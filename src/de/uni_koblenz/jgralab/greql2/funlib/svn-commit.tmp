@@ -1,0 +1,15 @@
+Greql2FunctionLib
+-- Diese und die folgenden Zeilen werden ignoriert --
+
+A    .
+A    GreqlFunction.java
+A    Greql2Function.java
+A    GreqlFunctionLibary.java
+AM   GreqlFunction.class
+A    SquareRoot.java
+AM   GreqlFunctionLibary.class
+A    Greql2FunctionLibrary.java
+A    SchemaFunctions.java
+A    Equals.java
+A    GetValue.java
+AM   SchemaFunctions.class

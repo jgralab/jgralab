@@ -1,0 +1,64 @@
+package greql2.evaluator.funlib;
+
+import greql2.evaluator.SubgraphTempAttribute;
+import greql2.evaluator.exception.EvaluateException;
+import greql2.evaluator.exception.WrongFunctionParameterException;
+import java.util.*;
+import jgralab.Graph;
+import jvalue.JValue;
+import jvalue.JValueCollection;
+
+/**
+ * calculates the average of the given collection
+ * @param JValueCollection the collection to calculate the average value for
+ * @return JValueDouble
+ * @author Daniel Bildhauer <dbildh@uni-koblenz.de> 
+ * Summer 2006, Diploma Thesis
+ *
+ */
+public class Avg implements Greql2Function {
+
+	public JValue evaluate(Graph graph, SubgraphTempAttribute subgraph, JValue[] arguments) throws EvaluateException {
+		if ( arguments.length < 1) {
+			throw new WrongFunctionParameterException(this, null, arguments );
+		}	
+		try {
+			if (arguments[0].isCollection()) {
+				JValueCollection col = arguments[0].toCollection();
+				Iterator<JValue> iter = col.iterator();
+				int sum = 0;
+				while (iter.hasNext()) {
+					JValue curVal = iter.next();
+					if (curVal.isInteger()) {
+						sum += curVal.toInteger();
+					} else {
+						throw new WrongFunctionParameterException(this, null, arguments);
+					}
+				}
+				return new JValue(sum / col.size());
+			} else {
+				return arguments[0];
+			}
+		}
+		catch (Exception ex) { //JValueInvalidTypeException, NoSuchFieldException, IndexOutOfBoundsException
+			throw new WrongFunctionParameterException(this, null, arguments);
+		} 
+	}
+
+	public long getEstimatedCosts(int inElements) {
+		return inElements;
+	}
+
+	public float getSelectivity() {
+		return 1;
+	}
+
+	public int getEstimatedCardinality(int inElements) {
+		return 1;
+	}
+
+	public String getExpectedParameters() {
+		return "(JValueCollection of Integers)";
+	}
+
+}

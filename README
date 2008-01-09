@@ -1,0 +1,33 @@
+Steps needed to build JGraLab:
+
+1. Unzip the zip-file to any directory.
+
+2. Download jdom, antlr, javaee and xmlrpc, and copy the nessesary jar-files to these locations:
+	- jdom to common/lib/jdom
+	- antlr to common/lib/antlr
+	- javaee to common/lib/javaee
+	- xmlrpc to jgralab/lib/xmlrpc (more than one jar-file)
+   
+   jdom can be downloaded from:
+   		http://www.jdom.org/
+   
+   antlr can be downloaded from:
+   		http://www.antlr.org/
+   
+   javaee (Java Enterprise Edition) can be downloaded from:
+   		http://java.sun.com
+   	The needed file is called javaee.jar
+   
+   xmlrpc can be downloaded from:
+   		http://www.xmlrpc.com/
+
+3. If not present, download and install apache ant:
+		http://ant.apache.org/
+
+4. Open up a console and navigate to the directory you unziped the files. Then type the following commands:
+	cd jgralab
+	ant
+
+5. The jar-file of jgralab is located at jgralab/build/jar .
+   It includes all jar-files, except javaee.jar. If you need it (xmlrpc is the only part of JGraLab that
+   needs this file), you have to add it to the classpath manually.

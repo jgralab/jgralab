@@ -1,0 +1,174 @@
+//
+// JGraLab - The Java graph laboratory
+// (c) 2006-2007 Institute for Software Technology
+//               University of Koblenz-Landau, Germany
+//
+//               ist@uni-koblenz.de
+//
+// Please report bugs to http://serres.uni-koblenz.de/bugzilla
+//
+// This program is free software; you can redistribute it and/or
+// modify it under the terms of the GNU General Public License
+// as published by the Free Software Foundation; either version 2
+// of the License, or (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program; if not, write to the Free Software
+// Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+//
+
+Schema de.uni_koblenz.jgralab.greql2.schema.Greql2Schema;
+
+RecordDomain SourcePosition (offset: Integer, length: Integer);
+
+GraphClass Greql2;
+
+// A common superclass for all vertices of GReQL2-vertices
+abstract VertexClass Greql2Vertex;
+
+VertexClass AlternativePathDescription: PathDescription;
+VertexClass AttributeId: Identifier;
+VertexClass BackwardVertexSet: PathExpression;
+VertexClass BagComprehension: ComprehensionWithTableHeader;
+VertexClass BagConstruction: ValueConstruction;
+VertexClass BoolLiteral: Literal { boolValue: Boolean };
+VertexClass CfGrammar: Expression;
+VertexClass ConditionalExpression: Expression;
+VertexClass Declaration: Greql2Vertex;
+VertexClass Definition: Greql2Vertex;
+VertexClass Direction: Greql2Vertex { dirValue: String };
+VertexClass EdgePathDescription: PrimaryPathDescription;
+VertexClass EdgeRestriction: Greql2Vertex;
+VertexClass EdgeSetExpression: ElementSetExpression;
+VertexClass EdgeSubgraphExpression: SubgraphExpression;
+VertexClass EdgeVertexList: Greql2Vertex;
+VertexClass ExponentiatedPathDescription: PathDescription;
+VertexClass ForwardVertexSet: PathExpression;
+VertexClass FunctionApplication: Expression;
+VertexClass FunctionId: Identifier;
+VertexClass Greql2Expression: Greql2Vertex { _queryText: String, _optimizer: String, _costModel: String };
+VertexClass Identifier : Expression { name: String };
+VertexClass IntLiteral: Literal { intValue: Integer };
+VertexClass IntermediateVertexPathDescription: PathDescription;
+VertexClass IteratedPathDescription: PathDescription { times: String };
+VertexClass LetExpression: DefinitionExpression;
+VertexClass ListConstruction: ValueConstruction;
+VertexClass ListRangeConstruction: ListConstruction;
+VertexClass Literal: Expression;
+VertexClass Nonterminal: Symbol;
+VertexClass NullLiteral: Literal;
+VertexClass OptionalPathDescription: PathDescription;
+VertexClass PathConstruction: ValueConstruction;
+VertexClass PathExistence: PathExpression;
+VertexClass PathSystemConstruction: ValueConstruction;
+VertexClass Production: Greql2Vertex;
+VertexClass QuantifiedExpression: Expression;
+VertexClass Quantifier: Greql2Vertex { name: String };
+VertexClass RealLiteral: Literal { realValue: Double };
+VertexClass RecordConstruction: ValueConstruction;
+VertexClass RecordElement: Greql2Vertex;
+VertexClass RecordId: Identifier;
+VertexClass RestrictedExpression: Expression;
+VertexClass RightSide: Greql2Vertex;
+VertexClass RoleId: Identifier;
+VertexClass SequentialPathDescription: PathDescription;
+VertexClass SetComprehension: Comprehension;
+VertexClass SetConstruction: ValueConstruction;
+VertexClass SimpleDeclaration: Greql2Vertex;
+VertexClass SimplePathDescription: PrimaryPathDescription;
+VertexClass StringLiteral: Literal { stringValue: String };
+VertexClass Symbol: Identifier;
+VertexClass TableComprehension: ComprehensionWithTableHeader;
+VertexClass ThisLiteral: Literal { thisValue: String };
+VertexClass TransposedPathDescription: PathDescription;
+VertexClass TupleConstruction: ValueConstruction;
+VertexClass TypeId: Symbol { excluded: Boolean, type: Boolean };
+VertexClass Variable: Identifier;
+VertexClass VertexSetExpression: ElementSetExpression;
+VertexClass VertexSubgraphExpression: SubgraphExpression;
+VertexClass WhereExpression: DefinitionExpression;
+abstract VertexClass Comprehension: Expression;
+abstract VertexClass ComprehensionWithTableHeader: Comprehension;
+abstract VertexClass DefinitionExpression: Expression;
+abstract VertexClass ElementSetExpression: Expression;
+abstract VertexClass Expression: Greql2Vertex;
+abstract VertexClass PathDescription: Expression;
+abstract VertexClass PathExpression: Expression;
+abstract VertexClass PrimaryPathDescription: PathDescription;
+abstract VertexClass SubgraphExpression: Expression;
+abstract VertexClass ValueConstruction: Expression;
+
+// A common super-class for all Edges that connect PathDescription vertices
+abstract AggregationClass IsPathDescriptionOf : Greql2Aggregation from PathDescription (0,*) to PathDescription(0,*) aggregate to;
+
+AggregationClass IsAlternativePathOf: IsPathDescriptionOf from PathDescription (2,*) to AlternativePathDescription (0,*) aggregate to;
+AggregationClass IsArgumentOf: Greql2Aggregation from Expression (0,*) to FunctionApplication (0,*) aggregate to;
+AggregationClass IsBoundExprOfDefinition: IsBoundExprOf from Expression (1,1) to DefinitionExpression (0,1) aggregate to;
+AggregationClass IsBoundExprOfQuantifier: IsBoundExprOf from Expression (1,1) to QuantifiedExpression (0,*) aggregate to;
+AggregationClass IsBoundVarOf: Greql2Aggregation from Variable (0,*) to Greql2Expression (0,1) aggregate to;
+AggregationClass IsColumnHeaderExprOf: Greql2Aggregation from Expression (0,*) to TableComprehension (0,*) aggregate to;
+AggregationClass IsCompDeclOf: Greql2Aggregation from Declaration (1,1) to Comprehension (0,1) aggregate to;
+AggregationClass IsCompResultDefOf: Greql2Aggregation from Expression (1,1) to Comprehension (0,*) aggregate to;
+AggregationClass IsConditionOf: Greql2Aggregation from Expression (1,1) to ConditionalExpression (0,*) aggregate to;
+AggregationClass IsConstraintOf: Greql2Aggregation from Expression (0,*) to Declaration (0,*) aggregate to;
+AggregationClass IsDeclaredVarOf: Greql2Aggregation from Variable (1,*) to SimpleDeclaration (0,1) aggregate to;
+AggregationClass IsDefinitionOf: Greql2Aggregation from Definition (1,*) to DefinitionExpression (1,*) aggregate to;
+AggregationClass IsDirectionOf: Greql2Aggregation from Direction (1,1) to PrimaryPathDescription (1,*) aggregate to;
+AggregationClass IsEdgeExprOf: Greql2Aggregation from Expression (1,1) to EdgePathDescription (0,*) aggregate to;
+AggregationClass IsEdgeOrVertexExprOf: Greql2Aggregation from Expression (2,*) to EdgeVertexList (0,*) aggregate to;
+AggregationClass IsEdgeRestrOf: Greql2Aggregation from EdgeRestriction (0,*) to PrimaryPathDescription (0,*) aggregate to;
+AggregationClass IsEdgeVertexListOf: Greql2Aggregation from EdgeVertexList (0,*) to PathSystemConstruction (0,*) aggregate to;
+AggregationClass IsElementOf: Greql2Aggregation from EdgeVertexList (0,*) to EdgeVertexList (0,*) aggregate to;
+AggregationClass IsExponentOf: Greql2Aggregation from IntLiteral (1,1) to ExponentiatedPathDescription (0,*) aggregate to;
+AggregationClass IsExponentiatedPathOf: IsPathDescriptionOf from PathDescription (1,1) to ExponentiatedPathDescription (0,*) aggregate to;
+AggregationClass IsExprOf:Greql2Aggregation from Expression (1,1) to Definition (0,*) aggregate to;
+AggregationClass IsFalseExprOf: Greql2Aggregation from Expression (1,1) to ConditionalExpression (0,*) aggregate to;
+AggregationClass IsFirstValueOf: Greql2Aggregation from Expression (1,1) to ListRangeConstruction (0,*) aggregate to;
+AggregationClass IsFunctionIdOf: Greql2Aggregation from FunctionId (1,1) to FunctionApplication (1,*) aggregate to;
+AggregationClass IsGoalRestrOf: Greql2Aggregation from Expression (0,1) to PathDescription (0,*) aggregate to;
+AggregationClass IsIdOf: Greql2Aggregation from Identifier (0,1) to Greql2Expression (0,*) aggregate to;
+AggregationClass IsIntermediateVertexOf: Greql2Aggregation from Expression (1,1) to IntermediateVertexPathDescription (0,*) aggregate to;
+AggregationClass IsIteratedPathOf: IsPathDescriptionOf from PathDescription (1,1) to IteratedPathDescription (0,*) aggregate to;
+AggregationClass IsLastValueOf: Greql2Aggregation from Expression (1,1) to ListRangeConstruction (0,*) aggregate to;
+AggregationClass IsLeftSideOf: Greql2Aggregation from Nonterminal (1,1) to Production (1,1) aggregate to;
+AggregationClass IsNullExprOf: Greql2Aggregation from Expression (1,1) to ConditionalExpression (0,*) aggregate to;
+AggregationClass IsOptionalPathOf: IsPathDescriptionOf from PathDescription (1,1) to OptionalPathDescription (0,*) aggregate to;
+AggregationClass IsPartOf: Greql2Aggregation from Expression (0,*) to ValueConstruction (0,*) aggregate to;
+AggregationClass IsPathOf: Greql2Aggregation from Expression (1,1) to PathExpression (0,*) aggregate to;
+AggregationClass IsProductionOf: Greql2Aggregation from Production (1,*) to CfGrammar (1,1) aggregate to;
+AggregationClass IsQuantifiedDeclOf: Greql2Aggregation from Declaration (1,1) to QuantifiedExpression (0,1) aggregate to;
+AggregationClass IsQuantifierOf: Greql2Aggregation from Quantifier (1,1) to QuantifiedExpression (1,*) aggregate to;
+AggregationClass IsQueryExprOf: Greql2Aggregation from Expression (1,1) to Greql2Expression (0,*) aggregate to;
+AggregationClass IsRecordElementOf: Greql2Aggregation from RecordElement (1,*) to RecordConstruction (1,*) aggregate to;
+AggregationClass IsRecordExprOf: Greql2Aggregation from Expression (1,1) to RecordElement (0,*) aggregate to;
+AggregationClass IsRecordIdOf: Greql2Aggregation from RecordId (1,1) to RecordElement (1,*) aggregate to;
+AggregationClass IsRestrictedExprOf: Greql2Aggregation from Expression (1,1) to RestrictedExpression (0,*) aggregate to;
+AggregationClass IsRestrictionOf: Greql2Aggregation from Expression (1,1) to RestrictedExpression (0,*) aggregate to;
+AggregationClass IsRightSideOf: Greql2Aggregation from RightSide (1,*) to Production (1,1) aggregate to;
+AggregationClass IsRoleIdOf: Greql2Aggregation from RoleId (0,1) to EdgeRestriction (1,*) aggregate to;
+AggregationClass IsRootOf: Greql2Aggregation from Expression (1,1) to PathSystemConstruction (0,*) aggregate to;
+AggregationClass IsRowHeaderExprOf: Greql2Aggregation from Expression (0,*) to TableComprehension (0,*) aggregate to;
+AggregationClass IsSequenceElementOf: IsPathDescriptionOf from PathDescription (2,*) to SequentialPathDescription (0,*) aggregate to;
+AggregationClass IsSimpleDeclOf: Greql2Aggregation from SimpleDeclaration (1,*) to Declaration (1,1) aggregate to;
+AggregationClass IsStartExprOf: Greql2Aggregation from Expression (0,1) to PathExpression (0,*) aggregate to;
+AggregationClass IsStartRestrOf: Greql2Aggregation from Expression (0,1) to PathDescription (0,*) aggregate to;
+AggregationClass IsSubPathOf: IsPathDescriptionOf from PathDescription (2,2) to IntermediateVertexPathDescription (0,*) aggregate to;
+AggregationClass IsSubgraphOf: Greql2Aggregation from Expression (0,1) to Declaration (0,*) aggregate to;
+AggregationClass IsSymbolOf: Greql2Aggregation from Symbol (0,*) to RightSide (1,*) aggregate to;
+AggregationClass IsTableHeaderOf: Greql2Aggregation from Expression (0,*) to ComprehensionWithTableHeader (0,*) aggregate to;
+AggregationClass IsTargetExprOf: Greql2Aggregation from Expression (0,1) to PathExpression (0,*) aggregate to;
+AggregationClass IsTransposedPathOf: IsPathDescriptionOf from PathDescription (1,1) to TransposedPathDescription (0,*) aggregate to;
+AggregationClass IsTrueExprOf: Greql2Aggregation from Expression (1,1) to ConditionalExpression (0,*) aggregate to;
+AggregationClass IsTypeExprOfDeclaration: IsTypeExprOf from Expression (0,1) to SimpleDeclaration (0,*) aggregate to;
+AggregationClass IsTypeExprOfFunction: IsTypeExprOf from Expression (0,1) to FunctionApplication (0,*) aggregate to;
+AggregationClass IsTypeIdOf: Greql2Aggregation from TypeId (0,1) to EdgeRestriction (0,*) aggregate to;
+AggregationClass IsTypeRestrOf: Greql2Aggregation from TypeId (0,*) to Expression (0,*) aggregate to;
+AggregationClass IsVarOf: Greql2Aggregation from Variable (1,1) to Definition (0,1) aggregate to;
+abstract AggregationClass Greql2Aggregation from Vertex (0,*) to Vertex (0,*) aggregate to { sourcePositions: List<SourcePosition> };
+abstract AggregationClass IsBoundExprOf: Greql2Aggregation from Expression (1,1) to Vertex (0,*) aggregate to;
+abstract AggregationClass IsTypeExprOf: Greql2Aggregation from Expression (0,*) to Vertex (0,*) aggregate to;

@@ -1,0 +1,201 @@
+/*
+ * JGraLab - The Java graph laboratory
+ * (c) 2006-2007 Institute for Software Technology
+ *               University of Koblenz-Landau, Germany
+ *
+ *               ist@uni-koblenz.de
+ *
+ * Please report bugs to http://serres.uni-koblenz.de/bugzilla
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+ * 
+ */
+
+package de.uni_koblenz.jgralab.greql2.funlib;
+
+import java.util.ArrayList;
+
+import de.uni_koblenz.jgralab.BooleanGraphMarker;
+import de.uni_koblenz.jgralab.Graph;
+import de.uni_koblenz.jgralab.greql2.exception.EvaluateException;
+import de.uni_koblenz.jgralab.greql2.exception.WrongFunctionParameterException;
+import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
+import de.uni_koblenz.jgralab.greql2.jvalue.JValueInvalidTypeException;
+import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
+
+/**
+ * Checks if the given number is a prime number.
+ * <dl>
+ * <dt><b>GReQL-signature</b></dt>
+ * <dd><code>BOOLEAN isPrime(number:LONG, noOfTestRuns:INTEGER)</code></dd>
+ * <dd><code>BOOLEAN isPrime(number:LONG)</code></dd>
+ * <dd>&nbsp;</dd>
+ * </dl>
+ * <dl>
+ * <dt></dt>
+ * <dd>
+ * <dl>
+ * <dt><b>Parameters:</b></dt>
+ * <dd><code>number: LONG</code> - the number you want to test for primality</dd>
+ * <dd><code>noOfTestRuns: INTEGER</code> - the number of test runs (defaults
+ * to 10 if omitted)</dd>
+ * <dt><b>Returns:</b></dt>
+ * <dd><code>false</code> if <code>number</code> is no prime number. If it
+ * returns <code>true</code> the probability that <code>number</code> is
+ * indeed prime is at least <code>1-(1/4)^noOfTestRuns</code>.</dd>
+ * <dd>&nbsp;</dd>
+ * </dl>
+ * </dd>
+ * </dl>
+ * 
+ * @author Tassilo Horn (heimdall), 2007, Diploma Thesis
+ */
+public class IsPrime implements Greql2Function {
+
+	/**
+	 * The costs for an isPrime function application.
+	 * 
+	 * Since those depend heavily on the parameter(s) of isPrime, but those
+	 * aren't available before evaluation, it's hard to set it to a "good"
+	 * value...
+	 */
+	private static final int ESTIMATED_COSTS_PER_RUN = 5;
+
+	/**
+	 * The selectivity for isPrime. The number of prime numbers < x can be
+	 * estimated with x / ln(x). So the selectivity is (x / ln(x))/x = 1/ln(x).
+	 * 
+	 * Since we assume that isPrime is most often called with smaller values, we
+	 * use 500 for x.
+	 */
+	private static final double SELECTIVITY = 1.0 / Math.log(5000);
+
+	/**
+	 * @param a
+	 *            a random number between 2 and <code>n-1</code>
+	 * @param i
+	 * @param n
+	 *            the number to check the primality of
+	 * @return 1 if it's possible that <code>n</code> is a prime number, or
+	 *         something else if <code>n</code> is definitely composite.
+	 */
+	private static long witness(long a, long i, long n) {
+		long x, y;
+		if (i == 0)
+			return 1;
+
+		x = witness(a, i / 2, n);
+		if (x == 0)
+			return 0;
+
+		y = (x * x) % n;
+		if (y == 1 && x != 1 && x != n - 1)
+			return 0;
+
+		if (i % 2 != 0)
+			y = (a * y) % n;
+		return y;
+	}
+
+	/**
+	 * @param x
+	 *            lower bound
+	 * @param y
+	 *            higher bound
+	 * @return a random number between <code>x</code> and <code>y</code>
+	 */
+	private static long random(long x, long y) {
+		return Math.round(Math.random() * (y - x) + x);
+	}
+
+	/**
+	 * @return <code>false</code>, if <code>number</code> is no prime
+	 *         number or <true>true</code>, if <code>number</code> is a
+	 *         prime number with a probability of <code>1-(1/number)^noOfTestRuns</code>.
+	 */
+	private static boolean isPrime(long number, int noOfTestRuns) {
+		if (number < 2)
+			return false;
+		if (number == 2)
+			return true;
+		long w = 0;
+		for (int i = 0; i < noOfTestRuns; i++) {
+			w = witness(random(2, number - 1), number - 1, number);
+			if (w != 1)
+				return false;
+		}
+		return true;
+	}
+
+	public JValue evaluate(Graph graph, BooleanGraphMarker subgraph,
+			JValue[] arguments) throws EvaluateException {
+		if (arguments.length < 1 || arguments.length > 2) {
+			throw new WrongFunctionParameterException(this, null, arguments);
+		}
+		if (!(arguments[0].canConvert(JValueType.LONG))) {
+			throw new WrongFunctionParameterException(this, null, arguments);
+		}
+		int noOfTestRuns = 10;
+		if (arguments.length == 2) {
+			if (!(arguments[1].canConvert(JValueType.INTEGER))) {
+				throw new WrongFunctionParameterException(this, null, arguments);
+			}
+			try {
+				noOfTestRuns = arguments[1].toInteger();
+				if (noOfTestRuns <= 0) {
+					throw new WrongFunctionParameterException(this, null,
+							arguments);
+				}
+			} catch (JValueInvalidTypeException e) {
+				e.printStackTrace();
+				throw new WrongFunctionParameterException(this, null, arguments);
+			}
+		}
+		long number;
+		try {
+			number = arguments[0].toLong();
+		} catch (JValueInvalidTypeException e) {
+			e.printStackTrace();
+			throw new WrongFunctionParameterException(this, null, arguments);
+		}
+		if (number < 0) {
+			throw new WrongFunctionParameterException(this, null, arguments);
+		}
+
+		return JValue.fromObject(isPrime(number, noOfTestRuns));
+	}
+
+	public int getEstimatedCardinality(int inElements) {
+		return 1;
+	}
+
+	public int getEstimatedCosts(ArrayList<Integer> inElements) {
+		return 10 * ESTIMATED_COSTS_PER_RUN;
+	}
+
+	public String getExpectedParameters() {
+		return "(number[, noOfTestRuns])";
+	}
+
+	public double getSelectivity() {
+
+		return SELECTIVITY;
+	}
+
+	@Override
+	public boolean isPredicate() {
+		return true;
+	}
+}
