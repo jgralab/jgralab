@@ -19,25 +19,24 @@
 	\vspace{-6pt}
 	
 	\section{Purpose}
-	The tool \emph{XMI2TGSchema} transforms a TGraph schema specified by a grUML model in XMI-format to a corresponding TGraph schema definition in TG-format, readable by JGraLab. The possible deviations from grUML the tool is able to cope with are described in section \ref{sec:Usage}. Up to now, the transformation has only been tested for XMI-files exported by Sparx System's \emph{Enterprise Architect}.
+	The tool \emph{XMI2TGSchema} transforms a TGraph schema specified by a grUML model in XMI-format to a corresponding TGraph schema definition in TG-format, readable by JGraLab. The possible deviations from grUML the tool is able to cope with are given in the descriptions of the \texttt{autoCorrect} parameter in section \ref{sec:Usage}. Up to now, the transformation has only been tested for XMI-files exported by Sparx System's \emph{Enterprise Architect}.
 	
 	\section{Prerequisites}
-	As XMI2TGSchema is implemented as an XSL Stylesheet, an XSLT processor is needed for its execution. The processor must be capable of processing XSLT 2.0. The usage instruction below relate to \emph{Saxon-B}, available at \emph{http://www.saxonica.com}. The tested version of Saxon-B is 8.9.
+	As XMI2TGSchema is implemented as an XSL Stylesheet, an XSLT processor is needed for its execution. The processor must be capable of processing XSLT 2.0. The usage instruction below relate to \emph{Saxon-B}, available at \emph{http://www.saxonica.com}. The tested version of Saxon-B is 9.0.0.2J.
 	
 	\section{Usage} \label{sec:Usage}
 	The command line instruction is:
 	
-	\texttt{java -jar saxon8.jar } \emph{source}\texttt{ }\emph{path}\texttt{/XMI2TGSchema.xsl }[\texttt{>}\emph{target}]\texttt{ } \\ 
-	\mbox{[}\texttt{tool=}\emph{tool}]\texttt{ }[\texttt{schemaName=}\emph{schemaName}]\texttt{ }[\texttt{gcName=}\emph{gcName}] \\
+	\texttt{java -jar saxon9.jar } \texttt{-s:}\emph{source}\texttt{ -xsl:}\emph{path}\texttt{/XMI2TGSchema.xsl} \\
+	\mbox{[}\texttt{-o:}\emph{target}]\texttt{ }[\texttt{tool=}\emph{tool}]\texttt{ }[\texttt{schemaName=}\emph{schemaName}]\texttt{ }[\texttt{gcName=}\emph{gcName}] \\
 	\mbox{[}\texttt{autoCorrect=}(\texttt{yes}|\texttt{no})]\texttt{ }[\texttt{errorDetection=}(\texttt{yes}|\texttt{no})] \\
-	\mbox{[}\texttt{errorDetection=}\emph{classToEdgeClass}]
+	\mbox{[}\texttt{errorDetection=}(\texttt{yes}|\texttt{no})]\texttt{ }[\texttt{classToEdgeClass=}\emph{classToEdgeClass}]
 
 	with:
 	\begin{itemize}
 		\item \emph{source} -- The XMI-file to be transformed.
 		\item \emph{path} -- The path to the XSL stylesheet \texttt{XMI2TGSchema.xsl}.
 		\item \emph{target} -- The output file. If not given, the standard output device (usually the screen) is used.
-		\item \emph{parameters} -- A selection of the following:
 		\item \emph{tool} -- The tool used to create the XMI file. As yet, the only possible value is \texttt{ea}. Omission of this parameter probably results in corrupted TG files (e.g.\ due to missing attribute types).
 		\item \emph{schemaName} -- The name of the Schema which shall be created. If omitted, default value \texttt{default\-schema} is used.
 		\item \emph{gcName} -- The name of the Graph Class which shall be created. If omitted, default value  \texttt{Default\-GraphClass} is used.
