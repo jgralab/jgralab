@@ -247,7 +247,7 @@
 			<fileset dir="src" includes="de/**" excludes=" **/schema/** **/parser/** **/grumlschema/** **/*.class **/*.bak **/*~ **/*.tmp"/>
 		</copy>
 		<copy file="${common.dir}/lib/getopt/java-getopt-1.0.13.jar" todir="${tmp.dir}/source/common/lib/getopt"/>
-		<copy file="lib/org.riediger.plist.jar" todir="${tmp.dir}/source/jgralab/lib"/>
+		<copy file="lib/plist/org.riediger.plist.jar" todir="${tmp.dir}/source/jgralab/lib"/>
 		<copy file="README" todir="${tmp.dir}/source/jgralab"/>
 		<copy file="README" todir="${tmp.dir}/source"/>
 		<mkdir dir="build/zip"/>
