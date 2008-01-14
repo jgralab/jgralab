@@ -1,0 +1,47 @@
+Schema de.uni_koblenz.jgralab.utilities.tg2schemagraph.grumlschema.GrUMLSchema;
+GraphClass GrUMLSchemaGraph;
+
+
+VertexClass SchemaM2 {name: String};
+abstract VertexClass AttributedElementClassM2 {isAbstract: Boolean, name: String};
+VertexClass GraphClassM2: AttributedElementClassM2;
+abstract VertexClass GraphElementClassM2: AttributedElementClassM2;
+VertexClass VertexClassM2: GraphElementClassM2;
+VertexClass EdgeClassM2: GraphElementClassM2;
+VertexClass AggregationClassM2: EdgeClassM2 {aggregateFrom: Boolean};
+VertexClass CompositionClassM2: AggregationClassM2;
+
+VertexClass AttributeM2 {name: String};
+abstract VertexClass DomainM2;
+
+abstract VertexClass CompositeDomainM2: DomainM2;
+VertexClass SetDomainM2: CompositeDomainM2;
+VertexClass RecordDomainM2: CompositeDomainM2 {name: String};
+VertexClass ListDomainM2: CompositeDomainM2;
+
+
+abstract VertexClass BasicDomainM2: DomainM2;
+VertexClass IntDomainM2: BasicDomainM2;
+VertexClass BooleanDomainM2: BasicDomainM2;
+VertexClass EnumDomainM2: BasicDomainM2 {constants: List<String>};
+VertexClass StringDomainM2: BasicDomainM2;
+VertexClass LongDomainM2: BasicDomainM2;
+VertexClass ObjectDomainM2: BasicDomainM2;
+VertexClass DoubleDomainM2: BasicDomainM2;
+
+AggregationClass HasAttributeM2 from AttributeM2 (0,*) to AttributedElementClassM2 (1,1) aggregate to;
+EdgeClass HasDomainM2 from DomainM2 (1,1) to AttributeM2 (0,*);
+
+EdgeClass HasBaseDomainM2 from CompositeDomainM2 (0,*) to DomainM2 (0,1);
+AggregationClass HasRecordDomainComponentM2 from RecordDomainM2 (0,*) to DomainM2 (0,*) aggregate from {name: String};
+
+AggregationClass ToM2 from EdgeClassM2 (0,*) to VertexClassM2 (1,1) aggregate from {min: Integer, roleName: String, max: Integer} ;
+AggregationClass FromM2 from EdgeClassM2 (0,*) to VertexClassM2 (1,1) aggregate from {max: Integer, min: Integer, roleName: String};
+
+CompositionClass ContainsGraphClassM2 from GraphClassM2 (1,*) to SchemaM2 (1,1) aggregate to;
+CompositionClass ContainsGraphElementClassM2 from GraphElementClassM2 (0,*) to GraphClassM2 (1,1) aggregate to;
+
+abstract EdgeClass IsSubClassOfM2 from AttributedElementClassM2 (0,*) to AttributedElementClassM2 (0,*);
+EdgeClass IsSubEdgeClassOfM2: IsSubClassOfM2 from EdgeClassM2 (0,*) to EdgeClassM2 (0,*);
+EdgeClass IsSubVertexClassOfM2: IsSubClassOfM2 from VertexClassM2 (0,*) to VertexClassM2 (0,*);
+EdgeClass IsSubGraphClassOfM2: IsSubClassOfM2 from GraphClassM2 (0,*) to GraphClassM2 (0,*);
