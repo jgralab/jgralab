@@ -880,7 +880,7 @@ public class GraphIO {
 	 * GraphElementClasses.
 	 * 
 	 * @throws GraphIOException
-	 * @
+	 * @throws SchemaException
 	 */
 	private void completeGraphClass() throws GraphIOException, SchemaException {
 		for (GraphClassData currentGraphClassData : graphClassBuffer) {
@@ -899,7 +899,7 @@ public class GraphIO {
 	 * 
 	 * @return The name of the read GraphClass.
 	 * @throws GraphIOException
-	 * @
+	 * @throws SchemaException
 	 */
 	private String parseGraphClass() throws GraphIOException, SchemaException {
 		GraphClassData graphClassData = new GraphClassData();
@@ -942,7 +942,7 @@ public class GraphIO {
 	 *            The GraphClassData used to create the GraphClass.
 	 * @return The created GraphClass.
 	 * @throws GraphIOException
-	 * @
+	 * @throws SchemaException
 	 */
 	private GraphClass graphClass(GraphClassData gcData)
 			throws GraphIOException, SchemaException {
@@ -2222,13 +2222,12 @@ public class GraphIO {
 					orderedGcNames.add(gc.name);
 					gcit.remove();
 				} else {
-					/* check if superclasses exist among yet unsorted GraphClasses*/
+					/* check if some superclasses exist among yet unsorted GraphClasses*/
 					for (String superClass : gc.directSuperClasses) {
-						definedGcName = false;
 						if (orderedGcNames.contains(superClass)) {
-							definedGcName = true;
-							break;
+							continue;
 						} 
+						definedGcName = false;
 						for (GraphClassData gc2 : graphClassBuffer) {
 							if (gc2.name.equals(superClass)) {
 								definedGcName = true;
@@ -2247,22 +2246,22 @@ public class GraphIO {
 	}
 
 	private void sortVertexClasses() throws GraphIOException {
-		List<GraphElementClassData> orderedVcList;
+		List<GraphElementClassData> orderedVcList, unorderedVcList;
 		Set<String> orderedVcNames = new TreeSet<String>();
 		GraphElementClassData vc;
 		boolean definedVcName;
 
-		for (Entry<String, List<GraphElementClassData>> graphClass : vertexClassBuffer
-				.entrySet()) {
+		for (GraphClassData graphClass : graphClassBuffer) {
+			unorderedVcList = vertexClassBuffer.get(graphClass.name);
 			orderedVcList = new ArrayList<GraphElementClassData>();
 
 			// iteratively add VertexClasses from vertexClassBuffer,
 			// whose superclasses already are in orderedVcList,
 			// to orderedVcList
 			// the added VertexClasses are removed from vertexClassBuffer
-			while (!graphClass.getValue().isEmpty()) {
-				for (Iterator<GraphElementClassData> vcit = graphClass
-						.getValue().iterator(); vcit.hasNext();) {
+			while (!unorderedVcList.isEmpty()) {
+				for (Iterator<GraphElementClassData> vcit = 
+						unorderedVcList.iterator(); vcit.hasNext();) {
 					vc = vcit.next();
 					// check if all superclasses exist among already sorted VertexClasses
 					if (orderedVcNames.containsAll(vc.directSuperClasses)) {
@@ -2270,14 +2269,13 @@ public class GraphIO {
 						orderedVcList.add(vc);
 						vcit.remove();
 					} else {
-						/* check if superclasses exist among yet unsorted VertexClasses*/
+						/* check if some superclasses exist among yet unsorted VertexClasses*/
 						for (String superClass : vc.directSuperClasses) {
-							definedVcName = false;
 							if (orderedVcNames.contains(superClass)) {
-								definedVcName = true;
-								break;
+								continue;
 							}
-							for (GraphElementClassData vc2 : graphClass.getValue()) {
+							definedVcName = false;
+							for (GraphElementClassData vc2 : unorderedVcList) {
 								if (vc2.name.equals(superClass)) {
 									definedVcName = true;
 									break;
@@ -2291,27 +2289,27 @@ public class GraphIO {
 					}
 				}
 			}
-			graphClass.setValue(orderedVcList);
+			vertexClassBuffer.put(graphClass.name, orderedVcList);
 		}
 	}
 
 	private void sortEdgeClasses() throws GraphIOException {
-		List<GraphElementClassData> orderedEcList;
+		List<GraphElementClassData> orderedEcList, unorderedEcList;
 		Set<String> orderedEcNames = new TreeSet<String>();
 		GraphElementClassData ec;
 		boolean definedEcName;
 
-		for (Entry<String, List<GraphElementClassData>> graphClass : edgeClassBuffer
-				.entrySet()) {
+		for (GraphClassData graphClass : graphClassBuffer) {
+			unorderedEcList = edgeClassBuffer.get(graphClass.name);
 			orderedEcList = new ArrayList<GraphElementClassData>();
 
 			// iteratively add EdgeClasses from edgeClassBuffer,
 			// whose superclasses already are in orderedEcList,
 			// to orderedEcList
 			// the added EdgeClasses are removed from edgeClassBuffer
-			while (!graphClass.getValue().isEmpty()) {
-				for (Iterator<GraphElementClassData> ecit = graphClass
-						.getValue().iterator(); ecit.hasNext();) {
+			while (!unorderedEcList.isEmpty()) {
+				for (Iterator<GraphElementClassData> ecit = 
+						unorderedEcList.iterator(); ecit.hasNext();) {
 					ec = ecit.next();
 					// check if all superclasses exist among already sorted EdgeClasses
 					if (orderedEcNames.containsAll(ec.directSuperClasses)) {
@@ -2321,12 +2319,11 @@ public class GraphIO {
 					} else {
 						/* check if superclasses exist among yet unsorted EdgeClasses*/
 						for (String superClass : ec.directSuperClasses) {
-							definedEcName = false;
 							if (orderedEcNames.contains(superClass)) {
-								definedEcName = true;
-								break;
+								continue;
 							}
-							for (GraphElementClassData ec2 : graphClass.getValue()) {
+							definedEcName = false;
+							for (GraphElementClassData ec2 : unorderedEcList) {
 								if (ec2.name.equals(superClass)) {
 									definedEcName = true;
 									break;
@@ -2340,7 +2337,7 @@ public class GraphIO {
 					}
 				}
 			}
-			graphClass.setValue(orderedEcList);
+			edgeClassBuffer.put(graphClass.name, orderedEcList);
 		}
 	}
 	
