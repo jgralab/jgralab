@@ -1,17 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
-	<classpathentry excluding="de/uni_koblenz/jgralab/impl/list/" kind="src" path="src"/>
-	<classpathentry kind="lib" path="lib/xmlrpc-3.0/lib/commons-logging-1.1.jar"/>
-	<classpathentry kind="lib" path="lib/xmlrpc-3.0/lib/ws-commons-util-1.0.1.jar"/>
-	<classpathentry kind="lib" path="lib/xmlrpc-3.0/lib/xmlrpc-client-3.0.jar"/>
-	<classpathentry kind="lib" path="lib/xmlrpc-3.0/lib/xmlrpc-common-3.0.jar" sourcepath="lib/xmlrpc-3.0/lib/xmlrpc-common-3.0-sources.jar"/>
-	<classpathentry kind="lib" path="lib/xmlrpc-3.0/lib/xmlrpc-server-3.0.jar"/>
+	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry kind="lib" path="lib/org.riediger.plist.jar"/>
-	<classpathentry kind="var" path="RGHOME/project/common/lib/getopt/java-getopt-1.0.13.jar"/>
-	<classpathentry kind="var" path="RGHOME/project/common/lib/javaee/javaee.jar"/>
-	<classpathentry kind="var" path="RGHOME/project/common/lib/antlr/org.antlr_2.7.6.jar"/>
-	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/3"/>
-	<classpathentry kind="var" path="RGHOME/project/common/lib/jdom/jdom.jar"/>
-	<classpathentry kind="output" path="build/classes"/>
+	<classpathentry kind="var" path="UKOISTHOME/jgralab/lib/plist/org.riediger.plist.jar"/>
+	<classpathentry kind="var" path="UKOISTHOME/jgralab/lib/xmlrpc/commons-logging-1.1.jar"/>
+	<classpathentry kind="var" path="UKOISTHOME/jgralab/lib/xmlrpc/ws-commons-util-1.0.1.jar"/>
+	<classpathentry kind="var" path="UKOISTHOME/jgralab/lib/xmlrpc/xmlrpc-client-3.0.jar"/>
+	<classpathentry kind="var" path="UKOISTHOME/jgralab/lib/xmlrpc/xmlrpc-common-3.0.jar"/>
+	<classpathentry kind="var" path="UKOISTHOME/jgralab/lib/xmlrpc/xmlrpc-server-3.0.jar"/>
+	<classpathentry kind="var" path="UKOISTHOME/common/lib/antlr/org.antlr_2.7.6.jar"/>
+	<classpathentry kind="var" path="UKOISTHOME/common/lib/autoBuildID/de.uni_koblenz.autobuildid.jar"/>
+	<classpathentry kind="var" path="UKOISTHOME/common/lib/getopt/java-getopt-1.0.13.jar"/>
+	<classpathentry kind="var" path="UKOISTHOME/common/lib/jdom/jdom.jar"/>
+	<classpathentry kind="var" path="UKOISTHOME/common/lib/javaee.jar"/>
+	<classpathentry kind="output" path="bin"/>
 </classpath>
