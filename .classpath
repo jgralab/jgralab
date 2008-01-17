@@ -12,6 +12,6 @@
 	<classpathentry kind="var" path="UKOISTHOME/common/lib/autoBuildID/de.uni_koblenz.autobuildid.jar"/>
 	<classpathentry kind="var" path="UKOISTHOME/common/lib/getopt/java-getopt-1.0.13.jar"/>
 	<classpathentry kind="var" path="UKOISTHOME/common/lib/jdom/jdom.jar"/>
-	<classpathentry kind="var" path="UKOISTHOME/common/lib/javaee.jar"/>
+	<classpathentry kind="var" path="UKOISTHOME/common/lib/javaee/javaee.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
