@@ -13,5 +13,5 @@
 	<classpathentry kind="var" path="UKOISTHOME/common/lib/getopt/java-getopt-1.0.13.jar"/>
 	<classpathentry kind="var" path="UKOISTHOME/common/lib/jdom/jdom.jar"/>
 	<classpathentry kind="var" path="UKOISTHOME/common/lib/javaee/javaee.jar"/>
-	<classpathentry kind="output" path="bin"/>
+	<classpathentry kind="output" path="build/classes"/>
 </classpath>
