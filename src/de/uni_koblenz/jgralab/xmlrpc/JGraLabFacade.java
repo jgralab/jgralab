@@ -301,7 +301,7 @@ public class JGraLabFacade {
 			try {
 				Class.forName(schema.getFullName(), true, M1ClassManager.instance());
 			} catch (ClassNotFoundException e) {
-				compileRemoteSchema(schema);
+				schema.compile();
 			}
 						
 			graphCreateMethod = schema.getGraphCreateMethod(graphClassName);
@@ -345,10 +345,10 @@ public class JGraLabFacade {
 			try {
 				Class.forName(schema.getFullName(), true, M1ClassManager.instance());
 			} catch (ClassNotFoundException e) {
-				compileRemoteSchema(schema);
+				schema.compile();
 			}
 			
-			compileRemoteSchema(GraphIO.loadSchemaFromURL(url));
+			GraphIO.loadSchemaFromURL(url).compile();
 			
 			graph = GraphIO.loadGraphFromURL(url, null);
 			graphNo = graphContainer.addGraph(graph);
@@ -2581,18 +2581,5 @@ public class JGraLabFacade {
 		ois.close();
 		
 		return o;	
-	}
-	
-	/**
-	 * Generates and compiles the M1 classes of a remote schema and stores the
-	 * bytecode to memory.
-	 * 
-	 * @param schema the schema to be compiled
-	 * @throws GraphIOException
-	 * @throws InterruptedException
-	 * @throws IOException
-	 */
-	private void compileRemoteSchema(Schema schema) {
-		schema.compile();
 	}
 }
