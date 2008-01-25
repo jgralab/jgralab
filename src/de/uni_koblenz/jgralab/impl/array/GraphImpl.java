@@ -590,18 +590,16 @@ public abstract class GraphImpl extends GraphBaseImpl {
 	public Edge getFirstEdgeOfClassInGraph(Class anEdgeClass,
 			boolean explicitType) {
 		Edge currentEdge = getFirstEdgeInGraph();
-		Edge firstEdge = currentEdge;
-		if (currentEdge != null)
-			while (currentEdge != firstEdge) {
-				if (explicitType) {
-					if (anEdgeClass == currentEdge.getM1Class())
-						return currentEdge;
-				} else {
-					if (anEdgeClass.isInstance(currentEdge))
-						return currentEdge;
-				}
-				currentEdge = currentEdge.getNextEdgeInGraph();
+		while (currentEdge != null) {
+			if (explicitType) {
+				if (anEdgeClass == currentEdge.getM1Class())
+					return currentEdge;
+			} else {
+				if (anEdgeClass.isInstance(currentEdge))
+					return currentEdge;
 			}
+			currentEdge = currentEdge.getNextEdgeInGraph();
+		}
 		return null;
 	}
 
@@ -968,7 +966,7 @@ public abstract class GraphImpl extends GraphBaseImpl {
 	 * @see jgralab.Graph#getNextIncidenceOfClass(int, jgralab.EdgeClass)
 	 */
 	public Edge getNextEdgeOfClass(int eId, EdgeClass anEdgeClass) {
-		return getNextEdgeOfClass(eId, anEdgeClass);
+		return getNextEdgeOfClass(eId, anEdgeClass, false);
 	}
 
 	/*
@@ -977,7 +975,7 @@ public abstract class GraphImpl extends GraphBaseImpl {
 	 * @see jgralab.Graph#getNextIncidenceOfClass(int, jgralab.EdgeClass)
 	 */
 	public Edge getNextEdgeOfClass(int eId, Class anEdgeClass) {
-		return getNextEdgeOfClass(eId, anEdgeClass);
+		return getNextEdgeOfClass(eId, anEdgeClass, false);
 	}
 
 	/*
