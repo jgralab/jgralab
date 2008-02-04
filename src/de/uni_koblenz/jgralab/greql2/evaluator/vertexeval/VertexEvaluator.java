@@ -260,32 +260,32 @@ public abstract class VertexEvaluator {
 								.acceptsType(ec));
 					}
 				}
-			}
 
-			// Log the size of the result
-			if (result.isCollection()) {
-				if (this instanceof SimpleDeclarationEvaluator) {
-					int size = 1;
-					for (JValue val : result.toJValueList()) {
-						VariableDeclaration d = val.toVariableDeclaration();
-						size *= d.getDefinitionCardinality();
+				// Log the size of the result
+				if (result.isCollection()) {
+					if (this instanceof SimpleDeclarationEvaluator) {
+						int size = 1;
+						for (JValue val : result.toJValueList()) {
+							VariableDeclaration d = val.toVariableDeclaration();
+							size *= d.getDefinitionCardinality();
+						}
+						evaluationLogger.logResultSize(getLoggingName(), size);
+					} else {
+						evaluationLogger.logResultSize(getLoggingName(), result
+								.toCollection().size());
 					}
-					evaluationLogger.logResultSize(getLoggingName(), size);
+				} else if (result.isDeclarationLayer()) {
+					// Declarations return a VariableDeclarationLayer object as
+					// result. The real result size is the number of possible
+					// variable combinations. This cannot be logged here, but it
+					// is done in DeclarationLayer itself.
+				} else if (result.isDFA() || result.isNFA()) {
+					// Result sizes for PathDescriptions are logged as the
+					// number of states the DFA has. That is done in
+					// Forward-/BackwardVertexSet and PathExistance.
 				} else {
-					evaluationLogger.logResultSize(getLoggingName(), result
-							.toCollection().size());
+					evaluationLogger.logResultSize(getLoggingName(), 1);
 				}
-			} else if (result.isDeclarationLayer()) {
-				// Declarations return a VariableDeclarationLayer object as
-				// result. The real result size is the number of possible
-				// variable combinations. This cannot be logged here, but it is
-				// done in DeclarationLayer itself.
-			} else if (result.isDFA() || result.isNFA()) {
-				// Result sizes for PathDescriptions are logged as the number of
-				// states the DFA has. That is done in
-				// Forward-/BackwardVertexSet and PathExistance.
-			} else {
-				evaluationLogger.logResultSize(getLoggingName(), 1);
 			}
 		}
 
