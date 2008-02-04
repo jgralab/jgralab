@@ -232,7 +232,7 @@ public abstract class VertexEvaluator {
 
 		// Log the size of the result and the selectivity for boolean
 		// expressions.
-		if (evaluationLogger != null && result != null) {
+		if (evaluationLogger != null && result != null && result.isValid()) {
 			if (result.isBoolean()) {
 				// Log the selectivity for vertices that return a boolean
 				evaluationLogger.logSelectivity(getLoggingName(), result
