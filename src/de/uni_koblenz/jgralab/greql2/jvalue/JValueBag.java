@@ -258,8 +258,9 @@ public class JValueBag extends JValueCollection {
 			while (iter.hasNext()) {
 				currentElement = (JValue) iter.next();
 				if (this.getQuantity(currentElement) != foreignBag
-						.getQuantity(currentElement))
+						.getQuantity(currentElement)) {
 					return false;
+				}	
 			}
 			return true;
 		}
