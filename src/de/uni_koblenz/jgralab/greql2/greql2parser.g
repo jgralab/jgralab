@@ -148,6 +148,8 @@ options
 			mergeVariablesInQuantifiedExpression((QuantifiedExpression) v);
 		} else if (v instanceof Greql2Expression) {
 			mergeVariablesInGreql2Expression((Greql2Expression) v);
+		} else if (v instanceof ThisLiteral) {
+		    return;	 
 		} else if (v instanceof Variable) {
 			Vertex var = variableSymbolTable.lookup( ( (Variable) v).getName());
 			if (var != null) {
@@ -1585,7 +1587,7 @@ restrictedExpression returns [Expression expr = null] throws ParseException, Dup
 	                    IsRestrictionOf restrOf = graph.createIsRestrictionOf(restr, restrExpr);
 	                    restrOf.setSourcePositions((createSourcePositionList(lengthRestr, offsetRestr)));
 	                	// merge this-literals in restriction with vertex
-	                	mergeRestrictedExpr(restr, expr);
+	                //	mergeRestrictedExpr(restr, expr);
 						expr = restrExpr;
 					} catch (Exception ex) { ex.printStackTrace(); }
                 }
@@ -2097,7 +2099,7 @@ startRestrictedPathDescription returns [PathDescription pathDescr = null] throws
 				{
 				  		IsStartRestrOf startRestrOf = graph.createIsStartRestrOf(expr, pathDescr);
 						startRestrOf.setSourcePositions((createSourcePositionList(length, offset)));
-						mergeRestrictedExpr(expr, pathDescr);
+				//		mergeRestrictedExpr(expr, pathDescr);
 				}
 				else
 				{
@@ -2148,7 +2150,7 @@ goalRestrictedPathDescription returns [PathDescription pathDescr = null] throws 
     			  		{
     			  			IsGoalRestrOf goalRestrOf = graph.createIsGoalRestrOf(expr, pathDescr);
     			  			goalRestrOf.setSourcePositions((createSourcePositionList(length, offset)));
-    			  			mergeRestrictedExpr(expr, pathDescr);
+    			  //			mergeRestrictedExpr(expr, pathDescr);
     			  		}
     			  		catch (Exception ex) { ex.printStackTrace(); }
 			  		}

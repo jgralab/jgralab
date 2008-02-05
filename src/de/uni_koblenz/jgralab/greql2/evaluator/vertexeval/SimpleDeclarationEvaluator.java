@@ -79,10 +79,13 @@ public class SimpleDeclarationEvaluator extends VertexEvaluator {
 			exprEval = greqlEvaluator.getVertexEvaluatorGraphMarker().getMark(typeExpression);
 		}
 		JValue tempAttribute = exprEval.getResult(subgraph);
-		JValueCollection declarationSet = null;
+		JValueSet declarationSet = null;
 		if (tempAttribute.isCollection()) {
 			try {
-				declarationSet = tempAttribute.toCollection();
+				JValueCollection col = tempAttribute.toCollection();
+				declarationSet = col.toJValueSet();
+				if (col.size() > declarationSet.size())
+					throw new EvaluateException("A collection that doesn't fulfill the set property is used as variable range definition");
 			} catch (JValueInvalidTypeException exception) {
 				throw new EvaluateException(
 						"Error evaluating a SimpleDeclaration : "

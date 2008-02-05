@@ -48,7 +48,7 @@ public class VariableEvaluator extends VertexEvaluator {
 	/**
 	 * The variable this VariableEvaluator "evaluates"
 	 */
-	private Variable vertex;
+	protected Variable vertex;
 
 	/**
 	 * returns the vertex this VertexEvaluator evaluates
@@ -61,7 +61,7 @@ public class VariableEvaluator extends VertexEvaluator {
 	/**
 	 * This is the value that has been set from outside
 	 */
-	private JValue variableValue;
+	protected JValue variableValue;
 
 	/**
 	 * This is the estimated cardinality of the definitionset of this variable
@@ -120,6 +120,19 @@ public class VariableEvaluator extends VertexEvaluator {
 			neededVariables.add(vertex);
 		}
 		return neededVariables;
+	}
+	
+	@Override
+	public Set<Variable> getDefinedVariables() {
+		if (definedVariables == null) {
+			definedVariables = new HashSet<Variable>();
+		}
+		return definedVariables;
+	}
+	
+	@Override
+	public void calculateNeededAndDefinedVariables() {
+		//for variables, this method is not used
 	}
 
 	/**

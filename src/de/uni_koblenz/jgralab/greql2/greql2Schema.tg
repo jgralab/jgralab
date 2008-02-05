@@ -84,7 +84,7 @@ VertexClass SimplePathDescription: PrimaryPathDescription;
 VertexClass StringLiteral: Literal { stringValue: String };
 VertexClass Symbol: Identifier;
 VertexClass TableComprehension: ComprehensionWithTableHeader;
-VertexClass ThisLiteral: Literal { thisValue: String };
+VertexClass ThisLiteral: Literal,Variable { thisValue: String };
 VertexClass TransposedPathDescription: PathDescription;
 VertexClass TupleConstruction: ValueConstruction;
 VertexClass TypeId: Symbol { excluded: Boolean, type: Boolean };

@@ -460,8 +460,10 @@ public class JValue implements Comparable<JValue> {
 	 *             if this JValue does not encapsulate a boolean value
 	 */
 	public Boolean toBoolean() throws JValueInvalidTypeException {
-		if (isBoolean())
+		if (isBoolean()) {
+			System.out.println("Returning " + value);
 			return (Boolean) value;
+		}	
 		throw new JValueInvalidTypeException(JValueType.BOOLEAN, type);
 	}
 
