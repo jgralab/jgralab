@@ -27,6 +27,8 @@
 
 <project name="de.uni_koblenz.jgralab" basedir="." default="build">
 	
+	<property name="enable-xmlrpc"
+		  value="no"/>
 	
 	<!-- project name -->
 	<property name="projectname"			
@@ -113,8 +115,29 @@
 		<!-- calls target compile in general ant file ${ant}/build.xml -->
 	   	<ant dir="${common.dir}" antfile="build.xml" target="compile">
 	   		<property name="src.dir" value="${src.dir}/de/uni_koblenz/${projectname}"/>
-	   		<property name="compileincludes" value="*.java codegenerator/** impl/** xmlrpc/**"/>
-	   		<property name="compileexcludes" value="impl/list/**"/>
+	   		<property name="compileincludes" value="*.java codegenerator/** impl/**"/>
+			<property name="compileexcludes" value="impl/list/** xmlrpc/**"/>
+	   	</ant>
+	</target>
+	
+	<target name="checkxmlrpc">
+		<condition property="is_xmlrpc_enabled">
+			<or>
+				<equals arg1="${enable-xmlrpc}"
+					arg2="true"
+					casesensitive="no"/>
+				<equals arg1="${enable-xmlrpc}"
+					arg2="yes"
+					casesensitive="no"/>
+			</or>
+		</condition>
+	</target>
+	
+	<target name="xmlrpc" depends="checkxmlrpc" if="is_xmlrpc_enabled">
+		<ant dir="${common.dir}" antfile="build.xml" target="compile">
+			<property name="src.dir" value="${src.dir}/de/uni_koblenz/${projectname}"/>
+			<property name="compileincludes" value="xmlrpc/**"/>
+<!-- 			<property name="compileexcludes" value="impl/list/**"/> -->
 	   	</ant>
 	</target>
 	
@@ -158,7 +181,7 @@
 	
 	<!-- utilities -->
 	<!-- compiles utility sources -->
-	<target name="grumlsources" depends="tgschema2java">
+	<target name="grumlsources" depends="xmlrpc,tgschema2java">
 		<!-- calls target generateschema in general ant file ${ant}/build.xml -->
 	   	<ant dir="${common.dir}" antfile="build.xml" target="generateschema">
 			<property name="schemafile" 
