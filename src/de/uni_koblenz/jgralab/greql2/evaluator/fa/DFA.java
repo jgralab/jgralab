@@ -102,7 +102,6 @@ public class DFA extends FiniteAutomaton {
 			containsEpsilonTransitions = false;
 		//	if (curTransNr == nfa.transitionList.size())
 			int curTransNr = 0;
-			System.out.println("Restart iterating over " + nfa.transitionList.size() + " transitions");
 			while ((curTransNr < nfa.transitionList.size())) {
 				Transition currentTransition = nfa.transitionList
 						.get(curTransNr);
