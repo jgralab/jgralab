@@ -192,6 +192,8 @@ public class ValueXMLLoader extends DefaultHandler {
 				int edgeId = Integer.parseInt(entry.value);
 				Edge edge = graph.getEdge(edgeId);
 				value = new JValue(edge);
+			} else if ((qName.equals("boolean"))) {
+				value = new JValue(Boolean.parseBoolean(entry.value));
 			} else if ((qName.equals("integer"))) {
 				value = new JValue(Integer.parseInt(entry.value));
 			} else if ((qName.equals("long"))) {
