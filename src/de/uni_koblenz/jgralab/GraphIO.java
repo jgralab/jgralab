@@ -57,7 +57,7 @@ import de.uni_koblenz.jgralab.impl.SchemaImpl;
 /**
  * class for loading and storing schema and graphs in tg format
  * 
- * @author Steffen Kahle
+ * @author riediger@uni-koblenz.de
  */
 public class GraphIO {
 	private static final boolean DEBUG = false;
@@ -1330,12 +1330,15 @@ public class GraphIO {
 	private List<String> parseRolenameRedefinitions() throws GraphIOException {
 		if (lookAhead.equals("redefines")) {
 			match();
-			List<String> returnSet = new ArrayList<String>();
-			do {
-				String result = matchIdentifier(false);
-				returnSet.add(result);
-			} while (lookAhead.equals(","));
-			return returnSet;
+			List<String> result = new ArrayList<String>();
+			String redefinedName  = matchIdentifier(false);
+			result.add(redefinedName);
+			while (lookAhead.equals(",")) {
+				match();
+				redefinedName = matchIdentifier(false);
+				result.add(redefinedName);
+			}
+			return result;
 		}
 		return null;
 	}
