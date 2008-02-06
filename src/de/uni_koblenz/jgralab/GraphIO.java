@@ -21,7 +21,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
- 
+
 package de.uni_koblenz.jgralab;
 
 import java.io.BufferedOutputStream;
@@ -106,7 +106,6 @@ public class GraphIO {
 
 	private int bufferSize;
 
-	
 	/**
 	 * indexed with incidence-id, holds the next incidence of the current vertex
 	 * to represent iSeq
@@ -123,9 +122,8 @@ public class GraphIO {
 	 */
 	private int lastEdgeAtVertex[];
 
-	
 	private int edgeOffset;
-	
+
 	/**
 	 * Buffers the parsed data of enum domains prior to their creation in
 	 * JGraLab.
@@ -155,7 +153,7 @@ public class GraphIO {
 	 * JGraLab.
 	 */
 	private Map<String, List<GraphElementClassData>> edgeClassBuffer;
-		
+
 	private int putBackChar;
 
 	static {
@@ -317,11 +315,12 @@ public class GraphIO {
 						TGOut.writeBytes(" role '");
 						TGOut.writeBytes(ec.getFromRolename());
 						String delim = " redefines ";
-						for (String redefinedRolename : ec.getRedefinedFromRoles()) {
+						for (String redefinedRolename : ec
+								.getRedefinedFromRoles()) {
 							TGOut.writeBytes(delim);
 							delim = ",";
 							TGOut.writeBytes(redefinedRolename);
-						}	
+						}
 					}
 
 					// to (min,max) rolename
@@ -336,11 +335,12 @@ public class GraphIO {
 						TGOut.writeBytes(" role '");
 						TGOut.writeBytes(ec.getToRolename());
 						String delim = " redefines ";
-						for (String redefinedRolename : ec.getRedefinedToRoles()) {
+						for (String redefinedRolename : ec
+								.getRedefinedToRoles()) {
 							TGOut.writeBytes(delim);
 							delim = ",";
 							TGOut.writeBytes(redefinedRolename);
-						}	
+						}
 					}
 
 					if (ec instanceof AggregationClass) {
@@ -402,8 +402,8 @@ public class GraphIO {
 			interval = pf.getInterval();
 		}
 
-		TGOut.writeBytes("\nGraph " + toUTF(
-						graph.getId() + "_"	+ graph.getGraphVersion())  + " "
+		TGOut.writeBytes("\nGraph "
+				+ toUTF(graph.getId() + "_" + graph.getGraphVersion()) + " "
 				+ graph.getAttributedElementClass().getName() + " ("
 				+ graph.getMaxVCount() + " " + graph.getMaxECount() + " "
 				+ graph.getVCount() + " " + graph.getECount() + ")");
@@ -536,7 +536,7 @@ public class GraphIO {
 		writeSpace();
 		TGOut.writeBytes(Integer.toString(i));
 	}
-	
+
 	public void writeLong(long l) throws IOException {
 		writeSpace();
 		TGOut.writeBytes(Long.toString(l));
@@ -593,14 +593,13 @@ public class GraphIO {
 					+ filename + ", the file cannot be found", ex);
 		}
 	}
-	
-	public static Schema loadSchemaFromURL(String url)
-			throws GraphIOException {
+
+	public static Schema loadSchemaFromURL(String url) throws GraphIOException {
 		try {
 			return loadSchemaFromStream(new URL(url).openStream());
 		} catch (IOException ex) {
-			throw new GraphIOException("Unable to load graph from url "
-					+ url + ", the resource cannot be found", ex);
+			throw new GraphIOException("Unable to load graph from url " + url
+					+ ", the resource cannot be found", ex);
 		}
 	}
 
@@ -627,19 +626,19 @@ public class GraphIO {
 					+ filename + ", the file cannot be found", ex);
 		}
 	}
-	
+
 	public static Graph loadGraphFromURL(String url, ProgressFunction pf)
 			throws GraphIOException {
 		try {
 			return loadGraphFromStream(new URL(url).openStream(), pf);
 		} catch (IOException ex) {
-			throw new GraphIOException("Unable to load graph from url "
-					+ url + ", the resource cannot be found", ex);
+			throw new GraphIOException("Unable to load graph from url " + url
+					+ ", the resource cannot be found", ex);
 		}
 	}
 
-	public static Graph loadGraphFromStream(InputStream in,
-			ProgressFunction pf) throws GraphIOException {
+	public static Graph loadGraphFromStream(InputStream in, ProgressFunction pf)
+			throws GraphIOException {
 		try {
 			GraphIO io = new GraphIO();
 			io.TGIn = in;
@@ -650,7 +649,8 @@ public class GraphIO {
 			 * the special methods of this class can be used later
 			 */
 			String schemaName = io.schema.getFullName();
-			Class<?> schemaClass = Class.forName(schemaName, true, M1ClassManager.instance());
+			Class<?> schemaClass = Class.forName(schemaName, true,
+					M1ClassManager.instance());
 			Method instanceMethod = schemaClass.getMethod("instance",
 					(Class<?>[]) null);
 			io.schema = (Schema) instanceMethod.invoke(null, new Object[0]);
@@ -661,7 +661,8 @@ public class GraphIO {
 			// the class was not found, so the schema.commit-method was not
 			// called yet, an exception will be thrown
 			throw new GraphIOException(
-					"Unable to load a graph which belongs to the schema because the Java-classes for this schema have not yet been created. Use Schema.commit(..) to create them!", e);
+					"Unable to load a graph which belongs to the schema because the Java-classes for this schema have not yet been created. Use Schema.commit(..) to create them!",
+					e);
 		} catch (Exception e) {
 			throw new GraphIOException("exception while loading graph", e);
 		}
@@ -683,8 +684,7 @@ public class GraphIO {
 	 * Reads a Schema together with its Domains, GraphClasses and
 	 * GraphElementClasses from a TG-file. Subsequently, the Schema is created.
 	 * 
-	 * @throws GraphIOException
-	 * @
+	 * @throws GraphIOException @
 	 */
 	private void schema() throws GraphIOException, SchemaException {
 		match("Schema");
@@ -705,18 +705,18 @@ public class GraphIO {
 		// read Domains and GraphClasses with contained GraphElementClasses
 		parseSchema();
 
-		// test for correct syntax, because otherwise, the following 
+		// test for correct syntax, because otherwise, the following
 		// sorting/creation methods probably can't work.
-		if (!(lookAhead.equals("")||lookAhead.equals("Graph"))) {
+		if (!(lookAhead.equals("") || lookAhead.equals("Graph"))) {
 			throw new GraphIOException("symbol '" + lookAhead
 					+ "' not recognized in line " + line, null);
 		}
 
 		// sort data of RecordDomains, GraphClasses and GraphElementClasses in
 		// topological order
-		
+
 		checkFromToVertexClasses();
-		
+
 		sortRecordDomains();
 		sortGraphClasses();
 		sortVertexClasses();
@@ -731,8 +731,7 @@ public class GraphIO {
 	 * Creates the Domains contained in a Schema.
 	 * 
 	 * @return A Map of the Domain names to the concrete Domain objects.
-	 * @throws GraphIOException
-	 * @
+	 * @throws GraphIOException @
 	 */
 	private Map<String, Domain> domDef() throws GraphIOException,
 			SchemaException {
@@ -763,10 +762,9 @@ public class GraphIO {
 
 	/**
 	 * Creates all EnumDomains whose data is stored in {@link enumDomainBuffer}
-	 * 
-	 * @
+	 *  @
 	 */
-	private void enumDomains()  {
+	private void enumDomains() {
 		Domain domain;
 
 		for (EnumDomainData enumDomainData : enumDomainBuffer) {
@@ -793,8 +791,7 @@ public class GraphIO {
 	/**
 	 * Creates all RecordDomains whose data is stored in
 	 * {@link recordDomainBuffer}
-	 * 
-	 * @
+	 *  @
 	 */
 	private void recordDomains() throws GraphIOException, SchemaException {
 		Domain domain;
@@ -838,8 +835,7 @@ public class GraphIO {
 	 * Reads Schema's Domains and GraphClasses with contained
 	 * GraphElementClasses from TG-file.
 	 * 
-	 * @throws GraphIOException
-	 * @
+	 * @throws GraphIOException @
 	 */
 	private void parseSchema() throws GraphIOException, SchemaException {
 		String currentGraphClassName = null;
@@ -864,8 +860,9 @@ public class GraphIO {
 				currentGraphClassName = parseGraphClass();
 			} else {
 				if (currentGraphClassName == null) {
-					throw new GraphIOException("Definition of GraphElementClass before" +
-							"definition of GraphClass");
+					throw new GraphIOException(
+							"Definition of GraphElementClass before"
+									+ "definition of GraphClass");
 				}
 				parseGraphElementClass(currentGraphClassName);
 			}
@@ -1141,12 +1138,12 @@ public class GraphIO {
 		String type;
 
 		graphElementClassData = new GraphElementClassData();
-			
+
 		if (lookAhead.equals("abstract")) {
 			match();
 			graphElementClassData.isAbstract = true;
 		}
-		
+
 		if (lookAhead.equals("VertexClass")) {
 			match("VertexClass");
 			graphElementClassData.type = "VertexClass";
@@ -1197,8 +1194,7 @@ public class GraphIO {
 			graphElementClassData.toRoleName = parseRoleName();
 			graphElementClassData.redefinedToRoles = parseRolenameRedefinitions();
 			if (graphElementClassData.type.equals("AggregationClass")
-					|| graphElementClassData.type
-							.equals("CompositionClass"))
+					|| graphElementClassData.type.equals("CompositionClass"))
 				graphElementClassData.aggregateFrom = parseAggregate();
 			if (lookAhead.equals("{"))
 				graphElementClassData.attributes = parseAttributes();
@@ -1210,7 +1206,8 @@ public class GraphIO {
 		if (DEBUG)
 			System.out.println();
 		if (DEBUG)
-			System.err.println("END OF parseGraphElementClasses, LA=" + lookAhead);
+			System.err.println("END OF parseGraphElementClasses, LA="
+					+ lookAhead);
 	}
 
 	private VertexClass vertexClass(GraphElementClassData vcd, GraphClass gc)
@@ -1262,7 +1259,7 @@ public class GraphIO {
 		ec.setAbstract(ecd.isAbstract);
 		ec.redefineFromRole(ecd.redefinedFromRoles);
 		ec.redefineToRole(ecd.redefinedToRoles);
-		
+
 		GECsearch.put(ec, gc);
 		return ec;
 	}
@@ -1320,27 +1317,28 @@ public class GraphIO {
 		}
 		return "";
 	}
-	
+
 	/**
 	 * Reads the redefinition of a rolename of an EdgeClass
 	 * 
-	 * @return A Set<String> of redefined rolenames or <code>null</code> if no rolenames were redefined
+	 * @return A Set<String> of redefined rolenames or <code>null</code> if
+	 *         no rolenames were redefined
 	 * @throw GraphIOException
 	 */
 	private List<String> parseRolenameRedefinitions() throws GraphIOException {
-		if (lookAhead.equals("redefines")) {
-			match();
-			List<String> result = new ArrayList<String>();
-			String redefinedName  = matchIdentifier(false);
-			result.add(redefinedName);
-			while (lookAhead.equals(",")) {
-				match();
-				redefinedName = matchIdentifier(false);
-				result.add(redefinedName);
-			}
-			return result;
+		if (!lookAhead.equals("redefines")) {
+			return null;
 		}
-		return null;
+		match();
+		List<String> result = new ArrayList<String>();
+		String redefinedName = matchIdentifier(false);
+		result.add(redefinedName);
+		while (lookAhead.equals(",")) {
+			match();
+			redefinedName = matchIdentifier(false);
+			result.add(redefinedName);
+		}
+		return result;
 	}
 
 	/**
@@ -1397,15 +1395,16 @@ public class GraphIO {
 		for (int i = 0; i < parts.length - 1; i++) {
 			if (!isValidPackageName(parts[i])) {
 				if (DEBUG)
-					System.out.println(parts[i] + " is not a valid package name ");
+					System.out.println(parts[i]
+							+ " is not a valid package name ");
 				return false;
 			}
 		}
-		if (parts[parts.length - 1].charAt(0) == '\'') {           
+		if (parts[parts.length - 1].charAt(0) == '\'') {
 			parts[parts.length - 1] = parts[parts.length - 1].substring(1);
 		}
-		
-		return isValidIdentifier(parts[parts.length - 1]) 
+
+		return isValidIdentifier(parts[parts.length - 1])
 				&& Character.isUpperCase(parts[parts.length - 1].charAt(0));
 	}
 
@@ -1739,7 +1738,7 @@ public class GraphIO {
 					+ lookAhead + "' in line " + line, e);
 		}
 	}
-	
+
 	public long matchLong() throws GraphIOException {
 		try {
 			long result = Long.parseLong(lookAhead);
@@ -1754,19 +1753,19 @@ public class GraphIO {
 	/**
 	 * Parses an identifier, checks it for validity and returns it.
 	 * 
-	 * @param isUpperCase If true, the identifier must begin with an uppercase character 
+	 * @param isUpperCase
+	 *            If true, the identifier must begin with an uppercase character
 	 * @return the parsed identifier
 	 * @throws GraphIOException
 	 */
 	public String matchIdentifier(boolean isUpperCase) throws GraphIOException {
 		String result = (lookAhead.charAt(0) == '\'') ? lookAhead.substring(1)
 				: lookAhead;
-		if (!isValidIdentifier(result) 
+		if (!isValidIdentifier(result)
 				&& (isUpperCase && Character.isUpperCase(result.charAt(0)))
 				&& (!isUpperCase && Character.isLowerCase(result.charAt(0)))) {
-			throw new GraphIOException(
-					"invalid identifier '" + lookAhead
-							+ "' in line " + line);
+			throw new GraphIOException("invalid identifier '" + lookAhead
+					+ "' in line " + line);
 		}
 		match();
 		return result;
@@ -1831,22 +1830,23 @@ public class GraphIO {
 		String graphIdVersion = matchUtfString();
 		String graphId;
 		long graphVersion;
-		
+
 		try {
-			graphId = graphIdVersion.substring(0, graphIdVersion.lastIndexOf('_'));
+			graphId = graphIdVersion.substring(0, graphIdVersion
+					.lastIndexOf('_'));
 		} catch (IndexOutOfBoundsException e) {
 			graphId = graphIdVersion;
 		}
-		
+
 		try {
-			graphVersion = Long.parseLong(
-					graphIdVersion.substring(graphIdVersion.lastIndexOf('_') + 1));
+			graphVersion = Long.parseLong(graphIdVersion
+					.substring(graphIdVersion.lastIndexOf('_') + 1));
 		} catch (IndexOutOfBoundsException e1) {
 			graphVersion = 0;
 		} catch (NumberFormatException e2) {
 			graphVersion = 0;
 		}
-		
+
 		if (DEBUG) {
 			System.out.print("with ID '" + graphId + "', ");
 			System.out.print("with version '" + graphVersion + "'");
@@ -1884,15 +1884,15 @@ public class GraphIO {
 		edgeOut = new Vertex[maxE + 1];
 		lastEdgeAtVertex = new int[maxV + 1];
 		firstEdgeAtVertex = new int[maxV + 1];
-		for (int i=0; i<maxV+1; i++) {
+		for (int i = 0; i < maxV + 1; i++) {
 			lastEdgeAtVertex[i] = 0;
 			firstEdgeAtVertex[i] = 0;
 		}
-		nextEdgeAtVertex = new int [(maxE+1)*2];
-		for (int i=0; i<(maxE+1)*2; i++) {
+		nextEdgeAtVertex = new int[(maxE + 1) * 2];
+		for (int i = 0; i < (maxE + 1) * 2; i++) {
 			nextEdgeAtVertex[i] = 0;
 		}
-		edgeOffset = maxE+1;
+		edgeOffset = maxE + 1;
 		// progress bar for graph
 		// ProgressFunction pf;
 		int graphElements = 0, currentCount = 0, interval = 1;
@@ -1944,8 +1944,10 @@ public class GraphIO {
 				}
 			}
 		}
-		((de.uni_koblenz.jgralab.impl.array.GraphImpl)graph).overwriteEdgeAtVertexArrays(firstEdgeAtVertex, nextEdgeAtVertex, lastEdgeAtVertex);
-		
+		((de.uni_koblenz.jgralab.impl.array.GraphImpl) graph)
+				.overwriteEdgeAtVertexArrays(firstEdgeAtVertex,
+						nextEdgeAtVertex, lastEdgeAtVertex);
+
 		graph.setGraphVersion(graphVersion);
 		// System.out.println((System.currentTimeMillis() - time) / 1000.0);
 		if (pf != null) {
@@ -1965,9 +1967,6 @@ public class GraphIO {
 		}
 	}
 
-	
-	
-	
 	private void vertexDesc(Graph graph) throws GraphIOException {
 		int vId = vId();
 		String vcName = className();
@@ -1992,8 +1991,6 @@ public class GraphIO {
 		vertex.readAttributeValues(this);
 		match(";");
 	}
-	
-
 
 	private void edgeDesc(Graph graph) throws GraphIOException {
 		int eId = eId();
@@ -2029,7 +2026,8 @@ public class GraphIO {
 	private String className() throws GraphIOException {
 		String className = matchAndNext();
 		if (!schema.knows(className))
-			throw new GraphIOException("Class " + className  + " of read element does not exist.");
+			throw new GraphIOException("Class " + className
+					+ " of read element does not exist.");
 		return className;
 	}
 
@@ -2044,7 +2042,7 @@ public class GraphIO {
 		int eId = 0;
 		int prevId = 0;
 		int vId = v.getId();
-		
+
 		if (DEBUG)
 			System.out.print(", incidences: <");
 		match("<");
@@ -2173,11 +2171,14 @@ public class GraphIO {
 								break;
 							}
 						}
-						
-						/* check if component domain exists among yet unsorted domains*/
+
+						/*
+						 * check if component domain exists among yet unsorted
+						 * domains
+						 */
 						if (!componentDomsInOrderedList) {
 							definedRdName = false;
-					
+
 							for (RecordDomainData rd2 : recordDomainBuffer) {
 								if (rd2.name.equals(componentDomain)) {
 									definedRdName = true;
@@ -2193,7 +2194,7 @@ public class GraphIO {
 					}
 					if (!componentDomsInOrderedList) {
 						break;
-					} 
+					}
 				}
 				if (componentDomsInOrderedList) {
 					orderedRdList.add(rd);
@@ -2219,17 +2220,21 @@ public class GraphIO {
 			for (Iterator<GraphClassData> gcit = graphClassBuffer.iterator(); gcit
 					.hasNext();) {
 				gc = gcit.next();
-				// check if all superclasses exist among already sorted GraphClasses
+				// check if all superclasses exist among already sorted
+				// GraphClasses
 				if (orderedGcNames.containsAll(gc.directSuperClasses)) {
 					orderedGcList.add(gc);
 					orderedGcNames.add(gc.name);
 					gcit.remove();
 				} else {
-					/* check if some superclasses exist among yet unsorted GraphClasses*/
+					/*
+					 * check if some superclasses exist among yet unsorted
+					 * GraphClasses
+					 */
 					for (String superClass : gc.directSuperClasses) {
 						if (orderedGcNames.contains(superClass)) {
 							continue;
-						} 
+						}
 						definedGcName = false;
 						for (GraphClassData gc2 : graphClassBuffer) {
 							if (gc2.name.equals(superClass)) {
@@ -2263,16 +2268,20 @@ public class GraphIO {
 			// to orderedVcList
 			// the added VertexClasses are removed from vertexClassBuffer
 			while (!unorderedVcList.isEmpty()) {
-				for (Iterator<GraphElementClassData> vcit = 
-						unorderedVcList.iterator(); vcit.hasNext();) {
+				for (Iterator<GraphElementClassData> vcit = unorderedVcList
+						.iterator(); vcit.hasNext();) {
 					vc = vcit.next();
-					// check if all superclasses exist among already sorted VertexClasses
+					// check if all superclasses exist among already sorted
+					// VertexClasses
 					if (orderedVcNames.containsAll(vc.directSuperClasses)) {
 						orderedVcNames.add(vc.name);
 						orderedVcList.add(vc);
 						vcit.remove();
 					} else {
-						/* check if some superclasses exist among yet unsorted VertexClasses*/
+						/*
+						 * check if some superclasses exist among yet unsorted
+						 * VertexClasses
+						 */
 						for (String superClass : vc.directSuperClasses) {
 							if (orderedVcNames.contains(superClass)) {
 								continue;
@@ -2311,16 +2320,20 @@ public class GraphIO {
 			// to orderedEcList
 			// the added EdgeClasses are removed from edgeClassBuffer
 			while (!unorderedEcList.isEmpty()) {
-				for (Iterator<GraphElementClassData> ecit = 
-						unorderedEcList.iterator(); ecit.hasNext();) {
+				for (Iterator<GraphElementClassData> ecit = unorderedEcList
+						.iterator(); ecit.hasNext();) {
 					ec = ecit.next();
-					// check if all superclasses exist among already sorted EdgeClasses
+					// check if all superclasses exist among already sorted
+					// EdgeClasses
 					if (orderedEcNames.containsAll(ec.directSuperClasses)) {
 						orderedEcNames.add(ec.name);
 						orderedEcList.add(ec);
 						ecit.remove();
 					} else {
-						/* check if superclasses exist among yet unsorted EdgeClasses*/
+						/*
+						 * check if superclasses exist among yet unsorted
+						 * EdgeClasses
+						 */
 						for (String superClass : ec.directSuperClasses) {
 							if (orderedEcNames.contains(superClass)) {
 								continue;
@@ -2343,25 +2356,23 @@ public class GraphIO {
 			edgeClassBuffer.put(graphClass.name, orderedEcList);
 		}
 	}
-	
+
 	/**
-	 * checks if from- and to-VertexClasses given in EdgeClass definitions
-	 * exist 
+	 * checks if from- and to-VertexClasses given in EdgeClass definitions exist
 	 */
 	private void checkFromToVertexClasses() throws GraphIOException {
 		boolean existingFromVertexClass;
 		boolean existingToVertexClass;
-		
+
 		for (Entry<String, List<GraphElementClassData>> graphClassEdge : edgeClassBuffer
 				.entrySet()) {
 			for (GraphElementClassData ec : graphClassEdge.getValue()) {
 				existingFromVertexClass = false;
 				existingToVertexClass = false;
-				
-				for (Entry<String, List<GraphElementClassData>> 
-						graphClassVertex : vertexClassBuffer.entrySet()) {
-					for (GraphElementClassData vc : graphClassVertex
-								.getValue()) {
+
+				for (Entry<String, List<GraphElementClassData>> graphClassVertex : vertexClassBuffer
+						.entrySet()) {
+					for (GraphElementClassData vc : graphClassVertex.getValue()) {
 						if (ec.fromVertexClassName.equals(vc.name)
 								|| ec.fromVertexClassName.equals("Vertex")) {
 							existingFromVertexClass = true;
@@ -2379,11 +2390,11 @@ public class GraphIO {
 					}
 				}
 				if (!existingFromVertexClass) {
-					throw new GraphIOException("VertexClass " 
+					throw new GraphIOException("VertexClass "
 							+ ec.fromVertexClassName + " does not exist");
 				}
 				if (!existingToVertexClass) {
-					throw new GraphIOException("VertexClass " 
+					throw new GraphIOException("VertexClass "
 							+ ec.toVertexClassName + " does not exist");
 				}
 			}
@@ -2452,7 +2463,7 @@ public class GraphIO {
 		int[] fromMultiplicity = { 1, Integer.MAX_VALUE };
 
 		String fromRoleName = "";
-		
+
 		List<String> redefinedFromRoles = null;
 
 		String toVertexClassName;
@@ -2460,7 +2471,7 @@ public class GraphIO {
 		int[] toMultiplicity = { 1, Integer.MAX_VALUE };
 
 		String toRoleName = "";
-		
+
 		List<String> redefinedToRoles = null;
 
 		boolean aggregateFrom;
