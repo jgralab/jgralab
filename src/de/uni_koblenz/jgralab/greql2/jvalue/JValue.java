@@ -461,7 +461,6 @@ public class JValue implements Comparable<JValue> {
 	 */
 	public Boolean toBoolean() throws JValueInvalidTypeException {
 		if (isBoolean()) {
-			System.out.println("Returning " + value);
 			return (Boolean) value;
 		}	
 		throw new JValueInvalidTypeException(JValueType.BOOLEAN, type);
