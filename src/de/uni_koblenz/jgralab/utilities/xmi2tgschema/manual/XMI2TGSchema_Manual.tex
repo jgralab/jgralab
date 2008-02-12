@@ -28,10 +28,14 @@
 	The command line instruction is:
 	
 	\texttt{java -jar saxon9.jar } \texttt{-s:}\emph{source}\texttt{ -xsl:}\emph{path}\texttt{/XMI2TGSchema.xsl} \\
-	\mbox{[}\texttt{-o:}\emph{target}]\texttt{ }[\texttt{tool=}\emph{tool}]\texttt{ }[\texttt{schemaName=}\emph{schemaName}]\texttt{ }[\texttt{gcName=}\emph{gcName}] \\
-	\mbox{[}\texttt{autoCorrect=}(\texttt{yes}|\texttt{no})]\texttt{ }[\texttt{errorDetection=}(\texttt{yes}|\texttt{no})] \\
-	\mbox{[}\texttt{errorDetection=}(\texttt{yes}|\texttt{no})]\texttt{ }[\texttt{classToEdgeClass=}\emph{classToEdgeClass}]
-
+	\mbox{[}\texttt{-o:}\emph{target}] \\
+	\mbox{[}\texttt{appendEdgeIds=}(\texttt{yes}|\texttt{no})]\texttt{ }[\texttt{autoCorrect=}(\texttt{yes}|\texttt{no})] \\
+	\mbox{[}\texttt{classToEdgeClass=}(\texttt{yes}|\texttt{no})]\texttt{ }[\texttt{errorDetection=}(\texttt{yes}|\texttt{no})] \\
+	\mbox{[}\texttt{extendedEdgeClassNames=}(\texttt{yes}|\texttt{no})]\texttt{ }[\texttt{gcName=}\emph{gcName}] \\
+	\mbox{[}\texttt{prependPackageName=}(\texttt{yes}|\texttt{no})] \\
+	\mbox{[}\texttt{schemaName=}\emph{schemaName}]\texttt{ }[\texttt{tool=}\emph{tool}] \\
+	\mbox{[}\texttt{uml=}(\texttt{yes}|\texttt{no})] \\
+	
 	with:
 	\begin{itemize}
 		\item \emph{source} -- The XMI-file to be transformed.
