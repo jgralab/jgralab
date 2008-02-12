@@ -33,49 +33,49 @@
     
     <xsl:output method="text"/>
     
-    <!-- specifies tool used to create the XMI-file -->
-    <xsl:param name="tool" required="no"/>
-    <!-- specifies whether the XMI-file to be converted contains a UML model or a grUML model (default) -->
-    <xsl:param name="uml" required="no" select="'no'"/>
-    <!-- specifies name of the default Schema -->
-    <xsl:param name="schemaName" required="no" select="'defaultschema'"/>
-    <!-- specifies name of the default GraphClass
-        has no effect if $package2Gc=true() -->
-    <xsl:param name="gcName" required="no" select="'DefaultGraphClass'"/>
-    <!-- specifies whether packages shall be converted to GraphClasses 
-        NOT YET IMPLEMENTED -->
-    <xsl:param name="package2Gc" required="no" select="'no'"/>
+    <!-- Specifies if ids of associations should be added to EdgeClassNames
+        . This helps to avoid duplicate names, but makes code harder to understand -->
+    <xsl:param name="appendEdgeIds" as="xs:string" required="no" select="'no'"/>
     <!-- specifies whether to perform some automatic corrections
         these include:
-            conversion of first char in class and association names to uppercase 
-            change of identifiers in order to avoid conflicts with reserved words
-            creation of EdgeClass names by using role or VertexClass names, if corresponding association has no name -->
+        conversion of first char in class and association names to uppercase 
+        change of identifiers in order to avoid conflicts with reserved words
+        creation of EdgeClass names by using role or VertexClass names, if corresponding association has no name -->
     <xsl:param name="autoCorrect" required="no" select="'yes'"/>
-    <!-- specifies if some errors shall be detected and the transformation be aborted 
-        the errors include:
-            detection of classes without names 
-            detection of classes with duplicate names -->
-    <xsl:param name="errorDetection" required="no" select="'yes'"/>
     <!-- Specifies names of classes which shall be transformed to EdgeClasses in the tg-file. This also applies to their subclasses.
         Such a class must have two associations: one with the role name "source" at the from-Class (the "from" side of the resulting EdgeClass) 
         and one with the role name "target" at the to-Class (the "to" side of the resulting EdgeClass) -->
     <xsl:param name="classToEdgeClass" required="no"/>
+    <!-- specifies if some errors shall be detected and the transformation be aborted 
+        the errors include:
+        detection of classes without names 
+        detection of classes with duplicate names -->
+    <xsl:param name="errorDetection" required="no" select="'yes'"/>
+    <!-- Specifies if names of EdgeClasses should be FromRolenameLinksToToRolename or simply
+        LinksToToRolename. If set to yes, the extended form FromRolenameLinksToToRolename
+        is used, otherwise the simpler form LinksToToRolename. -->
+    <xsl:param name="extendedEdgeClassNames" as="xs:string" required="no" select="'no'"/>
+    <!-- specifies name of the created GraphClass -->
+    <xsl:param name="gcName" required="no" select="'DefaultGraphClass'"/>
     <!-- Specifies if names of generated GraphElementClasses shall be prepended by the names of
         their containing packages. This helps to avoid duplicate names. -->
     <xsl:param name="prependPackageName" as="xs:string" required="no" select="'no'"/>
-    
-    <!-- Specifies if ids of associations should be added to EdgeClassNames
-        . This helps to avoid duplicate names, but makes code harder to understand -->
-    <xsl:param name="appendEdgeIds" as="xs:string" required="no" select="'yes'"/>
-    
-    <!-- Specifies if names of EdgeClasses should be FromRolenameLinksToToRolename or simply
-          LinksToToRolename. If set to yes, the extended form FromRolenameLinksToToRolename
-          is used, otherwise the simpler form LinksToToRolename. -->
-    <xsl:param name="extendedEdgeClassNames" as="xs:string" required="no" select="'no'"/>
+    <!-- specifies name of the default Schema -->
+    <xsl:param name="schemaName" required="no" select="'defaultschema'"/>
+    <!-- specifies tool used to create the XMI-file -->
+    <xsl:param name="tool" required="no"/>
+    <!-- specifies whether 
+        (1) a subset constraint of an association results in the corresponding EdgeClass to be
+        a specialization of the EdgeClass corresponding to the subsetted association,
+        (2) a derived union constraint of an association results in the corresponding EdgeClass
+        to be abstract 
+        WARNING: Using this feature together with specialization of associated classes probably
+        results in corrupted TG files. -->
+    <xsl:param name="uml" required="no" select="'no'"/>
     
     <xsl:variable name="reservedWords" select="
-        'abstract', 'aggregate', 'AggregationClass', 'Boolean', 'CompositionClass', 'Double', 'EdgeClass', 'EnumDomain', 'false', 'from',
-        'Graph', 'GraphClass', 'Integer', 'List', 'Object', 'RecordDomain', 'role', 'Schema', 'Set', 'String', 'to', 'true', 'VertexClass'" 
+        'abstract', 'aggregate', 'AggregationClass', 'Boolean', 'CompositionClass', 'Double', 'EdgeClass', 'EnumDomain', 'f', 'from',
+        'Graph', 'GraphClass', 'Integer', 'List', 'Object', 'Package', 'RecordDomain', 'role', 'Schema', 'Set', 'String', 'to', 't', 'VertexClass'" 
         as="xs:string*"/>
     
     <!-- processes root -->
@@ -257,9 +257,14 @@
             attribute of the ownedEnd corresponding to the association destination. Since one of these strings is empty, the result is the "to"-rolename. -->
         <xsl:variable name="toRoleName" select="concat(/xmi:XMI/uml:Model//ownedAttribute[contains(@xmi:id, 'dst') and @xmi:id = $association/memberEnd/@xmi:idref]/@name,
             $association/ownedEnd[contains(@xmi:id, 'dst')]/@name)"/>
-             
-        <!-- If the association is a derived union, the EdgeClass to be created has to be abstract -->     
-        <xsl:if test="ownedEnd/@isDerivedUnion='true' or /xmi:XMI/uml:Model//packagedElement/ownedAttribute[@association = $association/@xmi:id]/@isDerivedUnion = 'true'">
+        
+        <xsl:if test="$uml='yes'">
+            <!-- If the association is a derived union or the association class is abstract, the EdgeClass to be created has to be abstract -->     
+            <xsl:if test="ownedEnd/@isDerivedUnion='true' or /xmi:XMI/uml:Model//packagedElement/ownedAttribute[@association = $association/@xmi:id]/@isDerivedUnion = 'true'">
+                <xsl:text>abstract </xsl:text>
+            </xsl:if>
+        </xsl:if>
+        <xsl:if test="@isAbstract = 'true'">
             <xsl:text>abstract </xsl:text>
         </xsl:if>
         
@@ -467,7 +472,8 @@
     
     <!-- creates names of EdgeClass out of role names or names of adjacent VertexClasses
         parameter association: Specifies the association for which to create a name.
-        parameter aggregationAttribute: Specifies the aggregation attributes for the association
+        parameter fromAggregateAttribute: Specifies the aggregation attribute for the association's from side
+        parameter toAggregateAttribute: Specifies the aggregation attribute for the association's to side
         parameter toVertexClass: Specifies the name of the "to"-VertexClass
         parameter toRoleName: Specifies the name of the "to"-role --> 
     <xsl:template name="edgeClassName">
@@ -526,13 +532,19 @@
         <xsl:variable name="toRoleName" select="concat(/xmi:XMI/uml:Model//ownedAttribute[contains(@xmi:id, 'dst') and @xmi:id = $association/memberEnd/@xmi:idref]/@name,
             $association/ownedEnd[contains(@xmi:id, 'dst')]/@name)"/>
         
-  
-        
-        <xsl:variable name="aggregateAttributes" select="$fromAggregateAttribute union $toAggregateAttribute"/>
-        
         <xsl:if test="$autoCorrect = 'yes'">
             <!-- if the association has no name -->
             <xsl:if test="empty(@name)">
+                <!-- if $extendedEdgeClassNames = "yes", then prepend, if existing,  fromRoleName or, alternatively, fromVertexClassName-->
+                <xsl:if test="$extendedEdgeClassNames = 'yes'">
+                    <xsl:if test="$fromRoleName = ''">
+                        <xsl:value-of select="$fromVertexClassName"/>
+                    </xsl:if>
+                    <xsl:if test="$fromRoleName != ''">
+                        <xsl:value-of select="myfunctions:firstToUpperCase($fromRoleName)"/>
+                    </xsl:if>
+                </xsl:if>     
+                
                 <!-- if the association is actually an aggregation or composition -->
                 <xsl:if test="some $aggr in $aggregateAttributes satisfies ($aggr = 'shared' or $aggr = 'composite')">
                     <xsl:if test="$extendedEdgeClassNames = 'yes'">
@@ -551,14 +563,7 @@
                     <xsl:if test="$toAggregateAttribute = 'none'">
                         <xsl:text>Contains</xsl:text>
                     </xsl:if>
-                    <xsl:if test="$toRoleName = ''">
-                        <xsl:value-of select="$toVertexClassName"/>
-                    </xsl:if>
-                    <xsl:if test="$toRoleName != ''">
-                        <xsl:value-of select="myfunctions:firstToUpperCase($toRoleName)"/>
-                    </xsl:if>
                 </xsl:if>
-                
                 <!-- if the association is no aggregation or composition -->
                 <xsl:if test="every $aggr in $aggregateAttributes satisfies $aggr = 'none'">
                     <xsl:if test="$extendedEdgeClassNames = 'yes'">
@@ -570,15 +575,17 @@
                         </xsl:if>
                     </xsl:if>     
                     <xsl:text>LinksTo</xsl:text>
-                    <xsl:if test="$toRoleName = ''">
-                        <xsl:value-of select="$toVertexClassName"/>
-                    </xsl:if>
-                    <xsl:if test="$toRoleName != ''">
-                        <xsl:value-of select="myfunctions:firstToUpperCase($toRoleName)"/>
-                    </xsl:if>
+                </xsl:if>
+                
+                <!-- append, if existing,  toRoleName or, alternatively, toVertexClassName-->
+                <xsl:if test="$toRoleName = ''">
+                    <xsl:value-of select="$toVertexClassName"/>
+                </xsl:if>
+                <xsl:if test="$toRoleName != ''">
+                    <xsl:value-of select="myfunctions:firstToUpperCase($toRoleName)"/>
                 </xsl:if>
             </xsl:if>
-            
+                            
             <!-- if the association has a name -->
             <xsl:if test="@name != ''">
                 <xsl:value-of select="myfunctions:correctIdentifier(@name)"/>
@@ -608,12 +615,12 @@
                     and (every $aggr2 in (.[myfunctions:getAssociation(.)/ownedEnd/type/@xmi:idref = @xmi:id
                             or ownedAttribute/@xmi:id = myfunctions:getAssociation(.)/memberEnd/@xmi:idref]/ownedAttribute[@association = myfunctions:getAssociation(.)/@xmi:id]/@aggregation 
                         union myfunctions:getAssociation(.)/ownedEnd/@aggregation) satisfies $aggr2 = 'none')))]) > 1"> 
+                    </xsl:if>
  -->
             <xsl:if  test="$appendEdgeIds = 'yes'">
                 <xsl:text>_</xsl:text>
                 <xsl:value-of select="generate-id($association)"/>
             </xsl:if> 
- <!--           </xsl:if>     -->
         </xsl:if>
         <xsl:if test="$autoCorrect = 'no'">
             <xsl:value-of select="@name"/>

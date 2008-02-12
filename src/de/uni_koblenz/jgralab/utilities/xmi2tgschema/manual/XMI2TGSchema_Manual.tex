@@ -37,9 +37,9 @@
 		\item \emph{source} -- The XMI-file to be transformed.
 		\item \emph{path} -- The path to the XSL stylesheet \texttt{XMI2TGSchema.xsl}.
 		\item \emph{target} -- The output file. If not given, the standard output device (usually the screen) is used.
-		\item \emph{tool} -- The tool used to create the XMI file. As yet, the only possible value is \texttt{ea}. Omission of this parameter probably results in corrupted TG files (e.g.\ due to missing attribute types).
-		\item \emph{schemaName} -- The name of the Schema which shall be created. If omitted, default value \texttt{default\-schema} is used.
-		\item \emph{gcName} -- The name of the Graph Class which shall be created. If omitted, default value  \texttt{Default\-GraphClass} is used.
+	\end{itemize}
+	\begin{itemize}
+		\item \emph{appendEdgeIds} -- If set to \texttt{yes}, ids of associations are added to the names of corresponding EdgeClasses. This helps to avoid duplicate names, but makes code harder to understand. Default is \texttt{no}.
 		\item \emph{autoCorrect} -- If set to \texttt{yes}, the following corrections are made:
 		\begin{itemize}
 			\item If the first character of Vertex Class and Edge Class names is lower case, it is set to upper case.
@@ -47,13 +47,24 @@
 			\item If an Edge Class has no name, it is created by using role names or the names of the incident Vertex Classes. 
 		\end{itemize}
 		It is recommended to set this parameter to \texttt{yes}. Default is \texttt{yes}.
+		\item \emph{classToEdgeClass} -- Specifies the name of a class in the grUML model which shall be transformed to an Edge Class. The class must have two associations: one to the class on the ``from'' side with the role name \texttt{source} and the other one to the class on the ``to'' side with the role name \texttt{target}. The associations must not have navigable ends.
 		\item \emph{errorDetection} -- If set to \texttt{yes},
 		\begin{itemize}
 			\item Vertex Classes without names are detected and an error is thrown.
 			\item Vertex Classes with duplicate names are detected and an error is thrown..
 		\end{itemize}
 		It is recommended to set this parameter to \texttt{yes}. Default is \texttt{yes}.
-		\item \emph{classToEdgeClass} -- Specifies the name of a class in the grUML model which shall be transformed to an Edge Class. The class must have two associations: one to the class on the ``from'' side with the role name \texttt{source} and the other one to the class on the ``to'' side with the role name \texttt{target}. The associations must not have navigable ends.
+		\item \emph{extendedEdgeClassNames} --  If set to \texttt{yes} names of EdgeClasses correspond to the extended form \emph{FromRolename}\texttt{LinksTo}\emph{ToRolename}, else names correspond to \texttt{LinksTo}\emph{ToRolename}. Default is \texttt{no}.
+		\item \emph{gcName} -- The name of the Graph Class which shall be created. If omitted, default value  \texttt{Default\-GraphClass} is used.
+		\item \emph{prependPackageName} --  If set to \texttt{yes}, names of generated GraphElementClasses are prepended by the names of their containing packages. This helps to avoid duplicate names. Default is \texttt{no}.
+		\item \emph{schemaName} -- The name of the Schema which shall be created. If omitted, default value \texttt{default\-schema} is used.
+		\item \emph{tool} -- The tool used to create the XMI file. As yet, the only possible value is \texttt{ea}. Omission of this parameter probably results in corrupted TG files (e.g.\ due to missing attribute types).
+		\item \emph{uml} -- If set to \texttt{yes}, the grUML equivalents of the following UML constructs are created:
+		\begin{itemize}
+			\item associations with \emph{derived union} association end => \emph{abstract} edge classes
+			\item associations with subsetting association end => EdgeClass as specialization of edge class corresponding to association with subsetted association end.
+		\end{itemize}
+		Default is \texttt{no}.
 	\end{itemize}
 
 	
