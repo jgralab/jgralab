@@ -68,6 +68,7 @@ public class M1ClassManager extends ClassLoader {
 			byte[] bytes = cfa.getBytecode();
 			return defineClass(name, bytes, 0, bytes.length);
 		}
-		return super.findClass(name);
+//		return super.findClass(name);
+		return Class.forName(name);
 	}
 }

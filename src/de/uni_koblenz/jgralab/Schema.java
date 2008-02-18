@@ -196,10 +196,20 @@ public interface Schema {
 	/**
 	 * After creating the schema, this command serves to generate and compile code
 	 * for the m1 classes. The class files are not written to disk, but only held in
-	 * memory.
+	 * memory. Same as calling {@code compile(null)}, thus expecting that the JGraLab classes
+	 * can be found by the compiler. 
 	 */
 	public void compile();
 
+	/**
+	 * After creating the schema, this command serves to generate and compile code
+	 * for the m1 classes. The class files are not written to disk, but only held in
+	 * memory.
+	 * 
+	 * @param jgralabClassPath the classpath to JGraLab
+	 */
+	public void compile(String jgralabClassPath);
+	
 	/**
 	 * @param aGraphClass
 	 *            the graph class which is being searched for

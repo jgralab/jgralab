@@ -25,7 +25,10 @@
 package de.uni_koblenz.jgralab.impl;
 
 import java.io.File;
+import java.io.IOException;
 import java.lang.reflect.Method;
+import java.net.URL;
+import java.net.URLClassLoader;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -40,6 +43,7 @@ import javax.tools.ForwardingJavaFileManager;
 import javax.tools.JavaCompiler;
 import javax.tools.JavaFileManager;
 import javax.tools.JavaFileObject;
+import javax.tools.StandardJavaFileManager;
 import javax.tools.ToolProvider;
 import javax.tools.JavaFileObject.Kind;
 
@@ -315,13 +319,14 @@ public class SchemaImpl implements Schema {
 	public Vector<JavaSourceFromString> commit() {
 		Vector<JavaSourceFromString> javaSources 
 				= new Vector<JavaSourceFromString>(0);
-				
+		
 		String schemaPackageName = packagePrefix;
 
 		// generate schema class
 		CodeGenerator schemaCodeGenerator = new SchemaCodeGenerator(this,
 				schemaPackageName, implPackage);
 		javaSources.addAll(schemaCodeGenerator.createJavaSources());
+		
 		
 		//generate factory
 		CodeGenerator factoryCodeGenerator = new GraphFactoryGenerator(this, schemaPackageName, implPackage);
@@ -379,15 +384,29 @@ public class SchemaImpl implements Schema {
 	}
 	
 	public void compile() {
+		compile(null);
+	}
+	
+	public void compile(String jgralabClassPath) {
 		JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
 		
 		//commit
 		Vector<JavaSourceFromString> javaSources = commit();				
-			
 		//compile
 		JavaFileManager jfm = compiler.getStandardFileManager(null, null, null);
 		ClassFileManager manager = new ClassFileManager(jfm);
-		compiler.getTask(null, manager, null, null, null, javaSources).call();
+		
+		manager.setSources(javaSources);
+		
+		Vector<String> options = new Vector<String>();
+		options.add("-cp");
+		options.add(jgralabClassPath);
+		
+		if (jgralabClassPath == null) {
+			compiler.getTask(null, manager, null, null, null, javaSources).call();
+		} else {
+			compiler.getTask(null, manager, null, options, null, javaSources).call();
+		}
 	}
 
 	/*
@@ -955,6 +974,8 @@ public class SchemaImpl implements Schema {
 	 *
 	 */
 	private class ClassFileManager extends ForwardingJavaFileManager<JavaFileManager> {
+		Vector<JavaSourceFromString> sources;
+		
 		public ClassFileManager(JavaFileManager fm) {
 			super(fm);
 		}
@@ -962,9 +983,13 @@ public class SchemaImpl implements Schema {
 		public JavaFileObject getJavaFileForOutput (Location location, String className,
 				Kind kind, FileObject sibling) {
 			ClassFileAbstraction cfa = new ClassFileAbstraction(className);
-		
+			
 			M1ClassManager.instance().putM1Class(className, cfa);
 		    return cfa;
+		}
+		
+		public void setSources(Vector<JavaSourceFromString> sources) {
+			this.sources = sources;
 		}
 	}
 }
