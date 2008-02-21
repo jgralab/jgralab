@@ -27,7 +27,6 @@ package de.uni_koblenz.jgralab.impl;
 import java.lang.reflect.Constructor;
 import java.util.HashMap;
 
-import de.uni_koblenz.jgralab.AttributedElementClass;
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.GraphFactory;

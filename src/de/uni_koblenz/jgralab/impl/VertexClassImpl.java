@@ -37,6 +37,7 @@ import de.uni_koblenz.jgralab.EdgeClass;
 import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.GraphClass;
 import de.uni_koblenz.jgralab.RolenameEntry;
+import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.VertexClass;
 
 public class VertexClassImpl extends GraphElementClassImpl implements VertexClass {
@@ -341,6 +342,38 @@ public class VertexClassImpl extends GraphElementClassImpl implements VertexClas
 				map.remove(s);
 		}
 		return map;
+	}
+	
+	/*
+	 * This method is needed to allow the following code
+	 * 
+	 * 
+	 * VertexClass vertexClass = graph.getGraphClass().getVertexClass("V1");
+     * Vertex vertex = (Vertex)graph.createVertex(vertexClass.getM1Class());
+     *
+	 * (non-Javadoc)
+	 * @see de.uni_koblenz.jgralab.impl.AttributedElementClassImpl#getM1Class()
+	 */
+	@SuppressWarnings("unchecked")
+	public Class<Vertex> getM1Class() {
+		Class<Vertex> v = super.getM1Class();
+		return v;
+	}
+	
+	/*
+	 * This method is needed to allow the following code
+	 * 
+	 * 
+	 * VertexClass vertexClass = graph.getGraphClass().getVertexClass("V1");
+     * Vertex vertex = (Vertex)graph.createVertex(vertexClass.getM1Class());
+     *
+	 * (non-Javadoc)
+	 * @see de.uni_koblenz.jgralab.impl.AttributedElementClassImpl#getM1Class()
+	 */
+	@SuppressWarnings("unchecked")
+	public Class<Vertex> getM1ImplementationClass() {
+		Class<Vertex> v = super.getM1ImplementationClass();
+		return v;
 	}
 	
 }

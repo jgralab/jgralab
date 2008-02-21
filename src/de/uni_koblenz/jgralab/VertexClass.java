@@ -147,4 +147,16 @@ public interface VertexClass extends GraphElementClass {
 	public Set<DirectedEdgeClass> getInvalidDirectedClasses(); 
 
 	public Set<String> getInvalidRoles();
+	
+	
+	/**
+	 * @return the M1 interface class for this VertexClass if reflection exceptions occures
+	 */
+	public <T extends Vertex> Class<T> getM1Class() ;
+	
+	/**
+	 * @return the M1 implementation class for this VertexClass if this AttributedElementClass is abstract, or upon reflection exceptions
+	 */
+	public <T extends Vertex> Class<T> getM1ImplementationClass() ;
+
 }

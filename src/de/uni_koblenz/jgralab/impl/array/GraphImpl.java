@@ -1647,12 +1647,12 @@ public abstract class GraphImpl extends GraphBaseImpl {
 			while (nextEdgeAtVertex[edgeOffset(prevId)] != iNo) {
 				prevId = nextEdgeAtVertex[edgeOffset(prevId)];
 			}
+			if (prevId != 0) {
+				nextEdgeAtVertex[edgeOffset(prevId)] = nextEdgeAtVertex[edgeOffset(iNo)];
+			}
 		}
 		if (iNo == lastEdgeAtVertex[vId]) {
 			lastEdgeAtVertex[vId] = prevId;
-		}
-		if (prevId != 0) {
-			nextEdgeAtVertex[edgeOffset(prevId)] = nextEdgeAtVertex[edgeOffset(iNo)];
 		}
 		nextEdgeAtVertex[edgeOffset(iNo)] = 0;
 		modified();
