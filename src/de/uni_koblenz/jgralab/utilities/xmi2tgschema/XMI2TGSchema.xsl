@@ -171,7 +171,12 @@
         
         <!-- create name of VertexClass -->
         <xsl:if test="$autoCorrect = 'yes'">
-            <xsl:value-of select="myfunctions:correctIdentifier(@name)"/>
+            <xsl:if test="$prependPackageName = 'yes'">
+                <xsl:value-of select="myfunctions:correctIdentifier(@name)"/>
+            </xsl:if>
+            <xsl:if test="$prependPackageName = 'no'">
+                <xsl:value-of select="myfunctions:removeReservedWordsConflicts(myfunctions:correctIdentifier(@name))"/>
+            </xsl:if>
         </xsl:if>
         <xsl:if test="$autoCorrect = 'no'">
             <xsl:value-of select="@name"/>
@@ -231,7 +236,9 @@
             
         <!-- name of "from" VertexClass -->
         <xsl:variable name="fromVertexClassName" select="if ($autoCorrect='yes')
-            then myfunctions:correctIdentifier($fromVertexClass/@name) else $fromVertexClass/@name"/>
+            then if ($prependPackageName='yes') then myfunctions:correctIdentifier($fromVertexClass/@name) 
+                 else myfunctions:removeReservedWordsConflicts(myfunctions:correctIdentifier($fromVertexClass/@name))
+            else $fromVertexClass/@name"/>
         
         <!-- "to" VertexClass 
             The expression says that either the id of a type of an ownedEnd of the currently
@@ -244,7 +251,9 @@
         
         <!-- name of "to" VertexClass -->
         <xsl:variable name="toVertexClassName" select="if ($autoCorrect='yes')
-            then myfunctions:correctIdentifier($toVertexClass/@name) else $toVertexClass/@name"/>
+            then if ($prependPackageName='yes') then myfunctions:correctIdentifier($toVertexClass/@name) 
+                 else myfunctions:removeReservedWordsConflicts(myfunctions:correctIdentifier($toVertexClass/@name))
+            else $toVertexClass/@name"/>
         
         <!-- name of "from" role
             The expression says that the name attribute of the ownedAttribute corresponding to the association source (non-navigable end) shall be concatenated with the name
@@ -394,7 +403,12 @@
         
         <!-- create name of EdgeClass -->
         <xsl:if test="$autoCorrect = 'yes'">
-            <xsl:value-of select="myfunctions:correctIdentifier(@name)"/>
+            <xsl:if test="$prependPackageName = 'yes'">
+                <xsl:value-of select="myfunctions:correctIdentifier(@name)"/>
+            </xsl:if>
+            <xsl:if test="$prependPackageName = 'no'">
+                <xsl:value-of select="myfunctions:removeReservedWordsConflicts(myfunctions:correctIdentifier(@name))"/>
+            </xsl:if>
         </xsl:if>
         <xsl:if test="$autoCorrect = 'no'">
             <xsl:value-of select="@name"/>
@@ -505,7 +519,9 @@
         
         <!-- name of "from" VertexClass -->
         <xsl:variable name="fromVertexClassName" select="if ($autoCorrect='yes')
-            then myfunctions:correctIdentifier($fromVertexClass/@name) else $fromVertexClass/@name"/>
+            then if ($prependPackageName='yes') then myfunctions:correctIdentifier($fromVertexClass/@name)
+                 else myfunctions:removeReservedWordsConflicts(myfunctions:correctIdentifier($fromVertexClass/@name))
+            else $fromVertexClass/@name"/>
         
         <!-- "to" VertexClass 
             The expression says that either the id of a type of an ownedEnd of the currently
@@ -518,7 +534,9 @@
         
         <!-- name of "to" VertexClass -->
         <xsl:variable name="toVertexClassName" select="if ($autoCorrect='yes')
-            then myfunctions:correctIdentifier($toVertexClass/@name) else $toVertexClass/@name"/>
+            then if ($prependPackageName='yes') then myfunctions:correctIdentifier($toVertexClass/@name) 
+                 else myfunctions:removeReservedWordsConflicts(myfunctions:correctIdentifier($toVertexClass/@name))
+            else $toVertexClass/@name"/>
         
         <!-- name of "from" role
             The expression says that the name attribute of the ownedAttribute corresponding to the association source (non-navigable end) shall be concatenated with the name
@@ -588,7 +606,12 @@
                             
             <!-- if the association has a name -->
             <xsl:if test="@name != ''">
-                <xsl:value-of select="myfunctions:correctIdentifier(@name)"/>
+                <xsl:if test="$prependPackageName = 'yes'">
+                    <xsl:value-of select="myfunctions:correctIdentifier(@name)"/>
+                </xsl:if>
+                <xsl:if test="$prependPackageName = 'no'">
+                    <xsl:value-of select="myfunctions:removeReservedWordsConflicts(myfunctions:correctIdentifier(@name))"/>
+                </xsl:if>
             </xsl:if>
             
             <!-- TODO: does not work for navigable ends. Furthermore, ids are generated even if aggregations are on opposite sides -->
@@ -827,8 +850,12 @@
         </xsl:if>    
         
         <xsl:if test="$autoCorrect = 'yes'">
-            <xsl:variable name="name" select="myfunctions:correctIdentifier(/xmi:XMI/uml:Model//packagedElement[@xmi:id = current()/@general]/@name)"/>
-            <xsl:value-of select="$name"/>
+            <xsl:if test="$prependPackageName = 'yes'">
+                <xsl:value-of select="myfunctions:correctIdentifier(/xmi:XMI/uml:Model//packagedElement[@xmi:id = current()/@general]/@name)"/>
+            </xsl:if>
+            <xsl:if test="$prependPackageName = 'no'">
+                <xsl:value-of select="myfunctions:removeReservedWordsConflicts(myfunctions:correctIdentifier(/xmi:XMI/uml:Model//packagedElement[@xmi:id = current()/@general]/@name))"/>
+            </xsl:if>
         </xsl:if>
         <xsl:if test="$autoCorrect = 'no'">
             <xsl:value-of select="/xmi:XMI/uml:Model//packagedElement[@xmi:id = current()/@general]/@name"/>
@@ -985,7 +1012,7 @@
     <xsl:function name="myfunctions:correctIdentifier" as="xs:string">
         <xsl:param name="identifier"/>
         
-        <xsl:sequence select="myfunctions:removeReservedWordsConflicts(myfunctions:firstToUpperCase(myfunctions:removeSpaces($identifier)))"/>
+        <xsl:sequence select="myfunctions:firstToUpperCase(myfunctions:removeSpaces($identifier))"/>
     </xsl:function>
     
     <!-- converts the first character of the given string to uppercase
