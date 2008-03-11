@@ -38,8 +38,8 @@
     <xsl:param name="appendEdgeIds" as="xs:string" required="no" select="'no'"/>
     <!-- specifies whether to perform some automatic corrections
         these include:
-        conversion of first char in class and association names to uppercase 
-        change of identifiers in order to avoid conflicts with reserved words
+        conversion of first char in class and association names to uppercase, 
+        change of identifiers in order to avoid conflicts with reserved words,
         creation of EdgeClass names by using role or VertexClass names, if corresponding association has no name -->
     <xsl:param name="autoCorrect" required="no" select="'yes'"/>
     <!-- Specifies names of classes which shall be transformed to EdgeClasses in the tg-file. This also applies to their subclasses.
@@ -48,8 +48,9 @@
     <xsl:param name="classToEdgeClass" required="no"/>
     <!-- specifies if some errors shall be detected and the transformation be aborted 
         the errors include:
-        detection of classes without names 
-        detection of classes with duplicate names -->
+        detection of classes without names, 
+        detection of classes with duplicate names,
+        detection of xmi:idrefs without corresponding xmi:ids, e.g. if a class which is in the schema has an associated class not in the schema -->
     <xsl:param name="errorDetection" required="no" select="'yes'"/>
     <!-- Specifies if names of EdgeClasses should be FromRolenameLinksToToRolename or simply
         LinksToToRolename. If set to yes, the extended form FromRolenameLinksToToRolename
@@ -81,6 +82,11 @@
     <!-- processes root -->
     <xsl:template match="/">
         
+        <!-- check is Schema is self-contained -->
+        <xsl:if test="$errorDetection = 'yes'">
+            <xsl:apply-templates select="xmi:XMI/uml:Model//@xmi:idref"/>
+        </xsl:if>
+        
         <!-- convert notes not related to any element to comments -->
         <xsl:apply-templates select="xmi:XMI/uml:Model//ownedComment[empty(annotatedElement) and exists(@body)]"/>
 
@@ -103,6 +109,14 @@
             or @xmi:type = 'uml:Class' and exists(myfunctions:getAssociation(.)) and not(myfunctions:isClassToEdgeClass(.))]"/>
         <xsl:apply-templates select="xmi:XMI/uml:Model//packagedElement[@xmi:type='uml:Class' and myfunctions:isClassToEdgeClass(.)]"/>
     </xsl:template>
+    
+    <!-- check is Schema is self-contained -->
+    <xsl:template match="@xmi:idref">
+        <xsl:if test="empty(index-of(/xmi:XMI/uml:Model//@xmi:id, current()))">
+            <xsl:value-of select="error(QName('', 'xmi2tg-Error'), concat('schema is not self-contained, caused by xmi:idref ', current()))"/>
+        </xsl:if>      
+    </xsl:template>
+    
     
     <!-- converts notes to comments -->
     <xsl:template match="ownedComment">

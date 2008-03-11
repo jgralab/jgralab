@@ -55,7 +55,8 @@
 		\item \emph{errorDetection} -- If set to \texttt{yes},
 		\begin{itemize}
 			\item Vertex Classes without names are detected and an error is thrown.
-			\item Vertex Classes with duplicate names are detected and an error is thrown..
+			\item Vertex Classes with duplicate names are detected and an error is thrown.
+			\item a Schema which is not self-contained is detected and an error is thrown.\footnote{Most probably an association in the XMI-file is to be transformed to an Edge Class, but one of the associated Classes is missing.}
 		\end{itemize}
 		It is recommended to set this parameter to \texttt{yes}. Default is \texttt{yes}.
 		\item \emph{extendedEdgeClassNames} --  If set to \texttt{yes} names of EdgeClasses correspond to the extended form \emph{FromRolename}\texttt{LinksTo}\emph{ToRolename}, else names correspond to \texttt{LinksTo}\emph{ToRolename}. Default is \texttt{no}.
