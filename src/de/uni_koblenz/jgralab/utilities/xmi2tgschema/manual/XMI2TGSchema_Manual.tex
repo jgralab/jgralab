@@ -30,7 +30,7 @@
 	\texttt{java -jar saxon9.jar } \texttt{-s:}\emph{source}\texttt{ -xsl:}\emph{path}\texttt{/XMI2TGSchema.xsl} \\
 	\mbox{[}\texttt{-o:}\emph{target}] \\
 	\mbox{[}\texttt{appendEdgeIds=}(\texttt{yes}|\texttt{no})]\texttt{ }[\texttt{autoCorrect=}(\texttt{yes}|\texttt{no})] \\
-	\mbox{[}\texttt{classToEdgeClass=}(\texttt{yes}|\texttt{no})]\texttt{ }[\texttt{errorDetection=}(\texttt{yes}|\texttt{no})] \\
+	\mbox{[}\texttt{errorDetection=}(\texttt{yes}|\texttt{no})] \\
 	\mbox{[}\texttt{extendedEdgeClassNames=}(\texttt{yes}|\texttt{no})]\texttt{ }[\texttt{gcName=}\emph{gcName}] \\
 	\mbox{[}\texttt{prependPackageName=}(\texttt{yes}|\texttt{no})] \\
 	\mbox{[}\texttt{schemaName=}\emph{schemaName}]\texttt{ }[\texttt{tool=}\emph{tool}] \\
@@ -51,7 +51,6 @@
 			\item If an Edge Class has no name, it is created by using role names or the names of the incident Vertex Classes. 
 		\end{itemize}
 		It is recommended to set this parameter to \texttt{yes}. Default is \texttt{yes}.
-		\item \emph{classToEdgeClass} -- Specifies the name of a class in the grUML model which shall be transformed to an Edge Class. The class must have two associations: one to the class on the ``from'' side with the role name \texttt{source} and the other one to the class on the ``to'' side with the role name \texttt{target}. The associations must not have navigable ends.
 		\item \emph{errorDetection} -- If set to \texttt{yes},
 		\begin{itemize}
 			\item Vertex Classes without names are detected and an error is thrown.
