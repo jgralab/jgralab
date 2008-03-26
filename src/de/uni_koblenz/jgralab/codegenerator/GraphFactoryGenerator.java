@@ -24,10 +24,10 @@
  
 package de.uni_koblenz.jgralab.codegenerator;
 
-import de.uni_koblenz.jgralab.EdgeClass;
-import de.uni_koblenz.jgralab.GraphClass;
-import de.uni_koblenz.jgralab.Schema;
-import de.uni_koblenz.jgralab.VertexClass;
+import de.uni_koblenz.jgralab.schema.EdgeClass;
+import de.uni_koblenz.jgralab.schema.GraphClass;
+import de.uni_koblenz.jgralab.schema.Schema;
+import de.uni_koblenz.jgralab.schema.VertexClass;
 
 /**
  * This class generates the code of the GraphElement Factory.
@@ -39,19 +39,19 @@ public class GraphFactoryGenerator extends CodeGenerator {
 	private Schema schema;
 	
 	public GraphFactoryGenerator(Schema schema, String schemaPackageName, String implementationName) {
-		super(schemaPackageName, implementationName);
+		super(schemaPackageName, "");
 		this.schema = schema;
-		rootBlock.setVariable("className", schema.getName() + "Factory");
-		rootBlock.setVariable("implClassName", schema.getName() + "Factory");
+		rootBlock.setVariable("className", schema.getSimpleName() + "Factory");
+		rootBlock.setVariable("simpleImplClassName", schema.getSimpleName() + "Factory");
 		//rootBlock.setVariable("isClassOnly", "true");
 		rootBlock.setVariable("isImplementationClassOnly", "true");
 	}
 
 	protected CodeBlock createHeader(boolean createClass) {
-		addImports("#schemaPackage#.*");
+	//	addImports("#schemaPackage#.*");
 		addImports("#jgImplPackage#.GraphFactoryImpl");
 		CodeSnippet code = new CodeSnippet(true);
-		code.setVariable("className", schema.getName() + "Factory");
+		code.setVariable("className", schema.getSimpleName() + "Factory");
 		code.add("public class #className# extends GraphFactoryImpl {");
 		return code;
 	}
@@ -68,7 +68,7 @@ public class GraphFactoryGenerator extends CodeGenerator {
 	
 	protected CodeBlock createConstructor() {
 		CodeSnippet code = new CodeSnippet(true);
-		code.setVariable("className", schema.getName() + "Factory");
+		code.setVariable("className", schema.getSimpleName() + "Factory");
 		code.add("public #className#() {");
 		code.add("\tsuper();");
 		code.add("\tfillTable();");
@@ -102,9 +102,13 @@ public class GraphFactoryGenerator extends CodeGenerator {
 		if (graphClass.isAbstract())
 			return null;
 		CodeSnippet code = new CodeSnippet(true);
-		code.setVariable("graphName", graphClass.getName());
-		code.add("/* code for graph #graphName# */");
-		code.add("setGraphImplementationClass(#graphName#.class, #graphName#Impl.class);");
+		code.setVariable("graphName", schemaRootPackageName + "." +graphClass.getQualifiedName());
+		code.setVariable("graphImplName", schemaRootPackageName + ".impl." + graphClass.getQualifiedName());
+
+		if (!graphClass.isAbstract()) {
+			code.add("/* code for graph #graphName# */");
+			code.add("setGraphImplementationClass(#graphName#.class, #graphImplName#Impl.class);");
+		}	
 		return code;
 	}
 	
@@ -112,8 +116,10 @@ public class GraphFactoryGenerator extends CodeGenerator {
 		if (vertexClass.isAbstract())
 			return null;
 		CodeSnippet code = new CodeSnippet(true);
-		code.setVariable("vertexName", vertexClass.getName());
-		code.add("setVertexImplementationClass(#vertexName#.class, #vertexName#Impl.class);");
+		code.setVariable("vertexName", schemaRootPackageName + "." +vertexClass.getQualifiedName());
+		code.setVariable("vertexImplName", schemaRootPackageName + ".impl." + vertexClass.getQualifiedName());
+		if (!vertexClass.isAbstract())
+		code.add("setVertexImplementationClass(#vertexName#.class, #vertexImplName#Impl.class);");
 		return code;
 	}
 	
@@ -121,9 +127,11 @@ public class GraphFactoryGenerator extends CodeGenerator {
 
 			//return null;
 		CodeSnippet code = new CodeSnippet(true);
-		code.setVariable("edgeName", edgeClass.getName());
+		code.setVariable("edgeName", schemaRootPackageName + "." + edgeClass.getQualifiedName());
+		code.setVariable("edgeImplName", schemaRootPackageName + ".impl." + edgeClass.getQualifiedName());
+
 		if (!edgeClass.isAbstract())
-		code.add("setEdgeImplementationClass(#edgeName#.class, #edgeName#Impl.class);");
+		code.add("setEdgeImplementationClass(#edgeName#.class, #edgeImplName#Impl.class);");
 		return code;
 	}
 	

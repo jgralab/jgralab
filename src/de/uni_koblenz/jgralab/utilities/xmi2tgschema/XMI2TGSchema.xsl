@@ -56,17 +56,12 @@
         LinksToToRolename. If set to yes, the extended form FromRolenameLinksToToRolename
         is used, otherwise the simpler form LinksToToRolename. -->
     <xsl:param name="extendedEdgeClassNames" as="xs:string" required="no" select="'no'"/>
-    <!-- specifies name of the created GraphClass -->
-    <xsl:param name="gcName" required="no" select="'DefaultGraphClass'"/>
-    <!-- Specifies if names of generated GraphElementClasses shall be prepended by the names of
-        their containing packages. This helps to avoid duplicate names. -->
-    <xsl:param name="prependPackageName" as="xs:string" required="no" select="'no'"/>
-    <!-- specifies name of the default Schema -->
-    <xsl:param name="schemaName" required="no" select="'defaultschema'"/>
+    <!-- specifies the Schema name; must correspond to name of package containing the schema -->
+    <xsl:param name="schemaName" required="yes"/>
     <!-- specifies tool used to create the XMI-file -->
     <xsl:param name="tool" required="no"/>
     <!-- specifies whether 
-        (1) a subset or redefines constraint of an association results in the corresponding EdgeClass to be
+        (1) a subset constraint of an association results in the corresponding EdgeClass to be
         a specialization of the EdgeClass corresponding to the subsetted association,
         (2) a derived union constraint of an association results in the corresponding EdgeClass
         to be abstract 
@@ -76,47 +71,63 @@
     
     <xsl:variable name="reservedWords" select="
         'abstract', 'aggregate', 'AggregationClass', 'Boolean', 'CompositionClass', 'Double', 'EdgeClass', 'EnumDomain', 'f', 'from',
-        'Graph', 'GraphClass', 'Integer', 'List', 'Object', 'Package', 'RecordDomain', 'role', 'Schema', 'Set', 'String', 'to', 't', 'VertexClass'" 
+        'Graph', 'GraphClass', 'Integer', 'List', 'Long', 'Object', 'Package', 'RecordDomain', 'role', 'Schema', 'Set', 'String', 'to', 't', 'VertexClass'" 
         as="xs:string*"/>
+    
+    <!-- stores the package with the given schemaName -->
+    <xsl:variable name="schemaPackage" select="xmi:XMI/uml:Model//packagedElement[@xmi:type='uml:Package' and @name=$schemaName]"/>
     
     <!-- processes root -->
     <xsl:template match="/">
         
         <!-- check is Schema is self-contained -->
         <xsl:if test="$errorDetection = 'yes'">
-            <xsl:apply-templates select="xmi:XMI/uml:Model//@xmi:idref"/>
+            <xsl:apply-templates select="$schemaPackage//@xmi:idref"/>
         </xsl:if>
         
         <!-- convert notes not related to any element to comments -->
-        <xsl:apply-templates select="xmi:XMI/uml:Model//ownedComment[empty(annotatedElement) and exists(@body)]"/>
+        <xsl:apply-templates select="$schemaPackage//ownedComment[empty(annotatedElement) and exists(@body)]"/>
 
-        <xsl:text>Schema </xsl:text>
-        <xsl:value-of select="$schemaName"/>
-        <xsl:text>;&#xa;</xsl:text>
+        <!-- write schema name -->
+        <xsl:call-template name="schema"/>
         
-        <xsl:text>GraphClass </xsl:text>
-        <xsl:value-of select="$gcName"/>
-        <xsl:text>;&#xa;</xsl:text>
-        
+        <!-- write graph class -->
+        <xsl:if test="$schemaPackage//packagedElement[@xmi:type='uml:Class'
+                and exists(index-of(/xmi:XMI/uml:Model/thecustomprofile:GraphClass/@base_Class, @xmi:id))]">
+            <xsl:apply-templates select="$schemaPackage//packagedElement[@xmi:type='uml:Class'
+                and exists(index-of(/xmi:XMI/uml:Model/thecustomprofile:GraphClass/@base_Class, @xmi:id))]"/>    
+        </xsl:if>
+        <xsl:if test="empty(/xmi:XMI/uml:Model/thecustomprofile:GraphClass/@base_Class)">
+            <xsl:text>GraphClass DefaultGraphClass;&#xa;</xsl:text>    
+        </xsl:if>
+
         <!-- convert to EnumDomains -->
-        <xsl:apply-templates select="xmi:XMI/uml:Model//packagedElement[@xmi:type='uml:Enumeration']"/>
-        <!-- convert to RecordDomains and VertexClasses -->
-        <xsl:apply-templates select="xmi:XMI/uml:Model//packagedElement[@xmi:type='uml:Class' and empty(myfunctions:getAssociation(.)) 
-        and not(myfunctions:isClassToEdgeClass(.))]"/>
+        <xsl:apply-templates select="$schemaPackage//packagedElement[@xmi:type='uml:Enumeration']"/>
+        <!-- convert to RecordDomains -->
+        <xsl:apply-templates select="$schemaPackage//packagedElement[@xmi:type = 'uml:Class'
+            and exists(index-of(/xmi:XMI/uml:Model//thecustomprofile:record/@base_Class, @xmi:id))]"/>
+        <!-- convert to Packages -->
+        <xsl:apply-templates select="$schemaPackage//packagedElement[@xmi:type='uml:Package']"/>
+        <!-- write default package -->
+        <xsl:text>Package;&#xa;</xsl:text>
+        <!-- convert to VertexClasses -->
+        <xsl:apply-templates select="$schemaPackage//packagedElement[@xmi:type='uml:Class' and empty(myfunctions:getAssociation(.)) 
+            and not(myfunctions:isClassToEdgeClass(.))
+            and empty(index-of(/xmi:XMI/uml:Model//thecustomprofile:record/@base_Class, @xmi:id))
+            and empty(index-of(/xmi:XMI/uml:Model//thecustomprofile:GraphClass/@base_Class, @xmi:id))]"/>
         <!-- convert to EdgeClasses -->
-        <xsl:apply-templates select="xmi:XMI/uml:Model//packagedElement[(@xmi:type='uml:Association' or @xmi:type='uml:AssociationClass') 
+        <xsl:apply-templates select="$schemaPackage//packagedElement[(@xmi:type='uml:Association' or @xmi:type='uml:AssociationClass') 
             and not(myfunctions:isClassToEdgeClassAssociation(.))
             or @xmi:type = 'uml:Class' and exists(myfunctions:getAssociation(.)) and not(myfunctions:isClassToEdgeClass(.))]"/>
-        <xsl:apply-templates select="xmi:XMI/uml:Model//packagedElement[@xmi:type='uml:Class' and myfunctions:isClassToEdgeClass(.)]"/>
+        <xsl:apply-templates select="$schemaPackage//packagedElement[@xmi:type='uml:Class' and myfunctions:isClassToEdgeClass(.)]"/>
     </xsl:template>
     
     <!-- check is Schema is self-contained -->
     <xsl:template match="@xmi:idref">
-        <xsl:if test="empty(index-of(/xmi:XMI/uml:Model//@xmi:id, current()))">
+        <xsl:if test="empty(index-of($schemaPackage//@xmi:id, current()))">
             <xsl:value-of select="error(QName('', 'xmi2tg-Error'), concat('schema is not self-contained, caused by xmi:idref ', current()))"/>
         </xsl:if>      
     </xsl:template>
-    
     
     <!-- converts notes to comments -->
     <xsl:template match="ownedComment">
@@ -132,15 +143,45 @@
         <xsl:text>} &#xa;</xsl:text>
     </xsl:template>
     
+    <!-- writes schema name -->
+    <xsl:template name="schema">
+        <xsl:text>Schema </xsl:text>
+        <xsl:value-of select="$schemaName"/>
+        <xsl:text>;&#xa;</xsl:text>      
+    </xsl:template>
+    
+    <xsl:template match="packagedElement[@xmi:type='uml:Class'
+            and exists(index-of(/xmi:XMI/uml:Model/thecustomprofile:GraphClass/@base_Class, @xmi:id))]">
+        <xsl:text>GraphClass </xsl:text>
+        
+        <xsl:if test="$autoCorrect = 'yes'">
+            <xsl:value-of select="myfunctions:correctQualifiedName(@name)"/>
+        </xsl:if>
+        <xsl:if test="$autoCorrect = 'no'">
+            <xsl:value-of select="@name"/>
+        </xsl:if>
+       
+        <!-- GraphClass attributes -->
+        <xsl:apply-templates select="$schemaPackage/packagedElement[@xmi:id=/xmi:XMI/uml:Model/thecustomprofile:GraphClass/@base_Class and @xmi:type='uml:Class']/ownedAttribute[not(@association)]">
+            <xsl:with-param name="caller">attributedElementClass</xsl:with-param>
+        </xsl:apply-templates>
+        <xsl:text>;&#xa;</xsl:text>  
+    </xsl:template>
+    
     <!-- creates EnumDomain -->
     <xsl:template match="packagedElement[@xmi:type='uml:Enumeration']">
         
         <!-- convert notes and constraints to comments -->
-        <xsl:apply-templates select="/xmi:XMI/uml:Model//ownedComment[annotatedElement/@xmi:idref = current()/@xmi:id]"/>
-        <xsl:apply-templates select="/xmi:XMI/uml:Model//ownedRule[constrainedElement/@xmi:idref = current()/@xmi:id]"/>
+        <xsl:apply-templates select="$schemaPackage//ownedComment[annotatedElement/@xmi:idref = current()/@xmi:id]"/>
+        <xsl:apply-templates select="$schemaPackage//ownedRule[constrainedElement/@xmi:idref = current()/@xmi:id]"/>
         
         <xsl:text>EnumDomain </xsl:text>
-        <xsl:value-of select="@name"/>
+        <xsl:if test="$autoCorrect = 'yes'">
+            <xsl:value-of select="myfunctions:correctQualifiedName(myfunctions:getQualifiedName(., $schemaPackage))"/>
+        </xsl:if>
+        <xsl:if test="$autoCorrect = 'no'">
+            <xsl:value-of select="myfunctions:getQualifiedName(., $schemaPackage)"/>
+        </xsl:if>
         <xsl:apply-templates select="ownedAttribute">
             <xsl:with-param name="caller">enum</xsl:with-param>
         </xsl:apply-templates>
@@ -149,67 +190,80 @@
     
     <!-- creates RecordDomain -->
     <xsl:template match="packagedElement[@xmi:type = 'uml:Class' and empty(myfunctions:getAssociation(.)) and not(myfunctions:isClassToEdgeClass(.))
-            and exists(/xmi:XMI/uml:Model//thecustomprofile:record[@base_Class = current()/@xmi:id])]">
+            and exists(index-of(/xmi:XMI/uml:Model//thecustomprofile:record/@base_Class, @xmi:id))]">
         
         <!-- convert notes and constraints to comments -->
-        <xsl:apply-templates select="/xmi:XMI/uml:Model//ownedComment[annotatedElement/@xmi:idref = current()/@xmi:id]"/>
-        <xsl:apply-templates select="/xmi:XMI/uml:Model//ownedRule[constrainedElement/@xmi:idref = current()/@xmi:id]"/>
+        <xsl:apply-templates select="$schemaPackage//ownedComment[annotatedElement/@xmi:idref = current()/@xmi:id]"/>
+        <xsl:apply-templates select="$schemaPackage//ownedRule[constrainedElement/@xmi:idref = current()/@xmi:id]"/>
         
         <xsl:text>RecordDomain </xsl:text>
-        <xsl:value-of select="@name"/>
+        <xsl:if test="$autoCorrect = 'yes'">
+            <xsl:value-of select="myfunctions:correctQualifiedName(myfunctions:getQualifiedName(., $schemaPackage))"/>
+        </xsl:if>
+        <xsl:if test="$autoCorrect = 'no'">
+            <xsl:value-of select="myfunctions:getQualifiedName(., $schemaPackage)"/>
+        </xsl:if>
         <xsl:apply-templates select="ownedAttribute">
             <xsl:with-param name="caller">record</xsl:with-param>
         </xsl:apply-templates>
         <xsl:text>;&#xa;</xsl:text>
     </xsl:template>
     
+    <!-- create Package -->
+    <xsl:template match="packagedElement[@xmi:type='uml:Package']">       
+        <!-- convert notes and constraints to comments -->
+        <xsl:apply-templates select="$schemaPackage//ownedComment[annotatedElement/@xmi:idref = current()/@xmi:id]"/>
+        <xsl:apply-templates select="$schemaPackage//ownedRule[constrainedElement/@xmi:idref = current()/@xmi:id]"/>
+        
+        <xsl:text>Package </xsl:text>
+        
+        <!-- create name of Package -->
+        <xsl:if test="$autoCorrect = 'yes'">
+            <xsl:value-of select="lower-case(myfunctions:getQualifiedName(., $schemaPackage))"/>
+        </xsl:if>
+        <xsl:if test="$autoCorrect = 'no'">
+            <xsl:value-of select="myfunctions:getQualifiedName(., $schemaPackage)"/>
+        </xsl:if>
+        <xsl:text>;&#xa;</xsl:text>
+    </xsl:template>
+    
     <!-- creates VertexClass -->
     <xsl:template match="packagedElement[@xmi:type = 'uml:Class' and empty(myfunctions:getAssociation(.)) and not(myfunctions:isClassToEdgeClass(.))
-            and empty(/xmi:XMI/uml:Model//thecustomprofile:record[@base_Class = current()/@xmi:id])]">
-        <xsl:apply-templates select="xmi:XMI/uml:Model//ownedComment[annotatedElement/@xmi:idref = current()/@xmi:id]"/>
+        and empty(index-of(/xmi:XMI/uml:Model//thecustomprofile:record/@base_Class, @xmi:id))
+        and empty(index-of(/xmi:XMI/uml:Model//thecustomprofile:GraphClass/@base_Class, @xmi:id))]">
         
         <!-- convert notes and constraints to comments -->
-        <xsl:apply-templates select="/xmi:XMI/uml:Model//ownedComment[annotatedElement/@xmi:idref = current()/@xmi:id]"/>
-        <xsl:apply-templates select="/xmi:XMI/uml:Model//ownedRule[constrainedElement/@xmi:idref = current()/@xmi:id]"/>
+        <xsl:apply-templates select="$schemaPackage//ownedComment[annotatedElement/@xmi:idref = current()/@xmi:id]"/>
+        <xsl:apply-templates select="$schemaPackage//ownedRule[constrainedElement/@xmi:idref = current()/@xmi:id]"/>
         
         <xsl:if test="@isAbstract='true'">
             <xsl:text>abstract </xsl:text>
         </xsl:if>
-        <xsl:text>VertexClass </xsl:text>
-        
-        <!-- prepend name of containing package -->
-        <xsl:if test="$prependPackageName = 'yes'">
-            <xsl:value-of select="myfunctions:getPackageName(current())"/>
-            <xsl:text>_</xsl:text>
-        </xsl:if>    
+        <xsl:text>VertexClass </xsl:text>        
         
         <!-- create name of VertexClass -->
         <xsl:if test="$autoCorrect = 'yes'">
-            <xsl:if test="$prependPackageName = 'yes'">
-                <xsl:value-of select="myfunctions:correctIdentifier(@name)"/>
-            </xsl:if>
-            <xsl:if test="$prependPackageName = 'no'">
-                <xsl:value-of select="myfunctions:removeReservedWordsConflicts(myfunctions:correctIdentifier(@name))"/>
-            </xsl:if>
+            <xsl:value-of select="myfunctions:correctQualifiedName(myfunctions:getQualifiedName(., $schemaPackage))"/>
         </xsl:if>
         <xsl:if test="$autoCorrect = 'no'">
-            <xsl:value-of select="@name"/>
+            <xsl:value-of select="myfunctions:getQualifiedName(., $schemaPackage)"/>
         </xsl:if>
         
         <xsl:if test="$errorDetection = 'yes'">
             <xsl:if test="empty(@name)">
                 <xsl:value-of select="error(QName('', 'xmi2tg-Error'), 'empty class name')"/>
             </xsl:if>
-            <xsl:if test="$prependPackageName = 'no' and count(/xmi:XMI/uml:Model//packagedElement[@name = current()/@name]) > 1">
-                <xsl:value-of select="error(QName('', 'xmi2tg-Error'), concat('duplicate vertex name ''', @name, ''''))"/>   
+            <xsl:if test="count(current()/parent::packagedElement/packagedElement[@name = current()/@name]) > 1">
+                <xsl:value-of select="error(QName('', 'xmi2tg-Error'), concat('duplicate vertex name ''', @name, ''' in package ''', current()/parent::packagedElement, ''''))"/>   
             </xsl:if>  
         </xsl:if>
+        
         <xsl:call-template name="generalization">
-            <xsl:with-param name="elements" select="/xmi:XMI/uml:Model//packagedElement[@xmi:id = current()/generalization/@general]"/>
+            <xsl:with-param name="elements" select="$schemaPackage//packagedElement[@xmi:id = current()/generalization/@general]"/>
         </xsl:call-template>
         
         <xsl:apply-templates select="ownedAttribute[not(@association)]">
-            <xsl:with-param name="caller">graphElementClass</xsl:with-param>
+            <xsl:with-param name="caller">attributedElementClass</xsl:with-param>
         </xsl:apply-templates>
         <xsl:text>;&#xa;</xsl:text>
     </xsl:template>
@@ -220,20 +274,20 @@
         or @xmi:type = 'uml:Class' and exists(myfunctions:getAssociation(.)) and not(myfunctions:isClassToEdgeClass(.))]">
         
         <!-- convert notes and constraints to comments -->
-        <xsl:apply-templates select="/xmi:XMI/uml:Model//ownedComment[annotatedElement/@xmi:idref = current()/@xmi:id]"/>
-        <xsl:apply-templates select="/xmi:XMI/uml:Model//ownedRule[constrainedElement/@xmi:idref = current()/@xmi:id]"/>
+        <xsl:apply-templates select="$schemaPackage//ownedComment[annotatedElement/@xmi:idref = current()/@xmi:id]"/>
+        <xsl:apply-templates select="$schemaPackage//ownedRule[constrainedElement/@xmi:idref = current()/@xmi:id]"/>
         
         <!-- if current() is of type 'uml:Class', this variable stores its generalization which must be an AssociationClass -->
         <xsl:variable name="association" select="myfunctions:getAssociation(.)"/>
         
         <!-- store XPaths to aggregate attribute of source VertexClass -->
-        <xsl:variable name="fromAggregateAttribute" select="/xmi:XMI/uml:Model//packagedElement[$association/ownedEnd/type/@xmi:idref = @xmi:id
+        <xsl:variable name="fromAggregateAttribute" select="$schemaPackage//packagedElement[$association/ownedEnd/type/@xmi:idref = @xmi:id
             or ownedAttribute/@xmi:id = $association/memberEnd/@xmi:idref]/ownedAttribute[@association = $association/@xmi:id 
                 and contains(@xmi:id, 'src')]/@aggregation 
                 union $association/ownedEnd[contains(@xmi:id, 'src')]/@aggregation"/>
         
         <!-- store XPaths to aggregate attribute of target VertexClass -->
-        <xsl:variable name="toAggregateAttribute" select="/xmi:XMI/uml:Model//packagedElement[$association/ownedEnd/type/@xmi:idref = @xmi:id
+        <xsl:variable name="toAggregateAttribute" select="$schemaPackage//packagedElement[$association/ownedEnd/type/@xmi:idref = @xmi:id
             or ownedAttribute/@xmi:id = $association/memberEnd/@xmi:idref]/ownedAttribute[@association = $association/@xmi:id 
                 and contains(@xmi:id, 'dst')]/@aggregation 
             union $association/ownedEnd[contains(@xmi:id, 'dst')]/@aggregation"/>
@@ -247,14 +301,12 @@
             looked-for packagedElement, or that the id of an ownedAttribute of the looked-for
             packagedElement must contain 'src' and be equal to the id of a memberEnd of the
             currently processed EdgeClass. -->
-        <xsl:variable name="fromVertexClass" select="/xmi:XMI/uml:Model//packagedElement[$association/ownedEnd[contains(@xmi:id, 'src')]/type/@xmi:idref = @xmi:id
-                or /xmi:XMI/uml:Model//packagedElement/ownedAttribute[contains(@xmi:id, 'src') and @xmi:id = $association/memberEnd/@xmi:idref]/type/@xmi:idref = @xmi:id]"/>
+        <xsl:variable name="fromVertexClass" select="$schemaPackage//packagedElement[$association/ownedEnd[contains(@xmi:id, 'src')]/type/@xmi:idref = @xmi:id
+            or $schemaPackage//packagedElement/ownedAttribute[contains(@xmi:id, 'src') and @xmi:id = $association/memberEnd/@xmi:idref]/type/@xmi:idref = @xmi:id]"/>
             
         <!-- name of "from" VertexClass -->
         <xsl:variable name="fromVertexClassName" select="if ($autoCorrect='yes')
-            then if ($prependPackageName='yes') then myfunctions:correctIdentifier($fromVertexClass/@name) 
-                 else myfunctions:removeReservedWordsConflicts(myfunctions:correctIdentifier($fromVertexClass/@name))
-            else $fromVertexClass/@name"/>
+            then myfunctions:correctQualifiedName(myfunctions:getQualifiedName($fromVertexClass, $schemaPackage)) else myfunctions:getQualifiedName($fromVertexClass, $schemaPackage)"/>
         
         <!-- "to" VertexClass 
             The expression says that either the id of a type of an ownedEnd of the currently
@@ -262,30 +314,28 @@
             looked-for packagedElement, or that the id of an ownedAttribute of the looked-for
             packagedElement must contain 'dst' and be equal to the id of a memberEnd of the
             currently processed EdgeClass. -->
-        <xsl:variable name="toVertexClass" select="/xmi:XMI/uml:Model//packagedElement[$association/ownedEnd[contains(@xmi:id, 'dst')]/type/@xmi:idref = @xmi:id
-                or /xmi:XMI/uml:Model//packagedElement/ownedAttribute[contains(@xmi:id, 'dst') and @xmi:id = $association/memberEnd/@xmi:idref]/type/@xmi:idref = @xmi:id]"/>
+        <xsl:variable name="toVertexClass" select="$schemaPackage//packagedElement[$association/ownedEnd[contains(@xmi:id, 'dst')]/type/@xmi:idref = @xmi:id
+            or $schemaPackage//packagedElement/ownedAttribute[contains(@xmi:id, 'dst') and @xmi:id = $association/memberEnd/@xmi:idref]/type/@xmi:idref = @xmi:id]"/>
         
         <!-- name of "to" VertexClass -->
         <xsl:variable name="toVertexClassName" select="if ($autoCorrect='yes')
-            then if ($prependPackageName='yes') then myfunctions:correctIdentifier($toVertexClass/@name) 
-                 else myfunctions:removeReservedWordsConflicts(myfunctions:correctIdentifier($toVertexClass/@name))
-            else $toVertexClass/@name"/>
+            then myfunctions:correctQualifiedName(myfunctions:getQualifiedName($toVertexClass, $schemaPackage)) else myfunctions:getQualifiedName($toVertexClass, $schemaPackage)"/>
         
         <!-- name of "from" role
             The expression says that the name attribute of the ownedAttribute corresponding to the association source (non-navigable end) shall be concatenated with the name
             attribute of the ownedEnd corresponding to the association source. Since one of these strings is empty, the result is the "from"-rolename. -->
-        <xsl:variable name="fromRoleName" select="concat(/xmi:XMI/uml:Model//ownedAttribute[contains(@xmi:id, 'src') and @xmi:id = $association/memberEnd/@xmi:idref]/@name,
+        <xsl:variable name="fromRoleName" select="concat($schemaPackage//ownedAttribute[contains(@xmi:id, 'src') and @xmi:id = $association/memberEnd/@xmi:idref]/@name,
             $association/ownedEnd[contains(@xmi:id, 'src')]/@name)"/>
         
         <!-- name of "to" role
             The expression says that the name attribute of the ownedAttribute corresponding to the association destination (non-navigable end) shall be concatenated with the name
             attribute of the ownedEnd corresponding to the association destination. Since one of these strings is empty, the result is the "to"-rolename. -->
-        <xsl:variable name="toRoleName" select="concat(/xmi:XMI/uml:Model//ownedAttribute[contains(@xmi:id, 'dst') and @xmi:id = $association/memberEnd/@xmi:idref]/@name,
+        <xsl:variable name="toRoleName" select="concat($schemaPackage//ownedAttribute[contains(@xmi:id, 'dst') and @xmi:id = $association/memberEnd/@xmi:idref]/@name,
             $association/ownedEnd[contains(@xmi:id, 'dst')]/@name)"/>
         
         <xsl:if test="$uml='yes'">
             <!-- If the association is a derived union or the association class is abstract, the EdgeClass to be created has to be abstract -->     
-            <xsl:if test="ownedEnd/@isDerivedUnion='true' or /xmi:XMI/uml:Model//packagedElement/ownedAttribute[@association = $association/@xmi:id]/@isDerivedUnion = 'true'">
+            <xsl:if test="ownedEnd/@isDerivedUnion='true' or $schemaPackage//packagedElement/ownedAttribute[@association = $association/@xmi:id]/@isDerivedUnion = 'true'">
                 <xsl:text>abstract </xsl:text>
             </xsl:if>
         </xsl:if>
@@ -306,39 +356,29 @@
             </xsl:when>
         </xsl:choose>
         
-        <!-- prepend name of containing package -->
-        <xsl:if test="$prependPackageName = 'yes'">
-            <xsl:value-of select="myfunctions:getPackageName(current())"/>
-            <xsl:text>_</xsl:text>
-        </xsl:if>    
-        
-        <!-- create name of EdgeClass -->
+        <!-- create edge class name -->
         <xsl:call-template name="edgeClassName">
             <xsl:with-param name="association" select="."/>
         </xsl:call-template>
-                 
+        
         <!-- provide super classes of EdgeClass -->
         <xsl:if test="$uml='no'">
             <xsl:call-template name="generalization">
-                <xsl:with-param name="elements" select="/xmi:XMI/uml:Model//packagedElement[@xmi:id = current()/generalization/@general] 
-                    union /xmi:XMI/uml:Model//packagedElement[memberEnd/@xmi:idref = current()/ownedEnd/redefinedProperty/@xmi:idref]
-                    union /xmi:XMI/uml:Model//packagedElement[memberEnd/@xmi:idref = /xmi:XMI/uml:Model//packagedElement/ownedAttribute[@association = current()/@xmi:id]/redefinedProperty/@xmi:idref]"/>
+                <xsl:with-param name="elements" select="$schemaPackage//packagedElement[@xmi:id = current()/generalization/@general] 
+                    union $schemaPackage[memberEnd/@xmi:idref = current()/ownedEnd/redefinedProperty/@xmi:idref]
+                    union $schemaPackage//packagedElement[memberEnd/@xmi:idref = $schemaPackage//packagedElement/ownedAttribute[@association = current()/@xmi:id]/redefinedProperty/@xmi:idref]"/>
             </xsl:call-template>
         </xsl:if>
         <xsl:if test="$uml='yes'">
             <xsl:call-template name="generalization">
-                <xsl:with-param name="elements" select="/xmi:XMI/uml:Model//packagedElement[memberEnd/@xmi:idref = current()/ownedEnd/redefinedProperty/@xmi:idref]
-                    union /xmi:XMI/uml:Model//packagedElement[memberEnd/@xmi:idref = /xmi:XMI/uml:Model//packagedElement/ownedAttribute[@association = current()/@xmi:id]/redefinedProperty/@xmi:idref]
-                    union /xmi:XMI/uml:Model//packagedElement[memberEnd/@xmi:idref = current()/ownedEnd/subsettedProperty/@xmi:idref]
-                    union /xmi:XMI/uml:Model//packagedElement[memberEnd/@xmi:idref = /xmi:XMI/uml:Model//packagedElement/ownedAttribute[@association = current()/@xmi:id]/subsettedProperty/@xmi:idref]"/>
+                <xsl:with-param name="elements" select="$schemaPackage//packagedElement[memberEnd/@xmi:idref = current()/ownedEnd/redefinedProperty/@xmi:idref]
+                    union $schemaPackage//packagedElement[memberEnd/@xmi:idref = $schemaPackage//packagedElement/ownedAttribute[@association = current()/@xmi:id]/redefinedProperty/@xmi:idref]
+                    union $schemaPackage//packagedElement[memberEnd/@xmi:idref = current()/ownedEnd/subsettedProperty/@xmi:idref]
+                    union $schemaPackage//packagedElement[memberEnd/@xmi:idref = $schemaPackage//packagedElement/ownedAttribute[@association = current()/@xmi:id]/subsettedProperty/@xmi:idref]"/>
             </xsl:call-template> 
         </xsl:if>
         
-        <xsl:text> from </xsl:text>
-        <xsl:if test="$prependPackageName = 'yes'">
-            <xsl:value-of select="myfunctions:getPackageName($fromVertexClass)"/>
-            <xsl:text>_</xsl:text>
-        </xsl:if>    
+        <xsl:text> from </xsl:text>         
         <xsl:value-of select="$fromVertexClassName"/>
         
         <!-- "from" multiplicity -->
@@ -353,13 +393,9 @@
         </xsl:call-template>
         
         <!-- redefinitions on "from" side -->
-        <xsl:apply-templates select="ownedEnd[contains(@xmi:id, 'src')]/redefinedProperty union /xmi:XMI/uml:Model//packagedElement/ownedAttribute[contains(@xmi:id, 'src') and @association = $association/@xmi:id]/redefinedProperty"/>
+        <xsl:apply-templates select="ownedEnd[contains(@xmi:id, 'src')]/redefinedProperty union $schemaPackage//packagedElement/ownedAttribute[contains(@xmi:id, 'src') and @association = $association/@xmi:id]/redefinedProperty" mode="redefines"/>
                         
-        <xsl:text> to </xsl:text>
-        <xsl:if test="$prependPackageName = 'yes'">
-            <xsl:value-of select="myfunctions:getPackageName($toVertexClass)"/>
-            <xsl:text>_</xsl:text>
-        </xsl:if>    
+        <xsl:text> to </xsl:text>        
         <xsl:value-of select="$toVertexClassName"/>
         
         <!-- "to" multiplicity -->
@@ -374,7 +410,7 @@
         </xsl:call-template>
         
         <!-- redefinitions on "to" side -->
-        <xsl:apply-templates select="ownedEnd[contains(@xmi:id, 'dst')]/redefinedProperty union /xmi:XMI/uml:Model//packagedElement/ownedAttribute[contains(@xmi:id, 'dst') and @association = $association/@xmi:id]/redefinedProperty"/>
+        <xsl:apply-templates select="ownedEnd[contains(@xmi:id, 'dst')]/redefinedProperty union $schemaPackage//packagedElement/ownedAttribute[contains(@xmi:id, 'dst') and @association = $association/@xmi:id]/redefinedProperty" mode="redefines"/>
         
         <!-- if current EdgeClass is an AggregationClass or CompositionClass, determine aggregate VertexClass -->
         <xsl:if test="$fromAggregateAttribute != 'none'">
@@ -386,12 +422,12 @@
         
         <!-- attributes -->
         <xsl:apply-templates select="ownedAttribute[not(@association)]">
-            <xsl:with-param name="caller">graphElementClass</xsl:with-param>
+            <xsl:with-param name="caller">attributedElementClass</xsl:with-param>
         </xsl:apply-templates>
         
         <xsl:text>;&#xa;</xsl:text>
     </xsl:template>
-     
+      
     <!-- creates names of EdgeClass out of role names or names of adjacent VertexClasses
         parameter association: Specifies the association for which to create a name.
         parameter fromAggregateAttribute: Specifies the aggregation attribute for the association's from side
@@ -400,15 +436,18 @@
         parameter toRoleName: Specifies the name of the "to"-role --> 
     <xsl:template name="edgeClassName">
         <xsl:param name="association"/>
+        
+        <!-- store EdgeClass's package prefix -->
+        <xsl:variable name="packagePrefix" select="myfunctions:getPackagePrefix($association, $schemaPackage)"/>
        
         <!-- store XPaths to aggregate attribute of source VertexClass -->
-        <xsl:variable name="fromAggregateAttribute" select="/xmi:XMI/uml:Model//packagedElement[$association/ownedEnd/type/@xmi:idref = @xmi:id
+        <xsl:variable name="fromAggregateAttribute" select="$schemaPackage//packagedElement[$association/ownedEnd/type/@xmi:idref = @xmi:id
             or ownedAttribute/@xmi:id = $association/memberEnd/@xmi:idref]/ownedAttribute[@association = $association/@xmi:id 
             and contains(@xmi:id, 'src')]/@aggregation 
             union $association/ownedEnd[contains(@xmi:id, 'src')]/@aggregation"/>
         
         <!-- store XPaths to aggregate attribute of target VertexClass -->
-        <xsl:variable name="toAggregateAttribute" select="/xmi:XMI/uml:Model//packagedElement[$association/ownedEnd/type/@xmi:idref = @xmi:id
+        <xsl:variable name="toAggregateAttribute" select="$schemaPackage//packagedElement[$association/ownedEnd/type/@xmi:idref = @xmi:id
             or ownedAttribute/@xmi:id = $association/memberEnd/@xmi:idref]/ownedAttribute[@association = $association/@xmi:id 
             and contains(@xmi:id, 'dst')]/@aggregation 
             union $association/ownedEnd[contains(@xmi:id, 'dst')]/@aggregation"/>
@@ -422,14 +461,12 @@
             looked-for packagedElement, or that the id of an ownedAttribute of the looked-for
             packagedElement must contain 'dst' and be equal to the id of a memberEnd of the
             currently processed EdgeClass. -->
-        <xsl:variable name="fromVertexClass" select="/xmi:XMI/uml:Model//packagedElement[$association/ownedEnd[contains(@xmi:id, 'src')]/type/@xmi:idref = @xmi:id
-            or /xmi:XMI/uml:Model//packagedElement/ownedAttribute[contains(@xmi:id, 'src') and @xmi:id = $association/memberEnd/@xmi:idref]/type/@xmi:idref = @xmi:id]"/>
+        <xsl:variable name="fromVertexClass" select="$schemaPackage//packagedElement[$association/ownedEnd[contains(@xmi:id, 'src')]/type/@xmi:idref = @xmi:id
+            or $schemaPackage//packagedElement/ownedAttribute[contains(@xmi:id, 'src') and @xmi:id = $association/memberEnd/@xmi:idref]/type/@xmi:idref = @xmi:id]"/>
         
         <!-- name of "from" VertexClass -->
         <xsl:variable name="fromVertexClassName" select="if ($autoCorrect='yes')
-            then if ($prependPackageName='yes') then myfunctions:correctIdentifier($fromVertexClass/@name)
-                 else myfunctions:removeReservedWordsConflicts(myfunctions:correctIdentifier($fromVertexClass/@name))
-            else $fromVertexClass/@name"/>
+            then myfunctions:correctQualifiedName($fromVertexClass/@name) else $fromVertexClass/@name"/>
         
         <!-- "to" VertexClass 
             The expression says that either the id of a type of an ownedEnd of the currently
@@ -437,27 +474,35 @@
             looked-for packagedElement, or that the id of an ownedAttribute of the looked-for
             packagedElement must contain 'dst' and be equal to the id of a memberEnd of the
             currently processed EdgeClass. -->
-        <xsl:variable name="toVertexClass" select="/xmi:XMI/uml:Model//packagedElement[$association/ownedEnd[contains(@xmi:id, 'dst')]/type/@xmi:idref = @xmi:id
-            or /xmi:XMI/uml:Model//packagedElement/ownedAttribute[contains(@xmi:id, 'dst') and @xmi:id = $association/memberEnd/@xmi:idref]/type/@xmi:idref = @xmi:id]"/>
+        <xsl:variable name="toVertexClass" select="$schemaPackage//packagedElement[$association/ownedEnd[contains(@xmi:id, 'dst')]/type/@xmi:idref = @xmi:id
+            or $schemaPackage//packagedElement/ownedAttribute[contains(@xmi:id, 'dst') and @xmi:id = $association/memberEnd/@xmi:idref]/type/@xmi:idref = @xmi:id]"/>
         
         <!-- name of "to" VertexClass -->
         <xsl:variable name="toVertexClassName" select="if ($autoCorrect='yes')
-            then if ($prependPackageName='yes') then myfunctions:correctIdentifier($toVertexClass/@name) 
-                 else myfunctions:removeReservedWordsConflicts(myfunctions:correctIdentifier($toVertexClass/@name))
-            else $toVertexClass/@name"/>
+            then myfunctions:correctQualifiedName($toVertexClass/@name) else $toVertexClass/@name"/>
         
         <!-- name of "from" role
             The expression says that the name attribute of the ownedAttribute corresponding to the association source (non-navigable end) shall be concatenated with the name
             attribute of the ownedEnd corresponding to the association source. Since one of these strings is empty, the result is the "from"-rolename. -->
-        <xsl:variable name="fromRoleName" select="concat(/xmi:XMI/uml:Model//ownedAttribute[contains(@xmi:id, 'src') and @xmi:id = $association/memberEnd/@xmi:idref]/@name,
+        <xsl:variable name="fromRoleName" select="concat($schemaPackage//ownedAttribute[contains(@xmi:id, 'src') and @xmi:id = $association/memberEnd/@xmi:idref]/@name,
             $association/ownedEnd[contains(@xmi:id, 'src')]/@name)"/>
         
         <!-- name of "to" role
             The expression says that the name attribute of the ownedAttribute corresponding to the association destination (non-navigable end) shall be concatenated with the name
             attribute of the ownedEnd corresponding to the association destination. Since one of these strings is empty, the result is the "to"-rolename. -->
-        <xsl:variable name="toRoleName" select="concat(/xmi:XMI/uml:Model//ownedAttribute[contains(@xmi:id, 'dst') and @xmi:id = $association/memberEnd/@xmi:idref]/@name,
-        $association/ownedEnd[contains(@xmi:id, 'dst')]/@name)"/>
-         
+        <xsl:variable name="toRoleName" select="concat($schemaPackage//ownedAttribute[contains(@xmi:id, 'dst') and @xmi:id = $association/memberEnd/@xmi:idref]/@name,
+            $association/ownedEnd[contains(@xmi:id, 'dst')]/@name)"/>
+               
+        <!-- create package prefix -->
+        <xsl:if test="$packagePrefix != ''">
+            <xsl:if test="$autoCorrect = 'yes'">
+                <xsl:value-of select="myfunctions:correctPackagePrefix($packagePrefix)"/>
+            </xsl:if>
+            <xsl:if test="$autoCorrect = 'no'">
+                <xsl:value-of select="$packagePrefix"/>
+            </xsl:if>
+        </xsl:if>        
+        
         <xsl:if test="$autoCorrect = 'yes'">
             <!-- if the association has no name -->
             <xsl:if test="empty($association/@name) or $association/@name = ''">
@@ -473,14 +518,6 @@
                 
                 <!-- if the association is actually an aggregation or composition -->
                 <xsl:if test="some $aggr in $aggregateAttributes satisfies ($aggr = 'shared' or $aggr = 'composite')">
-                    <xsl:if test="$extendedEdgeClassNames = 'yes'">
-                        <xsl:if test="$fromRoleName = ''">
-                            <xsl:value-of select="$fromVertexClassName"/>
-                        </xsl:if>
-                        <xsl:if test="$fromRoleName != ''">
-                            <xsl:value-of select="myfunctions:firstToUpperCase($fromRoleName)"/>
-                        </xsl:if>
-                    </xsl:if>     
                     <!-- if the composite is on the "to" side -->
                     <xsl:if test="$toAggregateAttribute != 'none'">
                         <xsl:text>IsPartOf</xsl:text>
@@ -492,14 +529,6 @@
                 </xsl:if>
                 <!-- if the association is no aggregation or composition -->
                 <xsl:if test="every $aggr in $aggregateAttributes satisfies $aggr = 'none'">
-                    <xsl:if test="$extendedEdgeClassNames = 'yes'">
-                        <xsl:if test="$fromRoleName = ''">
-                            <xsl:value-of select="$fromVertexClassName"/>
-                        </xsl:if>
-                        <xsl:if test="$fromRoleName != ''">
-                            <xsl:value-of select="myfunctions:firstToUpperCase($fromRoleName)"/>
-                        </xsl:if>
-                    </xsl:if>     
                     <xsl:text>LinksTo</xsl:text>
                 </xsl:if>
                 
@@ -514,12 +543,7 @@
                             
             <!-- if the association has a name -->
             <xsl:if test="exists($association/@name) and $association/@name != ''">
-                <xsl:if test="$prependPackageName = 'yes'">
-                    <xsl:value-of select="myfunctions:correctIdentifier($association/@name)"/>
-                </xsl:if>
-                <xsl:if test="$prependPackageName = 'no'">
-                    <xsl:value-of select="myfunctions:removeReservedWordsConflicts(myfunctions:correctIdentifier($association/@name))"/>
-                </xsl:if>
+                <xsl:value-of select="$association/@name"/>
             </xsl:if>
             
             <!-- TODO: does not work for navigable ends. Furthermore, ids are generated even if aggregations are on opposite sides -->
@@ -529,7 +553,7 @@
                 with the same "to" VertexClass (6th to 9th line),
                 with aggregation type ('shared' or 'composite') (10th to 17th line) or 'none' (18th to 21th line),
                 append an unambiguous id to the EdgeClass name -->
- <!--           <xsl:if test="count(/xmi:XMI/uml:Model//packagedElement[(@name = current()/@name or empty(@name) and empty(current()/@name))
+            <!--           <xsl:if test="count($schemaPackage//packagedElement[(@name = current()/@name or empty(@name) and empty(current()/@name))
                 and ($fromVertexClass/@xmi:id
                         = myfunctions:getAssociation(.)/ownedEnd[contains(@xmi:id, 'src')]/type/@xmi:idref         
                     or $toVertexClass/@xmi:id
@@ -554,7 +578,7 @@
             </xsl:if> 
         </xsl:if>
         <xsl:if test="$autoCorrect = 'no'">
-            <xsl:value-of select="$association/@name"/>
+            <xsl:value-of select="@name"/>
         </xsl:if>    
     </xsl:template>
     
@@ -578,7 +602,7 @@
     </xsl:template>
     
     <!-- created redefinitions -->
-    <xsl:template match="redefinedProperty">
+    <xsl:template match="redefinedProperty" mode="redefines">
         <xsl:choose>
             <xsl:when test="position() = 1">
                 <xsl:text> redefines </xsl:text>
@@ -588,7 +612,7 @@
             </xsl:otherwise>
         </xsl:choose>
         
-        <xsl:value-of select="/xmi:XMI/uml:Model//packagedElement/ownedEnd[@xmi:id = current()/@xmi:idref]/@name union /xmi:XMI/uml:Model//packagedElement/ownedAttribute[@xmi:id = current()/@xmi:idref]/@name"/>        
+        <xsl:value-of select="$schemaPackage//packagedElement/ownedEnd[@xmi:id = current()/@xmi:idref]/@name union $schemaPackage//packagedElement/ownedAttribute[@xmi:id = current()/@xmi:idref]/@name"/>        
     </xsl:template>
     
     <!-- creates multiplicities
@@ -687,7 +711,7 @@
                     The variables contain the possible XPaths to the lower value: "lowerValueNav" if the
                         association end indicated by $side is navigable, "lowerValueNonNav" if the association end is
                         not navigable -->
-                <xsl:variable name="lowerValueNav" select="/xmi:XMI/uml:Model//ownedAttribute[contains(@xmi:id, $side) and @xmi:id = $association/memberEnd/@xmi:idref]/lowerValue/@value"/>
+                <xsl:variable name="lowerValueNav" select="$schemaPackage//ownedAttribute[contains(@xmi:id, $side) and @xmi:id = $association/memberEnd/@xmi:idref]/lowerValue/@value"/>
                 <xsl:variable name="lowerValueNonNav" select="$association/ownedEnd[contains(@xmi:id, $side)]/lowerValue/@value"/>
                 <xsl:if test="$autoCorrect = 'yes'">
                     <xsl:if test="empty($lowerValueNav) and empty($lowerValueNonNav)">
@@ -709,7 +733,7 @@
                     The variables contain the possible XPaths to the upper value: "upperValueNav" if the
                         association end indicated by $side is navigable, "upperValueNonNav" if the association end is
                         not navigable -->
-                <xsl:variable name="upperValueNav" select="/xmi:XMI/uml:Model//ownedAttribute[contains(@xmi:id, $side) and @xmi:id = $association/memberEnd/@xmi:idref]/upperValue/@value"/>
+                <xsl:variable name="upperValueNav" select="$schemaPackage//ownedAttribute[contains(@xmi:id, $side) and @xmi:id = $association/memberEnd/@xmi:idref]/upperValue/@value"/>
                 <xsl:variable name="upperValueNonNav" select="$association/ownedEnd[contains(@xmi:id, $side)]/upperValue/@value"/>
                 <xsl:if test="$autoCorrect = 'yes'">
                     <xsl:if test="empty($upperValueNav) and empty($upperValueNonNav)">
@@ -741,10 +765,10 @@
         </xsl:choose>   
     </xsl:template>
     
-    <!-- creates generalization hierarchy-->
+    <!-- creates generalization hierarchy for edges when uml parameter is set to no-->
     <xsl:template name="generalization">
         <xsl:param name="elements"/>
-             
+        
         <xsl:for-each select="$elements">
             
             <xsl:choose>
@@ -756,11 +780,6 @@
                 </xsl:otherwise>
             </xsl:choose>
             
-            <xsl:if test="$prependPackageName = 'yes'">
-                <xsl:value-of select="myfunctions:getPackageName(current())"/>
-                <xsl:text>_</xsl:text>
-            </xsl:if>
-                    
             <xsl:call-template name="edgeClassName">
                 <xsl:with-param name="association" select="current()"/>
             </xsl:call-template>                                
@@ -775,7 +794,7 @@
         
         <!-- write opening parenthesis before first attribute -->
         <xsl:if test="position() = 1">
-            <xsl:if test="$caller='graphElementClass'">
+            <xsl:if test="$caller='attributedElementClass'">
                 <xsl:text> {</xsl:text>
             </xsl:if>
             <xsl:if test="$caller='enum' or $caller='record'">
@@ -801,20 +820,23 @@
         
         <xsl:if test="$caller!='enum'">
             <xsl:text>: </xsl:text>
-            <xsl:choose>
-                <!-- if tool is EA, then data from xmi:Extension is used -->
-                <xsl:when test="$tool='ea'">
-                    <xsl:value-of select="/xmi:XMI/xmi:Extension/elements/element/attributes/attribute[@xmi:idref = current()/@xmi:id]/properties/@type"/>
-                </xsl:when>
-                <xsl:otherwise>
-                    <xsl:value-of select="/xmi:XMI/uml:Model//packagedElement[@xmi:id = current()/type/@xmi:idref]/@name"/>
-                </xsl:otherwise>
-            </xsl:choose>
+            <!-- if tool is EA and Domain is primitive, then data from xmi:Extension is used -->
+            <xsl:if test="$tool = 'ea' and exists(index-of($reservedWords, /xmi:XMI/xmi:Extension/elements/element/attributes/attribute[@xmi:idref = current()/@xmi:id]/properties/@type))">
+                <xsl:value-of select="/xmi:XMI/xmi:Extension/elements/element/attributes/attribute[@xmi:idref = current()/@xmi:id]/properties/@type"/>
+            </xsl:if>
+            <xsl:if test="$tool != 'ea' or empty(index-of($reservedWords, /xmi:XMI/xmi:Extension/elements/element/attributes/attribute[@xmi:idref = current()/@xmi:id]/properties/@type))">
+                <xsl:if test="$autoCorrect = 'yes'">
+                    <xsl:value-of select="myfunctions:correctQualifiedName(myfunctions:getQualifiedName($schemaPackage//packagedElement[@name = /xmi:XMI/xmi:Extension/elements/element/attributes/attribute[@xmi:idref = current()/@xmi:id]/properties/@type], $schemaPackage))"/>
+                </xsl:if>
+                <xsl:if test="$autoCorrect = 'no'">
+                    <xsl:value-of select="myfunctions:getQualifiedName($schemaPackage//packagedElement[@name = /xmi:XMI/xmi:Extension/elements/element/attributes/attribute[@xmi:idref = current()/@xmi:id]/properties/@type], $schemaPackage)"/>
+                </xsl:if>
+            </xsl:if>   
         </xsl:if>
         
         <!-- write closing parenthesis after last attribute -->
         <xsl:if test="position()=last()">
-            <xsl:if test="$caller='graphElementClass'">
+            <xsl:if test="$caller='attributedElementClass'">
                 <xsl:text>}</xsl:text>
             </xsl:if>
             <xsl:if test="$caller='enum' or $caller='record'">
@@ -822,6 +844,68 @@
             </xsl:if>
         </xsl:if>
     </xsl:template>
+    
+    <xsl:template name="packagePrefix">
+        
+        
+    </xsl:template>
+    
+    <!-- inserts '// ' after line breaks in given string and returns the resulting string -->
+    <xsl:function name="myfunctions:adaptNotes" as="xs:string">
+        <xsl:param name="inputString"/>
+        
+        <xsl:sequence select="replace($inputString, '&#xa;', '&#xa;// ')"/>
+    </xsl:function>
+    
+    <!--
+        <xsl:function name="myfunctions:convertSpacesToCamelCase" as="xs:string">
+        <xsl:param name="inputString"/>
+        
+        <xsl:sequence select="replace($inputString, ' (.)', upper-case('$1'))"/>     
+        </xsl:function>
+    -->
+ 
+    <!-- performs autoCorrect measures on given package prefix
+        parameter inputString: package prefix which shall be corrected
+        returns: corrected $inputString -->
+    <xsl:function name="myfunctions:correctPackagePrefix" as="xs:string">
+        <xsl:param name="inputString" as="xs:string"/>
+        
+        <xsl:sequence select="myfunctions:removeReservedWordsConflicts(lower-case(myfunctions:removeSpaces($inputString)))"/>
+    </xsl:function>
+    
+    <!-- performs autoCorrect measures on given qualified name
+        parameter inputString: qualified name which shall be corrected
+        returns: corrected $inputString -->
+    <xsl:function name="myfunctions:correctQualifiedName" as="xs:string">
+        <xsl:param name="inputString" as="xs:string"/>
+        
+        <xsl:sequence select="myfunctions:removeReservedWordsConflicts(myfunctions:correctQualifiedNameCase(myfunctions:removeSpaces($inputString)))"/>
+    </xsl:function>
+    
+    <!-- corrects the case of the qualified name, i.e. package prefix all lower-case and the name
+        of the AttributedElementClass with the first character upper case -->
+    <xsl:function name="myfunctions:correctQualifiedNameCase">
+        <xsl:param name="inputString" as="xs:string"/>
+        
+        <xsl:variable name="tokenization" select="tokenize($inputString, '\.')" as="xs:string*"/>
+        <xsl:variable name="className" select="$tokenization[count($tokenization)]" as="xs:string"/>
+        <xsl:variable name="packagePrefix" select="string-join(remove($tokenization, count($tokenization)), '.')" as="xs:string"/>
+        <xsl:sequence select="if ($packagePrefix = '')
+            then myfunctions:firstToUpperCase($className)
+            else concat(lower-case($packagePrefix), '.', myfunctions:firstToUpperCase($className))"/>
+    </xsl:function>
+    
+    <!-- converts the first character of the given string to uppercase
+        parameter inputString: string whose first character is to be converted
+        returns: $inputString with first character in uppercase -->
+    <xsl:function name="myfunctions:firstToUpperCase" as="xs:string">
+        <xsl:param name="inputString"/>
+        
+        <xsl:variable name="headOfInputString" select="substring($inputString, 1, 1)"/>
+        <xsl:variable name="tailOfInputString" select="substring($inputString, 2)"/>
+        <xsl:sequence select="concat(upper-case($headOfInputString), $tailOfInputString)"/>
+    </xsl:function>              
     
     <!-- checks if node given as parameter is subclass of one or more associations or association 
             classes and returns these superclasses, otherwise an empty sequence is returned
@@ -835,7 +919,7 @@
                 then $class
                 else if (empty($class/generalization))
                     then () 
-                    else myfunctions:getAssociation(root($class[1])/xmi:XMI/uml:Model//packagedElement[@xmi:id = $class/generalization/@general])"/>            
+                    else myfunctions:getAssociation(root($class[1])//xmi:XMI/uml:Model//packagedElement[@xmi:id = $class/generalization/@general])"/>            
     </xsl:function>
     
     <!-- for the given class, this function returns the next class in the given class' generalization hierarchy which is connected to an association and has a
@@ -851,6 +935,48 @@
                 else if (empty($class/generalization)) 
                     then ()
                     else myfunctions:getClassToEdgeClass(root($class[1])/xmi:XMI/uml:Model//packagedElement[@xmi:id = $class/generalization/@general])"/>
+    </xsl:function>
+    
+    <!-- returns all the superclasses of the given class, including the class itself
+        parameter class: the class whose superclasses shall be returned
+        returns: the superclasses of the given class, including the class itself -->
+    <xsl:function name="myfunctions:getGeneralizationHierarchy">
+        <xsl:param name="class"/>
+        
+        <xsl:sequence select="
+            if (empty($class/generalization))
+            then $class
+            else ($class, myfunctions:getGeneralizationHierarchy(root($class[1])/xmi:XMI/uml:Model//packagedElement[@xmi:id = $class/generalization/@general]))"/>
+    </xsl:function>
+    
+    <!-- constructs the package prefix of the given element -->
+    <xsl:function name="myfunctions:getPackagePrefix">
+        <xsl:param name="element"/>
+        <xsl:param name="schemaPackage"/>
+        
+        <xsl:if test="$element/@xmi:type = 'uml:AssociationClass'">
+            <xsl:variable name="parentPackage" select="
+                $schemaPackage//packagedElement[@xmi:id = root($element)/xmi:XMI/xmi:Extension/elements/element[@xmi:idref = $element/@xmi:id]/model/@package]"/>
+            
+            <xsl:sequence select="if ($parentPackage != $schemaPackage)
+                then concat(myfunctions:getPackagePrefix($parentPackage, $schemaPackage), $parentPackage/@name, '.') 
+                else ''"/>
+        </xsl:if>
+        <xsl:if test="$element/@xmi:type != 'uml:AssociationClass'">
+            <xsl:sequence select="
+                if ($element/parent::packagedElement != $schemaPackage)
+                    then concat(myfunctions:getPackagePrefix($element/parent::packagedElement, $schemaPackage), $element/parent::packagedElement/@name, '.')
+                    else ''"/>
+        </xsl:if>
+    </xsl:function>
+    
+    <!-- constructs the qualified name of the given element -->
+    <xsl:function name="myfunctions:getQualifiedName">
+        <xsl:param name="element"/>
+        <xsl:param name="schemaPackage"/>
+        
+        <xsl:variable name="packagePrefix" select="myfunctions:getPackagePrefix($element, $schemaPackage)"/>
+        <xsl:sequence select="concat($packagePrefix, $element/@name)"/>            
     </xsl:function>
     
     <!-- checks if given class shall be converted to an EdgeClass; this is the case if its name is contained in parameter $classToEdgeClass or it is a
@@ -877,46 +1003,14 @@
                     or @xmi:id = root($association[1])/xmi:XMI/uml:Model//packagedElement[@xmi:id = $association/@xmi:id]/ownedEnd/type/@xmi:idref]))
                 then true()
                 else false()"/>
-    </xsl:function>
-    
-    <!-- returns all the superclasses of the given class, including the class itself
-        parameter class: the class whose superclasses shall be returned
-        returns: the superclasses of the given class, including the class itself -->
-    <xsl:function name="myfunctions:getGeneralizationHierarchy">
-        <xsl:param name="class"/>
-        
-        <xsl:sequence select="
-            if (empty($class/generalization))
-                then $class
-            else ($class, myfunctions:getGeneralizationHierarchy(root($class[1])/xmi:XMI/uml:Model//packagedElement[@xmi:id = $class/generalization/@general]))"/>
-    </xsl:function>
-    
-    <!-- performs autoCorrect measures on given identifier
-        parameter inputString: identifier which shall be corrected
-        returns: corrected $inputString -->
-    <xsl:function name="myfunctions:correctIdentifier" as="xs:string">
-        <xsl:param name="identifier"/>
-        
-        <xsl:sequence select="myfunctions:firstToUpperCase(myfunctions:removeSpaces($identifier))"/>
-    </xsl:function>
-    
-    <!-- converts the first character of the given string to uppercase
-        parameter inputString: string whose first character is to be converted
-        returns: $inputString with first character in uppercase -->
-    <xsl:function name="myfunctions:firstToUpperCase" as="xs:string">
-        <xsl:param name="inputString"/>
-        
-        <xsl:variable name="headOfInputString" select="substring($inputString, 1, 1)"/>
-        <xsl:variable name="tailOfInputString" select="substring($inputString, 2)"/>
-        <xsl:sequence select="concat(upper-case($headOfInputString), $tailOfInputString)"/>
-    </xsl:function>
+    </xsl:function>                           
     
     <!-- checks whether the given string is equal to a reserved word of JGraLab; if true, "'" is prepended and
             the resulting string returned; if false, the input is returned unchanged
         parameter inputString: string to be checked against reserved words 
         returns: $inputString if it is not a reserved word, else "'" + $inputString -->
     <xsl:function name="myfunctions:removeReservedWordsConflicts" as="xs:string">
-        <xsl:param name="inputString"/>
+        <xsl:param name="inputString" as="xs:string"/>
         
         <xsl:sequence select="
             if (empty(index-of($reservedWords, $inputString)))
@@ -932,30 +1026,5 @@
         
         <xsl:sequence select="replace($inputString, ' ', '')"/>     
     </xsl:function>
-    
-    <!-- inserts '// ' after line breaks in given string and returns the resulting string -->
-    <xsl:function name="myfunctions:adaptNotes" as="xs:string">
-        <xsl:param name="inputString"/>
-        
-        <xsl:sequence select="replace($inputString, '&#xa;', '&#xa;// ')"/>
-    </xsl:function>
-    
-    <!--
-    <xsl:function name="myfunctions:convertSpacesToCamelCase" as="xs:string">
-        <xsl:param name="inputString"/>
-        
-        <xsl:sequence select="replace($inputString, ' (.)', upper-case('$1'))"/>     
-    </xsl:function>
-    -->
-    
-    <!-- gets the name of the package containing the given element
-        parameter element: element whose containing package shall be returned
-        returns: the package which contains $element -->
-    <xsl:function name="myfunctions:getPackageName">
-        <xsl:param name="element"/>   
-            
-        <xsl:sequence select="root($element)//packagedElement[@xmi:type = 'uml:Package'
-            and packagedElement[@xmi:id = $element/@xmi:id]]/@name"/>    
-    </xsl:function>
- 
+   
 </xsl:stylesheet>

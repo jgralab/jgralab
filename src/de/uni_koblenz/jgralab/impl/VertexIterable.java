@@ -24,12 +24,13 @@
  
 package de.uni_koblenz.jgralab.impl;
 
+import java.util.ConcurrentModificationException;
 import java.util.Iterator;
 
 import de.uni_koblenz.jgralab.Vertex;
-import de.uni_koblenz.jgralab.VertexClass;
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.GraphException;
+import de.uni_koblenz.jgralab.schema.VertexClass;
 
 /**
  * This class provides an Iterable to iterate over vertices in a graph. One may use this class
@@ -75,6 +76,15 @@ public class VertexIterable<V extends Vertex> implements Iterable<V> {
 		 * the graph this iterator works on
 		 */
 		protected Graph graph = null;
+		
+		/**
+		 * the version of the vertex list of the graph 
+		 * at the beginning of the iteration. This information
+		 * is used to check if the vertex list has changed,
+		 * the failfast-iterator will then throw an exception
+		 * the next time "next()" is called
+		 */
+		protected long vertexListVersion;
 
 		/**
 		 * creates a new VertexIterator for the given graph
@@ -82,12 +92,15 @@ public class VertexIterable<V extends Vertex> implements Iterable<V> {
 		 */
 		VertexIterator(Graph g) {
 			graph = g;
+			vertexListVersion = g.getVertexListVersion();
 		}
 		
 		/**
 		 * @return the next vertex in the graph which mathes the conditions of this iterator
 		 */
 		public V next() {
+			if (graph.isVertexListModified(vertexListVersion))
+				throw new ConcurrentModificationException("The vertex list of the graph has been modified - the iterator is not longer valid");
 			gotNext = true; 
 			return current;
 		}
@@ -143,50 +156,24 @@ public class VertexIterable<V extends Vertex> implements Iterable<V> {
 	}
 	
 		
-	class VertexIteratorVertexClassExplicit extends VertexIterator {
-		
-		boolean type;
-		
-		VertexClass ec;
-			
-		public VertexIteratorVertexClassExplicit(Graph g, VertexClass c, boolean type) {
-			super(g);
-			this.type = type;
-			ec = c;
-		}
-		
-		@SuppressWarnings("unchecked")
-		protected V getNext() {
-			return (V) current.getNextVertexOfClass(ec, type);
-		}
-		
-		@SuppressWarnings("unchecked")
-		protected V getFirst() {
-			return (V) graph.getFirstVertexOfClass(ec, type);
-		}
-		
-	}
 	
-	class VertexIteratorClassExplicit extends VertexIterator {
-		
-		boolean type;
+	class VertexIteratorClass extends VertexIterator {
 		
 		Class<? extends Vertex> ec;
 			
-		public VertexIteratorClassExplicit(Graph g, Class<? extends Vertex> c, boolean type) {
+		public VertexIteratorClass(Graph g, Class<? extends Vertex> c) {
 			super(g);
-			this.type = type;
 			ec = c;
 		}
 		
 		@SuppressWarnings("unchecked")
 		protected V getNext() {
-			return (V) current.getNextVertexOfClass(ec, type);
+			return (V) current.getNextVertexOfClass(ec);
 		}
 		
 		@SuppressWarnings("unchecked")
 		protected V getFirst() {
-			return (V) graph.getFirstVertexOfClass(ec, type);
+			return (V) graph.getFirstVertexOfClass(ec);
 		}
 		
 	}
@@ -199,23 +186,15 @@ public class VertexIterable<V extends Vertex> implements Iterable<V> {
 		iter = new VertexIterator(g);
 	}
 	
+	@SuppressWarnings("unchecked")
 	public VertexIterable(Graph g, VertexClass ec) {
-		iter = new VertexIteratorVertexClassExplicit(g, ec, false);
+		iter = new VertexIteratorClass(g, (Class<? extends Vertex>) ec.getM1Class());
 	}
 
 	public VertexIterable(Graph g, Class<? extends Vertex> ec) {
-		iter = new VertexIteratorClassExplicit(g, ec, false);
+		iter = new VertexIteratorClass(g, ec);
 	}
-	
-	public VertexIterable(Graph g, VertexClass ec, boolean explicitType) {
-		iter = new VertexIteratorVertexClassExplicit(g, ec, explicitType);
-	}
-	
-	public VertexIterable(Graph g, Class<? extends Vertex> ec, boolean explicitType) {
-		iter = new VertexIteratorClassExplicit(g, ec, explicitType);
-	}
-
-		
+			
 	public Iterator<V> iterator() {
 		return iter;
 	}

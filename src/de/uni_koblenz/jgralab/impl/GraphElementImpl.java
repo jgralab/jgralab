@@ -24,13 +24,21 @@
  
 package de.uni_koblenz.jgralab.impl;
 
-import de.uni_koblenz.jgralab.AttributedElementClass;
 import de.uni_koblenz.jgralab.Graph;
-import de.uni_koblenz.jgralab.GraphClass;
-import de.uni_koblenz.jgralab.Schema;
+import de.uni_koblenz.jgralab.schema.AttributedElementClass;
+import de.uni_koblenz.jgralab.schema.GraphClass;
+import de.uni_koblenz.jgralab.schema.Schema;
 
 public abstract class GraphElementImpl extends AttributedElementImpl {
 
+	/**
+	 * holds the version of the graphelement, for every modification 
+	 * (e.g. adding an edge or changing incidence sequence of a vertex)
+	 * this version number is increased by one
+	 * It is set to 0 when the graph is loaded.
+	 */
+	protected long graphVersion;
+	
 	public GraphElementImpl(Graph graph, AttributedElementClass cls) {
 		super(cls);
 		myGraph = graph;
@@ -62,11 +70,9 @@ public abstract class GraphElementImpl extends AttributedElementImpl {
 		return myGraph.getSchema();
 	}
 	
-	/**
-	 * increases the graph version number
-	 *
-	 */
-	public final void modified() {
-		myGraph.modified();
+
+
+	public void graphModified() {
+		myGraph.graphModified();
 	}
 }

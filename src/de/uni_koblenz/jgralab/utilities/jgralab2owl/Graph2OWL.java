@@ -29,20 +29,20 @@ import java.util.Map;
 import java.util.Set;
 
 import de.uni_koblenz.jgralab.Aggregation;
-import de.uni_koblenz.jgralab.AggregationClass;
 import de.uni_koblenz.jgralab.Attribute;
 import de.uni_koblenz.jgralab.AttributedElement;
-import de.uni_koblenz.jgralab.AttributedElementClass;
-import de.uni_koblenz.jgralab.Domain;
 import de.uni_koblenz.jgralab.Edge;
-import de.uni_koblenz.jgralab.EdgeClass;
 import de.uni_koblenz.jgralab.Graph;
-import de.uni_koblenz.jgralab.ListDomain;
 import de.uni_koblenz.jgralab.ProgressFunction;
-import de.uni_koblenz.jgralab.RecordDomain;
-import de.uni_koblenz.jgralab.Schema;
-import de.uni_koblenz.jgralab.SetDomain;
 import de.uni_koblenz.jgralab.Vertex;
+import de.uni_koblenz.jgralab.schema.AggregationClass;
+import de.uni_koblenz.jgralab.schema.AttributedElementClass;
+import de.uni_koblenz.jgralab.schema.Domain;
+import de.uni_koblenz.jgralab.schema.EdgeClass;
+import de.uni_koblenz.jgralab.schema.ListDomain;
+import de.uni_koblenz.jgralab.schema.RecordDomain;
+import de.uni_koblenz.jgralab.schema.Schema;
+import de.uni_koblenz.jgralab.schema.SetDomain;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -476,7 +476,7 @@ class Graph2OWL {
 		
 		// if "attr" has a CompositeDomain as type (no Object)
 		if ((dom.isComposite() 
-			    	&& !dom.getTGTypeName().equals("Object"))) {
+			    	&& !dom.getTGTypeName(null).equals("Object"))) {
 			return createAttributeIndividualObjectPropertyElement(
 					attrPropertyName, value, dom);
 		// if "attr" has a BasicDomain as type
@@ -505,10 +505,10 @@ class Graph2OWL {
 	 */
 	private Element createAttributeIndividualObjectPropertyElement(
 			String propertyName, Object value, Domain dom) {						
-		if (dom.getTGTypeName().startsWith("List")) {
+		if (dom.getTGTypeName(null).startsWith("List<")) {
 			return createListIndividualObjectPropertyElement(
 					propertyName, value, dom);
-		} else if (dom.getTGTypeName().startsWith("Set")) {
+		} else if (dom.getTGTypeName(null).startsWith("Set<")) {
 			return createSetIndividualObjectPropertyElement(
 					propertyName, value, dom);
 		} else {
@@ -594,7 +594,7 @@ class Graph2OWL {
 
 			// create individual properties for the ListElement's value
 			if (((baseDomain.isComposite() 
-			    	&& !baseDomain.getTGTypeName().equals("Object")))) {
+			    	&& !baseDomain.getTGTypeName(null).equals("Object")))) {
 				compositeIndividualElem.appendChild(
 						createAttributeIndividualObjectPropertyElement(
 								"listElementHasObject",	componentValue, baseDomain));
@@ -669,7 +669,7 @@ class Graph2OWL {
 
 		// if the base domain is a composite domain
 		if ((baseDomain.isComposite() 
-		    	&& !dom.getTGTypeName().equals("Object"))) {
+		    	&& !dom.getTGTypeName(null).equals("Object"))) {
 			// for each value inside the Set
 			for (Object componentValue : (Set)value) {
 				compositeIndividualElem.appendChild(
@@ -751,7 +751,7 @@ class Graph2OWL {
 			
 			// if the component is of composite type
 			if (component.getValue().isComposite() 
-					&& !component.getValue().getTGTypeName().equals("Object")) {
+					&& !component.getValue().getTGTypeName(null).equals("Object")) {
 				compositeIndividualElem.appendChild(
 						createAttributeIndividualObjectPropertyElement(
 									HelperMethods.firstToLowerCase(dom.getName()) 
@@ -794,12 +794,12 @@ class Graph2OWL {
 		Element attrIndividualPropertyElem = createIndividualPropertyElement(
 				propertyName);
 		
-		if (dom.getTGTypeName().equals("String")) {
+		if (dom.getTGTypeName(null).equals("String")) {
 			attrIndividualPropertyElem.setAttribute("rdf:datatype", 
 					"http://www.w3.org/2001/XMLSchema#string");
 			attrIndividualPropertyElem.appendChild(doc.createTextNode(
 					(String)value));
-		} else if (dom.getTGTypeName().equals("Object")) {
+		} else if (dom.getTGTypeName(null).equals("Object")) {
 			attrIndividualPropertyElem.setAttribute("rdf:datatype", 
 					"http://www.w3.org/2001/XMLSchema#base64Binary");
 			attrIndividualPropertyElem.appendChild(doc.createTextNode(
@@ -810,7 +810,7 @@ class Graph2OWL {
 		} else {
 			attrIndividualPropertyElem.setAttribute("rdf:datatype", 
 					"http://www.w3.org/2001/XMLSchema#"
-							+ dom.getJavaAttributeImplementationTypeName()); 
+							+ dom.getJavaAttributeImplementationTypeName("")); 
 			attrIndividualPropertyElem.appendChild(doc.createTextNode(
 					(value.toString())));
 		}

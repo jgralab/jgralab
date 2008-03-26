@@ -43,21 +43,22 @@ import org.apache.xmlrpc.XmlRpcException;
 
 import de.uni_koblenz.jgralab.Attribute;
 import de.uni_koblenz.jgralab.AttributedElement;
-import de.uni_koblenz.jgralab.CompositeDomain;
-import de.uni_koblenz.jgralab.Domain;
 import de.uni_koblenz.jgralab.Edge;
-import de.uni_koblenz.jgralab.EdgeClass;
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.GraphElement;
 import de.uni_koblenz.jgralab.GraphIO;
 import de.uni_koblenz.jgralab.GraphIOException;
 import de.uni_koblenz.jgralab.M1ClassManager;
-import de.uni_koblenz.jgralab.RecordDomain;
-import de.uni_koblenz.jgralab.Schema;
 import de.uni_koblenz.jgralab.Vertex;
-import de.uni_koblenz.jgralab.VertexClass;
-import de.uni_koblenz.jgralab.impl.EdgeBaseImpl;
-import de.uni_koblenz.jgralab.impl.VertexBaseImpl;
+import de.uni_koblenz.jgralab.impl.EdgeImpl;
+import de.uni_koblenz.jgralab.impl.VertexImpl;
+import de.uni_koblenz.jgralab.schema.CompositeDomain;
+import de.uni_koblenz.jgralab.schema.Domain;
+import de.uni_koblenz.jgralab.schema.EdgeClass;
+import de.uni_koblenz.jgralab.schema.QualifiedName;
+import de.uni_koblenz.jgralab.schema.RecordDomain;
+import de.uni_koblenz.jgralab.schema.Schema;
+import de.uni_koblenz.jgralab.schema.VertexClass;
 
 /**
  * The public methods of this class which have return type (no {@code void})
@@ -70,15 +71,15 @@ public class JGraLabFacade {
 	 * the instance of {@code GraphContainer} containing the graphs
 	 */
 	private GraphContainer graphContainer;
-	
+
 	public JGraLabFacade() {
 		graphContainer = GraphContainer.instance();
 	}
-	
+
 	/**
 	 * Creates a graph of type {@code graphClassName} with random id. The
-	 * maximum number of vertices and edges is initially set to 100 each. Returns
-	 * a {@code Map<String, Object>} with four entries:<br>
+	 * maximum number of vertices and edges is initially set to 100 each.
+	 * Returns a {@code Map<String, Object>} with four entries:<br>
 	 * <br>
 	 * "handle" -> {@code Integer} value which has to be used to access the
 	 * graph<br>
@@ -105,9 +106,9 @@ public class JGraLabFacade {
 	}
 
 	/**
-	 * Creates a graph of type {@code graphClassName} with id
-	 * {@code graphId}. The maximum number of vertices and edges is initially
-	 * set to 100 each. Returns a {@code Map<String, Object>} with four entries:<br>
+	 * Creates a graph of type {@code graphClassName} with id {@code graphId}.
+	 * The maximum number of vertices and edges is initially set to 100 each.
+	 * Returns a {@code Map<String, Object>} with four entries:<br>
 	 * <br>
 	 * "handle" -> {@code Integer} value which has to be used to access the
 	 * graph<br>
@@ -136,10 +137,10 @@ public class JGraLabFacade {
 	}
 
 	/**
-	 * Creates a graph of type {@code graphClassName} with id
-	 * {@code graphId}, and maximum numbers of vertices and edges of
-	 * {@code vMax} and {@code eMax}, respectively. Returns a
-	 * {@code Map<String, Object>} with four entries:<br>
+	 * Creates a graph of type {@code graphClassName} with id {@code graphId},
+	 * and maximum numbers of vertices and edges of {@code vMax} and
+	 * {@code eMax}, respectively. Returns a {@code Map<String, Object>} with
+	 * four entries:<br>
 	 * <br>
 	 * "handle" -> {@code Integer} value which has to be used to access the
 	 * graph<br>
@@ -169,14 +170,16 @@ public class JGraLabFacade {
 			String graphClassName, String graphId, int vMax, int eMax)
 			throws XmlRpcException {
 		try {
-			Class<?> schemaClass = Class.forName(schemaName, true, M1ClassManager.instance());
+			Class<?> schemaClass = Class.forName(schemaName, true,
+					M1ClassManager.instance());
 			Schema schema = (Schema) (schemaClass.getMethod("instance",
 					(Class[]) null).invoke(null));
 
-			Method graphCreateMethod = schema.getGraphCreateMethod(graphClassName);
+			Method graphCreateMethod = schema
+					.getGraphCreateMethod(new QualifiedName(graphClassName));
 
-			Graph graph = (Graph) (graphCreateMethod.invoke(null,
-					new Object[] { graphId, vMax, eMax }));
+			Graph graph = (Graph) (graphCreateMethod.invoke(null, new Object[] {
+					graphId, vMax, eMax }));
 
 			int graphNo = graphContainer.addGraph(graph);
 			return createGraphMap(graphNo);
@@ -185,11 +188,11 @@ public class JGraLabFacade {
 			throw new XmlRpcException(e.toString());
 		}
 	}
-	
+
 	/**
-	 * Creates a graph of type {@code graphClassName} with random id.
-	 * The maximum number of vertices and edges is initially
-	 * set to 100 each. Returns a {@code Map<String, Object>} with four entries:<br>
+	 * Creates a graph of type {@code graphClassName} with random id. The
+	 * maximum number of vertices and edges is initially set to 100 each.
+	 * Returns a {@code Map<String, Object>} with four entries:<br>
 	 * <br>
 	 * "handle" -> {@code Integer} value which has to be used to access the
 	 * graph<br>
@@ -199,9 +202,10 @@ public class JGraLabFacade {
 	 * "attributes" -> {@code Map<String, Object>} representing the graph's
 	 * attributes (attribute name -> attribute value)
 	 * 
-	 * If the M1-Classes are not present in the classpath, the "tempSchema" folder
-	 * must be on the classpath of the XML-RPC server. The path to the {@code javac}
-	 * compiler must be in the {@code PATH} system environment variable.
+	 * If the M1-Classes are not present in the classpath, the "tempSchema"
+	 * folder must be on the classpath of the XML-RPC server. The path to the
+	 * {@code javac} compiler must be in the {@code PATH} system environment
+	 * variable.
 	 * 
 	 * @param schemaUrl
 	 *            the URL of the TG-file holding the schema.
@@ -216,14 +220,14 @@ public class JGraLabFacade {
 	 */
 	public Map<String, Object> createGraphWithRemoteSchema(String schemaUrl,
 			String graphClassName) throws XmlRpcException {
-		return createGraphWithRemoteSchema(
-				schemaUrl, graphClassName, null, 100, 100);
+		return createGraphWithRemoteSchema(schemaUrl, graphClassName, null,
+				100, 100);
 	}
-	
+
 	/**
-	 * Creates a graph of type {@code graphClassName} with id
-	 * {@code graphId}. The maximum number of vertices and edges is initially
-	 * set to 100 each. Returns a {@code Map<String, Object>} with four entries:<br>
+	 * Creates a graph of type {@code graphClassName} with id {@code graphId}.
+	 * The maximum number of vertices and edges is initially set to 100 each.
+	 * Returns a {@code Map<String, Object>} with four entries:<br>
 	 * <br>
 	 * "handle" -> {@code Integer} value which has to be used to access the
 	 * graph<br>
@@ -233,9 +237,10 @@ public class JGraLabFacade {
 	 * "attributes" -> {@code Map<String, Object>} representing the graph's
 	 * attributes (attribute name -> attribute value)
 	 * 
-	 * If the M1-Classes are not present in the classpath, the "tempSchema" folder
-	 * must be on the classpath of the XML-RPC server. The path to the {@code javac}
-	 * compiler must be in the {@code PATH} system environment variable.
+	 * If the M1-Classes are not present in the classpath, the "tempSchema"
+	 * folder must be on the classpath of the XML-RPC server. The path to the
+	 * {@code javac} compiler must be in the {@code PATH} system environment
+	 * variable.
 	 * 
 	 * @param schemaUrl
 	 *            the URL of the TG-file holding the schema.
@@ -250,15 +255,15 @@ public class JGraLabFacade {
 	 */
 	public Map<String, Object> createGraphWithRemoteSchema(String schemaUrl,
 			String graphClassName, String graphId) throws XmlRpcException {
-		return createGraphWithRemoteSchema(
-				schemaUrl, graphClassName, graphId, 100, 100);
+		return createGraphWithRemoteSchema(schemaUrl, graphClassName, graphId,
+				100, 100);
 	}
-	
+
 	/**
-	 * Creates a graph of type {@code graphClassName} with id
-	 * {@code graphId}, and maximum numbers of vertices and edges of
-	 * {@code vMax} and {@code eMax}, respectively. Returns a
-	 * {@code Map<String, Object>} with four entries:<br>
+	 * Creates a graph of type {@code graphClassName} with id {@code graphId},
+	 * and maximum numbers of vertices and edges of {@code vMax} and
+	 * {@code eMax}, respectively. Returns a {@code Map<String, Object>} with
+	 * four entries:<br>
 	 * <br>
 	 * "handle" -> {@code Integer} value which has to be used to access the
 	 * graph<br>
@@ -268,10 +273,10 @@ public class JGraLabFacade {
 	 * "attributes" -> {@code Map<String, Object>} representing the graph's
 	 * attributes (attribute name -> attribute value)
 	 * 
-	 * If the M1-Classes are not present in the classpath, the "tempSchema" folder
-	 * must be on the classpath of the XML-RPC server as well as the path to the
-	 * {@code javac} compiler must be in the {@code PATH} system environment
-	 * variable.
+	 * If the M1-Classes are not present in the classpath, the "tempSchema"
+	 * folder must be on the classpath of the XML-RPC server as well as the path
+	 * to the {@code javac} compiler must be in the {@code PATH} system
+	 * environment variable.
 	 * 
 	 * @param schemaUrl
 	 *            the URL of the TG-file holding the schema.
@@ -292,28 +297,30 @@ public class JGraLabFacade {
 			String graphClassName, String graphId, int vMax, int eMax)
 			throws XmlRpcException {
 		int graphNo;
-		
+
 		try {
 			Method graphCreateMethod;
 			Graph graph;
 			Schema schema = GraphIO.loadSchemaFromURL(schemaUrl);
-			
+
 			try {
-				Class.forName(schema.getFullName(), true, M1ClassManager.instance());
+				Class.forName(schema.getQualifiedName(), true, M1ClassManager
+						.instance());
 			} catch (ClassNotFoundException e) {
 				schema.compile();
 			}
-						
-			graphCreateMethod = schema.getGraphCreateMethod(graphClassName);
-			graph = (Graph)graphCreateMethod.invoke(
-					null, new Object[] { graphId, vMax, eMax } );
-			
+
+			graphCreateMethod = schema.getGraphCreateMethod(new QualifiedName(
+					graphClassName));
+			graph = (Graph) graphCreateMethod.invoke(null, new Object[] {
+					graphId, vMax, eMax });
+
 			graphNo = graphContainer.addGraph(graph);
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw new XmlRpcException(e.toString());
 		}
-			
+
 		return createGraphMap(graphNo);
 	}
 
@@ -329,27 +336,29 @@ public class JGraLabFacade {
 	 * "attributes" -> {@code Map<String, Object>} representing the graph's
 	 * attributes (attribute name -> attribute value)
 	 * 
-	 * @param url the URL pointing to the TG-file containing the graph to be loaded
+	 * @param url
+	 *            the URL pointing to the TG-file containing the graph to be
+	 *            loaded
 	 * @return a {@code Map<String, Object>} with four entries (see method
 	 *         description)
 	 * @throws XmlRpcException
 	 */
-	public Map<String, Object> loadGraph(String url)
-			throws XmlRpcException {
+	public Map<String, Object> loadGraph(String url) throws XmlRpcException {
 		int graphNo;
-		
+
 		try {
 			Graph graph;
 			Schema schema = GraphIO.loadSchemaFromURL(url);
-			
+
 			try {
-				Class.forName(schema.getFullName(), true, M1ClassManager.instance());
+				Class.forName(schema.getQualifiedName(), true, M1ClassManager
+						.instance());
 			} catch (ClassNotFoundException e) {
 				schema.compile();
 			}
-			
+
 			GraphIO.loadSchemaFromURL(url).compile();
-			
+
 			graph = GraphIO.loadGraphFromURL(url, null);
 			graphNo = graphContainer.addGraph(graph);
 		} catch (Exception e) {
@@ -376,8 +385,8 @@ public class JGraLabFacade {
 	public boolean saveGraph(int graphNo, String tgFilename)
 			throws XmlRpcException {
 		try {
-			GraphIO.saveGraphToFile(tgFilename, graphContainer.getGraph(graphNo),
-					null);
+			GraphIO.saveGraphToFile(tgFilename, graphContainer
+					.getGraph(graphNo), null);
 			return true;
 		} catch (GraphIOException e) {
 			e.printStackTrace();
@@ -460,16 +469,14 @@ public class JGraLabFacade {
 	 */
 	public Map<String, Object> createVertex(int graphNo, String vertexClassName)
 			throws XmlRpcException {
-		Class<VertexBaseImpl> m1VertexClass;
+		Class<? extends VertexImpl> m1VertexClass;
 
 		Graph graph;
-		Schema schema;
-
+		
 		graph = graphContainer.getGraph(graphNo);
-		schema = graph.getSchema();
-		m1VertexClass = schema.getAttributedElementClass(vertexClassName)
-				.getM1Class();
-
+		m1VertexClass = (Class<? extends VertexImpl>)graph.getGraphClass().getVertexClass(
+				new QualifiedName(vertexClassName)).getM1Class();
+		
 		return createGraphElementMap(graph.createVertex(m1VertexClass));
 	}
 
@@ -499,19 +506,17 @@ public class JGraLabFacade {
 	 */
 	public Map<String, Object> createEdge(int graphNo, String vertexClassName,
 			int alphaId, int omegaId) throws XmlRpcException {
-		Class<EdgeBaseImpl> m1EdgeClass;
+		Class<EdgeImpl> m1EdgeClass;
 
 		Graph graph;
-		Schema schema;
 		Vertex alpha, omega;
 
 		graph = graphContainer.getGraph(graphNo);
 		alpha = graph.getVertex(alphaId);
 		omega = graph.getVertex(omegaId);
 
-		schema = graph.getSchema();
-		m1EdgeClass = schema.getAttributedElementClass(vertexClassName)
-				.getM1Class();
+		m1EdgeClass = (Class<EdgeImpl>)graph.getGraphClass().getEdgeClass(
+				new QualifiedName(vertexClassName)).getM1Class();
 
 		return createGraphElementMap(graph
 				.createEdge(m1EdgeClass, alpha, omega));
@@ -539,8 +544,10 @@ public class JGraLabFacade {
 			throws XmlRpcException {
 		Map<String, Object> vertexMap = createGraphElementMap(graphContainer
 				.getGraph(graphNo).getVertex(vId));
+		
+		Graph graph = graphContainer.getGraph(graphNo);
 
-		graphContainer.getGraph(graphNo).deleteVertex(vId);
+		graph.deleteVertex(graph.getVertex(vId));
 
 		return vertexMap;
 	}
@@ -567,8 +574,10 @@ public class JGraLabFacade {
 			throws XmlRpcException {
 		Map<String, Object> edgeMap = createGraphElementMap(graphContainer
 				.getGraph(graphNo).getEdge(eId));
+		
+		Graph graph = graphContainer.getGraph(graphNo);
 
-		graphContainer.getGraph(graphNo).deleteEdge(eId);
+		graph.deleteEdge(graph.getEdge(eId));
 
 		return edgeMap;
 	}
@@ -711,7 +720,8 @@ public class JGraLabFacade {
 		return createGraphElementMap(graphContainer.getGraph(graphNo)
 				.getFirstVertexOfClass(
 						(VertexClass) graphContainer.getGraph(graphNo)
-								.getSchema().getAttributedElementClass(vcName)));
+								.getSchema().getAttributedElementClass(
+										new QualifiedName(vcName))));
 	}
 
 	/**
@@ -738,8 +748,9 @@ public class JGraLabFacade {
 	 */
 	public Map<String, Object> getNextVertex(int graphNo, int vId)
 			throws XmlRpcException {
-		return createGraphElementMap(graphContainer.getGraph(graphNo)
-				.getNextVertex(vId));
+		Graph graph = graphContainer.getGraph(graphNo);
+		
+		return createGraphElementMap(graph.getNextVertex(graph.getVertex(vId)));
 	}
 
 	/**
@@ -772,9 +783,9 @@ public class JGraLabFacade {
 			String vcName) throws XmlRpcException {
 		Graph graph = graphContainer.getGraph(graphNo);
 
-		return createGraphElementMap(graph.getNextVertexOfClass(vId,
+		return createGraphElementMap(graph.getNextVertexOfClass(graph.getVertex(vId),
 				(VertexClass) graph.getSchema().getAttributedElementClass(
-						vcName)));
+						new QualifiedName(vcName))));
 	}
 
 	/**
@@ -800,8 +811,9 @@ public class JGraLabFacade {
 	 */
 	public Map<String, Object> getFirstEdge(int graphNo, int vId)
 			throws XmlRpcException {
-		return createGraphElementMap(graphContainer.getGraph(graphNo)
-				.getFirstEdge(vId));
+		Graph graph = graphContainer.getGraph(graphNo);
+		
+		return createGraphElementMap(graph.getFirstEdge(graph.getVertex(vId)));
 	}
 
 	/**
@@ -831,11 +843,11 @@ public class JGraLabFacade {
 	 */
 	public Map<String, Object> getFirstEdgeOfClass(int graphNo, int vId,
 			String ecName) throws XmlRpcException {
-		return createGraphElementMap(graphContainer.getGraph(graphNo)
-				.getFirstEdgeOfClass(
-						vId,
-						(EdgeClass) graphContainer.getGraph(graphNo)
-								.getSchema().getAttributedElementClass(ecName)));
+		Graph graph = graphContainer.getGraph(graphNo);
+		
+		return createGraphElementMap(graph.getFirstEdgeOfClass(graph.getVertex(vId),
+						(EdgeClass) graph.getSchema().getAttributedElementClass(
+										new QualifiedName(ecName))));
 	}
 
 	/**
@@ -862,8 +874,9 @@ public class JGraLabFacade {
 	 */
 	public Map<String, Object> getNextEdge(int graphNo, int eId)
 			throws XmlRpcException {
-		return createGraphElementMap(graphContainer.getGraph(graphNo)
-				.getNextEdge(eId));
+		Graph graph = graphContainer.getGraph(graphNo);
+		
+		return createGraphElementMap(graph.getNextEdge(graph.getEdge(eId)));
 	}
 
 	/**
@@ -895,9 +908,9 @@ public class JGraLabFacade {
 			String ecName) throws XmlRpcException {
 		Graph graph = graphContainer.getGraph(graphNo);
 
-		return createGraphElementMap(graph
-				.getNextEdgeOfClass(eId, (EdgeClass) graph.getSchema()
-						.getAttributedElementClass(ecName)));
+		return createGraphElementMap(graph.getNextEdgeOfClass(graph.getEdge(eId),
+				(EdgeClass) graph.getSchema().getAttributedElementClass(
+						new QualifiedName(ecName))));
 	}
 
 	/**
@@ -952,7 +965,7 @@ public class JGraLabFacade {
 
 		return createGraphElementMap(graph
 				.getFirstEdgeOfClassInGraph((EdgeClass) graph.getSchema()
-						.getAttributedElementClass(ecName)));
+						.getAttributedElementClass(new QualifiedName(ecName))));
 	}
 
 	/**
@@ -978,8 +991,9 @@ public class JGraLabFacade {
 	 */
 	public Map<String, Object> getNextEdgeInGraph(int graphNo, int eId)
 			throws XmlRpcException {
-		return createGraphElementMap(graphContainer.getGraph(graphNo)
-				.getNextEdgeInGraph(eId));
+		Graph graph = graphContainer.getGraph(graphNo);
+		
+		return createGraphElementMap(graph.getNextEdgeInGraph(graph.getEdge(eId)));
 	}
 
 	/**
@@ -1012,9 +1026,9 @@ public class JGraLabFacade {
 			String ecName) throws XmlRpcException {
 		Graph graph = graphContainer.getGraph(graphNo);
 
-		return createGraphElementMap(graph
-				.getNextEdgeOfClassInGraph(eId, (EdgeClass) graph.getSchema()
-						.getAttributedElementClass(ecName)));
+		return createGraphElementMap(graph.getNextEdgeOfClassInGraph(graph.getEdge(eId),
+				(EdgeClass) graph.getSchema().getAttributedElementClass(
+						new QualifiedName(ecName))));
 	}
 
 	/**
@@ -1029,7 +1043,9 @@ public class JGraLabFacade {
 	 * @return the degree of the vertex with id {@code vId}
 	 */
 	public int getDegree(int graphNo, int vId) {
-		return graphContainer.getGraph(graphNo).getDegree(vId);
+		Graph graph = graphContainer.getGraph(graphNo);
+		
+		return graph.getDegree(graph.getVertex(vId));
 	}
 
 	/**
@@ -1055,8 +1071,9 @@ public class JGraLabFacade {
 	 */
 	public Map<String, Object> getAlpha(int graphNo, int eId)
 			throws XmlRpcException {
-		return createGraphElementMap(graphContainer.getGraph(graphNo).getAlpha(
-				eId));
+		Graph graph = graphContainer.getGraph(graphNo);
+		
+		return createGraphElementMap(graph.getAlpha(graph.getEdge(eId)));
 	}
 
 	/**
@@ -1082,8 +1099,9 @@ public class JGraLabFacade {
 	 */
 	public Map<String, Object> getOmega(int graphNo, int eId)
 			throws XmlRpcException {
-		return createGraphElementMap(graphContainer.getGraph(graphNo).getOmega(
-				eId));
+		Graph graph = graphContainer.getGraph(graphNo);
+		
+		return createGraphElementMap(graph.getOmega(graph.getEdge(eId)));
 	}
 
 	/**
@@ -1114,7 +1132,7 @@ public class JGraLabFacade {
 			throws XmlRpcException {
 		Graph graph = graphContainer.getGraph(graphNo);
 
-		graph.setAlpha(eId, vId);
+		graph.setAlpha(graph.getEdge(eId), graph.getVertex(vId));
 
 		return createGraphElementMap(graph.getVertex(vId));
 	}
@@ -1146,40 +1164,7 @@ public class JGraLabFacade {
 			throws XmlRpcException {
 		Graph graph = graphContainer.getGraph(graphNo);
 
-		graph.setOmega(eId, vId);
-
-		return createGraphElementMap(graph.getVertex(vId));
-	}
-
-	/**
-	 * Inserts the vertex with the id {@code vId} at the position {@code pos} of
-	 * the sequence of vertices <i>Vseq</i> of the graph pointed to by
-	 * {@code graphNo}. Returns a {@code Map<String, Object>} with three
-	 * entries:<br>
-	 * <br>
-	 * "id" -> {@code Integer} value representing the id of the vertex<br>
-	 * "class" -> {@code String} value representing the name of the vertex class
-	 * the vertex is an instance of<br>
-	 * "attributes" -> {@code Map<String, Object>} representing the vertex'
-	 * attributes (attribute name -> attribute value)
-	 * 
-	 * @param graphNo
-	 *            the handle of the graph in which the vertex shall be inserted
-	 *            at position {@code pos}
-	 * @param vId
-	 *            the id of the vertex which shall be inserted at {@code pos}
-	 * @param pos
-	 *            the position of <i>Vseq</i> at which the vertex {@code vId}
-	 *            shall be inserted
-	 * @return a {@code Map<String, Object>} with three entries (see method
-	 *         description)
-	 * @throws XmlRpcException
-	 */
-	public Map<String, Object> insertVertexAt(int graphNo, int vId, int pos)
-			throws XmlRpcException {
-		Graph graph = graphContainer.getGraph(graphNo);
-
-		graph.insertVertexAtPos(vId, pos);
+		graph.setOmega(graph.getEdge(eId), graph.getVertex(vId));
 
 		return createGraphElementMap(graph.getVertex(vId));
 	}
@@ -1214,40 +1199,7 @@ public class JGraLabFacade {
 			int pos) throws XmlRpcException {
 		Graph graph = graphContainer.getGraph(graphNo);
 
-		graph.insertEdgeAt(vId, eId, pos);
-
-		return createGraphElementMap(graph.getEdge(eId));
-	}
-
-	/**
-	 * Inserts the edge with the id {@code eId} at the position {@code pos} of
-	 * the sequence of edges <i>Eseq</i> of the graph pointed to by
-	 * {@code graphNo}. Returns a {@code Map<String, Object>} with three
-	 * entries:<br>
-	 * <br>
-	 * "id" -> {@code Integer} value representing the id of the edge<br>
-	 * "class" -> {@code String} value representing the name of the edge class
-	 * the edge is an instance of<br>
-	 * "attributes" -> {@code Map<String, Object>} representing the edge's
-	 * attributes (attribute name -> attribute value)
-	 * 
-	 * @param graphNo
-	 *            the handle of the graph in which the edge shall be inserted at
-	 *            position {@code pos}
-	 * @param eId
-	 *            the id of the edge which shall be inserted at {@code pos}
-	 * @param pos
-	 *            the position of <i>Eseq</i> at which the edge {@code eId}
-	 *            shall be inserted
-	 * @return a {@code Map<String, Object>} with three entries (see method
-	 *         description)
-	 * @throws XmlRpcException
-	 */
-	public Map<String, Object> insertEdgeInGraphAt(int graphNo, int eId, int pos)
-			throws XmlRpcException {
-		Graph graph = graphContainer.getGraph(graphNo);
-
-		graphContainer.getGraph(graphNo).insertEdgeInGraphAtPos(eId, pos);
+		graph.insertEdgeAt(graph.getVertex(vId), graph.getEdge(eId), pos);
 
 		return createGraphElementMap(graph.getEdge(eId));
 	}
@@ -1282,7 +1234,7 @@ public class JGraLabFacade {
 			int source) throws XmlRpcException {
 		Graph graph = graphContainer.getGraph(graphNo);
 
-		graph.putAfterVertex(target, source);
+		graph.putAfterVertex(graph.getVertex(target), graph.getVertex(source));
 
 		return createGraphElementMap(graph.getVertex(source));
 	}
@@ -1317,7 +1269,7 @@ public class JGraLabFacade {
 			int source) throws XmlRpcException {
 		Graph graph = graphContainer.getGraph(graphNo);
 
-		graph.putBeforeVertex(target, source);
+		graph.putBeforeVertex(graph.getVertex(target), graph.getVertex(source));
 
 		return createGraphElementMap(graph.getVertex(source));
 	}
@@ -1352,7 +1304,7 @@ public class JGraLabFacade {
 			int source) throws XmlRpcException {
 		Graph graph = graphContainer.getGraph(graphNo);
 
-		graph.putAfterEdgeInGraph(target, source);
+		graph.putAfterEdgeInGraph(graph.getEdge(target), graph.getEdge(source));
 
 		return createGraphElementMap(graph.getEdge(source));
 	}
@@ -1387,7 +1339,7 @@ public class JGraLabFacade {
 			int source) throws XmlRpcException {
 		Graph graph = graphContainer.getGraph(graphNo);
 
-		graph.putBeforeEdgeInGraph(target, source);
+		graph.putBeforeEdgeInGraph(graph.getEdge(target), graph.getEdge(source));
 
 		return createGraphElementMap(graph.getEdge(source));
 	}
@@ -1422,7 +1374,7 @@ public class JGraLabFacade {
 			int previousEdgeId) throws XmlRpcException {
 		Graph graph = graphContainer.getGraph(graphNo);
 
-		graph.putEdgeAfter(edgeId, previousEdgeId);
+		graph.putEdgeAfter(graph.getEdge(edgeId), graph.getEdge(previousEdgeId));
 
 		return createGraphElementMap(graph.getEdge(edgeId));
 	}
@@ -1457,7 +1409,7 @@ public class JGraLabFacade {
 			int nextEdgeId) throws XmlRpcException {
 		Graph graph = graphContainer.getGraph(graphNo);
 
-		graph.putEdgeBefore(edgeId, nextEdgeId);
+		graph.putEdgeBefore(graph.getEdge(edgeId), graph.getEdge(nextEdgeId));
 
 		return createGraphElementMap(graph.getEdge(edgeId));
 	}
@@ -1515,7 +1467,7 @@ public class JGraLabFacade {
 
 		for (Attribute attribute : attributeSet) {
 			attributeTypeMap.put(attribute.getName(), attribute.getDomain()
-					.getTGTypeName());
+					.getTGTypeName(null));
 		}
 
 		return attributeTypeMap;
@@ -1583,8 +1535,8 @@ public class JGraLabFacade {
 	}
 
 	/**
-	 * Sets the value of the attribute {@code attrName} of type Integer
-	 * of the graph pointed to by {@code graphNo} to {@code value}.
+	 * Sets the value of the attribute {@code attrName} of type Integer of the
+	 * graph pointed to by {@code graphNo} to {@code value}.
 	 * 
 	 * @param graphNo
 	 *            the handle of the graph whose attribute value shall be set
@@ -1596,14 +1548,14 @@ public class JGraLabFacade {
 	 *         {@code false} otherwise
 	 * @throws XmlRpcException
 	 */
-	public boolean setGraphAttribute(int graphNo, String attrName,
-			int value) throws XmlRpcException {
+	public boolean setGraphAttribute(int graphNo, String attrName, int value)
+			throws XmlRpcException {
 		return setGraphAttribute(graphNo, attrName, new Integer(value));
 	}
 
 	/**
-	 * Sets the value of the attribute {@code attrName} of type Double
-	 * of the graph pointed to by {@code graphNo} to {@code value}.
+	 * Sets the value of the attribute {@code attrName} of type Double of the
+	 * graph pointed to by {@code graphNo} to {@code value}.
 	 * 
 	 * @param graphNo
 	 *            the handle of the graph whose attribute value shall be set
@@ -1621,8 +1573,8 @@ public class JGraLabFacade {
 	}
 
 	/**
-	 * Sets the value of the attribute {@code attrName} of type Boolean
-	 * of the graph pointed to by {@code graphNo} to {@code value}.
+	 * Sets the value of the attribute {@code attrName} of type Boolean of the
+	 * graph pointed to by {@code graphNo} to {@code value}.
 	 * 
 	 * @param graphNo
 	 *            the handle of the graph whose attribute value shall be set
@@ -1638,10 +1590,10 @@ public class JGraLabFacade {
 			boolean value) throws XmlRpcException {
 		return setGraphAttribute(graphNo, attrName, new Boolean(value));
 	}
-	
+
 	/**
-	 * Sets the value of the attribute {@code attrName} of types List or Set
-	 * of the graph pointed to by {@code graphNo} to {@code value}.
+	 * Sets the value of the attribute {@code attrName} of types List or Set of
+	 * the graph pointed to by {@code graphNo} to {@code value}.
 	 * 
 	 * @param graphNo
 	 *            the handle of the graph whose attribute value shall be set
@@ -1655,12 +1607,12 @@ public class JGraLabFacade {
 	 */
 	public boolean setGraphAttribute(int graphNo, int vId, String attrName,
 			Object[] value) throws XmlRpcException {
-		return setGraphAttribute(graphNo, attrName, (Object)value);
+		return setGraphAttribute(graphNo, attrName, (Object) value);
 	}
-	
+
 	/**
-	 * Sets the value of the attribute {@code attrName} of type Record
-	 * of the graph pointed to by {@code graphNo} to {@code value}.
+	 * Sets the value of the attribute {@code attrName} of type Record of the
+	 * graph pointed to by {@code graphNo} to {@code value}.
 	 * 
 	 * @param graphNo
 	 *            the handle of the graph whose attribute value shall be set
@@ -1674,12 +1626,12 @@ public class JGraLabFacade {
 	 */
 	public boolean setGraphAttribute(int graphNo, int vId, String attrName,
 			Map<String, Object> value) throws XmlRpcException {
-		return setGraphAttribute(graphNo, attrName, (Object)value);
+		return setGraphAttribute(graphNo, attrName, (Object) value);
 	}
-	
+
 	/**
-	 * Sets the value of the attribute {@code attrName} of type Object
-	 * of the graph pointed to by {@code graphNo} to {@code value}.
+	 * Sets the value of the attribute {@code attrName} of type Object of the
+	 * graph pointed to by {@code graphNo} to {@code value}.
 	 * 
 	 * @param graphNo
 	 *            the handle of the graph whose attribute value shall be set
@@ -1693,7 +1645,7 @@ public class JGraLabFacade {
 	 */
 	public boolean setGraphAttribute(int graphNo, int vId, String attrName,
 			byte[] value) throws XmlRpcException {
-		return setGraphAttribute(graphNo, attrName, (Object)value);
+		return setGraphAttribute(graphNo, attrName, (Object) value);
 	}
 
 	/**
@@ -1752,7 +1704,7 @@ public class JGraLabFacade {
 
 		for (Attribute attribute : attributeSet) {
 			attributeTypeMap.put(attribute.getName(), attribute.getDomain()
-					.getTGTypeName());
+					.getTGTypeName(null));
 		}
 
 		return attributeTypeMap;
@@ -1814,12 +1766,10 @@ public class JGraLabFacade {
 	 */
 	public boolean setVertexAttribute(int graphNo, int vId, String attrName,
 			Object value) throws XmlRpcException {
-		value = convertToJGraLabType(value, 
-				graphContainer.getGraph(graphNo).getVertex(vId)
-						.getAttributedElementClass().getAttribute(attrName)
-								.getDomain(),
-				graphContainer.getGraph(graphNo));
-		
+		value = convertToJGraLabType(value, graphContainer.getGraph(graphNo)
+				.getVertex(vId).getAttributedElementClass().getAttribute(
+						attrName).getDomain(), graphContainer.getGraph(graphNo));
+
 		try {
 			graphContainer.getGraph(graphNo).getVertex(vId).setAttribute(
 					attrName, value);
@@ -1832,10 +1782,9 @@ public class JGraLabFacade {
 	}
 
 	/**
-	 * Sets the value of the attribute {@code attrName} of type Integer of 
-	 * the vertex with the id {@code vId} contained in the graph pointed to
-	 * by {@code graphNo} to
-	 * {@code value}.
+	 * Sets the value of the attribute {@code attrName} of type Integer of the
+	 * vertex with the id {@code vId} contained in the graph pointed to by
+	 * {@code graphNo} to {@code value}.
 	 * 
 	 * @param graphNo
 	 *            the handle of the graph containing the vertex {@code vId}
@@ -1855,10 +1804,9 @@ public class JGraLabFacade {
 	}
 
 	/**
-	 * Sets the value of the attribute {@code attrName} of type Double of 
-	 * the vertex with the id {@code vId} contained in the graph pointed to
-	 * by {@code graphNo} to
-	 * {@code value}.
+	 * Sets the value of the attribute {@code attrName} of type Double of the
+	 * vertex with the id {@code vId} contained in the graph pointed to by
+	 * {@code graphNo} to {@code value}.
 	 * 
 	 * @param graphNo
 	 *            the handle of the graph containing the vertex {@code vId}
@@ -1878,10 +1826,9 @@ public class JGraLabFacade {
 	}
 
 	/**
-	 * Sets the value of the attribute {@code attrName} of type Boolean of 
-	 * the vertex with the id {@code vId} contained in the graph pointed to
-	 * by {@code graphNo} to
-	 * {@code value}.
+	 * Sets the value of the attribute {@code attrName} of type Boolean of the
+	 * vertex with the id {@code vId} contained in the graph pointed to by
+	 * {@code graphNo} to {@code value}.
 	 * 
 	 * @param graphNo
 	 *            the handle of the graph containing the vertex {@code vId}
@@ -1899,12 +1846,11 @@ public class JGraLabFacade {
 			boolean value) throws XmlRpcException {
 		return setVertexAttribute(graphNo, vId, attrName, new Boolean(value));
 	}
-	
+
 	/**
-	 * Sets the value of the attribute {@code attrName} of types List or Set of 
-	 * the vertex with the id {@code vId} contained in the graph pointed to
-	 * by {@code graphNo} to
-	 * {@code value}.
+	 * Sets the value of the attribute {@code attrName} of types List or Set of
+	 * the vertex with the id {@code vId} contained in the graph pointed to by
+	 * {@code graphNo} to {@code value}.
 	 * 
 	 * @param graphNo
 	 *            the handle of the graph containing the vertex {@code vId}
@@ -1920,14 +1866,13 @@ public class JGraLabFacade {
 	 */
 	public boolean setVertexAttribute(int graphNo, int vId, String attrName,
 			Object[] value) throws XmlRpcException {
-		return setVertexAttribute(graphNo, vId, attrName, (Object)value);
+		return setVertexAttribute(graphNo, vId, attrName, (Object) value);
 	}
-	
+
 	/**
-	 * Sets the value of the attribute {@code attrName} of type Record of 
-	 * the vertex with the id {@code vId} contained in the graph pointed to
-	 * by {@code graphNo} to
-	 * {@code value}.
+	 * Sets the value of the attribute {@code attrName} of type Record of the
+	 * vertex with the id {@code vId} contained in the graph pointed to by
+	 * {@code graphNo} to {@code value}.
 	 * 
 	 * @param graphNo
 	 *            the handle of the graph containing the vertex {@code vId}
@@ -1943,14 +1888,13 @@ public class JGraLabFacade {
 	 */
 	public boolean setVertexAttribute(int graphNo, int vId, String attrName,
 			Map<String, Object> value) throws XmlRpcException {
-		return setVertexAttribute(graphNo, vId, attrName, (Object)value);
+		return setVertexAttribute(graphNo, vId, attrName, (Object) value);
 	}
-	
+
 	/**
-	 * Sets the value of the attribute {@code attrName} of type Object of 
-	 * the vertex with the id {@code vId} contained in the graph pointed to
-	 * by {@code graphNo} to
-	 * {@code value}.
+	 * Sets the value of the attribute {@code attrName} of type Object of the
+	 * vertex with the id {@code vId} contained in the graph pointed to by
+	 * {@code graphNo} to {@code value}.
 	 * 
 	 * @param graphNo
 	 *            the handle of the graph containing the vertex {@code vId}
@@ -1966,7 +1910,7 @@ public class JGraLabFacade {
 	 */
 	public boolean setVertexAttribute(int graphNo, int vId, String attrName,
 			byte[] value) throws XmlRpcException {
-		return setVertexAttribute(graphNo, vId, attrName, (Object)value);
+		return setVertexAttribute(graphNo, vId, attrName, (Object) value);
 	}
 
 	/**
@@ -2025,7 +1969,7 @@ public class JGraLabFacade {
 
 		for (Attribute attribute : attributeSet) {
 			attributeTypeMap.put(attribute.getName(), attribute.getDomain()
-					.getTGTypeName());
+					.getTGTypeName(null));
 		}
 
 		return attributeTypeMap;
@@ -2099,9 +2043,9 @@ public class JGraLabFacade {
 	}
 
 	/**
-	 * Sets the value of the attribute {@code attrName} of type Integer of
-	 * the edge with the id {@code vId} contained in the graph pointed to
-	 * by {@code graphNo} to {@code value}.
+	 * Sets the value of the attribute {@code attrName} of type Integer of the
+	 * edge with the id {@code vId} contained in the graph pointed to by
+	 * {@code graphNo} to {@code value}.
 	 * 
 	 * @param graphNo
 	 *            the handle of the graph containing the edge {@code eId}
@@ -2121,9 +2065,9 @@ public class JGraLabFacade {
 	}
 
 	/**
-	 * Sets the value of the attribute {@code attrName} of type Double of
-	 * the edge with the id {@code vId} contained in the graph pointed to
-	 * by {@code graphNo} to {@code value}.
+	 * Sets the value of the attribute {@code attrName} of type Double of the
+	 * edge with the id {@code vId} contained in the graph pointed to by
+	 * {@code graphNo} to {@code value}.
 	 * 
 	 * @param graphNo
 	 *            the handle of the graph containing the edge {@code eId}
@@ -2143,9 +2087,9 @@ public class JGraLabFacade {
 	}
 
 	/**
-	 * Sets the value of the attribute {@code attrName} of type Boolean of
-	 * the edge with the id {@code vId} contained in the graph pointed to
-	 * by {@code graphNo} to {@code value}.
+	 * Sets the value of the attribute {@code attrName} of type Boolean of the
+	 * edge with the id {@code vId} contained in the graph pointed to by
+	 * {@code graphNo} to {@code value}.
 	 * 
 	 * @param graphNo
 	 *            the handle of the graph containing the edge {@code eId}
@@ -2163,11 +2107,11 @@ public class JGraLabFacade {
 			boolean value) throws XmlRpcException {
 		return setEdgeAttribute(graphNo, eId, attrName, new Boolean(value));
 	}
-	
+
 	/**
 	 * Sets the value of the attribute {@code attrName} of types List or Set of
-	 * the edge with the id {@code vId} contained in the graph pointed to
-	 * by {@code graphNo} to {@code value}.
+	 * the edge with the id {@code vId} contained in the graph pointed to by
+	 * {@code graphNo} to {@code value}.
 	 * 
 	 * @param graphNo
 	 *            the handle of the graph containing the edge {@code eId}
@@ -2183,13 +2127,13 @@ public class JGraLabFacade {
 	 */
 	public boolean setEdgeAttribute(int graphNo, int eId, String attrName,
 			Object[] value) throws XmlRpcException {
-		return setEdgeAttribute(graphNo, eId, attrName, (Object)value);
+		return setEdgeAttribute(graphNo, eId, attrName, (Object) value);
 	}
-	
+
 	/**
-	 * Sets the value of the attribute {@code attrName} of type Record of
-	 * the edge with the id {@code vId} contained in the graph pointed to
-	 * by {@code graphNo} to {@code value}.
+	 * Sets the value of the attribute {@code attrName} of type Record of the
+	 * edge with the id {@code vId} contained in the graph pointed to by
+	 * {@code graphNo} to {@code value}.
 	 * 
 	 * @param graphNo
 	 *            the handle of the graph containing the edge {@code eId}
@@ -2205,13 +2149,13 @@ public class JGraLabFacade {
 	 */
 	public boolean setEdgeAttribute(int graphNo, int eId, String attrName,
 			Map<String, Object> value) throws XmlRpcException {
-		return setEdgeAttribute(graphNo, eId, attrName, (Object)value);
+		return setEdgeAttribute(graphNo, eId, attrName, (Object) value);
 	}
-	
+
 	/**
-	 * Sets the value of the attribute {@code attrName} of type Object of
-	 * the edge with the id {@code vId} contained in the graph pointed to
-	 * by {@code graphNo} to {@code value}.
+	 * Sets the value of the attribute {@code attrName} of type Object of the
+	 * edge with the id {@code vId} contained in the graph pointed to by
+	 * {@code graphNo} to {@code value}.
 	 * 
 	 * @param graphNo
 	 *            the handle of the graph containing the edge {@code eId}
@@ -2227,7 +2171,7 @@ public class JGraLabFacade {
 	 */
 	public boolean setEdgeAttribute(int graphNo, int eId, String attrName,
 			byte[] value) throws XmlRpcException {
-		return setEdgeAttribute(graphNo, eId, attrName, (Object)value);
+		return setEdgeAttribute(graphNo, eId, attrName, (Object) value);
 	}
 
 	/**
@@ -2363,32 +2307,32 @@ public class JGraLabFacade {
 			} else {
 				attrValue = convertRecord((RecordDomain) domain, attrValue);
 			}
-		} else if (domain.getTGTypeName().startsWith("List")) {
+		} else if (domain.getTGTypeName(null).startsWith("List<")) {
 			if (attrValue == null) {
 				attrValue = new ArrayList<Object>(0);
 			} else {
 				attrValue = convertList((CompositeDomain) domain,
 						(List<Object>) attrValue);
 			}
-		} else if (domain.getTGTypeName().startsWith("Set")) {
+		} else if (domain.getTGTypeName(null).startsWith("Set<")) {
 			if (attrValue == null) {
 				attrValue = new ArrayList<Object>(0);
 			} else {
 				attrValue = convertList((CompositeDomain) domain,
 						new ArrayList<Object>((Set<Object>) attrValue));
 			}
-		} else if (domain.getTGTypeName().equals("Object")) {
+		} else if (domain.getTGTypeName(null).equals("Object")) {
 			try {
 				attrValue = toByteArrayRepresentation(attrValue);
 			} catch (IOException e) {
 				e.printStackTrace();
 				throw new XmlRpcException(e.toString());
 			}
-		} else if (domain.getTGTypeName().equals("Long")) {
+		} else if (domain.getTGTypeName(null).equals("Long")) {
 			if ((Long) attrValue > Integer.MAX_VALUE) {
 				attrValue = Integer.MAX_VALUE;
 			}
-		} else if (domain.getTGTypeName().equals("String")) {
+		} else if (domain.getTGTypeName(null).equals("String")) {
 			if (attrValue == null) {
 				attrValue = "";
 			}
@@ -2429,7 +2373,7 @@ public class JGraLabFacade {
 
 		return recordMap;
 	}
-		
+
 	/**
 	 * Converts the elements of an attribute value of type {@code List} so that
 	 * it is useful for the XML-RPC interface.
@@ -2454,98 +2398,101 @@ public class JGraLabFacade {
 
 		return attrValue;
 	}
-	
+
 	/**
 	 * Converts an attribute value recieved by the client to the corresponding
 	 * type processable by JGraLab. A {@code value} of type...<br>
-	 * <br>
-	 * - {@code Integer}, {@code Boolean}, or {@code Double} is not modified.<br>
-	 * - {@code String} is converted to an Enum, if {@code domain} is String 
-	 * - {@code Object[]} is converted to a List or Set 
-	 * - {@code Map<String, Object>} is converted to a Record
+	 * <br> - {@code Integer}, {@code Boolean}, or {@code Double} is not
+	 * modified.<br> - {@code String} is converted to an Enum, if
+	 * {@code domain} is String - {@code Object[]} is converted to a List or Set -
+	 * {@code Map<String, Object>} is converted to a Record
 	 * 
-	 * @param value the attribute value received by the client
-	 * @param domain the attribute's domain in the schema
-	 * @param graph the graph containing the attribute or the graph containing the
-	 * graph element which contains the attribute
-	 * @return the value converted to the corresponding type processable by JGraLab
+	 * @param value
+	 *            the attribute value received by the client
+	 * @param domain
+	 *            the attribute's domain in the schema
+	 * @param graph
+	 *            the graph containing the attribute or the graph containing the
+	 *            graph element which contains the attribute
+	 * @return the value converted to the corresponding type processable by
+	 *         JGraLab
 	 * @throws XmlRpcException
 	 */
 	@SuppressWarnings("unchecked")
 	private Object convertToJGraLabType(Object value, Domain domain, Graph graph)
 			throws XmlRpcException {
-		String prefix = graph.getSchema().getPrefix();
-		
+		String prefix = graph.getSchema().getPackageName();
+
 		if (domain.toString().startsWith("Enum")) {
 			// value if of type String
-			// get M1-Class for Enum and invoke fromString() method 
+			// get M1-Class for Enum and invoke fromString() method
 			try {
-				Class<?> attrType = Class.forName(prefix + "." + domain.getName()
-						, true, M1ClassManager.instance());
-				value = attrType.getMethod(
-						"fromString", new Class[] { String.class } )
-								.invoke(null, value);
+				Class<?> attrType = Class.forName(prefix + "."
+						+ domain.getName(), true, M1ClassManager.instance());
+				value = attrType.getMethod("fromString",
+						new Class[] { String.class }).invoke(null, value);
 			} catch (Exception e) {
 				e.printStackTrace();
 				throw new XmlRpcException(e.toString());
 			}
-		} else if (domain.toString().startsWith("List") 
+		} else if (domain.toString().startsWith("List")
 				|| domain.toString().startsWith("Set")) {
 			// value is of type Object[]
 			Object element;
-			
+
 			// convert the Array to a List
 			List<Object> list = new ArrayList<Object>(0);
-			Collections.addAll(list, (Object[])value);
-			
+			Collections.addAll(list, (Object[]) value);
+
 			// call convertToJGraLabType for every list element
-			for (ListIterator<Object> i = ((List<Object>)list).listIterator(); i.hasNext();) {
+			for (ListIterator<Object> i = ((List<Object>) list).listIterator(); i
+					.hasNext();) {
 				element = i.next();
-				
-				i.set(convertToJGraLabType(element, ((CompositeDomain)domain)
-						.getAllComponentDomains().toArray(new Domain[0])[0], graph));
+
+				i.set(convertToJGraLabType(element, ((CompositeDomain) domain)
+						.getAllComponentDomains().toArray(new Domain[0])[0],
+						graph));
 			}
-			
+
 			// if domain is a Set, convert the List to a Set
 			if (domain.toString().startsWith("Set")) {
-				value = new HashSet<Object>((List<Object>)list);
+				value = new HashSet<Object>((List<Object>) list);
 			} else {
 				value = list;
 			}
 		} else if (domain.toString().startsWith("Record")) {
 			// value is of type Map<String, Object>
 			// call convertToJGraLabType for every mapping inside the Map
-			for (Map.Entry<String, Object> component : 
-					((Map<String, Object>)value).entrySet()) {
-				component.setValue(convertToJGraLabType(component.getValue(), 
-						((RecordDomain)domain)
-								.getDomainOfComponent(component.getKey()),
-						graph));
+			for (Map.Entry<String, Object> component : ((Map<String, Object>) value)
+					.entrySet()) {
+				component.setValue(convertToJGraLabType(component.getValue(),
+						((RecordDomain) domain).getDomainOfComponent(component
+								.getKey()), graph));
 			}
-			
+
 			// get M1-Class for Record and invoke the Constructor
 			try {
-				Class<?> attrType = Class.forName(prefix + "." + domain.getName(),
-						true, M1ClassManager.instance());
-				value = attrType.getConstructor(
-						new Class<?>[] { Map.class } ).newInstance(value);
+				Class<?> attrType = Class.forName(prefix + "."
+						+ domain.getName(), true, M1ClassManager.instance());
+				value = attrType.getConstructor(new Class<?>[] { Map.class })
+						.newInstance(value);
 			} catch (Exception e) {
 				e.printStackTrace();
 				throw new XmlRpcException(e.toString());
 			}
-		} else if (domain.getTGTypeName().equals("Object")) {
+		} else if (domain.getTGTypeName(null).equals("Object")) {
 			// value is of type Object
 			try {
-				value = fromByteArrayRepresentation((byte[])value);
+				value = fromByteArrayRepresentation((byte[]) value);
 			} catch (Exception e) {
 				e.printStackTrace();
 				throw new XmlRpcException(e.toString());
 			}
 		}
-		
+
 		return value;
 	}
-	
+
 	/**
 	 * Creates a byte array representation of the given {@code Object o}.
 	 * 
@@ -2561,14 +2508,15 @@ public class JGraLabFacade {
 		ObjectOutputStream oos = new ObjectOutputStream(bos);
 		oos.writeObject(o);
 		oos.close();
-		
+
 		return bos.toByteArray();
 	}
-	
+
 	/**
 	 * Creates an Object from the given byte array {@code ba}.
 	 * 
-	 * @param ba a byte array from which to create the returned {@code Object}
+	 * @param ba
+	 *            a byte array from which to create the returned {@code Object}
 	 * @return an {@code Object}
 	 * @throws ClassNotFoundException
 	 * @throws IOException
@@ -2579,7 +2527,9 @@ public class JGraLabFacade {
 		ObjectInputStream ois = new ObjectInputStream(bis);
 		Object o = ois.readObject();
 		ois.close();
-		
-		return o;	
+
+		return o;
 	}
+	
+	
 }

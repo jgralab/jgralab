@@ -41,6 +41,7 @@ import de.uni_koblenz.jgralab.greql2.optimizer.Optimizer;
 import de.uni_koblenz.jgralab.greql2.parser.Greql2Lexer;
 import de.uni_koblenz.jgralab.greql2.parser.Greql2Parser;
 import de.uni_koblenz.jgralab.greql2.schema.Greql2;
+import de.uni_koblenz.jgralab.schema.Schema;
 import de.uni_koblenz.jgralab.utilities.TGFilenameFilter;
 
 import java.io.BufferedReader;
@@ -58,7 +59,6 @@ import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.GraphIOException;
 import de.uni_koblenz.jgralab.GraphMarker;
 import de.uni_koblenz.jgralab.ProgressFunction;
-import de.uni_koblenz.jgralab.Schema;
 import de.uni_koblenz.jgralab.Vertex;
 
 /**
@@ -689,7 +689,7 @@ public class GreqlEvaluator {
 	 * Creates the VertexEvaluator-Object at the vertices in the syntaxgraph
 	 */
 	protected void createVertexEvaluators() throws EvaluateException {
-		vertexEvalGraphMarker = new GraphMarker<VertexEvaluator>();
+		vertexEvalGraphMarker = new GraphMarker<VertexEvaluator>(queryGraph);
 		Vertex currentVertex = queryGraph.getFirstVertex();
 		while (currentVertex != null) {
 			VertexEvaluator vertexEval = VertexEvaluator.createVertexEvaluator(
@@ -780,7 +780,6 @@ public class GreqlEvaluator {
 		parseTime = System.currentTimeMillis() - parseStartTime;
 
 		createVertexEvaluators();
-
 		// Initialize the CostModel if there's none
 		if (costModel == null) {
 			// costModel = new DefaultCostModel(vertexEvalGraphMarker);
@@ -792,6 +791,7 @@ public class GreqlEvaluator {
 				logReader = new Level1LogReader((Level1Logger) logger);
 			}
 			try {
+				System.out.println("Creating costModel with marker" + vertexEvalGraphMarker);
 				costModel = new LogCostModel(logReader, 0.7f,
 						vertexEvalGraphMarker);
 				System.out.println("Created new LogCostModel.");

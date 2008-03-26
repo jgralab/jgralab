@@ -108,12 +108,12 @@ public class IsReachable extends PathSearch implements Greql2Function {
 		BooleanGraphMarker[] markers = new BooleanGraphMarker[dfa.stateList
 				.size()];
 		for (State s : dfa.stateList) {
-			markers[s.number] = new BooleanGraphMarker();
+			markers[s.number] = new BooleanGraphMarker(graph);
 		}
 		Queue<PathSearchQueueEntry> queue = new LinkedList<PathSearchQueueEntry>();
 		PathSearchQueueEntry currentEntry = new PathSearchQueueEntry(
 				startVertex, dfa.initialState);
-		markers[currentEntry.state.number].isMarked(currentEntry.vertex);
+		markers[currentEntry.state.number].mark(currentEntry.vertex);
 		boolean found = false;
 		while (currentEntry != null) {
 			if ((currentEntry.vertex == endVertex)

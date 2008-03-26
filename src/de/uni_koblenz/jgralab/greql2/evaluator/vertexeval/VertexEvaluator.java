@@ -24,6 +24,20 @@
 
 package de.uni_koblenz.jgralab.greql2.evaluator.vertexeval;
 
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Set;
+
+import de.uni_koblenz.jgralab.BooleanGraphMarker;
+import de.uni_koblenz.jgralab.Edge;
+import de.uni_koblenz.jgralab.EdgeDirection;
+import de.uni_koblenz.jgralab.Graph;
+import de.uni_koblenz.jgralab.GraphMarker;
+import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
 import de.uni_koblenz.jgralab.greql2.evaluator.VariableDeclaration;
 import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.GraphSize;
@@ -43,24 +57,8 @@ import de.uni_koblenz.jgralab.greql2.schema.TypeId;
 import de.uni_koblenz.jgralab.greql2.schema.Variable;
 import de.uni_koblenz.jgralab.greql2.schema.VertexSetExpression;
 import de.uni_koblenz.jgralab.greql2.schema.VertexSubgraphExpression;
-
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Set;
-
-import de.uni_koblenz.jgralab.BooleanGraphMarker;
-import de.uni_koblenz.jgralab.Edge;
-import de.uni_koblenz.jgralab.EdgeClass;
-import de.uni_koblenz.jgralab.EdgeDirection;
-import de.uni_koblenz.jgralab.EdgeVertexPair;
-import de.uni_koblenz.jgralab.Graph;
-import de.uni_koblenz.jgralab.GraphMarker;
-import de.uni_koblenz.jgralab.Vertex;
-import de.uni_koblenz.jgralab.VertexClass;
+import de.uni_koblenz.jgralab.schema.EdgeClass;
+import de.uni_koblenz.jgralab.schema.VertexClass;
 
 /**
  * This is the base class for all VertexEvaluators which evaluate the vertices
@@ -351,9 +349,9 @@ public abstract class VertexEvaluator {
 		resetToInitialState();
 		GraphMarker<VertexEvaluator> marker = greqlEvaluator
 				.getVertexEvaluatorGraphMarker();
-		for (EdgeVertexPair<? extends Edge, ? extends Vertex> pair : getVertex()
+		for (Edge e : getVertex()
 				.incidences(EdgeDirection.IN)) {
-			Vertex vertex = pair.getVertex();
+			Vertex vertex = e.getThat();
 			VertexEvaluator eval = marker.getMark(vertex);
 			// System.out.println("Vertex: " + vertex.getClass().getName());
 			if (eval != null) {

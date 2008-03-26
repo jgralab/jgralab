@@ -29,6 +29,7 @@ import java.util.ArrayList;
 import de.uni_koblenz.jgralab.greql2.exception.EvaluateException;
 import de.uni_koblenz.jgralab.greql2.exception.WrongFunctionParameterException;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
+import de.uni_koblenz.jgralab.schema.QualifiedName;
 import de.uni_koblenz.jgralab.BooleanGraphMarker;
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.GraphElement;
@@ -79,7 +80,7 @@ public class Type implements Greql2Function {
 				elem = arguments[0].toEdge();
 			else if (arguments[0].isString()) {
 				return new JValue(graph.getSchema().getAttributedElementClass(
-						arguments[0].toString()));
+						new QualifiedName(arguments[0].toString())));
 			}
 
 		} catch (Exception ex) {

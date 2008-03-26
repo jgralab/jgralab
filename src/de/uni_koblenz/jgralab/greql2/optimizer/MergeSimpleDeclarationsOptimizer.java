@@ -60,7 +60,7 @@ public class MergeSimpleDeclarationsOptimizer extends OptimizerBase {
 	 */
 	private void findAndMergeSimpleDeclarations(Greql2 syntaxgraph) {
 		HashMap<String, ArrayList<SimpleDeclaration>> mergableSDMap = new HashMap<String, ArrayList<SimpleDeclaration>>();
-		Declaration decl = syntaxgraph.getFirstDeclaration(false);
+		Declaration decl = syntaxgraph.getFirstDeclaration();
 		while (decl != null) {
 			IsSimpleDeclOf isSimpleDeclOf = decl
 					.getFirstIsSimpleDeclOf(EdgeDirection.IN);
@@ -84,7 +84,7 @@ public class MergeSimpleDeclarationsOptimizer extends OptimizerBase {
 				}
 				isSimpleDeclOf = isSimpleDeclOf.getNextIsSimpleDeclOf();
 			}
-			decl = decl.getNextDeclaration(false);
+			decl = decl.getNextDeclaration();
 		}
 		mergeSimpleDeclarations(mergableSDMap);
 	}

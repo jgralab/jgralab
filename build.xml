@@ -115,7 +115,7 @@
 		<!-- calls target compile in general ant file ${ant}/build.xml -->
 	   	<ant dir="${common.dir}" antfile="build.xml" target="compile">
 	   		<property name="src.dir" value="${src.dir}/de/uni_koblenz/${projectname}"/>
-	   		<property name="compileincludes" value="*.java codegenerator/** impl/**"/>
+	   		<property name="compileincludes" value="*.java schema/** codegenerator/** impl/**"/>
 			<property name="compileexcludes" value="impl/list/** xmlrpc/**"/>
 	   	</ant>
 	</target>
@@ -149,6 +149,30 @@
 	   		<property name="compileincludes" 
 	   			value="**/utilities/tgschema2java/**"/>
 	   	</ant>
+	</target>
+	
+	
+	<!-- greql2 -->
+	<!-- generates greql2 schmema sources and parser sources, compiles greql2 sources -->
+	<target name="citymap" depends="tgschema2java">
+		<!-- calls target generateschema in general ant file ${ant}/build.xml -->
+		<ant dir="${common.dir}" antfile="build.xml" target="generateschema">
+			<property name="subprojectname" value = "jgralab/citymap"/>			
+			<property name="schemafile" value = "citymap.tg"/>			
+		</ant>
+		<ant dir="${common.dir}" antfile="build.xml" target="compile">
+			<property name="src.dir" value="${src.dir}/de/uni_koblenz/${projectname}/citymap"/>
+	   	</ant>
+	</target>
+	
+	<!-- greql2 -->
+	<!-- generates greql2 schmema sources and parser sources, compiles greql2 sources -->
+	<target name="scl" depends="tgschema2java">
+		<!-- calls target generateschema in general ant file ${ant}/build.xml -->
+		<ant dir="${common.dir}" antfile="build.xml" target="generateschema">
+			<property name="subprojectname" value = ""/>			
+			<property name="schemafile" value = "sclschema.tg"/>			
+		</ant>
 	</target>
 	
 	<!-- greql2 -->

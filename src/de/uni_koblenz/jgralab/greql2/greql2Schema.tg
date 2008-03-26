@@ -23,10 +23,9 @@
 //
 
 Schema de.uni_koblenz.jgralab.greql2.schema.Greql2Schema;
+GraphClass Greql2;
 
 RecordDomain SourcePosition (offset: Integer, length: Integer);
-
-GraphClass Greql2;
 
 // A common superclass for all vertices of GReQL2-vertices
 abstract VertexClass Greql2Vertex;
@@ -51,7 +50,7 @@ VertexClass ExponentiatedPathDescription: PathDescription;
 VertexClass ForwardVertexSet: PathExpression;
 VertexClass FunctionApplication: Expression;
 VertexClass FunctionId: Identifier;
-VertexClass Greql2Expression: Greql2Vertex { _queryText: String, _optimizer: String, _costModel: String };
+VertexClass Greql2Expression: Greql2Vertex { queryText: String, optimizer: String, costModel: String };
 VertexClass Identifier : Expression { name: String };
 VertexClass IntLiteral: Literal { intValue: Integer };
 VertexClass IntermediateVertexPathDescription: PathDescription;

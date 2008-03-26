@@ -24,6 +24,11 @@
  
 package de.uni_koblenz.jgralab.greql2.evaluator.vertexeval;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import de.uni_koblenz.jgralab.Graph;
+import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
 import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.GraphSize;
 import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.VertexCosts;
@@ -32,16 +37,11 @@ import de.uni_koblenz.jgralab.greql2.exception.UnknownTypeException;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValueTypeCollection;
 import de.uni_koblenz.jgralab.greql2.schema.TypeId;
-
-import java.util.ArrayList;
-import java.util.List;
-
-import de.uni_koblenz.jgralab.AttributedElementClass;
-import de.uni_koblenz.jgralab.Graph;
-import de.uni_koblenz.jgralab.GraphClass;
-import de.uni_koblenz.jgralab.GraphElementClass;
-import de.uni_koblenz.jgralab.Schema;
-import de.uni_koblenz.jgralab.Vertex;
+import de.uni_koblenz.jgralab.schema.AttributedElementClass;
+import de.uni_koblenz.jgralab.schema.GraphClass;
+import de.uni_koblenz.jgralab.schema.GraphElementClass;
+import de.uni_koblenz.jgralab.schema.QualifiedName;
+import de.uni_koblenz.jgralab.schema.Schema;
 
 /**
  * Creates a List of types out of the TypeId-Vertex.
@@ -78,10 +78,10 @@ public class TypeIdEvaluator extends VertexEvaluator {
 		ArrayList<AttributedElementClass> returnTypes = new ArrayList<AttributedElementClass>();
 		if (vertex.isType()) {
 			returnTypes.add((GraphElementClass) schema
-					.getAttributedElementClass(vertex.getName()));
+					.getAttributedElementClass(new QualifiedName(vertex.getName())));
 		} else {
 			GraphElementClass graphElemClass = (GraphElementClass) schema
-					.getAttributedElementClass(vertex.getName());
+					.getAttributedElementClass(new QualifiedName(vertex.getName()));
 			if (graphElemClass == null) {
 				throw new UnknownTypeException(vertex.getName(),
 						createPossibleSourcePositions());

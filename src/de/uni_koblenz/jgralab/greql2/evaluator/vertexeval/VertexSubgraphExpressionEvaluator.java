@@ -31,7 +31,7 @@ import de.uni_koblenz.jgralab.greql2.exception.EvaluateException;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValueTypeCollection;
 import de.uni_koblenz.jgralab.greql2.schema.VertexSubgraphExpression;
-import de.uni_koblenz.jgralab.AttributedElementClass;
+import de.uni_koblenz.jgralab.schema.AttributedElementClass;
 import de.uni_koblenz.jgralab.BooleanGraphMarker;
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.Vertex;
@@ -51,7 +51,7 @@ public class VertexSubgraphExpressionEvaluator extends
 
 	@Override
 	public JValue evaluate() throws EvaluateException {
-		BooleanGraphMarker subgraphAttr = new BooleanGraphMarker();
+		BooleanGraphMarker subgraphAttr = new BooleanGraphMarker(getDatagraph());
 		Vertex currentVertex = getDatagraph().getFirstVertex();
 		while (currentVertex != null) {
 			JValueTypeCollection typeCollection = getTypeCollection();

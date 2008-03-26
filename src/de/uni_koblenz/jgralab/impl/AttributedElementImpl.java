@@ -25,13 +25,16 @@
 package de.uni_koblenz.jgralab.impl;
 
 import de.uni_koblenz.jgralab.AttributedElement;
-import de.uni_koblenz.jgralab.AttributedElementClass;
+import de.uni_koblenz.jgralab.schema.AttributedElementClass;
 
 public abstract class AttributedElementImpl implements AttributedElement {
 
 	protected AttributedElementClass theClass;
 	
 	public AttributedElementImpl(AttributedElementClass cls) {
+		if (cls == null) {
+			throw new IllegalArgumentException("AttributedElementClass must not be null");
+		}
 		theClass = cls;
 	}
 	

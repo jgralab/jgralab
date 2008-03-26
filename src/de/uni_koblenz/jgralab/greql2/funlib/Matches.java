@@ -96,7 +96,7 @@ public class Matches extends PathSearch implements Greql2Function {
 		BooleanGraphMarker[] markers = new BooleanGraphMarker[dfa.stateList
 				.size()];
 		for (State s : dfa.stateList) {
-			markers[s.number] = new BooleanGraphMarker();
+			markers[s.number] = new BooleanGraphMarker(graph);
 		}
 		while (currentEntry != null) {
 			Iterator<Transition> transitionIter = currentEntry.state.outTransitions

@@ -27,6 +27,7 @@ package de.uni_koblenz.jgralab.greql2.jvalue;
 import de.uni_koblenz.jgralab.*;
 import de.uni_koblenz.jgralab.greql2.evaluator.fa.*;
 import de.uni_koblenz.jgralab.greql2.evaluator.*;
+import de.uni_koblenz.jgralab.schema.AttributedElementClass;
 
  
 public class JValue implements Comparable<JValue> {

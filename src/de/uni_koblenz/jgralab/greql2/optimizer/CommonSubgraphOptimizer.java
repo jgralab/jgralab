@@ -8,16 +8,12 @@ import java.util.HashMap;
 import de.uni_koblenz.jgralab.Attribute;
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.EdgeDirection;
-import de.uni_koblenz.jgralab.EdgeVertexPair;
-import de.uni_koblenz.jgralab.Vertex;
-
 import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
+import de.uni_koblenz.jgralab.greql2.schema.Greql2;
 import de.uni_koblenz.jgralab.greql2.schema.Greql2Aggregation;
 import de.uni_koblenz.jgralab.greql2.schema.Greql2Vertex;
 import de.uni_koblenz.jgralab.greql2.schema.PathDescription;
 import de.uni_koblenz.jgralab.greql2.schema.Variable;
-
-import de.uni_koblenz.jgralab.greql2.schema.Greql2;
 
 /**
  * This {@link Optimizer} finds all subgraps in a {@link Greql2} syntaxgraph
@@ -127,12 +123,12 @@ public class CommonSubgraphOptimizer extends OptimizerBase {
 		buf.append(computeAttributeHash(vertex));
 
 		// Compute the hashes of the children
-		for (EdgeVertexPair<? extends Edge, ? extends Vertex> pair : vertex
+		for (Edge e: vertex
 				.incidences(EdgeDirection.IN)) {
 			buf.append("{E:");
-			buf.append(pair.getEdge().getAttributedElementClass().getName());
+			buf.append(e.getAttributedElementClass().getName());
 			buf.append("}");
-			buf.append(computeHashAndProcess((Greql2Vertex) pair.getVertex()));
+			buf.append(computeHashAndProcess((Greql2Vertex) e.getThat()));
 		}
 		buf.append("}");
 

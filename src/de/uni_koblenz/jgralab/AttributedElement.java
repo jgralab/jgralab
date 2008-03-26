@@ -26,6 +26,10 @@ package de.uni_koblenz.jgralab;
 
 import java.io.IOException;
 
+import de.uni_koblenz.jgralab.schema.AttributedElementClass;
+import de.uni_koblenz.jgralab.schema.GraphClass;
+import de.uni_koblenz.jgralab.schema.Schema;
+
 /**
  * aggregates graphs, edges and vertices 
  * @author Steffen Kahle
@@ -58,9 +62,5 @@ public interface AttributedElement extends Comparable<AttributedElement> {
 	 */
 	public Schema getSchema();
 	
-	/**
-	 * increases the graph version number
-	 *
-	 */
-	public void modified();
+	
 }

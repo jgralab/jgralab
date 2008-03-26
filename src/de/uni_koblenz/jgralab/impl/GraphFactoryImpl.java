@@ -30,9 +30,8 @@ import java.util.HashMap;
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.GraphFactory;
-import de.uni_koblenz.jgralab.Schema;
-import de.uni_koblenz.jgralab.SchemaException;
 import de.uni_koblenz.jgralab.Vertex;
+import de.uni_koblenz.jgralab.schema.SchemaException;
 
 /**
  * This class provides a default implementation for the GraphFactory.
@@ -66,9 +65,9 @@ public abstract class GraphFactoryImpl implements GraphFactory {
 		}
 	}
 
-	public Graph createGraph(Class<? extends Graph> graphClass, String id, Schema schema, int vMax, int eMax) {
+	public Graph createGraph(Class<? extends Graph> graphClass, String id, int vMax, int eMax) {
 		try {
-			return graphMap.get(graphClass).newInstance(id, schema, vMax, eMax);
+			return graphMap.get(graphClass).newInstance(id, vMax, eMax);
 		} catch (Exception ex) {
 			throw new SchemaException("Cannot create graph of class " + graphClass.getCanonicalName(), ex);
 		}
@@ -86,10 +85,10 @@ public abstract class GraphFactoryImpl implements GraphFactory {
 	public void setGraphImplementationClass(Class<? extends Graph> originalClass, Class <? extends Graph> implementationClass) {
 		if (isSuperclassOrEqual(originalClass, implementationClass)) {
 			try {
-				Class[] params = {String.class, Schema.class, int.class, int.class};
+				Class[] params = {String.class, int.class, int.class};
 				graphMap.put(originalClass, implementationClass.getConstructor(params));
 			} catch (NoSuchMethodException ex) {
-				throw new SchemaException("Unable to locate default constructor for graphclass" + implementationClass, ex);
+				throw new SchemaException("Unable to locate default constructor for graphclass " + implementationClass.getName(), ex);
 			}
 		}		
 	}

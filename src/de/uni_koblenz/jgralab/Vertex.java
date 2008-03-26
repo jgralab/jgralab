@@ -21,10 +21,11 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
- 
+
 package de.uni_koblenz.jgralab;
 
-
+import de.uni_koblenz.jgralab.schema.EdgeClass;
+import de.uni_koblenz.jgralab.schema.VertexClass;
 
 /**
  * represents a vertex, m1 classes inherit from this class
@@ -33,6 +34,25 @@ package de.uni_koblenz.jgralab;
  * 
  */
 public interface Vertex extends GraphElement {
+
+	/**
+	 * Checks if the list of incident edges has changed with respect to the given
+	 * <code>incidenceListVersion</code>. 
+	 */
+	public boolean isIncidenceListModified(long incidenceListVersion);
+
+	/**
+	 * Changes the incidence list version, should be called whenever 
+	 * an incidence edge is created, deleted or reordered
+	 */
+	public void incidenceListModified();
+
+	/**
+	 * @return the internal vertex structure version
+	 * @see vertexStructureModified
+	 * @see isVertexStructureModified
+	 */
+	public long getIncidenceListVersion();
 
 	/**
 	 * @return the id of the vertex
@@ -58,15 +78,13 @@ public interface Vertex extends GraphElement {
 	 */
 	public int getDegree(EdgeClass ec);
 
-	
 	/**
 	 * @param ec
 	 *            an EdgeClass
 	 * @return number of IN or OUT incidences of the specified EdgeClass
 	 */
 	public int getDegree(Class<? extends Edge> ec);
-	
-	
+
 	/**
 	 * @param ec
 	 *            an EdgeClass
@@ -76,7 +94,7 @@ public interface Vertex extends GraphElement {
 	 * @return number of IN or OUT incidences of the specified EdgeClass
 	 */
 	public int getDegree(EdgeClass ec, boolean noSubClasses);
-	
+
 	/**
 	 * @param ec
 	 *            an EdgeClass
@@ -95,8 +113,7 @@ public interface Vertex extends GraphElement {
 	 * @return number of IN or OUT incidences connected to the vertex
 	 */
 	public int getDegree(EdgeClass ec, EdgeDirection orientation);
-	
-	
+
 	/**
 	 * @param ec
 	 *            an EdgeClass
@@ -107,7 +124,7 @@ public interface Vertex extends GraphElement {
 	public int getDegree(Class<? extends Edge> ec, EdgeDirection orientation);
 
 	/**
-	 * @param ec 
+	 * @param ec
 	 *            an EdgeClass
 	 * @param orientation
 	 *            of connected incidences,
@@ -118,7 +135,7 @@ public interface Vertex extends GraphElement {
 	 */
 	public int getDegree(EdgeClass ec, EdgeDirection orientation,
 			boolean noSubClasses);
-	
+
 	/**
 	 * @param ec
 	 *            an EdgeClass
@@ -172,13 +189,6 @@ public interface Vertex extends GraphElement {
 			boolean explicitType);
 
 	/**
-	 * warning: slow in package 'incarray'
-	 * 
-	 * @return the previous vertex in vSeq before this vertex
-	 */
-	public Vertex getPrevVertex();
-
-	/**
 	 * @return first incidence object of the graph
 	 */
 	public Edge getFirstEdge();
@@ -189,8 +199,6 @@ public interface Vertex extends GraphElement {
 	 * @return the first incidence of vertex with direction IN or OUT
 	 */
 	public Edge getFirstEdge(EdgeDirection orientation);
-	
-
 
 	/**
 	 * @param anEdgeClass
@@ -199,7 +207,7 @@ public interface Vertex extends GraphElement {
 	 *         class anEdgeClass
 	 */
 	public Edge getFirstEdgeOfClass(EdgeClass anEdgeClass);
-	
+
 	/**
 	 * @param anEdgeClass
 	 *            the edge class to search for
@@ -218,7 +226,7 @@ public interface Vertex extends GraphElement {
 	 */
 	public Edge getFirstEdgeOfClass(EdgeClass anEdgeClass,
 			EdgeDirection orientation);
-	
+
 	/**
 	 * @param anEdgeClass
 	 *            the edge class to search for
@@ -239,7 +247,7 @@ public interface Vertex extends GraphElement {
 	 *         explicit class anEdgeClass
 	 */
 	public Edge getFirstEdgeOfClass(EdgeClass anEdgeClass, boolean explicitType);
-	
+
 	/**
 	 * @param anEdgeClass
 	 *            the edge class to search for
@@ -248,7 +256,8 @@ public interface Vertex extends GraphElement {
 	 * @return the first incidence in iSeq where the corresponding edge is of
 	 *         explicit class anEdgeClass
 	 */
-	public Edge getFirstEdgeOfClass(Class<? extends Edge> anEdgeClass, boolean explicitType);
+	public Edge getFirstEdgeOfClass(Class<? extends Edge> anEdgeClass,
+			boolean explicitType);
 
 	/**
 	 * @param anEdgeClass
@@ -263,7 +272,7 @@ public interface Vertex extends GraphElement {
 	 */
 	public Edge getFirstEdgeOfClass(EdgeClass anEdgeClass,
 			EdgeDirection orientation, boolean explicitType);
-	
+
 	/**
 	 * @param anEdgeClass
 	 *            the edge class to search for
@@ -285,12 +294,6 @@ public interface Vertex extends GraphElement {
 	public boolean isBefore(Vertex v);
 
 	/**
-	 * @param v
-	 * @return true, if this vertex is before v's id in vSeq
-	 */
-	public boolean isBefore(int v);
-
-	/**
 	 * puts this vertex before v in vSeq
 	 * 
 	 * @param v
@@ -298,23 +301,10 @@ public interface Vertex extends GraphElement {
 	public void putBefore(Vertex v);
 
 	/**
-	 * puts this vertex before v's id in vSeq
-	 * 
-	 * @param v
-	 */
-	public void putBefore(int v);
-
-	/**
 	 * @param v
 	 * @return true, if this vertex is after v in vSeq
 	 */
 	public boolean isAfter(Vertex v);
-
-	/**
-	 * @param v
-	 * @return true, if this vertex is after v's id in vSeq
-	 */
-	public boolean isAfter(int v);
 
 	/**
 	 * puts this vertex after v in vSeq
@@ -324,58 +314,12 @@ public interface Vertex extends GraphElement {
 	public void putAfter(Vertex v);
 
 	/**
-	 * puts this vertex after v's id in vSeq
-	 * 
-	 * @param v
-	 */
-	public void putAfter(int v);
-
-	/**
-	 * inserts this vertex at position pos in vSeq
-	 * 
-	 * @param pos
-	 */
-	public void insertAt(int pos);
-
-	/**
-	 * deletes the incidence object incident to eNo
-	 * 
-	 * @param eNo
-	 *            the edge number to which the incidence is connected to
-	 */
-	void deleteIncidenceTo(int eNo);
-
-	/**
-	 * sets the next vertex field of this vertex in package 'oo' to v
-	 * 
-	 * @param v
-	 *            a vertex
-	 */
-	void setNextVertex(Vertex v);
-
-	/**
-	 * sets the previous vertex field of this vertex in package 'oo' to v
-	 * 
-	 * @param v
-	 *            a vertex
-	 */
-	void setPrevVertex(Vertex v);
-
-	/**
 	 * sets the id field of this vertex in package 'oo' to id
 	 * 
 	 * @param id
 	 *            an id
 	 */
 	void setId(int id);
-
-	/**
-	 * sets the first incidence field of this vertex in package 'oo' to i
-	 * 
-	 * @param i
-	 *            an incidence
-	 */
-	void setFirstEdge(Edge i);
 
 	/**
 	 * removes this vertex from vSeq and erases its attributes
@@ -399,130 +343,99 @@ public interface Vertex extends GraphElement {
 	void putEdgeAfter(Edge edge, Edge previousEdge);
 
 	/**
-	 * inserts the given edge <code>edge</code> at the given position
-	 * <code>pos</code> in the incidence list. This does neither affect the
-	 * global edge sequence eSeq nor the alpha or omega vertices, only the order
-	 * of the edges at this vertex is changed
+	 * Using this method, one can simply iterate over all incident edges of this
+	 * vertex using the advanced for-loop
+	 * 
+	 * @return a iterable object which can be iterated through using the
+	 *         advanced for-loop
 	 */
-	void insertEdgeAt(Edge edge, int pos);
-	
-	
+	public Iterable<Edge> incidences();
+
 	/**
-	 * Using this method, one can simply iterate over all incident edges of this vertex using the
-	 * advanced for-loop
-	 * @return a iterable object which can be iterated through using the advanced for-loop 
+	 * Using this method, one can simply iterate over all incident edges of this
+	 * vertex using the advanced for-loop
+	 * 
+	 * @param dir
+	 *            the direction of the edges which should be iterated, either
+	 *            EdgeDirection.IN or EdgeDirection.OUT
+	 * @return a iterable object which can be iterated through using the
+	 *         advanced for-loop
 	 */
-	public Iterable<EdgeVertexPair<? extends Edge, ? extends Vertex>> incidences();
-	
+	public Iterable<Edge> incidences(EdgeDirection dir);
+
 	/**
-	 * Using this method, one can simply iterate over all incident edges of this vertex using the
-	 * advanced for-loop
-	 * @param dir the direction of the edges which should be iterated, either EdgeDirection.IN or EdgeDirection.OUT
-	 * @return a iterable object which can be iterated through using the advanced for-loop 
+	 * Using this method, one can simply iterate over all incident edges of this
+	 * vertex using the advanced for-loop
+	 * 
+	 * @param eclass
+	 *            the EdgeClass of the edges which should be iterated
+	 * @param dir
+	 *            the direction of the edges which should be iterated, either
+	 *            EdgeDirection.IN or EdgeDirection.OUT
+	 * @return a iterable object which can be iterated through using the
+	 *         advanced for-loop
 	 */
-	public Iterable<EdgeVertexPair<? extends Edge, ? extends Vertex>> incidences(EdgeDirection dir);
-	
+	public Iterable<Edge> incidences(EdgeClass eclass, EdgeDirection dir);
+
 	/**
-	 * Using this method, one can simply iterate over all incident edges of this vertex using the
-	 * advanced for-loop
-	 * @param eclass the EdgeClass of the edges which should be iterated
-	 * @param dir the direction of the edges which should be iterated, either EdgeDirection.IN or EdgeDirection.OUT
-	 * @return a iterable object which can be iterated through using the advanced for-loop 
+	 * Using this method, one can simply iterate over all incident edges of this
+	 * vertex using the advanced for-loop
+	 * 
+	 * @param eclass
+	 *            the M1-Class of the edges which should be iterated
+	 * @param dir
+	 *            the direction of the edges which should be iterated, either
+	 *            EdgeDirection.IN or EdgeDirection.OUT
+	 * @return a iterable object which can be iterated through using the
+	 *         advanced for-loop
 	 */
-	public Iterable<EdgeVertexPair<? extends Edge, ? extends Vertex>> incidences(EdgeClass eclass, EdgeDirection dir);
-	
+	public Iterable<Edge> incidences(Class<? extends Edge> eclass,
+			EdgeDirection dir);
+
 	/**
-	 * Using this method, one can simply iterate over all incident edges of this vertex using the
-	 * advanced for-loop
-	 * @param eclass the M1-Class of the edges which should be iterated
-	 * @param dir the direction of the edges which should be iterated, either EdgeDirection.IN or EdgeDirection.OUT
-	 * @return a iterable object which can be iterated through using the advanced for-loop 
+	 * Using this method, one can simply iterate over all incident edges of this
+	 * vertex using the advanced for-loop
+	 * 
+	 * @param eclass
+	 *            the EdgeClass of the edges which should be iterated
+	 * @return a iterable object which can be iterated through using the
+	 *         advanced for-loop
 	 */
-	public Iterable<EdgeVertexPair<? extends Edge, ? extends Vertex>> incidences(Class<? extends Edge> eclass, EdgeDirection dir);
-	
+	public Iterable<Edge> incidences(EdgeClass eclass);
+
 	/**
-	 * Using this method, one can simply iterate over all incident edges of this vertex using the
-	 * advanced for-loop
-	 * @param eclass the EdgeClass of the edges which should be iterated
-	 * @param dir the direction of the edges which should be iterated, either EdgeDirection.IN or EdgeDirection.OUT
-	 * @param explicitType if set to true, no subclasses of the given EdgeClass will be iterated
-	 * @return a iterable object which can be iterated through using the advanced for-loop 
+	 * Using this method, one can simply iterate over all incident edges of this
+	 * vertex using the advanced for-loop
+	 * 
+	 * @param eclass
+	 *            the M1-Class of the edges which should be iterated
+	 * @return a iterable object which can be iterated through using the
+	 *         advanced for-loop
 	 */
-	public Iterable<EdgeVertexPair<? extends Edge, ? extends Vertex>> incidences(EdgeClass eclass, EdgeDirection dir, boolean explicitType);
-	
-	/**
-	 * Using this method, one can simply iterate over all incident edges of this vertex using the
-	 * advanced for-loop
-	 * @param eclass the M1-Class of the edges which should be iterated
-	 * @param dir the direction of the edges which should be iterated, either EdgeDirection.IN or EdgeDirection.OUT
-	 * @param explicitType if set to true, no subclasses of the given EdgeClass will be iterated
-	 * @return a iterable object which can be iterated through using the advanced for-loop 
-	 */
-	public Iterable<EdgeVertexPair<? extends Edge, ? extends Vertex>> incidences(Class<? extends Edge> eclass, EdgeDirection dir, boolean explicitType);
-	
-	/**
-	 * Using this method, one can simply iterate over all incident edges of this vertex using the
-	 * advanced for-loop
-	 * @param eclass the EdgeClass of the edges which should be iterated
-	 * @return a iterable object which can be iterated through using the advanced for-loop 
-	 */
-	public Iterable<EdgeVertexPair<? extends Edge, ? extends Vertex>> incidences(EdgeClass eclass);
-	
-	/**
-	 * Using this method, one can simply iterate over all incident edges of this vertex using the
-	 * advanced for-loop
-	 * @param eclass the M1-Class of the edges which should be iterated
-	 * @return a iterable object which can be iterated through using the advanced for-loop 
-	 */
-	public Iterable<EdgeVertexPair<? extends Edge, ? extends Vertex>> incidences(Class<? extends Edge> eclass);
-	
-	/**
-	 * Using this method, one can simply iterate over all incident edges of this vertex using the
-	 * advanced for-loop
-	 * @param eclass the EdgeClass of the edges which should be iterated
-	 * @param explicitType if set to true, no subclasses of the given EdgeClass will be iterated
-	 * @return a iterable object which can be iterated through using the advanced for-loop 
-	 */
-	public Iterable<EdgeVertexPair<? extends Edge, ? extends Vertex>> incidences(EdgeClass eclass,  boolean explicitType);
-	
-	/**
-	 * Using this method, one can simply iterate over all incident edges of this vertex using the
-	 * advanced for-loop
-	 * @param eclass the M1-Class of the edges which should be iterated
-	 * @param explicitType if set to true, no subclasses of the given EdgeClass will be iterated
-	 * @return a iterable object which can be iterated through using the advanced for-loop 
-	 */
-	public Iterable<EdgeVertexPair<? extends Edge, ? extends Vertex>> incidences(Class<? extends Edge> eclass, boolean explicitType);
-	
-	
+	public Iterable<Edge> incidences(Class<? extends Edge> eclass);
+
 	/**
 	 * tests if the Edge <code>edge</code> may start at this vertex
-	 * @return <code>true</code> iff <code>edge</code> may start at this vertex 
+	 * 
+	 * @return <code>true</code> iff <code>edge</code> may start at this
+	 *         vertex
 	 */
 	public boolean isValidAlpha(Edge edge);
-	
-	
+
 	/**
 	 * tests if the Edge <code>edge</code> may end at this vertex
-	 * @return <code>true</code> iff <code>edge</code> may end at this vertex 
+	 * 
+	 * @return <code>true</code> iff <code>edge</code> may end at this
+	 *         vertex
 	 */
 	public boolean isValidOmega(Edge edge);
-	
-	
+
 	public Composition getFirstComposition();
 
 	public Composition getFirstComposition(EdgeDirection orientation);
 
-	public Composition getFirstComposition(boolean noSubClasses);
-
-	public Composition getFirstComposition(EdgeDirection orientation, boolean noSubClasses);
-	
-	
 	public Aggregation getFirstAggregation();
 
 	public Aggregation getFirstAggregation(EdgeDirection orientation);
 
-	public Aggregation getFirstAggregation(boolean noSubClasses);
-
-	public Aggregation getFirstAggregation(EdgeDirection orientation, boolean noSubClasses);
 }

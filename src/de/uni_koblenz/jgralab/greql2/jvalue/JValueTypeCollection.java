@@ -24,8 +24,12 @@
  
 package de.uni_koblenz.jgralab.greql2.jvalue;
 
-import java.util.*;
-import de.uni_koblenz.jgralab.*;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Set;
+
+import de.uni_koblenz.jgralab.schema.AttributedElementClass;
 
 /**
  * Represents a set of allowed and forbidden types

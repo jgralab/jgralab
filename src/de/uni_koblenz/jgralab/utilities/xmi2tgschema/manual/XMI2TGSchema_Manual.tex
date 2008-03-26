@@ -31,11 +31,10 @@
 	\mbox{[}\texttt{-o:}\emph{target}] \\
 	\mbox{[}\texttt{appendEdgeIds=}(\texttt{yes}|\texttt{no})]\texttt{ }[\texttt{autoCorrect=}(\texttt{yes}|\texttt{no})] \\
 	\mbox{[}\texttt{errorDetection=}(\texttt{yes}|\texttt{no})] \\
-	\mbox{[}\texttt{extendedEdgeClassNames=}(\texttt{yes}|\texttt{no})]\texttt{ }[\texttt{gcName=}\emph{gcName}] \\
-	\mbox{[}\texttt{prependPackageName=}(\texttt{yes}|\texttt{no})] \\
+	\mbox{[}\texttt{extendedEdgeClassNames=}(\texttt{yes}|\texttt{no})] \\
 	\mbox{[}\texttt{schemaName=}\emph{schemaName}]\texttt{ }[\texttt{tool=}\emph{tool}] \\
 	\mbox{[}\texttt{uml=}(\texttt{yes}|\texttt{no})] \\
-	
+
 	with:
 	\begin{itemize}
 		\item \emph{source} -- The XMI-file to be transformed.
@@ -55,13 +54,11 @@
 		\begin{itemize}
 			\item Vertex Classes without names are detected and an error is thrown.
 			\item Vertex Classes with duplicate names are detected and an error is thrown.
-			\item a Schema which is not self-contained is detected and an error is thrown.\footnote{Most probably an association in the XMI-file is to be transformed to an Edge Class, but one of the associated Classes is missing.}
+			\item a Schema which is not self-contained is detected and an error is thrown\footnote{Most probably an association in the XMI-file is to be transformed to an Edge Class, but one of the associated Classes is missing.}.
 		\end{itemize}
 		It is recommended to set this parameter to \texttt{yes}. Default is \texttt{yes}.
 		\item \emph{extendedEdgeClassNames} --  If set to \texttt{yes} names of EdgeClasses correspond to the extended form \emph{FromRolename}\texttt{LinksTo}\emph{ToRolename}, else names correspond to \texttt{LinksTo}\emph{ToRolename}. Default is \texttt{no}.
-		\item \emph{gcName} -- The name of the Graph Class which shall be created. If omitted, default value  \texttt{Default\-GraphClass} is used.
-		\item \emph{prependPackageName} --  If set to \texttt{yes}, names of generated GraphElementClasses are prepended by the names of their containing packages. This helps to avoid duplicate names. Default is \texttt{no}.
-		\item \emph{schemaName} -- The name of the Schema which shall be created. If omitted, default value \texttt{default\-schema} is used.
+		\item \emph{schemaName} -- The name of the created Schema. Must correspond to the UML package in the modeling tool which contains the schema. If the package does not contain a class with stereotype \texttt{<<GraphClass>>}, the name of the created GraphClass is \texttt{DefaultGraphClass}.
 		\item \emph{tool} -- The tool used to create the XMI file. As yet, the only possible value is \texttt{ea}. Omission of this parameter probably results in corrupted TG files (e.g.\ due to missing attribute types).
 		\item \emph{uml} -- If set to \texttt{yes}, the grUML equivalents of the following UML constructs are created:
 		\begin{itemize}
@@ -70,6 +67,15 @@
 		\end{itemize}
 		Default is \texttt{no}.
 	\end{itemize}
-
 	
+	\section{Notes}
+	\subsection{Conversion of associations}
+	As it is not possible to directly specify package containment for associations in Enterprise Architect, the containment in the exported XMI is derived from the classes connected by the association.
+
+	The following observations were made:
+	\begin{itemize}
+		\item If both classes reside in the same package, the association is also considered to be in this package.
+		\item If one class resides in a package which is ``above'' the other class's package in the package hierarchy, the association is considered to be in the package on the higher hierarchy level.
+		\item If the classes reside in different packages on the same hierarchy level, package containment for the concerned association seems to be random.
+	\end{itemize}
 \end{document}

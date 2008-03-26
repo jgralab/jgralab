@@ -24,12 +24,13 @@
  
 package de.uni_koblenz.jgralab.impl;
 
+import java.util.ConcurrentModificationException;
 import java.util.Iterator;
 
 import de.uni_koblenz.jgralab.Edge;
-import de.uni_koblenz.jgralab.EdgeClass;
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.GraphException;
+import de.uni_koblenz.jgralab.schema.EdgeClass;
 
 /**
  * This class provides an Iterable to iterate over edges in a graph. One may use this class
@@ -55,12 +56,24 @@ public class EdgeIterable<E extends Edge> implements Iterable<E> {
 		protected E current = null;;
 		
 		protected Graph graph = null;
+		
+		/**
+		 * the version of the edge list of the graph 
+		 * at the beginning of the iteration. This information
+		 * is used to check if the edge list has changed,
+		 * the failfast-iterator will then throw an exception
+		 * the next time "next()" is called
+		 */
+		protected long edgeListVersion;
 
 		EdgeIterator(Graph g) {
 			graph = g;
+			edgeListVersion = g.getEdgeListVersion();
 		}
 			
 		public E next() {
+			if (graph.isEdgeListModified(edgeListVersion))
+				throw new ConcurrentModificationException("The edge list of the graph has been modified - the iterator is not longer valid");
 			gotNext = true; 
 			return current;
 		}

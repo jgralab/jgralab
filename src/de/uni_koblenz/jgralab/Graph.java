@@ -21,10 +21,11 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
- 
+
 package de.uni_koblenz.jgralab;
 
-
+import de.uni_koblenz.jgralab.schema.EdgeClass;
+import de.uni_koblenz.jgralab.schema.VertexClass;
 
 /**
  * Represents an m1 graph. The classes jgralab.impl.array.GraphImpl and
@@ -34,17 +35,124 @@ package de.uni_koblenz.jgralab;
  * 
  */
 public interface Graph extends AttributedElement {
-	
+
 	/**
 	 * Creates a instance of the given class and adds this vertex to the graph
 	 */
-	public <T extends Vertex> T createVertex(Class<T> cls)  ;
-	
+	public <T extends Vertex> T createVertex(Class<T> cls);
+
 	/**
 	 * Creates a instance of the given class and adds this edge to the graph
 	 */
-	public <T extends Edge> T createEdge(Class<T> cls, Vertex alpha, Vertex omega)   ;
-	
+	public <T extends Edge> T createEdge(Class<T> cls, Vertex alpha,
+			Vertex omega);
+
+	/**
+	 * This method checks, if the graph is currently being loaded
+	 * @return true if the graph is being loaded
+	 */
+	public boolean isLoading();
+
+	/**
+	 * Sets the loading flag. 
+	 * @param isLoading
+	 */
+	public void setLoading(boolean isLoading);
+
+	/**
+	 * This method is called as soon as the loading of a graph is completed
+	 */
+	public void loadingCompleted();
+
+	/**
+	 * Checks if the graph has changed with respect to the given
+	 * <code>aGraphVersion</code>. Every change in the graph, e.g. adding,
+	 * creating and reordering of edges and vertices or changes of attributes of
+	 * the graph, an edge or a vertex are treated as a change.
+	 * 
+	 * @param aGraphVersion
+	 *            The graphVersion to check against
+	 * @return <code>true</code> if the internal graph version of the graph is
+	 *         different from the given version <code>aGraphVersion</code>.
+	 */
+	public boolean isGraphModified(long aGraphVersion);
+
+	/**
+	 * Changes the graph version, should be called whenever the graph is
+	 * changed, all changes like adding, creating and reordering of edges and
+	 * vertices or changes of attributes of the graph, an edge or a vertex are
+	 * treated as a change.
+	 */
+	public void graphModified();
+
+	/**
+	 * sets the internal graph version of this graph to graphVersion. This
+	 * method is needed to load a graph without changing its version back to
+	 * zero
+	 * 
+	 * @param graphVersion
+	 */
+	public void setGraphVersion(long graphVersion);
+
+	/**
+	 * @return the internal graph version
+	 * @see graphChanged
+	 * @see isGraphChanged
+	 */
+	public long getGraphVersion();
+
+	/**
+	 * Checks if the graph-structure has changed with respect to the given
+	 * <code>graphStructureVersion</code>. Changes in the graph structure are
+	 * creation and deletion as well as reordering of vertices and edges, but
+	 * not changes of attribute values.
+	 * 
+	 * @return <code>true</code> if the internal graph structure version of
+	 *         the graph is different from the given version
+	 *         <code>graphStructureVersion</code>.
+	 */
+	public boolean isVertexListModified(long vertexListVersion);
+
+	/**
+	 * Changes the graph structure version, should be called whenever the
+	 * structure of the graph is changed, for instance by creation and deletion
+	 * or reordering of vertices and edges
+	 */
+	public void vertexListModified();
+
+	/**
+	 * @return the internal graph structure version
+	 * @see graphStructureChanged
+	 * @see isGraphStructureChanged
+	 */
+	public long getVertexListVersion();
+
+	/**
+	 * Checks if the graph-structure has changed with respect to the given
+	 * <code>graphStructureVersion</code>. Changes in the graph structure are
+	 * creation and deletion as well as reordering of vertices and edges, but
+	 * not changes of attribute values.
+	 * 
+	 * @return <code>true</code> if the internal graph structure version of
+	 *         the graph is different from the given version
+	 *         <code>graphStructureVersion</code>.
+	 */
+	public boolean isEdgeListModified(long edgeListVersion);
+
+	/**
+	 * Changes the graph structure version, should be called whenever the
+	 * structure of the graph is changed, for instance by creation and deletion
+	 * or reordering of vertices and edges
+	 */
+	public void edgeListModified();
+
+	/**
+	 * @return the internal graph structure version
+	 * @see graphStructureChanged
+	 * @see isGraphStructureChanged
+	 */
+	public long getEdgeListVersion();
+
 	/**
 	 * adds the given vertex object to this graph. if the vertex' id is 0, a
 	 * valid id is set, otherwise the vertex' current id is used if possible.
@@ -52,17 +160,18 @@ public interface Graph extends AttributedElement {
 	 * Vertex as user, use the appropriate methods from the derived Graphs like
 	 * <code>createStreet(...)</code>
 	 * 
-	 * @param aVertex
+	 * @param newVertex
 	 *            the Vertex to add
-	 * @throws GraphException if a vertex with the same id already exists
+	 * @throws GraphException
+	 *             if a vertex with the same id already exists
 	 */
-	void addVertex(Vertex aVertex) ;
+	void addVertex(Vertex newVertex);
 
 	/**
 	 * @return true iff this graph contains the given vertex
 	 */
 	boolean containsVertex(Vertex v);
-	
+
 	/**
 	 * adds the given edge object to this graph. if the edges id is 0, a valid
 	 * id is set, otherwise the edges current id is used if possible. Should
@@ -76,7 +185,8 @@ public interface Graph extends AttributedElement {
 	 *            the vertex the new edge should start at
 	 * @param omega
 	 *            the vertex the new edge should end at
-	 * @throws GraphException if a edge with the same id already exists
+	 * @throws GraphException
+	 *             if a edge with the same id already exists
 	 */
 	void addEdge(Edge newEdge, Vertex alpha, Vertex omega);
 
@@ -85,13 +195,6 @@ public interface Graph extends AttributedElement {
 	 */
 	boolean containsEdge(Edge e);
 
-	/**
-	 * removes the vertex with the given id from vSeq and erases its attributes
-	 * 
-	 * @param id
-	 *            the id of the vertex to be deleted
-	 */
-	public void deleteVertex(int id) ;
 
 	/**
 	 * removes the specified vertex from vSeq and erases its attributes
@@ -99,32 +202,50 @@ public interface Graph extends AttributedElement {
 	 * @param v
 	 *            the id of the vertex to be deleted
 	 */
-	public void deleteVertex(Vertex v) ;
+	public void deleteVertex(Vertex v);
+
+	/**
+	 * Callback function for triggered actions just before a vertex is actually
+	 * deleted.
+	 * 
+	 * @param v
+	 *            the deleted vertex
+	 */
+	public void vertexDeleted(Vertex v);
+
+	/**
+	 * Callback function for triggered actions just after a vertex was added.
+	 * 
+	 * @param v
+	 *            the deleted vertex
+	 */
+	public void vertexAdded(Vertex v);
 
 	/**
 	 * removes this edge from eSeq and erases its attributes
 	 * 
 	 * @param id
 	 *            the id of the edge to be deleted
-	 *
-	 */
-	public void deleteEdge(int id) ;
-
-	/**
-	 * internally used method to delete incidences, do not use!
 	 * 
-	 * @param vNo
-	 *            vertex number from which the incidence originates
-	 * @param iNo
-	 *            incidence number of the vertex
 	 */
-	void deleteEdgeTo(int vNo, int iNo) ;
+	public void deleteEdge(Edge e);
 
 	/**
-	 * prints the incidence array on the console, only works for package
-	 * 'incarray'
+	 * Callback function for triggered actions just before an edge is actually
+	 * deleted.
+	 * 
+	 * @param e
+	 *            the deleted edge
 	 */
-	public void printArray();
+	public void edgeDeleted(Edge e);
+
+	/**
+	 * Callback function for triggered actions just after an edge was added.
+	 * 
+	 * @param e
+	 *            the deleted vertex
+	 */
+	public void edgeAdded(Edge e);
 
 	/**
 	 * @return the first vertex object of vSeq
@@ -147,7 +268,7 @@ public interface Graph extends AttributedElement {
 	 */
 	public Vertex getFirstVertexOfClass(VertexClass aVertexClass,
 			boolean explicitType);
-	
+
 	/**
 	 * @param aVertexClass
 	 * @return the first vertex object of class aVertexClass in vSeq
@@ -172,12 +293,6 @@ public interface Graph extends AttributedElement {
 	public Vertex getNextVertex(Vertex aVertex);
 
 	/**
-	 * @param v
-	 * @return the next vertex object in vSeq of v's id
-	 */
-	public Vertex getNextVertex(int v);
-
-	/**
 	 * @param aVertex
 	 *            the current vertex
 	 * @param aVertexClass
@@ -193,28 +308,9 @@ public interface Graph extends AttributedElement {
 	 *            the javaclass of the next vertex
 	 * @return the next vertex in vSeq of class aVertexClass or its superclasses
 	 */
-	public Vertex getNextVertexOfClass(Vertex aVertex, Class<? extends Vertex> aM1VertexClass);
+	public Vertex getNextVertexOfClass(Vertex aVertex,
+			Class<? extends Vertex> aM1VertexClass);
 
-	
-	/**
-	 * @param aVertexNo
-	 *            the number of the current vertex
-	 * @param aVertexClass
-	 *            the class of the next vertex
-	 * @return the next vertex in vSeq of class aVertexClass or its superclasses
-	 */
-	public Vertex getNextVertexOfClass(int aVertexNo, VertexClass aVertexClass);
-
-	/**
-	 * @param aVertexNo
-	 *            the number of the current vertex
-	 * @param aM1VertexClass
-	 *            the class of the next vertex
-	 * @return the next vertex in vSeq of class aVertexClass or its superclasses
-	 */
-	public Vertex getNextVertexOfClass(int aVertexNo, Class<? extends Vertex> aM1VertexClass);
-
-	
 	/**
 	 * @param aVertex
 	 *            the current vertex
@@ -228,7 +324,7 @@ public interface Graph extends AttributedElement {
 	 */
 	public Vertex getNextVertexOfClass(Vertex aVertex,
 			VertexClass aVertexClass, boolean explicitType);
-	
+
 	/**
 	 * @param aVertex
 	 *            the current vertex
@@ -243,33 +339,6 @@ public interface Graph extends AttributedElement {
 	public Vertex getNextVertexOfClass(Vertex aVertex,
 			Class<? extends Vertex> aM1VertexClass, boolean explicitType);
 
-	/**
-	 * @param aVertexNo
-	 *            the number of the current vertex
-	 * @param aVertexClass
-	 *            the class of the next vertex
-	 * @param explicitType
-	 *            if set to true, only vertices which are explicitly of the
-	 *            given edge class will be retrieved, otherwise also vertices of
-	 *            subclasses of the given EdgeClass will be retrieved
-	 * @return the next vertex in vSeq of explicit class aVertexClass
-	 */
-	public Vertex getNextVertexOfClass(int aVertexNo, VertexClass aVertexClass,
-			boolean explicitType);
-	
-	/**
-	 * @param aVertexNo
-	 *            the number of the current vertex
-	 * @param aM1VertexClass
-	 *            the class of the next vertex
-	 * @param explicitType
-	 *            if set to true, only vertices which are explicitly of the
-	 *            given edge class will be retrieved, otherwise also vertices of
-	 *            subclasses of the given EdgeClass will be retrieved
-	 * @return the next vertex in vSeq of explicit class aVertexClass
-	 */
-	public Vertex getNextVertexOfClass(int aVertexNo, Class<? extends Vertex> aM1VertexClass,
-			boolean explicitType);
 
 	/**
 	 * @return first edge object of eSeq
@@ -281,7 +350,7 @@ public interface Graph extends AttributedElement {
 	 * @return the first edge object of anEdgeClass in eSeq
 	 */
 	public Edge getFirstEdgeOfClassInGraph(EdgeClass anEdgeClass);
-	
+
 	/**
 	 * @param anEdgeClass
 	 * @return the first edge object of anEdgeClass in eSeq
@@ -298,7 +367,7 @@ public interface Graph extends AttributedElement {
 	 */
 	public Edge getFirstEdgeOfClassInGraph(EdgeClass anEdgeClass,
 			boolean explicitType);
-	
+
 	/**
 	 * @param anEdgeClass
 	 * @param explicitType
@@ -317,28 +386,6 @@ public interface Graph extends AttributedElement {
 	public Edge getNextEdgeInGraph(Edge anEdge);
 
 	/**
-	 * @param e
-	 * @return the next edge object in eSeq of e's id
-	 */
-	public Edge getNextEdgeInGraph(int e);
-
-	/**
-	 * @param anEdgeNo
-	 *            the number of the current edge
-	 * @param anEdgeClass
-	 * @return the next object of anEdgeClass or its superclasses in eSeq
-	 */
-	public Edge getNextEdgeOfClassInGraph(int anEdgeNo, EdgeClass anEdgeClass);
-
-	/**
-	 * @param anEdgeNo
-	 *            the number of the current edge
-	 * @param anEdgeClass
-	 * @return the next object of anEdgeClass or its superclasses in eSeq
-	 */
-	public Edge getNextEdgeOfClassInGraph(int anEdgeNo, Class<? extends Edge> anEdgeClass);
-	
-	/**
 	 * @param anEdge
 	 *            the current edge
 	 * @param anEdgeClass
@@ -352,33 +399,8 @@ public interface Graph extends AttributedElement {
 	 * @param anEdgeClass
 	 * @return the next object of anEdgeClass or its superclasses in eSeq
 	 */
-	public Edge getNextEdgeOfClassInGraph(Edge anEdge, Class<? extends Edge> anEdgeClass);
-	
-	/**
-	 * @param anEdgeNo
-	 *            the number of the current edge
-	 * @param anEdgeClass
-	 * @param explicitType
-	 *            if set to true, only edges which are explicitly of the given
-	 *            edge class will be retrieved, otherwise also edges of
-	 *            subclasses of the given EdgeClass will be retrieved
-	 * @return the next object of explicit anEdgeClass in eSeq
-	 */
-	public Edge getNextEdgeOfClassInGraph(int anEdgeNo, EdgeClass anEdgeClass,
-			boolean explicitType);
-	
-	/**
-	 * @param anEdgeNo
-	 *            the number of the current edge
-	 * @param anEdgeClass
-	 * @param explicitType
-	 *            if set to true, only edges which are explicitly of the given
-	 *            edge class will be retrieved, otherwise also edges of
-	 *            subclasses of the given EdgeClass will be retrieved
-	 * @return the next object of explicit anEdgeClass in eSeq
-	 */
-	public Edge getNextEdgeOfClassInGraph(int anEdgeNo, Class<? extends Edge> anEdgeClass,
-			boolean explicitType);
+	public Edge getNextEdgeOfClassInGraph(Edge anEdge,
+			Class<? extends Edge> anEdgeClass);
 
 	/**
 	 * @param anEdge
@@ -392,7 +414,7 @@ public interface Graph extends AttributedElement {
 	 */
 	public Edge getNextEdgeOfClassInGraph(Edge anEdge, EdgeClass anEdgeClass,
 			boolean explicitType);
-	
+
 	/**
 	 * @param anEdge
 	 *            the current edge
@@ -403,76 +425,72 @@ public interface Graph extends AttributedElement {
 	 *            subclasses of the given EdgeClass will be retrieved
 	 * @return the next object of explicit anEdgeClass in eSeq
 	 */
-	public Edge getNextEdgeOfClassInGraph(Edge anEdge, Class<? extends Edge> anEdgeClass,
-			boolean explicitType);
+	public Edge getNextEdgeOfClassInGraph(Edge anEdge,
+			Class<? extends Edge> anEdgeClass, boolean explicitType);
 
 	/**
 	 * @param v
-	 *            the vertex which is connected to the incidence
-	 * @return first incidence object in iSeq of vertex v
+	 *            a vertex
+	 * @return the first edge in the incidence list of v
 	 */
 	public Edge getFirstEdge(Vertex v);
 
 	/**
 	 * @param v
-	 *            the vertex which is connect to the incidence
-	 * @return first incidence object in iSeq of vertex-id v
-	 */
-	public Edge getFirstEdge(int v);
-
-	/**
-	 * @param v
-	 *            the vertex which is connected to the incidence
-	 * @return first incidence object in iSeq of vertex v which has the
-	 *         orientation IN or OUT
+	 *            a vertex
 	 * @param orientation
 	 *            the orientation the next incidence should have
+	 * @return the first edge in the incidence list of v with the specified
+	 *         orientation
 	 */
 	public Edge getFirstEdge(Vertex v, EdgeDirection orientation);
 
+	public Edge getFirstEdgeOfClass(Vertex v, EdgeClass ec);
+
+	public Edge getFirstEdgeOfClass(Vertex v, EdgeClass ec, boolean noSubclasses);
+
+	public Edge getFirstEdgeOfClass(Vertex v, EdgeClass ec,
+			EdgeDirection orientation, boolean noSubclasses);
+
+	public Edge getFirstEdgeOfClass(Vertex v, Class<? extends Edge> ec);
+
+	public Edge getFirstEdgeOfClass(Vertex v, Class<? extends Edge> ec,
+			boolean noSubclasses);
+
+	public Edge getFirstEdgeOfClass(Vertex v, Class<? extends Edge> ec,
+			EdgeDirection orientation, boolean noSubclasses);
+
 	/**
-	 * @param i
-	 *            the vertex-id which is connected to the incidence
-	 * @return first incidence object in iSeq of vertex e which has the
-	 *         orientation IN or OUT
+	 * @param e
+	 *            an edge
+	 * @return the next edge in the incidence list of this(e)
+	 */
+	public Edge getNextEdge(Edge e);
+
+	/**
+	 * @param v
+	 *            a vertex
 	 * @param orientation
 	 *            the orientation the next incidence should have
+	 * @return the next edge in the incidence list of this(e) with the specified
+	 *         orientation
 	 */
-	public Edge getFirstEdge(int i, EdgeDirection orientation);
+	public Edge getNextEdge(Edge e, EdgeDirection orientation);
 
-	/**
-	 * @param i
-	 *            an incidence object
-	 * @return the next incidence object in iSeq after e
-	 */
-	public Edge getNextEdge(Edge i);
+	public Edge getNextEdgeOfClass(Edge e, EdgeClass ec);
 
-	/**
-	 * @param i
-	 *            an incidence-id
-	 * @return the next incidence object in iSeq after e
-	 */
-	public Edge getNextEdge(int i);
+	public Edge getNextEdgeOfClass(Edge e, EdgeClass ec, boolean noSubclasses);
 
-	/**
-	 * @param i
-	 *            an incidence object
-	 * @return the next incidence object in iSeq after e which has the
-	 *         orientation IN or OUT
-	 * @param orientation
-	 *            the orientation the next incidence should have
-	 */
-	public Edge getNextEdge(Edge i, EdgeDirection orientation);
+	public Edge getNextEdgeOfClass(Edge e, EdgeClass ec,
+			EdgeDirection orientation, boolean noSubclasses);
 
-	/**
-	 * @param i
-	 *            an incidence-id
-	 * @return the next incidence object in iSeq after e which has the
-	 *         orientation IN or OUT
-	 * @param orientation
-	 *            the orientation the next incidence should have
-	 */
-	public Edge getNextEdge(int i, EdgeDirection orientation);
+	public Edge getNextEdgeOfClass(Edge e, Class<? extends Edge> ec);
+
+	public Edge getNextEdgeOfClass(Edge e, Class<? extends Edge> ec,
+			boolean noSubclasses);
+
+	public Edge getNextEdgeOfClass(Edge e, Class<? extends Edge> ec,
+			EdgeDirection orientation, boolean noSubclasses);
 
 	/**
 	 * @param v
@@ -483,27 +501,11 @@ public interface Graph extends AttributedElement {
 
 	/**
 	 * @param v
-	 *            the vertex-id which degree is to be determined
-	 * @return the degree of vertex v
-	 */
-	public int getDegree(int v);
-
-	/**
-	 * @param v
 	 *            the vertex object which degree is to be determined
 	 * @param orientation
 	 *            the orientation the next incidence should have are counted
 	 */
 	public int getDegree(Vertex v, EdgeDirection orientation);
-
-	/**
-	 * @param v
-	 *            the vertex-id which degree is to be determined
-	 * @param orientation
-	 *            the orientation the next incidence should have
-	 * @return the degree of vertex v, only IN or OUT incidences are counted
-	 */
-	public int getDegree(int v, EdgeDirection orientation);
 
 	/**
 	 * @param id
@@ -513,61 +515,11 @@ public interface Graph extends AttributedElement {
 	public Vertex getVertex(int id);
 
 	/**
-	 * @param vc
-	 *            the vertexclass of the vertex
-	 * @param id
-	 *            the id of the vertex
-	 * @return vertex with id-number id only if vertex' class is vc or one of
-	 *         its subclasses
-	 */
-	@Deprecated
-	public Vertex getVertexOfClass(VertexClass vc, int id);
-
-	/**
-	 * @param vc
-	 *            the vertexclass of the vertex
-	 * @param id
-	 *            the id of the vertex
-	 * @param explicitType
-	 *            if set to true, only vertices which are explicitly of the
-	 *            given vertex class will be retrieved, otherwise also vertices of
-	 *            subclasses of the given VertexClass will be retrieved
-	 * @return vertex with id-number id only if vertex' class is vc
-	 */
-	@Deprecated
-	public Vertex getVertexOfClass(VertexClass vc, int id, boolean explicitType);
-
-	/**
 	 * @param id
 	 *            the id of the edge
 	 * @return edge with id-number id
 	 */
 	public Edge getEdge(int id);
-
-	/**
-	 * @param ec
-	 *            the vertexclass of the vertex
-	 * @param id
-	 *            the id of the vertex
-	 * @return vertex with id-number id only if vertex' class is ec or one of
-	 *         its subclasses
-	 */
-	@Deprecated
-	public Edge getEdgeOfClassInGraph(EdgeClass ec, int id);
-
-	/**
-	 * @param ec
-	 *            the vertexclass of the vertex
-	 * @param id
-	 *            the id of the vertex
-	 * @param explicitType
-	 *            if set to true, only edges which are explicitly of the given
-	 *            edge class will be retrieved, otherwise also edges of
-	 *            subclasses of the given EdgeClass will be retrieved
-	 * @return edge with id-number id only if edges class is ec
-	 */
-	@Deprecated
-	public Edge getEdgeOfClassInGraph(EdgeClass ec, int id, boolean explicitType);
 
 	/**
 	 * @param e
@@ -578,143 +530,102 @@ public interface Graph extends AttributedElement {
 
 	/**
 	 * @param e
-	 *            the edge-id which alpha vertex has to be determined
-	 * @return the alpha vertex of edge e
-	 */
-	public Vertex getAlpha(int e);
-
-	/**
-	 * @param e
 	 *            the edge object which omega vertex has to be determined
 	 * @return the omega vertex of edge e
 	 */
 	public Vertex getOmega(Edge e);
 
 	/**
-	 * @param e
-	 *            the edge-id which omega vertex has to be determined
-	 * @return the omega vertex of edge e
-	 */
-	public Vertex getOmega(int e);
-
-	/**
-	 * warning: slow in package 'incarray'
-	 * 
-	 * @param v
-	 *            the vertex-id which previous vertex in vSeq has to be
-	 *            determined
-	 * @return the previous vertex object in vSeq
-	 */
-	public Vertex getPrevVertex(int v);
-
-	/**
-	 * warning: slow in package 'incarray'
-	 * 
-	 * @param e
-	 *            the edge-id which previous edge in eSeq has to be determined
-	 * @return the previous edge object in eSeq
-	 */
-	public Edge getPrevEdgeInGraph(int e);
-
-	/**
-	 * @param source
-	 *            a vertex id
-	 * @param target
-	 *            a vertex id
-	 * @return true, if target is before source in vSeq
-	 */
-	public boolean isBeforeVertex(int source, int target);
-
-	/**
-	 * @param source
-	 *            an edge id
-	 * @param target
-	 *            an edge id
-	 * @return true, if target is before source in eSeq
-	 */
-	public boolean isBeforeEdgeInGraph(int source, int target);
-
-	/**
-	 * @param source
-	 *            a vertex id
-	 * @param target
-	 *            a vertex id
-	 * @return true, if target is after source in vSeq
-	 */
-	public boolean isAfterVertex(int source, int target);
-
-	/**
-	 * @param source
-	 *            an edge id
-	 * @param target
-	 *            an edge id
-	 * @return true, if target is after source in eSeq
-	 */
-	public boolean isAfterEdgeInGraph(int source, int target);
-
-	/**
-	 * puts source somewhere before target in vSeq WARNING: implementation is
-	 * different for package 'incarray' to 'oo'
+	 * Puts source somewhere before target in vSeq
 	 * 
 	 * @param source
-	 *            a vertex id
+	 *            a vertex
 	 * @param target
-	 *            a vertex id
+	 *            a vertex
 	 */
-	public void putAfterVertex(int target, int source);
+	public void putAfterVertex(Vertex target, Vertex source);
 
 	/**
-	 * puts source somewhere after target in eSeq WARNING: implementation is
-	 * different for package 'incarray' to 'oo'
+	 * Checks whether <code>source</code> is after <code>target</code> in
+	 * the global vertex sequence of this graph.
+	 * 
+	 * @param target
+	 *            a Vertex
+	 * @param source
+	 *            another Vertex
+	 * @return true if source is after target in the global vertex sequence of
+	 *         this graph
+	 */
+	public boolean isAfterVertex(Vertex target, Vertex source);
+
+	/**
+	 * Checks whether <code>source</code> is before <code>target</code> in
+	 * the global vertex sequence of this graph.
+	 * 
+	 * @param target
+	 *            a Vertex
+	 * @param source
+	 *            another Vertex
+	 * @return true if source is before target in the global vertex sequence of
+	 *         this graph
+	 */
+	public boolean isBeforeVertex(Vertex target, Vertex source);
+
+	/**
+	 * puts source somewhere after target in eSeq
 	 * 
 	 * @param source
-	 *            an edge id
+	 *            an edge
 	 * @param target
-	 *            an edge id
+	 *            an edge
 	 */
-	public void putAfterEdgeInGraph(int target, int source);
+	public void putAfterEdgeInGraph(Edge target, Edge source);
 
 	/**
-	 * puts source somewhere before target in vSeq WARNING: implementation is
-	 * different for package 'incarray' to 'oo'
+	 * puts source somewhere before target in vSeq
 	 * 
 	 * @param source
-	 *            a vertex id
+	 *            a vertex
 	 * @param target
-	 *            a vertex id
+	 *            a vertex
 	 */
-	public void putBeforeVertex(int target, int source);
+	public void putBeforeVertex(Vertex target, Vertex source);
 
 	/**
-	 * puts source somewhere before target in eSeq WARNING: implementation is
-	 * different for package 'incarray' to 'oo'
+	 * puts source somewhere before target in eSeq
 	 * 
 	 * @param source
-	 *            an edge id
+	 *            an edge
 	 * @param target
-	 *            an edge id
+	 *            an edge
 	 */
-	public void putBeforeEdgeInGraph(int target, int source);
+	public void putBeforeEdgeInGraph(Edge target, Edge source);
 
 	/**
-	 * locates vertex v in vSeq and moves it to position pos
+	 * Checks whether <code>source</code> is after <code>target</code> in
+	 * the global edge sequence of this graph.
 	 * 
-	 * @param v
-	 *            the vertex to move in vSeq
-	 * @param pos
-	 *            the position to where the vertex has to go
+	 * @param target
+	 *            an Edge
+	 * @param source
+	 *            another Edge
+	 * @return true if source is after target in the global edge sequence of
+	 *         this graph
 	 */
-	public void insertVertexAtPos(int v, int pos);
+	public boolean isAfterEdgeInGraph(Edge target, Edge source);
 
 	/**
-	 * locates edge e in eSeq and moves it to position pos
+	 * Checks whether <code>source</code> is before <code>target</code> in
+	 * the global edge sequence of this graph.
 	 * 
-	 * @param e
-	 *            the edge to move in eSeq
-	 * @param pos
-	 *            the position to where the edge has to go
+	 * @param target
+	 *            an Edge
+	 * @param source
+	 *            another Edge
+	 * @return true if source is before target in the global edge sequence of
+	 *         this graph
 	 */
-	public void insertEdgeInGraphAtPos(int e, int pos);
+	public boolean isBeforeEdgeInGraph(Edge target, Edge source);
 
 	/**
 	 * puts the given edge <code>edge</code> before the given edge
@@ -723,14 +634,6 @@ public interface Graph extends AttributedElement {
 	 * order of the edges at the <code>this-vertex</code> of e is changed
 	 */
 	public void putEdgeBefore(Edge edge, Edge nextEdge);
-	
-	/**
-	 * puts the edge given by <code>edgeId</code> before the edge given by
-	 * <code>nextEdgeId</code> in the incidence list. This does neither affect
-	 * the global edge sequence eSeq nor the alpha or omega vertices, only the
-	 * order of the edges at the <code>this-vertex</code> of e is changed
-	 */
-	public void putEdgeBefore(int edgeId, int nextEdgeId);
 
 	/**
 	 * puts the given edge <code>edge</code> after the given edge
@@ -740,252 +643,17 @@ public interface Graph extends AttributedElement {
 	 * changed
 	 */
 	public void putEdgeAfter(Edge edge, Edge previousEdge);
-	
-	/**
-	 * puts the edge by <code>edgeId</code> after the edge given by
-	 * <code>previousEdgeId</code> in the incidence list. This does neither
-	 * affect the global edge sequence eSeq nor the alpha or omega vertices,
-	 * only the order of the edges at the <code>this-vertex</code> of e is
-	 * changed
-	 */
-	public void putEdgeAfter(int edgeId, int previousEdgeId);
 
 	/**
 	 * inserts the given edge <code>edge</code> at the given position
 	 * <code>pos</code> in the incidence list. This does neither affect the
 	 * global edge sequence eSeq nor the alpha or omega vertices, only the order
 	 * of the edges at the <code>this-vertex</code> of e is changed
+	 * 
+	 * @throw GraphException if the edges this-vertex and the given vertex are
+	 *        not identical
 	 */
 	public void insertEdgeAt(Vertex vertex, Edge edge, int pos);
-	
-	/**
-	 * inserts the edge given by <code>eId</code> at the given position
-	 * <code>pos</code> in the incidence list. This does neither affect the
-	 * global edge sequence eSeq nor the alpha or omega vertices, only the order
-	 * of the edges at the <code>this-vertex</code> of e is changed
-	 */
-	public void insertEdgeAt(int vId, int eId, int pos);
-
-	/**
-	 * @param id
-	 *            the id of the incidence to start
-	 * @param anEdgeClass
-	 *            the edge class to search for
-	 * @return the next incidence in iSeq where the corresponding edge is of
-	 *         class anEdgeClass
-	 */
-	public Edge getNextEdgeOfClass(int id, EdgeClass anEdgeClass);
-
-	/**
-	 * @param id
-	 *            the id of the incidence to start
-	 * @param anEdgeClass
-	 *            the edge class to search for
-	 * @return the next incidence in iSeq where the corresponding edge is of
-	 *         class anEdgeClass
-	 */
-	public Edge getNextEdgeOfClass(int id, Class<? extends Edge> anEdgeClass);
-	
-	/**
-	 * @param id
-	 *            the id of the incidence to start
-	 * @param anEdgeClass
-	 *            the edge class to search for
-	 * @param orientation
-	 *            the orientation the next incidence should have
-	 * @return the next incidence in iSeq where the corresponding edge is of
-	 *         class anEdgeClass
-	 */
-	public Edge getNextEdgeOfClass(int id, EdgeClass anEdgeClass,
-			EdgeDirection orientation);
-
-	/**
-	 * @param id
-	 *            the id of the incidence to start
-	 * @param anEdgeClass
-	 *            the edge class to search for
-	 * @param orientation
-	 *            the orientation the next incidence should have
-	 * @return the next incidence in iSeq where the corresponding edge is of
-	 *         class anEdgeClass
-	 */
-	public Edge getNextEdgeOfClass(int id, Class<? extends Edge> anEdgeClass,
-			EdgeDirection orientation);
-
-	
-	/**
-	 * @param id
-	 *            the id of the vertex to which the incidence belongs
-	 * @param anEdgeClass
-	 *            the edge class to search for
-	 * @return the first incidence in iSeq where the corresponding edge is of
-	 *         class anEdgeClass
-	 */
-	public Edge getFirstEdgeOfClass(int id, EdgeClass anEdgeClass);
-	
-	/**
-	 * @param id
-	 *            the id of the vertex to which the incidence belongs
-	 * @param anEdgeClass
-	 *            the edge class to search for
-	 * @return the first incidence in iSeq where the corresponding edge is of
-	 *         class anEdgeClass
-	 */
-	public Edge getFirstEdgeOfClass(int id, Class<? extends Edge> anEdgeClass);
-
-	/**
-	 * @param id
-	 *            the id of the vertex to which the incidence belongs
-	 * @param anEdgeClass
-	 *            the edge class to search for
-	 * @param orientation
-	 *            the orientation the next incidence should have
-	 * @return the first incidence in iSeq where the corresponding edge is of
-	 *         class anEdgeClass
-	 */
-	public Edge getFirstEdgeOfClass(int id, EdgeClass anEdgeClass,
-			EdgeDirection orientation);
-	
-	/**
-	 * @param id
-	 *            the id of the vertex to which the incidence belongs
-	 * @param anEdgeClass
-	 *            the edge class to search for
-	 * @param orientation
-	 *            the orientation the next incidence should have
-	 * @return the first incidence in iSeq where the corresponding edge is of
-	 *         class anEdgeClass
-	 */
-	public Edge getFirstEdgeOfClass(int id, Class<? extends Edge> anEdgeClass,
-			EdgeDirection orientation);
-
-	/**
-	 * @param id
-	 *            the id of the incidence to start
-	 * @param anEdgeClass
-	 *            the edge class to search for
-	 * @param explicitType
-	 *            if set to true, only edges which are explicitly of the given
-	 *            edge class will be retrieved, otherwise also edges of
-	 *            subclasses of the given EdgeClass will be retrieved
-	 * @return the next incidence in iSeq where the corresponding edge is of
-	 *         explicit class anEdgeClass
-	 */
-	public Edge getNextEdgeOfClass(int id, EdgeClass anEdgeClass,
-			boolean explicitType);
-
-	/**
-	 * @param id
-	 *            the id of the incidence to start
-	 * @param anEdgeClass
-	 *            the edge class to search for
-	 * @param explicitType
-	 *            if set to true, only edges which are explicitly of the given
-	 *            edge class will be retrieved, otherwise also edges of
-	 *            subclasses of the given EdgeClass will be retrieved
-	 * @return the next incidence in iSeq where the corresponding edge is of
-	 *         explicit class anEdgeClass
-	 */
-	public Edge getNextEdgeOfClass(int id, Class<? extends Edge> anEdgeClass,
-			boolean explicitType);
-	
-	/**
-	 * @param id
-	 *            the id of the incidence to start
-	 * @param anEdgeClass
-	 *            the edge class to search for
-	 * @param orientation
-	 *            the orientation the next incidence should have
-	 * @param explicitType
-	 *            if set to true, only edges which are explicitly of the given
-	 *            edge class will be retrieved, otherwise also edges of
-	 *            subclasses of the given EdgeClass will be retrieved
-	 * @return the next incidence in iSeq where the corresponding edge is of
-	 *         explicit class anEdgeClass
-	 */
-	public Edge getNextEdgeOfClass(int id, EdgeClass anEdgeClass,
-			EdgeDirection orientation, boolean explicitType);
-	
-	/**
-	 * @param id
-	 *            the id of the incidence to start
-	 * @param anEdgeClass
-	 *            the edge class to search for
-	 * @param orientation
-	 *            the orientation the next incidence should have
-	 * @param explicitType
-	 *            if set to true, only edges which are explicitly of the given
-	 *            edge class will be retrieved, otherwise also edges of
-	 *            subclasses of the given EdgeClass will be retrieved
-	 * @return the next incidence in iSeq where the corresponding edge is of
-	 *         explicit class anEdgeClass
-	 */
-	public Edge getNextEdgeOfClass(int id, Class<? extends Edge> anEdgeClass,
-			EdgeDirection orientation, boolean explicitType);
-
-	/**
-	 * @param id
-	 *            the id of the vertex to which the incidence belongs
-	 * @param anEdgeClass
-	 *            the edge class to search for
-	 * @param explicitType
-	 *            if set to true, only edges which are explicitly of the given
-	 *            edge class will be retrieved, otherwise also edges of
-	 *            subclasses of the given EdgeClass will be retrieved *
-	 * @return the first incidence in iSeq where the corresponding edge is of
-	 *         explicit class anEdgeClass
-	 */
-	public Edge getFirstEdgeOfClass(int id, EdgeClass anEdgeClass,
-			boolean explicitType);
-	
-	/**
-	 * @param id
-	 *            the id of the vertex to which the incidence belongs
-	 * @param anEdgeClass
-	 *            the edge class to search for
-	 * @param explicitType
-	 *            if set to true, only edges which are explicitly of the given
-	 *            edge class will be retrieved, otherwise also edges of
-	 *            subclasses of the given EdgeClass will be retrieved *
-	 * @return the first incidence in iSeq where the corresponding edge is of
-	 *         explicit class anEdgeClass
-	 */
-	public Edge getFirstEdgeOfClass(int id, Class<? extends Edge> anEdgeClass,
-			boolean explicitType);
-
-	/**
-	 * @param id
-	 *            the id of the vertex to which the incidence belongs
-	 * @param anEdgeClass
-	 *            the edge class to search for
-	 * @param orientation
-	 *            the orientation the next incidence should have
-	 * @param explicitType
-	 *            if set to true, only edges which are explicitly of the given
-	 *            edge class will be retrieved, otherwise also edges of
-	 *            subclasses of the given EdgeClass will be retrieved *
-	 * @return the first incidence in iSeq where the corresponding edge is of
-	 *         explicit class anEdgeClass
-	 */
-	public Edge getFirstEdgeOfClass(int id, EdgeClass anEdgeClass,
-			EdgeDirection orientation, boolean explicitType);
-	
-	/**
-	 * @param id
-	 *            the id of the vertex to which the incidence belongs
-	 * @param anEdgeClass
-	 *            the edge class to search for
-	 * @param orientation
-	 *            the orientation the next incidence should have
-	 * @param explicitType
-	 *            if set to true, only edges which are explicitly of the given
-	 *            edge class will be retrieved, otherwise also edges of
-	 *            subclasses of the given EdgeClass will be retrieved *
-	 * @return the first incidence in iSeq where the corresponding edge is of
-	 *         explicit class anEdgeClass
-	 */
-	public Edge getFirstEdgeOfClass(int id, Class<? extends Edge> anEdgeClass,
-			EdgeDirection orientation, boolean explicitType);
 
 	/**
 	 * @return the maximum number of vertices which can be stored in the graph
@@ -1022,155 +690,98 @@ public interface Graph extends AttributedElement {
 	public void setId(String id);
 
 	/**
-	 * sets the first edge in eSeq of the graph to e
-	 * 
-	 * @param e
-	 *            an edge
-	 */
-	public void setFirstEdgeInGraph(Edge e);
-
-	/**
 	 * Sets the start vertex of the given edge <code>e</code> to
 	 * <code>alpha</code>. Also removes the edge from the incidence sequence
 	 * of its old alpha vertex
 	 */
-	public void setAlpha(Edge e, Vertex alpha) ;
+	public void setAlpha(Edge e, Vertex alpha);
 
 	/**
 	 * Sets the end vertex of the given edge <code>e</code> to
 	 * <code>omega</code> Also removes the edge from the incidence sequence of
 	 * its old omega vertex
 	 */
-	public void setOmega(Edge e, Vertex omega) ;
+	public void setOmega(Edge e, Vertex omega);
 
 	/**
-	 * Sets the end vertex of the edge with id <code>eId</code> to
-	 * the vertex with id <code>vId</code> Also removes the edge from the incidence sequence of
-	 * its old omega vertex
-	 */
-	public void setOmega(int eId, int vId) ;
-
-	/**
-	 * Sets the start vertex of the edge with id <code>eId</code> to
-	 * the vertex with id <code>vId</code> Also removes the edge from the incidence sequence of
-	 * its old alpha vertex
-	 */
-	public void setAlpha(int eId, int vId) ;
-	
-	/**
-	 * @return the current version of the graph. This version is increased everytime the graph is changed
-	 */	
-	public long getGraphVersion();
-	
-	/**
-	 * Sets the graph's version.
+	 * Using this method, one can simply iterate over all edges of this graph
+	 * using the advanced for-loop
 	 * 
-	 * @param graphVersion the new version of the graph
-	 */
-	void setGraphVersion(long graphVersion);
-	
-	/**
-	 * @param aGraphVersion a version number as <code>long</code> to check the current graph version against 
-	 * @return true iff the given version and the current version are not identical.
-	 */
-	public boolean isModified(long aGraphVersion);
-	
-	/**
-	 * Using this method, one can simply iterate over all edges of this graph using the
-	 * advanced for-loop
-	 * @return a iterable object which can be iterated through using the advanced for-loop 
+	 * @return a iterable object which can be iterated through using the
+	 *         advanced for-loop
 	 */
 	public Iterable<Edge> edges();
-	
+
 	/**
-	 * Using this method, one can simply iterate over all edges of this graph using the
-	 * advanced for-loop
-	 * @param eclass the EdgeClass of the edges which should be iterated
-	 * @return a iterable object which can be iterated through using the advanced for-loop 
+	 * Using this method, one can simply iterate over all edges of this graph
+	 * using the advanced for-loop
+	 * 
+	 * @param eclass
+	 *            the EdgeClass of the edges which should be iterated
+	 * @return a iterable object which can be iterated through using the
+	 *         advanced for-loop
 	 */
 	public Iterable<Edge> edges(EdgeClass eclass);
-	
+
 	/**
-	 * Using this method, one can simply iterate over all edges of this graph using the
-	 * advanced for-loop
-	 * @param eclass the M1-Class of the edges which should be iterated
-	 * @return a iterable object which can be iterated through using the advanced for-loop 
+	 * Using this method, one can simply iterate over all edges of this graph
+	 * using the advanced for-loop
+	 * 
+	 * @param eclass
+	 *            the M1-Class of the edges which should be iterated
+	 * @return a iterable object which can be iterated through using the
+	 *         advanced for-loop
 	 */
 	public Iterable<Edge> edges(Class<? extends Edge> eclass);
-	
+
 	/**
-	 * Using this method, one can simply iterate over all edges of this graph using the
-	 * advanced for-loop
-	 * @param eclass the EdgeClass of the edges which should be iterated
-	 * @param explicitType if set to true, no subclasses of the given EdgeClass will be iterated
-	 * @return a iterable object which can be iterated through using the advanced for-loop 
-	 */
-	public Iterable<Edge> edges(EdgeClass eclass,  boolean explicitType);
-	
-	/**
-	 * Using this method, one can simply iterate over all edges of this graph using the
-	 * advanced for-loop
-	 * @param eclass the M1-Class of the edges which should be iterated
-	 * @param explicitType if set to true, no subclasses of the given EdgeClass will be iterated
-	 * @return a iterable object which can be iterated through using the advanced for-loop 
-	 */
-	public Iterable<Edge> edges(Class<? extends Edge> eclass, boolean explicitType);
-	
-	/**
-	 * Using this method, one can simply iterate over all aggregations of this graph using the
-	 * advanced for-loop
-	 * @return a iterable object which can be iterated through using the advanced for-loop 
+	 * Using this method, one can simply iterate over all aggregations of this
+	 * graph using the advanced for-loop
+	 * 
+	 * @return a iterable object which can be iterated through using the
+	 *         advanced for-loop
 	 */
 	public Iterable<Aggregation> aggregations();
-	
-	
+
 	/**
-	 * Using this method, one can simply iterate over all compositions of this graph using the
-	 * advanced for-loop
-	 * @return a iterable object which can be iterated through using the advanced for-loop 
+	 * Using this method, one can simply iterate over all compositions of this
+	 * graph using the advanced for-loop
+	 * 
+	 * @return a iterable object which can be iterated through using the
+	 *         advanced for-loop
 	 */
 	public Iterable<Composition> compositions();
-	
-	
+
 	/**
-	 * Using this method, one can simply iterate over all vertices of this graph using the
-	 * advanced for-loop
-	 * @return a iterable object which can be iterated through using the advanced for-loop 
+	 * Using this method, one can simply iterate over all vertices of this graph
+	 * using the advanced for-loop
+	 * 
+	 * @return a iterable object which can be iterated through using the
+	 *         advanced for-loop
 	 */
 	public Iterable<Vertex> vertices();
-	
+
 	/**
-	 * Using this method, one can simply iterate over all vertices of this graph using the
-	 * advanced for-loop
-	 * @param vclass the VertexClass of the vertices which should be iterated
-	 * @return a iterable object which can be iterated through using the advanced for-loop 
+	 * Using this method, one can simply iterate over all vertices of this graph
+	 * using the advanced for-loop
+	 * 
+	 * @param vclass
+	 *            the VertexClass of the vertices which should be iterated
+	 * @return a iterable object which can be iterated through using the
+	 *         advanced for-loop
 	 */
 	public Iterable<Vertex> vertices(VertexClass vclass);
-	
+
 	/**
-	 * Using this method, one can simply iterate over all vertices of this graph using the
-	 * advanced for-loop
-	 * @param vclass the M1-Class of the vertices which should be iterated
-	 * @return a iterable object which can be iterated through using the advanced for-loop 
+	 * Using this method, one can simply iterate over all vertices of this graph
+	 * using the advanced for-loop
+	 * 
+	 * @param vclass
+	 *            the M1-Class of the vertices which should be iterated
+	 * @return a iterable object which can be iterated through using the
+	 *         advanced for-loop
 	 */
 	public Iterable<Vertex> vertices(Class<? extends Vertex> eclass);
-	
-	/**
-	 * Using this method, one can simply iterate over all vertices of this graph using the
-	 * advanced for-loop
-	 * @param vclass the VertexClass of the vertices which should be iterated
-	 * @param explicitType if set to true, no subclasses of the given VertexClass will be iterated
-	 * @return a iterable object which can be iterated through using the advanced for-loop 
-	 */
-	public Iterable<Vertex> vertices(VertexClass vclass,  boolean explicitType);
-	
-	/**
-	 * Using this method, one can simply iterate over all vertices of this graph using the
-	 * advanced for-loop
-	 * @param vclass the M1-Class of the vertices which should be iterated
-	 * @param explicitType if set to true, no subclasses of the given VertexClass will be iterated
-	 * @return a iterable object which can be iterated through using the advanced for-loop 
-	 */
-	public Iterable<Vertex> vertices(Class<? extends Vertex> vclass, boolean explicitType);
+
 
 }

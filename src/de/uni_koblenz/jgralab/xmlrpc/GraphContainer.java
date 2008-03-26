@@ -34,7 +34,7 @@ import de.uni_koblenz.jgralab.Graph;
  * mapping an integer value (the handle) to a graph. 
  * 
  */
-class GraphContainer {
+public class GraphContainer {
 
 	/**
 	 * the singleton instance of this class

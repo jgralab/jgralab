@@ -21,15 +21,16 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
- 
+
 package de.uni_koblenz.jgralab;
 
 /**
- * Modells the direction of an edge, may be IN or OUT
+ * Specifies direction of edges for traversal methods. IN: Only incoming edges
+ * are traversed, OUT: only outgoing edges are traversed, INOUT: both incoming
+ * and outgoing edges are traversed.
  */
 public enum EdgeDirection {
 
-	IN,
-	OUT
-	
+	IN, OUT, INOUT
+
 }

@@ -28,15 +28,16 @@ import de.uni_koblenz.jgralab.greql2.exception.EvaluateException;
 import de.uni_koblenz.jgralab.greql2.exception.WrongFunctionParameterException;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValueSet;
+import de.uni_koblenz.jgralab.schema.AttributedElementClass;
+import de.uni_koblenz.jgralab.schema.GraphClass;
+import de.uni_koblenz.jgralab.schema.QualifiedName;
+import de.uni_koblenz.jgralab.schema.Schema;
 
 import java.util.ArrayList;
 import java.util.Iterator;
 
-import de.uni_koblenz.jgralab.AttributedElementClass;
 import de.uni_koblenz.jgralab.BooleanGraphMarker;
 import de.uni_koblenz.jgralab.Graph;
-import de.uni_koblenz.jgralab.GraphClass;
-import de.uni_koblenz.jgralab.Schema;
 
 /**
  * Returns all supertypes of the given type. The type can be given as
@@ -87,8 +88,8 @@ public class Supertypes implements Greql2Function {
 					GraphClass graphClass = (GraphClass) graph
 							.getAttributedElementClass();
 					Schema schema = graphClass.getSchema();
-					type = schema.getAttributedElementClass(arguments[0]
-							.toString());
+					type = schema.getAttributedElementClass(new QualifiedName(
+							arguments[0].toString()));
 				} else {
 					type = arguments[0].toAttributedElementClass();
 				}

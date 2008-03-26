@@ -25,6 +25,9 @@
 package de.uni_koblenz.jgralab.greql2.jvalue;
 
 import de.uni_koblenz.jgralab.*;
+import de.uni_koblenz.jgralab.schema.GraphElementClass;
+import de.uni_koblenz.jgralab.schema.AttributedElementClass;
+
 import java.util.*;
 
 public class JValuePathSystem extends JValue {

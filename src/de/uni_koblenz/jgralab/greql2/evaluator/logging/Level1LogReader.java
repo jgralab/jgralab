@@ -4,8 +4,8 @@
 package de.uni_koblenz.jgralab.greql2.evaluator.logging;
 
 import de.uni_koblenz.jgralab.Graph;
-import de.uni_koblenz.jgralab.Schema;
 import de.uni_koblenz.jgralab.greql2.schema.Greql2Vertex;
+import de.uni_koblenz.jgralab.schema.Schema;
 
 import java.io.File;
 import java.util.ArrayList;

@@ -24,6 +24,8 @@
  
 package de.uni_koblenz.jgralab;
 
+import de.uni_koblenz.jgralab.schema.Domain;
+
 /**
  * represents an attribute in the m2 layer, consists of a name and a domain 
  * @author Steffen Kahle

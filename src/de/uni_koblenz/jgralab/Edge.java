@@ -24,6 +24,8 @@
  
 package de.uni_koblenz.jgralab;
 
+import de.uni_koblenz.jgralab.schema.EdgeClass;
+
 /**
  * represents a signed edge, has an orientation
  * 
@@ -156,16 +158,6 @@ public interface Edge extends GraphElement {
 	public String getThatRole();
 
 	/**
-	 * sets the next incidence of this incidence in package 'oo' to i this
-	 * method has only package visibility, because it should be used only
-	 * internal in the list-implementation
-	 * 
-	 * @param i
-	 *            an incidence
-	 */
-	void setNextEdge(Edge i);
-
-	/**
 	 * @return next edge object in eSeq
 	 */
 	public Edge getNextEdgeInGraph();
@@ -200,12 +192,6 @@ public interface Edge extends GraphElement {
 	public Edge getNextEdgeOfClassInGraph(Class<? extends Edge> anEdgeClass,
 			boolean explicitType);
 
-	/**
-	 * warning: may be slow in package 'incarray'
-	 * 
-	 * @return previous edge in eSeq
-	 */
-	public Edge getPrevEdgeInGraph();
 
 	/**
 	 * @return the alpha vertex of this edge
@@ -224,24 +210,11 @@ public interface Edge extends GraphElement {
 	public boolean isBeforeInGraph(Edge anEdge);
 
 	/**
-	 * @param anEdgeId
-	 * @return true, if this edge id is before anEdgeId in eSeq
-	 */
-	public boolean isBeforeInGraph(int anEdgeId);
-
-	/**
 	 * puts this edge before anEdge in eSeq
 	 * 
 	 * @param anEdge
 	 */
 	public void putBeforeInGraph(Edge anEdge);
-
-	/**
-	 * puts this edge before anEdgeId in eSeq
-	 * 
-	 * @param anEdgeId
-	 */
-	public void putBeforeInGraph(int anEdgeId);
 
 	/**
 	 * @param anEdge
@@ -250,45 +223,11 @@ public interface Edge extends GraphElement {
 	public boolean isAfterInGraph(Edge anEdge);
 
 	/**
-	 * @param anEdgeId
-	 * @return true, if this edge is after anEdgeId in eSeq
-	 */
-	public boolean isAfterInGraph(int anEdgeId);
-
-	/**
 	 * puts this edge after anEdge in eSeq
 	 * 
 	 * @param anEdge
 	 */
 	public void putAfterInGraph(Edge anEdge);
-
-	/**
-	 * puts this edge after anEdgeId in eSeq
-	 * 
-	 * @param anEdgeId
-	 */
-	public void putAfterInGraph(int anEdgeId);
-
-	/**
-	 * inserts this edge at position pos in eSeq
-	 * 
-	 * @param pos
-	 */
-	public void insertAtInGraph(int pos);
-
-	/**
-	 * sets the next edge field of this edge in package 'oo' to anEdge
-	 * 
-	 * @param anEdge
-	 */
-	void setNextEdgeInGraph(Edge anEdge);
-
-	/**
-	 * sets the previous edge field of this edge in package 'oo' to anEdge
-	 * 
-	 * @param anEdge
-	 */
-	void setPrevEdgeInGraph(Edge anEdge);
 
 	/**
 	 * sets the id field of this edge in package 'oo' to id
@@ -352,14 +291,6 @@ public interface Edge extends GraphElement {
 	 * of this edge is changed
 	 */
 	public void putEdgeAfter(Edge previousEdge);
-
-	/**
-	 * inserts this at the given position <code>pos</code> in the incidence
-	 * list of the given vertex This does neither affect the global edge
-	 * sequence eSeq nor the alpha or omega vertices, only the order of the
-	 * edges at this vertex is changed
-	 */
-	public void insertEdgeAt(Vertex vertex, int pos);
 
 	/**
 	 * returns the normal edge of this edge

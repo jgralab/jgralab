@@ -100,7 +100,7 @@ public class GraphIndex {
 	 * @return true iff this index is still valid for the given graph
 	 */
 	public boolean isValid(Graph g) {
-		return ((g.getId().equals(graphId)) && (!g.isModified(graphVersion)));
+		return ((g.getId().equals(graphId)) && (!g.isGraphModified(graphVersion)));
 	}
 	
 	/**

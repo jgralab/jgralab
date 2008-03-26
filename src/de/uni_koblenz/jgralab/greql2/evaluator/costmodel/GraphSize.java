@@ -25,7 +25,7 @@
 package de.uni_koblenz.jgralab.greql2.evaluator.costmodel;
 
 import de.uni_koblenz.jgralab.Graph;
-import de.uni_koblenz.jgralab.GraphClass;
+import de.uni_koblenz.jgralab.schema.GraphClass;
 
 /**
  * This class is needed to propagate the size of the currently used graph along

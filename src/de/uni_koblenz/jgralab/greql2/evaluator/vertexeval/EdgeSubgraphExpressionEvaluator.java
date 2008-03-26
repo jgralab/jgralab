@@ -31,6 +31,7 @@ import de.uni_koblenz.jgralab.greql2.exception.EvaluateException;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValueTypeCollection;
 import de.uni_koblenz.jgralab.greql2.schema.*;
+import de.uni_koblenz.jgralab.schema.AttributedElementClass;
 
 
 /**
@@ -48,7 +49,7 @@ public class EdgeSubgraphExpressionEvaluator extends
 
 	@Override
 	public JValue evaluate() throws EvaluateException {
-		BooleanGraphMarker subgraphAttr = new BooleanGraphMarker();
+		BooleanGraphMarker subgraphAttr = new BooleanGraphMarker(getDatagraph());
 		Edge currentEdge = getDatagraph().getFirstEdgeInGraph();
 		JValueTypeCollection typeCollection = getTypeCollection();
 		while (currentEdge != null) {

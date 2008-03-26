@@ -21,14 +21,13 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
- 
+
 package de.uni_koblenz.jgralab.codegenerator;
 
 import java.util.Map.Entry;
 
-import de.uni_koblenz.jgralab.Domain;
-import de.uni_koblenz.jgralab.RecordDomain;
-
+import de.uni_koblenz.jgralab.schema.Domain;
+import de.uni_koblenz.jgralab.schema.RecordDomain;
 
 public class RecordCodeGenerator extends CodeGenerator {
 
@@ -36,13 +35,16 @@ public class RecordCodeGenerator extends CodeGenerator {
 	 * The RecordDomain to create code for
 	 */
 	protected RecordDomain recordDomain;
-	
+
 	/**
-	 * Creates a new RecordCodeGenerator which creates code for the given recordDomain object
+	 * Creates a new RecordCodeGenerator which creates code for the given
+	 * recordDomain object
 	 */
-	public RecordCodeGenerator(RecordDomain recordDomain, String schemaPackageName, String implementationName) {
-		super(schemaPackageName, implementationName);
-		rootBlock.setVariable("className", recordDomain.getName());
+	public RecordCodeGenerator(RecordDomain recordDomain,
+			String schemaPackageName, String implementationName) {
+		super(schemaPackageName, recordDomain.getPackageName());
+		rootBlock.setVariable("simpleClassName", recordDomain.getSimpleName());
+		rootBlock.setVariable("simpleImplClassName", null);
 		rootBlock.setVariable("isClassOnly", "true");
 		this.recordDomain = recordDomain;
 	}
@@ -59,25 +61,24 @@ public class RecordCodeGenerator extends CodeGenerator {
 		return code;
 	}
 
-//	addImport("jgralab.GraphIO");
-//	addImport("jgralab.GraphIOException");
-//	code.append( indentation + "public " + classToGenerateName + "() {}\n");
-	
 	@Override
 	protected CodeBlock createHeader(boolean createClass) {
-		return new CodeSnippet(true, "public class #className# {");
+		return new CodeSnippet(true, "public class #simpleClassName# {");
 	}
-	
+
 	private CodeBlock createFieldConstructor() {
 		CodeList code = new CodeList();
 		StringBuilder sb = new StringBuilder();
-		CodeSnippet header = new CodeSnippet(true, "public #className#(#fields#) {");
+		CodeSnippet header = new CodeSnippet(true,
+				"public #simpleClassName#(#fields#) {");
 		code.addNoIndent(header);
 		String delim = "";
-		for (Entry<String, Domain> rdc : recordDomain.getComponents().entrySet()) {
+		for (Entry<String, Domain> rdc : recordDomain.getComponents()
+				.entrySet()) {
 			sb.append(delim);
 			delim = ", ";
-			sb.append(rdc.getValue().getJavaAttributeImplementationTypeName());
+			sb.append(rdc.getValue().getJavaAttributeImplementationTypeName(
+					schemaRootPackageName));
 			sb.append(" ");
 			sb.append(rdc.getKey());
 
@@ -89,18 +90,19 @@ public class RecordCodeGenerator extends CodeGenerator {
 		code.addNoIndent(new CodeSnippet("}"));
 		return code;
 	}
-	
+
 	private CodeBlock createMapConstructor() {
 		CodeList code = new CodeList();
 		CodeSnippet suppress = new CodeSnippet(true,
 				"@SuppressWarnings(\"unchecked\")");
-		CodeSnippet header = new CodeSnippet(false, 
-				"public #className#(java.util.Map<String, Object> fields) {");
+		CodeSnippet header = new CodeSnippet(false,
+				"public #simpleClassName#(java.util.Map<String, Object> fields) {");
 		code.addNoIndent(suppress);
 		code.addNoIndent(header);
-		for (Entry<String, Domain> rdc : recordDomain.getComponents().entrySet()) {
+		for (Entry<String, Domain> rdc : recordDomain.getComponents()
+				.entrySet()) {
 			CodeBlock assign = new CodeSnippet("this.#name# = ("
-					+ rdc.getValue().getJavaClassName()
+					+ rdc.getValue().getJavaClassName(schemaRootPackageName)
 					+ ")fields.get(\"#name#\");");
 			assign.setVariable("name", rdc.getKey());
 			code.add(assign);
@@ -112,26 +114,33 @@ public class RecordCodeGenerator extends CodeGenerator {
 	private CodeBlock createReadComponentsMethod() {
 		CodeList code = new CodeList();
 		addImports("#jgPackage#.GraphIO", "#jgPackage#.GraphIOException");
-		code.addNoIndent(new CodeSnippet(true, "public #className#(GraphIO io) throws GraphIOException {"));
+		code
+				.addNoIndent(new CodeSnippet(true,
+						"public #simpleClassName#(GraphIO io) throws GraphIOException {"));
 		code.add(new CodeSnippet("io.match(\"(\");"));
 		for (Entry<String, Domain> c : recordDomain.getComponents().entrySet()) {
-			code.add(c.getValue().getReadMethod(c.getKey(), "io"));
+			code.add(c.getValue().getReadMethod(schemaRootPackageName,
+					c.getKey(), "io"));
 		}
 		code.add(new CodeSnippet("io.match(\")\");"));
 		code.addNoIndent(new CodeSnippet("}"));
 		return code;
 	}
-	
+
 	private CodeBlock createWriteComponentsMethod() {
 		CodeList code = new CodeList();
-		addImports("#jgPackage#.GraphIO", "#jgPackage#.GraphIOException", "java.io.IOException");
-		code.addNoIndent(new CodeSnippet(true, "public void writeComponentValues(GraphIO io) throws IOException, GraphIOException {", 
-				"\tio.writeSpace();",
-				"\tio.write(\"(\");",
-				"\tio.noSpace();"));
+		addImports("#jgPackage#.GraphIO", "#jgPackage#.GraphIOException",
+				"java.io.IOException");
+		code
+				.addNoIndent(new CodeSnippet(
+						true,
+						"public void writeComponentValues(GraphIO io) throws IOException, GraphIOException {",
+						"\tio.writeSpace();", "\tio.write(\"(\");",
+						"\tio.noSpace();"));
 
-		for (Entry<String, Domain> c :recordDomain.getComponents().entrySet()) {
-			code.add(c.getValue().getWriteMethod(c.getKey(), "io"));
+		for (Entry<String, Domain> c : recordDomain.getComponents().entrySet()) {
+			code.add(c.getValue().getWriteMethod(schemaRootPackageName,
+					c.getKey(), "io"));
 		}
 
 		code.addNoIndent(new CodeSnippet("\tio.write(\")\");", "}"));
@@ -140,41 +149,43 @@ public class RecordCodeGenerator extends CodeGenerator {
 
 	private CodeBlock createRecordComponents() {
 		CodeList code = new CodeList();
-		for (Entry<String, Domain> rdc : recordDomain.getComponents().entrySet()) {
-			CodeSnippet s = new CodeSnippet(true,
-					"public #type# #field#;");
-			s.setVariable("type", rdc.getValue().getJavaAttributeImplementationTypeName());
+		for (Entry<String, Domain> rdc : recordDomain.getComponents()
+				.entrySet()) {
+			CodeSnippet s = new CodeSnippet(true, "public #type# #field#;");
+			s.setVariable("type", rdc.getValue()
+					.getJavaAttributeImplementationTypeName(
+							schemaRootPackageName));
 			s.setVariable("field", rdc.getKey());
 			code.addNoIndent(s);
 		}
 		return code;
 	}
-	
+
 	/**
 	 * Creates the toString()-method for this record domain
 	 */
 	private CodeBlock createToStringMethod() {
 		CodeList code = new CodeList();
-		code.addNoIndent(new CodeSnippet(true,
-			"public String toString() {",
-			"\tStringBuilder sb = new StringBuilder();"));
-		String delim="[";
+		code.addNoIndent(new CodeSnippet(true, "public String toString() {",
+				"\tStringBuilder sb = new StringBuilder();"));
+		String delim = "[";
 		for (String key : recordDomain.getComponents().keySet()) {
-			CodeSnippet s = new CodeSnippet(
-			"sb.append(\"#delim#\");",
-			"sb.append(\"#key#\");",
-			"sb.append(\" = \");",
-			"sb.append(#key##toString#);");
-			
+			CodeSnippet s = new CodeSnippet("sb.append(\"#delim#\");",
+					"sb.append(\"#key#\");", "sb.append(\" = \");",
+					"sb.append(#key##toString#);");
+
 			Domain domain = recordDomain.getComponents().get(key);
 			s.setVariable("delim", delim);
 			s.setVariable("key", key);
-			s.setVariable("toString", domain.isComposite() ? ".toString()" : "");
+			s
+					.setVariable("toString",
+							domain.isComposite() ? ".toString()" : "");
 			code.add(s);
 			delim = ", ";
 		}
-		code.addNoIndent(new CodeSnippet("\tsb.append(\"]\");", "\treturn sb.toString();", "}"));
+		code.addNoIndent(new CodeSnippet("\tsb.append(\"]\");",
+				"\treturn sb.toString();", "}"));
 		return code;
 	}
-	
+
 }

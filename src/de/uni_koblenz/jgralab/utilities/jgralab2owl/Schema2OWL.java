@@ -27,16 +27,16 @@ package de.uni_koblenz.jgralab.utilities.jgralab2owl;
 import java.util.Map;
 
 import de.uni_koblenz.jgralab.Attribute;
-import de.uni_koblenz.jgralab.AttributedElementClass;
-import de.uni_koblenz.jgralab.CompositeDomain;
-import de.uni_koblenz.jgralab.Domain;
-import de.uni_koblenz.jgralab.EdgeClass;
-import de.uni_koblenz.jgralab.EnumDomain;
-import de.uni_koblenz.jgralab.GraphClass;
-import de.uni_koblenz.jgralab.GraphElementClass;
-import de.uni_koblenz.jgralab.RecordDomain;
-import de.uni_koblenz.jgralab.Schema;
-import de.uni_koblenz.jgralab.VertexClass;
+import de.uni_koblenz.jgralab.schema.GraphElementClass;
+import de.uni_koblenz.jgralab.schema.AttributedElementClass;
+import de.uni_koblenz.jgralab.schema.CompositeDomain;
+import de.uni_koblenz.jgralab.schema.Domain;
+import de.uni_koblenz.jgralab.schema.EdgeClass;
+import de.uni_koblenz.jgralab.schema.EnumDomain;
+import de.uni_koblenz.jgralab.schema.GraphClass;
+import de.uni_koblenz.jgralab.schema.RecordDomain;
+import de.uni_koblenz.jgralab.schema.Schema;
+import de.uni_koblenz.jgralab.schema.VertexClass;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -171,11 +171,11 @@ class Schema2OWL {
 		boolean listCreated = false;
 		
 		for (CompositeDomain compositeDomain : schema.getCompositeDomainsInTopologicalOrder()) {
-			if (!setCreated && compositeDomain.getTGTypeName().startsWith("Set")) {
+			if (!setCreated && compositeDomain.getTGTypeName(null).startsWith("Set<")) {
 				convertSetDomain();
 				setCreated = true;
 			}
-			if (!listCreated && compositeDomain.getTGTypeName().startsWith("List")) {
+			if (!listCreated && compositeDomain.getTGTypeName(null).startsWith("List<")) {
 				convertListDomain();
 				listCreated = true;
 			}
@@ -398,13 +398,13 @@ class Schema2OWL {
 			
 			// if "component" has a CompositeDomain or an EnumDomain (no Object)
 			if ((component.getValue().isComposite() 
-						&& !component.getValue().getTGTypeName().equals("Object"))
+						&& !component.getValue().getTGTypeName(null).equals("Object"))
 					|| component.getValue().toString().startsWith("Enum")) {
 				componentElem = createOwlObjectPropertyElement();
 				
-				if (component.getValue().getTGTypeName().startsWith("List")) {
+				if (component.getValue().getTGTypeName(null).startsWith("List<")) {
 					rdfsRangeElem.setAttribute("rdf:resource", "#ListElement");
-				} else if (component.getValue().getTGTypeName().startsWith("Set")) {
+				} else if (component.getValue().getTGTypeName(null).startsWith("Set<")) {
 					rdfsRangeElem.setAttribute("rdf:resource", "#Set");
 				} else {
 					rdfsRangeElem.setAttribute("rdf:resource", 
@@ -414,16 +414,16 @@ class Schema2OWL {
 			} else {
 				componentElem = createOwlDatatypePropertyElement();
 								
-				if (component.getValue().getTGTypeName().equals("String")) {
+				if (component.getValue().getTGTypeName(null).equals("String")) {
 					rdfsRangeElem.setAttribute("rdf:resource", 
 							"http://www.w3.org/2001/XMLSchema#string");
-				} else if (component.getValue().getTGTypeName().equals("Object")) {
+				} else if (component.getValue().getTGTypeName(null).equals("Object")) {
 					rdfsRangeElem.setAttribute("rdf:resource", 
 							"http://www.w3.org/2001/XMLSchema#base64binary");
 				} else {
 					rdfsRangeElem.setAttribute("rdf:resource", 
 							"http://www.w3.org/2001/XMLSchema#" 
-							+ component.getValue().getJavaAttributeImplementationTypeName());
+							+ component.getValue().getJavaAttributeImplementationTypeName(""));
 				} 
 			}
 			
@@ -1225,16 +1225,16 @@ class Schema2OWL {
 			
 			// if "attr" has a CompositeDomain or an EnumDomain as type (no Object)
 			if ((attr.getDomain().isComposite() 
-						&& !attr.getDomain().getTGTypeName().equals("Object"))
+						&& !attr.getDomain().getTGTypeName(null).equals("Object"))
 					|| attr.getDomain().toString().startsWith("Enum")) {
 				attrElem = createOwlObjectPropertyElement(
 						HelperMethods.firstToLowerCase(aecElemName)
 						+ "Has" 
 						+ HelperMethods.firstToUpperCase(attr.getName()));
 				
-				if (attr.getDomain().getTGTypeName().startsWith("List")) {
+				if (attr.getDomain().getTGTypeName(null).startsWith("List<")) {
 					rangeElem.setAttribute("rdf:resource", "#ListElement");
-				} else if (attr.getDomain().getTGTypeName().startsWith("Set")) {
+				} else if (attr.getDomain().getTGTypeName(null).startsWith("Set<")) {
 					rangeElem.setAttribute("rdf:resource", "#Set");
 				} else {
 					rangeElem.setAttribute("rdf:resource", 
@@ -1247,16 +1247,16 @@ class Schema2OWL {
 						+ "Has" 
 						+ HelperMethods.firstToUpperCase(attr.getName()));
 								
-				if (attr.getDomain().getTGTypeName().equals("String")) {
+				if (attr.getDomain().getTGTypeName(null).equals("String")) {
 					rangeElem.setAttribute("rdf:resource", 
 							"http://www.w3.org/2001/XMLSchema#string");
-				} else if (attr.getDomain().getTGTypeName().equals("Object")) {
+				} else if (attr.getDomain().getTGTypeName(null).equals("Object")) {
 					rangeElem.setAttribute("rdf:resource", 
 							"http://www.w3.org/2001/XMLSchema#base64Binary");
 				} else {
 					rangeElem.setAttribute("rdf:resource", 
 							"http://www.w3.org/2001/XMLSchema#"	+ attr.getDomain()
-									.getJavaAttributeImplementationTypeName());
+									.getJavaAttributeImplementationTypeName(""));
 				}
 			}
 			

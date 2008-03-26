@@ -21,62 +21,112 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
- 
+
 package de.uni_koblenz.jgralab;
 
 import java.util.HashMap;
 
-import de.uni_koblenz.jgralab.impl.ReversedEdgeBaseImpl;
+import de.uni_koblenz.jgralab.impl.EdgeImpl;
+import de.uni_koblenz.jgralab.impl.ReversedEdgeImpl;
+import de.uni_koblenz.jgralab.impl.VertexImpl;
 
 /**
- * This class can be used to "colorize" graphs, edges and vertices.  If a algorithm only needs
- * to distinguish between "marked" and "not marked", a look at the class <code>BooleanGraphMarker</code> may be reasonable. 
- * If a specific kind of marking is used, it may be reasonalbe to extends this GraphMarker. 
- * A example how that could be done is located in the tutorial in the class <code>DijkstraVertexMarker</code>. 
+ * This class can be used to "colorize" graphs, edges and vertices. If a
+ * algorithm only needs to distinguish between "marked" and "not marked", a look
+ * at the class <code>BooleanGraphMarker</code> may be reasonable. If a
+ * specific kind of marking is used, it may be reasonalbe to extends this
+ * GraphMarker. A example how that could be done is located in the tutorial in
+ * the class <code>DijkstraVertexMarker</code>.
  * 
- * @author Daniel Bildhauer <dbildh@uni-koblenz.de> 
- * November 2006
- *
+ * @author Daniel Bildhauer <dbildh@uni-koblenz.de> November 2006
+ * 
  */
 public class GraphMarker<T> {
 
-		/*
-		 * Stores the mapping between Graph,Edge or Vertex and the attribute 
-		 */
-		private HashMap<AttributedElement, T> tempAttributeMap;
-		
-		/**
-		 * Creates a new GraphMarker 
-		 */
-		public GraphMarker() {
-			tempAttributeMap = new HashMap<AttributedElement, T>();
-		}
-		
-		/**
-		 * returns the object that marks the given Graph, Edge or Vertex in this marking.
-		 * @param elem the element to get the marking for
-		 * @return the object that marks the givne element or <code>null</code> if the given element is not marked in this marking. 
-		 */
-		public T getMark(AttributedElement elem) {
-			if (elem == null)
-				return null;
-			if (elem instanceof ReversedEdgeBaseImpl) {
-				elem = ((ReversedEdgeBaseImpl)elem).getNormalEdge();
-			}
-			return tempAttributeMap.get(elem);
-		}	
+	/**
+	 * Stores the mapping between Graph, Edge or Vertex and the attribute
+	 */
+	private HashMap<AttributedElement, T> tempAttributeMap;
 
-		/**
-		 * marks the given element with the given value
-		 * @param elem the element (Graph, Vertex or Edge) to mark
-		 * @param value the object that should be used as marking
-		 * @return true on success, false if the given element already contains a marking 
-		 */
-		public T mark(AttributedElement elem, T value) {
-			if (elem instanceof ReversedEdgeBaseImpl) {
-				elem = ((ReversedEdgeBaseImpl)elem).getNormalEdge();
-			}
+	/**
+	 * The graph which is marked by this GraphMarker.
+	 */
+	private Graph graph;
+
+	/**
+	 * Creates a new GraphMarker
+	 */
+	public GraphMarker(Graph g) {
+		graph = g;
+		tempAttributeMap = new HashMap<AttributedElement, T>();
+	}
+
+	/**
+	 * returns the object that marks the given Graph, Edge or Vertex in this
+	 * marking.
+	 * 
+	 * @param elem
+	 *            the element to get the marking for
+	 * @return the object that marks the givne element or <code>null</code> if
+	 *         the given element is not marked in this marking.
+	 */
+	public T getMark(AttributedElement elem) {
+		if (elem == null)
+			return null;
+		if (elem instanceof ReversedEdgeImpl) {
+			elem = ((ReversedEdgeImpl) elem).getNormalEdge();
+		}
+		return tempAttributeMap.get(elem);
+	}
+
+	/**
+	 * marks the given element with the given value
+	 * 
+	 * @param elem
+	 *            the element (Graph, Vertex or Edge) to mark
+	 * @param value
+	 *            the object that should be used as marking
+	 * @return true on success, false if the given element already contains a
+	 *         marking
+	 */
+	public T mark(AttributedElement elem, T value) {
+
+		if (elem instanceof ReversedEdgeImpl) {
+			elem = ((ReversedEdgeImpl) elem).getNormalEdge();
+		}
+
+		if ((elem instanceof VertexImpl && ((VertexImpl) elem).getGraph() == graph)
+				|| (elem instanceof EdgeImpl && ((EdgeImpl) elem).getGraph() == graph)
+				|| elem == graph) {
 			return tempAttributeMap.put(elem, value);
 		}
-
+		throw new GraphException("Can't mark the element " + elem
+				+ ", because it belongs to a different graph.");
 	}
+
+	/**
+	 * Returns the number of marked elements in this GraphMarker.
+	 * 
+	 * @return The number of marked elements.
+	 */
+	public int size() {
+		return tempAttributeMap.size();
+	}
+
+	/**
+	 * Clears this GraphMarker such that no element is marked.
+	 */
+	public void clear() {
+		tempAttributeMap.clear();
+	}
+
+	/**
+	 * Returns the Graph of this GraphMarker.
+	 * 
+	 * @return the Graph of this GraphMarker.
+	 */
+	public Graph getGraph() {
+		return graph;
+	}
+
+}

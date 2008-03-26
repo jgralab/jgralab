@@ -21,12 +21,14 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
- 
+
 package de.uni_koblenz.jgralab;
 
 import java.util.HashSet;
 
-import de.uni_koblenz.jgralab.impl.ReversedEdgeBaseImpl;
+import de.uni_koblenz.jgralab.impl.EdgeImpl;
+import de.uni_koblenz.jgralab.impl.ReversedEdgeImpl;
+import de.uni_koblenz.jgralab.impl.VertexImpl;
 
 /**
  * This class can be used to "colorize" graphs, it supports only two "colors",
@@ -39,17 +41,16 @@ import de.uni_koblenz.jgralab.impl.ReversedEdgeBaseImpl;
  */
 public class BooleanGraphMarker {
 
-	/*
-	 * stores the Elements (Graphes, Edges and Vertices) that are marked by this
-	 * marker
-	 */
 	private HashSet<AttributedElement> markedElements;
+
+	private Graph graph;
 
 	/**
 	 * creates a new boolean graph marker
 	 * 
 	 */
-	public BooleanGraphMarker() {
+	public BooleanGraphMarker(Graph g) {
+		graph = g;
 		markedElements = new HashSet<AttributedElement>();
 	}
 
@@ -62,8 +63,8 @@ public class BooleanGraphMarker {
 	 *         element is already marked by this GraphMarker
 	 */
 	public boolean isMarked(AttributedElement elem) {
-		if (elem instanceof ReversedEdgeBaseImpl) {
-			elem = ((ReversedEdgeBaseImpl) elem).getNormalEdge();
+		if (elem instanceof ReversedEdgeImpl) {
+			elem = ((ReversedEdgeImpl) elem).getNormalEdge();
 		}
 		return markedElements.contains(elem);
 	}
@@ -76,7 +77,37 @@ public class BooleanGraphMarker {
 	 * @return true if this GraphMarker marks the given element, false otherwise
 	 */
 	public boolean mark(AttributedElement elem) {
-		return markedElements.add(elem);
+		if ((elem instanceof VertexImpl && ((VertexImpl) elem).getGraph() == graph)
+				|| (elem instanceof EdgeImpl && ((EdgeImpl) elem).getGraph() == graph)
+				|| elem == graph) {
+			return markedElements.add(elem);
+		}
+		throw new GraphException("Can't mark the element " + elem
+				+ ", because it belongs to a different graph.");
 	}
 
+	/**
+	 * Returns the number of marked elements in this GraphMarker.
+	 * 
+	 * @return The number of marked elements.
+	 */
+	public int size() {
+		return markedElements.size();
+	}
+
+	/**
+	 * Clears this GraphMarker such that no element is marked.
+	 */
+	public void clear() {
+		markedElements.clear();
+	}
+
+	/**
+	 * Returns the Graph of this GraphMarker.
+	 * 
+	 * @return the Graph of this GraphMarker.
+	 */
+	public Graph getGraph() {
+		return graph;
+	}
 }

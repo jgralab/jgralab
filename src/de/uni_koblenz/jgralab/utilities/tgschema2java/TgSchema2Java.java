@@ -34,13 +34,14 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
-import de.uni_koblenz.jgralab.Domain;
-import de.uni_koblenz.jgralab.EdgeClass;
-import de.uni_koblenz.jgralab.GraphClass;
 import de.uni_koblenz.jgralab.GraphIO;
 import de.uni_koblenz.jgralab.GraphIOException;
-import de.uni_koblenz.jgralab.Schema;
-import de.uni_koblenz.jgralab.VertexClass;
+import de.uni_koblenz.jgralab.schema.Domain;
+import de.uni_koblenz.jgralab.schema.EdgeClass;
+import de.uni_koblenz.jgralab.schema.GraphClass;
+import de.uni_koblenz.jgralab.schema.Schema;
+import de.uni_koblenz.jgralab.schema.VertexClass;
+import de.uni_koblenz.jgralab.schema.impl.SchemaImpl;
 import de.uni_koblenz.jgralab.utilities.tgschema2java.SchemaJarGenerator;
 
 public class TgSchema2Java {
@@ -64,12 +65,7 @@ public class TgSchema2Java {
 	 * Stores the classpath. 
 	 */
 	private String classpath;
-	
-	/**
-	 * Specifies whether the array- or the list-implementation is to be used.
-	 */
-	private boolean isArrayImplementation;
-	
+		
 	/**
 	 * Specifies whether the .java-files should be compiled
 	 */
@@ -110,7 +106,6 @@ public class TgSchema2Java {
 	 */
 	public TgSchema2Java(String[] args) {
 		commitPath = ".";
-		isArrayImplementation = true;
 		compile = false;
 		createJar = false;
 		overwrite = true;
@@ -122,11 +117,6 @@ public class TgSchema2Java {
 			processArguments(args);
 			//loading .tg-file and creating schema-object
 			schema = GraphIO.loadSchemaFromFile(tgFilename);
-			//setting implementation to be used
-			if (isArrayImplementation)
-				schema.setArrayImplementation();
-			else
-				schema.setListImplementation();
 		}
 		catch (GraphIOException e) {
 			e.printStackTrace();
@@ -152,17 +142,7 @@ public class TgSchema2Java {
 		longOptions[5] = new LongOpt("cp", LongOpt.REQUIRED_ARGUMENT, null, 's');
 		longOptions[6] = new LongOpt("filename", LongOpt.REQUIRED_ARGUMENT, null, 's');
 	}
-	
-	/**
-	 * Converts a package, e.g. "example.that" to a path ("example/path")
-	 * 
-	 * @param pack the package name to be coverted to a path
-	 * @return the path
-	 */
-	private String packageToFolder(String pack) {
-		return pack.replace('.', File.separatorChar);
-	}
-	
+		
 	private boolean deleteFolder(String path) {
 		File folder = new File(path);
 		File file = new File(path);
@@ -170,7 +150,7 @@ public class TgSchema2Java {
 		if (!folder.exists())
 			return false;
 		for (String filename : folder.list()) {
-			file = new File(path + "/" + filename);
+			file = new File(path + File.separator + filename);
 			if (file.isDirectory())
 				deleteFolder(file.getPath());
 			else
@@ -189,9 +169,9 @@ public class TgSchema2Java {
 	 * @return true if all .java-files already exist; false otherwise
 	 */
 	private boolean isExistingSchema(Schema schema) {
-		String packageFolder = packageToFolder(schema.getPrefix());
-		File interfaceFolder = new File(commitPath + "/" + packageFolder);
-		File implFolder = new File(commitPath + "/" + packageFolder + "/impl");
+		String packageFolder = schema.getDirectoryName();
+		File interfaceFolder = new File(commitPath + File.separator + packageFolder);
+		File implFolder = new File(commitPath + File.separator + packageFolder + File.separator + SchemaImpl.IMPLPACKAGENAME);
 		if (!interfaceFolder.exists() || !implFolder.exists())
 			return false;
 		
@@ -252,9 +232,8 @@ public class TgSchema2Java {
 	 * @throws Exception Throws Exception if mandatory option "-f" is not specified.
 	 */
 	private void processArguments(String[] args) throws Exception {
-		Getopt getopt = new Getopt("TgSchema2Java", args, "f:p:i:hc:j:s:", longOptions);
+		Getopt getopt = new Getopt("TgSchema2Java", args, "f:p:hc:j:s:", longOptions);
 		int option;
-		String optionArg;
 		boolean missingFilenameOption = true;
 				
 		/*if no command line arguments are specified, create an "-h" argument in
@@ -271,15 +250,6 @@ public class TgSchema2Java {
 					break;
 				case 'p': 
 					commitPath = getopt.getOptarg();
-					break;
-				case 'i':
-					optionArg = getopt.getOptarg();
-					if (optionArg.equals("list"))
-						isArrayImplementation = false;
-					else if (optionArg.equals("array"));
-					else {
-						throw new Exception("Invalid options");
-					}
 					break;
 				case 'c':
 					compile = true;
@@ -332,18 +302,18 @@ public class TgSchema2Java {
 	 * Compiles the written .java-files
 	 */
 	private void compile() throws IOException {
-		String packageFolder = packageToFolder(schema.getPrefix());
-		File folder = new File(commitPath + "/" + packageFolder);
+		String packageFolder = schema.getDirectoryName();
+		File folder = new File(commitPath + File.separator + packageFolder);
 		
 		//compiling of interfaces
 		for(String filename : folder.list()) {
 			if (filename.endsWith(".java"))
-				Runtime.getRuntime().exec(new String[] { javacPath + "/javac", 
+				Runtime.getRuntime().exec(new String[] { javacPath + File.separator + "javac", 
 						"-classpath", classpath, "-sourcepath", commitPath, 
-						"-d", commitPath, packageFolder + "/" + filename } );
+						"-d", commitPath, packageFolder + File.separator + filename } );
 		}
 		
-		folder = new File(commitPath + "/" + packageFolder + "/impl");
+		folder = new File(commitPath + File.separator + packageFolder + File.separator + SchemaImpl.IMPLPACKAGENAME);
 		
 		//compiling of classes (*Impl.java)
 		for(String filename : folder.list()) {
@@ -373,10 +343,10 @@ public class TgSchema2Java {
 				}		
 			}
 			if (overwrite) {
-				deleteFolder(commitPath + "/" + packageToFolder(schema.getPrefix()));
-				System.out.println("Committing schema " + schema.getFullName());
+				deleteFolder(commitPath + File.separator + schema.getDirectoryName());
+				System.out.println("Committing schema " + schema.getQualifiedName());
 				schema.commit(commitPath);
-				System.out.println("Schema " + schema.getFullName() 
+				System.out.println("Schema " + schema.getQualifiedName() 
 						+ " committed successfully");
 			}	
 			if (compile) {
@@ -399,7 +369,7 @@ public class TgSchema2Java {
 	 * generates the .jar-file
 	 */
 	private void generateJarFile() {
-		SchemaJarGenerator jarGenerator = new SchemaJarGenerator(commitPath, schema.getPrefix(), jarFileName);
+		SchemaJarGenerator jarGenerator = new SchemaJarGenerator(commitPath, schema.getDirectoryName(), jarFileName);
 		try {
 			jarGenerator.createJar();
 		} catch (Exception ex) {

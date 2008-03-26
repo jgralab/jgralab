@@ -27,6 +27,7 @@ package de.uni_koblenz.jgralab.greql2.jvalue;
 import java.io.*;
 import de.uni_koblenz.jgralab.*;
 import de.uni_koblenz.jgralab.greql2.exception.*;
+import de.uni_koblenz.jgralab.schema.AttributedElementClass;
 
 public class JValueXMLOutputVisitor extends JValueDefaultVisitor {
 

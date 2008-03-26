@@ -25,7 +25,7 @@
 package de.uni_koblenz.jgralab.impl;
 
 import de.uni_koblenz.jgralab.Attribute;
-import de.uni_koblenz.jgralab.Domain;
+import de.uni_koblenz.jgralab.schema.Domain;
 
 public class AttributeImpl implements Attribute, Comparable<Attribute> {
 	

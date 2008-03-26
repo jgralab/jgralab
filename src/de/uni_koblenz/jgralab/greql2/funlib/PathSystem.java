@@ -115,7 +115,7 @@ public class PathSystem extends PathSearch implements Greql2Function {
 				ps, d);
 		GraphMarker<PathSystemMarkerList> currentMarker = marker.get(s.number);
 		if (currentMarker == null) {
-			currentMarker = new GraphMarker<PathSystemMarkerList>();
+			currentMarker = new GraphMarker<PathSystemMarkerList>(graph);
 			marker.set(s.number, currentMarker);
 		}
 		PathSystemMarkerList list = currentMarker.getMark(v);
@@ -230,7 +230,7 @@ public class PathSystem extends PathSearch implements Greql2Function {
 		marker = new ArrayList<GraphMarker<PathSystemMarkerList>>(dfa.stateList
 				.size());
 		for (int i = 0; i < dfa.stateList.size(); i++)
-			marker.add(new GraphMarker<PathSystemMarkerList>());
+			marker.add(new GraphMarker<PathSystemMarkerList>(graph));
 		List<Vertex> leaves = markVerticesOfPathSystem(startVertex, dfa,
 				subgraph);
 		JValuePathSystem resultPathSystem = createPathSystemFromMarkings(

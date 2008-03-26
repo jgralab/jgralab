@@ -2,46 +2,44 @@ Schema de.uni_koblenz.jgralab.utilities.tg2schemagraph.grumlschema.GrUMLSchema;
 GraphClass GrUMLSchemaGraph;
 
 
-VertexClass SchemaM2 {name: String};
-abstract VertexClass AttributedElementClassM2 {isAbstract: Boolean, name: String};
-VertexClass GraphClassM2: AttributedElementClassM2;
-abstract VertexClass GraphElementClassM2: AttributedElementClassM2;
-VertexClass VertexClassM2: GraphElementClassM2;
-VertexClass EdgeClassM2: GraphElementClassM2;
-VertexClass AggregationClassM2: EdgeClassM2 {aggregateFrom: Boolean};
-VertexClass CompositionClassM2: AggregationClassM2;
+VertexClass 'Schema { name: String };
+abstract VertexClass AttributedElementClass { 'isAbstract: Boolean, name: String };
+VertexClass 'GraphClass: AttributedElementClass;
+abstract VertexClass GraphElementClass: AttributedElementClass;
+VertexClass 'VertexClass: GraphElementClass;
+VertexClass 'EdgeClass: GraphElementClass;
+VertexClass 'AggregationClass: 'EdgeClass { aggregateFrom: Boolean };
+VertexClass 'CompositionClass: 'AggregationClass;
 
-VertexClass AttributeM2 {name: String};
-abstract VertexClass DomainM2;
+VertexClass Attribute { name: String };
+abstract VertexClass Domain;
 
-abstract VertexClass CompositeDomainM2: DomainM2;
-VertexClass SetDomainM2: CompositeDomainM2;
-VertexClass RecordDomainM2: CompositeDomainM2 {name: String};
-VertexClass ListDomainM2: CompositeDomainM2;
+abstract VertexClass CompositeDomain: Domain;
+VertexClass SetDomain: CompositeDomain;
+VertexClass 'RecordDomain: CompositeDomain { name: String };
+VertexClass ListDomain: CompositeDomain;
 
+abstract VertexClass BasicDomain: Domain;
+VertexClass IntDomain: BasicDomain;
+VertexClass BooleanDomain: BasicDomain;
+VertexClass 'EnumDomain: BasicDomain { constants: List<String> };
+VertexClass StringDomain: BasicDomain;
+VertexClass LongDomain: BasicDomain;
+VertexClass ObjectDomain: BasicDomain;
+VertexClass DoubleDomain: BasicDomain;
 
-abstract VertexClass BasicDomainM2: DomainM2;
-VertexClass IntDomainM2: BasicDomainM2;
-VertexClass BooleanDomainM2: BasicDomainM2;
-VertexClass EnumDomainM2: BasicDomainM2 {constants: List<String>};
-VertexClass StringDomainM2: BasicDomainM2;
-VertexClass LongDomainM2: BasicDomainM2;
-VertexClass ObjectDomainM2: BasicDomainM2;
-VertexClass DoubleDomainM2: BasicDomainM2;
+AggregationClass HasAttribute from Attribute (0,*) to AttributedElementClass (1,1) aggregate to;
+EdgeClass HasDomain from Domain (1,1) to Attribute (0,*);
 
-AggregationClass HasAttributeM2 from AttributeM2 (0,*) to AttributedElementClassM2 (1,1) aggregate to;
-EdgeClass HasDomainM2 from DomainM2 (1,1) to AttributeM2 (0,*);
+EdgeClass HasBaseDomain from CompositeDomain (0,*) to Domain (0,1);
+AggregationClass HasRecordDomainComponent from 'RecordDomain (0,*) to Domain (0,*) aggregate from {name: String};
 
-EdgeClass HasBaseDomainM2 from CompositeDomainM2 (0,*) to DomainM2 (0,1);
-AggregationClass HasRecordDomainComponentM2 from RecordDomainM2 (0,*) to DomainM2 (0,*) aggregate from {name: String};
+AggregationClass To from 'EdgeClass (0,*) to 'VertexClass (1,1) aggregate from { min: Integer, max: Integer, roleName: String, 'redefines: Set<String> } ;
+AggregationClass From from 'EdgeClass (0,*) to 'VertexClass (1,1) aggregate from { min: Integer, max: Integer, roleName: String, 'redefines: Set<String> };
 
-AggregationClass ToM2 from EdgeClassM2 (0,*) to VertexClassM2 (1,1) aggregate from {min: Integer, roleName: String, max: Integer} ;
-AggregationClass FromM2 from EdgeClassM2 (0,*) to VertexClassM2 (1,1) aggregate from {max: Integer, min: Integer, roleName: String};
+CompositionClass ContainsGraphClass from 'GraphClass (1,*) to 'Schema (1,1) aggregate to;
+CompositionClass ContainsGraphElementClass from GraphElementClass (0,*) to 'GraphClass (1,1) aggregate to;
 
-CompositionClass ContainsGraphClassM2 from GraphClassM2 (1,*) to SchemaM2 (1,1) aggregate to;
-CompositionClass ContainsGraphElementClassM2 from GraphElementClassM2 (0,*) to GraphClassM2 (1,1) aggregate to;
-
-abstract EdgeClass IsSubClassOfM2 from AttributedElementClassM2 (0,*) to AttributedElementClassM2 (0,*);
-EdgeClass IsSubEdgeClassOfM2: IsSubClassOfM2 from EdgeClassM2 (0,*) to EdgeClassM2 (0,*);
-EdgeClass IsSubVertexClassOfM2: IsSubClassOfM2 from VertexClassM2 (0,*) to VertexClassM2 (0,*);
-EdgeClass IsSubGraphClassOfM2: IsSubClassOfM2 from GraphClassM2 (0,*) to GraphClassM2 (0,*);
+abstract EdgeClass IsSubClassOf from AttributedElementClass (0,*) to AttributedElementClass (0,*);
+EdgeClass IsSubEdgeClassOf: IsSubClassOf from 'EdgeClass (0,*) to 'EdgeClass (0,*);
+EdgeClass IsSubVertexClassOf: IsSubClassOf from 'VertexClass (0,*) to 'VertexClass (0,*);

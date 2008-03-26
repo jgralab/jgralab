@@ -59,7 +59,6 @@ public class SimplePathDescriptionEvaluator extends
 		}
 		JValueTypeCollection typeCollection = new JValueTypeCollection();
 		IsEdgeRestrOf inc = vertex.getFirstIsEdgeRestrOf(EdgeDirection.IN);
-	//	IsTypeRestrOf inc = vertex.getFirstIsTypeRestrOf(EdgeDirection.IN);
 		EdgeRestrictionEvaluator edgeRestEval = null;
 		if (inc != null) {
 			edgeRestEval = (EdgeRestrictionEvaluator) greqlEvaluator.getVertexEvaluatorGraphMarker().getMark(inc.getAlpha());

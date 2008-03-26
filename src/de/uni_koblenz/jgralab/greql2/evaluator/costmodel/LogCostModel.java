@@ -479,18 +479,18 @@ public class LogCostModel extends DefaultCostModel {
 		}
 
 		Expression expressionToEvaluate;
-		expressionToEvaluate = (Expression) vertex.getFirstIsTrueExprOf(true)
+		expressionToEvaluate = (Expression) vertex.getFirstIsTrueExprOf()
 				.getAlpha();
 		VertexEvaluator vertexEval = vertexEvalMarker
 				.getMark(expressionToEvaluate);
 		int trueCosts = vertexEval.getCurrentSubtreeEvaluationCosts(graphSize);
 
-		expressionToEvaluate = (Expression) vertex.getFirstIsFalseExprOf(true)
+		expressionToEvaluate = (Expression) vertex.getFirstIsFalseExprOf()
 				.getAlpha();
 		vertexEval = vertexEvalMarker.getMark(expressionToEvaluate);
 		int falseCosts = vertexEval.getCurrentSubtreeEvaluationCosts(graphSize);
 
-		expressionToEvaluate = (Expression) vertex.getFirstIsNullExprOf(true)
+		expressionToEvaluate = (Expression) vertex.getFirstIsNullExprOf()
 				.getAlpha();
 		vertexEval = vertexEvalMarker.getMark(expressionToEvaluate);
 		int nullCosts = vertexEval.getCurrentSubtreeEvaluationCosts(graphSize);
@@ -602,9 +602,9 @@ public class LogCostModel extends DefaultCostModel {
 			ListRangeConstructionEvaluator e, GraphSize graphSize) {
 		ListRangeConstruction exp = (ListRangeConstruction) e.getVertex();
 		VertexEvaluator startExpEval = vertexEvalMarker.getMark(exp
-				.getFirstIsFirstValueOf(true).getAlpha());
+				.getFirstIsFirstValueOf().getAlpha());
 		VertexEvaluator targetExpEval = vertexEvalMarker.getMark(exp
-				.getFirstIsLastValueOf(true).getAlpha());
+				.getFirstIsLastValueOf().getAlpha());
 		int startCosts = startExpEval
 				.getCurrentSubtreeEvaluationCosts(graphSize);
 		int targetCosts = targetExpEval

@@ -21,54 +21,63 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
- 
+
 package de.uni_koblenz.jgralab.impl;
 
+import java.util.ConcurrentModificationException;
 import java.util.Iterator;
 
 import de.uni_koblenz.jgralab.Edge;
-import de.uni_koblenz.jgralab.EdgeClass;
 import de.uni_koblenz.jgralab.EdgeDirection;
-import de.uni_koblenz.jgralab.EdgeVertexPair;
 import de.uni_koblenz.jgralab.GraphException;
 import de.uni_koblenz.jgralab.Vertex;
+import de.uni_koblenz.jgralab.schema.EdgeClass;
 
 /**
- * This class provides an Iterable for the Edges incident to a vertex. 
- * Using the vertex' different methods which return an instance of
- * IncidenceIterable, one may use an iterator or the advanced for
- * loop of Java 5 to iterate over all classes.
- * In contrast to most other iterators, this iterators provides NO
- * functionality to remove edges during iteration, the iterator
- * neither supports the removel nor recognizes it. So DON'T change
- * anything at the edge sequence at a vertex during using an iterator. 
+ * This class provides an Iterable for the Edges incident to a vertex. Using the
+ * vertex' different methods which return an instance of IncidenceIterable, one
+ * may use an iterator or the advanced for loop of Java 5 to iterate over all
+ * classes. If the list of incidence edges is changed during iteration, an exception
+ * if thrown
+ * 
  * @author dbildh
- *
+ * 
  * @param <E>
  * @param <V>
  */
-public class IncidenceIterable<E extends Edge, V extends Vertex> implements Iterable<EdgeVertexPair<? extends E, ? extends V>> {
-	
-	class IncidenceIterator implements Iterator<EdgeVertexPair<? extends E, ? extends V>> {
+public class IncidenceIterable<E extends Edge> implements Iterable<E> {
+
+	class IncidenceIterator implements Iterator<E> {
 
 		private boolean first = true;
-		
+
 		private boolean gotNext = true;
-		
-		protected EdgeVertexPair<? extends E, V> current = null;;
-		
+
+		protected E current = null;
+
 		protected Vertex vertex = null;
+		
+		/**
+		 * the version of the incidence list of the vertex
+		 * at the beginning of the iteration. This information
+		 * is used to check if the incidence list has changed,
+		 * the failfast-iterator will then throw an exception
+		 * the next time "next()" is called
+		 */
+		protected long incidenceListVersion;
 
 		IncidenceIterator(Vertex v) {
 			vertex = v;
+			incidenceListVersion = v.getIncidenceListVersion();
 		}
-			
-		public EdgeVertexPair<? extends E, V> next() {
-			gotNext = true; 
+
+		public E next() {
+			if (vertex.isIncidenceListModified(incidenceListVersion))
+				throw new ConcurrentModificationException("The incidence list of the vertex has been modified - the iterator is not longer valid");
+			gotNext = true;
 			return current;
 		}
-		
-		@SuppressWarnings("unchecked")
+
 		public boolean hasNext() {
 			if (gotNext) {
 				if (first) {
@@ -82,238 +91,119 @@ public class IncidenceIterable<E extends Edge, V extends Vertex> implements Iter
 			} else
 				return true;
 		}
-		
+
 		@SuppressWarnings("unchecked")
-		protected EdgeVertexPair<? extends E, V> getNext() {
-			Edge e = current.getEdge().getNextEdge();
-			if (e != null) {
-				return new EdgeVertexPair<E, V>((E) e, (V) e.getThat());
-			}
-			return null;
+		protected E getNext() {
+			return (E) current.getNextEdge();
 		}
-		
+
 		@SuppressWarnings("unchecked")
-		protected EdgeVertexPair<? extends E, V> getFirst() {
-			Edge e = vertex.getFirstEdge();
-			if (e != null) {
-				return new EdgeVertexPair<E, V>((E) e, (V) e.getThat());
-			}
-			return null;
+		protected E getFirst() {
+			return (E) vertex.getFirstEdge();
 		}
-		
-		
+
 		public void remove() {
 			throw new GraphException("Cannot remove Edges using Iterator");
 		}
-		
+
 	}
-	
-	
+
 	class IncidenceIteratorEdgeDirection extends IncidenceIterator {
-		
+
 		EdgeDirection direction;
-		
+
 		public IncidenceIteratorEdgeDirection(Vertex v, EdgeDirection dir) {
 			super(v);
 			direction = dir;
 		}
-		
+
 		@SuppressWarnings("unchecked")
-		protected EdgeVertexPair<? extends E, V> getNext() {
-			Edge e = current.getEdge().getNextEdge(direction);
-			if (e != null) {
-				return new EdgeVertexPair<E, V>((E) e, (V) e.getThat());
-			}
-			return null;
+		protected E getNext() {
+			return (E)current.getNextEdge(direction);
 		}
-		
+
 		@SuppressWarnings("unchecked")
-		protected EdgeVertexPair<? extends E, V> getFirst() {
-			Edge e = vertex.getFirstEdge(direction);
-			if (e != null) {
-				return new EdgeVertexPair<E, V>((E) e, (V) e.getThat());
-			}
-			return null;
+		protected E getFirst() {
+			return (E)vertex.getFirstEdge(direction);
 		}
-		
+
 	}
-	
-		
-	class IncidenceIteratorEdgeClassExplicit extends IncidenceIterator {
-		
-		boolean type;
-		
-		EdgeClass ec;
-			
-		public IncidenceIteratorEdgeClassExplicit(Vertex v, EdgeClass c, boolean type) {
-			super(v);
-			this.type = type;
-			ec = c;
-		}
-		
-		@SuppressWarnings("unchecked")
-		protected EdgeVertexPair<? extends E, V> getNext() {
-			Edge e = current.getEdge().getNextEdgeOfClass(ec, type);
-			if (e != null) {
-				return new EdgeVertexPair<E, V>((E) e, (V) e.getThat());
-			}
-			return null;
-		}
-		
-		@SuppressWarnings("unchecked")
-		protected EdgeVertexPair<? extends E, V> getFirst() {
-			Edge e = vertex.getFirstEdgeOfClass(ec, type);
-			if (e != null) {
-				return new EdgeVertexPair<E, V>((E) e, (V) e.getThat());
-			}
-			return null;
-		}
-		
-	}
-	
+
 	class IncidenceIteratorClassExplicit extends IncidenceIterator {
-		
-		boolean type;
-		
+
 		Class<? extends Edge> ec;
-		
-		public IncidenceIteratorClassExplicit(Vertex v, Class<? extends Edge> c, boolean type) {
+
+		public IncidenceIteratorClassExplicit(Vertex v,
+				Class<? extends Edge> c) {
 			super(v);
-			this.type = type;
 			ec = c;
 		}
-		
+
 		@SuppressWarnings("unchecked")
-		protected EdgeVertexPair<? extends E, V> getNext() {
-			Edge e = current.getEdge().getNextEdgeOfClass(ec, type);
-			if (e != null) {
-				return new EdgeVertexPair<E, V>((E) e, (V) e.getThat());
-			}
-			return null;
+		protected E getNext() {
+			return (E) current.getNextEdgeOfClass(ec);
 		}
-		
+
 		@SuppressWarnings("unchecked")
-		protected EdgeVertexPair<? extends E, V> getFirst() {
-			Edge e = vertex.getFirstEdgeOfClass(ec, type);
-			if (e != null) {
-				return new EdgeVertexPair<E, V>((E) e, (V) e.getThat());
-			}
-			return null;
+		protected E getFirst() {
+			return (E) vertex.getFirstEdgeOfClass(ec);
 		}
-		
+
 	}
-	
-	
-	class IncidenceIteratorEdgeClassDirection extends IncidenceIteratorEdgeClassExplicit {
-		
+
+
+	class IncidenceIteratorClassDirection extends
+			IncidenceIteratorClassExplicit {
+
 		EdgeDirection direction;
-		
-		public IncidenceIteratorEdgeClassDirection(Vertex v, EdgeClass ec, EdgeDirection dir, boolean explicit) {
-			super(v, ec, explicit);
+
+		public IncidenceIteratorClassDirection(Vertex v,
+				Class<? extends Edge> ec, EdgeDirection dir) {
+			super(v, ec);
 			direction = dir;
 		}
-			
+
 		@SuppressWarnings("unchecked")
-		protected EdgeVertexPair<? extends E, V> getNext() {
-			Edge e = current.getEdge().getNextEdgeOfClass(ec, direction, type);
-			if (e != null) {
-				return new EdgeVertexPair<E, V>((E) e, (V) e.getThat());
-			}
-			return null;
+		protected E getNext() {
+			return (E) current.getNextEdgeOfClass(ec, direction);
 		}
-		
+
 		@SuppressWarnings("unchecked")
-		protected EdgeVertexPair<? extends E, V> getFirst() {
-			Edge e = vertex.getFirstEdgeOfClass(ec, direction, type);
-			if (e != null) {
-				return new EdgeVertexPair<E, V>((E) e, (V) e.getThat());
-			}
-			return null;
+		protected E getFirst() {
+			return (E) vertex.getFirstEdgeOfClass(ec, direction);
 		}
-		
-		
-		
+
 	}
-	
-	class IncidenceIteratorClassDirection extends IncidenceIteratorClassExplicit {
-		
-		EdgeDirection direction;
-		
-		public IncidenceIteratorClassDirection(Vertex v, Class<? extends Edge> ec, EdgeDirection dir, boolean explicit) {
-			super(v, ec, explicit);
-			direction = dir;
-		}
-		
-		@SuppressWarnings("unchecked")
-		protected EdgeVertexPair<? extends E, V> getNext() {
-			Edge e = current.getEdge().getNextEdgeOfClass(ec, direction, type);
-			if (e != null) {
-				return new EdgeVertexPair<E, V>((E) e, (V) e.getThat());
-			}
-			return null;
-		}
-		
-		@SuppressWarnings("unchecked")
-		protected EdgeVertexPair<? extends E, V> getFirst() {
-			Edge e = vertex.getFirstEdgeOfClass(ec, direction, type);
-			if (e != null) {
-				return new EdgeVertexPair<E, V>((E) e, (V) e.getThat());
-			}
-			return null;
-		}
-		
-		
-	}
-	
-	
 
 	private IncidenceIterator iter = null;
-	
-	
-	
+
 	public IncidenceIterable(Vertex v) {
 		iter = new IncidenceIterator(v);
 	}
-	
+
 	public IncidenceIterable(Vertex v, EdgeDirection orientation) {
 		iter = new IncidenceIteratorEdgeDirection(v, orientation);
 	}
-	
+
 	public IncidenceIterable(Vertex v, EdgeClass ec) {
-		iter = new IncidenceIteratorEdgeClassExplicit(v, ec, false);
+		iter = new IncidenceIteratorClassExplicit(v, ec.getM1Class());
 	}
 
 	public IncidenceIterable(Vertex v, Class<? extends Edge> ec) {
-		iter = new IncidenceIteratorClassExplicit(v, ec, false);
+		iter = new IncidenceIteratorClassExplicit(v, ec);
 	}
 	
-	public IncidenceIterable(Vertex v, EdgeClass ec, boolean explicitType) {
-		iter = new IncidenceIteratorEdgeClassExplicit(v, ec, explicitType);
-	}
-	
-	public IncidenceIterable(Vertex v, Class<? extends Edge> ec, boolean explicitType) {
-		iter = new IncidenceIteratorClassExplicit(v, ec, explicitType);
-	}
-
 	public IncidenceIterable(Vertex v, EdgeClass ec, EdgeDirection orientation) {
-		iter = new IncidenceIteratorEdgeClassDirection(v, ec, orientation, false);
-	}
-	
-	public IncidenceIterable(Vertex v, Class<? extends Edge> ec, EdgeDirection orientation) {
-		iter = new IncidenceIteratorClassDirection(v, ec, orientation, false);
-	}
-	
-	public IncidenceIterable(Vertex v, EdgeClass ec, EdgeDirection orientation, boolean explicitType) {
-		iter = new IncidenceIteratorEdgeClassDirection(v, ec, orientation, explicitType);
-	}
-	
-	public IncidenceIterable(Vertex v, Class<? extends Edge> ec, EdgeDirection orientation, boolean explicitType) {
-		iter = new IncidenceIteratorClassDirection(v, ec, orientation, explicitType);
+		iter = new IncidenceIteratorClassDirection(v, ec.getM1Class(), orientation);
 	}
 
-	
-	public Iterator<EdgeVertexPair<? extends E, ? extends V>> iterator() {
+	public IncidenceIterable(Vertex v, Class<? extends Edge> ec,
+			EdgeDirection orientation) {
+		iter = new IncidenceIteratorClassDirection(v, ec, orientation);
+	}
+
+	public Iterator<E> iterator() {
 		return iter;
 	}
-	
+
 }

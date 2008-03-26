@@ -32,27 +32,25 @@ import java.util.Map.Entry;
 
 import de.uni_koblenz.jgralab.Attribute;
 import de.uni_koblenz.jgralab.AttributedElement;
-import de.uni_koblenz.jgralab.AttributedElementClass;
-import de.uni_koblenz.jgralab.BooleanDomain;
-import de.uni_koblenz.jgralab.Domain;
-import de.uni_koblenz.jgralab.DoubleDomain;
 import de.uni_koblenz.jgralab.Edge;
-import de.uni_koblenz.jgralab.EdgeVertexPair;
-import de.uni_koblenz.jgralab.EnumDomain;
 import de.uni_koblenz.jgralab.GraphIOException;
-import de.uni_koblenz.jgralab.IntDomain;
-import de.uni_koblenz.jgralab.ListDomain;
-import de.uni_koblenz.jgralab.LongDomain;
-import de.uni_koblenz.jgralab.ObjectDomain;
-import de.uni_koblenz.jgralab.RecordDomain;
-import de.uni_koblenz.jgralab.SetDomain;
-import de.uni_koblenz.jgralab.StringDomain;
 import de.uni_koblenz.jgralab.Vertex;
+import de.uni_koblenz.jgralab.schema.AttributedElementClass;
+import de.uni_koblenz.jgralab.schema.BooleanDomain;
+import de.uni_koblenz.jgralab.schema.Domain;
+import de.uni_koblenz.jgralab.schema.DoubleDomain;
+import de.uni_koblenz.jgralab.schema.EnumDomain;
+import de.uni_koblenz.jgralab.schema.IntDomain;
+import de.uni_koblenz.jgralab.schema.ListDomain;
+import de.uni_koblenz.jgralab.schema.LongDomain;
+import de.uni_koblenz.jgralab.schema.ObjectDomain;
+import de.uni_koblenz.jgralab.schema.RecordDomain;
+import de.uni_koblenz.jgralab.schema.SetDomain;
+import de.uni_koblenz.jgralab.schema.StringDomain;
 import de.uni_koblenz.jgralab.utilities.tg2schemagraph.Tg2SchemaGraph;
-import de.uni_koblenz.jgralab.utilities.tg2schemagraph.grumlschema.AttributedElementClassM2;
-import de.uni_koblenz.jgralab.utilities.tg2schemagraph.grumlschema.ContainsGraphClassM2;
-import de.uni_koblenz.jgralab.utilities.tg2schemagraph.grumlschema.HasRecordDomainComponentM2;
-import de.uni_koblenz.jgralab.utilities.tg2schemagraph.grumlschema.SchemaM2;
+import de.uni_koblenz.jgralab.utilities.tg2schemagraph.grumlschema.ContainsGraphClass;
+import de.uni_koblenz.jgralab.utilities.tg2schemagraph.grumlschema.HasRecordDomainComponent;
+import de.uni_koblenz.jgralab.utilities.tg2schemagraph.grumlschema.Schema;
 import de.uni_koblenz.jgralab.utilities.tg2whatever.Tg2Whatever;
 
 /**
@@ -77,7 +75,6 @@ public class Tg2GXL extends Tg2Whatever {
 
 	private String uniqueGraphClassName;
 	private Boolean printSchema;
-	private Boolean combineGraphClasses;
 
 	private HashMap<String, String> grUML2GXL;
 
@@ -142,23 +139,20 @@ public class Tg2GXL extends Tg2Whatever {
 
 		if (printSchema) {
 
-			out.println(" <graph id=\""
+			out
+					.println(" <graph id=\""
 							+ uniqueGraphClassName
 							+ "Graph\" edgeids=\" true\" edgemode=\" directed\" hypergraph=\" false\">");
 			out.println(" <type xlink:href=\"" + gxlMetaSchema
 					+ "#gxl-1.0\" xlink:type=\" simple\"/>");
 		} else {
-			out.println(" <graph id=\""
+			out
+					.println(" <graph id=\""
 							+ graph.getId()
 							+ "\" edgeids=\" true\" edgemode=\" directed\" hypergraph=\" false\">");
-			if (combineGraphClasses)
-				out.println(" <type xlink:href=\"" + schemaGraphOutputName
-						+ "#" + uniqueGraphClassName
-						+ "\" xlink:type=\" simple\"/>");
-			else
-				out.println(" <type xlink:href=\"" + schemaGraphOutputName
-						+ "#" + graph.getGraphClass().getName()
-						+ "\" xlink:type=\" simple\"/>");
+			out.println(" <type xlink:href=\"" + schemaGraphOutputName + "#"
+					+ graph.getGraphClass().getName()
+					+ "\" xlink:type=\" simple\"/>");
 		}
 	}
 
@@ -182,13 +176,13 @@ public class Tg2GXL extends Tg2Whatever {
 		AttributedElementClass elemClass = v.getAttributedElementClass();
 
 		try {
-			if (printSchema && !(v instanceof SchemaM2)) {
+			if (printSchema && !(v instanceof Schema)) {
 
-				if (v instanceof AttributedElementClassM2)
+				if (v instanceof de.uni_koblenz.jgralab.utilities.tg2schemagraph.grumlschema.AttributedElementClass)
 					out.println("<node id=\"" + v.getAttribute("name") + "\">");
 				else
 					out.println("<node id=\"v:" + v.getId() + "\">");
-					out.println(" <type xlink:href=\"" + gxlMetaSchema + "#"
+				out.println(" <type xlink:href=\"" + gxlMetaSchema + "#"
 						+ grUML2GXL.get(elemClass.getName())
 						+ "\" xlink:type=\" simple\"/>");
 				// print attributes
@@ -226,9 +220,9 @@ public class Tg2GXL extends Tg2Whatever {
 	 */
 	protected int getEdgeIncidence(Edge e, Vertex v) {
 		int i = 0;
-		for (EdgeVertexPair<? extends Edge, ? extends Vertex> p : v
+		for (Edge e0 : v
 				.incidences()) {
-			if ((p.getEdge() == e) && (p.getEdge().isNormal() == e.isNormal()))
+			if ((e0 == e) && (e0.isNormal() == e.isNormal()))
 				return i;
 			i++;
 		}
@@ -249,16 +243,15 @@ public class Tg2GXL extends Tg2Whatever {
 	protected void printEdge(PrintStream out, Edge e) {
 		AttributedElementClass elemClass = e.getAttributedElementClass();
 
-		if (printSchema 
-				&& !(e instanceof ContainsGraphClassM2)
-				&& !(e instanceof HasRecordDomainComponentM2)){
+		if (printSchema && !(e instanceof ContainsGraphClass)
+				&& !(e instanceof HasRecordDomainComponent)) {
 			String thisVertex = "v:" + e.getThis().getId();
 			String thatVertex = "v:" + e.getThat().getId();
-			
+
 			try {
-				if (e.getThis() instanceof AttributedElementClassM2)
+				if (e.getThis() instanceof de.uni_koblenz.jgralab.utilities.tg2schemagraph.grumlschema.AttributedElementClass)
 					thisVertex = "" + e.getThis().getAttribute("name");
-				if (e.getThat() instanceof AttributedElementClassM2)
+				if (e.getThat() instanceof de.uni_koblenz.jgralab.utilities.tg2schemagraph.grumlschema.AttributedElementClass)
 					thatVertex = "" + e.getThat().getAttribute("name");
 			} catch (NoSuchFieldException ex) {
 				ex.printStackTrace();
@@ -461,7 +454,6 @@ public class Tg2GXL extends Tg2Whatever {
 	 */
 	public static void main(String[] args) {
 		Tg2GXL converter = new Tg2GXL();
-		converter.combineGraphClasses = false;
 		converter.getOptions(args);
 		converter.initgrUML2GXLMap();
 		converter.printGraph();
@@ -479,8 +471,7 @@ public class Tg2GXL extends Tg2Whatever {
 		uniqueGraphClassName = graph.getSchema().getName();
 		super.printGraph();
 		setOutputFile(schemaGraphOutputName);
-		setGraph((new Tg2SchemaGraph(graph.getSchema(), combineGraphClasses))
-				.getSchemaGraph());
+		setGraph(new Tg2SchemaGraph(graph.getSchema()).getSchemaGraph());
 		printSchema = true;
 		super.printGraph();
 
@@ -490,24 +481,20 @@ public class Tg2GXL extends Tg2Whatever {
 	 * processes the command-line parameter set valid parameters are: -g --graph
 	 * points at the .tg file in which the graph is located, that should be
 	 * processed. -o --output point at the .gxl output file, where the converted
-	 * graph will be stored -c --combine if checked, all graph classes get
-	 * combined to one graph class. -h --help print usage information on
-	 * System.out
+	 * graph will be stored. -h --help print usage information on System.out
 	 */
 	protected void getOptions(String[] args) {
-		LongOpt[] longOptions = new LongOpt[4];
+		LongOpt[] longOptions = new LongOpt[3];
 
 		int c = 0;
 		longOptions[c++] = new LongOpt("graph", LongOpt.REQUIRED_ARGUMENT,
 				null, 'g');
 		longOptions[c++] = new LongOpt("output", LongOpt.REQUIRED_ARGUMENT,
 				null, 'o');
-		longOptions[c++] = new LongOpt("combine", LongOpt.NO_ARGUMENT, null,
-				'c');
 
 		longOptions[c++] = new LongOpt("help", LongOpt.NO_ARGUMENT, null, 'h');
 
-		Getopt g = new Getopt("Tg2Dot", args, "g:o:ch", longOptions);
+		Getopt g = new Getopt("Tg2Dot", args, "g:o:h", longOptions);
 		c = g.getopt();
 		String graphName = null;
 		while (c >= 0) {
@@ -535,9 +522,6 @@ public class Tg2GXL extends Tg2Whatever {
 				if (graphOutputName == null) {
 					usage(1);
 				}
-				break;
-			case 'c':
-				combineGraphClasses = true;
 				break;
 
 			case '?':

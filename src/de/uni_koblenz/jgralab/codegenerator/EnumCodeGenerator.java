@@ -24,7 +24,7 @@
  
 package de.uni_koblenz.jgralab.codegenerator;
 
-import de.uni_koblenz.jgralab.EnumDomain;
+import de.uni_koblenz.jgralab.schema.EnumDomain;
 
 public class EnumCodeGenerator extends CodeGenerator {
 	private EnumDomain enumDomain;
@@ -33,8 +33,8 @@ public class EnumCodeGenerator extends CodeGenerator {
 	 * Creates a new EnumCodeGenerator which creates code for the given enumDomain object
 	 */
 	public EnumCodeGenerator(EnumDomain enumDomain, String schemaPackageName, String implementationName) {
-		super(schemaPackageName, implementationName);
-		rootBlock.setVariable("className", enumDomain.getName());
+		super(schemaPackageName, enumDomain.getPackageName());
+		rootBlock.setVariable("simpleClassName", enumDomain.getSimpleName());
 		rootBlock.setVariable("isClassOnly", "true");
 		this.enumDomain = enumDomain;
 	}
@@ -51,16 +51,16 @@ public class EnumCodeGenerator extends CodeGenerator {
 		}
 		code.add(constants + ";",
 				"",
-				"private static java.util.HashMap<String, #className#> entries;",
+				"private static java.util.HashMap<String, #simpleClassName#> entries;",
 				"",
 				"static {",
-				"\tentries = new java.util.HashMap<String, #className#>();",
-				"\tfor(#className# e: values()) {",
+				"\tentries = new java.util.HashMap<String, #simpleClassName#>();",
+				"\tfor(#simpleClassName# e: values()) {",
 				"\t\tentries.put(e.toString(), e);",
 				"\t}",
 				"}",
 				"",
-				"public static #className# fromString(String s) {",
+				"public static #simpleClassName# fromString(String s) {",
 				"\treturn entries.get(s);",
 				"}");
 
@@ -71,6 +71,6 @@ public class EnumCodeGenerator extends CodeGenerator {
 	
 	@Override
 	protected CodeBlock createHeader(boolean createClass) {
-		return new CodeSnippet(true, "public enum #className# {");
+		return new CodeSnippet(true, "public enum #simpleClassName# {");
 	}
 }

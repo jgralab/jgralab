@@ -30,6 +30,7 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValueCollection;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValueInvalidTypeException;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValueSet;
+import de.uni_koblenz.jgralab.schema.GraphElementClass;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -37,7 +38,6 @@ import java.util.Iterator;
 import de.uni_koblenz.jgralab.BooleanGraphMarker;
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.GraphElement;
-import de.uni_koblenz.jgralab.GraphElementClass;
 
 /**
  * Returns a set of all edge-types that occure in the given structure.

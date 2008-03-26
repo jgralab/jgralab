@@ -28,6 +28,7 @@ import java.util.Vector;
 import java.util.*;
 
 import de.uni_koblenz.jgralab.*;
+import de.uni_koblenz.jgralab.schema.*;
 import de.uni_koblenz.jgralab.greql2.schema.*;
 import de.uni_koblenz.jgralab.greql2.*;
 import de.uni_koblenz.jgralab.greql2.schema.impl.*;
@@ -78,7 +79,7 @@ options
 		functionSymbolTable = new SymbolTable();
 		nonterminalSymbolTable = new SymbolTable();
 		functionSymbolTable.blockBegin();
-	    graphClass = schema.getGraphClass("Greql2");
+	    graphClass = schema.getGraphClass(new QualifiedName("Greql2"));
   	}
 
     private void createFunctionIdAndArgumentOf(FunctionApplication fa, FunctionId functionId, int offsetOperator, int lengthOperator, Expression arg1, int offsetArg1, int lengthArg1, Expression arg2, int offsetArg2, int lengthArg2) {
@@ -182,12 +183,12 @@ options
 	*/
 	private void mergeVariablesInGreql2Expression(Greql2Expression root) throws DuplicateVariableException, UndefinedVariableException {
 		variableSymbolTable.blockBegin();
-		IsBoundVarOf isBoundVarOf = root.getFirstIsBoundVarOf(EdgeDirection.IN, true);
+		IsBoundVarOf isBoundVarOf = root.getFirstIsBoundVarOf(EdgeDirection.IN);
 		while (isBoundVarOf != null) {
 		 	 variableSymbolTable.insert( ((Variable) isBoundVarOf.getAlpha()).getName(), isBoundVarOf.getAlpha());
-			 isBoundVarOf = isBoundVarOf.getNextIsBoundVarOf(EdgeDirection.IN, true);
+			 isBoundVarOf = isBoundVarOf.getNextIsBoundVarOf(EdgeDirection.IN);
 		}
-		IsQueryExprOf isQueryExprOf = root.getFirstIsQueryExprOf(EdgeDirection.IN, true);
+		IsQueryExprOf isQueryExprOf = root.getFirstIsQueryExprOf(EdgeDirection.IN);
 		mergeVariables(isQueryExprOf.getAlpha());
 		variableSymbolTable.blockEnd();
 	}
@@ -199,21 +200,21 @@ options
 	*/
 	private void mergeVariablesInDefinitionExpression(DefinitionExpression v) throws DuplicateVariableException, UndefinedVariableException	{
 		variableSymbolTable.blockBegin();
-		IsDefinitionOf isDefinitionOf = v.getFirstIsDefinitionOf( EdgeDirection.IN,true);
+		IsDefinitionOf isDefinitionOf = v.getFirstIsDefinitionOf(EdgeDirection.IN);
 		while (isDefinitionOf != null) {
 			Definition definition = (Definition) isDefinitionOf.getAlpha();
-			Variable variable = (Variable) definition.getFirstIsVarOf(EdgeDirection.IN, true).getAlpha();
+			Variable variable = (Variable) definition.getFirstIsVarOf(EdgeDirection.IN).getAlpha();
 			variableSymbolTable.insert(variable.getName(), variable);
-			isDefinitionOf = isDefinitionOf.getNextIsDefinitionOf(EdgeDirection.IN, true);
+			isDefinitionOf = isDefinitionOf.getNextIsDefinitionOf(EdgeDirection.IN);
 		}
-		isDefinitionOf = v.getFirstIsDefinitionOf(EdgeDirection.IN, true);
+		isDefinitionOf = v.getFirstIsDefinitionOf(EdgeDirection.IN);
 		while (isDefinitionOf != null) {
 			Definition definition = (Definition) isDefinitionOf.getAlpha();
-			Expression expr = (Expression) definition.getFirstIsExprOf(EdgeDirection.IN, true).getAlpha();
+			Expression expr = (Expression) definition.getFirstIsExprOf(EdgeDirection.IN).getAlpha();
 			mergeVariables(expr);
-			isDefinitionOf = isDefinitionOf.getNextIsDefinitionOf(EdgeDirection.IN,true);
+			isDefinitionOf = isDefinitionOf.getNextIsDefinitionOf(EdgeDirection.IN);
 		}
-		Edge isBoundExprOf = v.getFirstIsBoundExprOfDefinition(EdgeDirection.IN, true);
+		Edge isBoundExprOf = v.getFirstIsBoundExprOfDefinition(EdgeDirection.IN);
 		mergeVariables(isBoundExprOf.getAlpha());
 		variableSymbolTable.blockEnd();
 	}
@@ -225,32 +226,32 @@ options
 	*   @param v contains a declaration
 	*/
 	private void mergeVariablesInDeclaration(Declaration v) throws DuplicateVariableException, UndefinedVariableException	{
-		IsSimpleDeclOf isSimpleDeclOf = v.getFirstIsSimpleDeclOf(EdgeDirection.IN, true);
+		IsSimpleDeclOf isSimpleDeclOf = v.getFirstIsSimpleDeclOf(EdgeDirection.IN);
 		while (isSimpleDeclOf != null) {
 			SimpleDeclaration simpleDecl = (SimpleDeclaration) isSimpleDeclOf.getAlpha();
-			IsDeclaredVarOf isDeclaredVarOf = simpleDecl.getFirstIsDeclaredVarOf(EdgeDirection.IN,true);
+			IsDeclaredVarOf isDeclaredVarOf = simpleDecl.getFirstIsDeclaredVarOf(EdgeDirection.IN);
 			while (isDeclaredVarOf != null)	{
 				Variable variable = (Variable) isDeclaredVarOf.getAlpha();
 				variableSymbolTable.insert(variable.getName(), variable);
-				isDeclaredVarOf = isDeclaredVarOf.getNextIsDeclaredVarOf(EdgeDirection.IN, true);
+				isDeclaredVarOf = isDeclaredVarOf.getNextIsDeclaredVarOf(EdgeDirection.IN);
 			}
-			isSimpleDeclOf = isSimpleDeclOf.getNextIsSimpleDeclOf(EdgeDirection.IN,	true);
+			isSimpleDeclOf = isSimpleDeclOf.getNextIsSimpleDeclOf(EdgeDirection.IN);
 		}
-		isSimpleDeclOf = v.getFirstIsSimpleDeclOf(EdgeDirection.IN,true);
+		isSimpleDeclOf = v.getFirstIsSimpleDeclOf(EdgeDirection.IN);
 		while (isSimpleDeclOf != null) {
 			SimpleDeclaration simpleDecl = (SimpleDeclaration) isSimpleDeclOf.getAlpha();
 			Expression expr = (Expression) simpleDecl.getFirstIsTypeExprOf(EdgeDirection.IN).getAlpha();
 			mergeVariables(expr); 
-			isSimpleDeclOf = isSimpleDeclOf.getNextIsSimpleDeclOf(EdgeDirection.IN, true);
+			isSimpleDeclOf = isSimpleDeclOf.getNextIsSimpleDeclOf(EdgeDirection.IN);
 		}
-		IsSubgraphOf isSubgraphOf = v.getFirstIsSubgraphOf(EdgeDirection.IN,true);
+		IsSubgraphOf isSubgraphOf = v.getFirstIsSubgraphOf(EdgeDirection.IN);
 		if (isSubgraphOf != null) {
 			mergeVariables(isSubgraphOf.getAlpha());
 		}
-		IsConstraintOf isConstraintOf = v.getFirstIsConstraintOf(EdgeDirection.IN, true);
+		IsConstraintOf isConstraintOf = v.getFirstIsConstraintOf(EdgeDirection.IN);
 		while (isConstraintOf != null) {
 			mergeVariables(isConstraintOf.getAlpha());
-			isConstraintOf = isConstraintOf.getNextIsConstraintOf(EdgeDirection.IN, true);
+			isConstraintOf = isConstraintOf.getNextIsConstraintOf(EdgeDirection.IN);
 		}
 	}
 
@@ -262,9 +263,9 @@ options
 	*/
 	private void mergeVariablesInQuantifiedExpression(QuantifiedExpression v) throws DuplicateVariableException, UndefinedVariableException {
 		variableSymbolTable.blockBegin();
-		IsQuantifiedDeclOf isQuantifiedDeclOf = v.getFirstIsQuantifiedDeclOf(EdgeDirection.IN, true);
+		IsQuantifiedDeclOf isQuantifiedDeclOf = v.getFirstIsQuantifiedDeclOf(EdgeDirection.IN);
 		mergeVariablesInDeclaration((Declaration) isQuantifiedDeclOf.getAlpha());
-		IsBoundExprOfQuantifier isBoundExprOfQuantifier = v.getFirstIsBoundExprOfQuantifier(EdgeDirection.IN,	true);
+		IsBoundExprOfQuantifier isBoundExprOfQuantifier = v.getFirstIsBoundExprOfQuantifier(EdgeDirection.IN);
 		mergeVariables(isBoundExprOfQuantifier.getAlpha()); 
 		variableSymbolTable.blockEnd();
 	}
@@ -277,25 +278,25 @@ options
 	*/
 	private void mergeVariablesInComprehension(Comprehension v) throws DuplicateVariableException, UndefinedVariableException {
 		variableSymbolTable.blockBegin();
-		Edge IsCompDeclOf = v.getFirstIsCompDeclOf(EdgeDirection.IN,true);
+		Edge IsCompDeclOf = v.getFirstIsCompDeclOf(EdgeDirection.IN);
 		mergeVariablesInDeclaration((Declaration)IsCompDeclOf.getAlpha());
-		Edge IsCompResultDefOf = v.getFirstIsCompResultDefOf(EdgeDirection.IN,	true);
+		Edge IsCompResultDefOf = v.getFirstIsCompResultDefOf(EdgeDirection.IN);
 		mergeVariables(IsCompResultDefOf.getAlpha());
 		// merge variables in table-headers if it's a bag-comprehension
 		if (v instanceof BagComprehension) {
-			IsTableHeaderOf isTableHeaderOf = v.getFirstIsTableHeaderOf(EdgeDirection.IN, true);
+			IsTableHeaderOf isTableHeaderOf = v.getFirstIsTableHeaderOf(EdgeDirection.IN);
 			while (isTableHeaderOf != null)	{
 				mergeVariables(isTableHeaderOf.getAlpha());
-				isTableHeaderOf = isTableHeaderOf.getNextIsTableHeaderOf(EdgeDirection.IN,true);
+				isTableHeaderOf = isTableHeaderOf.getNextIsTableHeaderOf(EdgeDirection.IN);
 			}
 		}
 		if (v instanceof TableComprehension) {
 			TableComprehension tc = (TableComprehension) v;
-			IsColumnHeaderExprOf ch = tc.getFirstIsColumnHeaderExprOf(EdgeDirection.IN, true);
+			IsColumnHeaderExprOf ch = tc.getFirstIsColumnHeaderExprOf(EdgeDirection.IN);
 			mergeVariables(ch.getAlpha());
-			IsRowHeaderExprOf rh = tc.getFirstIsRowHeaderExprOf(EdgeDirection.IN, true);
+			IsRowHeaderExprOf rh = tc.getFirstIsRowHeaderExprOf(EdgeDirection.IN);
 			mergeVariables(rh.getAlpha());
-			IsTableHeaderOf th = tc.getFirstIsTableHeaderOf(EdgeDirection.IN, true);
+			IsTableHeaderOf th = tc.getFirstIsTableHeaderOf(EdgeDirection.IN);
 			if (th != null)
 				mergeVariables(th.getAlpha());
 		}
@@ -2317,13 +2318,13 @@ simplePathDescription returns [PrimaryPathDescription pathDescr = null] throws P
         	try
         	{
 	        	pathDescr = graph.createSimplePathDescription();
-	        	VertexClass directionVertexClass = (VertexClass) graphClass.getGraphElementClass("Direction");
-	        	dir = (Direction)graph.getFirstVertexOfClass(directionVertexClass, true);
+	        	VertexClass directionVertexClass = (VertexClass) graphClass.getGraphElementClass(new QualifiedName("Direction"));
+	        	dir = (Direction)graph.getFirstVertexOfClass(directionVertexClass);
 	        	while (dir != null ) //
 	        	{
 	        		if (! dir.getDirValue().equals(direction))
 	        		{
-	        			dir = (Direction)graph.getNextVertexOfClass(dir, directionVertexClass, true);
+	        			dir = (Direction)graph.getNextVertexOfClass(dir, directionVertexClass);
 	        		}
 	        		else
 	        		{
@@ -2387,13 +2388,13 @@ edgePathDescription returns [EdgePathDescription pathDescr = null] throws ParseE
 	            if ((edgeStart && !edgeEnd) || (!edgeStart  && edgeEnd))
 	            	if (edgeStart) direction = "in";
 	            	else direction = "out";
-	            VertexClass directionVertexClass = (VertexClass) graphClass.getGraphElementClass("Direction");
-	        	dir = (Direction)graph.getFirstVertexOfClass(directionVertexClass, true);
+	            VertexClass directionVertexClass = (VertexClass) graphClass.getGraphElementClass(new QualifiedName("Direction"));
+	        	dir = (Direction)graph.getFirstVertexOfClass(directionVertexClass);
 	        	while (dir != null )
 	        	{
 	        		if (! dir.getDirValue().equals(direction))
 	        		{
-	        			dir = (Direction)graph.getNextVertexOfClass(dir, directionVertexClass, true);
+	        			dir = (Direction)graph.getNextVertexOfClass(dir, directionVertexClass);
 	        		}
 	        		else
 	        		{
@@ -3324,20 +3325,46 @@ edgeRestrictionList returns [Vector<VertexPosition> list = new Vector<VertexPosi
 		(	COMMA eRList = edgeRestrictionList {list.addAll(eRList);}  )?
 	;
 
+
+/** mathes a qualifiedName
+*/	
+qualifiedName returns [String name = null] throws ParseException
+{
+      	String newName = null;
+}
+    : 
+      i:IDENT {name = i.getText();}
+      ( DOT
+  		newName = qualifiedName
+  		{
+         	name = name + "." + newName;
+        } 
+      )? 
+    ;
+
 /** matches a typeId
 	@return
 */
 typeId returns [TypeId type = null] throws ParseException, DuplicateVariableException
+{
+     String s;
+}
 	:
     	{
 			type = graph.createTypeId();
 		}
+		(	CARET	{ type.setExcluded(true); } )?
+		(  s = qualifiedName )
+		  { 
+		     type.setName(s);
+		  }
 		(	CARET	{ type.setExcluded(true); }
 		)?
-		i:IDENT		{ type.setName(i.getText()); }
 		(	EXCL	{ type.setType(true);  }
 		)?
 	;
+	
+
 
 /** matches a role-id
 	@return
@@ -3420,12 +3447,12 @@ literal returns [Literal literal = null] throws ParseException, DuplicateVariabl
         }
 		|	t:THIS
         	{
-            	VertexClass thisLiteralVertexClass = (VertexClass) graphClass.getGraphElementClass("ThisLiteral");
-            	literal = (ThisLiteral) graph.getFirstVertexOfClass(thisLiteralVertexClass, true);
+            	VertexClass thisLiteralVertexClass = (VertexClass) graphClass.getGraphElementClass(new QualifiedName("ThisLiteral"));
+            	literal = (ThisLiteral) graph.getFirstVertexOfClass(thisLiteralVertexClass);
             	while (literal != null)	{
 	               if ( literal != null && ((ThisLiteral) literal).getThisValue().equals(t.getText() ))
 	               	return literal;
-	              literal = (ThisLiteral) graph.getNextVertexOfClass(literal, thisLiteralVertexClass, true);
+	              literal = (ThisLiteral) graph.getNextVertexOfClass(literal, thisLiteralVertexClass);
    	           	}
                	literal = graph.createThisLiteral();
  	           	((ThisLiteral) literal).setThisValue(t.getText());
@@ -3450,8 +3477,8 @@ literal returns [Literal literal = null] throws ParseException, DuplicateVariabl
             }
 		|	TRUE
         	{
-            	VertexClass boolLiteralVertexClass = (VertexClass) graphClass.getGraphElementClass("BoolLiteral");
-            	literal = (Literal) graph.getFirstVertexOfClass(boolLiteralVertexClass, true);
+            	VertexClass boolLiteralVertexClass = (VertexClass) graphClass.getGraphElementClass(new QualifiedName("BoolLiteral"));
+            	literal = (Literal) graph.getFirstVertexOfClass(boolLiteralVertexClass);
             	if (literal == null || !( (BoolLiteral) literal).isBoolValue() ) {
 	            	literal = graph.createBoolLiteral();
    	            	((BoolLiteral) literal).setBoolValue(true);
@@ -3459,8 +3486,8 @@ literal returns [Literal literal = null] throws ParseException, DuplicateVariabl
             }
 		|	FALSE
        		{
-           	    VertexClass boolLiteralVertexClass = (VertexClass) graphClass.getGraphElementClass("BoolLiteral");
-            	literal = (Literal) graph.getFirstVertexOfClass(boolLiteralVertexClass, true);
+           	    VertexClass boolLiteralVertexClass = (VertexClass) graphClass.getGraphElementClass(new QualifiedName("BoolLiteral"));
+            	literal = (Literal) graph.getFirstVertexOfClass(boolLiteralVertexClass);
             	if (literal == null || ( (BoolLiteral) literal).isBoolValue() ) {
 	            	literal = graph.createBoolLiteral();
              	   ((BoolLiteral) literal).setBoolValue(false);
@@ -3468,8 +3495,8 @@ literal returns [Literal literal = null] throws ParseException, DuplicateVariabl
             }
 		|	NULL_VALUE
             {
-				VertexClass nullLiteralVertexClass = (VertexClass) graphClass.getGraphElementClass("NullLiteral");
-	            literal = (Literal) graph.getFirstVertexOfClass(nullLiteralVertexClass, true);
+				VertexClass nullLiteralVertexClass = (VertexClass) graphClass.getGraphElementClass(new QualifiedName("NullLiteral"));
+	            literal = (Literal) graph.getFirstVertexOfClass(nullLiteralVertexClass);
 	            if (literal == null)
 		            literal = graph.createNullLiteral(); 
             }
