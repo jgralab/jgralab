@@ -543,7 +543,7 @@
                             
             <!-- if the association has a name -->
             <xsl:if test="exists($association/@name) and $association/@name != ''">
-                <xsl:value-of select="$association/@name"/>
+                <xsl:value-of select="myfunctions:correctQualifiedNameCase(myfunctions:removeSpaces($association/@name))"/>
             </xsl:if>
             
             <!-- TODO: does not work for navigable ends. Furthermore, ids are generated even if aggregations are on opposite sides -->
@@ -578,7 +578,7 @@
             </xsl:if> 
         </xsl:if>
         <xsl:if test="$autoCorrect = 'no'">
-            <xsl:value-of select="@name"/>
+            <xsl:value-of select="$association/@name"/>
         </xsl:if>    
     </xsl:template>
     
@@ -765,7 +765,7 @@
         </xsl:choose>   
     </xsl:template>
     
-    <!-- creates generalization hierarchy for edges when uml parameter is set to no-->
+    <!-- creates generalization hierarchy -->
     <xsl:template name="generalization">
         <xsl:param name="elements"/>
         
