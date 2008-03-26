@@ -32,11 +32,11 @@ public class JGraLab {
 	
 	// look but don't touch, both values are updated automatically
 	private final String revision = "$Revision$";
-	private final String buildID = "54";
+	private final String buildID = "55";
 	//
 	// to use this information inside the text place $rev for the revision information
 	// and $bid for the build id
-	private final String version = "Anatotitan";
+	private final String version = "Becklespinax";
 	
 	private final String[] info =   {"JGraLab - The Java graph laboratory $ver $rev  $bid",
 					 "(c) 2006-2007 Institute for Software Technology",
