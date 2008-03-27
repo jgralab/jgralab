@@ -27,6 +27,8 @@ package de.uni_koblenz.jgralab.schema;
 import java.util.Map;
 import java.util.Set;
 
+import de.uni_koblenz.jgralab.Vertex;
+
 /**
  * represents a vertex class in the schema, instances represent m2 classes
  * 
@@ -97,5 +99,11 @@ public interface VertexClass extends GraphElementClass {
 
 
 	public Set<DirectedEdgeClass> getValidDirectedEdgeClasses();
+	
+	/*
+	 * (non-Javadoc)
+	 * @see de.uni_koblenz.jgralab.schema.AttributedElementClass#getM1Class()
+	 */
+	public Class<? extends Vertex> getM1Class();
 
 }

@@ -30,6 +30,7 @@ import java.util.Map;
 import java.util.Set;
 
 import de.uni_koblenz.jgralab.EdgeDirection;
+import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.schema.AttributedElementClass;
 import de.uni_koblenz.jgralab.schema.DirectedEdgeClass;
 import de.uni_koblenz.jgralab.schema.EdgeClass;
@@ -238,5 +239,10 @@ public class VertexClassImpl extends GraphElementClassImpl implements VertexClas
 			throw new SchemaException("Multiple inherited rolename '" + s + "' must be redefined at vertexclass " + getQualifiedName());
 		}
 		return allMap;
+	}
+	
+	@SuppressWarnings("unchecked")
+	public Class<? extends Vertex> getM1Class() {
+		return (Class<? extends Vertex>) super.getM1Class();
 	}
 }

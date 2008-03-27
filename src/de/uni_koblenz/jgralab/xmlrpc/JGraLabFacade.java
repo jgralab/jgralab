@@ -50,8 +50,6 @@ import de.uni_koblenz.jgralab.GraphIO;
 import de.uni_koblenz.jgralab.GraphIOException;
 import de.uni_koblenz.jgralab.M1ClassManager;
 import de.uni_koblenz.jgralab.Vertex;
-import de.uni_koblenz.jgralab.impl.EdgeImpl;
-import de.uni_koblenz.jgralab.impl.VertexImpl;
 import de.uni_koblenz.jgralab.schema.CompositeDomain;
 import de.uni_koblenz.jgralab.schema.Domain;
 import de.uni_koblenz.jgralab.schema.EdgeClass;
@@ -469,12 +467,12 @@ public class JGraLabFacade {
 	 */
 	public Map<String, Object> createVertex(int graphNo, String vertexClassName)
 			throws XmlRpcException {
-		Class<? extends VertexImpl> m1VertexClass;
+		Class<? extends Vertex> m1VertexClass;
 
 		Graph graph;
 		
 		graph = graphContainer.getGraph(graphNo);
-		m1VertexClass = (Class<? extends VertexImpl>)graph.getGraphClass().getVertexClass(
+		m1VertexClass = graph.getGraphClass().getVertexClass(
 				new QualifiedName(vertexClassName)).getM1Class();
 		
 		return createGraphElementMap(graph.createVertex(m1VertexClass));
@@ -504,9 +502,9 @@ public class JGraLabFacade {
 	 *         description)
 	 * @throws XmlRpcException
 	 */
-	public Map<String, Object> createEdge(int graphNo, String vertexClassName,
+	public Map<String, Object> createEdge(int graphNo, String edgeClassName,
 			int alphaId, int omegaId) throws XmlRpcException {
-		Class<EdgeImpl> m1EdgeClass;
+		Class<? extends Edge> m1EdgeClass;
 
 		Graph graph;
 		Vertex alpha, omega;
@@ -515,8 +513,8 @@ public class JGraLabFacade {
 		alpha = graph.getVertex(alphaId);
 		omega = graph.getVertex(omegaId);
 
-		m1EdgeClass = (Class<EdgeImpl>)graph.getGraphClass().getEdgeClass(
-				new QualifiedName(vertexClassName)).getM1Class();
+		m1EdgeClass = graph.getGraphClass().getEdgeClass(
+				new QualifiedName(edgeClassName)).getM1Class();
 
 		return createGraphElementMap(graph
 				.createEdge(m1EdgeClass, alpha, omega));
