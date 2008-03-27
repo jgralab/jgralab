@@ -98,7 +98,7 @@ public class SchemaImpl implements Schema {
 	/**
 	 * Toggles if the schema allows lowercase enumeration constants 
 	 */
-	private boolean allowLowercaseEnumConstants = false;
+	private boolean allowLowercaseEnumConstants = true;
 
 	private QualifiedName qName;
 

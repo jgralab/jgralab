@@ -302,25 +302,45 @@ public class TgSchema2Java {
 	 * Compiles the written .java-files
 	 */
 	private void compile() throws IOException {
-		String packageFolder = schema.getDirectoryName();
+		String packageFolder = schema.getPathName();
+		System.out.println("Commit path is: " + commitPath);
+		System.out.println("packageFolder is: " + packageFolder);
 		File folder = new File(commitPath + File.separator + packageFolder);
+		compileFilesInDirectory(folder);
+//		//compiling of interfaces
+//		for(String filename : folder.list()) {
+//			if (filename.endsWith(".java"))
+//				Runtime.getRuntime().exec(new String[] { javacPath + File.separator + "javac", 
+//						"-classpath", classpath, "-sourcepath", commitPath, 
+//						"-d", commitPath, packageFolder + File.separator + filename } );
+//		}
 		
-		//compiling of interfaces
-		for(String filename : folder.list()) {
-			if (filename.endsWith(".java"))
-				Runtime.getRuntime().exec(new String[] { javacPath + File.separator + "javac", 
-						"-classpath", classpath, "-sourcepath", commitPath, 
-						"-d", commitPath, packageFolder + File.separator + filename } );
-		}
-		
-		folder = new File(commitPath + File.separator + packageFolder + File.separator + SchemaImpl.IMPLPACKAGENAME);
+	//	folder = new File(commitPath + File.separator + packageFolder + File.separator + SchemaImpl.IMPLPACKAGENAME);
 		
 		//compiling of classes (*Impl.java)
-		for(String filename : folder.list()) {
-			if (filename.endsWith(".java"))
+	//	compileFilesInDirectory(folder);
+//		for(String filename : folder.list()) {
+//			if (filename.endsWith(".java"))
+//				Runtime.getRuntime().exec(new String[] { javacPath + "/javac", 
+//						"-classpath", classpath, "-sourcepath", commitPath, 
+//						"-d", commitPath, packageFolder + "/impl/" + filename } );
+//		}
+	}
+	
+	
+	private void compileFilesInDirectory(File folder) throws IOException {
+		System.out.println("Compiling file in directory " + folder.getAbsolutePath());
+		for(File file : folder.listFiles()) {
+			if (file != null && file.isFile() && file.getName().endsWith(".java")) {
+				System.out.println("Compiling file: " + file.getName() + " Absoulte: " + file.getAbsolutePath());
 				Runtime.getRuntime().exec(new String[] { javacPath + "/javac", 
 						"-classpath", classpath, "-sourcepath", commitPath, 
-						"-d", commitPath, packageFolder + "/impl/" + filename } );
+						"-d", commitPath, folder + "/" + file.getName() } );
+				System.out.println("Sucessfully compile file");
+			} else if (file != null && file.isDirectory()) {
+				System.out.println("Compiling dir");
+				compileFilesInDirectory(file);
+			}
 		}
 	}
 	
