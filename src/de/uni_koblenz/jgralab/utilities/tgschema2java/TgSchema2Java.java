@@ -29,10 +29,17 @@ import gnu.getopt.LongOpt;
 
 import java.io.File;
 import java.io.FilenameFilter;
-import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
+import java.util.Vector;
+
+import javax.tools.JavaCompiler;
+import javax.tools.JavaFileObject;
+import javax.tools.StandardJavaFileManager;
+import javax.tools.ToolProvider;
 
 import de.uni_koblenz.jgralab.GraphIO;
 import de.uni_koblenz.jgralab.GraphIOException;
@@ -42,9 +49,10 @@ import de.uni_koblenz.jgralab.schema.GraphClass;
 import de.uni_koblenz.jgralab.schema.Schema;
 import de.uni_koblenz.jgralab.schema.VertexClass;
 import de.uni_koblenz.jgralab.schema.impl.SchemaImpl;
-import de.uni_koblenz.jgralab.utilities.tgschema2java.SchemaJarGenerator;
 
 public class TgSchema2Java {
+	
+	int i = 0;
 
 	/**
 	 * Stores the name of the .tg-file to be converted. 
@@ -55,11 +63,6 @@ public class TgSchema2Java {
 	 * Stores the path to where the java-files should be written.
 	 */
 	private String commitPath;
-	
-	/**
-	 * Stores the path to the javac compiler
-	 */
-	private String javacPath;
 	
 	/**
 	 * Stores the classpath. 
@@ -138,7 +141,7 @@ public class TgSchema2Java {
 		longOptions[1] = new LongOpt("path", LongOpt.REQUIRED_ARGUMENT, null, 'p');
 		longOptions[2] = new LongOpt("implementation", LongOpt.REQUIRED_ARGUMENT, null, 'i');
 		longOptions[3] = new LongOpt("help", LongOpt.NO_ARGUMENT, null, 'h');
-		longOptions[4] = new LongOpt("compile", LongOpt.REQUIRED_ARGUMENT, null, 'c');
+		longOptions[4] = new LongOpt("compile", LongOpt.NO_ARGUMENT, null, 'c');
 		longOptions[5] = new LongOpt("cp", LongOpt.REQUIRED_ARGUMENT, null, 's');
 		longOptions[6] = new LongOpt("filename", LongOpt.REQUIRED_ARGUMENT, null, 's');
 	}
@@ -232,7 +235,7 @@ public class TgSchema2Java {
 	 * @throws Exception Throws Exception if mandatory option "-f" is not specified.
 	 */
 	private void processArguments(String[] args) throws Exception {
-		Getopt getopt = new Getopt("TgSchema2Java", args, "f:p:hc:j:s:", longOptions);
+		Getopt getopt = new Getopt("TgSchema2Java", args, "f:p:hcj:s:", longOptions);
 		int option;
 		boolean missingFilenameOption = true;
 				
@@ -253,7 +256,6 @@ public class TgSchema2Java {
 					break;
 				case 'c':
 					compile = true;
-					javacPath = getopt.getOptarg();
 					break;
 				case 's':
 					classpath = getopt.getOptarg();
@@ -278,17 +280,12 @@ public class TgSchema2Java {
 	private void printHelp() {
 		System.out.println("Usage: java " + TgSchema2Java.class.getSimpleName() +"\n" 
 				+ " (-f | --filename) <filename>[.tg] [(-p | --path) <commit-path>]\n" 
-				+ " [(-i | --implementation) (array|list)] [(-h | --help)]\n"
 				+ " [(-c | --compile) <javac-path>]\n"
 				+ " [(-s | --cp | --classpath) <classpath>\n");
 		System.out.println("Options:");
 		System.out.println("-f | --filename (required): specifies the .tg-file to be converted");
 		System.out.println("-p | --path (optional): specifies the path to where the created\n" +
 				           "                        files are stored; default is current folder (\".\")");
-		System.out.println("-i | --implementation (optional): takes \"array\" or \"list\" as\n" + 
-				           "                                  arguments and specifies whether the array-\n" +
-				           "                                  or the list-implementation is used;\n" + 
-				           "                                  default is \"array\"");
 		System.out.println("-c | --compile (optional): specifies the path to the javac-compiler;\n" +
 				           "                           if not specified, the .java-files will not be\n" + 
 				           "                           compiled");
@@ -298,52 +295,41 @@ public class TgSchema2Java {
 		System.out.println("-h | --help (optional): prints this help");
 	}
 	
-	/**
-	 * Compiles the written .java-files
-	 */
-	private void compile() throws IOException {
+
+	public void compile() throws Exception {
 		String packageFolder = schema.getPathName();
-		System.out.println("Commit path is: " + commitPath);
-		System.out.println("packageFolder is: " + packageFolder);
 		File folder = new File(commitPath + File.separator + packageFolder);
-		compileFilesInDirectory(folder);
-//		//compiling of interfaces
-//		for(String filename : folder.list()) {
-//			if (filename.endsWith(".java"))
-//				Runtime.getRuntime().exec(new String[] { javacPath + File.separator + "javac", 
-//						"-classpath", classpath, "-sourcepath", commitPath, 
-//						"-d", commitPath, packageFolder + File.separator + filename } );
-//		}
-		
-	//	folder = new File(commitPath + File.separator + packageFolder + File.separator + SchemaImpl.IMPLPACKAGENAME);
-		
-		//compiling of classes (*Impl.java)
-	//	compileFilesInDirectory(folder);
-//		for(String filename : folder.list()) {
-//			if (filename.endsWith(".java"))
-//				Runtime.getRuntime().exec(new String[] { javacPath + "/javac", 
-//						"-classpath", classpath, "-sourcepath", commitPath, 
-//						"-d", commitPath, packageFolder + "/impl/" + filename } );
-//		}
-	}
-	
-	
-	private void compileFilesInDirectory(File folder) throws IOException {
-		System.out.println("Compiling file in directory " + folder.getAbsolutePath());
-		for(File file : folder.listFiles()) {
-			if (file != null && file.isFile() && file.getName().endsWith(".java")) {
-				System.out.println("Compiling file: " + file.getName() + " Absoulte: " + file.getAbsolutePath());
-				Runtime.getRuntime().exec(new String[] { javacPath + "/javac", 
-						"-classpath", classpath, "-sourcepath", commitPath, 
-						"-d", commitPath, folder + "/" + file.getName() } );
-				System.out.println("Sucessfully compile file");
-			} else if (file != null && file.isDirectory()) {
-				System.out.println("Compiling dir");
-				compileFilesInDirectory(file);
-			}
+	    List<File> files1 = findFilesInDirectory(folder);
+	       
+	    JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
+	    StandardJavaFileManager fileManager = compiler.getStandardFileManager(null, null, null);
+
+	    Iterable<? extends JavaFileObject> compilationUnits1 =
+	           fileManager.getJavaFileObjectsFromFiles(files1);
+		Vector<String> options = new Vector<String>();
+		if (classpath != null) {
+			options.add("-cp");
+			options.add(classpath);
 		}
+		System.out.print("Starting compilation....");
+	    compiler.getTask(null, fileManager, null, null, null, compilationUnits1).call();
+	    System.out.println("finished");
+	}
+		
+		
+	private List<File> findFilesInDirectory(File folder) throws Exception {
+		List<File> javaSources = new ArrayList<File>();
+		for (File file : folder.listFiles()) {
+			if (file != null && file.isFile() && file.getName().endsWith(".java")) {
+				javaSources.add(file);
+			} else if (file.isDirectory()) {
+				javaSources.addAll(findFilesInDirectory(file));
+			}
+		}	
+		return javaSources;
 	}
 	
+		
 	/**
 	 * Writes the .java-files.
 	 */
