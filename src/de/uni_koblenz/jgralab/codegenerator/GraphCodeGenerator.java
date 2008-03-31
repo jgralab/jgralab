@@ -229,14 +229,14 @@ public class GraphCodeGenerator extends AttributedElementCodeGenerator {
 			String fromClass = ec.getFrom().getName();
 			String toClass = ec.getTo().getName();
 			if (fromClass.equals("Vertex")) {
-				code.setVariable("fromClass", code.getVariable("schemaPackage")
+				code.setVariable("fromClass", rootBlock.getVariable("jgPackage")
 						+ "." + "Vertex");
 			} else {
 				code.setVariable("fromClass", schemaRootPackageName + "."
 						+ ec.getFrom().getQualifiedName());
 			}
 			if (toClass.equals("Vertex")) {
-				code.setVariable("toClass", code.getVariable("schemaPackage")
+				code.setVariable("toClass", rootBlock.getVariable("jgPackage")
 						+ "." + "Vertex");
 			} else {
 				code.setVariable("toClass", schemaRootPackageName + "."
