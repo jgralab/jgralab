@@ -27,8 +27,9 @@ import gnu.getopt.LongOpt;
 
 import java.io.PrintStream;
 import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map.Entry;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import de.uni_koblenz.jgralab.Attribute;
 import de.uni_koblenz.jgralab.AttributedElement;
@@ -140,17 +141,17 @@ public class Tg2GXL extends Tg2Whatever {
 		if (printSchema) {
 
 			out
-					.println(" <graph id=\""
+					.println("<graph id=\""
 							+ uniqueGraphClassName
 							+ "Graph\" edgeids=\" true\" edgemode=\" directed\" hypergraph=\" false\">");
-			out.println(" <type xlink:href=\"" + gxlMetaSchema
+			out.println("<type xlink:href=\"" + gxlMetaSchema
 					+ "#gxl-1.0\" xlink:type=\" simple\"/>");
 		} else {
 			out
-					.println(" <graph id=\""
+					.println("<graph id=\""
 							+ graph.getId()
 							+ "\" edgeids=\" true\" edgemode=\" directed\" hypergraph=\" false\">");
-			out.println(" <type xlink:href=\"" + schemaGraphOutputName + "#"
+			out.println("<type xlink:href=\"" + schemaGraphOutputName + "#"
 					+ graph.getGraphClass().getName()
 					+ "\" xlink:type=\" simple\"/>");
 		}
@@ -182,7 +183,7 @@ public class Tg2GXL extends Tg2Whatever {
 					out.println("<node id=\"" + v.getAttribute("name") + "\">");
 				else
 					out.println("<node id=\"v:" + v.getId() + "\">");
-				out.println(" <type xlink:href=\"" + gxlMetaSchema + "#"
+				out.println("<type xlink:href=\"" + gxlMetaSchema + "#"
 						+ grUML2GXL.get(elemClass.getName())
 						+ "\" xlink:type=\" simple\"/>");
 				// print attributes
@@ -194,7 +195,7 @@ public class Tg2GXL extends Tg2Whatever {
 
 			else if (!printSchema) {
 				out.println("<node id=\"v:" + v.getId() + "\">");
-				out.println(" <type xlink:href=\"" + schemaGraphOutputName
+				out.println("<type xlink:href=\"" + schemaGraphOutputName
 						+ "#" + elemClass.getName()
 						+ "\" xlink:type=\" simple\"/>");
 
@@ -220,8 +221,7 @@ public class Tg2GXL extends Tg2Whatever {
 	 */
 	protected int getEdgeIncidence(Edge e, Vertex v) {
 		int i = 0;
-		for (Edge e0 : v
-				.incidences()) {
+		for (Edge e0 : v.incidences()) {
 			if ((e0 == e) && (e0.isNormal() == e.isNormal()))
 				return i;
 			i++;
@@ -259,7 +259,7 @@ public class Tg2GXL extends Tg2Whatever {
 
 			out.println("<edge id=\"e:" + e.getId() + "\" to=\"" + thatVertex
 					+ "\" from=\"" + thisVertex + "\">");
-			out.println(" <type xlink:href=\"" + gxlMetaSchema + "#"
+			out.println("<type xlink:href=\"" + gxlMetaSchema + "#"
 					+ grUML2GXL.get(elemClass.getName())
 					+ "\" xlink:type=\" simple\"/>");
 
@@ -275,7 +275,7 @@ public class Tg2GXL extends Tg2Whatever {
 					+ e.getThat().getId() + "\" from=\"v:"
 					+ e.getThis().getId() + "\" toorder=\" " + toOrder
 					+ "\" fromorder=\" " + fromOrder + "\">");
-			out.println(" <type xlink:href=\"" + schemaGraphOutputName + "#"
+			out.println("<type xlink:href=\"" + schemaGraphOutputName + "#"
 					+ elemClass.getName() + "\" xlink:type=\" simple\"/>");
 			// printAttributes
 			if (elemClass.getAttributeCount() > 0) {
@@ -314,7 +314,7 @@ public class Tg2GXL extends Tg2Whatever {
 		for (Attribute attr : elem.getAttributedElementClass()
 				.getAttributeList()) {
 
-			out.println(" <attr name=\"" + attr.getName() + "\">");
+			out.println("<attr name=\"" + attr.getName() + "\">");
 
 			Object val = null;
 			try {
@@ -325,7 +325,7 @@ public class Tg2GXL extends Tg2Whatever {
 			}
 			Domain dom = attr.getDomain();
 			printComposite(out, dom, val);
-			out.println(" </attr>");
+			out.println("</attr>");
 
 		}
 	}
@@ -349,39 +349,44 @@ public class Tg2GXL extends Tg2Whatever {
 			printValue(out, dom, val);
 		else {
 			if (dom instanceof SetDomain) {
-				out.println("  <Set>");
+				out.println("<Set>");
 
-				Iterator<Domain> iter = ((Iterable<Domain>) val).iterator();
-				while (iter.hasNext()) {
-					printComposite(out, ((SetDomain) dom).getBaseDomain(), iter
-							.next());
+				for (Object o : (Set<?>) val) {
+					printComposite(out, ((SetDomain) dom).getBaseDomain(), o);
 				}
-				out.println("  </Set>");
+				out.println("</Set>");
 			}
 			if (dom instanceof ListDomain) {
-				out.println("  <List>");
-				Iterator<Domain> iter = ((Iterable<Domain>) val).iterator();
-				while (iter.hasNext()) {
-					printComposite(out, ((ListDomain) dom).getBaseDomain(),
-							iter.next());
+				out.println("<List>");
+				for (Object o : (List<?>) val) {
+					printComposite(out, ((ListDomain) dom).getBaseDomain(), o);
 				}
-				out.println("  </List>");
+				out.println("</List>");
 			}
 			if (dom instanceof RecordDomain) {
-				out.println("  <Tup>");
-				out.println("   <String>");
-				out.println("    " + ((RecordDomain) dom).getName());
-				out.println("   </String>");
-				Iterator iter = ((Iterable<Domain>) val).iterator();
-				for (Entry en : ((RecordDomain) dom).getComponents().entrySet()) {
-					out.println("   <Tup>");
-					out.println("    <String>");
-					out.println("     " + stringQuote((String) en.getKey()));
-					out.println("    </String>");
-					printComposite(out, (Domain) en.getValue(), iter.next());
-					out.println("   </Tup>");
+				out.println("<Tup>");
+				out.println("<String>");
+				out.println("" + ((RecordDomain) dom).getName());
+				out.println("</String>");
+				Map<String, Domain> components = ((RecordDomain) dom)
+						.getComponents();
+				for (Map.Entry<String, Domain> component : components
+						.entrySet()) {
+					out.println("<Tup>");
+					out.println("<String>");
+					out.println(""
+							+ stringQuote((String) component.getKey()));
+					out.println("</String>");
+					try {
+						printComposite(out, component.getValue(), val
+								.getClass().getField(component.getKey()).get(
+										val));
+					} catch (Exception e) {
+
+					}
+					out.println("</Tup>");
 				}
-				out.println("  </Tup>");
+				out.println("</Tup>");
 			}
 		}
 	}
@@ -411,42 +416,36 @@ public class Tg2GXL extends Tg2Whatever {
 		}
 
 		if (dom instanceof BooleanDomain) {
-			out.println("  <Bool>");
-			out.println("  " + attrValue);
-			out.println("  </Bool>");
+			out.println("<Bool>");
+			out.println("" + attrValue);
+			out.println("</Bool>");
 		}
 		if (dom instanceof DoubleDomain) {
-			out.println("  <Float>");
-			out.println("  " + attrValue);
-			out.println("  </Float>");
+			out.println("<Float>");
+			out.println("" + attrValue);
+			out.println("</Float>");
 		}
 		if (dom instanceof EnumDomain) {
-
-			out.println("  <Enum>");
-			for (String constant : ((EnumDomain) val).getConsts()) {
-				out.println("   <String>");
-				out.println("   " + stringQuote(constant));
-				out.println("   </String>");
-			}
-			out.println("  </Enum>");
+			out.println("<String>");
+			out.println("" + stringQuote(val.toString()));
+			out.println("</String>");
 		}
 		if (dom instanceof IntDomain || dom instanceof LongDomain) {
-			out.println("  <Int>");
-			out.println("  " + attrValue);
-			out.println("  </Int>");
-
+			out.println("<Int>");
+			out.println("" + attrValue);
+			out.println("</Int>");
 		}
 		if (dom instanceof StringDomain || dom instanceof ObjectDomain) {
-			out.println("  <String>");
-			out.println("  " + attrValue);
-			out.println("  </String>");
+			out.println("<String>");
+			out.println("" + attrValue);
+			out.println("</String>");
 		}
 	}
 
 	/**
 	 * You can launch this tool from the command-line.
 	 * 
-	 * e.g. java Tg2GXL -g /myTg/myGraph.tg -o /myGxl/myGraph.gxl -c
+	 * i.e. java Tg2GXL -g /myTg/myGraph.tg -o /myGxl/myGraph.gxl -c
 	 * 
 	 * @param args
 	 *            the command-line option set processed by
