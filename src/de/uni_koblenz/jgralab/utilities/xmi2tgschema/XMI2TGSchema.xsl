@@ -267,20 +267,11 @@
         or (@xmi:type = 'uml:Class' and exists(myfunctions:getGeneralAssociationClass(.)))
         or (@xmi:type='uml:AssociationClass' and empty(myfunctions:getAssociation(.)))]">
         
-        <!-- If current() is of type 'uml:Association', this variable stores its 'uml:AssociationClass', if existing.
-            If current() is of type 'uml:Class', this variable stores its generalization of type 'uml:AssociationClass.
-            If current() is of type 'uml:AssociationClass', this variable stores current() . -->
-        <xsl:variable name="associationClass" select="if (@xmi:type='uml:Association') 
-            then myfunctions:getAssociationClass(.) 
-            else if (@xmi:type='uml:Class')
-                then myfunctions:getGeneralAssociationClass(.)
-                else ."/>
-        
         <!-- stores association (either current(), that one corresponding to $associationClass or
             $associationClass itself if there no corresponding association) -->
         <xsl:variable name="association" select="if (@xmi:type='uml:Association' or @xmi:type='uml:AssociationClass') 
             then . 
-            else myfunctions:getAssociation($associationClass)"/>
+            else myfunctions:getAssociation(myfunctions:getGeneralAssociationClass(.))"/>
         
         <!-- store XPaths to aggregate attribute of source VertexClass -->
         <xsl:variable name="fromAggregateAttribute" select="$schemaPackage//packagedElement[$association/ownedEnd/type/@xmi:idref = @xmi:id
@@ -925,20 +916,6 @@
             @xmi:type = 'uml:Association' and 
                 ($associationClass/@xmi:id = ownedEnd/@association
                     or memberEnd/@xmi:idref = root($associationClass)//xmi:XMI/uml:Model//packagedElement/ownedAttribute[@association = $associationClass/@xmi:id]/@xmi:id)]"/>       
-    </xsl:function>
-    
-    <!-- returns the association class of the given association-->
-    <xsl:function name="myfunctions:getAssociationClass">
-        <xsl:param name="association"/>
-        
-        <xsl:if test="$association/@xmi:type != 'uml:Association'">
-            <xsl:value-of select="error(QName('', 'xmi2tg-Error'), concat('Called myfunctions:getAssociationClass() with wrong parameter type. ', $association/@name, ' is not an association.'))"/>
-        </xsl:if>  
-        
-        <xsl:sequence select="root($association)//xmi:XMI/uml:Model//packagedElement[
-                @xmi:type = 'uml:AssociationClass' and 
-                    (@xmi:id = $association/ownedEnd/@association
-                        or @xmi:id = root($association)//xmi:XMI/uml:Model//packagedElement/ownedAttribute[@xmi:id = $association/memberEnd/@xmi:idref]/@association)]"/>       
     </xsl:function>
     
     <!-- checks if node given as parameter is subclass of one or more associations or association 
