@@ -42,10 +42,6 @@
         change of identifiers in order to avoid conflicts with reserved words,
         creation of EdgeClass names by using role or VertexClass names, if corresponding association has no name -->
     <xsl:param name="autoCorrect" required="no" select="'yes'"/>
-    <!-- Specifies names of classes which shall be transformed to EdgeClasses in the tg-file. This also applies to their subclasses.
-        Such a class must have two associations: one with the role name "source" at the from-Class (the "from" side of the resulting EdgeClass) 
-        and one with the role name "target" at the to-Class (the "to" side of the resulting EdgeClass) -->
-    <xsl:param name="classToEdgeClass" required="no"/>
     <!-- specifies if some errors shall be detected and the transformation be aborted 
         the errors include:
         detection of classes without names, 
@@ -111,20 +107,18 @@
         <!-- write default package -->
         <xsl:text>Package;&#xa;</xsl:text>
         <!-- convert to VertexClasses -->
-        <xsl:apply-templates select="$schemaPackage//packagedElement[@xmi:type='uml:Class' and empty(myfunctions:getAssociation(.)) 
-            and not(myfunctions:isClassToEdgeClass(.))
+        <xsl:apply-templates select="$schemaPackage//packagedElement[@xmi:type='uml:Class' and empty(myfunctions:getGeneralAssociationClass(.)) 
             and empty(index-of(/xmi:XMI/uml:Model//thecustomprofile:record/@base_Class, @xmi:id))
             and empty(index-of(/xmi:XMI/uml:Model//thecustomprofile:GraphClass/@base_Class, @xmi:id))]"/>
         <!-- convert to EdgeClasses -->
-        <xsl:apply-templates select="$schemaPackage//packagedElement[(@xmi:type='uml:Association' or @xmi:type='uml:AssociationClass') 
-            and not(myfunctions:isClassToEdgeClassAssociation(.))
-            or @xmi:type = 'uml:Class' and exists(myfunctions:getAssociation(.)) and not(myfunctions:isClassToEdgeClass(.))]"/>
-        <xsl:apply-templates select="$schemaPackage//packagedElement[@xmi:type='uml:Class' and myfunctions:isClassToEdgeClass(.)]"/>
+        <xsl:apply-templates select="$schemaPackage//packagedElement[@xmi:type='uml:Association'
+            or (@xmi:type = 'uml:Class' and exists(myfunctions:getGeneralAssociationClass(.)))
+            or (@xmi:type = 'uml:AssociationClass' and empty(myfunctions:getAssociation(.)))]"/>
     </xsl:template>
     
     <!-- check is Schema is self-contained -->
     <xsl:template match="@xmi:idref">
-        <xsl:if test="empty(index-of($schemaPackage//@xmi:id, current()))">
+        <xsl:if test="empty(index-of($schemaPackage//@xmi:id union /xmi:XMI/uml:Model//EAStub/@xmi:id, current()))">
             <xsl:value-of select="error(QName('', 'xmi2tg-Error'), concat('schema is not self-contained, caused by xmi:idref ', current()))"/>
         </xsl:if>      
     </xsl:template>
@@ -189,7 +183,7 @@
     </xsl:template>
     
     <!-- creates RecordDomain -->
-    <xsl:template match="packagedElement[@xmi:type = 'uml:Class' and empty(myfunctions:getAssociation(.)) and not(myfunctions:isClassToEdgeClass(.))
+    <xsl:template match="packagedElement[@xmi:type = 'uml:Class' and empty(myfunctions:getGeneralAssociationClass(.))
             and exists(index-of(/xmi:XMI/uml:Model//thecustomprofile:record/@base_Class, @xmi:id))]">
         
         <!-- convert notes and constraints to comments -->
@@ -228,7 +222,7 @@
     </xsl:template>
     
     <!-- creates VertexClass -->
-    <xsl:template match="packagedElement[@xmi:type = 'uml:Class' and empty(myfunctions:getAssociation(.)) and not(myfunctions:isClassToEdgeClass(.))
+    <xsl:template match="packagedElement[@xmi:type = 'uml:Class' and empty(myfunctions:getGeneralAssociationClass(.))
         and empty(index-of(/xmi:XMI/uml:Model//thecustomprofile:record/@base_Class, @xmi:id))
         and empty(index-of(/xmi:XMI/uml:Model//thecustomprofile:GraphClass/@base_Class, @xmi:id))]">
         
@@ -269,16 +263,24 @@
     </xsl:template>
     
     <!-- creates EdgeClass, AggregationClass or CompositionClass -->
-    <xsl:template match="packagedElement[(@xmi:type='uml:Association' or @xmi:type='uml:AssociationClass') 
-        and not(myfunctions:isClassToEdgeClassAssociation(.)) 
-        or @xmi:type = 'uml:Class' and exists(myfunctions:getAssociation(.)) and not(myfunctions:isClassToEdgeClass(.))]">
+    <xsl:template match="packagedElement[@xmi:type='uml:Association' 
+        or (@xmi:type = 'uml:Class' and exists(myfunctions:getGeneralAssociationClass(.)))
+        or (@xmi:type='uml:AssociationClass' and empty(myfunctions:getAssociation(.)))]">
         
-        <!-- convert notes and constraints to comments -->
-        <xsl:apply-templates select="$schemaPackage//ownedComment[annotatedElement/@xmi:idref = current()/@xmi:id]"/>
-        <xsl:apply-templates select="$schemaPackage//ownedRule[constrainedElement/@xmi:idref = current()/@xmi:id]"/>
+        <!-- If current() is of type 'uml:Association', this variable stores its 'uml:AssociationClass', if existing.
+            If current() is of type 'uml:Class', this variable stores its generalization of type 'uml:AssociationClass.
+            If current() is of type 'uml:AssociationClass', this variable stores current() . -->
+        <xsl:variable name="associationClass" select="if (@xmi:type='uml:Association') 
+            then myfunctions:getAssociationClass(.) 
+            else if (@xmi:type='uml:Class')
+                then myfunctions:getGeneralAssociationClass(.)
+                else ."/>
         
-        <!-- if current() is of type 'uml:Class', this variable stores its generalization which must be an AssociationClass -->
-        <xsl:variable name="association" select="myfunctions:getAssociation(.)"/>
+        <!-- stores association (either current(), that one corresponding to $associationClass or
+            $associationClass itself if there no corresponding association) -->
+        <xsl:variable name="association" select="if (@xmi:type='uml:Association' or @xmi:type='uml:AssociationClass') 
+            then . 
+            else myfunctions:getAssociation($associationClass)"/>
         
         <!-- store XPaths to aggregate attribute of source VertexClass -->
         <xsl:variable name="fromAggregateAttribute" select="$schemaPackage//packagedElement[$association/ownedEnd/type/@xmi:idref = @xmi:id
@@ -331,7 +333,11 @@
             The expression says that the name attribute of the ownedAttribute corresponding to the association destination (non-navigable end) shall be concatenated with the name
             attribute of the ownedEnd corresponding to the association destination. Since one of these strings is empty, the result is the "to"-rolename. -->
         <xsl:variable name="toRoleName" select="concat($schemaPackage//ownedAttribute[contains(@xmi:id, 'dst') and @xmi:id = $association/memberEnd/@xmi:idref]/@name,
-            $association/ownedEnd[contains(@xmi:id, 'dst')]/@name)"/>
+        $association/ownedEnd[contains(@xmi:id, 'dst')]/@name)"/>
+        
+        <!-- convert notes and constraints to comments -->
+        <xsl:apply-templates select="$schemaPackage//ownedComment[annotatedElement/@xmi:idref = current()/@xmi:id]"/>
+        <xsl:apply-templates select="$schemaPackage//ownedRule[constrainedElement/@xmi:idref = current()/@xmi:id]"/>
         
         <xsl:if test="$uml='yes'">
             <!-- If the association is a derived union or the association class is abstract, the EdgeClass to be created has to be abstract -->     
@@ -905,13 +911,41 @@
         <xsl:variable name="headOfInputString" select="substring($inputString, 1, 1)"/>
         <xsl:variable name="tailOfInputString" select="substring($inputString, 2)"/>
         <xsl:sequence select="concat(upper-case($headOfInputString), $tailOfInputString)"/>
-    </xsl:function>              
+    </xsl:function>
+    
+    <!-- returns the association of the given association class-->
+    <xsl:function name="myfunctions:getAssociation">
+        <xsl:param name="associationClass"/>
+        
+        <xsl:if test="$associationClass/@xmi:type != 'uml:AssociationClass'">
+            <xsl:value-of select="error(QName('', 'xmi2tg-Error'), concat('Called myfunctions:getAssociation() with wrong parameter type. ', $associationClass/@name, ' is not an association class.'))"/>
+        </xsl:if>  
+        
+        <xsl:sequence select="root($associationClass)//xmi:XMI/uml:Model//packagedElement[
+            @xmi:type = 'uml:Association' and 
+                ($associationClass/@xmi:id = ownedEnd/@association
+                    or memberEnd/@xmi:idref = root($associationClass)//xmi:XMI/uml:Model//packagedElement/ownedAttribute[@association = $associationClass/@xmi:id]/@xmi:id)]"/>       
+    </xsl:function>
+    
+    <!-- returns the association class of the given association-->
+    <xsl:function name="myfunctions:getAssociationClass">
+        <xsl:param name="association"/>
+        
+        <xsl:if test="$association/@xmi:type != 'uml:Association'">
+            <xsl:value-of select="error(QName('', 'xmi2tg-Error'), concat('Called myfunctions:getAssociationClass() with wrong parameter type. ', $association/@name, ' is not an association.'))"/>
+        </xsl:if>  
+        
+        <xsl:sequence select="root($association)//xmi:XMI/uml:Model//packagedElement[
+                @xmi:type = 'uml:AssociationClass' and 
+                    (@xmi:id = $association/ownedEnd/@association
+                        or @xmi:id = root($association)//xmi:XMI/uml:Model//packagedElement/ownedAttribute[@xmi:id = $association/memberEnd/@xmi:idref]/@association)]"/>       
+    </xsl:function>
     
     <!-- checks if node given as parameter is subclass of one or more associations or association 
             classes and returns these superclasses, otherwise an empty sequence is returned
         parameter class: node to be checked
         returns: a sequence of all associations and association classes which are superclasses of $node -->
-    <xsl:function name="myfunctions:getAssociation">
+    <xsl:function name="myfunctions:getGeneralAssociationClass">
         <xsl:param name="class"/>
         
         <xsl:sequence select="
@@ -919,22 +953,7 @@
                 then $class
                 else if (empty($class/generalization))
                     then () 
-                    else myfunctions:getAssociation(root($class[1])//xmi:XMI/uml:Model//packagedElement[@xmi:id = $class/generalization/@general])"/>            
-    </xsl:function>
-    
-    <!-- for the given class, this function returns the next class in the given class' generalization hierarchy which is connected to an association and has a
-        superclass whose name is given in $classesToEdgeClasses -->
-    <xsl:function name="myfunctions:getClassToEdgeClass">
-        <xsl:param name="class"/>
-        
-        <xsl:sequence select="
-            if (some $node in $class satisfies (myfunctions:isClassToEdgeClass($node)) 
-                    and (exists(root($class[1])/xmi:XMI/uml:Model//packagedElement[
-                            ownedEnd/@name = 'source']/ownedEnd/type[@xmi:idref = $node/@xmi:id])))
-                then $class
-                else if (empty($class/generalization)) 
-                    then ()
-                    else myfunctions:getClassToEdgeClass(root($class[1])/xmi:XMI/uml:Model//packagedElement[@xmi:id = $class/generalization/@general])"/>
+                    else myfunctions:getGeneralAssociationClass(root($class[1])//xmi:XMI/uml:Model//packagedElement[@xmi:id = $class/generalization/@general])"/>            
     </xsl:function>
     
     <!-- returns all the superclasses of the given class, including the class itself
@@ -978,33 +997,7 @@
         <xsl:variable name="packagePrefix" select="myfunctions:getPackagePrefix($element, $schemaPackage)"/>
         <xsl:sequence select="concat($packagePrefix, $element/@name)"/>            
     </xsl:function>
-    
-    <!-- checks if given class shall be converted to an EdgeClass; this is the case if its name is contained in parameter $classToEdgeClass or it is a
-            subclass of one of these classes
-        parameter class: class to be checked if it shall be converted to an EdgeClass
-        returns: true if given class shall be converted to an EdgeClass, else false -->
-    <xsl:function name="myfunctions:isClassToEdgeClass" as="xs:boolean">
-        <xsl:param name="class"/>
-        
-        <xsl:sequence select="
-            if (some $node in myfunctions:getGeneralizationHierarchy($class) satisfies exists(index-of($classToEdgeClass, $node/@name)))
-                then true()
-                else false()"/>        
-    </xsl:function>
-    
-    <!-- checks if given association is connected to a class which shall be converted to an EdgeClass
-        parameter association: association to be checked if connected class shall be converted to an EdgeClass
-        returns: true if a connected class shall be converted to an EdgeClass, else false -->
-    <xsl:function name="myfunctions:isClassToEdgeClassAssociation" as="xs:boolean">
-        <xsl:param name="association"/>
-        
-        <xsl:sequence select="
-            if (myfunctions:isClassToEdgeClass(root($association[1])/xmi:XMI/uml:Model//packagedElement[ownedAttribute/@association = $association/@xmi:id
-                    or @xmi:id = root($association[1])/xmi:XMI/uml:Model//packagedElement[@xmi:id = $association/@xmi:id]/ownedEnd/type/@xmi:idref]))
-                then true()
-                else false()"/>
-    </xsl:function>                           
-    
+                      
     <!-- checks whether the given string is equal to a reserved word of JGraLab; if true, "'" is prepended and
             the resulting string returned; if false, the input is returned unchanged
         parameter inputString: string to be checked against reserved words 
