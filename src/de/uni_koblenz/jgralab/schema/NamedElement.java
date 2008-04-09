@@ -59,6 +59,7 @@ public interface NamedElement {
 	 */
 	public String getQualifiedName(); 
 	
+	@Deprecated
 	public String getName();
 	
 	String getQualifiedName(Package pkg);

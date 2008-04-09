@@ -111,38 +111,34 @@ public interface AttributedElementClass extends NamedElement,
 	public Set<AttributedElementClass> getAllSuperClasses();
 
 	/**
-	 * @return the unique name of the element in the package
-	 * without the fully qualified package name
+	 * @return the unique name of the element in the package without the fully
+	 *         qualified package name
 	 */
 	public String getSimpleName();
-	
-	
-	/**	 
-	 * @return the unique name of the element in the schema,
-	 * if there is only one class in the schema with this short name, 
-	 * the short name is returned. Otherwise, the fully qualified package name
-	 * is returned in a camel-cased underscored manner
+
+	/**
+	 * @return the unique name of the element in the schema, if there is only
+	 *         one class in the schema with this short name, the short name is
+	 *         returned. Otherwise, the fully qualified package name is returned
+	 *         in a camel-cased underscored manner
 	 */
 	public String getUniqueName();
-	
 
 	/**
-	 * @return the fully qualified name of this element in the schema.
-	 * This is the fully qualified name of the package the element is  
-	 * located in together with the short name of the element
+	 * @return the fully qualified name of this element in the schema. This is
+	 *         the fully qualified name of the package the element is located in
+	 *         together with the short name of the element
 	 */
-	public String getQualifiedName(); 
-	
+	public String getQualifiedName();
 
-	
 	/**
-	 * @return the fully qualified name of this element in the schema.
-	 * This is the fully qualified name of the package the element is  
-	 * located in together with the short name of the element
+	 * @return the fully qualified name of this element in the schema. This is
+	 *         the fully qualified name of the package the element is located in
+	 *         together with the short name of the element
 	 */
-	public String getName(); 
-	
-	
+	@Deprecated
+	public String getName();
+
 	/**
 	 * adds a new attribute to the element
 	 * 
