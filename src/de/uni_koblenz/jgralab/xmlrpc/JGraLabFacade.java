@@ -209,8 +209,6 @@ public class JGraLabFacade {
 	 *            the URL of the TG-file holding the schema.
 	 * @param graphClassName
 	 *            the name of the graph class of the new graph
-	 * @param graphId
-	 *            the id of the created graph
 	 * @return a {@code Map<String, Object>} with four entries (see method
 	 *         description)
 	 * 
@@ -491,7 +489,7 @@ public class JGraLabFacade {
 	 * 
 	 * @param graphNo
 	 *            the handle of the graph for which the edge shall be created
-	 * @param vertexClassName
+	 * @param edgeClassName
 	 *            the name of the edge class the created edge shall be an
 	 *            instance of
 	 * @param alphaId

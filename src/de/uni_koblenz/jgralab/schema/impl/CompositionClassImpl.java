@@ -35,7 +35,7 @@ public class CompositionClassImpl extends AggregationClassImpl implements
 	/**
 	 * builds a new composition class
 	 * 
-	 * @param name
+	 * @param qn
 	 *            the unique identifier of the composition class in the schema
 	 * @param from
 	 *            the vertex class from which the composition class may connect

@@ -93,7 +93,7 @@ public class QualifiedName implements Comparable<QualifiedName> {
 	 * in the schema which owns the same unique name, a SchemaExceptiion is throws
 	 * @param element The element which should be identified with the unique name
 	 * @param uniqueName The new uniqueName of the element
-	 * @throw SchemaException if the uniqueName is not unique, i.e. if there is any other element
+	 * @throws SchemaException if the uniqueName is not unique, i.e. if there is any other element
 	 * in the schema with the same unique name
 	 */
 	public void setUniqueName(NamedElement element, String uniqueName) {

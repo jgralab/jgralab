@@ -40,7 +40,7 @@ public abstract class GraphElementClassImpl extends AttributedElementClassImpl i
 
 	/**
 	 * delegates its constructor to the generalized class
-	 * @param name the unique identifier of the element in the schema
+	 * @param qn the unique identifier of the element in the schema
 	 */
 	public GraphElementClassImpl(QualifiedName qn, GraphClass aGraphClass) {
 		super(qn);

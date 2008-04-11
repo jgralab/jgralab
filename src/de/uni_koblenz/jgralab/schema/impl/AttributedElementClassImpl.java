@@ -114,7 +114,7 @@ public abstract class AttributedElementClassImpl implements
 	/**
 	 * builds a new attributed element class
 	 * 
-	 * @param name
+	 * @param qn
 	 *            the unique identifier of the element in the schema
 	 */
 	public AttributedElementClassImpl(QualifiedName qn) {

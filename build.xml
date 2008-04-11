@@ -280,8 +280,10 @@
 					${basePackage}.greql2.evaluator.test.*,
 					${basePackage}.greql2.evaluator.vertexeval.*,
 					${basePackage}.greql2.parser.*,
-					${basePackage}.greql2.utilities.tg2schemagraph.**,
-					${basePackage}.greql2.utilities.tg2schemagraph.*" />
+					${basePackage}.utilities.tg2schemagraph.**,
+					${basePackage}.utilities.tg2schemagraph.*,
+					${basePackage}.greql2.optimizer.**,
+					${basePackage}.greql2.optimizer.*" />
 				<property name="doc.maxmem" value="256"/>
 		</ant>
 	</target>

@@ -40,7 +40,7 @@ public class AggregationClassImpl extends EdgeClassImpl implements
 	/**
 	 * builds a new aggregation class
 	 * 
-	 * @param name
+	 * @param qn
 	 *            the unique identifier of the aggregation class in the schema
 	 * @param from
 	 *            the vertex class from which the aggregation class may connect
@@ -77,8 +77,8 @@ public class AggregationClassImpl extends EdgeClassImpl implements
 			VertexClass from, int fromMin, int fromMax, String fromRoleName,
 			boolean aggregateFrom, VertexClass to, int toMin, int toMax,
 			String toRoleName) {
-		super(qn, aGraphClass, from, fromMin, fromMax, fromRoleName, to,
-				toMin, toMax, toRoleName);
+		super(qn, aGraphClass, from, fromMin, fromMax, fromRoleName, to, toMin,
+				toMax, toRoleName);
 		this.aggregateFrom = aggregateFrom;
 	}
 

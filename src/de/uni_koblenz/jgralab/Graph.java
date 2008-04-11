@@ -96,8 +96,8 @@ public interface Graph extends AttributedElement {
 
 	/**
 	 * @return the internal graph version
-	 * @see graphChanged
-	 * @see isGraphChanged
+	 * @see #graphModified()
+	 * @see #isGraphModified(long)
 	 */
 	public long getGraphVersion();
 
@@ -122,8 +122,8 @@ public interface Graph extends AttributedElement {
 
 	/**
 	 * @return the internal graph structure version
-	 * @see graphStructureChanged
-	 * @see isGraphStructureChanged
+	 * @see #vertexListModified()
+	 * @see #isVertexListModified(long)
 	 */
 	public long getVertexListVersion();
 
@@ -147,9 +147,9 @@ public interface Graph extends AttributedElement {
 	public void edgeListModified();
 
 	/**
-	 * @return the internal graph structure version
-	 * @see graphStructureChanged
-	 * @see isGraphStructureChanged
+	 * @return the internal edge list version
+	 * @see #edgeListModified()
+	 * @see #isEdgeListModified(long)
 	 */
 	public long getEdgeListVersion();
 
@@ -224,8 +224,8 @@ public interface Graph extends AttributedElement {
 	/**
 	 * removes this edge from eSeq and erases its attributes
 	 * 
-	 * @param id
-	 *            the id of the edge to be deleted
+	 * @param e
+	 *            the edge to be deleted
 	 * 
 	 */
 	public void deleteEdge(Edge e);
@@ -468,8 +468,8 @@ public interface Graph extends AttributedElement {
 	public Edge getNextEdge(Edge e);
 
 	/**
-	 * @param v
-	 *            a vertex
+	 * @param e
+	 *            an edge
 	 * @param orientation
 	 *            the orientation the next incidence should have
 	 * @return the next edge in the incidence list of this(e) with the specified
@@ -650,7 +650,7 @@ public interface Graph extends AttributedElement {
 	 * global edge sequence eSeq nor the alpha or omega vertices, only the order
 	 * of the edges at the <code>this-vertex</code> of e is changed
 	 * 
-	 * @throw GraphException if the edges this-vertex and the given vertex are
+	 * @throws GraphException if the edges this-vertex and the given vertex are
 	 *        not identical
 	 */
 	public void insertEdgeAt(Vertex vertex, Edge edge, int pos);
@@ -781,7 +781,7 @@ public interface Graph extends AttributedElement {
 	 * @return a iterable object which can be iterated through using the
 	 *         advanced for-loop
 	 */
-	public Iterable<Vertex> vertices(Class<? extends Vertex> eclass);
+	public Iterable<Vertex> vertices(Class<? extends Vertex> vclass);
 
 
 }

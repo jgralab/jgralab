@@ -46,7 +46,7 @@ public class VertexClassImpl extends GraphElementClassImpl implements VertexClas
 
 	/**
 	 * builds a new vertex class object
-	 * @param name the unique identifier of the vertex class in
+	 * @param qn the unique identifier of the vertex class in
 	 * the schema
 	 */
 	public VertexClassImpl(QualifiedName qn, GraphClass aGraphClass) {

@@ -45,7 +45,7 @@ public interface NamedElement {
 	
 	/**
 	 * Sets the unique name of this element in the schema
-	 * @throw Exception if the same unique name is used for another element
+	 * @throws Exception if the same unique name is used for another element
 	 * @param name
 	 */
 	public void setUniqueName(String name);

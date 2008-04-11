@@ -21,7 +21,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
- 
+
 package de.uni_koblenz.jgralab.greql2.evaluator;
 
 import de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.VariableEvaluator;
@@ -67,9 +67,10 @@ public class VariableDeclaration implements Comparable<VariableDeclaration> {
 	 * Used for simple Iteration over the possible values
 	 */
 	private Iterator<JValue> iter;
-	
+
 	/**
-	 * Stores a reference to the Evaluator instance which is used to evaluate the query
+	 * Stores a reference to the Evaluator instance which is used to evaluate
+	 * the query
 	 */
 	private GreqlEvaluator greqlEvaluator;
 
@@ -78,7 +79,6 @@ public class VariableDeclaration implements Comparable<VariableDeclaration> {
 	 * variable
 	 */
 	private ArrayList<VertexEvaluator> dependingExpressions;
-
 
 	/**
 	 * Creates a new VariableDeclaration for the given Variable and the given
@@ -92,12 +92,13 @@ public class VariableDeclaration implements Comparable<VariableDeclaration> {
 	 * @param decl
 	 *            the SimpleDeclaration which declares the variable
 	 * @param eval
-	 * 			  the GreqlEvaluator which is used to evaluate the query           
+	 *            the GreqlEvaluator which is used to evaluate the query
 	 */
 	public VariableDeclaration(Variable var, JValueCollection definitionSet,
 			SimpleDeclaration decl, GreqlEvaluator eval) {
 		greqlEvaluator = eval;
-		variableEval = (VariableEvaluator) eval.getVertexEvaluatorGraphMarker().getMark(var);
+		variableEval = (VariableEvaluator) eval.getVertexEvaluatorGraphMarker()
+				.getMark(var);
 		parentDeclaration = decl;
 		this.definitionSet = definitionSet;
 		iter = definitionSet.iterator();
@@ -145,14 +146,16 @@ public class VariableDeclaration implements Comparable<VariableDeclaration> {
 	 *            if exp is part of this list, the recursion will stop
 	 */
 	protected void addExpressionsDependingOnExpression(Vertex exp) {
-		VertexEvaluator eval = greqlEvaluator.getVertexEvaluatorGraphMarker().getMark(exp);
+		VertexEvaluator eval = greqlEvaluator.getVertexEvaluatorGraphMarker()
+				.getMark(exp);
 		if (eval != null) {
 			dependingExpressions.add(eval);
 			Edge inc = exp.getFirstEdge(EdgeDirection.OUT);
 			while (inc != null) {
 				Vertex nextExpression = inc.getOmega();
 				if ((nextExpression != exp)
-						&& (nextExpression != parentDeclaration) && (!dependingExpressions.contains(nextExpression)) ) {
+						&& (nextExpression != parentDeclaration)
+						&& (!dependingExpressions.contains(nextExpression))) {
 					addExpressionsDependingOnExpression(nextExpression);
 				}
 				inc = inc.getNextEdge(EdgeDirection.OUT);
@@ -166,18 +169,18 @@ public class VariableDeclaration implements Comparable<VariableDeclaration> {
 	private void deleteDependingResults() {
 		for (VertexEvaluator eval : dependingExpressions) {
 			eval.clear();
-		}	
+		}
 	}
-	
+
 	public int compareTo(VariableDeclaration d) {
-		return variableEval.getVertex().getId() - d.variableEval.getVertex().getId();
+		return variableEval.getVertex().getId()
+				- d.variableEval.getVertex().getId();
 	}
-	
-	
+
 	/**
-	 * Returns the cardinality of the collection
-	 * this variable is bound to 
-	 * @return
+	 * Returns the cardinality of the collection this variable is bound to
+	 * 
+	 * @return the cardinality of the collection this variable is bound to
 	 */
 	public int getDefinitionCardinality() {
 		return definitionSet.size();

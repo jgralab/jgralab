@@ -429,8 +429,8 @@ public interface Schema extends NamedElement {
 	 *            the name to check
 	 * @return true, if the given name can be used for a new element in the
 	 *         schema, false otherwise
-	 * @see Schema#isAllowedSchemaElementName
-	 * @see Schema#knows
+	 * @see #isValidSchemaElementName(QualifiedName)
+	 * @see #knows
 	 */
 	public boolean isFreeSchemaElementName(QualifiedName name);
 
@@ -445,8 +445,8 @@ public interface Schema extends NamedElement {
 	 *            the name to check
 	 * @return true, if the given name can be used for a new domain in the
 	 *         schema, false otherwise
-	 * @see Schema#isAllowedSchemaElementName
-	 * @see Schema#knows
+	 * @see #isValidSchemaElementName(QualifiedName)
+	 * @see #knows(QualifiedName)
 	 */
 	public boolean isFreeDomainName(QualifiedName name);
 
@@ -462,7 +462,8 @@ public interface Schema extends NamedElement {
 	 *            the name to check
 	 * @return true if the given name is an allowed element name, false
 	 *         otherwise
-	 * @see Schema#isFreeSchemaElementName
+	 * @see #isFreeDomainName(QualifiedName)
+	 * @see #knows(QualifiedName)
 	 */
 	public boolean isValidSchemaElementName(QualifiedName name);
 

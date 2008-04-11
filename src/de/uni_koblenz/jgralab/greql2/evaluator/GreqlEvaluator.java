@@ -249,9 +249,9 @@ public class GreqlEvaluator {
 	 * optimizedSyntaxGraphsDirectory.
 	 * 
 	 * @throws GraphIOException
-	 *             if the optimizedGraphsDirectory is not accessible. See
-	 *             {@link GreqlEvaluator#setOptimizedGraphsDirectory(File)} and
-	 *             {@link GreqlEvaluator#getOptimizedGraphsDirectory()}.
+	 *             if the optimizedGraphsDirectory is not accessible. 
+	 * @see #setOptimizedSyntaxGraphsDirectory(File)
+	 * @see #getOptimizedSyntaxGraphsDirectory()
 	 */
 	public static synchronized void loadOptimizedSyntaxGraphs()
 			throws GraphIOException {

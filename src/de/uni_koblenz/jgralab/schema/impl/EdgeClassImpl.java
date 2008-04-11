@@ -61,7 +61,7 @@ public class EdgeClassImpl extends GraphElementClassImpl implements EdgeClass {
 	/**
 	 * builds a new edge class
 	 * 
-	 * @param name
+	 * @param qn
 	 *            the unique identifier of the edge class in the schema
 	 * @param from
 	 *            the vertex class from which the edge class may connect from

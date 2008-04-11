@@ -41,9 +41,6 @@ import de.uni_koblenz.jgralab.schema.EdgeClass;
  * if thrown
  * 
  * @author dbildh
- * 
- * @param <E>
- * @param <V>
  */
 public class IncidenceIterable<E extends Edge> implements Iterable<E> {
 

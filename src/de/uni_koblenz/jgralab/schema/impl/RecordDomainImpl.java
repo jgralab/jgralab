@@ -47,7 +47,7 @@ public class RecordDomainImpl extends CompositeDomainImpl implements RecordDomai
 	private Map<String, Domain> components;
 
 	/**
-	 * @param name
+	 * @param qn
 	 *            the unique name of the record in the schema
 	 * @param components
 	 *            a list of the components of the record
@@ -58,7 +58,7 @@ public class RecordDomainImpl extends CompositeDomainImpl implements RecordDomai
 	}
 
 	/**
-	 * @param name
+	 * @param qn
 	 *            the unique name of the record in the schema
 	 */
 	public RecordDomainImpl(Schema schema, QualifiedName qn) {
