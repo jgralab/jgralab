@@ -326,7 +326,7 @@ public abstract class VertexImpl extends GraphElementImpl implements Vertex {
 	}
 	
 	public String toString() {
-		return "v" + id + ": " + getAttributedElementClass().getName();
+		return "v" + id + ": " + getAttributedElementClass().getQualifiedName();
 	}
 	
 	public int compareTo(AttributedElement a) {

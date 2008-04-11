@@ -118,7 +118,7 @@ public class TypeIdEvaluator extends VertexEvaluator {
 	@Override
 	public String getLoggingName() {
 		StringBuilder name = new StringBuilder();
-		name.append(vertex.getAttributedElementClass().getName());
+		name.append(vertex.getAttributedElementClass().getQualifiedName());
 		if (vertex.isType()) {
 			name.append("-type");
 		}

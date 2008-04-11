@@ -152,7 +152,7 @@ public class Tg2GXL extends Tg2Whatever {
 							+ graph.getId()
 							+ "\" edgeids=\" true\" edgemode=\" directed\" hypergraph=\" false\">");
 			out.println("<type xlink:href=\"" + schemaGraphOutputName + "#"
-					+ graph.getGraphClass().getName()
+					+ graph.getGraphClass().getQualifiedName()
 					+ "\" xlink:type=\" simple\"/>");
 		}
 	}
@@ -184,7 +184,7 @@ public class Tg2GXL extends Tg2Whatever {
 				else
 					out.println("<node id=\"v:" + v.getId() + "\">");
 				out.println("<type xlink:href=\"" + gxlMetaSchema + "#"
-						+ grUML2GXL.get(elemClass.getName())
+						+ grUML2GXL.get(elemClass.getQualifiedName())
 						+ "\" xlink:type=\" simple\"/>");
 				// print attributes
 				if (elemClass.getAttributeCount() > 0) {
@@ -196,7 +196,7 @@ public class Tg2GXL extends Tg2Whatever {
 			else if (!printSchema) {
 				out.println("<node id=\"v:" + v.getId() + "\">");
 				out.println("<type xlink:href=\"" + schemaGraphOutputName
-						+ "#" + elemClass.getName()
+						+ "#" + elemClass.getQualifiedName()
 						+ "\" xlink:type=\" simple\"/>");
 
 				// print attributes
@@ -260,7 +260,7 @@ public class Tg2GXL extends Tg2Whatever {
 			out.println("<edge id=\"e:" + e.getId() + "\" to=\"" + thatVertex
 					+ "\" from=\"" + thisVertex + "\">");
 			out.println("<type xlink:href=\"" + gxlMetaSchema + "#"
-					+ grUML2GXL.get(elemClass.getName())
+					+ grUML2GXL.get(elemClass.getQualifiedName())
 					+ "\" xlink:type=\" simple\"/>");
 
 			// printAttributes
@@ -276,7 +276,7 @@ public class Tg2GXL extends Tg2Whatever {
 					+ e.getThis().getId() + "\" toorder=\" " + toOrder
 					+ "\" fromorder=\" " + fromOrder + "\">");
 			out.println("<type xlink:href=\"" + schemaGraphOutputName + "#"
-					+ elemClass.getName() + "\" xlink:type=\" simple\"/>");
+					+ elemClass.getQualifiedName() + "\" xlink:type=\" simple\"/>");
 			// printAttributes
 			if (elemClass.getAttributeCount() > 0) {
 				printAttributes(out, e);
@@ -366,7 +366,7 @@ public class Tg2GXL extends Tg2Whatever {
 			if (dom instanceof RecordDomain) {
 				out.println("<Tup>");
 				out.println("<String>");
-				out.println("" + ((RecordDomain) dom).getName());
+				out.println("" + ((RecordDomain) dom).getQualifiedName());
 				out.println("</String>");
 				Map<String, Domain> components = ((RecordDomain) dom)
 						.getComponents();
@@ -467,7 +467,7 @@ public class Tg2GXL extends Tg2Whatever {
 	public void printGraph() {
 		printSchema = false;
 		setOutputFile(graphOutputName);
-		uniqueGraphClassName = graph.getSchema().getName();
+		uniqueGraphClassName = graph.getSchema().getQualifiedName();
 		super.printGraph();
 		setOutputFile(schemaGraphOutputName);
 		setGraph(new Tg2SchemaGraph(graph.getSchema()).getSchemaGraph());

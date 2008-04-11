@@ -74,7 +74,7 @@ public class Tg2Dot extends Tg2Whatever {
 	protected void printVertex(PrintStream out, Vertex v) {
 		AttributedElementClass cls = v.getAttributedElementClass();
 		out.print("v" + v.getId() + " [label=\"{{v" + v.getId() + "|"
-				+ cls.getName() + "}");
+				+ cls.getQualifiedName() + "}");
 		if (cls.getAttributeCount() > 0) {
 			out.print("|");
 			printAttributes(out, v);
@@ -152,7 +152,7 @@ public class Tg2Dot extends Tg2Whatever {
 			}
 		}
 
-		out.print("label=\"e" + e.getId() + ": " + cls.getName() + "");
+		out.print("label=\"e" + e.getId() + ": " + cls.getQualifiedName() + "");
 
 		if (edgeAttributes && cls.getAttributeCount() > 0) {
 			out.print("\\l");
@@ -175,7 +175,7 @@ public class Tg2Dot extends Tg2Whatever {
 					out.print(attr.getName());
 				}
 				if (domainNames) {
-					out.print(": " + stringQuote(attr.getDomain().getName()));
+					out.print(": " + stringQuote(attr.getDomain().getQualifiedName()));
 				}
 				Object attribute = elem.getAttribute(attr.getName());
 				String attributeString = (attribute != null) ? attribute

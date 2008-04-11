@@ -119,14 +119,14 @@ public class CommonSubgraphOptimizer extends OptimizerBase {
 		StringBuilder buf = new StringBuilder();
 		buf.append("{V");
 		buf.append(":");
-		buf.append(vertex.getAttributedElementClass().getName());
+		buf.append(vertex.getAttributedElementClass().getQualifiedName());
 		buf.append(computeAttributeHash(vertex));
 
 		// Compute the hashes of the children
 		for (Edge e: vertex
 				.incidences(EdgeDirection.IN)) {
 			buf.append("{E:");
-			buf.append(e.getAttributedElementClass().getName());
+			buf.append(e.getAttributedElementClass().getQualifiedName());
 			buf.append("}");
 			buf.append(computeHashAndProcess((Greql2Vertex) e.getThat()));
 		}

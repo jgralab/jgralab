@@ -375,7 +375,7 @@ public class SchemaImpl implements Schema {
 
 		// generate graph classes
 		for (GraphClass graphClass : graphClasses.values()) {
-			if (graphClass.getName().equals("Graph"))
+			if (graphClass.getQualifiedName().equals("Graph"))
 				continue;
 
 			GraphCodeGenerator graphCodeGenerator = new GraphCodeGenerator(
@@ -490,7 +490,7 @@ public class SchemaImpl implements Schema {
 		Iterator<GraphClass> gcit = graphClasses.values().iterator();
 		while (gcit.hasNext()) {
 			GraphClass graphClass = (GraphClass) gcit.next();
-			if (graphClass.getName().equals("Graph"))
+			if (graphClass.getQualifiedName().equals("Graph"))
 				continue;
 
 			GraphCodeGenerator graphCodeGenerator = new GraphCodeGenerator(
@@ -609,7 +609,7 @@ public class SchemaImpl implements Schema {
 	public AttributedElementClass getClass(AttributedElement anAttributedElement) {
 		// String aeClassName = anAttributedElement.getClass().getSimpleName();
 		String aeClassName = anAttributedElement.getAttributedElementClass()
-				.getName()
+				.getQualifiedName()
 				+ "Impl";
 		aeClassName = aeClassName.substring(0, aeClassName.length() - 4); // cut
 		// "Impl"
@@ -630,7 +630,7 @@ public class SchemaImpl implements Schema {
 					.getOwnGraphElementClasses().iterator();
 			while (it2.hasNext()) {
 				GraphElementClass gec = it2.next();
-				if (gec.getName().equals(aeClassName))
+				if (gec.getQualifiedName().equals(aeClassName))
 					return gec;
 			}
 		}
@@ -648,6 +648,14 @@ public class SchemaImpl implements Schema {
 
 	public Map<QualifiedName, GraphClass> getGraphClasses() {
 		return graphClasses;
+	}
+	
+	public Map<QualifiedName, Package> getPackages() {
+		return packages;
+	}
+	
+	public Package getPackage(String packageName) {
+		return packages.get(new QualifiedName(packageName));
 	}
 
 	@Override

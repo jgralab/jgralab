@@ -68,12 +68,12 @@ public class AttributedElementCodeGenerator extends CodeGenerator {
 		rootBlock.setVariable("schemaPackageName", schemaRootPackageName);
 
 		interfaces = new TreeSet<String>();
-		interfaces.add(aec.getName());
+		interfaces.add(aec.getQualifiedName());
 		rootBlock.setVariable("isAbstractClass", aec.isAbstract() ? "true"
 				: "false");
 		for (AttributedElementClass superClass : attributedElementClass
 				.getAllSuperClasses()) {
-			interfaces.add(superClass.getName());
+			interfaces.add(superClass.getQualifiedName());
 		}
 		if (interfaces.contains("Aggregation")) {
 			interfaces.remove("Edge");
@@ -126,7 +126,7 @@ public class AttributedElementCodeGenerator extends CodeGenerator {
 		if (interfaces.size() > 0) {
 			String delim = createClass ? " implements " : " extends ";
 			for (String interfaceName : interfaces) {
-				if (createClass || !interfaceName.equals(aec.getName())) {
+				if (createClass || !interfaceName.equals(aec.getQualifiedName())) {
 					if (interfaceName.equals("Vertex")
 							|| interfaceName.equals("Edge")
 							|| interfaceName.equals("Aggregation")

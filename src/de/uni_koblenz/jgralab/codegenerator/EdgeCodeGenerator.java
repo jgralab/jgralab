@@ -48,11 +48,11 @@ public class EdgeCodeGenerator extends AttributedElementCodeGenerator {
 	protected CodeBlock createHeader(boolean createClass) {
 		CodeList code = new CodeList();
 		EdgeClass ec = (EdgeClass) aec;
-		code.setVariable("fromVertexClass", ec.getFrom().getName());
-		code.setVariable("toVertexClass", ec.getTo().getName());
+		code.setVariable("fromVertexClass", ec.getFrom().getQualifiedName());
+		code.setVariable("toVertexClass", ec.getTo().getQualifiedName());
 		code.setVariable("fromRoleName", ec.getFromRolename());
 		code.setVariable("toRoleName", ec.getToRolename());
-		code.setVariable("ecName", ec.getName());
+		code.setVariable("ecName", ec.getQualifiedName());
 		CodeSnippet snippet = new CodeSnippet();
 		snippet.add("/**");
 		snippet.add("FromVertexClass: #fromVertexClass#");

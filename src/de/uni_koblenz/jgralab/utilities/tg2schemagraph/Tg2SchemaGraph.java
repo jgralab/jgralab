@@ -118,7 +118,7 @@ public class Tg2SchemaGraph {
 
 			// create the schemagraph
 			schemagraph = GrUMLSchema.instance().createGrUMLSchemaGraph(
-					schema.getName(), MAX_VERTICES, MAX_EDGES);
+					schema.getQualifiedName(), MAX_VERTICES, MAX_EDGES);
 
 			// create a HashMap, that maps each schema domain to the
 			// corresponding schemagraph domain
@@ -209,7 +209,7 @@ public class Tg2SchemaGraph {
 			if (allBaseDomainsMapped) {
 				de.uni_koblenz.jgralab.utilities.tg2schemagraph.grumlschema.RecordDomain dM2 = schemagraph
 						.createRecordDomain();
-				dM2.setName(((RecordDomain) d).getName());
+				dM2.setName(((RecordDomain) d).getQualifiedName());
 				Map<String, Domain> recordMap = ((RecordDomain) d)
 						.getComponents();
 				for (String key : recordMap.keySet()) {
@@ -236,7 +236,7 @@ public class Tg2SchemaGraph {
 
 			de.uni_koblenz.jgralab.utilities.tg2schemagraph.grumlschema.GraphClass gcM2 = schemagraph
 					.createGraphClass();
-			gcM2.setName(gc.getName());
+			gcM2.setName(gc.getQualifiedName());
 			gcM2.setIsAbstract(gc.isAbstract());
 
 			schemagraph.createContainsGraphClass(gcM2, schemagraphschema);
@@ -258,7 +258,7 @@ public class Tg2SchemaGraph {
 		for (VertexClass vc : schema.getVertexClassesInTopologicalOrder()) {
 			de.uni_koblenz.jgralab.utilities.tg2schemagraph.grumlschema.VertexClass vcM2 = schemagraph
 					.createVertexClass();
-			vcM2.setName(vc.getName());
+			vcM2.setName(vc.getQualifiedName());
 			vcM2.setIsAbstract(vc.isAbstract());
 
 			// ..find the GraphClassM2, it is corresponding to.
@@ -272,7 +272,7 @@ public class Tg2SchemaGraph {
 					.getDirectSuperClasses())
 				for (de.uni_koblenz.jgralab.utilities.tg2schemagraph.grumlschema.VertexClass aM2VertexClass : schemagraph
 						.getVertexClassVertices())
-					if (aM2VertexClass.getName().equals(vcSuperClass.getName()))
+					if (aM2VertexClass.getName().equals(vcSuperClass.getQualifiedName()))
 						schemagraph.createIsSubVertexClassOf(vcM2,
 								aM2VertexClass);
 
@@ -304,14 +304,14 @@ public class Tg2SchemaGraph {
 			} else {
 				ecM2 = schemagraph.createEdgeClass();
 			}
-			ecM2.setName(ec.getName());
+			ecM2.setName(ec.getQualifiedName());
 			ecM2.setIsAbstract(ec.isAbstract());
 
 			// ..the FromM2 aggregation gets created.
 			// ..the FromM2 attributes gets initialized.
 			for (de.uni_koblenz.jgralab.utilities.tg2schemagraph.grumlschema.VertexClass vcFrom : schemagraph
 					.getVertexClassVertices()) {
-				if (vcFrom.getName().equals(ec.getFrom().getName())) {
+				if (vcFrom.getName().equals(ec.getFrom().getQualifiedName())) {
 					From fromM2 = schemagraph.createFrom(ecM2, vcFrom);
 					fromM2.setRoleName(ec.getFromRolename());
 					fromM2.setMin(ec.getFromMin());
@@ -323,7 +323,7 @@ public class Tg2SchemaGraph {
 			// ..the ToM2 attributes gets initialized.
 			for (de.uni_koblenz.jgralab.utilities.tg2schemagraph.grumlschema.VertexClass vcTo : schemagraph
 					.getVertexClassVertices()) {
-				if (vcTo.getName().equals(ec.getTo().getName())) {
+				if (vcTo.getName().equals(ec.getTo().getQualifiedName())) {
 					To toM2 = schemagraph.createTo(ecM2, vcTo);
 					toM2.setRoleName(ec.getToRolename());
 					toM2.setMin(ec.getToMin());
@@ -341,7 +341,7 @@ public class Tg2SchemaGraph {
 					.getDirectSuperClasses()) {
 				for (de.uni_koblenz.jgralab.utilities.tg2schemagraph.grumlschema.EdgeClass aM2EdgeClass : schemagraph
 						.getEdgeClassVertices()) {
-					if (aM2EdgeClass.getName().equals(vcSuperClass.getName())) {
+					if (aM2EdgeClass.getName().equals(vcSuperClass.getQualifiedName())) {
 						schemagraph.createIsSubEdgeClassOf(ecM2, aM2EdgeClass);
 					}
 				}
@@ -487,7 +487,7 @@ public class Tg2SchemaGraph {
 			usage(1);
 		}
 		if (outputFilename == null) {
-			outputFilename = schema.getName() + "schemagraph.tg";
+			outputFilename = schema.getQualifiedName() + "schemagraph.tg";
 		}
 	}
 

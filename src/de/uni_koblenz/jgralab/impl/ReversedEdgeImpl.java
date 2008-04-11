@@ -44,7 +44,7 @@ public abstract class ReversedEdgeImpl implements
 		Edge {
 
 	/**
-	 * true, if this incidence is in the normal edge order, falso otherwise
+	 * true, if this incidence is in the normal edge order, false otherwise
 	 */
 	protected EdgeImpl normalEdge;
 
@@ -296,7 +296,7 @@ public abstract class ReversedEdgeImpl implements
 
 	@Override
 	public String toString() {
-		return "-e" + normalEdge.getId() + ": " + getAttributedElementClass().getName();
+		return "-e" + normalEdge.getId() + ": " + getAttributedElementClass().getQualifiedName();
 	}
 
 }

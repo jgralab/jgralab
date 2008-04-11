@@ -337,7 +337,7 @@ public class JValueXMLOutputVisitor extends JValueDefaultVisitor {
 		try {
 			AttributedElementClass c = a.toAttributedElementClass();
 			storeln("<attributedelementclass>");
-			storeln("<value>" + c.getName() + "</value>");
+			storeln("<value>" + c.getQualifiedName() + "</value>");
 			storeBrowsingInfo(a);
 			storeln("</attributedelementclass>");
 		} catch (JValueInvalidTypeException ex) {

@@ -307,7 +307,7 @@ public abstract class AttributedElementClassImpl implements
 		if ((superClass == this) || (superClass == null))
 			return;
 		if (DEBUG) {
-			System.out.println("Adding superclass: " + superClass.getName()
+			System.out.println("Adding superclass: " + superClass.getQualifiedName()
 					+ " to class " + this.getName());
 		}
 		directSuperClasses.remove(getSchema().getDefaultGraphClass());
@@ -317,14 +317,14 @@ public abstract class AttributedElementClassImpl implements
 		directSuperClasses.remove(getSchema().getDefaultCompositionClass());
 		for (Attribute a : superClass.getAttributeList()) {
 			if (getOwnAttribute(a.getName()) != null)
-				throw new SchemaException("Cannot add " + superClass.getName()
+				throw new SchemaException("Cannot add " + superClass.getQualifiedName()
 						+ " as superclass of " + getName()
 						+ ", cause: Attribute " + a.getName()
 						+ " is declared in both classes");
 		}
 		if (superClass.isSubClassOf(this))
 			throw new GraphException("Cycle in class hierarchie for classes: "
-					+ getName() + " and " + superClass.getName());
+					+ getName() + " and " + superClass.getQualifiedName());
 		directSuperClasses.add(superClass);
 		((AttributedElementClassImpl) superClass).subClasses.add(this);
 	}
@@ -343,8 +343,8 @@ public abstract class AttributedElementClassImpl implements
 		while (it.hasNext()) {
 			a = it.next();
 			if (DEBUG)
-				System.out.println("Adding subclass " + subClass.getName()
-						+ " to superclass " + a.getName());
+				System.out.println("Adding subclass " + subClass.getQualifiedName()
+						+ " to superclass " + a.getQualifiedName());
 			((AttributedElementClassImpl) a).addSubClass(subClass);
 		}
 	}

@@ -242,7 +242,7 @@ public class GraphClassImpl extends AttributedElementClassImpl implements
 	@Override
 	public void addSuperClass(GraphClass superClass) {
 		// only the internal abstract base class "Graph" can be a superclass
-		if (!superClass.getName().equals("Graph")) {
+		if (!superClass.getQualifiedName().equals("Graph")) {
 			throw new SchemaException("GraphClass can not be generealized.");
 		}
 		super.addSuperClass(superClass);

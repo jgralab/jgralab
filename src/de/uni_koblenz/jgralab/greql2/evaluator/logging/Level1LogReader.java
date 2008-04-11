@@ -48,7 +48,7 @@ public class Level1LogReader extends Level1LoggingBase implements
 		this();
 		loggerDirectory = logDirectory;
 		if (dataGraph != null) {
-			schemaName = dataGraph.getSchema().getName();
+			schemaName = dataGraph.getSchema().getQualifiedName();
 			dataGraphId = dataGraph.getId();
 		}
 		this.loggingType = loggingType;
@@ -106,7 +106,7 @@ public class Level1LogReader extends Level1LoggingBase implements
 		this();
 		loggerDirectory = logDirectory;
 		if (schema != null) {
-			schemaName = schema.getName();
+			schemaName = schema.getQualifiedName();
 		}
 		this.loggingType = loggingType;
 

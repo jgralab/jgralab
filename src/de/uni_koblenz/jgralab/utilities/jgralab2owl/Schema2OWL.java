@@ -383,9 +383,9 @@ class Schema2OWL {
 		Element typeElem;
 		
 		rdElem = createOwlClassElement();
-		rdElem.setAttribute("rdf:ID", rd.getName());
+		rdElem.setAttribute("rdf:ID", rd.getQualifiedName());
 		rdfsDomainElem = createRdfsDomainElement();
-		rdfsDomainElem.setAttribute("rdf:resource", "#" + rd.getName());
+		rdfsDomainElem.setAttribute("rdf:resource", "#" + rd.getQualifiedName());
 		
 		// append Class representing "rd" to root
 		rdfElem.appendChild(rdElem);
@@ -408,7 +408,7 @@ class Schema2OWL {
 					rdfsRangeElem.setAttribute("rdf:resource", "#Set");
 				} else {
 					rdfsRangeElem.setAttribute("rdf:resource", 
-							"#" + component.getValue().getName());
+							"#" + component.getValue().getQualifiedName());
 				}
 			// if "component" has a BasicDomain
 			} else {
@@ -429,7 +429,7 @@ class Schema2OWL {
 			
 			// set Property's ID
 			componentElem.setAttribute("rdf:ID", 
-					HelperMethods.firstToLowerCase(rd.getName()) + "Has" +
+					HelperMethods.firstToLowerCase(rd.getQualifiedName()) + "Has" +
 					HelperMethods.firstToUpperCase(component.getKey()));
 			
 			// build subtree
@@ -536,12 +536,12 @@ class Schema2OWL {
 		Element unionOfElem;
 		
 		for (GraphClass gc : schema.getGraphClassesInTopologicalOrder()) {
-			gcElem = createOwlClassElement(gc.getName());
+			gcElem = createOwlClassElement(gc.getQualifiedName());
 			rdfElem.appendChild(gcElem);
 			
 			// create references to superclasses
 			for (AttributedElementClass superGC : gc.getDirectSuperClasses()) {
-				subClassOfElem = createRdfsSubClassOfElement("#" + superGC.getName());
+				subClassOfElem = createRdfsSubClassOfElement("#" + superGC.getQualifiedName());
 				gcElem.appendChild(subClassOfElem);
 			}
 			
@@ -627,12 +627,12 @@ class Schema2OWL {
 		
 		// for each VertexClass in gc
 		for (VertexClass vc : gc.getOwnVertexClasses()) {
-			vcElem = createOwlClassElement(vc.getName());
+			vcElem = createOwlClassElement(vc.getQualifiedName());
 			rdfElem.appendChild(vcElem);
 			
 			// create references to superclasses
 			for (AttributedElementClass superVC : vc.getDirectSuperClasses()) {
-				subClassOfElem = createRdfsSubClassOfElement("#" + superVC.getName());
+				subClassOfElem = createRdfsSubClassOfElement("#" + superVC.getQualifiedName());
 				vcElem.appendChild(subClassOfElem);
 			}
 			
@@ -644,7 +644,7 @@ class Schema2OWL {
 			}
 			
 			// create restriction for Property "vertexClassIsIn + gc.getName()"
-			if (vc.getName().equals("Vertex")) {
+			if (vc.getQualifiedName().equals("Vertex")) {
 				vcElem.appendChild(createDefaultGECCardinality("Vertex"));
 			}
 			
@@ -744,9 +744,9 @@ class Schema2OWL {
 		Element inMultiplicityElem;
 				
 		ecElem = createOwlObjectPropertyElement(
-				HelperMethods.firstToLowerCase(ec.getName()) + edgeClassNameSuffix);
+				HelperMethods.firstToLowerCase(ec.getQualifiedName()) + edgeClassNameSuffix);
 		ecReElem = createOwlObjectPropertyElement(
-				HelperMethods.firstToLowerCase(ec.getName()) + edgeClassNameSuffix + "-of");
+				HelperMethods.firstToLowerCase(ec.getQualifiedName()) + edgeClassNameSuffix + "-of");
 		
 		rdfElem.appendChild(ecElem);
 		rdfElem.appendChild(ecReElem);
@@ -754,28 +754,28 @@ class Schema2OWL {
 		// create superclass references
 		for (AttributedElementClass superEC : ec.getDirectSuperClasses()) {
 			subPropertyOfElem = createRdfsSubPropertyOfElement("#" 
-					+ HelperMethods.firstToLowerCase(superEC.getName())
+					+ HelperMethods.firstToLowerCase(superEC.getQualifiedName())
 					+ edgeClassNameSuffix);
 			ecElem.appendChild(subPropertyOfElem);
 			
 			subPropertyOfElem = createRdfsSubPropertyOfElement("#" 
-					+ HelperMethods.firstToLowerCase(superEC.getName())
+					+ HelperMethods.firstToLowerCase(superEC.getQualifiedName())
 					+ edgeClassNameSuffix + "-of");
 			ecReElem.appendChild(subPropertyOfElem);
 		}
 		
 		inverseOfElem = createOwlInverseOfElement("#"
-				+ HelperMethods.firstToLowerCase(ec.getName())
+				+ HelperMethods.firstToLowerCase(ec.getQualifiedName())
 				+ edgeClassNameSuffix);
 		ecReElem.appendChild(inverseOfElem);
 		
-		domainElem = createRdfsDomainElement("#" + ((EdgeClass)ec).getFrom().getName());
-		rangeElem = createRdfsRangeElement("#" + ((EdgeClass)ec).getTo().getName());
+		domainElem = createRdfsDomainElement("#" + ((EdgeClass)ec).getFrom().getQualifiedName());
+		rangeElem = createRdfsRangeElement("#" + ((EdgeClass)ec).getTo().getQualifiedName());
 		ecElem.appendChild(domainElem);
 		ecElem.appendChild(rangeElem);
 		
-		domainElem = createRdfsDomainElement("#" + ((EdgeClass)ec).getTo().getName());
-		rangeElem = createRdfsRangeElement("#" + ((EdgeClass)ec).getFrom().getName());
+		domainElem = createRdfsDomainElement("#" + ((EdgeClass)ec).getTo().getQualifiedName());
+		rangeElem = createRdfsRangeElement("#" + ((EdgeClass)ec).getFrom().getQualifiedName());
 		ecReElem.appendChild(domainElem);
 		ecReElem.appendChild(rangeElem);
 		
@@ -787,9 +787,9 @@ class Schema2OWL {
 		
 		// build subtrees
 		HelperMethods.getOwlElement(doc, ((EdgeClass)ec).getFrom()
-				.getName()).appendChild(outMultiplicityElem);
+				.getQualifiedName()).appendChild(outMultiplicityElem);
 		HelperMethods.getOwlElement(doc, ((EdgeClass)ec).getTo()
-				.getName()).appendChild(inMultiplicityElem);
+				.getQualifiedName()).appendChild(inMultiplicityElem);
 	}
 	
 	/**
@@ -918,13 +918,13 @@ class Schema2OWL {
 		Element inMultiplicityElem;
 		Element unionOfElem;
 		
-		ecElem = createOwlClassElement(ec.getName() + edgeClassNameSuffix);
+		ecElem = createOwlClassElement(ec.getQualifiedName() + edgeClassNameSuffix);
 		rdfElem.appendChild(ecElem);
 	
 		// create superclass references
 		for (AttributedElementClass superEC : ec.getDirectSuperClasses()) {
 			subClassOfElem = createRdfsSubClassOfElement("#" 
-						+ superEC.getName() + edgeClassNameSuffix);
+						+ superEC.getQualifiedName() + edgeClassNameSuffix);
 			ecElem.appendChild(subClassOfElem);
 		}
 		
@@ -944,7 +944,7 @@ class Schema2OWL {
 		toVCElem = createIncidentVertexClassElement(false, ec);
 		
 		// create ObjectProperty for aggregate
-		if (ec.getName().equals("Aggregation")) {
+		if (ec.getQualifiedName().equals("Aggregation")) {
 			aggregateElem = createAggregateElement();
 			aggregateSubClassElem = createAggregateSubClassElement(
 					aggregateElem);
@@ -954,14 +954,14 @@ class Schema2OWL {
 		}
 	
 		// create subclass restriction for Property "edgeClassIsIn + gc.getName()"
-		if (ec.getName().equals("Edge")) {
+		if (ec.getQualifiedName().equals("Edge")) {
 			ecElem.appendChild(createDefaultGECCardinality("Edge"));
 		}
 		
 		// build subtrees
-		HelperMethods.getOwlElement(doc, (ec).getFrom().getName())
+		HelperMethods.getOwlElement(doc, (ec).getFrom().getQualifiedName())
 				.appendChild(outMultiplicityElem);
-		HelperMethods.getOwlElement(doc, (ec).getTo().getName())
+		HelperMethods.getOwlElement(doc, (ec).getTo().getQualifiedName())
 				.appendChild(inMultiplicityElem);
 		
 		rdfElem.appendChild(fromVCElem);
@@ -1004,21 +1004,21 @@ class Schema2OWL {
 		// get name of 'from' or 'to' VertexClass 
 		if (from) {
 			direction = "Out";
-			vcName = ec.getFrom().getName();
+			vcName = ec.getFrom().getQualifiedName();
 		} else {
 			direction = "In";
-			vcName = ec.getTo().getName();
+			vcName = ec.getTo().getQualifiedName();
 		}
 		
 		// create ObjectProperty for incident EdgeClass
 		incidentVertexClassElem = createOwlObjectPropertyElement();
 		incidentVertexClassElem.setAttribute(
-				"rdf:ID", HelperMethods.firstToLowerCase(ec.getName()) 
+				"rdf:ID", HelperMethods.firstToLowerCase(ec.getQualifiedName()) 
 						+ edgeClassNameSuffix + direction);
 		typeElem = createRdfTypeElement(
 				"http://www.w3.org/2002/07/owl#SymmetricProperty");
 		domainElem = createRdfsDomainElement("#" + vcName);
-		rangeElem = createRdfsRangeElement("#" + ec.getName() + edgeClassNameSuffix);
+		rangeElem = createRdfsRangeElement("#" + ec.getQualifiedName() + edgeClassNameSuffix);
 		
 		// build subtree
 		incidentVertexClassElem.appendChild(typeElem);
@@ -1080,16 +1080,16 @@ class Schema2OWL {
 		if (edgeClasses2Properties) {
 			if (from) {
 				onPropertyElem = createOwlOnPropertyElement("#" 
-						+ HelperMethods.firstToLowerCase(ec.getName()) 
+						+ HelperMethods.firstToLowerCase(ec.getQualifiedName()) 
 						+ edgeClassNameSuffix);
 			} else {
 				onPropertyElem = createOwlOnPropertyElement("#" 
-						+ HelperMethods.firstToLowerCase(ec.getName()) 
+						+ HelperMethods.firstToLowerCase(ec.getQualifiedName()) 
 						+ edgeClassNameSuffix + "-of");
 			}
 		} else {
 			onPropertyElem = createOwlOnPropertyElement("#" 
-					+ HelperMethods.firstToLowerCase(ec.getName()) 
+					+ HelperMethods.firstToLowerCase(ec.getQualifiedName()) 
 					+ edgeClassNameSuffix + direction);
 		}
 		minCardinalityElem = createOwlMinCardinalityElement(lowerBound);
@@ -1211,9 +1211,9 @@ class Schema2OWL {
 		
 		String aecElemName;
 		if (aec instanceof EdgeClass) {
-			aecElemName = aec.getName() + edgeClassNameSuffix;
+			aecElemName = aec.getQualifiedName() + edgeClassNameSuffix;
 		} else {
-			aecElemName = aec.getName();
+			aecElemName = aec.getQualifiedName();
 		}
 
 		// for every attribute of "aec"
@@ -1238,7 +1238,7 @@ class Schema2OWL {
 					rangeElem.setAttribute("rdf:resource", "#Set");
 				} else {
 					rangeElem.setAttribute("rdf:resource", 
-							"#" + attr.getDomain().getName());
+							"#" + attr.getDomain().getQualifiedName());
 				}
 			// if "attr" has a BasicDomain as type
 			} else {
@@ -1481,10 +1481,10 @@ class Schema2OWL {
 			classElem = doc.createElement("owl:Class");
 			
 			if (subclass instanceof EdgeClass) {
-				classElem.setAttribute("rdf:about", subclass.getName() 
+				classElem.setAttribute("rdf:about", subclass.getQualifiedName() 
 						+ edgeClassNameSuffix);
 			} else {
-				classElem.setAttribute("rdf:about", subclass.getName());
+				classElem.setAttribute("rdf:about", subclass.getQualifiedName());
 			}
 			
 			unionOfElem.appendChild(classElem);

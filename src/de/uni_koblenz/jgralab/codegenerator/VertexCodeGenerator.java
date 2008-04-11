@@ -356,7 +356,7 @@ public class VertexCodeGenerator extends AttributedElementCodeGenerator {
 		CodeSnippet s = new CodeSnippet(true);
 		VertexClass lcvc = entry.getVertexClassAtFarEnd();
 		if (lcvc.isInternal()) {
-			s.setVariable("targetClass", "#jgPackage#." + lcvc.getName());
+			s.setVariable("targetClass", "#jgPackage#." + lcvc.getQualifiedName());
 		} else {
 			s.setVariable("targetClass", schemaRootPackageName + "."
 					+ lcvc.getQualifiedName());

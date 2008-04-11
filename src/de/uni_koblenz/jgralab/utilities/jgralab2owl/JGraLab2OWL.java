@@ -220,8 +220,8 @@ public class JGraLab2OWL {
 		Element labelElem;
 		//create Elements and set Attributes
 		rdfElem = doc.createElement("rdf:RDF");
-		rdfElem.setAttribute("xmlns", "http://" + schema.getName() + "#");
-		rdfElem.setAttribute("xml:base", "http://" + schema.getName() + "#");
+		rdfElem.setAttribute("xmlns", "http://" + schema.getQualifiedName() + "#");
+		rdfElem.setAttribute("xml:base", "http://" + schema.getQualifiedName() + "#");
 		rdfElem.setAttribute("xmlns:owl", "http://www.w3.org/2002/07/owl#");
 		rdfElem.setAttribute("xmlns:rdf", "http://www.w3.org/1999/02/22-rdf-syntax-ns#");
 		rdfElem.setAttribute("xmlns:rdfs", "http://www.w3.org/2000/01/rdf-schema#");
@@ -233,7 +233,7 @@ public class JGraLab2OWL {
 		labelElem = doc.createElement("rdfs:label");
 		
 		//build subtree
-		labelElem.appendChild(doc.createTextNode(schema.getName()));
+		labelElem.appendChild(doc.createTextNode(schema.getQualifiedName()));
 		rdfElem.appendChild(ontologyElem);
 		ontologyElem.appendChild(labelElem);
 	}

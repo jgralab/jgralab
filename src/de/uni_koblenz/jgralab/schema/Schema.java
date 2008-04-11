@@ -262,6 +262,11 @@ public interface Schema extends NamedElement {
 	 * @return all the domains in the schema
 	 */
 	public Map<QualifiedName, Domain> getDomains();
+	
+	/**
+	 * @return all packages in the schema
+	 */
+	public Map<QualifiedName, Package> getPackages();
 
 	/**
 	 * @param id
@@ -275,6 +280,13 @@ public interface Schema extends NamedElement {
 	 * @return the enum or record domain with the name domainName
 	 */
 	public Domain getDomain(QualifiedName domainName);
+	
+	/**
+	 * @param packageName
+	 *            the unique name of the package
+	 * @return the package name packageName
+	 */
+	public Package getPackage(String packageName);
 
 	/**
 	 * @param domainName

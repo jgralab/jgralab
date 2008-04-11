@@ -422,7 +422,7 @@ public class GraphIO {
 		space();
 		TGOut.writeBytes("\nGraph "
 				+ toUTF(graph.getId() + "_" + graph.getGraphVersion()));
-		writeIdentifier(graph.getAttributedElementClass().getName());
+		writeIdentifier(graph.getAttributedElementClass().getQualifiedName());
 		TGOut.writeBytes(" (" + graph.getMaxVCount() + " "
 				+ graph.getMaxECount() + " " + graph.getVCount() + " "
 				+ graph.getECount() + ")");

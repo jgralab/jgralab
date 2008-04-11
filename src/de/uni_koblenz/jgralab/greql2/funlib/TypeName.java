@@ -86,7 +86,7 @@ public class TypeName implements Greql2Function {
 		} catch (Exception ex) {
 			throw new WrongFunctionParameterException(this, null, arguments);
 		}
-		return new JValue(elem.getAttributedElementClass().getName(), elem);
+		return new JValue(elem.getAttributedElementClass().getQualifiedName(), elem);
 	}
 
 	public int getEstimatedCosts(ArrayList<Integer> inElements) {

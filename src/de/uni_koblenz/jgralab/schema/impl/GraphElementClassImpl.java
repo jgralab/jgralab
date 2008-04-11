@@ -66,17 +66,17 @@ public abstract class GraphElementClassImpl extends AttributedElementClassImpl i
 		output += "subClasses of '" + getName() + "': ";
 		Iterator<AttributedElementClass> it = subClasses.iterator();
 		while (it.hasNext()) {
-			output+= "'"+it.next().getName() + "' ";
+			output+= "'"+it.next().getQualifiedName() + "' ";
 		}
 		output += "\nsuperClasses of '" + getName() + "': ";
 		it = getAllSuperClasses().iterator();
 		while (it.hasNext()) {
-			output+= "'"+it.next().getName() + "' ";
+			output+= "'"+it.next().getQualifiedName() + "' ";
 		}
 		output += "\ndirectSuperClasses of '" + getName() + "': ";
 		it = directSuperClasses.iterator();
 		while (it.hasNext()) {
-			output+= "'"+it.next().getName() + "' ";
+			output+= "'"+it.next().getQualifiedName() + "' ";
 		}
 		
 		output += attributesToString();
@@ -85,7 +85,7 @@ public abstract class GraphElementClassImpl extends AttributedElementClassImpl i
 			output += "may connect to edgeclasses: ";
 			Iterator<EdgeClass> it2 = ((VertexClass)this).getEdgeClasses().iterator();
 			while (it2.hasNext()) {
-				output += it2.next().getName();
+				output += it2.next().getQualifiedName();
 				if (it2.hasNext())
 					output += ", ";
 			}

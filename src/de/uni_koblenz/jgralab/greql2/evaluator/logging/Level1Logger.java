@@ -99,7 +99,7 @@ public class Level1Logger extends Level1LoggingBase implements EvaluationLogger 
 		this();
 		loggerDirectory = logDirectory;
 		if (dataGraph != null) {
-			schemaName = dataGraph.getSchema().getName();
+			schemaName = dataGraph.getSchema().getQualifiedName();
 			dataGraphId = dataGraph.getId();
 		}
 		this.loggingType = loggingType;

@@ -628,7 +628,7 @@ public class JGraLabFacade {
 	 */
 	public String getGraphClass(int graphNo) {
 		return graphContainer.getGraph(graphNo).getAttributedElementClass()
-				.getName();
+				.getQualifiedName();
 	}
 
 	/**
@@ -645,7 +645,7 @@ public class JGraLabFacade {
 	 */
 	public String getVertexClass(int graphNo, int vId) {
 		return graphContainer.getGraph(graphNo).getVertex(vId)
-				.getAttributedElementClass().getName();
+				.getAttributedElementClass().getQualifiedName();
 	}
 
 	/**
@@ -662,7 +662,7 @@ public class JGraLabFacade {
 	 */
 	public String getEdgeClass(int graphNo, int eId) {
 		return graphContainer.getGraph(graphNo).getEdge(eId)
-				.getAttributedElementClass().getName();
+				.getAttributedElementClass().getQualifiedName();
 	}
 
 	/**
@@ -2196,7 +2196,7 @@ public class JGraLabFacade {
 
 		graphMap.put("handle", graphNo);
 		graphMap.put("id", graph.getId());
-		graphMap.put("class", graph.getGraphClass().getName());
+		graphMap.put("class", graph.getGraphClass().getQualifiedName());
 		graphMap.put("attributes", getAttributes(graph));
 
 		return graphMap;
@@ -2224,7 +2224,7 @@ public class JGraLabFacade {
 
 		graphMap.put("id", graphElement.getId());
 		graphMap.put("class", graphElement.getAttributedElementClass()
-				.getName());
+				.getQualifiedName());
 		graphMap.put("attributes", getAttributes(graphElement));
 
 		return graphMap;

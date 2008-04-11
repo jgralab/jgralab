@@ -225,14 +225,14 @@ Graph {
 		assert (newEdge.isNormal());
 		if (!alpha.isValidAlpha(newEdge))
 			throw new GraphException("Edges of class "
-					+ newEdge.getAttributedElementClass().getName()
+					+ newEdge.getAttributedElementClass().getQualifiedName()
 					+ " may not start at vertices of class "
-					+ alpha.getAttributedElementClass().getName());
+					+ alpha.getAttributedElementClass().getQualifiedName());
 		if (!omega.isValidOmega(newEdge))
 			throw new GraphException("Edges of class "
-					+ newEdge.getAttributedElementClass().getName()
+					+ newEdge.getAttributedElementClass().getQualifiedName()
 					+ " may not end at at vertices of class"
-					+ omega.getAttributedElementClass().getName());
+					+ omega.getAttributedElementClass().getQualifiedName());
 
 		int eId = newEdge.getId();
 

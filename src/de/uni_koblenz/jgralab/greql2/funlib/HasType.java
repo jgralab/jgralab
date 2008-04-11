@@ -78,11 +78,11 @@ public class HasType implements Greql2Function {
 				return new JValue(typeCollection.acceptsType(elem.getAttributedElementClass()));
 			} else {
 				if (arguments[1].isAttributedElementClass())
-					typeName = arguments[1].toAttributedElementClass().getName();
+					typeName = arguments[1].toAttributedElementClass().getQualifiedName();
 				else
 					typeName = arguments[1].toString();
 				return new JValue(elem
-						.getAttributedElementClass().getName().equals(typeName), elem);
+						.getAttributedElementClass().getQualifiedName().equals(typeName), elem);
 			}	
 		} catch (Exception ex) {
 			throw new WrongFunctionParameterException(this, null, arguments);

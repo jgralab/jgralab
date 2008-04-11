@@ -147,11 +147,11 @@ public class JValueTypeCollection extends JValue {
 		StringBuffer returnString = new StringBuffer();
 		returnString.append("    Allowed Types are: \n");
 		while (allowedIter.hasNext()) {
-			returnString.append("        " + allowedIter.next().getName() + "\n");
+			returnString.append("        " + allowedIter.next().getQualifiedName() + "\n");
 		}
 		returnString.append("    Forbidden Types are:  \n");
 		while (forbiddenIter.hasNext()) {
-			returnString.append("        " + forbiddenIter.next().getName() + "\n");
+			returnString.append("        " + forbiddenIter.next().getQualifiedName() + "\n");
 		}
 		return returnString.toString();
 	}
@@ -162,11 +162,11 @@ public class JValueTypeCollection extends JValue {
 		StringBuffer returnString = new StringBuffer();
 		returnString.append("Allowed:");
 		while (allowedIter.hasNext()) {
-			returnString.append(":" + allowedIter.next().getName());
+			returnString.append(":" + allowedIter.next().getQualifiedName());
 		}
 		returnString.append("||Forbidden:");
 		while (forbiddenIter.hasNext()) {
-			returnString.append(":" + forbiddenIter.next().getName());
+			returnString.append(":" + forbiddenIter.next().getQualifiedName());
 		}
 		return returnString.toString();
 	}

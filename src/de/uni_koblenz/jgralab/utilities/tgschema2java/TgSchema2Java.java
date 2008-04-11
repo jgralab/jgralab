@@ -28,9 +28,8 @@ import gnu.getopt.Getopt;
 import gnu.getopt.LongOpt;
 
 import java.io.File;
-import java.io.FilenameFilter;
+import java.io.FileFilter;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -48,7 +47,6 @@ import de.uni_koblenz.jgralab.schema.EdgeClass;
 import de.uni_koblenz.jgralab.schema.GraphClass;
 import de.uni_koblenz.jgralab.schema.Schema;
 import de.uni_koblenz.jgralab.schema.VertexClass;
-import de.uni_koblenz.jgralab.schema.impl.SchemaImpl;
 
 public class TgSchema2Java {
 	
@@ -164,6 +162,25 @@ public class TgSchema2Java {
 		return true;
 	}
 	
+	private Set<String> getGeneratedFilePaths(String path) {
+		Set<String> generatedFilePaths = new HashSet<String>();
+		JavaFileFilter javaFileFilter = new JavaFileFilter();
+		
+		File folder = new File(path);
+				
+		if (!folder.exists())
+			return generatedFilePaths;
+		for (File file : folder.listFiles(javaFileFilter)) {
+			if (file.isDirectory()) {
+				generatedFilePaths.addAll(getGeneratedFilePaths(file.getAbsolutePath()));
+			} else {
+				generatedFilePaths.add(file.getAbsolutePath());
+			}
+		}
+		
+		return generatedFilePaths;
+	}
+	
 	/**
 	 * Checks if all .java-files belonging to the specified Schema already exist in
 	 * the commit path. There also must not exist any surplus .java-files.
@@ -172,58 +189,86 @@ public class TgSchema2Java {
 	 * @return true if all .java-files already exist; false otherwise
 	 */
 	private boolean isExistingSchema(Schema schema) {
-		String packageFolder = schema.getDirectoryName();
-		File interfaceFolder = new File(commitPath + File.separator + packageFolder);
-		File implFolder = new File(commitPath + File.separator + packageFolder + File.separator + SchemaImpl.IMPLPACKAGENAME);
-		if (!interfaceFolder.exists() || !implFolder.exists())
-			return false;
+		String pathName;
+		String schemaPath = schema.getPathName();
+		Set<String> existingFilePaths = getGeneratedFilePaths(
+				commitPath + File.separator + schemaPath);
+		Set<String> requiredFilePaths = new HashSet<String>();
 		
-		// retrieve names of existing .java-files
-		JavaFileFilter javaFileFilter = new JavaFileFilter();		
-		Set<String> interfaceFilenames = new HashSet<String>(
-				Arrays.asList(interfaceFolder.list(javaFileFilter)));
-		Set<String> implFilenames = new HashSet<String>(
-				Arrays.asList(implFolder.list(javaFileFilter)));
-				
-		/* retrieve names of Schema, Domains and AttributedElementClasses and store them in
-		 * requiredInterfaceFilenames; also store names of all non-abstract
-		 * AttributedElementClasses in requiredImplFilenames
-		 */
-		Set<String> requiredInterfaceFilenames = new HashSet<String>();
-		Set<String> requiredImplFilenames = new HashSet<String>();
+		requiredFilePaths.add(commitPath + File.separator + schema.getDirectoryName() + ".java");
+		requiredFilePaths.add(commitPath + File.separator + schema.getPathName()  
+				+ File.separator + "impl" + File.separator + schema.getSimpleName() + "Factory.java");
+		for (Domain d : schema.getDomains().values()) {
+			pathName = d.getPathName();
+			
+			if (pathName != "") {
+				pathName = pathName.concat(File.separator);
+			}
+			if (d.toString().startsWith("Enum") || d.toString().startsWith("Record")) {
+				requiredFilePaths.add(commitPath + File.separator + schemaPath + File.separator
+						+ pathName + d.getSimpleName() + ".java");
+			}
+		}
 		
-		requiredInterfaceFilenames.add(schema.getName() + ".java");
-		for (Domain d : schema.getCompositeDomainsInTopologicalOrder())
-			if (d.toString().startsWith("Enum") || d.toString().startsWith("Record"))
-				requiredInterfaceFilenames.add(d.getName() + ".java");
-		for (GraphClass gc : schema.getGraphClassesInTopologicalOrder())
+		for (GraphClass gc : schema.getGraphClassesInTopologicalOrder()) {
 			if (!gc.isInternal()) {
-				requiredInterfaceFilenames.add(gc.getName() + ".java");
-				if (!gc.isAbstract())
-					requiredImplFilenames.add(gc.getName() + "Impl.java");
-			}
-		for (VertexClass vc : schema.getVertexClassesInTopologicalOrder())
-			if (!vc.isInternal()) {
-				requiredInterfaceFilenames.add(vc.getName() + ".java");
-				if (!vc.isAbstract())
-					requiredImplFilenames.add(vc.getName() + "Impl.java");
-			}
-		for (EdgeClass ec : schema.getEdgeClassesInTopologicalOrder())
-			if (!ec.isInternal()) {
-				requiredInterfaceFilenames.add(ec.getName() + ".java");
-				if (!ec.isAbstract()) {
-					requiredImplFilenames.add(ec.getName() + "Impl.java");
-					requiredImplFilenames.add("Reversed" + ec.getName() + "Impl.java");
+				requiredFilePaths.add(commitPath + File.separator + schemaPath + File.separator
+						+ gc.getDirectoryName() + ".java");
+				if (!gc.isAbstract()) {
+					pathName = gc.getPathName();
+					
+					if (pathName != "") {
+						pathName = pathName.concat(File.separator);
+					}
+					requiredFilePaths.add(commitPath + File.separator + schemaPath + File.separator
+							+ "impl" + File.separator + pathName + gc.getSimpleName() 
+							+ "Impl.java");
 				}
 			}
+		}
+		
+		for (VertexClass vc : schema.getVertexClassesInTopologicalOrder()) {
+			if (!vc.isInternal()) {
+				requiredFilePaths.add(commitPath + File.separator + schemaPath + File.separator
+						+ vc.getDirectoryName() + ".java");
+				if (!vc.isAbstract()) {
+					pathName = vc.getPathName();
+					
+					if (pathName != "") {
+						pathName = pathName.concat(File.separator);
+					}
+					requiredFilePaths.add(commitPath + File.separator + schemaPath + File.separator
+							+ "impl" + File.separator + pathName + vc.getSimpleName()
+							+ "Impl.java");
+				}
+			}
+		}
+		for (EdgeClass ec : schema.getEdgeClassesInTopologicalOrder()) {
+			if (!ec.isInternal()) {
+				requiredFilePaths.add(commitPath + File.separator + schemaPath + File.separator
+						+ ec.getDirectoryName() + ".java");
+				if (!ec.isAbstract()) {
+					pathName = ec.getPathName();
+					
+					if (pathName != "") {
+						pathName = pathName.concat(File.separator);
+					}
+					requiredFilePaths.add(commitPath + File.separator + schemaPath + File.separator
+							+ "impl" + File.separator + pathName + ec.getSimpleName() 
+							+ "Impl.java");
+					requiredFilePaths.add(commitPath + File.separator + schemaPath + File.separator
+							+ "impl" + File.separator + pathName + "Reversed" + ec.getSimpleName()
+							+ "Impl.java");
+				}
+			}
+		}
 		
 		/* checks if sets of existing and required .java-files are equal
 		 */
-		if (!interfaceFilenames.containsAll(requiredInterfaceFilenames)
-				|| !implFilenames.containsAll(requiredImplFilenames)
-				|| !requiredInterfaceFilenames.containsAll(interfaceFilenames)
-				|| !requiredImplFilenames.containsAll(implFilenames))
+		if (!existingFilePaths.containsAll(requiredFilePaths)
+				|| !requiredFilePaths.containsAll(existingFilePaths)) {
 			return false;
+		}
 		
 		return true;
 	}
@@ -253,6 +298,8 @@ public class TgSchema2Java {
 					break;
 				case 'p': 
 					commitPath = getopt.getOptarg();
+					commitPath = commitPath.replace("/", File.separator);
+					commitPath = commitPath.replace("\\", File.separator);
 					break;
 				case 'c':
 					compile = true;
@@ -280,15 +327,13 @@ public class TgSchema2Java {
 	private void printHelp() {
 		System.out.println("Usage: java " + TgSchema2Java.class.getSimpleName() +"\n" 
 				+ " (-f | --filename) <filename>[.tg] [(-p | --path) <commit-path>]\n" 
-				+ " [(-c | --compile) <javac-path>]\n"
+				+ " [(-c | --compile)]\n"
 				+ " [(-s | --cp | --classpath) <classpath>\n");
 		System.out.println("Options:");
 		System.out.println("-f | --filename (required): specifies the .tg-file to be converted");
 		System.out.println("-p | --path (optional): specifies the path to where the created\n" +
 				           "                        files are stored; default is current folder (\".\")");
-		System.out.println("-c | --compile (optional): specifies the path to the javac-compiler;\n" +
-				           "                           if not specified, the .java-files will not be\n" + 
-				           "                           compiled");
+		System.out.println("-c | --compile (optional): if specified, the .java are compiled");
 		System.out.println("-s | --cp | --classpath (optional): specifies the path to jgralab");
 		System.out.println("-j | --jar (optional): specifies the name of the .jar-file;\n" +
 				           "                       if omitted, no jar will be created");
@@ -392,9 +437,9 @@ public class TgSchema2Java {
 		tgSchema2Java.execute();
 	}
 	
-	class JavaFileFilter implements FilenameFilter {
-		public boolean accept(File dir, String name) {
-			return name.endsWith(".java");
+	class JavaFileFilter implements FileFilter {
+		public boolean accept(File file) {
+			return (file.isDirectory() || file.getName().endsWith(".java"));
 		}
 	}
 }

@@ -283,7 +283,7 @@ public abstract class EdgeImpl extends GraphElementImpl implements Edge {
 
 	@Override
 	public String toString() {
-		return "+e" + id + ": " + getAttributedElementClass().getName();
+		return "+e" + id + ": " + getAttributedElementClass().getQualifiedName();
 	}
 
 }

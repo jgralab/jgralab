@@ -176,7 +176,7 @@ class Graph2OWL {
 		String vElemId;
 		
 		// create Individual for Graph g
-		Element gElem = createIndividualElement(g.getAttributedElementClass().getName(),
+		Element gElem = createIndividualElement(g.getAttributedElementClass().getQualifiedName(),
 				g.getId());
 		
 		// convert attributes of g
@@ -196,7 +196,7 @@ class Graph2OWL {
 		// convert vertices
 		for (Vertex v : g.vertices()) {
 			vElemId = HelperMethods.firstToLowerCase(
-					v.getAttributedElementClass().getName()) + String.valueOf(v.getId());
+					v.getAttributedElementClass().getQualifiedName()) + String.valueOf(v.getId());
 			gElem.appendChild(createIndividualObjectPropertyElement(
 					"graphContainsVertex", "#" + vElemId));
 			convertVertex(v, vElemId, pf);
@@ -206,7 +206,7 @@ class Graph2OWL {
 			// convert edges
 			for (Edge e : g.edges()) {
 				eElemId = HelperMethods.firstToLowerCase(
-						e.getAttributedElementClass().getName())
+						e.getAttributedElementClass().getQualifiedName())
 								+ edgeClassNameSuffix
 								+ String.valueOf(e.getId());
 					gElem.appendChild(createIndividualObjectPropertyElement(
@@ -269,7 +269,7 @@ class Graph2OWL {
 		Edge e = v.getFirstEdge();
 				
 		// create the Individual representing v
-		Element vElem = createIndividualElement(vc.getName(), vElemId);
+		Element vElem = createIndividualElement(vc.getQualifiedName(), vElemId);
 		
 		String eElemId; 
 		
@@ -290,7 +290,7 @@ class Graph2OWL {
 		// create individual properties referring to individuals representing incident edges
 		while (e != null) {
 			eElemId = HelperMethods.firstToLowerCase(
-					e.getAttributedElementClass().getName())
+					e.getAttributedElementClass().getQualifiedName())
 							+ edgeClassNameSuffix
 							+ String.valueOf(e.getNormalEdge().getId());
 			
@@ -298,39 +298,39 @@ class Graph2OWL {
 				if (e.getAlpha() == v) {
 					vElem.appendChild(createIndividualObjectPropertyElement(
 							HelperMethods.firstToLowerCase(
-									e.getAttributedElementClass().getName()
+									e.getAttributedElementClass().getQualifiedName()
 											+ edgeClassNameSuffix),
 									"#" 
 											+ HelperMethods.firstToLowerCase(
 													e.getOmega()
 															.getAttributedElementClass()
-																	.getName()) 
+																	.getQualifiedName()) 
 											+ e.getOmega().getId()));
 				} else {
 					vElem.appendChild(createIndividualObjectPropertyElement(
 							HelperMethods.firstToLowerCase(
-									e.getAttributedElementClass().getName()
+									e.getAttributedElementClass().getQualifiedName()
 											+ edgeClassNameSuffix
 											+ "-of"),
 									"#" 
 											+ HelperMethods.firstToLowerCase(
 													e.getAlpha()
 															.getAttributedElementClass()
-																	.getName()) 
+																	.getQualifiedName()) 
 											+ e.getAlpha().getId()));
 				}
 			} else {
 				if (e.getAlpha() == v) {
 					vElem.appendChild(createIndividualObjectPropertyElement(
 							HelperMethods.firstToLowerCase(
-									e.getAttributedElementClass().getName()
+									e.getAttributedElementClass().getQualifiedName()
 											+ edgeClassNameSuffix
 											+ "Out"),
 									"#" + eElemId));
 				} else {
 					vElem.appendChild(createIndividualObjectPropertyElement(
 							HelperMethods.firstToLowerCase(
-									e.getAttributedElementClass().getName()
+									e.getAttributedElementClass().getQualifiedName()
 											+ edgeClassNameSuffix
 											+ "In"),
 									"#" + eElemId));
@@ -390,14 +390,14 @@ class Graph2OWL {
 		Vertex toVertex = e.getOmega();
 		
 		Element eElem = createIndividualElement(
-				ec.getName() + edgeClassNameSuffix, eElemId);
+				ec.getQualifiedName() + edgeClassNameSuffix, eElemId);
 		
 		// compute the ids of the individuals representing the out and the in vertices
 		String fromElemId = HelperMethods.firstToLowerCase(
-					fromVertex.getAttributedElementClass().getName())
+					fromVertex.getAttributedElementClass().getQualifiedName())
 				+ fromVertex.getId();;
 		String toElemId = HelperMethods.firstToLowerCase(
-					toVertex.getAttributedElementClass().getName())
+					toVertex.getAttributedElementClass().getQualifiedName())
 				+ toVertex.getId();;
 		
 		// convert attributes of e
@@ -464,12 +464,12 @@ class Graph2OWL {
 		
 		// The name of the Property representing the attribute
 		if (ownersAec instanceof EdgeClass) {
-			attrPropertyName = 	HelperMethods.firstToLowerCase(ownersAec.getName()) 
+			attrPropertyName = 	HelperMethods.firstToLowerCase(ownersAec.getQualifiedName()) 
 					+ edgeClassNameSuffix
 					+ "Has" 
 					+ HelperMethods.firstToUpperCase(attrName);
 		} else {
-			attrPropertyName = HelperMethods.firstToLowerCase(ownersAec.getName()) 
+			attrPropertyName = HelperMethods.firstToLowerCase(ownersAec.getQualifiedName()) 
 				+ "Has" 
 				+ HelperMethods.firstToUpperCase(attrName);
 		}
@@ -733,7 +733,7 @@ class Graph2OWL {
 	 */
 	private Element createRecordIndividualObjectPropertyElement (
 			String propertyName, Object value, Domain dom) {
-		Element compositeIndividualElem = createAnonymousIndividualElement(dom.getName());
+		Element compositeIndividualElem = createAnonymousIndividualElement(dom.getQualifiedName());
 		
 		Element attrIndividualPropertyElem = createIndividualPropertyElement(propertyName);
 		attrIndividualPropertyElem.appendChild(compositeIndividualElem);
@@ -754,7 +754,7 @@ class Graph2OWL {
 					&& !component.getValue().getTGTypeName(null).equals("Object")) {
 				compositeIndividualElem.appendChild(
 						createAttributeIndividualObjectPropertyElement(
-									HelperMethods.firstToLowerCase(dom.getName()) 
+									HelperMethods.firstToLowerCase(dom.getQualifiedName()) 
 									+ "Has" 
 									+ HelperMethods.firstToUpperCase(component.getKey()),
 								componentValue, component.getValue()));
@@ -762,7 +762,7 @@ class Graph2OWL {
 			} else {			
 				compositeIndividualElem.appendChild(
 						createAttributeIndividualDatatypePropertyElement(
-									HelperMethods.firstToLowerCase(dom.getName()) 
+									HelperMethods.firstToLowerCase(dom.getQualifiedName()) 
 									+ "Has" 
 									+ HelperMethods.firstToUpperCase(component.getKey()),
 								componentValue, component.getValue()));

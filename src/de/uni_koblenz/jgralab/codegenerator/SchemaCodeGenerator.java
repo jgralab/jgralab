@@ -156,9 +156,9 @@ public class SchemaCodeGenerator extends CodeGenerator {
 				"\t\tthrow new GraphIOException(\"Graph in file '\" + filename + \" is not an instance of GraphClass #gcName#\");",
 				"\t}", "\treturn (#gcName#) graph;", "}");
 
-		code.setVariable("gcName", gc.getName());
-		code.setVariable("gcCamelName", camelCase(gc.getName()));
-		code.setVariable("gcImplName", gc.getName() + "Impl");
+		code.setVariable("gcName", gc.getQualifiedName());
+		code.setVariable("gcCamelName", camelCase(gc.getQualifiedName()));
+		code.setVariable("gcImplName", gc.getQualifiedName() + "Impl");
 		return code;
 	}
 
@@ -215,7 +215,7 @@ public class SchemaCodeGenerator extends CodeGenerator {
 	private CodeBlock createGraphClass(GraphClass gc) {
 		CodeList code = new CodeList();
 		addImports("#jgSchemaPackage#.GraphClass");
-		code.setVariable("gcName", gc.getName());
+		code.setVariable("gcName", gc.getQualifiedName());
 		code.setVariable("gcVariable", "gc");
 		code.setVariable("aecVariable", "gc");
 		code.setVariable("schemaVariable", gc.getVariableName());
@@ -232,7 +232,7 @@ public class SchemaCodeGenerator extends CodeGenerator {
 			}
 			CodeSnippet s = new CodeSnippet(
 					"#gcVariable#.addSuperClass(getGraphClass(new QualifiedName(\"#superClassName#\")));");
-			s.setVariable("superClassName", superClass.getName());
+			s.setVariable("superClassName", superClass.getQualifiedName());
 			code.add(s);
 		}
 		code.add(createAttributes(gc));
@@ -292,7 +292,7 @@ public class SchemaCodeGenerator extends CodeGenerator {
 			code.setVariable("aggregateFrom", "");
 		}
 
-		code.setVariable("ecName", ec.getName());
+		code.setVariable("ecName", ec.getQualifiedName());
 		code.setVariable("schemaVariable", ec.getVariableName());
 		code.setVariable("ecVariable", "ec");
 		code.setVariable("aecVariable", "ec");
@@ -355,7 +355,7 @@ public class SchemaCodeGenerator extends CodeGenerator {
 	private CodeBlock createVertexClass(VertexClass vc) {
 		CodeList code = new CodeList();
 		addImports("#jgSchemaPackage#.VertexClass");
-		code.setVariable("vcName", vc.getName());
+		code.setVariable("vcName", vc.getQualifiedName());
 		code.setVariable("vcVariable", "vc");
 		code.setVariable("aecVariable", "vc");
 		code.setVariable("schemaVariable", vc.getVariableName());
@@ -388,7 +388,7 @@ public class SchemaCodeGenerator extends CodeGenerator {
 					false,
 					"#aecVariable#.addAttribute(createAttribute(\"#attrName#\", getDomain(\"#domainName#\")));");
 			s.setVariable("attrName", attr.getName());
-			s.setVariable("domainName", attr.getDomain().getName());
+			s.setVariable("domainName", attr.getDomain().getQualifiedName());
 			code.addNoIndent(s);
 		}
 		return code;
@@ -418,16 +418,16 @@ public class SchemaCodeGenerator extends CodeGenerator {
 		for (CompositeDomain dom : schema
 				.getCompositeDomainsInTopologicalOrder()) {
 			CodeSnippet s = new CodeSnippet(true);
-			s.setVariable("domName", dom.getName());
+			s.setVariable("domName", dom.getQualifiedName());
 			code.addNoIndent(s);
 			if (dom instanceof ListDomain) {
 				s.setVariable("componentDomainName", ((ListDomain) dom)
-						.getBaseDomain().getName());
+						.getBaseDomain().getQualifiedName());
 				s
 						.add("createListDomain(getDomain(\"#componentDomainName#\"));");
 			} else if (dom instanceof SetDomain) {
 				s.setVariable("componentDomainName", ((SetDomain) dom)
-						.getBaseDomain().getName());
+						.getBaseDomain().getQualifiedName());
 				s.add("createSetDomain(getDomain(\"#componentDomainName#\"));");
 			} else if (dom instanceof RecordDomain) {
 				addImports("#jgSchemaPackage#.RecordDomain");
@@ -440,7 +440,7 @@ public class SchemaCodeGenerator extends CodeGenerator {
 					s
 							.add("\tdom.addComponent(\"" + cName
 									+ "\", getDomain(\""
-									+ rd.getComponents().get(cName).getName()
+									+ rd.getComponents().get(cName).getQualifiedName()
 									+ "\"));");
 				}
 				s.add("}");

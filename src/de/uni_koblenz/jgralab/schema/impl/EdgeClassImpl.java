@@ -268,7 +268,7 @@ public class EdgeClassImpl extends GraphElementClassImpl implements EdgeClass {
 								+ newMinTo
 								+ " is bigger than maximal cardinality "
 								+ ec.getToMax() + " of inherited EdgeClass "
-								+ ec.getName());
+								+ ec.getQualifiedName());
 			if (newMinTo < ec.getToMin())
 				newMinTo = ec.getToMin();
 			if (newMinFrom > ec.getFromMax())
@@ -279,7 +279,7 @@ public class EdgeClassImpl extends GraphElementClassImpl implements EdgeClass {
 								+ newMinFrom
 								+ " is bigger than maximal cardinality "
 								+ ec.getFromMax() + " of inherited EdgeClass "
-								+ ec.getName());
+								+ ec.getQualifiedName());
 			if (newMinFrom < ec.getFromMin())
 				newMinFrom = ec.getFromMin();
 
@@ -291,7 +291,7 @@ public class EdgeClassImpl extends GraphElementClassImpl implements EdgeClass {
 								+ newMaxTo
 								+ " is lesser than minimal cardinality "
 								+ ec.getToMin() + " of inherited EdgeClass "
-								+ ec.getName());
+								+ ec.getQualifiedName());
 			if (newMaxTo > ec.getToMax())
 				newMaxTo = ec.getToMax();
 			if (newMaxFrom < ec.getFromMin())
@@ -302,7 +302,7 @@ public class EdgeClassImpl extends GraphElementClassImpl implements EdgeClass {
 								+ newMaxFrom
 								+ " is lesser than minimal cardinality "
 								+ ec.getFromMin() + " of inherited EdgeClass "
-								+ ec.getName());
+								+ ec.getQualifiedName());
 			if (newMaxFrom > ec.getFromMax())
 				newMaxFrom = ec.getFromMax();
 		}
@@ -342,8 +342,8 @@ public class EdgeClassImpl extends GraphElementClassImpl implements EdgeClass {
 					throw new SchemaException(
 							"Cannot merge ToVertexClasses for EdgeClass "
 									+ this.getName() + " VertexClass "
-									+ mostSpecialTo.getName() + " and "
-									+ ec.getTo().getName()
+									+ mostSpecialTo.getQualifiedName() + " and "
+									+ ec.getTo().getQualifiedName()
 									+ " cannot be merged");
 			}
 			if ((ec.getFrom() != mostSpecialFrom)
@@ -354,8 +354,8 @@ public class EdgeClassImpl extends GraphElementClassImpl implements EdgeClass {
 					throw new SchemaException(
 							"Cannot merge FromVertexClasses for EdgeClass "
 									+ this.getName() + " VertexClass "
-									+ mostSpecialFrom.getName() + " and "
-									+ ec.getFrom().getName()
+									+ mostSpecialFrom.getQualifiedName() + " and "
+									+ ec.getFrom().getQualifiedName()
 									+ " cannot be merged");
 			}
 		}

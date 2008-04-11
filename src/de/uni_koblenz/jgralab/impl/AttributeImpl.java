@@ -52,7 +52,7 @@ public class AttributeImpl implements Attribute, Comparable<Attribute> {
 	public AttributeImpl(String name, Domain domain) {
 		this.name = name;
 		this.domain = domain;
-		this.sortKey = name + ":" + domain.getName();
+		this.sortKey = name + ":" + domain.getQualifiedName();
 	}
 	
 	/* (non-Javadoc)

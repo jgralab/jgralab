@@ -89,9 +89,9 @@ public class GraphCodeGenerator extends AttributedElementCodeGenerator {
 		TreeSet<GraphElementClass> sortedClasses = new TreeSet<GraphElementClass>();
 		sortedClasses.addAll(gc.getGraphElementClasses());
 		for (GraphElementClass gec : sortedClasses) {
-			if (gec.getName() != "Vertex" && gec.getName() != "Edge"
-					&& gec.getName() != "Aggregation"
-					&& gec.getName() != "Composition") {
+			if (gec.getQualifiedName() != "Vertex" && gec.getQualifiedName() != "Edge"
+					&& gec.getQualifiedName() != "Aggregation"
+					&& gec.getQualifiedName() != "Composition") {
 				// if (createClass) {
 				// addImports("#schemaPackage#." + gec.getName());
 				// }
@@ -118,7 +118,7 @@ public class GraphCodeGenerator extends AttributedElementCodeGenerator {
 						.getUniqueName()));
 				gecCode.setVariable("ecImplName",
 						(gec.isAbstract() ? "**ERROR**" : camelCase(gec
-								.getName())
+								.getQualifiedName())
 								+ "Impl"));
 
 				// gecCode.addNoIndent(createGetByIdMethod(gec, createClass));
@@ -226,8 +226,8 @@ public class GraphCodeGenerator extends AttributedElementCodeGenerator {
 
 		if (gec instanceof EdgeClass) {
 			EdgeClass ec = (EdgeClass) gec;
-			String fromClass = ec.getFrom().getName();
-			String toClass = ec.getTo().getName();
+			String fromClass = ec.getFrom().getQualifiedName();
+			String toClass = ec.getTo().getQualifiedName();
 			if (fromClass.equals("Vertex")) {
 				code.setVariable("fromClass", rootBlock.getVariable("jgPackage")
 						+ "." + "Vertex");

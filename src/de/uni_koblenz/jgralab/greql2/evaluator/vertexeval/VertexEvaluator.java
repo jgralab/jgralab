@@ -199,7 +199,7 @@ public abstract class VertexEvaluator {
 	 *         the function name of the corresponding function for logging.
 	 */
 	public String getLoggingName() {
-		return this.getVertex().getAttributedElementClass().getName();
+		return this.getVertex().getAttributedElementClass().getQualifiedName();
 	}
 
 	/**

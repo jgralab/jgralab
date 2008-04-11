@@ -199,7 +199,7 @@ public class ReversedEdgeCodeGenerator extends AttributedElementCodeGenerator {
 				"public #ecName# getNext#ecCamelName#(#formalParams#) {",
 				"\treturn (#ecName#)getNextEdgeOfClass(#ecName#.class#actualParams#);",
 				"}");
-		code.setVariable("ecName", schemaRootPackageName + "." + ec.getName());
+		code.setVariable("ecName", schemaRootPackageName + "." + ec.getQualifiedName());
 		code.setVariable("ecCamelName", camelCase(ec.getUniqueName()));
 		code.setVariable("formalParams",
 				(withOrientation ? "EdgeDirection orientation" : "")
