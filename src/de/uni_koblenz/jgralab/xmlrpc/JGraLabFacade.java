@@ -2424,7 +2424,7 @@ public class JGraLabFacade {
 			// get M1-Class for Enum and invoke fromString() method
 			try {
 				Class<?> attrType = Class.forName(prefix + "."
-						+ domain.getName(), true, M1ClassManager.instance());
+						+ domain.getQualifiedName(), true, M1ClassManager.instance());
 				value = attrType.getMethod("fromString",
 						new Class[] { String.class }).invoke(null, value);
 			} catch (Exception e) {
@@ -2469,7 +2469,7 @@ public class JGraLabFacade {
 			// get M1-Class for Record and invoke the Constructor
 			try {
 				Class<?> attrType = Class.forName(prefix + "."
-						+ domain.getName(), true, M1ClassManager.instance());
+						+ domain.getQualifiedName(), true, M1ClassManager.instance());
 				value = attrType.getConstructor(new Class<?>[] { Map.class })
 						.newInstance(value);
 			} catch (Exception e) {
