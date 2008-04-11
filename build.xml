@@ -34,6 +34,9 @@
 	<property name="projectname"			
 		value="jgralab"/>
 	
+	<property name="basePackage"
+		  value="de.uni_koblenz.${projectname}"/>
+	
 	<!-- main class name -->
 	<property name="main"					
 		value="JGraLab"/>
@@ -41,7 +44,7 @@
 	<!-- project directory -->
 	<property name="project.dir"			
 		value="../${projectname}"/>
-
+	
 	<!-- directory of general ant file -->
 	<property name="common.dir"				
 		value="../common"/>
@@ -255,19 +258,30 @@
 	
 	<!-- document -->
 	<!-- documents all sources -->
-	<target name="document" depends="grumlsources,greql2sources">
+	<target name="verbosedocument" depends="grumlsources,greql2sources">
+		<ant dir="${common.dir}" antfile="build.xml" target="document">
+			<property name="documentexcludes"
+				  value="{basePackage}.greql2.evaluator.test.*"/>
+			<property name="doc.maxmem" value="256"/>
+		</ant>
+	</target>
+	
+	<target name="document">
 		<!-- calls target document in general ant file ../common/build.xml -->
 		<ant dir="${common.dir}" antfile="build.xml" target="document">
-				<property name="excludedPackageNames" 
-					value="${basePackage}.greql2.schema.*,
-					${basePackage}.greql2.funlib.pathsearch,
-					${basePackage}.greql2.evaluator.costmodel,
-					${basePackage}.greql2.evaluator.fa,
-					${basePackage}.greql2.evaluator.logging,
-					${basePackage}.greql2.evaluator.test,
-					${basePackage}.greql2.evaluator.vertexeval
-					${basePackage}.greql2.parser,
-					${basePackage}.greql2.utilities.tg2schemagraph" />
+<!-- 				<property name="excludedPackageNames" -->
+				<property name="documentexcludes"
+					value="${basePackage}.greql2.schema.**,
+					${basePackage}.greql2.schema.*,
+					${basePackage}.greql2.funlib.pathsearch.*,
+					${basePackage}.greql2.evaluator.costmodel.*,
+					${basePackage}.greql2.evaluator.fa.*,
+					${basePackage}.greql2.evaluator.logging.*,
+					${basePackage}.greql2.evaluator.test.*,
+					${basePackage}.greql2.evaluator.vertexeval.*,
+					${basePackage}.greql2.parser.*,
+					${basePackage}.greql2.utilities.tg2schemagraph.**,
+					${basePackage}.greql2.utilities.tg2schemagraph.*" />
 				<property name="doc.maxmem" value="256"/>
 		</ant>
 	</target>
