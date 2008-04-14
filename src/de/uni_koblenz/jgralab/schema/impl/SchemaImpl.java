@@ -435,11 +435,20 @@ public class SchemaImpl implements Schema {
 	@Override
 	public void compile(String jgralabClassPath) {
 		JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
-
+		JavaFileManager jfm = null;
+		
 		// commit
 		Vector<JavaSourceFromString> javaSources = commit();
 		// compile
-		JavaFileManager jfm = compiler.getStandardFileManager(null, null, null);
+		try {
+			jfm = compiler.getStandardFileManager(null, null, null);
+		} catch (NullPointerException e) {
+			System.out.println("Cannot compile schema " + getSimpleName() + ".");
+			System.out.println("Most probably you use a JRE instead of a JDK. "
+					+ "The JRE does not provide a compiler.");
+			e.printStackTrace();
+		}
+		
 		ClassFileManager manager = new ClassFileManager(jfm);
 
 		manager.setSources(javaSources);
