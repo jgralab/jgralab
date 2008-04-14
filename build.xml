@@ -212,7 +212,7 @@
 		<!-- calls target generateschema in general ant file ${ant}/build.xml -->
 	   	<ant dir="${common.dir}" antfile="build.xml" target="generateschema">
 			<property name="schemafile" 
-				value = "utilities/tg2schemagraph/grUMLSchema.tg"/>			
+				value = "utilities/tg2schemagraph/GrUML_Becklespinax_M3.tg"/>			
 	   	</ant>
 	</target>
 	<target name="utilities" depends="grumlsources">
