@@ -49,7 +49,7 @@ import de.uni_koblenz.jgralab.schema.RecordDomain;
 import de.uni_koblenz.jgralab.schema.SetDomain;
 import de.uni_koblenz.jgralab.schema.StringDomain;
 import de.uni_koblenz.jgralab.utilities.tg2schemagraph.Tg2SchemaGraph;
-import de.uni_koblenz.jgralab.utilities.tg2schemagraph.grumlschema.ContainsGraphClass;
+import de.uni_koblenz.jgralab.utilities.tg2schemagraph.grumlschema.DefinesGraphClass;
 import de.uni_koblenz.jgralab.utilities.tg2schemagraph.grumlschema.HasRecordDomainComponent;
 import de.uni_koblenz.jgralab.utilities.tg2schemagraph.grumlschema.Schema;
 import de.uni_koblenz.jgralab.utilities.tg2whatever.Tg2Whatever;
@@ -243,7 +243,7 @@ public class Tg2GXL extends Tg2Whatever {
 	protected void printEdge(PrintStream out, Edge e) {
 		AttributedElementClass elemClass = e.getAttributedElementClass();
 
-		if (printSchema && !(e instanceof ContainsGraphClass)
+		if (printSchema && !(e instanceof DefinesGraphClass)
 				&& !(e instanceof HasRecordDomainComponent)) {
 			String thisVertex = "v:" + e.getThis().getId();
 			String thatVertex = "v:" + e.getThat().getId();
