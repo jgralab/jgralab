@@ -129,4 +129,14 @@ public class GraphMarker<T> {
 		return graph;
 	}
 
+	/**
+	 * Remove the mark from <code>elem</code>.
+	 * 
+	 * @param elem
+	 *            a marked {@link AttributedElement}
+	 */
+	public void removeMark(AttributedElement elem) {
+		tempAttributeMap.remove(elem);
+	}
+
 }
