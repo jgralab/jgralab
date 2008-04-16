@@ -34,7 +34,6 @@ import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.GraphIO;
 import de.uni_koblenz.jgralab.GraphIOException;
 import de.uni_koblenz.jgralab.ProgressFunction;
-import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.schema.AggregationClass;
 import de.uni_koblenz.jgralab.schema.AttributedElementClass;
 import de.uni_koblenz.jgralab.schema.BooleanDomain;
@@ -44,7 +43,6 @@ import de.uni_koblenz.jgralab.schema.Domain;
 import de.uni_koblenz.jgralab.schema.DoubleDomain;
 import de.uni_koblenz.jgralab.schema.EdgeClass;
 import de.uni_koblenz.jgralab.schema.EnumDomain;
-import de.uni_koblenz.jgralab.schema.GraphClass;
 import de.uni_koblenz.jgralab.schema.IntDomain;
 import de.uni_koblenz.jgralab.schema.ListDomain;
 import de.uni_koblenz.jgralab.schema.LongDomain;
@@ -70,6 +68,16 @@ import de.uni_koblenz.jgralab.utilities.tg2schemagraph.grumlschema.To;
  */
 public class Tg2SchemaGraph {
 
+	/**
+	 * writes a schema's schemagraph to a file. the schema .tg file and the
+	 * outputfile get defined by the command line options
+	 */
+	public static void main(String[] args) {
+		Tg2SchemaGraph tg2sg = new Tg2SchemaGraph();
+		tg2sg.getOptions(args);
+		tg2sg.saveSchemaGraphToFile();
+	}
+	
 	private int MAX_VERTICES = 1000;
 	private int MAX_EDGES = 1000;
 
@@ -120,125 +128,62 @@ public class Tg2SchemaGraph {
 			// create the schemagraph
 			schemagraph = GrUMLSchema.instance().createGrUMLSchemaGraph(
 					schema.getQualifiedName(), MAX_VERTICES, MAX_EDGES);
-
-			// create a HashMap, that maps each schema domain to the
-			// corresponding schemagraph domain
-			domainMap = new HashMap<Domain, de.uni_koblenz.jgralab.utilities.tg2schemagraph.grumlschema.Domain>();
-			createDomainToDomainM2Map();
+			
+			//create a vertex for the schema
 			de.uni_koblenz.jgralab.utilities.tg2schemagraph.grumlschema.Schema schemaVertex = schemagraph.createSchema();
+			
+			// create a HashMap that maps each schema domain to the
+			// corresponding schemagraph domainVertex
+			domainMap = new HashMap<Domain, de.uni_koblenz.jgralab.utilities.tg2schemagraph.grumlschema.Domain>();
+			createDomainToSchemaGraphDomainVertexMap();			
 			for(de.uni_koblenz.jgralab.utilities.tg2schemagraph.grumlschema.Domain domain:domainMap.values())
 				schemagraph.createContainsDomain((de.uni_koblenz.jgralab.utilities.tg2schemagraph.grumlschema.Schema)schemaVertex, domain);
-			// the proper createM2Graph job
+			
+			// create the schemagraph vertex for the graphclass and the schemagraph edge definesGraphClass
 			de.uni_koblenz.jgralab.utilities.tg2schemagraph.grumlschema.GraphClass graphClassVertex = schemagraph.createGraphClass();
+			schemagraph.createDefinesGraphClass(schemaVertex, graphClassVertex);
+			
+			// create vertex for the default package and set its attributes
+			// create incident edge containsDefaultPackage
 			de.uni_koblenz.jgralab.schema.Package defaultPackage = schema.getDefaultPackage();
 			de.uni_koblenz.jgralab.utilities.tg2schemagraph.grumlschema.Package defaultPackageVertex = schemagraph.createPackage();
 			defaultPackageVertex.setName(defaultPackage.getQualifiedName());
 			defaultPackageVertex.setQualifiedName(defaultPackage.getPackageName());
 			defaultPackageVertex.setFullyQualifiedName(defaultPackage.getQualifiedName());
 			schemagraph.createContainsDefaultPackage(schemaVertex, defaultPackageVertex);
-			schemagraph.createDefinesGraphClass(schemaVertex, graphClassVertex);
-
-			createVertexClassesM2();
-			createEdgeClassesM2();
+			
+			//
+			createPackageVertices(defaultPackage, defaultPackageVertex);
 		}
 		return schemagraph;
 	}
 
 	/**
-	 * This method values the <code>Map<Domain, DomainM2> domainMap</code>.
-	 * i.e. <code>domainMap.get(\<Domain\> d)</code> return the corresponding
-	 * <code>DomainM2</code> object.
 	 * 
-	 * At first only the <code>BasicDomain</code>s get mapped. The
-	 * <code>CompositeDomain</code>s get mapped according to their
-	 * "structural depth". First, composites of basic types get mapped. Then
-	 * composites of composites of basic types get mapped. ...and so on...
+	 * @param superPackage
+	 * @param superPackageVertex
 	 */
-	private void createDomainToDomainM2Map() {
-		Map<QualifiedName, Domain> domains = schema.getDomains();
-		while (domainMap.size() != domains.size()) {
-			for (Domain d : domains.values()) {
-				if (domainMap.get(d) != null)
-					continue;
-
-				if (d instanceof BooleanDomain) {
-					domainMap.put(d, schemagraph.createBooleanDomain());
-				} else if (d instanceof DoubleDomain) {
-					domainMap.put(d, schemagraph.createDoubleDomain());
-				} else if (d instanceof EnumDomain) {
-					de.uni_koblenz.jgralab.utilities.tg2schemagraph.grumlschema.EnumDomain enumM2 = schemagraph
-							.createEnumDomain();
-					enumM2.setEnumConstants(((EnumDomain) d).getConsts());
-					domainMap.put(d, enumM2);
-				} else if (d instanceof LongDomain) {
-					domainMap.put(d, schemagraph.createLongDomain());
-				} else if (d instanceof IntDomain) {
-					domainMap.put(d, schemagraph.createIntDomain());
-				} else if (d instanceof ObjectDomain) {
-					domainMap.put(d, schemagraph.createObjectDomain());
-				} else if (d instanceof StringDomain) {
-					domainMap.put(d, schemagraph.createStringDomain());
-				} else if (d instanceof CompositeDomain) {
-					createCompositeDomainM2(d);
-				}
-			}
+	private void createPackageVertices(de.uni_koblenz.jgralab.schema.Package superPackage, de.uni_koblenz.jgralab.utilities.tg2schemagraph.grumlschema.Package superPackageVertex){
+		createVertexClassVerticesForPackage();
+		createEdgeClassVerticesForPackage();
+		
+		Map<String, de.uni_koblenz.jgralab.schema.Package> subPackages = superPackage.getSubPackages();
+		for(de.uni_koblenz.jgralab.schema.Package subPackage:subPackages.values()){
+			de.uni_koblenz.jgralab.utilities.tg2schemagraph.grumlschema.Package subPackageVertex = schemagraph.createPackage();
+			subPackageVertex.setName(subPackage.getQualifiedName());
+			subPackageVertex.setQualifiedName(subPackage.getPackageName());
+			subPackageVertex.setFullyQualifiedName(subPackage.getQualifiedName());
+			schemagraph.createContainsSubPackage(superPackageVertex, subPackageVertex);
+			createPackageVertices(subPackage, subPackageVertex);
 		}
 	}
 
-	/**
-	 * This method checks, if a <code>CompositeDomainM2</code> can be created.
-	 * The condition asks every underlying <code>DomainM2</code> to be created
-	 * first. If so, it creates a <code>CompositeDomainM2</code> object and
-	 * maps its corresponding <code>CompositeDomain</code> object to it.
-	 */
-	private void createCompositeDomainM2(Domain d) {
-		if (d instanceof ListDomain
-				&& !(domainMap.get(((ListDomain) d).getBaseDomain()) == null)) {
-
-			de.uni_koblenz.jgralab.utilities.tg2schemagraph.grumlschema.ListDomain dM2 = schemagraph
-					.createListDomain();
-			schemagraph.createHasListElementDomain(dM2, domainMap.get(((ListDomain) d)
-					.getBaseDomain()));
-			domainMap.put(d, dM2);
-		}
-		if (d instanceof SetDomain
-				&& !(domainMap.get(((SetDomain) d).getBaseDomain()) == null)) {
-
-			de.uni_koblenz.jgralab.utilities.tg2schemagraph.grumlschema.SetDomain dM2 = schemagraph
-					.createSetDomain();
-			schemagraph.createHasSetElementDomain(dM2, domainMap.get(((SetDomain) d)
-					.getBaseDomain()));
-			domainMap.put(d, dM2);
-		}
-		if (d instanceof RecordDomain) {
-			boolean allBaseDomainsMapped = true;
-			for (Domain dom : ((RecordDomain) d).getComponents().values())
-				if (domainMap.get(dom) == null) {
-					allBaseDomainsMapped = false;
-					break;
-				}
-			if (allBaseDomainsMapped) {
-				de.uni_koblenz.jgralab.utilities.tg2schemagraph.grumlschema.RecordDomain dM2 = schemagraph
-						.createRecordDomain();
-				dM2.setName(((RecordDomain) d).getQualifiedName());
-				Map<String, Domain> recordMap = ((RecordDomain) d)
-						.getComponents();
-				for (String key : recordMap.keySet()) {
-					HasRecordDomainComponent hrc = schemagraph
-							.createHasRecordDomainComponent(dM2, domainMap
-									.get(recordMap.get(key)));
-					hrc.setName(key);
-				}
-				domainMap.put(d, dM2);
-			}
-		}
-	}
 	/**
 	 * This method creates all <code>VertexClassM2</code> objects, the
 	 * <code>isSubVertexClassOfM2</code> edges and the
 	 * <code>containsGraphElementClassM2</code> edge.
 	 */
-	private void createVertexClassesM2() {
+	private void createVertexClassVerticesForPackage() {
 		// for each vertex...
 		for (VertexClass vc : schema.getVertexClassesInTopologicalOrder()) {
 			de.uni_koblenz.jgralab.utilities.tg2schemagraph.grumlschema.VertexClass vcM2 = schemagraph
@@ -274,7 +219,7 @@ public class Tg2SchemaGraph {
 	 * <code>isSubEdgeClassOfM2</code> edges and the
 	 * <code>containsGraphElementClassM2</code> edge.
 	 */
-	private void createEdgeClassesM2() {
+	private void createEdgeClassVerticesForPackage() {
 		// for each edge class..
 		for (EdgeClass ec : schema.getEdgeClassesInTopologicalOrder()) {
 			de.uni_koblenz.jgralab.utilities.tg2schemagraph.grumlschema.EdgeClass ecM2 = null;
@@ -361,6 +306,96 @@ public class Tg2SchemaGraph {
 	}
 
 	/**
+	 * This method values the <code>Map<de.uni_koblenz.jgralab.schema.Domain, de.uni_koblenz.jgralab.utilities.tg2schemagraph.grumlschema.Domain> domainMap</code>.
+	 * i.e. <code>domainMap.get(de.uni_koblenz.jgralab.schema.Domain d)</code> return the corresponding
+	 * <code>de.uni_koblenz.jgralab.utilities.tg2schemagraph.grumlschema.Domain</code> object.
+	 * 
+	 * At first only the <code>BasicDomain</code>s get mapped. The
+	 * <code>CompositeDomain</code>s get mapped according to their
+	 * "structural depth". First, composites of basic types get mapped. Then
+	 * composites of composites of basic types get mapped...
+	 */
+	private void createDomainToSchemaGraphDomainVertexMap() {
+		Map<QualifiedName, Domain> domains = schema.getDomains();
+		while (domainMap.size() != domains.size()) {
+			for (Domain d : domains.values()) {
+				if (domainMap.get(d) != null)
+					continue;
+
+				if (d instanceof BooleanDomain) {
+					domainMap.put(d, schemagraph.createBooleanDomain());
+				} else if (d instanceof DoubleDomain) {
+					domainMap.put(d, schemagraph.createDoubleDomain());
+				} else if (d instanceof EnumDomain) {
+					de.uni_koblenz.jgralab.utilities.tg2schemagraph.grumlschema.EnumDomain enumM2 = schemagraph
+							.createEnumDomain();
+					enumM2.setEnumConstants(((EnumDomain) d).getConsts());
+					domainMap.put(d, enumM2);
+				} else if (d instanceof LongDomain) {
+					domainMap.put(d, schemagraph.createLongDomain());
+				} else if (d instanceof IntDomain) {
+					domainMap.put(d, schemagraph.createIntDomain());
+				} else if (d instanceof ObjectDomain) {
+					domainMap.put(d, schemagraph.createObjectDomain());
+				} else if (d instanceof StringDomain) {
+					domainMap.put(d, schemagraph.createStringDomain());
+				} else if (d instanceof CompositeDomain) {
+					createCompositeDomainM2(d);
+				}
+			}
+		}
+	}
+
+	/**
+	 * This method checks, if a <code>CompositeDomainM2</code> can be created.
+	 * The condition asks every underlying <code>DomainM2</code> to be created
+	 * first. If so, it creates a <code>CompositeDomainM2</code> object and
+	 * maps its corresponding <code>CompositeDomain</code> object to it.
+	 */
+	private void createCompositeDomainM2(Domain d) {
+		if (d instanceof ListDomain
+				&& !(domainMap.get(((ListDomain) d).getBaseDomain()) == null)) {
+
+			de.uni_koblenz.jgralab.utilities.tg2schemagraph.grumlschema.ListDomain dM2 = schemagraph
+					.createListDomain();
+			schemagraph.createHasListElementDomain(dM2, domainMap.get(((ListDomain) d)
+					.getBaseDomain()));
+			domainMap.put(d, dM2);
+		}
+		if (d instanceof SetDomain
+				&& !(domainMap.get(((SetDomain) d).getBaseDomain()) == null)) {
+
+			de.uni_koblenz.jgralab.utilities.tg2schemagraph.grumlschema.SetDomain dM2 = schemagraph
+					.createSetDomain();
+			schemagraph.createHasSetElementDomain(dM2, domainMap.get(((SetDomain) d)
+					.getBaseDomain()));
+			domainMap.put(d, dM2);
+		}
+		if (d instanceof RecordDomain) {
+			boolean allBaseDomainsMapped = true;
+			for (Domain dom : ((RecordDomain) d).getComponents().values())
+				if (domainMap.get(dom) == null) {
+					allBaseDomainsMapped = false;
+					break;
+				}
+			if (allBaseDomainsMapped) {
+				de.uni_koblenz.jgralab.utilities.tg2schemagraph.grumlschema.RecordDomain dM2 = schemagraph
+						.createRecordDomain();
+				dM2.setName(((RecordDomain) d).getQualifiedName());
+				Map<String, Domain> recordMap = ((RecordDomain) d)
+						.getComponents();
+				for (String key : recordMap.keySet()) {
+					HasRecordDomainComponent hrc = schemagraph
+							.createHasRecordDomainComponent(dM2, domainMap
+									.get(recordMap.get(key)));
+					hrc.setName(key);
+				}
+				domainMap.put(d, dM2);
+			}
+		}
+	}
+	
+	/**
 	 * This methods writes the schemagrpah to a file (see GraphIO.java)
 	 */
 	public void saveSchemaGraphToFile(String filename, ProgressFunction pf) {
@@ -385,16 +420,6 @@ public class Tg2SchemaGraph {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-	}
-
-	/**
-	 * writes a schema's schemagraph to a file. the schema .tg file and the
-	 * outputfile get defined by the command line options
-	 */
-	public static void main(String[] args) {
-		Tg2SchemaGraph tg2sg = new Tg2SchemaGraph();
-		tg2sg.getOptions(args);
-		tg2sg.saveSchemaGraphToFile();
 	}
 
 	/**
