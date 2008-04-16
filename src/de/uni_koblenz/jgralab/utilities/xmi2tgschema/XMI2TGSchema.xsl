@@ -76,6 +76,11 @@
     <!-- processes root -->
     <xsl:template match="/">
         
+        <!-- check if Schema package exists -->
+        <xsl:if test="$errorDetection = 'yes' and empty($schemaPackage)">
+            <xsl:value-of select="error(QName('', 'xmi2tg-Error'), concat('model does not contain a package with schemaName ', $schemaName))"/>
+        </xsl:if>
+        
         <!-- check is Schema is self-contained -->
         <xsl:if test="$errorDetection = 'yes'">
             <xsl:apply-templates select="$schemaPackage//@xmi:idref"/>
@@ -270,11 +275,13 @@
         <!-- If current() is of type 'uml:Association', this variable stores its 'uml:AssociationClass', if existing.
             If current() is of type 'uml:Class', this variable stores its generalization of type 'uml:AssociationClass.
             If current() is of type 'uml:AssociationClass', this variable stores current() . -->
-        <xsl:variable name="associationClass" select="if (@xmi:type='uml:Association') 
-            then myfunctions:getAssociationClass(.) 
-            else if (@xmi:type='uml:Class')
-                then myfunctions:getGeneralAssociationClass(.)
-                else ."/>
+        <xsl:variable name="associationClass" select="if (@xmi:type='uml:Association' and empty(myfunctions:getAssociationClass(.))) 
+            then . 
+            else if (@xmi:type='uml:Association') 
+                then myfunctions:getAssociationClass(.) 
+                else if (@xmi:type='uml:Class')
+                    then myfunctions:getGeneralAssociationClass(.)
+                    else ."/>
         
         <!-- stores association (either current(), that one corresponding to $associationClass or
             $associationClass itself if there no corresponding association) -->
@@ -284,13 +291,13 @@
         
         <!-- store XPaths to aggregate attribute of source VertexClass -->
         <xsl:variable name="fromAggregateAttribute" select="$schemaPackage//packagedElement[$association/ownedEnd/type/@xmi:idref = @xmi:id
-            or ownedAttribute/@xmi:id = $association/memberEnd/@xmi:idref]/ownedAttribute[@association = $association/@xmi:id 
+            or ownedAttribute/@xmi:id = $association/memberEnd/@xmi:idref]/ownedAttribute[@association = $associationClass/@xmi:id 
                 and contains(@xmi:id, 'src')]/@aggregation 
                 union $association/ownedEnd[contains(@xmi:id, 'src')]/@aggregation"/>
         
         <!-- store XPaths to aggregate attribute of target VertexClass -->
         <xsl:variable name="toAggregateAttribute" select="$schemaPackage//packagedElement[$association/ownedEnd/type/@xmi:idref = @xmi:id
-            or ownedAttribute/@xmi:id = $association/memberEnd/@xmi:idref]/ownedAttribute[@association = $association/@xmi:id 
+            or ownedAttribute/@xmi:id = $association/memberEnd/@xmi:idref]/ownedAttribute[@association = $associationClass/@xmi:id 
                 and contains(@xmi:id, 'dst')]/@aggregation 
             union $association/ownedEnd[contains(@xmi:id, 'dst')]/@aggregation"/>
         
@@ -427,7 +434,7 @@
         </xsl:if>
         
         <!-- attributes -->
-        <xsl:apply-templates select="ownedAttribute[not(@association)]">
+        <xsl:apply-templates select="$associationClass/ownedAttribute[not(@association)]">
             <xsl:with-param name="caller">attributedElementClass</xsl:with-param>
         </xsl:apply-templates>
         
@@ -827,10 +834,10 @@
         <xsl:if test="$caller!='enum'">
             <xsl:text>: </xsl:text>
             <!-- if tool is EA and Domain is primitive, then data from xmi:Extension is used -->
-            <xsl:if test="$tool = 'ea' and exists(index-of($reservedWords, /xmi:XMI/xmi:Extension/elements/element/attributes/attribute[@xmi:idref = current()/@xmi:id]/properties/@type))">
+            <xsl:if test="$tool = 'ea' and (exists(index-of($reservedWords, /xmi:XMI/xmi:Extension/elements/element/attributes/attribute[@xmi:idref = current()/@xmi:id]/properties/@type)) or contains(/xmi:XMI/xmi:Extension/elements/element/attributes/attribute[@xmi:idref = current()/@xmi:id]/properties/@type, 'List') or contains(/xmi:XMI/xmi:Extension/elements/element/attributes/attribute[@xmi:idref = current()/@xmi:id]/properties/@type, 'Set'))">
                 <xsl:value-of select="/xmi:XMI/xmi:Extension/elements/element/attributes/attribute[@xmi:idref = current()/@xmi:id]/properties/@type"/>
             </xsl:if>
-            <xsl:if test="$tool != 'ea' or empty(index-of($reservedWords, /xmi:XMI/xmi:Extension/elements/element/attributes/attribute[@xmi:idref = current()/@xmi:id]/properties/@type))">
+            <xsl:if test="not($tool = 'ea' and (exists(index-of($reservedWords, /xmi:XMI/xmi:Extension/elements/element/attributes/attribute[@xmi:idref = current()/@xmi:id]/properties/@type)) or contains(/xmi:XMI/xmi:Extension/elements/element/attributes/attribute[@xmi:idref = current()/@xmi:id]/properties/@type, 'List') or contains(/xmi:XMI/xmi:Extension/elements/element/attributes/attribute[@xmi:idref = current()/@xmi:id]/properties/@type, 'Set')))">
                 <xsl:if test="$autoCorrect = 'yes'">
                     <xsl:value-of select="myfunctions:correctQualifiedName(myfunctions:getQualifiedName($schemaPackage//packagedElement[@name = /xmi:XMI/xmi:Extension/elements/element/attributes/attribute[@xmi:idref = current()/@xmi:id]/properties/@type], $schemaPackage))"/>
                 </xsl:if>
