@@ -47,6 +47,7 @@ import de.uni_koblenz.jgralab.schema.IntDomain;
 import de.uni_koblenz.jgralab.schema.ListDomain;
 import de.uni_koblenz.jgralab.schema.LongDomain;
 import de.uni_koblenz.jgralab.schema.ObjectDomain;
+import de.uni_koblenz.jgralab.schema.Package;
 import de.uni_koblenz.jgralab.schema.QualifiedName;
 import de.uni_koblenz.jgralab.schema.RecordDomain;
 import de.uni_koblenz.jgralab.schema.Schema;
@@ -164,8 +165,8 @@ public class Tg2SchemaGraph {
 	 * @param superPackageVertex
 	 */
 	private void createPackageVertices(de.uni_koblenz.jgralab.schema.Package superPackage, de.uni_koblenz.jgralab.utilities.tg2schemagraph.grumlschema.Package superPackageVertex){
-		createVertexClassVerticesForPackage();
-		createEdgeClassVerticesForPackage();
+		createVertexClassVerticesForPackage(superPackage, superPackageVertex);
+		createEdgeClassVerticesForPackage(superPackage, superPackageVertex);
 		
 		Map<String, de.uni_koblenz.jgralab.schema.Package> subPackages = superPackage.getSubPackages();
 		for(de.uni_koblenz.jgralab.schema.Package subPackage:subPackages.values()){
@@ -182,10 +183,13 @@ public class Tg2SchemaGraph {
 	 * This method creates all <code>VertexClassM2</code> objects, the
 	 * <code>isSubVertexClassOfM2</code> edges and the
 	 * <code>containsGraphElementClassM2</code> edge.
+	 * @param pakkageVertex 
+	 * @param pakkage 
 	 */
-	private void createVertexClassVerticesForPackage() {
-		// for each vertex...
-		for (VertexClass vc : schema.getVertexClassesInTopologicalOrder()) {
+	private void createVertexClassVerticesForPackage(Package pakkage, de.uni_koblenz.jgralab.utilities.tg2schemagraph.grumlschema.Package pakkageVertex) {
+		// for each vertexClass of package pakkage...
+		for (VertexClass vc : pakkage.getVertexClasses().values()) {
+			//...crate a verte
 			de.uni_koblenz.jgralab.utilities.tg2schemagraph.grumlschema.VertexClass vcM2 = schemagraph
 					.createVertexClass();
 			vcM2.setName(vc.getQualifiedName());
@@ -218,8 +222,10 @@ public class Tg2SchemaGraph {
 	 * <code>FromM2</code> and <code>ToM2</code> edges, the
 	 * <code>isSubEdgeClassOfM2</code> edges and the
 	 * <code>containsGraphElementClassM2</code> edge.
+	 * @param superPackageVertex 
+	 * @param superPackage 
 	 */
-	private void createEdgeClassVerticesForPackage() {
+	private void createEdgeClassVerticesForPackage(Package superPackage, de.uni_koblenz.jgralab.utilities.tg2schemagraph.grumlschema.Package superPackageVertex) {
 		// for each edge class..
 		for (EdgeClass ec : schema.getEdgeClassesInTopologicalOrder()) {
 			de.uni_koblenz.jgralab.utilities.tg2schemagraph.grumlschema.EdgeClass ecM2 = null;
