@@ -95,8 +95,8 @@ public class GraphMarker<T> {
 			elem = ((ReversedEdgeImpl) elem).getNormalEdge();
 		}
 
-		if ((elem instanceof VertexImpl && ((VertexImpl) elem).getGraph() == graph)
-				|| (elem instanceof EdgeImpl && ((EdgeImpl) elem).getGraph() == graph)
+		if ((elem instanceof Vertex && ((Vertex) elem).getGraph() == graph)
+				|| (elem instanceof Edge && ((Edge) elem).getGraph() == graph)
 				|| elem == graph) {
 			return tempAttributeMap.put(elem, value);
 		}

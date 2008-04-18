@@ -26,9 +26,7 @@ package de.uni_koblenz.jgralab;
 
 import java.util.HashSet;
 
-import de.uni_koblenz.jgralab.impl.EdgeImpl;
 import de.uni_koblenz.jgralab.impl.ReversedEdgeImpl;
-import de.uni_koblenz.jgralab.impl.VertexImpl;
 
 /**
  * This class can be used to "colorize" graphs, it supports only two "colors",
@@ -77,6 +75,10 @@ public class BooleanGraphMarker {
 	 * @return true if this GraphMarker marks the given element, false otherwise
 	 */
 	public boolean mark(AttributedElement elem) {
+		if (elem instanceof ReversedEdgeImpl) {
+			elem = ((ReversedEdgeImpl) elem).getNormalEdge();
+		}
+		
 		if ((elem instanceof Vertex && ((Vertex) elem).getGraph() == graph)
 				|| (elem instanceof Edge && ((Edge) elem).getGraph() == graph)
 				|| elem == graph) {
