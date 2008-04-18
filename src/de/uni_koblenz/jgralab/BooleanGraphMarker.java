@@ -70,15 +70,15 @@ public class BooleanGraphMarker {
 	}
 
 	/**
-	 * Checks wether this marker is a marking of the given Graph or GraphElement
+	 * Checks whether this marker is a marking of the given Graph or GraphElement
 	 * 
 	 * @param elem
 	 *            the Graph, Vertex or Edge to check for a marking
 	 * @return true if this GraphMarker marks the given element, false otherwise
 	 */
 	public boolean mark(AttributedElement elem) {
-		if ((elem instanceof VertexImpl && ((VertexImpl) elem).getGraph() == graph)
-				|| (elem instanceof EdgeImpl && ((EdgeImpl) elem).getGraph() == graph)
+		if ((elem instanceof Vertex && ((Vertex) elem).getGraph() == graph)
+				|| (elem instanceof Edge && ((Edge) elem).getGraph() == graph)
 				|| elem == graph) {
 			return markedElements.add(elem);
 		}
