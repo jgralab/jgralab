@@ -56,7 +56,7 @@ public class Tg2SiDiff extends Tg2Whatever {
 		Vertex v = graph.getFirstVertex();
 		String id = null;
 		while ((v != null) && (id == null)) {
-			if (((marker == null) || (marker.isMarked(v))) && (v.getAttributedElementClass().getName().equals("SoftwareCase")))
+			if (((marker == null) || (marker.isMarked(v))) && (v.getAttributedElementClass().getQualifiedName().equals("SoftwareCase")))
 				id = Integer.toString(v.getId());
 			v = v.getNextVertex();
 		}
@@ -80,7 +80,7 @@ public class Tg2SiDiff extends Tg2Whatever {
 	 */
 	protected void printVertex(PrintStream out, Vertex v) {
 		AttributedElementClass cls = v.getAttributedElementClass();
-		out.print("<Node type=\"" + cls.getName() + "\" id=\"vertex" + v.getId() + "\">\n");
+		out.print("<Node type=\"" + cls.getQualifiedName() + "\" id=\"vertex" + v.getId() + "\">\n");
 		if (cls.getAttributeCount() > 0) {
 			printAttributes(out, v);
 		}
@@ -156,21 +156,21 @@ public class Tg2SiDiff extends Tg2Whatever {
 		}		
 		
 		if (PRINT_EDGES_AS_NODES) {
-			out.print("<Node type=\"" + cls.getName() + "\" id=\"edge"
+			out.print("<Node type=\"" + cls.getQualifiedName() + "\" id=\"edge"
 					+ e.getId() + "\">\n");
 			if (cls.getAttributeCount() > 0) {
 				printAttributes(out, e);
 			}
 			out.print("</Node>\n");
 
-			out.print("<Edge type=\"" + cls.getName() + "From\" src=\"vertex"
+			out.print("<Edge type=\"" + cls.getQualifiedName() + "From\" src=\"vertex"
 					+ alpha.getId() + "\" tar=\"edge" + e.getId()
 					+ "\" nesting=\"" + aggregateFrom + "\"/>\n");
-			out.print("<Edge type=\"" + cls.getName() + "To\" src=\"edge"
+			out.print("<Edge type=\"" + cls.getQualifiedName() + "To\" src=\"edge"
 					+ e.getId() + "\" tar=\"vertex" + omega.getId()
 					+ "\" nesting=\"" + aggregateTo + "\"/>\n");
 		} else {
-			out.print("<Edge type=\"" + cls.getName() + "\" src=\"vertex"
+			out.print("<Edge type=\"" + cls.getQualifiedName() + "\" src=\"vertex"
 					+ alpha.getId() + "\" tar=\"vertex" + omega.getId()
 					+ "\" nesting=\"" + aggregateFrom + "\"/>\n");
 		}

@@ -74,7 +74,7 @@ public class Tg2Dot extends Tg2Whatever {
 	protected void printVertex(PrintStream out, Vertex v) {
 		AttributedElementClass cls = v.getAttributedElementClass();
 		out.print("v" + v.getId() + " [label=\"{{v" + v.getId() + "|"
-				+ cls.getQualifiedName() + "}");
+				+ cls.getUniqueName() + "}");
 		if (cls.getAttributeCount() > 0) {
 			out.print("|");
 			printAttributes(out, v);
@@ -152,7 +152,7 @@ public class Tg2Dot extends Tg2Whatever {
 			}
 		}
 
-		out.print("label=\"e" + e.getId() + ": " + cls.getQualifiedName() + "");
+		out.print("label=\"e" + e.getId() + ": " + cls.getUniqueName() + "");
 
 		if (edgeAttributes && cls.getAttributeCount() > 0) {
 			out.print("\\l");
