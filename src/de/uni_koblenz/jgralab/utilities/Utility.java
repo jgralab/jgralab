@@ -30,7 +30,7 @@ public class Utility {
 		converter.setPrintRoleNames(true);
 		converter.setShortenStrings(false);
 		converter.setAbbreviateAttributeNames(true);
-		converter.setRanksep(1.5);
+		converter.setRanksep(3.5);
 		converter.setNodesep(0.2);
 		converter.setFontsize(16);
 		converter.printGraph();
