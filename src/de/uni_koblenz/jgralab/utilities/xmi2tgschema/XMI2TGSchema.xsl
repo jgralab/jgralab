@@ -273,6 +273,7 @@
         or (@xmi:type='uml:AssociationClass' and empty(myfunctions:getAssociation(.)))]">
         
         <!-- If current() is of type 'uml:Association', this variable stores its 'uml:AssociationClass', if existing.
+            If current() is of type 'uml:Association' and there is no corresponding 'uml:AssociationClass', the association itself is stored.
             If current() is of type 'uml:Class', this variable stores its generalization of type 'uml:AssociationClass.
             If current() is of type 'uml:AssociationClass', this variable stores current() . -->
         <xsl:variable name="associationClass" select="if (@xmi:type='uml:Association' and empty(myfunctions:getAssociationClass(.))) 
@@ -283,12 +284,14 @@
                     then myfunctions:getGeneralAssociationClass(.)
                     else ."/>
         
-        <!-- stores association (either current(), that one corresponding to $associationClass or
+        <!-- stores association (either current(), that one corresponding to $associationClass, or
             $associationClass itself if there no corresponding association) -->
-        <xsl:variable name="association" select="if (@xmi:type='uml:Association' or @xmi:type='uml:AssociationClass') 
+        <xsl:variable name="association" select="if (@xmi:type='uml:Association') 
             then . 
-            else myfunctions:getAssociation($associationClass)"/>
-        
+            else if (exists(myfunctions:getAssociation($associationClass)))
+                then myfunctions:getAssociation($associationClass)
+                else $associationClass"/>
+      
         <!-- store XPaths to aggregate attribute of source VertexClass -->
         <xsl:variable name="fromAggregateAttribute" select="$schemaPackage//packagedElement[$association/ownedEnd/type/@xmi:idref = @xmi:id
             or ownedAttribute/@xmi:id = $association/memberEnd/@xmi:idref]/ownedAttribute[@association = $associationClass/@xmi:id 
