@@ -842,6 +842,9 @@
             </xsl:if>
             <xsl:if test="not($tool = 'ea' and (exists(index-of($reservedWords, /xmi:XMI/xmi:Extension/elements/element/attributes/attribute[@xmi:idref = current()/@xmi:id]/properties/@type)) or contains(/xmi:XMI/xmi:Extension/elements/element/attributes/attribute[@xmi:idref = current()/@xmi:id]/properties/@type, 'List') or contains(/xmi:XMI/xmi:Extension/elements/element/attributes/attribute[@xmi:idref = current()/@xmi:id]/properties/@type, 'Set')))">
                 <xsl:if test="$autoCorrect = 'yes'">
+                    <xsl:if test="$errorDetection='yes' and empty($schemaPackage//packagedElement[@name = /xmi:XMI/xmi:Extension/elements/element/attributes/attribute[@xmi:idref = current()/@xmi:id]/properties/@type])">
+                        <xsl:value-of select="error(QName('', 'xmi2tg-Error'), concat('schema does not contain an eligible attribute type ''', /xmi:XMI/xmi:Extension/elements/element/attributes/attribute[@xmi:idref = current()/@xmi:id]/properties/@type, ''', in class ''', /xmi:XMI/xmi:Extension/elements/element[attributes/attribute[@xmi:idref = current()/@xmi:id]]/@name, ''''))"/>
+                    </xsl:if>
                     <xsl:value-of select="myfunctions:correctQualifiedName(myfunctions:getQualifiedName($schemaPackage//packagedElement[@name = /xmi:XMI/xmi:Extension/elements/element/attributes/attribute[@xmi:idref = current()/@xmi:id]/properties/@type], $schemaPackage))"/>
                 </xsl:if>
                 <xsl:if test="$autoCorrect = 'no'">
