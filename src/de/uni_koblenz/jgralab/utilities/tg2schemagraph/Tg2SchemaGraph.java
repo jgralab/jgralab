@@ -92,8 +92,10 @@ public class Tg2SchemaGraph {
 
 	// helpful to encapsulate the CompositeDomain hierarchy from the
 	// rest of the graph
-	private Map<Domain, de.uni_koblenz.jgralab.utilities.tg2schemagraph.grumlschema.Domain> domainMap;
+	private Map<de.uni_koblenz.jgralab.schema.Domain, de.uni_koblenz.jgralab.utilities.tg2schemagraph.grumlschema.Domain> domainMap;
 
+	private Map<de.uni_koblenz.jgralab.schema.VertexClass, de.uni_koblenz.jgralab.utilities.tg2schemagraph.grumlschema.VertexClass> vertexClassMap;
+	private Map<de.uni_koblenz.jgralab.schema.EdgeClass, de.uni_koblenz.jgralab.utilities.tg2schemagraph.grumlschema.EdgeClass> edgeClassMap;
 	/**
 	 * The unparameterized constructor is only used in the command line mode.
 	 * The method <code>private void setSchema()</code> ensures the
@@ -134,6 +136,8 @@ public class Tg2SchemaGraph {
 			//create a vertex for the schema
 			de.uni_koblenz.jgralab.utilities.tg2schemagraph.grumlschema.Schema schemaVertex = schemagraph.createSchema();
 			
+			edgeClassMap = new HashMap<de.uni_koblenz.jgralab.schema.EdgeClass, de.uni_koblenz.jgralab.utilities.tg2schemagraph.grumlschema.EdgeClass>();
+			vertexClassMap = new HashMap<de.uni_koblenz.jgralab.schema.VertexClass, de.uni_koblenz.jgralab.utilities.tg2schemagraph.grumlschema.VertexClass>();
 			// create a HashMap that maps each schema domain to the
 			// corresponding schemagraph domainVertex
 			domainMap = new HashMap<Domain, de.uni_koblenz.jgralab.utilities.tg2schemagraph.grumlschema.Domain>();
@@ -159,7 +163,7 @@ public class Tg2SchemaGraph {
 			schemagraph.createContainsDefaultPackage(schemaVertex, defaultPackageVertex);
 			
 			//
-			//createPackageVertices(defaultPackage, defaultPackageVertex);
+			createPackageVertices(defaultPackage, defaultPackageVertex);
 		}
 		return schemagraph;
 	}
@@ -192,6 +196,7 @@ public class Tg2SchemaGraph {
 	 * @param pakkage 
 	 */
 	private void createVertexClassVerticesForPackage(Package pakkage, de.uni_koblenz.jgralab.utilities.tg2schemagraph.grumlschema.Package pakkageVertex) {
+		
 		// for each vertexClass of package pakkage...
 		for (VertexClass vc : pakkage.getVertexClasses().values()) {
 			//...crate a verte
@@ -200,20 +205,7 @@ public class Tg2SchemaGraph {
 			vcM2.setName(vc.getQualifiedName());
 			vcM2.setIsAbstract(vc.isAbstract());
 
-			// ..find the GraphClassM2, it is corresponding to.
-			// ..the ContainsGraphElementClass gets generated.
-			for (de.uni_koblenz.jgralab.utilities.tg2schemagraph.grumlschema.GraphClass gcM2 : schemagraph
-					.getGraphClassVertices())
-				//schemagraph.createContainsGraphElementClass(vcM2, gcM2);
-
-			// ..each super class link gets created.
-			for (AttributedElementClass vcSuperClass : vc
-					.getDirectSuperClasses())
-				for (de.uni_koblenz.jgralab.utilities.tg2schemagraph.grumlschema.VertexClass aM2VertexClass : schemagraph
-						.getVertexClassVertices())
-					if (aM2VertexClass.getName().equals(vcSuperClass.getQualifiedName()))
-						//schemagraph.createIsSubVertexClassOf(vcM2,
-								//aM2VertexClass);
+			vertexClassMap.put(vc, vcM2);
 
 			// ..each attribute gets created.
 			for (Attribute attr : vc.getOwnAttributeList())
@@ -257,6 +249,7 @@ public class Tg2SchemaGraph {
 					fromM2.setRoleName(ec.getFromRolename());
 					fromM2.setMin(ec.getFromMin());
 					fromM2.setMax(ec.getFromMax());
+					break;
 				}
 			}
 
@@ -269,24 +262,10 @@ public class Tg2SchemaGraph {
 					toM2.setRoleName(ec.getToRolename());
 					toM2.setMin(ec.getToMin());
 					toM2.setMax(ec.getToMax());
+					break;
 				}
 			}
-			// ..find the GraphClassM2, it is corresponding to.
-			// ..the ContainsGraphElementClass gets generated.
-			for (de.uni_koblenz.jgralab.utilities.tg2schemagraph.grumlschema.GraphClass gcM2 : schemagraph
-					.getGraphClassVertices())
-				//schemagraph.(ecM2, gcM2);
-
-			// ..each super class link gets created.
-			for (AttributedElementClass vcSuperClass : ec
-					.getDirectSuperClasses()) {
-				for (de.uni_koblenz.jgralab.utilities.tg2schemagraph.grumlschema.EdgeClass aM2EdgeClass : schemagraph
-						.getEdgeClassVertices()) {
-					if (aM2EdgeClass.getName().equals(vcSuperClass.getQualifiedName())) {
-						schemagraph.createSpecializesEdgeClass(ecM2, aM2EdgeClass);
-					}
-				}
-			}
+			edgeClassMap.put(ec, ecM2);
 			// ..each attribute gets created.
 			for (Attribute attr : ec.getOwnAttributeList()) {
 				createAttributeM2(attr, ecM2);
