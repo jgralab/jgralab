@@ -26,6 +26,7 @@ import gnu.getopt.Getopt;
 import gnu.getopt.LongOpt;
 
 import java.io.DataOutputStream;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -136,8 +137,12 @@ public class Tg2SchemaGraph {
 			// create a HashMap that maps each schema domain to the
 			// corresponding schemagraph domainVertex
 			domainMap = new HashMap<Domain, de.uni_koblenz.jgralab.utilities.tg2schemagraph.grumlschema.Domain>();
-			createDomainToSchemaGraphDomainVertexMap();			
+			createDomainToSchemaGraphDomainVertexMap();		
+			
+			ArrayList<de.uni_koblenz.jgralab.utilities.tg2schemagraph.grumlschema.Domain> domains = new ArrayList<de.uni_koblenz.jgralab.utilities.tg2schemagraph.grumlschema.Domain>();
 			for(de.uni_koblenz.jgralab.utilities.tg2schemagraph.grumlschema.Domain domain:domainMap.values())
+				domains.add(domain);
+			for(de.uni_koblenz.jgralab.utilities.tg2schemagraph.grumlschema.Domain domain:domains)
 				schemagraph.createContainsDomain((de.uni_koblenz.jgralab.utilities.tg2schemagraph.grumlschema.Schema)schemaVertex, domain);
 			
 			// create the schemagraph vertex for the graphclass and the schemagraph edge definesGraphClass
@@ -154,7 +159,7 @@ public class Tg2SchemaGraph {
 			schemagraph.createContainsDefaultPackage(schemaVertex, defaultPackageVertex);
 			
 			//
-			createPackageVertices(defaultPackage, defaultPackageVertex);
+			//createPackageVertices(defaultPackage, defaultPackageVertex);
 		}
 		return schemagraph;
 	}
@@ -499,11 +504,12 @@ public class Tg2SchemaGraph {
 			usage(1);
 		}
 		if (g.getOptarg() == null) {
-			System.out.println("Missing option");
-			usage(1);
+			//??????????
+			//System.out.println("Missing option");
+			//usage(1);
 		}
 		if (outputFilename == null) {
-			outputFilename = schema.getQualifiedName() + "schemagraph.tg";
+			outputFilename = schema.getQualifiedName() + "_schemagraph.tg";
 		}
 	}
 
