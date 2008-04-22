@@ -164,8 +164,26 @@ public class Tg2SchemaGraph {
 			
 			//
 			createPackageVertices(defaultPackage, defaultPackageVertex);
+			
+			//
+			createVertexHirarchie();
+			createEdgeHirarchie();
 		}
 		return schemagraph;
+	}
+
+	private void createEdgeHirarchie() {
+		for(VertexClass vc:schema.getVertexClassesInTopologicalOrder())
+			for(AttributedElementClass vcSub:vc.getDirectSubClasses()){
+				schemagraph.createSpecializesVertexClass(vertexClassMap.get(vc), vertexClassMap.get(vcSub));
+			}		
+	}
+
+	private void createVertexHirarchie() {
+		for(EdgeClass ec:schema.getEdgeClassesInTopologicalOrder())
+			for(AttributedElementClass ecSub:ec.getDirectSubClasses()){
+				schemagraph.createSpecializesEdgeClass(edgeClassMap.get(ec), edgeClassMap.get(ecSub));
+			}		
 	}
 
 	/**
