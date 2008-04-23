@@ -26,9 +26,7 @@ package de.uni_koblenz.jgralab;
 
 import java.util.HashMap;
 
-import de.uni_koblenz.jgralab.impl.EdgeImpl;
 import de.uni_koblenz.jgralab.impl.ReversedEdgeImpl;
-import de.uni_koblenz.jgralab.impl.VertexImpl;
 
 /**
  * This class can be used to "colorize" graphs, edges and vertices. If a

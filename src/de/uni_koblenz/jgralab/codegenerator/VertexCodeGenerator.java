@@ -24,7 +24,6 @@
 
 package de.uni_koblenz.jgralab.codegenerator;
 
-import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
@@ -255,7 +254,7 @@ public class VertexCodeGenerator extends AttributedElementCodeGenerator {
 		if (!createClass) {
 			s.add(
 				"/**",
-				" * @return a List of all #targetSimpleName# vertices related to this by a <code>#roleName#</code> link.",
+				" * @return a List of all #vertexClassName# vertices related to this by a <code>#roleCamelName#</code> link.",
 				" */",
 				"public #edgeClassName# add#roleCamelName#(#vertexClassName# vertex);");
 		} else {
@@ -284,29 +283,26 @@ public class VertexCodeGenerator extends AttributedElementCodeGenerator {
 	 */
 	private CodeBlock createRolenameMethods(boolean createClass) {
 		VertexClass vc = (VertexClass) aec;
-		Map<String, RolenameEntry> rolesToGenerate = vc.getRolenameMap();
-		
+		Map<String, RolenameEntry> rolesToGenerateGetters = vc.getRolenameMap();
 		/*
 	     * if the interface should be created, remove all inherited (and unchanged)
 	     * and redefined (in the sense of removed, not overwritten)
 	     * rolenames from the list of rolenames to generate 
 		 */
-		if (!createClass) {
-			Set<String> inheritedAndRedefinedRolenames = new HashSet<String>();
-			for (RolenameEntry entry : rolesToGenerate.values()) {
-				if (entry.isInherited() || entry.isRedefined())
-					inheritedAndRedefinedRolenames.add(entry.getRoleNameAtFarEnd());
-			}	
-			for (String s : inheritedAndRedefinedRolenames)
-				rolesToGenerate.remove(s);
-		}
+//		if (!createClass) {
+//			Set<String> inheritedAndRedefinedRolenames = new HashSet<String>();
+//			for (RolenameEntry entry : rolesToGenerate.values()) {
+//				if (entry.isInherited() || entry.isRedefined())
+//					inheritedAndRedefinedRolenames.add(entry.getRoleNameAtFarEnd());
+//			}	
+//			for (String s : inheritedAndRedefinedRolenames)
+//				rolesToGenerate.remove(s);
+//		}
 			
 		/* create code snippets for addROLENAME(Vertex vertex) methods */ 
 		CodeList code = new CodeList();
-		for (RolenameEntry entry : rolesToGenerate.values()) {
+		for (RolenameEntry entry : rolesToGenerateGetters.values()) {
 			CodeSnippet s = configureRolenameCodesnippet(entry, createClass);
-			if (s == null)
-				continue;
 			if (entry.isRedefined())
 				code.addNoIndent(invalidRolenameSnippet(s));
 			else		
@@ -320,6 +316,7 @@ public class VertexCodeGenerator extends AttributedElementCodeGenerator {
 				addSnippet.setVariable("edgeClassUniqueName", camelCase(edgeEntry.getEdge().getUniqueName()));
 				addSnippet.setVariable("graphClassName", schemaRootPackageName + "." + edgeEntry.getEdge().getGraphClass().getQualifiedName());
 				addSnippet.setVariable("vertexClassName", schemaRootPackageName + "." + edgeEntry.getVertex().getQualifiedName());
+				
 				if (edgeEntry.getDirection() == EdgeDirection.IN) {
 					addSnippet.setVariable("fromVertex", "vertex");
 					addSnippet.setVariable("toVertex", "this");

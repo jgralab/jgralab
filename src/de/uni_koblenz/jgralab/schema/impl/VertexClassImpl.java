@@ -183,6 +183,7 @@ public class VertexClassImpl extends GraphElementClassImpl implements VertexClas
 				}
 			}
 		}
+		
 		/*
 		 * for all connected edge classes
 		 *  - add the redefined far roles to the set "allRedefinedRolenames"
@@ -229,7 +230,7 @@ public class VertexClassImpl extends GraphElementClassImpl implements VertexClas
 			if (allMap.containsKey(entry.getRoleNameAtFarEnd())) {
 				RolenameEntry inheritedEntry = allMap.get(entry.getRoleNameAtFarEnd()); 
 				inheritedEntry.addVertexWithEdge(entry.getVertexClassAtFarEnd(), entry.getEdgeClassToTraverse());
-				inheritedEntry.setInherited(true);				
+				inheritedEntry.setInherited(true);	
 			} else {
 				allMap.put(entry.getRoleNameAtFarEnd(), entry);
 			}	
@@ -238,6 +239,7 @@ public class VertexClassImpl extends GraphElementClassImpl implements VertexClas
 		for (String s : rolenamesThatMustBeRedefined) {
 			throw new SchemaException("Multiple inherited rolename '" + s + "' must be redefined at vertexclass " + getQualifiedName());
 		}
+	
 		return allMap;
 	}
 	

@@ -98,10 +98,8 @@ public class GraphCodeGenerator extends AttributedElementCodeGenerator {
 				CodeList gecCode = new CodeList();
 				code.addNoIndent(gecCode);
 
-				gecCode
-						.addNoIndent(new CodeSnippet(
-								true,
-								"// ------------------------ Code for #ecQualifiedName# ------------------------"));
+				gecCode.addNoIndent(new CodeSnippet(true,
+					"// ------------------------ Code for #ecQualifiedName# ------------------------"));
 
 				gecCode.setVariable("ecSimpleName", gec.getSimpleName());
 				gecCode.setVariable("ecUniqueName", gec.getUniqueName());
