@@ -80,6 +80,10 @@
 	\end{itemize}
 	
 	\subsection{Attribute Types in Enterprise Architect}
-	The types of attributes have to be spelled \emph{exactly} as defined by the grUML specification (e.g.\ Integer, Boolean, Double, etc.). The range of predefined primitive attribute types provided by Enterprise Architect depends on the setting of the ``\emph{Language}'' option for a class or association class. The default setting, ``Java'', is not suitable for grUML models because the Java type names differ significantly from the grUML type names. In order to avoid tedious typing of type names for every attribute, it is possible in EA to define a new language (grUML) with its attribute types by the \emph{Settings $\rightarrow$ Code Datatypes} menu item. This language can then be set as default with the \emph{Code Generation} toolbar. If this toolbar is not visible, select the \emph{View $\rightarrow$ Toolbars $\rightarrow$ Code Generation} menu item.
+	The domains of attributes have to be spelled \emph{exactly} as defined by the grUML specification (e.g.\ Integer, Boolean, Double, etc.). The range of predefined primitive attribute types provided by Enterprise Architect depends on the setting of the ``\emph{Language}'' option for a class or association class. The default setting, ``Java'', is not suitable for grUML models because the Java type names differ significantly from the grUML domain names. 
+
+	In order to avoid tedious typing of domain names for every attribute, EA allows for defining a new language (grUML) together with its attribute types by selecting the \emph{Settings $\rightarrow$ Code Datatypes} menu item. This language can then be set as default with the \emph{Code Generation} toolbar. If this toolbar is not visible, select the \emph{View $\rightarrow$ Toolbars $\rightarrow$ Code Generation} menu item.
+	
+	However, the composite domains \texttt{List} and \texttt{Set} still require manual typing.
 	
 \end{document}
