@@ -216,7 +216,7 @@ public class VertexClassImpl extends GraphElementClassImpl implements VertexClas
 			/* check if redefined name occurs at the same class as rolename*/
 			if (ownMap.containsKey(redefinedRole))
 				throw new SchemaException("Cannot redefine rolename " + redefinedRole + " for it is used as non-redefined rolename at the same vertex class");
-			/* check if rolename is not inherited from a supoerclass */
+			/* check if rolename is not inherited from a superclass */
 			RolenameEntry entry = allMap.get(redefinedRole);
 			if (entry == null)
 				throw new SchemaException("Cannot redefine rolename " + redefinedRole + " that is not inherited from a superclass");
@@ -235,11 +235,11 @@ public class VertexClassImpl extends GraphElementClassImpl implements VertexClas
 				allMap.put(entry.getRoleNameAtFarEnd(), entry);
 			}	
 		}
-				
+			
 		for (String s : rolenamesThatMustBeRedefined) {
 			throw new SchemaException("Multiple inherited rolename '" + s + "' must be redefined at vertexclass " + getQualifiedName());
 		}
-	
+
 		return allMap;
 	}
 	
