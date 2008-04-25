@@ -254,7 +254,11 @@ public class VertexCodeGenerator extends AttributedElementCodeGenerator {
 		if (!createClass) {
 			s.add(
 				"/**",
-				" * @return a List of all #vertexClassName# vertices related to this by a <code>#roleCamelName#</code> link.",
+				" * adds the given vertex as <code>#roleCamelName#</code> to this vertex, i.e. creates an",
+				" * <code>#edgeClassName#</code> edge from this vertex to the given ",
+				" * one and returns the created edge.",
+				" * @return  a newly created edge of type <code>#edgeClassName#</code>",
+				" *          between this vertex and the given one.",
 				" */",
 				"public #edgeClassName# add#roleCamelName#(#vertexClassName# vertex);");
 		} else {

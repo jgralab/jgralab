@@ -909,7 +909,7 @@ public class SchemaImpl implements Schema {
 		// from-class. Those subclasses are unknown in this method. Therefore,
 		// we look for a method with correct name and 3 parameters
 		// (int, vertex, Vertex).
-		String methodName = "create" + edgeClassName.getUniqueName();
+		String methodName = "create" + CodeGenerator.camelCase(edgeClassName.getUniqueName());
 		Class<?> m1Class = getGraphClassImpl(graphClassName);
 		for (Method m : m1Class.getMethods()) {
 			if (m.getName().equals(methodName)

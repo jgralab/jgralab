@@ -346,7 +346,11 @@ public class GraphClassImpl extends AttributedElementClassImpl implements
 
 	@Override
 	public List<EdgeClass> getOwnEdgeClasses() {
-		return new ArrayList<EdgeClass>(edgeClasses.values());
+		List<EdgeClass> list = new ArrayList<EdgeClass>(edgeClasses.values());
+		for (EdgeClass ac : getOwnAggregationClasses()) {
+			list.add(ac);
+		}
+		return list;
 	}
 
 	@Override
@@ -358,7 +362,7 @@ public class GraphClassImpl extends AttributedElementClassImpl implements
 					.getOwnEdgeClasses());
 		}
 
-		allClasses.addAll(edgeClasses.values());
+		allClasses.addAll(getOwnEdgeClasses());
 
 		return allClasses;
 	}
@@ -377,14 +381,18 @@ public class GraphClassImpl extends AttributedElementClassImpl implements
 					.getOwnCompositionClasses());
 		}
 
-		allClasses.addAll(compositionClasses.values());
+		allClasses.addAll(getOwnCompositionClasses());
 
 		return allClasses;
 	}
 
 	@Override
 	public List<AggregationClass> getOwnAggregationClasses() {
-		return new ArrayList<AggregationClass>(aggregationClasses.values());
+		List<AggregationClass> list = new ArrayList<AggregationClass>(aggregationClasses.values());
+		for (AggregationClass cc : getOwnCompositionClasses()) {
+			list.add(cc);
+		}
+		return list;
 	}
 
 	@Override
@@ -396,7 +404,7 @@ public class GraphClassImpl extends AttributedElementClassImpl implements
 					.getOwnAggregationClasses());
 		}
 
-		allClasses.addAll(aggregationClasses.values());
+		allClasses.addAll(getOwnAggregationClasses());
 
 		return allClasses;
 	}

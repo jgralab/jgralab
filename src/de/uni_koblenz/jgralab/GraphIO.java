@@ -2043,7 +2043,7 @@ public class GraphIO {
 
 	private void edgeDesc(Graph graph) throws GraphIOException {
 		int eId = eId();
-		QualifiedName ecName = className();
+		QualifiedName ecName = graph.getGraphClass().getEdgeClass(className()).getQName();
 		Edge edge;
 		Method createMethod;
 
