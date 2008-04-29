@@ -85,6 +85,12 @@ public class GraphIO {
 
 	private Schema schema;
 
+	
+	/**
+	 * Maps the strings that form a qualified name to the correct qualified name object
+	 */
+	private Map<String, QualifiedName> qualifiedNameMap;
+	
 	/**
 	 * Maps domain names to the respective Domains.
 	 */
@@ -183,6 +189,7 @@ public class GraphIO {
 		vertexClassBuffer = new TreeMap<QualifiedName, List<GraphElementClassData>>();
 		edgeClassBuffer = new TreeMap<QualifiedName, List<GraphElementClassData>>();
 		putBackChar = -1;
+		qualifiedNameMap = new HashMap<String, QualifiedName>();
 	}
 
 	public static void saveSchemaToFile(String filename, Schema schema)
@@ -1772,8 +1779,13 @@ public class GraphIO {
 
 		String s = (lookAhead.charAt(0) == '\'') ? lookAhead.substring(1)
 				: lookAhead;
+		QualifiedName result = qualifiedNameMap.get(s);
+		if (result != null) {
+			match();
+			return result;
+		}	
 		boolean ok = true;
-		QualifiedName result = new QualifiedName(s);
+		result = new QualifiedName(s);
 		if (result.getPackageName().length() == 0 && !s.startsWith(".")) {
 			// no need to check, because currentPackageName is already checked
 			// by parsePackage();
@@ -1800,6 +1812,7 @@ public class GraphIO {
 					+ "' in line " + line);
 		}
 		match();
+		qualifiedNameMap.put(s, result);
 		return result;
 	}
 
@@ -1970,7 +1983,7 @@ public class GraphIO {
 			}
 		}
 		// System.out.println((System.currentTimeMillis() - time) / 1000.0);
-
+		System.out.println("Loaded all vertices");
 		// time = System.currentTimeMillis();
 		int eNo = 1;
 		while (eNo <= eCount) {
@@ -2043,7 +2056,7 @@ public class GraphIO {
 
 	private void edgeDesc(Graph graph) throws GraphIOException {
 		int eId = eId();
-		QualifiedName ecName = graph.getGraphClass().getEdgeClass(className()).getQName();
+		QualifiedName ecName = className(); // graph.getGraphClass().getEdgeClass(className()).getQName();
 		Edge edge;
 		Method createMethod;
 
@@ -2091,6 +2104,7 @@ public class GraphIO {
 		int eId = 0;
 		int prevId = 0;
 		int vId = v.getId();
+		boolean first = true;
 
 		if (DEBUG)
 			System.out.print(", incidences: <");
@@ -2098,8 +2112,10 @@ public class GraphIO {
 		while (!lookAhead.equals(">")) {
 			prevId = eId;
 			eId = eId();
-			if (firstEdgeAtVertex[vId] == 0) {
+			//if (firstEdgeAtVertex[vId] == 0) {
+			if (first) {
 				firstEdgeAtVertex[vId] = eId;
+				first = false;
 			} else {
 				nextEdgeAtVertex[edgeOffset + prevId] = eId;
 			}

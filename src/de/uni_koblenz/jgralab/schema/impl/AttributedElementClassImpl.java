@@ -64,11 +64,10 @@ public abstract class AttributedElementClassImpl implements
 	protected HashSet<AttributedElementClass> directSuperClasses;
 
 	/**
-	 * a list of subclasses of this class object, all attributes of this class
-	 * and all superclasses get inherited from those classes
+	 * the immediate sub classes of this class
 	 */
-	protected HashSet<AttributedElementClass> subClasses;
-
+	protected HashSet<AttributedElementClass> directSubClasses;
+	
 	/**
 	 * a list of attributes which belongs to the m2 element
 	 * (edgeclass/vertexclass/graphclass). Only the own attributes of this class
@@ -122,7 +121,7 @@ public abstract class AttributedElementClassImpl implements
 		m1Class = null;
 		m1ImplementationClass = null;
 		attributeList = new TreeSet<Attribute>();
-		subClasses = new HashSet<AttributedElementClass>();
+		directSubClasses = new HashSet<AttributedElementClass>();
 		directSuperClasses = new HashSet<AttributedElementClass>();
 	}
 
@@ -326,28 +325,29 @@ public abstract class AttributedElementClassImpl implements
 			throw new GraphException("Cycle in class hierarchie for classes: "
 					+ getName() + " and " + superClass.getQualifiedName());
 		directSuperClasses.add(superClass);
-		((AttributedElementClassImpl) superClass).subClasses.add(this);
+		((AttributedElementClassImpl) superClass).directSubClasses.add(this);
 	}
 
-	/**
-	 * adds a subclass to the list of subclasses, all attributes of this class
-	 * and all superclasses get inherited to those classes
-	 * 
-	 * @param subClass
-	 *            the edge class to be added to the list of subclasses
-	 */
-	protected void addSubClass(AttributedElementClass subClass) {
-		subClasses.add(subClass);
-		Iterator<AttributedElementClass> it = getAllSuperClasses().iterator();
-		AttributedElementClass a;
-		while (it.hasNext()) {
-			a = it.next();
-			if (DEBUG)
-				System.out.println("Adding subclass " + subClass.getQualifiedName()
-						+ " to superclass " + a.getQualifiedName());
-			((AttributedElementClassImpl) a).addSubClass(subClass);
-		}
-	}
+//	/**
+//	 * adds a subclass to the list of subclasses, all attributes of this class
+//	 * and all superclasses get inherited to those classes
+//	 * 
+//	 * @param subClass
+//	 *            the AttributedElementClass to be added to the list of subclasses
+//	 */
+//	protected void addSubClass(AttributedElementClass subClass) {
+//		
+////		subClasses.add(subClass);
+////		Iterator<AttributedElementClass> it = getAllSuperClasses().iterator();
+////		AttributedElementClass a;
+////		while (it.hasNext()) {
+////			a = it.next();
+////			if (DEBUG)
+////				System.out.println("Adding subclass " + subClass.getQualifiedName()
+////						+ " to superclass " + a.getQualifiedName());
+////			((AttributedElementClassImpl) a).addSubClass(subClass);
+////		}
+//	}
 
 	@Override
 	public boolean isSuperClassOf(
@@ -402,7 +402,7 @@ public abstract class AttributedElementClassImpl implements
 	@Override
 	public Set<AttributedElementClass> getAllSubClasses() {
 		Set<AttributedElementClass> returnSet = new HashSet<AttributedElementClass>();
-		for (AttributedElementClass subclass : subClasses) {
+		for (AttributedElementClass subclass : directSubClasses) {
 			returnSet.add(subclass);
 			returnSet.addAll(subclass.getAllSubClasses());
 		}
@@ -411,7 +411,7 @@ public abstract class AttributedElementClassImpl implements
 
 	@Override
 	public Set<AttributedElementClass> getDirectSubClasses() {
-		return subClasses;
+		return directSubClasses;
 	}
 
 	@Override

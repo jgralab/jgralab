@@ -304,7 +304,7 @@ public class GraphClassImpl extends AttributedElementClassImpl implements
 		output += ": \n";
 
 		output += "subClasses of '" + super.getName() + "': ";
-		Iterator<AttributedElementClass> it = subClasses.iterator();
+		Iterator<AttributedElementClass> it = getAllSubClasses().iterator();
 		while (it.hasNext()) {
 			output += "'" + ((GraphClassImpl) it.next()).getName() + "' ";
 		}

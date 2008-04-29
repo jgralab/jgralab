@@ -64,7 +64,7 @@ public abstract class GraphElementClassImpl extends AttributedElementClassImpl i
 		output += ": \n";
 
 		output += "subClasses of '" + getName() + "': ";
-		Iterator<AttributedElementClass> it = subClasses.iterator();
+		Iterator<AttributedElementClass> it = getAllSubClasses().iterator();
 		while (it.hasNext()) {
 			output+= "'"+it.next().getQualifiedName() + "' ";
 		}
