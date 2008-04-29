@@ -437,14 +437,24 @@ public class GraphIO {
 		graph.writeAttributeValues(this);
 		TGOut.writeBytes(";\n");
 
+		Package oldPackage = null;
 		// write vertices
 		Vertex nextV = graph.getFirstVertex();
 		while (nextV != null) {
 			vId = nextV.getId();
 			// System.out.println("Writing vertex: " + nextV.getId());
+			AttributedElementClass aec = nextV.getAttributedElementClass();
+			Package currentPackage = aec.getPackage();
+			if (currentPackage != oldPackage) {
+				TGOut.writeBytes("Package");
+				space();
+				writeIdentifier(currentPackage.getQualifiedName());
+				TGOut.writeBytes(";\n");
+				oldPackage = currentPackage;
+			}
 			TGOut.writeBytes(Integer.toString(vId));
 			space();
-			writeIdentifier(nextV.getAttributedElementClass().getQualifiedName());
+			writeIdentifier(aec.getSimpleName());
 			// write incident edges
 			Edge nextI = graph.getFirstEdge(nextV);
 			TGOut.writeBytes(" <");
@@ -478,9 +488,18 @@ public class GraphIO {
 		while (nextE != null) {
 			eId = nextE.getId();
 			// System.out.println("Writing edge: " + nextE.getId());
+			AttributedElementClass aec = nextE.getAttributedElementClass();
+			Package currentPackage = aec.getPackage();
+			if (currentPackage != oldPackage) {
+				TGOut.writeBytes("Package");
+				space();
+				writeIdentifier(currentPackage.getQualifiedName());
+				TGOut.writeBytes(";\n");
+				oldPackage = currentPackage;
+			}
 			TGOut.writeBytes(Integer.toString(eId));
 			space();
-			writeIdentifier(nextE.getAttributedElementClass().getQualifiedName());
+			writeIdentifier(aec.getSimpleName());
 			space();
 			nextE.writeAttributeValues(this);
 			TGOut.writeBytes(";\n");
