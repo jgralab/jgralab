@@ -156,7 +156,6 @@ public class VertexClassImpl extends GraphElementClassImpl implements VertexClas
 	
 	@Override
 	public Map<String, RolenameEntry> getRolenameMap() {
-	//	System.out.println("Start getRolenameMap() for class " + getSimpleName());
 		Map<String, RolenameEntry> allMap = new HashMap<String, RolenameEntry>();
 		Map<String, RolenameEntry> ownMap = new HashMap<String, RolenameEntry>();
 		Set<String> rolenamesThatMustBeRedefined = new HashSet<String>();
@@ -176,31 +175,64 @@ public class VertexClassImpl extends GraphElementClassImpl implements VertexClas
 				if (allMap.containsKey(entry.getRoleNameAtFarEnd())) {
 					RolenameEntry foreign = allMap.get(entry.getRoleNameAtFarEnd());
 					//the same class is specialized via two different direct superclasses
-					if(foreign.getVertexClassDefiningRolename() == entry.getVertexClassDefiningRolename())
+					boolean sameEntry = true;
+					if (foreign.getVertexClassDefiningRolename() == entry.getVertexClassDefiningRolename()) {
+						if (entry.getVertexEdgeEntryList().size() != foreign.getVertexEdgeEntryList().size()) {
+							sameEntry = false;
+						} else {	
+							for (VertexEdgeEntry ve : entry.getVertexEdgeEntryList()) {
+								boolean foundThisEntry = false;
+								for (VertexEdgeEntry ve2 : foreign.getVertexEdgeEntryList()) {
+									if (   (ve.getDirection() == ve2.getDirection())
+										&& (ve.getEdge() == ve2.getEdge())
+										&& (ve.getVertex() == ve2.getVertex()))
+										foundThisEntry = true;
+								}
+								if (!foundThisEntry) {
+									sameEntry = false;
+									break;
+								}
+							}		
+						}
+					} else {
+						sameEntry = false;
+					}
+					if (sameEntry)
 						continue;
+					
+					//one of the classes is abstract
+					boolean foreignIsAbstract = false;
+					if (foreign.getEdgeClassToTraverse().getEdgeClass().isAbstract()) {
+						foreignIsAbstract = true;
+						for (VertexEdgeEntry ve : foreign.getVertexEdgeEntryList()) {
+							foreignIsAbstract &= ve.getEdge().isAbstract();
+						}
+					}
+					boolean entryIsAbstract = false;
+					if (entry.getEdgeClassToTraverse().getEdgeClass().isAbstract()) {
+						entryIsAbstract = true;
+						for (VertexEdgeEntry ve : entry.getVertexEdgeEntryList()) {
+							entryIsAbstract &= ve.getEdge().isAbstract();
+						}
+					}
+					if (foreignIsAbstract) {
+						if (!entryIsAbstract) {
+							//put the non-abstract class in the map
+							allMap.remove(foreign.getRoleNameAtFarEnd());
+							allMap.put(entry.getRoleNameAtFarEnd(), entry);	
+						}
+						continue;
+					}
+					
+					if (entryIsAbstract)
+						continue;
+					
 					rolenamesThatMustBeRedefined.add(entry.getRoleNameAtFarEnd());
 				} else {
 					allMap.put(entry.getRoleNameAtFarEnd(), entry);					
 				}
 			}
 		}
-//		if (isSubClassOf(getGraphClass().getVertexClass(new QualifiedName("rsl.rslkernel.elements.RepresentableElementRelationship")))) {
-//		for (RolenameEntry entry : allMap.values()) {
-//			System.out.println("Class: " + getSimpleName() + ", Rolename: " + entry.getRoleNameAtFarEnd() + " EntryId: " + entry);
-//		}	
-//		System.out.println("-------------------------");
-//		}
-		
-//		if (getSimpleName().equals("Constrains")) {
-//			for (RolenameEntry entry : allMap.values()) {
-//					System.out.println(entry.getRoleNameAtFarEnd() + " EntryId: " + entry);
-//					for (VertexEdgeEntry ve : entry.getVertexEdgeEntryList()) {
-//						System.out.println("  Edge: " + ve.getEdge().getSimpleName());
-//						System.out.println("  Vertex: " + ve.getVertex().getSimpleName());
-//						System.out.println("  ------------------------------------------");
-//					}
-//			}	
-//		}
 		
 		/*
 		 * for all connected edge classes
@@ -208,20 +240,15 @@ public class VertexClassImpl extends GraphElementClassImpl implements VertexClas
 		 *    if a role is redefined twice, throw an exception
 		 *  - add the new rolename to the list of own rolenames
 		 */
-		if (getSimpleName().equals("RequirementRelationship")) {
-			System.out.println("Finding rolenames for class RequirementRelationship");
-		}
 		for (DirectedEdgeClass dec : getOwnDirectedEdgeClasses()) {
 			String roleName = dec.getThatRolename();
-			if (getSimpleName().equals("RequirementRelationship")) {
-				System.out.println("Current rolename " + roleName);
-			}
 			if (roleName == null || roleName.isEmpty()|| roleName.equals("") )
 				continue;
 			if (ownMap.containsKey(roleName))
 				throw new SchemaException("A rolename may be used only once at the far association ends at one edge class");
 			Set<String> redefinedRolenames = dec.getRedefinedThatRolenames();
 			for (String redefinedRole : redefinedRolenames) {
+				System.out.println("Removing rolename " + redefinedRole + " from list of rolenames that must be redefined");
 				rolenamesThatMustBeRedefined.remove(redefinedRole);
 				if (redefinedRole.equals(roleName))
 					continue;
@@ -232,10 +259,6 @@ public class VertexClassImpl extends GraphElementClassImpl implements VertexClas
 			}
 			VertexClass vc = dec.getDirection() == EdgeDirection.IN ? dec.getEdgeClass().getFrom() : dec.getEdgeClass().getTo();
 			RolenameEntry entry = new RolenameEntry(this, roleName, dec, vc);
-		//	System.out.println(getSimpleName() + "Putting " + roleName + " in own map, contains: " + ownMap.containsKey(roleName));
-			if (getSimpleName().equals("RequirementRelationship")) {
-				System.out.println("Adding rolename " + roleName + " with vertexclass " + entry.getVertexClassAtFarEnd() + " to class RequirementRelationship");
-			}
 			ownMap.put(roleName, entry);
 		}
 		
@@ -270,17 +293,6 @@ public class VertexClassImpl extends GraphElementClassImpl implements VertexClas
 			throw new SchemaException("Multiple inherited rolename '" + s + "' must be redefined at vertexclass " + getQualifiedName());
 		}
 
-		if (getSimpleName().equals("Constrains")) {
-			System.out.println("Rolenames for class Constraints");
-			for (RolenameEntry entry : allMap.values()) {
-					System.out.println(entry.getRoleNameAtFarEnd());
-					for (VertexEdgeEntry ve : entry.getVertexEdgeEntryList()) {
-						System.out.println("  Edge: " + ve.getEdge().getSimpleName());
-						System.out.println("  Vertex: " + ve.getVertex().getSimpleName());
-						System.out.println("  ------------------------------------------");
-					}
-			}	
-		}
 		
 		return allMap;
 	}
