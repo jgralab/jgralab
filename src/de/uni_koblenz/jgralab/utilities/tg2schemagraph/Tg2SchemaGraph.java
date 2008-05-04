@@ -31,6 +31,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import de.uni_koblenz.jgralab.Attribute;
+import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.GraphIO;
 import de.uni_koblenz.jgralab.GraphIOException;
@@ -55,6 +56,7 @@ import de.uni_koblenz.jgralab.schema.Schema;
 import de.uni_koblenz.jgralab.schema.SetDomain;
 import de.uni_koblenz.jgralab.schema.StringDomain;
 import de.uni_koblenz.jgralab.schema.VertexClass;
+import de.uni_koblenz.jgralab.utilities.tg2schemagraph.grumlschema.ContainsGraphElementClass;
 import de.uni_koblenz.jgralab.utilities.tg2schemagraph.grumlschema.From;
 import de.uni_koblenz.jgralab.utilities.tg2schemagraph.grumlschema.GrUMLSchema;
 import de.uni_koblenz.jgralab.utilities.tg2schemagraph.grumlschema.GrUMLSchemaGraph;
@@ -79,7 +81,7 @@ public class Tg2SchemaGraph {
 		tg2sg.getOptions(args);
 		tg2sg.saveSchemaGraphToFile();
 	}
-	
+
 	private int MAX_VERTICES = 1000;
 	private int MAX_EDGES = 1000;
 
@@ -96,6 +98,7 @@ public class Tg2SchemaGraph {
 
 	private Map<de.uni_koblenz.jgralab.schema.VertexClass, de.uni_koblenz.jgralab.utilities.tg2schemagraph.grumlschema.VertexClass> vertexClassMap;
 	private Map<de.uni_koblenz.jgralab.schema.EdgeClass, de.uni_koblenz.jgralab.utilities.tg2schemagraph.grumlschema.EdgeClass> edgeClassMap;
+
 	/**
 	 * The unparameterized constructor is only used in the command line mode.
 	 * The method <code>private void setSchema()</code> ensures the
@@ -132,39 +135,57 @@ public class Tg2SchemaGraph {
 			// create the schemagraph
 			schemagraph = GrUMLSchema.instance().createGrUMLSchemaGraph(
 					schema.getQualifiedName(), MAX_VERTICES, MAX_EDGES);
-			
-			//create a vertex for the schema
-			de.uni_koblenz.jgralab.utilities.tg2schemagraph.grumlschema.Schema schemaVertex = schemagraph.createSchema();
-			
+
+			// create a vertex for the schema
+			de.uni_koblenz.jgralab.utilities.tg2schemagraph.grumlschema.Schema schemaVertex = schemagraph
+					.createSchema();
+
+			schemaVertex.setName(schema.getSimpleName());
+			schemaVertex.setPackagePrefix(schema.getPackageName());
+						
 			edgeClassMap = new HashMap<de.uni_koblenz.jgralab.schema.EdgeClass, de.uni_koblenz.jgralab.utilities.tg2schemagraph.grumlschema.EdgeClass>();
 			vertexClassMap = new HashMap<de.uni_koblenz.jgralab.schema.VertexClass, de.uni_koblenz.jgralab.utilities.tg2schemagraph.grumlschema.VertexClass>();
 			// create a HashMap that maps each schema domain to the
 			// corresponding schemagraph domainVertex
 			domainMap = new HashMap<Domain, de.uni_koblenz.jgralab.utilities.tg2schemagraph.grumlschema.Domain>();
-			createDomainToSchemaGraphDomainVertexMap();		
-			
+			createDomainToSchemaGraphDomainVertexMap();
+
 			ArrayList<de.uni_koblenz.jgralab.utilities.tg2schemagraph.grumlschema.Domain> domains = new ArrayList<de.uni_koblenz.jgralab.utilities.tg2schemagraph.grumlschema.Domain>();
-			for(de.uni_koblenz.jgralab.utilities.tg2schemagraph.grumlschema.Domain domain:domainMap.values())
+			for (de.uni_koblenz.jgralab.utilities.tg2schemagraph.grumlschema.Domain domain : domainMap
+					.values())
 				domains.add(domain);
-			for(de.uni_koblenz.jgralab.utilities.tg2schemagraph.grumlschema.Domain domain:domains)
-				schemagraph.createContainsDomain((de.uni_koblenz.jgralab.utilities.tg2schemagraph.grumlschema.Schema)schemaVertex, domain);
-			
-			// create the schemagraph vertex for the graphclass and the schemagraph edge definesGraphClass
-			de.uni_koblenz.jgralab.utilities.tg2schemagraph.grumlschema.GraphClass graphClassVertex = schemagraph.createGraphClass();
+			for (de.uni_koblenz.jgralab.utilities.tg2schemagraph.grumlschema.Domain domain : domains)
+				schemagraph
+						.createContainsDomain(
+								(de.uni_koblenz.jgralab.utilities.tg2schemagraph.grumlschema.Schema) schemaVertex,
+								domain);
+
+			// create the schemagraph vertex for the graphclass and the
+			// schemagraph edge definesGraphClass
+			de.uni_koblenz.jgralab.utilities.tg2schemagraph.grumlschema.GraphClass graphClassVertex = schemagraph
+					.createGraphClass();
 			schemagraph.createDefinesGraphClass(schemaVertex, graphClassVertex);
 			
+			graphClassVertex.setName(schema.getGraphClassesInTopologicalOrder().get(1).getQualifiedName());
+			graphClassVertex.setQualifiedName(schema.getGraphClassesInTopologicalOrder().get(1).getQualifiedName());
+			graphClassVertex.setFullyQualifiedName(schema.getPackageName()+"."+schema.getGraphClassesInTopologicalOrder().get(1).getQualifiedName());
 			// create vertex for the default package and set its attributes
 			// create incident edge containsDefaultPackage
-			de.uni_koblenz.jgralab.schema.Package defaultPackage = schema.getDefaultPackage();
-			de.uni_koblenz.jgralab.utilities.tg2schemagraph.grumlschema.Package defaultPackageVertex = schemagraph.createPackage();
+			de.uni_koblenz.jgralab.schema.Package defaultPackage = schema
+					.getDefaultPackage();
+			de.uni_koblenz.jgralab.utilities.tg2schemagraph.grumlschema.Package defaultPackageVertex = schemagraph
+					.createPackage();
 			defaultPackageVertex.setName(defaultPackage.getQualifiedName());
-			defaultPackageVertex.setQualifiedName(defaultPackage.getPackageName());
-			defaultPackageVertex.setFullyQualifiedName(defaultPackage.getQualifiedName());
-			schemagraph.createContainsDefaultPackage(schemaVertex, defaultPackageVertex);
-			
+			defaultPackageVertex.setQualifiedName(defaultPackage
+					.getQualifiedName());
+			defaultPackageVertex.setFullyQualifiedName(schema
+					.getPackageName());
+			schemagraph.createContainsDefaultPackage(schemaVertex,
+					defaultPackageVertex);
+
 			//
 			createPackageVertices(defaultPackage, defaultPackageVertex);
-			
+
 			//
 			createVertexHirarchie();
 			createEdgeHirarchie();
@@ -173,17 +194,19 @@ public class Tg2SchemaGraph {
 	}
 
 	private void createEdgeHirarchie() {
-		for(VertexClass vc:schema.getVertexClassesInTopologicalOrder())
-			for(AttributedElementClass vcSub:vc.getDirectSubClasses()){
-				schemagraph.createSpecializesVertexClass(vertexClassMap.get(vc), vertexClassMap.get(vcSub));
-			}		
+		for (VertexClass vc : schema.getVertexClassesInTopologicalOrder())
+			for (AttributedElementClass vcSub : vc.getDirectSubClasses()) {
+				schemagraph.createSpecializesVertexClass(
+						vertexClassMap.get(vc), vertexClassMap.get(vcSub));
+			}
 	}
 
 	private void createVertexHirarchie() {
-		for(EdgeClass ec:schema.getEdgeClassesInTopologicalOrder())
-			for(AttributedElementClass ecSub:ec.getDirectSubClasses()){
-				schemagraph.createSpecializesEdgeClass(edgeClassMap.get(ec), edgeClassMap.get(ecSub));
-			}		
+		for (EdgeClass ec : schema.getEdgeClassesInTopologicalOrder())
+			for (AttributedElementClass ecSub : ec.getDirectSubClasses()) {
+				schemagraph.createSpecializesEdgeClass(edgeClassMap.get(ec),
+						edgeClassMap.get(ecSub));
+			}
 	}
 
 	/**
@@ -191,36 +214,52 @@ public class Tg2SchemaGraph {
 	 * @param superPackage
 	 * @param superPackageVertex
 	 */
-	private void createPackageVertices(de.uni_koblenz.jgralab.schema.Package superPackage, de.uni_koblenz.jgralab.utilities.tg2schemagraph.grumlschema.Package superPackageVertex){
+	private void createPackageVertices(
+			de.uni_koblenz.jgralab.schema.Package superPackage,
+			de.uni_koblenz.jgralab.utilities.tg2schemagraph.grumlschema.Package superPackageVertex) {
 		createVertexClassVerticesForPackage(superPackage, superPackageVertex);
 		createEdgeClassVerticesForPackage(superPackage, superPackageVertex);
-		
-		Map<String, de.uni_koblenz.jgralab.schema.Package> subPackages = superPackage.getSubPackages();
-		for(de.uni_koblenz.jgralab.schema.Package subPackage:subPackages.values()){
-			de.uni_koblenz.jgralab.utilities.tg2schemagraph.grumlschema.Package subPackageVertex = schemagraph.createPackage();
-			subPackageVertex.setName(subPackage.getQualifiedName());
-			subPackageVertex.setQualifiedName(subPackage.getPackageName());
-			subPackageVertex.setFullyQualifiedName(subPackage.getQualifiedName());
-			schemagraph.createContainsSubPackage(superPackageVertex, subPackageVertex);
-			createPackageVertices(subPackage, subPackageVertex);
-		}
+
+		Map<String, de.uni_koblenz.jgralab.schema.Package> subPackages = superPackage
+				.getSubPackages();
+		if (subPackages != null)
+			for (de.uni_koblenz.jgralab.schema.Package subPackage : subPackages
+					.values()) {
+				de.uni_koblenz.jgralab.utilities.tg2schemagraph.grumlschema.Package subPackageVertex = schemagraph
+						.createPackage();
+				subPackageVertex.setName(subPackage.getQualifiedName());
+				subPackageVertex.setQualifiedName(subPackage.getPackageName());
+				subPackageVertex.setFullyQualifiedName(schema.getPackageName()+"."+subPackage
+						.getQualifiedName());
+				schemagraph.createContainsSubPackage(superPackageVertex,
+						subPackageVertex);
+				createPackageVertices(subPackage, subPackageVertex);
+			}
 	}
 
 	/**
 	 * This method creates all <code>VertexClassM2</code> objects, the
 	 * <code>isSubVertexClassOfM2</code> edges and the
 	 * <code>containsGraphElementClassM2</code> edge.
-	 * @param pakkageVertex 
-	 * @param pakkage 
+	 * 
+	 * @param pakkageVertex
+	 * @param pakkage
 	 */
-	private void createVertexClassVerticesForPackage(Package pakkage, de.uni_koblenz.jgralab.utilities.tg2schemagraph.grumlschema.Package pakkageVertex) {
-		
+	private void createVertexClassVerticesForPackage(
+			Package pakkage,
+			de.uni_koblenz.jgralab.utilities.tg2schemagraph.grumlschema.Package pakkageVertex) {
+
 		// for each vertexClass of package pakkage...
 		for (VertexClass vc : pakkage.getVertexClasses().values()) {
-			//...crate a verte
+			// ...create a vertex
 			de.uni_koblenz.jgralab.utilities.tg2schemagraph.grumlschema.VertexClass vcM2 = schemagraph
 					.createVertexClass();
+			schemagraph.createContainsGraphElementClass(pakkageVertex, vcM2);
+
 			vcM2.setName(vc.getQualifiedName());
+			vcM2.setFullyQualifiedName(schema.getPackageName() + "."
+					+ vc.getQualifiedName());
+			vcM2.setQualifiedName(vc.getQualifiedName());
 			vcM2.setIsAbstract(vc.isAbstract());
 
 			vertexClassMap.put(vc, vcM2);
@@ -237,10 +276,13 @@ public class Tg2SchemaGraph {
 	 * <code>FromM2</code> and <code>ToM2</code> edges, the
 	 * <code>isSubEdgeClassOfM2</code> edges and the
 	 * <code>containsGraphElementClassM2</code> edge.
-	 * @param superPackageVertex 
-	 * @param superPackage 
+	 * 
+	 * @param superPackageVertex
+	 * @param superPackage
 	 */
-	private void createEdgeClassVerticesForPackage(Package superPackage, de.uni_koblenz.jgralab.utilities.tg2schemagraph.grumlschema.Package superPackageVertex) {
+	private void createEdgeClassVerticesForPackage(
+			Package superPackage,
+			de.uni_koblenz.jgralab.utilities.tg2schemagraph.grumlschema.Package superPackageVertex) {
 		// for each edge class..
 		for (EdgeClass ec : schema.getEdgeClassesInTopologicalOrder()) {
 			de.uni_koblenz.jgralab.utilities.tg2schemagraph.grumlschema.EdgeClass ecM2 = null;
@@ -255,7 +297,13 @@ public class Tg2SchemaGraph {
 			} else {
 				ecM2 = schemagraph.createEdgeClass();
 			}
+			schemagraph.createContainsGraphElementClass(superPackageVertex,
+					ecM2);
+
 			ecM2.setName(ec.getQualifiedName());
+			ecM2.setQualifiedName(ec.getQualifiedName());
+			ecM2.setFullyQualifiedName(schema.getPackageName() + "."
+					+ ec.getQualifiedName());
 			ecM2.setIsAbstract(ec.isAbstract());
 
 			// ..the FromM2 aggregation gets created.
@@ -314,9 +362,12 @@ public class Tg2SchemaGraph {
 	}
 
 	/**
-	 * This method values the <code>Map<de.uni_koblenz.jgralab.schema.Domain, de.uni_koblenz.jgralab.utilities.tg2schemagraph.grumlschema.Domain> domainMap</code>.
-	 * i.e. <code>domainMap.get(de.uni_koblenz.jgralab.schema.Domain d)</code> return the corresponding
-	 * <code>de.uni_koblenz.jgralab.utilities.tg2schemagraph.grumlschema.Domain</code> object.
+	 * This method values the
+	 * <code>Map<de.uni_koblenz.jgralab.schema.Domain, de.uni_koblenz.jgralab.utilities.tg2schemagraph.grumlschema.Domain> domainMap</code>.
+	 * i.e. <code>domainMap.get(de.uni_koblenz.jgralab.schema.Domain d)</code>
+	 * return the corresponding
+	 * <code>de.uni_koblenz.jgralab.utilities.tg2schemagraph.grumlschema.Domain</code>
+	 * object.
 	 * 
 	 * At first only the <code>BasicDomain</code>s get mapped. The
 	 * <code>CompositeDomain</code>s get mapped according to their
@@ -366,8 +417,8 @@ public class Tg2SchemaGraph {
 
 			de.uni_koblenz.jgralab.utilities.tg2schemagraph.grumlschema.ListDomain dM2 = schemagraph
 					.createListDomain();
-			schemagraph.createHasListElementDomain(dM2, domainMap.get(((ListDomain) d)
-					.getBaseDomain()));
+			schemagraph.createHasListElementDomain(dM2, domainMap
+					.get(((ListDomain) d).getBaseDomain()));
 			domainMap.put(d, dM2);
 		}
 		if (d instanceof SetDomain
@@ -375,8 +426,8 @@ public class Tg2SchemaGraph {
 
 			de.uni_koblenz.jgralab.utilities.tg2schemagraph.grumlschema.SetDomain dM2 = schemagraph
 					.createSetDomain();
-			schemagraph.createHasSetElementDomain(dM2, domainMap.get(((SetDomain) d)
-					.getBaseDomain()));
+			schemagraph.createHasSetElementDomain(dM2, domainMap
+					.get(((SetDomain) d).getBaseDomain()));
 			domainMap.put(d, dM2);
 		}
 		if (d instanceof RecordDomain) {
@@ -402,7 +453,7 @@ public class Tg2SchemaGraph {
 			}
 		}
 	}
-	
+
 	/**
 	 * This methods writes the schemagrpah to a file (see GraphIO.java)
 	 */
@@ -444,7 +495,6 @@ public class Tg2SchemaGraph {
 		try {
 			GraphIO.saveGraphToFile(outputFilename, getSchemaGraph(), null);
 		} catch (GraphIOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
@@ -501,9 +551,9 @@ public class Tg2SchemaGraph {
 			usage(1);
 		}
 		if (g.getOptarg() == null) {
-			//??????????
-			//System.out.println("Missing option");
-			//usage(1);
+			// ??????????
+			// System.out.println("Missing option");
+			// usage(1);
 		}
 		if (outputFilename == null) {
 			outputFilename = schema.getQualifiedName() + "_schemagraph.tg";
