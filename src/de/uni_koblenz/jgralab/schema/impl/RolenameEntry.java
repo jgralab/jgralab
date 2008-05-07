@@ -22,12 +22,13 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
  
-package de.uni_koblenz.jgralab.schema;
+package de.uni_koblenz.jgralab.schema.impl;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import de.uni_koblenz.jgralab.schema.impl.VertexEdgeEntry;
+import de.uni_koblenz.jgralab.schema.SchemaException;
+import de.uni_koblenz.jgralab.schema.VertexClass;
 
 
 

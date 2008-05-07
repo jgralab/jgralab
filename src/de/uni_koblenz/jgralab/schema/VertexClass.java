@@ -28,6 +28,8 @@ import java.util.Map;
 import java.util.Set;
 
 import de.uni_koblenz.jgralab.Vertex;
+import de.uni_koblenz.jgralab.schema.impl.DirectedEdgeClass;
+import de.uni_koblenz.jgralab.schema.impl.RolenameEntry;
 
 /**
  * represents a vertex class in the schema, instances represent m2 classes

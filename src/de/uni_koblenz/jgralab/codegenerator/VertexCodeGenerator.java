@@ -31,8 +31,8 @@ import java.util.TreeSet;
 import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.schema.AttributedElementClass;
 import de.uni_koblenz.jgralab.schema.EdgeClass;
-import de.uni_koblenz.jgralab.schema.RolenameEntry;
 import de.uni_koblenz.jgralab.schema.VertexClass;
+import de.uni_koblenz.jgralab.schema.impl.RolenameEntry;
 import de.uni_koblenz.jgralab.schema.impl.VertexEdgeEntry;
 
 /**

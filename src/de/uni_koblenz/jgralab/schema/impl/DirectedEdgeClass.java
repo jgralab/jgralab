@@ -22,11 +22,12 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-package de.uni_koblenz.jgralab.schema;
+package de.uni_koblenz.jgralab.schema.impl;
 
 import java.util.Set;
 
 import de.uni_koblenz.jgralab.EdgeDirection;
+import de.uni_koblenz.jgralab.schema.EdgeClass;
 
 public class DirectedEdgeClass /* implements Comparable<DirectedEdgeClass> */{
 

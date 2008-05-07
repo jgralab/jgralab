@@ -27,6 +27,7 @@ package de.uni_koblenz.jgralab.schema;
 import java.util.Set;
 
 import de.uni_koblenz.jgralab.Edge;
+import de.uni_koblenz.jgralab.schema.impl.DirectedEdgeClass;
 
 /**
  * aggregates edge/aggregation/composition classes,
