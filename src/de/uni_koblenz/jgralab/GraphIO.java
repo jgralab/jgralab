@@ -123,18 +123,6 @@ public class GraphIO {
 	private int bufferSize;
 
 	/**
-	 * Helper variable, helps to reduce number of variable allocations.
-	 * Used only in method eId 
-	 */
-	private int eId_eId;
-	
-	/**
-	 * Helper variable, helps to reduce number of variable allocations.
-	 * Used only in method vId 
-	 */
-	private int vId_iId;
-	
-	/**
 	 * indexed with incidence-id, holds the next incidence of the current vertex
 	 * to represent iSeq
 	 */
@@ -1992,18 +1980,11 @@ public class GraphIO {
 		match(";");
 	}
 
-//	private int eId() throws GraphIOException {
-//		int eId = matchInteger();
-//		if (eId == 0)
-//			throw new GraphIOException("Invalid edge id " + eId + ".");
-//		return eId;
-//	}
-	
 	private int eId() throws GraphIOException {
-		eId_eId = matchInteger();
-		if (eId_eId == 0)
-			throw new GraphIOException("Invalid edge id " + eId_eId + ".");
-		return eId_eId;
+		int eId = matchInteger();
+		if (eId == 0)
+			throw new GraphIOException("Invalid edge id " + eId + ".");
+		return eId;
 	}
 
 	private QualifiedName className() throws GraphIOException {
@@ -2014,20 +1995,13 @@ public class GraphIO {
 		return className;
 	}
 
-//	private int vId() throws GraphIOException {
-//		int vId = matchInteger();
-//		if (vId <= 0)
-//			throw new GraphIOException("Invalid vertex id " + vId + ".");
-//		return vId;
-//	}
-	
 	private int vId() throws GraphIOException {
-		int vId_vId = matchInteger();
-		if (vId_vId <= 0)
-			throw new GraphIOException("Invalid vertex id " + vId_vId + ".");
-		return vId_vId;
+		int vId = matchInteger();
+		if (vId <= 0)
+			throw new GraphIOException("Invalid vertex id " + vId + ".");
+		return vId;
 	}
-
+	
 	private void parseIncidentEdges(Vertex v) throws GraphIOException {
 		int eId = 0;
 		int prevId = 0;
