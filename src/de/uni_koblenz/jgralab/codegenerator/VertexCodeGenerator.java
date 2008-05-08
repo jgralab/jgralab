@@ -275,6 +275,46 @@ public class VertexCodeGenerator extends AttributedElementCodeGenerator {
 				"\tthrow new SchemaException(\"No edges of class \" + #edgeClassName# + \"are allowed at this vertex\");", "}");
 		return s;
 	}
+	
+	
+	private CodeBlock validRemoveRolenameSnippet(CodeSnippet s, boolean createClass) {
+		if (!createClass) {
+			s.add(
+				"/**",
+				" * removes the given vertex as <code>#roleCamelName#</code> from this vertex, i.e. " +
+				" * deletes the <code>#edgeClassName#</code> edge connection this vertex with " ,
+				" * the given one. The given vertex is only deleted if the edge is a composition",
+				" * which implies a existential dependency between the composition and the child vertex",
+				" */",
+				"public void remove#roleCamelName#(#vertexClassName# vertex);");
+		} else {
+			s.add(
+				"public void remove#roleCamelName#(#vertexClassName# vertex) {",
+				"    Edge e = getFirst#edgeClassUniqueName#();",
+				"    while (e != null && e.getThat() == vertex) {",
+				"        e.delete();",
+				"        e = getFirst#edgeClassUniqueName#();",
+				"    }",
+				"    while (e != null) {",
+				"        Edge f = e.getNextEdge();",
+				"        while (f != null && f.getThat() == vertex) {",
+				"           f.delete();",
+				"           f = e.getNextEdge();",
+				"        }",
+				"        e = f;",
+				"   }",
+				"}");
+		}
+		return s;
+	}
+	
+	private CodeBlock invalidRemoveRolenameSnippet(CodeSnippet s, boolean createClass) {
+		s.add(
+				"public #edgeClassName# remove#roleCamelName#(#vertexClassName# vertex) {",
+				"\tthrow new SchemaException(\"There is no rolename \" + #roleCamelName# + \" allowed at this vertex\");", "}");
+		return s;
+	}
+	
 
 	/**
 	 * creates the <code>getRolenameList()</code> methods for the current
@@ -328,10 +368,18 @@ public class VertexCodeGenerator extends AttributedElementCodeGenerator {
 					addSnippet.setVariable("toVertex", "vertex");
 					addSnippet.setVariable("fromVertex", "this");
 				}
-				if (!edgeEntry.isRedefined()) 
+				CodeSnippet removeSnippet = new CodeSnippet(true);
+				removeSnippet.setVariable("roleCamelName", camelCase(entry.getRoleNameAtFarEnd()));
+				removeSnippet.setVariable("edgeClassName", schemaRootPackageName + "." + edgeEntry.getEdge().getQualifiedName());
+				removeSnippet.setVariable("edgeClassUniqueName", camelCase(edgeEntry.getEdge().getUniqueName()));
+				removeSnippet.setVariable("vertexClassName", schemaRootPackageName + "." + edgeEntry.getVertex().getQualifiedName());
+				if (!edgeEntry.isRedefined()) {
 					code.addNoIndent(validAddRolenameSnippet(addSnippet, createClass));
-				else 
+					code.addNoIndent(validRemoveRolenameSnippet(removeSnippet, createClass));
+				} else { 
 					code.addNoIndent(invalidAddRolenameSnippet(addSnippet, createClass));
+					code.addNoIndent(invalidRemoveRolenameSnippet(removeSnippet, createClass));
+				}	
 			}
 		}
 		return code;
