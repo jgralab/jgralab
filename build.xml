@@ -183,17 +183,17 @@
 	<target name="greql2sources" depends="tgschema2java">
 		<!-- calls target generateschema in general ant file ${ant}/build.xml -->
 	   	<ant dir="${common.dir}" antfile="build.xml" target="generateschema">
-			<property name="subprojectname" value = "jgralab/greql2"/>			
+			<property name="subprojectname" value = "greql2"/>			
 			<property name="schemafile" value = "greql2Schema.tg"/>			
 	   	</ant>
 		<!-- calls target generateparser in general ant file ${ant}/build.xml -->
 		<ant dir="${common.dir}" antfile="build.xml" target="generateparser">
-			<property name="subprojectname" value = "jgralab/greql2"/>			
+			<property name="subprojectname" value = "greql2"/>			
 			<property name="grammarfile" value = "greql2lexer.g"/>			
 		</ant>
 		<!-- calls target generateparser in general ant file ${ant}/build.xml -->
 		<ant dir="${common.dir}" antfile="build.xml" target="generateparser">
-			<property name="subprojectname" value = "jgralab/greql2"/>			
+			<property name="subprojectname" value = "greql2"/>			
 			<property name="grammarfile" value = "greql2parser.g"/>			
 		</ant>
 	</target>
@@ -211,8 +211,9 @@
 	<target name="grumlsources" depends="xmlrpc,tgschema2java">
 		<!-- calls target generateschema in general ant file ${ant}/build.xml -->
 	   	<ant dir="${common.dir}" antfile="build.xml" target="generateschema">
+			<property name="subprojectname" value = "utilities/tg2schemagraph/"/>	
 			<property name="schemafile" 
-				value = "utilities/tg2schemagraph/GrUML_Becklespinax_M3.tg"/>			
+				value = "GrUML_Becklespinax_M3.tg"/>			
 	   	</ant>
 	</target>
 	<target name="utilities" depends="grumlsources">
