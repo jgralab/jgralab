@@ -3479,19 +3479,27 @@ literal returns [Literal literal = null] throws ParseException, DuplicateVariabl
         	{
             	VertexClass boolLiteralVertexClass = (VertexClass) graphClass.getGraphElementClass(new QualifiedName("BoolLiteral"));
             	literal = (Literal) graph.getFirstVertexOfClass(boolLiteralVertexClass);
-            	if (literal == null || !( (BoolLiteral) literal).isBoolValue() ) {
+            /*	if (literal == null || !( (BoolLiteral) literal).isBoolValue() ) {
 	            	literal = graph.createBoolLiteral();
    	            	((BoolLiteral) literal).setBoolValue(true);
-               	}
+               	}*/
+               	if (literal == null || ( (BoolLiteral) literal).getBoolValue() != TrivalentBoolean.TRUE ) {
+				   	literal = graph.createBoolLiteral();
+				   	((BoolLiteral) literal).setBoolValue(TrivalentBoolean.TRUE);
+				}
             }
 		|	FALSE
        		{
            	    VertexClass boolLiteralVertexClass = (VertexClass) graphClass.getGraphElementClass(new QualifiedName("BoolLiteral"));
             	literal = (Literal) graph.getFirstVertexOfClass(boolLiteralVertexClass);
-            	if (literal == null || ( (BoolLiteral) literal).isBoolValue() ) {
+         /*   	if (literal == null || ( (BoolLiteral) literal).isBoolValue() ) {
 	            	literal = graph.createBoolLiteral();
              	   ((BoolLiteral) literal).setBoolValue(false);
-   	            }
+   	            }*/
+   	            if (literal == null || ( (BoolLiteral) literal).getBoolValue() == TrivalentBoolean.TRUE ) {
+				   	literal = graph.createBoolLiteral();
+				   	((BoolLiteral) literal).setBoolValue(TrivalentBoolean.FALSE);
+				}
             }
 		|	NULL_VALUE
             {

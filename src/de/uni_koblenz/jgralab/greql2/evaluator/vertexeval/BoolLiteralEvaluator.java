@@ -24,13 +24,14 @@
  
 package de.uni_koblenz.jgralab.greql2.evaluator.vertexeval;
 
+import de.uni_koblenz.jgralab.Vertex;
+import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
 import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.GraphSize;
 import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.VertexCosts;
-import de.uni_koblenz.jgralab.greql2.schema.*;
-import de.uni_koblenz.jgralab.greql2.evaluator.*;
 import de.uni_koblenz.jgralab.greql2.exception.EvaluateException;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
-import de.uni_koblenz.jgralab.*;
+import de.uni_koblenz.jgralab.greql2.schema.BoolLiteral;
+import de.uni_koblenz.jgralab.greql2.schema.TrivalentBoolean;
 
 /**
  * Evaluates a boolean literal, that means, provides access to the literal value
@@ -63,7 +64,13 @@ public class BoolLiteralEvaluator extends VertexEvaluator {
 
 	@Override
 	public JValue evaluate() throws EvaluateException {
-		return new JValue(vertex.isBoolValue());
+		if (vertex.getBoolValue() == TrivalentBoolean.TRUE)
+			return new JValue(true);
+		else if (vertex.getBoolValue() == TrivalentBoolean.FALSE)
+			return new JValue(false);
+		else
+			return new JValue((Boolean)null);
+		//return new JValue(vertex.getBoolValue()); // == TrivalentBoolean.TRUE /* .isBoolValue()*/);
 	}
 
 	@Override

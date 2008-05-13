@@ -26,6 +26,7 @@ Schema de.uni_koblenz.jgralab.greql2.schema.Greql2Schema;
 GraphClass Greql2;
 
 RecordDomain SourcePosition (offset: Integer, length: Integer);
+EnumDomain TrivalentBoolean (TRUE, FALSE, NULL);
 
 // A common superclass for all vertices of GReQL2-vertices
 abstract VertexClass Greql2Vertex;
@@ -35,7 +36,7 @@ VertexClass AttributeId: Identifier;
 VertexClass BackwardVertexSet: PathExpression;
 VertexClass BagComprehension: ComprehensionWithTableHeader;
 VertexClass BagConstruction: ValueConstruction;
-VertexClass BoolLiteral: Literal { boolValue: Boolean };
+VertexClass BoolLiteral: Literal { boolValue: TrivalentBoolean };
 VertexClass CfGrammar: Expression;
 VertexClass ConditionalExpression: Expression;
 VertexClass Declaration: Greql2Vertex;
