@@ -60,7 +60,14 @@ public interface Graph extends AttributedElement {
 	public void setLoading(boolean isLoading);
 
 	/**
+	 * This method is called as soon as the loading of a graph is completed.
+	 * It is used internally and one should not touch it
+	 */
+	public void internalLoadingCompleted();
+	
+	/**
 	 * This method is called as soon as the loading of a graph is completed
+	 * One may use it to perform own operations as soon as the loading is completed
 	 */
 	public void loadingCompleted();
 
@@ -166,6 +173,7 @@ public interface Graph extends AttributedElement {
 	 *             if a vertex with the same id already exists
 	 */
 	void addVertex(Vertex newVertex);
+	
 
 	/**
 	 * @return true iff this graph contains the given vertex

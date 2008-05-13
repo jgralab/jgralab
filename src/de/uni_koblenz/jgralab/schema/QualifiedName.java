@@ -31,7 +31,7 @@ public class QualifiedName implements Comparable<QualifiedName> {
 				qualifiedName = qn;
 			}
 		}
-		uniqueName = simpleName; //toUniqueName(qualifiedName);
+		uniqueName = simpleName; 
 	}
 
 	public QualifiedName(String pn, String sn) {
@@ -39,7 +39,7 @@ public class QualifiedName implements Comparable<QualifiedName> {
 		simpleName = sn;
 		qualifiedName = (pn.length() == 0) ? simpleName : packageName + "."
 				+ simpleName;
-		uniqueName = toUniqueName(qualifiedName);
+		uniqueName = simpleName;
 	}
 
 	@Override
@@ -98,24 +98,19 @@ public class QualifiedName implements Comparable<QualifiedName> {
 	 */
 	public void setUniqueName(NamedElement element, String uniqueName) {
 		//Must be 1 because 0 is the default graph-class Graph
-	//	System.out.println("Element: " + element);
-	//	System.out.println("Schema: " + element.getSchema());
 		for (GraphClass gc : element.getSchema().getGraphClassesInTopologicalOrder()) {
 			if (gc != element)
 				if (gc.getUniqueName().equals(uniqueName)) {
-				//	System.out.println("Found GraphClass " + uniqueName);
 					throw new SchemaException("The unique name " + uniqueName + " is already used in this schema"); 
 				}
 			for (VertexClass v : gc.getVertexClasses()) {
 				if (v != element)
 					if (v.getSimpleName().equals(uniqueName)) {
-					//	System.out.println("Found VertexClass " + uniqueName  + " QualifiedName: " + v.getQualifiedName());
 						throw new SchemaException("The unique name " + uniqueName + " is already used in this schema"); 
 					}
 			}
 			for (EdgeClass e : gc.getEdgeClasses()) {
 				if (e != element) {
-				//	System.out.println("Found EdgeClass " + uniqueName + " QualifiedName: " + e.getQualifiedName());
 					if (e.getSimpleName().equals(uniqueName)) {
 						throw new SchemaException("The unique name " + uniqueName + " is already used in this schema"); 
 					}
@@ -124,7 +119,6 @@ public class QualifiedName implements Comparable<QualifiedName> {
 			for (AggregationClass e : gc.getAggregationClasses()) {
 				if (e != element) {
 					if (e.getSimpleName().equals(uniqueName)) {
-				//		System.out.println("Found AggregationClass " + uniqueName);
 						throw new SchemaException("The unique name " + uniqueName + " is already used in this schema"); 
 					}
 				}	
@@ -132,7 +126,6 @@ public class QualifiedName implements Comparable<QualifiedName> {
 			for (CompositionClass e : gc.getCompositionClasses()) {
 				if (e !=  element) {
 					if (e.getSimpleName().equals(uniqueName)) {
-					//	System.out.println("Found CompositionClass " + uniqueName);
 						throw new SchemaException("The unique name " + uniqueName + " is already used in this schema"); 
 					}
 				}	

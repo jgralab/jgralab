@@ -24,16 +24,12 @@
 
 package de.uni_koblenz.jgralab.codegenerator;
 
-import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 
-import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.schema.AttributedElementClass;
 import de.uni_koblenz.jgralab.schema.EdgeClass;
 import de.uni_koblenz.jgralab.schema.VertexClass;
-import de.uni_koblenz.jgralab.schema.impl.RolenameEntry;
-import de.uni_koblenz.jgralab.schema.impl.VertexEdgeEntry;
 
 /**
  * This class is used by the method Schema.commit() to generate the Java-classes
@@ -42,10 +38,14 @@ import de.uni_koblenz.jgralab.schema.impl.VertexEdgeEntry;
  */
 public class VertexCodeGenerator extends AttributedElementCodeGenerator {
 
+	
+	private RolenameCodeGenerator rolenameGenerator;
+	
 	public VertexCodeGenerator(VertexClass vertexClass,
 			String schemaPackageName, String implementationName) {
 		super(vertexClass, schemaPackageName, implementationName);
 		rootBlock.setVariable("graphElementClass", "Vertex");
+		rolenameGenerator = new RolenameCodeGenerator((VertexClass)aec);
 	}
 
 	/**
@@ -68,7 +68,7 @@ public class VertexCodeGenerator extends AttributedElementCodeGenerator {
 		}
 		code.add(createNextVertexMethods(createClass));
 		code.add(createFirstEdgeMethods(createClass));
-		code.add(createRolenameMethods(createClass));
+		code.add(rolenameGenerator.createRolenameMethods(createClass));
 		code.add(createIncidenceIteratorMethods(createClass));
 		return code;
 	}
@@ -219,212 +219,7 @@ public class VertexCodeGenerator extends AttributedElementCodeGenerator {
 	
 	
 	
-	private CodeBlock validRolenameSnippet(CodeSnippet s, boolean createClass) {
-		if (!createClass) {
-			s.add(
-				"/**",
-				" * @return a List of all #targetSimpleName# vertices related to this by a <code>#roleName#</code> link.",
-				" */",
-				"public java.util.List<? extends #targetClass#> get#roleCamelName#List();");
-		} else {
-			s.add(
-				"public java.util.List<? extends #targetClass#> get#roleCamelName#List() {",
-				"\tjava.util.List<#targetClass#> list = new java.util.ArrayList<#targetClass#>();",
-				"\t#ecQualifiedName# edge = getFirst#ecCamelName#(#dir#);",
-				"\twhile (edge != null) {",
-				"\t\tif (edge.getThatRole().equals(\"#roleName#\")) {",
-				"\t\t\tlist.add((#targetClass#)edge.getThat());",
-				"\t\t}",
-				"\t\tedge = edge.getNext#ecCamelName#(#dir#);",
-				"\t}", "\treturn list;", "}");
-		}
-		return s;
-	}
 	
-	private CodeBlock invalidRolenameSnippet(CodeSnippet s) {
-		addImports("#jgPackage#.GraphException");
-		s.add("public java.util.List<#targetClass#> get#roleCamelName#List() {");
-		s.add("\tthrow new GraphException(\"The rolename #roleName# is redefined for the VertexClass #vertexClassName#\");");
-		s.add("}");
-		return s;
-	}
-	
-	
-	private CodeBlock validAddRolenameSnippet(CodeSnippet s, boolean createClass) {
-		if (!createClass) {
-			s.add(
-				"/**",
-				" * adds the given vertex as <code>#roleCamelName#</code> to this vertex, i.e. creates an",
-				" * <code>#edgeClassName#</code> edge from this vertex to the given ",
-				" * one and returns the created edge.",
-				" * @return  a newly created edge of type <code>#edgeClassName#</code>",
-				" *          between this vertex and the given one.",
-				" */",
-				"public #edgeClassName# add#roleCamelName#(#vertexClassName# vertex);");
-		} else {
-			s.add(
-				"public #edgeClassName# add#roleCamelName#(#vertexClassName# vertex) {",
-				"\treturn ((#graphClassName#)getGraph()).create#edgeClassUniqueName#(#fromVertex#, #toVertex#);", "}");
-		}
-		return s;
-	}
-	
-	private CodeBlock invalidAddRolenameSnippet(CodeSnippet s, boolean createClass) {
-		s.add(
-				"public #edgeClassName# add#roleCamelName#(#vertexClassName# vertex) {",
-				"\tthrow new SchemaException(\"No edges of class \" + #edgeClassName# + \"are allowed at this vertex\");", "}");
-		return s;
-	}
-	
-	
-	private CodeBlock validRemoveRolenameSnippet(CodeSnippet s, boolean createClass) {
-		if (!createClass) {
-			s.add(
-				"/**",
-				" * removes the given vertex as <code>#roleCamelName#</code> from this vertex, i.e. " +
-				" * deletes the <code>#edgeClassName#</code> edge connection this vertex with " ,
-				" * the given one. The given vertex is only deleted if the edge is a composition",
-				" * which implies a existential dependency between the composition and the child vertex",
-				" */",
-				"public void remove#roleCamelName#(#vertexClassName# vertex);");
-		} else {
-			s.add(
-				"public void remove#roleCamelName#(#vertexClassName# vertex) {",
-				"    Edge e = getFirst#edgeClassUniqueName#();",
-				"    while (e != null && e.getThat() == vertex) {",
-				"        e.delete();",
-				"        e = getFirst#edgeClassUniqueName#();",
-				"    }",
-				"    while (e != null) {",
-				"        Edge f = e.getNextEdge();",
-				"        while (f != null && f.getThat() == vertex) {",
-				"           f.delete();",
-				"           f = e.getNextEdge();",
-				"        }",
-				"        e = f;",
-				"   }",
-				"}");
-		}
-		return s;
-	}
-	
-	private CodeBlock invalidRemoveRolenameSnippet(CodeSnippet s, boolean createClass) {
-		s.add(
-				"public #edgeClassName# remove#roleCamelName#(#vertexClassName# vertex) {",
-				"\tthrow new SchemaException(\"There is no rolename \" + #roleCamelName# + \" allowed at this vertex\");", "}");
-		return s;
-	}
-	
-
-	/**
-	 * creates the <code>getRolenameList()</code> methods for the current
-	 * vertex.
-	 * 
-	 * @param createClass
-	 *            iff set to true, also the method bodies will be created
-	 * @return the CodeBlock that contains the code for the
-	 *         getRolenameList-methods
-	 */
-	private CodeBlock createRolenameMethods(boolean createClass) {
-		VertexClass vc = (VertexClass) aec;
-		Map<String, RolenameEntry> rolesToGenerateGetters = vc.getRolenameMap();
-		/*
-	     * if the interface should be created, remove all inherited (and unchanged)
-	     * and redefined (in the sense of removed, not overwritten)
-	     * rolenames from the list of rolenames to generate 
-		 */
-//		if (!createClass) {
-//			Set<String> inheritedAndRedefinedRolenames = new HashSet<String>();
-//			for (RolenameEntry entry : rolesToGenerate.values()) {
-//				if (entry.isInherited() || entry.isRedefined())
-//					inheritedAndRedefinedRolenames.add(entry.getRoleNameAtFarEnd());
-//			}	
-//			for (String s : inheritedAndRedefinedRolenames)
-//				rolesToGenerate.remove(s);
-//		}
-			
-		/* create code snippets for addROLENAME(Vertex vertex) methods */ 
-		CodeList code = new CodeList();
-		for (RolenameEntry entry : rolesToGenerateGetters.values()) {
-			CodeSnippet s = configureRolenameCodesnippet(entry, createClass);
-			if (entry.isRedefined())
-				code.addNoIndent(invalidRolenameSnippet(s));
-			else		
-				code.addNoIndent(validRolenameSnippet(s, createClass));
-			for (VertexEdgeEntry edgeEntry : entry.getVertexEdgeEntryList()) {
-				if (edgeEntry.getEdge().isAbstract())
-					continue;
-				CodeSnippet addSnippet = new CodeSnippet(true);
-				addSnippet.setVariable("roleCamelName", camelCase(entry.getRoleNameAtFarEnd()));
-				addSnippet.setVariable("edgeClassName", schemaRootPackageName + "." + edgeEntry.getEdge().getQualifiedName());
-				addSnippet.setVariable("edgeClassUniqueName", camelCase(edgeEntry.getEdge().getUniqueName()));
-				addSnippet.setVariable("graphClassName", schemaRootPackageName + "." + edgeEntry.getEdge().getGraphClass().getQualifiedName());
-				addSnippet.setVariable("vertexClassName", schemaRootPackageName + "." + edgeEntry.getVertex().getQualifiedName());
-				
-				if (edgeEntry.getDirection() == EdgeDirection.IN) {
-					addSnippet.setVariable("fromVertex", "vertex");
-					addSnippet.setVariable("toVertex", "this");
-				} else {
-					addSnippet.setVariable("toVertex", "vertex");
-					addSnippet.setVariable("fromVertex", "this");
-				}
-				CodeSnippet removeSnippet = new CodeSnippet(true);
-				removeSnippet.setVariable("roleCamelName", camelCase(entry.getRoleNameAtFarEnd()));
-				removeSnippet.setVariable("edgeClassName", schemaRootPackageName + "." + edgeEntry.getEdge().getQualifiedName());
-				removeSnippet.setVariable("edgeClassUniqueName", camelCase(edgeEntry.getEdge().getUniqueName()));
-				removeSnippet.setVariable("vertexClassName", schemaRootPackageName + "." + edgeEntry.getVertex().getQualifiedName());
-				if (!edgeEntry.isRedefined()) {
-					code.addNoIndent(validAddRolenameSnippet(addSnippet, createClass));
-					code.addNoIndent(validRemoveRolenameSnippet(removeSnippet, createClass));
-				} else { 
-					code.addNoIndent(invalidAddRolenameSnippet(addSnippet, createClass));
-					code.addNoIndent(invalidRemoveRolenameSnippet(removeSnippet, createClass));
-				}	
-			}
-		}
-		return code;
-	}
-
-	/**
-	 * Creates a codeSnippet
-	 * 
-	 * @param codeList
-	 *            The CodeList that represents the code for all Rolename Methods
-	 * @param entry
-	 *            the pair <Rolename, Set<EdgeClassTriple>> to generate code
-	 *            for
-	 * @param allRoles
-	 *            all roles that are related to the VertexClass currently
-	 *            creating code for
-	 * @param createClass
-	 *            toggles if to create code for the class or for the
-	 *            interface
-	 * @return
-	 */
-	private CodeSnippet configureRolenameCodesnippet(RolenameEntry entry, boolean createClass) {
-		CodeSnippet s = new CodeSnippet(true);
-		VertexClass lcvc = entry.getVertexClassAtFarEnd();
-		if (lcvc.isInternal()) {
-			s.setVariable("targetClass", "#jgPackage#." + lcvc.getQualifiedName());
-		} else {
-			s.setVariable("targetClass", schemaRootPackageName + "."
-					+ lcvc.getQualifiedName());
-		}
-		s.setVariable("targetSimpleName", lcvc.getSimpleName());
-		s.setVariable("roleName", entry.getRoleNameAtFarEnd());
-		s.setVariable("roleCamelName", camelCase(entry.getRoleNameAtFarEnd()));
-		s.setVariable("dir", "EdgeDirection." + entry.getEdgeClassToTraverse().getDirection().toString());
-		EdgeClass lcec = entry.getEdgeClassToTraverse().getEdgeClass();
-		if (lcec.isInternal()) {
-			s.setVariable("ecQualifiedName", "#jgPackage#."
-					+ lcec.getSimpleName());
-		} else {
-			s.setVariable("ecQualifiedName", schemaRootPackageName + "."
-					+ lcec.getQualifiedName());
-		}
-		s.setVariable("ecCamelName", camelCase(lcec.getUniqueName()));
-		return s;
-	}
 
 	/**
 	 * creates the <code>getEdgeNameIncidences</code> methods

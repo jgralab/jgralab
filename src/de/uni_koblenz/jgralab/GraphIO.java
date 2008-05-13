@@ -24,6 +24,7 @@
 
 package de.uni_koblenz.jgralab;
 
+import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -173,7 +174,11 @@ public class GraphIO {
 	private int putBackChar;
 
 	private String currentPackageName;
-
+	
+	private Object[] vertexDescTempObject = {0};
+	
+	private Object[] edgeDescTempObject = {0, 0, 0};
+	
 	private GraphIO() {
 		domains = new TreeMap<QualifiedName, Domain>();
 		GECsearch = new HashMap<GraphElementClass, GraphClass>();
@@ -551,46 +556,46 @@ public class GraphIO {
 		}
 	}
 
-	public void write(String s) throws IOException {
+	public final void write(String s) throws IOException {
 		TGOut.writeBytes(s);
 	}
 
-	public void noSpace() {
+	public final void noSpace() {
 		writeSpace = false;
 	}
 
-	public void space() {
+	public final void space() {
 		writeSpace = true;
 	}
 
-	public void writeSpace() throws IOException {
+	public final void writeSpace() throws IOException {
 		if (writeSpace) {
 			TGOut.writeBytes(" ");
 		}
 		writeSpace = true;
 	}
 
-	public void writeBoolean(boolean b) throws IOException {
+	public final void writeBoolean(boolean b) throws IOException {
 		writeSpace();
 		TGOut.writeBytes(b ? "t" : "f");
 	}
 
-	public void writeInteger(int i) throws IOException {
+	public final void writeInteger(int i) throws IOException {
 		writeSpace();
 		TGOut.writeBytes(Integer.toString(i));
 	}
 
-	public void writeLong(long l) throws IOException {
+	public final void writeLong(long l) throws IOException {
 		writeSpace();
 		TGOut.writeBytes(Long.toString(l));
 	}
 
-	public void writeDouble(double d) throws IOException {
+	public final void writeDouble(double d) throws IOException {
 		writeSpace();
 		TGOut.writeBytes(Double.toString(d));
 	}
 
-	public void writeUtfString(String s) throws IOException {
+	public final void writeUtfString(String s) throws IOException {
 		writeSpace();
 		if (s == null) {
 			TGOut.writeBytes("\\null");
@@ -599,14 +604,14 @@ public class GraphIO {
 		}
 	}
 
-	public void writeIdentifier(String s) throws IOException {
+	public final void writeIdentifier(String s) throws IOException {
 		writeSpace();
 		if (Schema.reservedTGWords.contains(s))
 			TGOut.writeBytes("'");
 		TGOut.writeBytes(s);
 	}
 
-	public void writeObject(Object o) throws IOException {
+	public final void writeObject(Object o) throws IOException {
 		writeSpace();
 		if (o == null) {
 			TGOut.writeBytes("\\null");
@@ -630,7 +635,7 @@ public class GraphIO {
 	public static Schema loadSchemaFromFile(String filename)
 			throws GraphIOException {
 		try {
-			return loadSchemaFromStream(new FileInputStream(filename));
+			return loadSchemaFromStream(new BufferedInputStream(new FileInputStream(filename), 10000));
 		} catch (FileNotFoundException ex) {
 			throw new GraphIOException("Unable to load schema from file "
 					+ filename + ", the file cannot be found", ex);
@@ -663,7 +668,8 @@ public class GraphIO {
 	public static Graph loadGraphFromFile(String filename, ProgressFunction pf)
 			throws GraphIOException {
 		try {
-			return loadGraphFromStream(new FileInputStream(filename), pf);
+			System.out.println("Loading graph " + filename);
+			return loadGraphFromStream(new BufferedInputStream(new FileInputStream(filename), 10000), pf);
 		} catch (IOException ex) {
 			throw new GraphIOException("Unable to load graph from file "
 					+ filename + ", the file cannot be found", ex);
@@ -693,6 +699,7 @@ public class GraphIO {
 					(Class<?>[]) null);
 			io.schema = (Schema) instanceMethod.invoke(null, new Object[0]);
 			Graph g = io.graph(pf);
+			g.internalLoadingCompleted();
 			g.loadingCompleted();
 			return g;
 		} catch (GraphIOException e) {
@@ -1129,7 +1136,7 @@ public class GraphIO {
 		return result;
 	}
 
-	public String matchEnumConstant() throws GraphIOException {
+	public final String matchEnumConstant() throws GraphIOException {
 		if (schema.isValidEnumConstant(lookAhead) || lookAhead.equals("\\null"))
 			return matchAndNext();
 		throw new GraphIOException("invalid enumeration constant '" + lookAhead
@@ -1503,7 +1510,7 @@ public class GraphIO {
 		return out.toString();
 	}
 
-	private int read() throws GraphIOException {
+	private final int read() throws GraphIOException {
 		if (putBackChar >= 0) {
 			int result = putBackChar;
 			putBackChar = -1;
@@ -1525,7 +1532,7 @@ public class GraphIO {
 		}
 	}
 
-	private void readUtfString(StringBuilder out) throws IOException,
+	private final void readUtfString(StringBuilder out) throws IOException,
 			GraphIOException {
 		int startLine = line;
 		la = read();
@@ -1594,17 +1601,17 @@ public class GraphIO {
 		la = read();
 	}
 
-	private static boolean isWs(int c) {
+	private final static boolean isWs(int c) {
 		return c == ' ' || c == '\n' || c == '\t' || c == '\r';
 	}
 
-	private static boolean isSeparator(int c) {
+	private final static boolean isSeparator(int c) {
 		return c == ';' || c == '<' || c == '>' || c == '(' || c == ')'
 				|| c == '{' || c == '}' || c == ':' || c == '[' || c == ']'
 				|| c == ',';
 	}
 
-	private void skipWs() throws GraphIOException {
+	private final void skipWs() throws GraphIOException {
 		// skip whitespace and consecutive single line comments
 		do {
 			// skip whitespace
@@ -1630,25 +1637,25 @@ public class GraphIO {
 		} while (isWs(la));
 	}
 
-	private void putback(int ch) {
+	private final void putback(int ch) {
 		putBackChar = ch;
 	}
 
-	private String matchAndNext() throws GraphIOException {
+	private final String matchAndNext() throws GraphIOException {
 		String result = lookAhead;
 		match();
 		return result;
 	}
 
-	public boolean isNextToken(String token) {
+	public final boolean isNextToken(String token) {
 		return lookAhead.equals(token);
 	}
 
-	private void match() throws GraphIOException {
+	private final void match() throws GraphIOException {
 		lookAhead = nextToken();
 	}
 
-	public void match(String s) throws GraphIOException {
+	public final void match(String s) throws GraphIOException {
 		if (lookAhead.equals(s)) {
 			lookAhead = nextToken();
 		} else {
@@ -1657,7 +1664,7 @@ public class GraphIO {
 		}
 	}
 
-	public int matchInteger() throws GraphIOException {
+	public final int matchInteger() throws GraphIOException {
 		try {
 			int result = Integer.parseInt(lookAhead);
 			match();
@@ -1668,7 +1675,7 @@ public class GraphIO {
 		}
 	}
 
-	public long matchLong() throws GraphIOException {
+	public final long matchLong() throws GraphIOException {
 		try {
 			long result = Long.parseLong(lookAhead);
 			match();
@@ -1687,7 +1694,7 @@ public class GraphIO {
 	 * @return the parsed identifier
 	 * @throws GraphIOException
 	 */
-	public String matchSimpleName(boolean isUpperCase) throws GraphIOException {
+	public final String matchSimpleName(boolean isUpperCase) throws GraphIOException {
 		String s = (lookAhead.charAt(0) == '\'') ? lookAhead.substring(1)
 				: lookAhead;
 		boolean ok = isValidIdentifier(s)
@@ -1710,7 +1717,7 @@ public class GraphIO {
 	 * @return the parsed identifier
 	 * @throws GraphIOException
 	 */
-	public QualifiedName matchQualifiedName(boolean isUpperCase)
+	public final QualifiedName matchQualifiedName(boolean isUpperCase)
 			throws GraphIOException {
 
 		String s = (lookAhead.charAt(0) == '\'') ? lookAhead.substring(1)
@@ -1752,7 +1759,7 @@ public class GraphIO {
 		return result;
 	}
 
-	public Object matchObject() throws GraphIOException {
+	public final Object matchObject() throws GraphIOException {
 		if (lookAhead.equals("\\null")) {
 			match();
 			return null;
@@ -1776,7 +1783,7 @@ public class GraphIO {
 		}
 	}
 
-	public String matchUtfString() throws GraphIOException {
+	public final String matchUtfString() throws GraphIOException {
 		if (lookAhead.equals("\\null")) {
 			match();
 			return null;
@@ -1790,7 +1797,7 @@ public class GraphIO {
 				+ lookAhead + "' in line " + line);
 	}
 
-	public boolean matchBoolean() throws GraphIOException {
+	public final boolean matchBoolean() throws GraphIOException {
 		if (!lookAhead.equals("t") && !lookAhead.equals("f")) {
 			throw new GraphIOException(
 					"expected a boolean constant but found '" + lookAhead
@@ -1927,7 +1934,7 @@ public class GraphIO {
 		return graph;
 	}
 
-	public double matchDouble() throws GraphIOException {
+	public final double matchDouble() throws GraphIOException {
 		try {
 			double result = Double.parseDouble(lookAhead);
 			match();
@@ -1949,7 +1956,9 @@ public class GraphIO {
 				createMethod = schema.getVertexCreateMethod(vcName, gcName);
 				createMethods.put(vcName, createMethod);
 			}
-			vertex = (Vertex) createMethod.invoke(graph, new Object[] { vId });
+			vertexDescTempObject[0] = vId;
+			vertex = (Vertex) createMethod.invoke(graph, vertexDescTempObject);
+//			vertex = (Vertex) createMethod.invoke(graph, new Object[] { vId });
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw new GraphIOException("cant't create vertex '" + vId + "'", e);
@@ -1971,8 +1980,12 @@ public class GraphIO {
 				createMethod = schema.getEdgeCreateMethod(ecName, gcName);
 				createMethods.put(ecName, createMethod);
 			}
-			edge = (Edge) createMethod.invoke(graph, new Object[] { eId,
-					edgeOut[eId], edgeIn[eId] });
+			edgeDescTempObject[0] = eId;
+			edgeDescTempObject[1] = edgeOut[eId];
+			edgeDescTempObject[2] = edgeIn[eId];
+			edge = (Edge) createMethod.invoke(graph, edgeDescTempObject);
+//			edge = (Edge) createMethod.invoke(graph, new Object[] { eId,
+//					edgeOut[eId], edgeIn[eId] });
 		} catch (Exception e) {
 			throw new GraphIOException("can't create edge '" + eId + "'", e);
 		}
@@ -1989,9 +2002,10 @@ public class GraphIO {
 
 	private QualifiedName className() throws GraphIOException {
 		QualifiedName className = matchQualifiedName(true);
-		if (!schema.knows(className))
-			throw new GraphIOException("Class " + className
-					+ " of read element does not exist.");
+//      The following time-consuming test is performed in the invocation and thus not longer needed here 
+//		if (!schema.knows(className))
+//			throw new GraphIOException("Class " + className
+//					+ " of read element does not exist.");
 		return className;
 	}
 

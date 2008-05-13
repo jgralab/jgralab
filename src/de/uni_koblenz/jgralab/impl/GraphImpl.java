@@ -236,30 +236,44 @@ Graph {
 
 		int eId = newEdge.getId();
 
-		if (eId != 0) {
-			// the given vertex already has an id, try to use it
-			if (containsEdgeId(eId))
-				throw new GraphException("edge with id " + eId
-						+ " already exists");
+		if (isLoading()) {
+			if (eId != 0) {
+				// the given vertex already has an id, try to use it
+				if (containsEdgeId(eId))
+					throw new GraphException("edge with id " + eId
+							+ " already exists");
 
-			if (eId >= eSize)
-				throw new GraphException("edge id " + eId
-						+ " is bigger than eSize");
-
-			// remove edge from free edge list
-			int i = 0;
-			while (nextEdgeInGraph[i] != eId)
-				++i;
-			nextEdgeInGraph[i] = nextEdgeInGraph[eId];
-		} else {
-			if (nextEdgeInGraph[0] == 0) {
-				expandEdges(EXPANSIONFACTOR);
+				if (eId >= eSize)
+					throw new GraphException("edge id " + eId
+							+ " is bigger than eSize");
+			} else {
+				throw new GraphException("a vertex that has not id may not be added while a graph is loading");
 			}
-			eId = nextEdgeInGraph[0];
-			nextEdgeInGraph[0] = nextEdgeInGraph[eId];
-			newEdge.setId(eId);
+		} else {
+			if (eId != 0) {
+				// the given vertex already has an id, try to use it
+				if (containsEdgeId(eId))
+					throw new GraphException("edge with id " + eId
+							+ " already exists");
+	
+				if (eId >= eSize)
+					throw new GraphException("edge id " + eId
+							+ " is bigger than eSize");
+	
+				// remove edge from free edge list
+				int i = 0;
+				while (nextEdgeInGraph[i] != eId)
+					++i;
+				nextEdgeInGraph[i] = nextEdgeInGraph[eId];
+			} else {
+				if (nextEdgeInGraph[0] == 0) {
+					expandEdges(EXPANSIONFACTOR);
+				}
+				eId = nextEdgeInGraph[0];
+				nextEdgeInGraph[0] = nextEdgeInGraph[eId];
+				newEdge.setId(eId);
+			}
 		}
-
 		++eCount;
 
 		if (firstEdge == 0) {
@@ -304,9 +318,11 @@ Graph {
 			lastEdgeAtVertex[omegaId] = -eId;
 		}
 
-		alpha.incidenceListModified();
-		omega.incidenceListModified();
-		edgeListModified();
+		if (!isLoading()) {
+			alpha.incidenceListModified();
+			omega.incidenceListModified();
+			edgeListModified();
+		}	
 		edgeAdded(newEdge);
 	}
 
@@ -314,28 +330,43 @@ Graph {
 	public void addVertex(Vertex newVertex) {
 		int vId = newVertex.getId();
 
-		if (vId != 0) {
-			// the given vertex already has an id, try to use it
-			if (containsVertexId(vId))
-				throw new GraphException("vertex with id " + vId
-						+ " already exists");
+		if (isLoading()) {
+			if (vId != 0) {
+				// the given vertex already has an id, try to use it
+				if (containsVertexId(vId))
+					throw new GraphException("vertex with id " + vId
+							+ " already exists");
 
-			if (vId >= vSize)
-				throw new GraphException("vertex id " + vId
-						+ " is bigger than vSize");
-
-			// remove vertex from free vertex list
-			int i = 0;
-			while (nextVertex[i] != vId)
-				++i;
-			nextVertex[i] = nextVertex[vId];
-		} else {
-			if (nextVertex[0] == 0) {
-				expandVertices(EXPANSIONFACTOR);
+				if (vId >= vSize)
+					throw new GraphException("vertex id " + vId
+							+ " is bigger than vSize");
+			} else {
+				throw new GraphException("a vertex that has not id may not be added while a graph is loading");
 			}
-			vId = nextVertex[0];
-			nextVertex[0] = nextVertex[vId];
-			newVertex.setId(vId);
+		} else {
+			if (vId != 0) {
+				// the given vertex already has an id, try to use it
+				if (containsVertexId(vId))
+					throw new GraphException("vertex with id " + vId
+							+ " already exists");
+	
+				if (vId >= vSize)
+					throw new GraphException("vertex id " + vId
+							+ " is bigger than vSize");
+	
+				// remove vertex from free vertex list
+				int i = 0;
+				while (nextVertex[i] != vId)
+					++i;
+				nextVertex[i] = nextVertex[vId];
+			} else {
+				if (nextVertex[0] == 0) {
+					expandVertices(EXPANSIONFACTOR);
+				}
+				vId = nextVertex[0];
+				nextVertex[0] = nextVertex[vId];
+				newVertex.setId(vId);
+			}
 		}
 
 		++vCount;
@@ -354,9 +385,11 @@ Graph {
 
 		vertex[vId] = newVertex;
 
-		vertexListModified();
+		if (!isLoading())
+			vertexListModified();
 		vertexAdded(newVertex);
 	}
+	
 	
 	@Override
 	public Iterable<Aggregation> aggregations() {
@@ -439,6 +472,8 @@ Graph {
 			addVertex(v);
 			return (T) v;
 		} catch (Exception ex) {
+			ex.printStackTrace();
+			System.exit(1);
 			throw new GraphException("Error creating vertex of class "
 					+ cls.getName(), ex);
 		}
@@ -1346,6 +1381,26 @@ Graph {
 
 	@Override
 	public void loadingCompleted() {
+	}
+	
+
+	@Override
+	public final void internalLoadingCompleted() {
+		//initialize list of free vertex ids
+		int lastFreeVertex = 0;
+		for (int i = 1; i < vSize; i++) {
+			if (vertex[i] == null) {
+				nextVertex[lastFreeVertex] = i;
+				lastFreeVertex = i;
+			}
+		}
+		int lastFreeEdge = 0;
+		for (int i = 1; i < eSize; i++) {
+			if (edge[i] == null) {
+				nextEdgeInGraph[lastFreeEdge] = i;
+				lastFreeEdge = i;
+			}
+		}
 	}
 
 	/**

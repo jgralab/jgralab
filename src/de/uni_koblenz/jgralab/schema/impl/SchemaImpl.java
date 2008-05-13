@@ -236,18 +236,14 @@ public class SchemaImpl implements Schema {
 		if (reservedUniqueNames.contains(name)) {
 			NamedElement known = namedElements.get(name);
 			if (known != null) {
-			//	System.out.println("Duplicate detected! Setting unique name of " + known.getQualifiedName() + " to " + QualifiedName.toUniqueName(known.getQualifiedName()) );
-			//	System.out.println(known.getSimpleName() + " is already known");
 				String uniqueName = QualifiedName.toUniqueName(known.getQualifiedName());
 				known.setUniqueName(uniqueName);
 				namedElements.remove(name);
 				namedElements.put(uniqueName, known);
 				reservedUniqueNames.add(uniqueName);
-			//	System.out.println("New UniqueName of " + known.getQualifiedName() + ": " + known.getUniqueName());
 			} 
 			String uniqueName = QualifiedName.toUniqueName(elem.getQualifiedName());
 			elem.setUniqueName(uniqueName);
-		//	System.out.println("Setting unique name of " + elem.getQualifiedName() + " to " + QualifiedName.toUniqueName(elem.getQualifiedName()) );
 			namedElements.put(uniqueName, elem);
 			reservedUniqueNames.add(uniqueName);
 		} else {
@@ -266,7 +262,6 @@ public class SchemaImpl implements Schema {
 		if (!isFreeDomainName(d.getQName()))
 			return false;
 		domains.put(d.getQName(), d);
-		//System.out.println("Try to add: " + d.getQualifiedName() + " to domains");
 		addToKnownElements(d.getUniqueName(), d);
 		
 		return true;
@@ -872,7 +867,11 @@ public class SchemaImpl implements Schema {
 			    if (vc != null) {
 			    	className = vc.getQName();
 			    } else {
-			    	className = gc.getEdgeClass(className).getQName();
+			    	EdgeClass ec = gc.getEdgeClass(className);
+			    	if (ec != null)
+			    		className = ec.getQName();
+			    	else
+			    		throw new SchemaException("class " + className.getQualifiedName() + " does not exist in schema");
 			    }
 			    return m1Class.getMethod("create" + CodeGenerator.camelCase(className.getUniqueName()), signature);
 			}
@@ -909,6 +908,7 @@ public class SchemaImpl implements Schema {
 		// from-class. Those subclasses are unknown in this method. Therefore,
 		// we look for a method with correct name and 3 parameters
 		// (int, vertex, Vertex).
+		long time = System.currentTimeMillis();
 		String methodName = "create" + CodeGenerator.camelCase(edgeClassName.getUniqueName());
 		Class<?> m1Class = getGraphClassImpl(graphClassName);
 		for (Method m : m1Class.getMethods()) {
@@ -916,6 +916,10 @@ public class SchemaImpl implements Schema {
 					&& m.getParameterTypes().length == 3) {
 				return m;
 			}
+		}
+		long diff = System.currentTimeMillis() - time;
+		if (diff > 0) {
+			System.out.println("getEdgeCreateMethod took: " + diff + " milliseconds");
 		}
 		throw new SchemaException("can't find create method in '"
 				+ m1Class.getName() + "' for '" + edgeClassName.getUniqueName() + "'");

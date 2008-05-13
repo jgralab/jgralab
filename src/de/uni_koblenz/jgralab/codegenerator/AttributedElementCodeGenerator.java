@@ -325,18 +325,16 @@ public class AttributedElementCodeGenerator extends CodeGenerator {
 
 		addImports("#jgPackage#.GraphIO", "#jgPackage#.GraphIOException");
 
-		code
-				.addNoIndent(new CodeSnippet(true,
+		code.addNoIndent(new CodeSnippet(true,
 						"public void readAttributeValues(GraphIO io) throws GraphIOException {"));
 		if (attrSet != null) {
 			for (Attribute attribute : attrSet) {
-				// addDomainImport(attribute);
-				code.add(attribute.getDomain().getReadMethod(
-						schemaRootPackageName, attribute.getName(), "io"));
 				CodeSnippet snippet = new CodeSnippet();
 				snippet.setVariable("setterName", "set"
 						+ camelCase(attribute.getName()));
 				snippet.setVariable("variableName", attribute.getName());
+				code.add(attribute.getDomain().getReadMethod(
+				schemaRootPackageName, attribute.getName(), "io"));	
 				snippet.add("#setterName#(#variableName#);");
 				code.add(snippet);
 			}
@@ -351,8 +349,7 @@ public class AttributedElementCodeGenerator extends CodeGenerator {
 		addImports("#jgPackage#.GraphIO", "#jgPackage#.GraphIOException",
 				"java.io.IOException");
 
-		code
-				.addNoIndent(new CodeSnippet(
+		code.addNoIndent(new CodeSnippet(
 						true,
 						"public void writeAttributeValues(GraphIO io) throws GraphIOException, IOException {"));
 		if (attrSet != null && !attrSet.isEmpty()) {

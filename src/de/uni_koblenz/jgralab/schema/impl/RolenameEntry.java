@@ -25,6 +25,7 @@
 package de.uni_koblenz.jgralab.schema.impl;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 
 import de.uni_koblenz.jgralab.schema.SchemaException;
@@ -42,6 +43,8 @@ public class RolenameEntry {
 	private VertexClass vertexClassAtFarEnd;
 	
 	private String roleNameAtFarEnd;
+	
+	private HashSet<String> rolenameAndSubsettedRolenames;
 	
 	/**
 	 * holds the information to which vertex class which edge should be used
@@ -71,6 +74,8 @@ public class RolenameEntry {
 		this.roleNameAtFarEnd = roleNameAtFarEnd;
 		this.redefined = false;
 		this.inherited = false;
+		rolenameAndSubsettedRolenames = new HashSet<String>();
+		rolenameAndSubsettedRolenames.add(roleNameAtFarEnd);
 	}
 
 	public DirectedEdgeClass getEdgeClassToTraverse() {
