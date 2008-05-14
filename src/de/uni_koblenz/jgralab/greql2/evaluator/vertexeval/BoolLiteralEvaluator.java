@@ -69,7 +69,7 @@ public class BoolLiteralEvaluator extends VertexEvaluator {
 		else if (vertex.getBoolValue() == TrivalentBoolean.FALSE)
 			return new JValue(false);
 		else
-			return new JValue((Boolean)null);
+			return new JValue();
 		//return new JValue(vertex.getBoolValue()); // == TrivalentBoolean.TRUE /* .isBoolValue()*/);
 	}
 
