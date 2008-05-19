@@ -24,10 +24,15 @@
  
 package de.uni_koblenz.jgralab.greql2.jvalue;
 
-import de.uni_koblenz.jgralab.*;
-import de.uni_koblenz.jgralab.greql2.evaluator.fa.*;
-import de.uni_koblenz.jgralab.greql2.evaluator.*;
-import de.uni_koblenz.jgralab.greql2.schema.TrivalentBoolean;
+import de.uni_koblenz.jgralab.AttributedElement;
+import de.uni_koblenz.jgralab.BooleanGraphMarker;
+import de.uni_koblenz.jgralab.Edge;
+import de.uni_koblenz.jgralab.Graph;
+import de.uni_koblenz.jgralab.Vertex;
+import de.uni_koblenz.jgralab.greql2.evaluator.VariableDeclaration;
+import de.uni_koblenz.jgralab.greql2.evaluator.VariableDeclarationLayer;
+import de.uni_koblenz.jgralab.greql2.evaluator.fa.DFA;
+import de.uni_koblenz.jgralab.greql2.evaluator.fa.NFA;
 import de.uni_koblenz.jgralab.schema.AttributedElementClass;
 
  

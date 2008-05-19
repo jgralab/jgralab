@@ -446,7 +446,6 @@ public class GraphIO {
 		Vertex nextV = graph.getFirstVertex();
 		while (nextV != null) {
 			vId = nextV.getId();
-			// System.out.println("Writing vertex: " + nextV.getId());
 			AttributedElementClass aec = nextV.getAttributedElementClass();
 			Package currentPackage = aec.getPackage();
 			if (currentPackage != oldPackage) {
@@ -1173,7 +1172,6 @@ public class GraphIO {
 				graphElementClassData.attributes = parseAttributes();
 			}
 			match(";");
-
 			vertexClassBuffer.get(gcName).add(graphElementClassData);
 		} else if (lookAhead.equals("EdgeClass")
 				|| lookAhead.equals("AggregationClass")
@@ -1722,7 +1720,12 @@ public class GraphIO {
 
 		String s = (lookAhead.charAt(0) == '\'') ? lookAhead.substring(1)
 				: lookAhead;
-		QualifiedName result = qualifiedNameMap.get(s);
+		String c = null;
+		if (s.contains("."))
+			c = s;
+		else
+			c = currentPackageName + s;
+		QualifiedName result = qualifiedNameMap.get(c);
 		if (result != null) {
 			match();
 			return result;
@@ -1755,7 +1758,7 @@ public class GraphIO {
 					+ "' in line " + line);
 		}
 		match();
-		qualifiedNameMap.put(s, result);
+		qualifiedNameMap.put(result.getQualifiedName(), result);
 		return result;
 	}
 
@@ -2331,12 +2334,12 @@ public class GraphIO {
 					}
 				}
 				if (!existingFromVertexClass) {
-					throw new GraphIOException("VertexClass "
-							+ ec.fromVertexClassName + " does not exist");
+					throw new GraphIOException("FromVertexClass "
+							+ ec.fromVertexClassName + " at EdgeClass " + ec.name + " + does not exist");
 				}
 				if (!existingToVertexClass) {
-					throw new GraphIOException("VertexClass "
-							+ ec.toVertexClassName + " does not exist");
+					throw new GraphIOException("ToVertexClass "
+							+ ec.toVertexClassName + " at EdgeClass " + ec.name + " does not exist");
 				}
 			}
 		}
