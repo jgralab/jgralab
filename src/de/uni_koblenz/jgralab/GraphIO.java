@@ -1724,7 +1724,7 @@ public class GraphIO {
 		if (s.contains("."))
 			c = s;
 		else
-			c = currentPackageName + s;
+			c = currentPackageName + "." + s;
 		QualifiedName result = qualifiedNameMap.get(c);
 		if (result != null) {
 			match();
@@ -1922,8 +1922,8 @@ public class GraphIO {
 						currentCount = 0;
 					}
 				}
+				++eNo;
 			}
-			++eNo;
 		}
 		((de.uni_koblenz.jgralab.impl.GraphImpl) graph)
 				.overwriteEdgeAtVertexArrays(firstEdgeAtVertex,
@@ -1976,10 +1976,10 @@ public class GraphIO {
 		QualifiedName ecName = className(); // graph.getGraphClass().getEdgeClass(className()).getQName();
 		Edge edge;
 		Method createMethod;
-
 		createMethod = createMethods.get(ecName);
 		try {
 			if (createMethod == null) {
+				System.out.println("Searching create method for edge " + ecName);
 				createMethod = schema.getEdgeCreateMethod(ecName, gcName);
 				createMethods.put(ecName, createMethod);
 			}

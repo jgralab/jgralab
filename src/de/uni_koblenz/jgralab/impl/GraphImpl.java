@@ -279,12 +279,11 @@ Graph {
 		if (firstEdge == 0) {
 			firstEdge = eId;
 		}
-
 		if (lastEdge != 0) {
 			nextEdgeInGraph[lastEdge] = eId;
 		}
 		lastEdge = eId;
-
+		
 		nextEdgeInGraph[eId] = 0;
 
 		edge[edgeOffset(eId)] = newEdge;
@@ -1394,6 +1393,7 @@ Graph {
 				lastFreeVertex = i;
 			}
 		}
+		nextVertex[lastFreeVertex] = 0;
 		int lastFreeEdge = 0;
 		for (int i = 1; i < eSize; i++) {
 			if (edge[i] == null) {
@@ -1401,7 +1401,9 @@ Graph {
 				lastFreeEdge = i;
 			}
 		}
+		nextEdgeInGraph[lastFreeEdge] = 0;
 	}
+
 
 	/**
 	 * This method overwrites the internal arrays that store the first and last
