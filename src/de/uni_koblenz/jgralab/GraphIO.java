@@ -1979,7 +1979,7 @@ public class GraphIO {
 		createMethod = createMethods.get(ecName);
 		try {
 			if (createMethod == null) {
-				System.out.println("Searching create method for edge " + ecName);
+				//System.out.println("Searching create method for edge " + ecName);
 				createMethod = schema.getEdgeCreateMethod(ecName, gcName);
 				createMethods.put(ecName, createMethod);
 			}

@@ -41,6 +41,7 @@ import de.uni_koblenz.jgralab.schema.AttributedElementClass;
 import de.uni_koblenz.jgralab.schema.Domain;
 import de.uni_koblenz.jgralab.schema.Package;
 import de.uni_koblenz.jgralab.schema.QualifiedName;
+import de.uni_koblenz.jgralab.schema.Schema;
 import de.uni_koblenz.jgralab.schema.SchemaException;
 
 public abstract class AttributedElementClassImpl implements
@@ -194,6 +195,11 @@ public abstract class AttributedElementClassImpl implements
 		if (containsAttribute(anAttribute.getName())) {
 			throw new SchemaException("duplicate attribute name '"
 					+ anAttribute.getName() + "' in class '" + getName() + "'");
+		}
+		if (Schema.reservedTGWords.contains(anAttribute.getName()) ||
+			Schema.reservedJavaWords.contains(anAttribute.getName())) {
+			throw new SchemaException("The name " + anAttribute.getName() + " may not be used as " +
+					"attribute name because it is a reserved word.");
 		}
 		attributeList.add(anAttribute);
 	}
