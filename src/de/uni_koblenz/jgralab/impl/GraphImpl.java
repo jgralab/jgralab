@@ -269,6 +269,9 @@ Graph {
 				if (nextEdgeInGraph[0] == 0) {
 					expandEdges(EXPANSIONFACTOR);
 				}
+				System.out.println("Nextedgeingraph of new edge " + nextEdgeInGraph[0]);
+				System.out.println("Edge at " + nextEdgeInGraph[0] + ": " + edge[nextEdgeInGraph[0]]);
+				System.out.println("NextEdge of next Edge: " + nextEdgeInGraph[nextEdgeInGraph[0]]);
 				eId = nextEdgeInGraph[0];
 				nextEdgeInGraph[0] = nextEdgeInGraph[eId];
 				newEdge.setId(eId);
@@ -1396,7 +1399,7 @@ Graph {
 		nextVertex[lastFreeVertex] = 0;
 		int lastFreeEdge = 0;
 		for (int i = 1; i < eSize; i++) {
-			if (edge[i] == null) {
+			if (edge[edgeOffset(i)] == null) {
 				nextEdgeInGraph[lastFreeEdge] = i;
 				lastFreeEdge = i;
 			}
