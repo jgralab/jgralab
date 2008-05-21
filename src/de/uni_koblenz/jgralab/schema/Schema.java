@@ -74,7 +74,7 @@ public interface Schema extends NamedElement {
 					"EnumDomain", "f", "from", "Graph", "GraphClass",
 					"Integer", "List", "Long", "Object", "Package",
 					"RecordDomain", "redefines", "role", "Schema", "Set",
-					"String", "t", "to", "VertexClass" }));
+					"String", "t", "to", "VertexClass", "id" }));
 
 	/**
 	 * sets the factory that is used to create graphs, vertices and edges
