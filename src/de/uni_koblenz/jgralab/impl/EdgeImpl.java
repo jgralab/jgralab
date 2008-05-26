@@ -93,7 +93,7 @@ public abstract class EdgeImpl extends GraphElementImpl implements Edge {
 
 	@Override
 	public Edge getNextEdge(EdgeDirection orientation) {
-		return myGraph.getNextEdge(this);
+		return myGraph.getNextEdge(this, orientation);
 	}
 
 	@Override
