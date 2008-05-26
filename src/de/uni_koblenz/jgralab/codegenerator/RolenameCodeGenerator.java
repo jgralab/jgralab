@@ -52,20 +52,11 @@ public class RolenameCodeGenerator {
 				"public java.util.List<? extends #targetClass#> get#roleCamelName#List() {",
 				"\tjava.util.List<#targetClass#> list = new java.util.ArrayList<#targetClass#>();",
 				"\t#ecQualifiedName# edge = getFirst#ecCamelName#(#dir#);",
-				"\tSystem.out.println(\"get#roleCamelName#List\");" ,
-				"\tSystem.out.println(\"\tEdge is :\" + edge);" ,
-				"\tfor (Object a : connected#roleCamelName#EdgeSet) { " ,
-				"\t\tSystem.out.println(a); }" ,
 				"\twhile (edge != null) {",
-				"\t\tSystem.out.println(\"\tM1Class is: \" + edge.getM1Class());" ,
 				"\t\tif (connected#roleCamelName#EdgeSet.contains(edge.getM1Class())) {",
-				"\t\t\tSystem.out.println(\"Adding edge \" + edge);" ,
 				"\t\t\tlist.add((#targetClass#)edge.getThat());",
 				"\t\t}",
 				"\t\tedge = edge.getNext#ecCamelName#(#dir#);",
-				"\t\tfor (Object o : list) {",
-				"\t\t\tSystem.out.println(\"Object in list: \" + o);",
-				"\t\t}",
 				"\t}", "\treturn list;", "}");
 			list.addNoIndent(s);
 			return list;
