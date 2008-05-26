@@ -423,7 +423,7 @@ Graph {
 
 	@Override
 	public boolean containsEdge(Edge e) {
-		return e != null && e.getGraph() == this && containsEdgeId(e.getId());
+		return e != null && e.getGraph() == this && containsEdgeId(e.getId()) && edge[edgeOffset(e.getId())] == e;
 	}
 
 	private boolean containsEdgeId(int eId) {
@@ -434,7 +434,7 @@ Graph {
 
 	@Override
 	public boolean containsVertex(Vertex v) {
-		return v != null && v.getGraph() == this && containsVertexId(v.getId());
+		return v != null && v.getGraph() == this && containsVertexId(v.getId()) && vertex[v.getId()] == v;
 	}
 
 	private boolean containsVertexId(int vId) {
@@ -1262,7 +1262,6 @@ Graph {
 			int vId = deleteVertexList.remove(0);
 			vertex[vId].incidenceListModified();
 			vertexDeleted(vertex[vId]);
-
 			// remove vertex from vSeq
 			int prevId = 0;
 			if (vId == firstVertex) {
