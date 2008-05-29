@@ -54,11 +54,11 @@
 		\begin{itemize}
 			\item Vertex Classes without names are detected and an error is thrown.
 			\item Vertex Classes with duplicate names are detected and an error is thrown.
-			\item a Schema which is not self-contained is detected and an error is thrown\footnote{Most probably an association in the XMI-file is to be transformed to an Edge Class, but one of the associated Classes is missing.}.
+			\item a Schema which is not self-contained is detected and an error is thrown\footnote{Most probably an association in the XMI-file is to be transformed to an Edge Class, but one of the associated Classes is not in the schema package.}.
 		\end{itemize}
 		It is recommended to set this parameter to \texttt{yes}. Default is \texttt{yes}.
-		\item \emph{extendedEdgeClassNames} --  If set to \texttt{yes} names of EdgeClasses correspond to the extended form \emph{FromRolename}\texttt{LinksTo}\emph{ToRolename}, else names correspond to \texttt{LinksTo}\emph{ToRolename}. Default is \texttt{no}.
-		\item \emph{schemaName} -- The name of the created Schema. Must correspond to the UML package in the modeling tool which contains the schema. If the package does not contain a class with stereotype \texttt{<<GraphClass>>}, the name of the created GraphClass is \texttt{DefaultGraphClass}.
+		\item \emph{extendedEdgeClassNames} --  If set to \texttt{yes} generated Edge Class names correspond to the extended form \emph{FromRolename}\texttt{LinksTo}\emph{ToRolename}, else names correspond to \texttt{LinksTo}\emph{ToRolename}. Default is \texttt{no}.
+		\item \emph{schemaName} -- Defines the name of the created Schema. The name must correspond to the UML package in the modeling tool which contains the schema (e.\ g.\ \texttt{de.uni-koblenz.jgstreetmap.JgStreetMap}). If the package does not contain a class with stereotype \texttt{<<GraphClass>>}, the name of the created GraphClass is \texttt{DefaultGraphClass}.
 		\item \emph{tool} -- The tool used to create the XMI file. As yet, the only possible value is \texttt{ea}. Omission of this parameter probably results in corrupted TG files (e.g.\ due to missing attribute types).
 		\item \emph{uml} -- If set to \texttt{yes}, the grUML equivalents of the following UML constructs are created:
 		\begin{itemize}
