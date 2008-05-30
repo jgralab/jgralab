@@ -174,16 +174,16 @@ public class GraphIO {
 	private int putBackChar;
 
 	private String currentPackageName;
-	
-	private Object[] vertexDescTempObject = {0};
-	
-	private Object[] edgeDescTempObject = {0, 0, 0};
-	
+
+	private Object[] vertexDescTempObject = { 0 };
+
+	private Object[] edgeDescTempObject = { 0, 0, 0 };
+
 	private GraphIO() {
 		domains = new TreeMap<QualifiedName, Domain>();
 		GECsearch = new HashMap<GraphElementClass, GraphClass>();
 		createMethods = new HashMap<QualifiedName, Method>();
-		buffer = new byte[10140];
+		buffer = new byte[65536];
 		bufferPos = 0;
 		enumDomainBuffer = new HashSet<EnumDomainData>();
 		recordDomainBuffer = new ArrayList<RecordDomainData>();
@@ -634,7 +634,8 @@ public class GraphIO {
 	public static Schema loadSchemaFromFile(String filename)
 			throws GraphIOException {
 		try {
-			return loadSchemaFromStream(new BufferedInputStream(new FileInputStream(filename), 10000));
+			return loadSchemaFromStream(new BufferedInputStream(
+					new FileInputStream(filename), 10000));
 		} catch (FileNotFoundException ex) {
 			throw new GraphIOException("Unable to load schema from file "
 					+ filename + ", the file cannot be found", ex);
@@ -667,8 +668,9 @@ public class GraphIO {
 	public static Graph loadGraphFromFile(String filename, ProgressFunction pf)
 			throws GraphIOException {
 		try {
-			System.out.println("Loading graph " + filename);
-			return loadGraphFromStream(new BufferedInputStream(new FileInputStream(filename), 10000), pf);
+			// System.out.println("Loading graph " + filename);
+			return loadGraphFromStream(new BufferedInputStream(
+					new FileInputStream(filename), 10000), pf);
 		} catch (IOException ex) {
 			throw new GraphIOException("Unable to load graph from file "
 					+ filename + ", the file cannot be found", ex);
@@ -1692,7 +1694,8 @@ public class GraphIO {
 	 * @return the parsed identifier
 	 * @throws GraphIOException
 	 */
-	public final String matchSimpleName(boolean isUpperCase) throws GraphIOException {
+	public final String matchSimpleName(boolean isUpperCase)
+			throws GraphIOException {
 		String s = (lookAhead.charAt(0) == '\'') ? lookAhead.substring(1)
 				: lookAhead;
 		boolean ok = isValidIdentifier(s)
@@ -1961,7 +1964,8 @@ public class GraphIO {
 			}
 			vertexDescTempObject[0] = vId;
 			vertex = (Vertex) createMethod.invoke(graph, vertexDescTempObject);
-//			vertex = (Vertex) createMethod.invoke(graph, new Object[] { vId });
+			// vertex = (Vertex) createMethod.invoke(graph, new Object[] { vId
+			// });
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw new GraphIOException("cant't create vertex '" + vId + "'", e);
@@ -1979,7 +1983,8 @@ public class GraphIO {
 		createMethod = createMethods.get(ecName);
 		try {
 			if (createMethod == null) {
-				//System.out.println("Searching create method for edge " + ecName);
+				// System.out.println("Searching create method for edge " +
+				// ecName);
 				createMethod = schema.getEdgeCreateMethod(ecName, gcName);
 				createMethods.put(ecName, createMethod);
 			}
@@ -1987,8 +1992,8 @@ public class GraphIO {
 			edgeDescTempObject[1] = edgeOut[eId];
 			edgeDescTempObject[2] = edgeIn[eId];
 			edge = (Edge) createMethod.invoke(graph, edgeDescTempObject);
-//			edge = (Edge) createMethod.invoke(graph, new Object[] { eId,
-//					edgeOut[eId], edgeIn[eId] });
+			// edge = (Edge) createMethod.invoke(graph, new Object[] { eId,
+			// edgeOut[eId], edgeIn[eId] });
 		} catch (Exception e) {
 			throw new GraphIOException("can't create edge '" + eId + "'", e);
 		}
@@ -2005,10 +2010,11 @@ public class GraphIO {
 
 	private QualifiedName className() throws GraphIOException {
 		QualifiedName className = matchQualifiedName(true);
-//      The following time-consuming test is performed in the invocation and thus not longer needed here 
-//		if (!schema.knows(className))
-//			throw new GraphIOException("Class " + className
-//					+ " of read element does not exist.");
+		// The following time-consuming test is performed in the invocation and
+		// thus not longer needed here
+		// if (!schema.knows(className))
+		// throw new GraphIOException("Class " + className
+		// + " of read element does not exist.");
 		return className;
 	}
 
@@ -2018,7 +2024,7 @@ public class GraphIO {
 			throw new GraphIOException("Invalid vertex id " + vId + ".");
 		return vId;
 	}
-	
+
 	private void parseIncidentEdges(Vertex v) throws GraphIOException {
 		int eId = 0;
 		int prevId = 0;
@@ -2335,11 +2341,13 @@ public class GraphIO {
 				}
 				if (!existingFromVertexClass) {
 					throw new GraphIOException("FromVertexClass "
-							+ ec.fromVertexClassName + " at EdgeClass " + ec.name + " + does not exist");
+							+ ec.fromVertexClassName + " at EdgeClass "
+							+ ec.name + " + does not exist");
 				}
 				if (!existingToVertexClass) {
 					throw new GraphIOException("ToVertexClass "
-							+ ec.toVertexClassName + " at EdgeClass " + ec.name + " does not exist");
+							+ ec.toVertexClassName + " at EdgeClass " + ec.name
+							+ " does not exist");
 				}
 			}
 		}
