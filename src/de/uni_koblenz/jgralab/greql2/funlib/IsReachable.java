@@ -150,8 +150,7 @@ public class IsReachable extends PathSearch implements Greql2Function {
 	}
 
 	public int getEstimatedCosts(ArrayList<Integer> inElements) {
-		// TODO Auto-generated method stub
-		return 0;
+		return 50;
 	}
 
 	public double getSelectivity() {

@@ -105,7 +105,7 @@ public class Or implements Greql2Function {
 	}
 
 	public double getSelectivity() {
-		return 0.5;
+		return 5d / 9;
 	}
 
 	public int getEstimatedCardinality(int inElements) {

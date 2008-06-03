@@ -78,4 +78,12 @@ public class BoolLiteralEvaluator extends VertexEvaluator {
 		return new VertexCosts(1, 1, 1);
 	}
 
+	@Override
+	public double calculateEstimatedSelectivity(GraphSize graphSize) {
+		// true has selectivity 1, but false and null can never be true, so
+		// their selectivity is 0.
+		if (vertex.getBoolValue() == TrivalentBoolean.TRUE)
+			return 1;
+		return 0;
+	}
 }

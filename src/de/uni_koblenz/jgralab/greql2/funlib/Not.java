@@ -96,7 +96,7 @@ public class Not implements Greql2Function {
 	}
 
 	public double getSelectivity() {
-		return 0.5;
+		return 1d / 3;
 	}
 
 	public int getEstimatedCardinality(int inElements) {

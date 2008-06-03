@@ -9,6 +9,7 @@ import de.uni_koblenz.jgralab.Attribute;
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
+import de.uni_koblenz.jgralab.greql2.exception.OptimizerException;
 import de.uni_koblenz.jgralab.greql2.schema.Greql2;
 import de.uni_koblenz.jgralab.greql2.schema.Greql2Aggregation;
 import de.uni_koblenz.jgralab.greql2.schema.Greql2Vertex;
@@ -86,8 +87,12 @@ public class CommonSubgraphOptimizer extends OptimizerBase {
 	 *      de.uni_koblenz.jgralab.greql2.schema.Greql2)
 	 */
 	@Override
-	public void optimize(GreqlEvaluator eval, Greql2 syntaxgraph) {
+	public void optimize(GreqlEvaluator eval, Greql2 syntaxgraph)
+			throws OptimizerException {
 		computeHashAndProcess(syntaxgraph.getFirstGreql2Expression());
+
+		Optimizer mergeSDOpt = new MergeSimpleDeclarationsOptimizer();
+		mergeSDOpt.optimize(eval, syntaxgraph);
 	}
 
 	/**
@@ -104,7 +109,8 @@ public class CommonSubgraphOptimizer extends OptimizerBase {
 	private String computeHashAndProcess(Greql2Vertex vertex) {
 		if (reverseSubgraphMap.containsKey(vertex)) {
 			if (DEBUG) {
-				System.out.println(vertex + " is already computed.");
+				System.out.println(optimizerHeaderString() + vertex
+						+ " is already computed.");
 			}
 			return "{V" + vertex.getId() + "}";
 		}
@@ -135,7 +141,8 @@ public class CommonSubgraphOptimizer extends OptimizerBase {
 		String hash = buf.toString();
 
 		if (DEBUG) {
-			System.out.println("v" + vertex.getId() + " = " + hash);
+			System.out.println(optimizerHeaderString() + "v" + vertex.getId()
+					+ " = " + hash);
 		}
 
 		Greql2Vertex lowerVertex = vertex;
@@ -218,8 +225,8 @@ public class CommonSubgraphOptimizer extends OptimizerBase {
 			Greql2Vertex higherVertex) {
 		if (!(lowerVertex instanceof PathDescription)) {
 			if (DEBUG)
-				System.out.println("\n" + lowerVertex + " == " + higherVertex
-						+ "\n");
+				System.out.println(optimizerHeaderString() + lowerVertex
+						+ " == " + higherVertex + "\n");
 			// Merge the sourcePositions of the incoming edges
 			mergeSourcePositionsBelow(lowerVertex, higherVertex);
 			// Now set the alphas of the outgoing edges
@@ -249,7 +256,7 @@ public class CommonSubgraphOptimizer extends OptimizerBase {
 		Greql2Aggregation gah = higherVertex
 				.getFirstGreql2Aggregation(EdgeDirection.IN);
 		while (gal != null && gah != null) {
-			mergeSourcePositions(gah, gal);
+			OptimizerUtility.mergeSourcePositions(gah, gal);
 			mergeSourcePositionsBelow((Greql2Vertex) gal.getAlpha(),
 					(Greql2Vertex) gah.getAlpha());
 			gal = gal.getNextGreql2Aggregation(EdgeDirection.IN);

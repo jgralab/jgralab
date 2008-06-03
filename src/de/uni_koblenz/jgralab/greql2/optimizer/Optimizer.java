@@ -25,6 +25,7 @@
 package de.uni_koblenz.jgralab.greql2.optimizer;
 
 import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
+import de.uni_koblenz.jgralab.greql2.exception.OptimizerException;
 import de.uni_koblenz.jgralab.greql2.schema.*;
 
 /**
@@ -44,8 +45,11 @@ public interface Optimizer {
 	 *            the GreqlEvaluator, which calls this method
 	 * @param syntaxgraph
 	 *            The GReQL 2 syntaxgraph to optimize
+	 * @throws OptimizerException
+	 *             on failures while optimization
 	 */
-	public void optimize(GreqlEvaluator eval, Greql2 syntaxgraph);
+	public void optimize(GreqlEvaluator eval, Greql2 syntaxgraph)
+			throws OptimizerException;
 
 	/**
 	 * @return true, if this optimizer and the given one are logical equivalent,

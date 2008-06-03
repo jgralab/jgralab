@@ -24,26 +24,6 @@
 
 package de.uni_koblenz.jgralab.greql2.evaluator;
 
-import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.CostModel;
-import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.GraphSize;
-import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.LogCostModel;
-import de.uni_koblenz.jgralab.greql2.evaluator.logging.EvaluationLogger;
-import de.uni_koblenz.jgralab.greql2.evaluator.logging.Level1LogReader;
-import de.uni_koblenz.jgralab.greql2.evaluator.logging.Level1Logger;
-import de.uni_koblenz.jgralab.greql2.evaluator.logging.LoggingType;
-import de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.VertexEvaluator;
-import de.uni_koblenz.jgralab.greql2.exception.CostModelException;
-import de.uni_koblenz.jgralab.greql2.exception.EvaluateException;
-import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
-import de.uni_koblenz.jgralab.greql2.jvalue.JValueSet;
-import de.uni_koblenz.jgralab.greql2.optimizer.DefaultOptimizer;
-import de.uni_koblenz.jgralab.greql2.optimizer.Optimizer;
-import de.uni_koblenz.jgralab.greql2.parser.Greql2Lexer;
-import de.uni_koblenz.jgralab.greql2.parser.Greql2Parser;
-import de.uni_koblenz.jgralab.greql2.schema.Greql2;
-import de.uni_koblenz.jgralab.schema.Schema;
-import de.uni_koblenz.jgralab.utilities.TGFilenameFilter;
-
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -60,6 +40,26 @@ import de.uni_koblenz.jgralab.GraphIOException;
 import de.uni_koblenz.jgralab.GraphMarker;
 import de.uni_koblenz.jgralab.ProgressFunction;
 import de.uni_koblenz.jgralab.Vertex;
+import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.CostModel;
+import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.GraphSize;
+import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.LogCostModel;
+import de.uni_koblenz.jgralab.greql2.evaluator.logging.EvaluationLogger;
+import de.uni_koblenz.jgralab.greql2.evaluator.logging.Level2LogReader;
+import de.uni_koblenz.jgralab.greql2.evaluator.logging.Level2Logger;
+import de.uni_koblenz.jgralab.greql2.evaluator.logging.LoggingType;
+import de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.VertexEvaluator;
+import de.uni_koblenz.jgralab.greql2.exception.CostModelException;
+import de.uni_koblenz.jgralab.greql2.exception.EvaluateException;
+import de.uni_koblenz.jgralab.greql2.exception.OptimizerException;
+import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
+import de.uni_koblenz.jgralab.greql2.jvalue.JValueSet;
+import de.uni_koblenz.jgralab.greql2.optimizer.DefaultOptimizer;
+import de.uni_koblenz.jgralab.greql2.optimizer.Optimizer;
+import de.uni_koblenz.jgralab.greql2.parser.Greql2Lexer;
+import de.uni_koblenz.jgralab.greql2.parser.Greql2Parser;
+import de.uni_koblenz.jgralab.greql2.schema.Greql2;
+import de.uni_koblenz.jgralab.schema.Schema;
+import de.uni_koblenz.jgralab.utilities.TGFilenameFilter;
 
 /**
  * This is the core class of the GReQL-2 Evaluator. It takes a GReQL-2 Query as
@@ -71,22 +71,21 @@ import de.uni_koblenz.jgralab.Vertex;
  * 
  */
 public class GreqlEvaluator {
-	
+
 	/**
 	 * toggles wether the optimizer should be called
 	 */
-	private static final boolean OPTIMIZE = false;
-
+	// There's the boolean optimize, setOptimize() and isOptimize();
+	// private static final boolean OPTIMIZE = false;
 	/**
 	 * toggles wether the debug-messages should be displayed on console
 	 */
 	private static final boolean DEBUG = false;
 
 	/**
-	 * toggles wether to print messages like time for parsing, evaluation and so
-	 * on on console
+	 * toggles wether to print timing messages on the console
 	 */
-	private static boolean printMessages = false;
+	private static boolean printTimingMessages = false;
 
 	/**
 	 * toggles which expressions are added to the index. Only vertex- and
@@ -158,8 +157,8 @@ public class GreqlEvaluator {
 	 * @param b
 	 *            if set to yes, messages will be print
 	 */
-	public static void setPrintMessages(boolean b) {
-		printMessages = b;
+	public static void setPrintTimingMessages(boolean b) {
+		printTimingMessages = b;
 	}
 
 	/**
@@ -249,7 +248,7 @@ public class GreqlEvaluator {
 	 * optimizedSyntaxGraphsDirectory.
 	 * 
 	 * @throws GraphIOException
-	 *             if the optimizedGraphsDirectory is not accessible. 
+	 *             if the optimizedGraphsDirectory is not accessible.
 	 * @see #setOptimizedSyntaxGraphsDirectory(File)
 	 * @see #getOptimizedSyntaxGraphsDirectory()
 	 */
@@ -323,6 +322,12 @@ public class GreqlEvaluator {
 	 * evaluation. Otherwise it will be evaluated without any optimizations.
 	 */
 	private boolean optimize = true;
+
+	/**
+	 * If set to <code>true</code>, then a stored optimized syntaxgraph will
+	 * be used if <code>optimize == true</code> and such a graph exists.
+	 */
+	private boolean useSavedOptimizedSyntaxGraph = false;
 
 	/**
 	 * This attribute holds the datagraph
@@ -481,7 +486,7 @@ public class GreqlEvaluator {
 				}
 			}
 			try {
-				logger = new Level1Logger(loggerDirectory, datagraph,
+				logger = new Level2Logger(loggerDirectory, datagraph,
 						loggerLoggingType);
 			} catch (InterruptedException e) {
 				// TODO (heimdall) Auto-generated catch block
@@ -688,14 +693,15 @@ public class GreqlEvaluator {
 	/**
 	 * Creates the VertexEvaluator-Object at the vertices in the syntaxgraph
 	 */
-	protected void createVertexEvaluators() throws EvaluateException {
+	public void createVertexEvaluators() throws EvaluateException {
 		vertexEvalGraphMarker = new GraphMarker<VertexEvaluator>(queryGraph);
 		Vertex currentVertex = queryGraph.getFirstVertex();
 		while (currentVertex != null) {
 			VertexEvaluator vertexEval = VertexEvaluator.createVertexEvaluator(
 					currentVertex, this);
-			if (vertexEval != null)
+			if (vertexEval != null) {
 				vertexEvalGraphMarker.mark(currentVertex, vertexEval);
+			}
 			currentVertex = currentVertex.getNextVertex();
 		}
 	}
@@ -722,27 +728,29 @@ public class GreqlEvaluator {
 	 * syntaxgraph, adds the VertexEvaluator object to the vertices of that
 	 * graph and stores this as attribute queryGraph.
 	 */
-	protected void createOptimizedSyntaxGraph() throws EvaluateException {
+	protected void createOptimizedSyntaxGraph() throws EvaluateException,
+			OptimizerException {
 		if (optimizer == null) {
 			optimizer = new DefaultOptimizer();
 		}
-		if (optimizedGraphs.containsKey(queryString)) {
+		if (useSavedOptimizedSyntaxGraph
+				&& optimizedGraphs.containsKey(queryString)) {
 			syntaxGraphEntry = getOptimizedSyntaxGraph(queryString, optimizer,
 					costModel);
-			queryGraph = syntaxGraphEntry.getSyntaxGraph();
-			createVertexEvaluators();
-			costModel.setGraphMarker(vertexEvalGraphMarker);
-			System.out.println("Using stored optimized syntax graph.");
-			return;
-		} else {
-			long optimizerStartTime = System.currentTimeMillis();
-			if (OPTIMIZE) 
-				optimizer.optimize(this, queryGraph);
-			optimizationTime = System.currentTimeMillis() - optimizerStartTime;
-			syntaxGraphEntry = new SyntaxGraphEntry(queryString, queryGraph,
-					optimizer, costModel, true);
-			addOptimizedSyntaxGraph(queryString, syntaxGraphEntry);
+			if (syntaxGraphEntry != null) {
+				queryGraph = syntaxGraphEntry.getSyntaxGraph();
+				createVertexEvaluators();
+				costModel.setGreqlEvaluator(this);
+				System.out.println("Using stored optimized syntax graph.");
+				return;
+			}
 		}
+
+		// No optimized graph for this query, optimizer and costmodel was found.
+		optimizer.optimize(this, queryGraph);
+		syntaxGraphEntry = new SyntaxGraphEntry(queryString, queryGraph,
+				optimizer, costModel, true);
+		addOptimizedSyntaxGraph(queryString, syntaxGraphEntry);
 	}
 
 	/**
@@ -751,7 +759,8 @@ public class GreqlEvaluator {
 	 * @return true if the evaluation succeeds, false otherwise
 	 * @throws EvaluateException
 	 */
-	public boolean startEvaluation() throws EvaluateException {
+	public boolean startEvaluation() throws EvaluateException,
+			OptimizerException {
 		return startEvaluation(false);
 	}
 
@@ -761,15 +770,17 @@ public class GreqlEvaluator {
 	 * 
 	 * @param log
 	 *            if set to true, the evaluation will be logged. If no logger
-	 *            was set before, the Level1Logger is used
+	 *            was set before, the Level2Logger is used
 	 * @return true on success, false otherwise
 	 * @throws EvaluateException
 	 *             if something gets wrong during evaluation
 	 */
-	public boolean startEvaluation(boolean log) throws EvaluateException {
+	public boolean startEvaluation(boolean log) throws EvaluateException,
+			OptimizerException {
 		if (started)
 			return (result != null);
 		started = true;
+
 		long startTime = System.currentTimeMillis();
 
 		if (log)
@@ -783,42 +794,43 @@ public class GreqlEvaluator {
 		// Initialize the CostModel if there's none
 		if (costModel == null) {
 			// costModel = new DefaultCostModel(vertexEvalGraphMarker);
-			Level1LogReader logReader;
+			Level2LogReader logReader;
 			if (logger == null) {
 				// Create only a generic log reader by default.
-				logReader = new Level1LogReader(loggerDirectory);
+				logReader = new Level2LogReader(loggerDirectory);
 			} else {
-				logReader = new Level1LogReader((Level1Logger) logger);
+				logReader = new Level2LogReader((Level2Logger) logger);
 			}
 			try {
-				System.out.println("Creating costModel with marker" + vertexEvalGraphMarker);
-				costModel = new LogCostModel(logReader, 0.7f,
-						vertexEvalGraphMarker);
-				System.out.println("Created new LogCostModel.");
+				costModel = new LogCostModel(logReader, 0.7f, this);
 			} catch (CostModelException e) {
-				// TODO (heimdall) Auto-generated catch block
 				e.printStackTrace();
 			}
 		}
 
+		long optimizerStartTime = System.currentTimeMillis();
+
 		if (optimize) {
 			createOptimizedSyntaxGraph();
 		}
+
+		optimizationTime = System.currentTimeMillis() - optimizerStartTime;
 
 		// Calculate the evaluation costs
 		VertexEvaluator greql2ExpEval = vertexEvalGraphMarker
 				.getMark(queryGraph.getFirstGreql2Expression());
 		estimatedInterpretationSteps = greql2ExpEval
 				.getInitialSubtreeEvaluationCosts(new GraphSize(datagraph));
-		if (printMessages)
+		if (printTimingMessages)
 			System.out.println("EstimatedInterpretationSteps: "
 					+ estimatedInterpretationSteps);
-
-		long realstarttime = System.currentTimeMillis();
 
 		if (progressFunction != null) {
 			progressFunction.init(estimatedInterpretationSteps);
 		}
+
+		long plainEvaluationStartTime = System.currentTimeMillis();
+
 		result = vertexEvalGraphMarker.getMark(
 				queryGraph.getFirstGreql2Expression()).getResult(null);
 
@@ -828,7 +840,8 @@ public class GreqlEvaluator {
 			progressFunction.finished();
 		}
 
-		plainEvaluationTime = System.currentTimeMillis() - realstarttime;
+		plainEvaluationTime = System.currentTimeMillis()
+				- plainEvaluationStartTime;
 
 		if (logger != null) {
 			try {
@@ -846,12 +859,21 @@ public class GreqlEvaluator {
 			}
 		}
 
-		overallEvaluationTime = System.currentTimeMillis() - startTime;
-
 		resetVertexEvaluators();
 		if (syntaxGraphEntry != null) {
 			syntaxGraphEntry.release();
 		}
+
+		overallEvaluationTime = System.currentTimeMillis() - startTime;
+
+		if (printTimingMessages)
+			System.out.println("Overall evaluation took "
+					+ overallEvaluationTime / 1000d + " seconds.\n"
+					+ " --> parsing time         : " + parseTime / 1000d
+					+ "\n --> optimization time    : " + optimizationTime
+					/ 1000d + "\n --> plain evaluation time: "
+					+ plainEvaluationTime / 1000d);
+
 		return true;
 	}
 
@@ -948,5 +970,14 @@ public class GreqlEvaluator {
 
 	public void setLoggerLoggingType(LoggingType loggerLoggingType) {
 		this.loggerLoggingType = loggerLoggingType;
+	}
+
+	public boolean isUseSavedOptimizedSyntaxGraph() {
+		return useSavedOptimizedSyntaxGraph;
+	}
+
+	public void setUseSavedOptimizedSyntaxGraph(
+			boolean useSavedOptimizedSyntaxGraph) {
+		this.useSavedOptimizedSyntaxGraph = useSavedOptimizedSyntaxGraph;
 	}
 }

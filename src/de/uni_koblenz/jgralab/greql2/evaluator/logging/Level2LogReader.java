@@ -3,16 +3,16 @@
  */
 package de.uni_koblenz.jgralab.greql2.evaluator.logging;
 
-import de.uni_koblenz.jgralab.Graph;
-import de.uni_koblenz.jgralab.greql2.schema.Greql2Vertex;
-import de.uni_koblenz.jgralab.schema.Schema;
-
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import de.uni_koblenz.jgralab.Graph;
+import de.uni_koblenz.jgralab.greql2.schema.Greql2Vertex;
+import de.uni_koblenz.jgralab.schema.Schema;
+
 /**
- * This class is the counterpart of {@link Level1Logger}. The logger is
+ * This class is the counterpart of {@link Level2Logger}. The logger is
  * responsible for creating logs (in a thread-safe way), whereas this log reader
  * reads the logs and provides informations about the average input and result
  * sizes of {@link Greql2Vertex}s and the average selectivity.
@@ -20,20 +20,20 @@ import java.util.HashMap;
  * @author Tassilo Horn (heimdall), 2007, Diploma Thesis
  * 
  */
-public class Level1LogReader extends Level1LoggingBase implements
+public class Level2LogReader extends Level2LoggingBase implements
 		EvaluationLogReader {
 
-	private Level1LogReader() {
+	private Level2LogReader() {
 		inputSize = new HashMap<String, ArrayLogEntry>();
 		resultSize = new HashMap<String, SimpleLogEntry>();
 		selectivity = new HashMap<String, SimpleLogEntry>();
 	}
 
 	/**
-	 * Creates a new {@link Level1LogReader}.
+	 * Creates a new {@link Level2LogReader}.
 	 * 
 	 * @param logDirectory
-	 *            the directory where the corresponding {@link Level1Logger}
+	 *            the directory where the corresponding {@link Level2Logger}
 	 *            stored the logfiles
 	 * @param dataGraph
 	 *            a datagraph (used to get the {@link Schema} and the graphid)
@@ -43,7 +43,7 @@ public class Level1LogReader extends Level1LoggingBase implements
 	 *            {@link LoggingType#GENERIC}, then the parameter dataGraph may
 	 *            be null.
 	 */
-	public Level1LogReader(File logDirectory, Graph dataGraph,
+	public Level2LogReader(File logDirectory, Graph dataGraph,
 			LoggingType loggingType) {
 		this();
 		loggerDirectory = logDirectory;
@@ -53,23 +53,23 @@ public class Level1LogReader extends Level1LoggingBase implements
 		}
 		this.loggingType = loggingType;
 		if (load()) {
-			System.out.println("Level1LogReader successfully loaded "
+			System.out.println("Level2LogReader successfully loaded "
 					+ getLogFile().getPath());
 		} else {
-			System.err.println("Level1LogReader couldn't load "
+			System.err.println("Level2LogReader couldn't load "
 					+ getLogFile().getPath());
 		}
 	}
 
 	/**
-	 * Creates a new {@link Level1LogReader} that uses the same values for
+	 * Creates a new {@link Level2LogReader} that uses the same values for
 	 * logDirectory, schemaName, graphId and loggingType as the given
-	 * {@link Level1Logger}.
+	 * {@link Level2Logger}.
 	 * 
 	 * @param logger
-	 *            the {@link Level1Logger} which's values to use
+	 *            the {@link Level2Logger} which's values to use
 	 */
-	public Level1LogReader(Level1Logger logger) {
+	public Level2LogReader(Level2Logger logger) {
 		this();
 		loggerDirectory = logger.loggerDirectory;
 		schemaName = logger.schemaName;
@@ -86,12 +86,12 @@ public class Level1LogReader extends Level1LoggingBase implements
 	}
 
 	/**
-	 * Creates a new {@link Level1LogReader} which can read logfiles for
+	 * Creates a new {@link Level2LogReader} which can read logfiles for
 	 * {@link LoggingType#GENERIC} and {@link LoggingType#SCHEMA}, but no
 	 * datagraph specific logfiles.
 	 * 
 	 * @param logDirectory
-	 *            the directory where the corresponding {@link Level1Logger}
+	 *            the directory where the corresponding {@link Level2Logger}
 	 *            stored the logfiles
 	 * @param schema
 	 *            the schema
@@ -101,12 +101,12 @@ public class Level1LogReader extends Level1LoggingBase implements
 	 *            {@link LoggingType#GENERIC}, then the parameter schema may be
 	 *            null.
 	 */
-	public Level1LogReader(File logDirectory, Schema schema,
+	public Level2LogReader(File logDirectory, Schema schema,
 			LoggingType loggingType) {
 		this();
 		loggerDirectory = logDirectory;
 		if (schema != null) {
-			schemaName = schema.getQualifiedName();
+			schemaName = schema.getSimpleName();
 		}
 		this.loggingType = loggingType;
 
@@ -124,10 +124,10 @@ public class Level1LogReader extends Level1LoggingBase implements
 	 * <code>new Level1LogReader(logDir, null, LoggingType.GENERIC);</code>
 	 * 
 	 * @param logDirectory
-	 *            the directory where the corresponding {@link Level1Logger}
+	 *            the directory where the corresponding {@link Level2Logger}
 	 *            stored the logfiles
 	 */
-	public Level1LogReader(File logDirectory) {
+	public Level2LogReader(File logDirectory) {
 		this();
 		loggerDirectory = logDirectory;
 		this.loggingType = LoggingType.GENERIC;

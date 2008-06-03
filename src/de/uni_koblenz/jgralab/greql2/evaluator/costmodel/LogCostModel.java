@@ -4,7 +4,7 @@
 package de.uni_koblenz.jgralab.greql2.evaluator.costmodel;
 
 import de.uni_koblenz.jgralab.EdgeDirection;
-import de.uni_koblenz.jgralab.GraphMarker;
+import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
 import de.uni_koblenz.jgralab.greql2.evaluator.fa.NFA;
 import de.uni_koblenz.jgralab.greql2.evaluator.logging.EvaluationLogReader;
 import de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.*;
@@ -59,16 +59,15 @@ public class LogCostModel extends DefaultCostModel {
 	 *            values have been logged. In that case
 	 *            <code>logScalingFactor</code> has no effect and this
 	 *            {@link LogCostModel} behaves as if it was set to 0.
-	 * @param vertexEvalGraphMarker
-	 *            the GraphMarker that stores the vertex evaluator objects of
-	 *            the {@link Greql2Vertex}s
+	 * @param eval
+	 *            the {@link GreqlEvaluator} that will be used for accessing the
+	 *            {@link VertexEvaluator}s
 	 * @throws CostModelException
 	 *             if an invalid <code>scalingFactor</code> was given
 	 */
 	public LogCostModel(EvaluationLogReader logReader, float logScalingFactor,
-			GraphMarker<VertexEvaluator> vertexEvalGraphMarker)
-			throws CostModelException {
-		super(vertexEvalGraphMarker);
+			GreqlEvaluator eval) throws CostModelException {
+		super(eval);
 		this.logReader = logReader;
 
 		if (logScalingFactor < 0 || logScalingFactor > 1) {
@@ -164,9 +163,12 @@ public class LogCostModel extends DefaultCostModel {
 	@Override
 	public int calculateCardinalityDeclaration(DeclarationEvaluator e,
 			GraphSize graphSize) {
-		return getMeanCardinality(logReader
-				.getAvgResultSize(e.getLoggingName()), super
-				.calculateCardinalityDeclaration(e, graphSize));
+		return super.calculateCardinalityDeclaration(e, graphSize);
+		// I think the logging doesn't make sense here...
+		//
+		// return getMeanCardinality(logReader
+		// .getAvgResultSize(e.getLoggingName()), super
+		// .calculateCardinalityDeclaration(e, graphSize));
 
 	}
 
@@ -305,9 +307,12 @@ public class LogCostModel extends DefaultCostModel {
 	@Override
 	public int calculateCardinalitySimpleDeclaration(
 			SimpleDeclarationEvaluator e, GraphSize graphSize) {
-		return getMeanCardinality(logReader
-				.getAvgResultSize(e.getLoggingName()), super
-				.calculateCardinalitySimpleDeclaration(e, graphSize));
+		return super.calculateCardinalitySimpleDeclaration(e, graphSize);
+		// I think the log results don't make sense here...
+		//
+		// return getMeanCardinality(logReader
+		// .getAvgResultSize(e.getLoggingName()), super
+		// .calculateCardinalitySimpleDeclaration(e, graphSize));
 	}
 
 	/*
@@ -392,8 +397,8 @@ public class LogCostModel extends DefaultCostModel {
 
 		int subtreeCosts = 0;
 		while (inc != null) {
-			PathDescriptionEvaluator pathEval = (PathDescriptionEvaluator) vertexEvalMarker
-					.getMark(inc.getAlpha());
+			PathDescriptionEvaluator pathEval = (PathDescriptionEvaluator) greqlEvaluator
+					.getVertexEvaluatorGraphMarker().getMark(inc.getAlpha());
 			subtreeCosts += pathEval
 					.getCurrentSubtreeEvaluationCosts(graphSize);
 			inc = inc.getNextIsPathDescriptionOf(EdgeDirection.IN);
@@ -429,14 +434,14 @@ public class LogCostModel extends DefaultCostModel {
 		BackwardVertexSet vertex = (BackwardVertexSet) e.getVertex();
 		Expression targetExpression = (Expression) vertex
 				.getFirstIsTargetExprOf().getAlpha();
-		VertexEvaluator vertexEval = (VertexEvaluator) vertexEvalMarker
-				.getMark(targetExpression);
+		VertexEvaluator vertexEval = (VertexEvaluator) greqlEvaluator
+				.getVertexEvaluatorGraphMarker().getMark(targetExpression);
 		int targetCosts = vertexEval
 				.getCurrentSubtreeEvaluationCosts(graphSize);
 		PathDescription p = (PathDescription) vertex.getFirstIsPathOf()
 				.getAlpha();
-		PathDescriptionEvaluator pathDescEval = (PathDescriptionEvaluator) vertexEvalMarker
-				.getMark(p);
+		PathDescriptionEvaluator pathDescEval = (PathDescriptionEvaluator) greqlEvaluator
+				.getVertexEvaluatorGraphMarker().getMark(p);
 		int pathDescCosts = pathDescEval
 				.getCurrentSubtreeEvaluationCosts(graphSize);
 
@@ -467,8 +472,8 @@ public class LogCostModel extends DefaultCostModel {
 
 		Expression condition = (Expression) vertex.getFirstIsConditionOf()
 				.getAlpha();
-		VertexEvaluator conditionEvaluator = vertexEvalMarker
-				.getMark(condition);
+		VertexEvaluator conditionEvaluator = greqlEvaluator
+				.getVertexEvaluatorGraphMarker().getMark(condition);
 		int conditionCosts = conditionEvaluator
 				.getCurrentSubtreeEvaluationCosts(graphSize);
 
@@ -481,18 +486,20 @@ public class LogCostModel extends DefaultCostModel {
 		Expression expressionToEvaluate;
 		expressionToEvaluate = (Expression) vertex.getFirstIsTrueExprOf()
 				.getAlpha();
-		VertexEvaluator vertexEval = vertexEvalMarker
-				.getMark(expressionToEvaluate);
+		VertexEvaluator vertexEval = greqlEvaluator
+				.getVertexEvaluatorGraphMarker().getMark(expressionToEvaluate);
 		int trueCosts = vertexEval.getCurrentSubtreeEvaluationCosts(graphSize);
 
 		expressionToEvaluate = (Expression) vertex.getFirstIsFalseExprOf()
 				.getAlpha();
-		vertexEval = vertexEvalMarker.getMark(expressionToEvaluate);
+		vertexEval = greqlEvaluator.getVertexEvaluatorGraphMarker().getMark(
+				expressionToEvaluate);
 		int falseCosts = vertexEval.getCurrentSubtreeEvaluationCosts(graphSize);
 
 		expressionToEvaluate = (Expression) vertex.getFirstIsNullExprOf()
 				.getAlpha();
-		vertexEval = vertexEvalMarker.getMark(expressionToEvaluate);
+		vertexEval = greqlEvaluator.getVertexEvaluatorGraphMarker().getMark(
+				expressionToEvaluate);
 		int nullCosts = vertexEval.getCurrentSubtreeEvaluationCosts(graphSize);
 
 		// We say the costs are the average of all costs weighted by the
@@ -500,7 +507,7 @@ public class LogCostModel extends DefaultCostModel {
 		// by conditionSelectivity. We say the two other cases are equally
 		// distributed: (1 - conditionSelectivity) / 2
 		int avgCosts = (int) Math.round((trueCosts * conditionSelectivity)
-				+ (falseCosts + nullCosts) / 2 * (1 - conditionSelectivity));
+				+ (falseCosts + nullCosts) / 2d * (1 - conditionSelectivity));
 
 		int ownCosts = 4;
 		int iteratedCosts = ownCosts * e.getVariableCombinations(graphSize);
@@ -544,12 +551,13 @@ public class LogCostModel extends DefaultCostModel {
 		ForwardVertexSet vertex = (ForwardVertexSet) e.getVertex();
 		Expression startExpression = (Expression) vertex
 				.getFirstIsStartExprOf().getAlpha();
-		VertexEvaluator vertexEval = vertexEvalMarker.getMark(startExpression);
+		VertexEvaluator vertexEval = greqlEvaluator
+				.getVertexEvaluatorGraphMarker().getMark(startExpression);
 		int startCosts = vertexEval.getCurrentSubtreeEvaluationCosts(graphSize);
 		PathDescription p = (PathDescription) vertex.getFirstIsPathOf()
 				.getAlpha();
-		PathDescriptionEvaluator pathDescEval = (PathDescriptionEvaluator) vertexEvalMarker
-				.getMark(p);
+		PathDescriptionEvaluator pathDescEval = (PathDescriptionEvaluator) greqlEvaluator
+				.getVertexEvaluatorGraphMarker().getMark(p);
 		int pathDescCosts = pathDescEval
 				.getCurrentSubtreeEvaluationCosts(graphSize);
 
@@ -601,10 +609,14 @@ public class LogCostModel extends DefaultCostModel {
 	public VertexCosts calculateCostsListRangeConstruction(
 			ListRangeConstructionEvaluator e, GraphSize graphSize) {
 		ListRangeConstruction exp = (ListRangeConstruction) e.getVertex();
-		VertexEvaluator startExpEval = vertexEvalMarker.getMark(exp
-				.getFirstIsFirstValueOf().getAlpha());
-		VertexEvaluator targetExpEval = vertexEvalMarker.getMark(exp
-				.getFirstIsLastValueOf().getAlpha());
+
+		VertexEvaluator startExpEval = greqlEvaluator
+				.getVertexEvaluatorGraphMarker().getMark(
+						exp.getFirstIsFirstValueOf().getAlpha());
+		VertexEvaluator targetExpEval = greqlEvaluator
+				.getVertexEvaluatorGraphMarker().getMark(
+						exp.getFirstIsLastValueOf().getAlpha());
+
 		int startCosts = startExpEval
 				.getCurrentSubtreeEvaluationCosts(graphSize);
 		int targetCosts = targetExpEval
@@ -661,19 +673,21 @@ public class LogCostModel extends DefaultCostModel {
 		PathExistence existence = (PathExistence) e.getVertex();
 		Expression startExpression = (Expression) existence
 				.getFirstIsStartExprOf().getAlpha();
-		VertexEvaluator vertexEval = vertexEvalMarker.getMark(startExpression);
+		VertexEvaluator vertexEval = greqlEvaluator
+				.getVertexEvaluatorGraphMarker().getMark(startExpression);
 		int startCosts = vertexEval.getCurrentSubtreeEvaluationCosts(graphSize);
 
 		Expression targetExpression = (Expression) existence
 				.getFirstIsTargetExprOf().getAlpha();
-		vertexEval = vertexEvalMarker.getMark(targetExpression);
+		vertexEval = greqlEvaluator.getVertexEvaluatorGraphMarker().getMark(
+				targetExpression);
 		int targetCosts = vertexEval
 				.getCurrentSubtreeEvaluationCosts(graphSize);
 
 		PathDescription p = (PathDescription) existence.getFirstIsPathOf()
 				.getAlpha();
-		PathDescriptionEvaluator pathDescEval = (PathDescriptionEvaluator) vertexEvalMarker
-				.getMark(p);
+		PathDescriptionEvaluator pathDescEval = (PathDescriptionEvaluator) greqlEvaluator
+				.getVertexEvaluatorGraphMarker().getMark(p);
 		int pathDescCosts = pathDescEval
 				.getCurrentSubtreeEvaluationCosts(graphSize);
 
@@ -685,7 +699,7 @@ public class LogCostModel extends DefaultCostModel {
 
 		// We assume the costs for evaluating a DFA is the square of its number
 		// of states + 50 base costs.
-		int ownCosts = noOfStates * noOfStates + 50;
+		int ownCosts = Math.round(1.0f * noOfStates * noOfStates) + 50;
 		int iteratedCosts = ownCosts * e.getVariableCombinations(graphSize);
 		int subtreeCosts = startCosts + targetCosts + pathDescCosts
 				+ iteratedCosts;
@@ -778,7 +792,7 @@ public class LogCostModel extends DefaultCostModel {
 			GraphSize graphSize) {
 		double loggedSelectivity = logReader.getAvgSelectivity(e
 				.getLoggingName());
-		if (loggedSelectivity > 0 || loggedSelectivity <= 1) {
+		if (loggedSelectivity > 0 && loggedSelectivity <= 1) {
 			return (loggedSelectivity * logScalingFactor)
 					+ ((1 - logScalingFactor) * super
 							.calculateSelectivityTypeId(e, graphSize));

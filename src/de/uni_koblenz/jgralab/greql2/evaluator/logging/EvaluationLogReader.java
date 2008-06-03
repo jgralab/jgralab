@@ -3,7 +3,7 @@
  */
 package de.uni_koblenz.jgralab.greql2.evaluator.logging;
 
-import java.util.ArrayList;
+import java.util.List;
 
 /**
  * An {@link EvaluationLogReader} is used to get the average input and result
@@ -43,7 +43,7 @@ public interface EvaluationLogReader {
 	 *            sizes
 	 * @return an array of average size of input elements
 	 */
-	public ArrayList<Double> getAvgInputSize(String name);
+	public List<Double> getAvgInputSize(String name);
 
 	/**
 	 * loads the log from the default filename of this logger

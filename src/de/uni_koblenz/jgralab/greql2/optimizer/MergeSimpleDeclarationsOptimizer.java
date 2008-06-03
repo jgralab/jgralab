@@ -6,8 +6,11 @@ import java.util.HashMap;
 import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
 import de.uni_koblenz.jgralab.greql2.schema.Declaration;
+import de.uni_koblenz.jgralab.greql2.schema.Expression;
 import de.uni_koblenz.jgralab.greql2.schema.Greql2;
+import de.uni_koblenz.jgralab.greql2.schema.IsDeclaredVarOf;
 import de.uni_koblenz.jgralab.greql2.schema.IsSimpleDeclOf;
+import de.uni_koblenz.jgralab.greql2.schema.IsTargetExprOf;
 import de.uni_koblenz.jgralab.greql2.schema.IsTypeExprOfDeclaration;
 import de.uni_koblenz.jgralab.greql2.schema.SimpleDeclaration;
 
@@ -115,10 +118,10 @@ public class MergeSimpleDeclarationsOptimizer extends OptimizerBase {
 				// merge the sourcePositions
 				IsSimpleDeclOf isSDOfS = s
 						.getFirstIsSimpleDeclOf(EdgeDirection.OUT);
-				mergeSourcePositions(isSDOfS, isSDOfSurvivor);
+				OptimizerUtility.mergeSourcePositions(isSDOfS, isSDOfSurvivor);
 				IsTypeExprOfDeclaration isTEODS = s
 						.getFirstIsTypeExprOfDeclaration(EdgeDirection.IN);
-				mergeSourcePositions(isTEODS, isTEODSurvivor);
+				OptimizerUtility.mergeSourcePositions(isTEODS, isTEODSurvivor);
 
 				s.delete();
 			}

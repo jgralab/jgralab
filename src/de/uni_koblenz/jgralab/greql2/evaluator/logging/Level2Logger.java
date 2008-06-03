@@ -47,7 +47,7 @@ import java.util.concurrent.Semaphore;
  * <br>
  * 
  * <code>
- * EvaluationLogger logger = new Level1Logger(loggerDirectory, dataGraph, LoggingType.SCHEMA);<br>
+ * EvaluationLogger logger = new Level2Logger(loggerDirectory, dataGraph, LoggingType.SCHEMA);<br>
  * ...<br>
  * logger.logResultSize(&quot;foo&quot;, 33);<br>
  * ...<br>
@@ -59,7 +59,7 @@ import java.util.concurrent.Semaphore;
  * @author Daniel Bildhauer <dbildh@uni-koblenz.de> Summer 2006, Diploma Thesis
  * @author Tassilo Horn <heimdall@uni-koblenz.de>, 2007, Diploma Thesis
  */
-public class Level1Logger extends Level1LoggingBase implements EvaluationLogger {
+public class Level2Logger extends Level2LoggingBase implements EvaluationLogger {
 
 	private static HashMap<String, Semaphore> logFileLockMap;
 
@@ -68,7 +68,7 @@ public class Level1Logger extends Level1LoggingBase implements EvaluationLogger 
 	}
 
 	/**
-	 * Indicates if this {@link Level1Logger} already has called its store()
+	 * Indicates if this {@link Level2Logger} already has called its store()
 	 * method.
 	 */
 	private boolean hasStored = false;
@@ -76,7 +76,7 @@ public class Level1Logger extends Level1LoggingBase implements EvaluationLogger 
 	/**
 	 * creates a new level1logger
 	 */
-	private Level1Logger() {
+	private Level2Logger() {
 		inputSize = new HashMap<String, ArrayLogEntry>();
 		resultSize = new HashMap<String, SimpleLogEntry>();
 		selectivity = new HashMap<String, SimpleLogEntry>();
@@ -94,12 +94,12 @@ public class Level1Logger extends Level1LoggingBase implements EvaluationLogger 
 	 *            see {@link LoggingType}. If {@link LoggingType#GENERIC} is
 	 *            used here, the given dataGraph may be null.
 	 */
-	public Level1Logger(File logDirectory, Graph dataGraph,
+	public Level2Logger(File logDirectory, Graph dataGraph,
 			LoggingType loggingType) throws InterruptedException {
 		this();
 		loggerDirectory = logDirectory;
 		if (dataGraph != null) {
-			schemaName = dataGraph.getSchema().getQualifiedName();
+			schemaName = dataGraph.getSchema().getSimpleName();
 			dataGraphId = dataGraph.getId();
 		}
 		this.loggingType = loggingType;
@@ -197,7 +197,7 @@ public class Level1Logger extends Level1LoggingBase implements EvaluationLogger 
 	 * stores the log to the given file
 	 */
 	public boolean store(File file) throws IOException {
-		Element rootElement = new Element("level1log");
+		Element rootElement = new Element("level2log");
 		Element resultElement = new Element("results");
 		Iterator<SimpleLogEntry> iter = resultSize.values().iterator();
 		while (iter.hasNext()) {

@@ -24,8 +24,7 @@
 
 package de.uni_koblenz.jgralab.greql2.evaluator.costmodel;
 
-import de.uni_koblenz.jgralab.Graph;
-import de.uni_koblenz.jgralab.GraphMarker;
+import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
 import de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.*;
 
 /**
@@ -56,13 +55,12 @@ public interface CostModel {
 	public boolean isEquivalent(CostModel costModel);
 
 	/**
-	 * Set the given {@link GraphMarker} for this CostModel.
+	 * Set the given {@link GreqlEvaluator} for this CostModel.
 	 * 
-	 * @param marker
-	 *            the {@link GraphMarker} with the {@link VertexEvaluator}s for
-	 *            the {@link Graph} that is the object for cost estimation.
+	 * @param eval
+	 *            the {@link GreqlEvaluator}
 	 */
-	public void setGraphMarker(GraphMarker<VertexEvaluator> marker);
+	public void setGreqlEvaluator(GreqlEvaluator eval);
 
 	public VertexCosts calculateCostsAlternativePathDescription(
 			AlternativePathDescriptionEvaluator e, GraphSize graphSize);

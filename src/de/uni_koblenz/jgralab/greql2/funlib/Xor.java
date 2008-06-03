@@ -105,7 +105,7 @@ public class Xor implements Greql2Function {
 	}
 
 	public double getSelectivity() {
-		return 1;
+		return 2d / 9;
 	}
 
 	public int getEstimatedCardinality(int inElements) {

@@ -21,7 +21,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
- 
+
 package de.uni_koblenz.jgralab.greql2.funlib;
 
 import java.util.ArrayList;
@@ -39,32 +39,47 @@ import de.uni_koblenz.jgralab.greql2.jvalue.*;
  * <dd>This function can be used in infix notation: <code>a and b</code></dd>
  * <dd>&nbsp;</dd>
  * </dl>
- * <dl><dt></dt>
+ * <dl>
+ * <dt></dt>
  * <dd>
  * <dl>
  * <dt><b>Parameters:</b></dt>
  * <dd><code>a: BOOLEAN</code> - first operand</dd>
  * <dd><code>b: BOOLEAN</code> - second operand</dd>
  * <dt><b>Returns:</b></dt>
- * <dd>the result of the logical operation <code>a and b</code> as defined below:</dd>
+ * <dd>the result of the logical operation <code>a and b</code> as defined
+ * below:</dd>
  * <dd>&nbsp;</dd>
  * <dd><table border = "1">
- * 	<tr>
- * 		<th>a\b</th><th bgcolor="#cc996f">false</th><th bgcolor="#bababa">Null</th><th bgcolor="#92cc90">true</th>
- * 	</tr>
- * 	<tr>
- * 		<th bgcolor="#cc996f">false</th><td bgcolor="#ffbf8b">false</td><td bgcolor="#ffbf8b">false</td><td bgcolor="#ffbf8b">false</td>
- * 	</tr>
- * 	<tr>
- * 		<th bgcolor="#bababa">Null</th><td bgcolor="#ffbf8b">false</td><td bgcolor="#eeeeee">Null</td><td bgcolor="#eeeeee">Null</td>
- * 	</tr>
- * 	<tr>
- * 		<th bgcolor="#92cc90">true</th><td bgcolor="#ffbf8b">false</td><td bgcolor="#eeeeee">Null</td><td bgcolor="#b7ffb4">true</td>
- * 	</tr>
+ * <tr>
+ * <th>a\b</th>
+ * <th bgcolor="#cc996f">false</th>
+ * <th bgcolor="#bababa">Null</th>
+ * <th bgcolor="#92cc90">true</th>
+ * </tr>
+ * <tr>
+ * <th bgcolor="#cc996f">false</th>
+ * <td bgcolor="#ffbf8b">false</td>
+ * <td bgcolor="#ffbf8b">false</td>
+ * <td bgcolor="#ffbf8b">false</td>
+ * </tr>
+ * <tr>
+ * <th bgcolor="#bababa">Null</th>
+ * <td bgcolor="#ffbf8b">false</td>
+ * <td bgcolor="#eeeeee">Null</td>
+ * <td bgcolor="#eeeeee">Null</td>
+ * </tr>
+ * <tr>
+ * <th bgcolor="#92cc90">true</th>
+ * <td bgcolor="#ffbf8b">false</td>
+ * <td bgcolor="#eeeeee">Null</td>
+ * <td bgcolor="#b7ffb4">true</td>
+ * </tr>
  * </table></dd>
  * </dl>
  * </dd>
  * </dl>
+ * 
  * @author Daniel Bildhauer <dbildh@uni-koblenz.de> Summer 2006, Diploma Thesis
  * 
  */
@@ -76,7 +91,7 @@ public class And implements Greql2Function {
 			throw new WrongFunctionParameterException(this, null, arguments);
 		}
 		try {
-			return JValueBoolean.and(arguments[0],arguments[1]);
+			return JValueBoolean.and(arguments[0], arguments[1]);
 		} catch (JValueInvalidTypeException ex) {
 			throw new WrongFunctionParameterException(this, null, arguments);
 		}
@@ -87,7 +102,7 @@ public class And implements Greql2Function {
 	}
 
 	public double getSelectivity() {
-		return 0.5;
+		return 1d / 9;
 	}
 
 	public int getEstimatedCardinality(int inElements) {

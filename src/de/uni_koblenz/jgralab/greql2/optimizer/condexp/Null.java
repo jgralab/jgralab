@@ -1,0 +1,45 @@
+/**
+ * 
+ */
+package de.uni_koblenz.jgralab.greql2.optimizer.condexp;
+
+import de.uni_koblenz.jgralab.greql2.schema.BoolLiteral;
+import de.uni_koblenz.jgralab.greql2.schema.Expression;
+import de.uni_koblenz.jgralab.greql2.schema.TrivalentBoolean;
+
+/**
+ * TODO: (heimdall) Comment class!
+ * 
+ * @author Tassilo Horn (heimdall), 2008, Diploma Thesis
+ * 
+ */
+public class Null extends Literal {
+
+	@Override
+	public String toString() {
+		return "null";
+	}
+
+	@Override
+	public Expression toExpression() {
+		BoolLiteral bool = syntaxgraph.createBoolLiteral();
+		bool.setBoolValue(TrivalentBoolean.NULL);
+		return bool;
+	}
+
+	@Override
+	public double getSelectivity() {
+		return 0;
+	}
+
+	@Override
+	public boolean equals(Object o) {
+		return o instanceof Null;
+	}
+
+	@Override
+	public int hashCode() {
+		return 0;
+	}
+
+}

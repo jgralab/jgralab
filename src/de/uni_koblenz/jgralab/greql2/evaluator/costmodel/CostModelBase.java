@@ -1,7 +1,11 @@
 package de.uni_koblenz.jgralab.greql2.evaluator.costmodel;
 
-import de.uni_koblenz.jgralab.GraphMarker;
-import de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.VertexEvaluator;
+import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
+import de.uni_koblenz.jgralab.greql2.schema.Declaration;
+import de.uni_koblenz.jgralab.greql2.schema.EdgeSetExpression;
+import de.uni_koblenz.jgralab.greql2.schema.EdgeSubgraphExpression;
+import de.uni_koblenz.jgralab.greql2.schema.VertexSetExpression;
+import de.uni_koblenz.jgralab.greql2.schema.VertexSubgraphExpression;
 
 /**
  * Base class for {@link CostModel}s. Holds constants that are meant to be used
@@ -82,8 +86,42 @@ public abstract class CostModelBase {
 	protected static final int typeIdCosts = 5;
 
 	/**
-	 * Stores a reference to the GraphMarker that holds the VertexEvaluator
-	 * object
+	 * A factor that will be multiplied with the number of variable combinations
+	 * to estimate the own costs of a {@link Declaration}.
 	 */
-	protected GraphMarker<VertexEvaluator> vertexEvalMarker;
+	protected static final int declarationCostsFactor = 5;
+
+	/**
+	 * A factor that will be multiplied with the number of edges of the
+	 * datagraph to estimate the own costs of a {@link EdgeSetExpression}.
+	 */
+	protected static final int edgeSetExpressionCostsFactor = 3;
+
+	/**
+	 * A factor that will be multiplied with the number of vertices of the
+	 * datagraph to estimate the own costs of a {@link VertexSetExpression}.
+	 */
+	protected static final int vertexSetExpressionCostsFactor = 3;
+
+	/**
+	 * A factor that will be multiplied with the number of edges of the
+	 * datagraph to estimate the own costs of a {@link EdgeSubgraphExpression}.
+	 */
+	protected static final int edgeSubgraphExpressionCostsFactor = 3;
+
+	/**
+	 * A factor that will be multiplied with the number of vertices of the
+	 * datagraph to estimate the own costs of a {@link VertexSubgraphExpression}.
+	 */
+	protected static final int vertexSubgraphExpressionCostsFactor = 3;
+
+	protected static final int greql2ExpressionCostsFactor = 3;
+
+	protected static final int definitionExpressionCostsFactor = 2;
+
+	/**
+	 * Stores a reference to the {@link GreqlEvaluator} that will evaluate the
+	 * query
+	 */
+	protected GreqlEvaluator greqlEvaluator;
 }

@@ -3,15 +3,15 @@
  */
 package de.uni_koblenz.jgralab.greql2.optimizer;
 
-import java.util.List;
+import java.io.File;
+import java.io.IOException;
+import java.util.HashSet;
+import java.util.Set;
 
-import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.Vertex;
-import de.uni_koblenz.jgralab.greql2.schema.FunctionId;
 import de.uni_koblenz.jgralab.greql2.schema.Greql2;
-import de.uni_koblenz.jgralab.greql2.schema.Greql2Aggregation;
-import de.uni_koblenz.jgralab.greql2.schema.SourcePosition;
+import de.uni_koblenz.jgralab.greql2.schema.IsDeclaredVarOf;
 import de.uni_koblenz.jgralab.greql2.schema.Variable;
 
 /**
@@ -23,61 +23,46 @@ import de.uni_koblenz.jgralab.greql2.schema.Variable;
  */
 public abstract class OptimizerBase implements Optimizer {
 
+	String optimizerHeaderString() {
+		return "*** " + this.getClass().getSimpleName() + ": ";
+	}
+
 	/**
-	 * Merges the contents of the sourcePosition attribute of <code>from</code>
-	 * to the contents of the sourcePosition attribute of <code>to</code>. If
-	 * a {@link SourcePosition} already exists in <code>to</code> it won't be
-	 * added again.
+	 * Print <code>graph</code> as dot-file with name <code>tmpFileName</code>
+	 * as temporary file in /tmp/ (or where your systems tempdir is...)
 	 * 
-	 * @param from
-	 *            a {@link Greql2Aggregation}
-	 * @param to
-	 *            another {@link Greql2Aggregation}
+	 * @param graph
+	 * @param tmpFileName
 	 */
-	protected void mergeSourcePositions(Greql2Aggregation from,
-			Greql2Aggregation to) {
-		List<SourcePosition> toSourcePositions = to.getSourcePositions();
-		for (SourcePosition sp : from.getSourcePositions()) {
-			if (!toSourcePositions.contains(sp)) {
-				toSourcePositions.add(sp);
-			}
+	protected void printGraphAsDot(Greql2 graph, String tmpFileName) {
+		try {
+			de.uni_koblenz.jgralab.utilities.Utility.convertGraphToDot(graph,
+					File.createTempFile(tmpFileName, ".dot").getAbsolutePath());
+		} catch (IOException e) {
+			e.printStackTrace();
 		}
 	}
 
 	/**
-	 * Makes a deep copy of the subgraph given by <code>origVertex</code>.
-	 * For each {@link Vertex} in that subgraph a new {@link Vertex} of the same
-	 * will be created, likewise for the {@link Edge}s. As an exception to that
-	 * rule, {@link FunctionId}s and {@link Variable} vertices won't be copied.
+	 * Collect the {@link Variable}s that have no outgoing
+	 * {@link IsDeclaredVarOf} edges and are located below <code>v</code>.
 	 * 
-	 * The new {@link Edge} will have the same <code>sourcePositions</code> as
-	 * the original {@link Edge}s.
-	 * 
-	 * @param origVertex
-	 *            the root {@link Vertex} of the subgraph to be copied
-	 * @param graph
-	 *            the {@link Graph} where <code>origVertex</code> is part of.
-	 * @return the root {@link Vertex} of the copy
+	 * @param vertex
+	 *            the root {@link Vertex} below which to look for undeclared
+	 *            {@link Variable}s
+	 * @return a {@link Set} of {@link Variable}s that have no outgoing
+	 *         {@link IsDeclaredVarOf} edges and are located below
+	 *         <code>v</code>
 	 */
-	protected Vertex copySubgraph(Vertex origVertex, Greql2 graph) {
-		Vertex newVertex;
-		if (origVertex instanceof Variable || origVertex instanceof FunctionId) {
-			// FunctionIds and Variables aren't copied. Since those are always
-			// leaves, we can stop here.
-			return origVertex;
+	protected Set<Variable> collectUndeclaredVariablesBelow(Vertex vertex) {
+		// System.out.println("collectUndeclaredVariablesBelow(" + vertex +
+		// ")");
+		HashSet<Variable> undeclaredVars = new HashSet<Variable>();
+		for (Variable var : OptimizerUtility.collectVariablesBelow(vertex)) {
+			if (var.getFirstIsDeclaredVarOf(EdgeDirection.OUT) == null) {
+				undeclaredVars.add(var);
+			}
 		}
-		newVertex = graph.createVertex(origVertex.getClass());
-		Edge origEdge = origVertex.getFirstEdge(EdgeDirection.IN);
-		Vertex subVertex;
-		Edge newEdge;
-		while (origEdge != null) {
-			subVertex = copySubgraph(origEdge.getAlpha(), graph);
-			newEdge = graph.createEdge(origEdge.getClass(), subVertex,
-					newVertex);
-			mergeSourcePositions((Greql2Aggregation) origEdge,
-					(Greql2Aggregation) newEdge);
-			origEdge = origEdge.getNextEdge(EdgeDirection.IN);
-		}
-		return newVertex;
+		return undeclaredVars;
 	}
 }

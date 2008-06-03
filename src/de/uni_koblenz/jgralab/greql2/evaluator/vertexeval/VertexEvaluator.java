@@ -49,7 +49,6 @@ import de.uni_koblenz.jgralab.greql2.exception.QuerySourceException;
 import de.uni_koblenz.jgralab.greql2.exception.UnknownVertexException;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValueTypeCollection;
-import de.uni_koblenz.jgralab.greql2.schema.Expression;
 import de.uni_koblenz.jgralab.greql2.schema.Greql2Aggregation;
 import de.uni_koblenz.jgralab.greql2.schema.Greql2Vertex;
 import de.uni_koblenz.jgralab.greql2.schema.SourcePosition;
@@ -199,7 +198,7 @@ public abstract class VertexEvaluator {
 	 *         the function name of the corresponding function for logging.
 	 */
 	public String getLoggingName() {
-		return this.getVertex().getAttributedElementClass().getQualifiedName();
+		return this.getVertex().getAttributedElementClass().getSimpleName();
 	}
 
 	/**
@@ -228,9 +227,8 @@ public abstract class VertexEvaluator {
 			throw ex;
 		}
 
-		// Log the size of the result and the selectivity for boolean
-		// expressions.
-		if (evaluationLogger != null && result != null && result.isValid()) {
+		// Logging...
+		if (evaluationLogger != null && result != null) {
 			if (result.isBoolean()) {
 				// Log the selectivity for vertices that return a boolean
 				evaluationLogger.logSelectivity(getLoggingName(), result
@@ -240,10 +238,17 @@ public abstract class VertexEvaluator {
 				JValueTypeCollection col = result.toJValueTypeCollection();
 				TypeId tid = (TypeId) getVertex();
 				// get the father vertex of this TypeId
-				Expression exp = (Expression) tid.getFirstIsTypeRestrOf(
-						EdgeDirection.OUT).getOmega();
-				if (exp instanceof VertexSetExpression
-						|| exp instanceof VertexSubgraphExpression) {
+				Vertex fatherOfTypeId = null;
+				if (tid.getFirstIsTypeRestrOf(EdgeDirection.OUT) == null)
+					// No IsTypeRestrOf edge, so there must be a IsTypeIdOf
+					// edge, going to an EdgeRestriction.
+					fatherOfTypeId = tid.getFirstIsTypeIdOf(EdgeDirection.OUT)
+							.getOmega();
+				else
+					fatherOfTypeId = tid.getFirstIsTypeRestrOf(
+							EdgeDirection.OUT).getOmega();
+				if (fatherOfTypeId instanceof VertexSetExpression
+						|| fatherOfTypeId instanceof VertexSubgraphExpression) {
 					// The typeId restricts vertex classes
 					for (VertexClass vc : greqlEvaluator.getDatagraph()
 							.getSchema().getVertexClassesInTopologicalOrder()) {
@@ -258,32 +263,32 @@ public abstract class VertexEvaluator {
 								.acceptsType(ec));
 					}
 				}
+			}
 
-				// Log the size of the result
-				if (result.isCollection()) {
-					if (this instanceof SimpleDeclarationEvaluator) {
-						int size = 1;
-						for (JValue val : result.toJValueList()) {
-							VariableDeclaration d = val.toVariableDeclaration();
-							size *= d.getDefinitionCardinality();
-						}
-						evaluationLogger.logResultSize(getLoggingName(), size);
-					} else {
-						evaluationLogger.logResultSize(getLoggingName(), result
-								.toCollection().size());
+			// Log the size of the result
+			if (result.isCollection()) {
+				if (this instanceof SimpleDeclarationEvaluator) {
+					int size = 1;
+					for (JValue val : result.toJValueList()) {
+						VariableDeclaration d = val.toVariableDeclaration();
+						size *= d.getDefinitionCardinality();
 					}
-				} else if (result.isDeclarationLayer()) {
-					// Declarations return a VariableDeclarationLayer object as
-					// result. The real result size is the number of possible
-					// variable combinations. This cannot be logged here, but it
-					// is done in DeclarationLayer itself.
-				} else if (result.isDFA() || result.isNFA()) {
-					// Result sizes for PathDescriptions are logged as the
-					// number of states the DFA has. That is done in
-					// Forward-/BackwardVertexSet and PathExistance.
+					evaluationLogger.logResultSize(getLoggingName(), size);
 				} else {
-					evaluationLogger.logResultSize(getLoggingName(), 1);
+					evaluationLogger.logResultSize(getLoggingName(), result
+							.toCollection().size());
 				}
+			} else if (result.isDeclarationLayer()) {
+				// Declarations return a VariableDeclarationLayer object as
+				// result. The real result size is the number of possible
+				// variable combinations. This cannot be logged here, but it
+				// is done in DeclarationLayer itself.
+			} else if (result.isDFA() || result.isNFA()) {
+				// Result sizes for PathDescriptions are logged as the
+				// number of states the DFA has. That is done in
+				// Forward-/BackwardVertexSet and PathExistance.
+			} else {
+				evaluationLogger.logResultSize(getLoggingName(), 1);
 			}
 		}
 
@@ -293,7 +298,6 @@ public abstract class VertexEvaluator {
 		// System.out.println("Result is: " + result);
 
 		greqlEvaluator.progress(ownEvaluationCosts);
-
 		return result;
 	}
 
@@ -349,8 +353,7 @@ public abstract class VertexEvaluator {
 		resetToInitialState();
 		GraphMarker<VertexEvaluator> marker = greqlEvaluator
 				.getVertexEvaluatorGraphMarker();
-		for (Edge e : getVertex()
-				.incidences(EdgeDirection.IN)) {
+		for (Edge e : getVertex().incidences(EdgeDirection.IN)) {
 			Vertex vertex = e.getThat();
 			VertexEvaluator eval = marker.getMark(vertex);
 			// System.out.println("Vertex: " + vertex.getClass().getName());
@@ -408,6 +411,23 @@ public abstract class VertexEvaluator {
 			this.initialSubtreeEvaluationCosts = costs.subtreeEvaluationCosts;
 			return this.initialSubtreeEvaluationCosts;
 		}
+	}
+
+	/**
+	 * Get the costs for evaluating the associated vertex one time. No subtree
+	 * or iteration costs are taken into account.
+	 * 
+	 * @param graphSize
+	 *            a {@link GraphSize} object indicating the size of the data-{@link Graph}
+	 * @return the costs for evaluating the associated vertex one time excluding
+	 *         subtree and iteration costs
+	 */
+	public int getOwnEvaluationCosts(GraphSize graphSize) {
+		if (ownEvaluationCosts == Integer.MIN_VALUE) {
+			// call for side-effects
+			getInitialSubtreeEvaluationCosts(graphSize);
+		}
+		return ownEvaluationCosts;
 	}
 
 	/**

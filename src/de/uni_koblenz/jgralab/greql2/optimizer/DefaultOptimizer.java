@@ -24,18 +24,23 @@
 
 package de.uni_koblenz.jgralab.greql2.optimizer;
 
-import java.io.File;
-import java.io.IOException;
+import java.util.Set;
 
+import de.uni_koblenz.jgralab.GraphMarker;
 import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
+import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.GraphSize;
+import de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.VertexEvaluator;
+import de.uni_koblenz.jgralab.greql2.exception.OptimizerException;
 import de.uni_koblenz.jgralab.greql2.schema.Greql2;
-import de.uni_koblenz.jgralab.utilities.Utility;
+import de.uni_koblenz.jgralab.greql2.schema.Greql2Expression;
+import de.uni_koblenz.jgralab.greql2.schema.Greql2Vertex;
+import de.uni_koblenz.jgralab.greql2.schema.Variable;
 
 /**
  * @author Tassilo Horn (heimdall), 2007, Diploma Thesis
  * 
  */
-public class DefaultOptimizer implements Optimizer {
+public class DefaultOptimizer extends OptimizerBase {
 
 	/*
 	 * (non-Javadoc)
@@ -56,80 +61,83 @@ public class DefaultOptimizer implements Optimizer {
 	 * @see de.uni_koblenz.jgralab.greql2.optimizer.Optimizer#optimize(de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator,
 	 *      de.uni_koblenz.jgralab.greql2.schema.Greql2)
 	 */
-	public void optimize(GreqlEvaluator eval, Greql2 syntaxgraph) {
-		// logCosts(eval, syntaxgraph);
-		Optimizer optimizer = new CommonSubgraphOptimizer();
+	public void optimize(GreqlEvaluator eval, Greql2 syntaxgraph)
+			throws OptimizerException {
+		// printGraphAsDot(syntaxgraph, "before-optimization");
 
-		// output the unoptimized syntax graph
-		try {
-			Utility.convertGraphToDot(eval.getSyntaxGraph(), File
-					.createTempFile("syntaxgraph-before", ".dot")
-					.getAbsolutePath());
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+		// optimizers
+		Optimizer cso = new CommonSubgraphOptimizer();
+		Optimizer eso = new EarySelectionOptimizer();
+		Optimizer peo = new PathExistenceOptimizer();
+		Optimizer vdoo = new VariableDeclarationOrderOptimizer();
+		Optimizer ceo = new ConditionalExpressionOptimizer();
 
-		// optimize
-		optimizer.optimize(eval, syntaxgraph);
-		optimizer = new MergeSimpleDeclarationsOptimizer();
-		optimizer.optimize(eval, syntaxgraph);
-		optimizer = new EarySelectionOptimizer();
-		optimizer.optimize(eval, syntaxgraph);
-		
-		// output the optimized syntax graph
-		try {
-			Utility.convertGraphToDot(eval.getSyntaxGraph(), File
-					.createTempFile("syntaxgraph-after", ".dot")
-					.getAbsolutePath());
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+		// do the optimization
+		cso.optimize(eval, syntaxgraph);
+		eso.optimize(eval, syntaxgraph);
 
-		// print the costs for each vertex
-		//printCosts(eval, syntaxgraph);
+		cso.optimize(eval, syntaxgraph);
+		vdoo.optimize(eval, syntaxgraph);
+
+		cso.optimize(eval, syntaxgraph);
+		peo.optimize(eval, syntaxgraph);
+
+		cso.optimize(eval, syntaxgraph);
+		ceo.optimize(eval, syntaxgraph);
+
+		cso.optimize(eval, syntaxgraph);
+
+		// printGraphAsDot(syntaxgraph, "after-optimization");
+		// printCosts(eval, syntaxgraph);
 	}
 
-//	private void printCosts(GreqlEvaluator eval, Greql2 syntaxgraph) {
-//		System.out.println("Optimizer: Optimizing " + syntaxgraph.getId()
-//				+ ".\n" + "This syntaxgraph has " + syntaxgraph.getECount()
-//				+ " edges and " + syntaxgraph.getVCount() + " vertexes.");
-//		GraphMarker<VertexEvaluator> marker = eval
-//				.getVertexEvaluatorGraphMarker();
-//		VertexEvaluator veval;
-//		GraphSize graphSize = new GraphSize(syntaxgraph);
-//
-//		// Calculate the cost of the root vertex so that all initial costs of
-//		// the vertices below are properly initialized.
-//		Greql2Expression rootVertex = syntaxgraph.getFirstGreql2Expression();
-//		VertexEvaluator rootEval = marker.getMark(rootVertex);
-//		rootEval.getInitialSubtreeEvaluationCosts(graphSize);
-//		rootEval.getEstimatedCardinality(graphSize);
-//		rootEval.calculateEstimatedSelectivity(graphSize);
-//
-//		Greql2Vertex vertex = syntaxgraph.getFirstGreql2Vertex();
-//		System.out
-//				.println("=========================================================");
-//		while (vertex != null) {
-//			System.out.println("Current Node: " + vertex);
-//			veval = marker.getMark(vertex);
-//			if (veval != null) {
-//				int costs = veval.getInitialSubtreeEvaluationCosts(graphSize);
-//				int card = veval.getEstimatedCardinality(graphSize);
-//				double sel = veval.getEstimatedSelectivity(graphSize);
-//				System.out.println("Costs for subtree evaluation: " + costs
-//						+ "\n" + "Estimated cardinality: " + card + "\n"
-//						+ "Estimated selectivity: " + sel);
-//			}
-//			System.out
-//					.println("=========================================================");
-//			vertex = vertex.getNextGreql2Vertex();
-//		}
-//		VertexEvaluator greql2ExpEval = marker.getMark(syntaxgraph
-//				.getFirstGreql2Expression());
-//		greql2ExpEval.resetSubtreeToInitialState();
-//		int estimatedInterpretationSteps = greql2ExpEval
-//				.getCurrentSubtreeEvaluationCosts(graphSize);
-//		System.out.println("Costs for the whole query: "
-//				+ estimatedInterpretationSteps);
-//	}
+	private void printCosts(GreqlEvaluator eval, Greql2 syntaxgraph) {
+		System.out.println("Optimizer: Optimizing " + syntaxgraph.getId()
+				+ ".\n" + "This syntaxgraph has " + syntaxgraph.getECount()
+				+ " edges and " + syntaxgraph.getVCount() + " vertexes.");
+		GraphMarker<VertexEvaluator> marker = eval
+				.getVertexEvaluatorGraphMarker();
+		VertexEvaluator veval;
+		GraphSize graphSize = new GraphSize(syntaxgraph);
+
+		// Calculate the cost of the root vertex so that all initial costs of
+		// the vertices below are properly initialized.
+		Greql2Expression rootVertex = syntaxgraph.getFirstGreql2Expression();
+		VertexEvaluator rootEval = marker.getMark(rootVertex);
+		rootEval.getInitialSubtreeEvaluationCosts(graphSize);
+		rootEval.getEstimatedCardinality(graphSize);
+		rootEval.calculateEstimatedSelectivity(graphSize);
+
+		Greql2Vertex vertex = syntaxgraph.getFirstGreql2Vertex();
+		System.out
+				.println("=========================================================");
+		while (vertex != null) {
+			System.out.println("Current Node: " + vertex);
+			veval = marker.getMark(vertex);
+			if (veval != null) {
+				int costs = veval.getInitialSubtreeEvaluationCosts(graphSize);
+				int card = veval.getEstimatedCardinality(graphSize);
+				Set<Variable> neededVars = veval.getNeededVariables();
+				Set<Variable> definedVars = veval.getDefinedVariables();
+				int varCombs = veval.getVariableCombinations(graphSize);
+				double sel = veval.getEstimatedSelectivity(graphSize);
+				System.out.println("Costs for subtree evaluation: " + costs
+						+ "\n" + "Estimated cardinality: " + card + "\n"
+						+ "Estimated selectivity: " + sel + "\n"
+						+ "Needed Vars: " + neededVars + "\n"
+						+ "Defined Vars: " + definedVars + "\n"
+						+ "Variable Combinations: " + varCombs);
+			}
+			System.out
+					.println("=========================================================");
+			vertex = vertex.getNextGreql2Vertex();
+		}
+		VertexEvaluator greql2ExpEval = marker.getMark(syntaxgraph
+				.getFirstGreql2Expression());
+		greql2ExpEval.resetSubtreeToInitialState();
+		int estimatedInterpretationSteps = greql2ExpEval
+				.getCurrentSubtreeEvaluationCosts(graphSize);
+		System.out.println("Costs for the whole query: "
+				+ estimatedInterpretationSteps);
+	}
 }

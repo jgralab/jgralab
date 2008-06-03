@@ -13,13 +13,13 @@ import org.jdom.Element;
 import org.jdom.input.SAXBuilder;
 
 /**
- * Holds the data that both {@link Level1LogReader} and {@link Level1Logger}
+ * Holds the data that both {@link Level2LogReader} and {@link Level2Logger}
  * share plus some internal methods both of them use.
  * 
  * @author Tassilo Horn (heimdall), 2007, Diploma Thesis
  * 
  */
-public abstract class Level1LoggingBase {
+public abstract class Level2LoggingBase {
 	/**
 	 * The directory where this logger saves it's logfiles.
 	 */
