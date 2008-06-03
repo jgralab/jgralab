@@ -239,14 +239,16 @@ public abstract class VertexEvaluator {
 				TypeId tid = (TypeId) getVertex();
 				// get the father vertex of this TypeId
 				Vertex fatherOfTypeId = null;
-				if (tid.getFirstIsTypeRestrOf(EdgeDirection.OUT) == null)
-					// No IsTypeRestrOf edge, so there must be a IsTypeIdOf
-					// edge, going to an EdgeRestriction.
+				if (tid.getFirstIsTypeRestrOf(EdgeDirection.OUT) == null) {
+					// FIXME (horn): TypeIds can be attached as GoalRestrictions
+					// of PathDescriptions, too, and maybe there're even more
+					// cases...
 					fatherOfTypeId = tid.getFirstIsTypeIdOf(EdgeDirection.OUT)
 							.getOmega();
-				else
+				} else {
 					fatherOfTypeId = tid.getFirstIsTypeRestrOf(
 							EdgeDirection.OUT).getOmega();
+				}
 				if (fatherOfTypeId instanceof VertexSetExpression
 						|| fatherOfTypeId instanceof VertexSubgraphExpression) {
 					// The typeId restricts vertex classes
