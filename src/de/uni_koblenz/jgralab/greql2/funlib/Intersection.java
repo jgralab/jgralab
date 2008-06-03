@@ -77,9 +77,9 @@ public class Intersection implements Greql2Function {
 		}
 	}
 
-	public int getEstimatedCosts(ArrayList<Integer> inElements) {
-		int sum = 0;
-		for (Integer i : inElements) {
+	public long getEstimatedCosts(ArrayList<Long> inElements) {
+		long sum = 0;
+		for (Long i : inElements) {
 			sum += i;
 		}
 		return sum * 2;
@@ -89,7 +89,7 @@ public class Intersection implements Greql2Function {
 		return 1;
 	}
 
-	public int getEstimatedCardinality(int inElements) {
+	public long getEstimatedCardinality(int inElements) {
 		return 1;
 	}
 

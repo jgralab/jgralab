@@ -111,29 +111,29 @@ public abstract class VertexEvaluator {
 	 * The costs for the current evaluation of the whole subtree in the abstract
 	 * measurement unit "interpretation steps"
 	 */
-	protected int currentSubtreeEvaluationCosts = Integer.MIN_VALUE;
+	protected long currentSubtreeEvaluationCosts = Long.MIN_VALUE;
 
 	/**
 	 * The costs for the evaluation of the whole subtree for the first time
 	 */
-	protected int initialSubtreeEvaluationCosts = Integer.MIN_VALUE;
+	protected long initialSubtreeEvaluationCosts = Long.MIN_VALUE;
 
 	/**
 	 * The costs for <b>one</b> evaluation of this vertex _without_ the costs
 	 * of the evaluation of the subtrees
 	 */
-	protected int ownEvaluationCosts = Integer.MIN_VALUE;
+	protected long ownEvaluationCosts = Long.MIN_VALUE;
 
 	/**
 	 * The costs for all evaluations of this vertex for all variable
 	 * combinations <b>without</b> the costs for the subtree evaluation
 	 */
-	protected int iteratedEvaluationCosts = Integer.MIN_VALUE;
+	protected long iteratedEvaluationCosts = Long.MIN_VALUE;
 
 	/**
 	 * The expected cardinality of the evaluation result this evaluator creates
 	 */
-	protected int estimatedCardinality = Integer.MIN_VALUE;
+	protected long estimatedCardinality = Long.MIN_VALUE;
 
 	/**
 	 * The expected selectivity of this vertexevaluator
@@ -339,11 +339,11 @@ public abstract class VertexEvaluator {
 	 */
 	public void resetToInitialState() {
 		result = null;
-		currentSubtreeEvaluationCosts = Integer.MIN_VALUE;
-		initialSubtreeEvaluationCosts = Integer.MIN_VALUE;
-		ownEvaluationCosts = Integer.MIN_VALUE;
-		iteratedEvaluationCosts = Integer.MIN_VALUE;
-		estimatedCardinality = Integer.MIN_VALUE;
+		currentSubtreeEvaluationCosts = Long.MIN_VALUE;
+		initialSubtreeEvaluationCosts = Long.MIN_VALUE;
+		ownEvaluationCosts = Long.MIN_VALUE;
+		iteratedEvaluationCosts = Long.MIN_VALUE;
+		estimatedCardinality = Long.MIN_VALUE;
 		estimatedSelectivity = Double.NaN;
 		costsGraphSize = null;
 		subgraph = null;
@@ -383,8 +383,8 @@ public abstract class VertexEvaluator {
 	 * @return the costs of this evaluation of the subtree the vertex this
 	 *         evaluator evaluates is root of
 	 */
-	public int getCurrentSubtreeEvaluationCosts(GraphSize graphSize) {
-		if (currentSubtreeEvaluationCosts == Integer.MIN_VALUE) {
+	public long getCurrentSubtreeEvaluationCosts(GraphSize graphSize) {
+		if (currentSubtreeEvaluationCosts == Long.MIN_VALUE) {
 			return getInitialSubtreeEvaluationCosts(graphSize);
 		} else {
 			return 1;
@@ -399,7 +399,7 @@ public abstract class VertexEvaluator {
 	 * @return the costs of the first evaluation of the subgraph the vertex this
 	 *         evaluator evaluates is root of
 	 */
-	public int getInitialSubtreeEvaluationCosts(GraphSize graphSize) {
+	public long getInitialSubtreeEvaluationCosts(GraphSize graphSize) {
 		if (costsGraphSize == graphSize && initialSubtreeEvaluationCosts > 0) {
 			return initialSubtreeEvaluationCosts;
 		} else {
@@ -422,8 +422,8 @@ public abstract class VertexEvaluator {
 	 * @return the costs for evaluating the associated vertex one time excluding
 	 *         subtree and iteration costs
 	 */
-	public int getOwnEvaluationCosts(GraphSize graphSize) {
-		if (ownEvaluationCosts == Integer.MIN_VALUE) {
+	public long getOwnEvaluationCosts(GraphSize graphSize) {
+		if (ownEvaluationCosts == Long.MIN_VALUE) {
 			// call for side-effects
 			getInitialSubtreeEvaluationCosts(graphSize);
 		}
@@ -482,7 +482,7 @@ public abstract class VertexEvaluator {
 	 * Returns the number of combinations of the variables this vertex depends
 	 * on
 	 */
-	public int getVariableCombinations(GraphSize graphSize) {
+	public long getVariableCombinations(GraphSize graphSize) {
 		int combinations = 1;
 		Iterator<Variable> iter = getNeededVariables().iterator();
 		while (iter.hasNext()) {
@@ -497,8 +497,8 @@ public abstract class VertexEvaluator {
 	/**
 	 * returns the estimated size of the result.
 	 */
-	public int getEstimatedCardinality(GraphSize graphSize) {
-		if (estimatedCardinality == Integer.MIN_VALUE) {
+	public long getEstimatedCardinality(GraphSize graphSize) {
+		if (estimatedCardinality == Long.MIN_VALUE) {
 			estimatedCardinality = calculateEstimatedCardinality(graphSize);
 		}
 		return estimatedCardinality;
@@ -509,7 +509,7 @@ public abstract class VertexEvaluator {
 	 * vertexevaluator creates. By default, this size is 1, if a VertexEvaluator
 	 * has bigger resultsizes, it should override this method
 	 */
-	public int calculateEstimatedCardinality(GraphSize graphSize) {
+	public long calculateEstimatedCardinality(GraphSize graphSize) {
 		return 1;
 	}
 

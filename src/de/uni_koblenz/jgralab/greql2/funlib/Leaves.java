@@ -74,7 +74,7 @@ public class Leaves implements Greql2Function {
 		return pathSystem.leaves();
 	}
 
-	public int getEstimatedCosts(ArrayList<Integer> inElements) {
+	public long getEstimatedCosts(ArrayList<Long> inElements) {
 		return 20;
 	}
 
@@ -82,7 +82,7 @@ public class Leaves implements Greql2Function {
 		return 1;
 	}
 
-	public int getEstimatedCardinality(int inElements) {
+	public long getEstimatedCardinality(int inElements) {
 		return 1;
 	}
 

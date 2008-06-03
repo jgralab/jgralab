@@ -73,7 +73,7 @@ public abstract class SemanticGraph {
 	@Override
 	public abstract String toString();
 
-	public abstract int getCosts();
+	public abstract long getCosts();
 
 	public static SemanticGraph createSemanticGraphFromExpression(
 			Expression exp, GraphMarker<VertexEvaluator> graphMarker,

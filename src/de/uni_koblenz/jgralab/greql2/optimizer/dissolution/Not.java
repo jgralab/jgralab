@@ -64,7 +64,7 @@ public class Not extends Leaf {
 	}
 
 	@Override
-	public int getCosts() {
+	public long getCosts() {
 		return formula.getCosts() + 2;
 	}
 

@@ -76,7 +76,7 @@ public class TheElement implements Greql2Function {
 	 * @see de.uni_koblenz.jgralab.greql2.funlib.Greql2Function#getEstimatedCardinality(int)
 	 */
 	@Override
-	public int getEstimatedCardinality(int inElements) {
+	public long getEstimatedCardinality(int inElements) {
 		return 1;
 	}
 
@@ -86,7 +86,7 @@ public class TheElement implements Greql2Function {
 	 * @see de.uni_koblenz.jgralab.greql2.funlib.Greql2Function#getEstimatedCosts(int)
 	 */
 	@Override
-	public int getEstimatedCosts(ArrayList<Integer> inElements) {
+	public long getEstimatedCosts(ArrayList<Long> inElements) {
 		return 1;
 	}
 

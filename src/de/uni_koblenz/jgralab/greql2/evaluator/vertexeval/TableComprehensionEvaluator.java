@@ -180,7 +180,7 @@ public class TableComprehensionEvaluator extends VertexEvaluator {
 	}
 
 	@Override
-	public int calculateEstimatedCardinality(GraphSize graphSize) {
+	public long calculateEstimatedCardinality(GraphSize graphSize) {
 		return greqlEvaluator.getCostModel()
 				.calculateCardinalityTableComprehension(this, graphSize);
 	}

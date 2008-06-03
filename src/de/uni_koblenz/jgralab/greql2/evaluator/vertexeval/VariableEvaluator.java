@@ -21,7 +21,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
- 
+
 package de.uni_koblenz.jgralab.greql2.evaluator.vertexeval;
 
 import java.util.HashSet;
@@ -66,7 +66,7 @@ public class VariableEvaluator extends VertexEvaluator {
 	/**
 	 * This is the estimated cardinality of the definitionset of this variable
 	 */
-	private int estimatedAssignments = -1;
+	private long estimatedAssignments = Long.MIN_VALUE;
 
 	/**
 	 * Sets the given value as "result" of this variable, so it can be uses via
@@ -104,7 +104,7 @@ public class VariableEvaluator extends VertexEvaluator {
 	@Override
 	public JValue getResult(BooleanGraphMarker subgraphMarker)
 			throws EvaluateException {
-			return variableValue;
+		return variableValue;
 	}
 
 	@Override
@@ -121,7 +121,7 @@ public class VariableEvaluator extends VertexEvaluator {
 		}
 		return neededVariables;
 	}
-	
+
 	@Override
 	public Set<Variable> getDefinedVariables() {
 		if (definedVariables == null) {
@@ -129,10 +129,10 @@ public class VariableEvaluator extends VertexEvaluator {
 		}
 		return definedVariables;
 	}
-	
+
 	@Override
 	public void calculateNeededAndDefinedVariables() {
-		//for variables, this method is not used
+		// for variables, this method is not used
 	}
 
 	/**
@@ -140,19 +140,20 @@ public class VariableEvaluator extends VertexEvaluator {
 	 *         may get during evaluation
 	 */
 	@Override
-	public int getVariableCombinations(GraphSize graphSize) {
-		if (estimatedAssignments == -1) {
+	public long getVariableCombinations(GraphSize graphSize) {
+		if (estimatedAssignments == Long.MIN_VALUE) {
 			estimatedAssignments = calculateEstimatedAssignments(graphSize);
 		}
 		return estimatedAssignments;
 	}
 
 	/**
-	 * calculated the estimated number of possible different values this variable may
-	 * get during evlauation
+	 * calculated the estimated number of possible different values this
+	 * variable may get during evaluation
 	 */
-	public int calculateEstimatedAssignments(GraphSize graphSize) {
-		return this.greqlEvaluator.getCostModel().calculateVariableAssignments(this, graphSize);
+	public long calculateEstimatedAssignments(GraphSize graphSize) {
+		return this.greqlEvaluator.getCostModel().calculateVariableAssignments(
+				this, graphSize);
 	}
 
 }

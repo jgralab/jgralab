@@ -115,11 +115,11 @@ public class DefaultOptimizer extends OptimizerBase {
 			System.out.println("Current Node: " + vertex);
 			veval = marker.getMark(vertex);
 			if (veval != null) {
-				int costs = veval.getInitialSubtreeEvaluationCosts(graphSize);
-				int card = veval.getEstimatedCardinality(graphSize);
+				long costs = veval.getInitialSubtreeEvaluationCosts(graphSize);
+				long card = veval.getEstimatedCardinality(graphSize);
 				Set<Variable> neededVars = veval.getNeededVariables();
 				Set<Variable> definedVars = veval.getDefinedVariables();
-				int varCombs = veval.getVariableCombinations(graphSize);
+				long varCombs = veval.getVariableCombinations(graphSize);
 				double sel = veval.getEstimatedSelectivity(graphSize);
 				System.out.println("Costs for subtree evaluation: " + costs
 						+ "\n" + "Estimated cardinality: " + card + "\n"
@@ -135,7 +135,7 @@ public class DefaultOptimizer extends OptimizerBase {
 		VertexEvaluator greql2ExpEval = marker.getMark(syntaxgraph
 				.getFirstGreql2Expression());
 		greql2ExpEval.resetSubtreeToInitialState();
-		int estimatedInterpretationSteps = greql2ExpEval
+		long estimatedInterpretationSteps = greql2ExpEval
 				.getCurrentSubtreeEvaluationCosts(graphSize);
 		System.out.println("Costs for the whole query: "
 				+ estimatedInterpretationSteps);

@@ -63,7 +63,7 @@ public abstract class BinaryOperator extends SemanticGraph {
 	}
 
 	@Override
-	public int getCosts() {
+	public long getCosts() {
 		// And, Or, Xor cost 2 according to funlib
 		return leftHandSide.getCosts() + rightHandSide.getCosts() + 2;
 	}

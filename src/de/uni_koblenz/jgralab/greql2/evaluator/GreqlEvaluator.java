@@ -364,7 +364,7 @@ public class GreqlEvaluator {
 	 * holds the number of interpretetation steps that have been passed since
 	 * the last call of the progress function
 	 */
-	protected int progressStepsPassed = 0;
+	protected long progressStepsPassed = 0;
 
 	/**
 	 * the time the ovarall evaluation (parsing + optimization + evluation) took
@@ -410,12 +410,12 @@ public class GreqlEvaluator {
 	/**
 	 * Holds the estimated needed for evaluation time in abstract units
 	 */
-	protected int estimatedInterpretationSteps = 0;
+	protected long estimatedInterpretationSteps = 0;
 
 	/**
 	 * Holds the already passed time in abstract time units
 	 */
-	protected int passedInterpretationSteps = 0;
+	protected long passedInterpretationSteps = 0;
 
 	/**
 	 * Gets the estimated number of interpretation steps the evaluation will
@@ -430,7 +430,7 @@ public class GreqlEvaluator {
 	 * given value should be the ownEvaluationCosts of that VertexEvaluator.
 	 * Calls the progress()-Method of the progress function this evaluator uses
 	 */
-	public final void progress(int value) {
+	public final void progress(long value) {
 		progressStepsPassed += value;
 		if (progressFunction != null) {
 			while (progressStepsPassed > progressFunction.getInterval()) {

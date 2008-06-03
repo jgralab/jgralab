@@ -114,7 +114,7 @@ public class IsIn implements Greql2Function {
 		}
 	}
 
-	public int getEstimatedCosts(ArrayList<Integer> inElements) {
+	public long getEstimatedCosts(ArrayList<Long> inElements) {
 		return inElements.get(0);
 	}
 
@@ -122,7 +122,7 @@ public class IsIn implements Greql2Function {
 		return 0.1;
 	}
 
-	public int getEstimatedCardinality(int inElements) {
+	public long getEstimatedCardinality(int inElements) {
 		return 1;
 	}
 

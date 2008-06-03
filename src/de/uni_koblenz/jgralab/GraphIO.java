@@ -420,11 +420,11 @@ public class GraphIO {
 		schema = graph.getSchema();
 		saveSchema(schema);
 
-		int eId;
-		int vId;
+		long eId;
+		long vId;
 
 		// progress bar for graph
-		int graphElements = 0, currentCount = 0, interval = 1;
+		long graphElements = 0, currentCount = 0, interval = 1;
 		if (pf != null) {
 			pf.init(graph.getVCount() + graph.getECount());
 			interval = pf.getInterval();
@@ -455,7 +455,7 @@ public class GraphIO {
 				TGOut.writeBytes(";\n");
 				oldPackage = currentPackage;
 			}
-			TGOut.writeBytes(Integer.toString(vId));
+			TGOut.writeBytes(Long.toString(vId));
 			space();
 			writeIdentifier(aec.getSimpleName());
 			// write incident edges
@@ -464,7 +464,7 @@ public class GraphIO {
 			noSpace();
 			while (nextI != null) {
 				eId = nextI.getId();
-				writeInteger(eId);
+				writeLong(eId);
 				nextI = graph.getNextEdge(nextI);
 			}
 			TGOut.writeBytes(">");
@@ -498,7 +498,7 @@ public class GraphIO {
 				TGOut.writeBytes(";\n");
 				oldPackage = currentPackage;
 			}
-			TGOut.writeBytes(Integer.toString(eId));
+			TGOut.writeBytes(Long.toString(eId));
 			space();
 			writeIdentifier(aec.getSimpleName());
 			space();
@@ -1874,7 +1874,7 @@ public class GraphIO {
 		}
 		edgeOffset = maxE + 1;
 
-		int graphElements = 0, currentCount = 0, interval = 1;
+		long graphElements = 0, currentCount = 0, interval = 1;
 		if (pf != null) {
 			pf.init(vCount + eCount);
 			interval = pf.getInterval();

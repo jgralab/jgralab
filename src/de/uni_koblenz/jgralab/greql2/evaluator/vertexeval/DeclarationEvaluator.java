@@ -141,8 +141,8 @@ public class DeclarationEvaluator extends VertexEvaluator {
 	/**
 	 * Returns the number of combinations of the variables this vertex defines
 	 */
-	public int getDefinedVariableCombinations(GraphSize graphSize) {
-		int combinations = 1;
+	public long getDefinedVariableCombinations(GraphSize graphSize) {
+		long combinations = 1;
 		Iterator<Variable> iter = getDefinedVariables().iterator();
 		while (iter.hasNext()) {
 			VariableEvaluator veval = (VariableEvaluator) greqlEvaluator
@@ -153,7 +153,7 @@ public class DeclarationEvaluator extends VertexEvaluator {
 	}
 
 	@Override
-	public int calculateEstimatedCardinality(GraphSize graphSize) {
+	public long calculateEstimatedCardinality(GraphSize graphSize) {
 		return greqlEvaluator.getCostModel().calculateCardinalityDeclaration(
 				this, graphSize);
 	}

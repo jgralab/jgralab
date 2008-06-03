@@ -78,7 +78,7 @@ public class Parent implements Greql2Function {
 		return pathSystem.parent(vertex);
 	}
 
-	public int getEstimatedCosts(ArrayList<Integer> inElements) {
+	public long getEstimatedCosts(ArrayList<Long> inElements) {
 		return 5;
 	}
 
@@ -86,7 +86,7 @@ public class Parent implements Greql2Function {
 		return 1;
 	}
 
-	public int getEstimatedCardinality(int inElements) {
+	public long getEstimatedCardinality(int inElements) {
 		return 1;
 	}
 

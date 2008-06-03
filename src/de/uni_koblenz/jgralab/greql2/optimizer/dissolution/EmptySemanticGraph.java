@@ -122,7 +122,7 @@ public class EmptySemanticGraph extends SemanticGraph {
 	}
 
 	@Override
-	public int getCosts() {
+	public long getCosts() {
 		return 1;
 	}
 }

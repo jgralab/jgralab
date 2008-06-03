@@ -70,7 +70,7 @@ public class Atom extends Leaf {
 	}
 
 	@Override
-	public int getCosts() {
+	public long getCosts() {
 		if (originalExpressionsCostSet.contains(originalExpression)) {
 			// the initial costs were already returned.
 			return 1;

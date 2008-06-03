@@ -74,7 +74,7 @@ public class IsTrail implements Greql2Function {
 		return new JValue(p1.isTrail());
 	}
 
-	public int getEstimatedCosts(ArrayList<Integer> inElements) {
+	public long getEstimatedCosts(ArrayList<Long> inElements) {
 		return 50;
 	}
 
@@ -82,7 +82,7 @@ public class IsTrail implements Greql2Function {
 		return 0.5;
 	}
 
-	public int getEstimatedCardinality(int inElements) {
+	public long getEstimatedCardinality(int inElements) {
 		return 1;
 	}
 

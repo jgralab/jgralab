@@ -100,7 +100,7 @@ public class Or implements Greql2Function {
 		}
 	}
 
-	public int getEstimatedCosts(ArrayList<Integer> inElements) {
+	public long getEstimatedCosts(ArrayList<Long> inElements) {
 		return 2;
 	}
 
@@ -108,7 +108,7 @@ public class Or implements Greql2Function {
 		return 5d / 9;
 	}
 
-	public int getEstimatedCardinality(int inElements) {
+	public long getEstimatedCardinality(int inElements) {
 		return 1;
 	}
 

@@ -134,7 +134,7 @@ public class ReachableVertices extends PathSearch implements Greql2Function {
 		return resultSet;
 	}
 
-	public int getEstimatedCosts(ArrayList<Integer> inElements) {
+	public long getEstimatedCosts(ArrayList<Long> inElements) {
 		return 100;
 	}
 
@@ -142,7 +142,7 @@ public class ReachableVertices extends PathSearch implements Greql2Function {
 		return 1;
 	}
 
-	public int getEstimatedCardinality(int inElements) {
+	public long getEstimatedCardinality(int inElements) {
 		return 1;
 	}
 

@@ -94,9 +94,9 @@ public class SchemaImpl implements Schema {
 	 * the Schema.
 	 */
 	public static final String IMPLPACKAGENAME = "impl";
-	
+
 	/**
-	 * Toggles if the schema allows lowercase enumeration constants 
+	 * Toggles if the schema allows lowercase enumeration constants
 	 */
 	private boolean allowLowercaseEnumConstants = true;
 
@@ -107,11 +107,11 @@ public class SchemaImpl implements Schema {
 	private Map<QualifiedName, Domain> domains;
 
 	private Map<QualifiedName, GraphClass> graphClasses;
-	
+
 	private Map<String, NamedElement> namedElements;
 
 	private Set<String> reservedUniqueNames;
-	
+
 	private Package defaultPackage;
 
 	private EdgeClass defaultEdgeClass;
@@ -130,17 +130,18 @@ public class SchemaImpl implements Schema {
 	public Schema getSchema() {
 		return this;
 	}
-	
+
 	@Override
 	public void setUniqueName(String uniqueName) {
-		throw new SchemaException("It is not allowed to explicitly set the unique name of a schema");
+		throw new SchemaException(
+				"It is not allowed to explicitly set the unique name of a schema");
 	}
-	
+
 	@Override
 	public String getUniqueName() {
 		return qName.getUniqueName();
 	}
-	
+
 	/**
 	 * builds a new schema
 	 * 
@@ -161,12 +162,12 @@ public class SchemaImpl implements Schema {
 			reservedUniqueNames = new HashSet<String>();
 			domains = new HashMap<QualifiedName, Domain>();
 			graphClasses = new HashMap<QualifiedName, GraphClass>();
-//			addDomain(BooleanDomainImpl.instance());
-//			addDomain(IntDomainImpl.instance());
-//			addDomain(LongDomainImpl.instance());
-//			addDomain(StringDomainImpl.instance());
-//			addDomain(DoubleDomainImpl.instance());
-//			addDomain(ObjectDomainImpl.instance());
+			// addDomain(BooleanDomainImpl.instance());
+			// addDomain(IntDomainImpl.instance());
+			// addDomain(LongDomainImpl.instance());
+			// addDomain(StringDomainImpl.instance());
+			// addDomain(DoubleDomainImpl.instance());
+			// addDomain(ObjectDomainImpl.instance());
 			addDomain(new BooleanDomainImpl(this));
 			addDomain(new IntDomainImpl(this));
 			addDomain(new LongDomainImpl(this));
@@ -174,33 +175,40 @@ public class SchemaImpl implements Schema {
 			addDomain(new DoubleDomainImpl(this));
 			addDomain(new ObjectDomainImpl(this));
 			defaultGraphClass = createGraphClass(new QualifiedName("Graph"));
-			addToKnownElements(defaultGraphClass.getUniqueName(), defaultGraphClass);
+			addToKnownElements(defaultGraphClass.getUniqueName(),
+					defaultGraphClass);
 			defaultGraphClass.setInternal(true);
 			defaultGraphClass.setAbstract(true);
 
-			defaultVertexClass = defaultGraphClass.createVertexClass(new QualifiedName("Vertex"));
-			addToKnownElements(defaultVertexClass.getUniqueName(), defaultVertexClass);
+			defaultVertexClass = defaultGraphClass
+					.createVertexClass(new QualifiedName("Vertex"));
+			addToKnownElements(defaultVertexClass.getUniqueName(),
+					defaultVertexClass);
 			defaultVertexClass.setInternal(true);
 			defaultVertexClass.setAbstract(true);
 
-			defaultEdgeClass = defaultGraphClass.createEdgeClass(new QualifiedName("Edge"),
-					defaultVertexClass, defaultVertexClass);
-			addToKnownElements(defaultEdgeClass.getUniqueName(), defaultEdgeClass);
+			defaultEdgeClass = defaultGraphClass.createEdgeClass(
+					new QualifiedName("Edge"), defaultVertexClass,
+					defaultVertexClass);
+			addToKnownElements(defaultEdgeClass.getUniqueName(),
+					defaultEdgeClass);
 			defaultEdgeClass.setInternal(true);
 			defaultEdgeClass.setAbstract(true);
 
-			defaultAggregationClass = defaultGraphClass
-					.createAggregationClass(new QualifiedName("Aggregation"), defaultVertexClass,
-							true, defaultVertexClass);
-			addToKnownElements(defaultAggregationClass.getUniqueName(), defaultAggregationClass);
+			defaultAggregationClass = defaultGraphClass.createAggregationClass(
+					new QualifiedName("Aggregation"), defaultVertexClass, true,
+					defaultVertexClass);
+			addToKnownElements(defaultAggregationClass.getUniqueName(),
+					defaultAggregationClass);
 			defaultAggregationClass.setInternal(true);
 			defaultAggregationClass.setAbstract(true);
 			defaultAggregationClass.addSuperClass(defaultEdgeClass);
 
-			defaultCompositionClass = defaultGraphClass
-					.createCompositionClass(new QualifiedName("Composition"), defaultVertexClass,
-							true, defaultVertexClass);
-			addToKnownElements(defaultCompositionClass.getUniqueName(), defaultCompositionClass);
+			defaultCompositionClass = defaultGraphClass.createCompositionClass(
+					new QualifiedName("Composition"), defaultVertexClass, true,
+					defaultVertexClass);
+			addToKnownElements(defaultCompositionClass.getUniqueName(),
+					defaultCompositionClass);
 			defaultCompositionClass.setInternal(true);
 			defaultCompositionClass.setAbstract(true);
 			defaultCompositionClass.addSuperClass(defaultAggregationClass);
@@ -222,13 +230,13 @@ public class SchemaImpl implements Schema {
 	public GraphFactory getGraphFactory() {
 		return graphFactory;
 	}
-	
+
 	/**
-	 * Adds the given element with the given uniquename to the list of known elements
-	 * and reserves the given unique name so it can not be used as unique name for other
-	 * elements. 
-	 * If the unique name is already in use, the unique names of both elements (the known one and the new one) 
-	 * are changed  
+	 * Adds the given element with the given uniquename to the list of known
+	 * elements and reserves the given unique name so it can not be used as
+	 * unique name for other elements. If the unique name is already in use, the
+	 * unique names of both elements (the known one and the new one) are changed
+	 * 
 	 * @param name
 	 * @param elem
 	 */
@@ -236,13 +244,15 @@ public class SchemaImpl implements Schema {
 		if (reservedUniqueNames.contains(name)) {
 			NamedElement known = namedElements.get(name);
 			if (known != null) {
-				String uniqueName = QualifiedName.toUniqueName(known.getQualifiedName());
+				String uniqueName = QualifiedName.toUniqueName(known
+						.getQualifiedName());
 				known.setUniqueName(uniqueName);
 				namedElements.remove(name);
 				namedElements.put(uniqueName, known);
 				reservedUniqueNames.add(uniqueName);
-			} 
-			String uniqueName = QualifiedName.toUniqueName(elem.getQualifiedName());
+			}
+			String uniqueName = QualifiedName.toUniqueName(elem
+					.getQualifiedName());
 			elem.setUniqueName(uniqueName);
 			namedElements.put(uniqueName, elem);
 			reservedUniqueNames.add(uniqueName);
@@ -263,7 +273,7 @@ public class SchemaImpl implements Schema {
 			return false;
 		domains.put(d.getQName(), d);
 		addToKnownElements(d.getUniqueName(), d);
-		
+
 		return true;
 	}
 
@@ -273,12 +283,11 @@ public class SchemaImpl implements Schema {
 			throw new SchemaException(
 					"there is already an element with the name " + name
 							+ " in the schema");
-		
+
 		if (name.isQualified()) {
-			throw new SchemaException(
-					"GraphClass must have simple name, but " + name
-							+ " is a qualified name");
-			
+			throw new SchemaException("GraphClass must have simple name, but "
+					+ name + " is a qualified name");
+
 		}
 		GraphClassImpl graphClass;
 		graphClass = new GraphClassImpl(name, this);
@@ -431,19 +440,20 @@ public class SchemaImpl implements Schema {
 	public void compile(String jgralabClassPath) {
 		JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
 		JavaFileManager jfm = null;
-		
+
 		// commit
 		Vector<JavaSourceFromString> javaSources = commit();
 		// compile
 		try {
 			jfm = compiler.getStandardFileManager(null, null, null);
 		} catch (NullPointerException e) {
-			System.out.println("Cannot compile schema " + getSimpleName() + ".");
+			System.out
+					.println("Cannot compile schema " + getSimpleName() + ".");
 			System.out.println("Most probably you use a JRE instead of a JDK. "
 					+ "The JRE does not provide a compiler.");
 			e.printStackTrace();
 		}
-		
+
 		ClassFileManager manager = new ClassFileManager(jfm);
 
 		manager.setSources(javaSources);
@@ -469,7 +479,7 @@ public class SchemaImpl implements Schema {
 
 		// progress bar for schema generation
 		// ProgressFunctionImpl pf;
-		int schemaElements = 0, currentCount = 0, interval = 1;
+		long schemaElements = 0, currentCount = 0, interval = 1;
 		if (progressFunction != null) {
 			progressFunction.init(getNumberOfElements());
 			interval = progressFunction.getInterval();
@@ -589,7 +599,7 @@ public class SchemaImpl implements Schema {
 	public String toString() {
 		String output = "GraphClasses of schema '" + qName.getQualifiedName()
 				+ "':\n\n\n";
-		for (GraphClass gc: graphClasses.values()) {
+		for (GraphClass gc : graphClasses.values()) {
 			output += gc.toString();
 		}
 
@@ -653,11 +663,11 @@ public class SchemaImpl implements Schema {
 	public Map<QualifiedName, GraphClass> getGraphClasses() {
 		return graphClasses;
 	}
-	
+
 	public Map<QualifiedName, Package> getPackages() {
 		return packages;
 	}
-	
+
 	public Package getPackage(String packageName) {
 		return packages.get(new QualifiedName(packageName));
 	}
@@ -780,7 +790,6 @@ public class SchemaImpl implements Schema {
 		return enumList;
 	}
 
-	
 	public List<RecordDomain> getRecordDomains() {
 		ArrayList<RecordDomain> recordList = new ArrayList<RecordDomain>();
 
@@ -790,7 +799,7 @@ public class SchemaImpl implements Schema {
 
 		return recordList;
 	}
-	
+
 	public List<CompositeDomain> getCompositeDomainsInTopologicalOrder() {
 		ArrayList<CompositeDomain> topologicalOrderList = new ArrayList<CompositeDomain>();
 		CompositeDomain cd;
@@ -840,13 +849,14 @@ public class SchemaImpl implements Schema {
 	}
 
 	@SuppressWarnings("unchecked")
-	private Class<? extends Graph> getGraphClassImpl(QualifiedName graphClassName) {
+	private Class<? extends Graph> getGraphClassImpl(
+			QualifiedName graphClassName) {
 		String implClassName = getPackageName() + "." + IMPLPACKAGENAME + "."
 				+ graphClassName.getSimpleName() + "Impl";
 		Class<? extends Graph> m1Class;
 		try {
-			m1Class = (Class<? extends Graph>) Class.forName(implClassName, true, M1ClassManager
-					.instance());
+			m1Class = (Class<? extends Graph>) Class.forName(implClassName,
+					true, M1ClassManager.instance());
 		} catch (ClassNotFoundException e) {
 			throw new SchemaException("can't load implementation class '"
 					+ implClassName + "'", e);
@@ -854,33 +864,39 @@ public class SchemaImpl implements Schema {
 		return m1Class;
 	}
 
-	private Method getCreateMethod(QualifiedName className, QualifiedName graphClassName,
-			Class<?>[] signature) {
+	private Method getCreateMethod(QualifiedName className,
+			QualifiedName graphClassName, Class<?>[] signature) {
 		Class<? extends Graph> m1Class = null;
 		try {
 			m1Class = getGraphClassImpl(graphClassName);
 			if (className.equals(graphClassName)) {
 				return m1Class.getMethod("create", signature);
 			} else {
-			    GraphClass gc = getGraphClasses().get(graphClassName);
-			    VertexClass vc = gc.getVertexClass(className);
-			    if (vc != null) {
-			    	className = vc.getQName();
-			    } else {
-			    	EdgeClass ec = gc.getEdgeClass(className);
-			    	if (ec != null)
-			    		className = ec.getQName();
-			    	else
-			    		throw new SchemaException("class " + className.getQualifiedName() + " does not exist in schema");
-			    }
-			    return m1Class.getMethod("create" + CodeGenerator.camelCase(className.getUniqueName()), signature);
+				GraphClass gc = getGraphClasses().get(graphClassName);
+				VertexClass vc = gc.getVertexClass(className);
+				if (vc != null) {
+					className = vc.getQName();
+				} else {
+					EdgeClass ec = gc.getEdgeClass(className);
+					if (ec != null)
+						className = ec.getQName();
+					else
+						throw new SchemaException("class "
+								+ className.getQualifiedName()
+								+ " does not exist in schema");
+				}
+				return m1Class.getMethod("create"
+						+ CodeGenerator.camelCase(className.getUniqueName()),
+						signature);
 			}
 		} catch (SecurityException e) {
 			throw new SchemaException("can't find create method in '"
-					+ m1Class.getName() + "' for '" + className.getUniqueName() + "'", e);
+					+ m1Class.getName() + "' for '" + className.getUniqueName()
+					+ "'", e);
 		} catch (NoSuchMethodException e) {
 			throw new SchemaException("can't find create method in '"
-					+ m1Class.getName() + "' for '" + className.getUniqueName() + "'", e);
+					+ m1Class.getName() + "' for '" + className.getUniqueName()
+					+ "'", e);
 		}
 	}
 
@@ -909,7 +925,8 @@ public class SchemaImpl implements Schema {
 		// we look for a method with correct name and 3 parameters
 		// (int, vertex, Vertex).
 		long time = System.currentTimeMillis();
-		String methodName = "create" + CodeGenerator.camelCase(edgeClassName.getUniqueName());
+		String methodName = "create"
+				+ CodeGenerator.camelCase(edgeClassName.getUniqueName());
 		Class<?> m1Class = getGraphClassImpl(graphClassName);
 		for (Method m : m1Class.getMethods()) {
 			if (m.getName().equals(methodName)
@@ -919,10 +936,12 @@ public class SchemaImpl implements Schema {
 		}
 		long diff = System.currentTimeMillis() - time;
 		if (diff > 0) {
-			System.out.println("getEdgeCreateMethod took: " + diff + " milliseconds");
+			System.out.println("getEdgeCreateMethod took: " + diff
+					+ " milliseconds");
 		}
 		throw new SchemaException("can't find create method in '"
-				+ m1Class.getName() + "' for '" + edgeClassName.getUniqueName() + "'");
+				+ m1Class.getName() + "' for '" + edgeClassName.getUniqueName()
+				+ "'");
 	}
 
 	public AggregationClass getDefaultAggregationClass() {
@@ -977,21 +996,22 @@ public class SchemaImpl implements Schema {
 	 * that bytecode is written to a {@code ClassFileAbstraction}.
 	 * 
 	 */
-	private class ClassFileManager extends ForwardingJavaFileManager<JavaFileManager> {
+	private class ClassFileManager extends
+			ForwardingJavaFileManager<JavaFileManager> {
 		Vector<JavaSourceFromString> sources;
-		
+
 		public ClassFileManager(JavaFileManager fm) {
 			super(fm);
 		}
-		
-		public JavaFileObject getJavaFileForOutput (Location location, String className,
-				Kind kind, FileObject sibling) {
+
+		public JavaFileObject getJavaFileForOutput(Location location,
+				String className, Kind kind, FileObject sibling) {
 			ClassFileAbstraction cfa = new ClassFileAbstraction(className);
-			
+
 			M1ClassManager.instance().putM1Class(className, cfa);
-		    return cfa;
+			return cfa;
 		}
-		
+
 		public void setSources(Vector<JavaSourceFromString> sources) {
 			this.sources = sources;
 		}
@@ -1026,7 +1046,7 @@ public class SchemaImpl implements Schema {
 	public QualifiedName getQName() {
 		return qName;
 	}
-	
+
 	@Override
 	public String getQualifiedName(Package pkg) {
 		throw new UnsupportedOperationException();
@@ -1036,7 +1056,7 @@ public class SchemaImpl implements Schema {
 	public String getVariableName() {
 		throw new UnsupportedOperationException();
 	}
-	
+
 	@Override
 	public Package createPackageWithParents(String qualifiedName) {
 		if (qualifiedName.length() == 0) {
@@ -1057,27 +1077,28 @@ public class SchemaImpl implements Schema {
 	@Override
 	public void addPackage(Package p) {
 		packages.put(p.getQName(), p);
-		//TODO check if packages should have unique names
-		//addToKnownElements(p.getUniqueName(), p);
+		// TODO check if packages should have unique names
+		// addToKnownElements(p.getUniqueName(), p);
 	}
 
 	public boolean allowsLowercaseEnumConstants() {
 		return allowLowercaseEnumConstants;
 	}
 
-	public void setAllowLowercaseEnumConstants(boolean allowLowercaseEnumConstants) {
+	public void setAllowLowercaseEnumConstants(
+			boolean allowLowercaseEnumConstants) {
 		this.allowLowercaseEnumConstants = allowLowercaseEnumConstants;
 	}
-	
+
 	public boolean isValidEnumConstant(String name) {
-		if (!allowsLowercaseEnumConstants()) 
+		if (!allowsLowercaseEnumConstants())
 			for (int i = 0; i < name.length(); i++) {
 				if (Character.isLowerCase(name.charAt(i))) {
 					return false;
 				}
 			}
 		if (reservedJavaWords.contains(name))
-				return false;
+			return false;
 		return true;
 	}
 }

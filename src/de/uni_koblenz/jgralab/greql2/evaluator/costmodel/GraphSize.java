@@ -21,7 +21,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
- 
+
 package de.uni_koblenz.jgralab.greql2.evaluator.costmodel;
 
 import de.uni_koblenz.jgralab.Graph;
@@ -35,9 +35,9 @@ import de.uni_koblenz.jgralab.schema.GraphClass;
  */
 public class GraphSize {
 
-	private int vertexCount;
+	private long vertexCount;
 
-	private int edgeCount;
+	private long edgeCount;
 
 	private int knownVertexTypes;
 
@@ -75,7 +75,7 @@ public class GraphSize {
 	 * @param knownEdgeTypes
 	 *            the number edgetypes this GraphSize object should know
 	 */
-	public GraphSize(int vCount, int eCount, int knownVertexTypes,
+	public GraphSize(long vCount, long eCount, int knownVertexTypes,
 			int knownEdgeTypes) {
 		vertexCount = vCount;
 		edgeCount = eCount;
@@ -131,28 +131,28 @@ public class GraphSize {
 	/**
 	 * @return the number of vertices in this graphsize object
 	 */
-	public int getVertexCount() {
+	public long getVertexCount() {
 		return vertexCount;
 	}
 
 	/**
 	 * sets the number of vertices in this GraphSize object
 	 */
-	public void setVertexCount(int count) {
+	public void setVertexCount(long count) {
 		vertexCount = count;
 	}
 
 	/**
 	 * @return the number of edge in this graphsize object
 	 */
-	public int getEdgeCount() {
+	public long getEdgeCount() {
 		return edgeCount;
 	}
 
 	/**
 	 * sets the number of edges in this GraphSize object
 	 */
-	public void setEdgeCount(int count) {
+	public void setEdgeCount(long count) {
 		edgeCount = count;
 	}
 

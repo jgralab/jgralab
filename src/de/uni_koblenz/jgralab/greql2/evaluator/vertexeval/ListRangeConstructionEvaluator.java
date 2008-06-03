@@ -21,7 +21,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
- 
+
 package de.uni_koblenz.jgralab.greql2.evaluator.vertexeval;
 
 import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
@@ -73,8 +73,11 @@ public class ListRangeConstructionEvaluator extends VertexEvaluator {
 				.getFirstIsFirstValueOf(EdgeDirection.IN).getAlpha();
 		Expression lastElementExpression = (Expression) vertex
 				.getFirstIsLastValueOf(EdgeDirection.IN).getAlpha();
-		VertexEvaluator firstElementEvaluator = greqlEvaluator.getVertexEvaluatorGraphMarker().getMark(firstElementExpression);
-		VertexEvaluator lastElementEvaluator = greqlEvaluator.getVertexEvaluatorGraphMarker().getMark(lastElementExpression);
+		VertexEvaluator firstElementEvaluator = greqlEvaluator
+				.getVertexEvaluatorGraphMarker()
+				.getMark(firstElementExpression);
+		VertexEvaluator lastElementEvaluator = greqlEvaluator
+				.getVertexEvaluatorGraphMarker().getMark(lastElementExpression);
 		JValue firstElement = firstElementEvaluator.getResult(subgraph);
 		JValue lastElement = lastElementEvaluator.getResult(subgraph);
 		try {
@@ -104,7 +107,7 @@ public class ListRangeConstructionEvaluator extends VertexEvaluator {
 	}
 
 	@Override
-	public int calculateEstimatedCardinality(GraphSize graphSize) {
+	public long calculateEstimatedCardinality(GraphSize graphSize) {
 		return greqlEvaluator.getCostModel()
 				.calculateCardinalityListRangeConstruction(this, graphSize);
 	}

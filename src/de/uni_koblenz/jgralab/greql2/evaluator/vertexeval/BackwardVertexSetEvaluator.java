@@ -119,7 +119,7 @@ public class BackwardVertexSetEvaluator extends PathSearchEvaluator {
 	}
 
 	@Override
-	public int calculateEstimatedCardinality(GraphSize graphSize) {
+	public long calculateEstimatedCardinality(GraphSize graphSize) {
 		return greqlEvaluator.getCostModel()
 				.calculateCardinalityBackwardVertexSet(this, graphSize);
 	}

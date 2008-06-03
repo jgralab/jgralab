@@ -21,7 +21,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
- 
+
 package de.uni_koblenz.jgralab.greql2.evaluator.vertexeval;
 
 import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
@@ -64,8 +64,8 @@ public class EdgeSetExpressionEvaluator extends ElementSetExpressionEvaluator {
 		JValueSet resultSet = new JValueSet();
 		Edge currentEdge = datagraph.getFirstEdgeInGraph();
 		JValueTypeCollection typeCollection = getTypeCollection();
-		while (currentEdge != null ){
-			if ((subgraph==null) || (subgraph.isMarked(currentEdge))) {
+		while (currentEdge != null) {
+			if ((subgraph == null) || (subgraph.isMarked(currentEdge))) {
 				AttributedElementClass edgeClass = currentEdge
 						.getAttributedElementClass();
 				if (typeCollection.acceptsType(edgeClass))
@@ -83,7 +83,7 @@ public class EdgeSetExpressionEvaluator extends ElementSetExpressionEvaluator {
 	}
 
 	@Override
-	public int calculateEstimatedCardinality(GraphSize graphSize) {
+	public long calculateEstimatedCardinality(GraphSize graphSize) {
 		return greqlEvaluator.getCostModel()
 				.calculateCardinalityEdgeSetExpression(this, graphSize);
 	}

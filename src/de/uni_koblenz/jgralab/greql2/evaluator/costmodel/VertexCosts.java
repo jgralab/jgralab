@@ -45,17 +45,17 @@ public class VertexCosts {
 	/**
 	 * The evaluation costs of the whole subtree
 	 */
-	public int subtreeEvaluationCosts = 0;
+	public long subtreeEvaluationCosts = 0;
 
 	/**
 	 * The costs <b>one</b> evaluation of the root-vertex causes
 	 */
-	public int ownEvaluationCosts = 0;
+	public long ownEvaluationCosts = 0;
 
 	/**
 	 * The costs all evaluations of the root-vertex
 	 */
-	public int iteratedEvaluationCosts = 0;
+	public long iteratedEvaluationCosts = 0;
 
 	/**
 	 * Creates a new VertexCosts object
@@ -70,7 +70,7 @@ public class VertexCosts {
 	 *            the costs for the evaluation of the subtree with the vertex as
 	 *            root
 	 */
-	public VertexCosts(int own, int iterated, int subtree) {
+	public VertexCosts(long own, long iterated, long subtree) {
 		ownEvaluationCosts = own;
 		iteratedEvaluationCosts = iterated;
 		subtreeEvaluationCosts = subtree;

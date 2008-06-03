@@ -104,7 +104,7 @@ public class IsAcyclic extends PathSearch implements Greql2Function {
 		return new JValue(cycleFound);
 	}
 
-	public int getEstimatedCosts(ArrayList<Integer> inElements) {
+	public long getEstimatedCosts(ArrayList<Long> inElements) {
 		// TODO Auto-generated method stub
 		return 0;
 	}
@@ -113,7 +113,7 @@ public class IsAcyclic extends PathSearch implements Greql2Function {
 		return 0.1;
 	}
 
-	public int getEstimatedCardinality(int inElements) {
+	public long getEstimatedCardinality(int inElements) {
 		return 1;
 	}
 

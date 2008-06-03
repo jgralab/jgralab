@@ -149,7 +149,7 @@ public class IsReachable extends PathSearch implements Greql2Function {
 		return new JValue(found, startVertex);
 	}
 
-	public int getEstimatedCosts(ArrayList<Integer> inElements) {
+	public long getEstimatedCosts(ArrayList<Long> inElements) {
 		return 50;
 	}
 
@@ -157,7 +157,7 @@ public class IsReachable extends PathSearch implements Greql2Function {
 		return 0.01;
 	}
 
-	public int getEstimatedCardinality(int inElements) {
+	public long getEstimatedCardinality(int inElements) {
 		return 1;
 	}
 

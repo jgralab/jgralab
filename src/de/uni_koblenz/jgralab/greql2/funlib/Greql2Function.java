@@ -78,7 +78,7 @@ public interface Greql2Function {
 	 * @return The estimated costs in the abstract measure-unit "interpretation
 	 *         steps"
 	 */
-	public int getEstimatedCosts(ArrayList<Integer> inElements);
+	public long getEstimatedCosts(ArrayList<Long> inElements);
 
 	/**
 	 * Calculates the estimated selectivity of this boolean function. If this
@@ -96,7 +96,7 @@ public interface Greql2Function {
 	 *            the number of input elements to calculate the result size for
 	 * @return the estimated number of elements in the result
 	 */
-	public int getEstimatedCardinality(int inElements);
+	public long getEstimatedCardinality(int inElements);
 
 	/**
 	 * @return the expected parameters for this function as string. This is

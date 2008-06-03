@@ -77,7 +77,7 @@ public class IsParallel implements Greql2Function {
 		return new JValue(p1.isParallel(p2));
 	}
 
-	public int getEstimatedCosts(ArrayList<Integer> inElements) {
+	public long getEstimatedCosts(ArrayList<Long> inElements) {
 		// TODO Auto-generated method stub
 		return 0;
 	}
@@ -86,7 +86,7 @@ public class IsParallel implements Greql2Function {
 		return 1;
 	}
 
-	public int getEstimatedCardinality(int inElements) {
+	public long getEstimatedCardinality(int inElements) {
 		return 1;
 	}
 

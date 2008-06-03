@@ -177,11 +177,11 @@ public class IsPrime implements Greql2Function {
 		return JValue.fromObject(isPrime(number, noOfTestRuns));
 	}
 
-	public int getEstimatedCardinality(int inElements) {
+	public long getEstimatedCardinality(int inElements) {
 		return 1;
 	}
 
-	public int getEstimatedCosts(ArrayList<Integer> inElements) {
+	public long getEstimatedCosts(ArrayList<Long> inElements) {
 		return 10 * ESTIMATED_COSTS_PER_RUN;
 	}
 

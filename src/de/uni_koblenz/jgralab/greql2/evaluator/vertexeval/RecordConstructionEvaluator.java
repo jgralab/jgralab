@@ -21,7 +21,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
- 
+
 package de.uni_koblenz.jgralab.greql2.evaluator.vertexeval;
 
 import de.uni_koblenz.jgralab.greql2.schema.*;
@@ -34,10 +34,10 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueRecord;
 import de.uni_koblenz.jgralab.*;
 
 /**
- * Evaluates a record construction, this is for instance  rec( name:"element")
- * @author Daniel Bildhauer <dbildh@uni-koblenz.de> 
- * Summer 2006, Diploma Thesis
- *
+ * Evaluates a record construction, this is for instance rec( name:"element")
+ * 
+ * @author Daniel Bildhauer <dbildh@uni-koblenz.de> Summer 2006, Diploma Thesis
+ * 
  */
 public class RecordConstructionEvaluator extends VertexEvaluator {
 
@@ -68,11 +68,14 @@ public class RecordConstructionEvaluator extends VertexEvaluator {
 	@Override
 	public JValue evaluate() throws EvaluateException {
 		JValueRecord resultRecord = new JValueRecord();
-		IsRecordElementOf inc = vertex.getFirstIsRecordElementOf(EdgeDirection.IN);
+		IsRecordElementOf inc = vertex
+				.getFirstIsRecordElementOf(EdgeDirection.IN);
 		while (inc != null) {
 			RecordElement currentElement = (RecordElement) inc.getAlpha();
-			RecordElementEvaluator vertexEval = (RecordElementEvaluator) greqlEvaluator.getVertexEvaluatorGraphMarker().getMark(currentElement);
-			resultRecord.add(vertexEval.getId(), vertexEval.getResult(subgraph));
+			RecordElementEvaluator vertexEval = (RecordElementEvaluator) greqlEvaluator
+					.getVertexEvaluatorGraphMarker().getMark(currentElement);
+			resultRecord
+					.add(vertexEval.getId(), vertexEval.getResult(subgraph));
 			inc = inc.getNextIsRecordElementOf(EdgeDirection.IN);
 		}
 		return resultRecord;
@@ -83,9 +86,9 @@ public class RecordConstructionEvaluator extends VertexEvaluator {
 		return this.greqlEvaluator.getCostModel()
 				.calculateCostsRecordConstruction(this, graphSize);
 	}
-	
+
 	@Override
-	public int calculateEstimatedCardinality(GraphSize graphSize) {
+	public long calculateEstimatedCardinality(GraphSize graphSize) {
 		return greqlEvaluator.getCostModel()
 				.calculateCardinalityRecordConstruction(this, graphSize);
 	}

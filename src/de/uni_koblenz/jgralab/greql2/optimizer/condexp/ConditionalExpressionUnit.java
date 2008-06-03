@@ -50,7 +50,7 @@ public class ConditionalExpressionUnit {
 		} else {
 			graphSize = OptimizerUtility.getDefaultGraphSize();
 		}
-		int costs = veval.getInitialSubtreeEvaluationCosts(graphSize);
+		long costs = veval.getInitialSubtreeEvaluationCosts(graphSize);
 		return selectivity / costs;
 	}
 

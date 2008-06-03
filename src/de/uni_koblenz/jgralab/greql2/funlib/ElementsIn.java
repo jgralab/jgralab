@@ -94,7 +94,7 @@ public class ElementsIn implements Greql2Function {
 		}
 	}
 
-	public int getEstimatedCosts(ArrayList<Integer> inElements) {
+	public long getEstimatedCosts(ArrayList<Long> inElements) {
 		return inElements.get(0) * 2;
 	}
 
@@ -102,7 +102,7 @@ public class ElementsIn implements Greql2Function {
 		return 0.1;
 	}
 
-	public int getEstimatedCardinality(int inElements) {
+	public long getEstimatedCardinality(int inElements) {
 		return inElements / 10;
 	}
 

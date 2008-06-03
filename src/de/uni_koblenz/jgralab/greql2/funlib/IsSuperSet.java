@@ -85,9 +85,9 @@ public class IsSuperSet implements Greql2Function {
 		}
 	}
 
-	public int getEstimatedCosts(ArrayList<Integer> inElements) {
-		int elems = 1;
-		for (Integer i : inElements) {
+	public long getEstimatedCosts(ArrayList<Long> inElements) {
+		long elems = 1;
+		for (Long i : inElements) {
 			elems *= i;
 		}
 		return elems * 2;
@@ -97,7 +97,7 @@ public class IsSuperSet implements Greql2Function {
 		return 0.5;
 	}
 
-	public int getEstimatedCardinality(int inElements) {
+	public long getEstimatedCardinality(int inElements) {
 		return 1;
 	}
 

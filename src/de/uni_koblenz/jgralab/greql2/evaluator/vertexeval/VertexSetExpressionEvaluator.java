@@ -21,7 +21,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
- 
+
 package de.uni_koblenz.jgralab.greql2.evaluator.vertexeval;
 
 import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
@@ -67,8 +67,8 @@ public class VertexSetExpressionEvaluator extends ElementSetExpressionEvaluator 
 		String indexKey = null;
 		if (GreqlEvaluator.VERTEX_INDEXING) {
 			indexKey = typeCollection.typeString() + subgraph;
-		 	resultSet = greqlEvaluator.getVertexIndex(datagraph, indexKey);
-		}	
+			resultSet = greqlEvaluator.getVertexIndex(datagraph, indexKey);
+		}
 		if (resultSet == null) {
 			long startTime = System.currentTimeMillis();
 			resultSet = new JValueSet();
@@ -92,9 +92,11 @@ public class VertexSetExpressionEvaluator extends ElementSetExpressionEvaluator 
 				}
 			}
 			if (GreqlEvaluator.VERTEX_INDEXING) {
-				if (System.currentTimeMillis() - startTime > greqlEvaluator.getIndexTimeBarrier())
-					greqlEvaluator.addVertexIndex(datagraph, indexKey, resultSet);
-			}	
+				if (System.currentTimeMillis() - startTime > greqlEvaluator
+						.getIndexTimeBarrier())
+					greqlEvaluator.addVertexIndex(datagraph, indexKey,
+							resultSet);
+			}
 		}
 		return resultSet;
 	}
@@ -106,7 +108,7 @@ public class VertexSetExpressionEvaluator extends ElementSetExpressionEvaluator 
 	}
 
 	@Override
-	public int calculateEstimatedCardinality(GraphSize graphSize) {
+	public long calculateEstimatedCardinality(GraphSize graphSize) {
 		return greqlEvaluator.getCostModel()
 				.calculateCardinalityVertexSetExpression(this, graphSize);
 	}

@@ -78,7 +78,7 @@ public class Nequals implements Greql2Function {
 		return new JValue(JValueBoolean.getTrueValue());
 	}
 
-	public int getEstimatedCosts(ArrayList<Integer> inElements) {
+	public long getEstimatedCosts(ArrayList<Long> inElements) {
 		return 2;
 	}
 
@@ -86,7 +86,7 @@ public class Nequals implements Greql2Function {
 		return 0.95;
 	}
 
-	public int getEstimatedCardinality(int inElements) {
+	public long getEstimatedCardinality(int inElements) {
 		return 1;
 	}
 

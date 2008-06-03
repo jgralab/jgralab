@@ -32,8 +32,8 @@ public class VariableDeclarationOrderUnit implements
 	private Variable variable;
 	private Declaration declaringDeclaration;
 	private Set<Vertex> dependentVertices;
-	private int variableValueChangeCosts = Integer.MIN_VALUE;
-	private int typeExpressionCardinality = Integer.MIN_VALUE;
+	private long variableValueChangeCosts = Long.MIN_VALUE;
+	private long typeExpressionCardinality = Long.MIN_VALUE;
 	private GraphMarker<VertexEvaluator> vertexEvalMarker;
 	private GraphSize graphSize;
 	private SimpleDeclaration simpleDeclarationOfVariable;
@@ -101,8 +101,8 @@ public class VariableDeclarationOrderUnit implements
 	 * @return the costs needed to re-evaluate all vertices that depend on this
 	 *         {@link VariableDeclarationOrderUnit}'s {@link Variable}
 	 */
-	int getVariableValueChangeCosts() {
-		if (variableValueChangeCosts == Integer.MIN_VALUE) {
+	long getVariableValueChangeCosts() {
+		if (variableValueChangeCosts == Long.MIN_VALUE) {
 			variableValueChangeCosts = calculateVariableValueChangeCosts();
 		}
 		return variableValueChangeCosts;
@@ -164,8 +164,8 @@ public class VariableDeclarationOrderUnit implements
 
 		// The costs are equal, so the one with the higher cardinality should
 		// be declared after the one with the lower cardinality.
-		int thisCard = getTypeExpressionCardinality();
-		int otherCard = o.getTypeExpressionCardinality();
+		long thisCard = getTypeExpressionCardinality();
+		long otherCard = o.getTypeExpressionCardinality();
 		if (thisCard > otherCard) {
 			return 1;
 		}
@@ -182,7 +182,7 @@ public class VariableDeclarationOrderUnit implements
 	 * @return the cardinality of the type expression of the {@link Variable} of
 	 *         this {@link VariableDeclarationOrderUnit}
 	 */
-	private int calculateTypeExpressionCardinality() {
+	private long calculateTypeExpressionCardinality() {
 		VertexEvaluator veval = vertexEvalMarker
 				.getMark(typeExpressionOfVariable);
 		return veval.getEstimatedCardinality(graphSize);
@@ -195,8 +195,8 @@ public class VariableDeclarationOrderUnit implements
 	 * @return the estimated cardinality of the type expression of this
 	 *         {@link VariableDeclarationOrderUnit}'s {@link Variable}.
 	 */
-	int getTypeExpressionCardinality() {
-		if (typeExpressionCardinality == Integer.MIN_VALUE) {
+	long getTypeExpressionCardinality() {
+		if (typeExpressionCardinality == Long.MIN_VALUE) {
 			typeExpressionCardinality = calculateTypeExpressionCardinality();
 		}
 		return typeExpressionCardinality;

@@ -21,7 +21,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
- 
+
 package de.uni_koblenz.jgralab.greql2.evaluator.vertexeval;
 
 import java.util.HashSet;
@@ -35,11 +35,11 @@ import de.uni_koblenz.jgralab.greql2.schema.*;
 import de.uni_koblenz.jgralab.*;
 
 /**
- * Evaluates a simple declaration. Creates a VariableDeclaration-object, that 
+ * Evaluates a simple declaration. Creates a VariableDeclaration-object, that
  * provides methods to iterate over all possible values.
- * @author Daniel Bildhauer <dbildh@uni-koblenz.de> 
- * Summer 2006, Diploma Thesis
- *
+ * 
+ * @author Daniel Bildhauer <dbildh@uni-koblenz.de> Summer 2006, Diploma Thesis
+ * 
  */
 public class SimpleDeclarationEvaluator extends VertexEvaluator {
 
@@ -72,11 +72,13 @@ public class SimpleDeclarationEvaluator extends VertexEvaluator {
 	public JValue evaluate() throws EvaluateException {
 		IsTypeExprOf inc = vertex.getFirstIsTypeExprOf(EdgeDirection.IN);
 		Expression typeExpression = (Expression) inc.getAlpha();
-		VertexEvaluator exprEval = greqlEvaluator.getVertexEvaluatorGraphMarker().getMark(typeExpression);
+		VertexEvaluator exprEval = greqlEvaluator
+				.getVertexEvaluatorGraphMarker().getMark(typeExpression);
 		if (exprEval instanceof VertexSubgraphExpressionEvaluator) {
 			inc = inc.getNextIsTypeExprOf(EdgeDirection.IN);
 			typeExpression = (Expression) inc.getAlpha();
-			exprEval = greqlEvaluator.getVertexEvaluatorGraphMarker().getMark(typeExpression);
+			exprEval = greqlEvaluator.getVertexEvaluatorGraphMarker().getMark(
+					typeExpression);
 		}
 		JValue tempAttribute = exprEval.getResult(subgraph);
 		JValueSet declarationSet = null;
@@ -85,7 +87,8 @@ public class SimpleDeclarationEvaluator extends VertexEvaluator {
 				JValueCollection col = tempAttribute.toCollection();
 				declarationSet = col.toJValueSet();
 				if (col.size() > declarationSet.size())
-					throw new EvaluateException("A collection that doesn't fulfill the set property is used as variable range definition");
+					throw new EvaluateException(
+							"A collection that doesn't fulfill the set property is used as variable range definition");
 			} catch (JValueInvalidTypeException exception) {
 				throw new EvaluateException(
 						"Error evaluating a SimpleDeclaration : "
@@ -97,10 +100,12 @@ public class SimpleDeclarationEvaluator extends VertexEvaluator {
 		}
 		if (declarationSet != null) {
 			JValueList varDeclList = new JValueList();
-			IsDeclaredVarOf varInc = vertex.getFirstIsDeclaredVarOf(EdgeDirection.IN);
+			IsDeclaredVarOf varInc = vertex
+					.getFirstIsDeclaredVarOf(EdgeDirection.IN);
 			while (varInc != null) {
 				VariableDeclaration varDecl = new VariableDeclaration(
-						(Variable) varInc.getAlpha(), declarationSet, vertex, greqlEvaluator);
+						(Variable) varInc.getAlpha(), declarationSet, vertex,
+						greqlEvaluator);
 				varDeclList.add(new JValue(varDecl));
 				varInc = varInc.getNextIsDeclaredVarOf(EdgeDirection.IN);
 			}
@@ -114,30 +119,32 @@ public class SimpleDeclarationEvaluator extends VertexEvaluator {
 		return this.greqlEvaluator.getCostModel()
 				.calculateCostsSimpleDeclaration(this, graphSize);
 	}
-	
+
 	@Override
 	public void calculateNeededAndDefinedVariables() {
 		neededVariables = new HashSet<Variable>();
 		definedVariables = new HashSet<Variable>();
-		IsDeclaredVarOf varInc = vertex.getFirstIsDeclaredVarOf(EdgeDirection.IN);
+		IsDeclaredVarOf varInc = vertex
+				.getFirstIsDeclaredVarOf(EdgeDirection.IN);
 		while (varInc != null) {
-			definedVariables.add( (Variable) varInc.getAlpha());
+			definedVariables.add((Variable) varInc.getAlpha());
 			varInc = varInc.getNextIsDeclaredVarOf(EdgeDirection.IN);
 		}
 		IsTypeExprOf typeInc = vertex.getFirstIsTypeExprOf(EdgeDirection.IN);
 		if (typeInc != null) {
-			VertexEvaluator veval = greqlEvaluator.getVertexEvaluatorGraphMarker().getMark(typeInc.getAlpha());
+			VertexEvaluator veval = greqlEvaluator
+					.getVertexEvaluatorGraphMarker()
+					.getMark(typeInc.getAlpha());
 			if (veval != null) {
 				neededVariables.addAll(veval.getNeededVariables());
-			}	
+			}
 		}
 	}
 
 	@Override
-	public int calculateEstimatedCardinality(GraphSize graphSize) {
+	public long calculateEstimatedCardinality(GraphSize graphSize) {
 		return greqlEvaluator.getCostModel()
 				.calculateCardinalitySimpleDeclaration(this, graphSize);
 	}
 
-	
 }

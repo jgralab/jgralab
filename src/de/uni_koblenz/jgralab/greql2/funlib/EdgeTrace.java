@@ -82,7 +82,7 @@ public class EdgeTrace implements Greql2Function {
 		return resultList;
 	}
 
-	public int getEstimatedCosts(ArrayList<Integer> inElements) {
+	public long getEstimatedCosts(ArrayList<Long> inElements) {
 		return 10;
 	}
 
@@ -90,7 +90,7 @@ public class EdgeTrace implements Greql2Function {
 		return 1;
 	}
 
-	public int getEstimatedCardinality(int inElements) {
+	public long getEstimatedCardinality(int inElements) {
 		return 1;
 	}
 

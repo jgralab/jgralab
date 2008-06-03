@@ -126,7 +126,7 @@ public class Matches extends PathSearch implements Greql2Function {
 		return new JValue(false);
 	}
 
-	public int getEstimatedCosts(ArrayList<Integer> inElements) {
+	public long getEstimatedCosts(ArrayList<Long> inElements) {
 		return 40;
 	}
 
@@ -134,7 +134,7 @@ public class Matches extends PathSearch implements Greql2Function {
 		return 0.1;
 	}
 
-	public int getEstimatedCardinality(int inElements) {
+	public long getEstimatedCardinality(int inElements) {
 		return 1;
 	}
 

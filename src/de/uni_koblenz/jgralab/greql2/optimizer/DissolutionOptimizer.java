@@ -73,8 +73,8 @@ public class DissolutionOptimizer extends OptimizerBase {
 							.getVertexEvaluatorGraphMarker(), graphSize);
 			miniSG = sg.dissolve();
 
-			int sgCosts = sg.getCosts();
-			int miniSGCosts = miniSG.getCosts();
+			long sgCosts = sg.getCosts();
+			long miniSGCosts = miniSG.getCosts();
 
 			Expression optimizedExpression;
 

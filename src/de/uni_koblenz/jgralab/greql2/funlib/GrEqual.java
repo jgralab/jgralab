@@ -110,7 +110,7 @@ public class GrEqual implements Greql2Function {
 		}
 	}
 
-	public int getEstimatedCosts(ArrayList<Integer> inElements) {
+	public long getEstimatedCosts(ArrayList<Long> inElements) {
 		return 1;
 	}
 
@@ -118,7 +118,7 @@ public class GrEqual implements Greql2Function {
 		return 0.5;
 	}
 
-	public int getEstimatedCardinality(int inElements) {
+	public long getEstimatedCardinality(int inElements) {
 		return 1;
 	}
 

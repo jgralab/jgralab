@@ -85,9 +85,9 @@ public class Union implements Greql2Function {
 		}
 	}
 
-	public int getEstimatedCosts(ArrayList<Integer> inElements) {
-		int elems = 0;
-		for (Integer i : inElements) {
+	public long getEstimatedCosts(ArrayList<Long> inElements) {
+		long elems = 0;
+		for (Long i : inElements) {
 			elems += i;
 		}
 		return elems * 2;
@@ -97,7 +97,7 @@ public class Union implements Greql2Function {
 		return 1;
 	}
 
-	public int getEstimatedCardinality(int inElements) {
+	public long getEstimatedCardinality(int inElements) {
 		return 1;
 	}
 

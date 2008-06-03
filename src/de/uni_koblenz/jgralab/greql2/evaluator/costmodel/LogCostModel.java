@@ -90,11 +90,11 @@ public class LogCostModel extends DefaultCostModel {
 	 *         {@link Greql2Vertex} has been logged so far). Else return a mean
 	 *         of both values scaled by <code>logScalingFactor</code>.
 	 */
-	private int getMeanCardinality(double logCard, int defaultCard) {
+	private long getMeanCardinality(double logCard, long defaultCard) {
 		if (logCard == 0) {
 			return defaultCard;
 		}
-		return (int) Math.round((logCard * logScalingFactor)
+		return Math.round((logCard * logScalingFactor)
 				+ (defaultCard * (1 - logScalingFactor)));
 	}
 
@@ -105,7 +105,7 @@ public class LogCostModel extends DefaultCostModel {
 	 *      de.uni_koblenz.jgralab.greql2.evaluator.costmodel.GraphSize)
 	 */
 	@Override
-	public int calculateCardinalityBackwardVertexSet(
+	public long calculateCardinalityBackwardVertexSet(
 			BackwardVertexSetEvaluator e, GraphSize graphSize) {
 		return getMeanCardinality(logReader
 				.getAvgResultSize(e.getLoggingName()), super
@@ -119,7 +119,7 @@ public class LogCostModel extends DefaultCostModel {
 	 *      de.uni_koblenz.jgralab.greql2.evaluator.costmodel.GraphSize)
 	 */
 	@Override
-	public int calculateCardinalityBagComprehension(
+	public long calculateCardinalityBagComprehension(
 			BagComprehensionEvaluator e, GraphSize graphSize) {
 		return getMeanCardinality(logReader
 				.getAvgResultSize(e.getLoggingName()), super
@@ -133,7 +133,7 @@ public class LogCostModel extends DefaultCostModel {
 	 *      de.uni_koblenz.jgralab.greql2.evaluator.costmodel.GraphSize)
 	 */
 	@Override
-	public int calculateCardinalityBagConstruction(BagConstructionEvaluator e,
+	public long calculateCardinalityBagConstruction(BagConstructionEvaluator e,
 			GraphSize graphSize) {
 		return getMeanCardinality(logReader
 				.getAvgResultSize(e.getLoggingName()), super
@@ -147,7 +147,7 @@ public class LogCostModel extends DefaultCostModel {
 	 *      de.uni_koblenz.jgralab.greql2.evaluator.costmodel.GraphSize)
 	 */
 	@Override
-	public int calculateCardinalityConditionalExpression(
+	public long calculateCardinalityConditionalExpression(
 			ConditionalExpressionEvaluator e, GraphSize graphSize) {
 		return getMeanCardinality(logReader
 				.getAvgResultSize(e.getLoggingName()), super
@@ -161,7 +161,7 @@ public class LogCostModel extends DefaultCostModel {
 	 *      de.uni_koblenz.jgralab.greql2.evaluator.costmodel.GraphSize)
 	 */
 	@Override
-	public int calculateCardinalityDeclaration(DeclarationEvaluator e,
+	public long calculateCardinalityDeclaration(DeclarationEvaluator e,
 			GraphSize graphSize) {
 		return super.calculateCardinalityDeclaration(e, graphSize);
 		// I think the logging doesn't make sense here...
@@ -179,7 +179,7 @@ public class LogCostModel extends DefaultCostModel {
 	 *      de.uni_koblenz.jgralab.greql2.evaluator.costmodel.GraphSize)
 	 */
 	@Override
-	public int calculateCardinalityEdgeSetExpression(
+	public long calculateCardinalityEdgeSetExpression(
 			EdgeSetExpressionEvaluator e, GraphSize graphSize) {
 		return getMeanCardinality(logReader
 				.getAvgResultSize(e.getLoggingName()), super
@@ -193,7 +193,7 @@ public class LogCostModel extends DefaultCostModel {
 	 *      de.uni_koblenz.jgralab.greql2.evaluator.costmodel.GraphSize)
 	 */
 	@Override
-	public int calculateCardinalityEdgeSubgraphExpression(
+	public long calculateCardinalityEdgeSubgraphExpression(
 			EdgeSubgraphExpressionEvaluator e, GraphSize graphSize) {
 		return getMeanCardinality(logReader
 				.getAvgResultSize(e.getLoggingName()), super
@@ -207,7 +207,7 @@ public class LogCostModel extends DefaultCostModel {
 	 *      de.uni_koblenz.jgralab.greql2.evaluator.costmodel.GraphSize)
 	 */
 	@Override
-	public int calculateCardinalityForwardVertexSet(
+	public long calculateCardinalityForwardVertexSet(
 			ForwardVertexSetEvaluator e, GraphSize graphSize) {
 		return getMeanCardinality(logReader
 				.getAvgResultSize(e.getLoggingName()), super
@@ -221,7 +221,7 @@ public class LogCostModel extends DefaultCostModel {
 	 *      de.uni_koblenz.jgralab.greql2.evaluator.costmodel.GraphSize)
 	 */
 	@Override
-	public int calculateCardinalityFunctionApplication(
+	public long calculateCardinalityFunctionApplication(
 			FunctionApplicationEvaluator e, GraphSize graphSize) {
 		return getMeanCardinality(logReader
 				.getAvgResultSize(e.getLoggingName()), super
@@ -235,7 +235,7 @@ public class LogCostModel extends DefaultCostModel {
 	 *      de.uni_koblenz.jgralab.greql2.evaluator.costmodel.GraphSize)
 	 */
 	@Override
-	public int calculateCardinalityListConstruction(
+	public long calculateCardinalityListConstruction(
 			ListConstructionEvaluator e, GraphSize graphSize) {
 		return getMeanCardinality(logReader
 				.getAvgResultSize(e.getLoggingName()), super
@@ -249,7 +249,7 @@ public class LogCostModel extends DefaultCostModel {
 	 *      de.uni_koblenz.jgralab.greql2.evaluator.costmodel.GraphSize)
 	 */
 	@Override
-	public int calculateCardinalityListRangeConstruction(
+	public long calculateCardinalityListRangeConstruction(
 			ListRangeConstructionEvaluator e, GraphSize graphSize) {
 		return getMeanCardinality(logReader
 				.getAvgResultSize(e.getLoggingName()), super
@@ -263,7 +263,7 @@ public class LogCostModel extends DefaultCostModel {
 	 *      de.uni_koblenz.jgralab.greql2.evaluator.costmodel.GraphSize)
 	 */
 	@Override
-	public int calculateCardinalityRecordConstruction(
+	public long calculateCardinalityRecordConstruction(
 			RecordConstructionEvaluator e, GraphSize graphSize) {
 		return getMeanCardinality(logReader
 				.getAvgResultSize(e.getLoggingName()), super
@@ -277,7 +277,7 @@ public class LogCostModel extends DefaultCostModel {
 	 *      de.uni_koblenz.jgralab.greql2.evaluator.costmodel.GraphSize)
 	 */
 	@Override
-	public int calculateCardinalitySetComprehension(
+	public long calculateCardinalitySetComprehension(
 			SetComprehensionEvaluator e, GraphSize graphSize) {
 		return getMeanCardinality(logReader
 				.getAvgResultSize(e.getLoggingName()), super
@@ -291,7 +291,7 @@ public class LogCostModel extends DefaultCostModel {
 	 *      de.uni_koblenz.jgralab.greql2.evaluator.costmodel.GraphSize)
 	 */
 	@Override
-	public int calculateCardinalitySetConstruction(SetConstructionEvaluator e,
+	public long calculateCardinalitySetConstruction(SetConstructionEvaluator e,
 			GraphSize graphSize) {
 		return getMeanCardinality(logReader
 				.getAvgResultSize(e.getLoggingName()), super
@@ -305,7 +305,7 @@ public class LogCostModel extends DefaultCostModel {
 	 *      de.uni_koblenz.jgralab.greql2.evaluator.costmodel.GraphSize)
 	 */
 	@Override
-	public int calculateCardinalitySimpleDeclaration(
+	public long calculateCardinalitySimpleDeclaration(
 			SimpleDeclarationEvaluator e, GraphSize graphSize) {
 		return super.calculateCardinalitySimpleDeclaration(e, graphSize);
 		// I think the log results don't make sense here...
@@ -322,7 +322,7 @@ public class LogCostModel extends DefaultCostModel {
 	 *      de.uni_koblenz.jgralab.greql2.evaluator.costmodel.GraphSize)
 	 */
 	@Override
-	public int calculateCardinalityTableComprehension(
+	public long calculateCardinalityTableComprehension(
 			TableComprehensionEvaluator e, GraphSize graphSize) {
 		return getMeanCardinality(logReader
 				.getAvgResultSize(e.getLoggingName()), super
@@ -336,7 +336,7 @@ public class LogCostModel extends DefaultCostModel {
 	 *      de.uni_koblenz.jgralab.greql2.evaluator.costmodel.GraphSize)
 	 */
 	@Override
-	public int calculateCardinalityTupleConstruction(
+	public long calculateCardinalityTupleConstruction(
 			TupleConstructionEvaluator e, GraphSize graphSize) {
 		return getMeanCardinality(logReader
 				.getAvgResultSize(e.getLoggingName()), super
@@ -350,7 +350,7 @@ public class LogCostModel extends DefaultCostModel {
 	 *      de.uni_koblenz.jgralab.greql2.evaluator.costmodel.GraphSize)
 	 */
 	@Override
-	public int calculateCardinalityVertexSetExpression(
+	public long calculateCardinalityVertexSetExpression(
 			VertexSetExpressionEvaluator e, GraphSize graphSize) {
 		return getMeanCardinality(logReader
 				.getAvgResultSize(e.getLoggingName()), super
@@ -364,7 +364,7 @@ public class LogCostModel extends DefaultCostModel {
 	 *      de.uni_koblenz.jgralab.greql2.evaluator.costmodel.GraphSize)
 	 */
 	@Override
-	public int calculateCardinalityVertexSubgraphExpression(
+	public long calculateCardinalityVertexSubgraphExpression(
 			VertexSubgraphExpressionEvaluator e, GraphSize graphSize) {
 		return getMeanCardinality(logReader
 				.getAvgResultSize(e.getLoggingName()), super
@@ -395,7 +395,7 @@ public class LogCostModel extends DefaultCostModel {
 		IsPathDescriptionOf inc = p
 				.getFirstIsPathDescriptionOf(EdgeDirection.IN);
 
-		int subtreeCosts = 0;
+		long subtreeCosts = 0;
 		while (inc != null) {
 			PathDescriptionEvaluator pathEval = (PathDescriptionEvaluator) greqlEvaluator
 					.getVertexEvaluatorGraphMarker().getMark(inc.getAlpha());
@@ -404,8 +404,8 @@ public class LogCostModel extends DefaultCostModel {
 			inc = inc.getNextIsPathDescriptionOf(EdgeDirection.IN);
 		}
 
-		int ownCosts = defaultNfaConstructionCosts;
-		int iteratedCosts = ownCosts * e.getVariableCombinations(graphSize);
+		long ownCosts = defaultNfaConstructionCosts;
+		long iteratedCosts = ownCosts * e.getVariableCombinations(graphSize);
 		return new VertexCosts(ownCosts, iteratedCosts, iteratedCosts
 				+ subtreeCosts);
 	}
@@ -436,16 +436,16 @@ public class LogCostModel extends DefaultCostModel {
 				.getFirstIsTargetExprOf().getAlpha();
 		VertexEvaluator vertexEval = (VertexEvaluator) greqlEvaluator
 				.getVertexEvaluatorGraphMarker().getMark(targetExpression);
-		int targetCosts = vertexEval
+		long targetCosts = vertexEval
 				.getCurrentSubtreeEvaluationCosts(graphSize);
 		PathDescription p = (PathDescription) vertex.getFirstIsPathOf()
 				.getAlpha();
 		PathDescriptionEvaluator pathDescEval = (PathDescriptionEvaluator) greqlEvaluator
 				.getVertexEvaluatorGraphMarker().getMark(p);
-		int pathDescCosts = pathDescEval
+		long pathDescCosts = pathDescEval
 				.getCurrentSubtreeEvaluationCosts(graphSize);
 
-		int noOfStates = (int) Math.round(logReader
+		long noOfStates = Math.round(logReader
 				.getAvgResultSize("PathDescription"));
 		if (noOfStates == 0) {
 			noOfStates = defaultDfaStateNumber;
@@ -453,9 +453,9 @@ public class LogCostModel extends DefaultCostModel {
 
 		// We assume the costs for evaluating a DFA is the square of its number
 		// of states.
-		int ownCosts = noOfStates * noOfStates;
-		int iteratedCosts = ownCosts * e.getVariableCombinations(graphSize);
-		int subtreeCosts = iteratedCosts + targetCosts + pathDescCosts;
+		long ownCosts = noOfStates * noOfStates;
+		long iteratedCosts = ownCosts * e.getVariableCombinations(graphSize);
+		long subtreeCosts = iteratedCosts + targetCosts + pathDescCosts;
 		return new VertexCosts(ownCosts, iteratedCosts, subtreeCosts);
 	}
 
@@ -474,7 +474,7 @@ public class LogCostModel extends DefaultCostModel {
 				.getAlpha();
 		VertexEvaluator conditionEvaluator = greqlEvaluator
 				.getVertexEvaluatorGraphMarker().getMark(condition);
-		int conditionCosts = conditionEvaluator
+		long conditionCosts = conditionEvaluator
 				.getCurrentSubtreeEvaluationCosts(graphSize);
 
 		double conditionSelectivity = logReader
@@ -488,30 +488,31 @@ public class LogCostModel extends DefaultCostModel {
 				.getAlpha();
 		VertexEvaluator vertexEval = greqlEvaluator
 				.getVertexEvaluatorGraphMarker().getMark(expressionToEvaluate);
-		int trueCosts = vertexEval.getCurrentSubtreeEvaluationCosts(graphSize);
+		long trueCosts = vertexEval.getCurrentSubtreeEvaluationCosts(graphSize);
 
 		expressionToEvaluate = (Expression) vertex.getFirstIsFalseExprOf()
 				.getAlpha();
 		vertexEval = greqlEvaluator.getVertexEvaluatorGraphMarker().getMark(
 				expressionToEvaluate);
-		int falseCosts = vertexEval.getCurrentSubtreeEvaluationCosts(graphSize);
+		long falseCosts = vertexEval
+				.getCurrentSubtreeEvaluationCosts(graphSize);
 
 		expressionToEvaluate = (Expression) vertex.getFirstIsNullExprOf()
 				.getAlpha();
 		vertexEval = greqlEvaluator.getVertexEvaluatorGraphMarker().getMark(
 				expressionToEvaluate);
-		int nullCosts = vertexEval.getCurrentSubtreeEvaluationCosts(graphSize);
+		long nullCosts = vertexEval.getCurrentSubtreeEvaluationCosts(graphSize);
 
 		// We say the costs are the average of all costs weighted by the
 		// probability for each case. The probability of the true-case is given
 		// by conditionSelectivity. We say the two other cases are equally
 		// distributed: (1 - conditionSelectivity) / 2
-		int avgCosts = (int) Math.round((trueCosts * conditionSelectivity)
+		long avgCosts = Math.round((trueCosts * conditionSelectivity)
 				+ (falseCosts + nullCosts) / 2d * (1 - conditionSelectivity));
 
-		int ownCosts = 4;
-		int iteratedCosts = ownCosts * e.getVariableCombinations(graphSize);
-		int subtreeCosts = iteratedCosts + avgCosts + conditionCosts;
+		long ownCosts = 4;
+		long iteratedCosts = ownCosts * e.getVariableCombinations(graphSize);
+		long subtreeCosts = iteratedCosts + avgCosts + conditionCosts;
 		return new VertexCosts(ownCosts, iteratedCosts, subtreeCosts);
 	}
 
@@ -553,15 +554,16 @@ public class LogCostModel extends DefaultCostModel {
 				.getFirstIsStartExprOf().getAlpha();
 		VertexEvaluator vertexEval = greqlEvaluator
 				.getVertexEvaluatorGraphMarker().getMark(startExpression);
-		int startCosts = vertexEval.getCurrentSubtreeEvaluationCosts(graphSize);
+		long startCosts = vertexEval
+				.getCurrentSubtreeEvaluationCosts(graphSize);
 		PathDescription p = (PathDescription) vertex.getFirstIsPathOf()
 				.getAlpha();
 		PathDescriptionEvaluator pathDescEval = (PathDescriptionEvaluator) greqlEvaluator
 				.getVertexEvaluatorGraphMarker().getMark(p);
-		int pathDescCosts = pathDescEval
+		long pathDescCosts = pathDescEval
 				.getCurrentSubtreeEvaluationCosts(graphSize);
 
-		int noOfStates = (int) Math.round(logReader
+		long noOfStates = Math.round(logReader
 				.getAvgResultSize("PathDescription"));
 		if (noOfStates == 0) {
 			noOfStates = defaultDfaStateNumber;
@@ -569,9 +571,9 @@ public class LogCostModel extends DefaultCostModel {
 
 		// We assume the costs for evaluating a DFA is the square of its number
 		// of states.
-		int ownCosts = noOfStates * noOfStates;
-		int iteratedCosts = ownCosts * e.getVariableCombinations(graphSize);
-		int subtreeCosts = iteratedCosts + startCosts + pathDescCosts;
+		long ownCosts = noOfStates * noOfStates;
+		long iteratedCosts = ownCosts * e.getVariableCombinations(graphSize);
+		long subtreeCosts = iteratedCosts + startCosts + pathDescCosts;
 		return new VertexCosts(ownCosts, iteratedCosts, subtreeCosts);
 	}
 
@@ -617,12 +619,12 @@ public class LogCostModel extends DefaultCostModel {
 				.getVertexEvaluatorGraphMarker().getMark(
 						exp.getFirstIsLastValueOf().getAlpha());
 
-		int startCosts = startExpEval
+		long startCosts = startExpEval
 				.getCurrentSubtreeEvaluationCosts(graphSize);
-		int targetCosts = targetExpEval
+		long targetCosts = targetExpEval
 				.getCurrentSubtreeEvaluationCosts(graphSize);
 
-		int range = -1;
+		long range = -1;
 		if (startExpEval instanceof IntLiteralEvaluator) {
 			if (targetExpEval instanceof IntLiteralEvaluator) {
 				try {
@@ -635,17 +637,16 @@ public class LogCostModel extends DefaultCostModel {
 		}
 
 		if (range <= 0) {
-			range = (int) Math.round(logReader.getAvgResultSize(e
-					.getLoggingName()));
+			range = Math.round(logReader.getAvgResultSize(e.getLoggingName()));
 		}
 
 		if (range <= 0) {
 			range = defaultListRangeSize;
 		}
 
-		int ownCosts = addToListCosts * range;
-		int iteratedCosts = ownCosts * e.getVariableCombinations(graphSize);
-		int subtreeCosts = iteratedCosts + startCosts + targetCosts;
+		long ownCosts = addToListCosts * range;
+		long iteratedCosts = ownCosts * e.getVariableCombinations(graphSize);
+		long subtreeCosts = iteratedCosts + startCosts + targetCosts;
 		return new VertexCosts(ownCosts, iteratedCosts, subtreeCosts);
 	}
 
@@ -675,23 +676,24 @@ public class LogCostModel extends DefaultCostModel {
 				.getFirstIsStartExprOf().getAlpha();
 		VertexEvaluator vertexEval = greqlEvaluator
 				.getVertexEvaluatorGraphMarker().getMark(startExpression);
-		int startCosts = vertexEval.getCurrentSubtreeEvaluationCosts(graphSize);
+		long startCosts = vertexEval
+				.getCurrentSubtreeEvaluationCosts(graphSize);
 
 		Expression targetExpression = (Expression) existence
 				.getFirstIsTargetExprOf().getAlpha();
 		vertexEval = greqlEvaluator.getVertexEvaluatorGraphMarker().getMark(
 				targetExpression);
-		int targetCosts = vertexEval
+		long targetCosts = vertexEval
 				.getCurrentSubtreeEvaluationCosts(graphSize);
 
 		PathDescription p = (PathDescription) existence.getFirstIsPathOf()
 				.getAlpha();
 		PathDescriptionEvaluator pathDescEval = (PathDescriptionEvaluator) greqlEvaluator
 				.getVertexEvaluatorGraphMarker().getMark(p);
-		int pathDescCosts = pathDescEval
+		long pathDescCosts = pathDescEval
 				.getCurrentSubtreeEvaluationCosts(graphSize);
 
-		int noOfStates = (int) Math.round(logReader
+		long noOfStates = Math.round(logReader
 				.getAvgResultSize("PathDescription"));
 		if (noOfStates == 0) {
 			noOfStates = defaultDfaStateNumber;
@@ -699,9 +701,9 @@ public class LogCostModel extends DefaultCostModel {
 
 		// We assume the costs for evaluating a DFA is the square of its number
 		// of states + 50 base costs.
-		int ownCosts = Math.round(1.0f * noOfStates * noOfStates) + 50;
-		int iteratedCosts = ownCosts * e.getVariableCombinations(graphSize);
-		int subtreeCosts = startCosts + targetCosts + pathDescCosts
+		long ownCosts = Math.round(1.0f * noOfStates * noOfStates) + 50;
+		long iteratedCosts = ownCosts * e.getVariableCombinations(graphSize);
+		long subtreeCosts = startCosts + targetCosts + pathDescCosts
 				+ iteratedCosts;
 		return new VertexCosts(ownCosts, iteratedCosts, subtreeCosts);
 	}

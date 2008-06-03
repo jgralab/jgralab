@@ -301,7 +301,7 @@ public class PathSystem extends PathSearch implements Greql2Function {
 		return null;
 	}
 
-	public int getEstimatedCosts(ArrayList<Integer> inElements) {
+	public long getEstimatedCosts(ArrayList<Long> inElements) {
 		return 1000;
 	}
 
@@ -309,7 +309,7 @@ public class PathSystem extends PathSearch implements Greql2Function {
 		return 0.001f;
 	}
 
-	public int getEstimatedCardinality(int inElements) {
+	public long getEstimatedCardinality(int inElements) {
 		return 1;
 	}
 

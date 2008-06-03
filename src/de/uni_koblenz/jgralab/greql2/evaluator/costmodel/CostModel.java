@@ -191,61 +191,61 @@ public interface CostModel {
 	 * The methods to calculate the cardinality
 	 */
 
-	public int calculateCardinalityBackwardVertexSet(
+	public long calculateCardinalityBackwardVertexSet(
 			BackwardVertexSetEvaluator e, GraphSize graphSize);
 
-	public int calculateCardinalityBagComprehension(
+	public long calculateCardinalityBagComprehension(
 			BagComprehensionEvaluator e, GraphSize graphSize);
 
-	public int calculateCardinalityBagConstruction(BagConstructionEvaluator e,
+	public long calculateCardinalityBagConstruction(BagConstructionEvaluator e,
 			GraphSize graphSize);
 
-	public int calculateCardinalityConditionalExpression(
+	public long calculateCardinalityConditionalExpression(
 			ConditionalExpressionEvaluator e, GraphSize graphSize);
 
-	public int calculateCardinalityDeclaration(DeclarationEvaluator e,
+	public long calculateCardinalityDeclaration(DeclarationEvaluator e,
 			GraphSize graphSize);
 
-	public int calculateCardinalityEdgeSetExpression(
+	public long calculateCardinalityEdgeSetExpression(
 			EdgeSetExpressionEvaluator e, GraphSize graphSize);
 
-	public int calculateCardinalityEdgeSubgraphExpression(
+	public long calculateCardinalityEdgeSubgraphExpression(
 			EdgeSubgraphExpressionEvaluator e, GraphSize graphSize);
 
-	public int calculateCardinalityForwardVertexSet(
+	public long calculateCardinalityForwardVertexSet(
 			ForwardVertexSetEvaluator e, GraphSize graphSize);
 
-	public int calculateCardinalityFunctionApplication(
+	public long calculateCardinalityFunctionApplication(
 			FunctionApplicationEvaluator e, GraphSize graphSize);
 
-	public int calculateCardinalityListConstruction(
+	public long calculateCardinalityListConstruction(
 			ListConstructionEvaluator e, GraphSize graphSize);
 
-	public int calculateCardinalityListRangeConstruction(
+	public long calculateCardinalityListRangeConstruction(
 			ListRangeConstructionEvaluator e, GraphSize graphSize);
 
-	public int calculateCardinalityRecordConstruction(
+	public long calculateCardinalityRecordConstruction(
 			RecordConstructionEvaluator e, GraphSize graphSize);
 
-	public int calculateCardinalitySetComprehension(
+	public long calculateCardinalitySetComprehension(
 			SetComprehensionEvaluator e, GraphSize graphSize);
 
-	public int calculateCardinalitySetConstruction(SetConstructionEvaluator e,
+	public long calculateCardinalitySetConstruction(SetConstructionEvaluator e,
 			GraphSize graphSize);
 
-	public int calculateCardinalitySimpleDeclaration(
+	public long calculateCardinalitySimpleDeclaration(
 			SimpleDeclarationEvaluator e, GraphSize graphSize);
 
-	public int calculateCardinalityTableComprehension(
+	public long calculateCardinalityTableComprehension(
 			TableComprehensionEvaluator e, GraphSize graphSize);
 
-	public int calculateCardinalityTupleConstruction(
+	public long calculateCardinalityTupleConstruction(
 			TupleConstructionEvaluator e, GraphSize graphSize);
 
-	public int calculateCardinalityVertexSetExpression(
+	public long calculateCardinalityVertexSetExpression(
 			VertexSetExpressionEvaluator e, GraphSize graphSize);
 
-	public int calculateCardinalityVertexSubgraphExpression(
+	public long calculateCardinalityVertexSubgraphExpression(
 			VertexSubgraphExpressionEvaluator e, GraphSize graphSize);
 
 	/*
@@ -271,7 +271,7 @@ public interface CostModel {
 	public GraphSize calculateEdgeSubgraphSize(
 			EdgeSubgraphExpressionEvaluator e, GraphSize graphSize);
 
-	public int calculateVariableAssignments(VariableEvaluator e,
+	public long calculateVariableAssignments(VariableEvaluator e,
 			GraphSize graphSize);
 
 }

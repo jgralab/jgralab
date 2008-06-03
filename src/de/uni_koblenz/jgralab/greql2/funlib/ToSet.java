@@ -81,7 +81,7 @@ public class ToSet implements Greql2Function {
 		throw new WrongFunctionParameterException(this, null, arguments);
 	}
 
-	public int getEstimatedCosts(ArrayList<Integer> inElements) {
+	public long getEstimatedCosts(ArrayList<Long> inElements) {
 		return 2;
 	}
 
@@ -89,7 +89,7 @@ public class ToSet implements Greql2Function {
 		return 1;
 	}
 
-	public int getEstimatedCardinality(int inElements) {
+	public long getEstimatedCardinality(int inElements) {
 		return 1;
 	}
 
