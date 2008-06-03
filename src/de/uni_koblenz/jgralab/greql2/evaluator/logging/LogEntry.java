@@ -35,7 +35,7 @@ public abstract class LogEntry {
 	/**
 	 * Stores the number of log-calls for this logentry
 	 */
-	protected int calls;
+	protected long calls;
 
 	/**
 	 * Stores the name of this logentry. This can be either the vertextype or
@@ -66,7 +66,7 @@ public abstract class LogEntry {
 	 * 
 	 * @return the callcount of this LogEntry object
 	 */
-	public int getCalls() {
+	public long getCalls() {
 		return calls;
 	}
 

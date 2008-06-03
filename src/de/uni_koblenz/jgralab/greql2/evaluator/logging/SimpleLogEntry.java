@@ -44,7 +44,7 @@ public class SimpleLogEntry extends LogEntry {
 	public SimpleLogEntry(Element elem) {
 		super(elem);
 		Element sumElem = elem.getChild("sum");
-		sum = Integer.parseInt(sumElem.getText());
+		sum = Long.parseLong(sumElem.getText());
 	}
 
 	/**
@@ -61,7 +61,7 @@ public class SimpleLogEntry extends LogEntry {
 	 * 
 	 * @param n
 	 */
-	public void logSum(int n) {
+	public void logSum(long n) {
 		sum += n;
 		calls++;
 	}
@@ -81,7 +81,7 @@ public class SimpleLogEntry extends LogEntry {
 	 * @return the average or estimated value
 	 */
 	public double getAverageValue() {
-		return sum * 1.0 / calls;
+		return sum * 1d / calls;
 	}
 
 	/**

@@ -35,7 +35,7 @@ import java.util.*;
 import java.util.concurrent.Semaphore;
 
 /**
- * This class implements the Level1 logging component of the GreqlEvaluator. It
+ * This class implements the Level2 logging component of the GreqlEvaluator. It
  * logs average values for selectivity, input and result size of the vertextypes
  * in the GReQL Syntaxgraph.
  * 
@@ -74,7 +74,7 @@ public class Level2Logger extends Level2LoggingBase implements EvaluationLogger 
 	private boolean hasStored = false;
 
 	/**
-	 * creates a new level1logger
+	 * creates a new {@link Level2Logger}
 	 */
 	private Level2Logger() {
 		inputSize = new HashMap<String, ArrayLogEntry>();
@@ -83,7 +83,7 @@ public class Level2Logger extends Level2LoggingBase implements EvaluationLogger 
 	}
 
 	/**
-	 * Creates a new Level1Logger
+	 * Creates a new {@link Level2Logger}
 	 * 
 	 * @param logDirectory
 	 *            the directory where the log should be stored
@@ -138,10 +138,10 @@ public class Level2Logger extends Level2LoggingBase implements EvaluationLogger 
 	 * (non-Javadoc)
 	 * 
 	 * @see de.uni_koblenz.jgralab.greql2.evaluator.logging.EvaluationLogger#logResultSize(java.lang.String,
-	 *      int)
+	 *      long)
 	 */
 	@Override
-	public void logResultSize(String name, int size) {
+	public void logResultSize(String name, long size) {
 		SimpleLogEntry entry = resultSize.get(name);
 		if (entry == null) {
 			entry = new SimpleLogEntry(name);
@@ -157,7 +157,7 @@ public class Level2Logger extends Level2LoggingBase implements EvaluationLogger 
 	 *      java.util.ArrayList)
 	 */
 	@Override
-	public void logInputSize(String name, ArrayList<Integer> size) {
+	public void logInputSize(String name, ArrayList<Long> size) {
 		ArrayLogEntry entry = inputSize.get(name);
 		if (entry == null) {
 			entry = new ArrayLogEntry(name);

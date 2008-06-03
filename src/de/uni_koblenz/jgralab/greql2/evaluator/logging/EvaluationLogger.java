@@ -58,7 +58,7 @@ public interface EvaluationLogger {
 	 * @param resultSize
 	 *            The size of the resulting collection
 	 */
-	public void logResultSize(String name, int resultSize);
+	public void logResultSize(String name, long resultSize);
 
 	/**
 	 * logs the number of input elements for a specific vertex. Because a vertex
@@ -70,7 +70,7 @@ public interface EvaluationLogger {
 	 * @param inputSize
 	 *            The size of the input
 	 */
-	public void logInputSize(String name, ArrayList<Integer> inputSize);
+	public void logInputSize(String name, ArrayList<Long> inputSize);
 
 	/**
 	 * stores the log to the default filename of this logger

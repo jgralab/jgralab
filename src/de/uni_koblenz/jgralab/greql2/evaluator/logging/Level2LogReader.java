@@ -77,10 +77,10 @@ public class Level2LogReader extends Level2LoggingBase implements
 		loggingType = logger.loggingType;
 
 		if (load()) {
-			System.out.println("Level1LogReader successfully loaded "
+			System.out.println("Level2LogReader successfully loaded "
 					+ getLogFile().getPath());
 		} else {
-			System.err.println("Level1LogReader couldn't load "
+			System.err.println("Level2LogReader couldn't load "
 					+ getLogFile().getPath());
 		}
 	}
@@ -111,17 +111,17 @@ public class Level2LogReader extends Level2LoggingBase implements
 		this.loggingType = loggingType;
 
 		if (load()) {
-			System.out.println("Level1LogReader successfully loaded "
+			System.out.println("Level2LogReader successfully loaded "
 					+ getLogFile().getPath());
 		} else {
-			System.err.println("Level1LogReader couldn't load "
+			System.err.println("Level2LogReader couldn't load "
 					+ getLogFile().getPath());
 		}
 	}
 
 	/**
 	 * A shorthand for
-	 * <code>new Level1LogReader(logDir, null, LoggingType.GENERIC);</code>
+	 * <code>new Level2LogReader(logDir, null, LoggingType.GENERIC);</code>
 	 * 
 	 * @param logDirectory
 	 *            the directory where the corresponding {@link Level2Logger}
@@ -133,10 +133,10 @@ public class Level2LogReader extends Level2LoggingBase implements
 		this.loggingType = LoggingType.GENERIC;
 
 		if (load()) {
-			System.out.println("Level1LogReader successfully loaded "
+			System.out.println("Level2LogReader successfully loaded "
 					+ getLogFile().getPath());
 		} else {
-			System.err.println("Level1LogReader couldn't load "
+			System.err.println("Level2LogReader couldn't load "
 					+ getLogFile().getPath());
 		}
 	}
