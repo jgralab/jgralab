@@ -230,8 +230,9 @@ public abstract class VertexEvaluator {
 		if (evaluationLogger != null && result != null) {
 			if (result.isBoolean()) {
 				// Log the selectivity for vertices that return a boolean
-				evaluationLogger.logSelectivity(getLoggingName(), result
-						.toBoolean().booleanValue());
+				Boolean bool = result.toBoolean();
+				evaluationLogger.logSelectivity(getLoggingName(),
+						(bool != null) && bool.booleanValue());
 			} else if (result.isJValueTypeCollection()) {
 				// Log the selectivity for TypeId vertices
 				JValueTypeCollection col = result.toJValueTypeCollection();
