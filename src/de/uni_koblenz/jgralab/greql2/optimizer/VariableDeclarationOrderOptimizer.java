@@ -58,7 +58,7 @@ public class VariableDeclarationOrderOptimizer extends OptimizerBase {
 	 *      de.uni_koblenz.jgralab.greql2.schema.Greql2)
 	 */
 	@Override
-	public void optimize(GreqlEvaluator eval, Greql2 syntaxgraph)
+	public boolean optimize(GreqlEvaluator eval, Greql2 syntaxgraph)
 			throws OptimizerException {
 		this.syntaxgraph = syntaxgraph;
 		this.greqlEvaluator = eval;
@@ -69,6 +69,9 @@ public class VariableDeclarationOrderOptimizer extends OptimizerBase {
 
 		Optimizer mergeSDOpt = new MergeSimpleDeclarationsOptimizer();
 		mergeSDOpt.optimize(this.greqlEvaluator, this.syntaxgraph);
+
+		// FIXME (horn): Return true if something was done!
+		return false;
 	}
 
 	/**

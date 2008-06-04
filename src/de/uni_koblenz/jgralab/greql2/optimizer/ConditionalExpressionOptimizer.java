@@ -41,7 +41,7 @@ public class ConditionalExpressionOptimizer extends OptimizerBase {
 	 *      de.uni_koblenz.jgralab.greql2.schema.Greql2)
 	 */
 	@Override
-	public void optimize(GreqlEvaluator eval, Greql2 syntaxgraph)
+	public boolean optimize(GreqlEvaluator eval, Greql2 syntaxgraph)
 			throws OptimizerException {
 
 		// Replace all Xor funapps with and/or/not...
@@ -82,5 +82,8 @@ public class ConditionalExpressionOptimizer extends OptimizerBase {
 					"Exception while re-creating VertexEvaluators.", e);
 		}
 		// printGraphAsDot(syntaxgraph, "foo");
+
+		// FIXME (horn): Return true if something was done!
+		return false;
 	}
 }

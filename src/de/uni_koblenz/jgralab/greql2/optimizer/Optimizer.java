@@ -45,10 +45,13 @@ public interface Optimizer {
 	 *            the GreqlEvaluator, which calls this method
 	 * @param syntaxgraph
 	 *            The GReQL 2 syntaxgraph to optimize
+	 * @return <code>true</code> if a transformation was done,
+	 *         <code>false</code> if this {@link Optimizer} couldn't do
+	 *         anything.
 	 * @throws OptimizerException
 	 *             on failures while optimization
 	 */
-	public void optimize(GreqlEvaluator eval, Greql2 syntaxgraph)
+	public boolean optimize(GreqlEvaluator eval, Greql2 syntaxgraph)
 			throws OptimizerException;
 
 	/**

@@ -66,7 +66,7 @@ public class EarySelectionOptimizer extends OptimizerBase {
 	 *      de.uni_koblenz.jgralab.greql2.schema.Greql2)
 	 */
 	@Override
-	public void optimize(GreqlEvaluator eval, Greql2 syntaxgraph)
+	public boolean optimize(GreqlEvaluator eval, Greql2 syntaxgraph)
 			throws OptimizerException {
 		this.syntaxgraph = syntaxgraph;
 
@@ -88,6 +88,10 @@ public class EarySelectionOptimizer extends OptimizerBase {
 		} catch (EvaluateException e) {
 			e.printStackTrace();
 		}
+
+		// If there was more than one optimization run, a transformation was
+		// done.
+		return noOfRuns > 1;
 	}
 
 	/**

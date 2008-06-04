@@ -56,7 +56,7 @@ public class PathExistenceOptimizer extends OptimizerBase {
 	 *      de.uni_koblenz.jgralab.greql2.schema.Greql2)
 	 */
 	@Override
-	public void optimize(GreqlEvaluator eval, Greql2 syntaxgraph)
+	public boolean optimize(GreqlEvaluator eval, Greql2 syntaxgraph)
 			throws OptimizerException {
 		this.syntaxgraph = syntaxgraph;
 
@@ -67,6 +67,9 @@ public class PathExistenceOptimizer extends OptimizerBase {
 		} catch (EvaluateException e) {
 			e.printStackTrace();
 		}
+
+		// FIXME (horn): Return true if something was done!
+		return false;
 	}
 
 	/**
@@ -131,13 +134,15 @@ public class PathExistenceOptimizer extends OptimizerBase {
 		}
 
 		if (startExpVars.isEmpty()
-				|| (!targetExpVars.isEmpty() && OptimizerUtility.isDeclaredBefore(
-						startExpVars.last(), targetExpVars.last()))) {
+				|| (!targetExpVars.isEmpty() && OptimizerUtility
+						.isDeclaredBefore(startExpVars.last(), targetExpVars
+								.last()))) {
 			replacePathExistenceWithContainsFunApp(pe, startExp, targetExp,
 					true);
 		} else if (targetExpVars.isEmpty()
-				|| (!startExpVars.isEmpty() && OptimizerUtility.isDeclaredBefore(
-						targetExpVars.last(), startExpVars.last()))) {
+				|| (!startExpVars.isEmpty() && OptimizerUtility
+						.isDeclaredBefore(targetExpVars.last(), startExpVars
+								.last()))) {
 			replacePathExistenceWithContainsFunApp(pe, targetExp, startExp,
 					false);
 		}
@@ -181,8 +186,8 @@ public class PathExistenceOptimizer extends OptimizerBase {
 			inc = inc.getNextEdge(EdgeDirection.OUT);
 		}
 		FunctionApplication contains = syntaxgraph.createFunctionApplication();
-		FunctionId containsId = OptimizerUtility.findOrCreateFunctionId("contains",
-				syntaxgraph);
+		FunctionId containsId = OptimizerUtility.findOrCreateFunctionId(
+				"contains", syntaxgraph);
 		syntaxgraph.createIsFunctionIdOf(containsId, contains);
 		PathExpression vertexSet;
 		if (forward) {

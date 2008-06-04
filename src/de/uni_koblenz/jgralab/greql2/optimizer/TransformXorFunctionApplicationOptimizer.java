@@ -46,7 +46,7 @@ public class TransformXorFunctionApplicationOptimizer extends OptimizerBase {
 	 *      de.uni_koblenz.jgralab.greql2.schema.Greql2)
 	 */
 	@Override
-	public void optimize(GreqlEvaluator eval, Greql2 syntaxgraph)
+	public boolean optimize(GreqlEvaluator eval, Greql2 syntaxgraph)
 			throws OptimizerException {
 		ArrayList<FunctionApplication> xors = new ArrayList<FunctionApplication>();
 		for (FunctionApplication funApp : syntaxgraph
@@ -116,6 +116,9 @@ public class TransformXorFunctionApplicationOptimizer extends OptimizerBase {
 			// delete the Xor
 			xor.delete();
 		}
+
+		// FIXME (horn): Return true if something was done!
+		return false;
 	}
 
 }

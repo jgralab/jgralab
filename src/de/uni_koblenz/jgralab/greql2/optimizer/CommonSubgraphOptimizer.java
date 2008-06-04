@@ -87,12 +87,15 @@ public class CommonSubgraphOptimizer extends OptimizerBase {
 	 *      de.uni_koblenz.jgralab.greql2.schema.Greql2)
 	 */
 	@Override
-	public void optimize(GreqlEvaluator eval, Greql2 syntaxgraph)
+	public boolean optimize(GreqlEvaluator eval, Greql2 syntaxgraph)
 			throws OptimizerException {
 		computeHashAndProcess(syntaxgraph.getFirstGreql2Expression());
 
 		Optimizer mergeSDOpt = new MergeSimpleDeclarationsOptimizer();
 		mergeSDOpt.optimize(eval, syntaxgraph);
+
+		// FIXME (horn): Return true if something was done!
+		return false;
 	}
 
 	/**
@@ -129,8 +132,7 @@ public class CommonSubgraphOptimizer extends OptimizerBase {
 		buf.append(computeAttributeHash(vertex));
 
 		// Compute the hashes of the children
-		for (Edge e: vertex
-				.incidences(EdgeDirection.IN)) {
+		for (Edge e : vertex.incidences(EdgeDirection.IN)) {
 			buf.append("{E:");
 			buf.append(e.getAttributedElementClass().getQualifiedName());
 			buf.append("}");

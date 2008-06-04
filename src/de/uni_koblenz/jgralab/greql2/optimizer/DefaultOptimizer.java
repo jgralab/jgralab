@@ -61,7 +61,7 @@ public class DefaultOptimizer extends OptimizerBase {
 	 * @see de.uni_koblenz.jgralab.greql2.optimizer.Optimizer#optimize(de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator,
 	 *      de.uni_koblenz.jgralab.greql2.schema.Greql2)
 	 */
-	public void optimize(GreqlEvaluator eval, Greql2 syntaxgraph)
+	public boolean optimize(GreqlEvaluator eval, Greql2 syntaxgraph)
 			throws OptimizerException {
 		// printGraphAsDot(syntaxgraph, "before-optimization");
 
@@ -73,22 +73,24 @@ public class DefaultOptimizer extends OptimizerBase {
 		Optimizer ceo = new ConditionalExpressionOptimizer();
 
 		// do the optimization
-		cso.optimize(eval, syntaxgraph);
-		eso.optimize(eval, syntaxgraph);
+		boolean aTransformationWasDone = cso.optimize(eval, syntaxgraph)
+				| eso.optimize(eval, syntaxgraph) |
 
-		cso.optimize(eval, syntaxgraph);
-		vdoo.optimize(eval, syntaxgraph);
+				cso.optimize(eval, syntaxgraph)
+				| vdoo.optimize(eval, syntaxgraph) |
 
-		cso.optimize(eval, syntaxgraph);
-		peo.optimize(eval, syntaxgraph);
+				cso.optimize(eval, syntaxgraph)
+				| peo.optimize(eval, syntaxgraph) |
 
-		cso.optimize(eval, syntaxgraph);
-		ceo.optimize(eval, syntaxgraph);
+				cso.optimize(eval, syntaxgraph)
+				| ceo.optimize(eval, syntaxgraph) |
 
-		cso.optimize(eval, syntaxgraph);
+				cso.optimize(eval, syntaxgraph);
 
 		// printGraphAsDot(syntaxgraph, "after-optimization");
 		// printCosts(eval, syntaxgraph);
+
+		return aTransformationWasDone;
 	}
 
 	private void printCosts(GreqlEvaluator eval, Greql2 syntaxgraph) {
