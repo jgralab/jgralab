@@ -21,7 +21,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
- 
+
 package de.uni_koblenz.jgralab.greql2.evaluator.fa;
 
 import de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.VertexEvaluator;
@@ -33,20 +33,18 @@ import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.Vertex;
 
 /**
- * This transition accepts only one edge. Because this edge may be a variable
- * or even the result of an expression containing a variable, a reference to the VertexEvaluator
- * which evaluates this variable/expression is stored in this transition and the result of
- * this evaluator is acceptes. 
+ * This transition accepts only one edge. Because this edge may be a variable or
+ * even the result of an expression containing a variable, a reference to the
+ * VertexEvaluator which evaluates this variable/expression is stored in this
+ * transition and the result of this evaluator is acceptes.
  * 
  * This transition accepts the greql2 syntax: --{edge}->
  * 
- * @author Daniel Bildhauer <dbildh@uni-koblenz.de> 
- * Summer 2006, Diploma Thesis
- *
+ * @author Daniel Bildhauer <dbildh@uni-koblenz.de> Summer 2006, Diploma Thesis
+ * 
  */
 public class EdgeTransition extends SimpleTransition {
 
-	
 	/**
 	 * In GReQL 2 it is possible to specify an explicit edge. Cause this edge
 	 * may be a variable or the result of an expression containing a variable,
@@ -55,20 +53,21 @@ public class EdgeTransition extends SimpleTransition {
 	 */
 	private VertexEvaluator allowedEdgeEvaluator;
 
-
 	/**
 	 * returns a string which describes the edge
 	 */
 	public String edgeString() {
 		String desc = "EdgeTransition";
-		//String desc = "EdgeTransition (  Dir:" + validDirection.toString() + "  "
-				//+ edgeTypeRestriction.toString() + " Edge: " + allowedEdgeEvaluator.toString() + "   )";
+		// String desc = "EdgeTransition ( Dir:" + validDirection.toString() + "
+		// "
+		// + edgeTypeRestriction.toString() + " Edge: " +
+		// allowedEdgeEvaluator.toString() + " )";
 		return desc;
 	}
 
-
-
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see greql2.evaluator.fa.Transition#equalSymbol(greql2.evaluator.fa.EdgeTransition)
 	 */
 	public boolean equalSymbol(Transition t) {
@@ -93,16 +92,13 @@ public class EdgeTransition extends SimpleTransition {
 		super(t, addToStates);
 		allowedEdgeEvaluator = t.allowedEdgeEvaluator;
 	}
-	
-	
+
 	/**
 	 * returns a copy of this transition
 	 */
 	public Transition copy(boolean addToStates) {
 		return new EdgeTransition(this, addToStates);
 	}
-
-
 
 	/**
 	 * Creates a new transition from start state to end state. The Transition
@@ -126,27 +122,31 @@ public class EdgeTransition extends SimpleTransition {
 	 *            be accepted
 	 */
 	public EdgeTransition(State start, State end, AllowedEdgeDirection dir,
-			JValueTypeCollection typeCollection, String role, VertexEvaluator edgeEval) {
+			JValueTypeCollection typeCollection, String role,
+			VertexEvaluator edgeEval) {
 		super(start, end, dir, typeCollection, role);
 		allowedEdgeEvaluator = edgeEval;
 	}
 
-
-	/* (non-Javadoc)
-	 * @see greql2.evaluator.fa.Transition#accepts(jgralab.Vertex, jgralab.Edge, greql2.evaluator.SubgraphTempAttribute)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see greql2.evaluator.fa.Transition#accepts(jgralab.Vertex, jgralab.Edge,
+	 *      greql2.evaluator.SubgraphTempAttribute)
 	 */
 	public boolean accepts(Vertex v, Edge e, BooleanGraphMarker subgraph)
 			throws EvaluateException {
-		if ( !super.accepts(v,e,subgraph) ) {
+		if (!super.accepts(v, e, subgraph)) {
 			return false;
-		}	
-		//System.out.println("Checking edge path for Edge: " + e.toString());
+		}
+		// System.out.println("Checking edge path for Edge: " + e.toString());
 		// checks if only one edge is allowed an if e is this allowed edge
 		if (allowedEdgeEvaluator != null) {
 			try {
-				Edge allowedEdge = allowedEdgeEvaluator.getResult(
-						subgraph).toEdge().getNormalEdge();
-				//System.out.println("Allowed Edge is: " + allowedEdge.toString());
+				Edge allowedEdge = allowedEdgeEvaluator.getResult(subgraph)
+						.toEdge().getNormalEdge();
+				// System.out.println("Allowed Edge is: " +
+				// allowedEdge.toString());
 				if (e.getNormalEdge() != allowedEdge)
 					return false;
 			} catch (JValueInvalidTypeException ex) {
@@ -157,6 +157,5 @@ public class EdgeTransition extends SimpleTransition {
 		}
 		return true;
 	}
-	
-	
+
 }

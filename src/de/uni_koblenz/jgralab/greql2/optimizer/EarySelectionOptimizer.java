@@ -4,6 +4,8 @@
 package de.uni_koblenz.jgralab.greql2.optimizer;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -119,7 +121,35 @@ public class EarySelectionOptimizer extends OptimizerBase {
 
 		// now perform the needed transformations
 		boolean aTransformationWasDone = false;
-		for (SimpleDeclaration sd : movableExpressions.keySet()) {
+		List<SimpleDeclaration> simpleDeclsWithMovableExpressions = new ArrayList<SimpleDeclaration>(
+				movableExpressions.keySet());
+
+		// Sort the list of SDs with associated movable expressions to handle
+		// this case: A predicate P is moved, and its nodes are copied. But P
+		// contains another declaration (e.g. in a QuantifiedExpression) which
+		// can be optimized, too. But due to the copying its simple
+		// declarations have another ID now, but movableExpressions
+		// contains the old SD. By moving expressions to their SD in a bottom-up
+		// order, we omit this problem.
+		Collections.sort(simpleDeclsWithMovableExpressions,
+				new Comparator<SimpleDeclaration>() {
+
+					@Override
+					public int compare(SimpleDeclaration sd1,
+							SimpleDeclaration sd2) {
+						Declaration decl1 = (Declaration) sd1
+								.getFirstIsSimpleDeclOf().getOmega();
+						Declaration decl2 = (Declaration) sd2
+								.getFirstIsSimpleDeclOf().getOmega();
+						if (OptimizerUtility.isAbove(decl1, decl2))
+							return 1;
+						if (OptimizerUtility.isAbove(decl2, decl1))
+							return -1;
+						return 0;
+					}
+				});
+
+		for (SimpleDeclaration sd : simpleDeclsWithMovableExpressions) {
 			Declaration parentDecl = (Declaration) sd.getFirstIsSimpleDeclOf()
 					.getOmega();
 			Set<Variable> varsDeclaredBySd = OptimizerUtility
@@ -159,16 +189,6 @@ public class EarySelectionOptimizer extends OptimizerBase {
 					movePredicatesToOneVarSimpleDeclaration(sd,
 							movableExpressions.get(sd), varsDeclaredBySd);
 					aTransformationWasDone = true;
-					// FIXME: The break is for this case: A predicate P is
-					// moved, and its nodes are copied. Now P contains another
-					// declaration (e.g. in a QuantifiedExpression) which can be
-					// optimized, too. But due to the copying its simple
-					// declarations have another ID now, but movableExpressions
-					// contains the old SD. Instead of the break and
-					// recalculation of all movable expressions it should be
-					// doable to optimize in a bottom-up order in the graph
-					// which would solve that problem in a better way...
-					break;
 				} else {
 					// The Mn rule may only be performed if there are more
 					// SimpleDeclarations below the current SD's parent
@@ -177,8 +197,6 @@ public class EarySelectionOptimizer extends OptimizerBase {
 						movePredicatesToMultiVarSimpleDeclaration(sd,
 								movableExpressions.get(sd), varsDeclaredBySd);
 						aTransformationWasDone = true;
-						// FIXME: Same as above...
-						break;
 					}
 				}
 			}
@@ -237,10 +255,18 @@ public class EarySelectionOptimizer extends OptimizerBase {
 	private void movePredicatesToMultiVarSimpleDeclaration(
 			SimpleDeclaration origSD, Set<Expression> predicates,
 			Set<Variable> varsDeclaredByOrigSD) throws OptimizerException {
-		System.out.println(optimizerHeaderString()
+		System.out.print(optimizerHeaderString()
 				+ "(Mn) Performing early selection transformation for "
-				+ origSD + " (declaring " + varsDeclaredByOrigSD.size()
-				+ " variables) with predicates " + predicates);
+				+ origSD + " declaring ");
+		int varsSize = varsDeclaredByOrigSD.size();
+		int i = 1;
+		for (Variable var : varsDeclaredByOrigSD) {
+			System.out.print(var + " (" + var.getName() + ")");
+			if (i < varsSize)
+				System.out.print(", ");
+			i++;
+		}
+		System.out.println(" with predicates " + predicates);
 
 		// First we search the edges that are connected to each variable in
 		// the result definition or bound expression of the parent
@@ -344,10 +370,11 @@ public class EarySelectionOptimizer extends OptimizerBase {
 	private void movePredicatesToOneVarSimpleDeclaration(
 			SimpleDeclaration origSD, Set<Expression> predicates,
 			Set<Variable> varsDeclaredByOrigSD) throws OptimizerException {
+		Variable var = varsDeclaredByOrigSD.iterator().next();
 		System.out.println(optimizerHeaderString()
 				+ "(M1) Performing early selection transformation for "
-				+ origSD + " (declaring one variable) with predicates "
-				+ predicates);
+				+ origSD + " declaring variable " + var + " (" + var.getName()
+				+ ") with predicates " + predicates);
 
 		// Create the new vertices
 		Expression newCombinedConstraint = createConjunction(

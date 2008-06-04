@@ -21,7 +21,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
- 
+
 package de.uni_koblenz.jgralab.greql2.evaluator.fa;
 
 import de.uni_koblenz.jgralab.greql2.exception.EvaluateException;
@@ -29,12 +29,11 @@ import de.uni_koblenz.jgralab.BooleanGraphMarker;
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.Vertex;
 
-
 /**
- * Is baseclass of all transitions. Has one start and one endstate. 
- * @author Daniel Bildhauer <dbildh@uni-koblenz.de> 
- * Summer 2006, Diploma Thesis
- *
+ * Is baseclass of all transitions. Has one start and one endstate.
+ * 
+ * @author Daniel Bildhauer <dbildh@uni-koblenz.de> Summer 2006, Diploma Thesis
+ * 
  */
 public abstract class Transition {
 
@@ -100,8 +99,12 @@ public abstract class Transition {
 
 	/**
 	 * Copy-constructor, creates a copy of the given transition.
-	 * @param addToStates if true, the transition gets added to the in/out transitionlist of start and end state. Beware, if you
-	 * use one of these lists in an iterator and create copies for all transitions, it will result in a concurntlyModifiedException 
+	 * 
+	 * @param addToStates
+	 *            if true, the transition gets added to the in/out
+	 *            transitionlist of start and end state. Beware, if you use one
+	 *            of these lists in an iterator and create copies for all
+	 *            transitions, it will result in a concurntlyModifiedException
 	 */
 	protected Transition(Transition t, boolean addToStates) {
 		startState = t.startState;
@@ -116,11 +119,15 @@ public abstract class Transition {
 	 * returns a string which describes the edge
 	 */
 	public abstract String edgeString();
-	
+
 	/**
 	 * returns a copy of this transition
-	 * @param addToStates if this parameter is set to true, the transition will be added to the start and endstate of the original transition
-	 * Beware, this may lead to an ConcurrentModificatonException if used in an iterator over the transitions of a state
+	 * 
+	 * @param addToStates
+	 *            if this parameter is set to true, the transition will be added
+	 *            to the start and endstate of the original transition Beware,
+	 *            this may lead to an ConcurrentModificatonException if used in
+	 *            an iterator over the transitions of a state
 	 */
 	public abstract Transition copy(boolean addToStates);
 
@@ -165,13 +172,11 @@ public abstract class Transition {
 	public abstract boolean accepts(Vertex v, Edge e,
 			BooleanGraphMarker subgraph) throws EvaluateException;
 
-	
 	/**
-	 * returns the vertex of the datagraph which can be visited after this transition has fired.
-	 * This can be either the vertex itself or the vertex at the end of the edge
+	 * returns the vertex of the datagraph which can be visited after this
+	 * transition has fired. This can be either the vertex itself or the vertex
+	 * at the end of the edge
 	 */
 	public abstract Vertex getNextVertex(Vertex v, Edge e);
-	
 
-	
 }
