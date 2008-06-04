@@ -221,6 +221,7 @@ public abstract class VertexEvaluator {
 		this.subgraph = subgraphMarker;
 		try {
 			result = evaluate();
+		//	System.out.println("VertexEvaluator.getResult() " + result + " of vertex " + getVertex() );
 		} catch (QuerySourceException ex) {
 			removeInvalidSourcePosition(ex);
 			throw ex;

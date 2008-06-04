@@ -35,6 +35,7 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValueSet;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Queue;
 
@@ -109,10 +110,13 @@ public class ReachableVertices extends PathSearch implements Greql2Function {
 				resultSet.add(new JValue(currentEntry.vertex,
 						currentEntry.vertex));
 			}
-			// markers[currentEntry.state.number].markGraphElement(currentEntry.vertex);
+			//markers[currentEntry.state.number].mark(currentEntry.vertex);
 			Edge inc = currentEntry.vertex.getFirstEdge();
 			while (inc != null) {
-				for (Transition currentTransition : currentEntry.state.outTransitions) {
+				Iterator<Transition> transitionIter = currentEntry.state.outTransitions
+				.iterator();
+				while (transitionIter.hasNext()) {
+					Transition currentTransition = transitionIter.next();
 					Vertex nextVertex = currentTransition.getNextVertex(
 							currentEntry.vertex, inc);
 					if (!markers[currentTransition.getEndState().number]

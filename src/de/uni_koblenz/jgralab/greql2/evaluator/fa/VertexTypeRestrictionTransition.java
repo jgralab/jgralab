@@ -95,16 +95,6 @@ public class VertexTypeRestrictionTransition extends Transition {
 
 
 	/**
-	 * reverses this transition, that means, the former end state gets the new
-	 * start state and vice versa,
-	 */
-	public void reverse() {
-		State s = startState;
-		startState = endState;
-		endState = s;
-	}
-
-	/**
 	 * Checks if the transition is an epsilon-transition
 	 * 
 	 * @return true if this transition is an epsilon-transition, false otherwise
@@ -142,7 +132,7 @@ public class VertexTypeRestrictionTransition extends Transition {
 		// checks if a startVertexTypeRestriction is set and if v has the right
 		// type
 		AttributedElementClass vertexClass = v.getAttributedElementClass();
-		if (!typeCollection.acceptsType(vertexClass))
+		if (!typeCollection.acceptsType(vertexClass)) 
 			return false;
 		return true;
 	}
