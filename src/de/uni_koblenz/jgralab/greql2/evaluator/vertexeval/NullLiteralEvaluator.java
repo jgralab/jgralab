@@ -60,7 +60,7 @@ public class NullLiteralEvaluator extends VertexEvaluator {
 
 	@Override
 	public JValue evaluate() throws EvaluateException {
-		return new JValue();
+		return new JValue((Boolean) null);
 	}
 
 	@Override

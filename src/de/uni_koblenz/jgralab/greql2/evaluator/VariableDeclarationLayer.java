@@ -197,19 +197,19 @@ public class VariableDeclarationLayer implements
 		for (VertexEvaluator currentEval : constraintList) {
 			JValue tempResult = currentEval.getResult(subgraphMarker);
 			try {
-			//	System.out.println("Tempresult is : " + tempResult);
 				if (tempResult.isBoolean()) {
-					if (tempResult.toBoolean() != true)
+					if (tempResult.toBoolean() != Boolean.TRUE)  {
 						return false;
+					}	
 				} else {
 					throw new WrongResultTypeException(currentEval.getClass()
-							.getSimpleName(), "Boolean or TrivalentBoolean",
+							.getSimpleName(), "Boolean",
 							tempResult.getClass().getName(), currentEval
 									.createPossibleSourcePositions());
 				}
 			} catch (JValueInvalidTypeException ex) {
 				throw new WrongResultTypeException(currentEval.getClass()
-						.getSimpleName(), "Boolean or TrivalentBoolean",
+						.getSimpleName(), "Boolean",
 						tempResult.getClass().getName(), currentEval
 								.createPossibleSourcePositions());
 			}

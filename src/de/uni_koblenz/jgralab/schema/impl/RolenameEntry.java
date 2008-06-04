@@ -68,7 +68,6 @@ public class RolenameEntry {
 		super();
 		vertexClassDefiningRolename = definingClass;
 		vertexEdgeEntryList = new ArrayList<VertexEdgeEntry>();
-		addVertexWithEdge(vertexClassAtFarEnd, edgeClassToTraverse);
 		this.edgeClassToTraverse = edgeClassToTraverse;
 		this.vertexClassAtFarEnd = vertexClassAtFarEnd;
 		this.roleNameAtFarEnd = roleNameAtFarEnd;
@@ -76,6 +75,7 @@ public class RolenameEntry {
 		this.inherited = false;
 		rolenameAndSubsettedRolenames = new HashSet<String>();
 		rolenameAndSubsettedRolenames.add(roleNameAtFarEnd);
+		addVertexWithEdge(vertexClassAtFarEnd, edgeClassToTraverse);
 	}
 
 	public DirectedEdgeClass getEdgeClassToTraverse() {
@@ -129,6 +129,12 @@ public class RolenameEntry {
 	}
 	
 	public void addVertexWithEdge(VertexClass vertex, DirectedEdgeClass edge) {
+		if ((edge.getEdgeClass() != edgeClassToTraverse.getEdgeClass()) && (!edge.getEdgeClass().isSubClassOf(edgeClassToTraverse.getEdgeClass())))
+			throw new SchemaException("Rolename '" + roleNameAtFarEnd + "' inherited from VertexClass " + vertexClassDefiningRolename.getQualifiedName() + " with EdgeClass " + edgeClassToTraverse.getEdgeClass().getQualifiedName() + " subsetted or redefined by edge class " + edge.getEdgeClass().getQualifiedName() + " which is not a subclass of " + edgeClassToTraverse.getEdgeClass().getQualifiedName());
+		if (edge.getDirection() != edgeClassToTraverse.getDirection())
+			throw new SchemaException("Rolename '" + roleNameAtFarEnd + "' inherited from VertexClass " + vertexClassDefiningRolename.getQualifiedName() + " used with wrong edge direction." +
+					"Original direction is " + edgeClassToTraverse.getDirection() + " new direction is " + edge.getDirection() + " new vertex is " + vertex.getQualifiedName() + " new edge is " + edge.getEdgeClass().getQualifiedName());
+
 		for (VertexEdgeEntry entry : vertexEdgeEntryList) {
 			if (!edge.getEdgeClass().isAbstract() && entry.getVertex() == vertex) {
 				if (entry.getEdge().isAbstract())

@@ -246,7 +246,6 @@ public class VertexClassImpl extends GraphElementClassImpl implements VertexClas
 				throw new SchemaException("A rolename may be used only once at the far association ends at one edge class");
 			Set<String> redefinedRolenames = dec.getRedefinedThatRolenames();
 			for (String redefinedRole : redefinedRolenames) {
-				System.out.println("Removing rolename " + redefinedRole + " from list of rolenames that must be redefined");
 				rolenamesThatMustBeRedefined.remove(redefinedRole);
 				if (redefinedRole.equals(roleName))
 					continue;

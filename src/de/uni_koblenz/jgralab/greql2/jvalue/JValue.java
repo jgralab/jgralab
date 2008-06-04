@@ -156,16 +156,6 @@ public class JValue implements Comparable<JValue> {
 		}
 	}
 	
-//	
-//	/**
-//	 * copies this object
-//	 */
-//	public JValue clone() {
-//		Object newObject = 
-//		JValue newValue = new JValue();
-//		
-//	}
-	
 
 	/**
 	 * returns the type of this JValue
