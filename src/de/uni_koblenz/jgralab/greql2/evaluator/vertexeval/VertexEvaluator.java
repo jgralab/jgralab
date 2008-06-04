@@ -52,11 +52,10 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueTypeCollection;
 import de.uni_koblenz.jgralab.greql2.schema.Greql2Aggregation;
 import de.uni_koblenz.jgralab.greql2.schema.Greql2Vertex;
 import de.uni_koblenz.jgralab.greql2.schema.SourcePosition;
-import de.uni_koblenz.jgralab.greql2.schema.TypeId;
 import de.uni_koblenz.jgralab.greql2.schema.Variable;
-import de.uni_koblenz.jgralab.greql2.schema.VertexSetExpression;
-import de.uni_koblenz.jgralab.greql2.schema.VertexSubgraphExpression;
+import de.uni_koblenz.jgralab.schema.AttributedElementClass;
 import de.uni_koblenz.jgralab.schema.EdgeClass;
+import de.uni_koblenz.jgralab.schema.QualifiedName;
 import de.uni_koblenz.jgralab.schema.VertexClass;
 
 /**
@@ -236,21 +235,15 @@ public abstract class VertexEvaluator {
 			} else if (result.isJValueTypeCollection()) {
 				// Log the selectivity for TypeId vertices
 				JValueTypeCollection col = result.toJValueTypeCollection();
-				TypeId tid = (TypeId) getVertex();
-				// get the father vertex of this TypeId
-				Vertex fatherOfTypeId = null;
-				if (tid.getFirstIsTypeRestrOf(EdgeDirection.OUT) == null) {
-					// FIXME (horn): TypeIds can be attached as GoalRestrictions
-					// of PathDescriptions, too, and maybe there're even more
-					// cases...
-					fatherOfTypeId = tid.getFirstIsTypeIdOf(EdgeDirection.OUT)
-							.getOmega();
+				AttributedElementClass aec = null;
+				if (col.getAllowedTypes().iterator().hasNext()) {
+					aec = col.getAllowedTypes().iterator().next();
 				} else {
-					fatherOfTypeId = tid.getFirstIsTypeRestrOf(
-							EdgeDirection.OUT).getOmega();
+					aec = col.getForbiddenTypes().iterator().next();
 				}
-				if (fatherOfTypeId instanceof VertexSetExpression
-						|| fatherOfTypeId instanceof VertexSubgraphExpression) {
+				QualifiedName qn = new QualifiedName("Vertex");
+				if (aec.isSubClassOf(aec.getSchema().getAttributedElementClass(
+						qn))) {
 					// The typeId restricts vertex classes
 					for (VertexClass vc : greqlEvaluator.getDatagraph()
 							.getSchema().getVertexClassesInTopologicalOrder()) {
