@@ -145,9 +145,9 @@ public class EdgeTransition extends SimpleTransition {
 		if (allowedEdgeEvaluator != null) {
 			try {
 				Edge allowedEdge = allowedEdgeEvaluator.getResult(
-						subgraph).toEdge();
+						subgraph).toEdge().getNormalEdge();
 				//System.out.println("Allowed Edge is: " + allowedEdge.toString());
-				if (e != allowedEdge)
+				if (e.getNormalEdge() != allowedEdge)
 					return false;
 			} catch (JValueInvalidTypeException ex) {
 				throw new EvaluateException(
