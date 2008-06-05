@@ -90,8 +90,8 @@ public class ConditionalExpressionEvaluator extends VertexEvaluator {
 						.getFirstIsNullExprOf(EdgeDirection.IN).getAlpha();
 			}
 		} else {
-			throw new JValueInvalidTypeException(JValueType.BOOLEAN,
-					conditionResult.getType());
+			expressionToEvaluate = (Expression) vertex.getFirstIsNullExprOf(
+					EdgeDirection.IN).getAlpha();
 		}
 		VertexEvaluator exprEvaluator = greqlEvaluator
 				.getVertexEvaluatorGraphMarker().getMark(expressionToEvaluate);
