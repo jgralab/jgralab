@@ -46,11 +46,6 @@ public class DissolutionOptimizer extends OptimizerBase {
 	@Override
 	public boolean optimize(GreqlEvaluator eval, Greql2 syntaxgraph)
 			throws OptimizerException {
-
-		// Replace all Xor funapps with and/or/not...
-		Optimizer xorTransform = new TransformXorFunctionApplicationOptimizer();
-		xorTransform.optimize(eval, syntaxgraph);
-
 		Atom.resetNumbering();
 
 		GraphSize graphSize;

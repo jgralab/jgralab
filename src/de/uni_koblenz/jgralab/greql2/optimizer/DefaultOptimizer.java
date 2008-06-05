@@ -71,9 +71,13 @@ public class DefaultOptimizer extends OptimizerBase {
 		Optimizer peo = new PathExistenceOptimizer();
 		Optimizer vdoo = new VariableDeclarationOrderOptimizer();
 		Optimizer ceo = new ConditionalExpressionOptimizer();
+		Optimizer txfao = new TransformXorFunctionApplicationOptimizer();
 
 		// do the optimization
 		boolean aTransformationWasDone = cso.optimize(eval, syntaxgraph)
+				| txfao.optimize(eval, syntaxgraph) |
+
+				cso.optimize(eval, syntaxgraph)
 				| eso.optimize(eval, syntaxgraph) |
 
 				cso.optimize(eval, syntaxgraph)

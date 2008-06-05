@@ -47,6 +47,8 @@ import de.uni_koblenz.jgralab.greql2.schema.Variable;
  */
 public class CommonSubgraphOptimizer extends OptimizerBase {
 
+	private boolean anOptimizationWasDone = false;
+
 	/**
 	 * Maps hash-values to Greql2Vertices (see {@link Greql2Vertex}).
 	 */
@@ -89,13 +91,14 @@ public class CommonSubgraphOptimizer extends OptimizerBase {
 	@Override
 	public boolean optimize(GreqlEvaluator eval, Greql2 syntaxgraph)
 			throws OptimizerException {
+		anOptimizationWasDone = false;
+
 		computeHashAndProcess(syntaxgraph.getFirstGreql2Expression());
 
 		Optimizer mergeSDOpt = new MergeSimpleDeclarationsOptimizer();
 		mergeSDOpt.optimize(eval, syntaxgraph);
 
-		// FIXME (horn): Return true if something was done!
-		return false;
+		return anOptimizationWasDone;
 	}
 
 	/**
@@ -226,6 +229,7 @@ public class CommonSubgraphOptimizer extends OptimizerBase {
 	private void mergeVertices(Greql2Vertex lowerVertex,
 			Greql2Vertex higherVertex) {
 		if (!(lowerVertex instanceof PathDescription)) {
+			anOptimizationWasDone = true;
 			if (DEBUG)
 				System.out.println(optimizerHeaderString() + lowerVertex
 						+ " == " + higherVertex + "\n");

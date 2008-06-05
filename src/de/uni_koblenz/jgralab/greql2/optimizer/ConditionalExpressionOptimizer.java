@@ -43,11 +43,6 @@ public class ConditionalExpressionOptimizer extends OptimizerBase {
 	@Override
 	public boolean optimize(GreqlEvaluator eval, Greql2 syntaxgraph)
 			throws OptimizerException {
-
-		// Replace all Xor funapps with and/or/not...
-		Optimizer xorTransform = new TransformXorFunctionApplicationOptimizer();
-		xorTransform.optimize(eval, syntaxgraph);
-
 		OptimizerUtility.mergeConstraints(syntaxgraph);
 
 		Formula.setGreqlEvaluator(eval);
