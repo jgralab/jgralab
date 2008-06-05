@@ -21,7 +21,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
- 
+
 package de.uni_koblenz.jgralab.greql2.evaluator.vertexeval;
 
 import de.uni_koblenz.jgralab.greql2.evaluator.*;
@@ -44,7 +44,7 @@ public class ConditionalExpressionEvaluator extends VertexEvaluator {
 	 * The ConditionalExpression-Vertex this evaluator evaluates
 	 */
 	private ConditionalExpression vertex;
-	
+
 	/**
 	 * returns the vertex this VertexEvaluator evaluates
 	 */
@@ -74,32 +74,35 @@ public class ConditionalExpressionEvaluator extends VertexEvaluator {
 	public JValue evaluate() throws EvaluateException {
 		Expression condition = (Expression) vertex.getFirstIsConditionOf()
 				.getAlpha();
-		VertexEvaluator conditionEvaluator = greqlEvaluator.getVertexEvaluatorGraphMarker().getMark(condition);
+		VertexEvaluator conditionEvaluator = greqlEvaluator
+				.getVertexEvaluatorGraphMarker().getMark(condition);
 		JValue conditionResult = conditionEvaluator.getResult(subgraph);
 		Expression expressionToEvaluate = null;
 		if (conditionResult.isBoolean()) {
-			try {
-				if (conditionResult.toBoolean() == Boolean.TRUE) {
-					expressionToEvaluate = (Expression) vertex.getFirstIsTrueExprOf(EdgeDirection.IN).getAlpha();
-				}
-				if (conditionResult.toBoolean() == Boolean.FALSE) {
-					expressionToEvaluate = (Expression) vertex.getFirstIsFalseExprOf(EdgeDirection.IN).getAlpha();
-				}
-			} catch (JValueInvalidTypeException exception) {
+			if (conditionResult.toBoolean() == Boolean.TRUE) {
+				expressionToEvaluate = (Expression) vertex
+						.getFirstIsTrueExprOf(EdgeDirection.IN).getAlpha();
+			} else if (conditionResult.toBoolean() == Boolean.FALSE) {
+				expressionToEvaluate = (Expression) vertex
+						.getFirstIsFalseExprOf(EdgeDirection.IN).getAlpha();
+			} else {
+				expressionToEvaluate = (Expression) vertex
+						.getFirstIsNullExprOf(EdgeDirection.IN).getAlpha();
 			}
+		} else {
+			throw new JValueInvalidTypeException(JValueType.BOOLEAN,
+					conditionResult.getType());
 		}
-		if (expressionToEvaluate == null) {
-			expressionToEvaluate = (Expression) vertex.getFirstIsNullExprOf(EdgeDirection.IN)
-					.getAlpha();
-		}
-		VertexEvaluator exprEvaluator = greqlEvaluator.getVertexEvaluatorGraphMarker().getMark(expressionToEvaluate);
+		VertexEvaluator exprEvaluator = greqlEvaluator
+				.getVertexEvaluatorGraphMarker().getMark(expressionToEvaluate);
 		result = exprEvaluator.getResult(subgraph);
 		return result;
 	}
-	
+
 	@Override
 	public VertexCosts calculateSubtreeEvaluationCosts(GraphSize graphSize) {
-		return this.greqlEvaluator.getCostModel().calculateCostsConditionalExpression(this, graphSize);
+		return this.greqlEvaluator.getCostModel()
+				.calculateCostsConditionalExpression(this, graphSize);
 	}
 
 }

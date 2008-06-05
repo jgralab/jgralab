@@ -21,7 +21,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
- 
+
 package de.uni_koblenz.jgralab.greql2.jvalue;
 
 import de.uni_koblenz.jgralab.AttributedElement;
@@ -35,38 +35,37 @@ import de.uni_koblenz.jgralab.greql2.evaluator.fa.DFA;
 import de.uni_koblenz.jgralab.greql2.evaluator.fa.NFA;
 import de.uni_koblenz.jgralab.schema.AttributedElementClass;
 
- 
 public class JValue implements Comparable<JValue> {
-	
+
 	public static boolean JVALUE_DEBUG = true;
 
 	/**
 	 * The type of the object this JValue stores
 	 */
 	protected JValueType type;
-	
+
 	/**
 	 * The object this JValue stored
 	 */
 	protected Object value;
 
 	/**
-	 * This attributedElement holds the information, that can be browsed. 
+	 * This attributedElement holds the information, that can be browsed.
 	 */
 	protected AttributedElement browsingInfo;
-	
+
 	/**
 	 * The stored hashCode
 	 */
 	protected int storedHashCode = 0;
-	
+
 	/**
 	 * @return the browsing info or null if none exists
 	 */
 	public AttributedElement getBrowsingInfo() {
 		return browsingInfo;
 	}
-	
+
 	/**
 	 * sets the browsing info of this jvalue
 	 */
@@ -74,12 +73,11 @@ public class JValue implements Comparable<JValue> {
 		storedHashCode = 0;
 		browsingInfo = bInfo;
 	}
-	
-	
+
 	/**
 	 * accepts te given visitor to visit this jvalue
 	 */
-	public void accept(JValueVisitor v)  throws Exception {
+	public void accept(JValueVisitor v) throws Exception {
 		switch (this.type) {
 		case BOOLEAN:
 			v.visitBoolean(this);
@@ -93,7 +91,7 @@ public class JValue implements Comparable<JValue> {
 		case LONG:
 			v.visitLong(this);
 			return;
-		case DOUBLE:	
+		case DOUBLE:
 			v.visitDouble(this);
 			return;
 		case STRING:
@@ -102,37 +100,37 @@ public class JValue implements Comparable<JValue> {
 		case ENUMVALUE:
 			v.visitEnumValue(this);
 			return;
-		case ATTRIBUTEDELEMENTCLASS:	
+		case ATTRIBUTEDELEMENTCLASS:
 			v.visitAttributedElementClass(this);
 			return;
-		case VARIABLEDECLARATION:	
+		case VARIABLEDECLARATION:
 			v.visitDeclaration(this);
 			return;
-		case DECLARATIONLAYER:	
+		case DECLARATIONLAYER:
 			v.visitDeclarationLayer(this);
 			return;
-		case DFA:	
+		case DFA:
 			v.visitDFA(this);
 			return;
-		case EDGE:	
+		case EDGE:
 			v.visitEdge(this);
 			return;
-		case GRAPH:	
+		case GRAPH:
 			v.visitGraph(this);
 			return;
-		case NFA:	
+		case NFA:
 			v.visitNFA(this);
 			return;
-		case STATE:	
+		case STATE:
 			v.visitState(this);
 			return;
-		case TRANSITION:	
+		case TRANSITION:
 			v.visitTransition(this);
 			return;
-		case SUBGRAPHTEMPATTRIBUTE:	
+		case SUBGRAPHTEMPATTRIBUTE:
 			v.visitSubgraph(this);
 			return;
-		case VERTEX:	
+		case VERTEX:
 			v.visitVertex(this);
 			return;
 		default:
@@ -140,7 +138,7 @@ public class JValue implements Comparable<JValue> {
 			return;
 		}
 	}
-	
+
 	/**
 	 * 
 	 */
@@ -150,12 +148,11 @@ public class JValue implements Comparable<JValue> {
 			return (type.compareTo(o.type));
 		} else {
 			if (value instanceof Comparable)
-				return ((Comparable)value).compareTo(o.value);
+				return ((Comparable) value).compareTo(o.value);
 			else
 				return hashCode() - o.hashCode();
 		}
 	}
-	
 
 	/**
 	 * returns the type of this JValue
@@ -173,8 +170,8 @@ public class JValue implements Comparable<JValue> {
 	}
 
 	/**
-	 * returns true is this JValue contains a valid type, that means, if the
-	 * type is not JValueType.INVALID
+	 * returns true if this JValue is valid, that means, that its value is not
+	 * null.
 	 */
 	public boolean isValid() {
 		return value != null;
@@ -211,11 +208,10 @@ public class JValue implements Comparable<JValue> {
 		if (storedHashCode == 0) {
 			if (value == null) {
 				storedHashCode = JValue.class.hashCode();
-			}
-			else {
+			} else {
 				storedHashCode = value.hashCode() + JValue.class.hashCode();
 			}
-		}	
+		}
 		return storedHashCode;
 	}
 
@@ -247,7 +243,7 @@ public class JValue implements Comparable<JValue> {
 		value = d;
 		browsingInfo = null;
 	}
-	
+
 	/**
 	 * creates a new JValue that encapsulates the given VariableDEclarationLayer
 	 */
@@ -285,7 +281,7 @@ public class JValue implements Comparable<JValue> {
 		value = d;
 		browsingInfo = null;
 	}
-	
+
 	/**
 	 * creates a new JValue that encapsulates the given VariableDeclaration
 	 */
@@ -348,7 +344,7 @@ public class JValue implements Comparable<JValue> {
 		this(type);
 		this.browsingInfo = browsingInfo;
 	}
-	
+
 	/**
 	 * @return true if this JValue encapsulates a GraphElementClass, false
 	 *         otherwise
@@ -366,7 +362,8 @@ public class JValue implements Comparable<JValue> {
 			throws JValueInvalidTypeException {
 		if (isAttributedElementClass())
 			return (AttributedElementClass) value;
-		throw new JValueInvalidTypeException(JValueType.ATTRIBUTEDELEMENTCLASS, type);
+		throw new JValueInvalidTypeException(JValueType.ATTRIBUTEDELEMENTCLASS,
+				type);
 	}
 
 	/**
@@ -388,9 +385,7 @@ public class JValue implements Comparable<JValue> {
 			return (JValueTypeCollection) this;
 		throw new JValueInvalidTypeException(JValueType.TYPECOLLECTION, type);
 	}
-	
-	
-	
+
 	/**
 	 * constructs a new JValue with encapsulates a AttributedElement
 	 */
@@ -407,7 +402,7 @@ public class JValue implements Comparable<JValue> {
 		this(elem);
 		this.browsingInfo = browsingInfo;
 	}
-	
+
 	/**
 	 * @return true if this JValue encapsulates a graphlement value, that is
 	 *         either a vertex or an edge, false otherwise
@@ -421,12 +416,13 @@ public class JValue implements Comparable<JValue> {
 	 * @throws JValueInvalidTypeException
 	 *             if this JValue does not encapsulate a AttributedElement
 	 */
-	public AttributedElement toAttributedElement() throws JValueInvalidTypeException {
-		if (isAttributedElement()  || (canConvert(JValueType.ATTRIBUTEDELEMENT)) )
+	public AttributedElement toAttributedElement()
+			throws JValueInvalidTypeException {
+		if (isAttributedElement() || (canConvert(JValueType.ATTRIBUTEDELEMENT)))
 			return (AttributedElement) value;
 		throw new JValueInvalidTypeException(JValueType.ATTRIBUTEDELEMENT, type);
 	}
-	
+
 	/**
 	 * constructs a new JValue with encapsulates a TrivalentBoolean value
 	 */
@@ -443,7 +439,7 @@ public class JValue implements Comparable<JValue> {
 		this(b);
 		this.browsingInfo = browsingInfo;
 	}
-	
+
 	/**
 	 * @return true if this JValue encapsulates a boolean value, false otherwise
 	 */
@@ -459,11 +455,10 @@ public class JValue implements Comparable<JValue> {
 	public Boolean toBoolean() throws JValueInvalidTypeException {
 		if (isBoolean()) {
 			return (Boolean) value;
-		}	
+		}
 		throw new JValueInvalidTypeException(JValueType.BOOLEAN, type);
 	}
 
-	
 	/**
 	 * @return true if this JValue encapsulates a integer value, false otherwise
 	 */
@@ -490,7 +485,7 @@ public class JValue implements Comparable<JValue> {
 		this.value = i;
 		browsingInfo = null;
 	}
-	
+
 	/**
 	 * constructs a new JValue with encapsulates a Integer or int value
 	 */
@@ -507,7 +502,7 @@ public class JValue implements Comparable<JValue> {
 		this.value = l;
 		browsingInfo = null;
 	}
-	
+
 	/**
 	 * creates a new JValue which encapsulates the given Long
 	 */
@@ -529,16 +524,15 @@ public class JValue implements Comparable<JValue> {
 	 *             if this JValue does not encapsulate a long value
 	 */
 	public Long toLong() throws JValueInvalidTypeException {
-		if (isLong()  || (canConvert(JValueType.LONG)) ) {
+		if (isLong() || (canConvert(JValueType.LONG))) {
 			if (value instanceof Long)
 				return (Long) value;
 			if (value instanceof Integer)
-				return (long) ((int) ((Integer)value));
-		}	
+				return (long) ((int) ((Integer) value));
+		}
 		throw new JValueInvalidTypeException(JValueType.LONG, type);
 	}
 
-	
 	/**
 	 * creates a new JValue which encapsulates the given Double
 	 */
@@ -547,7 +541,7 @@ public class JValue implements Comparable<JValue> {
 		this.value = d;
 		browsingInfo = null;
 	}
-	
+
 	/**
 	 * creates a new JValue which encapsulates the given Double
 	 */
@@ -575,7 +569,7 @@ public class JValue implements Comparable<JValue> {
 				return Double.valueOf(i);
 			}
 			return (Double) value;
-		}	
+		}
 		throw new JValueInvalidTypeException(JValueType.DOUBLE, type);
 	}
 
@@ -587,7 +581,7 @@ public class JValue implements Comparable<JValue> {
 		this.value = c;
 		browsingInfo = null;
 	}
-	
+
 	/**
 	 * creates a new JValue which encapsulates the given Character
 	 */
@@ -622,7 +616,7 @@ public class JValue implements Comparable<JValue> {
 		this.value = s;
 		browsingInfo = null;
 	}
-	
+
 	/**
 	 * creates a new JValue which encapsulates the given String
 	 */
@@ -649,14 +643,13 @@ public class JValue implements Comparable<JValue> {
 	public String toString() {
 		if (isString())
 			return (String) value;
-		else {
-			if (this.isValid()) {
-				return value.toString();
-			} else
-				return "Invalid JValue";
+		else if (isValid()) {
+			return value.toString();
+		} else {
+			return "null";
 		}
 	}
-	
+
 	/**
 	 * creates a new JValue which encapsulates the given String
 	 */
@@ -666,7 +659,7 @@ public class JValue implements Comparable<JValue> {
 		this.value = e;
 		browsingInfo = null;
 	}
-	
+
 	/**
 	 * creates a new JValue which encapsulates the given String
 	 */
@@ -729,7 +722,7 @@ public class JValue implements Comparable<JValue> {
 		this(vertex);
 		this.browsingInfo = browsingInfo;
 	}
-	
+
 	/**
 	 * @return true if this JValue encapsulates a Edge value, false otherwise
 	 */
@@ -756,7 +749,7 @@ public class JValue implements Comparable<JValue> {
 		this.value = edge;
 		browsingInfo = edge;
 	}
-	
+
 	/**
 	 * creates a new JValue which encapsulates the given edge
 	 */
@@ -773,7 +766,7 @@ public class JValue implements Comparable<JValue> {
 		this.value = graph;
 		browsingInfo = null;
 	}
-	
+
 	/**
 	 * creates a new JValue which encapsulates the given graph
 	 */
@@ -781,7 +774,7 @@ public class JValue implements Comparable<JValue> {
 		this(graph);
 		this.browsingInfo = browsingInfo;
 	}
-	
+
 	/**
 	 * @return true if this JValue encapsulates a Graph value, false otherwise
 	 */
@@ -808,7 +801,7 @@ public class JValue implements Comparable<JValue> {
 		this.value = nfa;
 		browsingInfo = null;
 	}
-	
+
 	/**
 	 * creates a new JValue which encapsulates the given NFA
 	 */
@@ -834,7 +827,6 @@ public class JValue implements Comparable<JValue> {
 			return (NFA) value;
 		throw new JValueInvalidTypeException(JValueType.NFA, type);
 	}
-
 
 	/**
 	 * return true if this JValue is a DFA, false Otherwise
@@ -862,7 +854,7 @@ public class JValue implements Comparable<JValue> {
 		this.value = dfa;
 		browsingInfo = null;
 	}
-	
+
 	/**
 	 * creates a new JValue which encapsulates the given DFA
 	 */
@@ -887,7 +879,7 @@ public class JValue implements Comparable<JValue> {
 		this(o);
 		this.browsingInfo = browsingInfo;
 	}
-	
+
 	/**
 	 * @return true if this JValue encapsulates a Object value, false otherwise
 	 */
@@ -916,55 +908,69 @@ public class JValue implements Comparable<JValue> {
 
 	/**
 	 * returns a JValueCollection-Reference of this JValue
-	 * @throws JValueInvalidTypeException if the JValue cannot be converted to a collection
+	 * 
+	 * @throws JValueInvalidTypeException
+	 *             if the JValue cannot be converted to a collection
 	 */
 	public JValueCollection toCollection() throws JValueInvalidTypeException {
 		throw new JValueInvalidTypeException(JValueType.COLLECTION, type);
 	}
-	
+
 	/**
 	 * returns a JValueSet-Reference of this JValue
-	 * @throws ValueInvalidTypeException if the JValue cannot be converted to a set
+	 * 
+	 * @throws ValueInvalidTypeException
+	 *             if the JValue cannot be converted to a set
 	 */
 	public JValueCollection toJValueSet() throws JValueInvalidTypeException {
 		throw new JValueInvalidTypeException(JValueType.COLLECTION, type);
 	}
-	
+
 	/**
 	 * returns a JValueBag-Reference of this JValue
-	 * @throws ValueInvalidTypeException if the JValue cannot be converted to a bag
+	 * 
+	 * @throws ValueInvalidTypeException
+	 *             if the JValue cannot be converted to a bag
 	 */
 	public JValueCollection toJValueBag() throws JValueInvalidTypeException {
 		throw new JValueInvalidTypeException(JValueType.COLLECTION, type);
 	}
-	
+
 	/**
 	 * returns a JValueTable-Reference of this JValue
-	 * @throws ValueInvalidTypeException if the JValue cannot be converted to a table
+	 * 
+	 * @throws ValueInvalidTypeException
+	 *             if the JValue cannot be converted to a table
 	 */
 	public JValueCollection toJValueTable() throws JValueInvalidTypeException {
 		throw new JValueInvalidTypeException(JValueType.COLLECTION, type);
 	}
-	
+
 	/**
 	 * returns a JValueList-Reference of this JValue
-	 * @throws ValueInvalidTypeException if the JValue cannot be converted to a list
+	 * 
+	 * @throws ValueInvalidTypeException
+	 *             if the JValue cannot be converted to a list
 	 */
 	public JValueCollection toJValueList() throws JValueInvalidTypeException {
 		throw new JValueInvalidTypeException(JValueType.COLLECTION, type);
 	}
-	
+
 	/**
 	 * returns a JValueTuple-Reference of this JValue
-	 * @throws ValueInvalidTypeException if the JValue cannot be converted to a tuple
+	 * 
+	 * @throws ValueInvalidTypeException
+	 *             if the JValue cannot be converted to a tuple
 	 */
 	public JValueCollection toJValueTuple() throws JValueInvalidTypeException {
 		throw new JValueInvalidTypeException(JValueType.COLLECTION, type);
 	}
-	
+
 	/**
 	 * returns a JValueRecord-Reference of this JValue
-	 * @throws ValueInvalidTypeException if the JValue cannot be converted to a record
+	 * 
+	 * @throws ValueInvalidTypeException
+	 *             if the JValue cannot be converted to a record
 	 */
 	public JValueCollection toJValueRecord() throws JValueInvalidTypeException {
 		throw new JValueInvalidTypeException(JValueType.RECORD, type);
@@ -978,7 +984,7 @@ public class JValue implements Comparable<JValue> {
 		value = t;
 		browsingInfo = null;
 	}
-	
+
 	/**
 	 * constructs a new invalid JValue. Is only called in subclasses
 	 */
@@ -1012,25 +1018,26 @@ public class JValue implements Comparable<JValue> {
 	 *         type, false otherwise
 	 */
 	public boolean canConvert(JValueType atype) {
-		if (this.type == atype) //every type can be converted to itself
+		if (this.type == atype) // every type can be converted to itself
 			return true;
-		if (atype == JValueType.STRING) //Everything can be converted in a String representation
+		if (atype == JValueType.STRING) // Everything can be converted in a
+			// String representation
 			return true;
 		if (atype == JValueType.OBJECT)
 			return true;
 		switch (this.type) {
 		case BOOLEAN:
-				return false;
+			return false;
 		case CHARACTER:
 			switch (atype) {
 			case STRING:
 				return true;
 			default:
 				return false;
-			}	
+			}
 		case INTEGER:
 			switch (atype) {
-			case LONG: 
+			case LONG:
 			case DOUBLE:
 				return true;
 			default:
@@ -1056,25 +1063,27 @@ public class JValue implements Comparable<JValue> {
 				return true;
 			default:
 				return false;
-			}	
+			}
 		case GRAPH:
 			switch (atype) {
 			case ATTRIBUTEDELEMENT:
-				return true;	
+				return true;
 			default:
 				return false;
-			}	
+			}
 		case OBJECT:
 			return true;
-		}	
+		}
 		return false;
 	}
 
-	
 	/**
-	 * encapsulates the given object in a jvalue. Doesn't create an object-jvalue per default but
-	 * tries to determine the class of the object. Use it with care, because it's slow....
-	 * @param o the object to encapsulte
+	 * encapsulates the given object in a jvalue. Doesn't create an
+	 * object-jvalue per default but tries to determine the class of the object.
+	 * Use it with care, because it's slow....
+	 * 
+	 * @param o
+	 *            the object to encapsulte
 	 * @return the encapsulated object
 	 */
 	@SuppressWarnings("unchecked")
@@ -1102,19 +1111,22 @@ public class JValue implements Comparable<JValue> {
 			return new JValue((Graph) o);
 		return new JValue(o);
 	}
-	
+
 	/**
-	 * encapsulates the given object in a jvalue. Doesn't create a object-jvalue per default but
-	 * tries to determine the class of the object. Use it with care, because it's slow....
-	 * @param o the object to encapsulte
-	 * @param browsingInfo the AttributedElement to set as browsing info
+	 * encapsulates the given object in a jvalue. Doesn't create a object-jvalue
+	 * per default but tries to determine the class of the object. Use it with
+	 * care, because it's slow....
+	 * 
+	 * @param o
+	 *            the object to encapsulte
+	 * @param browsingInfo
+	 *            the AttributedElement to set as browsing info
 	 * @return the encapsulated object
 	 */
-	public static JValue fromObject(Object o,AttributedElement browsingInfo) {
+	public static JValue fromObject(Object o, AttributedElement browsingInfo) {
 		JValue j = fromObject(o);
 		j.setBrowsingInfo(browsingInfo);
 		return j;
 	}
 
-	
 }
