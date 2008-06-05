@@ -23,6 +23,12 @@ import de.uni_koblenz.jgralab.greql2.schema.TrivalentBoolean;
  */
 public abstract class Formula {
 
+	/**
+	 * Indicates if a simplification or optimization (condexp-transformation)
+	 * could be done.
+	 */
+	protected static boolean simplifiedOrOptimized = false;
+
 	protected final static boolean DEBUG = false;
 
 	protected static Greql2 syntaxgraph;
@@ -95,6 +101,8 @@ public abstract class Formula {
 			return this;
 		}
 
+		simplifiedOrOptimized = true;
+
 		ConditionalExpressionUnit bestUnit = calculateBestConditionalExpressionUnit(nctExpressions);
 		return bestUnit.toConditionalExpression();
 	}
@@ -159,4 +167,12 @@ public abstract class Formula {
 
 	@Override
 	public abstract int hashCode();
+
+	public static boolean isSimplifiedOrOptimized() {
+		return simplifiedOrOptimized;
+	}
+
+	public static void setSimplifiedOrOptimized(boolean simplifiedOrOptimized) {
+		Formula.simplifiedOrOptimized = simplifiedOrOptimized;
+	}
 }

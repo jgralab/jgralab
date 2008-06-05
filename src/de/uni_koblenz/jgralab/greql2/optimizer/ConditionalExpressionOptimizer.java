@@ -45,6 +45,7 @@ public class ConditionalExpressionOptimizer extends OptimizerBase {
 			throws OptimizerException {
 		// printGraphAsDot(syntaxgraph, "before-condexp");
 
+		Formula.setSimplifiedOrOptimized(false);
 		Formula.setGreqlEvaluator(eval);
 		ConditionalExpressionUnit.setGreqlEvaluator(eval);
 
@@ -81,7 +82,6 @@ public class ConditionalExpressionOptimizer extends OptimizerBase {
 
 		// printGraphAsDot(syntaxgraph, "after-condexp");
 
-		// FIXME (horn): Return true if something was done!
-		return false;
+		return Formula.isSimplifiedOrOptimized();
 	}
 }

@@ -48,32 +48,50 @@ public class And extends BinaryOperator {
 		Formula lhs = leftHandSide.simplify();
 		Formula rhs = rightHandSide.simplify();
 
-		if (lhs instanceof False)
+		if (lhs instanceof False) {
+			simplifiedOrOptimized = true;
 			return lhs;
+		}
 
-		if (rhs instanceof False)
+		if (rhs instanceof False) {
+			simplifiedOrOptimized = true;
 			return rhs;
+		}
 
-		if (lhs instanceof True)
+		if (lhs instanceof True) {
+			simplifiedOrOptimized = true;
 			return rhs;
+		}
 
-		if (rhs instanceof True)
+		if (rhs instanceof True) {
+			simplifiedOrOptimized = true;
 			return lhs;
+		}
 
-		if (lhs instanceof Null && isOrWithNullLeaf(rhs))
+		if (lhs instanceof Null && isOrWithNullLeaf(rhs)) {
+			simplifiedOrOptimized = true;
 			return lhs;
+		}
 
-		if (rhs instanceof Null && isOrWithNullLeaf(lhs))
+		if (rhs instanceof Null && isOrWithNullLeaf(lhs)) {
+			simplifiedOrOptimized = true;
 			return rhs;
+		}
 
-		if (lhs instanceof Null && isAndWithNullLeaf(rhs))
+		if (lhs instanceof Null && isAndWithNullLeaf(rhs)) {
+			simplifiedOrOptimized = true;
 			return rhs;
+		}
 
-		if (rhs instanceof Null && isAndWithNullLeaf(lhs))
+		if (rhs instanceof Null && isAndWithNullLeaf(lhs)) {
+			simplifiedOrOptimized = true;
 			return lhs;
+		}
 
-		if (lhs.equals(rhs))
+		if (lhs.equals(rhs)) {
+			simplifiedOrOptimized = true;
 			return lhs;
+		}
 
 		return new And(lhs, rhs);
 	}
