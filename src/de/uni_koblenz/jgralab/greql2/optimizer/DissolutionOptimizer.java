@@ -46,6 +46,8 @@ public class DissolutionOptimizer extends OptimizerBase {
 	@Override
 	public boolean optimize(GreqlEvaluator eval, Greql2 syntaxgraph)
 			throws OptimizerException {
+		boolean optimized = false;
+
 		Atom.resetNumbering();
 
 		GraphSize graphSize;
@@ -78,15 +80,18 @@ public class DissolutionOptimizer extends OptimizerBase {
 						+ "Minimized formula\n    " + sg + "\nto\n    "
 						+ miniSG);
 				optimizedExpression = miniSG.toExpression(syntaxgraph);
+				optimized = true;
 			} else {
 				System.out.println(optimizerHeaderString()
 						+ "Minimization result costs " + miniSGCosts
 						+ " while original formula costs " + sgCosts
 						+ ", so the original one is used.");
 				optimizedExpression = sg.toExpression(syntaxgraph);
+				optimized = false;
 			}
 
 			syntaxgraph.createIsConstraintOf(optimizedExpression, decl);
+			OptimizerUtility.createMissingSourcePositions(syntaxgraph);
 			try {
 				eval.createVertexEvaluators();
 			} catch (EvaluateException e) {
@@ -96,7 +101,6 @@ public class DissolutionOptimizer extends OptimizerBase {
 			}
 		}
 
-		// FIXME (horn): Return true if something was done!
-		return false;
+		return optimized;
 	}
 }
