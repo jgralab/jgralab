@@ -43,7 +43,7 @@ public class ConditionalExpressionOptimizer extends OptimizerBase {
 	@Override
 	public boolean optimize(GreqlEvaluator eval, Greql2 syntaxgraph)
 			throws OptimizerException {
-		OptimizerUtility.mergeConstraints(syntaxgraph);
+		// printGraphAsDot(syntaxgraph, "before-condexp");
 
 		Formula.setGreqlEvaluator(eval);
 		ConditionalExpressionUnit.setGreqlEvaluator(eval);
@@ -76,7 +76,10 @@ public class ConditionalExpressionOptimizer extends OptimizerBase {
 			throw new OptimizerException(
 					"Exception while re-creating VertexEvaluators.", e);
 		}
-		// printGraphAsDot(syntaxgraph, "foo");
+
+		OptimizerUtility.createMissingSourcePositions(syntaxgraph);
+
+		// printGraphAsDot(syntaxgraph, "after-condexp");
 
 		// FIXME (horn): Return true if something was done!
 		return false;

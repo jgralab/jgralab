@@ -72,10 +72,14 @@ public class DefaultOptimizer extends OptimizerBase {
 		Optimizer vdoo = new VariableDeclarationOrderOptimizer();
 		Optimizer ceo = new ConditionalExpressionOptimizer();
 		Optimizer txfao = new TransformXorFunctionApplicationOptimizer();
+		Optimizer mco = new MergeConstraintsOptimizer();
 
 		// do the optimization
 		boolean aTransformationWasDone = cso.optimize(eval, syntaxgraph)
-				| txfao.optimize(eval, syntaxgraph) |
+				| txfao.optimize(eval, syntaxgraph)
+
+				| cso.optimize(eval, syntaxgraph)
+				| mco.optimize(eval, syntaxgraph) |
 
 				cso.optimize(eval, syntaxgraph)
 				| eso.optimize(eval, syntaxgraph) |

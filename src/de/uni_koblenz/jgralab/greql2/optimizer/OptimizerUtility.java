@@ -521,36 +521,7 @@ public class OptimizerUtility {
 		return vcopy;
 	}
 
-	/**
-	 * TODO: (heimdall) Comment method!
-	 * 
-	 * @param syntaxgraph
-	 */
-	public static void mergeConstraints(Greql2 syntaxgraph) {
-		ArrayList<Declaration> declarations = new ArrayList<Declaration>();
-		for (Declaration decl : syntaxgraph.getDeclarationVertices()) {
-			declarations.add(decl);
-		}
-
-		for (Declaration decl : declarations) {
-			ArrayList<IsConstraintOf> constraintEdges = new ArrayList<IsConstraintOf>();
-			IsConstraintOf constraint = decl.getFirstIsConstraintOf();
-			while (constraint != null) {
-				constraintEdges.add(constraint);
-				constraint = constraint.getNextIsConstraintOf();
-			}
-			if (constraintEdges.size() > 1) {
-				Expression singleConstraint = createConjunction(
-						constraintEdges, syntaxgraph);
-				for (IsConstraintOf e : constraintEdges) {
-					e.delete();
-				}
-				syntaxgraph.createIsConstraintOf(singleConstraint, decl);
-			}
-		}
-	}
-
-	private static Expression createConjunction(
+	public static Expression createConjunction(
 			List<IsConstraintOf> constraintEdges, Greql2 syntaxgraph) {
 		if (constraintEdges.size() == 1) {
 			return (Expression) constraintEdges.get(0).getAlpha();
