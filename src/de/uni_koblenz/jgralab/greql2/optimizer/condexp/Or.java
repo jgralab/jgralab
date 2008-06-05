@@ -59,10 +59,16 @@ public class Or extends BinaryOperator {
 		if (rhs instanceof False)
 			return lhs;
 
-		if (lhs instanceof Null && hasSameTypeAndNullLeaf(rhs))
+		if (lhs instanceof Null && isAndWithNullLeaf(rhs))
+			return lhs;
+
+		if (rhs instanceof Null && isAndWithNullLeaf(lhs))
 			return rhs;
 
-		if (rhs instanceof Null && hasSameTypeAndNullLeaf(lhs))
+		if (lhs instanceof Null && isOrWithNullLeaf(rhs))
+			return rhs;
+
+		if (rhs instanceof Null && isOrWithNullLeaf(lhs))
 			return lhs;
 
 		if (lhs.equals(rhs))
