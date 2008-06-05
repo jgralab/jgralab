@@ -55,8 +55,10 @@ public class TransformXorFunctionApplicationOptimizer extends OptimizerBase {
 				xors.add(funApp);
 			}
 		}
+		boolean somethingWasTransformed = false;
 		for (FunctionApplication xor : xors) {
-			// Figure out the twa arguments of the Xor
+			somethingWasTransformed = true;
+			// Figure out the two arguments of the Xor
 			IsArgumentOf isArgOf = xor.getFirstIsArgumentOf(EdgeDirection.IN);
 			Expression arg1 = (Expression) isArgOf.getAlpha();
 			isArgOf = isArgOf.getNextIsArgumentOf(EdgeDirection.IN);
@@ -117,8 +119,7 @@ public class TransformXorFunctionApplicationOptimizer extends OptimizerBase {
 			xor.delete();
 		}
 
-		// FIXME (horn): Return true if something was done!
-		return false;
+		return somethingWasTransformed;
 	}
 
 }
