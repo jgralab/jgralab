@@ -21,7 +21,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
- 
+
 package de.uni_koblenz.jgralab.greql2.evaluator.vertexeval;
 
 import de.uni_koblenz.jgralab.Vertex;
@@ -30,6 +30,7 @@ import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.GraphSize;
 import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.VertexCosts;
 import de.uni_koblenz.jgralab.greql2.exception.EvaluateException;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
+import de.uni_koblenz.jgralab.greql2.jvalue.JValueBoolean;
 import de.uni_koblenz.jgralab.greql2.schema.BoolLiteral;
 import de.uni_koblenz.jgralab.greql2.schema.TrivalentBoolean;
 
@@ -65,12 +66,11 @@ public class BoolLiteralEvaluator extends VertexEvaluator {
 	@Override
 	public JValue evaluate() throws EvaluateException {
 		if (vertex.getBoolValue() == TrivalentBoolean.TRUE)
-			return new JValue(true);
+			return new JValue(Boolean.TRUE);
 		else if (vertex.getBoolValue() == TrivalentBoolean.FALSE)
-			return new JValue(false);
+			return new JValue(Boolean.FALSE);
 		else
-			return new JValue();
-		//return new JValue(vertex.getBoolValue()); // == TrivalentBoolean.TRUE /* .isBoolValue()*/);
+			return new JValue(JValueBoolean.NULL);
 	}
 
 	@Override
