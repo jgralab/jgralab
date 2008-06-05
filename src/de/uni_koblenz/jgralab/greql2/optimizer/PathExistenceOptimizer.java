@@ -36,6 +36,8 @@ public class PathExistenceOptimizer extends OptimizerBase {
 
 	private Greql2 syntaxgraph;
 
+	private boolean anOptimizationWasDone = false;
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -58,6 +60,7 @@ public class PathExistenceOptimizer extends OptimizerBase {
 	@Override
 	public boolean optimize(GreqlEvaluator eval, Greql2 syntaxgraph)
 			throws OptimizerException {
+		anOptimizationWasDone = false;
 		this.syntaxgraph = syntaxgraph;
 
 		runOptimization();
@@ -68,8 +71,9 @@ public class PathExistenceOptimizer extends OptimizerBase {
 			e.printStackTrace();
 		}
 
-		// FIXME (horn): Return true if something was done!
-		return false;
+		OptimizerUtility.createMissingSourcePositions(syntaxgraph);
+
+		return anOptimizationWasDone;
 	}
 
 	/**
@@ -176,6 +180,7 @@ public class PathExistenceOptimizer extends OptimizerBase {
 	 */
 	private void replacePathExistenceWithContainsFunApp(PathExistence pe,
 			Expression startOrTargetExp, Expression otherExp, boolean forward) {
+		anOptimizationWasDone = true;
 		System.out.println(optimizerHeaderString() + "Replacing " + pe
 				+ " with a contains FunctionApplication using a "
 				+ ((forward) ? "Forward" : "Backward") + "VertexSet.");
