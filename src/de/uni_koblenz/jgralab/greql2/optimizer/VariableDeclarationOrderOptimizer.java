@@ -18,6 +18,8 @@ import de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.VertexEvaluator;
 import de.uni_koblenz.jgralab.greql2.exception.OptimizerException;
 import de.uni_koblenz.jgralab.greql2.schema.Declaration;
 import de.uni_koblenz.jgralab.greql2.schema.Greql2;
+import de.uni_koblenz.jgralab.greql2.schema.IsDeclaredVarOf;
+import de.uni_koblenz.jgralab.greql2.schema.IsSimpleDeclOf;
 import de.uni_koblenz.jgralab.greql2.schema.SimpleDeclaration;
 import de.uni_koblenz.jgralab.greql2.schema.Variable;
 
@@ -34,9 +36,6 @@ import de.uni_koblenz.jgralab.greql2.schema.Variable;
  * 
  */
 public class VariableDeclarationOrderOptimizer extends OptimizerBase {
-
-	private Greql2 syntaxgraph;
-	private GreqlEvaluator greqlEvaluator;
 
 	/*
 	 * (non-Javadoc)
@@ -60,35 +59,14 @@ public class VariableDeclarationOrderOptimizer extends OptimizerBase {
 	@Override
 	public boolean optimize(GreqlEvaluator eval, Greql2 syntaxgraph)
 			throws OptimizerException {
-		this.syntaxgraph = syntaxgraph;
-		this.greqlEvaluator = eval;
-
-		runOptimization();
-
-		OptimizerUtility.createMissingSourcePositions(this.syntaxgraph);
-
-		Optimizer mergeSDOpt = new MergeSimpleDeclarationsOptimizer();
-		mergeSDOpt.optimize(this.greqlEvaluator, this.syntaxgraph);
-
-		// FIXME (horn): Return true if something was done!
-		return false;
-	}
-
-	/**
-	 * Iterates through all {@link Declaration}s and sorts the {@link Variable}
-	 * declarations.
-	 * 
-	 * @throws OptimizerException
-	 */
-	private void runOptimization() throws OptimizerException {
 		GraphSize graphSize;
-		if (greqlEvaluator.getDatagraph() != null) {
-			graphSize = new GraphSize(greqlEvaluator.getDatagraph());
+		if (eval.getDatagraph() != null) {
+			graphSize = new GraphSize(eval.getDatagraph());
 		} else {
 			graphSize = OptimizerUtility.getDefaultGraphSize();
 		}
 
-		GraphMarker<VertexEvaluator> marker = greqlEvaluator
+		GraphMarker<VertexEvaluator> marker = eval
 				.getVertexEvaluatorGraphMarker();
 
 		ArrayList<List<VariableDeclarationOrderUnit>> unitsList = new ArrayList<List<VariableDeclarationOrderUnit>>();
@@ -107,35 +85,71 @@ public class VariableDeclarationOrderOptimizer extends OptimizerBase {
 			unitsList.add(units);
 		}
 
-		Set<SimpleDeclaration> oldSDs = new HashSet<SimpleDeclaration>();
+		boolean varDeclOrderChanged = false;
+
 		for (List<VariableDeclarationOrderUnit> units : unitsList) {
 			Collections.sort(units);
-			Declaration declaringDecl = units.get(0).getDeclaringDeclaration();
-			System.out.println(optimizerHeaderString()
-					+ "New order of declarations in " + declaringDecl);
-			for (VariableDeclarationOrderUnit unit : units) {
-				oldSDs.add(unit.getSimpleDeclarationOfVariable());
-				marker.removeMark(unit.getSimpleDeclarationOfVariable());
-				Variable var = unit.getVariable();
-				System.out.println("  --> [" + var + " (" + var.getName()
-						+ "), changeCosts = "
-						+ unit.getVariableValueChangeCosts()
-						+ ", cardinality = "
-						+ unit.getTypeExpressionCardinality() + "]");
-				SimpleDeclaration newSD = syntaxgraph.createSimpleDeclaration();
-				syntaxgraph.createIsDeclaredVarOf(var, newSD);
-				syntaxgraph.createIsTypeExprOfDeclaration(unit
-						.getTypeExpressionOfVariable(), newSD);
-				syntaxgraph.createIsSimpleDeclOf(newSD, unit
-						.getDeclaringDeclaration());
-				marker.mark(newSD, new SimpleDeclarationEvaluator(newSD,
-						greqlEvaluator));
 
+			Declaration declaringDecl = units.get(0).getDeclaringDeclaration();
+
+			List<Variable> varDeclOrderBefore = collectVariablesInDeclarationOrder(declaringDecl);
+			List<Variable> varDeclOrderAfter = collectVariablesInProposedDeclarationOrder(units);
+
+			if (!varDeclOrderAfter.equals(varDeclOrderBefore)) {
+				varDeclOrderChanged = true;
+				System.out.println(optimizerHeaderString()
+						+ "New order of declarations in " + declaringDecl);
+				Set<SimpleDeclaration> oldSDs = new HashSet<SimpleDeclaration>();
+				int i = 0;
+				for (VariableDeclarationOrderUnit unit : units) {
+					oldSDs.add(unit.getSimpleDeclarationOfVariable());
+					marker.removeMark(unit.getSimpleDeclarationOfVariable());
+					Variable var = unit.getVariable();
+					System.out.println("  " + varDeclOrderBefore.get(i)
+							+ "  -->  v" + var.getId() + " (" + var.getName()
+							+ "), changeCosts = "
+							+ unit.getVariableValueChangeCosts()
+							+ ", cardinality = "
+							+ unit.getTypeExpressionCardinality());
+					i++;
+					SimpleDeclaration newSD = syntaxgraph
+							.createSimpleDeclaration();
+					syntaxgraph.createIsDeclaredVarOf(var, newSD);
+					syntaxgraph.createIsTypeExprOfDeclaration(unit
+							.getTypeExpressionOfVariable(), newSD);
+					syntaxgraph.createIsSimpleDeclOf(newSD, unit
+							.getDeclaringDeclaration());
+					marker.mark(newSD, new SimpleDeclarationEvaluator(newSD,
+							eval));
+				}
+				for (SimpleDeclaration sd : oldSDs) {
+					sd.delete();
+				}
 			}
 		}
-		for (SimpleDeclaration sd : oldSDs) {
-			sd.delete();
-		}
 
+		OptimizerUtility.createMissingSourcePositions(syntaxgraph);
+
+		return varDeclOrderChanged;
+	}
+
+	private List<Variable> collectVariablesInDeclarationOrder(Declaration decl) {
+		ArrayList<Variable> varList = new ArrayList<Variable>();
+		for (IsSimpleDeclOf isSD : decl.getIsSimpleDeclOfIncidences()) {
+			for (IsDeclaredVarOf isVar : ((SimpleDeclaration) isSD.getAlpha())
+					.getIsDeclaredVarOfIncidences()) {
+				varList.add((Variable) isVar.getAlpha());
+			}
+		}
+		return varList;
+	}
+
+	private List<Variable> collectVariablesInProposedDeclarationOrder(
+			List<VariableDeclarationOrderUnit> units) {
+		ArrayList<Variable> varList = new ArrayList<Variable>();
+		for (VariableDeclarationOrderUnit unit : units) {
+			varList.add(unit.getVariable());
+		}
+		return varList;
 	}
 }
