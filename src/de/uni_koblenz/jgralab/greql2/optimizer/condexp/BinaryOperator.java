@@ -34,4 +34,12 @@ public abstract class BinaryOperator extends Formula {
 		startVal = startVal * multiplier + rightHandSide.hashCode();
 		return startVal;
 	}
+
+	protected boolean hasSameTypeAndNullLeaf(Formula other) {
+		if (this.getClass() == other.getClass()) {
+			BinaryOperator otherBO = (BinaryOperator) other;
+			return (otherBO.leftHandSide instanceof Null || otherBO.rightHandSide instanceof Null);
+		}
+		return false;
+	}
 }
