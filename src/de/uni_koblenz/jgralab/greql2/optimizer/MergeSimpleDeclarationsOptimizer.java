@@ -26,6 +26,8 @@ import de.uni_koblenz.jgralab.greql2.schema.SimpleDeclaration;
  */
 public class MergeSimpleDeclarationsOptimizer extends OptimizerBase {
 
+	private boolean anOptimizationWasDone = false;
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -47,10 +49,9 @@ public class MergeSimpleDeclarationsOptimizer extends OptimizerBase {
 	 */
 	@Override
 	public boolean optimize(GreqlEvaluator eval, Greql2 syntaxgraph) {
+		anOptimizationWasDone = false;
 		findAndMergeSimpleDeclarations(syntaxgraph);
-
-		// FIXME (horn): Return true if something was done!
-		return false;
+		return anOptimizationWasDone;
 	}
 
 	/**
@@ -127,6 +128,7 @@ public class MergeSimpleDeclarationsOptimizer extends OptimizerBase {
 				OptimizerUtility.mergeSourcePositions(isTEODS, isTEODSurvivor);
 
 				s.delete();
+				anOptimizationWasDone = true;
 			}
 		}
 	}
