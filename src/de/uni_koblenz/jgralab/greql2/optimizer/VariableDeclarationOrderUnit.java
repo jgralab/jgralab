@@ -172,7 +172,13 @@ public class VariableDeclarationOrderUnit implements
 		if (thisCard < otherCard) {
 			return -1;
 		}
-		return 0;
+
+		// If there can be no decision made on costs and cardinality, then the
+		// variable with the lower ID should come first.
+		if (variable.getId() < o.getVariable().getId())
+			return -1;
+		else
+			return 1;
 	}
 
 	/**

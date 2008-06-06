@@ -75,7 +75,10 @@ public class VariableDeclarationOrderOptimizer extends OptimizerBase {
 			Set<Variable> varsOfDecl = OptimizerUtility
 					.collectVariablesDeclaredBy(decl);
 			if (varsOfDecl.size() < 2
-					|| decl.getFirstIsConstraintOf(EdgeDirection.IN) == null)
+					|| decl.getFirstIsConstraintOf(EdgeDirection.IN) == null
+					|| OptimizerUtility.collectVariablesBelow(
+							decl.getFirstIsConstraintOf(EdgeDirection.IN)
+									.getAlpha()).size() == 0)
 				continue;
 
 			for (Variable var : varsOfDecl) {
@@ -96,6 +99,7 @@ public class VariableDeclarationOrderOptimizer extends OptimizerBase {
 			List<Variable> varDeclOrderAfter = collectVariablesInProposedDeclarationOrder(units);
 
 			if (!varDeclOrderAfter.equals(varDeclOrderBefore)) {
+				printGraphAsDot(syntaxgraph, "foo");
 				varDeclOrderChanged = true;
 				System.out.println(optimizerHeaderString()
 						+ "New order of declarations in " + declaringDecl);

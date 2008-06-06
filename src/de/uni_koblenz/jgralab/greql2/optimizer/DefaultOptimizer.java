@@ -75,8 +75,10 @@ public class DefaultOptimizer extends OptimizerBase {
 		Optimizer mco = new MergeConstraintsOptimizer();
 		Optimizer msdo = new MergeSimpleDeclarationsOptimizer();
 
+		boolean aTransformationWasDone = false;
+
 		// do the optimization
-		boolean aTransformationWasDone =
+		while (
 		// First merge common subgraphs
 		cso.optimize(eval, syntaxgraph)
 		// then transform all Xors to (x & ~y) | (~x & y).
@@ -112,7 +114,10 @@ public class DefaultOptimizer extends OptimizerBase {
 				cso.optimize(eval, syntaxgraph)
 				// merge simple declarations which have the same type
 				// expression.
-				| msdo.optimize(eval, syntaxgraph);
+				| msdo.optimize(eval, syntaxgraph)) {
+			aTransformationWasDone = true;
+		}
+		;
 
 		// printGraphAsDot(syntaxgraph, "after-optimization");
 		// printCosts(eval, syntaxgraph);

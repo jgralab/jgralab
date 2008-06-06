@@ -95,9 +95,6 @@ public class CommonSubgraphOptimizer extends OptimizerBase {
 
 		computeHashAndProcess(syntaxgraph.getFirstGreql2Expression());
 
-		Optimizer mergeSDOpt = new MergeSimpleDeclarationsOptimizer();
-		mergeSDOpt.optimize(eval, syntaxgraph);
-
 		return anOptimizationWasDone;
 	}
 

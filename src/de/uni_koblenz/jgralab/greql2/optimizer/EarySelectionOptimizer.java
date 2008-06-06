@@ -78,8 +78,12 @@ public class EarySelectionOptimizer extends OptimizerBase {
 			// "-iterations");
 			noOfRuns++;
 		}
-		System.out.println(optimizerHeaderString() + "finished after "
-				+ noOfRuns + " runs.");
+
+		if (noOfRuns > 1) {
+			// We want no output if that optimizer didn't do anything.
+			System.out.println(optimizerHeaderString() + "finished after "
+					+ noOfRuns + " runs.");
+		}
 
 		OptimizerUtility.createMissingSourcePositions(syntaxgraph);
 

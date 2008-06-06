@@ -50,7 +50,11 @@ public class MergeSimpleDeclarationsOptimizer extends OptimizerBase {
 	@Override
 	public boolean optimize(GreqlEvaluator eval, Greql2 syntaxgraph) {
 		anOptimizationWasDone = false;
-		findAndMergeSimpleDeclarations(syntaxgraph);
+
+		// FIXME (horn): It must be guaranteed, that this transformation doesn't
+		// change the order of variable declarations!
+		// findAndMergeSimpleDeclarations(syntaxgraph);
+
 		return anOptimizationWasDone;
 	}
 
