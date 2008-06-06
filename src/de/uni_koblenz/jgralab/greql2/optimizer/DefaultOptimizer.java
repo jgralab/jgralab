@@ -73,27 +73,46 @@ public class DefaultOptimizer extends OptimizerBase {
 		Optimizer ceo = new ConditionalExpressionOptimizer();
 		Optimizer txfao = new TransformXorFunctionApplicationOptimizer();
 		Optimizer mco = new MergeConstraintsOptimizer();
+		Optimizer msdo = new MergeSimpleDeclarationsOptimizer();
 
 		// do the optimization
-		boolean aTransformationWasDone = cso.optimize(eval, syntaxgraph)
+		boolean aTransformationWasDone =
+		// First merge common subgraphs
+		cso.optimize(eval, syntaxgraph)
+		// then transform all Xors to (x & ~y) | (~x & y).
 				| txfao.optimize(eval, syntaxgraph)
-
+				// Again, merge common subgraphs that may be the result of the
+				// previous step.
 				| cso.optimize(eval, syntaxgraph)
-				| mco.optimize(eval, syntaxgraph) |
-
-				cso.optimize(eval, syntaxgraph)
-				| eso.optimize(eval, syntaxgraph) |
-
-				cso.optimize(eval, syntaxgraph)
-				| vdoo.optimize(eval, syntaxgraph) |
-
-				cso.optimize(eval, syntaxgraph)
-				| peo.optimize(eval, syntaxgraph) |
-
-				cso.optimize(eval, syntaxgraph)
+				// For each declaration merge its constraints into a single
+				// conjunction.
+				| mco.optimize(eval, syntaxgraph)
+				// Now move predicates that are part of a conjunction and thus
+				// movable into the type expression of the simple declaration
+				// that declares all needed local variables of it.
+				| eso.optimize(eval, syntaxgraph)
+				// Merge common subgraphs again.
+				| cso.optimize(eval, syntaxgraph)
+				// Reorder the variable declarations in all declaration vertices
+				// so that these assertions hold: 1. Variables which cause high
+				// recalculation costs on value changes are declared first. 2.
+				// If two variables cause the same recalculation costs the
+				// variable with lower cardinality is declared before the other
+				// one.
+				| vdoo.optimize(eval, syntaxgraph)
+				// Now merge the common subgaphs again.
+				| cso.optimize(eval, syntaxgraph)
+				// Transform path existence predicates to function applications
+				// of the "contains" function.
+				| peo.optimize(eval, syntaxgraph)
+				// Transform complex constraint expressions to conditional
+				// expressions to simulate short circuit evaluation.
 				| ceo.optimize(eval, syntaxgraph) |
-
-				cso.optimize(eval, syntaxgraph);
+				// At last, merge common subgraphs and
+				cso.optimize(eval, syntaxgraph)
+				// merge simple declarations which have the same type
+				// expression.
+				| msdo.optimize(eval, syntaxgraph);
 
 		// printGraphAsDot(syntaxgraph, "after-optimization");
 		// printCosts(eval, syntaxgraph);

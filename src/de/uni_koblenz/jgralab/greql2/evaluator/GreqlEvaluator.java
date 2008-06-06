@@ -73,19 +73,9 @@ import de.uni_koblenz.jgralab.utilities.TGFilenameFilter;
 public class GreqlEvaluator {
 
 	/**
-	 * toggles wether the optimizer should be called
-	 */
-	// There's the boolean optimize, setOptimize() and isOptimize();
-	// private static final boolean OPTIMIZE = false;
-	/**
 	 * toggles wether the debug-messages should be displayed on console
 	 */
 	private static final boolean DEBUG = false;
-
-	/**
-	 * toggles wether to print timing messages on the console
-	 */
-	private static boolean printTimingMessages = false;
 
 	/**
 	 * toggles which expressions are added to the index. Only vertex- and
@@ -148,17 +138,6 @@ public class GreqlEvaluator {
 	static {
 		optimizedGraphs = new HashMap<String, List<SyntaxGraphEntry>>();
 		graphIndizes = new HashMap<String, GraphIndex>();
-	}
-
-	/**
-	 * toggles wether to print messages like time needed for evaluation and
-	 * parsing on console
-	 * 
-	 * @param b
-	 *            if set to yes, messages will be print
-	 */
-	public static void setPrintTimingMessages(boolean b) {
-		printTimingMessages = b;
 	}
 
 	/**
@@ -819,11 +798,9 @@ public class GreqlEvaluator {
 		// Calculate the evaluation costs
 		VertexEvaluator greql2ExpEval = vertexEvalGraphMarker
 				.getMark(queryGraph.getFirstGreql2Expression());
+
 		estimatedInterpretationSteps = greql2ExpEval
 				.getInitialSubtreeEvaluationCosts(new GraphSize(datagraph));
-		if (printTimingMessages)
-			System.out.println("EstimatedInterpretationSteps: "
-					+ estimatedInterpretationSteps);
 
 		if (progressFunction != null) {
 			progressFunction.init(estimatedInterpretationSteps);
@@ -865,14 +842,6 @@ public class GreqlEvaluator {
 		}
 
 		overallEvaluationTime = System.currentTimeMillis() - startTime;
-
-		if (printTimingMessages)
-			System.out.println("Overall evaluation took "
-					+ overallEvaluationTime / 1000d + " seconds.\n"
-					+ " --> parsing time         : " + parseTime / 1000d
-					+ "\n --> optimization time    : " + optimizationTime
-					/ 1000d + "\n --> plain evaluation time: "
-					+ plainEvaluationTime / 1000d);
 
 		return true;
 	}
@@ -932,10 +901,13 @@ public class GreqlEvaluator {
 	}
 
 	public void printEvaluationTimes() {
-		System.out.println("Overall Evaluation time: " + overallEvaluationTime
-				+ "\nParsing Time: " + parseTime + "\nOptimization Time: "
-				+ optimizationTime + "\nPlain Evaluation Time: "
-				+ plainEvaluationTime);
+		System.out.println("Overall evaluation took " + overallEvaluationTime
+				/ 1000d + " seconds.\n" + " --> parsing time         : "
+				+ parseTime / 1000d + "\n --> optimization time    : "
+				+ optimizationTime / 1000d + "\n --> plain evaluation time: "
+				+ plainEvaluationTime / 1000d
+				+ "\nEstimated evaluation costs: "
+				+ estimatedInterpretationSteps);
 	}
 
 	public static File getOptimizedSyntaxGraphsDirectory() {
