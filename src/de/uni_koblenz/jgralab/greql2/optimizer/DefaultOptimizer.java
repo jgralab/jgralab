@@ -42,6 +42,11 @@ import de.uni_koblenz.jgralab.greql2.schema.Variable;
  */
 public class DefaultOptimizer extends OptimizerBase {
 
+	@Override
+	String optimizerHeaderString() {
+		return "### " + this.getClass().getSimpleName() + ": ";
+	}
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -63,6 +68,9 @@ public class DefaultOptimizer extends OptimizerBase {
 	 */
 	public boolean optimize(GreqlEvaluator eval, Greql2 syntaxgraph)
 			throws OptimizerException {
+		System.out.println(optimizerHeaderString()
+				+ "Starting optimization.  Fasten your seatbelts!");
+
 		// printGraphAsDot(syntaxgraph, "before-optimization");
 
 		// optimizers
@@ -76,6 +84,7 @@ public class DefaultOptimizer extends OptimizerBase {
 		Optimizer msdo = new MergeSimpleDeclarationsOptimizer();
 
 		boolean aTransformationWasDone = false;
+		int noOfRuns = 1;
 
 		// do the optimization
 		while (
@@ -116,12 +125,17 @@ public class DefaultOptimizer extends OptimizerBase {
 				// expression.
 				| msdo.optimize(eval, syntaxgraph)) {
 			aTransformationWasDone = true;
+			noOfRuns++;
+			System.out.println(optimizerHeaderString()
+					+ "starts a new iteration (" + noOfRuns + ")...");
 		}
 		;
 
 		// printGraphAsDot(syntaxgraph, "after-optimization");
 		// printCosts(eval, syntaxgraph);
 
+		System.out.println(optimizerHeaderString() + " finished after "
+				+ noOfRuns + " iterations.");
 		return aTransformationWasDone;
 	}
 

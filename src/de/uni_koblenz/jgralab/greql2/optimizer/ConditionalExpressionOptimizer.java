@@ -62,11 +62,15 @@ public class ConditionalExpressionOptimizer extends OptimizerBase {
 			decl.getFirstIsConstraintOf().delete();
 			Formula formula = Formula
 					.createFormulaFromExpression(topLevelExpression);
-			System.out.println(optimizerHeaderString()
-					+ "Transformed constraint\n    " + formula);
-			formula = formula.simplify().optimize();
-			System.out.println("to\n    " + formula + ".");
-			Expression newConstraint = formula.toExpression();
+			Formula optimizedFormula = formula.simplify().optimize();
+
+			if (!formula.equals(optimizedFormula)) {
+				System.out.println(optimizerHeaderString()
+						+ "Transformed constraint\n    " + formula
+						+ "\nto\n    " + optimizedFormula + ".");
+			}
+
+			Expression newConstraint = optimizedFormula.toExpression();
 			syntaxgraph.createIsConstraintOf(newConstraint, decl);
 		}
 

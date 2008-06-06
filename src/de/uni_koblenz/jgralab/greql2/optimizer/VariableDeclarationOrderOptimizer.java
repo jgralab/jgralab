@@ -99,7 +99,6 @@ public class VariableDeclarationOrderOptimizer extends OptimizerBase {
 			List<Variable> varDeclOrderAfter = collectVariablesInProposedDeclarationOrder(units);
 
 			if (!varDeclOrderAfter.equals(varDeclOrderBefore)) {
-				printGraphAsDot(syntaxgraph, "foo");
 				varDeclOrderChanged = true;
 				System.out.println(optimizerHeaderString()
 						+ "New order of declarations in " + declaringDecl);
