@@ -115,6 +115,12 @@ public class TransformXorFunctionApplicationOptimizer extends OptimizerBase {
 				edge.setAlpha(or);
 			}
 
+			if (printMessages) {
+				System.out.println(optimizerHeaderString() + "Transformed "
+						+ xor + " to (" + arg1 + " & ~" + arg2 + ") | (~"
+						+ arg1 + " & " + arg2 + ").");
+			}
+
 			// delete the Xor
 			xor.delete();
 		}

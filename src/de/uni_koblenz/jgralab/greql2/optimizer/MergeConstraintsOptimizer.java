@@ -61,6 +61,13 @@ public class MergeConstraintsOptimizer extends OptimizerBase {
 				constraintsGotMerged = true;
 				Expression singleConstraint = OptimizerUtility
 						.createConjunction(constraintEdges, syntaxgraph);
+
+				if (printMessages) {
+					System.out.println(optimizerHeaderString()
+							+ "Merging constraints on edges " + constraintEdges
+							+ " into conjunction " + singleConstraint + ".");
+				}
+
 				for (IsConstraintOf e : constraintEdges) {
 					e.delete();
 				}
@@ -69,5 +76,4 @@ public class MergeConstraintsOptimizer extends OptimizerBase {
 		}
 		return constraintsGotMerged;
 	}
-
 }

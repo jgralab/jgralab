@@ -100,20 +100,28 @@ public class VariableDeclarationOrderOptimizer extends OptimizerBase {
 
 			if (!varDeclOrderAfter.equals(varDeclOrderBefore)) {
 				varDeclOrderChanged = true;
-				System.out.println(optimizerHeaderString()
-						+ "New order of declarations in " + declaringDecl);
+
+				if (printMessages) {
+					System.out.println(optimizerHeaderString()
+							+ "New order of declarations in " + declaringDecl);
+				}
+
 				Set<SimpleDeclaration> oldSDs = new HashSet<SimpleDeclaration>();
 				int i = 0;
 				for (VariableDeclarationOrderUnit unit : units) {
 					oldSDs.add(unit.getSimpleDeclarationOfVariable());
 					marker.removeMark(unit.getSimpleDeclarationOfVariable());
 					Variable var = unit.getVariable();
-					System.out.println("  " + varDeclOrderBefore.get(i)
-							+ "  -->  v" + var.getId() + " (" + var.getName()
-							+ "), changeCosts = "
-							+ unit.getVariableValueChangeCosts()
-							+ ", cardinality = "
-							+ unit.getTypeExpressionCardinality());
+
+					if (printMessages) {
+						System.out.println("  " + varDeclOrderBefore.get(i)
+								+ "  -->  v" + var.getId() + " ("
+								+ var.getName() + "), changeCosts = "
+								+ unit.getVariableValueChangeCosts()
+								+ ", cardinality = "
+								+ unit.getTypeExpressionCardinality());
+					}
+
 					i++;
 					SimpleDeclaration newSD = syntaxgraph
 							.createSimpleDeclaration();

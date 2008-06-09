@@ -64,7 +64,7 @@ public class ConditionalExpressionOptimizer extends OptimizerBase {
 					.createFormulaFromExpression(topLevelExpression);
 			Formula optimizedFormula = formula.simplify().optimize();
 
-			if (!formula.equals(optimizedFormula)) {
+			if (!formula.equals(optimizedFormula) && printMessages) {
 				System.out.println(optimizerHeaderString()
 						+ "Transformed constraint\n    " + formula
 						+ "\nto\n    " + optimizedFormula + ".");

@@ -61,8 +61,6 @@ public class CommonSubgraphOptimizer extends OptimizerBase {
 	 */
 	private HashMap<Greql2Vertex, String> reverseSubgraphMap;
 
-	private static final boolean DEBUG = false;
-
 	public CommonSubgraphOptimizer() {
 		subgraphMap = new HashMap<String, Greql2Vertex>();
 		reverseSubgraphMap = new HashMap<Greql2Vertex, String>();
@@ -111,10 +109,6 @@ public class CommonSubgraphOptimizer extends OptimizerBase {
 	 */
 	private String computeHashAndProcess(Greql2Vertex vertex) {
 		if (reverseSubgraphMap.containsKey(vertex)) {
-			if (DEBUG) {
-				System.out.println(optimizerHeaderString() + vertex
-						+ " is already computed.");
-			}
 			return "{V" + vertex.getId() + "}";
 		}
 
@@ -141,11 +135,6 @@ public class CommonSubgraphOptimizer extends OptimizerBase {
 		buf.append("}");
 
 		String hash = buf.toString();
-
-		if (DEBUG) {
-			System.out.println(optimizerHeaderString() + "v" + vertex.getId()
-					+ " = " + hash);
-		}
 
 		Greql2Vertex lowerVertex = vertex;
 
@@ -227,9 +216,12 @@ public class CommonSubgraphOptimizer extends OptimizerBase {
 			Greql2Vertex higherVertex) {
 		if (!(lowerVertex instanceof PathDescription)) {
 			anOptimizationWasDone = true;
-			if (DEBUG)
-				System.out.println(optimizerHeaderString() + lowerVertex
-						+ " == " + higherVertex + "\n");
+
+			if (printMessages) {
+				System.out.println(optimizerHeaderString() + "Merging "
+						+ lowerVertex + " and " + higherVertex + ".");
+			}
+
 			// Merge the sourcePositions of the incoming edges
 			mergeSourcePositionsBelow(lowerVertex, higherVertex);
 			// Now set the alphas of the outgoing edges

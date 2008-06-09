@@ -52,7 +52,7 @@ public class MergeSimpleDeclarationsOptimizer extends OptimizerBase {
 		anOptimizationWasDone = false;
 
 		findAndMergeSimpleDeclarations(syntaxgraph);
-		
+
 		return anOptimizationWasDone;
 	}
 
@@ -122,9 +122,12 @@ public class MergeSimpleDeclarationsOptimizer extends OptimizerBase {
 						.getFirstIsSimpleDeclOf(EdgeDirection.OUT);
 
 				if (isNextInIncidenceList(decl, isSDOfSurvivor, isSDOfS)) {
-					System.out.println(optimizerHeaderString()
-							+ "Merging all variables of " + s + " into "
-							+ survivor + ".");
+					if (printMessages) {
+						System.out.println(optimizerHeaderString()
+								+ "Merging all variables of " + s + " into "
+								+ survivor + ".");
+					}
+					
 					while (s.getFirstIsDeclaredVarOf() != null) {
 						s.getFirstIsDeclaredVarOf().setOmega(survivor);
 					}

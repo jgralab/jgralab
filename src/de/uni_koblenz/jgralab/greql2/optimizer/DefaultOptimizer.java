@@ -68,8 +68,10 @@ public class DefaultOptimizer extends OptimizerBase {
 	 */
 	public boolean optimize(GreqlEvaluator eval, Greql2 syntaxgraph)
 			throws OptimizerException {
-		System.out.println(optimizerHeaderString()
-				+ "Starting optimization.  Fasten your seatbelts!");
+		if (printMessages) {
+			System.out.println(optimizerHeaderString()
+					+ "Starting optimization.  Fasten your seatbelts!");
+		}
 
 		// printGraphAsDot(syntaxgraph, "before-optimization");
 
@@ -126,16 +128,22 @@ public class DefaultOptimizer extends OptimizerBase {
 				| msdo.optimize(eval, syntaxgraph)) {
 			aTransformationWasDone = true;
 			noOfRuns++;
-			System.out.println(optimizerHeaderString()
-					+ "starts a new iteration (" + noOfRuns + ")...");
+
+			if (printMessages) {
+				System.out.println(optimizerHeaderString()
+						+ "starts a new iteration (" + noOfRuns + ")...");
+			}
 		}
 		;
 
 		// printGraphAsDot(syntaxgraph, "after-optimization");
 		// printCosts(eval, syntaxgraph);
 
-		System.out.println(optimizerHeaderString() + " finished after "
-				+ noOfRuns + " iterations.");
+		if (printMessages) {
+			System.out.println(optimizerHeaderString() + " finished after "
+					+ noOfRuns + " iterations.");
+		}
+
 		return aTransformationWasDone;
 	}
 

@@ -76,16 +76,22 @@ public class DissolutionOptimizer extends OptimizerBase {
 			Expression optimizedExpression;
 
 			if (miniSGCosts < sgCosts) {
-				System.out.println(optimizerHeaderString()
-						+ "Minimized formula\n    " + sg + "\nto\n    "
-						+ miniSG);
+				if (printMessages) {
+					System.out.println(optimizerHeaderString()
+							+ "Minimized formula\n    " + sg + "\nto\n    "
+							+ miniSG);
+				}
+
 				optimizedExpression = miniSG.toExpression(syntaxgraph);
 				optimized = true;
 			} else {
-				System.out.println(optimizerHeaderString()
-						+ "Minimization result costs " + miniSGCosts
-						+ " while original formula costs " + sgCosts
-						+ ", so the original one is used.");
+				if (printMessages) {
+					System.out.println(optimizerHeaderString()
+							+ "Minimization result costs " + miniSGCosts
+							+ " while original formula costs " + sgCosts
+							+ ", so the original one is used.");
+				}
+
 				optimizedExpression = sg.toExpression(syntaxgraph);
 				optimized = false;
 			}

@@ -72,14 +72,17 @@ public class EarySelectionOptimizer extends OptimizerBase {
 
 		int noOfRuns = 1;
 		while (runOptimization()) {
-			System.out.println(optimizerHeaderString() + "Iteration "
-					+ noOfRuns + " finished.  Restarting...");
+			if (printMessages) {
+				System.out.println(optimizerHeaderString() + "Iteration "
+						+ noOfRuns + " finished.  Restarting...");
+			}
+
 			// printGraphAsDot(syntaxgraph, "sg-after-" + noOfRuns +
 			// "-iterations");
 			noOfRuns++;
 		}
 
-		if (noOfRuns > 1) {
+		if (noOfRuns > 1 && printMessages) {
 			// We want no output if that optimizer didn't do anything.
 			System.out.println(optimizerHeaderString() + "finished after "
 					+ noOfRuns + " runs.");
@@ -228,9 +231,13 @@ public class EarySelectionOptimizer extends OptimizerBase {
 			Set<Variable> varsToBeSplit) {
 		Set<Variable> varsDeclaredBySD = OptimizerUtility
 				.collectVariablesDeclaredBy(sd);
-		System.out.println(optimizerHeaderString() + "(S) Splitting out "
-				+ varsToBeSplit + " of " + sd + " that declares "
-				+ varsDeclaredBySD);
+
+		if (printMessages) {
+			System.out.println(optimizerHeaderString() + "(S) Splitting out "
+					+ varsToBeSplit + " of " + sd + " that declares "
+					+ varsDeclaredBySD);
+		}
+
 		if (varsDeclaredBySD.size() == varsToBeSplit.size()) {
 			// there's nothing to split out anymore
 			return;
@@ -263,18 +270,22 @@ public class EarySelectionOptimizer extends OptimizerBase {
 	private void movePredicatesToMultiVarSimpleDeclaration(
 			SimpleDeclaration origSD, Set<Expression> predicates,
 			Set<Variable> varsDeclaredByOrigSD) throws OptimizerException {
-		System.out.print(optimizerHeaderString()
-				+ "(Mn) Performing early selection transformation for "
-				+ origSD + " declaring ");
-		int varsSize = varsDeclaredByOrigSD.size();
-		int i = 1;
-		for (Variable var : varsDeclaredByOrigSD) {
-			System.out.print(var + " (" + var.getName() + ")");
-			if (i < varsSize)
-				System.out.print(", ");
-			i++;
+
+		if (printMessages) {
+			System.out.print(optimizerHeaderString()
+					+ "(Mn) Performing early selection transformation for "
+					+ origSD + " declaring ");
+
+			int varsSize = varsDeclaredByOrigSD.size();
+			int i = 1;
+			for (Variable var : varsDeclaredByOrigSD) {
+				System.out.print(var + " (" + var.getName() + ")");
+				if (i < varsSize)
+					System.out.print(", ");
+				i++;
+			}
+			System.out.println(" with predicates " + predicates + ".");
 		}
-		System.out.println(" with predicates " + predicates);
 
 		// First we search the edges that are connected to each variable in
 		// the result definition or bound expression of the parent
@@ -379,10 +390,12 @@ public class EarySelectionOptimizer extends OptimizerBase {
 			SimpleDeclaration origSD, Set<Expression> predicates,
 			Set<Variable> varsDeclaredByOrigSD) throws OptimizerException {
 		Variable var = varsDeclaredByOrigSD.iterator().next();
-		System.out.println(optimizerHeaderString()
-				+ "(M1) Performing early selection transformation for "
-				+ origSD + " declaring variable " + var + " (" + var.getName()
-				+ ") with predicates " + predicates);
+		if (printMessages) {
+			System.out.println(optimizerHeaderString()
+					+ "(M1) Performing early selection transformation for "
+					+ origSD + " declaring variable " + var + " ("
+					+ var.getName() + ") with predicates " + predicates);
+		}
 
 		// Create the new vertices
 		Expression newCombinedConstraint = createConjunction(
@@ -549,7 +562,6 @@ public class EarySelectionOptimizer extends OptimizerBase {
 	 */
 	private HashMap<SimpleDeclaration, Set<Expression>> collectMovableExpressions(
 			Expression exp) {
-		// System.out.println("findMovableExpressions(" + exp + ")");
 		HashMap<SimpleDeclaration, Set<Expression>> movableExpressions = new HashMap<SimpleDeclaration, Set<Expression>>();
 
 		if (exp instanceof FunctionApplication
@@ -611,9 +623,6 @@ public class EarySelectionOptimizer extends OptimizerBase {
 	 */
 	private SimpleDeclaration findSimpleDeclarationThatDeclaresAllNeededLocalVariables(
 			Expression exp) {
-		// System.out
-		// .println("findSimpleDeclarationThatDefinesAllNeededVariables("
-		// + exp + ")");
 		Set<Variable> neededVars = collectNeededLocalVariables(exp);
 
 		SimpleDeclaration sd = null, oldSd = null;
@@ -640,8 +649,6 @@ public class EarySelectionOptimizer extends OptimizerBase {
 	 *         {@link Declaration} above <code>exp</code>.
 	 */
 	private Set<Variable> collectNeededLocalVariables(Expression exp) {
-		// System.out
-		// .println("calculateNeededButNotDefinedVariables(" + exp + ")");
 		Set<Variable> neededVars = OptimizerUtility.collectVariablesBelow(exp);
 		Set<Variable> neededLocalVars = new HashSet<Variable>();
 		Declaration localDecl = findNearestDeclarationAbove(exp);
@@ -657,9 +664,6 @@ public class EarySelectionOptimizer extends OptimizerBase {
 				}
 			}
 		}
-		// System.out.println(exp + " needs " + neededVars + ". Those are local
-		// "
-		// + neededLocalVars);
 		return neededLocalVars;
 	}
 
@@ -671,7 +675,6 @@ public class EarySelectionOptimizer extends OptimizerBase {
 	 * @return nearest {@link Declaration} above <code>vertex</code>
 	 */
 	private Declaration findNearestDeclarationAbove(Vertex vertex) {
-		// System.out.println("findNearestDeclarationAbove(" + vertex + ")");
 		if (vertex instanceof Declaration) {
 			return (Declaration) vertex;
 		}

@@ -180,10 +180,14 @@ public class PathExistenceOptimizer extends OptimizerBase {
 	 */
 	private void replacePathExistenceWithContainsFunApp(PathExistence pe,
 			Expression startOrTargetExp, Expression otherExp, boolean forward) {
+		if (printMessages) {
+			System.out.println(optimizerHeaderString() + "Replacing " + pe
+					+ " with a contains FunctionApplication using a "
+					+ ((forward) ? "Forward" : "Backward") + "VertexSet.");
+		}
+
 		anOptimizationWasDone = true;
-		System.out.println(optimizerHeaderString() + "Replacing " + pe
-				+ " with a contains FunctionApplication using a "
-				+ ((forward) ? "Forward" : "Backward") + "VertexSet.");
+
 		Edge inc = pe.getFirstEdge(EdgeDirection.OUT);
 		Set<Edge> edgesToRelink = new HashSet<Edge>();
 		while (inc != null) {

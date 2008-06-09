@@ -55,6 +55,7 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValueSet;
 import de.uni_koblenz.jgralab.greql2.optimizer.DefaultOptimizer;
 import de.uni_koblenz.jgralab.greql2.optimizer.Optimizer;
+import de.uni_koblenz.jgralab.greql2.optimizer.OptimizerBase;
 import de.uni_koblenz.jgralab.greql2.parser.Greql2Lexer;
 import de.uni_koblenz.jgralab.greql2.parser.Greql2Parser;
 import de.uni_koblenz.jgralab.greql2.schema.Greql2;
@@ -71,11 +72,6 @@ import de.uni_koblenz.jgralab.utilities.TGFilenameFilter;
  * 
  */
 public class GreqlEvaluator {
-
-	/**
-	 * toggles wether the debug-messages should be displayed on console
-	 */
-	private static final boolean DEBUG = false;
 
 	/**
 	 * toggles which expressions are added to the index. Only vertex- and
@@ -154,8 +150,6 @@ public class GreqlEvaluator {
 		GraphIndex index = graphIndizes.get(graph.getId());
 		if (index != null) {
 			if (index.isValid(graph)) {
-				if (DEBUG)
-					System.out.println("Using indexed vertex set");
 				return index.getVertexSet(queryPart);
 			}
 		}
@@ -951,5 +945,23 @@ public class GreqlEvaluator {
 	public void setUseSavedOptimizedSyntaxGraph(
 			boolean useSavedOptimizedSyntaxGraph) {
 		this.useSavedOptimizedSyntaxGraph = useSavedOptimizedSyntaxGraph;
+	}
+
+	/**
+	 * @return <code>true</code> if optimizers print their actions to stdout,
+	 *         <code>false</code> otherwise
+	 */
+	public static boolean isPrintOptimizerMessages() {
+		return OptimizerBase.isPrintMessages();
+	}
+
+	/**
+	 * @param printOptimizerMessages
+	 *            if <code>true</code> the optimizers should print their
+	 *            actions to stdout, if <code>false</code> they should be
+	 *            quiet.
+	 */
+	public static void setPrintOptimizerMessages(boolean printOptimizerMessages) {
+		OptimizerBase.setPrintMessages(printOptimizerMessages);
 	}
 }
