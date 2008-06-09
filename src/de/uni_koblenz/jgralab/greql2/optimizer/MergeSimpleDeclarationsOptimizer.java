@@ -51,10 +51,8 @@ public class MergeSimpleDeclarationsOptimizer extends OptimizerBase {
 	public boolean optimize(GreqlEvaluator eval, Greql2 syntaxgraph) {
 		anOptimizationWasDone = false;
 
-		// FIXME (horn): It must be guaranteed, that this transformation doesn't
-		// change the order of variable declarations!
-		// findAndMergeSimpleDeclarations(syntaxgraph);
-
+		findAndMergeSimpleDeclarations(syntaxgraph);
+		
 		return anOptimizationWasDone;
 	}
 
@@ -102,58 +100,79 @@ public class MergeSimpleDeclarationsOptimizer extends OptimizerBase {
 
 	/**
 	 * Merges the {@link SimpleDeclaration} given as the values of
-	 * <code>mergableSDMap</code>.
+	 * <code>mergableSDMap</code> if the order of variable declarations isn't
+	 * changed by the merge.
 	 * 
 	 * @param mergableSDMap
 	 */
 	private void mergeSimpleDeclarations(
 			HashMap<String, ArrayList<SimpleDeclaration>> mergableSDMap) {
 		for (String key : mergableSDMap.keySet()) {
-			SimpleDeclaration survivor = findSimpleDeclarationWithLowestId(mergableSDMap
-					.get(key));
+			SimpleDeclaration survivor = mergableSDMap.get(key).get(0);
+			Declaration decl = (Declaration) survivor.getFirstIsSimpleDeclOf()
+					.getOmega();
 			IsSimpleDeclOf isSDOfSurvivor = survivor
 					.getFirstIsSimpleDeclOf(EdgeDirection.OUT);
 			IsTypeExprOfDeclaration isTEODSurvivor = survivor
 					.getFirstIsTypeExprOfDeclaration(EdgeDirection.IN);
-			for (SimpleDeclaration s : mergableSDMap.get(key)) {
-				if (s == survivor) {
-					continue;
-				}
-				while (s.getFirstIsDeclaredVarOf() != null) {
-					s.getFirstIsDeclaredVarOf().setOmega(survivor);
-				}
 
-				// merge the sourcePositions
+			for (SimpleDeclaration s : mergableSDMap.get(key)) {
+
 				IsSimpleDeclOf isSDOfS = s
 						.getFirstIsSimpleDeclOf(EdgeDirection.OUT);
-				OptimizerUtility.mergeSourcePositions(isSDOfS, isSDOfSurvivor);
-				IsTypeExprOfDeclaration isTEODS = s
-						.getFirstIsTypeExprOfDeclaration(EdgeDirection.IN);
-				OptimizerUtility.mergeSourcePositions(isTEODS, isTEODSurvivor);
 
-				s.delete();
-				anOptimizationWasDone = true;
+				if (isNextInIncidenceList(decl, isSDOfSurvivor, isSDOfS)) {
+					System.out.println(optimizerHeaderString()
+							+ "Merging all variables of " + s + " into "
+							+ survivor + ".");
+					while (s.getFirstIsDeclaredVarOf() != null) {
+						s.getFirstIsDeclaredVarOf().setOmega(survivor);
+					}
+
+					// merge the sourcePositions
+					OptimizerUtility.mergeSourcePositions(isSDOfS,
+							isSDOfSurvivor);
+					IsTypeExprOfDeclaration isTEODS = s
+							.getFirstIsTypeExprOfDeclaration(EdgeDirection.IN);
+					OptimizerUtility.mergeSourcePositions(isTEODS,
+							isTEODSurvivor);
+
+					s.delete();
+					anOptimizationWasDone = true;
+				} else {
+					// survivor and s couldn't be merged, which means that the
+					// edge from s doesn't follow directly after the edge from
+					// survivor in decl's incidence list. But maybe the next
+					// IsSDEdge follows the edge from s.
+					survivor = s;
+				}
 			}
 		}
 	}
 
 	/**
-	 * Finds the {@link SimpleDeclaration} with the lowest ID in the given list.
-	 * 
-	 * @param arrayList
-	 *            a {@link ArrayList} of {@link SimpleDeclaration}s
-	 * @return the {@link SimpleDeclaration} with the lowest ID
+	 * @param decl
+	 * @param isSDOfSurvivor
+	 * @param isSDOfS
+	 * @return <code>true</code> if <code>isSDOfS</code> follows directly
+	 *         <code>isSDOfSurvivor</code> in the incidence list of
+	 *         <code>decl</code>, <code>false</code> otherwise
 	 */
-	private SimpleDeclaration findSimpleDeclarationWithLowestId(
-			ArrayList<SimpleDeclaration> arrayList) {
-		int lowestId = Integer.MAX_VALUE;
-		SimpleDeclaration lowest = null;
-		for (SimpleDeclaration v : arrayList) {
-			if (v.getId() < lowestId) {
-				lowestId = v.getId();
-				lowest = v;
+	private boolean isNextInIncidenceList(Declaration decl,
+			IsSimpleDeclOf isSDOfSurvivor, IsSimpleDeclOf isSDOfS) {
+		IsSimpleDeclOf edge = decl.getFirstIsSimpleDeclOf();
+		while (edge != null) {
+			if (edge.getNormalEdge() != isSDOfSurvivor) {
+				edge = edge.getNextIsSimpleDeclOf();
+				continue;
+			}
+			IsSimpleDeclOf nextEdge = edge.getNextIsSimpleDeclOf();
+			if (nextEdge != null && nextEdge.getNormalEdge() == isSDOfS) {
+				return true;
+			} else {
+				return false;
 			}
 		}
-		return lowest;
+		return false;
 	}
 }
