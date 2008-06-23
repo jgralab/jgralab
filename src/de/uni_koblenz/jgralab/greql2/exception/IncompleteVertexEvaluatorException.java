@@ -21,28 +21,28 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
- 
+
 package de.uni_koblenz.jgralab.greql2.exception;
 
 /**
- * Should be thrown if a incomplete VertexEvaluator is instanciated, 
- * incomplete means a wrong constructor or something like that 
- * @author Daniel Bildhauer <dbildh@uni-koblenz.de> 
- * Summer 2006, Diploma Thesis
- *
+ * Should be thrown if a incomplete VertexEvaluator is instanciated, incomplete
+ * means a wrong constructor or something like that
+ * 
+ * @author Daniel Bildhauer <dbildh@uni-koblenz.de> Summer 2006, Diploma Thesis
+ * 
  */
 public class IncompleteVertexEvaluatorException extends EvaluateException {
 
 	static final long serialVersionUID = -1234564;
-	
-	
+
 	public IncompleteVertexEvaluatorException(String vertexName, Exception cause) {
-		super("VertexEvaluator " + vertexName + "Evaluator is incomplete, maybee wrong constructor", cause);
+		super("VertexEvaluator " + vertexName
+				+ "Evaluator is incomplete, maybee wrong constructor", cause);
 	}
 
 	public IncompleteVertexEvaluatorException(String vertexName) {
-		super("VertexEvaluator " + vertexName + "Evaluator is incomplete, maybee wrong constructor");
+		super("VertexEvaluator " + vertexName
+				+ "Evaluator is incomplete, maybee wrong constructor");
 	}
-	
-	
+
 }

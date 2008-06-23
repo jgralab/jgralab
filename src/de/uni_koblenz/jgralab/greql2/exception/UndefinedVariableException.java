@@ -21,33 +21,31 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
- 
-package de.uni_koblenz.jgralab.greql2.exception;
 
-import de.uni_koblenz.jgralab.greql2.schema.SourcePosition;
+package de.uni_koblenz.jgralab.greql2.exception;
 
 import java.util.List;
 
+import de.uni_koblenz.jgralab.greql2.schema.SourcePosition;
+
 /**
  * Should be thrown if a undefined Variable is used
- * @author Daniel Bildhauer <dbildh@uni-koblenz.de> 
- * Summer 2006, Diploma Thesis
- *
+ * 
+ * @author Daniel Bildhauer <dbildh@uni-koblenz.de> Summer 2006, Diploma Thesis
+ * 
  */
 public class UndefinedVariableException extends QuerySourceException {
 
 	static final long serialVersionUID = -1234567;
-	
 
 	/**
 	 * 
 	 * @param variableName
 	 * @param sourcePositions
 	 */
-	public UndefinedVariableException(String variableName, List<SourcePosition> sourcePositions) {
-		super("Undefined variable ", variableName, sourcePositions );
+	public UndefinedVariableException(String variableName,
+			List<SourcePosition> sourcePositions) {
+		super("Undefined variable ", variableName, sourcePositions);
 	}
 
-	
-	
 }

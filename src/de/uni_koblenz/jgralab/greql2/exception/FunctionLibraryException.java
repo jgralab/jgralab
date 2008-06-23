@@ -21,31 +21,32 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
- 
-package de.uni_koblenz.jgralab.greql2.exception;
 
-import de.uni_koblenz.jgralab.greql2.schema.SourcePosition;
+package de.uni_koblenz.jgralab.greql2.exception;
 
 import java.util.List;
 
+import de.uni_koblenz.jgralab.greql2.schema.SourcePosition;
+
 /**
- * Should be thrown if something went wrong with the functionlibary that is not covered
- * by the other exceptions
- * @author Daniel Bildhauer <dbildh@uni-koblenz.de> 
- * Summer 2006, Diploma Thesis
- *
+ * Should be thrown if something went wrong with the functionlibary that is not
+ * covered by the other exceptions
+ * 
+ * @author Daniel Bildhauer <dbildh@uni-koblenz.de> Summer 2006, Diploma Thesis
+ * 
  */
 public class FunctionLibraryException extends QuerySourceException {
 
 	static final long serialVersionUID = -1234562;
 
-
-	public FunctionLibraryException(String functionName, List<SourcePosition> sourcePositions, Exception cause) {
-		super("Error evaluating a function", functionName, sourcePositions, cause);
+	public FunctionLibraryException(String functionName,
+			List<SourcePosition> sourcePositions, Exception cause) {
+		super("Error evaluating a function", functionName, sourcePositions,
+				cause);
 	}
-	
 
-	public FunctionLibraryException(String functionName, List<SourcePosition> sourcePositions) {
+	public FunctionLibraryException(String functionName,
+			List<SourcePosition> sourcePositions) {
 		super("Error evaluating a function", functionName, sourcePositions);
 	}
 }

@@ -11,7 +11,7 @@ import de.uni_koblenz.jgralab.greql2.optimizer.Optimizer;
  * @author Tassilo Horn (heimdall), 2008, Diploma Thesis
  * 
  */
-public class OptimizerException extends Exception {
+public class OptimizerException extends Greql2Exception {
 
 	private static final long serialVersionUID = 8869420302056125072L;
 

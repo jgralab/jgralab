@@ -21,26 +21,33 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
- 
+
 package de.uni_koblenz.jgralab.greql2.exception;
 
 /**
- * Should be thrown if there is a Vertex in the GReQL Syntaxgraph for which no VertexEvaluator exists
- * @author Daniel Bildhauer <dbildh@uni-koblenz.de> 
- * Summer 2006, Diploma Thesis
- *
+ * Should be thrown if there is a Vertex in the GReQL Syntaxgraph for which no
+ * VertexEvaluator exists
+ * 
+ * @author Daniel Bildhauer <dbildh@uni-koblenz.de> Summer 2006, Diploma Thesis
+ * 
  */
 public class UnknownVertexException extends EvaluateException {
 
 	static final long serialVersionUID = -1234565;
-	
-	
+
 	public UnknownVertexException(String vertexName, Exception cause) {
-		super("Vertex " + vertexName + " unknown, cannot create a VertexEvaluator for a unknown syntaxgraph vertex", cause);
+		super(
+				"Vertex "
+						+ vertexName
+						+ " unknown, cannot create a VertexEvaluator for a unknown syntaxgraph vertex",
+				cause);
 	}
 
 	public UnknownVertexException(String vertexName) {
-		super("Vertex " + vertexName + " unknown, cannot create a VertexEvaluator for a unknown syntaxgraph vertex");
+		super(
+				"Vertex "
+						+ vertexName
+						+ " unknown, cannot create a VertexEvaluator for a unknown syntaxgraph vertex");
 	}
-	
+
 }

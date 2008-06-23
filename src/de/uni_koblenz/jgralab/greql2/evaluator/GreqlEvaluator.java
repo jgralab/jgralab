@@ -764,6 +764,7 @@ public class GreqlEvaluator {
 		parseTime = System.currentTimeMillis() - parseStartTime;
 
 		createVertexEvaluators();
+
 		// Initialize the CostModel if there's none
 		if (costModel == null) {
 			// costModel = new DefaultCostModel(vertexEvalGraphMarker);

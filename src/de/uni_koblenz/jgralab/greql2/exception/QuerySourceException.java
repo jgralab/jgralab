@@ -21,47 +21,50 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
- 
+
 package de.uni_koblenz.jgralab.greql2.exception;
 
-import de.uni_koblenz.jgralab.greql2.schema.SourcePosition;
 import java.util.ArrayList;
 import java.util.List;
 
+import de.uni_koblenz.jgralab.greql2.schema.SourcePosition;
+
 /**
- * This is the base class for all exceptions that refeer to the querysource with 
+ * This is the base class for all exceptions that refeer to the querysource with
  * offset/length pairs
- * @author Daniel Bildhauer <dbildh@uni-koblenz.de> 
- * Summer 2006, Diploma Thesis
- *
+ * 
+ * @author Daniel Bildhauer <dbildh@uni-koblenz.de> Summer 2006, Diploma Thesis
+ * 
  */
 public class QuerySourceException extends EvaluateException {
 
-static final long serialVersionUID = -1234561;
-	
+	static final long serialVersionUID = -1234561;
+
 	/**
-	 * the position in the query where the undefined variable is used 
+	 * the position in the query where the undefined variable is used
 	 */
 	private List<SourcePosition> positions;
-	
+
 	/**
 	 * the name of the elements that causes the error
 	 */
 	private String elementName;
-	
+
 	/**
 	 * the error message
 	 */
 	private String errorMessage;
-	
-	
+
 	/**
 	 * 
-	 * @param elementName the name of the element that caused the error
-	 * @param sourcePositions a list of sourceposition where the error possible occurs
+	 * @param elementName
+	 *            the name of the element that caused the error
+	 * @param sourcePositions
+	 *            a list of sourceposition where the error possible occurs
 	 */
-	public QuerySourceException(String errorMessage, String elementName, List<SourcePosition> sourcePositions, Exception cause) {
-		super(errorMessage + elementName, cause );
+	public QuerySourceException(String errorMessage, String elementName,
+			List<SourcePosition> sourcePositions, Exception cause) {
+		super(errorMessage + elementName, cause);
 		this.elementName = elementName;
 		this.errorMessage = errorMessage;
 		if (sourcePositions != null)
@@ -69,56 +72,67 @@ static final long serialVersionUID = -1234561;
 		else
 			positions = new ArrayList<SourcePosition>();
 	}
-	
+
 	/**
 	 * 
-	 * @param elementName the name of the element that caused the error
-	 * @param sourcePosition the sourceposition where the error occurs
+	 * @param elementName
+	 *            the name of the element that caused the error
+	 * @param sourcePosition
+	 *            the sourceposition where the error occurs
 	 */
-	public QuerySourceException(String errorMessage, String elementName, SourcePosition sourcePosition, Exception cause) {
+	public QuerySourceException(String errorMessage, String elementName,
+			SourcePosition sourcePosition, Exception cause) {
 		super(errorMessage + elementName, cause);
 		this.errorMessage = errorMessage;
 		this.elementName = elementName;
 		positions = new ArrayList<SourcePosition>();
 		positions.add(sourcePosition);
 	}
-	
+
 	/**
 	 * 
-	 * @param elementName the name of the element that caused the error
-	 * @param sourcePositions a list of sourceposition where the error possible occurs
+	 * @param elementName
+	 *            the name of the element that caused the error
+	 * @param sourcePositions
+	 *            a list of sourceposition where the error possible occurs
 	 */
-	public QuerySourceException(String errorMessage, String elementName, List<SourcePosition> sourcePositions) {
+	public QuerySourceException(String errorMessage, String elementName,
+			List<SourcePosition> sourcePositions) {
 		this(errorMessage, elementName, sourcePositions, null);
 	}
-	
+
 	/**
 	 * 
-	 * @param elementName the name of the element that caused the error
-	 * @param sourcePosition the sourceposition where the error occurs
+	 * @param elementName
+	 *            the name of the element that caused the error
+	 * @param sourcePosition
+	 *            the sourceposition where the error occurs
 	 */
-	public QuerySourceException(String errorMessage, String elementName, SourcePosition sourcePosition) {
+	public QuerySourceException(String errorMessage, String elementName,
+			SourcePosition sourcePosition) {
 		this(errorMessage, elementName, sourcePosition, null);
 	}
-	
+
 	/**
 	 * returns the string of the message
 	 */
 	@Override
 	public String getMessage() {
 		if (positions.size() > 0) {
-			return errorMessage + elementName + " at position (" + positions.get(0).offset + ", " + positions.get(0).length + ")";
+			return errorMessage + elementName + " at position ("
+					+ positions.get(0).offset + ", " + positions.get(0).length
+					+ ")";
 		} else
 			return errorMessage + elementName + " at unknown position in query";
 	}
-	
+
 	/**
 	 * returns the list of sourcepositions
 	 */
 	public List<SourcePosition> getSourcePositions() {
 		return positions;
 	}
-	
+
 	/**
 	 * @return the position where the undefined varialbe is used
 	 */
@@ -127,7 +141,7 @@ static final long serialVersionUID = -1234561;
 			return 0;
 		return positions.get(0).offset;
 	}
-	
+
 	/**
 	 * @return the length of the usage of the undefined variable
 	 */
@@ -136,14 +150,12 @@ static final long serialVersionUID = -1234561;
 			return 0;
 		return positions.get(0).length;
 	}
-	
+
 	/**
 	 * @return the name of the undefinedvariable
 	 */
 	public String getElementName() {
 		return elementName;
 	}
-	
-	
-	
+
 }

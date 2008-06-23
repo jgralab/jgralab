@@ -21,15 +21,15 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
- 
+
 package de.uni_koblenz.jgralab.greql2.exception;
+
+import java.util.List;
 
 import de.uni_koblenz.jgralab.greql2.funlib.Greql2Function;
 import de.uni_koblenz.jgralab.greql2.funlib.Greql2FunctionLibrary;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
 import de.uni_koblenz.jgralab.greql2.schema.SourcePosition;
-
-import java.util.List;
 
 /**
  * Should be thrown if a function is called with the wrong parameter count or
@@ -66,7 +66,8 @@ public class WrongFunctionParameterException extends QuerySourceException {
 				+ " is not applicable for the arguments "
 				+ parametersToString(wrongArguments), Greql2FunctionLibrary
 				.instance().toFunctionName(
-						function.getClass().getCanonicalName()), sourcePositions);
+						function.getClass().getCanonicalName()),
+				sourcePositions);
 	}
 
 }

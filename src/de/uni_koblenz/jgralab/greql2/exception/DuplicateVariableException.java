@@ -21,7 +21,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
- 
+
 package de.uni_koblenz.jgralab.greql2.exception;
 
 import java.util.List;
@@ -31,13 +31,18 @@ import de.uni_koblenz.jgralab.greql2.schema.SourcePosition;
 public class DuplicateVariableException extends QuerySourceException {
 
 	static final long serialVersionUID = -1234561;
+
 	/**
 	 * 
 	 * @param variableName
 	 * @param sourcePositions
 	 */
-	public DuplicateVariableException(String variableName, List<SourcePosition> sourcePositions, SourcePosition previousPosition) {
-		super("Duplicate variable " + variableName + " previously defined at position " + previousPosition.offset, variableName, sourcePositions );
+	public DuplicateVariableException(String variableName,
+			List<SourcePosition> sourcePositions,
+			SourcePosition previousPosition) {
+		super("Duplicate variable " + variableName
+				+ " previously defined at position " + previousPosition.offset,
+				variableName, sourcePositions);
 	}
-	
+
 }

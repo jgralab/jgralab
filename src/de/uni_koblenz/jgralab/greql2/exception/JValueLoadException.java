@@ -21,15 +21,15 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
- 
+
 package de.uni_koblenz.jgralab.greql2.exception;
 
-public class JValueLoadException extends Exception {
+public class JValueLoadException extends Greql2Exception {
 
 	static final long serialVersionUID = 1;
-	
+
 	public JValueLoadException(String message, Exception cause) {
 		super(message, cause);
 	}
-	
+
 }

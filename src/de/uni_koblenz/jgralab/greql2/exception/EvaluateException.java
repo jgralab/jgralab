@@ -31,7 +31,7 @@ package de.uni_koblenz.jgralab.greql2.exception;
  * @author Daniel Bildhauer <dbildh@uni-koblenz.de> Summer 2006, Diploma Thesis
  * 
  */
-public class EvaluateException extends Exception {
+public class EvaluateException extends Greql2Exception {
 
 	static final long serialVersionUID = -1234566;
 

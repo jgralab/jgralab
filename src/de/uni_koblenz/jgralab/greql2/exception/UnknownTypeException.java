@@ -21,38 +21,45 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
- 
-package de.uni_koblenz.jgralab.greql2.exception;
 
-import de.uni_koblenz.jgralab.greql2.schema.SourcePosition;
+package de.uni_koblenz.jgralab.greql2.exception;
 
 import java.util.List;
 
+import de.uni_koblenz.jgralab.greql2.schema.SourcePosition;
+
 /**
- * This exception should be thrown if a query accesses a type that doesn't exist in the datagraph schema
- * @author Daniel Bildhauer <dbildh@uni-koblenz.de> 
- * Summer 2006, Diploma Thesis
- *
+ * This exception should be thrown if a query accesses a type that doesn't exist
+ * in the datagraph schema
+ * 
+ * @author Daniel Bildhauer <dbildh@uni-koblenz.de> Summer 2006, Diploma Thesis
+ * 
  */
 public class UnknownTypeException extends QuerySourceException {
-	
+
 	static final long serialVersionUID = -1234560;
 
-	public UnknownTypeException(String typeName, List<SourcePosition> sourcePositions, Exception cause) {
-		super("The Datagraph schema doesn't contain a type ",typeName, sourcePositions, cause);
-//		System.out.println("Creating UnknownTypeException with possible SourcePositions: ");
-		for (SourcePosition sp: sourcePositions) {
+	public UnknownTypeException(String typeName,
+			List<SourcePosition> sourcePositions, Exception cause) {
+		super("The Datagraph schema doesn't contain a type ", typeName,
+				sourcePositions, cause);
+		// System.out.println("Creating UnknownTypeException with possible
+		// SourcePositions: ");
+		for (SourcePosition sp : sourcePositions) {
 			System.out.println("  (" + sp.offset + ", " + sp.length + ")");
 		}
 
 	}
-	
-	public UnknownTypeException(String typeName, List<SourcePosition> sourcePositions) {
-		super("The Datagraph schema doesn't contain a type ",typeName, sourcePositions);
-		System.out.println("Creating UnknownTypeException with possible SourcePositions: ");
-		for (SourcePosition sp: sourcePositions) {
+
+	public UnknownTypeException(String typeName,
+			List<SourcePosition> sourcePositions) {
+		super("The Datagraph schema doesn't contain a type ", typeName,
+				sourcePositions);
+		System.out
+				.println("Creating UnknownTypeException with possible SourcePositions: ");
+		for (SourcePosition sp : sourcePositions) {
 			System.out.println("  (" + sp.offset + ", " + sp.length + ")");
 		}
 	}
-	
+
 }

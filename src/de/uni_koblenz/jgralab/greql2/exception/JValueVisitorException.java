@@ -21,26 +21,26 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
- 
+
 package de.uni_koblenz.jgralab.greql2.exception;
 
-import de.uni_koblenz.jgralab.greql2.jvalue.*;
+import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
 
-public class JValueVisitorException extends Exception {
+public class JValueVisitorException extends Greql2Exception {
 
 	static final long serialVersionUID = 1;
-	
-	//the element which causes the error
+
+	// the element which causes the error
 	private JValue value;
-	
+
 	public JValueVisitorException(String message, JValue value) {
 		super(message);
 		this.value = value;
 	}
-	
+
 	public String getMEssage() {
-		return "JValueVisitorException, the element that caused the exception was: " + value.toString();
+		return "JValueVisitorException, the element that caused the exception was: "
+				+ value.toString();
 	}
 
-	
 }

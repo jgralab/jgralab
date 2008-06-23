@@ -21,27 +21,28 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
- 
-package de.uni_koblenz.jgralab.greql2.exception;
 
-import de.uni_koblenz.jgralab.greql2.schema.SourcePosition;
+package de.uni_koblenz.jgralab.greql2.exception;
 
 import java.util.List;
 
+import de.uni_koblenz.jgralab.greql2.schema.SourcePosition;
+
 /**
- * Should be thrown if the user tries to access a field of a type which doesn't exists for this type, e.g.
- * if the user tries to access vertex.color, but vertex has no attribute color  
- * @author Daniel Bildhauer <dbildh@uni-koblenz.de> 
- * Summer 2006, Diploma Thesis
- *
+ * Should be thrown if the user tries to access a field of a type which doesn't
+ * exists for this type, e.g. if the user tries to access vertex.color, but
+ * vertex has no attribute color
+ * 
+ * @author Daniel Bildhauer <dbildh@uni-koblenz.de> Summer 2006, Diploma Thesis
+ * 
  */
 public class FunctionInvalidIndexException extends QuerySourceException {
 
 	static final long serialVersionUID = -1234560;
 
-
-	public FunctionInvalidIndexException(String className, int index, List<SourcePosition> sourcePositions ) {
-		super("Index '" + index + "' out of bounds", className	, sourcePositions);
+	public FunctionInvalidIndexException(String className, int index,
+			List<SourcePosition> sourcePositions) {
+		super("Index '" + index + "' out of bounds", className, sourcePositions);
 	}
-	
+
 }
