@@ -1,6 +1,6 @@
-;;; tg-mode.el --- Major mode for editing TG files with emacs
+;;; greqlscript-mode.el --- Major mode for editing greqlscript files with emacs
 
-;; Copyright (C) 2007,2008 by Tassilo Horn
+;; Copyright (C) 2008 by Tassilo Horn
 
 ;; Author: Tassilo Horn <horn@uni-koblenz.de>
 
@@ -20,29 +20,28 @@
 
 ;;; Commentary:
 
-;; Major mode for editing TG files with Emacs
+;; Major mode for editing greqlscript files with emacs
 
 
 ;;; History:
-;; <2007-08-04 Sat>: First version
+;; <2008-06-23 Mon 13:01>: First version
 
 ;;; Code:
 
-(define-generic-mode tg-mode
+(define-generic-mode greql-mode
   ;; Comments
   '(("//" . nil) ("/*" . "*/"))
   ;; Keywords
-  '("AggregationClass" "Boolean" "CompositionClass" "Double" "EdgeClass"
-    "EnumDomain" "Graph" "GraphClass" "Integer" "List" "Object" "RecordDomain"
-    "Schema" "Set" "String" "VertexClass" "abstract" "aggregate" "from" "role"
-    "to")
-  ;; Additional expressions to highlight
-  nil
+  '("assert", "break", "case", "continue", "default", "do", "else",
+    "foreach", "hastype", "if", "import", "importjava", "return",
+    "typeswitch", "var", "while")
+  ;; Additional expressions to highlight 
+  '()
   ;; Enable greql-mode for files matching this patterns
-  '("\\.tg$")
+  '("\\.greqlscript$")
   ;; List of functions to be run when mode is activated
   nil)
 
-(provide 'tg-mode)
+(provide 'greqlscript-mode)
 
-;;; tg-mode.el ends here
+;;; greqlscript-mode.el ends here

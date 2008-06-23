@@ -1,8 +1,8 @@
 ;;; greql-mode.el --- Major mode for editing GReQL2 files with emacs
 
-;; Copyright (C) 2007 by Tassilo Horn
+;; Copyright (C) 2007, 2008 by Tassilo Horn
 
-;; Author: Tassilo Horn <heimdall@uni-koblenz.de>
+;; Author: Tassilo Horn <horn@uni-koblenz.de>
 
 ;; This program is free software; you can redistribute it and/or modify it
 ;; under the terms of the GNU General Public License as published by the Free
