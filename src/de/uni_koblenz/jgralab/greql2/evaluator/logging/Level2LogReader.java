@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import de.uni_koblenz.jgralab.Graph;
+import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
 import de.uni_koblenz.jgralab.greql2.schema.Greql2Vertex;
 import de.uni_koblenz.jgralab.schema.Schema;
 
@@ -53,10 +54,10 @@ public class Level2LogReader extends Level2LoggingBase implements
 		}
 		this.loggingType = loggingType;
 		if (load()) {
-			System.out.println("Level2LogReader successfully loaded "
+			GreqlEvaluator.println("Level2LogReader successfully loaded "
 					+ getLogFile().getPath());
 		} else {
-			System.err.println("Level2LogReader couldn't load "
+			GreqlEvaluator.errprintln("Level2LogReader couldn't load "
 					+ getLogFile().getPath());
 		}
 	}
@@ -77,10 +78,10 @@ public class Level2LogReader extends Level2LoggingBase implements
 		loggingType = logger.loggingType;
 
 		if (load()) {
-			System.out.println("Level2LogReader successfully loaded "
+			GreqlEvaluator.println("Level2LogReader successfully loaded "
 					+ getLogFile().getPath());
 		} else {
-			System.err.println("Level2LogReader couldn't load "
+			GreqlEvaluator.errprintln("Level2LogReader couldn't load "
 					+ getLogFile().getPath());
 		}
 	}
@@ -111,10 +112,10 @@ public class Level2LogReader extends Level2LoggingBase implements
 		this.loggingType = loggingType;
 
 		if (load()) {
-			System.out.println("Level2LogReader successfully loaded "
+			GreqlEvaluator.println("Level2LogReader successfully loaded "
 					+ getLogFile().getPath());
 		} else {
-			System.err.println("Level2LogReader couldn't load "
+			GreqlEvaluator.errprintln("Level2LogReader couldn't load "
 					+ getLogFile().getPath());
 		}
 	}
@@ -133,10 +134,10 @@ public class Level2LogReader extends Level2LoggingBase implements
 		this.loggingType = LoggingType.GENERIC;
 
 		if (load()) {
-			System.out.println("Level2LogReader successfully loaded "
+			GreqlEvaluator.println("Level2LogReader successfully loaded "
 					+ getLogFile().getPath());
 		} else {
-			System.err.println("Level2LogReader couldn't load "
+			GreqlEvaluator.errprintln("Level2LogReader couldn't load "
 					+ getLogFile().getPath());
 		}
 	}

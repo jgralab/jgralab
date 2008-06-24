@@ -120,12 +120,12 @@ public class QuantifiedExpressionEvaluator extends VertexEvaluator {
 				JValue tempResult = vertexEval.getResult(subgraph);
 				if (tempResult.isBoolean()) {
 					try {
-						// System.out.println("Current Value is: " +
+						// GreqlEvaluator.println("Current Value is: " +
 						// tempResult.toBoolean());
 						if (tempResult.toBoolean() == JValueBoolean
 								.getTrueValue()) {
 							if (foundTrue == true) {
-								// System.out.println("Returning false cause
+								// GreqlEvaluator.println("Returning false cause
 								// double true found");
 								return new JValue(JValueBoolean.getFalseValue());
 							} else

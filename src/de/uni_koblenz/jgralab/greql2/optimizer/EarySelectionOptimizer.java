@@ -73,7 +73,7 @@ public class EarySelectionOptimizer extends OptimizerBase {
 		int noOfRuns = 1;
 		while (runOptimization()) {
 			if (printMessages) {
-				System.out.println(optimizerHeaderString() + "Iteration "
+				GreqlEvaluator.println(optimizerHeaderString() + "Iteration "
 						+ noOfRuns + " finished.  Restarting...");
 			}
 
@@ -84,7 +84,7 @@ public class EarySelectionOptimizer extends OptimizerBase {
 
 		if (noOfRuns > 1 && printMessages) {
 			// We want no output if that optimizer didn't do anything.
-			System.out.println(optimizerHeaderString() + "finished after "
+			GreqlEvaluator.println(optimizerHeaderString() + "finished after "
 					+ noOfRuns + " runs.");
 		}
 
@@ -233,7 +233,7 @@ public class EarySelectionOptimizer extends OptimizerBase {
 				.collectVariablesDeclaredBy(sd);
 
 		if (printMessages) {
-			System.out.println(optimizerHeaderString() + "(S) Splitting out "
+			GreqlEvaluator.println(optimizerHeaderString() + "(S) Splitting out "
 					+ varsToBeSplit + " of " + sd + " that declares "
 					+ varsDeclaredBySD);
 		}
@@ -272,19 +272,19 @@ public class EarySelectionOptimizer extends OptimizerBase {
 			Set<Variable> varsDeclaredByOrigSD) throws OptimizerException {
 
 		if (printMessages) {
-			System.out.print(optimizerHeaderString()
+			GreqlEvaluator.print(optimizerHeaderString()
 					+ "(Mn) Performing early selection transformation for "
 					+ origSD + " declaring ");
 
 			int varsSize = varsDeclaredByOrigSD.size();
 			int i = 1;
 			for (Variable var : varsDeclaredByOrigSD) {
-				System.out.print(var + " (" + var.getName() + ")");
+				GreqlEvaluator.print(var + " (" + var.getName() + ")");
 				if (i < varsSize)
-					System.out.print(", ");
+					GreqlEvaluator.print(", ");
 				i++;
 			}
-			System.out.println(" with predicates " + predicates + ".");
+			GreqlEvaluator.println(" with predicates " + predicates + ".");
 		}
 
 		// First we search the edges that are connected to each variable in
@@ -391,7 +391,7 @@ public class EarySelectionOptimizer extends OptimizerBase {
 			Set<Variable> varsDeclaredByOrigSD) throws OptimizerException {
 		Variable var = varsDeclaredByOrigSD.iterator().next();
 		if (printMessages) {
-			System.out.println(optimizerHeaderString()
+			GreqlEvaluator.println(optimizerHeaderString()
 					+ "(M1) Performing early selection transformation for "
 					+ origSD + " declaring variable " + var + " ("
 					+ var.getName() + ") with predicates " + predicates);
@@ -488,7 +488,7 @@ public class EarySelectionOptimizer extends OptimizerBase {
 	 *         <code>targetEdge</code>
 	 */
 	private Set<Edge> collectEdgesComingFrom(Vertex startVertex, Edge targetEdge) {
-		// System.out.println("collectEdgesComingFrom(" + startVertex + ", "
+		// GreqlEvaluator.println("collectEdgesComingFrom(" + startVertex + ", "
 		// + targetEdge + ")");
 		HashSet<Edge> edges = new HashSet<Edge>();
 		if (targetEdge.getAlpha() == startVertex) {
@@ -505,7 +505,7 @@ public class EarySelectionOptimizer extends OptimizerBase {
 
 	private Expression createConjunction(List<Expression> predicates,
 			Set<Variable> varsToBeCopied, HashMap<Variable, Variable> copiedVars) {
-		// System.out.println("createConjunction()");
+		// GreqlEvaluator.println("createConjunction()");
 		if (predicates.size() == 1) {
 			return (Expression) OptimizerUtility.copySubgraph(
 					predicates.get(0), syntaxgraph, varsToBeCopied, copiedVars);

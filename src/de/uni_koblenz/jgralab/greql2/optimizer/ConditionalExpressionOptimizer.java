@@ -65,7 +65,7 @@ public class ConditionalExpressionOptimizer extends OptimizerBase {
 			Formula optimizedFormula = formula.simplify().optimize();
 
 			if (!formula.equals(optimizedFormula) && printMessages) {
-				System.out.println(optimizerHeaderString()
+				GreqlEvaluator.println(optimizerHeaderString()
 						+ "Transformed constraint\n    " + formula
 						+ "\nto\n    " + optimizedFormula + ".");
 			}

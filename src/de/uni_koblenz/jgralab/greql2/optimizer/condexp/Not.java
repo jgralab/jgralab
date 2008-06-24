@@ -5,6 +5,7 @@ package de.uni_koblenz.jgralab.greql2.optimizer.condexp;
 
 import java.util.HashSet;
 
+import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
 import de.uni_koblenz.jgralab.greql2.optimizer.OptimizerUtility;
 import de.uni_koblenz.jgralab.greql2.schema.Expression;
 import de.uni_koblenz.jgralab.greql2.schema.FunctionApplication;
@@ -97,7 +98,8 @@ public class Not extends Formula {
 	public double getSelectivity() {
 		double selectivity = 1 - formula.getSelectivity();
 		if (DEBUG)
-			System.out.println("selectivity[" + this + "] = " + selectivity);
+			GreqlEvaluator
+					.println("selectivity[" + this + "] = " + selectivity);
 		return selectivity;
 	}
 

@@ -116,7 +116,7 @@ public class TransformXorFunctionApplicationOptimizer extends OptimizerBase {
 			}
 
 			if (printMessages) {
-				System.out.println(optimizerHeaderString() + "Transformed "
+				GreqlEvaluator.println(optimizerHeaderString() + "Transformed "
 						+ xor + " to (" + arg1 + " & ~" + arg2 + ") | (~"
 						+ arg1 + " & " + arg2 + ").");
 			}

@@ -108,7 +108,7 @@ public class EdgeRestrictionEvaluator extends VertexEvaluator {
 			while (typeInc != null) {
 				TypeIdEvaluator typeEval = (TypeIdEvaluator) greqlEvaluator.getVertexEvaluatorGraphMarker().getMark(typeInc.getAlpha());
 				try {
-				//	System.out.println("Adding types: " + typeEval.getResult(subgraph).toJValueTypeCollection());
+				//	GreqlEvaluator.println("Adding types: " + typeEval.getResult(subgraph).toJValueTypeCollection());
 					typeCollection.addTypes(typeEval.getResult(subgraph).toJValueTypeCollection());
 				} catch (JValueInvalidTypeException ex) {
 					throw new EvaluateException("Result of TypeId was not a JValueTypeCollection", ex);

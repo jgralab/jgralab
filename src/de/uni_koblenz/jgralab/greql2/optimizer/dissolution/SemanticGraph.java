@@ -8,6 +8,7 @@ import java.util.Set;
 
 import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.GraphMarker;
+import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
 import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.GraphSize;
 import de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.VertexEvaluator;
 import de.uni_koblenz.jgralab.greql2.optimizer.OptimizerUtility;
@@ -15,7 +16,6 @@ import de.uni_koblenz.jgralab.greql2.schema.Expression;
 import de.uni_koblenz.jgralab.greql2.schema.FunctionApplication;
 import de.uni_koblenz.jgralab.greql2.schema.Greql2;
 import de.uni_koblenz.jgralab.greql2.schema.IsArgumentOf;
-import de.uni_koblenz.jgralab.utilities.Utility;
 
 /**
  * TODO: (heimdall) Comment class!
@@ -30,9 +30,9 @@ public abstract class SemanticGraph {
 
 	public SemanticGraph dissolve() {
 		// Work an a copy and don't modify the original graph
-		System.out.println("Original formula:\n  --> " + this);
+		GreqlEvaluator.println("Original formula:\n  --> " + this);
 		SemanticGraph graphCopy = deepCopy().toNegationNormalForm();
-		System.out.println("Transformed to negation normal form:\n  --> "
+		GreqlEvaluator.println("Transformed to negation normal form:\n  --> "
 				+ graphCopy);
 
 		int step = 1;
@@ -53,13 +53,13 @@ public abstract class SemanticGraph {
 			assert dissolvent != null : "dissolvent == null, so " + link
 					+ " seems to be no dissolution chain!";
 
-			System.out.println("Dissolution step " + step + " using link "
+			GreqlEvaluator.println("Dissolution step " + step + " using link "
 					+ link + ":");
 
 			graphCopy = graphCopy.replaceInGraph(fullBlock, dissolvent);
 			graphCopy = graphCopy.simplify();
 
-			System.out.println("  --> " + graphCopy);
+			GreqlEvaluator.println("  --> " + graphCopy);
 
 			step++;
 
@@ -290,7 +290,8 @@ public abstract class SemanticGraph {
 		// .println("chainSubgraph != And(hx, hy) or hx or hy are no cblocks.");
 		// }
 		// } else {
-		// System.out.println("fullBlock " + fullBlock + " containing " + link
+		// GreqlEvaluator.println("fullBlock " + fullBlock + " containing " +
+		// link
 		// + " is a " + fullBlock.getClass().getSimpleName());
 		// }
 		//

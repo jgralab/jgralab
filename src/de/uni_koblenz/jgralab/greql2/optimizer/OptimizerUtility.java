@@ -47,7 +47,7 @@ public class OptimizerUtility {
 	 *         otherwise
 	 */
 	public static boolean isAbove(Vertex v1, Vertex v2) {
-		// System.out.println("isAbove(" + v1 +", " + v2 +")");
+		// GreqlEvaluator.println("isAbove(" + v1 +", " + v2 +")");
 		if (v1 == v2) {
 			return true;
 		}
@@ -153,7 +153,7 @@ public class OptimizerUtility {
 	 *         <code>var2</code>, <code>false</code> otherwise.
 	 */
 	public static boolean isDeclaredBefore(Variable var1, Variable var2) {
-		// System.out.println("isDeclaredBefore(" + var1 + ", " + var2 + ")");
+		// GreqlEvaluator.println("isDeclaredBefore(" + var1 + ", " + var2 + ")");
 		if (var1 == var2) {
 			return false;
 		}
@@ -243,7 +243,7 @@ public class OptimizerUtility {
 	public static Vertex copySubgraph(Vertex origVertex, Greql2 graph,
 			Set<Variable> variablesToBeCopied,
 			HashMap<Variable, Variable> copiedVarMap) {
-		// System.out.println("copySubgraph(" + origVertex + ", graph, "
+		// GreqlEvaluator.println("copySubgraph(" + origVertex + ", graph, "
 		// + variablesToBeCopied + ", " + copiedVarMap + ")");
 		if (origVertex instanceof Identifier
 				&& !(origVertex instanceof Variable)) {
@@ -403,14 +403,14 @@ public class OptimizerUtility {
 
 	private static Set<Variable> collectVariablesBelow(Vertex vertex,
 			Set<Variable> vars) {
-		// System.out.println("collectVariablesBelow(" + vertex + ")");
+		// GreqlEvaluator.println("collectVariablesBelow(" + vertex + ")");
 		if (vertex instanceof Variable) {
 			vars.add((Variable) vertex);
 			return vars;
 		}
 		Edge inc = vertex.getFirstEdge(EdgeDirection.IN);
 		while (inc != null) {
-			// System.out.println(inc + " <-- " + inc.getAlpha());
+			// GreqlEvaluator.println(inc + " <-- " + inc.getAlpha());
 			collectVariablesBelow(inc.getAlpha(), vars);
 			inc = inc.getNextEdge(EdgeDirection.IN);
 		}
@@ -469,7 +469,7 @@ public class OptimizerUtility {
 	 */
 	public static void deleteOrphanedVerticesBelow(Vertex vertex,
 			HashSet<? extends Vertex> verticesToOmit) {
-		// System.out.println("deleteOrphanedVerticesBelow(" + vertex + ")");
+		// GreqlEvaluator.println("deleteOrphanedVerticesBelow(" + vertex + ")");
 		deleteOrphanedVerticesBelow(vertex, verticesToOmit,
 				new HashSet<Vertex>());
 	}
@@ -490,7 +490,7 @@ public class OptimizerUtility {
 				&& !verticesToOmit.contains(vertex)) {
 			// vertex is orphaned
 			alreadyDeletedVertices.add(vertex);
-			// System.out.println("deleting " + vertex);
+			// GreqlEvaluator.println("deleting " + vertex);
 			vertex.delete();
 			for (Vertex v : nextOrphans) {
 				deleteOrphanedVerticesBelow(v, verticesToOmit,
@@ -558,7 +558,7 @@ public class OptimizerUtility {
 	 */
 	public static boolean existsForwardPathExcludingOtherTargetClassVertices(
 			Edge edge, Vertex target) {
-		// System.out.println("iFPT(" + edge + ", " + target + ");");
+		// GreqlEvaluator.println("iFPT(" + edge + ", " + target + ");");
 		Vertex omega = edge.getOmega();
 
 		if (omega == target)

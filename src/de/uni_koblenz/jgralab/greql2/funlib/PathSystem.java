@@ -160,7 +160,7 @@ public class PathSystem extends PathSearch implements Greql2Function {
 	 */
 	private List<Vertex> markVerticesOfPathSystem(Vertex startVertex, DFA dfa,
 			BooleanGraphMarker subgraph) throws EvaluateException {
-		// System.err.println("Start marking vertices of path system");
+		// GreqlEvaluator.errprintln("Start marking vertices of path system");
 		ArrayList<Vertex> finalVertices = new ArrayList<Vertex>();
 		Queue<PathSystemQueueEntry> queue = new LinkedList<PathSystemQueueEntry>();
 		PathSystemQueueEntry currentEntry = new PathSystemQueueEntry(
@@ -205,7 +205,7 @@ public class PathSystem extends PathSearch implements Greql2Function {
 			}
 			currentEntry = queue.poll();
 		}
-		// System.err.println("Marking vertices of path system finished");
+		// GreqlEvaluator.errprintln("Marking vertices of path system finished");
 		return finalVertices;
 	}
 

@@ -63,7 +63,7 @@ public class MergeConstraintsOptimizer extends OptimizerBase {
 						.createConjunction(constraintEdges, syntaxgraph);
 
 				if (printMessages) {
-					System.out.println(optimizerHeaderString()
+					GreqlEvaluator.println(optimizerHeaderString()
 							+ "Merging constraints on edges " + constraintEdges
 							+ " into conjunction " + singleConstraint + ".");
 				}

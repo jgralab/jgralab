@@ -64,13 +64,13 @@ public class EdgeSubgraphExpressionEvaluator extends
 		// add all vertices
 		Vertex currentVertex = getDatagraph().getFirstVertex();
 		while (currentVertex != null){
-		//	System.out.println("Current vertex is: " + currentVertex);
+		//	GreqlEvaluator.println("Current vertex is: " + currentVertex);
 			Edge inc = currentVertex.getFirstEdge();
 			while (inc != null) {
-			//	System.out.println("Edge is: " + inc);
+			//	GreqlEvaluator.println("Edge is: " + inc);
 				if (subgraphAttr.isMarked(inc)) {
 					subgraphAttr.mark(currentVertex);
-			//		System.out.println("Marking vertex: " + currentVertex);
+			//		GreqlEvaluator.println("Marking vertex: " + currentVertex);
 					break;
 				}	
 				inc = inc.getNextEdge();

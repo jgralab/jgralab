@@ -123,7 +123,7 @@ public class MergeSimpleDeclarationsOptimizer extends OptimizerBase {
 
 				if (isNextInIncidenceList(decl, isSDOfSurvivor, isSDOfS)) {
 					if (printMessages) {
-						System.out.println(optimizerHeaderString()
+						GreqlEvaluator.println(optimizerHeaderString()
 								+ "Merging all variables of " + s + " into "
 								+ survivor + ".");
 					}

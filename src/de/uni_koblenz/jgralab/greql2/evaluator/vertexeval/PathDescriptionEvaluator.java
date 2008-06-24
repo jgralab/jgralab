@@ -88,7 +88,7 @@ public abstract class PathDescriptionEvaluator extends VertexEvaluator {
 				createdNFA = result.toNFA();
 				addGoalRestrictions();
 				addStartRestrictions();
-		//		System.out.println("    Time for creating NFA: " + (System.currentTimeMillis() - ms));
+		//		GreqlEvaluator.println("    Time for creating NFA: " + (System.currentTimeMillis() - ms));
 			} catch (JValueInvalidTypeException ex) {
 				throw new EvaluateException("Error creating a Path NFA", ex);
 			}

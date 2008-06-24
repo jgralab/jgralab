@@ -124,7 +124,7 @@ public class ValueXMLLoader extends DefaultHandler {
 	 */
 	public void startElement(String uri, String localName, String qName,
 			Attributes attributes) {
-		//System.out.println("Starting: '" + qName + "'");
+		//GreqlEvaluator.println("Starting: '" + qName + "'");
 		JValueCollection col = null;
 		if (qName.equals("set"))
 			col = new JValueSet();
@@ -151,10 +151,10 @@ public class ValueXMLLoader extends DefaultHandler {
 	 * This method is called by the SAX-Parser
 	 */
 	public void endElement(String uri, String localName, String qName) {
-	//	System.out.println("CurrentData is: '" + currentData + "'");
-	//	System.out.println("Loaded Value: " + loadedValue);
+	//	GreqlEvaluator.println("CurrentData is: '" + currentData + "'");
+	//	GreqlEvaluator.println("Loaded Value: " + loadedValue);
 		JValue value = null;
-	//	System.out.println("endElement: '" + qName + "'");
+	//	GreqlEvaluator.println("endElement: '" + qName + "'");
 		if (qName.equals("xmlvalue"))
 			return;
 		StackEntry entry = valueStack.peek();

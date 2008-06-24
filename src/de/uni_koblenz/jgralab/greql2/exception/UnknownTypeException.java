@@ -26,6 +26,7 @@ package de.uni_koblenz.jgralab.greql2.exception;
 
 import java.util.List;
 
+import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
 import de.uni_koblenz.jgralab.greql2.schema.SourcePosition;
 
 /**
@@ -43,10 +44,10 @@ public class UnknownTypeException extends QuerySourceException {
 			List<SourcePosition> sourcePositions, Exception cause) {
 		super("The Datagraph schema doesn't contain a type ", typeName,
 				sourcePositions, cause);
-		// System.out.println("Creating UnknownTypeException with possible
+		// GreqlEvaluator.println("Creating UnknownTypeException with possible
 		// SourcePositions: ");
 		for (SourcePosition sp : sourcePositions) {
-			System.out.println("  (" + sp.offset + ", " + sp.length + ")");
+			GreqlEvaluator.println("  (" + sp.offset + ", " + sp.length + ")");
 		}
 
 	}
@@ -58,7 +59,7 @@ public class UnknownTypeException extends QuerySourceException {
 		System.out
 				.println("Creating UnknownTypeException with possible SourcePositions: ");
 		for (SourcePosition sp : sourcePositions) {
-			System.out.println("  (" + sp.offset + ", " + sp.length + ")");
+			GreqlEvaluator.println("  (" + sp.offset + ", " + sp.length + ")");
 		}
 	}
 

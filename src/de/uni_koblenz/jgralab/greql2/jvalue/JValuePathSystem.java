@@ -21,14 +21,21 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
- 
+
 package de.uni_koblenz.jgralab.greql2.jvalue;
 
-import de.uni_koblenz.jgralab.*;
-import de.uni_koblenz.jgralab.schema.GraphElementClass;
-import de.uni_koblenz.jgralab.schema.AttributedElementClass;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 
-import java.util.*;
+import de.uni_koblenz.jgralab.Edge;
+import de.uni_koblenz.jgralab.Graph;
+import de.uni_koblenz.jgralab.GraphElement;
+import de.uni_koblenz.jgralab.Vertex;
+import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
+import de.uni_koblenz.jgralab.schema.AttributedElementClass;
+import de.uni_koblenz.jgralab.schema.GraphElementClass;
 
 public class JValuePathSystem extends JValue {
 
@@ -202,7 +209,7 @@ public class JValuePathSystem extends JValue {
 							.getStateNumber())) {
 				Vertex v = mapEntry.getKey().getVertex();
 				returnSet.add(new JValue(v, v));
-			}	
+			}
 		}
 		return returnSet;
 	}
@@ -270,7 +277,8 @@ public class JValuePathSystem extends JValue {
 		while (iter.hasNext()) {
 			Map.Entry<PathSystemKey, PathSystemEntry> entry = iter.next();
 			returnSet.add(new JValue((GraphElementClass) entry.getKey()
-					.getVertex().getAttributedElementClass(), entry.getKey().getVertex()));
+					.getVertex().getAttributedElementClass(), entry.getKey()
+					.getVertex()));
 			Edge e = entry.getValue().getParentEdge();
 			if (e != null)
 				returnSet.add(new JValue((GraphElementClass) e
@@ -359,12 +367,15 @@ public class JValuePathSystem extends JValue {
 	 * @param orientation
 	 *            if set to true, the incomming edges will be counted,
 	 *            otherwise, the outgoing ones will be counted
-	 * @param typeCol the JValueTypeCollection which toggles wether a type is accepted or not           
+	 * @param typeCol
+	 *            the JValueTypeCollection which toggles wether a type is
+	 *            accepted or not
 	 * @return the number of edges with the given orientation connected to the
 	 *         given vertex or -1 if the given vertex is not part of this
 	 *         pathsystem
 	 */
-	public int degree(Vertex vertex, boolean orientation, JValueTypeCollection typeCol) {
+	public int degree(Vertex vertex, boolean orientation,
+			JValueTypeCollection typeCol) {
 		if (vertex == null)
 			return -1;
 		int degree = 0;
@@ -373,10 +384,14 @@ public class JValuePathSystem extends JValue {
 		while (iter.hasNext()) {
 			Map.Entry<PathSystemKey, PathSystemEntry> entry = iter.next();
 			if (orientation) {
-				if ((entry.getValue().getParentVertex() == vertex) && ((typeCol == null) || (typeCol.acceptsType(vertex.getAttributedElementClass()))))
+				if ((entry.getValue().getParentVertex() == vertex)
+						&& ((typeCol == null) || (typeCol.acceptsType(vertex
+								.getAttributedElementClass()))))
 					degree++;
 			} else {
-				if ((entry.getKey().getVertex() == vertex) && ((typeCol == null) || (typeCol.acceptsType(vertex.getAttributedElementClass()))))
+				if ((entry.getKey().getVertex() == vertex)
+						&& ((typeCol == null) || (typeCol.acceptsType(vertex
+								.getAttributedElementClass()))))
 					degree++;
 			}
 		}
@@ -390,7 +405,8 @@ public class JValuePathSystem extends JValue {
 	 * @param vertex
 	 *            the vertex for which the number of edges gets counted
 	 * @param typeCol
-	 *            the JValueTypeCollection which toggles wether a type is accepted or not           
+	 *            the JValueTypeCollection which toggles wether a type is
+	 *            accepted or not
 	 * @return the number of edges connected to the given vertex or -1 if the
 	 *         given vertex is not part of this pathsystem
 	 */
@@ -402,7 +418,10 @@ public class JValuePathSystem extends JValue {
 				.entrySet().iterator();
 		while (iter.hasNext()) {
 			Map.Entry<PathSystemKey, PathSystemEntry> entry = iter.next();
-			if (((entry.getValue().getParentVertex() == vertex) || (entry.getKey().getVertex() == vertex)) && ((typeCol == null) || (typeCol.acceptsType(vertex.getAttributedElementClass()))))
+			if (((entry.getValue().getParentVertex() == vertex) || (entry
+					.getKey().getVertex() == vertex))
+					&& ((typeCol == null) || (typeCol.acceptsType(vertex
+							.getAttributedElementClass()))))
 				degree++;
 		}
 		return degree;
@@ -557,8 +576,6 @@ public class JValuePathSystem extends JValue {
 		}
 	}
 
-
-	
 	/**
 	 * Extract the path which starts with the root vertex and ends with the
 	 * given vertex from the PathSystem. If the given vertex exists more than
@@ -615,7 +632,7 @@ public class JValuePathSystem extends JValue {
 		}
 		return pathSet;
 	}
-	
+
 	/**
 	 * Extracts all paths which length equal to <code>len</code>
 	 * 
@@ -788,7 +805,7 @@ public class JValuePathSystem extends JValue {
 	 * @return true, if the given path is part of this path tree, false
 	 *         otherwise
 	 */
-	public boolean containsPath(JValuePath path)  {
+	public boolean containsPath(JValuePath path) {
 		if (path.getStartVertex() != rootVertex)
 			return false;
 		if (leafKeys == null)
@@ -814,16 +831,16 @@ public class JValuePathSystem extends JValue {
 	/**
 	 * Prints this pathsystem as ascii-art
 	 */
-	public void printAscii()  {
+	public void printAscii() {
 		try {
 			JValueSet pathSet = extractPath();
 			Iterator<JValue> iter = pathSet.iterator();
 			while (iter.hasNext()) {
 				JValuePath path = (JValuePath) iter.next();
-				System.out.println(path.toString());
+				GreqlEvaluator.println(path.toString());
 			}
 		} catch (JValuePathException ex) {
-			System.out.println(ex);
+			GreqlEvaluator.println(ex);
 		}
 	}
 
@@ -851,12 +868,12 @@ public class JValuePathSystem extends JValue {
 	public void printEntryMap() {
 		Iterator<Map.Entry<PathSystemKey, PathSystemEntry>> iter = keyToEntryMap
 				.entrySet().iterator();
-		System.out.println("<Key, Entry> Set of PathSystem is:");
+		GreqlEvaluator.println("<Key, Entry> Set of PathSystem is:");
 		while (iter.hasNext()) {
 			Map.Entry<PathSystemKey, PathSystemEntry> mapEntry = iter.next();
 			PathSystemEntry thisEntry = mapEntry.getValue();
 			PathSystemKey thisKey = mapEntry.getKey();
-			System.out.println(thisKey.toString() + " maps to "
+			GreqlEvaluator.println(thisKey.toString() + " maps to "
 					+ thisEntry.toString());
 		}
 	}
@@ -867,20 +884,20 @@ public class JValuePathSystem extends JValue {
 	public void printKeyMap() {
 		Iterator<Map.Entry<Vertex, PathSystemKey>> iter = vertexToFirstKeyMap
 				.entrySet().iterator();
-		System.out.println("<Vertex, FirstKey> Set of PathSystem is:");
+		GreqlEvaluator.println("<Vertex, FirstKey> Set of PathSystem is:");
 		while (iter.hasNext()) {
 			Map.Entry<Vertex, PathSystemKey> mapEntry = iter.next();
 			PathSystemKey thisKey = mapEntry.getValue();
 			Vertex vertex = mapEntry.getKey();
-			System.out.println(vertex + " maps to " + thisKey.toString());
+			GreqlEvaluator.println(vertex + " maps to " + thisKey.toString());
 		}
 	}
 
 	/**
 	 * accepts te given visitor to visit this jvalue
 	 */
-	public void accept(JValueVisitor v)  throws Exception {
+	public void accept(JValueVisitor v) throws Exception {
 		v.visitPathSystem(this);
 	}
-	
+
 }

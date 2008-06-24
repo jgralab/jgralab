@@ -102,7 +102,7 @@ public class VariableDeclarationOrderOptimizer extends OptimizerBase {
 				varDeclOrderChanged = true;
 
 				if (printMessages) {
-					System.out.println(optimizerHeaderString()
+					GreqlEvaluator.println(optimizerHeaderString()
 							+ "New order of declarations in " + declaringDecl);
 				}
 
@@ -114,7 +114,7 @@ public class VariableDeclarationOrderOptimizer extends OptimizerBase {
 					Variable var = unit.getVariable();
 
 					if (printMessages) {
-						System.out.println("  " + varDeclOrderBefore.get(i)
+						GreqlEvaluator.println("  " + varDeclOrderBefore.get(i)
 								+ "  -->  v" + var.getId() + " ("
 								+ var.getName() + "), changeCosts = "
 								+ unit.getVariableValueChangeCosts()

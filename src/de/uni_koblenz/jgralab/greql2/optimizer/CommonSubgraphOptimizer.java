@@ -218,7 +218,7 @@ public class CommonSubgraphOptimizer extends OptimizerBase {
 			anOptimizationWasDone = true;
 
 			if (printMessages) {
-				System.out.println(optimizerHeaderString() + "Merging "
+				GreqlEvaluator.println(optimizerHeaderString() + "Merging "
 						+ lowerVertex + " and " + higherVertex + ".");
 			}
 

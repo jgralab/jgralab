@@ -132,7 +132,7 @@ public class NFA extends FiniteAutomaton {
 					newFinalState);
 			iteratedNFA.transitionList.add(t2);
 		}
-	//	System.out.println("created IteratedPath NFA");
+	//	GreqlEvaluator.println("created IteratedPath NFA");
 		iteratedNFA.updateStateAttributes();
 		return iteratedNFA;
 	}
@@ -290,7 +290,7 @@ public class NFA extends FiniteAutomaton {
 		nfa.transitionList.clear();
 		nfa.initialState.outTransitions.clear();
 		nfa.finalStates.get(0).inTransitions.clear();
-	//	System.out.println("NFA.createEdgePathDescription");
+	//	GreqlEvaluator.println("NFA.createEdgePathDescription");
 		SimpleTransition t = new EdgeTransition(nfa.initialState,
 				nfa.finalStates.get(0), dir, typeCollection,
 				role, edgeEval);

@@ -21,75 +21,83 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
- 
-package de.uni_koblenz.jgralab.greql2.evaluator.fa;
 
+package de.uni_koblenz.jgralab.greql2.evaluator.fa;
 
 import java.util.ArrayList;
 import java.util.Iterator;
 
+import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
+
 /**
- * This is the base class of NFA and DFA. Contains attributes and methods both subclasses
- * need. 
- * @author Daniel Bildhauer <dbildh@uni-koblenz.de> 
- * Summer 2006, Diploma Thesis
- *
+ * This is the base class of NFA and DFA. Contains attributes and methods both
+ * subclasses need.
+ * 
+ * @author Daniel Bildhauer <dbildh@uni-koblenz.de> Summer 2006, Diploma Thesis
+ * 
  */
 public abstract class FiniteAutomaton {
-	
+
 	/*
 	 * the one and only initial state of this automat
 	 */
-	public State initialState; 
-	
+	public State initialState;
+
 	/*
-	 * the list of final states, states that are in this list are also in the state list
+	 * the list of final states, states that are in this list are also in the
+	 * state list
 	 */
 	public ArrayList<State> finalStates;
-	
+
 	/*
 	 * a list of all states
 	 */
 	public ArrayList<State> stateList;
-	
+
 	/*
 	 * a list of all transitions
 	 */
 	public ArrayList<Transition> transitionList;
 
-	
 	/**
 	 * prints this automaton as ascii-stream
 	 */
 	public void printAscii() {
-		System.out.println("|||||||||||||||||||||||  Automaton: |||||||||||||||||||||||||");
+		GreqlEvaluator
+				.println("|||||||||||||||||||||||  Automaton: |||||||||||||||||||||||||");
 		Iterator<State> stateIter = stateList.iterator();
 		while (stateIter.hasNext()) {
 			State currentState = stateIter.next();
-			System.out.print("[" + stateList.indexOf(currentState) + "]");
-			Iterator<Transition> transitionIter = currentState.outTransitions.iterator();
+			GreqlEvaluator.print("[" + stateList.indexOf(currentState) + "]");
+			Iterator<Transition> transitionIter = currentState.outTransitions
+					.iterator();
 			while (transitionIter.hasNext()) {
 				Transition currentTransition = transitionIter.next();
-				int stateNumber = stateList.indexOf(currentTransition.getEndState());
+				int stateNumber = stateList.indexOf(currentTransition
+						.getEndState());
 				if (finalStates.contains(currentTransition.getEndState())) {
-					System.out.println("      ----" + currentTransition.edgeString() + "--->    [[" + stateNumber + "]]");
+					GreqlEvaluator.println("      ----"
+							+ currentTransition.edgeString() + "--->    [["
+							+ stateNumber + "]]");
 				} else {
-					System.out.println("      ----" + currentTransition.edgeString() + "--->    [" + stateNumber + "]");		
+					GreqlEvaluator.println("      ----"
+							+ currentTransition.edgeString() + "--->    ["
+							+ stateNumber + "]");
 				}
 			}
-			System.out.println("\n--------------------------");
+			GreqlEvaluator.println("\n--------------------------");
 		}
-		System.out.println("||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||| ");
+		GreqlEvaluator
+				.println("||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||| ");
 	}
-	
-		
+
 	/**
 	 * returns true if the given state if final
 	 */
 	public boolean isFinal(State s) {
 		return finalStates.contains(s);
 	}
-	
+
 	/**
 	 * creates a new instance
 	 */
@@ -98,12 +106,11 @@ public abstract class FiniteAutomaton {
 		stateList = new ArrayList<State>();
 		transitionList = new ArrayList<Transition>();
 	}
-	
-	
+
 	/**
-	 * sets the attributes "number" and "isFinal" for all states to the right values, so that
-	 * each number is unique and only these state are marked as "final" which are part of the final
-	 * list. This makes path-search faster 
+	 * sets the attributes "number" and "isFinal" for all states to the right
+	 * values, so that each number is unique and only these state are marked as
+	 * "final" which are part of the final list. This makes path-search faster
 	 */
 	protected void updateStateAttributes() {
 		Iterator<State> iter = stateList.iterator();
@@ -119,8 +126,4 @@ public abstract class FiniteAutomaton {
 		}
 	}
 
-
 }
-	
-	
-	

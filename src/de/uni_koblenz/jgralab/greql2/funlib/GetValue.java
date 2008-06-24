@@ -138,11 +138,11 @@ public class GetValue implements Greql2Function {
 	}
 
 //	private Object getAttribute(AttributedElement elem, String name) throws NoSuchFieldException, SecurityException, IllegalAccessException, IllegalArgumentException {
-//		System.out.println("elem.getClass(): " + elem.getClass());
+//		GreqlEvaluator.println("elem.getClass(): " + elem.getClass());
 //		Field[] fields = elem.getClass().getFields();
-//		System.out.println("Fields are: ");
+//		GreqlEvaluator.println("Fields are: ");
 //		for (Field f : fields)
-//			System.out.println("Field: " + f.toString());
+//			GreqlEvaluator.println("Field: " + f.toString());
 //		return elem.getClass().getField(name).get(elem);
 //	}
 	

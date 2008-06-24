@@ -825,7 +825,7 @@ public class DefaultCostModel extends CostModelBase implements CostModel {
 						greqlExp.getFirstIsQueryExprOf().getAlpha());
 		long queryCosts = queryExpEval
 				.getCurrentSubtreeEvaluationCosts(graphSize);
-		System.out.println("QueryCosts: " + queryCosts);
+		GreqlEvaluator.println("QueryCosts: " + queryCosts);
 		IsBoundVarOf boundVarInc = greqlExp.getFirstIsBoundVarOf();
 		int boundVars = 0;
 		while (boundVarInc != null) {

@@ -139,13 +139,13 @@ public class EdgeTransition extends SimpleTransition {
 		if (!super.accepts(v, e, subgraph)) {
 			return false;
 		}
-		// System.out.println("Checking edge path for Edge: " + e.toString());
+		// GreqlEvaluator.println("Checking edge path for Edge: " + e.toString());
 		// checks if only one edge is allowed an if e is this allowed edge
 		if (allowedEdgeEvaluator != null) {
 			try {
 				Edge allowedEdge = allowedEdgeEvaluator.getResult(subgraph)
 						.toEdge().getNormalEdge();
-				// System.out.println("Allowed Edge is: " +
+				// GreqlEvaluator.println("Allowed Edge is: " +
 				// allowedEdge.toString());
 				if (e.getNormalEdge() != allowedEdge)
 					return false;

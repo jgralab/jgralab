@@ -3,6 +3,7 @@
  */
 package de.uni_koblenz.jgralab.greql2.optimizer.condexp;
 
+import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
 import de.uni_koblenz.jgralab.greql2.optimizer.OptimizerUtility;
 import de.uni_koblenz.jgralab.greql2.schema.Expression;
 import de.uni_koblenz.jgralab.greql2.schema.FunctionApplication;
@@ -101,7 +102,8 @@ public class And extends BinaryOperator {
 		double selectivity = leftHandSide.getSelectivity()
 				* rightHandSide.getSelectivity();
 		if (DEBUG)
-			System.out.println("selectivity[" + this + "] = " + selectivity);
+			GreqlEvaluator
+					.println("selectivity[" + this + "] = " + selectivity);
 		return selectivity;
 	}
 

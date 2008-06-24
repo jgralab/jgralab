@@ -77,7 +77,7 @@ public class DissolutionOptimizer extends OptimizerBase {
 
 			if (miniSGCosts < sgCosts) {
 				if (printMessages) {
-					System.out.println(optimizerHeaderString()
+					GreqlEvaluator.println(optimizerHeaderString()
 							+ "Minimized formula\n    " + sg + "\nto\n    "
 							+ miniSG);
 				}
@@ -86,7 +86,7 @@ public class DissolutionOptimizer extends OptimizerBase {
 				optimized = true;
 			} else {
 				if (printMessages) {
-					System.out.println(optimizerHeaderString()
+					GreqlEvaluator.println(optimizerHeaderString()
 							+ "Minimization result costs " + miniSGCosts
 							+ " while original formula costs " + sgCosts
 							+ ", so the original one is used.");

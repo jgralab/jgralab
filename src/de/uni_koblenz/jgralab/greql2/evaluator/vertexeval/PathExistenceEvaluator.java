@@ -113,7 +113,7 @@ public class PathExistenceEvaluator extends PathSearchEvaluator {
 		if (targetVertex == null) {
 			return new JValue();
 		}
-		// System.out.println("Try to create DFA");
+		// GreqlEvaluator.println("Try to create DFA");
 		if (searchAutomaton == null) {
 			NFA createdNFA = pathDescEval.getNFA();
 			// createdNFA.printAscii();
@@ -126,7 +126,7 @@ public class PathExistenceEvaluator extends PathSearchEvaluator {
 						searchAutomaton.stateList.size());
 			}
 		}
-		// System.out.println("Successfull created DFA");
+		// GreqlEvaluator.println("Successfull created DFA");
 		if (function == null) {
 			function = Greql2FunctionLibrary.instance().getGreqlFunction(
 					"isReachable");

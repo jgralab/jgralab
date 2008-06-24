@@ -57,7 +57,7 @@ public abstract class OptimizerBase implements Optimizer {
 	 *         <code>v</code>
 	 */
 	protected Set<Variable> collectUndeclaredVariablesBelow(Vertex vertex) {
-		// System.out.println("collectUndeclaredVariablesBelow(" + vertex +
+		// GreqlEvaluator.println("collectUndeclaredVariablesBelow(" + vertex +
 		// ")");
 		HashSet<Variable> undeclaredVars = new HashSet<Variable>();
 		for (Variable var : OptimizerUtility.collectVariablesBelow(vertex)) {

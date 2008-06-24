@@ -210,18 +210,18 @@ public abstract class VertexEvaluator {
 	 */
 	public JValue getResult(BooleanGraphMarker subgraphMarker)
 			throws EvaluateException {
-		// System.out.println("Try to retrieve result for: " + this);
+		// GreqlEvaluator.println("Try to retrieve result for: " + this);
 		if (result != null && this.subgraph == subgraphMarker) {
 			// greqlEvaluator.progress(1);
 			return result;
 		}
 		// currentIndentation++;
 		// printIndentation();
-		// System.out.println("Evaluating : " + this);
+		// GreqlEvaluator.println("Evaluating : " + this);
 		this.subgraph = subgraphMarker;
 		try {
 			result = evaluate();
-		//	System.out.println("VertexEvaluator.getResult() " + result + " of vertex " + getVertex() );
+		//	GreqlEvaluator.println("VertexEvaluator.getResult() " + result + " of vertex " + getVertex() );
 		} catch (QuerySourceException ex) {
 			removeInvalidSourcePosition(ex);
 			throw ex;
@@ -290,9 +290,9 @@ public abstract class VertexEvaluator {
 		}
 
 		// printIndentation();
-		// System.out.println("Evaluating : " + this + " finished");
+		// GreqlEvaluator.println("Evaluating : " + this + " finished");
 		// currentIndentation--;
-		// System.out.println("Result is: " + result);
+		// GreqlEvaluator.println("Result is: " + result);
 
 		greqlEvaluator.progress(ownEvaluationCosts);
 		return result;
@@ -304,7 +304,7 @@ public abstract class VertexEvaluator {
 	 */
 	protected void printIndentation() {
 		for (int i = 0; i < currentIndentation; i++)
-			System.out.print("   ");
+			GreqlEvaluator.print("   ");
 	}
 
 	/**
@@ -353,9 +353,9 @@ public abstract class VertexEvaluator {
 		for (Edge e : getVertex().incidences(EdgeDirection.IN)) {
 			Vertex vertex = e.getThat();
 			VertexEvaluator eval = marker.getMark(vertex);
-			// System.out.println("Vertex: " + vertex.getClass().getName());
+			// GreqlEvaluator.println("Vertex: " + vertex.getClass().getName());
 			if (eval != null) {
-				// System.out.println("Eval: " + eval.getClass().getName());
+				// GreqlEvaluator.println("Eval: " + eval.getClass().getName());
 				eval.resetSubtreeToInitialState();
 			}
 		}
@@ -571,10 +571,10 @@ public abstract class VertexEvaluator {
 		if (possibleSourcePositions.size() == 0)
 			return; // maybe the vertex is the root vertex, than it has no
 		// outgoing edges
-		// System.out.println("Available sourcePositions for Vertex " + this + "
+		// GreqlEvaluator.println("Available sourcePositions for Vertex " + this + "
 		// are: ");
 		// for (SourcePosition sp : possibleSourcePositions) {
-		// System.out.println(" (" + sp.offset + ", " + sp.length + ")" );
+		// GreqlEvaluator.println(" (" + sp.offset + ", " + sp.length + ")" );
 		// }
 		Iterator<SourcePosition> iter = ex.getSourcePositions().iterator();
 		while (iter.hasNext()) {
@@ -592,7 +592,7 @@ public abstract class VertexEvaluator {
 				}
 			}
 			if (!accepted) {
-				// System.out.println("SourcePosition: (" +
+				// GreqlEvaluator.println("SourcePosition: (" +
 				// currentPosition.offset + ", " + currentPosition.length + ")
 				// is not accepted");
 				iter.remove();

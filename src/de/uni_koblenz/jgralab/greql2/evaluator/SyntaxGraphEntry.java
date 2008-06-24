@@ -243,7 +243,7 @@ public class SyntaxGraphEntry {
 				+ queryText.hashCode() + "-" + costModelClassSimple + "-"
 				+ optimizerClassSimple + ".tg";
 		GraphIO.saveGraphToFile(fileName, syntaxGraph, null);
-		System.out.println("Saved SyntaxGraphEntry to \"" + fileName + "\".");
+		GreqlEvaluator.println("Saved SyntaxGraphEntry to \"" + fileName + "\".");
 	}
 
 	/**

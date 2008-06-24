@@ -5,6 +5,7 @@ package de.uni_koblenz.jgralab.greql2.optimizer.condexp;
 
 import java.util.HashSet;
 
+import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
 import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.GraphSize;
 import de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.VertexEvaluator;
 import de.uni_koblenz.jgralab.greql2.optimizer.OptimizerUtility;
@@ -71,7 +72,8 @@ public class NonConstantTerm extends Formula {
 		if (this.toString().equals("v29"))
 			selectivity = 0.3;
 		if (DEBUG)
-			System.out.println("selectivity[" + this + "] = " + selectivity);
+			GreqlEvaluator
+					.println("selectivity[" + this + "] = " + selectivity);
 		return selectivity;
 	}
 

@@ -74,6 +74,12 @@ import de.uni_koblenz.jgralab.utilities.TGFilenameFilter;
 public class GreqlEvaluator {
 
 	/**
+	 * If set to <code>true</code> the evaluator won't print any messages to
+	 * stdout/stderr.
+	 */
+	private static boolean QUIET = false;
+
+	/**
 	 * toggles which expressions are added to the index. Only vertex- and
 	 * edgeset expressions that need more than <code>indextimeBarrier</code>
 	 * ms to calculate are added
@@ -236,7 +242,7 @@ public class GreqlEvaluator {
 		}
 		for (File syntaxGraphFile : optimizedSyntaxGraphsDirectory
 				.listFiles(new TGFilenameFilter())) {
-			System.out.println("Loading SyntaxGraphEntry \""
+			GreqlEvaluator.println("Loading SyntaxGraphEntry \""
 					+ syntaxGraphFile.getPath() + "\".");
 			SyntaxGraphEntry entry;
 			try {
@@ -467,10 +473,10 @@ public class GreqlEvaluator {
 				e.printStackTrace();
 			}
 			if (logger.load()) {
-				System.out.println("Successfully loaded logger file "
+				GreqlEvaluator.println("Successfully loaded logger file "
 						+ logger.getLogfileName() + ".");
 			} else {
-				System.out.println("Couldn't load logger file "
+				GreqlEvaluator.println("Couldn't load logger file "
 						+ logger.getLogfileName() + ".");
 			}
 		}
@@ -616,7 +622,8 @@ public class GreqlEvaluator {
 		queryString = queryString.replaceAll("\\s{2,}", " ");
 		// Delete the space at the front and at the end of the query.
 		queryString = queryString.trim();
-		// System.out.println("Normalized Query = \"" + queryString + "\".");
+		// GreqlEvaluator.println("Normalized Query = \"" + queryString +
+		// "\".");
 	}
 
 	/**
@@ -715,7 +722,7 @@ public class GreqlEvaluator {
 				queryGraph = syntaxGraphEntry.getSyntaxGraph();
 				createVertexEvaluators();
 				costModel.setGreqlEvaluator(this);
-				System.out.println("Using stored optimized syntax graph.");
+				GreqlEvaluator.println("Using stored optimized syntax graph.");
 				return;
 			}
 		}
@@ -820,10 +827,10 @@ public class GreqlEvaluator {
 		if (logger != null) {
 			try {
 				if (logger.store()) {
-					System.out.println("Successfully stored logfile to "
+					GreqlEvaluator.println("Successfully stored logfile to "
 							+ logger.getLogfileName() + ".");
 				} else {
-					System.err.println("Couldn't store logfile to "
+					GreqlEvaluator.errprintln("Couldn't store logfile to "
 							+ logger.getLogfileName() + ".");
 				}
 
@@ -898,12 +905,12 @@ public class GreqlEvaluator {
 	}
 
 	public void printEvaluationTimes() {
-		System.out.println("Overall evaluation took " + overallEvaluationTime
-				/ 1000d + " seconds.\n" + " --> parsing time         : "
-				+ parseTime / 1000d + "\n --> optimization time    : "
-				+ optimizationTime / 1000d + "\n --> plain evaluation time: "
-				+ plainEvaluationTime / 1000d
-				+ "\nEstimated evaluation costs: "
+		GreqlEvaluator.println("Overall evaluation took "
+				+ overallEvaluationTime / 1000d + " seconds.\n"
+				+ " --> parsing time         : " + parseTime / 1000d
+				+ "\n --> optimization time    : " + optimizationTime / 1000d
+				+ "\n --> plain evaluation time: " + plainEvaluationTime
+				/ 1000d + "\nEstimated evaluation costs: "
 				+ estimatedInterpretationSteps);
 	}
 
@@ -966,5 +973,91 @@ public class GreqlEvaluator {
 	 */
 	public static void setPrintOptimizerMessages(boolean printOptimizerMessages) {
 		OptimizerBase.setPrintMessages(printOptimizerMessages);
+	}
+
+	/**
+	 * @return <code>true</code> if the evaluator is in quiet mode, e.g. it
+	 *         won't print any messages to stdout/stderr.
+	 */
+	public static boolean isQUIET() {
+		return QUIET;
+	}
+
+	/**
+	 * @param quiet
+	 *            if <code>true</code> the evaluator won't print any messages
+	 *            to stdout/stderr.
+	 */
+	public static void setQUIET(boolean quiet) {
+		QUIET = quiet;
+	}
+
+	/**
+	 * Similar to {@link System#out}.println() but respects
+	 * {@link GreqlEvaluator#QUIET}.
+	 * 
+	 * @param o
+	 */
+	public static void println(Object o) {
+		if (!QUIET) {
+			System.out.println(o);
+		}
+	}
+
+	/**
+	 * Similar to {@link System#out}.println() but respects
+	 * {@link GreqlEvaluator#QUIET}.
+	 * 
+	 */
+	public static void println() {
+		if (!QUIET) {
+			System.out.println();
+		}
+	}
+
+	/**
+	 * Similar to {@link System#err}.println() but respects
+	 * {@link GreqlEvaluator#QUIET}.
+	 * 
+	 * @param o
+	 */
+	public static void errprintln(Object o) {
+		if (!QUIET) {
+			System.err.println(o);
+		}
+	}
+
+	/**
+	 * Similar to {@link System#err}.println() but respects
+	 * {@link GreqlEvaluator#QUIET}.
+	 */
+	public static void errprintln() {
+		if (!QUIET) {
+			System.err.println();
+		}
+	}
+
+	/**
+	 * Similar to {@link System#out}.print() but respects
+	 * {@link GreqlEvaluator#QUIET}.
+	 * 
+	 * @param o
+	 */
+	public static void print(Object o) {
+		if (!QUIET) {
+			System.out.print(o);
+		}
+	}
+
+	/**
+	 * Similar to {@link System#err}.print() but respects
+	 * {@link GreqlEvaluator#QUIET}.
+	 * 
+	 * @param o
+	 */
+	public static void errprint(Object o) {
+		if (!QUIET) {
+			System.err.print(o);
+		}
 	}
 }

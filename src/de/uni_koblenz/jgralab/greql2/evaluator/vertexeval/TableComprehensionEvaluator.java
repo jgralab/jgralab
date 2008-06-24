@@ -126,7 +126,7 @@ public class TableComprehensionEvaluator extends VertexEvaluator {
 				row = new HashMap<JValue, JValue>();
 				tableMap.put(rowHeaderEntry, row);
 				rowHeaderSet.add(rowHeaderEntry);
-				// System.out.println("Adding row");
+				// GreqlEvaluator.println("Adding row");
 			}
 			row.put(columnHeaderEntry, localResult);
 		}

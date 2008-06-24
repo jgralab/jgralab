@@ -181,7 +181,7 @@ public class PathExistenceOptimizer extends OptimizerBase {
 	private void replacePathExistenceWithContainsFunApp(PathExistence pe,
 			Expression startOrTargetExp, Expression otherExp, boolean forward) {
 		if (printMessages) {
-			System.out.println(optimizerHeaderString() + "Replacing " + pe
+			GreqlEvaluator.println(optimizerHeaderString() + "Replacing " + pe
 					+ " with a contains FunctionApplication using a "
 					+ ((forward) ? "Forward" : "Backward") + "VertexSet.");
 		}
