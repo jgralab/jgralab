@@ -91,6 +91,12 @@ public abstract class Level2LoggingBase {
 		}
 		Element rootElement = doc.getRootElement();
 		Element resultElem = rootElement.getChild("results");
+
+		if (resultElem == null) {
+			// The logfile contains only the root element
+			return true;
+		}
+
 		/*
 		 * the use of generic List<Element> and Iterator<Element> will result
 		 * in compiler warning because JDom doesn't support Java generics

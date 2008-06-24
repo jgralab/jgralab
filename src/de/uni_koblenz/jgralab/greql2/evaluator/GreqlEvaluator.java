@@ -437,12 +437,17 @@ public class GreqlEvaluator {
 
 	/**
 	 * @return the tmp directory of that system. On Unix/Linux this is /tmp.
-	 * @throws IOException
 	 */
-	private File getTmpDirectory() throws IOException {
-		File tmpFile = File.createTempFile("_tmp", "xyz");
-		File tmpDir = tmpFile.getParentFile();
-		tmpFile.delete();
+	private File getTmpDirectory() {
+		File tmpFile = null, tmpDir = null;
+		try {
+			tmpFile = File.createTempFile("_tmp", "xyz");
+			tmpDir = tmpFile.getParentFile();
+			tmpFile.delete();
+		} catch (IOException e) {
+			e.printStackTrace();
+			tmpDir = new File("/tmp/");
+		}
 		return tmpDir;
 	}
 
@@ -452,11 +457,7 @@ public class GreqlEvaluator {
 	protected void createEvaluationLogger() {
 		if (logger == null) {
 			if (loggerDirectory == null) {
-				try {
-					loggerDirectory = getTmpDirectory();
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
+				loggerDirectory = getTmpDirectory();
 			}
 			try {
 				logger = new Level2Logger(loggerDirectory, datagraph,
@@ -615,7 +616,7 @@ public class GreqlEvaluator {
 		queryString = queryString.replaceAll("\\s{2,}", " ");
 		// Delete the space at the front and at the end of the query.
 		queryString = queryString.trim();
-		System.out.println("Normalized Query = \"" + queryString + "\".");
+		// System.out.println("Normalized Query = \"" + queryString + "\".");
 	}
 
 	/**
@@ -771,6 +772,7 @@ public class GreqlEvaluator {
 			Level2LogReader logReader;
 			if (logger == null) {
 				// Create only a generic log reader by default.
+				loggerDirectory = getTmpDirectory();
 				logReader = new Level2LogReader(loggerDirectory);
 			} else {
 				logReader = new Level2LogReader((Level2Logger) logger);

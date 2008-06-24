@@ -32,9 +32,9 @@
   ;; Comments
   '(("//" . nil) ("/*" . "*/"))
   ;; Keywords
-  '("assert", "break", "case", "continue", "default", "do", "else",
-    "foreach", "hastype", "if", "import", "importjava", "return",
-    "typeswitch", "var", "while")
+  '("assert" "break" "case" "continue" "default" "do" "else"
+    "foreach" "hastype" "if" "import" "importjava" "return"
+    "typeswitch" "var" "while")
   ;; Additional expressions to highlight 
   '()
   ;; Enable greql-mode for files matching this patterns
