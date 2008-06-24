@@ -21,15 +21,20 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
- 
+
 package de.uni_koblenz.jgralab.greql2.jvalue;
 
-import org.riediger.plist.*;
+import java.util.Stack;
+
+import org.riediger.plist.MinimalSAXParser;
 import org.xml.sax.Attributes;
 import org.xml.sax.helpers.DefaultHandler;
-import de.uni_koblenz.jgralab.greql2.exception.*;
-import java.util.Stack;
-import de.uni_koblenz.jgralab.*;
+
+import de.uni_koblenz.jgralab.AttributedElement;
+import de.uni_koblenz.jgralab.Edge;
+import de.uni_koblenz.jgralab.Graph;
+import de.uni_koblenz.jgralab.Vertex;
+import de.uni_koblenz.jgralab.greql2.exception.JValueLoadException;
 
 public class ValueXMLLoader extends DefaultHandler {
 
@@ -124,7 +129,7 @@ public class ValueXMLLoader extends DefaultHandler {
 	 */
 	public void startElement(String uri, String localName, String qName,
 			Attributes attributes) {
-		//GreqlEvaluator.println("Starting: '" + qName + "'");
+		// GreqlEvaluator.println("Starting: '" + qName + "'");
 		JValueCollection col = null;
 		if (qName.equals("set"))
 			col = new JValueSet();
@@ -132,7 +137,7 @@ public class ValueXMLLoader extends DefaultHandler {
 			col = new JValueBag();
 		else if (qName.equals("list") || qName.equals("tabledata"))
 			col = new JValueList();
-		else if ( (qName.equals("tuple")) || (qName.equals("header")) )
+		else if ((qName.equals("tuple")) || (qName.equals("header")))
 			col = new JValueTuple();
 		else if (qName.equals("table"))
 			col = new JValueTable();
@@ -141,8 +146,10 @@ public class ValueXMLLoader extends DefaultHandler {
 		if (col != null) {
 			valueStack.push(new StackEntry(qName, col));
 		} else {
-			if (!qName.equals("value") && !qName.equals("browsevertex") && !qName.equals("browseedge") && !qName.equals("tabledata"))
-			valueStack.push(new StackEntry(qName));
+			if (!qName.equals("value") && !qName.equals("browsevertex")
+					&& !qName.equals("browseedge")
+					&& !qName.equals("tabledata"))
+				valueStack.push(new StackEntry(qName));
 		}
 
 	}
@@ -151,10 +158,10 @@ public class ValueXMLLoader extends DefaultHandler {
 	 * This method is called by the SAX-Parser
 	 */
 	public void endElement(String uri, String localName, String qName) {
-	//	GreqlEvaluator.println("CurrentData is: '" + currentData + "'");
-	//	GreqlEvaluator.println("Loaded Value: " + loadedValue);
+		// GreqlEvaluator.println("CurrentData is: '" + currentData + "'");
+		// GreqlEvaluator.println("Loaded Value: " + loadedValue);
 		JValue value = null;
-	//	GreqlEvaluator.println("endElement: '" + qName + "'");
+		// GreqlEvaluator.println("endElement: '" + qName + "'");
 		if (qName.equals("xmlvalue"))
 			return;
 		StackEntry entry = valueStack.peek();
@@ -164,8 +171,7 @@ public class ValueXMLLoader extends DefaultHandler {
 			entry.setBrowsingVertex(graph, currentData);
 		} else if (qName.equals("browseedge")) {
 			entry.setBrowsingEdge(graph, currentData);
-		} 
-		else {
+		} else {
 			entry = valueStack.pop();
 			if ((qName.equals("set")) || (qName.equals("bag"))
 					|| (qName.equals("list")) || (qName.equals("tuple"))
@@ -192,7 +198,7 @@ public class ValueXMLLoader extends DefaultHandler {
 				int edgeId = Integer.parseInt(entry.value);
 				Edge edge = graph.getEdge(edgeId);
 				value = new JValue(edge);
-			} else if ((qName.equals("boolean"))) {
+			} else if ((qName.equals("bool"))) {
 				value = new JValue(Boolean.parseBoolean(entry.value));
 			} else if ((qName.equals("integer"))) {
 				value = new JValue(Integer.parseInt(entry.value));
@@ -204,7 +210,7 @@ public class ValueXMLLoader extends DefaultHandler {
 				value = new JValue(entry.value);
 			} else if ((qName.equals("enumvalue"))) {
 				// TODO change load method in a way that the enum is restored
-				value = new JValue( entry.value);
+				value = new JValue(entry.value);
 			} else if ((qName.equals("char"))) {
 				value = new JValue(entry.value.charAt(0));
 			}

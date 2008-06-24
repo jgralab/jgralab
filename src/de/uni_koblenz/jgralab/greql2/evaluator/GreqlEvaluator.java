@@ -651,7 +651,8 @@ public class GreqlEvaluator {
 			parser.greqlExpression();
 		} catch (Exception e) {
 			e.printStackTrace();
-			throw new EvaluateException("Error parsing query", e);
+			throw new EvaluateException("Error parsing query \"" + queryString
+					+ "\".", e);
 		}
 		greqlSchema = parser.getSchema();
 		queryGraph = parser.getGraph();
