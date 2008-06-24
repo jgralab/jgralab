@@ -28,7 +28,7 @@
 
 ;;; Code:
 
-(define-generic-mode greql-mode
+(define-generic-mode greqlscript-mode
   ;; Comments
   '(("//" . nil) ("/*" . "*/"))
   ;; Keywords
