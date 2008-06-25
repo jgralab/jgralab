@@ -50,6 +50,7 @@ public abstract class DomainImpl implements Domain, Comparable<Domain> {
 	protected void initialize(Schema schema, QualifiedName qn) {
 		qName = qn;
 		this.schema = schema;
+		pkg = schema.getDefaultPackage();
 	}
 
 	@Override
