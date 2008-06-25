@@ -21,7 +21,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
- 
+
 package de.uni_koblenz.jgralab.schema.impl;
 
 import de.uni_koblenz.jgralab.codegenerator.CodeBlock;
@@ -30,16 +30,22 @@ import de.uni_koblenz.jgralab.schema.ObjectDomain;
 import de.uni_koblenz.jgralab.schema.Package;
 import de.uni_koblenz.jgralab.schema.QualifiedName;
 import de.uni_koblenz.jgralab.schema.Schema;
+import de.uni_koblenz.jgralab.schema.SchemaException;
 
 public class ObjectDomainImpl extends BasicDomainImpl implements ObjectDomain {
-//	private static ObjectDomainImpl instance = new ObjectDomainImpl();
-//	
-//	public static ObjectDomainImpl instance() {
-//		return instance;
-//	}
+	// private static ObjectDomainImpl instance = new ObjectDomainImpl();
+	//	
+	// public static ObjectDomainImpl instance() {
+	// return instance;
+	// }
 
-	public ObjectDomainImpl(Schema schema) {
-		super(schema, new QualifiedName("Object"));
+	public ObjectDomainImpl(Schema schema) throws SchemaException {
+		QualifiedName qName = new QualifiedName("Object");
+		if (schema.getDomain(qName) != null)
+			throw new SchemaException(
+					"Cannot create another ObjectDomain for Schema "
+							+ schema.getQualifiedName());
+		initialize(schema, qName);
 	}
 
 	@Override
@@ -48,7 +54,8 @@ public class ObjectDomainImpl extends BasicDomainImpl implements ObjectDomain {
 	}
 
 	@Override
-	public String getJavaAttributeImplementationTypeName(String schemaRootPackagePrefix) {
+	public String getJavaAttributeImplementationTypeName(
+			String schemaRootPackagePrefix) {
 		return "java.lang.Object";
 	}
 
@@ -65,12 +72,13 @@ public class ObjectDomainImpl extends BasicDomainImpl implements ObjectDomain {
 	@Override
 	public CodeBlock getReadMethod(String schemaPrefix, String variableName,
 			String graphIoVariableName) {
-		return new CodeSnippet(variableName + " = " + graphIoVariableName + ".matchObject();");
+		return new CodeSnippet(variableName + " = " + graphIoVariableName
+				+ ".matchObject();");
 	}
 
 	@Override
-	public CodeBlock getWriteMethod(String schemaRootPackagePrefix, String variableName,
-			String graphIoVariableName) {
+	public CodeBlock getWriteMethod(String schemaRootPackagePrefix,
+			String variableName, String graphIoVariableName) {
 		return new CodeSnippet(graphIoVariableName + ".writeObject("
 				+ variableName + ");");
 	}

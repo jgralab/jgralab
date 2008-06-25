@@ -21,7 +21,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
- 
+
 package de.uni_koblenz.jgralab.schema.impl;
 
 import java.util.HashSet;
@@ -34,12 +34,13 @@ import de.uni_koblenz.jgralab.schema.Domain;
 import de.uni_koblenz.jgralab.schema.QualifiedName;
 import de.uni_koblenz.jgralab.schema.Schema;
 
-public abstract class CompositeDomainImpl extends DomainImpl implements CompositeDomain {
+public abstract class CompositeDomainImpl extends DomainImpl implements
+		CompositeDomain {
 
 	public CompositeDomainImpl(Schema schema, QualifiedName qn) {
 		super(schema, qn);
 	}
-	
+
 	public boolean isComposite() {
 		return true;
 	}
@@ -48,15 +49,19 @@ public abstract class CompositeDomainImpl extends DomainImpl implements Composit
 		Domain d;
 		HashSet<CompositeDomain> componentCompositeDomains = new HashSet<CompositeDomain>();
 		Set<Domain> componentDomains = getAllComponentDomains();
-		
-		for (Iterator<Domain> cdit = componentDomains.iterator(); cdit.hasNext();) {
+
+		for (Iterator<Domain> cdit = componentDomains.iterator(); cdit
+				.hasNext();) {
 			d = cdit.next();
 			if (d instanceof BasicDomain)
 				cdit.remove();
 			else
-				componentCompositeDomains.add((CompositeDomain)d);
+				componentCompositeDomains.add((CompositeDomain) d);
 		}
-		
+
 		return componentCompositeDomains;
 	}
+
+	@Override
+	public abstract boolean equals(Object o);
 }

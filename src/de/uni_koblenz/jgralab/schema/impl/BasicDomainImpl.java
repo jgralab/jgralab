@@ -21,7 +21,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
- 
+
 package de.uni_koblenz.jgralab.schema.impl;
 
 import de.uni_koblenz.jgralab.schema.BasicDomain;
@@ -31,11 +31,13 @@ import de.uni_koblenz.jgralab.schema.Schema;
 public abstract class BasicDomainImpl extends DomainImpl implements BasicDomain {
 
 	protected BasicDomainImpl(Schema schema, QualifiedName qn) {
-		super(schema,qn);
+		super(schema, qn);
 	}
-	
+
+	protected BasicDomainImpl() {
+	}
+
 	public boolean isComposite() {
 		return false;
 	}
-	
 }

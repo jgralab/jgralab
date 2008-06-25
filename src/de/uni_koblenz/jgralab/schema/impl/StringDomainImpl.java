@@ -21,7 +21,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
- 
+
 package de.uni_koblenz.jgralab.schema.impl;
 
 import de.uni_koblenz.jgralab.codegenerator.CodeBlock;
@@ -29,21 +29,28 @@ import de.uni_koblenz.jgralab.codegenerator.CodeSnippet;
 import de.uni_koblenz.jgralab.schema.Package;
 import de.uni_koblenz.jgralab.schema.QualifiedName;
 import de.uni_koblenz.jgralab.schema.Schema;
+import de.uni_koblenz.jgralab.schema.SchemaException;
 import de.uni_koblenz.jgralab.schema.StringDomain;
 
 public class StringDomainImpl extends BasicDomainImpl implements StringDomain {
-//	private static StringDomainImpl instance = new StringDomainImpl();
-//	
-//	public static StringDomainImpl instance() {
-//		return instance;
-//	}
+	// private static StringDomainImpl instance = new StringDomainImpl();
+	//	
+	// public static StringDomainImpl instance() {
+	// return instance;
+	// }
 
-	public StringDomainImpl(Schema schema) {
-		super(schema, new QualifiedName("String"));
+	public StringDomainImpl(Schema schema) throws SchemaException {
+		QualifiedName qName = new QualifiedName("String");
+		if (schema.getDomain(qName) != null)
+			throw new SchemaException(
+					"Cannot create another StringDomain for Schema "
+							+ schema.getQualifiedName());
+		initialize(schema, qName);
 	}
 
 	@Override
-	public String getJavaAttributeImplementationTypeName(String schemaRootPackagePrefix) {
+	public String getJavaAttributeImplementationTypeName(
+			String schemaRootPackagePrefix) {
 		return "java.lang.String";
 	}
 
@@ -67,12 +74,16 @@ public class StringDomainImpl extends BasicDomainImpl implements StringDomain {
 	};
 
 	@Override
-	public CodeBlock getReadMethod(String schemaPrefix, String variableName, String graphIoVariableName) {
-		return new CodeSnippet(variableName + " = " + graphIoVariableName + ".matchUtfString();");
+	public CodeBlock getReadMethod(String schemaPrefix, String variableName,
+			String graphIoVariableName) {
+		return new CodeSnippet(variableName + " = " + graphIoVariableName
+				+ ".matchUtfString();");
 	}
-	
+
 	@Override
-	public CodeBlock getWriteMethod(String schemaRootPackagePrefix, String variableName, String graphIoVariableName) {
-		return new CodeSnippet(graphIoVariableName + ".writeUtfString(" + variableName + ");");
+	public CodeBlock getWriteMethod(String schemaRootPackagePrefix,
+			String variableName, String graphIoVariableName) {
+		return new CodeSnippet(graphIoVariableName + ".writeUtfString("
+				+ variableName + ");");
 	}
 }

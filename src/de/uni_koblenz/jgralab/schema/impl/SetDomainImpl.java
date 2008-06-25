@@ -21,7 +21,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
- 
+
 package de.uni_koblenz.jgralab.schema.impl;
 
 import java.util.HashSet;
@@ -64,8 +64,10 @@ public class SetDomainImpl extends CompositeDomainImpl implements SetDomain {
 	}
 
 	@Override
-	public String getJavaAttributeImplementationTypeName(String schemaRootPackagePrefix) {
-		return "java.util.Set<" + baseDomain.getJavaClassName(schemaRootPackagePrefix) + ">";
+	public String getJavaAttributeImplementationTypeName(
+			String schemaRootPackagePrefix) {
+		return "java.util.Set<"
+				+ baseDomain.getJavaClassName(schemaRootPackagePrefix) + ">";
 	}
 
 	@Override
@@ -93,53 +95,54 @@ public class SetDomainImpl extends CompositeDomainImpl implements SetDomain {
 	 * 
 	 * @see jgralab.Domain#getReadMethod(java.lang.String, java.lang.String)
 	 */
-	public CodeBlock getReadMethod(String schemaRootPackagePrefix, String variableName,
-			String graphIoVariableName) {
-		
+	public CodeBlock getReadMethod(String schemaRootPackagePrefix,
+			String variableName, String graphIoVariableName) {
+
 		CodeList code = new CodeList();
 		code.setVariable("name", variableName);
-		code.setVariable("basedom", getBaseDomain().getJavaClassName(schemaRootPackagePrefix));
-		code.setVariable("basetype", getBaseDomain()
-				.getJavaAttributeImplementationTypeName(schemaRootPackagePrefix));
+		code.setVariable("basedom", getBaseDomain().getJavaClassName(
+				schemaRootPackagePrefix));
+		code.setVariable("basetype",
+				getBaseDomain().getJavaAttributeImplementationTypeName(
+						schemaRootPackagePrefix));
 		code.setVariable("io", graphIoVariableName);
 
-		code.addNoIndent(new CodeSnippet("if (!#io#.isNextToken(\"\\\\null\")) {"));
+		code.addNoIndent(new CodeSnippet(
+				"if (!#io#.isNextToken(\"\\\\null\")) {"));
 		code.add(new CodeSnippet(
 				"#name# = new java.util.HashSet<#basedom#>();",
-				"#io#.match(\"{\");", 
-				"while (!#io#.isNextToken(\"}\")) {",
+				"#io#.match(\"{\");", "while (!#io#.isNextToken(\"}\")) {",
 				"\t#basetype# #name#Element;"));
-		code.add(getBaseDomain().getReadMethod(schemaRootPackagePrefix, variableName + "Element",
-				graphIoVariableName), 1);
+		code.add(getBaseDomain().getReadMethod(schemaRootPackagePrefix,
+				variableName + "Element", graphIoVariableName), 1);
 		code.add(new CodeSnippet("\t#name#.add(#name#Element);", "}",
 				"#io#.match(\"}\");"));
 		code.addNoIndent(new CodeSnippet("} else {"));
-		code.add(new CodeSnippet(
-				"io.match(\"\\\\null\");",
-		        "#name# = null;"));
+		code.add(new CodeSnippet("io.match(\"\\\\null\");", "#name# = null;"));
 		code.addNoIndent(new CodeSnippet("}"));
 		return code;
 	}
 
-	public CodeBlock getWriteMethod(String schemaRootPackagePrefix, String variableName,
-			String graphIoVariableName) {		
+	public CodeBlock getWriteMethod(String schemaRootPackagePrefix,
+			String variableName, String graphIoVariableName) {
 		CodeList code = new CodeList();
 		code.setVariable("name", variableName);
-		code.setVariable("basedom", getBaseDomain().getJavaClassName(schemaRootPackagePrefix));
-		code.setVariable("basetype", getBaseDomain()
-				.getJavaAttributeImplementationTypeName(schemaRootPackagePrefix));
+		code.setVariable("basedom", getBaseDomain().getJavaClassName(
+				schemaRootPackagePrefix));
+		code.setVariable("basetype",
+				getBaseDomain().getJavaAttributeImplementationTypeName(
+						schemaRootPackagePrefix));
 		code.setVariable("io", graphIoVariableName);
 
 		code.addNoIndent(new CodeSnippet("if (#name# != null) {"));
-		code.add(new CodeSnippet(
-				"#io#.writeSpace();",
-				"#io#.write(\"{\");",
-				"#io#.noSpace();",
-				"for (#basetype# #name#Element: #name#) {"));
-		code.add(getBaseDomain().getWriteMethod(schemaRootPackagePrefix, variableName + "Element", graphIoVariableName), 1);
+		code.add(new CodeSnippet("#io#.writeSpace();", "#io#.write(\"{\");",
+				"#io#.noSpace();", "for (#basetype# #name#Element: #name#) {"));
+		code.add(getBaseDomain().getWriteMethod(schemaRootPackagePrefix,
+				variableName + "Element", graphIoVariableName), 1);
 		code.add(new CodeSnippet("}", "#io#.write(\"}\");"));
 		code.addNoIndent(new CodeSnippet("} else {"));
-		code.add(new CodeSnippet(graphIoVariableName + ".writeIdentifier(\"\\\\null\");"));
+		code.add(new CodeSnippet(graphIoVariableName
+				+ ".writeIdentifier(\"\\\\null\");"));
 		code.addNoIndent(new CodeSnippet("}"));
 		return code;
 	}
@@ -148,5 +151,17 @@ public class SetDomainImpl extends CompositeDomainImpl implements SetDomain {
 		HashSet<Domain> componentDomainSet = new HashSet<Domain>(1);
 		componentDomainSet.add(baseDomain);
 		return componentDomainSet;
+	}
+
+	@Override
+	public boolean equals(Object o) {
+		if (this == o)
+			return true;
+
+		if (!(o instanceof SetDomain))
+			return false;
+
+		SetDomain other = (SetDomain) o;
+		return baseDomain.equals(other.getBaseDomain());
 	}
 }

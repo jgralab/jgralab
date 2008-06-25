@@ -21,9 +21,8 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
- 
-package de.uni_koblenz.jgralab.schema.impl;
 
+package de.uni_koblenz.jgralab.schema.impl;
 
 import de.uni_koblenz.jgralab.codegenerator.CodeBlock;
 import de.uni_koblenz.jgralab.codegenerator.CodeSnippet;
@@ -31,20 +30,27 @@ import de.uni_koblenz.jgralab.schema.BooleanDomain;
 import de.uni_koblenz.jgralab.schema.Package;
 import de.uni_koblenz.jgralab.schema.QualifiedName;
 import de.uni_koblenz.jgralab.schema.Schema;
+import de.uni_koblenz.jgralab.schema.SchemaException;
 
 public class BooleanDomainImpl extends BasicDomainImpl implements BooleanDomain {
-	//private static BooleanDomainImpl instance = new BooleanDomainImpl();
-	
-//	public static BooleanDomainImpl instance() {
-//		return instance;
-//	}
-//	
-	public BooleanDomainImpl(Schema schema) {
-		super(schema, new QualifiedName("Boolean"));
+	// private static BooleanDomainImpl instance = new BooleanDomainImpl();
+
+	// public static BooleanDomainImpl instance() {
+	// return instance;
+	// }
+	//	
+	public BooleanDomainImpl(Schema schema) throws SchemaException {
+		QualifiedName qName = new QualifiedName("Boolean");
+		if (schema.getDomain(qName) != null)
+			throw new SchemaException(
+					"Cannot create another BooleanDomain for Schema "
+							+ schema.getQualifiedName());
+		initialize(schema, qName);
 	}
 
 	@Override
-	public String getJavaAttributeImplementationTypeName(String schemaRootPackagePrefix) {
+	public String getJavaAttributeImplementationTypeName(
+			String schemaRootPackagePrefix) {
 		return "boolean";
 	}
 
@@ -66,8 +72,8 @@ public class BooleanDomainImpl extends BasicDomainImpl implements BooleanDomain 
 	}
 
 	@Override
-	public CodeBlock getWriteMethod(String schemaRootPackagePrefix, String variableName,
-			String graphIoVariableName) {
+	public CodeBlock getWriteMethod(String schemaRootPackagePrefix,
+			String variableName, String graphIoVariableName) {
 		return new CodeSnippet(graphIoVariableName + ".writeBoolean("
 				+ variableName + ");");
 	}

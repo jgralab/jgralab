@@ -34,18 +34,30 @@ public abstract class DomainImpl implements Domain, Comparable<Domain> {
 	private QualifiedName qName;
 	private Package pkg;
 	private Schema schema;
-	
+
 	@Override
 	public Schema getSchema() {
 		return schema;
 	}
-	
-	
+
+	protected DomainImpl() {
+	}
+
 	protected DomainImpl(Schema schema, QualifiedName qn) {
+		initialize(schema, qn);
+	}
+
+	protected void initialize(Schema schema, QualifiedName qn) {
 		qName = qn;
 		this.schema = schema;
 	}
 
+	@Override
+	public boolean equals(Object obj) {
+		return (this == obj)
+				|| ((obj instanceof Domain) && getQName().equals(
+						((Domain) obj).getQName()));
+	}
 
 	@Override
 	public void setPackage(Package p) {
@@ -77,7 +89,7 @@ public abstract class DomainImpl implements Domain, Comparable<Domain> {
 			return qName.getQualifiedName();
 		}
 	}
-	
+
 	@Override
 	public String getPackageName() {
 		return qName.getPackageName();
@@ -97,22 +109,15 @@ public abstract class DomainImpl implements Domain, Comparable<Domain> {
 	public QualifiedName getQName() {
 		return qName;
 	}
-	
+
 	@Override
 	public String getUniqueName() {
 		return qName.getUniqueName();
 	}
-	
+
 	@Override
 	public void setUniqueName(String uniqueName) {
 		qName.setUniqueName(this, uniqueName);
-	}
-
-	@Override
-	public boolean equals(Object obj) {
-		return (this == obj)
-				|| ((obj instanceof Domain) && qName.equals(((Domain) obj)
-						.getQName()));
 	}
 
 	@Override
@@ -132,7 +137,7 @@ public abstract class DomainImpl implements Domain, Comparable<Domain> {
 	public String getName() {
 		return qName.getQualifiedName();
 	}
-	
+
 	@Override
 	public String getVariableName() {
 		throw new UnsupportedOperationException();

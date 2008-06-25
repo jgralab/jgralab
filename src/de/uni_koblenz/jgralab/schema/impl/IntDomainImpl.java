@@ -30,20 +30,27 @@ import de.uni_koblenz.jgralab.schema.IntDomain;
 import de.uni_koblenz.jgralab.schema.Package;
 import de.uni_koblenz.jgralab.schema.QualifiedName;
 import de.uni_koblenz.jgralab.schema.Schema;
+import de.uni_koblenz.jgralab.schema.SchemaException;
 
 public class IntDomainImpl extends BasicDomainImpl implements IntDomain {
-//	private static IntDomainImpl instance = new IntDomainImpl();
-//
-//	public static IntDomainImpl instance() {
-//		return instance;
-//	}
+	// private static IntDomainImpl instance = new IntDomainImpl();
+	//
+	// public static IntDomainImpl instance() {
+	// return instance;
+	// }
 
-	public IntDomainImpl(Schema schema) {
-		super(schema, new QualifiedName("Integer"));
+	public IntDomainImpl(Schema schema) throws SchemaException {
+		QualifiedName qName = new QualifiedName("Integer");
+		if (schema.getDomain(qName) != null)
+			throw new SchemaException(
+					"Cannot create another IntDomain for Schema "
+							+ schema.getQualifiedName());
+		initialize(schema, qName);
 	}
 
 	@Override
-	public String getJavaAttributeImplementationTypeName(String schemaRootPackagePrefix) {
+	public String getJavaAttributeImplementationTypeName(
+			String schemaRootPackagePrefix) {
 		return "int";
 	}
 
@@ -65,8 +72,8 @@ public class IntDomainImpl extends BasicDomainImpl implements IntDomain {
 	}
 
 	@Override
-	public CodeBlock getWriteMethod(String schemaRootPackagePrefix, String variableName,
-			String graphIoVariableName) {
+	public CodeBlock getWriteMethod(String schemaRootPackagePrefix,
+			String variableName, String graphIoVariableName) {
 		return new CodeSnippet(graphIoVariableName + ".writeInteger("
 				+ variableName + ");");
 	}

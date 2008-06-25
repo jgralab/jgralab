@@ -21,7 +21,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
- 
+
 package de.uni_koblenz.jgralab.schema.impl;
 
 import java.util.Map;
@@ -39,7 +39,8 @@ import de.uni_koblenz.jgralab.schema.RecordDomain;
 import de.uni_koblenz.jgralab.schema.Schema;
 import de.uni_koblenz.jgralab.schema.SchemaException;
 
-public class RecordDomainImpl extends CompositeDomainImpl implements RecordDomain {
+public class RecordDomainImpl extends CompositeDomainImpl implements
+		RecordDomain {
 
 	/**
 	 * holds a list of the components of the record
@@ -52,7 +53,8 @@ public class RecordDomainImpl extends CompositeDomainImpl implements RecordDomai
 	 * @param components
 	 *            a list of the components of the record
 	 */
-	public RecordDomainImpl(Schema schema, QualifiedName qn, Map<String, Domain> components) {
+	public RecordDomainImpl(Schema schema, QualifiedName qn,
+			Map<String, Domain> components) {
 		super(schema, qn);
 		this.components = components;
 	}
@@ -79,7 +81,7 @@ public class RecordDomainImpl extends CompositeDomainImpl implements RecordDomai
 	}
 
 	@Override
-	public void addComponent(String name, Domain aDomain)  {
+	public void addComponent(String name, Domain aDomain) {
 		if (components.containsKey(name)) {
 			throw new SchemaException("duplicate record component '" + name
 					+ "' in RecordDomain '" + getName() + "'");
@@ -88,9 +90,10 @@ public class RecordDomainImpl extends CompositeDomainImpl implements RecordDomai
 	}
 
 	@Override
-	public void deleteComponent(String name)  {
+	public void deleteComponent(String name) {
 		if (!components.containsKey(name)) {
-			throw new SchemaException("RecordDomain '" + getName() + "' does not contain a component '" + name + "'");
+			throw new SchemaException("RecordDomain '" + getName()
+					+ "' does not contain a component '" + name + "'");
 		}
 		components.remove(name);
 	}
@@ -105,7 +108,8 @@ public class RecordDomainImpl extends CompositeDomainImpl implements RecordDomai
 	}
 
 	@Override
-	public String getJavaAttributeImplementationTypeName(String schemaRootPackagePrefix) {
+	public String getJavaAttributeImplementationTypeName(
+			String schemaRootPackagePrefix) {
 		return schemaRootPackagePrefix + "." + getQualifiedName();
 	}
 
@@ -125,36 +129,52 @@ public class RecordDomainImpl extends CompositeDomainImpl implements RecordDomai
 	}
 
 	@Override
-	public CodeBlock getReadMethod(String schemaPrefix, String variableName, String graphIoVariableName) {
+	public CodeBlock getReadMethod(String schemaPrefix, String variableName,
+			String graphIoVariableName) {
 		CodeSnippet code = new CodeSnippet();
-		
-		code.add("if (!" + graphIoVariableName + ".isNextToken(\"\\\\null\")) {");
-		code.add("    " + variableName + " = new " 
-				+  getJavaAttributeImplementationTypeName(schemaPrefix) + "("
+
+		code.add("if (!" + graphIoVariableName
+				+ ".isNextToken(\"\\\\null\")) {");
+		code.add("    " + variableName + " = new "
+				+ getJavaAttributeImplementationTypeName(schemaPrefix) + "("
 				+ graphIoVariableName + ");");
 		code.add("} else {");
 		code.add("    io.match(\"\\\\null\");");
 		code.add("    " + variableName + " = null;");
 		code.add("}");
-		
+
 		return code;
 	}
 
 	@Override
-	public CodeBlock getWriteMethod(String schemaRootPackagePrefix, String variableName, String graphIoVariableName) {
+	public CodeBlock getWriteMethod(String schemaRootPackagePrefix,
+			String variableName, String graphIoVariableName) {
 		CodeSnippet code = new CodeSnippet();
-		
+
 		code.add("if (" + variableName + " != null) {");
 		code.add("    " + variableName + ".writeComponentValues("
 				+ graphIoVariableName + ");");
 		code.add("} else {");
-		code.add("    " + graphIoVariableName + ".writeIdentifier(\"\\\\null\");");
+		code.add("    " + graphIoVariableName
+				+ ".writeIdentifier(\"\\\\null\");");
 		code.add("}");
-		
+
 		return code;
 	}
-	
+
 	public Set<Domain> getAllComponentDomains() {
 		return new TreeSet<Domain>(components.values());
+	}
+
+	@Override
+	public boolean equals(Object o) {
+		if (this == o)
+			return true;
+
+		if (!(o instanceof RecordDomain))
+			return false;
+
+		RecordDomain other = (RecordDomain) o;
+		return components.equals(other.getComponents());
 	}
 }

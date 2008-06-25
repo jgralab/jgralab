@@ -31,21 +31,28 @@ import de.uni_koblenz.jgralab.schema.LongDomain;
 import de.uni_koblenz.jgralab.schema.Package;
 import de.uni_koblenz.jgralab.schema.QualifiedName;
 import de.uni_koblenz.jgralab.schema.Schema;
+import de.uni_koblenz.jgralab.schema.SchemaException;
 
 public class LongDomainImpl extends BasicDomainImpl implements IntDomain,
 		LongDomain {
-//	private static LongDomainImpl instance = new LongDomainImpl();
-//
-//	public static LongDomainImpl instance() {
-//		return instance;
-//	}
+	// private static LongDomainImpl instance = new LongDomainImpl();
+	//
+	// public static LongDomainImpl instance() {
+	// return instance;
+	// }
 
-	public LongDomainImpl(Schema schema) {
-		super(schema, new QualifiedName("Long"));
+	public LongDomainImpl(Schema schema) throws SchemaException {
+		QualifiedName qName = new QualifiedName("Long");
+		if (schema.getDomain(qName) != null)
+			throw new SchemaException(
+					"Cannot create another LongDomain for Schema "
+							+ schema.getQualifiedName());
+		initialize(schema, qName);
 	}
 
 	@Override
-	public String getJavaAttributeImplementationTypeName(String schemaRootPackagePrefix) {
+	public String getJavaAttributeImplementationTypeName(
+			String schemaRootPackagePrefix) {
 		return "long";
 	}
 
@@ -67,8 +74,8 @@ public class LongDomainImpl extends BasicDomainImpl implements IntDomain,
 	}
 
 	@Override
-	public CodeBlock getWriteMethod(String schemaRootPackagePrefix, String variableName,
-			String graphIoVariableName) {
+	public CodeBlock getWriteMethod(String schemaRootPackagePrefix,
+			String variableName, String graphIoVariableName) {
 		return new CodeSnippet(graphIoVariableName + ".writeLong("
 				+ variableName + ");");
 	}
