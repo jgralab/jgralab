@@ -5,6 +5,7 @@ package de.uni_koblenz.jgralab.greql2.optimizer;
 
 import java.util.HashSet;
 import java.util.Set;
+import java.util.logging.Logger;
 
 import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
 import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.GraphSize;
@@ -25,10 +26,15 @@ import de.uni_koblenz.jgralab.greql2.schema.IsConstraintOf;
  */
 public class DissolutionOptimizer extends OptimizerBase {
 
+	private static Logger logger = Logger.getLogger(DissolutionOptimizer.class
+			.getName());
+
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see de.uni_koblenz.jgralab.greql2.optimizer.Optimizer#isEquivalent(de.uni_koblenz.jgralab.greql2.optimizer.Optimizer)
+	 * @see
+	 * de.uni_koblenz.jgralab.greql2.optimizer.Optimizer#isEquivalent(de.uni_koblenz
+	 * .jgralab.greql2.optimizer.Optimizer)
 	 */
 	@Override
 	public boolean isEquivalent(Optimizer optimizer) {
@@ -40,8 +46,10 @@ public class DissolutionOptimizer extends OptimizerBase {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see de.uni_koblenz.jgralab.greql2.optimizer.Optimizer#optimize(de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator,
-	 *      de.uni_koblenz.jgralab.greql2.schema.Greql2)
+	 * @see
+	 * de.uni_koblenz.jgralab.greql2.optimizer.Optimizer#optimize(de.uni_koblenz
+	 * .jgralab.greql2.evaluator.GreqlEvaluator,
+	 * de.uni_koblenz.jgralab.greql2.schema.Greql2)
 	 */
 	@Override
 	public boolean optimize(GreqlEvaluator eval, Greql2 syntaxgraph)
@@ -76,21 +84,17 @@ public class DissolutionOptimizer extends OptimizerBase {
 			Expression optimizedExpression;
 
 			if (miniSGCosts < sgCosts) {
-				if (printMessages) {
-					GreqlEvaluator.println(optimizerHeaderString()
-							+ "Minimized formula\n    " + sg + "\nto\n    "
-							+ miniSG);
-				}
+				logger.info(optimizerHeaderString() + "Minimized formula\n    "
+						+ sg + "\nto\n    " + miniSG);
 
 				optimizedExpression = miniSG.toExpression(syntaxgraph);
 				optimized = true;
 			} else {
-				if (printMessages) {
-					GreqlEvaluator.println(optimizerHeaderString()
-							+ "Minimization result costs " + miniSGCosts
-							+ " while original formula costs " + sgCosts
-							+ ", so the original one is used.");
-				}
+
+				logger.info(optimizerHeaderString()
+						+ "Minimization result costs " + miniSGCosts
+						+ " while original formula costs " + sgCosts
+						+ ", so the original one is used.");
 
 				optimizedExpression = sg.toExpression(syntaxgraph);
 				optimized = false;

@@ -3,7 +3,8 @@
  */
 package de.uni_koblenz.jgralab.greql2.optimizer.condexp;
 
-import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
+import java.util.logging.Logger;
+
 import de.uni_koblenz.jgralab.greql2.optimizer.OptimizerUtility;
 import de.uni_koblenz.jgralab.greql2.schema.Expression;
 import de.uni_koblenz.jgralab.greql2.schema.FunctionApplication;
@@ -16,6 +17,7 @@ import de.uni_koblenz.jgralab.greql2.schema.FunctionId;
  * 
  */
 public class And extends BinaryOperator {
+	private static Logger logger = Logger.getLogger(And.class.getName());
 
 	public And(Formula lhs, Formula rhs) {
 		super(lhs, rhs);
@@ -101,9 +103,7 @@ public class And extends BinaryOperator {
 	public double getSelectivity() {
 		double selectivity = leftHandSide.getSelectivity()
 				* rightHandSide.getSelectivity();
-		if (DEBUG)
-			GreqlEvaluator
-					.println("selectivity[" + this + "] = " + selectivity);
+		logger.finer("selectivity[" + this + "] = " + selectivity);
 		return selectivity;
 	}
 

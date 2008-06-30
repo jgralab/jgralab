@@ -4,6 +4,7 @@
 package de.uni_koblenz.jgralab.greql2.optimizer;
 
 import java.util.ArrayList;
+import java.util.logging.Logger;
 
 import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
 import de.uni_koblenz.jgralab.greql2.exception.OptimizerException;
@@ -22,10 +23,15 @@ import de.uni_koblenz.jgralab.greql2.schema.IsConstraintOf;
  */
 public class MergeConstraintsOptimizer extends OptimizerBase {
 
+	private static Logger logger = Logger
+			.getLogger(MergeConstraintsOptimizer.class.getName());
+
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see de.uni_koblenz.jgralab.greql2.optimizer.Optimizer#isEquivalent(de.uni_koblenz.jgralab.greql2.optimizer.Optimizer)
+	 * @see
+	 * de.uni_koblenz.jgralab.greql2.optimizer.Optimizer#isEquivalent(de.uni_koblenz
+	 * .jgralab.greql2.optimizer.Optimizer)
 	 */
 	@Override
 	public boolean isEquivalent(Optimizer optimizer) {
@@ -38,8 +44,10 @@ public class MergeConstraintsOptimizer extends OptimizerBase {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see de.uni_koblenz.jgralab.greql2.optimizer.Optimizer#optimize(de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator,
-	 *      de.uni_koblenz.jgralab.greql2.schema.Greql2)
+	 * @see
+	 * de.uni_koblenz.jgralab.greql2.optimizer.Optimizer#optimize(de.uni_koblenz
+	 * .jgralab.greql2.evaluator.GreqlEvaluator,
+	 * de.uni_koblenz.jgralab.greql2.schema.Greql2)
 	 */
 	@Override
 	public boolean optimize(GreqlEvaluator eval, Greql2 syntaxgraph)
@@ -62,11 +70,9 @@ public class MergeConstraintsOptimizer extends OptimizerBase {
 				Expression singleConstraint = OptimizerUtility
 						.createConjunction(constraintEdges, syntaxgraph);
 
-				if (printMessages) {
-					GreqlEvaluator.println(optimizerHeaderString()
-							+ "Merging constraints on edges " + constraintEdges
-							+ " into conjunction " + singleConstraint + ".");
-				}
+				logger.info(optimizerHeaderString()
+						+ "Merging constraints on edges " + constraintEdges
+						+ " into conjunction " + singleConstraint + ".");
 
 				for (IsConstraintOf e : constraintEdges) {
 					e.delete();

@@ -7,6 +7,7 @@ import java.util.Comparator;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.logging.Logger;
 
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.EdgeDirection;
@@ -34,6 +35,9 @@ import de.uni_koblenz.jgralab.greql2.schema.Variable;
  */
 public class PathExistenceOptimizer extends OptimizerBase {
 
+	private static Logger logger = Logger
+			.getLogger(PathExistenceOptimizer.class.getName());
+
 	private Greql2 syntaxgraph;
 
 	private boolean anOptimizationWasDone = false;
@@ -41,7 +45,9 @@ public class PathExistenceOptimizer extends OptimizerBase {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see de.uni_koblenz.jgralab.greql2.optimizer.Optimizer#isEquivalent(de.uni_koblenz.jgralab.greql2.optimizer.Optimizer)
+	 * @see
+	 * de.uni_koblenz.jgralab.greql2.optimizer.Optimizer#isEquivalent(de.uni_koblenz
+	 * .jgralab.greql2.optimizer.Optimizer)
 	 */
 	@Override
 	public boolean isEquivalent(Optimizer optimizer) {
@@ -54,8 +60,10 @@ public class PathExistenceOptimizer extends OptimizerBase {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see de.uni_koblenz.jgralab.greql2.optimizer.Optimizer#optimize(de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator,
-	 *      de.uni_koblenz.jgralab.greql2.schema.Greql2)
+	 * @see
+	 * de.uni_koblenz.jgralab.greql2.optimizer.Optimizer#optimize(de.uni_koblenz
+	 * .jgralab.greql2.evaluator.GreqlEvaluator,
+	 * de.uni_koblenz.jgralab.greql2.schema.Greql2)
 	 */
 	@Override
 	public boolean optimize(GreqlEvaluator eval, Greql2 syntaxgraph)
@@ -100,14 +108,14 @@ public class PathExistenceOptimizer extends OptimizerBase {
 	 * <code>a</code> is declared before <code>b</code>, then
 	 * <code>contains(a --&gt;, b)</code> is faster, because the costly
 	 * {@link ForwardVertexSet} <code>a --&gt;</code> has only to be evaluated
-	 * when <code>a</code> changes its value. In that case that happens only
-	 * all <code>|b|</code> steps.
+	 * when <code>a</code> changes its value. In that case that happens only all
+	 * <code>|b|</code> steps.
 	 * 
 	 * If <code>b</code> is declared before <code>a</code>, then
 	 * <code>contains(--&gt; b, a)</code> is faster, because the costly
-	 * {@link BackwardVertexSet} <code>--&gt; b</code> has only to be
-	 * evaluated when <code>b</code> changes its value. In that case that
-	 * happens only all <code>|a|</code> steps.
+	 * {@link BackwardVertexSet} <code>--&gt; b</code> has only to be evaluated
+	 * when <code>b</code> changes its value. In that case that happens only all
+	 * <code>|a|</code> steps.
 	 * 
 	 * @param pe
 	 *            a {@link PathExistence} vertex
@@ -180,11 +188,9 @@ public class PathExistenceOptimizer extends OptimizerBase {
 	 */
 	private void replacePathExistenceWithContainsFunApp(PathExistence pe,
 			Expression startOrTargetExp, Expression otherExp, boolean forward) {
-		if (printMessages) {
-			GreqlEvaluator.println(optimizerHeaderString() + "Replacing " + pe
-					+ " with a contains FunctionApplication using a "
-					+ ((forward) ? "Forward" : "Backward") + "VertexSet.");
-		}
+		logger.info(optimizerHeaderString() + "Replacing " + pe
+				+ " with a contains FunctionApplication using a "
+				+ ((forward) ? "Forward" : "Backward") + "VertexSet.");
 
 		anOptimizationWasDone = true;
 

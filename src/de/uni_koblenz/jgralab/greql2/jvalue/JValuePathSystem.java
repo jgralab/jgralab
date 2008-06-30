@@ -28,16 +28,19 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.logging.Logger;
 
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.GraphElement;
 import de.uni_koblenz.jgralab.Vertex;
-import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
 import de.uni_koblenz.jgralab.schema.AttributedElementClass;
 import de.uni_koblenz.jgralab.schema.GraphElementClass;
 
 public class JValuePathSystem extends JValue {
+
+	private static Logger logger = Logger.getLogger(JValuePathSystem.class
+			.getName());
 
 	/**
 	 * This HashMap stores references from a tuple (Vertex,State) to a
@@ -837,10 +840,10 @@ public class JValuePathSystem extends JValue {
 			Iterator<JValue> iter = pathSet.iterator();
 			while (iter.hasNext()) {
 				JValuePath path = (JValuePath) iter.next();
-				GreqlEvaluator.println(path.toString());
+				logger.info(path.toString());
 			}
 		} catch (JValuePathException ex) {
-			GreqlEvaluator.println(ex);
+			logger.severe("Caught " + ex);
 		}
 	}
 
@@ -868,13 +871,14 @@ public class JValuePathSystem extends JValue {
 	public void printEntryMap() {
 		Iterator<Map.Entry<PathSystemKey, PathSystemEntry>> iter = keyToEntryMap
 				.entrySet().iterator();
-		GreqlEvaluator.println("<Key, Entry> Set of PathSystem is:");
+		logger.info("<Key, Entry> Set of PathSystem is:");
 		while (iter.hasNext()) {
 			Map.Entry<PathSystemKey, PathSystemEntry> mapEntry = iter.next();
 			PathSystemEntry thisEntry = mapEntry.getValue();
 			PathSystemKey thisKey = mapEntry.getKey();
-			GreqlEvaluator.println(thisKey.toString() + " maps to "
-					+ thisEntry.toString());
+			logger
+					.info(thisKey.toString() + " maps to "
+							+ thisEntry.toString());
 		}
 	}
 
@@ -884,12 +888,12 @@ public class JValuePathSystem extends JValue {
 	public void printKeyMap() {
 		Iterator<Map.Entry<Vertex, PathSystemKey>> iter = vertexToFirstKeyMap
 				.entrySet().iterator();
-		GreqlEvaluator.println("<Vertex, FirstKey> Set of PathSystem is:");
+		logger.info("<Vertex, FirstKey> Set of PathSystem is:");
 		while (iter.hasNext()) {
 			Map.Entry<Vertex, PathSystemKey> mapEntry = iter.next();
 			PathSystemKey thisKey = mapEntry.getValue();
 			Vertex vertex = mapEntry.getKey();
-			GreqlEvaluator.println(vertex + " maps to " + thisKey.toString());
+			logger.info(vertex + " maps to " + thisKey.toString());
 		}
 	}
 

@@ -4,6 +4,7 @@
 package de.uni_koblenz.jgralab.greql2.optimizer;
 
 import java.util.HashMap;
+import java.util.logging.Logger;
 
 import de.uni_koblenz.jgralab.Attribute;
 import de.uni_koblenz.jgralab.Edge;
@@ -35,17 +36,20 @@ import de.uni_koblenz.jgralab.greql2.schema.Variable;
  * <nl>
  * <li>The sourcePositions {@link Attribute}s of the {@link Greql2Aggregation}
  * edges that run into the root-Greql2Vertices are merged recursively.</li>
- * <li>The source vertices of the {@link Edge}s that start in the root-{@link Greql2Vertex}
- * with the higher Id are set to the root-{@link Greql2Vertex} with the lower
- * Id.</li>
- * <li>The root-{@link Greql2Vertex} with the higher Id is deleted (and thus
- * is the subgaph below it).</li>
+ * <li>The source vertices of the {@link Edge}s that start in the root-
+ * {@link Greql2Vertex} with the higher Id are set to the root-
+ * {@link Greql2Vertex} with the lower Id.</li>
+ * <li>The root-{@link Greql2Vertex} with the higher Id is deleted (and thus is
+ * the subgaph below it).</li>
  * </nl>
  * 
  * @author Tassilo Horn (heimdall), 2007, Diploma Thesis
  * 
  */
 public class CommonSubgraphOptimizer extends OptimizerBase {
+
+	private static Logger logger = Logger
+			.getLogger(CommonSubgraphOptimizer.class.getName());
 
 	private boolean anOptimizationWasDone = false;
 
@@ -69,7 +73,9 @@ public class CommonSubgraphOptimizer extends OptimizerBase {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see de.uni_koblenz.jgralab.greql2.optimizer.Optimizer#isEquivalent(de.uni_koblenz.jgralab.greql2.optimizer.Optimizer)
+	 * @see
+	 * de.uni_koblenz.jgralab.greql2.optimizer.Optimizer#isEquivalent(de.uni_koblenz
+	 * .jgralab.greql2.optimizer.Optimizer)
 	 */
 	@Override
 	public boolean isEquivalent(Optimizer optimizer) {
@@ -83,8 +89,10 @@ public class CommonSubgraphOptimizer extends OptimizerBase {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see de.uni_koblenz.jgralab.greql2.optimizer.Optimizer#optimize(de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator,
-	 *      de.uni_koblenz.jgralab.greql2.schema.Greql2)
+	 * @see
+	 * de.uni_koblenz.jgralab.greql2.optimizer.Optimizer#optimize(de.uni_koblenz
+	 * .jgralab.greql2.evaluator.GreqlEvaluator,
+	 * de.uni_koblenz.jgralab.greql2.schema.Greql2)
 	 */
 	@Override
 	public boolean optimize(GreqlEvaluator eval, Greql2 syntaxgraph)
@@ -100,7 +108,8 @@ public class CommonSubgraphOptimizer extends OptimizerBase {
 	 * Compute the hash value of the given {@link Greql2Vertex}. If another
 	 * {@link Greql2Vertex} with the same hash value was processed before then
 	 * merge them (see
-	 * {@link CommonSubgraphOptimizer#mergeVertices(Greql2Vertex, Greql2Vertex)}).
+	 * {@link CommonSubgraphOptimizer#mergeVertices(Greql2Vertex, Greql2Vertex)}
+	 * ).
 	 * 
 	 * @param vertex
 	 *            the {@link Greql2Vertex} for which to compute the hash value
@@ -217,10 +226,8 @@ public class CommonSubgraphOptimizer extends OptimizerBase {
 		if (!(lowerVertex instanceof PathDescription)) {
 			anOptimizationWasDone = true;
 
-			if (printMessages) {
-				GreqlEvaluator.println(optimizerHeaderString() + "Merging "
-						+ lowerVertex + " and " + higherVertex + ".");
-			}
+			logger.info(optimizerHeaderString() + "Merging " + lowerVertex
+					+ " and " + higherVertex + ".");
 
 			// Merge the sourcePositions of the incoming edges
 			mergeSourcePositionsBelow(lowerVertex, higherVertex);

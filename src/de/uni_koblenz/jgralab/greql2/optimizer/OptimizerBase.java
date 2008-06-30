@@ -23,8 +23,6 @@ import de.uni_koblenz.jgralab.greql2.schema.Variable;
  */
 public abstract class OptimizerBase implements Optimizer {
 
-	protected static boolean printMessages = false;
-
 	String optimizerHeaderString() {
 		return "*** " + this.getClass().getSimpleName() + ": ";
 	}
@@ -66,13 +64,5 @@ public abstract class OptimizerBase implements Optimizer {
 			}
 		}
 		return undeclaredVars;
-	}
-
-	public static boolean isPrintMessages() {
-		return printMessages;
-	}
-
-	public static void setPrintMessages(boolean printMessages) {
-		OptimizerBase.printMessages = printMessages;
 	}
 }

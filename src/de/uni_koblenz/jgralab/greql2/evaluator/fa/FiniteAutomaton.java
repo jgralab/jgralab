@@ -26,8 +26,7 @@ package de.uni_koblenz.jgralab.greql2.evaluator.fa;
 
 import java.util.ArrayList;
 import java.util.Iterator;
-
-import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
+import java.util.logging.Logger;
 
 /**
  * This is the base class of NFA and DFA. Contains attributes and methods both
@@ -37,6 +36,9 @@ import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
  * 
  */
 public abstract class FiniteAutomaton {
+
+	private static Logger logger = Logger.getLogger(EpsilonTransition.class
+			.getName());
 
 	/*
 	 * the one and only initial state of this automat
@@ -63,12 +65,12 @@ public abstract class FiniteAutomaton {
 	 * prints this automaton as ascii-stream
 	 */
 	public void printAscii() {
-		GreqlEvaluator
-				.println("|||||||||||||||||||||||  Automaton: |||||||||||||||||||||||||");
+		logger
+				.info("|||||||||||||||||||||||  Automaton: |||||||||||||||||||||||||");
 		Iterator<State> stateIter = stateList.iterator();
 		while (stateIter.hasNext()) {
 			State currentState = stateIter.next();
-			GreqlEvaluator.print("[" + stateList.indexOf(currentState) + "]");
+			logger.info("[" + stateList.indexOf(currentState) + "]");
 			Iterator<Transition> transitionIter = currentState.outTransitions
 					.iterator();
 			while (transitionIter.hasNext()) {
@@ -76,19 +78,17 @@ public abstract class FiniteAutomaton {
 				int stateNumber = stateList.indexOf(currentTransition
 						.getEndState());
 				if (finalStates.contains(currentTransition.getEndState())) {
-					GreqlEvaluator.println("      ----"
-							+ currentTransition.edgeString() + "--->    [["
-							+ stateNumber + "]]");
+					logger.info("      ----" + currentTransition.edgeString()
+							+ "--->    [[" + stateNumber + "]]");
 				} else {
-					GreqlEvaluator.println("      ----"
-							+ currentTransition.edgeString() + "--->    ["
-							+ stateNumber + "]");
+					logger.info("      ----" + currentTransition.edgeString()
+							+ "--->    [" + stateNumber + "]");
 				}
 			}
-			GreqlEvaluator.println("\n--------------------------");
+			logger.info("\n--------------------------");
 		}
-		GreqlEvaluator
-				.println("||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||| ");
+		logger
+				.info("||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||| ");
 	}
 
 	/**

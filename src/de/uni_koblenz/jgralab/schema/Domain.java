@@ -65,7 +65,8 @@ public interface Domain extends NamedElement {
 	 * 
 	 * @return java representation of this attribute
 	 */
-	public String getJavaAttributeImplementationTypeName(String schemaRootPackagePrefix);
+	public String getJavaAttributeImplementationTypeName(
+			String schemaRootPackagePrefix);
 
 	/**
 	 * example: Integer for integer
@@ -100,6 +101,6 @@ public interface Domain extends NamedElement {
 	 * @return a code fragment to write a value of this domain to the GraphIO
 	 *         oject named graphIoVariablename into the variableName
 	 */
-	public CodeBlock getWriteMethod(String schemaRootPackagePrefix, String variableName,
-			String graphIoVariableName);
+	public CodeBlock getWriteMethod(String schemaRootPackagePrefix,
+			String variableName, String graphIoVariableName);
 }

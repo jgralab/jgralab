@@ -468,11 +468,11 @@ public class JGraLabFacade {
 		Class<? extends Vertex> m1VertexClass;
 
 		Graph graph;
-		
+
 		graph = graphContainer.getGraph(graphNo);
 		m1VertexClass = graph.getGraphClass().getVertexClass(
 				new QualifiedName(vertexClassName)).getM1Class();
-		
+
 		return createGraphElementMap(graph.createVertex(m1VertexClass));
 	}
 
@@ -540,7 +540,7 @@ public class JGraLabFacade {
 			throws XmlRpcException {
 		Map<String, Object> vertexMap = createGraphElementMap(graphContainer
 				.getGraph(graphNo).getVertex(vId));
-		
+
 		Graph graph = graphContainer.getGraph(graphNo);
 
 		graph.deleteVertex(graph.getVertex(vId));
@@ -570,7 +570,7 @@ public class JGraLabFacade {
 			throws XmlRpcException {
 		Map<String, Object> edgeMap = createGraphElementMap(graphContainer
 				.getGraph(graphNo).getEdge(eId));
-		
+
 		Graph graph = graphContainer.getGraph(graphNo);
 
 		graph.deleteEdge(graph.getEdge(eId));
@@ -745,7 +745,7 @@ public class JGraLabFacade {
 	public Map<String, Object> getNextVertex(int graphNo, int vId)
 			throws XmlRpcException {
 		Graph graph = graphContainer.getGraph(graphNo);
-		
+
 		return createGraphElementMap(graph.getNextVertex(graph.getVertex(vId)));
 	}
 
@@ -779,9 +779,9 @@ public class JGraLabFacade {
 			String vcName) throws XmlRpcException {
 		Graph graph = graphContainer.getGraph(graphNo);
 
-		return createGraphElementMap(graph.getNextVertexOfClass(graph.getVertex(vId),
-				(VertexClass) graph.getSchema().getAttributedElementClass(
-						new QualifiedName(vcName))));
+		return createGraphElementMap(graph.getNextVertexOfClass(graph
+				.getVertex(vId), (VertexClass) graph.getSchema()
+				.getAttributedElementClass(new QualifiedName(vcName))));
 	}
 
 	/**
@@ -808,7 +808,7 @@ public class JGraLabFacade {
 	public Map<String, Object> getFirstEdge(int graphNo, int vId)
 			throws XmlRpcException {
 		Graph graph = graphContainer.getGraph(graphNo);
-		
+
 		return createGraphElementMap(graph.getFirstEdge(graph.getVertex(vId)));
 	}
 
@@ -840,10 +840,10 @@ public class JGraLabFacade {
 	public Map<String, Object> getFirstEdgeOfClass(int graphNo, int vId,
 			String ecName) throws XmlRpcException {
 		Graph graph = graphContainer.getGraph(graphNo);
-		
-		return createGraphElementMap(graph.getFirstEdgeOfClass(graph.getVertex(vId),
-						(EdgeClass) graph.getSchema().getAttributedElementClass(
-										new QualifiedName(ecName))));
+
+		return createGraphElementMap(graph.getFirstEdgeOfClass(graph
+				.getVertex(vId), (EdgeClass) graph.getSchema()
+				.getAttributedElementClass(new QualifiedName(ecName))));
 	}
 
 	/**
@@ -871,7 +871,7 @@ public class JGraLabFacade {
 	public Map<String, Object> getNextEdge(int graphNo, int eId)
 			throws XmlRpcException {
 		Graph graph = graphContainer.getGraph(graphNo);
-		
+
 		return createGraphElementMap(graph.getNextEdge(graph.getEdge(eId)));
 	}
 
@@ -904,9 +904,9 @@ public class JGraLabFacade {
 			String ecName) throws XmlRpcException {
 		Graph graph = graphContainer.getGraph(graphNo);
 
-		return createGraphElementMap(graph.getNextEdgeOfClass(graph.getEdge(eId),
-				(EdgeClass) graph.getSchema().getAttributedElementClass(
-						new QualifiedName(ecName))));
+		return createGraphElementMap(graph.getNextEdgeOfClass(graph
+				.getEdge(eId), (EdgeClass) graph.getSchema()
+				.getAttributedElementClass(new QualifiedName(ecName))));
 	}
 
 	/**
@@ -988,8 +988,9 @@ public class JGraLabFacade {
 	public Map<String, Object> getNextEdgeInGraph(int graphNo, int eId)
 			throws XmlRpcException {
 		Graph graph = graphContainer.getGraph(graphNo);
-		
-		return createGraphElementMap(graph.getNextEdgeInGraph(graph.getEdge(eId)));
+
+		return createGraphElementMap(graph.getNextEdgeInGraph(graph
+				.getEdge(eId)));
 	}
 
 	/**
@@ -1022,9 +1023,9 @@ public class JGraLabFacade {
 			String ecName) throws XmlRpcException {
 		Graph graph = graphContainer.getGraph(graphNo);
 
-		return createGraphElementMap(graph.getNextEdgeOfClassInGraph(graph.getEdge(eId),
-				(EdgeClass) graph.getSchema().getAttributedElementClass(
-						new QualifiedName(ecName))));
+		return createGraphElementMap(graph.getNextEdgeOfClassInGraph(graph
+				.getEdge(eId), (EdgeClass) graph.getSchema()
+				.getAttributedElementClass(new QualifiedName(ecName))));
 	}
 
 	/**
@@ -1040,7 +1041,7 @@ public class JGraLabFacade {
 	 */
 	public int getDegree(int graphNo, int vId) {
 		Graph graph = graphContainer.getGraph(graphNo);
-		
+
 		return graph.getDegree(graph.getVertex(vId));
 	}
 
@@ -1068,7 +1069,7 @@ public class JGraLabFacade {
 	public Map<String, Object> getAlpha(int graphNo, int eId)
 			throws XmlRpcException {
 		Graph graph = graphContainer.getGraph(graphNo);
-		
+
 		return createGraphElementMap(graph.getAlpha(graph.getEdge(eId)));
 	}
 
@@ -1096,7 +1097,7 @@ public class JGraLabFacade {
 	public Map<String, Object> getOmega(int graphNo, int eId)
 			throws XmlRpcException {
 		Graph graph = graphContainer.getGraph(graphNo);
-		
+
 		return createGraphElementMap(graph.getOmega(graph.getEdge(eId)));
 	}
 
@@ -1335,7 +1336,9 @@ public class JGraLabFacade {
 			int source) throws XmlRpcException {
 		Graph graph = graphContainer.getGraph(graphNo);
 
-		graph.putBeforeEdgeInGraph(graph.getEdge(target), graph.getEdge(source));
+		graph
+				.putBeforeEdgeInGraph(graph.getEdge(target), graph
+						.getEdge(source));
 
 		return createGraphElementMap(graph.getEdge(source));
 	}
@@ -1370,7 +1373,9 @@ public class JGraLabFacade {
 			int previousEdgeId) throws XmlRpcException {
 		Graph graph = graphContainer.getGraph(graphNo);
 
-		graph.putEdgeAfter(graph.getEdge(edgeId), graph.getEdge(previousEdgeId));
+		graph
+				.putEdgeAfter(graph.getEdge(edgeId), graph
+						.getEdge(previousEdgeId));
 
 		return createGraphElementMap(graph.getEdge(edgeId));
 	}
@@ -2424,7 +2429,8 @@ public class JGraLabFacade {
 			// get M1-Class for Enum and invoke fromString() method
 			try {
 				Class<?> attrType = Class.forName(prefix + "."
-						+ domain.getQualifiedName(), true, M1ClassManager.instance());
+						+ domain.getQualifiedName(), true, M1ClassManager
+						.instance());
 				value = attrType.getMethod("fromString",
 						new Class[] { String.class }).invoke(null, value);
 			} catch (Exception e) {
@@ -2469,7 +2475,8 @@ public class JGraLabFacade {
 			// get M1-Class for Record and invoke the Constructor
 			try {
 				Class<?> attrType = Class.forName(prefix + "."
-						+ domain.getQualifiedName(), true, M1ClassManager.instance());
+						+ domain.getQualifiedName(), true, M1ClassManager
+						.instance());
 				value = attrType.getConstructor(new Class<?>[] { Map.class })
 						.newInstance(value);
 			} catch (Exception e) {
@@ -2526,6 +2533,5 @@ public class JGraLabFacade {
 
 		return o;
 	}
-	
-	
+
 }

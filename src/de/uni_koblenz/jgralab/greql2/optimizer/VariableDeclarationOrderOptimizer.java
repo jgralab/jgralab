@@ -8,6 +8,7 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.logging.Logger;
 
 import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.GraphMarker;
@@ -37,10 +38,15 @@ import de.uni_koblenz.jgralab.greql2.schema.Variable;
  */
 public class VariableDeclarationOrderOptimizer extends OptimizerBase {
 
+	private static Logger logger = Logger
+			.getLogger(VariableDeclarationOrderOptimizer.class.getName());
+
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see de.uni_koblenz.jgralab.greql2.optimizer.Optimizer#isEquivalent(de.uni_koblenz.jgralab.greql2.optimizer.Optimizer)
+	 * @see
+	 * de.uni_koblenz.jgralab.greql2.optimizer.Optimizer#isEquivalent(de.uni_koblenz
+	 * .jgralab.greql2.optimizer.Optimizer)
 	 */
 	@Override
 	public boolean isEquivalent(Optimizer optimizer) {
@@ -53,8 +59,10 @@ public class VariableDeclarationOrderOptimizer extends OptimizerBase {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see de.uni_koblenz.jgralab.greql2.optimizer.Optimizer#optimize(de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator,
-	 *      de.uni_koblenz.jgralab.greql2.schema.Greql2)
+	 * @see
+	 * de.uni_koblenz.jgralab.greql2.optimizer.Optimizer#optimize(de.uni_koblenz
+	 * .jgralab.greql2.evaluator.GreqlEvaluator,
+	 * de.uni_koblenz.jgralab.greql2.schema.Greql2)
 	 */
 	@Override
 	public boolean optimize(GreqlEvaluator eval, Greql2 syntaxgraph)
@@ -101,10 +109,8 @@ public class VariableDeclarationOrderOptimizer extends OptimizerBase {
 			if (!varDeclOrderAfter.equals(varDeclOrderBefore)) {
 				varDeclOrderChanged = true;
 
-				if (printMessages) {
-					GreqlEvaluator.println(optimizerHeaderString()
-							+ "New order of declarations in " + declaringDecl);
-				}
+				logger.info(optimizerHeaderString()
+						+ "New order of declarations in " + declaringDecl);
 
 				Set<SimpleDeclaration> oldSDs = new HashSet<SimpleDeclaration>();
 				int i = 0;
@@ -113,14 +119,12 @@ public class VariableDeclarationOrderOptimizer extends OptimizerBase {
 					marker.removeMark(unit.getSimpleDeclarationOfVariable());
 					Variable var = unit.getVariable();
 
-					if (printMessages) {
-						GreqlEvaluator.println("  " + varDeclOrderBefore.get(i)
-								+ "  -->  v" + var.getId() + " ("
-								+ var.getName() + "), changeCosts = "
-								+ unit.getVariableValueChangeCosts()
-								+ ", cardinality = "
-								+ unit.getTypeExpressionCardinality());
-					}
+					logger.info("  " + varDeclOrderBefore.get(i) + "  -->  v"
+							+ var.getId() + " (" + var.getName()
+							+ "), changeCosts = "
+							+ unit.getVariableValueChangeCosts()
+							+ ", cardinality = "
+							+ unit.getTypeExpressionCardinality());
 
 					i++;
 					SimpleDeclaration newSD = syntaxgraph

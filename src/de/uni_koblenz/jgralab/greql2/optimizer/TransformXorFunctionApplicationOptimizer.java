@@ -4,6 +4,7 @@
 package de.uni_koblenz.jgralab.greql2.optimizer;
 
 import java.util.ArrayList;
+import java.util.logging.Logger;
 
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.EdgeDirection;
@@ -26,10 +27,15 @@ import de.uni_koblenz.jgralab.greql2.schema.IsArgumentOf;
  */
 public class TransformXorFunctionApplicationOptimizer extends OptimizerBase {
 
+	private static Logger logger = Logger
+			.getLogger(TransformXorFunctionApplicationOptimizer.class.getName());
+
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see de.uni_koblenz.jgralab.greql2.optimizer.Optimizer#isEquivalent(de.uni_koblenz.jgralab.greql2.optimizer.Optimizer)
+	 * @see
+	 * de.uni_koblenz.jgralab.greql2.optimizer.Optimizer#isEquivalent(de.uni_koblenz
+	 * .jgralab.greql2.optimizer.Optimizer)
 	 */
 	@Override
 	public boolean isEquivalent(Optimizer optimizer) {
@@ -42,8 +48,10 @@ public class TransformXorFunctionApplicationOptimizer extends OptimizerBase {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see de.uni_koblenz.jgralab.greql2.optimizer.Optimizer#optimize(de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator,
-	 *      de.uni_koblenz.jgralab.greql2.schema.Greql2)
+	 * @see
+	 * de.uni_koblenz.jgralab.greql2.optimizer.Optimizer#optimize(de.uni_koblenz
+	 * .jgralab.greql2.evaluator.GreqlEvaluator,
+	 * de.uni_koblenz.jgralab.greql2.schema.Greql2)
 	 */
 	@Override
 	public boolean optimize(GreqlEvaluator eval, Greql2 syntaxgraph)
@@ -115,11 +123,9 @@ public class TransformXorFunctionApplicationOptimizer extends OptimizerBase {
 				edge.setAlpha(or);
 			}
 
-			if (printMessages) {
-				GreqlEvaluator.println(optimizerHeaderString() + "Transformed "
-						+ xor + " to (" + arg1 + " & ~" + arg2 + ") | (~"
-						+ arg1 + " & " + arg2 + ").");
-			}
+			logger.info(optimizerHeaderString() + "Transformed " + xor
+					+ " to (" + arg1 + " & ~" + arg2 + ") | (~" + arg1 + " & "
+					+ arg2 + ").");
 
 			// delete the Xor
 			xor.delete();

@@ -34,6 +34,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Logger;
 
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.GraphIOException;
@@ -55,7 +56,6 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValueSet;
 import de.uni_koblenz.jgralab.greql2.optimizer.DefaultOptimizer;
 import de.uni_koblenz.jgralab.greql2.optimizer.Optimizer;
-import de.uni_koblenz.jgralab.greql2.optimizer.OptimizerBase;
 import de.uni_koblenz.jgralab.greql2.parser.Greql2Lexer;
 import de.uni_koblenz.jgralab.greql2.parser.Greql2Parser;
 import de.uni_koblenz.jgralab.greql2.schema.Greql2;
@@ -74,15 +74,9 @@ import de.uni_koblenz.jgralab.utilities.TGFilenameFilter;
 public class GreqlEvaluator {
 
 	/**
-	 * If set to <code>true</code> the evaluator won't print any messages to
-	 * stdout/stderr.
-	 */
-	private static boolean QUIET = false;
-
-	/**
 	 * toggles which expressions are added to the index. Only vertex- and
-	 * edgeset expressions that need more than <code>indextimeBarrier</code>
-	 * ms to calculate are added
+	 * edgeset expressions that need more than <code>indextimeBarrier</code> ms
+	 * to calculate are added
 	 */
 	private static final long INDEX_TIME_BARRIER = 10;
 
@@ -141,6 +135,9 @@ public class GreqlEvaluator {
 		optimizedGraphs = new HashMap<String, List<SyntaxGraphEntry>>();
 		graphIndizes = new HashMap<String, GraphIndex>();
 	}
+
+	private static Logger logger = Logger.getLogger(GreqlEvaluator.class
+			.getName());
 
 	/**
 	 * Gets a vertex index for a part of a query
@@ -242,7 +239,7 @@ public class GreqlEvaluator {
 		}
 		for (File syntaxGraphFile : optimizedSyntaxGraphsDirectory
 				.listFiles(new TGFilenameFilter())) {
-			GreqlEvaluator.println("Loading SyntaxGraphEntry \""
+			logger.info("Loading SyntaxGraphEntry \""
 					+ syntaxGraphFile.getPath() + "\".");
 			SyntaxGraphEntry entry;
 			try {
@@ -303,8 +300,8 @@ public class GreqlEvaluator {
 	private boolean optimize = true;
 
 	/**
-	 * If set to <code>true</code>, then a stored optimized syntaxgraph will
-	 * be used if <code>optimize == true</code> and such a graph exists.
+	 * If set to <code>true</code>, then a stored optimized syntaxgraph will be
+	 * used if <code>optimize == true</code> and such a graph exists.
 	 */
 	private boolean useSavedOptimizedSyntaxGraph = false;
 
@@ -321,13 +318,13 @@ public class GreqlEvaluator {
 	/**
 	 * This attribute holds the EvaluationLogger, which logs the evaluation
 	 */
-	protected EvaluationLogger logger = null;
+	protected EvaluationLogger evaluationLogger = null;
 
 	/**
 	 * The {@link LoggingType} that should be used. It defaults to
 	 * {@link LoggingType#SCHEMA}.
 	 */
-	protected LoggingType loggerLoggingType = LoggingType.SCHEMA;
+	protected LoggingType evaluationLoggingType = LoggingType.SCHEMA;
 
 	/**
 	 * This attribute holds the CostModel which estimates the evaluation costs
@@ -438,7 +435,7 @@ public class GreqlEvaluator {
 	 * returns the logging-component
 	 */
 	public final EvaluationLogger getEvaluationLogger() {
-		return logger;
+		return evaluationLogger;
 	}
 
 	/**
@@ -461,23 +458,23 @@ public class GreqlEvaluator {
 	 * creates the logging-component
 	 */
 	protected void createEvaluationLogger() {
-		if (logger == null) {
+		if (evaluationLogger == null) {
 			if (loggerDirectory == null) {
 				loggerDirectory = getTmpDirectory();
 			}
 			try {
-				logger = new Level2Logger(loggerDirectory, datagraph,
-						loggerLoggingType);
+				evaluationLogger = new Level2Logger(loggerDirectory, datagraph,
+						evaluationLoggingType);
 			} catch (InterruptedException e) {
 				// TODO (heimdall) Auto-generated catch block
 				e.printStackTrace();
 			}
-			if (logger.load()) {
-				GreqlEvaluator.println("Successfully loaded logger file "
-						+ logger.getLogfileName() + ".");
+			if (evaluationLogger.load()) {
+				logger.info("Successfully loaded logger file "
+						+ evaluationLogger.getLogfileName() + ".");
 			} else {
-				GreqlEvaluator.println("Couldn't load logger file "
-						+ logger.getLogfileName() + ".");
+				logger.info("Couldn't load logger file "
+						+ evaluationLogger.getLogfileName() + ".");
 			}
 		}
 	}
@@ -486,7 +483,7 @@ public class GreqlEvaluator {
 	 * sets the logger which is used to log the evlauation
 	 */
 	public void setEvaluationLogger(EvaluationLogger logger) {
-		this.logger = logger;
+		this.evaluationLogger = logger;
 	}
 
 	/**
@@ -723,7 +720,7 @@ public class GreqlEvaluator {
 				queryGraph = syntaxGraphEntry.getSyntaxGraph();
 				createVertexEvaluators();
 				costModel.setGreqlEvaluator(this);
-				GreqlEvaluator.println("Using stored optimized syntax graph.");
+				logger.info("Using stored optimized syntax graph.");
 				return;
 			}
 		}
@@ -778,12 +775,12 @@ public class GreqlEvaluator {
 		if (costModel == null) {
 			// costModel = new DefaultCostModel(vertexEvalGraphMarker);
 			Level2LogReader logReader;
-			if (logger == null) {
+			if (evaluationLogger == null) {
 				// Create only a generic log reader by default.
 				loggerDirectory = getTmpDirectory();
 				logReader = new Level2LogReader(loggerDirectory);
 			} else {
-				logReader = new Level2LogReader((Level2Logger) logger);
+				logReader = new Level2LogReader((Level2Logger) evaluationLogger);
 			}
 			try {
 				costModel = new LogCostModel(logReader, 0.7f, this);
@@ -825,19 +822,19 @@ public class GreqlEvaluator {
 		plainEvaluationTime = System.currentTimeMillis()
 				- plainEvaluationStartTime;
 
-		if (logger != null) {
+		if (evaluationLogger != null) {
 			try {
-				if (logger.store()) {
-					GreqlEvaluator.println("Successfully stored logfile to "
-							+ logger.getLogfileName() + ".");
+				if (evaluationLogger.store()) {
+					logger.info("Successfully stored logfile to "
+							+ evaluationLogger.getLogfileName() + ".");
 				} else {
-					GreqlEvaluator.errprintln("Couldn't store logfile to "
-							+ logger.getLogfileName() + ".");
+					logger.warning("Couldn't store logfile to "
+							+ evaluationLogger.getLogfileName() + ".");
 				}
 
 			} catch (IOException ex) {
 				throw new EvaluateException("Error writing log to file: "
-						+ logger.getLogfileName(), ex);
+						+ evaluationLogger.getLogfileName(), ex);
 			}
 		}
 
@@ -882,9 +879,9 @@ public class GreqlEvaluator {
 
 	/**
 	 * @param optimize
-	 *            If <code>true</code>, then the query will be optimized
-	 *            before evaluation. If <code>false</code> it will be
-	 *            evaluated without any optimizations.
+	 *            If <code>true</code>, then the query will be optimized before
+	 *            evaluation. If <code>false</code> it will be evaluated without
+	 *            any optimizations.
 	 */
 	public void setOptimize(boolean optimize) {
 		this.optimize = optimize;
@@ -906,12 +903,12 @@ public class GreqlEvaluator {
 	}
 
 	public void printEvaluationTimes() {
-		GreqlEvaluator.println("Overall evaluation took "
-				+ overallEvaluationTime / 1000d + " seconds.\n"
-				+ " --> parsing time         : " + parseTime / 1000d
-				+ "\n --> optimization time    : " + optimizationTime / 1000d
-				+ "\n --> plain evaluation time: " + plainEvaluationTime
-				/ 1000d + "\nEstimated evaluation costs: "
+		logger.info("Overall evaluation took " + overallEvaluationTime / 1000d
+				+ " seconds.\n" + " --> parsing time         : " + parseTime
+				/ 1000d + "\n --> optimization time    : " + optimizationTime
+				/ 1000d + "\n --> plain evaluation time: "
+				+ plainEvaluationTime / 1000d
+				+ "\nEstimated evaluation costs: "
 				+ estimatedInterpretationSteps);
 	}
 
@@ -941,12 +938,12 @@ public class GreqlEvaluator {
 		GreqlEvaluator.loggerDirectory = loggerDirectory;
 	}
 
-	public LoggingType getLoggerLoggingType() {
-		return loggerLoggingType;
+	public LoggingType getEvaluationLoggingType() {
+		return evaluationLoggingType;
 	}
 
-	public void setLoggerLoggingType(LoggingType loggerLoggingType) {
-		this.loggerLoggingType = loggerLoggingType;
+	public void setEvaluationLoggingType(LoggingType loggerLoggingType) {
+		this.evaluationLoggingType = loggerLoggingType;
 	}
 
 	public boolean isUseSavedOptimizedSyntaxGraph() {
@@ -956,109 +953,5 @@ public class GreqlEvaluator {
 	public void setUseSavedOptimizedSyntaxGraph(
 			boolean useSavedOptimizedSyntaxGraph) {
 		this.useSavedOptimizedSyntaxGraph = useSavedOptimizedSyntaxGraph;
-	}
-
-	/**
-	 * @return <code>true</code> if optimizers print their actions to stdout,
-	 *         <code>false</code> otherwise
-	 */
-	public static boolean isPrintOptimizerMessages() {
-		return OptimizerBase.isPrintMessages();
-	}
-
-	/**
-	 * @param printOptimizerMessages
-	 *            if <code>true</code> the optimizers should print their
-	 *            actions to stdout, if <code>false</code> they should be
-	 *            quiet.
-	 */
-	public static void setPrintOptimizerMessages(boolean printOptimizerMessages) {
-		OptimizerBase.setPrintMessages(printOptimizerMessages);
-	}
-
-	/**
-	 * @return <code>true</code> if the evaluator is in quiet mode, e.g. it
-	 *         won't print any messages to stdout/stderr.
-	 */
-	public static boolean isQUIET() {
-		return QUIET;
-	}
-
-	/**
-	 * @param quiet
-	 *            if <code>true</code> the evaluator won't print any messages
-	 *            to stdout/stderr.
-	 */
-	public static void setQUIET(boolean quiet) {
-		QUIET = quiet;
-	}
-
-	/**
-	 * Similar to {@link System#out}.println() but respects
-	 * {@link GreqlEvaluator#QUIET}.
-	 * 
-	 * @param o
-	 */
-	public static void println(Object o) {
-		if (!QUIET) {
-			System.out.println(o);
-		}
-	}
-
-	/**
-	 * Similar to {@link System#out}.println() but respects
-	 * {@link GreqlEvaluator#QUIET}.
-	 * 
-	 */
-	public static void println() {
-		if (!QUIET) {
-			System.out.println();
-		}
-	}
-
-	/**
-	 * Similar to {@link System#err}.println() but respects
-	 * {@link GreqlEvaluator#QUIET}.
-	 * 
-	 * @param o
-	 */
-	public static void errprintln(Object o) {
-		if (!QUIET) {
-			System.err.println(o);
-		}
-	}
-
-	/**
-	 * Similar to {@link System#err}.println() but respects
-	 * {@link GreqlEvaluator#QUIET}.
-	 */
-	public static void errprintln() {
-		if (!QUIET) {
-			System.err.println();
-		}
-	}
-
-	/**
-	 * Similar to {@link System#out}.print() but respects
-	 * {@link GreqlEvaluator#QUIET}.
-	 * 
-	 * @param o
-	 */
-	public static void print(Object o) {
-		if (!QUIET) {
-			System.out.print(o);
-		}
-	}
-
-	/**
-	 * Similar to {@link System#err}.print() but respects
-	 * {@link GreqlEvaluator#QUIET}.
-	 * 
-	 * @param o
-	 */
-	public static void errprint(Object o) {
-		if (!QUIET) {
-			System.err.print(o);
-		}
 	}
 }

@@ -10,6 +10,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.logging.Logger;
 
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.EdgeDirection;
@@ -44,12 +45,17 @@ import de.uni_koblenz.jgralab.greql2.schema.Variable;
  */
 public class EarySelectionOptimizer extends OptimizerBase {
 
+	private static Logger logger = Logger
+			.getLogger(EarySelectionOptimizer.class.getName());
+
 	private Greql2 syntaxgraph;
 
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see de.uni_koblenz.jgralab.greql2.optimizer.Optimizer#isEquivalent(de.uni_koblenz.jgralab.greql2.optimizer.Optimizer)
+	 * @see
+	 * de.uni_koblenz.jgralab.greql2.optimizer.Optimizer#isEquivalent(de.uni_koblenz
+	 * .jgralab.greql2.optimizer.Optimizer)
 	 */
 	@Override
 	public boolean isEquivalent(Optimizer optimizer) {
@@ -62,8 +68,10 @@ public class EarySelectionOptimizer extends OptimizerBase {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see de.uni_koblenz.jgralab.greql2.optimizer.Optimizer#optimize(de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator,
-	 *      de.uni_koblenz.jgralab.greql2.schema.Greql2)
+	 * @see
+	 * de.uni_koblenz.jgralab.greql2.optimizer.Optimizer#optimize(de.uni_koblenz
+	 * .jgralab.greql2.evaluator.GreqlEvaluator,
+	 * de.uni_koblenz.jgralab.greql2.schema.Greql2)
 	 */
 	@Override
 	public boolean optimize(GreqlEvaluator eval, Greql2 syntaxgraph)
@@ -72,20 +80,18 @@ public class EarySelectionOptimizer extends OptimizerBase {
 
 		int noOfRuns = 1;
 		while (runOptimization()) {
-			if (printMessages) {
-				GreqlEvaluator.println(optimizerHeaderString() + "Iteration "
-						+ noOfRuns + " finished.  Restarting...");
-			}
+			logger.info(optimizerHeaderString() + "Iteration " + noOfRuns
+					+ " finished.  Restarting...");
 
 			// printGraphAsDot(syntaxgraph, "sg-after-" + noOfRuns +
 			// "-iterations");
 			noOfRuns++;
 		}
 
-		if (noOfRuns > 1 && printMessages) {
+		if (noOfRuns > 1) {
 			// We want no output if that optimizer didn't do anything.
-			GreqlEvaluator.println(optimizerHeaderString() + "finished after "
-					+ noOfRuns + " runs.");
+			logger.info(optimizerHeaderString() + "finished after " + noOfRuns
+					+ " runs.");
 		}
 
 		OptimizerUtility.createMissingSourcePositions(syntaxgraph);
@@ -232,11 +238,9 @@ public class EarySelectionOptimizer extends OptimizerBase {
 		Set<Variable> varsDeclaredBySD = OptimizerUtility
 				.collectVariablesDeclaredBy(sd);
 
-		if (printMessages) {
-			GreqlEvaluator.println(optimizerHeaderString() + "(S) Splitting out "
-					+ varsToBeSplit + " of " + sd + " that declares "
-					+ varsDeclaredBySD);
-		}
+		logger.info(optimizerHeaderString() + "(S) Splitting out "
+				+ varsToBeSplit + " of " + sd + " that declares "
+				+ varsDeclaredBySD);
 
 		if (varsDeclaredBySD.size() == varsToBeSplit.size()) {
 			// there's nothing to split out anymore
@@ -271,21 +275,20 @@ public class EarySelectionOptimizer extends OptimizerBase {
 			SimpleDeclaration origSD, Set<Expression> predicates,
 			Set<Variable> varsDeclaredByOrigSD) throws OptimizerException {
 
-		if (printMessages) {
-			GreqlEvaluator.print(optimizerHeaderString()
-					+ "(Mn) Performing early selection transformation for "
-					+ origSD + " declaring ");
+		logger.info(optimizerHeaderString()
+				+ "(Mn) Performing early selection transformation for "
+				+ origSD + " declaring ");
 
-			int varsSize = varsDeclaredByOrigSD.size();
-			int i = 1;
-			for (Variable var : varsDeclaredByOrigSD) {
-				GreqlEvaluator.print(var + " (" + var.getName() + ")");
-				if (i < varsSize)
-					GreqlEvaluator.print(", ");
-				i++;
-			}
-			GreqlEvaluator.println(" with predicates " + predicates + ".");
+		int varsSize = varsDeclaredByOrigSD.size();
+		int i = 1;
+		StringBuilder sb = new StringBuilder();
+		for (Variable var : varsDeclaredByOrigSD) {
+			sb.append(var + " (" + var.getName() + ")");
+			if (i < varsSize)
+				sb.append(", ");
+			i++;
 		}
+		logger.info(sb.toString() + " with predicates " + predicates + ".");
 
 		// First we search the edges that are connected to each variable in
 		// the result definition or bound expression of the parent
@@ -390,12 +393,11 @@ public class EarySelectionOptimizer extends OptimizerBase {
 			SimpleDeclaration origSD, Set<Expression> predicates,
 			Set<Variable> varsDeclaredByOrigSD) throws OptimizerException {
 		Variable var = varsDeclaredByOrigSD.iterator().next();
-		if (printMessages) {
-			GreqlEvaluator.println(optimizerHeaderString()
-					+ "(M1) Performing early selection transformation for "
-					+ origSD + " declaring variable " + var + " ("
-					+ var.getName() + ") with predicates " + predicates);
-		}
+
+		logger.info(optimizerHeaderString()
+				+ "(M1) Performing early selection transformation for "
+				+ origSD + " declaring variable " + var + " (" + var.getName()
+				+ ") with predicates " + predicates);
 
 		// Create the new vertices
 		Expression newCombinedConstraint = createConjunction(
@@ -405,8 +407,11 @@ public class EarySelectionOptimizer extends OptimizerBase {
 		SimpleDeclaration newInnerSD = syntaxgraph.createSimpleDeclaration();
 		Set<Variable> undeclaredVars = collectUndeclaredVariablesBelow(newCombinedConstraint);
 		if (undeclaredVars.size() != 1) {
-			throw new OptimizerException("undeclaredVars = " + undeclaredVars
-					+ " has size different form 1.");
+			OptimizerException ex = new OptimizerException("undeclaredVars = "
+					+ undeclaredVars + " has size different form 1.");
+			logger.throwing(getClass().getName(),
+					"movePredicatesToOneVarSimpleDeclaration", ex);
+			throw ex;
 		}
 		Variable newInnerVar = undeclaredVars.iterator().next();
 
@@ -523,8 +528,8 @@ public class EarySelectionOptimizer extends OptimizerBase {
 	}
 
 	/**
-	 * Given a {@link List} of {@link Expression}s build a new conjunction
-	 * (AND-{@link FunctionApplication}) that combines all the predicate
+	 * Given a {@link List} of {@link Expression}s build a new conjunction (AND-
+	 * {@link FunctionApplication}) that combines all the predicate
 	 * {@link Expression} in the list. This will be done by copying the vertices
 	 * with exceptions for {@link FunctionId}s (never copied) and
 	 * {@link Variable}s (only those in <code>varsToBeCopied</code> will be
@@ -537,9 +542,9 @@ public class EarySelectionOptimizer extends OptimizerBase {
 	 *            (After a variable was copied, the one and only copy will be
 	 *            reused instead of the original {@link Variable}.)
 	 * @return a AND-{@link FunctionApplication} that combines all
-	 *         {@link Expression}s in <code>predicates</code>, or a copy of
-	 *         the {@link Expression} in <code>predicates</code> if that
-	 *         contains only one {@link Expression}
+	 *         {@link Expression}s in <code>predicates</code>, or a copy of the
+	 *         {@link Expression} in <code>predicates</code> if that contains
+	 *         only one {@link Expression}
 	 */
 	private Expression createConjunction(List<Expression> predicates,
 			Set<Variable> varsToBeCopied) {
@@ -548,8 +553,8 @@ public class EarySelectionOptimizer extends OptimizerBase {
 	}
 
 	/**
-	 * Find all {@link Expression}s below <code>exp</code> that can be moved
-	 * and return them.
+	 * Find all {@link Expression}s below <code>exp</code> that can be moved and
+	 * return them.
 	 * 
 	 * An {@link Expression} is considered movable if it needs only
 	 * {@link Variable}s that are locally declared in one
@@ -617,9 +622,9 @@ public class EarySelectionOptimizer extends OptimizerBase {
 	 * @param exp
 	 *            an {@link Expression}
 	 * @return the {@link SimpleDeclaration} that declares all local
-	 *         {@link Variable}s the {@link Expression} <code>exp</code>
-	 *         needs or <code>null</code>, if such a
-	 *         {@link SimpleDeclaration} doesn't exist.
+	 *         {@link Variable}s the {@link Expression} <code>exp</code> needs
+	 *         or <code>null</code>, if such a {@link SimpleDeclaration} doesn't
+	 *         exist.
 	 */
 	private SimpleDeclaration findSimpleDeclarationThatDeclaresAllNeededLocalVariables(
 			Expression exp) {

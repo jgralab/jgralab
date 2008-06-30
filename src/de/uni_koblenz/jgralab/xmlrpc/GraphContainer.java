@@ -21,7 +21,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
- 
+
 package de.uni_koblenz.jgralab.xmlrpc;
 
 import java.util.Hashtable;
@@ -31,7 +31,7 @@ import de.uni_koblenz.jgralab.Graph;
 
 /**
  * This class holds the graphs created or loaded via the {@code JGraLabFacade},
- * mapping an integer value (the handle) to a graph. 
+ * mapping an integer value (the handle) to a graph.
  * 
  */
 public class GraphContainer {
@@ -40,7 +40,7 @@ public class GraphContainer {
 	 * the singleton instance of this class
 	 */
 	private static GraphContainer graphContainer;
-	
+
 	private static int keyGenerator;
 
 	/**
@@ -48,13 +48,13 @@ public class GraphContainer {
 	 * {@code JGraLabFacade}
 	 */
 	private Map<Integer, Graph> graphs;
-	
+
 	private GraphContainer() {
 		graphContainer = null;
 		keyGenerator = 0;
 		graphs = new Hashtable<Integer, Graph>();
 	}
-	
+
 	/**
 	 * Returns the single instance of this class.
 	 * 
@@ -64,10 +64,10 @@ public class GraphContainer {
 		if (graphContainer == null) {
 			graphContainer = new GraphContainer();
 		}
-		
+
 		return graphContainer;
 	}
-	
+
 	/**
 	 * Stores {@code graph} and returns the handle for accessing this graph.
 	 * 
@@ -80,11 +80,12 @@ public class GraphContainer {
 		graphs.put(key, graph);
 		return key;
 	}
-	
+
 	/**
-	 * Returns the graph stored with the handle {@code graphNo}. 
+	 * Returns the graph stored with the handle {@code graphNo}.
 	 * 
-	 * @param graphNo the handle for the graph which shall be got
+	 * @param graphNo
+	 *            the handle for the graph which shall be got
 	 * @return the graph with the handle {@code graphNo}.
 	 */
 	public Graph getGraph(int graphNo) {
@@ -92,9 +93,10 @@ public class GraphContainer {
 	}
 
 	/**
-	 * Removes the stored graph with the handle {@code graphNo}. 
+	 * Removes the stored graph with the handle {@code graphNo}.
 	 * 
-	 * @param graphNo the graph to be deleted
+	 * @param graphNo
+	 *            the graph to be deleted
 	 */
 	public void releaseGraph(int graphNo) {
 		graphs.remove(graphNo);
@@ -103,9 +105,10 @@ public class GraphContainer {
 	/**
 	 * Checks whether a graph with the handle {@code graphNo} exists.
 	 * 
-	 * @param graphNo the handle for which the existence of a graph shall be checked
+	 * @param graphNo
+	 *            the handle for which the existence of a graph shall be checked
 	 * @return {@code true} if a graph with handle {@code graphNo} exists,
-	 * {@code false} otherwise
+	 *         {@code false} otherwise
 	 */
 	public boolean containsGraph(int graphNo) {
 		return graphs.containsKey(graphNo);

@@ -5,10 +5,10 @@ package de.uni_koblenz.jgralab.greql2.optimizer.dissolution;
 
 import java.util.HashSet;
 import java.util.Set;
+import java.util.logging.Logger;
 
 import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.GraphMarker;
-import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
 import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.GraphSize;
 import de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.VertexEvaluator;
 import de.uni_koblenz.jgralab.greql2.optimizer.OptimizerUtility;
@@ -28,12 +28,14 @@ public abstract class SemanticGraph {
 	protected static GraphMarker<VertexEvaluator> vertexEvalGraphMarker;
 	protected static GraphSize graphSize;
 
+	private static Logger logger = Logger.getLogger(SemanticGraph.class
+			.getName());
+
 	public SemanticGraph dissolve() {
 		// Work an a copy and don't modify the original graph
-		GreqlEvaluator.println("Original formula:\n  --> " + this);
+		logger.info("Original formula:\n  --> " + this);
 		SemanticGraph graphCopy = deepCopy().toNegationNormalForm();
-		GreqlEvaluator.println("Transformed to negation normal form:\n  --> "
-				+ graphCopy);
+		logger.info("Transformed to negation normal form:\n  --> " + graphCopy);
 
 		int step = 1;
 
@@ -53,13 +55,13 @@ public abstract class SemanticGraph {
 			assert dissolvent != null : "dissolvent == null, so " + link
 					+ " seems to be no dissolution chain!";
 
-			GreqlEvaluator.println("Dissolution step " + step + " using link "
-					+ link + ":");
+			logger.info("Dissolution step " + step + " using link " + link
+					+ ":");
 
 			graphCopy = graphCopy.replaceInGraph(fullBlock, dissolvent);
 			graphCopy = graphCopy.simplify();
 
-			GreqlEvaluator.println("  --> " + graphCopy);
+			logger.info("  --> " + graphCopy);
 
 			step++;
 
@@ -182,8 +184,8 @@ public abstract class SemanticGraph {
 	 *            all C-Paths of the over-all {@link SemanticGraph}
 	 * @param allDPaths
 	 *            all D-Paths of the over-all {@link SemanticGraph}
-	 * @return <code>true</code>, if this {@link SemanticGraph} is a full
-	 *         block, <code>false</code> otherwise
+	 * @return <code>true</code>, if this {@link SemanticGraph} is a full block,
+	 *         <code>false</code> otherwise
 	 */
 	public boolean isFullBlock(Set<Set<Leaf>> allCPaths,
 			Set<Set<Leaf>> allDPaths) {

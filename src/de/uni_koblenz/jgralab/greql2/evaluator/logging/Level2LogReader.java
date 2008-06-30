@@ -6,9 +6,9 @@ package de.uni_koblenz.jgralab.greql2.evaluator.logging;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.logging.Logger;
 
 import de.uni_koblenz.jgralab.Graph;
-import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
 import de.uni_koblenz.jgralab.greql2.schema.Greql2Vertex;
 import de.uni_koblenz.jgralab.schema.Schema;
 
@@ -23,6 +23,9 @@ import de.uni_koblenz.jgralab.schema.Schema;
  */
 public class Level2LogReader extends Level2LoggingBase implements
 		EvaluationLogReader {
+
+	private static Logger logger = Logger.getLogger(Level2LogReader.class
+			.getName());
 
 	private Level2LogReader() {
 		inputSize = new HashMap<String, ArrayLogEntry>();
@@ -54,10 +57,10 @@ public class Level2LogReader extends Level2LoggingBase implements
 		}
 		this.loggingType = loggingType;
 		if (load()) {
-			GreqlEvaluator.println("Level2LogReader successfully loaded "
+			logger.info("Level2LogReader successfully loaded "
 					+ getLogFile().getPath());
 		} else {
-			GreqlEvaluator.errprintln("Level2LogReader couldn't load "
+			logger.warning("Level2LogReader couldn't load "
 					+ getLogFile().getPath());
 		}
 	}
@@ -70,18 +73,18 @@ public class Level2LogReader extends Level2LoggingBase implements
 	 * @param logger
 	 *            the {@link Level2Logger} which's values to use
 	 */
-	public Level2LogReader(Level2Logger logger) {
+	public Level2LogReader(Level2Logger l2logger) {
 		this();
-		loggerDirectory = logger.loggerDirectory;
-		schemaName = logger.schemaName;
-		dataGraphId = logger.dataGraphId;
-		loggingType = logger.loggingType;
+		loggerDirectory = l2logger.loggerDirectory;
+		schemaName = l2logger.schemaName;
+		dataGraphId = l2logger.dataGraphId;
+		loggingType = l2logger.loggingType;
 
 		if (load()) {
-			GreqlEvaluator.println("Level2LogReader successfully loaded "
+			logger.info("Level2LogReader successfully loaded "
 					+ getLogFile().getPath());
 		} else {
-			GreqlEvaluator.errprintln("Level2LogReader couldn't load "
+			logger.warning("Level2LogReader couldn't load "
 					+ getLogFile().getPath());
 		}
 	}
@@ -112,10 +115,10 @@ public class Level2LogReader extends Level2LoggingBase implements
 		this.loggingType = loggingType;
 
 		if (load()) {
-			GreqlEvaluator.println("Level2LogReader successfully loaded "
+			logger.info("Level2LogReader successfully loaded "
 					+ getLogFile().getPath());
 		} else {
-			GreqlEvaluator.errprintln("Level2LogReader couldn't load "
+			logger.warning("Level2LogReader couldn't load "
 					+ getLogFile().getPath());
 		}
 	}
@@ -134,10 +137,10 @@ public class Level2LogReader extends Level2LoggingBase implements
 		this.loggingType = LoggingType.GENERIC;
 
 		if (load()) {
-			GreqlEvaluator.println("Level2LogReader successfully loaded "
+			logger.info("Level2LogReader successfully loaded "
 					+ getLogFile().getPath());
 		} else {
-			GreqlEvaluator.errprintln("Level2LogReader couldn't load "
+			logger.warning("Level2LogReader couldn't load "
 					+ getLogFile().getPath());
 		}
 	}
@@ -145,7 +148,8 @@ public class Level2LogReader extends Level2LoggingBase implements
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see de.uni_koblenz.jgralab.greql2.evaluator.logging.EvaluationLogReader#getAvgSelectivity(java.lang.String)
+	 * @seede.uni_koblenz.jgralab.greql2.evaluator.logging.EvaluationLogReader#
+	 * getAvgSelectivity(java.lang.String)
 	 */
 	@Override
 	public double getAvgSelectivity(String name) {
@@ -160,7 +164,8 @@ public class Level2LogReader extends Level2LoggingBase implements
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see de.uni_koblenz.jgralab.greql2.evaluator.logging.EvaluationLogReader#getAvgResultSize(java.lang.String)
+	 * @seede.uni_koblenz.jgralab.greql2.evaluator.logging.EvaluationLogReader#
+	 * getAvgResultSize(java.lang.String)
 	 */
 	@Override
 	public double getAvgResultSize(String name) {
@@ -175,7 +180,8 @@ public class Level2LogReader extends Level2LoggingBase implements
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see de.uni_koblenz.jgralab.greql2.evaluator.logging.EvaluationLogReader#getAvgInputSize(java.lang.String)
+	 * @seede.uni_koblenz.jgralab.greql2.evaluator.logging.EvaluationLogReader#
+	 * getAvgInputSize(java.lang.String)
 	 */
 	@Override
 	public ArrayList<Double> getAvgInputSize(String name) {

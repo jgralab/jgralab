@@ -58,7 +58,7 @@ public abstract class AttributedElementClassImpl implements
 	 * the package this attributed element class belongs to
 	 */
 	private Package pkg;
-	
+
 	/**
 	 * the immediate super classes of this class
 	 */
@@ -68,7 +68,7 @@ public abstract class AttributedElementClassImpl implements
 	 * the immediate sub classes of this class
 	 */
 	protected HashSet<AttributedElementClass> directSubClasses;
-	
+
 	/**
 	 * a list of attributes which belongs to the m2 element
 	 * (edgeclass/vertexclass/graphclass). Only the own attributes of this class
@@ -89,15 +89,15 @@ public abstract class AttributedElementClassImpl implements
 	private boolean isAbstract = false;
 
 	/**
-	 * The class object representing the generated interface for this 
-	 * AttributedElementClass 
+	 * The class object representing the generated interface for this
+	 * AttributedElementClass
 	 */
 	private Class<? extends AttributedElement> m1Class;
 
 	/**
-	 * The class object representing the implementation class
-	 * for this AttributedElementClass. This may be either the generated
-	 * class or a subclass of this
+	 * The class object representing the implementation class for this
+	 * AttributedElementClass. This may be either the generated class or a
+	 * subclass of this
 	 */
 	private Class<? extends AttributedElement> m1ImplementationClass;
 
@@ -140,30 +140,27 @@ public abstract class AttributedElementClassImpl implements
 	public String getQualifiedName() {
 		return qName.getQualifiedName();
 	}
-	
+
 	@Override
 	public String getQualifiedName(Package pkg) {
 		if (this.pkg == pkg) {
 			return qName.getSimpleName();
 		} else if (this.pkg.isDefaultPackage()) {
-			 return "." + qName.getSimpleName();
+			return "." + qName.getSimpleName();
 		} else {
 			return qName.getQualifiedName();
 		}
 	}
-	
-	
+
 	@Override
 	public String getUniqueName() {
 		return qName.getUniqueName();
 	}
-	
+
 	@Override
 	public void setUniqueName(String uniqueName) {
 		qName.setUniqueName(this, uniqueName);
 	}
-	
-
 
 	@Override
 	public String getPackageName() {
@@ -184,7 +181,7 @@ public abstract class AttributedElementClassImpl implements
 	public QualifiedName getQName() {
 		return qName;
 	}
-	
+
 	@Override
 	public void addAttribute(String name, Domain domain) {
 		addAttribute(new AttributeImpl(name, domain));
@@ -196,10 +193,11 @@ public abstract class AttributedElementClassImpl implements
 			throw new SchemaException("duplicate attribute name '"
 					+ anAttribute.getName() + "' in class '" + getName() + "'");
 		}
-		if (Schema.reservedTGWords.contains(anAttribute.getName()) ||
-			Schema.reservedJavaWords.contains(anAttribute.getName())) {
-			throw new SchemaException("The name " + anAttribute.getName() + " may not be used as " +
-					"attribute name because it is a reserved word.");
+		if (Schema.reservedTGWords.contains(anAttribute.getName())
+				|| Schema.reservedJavaWords.contains(anAttribute.getName())) {
+			throw new SchemaException("The name " + anAttribute.getName()
+					+ " may not be used as "
+					+ "attribute name because it is a reserved word.");
 		}
 		attributeList.add(anAttribute);
 	}
@@ -312,8 +310,9 @@ public abstract class AttributedElementClassImpl implements
 		if ((superClass == this) || (superClass == null))
 			return;
 		if (DEBUG) {
-			System.out.println("Adding superclass: " + superClass.getQualifiedName()
-					+ " to class " + this.getName());
+			System.out.println("Adding superclass: "
+					+ superClass.getQualifiedName() + " to class "
+					+ this.getName());
 		}
 		directSuperClasses.remove(getSchema().getDefaultGraphClass());
 		directSuperClasses.remove(getSchema().getDefaultEdgeClass());
@@ -322,9 +321,9 @@ public abstract class AttributedElementClassImpl implements
 		directSuperClasses.remove(getSchema().getDefaultCompositionClass());
 		for (Attribute a : superClass.getAttributeList()) {
 			if (getOwnAttribute(a.getName()) != null)
-				throw new SchemaException("Cannot add " + superClass.getQualifiedName()
-						+ " as superclass of " + getName()
-						+ ", cause: Attribute " + a.getName()
+				throw new SchemaException("Cannot add "
+						+ superClass.getQualifiedName() + " as superclass of "
+						+ getName() + ", cause: Attribute " + a.getName()
 						+ " is declared in both classes");
 		}
 		if (superClass.isSubClassOf(this))
@@ -334,26 +333,26 @@ public abstract class AttributedElementClassImpl implements
 		((AttributedElementClassImpl) superClass).directSubClasses.add(this);
 	}
 
-//	/**
-//	 * adds a subclass to the list of subclasses, all attributes of this class
-//	 * and all superclasses get inherited to those classes
-//	 * 
-//	 * @param subClass
-//	 *            the AttributedElementClass to be added to the list of subclasses
-//	 */
-//	protected void addSubClass(AttributedElementClass subClass) {
-//		
-////		subClasses.add(subClass);
-////		Iterator<AttributedElementClass> it = getAllSuperClasses().iterator();
-////		AttributedElementClass a;
-////		while (it.hasNext()) {
-////			a = it.next();
-////			if (DEBUG)
-////				System.out.println("Adding subclass " + subClass.getQualifiedName()
-////						+ " to superclass " + a.getQualifiedName());
-////			((AttributedElementClassImpl) a).addSubClass(subClass);
-////		}
-//	}
+	// /**
+	// * adds a subclass to the list of subclasses, all attributes of this class
+	// * and all superclasses get inherited to those classes
+	// *
+	// * @param subClass
+	// * the AttributedElementClass to be added to the list of subclasses
+	// */
+	// protected void addSubClass(AttributedElementClass subClass) {
+	//		
+	// // subClasses.add(subClass);
+	// // Iterator<AttributedElementClass> it = getAllSuperClasses().iterator();
+	// // AttributedElementClass a;
+	// // while (it.hasNext()) {
+	// // a = it.next();
+	// // if (DEBUG)
+	// // System.out.println("Adding subclass " + subClass.getQualifiedName()
+	// // + " to superclass " + a.getQualifiedName());
+	// // ((AttributedElementClassImpl) a).addSubClass(subClass);
+	// // }
+	// }
 
 	@Override
 	public boolean isSuperClassOf(
@@ -450,8 +449,8 @@ public abstract class AttributedElementClassImpl implements
 		if (m1Class == null) {
 			String m1ClassName = getSchema().getPackageName() + "." + getName();
 			try {
-				m1Class = (Class<? extends AttributedElement>) Class.forName(m1ClassName, true,
-						M1ClassManager.instance());
+				m1Class = (Class<? extends AttributedElement>) Class.forName(
+						m1ClassName, true, M1ClassManager.instance());
 			} catch (ClassNotFoundException e) {
 				throw new SchemaException(
 						"Can't load M1 class for AttributedElementClass '"

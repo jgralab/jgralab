@@ -25,6 +25,7 @@
 package de.uni_koblenz.jgralab.greql2.optimizer;
 
 import java.util.Set;
+import java.util.logging.Logger;
 
 import de.uni_koblenz.jgralab.GraphMarker;
 import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
@@ -42,6 +43,9 @@ import de.uni_koblenz.jgralab.greql2.schema.Variable;
  */
 public class DefaultOptimizer extends OptimizerBase {
 
+	private static Logger logger = Logger.getLogger(DefaultOptimizer.class
+			.getName());
+
 	@Override
 	String optimizerHeaderString() {
 		return "### " + this.getClass().getSimpleName() + ": ";
@@ -50,7 +54,9 @@ public class DefaultOptimizer extends OptimizerBase {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see de.uni_koblenz.jgralab.greql2.optimizer.Optimizer#isEquivalent(de.uni_koblenz.jgralab.greql2.optimizer.Optimizer)
+	 * @see
+	 * de.uni_koblenz.jgralab.greql2.optimizer.Optimizer#isEquivalent(de.uni_koblenz
+	 * .jgralab.greql2.optimizer.Optimizer)
 	 */
 	public boolean isEquivalent(Optimizer optimizer) {
 		if (optimizer instanceof DefaultOptimizer) {
@@ -63,15 +69,15 @@ public class DefaultOptimizer extends OptimizerBase {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see de.uni_koblenz.jgralab.greql2.optimizer.Optimizer#optimize(de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator,
-	 *      de.uni_koblenz.jgralab.greql2.schema.Greql2)
+	 * @see
+	 * de.uni_koblenz.jgralab.greql2.optimizer.Optimizer#optimize(de.uni_koblenz
+	 * .jgralab.greql2.evaluator.GreqlEvaluator,
+	 * de.uni_koblenz.jgralab.greql2.schema.Greql2)
 	 */
 	public boolean optimize(GreqlEvaluator eval, Greql2 syntaxgraph)
 			throws OptimizerException {
-		if (printMessages) {
-			GreqlEvaluator.println(optimizerHeaderString()
-					+ "Starting optimization.  Fasten your seatbelts!");
-		}
+		logger.info(optimizerHeaderString()
+				+ "Starting optimization.  Fasten your seatbelts!");
 
 		// printGraphAsDot(syntaxgraph, "before-optimization");
 
@@ -129,27 +135,23 @@ public class DefaultOptimizer extends OptimizerBase {
 			aTransformationWasDone = true;
 			noOfRuns++;
 
-			if (printMessages) {
-				GreqlEvaluator.println(optimizerHeaderString()
-						+ "starts a new iteration (" + noOfRuns + ")...");
-			}
+			logger.info(optimizerHeaderString() + "starts a new iteration ("
+					+ noOfRuns + ")...");
 		}
 		;
 
 		// printGraphAsDot(syntaxgraph, "after-optimization");
 		// printCosts(eval, syntaxgraph);
 
-		if (printMessages) {
-			GreqlEvaluator.println(optimizerHeaderString() + " finished after "
-					+ noOfRuns + " iterations.");
-		}
+		logger.info(optimizerHeaderString() + " finished after " + noOfRuns
+				+ " iterations.");
 
 		return aTransformationWasDone;
 	}
 
 	private void printCosts(GreqlEvaluator eval, Greql2 syntaxgraph) {
-		GreqlEvaluator.println("Optimizer: Optimizing " + syntaxgraph.getId()
-				+ ".\n" + "This syntaxgraph has " + syntaxgraph.getECount()
+		logger.finer("Optimizer: Optimizing " + syntaxgraph.getId() + ".\n"
+				+ "This syntaxgraph has " + syntaxgraph.getECount()
 				+ " edges and " + syntaxgraph.getVCount() + " vertexes.");
 		GraphMarker<VertexEvaluator> marker = eval
 				.getVertexEvaluatorGraphMarker();
@@ -165,10 +167,10 @@ public class DefaultOptimizer extends OptimizerBase {
 		rootEval.calculateEstimatedSelectivity(graphSize);
 
 		Greql2Vertex vertex = syntaxgraph.getFirstGreql2Vertex();
-		System.out
-				.println("=========================================================");
+		logger
+				.finer("=========================================================");
 		while (vertex != null) {
-			GreqlEvaluator.println("Current Node: " + vertex);
+			logger.finer("Current Node: " + vertex);
 			veval = marker.getMark(vertex);
 			if (veval != null) {
 				long costs = veval.getInitialSubtreeEvaluationCosts(graphSize);
@@ -177,15 +179,15 @@ public class DefaultOptimizer extends OptimizerBase {
 				Set<Variable> definedVars = veval.getDefinedVariables();
 				long varCombs = veval.getVariableCombinations(graphSize);
 				double sel = veval.getEstimatedSelectivity(graphSize);
-				GreqlEvaluator.println("Costs for subtree evaluation: " + costs
-						+ "\n" + "Estimated cardinality: " + card + "\n"
+				logger.finer("Costs for subtree evaluation: " + costs + "\n"
+						+ "Estimated cardinality: " + card + "\n"
 						+ "Estimated selectivity: " + sel + "\n"
 						+ "Needed Vars: " + neededVars + "\n"
 						+ "Defined Vars: " + definedVars + "\n"
 						+ "Variable Combinations: " + varCombs);
 			}
-			System.out
-					.println("=========================================================");
+			logger
+					.finer("=========================================================");
 			vertex = vertex.getNextGreql2Vertex();
 		}
 		VertexEvaluator greql2ExpEval = marker.getMark(syntaxgraph
@@ -193,7 +195,7 @@ public class DefaultOptimizer extends OptimizerBase {
 		greql2ExpEval.resetSubtreeToInitialState();
 		long estimatedInterpretationSteps = greql2ExpEval
 				.getCurrentSubtreeEvaluationCosts(graphSize);
-		GreqlEvaluator.println("Costs for the whole query: "
+		logger.finer("Costs for the whole query: "
 				+ estimatedInterpretationSteps);
 	}
 }

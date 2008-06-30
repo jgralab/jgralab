@@ -25,6 +25,7 @@
 package de.uni_koblenz.jgralab.greql2.evaluator;
 
 import java.io.File;
+import java.util.logging.Logger;
 
 import de.uni_koblenz.jgralab.GraphIO;
 import de.uni_koblenz.jgralab.GraphIOException;
@@ -34,8 +35,8 @@ import de.uni_koblenz.jgralab.greql2.schema.Greql2;
 import de.uni_koblenz.jgralab.greql2.schema.Greql2Expression;
 
 /**
- * This class is one entry in the Map from Query+CostModel+Optimizer to List<OptimizedSyntaxGraph +
- * UsedFlag>
+ * This class is one entry in the Map from Query+CostModel+Optimizer to
+ * List<OptimizedSyntaxGraph + UsedFlag>
  */
 public class SyntaxGraphEntry {
 
@@ -55,6 +56,9 @@ public class SyntaxGraphEntry {
 	 * is the graph in use by an evaluator object or not
 	 */
 	private boolean locked;
+
+	private static Logger logger = Logger.getLogger(SyntaxGraphEntry.class
+			.getName());
 
 	/**
 	 * @return is the graph is in use by an evaluator object or not
@@ -243,13 +247,13 @@ public class SyntaxGraphEntry {
 				+ queryText.hashCode() + "-" + costModelClassSimple + "-"
 				+ optimizerClassSimple + ".tg";
 		GraphIO.saveGraphToFile(fileName, syntaxGraph, null);
-		GreqlEvaluator.println("Saved SyntaxGraphEntry to \"" + fileName + "\".");
+		logger.info("Saved SyntaxGraphEntry to \"" + fileName + "\".");
 	}
 
 	/**
 	 * This {@link SyntaxGraphEntry} equals the given object, if the given
-	 * object's type is {@link SyntaxGraphEntry}, it has the same queryText,
-	 * and its optimizer and costModel have the same type this
+	 * object's type is {@link SyntaxGraphEntry}, it has the same queryText, and
+	 * its optimizer and costModel have the same type this
 	 * {@link SyntaxGraphEntry}'s have.
 	 * 
 	 * (@see java.lang.Object#equals(java.lang.Object))

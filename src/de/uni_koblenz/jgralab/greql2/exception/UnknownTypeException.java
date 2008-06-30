@@ -25,8 +25,8 @@
 package de.uni_koblenz.jgralab.greql2.exception;
 
 import java.util.List;
+import java.util.logging.Logger;
 
-import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
 import de.uni_koblenz.jgralab.greql2.schema.SourcePosition;
 
 /**
@@ -37,7 +37,8 @@ import de.uni_koblenz.jgralab.greql2.schema.SourcePosition;
  * 
  */
 public class UnknownTypeException extends QuerySourceException {
-
+	private static Logger logger = Logger.getLogger(UnknownTypeException.class
+			.getName());
 	static final long serialVersionUID = -1234560;
 
 	public UnknownTypeException(String typeName,
@@ -47,7 +48,8 @@ public class UnknownTypeException extends QuerySourceException {
 		// GreqlEvaluator.println("Creating UnknownTypeException with possible
 		// SourcePositions: ");
 		for (SourcePosition sp : sourcePositions) {
-			GreqlEvaluator.println("  (" + sp.offset + ", " + sp.length + ")");
+			logger.severe("UnknownTypeException");
+			logger.severe("  (" + sp.offset + ", " + sp.length + ")");
 		}
 
 	}
@@ -59,7 +61,8 @@ public class UnknownTypeException extends QuerySourceException {
 		System.out
 				.println("Creating UnknownTypeException with possible SourcePositions: ");
 		for (SourcePosition sp : sourcePositions) {
-			GreqlEvaluator.println("  (" + sp.offset + ", " + sp.length + ")");
+			logger.severe("UnknownTypeException");
+			logger.severe("  (" + sp.offset + ", " + sp.length + ")");
 		}
 	}
 

@@ -29,8 +29,6 @@ public abstract class Formula {
 	 */
 	protected static boolean simplifiedOrOptimized = false;
 
-	protected final static boolean DEBUG = false;
-
 	protected static Greql2 syntaxgraph;
 	protected static GreqlEvaluator greqlEvaluator;
 

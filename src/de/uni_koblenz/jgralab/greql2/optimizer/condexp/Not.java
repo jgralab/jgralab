@@ -4,8 +4,8 @@
 package de.uni_koblenz.jgralab.greql2.optimizer.condexp;
 
 import java.util.HashSet;
+import java.util.logging.Logger;
 
-import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
 import de.uni_koblenz.jgralab.greql2.optimizer.OptimizerUtility;
 import de.uni_koblenz.jgralab.greql2.schema.Expression;
 import de.uni_koblenz.jgralab.greql2.schema.FunctionApplication;
@@ -18,6 +18,9 @@ import de.uni_koblenz.jgralab.greql2.schema.FunctionId;
  * 
  */
 public class Not extends Formula {
+
+	private static Logger logger = Logger.getLogger(Not.class.getName());
+
 	protected Formula formula;
 
 	public Not(Formula formula) {
@@ -97,9 +100,7 @@ public class Not extends Formula {
 	@Override
 	public double getSelectivity() {
 		double selectivity = 1 - formula.getSelectivity();
-		if (DEBUG)
-			GreqlEvaluator
-					.println("selectivity[" + this + "] = " + selectivity);
+		logger.finer("selectivity[" + this + "] = " + selectivity);
 		return selectivity;
 	}
 

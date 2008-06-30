@@ -3,7 +3,8 @@
  */
 package de.uni_koblenz.jgralab.greql2.optimizer.condexp;
 
-import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
+import java.util.logging.Logger;
+
 import de.uni_koblenz.jgralab.greql2.schema.Expression;
 
 /**
@@ -13,6 +14,7 @@ import de.uni_koblenz.jgralab.greql2.schema.Expression;
  * 
  */
 public class Equiv extends BinaryOperator {
+	private static Logger logger = Logger.getLogger(Equiv.class.getName());
 
 	public Equiv(Formula lhs, Formula rhs) {
 		super(lhs, rhs);
@@ -21,8 +23,10 @@ public class Equiv extends BinaryOperator {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see de.uni_koblenz.jgralab.greql2.optimizer.condexp.Formula#calculateReplacementFormula(de.uni_koblenz.jgralab.greql2.schema.Expression,
-	 *      de.uni_koblenz.jgralab.greql2.optimizer.condexp.Literal)
+	 * @seede.uni_koblenz.jgralab.greql2.optimizer.condexp.Formula#
+	 * calculateReplacementFormula
+	 * (de.uni_koblenz.jgralab.greql2.schema.Expression,
+	 * de.uni_koblenz.jgralab.greql2.optimizer.condexp.Literal)
 	 */
 	@Override
 	protected Formula calculateReplacementFormula(Expression exp,
@@ -46,7 +50,8 @@ public class Equiv extends BinaryOperator {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see de.uni_koblenz.jgralab.greql2.optimizer.condexp.Formula#toExpression()
+	 * @see
+	 * de.uni_koblenz.jgralab.greql2.optimizer.condexp.Formula#toExpression()
 	 */
 	@Override
 	public Expression toExpression() {
@@ -70,9 +75,7 @@ public class Equiv extends BinaryOperator {
 		double rightSel = rightHandSide.getSelectivity();
 		double selectivity = 1 - (1 - leftSel * rightSel)
 				* (1 - (1 - leftSel) * (1 - rightSel));
-		if (DEBUG)
-			GreqlEvaluator
-					.println("selectivity[" + this + "] = " + selectivity);
+		logger.finer("selectivity[" + this + "] = " + selectivity);
 		return selectivity;
 	}
 

@@ -66,7 +66,6 @@ import de.uni_koblenz.jgralab.schema.VertexClass;
  * 
  */
 public abstract class VertexEvaluator {
-
 	/**
 	 * This classes get not evaluated
 	 */
@@ -118,8 +117,8 @@ public abstract class VertexEvaluator {
 	protected long initialSubtreeEvaluationCosts = Long.MIN_VALUE;
 
 	/**
-	 * The costs for <b>one</b> evaluation of this vertex _without_ the costs
-	 * of the evaluation of the subtrees
+	 * The costs for <b>one</b> evaluation of this vertex _without_ the costs of
+	 * the evaluation of the subtrees
 	 */
 	protected long ownEvaluationCosts = Long.MIN_VALUE;
 
@@ -221,7 +220,8 @@ public abstract class VertexEvaluator {
 		this.subgraph = subgraphMarker;
 		try {
 			result = evaluate();
-		//	GreqlEvaluator.println("VertexEvaluator.getResult() " + result + " of vertex " + getVertex() );
+			// GreqlEvaluator.println("VertexEvaluator.getResult() " + result +
+			// " of vertex " + getVertex() );
 		} catch (QuerySourceException ex) {
 			removeInvalidSourcePosition(ex);
 			throw ex;
@@ -296,15 +296,6 @@ public abstract class VertexEvaluator {
 
 		greqlEvaluator.progress(ownEvaluationCosts);
 		return result;
-	}
-
-	/**
-	 * used only for debugging
-	 * 
-	 */
-	protected void printIndentation() {
-		for (int i = 0; i < currentIndentation; i++)
-			GreqlEvaluator.print("   ");
 	}
 
 	/**
@@ -415,7 +406,8 @@ public abstract class VertexEvaluator {
 	 * or iteration costs are taken into account.
 	 * 
 	 * @param graphSize
-	 *            a {@link GraphSize} object indicating the size of the data-{@link Graph}
+	 *            a {@link GraphSize} object indicating the size of the data-
+	 *            {@link Graph}
 	 * @return the costs for evaluating the associated vertex one time excluding
 	 *         subtree and iteration costs
 	 */
@@ -571,7 +563,8 @@ public abstract class VertexEvaluator {
 		if (possibleSourcePositions.size() == 0)
 			return; // maybe the vertex is the root vertex, than it has no
 		// outgoing edges
-		// GreqlEvaluator.println("Available sourcePositions for Vertex " + this + "
+		// GreqlEvaluator.println("Available sourcePositions for Vertex " + this
+		// + "
 		// are: ");
 		// for (SourcePosition sp : possibleSourcePositions) {
 		// GreqlEvaluator.println(" (" + sp.offset + ", " + sp.length + ")" );

@@ -4,8 +4,8 @@
 package de.uni_koblenz.jgralab.greql2.optimizer.condexp;
 
 import java.util.HashSet;
+import java.util.logging.Logger;
 
-import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
 import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.GraphSize;
 import de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.VertexEvaluator;
 import de.uni_koblenz.jgralab.greql2.optimizer.OptimizerUtility;
@@ -18,6 +18,10 @@ import de.uni_koblenz.jgralab.greql2.schema.Expression;
  * 
  */
 public class NonConstantTerm extends Formula {
+
+	private static Logger logger = Logger.getLogger(NonConstantTerm.class
+			.getName());
+
 	protected Expression expression;
 
 	public NonConstantTerm(Expression exp) {
@@ -71,9 +75,7 @@ public class NonConstantTerm extends Formula {
 			selectivity = 0.5;
 		if (this.toString().equals("v29"))
 			selectivity = 0.3;
-		if (DEBUG)
-			GreqlEvaluator
-					.println("selectivity[" + this + "] = " + selectivity);
+		logger.finer("selectivity[" + this + "] = " + selectivity);
 		return selectivity;
 	}
 

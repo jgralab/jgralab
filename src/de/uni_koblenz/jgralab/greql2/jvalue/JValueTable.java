@@ -25,8 +25,7 @@
 package de.uni_koblenz.jgralab.greql2.jvalue;
 
 import java.util.Iterator;
-
-import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
+import java.util.logging.Logger;
 
 /**
  * A JValueTable is the Java "replacement" for CvTable (but in fact it has not
@@ -39,6 +38,9 @@ import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
  * 
  */
 public class JValueTable extends JValueCollection {
+
+	private static Logger logger = Logger
+			.getLogger(JValueTable.class.getName());
 
 	/**
 	 * Returns the hash code value for this table.
@@ -142,9 +144,8 @@ public class JValueTable extends JValueCollection {
 	 * creates a new JValueTable with an empty header
 	 * 
 	 * @param useSet
-	 *            if it is true, the table will be based on a <b>set</b>
-	 *            instead of a bag, so every element can exists only one in the
-	 *            table
+	 *            if it is true, the table will be based on a <b>set</b> instead
+	 *            of a bag, so every element can exists only one in the table
 	 */
 	public JValueTable(boolean useSet) {
 		this(new JValueTuple(), false);
@@ -163,9 +164,8 @@ public class JValueTable extends JValueCollection {
 	 * table
 	 * 
 	 * @param useSet
-	 *            if it is true, the table will be based on a <b>set</b>
-	 *            instead of a bag, so every element can exists only one in the
-	 *            table
+	 *            if it is true, the table will be based on a <b>set</b> instead
+	 *            of a bag, so every element can exists only one in the table
 	 */
 	public JValueTable(JValueTuple header, boolean useSet) {
 		super();
@@ -205,34 +205,32 @@ public class JValueTable extends JValueCollection {
 	 * prints the table as table
 	 */
 	public void printTable() {
-		GreqlEvaluator
-				.println("----------------------------------------------------------------------");
+		StringBuilder sb = new StringBuilder();
+		sb
+				.append("----------------------------------------------------------------------\n");
 		Iterator<JValue> headIter = headerTuple.iterator();
 		while (headIter.hasNext()) {
-			GreqlEvaluator.print("|");
-			GreqlEvaluator.print(headIter.next());
+			sb.append("|");
+			sb.append(headIter.next());
 		}
-		GreqlEvaluator.println();
-		GreqlEvaluator
-				.println("----------------------------------------------------------------------");
-		GreqlEvaluator
-				.println("----------------------------------------------------------------------");
+		sb
+				.append("\n----------------------------------------------------------------------\n");
+		sb
+				.append("\n----------------------------------------------------------------------\n");
 		Iterator<JValue> rowIter = data.iterator();
 		while (rowIter.hasNext()) {
 			JValueTuple curTup = (JValueTuple) rowIter.next();
 			Iterator<JValue> colIter = curTup.iterator();
 			while (colIter.hasNext()) {
-				GreqlEvaluator.print("|");
-				GreqlEvaluator.print(colIter.next());
+				sb.append("|");
+				sb.append(colIter.next());
 			}
-			GreqlEvaluator.println();
-			GreqlEvaluator
-					.println("----------------------------------------------------------------------");
+			sb
+					.append("\n----------------------------------------------------------------------\n");
 		}
-		GreqlEvaluator
-				.println("----------------------------------------------------------------------");
-		GreqlEvaluator
-				.println("----------------------------------------------------------------------");
+		sb
+				.append("\n----------------------------------------------------------------------\n");
+		logger.info(sb.toString());
 	}
 
 	/**
@@ -375,7 +373,7 @@ public class JValueTable extends JValueCollection {
 			JValueTuple tuple = (JValueTuple) tupleIter.next();
 			if (colNumber > tuple.size())
 				return false; // not nice!! ckeck should be part of first if
-								// of method. need a getColumnCount() method?
+			// of method. need a getColumnCount() method?
 			if (!testSet.add(tuple.get(colNumber - 1)))
 				return true;
 		}

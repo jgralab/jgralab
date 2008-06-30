@@ -24,15 +24,17 @@
 
 package de.uni_koblenz.jgralab.greql2.jvalue;
 
-import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
+import java.util.logging.Logger;
 
 public class JValueTuple extends JValueList {
+
+	private static Logger logger = Logger
+			.getLogger(JValueTuple.class.getName());
 
 	/**
 	 * Acts as a cache for the hash code value of this set out of performance
 	 * considerations. Whenever this set is changed, storedHashCode is set to 0
-	 * and gets updated as soon as the <code>hashCode()</code> method is
-	 * called.
+	 * and gets updated as soon as the <code>hashCode()</code> method is called.
 	 */
 	private int storedHashCode = 0;
 
@@ -116,9 +118,7 @@ public class JValueTuple extends JValueList {
 	 */
 	public boolean insert(int position, JValue element) {
 		storedHashCode = 0;
-		if (JValue.JVALUE_DEBUG)
-			GreqlEvaluator
-					.println("JValueTupel doesn't support insertion  of elements");
+		logger.severe("JValueTupel doesn't support insertion  of elements");
 		return false;
 	}
 

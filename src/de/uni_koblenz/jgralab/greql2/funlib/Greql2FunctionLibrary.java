@@ -30,8 +30,7 @@ import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
-
-import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
+import java.util.logging.Logger;
 
 /**
  * This class is the core of the function libary. It's implemented following the
@@ -39,16 +38,14 @@ import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
  * package are read. One can use the methods
  * <code>boolean isGreqlFunction(String name)</code> to ask the Library if a
  * string is a greql-function
- * <code>JValue evaluateGreqlFunction(String name, JValue[] arguments)</code>
- * to evaluate the greql-function with the given name
+ * <code>JValue evaluateGreqlFunction(String name, JValue[] arguments)</code> to
+ * evaluate the greql-function with the given name
  * 
  */
 public class Greql2FunctionLibrary {
 
-	/**
-	 * toggles debug output on or off
-	 */
-	private static final boolean DEBUG = false;
+	private static Logger logger = Logger.getLogger(Greql2FunctionLibrary.class
+			.getName());
 
 	/**
 	 * this is the package name as greql2.evaluator.funlib
@@ -75,15 +72,11 @@ public class Greql2FunctionLibrary {
 	 */
 	static {
 		packageName = Greql2FunctionLibrary.class.getPackage().getName();
-		if (DEBUG)
-			GreqlEvaluator.println("Packagename : " + packageName);
+		logger.finer("Packagename : " + packageName);
 		nondottedPackageName = packageName.replace(".", "/");
-		if (DEBUG)
-			GreqlEvaluator.println("Nondotted Package name "
-					+ nondottedPackageName);
+		logger.finer("Nondotted Package name " + nondottedPackageName);
 		thisInstance = new Greql2FunctionLibrary();
-		if (DEBUG)
-			GreqlEvaluator.println("FunctionLibrary successfull loaded");
+		logger.finer("FunctionLibrary successfull loaded");
 	}
 
 	/**
@@ -143,20 +136,16 @@ public class Greql2FunctionLibrary {
 	@SuppressWarnings("unchecked")
 	private void registerFunction(String className) {
 		try {
-			if (DEBUG) {
-				GreqlEvaluator
-						.println("Try to register function: " + className);
-				GreqlEvaluator
-						.println("Found Class: "
-								+ (Class.forName(packageName + "." + className) != null));
-			}
+			logger.finer("Try to register function: " + className);
+			logger.finer("Found Class: "
+					+ (Class.forName(packageName + "." + className) != null));
+
 			Class[] interfaces = Class.forName(packageName + "." + className)
 					.getInterfaces();
 			String funIntName = packageName + ".Greql2Function";
 			for (int i = 0; i < interfaces.length; i++) {
-				if (DEBUG)
-					GreqlEvaluator.println("Implementing interface "
-							+ interfaces[i].getName());
+				logger.finer("Implementing interface "
+						+ interfaces[i].getName());
 				if (interfaces[i].getName().equals(funIntName)) {
 					Object o = Class.forName(packageName + "." + className)
 							.getConstructor().newInstance();
@@ -178,29 +167,27 @@ public class Greql2FunctionLibrary {
 	private boolean registerFunctionsInJar(String packagePath) {
 		if (packagePath.lastIndexOf(".jar!/") > 0) {
 			// in jar-file
-			GreqlEvaluator.println("Jar File found");
+			logger.info("Jar File found");
 			packagePath = packagePath
 					.substring(0, packagePath.lastIndexOf("!"));
-			GreqlEvaluator.println("Path of package is: " + packagePath);
+			logger.info("Path of package is: " + packagePath);
 			try {
 				JarFile jar = new JarFile(packagePath);
-				GreqlEvaluator.println("Try to read entrys");
+				logger.info("Try to read entrys");
 				for (Enumeration<JarEntry> e = jar.entries(); e
 						.hasMoreElements();) {
 					JarEntry je = e.nextElement();
 					String entryName = je.getName();
-					if (DEBUG && entryName.contains("funlib"))
-						GreqlEvaluator.println("Reading entry " + entryName);
+					if (entryName.contains("funlib"))
+						logger.finer("Reading entry " + entryName);
 					if (entryName.startsWith(nondottedPackageName)
 							&& entryName.endsWith(".class")) {
 						registerFunction(entryName.substring(
 								nondottedPackageName.length() + 1, entryName
 										.length() - 6));
-						if (DEBUG)
-							GreqlEvaluator.println("Registering function: "
-									+ entryName.substring(nondottedPackageName
-											.length() + 1,
-											entryName.length() - 6));
+						logger.finer("Registering function: "
+								+ entryName.substring(nondottedPackageName
+										.length() + 1, entryName.length() - 6));
 					}
 				}
 			} catch (Exception e) {
@@ -220,17 +207,13 @@ public class Greql2FunctionLibrary {
 	 */
 	private boolean registerFunctionsInDirectory(String packagePath) {
 		packagePath = packagePath.replaceAll("%20", " ");
-		if (DEBUG)
-			GreqlEvaluator.println("Directory Path : " + packagePath);
+		logger.finer("Directory Path : " + packagePath);
 		String entries[] = new File(packagePath).list();
 		int i = 0;
 		for (i = 0; i < entries.length; i++) {
-			// GreqlEvaluator.println("Entriename " + entries[i]);
 			if (entries[i].endsWith(".class")) {
 				String className = entries[i].substring(0,
 						entries[i].length() - 6);
-				// GreqlEvaluator.println("Try to register function : " +
-				// className);
 				registerFunction(className);
 			}
 		}
@@ -247,28 +230,24 @@ public class Greql2FunctionLibrary {
 	 * @return true if the package was successfull read
 	 */
 	private boolean registerAllFunctions() {
-		if (DEBUG)
-			GreqlEvaluator.println("Registering all functions");
+		logger.finer("Registering all functions");
 		availableFunctions = new HashMap<String, Greql2Function>();
 		String thisClassName = this.getClass().getCanonicalName();
-		if (DEBUG)
-			GreqlEvaluator.println("Functionlib name: " + thisClassName);
+		logger.finer("Functionlib name: " + thisClassName);
 		URL packageUrl = Greql2FunctionLibrary.class.getResource("/"
 				+ nondottedPackageName + "/Greql2FunctionLibrary.class");
 		if (packageUrl != null) {
-			if (DEBUG) {
-				GreqlEvaluator.println("Found Greql2FunctionLibrary");
-				GreqlEvaluator.println("URL : " + packageUrl.getPath());
-			}
+
+			logger.finer("Found Greql2FunctionLibrary");
+			logger.finer("URL : " + packageUrl.getPath());
+
 			String packagePath = packageUrl.getPath();
 			packagePath = packagePath
 					.substring(0, packagePath.lastIndexOf("/"));
-			// GreqlEvaluator.println("Path : " + packagePath);
 
 			if (!packagePath.startsWith("/")) {
 				// stripp leading file://
 				packagePath = packagePath.substring(packagePath.indexOf("/"));
-				// GreqlEvaluator.println("Stripped path : " + packagePath);
 			}
 			if (registerFunctionsInJar(packagePath))
 				return true;

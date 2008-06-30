@@ -24,10 +24,11 @@
 
 package de.uni_koblenz.jgralab.greql2.evaluator.fa;
 
+import java.util.logging.Logger;
+
 import de.uni_koblenz.jgralab.BooleanGraphMarker;
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.Vertex;
-import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
 import de.uni_koblenz.jgralab.greql2.exception.EvaluateException;
 
 /**
@@ -39,6 +40,9 @@ import de.uni_koblenz.jgralab.greql2.exception.EvaluateException;
  * 
  */
 public class EpsilonTransition extends Transition {
+
+	private static Logger logger = Logger.getLogger(EpsilonTransition.class
+			.getName());
 
 	/**
 	 * creates a new epsilon-transition from start to end
@@ -86,7 +90,7 @@ public class EpsilonTransition extends Transition {
 	@Override
 	public boolean accepts(Vertex v, Edge e, BooleanGraphMarker subgraph)
 			throws EvaluateException {
-		GreqlEvaluator.println("Id of this epsilon transition is: " + this);
+		logger.info("Id of this epsilon transition is: " + this);
 		// GreqlEvaluator.println("In Number of this transition is : " +
 		// this.endState.inTransitions.indexOf(this));
 		// GreqlEvaluator.println("Out Number of this transition is : " +

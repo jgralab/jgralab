@@ -37,8 +37,6 @@ import de.uni_koblenz.jgralab.schema.AttributedElementClass;
 
 public class JValue implements Comparable<JValue> {
 
-	public static boolean JVALUE_DEBUG = true;
-
 	/**
 	 * The type of the object this JValue stores
 	 */

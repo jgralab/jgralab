@@ -2,6 +2,7 @@ package de.uni_koblenz.jgralab.greql2.optimizer;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.logging.Logger;
 
 import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
@@ -26,12 +27,17 @@ import de.uni_koblenz.jgralab.greql2.schema.SimpleDeclaration;
  */
 public class MergeSimpleDeclarationsOptimizer extends OptimizerBase {
 
+	private static Logger logger = Logger
+			.getLogger(MergeSimpleDeclarationsOptimizer.class.getName());
+
 	private boolean anOptimizationWasDone = false;
 
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see de.uni_koblenz.jgralab.greql2.optimizer.Optimizer#isEquivalent(de.uni_koblenz.jgralab.greql2.optimizer.Optimizer)
+	 * @see
+	 * de.uni_koblenz.jgralab.greql2.optimizer.Optimizer#isEquivalent(de.uni_koblenz
+	 * .jgralab.greql2.optimizer.Optimizer)
 	 */
 	@Override
 	public boolean isEquivalent(Optimizer optimizer) {
@@ -44,8 +50,10 @@ public class MergeSimpleDeclarationsOptimizer extends OptimizerBase {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see de.uni_koblenz.jgralab.greql2.optimizer.Optimizer#optimize(de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator,
-	 *      de.uni_koblenz.jgralab.greql2.schema.Greql2)
+	 * @see
+	 * de.uni_koblenz.jgralab.greql2.optimizer.Optimizer#optimize(de.uni_koblenz
+	 * .jgralab.greql2.evaluator.GreqlEvaluator,
+	 * de.uni_koblenz.jgralab.greql2.schema.Greql2)
 	 */
 	@Override
 	public boolean optimize(GreqlEvaluator eval, Greql2 syntaxgraph) {
@@ -122,12 +130,10 @@ public class MergeSimpleDeclarationsOptimizer extends OptimizerBase {
 						.getFirstIsSimpleDeclOf(EdgeDirection.OUT);
 
 				if (isNextInIncidenceList(decl, isSDOfSurvivor, isSDOfS)) {
-					if (printMessages) {
-						GreqlEvaluator.println(optimizerHeaderString()
-								+ "Merging all variables of " + s + " into "
-								+ survivor + ".");
-					}
-					
+					logger.info(optimizerHeaderString()
+							+ "Merging all variables of " + s + " into "
+							+ survivor + ".");
+
 					while (s.getFirstIsDeclaredVarOf() != null) {
 						s.getFirstIsDeclaredVarOf().setOmega(survivor);
 					}
