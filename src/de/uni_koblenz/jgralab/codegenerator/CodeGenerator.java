@@ -21,7 +21,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
- 
+
 package de.uni_koblenz.jgralab.codegenerator;
 
 import java.io.BufferedWriter;
@@ -29,49 +29,65 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Vector;
+import java.util.logging.Logger;
 
 import de.uni_koblenz.jgralab.GraphIOException;
 import de.uni_koblenz.jgralab.codegenerator.JavaSourceFromString;
 
 public abstract class CodeGenerator {
-	
+
+	private static Logger logger = Logger.getLogger(CodeGenerator.class
+			.getName());
+
 	/**
-	 * toggles, if additional getNextEdge-Methods with a 
-	 * parameter "noSubclasses" should be generated.
+	 * toggles, if additional getNextEdge-Methods with a parameter
+	 * "noSubclasses" should be generated.
 	 */
 	public static final boolean CREATE_METHODS_WITH_TYPEFLAG = false;
-	
+
 	protected CodeList rootBlock;
 
 	private ImportCodeSnippet imports;
-	
+
 	protected String schemaRootPackageName;
 
 	/**
 	 * Creates a CodeGenerator for a single class
-	 * @param schemaRootPackageName the name of the root package of the schema, for instance de.uni_koblenz.jgralab.greql2
-	 * @param packageName the name of the package the class is located in, for instance comprehensions
-	 * Out of the three parameters, the CodeGenerator calculates the name
-	 *  schemaRootPackageName.packageName.implementationName, in the example 
-	 *  "de.uni_koblenz.jgralab.greql2.comprehension.Bagcomprehension"
-	 *  for the interface and possibly 
-	 *  schemaRootPackageName.impl.packageName.implementationName, in the example
-	 *  "de.uni_koblenz.jgralab.greql2.impl.comprehension.Bagcomprehension"
-	 *  for the default implementation class
+	 * 
+	 * @param schemaRootPackageName
+	 *            the name of the root package of the schema, for instance
+	 *            de.uni_koblenz.jgralab.greql2
+	 * @param packageName
+	 *            the name of the package the class is located in, for instance
+	 *            comprehensions Out of the three parameters, the CodeGenerator
+	 *            calculates the name
+	 *            schemaRootPackageName.packageName.implementationName, in the
+	 *            example
+	 *            "de.uni_koblenz.jgralab.greql2.comprehension.Bagcomprehension"
+	 *            for the interface and possibly
+	 *            schemaRootPackageName.impl.packageName.implementationName, in
+	 *            the example
+	 *            "de.uni_koblenz.jgralab.greql2.impl.comprehension.Bagcomprehension"
+	 *            for the default implementation class
 	 */
 	public CodeGenerator(String schemaRootPackageName, String packageName) {
 		this.schemaRootPackageName = schemaRootPackageName;
 		rootBlock = new CodeList(null);
 		rootBlock.setVariable("jgPackage", "de.uni_koblenz.jgralab");
 		rootBlock.setVariable("jgImplPackage", "de.uni_koblenz.jgralab.impl");
-		rootBlock.setVariable("jgSchemaPackage", "de.uni_koblenz.jgralab.schema");
-		rootBlock.setVariable("jgSchemaImplPackage", "de.uni_koblenz.jgralab.schema.impl");
+		rootBlock.setVariable("jgSchemaPackage",
+				"de.uni_koblenz.jgralab.schema");
+		rootBlock.setVariable("jgSchemaImplPackage",
+				"de.uni_koblenz.jgralab.schema.impl");
 		if (packageName != null && !packageName.equals("")) {
-			rootBlock.setVariable("schemaPackage", schemaRootPackageName + "." + packageName);
-			rootBlock.setVariable("schemaImplPackage", schemaRootPackageName + ".impl." + packageName );
+			rootBlock.setVariable("schemaPackage", schemaRootPackageName + "."
+					+ packageName);
+			rootBlock.setVariable("schemaImplPackage", schemaRootPackageName
+					+ ".impl." + packageName);
 		} else {
 			rootBlock.setVariable("schemaPackage", schemaRootPackageName);
-			rootBlock.setVariable("schemaImplPackage", schemaRootPackageName + ".impl");
+			rootBlock.setVariable("schemaImplPackage", schemaRootPackageName
+					+ ".impl");
 		}
 		rootBlock.setVariable("isClassOnly", "false");
 		rootBlock.setVariable("isImplementationClassOnly", "false");
@@ -101,7 +117,7 @@ public abstract class CodeGenerator {
 	 *            the path where the java source code is to be
 	 * @param fileName
 	 *            the filename of the java source code including .java
-	 * @throws GraphIOException 
+	 * @throws GraphIOException
 	 */
 	public void writeCodeToFile(String pathPrefix, String fileName,
 			String aPackage) throws GraphIOException {
@@ -132,33 +148,39 @@ public abstract class CodeGenerator {
 	}
 
 	public void createFiles(String pathPrefix) throws GraphIOException {
- 	//	String className = rootBlock.getVariable("className");
+		// String className = rootBlock.getVariable("className");
 		String simpleClassName = rootBlock.getVariable("simpleClassName");
 		String schemaPackage = rootBlock.getVariable("schemaPackage");
-		String simpleImplClassName = rootBlock.getVariable("simpleImplClassName");
+		String simpleImplClassName = rootBlock
+				.getVariable("simpleImplClassName");
 		String schemaImplPackage = rootBlock.getVariable("schemaImplPackage");
-		//System.err.println("createFiles(\"" + pathPrefix + "\")");
-		// System.err.println(" - className=" + className);
-		// System.err.println(" - schemaPackage=" + schemaPackage);
-		// System.err.println(" - implClassName=" + implClassName);
-		// System.err.println(" - schemaImplPackage=" + schemaImplPackage);
+		logger.finer("createFiles(\"" + pathPrefix + "\")");
+		logger.finer(" - simpleClassName=" + simpleClassName);
+		logger.finer(" - schemaPackage=" + schemaPackage);
+		logger.finer(" - simpleImplClassName=" + simpleImplClassName);
+		logger.finer(" - schemaImplPackage=" + schemaImplPackage);
 		if (rootBlock.getVariable("isClassOnly").equals("true")) {
 			// no separate implementaion
 			// create class only
 			createCode(true);
-			writeCodeToFile(pathPrefix, simpleClassName + ".java", schemaPackage);
+			writeCodeToFile(pathPrefix, simpleClassName + ".java",
+					schemaPackage);
 		} else if (rootBlock.getVariable("isAbstractClass").equals("true")) {
-//			System.out.println("Creating interface for class: " + simpleClassName);
-//			System.out.println("Writing file to: " + pathPrefix + "/" + schemaPackage);
+			logger.finer("Creating interface for class: " + simpleClassName);
+			logger
+					.finer("Writing file to: " + pathPrefix + "/"
+							+ schemaPackage);
 			// create interface only
 			createCode(false);
-			writeCodeToFile(pathPrefix, simpleClassName + ".java", schemaPackage);
+			writeCodeToFile(pathPrefix, simpleClassName + ".java",
+					schemaPackage);
 		} else {
 			if (!rootBlock.getVariable("isImplementationClassOnly").equals(
 					"true")) {
 				// create interface
 				createCode(false);
-				writeCodeToFile(pathPrefix, simpleClassName + ".java", schemaPackage);
+				writeCodeToFile(pathPrefix, simpleClassName + ".java",
+						schemaPackage);
 			}
 			// create implementation
 			rootBlock.clear();
@@ -211,7 +233,7 @@ public abstract class CodeGenerator {
 			return aString.toUpperCase();
 		return aString.substring(0, 1).toUpperCase() + aString.substring(1);
 	}
-	
+
 	/**
 	 * Returns {@code JavaSourceFromString}s from the generated code.
 	 * 
@@ -220,35 +242,35 @@ public abstract class CodeGenerator {
 	public Vector<JavaSourceFromString> createJavaSources() {
 		String className = rootBlock.getVariable("simpleClassName");
 		String implClassName = rootBlock.getVariable("simpleImplClassName");
-		Vector<JavaSourceFromString> javaSources 
-				= new Vector<JavaSourceFromString>(2);
-		
+		Vector<JavaSourceFromString> javaSources = new Vector<JavaSourceFromString>(
+				2);
+
 		if (rootBlock.getVariable("isClassOnly").equals("true")) {
 			// no separate implementaion
 			// create class only
 			createCode(true);
-			javaSources.add(new JavaSourceFromString(
-					className, rootBlock.getCode()));
+			javaSources.add(new JavaSourceFromString(className, rootBlock
+					.getCode()));
 		} else if (rootBlock.getVariable("isAbstractClass").equals("true")) {
 			// create interface only
 			createCode(false);
-			javaSources.add(new JavaSourceFromString(
-					className, rootBlock.getCode()));
+			javaSources.add(new JavaSourceFromString(className, rootBlock
+					.getCode()));
 		} else {
 			if (!rootBlock.getVariable("isImplementationClassOnly").equals(
 					"true")) {
 				// create interface
 				createCode(false);
-				javaSources.add(new JavaSourceFromString(
-						className, rootBlock.getCode()));
+				javaSources.add(new JavaSourceFromString(className, rootBlock
+						.getCode()));
 			}
 			// create implementation
 			rootBlock.clear();
 			createCode(true);
-			javaSources.add(new JavaSourceFromString(
-					implClassName, rootBlock.getCode()));
+			javaSources.add(new JavaSourceFromString(implClassName, rootBlock
+					.getCode()));
 		}
-		
+
 		return javaSources;
 	}
 }

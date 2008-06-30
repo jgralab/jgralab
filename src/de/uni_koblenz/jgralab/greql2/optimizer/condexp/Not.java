@@ -4,7 +4,6 @@
 package de.uni_koblenz.jgralab.greql2.optimizer.condexp;
 
 import java.util.HashSet;
-import java.util.logging.Logger;
 
 import de.uni_koblenz.jgralab.greql2.optimizer.OptimizerUtility;
 import de.uni_koblenz.jgralab.greql2.schema.Expression;
@@ -18,8 +17,6 @@ import de.uni_koblenz.jgralab.greql2.schema.FunctionId;
  * 
  */
 public class Not extends Formula {
-
-	private static Logger logger = Logger.getLogger(Not.class.getName());
 
 	protected Formula formula;
 

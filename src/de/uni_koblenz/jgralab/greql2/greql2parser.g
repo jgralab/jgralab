@@ -26,6 +26,7 @@ package de.uni_koblenz.jgralab.greql2.parser;
 
 import java.util.Vector;
 import java.util.*;
+import java.util.logging.Logger;
 
 import de.uni_koblenz.jgralab.*;
 import de.uni_koblenz.jgralab.schema.*;
@@ -43,6 +44,7 @@ options
 	defaultErrorHandler = false;
 }
 {
+    private static Logger logger = Logger.getLogger(Greql2Parser.class.getName());
     private final int VMAX = 100;
     private final int EMAX = 100;
     private Greql2Schema schema = null;
@@ -110,8 +112,8 @@ options
 		}
 		catch (Exception ex) { ex.printStackTrace(); }
 		if (offset != -1)
-				System.err.println("error: " + offset +": " + e.getMessage());
-			else System.err.println("error (offset = -1): " + e.getMessage());
+				logger.severe("error: " + offset +": " + e.getMessage());
+			else logger.severe("error (offset = -1): " + e.getMessage());
 	}
 
   	public void reportError(TokenStreamException e)
@@ -123,8 +125,8 @@ options
 		}
 		catch (Exception ex) { ex.printStackTrace(); }
 		if (offset != -1)
-				System.err.println("error: " + offset +": " + e.getMessage());
-			else System.err.println("error (offset = -1): " + e.getMessage());
+				logger.severe("error: " + offset +": " + e.getMessage());
+			else logger.severe("error (offset = -1): " + e.getMessage());
 	}
 
     /**

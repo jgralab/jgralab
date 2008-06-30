@@ -48,8 +48,8 @@ public class Not extends Leaf {
 				return new And(new Not(lhs).toNegationNormalForm(),
 						new Not(rhs).toNegationNormalForm());
 			} else {
-				System.err
-						.println("The NNF is only implemented via DeMorgan for And, Or and Xor!");
+				logger
+						.severe("The NNF is only implemented via DeMorgan for And, Or and Xor!");
 				return this;
 			}
 		}

@@ -52,6 +52,7 @@ import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
 import java.util.Map.Entry;
+import java.util.logging.Logger;
 
 import de.uni_koblenz.jgralab.impl.AttributeImpl;
 import de.uni_koblenz.jgralab.schema.AggregationClass;
@@ -76,6 +77,8 @@ import de.uni_koblenz.jgralab.schema.impl.SchemaImpl;
  * @author riediger@uni-koblenz.de
  */
 public class GraphIO {
+
+	private static Logger logger = Logger.getLogger(GraphIO.class.getName());
 
 	private InputStream TGIn;
 
@@ -488,7 +491,7 @@ public class GraphIO {
 		Edge nextE = graph.getFirstEdgeInGraph();
 		while (nextE != null) {
 			eId = nextE.getId();
-			// System.out.println("Writing edge: " + nextE.getId());
+			logger.finer("Writing edge: " + nextE.getId());
 			AttributedElementClass aec = nextE.getAttributedElementClass();
 			Package currentPackage = aec.getPackage();
 			if (currentPackage != oldPackage) {
@@ -668,7 +671,7 @@ public class GraphIO {
 	public static Graph loadGraphFromFile(String filename, ProgressFunction pf)
 			throws GraphIOException {
 		try {
-			// System.out.println("Loading graph " + filename);
+			logger.finer("Loading graph " + filename);
 			return loadGraphFromStream(new BufferedInputStream(
 					new FileInputStream(filename), 10000), pf);
 		} catch (IOException ex) {
@@ -732,7 +735,8 @@ public class GraphIO {
 	 * Reads a Schema together with its Domains, GraphClasses and
 	 * GraphElementClasses from a TG-file. Subsequently, the Schema is created.
 	 * 
-	 * @throws GraphIOException @
+	 * @throws GraphIOException
+	 *             @
 	 */
 	private void schema() throws GraphIOException, SchemaException {
 		currentPackageName = "";
@@ -775,7 +779,8 @@ public class GraphIO {
 	 * Creates the Domains contained in a Schema.
 	 * 
 	 * @return A Map of the Domain names to the concrete Domain objects.
-	 * @throws GraphIOException @
+	 * @throws GraphIOException
+	 *             @
 	 */
 	private Map<QualifiedName, Domain> domDef() throws GraphIOException,
 			SchemaException {
@@ -809,7 +814,8 @@ public class GraphIO {
 	}
 
 	/**
-	 * Creates all EnumDomains whose data is stored in {@link enumDomainBuffer} @
+	 * Creates all EnumDomains whose data is stored in {@link enumDomainBuffer}
+	 * @
 	 */
 	private void enumDomains() {
 		Domain domain;
@@ -878,7 +884,8 @@ public class GraphIO {
 	 * Reads Schema's Domains and GraphClasses with contained
 	 * GraphElementClasses from TG-file.
 	 * 
-	 * @throws GraphIOException @
+	 * @throws GraphIOException
+	 *             @
 	 */
 	private void parseSchema() throws GraphIOException, SchemaException {
 		QualifiedName currentGraphClassName = parseGraphClass();
@@ -1308,8 +1315,8 @@ public class GraphIO {
 	/**
 	 * Reads the redefinition of a rolename of an EdgeClass
 	 * 
-	 * @return A Set<String> of redefined rolenames or <code>null</code> if
-	 *         no rolenames were redefined
+	 * @return A Set<String> of redefined rolenames or <code>null</code> if no
+	 *         rolenames were redefined
 	 * @throw GraphIOException
 	 */
 	private Set<String> parseRolenameRedefinitions() throws GraphIOException {
@@ -1626,7 +1633,7 @@ public class GraphIO {
 				la = read();
 				if (la >= 0 && la == '/') {
 					// single line comment, skip to the end of the current line
-					// System.err.println("Comment detected in line " + line);
+					logger.finer("Comment detected in line " + line);
 					while (la >= 0 && la != '\n') {
 						la = read();
 					}
@@ -1977,14 +1984,14 @@ public class GraphIO {
 
 	private void edgeDesc(Graph graph) throws GraphIOException {
 		int eId = eId();
-		QualifiedName ecName = className(); // graph.getGraphClass().getEdgeClass(className()).getQName();
+		QualifiedName ecName = className(); //graph.getGraphClass().getEdgeClass
+		// (className()).getQName();
 		Edge edge;
 		Method createMethod;
 		createMethod = createMethods.get(ecName);
 		try {
 			if (createMethod == null) {
-				// System.out.println("Searching create method for edge " +
-				// ecName);
+				logger.finer("Searching create method for edge " + ecName);
 				createMethod = schema.getEdgeCreateMethod(ecName, gcName);
 				createMethods.put(ecName, createMethod);
 			}

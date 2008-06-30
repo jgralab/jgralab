@@ -8,6 +8,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.logging.Logger;
 
 import de.uni_koblenz.jgralab.Attribute;
 import de.uni_koblenz.jgralab.AttributedElement;
@@ -38,6 +39,10 @@ import de.uni_koblenz.jgralab.greql2.schema.Variable;
  * 
  */
 public class OptimizerUtility {
+
+	private static Logger logger = Logger.getLogger(OptimizerUtility.class
+			.getName());
+
 	/**
 	 * @param v1
 	 *            a {@link Vertex}
@@ -153,7 +158,8 @@ public class OptimizerUtility {
 	 *         <code>var2</code>, <code>false</code> otherwise.
 	 */
 	public static boolean isDeclaredBefore(Variable var1, Variable var2) {
-		// GreqlEvaluator.println("isDeclaredBefore(" + var1 + ", " + var2 + ")");
+		// GreqlEvaluator.println("isDeclaredBefore(" + var1 + ", " + var2 +
+		// ")");
 		if (var1 == var2) {
 			return false;
 		}
@@ -211,22 +217,22 @@ public class OptimizerUtility {
 				return false;
 			}
 		}
-		System.err
-				.println("No case matched in isDeclaredBefore(Variable, Variable)."
+		logger
+				.severe("No case matched in isDeclaredBefore(Variable, Variable)."
 						+ " That must not happen!");
 		return false;
 	}
 
 	/**
-	 * Makes a deep copy of the subgraph given by <code>origVertex</code>.
-	 * For each {@link Vertex} in that subgraph a new {@link Vertex} of the same
+	 * Makes a deep copy of the subgraph given by <code>origVertex</code>. For
+	 * each {@link Vertex} in that subgraph a new {@link Vertex} of the same
 	 * type will be created, likewise for the {@link Edge}s. As an exception to
 	 * that rule, {@link Identifier}s other than {@link Variable}s won't be
 	 * copied. For {@link Variable}s it's quite complicated. If a
-	 * {@link Variable} is in <code>variablesToBeCopied</code> it will be
-	 * copied ONCE. After that the one and only copy is used instead of creating
-	 * a new copy. That's what <code>copiedVarMap</code> is for. So normally
-	 * you'd provide an empty {@link HashMap}.
+	 * {@link Variable} is in <code>variablesToBeCopied</code> it will be copied
+	 * ONCE. After that the one and only copy is used instead of creating a new
+	 * copy. That's what <code>copiedVarMap</code> is for. So normally you'd
+	 * provide an empty {@link HashMap}.
 	 * 
 	 * @param origVertex
 	 *            the root {@link Vertex} of the subgraph to be copied
@@ -283,8 +289,8 @@ public class OptimizerUtility {
 	}
 
 	/**
-	 * Copy the attribute values of <code>from</code> to <code>to</code>.
-	 * The types of the given {@link AttributedElement}s have to be equal.
+	 * Copy the attribute values of <code>from</code> to <code>to</code>. The
+	 * types of the given {@link AttributedElement}s have to be equal.
 	 * 
 	 * @param from
 	 *            an {@link AttributedElement}
@@ -307,8 +313,8 @@ public class OptimizerUtility {
 
 	/**
 	 * Merges the contents of the sourcePosition attribute of <code>from</code>
-	 * to the contents of the sourcePosition attribute of <code>to</code>. If
-	 * a {@link SourcePosition} already exists in <code>to</code> it won't be
+	 * to the contents of the sourcePosition attribute of <code>to</code>. If a
+	 * {@link SourcePosition} already exists in <code>to</code> it won't be
 	 * added again.
 	 * 
 	 * @param from
@@ -336,7 +342,7 @@ public class OptimizerUtility {
 	 * exists it will be created.
 	 * 
 	 * @param name
-	 *            the value of the name attribute of the {@link FunctionId}
+	 *            the value of the name attribute of the {@link FunctionId} 
 	 *            we're looking for
 	 * @param graph
 	 *            the {@link Greql2} graph where we look for the
@@ -423,8 +429,8 @@ public class OptimizerUtility {
 	 * 
 	 * @param decl
 	 *            a {@link Declaration}
-	 * @return a {@link List} of all {@link SimpleDeclaration}s that are part
-	 *         of <code>decl</code>
+	 * @return a {@link List} of all {@link SimpleDeclaration}s that are part of
+	 *         <code>decl</code>
 	 */
 	public static List<SimpleDeclaration> collectSimpleDeclarationsOf(
 			Declaration decl) {
@@ -458,8 +464,8 @@ public class OptimizerUtility {
 	}
 
 	/**
-	 * Recursively delete all orphaned vertices below <code>vertex</code>
-	 * except vertices in <code>verticesToOmit</code> and their subgraphs. A
+	 * Recursively delete all orphaned vertices below <code>vertex</code> except
+	 * vertices in <code>verticesToOmit</code> and their subgraphs. A
 	 * {@link Vertex} is considered orphaned if no {@link Edge} starts at it.
 	 * 
 	 * @param vertex
@@ -469,7 +475,8 @@ public class OptimizerUtility {
 	 */
 	public static void deleteOrphanedVerticesBelow(Vertex vertex,
 			HashSet<? extends Vertex> verticesToOmit) {
-		// GreqlEvaluator.println("deleteOrphanedVerticesBelow(" + vertex + ")");
+		// GreqlEvaluator.println("deleteOrphanedVerticesBelow(" + vertex +
+		// ")");
 		deleteOrphanedVerticesBelow(vertex, verticesToOmit,
 				new HashSet<Vertex>());
 	}
@@ -552,9 +559,9 @@ public class OptimizerUtility {
 	 * @param target
 	 *            the target {@link Vertex}
 	 * @return <code>true</code> if there's a forward directed path from
-	 *         <code>edge</code> to <code>target</code> with no other
-	 *         vertices of <code>target</code>'s class in between,
-	 *         <code>false</code> otherwise
+	 *         <code>edge</code> to <code>target</code> with no other vertices
+	 *         of <code>target</code>'s class in between, <code>false</code>
+	 *         otherwise
 	 */
 	public static boolean existsForwardPathExcludingOtherTargetClassVertices(
 			Edge edge, Vertex target) {

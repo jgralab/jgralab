@@ -28,7 +28,7 @@ public abstract class SemanticGraph {
 	protected static GraphMarker<VertexEvaluator> vertexEvalGraphMarker;
 	protected static GraphSize graphSize;
 
-	private static Logger logger = Logger.getLogger(SemanticGraph.class
+	protected static Logger logger = Logger.getLogger(SemanticGraph.class
 			.getName());
 
 	public SemanticGraph dissolve() {
@@ -287,18 +287,6 @@ public abstract class SemanticGraph {
 						conjunction.leftHandSide.getCPathComplement(hx)
 								.deepCopy(), conjunction.rightHandSide
 								.getCPathExtension(hy).deepCopy()));
-		// } else {
-		// System.out
-		// .println("chainSubgraph != And(hx, hy) or hx or hy are no cblocks.");
-		// }
-		// } else {
-		// GreqlEvaluator.println("fullBlock " + fullBlock + " containing " +
-		// link
-		// + " is a " + fullBlock.getClass().getSimpleName());
-		// }
-		//
-		// // No case matches, so it's no dissolution chain.
-		// return null;
 	}
 
 	public SemanticGraph replaceInGraph(SemanticGraph originalSubgraph,

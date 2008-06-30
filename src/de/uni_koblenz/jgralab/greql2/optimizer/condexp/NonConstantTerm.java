@@ -4,7 +4,6 @@
 package de.uni_koblenz.jgralab.greql2.optimizer.condexp;
 
 import java.util.HashSet;
-import java.util.logging.Logger;
 
 import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.GraphSize;
 import de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.VertexEvaluator;
@@ -18,9 +17,6 @@ import de.uni_koblenz.jgralab.greql2.schema.Expression;
  * 
  */
 public class NonConstantTerm extends Formula {
-
-	private static Logger logger = Logger.getLogger(NonConstantTerm.class
-			.getName());
 
 	protected Expression expression;
 

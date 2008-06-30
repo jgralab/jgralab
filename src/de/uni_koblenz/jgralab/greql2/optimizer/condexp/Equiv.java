@@ -3,8 +3,6 @@
  */
 package de.uni_koblenz.jgralab.greql2.optimizer.condexp;
 
-import java.util.logging.Logger;
-
 import de.uni_koblenz.jgralab.greql2.schema.Expression;
 
 /**
@@ -14,7 +12,6 @@ import de.uni_koblenz.jgralab.greql2.schema.Expression;
  * 
  */
 public class Equiv extends BinaryOperator {
-	private static Logger logger = Logger.getLogger(Equiv.class.getName());
 
 	public Equiv(Formula lhs, Formula rhs) {
 		super(lhs, rhs);

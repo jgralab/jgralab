@@ -4,6 +4,7 @@
 package de.uni_koblenz.jgralab.greql2.optimizer.condexp;
 
 import java.util.HashSet;
+import java.util.logging.Logger;
 
 import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
@@ -22,6 +23,8 @@ import de.uni_koblenz.jgralab.greql2.schema.TrivalentBoolean;
  * 
  */
 public abstract class Formula {
+	protected static Logger logger = Logger.getLogger(Formula.class
+			.getPackage().getName());
 
 	/**
 	 * Indicates if a simplification or optimization (condexp-transformation)

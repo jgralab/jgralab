@@ -44,8 +44,8 @@ public class GraphContainer {
 	private static int keyGenerator;
 
 	/**
-	 * the {@code Map} holding the graphs created or loaded via the
-	 * {@code JGraLabFacade}
+	 * the {@code Map} holding the graphs created or loaded via the {@code
+	 * JGraLabFacade}
 	 */
 	private Map<Integer, Graph> graphs;
 

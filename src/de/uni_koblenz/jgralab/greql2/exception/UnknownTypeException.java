@@ -45,8 +45,6 @@ public class UnknownTypeException extends QuerySourceException {
 			List<SourcePosition> sourcePositions, Exception cause) {
 		super("The Datagraph schema doesn't contain a type ", typeName,
 				sourcePositions, cause);
-		// GreqlEvaluator.println("Creating UnknownTypeException with possible
-		// SourcePositions: ");
 		for (SourcePosition sp : sourcePositions) {
 			logger.severe("UnknownTypeException");
 			logger.severe("  (" + sp.offset + ", " + sp.length + ")");
@@ -58,8 +56,6 @@ public class UnknownTypeException extends QuerySourceException {
 			List<SourcePosition> sourcePositions) {
 		super("The Datagraph schema doesn't contain a type ", typeName,
 				sourcePositions);
-		System.out
-				.println("Creating UnknownTypeException with possible SourcePositions: ");
 		for (SourcePosition sp : sourcePositions) {
 			logger.severe("UnknownTypeException");
 			logger.severe("  (" + sp.offset + ", " + sp.length + ")");

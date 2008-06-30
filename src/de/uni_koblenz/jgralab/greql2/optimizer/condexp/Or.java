@@ -3,8 +3,6 @@
  */
 package de.uni_koblenz.jgralab.greql2.optimizer.condexp;
 
-import java.util.logging.Logger;
-
 import de.uni_koblenz.jgralab.greql2.optimizer.OptimizerUtility;
 import de.uni_koblenz.jgralab.greql2.schema.Expression;
 import de.uni_koblenz.jgralab.greql2.schema.FunctionApplication;
@@ -17,8 +15,6 @@ import de.uni_koblenz.jgralab.greql2.schema.FunctionId;
  * 
  */
 public class Or extends BinaryOperator {
-
-	private static Logger logger = Logger.getLogger(Or.class.getName());
 
 	public Or(Formula lhs, Formula rhs) {
 		super(lhs, rhs);

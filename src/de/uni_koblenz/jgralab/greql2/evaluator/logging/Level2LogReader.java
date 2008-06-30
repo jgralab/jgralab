@@ -70,7 +70,7 @@ public class Level2LogReader extends Level2LoggingBase implements
 	 * logDirectory, schemaName, graphId and loggingType as the given
 	 * {@link Level2Logger}.
 	 * 
-	 * @param logger
+	 * @param l2logger
 	 *            the {@link Level2Logger} which's values to use
 	 */
 	public Level2LogReader(Level2Logger l2logger) {
