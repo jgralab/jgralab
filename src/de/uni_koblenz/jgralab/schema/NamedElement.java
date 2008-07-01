@@ -62,10 +62,10 @@ public interface NamedElement {
 	@Deprecated
 	public String getName();
 	
-	String getQualifiedName(Package pkg);
-	String getPackageName();
-	String getPathName();
-	String getDirectoryName();
+	public String getQualifiedName(Package pkg);
+	public String getPackageName();
+	public String getPathName();
+	public String getDirectoryName();
 	
 	public Schema getSchema();
 }

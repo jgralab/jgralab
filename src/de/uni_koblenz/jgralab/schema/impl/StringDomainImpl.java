@@ -56,7 +56,7 @@ public class StringDomainImpl extends BasicDomainImpl implements StringDomain {
 
 	@Override
 	public String toString() {
-		return "String";
+		return "domain String";
 	}
 
 	public boolean isBasic() {

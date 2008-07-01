@@ -50,6 +50,7 @@ public class ObjectDomainImpl extends BasicDomainImpl implements ObjectDomain {
 
 	@Override
 	public boolean isComposite() {
+		// TODO why?
 		return true;
 	}
 
