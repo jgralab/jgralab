@@ -43,24 +43,13 @@ public abstract class BasicDomainImpl extends DomainImpl implements BasicDomain 
 	}
 
 	public void setPackage(Package p) {
-		System.err.println("The package of a BasicDomain may not be changed.");
 		throw new UnsupportedOperationException(
 				"The package of a BasicDomain may not be changed.");
 	}
 
 	public void setUniqueName(String newUniqueName) {
-		System.err
-				.println("The unique name of a BasicDomain may not be changed.");
 		throw new UnsupportedOperationException(
 				"The unique name of a BasicDomain may not be changed.");
-	}
-
-	public String getQualifiedName() {
-		return "." + getSimpleName();
-	}
-
-	public String getQualifiedName(Package p) {
-		return getQualifiedName();
 	}
 
 }
