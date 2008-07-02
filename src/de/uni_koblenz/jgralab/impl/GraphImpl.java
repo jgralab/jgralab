@@ -471,8 +471,6 @@ Graph {
 			addVertex(v);
 			return (T) v;
 		} catch (Exception ex) {
-			ex.printStackTrace();
-			System.exit(1);
 			throw new GraphException("Error creating vertex of class "
 					+ cls.getName(), ex);
 		}

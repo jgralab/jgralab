@@ -35,7 +35,7 @@ import de.uni_koblenz.jgralab.schema.QualifiedName;
 import de.uni_koblenz.jgralab.schema.Schema;
 import de.uni_koblenz.jgralab.schema.SchemaException;
 
-public class EnumDomainImpl extends BasicDomainImpl implements EnumDomain {
+public class EnumDomainImpl extends DomainImpl implements EnumDomain {
 
 	/**
 	 * holds a list of the components of the enumeration
@@ -137,5 +137,9 @@ public class EnumDomainImpl extends BasicDomainImpl implements EnumDomain {
 		code.add("}");
 		
 		return code;
+	}
+	
+	public boolean isComposite() {
+		return false;
 	}
 }

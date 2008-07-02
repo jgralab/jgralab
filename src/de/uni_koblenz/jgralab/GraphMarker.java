@@ -44,12 +44,12 @@ public class GraphMarker<T> {
 	/**
 	 * Stores the mapping between Graph, Edge or Vertex and the attribute
 	 */
-	private HashMap<AttributedElement, T> tempAttributeMap;
+	protected HashMap<AttributedElement, T> tempAttributeMap;
 
 	/**
 	 * The graph which is marked by this GraphMarker.
 	 */
-	private Graph graph;
+	protected Graph graph;
 
 	/**
 	 * Creates a new GraphMarker
@@ -65,7 +65,7 @@ public class GraphMarker<T> {
 	 * 
 	 * @param elem
 	 *            the element to get the marking for
-	 * @return the object that marks the givne element or <code>null</code> if
+	 * @return the object that marks the given element or <code>null</code> if
 	 *         the given element is not marked in this marking.
 	 */
 	public T getMark(AttributedElement elem) {
