@@ -31,13 +31,13 @@ import de.uni_koblenz.jgralab.impl.ReversedEdgeImpl;
 /**
  * This class can be used to "colorize" graphs, edges and vertices. If a
  * algorithm only needs to distinguish between "marked" and "not marked", a look
- * at the class <code>BooleanGraphMarker</code> may be reasonable. If a
- * specific kind of marking is used, it may be reasonalbe to extends this
- * GraphMarker. A example how that could be done is located in the tutorial in
- * the class <code>DijkstraVertexMarker</code>.
- * 
+ * at the class <code>BooleanGraphMarker</code> may be reasonable. If a specific
+ * kind of marking is used, it may be reasonalbe to extends this GraphMarker. A
+ * example how that could be done is located in the tutorial in the class
+ * <code>DijkstraVertexMarker</code>.
+ *
  * @author Daniel Bildhauer <dbildh@uni-koblenz.de> November 2006
- * 
+ *
  */
 public class GraphMarker<T> {
 
@@ -62,15 +62,16 @@ public class GraphMarker<T> {
 	/**
 	 * returns the object that marks the given Graph, Edge or Vertex in this
 	 * marking.
-	 * 
+	 *
 	 * @param elem
 	 *            the element to get the marking for
 	 * @return the object that marks the given element or <code>null</code> if
 	 *         the given element is not marked in this marking.
 	 */
 	public T getMark(AttributedElement elem) {
-		if (elem == null)
+		if (elem == null) {
 			return null;
+		}
 		if (elem instanceof ReversedEdgeImpl) {
 			elem = ((ReversedEdgeImpl) elem).getNormalEdge();
 		}
@@ -79,7 +80,7 @@ public class GraphMarker<T> {
 
 	/**
 	 * marks the given element with the given value
-	 * 
+	 *
 	 * @param elem
 	 *            the element (Graph, Vertex or Edge) to mark
 	 * @param value
@@ -104,7 +105,7 @@ public class GraphMarker<T> {
 
 	/**
 	 * Returns the number of marked elements in this GraphMarker.
-	 * 
+	 *
 	 * @return The number of marked elements.
 	 */
 	public int size() {
@@ -120,7 +121,7 @@ public class GraphMarker<T> {
 
 	/**
 	 * Returns the Graph of this GraphMarker.
-	 * 
+	 *
 	 * @return the Graph of this GraphMarker.
 	 */
 	public Graph getGraph() {
@@ -129,7 +130,7 @@ public class GraphMarker<T> {
 
 	/**
 	 * Remove the mark from <code>elem</code>.
-	 * 
+	 *
 	 * @param elem
 	 *            a marked {@link AttributedElement}
 	 */
@@ -137,4 +138,11 @@ public class GraphMarker<T> {
 		tempAttributeMap.remove(elem);
 	}
 
+	/**
+	 * @return An {@link Iterable} of all {@link AttributedElement}s in the
+	 *         {@link Graph} that are marked by this marker.
+	 */
+	public Iterable<AttributedElement> getMarkedElements() {
+		return tempAttributeMap.keySet();
+	}
 }
