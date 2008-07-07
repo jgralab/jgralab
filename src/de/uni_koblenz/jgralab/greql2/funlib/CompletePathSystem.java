@@ -24,19 +24,6 @@
 
 package de.uni_koblenz.jgralab.greql2.funlib;
 
-import de.uni_koblenz.jgralab.greql2.evaluator.fa.DFA;
-import de.uni_koblenz.jgralab.greql2.evaluator.fa.NFA;
-import de.uni_koblenz.jgralab.greql2.evaluator.fa.State;
-import de.uni_koblenz.jgralab.greql2.evaluator.fa.Transition;
-import de.uni_koblenz.jgralab.greql2.exception.EvaluateException;
-import de.uni_koblenz.jgralab.greql2.exception.WrongFunctionParameterException;
-import de.uni_koblenz.jgralab.greql2.funlib.pathsearch.PathSearch;
-import de.uni_koblenz.jgralab.greql2.funlib.pathsearch.PathSystemMarkerEntry;
-import de.uni_koblenz.jgralab.greql2.funlib.pathsearch.PathSystemMarkerList;
-import de.uni_koblenz.jgralab.greql2.funlib.pathsearch.PathSystemQueueEntry;
-import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
-import de.uni_koblenz.jgralab.greql2.jvalue.JValuePathSystem;
-
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -48,6 +35,18 @@ import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.GraphMarker;
 import de.uni_koblenz.jgralab.Vertex;
+import de.uni_koblenz.jgralab.greql2.evaluator.fa.DFA;
+import de.uni_koblenz.jgralab.greql2.evaluator.fa.NFA;
+import de.uni_koblenz.jgralab.greql2.evaluator.fa.State;
+import de.uni_koblenz.jgralab.greql2.evaluator.fa.Transition;
+import de.uni_koblenz.jgralab.greql2.exception.EvaluateException;
+import de.uni_koblenz.jgralab.greql2.exception.WrongFunctionParameterException;
+import de.uni_koblenz.jgralab.greql2.funlib.pathsearch.PathSearch;
+import de.uni_koblenz.jgralab.greql2.funlib.pathsearch.PathSystemMarkerEntry;
+import de.uni_koblenz.jgralab.greql2.funlib.pathsearch.PathSystemMarkerList;
+import de.uni_koblenz.jgralab.greql2.funlib.pathsearch.PathSystemQueueEntry;
+import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
+import de.uni_koblenz.jgralab.greql2.jvalue.JValueCompletePathSystem;
 
 /**
  * Returns a pathsystem, based on the current graph and the given dfa, whose
@@ -91,7 +90,7 @@ import de.uni_koblenz.jgralab.Vertex;
  * @return a JValuePathSystem, which contains all path in the graph, that start
  * with the givne rootvertex and match the given rpe
  */
-public class PathSystem extends PathSearch implements Greql2Function {
+public class CompletePathSystem extends PathSearch implements Greql2Function {
 
 	/**
 	 * for each state in the fa (normally < 10) a seperate GraphMarker is used
@@ -128,7 +127,23 @@ public class PathSystem extends PathSearch implements Greql2Function {
 	}
 
 	/**
-	 * Checks if the given vertex is marked with the given state
+	 * Checks if the given vertex is marked with the given state and parent vertex
+	 * 
+	 * @return true if the vertex is marked, false otherwise
+	 */
+	protected boolean isMarked(Vertex v, State s, Edge parentEdge) {
+		GraphMarker<PathSystemMarkerList> currentMarker = marker.get(s.number);
+		if (currentMarker == null)
+			return false;
+		PathSystemMarkerList list = currentMarker.getMark(v);
+		for (PathSystemMarkerEntry entry : list)
+			if (entry.edgeToParentVertex == parentEdge)
+				return true;
+		return false;
+	}
+	
+	/**
+	 * Checks if the given vertex is marked with the given state and parent vertex
 	 * 
 	 * @return true if the vertex is marked, false otherwise
 	 */
@@ -137,7 +152,7 @@ public class PathSystem extends PathSearch implements Greql2Function {
 		if (currentMarker == null)
 			return false;
 		PathSystemMarkerList list = currentMarker.getMark(v);
-		return (list != null);
+		return list != null;
 	}
 
 	/**
@@ -180,27 +195,28 @@ public class PathSystem extends PathSearch implements Greql2Function {
 					Transition currentTransition = transitionIter.next();
 					Vertex nextVertex = currentTransition.getNextVertex(
 							currentEntry.vertex, inc);
-					if (!isMarked(nextVertex, currentTransition.getEndState())) {
+					if (!isMarked(nextVertex, currentTransition.getEndState(), inc)) {
 						if (currentTransition.accepts(currentEntry.vertex, inc,
 								subgraph)) {
 							markVertex(nextVertex, currentTransition
 									.getEndState(), currentEntry.vertex, inc,
 									currentEntry.state,
 									currentEntry.distanceToRoot + 1);
+							if (!isMarked(nextVertex, currentTransition.getEndState())) {
 							PathSystemQueueEntry nextEntry = new PathSystemQueueEntry(
 									nextVertex,
 									currentTransition.getEndState(), inc,
 									currentEntry.state,
 									currentEntry.distanceToRoot + 1);
 							queue.add(nextEntry);
+							}
 						}
-					}
+					} 
 				}
 				inc = inc.getNextEdge();
 			}
 			currentEntry = queue.poll();
 		}
-		// GreqlEvaluator.errprintln("Marking vertices of path system finished");
 		return finalVertices;
 	}
 
@@ -228,7 +244,7 @@ public class PathSystem extends PathSearch implements Greql2Function {
 			marker.add(new GraphMarker<PathSystemMarkerList>(graph));
 		List<Vertex> leaves = markVerticesOfPathSystem(startVertex, dfa,
 				subgraph);
-		JValuePathSystem resultPathSystem = createPathSystemFromMarkings(
+		JValueCompletePathSystem resultPathSystem = createPathSystemFromMarkings(
 				startVertex, leaves);
 		return resultPathSystem;
 	}
@@ -240,9 +256,9 @@ public class PathSystem extends PathSearch implements Greql2Function {
 	 * @param leaves
 	 * @return
 	 */
-	private JValuePathSystem createPathSystemFromMarkings(Vertex rootVertex,
+	private JValueCompletePathSystem createPathSystemFromMarkings(Vertex rootVertex,
 			List<Vertex> leaves) {
-		JValuePathSystem pathSystem = new JValuePathSystem(rootVertex
+		JValueCompletePathSystem pathSystem = new JValueCompletePathSystem(rootVertex
 				.getGraph());
 		PathSystemMarkerList rootMarkerList = marker.get(0).getMark(rootVertex);
 		PathSystemMarkerEntry rootMarker = rootMarkerList
