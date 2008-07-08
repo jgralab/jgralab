@@ -27,16 +27,13 @@ package de.uni_koblenz.jgralab.greql2.jvalue;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
 
-import java.util.List;
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.Graph;
-import de.uni_koblenz.jgralab.GraphElement;
 import de.uni_koblenz.jgralab.Vertex;
-import de.uni_koblenz.jgralab.schema.AttributedElementClass;
-import de.uni_koblenz.jgralab.schema.GraphElementClass;
 
 public class JValueCompletePathSystem extends JValue {
 
@@ -180,15 +177,18 @@ public class JValueCompletePathSystem extends JValue {
 			Vertex parentVertex, int parentStateNumber, int distance,
 			boolean finalState) {
 		PathSystemKey key = new PathSystemKey(vertex, stateNumber);
-		if (!keyToEntryMap.containsKey(key)) {
-			PathSystemEntry entry = new PathSystemEntry(parentVertex,
-					parentEdge, parentStateNumber, distance, finalState);
-			List<PathSystemEntry> entryList = new ArrayList<PathSystemEntry>();
-			entryList.add(entry);
+		List<PathSystemEntry> entryList = keyToEntryMap.get(key);
+		if (entryList == null) {
+			entryList = new ArrayList<PathSystemEntry>();
 			keyToEntryMap.put(key, entryList);
 			if (!vertexToFirstKeyMap.containsKey(vertex))
 				vertexToFirstKeyMap.put(vertex, key);
 			leafKeys = null;
+		} 
+		PathSystemEntry entry = new PathSystemEntry(parentVertex,
+				 parentEdge, parentStateNumber, distance, finalState);
+		if (!entryList.contains(entry)) {
+			entryList.add(entry);
 		}
 	}
 
@@ -509,7 +509,7 @@ public class JValueCompletePathSystem extends JValue {
 		JValueSet resultSet = new JValueSet();
 		for (Map.Entry<PathSystemKey, List<PathSystemEntry>> mapEntry: keyToEntryMap.entrySet()) {
 			for (PathSystemEntry thisEntry : mapEntry.getValue()) {
-				resultSet.add(new JValue(thisEntry.getParentVertex()));
+				resultSet.add(new JValue((Vertex) thisEntry.getParentVertex()));
 			}
 		}
 		return resultSet;
@@ -565,17 +565,17 @@ public class JValueCompletePathSystem extends JValue {
 		}
 	}
 
-	/**
-	 * create the set of leave keys
-	 */
-	private void createLeafKeys() {
-		if (leafKeys != null)
-			return;
-		leafKeys = new ArrayList<PathSystemKey>();
-		for (Map.Entry<PathSystemKey, List<PathSystemEntry>> mapEntry: keyToEntryMap.entrySet()) {
-			leafKeys.add(mapEntry.getKey());
-		}	
-	}
+//	/**
+//	 * create the set of leave keys
+//	 */
+//	private void createLeafKeys() {
+//		if (leafKeys != null)
+//			return;
+//		leafKeys = new ArrayList<PathSystemKey>();
+//		for (Map.Entry<PathSystemKey, List<PathSystemEntry>> mapEntry: keyToEntryMap.entrySet()) {
+//			leafKeys.add(mapEntry.getKey());
+//		}	
+//	}
 
 	/**
 	 * Extract the path which starts with the root vertex and ends with the
@@ -652,27 +652,27 @@ public class JValueCompletePathSystem extends JValue {
 //		return pathSet;
 //	}
 
-	/**
-	 * calculate the number of vertices this pathsystem has. If a vertex is part
-	 * of this PathSystem n times, it is counted n times
-	 */
-	public int weight() {
-		return keyToEntryMap.size();
-	}
-
-	/**
-	 * calculates the depth of this pathtree
-	 */
-	public int depth() {
-		int maxdepth = 0;
-		for (Map.Entry<PathSystemKey, List<PathSystemEntry>> mapEntry: keyToEntryMap.entrySet()) {
-			for (PathSystemEntry entry : mapEntry.getValue()) {
-				if (entry.getDistanceToRoot() > maxdepth)
-					maxdepth = entry.getDistanceToRoot();
-			}
-		}
-		return maxdepth;
-	}
+//	/**
+//	 * calculate the number of vertices this pathsystem has. If a vertex is part
+//	 * of this PathSystem n times, it is counted n times
+//	 */
+//	public int weight() {
+//		return keyToEntryMap.size();
+//	}
+//
+//	/**
+//	 * calculates the depth of this pathtree
+//	 */
+//	public int depth() {
+//		int maxdepth = 0;
+//		for (Map.Entry<PathSystemKey, List<PathSystemEntry>> mapEntry: keyToEntryMap.entrySet()) {
+//			for (PathSystemEntry entry : mapEntry.getValue()) {
+//				if (entry.getDistanceToRoot() > maxdepth)
+//					maxdepth = entry.getDistanceToRoot();
+//			}
+//		}
+//		return maxdepth;
+//	}
 
 	/**
 	 * Calculates the distance between the root vertex of this path system and
