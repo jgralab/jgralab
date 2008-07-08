@@ -192,64 +192,64 @@ public class JValueCompletePathSystem extends JValue {
 		}
 	}
 
-	/**
-	 * Calculates the set of children the given vertex has in this PathSystem.
-	 * If the given vertex exists more than one times in this pathsystem, the
-	 * first occurence if used.
-	 */
-	public JValueSet children(Vertex vertex) {
-		PathSystemKey key = vertexToFirstKeyMap.get(vertex);
-		return children(key);
-	}
+//	/**
+//	 * Calculates the set of children the given vertex has in this PathSystem.
+//	 * If the given vertex exists more than one times in this pathsystem, the
+//	 * first occurence if used.
+//	 */
+//	public JValueSet children(Vertex vertex) {
+//		PathSystemKey key = vertexToFirstKeyMap.get(vertex);
+//		return children(key);
+//	}
+//
+//	/**
+//	 * Calculates the set of child the given key has in this PathSystem
+//	 */
+//	public JValueSet children(PathSystemKey key) {
+//		JValueSet returnSet = new JValueSet();
+//		for (Map.Entry<PathSystemKey, List<PathSystemEntry>> mapEntry: keyToEntryMap.entrySet()) {
+//			for (PathSystemEntry thisEntry : mapEntry.getValue()) {
+//				if ((thisEntry.getParentVertex() == key.getVertex())
+//						&& (thisEntry.getParentStateNumber() == key
+//								.getStateNumber())) {
+//					Vertex v = mapEntry.getKey().getVertex();
+//					returnSet.add(new JValue(v, v));
+//				}
+//			}
+//		}
+//		return returnSet;
+//	}
 
-	/**
-	 * Calculates the set of child the given key has in this PathSystem
-	 */
-	public JValueSet children(PathSystemKey key) {
-		JValueSet returnSet = new JValueSet();
-		for (Map.Entry<PathSystemKey, List<PathSystemEntry>> mapEntry: keyToEntryMap.entrySet()) {
-			for (PathSystemEntry thisEntry : mapEntry.getValue()) {
-				if ((thisEntry.getParentVertex() == key.getVertex())
-						&& (thisEntry.getParentStateNumber() == key
-								.getStateNumber())) {
-					Vertex v = mapEntry.getKey().getVertex();
-					returnSet.add(new JValue(v, v));
-				}
-			}
-		}
-		return returnSet;
-	}
-
-	/**
-	 * Calculates the set of siblings of the given vertex in this PathSystem. If
-	 * the given vertex exists more than one times in this pathsystem, the first
-	 * occurence if used.
-	 */
-	public JValueSet siblings(Vertex vertex) {
-		PathSystemKey key = vertexToFirstKeyMap.get(vertex);
-		return siblings(key);
-	}
-
-	/**
-	 * Calculates the set of children the given key has in this PathSystem
-	 */
-	public JValueSet siblings(PathSystemKey key) {
-		JValueSet returnSet = new JValueSet();
-		for (PathSystemEntry entry : keyToEntryMap.get(key)) {
-			for (Map.Entry<PathSystemKey, List<PathSystemEntry>> mapEntry: keyToEntryMap.entrySet()) {
-				for (PathSystemEntry thisEntry : mapEntry.getValue()) {
-					if ((thisEntry.getParentVertex() == entry.getParentVertex())
-							&& (thisEntry.getParentStateNumber() == entry
-									.getParentStateNumber())
-							&& (mapEntry.getKey().getVertex() != key.getVertex())) {
-						Vertex v = mapEntry.getKey().getVertex();
-						returnSet.add(new JValue(v, v));
-					}	
-				}
-			}	
-		}
-		return returnSet;
-	}
+//	/**
+//	 * Calculates the set of siblings of the given vertex in this PathSystem. If
+//	 * the given vertex exists more than one times in this pathsystem, the first
+//	 * occurence if used.
+//	 */
+//	public JValueSet siblings(Vertex vertex) {
+//		PathSystemKey key = vertexToFirstKeyMap.get(vertex);
+//		return siblings(key);
+//	}
+//
+//	/**
+//	 * Calculates the set of children the given key has in this PathSystem
+//	 */
+//	public JValueSet siblings(PathSystemKey key) {
+//		JValueSet returnSet = new JValueSet();
+//		for (PathSystemEntry entry : keyToEntryMap.get(key)) {
+//			for (Map.Entry<PathSystemKey, List<PathSystemEntry>> mapEntry: keyToEntryMap.entrySet()) {
+//				for (PathSystemEntry thisEntry : mapEntry.getValue()) {
+//					if ((thisEntry.getParentVertex() == entry.getParentVertex())
+//							&& (thisEntry.getParentStateNumber() == entry
+//									.getParentStateNumber())
+//							&& (mapEntry.getKey().getVertex() != key.getVertex())) {
+//						Vertex v = mapEntry.getKey().getVertex();
+//						returnSet.add(new JValue(v, v));
+//					}	
+//				}
+//			}	
+//		}
+//		return returnSet;
+//	}
 
 //	/**
 //	 * Calculates the parent vertex of the given vertex in this PathSystem. If

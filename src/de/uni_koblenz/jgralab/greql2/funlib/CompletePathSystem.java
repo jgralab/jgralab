@@ -25,10 +25,12 @@
 package de.uni_koblenz.jgralab.greql2.funlib;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
+import java.util.Set;
 
 import de.uni_koblenz.jgralab.BooleanGraphMarker;
 import de.uni_koblenz.jgralab.Edge;
@@ -266,49 +268,46 @@ public class CompletePathSystem extends PathSearch implements Greql2Function {
 				.getPathSystemMarkerEntryWithParentVertex(null);
 		pathSystem.setRootVertex(rootVertex, rootMarker.state.number,
 				rootMarker.state.isFinal);
-		Iterator<Vertex> iter = leaves.iterator();
-		while (iter.hasNext()) {
-			Vertex leaf = iter.next();
+		Queue<Vertex> queue = new LinkedList<Vertex>();
+		queue.addAll(leaves);
+		Set<Vertex> finished = new HashSet<Vertex>();
+		while (!queue.isEmpty()) {
+			Vertex current = queue.poll();
+			finished.add(current);
 			for (GraphMarker<PathSystemMarkerList> currentGraphMarker : marker) {
-				Object tempAttribute = currentGraphMarker.getMark(leaf);
+				Object tempAttribute = currentGraphMarker.getMark(current);
 				if ((tempAttribute != null)
 						&& (tempAttribute instanceof PathSystemMarkerList)) {
 					PathSystemMarkerList leafMarkerList = (PathSystemMarkerList) tempAttribute;
-					Iterator<PathSystemMarkerEntry> entryIter = leafMarkerList
-							.iterator();
-					while (entryIter.hasNext()) {
-						PathSystemMarkerEntry currentMarker = entryIter.next();
-						Vertex currentVertex = leaf;
-						while (currentVertex != null) {
-							int parentStateNumber = 0;
-							if (currentMarker.parentState != null)
-								parentStateNumber = currentMarker.parentState.number;
-							pathSystem.addVertex(currentVertex,
-									currentMarker.state.number,
-									currentMarker.edgeToParentVertex,
-									currentMarker.parentVertex,
-									parentStateNumber,
-									currentMarker.distanceToRoot,
-									currentMarker.state.isFinal);
-							currentVertex = currentMarker.parentVertex;
-							currentMarker = getMarkerWithState(currentVertex,
-									currentMarker.parentState);
-						}
+					for (PathSystemMarkerEntry entry : leafMarkerList) {
+						if (!finished.contains(entry.parentVertex))
+							queue.offer(entry.parentVertex);
+						int parentStateNumber = 0;
+						if (entry.parentState != null)
+							parentStateNumber = entry.parentState.number;
+						pathSystem.addVertex(current,
+								entry.state.number,
+								entry.edgeToParentVertex,
+								entry.parentVertex,
+								parentStateNumber,
+								entry.distanceToRoot,
+								entry.state.isFinal);
 					}
 				}
-			}
+			}	
 		}
 		return pathSystem;
 	}
 
-	private PathSystemMarkerEntry getMarkerWithState(Vertex v, State s) {
+	private List<PathSystemMarkerEntry> getMarkerWithState(Vertex v, State s) {
 		if (v == null)
 			return null;
 		GraphMarker<PathSystemMarkerList> currentMarker = marker.get(s.number);
 		PathSystemMarkerList list = currentMarker.getMark(v);
 		Iterator<PathSystemMarkerEntry> iter = list.iterator();
-		if (iter.hasNext()) {
-			return iter.next();
+		List<PathSystemMarkerEntry> returnList = new ArrayList<PathSystemMarkerEntry>();
+		while (iter.hasNext()) {
+			returnList.add(iter.next());
 		}
 		return null;
 	}
