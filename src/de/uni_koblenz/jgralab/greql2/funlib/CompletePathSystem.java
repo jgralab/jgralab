@@ -136,9 +136,10 @@ public class CompletePathSystem extends PathSearch implements Greql2Function {
 		if (currentMarker == null)
 			return false;
 		PathSystemMarkerList list = currentMarker.getMark(v);
-		for (PathSystemMarkerEntry entry : list)
-			if (entry.edgeToParentVertex == parentEdge)
-				return true;
+		if (list != null)
+			for (PathSystemMarkerEntry entry : list)
+				if (entry.edgeToParentVertex == parentEdge)
+					return true;
 		return false;
 	}
 	
