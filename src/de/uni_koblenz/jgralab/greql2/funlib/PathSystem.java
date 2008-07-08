@@ -84,7 +84,7 @@ import de.uni_koblenz.jgralab.Vertex;
 /*
  * Calculates the PathSystem that is constructed from the given root vertex, all
  * vertices that are reachable via a path of the given description and all
- * vertices, that are part of one of these parts
+ * vertices, that are part of one of these paths
  * 
  * @param vertex the rootvertex of the pathsystem to create @param rpe the
  * regular path expression, which describes the structure of the pathsystem.

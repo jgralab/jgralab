@@ -1710,6 +1710,7 @@ primaryExpression2 returns [Expression expr = null] throws ParseException, Dupli
 	:
 		( LPAREN expr = expression RPAREN )
 		|	expr = rangeExpression
+		|	expr = alternativePathDescription
 		|	expr = literal
 		|	expr = valueConstruction
 		| 	expr = functionApplication
