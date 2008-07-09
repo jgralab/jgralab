@@ -152,6 +152,7 @@ public class JValueCompletePathSystem extends JValue {
 			vertexToFirstKeyMap.put(vertex, key);
 		leafKeys = null;
 		hashvalue = 0;
+		rootVertex = vertex;
 	}
 
 	/**
