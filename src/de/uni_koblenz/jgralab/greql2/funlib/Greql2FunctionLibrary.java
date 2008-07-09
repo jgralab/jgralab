@@ -32,6 +32,8 @@ import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 import java.util.logging.Logger;
 
+import de.uni_koblenz.jgralab.greql2.exception.DuplicateGreqlFunctionException;
+
 /**
  * This class is the core of the function libary. It's implemented following the
  * singleton-pattern. On load, a instance gets created and all functions in the
@@ -143,10 +145,14 @@ public class Greql2FunctionLibrary {
 				logger.finer("Implementing interface "
 						+ interfaces[i].getName());
 				if (interfaces[i].getName().equals(funIntName)) {
-					Object o = functionClass.getConstructor().newInstance();
-					availableFunctions.put(
+					try {
+						Object o = functionClass.getConstructor().newInstance();
+						availableFunctions.put(
 							toFunctionName(functionClass.getSimpleName()),
 							(Greql2Function) o);
+					} catch (Exception ex) {
+						throw new RuntimeException("The class " + functionClass.getName() + " has no default constructor and is thus not usable as GReQL function");
+					}
 				}
 			}
 	}

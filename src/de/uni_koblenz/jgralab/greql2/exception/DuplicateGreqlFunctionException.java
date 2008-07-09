@@ -8,12 +8,12 @@ package de.uni_koblenz.jgralab.greql2.exception;
  * @author Daniel Bildhauer <dbildh@uni-koblenz.de>
  *
  */
-public class DuplicateGreqlFunction extends RuntimeException {
+public class DuplicateGreqlFunctionException extends RuntimeException {
 	
 
 	private static final long serialVersionUID = -5682985318690802997L;
 
-	public DuplicateGreqlFunction(String message) {
+	public DuplicateGreqlFunctionException(String message) {
 		super(message);
 	}
 
