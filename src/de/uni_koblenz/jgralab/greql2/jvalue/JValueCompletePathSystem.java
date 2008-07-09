@@ -496,7 +496,8 @@ public class JValueCompletePathSystem extends JValue {
 		JValueSet resultSet = new JValueSet();
 		for (Map.Entry<PathSystemKey, List<PathSystemEntry>> mapEntry: keyToEntryMap.entrySet()) {
 			for (PathSystemEntry thisEntry : mapEntry.getValue()) {
-				resultSet.add(new JValue(thisEntry.getParentEdge()));
+				if (thisEntry.getParentEdge() != null)
+					resultSet.add(new JValue(thisEntry.getParentEdge()));
 			}
 		}
 		return resultSet;

@@ -82,8 +82,7 @@ public class Greql2FunctionLibrary {
 	/**
 	 * creates a new GreqlFunctionLibrary
 	 */
-	public Greql2FunctionLibrary() {
-		// GreqlEvaluator.println("Creating a new GreqlFunctionLibrary");
+	public Greql2FunctionLibrary() throws RuntimeException {
 		availableFunctions = new HashMap<String, Greql2Function>();
 		registerAllFunctions();
 	}
@@ -127,6 +126,31 @@ public class Greql2FunctionLibrary {
 		return className;
 	}
 
+	
+	/**
+	 * registeres the given class as a GReQL-function in this Library
+	 * 
+	 * @param functionClass the class that implements the GReQL function 
+	 */
+	@SuppressWarnings("unchecked")
+	public void registerUserDefinedFunction(Class<? extends Greql2Function> functionClass) throws DuplicateGreqlFunctionException {
+			logger.finer("Try to register user defined function: " + functionClass.getName());
+			if (isGreqlFunction(toFunctionName(functionClass.getSimpleName())))
+				throw new DuplicateGreqlFunctionException("The class " + functionClass.getName() + " can not be registered as GReQL function, there is already a function ");
+			Class[] interfaces = functionClass.getInterfaces();
+			String funIntName = packageName + ".Greql2Function";
+			for (int i = 0; i < interfaces.length; i++) {
+				logger.finer("Implementing interface "
+						+ interfaces[i].getName());
+				if (interfaces[i].getName().equals(funIntName)) {
+					Object o = functionClass.getConstructor().newInstance();
+					availableFunctions.put(
+							toFunctionName(functionClass.getSimpleName()),
+							(Greql2Function) o);
+				}
+			}
+	}
+	
 	/**
 	 * registeres the given class as a GReQL-function in this Library
 	 * 
@@ -134,7 +158,7 @@ public class Greql2FunctionLibrary {
 	 *            the class which implements the greqlFunction
 	 */
 	@SuppressWarnings("unchecked")
-	private void registerFunction(String className) {
+	private void registerPredefinedFunction(String className) {
 		try {
 			logger.finer("Try to register function: " + className);
 			logger.finer("Found Class: "
@@ -153,7 +177,8 @@ public class Greql2FunctionLibrary {
 							(Greql2Function) o);
 				}
 			}
-		} catch (Exception ce) {
+		} catch (Exception ex) {
+			throw new RuntimeException("Error loading GReQL functions, check if folder with function classes is readable");
 		}
 	}
 
@@ -182,7 +207,7 @@ public class Greql2FunctionLibrary {
 						logger.finer("Reading entry " + entryName);
 					if (entryName.startsWith(nondottedPackageName)
 							&& entryName.endsWith(".class")) {
-						registerFunction(entryName.substring(
+						registerPredefinedFunction(entryName.substring(
 								nondottedPackageName.length() + 1, entryName
 										.length() - 6));
 						logger.finer("Registering function: "
@@ -214,7 +239,7 @@ public class Greql2FunctionLibrary {
 			if (entries[i].endsWith(".class")) {
 				String className = entries[i].substring(0,
 						entries[i].length() - 6);
-				registerFunction(className);
+				registerPredefinedFunction(className);
 			}
 		}
 		if (i > 0)
