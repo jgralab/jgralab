@@ -152,8 +152,9 @@ public class CompletePathSystem extends PathSearch implements Greql2Function {
 	 */
 	protected boolean isMarked(Vertex v, State s) {
 		GraphMarker<PathSystemMarkerList> currentMarker = marker.get(s.number);
-		if (currentMarker == null)
+		if (currentMarker == null) {
 			return false;
+		}	
 		PathSystemMarkerList list = currentMarker.getMark(v);
 		return list != null;
 	}
@@ -183,10 +184,12 @@ public class CompletePathSystem extends PathSearch implements Greql2Function {
 		Queue<PathSystemQueueEntry> queue = new LinkedList<PathSystemQueueEntry>();
 		PathSystemQueueEntry currentEntry = new PathSystemQueueEntry(
 				startVertex, dfa.initialState, null, null, 0);
+		queue.offer(currentEntry);
 		markVertex(startVertex, dfa.initialState, null /* no parent state */,
 				   null /* no parent vertex */, null /* no parent state */, 
 				   0 /*distance to root is null*/);
-		while (currentEntry != null) {
+		while (!queue.isEmpty()) {
+			currentEntry = queue.poll();
 			if (currentEntry.state.isFinal) {
 				finalVertices.add(currentEntry.vertex);
 			}
@@ -201,24 +204,22 @@ public class CompletePathSystem extends PathSearch implements Greql2Function {
 					if (!isMarked(nextVertex, currentTransition.getEndState(), inc)) {
 						if (currentTransition.accepts(currentEntry.vertex, inc,
 								subgraph)) {
+							if (!isMarked(nextVertex, currentTransition.getEndState())) {
+								queue.add(new PathSystemQueueEntry(
+									nextVertex,
+									currentTransition.getEndState(), inc,
+									currentEntry.state,
+									currentEntry.distanceToRoot + 1));
+							}
 							markVertex(nextVertex, currentTransition
 									.getEndState(), currentEntry.vertex, inc,
 									currentEntry.state,
 									currentEntry.distanceToRoot + 1);
-							if (!isMarked(nextVertex, currentTransition.getEndState())) {
-							PathSystemQueueEntry nextEntry = new PathSystemQueueEntry(
-									nextVertex,
-									currentTransition.getEndState(), inc,
-									currentEntry.state,
-									currentEntry.distanceToRoot + 1);
-							queue.add(nextEntry);
-							}
 						}
 					} 
 				}
 				inc = inc.getNextEdge();
 			}
-			currentEntry = queue.poll();
 		}
 		return finalVertices;
 	}
@@ -269,19 +270,23 @@ public class CompletePathSystem extends PathSearch implements Greql2Function {
 		pathSystem.setRootVertex(rootVertex, rootMarker.state.number,
 				rootMarker.state.isFinal);
 		Queue<Vertex> queue = new LinkedList<Vertex>();
-		queue.addAll(leaves);
-		Set<Vertex> finished = new HashSet<Vertex>();
+		for (Vertex v : leaves) {
+			queue.add(v);
+		}
+		Set<Vertex> alreadyEnqueuedVertices = new HashSet<Vertex>();
+		alreadyEnqueuedVertices.addAll(queue);
 		while (!queue.isEmpty()) {
 			Vertex current = queue.poll();
-			finished.add(current);
 			for (GraphMarker<PathSystemMarkerList> currentGraphMarker : marker) {
 				Object tempAttribute = currentGraphMarker.getMark(current);
 				if ((tempAttribute != null)
 						&& (tempAttribute instanceof PathSystemMarkerList)) {
 					PathSystemMarkerList leafMarkerList = (PathSystemMarkerList) tempAttribute;
 					for (PathSystemMarkerEntry entry : leafMarkerList) {
-						if (!finished.contains(entry.parentVertex))
+						if (entry.parentVertex != null && !alreadyEnqueuedVertices.contains(entry.parentVertex)) {
 							queue.offer(entry.parentVertex);
+							alreadyEnqueuedVertices.add(entry.parentVertex);
+						}	
 						int parentStateNumber = 0;
 						if (entry.parentState != null)
 							parentStateNumber = entry.parentState.number;
@@ -299,18 +304,6 @@ public class CompletePathSystem extends PathSearch implements Greql2Function {
 		return pathSystem;
 	}
 
-	private List<PathSystemMarkerEntry> getMarkerWithState(Vertex v, State s) {
-		if (v == null)
-			return null;
-		GraphMarker<PathSystemMarkerList> currentMarker = marker.get(s.number);
-		PathSystemMarkerList list = currentMarker.getMark(v);
-		Iterator<PathSystemMarkerEntry> iter = list.iterator();
-		List<PathSystemMarkerEntry> returnList = new ArrayList<PathSystemMarkerEntry>();
-		while (iter.hasNext()) {
-			returnList.add(iter.next());
-		}
-		return null;
-	}
 
 	public long getEstimatedCosts(ArrayList<Long> inElements) {
 		return 1000;

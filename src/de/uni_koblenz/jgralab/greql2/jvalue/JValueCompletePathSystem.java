@@ -188,7 +188,7 @@ public class JValueCompletePathSystem extends JValue {
 		PathSystemEntry entry = new PathSystemEntry(parentVertex,
 				 parentEdge, parentStateNumber, distance, finalState);
 		if (!entryList.contains(entry)) {
-			entryList.add(entry);
+				entryList.add(entry);
 		}
 	}
 
@@ -508,9 +508,10 @@ public class JValueCompletePathSystem extends JValue {
 	public JValueSet nodes() {
 		JValueSet resultSet = new JValueSet();
 		for (Map.Entry<PathSystemKey, List<PathSystemEntry>> mapEntry: keyToEntryMap.entrySet()) {
-			for (PathSystemEntry thisEntry : mapEntry.getValue()) {
-				resultSet.add(new JValue((Vertex) thisEntry.getParentVertex()));
-			}
+			resultSet.add(new JValue(mapEntry.getKey().getVertex()));
+//			for (PathSystemEntry thisEntry : mapEntry.getValue()) {
+//				resultSet.add(new JValue((Vertex) thisEntry. ));
+//			}
 		}
 		return resultSet;
 	}
