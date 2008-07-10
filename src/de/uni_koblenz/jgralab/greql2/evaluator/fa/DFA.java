@@ -96,11 +96,9 @@ public class DFA extends FiniteAutomaton {
 	 * with normal transitions
 	 */
 	private void eleminateEpsilonTransitions(NFA nfa) {
-	//	int curTransNr = 0;
 		boolean containsEpsilonTransitions = true;
 		while (containsEpsilonTransitions) {
 			containsEpsilonTransitions = false;
-		//	if (curTransNr == nfa.transitionList.size())
 			int curTransNr = 0;
 			while ((curTransNr < nfa.transitionList.size())) {
 				Transition currentTransition = nfa.transitionList
@@ -140,8 +138,8 @@ public class DFA extends FiniteAutomaton {
 								.getEndState()) {
 							// this two transitions accept the same symbol, but
 							// have different end states,
-							// so add the endstate of the second one to the list
-							// of represented states of the first's endstate
+							// so add the end state of the second one to the list
+							// of represented states of the first's end state
 							transitionList.addAll(newDFAState
 									.addRepresentedState(secondTransition
 											.getEndState()));
@@ -175,7 +173,7 @@ public class DFA extends FiniteAutomaton {
 				}
 				if (!foundSameState) {
 					stateList.add(newDFAState);
-					// maybee the newDFAState contains a final state in the nfa,
+					// maybe the newDFAState contains a final state in the nfa,
 					// then the newDFAState also gets final
 					if (newDFAState.containsFinalStateOfNFA(nfa))
 						finalStates.add(newDFAState);

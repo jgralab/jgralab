@@ -24,13 +24,14 @@
  
 package de.uni_koblenz.jgralab.greql2.evaluator.fa;
 
-import de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.VertexEvaluator;
-import de.uni_koblenz.jgralab.greql2.exception.EvaluateException;
-import de.uni_koblenz.jgralab.greql2.jvalue.JValueTypeCollection;
-
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+
+import de.uni_koblenz.jgralab.GraphMarker;
+import de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.VertexEvaluator;
+import de.uni_koblenz.jgralab.greql2.exception.EvaluateException;
+import de.uni_koblenz.jgralab.greql2.jvalue.JValueTypeCollection;
 
 /**
  * this class models a nondeterministic finite automaton. It created during evaluation
@@ -370,7 +371,7 @@ public class NFA extends FiniteAutomaton {
 	 *            the NFA to add the goal restriction to
 	 * @param boolEval the VertexEvaluator, which restricts this nfa
 	 */
-	public static void addGoalBooleanRestriction(NFA nfa, VertexEvaluator boolEval)
+	public static void addGoalBooleanRestriction(NFA nfa, VertexEvaluator boolEval, GraphMarker<VertexEvaluator> marker)
 			throws EvaluateException {
 		State newEndState;
 		if (nfa.finalStates.size() == 1) {
@@ -386,22 +387,23 @@ public class NFA extends FiniteAutomaton {
 		nfa.stateList.add(restrictedFinalState);
 		nfa.finalStates.add(restrictedFinalState);
 		BoolExpressionTransition trans = new BoolExpressionTransition(
-				newEndState, restrictedFinalState, boolEval);
+				newEndState, restrictedFinalState, boolEval, marker);
 		nfa.transitionList.add(trans);
 	}
 	
 	/**
 	 * Adds a boolean expression as start restriction
 	 * @param nfa
-	 *            the NFA to add thestart restriction to
+	 *            the NFA to add the start restriction to
 	 * @param boolEval the VertexEvaluator, which restricts this nfa
 	 */
-	public static void addStartBooleanRestriction(NFA nfa, VertexEvaluator boolEval)
+	public static void addStartBooleanRestriction(NFA nfa, VertexEvaluator boolEval, GraphMarker<VertexEvaluator> marker)
 			throws EvaluateException {
+		System.out.println("Adding boolean start restriction");
 		State newInitialState = new State();
 		nfa.stateList.add(newInitialState);
 		BoolExpressionTransition trans = new BoolExpressionTransition(
-				newInitialState, nfa.initialState, boolEval);
+				newInitialState, nfa.initialState, boolEval, marker);
 		nfa.transitionList.add(trans);
 		nfa.initialState = newInitialState;
 	}

@@ -24,6 +24,14 @@
 
 package de.uni_koblenz.jgralab.greql2.funlib;
 
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.Queue;
+
+import de.uni_koblenz.jgralab.BooleanGraphMarker;
+import de.uni_koblenz.jgralab.Edge;
+import de.uni_koblenz.jgralab.Graph;
+import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.greql2.evaluator.fa.DFA;
 import de.uni_koblenz.jgralab.greql2.evaluator.fa.State;
 import de.uni_koblenz.jgralab.greql2.evaluator.fa.Transition;
@@ -33,16 +41,6 @@ import de.uni_koblenz.jgralab.greql2.funlib.pathsearch.PathSearch;
 import de.uni_koblenz.jgralab.greql2.funlib.pathsearch.PathSearchQueueEntry;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValueBoolean;
-
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.Queue;
-
-import de.uni_koblenz.jgralab.BooleanGraphMarker;
-import de.uni_koblenz.jgralab.Edge;
-import de.uni_koblenz.jgralab.Graph;
-import de.uni_koblenz.jgralab.Vertex;
 
 /**
  * Checks if there exists a path from the first given vertex to the second given
@@ -124,10 +122,7 @@ public class IsReachable extends PathSearch implements Greql2Function {
 			// markers[currentEntry.state.number].markGraphElement(currentEntry.vertex);
 			Edge inc = currentEntry.vertex.getFirstEdge();
 			while (inc != null) {
-				Iterator<Transition> transitionIter = currentEntry.state.outTransitions
-						.iterator();
-				while (transitionIter.hasNext()) {
-					Transition currentTransition = transitionIter.next();
+				for (Transition currentTransition : currentEntry.state.outTransitions) {
 					Vertex nextVertex = currentTransition.getNextVertex(
 							currentEntry.vertex, inc);
 					if (!markers[currentTransition.getEndState().number]

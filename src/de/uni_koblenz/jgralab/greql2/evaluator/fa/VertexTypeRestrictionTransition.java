@@ -24,11 +24,12 @@
  
 package de.uni_koblenz.jgralab.greql2.evaluator.fa;
 
-import de.uni_koblenz.jgralab.greql2.jvalue.JValueTypeCollection;
-import de.uni_koblenz.jgralab.schema.AttributedElementClass;
 import de.uni_koblenz.jgralab.BooleanGraphMarker;
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.Vertex;
+import de.uni_koblenz.jgralab.greql2.exception.EvaluateException;
+import de.uni_koblenz.jgralab.greql2.jvalue.JValueTypeCollection;
+import de.uni_koblenz.jgralab.schema.AttributedElementClass;
 
 /**
  * This transition accepts a vertex type restriction. It is used to accept
@@ -39,11 +40,10 @@ import de.uni_koblenz.jgralab.Vertex;
  */
 public class VertexTypeRestrictionTransition extends Transition {
 
-
 	/**
 	 * The type collection that toggles which types are accepted and which are not
 	 */
-	JValueTypeCollection typeCollection;
+	private JValueTypeCollection typeCollection;
 
 
 	/**
@@ -124,7 +124,7 @@ public class VertexTypeRestrictionTransition extends Transition {
 	 *            the SubgraphTempAttribute which should be accepted
 	 * @return true if the transition can fire with e, false otherwise
 	 */
-	public boolean accepts(Vertex v, Edge e, BooleanGraphMarker subgraph) {
+	public boolean accepts(Vertex v, Edge e, BooleanGraphMarker subgraph) throws EvaluateException {
 		// it is not neccessary to check if the vertex belongs to a special
 		// subgraph, because if it does not, this method will not be called and
 		// there is no edge connected to this vertex wich belongs to the

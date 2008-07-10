@@ -311,21 +311,21 @@ options
 		@param restrictedExpr the expression that is restricted
 	*/
 	private void mergeRestrictedExpr(Vertex restriction, Expression expr) throws DuplicateVariableException, UndefinedVariableException {
-		Edge inc = restriction.getFirstEdge(EdgeDirection.IN);
-		while (inc != null)	{
-		    Vertex thisLit = inc.getAlpha();
-			if (thisLit instanceof ThisLiteral)	{
-				String name = ((ThisLiteral) thisLit).getThisValue();
-				if ( (name.equals("thisVertex") && !(expr instanceof PathDescription))
-				   ||(name.equals("thisEdge") && (expr instanceof PathDescription)) ) {
-					inc.setAlpha(expr);
-					if (thisLit.getDegree() <= 0) 
-						thisLit.delete();
-				}
-				mergeRestrictedExpr(inc.getAlpha(), expr);
-			}
-			inc = inc.getNextEdge(EdgeDirection.IN);
-		}
+	//	Edge inc = restriction.getFirstEdge(EdgeDirection.IN);
+	//	while (inc != null)	{
+	//	    Vertex thisLit = inc.getAlpha();
+	//		if ((thisLit instanceof ThisVertex) || (thisList instanceof ThisEdge))	{
+			//	String name = ((ThisLiteral) thisLit).getThisValue();
+			//	if ( (name.equals("thisVertex") && !(expr instanceof PathDescription))
+			//	   ||(name.equals("thisEdge") && (expr instanceof PathDescription)) ) {
+	//				inc.setAlpha(expr);
+	//				if (thisLit.getDegree() <= 0) 
+	//					thisLit.delete();
+			//	}
+	//			mergeRestrictedExpr(inc.getAlpha(), expr);
+	//		}
+	//		inc = inc.getNextEdge(EdgeDirection.IN);
+	//	}
 	}
 
 	private String decode(String s) {
@@ -3448,17 +3448,20 @@ literal returns [Literal literal = null] throws ParseException, DuplicateVariabl
            	literal = graph.createStringLiteral();
         	((StringLiteral) literal).setStringValue(decode(s.getText()));
         }
-		|	t:THIS
+		|	tv:THISVERTEX
         	{
-            	VertexClass thisLiteralVertexClass = (VertexClass) graphClass.getGraphElementClass(new QualifiedName("ThisLiteral"));
-            	literal = (ThisLiteral) graph.getFirstVertexOfClass(thisLiteralVertexClass);
-            	while (literal != null)	{
-	               if ( literal != null && ((ThisLiteral) literal).getThisValue().equals(t.getText() ))
+                literal = graph.getFirstThisLiteral();
+            	if (literal != null)	
 	               	return literal;
-	              literal = (ThisLiteral) graph.getNextVertexOfClass(literal, thisLiteralVertexClass);
-   	           	}
-               	literal = graph.createThisLiteral();
- 	           	((ThisLiteral) literal).setThisValue(t.getText());
+               	literal = graph.createThisVertex();
+            }
+       	|	te:THISEDGE
+        	{
+            	VertexClass thisLiteralVertexClass = (VertexClass) graphClass.getGraphElementClass(new QualifiedName("ThisEdge"));
+            	literal = graph.getFirstThisEdge();
+            	if (literal != null)
+	               	return literal;
+               	literal = graph.createThisEdge();
             }
 		|	i:NUM_INT
 			{

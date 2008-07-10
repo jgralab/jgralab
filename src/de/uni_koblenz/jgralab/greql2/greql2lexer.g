@@ -44,7 +44,8 @@ tokens{
 	DOTDOT;
 	DOT;
 	FUNCTIONID;
-	THIS;
+	THISVERTEX;
+	THISEDGE;
 	
 	AND 		= "and";
 	ANDTHEN 	= "andThen";
@@ -470,13 +471,12 @@ IDENT
 	:	
 		(('a'..'z'|'A'..'Z') ('a'..'z'|'A'..'Z'|'_'|'0'..'9')*
 		{			
-			if ( $getText.equals("thisGraph") 
-			| $getText.equals("thisEdge") 
-			| $getText.equals("thisVertex"))
-			{ _ttype = THIS;}
-			else 	
-			if (isFunctionName($getText))
-			{	_ttype = FUNCTIONID; } 		
+			if ($getText.equals("thisEdge")) 
+				{_ttype = THISEDGE;}
+			else if ($getText.equals("thisVertex"))
+				{_ttype = THISVERTEX;}
+			else if (isFunctionName($getText))
+				{_ttype = FUNCTIONID;} 		
 				
 		})
 	;

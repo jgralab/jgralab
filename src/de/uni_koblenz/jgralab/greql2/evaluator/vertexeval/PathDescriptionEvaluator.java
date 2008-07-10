@@ -124,7 +124,7 @@ public abstract class PathDescriptionEvaluator extends VertexEvaluator {
 		}		
 		NFA.addGoalTypeRestriction(getNFA(), typeCollection);
 		if (goalRestEval != null)
-			NFA.addGoalBooleanRestriction(getNFA(), goalRestEval);
+			NFA.addGoalBooleanRestriction(getNFA(), goalRestEval, greqlEvaluator.getVertexEvaluatorGraphMarker());
 	}
 
 	/**
@@ -156,7 +156,7 @@ public abstract class PathDescriptionEvaluator extends VertexEvaluator {
 		}		
 		NFA.addStartTypeRestriction(getNFA(), typeCollection);
 		if (startRestEval != null)
-			NFA.addGoalBooleanRestriction(getNFA(), startRestEval);
+			NFA.addStartBooleanRestriction(getNFA(), startRestEval, greqlEvaluator.getVertexEvaluatorGraphMarker());
 	}
 
 }
