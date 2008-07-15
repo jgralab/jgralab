@@ -1233,26 +1233,6 @@ Graph {
 		deleteEdgeTo(omegaId, -eId);
 
 		--eCount;
-
-		// check for cascading delete of vertices in composition edges
-		AttributedElementClass aec = deletedEdge.getAttributedElementClass();
-		if (aec instanceof CompositionClass) {
-			CompositionClass comp = (CompositionClass) aec;
-			if (comp.isAggregateFrom()) {
-				// omega vertex is to be deleted
-				if (containsVertexId(omegaId)) {
-					// System.err.println("Delete omega vertex v" + omegaId + "
-					// of composition e" + eId);
-					deleteVertexList.add(omegaId);
-				}
-			} else {
-				if (containsVertexId(alphaId)) {
-					// System.err.println("Delete alpha vertex v" + alphaId + "
-					// of composition e" + eId);
-					deleteVertexList.add(alphaId);
-				}
-			}
-		}
 	}
 
 	private void internalDeleteVertex() {
@@ -1287,8 +1267,33 @@ Graph {
 
 			// delete all incident edges including incidence objects
 
+			int alphaId, omegaId;
 			int eId = firstEdgeAtVertex[vId];
 			while (eId != 0) {
+				alphaId = targetVertex[edgeOffset(eId > 0 ? -eId : eId)];
+				omegaId = targetVertex[edgeOffset(eId > 0 ? eId : -eId)];
+				
+				// check for cascading delete of vertices in incident composition edges
+				AttributedElementClass aec = edge[edgeOffset(eId)].getAttributedElementClass();
+				if (aec instanceof CompositionClass) {
+					CompositionClass comp = (CompositionClass) aec;
+					if (comp.isAggregateFrom()) {
+						// omega vertex is to be deleted
+						if (containsVertexId(omegaId)) {
+							// System.err.println("Delete omega vertex v" + omegaId + "
+							// of composition e" + eId);
+							deleteVertexList.add(omegaId);
+						}
+					} else {
+						if (containsVertexId(alphaId)) {
+							// System.err.println("Delete alpha vertex v" + alphaId + "
+							// of composition e" + eId);
+							deleteVertexList.add(alphaId);
+						}
+					}
+				}
+				
+				// delete edge
 				internalDeleteEdge(eId);
 				eId = firstEdgeAtVertex[vId];
 			}
