@@ -37,20 +37,14 @@ import de.uni_koblenz.jgralab.schema.QualifiedName;
 import de.uni_koblenz.jgralab.schema.Schema;
 import de.uni_koblenz.jgralab.schema.SetDomain;
 
-public class SetDomainImpl extends CompositeDomainImpl implements SetDomain {
-
-	/**
-	 * the base domain of the set
-	 */
-	private Domain baseDomain;
+public class SetDomainImpl extends CollectionDomainImpl implements SetDomain {
 
 	/**
 	 * @param aBaseDomain
 	 *            the base domain of the set
 	 */
 	public SetDomainImpl(Schema schema, QualifiedName qn, Domain aBaseDomain) {
-		super(schema, qn);
-		this.baseDomain = aBaseDomain;
+		super(schema, qn, aBaseDomain);
 	}
 	
 	public SetDomainImpl(Schema schema, Domain aBaseDomain) {
@@ -62,11 +56,6 @@ public class SetDomainImpl extends CompositeDomainImpl implements SetDomain {
 	@Override
 	public String toString() {
 		return "domain Set<" + baseDomain.toString() + ">";
-	}
-
-	@Override
-	public Domain getBaseDomain() {
-		return baseDomain;
 	}
 
 	@Override

@@ -30,7 +30,7 @@ package de.uni_koblenz.jgralab.schema;
  * @author Steffen Kahle
  *
  */
-public interface ListDomain extends CompositeDomain {
+public interface ListDomain extends CollectionDomain {
 
 	/**
 	 * @return the base domain of the list

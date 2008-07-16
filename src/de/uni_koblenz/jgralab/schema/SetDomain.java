@@ -30,7 +30,7 @@ package de.uni_koblenz.jgralab.schema;
  * @author Steffen Kahle
  *
  */
-public interface SetDomain extends CompositeDomain {
+public interface SetDomain extends CollectionDomain {
 
 	/**
 	 * @return the base domain of the set

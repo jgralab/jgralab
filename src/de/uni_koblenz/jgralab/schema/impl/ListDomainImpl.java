@@ -37,21 +37,14 @@ import de.uni_koblenz.jgralab.schema.Package;
 import de.uni_koblenz.jgralab.schema.QualifiedName;
 import de.uni_koblenz.jgralab.schema.Schema;
 
-public class ListDomainImpl extends CompositeDomainImpl implements ListDomain {
-
-	/**
-	 * the base domain, every element of an instance of a list must be of that
-	 * domain
-	 */
-	private Domain baseDomain;
+public class ListDomainImpl extends CollectionDomainImpl implements ListDomain {
 
 	/**
 	 * @param aBaseDomain
 	 *            the base domain for the list
 	 */
 	public ListDomainImpl(Schema schema, QualifiedName qn, Domain aBaseDomain) {
-		super(schema, qn);
-		this.baseDomain = aBaseDomain;
+		super(schema, qn, aBaseDomain);
 	}
 
 	public ListDomainImpl(Schema schema, Domain aBaseDomain) {
@@ -78,15 +71,6 @@ public class ListDomainImpl extends CompositeDomainImpl implements ListDomain {
 	 */
 	public String toString() {
 		return "domain List<" + baseDomain.toString() + ">";
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see jgralab.ListDomain#getBaseDomain()
-	 */
-	public Domain getBaseDomain() {
-		return baseDomain;
 	}
 
 	/*
