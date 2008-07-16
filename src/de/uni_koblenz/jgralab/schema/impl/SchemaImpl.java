@@ -173,7 +173,6 @@ public class SchemaImpl implements Schema {
 			addDomain(new LongDomainImpl(this));
 			addDomain(new StringDomainImpl(this));
 			addDomain(new DoubleDomainImpl(this));
-			addDomain(new ObjectDomainImpl(this));
 			defaultGraphClass = createGraphClass(new QualifiedName("Graph"));
 			addToKnownElements(defaultGraphClass.getUniqueName(),
 					defaultGraphClass);

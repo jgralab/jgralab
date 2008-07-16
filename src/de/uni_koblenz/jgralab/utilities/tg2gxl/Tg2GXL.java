@@ -44,7 +44,6 @@ import de.uni_koblenz.jgralab.schema.EnumDomain;
 import de.uni_koblenz.jgralab.schema.IntDomain;
 import de.uni_koblenz.jgralab.schema.ListDomain;
 import de.uni_koblenz.jgralab.schema.LongDomain;
-import de.uni_koblenz.jgralab.schema.ObjectDomain;
 import de.uni_koblenz.jgralab.schema.RecordDomain;
 import de.uni_koblenz.jgralab.schema.SetDomain;
 import de.uni_koblenz.jgralab.schema.StringDomain;
@@ -434,11 +433,6 @@ public class Tg2GXL extends Tg2Whatever {
 			out.println("<Int>");
 			out.println("" + attrValue);
 			out.println("</Int>");
-		}
-		if (dom instanceof StringDomain || dom instanceof ObjectDomain) {
-			out.println("<String>");
-			out.println("" + attrValue);
-			out.println("</String>");
 		}
 	}
 

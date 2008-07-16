@@ -28,8 +28,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
 
-import de.uni_koblenz.jgralab.Base64;
-
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -75,25 +73,27 @@ public class HelperMethods {
 		return Character.toUpperCase(string.charAt(0)) + string.substring(1);
 	}
 	
-	static String createBase64Representation(Object o) {
-		StringBuffer b64 = null;
-		
-		try {
-			ByteArrayOutputStream bos = new ByteArrayOutputStream();
-			ObjectOutputStream oos = new ObjectOutputStream(bos);
-			oos.writeObject(o);
-			oos.close();
-			b64 = new StringBuffer(Base64.encodeBytes(bos
-					.toByteArray()));
-			int p = b64.indexOf("\n");
-			while (p >= 0) {
-				b64.deleteCharAt(p);
-				p = b64.indexOf("\n", p);
-			}
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-			
-		return b64.toString();
-	}
+
+
+	// static String createBase64Representation(Object o) {
+	// StringBuffer b64 = null;
+	//		
+	// try {
+	// ByteArrayOutputStream bos = new ByteArrayOutputStream();
+	// ObjectOutputStream oos = new ObjectOutputStream(bos);
+	// oos.writeObject(o);
+	// oos.close();
+	// b64 = new StringBuffer(Base64.encodeBytes(bos
+	// .toByteArray()));
+	// int p = b64.indexOf("\n");
+	// while (p >= 0) {
+	// b64.deleteCharAt(p);
+	// p = b64.indexOf("\n", p);
+	// }
+	// } catch (IOException e) {
+	// e.printStackTrace();
+	// }
+	//			
+	// return b64.toString();
+	// }
 }

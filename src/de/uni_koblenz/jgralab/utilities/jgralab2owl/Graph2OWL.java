@@ -899,12 +899,12 @@ class Graph2OWL {
 					"http://www.w3.org/2001/XMLSchema#string");
 			attrIndividualPropertyElem.appendChild(doc
 					.createTextNode((String) value));
-		} else if (dom.getTGTypeName(null).equals("Object")) {
-			attrIndividualPropertyElem.setAttribute("rdf:datatype",
-					"http://www.w3.org/2001/XMLSchema#base64Binary");
-			attrIndividualPropertyElem.appendChild(doc
-					.createTextNode(HelperMethods
-							.createBase64Representation(value)));
+//		} else if (dom.getTGTypeName(null).equals("Object")) {
+//			attrIndividualPropertyElem.setAttribute("rdf:datatype",
+//					"http://www.w3.org/2001/XMLSchema#base64Binary");
+//			attrIndividualPropertyElem.appendChild(doc
+//					.createTextNode(HelperMethods
+//							.createBase64Representation(value)));
 		} else if (dom.toString().startsWith("Enum")) {
 			attrIndividualPropertyElem.setAttribute("rdf:resource", "#"
 					+ ((Enum) value).toString());

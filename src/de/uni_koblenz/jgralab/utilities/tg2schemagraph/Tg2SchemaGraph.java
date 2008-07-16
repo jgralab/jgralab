@@ -48,7 +48,6 @@ import de.uni_koblenz.jgralab.schema.EnumDomain;
 import de.uni_koblenz.jgralab.schema.IntDomain;
 import de.uni_koblenz.jgralab.schema.ListDomain;
 import de.uni_koblenz.jgralab.schema.LongDomain;
-import de.uni_koblenz.jgralab.schema.ObjectDomain;
 import de.uni_koblenz.jgralab.schema.Package;
 import de.uni_koblenz.jgralab.schema.QualifiedName;
 import de.uni_koblenz.jgralab.schema.RecordDomain;
@@ -406,8 +405,6 @@ public class Tg2SchemaGraph {
 					domainMap.put(d, schemagraph.createLongDomain());
 				} else if (d instanceof IntDomain) {
 					domainMap.put(d, schemagraph.createIntDomain());
-				} else if (d instanceof ObjectDomain) {
-					domainMap.put(d, schemagraph.createObjectDomain());
 				} else if (d instanceof StringDomain) {
 					domainMap.put(d, schemagraph.createStringDomain());
 				} else if (d instanceof CompositeDomain) {
