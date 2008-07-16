@@ -54,6 +54,12 @@ public class ListDomainImpl extends CompositeDomainImpl implements ListDomain {
 		this.baseDomain = aBaseDomain;
 	}
 
+	public ListDomainImpl(Schema schema, Domain aBaseDomain) {
+		this(schema, new QualifiedName("List<"
+				+ aBaseDomain.getTGTypeName(schema.getDefaultPackage()) + ">"),
+				aBaseDomain);
+	}
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -71,7 +77,7 @@ public class ListDomainImpl extends CompositeDomainImpl implements ListDomain {
 	 * @see java.lang.Object#toString()
 	 */
 	public String toString() {
-		return "List<" + baseDomain.toString() + ">";
+		return "domain List<" + baseDomain.toString() + ">";
 	}
 
 	/*
@@ -186,5 +192,15 @@ public class ListDomainImpl extends CompositeDomainImpl implements ListDomain {
 
 		ListDomain other = (ListDomain) o;
 		return baseDomain.equals(other.getBaseDomain());
+	}
+
+	public void setPackage(Package p) {
+		throw new UnsupportedOperationException(
+				"The package of a ListDomain may not be changed.");
+	}
+
+	public void setUniqueName(String newUniqueName) {
+		throw new UnsupportedOperationException(
+				"The unique name of a ListDomain may not be changed.");
 	}
 }

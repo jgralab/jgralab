@@ -52,10 +52,16 @@ public class SetDomainImpl extends CompositeDomainImpl implements SetDomain {
 		super(schema, qn);
 		this.baseDomain = aBaseDomain;
 	}
+	
+	public SetDomainImpl(Schema schema, Domain aBaseDomain) {
+		this(schema, new QualifiedName("Set<"
+				+ aBaseDomain.getTGTypeName(schema.getDefaultPackage()) + ">"),
+				aBaseDomain);
+	}
 
 	@Override
 	public String toString() {
-		return "Set<" + baseDomain.toString() + ">";
+		return "domain Set<" + baseDomain.toString() + ">";
 	}
 
 	@Override
@@ -163,5 +169,15 @@ public class SetDomainImpl extends CompositeDomainImpl implements SetDomain {
 
 		SetDomain other = (SetDomain) o;
 		return baseDomain.equals(other.getBaseDomain());
+	}
+	
+	public void setPackage(Package p) {
+		throw new UnsupportedOperationException(
+				"The package of a SetDomain may not be changed.");
+	}
+
+	public void setUniqueName(String newUniqueName) {
+		throw new UnsupportedOperationException(
+				"The unique name of a SetDomain may not be changed.");
 	}
 }
