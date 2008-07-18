@@ -493,11 +493,10 @@ public class JValuePathSystem extends JValue {
 	 */
 	public JValueSet edges() {
 		JValueSet resultSet = new JValueSet();
-		Iterator<Map.Entry<PathSystemKey, PathSystemEntry>> iter = keyToEntryMap
-				.entrySet().iterator();
-		while (iter.hasNext()) {
-			Map.Entry<PathSystemKey, PathSystemEntry> entry = iter.next();
-			resultSet.add(new JValue(entry.getValue().getParentEdge()));
+		for (Map.Entry<PathSystemKey, PathSystemEntry> mapEntry: keyToEntryMap.entrySet()) {
+			PathSystemEntry thisEntry = mapEntry.getValue();
+			if (thisEntry.getParentEdge() != null)
+				resultSet.add(new JValue(thisEntry.getParentEdge()));
 		}
 		return resultSet;
 	}
