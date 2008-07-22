@@ -254,13 +254,10 @@ public class PathSystem extends PathSearch implements Greql2Function {
 			Vertex leaf = iter.next();
 			for (GraphMarker<PathSystemMarkerList> currentGraphMarker : marker) {
 				Object tempAttribute = currentGraphMarker.getMark(leaf);
-				if ((tempAttribute != null)
-						&& (tempAttribute instanceof PathSystemMarkerList)) {
-					PathSystemMarkerList leafMarkerList = (PathSystemMarkerList) tempAttribute;
-					Iterator<PathSystemMarkerEntry> entryIter = leafMarkerList
-							.iterator();
-					while (entryIter.hasNext()) {
-						PathSystemMarkerEntry currentMarker = entryIter.next();
+				if (tempAttribute != null) {
+					for (PathSystemMarkerEntry currentMarker : (PathSystemMarkerList) tempAttribute) {
+						if (!currentMarker.state.isFinal)
+							continue;
 						Vertex currentVertex = leaf;
 						while (currentVertex != null) {
 							int parentStateNumber = 0;
