@@ -2,9 +2,7 @@ package de.uni_koblenz.jgralab.utilities.xmi2tgschema.easystart;
 
 import java.io.FileWriter;
 import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
 
@@ -13,8 +11,34 @@ import javax.swing.JOptionPane;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
 /**
- * 
+ * <b><code>EasyStart</code></b> simplifies the process of initialising the <code>XMI to TG file conversion</code>.<br />
+ * <br />Normally the manual process of launching the conversion, by entering all needed arguments in a command shell, is very time consuming.
+ * <br /><b><code>EasyStart</code></b> therefore accomplishes the following tasks:
+ * <ol>
+ * 	<li>
+ * 		For starters, needed information regarding the <b><code>XMI2TG</code></b>-Conversion process are queried.
+ * 		<br />The requested informations are:
+ * 		<ul>
+ * 			<li> The path to the <code>saxonX</code> (X stands for the version) Jar file; the masterpiece to the transformation process.</li>
+ * 			<li> The path to the exported Enterprise Architect <code>diagram</code>, in <code>XML</code> format.</li>
+ * 			<li> The path to the <code>XMI2TG.xsl</code> file, a stylesheet describing how exported diagrams in XML should be transformed.</li>
+ * 			<li> The path to the output <code>TG</code> file, created during the XMI2TG conversion.</li>
+ * 			<li> The name of the <code>diagram</code>.</li>
+ * 			<li> The <code>Operating System</code>, for which to create a <code>shell script</code> for.</li>
+ * 			<li> The path to where to save the output <code>shell script</code>. <i>(see point 2 for more information regarding created the shell script)</i></li>
+ * 		</ul>
+ * 	</li>
+ * 	<li>
+ * 		A shell script, containing the polled date, is written to disk.
+ * 		<br />This shell script is intended to quickly and easily launch the XMI to TG file conversion.
+ * 	</li><br /><br />
+ * 	<li>
+ * 		Finally the user is given the choice to immediately start the XMI2TG conversion.
+ * 	</li>
+ * </ol>
  * @author Grégory Catellani
+ * @organisation Institute for Software Technology - University of Koblenz-Landau, Germany
+ * @email ist@uni-koblenz.de
  * @version 1.0
  * 
  */
@@ -22,28 +46,32 @@ public class EasyStart{
 	
 	/*---- Class Variables ----*/
 	
-	private static EasyStart instance;
+	private static EasyStart instance;	// Sole instance of this class | Created according to the Singleton Pattern
+	
 	
 	/*---- Object Variables -----*/
-		
-	//private JFileChooser fileChooser = new JFileChooser();
+	
+	// Dialog options
 	private Object[] noSelectionMadeDialogOptions = {"Redo this", "Restart program", "Quit"};
 	private Object[] confirmationDialogOptions = {"Yes" , "No" , "Quit"};
 
+	// Operating systems for which EasyStart can create shell scripts 
 	private String[][] os = new String[][]{
-			{"Linux", "Mac", "Windows"},
-			{"", "", "BAT File"},
-			{"", "", "bat"}
+			{"Linux", "Mac", "Windows"},	// The OS
+			{"", "", "BAT File"},			// The according shell script filename
+			{"", "", "bat"}					// The according shell script filename extension
 	};
-	private final int SAXONX_PATH = 0, XML_PATH = 1, XMI2TG_XSL_PATH = 2, TG_PATH = 3, SCHEMATICS_NAME = 4, OS = 5, SHELL_SCRIPT_PATH = 6;
-	private String[] arguments = new String[7];
+	
+	private final int SAXONX_PATH = 0, XML_PATH = 1, XMI2TG_XSL_PATH = 2, TG_PATH = 3, DIAGRAM_NAME = 4, OS = 5, SHELL_SCRIPT_PATH = 6; // Indices of the different queries in the argument array
+	private String[] arguments = new String[7]; // Array containing the needed information for the XMI2TG conversion
+	
 	
 	/*---- Constructors ----*/
 	
-	{
-		for(int i = 0; i < arguments.length; i++) arguments[i] = "";
-	}
-	
+	/**
+	 * Starts a new EasyStart instance.<br />
+	 * This constructor is <b>private</b> because a class-object is to be requested via the <code>instance()</code> method.
+	 */
 	private EasyStart(){
 		System.out.println("XMI2TG - EasyStart");
 		System.out.println("------------------\n");
@@ -52,33 +80,65 @@ public class EasyStart{
 		
 		writeShellScriptFile();
 		
+		// Start XMI2TG conversion immediately, if desired
 		if(JOptionPane.showOptionDialog(null, "Do you want to initiate the XMI2TG conversion immediately?", "Start conversion now?", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, null, null) == 0) initiateXMI2TGConversion();
 		
 		System.out.println("\nGood Bye");
 		System.out.println("--------");
 		System.out.println("\nProgram written by Grégory Catellani");
-		System.out.println("Organisation: Universität Koblenz-Landau - Institut für Softwaretechnik");
+		System.out.println("Institute for Software Technology - University of Koblenz-Landau, Germany");
 	}
-			
+	
+	
+	/*---- Class Methods ----*/
+	
+	/**
+	 * Returns the <b>unique instance</b> of this class according to the <b>Singleton</b> pattern.<br />
+	 * A new instance is created upon the first access to this method.
+	 */
+	public static EasyStart instanceOf(){
+		if(instance == null) instance = new EasyStart();
+		return instance;
+	}
+	
+	public static void main(String[] args) {
+		instanceOf();
+	}
+	
 	/*---- Object Methods ----*/
 	
+	/**
+	 * Accomplishes the first of the three EasyStart tasks, by polling the user for vital information concerning the XMI2TG conversion.
+	 */
 	private void gatherInformation(){
+		for(int i = 0; i < arguments.length; i++) arguments[i] = "";	// Initialise arguments
+		
+		/* Big loop, for polling all required information
+		 * Upon user request the program can restart polling the information from the beginning.
+		 * Thus allowing correction.
+		 */
 		start:
 		while(true){
 			if((arguments[SAXONX_PATH] = openPrompt("Please select the saxonX.jar file", "JAR File", "jar")) == null) continue;
 			if((arguments[XML_PATH] = openPrompt("Please select the exported .xml scheme file", "XML File", "xml")) == null) continue;
 			if((arguments[XMI2TG_XSL_PATH] = openPrompt("Please select the XMI2TGSchema.xsl file:", "XSL File", "xsl")) == null) continue;
 			if((arguments[TG_PATH] = savePrompt("Select the destination of the TG file", "TG File", "tg")) == null) continue;
-			if((arguments[SCHEMATICS_NAME] = inputPrompt("Please enter the name of the schematics", "Prompt - Schematics name")) == null) continue;
-			do{
+			if((arguments[DIAGRAM_NAME] = inputPrompt("Please enter the name of the schematics", "Prompt - Schematics name")) == null) continue;
+			
+			/* Poll for the operating system, to create a shell script file for
+			 * For the moment only Microsoft Windows operating systems are supported.
+			 * Support for GNU/Linux and MacOS will be implemented in a further release of EasyStart
+			 */
+			do{	//TODO Implement support for GNU/Linux and MacOS shell scripts
 				if((arguments[OS] = inputPrompt("Please choose the operating system you want a shell script for", "Prompt - OS Selection", os[0], 2)) == null) continue start;
 				else if(!arguments[OS].equals("Windows")) JOptionPane.showMessageDialog(null, "Sorry, but currently only Windows is supported!", "Warning - OS currently unsupported!", JOptionPane.ERROR_MESSAGE);
 			}while(!arguments[OS].equals("Windows"));
+			
+			// Request the desired file path for the shell script. The shell script being in the appropriate format for the entered operating system
 			{
-				int i = arrayIndexOf(arguments[OS], os[0]);
-				String osShellScriptFileExtensionDescriptor = (i >= 0 && i < os[1].length) ? os[1][i] : null;
-				String osShellScriptFileExtension = (i >= 0 && i < os[2].length) ? os[2][i] : null;
-				if((arguments[SHELL_SCRIPT_PATH] = savePrompt("Select the destination of the shell script file", osShellScriptFileExtensionDescriptor, osShellScriptFileExtension)) == null) continue;
+				int selectedOS = 2;	// Dictate Windows as default, if something goes wrong
+				for(int i = 0; i < os[0].length; i++) if(arguments[OS].equals(os[0][i])) selectedOS = i;	// Get the index of the correct file format informations
+				if((arguments[SHELL_SCRIPT_PATH] = savePrompt("Select the destination of the shell script file", os[1][selectedOS], os[2][selectedOS])) == null) continue;
 			}
 			
 			System.out.println("SaxonX.jar path: " + arguments[0]);
@@ -93,11 +153,19 @@ public class EasyStart{
 		}
 	}
 	
+	/**
+	 * Writes the <code>command shell input</code>, to the designated <code>shell script file</code>.
+	 */
 	private void writeShellScriptFile(){
 		System.out.println("Writing Shell Script file...");
+		
 		try {
+			// Replace backslash characters by double backslashes, for Java character escaping in Strings
 			FileWriter shellScriptFile = new FileWriter(arguments[SHELL_SCRIPT_PATH].replace("\\", "\\\\"));
-			shellScriptFile.write("java -jar \"" + arguments[SAXONX_PATH] + "\" -s:\"" + arguments[XML_PATH] + "\" -xsl:\"" + arguments[XMI2TG_XSL_PATH] + "\" -o:\"" + arguments[TG_PATH] + "\" schemaName=" + arguments[SCHEMATICS_NAME] + " tool=ea");
+			
+			// Write the call to execute the XMI2TG conversion, to the shell script file
+			shellScriptFile.write("java -jar \"" + arguments[SAXONX_PATH] + "\" -s:\"" + arguments[XML_PATH] + "\" -xsl:\"" + arguments[XMI2TG_XSL_PATH] + "\" -o:\"" + arguments[TG_PATH] + "\" schemaName=" + arguments[DIAGRAM_NAME] + " tool=ea");
+			
 			shellScriptFile.close();
 			System.out.println("Writing done!\n");
 		} catch (IOException e) {
@@ -105,32 +173,29 @@ public class EasyStart{
 		}
 	}
 	
+	/**
+	 * Loads the <code>saxonX Jar file</code> and starts the XMI2TG conversion.
+	 */
 	private void initiateXMI2TGConversion(){
 		System.out.println("Starting XMI2TGConversion...");
-		// Parameter Adaptation
+		
+		// Replace backslash characters by double backslashes, for Java character escaping in Strings
 		for(int i = 0; i < arguments.length; i++) arguments[i] = arguments[i].replace("\\", "\\\\");
 		
 		try {
+			// Load the saxonX Jar File
 			URLClassLoader urlLoader = new URLClassLoader(new URL[]{new URL("jar:file:" + arguments[SAXONX_PATH] + "!/")});
+			
+			// Load the net.sf.saxon.Transform class and get acquire the main method
 			Method main = Class.forName("net.sf.saxon.Transform", true, urlLoader).getDeclaredMethod("main", new String[]{}.getClass());
-			main.invoke(null, (Object) new String[]{"-s:" + arguments[XML_PATH], "-xsl:" + arguments[XMI2TG_XSL_PATH], "-o:" + arguments[TG_PATH], "schemaName=" + arguments[SCHEMATICS_NAME], "tool=ea"});
+			
+			// Invoke the main method, with the required arguments. Thus starting the XMI2TG conversion
+			main.invoke(null, (Object) new String[]{"-s:" + arguments[XML_PATH], "-xsl:" + arguments[XMI2TG_XSL_PATH], "-o:" + arguments[TG_PATH], "schemaName=" + arguments[DIAGRAM_NAME], "tool=ea"});
+			
 			System.out.println("Conversion completed!");
-		} catch (MalformedURLException e) {
-			e.printStackTrace();
-		} catch (SecurityException e) {
-			e.printStackTrace();
-		} catch (NoSuchMethodException e) {
-			e.printStackTrace();
-		} catch (ClassNotFoundException e) {
-			e.printStackTrace();
-		} catch (IllegalArgumentException e) {
-			e.printStackTrace();
-		} catch (IllegalAccessException e) {
-			e.printStackTrace();
-		} catch (InvocationTargetException e) {
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		
 	}
 	
 	private String openPrompt(String prompt, String fileExtensionDescriptor, String fileExtension){
@@ -238,24 +303,5 @@ public class EasyStart{
 			}
 		}
 		return temp;
-	}
-	
-	private int arrayIndexOf(String str, Object[] strArray){
-		if(str == null || str.length() == 0 || strArray == null) throw new IllegalArgumentException("SearchString and/or array must not be null OR SearchString must not be empty!");
-		
-		for(int i = 0; i < strArray.length; i++) if(str.equals((String)strArray[i])) return i;
-
-		return -1;
-	}
-
-	/*---- Class Methods ----*/
-	
-	public static EasyStart instanceOf(){
-		if(instance == null) instance = new EasyStart();
-		return instance;
-	}
-	
-	public static void main(String[] args) {
-		instanceOf();
 	}
 }
