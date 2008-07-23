@@ -380,7 +380,11 @@
         <!-- provide super classes of EdgeClass -->
         <xsl:if test="$uml='no'">
             <xsl:call-template name="generalization">
-                <xsl:with-param name="elements" select="$schemaPackage//packagedElement[@xmi:id = $associationClass/generalization/@general] 
+                <xsl:with-param name="elements" select="
+                    if (current()/@xmi:type='uml:Class') then 
+                        $schemaPackage//packagedElement[@xmi:id = current()/generalization/@general] 
+                    else
+                        $schemaPackage//packagedElement[@xmi:id = $associationClass/generalization/@general]
                     union $schemaPackage[memberEnd/@xmi:idref = current()/ownedEnd/redefinedProperty/@xmi:idref]
                     union $schemaPackage//packagedElement[memberEnd/@xmi:idref = $schemaPackage//packagedElement/ownedAttribute[@association = current()/@xmi:id]/redefinedProperty/@xmi:idref]"/>
             </xsl:call-template>
@@ -437,7 +441,11 @@
         </xsl:if>
         
         <!-- attributes -->
-        <xsl:apply-templates select="$associationClass/ownedAttribute[not(@association)]">
+        <xsl:apply-templates select="
+            if (current()/@xmi:type='uml:Class') then 
+                current()/ownedAttribute[not(@association)]
+            else
+                $associationClass/ownedAttribute[not(@association)]">
             <xsl:with-param name="caller">attributedElementClass</xsl:with-param>
         </xsl:apply-templates>
         
