@@ -103,6 +103,11 @@ public class CompletePathSystem extends PathSearch implements Greql2Function {
 	 * The graph the search is performed on
 	 */
 	private Graph graph;
+	
+	/**
+	 * Holds a set of states for each AttributedElement
+	 */
+	private GraphMarker<Set<State>> stateMarker;
 
 	/**
 	 * marks the given vertex with the given PathSystemMarker
@@ -221,6 +226,7 @@ public class CompletePathSystem extends PathSearch implements Greql2Function {
 				inc = inc.getNextEdge();
 			}
 		}
+		
 		return finalVertices;
 	}
 
@@ -269,41 +275,80 @@ public class CompletePathSystem extends PathSearch implements Greql2Function {
 				.getPathSystemMarkerEntryWithParentVertex(null);
 		pathSystem.setRootVertex(rootVertex, rootMarker.state.number,
 				rootMarker.state.isFinal);
+		Iterator<Vertex> iter = leaves.iterator();
 		Queue<Vertex> queue = new LinkedList<Vertex>();
-		for (Vertex v : leaves) {
-			queue.add(v);
-		}
-		Set<Vertex> alreadyEnqueuedVertices = new HashSet<Vertex>();
-		alreadyEnqueuedVertices.addAll(queue);
-		while (!queue.isEmpty()) {
-			Vertex current = queue.poll();
-			for (GraphMarker<PathSystemMarkerList> currentGraphMarker : marker) {
-				Object tempAttribute = currentGraphMarker.getMark(current);
-				if ((tempAttribute != null)
-						&& (tempAttribute instanceof PathSystemMarkerList)) {
-					PathSystemMarkerList leafMarkerList = (PathSystemMarkerList) tempAttribute;
-					for (PathSystemMarkerEntry entry : leafMarkerList) {
-						if (entry.parentVertex != null && !alreadyEnqueuedVertices.contains(entry.parentVertex)) {
-							queue.offer(entry.parentVertex);
-							alreadyEnqueuedVertices.add(entry.parentVertex);
-						}	
-						int parentStateNumber = 0;
-						if (entry.parentState != null)
-							parentStateNumber = entry.parentState.number;
-						pathSystem.addVertex(current,
-								entry.state.number,
-								entry.edgeToParentVertex,
-								entry.parentVertex,
-								parentStateNumber,
-								entry.distanceToRoot,
-								entry.state.isFinal);
+		Vertex currentVertex, parentVertex;
+		State parentState;
+		stateMarker = new GraphMarker<Set<State>>(rootVertex.getGraph());
+		GraphMarker<State> currentStateMarker = new GraphMarker<State>(rootVertex.getGraph()); 
+
+		while (iter.hasNext()) { // iterate through leaves
+			Vertex leaf = iter.next();
+			for (GraphMarker<PathSystemMarkerList> currentGraphMarker : marker) { // iterate through GraphMarkers (one for each state)
+				if (currentGraphMarker.getMark(leaf) != null) {
+					for (PathSystemMarkerEntry currentMarker : currentGraphMarker.getMark(leaf)) { // iterate through list of PathSystemMarkerEntrys for a particular GraphMarker (a particular state)
+						if (!currentMarker.state.isFinal ||                           // if state of current PathSystemMarkerEntry is final or 
+								isVertexMarkedWithState(leaf, currentMarker.state)) { // (leaf, state) has already been processed 
+							continue;
+						}
+						markVertexWithState(leaf, currentMarker.state);      // remember that (leaf, state) has already been processed
+						currentStateMarker.mark(leaf, currentMarker.state);  // mark leaf with current state
+						queue.add(leaf);
+							
+						while (!queue.isEmpty()) {
+							currentVertex = queue.poll();
+							
+							for (PathSystemMarkerEntry marker :  
+									getMarkersWithState(currentVertex, 
+											currentStateMarker.getMark(currentVertex))) {
+								int parentStateNumber = 0;
+								parentState = marker.parentState;
+								if (parentState != null)
+									parentStateNumber = parentState.number;
+								pathSystem.addVertex(currentVertex,
+										marker.state.number,
+										marker.edgeToParentVertex,
+										marker.parentVertex,
+										parentStateNumber,
+										marker.distanceToRoot,
+										marker.state.isFinal);
+								parentVertex = marker.parentVertex;
+								if (parentVertex != null &&		
+										!isVertexMarkedWithState(parentVertex, parentState)) { // if (parentVertex, parentState) has not already been processed
+									markVertexWithState(parentVertex, parentState); // remember that (parentVertex, parentState) has been processed now				
+									currentStateMarker.mark(parentVertex, parentState);
+									queue.add(parentVertex);
+								}
+							}
+						}
 					}
 				}
-			}	
+			}
 		}
+		
 		return pathSystem;
 	}
-
+	
+	private void markVertexWithState(Vertex v, State s) {
+		if (stateMarker.getMark(v) == null) {
+			stateMarker.mark(v, new HashSet<State>());
+		}
+		stateMarker.getMark(v).add(s);
+	}
+	
+	private boolean isVertexMarkedWithState(Vertex v, State s) {
+		if (stateMarker.getMark(v) == null) {
+			return false;
+		}
+		return stateMarker.getMark(v).contains(s);
+	}
+	
+	private PathSystemMarkerList getMarkersWithState(Vertex v, State s) {
+		if (v == null)
+			return null;
+		GraphMarker<PathSystemMarkerList> currentMarker = marker.get(s.number);
+		return currentMarker.getMark(v);
+	}
 
 	public long getEstimatedCosts(ArrayList<Long> inElements) {
 		return 1000;
