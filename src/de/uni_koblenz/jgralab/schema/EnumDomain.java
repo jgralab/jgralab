@@ -47,10 +47,11 @@ public interface EnumDomain extends BasicDomain {
 	public void deleteConst(String aConst);
 
 
-	/**
+	/*
 	 * @return the name of this enum, must be unique in schema
 	 */
-	public String getName();
+	// removed, is already defined in Domain and deprecated!
+	//	public String getName();
 	
 	/**
 	 * @return all the enum strings of this enum domain

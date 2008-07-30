@@ -67,11 +67,11 @@ public class EnumDomainImpl extends DomainImpl implements EnumDomain {
 
 	@Override
 	public String toString() {
-		String output = "Enum " + getName();
-		String delim = " (";
+		String output = "domain Enum " + getName() + " (";
+		String delim = "";
 		int count = 0;
 		for (String s : constants) {
-			output += delim + count + ": " + s;
+			output += delim + count++ + ": " + s;
 			delim = ", ";
 		}
 		output += ")";
