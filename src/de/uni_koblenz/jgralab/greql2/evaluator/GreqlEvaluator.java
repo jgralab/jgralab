@@ -67,9 +67,9 @@ import de.uni_koblenz.jgralab.utilities.TGFilenameFilter;
  * String or Graph and a JGraLab-Datagraph and evaluates the Query on this
  * graph. The result is a JValue-object, it can be accessed using the method
  * <code>JValue getEvaluationResult()</code>.
- * 
+ *
  * @author Daniel Bildhauer <dbildh@uni-koblenz.de> Summer 2006, Diploma Thesis
- * 
+ *
  */
 public class GreqlEvaluator {
 
@@ -141,7 +141,7 @@ public class GreqlEvaluator {
 
 	/**
 	 * Gets a vertex index for a part of a query
-	 * 
+	 *
 	 * @param graph
 	 *            the graph to get an index for
 	 * @param queryPart
@@ -222,7 +222,7 @@ public class GreqlEvaluator {
 	/**
 	 * Load all optimized {@link SyntaxGraphEntry}s in
 	 * optimizedSyntaxGraphsDirectory.
-	 * 
+	 *
 	 * @throws GraphIOException
 	 *             if the optimizedGraphsDirectory is not accessible.
 	 * @see #setOptimizedSyntaxGraphsDirectory(File)
@@ -509,7 +509,7 @@ public class GreqlEvaluator {
 
 	/**
 	 * Creates a new GreqlEvaluator for the given Query and Datagraph
-	 * 
+	 *
 	 * @param query
 	 *            the string-representation of the query to evaluate
 	 * @param datagraph
@@ -531,7 +531,7 @@ public class GreqlEvaluator {
 
 	/**
 	 * Creates a new GreqlEvaluator for the given Query and Datagraph
-	 * 
+	 *
 	 * @param query
 	 *            the string-representation of the query to evaluate
 	 * @param datagraph
@@ -547,7 +547,7 @@ public class GreqlEvaluator {
 	/**
 	 * Creates an new GreqlEvaluator for the query in the given file and the
 	 * given datagraph
-	 * 
+	 *
 	 * @param queryFile
 	 *            the name of the file whehre the query to evaluate is stored in
 	 * @param datagraph
@@ -576,7 +576,7 @@ public class GreqlEvaluator {
 	/**
 	 * Creates an new GreqlEvaluator for the query in the given file and the
 	 * given datagraph
-	 * 
+	 *
 	 * @param queryFile
 	 *            the name of the file whehre the query to evaluate is stored in
 	 * @param datagraph
@@ -592,7 +592,7 @@ public class GreqlEvaluator {
 
 	/**
 	 * Creates a new GreqlEvaluator for the given queryGraph and Datagraph
-	 * 
+	 *
 	 * @param queryGraph
 	 *            the graph-representation of the query to evaluate
 	 * @param dataGraph
@@ -658,10 +658,10 @@ public class GreqlEvaluator {
 
 	/**
 	 * Force parsing the query so that the query graph can be gotten.
-	 * 
+	 *
 	 * @return <code>true</code> if parsing was successful, <code>false</code>
 	 *         otherwise.
-	 * 
+	 *
 	 * @throws EvaluateException
 	 *             if an error occurs while parsing.
 	 */
@@ -688,7 +688,7 @@ public class GreqlEvaluator {
 	/**
 	 * clears the tempresults that are stored in the VertexEvaluators-Objects at
 	 * the syntaxgraph nodes
-	 * 
+	 *
 	 * @param optimizer
 	 */
 	private void resetVertexEvaluators() {
@@ -696,8 +696,9 @@ public class GreqlEvaluator {
 		while (currentVertex != null) {
 			VertexEvaluator vertexEval = vertexEvalGraphMarker
 					.getMark(currentVertex);
-			if (vertexEval != null)
+			if (vertexEval != null) {
 				vertexEval.resetToInitialState();
+			}
 			currentVertex = currentVertex.getNextVertex();
 		}
 	}
@@ -734,7 +735,7 @@ public class GreqlEvaluator {
 
 	/**
 	 * same as startEvaluation(false), provides for convenience
-	 * 
+	 *
 	 * @return true if the evaluation succeeds, false otherwise
 	 * @throws EvaluateException
 	 */
@@ -746,7 +747,7 @@ public class GreqlEvaluator {
 	/**
 	 * Starts the evaluation. If the query is a store-query, modifies the bound
 	 * variables
-	 * 
+	 *
 	 * @param log
 	 *            if set to true, the evaluation will be logged. If no logger
 	 *            was set before, the Level2Logger is used
@@ -756,14 +757,16 @@ public class GreqlEvaluator {
 	 */
 	public boolean startEvaluation(boolean log) throws EvaluateException,
 			OptimizerException {
-		if (started)
+		if (started) {
 			return (result != null);
+		}
 		started = true;
 
 		long startTime = System.currentTimeMillis();
 
-		if (log)
+		if (log) {
 			createEvaluationLogger();
+		}
 
 		long parseStartTime = System.currentTimeMillis();
 		parseQuery(queryString);
@@ -850,7 +853,7 @@ public class GreqlEvaluator {
 
 	/**
 	 * Sets the optimizer to optimize the syntaxgraph this evaluator evaluates
-	 * 
+	 *
 	 * @param optimizer
 	 *            the optimizer to use
 	 */

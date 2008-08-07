@@ -144,7 +144,7 @@ public class SchemaImpl implements Schema {
 
 	/**
 	 * builds a new schema
-	 * 
+	 *
 	 * @param qn
 	 *            the qualified name of the schema
 	 */
@@ -235,7 +235,7 @@ public class SchemaImpl implements Schema {
 	 * elements and reserves the given unique name so it can not be used as
 	 * unique name for other elements. If the unique name is already in use, the
 	 * unique names of both elements (the known one and the new one) are changed
-	 * 
+	 *
 	 * @param name
 	 * @param elem
 	 */
@@ -263,13 +263,14 @@ public class SchemaImpl implements Schema {
 
 	/**
 	 * adds the given domains to the domainlist
-	 * 
+	 *
 	 * @return true on success, false if a domain with the same name as the
 	 *         given one already exists in the schema
 	 */
 	protected boolean addDomain(Domain d) {
-		if (!isFreeDomainName(d.getQName()))
+		if (!isFreeDomainName(d.getQName())) {
 			return false;
+		}
 		domains.put(d.getQName(), d);
 		addToKnownElements(d.getUniqueName(), d);
 
@@ -278,10 +279,11 @@ public class SchemaImpl implements Schema {
 
 	@Override
 	public GraphClassImpl createGraphClass(QualifiedName name) {
-		if (!isFreeSchemaElementName(name))
+		if (!isFreeSchemaElementName(name)) {
 			throw new SchemaException(
 					"there is already an element with the name " + name
 							+ " in the schema");
+		}
 
 		if (name.isQualified()) {
 			throw new SchemaException("GraphClass must have simple name, but "
@@ -378,8 +380,9 @@ public class SchemaImpl implements Schema {
 
 		// generate graph classes
 		for (GraphClass graphClass : graphClasses.values()) {
-			if (graphClass.getQualifiedName().equals("Graph"))
+			if (graphClass.getQualifiedName().equals("Graph")) {
 				continue;
+			}
 
 			GraphCodeGenerator graphCodeGenerator = new GraphCodeGenerator(
 					graphClass, getPackageName(), GRAPHIMPLEMENTATIONPACKAGE,
@@ -502,9 +505,10 @@ public class SchemaImpl implements Schema {
 		// generate graph classes
 		Iterator<GraphClass> gcit = graphClasses.values().iterator();
 		while (gcit.hasNext()) {
-			GraphClass graphClass = (GraphClass) gcit.next();
-			if (graphClass.getQualifiedName().equals("Graph"))
+			GraphClass graphClass = gcit.next();
+			if (graphClass.getQualifiedName().equals("Graph")) {
 				continue;
+			}
 
 			GraphCodeGenerator graphCodeGenerator = new GraphCodeGenerator(
 					graphClass, getPackageName(), GRAPHIMPLEMENTATIONPACKAGE,
@@ -516,8 +520,7 @@ public class SchemaImpl implements Schema {
 					.getOwnGraphElementClasses().iterator();
 			AttributedElementCodeGenerator codeGenerator = null;
 			while (gecit.hasNext()) {
-				GraphElementClass graphElementClass = (GraphElementClass) gecit
-						.next();
+				GraphElementClass graphElementClass = gecit.next();
 				if (graphElementClass instanceof VertexClass) {
 					codeGenerator = new VertexCodeGenerator(
 							(VertexClass) graphElementClass, getPackageName(),
@@ -582,16 +585,18 @@ public class SchemaImpl implements Schema {
 
 	@Override
 	public boolean containsGraphClass(GraphClass aGraphClass) {
-		if (graphClasses.containsValue(aGraphClass))
+		if (graphClasses.containsValue(aGraphClass)) {
 			return true;
+		}
 		return false;
 	}
 
 	@Override
 	public GraphClass getGraphClass(QualifiedName name) {
-		if (!graphClasses.containsKey(name))
+		if (!graphClasses.containsKey(name)) {
 			return null;
-		return (GraphClass) graphClasses.get(name);
+		}
+		return graphClasses.get(name);
 	}
 
 	@Override
@@ -607,7 +612,7 @@ public class SchemaImpl implements Schema {
 
 	/**
 	 * only used internally
-	 * 
+	 *
 	 * @return number of graphelementclasses contained in graphclass
 	 */
 	private int getNumberOfElements() {
@@ -637,14 +642,16 @@ public class SchemaImpl implements Schema {
 				.iterator();
 		while (it.hasNext()) {
 			Entry<QualifiedName, GraphClass> gc = it.next();
-			if (gc.getKey().equals(aeClassName))
-				return (AttributedElementClass) gc.getValue();
+			if (gc.getKey().equals(aeClassName)) {
+				return gc.getValue();
+			}
 			Iterator<GraphElementClass> it2 = gc.getValue()
 					.getOwnGraphElementClasses().iterator();
 			while (it2.hasNext()) {
 				GraphElementClass gec = it2.next();
-				if (gec.getQualifiedName().equals(aeClassName))
+				if (gec.getQualifiedName().equals(aeClassName)) {
 					return gec;
+				}
 			}
 		}
 		return null;
@@ -652,7 +659,7 @@ public class SchemaImpl implements Schema {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see jgralab.Schema#getDomains()
 	 */
 	public Map<QualifiedName, Domain> getDomains() {
@@ -674,13 +681,14 @@ public class SchemaImpl implements Schema {
 	@Override
 	public AttributedElementClass getAttributedElementClass(QualifiedName name) {
 		AttributedElementClass search;
-		if (graphClasses.containsKey(name))
+		if (graphClasses.containsKey(name)) {
 			return graphClasses.get(name);
-		for (Iterator<GraphClass> gcit = graphClasses.values().iterator(); gcit
-				.hasNext();) {
-			search = gcit.next().getGraphElementClass(name);
-			if (search != null)
+		}
+		for (GraphClass graphClass : graphClasses.values()) {
+			search = graphClass.getGraphElementClass(name);
+			if (search != null) {
 				return search;
+			}
 		}
 		return null;
 	}
@@ -691,8 +699,9 @@ public class SchemaImpl implements Schema {
 		HashSet<GraphClass> graphClassSet = new HashSet<GraphClass>();
 
 		// store graph classes in graphClassSet
-		for (GraphClass gcl : graphClasses.values())
+		for (GraphClass gcl : graphClasses.values()) {
 			graphClassSet.add(gcl);
+		}
 
 		// topologicalOrderList.add(getDefaultGraphClass());
 
@@ -700,7 +709,7 @@ public class SchemaImpl implements Schema {
 		// whose superclasses already are in topologicalOrderList,
 		// to topologicalOrderList
 		// the added classes are removed from graphClassSet
-		while (!graphClassSet.isEmpty())
+		while (!graphClassSet.isEmpty()) {
 			for (Iterator<GraphClass> gcit = graphClassSet.iterator(); gcit
 					.hasNext();) {
 				gc = gcit.next();
@@ -709,6 +718,7 @@ public class SchemaImpl implements Schema {
 					gcit.remove();
 				}
 			}
+		}
 
 		return topologicalOrderList;
 	}
@@ -721,8 +731,9 @@ public class SchemaImpl implements Schema {
 
 		for (GraphClass gc : graphClassList) {
 			// store vertex classes in vertexClassSet
-			for (VertexClass vcl : gc.getOwnVertexClasses())
+			for (VertexClass vcl : gc.getOwnVertexClasses()) {
 				vertexClassSet.add(vcl);
+			}
 
 			// topologicalOrderList.add(getDefaultVertexClass());
 
@@ -730,7 +741,7 @@ public class SchemaImpl implements Schema {
 			// whose superclasses already are in topologicalOrderList,
 			// to topologicalOrderList
 			// the added classes are removed from vertexClassSet
-			while (!vertexClassSet.isEmpty())
+			while (!vertexClassSet.isEmpty()) {
 				for (Iterator<VertexClass> vcit = vertexClassSet.iterator(); vcit
 						.hasNext();) {
 					vc = vcit.next();
@@ -740,6 +751,7 @@ public class SchemaImpl implements Schema {
 						vcit.remove();
 					}
 				}
+			}
 		}
 
 		return topologicalOrderList;
@@ -753,18 +765,21 @@ public class SchemaImpl implements Schema {
 
 		for (GraphClass gc : graphClassList) {
 			// store edge classes in edgeClassSet
-			for (EdgeClass ecl : gc.getOwnEdgeClasses())
+			for (EdgeClass ecl : gc.getOwnEdgeClasses()) {
 				edgeClassSet.add(ecl);
-			for (EdgeClass ecl : gc.getOwnAggregationClasses())
+			}
+			for (EdgeClass ecl : gc.getOwnAggregationClasses()) {
 				edgeClassSet.add(ecl);
-			for (EdgeClass ecl : gc.getOwnCompositionClasses())
+			}
+			for (EdgeClass ecl : gc.getOwnCompositionClasses()) {
 				edgeClassSet.add(ecl);
+			}
 
 			// iteratively add classes from edgeClassSet,
 			// whose superclasses already are in topologicalOrderList,
 			// to topologicalOrderList
 			// the added classes are removed from edgeClassSet
-			while (!edgeClassSet.isEmpty())
+			while (!edgeClassSet.isEmpty()) {
 				for (Iterator<EdgeClass> ecit = edgeClassSet.iterator(); ecit
 						.hasNext();) {
 					ec = ecit.next();
@@ -774,6 +789,7 @@ public class SchemaImpl implements Schema {
 						ecit.remove();
 					}
 				}
+			}
 		}
 
 		return topologicalOrderList;
@@ -782,9 +798,11 @@ public class SchemaImpl implements Schema {
 	public List<EnumDomain> getEnumDomains() {
 		ArrayList<EnumDomain> enumList = new ArrayList<EnumDomain>();
 
-		for (Domain dl : domains.values())
-			if (dl instanceof EnumDomain)
+		for (Domain dl : domains.values()) {
+			if (dl instanceof EnumDomain) {
 				enumList.add((EnumDomain) dl);
+			}
+		}
 
 		return enumList;
 	}
@@ -792,9 +810,11 @@ public class SchemaImpl implements Schema {
 	public List<RecordDomain> getRecordDomains() {
 		ArrayList<RecordDomain> recordList = new ArrayList<RecordDomain>();
 
-		for (Domain dl : domains.values())
-			if (dl instanceof RecordDomain)
+		for (Domain dl : domains.values()) {
+			if (dl instanceof RecordDomain) {
 				recordList.add((RecordDomain) dl);
+			}
+		}
 
 		return recordList;
 	}
@@ -805,15 +825,17 @@ public class SchemaImpl implements Schema {
 		HashSet<CompositeDomain> compositeDomainSet = new HashSet<CompositeDomain>();
 
 		// store composite domains in compositeDomainSet
-		for (Domain dl : domains.values())
-			if (dl instanceof CompositeDomain)
+		for (Domain dl : domains.values()) {
+			if (dl instanceof CompositeDomain) {
 				compositeDomainSet.add((CompositeDomain) dl);
+			}
+		}
 
 		// iteratively add domains from compositeDomainSet,
 		// whose component domains already are in topologicalOrderList,
 		// to topologicalOrderList
 		// the added domains are removed from compositeDomainSet
-		while (!compositeDomainSet.isEmpty())
+		while (!compositeDomainSet.isEmpty()) {
 			for (Iterator<CompositeDomain> cdit = compositeDomainSet.iterator(); cdit
 					.hasNext();) {
 				cd = cdit.next();
@@ -823,6 +845,7 @@ public class SchemaImpl implements Schema {
 					cdit.remove();
 				}
 			}
+		}
 
 		return topologicalOrderList;
 	}
@@ -877,12 +900,13 @@ public class SchemaImpl implements Schema {
 					className = vc.getQName();
 				} else {
 					EdgeClass ec = gc.getEdgeClass(className);
-					if (ec != null)
+					if (ec != null) {
 						className = ec.getQName();
-					else
+					} else {
 						throw new SchemaException("class "
 								+ className.getQualifiedName()
 								+ " does not exist in schema");
+					}
 				}
 				return m1Class.getMethod("create"
 						+ CodeGenerator.camelCase(className.getUniqueName()),
@@ -993,7 +1017,7 @@ public class SchemaImpl implements Schema {
 	/**
 	 * File Manager class overwriting the method {@code getJavaFileForOutput} so
 	 * that bytecode is written to a {@code ClassFileAbstraction}.
-	 * 
+	 *
 	 */
 	private class ClassFileManager extends
 			ForwardingJavaFileManager<JavaFileManager> {
@@ -1003,6 +1027,7 @@ public class SchemaImpl implements Schema {
 			super(fm);
 		}
 
+		@Override
 		public JavaFileObject getJavaFileForOutput(Location location,
 				String className, Kind kind, FileObject sibling) {
 			ClassFileAbstraction cfa = new ClassFileAbstraction(className);
@@ -1090,14 +1115,16 @@ public class SchemaImpl implements Schema {
 	}
 
 	public boolean isValidEnumConstant(String name) {
-		if (!allowsLowercaseEnumConstants())
+		if (!allowsLowercaseEnumConstants()) {
 			for (int i = 0; i < name.length(); i++) {
 				if (Character.isLowerCase(name.charAt(i))) {
 					return false;
 				}
 			}
-		if (reservedJavaWords.contains(name))
+		}
+		if (reservedJavaWords.contains(name)) {
 			return false;
+		}
 		return true;
 	}
 }
