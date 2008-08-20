@@ -62,15 +62,14 @@ import de.uni_koblenz.jgralab.grumlschema.To;
 
 /**
  * This class represents any <code>Schema</code> object as an
- * <code>Graph</code> object. This resulting <code>Graph</code> object is an
- * instance of the M3 schema <code>GrUMLSchema</code>.
+ * <code>Graph</code> object.
  * 
  * @author Sebatian Plitt
  */
 public class Tg2SchemaGraph {
 
 	/**
-	 * writes a schema's schemagraph to a file. the schema .tg file and the
+	 * writes a schema's  to a file. the schema .tg file and the
 	 * outputfile get defined by the command line options
 	 */
 	public static void main(String[] args) {
@@ -139,16 +138,16 @@ public class Tg2SchemaGraph {
 
 			schemaVertex.setName(schema.getSimpleName());
 			schemaVertex.setPackagePrefix(schema.getPackageName());
-			
+
 			// create a HashMap that maps each schema domain to the
 			// corresponding schemagraph domainVertex
 			jGraLab2SchemagraphDomainMap = new HashMap<de.uni_koblenz.jgralab.schema.Domain, de.uni_koblenz.jgralab.grumlschema.Domain>();
 			jGraLab2SchemagraphPackageMap = new HashMap<de.uni_koblenz.jgralab.schema.Package, de.uni_koblenz.jgralab.grumlschema.Package>();
 			jGraLab2SchemagraphVertexClassMap = new HashMap<de.uni_koblenz.jgralab.schema.VertexClass, de.uni_koblenz.jgralab.grumlschema.VertexClass>();
 			jGraLab2SchemagraphEdgeClassMap = new HashMap<de.uni_koblenz.jgralab.schema.EdgeClass, de.uni_koblenz.jgralab.grumlschema.EdgeClass>();
-			
+
 			createJGraLabDomainToSchemagraphDomainMap();
-			
+
 			// create the schemagraph vertex for the graphclass and the
 			// schemagraph edge definesGraphClass
 			de.uni_koblenz.jgralab.grumlschema.GraphClass graphClassVertex = schemagraph
@@ -178,32 +177,43 @@ public class Tg2SchemaGraph {
 					schemaVertex);
 
 			//
-			createSchemagraphPackageAndContents(defaultPackage, defaultPackageVertex);
+			createSchemagraphPackageAndContents(defaultPackage,
+					defaultPackageVertex);
 
 			//
 			createSpecializesEdgesForSchemagraphVertexClasses();
 			createSpecializesEdgesForSchemagraphEdgeClasses();
-			
+
 			//
 			for (Entry<de.uni_koblenz.jgralab.schema.Domain, de.uni_koblenz.jgralab.grumlschema.Domain> entry : jGraLab2SchemagraphDomainMap
 					.entrySet())
 				schemagraph.createContainsDomain(entry.getValue(),
-						jGraLab2SchemagraphPackageMap.get(entry.getKey().getPackage()));
+						jGraLab2SchemagraphPackageMap.get(entry.getKey()
+								.getPackage()));
 		}
 		return schemagraph;
 	}
 
 	/**
+	 * Sets up a <code>schemagraph</code> <code>Package</code> vertex. For each subpackge
+	 * of <code>jGraLabSuperPackage</code> this method gets called
+	 * recursively.
 	 * 
 	 * @param jGraLabSuperPackage
+	 *            a JGraLab package
 	 * @param schemagraphSuperPackage
+	 *            a vertex of the  representing package
+	 *            jGraLabSuperPackage
 	 */
 	private void createSchemagraphPackageAndContents(
 			de.uni_koblenz.jgralab.schema.Package jGraLabSuperPackage,
 			de.uni_koblenz.jgralab.grumlschema.Package schemagraphSuperPackage) {
-		createSchemagraphVertexClassesForPackage(jGraLabSuperPackage, schemagraphSuperPackage);
-		createSchemagraphEdgeClassesForPackage(jGraLabSuperPackage, schemagraphSuperPackage);
-		jGraLab2SchemagraphPackageMap.put(jGraLabSuperPackage, schemagraphSuperPackage);
+		createSchemagraphVertexClassesForPackage(jGraLabSuperPackage,
+				schemagraphSuperPackage);
+		createSchemagraphEdgeClassesForPackage(jGraLabSuperPackage,
+				schemagraphSuperPackage);
+		jGraLab2SchemagraphPackageMap.put(jGraLabSuperPackage,
+				schemagraphSuperPackage);
 
 		Map<String, de.uni_koblenz.jgralab.schema.Package> jGraLabSubPackages = jGraLabSuperPackage
 				.getSubPackages();
@@ -212,56 +222,73 @@ public class Tg2SchemaGraph {
 					.values()) {
 				de.uni_koblenz.jgralab.grumlschema.Package schemagraphSubPackage = schemagraph
 						.createPackage();
-				schemagraphSubPackage.setName(jGraLabSubPackage.getQualifiedName());
-				schemagraphSubPackage.setQualifiedName(jGraLabSubPackage.getPackageName());
-				schemagraphSubPackage.setFullyQualifiedName(schema.getPackageName()
+				schemagraphSubPackage.setName(jGraLabSubPackage
+						.getQualifiedName());
+				schemagraphSubPackage.setQualifiedName(jGraLabSubPackage
+						.getPackageName());
+				schemagraphSubPackage.setFullyQualifiedName(schema
+						.getPackageName()
 						+ "." + jGraLabSubPackage.getQualifiedName());
 				schemagraph.createContainsSubPackage(schemagraphSuperPackage,
 						schemagraphSubPackage);
-				createSchemagraphPackageAndContents(jGraLabSubPackage, schemagraphSubPackage);
+				createSchemagraphPackageAndContents(jGraLabSubPackage,
+						schemagraphSubPackage);
 			}
 	}
 
 	/**
-	 * This method creates all <code>VertexClassM2</code> objects, the
-	 * <code>isSubVertexClassOfM2</code> edges and the
-	 * <code>containsGraphElementClassM2</code> edge.
+	 * This method creates all <code>schemagraph</code> <code>VertexClass</code> vertices
+	 * for a given package and the required incident edges of it. For each
+	 * attribute of the <code>VertexClass</code>es
+	 * <code>createSchemagraphAttribute</code> gets called.
 	 * 
 	 * @param schemagraphPackage
+	 *            a vertex representing package <code>jGraLabPackage</code>
 	 * @param jGraLabPackage
+	 *            a JGraLab package
 	 */
-	private void createSchemagraphVertexClassesForPackage(Package jGraLabPackage,
+	private void createSchemagraphVertexClassesForPackage(
+			Package jGraLabPackage,
 			de.uni_koblenz.jgralab.grumlschema.Package schemagraphPackage) {
 
 		// for each vertexClass of package pakkage...
-		for (VertexClass jGraLabVertexClass : jGraLabPackage.getVertexClasses().values()) {
-			if (!jGraLabVertexClass.isInternal() && jGraLabVertexClass.getPackage().equals(jGraLabPackage)) {
+		for (VertexClass jGraLabVertexClass : jGraLabPackage.getVertexClasses()
+				.values()) {
+			if (!jGraLabVertexClass.isInternal()
+					&& jGraLabVertexClass.getPackage().equals(jGraLabPackage)) {
 				// ...create a vertex
 				de.uni_koblenz.jgralab.grumlschema.VertexClass schemagraphVertexClass = schemagraph
 						.createVertexClass();
-				schemagraph
-						.createContainsGraphElementClass(schemagraphVertexClass, schemagraphPackage);
+				schemagraph.createContainsGraphElementClass(
+						schemagraphVertexClass, schemagraphPackage);
 
-				schemagraphVertexClass.setName(jGraLabVertexClass.getQualifiedName());
-				schemagraphVertexClass.setFullyQualifiedName(schema.getPackageName() + "."
-						+ jGraLabVertexClass.getQualifiedName());
-				schemagraphVertexClass.setQualifiedName(jGraLabVertexClass.getQualifiedName());
-				schemagraphVertexClass.setIsAbstract(jGraLabVertexClass.isAbstract());
+				schemagraphVertexClass.setName(jGraLabVertexClass
+						.getQualifiedName());
+				schemagraphVertexClass.setFullyQualifiedName(schema
+						.getPackageName()
+						+ "." + jGraLabVertexClass.getQualifiedName());
+				schemagraphVertexClass.setQualifiedName(jGraLabVertexClass
+						.getQualifiedName());
+				schemagraphVertexClass.setIsAbstract(jGraLabVertexClass
+						.isAbstract());
 
-				jGraLab2SchemagraphVertexClassMap.put(jGraLabVertexClass, schemagraphVertexClass);
+				jGraLab2SchemagraphVertexClassMap.put(jGraLabVertexClass,
+						schemagraphVertexClass);
 
 				// ..each attribute gets created.
 				for (Attribute attr : jGraLabVertexClass.getOwnAttributeList())
-					createAttributeM2(attr, schemagraphVertexClass);
+					createSchemagraphAttribute(attr, schemagraphVertexClass);
 			}
 		}
 	}
 
 	/**
-	 * This method creates all <code>EdgeClass</code> vertices in the schemagraph, the
-	 * schemagraphs <code>From</code> and <code>To</code> edges, the
-	 * schemagraphs <code>isSubEdgeClassOf</code> edges and the
-	 * <code>containsGraphElementClass</code> edge.
+	 * This method creates all <code>schemagraph</code> <code>EdgeClass</code> vertices for
+	 * a given package and the required incident edges of it(like
+	 * <code>To</code>, <code>From</code>,
+	 * <code>ContainsGraphElementClass</code>). For each attribute of the
+	 * <code>EdgeClass</code>es <code>createSchemagraphAttribute</code>
+	 * gets called.
 	 * 
 	 * @param schemagraphPackage
 	 * @param jGraLabPackage
@@ -269,8 +296,10 @@ public class Tg2SchemaGraph {
 	private void createSchemagraphEdgeClassesForPackage(Package jGraLabPackage,
 			de.uni_koblenz.jgralab.grumlschema.Package schemagraphPackage) {
 		// for each edge class..
-		for (EdgeClass jGraLabEdgeClass : schema.getEdgeClassesInTopologicalOrder()) {
-			if (!jGraLabEdgeClass.isInternal() && jGraLabEdgeClass.getPackage().equals(jGraLabPackage)) {
+		for (EdgeClass jGraLabEdgeClass : schema
+				.getEdgeClassesInTopologicalOrder()) {
+			if (!jGraLabEdgeClass.isInternal()
+					&& jGraLabEdgeClass.getPackage().equals(jGraLabPackage)) {
 				de.uni_koblenz.jgralab.grumlschema.EdgeClass schemagraphEdgeClass = null;
 
 				// ..either an EdgeClassM2 or EdgeClassM2 subclass objects gets
@@ -283,21 +312,26 @@ public class Tg2SchemaGraph {
 				} else {
 					schemagraphEdgeClass = schemagraph.createEdgeClass();
 				}
-				schemagraph.createContainsGraphElementClass(schemagraphEdgeClass,
-						schemagraphPackage);
+				schemagraph.createContainsGraphElementClass(
+						schemagraphEdgeClass, schemagraphPackage);
 
-				schemagraphEdgeClass.setName(jGraLabEdgeClass.getQualifiedName());
-				schemagraphEdgeClass.setQualifiedName(jGraLabEdgeClass.getQualifiedName());
-				schemagraphEdgeClass.setFullyQualifiedName(schema.getPackageName() + "."
-						+ jGraLabEdgeClass.getQualifiedName());
-				schemagraphEdgeClass.setIsAbstract(jGraLabEdgeClass.isAbstract());
+				schemagraphEdgeClass.setName(jGraLabEdgeClass
+						.getQualifiedName());
+				schemagraphEdgeClass.setQualifiedName(jGraLabEdgeClass
+						.getQualifiedName());
+				schemagraphEdgeClass.setFullyQualifiedName(schema
+						.getPackageName()
+						+ "." + jGraLabEdgeClass.getQualifiedName());
+				schemagraphEdgeClass.setIsAbstract(jGraLabEdgeClass
+						.isAbstract());
 
 				for (de.uni_koblenz.jgralab.grumlschema.VertexClass vcFrom : schemagraph
 						.getVertexClassVertices()) {
-					if (vcFrom.getName()
-							.equals(jGraLabEdgeClass.getFrom().getQualifiedName())) {
+					if (vcFrom.getName().equals(
+							jGraLabEdgeClass.getFrom().getQualifiedName())) {
 						// ..the From aggregation gets created.
-						From fromM2 = schemagraph.createFrom(vcFrom, schemagraphEdgeClass);
+						From fromM2 = schemagraph.createFrom(vcFrom,
+								schemagraphEdgeClass);
 						fromM2.setRoleName(jGraLabEdgeClass.getFromRolename());
 						fromM2.setMin(jGraLabEdgeClass.getFromMin());
 						fromM2.setMax(jGraLabEdgeClass.getFromMax());
@@ -305,53 +339,75 @@ public class Tg2SchemaGraph {
 					}
 				}
 
-				
 				for (de.uni_koblenz.jgralab.grumlschema.VertexClass vcTo : schemagraph
 						.getVertexClassVertices()) {
-					if (vcTo.getName().equals(jGraLabEdgeClass.getTo().getQualifiedName())) {
+					if (vcTo.getName().equals(
+							jGraLabEdgeClass.getTo().getQualifiedName())) {
 						// ..the To aggregation gets created.
-						To toM2 = schemagraph.createTo(vcTo, schemagraphEdgeClass);
+						To toM2 = schemagraph.createTo(vcTo,
+								schemagraphEdgeClass);
 						toM2.setRoleName(jGraLabEdgeClass.getToRolename());
 						toM2.setMin(jGraLabEdgeClass.getToMin());
 						toM2.setMax(jGraLabEdgeClass.getToMax());
 						break;
 					}
 				}
-				jGraLab2SchemagraphEdgeClassMap.put(jGraLabEdgeClass, schemagraphEdgeClass);
+				jGraLab2SchemagraphEdgeClassMap.put(jGraLabEdgeClass,
+						schemagraphEdgeClass);
 				// ..each attribute gets created.
 				for (Attribute attr : jGraLabEdgeClass.getOwnAttributeList()) {
-					createAttributeM2(attr, schemagraphEdgeClass);
+					createSchemagraphAttribute(attr, schemagraphEdgeClass);
 				}
 			}
 		}
 	}
 
-	private void createSpecializesEdgesForSchemagraphVertexClasses() {
-		for (EdgeClass schemagraphSuperEdgeClass : schema.getEdgeClassesInTopologicalOrder())
-			if (!schemagraphSuperEdgeClass.isInternal())
-				for (AttributedElementClass schemagraphSubEdgeClass : schemagraphSuperEdgeClass.getDirectSubClasses()) {
-					schemagraph.createSpecializesEdgeClass(
-							jGraLab2SchemagraphEdgeClassMap.get(schemagraphSuperEdgeClass),
-							jGraLab2SchemagraphEdgeClassMap.get(schemagraphSubEdgeClass));
-				}
-	}
-	
-	private void createSpecializesEdgesForSchemagraphEdgeClasses() {
-		for (VertexClass schemagraphSuperVertexClass : schema.getVertexClassesInTopologicalOrder())
-			if (!schemagraphSuperVertexClass.isInternal())
-				for (AttributedElementClass schemagraphSubVertexClass : schemagraphSuperVertexClass.getDirectSubClasses()) {
-					schemagraph.createSpecializesVertexClass(
-							jGraLab2SchemagraphVertexClassMap.get(schemagraphSuperVertexClass),
-							jGraLab2SchemagraphVertexClassMap.get(schemagraphSubVertexClass));
-				}
-	}
-	
 	/**
-	 * This method creates schemagraph <code>Attribute</code> vertices. For
-	 * each <code>Attribute</code> of a <code>AttributedElementClass</code>
-	 * this method gets called once.
+	 * creates all <code>SpecializesEdgeClass</code> edges in <code>schemagraph</code>
 	 */
-	private void createAttributeM2(Attribute jGraLabAttribute,
+	private void createSpecializesEdgesForSchemagraphVertexClasses() {
+		for (EdgeClass schemagraphSuperEdgeClass : schema
+				.getEdgeClassesInTopologicalOrder())
+			if (!schemagraphSuperEdgeClass.isInternal())
+				for (AttributedElementClass schemagraphSubEdgeClass : schemagraphSuperEdgeClass
+						.getDirectSubClasses()) {
+					schemagraph.createSpecializesEdgeClass(
+							jGraLab2SchemagraphEdgeClassMap
+									.get(schemagraphSuperEdgeClass),
+							jGraLab2SchemagraphEdgeClassMap
+									.get(schemagraphSubEdgeClass));
+				}
+	}
+
+	/**
+	 * creates all <code>SpecializesVertexClass</code> edges in <code>schemagraph</code> 
+	 */
+	private void createSpecializesEdgesForSchemagraphEdgeClasses() {
+		for (VertexClass schemagraphSuperVertexClass : schema
+				.getVertexClassesInTopologicalOrder())
+			if (!schemagraphSuperVertexClass.isInternal())
+				for (AttributedElementClass schemagraphSubVertexClass : schemagraphSuperVertexClass
+						.getDirectSubClasses()) {
+					schemagraph.createSpecializesVertexClass(
+							jGraLab2SchemagraphVertexClassMap
+									.get(schemagraphSuperVertexClass),
+							jGraLab2SchemagraphVertexClassMap
+									.get(schemagraphSubVertexClass));
+				}
+	}
+
+	/**
+	 * This method creates a <code>schemagraph</code> <code>Attribute</code> vertex and the
+	 * <code>HasAttribute</code> and <code>HasDomain</code> edges.
+	 * 
+	 * @param jGraLabAttribute
+	 *            a JGraLab attribute
+	 * @param schemagraphAttributedElementClass
+	 *            a <code>schemagraph</code> vertex representing
+	 *            <code>jGraLabAttribute</code>
+	 */
+	private void createSchemagraphAttribute(
+			Attribute jGraLabAttribute,
 			de.uni_koblenz.jgralab.grumlschema.AttributedElementClass schemagraphAttributedElementClass) {
 		de.uni_koblenz.jgralab.grumlschema.Attribute schemagraphAttribute = schemagraph
 				.createAttribute();
@@ -359,10 +415,11 @@ public class Tg2SchemaGraph {
 
 		// the HasAttribute link from AttributedElementClass to Attribute
 		// gets created.
-		schemagraph.createHasAttribute(schemagraphAttribute, schemagraphAttributedElementClass);
+		schemagraph.createHasAttribute(schemagraphAttribute,
+				schemagraphAttributedElementClass);
 
-		schemagraph.createHasDomain(jGraLab2SchemagraphDomainMap.get(jGraLabAttribute
-				.getDomain()), schemagraphAttribute);
+		schemagraph.createHasDomain(jGraLab2SchemagraphDomainMap
+				.get(jGraLabAttribute.getDomain()), schemagraphAttribute);
 	}
 
 	/**
@@ -373,9 +430,10 @@ public class Tg2SchemaGraph {
 	 * <code>de.uni_koblenz.jgralab.grumlschema.Domain</code> object.
 	 * 
 	 * At first only the <code>BasicDomain</code>s get mapped. The
-	 * <code>CompositeDomain</code>s get mapped according to their
-	 * "structural depth". First, composites of basic types get mapped. Then
-	 * composites of composites of basic types get mapped...
+	 * <code>CompositeDomain</code>s get mapped in the order of the
+	 * "domain-depth" of their base domains or RecordDomainComponents. First,
+	 * composites of basic types get mapped. Then composites of composites of
+	 * basic types...and so on. The leafs of the compositum get created lastly.
 	 */
 	private void createJGraLabDomainToSchemagraphDomainMap() {
 		Map<QualifiedName, Domain> domains = schema.getDomains();
@@ -405,42 +463,45 @@ public class Tg2SchemaGraph {
 					jGraLab2SchemagraphDomainMap.put(d, schemagraph
 							.createStringDomain());
 				} else if (d instanceof CompositeDomain) {
-					createCompositeDomainM2(d);
+					createSchemagraphCompositeDomain(d);
 				}
 			}
 		}
 	}
 
 	/**
-	 * This method checks, if a <code>CompositeDomainM2</code> can be created.
-	 * The condition asks every underlying <code>DomainM2</code> to be created
-	 * first. If so, it creates a <code>CompositeDomainM2</code> object and
-	 * maps its corresponding <code>CompositeDomain</code> object to it.
+	 * This method creates a <code>schemagraph</code> <code>CompositeDomain</code> vertex
+	 * if and only if its base domain (<code>ListDomain</code> and
+	 * <code>SetDomain</code>) or all of its
+	 * <code>RecordDomainComponent</code> have been created. If creation
+	 * proceeds successfully the <code>jGraLab2SchemagraphDomainMap</code> map
+	 * gets updated directly.
 	 */
-	private void createCompositeDomainM2(Domain d) {
-		if (d instanceof ListDomain
-				&& !(jGraLab2SchemagraphDomainMap.get(((ListDomain) d)
-						.getBaseDomain()) == null)) {
+	private void createSchemagraphCompositeDomain(Domain jGraLabDomain) {
+		if (jGraLabDomain instanceof ListDomain
+				&& !(jGraLab2SchemagraphDomainMap
+						.get(((ListDomain) jGraLabDomain).getBaseDomain()) == null)) {
 
 			de.uni_koblenz.jgralab.grumlschema.ListDomain dM2 = schemagraph
 					.createListDomain();
 			schemagraph.createHasBaseDomain(dM2, jGraLab2SchemagraphDomainMap
-					.get(((ListDomain) d).getBaseDomain()));
-			jGraLab2SchemagraphDomainMap.put(d, dM2);
+					.get(((ListDomain) jGraLabDomain).getBaseDomain()));
+			jGraLab2SchemagraphDomainMap.put(jGraLabDomain, dM2);
 		}
-		if (d instanceof SetDomain
-				&& !(jGraLab2SchemagraphDomainMap.get(((SetDomain) d)
-						.getBaseDomain()) == null)) {
+		if (jGraLabDomain instanceof SetDomain
+				&& !(jGraLab2SchemagraphDomainMap
+						.get(((SetDomain) jGraLabDomain).getBaseDomain()) == null)) {
 
 			de.uni_koblenz.jgralab.grumlschema.SetDomain dM2 = schemagraph
 					.createSetDomain();
 			schemagraph.createHasBaseDomain(dM2, jGraLab2SchemagraphDomainMap
-					.get(((SetDomain) d).getBaseDomain()));
-			jGraLab2SchemagraphDomainMap.put(d, dM2);
+					.get(((SetDomain) jGraLabDomain).getBaseDomain()));
+			jGraLab2SchemagraphDomainMap.put(jGraLabDomain, dM2);
 		}
-		if (d instanceof RecordDomain) {
+		if (jGraLabDomain instanceof RecordDomain) {
 			boolean allBaseDomainsMapped = true;
-			for (Domain dom : ((RecordDomain) d).getComponents().values())
+			for (Domain dom : ((RecordDomain) jGraLabDomain).getComponents()
+					.values())
 				if (jGraLab2SchemagraphDomainMap.get(dom) == null) {
 					allBaseDomainsMapped = false;
 					break;
@@ -448,8 +509,8 @@ public class Tg2SchemaGraph {
 			if (allBaseDomainsMapped) {
 				de.uni_koblenz.jgralab.grumlschema.RecordDomain dM2 = schemagraph
 						.createRecordDomain();
-				dM2.setName(((RecordDomain) d).getQualifiedName());
-				Map<String, Domain> recordMap = ((RecordDomain) d)
+				dM2.setName(((RecordDomain) jGraLabDomain).getQualifiedName());
+				Map<String, Domain> recordMap = ((RecordDomain) jGraLabDomain)
 						.getComponents();
 				for (String key : recordMap.keySet()) {
 					HasRecordDomainComponent hrc = schemagraph
@@ -458,13 +519,13 @@ public class Tg2SchemaGraph {
 											.get(key)));
 					hrc.setName(key);
 				}
-				jGraLab2SchemagraphDomainMap.put(d, dM2);
+				jGraLab2SchemagraphDomainMap.put(jGraLabDomain, dM2);
 			}
 		}
 	}
 
 	/**
-	 * This methods writes the schemagrpah to a file (see GraphIO.java)
+	 * This methods writes the <code>schemagraph</code> to a file (see GraphIO.java)
 	 */
 	public void saveSchemaGraphToFile(String filename, ProgressFunction pf) {
 		try {
@@ -476,7 +537,7 @@ public class Tg2SchemaGraph {
 	}
 
 	/**
-	 * This method writes the schemagraph to an DataOutputStream (see
+	 * This method writes the <code>schemagraph</code> to an DataOutputStream (see
 	 * GraphIO.java)
 	 */
 	public void saveSchemaGraphToStream(DataOutputStream stream,
