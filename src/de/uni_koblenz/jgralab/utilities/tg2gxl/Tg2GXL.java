@@ -36,6 +36,9 @@ import de.uni_koblenz.jgralab.AttributedElement;
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.GraphIOException;
 import de.uni_koblenz.jgralab.Vertex;
+import de.uni_koblenz.jgralab.grumlschema.DefinesGraphClass;
+import de.uni_koblenz.jgralab.grumlschema.HasRecordDomainComponent;
+import de.uni_koblenz.jgralab.grumlschema.Schema;
 import de.uni_koblenz.jgralab.schema.AttributedElementClass;
 import de.uni_koblenz.jgralab.schema.BooleanDomain;
 import de.uni_koblenz.jgralab.schema.Domain;
@@ -46,11 +49,7 @@ import de.uni_koblenz.jgralab.schema.ListDomain;
 import de.uni_koblenz.jgralab.schema.LongDomain;
 import de.uni_koblenz.jgralab.schema.RecordDomain;
 import de.uni_koblenz.jgralab.schema.SetDomain;
-import de.uni_koblenz.jgralab.schema.StringDomain;
 import de.uni_koblenz.jgralab.utilities.tg2schemagraph.Tg2SchemaGraph;
-import de.uni_koblenz.jgralab.utilities.tg2schemagraph.grumlschema.DefinesGraphClass;
-import de.uni_koblenz.jgralab.utilities.tg2schemagraph.grumlschema.HasRecordDomainComponent;
-import de.uni_koblenz.jgralab.utilities.tg2schemagraph.grumlschema.Schema;
 import de.uni_koblenz.jgralab.utilities.tg2whatever.Tg2Whatever;
 
 /**
@@ -178,7 +177,7 @@ public class Tg2GXL extends Tg2Whatever {
 		try {
 			if (printSchema && !(v instanceof Schema)) {
 
-				if (v instanceof de.uni_koblenz.jgralab.utilities.tg2schemagraph.grumlschema.AttributedElementClass)
+				if (v instanceof de.uni_koblenz.jgralab.grumlschema.AttributedElementClass)
 					out.println("<node id=\"" + v.getAttribute("name") + "\">");
 				else
 					out.println("<node id=\"v:" + v.getId() + "\">");
@@ -248,9 +247,9 @@ public class Tg2GXL extends Tg2Whatever {
 			String thatVertex = "v:" + e.getThat().getId();
 
 			try {
-				if (e.getThis() instanceof de.uni_koblenz.jgralab.utilities.tg2schemagraph.grumlschema.AttributedElementClass)
+				if (e.getThis() instanceof de.uni_koblenz.jgralab.grumlschema.AttributedElementClass)
 					thisVertex = "" + e.getThis().getAttribute("name");
-				if (e.getThat() instanceof de.uni_koblenz.jgralab.utilities.tg2schemagraph.grumlschema.AttributedElementClass)
+				if (e.getThat() instanceof de.uni_koblenz.jgralab.grumlschema.AttributedElementClass)
 					thatVertex = "" + e.getThat().getAttribute("name");
 			} catch (NoSuchFieldException ex) {
 				ex.printStackTrace();
