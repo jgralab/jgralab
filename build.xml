@@ -213,14 +213,25 @@
 	   	<ant dir="${common.dir}" antfile="build.xml" target="generateschema">
 			<property name="subprojectname" value = "utilities/tg2schemagraph/"/>	
 			<property name="schemafile" 
-				value = "GrUML_Becklespinax_M3.tg"/>			
+				value = "GrumlSchema.tg"/>			
 	   	</ant>
 	</target>
-	<target name="utilities" depends="grumlsources">
+	
+	<!-- -->
+	<target name="grumlsourcesCompile" depends="grumlsources">
+		<ant dir="${common.dir}" antfile="build.xml" target="compile">
+			<property name="src.dir" value="${src.dir}/de/uni_koblenz/${projectname}/grumlschema"/>
+		</ant>
+	</target>
+	
+	<target name="utilities" depends="grumlsourcesCompile">
 		<!-- calls target compile in general ant file ${ant}/build.xml -->
 	   	<ant dir="${common.dir}" antfile="build.xml" target="compile">
 	   		<property name="src.dir" value="${src.dir}/de/uni_koblenz/${projectname}/utilities"/>
-			<property name="compileexcludes" value="tgschema2java/**"/>
+	   		<!--	
+	   		-->
+	   		<property name="additional.pathelementlocation" value="${classes.dir}/de/uni_koblenz/jgralab/grumlschema/**"/>
+	   		<property name="compileexcludes" value="tgschema2java/**"/>	   		
 	   	</ant>
 	</target>
 	
