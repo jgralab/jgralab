@@ -25,7 +25,9 @@
 package de.uni_koblenz.jgralab.greql2.funlib;
 
 import java.io.File;
+import java.io.UnsupportedEncodingException;
 import java.net.URL;
+import java.net.URLDecoder;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.jar.JarEntry;
@@ -209,10 +211,11 @@ public class Greql2FunctionLibrary {
 						.hasMoreElements();) {
 					JarEntry je = e.nextElement();
 					String entryName = je.getName();
-					if (entryName.contains("funlib"))
+					if (entryName.contains("funlib") && !entryName.contains("funlib/pathsearch"))
 						logger.finer("Reading entry " + entryName);
 					if (entryName.startsWith(nondottedPackageName)
-							&& entryName.endsWith(".class")) {
+							&& entryName.endsWith(".class")
+							&& Character.isUpperCase(entryName.charAt(nondottedPackageName.length() + 1))) {
 						registerPredefinedFunction(entryName.substring(
 								nondottedPackageName.length() + 1, entryName
 										.length() - 6));
@@ -222,6 +225,7 @@ public class Greql2FunctionLibrary {
 					}
 				}
 			} catch (Exception e) {
+				e.printStackTrace();
 			}
 			return true;
 		}
@@ -272,7 +276,14 @@ public class Greql2FunctionLibrary {
 			logger.finer("Found Greql2FunctionLibrary");
 			logger.finer("URL : " + packageUrl.getPath());
 
-			String packagePath = packageUrl.getPath();
+			String packagePath = null;
+			
+			try {
+				packagePath = URLDecoder.decode(packageUrl.getPath(), "UTF-8");
+			} catch (UnsupportedEncodingException e) {
+				e.printStackTrace();
+			}
+			
 			packagePath = packagePath
 					.substring(0, packagePath.lastIndexOf("/"));
 
