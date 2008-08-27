@@ -1,6 +1,6 @@
 /*
  * JGraLab - The Java graph laboratory
- * (c) 2006-2007 Institute for Software Technology
+ * (c) 2006-2008 Institute for Software Technology
  *               University of Koblenz-Landau, Germany
  *
  *               ist@uni-koblenz.de
@@ -41,7 +41,7 @@ public class JGraLab {
 
 	private final String[] info = {
 			"JGraLab - The Java graph laboratory $ver $rev  $bid",
-			"(c) 2006-2007 Institute for Software Technology",
+			"(c) 2006-2008 Institute for Software Technology",
 			"              University of Koblenz-Landau, Germany",
 			"",
 			"              ist@uni-koblenz.de",
@@ -65,7 +65,7 @@ public class JGraLab {
 			"This software uses:",
 			"",
 			"ANTLR 2.7.6",
-			"Copyright (c) 2003-2007, Terence Parr",
+			"Copyright (c) 2003-2008, Terence Parr",
 			"All rights reserved.",
 			"",
 			"JDOM 1.0",
@@ -73,7 +73,7 @@ public class JGraLab {
 			"All rights reserved.",
 			"",
 			"Apache XML-RPC 3.0",
-			"Copyright (C) 2001-2007 The Apache Software Foundation",
+			"Copyright (C) 2001-2008 The Apache Software Foundation",
 			"Please note, you need the Java Enterprise Edition to make full use",
 			"of this part of the software." };
 

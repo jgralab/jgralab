@@ -1,6 +1,6 @@
 /*
  * JGraLab - The Java graph laboratory
- * (c) 2006-2007 Institute for Software Technology
+ * (c) 2006-2008 Institute for Software Technology
  *               University of Koblenz-Landau, Germany
  *
  *               ist@uni-koblenz.de
@@ -38,7 +38,7 @@ import de.uni_koblenz.jgralab.*;
  * difference for the other VertexEvaluators, if a value is the result of a
  * maybe complex evaluation or if it is a literal.
  * 
- * @author Daniel Bildhauer <dbildh@uni-koblenz.de> September 2007
+ * @author Daniel Bildhauer <dbildh@uni-koblenz.de> September 2008
  * 
  */
 public class NullLiteralEvaluator extends VertexEvaluator {

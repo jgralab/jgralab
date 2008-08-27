@@ -1,6 +1,6 @@
 /*
  * JGraLab - The Java graph laboratory
- * (c) 2006-2007 Institute for Software Technology
+ * (c) 2006-2008 Institute for Software Technology
  *               University of Koblenz-Landau, Germany
  *
  *               ist@uni-koblenz.de
@@ -38,7 +38,7 @@ import de.uni_koblenz.jgralab.greql2.schema.Greql2Vertex;
 import de.uni_koblenz.jgralab.greql2.schema.Variable;
 
 /**
- * @author Tassilo Horn (heimdall), 2007, Diploma Thesis
+ * @author Tassilo Horn (heimdall), 2008, Diploma Thesis
  * 
  */
 public class DefaultOptimizer extends OptimizerBase {

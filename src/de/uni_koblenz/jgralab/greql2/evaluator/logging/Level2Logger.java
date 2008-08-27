@@ -1,6 +1,6 @@
 /*
  * JGraLab - The Java graph laboratory
- * (c) 2006-2007 Institute for Software Technology
+ * (c) 2006-2008 Institute for Software Technology
  *               University of Koblenz-Landau, Germany
  *
  *               ist@uni-koblenz.de
@@ -57,7 +57,7 @@ import java.util.concurrent.Semaphore;
  * Any additional store() will return false and nothing will be written anymore.
  * 
  * @author Daniel Bildhauer <dbildh@uni-koblenz.de> Summer 2006, Diploma Thesis
- * @author Tassilo Horn <heimdall@uni-koblenz.de>, 2007, Diploma Thesis
+ * @author Tassilo Horn <heimdall@uni-koblenz.de>, 2008, Diploma Thesis
  */
 public class Level2Logger extends Level2LoggingBase implements EvaluationLogger {
 
