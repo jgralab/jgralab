@@ -1724,11 +1724,12 @@ public class GraphIO {
 
 		String s = (lookAhead.charAt(0) == '\'') ? lookAhead.substring(1)
 				: lookAhead;
-		String c = null;
-		if (s.contains("."))
-			c = s;
-		else
-			c = currentPackageName + "." + s;
+		String c = (s.contains(".")) ? s : currentPackageName +"." + s;
+//		String c = null;
+//		if (s.contains("."))
+//			c = s;
+//		else
+//			c = currentPackageName + "." + s;
 		QualifiedName result = qualifiedNameMap.get(c);
 		if (result != null) {
 			match();
