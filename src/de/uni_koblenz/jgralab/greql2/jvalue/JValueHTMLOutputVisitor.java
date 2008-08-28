@@ -171,6 +171,10 @@ public class JValueHTMLOutputVisitor extends JValueDefaultVisitor {
 	public void visitPathSystem(JValuePathSystem p) throws Exception {
 		//TODO visitPathSystem
 	}
+	
+	public void visitSlice(JValueSlice s) throws Exception {
+		// TODO visitSlice
+	}
 
 	public void visitVertex(JValue v) throws Exception {
 		Vertex vertex = v.toVertex();

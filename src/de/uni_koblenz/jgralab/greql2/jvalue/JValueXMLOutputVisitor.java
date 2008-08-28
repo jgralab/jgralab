@@ -162,6 +162,10 @@ public class JValueXMLOutputVisitor extends JValueDefaultVisitor {
 	public void visitPathSystem(JValuePathSystem p) throws Exception {
 		// TODO visitPathSystem
 	}
+	
+	public void visitSlice(JValueSlice s) throws Exception {
+		// TODO visitSlice
+	}
 
 	public void visitVertex(JValue v) throws Exception {
 		Vertex vertex = null;

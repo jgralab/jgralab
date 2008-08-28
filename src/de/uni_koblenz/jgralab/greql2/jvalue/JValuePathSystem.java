@@ -70,8 +70,8 @@ public class JValuePathSystem extends JValue {
 	/**
 	 * returns the rootVertex of this pathSystem
 	 */
-	public Vertex getRootVertex() {
-		return rootVertex;
+	public JValue getRootVertex() {
+		return new JValue(rootVertex);
 	}
 
 	/**
@@ -190,8 +190,8 @@ public class JValuePathSystem extends JValue {
 
 	/**
 	 * Calculates the set of children the given vertex has in this PathSystem.
-	 * If the given vertex exists more than one times in this pathsystem, the
-	 * first occurence if used.
+	 * If the given vertex exists more than one times in this slice, the
+	 * first occurrence if used.
 	 */
 	public JValueSet children(Vertex vertex) {
 		PathSystemKey key = vertexToFirstKeyMap.get(vertex);

@@ -138,6 +138,8 @@ public class JValueDefaultVisitor implements JValueVisitor {
 	}
 
 	public void visitPathSystem(JValuePathSystem p) throws Exception {}
+	
+	public void visitSlice(JValueSlice s) throws Exception {}
 
 	public void visitVertex(JValue v) throws Exception {}
 

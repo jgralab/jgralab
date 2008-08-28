@@ -85,7 +85,12 @@ public interface JValueVisitor {
 	 */
 	public void visitPathSystem(JValuePathSystem p) throws Exception;
 	
-	
+	/**
+	 * Method to visit a Slice
+	 * @param s the slice to visit
+	 */
+	public void visitSlice(JValueSlice s) throws Exception;
+		
 	/**
 	 * Method to visit a Vertex
 	 * @param v the Vertex to visit
@@ -196,7 +201,7 @@ public interface JValueVisitor {
 	
 	/**
 	 * The method to visit a type collection
-	 * @param a the type colleantion to visit
+	 * @param a the type collection to visit
 	 */
 	public void visitTypeCollection(JValue a) throws Exception;
 	

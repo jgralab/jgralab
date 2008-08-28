@@ -175,15 +175,20 @@ public class PathSystem extends PathSearch implements Greql2Function {
 		markVertex(startVertex, dfa.initialState, null /* no parent state */,
 				   null /* no parent vertex */, null /* no parent state */, 
 				   0 /*distance to root is null*/);
+		
+		int count = 0, countWTrans = 0;
 		while (currentEntry != null) {
 			if (currentEntry.state.isFinal) {
 				finalVertices.add(currentEntry.vertex);
 			}
 			Edge inc = currentEntry.vertex.getFirstEdge();
 			while (inc != null) {
+				count++;
+				
 				Iterator<Transition> transitionIter = currentEntry.state.outTransitions
 						.iterator();
 				while (transitionIter.hasNext()) {
+					countWTrans++;
 					Transition currentTransition = transitionIter.next();
 					Vertex nextVertex = currentTransition.getNextVertex(
 							currentEntry.vertex, inc);
@@ -208,6 +213,10 @@ public class PathSystem extends PathSearch implements Greql2Function {
 			currentEntry = queue.poll();
 		}
 		// GreqlEvaluator.errprintln("Marking vertices of path system finished");
+		System.out.println("# DFA states: " + dfa.stateList.size());
+		System.out.println("PathSystem - markVertices: " + count);
+		System.out.println("PathSystem - markVertices with transition loop: " + countWTrans);
+		
 		return finalVertices;
 	}
 
@@ -258,6 +267,7 @@ public class PathSystem extends PathSearch implements Greql2Function {
 				rootMarker.state.isFinal);
 		stateMarker = new GraphMarker<Set<State>>(rootVertex.getGraph());
 		Iterator<Vertex> iter = leaves.iterator();
+		int count = 0;
 		while (iter.hasNext()) {
 			Vertex leaf = iter.next();
 			for (GraphMarker<PathSystemMarkerList> currentGraphMarker : marker) {
@@ -274,6 +284,7 @@ public class PathSystem extends PathSearch implements Greql2Function {
 							int parentStateNumber = 0;
 							if (currentMarker.parentState != null)
 								parentStateNumber = currentMarker.parentState.number;
+							count++;
 							pathSystem.addVertex(currentVertex,
 									currentMarker.state.number,
 									currentMarker.edgeToParentVertex,
@@ -290,6 +301,7 @@ public class PathSystem extends PathSearch implements Greql2Function {
 				}
 			}
 		}
+		System.out.println("PathSystem - createPathSystem: " + count);
 		
 		return pathSystem;
 	}
