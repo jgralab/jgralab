@@ -21,17 +21,30 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
- 
+
 package de.uni_koblenz.jgralab;
 
 /**
  * exceptions of this class are thrown if an error occurs while loading or
  * storing of schema and graph in tg file format
- * 
+ *
  * @author Steffen Kahle
  */
 public class GraphIOException extends Exception {
 	private static final long serialVersionUID = 4569564712278582929L;
+
+	private GraphIOExceptionReason reason = GraphIOExceptionReason.UNDEFINED;
+
+	/**
+	 * @return the reason
+	 */
+	public GraphIOExceptionReason getReason() {
+		return reason;
+	}
+
+	public enum GraphIOExceptionReason {
+		UNDEFINED, UNKNOWN_SCHEMA
+	};
 
 	public GraphIOException() {
 	}
@@ -46,5 +59,11 @@ public class GraphIOException extends Exception {
 
 	public GraphIOException(String msg, Throwable t) {
 		super(msg, t);
+	}
+
+	public GraphIOException(String msg, Throwable t,
+			GraphIOExceptionReason cause) {
+		super(msg, t);
+		this.reason = cause;
 	}
 }
