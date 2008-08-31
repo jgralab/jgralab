@@ -173,7 +173,8 @@ public class Tg2SchemaGraph {
 			defaultPackageVertex.setQualifiedName(defaultPackage
 					.getQualifiedName());
 			defaultPackageVertex.setFullyQualifiedName(schema.getPackageName());
-			schemagraph.createContainsDefaultPackage(schemaVertex, defaultPackageVertex);
+			schemagraph.createContainsDefaultPackage(schemaVertex,
+					defaultPackageVertex);
 
 			//
 			createSchemagraphPackageAndContents(defaultPackage,
@@ -186,8 +187,8 @@ public class Tg2SchemaGraph {
 			//
 			for (Entry<de.uni_koblenz.jgralab.schema.Domain, de.uni_koblenz.jgralab.grumlschema.Domain> entry : jGraLab2SchemagraphDomainMap
 					.entrySet())
-				schemagraph.createContainsDomain(jGraLab2SchemagraphPackageMap.get(entry.getKey()
-								.getPackage()), entry.getValue());
+				schemagraph.createContainsDomain(jGraLab2SchemagraphPackageMap
+						.get(entry.getKey().getPackage()), entry.getValue());
 		}
 		return schemagraph;
 	}
@@ -222,7 +223,7 @@ public class Tg2SchemaGraph {
 				schemagraphSubPackage.setName(jGraLabSubPackage
 						.getQualifiedName());
 				schemagraphSubPackage.setQualifiedName(jGraLabSubPackage
-						.getPackageName());
+						.getQualifiedName());
 				schemagraphSubPackage.setFullyQualifiedName(schema
 						.getPackageName()
 						+ "." + jGraLabSubPackage.getQualifiedName());
@@ -256,7 +257,7 @@ public class Tg2SchemaGraph {
 				// ...create a vertex
 				de.uni_koblenz.jgralab.grumlschema.VertexClass schemagraphVertexClass = schemagraph
 						.createVertexClass();
-				schemagraph.createContainsGraphElementClass(schemagraphPackage, 
+				schemagraph.createContainsGraphElementClass(schemagraphPackage,
 						schemagraphVertexClass);
 
 				schemagraphVertexClass.setName(jGraLabVertexClass
@@ -309,8 +310,8 @@ public class Tg2SchemaGraph {
 				} else {
 					schemagraphEdgeClass = schemagraph.createEdgeClass();
 				}
-				schemagraph.createContainsGraphElementClass(
-						schemagraphPackage, schemagraphEdgeClass);
+				schemagraph.createContainsGraphElementClass(schemagraphPackage,
+						schemagraphEdgeClass);
 
 				schemagraphEdgeClass.setName(jGraLabEdgeClass
 						.getQualifiedName());
@@ -327,7 +328,8 @@ public class Tg2SchemaGraph {
 					if (vcFrom.getName().equals(
 							jGraLabEdgeClass.getFrom().getQualifiedName())) {
 						// ..the From aggregation gets created.
-						From fromM2 = schemagraph.createFrom(schemagraphEdgeClass, vcFrom);
+						From fromM2 = schemagraph.createFrom(
+								schemagraphEdgeClass, vcFrom);
 						fromM2.setRoleName(jGraLabEdgeClass.getFromRolename());
 						fromM2.setMin(jGraLabEdgeClass.getFromMin());
 						fromM2.setMax(jGraLabEdgeClass.getFromMax());
@@ -340,7 +342,8 @@ public class Tg2SchemaGraph {
 					if (vcTo.getName().equals(
 							jGraLabEdgeClass.getTo().getQualifiedName())) {
 						// ..the To aggregation gets created.
-						To toM2 = schemagraph.createTo(schemagraphEdgeClass, vcTo);
+						To toM2 = schemagraph.createTo(schemagraphEdgeClass,
+								vcTo);
 						toM2.setRoleName(jGraLabEdgeClass.getToRolename());
 						toM2.setMin(jGraLabEdgeClass.getToMin());
 						toM2.setMax(jGraLabEdgeClass.getToMax());
@@ -412,10 +415,11 @@ public class Tg2SchemaGraph {
 
 		// the HasAttribute link from AttributedElementClass to Attribute
 		// gets created.
-		schemagraph.createHasAttribute(schemagraphAttributedElementClass, schemagraphAttribute);
+		schemagraph.createHasAttribute(schemagraphAttributedElementClass,
+				schemagraphAttribute);
 
-		schemagraph.createHasDomain(schemagraphAttribute, jGraLab2SchemagraphDomainMap
-				.get(jGraLabAttribute.getDomain()));
+		schemagraph.createHasDomain(schemagraphAttribute,
+				jGraLab2SchemagraphDomainMap.get(jGraLabAttribute.getDomain()));
 	}
 
 	/**
