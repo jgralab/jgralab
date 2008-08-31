@@ -2,7 +2,7 @@ package de.uni_koblenz.jgralab.utilities.tg2schemagraph;
 
 /*
  * JGraLab - The Java graph laboratory
- * (c) 2006-2008 Institute for Software Technology
+ * (c) 2006-2007 Institute for Software Technology
  *               University of Koblenz-Landau, Germany
  *
  *               ist@uni-koblenz.de
@@ -69,8 +69,8 @@ import de.uni_koblenz.jgralab.grumlschema.To;
 public class Tg2SchemaGraph {
 
 	/**
-	 * writes a schema's  to a file. the schema .tg file and the
-	 * outputfile get defined by the command line options
+	 * writes a schema's to a file. the schema .tg file and the outputfile get
+	 * defined by the command line options
 	 */
 	public static void main(String[] args) {
 		Tg2SchemaGraph tg2sg = new Tg2SchemaGraph();
@@ -96,9 +96,9 @@ public class Tg2SchemaGraph {
 	private Map<de.uni_koblenz.jgralab.schema.EdgeClass, de.uni_koblenz.jgralab.grumlschema.EdgeClass> jGraLab2SchemagraphEdgeClassMap;
 
 	/**
-	 * This class must be instantiated with a schema. So for every schema, you
-	 * want to represent with a <Code>Graph</Code> object, you have to create
-	 * a new instance of this class.
+	 * This class must be instantiated with a schema. You cannot change the
+	 * <code>Schema</code> afterwards hence for every schemagraph you want to
+	 * create a new instance of this class is needed.
 	 * 
 	 * @param schema
 	 *            Any desired <code>Schema</code> object.
@@ -116,9 +116,9 @@ public class Tg2SchemaGraph {
 	}
 
 	/**
-	 * This method creates an instance graph of the grUML language's meta
-	 * schema. Its result is a <code>Graph</code>, that represents any
-	 * desired <code>Schema</code>.
+	 * creates an instance graph of the grUML language's meta schema. Its result
+	 * is a <code>Graph</code>, that represents any desired
+	 * <code>Schema</code>.
 	 * 
 	 * @return a <code>Graph</code> object that represents a
 	 *         <code>Schema</code>.
@@ -152,7 +152,7 @@ public class Tg2SchemaGraph {
 			// schemagraph edge definesGraphClass
 			de.uni_koblenz.jgralab.grumlschema.GraphClass graphClassVertex = schemagraph
 					.createGraphClass();
-			schemagraph.createDefinesGraphClass(graphClassVertex, schemaVertex);
+			schemagraph.createDefinesGraphClass(schemaVertex, graphClassVertex);
 
 			graphClassVertex.setName(schema.getGraphClassesInTopologicalOrder()
 					.get(1).getQualifiedName());
@@ -173,8 +173,7 @@ public class Tg2SchemaGraph {
 			defaultPackageVertex.setQualifiedName(defaultPackage
 					.getQualifiedName());
 			defaultPackageVertex.setFullyQualifiedName(schema.getPackageName());
-			schemagraph.createContainsDefaultPackage(defaultPackageVertex,
-					schemaVertex);
+			schemagraph.createContainsDefaultPackage(schemaVertex, defaultPackageVertex);
 
 			//
 			createSchemagraphPackageAndContents(defaultPackage,
@@ -187,23 +186,21 @@ public class Tg2SchemaGraph {
 			//
 			for (Entry<de.uni_koblenz.jgralab.schema.Domain, de.uni_koblenz.jgralab.grumlschema.Domain> entry : jGraLab2SchemagraphDomainMap
 					.entrySet())
-				schemagraph.createContainsDomain(entry.getValue(),
-						jGraLab2SchemagraphPackageMap.get(entry.getKey()
-								.getPackage()));
+				schemagraph.createContainsDomain(jGraLab2SchemagraphPackageMap.get(entry.getKey()
+								.getPackage()), entry.getValue());
 		}
 		return schemagraph;
 	}
 
 	/**
-	 * Sets up a <code>schemagraph</code> <code>Package</code> vertex. For each subpackge
-	 * of <code>jGraLabSuperPackage</code> this method gets called
-	 * recursively.
+	 * Sets up a <code>schemagraph</code> <code>Package</code> vertex. For
+	 * each subpackge of <code>jGraLabSuperPackage</code> this method gets
+	 * called recursively.
 	 * 
 	 * @param jGraLabSuperPackage
 	 *            a JGraLab package
 	 * @param schemagraphSuperPackage
-	 *            a vertex of the  representing package
-	 *            jGraLabSuperPackage
+	 *            a vertex of the representing package jGraLabSuperPackage
 	 */
 	private void createSchemagraphPackageAndContents(
 			de.uni_koblenz.jgralab.schema.Package jGraLabSuperPackage,
@@ -237,9 +234,9 @@ public class Tg2SchemaGraph {
 	}
 
 	/**
-	 * This method creates all <code>schemagraph</code> <code>VertexClass</code> vertices
-	 * for a given package and the required incident edges of it. For each
-	 * attribute of the <code>VertexClass</code>es
+	 * creates all <code>schemagraph</code> <code>VertexClass</code>
+	 * vertices for a given package and the required incident edges of it. For
+	 * each attribute of the <code>VertexClass</code>es
 	 * <code>createSchemagraphAttribute</code> gets called.
 	 * 
 	 * @param schemagraphPackage
@@ -259,8 +256,8 @@ public class Tg2SchemaGraph {
 				// ...create a vertex
 				de.uni_koblenz.jgralab.grumlschema.VertexClass schemagraphVertexClass = schemagraph
 						.createVertexClass();
-				schemagraph.createContainsGraphElementClass(
-						schemagraphVertexClass, schemagraphPackage);
+				schemagraph.createContainsGraphElementClass(schemagraphPackage, 
+						schemagraphVertexClass);
 
 				schemagraphVertexClass.setName(jGraLabVertexClass
 						.getQualifiedName());
@@ -283,8 +280,8 @@ public class Tg2SchemaGraph {
 	}
 
 	/**
-	 * This method creates all <code>schemagraph</code> <code>EdgeClass</code> vertices for
-	 * a given package and the required incident edges of it(like
+	 * creates all <code>schemagraph</code> <code>EdgeClass</code> vertices
+	 * for a given package and the required incident edges of it(like
 	 * <code>To</code>, <code>From</code>,
 	 * <code>ContainsGraphElementClass</code>). For each attribute of the
 	 * <code>EdgeClass</code>es <code>createSchemagraphAttribute</code>
@@ -313,7 +310,7 @@ public class Tg2SchemaGraph {
 					schemagraphEdgeClass = schemagraph.createEdgeClass();
 				}
 				schemagraph.createContainsGraphElementClass(
-						schemagraphEdgeClass, schemagraphPackage);
+						schemagraphPackage, schemagraphEdgeClass);
 
 				schemagraphEdgeClass.setName(jGraLabEdgeClass
 						.getQualifiedName());
@@ -330,8 +327,7 @@ public class Tg2SchemaGraph {
 					if (vcFrom.getName().equals(
 							jGraLabEdgeClass.getFrom().getQualifiedName())) {
 						// ..the From aggregation gets created.
-						From fromM2 = schemagraph.createFrom(vcFrom,
-								schemagraphEdgeClass);
+						From fromM2 = schemagraph.createFrom(schemagraphEdgeClass, vcFrom);
 						fromM2.setRoleName(jGraLabEdgeClass.getFromRolename());
 						fromM2.setMin(jGraLabEdgeClass.getFromMin());
 						fromM2.setMax(jGraLabEdgeClass.getFromMax());
@@ -344,8 +340,7 @@ public class Tg2SchemaGraph {
 					if (vcTo.getName().equals(
 							jGraLabEdgeClass.getTo().getQualifiedName())) {
 						// ..the To aggregation gets created.
-						To toM2 = schemagraph.createTo(vcTo,
-								schemagraphEdgeClass);
+						To toM2 = schemagraph.createTo(schemagraphEdgeClass, vcTo);
 						toM2.setRoleName(jGraLabEdgeClass.getToRolename());
 						toM2.setMin(jGraLabEdgeClass.getToMin());
 						toM2.setMax(jGraLabEdgeClass.getToMax());
@@ -363,7 +358,8 @@ public class Tg2SchemaGraph {
 	}
 
 	/**
-	 * creates all <code>SpecializesEdgeClass</code> edges in <code>schemagraph</code>
+	 * creates all <code>SpecializesEdgeClass</code> edges in
+	 * <code>schemagraph</code>
 	 */
 	private void createSpecializesEdgesForSchemagraphVertexClasses() {
 		for (EdgeClass schemagraphSuperEdgeClass : schema
@@ -380,7 +376,8 @@ public class Tg2SchemaGraph {
 	}
 
 	/**
-	 * creates all <code>SpecializesVertexClass</code> edges in <code>schemagraph</code> 
+	 * creates all <code>SpecializesVertexClass</code> edges in
+	 * <code>schemagraph</code>
 	 */
 	private void createSpecializesEdgesForSchemagraphEdgeClasses() {
 		for (VertexClass schemagraphSuperVertexClass : schema
@@ -397,8 +394,8 @@ public class Tg2SchemaGraph {
 	}
 
 	/**
-	 * This method creates a <code>schemagraph</code> <code>Attribute</code> vertex and the
-	 * <code>HasAttribute</code> and <code>HasDomain</code> edges.
+	 * creates a <code>schemagraph</code> <code>Attribute</code> vertex and
+	 * the <code>HasAttribute</code> and <code>HasDomain</code> edges.
 	 * 
 	 * @param jGraLabAttribute
 	 *            a JGraLab attribute
@@ -415,15 +412,14 @@ public class Tg2SchemaGraph {
 
 		// the HasAttribute link from AttributedElementClass to Attribute
 		// gets created.
-		schemagraph.createHasAttribute(schemagraphAttribute,
-				schemagraphAttributedElementClass);
+		schemagraph.createHasAttribute(schemagraphAttributedElementClass, schemagraphAttribute);
 
-		schemagraph.createHasDomain(jGraLab2SchemagraphDomainMap
-				.get(jGraLabAttribute.getDomain()), schemagraphAttribute);
+		schemagraph.createHasDomain(schemagraphAttribute, jGraLab2SchemagraphDomainMap
+				.get(jGraLabAttribute.getDomain()));
 	}
 
 	/**
-	 * This method values the
+	 * values the
 	 * <code>Map<de.uni_koblenz.jgralab.schema.Domain, de.uni_koblenz.jgralab.grumlschema.Domain> domainMap</code>.
 	 * i.e. <code>domainMap.get(de.uni_koblenz.jgralab.schema.Domain d)</code>
 	 * return the corresponding
@@ -470,8 +466,8 @@ public class Tg2SchemaGraph {
 	}
 
 	/**
-	 * This method creates a <code>schemagraph</code> <code>CompositeDomain</code> vertex
-	 * if and only if its base domain (<code>ListDomain</code> and
+	 * creates a <code>schemagraph</code> <code>CompositeDomain</code>
+	 * vertex if and only if its base domain (<code>ListDomain</code> and
 	 * <code>SetDomain</code>) or all of its
 	 * <code>RecordDomainComponent</code> have been created. If creation
 	 * proceeds successfully the <code>jGraLab2SchemagraphDomainMap</code> map
@@ -525,7 +521,8 @@ public class Tg2SchemaGraph {
 	}
 
 	/**
-	 * This methods writes the <code>schemagraph</code> to a file (see GraphIO.java)
+	 * This methods writes the <code>schemagraph</code> to a file (see
+	 * GraphIO.java)
 	 */
 	public void saveSchemaGraphToFile(String filename, ProgressFunction pf) {
 		try {
@@ -537,7 +534,7 @@ public class Tg2SchemaGraph {
 	}
 
 	/**
-	 * This method writes the <code>schemagraph</code> to an DataOutputStream (see
+	 * writes the <code>schemagraph</code> to an DataOutputStream (see
 	 * GraphIO.java)
 	 */
 	public void saveSchemaGraphToStream(DataOutputStream stream,
