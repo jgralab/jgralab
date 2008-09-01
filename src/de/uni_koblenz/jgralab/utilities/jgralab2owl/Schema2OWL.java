@@ -137,7 +137,7 @@ class Schema2OWL {
 	 */
 	private void convertEnumDomains(Schema schema) {
 		for(EnumDomain enumDomain : schema.getEnumDomains()) {
-			Element enumDomainElem = createOwlClassElement(enumDomain.getName());
+			Element enumDomainElem = createOwlClassElement(enumDomain.getQualifiedName());
 			rdfElem.appendChild(enumDomainElem);
 			
 			Element oneOfElem = doc.createElement("owl:oneOf");

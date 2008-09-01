@@ -398,7 +398,7 @@ public class SchemaCodeGenerator extends CodeGenerator {
 		CodeList code = new CodeList();
 		for (EnumDomain dom : schema.getEnumDomains()) {
 			CodeSnippet s = new CodeSnippet(true);
-			s.setVariable("domName", dom.getName());
+			s.setVariable("domName", dom.getQualifiedName());
 			code.addNoIndent(s);
 			addImports("#jgSchemaPackage#.EnumDomain");
 			addImports("#jgSchemaPackage#.QualifiedName");

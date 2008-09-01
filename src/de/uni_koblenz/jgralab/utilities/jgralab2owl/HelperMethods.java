@@ -24,10 +24,6 @@
  
 package de.uni_koblenz.jgralab.utilities.jgralab2owl;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.ObjectOutputStream;
-
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;

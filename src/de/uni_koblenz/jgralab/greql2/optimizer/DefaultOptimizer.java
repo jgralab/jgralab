@@ -149,6 +149,7 @@ public class DefaultOptimizer extends OptimizerBase {
 		return aTransformationWasDone;
 	}
 
+	@SuppressWarnings("unused")
 	private void printCosts(GreqlEvaluator eval, Greql2 syntaxgraph) {
 		logger.finer("Optimizer: Optimizing " + syntaxgraph.getId() + ".\n"
 				+ "This syntaxgraph has " + syntaxgraph.getECount()
