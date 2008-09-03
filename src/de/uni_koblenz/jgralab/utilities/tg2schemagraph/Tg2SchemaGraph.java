@@ -38,6 +38,7 @@ import de.uni_koblenz.jgralab.ProgressFunction;
 import de.uni_koblenz.jgralab.schema.AggregationClass;
 import de.uni_koblenz.jgralab.schema.AttributedElementClass;
 import de.uni_koblenz.jgralab.schema.BooleanDomain;
+import de.uni_koblenz.jgralab.schema.CollectionDomain;
 import de.uni_koblenz.jgralab.schema.CompositeDomain;
 import de.uni_koblenz.jgralab.schema.CompositionClass;
 import de.uni_koblenz.jgralab.schema.Domain;
@@ -439,31 +440,34 @@ public class Tg2SchemaGraph {
 		Map<QualifiedName, Domain> domains = schema.getDomains();
 		while (jGraLab2SchemagraphDomainMap.size() != domains.size()) {
 			for (Domain d : domains.values()) {
+				de.uni_koblenz.jgralab.grumlschema.Domain schemaGraphDomain = null;
 				if (jGraLab2SchemagraphDomainMap.get(d) != null)
 					continue;
 
 				if (d instanceof BooleanDomain) {
-					jGraLab2SchemagraphDomainMap.put(d, schemagraph
-							.createBooleanDomain());
+					schemaGraphDomain = schemagraph.createBooleanDomain();
 				} else if (d instanceof DoubleDomain) {
-					jGraLab2SchemagraphDomainMap.put(d, schemagraph
-							.createDoubleDomain());
+					schemaGraphDomain = schemagraph.createDoubleDomain();					
 				} else if (d instanceof EnumDomain) {
-					de.uni_koblenz.jgralab.grumlschema.EnumDomain enumM2 = schemagraph
-							.createEnumDomain();
-					enumM2.setEnumConstants(((EnumDomain) d).getConsts());
-					jGraLab2SchemagraphDomainMap.put(d, enumM2);
+					schemaGraphDomain = schemagraph.createEnumDomain();
+					((de.uni_koblenz.jgralab.grumlschema.EnumDomain) schemaGraphDomain)
+							.setEnumConstants(((EnumDomain) d).getConsts());
 				} else if (d instanceof LongDomain) {
-					jGraLab2SchemagraphDomainMap.put(d, schemagraph
-							.createLongDomain());
+					schemaGraphDomain = schemagraph.createLongDomain();					
 				} else if (d instanceof IntDomain) {
-					jGraLab2SchemagraphDomainMap.put(d, schemagraph
-							.createIntDomain());
+					schemaGraphDomain = schemagraph.createIntDomain();
 				} else if (d instanceof StringDomain) {
-					jGraLab2SchemagraphDomainMap.put(d, schemagraph
-							.createStringDomain());
+					schemaGraphDomain = schemagraph.createStringDomain();
+					
 				} else if (d instanceof CompositeDomain) {
-					createSchemagraphCompositeDomain(d);
+					schemaGraphDomain = createSchemagraphCompositeDomain(d, schemaGraphDomain);
+				}
+				if (schemaGraphDomain != null) {
+					schemaGraphDomain.setName(d.getSimpleName());
+					schemaGraphDomain.setQualifiedName(d.getSimpleName());
+					schemaGraphDomain.setFullyQualifiedName(d
+							.getQualifiedName());
+					jGraLab2SchemagraphDomainMap.put(d, schemaGraphDomain);
 				}
 			}
 		}
@@ -477,28 +481,26 @@ public class Tg2SchemaGraph {
 	 * proceeds successfully the <code>jGraLab2SchemagraphDomainMap</code> map
 	 * gets updated directly.
 	 */
-	private void createSchemagraphCompositeDomain(Domain jGraLabDomain) {
-		if (jGraLabDomain instanceof ListDomain
-				&& !(jGraLab2SchemagraphDomainMap
-						.get(((ListDomain) jGraLabDomain).getBaseDomain()) == null)) {
-
-			de.uni_koblenz.jgralab.grumlschema.ListDomain dM2 = schemagraph
-					.createListDomain();
-			schemagraph.createHasBaseDomain(dM2, jGraLab2SchemagraphDomainMap
-					.get(((ListDomain) jGraLabDomain).getBaseDomain()));
-			jGraLab2SchemagraphDomainMap.put(jGraLabDomain, dM2);
-		}
-		if (jGraLabDomain instanceof SetDomain
-				&& !(jGraLab2SchemagraphDomainMap
-						.get(((SetDomain) jGraLabDomain).getBaseDomain()) == null)) {
-
-			de.uni_koblenz.jgralab.grumlschema.SetDomain dM2 = schemagraph
-					.createSetDomain();
-			schemagraph.createHasBaseDomain(dM2, jGraLab2SchemagraphDomainMap
-					.get(((SetDomain) jGraLabDomain).getBaseDomain()));
-			jGraLab2SchemagraphDomainMap.put(jGraLabDomain, dM2);
-		}
-		if (jGraLabDomain instanceof RecordDomain) {
+	private de.uni_koblenz.jgralab.grumlschema.Domain createSchemagraphCompositeDomain(Domain jGraLabDomain,
+			de.uni_koblenz.jgralab.grumlschema.Domain schemagraphDomain) {
+		if (jGraLabDomain instanceof CollectionDomain) {
+			if (jGraLab2SchemagraphDomainMap
+					.get(((CollectionDomain) jGraLabDomain).getBaseDomain()) != null) {
+				if (jGraLabDomain instanceof ListDomain)
+					schemagraphDomain = schemagraph.createListDomain();
+				else if (jGraLabDomain instanceof SetDomain)
+					schemagraphDomain = schemagraph.createSetDomain();
+				if (schemagraphDomain != null) {
+					schemagraph
+							.createHasBaseDomain(
+									(de.uni_koblenz.jgralab.grumlschema.CollectionDomain) schemagraphDomain,
+									jGraLab2SchemagraphDomainMap
+											.get(((CollectionDomain) jGraLabDomain)
+													.getBaseDomain()));
+					return schemagraphDomain;
+				}
+			}
+		} else if (jGraLabDomain instanceof RecordDomain) {
 			boolean allBaseDomainsMapped = true;
 			for (Domain dom : ((RecordDomain) jGraLabDomain).getComponents()
 					.values())
@@ -507,21 +509,21 @@ public class Tg2SchemaGraph {
 					break;
 				}
 			if (allBaseDomainsMapped) {
-				de.uni_koblenz.jgralab.grumlschema.RecordDomain dM2 = schemagraph
+				schemagraphDomain = schemagraph
 						.createRecordDomain();
-				dM2.setName(((RecordDomain) jGraLabDomain).getQualifiedName());
 				Map<String, Domain> recordMap = ((RecordDomain) jGraLabDomain)
 						.getComponents();
 				for (String key : recordMap.keySet()) {
 					HasRecordDomainComponent hrc = schemagraph
-							.createHasRecordDomainComponent(dM2,
+							.createHasRecordDomainComponent(((de.uni_koblenz.jgralab.grumlschema.RecordDomain)schemagraphDomain),
 									jGraLab2SchemagraphDomainMap.get(recordMap
 											.get(key)));
 					hrc.setName(key);
-				}
-				jGraLab2SchemagraphDomainMap.put(jGraLabDomain, dM2);
-			}
+				}				
+				return schemagraphDomain;
+			}			
 		}
+		return null;
 	}
 
 	/**
