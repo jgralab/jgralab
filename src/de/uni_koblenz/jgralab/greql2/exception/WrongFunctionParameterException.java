@@ -34,9 +34,9 @@ import de.uni_koblenz.jgralab.greql2.schema.SourcePosition;
 /**
  * Should be thrown if a function is called with the wrong parameter count or
  * type
- * 
+ *
  * @author Daniel Bildhauer <dbildh@uni-koblenz.de> Summer 2006, Diploma Thesis
- * 
+ *
  */
 public class WrongFunctionParameterException extends QuerySourceException {
 
@@ -68,6 +68,20 @@ public class WrongFunctionParameterException extends QuerySourceException {
 				.instance().toFunctionName(
 						function.getClass().getCanonicalName()),
 				sourcePositions);
+	}
+
+	public WrongFunctionParameterException(Greql2Function function,
+			List<SourcePosition> sourcePositions, JValue[] wrongArguments,
+			Exception cause) {
+		super("Function "
+				+ Greql2FunctionLibrary.instance().toFunctionName(
+						function.getClass().getCanonicalName())
+				+ function.getExpectedParameters()
+				+ " is not applicable for the arguments "
+				+ parametersToString(wrongArguments), Greql2FunctionLibrary
+				.instance().toFunctionName(
+						function.getClass().getCanonicalName()),
+				sourcePositions, cause);
 	}
 
 }

@@ -21,23 +21,24 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
- 
+
 package de.uni_koblenz.jgralab.greql2.funlib;
 
 import java.util.ArrayList;
 
+import de.uni_koblenz.jgralab.AttributedElement;
+import de.uni_koblenz.jgralab.BooleanGraphMarker;
+import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.greql2.exception.EvaluateException;
 import de.uni_koblenz.jgralab.greql2.exception.FunctionUnknownFieldException;
 import de.uni_koblenz.jgralab.greql2.exception.WrongFunctionParameterException;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValueCollection;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValueRecord;
-import de.uni_koblenz.jgralab.AttributedElement;
-import de.uni_koblenz.jgralab.BooleanGraphMarker;
-import de.uni_koblenz.jgralab.Graph;
 
 /**
- * Returns the given attribute or element value for a vertex, an edge or a record. The attribute is called by its name.
+ * Returns the given attribute or element value for a vertex, an edge or a
+ * record. The attribute is called by its name.
  *
  * <dl>
  * <dt><b>GReQL-signature</b></dt>
@@ -46,7 +47,8 @@ import de.uni_koblenz.jgralab.Graph;
  * </dl>
  * <dd>This function can be used with the (.)-Operator: <code>elem.name</code></dd>
  * <dd>&nbsp;</dd>
- * <dl><dt></dt>
+ * <dl>
+ * <dt></dt>
  * <dd>
  * <dl>
  * <dt><b>Parameters:</b></dt>
@@ -58,21 +60,21 @@ import de.uni_koblenz.jgralab.Graph;
  * </dl>
  * </dd>
  * </dl>
+ *
  * @author Daniel Bildhauer <dbildh@uni-koblenz.de> Summer 2006, Diploma Thesis
- * 
+ *
  */
 
 /*
- * Returns the given attribute or element value for a vertex, an edge or a record. The attribute is called by its name.
- * <br /><br />
- * <strong>Parameters:</strong>
- * <ul>
- * 	<li> elem: (AttributedElement | JValueRecord) (vertex, edge or Record to acces)</li>
- * 	<li> name: String (name of the Attribute or RecordElement to return)</li>
- * </ul>
- * <strong>Returns:</strong> the value of the given attribute or RecordElement, encapsulated in a JValue
+ * Returns the given attribute or element value for a vertex, an edge or a
+ * record. The attribute is called by its name. <br /><br />
+ * <strong>Parameters:</strong> <ul> <li> elem: (AttributedElement |
+ * JValueRecord) (vertex, edge or Record to acces)</li> <li> name: String (name
+ * of the Attribute or RecordElement to return)</li> </ul>
+ * <strong>Returns:</strong> the value of the given attribute or RecordElement,
+ * encapsulated in a JValue
+ *
  * @author Daniel Bildhauer <dbildh@uni-koblenz.de> Summer 2006, Diploma Thesis
- * 
  */
 public class GetValue implements Greql2Function {
 
@@ -86,10 +88,11 @@ public class GetValue implements Greql2Function {
 		try {
 			// check if the first argument is a graphelement, then access the
 			// attribute with the given name of this graph element
-			if (arguments[0].isEdge())
+			if (arguments[0].isEdge()) {
 				elem = arguments[0].toEdge();
-			else if (arguments[0].isVertex())
+			} else if (arguments[0].isVertex()) {
 				elem = arguments[0].toVertex();
+			}
 			if (elem != null) {
 				return JValue.fromObject(elem.getAttribute(fieldName), elem);
 			}
@@ -101,16 +104,17 @@ public class GetValue implements Greql2Function {
 					return rec.get(arguments[1].toString());
 				}
 			}
-		}	catch (SecurityException ex) {
-				throw new FunctionUnknownFieldException(elem.getClass().getName(),
-						fieldName, null);
-		}	catch (IllegalArgumentException ex) {
+		} catch (SecurityException ex) {
 			throw new FunctionUnknownFieldException(elem.getClass().getName(),
 					fieldName, null);
-		} catch (Exception ex) { // JValueInvalidTypeException,
-									// NoSuchFieldException,
-									// IndexOutOfBoundsException
-			throw new WrongFunctionParameterException(this, null, arguments);
+		} catch (IllegalArgumentException ex) {
+			throw new FunctionUnknownFieldException(elem.getClass().getName(),
+					fieldName, null);
+		} catch (Exception ex) {
+			// JValueInvalidTypeException,
+			// NoSuchFieldException,
+			// IndexOutOfBoundsException
+			throw new WrongFunctionParameterException(this, null, arguments, ex);
 		}
 
 		return new JValue();
@@ -137,14 +141,15 @@ public class GetValue implements Greql2Function {
 		return false;
 	}
 
-//	private Object getAttribute(AttributedElement elem, String name) throws NoSuchFieldException, SecurityException, IllegalAccessException, IllegalArgumentException {
-//		GreqlEvaluator.println("elem.getClass(): " + elem.getClass());
-//		Field[] fields = elem.getClass().getFields();
-//		GreqlEvaluator.println("Fields are: ");
-//		for (Field f : fields)
-//			GreqlEvaluator.println("Field: " + f.toString());
-//		return elem.getClass().getField(name).get(elem);
-//	}
-	
-	
+	// private Object getAttribute(AttributedElement elem, String name) throws
+	// NoSuchFieldException, SecurityException, IllegalAccessException,
+	// IllegalArgumentException {
+	// GreqlEvaluator.println("elem.getClass(): " + elem.getClass());
+	// Field[] fields = elem.getClass().getFields();
+	// GreqlEvaluator.println("Fields are: ");
+	// for (Field f : fields)
+	// GreqlEvaluator.println("Field: " + f.toString());
+	// return elem.getClass().getField(name).get(elem);
+	// }
+
 }
