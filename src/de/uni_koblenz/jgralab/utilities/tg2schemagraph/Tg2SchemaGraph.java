@@ -155,25 +155,17 @@ public class Tg2SchemaGraph {
 					.createGraphClass();
 			schemagraph.createDefinesGraphClass(schemaVertex, graphClassVertex);
 
-			graphClassVertex.setName(schema.getGraphClassesInTopologicalOrder()
-					.get(1).getQualifiedName());
 			graphClassVertex.setQualifiedName(schema
 					.getGraphClassesInTopologicalOrder().get(1)
 					.getQualifiedName());
-			graphClassVertex.setFullyQualifiedName(schema.getPackageName()
-					+ "."
-					+ schema.getGraphClassesInTopologicalOrder().get(1)
-							.getQualifiedName());
 			// create vertex for the default package and set its attributes
 			// create incident edge containsDefaultPackage
 			de.uni_koblenz.jgralab.schema.Package defaultPackage = schema
 					.getDefaultPackage();
 			de.uni_koblenz.jgralab.grumlschema.Package defaultPackageVertex = schemagraph
 					.createPackage();
-			defaultPackageVertex.setName(defaultPackage.getQualifiedName());
 			defaultPackageVertex.setQualifiedName(defaultPackage
 					.getQualifiedName());
-			defaultPackageVertex.setFullyQualifiedName(schema.getPackageName());
 			schemagraph.createContainsDefaultPackage(schemaVertex,
 					defaultPackageVertex);
 
@@ -221,13 +213,8 @@ public class Tg2SchemaGraph {
 					.values()) {
 				de.uni_koblenz.jgralab.grumlschema.Package schemagraphSubPackage = schemagraph
 						.createPackage();
-				schemagraphSubPackage.setName(jGraLabSubPackage
-						.getQualifiedName());
 				schemagraphSubPackage.setQualifiedName(jGraLabSubPackage
 						.getQualifiedName());
-				schemagraphSubPackage.setFullyQualifiedName(schema
-						.getPackageName()
-						+ "." + jGraLabSubPackage.getQualifiedName());
 				schemagraph.createContainsSubPackage(schemagraphSuperPackage,
 						schemagraphSubPackage);
 				createSchemagraphPackageAndContents(jGraLabSubPackage,
@@ -261,11 +248,6 @@ public class Tg2SchemaGraph {
 				schemagraph.createContainsGraphElementClass(schemagraphPackage,
 						schemagraphVertexClass);
 
-				schemagraphVertexClass.setName(jGraLabVertexClass
-						.getQualifiedName());
-				schemagraphVertexClass.setFullyQualifiedName(schema
-						.getPackageName()
-						+ "." + jGraLabVertexClass.getQualifiedName());
 				schemagraphVertexClass.setQualifiedName(jGraLabVertexClass
 						.getQualifiedName());
 				schemagraphVertexClass.setIsAbstract(jGraLabVertexClass
@@ -314,19 +296,14 @@ public class Tg2SchemaGraph {
 				schemagraph.createContainsGraphElementClass(schemagraphPackage,
 						schemagraphEdgeClass);
 
-				schemagraphEdgeClass.setName(jGraLabEdgeClass
-						.getQualifiedName());
 				schemagraphEdgeClass.setQualifiedName(jGraLabEdgeClass
 						.getQualifiedName());
-				schemagraphEdgeClass.setFullyQualifiedName(schema
-						.getPackageName()
-						+ "." + jGraLabEdgeClass.getQualifiedName());
 				schemagraphEdgeClass.setIsAbstract(jGraLabEdgeClass
 						.isAbstract());
 
 				for (de.uni_koblenz.jgralab.grumlschema.VertexClass vcFrom : schemagraph
 						.getVertexClassVertices()) {
-					if (vcFrom.getName().equals(
+					if (vcFrom.getQualifiedName().equals(
 							jGraLabEdgeClass.getFrom().getQualifiedName())) {
 						// ..the From aggregation gets created.
 						From fromM2 = schemagraph.createFrom(
@@ -340,7 +317,7 @@ public class Tg2SchemaGraph {
 
 				for (de.uni_koblenz.jgralab.grumlschema.VertexClass vcTo : schemagraph
 						.getVertexClassVertices()) {
-					if (vcTo.getName().equals(
+					if (vcTo.getQualifiedName().equals(
 							jGraLabEdgeClass.getTo().getQualifiedName())) {
 						// ..the To aggregation gets created.
 						To toM2 = schemagraph.createTo(schemagraphEdgeClass,
@@ -463,10 +440,7 @@ public class Tg2SchemaGraph {
 					schemaGraphDomain = createSchemagraphCompositeDomain(d, schemaGraphDomain);
 				}
 				if (schemaGraphDomain != null) {
-					schemaGraphDomain.setName(d.getSimpleName());
-					schemaGraphDomain.setQualifiedName(d.getSimpleName());
-					schemaGraphDomain.setFullyQualifiedName(d
-							.getQualifiedName());
+					schemaGraphDomain.setQualifiedName(d.getQualifiedName());
 					jGraLab2SchemagraphDomainMap.put(d, schemaGraphDomain);
 				}
 			}
