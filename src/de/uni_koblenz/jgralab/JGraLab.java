@@ -24,6 +24,9 @@
 
 package de.uni_koblenz.jgralab;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 /**
  * This class gives information, which software was used creating JGraLab.
  * 
@@ -81,14 +84,25 @@ public class JGraLab {
 
 	}
 
+	/**
+	 * Sets the log level for package de.uni_koblenz.jgralab and all its
+	 * children to <code>level</code>.
+	 * 
+	 * @param level
+	 *            new log level
+	 */
+	public static void setLogLevel(Level level) {
+		Logger.getLogger(JGraLab.class.getPackage().getName()).setLevel(level);
+	}
+
+	/**
+	 * Prints version and license info.
+	 * @param args (ignored)
+	 */
 	public static void main(String[] args) {
 		JGraLab jgralab = new JGraLab();
 		System.out.println(jgralab.toString());
 	}
-
-	// private void printInfo(){
-	// System.out.println(toString());
-	// }
 
 	private String addInfo(String inputLine) {
 		String outputLine = inputLine;
