@@ -152,8 +152,8 @@ public class SchemaCodeGenerator extends CodeGenerator {
 				" */",
 				"public #gcName# load#gcCamelName#(String filename, ProgressFunction pf) throws GraphIOException {",
 				"\tGraph graph = GraphIO.loadGraphFromFile(filename, pf);",
-				"\tif (!graph.getGraphClass().getQualifiedName().equals(\"#gcName#\")) {",
-				"\t\tthrow new GraphIOException(\"Graph in file '\" + filename + \" is not an instance of GraphClass #gcName#\");",
+				"\tif (!(graph instanceof #gcName#)) {",
+				"\t\tthrow new GraphIOException(\"Graph in file '\" + filename + \"' is not an instance of GraphClass #gcName#\");",
 				"\t}", "\treturn (#gcName#) graph;", "}");
 
 		code.setVariable("gcName", gc.getQualifiedName());
