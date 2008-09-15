@@ -33,9 +33,9 @@ import de.uni_koblenz.jgralab.impl.ReversedEdgeImpl;
  * that are "marked" or "not marked". If one need to mark graphs or
  * graphelements with more specific "colors", have a look at the class
  * <code>GraphMarker</code>
- * 
+ *
  * @author Daniel Bildhauer <dbildh@uni-koblenz.de> November 2006
- * 
+ *
  */
 public class BooleanGraphMarker {
 
@@ -45,7 +45,7 @@ public class BooleanGraphMarker {
 
 	/**
 	 * creates a new boolean graph marker
-	 * 
+	 *
 	 */
 	public BooleanGraphMarker(Graph g) {
 		graph = g;
@@ -53,12 +53,12 @@ public class BooleanGraphMarker {
 	}
 
 	/**
-	 * Adds a marking to the given Graph or GraphElement.
-	 * 
+	 * Checks whether this marker is a marking of the given Graph or
+	 * GraphElement
+	 *
 	 * @param elem
-	 *            the Graph, Vertex or Edge to mark
-	 * @return true if the element has been marked successfull, false if this
-	 *         element is already marked by this GraphMarker
+	 *            the Graph, Vertex or Edge to check for a marking
+	 * @return true if this GraphMarker marks the given element, false otherwise
 	 */
 	public boolean isMarked(AttributedElement elem) {
 		if (elem instanceof ReversedEdgeImpl) {
@@ -68,17 +68,18 @@ public class BooleanGraphMarker {
 	}
 
 	/**
-	 * Checks whether this marker is a marking of the given Graph or GraphElement
-	 * 
+	 * Adds a marking to the given Graph or GraphElement.
+	 *
 	 * @param elem
-	 *            the Graph, Vertex or Edge to check for a marking
-	 * @return true if this GraphMarker marks the given element, false otherwise
+	 *            the Graph, Vertex or Edge to mark
+	 * @return true if the element has been marked successfull, false if this
+	 *         element is already marked by this GraphMarker
 	 */
 	public boolean mark(AttributedElement elem) {
 		if (elem instanceof ReversedEdgeImpl) {
 			elem = ((ReversedEdgeImpl) elem).getNormalEdge();
 		}
-		
+
 		if ((elem instanceof Vertex && ((Vertex) elem).getGraph() == graph)
 				|| (elem instanceof Edge && ((Edge) elem).getGraph() == graph)
 				|| elem == graph) {
@@ -89,8 +90,20 @@ public class BooleanGraphMarker {
 	}
 
 	/**
+	 * Remove the mark from the given element.
+	 *
+	 * @param elem
+	 *            an {@link AttributedElement}
+	 * @return <code>true</code> it the given element was marked,
+	 *         <code>false</code> otherwise
+	 */
+	public boolean unmark(AttributedElement elem) {
+		return markedElements.remove(elem);
+	}
+
+	/**
 	 * Returns the number of marked elements in this GraphMarker.
-	 * 
+	 *
 	 * @return The number of marked elements.
 	 */
 	public int size() {
@@ -106,7 +119,7 @@ public class BooleanGraphMarker {
 
 	/**
 	 * Returns the Graph of this GraphMarker.
-	 * 
+	 *
 	 * @return the Graph of this GraphMarker.
 	 */
 	public Graph getGraph() {
