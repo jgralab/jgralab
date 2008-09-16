@@ -21,24 +21,21 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
- 
+
 package de.uni_koblenz.jgralab.greql2.funlib;
 
-import de.uni_koblenz.jgralab.greql2.exception.EvaluateException;
-import de.uni_koblenz.jgralab.greql2.funlib.pathsearch.PathSearch;
-import de.uni_koblenz.jgralab.greql2.funlib.pathsearch.PathSearchQueueEntry;
-import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
-
+import java.util.ArrayDeque;
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.Queue;
 
 import de.uni_koblenz.jgralab.BooleanGraphMarker;
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.Graph;
+import de.uni_koblenz.jgralab.GraphMarker;
 import de.uni_koblenz.jgralab.Vertex;
-
+import de.uni_koblenz.jgralab.greql2.exception.EvaluateException;
+import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
 
 /**
  * Checks if the current graph or subgraph is cycle-free.
@@ -46,67 +43,74 @@ import de.uni_koblenz.jgralab.Vertex;
  * <dl>
  * <dt><b>GReQL-signature</b></dt>
  * <dd><code>BOOLEAN isAcyclic()</code></dd>
+ * <dd><code>BOOLEAN isAcyclic(graph : GRAPH)</code></dd>
  * <dd>&nbsp;</dd>
  * </dl>
- * <dl><dt></dt>
+ * <dl>
+ * <dt></dt>
  * <dd>
  * <dl>
  * <dt><b>Parameters:</b></dt>
+ * <dd><code>graph</code> - the graph to be checked (optional)</dd>
  * <dt><b>Returns:</b></dt>
- * <dd><code>true</code> if the current graph or subgraph is acyclic</dd>
+ * <dd><code>true</code> if the current or given graph or subgraph is acyclic</dd>
  * <dd><code>false</code> otherwise</dd>
  * </dl>
  * </dd>
  * </dl>
+ *
  * @author Daniel Bildhauer <dbildh@uni-koblenz.de> Summer 2006, Diploma Thesis
- * 
+ *
  */
+public class IsAcyclic implements Greql2Function {
 
-/*
- * Checks if the given graph or subgraph contains no cycles
- * Only parameter is : SubgraphTempAttribute
- * 
- * @return true if the graph contains no cycles, false if at least one cycle is
- *         found
- */
+	public JValue evaluate(Graph graph, BooleanGraphMarker subgraph,
+			JValue[] arguments) throws EvaluateException {
+		if (arguments.length > 0) {
+			subgraph = arguments[0].toSubgraphTempAttribute();
+		}
 
-public class IsAcyclic extends PathSearch implements Greql2Function {
-
-	public JValue evaluate(Graph graph, BooleanGraphMarker subgraph, JValue[] arguments) throws EvaluateException {
-		Queue<PathSearchQueueEntry> queue = new LinkedList<PathSearchQueueEntry>();
-		boolean cycleFound = false;
-		Vertex firstVertex = graph.getFirstVertex();
-		Vertex currentVertex = firstVertex;
-		do {
-			PathSearchQueueEntry currentEntry = new PathSearchQueueEntry(
-					currentVertex, null);
-			while (currentEntry != null) {
-				//markVertex(currentEntry.vertex, state);
-				Edge inc = currentEntry.vertex.getFirstEdge(EdgeDirection.OUT);
-				while (inc != null) {
-					Vertex nextVertex = inc.getOmega();
-					if (nextVertex == currentVertex) {
-						cycleFound = true;
-						break;
+		Queue<Vertex> queue = new ArrayDeque<Vertex>();
+		GraphMarker<Integer> marker = new GraphMarker<Integer>(graph);
+		int vCount = 0;
+		for (Vertex v : graph.vertices()) {
+			if (subgraph == null || subgraph.isMarked(v)) {
+				int inDegree = 0;
+				for (Edge inc : v.incidences(EdgeDirection.IN)) {
+					if (subgraph == null || subgraph.isMarked(inc)) {
+						inDegree++;
 					}
-					/*if ((subgraph.marksGraphElement(nextVertex)) && (!isMarked(nextVertex, state))) {
-						PathSearchQueueEntry nextEntry = new PathSearchQueueEntry(
-								nextVertex, state);
-						queue.add(nextEntry);
-					}*/
-					inc = inc.getNextEdge(EdgeDirection.OUT);
 				}
-				currentEntry = queue.poll();
+				marker.mark(v, inDegree);
+				if (inDegree == 0) {
+					queue.add(v);
+				}
+				vCount++;
 			}
-			currentVertex = currentVertex.getNextVertex();
-		} while ((!cycleFound) && (firstVertex != currentVertex));
-		//removeVertexMarks();
-		return new JValue(cycleFound);
+		}
+
+		while (!queue.isEmpty()) {
+			Vertex v = queue.poll();
+			vCount--;
+			for (Edge inc : v.incidences(EdgeDirection.OUT)) {
+				if (subgraph == null || subgraph.isMarked(inc)) {
+					Vertex omega = inc.getOmega();
+					assert subgraph == null || subgraph.isMarked(omega);
+					int hugo = marker.getMark(omega) - 1;
+					marker.mark(omega, hugo);
+					if (hugo == 0) {
+						queue.offer(omega);
+					}
+				}
+			}
+		}
+
+		return new JValue(vCount == 0);
+
 	}
 
 	public long getEstimatedCosts(ArrayList<Long> inElements) {
-		// TODO Auto-generated method stub
-		return 0;
+		return 20;
 	}
 
 	public double getSelectivity() {

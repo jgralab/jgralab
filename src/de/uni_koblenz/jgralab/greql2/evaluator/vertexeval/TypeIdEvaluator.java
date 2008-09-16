@@ -21,7 +21,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
- 
+
 package de.uni_koblenz.jgralab.greql2.evaluator.vertexeval;
 
 import java.util.ArrayList;
@@ -45,9 +45,9 @@ import de.uni_koblenz.jgralab.schema.Schema;
 
 /**
  * Creates a List of types out of the TypeId-Vertex.
- * 
+ *
  * @author Daniel Bildhauer <dbildh@uni-koblenz.de> Summer 2006, Diploma Thesis
- * 
+ *
  */
 public class TypeIdEvaluator extends VertexEvaluator {
 
@@ -68,7 +68,7 @@ public class TypeIdEvaluator extends VertexEvaluator {
 
 	/**
 	 * Creates a list of types from this TypeId-Vertex
-	 * 
+	 *
 	 * @param schema
 	 *            the schema of the datagraph
 	 * @return the generated list of types
@@ -77,11 +77,12 @@ public class TypeIdEvaluator extends VertexEvaluator {
 			throws EvaluateException {
 		ArrayList<AttributedElementClass> returnTypes = new ArrayList<AttributedElementClass>();
 		if (vertex.isType()) {
-			returnTypes.add((GraphElementClass) schema
-					.getAttributedElementClass(new QualifiedName(vertex.getName())));
+			returnTypes.add(schema.getAttributedElementClass(new QualifiedName(
+					vertex.getName())));
 		} else {
 			GraphElementClass graphElemClass = (GraphElementClass) schema
-					.getAttributedElementClass(new QualifiedName(vertex.getName()));
+					.getAttributedElementClass(new QualifiedName(vertex
+							.getName()));
 			if (graphElemClass == null) {
 				throw new UnknownTypeException(vertex.getName(),
 						createPossibleSourcePositions());
@@ -98,7 +99,8 @@ public class TypeIdEvaluator extends VertexEvaluator {
 		GraphClass graphClass = (GraphClass) datagraph
 				.getAttributedElementClass();
 		Schema schema = graphClass.getSchema();
-		return new JValueTypeCollection(createTypeList(schema), vertex.isExcluded());
+		return new JValueTypeCollection(createTypeList(schema), vertex
+				.isExcluded());
 	}
 
 	@Override
@@ -106,14 +108,18 @@ public class TypeIdEvaluator extends VertexEvaluator {
 		return this.greqlEvaluator.getCostModel().calculateCostsTypeId(this,
 				graphSize);
 	}
-	
+
 	@Override
 	public double calculateEstimatedSelectivity(GraphSize graphSize) {
-		return greqlEvaluator.getCostModel().calculateSelectivityTypeId(this, graphSize);
+		return greqlEvaluator.getCostModel().calculateSelectivityTypeId(this,
+				graphSize);
 	}
-	
-	/* (non-Javadoc)
-	 * @see de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.VertexEvaluator#getLoggingName()
+
+	/*
+	 * (non-Javadoc)
+	 *
+	 * @seede.uni_koblenz.jgralab.greql2.evaluator.vertexeval.VertexEvaluator#
+	 * getLoggingName()
 	 */
 	@Override
 	public String getLoggingName() {

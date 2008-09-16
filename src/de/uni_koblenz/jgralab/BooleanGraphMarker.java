@@ -102,6 +102,15 @@ public class BooleanGraphMarker {
 	}
 
 	/**
+	 * Return a set of all marked {@link AttributedElement}s.
+	 *
+	 * @return the markedElements
+	 */
+	public HashSet<AttributedElement> getMarkedElements() {
+		return markedElements;
+	}
+
+	/**
 	 * Returns the number of marked elements in this GraphMarker.
 	 *
 	 * @return The number of marked elements.
