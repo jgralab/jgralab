@@ -186,7 +186,6 @@ public class VertexIterable<V extends Vertex> implements Iterable<V> {
 		iter = new VertexIterator(g);
 	}
 	
-	@SuppressWarnings("unchecked")
 	public VertexIterable(Graph g, VertexClass ec) {
 		iter = new VertexIteratorClass(g, (Class<? extends Vertex>) ec.getM1Class());
 	}
