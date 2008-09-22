@@ -24,8 +24,6 @@
  
 package de.uni_koblenz.jgralab.greql2.evaluator;
 
-import de.uni_koblenz.jgralab.greql2.jvalue.JValueSet;
-
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -33,6 +31,7 @@ import java.util.TreeSet;
 import java.util.Map.Entry;
 
 import de.uni_koblenz.jgralab.Graph;
+import de.uni_koblenz.jgralab.greql2.jvalue.JValueSet;
 
 /**
  * This class contains the computed index for a graph

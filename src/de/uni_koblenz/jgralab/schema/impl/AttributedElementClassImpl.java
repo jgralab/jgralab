@@ -317,8 +317,18 @@ public abstract class AttributedElementClassImpl implements
 		directSuperClasses.remove(getSchema().getDefaultGraphClass());
 		directSuperClasses.remove(getSchema().getDefaultEdgeClass());
 		directSuperClasses.remove(getSchema().getDefaultVertexClass());
-		directSuperClasses.remove(getSchema().getDefaultAggregationClass());
-		directSuperClasses.remove(getSchema().getDefaultCompositionClass());
+		for (AttributedElementClass c : directSuperClasses) {
+			if ((c != getSchema().getDefaultAggregationClass()) && (c.isSubClassOf(getSchema().getDefaultAggregationClass()))) {
+				directSuperClasses.remove(getSchema().getDefaultAggregationClass());
+				break;
+			}
+		}
+		for (AttributedElementClass c : directSuperClasses) {
+			if ((c != getSchema().getDefaultCompositionClass()) && (c.isSubClassOf(getSchema().getDefaultCompositionClass()))) {
+				directSuperClasses.remove(getSchema().getDefaultCompositionClass());
+				break;
+			}	
+		}
 		for (Attribute a : superClass.getAttributeList()) {
 			if (getOwnAttribute(a.getName()) != null)
 				throw new SchemaException("Cannot add "

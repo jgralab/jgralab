@@ -24,10 +24,10 @@
 
 package de.uni_koblenz.jgralab.greql2.evaluator.fa;
 
-import de.uni_koblenz.jgralab.greql2.exception.EvaluateException;
-
 import java.util.ArrayList;
 import java.util.Iterator;
+
+import de.uni_koblenz.jgralab.greql2.exception.EvaluateException;
 
 /**
  * This class models a deterministic finite automaton. The automaton is not

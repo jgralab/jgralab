@@ -27,9 +27,9 @@ package de.uni_koblenz.jgralab.impl;
 import java.util.ConcurrentModificationException;
 import java.util.Iterator;
 
-import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.GraphException;
+import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.schema.VertexClass;
 
 /**

@@ -24,9 +24,9 @@
  
 package de.uni_koblenz.jgralab.greql2.evaluator.vertexeval;
 
-import de.uni_koblenz.jgralab.greql2.schema.*;
-import de.uni_koblenz.jgralab.greql2.evaluator.*;
-import de.uni_koblenz.jgralab.*;
+import de.uni_koblenz.jgralab.Vertex;
+import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
+import de.uni_koblenz.jgralab.greql2.schema.DefinitionExpression;
 /**
  * This is the baseclass for LetExpressionEvaluator and WhereExpressionEvaluator.
  * 

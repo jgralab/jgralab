@@ -26,8 +26,6 @@ package de.uni_koblenz.jgralab.schema;
 
 import java.util.List;
 
-import de.uni_koblenz.jgralab.schema.GraphElementClass;
-
 /**
  * represents a graph class in the schema, holds all graph element classes
  * 

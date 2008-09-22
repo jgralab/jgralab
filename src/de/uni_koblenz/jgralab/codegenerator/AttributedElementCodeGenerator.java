@@ -72,15 +72,15 @@ public class AttributedElementCodeGenerator extends CodeGenerator {
 		rootBlock.setVariable("isAbstractClass", aec.isAbstract() ? "true"
 				: "false");
 		for (AttributedElementClass superClass : attributedElementClass
-				.getAllSuperClasses()) {
+				.getDirectSuperClasses()) {
 			interfaces.add(superClass.getQualifiedName());
 		}
-		if (interfaces.contains("Aggregation")) {
-			interfaces.remove("Edge");
-		}
-		if (interfaces.contains("Composition")) {
-			interfaces.remove("Aggregation");
-		}
+//		if (interfaces.contains("Aggregation")) {
+//			interfaces.remove("Edge");
+//		}
+//		if (interfaces.contains("Composition")) {
+//			interfaces.remove("Aggregation");
+//		}
 	}
 
 	@Override
@@ -108,19 +108,11 @@ public class AttributedElementCodeGenerator extends CodeGenerator {
 
 	protected CodeBlock createHeader(boolean createClass) {
 		CodeSnippet code = new CodeSnippet(true);
-		code.setVariable("classOrInterface", createClass ? " class"
-				: " interface");
-		code.setVariable("abstract",
-				createClass && aec.isAbstract() ? " abstract" : "");
-		code
-				.setVariable("impl", createClass && !aec.isAbstract() ? "Impl"
-						: "");
-
-		code
-				.add("public#abstract##classOrInterface# #simpleClassName##impl##extends##implements# {");
-
-		code.setVariable("extends", createClass ? " extends #baseClassName#"
-				: "");
+		code.setVariable("classOrInterface", createClass ? " class"	: " interface");
+		code.setVariable("abstract", createClass && aec.isAbstract() ? " abstract" : "");
+		code.setVariable("impl", createClass && !aec.isAbstract() ? "Impl" : "");
+		code.add("public#abstract##classOrInterface# #simpleClassName##impl##extends##implements# {");
+		code.setVariable("extends", createClass ? " extends #baseClassName#" : "");
 
 		StringBuffer buf = new StringBuffer();
 		if (interfaces.size() > 0) {

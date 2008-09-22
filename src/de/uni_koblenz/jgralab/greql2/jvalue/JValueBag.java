@@ -24,11 +24,11 @@
  
 package de.uni_koblenz.jgralab.greql2.jvalue;
 
+import java.util.Collection;
+import java.util.ConcurrentModificationException;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.ConcurrentModificationException;
 import java.util.NoSuchElementException;
-import java.util.Collection;
 import java.util.Map.Entry;
 
 /**

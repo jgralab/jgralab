@@ -24,7 +24,11 @@
  
 package de.uni_koblenz.jgralab.greql2.jvalue;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Set;
 
 
 public class JValueRecord extends JValueCollection implements Map<String, JValue> {

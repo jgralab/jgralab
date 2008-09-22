@@ -24,8 +24,13 @@
  
 package de.uni_koblenz.jgralab.greql2.jvalue;
 
-import java.util.*;
-import de.uni_koblenz.jgralab.*;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+
+import de.uni_koblenz.jgralab.Edge;
+import de.uni_koblenz.jgralab.GraphElement;
+import de.uni_koblenz.jgralab.Vertex;
 
 /**
  * Represents a path in the Datagraph. A path is a alternating list of vertices

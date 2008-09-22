@@ -25,8 +25,7 @@
 package de.uni_koblenz.jgralab.greql2.evaluator.logging;
 
 import java.io.IOException;
-
-import java.util.*;
+import java.util.ArrayList;
 
 /**
  * This interface must be implemented by all classes which can be used for

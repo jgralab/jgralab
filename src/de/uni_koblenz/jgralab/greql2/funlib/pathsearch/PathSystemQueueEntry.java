@@ -24,8 +24,9 @@
  
 package de.uni_koblenz.jgralab.greql2.funlib.pathsearch;
 
-import de.uni_koblenz.jgralab.*;
-import de.uni_koblenz.jgralab.greql2.evaluator.fa.*;
+import de.uni_koblenz.jgralab.Edge;
+import de.uni_koblenz.jgralab.Vertex;
+import de.uni_koblenz.jgralab.greql2.evaluator.fa.State;
 
 /**
  * This class modells an entry in the queue which is used for PathSystemConstruction

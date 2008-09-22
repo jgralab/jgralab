@@ -24,8 +24,9 @@
  
 package de.uni_koblenz.jgralab.greql2.funlib.pathsearch;
 
-import java.util.*;
-import de.uni_koblenz.jgralab.*;
+import java.util.ArrayList;
+
+import de.uni_koblenz.jgralab.BooleanGraphMarker;
 
 public abstract class PathSearch {
 	

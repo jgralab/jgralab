@@ -30,12 +30,12 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import de.uni_koblenz.jgralab.schema.GraphElementClass;
 import de.uni_koblenz.jgralab.schema.AggregationClass;
 import de.uni_koblenz.jgralab.schema.AttributedElementClass;
 import de.uni_koblenz.jgralab.schema.CompositionClass;
 import de.uni_koblenz.jgralab.schema.EdgeClass;
 import de.uni_koblenz.jgralab.schema.GraphClass;
+import de.uni_koblenz.jgralab.schema.GraphElementClass;
 import de.uni_koblenz.jgralab.schema.Package;
 import de.uni_koblenz.jgralab.schema.QualifiedName;
 import de.uni_koblenz.jgralab.schema.Schema;
@@ -234,8 +234,6 @@ public class GraphClassImpl extends AttributedElementClassImpl implements
 		Package pkg = schema.createPackageWithParents(qn.getPackageName());
 		vc.setPackage(pkg);
 		pkg.addVertexClass(vc);
-//		if (vc.getSimpleName().equals("RequirementsSpecification"))
-//			System.out.println("Creating vertex class: " + vc.getUniqueName());
 		return vc;
 	}
 
