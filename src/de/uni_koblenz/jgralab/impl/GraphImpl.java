@@ -445,7 +445,6 @@ Graph {
 	 * Creates an edge of the given class and adds this edge to the graph.
 	 * <code>cls</code> has to be the "Impl" class.
 	 */
-	@SuppressWarnings("unchecked")
 	@Override
 	public <T extends Edge> T createEdge(Class<T> cls, Vertex alpha,
 			Vertex omega) {
@@ -463,7 +462,6 @@ Graph {
 	 * Creates a vertex of the given class and adds this edge to the graph.
 	 * <code>cls</code> has to be the "Impl" class.
 	 */
-	@SuppressWarnings("unchecked")
 	@Override
 	public <T extends Vertex> T createVertex(Class<T> cls) {
 		try {
@@ -795,21 +793,18 @@ Graph {
 		return null;
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
 	public Edge getFirstEdgeOfClass(Vertex v, EdgeClass ec) {
 		return getFirstEdgeOfClass(v, (Class<? extends Edge>) ec.getM1Class(),
 				EdgeDirection.INOUT, false);
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
 	public Edge getFirstEdgeOfClass(Vertex v, EdgeClass ec, boolean noSubclasses) {
 		return getFirstEdgeOfClass(v, (Class<? extends Edge>) ec.getM1Class(),
 				EdgeDirection.INOUT, noSubclasses);
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
 	public Edge getFirstEdgeOfClass(Vertex v, EdgeClass ec,
 			EdgeDirection orientation, boolean noSubclasses) {
@@ -839,14 +834,12 @@ Graph {
 		return null;
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
 	public Edge getFirstEdgeOfClassInGraph(EdgeClass anEdgeClass) {
 		return getFirstEdgeOfClassInGraph((Class<? extends Edge>) anEdgeClass
 				.getM1Class(), false);
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
 	public Edge getFirstEdgeOfClassInGraph(EdgeClass anEdgeClass,
 			boolean explicitType) {
@@ -885,7 +878,6 @@ Graph {
 		return getFirstVertexOfClass(aVertexClass, false);
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
 	public Vertex getFirstVertexOfClass(VertexClass aVertexClass,
 			boolean explicitType) {
@@ -984,21 +976,18 @@ Graph {
 		return null;
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
 	public Edge getNextEdgeOfClass(Edge e, EdgeClass ec) {
 		return getNextEdgeOfClass(e, (Class<? extends Edge>) ec.getM1Class(),
 				EdgeDirection.INOUT, false);
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
 	public Edge getNextEdgeOfClass(Edge e, EdgeClass ec, boolean noSubclasses) {
 		return getNextEdgeOfClass(e, (Class<? extends Edge>) ec.getM1Class(),
 				EdgeDirection.INOUT, noSubclasses);
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
 	public Edge getNextEdgeOfClass(Edge e, EdgeClass ec,
 			EdgeDirection orientation, boolean noSubclasses) {
@@ -1029,14 +1018,12 @@ Graph {
 		return null;
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
 	public Edge getNextEdgeOfClassInGraph(Edge anEdge, EdgeClass anEdgeClass) {
 		return getNextEdgeOfClassInGraph(anEdge,
 				(Class<? extends Edge>) anEdgeClass.getM1Class(), false);
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
 	public Edge getNextEdgeOfClassInGraph(Edge anEdge, EdgeClass anEdgeClass,
 			boolean explicitType) {
@@ -1097,7 +1084,6 @@ Graph {
 		return null;
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
 	public Vertex getNextVertexOfClass(Vertex vertex, VertexClass vertexClass) {
 		return getNextVertexOfClass(vertex,
@@ -1105,7 +1091,6 @@ Graph {
 	}
 
 
-	@SuppressWarnings("unchecked")
 	@Override
 	public Vertex getNextVertexOfClass(Vertex vertex, VertexClass vertexClass,
 			boolean explicitType) {

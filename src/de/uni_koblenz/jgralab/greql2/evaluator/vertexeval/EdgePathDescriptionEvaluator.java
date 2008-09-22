@@ -57,7 +57,7 @@ public class EdgePathDescriptionEvaluator extends
 		if (evalEdge != null) {
 			edgeEval = greqlEvaluator.getVertexEvaluatorGraphMarker().getMark(evalEdge.getAlpha());
 		}
-		JValueTypeCollection typeCollection = null;
+		JValueTypeCollection typeCollection = new JValueTypeCollection();
 		IsTypeRestrOf inc = vertex.getFirstIsTypeRestrOf(EdgeDirection.IN);
 		EdgeRestrictionEvaluator edgeRestEval = null;
 		if (inc != null) {

@@ -177,9 +177,7 @@ public class AttributedElementCodeGenerator extends CodeGenerator {
 
 	protected CodeBlock createGenericGetter(Set<Attribute> attrSet) {
 		CodeList code = new CodeList();
-
-		code
-				.addNoIndent(new CodeSnippet(
+		code.addNoIndent(new CodeSnippet(
 						true,
 						"public Object getAttribute(String attributeName) throws NoSuchFieldException {"));
 		for (Attribute attr : attrSet) {
@@ -188,8 +186,7 @@ public class AttributedElementCodeGenerator extends CodeGenerator {
 			s.add("if (attributeName.equals(\"#name#\")) return #name#;");
 			code.add(s);
 		}
-		code
-				.add(new CodeSnippet(
+		code.add(new CodeSnippet(
 						"throw new NoSuchFieldException(\"#qualifiedClassName# doesn't contain an attribute \" + attributeName);"));
 		code.addNoIndent(new CodeSnippet("}"));
 
@@ -199,9 +196,16 @@ public class AttributedElementCodeGenerator extends CodeGenerator {
 	protected CodeBlock createGenericSetter(Set<Attribute> attrSet) {
 		CodeList code = new CodeList();
 		CodeSnippet snip = new CodeSnippet(true);
-		snip.add("@SuppressWarnings(\"unchecked\")");
-		snip
-				.add("public void setAttribute(String attributeName, Object data) throws NoSuchFieldException {");
+		boolean suppressWarningsNeeded = false;
+		for (Attribute attr : attrSet) {
+			if (attr.getDomain().isComposite()) {
+				suppressWarningsNeeded = true;
+				break;
+			}	
+		}
+		if (suppressWarningsNeeded)
+			snip.add("@SuppressWarnings(\"unchecked\")");
+		snip.add("public void setAttribute(String attributeName, Object data) throws NoSuchFieldException {");
 		code.addNoIndent(snip);
 		for (Attribute attr : attrSet) {
 			CodeSnippet s = new CodeSnippet();
@@ -220,11 +224,9 @@ public class AttributedElementCodeGenerator extends CodeGenerator {
 			s.add("}");
 			code.add(s);
 		}
-		code
-				.add(new CodeSnippet(
+		code.add(new CodeSnippet(
 						"throw new NoSuchFieldException(\"#qualifiedClassName# doesn't contain an attribute \" + attributeName);"));
 		code.addNoIndent(new CodeSnippet("}"));
-
 		return code;
 	}
 

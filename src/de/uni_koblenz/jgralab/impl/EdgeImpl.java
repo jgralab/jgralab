@@ -129,7 +129,6 @@ public abstract class EdgeImpl extends GraphElementImpl implements Edge {
 	}
 
 
-	@SuppressWarnings("unchecked")
 	@Override
 	public Edge getNextEdgeOfClass(EdgeClass anEdgeClass) {
 		return myGraph.getNextEdgeOfClass(this, (Class<? extends Edge>) anEdgeClass
@@ -138,7 +137,6 @@ public abstract class EdgeImpl extends GraphElementImpl implements Edge {
 
 
 
-	@SuppressWarnings("unchecked")
 	@Override
 	public Edge getNextEdgeOfClass(EdgeClass anEdgeClass, boolean explicitType) {
 		return getNextEdgeOfClass((Class<? extends Edge>) anEdgeClass
@@ -170,14 +168,12 @@ public abstract class EdgeImpl extends GraphElementImpl implements Edge {
 		return myGraph.getNextEdgeOfClassInGraph(this, anEdgeClass, explicitType);
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
 	public Edge getNextEdgeOfClassInGraph(EdgeClass anEdgeClass) {
 		return getNextEdgeOfClassInGraph((Class<? extends Edge>) anEdgeClass
 				.getM1Class(), false);
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
 	public Edge getNextEdgeOfClassInGraph(EdgeClass anEdgeClass,
 			boolean explicitType) {
