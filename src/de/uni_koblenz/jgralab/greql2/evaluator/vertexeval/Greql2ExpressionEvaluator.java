@@ -24,14 +24,21 @@
  
 package de.uni_koblenz.jgralab.greql2.evaluator.vertexeval;
 
+import java.util.Map;
+
+import de.uni_koblenz.jgralab.EdgeDirection;
+import de.uni_koblenz.jgralab.Vertex;
+import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
 import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.GraphSize;
 import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.VertexCosts;
-import de.uni_koblenz.jgralab.greql2.evaluator.*;
-import de.uni_koblenz.jgralab.greql2.exception.*;
+import de.uni_koblenz.jgralab.greql2.exception.EvaluateException;
+import de.uni_koblenz.jgralab.greql2.exception.UndefinedVariableException;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
-import de.uni_koblenz.jgralab.greql2.schema.*;
-import java.util.Map;
-import de.uni_koblenz.jgralab.*;
+import de.uni_koblenz.jgralab.greql2.schema.Expression;
+import de.uni_koblenz.jgralab.greql2.schema.Greql2Expression;
+import de.uni_koblenz.jgralab.greql2.schema.IsBoundVarOf;
+import de.uni_koblenz.jgralab.greql2.schema.IsIdOf;
+import de.uni_koblenz.jgralab.greql2.schema.Variable;
 
 /**
  * Evaluates a Greql2Expression vertex in the GReQL-2 Syntaxgraph. A

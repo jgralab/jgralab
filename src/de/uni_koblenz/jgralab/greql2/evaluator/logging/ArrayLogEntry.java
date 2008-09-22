@@ -24,8 +24,10 @@
 
 package de.uni_koblenz.jgralab.greql2.evaluator.logging;
 
-import org.jdom.*;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Iterator;
+
+import org.jdom.Element;
 
 /**
  * This class stores the number of logging-calls for inputsize and the summed up

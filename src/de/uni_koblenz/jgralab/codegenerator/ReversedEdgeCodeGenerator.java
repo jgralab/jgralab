@@ -28,9 +28,7 @@ import java.util.Set;
 import java.util.TreeSet;
 
 import de.uni_koblenz.jgralab.Attribute;
-//import de.uni_koblenz.jgralab.schema.AggregationClass;
 import de.uni_koblenz.jgralab.schema.AttributedElementClass;
-//import de.uni_koblenz.jgralab.schema.CompositionClass;
 import de.uni_koblenz.jgralab.schema.EdgeClass;
 
 public class ReversedEdgeCodeGenerator extends AttributedElementCodeGenerator {

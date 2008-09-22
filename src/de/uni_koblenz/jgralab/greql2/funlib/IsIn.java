@@ -26,19 +26,19 @@ package de.uni_koblenz.jgralab.greql2.funlib;
 
 import java.util.ArrayList;
 
+import de.uni_koblenz.jgralab.AttributedElement;
+import de.uni_koblenz.jgralab.BooleanGraphMarker;
+import de.uni_koblenz.jgralab.Graph;
+import de.uni_koblenz.jgralab.GraphElement;
 import de.uni_koblenz.jgralab.greql2.exception.EvaluateException;
 import de.uni_koblenz.jgralab.greql2.exception.WrongFunctionParameterException;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
+import de.uni_koblenz.jgralab.greql2.jvalue.JValueBoolean;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValueInvalidTypeException;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValuePath;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValuePathSystem;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValueSet;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
-import de.uni_koblenz.jgralab.greql2.jvalue.JValueBoolean;
-import de.uni_koblenz.jgralab.AttributedElement;
-import de.uni_koblenz.jgralab.BooleanGraphMarker;
-import de.uni_koblenz.jgralab.Graph;
-import de.uni_koblenz.jgralab.GraphElement;
 
 /**
  * Checks if a given object is included in a given structure. The object can be

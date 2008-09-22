@@ -1,11 +1,5 @@
 package de.uni_koblenz.jgralab;
 
-import de.uni_koblenz.jgralab.AttributedElement;
-import de.uni_koblenz.jgralab.Edge;
-import de.uni_koblenz.jgralab.Graph;
-import de.uni_koblenz.jgralab.GraphException;
-import de.uni_koblenz.jgralab.GraphMarker;
-import de.uni_koblenz.jgralab.Vertex;
 
 /**
  * Marks directed graphs with arbitrary objects. 

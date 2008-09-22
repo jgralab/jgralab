@@ -24,7 +24,7 @@
 
 package de.uni_koblenz.jgralab.greql2.evaluator.logging;
 
-import org.jdom.*;
+import org.jdom.Element;
 
 /**
  * This class stores the number of logging-calls for selectivity and resultsize

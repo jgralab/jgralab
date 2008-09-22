@@ -28,9 +28,9 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.TreeSet;
 
-import de.uni_koblenz.jgralab.schema.GraphElementClass;
 import de.uni_koblenz.jgralab.schema.EdgeClass;
 import de.uni_koblenz.jgralab.schema.GraphClass;
+import de.uni_koblenz.jgralab.schema.GraphElementClass;
 import de.uni_koblenz.jgralab.schema.VertexClass;
 
 public class GraphCodeGenerator extends AttributedElementCodeGenerator {

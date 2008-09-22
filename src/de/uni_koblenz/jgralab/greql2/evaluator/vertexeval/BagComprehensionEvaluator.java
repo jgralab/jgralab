@@ -24,13 +24,23 @@
 
 package de.uni_koblenz.jgralab.greql2.evaluator.vertexeval;
 
+import de.uni_koblenz.jgralab.EdgeDirection;
+import de.uni_koblenz.jgralab.Vertex;
+import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
+import de.uni_koblenz.jgralab.greql2.evaluator.VariableDeclarationLayer;
 import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.GraphSize;
 import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.VertexCosts;
-import de.uni_koblenz.jgralab.greql2.evaluator.*;
 import de.uni_koblenz.jgralab.greql2.exception.EvaluateException;
-import de.uni_koblenz.jgralab.greql2.jvalue.*;
-import de.uni_koblenz.jgralab.greql2.schema.*;
-import de.uni_koblenz.jgralab.*;
+import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
+import de.uni_koblenz.jgralab.greql2.jvalue.JValueBag;
+import de.uni_koblenz.jgralab.greql2.jvalue.JValueCollection;
+import de.uni_koblenz.jgralab.greql2.jvalue.JValueInvalidTypeException;
+import de.uni_koblenz.jgralab.greql2.jvalue.JValueTable;
+import de.uni_koblenz.jgralab.greql2.jvalue.JValueTuple;
+import de.uni_koblenz.jgralab.greql2.schema.BagComprehension;
+import de.uni_koblenz.jgralab.greql2.schema.Declaration;
+import de.uni_koblenz.jgralab.greql2.schema.Expression;
+import de.uni_koblenz.jgralab.greql2.schema.IsTableHeaderOf;
 
 /**
  * Evaluates a BagComprehensionvertex in the GReQL-2 Syntaxgraph

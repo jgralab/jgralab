@@ -24,11 +24,11 @@
  
 package de.uni_koblenz.jgralab.greql2.evaluator.fa;
 
-import de.uni_koblenz.jgralab.greql2.jvalue.JValueTypeCollection;
-import de.uni_koblenz.jgralab.schema.AttributedElementClass;
 import de.uni_koblenz.jgralab.BooleanGraphMarker;
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.Vertex;
+import de.uni_koblenz.jgralab.greql2.jvalue.JValueTypeCollection;
+import de.uni_koblenz.jgralab.schema.AttributedElementClass;
 
 
 public class VertexRestrictionTransition extends Transition {

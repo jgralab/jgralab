@@ -24,6 +24,15 @@
 
 package de.uni_koblenz.jgralab.greql2.funlib;
 
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.Queue;
+
+import de.uni_koblenz.jgralab.BooleanGraphMarker;
+import de.uni_koblenz.jgralab.Edge;
+import de.uni_koblenz.jgralab.Graph;
+import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.greql2.evaluator.fa.DFA;
 import de.uni_koblenz.jgralab.greql2.evaluator.fa.NFA;
 import de.uni_koblenz.jgralab.greql2.evaluator.fa.State;
@@ -34,16 +43,6 @@ import de.uni_koblenz.jgralab.greql2.funlib.pathsearch.PathSearch;
 import de.uni_koblenz.jgralab.greql2.funlib.pathsearch.PathSystemQueueEntry;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValuePath;
-
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.Queue;
-
-import de.uni_koblenz.jgralab.BooleanGraphMarker;
-import de.uni_koblenz.jgralab.Edge;
-import de.uni_koblenz.jgralab.Graph;
-import de.uni_koblenz.jgralab.Vertex;
 
 /**
  * Checks if the given dfa matches the given path. A dfa is defined as regular

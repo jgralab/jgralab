@@ -24,13 +24,13 @@
 
 package de.uni_koblenz.jgralab.greql2.evaluator.fa;
 
+import de.uni_koblenz.jgralab.BooleanGraphMarker;
+import de.uni_koblenz.jgralab.Edge;
+import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.VertexEvaluator;
 import de.uni_koblenz.jgralab.greql2.exception.EvaluateException;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValueInvalidTypeException;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValueTypeCollection;
-import de.uni_koblenz.jgralab.BooleanGraphMarker;
-import de.uni_koblenz.jgralab.Edge;
-import de.uni_koblenz.jgralab.Vertex;
 
 /**
  * This transition accepts only one edge. Because this edge may be a variable or

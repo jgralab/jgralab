@@ -24,18 +24,17 @@
  
 package de.uni_koblenz.jgralab.greql2;
 
+import java.util.HashMap;
+import java.util.LinkedList;
+
+import de.uni_koblenz.jgralab.EdgeDirection;
+import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.greql2.exception.DuplicateVariableException;
 import de.uni_koblenz.jgralab.greql2.schema.Greql2Aggregation;
 import de.uni_koblenz.jgralab.greql2.schema.IsBoundVarOf;
 import de.uni_koblenz.jgralab.greql2.schema.IsDeclaredVarOf;
 import de.uni_koblenz.jgralab.greql2.schema.IsVarOf;
 import de.uni_koblenz.jgralab.greql2.schema.SourcePosition;
-
-import java.util.HashMap;
-import java.util.LinkedList;
-
-import de.uni_koblenz.jgralab.EdgeDirection;
-import de.uni_koblenz.jgralab.Vertex;
 
 
 public class SymbolTable 

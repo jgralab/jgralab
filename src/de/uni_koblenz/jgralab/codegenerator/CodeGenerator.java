@@ -32,7 +32,6 @@ import java.util.Vector;
 import java.util.logging.Logger;
 
 import de.uni_koblenz.jgralab.GraphIOException;
-import de.uni_koblenz.jgralab.codegenerator.JavaSourceFromString;
 
 public abstract class CodeGenerator {
 

@@ -24,6 +24,7 @@
  
 package de.uni_koblenz.jgralab.greql2.evaluator.vertexeval;
 
+import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
 import de.uni_koblenz.jgralab.greql2.exception.EvaluateException;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValueInvalidTypeException;
@@ -31,7 +32,6 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueTypeCollection;
 import de.uni_koblenz.jgralab.greql2.schema.Expression;
 import de.uni_koblenz.jgralab.greql2.schema.IsTypeRestrOf;
 import de.uni_koblenz.jgralab.greql2.schema.TypeId;
-import de.uni_koblenz.jgralab.EdgeDirection;
 
 /**
  * This class is the base class for all VertexEvaluators, that construct an element

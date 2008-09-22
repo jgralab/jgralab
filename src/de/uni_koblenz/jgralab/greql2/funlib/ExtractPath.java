@@ -26,13 +26,13 @@ package de.uni_koblenz.jgralab.greql2.funlib;
 
 import java.util.ArrayList;
 
+import de.uni_koblenz.jgralab.BooleanGraphMarker;
+import de.uni_koblenz.jgralab.Graph;
+import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.greql2.exception.EvaluateException;
 import de.uni_koblenz.jgralab.greql2.exception.WrongFunctionParameterException;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValuePathSystem;
-import de.uni_koblenz.jgralab.BooleanGraphMarker;
-import de.uni_koblenz.jgralab.Graph;
-import de.uni_koblenz.jgralab.Vertex;
 
 /**
  * Returns a path from the root of the given pathsystem to the given vertex. If the given vertex is contained more then once, the first occurance will be used. If no vertex is given, the paths from the root to all leaves are returned as set. If an integer is given instead of a vertex, all paths are returned that have the length of this integer.

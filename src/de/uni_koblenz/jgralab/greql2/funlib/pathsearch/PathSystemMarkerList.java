@@ -24,12 +24,11 @@
  
 package de.uni_koblenz.jgralab.greql2.funlib.pathsearch;
 
-import de.uni_koblenz.jgralab.greql2.evaluator.fa.State;
-
 import java.util.HashSet;
 import java.util.Iterator;
 
 import de.uni_koblenz.jgralab.Vertex;
+import de.uni_koblenz.jgralab.greql2.evaluator.fa.State;
 
 public class PathSystemMarkerList extends HashSet<PathSystemMarkerEntry> {
 

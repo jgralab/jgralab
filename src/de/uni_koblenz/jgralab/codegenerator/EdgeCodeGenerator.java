@@ -25,6 +25,7 @@
 package de.uni_koblenz.jgralab.codegenerator;
 
 import java.util.TreeSet;
+
 import de.uni_koblenz.jgralab.schema.AggregationClass;
 import de.uni_koblenz.jgralab.schema.AttributedElementClass;
 import de.uni_koblenz.jgralab.schema.CompositionClass;
@@ -55,24 +56,39 @@ public class EdgeCodeGenerator extends AttributedElementCodeGenerator {
 		code.setVariable("ecName", ec.getQualifiedName());
 		CodeSnippet snippet = new CodeSnippet();
 		snippet.add("/**");
-		snippet.add("FromVertexClass: #fromVertexClass#");
-		snippet.add("FromRoleName : #fromRoleName#");
-		snippet.add("ToVertexClass: #toVertexClass#");
-		snippet.add("ToRoleName : #toRoleName#");
+		snippet.add(" * FromVertexClass: #fromVertexClass#");
+		snippet.add(" * FromRoleName : #fromRoleName#");
+		snippet.add(" * ToVertexClass: #toVertexClass#");
+		snippet.add(" * ToRoleName : #toRoleName#");
 		snippet.add(" */");
 		code.addNoIndent(snippet);
 		code.addNoIndent(super.createHeader(createClass));
+		//adds the composition interface, since composition might be no "direct" superclass
+		if (aec instanceof CompositionClass) {
+			interfaces.add("Composition");
+		} else if (aec instanceof AggregationClass) {
+			interfaces.add("Aggregation");
+		} 
 		return code;
 	}
 
 	protected CodeBlock createBody(boolean createClass) {
 		CodeList code = (CodeList) super.createBody(createClass);
 		if (createClass) {
-			if (aec.getAllSuperClasses().contains(aec.getSchema().getDefaultCompositionClass()))
-				rootBlock.setVariable("baseClassName", "CompositionImpl");		
-			else if (aec.getAllSuperClasses().contains(aec.getSchema().getDefaultAggregationClass()))
-					rootBlock.setVariable("baseClassName", "AggregationImpl");
-			else rootBlock.setVariable("baseClassName", "EdgeImpl");
+			if (aec instanceof CompositionClass) {
+				rootBlock.setVariable("baseClassName", "CompositionImpl");	
+			} else if (aec instanceof AggregationClass) {
+				rootBlock.setVariable("baseClassName", "AggregationImpl");
+			} else {
+				rootBlock.setVariable("baseClassName", "EdgeImpl");
+			}	
+//			if (aec.getAllSuperClasses().contains(aec.getSchema().getDefaultCompositionClass())) {
+//				System.out.println("Setting Composition as BaseClass for class " + aec.getSimpleName());
+//				rootBlock.setVariable("baseClassName", "CompositionImpl");		
+//			}	
+//			else if (aec.getAllSuperClasses().contains(aec.getSchema().getDefaultAggregationClass()))
+//					rootBlock.setVariable("baseClassName", "AggregationImpl");
+//				 else rootBlock.setVariable("baseClassName", "EdgeImpl");
 			addImports("#jgImplPackage#.#baseClassName#");
 		}
 		code.add(createNextEdgeInGraphMethods(createClass));

@@ -24,16 +24,15 @@
 
 package de.uni_koblenz.jgralab.greql2.funlib;
 
-import de.uni_koblenz.jgralab.greql2.exception.EvaluateException;
-import de.uni_koblenz.jgralab.greql2.exception.WrongFunctionParameterException;
-import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
-import de.uni_koblenz.jgralab.greql2.jvalue.JValueCollection;
-
 import java.util.ArrayList;
 import java.util.Iterator;
 
 import de.uni_koblenz.jgralab.BooleanGraphMarker;
 import de.uni_koblenz.jgralab.Graph;
+import de.uni_koblenz.jgralab.greql2.exception.EvaluateException;
+import de.uni_koblenz.jgralab.greql2.exception.WrongFunctionParameterException;
+import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
+import de.uni_koblenz.jgralab.greql2.jvalue.JValueCollection;
 
 /**
  * Calculates the sum of all elements in the given collection.

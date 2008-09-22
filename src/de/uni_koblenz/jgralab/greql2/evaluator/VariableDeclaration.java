@@ -24,19 +24,18 @@
 
 package de.uni_koblenz.jgralab.greql2.evaluator;
 
-import de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.VariableEvaluator;
-import de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.VertexEvaluator;
-import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
-import de.uni_koblenz.jgralab.greql2.jvalue.JValueCollection;
-import de.uni_koblenz.jgralab.greql2.schema.SimpleDeclaration;
-import de.uni_koblenz.jgralab.greql2.schema.Variable;
-
 import java.util.ArrayList;
 import java.util.Iterator;
 
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.Vertex;
+import de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.VariableEvaluator;
+import de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.VertexEvaluator;
+import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
+import de.uni_koblenz.jgralab.greql2.jvalue.JValueCollection;
+import de.uni_koblenz.jgralab.greql2.schema.SimpleDeclaration;
+import de.uni_koblenz.jgralab.greql2.schema.Variable;
 
 /**
  * This class models the declaration of one variable. It allowes the iteration

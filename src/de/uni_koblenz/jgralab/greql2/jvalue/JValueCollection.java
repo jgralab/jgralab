@@ -24,7 +24,7 @@
  
 package de.uni_koblenz.jgralab.greql2.jvalue;
 
-import java.util.*;
+import java.util.Iterator;
 
 
 /**

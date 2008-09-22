@@ -26,9 +26,9 @@ package de.uni_koblenz.jgralab.greql2.funlib;
 
 import java.util.ArrayList;
 
-import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
 import de.uni_koblenz.jgralab.BooleanGraphMarker;
 import de.uni_koblenz.jgralab.Graph;
+import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
 
 /**
  * Calculates the squareroot of a given scalar.

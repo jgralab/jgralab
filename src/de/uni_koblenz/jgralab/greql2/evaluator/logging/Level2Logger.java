@@ -24,15 +24,22 @@
 
 package de.uni_koblenz.jgralab.greql2.evaluator.logging;
 
-import org.jdom.*;
-import org.jdom.output.*;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.concurrent.Semaphore;
+
+import org.jdom.Document;
+import org.jdom.Element;
+import org.jdom.output.Format;
+import org.jdom.output.XMLOutputter;
 
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
-
-import java.io.*;
-import java.util.*;
-import java.util.concurrent.Semaphore;
 
 /**
  * This class implements the Level2 logging component of the GreqlEvaluator. It

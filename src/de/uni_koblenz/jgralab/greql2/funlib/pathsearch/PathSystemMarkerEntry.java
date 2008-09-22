@@ -24,8 +24,9 @@
  
 package de.uni_koblenz.jgralab.greql2.funlib.pathsearch;
 
+import de.uni_koblenz.jgralab.Edge;
+import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.greql2.evaluator.fa.State;
-import de.uni_koblenz.jgralab.*;
 
 public class PathSystemMarkerEntry {
 	
