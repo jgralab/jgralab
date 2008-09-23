@@ -111,6 +111,15 @@ public class GraphMarker<T> {
 	public int size() {
 		return tempAttributeMap.size();
 	}
+	
+	/**
+	 * Returns <code>true</code> if nothing is marked by this GraphMarker.
+	 * 
+	 * @return <code>true</code> if no graph element is marked by this GraphMarker.
+	 */
+	public boolean isEmpty() {
+		return tempAttributeMap.isEmpty();
+	}
 
 	/**
 	 * Clears this GraphMarker such that no element is marked.
