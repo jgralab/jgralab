@@ -30,12 +30,11 @@ import de.uni_koblenz.jgralab.impl.ReversedEdgeImpl;
 
 /**
  * This class can be used to "colorize" graphs, it supports only two "colors",
- * that are "marked" or "not marked". If one need to mark graphs or
+ * that are "marked" or "not marked". If you need to mark graphs or
  * graphelements with more specific "colors", have a look at the class
  * <code>GraphMarker</code>
  *
  * @author Daniel Bildhauer <dbildh@uni-koblenz.de> November 2006
- *
  */
 public class BooleanGraphMarker {
 
@@ -117,6 +116,15 @@ public class BooleanGraphMarker {
 	 */
 	public int size() {
 		return markedElements.size();
+	}
+
+	/**
+	 * Returns <code>true</code> if nothing is marked by this GraphMarker.
+	 * 
+	 * @return <code>true</code> if no graph element is marked by this GraphMarker.
+	 */
+	public boolean isEmpty() {
+		return markedElements.isEmpty();
 	}
 
 	/**
