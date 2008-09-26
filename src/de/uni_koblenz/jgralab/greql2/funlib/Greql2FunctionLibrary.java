@@ -26,6 +26,7 @@ package de.uni_koblenz.jgralab.greql2.funlib;
 
 import java.io.File;
 import java.io.UnsupportedEncodingException;
+import java.net.URI;
 import java.net.URL;
 import java.net.URLDecoder;
 import java.util.Enumeration;
@@ -70,6 +71,27 @@ public class Greql2FunctionLibrary {
 	 * a reference on the one and only instance of this class
 	 */
 	private static Greql2FunctionLibrary thisInstance;
+	
+	private static String[] functions = new String[] { "And", "Avg",
+			"Children", "Contains", "Count", "Degree", "Depth", "Difference",
+			"Distance", "DividedBy", "EdgesConnected", "EdgesFrom", "EdgesTo",
+			"EdgeTrace", "EdgeTypeSet", "ElementsIn", "EndVertex", "Equals",
+			"ExtractPath", "GetEdge", "GetValue", "GetVertex",
+			"Greql2Function", "Greql2FunctionLibrary", "GrEqual", "GrThan",
+			"HasAttribute", "HasType", "Id", "InDegree", "InnerNodes",
+			"Intersection", "IsA", "IsAcyclic", "IsCycle", "IsIn",
+			"IsIsolated", "IsLoop", "IsNeighbour", "IsParallel", "IsPrime",
+			"IsReachable", "IsSibling", "IsSubPathOfPath", "IsSubSet",
+			"IsSuperSet", "IsTrail", "IsTree", "Leaves", "LeEqual", "LeThan",
+			"Matches", "MaxPathLength", "MinPathLength", "Minus", "Modulo",
+			"Nequals", "NodeTrace", "Not", "NthElement", "Or", "OutDegree",
+			"Parent", "PathConcat", "PathLength", "PathSystem", "Plus", "Pos",
+			"ReachableVertices", "ReMatch", "SchemaFunctions", "Siblings",
+			"Slice", "SquareRoot", "StartVertex", "Subtypes", "Sum",
+			"Supertypes", "SymDifference", "TheElement", "Times",
+			"TopologicalSort", "ToSet", "ToString", "Type", "TypeName",
+			"Types", "TypeSet", "Uminus", "Union", "VertexTypeSet", "Weight",
+			"Xor" }; 
 
 	/**
 	 * constructs a new instance as soon as the Library gets loaded
@@ -244,6 +266,9 @@ public class Greql2FunctionLibrary {
 		packagePath = packagePath.replaceAll("%20", " ");
 		logger.finer("Directory Path : " + packagePath);
 		String entries[] = new File(packagePath).list();
+		if (entries == null) {
+			return false;
+		}
 		int i = 0;
 		for (i = 0; i < entries.length; i++) {
 			if (entries[i].endsWith(".class")) {
@@ -257,20 +282,25 @@ public class Greql2FunctionLibrary {
 		else
 			return false;
 	}
+	
+	private void registerFixedFunctionSet(String packagePath) {
+		for (String function : functions) {
+			registerPredefinedFunction(function);
+		}
+	}
 
 	/**
 	 * registeres all GReQL-Functions in this package. GReQL-Functions are all
 	 * classes that implement the Interface GreqlFunction
-	 * 
-	 * @return true if the package was successfull read
 	 */
-	private boolean registerAllFunctions() {
+	private void registerAllFunctions() {
 		logger.finer("Registering all functions");
 		availableFunctions = new HashMap<String, Greql2Function>();
 		String thisClassName = this.getClass().getCanonicalName();
 		logger.finer("Functionlib name: " + thisClassName);
 		URL packageUrl = Greql2FunctionLibrary.class.getResource("/"
 				+ nondottedPackageName + "/Greql2FunctionLibrary.class");
+		
 		if (packageUrl != null) {
 
 			logger.finer("Found Greql2FunctionLibrary");
@@ -292,11 +322,11 @@ public class Greql2FunctionLibrary {
 				packagePath = packagePath.substring(packagePath.indexOf("/"));
 			}
 			if (registerFunctionsInJar(packagePath))
-				return true;
+				return;
 			if (registerFunctionsInDirectory(packagePath))
-				return true;
+				return;
+			registerFixedFunctionSet(packagePath);
 		}
-		return false;
 	}
 
 }
