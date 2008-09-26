@@ -1264,13 +1264,13 @@ Graph {
 					CompositionClass comp = (CompositionClass) aec;
 					if (comp.isAggregateFrom()) {
 						// omega vertex is to be deleted
-						if (containsVertexId(omegaId)) {
+						if (containsVertexId(omegaId) && !deleteVertexList.contains(omegaId)) {
 							// System.err.println("Delete omega vertex v" + omegaId + "
 							// of composition e" + eId);
 							deleteVertexList.add(omegaId);
 						}
 					} else {
-						if (containsVertexId(alphaId)) {
+						if (containsVertexId(alphaId) && !deleteVertexList.contains(alphaId)) {
 							// System.err.println("Delete alpha vertex v" + alphaId + "
 							// of composition e" + eId);
 							deleteVertexList.add(alphaId);
