@@ -296,7 +296,8 @@ public abstract class ReversedEdgeImpl implements
 
 	@Override
 	public String toString() {
-		return "-e" + normalEdge.getId() + ": " + getAttributedElementClass().getQualifiedName();
+		return "-e" + normalEdge.getId() + ": "
+				+ getAttributedElementClass().getQualifiedName();
 	}
 
 }
