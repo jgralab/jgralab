@@ -236,7 +236,7 @@ public abstract class GraphImpl extends AttributedElementImpl implements Graph {
 
 		if (isLoading()) {
 			if (eId != 0) {
-				// the given vertex already has an id, try to use it
+				// the given edge already has an id, try to use it
 				if (containsEdgeId(eId))
 					throw new GraphException("edge with id " + eId
 							+ " already exists");
@@ -250,7 +250,7 @@ public abstract class GraphImpl extends AttributedElementImpl implements Graph {
 			}
 		} else {
 			if (eId != 0) {
-				// the given vertex already has an id, try to use it
+				// the given edge already has an id, try to use it
 				if (containsEdgeId(eId))
 					throw new GraphException("edge with id " + eId
 							+ " already exists");
@@ -384,8 +384,9 @@ public abstract class GraphImpl extends AttributedElementImpl implements Graph {
 
 		vertex[vId] = newVertex;
 
-		if (!isLoading())
+		if (!isLoading()) {
 			vertexListModified();
+		}
 		vertexAdded(newVertex);
 	}
 
@@ -1470,28 +1471,33 @@ public abstract class GraphImpl extends AttributedElementImpl implements Graph {
 
 	@Override
 	public void putAfterEdgeInGraph(Edge targetEdge, Edge sourceEdge) {
+		assert containsEdge(targetEdge) && containsEdge(sourceEdge);
 		int source = Math.abs(sourceEdge.getId());
 		int target = Math.abs(targetEdge.getId());
-		if (target != source) {
+		if (target != source && nextEdgeInGraph[target] != source) {
 			// delete references to source
 			if (source == firstEdge) {
 				firstEdge = nextEdgeInGraph[source];
 			} else {
-				int prevId = -1;
-				int currId = firstEdge;
-				while (currId != 0 && currId != source) {
-					prevId = currId;
-					currId = nextEdgeInGraph[currId];
+				int prevId = firstEdge;
+				while (prevId != 0 && nextEdgeInGraph[prevId] != source) {
+					prevId = nextEdgeInGraph[prevId];
 				}
 				assert prevId != 0;
 				nextEdgeInGraph[prevId] = nextEdgeInGraph[source];
+				if (source == lastEdge) {
+					lastEdge = prevId;
+				}
 			}
 
 			// insert source in eSeq after target
 			nextEdgeInGraph[source] = nextEdgeInGraph[target];
 			nextEdgeInGraph[target] = source;
+			if (target == lastEdge) {
+				lastEdge = source;
+			}
+			edgeListModified();
 		}
-		edgeListModified();
 	}
 
 	@Override
@@ -1505,9 +1511,10 @@ public abstract class GraphImpl extends AttributedElementImpl implements Graph {
 				firstVertex = nextVertex[source];
 			} else {
 				int prevId = firstVertex;
-				while (nextVertex[prevId] != source) {
+				while (prevId != 0 && nextVertex[prevId] != source) {
 					prevId = nextVertex[prevId];
 				}
+				assert prevId != 0;
 				nextVertex[prevId] = nextVertex[source];
 				if (source == lastVertex) {
 					lastVertex = prevId;
@@ -1526,39 +1533,39 @@ public abstract class GraphImpl extends AttributedElementImpl implements Graph {
 
 	@Override
 	public void putBeforeEdgeInGraph(Edge targetEdge, Edge sourceEdge) {
+		assert containsEdge(targetEdge) && containsEdge(sourceEdge);
 		int source = Math.abs(sourceEdge.getId());
 		int target = Math.abs(targetEdge.getId());
-		if (target != source) {
+		if (target != source && nextEdgeInGraph[source] != target) {
 			// delete references to source
 			if (source == firstEdge) {
 				firstEdge = nextEdgeInGraph[source];
 			} else {
-				int prevId = -1;
-				int currId = firstEdge;
-				while (currId != 0 && currId != source) {
-					prevId = currId;
-					currId = nextEdgeInGraph[currId];
+				int prevId = firstEdge;
+				while (prevId != 0 && nextEdgeInGraph[prevId] != source) {
+					prevId = nextEdgeInGraph[prevId];
 				}
 				assert prevId != 0;
 				nextEdgeInGraph[prevId] = nextEdgeInGraph[source];
+				if (source == lastEdge) {
+					lastEdge = prevId;
+				}
 			}
 
 			// insert source immediately before target
 			if (target == firstEdge) {
 				firstEdge = source;
 			} else {
-				int prevId = -1;
-				int currId = firstEdge;
-				while (currId != 0 && currId != target) {
-					prevId = currId;
-					currId = nextEdgeInGraph[currId];
+				int prevId = firstEdge;
+				while (prevId != 0 && nextEdgeInGraph[prevId] != target) {
+					prevId = nextEdgeInGraph[prevId];
 				}
 				assert prevId != 0;
 				nextEdgeInGraph[prevId] = source;
 			}
 			nextEdgeInGraph[source] = target;
+			edgeListModified();
 		}
-		edgeListModified();
 	}
 
 	@Override
@@ -1572,9 +1579,10 @@ public abstract class GraphImpl extends AttributedElementImpl implements Graph {
 				firstVertex = nextVertex[source];
 			} else {
 				int prevId = firstVertex;
-				while (nextVertex[prevId] != source) {
+				while (prevId != 0 && nextVertex[prevId] != source) {
 					prevId = nextVertex[prevId];
 				}
+				assert prevId != 0;
 				nextVertex[prevId] = nextVertex[source];
 				if (source == lastVertex) {
 					lastVertex = prevId;
@@ -1587,9 +1595,10 @@ public abstract class GraphImpl extends AttributedElementImpl implements Graph {
 				firstVertex = source;
 			} else {
 				int prevId = firstVertex;
-				while (nextVertex[prevId] != target) {
+				while (prevId != 0 && nextVertex[prevId] != target) {
 					prevId = nextVertex[prevId];
 				}
+				assert prevId != 0;
 				nextVertex[source] = target;
 				nextVertex[prevId] = source;
 			}
