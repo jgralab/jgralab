@@ -50,8 +50,7 @@ import de.uni_koblenz.jgralab.schema.VertexClass;
  * @author Steffen Kahle et. al.
  */
 @SuppressWarnings("unchecked")
-public abstract class GraphImpl extends AttributedElementImpl implements
-Graph {
+public abstract class GraphImpl extends AttributedElementImpl implements Graph {
 
 	/**
 	 * indexed with incidence-id, holds the vertex-id the edge is pointing to
@@ -123,7 +122,6 @@ Graph {
 	 */
 	protected final double EXPANSIONFACTOR = 2.0;
 
-	
 	/**
 	 * The schema this graph belongs to
 	 */
@@ -209,7 +207,7 @@ Graph {
 		expandVertexArray(vMax + 1);
 		expandEdgeArray(eMax + 1);
 		graphFactory = schema.getGraphFactory();
-		
+
 		firstVertex = 0;
 		lastVertex = 0;
 		firstEdge = 0;
@@ -247,7 +245,8 @@ Graph {
 					throw new GraphException("edge id " + eId
 							+ " is bigger than eSize");
 			} else {
-				throw new GraphException("a vertex that has not id may not be added while a graph is loading");
+				throw new GraphException(
+						"a vertex that has not id may not be added while a graph is loading");
 			}
 		} else {
 			if (eId != 0) {
@@ -255,11 +254,11 @@ Graph {
 				if (containsEdgeId(eId))
 					throw new GraphException("edge with id " + eId
 							+ " already exists");
-	
+
 				if (eId >= eSize)
 					throw new GraphException("edge id " + eId
 							+ " is bigger than eSize");
-	
+
 				// remove edge from free edge list
 				int i = 0;
 				while (nextEdgeInGraph[i] != eId)
@@ -283,7 +282,7 @@ Graph {
 			nextEdgeInGraph[lastEdge] = eId;
 		}
 		lastEdge = eId;
-		
+
 		nextEdgeInGraph[eId] = 0;
 
 		edge[edgeOffset(eId)] = newEdge;
@@ -321,7 +320,7 @@ Graph {
 			alpha.incidenceListModified();
 			omega.incidenceListModified();
 			edgeListModified();
-		}	
+		}
 		edgeAdded(newEdge);
 	}
 
@@ -340,7 +339,8 @@ Graph {
 					throw new GraphException("vertex id " + vId
 							+ " is bigger than vSize");
 			} else {
-				throw new GraphException("a vertex that has not id may not be added while a graph is loading");
+				throw new GraphException(
+						"a vertex that has not id may not be added while a graph is loading");
 			}
 		} else {
 			if (vId != 0) {
@@ -348,11 +348,11 @@ Graph {
 				if (containsVertexId(vId))
 					throw new GraphException("vertex with id " + vId
 							+ " already exists");
-	
+
 				if (vId >= vSize)
 					throw new GraphException("vertex id " + vId
 							+ " is bigger than vSize");
-	
+
 				// remove vertex from free vertex list
 				int i = 0;
 				while (nextVertex[i] != vId)
@@ -388,8 +388,7 @@ Graph {
 			vertexListModified();
 		vertexAdded(newVertex);
 	}
-	
-	
+
 	@Override
 	public Iterable<Aggregation> aggregations() {
 		return new EdgeIterable<Aggregation>(this, Aggregation.class);
@@ -423,7 +422,8 @@ Graph {
 
 	@Override
 	public boolean containsEdge(Edge e) {
-		return e != null && e.getGraph() == this && containsEdgeId(e.getId()) && edge[edgeOffset(e.getId())] == e;
+		return e != null && e.getGraph() == this && containsEdgeId(e.getId())
+				&& edge[edgeOffset(e.getId())] == e;
 	}
 
 	private boolean containsEdgeId(int eId) {
@@ -434,7 +434,8 @@ Graph {
 
 	@Override
 	public boolean containsVertex(Vertex v) {
-		return v != null && v.getGraph() == this && containsVertexId(v.getId()) && vertex[v.getId()] == v;
+		return v != null && v.getGraph() == this && containsVertexId(v.getId())
+				&& vertex[v.getId()] == v;
 	}
 
 	private boolean containsVertexId(int vId) {
@@ -485,10 +486,6 @@ Graph {
 		}
 
 		internalDeleteEdge(eId);
-
-		if (!deleteVertexList.isEmpty()) {
-			internalDeleteVertex();
-		}
 
 		edgeListModified();
 	}
@@ -564,7 +561,6 @@ Graph {
 		return new EdgeIterable<Edge>(this, eclass);
 	}
 
-
 	@Override
 	public Iterable<Edge> edges(EdgeClass eclass) {
 		return new EdgeIterable<Edge>(this, eclass);
@@ -634,7 +630,6 @@ Graph {
 		}
 		return expandedArray;
 	}
-
 
 	private void expandVertexArray(int newSize) {
 		int oldSize = vSize;
@@ -746,7 +741,7 @@ Graph {
 			return edge[edgeOffset(firstEdgeAtVertex[vId])];
 		} else if (orientation == EdgeDirection.IN) {
 			int eId = firstEdgeAtVertex[vId];
-			while (eId != 0 && eId > 0) { 
+			while (eId != 0 && eId > 0) {
 				eId = nextEdgeAtVertex[edgeOffset(eId)];
 			}
 			return edge[edgeOffset(eId)];
@@ -957,8 +952,6 @@ Graph {
 		return getNextEdgeOfClass(e, ec, EdgeDirection.INOUT, noSubclasses);
 	}
 
-
-
 	@Override
 	public Edge getNextEdgeOfClass(Edge e, Class<? extends Edge> anEdgeClass,
 			EdgeDirection orientation, boolean explicitType) {
@@ -1090,7 +1083,6 @@ Graph {
 				(Class<? extends Vertex>) vertexClass.getM1Class(), false);
 	}
 
-
 	@Override
 	public Vertex getNextVertexOfClass(Vertex vertex, VertexClass vertexClass,
 			boolean explicitType) {
@@ -1098,7 +1090,6 @@ Graph {
 				(Class<? extends Vertex>) vertexClass.getM1Class(),
 				explicitType);
 	}
-
 
 	@Override
 	public Vertex getOmega(Edge e) {
@@ -1127,7 +1118,6 @@ Graph {
 	public long getVertexListVersion() {
 		return vertexListVersion;
 	}
-
 
 	@Override
 	public final void graphModified() {
@@ -1257,27 +1247,33 @@ Graph {
 			while (eId != 0) {
 				alphaId = targetVertex[edgeOffset(eId > 0 ? -eId : eId)];
 				omegaId = targetVertex[edgeOffset(eId > 0 ? eId : -eId)];
-				
-				// check for cascading delete of vertices in incident composition edges
-				AttributedElementClass aec = edge[edgeOffset(eId)].getAttributedElementClass();
+
+				// check for cascading delete of vertices in incident
+				// composition edges
+				AttributedElementClass aec = edge[edgeOffset(eId)]
+						.getAttributedElementClass();
 				if (aec instanceof CompositionClass) {
 					CompositionClass comp = (CompositionClass) aec;
 					if (comp.isAggregateFrom()) {
 						// omega vertex is to be deleted
-						if (containsVertexId(omegaId) && !deleteVertexList.contains(omegaId)) {
-							// System.err.println("Delete omega vertex v" + omegaId + "
+						if (containsVertexId(omegaId)
+								&& !deleteVertexList.contains(omegaId)) {
+							// System.err.println("Delete omega vertex v" +
+							// omegaId + "
 							// of composition e" + eId);
 							deleteVertexList.add(omegaId);
 						}
 					} else {
-						if (containsVertexId(alphaId) && !deleteVertexList.contains(alphaId)) {
-							// System.err.println("Delete alpha vertex v" + alphaId + "
+						if (containsVertexId(alphaId)
+								&& !deleteVertexList.contains(alphaId)) {
+							// System.err.println("Delete alpha vertex v" +
+							// alphaId + "
 							// of composition e" + eId);
 							deleteVertexList.add(alphaId);
 						}
 					}
 				}
-				
+
 				// delete edge
 				internalDeleteEdge(eId);
 				eId = firstEdgeAtVertex[vId];
@@ -1368,11 +1364,10 @@ Graph {
 	@Override
 	public void loadingCompleted() {
 	}
-	
 
 	@Override
 	public final void internalLoadingCompleted() {
-		//initialize list of free vertex ids
+		// initialize list of free vertex ids
 		int lastFreeVertex = 0;
 		for (int i = 1; i < vSize; i++) {
 			if (vertex[i] == null) {
@@ -1390,7 +1385,6 @@ Graph {
 		}
 		nextEdgeInGraph[lastFreeEdge] = 0;
 	}
-
 
 	/**
 	 * This method overwrites the internal arrays that store the first and last
@@ -1760,7 +1754,8 @@ Graph {
 
 	@Override
 	public Iterable<Vertex> vertices(VertexClass eclass) {
-		return new VertexIterable<Vertex>(this, (Class<? extends Vertex>) eclass.getM1Class());
+		return new VertexIterable<Vertex>(this,
+				(Class<? extends Vertex>) eclass.getM1Class());
 	}
 
 }
