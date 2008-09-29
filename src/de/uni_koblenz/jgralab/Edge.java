@@ -21,7 +21,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
- 
+
 package de.uni_koblenz.jgralab;
 
 import de.uni_koblenz.jgralab.schema.EdgeClass;
@@ -87,7 +87,8 @@ public interface Edge extends GraphElement {
 	 * @return the next incidence in iSeq where the corresponding edge is of
 	 *         class anEdgeClass
 	 */
-	public Edge getNextEdgeOfClass(Class<? extends Edge> anEdgeClass, EdgeDirection orientation);
+	public Edge getNextEdgeOfClass(Class<? extends Edge> anEdgeClass,
+			EdgeDirection orientation);
 
 	/**
 	 * @param anEdgeClass
@@ -107,7 +108,8 @@ public interface Edge extends GraphElement {
 	 * @return the next incidence in iSeq where the corresponding edge is of
 	 *         explicit class anEdgeClass
 	 */
-	public Edge getNextEdgeOfClass(Class<? extends Edge> anEdgeClass, boolean explicitType);
+	public Edge getNextEdgeOfClass(Class<? extends Edge> anEdgeClass,
+			boolean explicitType);
 
 	/**
 	 * @param anEdgeClass
@@ -191,7 +193,6 @@ public interface Edge extends GraphElement {
 	 */
 	public Edge getNextEdgeOfClassInGraph(Class<? extends Edge> anEdgeClass,
 			boolean explicitType);
-
 
 	/**
 	 * @return the alpha vertex of this edge
@@ -298,8 +299,8 @@ public interface Edge extends GraphElement {
 	public Edge getNormalEdge();
 
 	/**
-	 * returns the reversed edge of this edge, e.g. for the edge -1 the reversed edge is 1,
-	 * for the edge 1 the reversed edge is -1.
+	 * returns the reversed edge of this edge, e.g. for the edge -1 the reversed
+	 * edge is 1, for the edge 1 the reversed edge is -1.
 	 */
 	public Edge getReversedEdge();
 
@@ -307,4 +308,10 @@ public interface Edge extends GraphElement {
 	 * returns true if this edge is the "normal" edge, false otherwise
 	 */
 	public boolean isNormal();
+
+	/**
+	 * returns true if this Edge is still present in the Graph (i.e. not
+	 * deleted). This check is equivalent to getGraph().containsEdge(this).
+	 */
+	public boolean isValid();
 }
