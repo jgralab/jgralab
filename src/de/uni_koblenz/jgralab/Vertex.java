@@ -438,4 +438,10 @@ public interface Vertex extends GraphElement {
 
 	public Aggregation getFirstAggregation(EdgeDirection orientation);
 
+	/**
+	 * returns true if this Vertex is still present in the Graph (i.e. not
+	 * deleted). This check is equivalent to getGraph().containsVertex(this).
+	 */
+	public boolean isValid();
+
 }
