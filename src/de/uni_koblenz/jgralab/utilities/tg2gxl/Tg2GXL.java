@@ -1,4 +1,4 @@
-﻿/*
+/*
  * JGraLab - The Java graph laboratory
  * (c) 2006-2008 Institute for Software Technology
  *               University of Koblenz-Landau, Germany
