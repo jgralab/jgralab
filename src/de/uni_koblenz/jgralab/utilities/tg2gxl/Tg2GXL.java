@@ -1,4 +1,4 @@
-/*
+﻿/*
  * JGraLab - The Java graph laboratory
  * (c) 2006-2008 Institute for Software Technology
  *               University of Koblenz-Landau, Germany
@@ -498,7 +498,7 @@ public class Tg2GXL extends Tg2Whatever {
 					setGraph(graphName);
 
 				} catch (GraphIOException e) {
-					System.err.println("Coundn't load graph in file '"
+					System.err.println("Couldn't load graph in file '"
 							+ graphName + "': " + e.getMessage());
 					if (e.getCause() != null) {
 						e.getCause().printStackTrace();
