@@ -86,7 +86,7 @@ public interface Domain extends NamedElement {
 	/**
 	 * example: List<String>
 	 * 
-	 * @return the string how the domain is represented in the jg file
+	 * @return the string how the domain is represented in the tg file
 	 */
 	public String getTGTypeName(Package pkg);
 
