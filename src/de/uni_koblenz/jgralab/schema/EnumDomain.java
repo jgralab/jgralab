@@ -32,7 +32,7 @@ import java.util.List;
  * @author Steffen Kahle
  *
  */
-public interface EnumDomain extends BasicDomain {
+public interface EnumDomain extends Domain {
 
 	/**
 	 * adds aConst to the list of enums
