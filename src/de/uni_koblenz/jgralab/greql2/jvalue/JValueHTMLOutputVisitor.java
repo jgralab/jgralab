@@ -54,6 +54,9 @@ public class JValueHTMLOutputVisitor extends JValueDefaultVisitor {
 
 	private JValue rootValue;
 
+	private boolean createElementLinks;
+	private boolean createBrowsingLinks;
+
 	private void storeln(String s) {
 		try {
 			outputWriter.write(s);
@@ -100,9 +103,17 @@ public class JValueHTMLOutputVisitor extends JValueDefaultVisitor {
 
 	public JValueHTMLOutputVisitor(JValue value, String filePath,
 			Graph dataGraph) {
+		this(value, filePath, dataGraph, true, true);
+	}
+
+	public JValueHTMLOutputVisitor(JValue value, String filePath,
+			Graph dataGraph, boolean createElementLinks,
+			boolean createBrowsingLinks) {
 		this.filePath = filePath;
 		this.dataGraph = dataGraph;
 		this.rootValue = value;
+		this.createElementLinks = createElementLinks;
+		this.createBrowsingLinks = createBrowsingLinks;
 		head();
 		value.accept(this);
 		foot();
@@ -179,23 +190,30 @@ public class JValueHTMLOutputVisitor extends JValueDefaultVisitor {
 	@Override
 	public void visitVertex(JValue v) {
 		Vertex vertex = v.toVertex();
-		storeln("<a href=\"v" + vertex.getId() + "\">");
-		storeln("v" + vertex.getId() + ": "
-				+ vertex.getAttributedElementClass().getUniqueName());
-		storeln("</a>");
+		if (createElementLinks) {
+			storeln("<a href=\"v" + vertex.getId() + "\">v" + vertex.getId()
+					+ ": " + vertex.getAttributedElementClass().getUniqueName()
+					+ "</a>");
+		} else {
+			storeln("v" + vertex.getId() + ": "
+					+ vertex.getAttributedElementClass().getUniqueName());
+		}
 	}
 
 	@Override
 	public void visitEdge(JValue e) {
 		Edge edge = e.toEdge();
-		storeln("<a href=\"e" + edge.getId() + "\">");
-		storeln("e" + edge.getId() + ": "
-				+ edge.getAttributedElementClass().getUniqueName());
-		storeln("</a>");
+		if (createElementLinks) {
+			storeln("<a href=\"e" + edge.getId() + "\">e" + edge.getId() + ": "
+					+ edge.getAttributedElementClass().getUniqueName() + "</a>");
+		} else {
+			storeln("e" + edge.getId() + ": "
+					+ edge.getAttributedElementClass().getUniqueName());
+		}
 	}
 
 	private void simplePre(JValue n) {
-		if (dataGraph == null) {
+		if (!createBrowsingLinks) {
 			return;
 		}
 		if (n.getBrowsingInfo() instanceof Vertex) {
@@ -213,7 +231,7 @@ public class JValueHTMLOutputVisitor extends JValueDefaultVisitor {
 	}
 
 	private void simplePost(JValue n) {
-		if (dataGraph == null) {
+		if (!createBrowsingLinks) {
 			return;
 		}
 		if ((n.getBrowsingInfo() instanceof Vertex)
@@ -274,10 +292,13 @@ public class JValueHTMLOutputVisitor extends JValueDefaultVisitor {
 	@Override
 	public void visitGraph(JValue g) {
 		Graph gr = g.toGraph();
-		store("<a href=\"g" + gr.getId() + "\">");
-		store(gr.getId() + ": "
-				+ gr.getAttributedElementClass().getUniqueName());
-		storeln("</a>");
+		if (createElementLinks) {
+			storeln("<a href=\"g" + gr.getId() + "\">" + gr.getId() + ": "
+					+ gr.getAttributedElementClass().getUniqueName() + "</a>");
+		} else {
+			storeln(gr.getId() + ": "
+					+ gr.getAttributedElementClass().getUniqueName());
+		}
 	}
 
 	public void visitInvalid(JValue i) {

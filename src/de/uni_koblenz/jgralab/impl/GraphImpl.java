@@ -223,14 +223,14 @@ public abstract class GraphImpl extends AttributedElementImpl implements Graph {
 		assert (newEdge.isNormal());
 		if (!alpha.isValidAlpha(newEdge))
 			throw new GraphException("Edges of class "
-					+ newEdge.getAttributedElementClass().getQualifiedName()
+					+ newEdge.getAttributedElementClass().getUniqueName()
 					+ " may not start at vertices of class "
-					+ alpha.getAttributedElementClass().getQualifiedName());
+					+ alpha.getAttributedElementClass().getUniqueName());
 		if (!omega.isValidOmega(newEdge))
 			throw new GraphException("Edges of class "
-					+ newEdge.getAttributedElementClass().getQualifiedName()
-					+ " may not end at at vertices of class"
-					+ omega.getAttributedElementClass().getQualifiedName());
+					+ newEdge.getAttributedElementClass().getUniqueName()
+					+ " may not end at at vertices of class "
+					+ omega.getAttributedElementClass().getUniqueName());
 
 		int eId = newEdge.getId();
 
@@ -1689,9 +1689,9 @@ public abstract class GraphImpl extends AttributedElementImpl implements Graph {
 	public void setAlpha(Edge e, Vertex alpha) {
 		if (!alpha.isValidAlpha(e))
 			throw new GraphException("Edges of class "
-					+ e.getAttributedElementClass().getQualifiedName()
+					+ e.getAttributedElementClass().getUniqueName()
 					+ " may not start at vertices of class "
-					+ alpha.getAttributedElementClass().getQualifiedName());
+					+ alpha.getAttributedElementClass().getUniqueName());
 		int edgeId = e.getId();
 		int alphaId = alpha.getId();
 
@@ -1728,9 +1728,9 @@ public abstract class GraphImpl extends AttributedElementImpl implements Graph {
 	public void setOmega(Edge e, Vertex omega) {
 		if (!omega.isValidOmega(e))
 			throw new GraphException("Edges of class "
-					+ e.getAttributedElementClass().getQualifiedName()
-					+ " may not end at at vertices of class"
-					+ omega.getAttributedElementClass().getQualifiedName());
+					+ e.getAttributedElementClass().getUniqueName()
+					+ " may not end at at vertices of class "
+					+ omega.getAttributedElementClass().getUniqueName());
 		int edgeId = e.getId();
 		int omegaId = omega.getId();
 
