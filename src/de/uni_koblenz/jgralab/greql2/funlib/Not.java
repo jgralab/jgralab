@@ -81,7 +81,7 @@ public class Not implements Greql2Function {
 
 	public JValue evaluate(Graph graph, BooleanGraphMarker subgraph,
 			JValue[] arguments) throws EvaluateException {
-		if (arguments.length < 1) {
+		if (arguments.length != 1) {
 			throw new WrongFunctionParameterException(this, null, arguments);
 		}
 		try {

@@ -33,7 +33,6 @@ import de.uni_koblenz.jgralab.BooleanGraphMarker;
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.Vertex;
-import de.uni_koblenz.jgralab.greql2.exception.JValueInvalidTypeException;
 import de.uni_koblenz.jgralab.greql2.exception.JValueVisitorException;
 import de.uni_koblenz.jgralab.schema.AttributedElementClass;
 
@@ -54,21 +53,22 @@ public class JValueXMLOutputVisitor extends JValueDefaultVisitor {
 	 */
 	private Graph dataGraph = null;
 
-	// private boolean store(String s) {
-	// try {
-	// outputWriter.write(s);
-	// return true;
-	// } catch (IOException ex) {
-	// return false;
-	// }
-	// }
-
-	private boolean storeln(String s) {
+	private void storeln(String s) {
 		try {
-			outputWriter.write(s + "\n");
-			return true;
-		} catch (IOException ex) {
-			return false;
+			outputWriter.write(s);
+			outputWriter.write("\n");
+		} catch (IOException e) {
+			throw new JValueVisitorException("Can't write to output file",
+					null, e);
+		}
+	}
+
+	private void store(String s) {
+		try {
+			outputWriter.write(s);
+		} catch (IOException e) {
+			throw new JValueVisitorException("Can't write to output file",
+					null, e);
 		}
 	}
 
@@ -97,21 +97,18 @@ public class JValueXMLOutputVisitor extends JValueDefaultVisitor {
 		AttributedElement browsingInfo = n.getBrowsingInfo();
 		if (browsingInfo instanceof Vertex) {
 			Vertex browsingVertex = (Vertex) browsingInfo;
-			storeln("<browsevertex>" + browsingVertex.getId()
-					+ "</browsevertex>");
+			store("<browsevertex>" + browsingVertex.getId() + "</browsevertex>");
 		} else if (browsingInfo instanceof Edge) {
 			Edge browsingEdge = (Edge) browsingInfo;
-			storeln("<browseedge>" + browsingEdge.getId() + "</browseedge>");
+			store("<browseedge>" + browsingEdge.getId() + "</browseedge>");
 		}
 	}
 
-	public JValueXMLOutputVisitor(JValue value, String filePath)
-			throws Exception {
+	public JValueXMLOutputVisitor(JValue value, String filePath) {
 		this(value, filePath, null);
 	}
 
-	public JValueXMLOutputVisitor(JValue value, String filePath, Graph dataGraph)
-			throws Exception {
+	public JValueXMLOutputVisitor(JValue value, String filePath, Graph dataGraph) {
 		this.filePath = filePath;
 		this.dataGraph = dataGraph;
 		head();
@@ -119,37 +116,43 @@ public class JValueXMLOutputVisitor extends JValueDefaultVisitor {
 		foot();
 	}
 
-	public void visitSet(JValueSet set) throws Exception {
+	@Override
+	public void visitSet(JValueSet set) {
 		storeln("<set>");
 		super.visitSet(set);
 		storeln("</set>");
 	}
 
-	public void visitBag(JValueBag bag) throws Exception {
+	@Override
+	public void visitBag(JValueBag bag) {
 		storeln("<bag>");
 		super.visitBag(bag);
 		storeln("</bag>");
 	}
 
-	public void visitList(JValueList list) throws Exception {
+	@Override
+	public void visitList(JValueList list) {
 		storeln("<list>");
 		super.visitList(list);
 		storeln("</list>");
 	}
 
-	public void visitTuple(JValueTuple tuple) throws Exception {
+	@Override
+	public void visitTuple(JValueTuple tuple) {
 		storeln("<tuple>");
 		super.visitTuple(tuple);
 		storeln("</tuple>");
 	}
 
-	public void visitRecord(JValueRecord record) throws Exception {
+	@Override
+	public void visitRecord(JValueRecord record) {
 		storeln("<record>");
 		super.visitRecord(record);
 		storeln("</record>");
 	}
 
-	public void visitTable(JValueTable table) throws Exception {
+	@Override
+	public void visitTable(JValueTable table) {
 		storeln("<table>");
 		storeln("<header>");
 		super.visitTuple(table.getHeader());
@@ -160,132 +163,99 @@ public class JValueXMLOutputVisitor extends JValueDefaultVisitor {
 		storeln("</table>");
 	}
 
-	public void visitPathSystem(JValuePathSystem p) throws Exception {
-		// TODO visitPathSystem
-	}
-	
-	public void visitSlice(JValueSlice s) throws Exception {
-		// TODO visitSlice
-	}
-
-	public void visitVertex(JValue v) throws Exception {
+	@Override
+	public void visitVertex(JValue v) {
 		Vertex vertex = null;
-		try {
-			vertex = v.toVertex();
-			storeln("<vertex>");
-			storeln("<value>" + vertex.getId() + "</value>");
-			storeBrowsingInfo(v);
-			storeln("</vertex>");
-		} catch (JValueInvalidTypeException ex) {
-			return;
-			// this may not happed here
-		}
+		vertex = v.toVertex();
+		storeln("<vertex>");
+		store("<value>" + vertex.getId() + "</value>");
+		storeBrowsingInfo(v);
+		storeln("</vertex>");
 	}
 
-	public void visitEdge(JValue e) throws Exception {
+	@Override
+	public void visitEdge(JValue e) {
 		Edge edge = null;
-		try {
-			edge = e.toEdge();
-			storeln("<edge>");
-			storeln("<value>" + edge.getId() + "</value>");
-			storeBrowsingInfo(e);
-			storeln("</edge>");
-		} catch (JValueInvalidTypeException ex) {
-			return;
-			// this may not happed here
-		}
+		edge = e.toEdge();
+		store("<edge>");
+		store("<value>" + edge.getId() + "</value>");
+		storeBrowsingInfo(e);
+		storeln("</edge>");
 	}
 
-	public void visitInt(JValue n) throws Exception {
-		try {
-			Integer b = n.toInteger();
-			storeln("<integer>");
-			storeln("<value>" + b.intValue() + "</value>");
-			storeBrowsingInfo(n);
-			storeln("</integer>");
-		} catch (JValueInvalidTypeException ex) {
-			return;
-			// this may not happed here
-		}
+	@Override
+	public void visitInt(JValue n) {
+		Integer b = n.toInteger();
+		store("<integer>");
+		store("<value>" + b.intValue() + "</value>");
+		storeBrowsingInfo(n);
+		storeln("</integer>");
 	}
 
-	public void visitLong(JValue n) throws Exception {
-		try {
-			Long b = n.toLong();
-			storeln("<long>");
-			storeln("<value>" + b.longValue() + "</value>");
-			storeBrowsingInfo(n);
-			storeln("</long>");
-		} catch (JValueInvalidTypeException ex) {
-			return;
-			// this may not happed here
-		}
+	@Override
+	public void visitLong(JValue n) {
+		Long b = n.toLong();
+		store("<long>");
+		store("<value>" + b.longValue() + "</value>");
+		storeBrowsingInfo(n);
+		storeln("</long>");
 	}
 
-	public void visitDouble(JValue n) throws Exception {
-		try {
-			Double b = n.toDouble();
-			storeln("<double>");
-			storeln("<value>" + b.doubleValue() + "</value>");
-			storeBrowsingInfo(n);
-			storeln("</double>");
-		} catch (JValueInvalidTypeException ex) {
-			return;
-			// this may not happed here
-		}
+	@Override
+	public void visitDouble(JValue n) {
+		Double b = n.toDouble();
+		store("<double>");
+		store("<value>" + b.doubleValue() + "</value>");
+		storeBrowsingInfo(n);
+		storeln("</double>");
 	}
 
-	public void visitChar(JValue c) throws Exception {
-		try {
-			Character b = c.toCharacter();
-			String s = String.valueOf(b);
-			storeln("<char>");
-			storeln("<value>" + xmlQuote(s) + "</value>");
-			storeBrowsingInfo(c);
-			storeln("</char>");
-		} catch (JValueInvalidTypeException ex) {
-			return;
-			// this may not happed here
-		}
+	@Override
+	public void visitChar(JValue c) {
+		Character b = c.toCharacter();
+		String s = String.valueOf(b);
+		store("<char>");
+		store("<value>" + xmlQuote(s) + "</value>");
+		storeBrowsingInfo(c);
+		storeln("</char>");
 	}
 
-	public void visitString(JValue s) throws Exception {
+	@Override
+	public void visitString(JValue s) {
 		String st = s.toString();
-		storeln("<string>");
-		storeln("<value>" + xmlQuote(st) + "</value>");
+		store("<string>");
+		store("<value>" + xmlQuote(st) + "</value>");
 		storeBrowsingInfo(s);
 		storeln("</string>");
 	}
 
-	public void visitEnumValue(JValue e) throws Exception {
+	@Override
+	public void visitEnumValue(JValue e) {
 		String st = e.toString();
-		storeln("<enumvalue>");
-		storeln("<value>" + xmlQuote(st) + "</value>");
+		store("<enumvalue>");
+		store("<value>" + xmlQuote(st) + "</value>");
 		storeBrowsingInfo(e);
 		storeln("</enumvalue>");
 	}
 
-	public void visitGraph(JValue g) throws Exception {
-		try {
-			Graph gr = g.toGraph();
-			storeln("<graph>");
-			storeln("<value>" + gr.getId() + "</value>");
-			storeBrowsingInfo(g);
-			storeln("</graph>");
-		} catch (JValueInvalidTypeException ex) {
-			return;
-			// this may not happed here
-		}
+	@Override
+	public void visitGraph(JValue g) {
+		Graph gr = g.toGraph();
+		store("<graph>");
+		store("<value>" + gr.getId() + "</value>");
+		storeBrowsingInfo(g);
+		storeln("</graph>");
 	}
 
 	/**
 	 * To store a subgraph is very tricky, one possibility is to store all
 	 * vertices and edges
 	 */
-	public void visitSubgraph(JValue s) throws Exception {
-		if (dataGraph == null)
+	public void visitSubgraph(JValue s) {
+		if (dataGraph == null) {
 			throw new JValueVisitorException(
 					"Cannot write a Subgraph to xml if no Graph is given", s);
+		}
 		storeln("<subgraph>");
 		storeBrowsingInfo(s);
 		BooleanGraphMarker subgraph = s.toSubgraphTempAttribute();
@@ -306,83 +276,52 @@ public class JValueXMLOutputVisitor extends JValueDefaultVisitor {
 		storeln("</subgraph>");
 	}
 
-	public void visitDFA(JValue d) throws Exception {
-		throw new JValueVisitorException("Cannot write a DFA to xml", d);
+	@Override
+	public void visitBoolean(JValue b) {
+		Boolean bool = b.toBoolean();
+		store("<bool>");
+		store("<value>" + bool + "</value>");
+		storeBrowsingInfo(b);
+		storeln("</bool>");
 	}
 
-	public void visitNFA(JValue n) throws Exception {
-		throw new JValueVisitorException("Cannot write a NFA to xml", n);
+	@Override
+	public void visitObject(JValue o) {
+		Object t = o.toObject();
+		store("<object>");
+		store("<value>" + xmlQuote(t.toString()) + "</value>");
+		storeBrowsingInfo(o);
+		storeln("</object>");
 	}
 
-	public void visitInvalid(JValue i) throws Exception {
-
+	@Override
+	public void visitAttributedElementClass(JValue a) {
+		AttributedElementClass c = a.toAttributedElementClass();
+		store("<attributedelementclass>");
+		store("<value>" + c.getQualifiedName() + "</value>");
+		storeBrowsingInfo(a);
+		storeln("</attributedelementclass>");
 	}
 
-	public void visitBoolean(JValue b) throws Exception {
+	@Override
+	public void head() {
 		try {
-			Boolean bool = b.toBoolean();
-			storeln("<bool>");
-			storeln("<value>" + bool + "</value>");
-			storeBrowsingInfo(b);
-			storeln("</bool>");
-		} catch (JValueInvalidTypeException ex) {
-			return;
-			// this may not happed here
+			outputWriter = new BufferedWriter(new FileWriter(filePath));
+		} catch (IOException e) {
+			throw new JValueVisitorException("Can't create output file", null,
+					e);
 		}
-	}
-
-	public void visitObject(JValue o) throws Exception {
-		try {
-			Object t = o.toObject();
-			storeln("<object>");
-			storeln("<value>" + xmlQuote(t.toString()) + "</value>");
-			storeBrowsingInfo(o);
-			storeln("</object>");
-		} catch (JValueInvalidTypeException ex) {
-			return;
-			// this may not happed here
-		}
-	}
-
-	public void visitAttributedElementClass(JValue a) throws Exception {
-		try {
-			AttributedElementClass c = a.toAttributedElementClass();
-			storeln("<attributedelementclass>");
-			storeln("<value>" + c.getQualifiedName() + "</value>");
-			storeBrowsingInfo(a);
-			storeln("</attributedelementclass>");
-		} catch (JValueInvalidTypeException ex) {
-			return;
-			// this may not happed here
-		}
-	}
-
-	public void visitState(JValue s) throws Exception {
-		throw new JValueVisitorException("Cannot write a state to xml", s);
-
-	}
-
-	public void visitTransition(JValue t) throws Exception {
-		throw new JValueVisitorException("Cannot write a transition to xml", t);
-	}
-
-	public void visitDeclaration(JValue d) throws Exception {
-		throw new JValueVisitorException("Cannot write a Declaration to xml", d);
-	}
-
-	public void visitDeclarationLayer(JValue d) throws Exception {
-		throw new JValueVisitorException(
-				"Cannot write a DeclarationLayer to xml", d);
-	}
-
-	public void head() throws Exception {
-		outputWriter = new BufferedWriter(new FileWriter(filePath));
 		storeln("<xmlvalue>");
 	}
 
-	public void foot() throws Exception {
+	@Override
+	public void foot() {
 		storeln("</xmlvalue>");
-		outputWriter.close();
+		try {
+			outputWriter.close();
+		} catch (IOException e) {
+			throw new JValueVisitorException("Can't close output file", null, e);
+		}
 	}
 
 }

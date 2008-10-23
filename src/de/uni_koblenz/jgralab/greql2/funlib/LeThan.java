@@ -81,7 +81,7 @@ public class LeThan implements Greql2Function {
 
 	public JValue evaluate(Graph graph, BooleanGraphMarker subgraph,
 			JValue[] arguments) throws EvaluateException {
-		if (arguments.length < 1) {
+		if (arguments.length != 2) {
 			throw new WrongFunctionParameterException(this, null, arguments);
 		}
 		try {
@@ -95,8 +95,7 @@ public class LeThan implements Greql2Function {
 				String a, b;
 				a = arguments[0].toString();
 				b = arguments[1].toString();
-				boolean lessThan = ((a.compareTo(b)) < 0);
-				return new JValue(lessThan);
+				return new JValue(a.compareTo(b) < 0);
 			}
 		} catch (Exception ex) {
 			throw new WrongFunctionParameterException(this, null, arguments);
@@ -104,7 +103,7 @@ public class LeThan implements Greql2Function {
 	}
 
 	public long getEstimatedCosts(ArrayList<Long> inElements) {
-		return 5;
+		return 1;
 	}
 
 	public double getSelectivity() {

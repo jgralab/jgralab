@@ -26,7 +26,6 @@ package de.uni_koblenz.jgralab.greql2.funlib;
 
 import java.io.File;
 import java.io.UnsupportedEncodingException;
-import java.net.URI;
 import java.net.URL;
 import java.net.URLDecoder;
 import java.util.Enumeration;

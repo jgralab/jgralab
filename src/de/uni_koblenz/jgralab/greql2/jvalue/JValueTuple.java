@@ -34,7 +34,8 @@ public class JValueTuple extends JValueList {
 	/**
 	 * Acts as a cache for the hash code value of this set out of performance
 	 * considerations. Whenever this set is changed, storedHashCode is set to 0
-	 * and gets updated as soon as the <code>hashCode()</code> method is called.
+	 * and gets updated as soon as the <code>hashCode()</code> method is
+	 * called.
 	 */
 	private int storedHashCode = 0;
 
@@ -145,7 +146,7 @@ public class JValueTuple extends JValueList {
 	/**
 	 * accepts te given visitor to visit this jvalue
 	 */
-	public void accept(JValueVisitor v) throws Exception {
+	public void accept(JValueVisitor v) {
 		v.visitTuple(this);
 	}
 

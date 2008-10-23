@@ -44,8 +44,8 @@ public class JValueSlice extends JValue {
 			.getName());
 
 	/**
-	 * This HashMap stores references from a tuple (Vertex,State) to a
-	 * list of tuples(ParentVertex, ParentEdge, ParentState, DistanceToRoot)
+	 * This HashMap stores references from a tuple (Vertex,State) to a list of
+	 * tuples(ParentVertex, ParentEdge, ParentState, DistanceToRoot)
 	 */
 	private HashMap<PathSystemKey, List<PathSystemEntry>> keyToEntryMap;
 
@@ -62,9 +62,9 @@ public class JValueSlice extends JValue {
 	private Set<Vertex> sliCritVertices;
 
 	/**
-	 * this set stores the keys of the leaves of this slice. It is created
-	 * the first time it is needed. So the creation (which is in O(n²) ) has to
-	 * be done only once.
+	 * this set stores the keys of the leaves of this slice. It is created the
+	 * first time it is needed. So the creation (which is in O(n²) ) has to be
+	 * done only once.
 	 */
 	private ArrayList<PathSystemKey> leafKeys = null;
 
@@ -73,7 +73,7 @@ public class JValueSlice extends JValue {
 	 */
 	public JValueSet getSlicingCriterionVertices() {
 		JValueSet resultSet = new JValueSet();
-		
+
 		for (Vertex v : sliCritVertices) {
 			resultSet.add(new JValue(v));
 		}
@@ -86,8 +86,8 @@ public class JValueSlice extends JValue {
 	private Graph datagraph;
 
 	/**
-	 * stores the hashcode of this slice so it must be calculated only if
-	 * the slice changes
+	 * stores the hashcode of this slice so it must be calculated only if the
+	 * slice changes
 	 */
 	private int hashvalue = 0;
 
@@ -139,8 +139,8 @@ public class JValueSlice extends JValue {
 	}
 
 	/**
-	 * adds a vertex of the slice which is described by the parameters to
-	 * the slicing criterion
+	 * adds a vertex of the slice which is described by the parameters to the
+	 * slicing criterion
 	 * 
 	 * @param vertex
 	 *            the vertex to add
@@ -150,7 +150,8 @@ public class JValueSlice extends JValue {
 	 * @param finalState
 	 *            true if the vertex is visited by the dfa in a final state
 	 */
-	public void addSlicingCriterionVertex(Vertex vertex, int stateNumber, boolean finalState) {
+	public void addSlicingCriterionVertex(Vertex vertex, int stateNumber,
+			boolean finalState) {
 		PathSystemKey key = new PathSystemKey(vertex, stateNumber);
 		PathSystemEntry entry = new PathSystemEntry(null, null, -1, 0,
 				finalState);
@@ -165,8 +166,8 @@ public class JValueSlice extends JValue {
 	}
 
 	/**
-	 * adds a vertex of the slice which is described by the parameters to
-	 * the slice
+	 * adds a vertex of the slice which is described by the parameters to the
+	 * slice
 	 * 
 	 * @param vertex
 	 *            the vertex to add
@@ -191,41 +192,42 @@ public class JValueSlice extends JValue {
 			if (!vertexToFirstKeyMap.containsKey(vertex))
 				vertexToFirstKeyMap.put(vertex, key);
 			leafKeys = null;
-		} 
-		PathSystemEntry entry = new PathSystemEntry(parentVertex,
-				 parentEdge, parentStateNumber, 0, finalState);
+		}
+		PathSystemEntry entry = new PathSystemEntry(parentVertex, parentEdge,
+				parentStateNumber, 0, finalState);
 		if (!entryList.contains(entry)) {
-				entryList.add(entry);
+			entryList.add(entry);
 		}
 	}
 
-//	/**
-//	 * Calculates the set of children the given vertex has in this PathSystem.
-//	 * If the given vertex exists more than one times in this pathsystem, the
-//	 * first occurence if used.
-//	 */
-//	public JValueSet children(Vertex vertex) {
-//		PathSystemKey key = vertexToFirstKeyMap.get(vertex);
-//		return children(key);
-//	}
-//
-//	/**
-//	 * Calculates the set of child the given key has in this PathSystem
-//	 */
-//	public JValueSet children(PathSystemKey key) {
-//		JValueSet returnSet = new JValueSet();
-//		for (Map.Entry<PathSystemKey, List<PathSystemEntry>> mapEntry: keyToEntryMap.entrySet()) {
-//			for (PathSystemEntry thisEntry : mapEntry.getValue()) {
-//				if ((thisEntry.getParentVertex() == key.getVertex())
-//						&& (thisEntry.getParentStateNumber() == key
-//								.getStateNumber())) {
-//					Vertex v = mapEntry.getKey().getVertex();
-//					returnSet.add(new JValue(v, v));
-//				}
-//			}
-//		}
-//		return returnSet;
-//	}
+	// /**
+	// * Calculates the set of children the given vertex has in this PathSystem.
+	// * If the given vertex exists more than one times in this pathsystem, the
+	// * first occurence if used.
+	// */
+	// public JValueSet children(Vertex vertex) {
+	// PathSystemKey key = vertexToFirstKeyMap.get(vertex);
+	// return children(key);
+	// }
+	//
+	// /**
+	// * Calculates the set of child the given key has in this PathSystem
+	// */
+	// public JValueSet children(PathSystemKey key) {
+	// JValueSet returnSet = new JValueSet();
+	// for (Map.Entry<PathSystemKey, List<PathSystemEntry>> mapEntry:
+	// keyToEntryMap.entrySet()) {
+	// for (PathSystemEntry thisEntry : mapEntry.getValue()) {
+	// if ((thisEntry.getParentVertex() == key.getVertex())
+	// && (thisEntry.getParentStateNumber() == key
+	// .getStateNumber())) {
+	// Vertex v = mapEntry.getKey().getVertex();
+	// returnSet.add(new JValue(v, v));
+	// }
+	// }
+	// }
+	// return returnSet;
+	// }
 
 	/**
 	 * Calculates the parent vertices of the given vertex in this slice. If the
@@ -243,238 +245,244 @@ public class JValueSlice extends JValue {
 	 */
 	public JValueSet parents(PathSystemKey key) {
 		JValueSet resultSet = new JValueSet();
-		
+
 		for (PathSystemEntry entry : keyToEntryMap.get(key)) {
-			resultSet.add(
-					new JValue(entry.getParentVertex(), entry.getParentVertex()));
+			resultSet.add(new JValue(entry.getParentVertex(), entry
+					.getParentVertex()));
 		}
-		
+
 		return resultSet;
 	}
 
-//	/**
-//	 * Calculates the set of types this pathsystem contains
-//	 */
-//	public JValueSet types() {
-//		JValueSet returnSet = new JValueSet();
-//		Iterator<Map.Entry<PathSystemKey, PathSystemEntry>> iter = keyToEntryMap
-//				.entrySet().iterator();
-//		while (iter.hasNext()) {
-//			Map.Entry<PathSystemKey, PathSystemEntry> entry = iter.next();
-//			returnSet.add(new JValue((GraphElementClass) entry.getKey()
-//					.getVertex().getAttributedElementClass(), entry.getKey()
-//					.getVertex()));
-//			Edge e = entry.getValue().getParentEdge();
-//			if (e != null)
-//				returnSet.add(new JValue((GraphElementClass) e
-//						.getAttributedElementClass(), e));
-//		}
-//		return returnSet;
-//	}
-//
-//	/**
-//	 * Calculates the set of vertextypes this pathsystem contains
-//	 */
-//	public JValueSet vertexTypes() {
-//		JValueSet returnSet = new JValueSet();
-//		Iterator<Map.Entry<PathSystemKey, PathSystemEntry>> iter = keyToEntryMap
-//				.entrySet().iterator();
-//		while (iter.hasNext()) {
-//			Map.Entry<PathSystemKey, PathSystemEntry> entry = iter.next();
-//			returnSet.add(new JValue((GraphElementClass) entry.getKey()
-//					.getVertex().getAttributedElementClass(), entry.getKey()
-//					.getVertex()));
-//		}
-//		return returnSet;
-//	}
-//
-//	/**
-//	 * Calculates the set of edgetypes this pathsystem contains
-//	 */
-//	public JValueSet edgeTypes() {
-//		JValueSet returnSet = new JValueSet();
-//		Iterator<Map.Entry<PathSystemKey, PathSystemEntry>> iter = keyToEntryMap
-//				.entrySet().iterator();
-//		while (iter.hasNext()) {
-//			Map.Entry<PathSystemKey, PathSystemEntry> entry = iter.next();
-//			Edge e = entry.getValue().getParentEdge();
-//			if (e != null)
-//				returnSet.add(new JValue((GraphElementClass) e
-//						.getAttributedElementClass(), e));
-//		}
-//		return returnSet;
-//	}
-//
-//	/**
-//	 * Checks, wether the given element (vertex or edge) is part of this
-//	 * pathsystem
-//	 * 
-//	 * @return true, if the element is part of this system, false otherwise
-//	 */
-//	public boolean contains(GraphElement elem) {
-//		Iterator<Map.Entry<PathSystemKey, PathSystemEntry>> iter = keyToEntryMap
-//				.entrySet().iterator();
-//		while (iter.hasNext()) {
-//			Map.Entry<PathSystemKey, PathSystemEntry> entry = iter.next();
-//			if (entry.getValue().getParentEdge() == elem)
-//				return true;
-//			if (entry.getKey().getVertex() == elem)
-//				return true;
-//		}
-//		return false;
-//	}
+	// /**
+	// * Calculates the set of types this pathsystem contains
+	// */
+	// public JValueSet types() {
+	// JValueSet returnSet = new JValueSet();
+	// Iterator<Map.Entry<PathSystemKey, PathSystemEntry>> iter = keyToEntryMap
+	// .entrySet().iterator();
+	// while (iter.hasNext()) {
+	// Map.Entry<PathSystemKey, PathSystemEntry> entry = iter.next();
+	// returnSet.add(new JValue((GraphElementClass) entry.getKey()
+	// .getVertex().getAttributedElementClass(), entry.getKey()
+	// .getVertex()));
+	// Edge e = entry.getValue().getParentEdge();
+	// if (e != null)
+	// returnSet.add(new JValue((GraphElementClass) e
+	// .getAttributedElementClass(), e));
+	// }
+	// return returnSet;
+	// }
+	//
+	// /**
+	// * Calculates the set of vertextypes this pathsystem contains
+	// */
+	// public JValueSet vertexTypes() {
+	// JValueSet returnSet = new JValueSet();
+	// Iterator<Map.Entry<PathSystemKey, PathSystemEntry>> iter = keyToEntryMap
+	// .entrySet().iterator();
+	// while (iter.hasNext()) {
+	// Map.Entry<PathSystemKey, PathSystemEntry> entry = iter.next();
+	// returnSet.add(new JValue((GraphElementClass) entry.getKey()
+	// .getVertex().getAttributedElementClass(), entry.getKey()
+	// .getVertex()));
+	// }
+	// return returnSet;
+	// }
+	//
+	// /**
+	// * Calculates the set of edgetypes this pathsystem contains
+	// */
+	// public JValueSet edgeTypes() {
+	// JValueSet returnSet = new JValueSet();
+	// Iterator<Map.Entry<PathSystemKey, PathSystemEntry>> iter = keyToEntryMap
+	// .entrySet().iterator();
+	// while (iter.hasNext()) {
+	// Map.Entry<PathSystemKey, PathSystemEntry> entry = iter.next();
+	// Edge e = entry.getValue().getParentEdge();
+	// if (e != null)
+	// returnSet.add(new JValue((GraphElementClass) e
+	// .getAttributedElementClass(), e));
+	// }
+	// return returnSet;
+	// }
+	//
+	// /**
+	// * Checks, wether the given element (vertex or edge) is part of this
+	// * pathsystem
+	// *
+	// * @return true, if the element is part of this system, false otherwise
+	// */
+	// public boolean contains(GraphElement elem) {
+	// Iterator<Map.Entry<PathSystemKey, PathSystemEntry>> iter = keyToEntryMap
+	// .entrySet().iterator();
+	// while (iter.hasNext()) {
+	// Map.Entry<PathSystemKey, PathSystemEntry> entry = iter.next();
+	// if (entry.getValue().getParentEdge() == elem)
+	// return true;
+	// if (entry.getKey().getVertex() == elem)
+	// return true;
+	// }
+	// return false;
+	// }
 
-//	/**
-//	 * Checks, wether the pathsystem contains an element which has the given
-//	 * type
-//	 * 
-//	 * @return true, if the element is part of this system, false otherwise
-//	 */
-//	public boolean contains(AttributedElementClass type) {
-//		Iterator<Map.Entry<PathSystemKey, PathSystemEntry>> iter = keyToEntryMap
-//				.entrySet().iterator();
-//		while (iter.hasNext()) {
-//			Map.Entry<PathSystemKey, PathSystemEntry> entry = iter.next();
-//			if (entry.getValue().getParentEdge().getAttributedElementClass() == type)
-//				return true;
-//			if (entry.getKey().getVertex().getAttributedElementClass() == type)
-//				return true;
-//		}
-//		return false;
-//	}
-//
-//	/**
-//	 * Calculates the number of incomming or outgoing edges of the given vertex
-//	 * which are part of this PathSystem
-//	 * 
-//	 * @param vertex
-//	 *            the vertex for which the number of edges gets counted
-//	 * @param orientation
-//	 *            if set to true, the incomming edges will be counted,
-//	 *            otherwise, the outgoing ones will be counted
-//	 * @param typeCol
-//	 *            the JValueTypeCollection which toggles wether a type is
-//	 *            accepted or not
-//	 * @return the number of edges with the given orientation connected to the
-//	 *         given vertex or -1 if the given vertex is not part of this
-//	 *         pathsystem
-//	 */
-//	public int degree(Vertex vertex, boolean orientation,
-//			JValueTypeCollection typeCol) {
-//		if (vertex == null)
-//			return -1;
-//		int degree = 0;
-//		Iterator<Map.Entry<PathSystemKey, PathSystemEntry>> iter = keyToEntryMap
-//				.entrySet().iterator();
-//		while (iter.hasNext()) {
-//			Map.Entry<PathSystemKey, PathSystemEntry> entry = iter.next();
-//			if (orientation) {
-//				if ((entry.getValue().getParentVertex() == vertex)
-//						&& ((typeCol == null) || (typeCol.acceptsType(vertex
-//								.getAttributedElementClass()))))
-//					degree++;
-//			} else {
-//				if ((entry.getKey().getVertex() == vertex)
-//						&& ((typeCol == null) || (typeCol.acceptsType(vertex
-//								.getAttributedElementClass()))))
-//					degree++;
-//			}
-//		}
-//		return degree;
-//	}
-//
-//	/**
-//	 * Calculates the number of incomming and outgoing edges of the given vertex
-//	 * which are part of this PathSystem
-//	 * 
-//	 * @param vertex
-//	 *            the vertex for which the number of edges gets counted
-//	 * @param typeCol
-//	 *            the JValueTypeCollection which toggles wether a type is
-//	 *            accepted or not
-//	 * @return the number of edges connected to the given vertex or -1 if the
-//	 *         given vertex is not part of this pathsystem
-//	 */
-//	public int degree(Vertex vertex, JValueTypeCollection typeCol) {
-//		if (vertex == null)
-//			return -1;
-//		int degree = 0;
-//		Iterator<Map.Entry<PathSystemKey, PathSystemEntry>> iter = keyToEntryMap
-//				.entrySet().iterator();
-//		while (iter.hasNext()) {
-//			Map.Entry<PathSystemKey, PathSystemEntry> entry = iter.next();
-//			if (((entry.getValue().getParentVertex() == vertex) || (entry
-//					.getKey().getVertex() == vertex))
-//					&& ((typeCol == null) || (typeCol.acceptsType(vertex
-//							.getAttributedElementClass()))))
-//				degree++;
-//		}
-//		return degree;
-//	}
-//
-//	/**
-//	 * Calculates the set of incomming or outgoing edges of the given vertex,
-//	 * which are also part of this pathsystem
-//	 * 
-//	 * @param vertex
-//	 *            the vertex for which the edgeset will be created
-//	 * @param orientation
-//	 *            if set to true, the set of incomming edges will, be created,
-//	 *            otherwise, the set of outgoing ones will be created
-//	 * @return a set of edges with the given orientation connected to the given
-//	 *         vertex or an empty set, if the vertex is not part of this
-//	 *         pathsystem
-//	 */
-//	public JValueSet edgesConnected(Vertex vertex, boolean orientation) {
-//		JValueSet resultSet = new JValueSet();
-//		if (vertex == null)
-//			return resultSet;
-//		Iterator<Map.Entry<PathSystemKey, PathSystemEntry>> iter = keyToEntryMap
-//				.entrySet().iterator();
-//		while (iter.hasNext()) {
-//			Map.Entry<PathSystemKey, PathSystemEntry> entry = iter.next();
-//			if (orientation) {
-//				if (entry.getValue().getParentVertex() == vertex)
-//					resultSet.add(new JValue(entry.getValue().getParentEdge()));
-//			} else {
-//				if (entry.getKey().getVertex() == vertex)
-//					resultSet.add(new JValue(entry.getValue().getParentEdge()));
-//			}
-//		}
-//		return resultSet;
-//	}
-//
-//	/**
-//	 * Calculates the set of edges which are connected to the given vertex, and
-//	 * which are also part of this pathsystem
-//	 * 
-//	 * @param vertex
-//	 *            the vertex for which the edgeset will be created
-//	 * @return a set of edges connected to the given vertex or an empty set, if
-//	 *         the vertex is not part of this pathsystem
-//	 */
-//	public JValueSet edgesConnected(Vertex vertex) {
-//		JValueSet resultSet = new JValueSet();
-//		if (vertex == null)
-//			return resultSet;
-//		Iterator<Map.Entry<PathSystemKey, PathSystemEntry>> iter = keyToEntryMap
-//				.entrySet().iterator();
-//		while (iter.hasNext()) {
-//			Map.Entry<PathSystemKey, PathSystemEntry> entry = iter.next();
-//			if (entry.getValue().getParentVertex() == vertex)
-//				resultSet.add(new JValue(entry.getValue().getParentEdge()));
-//			if (entry.getKey().getVertex() == vertex)
-//				resultSet.add(new JValue(entry.getValue().getParentEdge()));
-//		}
-//		return resultSet;
-//	}
+	// /**
+	// * Checks, wether the pathsystem contains an element which has the given
+	// * type
+	// *
+	// * @return true, if the element is part of this system, false otherwise
+	// */
+	// public boolean contains(AttributedElementClass type) {
+	// Iterator<Map.Entry<PathSystemKey, PathSystemEntry>> iter = keyToEntryMap
+	// .entrySet().iterator();
+	// while (iter.hasNext()) {
+	// Map.Entry<PathSystemKey, PathSystemEntry> entry = iter.next();
+	// if (entry.getValue().getParentEdge().getAttributedElementClass() == type)
+	// return true;
+	// if (entry.getKey().getVertex().getAttributedElementClass() == type)
+	// return true;
+	// }
+	// return false;
+	// }
+	//
+	// /**
+	// * Calculates the number of incomming or outgoing edges of the given
+	// vertex
+	// * which are part of this PathSystem
+	// *
+	// * @param vertex
+	// * the vertex for which the number of edges gets counted
+	// * @param orientation
+	// * if set to true, the incomming edges will be counted,
+	// * otherwise, the outgoing ones will be counted
+	// * @param typeCol
+	// * the JValueTypeCollection which toggles wether a type is
+	// * accepted or not
+	// * @return the number of edges with the given orientation connected to the
+	// * given vertex or -1 if the given vertex is not part of this
+	// * pathsystem
+	// */
+	// public int degree(Vertex vertex, boolean orientation,
+	// JValueTypeCollection typeCol) {
+	// if (vertex == null)
+	// return -1;
+	// int degree = 0;
+	// Iterator<Map.Entry<PathSystemKey, PathSystemEntry>> iter = keyToEntryMap
+	// .entrySet().iterator();
+	// while (iter.hasNext()) {
+	// Map.Entry<PathSystemKey, PathSystemEntry> entry = iter.next();
+	// if (orientation) {
+	// if ((entry.getValue().getParentVertex() == vertex)
+	// && ((typeCol == null) || (typeCol.acceptsType(vertex
+	// .getAttributedElementClass()))))
+	// degree++;
+	// } else {
+	// if ((entry.getKey().getVertex() == vertex)
+	// && ((typeCol == null) || (typeCol.acceptsType(vertex
+	// .getAttributedElementClass()))))
+	// degree++;
+	// }
+	// }
+	// return degree;
+	// }
+	//
+	// /**
+	// * Calculates the number of incomming and outgoing edges of the given
+	// vertex
+	// * which are part of this PathSystem
+	// *
+	// * @param vertex
+	// * the vertex for which the number of edges gets counted
+	// * @param typeCol
+	// * the JValueTypeCollection which toggles wether a type is
+	// * accepted or not
+	// * @return the number of edges connected to the given vertex or -1 if the
+	// * given vertex is not part of this pathsystem
+	// */
+	// public int degree(Vertex vertex, JValueTypeCollection typeCol) {
+	// if (vertex == null)
+	// return -1;
+	// int degree = 0;
+	// Iterator<Map.Entry<PathSystemKey, PathSystemEntry>> iter = keyToEntryMap
+	// .entrySet().iterator();
+	// while (iter.hasNext()) {
+	// Map.Entry<PathSystemKey, PathSystemEntry> entry = iter.next();
+	// if (((entry.getValue().getParentVertex() == vertex) || (entry
+	// .getKey().getVertex() == vertex))
+	// && ((typeCol == null) || (typeCol.acceptsType(vertex
+	// .getAttributedElementClass()))))
+	// degree++;
+	// }
+	// return degree;
+	// }
+	//
+	// /**
+	// * Calculates the set of incomming or outgoing edges of the given vertex,
+	// * which are also part of this pathsystem
+	// *
+	// * @param vertex
+	// * the vertex for which the edgeset will be created
+	// * @param orientation
+	// * if set to true, the set of incomming edges will, be created,
+	// * otherwise, the set of outgoing ones will be created
+	// * @return a set of edges with the given orientation connected to the
+	// given
+	// * vertex or an empty set, if the vertex is not part of this
+	// * pathsystem
+	// */
+	// public JValueSet edgesConnected(Vertex vertex, boolean orientation) {
+	// JValueSet resultSet = new JValueSet();
+	// if (vertex == null)
+	// return resultSet;
+	// Iterator<Map.Entry<PathSystemKey, PathSystemEntry>> iter = keyToEntryMap
+	// .entrySet().iterator();
+	// while (iter.hasNext()) {
+	// Map.Entry<PathSystemKey, PathSystemEntry> entry = iter.next();
+	// if (orientation) {
+	// if (entry.getValue().getParentVertex() == vertex)
+	// resultSet.add(new JValue(entry.getValue().getParentEdge()));
+	// } else {
+	// if (entry.getKey().getVertex() == vertex)
+	// resultSet.add(new JValue(entry.getValue().getParentEdge()));
+	// }
+	// }
+	// return resultSet;
+	// }
+	//
+	// /**
+	// * Calculates the set of edges which are connected to the given vertex,
+	// and
+	// * which are also part of this pathsystem
+	// *
+	// * @param vertex
+	// * the vertex for which the edgeset will be created
+	// * @return a set of edges connected to the given vertex or an empty set,
+	// if
+	// * the vertex is not part of this pathsystem
+	// */
+	// public JValueSet edgesConnected(Vertex vertex) {
+	// JValueSet resultSet = new JValueSet();
+	// if (vertex == null)
+	// return resultSet;
+	// Iterator<Map.Entry<PathSystemKey, PathSystemEntry>> iter = keyToEntryMap
+	// .entrySet().iterator();
+	// while (iter.hasNext()) {
+	// Map.Entry<PathSystemKey, PathSystemEntry> entry = iter.next();
+	// if (entry.getValue().getParentVertex() == vertex)
+	// resultSet.add(new JValue(entry.getValue().getParentEdge()));
+	// if (entry.getKey().getVertex() == vertex)
+	// resultSet.add(new JValue(entry.getValue().getParentEdge()));
+	// }
+	// return resultSet;
+	// }
 
 	/**
 	 * Calculates the set of edges nodes in this slice.
 	 */
 	public JValueSet edges() {
 		JValueSet resultSet = new JValueSet();
-		for (Map.Entry<PathSystemKey, List<PathSystemEntry>> mapEntry: keyToEntryMap.entrySet()) {
+		for (Map.Entry<PathSystemKey, List<PathSystemEntry>> mapEntry : keyToEntryMap
+				.entrySet()) {
 			for (PathSystemEntry thisEntry : mapEntry.getValue()) {
 				if (thisEntry.getParentEdge() != null)
 					resultSet.add(new JValue(thisEntry.getParentEdge()));
@@ -491,33 +499,33 @@ public class JValueSlice extends JValue {
 		for (PathSystemKey mapKey : keyToEntryMap.keySet()) {
 			resultSet.add(new JValue(mapKey.getVertex()));
 		}
-		
+
 		return resultSet;
 	}
 
 	/**
-	 * Calculates the set of inner nodes in this slice. Inner nodes are
-	 * these nodes, which are neither root nor leave Costs: O(n) where n is the
-	 * number of vertices in the slice
+	 * Calculates the set of inner nodes in this slice. Inner nodes are these
+	 * nodes, which are neither root nor leave Costs: O(n) where n is the number
+	 * of vertices in the slice
 	 */
 	public JValueSet innerNodes() {
 		JValueSet resultSet = new JValueSet();
-		for (Map.Entry<PathSystemKey, List<PathSystemEntry>> mapEntry: keyToEntryMap.entrySet()) {
+		for (Map.Entry<PathSystemKey, List<PathSystemEntry>> mapEntry : keyToEntryMap
+				.entrySet()) {
 			for (PathSystemEntry entry : mapEntry.getValue()) {
 				if ((!entry.isStateIsFinal())
 						&& (entry.getParentVertex() != null)) {
 					resultSet.add(new JValue(mapEntry.getKey().getVertex()));
 				}
 			}
-		}	
+		}
 		return resultSet;
 	}
 
 	/**
-	 * Calculates the set of leaves in this slice. Costs: O(n²) where n is
-	 * the number of vertices in the slice. The created set is stored as
-	 * private field <code>leaves</code>, so the creation has to be done only
-	 * once.
+	 * Calculates the set of leaves in this slice. Costs: O(n²) where n is the
+	 * number of vertices in the slice. The created set is stored as private
+	 * field <code>leaves</code>, so the creation has to be done only once.
 	 */
 	public JValueSet leaves() {
 		JValueSet leaves = new JValueSet();
@@ -539,7 +547,8 @@ public class JValueSlice extends JValue {
 			return;
 		}
 		leafKeys = new ArrayList<PathSystemKey>();
-		for (Map.Entry<PathSystemKey, List<PathSystemEntry>> mapEntry: keyToEntryMap.entrySet()) {
+		for (Map.Entry<PathSystemKey, List<PathSystemEntry>> mapEntry : keyToEntryMap
+				.entrySet()) {
 			boolean isFinal = false;
 			for (PathSystemEntry entry : mapEntry.getValue()) {
 				if (entry.isStateIsFinal())
@@ -548,89 +557,92 @@ public class JValueSlice extends JValue {
 			if (isFinal) {
 				leafKeys.add(mapEntry.getKey());
 			}
-		}	
+		}
 	}
 
-//	/**
-//	 * Extracts the paths which start at one of the vertices in the slicing
-//	 * criterion and end with the given vertex from the slice. If the given
-//	 * vertex exists more than one times in this slice, the first occurrence if
-//	 * used. If the given vertex is not part of this slice, null will be
-//	 * returned.
-//	 * 
-//	 * @param vertex
-//	 * @return a set containing the paths from the vertices in the slicing
-//	 * criterion to the given vertex
-//	 */
-//	public JValueSet extractPaths(Vertex vertex) throws JValuePathException {
-//		PathSystemKey key = vertexToFirstKeyMap.get(vertex);
-//		if (key == null)
-//			return new JValueSet();
-//		return extractPaths(key);
-//	}
-//
-//	/**
-//	 * Extract the paths which start at one of the vertices in the slicing
-//	 * criterion and end with the vertex in the given key.
-//	 * 
-//	 * @param key
-//	 *            the pair (Vertex, Statenumber) which is the target of the paths
-//	 * @return a Path from rootVertex to given vertex
-//	 */
-//	public JValuePath extractPath(PathSystemKey key) throws JValuePathException {
-//		JValuePath path = new JValuePath(key.getVertex());
-//		while (key != null) {
-//			PathSystemEntry entry = keyToEntryMap.get(key);
-//			if (entry.getParentEdge() != null) {
-//				path.addEdge(entry.getParentEdge().getReversedEdge());
-//				key = new PathSystemKey(entry.getParentVertex(), entry
-//						.getParentStateNumber());
-//			} else {
-//				key = null;
-//			}
-//		}
-//		return path.reverse();
-//	}
+	// /**
+	// * Extracts the paths which start at one of the vertices in the slicing
+	// * criterion and end with the given vertex from the slice. If the given
+	// * vertex exists more than one times in this slice, the first occurrence
+	// if
+	// * used. If the given vertex is not part of this slice, null will be
+	// * returned.
+	// *
+	// * @param vertex
+	// * @return a set containing the paths from the vertices in the slicing
+	// * criterion to the given vertex
+	// */
+	// public JValueSet extractPaths(Vertex vertex) throws JValuePathException {
+	// PathSystemKey key = vertexToFirstKeyMap.get(vertex);
+	// if (key == null)
+	// return new JValueSet();
+	// return extractPaths(key);
+	// }
+	//
+	// /**
+	// * Extract the paths which start at one of the vertices in the slicing
+	// * criterion and end with the vertex in the given key.
+	// *
+	// * @param key
+	// * the pair (Vertex, Statenumber) which is the target of the paths
+	// * @return a Path from rootVertex to given vertex
+	// */
+	// public JValuePath extractPath(PathSystemKey key) throws
+	// JValuePathException {
+	// JValuePath path = new JValuePath(key.getVertex());
+	// while (key != null) {
+	// PathSystemEntry entry = keyToEntryMap.get(key);
+	// if (entry.getParentEdge() != null) {
+	// path.addEdge(entry.getParentEdge().getReversedEdge());
+	// key = new PathSystemKey(entry.getParentVertex(), entry
+	// .getParentStateNumber());
+	// } else {
+	// key = null;
+	// }
+	// }
+	// return path.reverse();
+	// }
 
-//	/**
-//	 * Extract the set of paths which are part of this path system. These paths
-//	 * start with the root vertex and ends with a leave.
-//	 * 
-//	 * @return a set of Paths from rootVertex to leaves
-//	 */
-//	public JValueSet extractPath() throws JValuePathException {
-//		JValueSet pathSet = new JValueSet();
-//		if (leafKeys == null)
-//			createLeafKeys();
-//		Iterator<PathSystemKey> iter = leafKeys.iterator();
-//		while (iter.hasNext()) {
-//			JValuePath path = extractPath(iter.next());
-//			pathSet.add(path);
-//		}
-//		return pathSet;
-//	}
+	// /**
+	// * Extract the set of paths which are part of this path system. These
+	// paths
+	// * start with the root vertex and ends with a leave.
+	// *
+	// * @return a set of Paths from rootVertex to leaves
+	// */
+	// public JValueSet extractPath() throws JValuePathException {
+	// JValueSet pathSet = new JValueSet();
+	// if (leafKeys == null)
+	// createLeafKeys();
+	// Iterator<PathSystemKey> iter = leafKeys.iterator();
+	// while (iter.hasNext()) {
+	// JValuePath path = extractPath(iter.next());
+	// pathSet.add(path);
+	// }
+	// return pathSet;
+	// }
 
-//	/**
-//	 * Extracts all paths which length equal to <code>len</code>
-//	 * 
-//	 * @return a set of Paths from rootVertex to leaves
-//	 */
-//	public JValueSet extractPath(int len) throws JValuePathException {
-//		JValueSet pathSet = new JValueSet();
-//		if (leafKeys == null)
-//			createLeafKeys();
-//		Iterator<PathSystemKey> iter = leafKeys.iterator();
-//		while (iter.hasNext()) {
-//			JValuePath path = extractPath(iter.next());
-//			if (path.pathLength() == len)
-//				pathSet.add(path);
-//		}
-//		return pathSet;
-//	}
+	// /**
+	// * Extracts all paths which length equal to <code>len</code>
+	// *
+	// * @return a set of Paths from rootVertex to leaves
+	// */
+	// public JValueSet extractPath(int len) throws JValuePathException {
+	// JValueSet pathSet = new JValueSet();
+	// if (leafKeys == null)
+	// createLeafKeys();
+	// Iterator<PathSystemKey> iter = leafKeys.iterator();
+	// while (iter.hasNext()) {
+	// JValuePath path = extractPath(iter.next());
+	// if (path.pathLength() == len)
+	// pathSet.add(path);
+	// }
+	// return pathSet;
+	// }
 
 	/**
-	 * calculate the number of vertices this slice has. If a vertex is part
-	 * of this slice n times, it is counted n times
+	 * calculate the number of vertices this slice has. If a vertex is part of
+	 * this slice n times, it is counted n times
 	 */
 	public int weight() {
 		return keyToEntryMap.size();
@@ -638,11 +650,10 @@ public class JValueSlice extends JValue {
 
 	/**
 	 * @return true if the given first vertex is a neighbour of the given second
-	 *         vertex, that means, if there is a edge from v1 to
-	 *         v2. If one or both of the given vertices are part of the
-	 *         slice more than once, the first occurence is used. If
-	 *         one of the vertices is not part of this slice, false is
-	 *         returned
+	 *         vertex, that means, if there is a edge from v1 to v2. If one or
+	 *         both of the given vertices are part of the slice more than once,
+	 *         the first occurence is used. If one of the vertices is not part
+	 *         of this slice, false is returned
 	 */
 	public boolean isNeighbour(Vertex v1, Vertex v2) {
 		PathSystemKey key1 = vertexToFirstKeyMap.get(v1);
@@ -663,85 +674,87 @@ public class JValueSlice extends JValue {
 		for (PathSystemEntry entry1 : keyToEntryMap.get(key1)) {
 			for (PathSystemEntry entry2 : keyToEntryMap.get(key2)) {
 				if ((entry1.getParentVertex() == key2.getVertex())
-						&& (entry1.getParentStateNumber() == key2.getStateNumber()))
+						&& (entry1.getParentStateNumber() == key2
+								.getStateNumber()))
 					return true;
 				if ((entry2.getParentVertex() == key1.getVertex())
-						&& (entry2.getParentStateNumber() == key1.getStateNumber()))
+						&& (entry2.getParentStateNumber() == key1
+								.getStateNumber()))
 					return true;
 			}
 		}
 		return false;
 	}
 
-//	/**
-//	 * @return true, if the given path is part of this path tree, false
-//	 *         otherwise
-//	 */
-//	public boolean containsPath(JValuePath path) {
-//		if (path.getStartVertex() != rootVertex)
-//			return false;
-//		if (leafKeys == null)
-//			createLeafKeys();
-//		Iterator<PathSystemKey> iter = leafKeys.iterator();
-//		while (iter.hasNext()) {
-//			PathSystemKey key = iter.next();
-//			PathSystemEntry entry = keyToEntryMap.get(key);
-//			if ((entry.getDistanceToRoot() == path.pathLength())
-//					&& (key.getVertex() == path.getEndVertex())) {
-//				try {
-//					JValuePath entryPath = extractPath(path.getEndVertex());
-//					if (entryPath.isSubPathOf(path))
-//						return true;
-//				} catch (JValuePathException ex) {
-//					ex.printStackTrace();
-//				}
-//			}
-//		}
-//		return false;
-//	}
+	// /**
+	// * @return true, if the given path is part of this path tree, false
+	// * otherwise
+	// */
+	// public boolean containsPath(JValuePath path) {
+	// if (path.getStartVertex() != rootVertex)
+	// return false;
+	// if (leafKeys == null)
+	// createLeafKeys();
+	// Iterator<PathSystemKey> iter = leafKeys.iterator();
+	// while (iter.hasNext()) {
+	// PathSystemKey key = iter.next();
+	// PathSystemEntry entry = keyToEntryMap.get(key);
+	// if ((entry.getDistanceToRoot() == path.pathLength())
+	// && (key.getVertex() == path.getEndVertex())) {
+	// try {
+	// JValuePath entryPath = extractPath(path.getEndVertex());
+	// if (entryPath.isSubPathOf(path))
+	// return true;
+	// } catch (JValuePathException ex) {
+	// ex.printStackTrace();
+	// }
+	// }
+	// }
+	// return false;
+	// }
 
-//	/**
-//	 * Prints this pathsystem as ascii-art
-//	 */
-//	public void printAscii() {
-//		try {
-//			JValueSet pathSet = extractPath();
-//			Iterator<JValue> iter = pathSet.iterator();
-//			while (iter.hasNext()) {
-//				JValuePath path = (JValuePath) iter.next();
-//				logger.info(path.toString());
-//			}
-//		} catch (JValuePathException ex) {
-//			logger.severe("Caught " + ex);
-//		}
-//	}
+	// /**
+	// * Prints this pathsystem as ascii-art
+	// */
+	// public void printAscii() {
+	// try {
+	// JValueSet pathSet = extractPath();
+	// Iterator<JValue> iter = pathSet.iterator();
+	// while (iter.hasNext()) {
+	// JValuePath path = (JValuePath) iter.next();
+	// logger.info(path.toString());
+	// }
+	// } catch (JValuePathException ex) {
+	// logger.severe("Caught " + ex);
+	// }
+	// }
 
-//	/**
-//	 * returns a string representation of this path system
-//	 */
-//	public String toString() {
-//		StringBuffer returnString = new StringBuffer("PathSystem: \n");
-//		try {
-//			JValueSet pathSet = extractPath();
-//			Iterator<JValue> iter = pathSet.iterator();
-//			while (iter.hasNext()) {
-//				JValuePath path = (JValuePath) iter.next();
-//				returnString.append(path.toString());
-//			}
-//		} catch (JValuePathException ex) {
-//			return ex.toString();
-//		}
-//		return returnString.toString();
-//	}
+	// /**
+	// * returns a string representation of this path system
+	// */
+	// public String toString() {
+	// StringBuffer returnString = new StringBuffer("PathSystem: \n");
+	// try {
+	// JValueSet pathSet = extractPath();
+	// Iterator<JValue> iter = pathSet.iterator();
+	// while (iter.hasNext()) {
+	// JValuePath path = (JValuePath) iter.next();
+	// returnString.append(path.toString());
+	// }
+	// } catch (JValuePathException ex) {
+	// return ex.toString();
+	// }
+	// return returnString.toString();
+	// }
 
 	/**
-	 * Prints the <key, List<entry>> map as single <key, entry> entries, i.e. a key
-	 * may occur multiple times.
+	 * Prints the <key, List<entry>> map as single <key, entry> entries, i.e. a
+	 * key may occur multiple times.
 	 */
 	public void printEntryMap() {
 		logger.info("<Key, Entry> set of slice is:");
-		for (Map.Entry<PathSystemKey, List<PathSystemEntry>> mapEntry 
-				: keyToEntryMap.entrySet()) {
+		for (Map.Entry<PathSystemKey, List<PathSystemEntry>> mapEntry : keyToEntryMap
+				.entrySet()) {
 			for (PathSystemEntry entry : mapEntry.getValue()) {
 				logger.info(mapEntry.getKey().toString() + " maps to "
 						+ entry.toString());
@@ -767,7 +780,7 @@ public class JValueSlice extends JValue {
 	/**
 	 * accepts te given visitor to visit this jvalue
 	 */
-	public void accept(JValueVisitor v) throws Exception {
+	public void accept(JValueVisitor v) {
 		v.visitSlice(this);
 	}
 

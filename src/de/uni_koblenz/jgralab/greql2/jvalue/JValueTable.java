@@ -144,8 +144,9 @@ public class JValueTable extends JValueCollection {
 	 * creates a new JValueTable with an empty header
 	 * 
 	 * @param useSet
-	 *            if it is true, the table will be based on a <b>set</b> instead
-	 *            of a bag, so every element can exists only one in the table
+	 *            if it is true, the table will be based on a <b>set</b>
+	 *            instead of a bag, so every element can exists only one in the
+	 *            table
 	 */
 	public JValueTable(boolean useSet) {
 		this(new JValueTuple(), false);
@@ -164,8 +165,9 @@ public class JValueTable extends JValueCollection {
 	 * table
 	 * 
 	 * @param useSet
-	 *            if it is true, the table will be based on a <b>set</b> instead
-	 *            of a bag, so every element can exists only one in the table
+	 *            if it is true, the table will be based on a <b>set</b>
+	 *            instead of a bag, so every element can exists only one in the
+	 *            table
 	 */
 	public JValueTable(JValueTuple header, boolean useSet) {
 		super();
@@ -399,7 +401,7 @@ public class JValueTable extends JValueCollection {
 	/**
 	 * accepts te given visitor to visit this jvalue
 	 */
-	public void accept(JValueVisitor v) throws Exception {
+	public void accept(JValueVisitor v) {
 		v.visitTable(this);
 	}
 

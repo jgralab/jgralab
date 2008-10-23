@@ -184,7 +184,7 @@ public class JValueTypeCollection extends JValue {
 	/**
 	 * accepts te given visitor to visit this jvalue
 	 */
-	public void accept(JValueVisitor v) throws Exception {
+	public void accept(JValueVisitor v) {
 		v.visitTypeCollection(this);
 	}
 

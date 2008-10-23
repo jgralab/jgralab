@@ -21,7 +21,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
- 
+
 package de.uni_koblenz.jgralab.greql2.jvalue;
 
 import java.util.ArrayList;
@@ -78,9 +78,10 @@ public class JValuePath extends JValue {
 			vertices.add(firstVertex);
 		type = JValueType.PATH;
 	}
-	
+
 	/**
-	 * returns true, if this path is valid, that means, it has a valid root vertex and ends with a root vertx
+	 * returns true, if this path is valid, that means, it has a valid root
+	 * vertex and ends with a root vertx
 	 */
 	public boolean isValidPath() {
 		return !vertices.isEmpty();
@@ -141,19 +142,27 @@ public class JValuePath extends JValue {
 	}
 
 	/**
-	 * adds an edge and the that-vertex of this edge to the path.
-	 * The edge will be added after the last vertex which is already
-	 * in the path and the vertex will be added after this edge,
-	 * so it will be the last vertex in the path. The edge to be added
-	 * must start at the last vertex in the path.
+	 * adds an edge and the that-vertex of this edge to the path. The edge will
+	 * be added after the last vertex which is already in the path and the
+	 * vertex will be added after this edge, so it will be the last vertex in
+	 * the path. The edge to be added must start at the last vertex in the path.
 	 * costs are O(1)
-	 * @param e the Edge to add 
-	 * @throws JValuePathException if the edge to be added doesn't start at the last vertex in the path
+	 * 
+	 * @param e
+	 *            the Edge to add
+	 * @throws JValuePathException
+	 *             if the edge to be added doesn't start at the last vertex in
+	 *             the path
 	 */
 	public void addEdge(Edge e) throws JValuePathException {
-		if (vertices.get(vertices.size()-1) != e.getThis())
-			throw new JValuePathException("The edge " + e.toString() + " could not be added to the path " + this.toString() + " because the last vertex in the path is not the this-vertex of the edge");
-		edges.add(e);		
+		if (vertices.get(vertices.size() - 1) != e.getThis())
+			throw new JValuePathException(
+					"The edge "
+							+ e.toString()
+							+ " could not be added to the path "
+							+ this.toString()
+							+ " because the last vertex in the path is not the this-vertex of the edge");
+		edges.add(e);
 		vertices.add(e.getThat());
 		hashvalue = 0;
 	}
@@ -245,19 +254,19 @@ public class JValuePath extends JValue {
 		JValueList nodeList = new JValueList();
 		Iterator<Vertex> iter = vertices.iterator();
 		while (iter.hasNext()) {
-			//TODO
+			// TODO
 			nodeList.add(new JValue(iter.next(), null));
 		}
 		return nodeList;
 	}
-	
+
 	/**
 	 * @return the list of edges
 	 */
 	public List<Edge> edgeTrace() {
 		return edges;
 	}
-	
+
 	/**
 	 * @return the edgetrace, but all edges are encalpsulated in jvalues
 	 */
@@ -340,19 +349,20 @@ public class JValuePath extends JValue {
 			if ((index < edges.size()) && (index > 0)) {
 				if (orientation) {
 					if (edges.get(index).getOmega() == vertex)
-						returnSet.add(new JValue(edges.get(index), edges.get(index)));
+						returnSet.add(new JValue(edges.get(index), edges
+								.get(index)));
 				} else {
 					if (edges.get(index).getAlpha() == vertex)
-						returnSet.add(new JValue(edges.get(index), edges.get(index)));
+						returnSet.add(new JValue(edges.get(index), edges
+								.get(index)));
 				}
 			}
 		}
 		return returnSet;
 	}
-	
+
 	/**
-	 * returns the edges which are connected to the given vertex in
-	 * this path
+	 * returns the edges which are connected to the given vertex in this path
 	 * 
 	 * @param vertex
 	 *            the vertex for which the connected edge will be returned
@@ -365,8 +375,10 @@ public class JValuePath extends JValue {
 			return returnSet;
 		for (int i = index - 1; i <= index; i++) {
 			if ((index < edges.size()) && (index > 0)) {
-				if ((edges.get(index).getOmega() == vertex) || (edges.get(index).getAlpha() == vertex))
-					returnSet.add(new JValue(edges.get(index), edges.get(index)));
+				if ((edges.get(index).getOmega() == vertex)
+						|| (edges.get(index).getAlpha() == vertex))
+					returnSet
+							.add(new JValue(edges.get(index), edges.get(index)));
 			}
 		}
 		return returnSet;
@@ -379,12 +391,13 @@ public class JValuePath extends JValue {
 		JValueSet resultSet = new JValueSet();
 		Iterator<Vertex> iter = vertices.iterator();
 		while (iter.hasNext()) {
-			//TODO
-			resultSet.add(new JValue(iter.next().getAttributedElementClass(), null));
+			// TODO
+			resultSet.add(new JValue(iter.next().getAttributedElementClass(),
+					null));
 		}
 		return resultSet;
 	}
-	
+
 	/**
 	 * returns the set of edgeTypes in this path
 	 */
@@ -397,7 +410,7 @@ public class JValuePath extends JValue {
 		}
 		return resultSet;
 	}
-	
+
 	/**
 	 * return the set of types in this path
 	 */
@@ -406,7 +419,7 @@ public class JValuePath extends JValue {
 		types.addAll(vertexTypes());
 		return types;
 	}
-	
+
 	/**
 	 * returns true, if this path contains the given graphelement
 	 */
@@ -416,21 +429,21 @@ public class JValuePath extends JValue {
 		else
 			return contains((Edge) elem);
 	}
-	
+
 	/**
 	 * returns true, if this path contains the vertex
 	 */
 	public boolean contains(Vertex vertex) {
 		return (vertices.indexOf(vertex) >= 0);
 	}
-	
+
 	/**
 	 * returns true, if this path contains the edge
 	 */
 	public boolean contains(Edge edge) {
 		return (edges.indexOf(edge) >= 0);
 	}
-	
+
 	/**
 	 * @return true, if this path and the given path are parallel, that means
 	 *         they have the same start and end vertex, but no more same
@@ -489,7 +502,7 @@ public class JValuePath extends JValue {
 		}
 		if (iter2.hasNext())
 			return false; // there are more vertices in this path that are not
-							// in the given path
+		// in the given path
 		return true;
 	}
 
@@ -538,11 +551,11 @@ public class JValuePath extends JValue {
 		newPath.edges.addAll(p2.edges);
 		return newPath;
 	}
-	
+
 	/**
 	 * accepts te given visitor to visit this jvalue
 	 */
-	public void accept(JValueVisitor v)  throws Exception {
+	public void accept(JValueVisitor v) {
 		v.visitPath(this);
 	}
 

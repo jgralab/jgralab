@@ -21,7 +21,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
- 
+
 package de.uni_koblenz.jgralab.greql2.jvalue;
 
 import java.util.Collection;
@@ -219,7 +219,8 @@ public class JValueBag extends JValueCollection {
 			int newHashCode = -1;
 
 			for (Entry<JValue, Integer> currentEntry : myHashMap.entrySet()) {
-				elementHashCode = currentEntry.getKey().hashCode() * currentEntry.getValue();
+				elementHashCode = currentEntry.getKey().hashCode()
+						* currentEntry.getValue();
 				newHashCode += -1 + (3 + elementHashCode)
 						* (7 + elementHashCode) * (11 + elementHashCode);
 			}
@@ -260,7 +261,7 @@ public class JValueBag extends JValueCollection {
 				if (this.getQuantity(currentElement) != foreignBag
 						.getQuantity(currentElement)) {
 					return false;
-				}	
+				}
 			}
 			return true;
 		}
@@ -381,7 +382,7 @@ public class JValueBag extends JValueCollection {
 			} else {
 				return false;
 			}
-		}	
+		}
 		storedHashCode = 0;
 		isConcurrentlyModified = true;
 		return true;
@@ -621,7 +622,6 @@ public class JValueBag extends JValueCollection {
 		}
 	}
 
-
 	/**
 	 * adds the specified element 1 times to this collection
 	 */
@@ -720,7 +720,7 @@ public class JValueBag extends JValueCollection {
 	/**
 	 * accepts te given visitor to visit this jvalue
 	 */
-	public void accept(JValueVisitor v) throws Exception {
+	public void accept(JValueVisitor v) {
 		v.visitBag(this);
 	}
 }

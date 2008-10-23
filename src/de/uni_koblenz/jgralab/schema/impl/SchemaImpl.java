@@ -947,7 +947,6 @@ public class SchemaImpl implements Schema {
 		// from-class. Those subclasses are unknown in this method. Therefore,
 		// we look for a method with correct name and 3 parameters
 		// (int, vertex, Vertex).
-		long time = System.currentTimeMillis();
 		String methodName = "create"
 				+ CodeGenerator.camelCase(edgeClassName.getUniqueName());
 		Class<?> m1Class = getGraphClassImpl(graphClassName);
@@ -956,11 +955,6 @@ public class SchemaImpl implements Schema {
 					&& m.getParameterTypes().length == 3) {
 				return m;
 			}
-		}
-		long diff = System.currentTimeMillis() - time;
-		if (diff > 0) {
-			System.out.println("getEdgeCreateMethod took: " + diff
-					+ " milliseconds");
 		}
 		throw new SchemaException("can't find create method in '"
 				+ m1Class.getName() + "' for '" + edgeClassName.getUniqueName()
