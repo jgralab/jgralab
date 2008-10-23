@@ -21,7 +21,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
- 
+
 package de.uni_koblenz.jgralab.greql2.evaluator.vertexeval;
 
 import java.util.Map;
@@ -45,9 +45,9 @@ import de.uni_koblenz.jgralab.greql2.schema.Variable;
  * GReQL2-Expression is the rootvertex of the GReQL-2Syntaxgraph. It contains
  * the bound/free variables, that are defined via "using" and binds them to the
  * values in the variableMap of the Greql2Evaluator.
- * 
+ *
  * @author Daniel Bildhauer <dbildh@uni-koblenz.de> Summer 2006, Diploma Thesis
- * 
+ *
  */
 public class Greql2ExpressionEvaluator extends VertexEvaluator {
 
@@ -65,8 +65,8 @@ public class Greql2ExpressionEvaluator extends VertexEvaluator {
 	}
 
 	/**
-	 * The varibles that are defined via the <code>using</code> clause. They
-	 * are called bound or also free variables
+	 * The varibles that are defined via the <code>using</code> clause. They are
+	 * called bound or also free variables
 	 */
 	private Map<String, JValue> boundVariables;
 
@@ -97,19 +97,24 @@ public class Greql2ExpressionEvaluator extends VertexEvaluator {
 				throw new UndefinedVariableException(currentBoundVariable
 						.getName(), createSourcePositions(inc));
 			}
-			VariableEvaluator variableEval = (VariableEvaluator) greqlEvaluator.getVertexEvaluatorGraphMarker().getMark(currentBoundVariable);
+			VariableEvaluator variableEval = (VariableEvaluator) greqlEvaluator
+					.getVertexEvaluatorGraphMarker().getMark(
+							currentBoundVariable);
 			variableEval.setValue(variableValue);
 			inc = inc.getNextIsBoundVarOf(EdgeDirection.IN);
 		}
-		Expression boundExpression = (Expression) vertex
-				.getFirstIsQueryExprOf(EdgeDirection.IN).getAlpha();
-		VertexEvaluator eval = (VertexEvaluator) greqlEvaluator.getVertexEvaluatorGraphMarker().getMark(boundExpression);
+		Expression boundExpression = (Expression) vertex.getFirstIsQueryExprOf(
+				EdgeDirection.IN).getAlpha();
+		VertexEvaluator eval = greqlEvaluator
+				.getVertexEvaluatorGraphMarker().getMark(boundExpression);
 		JValue result = eval.getResult(subgraph);
-		// if the query contains a "store as " - clause, there is a "isIdOfInc
-		// "-Incidence connected with the Greql2Expression
+		// if the query contains a "store as " - clause, there is a
+		// "isIdOfInc"-Incidence connected with the Greql2Expression
 		IsIdOf storeInc = vertex.getFirstIsIdOf(EdgeDirection.IN);
 		if (storeInc != null) {
-			VertexEvaluator storeEval =greqlEvaluator.getVertexEvaluatorGraphMarker().getMark(storeInc.getAlpha());
+			VertexEvaluator storeEval = greqlEvaluator
+					.getVertexEvaluatorGraphMarker().getMark(
+							storeInc.getAlpha());
 			String varName = storeEval.getResult(null).toString();
 			boundVariables.put(varName, result);
 		}

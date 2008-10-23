@@ -38,7 +38,6 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValueTypeCollection;
 import de.uni_koblenz.jgralab.greql2.schema.TypeId;
 import de.uni_koblenz.jgralab.schema.AttributedElementClass;
-import de.uni_koblenz.jgralab.schema.GraphClass;
 import de.uni_koblenz.jgralab.schema.GraphElementClass;
 import de.uni_koblenz.jgralab.schema.QualifiedName;
 import de.uni_koblenz.jgralab.schema.Schema;
@@ -96,9 +95,7 @@ public class TypeIdEvaluator extends VertexEvaluator {
 	@Override
 	public JValue evaluate() throws EvaluateException {
 		Graph datagraph = getDatagraph();
-		GraphClass graphClass = (GraphClass) datagraph
-				.getAttributedElementClass();
-		Schema schema = graphClass.getSchema();
+		Schema schema = datagraph.getSchema();
 		return new JValueTypeCollection(createTypeList(schema), vertex
 				.isExcluded());
 	}
