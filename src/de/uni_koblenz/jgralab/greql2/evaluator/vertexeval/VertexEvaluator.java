@@ -61,9 +61,9 @@ import de.uni_koblenz.jgralab.schema.VertexClass;
 /**
  * This is the base class for all VertexEvaluators which evaluate the vertices
  * in the GReQL Syntaxgraph
- * 
+ *
  * @author Daniel Bildhauer <dbildh@uni-koblenz.de> Summer 2006, Diploma Thesis
- * 
+ *
  */
 public abstract class VertexEvaluator {
 	/**
@@ -201,7 +201,7 @@ public abstract class VertexEvaluator {
 
 	/**
 	 * Gets the result of the evaluation of this vertex on the given subgraph
-	 * 
+	 *
 	 * @param subgraphMarker
 	 *            the subgraph to evaluate the vertex on or null if it should be
 	 *            evaluated on the whole datagraph
@@ -220,8 +220,8 @@ public abstract class VertexEvaluator {
 		this.subgraph = subgraphMarker;
 		try {
 			result = evaluate();
-			// GreqlEvaluator.println("VertexEvaluator.getResult() " + result +
-			// " of vertex " + getVertex() );
+			// System.out.println("VertexEvaluator.getResult() " + result
+			// + " of vertex " + getVertex());
 		} catch (QuerySourceException ex) {
 			removeInvalidSourcePosition(ex);
 			throw ex;
@@ -355,7 +355,7 @@ public abstract class VertexEvaluator {
 	/**
 	 * This method must be overwritten by every subclass. It should call the
 	 * right method of the GreqlEvaluators costmodel.
-	 * 
+	 *
 	 * @return a 3-Tupel (ownCosts, iteratedCosts, subtreeCosts) of costs the
 	 *         evaluation of the subtree with this vertex as root causes
 	 */
@@ -367,7 +367,7 @@ public abstract class VertexEvaluator {
 	 * cost differ from the initialEvaluationCosts, because only for the first
 	 * evaluation, the result really gets evaluated, for all other evaluations,
 	 * the evaluated result only gets copied, these costs are 1
-	 * 
+	 *
 	 * @return the costs of this evaluation of the subtree the vertex this
 	 *         evaluator evaluates is root of
 	 */
@@ -383,7 +383,7 @@ public abstract class VertexEvaluator {
 	 * Calculates the costs the first evaluation of the subtree causes. These
 	 * cost differ from the second "evaluation", because for the second one, the
 	 * already evaluated result only gets copied, these costs are 1
-	 * 
+	 *
 	 * @return the costs of the first evaluation of the subgraph the vertex this
 	 *         evaluator evaluates is root of
 	 */
@@ -404,7 +404,7 @@ public abstract class VertexEvaluator {
 	/**
 	 * Get the costs for evaluating the associated vertex one time. No subtree
 	 * or iteration costs are taken into account.
-	 * 
+	 *
 	 * @param graphSize
 	 *            a {@link GraphSize} object indicating the size of the data-
 	 *            {@link Graph}
@@ -443,7 +443,7 @@ public abstract class VertexEvaluator {
 
 	/**
 	 * Calculates the set of variables this vertex depends on
-	 * 
+	 *
 	 * @return the set of variables this vertex depends on
 	 */
 	public Set<Variable> getNeededVariables() {
@@ -457,7 +457,7 @@ public abstract class VertexEvaluator {
 	 * Calculates the set of variables this vertex (or even a vertex in a
 	 * subgraph) defines and that is valid in the whole subtree with this vertex
 	 * as head.
-	 * 
+	 *
 	 * @return the set of variables this vertex defines and that are valid
 	 */
 	public Set<Variable> getDefinedVariables() {
@@ -560,8 +560,9 @@ public abstract class VertexEvaluator {
 			possibleSourcePositions.addAll(sourcePositions);
 			inc = inc.getNextGreql2Aggregation(EdgeDirection.OUT);
 		}
-		if (possibleSourcePositions.size() == 0)
+		if (possibleSourcePositions.size() == 0) {
 			return; // maybe the vertex is the root vertex, than it has no
+		}
 		// outgoing edges
 		// GreqlEvaluator.println("Available sourcePositions for Vertex " + this
 		// + "
@@ -609,8 +610,9 @@ public abstract class VertexEvaluator {
 		String className = fullClassName.substring(fullClassName
 				.lastIndexOf(".") + 1);
 
-		if (unevaluatedVertices.contains(className))
+		if (unevaluatedVertices.contains(className)) {
 			return null;
+		}
 		String evalName = className + "Evaluator";
 		evalName = evalName.substring(className.lastIndexOf(".") + 1);
 		evalName = VertexEvaluator.class.getPackage().getName() + "."

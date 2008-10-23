@@ -21,18 +21,19 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
- 
+
 package de.uni_koblenz.jgralab.greql2.jvalue;
 
 import java.util.Iterator;
 
-
 /**
- * This class is base for all collections of JValue-Objects. 
+ * This class is base for all collections of JValue-Objects.
+ *
  * @author Daniel Bildhauer <dbildh@uni-koblenz.de>
- * 
+ *
  */
-abstract public class JValueCollection extends JValue implements Iterable<JValue> {
+abstract public class JValueCollection extends JValue implements
+		Iterable<JValue> {
 
 	/**
 	 * Constructs a new JValueCollection
@@ -40,21 +41,23 @@ abstract public class JValueCollection extends JValue implements Iterable<JValue
 	public JValueCollection() {
 		type = JValueType.COLLECTION;
 	}
-	
+
 	/**
 	 * returns a JValueCollection-Reference of this Collection
 	 */
+	@Override
 	public JValueCollection toCollection() {
 		return this;
 	}
-	
+
 	/**
 	 * @return true always, because a JValueCollection is always a collection
 	 */
+	@Override
 	public boolean isCollection() {
 		return true;
 	}
-	
+
 	/**
 	 * @return true if this collection is ordered
 	 */
@@ -64,205 +67,234 @@ abstract public class JValueCollection extends JValue implements Iterable<JValue
 
 	/**
 	 * adds a JValue to the collection
-	 * @param element the JValue to be added
+	 *
+	 * @param element
+	 *            the JValue to be added
 	 * @return true if successfull, false otherwise
 	 */
 	abstract public boolean add(JValue element);
-	
+
 	/**
 	 * adds all elements of given collection to this collection
-	 * @param collection the collection whose elements should be added
+	 *
+	 * @param collection
+	 *            the collection whose elements should be added
 	 * @return true if successfull, false otherwise
 	 */
 	public boolean addAll(JValueCollection collection) {
 		Iterator<JValue> collectionIterator = collection.iterator();
-        while (collectionIterator.hasNext()) 
-        	add(collectionIterator.next());
-        return true;
+		while (collectionIterator.hasNext()) {
+			add(collectionIterator.next());
+		}
+		return true;
 	}
-	
+
 	/**
-	 * @return true if the collection contains the given element, false otherwise
+	 * @return true if the collection contains the given element, false
+	 *         otherwise
 	 */
 	abstract public boolean contains(JValue element);
-	
+
 	/**
-	 * @param collection the collection whose elements should be checked
-	 * @return true if this collection contains all elements of the given collection, false otherwise
+	 * @param collection
+	 *            the collection whose elements should be checked
+	 * @return true if this collection contains all elements of the given
+	 *         collection, false otherwise
 	 */
 	public boolean containsAll(JValueCollection collection) {
 		Iterator<JValue> collectionIterator = collection.iterator();
-        while (collectionIterator.hasNext()) 
-        	if (!contains(collectionIterator.next())) 
-        		return false;
-        return true;
+		while (collectionIterator.hasNext()) {
+			if (!contains(collectionIterator.next())) {
+				return false;
+			}
+		}
+		return true;
 	}
-	
+
 	/**
 	 * removes a JValue from the collection
-	 * @param element the element to be removed
+	 *
+	 * @param element
+	 *            the element to be removed
 	 * @return true if successfull, false otherwise
-	 */	
+	 */
 	abstract public boolean remove(JValue element);
-	
+
 	/**
 	 * removes a collection from this collection
-	 * @param collection the collection whose elements should be removed
+	 *
+	 * @param collection
+	 *            the collection whose elements should be removed
 	 * @return true if have been removed, false otherwise
 	 */
 	public boolean removeAll(JValueCollection collection) {
 		Iterator<JValue> collectionIterator = collection.iterator();
-        while (collectionIterator.hasNext()) 
-        	remove(collectionIterator.next());
-        return true;
+		while (collectionIterator.hasNext()) {
+			remove(collectionIterator.next());
+		}
+		return true;
 	}
-	
+
 	/**
 	 * replaces the old element the given newElement
-	 * @param oldElement the element which should be replaced
-	 * @param newElement the element which should replace the old one
+	 *
+	 * @param oldElement
+	 *            the element which should be replaced
+	 * @param newElement
+	 *            the element which should replace the old one
 	 * @return true if successfull, false otherwise
 	 */
 	abstract public boolean replace(JValue oldElement, JValue newElement);
-	
-	
+
 	/**
-	 * 
+	 *
 	 * @return the number of elements in this collection
 	 */
 	abstract public int size();
-	
-    /**
-     * removes all elements from this collection
-     */
+
+	/**
+	 * removes all elements from this collection
+	 */
 	abstract public void clear();
-	
+
 	/**
 	 * @return true if this collection contains no elements, false otherwise
 	 */
 	abstract public boolean isEmpty();
-	
+
 	/**
-	 * @return an Iterator to navigate through the collection 
+	 * @return an Iterator to navigate through the collection
 	 */
 	abstract public Iterator<JValue> iterator();
 
-	
 	/**
 	 * returns true if this Collection is a table
 	 */
 	public boolean isJValueTable() {
 		return false;
 	}
-	
+
 	/**
-	 * transforms this JValueCollection to a JValueTable. Creates a table without headers
+	 * transforms this JValueCollection to a JValueTable. Creates a table
+	 * without headers
 	 */
+	@Override
 	public JValueTable toJValueTable() {
 		return new JValueTable(this);
 	}
-	
-	
+
 	/**
 	 * returns true if this Collection is a set
 	 */
 	public boolean isJValueSet() {
 		return false;
 	}
-		
+
 	/**
 	 * transforms this collection into a JValueSet
+	 *
 	 * @return a JValueSet which contains the same elements as this collection,
-	 *  duplicates will be eliminated
+	 *         duplicates will be eliminated
 	 */
+	@Override
 	public JValueSet toJValueSet() {
 		return new JValueSet(this);
 	}
-	
+
 	/**
 	 * returns true if this Collection is a bag
 	 */
 	public boolean isJValueBag() {
 		return false;
 	}
-	
+
 	/**
 	 * transforms this collection into a JValueBag
+	 *
 	 * @return a JValueBag which contains the same elements as this collection,
-	 *  duplicates won't be eliminated
+	 *         duplicates won't be eliminated
 	 */
+	@Override
 	public JValueBag toJValueBag() {
 		return new JValueBag(this);
 	}
-	
+
 	/**
 	 * returns true if this Collection is a list
 	 */
 	public boolean isJValueList() {
 		return false;
 	}
-	
+
 	/**
-	 * transforms this collection into a JValueList.
-	 * Beware, the order of the elements is random, the are _not_ sorted
+	 * transforms this collection into a JValueList. Beware, the order of the
+	 * elements is random, the are _not_ sorted
+	 *
 	 * @return a JValueList which contains the same elements as this collecton,
-	 *  duplicates won't be eliminated
+	 *         duplicates won't be eliminated
 	 */
+	@Override
 	public JValueList toJValueList() {
 		return new JValueList(this);
 	}
-	
+
 	/**
 	 * returns true if this Collection is a tuple
 	 */
 	public boolean isJValueTuple() {
 		return false;
 	}
-	
+
 	/**
-	 * transforms this collection into a JValueTupel.
-	 * Beware, the order of the elements is random, the are _not_ sorted and the
-	 * sequence of the resultig tupel will be random. Use this with care
+	 * transforms this collection into a JValueTupel. Beware, the order of the
+	 * elements is random, the are _not_ sorted and the sequence of the resultig
+	 * tupel will be random. Use this with care
+	 *
 	 * @return a JValueTupel which contains the same elements as this collecton,
-	 *  duplicates won't be eliminated
+	 *         duplicates won't be eliminated
 	 */
+	@Override
 	public JValueTuple toJValueTuple() {
 		return new JValueTuple(this);
 	}
-	
+
 	/**
 	 * returns true if this Collection is a record
 	 */
 	public boolean isJValueRecord() {
 		return false;
 	}
-	
+
 	/**
-	 * transforms this collection into a JValueRecord.
-	 * If the collection is not already a record, the attribute names are 1, 2 ... 
-	 * @return a JValueRecord which contains the same elements as this collecton,
-	 *  duplicates won't be eliminated
+	 * transforms this collection into a JValueRecord. If the collection is not
+	 * already a record, the attribute names are 1, 2 ...
+	 *
+	 * @return a JValueRecord which contains the same elements as this
+	 *         collecton, duplicates won't be eliminated
 	 */
+	@Override
 	public JValueRecord toJValueRecord() {
 		return new JValueRecord(this);
 	}
-	
-	
+
 	/**
 	 * Returns this Collection as a String representation, { arg1, arg2, arg3 }
 	 */
+	@Override
 	public String toString() {
-		String retString = "{";
+		StringBuilder sb = new StringBuilder();
+		sb.append("{");
 		Iterator<JValue> iter = this.iterator();
 		boolean first = true;
 		while (iter.hasNext()) {
-			if (!first) 
-				retString += ", ";
+			if (!first) {
+				sb.append(", ");
+			}
 			first = false;
-			retString += iter.next().toString();
+			sb.append(iter.next().toString());
 		}
-		retString += "}";
-		return retString;
+		sb.append("}");
+		return sb.toString();
 	}
-	
+
 }

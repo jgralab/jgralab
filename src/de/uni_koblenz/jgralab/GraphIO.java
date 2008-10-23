@@ -680,7 +680,7 @@ public class GraphIO {
 			return loadGraphFromFile(filename, pf);
 		} catch (GraphIOException ex) {
 			if (ex.getReason() == GraphIOExceptionReason.UNKNOWN_SCHEMA) {
-				logger.finer("Schema was unknown, so loading that first.");
+				logger.fine("Schema was unknown, so loading that first.");
 				Schema s = loadSchemaFromFile(filename);
 				s.compile();
 				return loadGraphFromFile(filename, pf);
@@ -2030,7 +2030,7 @@ public class GraphIO {
 
 	private void edgeDesc(Graph graph) throws GraphIOException {
 		int eId = eId();
-		QualifiedName ecName = className(); //graph.getGraphClass().getEdgeClass
+		QualifiedName ecName = className(); // graph.getGraphClass().getEdgeClass
 		// (className()).getQName();
 		Edge edge;
 		Method createMethod;
