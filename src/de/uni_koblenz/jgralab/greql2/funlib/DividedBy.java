@@ -21,7 +21,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
- 
+
 package de.uni_koblenz.jgralab.greql2.funlib;
 
 import java.util.ArrayList;
@@ -33,7 +33,8 @@ import de.uni_koblenz.jgralab.greql2.exception.WrongFunctionParameterException;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
 
 /**
- * Calculates the quotient (a/b) for given scalar values a and b. The quotient (a / 0) will return the value positive or negative infinity.
+ * Calculates the quotient (a/b) for given scalar values a and b. The quotient
+ * (a / 0) will return the value positive or negative infinity.
  * <dl>
  * <dt><b>GReQL-signature</b></dt>
  * <dd><code>DOUBLE dividedBy(a: INTEGER, b: INTEGER)</code></dd>
@@ -48,7 +49,8 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
  * <dd></dd>
  * <dd>This function can be used with the (/)-Operator: <code>a / b</code></dd>
  * </dl>
- * <dl><dt></dt>
+ * <dl>
+ * <dt></dt>
  * <dd>
  * <dl>
  * <dt><b>Parameters:</b></dt>
@@ -64,22 +66,23 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
  * </dl>
  * </dd>
  * </dl>
+ * 
  * @author Daniel Bildhauer <dbildh@uni-koblenz.de> Summer 2006, Diploma Thesis
  * 
  */
- 
+
 public class DividedBy implements Greql2Function {
 
 	public JValue evaluate(Graph graph, BooleanGraphMarker subgraph,
 			JValue[] arguments) throws EvaluateException {
-		if (arguments.length < 1) {
+		if (arguments.length != 2) {
 			throw new WrongFunctionParameterException(this, null, arguments);
 		}
 		Double a, b;
 		try {
 			a = arguments[0].toDouble();
 			b = arguments[1].toDouble();
-			return new JValue(a/b);
+			return new JValue(a / b);
 		} catch (Exception ex) {
 			throw new WrongFunctionParameterException(this, null, arguments);
 		}

@@ -21,7 +21,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
- 
+
 package de.uni_koblenz.jgralab.greql2.funlib;
 
 import java.util.ArrayList;
@@ -34,7 +34,8 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
 
 /**
- * Calculates a > b for given scalar values a and b or s1 and s2. In case of strings a lexicographical order is used.
+ * Calculates a > b for given scalar values a and b or s1 and s2. In case of
+ * strings a lexicographical order is used.
  * <dl>
  * <dt><b>GReQL-signature</b></dt>
  * <dd><code>BOOLEAN grThan(a: INTEGER, b: INTEGER)</code></dd>
@@ -50,7 +51,8 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
  * <dd>&nbsp;</dd>
  * <dd>This function can be used with the (>)-Operator: <code>a > b</code></dd>
  * </dl>
- * <dl><dt></dt>
+ * <dl>
+ * <dt></dt>
  * <dd>
  * <dl>
  * <dt><b>Parameters:</b></dt>
@@ -69,30 +71,31 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
  * </dl>
  * </dd>
  * </dl>
+ * 
  * @author Daniel Bildhauer <dbildh@uni-koblenz.de> Summer 2006, Diploma Thesis
  * 
  */
- 
+
 public class GrThan implements Greql2Function {
 
 	public JValue evaluate(Graph graph, BooleanGraphMarker subgraph,
 			JValue[] arguments) throws EvaluateException {
-		if (arguments.length < 1) {
+		if (arguments.length != 2) {
 			throw new WrongFunctionParameterException(this, null, arguments);
 		}
 		try {
-		if ( (arguments[0].canConvert(JValueType.DOUBLE)) && (arguments[1].canConvert(JValueType.DOUBLE))) {
-			Double a, b;
-			a = arguments[0].toDouble();
-			b = arguments[1].toDouble();
-			return new JValue(a > b);
-		} else {
-			String a, b;
-			a = arguments[0].toString();
-			b = arguments[1].toString();
-			boolean lessThan = ((a.compareTo(b)) > 0);
-			return new JValue(lessThan);
-		}
+			if ((arguments[0].canConvert(JValueType.DOUBLE))
+					&& (arguments[1].canConvert(JValueType.DOUBLE))) {
+				Double a, b;
+				a = arguments[0].toDouble();
+				b = arguments[1].toDouble();
+				return new JValue(a > b);
+			} else {
+				String a, b;
+				a = arguments[0].toString();
+				b = arguments[1].toString();
+				return new JValue(a.compareTo(b) > 0);
+			}
 		} catch (Exception ex) {
 			throw new WrongFunctionParameterException(this, null, arguments);
 		}

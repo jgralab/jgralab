@@ -76,7 +76,7 @@ public class JValue implements Comparable<JValue> {
 	/**
 	 * accepts te given visitor to visit this jvalue
 	 */
-	public void accept(JValueVisitor v) throws Exception {
+	public void accept(JValueVisitor v) {
 		switch (this.type) {
 		case BOOLEAN:
 			v.visitBoolean(this);
@@ -566,6 +566,9 @@ public class JValue implements Comparable<JValue> {
 			if (isInteger()) {
 				int i = (Integer) value;
 				return Double.valueOf(i);
+			} else if (isLong()) {
+				long l = (Long) value;
+				return Double.valueOf(l);
 			}
 			return (Double) value;
 		}
@@ -1094,6 +1097,8 @@ public class JValue implements Comparable<JValue> {
 			return new JValue((Enum) o);
 		if (objectsClass == Integer.class)
 			return new JValue((Integer) o);
+		if (objectsClass == Long.class)
+			return new JValue((Long) o);
 		if (objectsClass == Double.class)
 			return new JValue((Double) o);
 		if (objectsClass == Boolean.class)

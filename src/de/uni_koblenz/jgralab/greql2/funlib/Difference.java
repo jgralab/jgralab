@@ -66,6 +66,9 @@ public class Difference implements Greql2Function {
 
 	public JValue evaluate(Graph graph, BooleanGraphMarker subgraph,
 			JValue[] arguments) throws EvaluateException {
+		if (arguments.length != 2) {
+			throw new WrongFunctionParameterException(this, null, arguments);
+		}
 		try {
 			JValueSet firstSet = arguments[0].toCollection().toJValueSet();
 			JValueSet secondSet = arguments[1].toCollection().toJValueSet();

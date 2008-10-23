@@ -21,7 +21,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
- 
+
 package de.uni_koblenz.jgralab.greql2.jvalue;
 
 import java.io.BufferedWriter;
@@ -41,31 +41,38 @@ public class JValueHTMLOutputVisitor extends JValueDefaultVisitor {
 	 * The writer which stores the elements
 	 */
 	private BufferedWriter outputWriter;
-	
+
 	/**
 	 * The path to the file the value should be stored in
 	 */
 	private String filePath;
-	
+
 	/**
 	 * The graph all elements in the jvalue to visit belong to
 	 */
 	private Graph dataGraph = null;
-	
-	
-	private JValue rootValue;
-	
-	
 
-	private boolean storeln(String s) {
+	private JValue rootValue;
+
+	private void storeln(String s) {
 		try {
-			outputWriter.write(s + "\n");
-			return true;
-		} catch (IOException ex) {
-			return false;
+			outputWriter.write(s);
+			outputWriter.write("\n");
+		} catch (IOException e) {
+			throw new JValueVisitorException("Can't write to output file",
+					null, e);
 		}
 	}
-	
+
+	private void store(String s) {
+		try {
+			outputWriter.write(s);
+		} catch (IOException e) {
+			throw new JValueVisitorException("Can't write to output file",
+					null, e);
+		}
+	}
+
 	private String htmlQuote(String string) {
 		StringBuffer result = new StringBuffer();
 		for (int i = 0; i < string.length(); ++i) {
@@ -87,11 +94,12 @@ public class JValueHTMLOutputVisitor extends JValueDefaultVisitor {
 		return result.toString();
 	}
 
-	public JValueHTMLOutputVisitor(JValue value, String filePath) throws Exception {
+	public JValueHTMLOutputVisitor(JValue value, String filePath) {
 		this(value, filePath, null);
 	}
-	
-	public JValueHTMLOutputVisitor(JValue value, String filePath, Graph dataGraph) throws Exception {
+
+	public JValueHTMLOutputVisitor(JValue value, String filePath,
+			Graph dataGraph) {
 		this.filePath = filePath;
 		this.dataGraph = dataGraph;
 		this.rootValue = value;
@@ -99,21 +107,24 @@ public class JValueHTMLOutputVisitor extends JValueDefaultVisitor {
 		value.accept(this);
 		foot();
 	}
-	
-	
+
+	@Override
 	public void pre() {
 		storeln("<table><tr><td>");
 	}
-	
+
+	@Override
 	public void post() {
 		storeln("</td></tr></table>");
 	}
-	
+
+	@Override
 	public void inter() {
 		storeln("</td></tr><tr><td>");
 	}
-	
-	public void visitTuple(JValueTuple t) throws Exception {
+
+	@Override
+	public void visitTuple(JValueTuple t) {
 		storeln("<table><tr><td>");
 		boolean first = true;
 		for (JValue val : t) {
@@ -125,8 +136,9 @@ public class JValueHTMLOutputVisitor extends JValueDefaultVisitor {
 		}
 		storeln("</td></tr></table>");
 	}
-	
-	public void visitRecord(JValueRecord r) throws Exception {
+
+	@Override
+	public void visitRecord(JValueRecord r) {
 		storeln("<table><tr><td>");
 		boolean first = true;
 		for (Map.Entry<String, JValue> entry : r.entrySet()) {
@@ -140,58 +152,52 @@ public class JValueHTMLOutputVisitor extends JValueDefaultVisitor {
 		storeln("</td></tr></table>");
 	}
 
-	
-	public void visitTable(JValueTable table) throws Exception {
-		storeln("<table style=\"align:left;\"><tr><th>");
+	@Override
+	public void visitTable(JValueTable table) {
+		store("<table style=\"align:left;\"><tr><th>");
 		boolean first = true;
 		for (JValue val : table.getHeader()) {
 			if (first)
 				first = false;
 			else
-				storeln("</th><th>");
+				store("</th><th>");
 			val.accept(this);
 		}
 		storeln("</th></tr>");
-		
 		for (JValue row : table.getData()) {
-			storeln("<tr>");
+			store("<tr>");
 			for (JValue cell : row.toJValueTuple()) {
-				storeln("<th>");
+				store("<td>");
 				cell.accept(this);
-				storeln("</th>");
+				store("</td>");
 			}
-			storeln("</tr>");
+			store("</tr>");
 		}
-		
 		storeln("</table>");
 	}
-	
-	
-	
-	public void visitPathSystem(JValuePathSystem p) throws Exception {
-		//TODO visitPathSystem
-	}
-	
-	public void visitSlice(JValueSlice s) throws Exception {
-		// TODO visitSlice
-	}
 
-	public void visitVertex(JValue v) throws Exception {
+	@Override
+	public void visitVertex(JValue v) {
 		Vertex vertex = v.toVertex();
 		storeln("<a href=\"v" + vertex.getId() + "\">");
-		storeln("v" + vertex.getId() + ": " + vertex.getAttributedElementClass().getUniqueName());
+		storeln("v" + vertex.getId() + ": "
+				+ vertex.getAttributedElementClass().getUniqueName());
 		storeln("</a>");
 	}
 
-	public void visitEdge(JValue e) throws Exception {
+	@Override
+	public void visitEdge(JValue e) {
 		Edge edge = e.toEdge();
 		storeln("<a href=\"e" + edge.getId() + "\">");
-		storeln("e" + edge.getId() + ": " + edge.getAttributedElementClass().getUniqueName());
+		storeln("e" + edge.getId() + ": "
+				+ edge.getAttributedElementClass().getUniqueName());
 		storeln("</a>");
 	}
 
-	
 	private void simplePre(JValue n) {
+		if (dataGraph == null) {
+			return;
+		}
 		if (n.getBrowsingInfo() instanceof Vertex) {
 			Vertex v = (Vertex) n.getBrowsingInfo();
 			storeln("<a href=\"v" + v.getId() + "\">");
@@ -205,184 +211,142 @@ public class JValueHTMLOutputVisitor extends JValueDefaultVisitor {
 			storeln("<a href=\"g" + g.getId() + "\">");
 		}
 	}
-	
+
 	private void simplePost(JValue n) {
-		if ((n.getBrowsingInfo() instanceof Vertex) ||
-		    (n.getBrowsingInfo() instanceof Edge)   ||
-		    (n.getBrowsingInfo() instanceof Graph)) {
+		if (dataGraph == null) {
+			return;
+		}
+		if ((n.getBrowsingInfo() instanceof Vertex)
+				|| (n.getBrowsingInfo() instanceof Edge)
+				|| (n.getBrowsingInfo() instanceof Graph)) {
 			storeln("</a>");
 		}
 	}
-	
-	
-	public void visitInt(JValue n) throws Exception {
+
+	@Override
+	public void visitInt(JValue n) {
 		simplePre(n);
 		Integer b = n.toInteger();
 		storeln(b.toString());
 		simplePost(n);
 	}
-	
-	public void visitLong(JValue n) throws Exception {
+
+	@Override
+	public void visitLong(JValue n) {
 		simplePre(n);
 		Long b = n.toLong();
 		storeln(b.toString());
 		simplePost(n);
 	}
-	
-	public void visitDouble(JValue n) throws Exception {
+
+	@Override
+	public void visitDouble(JValue n) {
 		simplePre(n);
 		Double b = n.toDouble();
 		storeln(b.toString());
 		simplePost(n);
 	}
 
-	public void visitChar(JValue c) throws Exception {
+	@Override
+	public void visitChar(JValue c) {
 		simplePre(c);
 		Character b = c.toCharacter();
 		storeln(htmlQuote(b.toString()));
 		simplePost(c);
 	}
 
-	public void visitString(JValue s) throws Exception {
+	@Override
+	public void visitString(JValue s) {
 		simplePre(s);
 		String b = s.toString();
 		storeln(htmlQuote(b));
 		simplePost(s);
 	}
-	
-	public void visitEnumValue(JValue e) throws Exception {
+
+	@Override
+	public void visitEnumValue(JValue e) {
 		simplePre(e);
 		String b = e.toString();
 		storeln(b);
 		simplePost(e);
 	}
 
-	public void visitGraph(JValue g) throws Exception {
+	@Override
+	public void visitGraph(JValue g) {
 		Graph gr = g.toGraph();
-		storeln("<a href=\"e" + gr.getId() + "\">");
-		storeln(gr.getId() + ": " + gr.getAttributedElementClass().getUniqueName());
+		store("<a href=\"g" + gr.getId() + "\">");
+		store(gr.getId() + ": "
+				+ gr.getAttributedElementClass().getUniqueName());
 		storeln("</a>");
 	}
 
-	/**
-	 * To store a subgraph is very tricky, one possibility is to store all vertices and edges
-	 */
-	public void visitSubgraph(JValue s) throws Exception {
-//		if (dataGraph == null)
-//			throw new JValueVisitorException("Cannot write a Subgraph to xml if no Graph is given", s);
-//		storeln("<subgraph>");
-//		storeBrowsingInfo(s);
-//		BooleanGraphMarker subgraph = s.toSubgraphTempAttribute();
-//		Vertex firstVertex = dataGraph.getFirstVertex();
-//		Vertex currentVertex = firstVertex;
-//		do {
-//			if ((subgraph==null) || (subgraph.isMarked(currentVertex)))
-//				storeln("<vertex>" + currentVertex.getId() + "</vertex>");
-//			currentVertex = currentVertex.getNextVertex();
-//		} while (firstVertex != currentVertex);
-//		Edge firstEdge = dataGraph.getFirstEdgeInGraph();
-//		Edge currentEdge = firstEdge;
-//		do {
-//			if (subgraph.isMarked(currentEdge))
-//				storeln("<edge>" + currentEdge.getId() + "</edge>");
-//		} while (firstEdge != currentEdge);
-//		
-//		storeln("</subgraph>");
+	public void visitInvalid(JValue i) {
+		store("[invalid value]");
 	}
 
-	public void visitDFA(JValue d) throws Exception {
-		throw new JValueVisitorException("Cannot write a DFA to xml", d);
-	}
-
-	public void visitNFA(JValue n) throws Exception {
-		throw new JValueVisitorException("Cannot write a NFA to xml", n);
-	}
-
-	public void visitInvalid(JValue i) throws Exception {
-
-	}
-
-	public void visitBoolean(JValue b) throws Exception {
+	@Override
+	public void visitBoolean(JValue b) {
 		simplePre(b);
 		Boolean v = b.toBoolean();
 		storeln(v.toString());
-		storeln("</a>");
+		simplePost(b);
 	}
 
-	public void visitObject(JValue o) throws Exception {
+	@Override
+	public void visitObject(JValue o) {
 		simplePre(o);
 		String b = o.toString();
 		storeln(b.toString());
-		storeln("</a>");
+		simplePost(o);
 	}
 
-	public void visitAttributedElementClass(JValue a) throws Exception {
+	@Override
+	public void visitAttributedElementClass(JValue a) {
 		simplePre(a);
 		AttributedElementClass c = a.toAttributedElementClass();
 		storeln(c.getQualifiedName());
-		storeln("</a>");
-	}
-		
-
-	public void visitState(JValue s) throws Exception {
-		throw new JValueVisitorException("Cannot write a state to html", s);
+		simplePost(a);
 	}
 
-	public void visitTransition(JValue t) throws Exception {
-		throw new JValueVisitorException("Cannot write a transition to html", t);
-	}
-
-	public void visitDeclaration(JValue d) throws Exception  {
-		throw new JValueVisitorException("Cannot write a Declaration to html", d);
-	}
-
-	public void visitDeclarationLayer(JValue d) throws Exception  {
-		throw new JValueVisitorException("Cannot write a DeclarationLayer to html", d);
-	}
-	
-
-	public void head() throws Exception {
-		outputWriter = new BufferedWriter(new FileWriter(filePath));
+	@Override
+	public void head() {
+		try {
+			outputWriter = new BufferedWriter(new FileWriter(filePath));
+		} catch (IOException e) {
+			throw new JValueVisitorException("Can't create output file", null,
+					e);
+		}
 		storeln("<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01 Transitional//EN\">");
 		storeln("<html>");
 		storeln("<head>\n");
-		storeln("<meta http-equiv=\"content-type\" content=\"text/html; charset=ISO-8859-1\">");
-		storeln("<style type=\"text/css\"> \n" +
-				"table {\n" +
-				"  border: 1px;\n" +
-				"  border-color: #555555;\n" +
-				"  border-collapse: collapse;" +
-				"}\n" +
-				"\n" +
-				"td {\n" +
-				"  text-align:left;\n" +
-				"  border-style: groove;" +
-				"  border-color: #505050;" +
-				"  border-width: 2px;" +
-				"}\n" + 
-				"\n" +
-				"th {\n" +
-				"  text-align:left;\n" +
-				"  border-style: groove;" +
-				"  border-color: #505050;" +
-				"  border-width: 2px;" +
-				"}\n" + 
-				"</style>\n");
-		storeln("</head><body>");
-		storeln("<table><tr><th>Graph id: </th><th>" + dataGraph.getId() + "</th></tr>");
-		storeln("<tr><th>Result size: </th><th>");
+		storeln("<meta http-equiv=\"content-type\" content=\"text/html; charset=UTF-8\">");
+		storeln("<style type=\"text/css\">\n"
+				+ "table { border: thin gray solid; border-collapse: collapse; border-spacing: 2px }\n"
+				+ "td { border: thin gray solid; border-collapse: collapse; border-spacing: 2px }\n"
+				+ "th { border: thin gray solid; border-collapse: collapse; border-spacing: 2px }\n"
+				+ "</style>\n");
+		storeln("</head><body><table>");
+		if (dataGraph != null) {
+			storeln("<tr><td>Graph id: </td><td>" + dataGraph.getId()
+					+ "</td></tr>");
+		}
+		storeln("<tr><td>Result size: </td><td>");
 		if (rootValue.isCollection()) {
 			storeln(Integer.toString(rootValue.toCollection().size()));
 		} else {
 			storeln("1");
-		}	
-		storeln("</th></tr></table>\n\n<br/><br/>\n\n");
+		}
+		storeln("</td></tr></table>\n<br/><br/>\n");
 	}
-	
 
-	public void foot() throws Exception {
+	@Override
+	public void foot() {
 		storeln("</body></html>");
-		outputWriter.close();
+		try {
+			outputWriter.close();
+		} catch (IOException e) {
+			throw new JValueVisitorException("Can't close file", null, e);
+		}
 	}
-	
+
 }

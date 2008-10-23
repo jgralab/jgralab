@@ -1687,6 +1687,11 @@ public abstract class GraphImpl extends AttributedElementImpl implements Graph {
 
 	@Override
 	public void setAlpha(Edge e, Vertex alpha) {
+		if (!alpha.isValidAlpha(e))
+			throw new GraphException("Edges of class "
+					+ e.getAttributedElementClass().getQualifiedName()
+					+ " may not start at vertices of class "
+					+ alpha.getAttributedElementClass().getQualifiedName());
 		int edgeId = e.getId();
 		int alphaId = alpha.getId();
 
@@ -1721,6 +1726,11 @@ public abstract class GraphImpl extends AttributedElementImpl implements Graph {
 
 	@Override
 	public void setOmega(Edge e, Vertex omega) {
+		if (!omega.isValidOmega(e))
+			throw new GraphException("Edges of class "
+					+ e.getAttributedElementClass().getQualifiedName()
+					+ " may not end at at vertices of class"
+					+ omega.getAttributedElementClass().getQualifiedName());
 		int edgeId = e.getId();
 		int omegaId = omega.getId();
 

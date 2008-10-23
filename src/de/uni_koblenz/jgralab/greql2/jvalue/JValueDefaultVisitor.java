@@ -21,23 +21,27 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
- 
+
 package de.uni_koblenz.jgralab.greql2.jvalue;
+
 import java.util.Iterator;
 
+import de.uni_koblenz.jgralab.greql2.exception.JValueVisitorException;
+
 /**
- * This class implements a default visitor. It visits all elements in the structure given recursivly,
- * but it does nothing with them. To implement a own visitor, which for example prints alls vertices
- * to a list, extend this class an overwrite the method visitVertex(Vertex v)
+ * This class implements a default visitor. It visits all elements in the
+ * structure given recursivly, but it does nothing with them. To implement a own
+ * visitor, which for example prints alls vertices to a list, extend this class
+ * an overwrite the method visitVertex(Vertex v)
  * 
- * @author Daniel Bildhauer <dbildh@uni-koblenz.de> 
- * Summer 2006, Diploma Thesis
- *
+ * @author Daniel Bildhauer <dbildh@uni-koblenz.de> Summer 2006, Diploma Thesis
+ * 
  */
 
 public class JValueDefaultVisitor implements JValueVisitor {
 
-	public void visitSet(JValueSet s) throws Exception {
+	@Override
+	public void visitSet(JValueSet s) {
 		Iterator<JValue> iter = s.iterator();
 		boolean first = true;
 		pre();
@@ -51,7 +55,8 @@ public class JValueDefaultVisitor implements JValueVisitor {
 		post();
 	}
 
-	public void visitBag(JValueBag b) throws Exception {
+	@Override
+	public void visitBag(JValueBag b) {
 		Iterator<JValue> iter = b.iterator();
 		boolean first = true;
 		pre();
@@ -64,13 +69,15 @@ public class JValueDefaultVisitor implements JValueVisitor {
 		}
 		post();
 	}
-	
-	public void visitTable(JValueTable t) throws Exception {
+
+	@Override
+	public void visitTable(JValueTable t) {
 		t.getHeader().accept(this);
 		t.getData().accept(this);
 	}
 
-	public void visitList(JValueList b) throws Exception {
+	@Override
+	public void visitList(JValueList b) {
 		Iterator<JValue> iter = b.iterator();
 		boolean first = true;
 		pre();
@@ -84,7 +91,8 @@ public class JValueDefaultVisitor implements JValueVisitor {
 		post();
 	}
 
-	public void visitTuple(JValueTuple t) throws Exception {
+	@Override
+	public void visitTuple(JValueTuple t) {
 		Iterator<JValue> iter = t.iterator();
 		boolean first = true;
 		pre();
@@ -98,7 +106,8 @@ public class JValueDefaultVisitor implements JValueVisitor {
 		post();
 	}
 
-	public void visitRecord(JValueRecord r) throws Exception {
+	@Override
+	public void visitRecord(JValueRecord r) {
 		Iterator<JValue> iter = r.iterator();
 		boolean first = true;
 		pre();
@@ -112,7 +121,8 @@ public class JValueDefaultVisitor implements JValueVisitor {
 		post();
 	}
 
-	public void visitPath(JValuePath p) throws Exception {
+	@Override
+	public void visitPath(JValuePath p) {
 		Iterator<JValue> eiter = p.edgeTraceAsJValue().iterator();
 		boolean first = true;
 		pre();
@@ -137,93 +147,151 @@ public class JValueDefaultVisitor implements JValueVisitor {
 		post();
 	}
 
-	public void visitPathSystem(JValuePathSystem p) throws Exception {}
-	
-	public void visitSlice(JValueSlice s) throws Exception {}
+	@Override
+	public void visitPathSystem(JValuePathSystem p) {
+		cantVisit(p);
+	}
 
-	public void visitVertex(JValue v) throws Exception {}
+	@Override
+	public void visitSlice(JValueSlice s) {
+		cantVisit(s);
+	}
 
-	
-	public void visitEdge(JValue e) throws Exception {}
+	@Override
+	public void visitVertex(JValue v) {
+		cantVisit(v);
+	}
 
-	/**
-	 * Method to visit a Number
-	 * @param n the number to visit
-	 */
-	public void visitInt(JValue n) throws Exception {}
-	
-	/**
-	 * Method to visit a Number
-	 * @param n the number to visit
-	 */
-	public void visitLong(JValue n) throws Exception {}
-	
-	/**
-	 * Method to visit a Number
-	 * @param n the number to visit
-	 */
-	public void visitDouble(JValue n) throws Exception {}
+	@Override
+	public void visitEdge(JValue e) {
+		cantVisit(e);
+	}
 
-	public void visitChar(JValue c) throws Exception {}
+	@Override
+	public void visitInt(JValue n) {
+		cantVisit(n);
+	}
 
-	public void visitString(JValue s) throws Exception {}
-	
-	public void visitEnumValue(JValue e) throws Exception {}
+	@Override
+	public void visitLong(JValue n) {
+		cantVisit(n);
+	}
 
-	public void visitGraph(JValue g) throws Exception {}
+	@Override
+	public void visitDouble(JValue n) {
+		cantVisit(n);
+	}
 
-	public void visitSubgraph(JValue s) throws Exception {}
+	@Override
+	public void visitChar(JValue c) {
+		cantVisit(c);
+	}
 
-	public void visitDFA(JValue d) throws Exception {}
+	@Override
+	public void visitString(JValue s) {
+		cantVisit(s);
+	}
 
-	public void visitNFA(JValue n) throws Exception {}
+	@Override
+	public void visitEnumValue(JValue e) {
+		cantVisit(e);
+	}
 
-	public void visitInvalid(JValue i) throws Exception {}
+	@Override
+	public void visitGraph(JValue g) {
+		cantVisit(g);
+	}
 
-	public void visitBoolean(JValue b) throws Exception {}
+	@Override
+	public void visitSubgraph(JValue s) {
+		cantVisit(s);
+	}
 
-	public void visitTrivalentBoolean(JValue b) throws Exception {}
+	@Override
+	public void visitDFA(JValue d) {
+		cantVisit(d);
+	}
 
-	public void visitObject(JValue o) throws Exception {}
+	@Override
+	public void visitNFA(JValue n) {
+		cantVisit(n);
+	}
 
-	public void visitAttributedElementClass(JValue a) throws Exception {}
-	
-	public void visitTypeCollection(JValue a) throws Exception {}
+	@Override
+	public void visitInvalid(JValue i) {
+		cantVisit(i);
+	}
 
-	public void visitState(JValue s) throws Exception {}
+	@Override
+	public void visitBoolean(JValue b) {
+		cantVisit(b);
+	}
 
-	public void visitTransition(JValue t) throws Exception {}
+	@Override
+	public void visitTrivalentBoolean(JValue b) {
+		cantVisit(b);
+	}
 
-	public void visitDeclaration(JValue d) throws Exception {}
+	@Override
+	public void visitObject(JValue o) {
+		cantVisit(o);
+	}
 
-	public void visitDeclarationLayer(JValue d) throws Exception {}
-	
-	/**
-	 * This method should be called after the last element in a collection
-	 * was visited
-	 */
-	public void post() throws Exception {}
-	
-	/**
-	 * This method should be called before the last element in a collection
-	 * was visited
-	 */
-	public void pre() throws Exception {}
-	
-	/**
-	 * This method should be called between two elements a collection
-	 * are visited
-	 */
-	public void inter() throws Exception {}
-	
-	/**
-	 * This method should be called when the visitor is created
-	 */
-	public void head() throws Exception {}
-	
-	/**
-	 * This method should be called after the last element was visited
-	 */
-	public void foot() throws Exception {}
+	@Override
+	public void visitAttributedElementClass(JValue a) {
+		cantVisit(a);
+	}
+
+	@Override
+	public void visitTypeCollection(JValue a) {
+		cantVisit(a);
+	}
+
+	@Override
+	public void visitState(JValue s) {
+		cantVisit(s);
+	}
+
+	@Override
+	public void visitTransition(JValue t) {
+		cantVisit(t);
+	}
+
+	@Override
+	public void visitDeclaration(JValue d) {
+		cantVisit(d);
+	}
+
+	@Override
+	public void visitDeclarationLayer(JValue d) {
+		cantVisit(d);
+	}
+
+	@Override
+	public void post() {
+	}
+
+	@Override
+	public void pre() {
+	}
+
+	@Override
+	public void inter() {
+	}
+
+	@Override
+	public void head() {
+	}
+
+	@Override
+	public void foot() {
+	}
+
+	@Override
+	public void cantVisit(JValue v) {
+		throw new JValueVisitorException(getClass().getSimpleName()
+				+ " can not handle " + v.getType(), null);
+
+	}
 
 }

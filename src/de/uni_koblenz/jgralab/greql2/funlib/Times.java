@@ -34,7 +34,7 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
 
 /**
  * Calculates a*b for given scalar values a and b or the n-fold concatenation of
- * a givin string.
+ * a given string.
  * <dl>
  * <dt><b>GReQL-signature</b></dt>
  * <dd><code>INTEGER times(a: INTEGER, b: INTEGER)</code></dd>
@@ -80,7 +80,7 @@ public class Times implements Greql2Function {
 
 	public JValue evaluate(Graph graph, BooleanGraphMarker subgraph,
 			JValue[] arguments) throws EvaluateException {
-		if (arguments.length < 1) {
+		if (arguments.length != 2) {
 			throw new WrongFunctionParameterException(this, null, arguments);
 		}
 		try {
@@ -101,11 +101,14 @@ public class Times implements Greql2Function {
 				Double d = arguments[0].toDouble() * arguments[1].toDouble();
 				return new JValue(d);
 			}
+
 			if (arguments[0].isLong() || arguments[1].isLong()) {
 				Long l = arguments[0].toLong() * arguments[1].toLong();
 				return new JValue(l);
 			}
+
 			Integer i = arguments[0].toInteger() * arguments[1].toInteger();
+
 			return new JValue(i);
 		} catch (Exception ex) {
 			throw new WrongFunctionParameterException(this, null, arguments);

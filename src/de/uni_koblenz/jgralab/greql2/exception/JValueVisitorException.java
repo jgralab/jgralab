@@ -26,7 +26,7 @@ package de.uni_koblenz.jgralab.greql2.exception;
 
 import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
 
-public class JValueVisitorException extends Greql2Exception {
+public class JValueVisitorException extends RuntimeException {
 
 	static final long serialVersionUID = 1;
 
@@ -38,9 +38,13 @@ public class JValueVisitorException extends Greql2Exception {
 		this.value = value;
 	}
 
+	public JValueVisitorException(String message, JValue value, Throwable cause) {
+		super(message, cause);
+		this.value = value;
+	}
+
 	public String getMEssage() {
-		return "JValueVisitorException, the element that caused the exception was: "
-				+ value.toString();
+		return super.getMessage() + "(value was: " + value + ")";
 	}
 
 }

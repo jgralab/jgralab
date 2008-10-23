@@ -191,8 +191,8 @@ public class JValuePathSystem extends JValue {
 
 	/**
 	 * Calculates the set of children the given vertex has in this PathSystem.
-	 * If the given vertex exists more than one times in this slice, the
-	 * first occurrence if used.
+	 * If the given vertex exists more than one times in this slice, the first
+	 * occurrence if used.
 	 */
 	public JValueSet children(Vertex vertex) {
 		PathSystemKey key = vertexToFirstKeyMap.get(vertex);
@@ -494,7 +494,8 @@ public class JValuePathSystem extends JValue {
 	 */
 	public JValueSet edges() {
 		JValueSet resultSet = new JValueSet();
-		for (Map.Entry<PathSystemKey, PathSystemEntry> mapEntry: keyToEntryMap.entrySet()) {
+		for (Map.Entry<PathSystemKey, PathSystemEntry> mapEntry : keyToEntryMap
+				.entrySet()) {
 			PathSystemEntry thisEntry = mapEntry.getValue();
 			if (thisEntry.getParentEdge() != null)
 				resultSet.add(new JValue(thisEntry.getParentEdge()));
@@ -901,7 +902,7 @@ public class JValuePathSystem extends JValue {
 	/**
 	 * accepts te given visitor to visit this jvalue
 	 */
-	public void accept(JValueVisitor v) throws Exception {
+	public void accept(JValueVisitor v) {
 		v.visitPathSystem(this);
 	}
 

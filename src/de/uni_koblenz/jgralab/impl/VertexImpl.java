@@ -364,7 +364,6 @@ public abstract class VertexImpl extends GraphElementImpl implements Vertex {
 	@Override
 	public final void incidenceListModified() {
 		vertexStructureVersion++;
-		getGraph().vertexListModified();
 	}
 
 	/*
