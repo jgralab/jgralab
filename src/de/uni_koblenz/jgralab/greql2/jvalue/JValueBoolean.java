@@ -24,6 +24,8 @@
  
 package de.uni_koblenz.jgralab.greql2.jvalue;
 
+import de.uni_koblenz.jgralab.greql2.exception.JValueInvalidTypeException;
+
 /**
  * This enumerationclass represents a trivalent boolean value. It may hold the
  * boolean values <code>true</code> and <code>false</code> and a third value, called <code>null</code>
