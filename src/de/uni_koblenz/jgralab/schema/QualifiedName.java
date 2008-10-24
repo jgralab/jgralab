@@ -103,6 +103,11 @@ public class QualifiedName implements Comparable<QualifiedName> {
 	 *             element in the schema with the same unique name
 	 */
 	public void setUniqueName(NamedElement element, String uniqueName) {
+		if(!(uniqueName.indexOf('.')<0)){
+			throw new SchemaException("The unique name "
+					+ uniqueName
+					+ " must not contain '.'.");
+		}
 		// Must be 1 because 0 is the default graph-class Graph
 		for (GraphClass gc : element.getSchema()
 				.getGraphClassesInTopologicalOrder()) {
@@ -144,6 +149,15 @@ public class QualifiedName implements Comparable<QualifiedName> {
 								+ uniqueName
 								+ " is already used in this schema");
 					}
+				}
+			}
+		}
+		for (Domain e : element.getSchema().getDomains().values()) {
+			if (e != element) {
+				if (e.getSimpleName().equals(uniqueName)) {
+					throw new SchemaException("The unique name "
+							+ uniqueName
+							+ " is already used in this schema");
 				}
 			}
 		}
