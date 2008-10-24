@@ -492,16 +492,6 @@ public abstract class ReversedEdgeImpl implements Edge {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see de.uni_koblenz.jgralab.Edge#setId(int)
-	 */
-	@Override
-	public void setId(int anId) {
-		normalEdge.setId(anId);
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
 	 * @see de.uni_koblenz.jgralab.Edge#setOmega(de.uni_koblenz.jgralab.Vertex)
 	 */
 	@Override

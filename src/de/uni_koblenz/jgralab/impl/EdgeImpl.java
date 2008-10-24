@@ -433,13 +433,12 @@ public abstract class EdgeImpl extends GraphElementImpl implements Edge {
 		myGraph.setAlpha(this, alpha);
 	}
 
-	/*
-	 * (non-Javadoc)
+	/**
+	 * sets the id field of this edge
 	 * 
-	 * @see de.uni_koblenz.jgralab.Edge#setId(int)
+	 * @param id
 	 */
-	@Override
-	public void setId(int id) {
+	void setId(int id) {
 		if ((this.id == 0) && (id > 0))
 			this.id = id;
 	}

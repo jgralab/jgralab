@@ -314,14 +314,6 @@ public interface Vertex extends GraphElement {
 	public void putAfter(Vertex v);
 
 	/**
-	 * sets the id field of this vertex in package 'oo' to id
-	 * 
-	 * @param id
-	 *            an id
-	 */
-	void setId(int id);
-
-	/**
 	 * removes this vertex from vSeq and erases its attributes
 	 */
 	public void delete();

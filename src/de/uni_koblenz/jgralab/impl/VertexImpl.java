@@ -483,13 +483,13 @@ public abstract class VertexImpl extends GraphElementImpl implements Vertex {
 		return id;
 	}
 
-	/*
-	 * (non-Javadoc)
+	/**
+	 * sets the id field of this vertex
 	 * 
-	 * @see de.uni_koblenz.jgralab.Vertex#setId(int)
+	 * @param id
+	 *            an id
 	 */
-	@Override
-	public void setId(int anId) {
+	void setId(int anId) {
 		id = anId;
 	}
 

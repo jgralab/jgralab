@@ -270,7 +270,7 @@ public abstract class GraphImpl extends AttributedElementImpl implements Graph {
 				}
 				eId = nextEdgeInGraph[0];
 				nextEdgeInGraph[0] = nextEdgeInGraph[eId];
-				newEdge.setId(eId);
+				((EdgeImpl)newEdge).setId(eId);
 			}
 		}
 		++eCount;
@@ -364,7 +364,7 @@ public abstract class GraphImpl extends AttributedElementImpl implements Graph {
 				}
 				vId = nextVertex[0];
 				nextVertex[0] = nextVertex[vId];
-				newVertex.setId(vId);
+				((VertexImpl)newVertex).setId(vId);
 			}
 		}
 
