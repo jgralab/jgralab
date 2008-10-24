@@ -231,13 +231,6 @@ public interface Edge extends GraphElement {
 	public void putAfterInGraph(Edge anEdge);
 
 	/**
-	 * sets the id field of this edge in package 'oo' to id
-	 * 
-	 * @param id
-	 */
-	void setId(int id);
-
-	/**
 	 * removes this edge from eSeq and erases its attributes @ if used on an
 	 * incidence
 	 */
