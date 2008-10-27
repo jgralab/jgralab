@@ -139,21 +139,89 @@ public interface AttributedElementClass extends NamedElement,
 	@Deprecated
 	public String getName();
 
+	
 	/**
-	 * adds a new attribute to the element
+	 * Adds a new attribute to the element.
+	 * 
+	 * <p>
+	 * 	Pattern: e.addAttribute(name, domain);
+	 * </p>
+	 * 
+	 * <p>
+	 * 	Preconditions:
+	 * 	<ul>
+	 * 	 <li>The new attribute큦 name must not correlate with another attribute큦 name already part of the element.</li>
+	 * 	 <li>The attribute큦 name must be distinct from the {@link de.uni_koblenz.jgralab.schema.Schema#reservedTGWords reserved TG words}.</li> 
+	 * 	</ul>
+	 * </p>
+	 * 
+	 * <p>
+	 * 	Postconditions:
+	 * 	<ul>
+	 * 	 <li>The newly added attribute (newAttribute) can be found _once_ in the element큦 attribute list.<br />
+	 * 		 There is an i (0 <= i < e.getAttributeCount), so that: <code>e.getAttribute[i].equals(newAttribute)</code><br />
+	 * 		 There is no j (0 <= j < i), so that: <code>e.getAttribute[j].equals(newAttribute)</code><br />
+	 * 		 There is no k (i < k < e.getAttributeCount), so that: <code>e.getAttribute[k].equals(newAttribute)</code>
+	 * 	 </li>
+	 * 	 <li>The element has one additional attribute.<br />
+	 * 		 <code>e.<i>attributeCountBeforeAdd</i> + 1 == e.getAttributeCount</code>
+	 * 	 </li>
+	 * 	</ul>
+	 * </p>
 	 * 
 	 * @param name
-	 *            the attribute name
+	 * 			the attribute큦 name
 	 * @param domain
-	 *            the attribute domain
+	 * 			the attribute큦 domain
+	 * 
+	 * @throws SchemaException
+	 * 			if:
+	 * 			<ul>
+	 * 			 <li>the element already contains an attribute bearing the same name,</li>
+	 * 			 <li>or the attribute큦 name clashes with a reserved TG word</li>
+	 * 			</ul>
 	 */
 	public void addAttribute(String name, Domain domain);
 
+	
 	/**
-	 * adds a new attribute to the element
+	 * Adds a new attribute to the element.
+	 * 
+	 * <p>
+	 * 	Pattern: e.addAttribute(name, domain);
+	 * </p>
+	 * 
+	 * <p>
+	 * 	Preconditions:
+	 * 	<ul>
+	 * 	 <li>The new attribute큦 name must not correlate with another attribute큦 name already part of the element.</li>
+	 * 	 <li>The attribute큦 name must be distinct from the {@link de.uni_koblenz.jgralab.schema.Schema#reservedTGWords reserved TG words}.</li> 
+	 * 	</ul>
+	 * </p>
+	 * 
+	 * <p>
+	 * 	Postconditions:
+	 * 	<ul>
+	 * 	 <li>The newly added attribute (newAttribute) can be found _once_ in the element큦 attribute list.<br />
+	 * 		 There is an i (0 <= i < e.getAttributeCount), so that: <code>e.getAttribute[i].equals(newAttribute)</code><br />
+	 * 		 There is no j (0 <= j < i), so that: <code>e.getAttribute[j].equals(newAttribute)</code><br />
+	 * 		 There is no k (i < k < e.getAttributeCount), so that: <code>e.getAttribute[k].equals(newAttribute)</code>
+	 * 	 </li>
+	 * 	 <li>The element has one additional attribute.<br />
+	 * 		 <code>e.<i>attributeCountBeforeAdd</i> + 1 == e.getAttributeCount</code>
+	 * 	 </li>
+	 * 	</ul>
+	 * </p>
 	 * 
 	 * @param anAttribute
 	 *            the attribute to be added
+	 *            
+	 * @throws SchemaException
+	 * 			if:
+	 * 			<ul>
+	 * 			 <li>the element already contains an attribute bearing the same name,</li>
+	 * 			 <li>or the attribute큦 name clashes with a reserved TG word</li>
+	 * 			</ul>
 	 */
 	public void addAttribute(Attribute anAttribute);
 
