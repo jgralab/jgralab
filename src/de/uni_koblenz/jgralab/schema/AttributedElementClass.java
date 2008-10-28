@@ -150,16 +150,16 @@ public interface AttributedElementClass extends NamedElement,
 	 * <p>
 	 * 	Preconditions:
 	 * 	<ul>
-	 * 	 <li>The new attribute´s name must not collide with another attribute´s name already part of the element.</li>
 	 * 	 <li>The attribute´s name must be distinct from the {@link de.uni_koblenz.jgralab.schema.Schema#reservedTGWords reserved TG words} and {@link de.uni_koblenz.jgralab.schema.Schema#reservedJavaWords reserved Java words}.</li> 
+	 * 	 <li>The new attribute´s name must not collide with another attribute´s name already part of the element.</li>
 	 * 	</ul>
 	 * </p>
 	 * 
 	 * <p>
 	 * 	Postconditions:
 	 * 	<ul>
-	 * 	 <li>The newly added attribute (newAttribute) can be found exactly one time in the element´s attribute list.<br /></li>
-	 * 	 <li>The element has one additional attribute.<br /></li>
+	 * 	 <li>The element has one additional attribute.</li>
+	 * 	 <li>The newly added attribute (newAttribute) can be found exactly one time in the element´s attribute list.</li>
 	 * 	</ul>
 	 * </p>
 	 * 
@@ -188,17 +188,16 @@ public interface AttributedElementClass extends NamedElement,
 	 * <p>
 	 * 	Preconditions:
 	 * 	<ul>
+	 * 	 <li>The attribute´s name must be distinct from the {@link de.uni_koblenz.jgralab.schema.Schema#reservedTGWords reserved TG words} and {@link de.uni_koblenz.jgralab.schema.Schema#reservedJavaWords reserved Java words}.</li> 
 	 * 	 <li>The new attribute´s name must not collide with another attribute´s name already part of the element.</li>
-	 * 	 <li>The attribute´s name must be distinct from the {@link de.uni_koblenz.jgralab.schema.Schema#reservedTGWords reserved TG words} and {@link de.uni_koblenz.jgralab.schema.Schema#reservedJavaWords reserved Java words}..</li> 
 	 * 	</ul>
 	 * </p>
 	 * 
 	 * <p>
 	 * 	Postconditions:
 	 * 	<ul>
-	 * 	 <li>The newly added attribute (<code>newAttribute</code>) can be found exactly one time in the element´s attribute list.<br /></li>
-	 * 	 </li>
-	 * 	 <li>The element has one additional attribute.<br /></li>
+	 * 	 <li>The element has one additional attribute.</li>
+	 * 	 <li>The newly added attribute (<code>newAttribute</code>) can be found exactly one time in the element´s attribute list.</li>
 	 * 	</ul>
 	 * </p>
 	 * 
