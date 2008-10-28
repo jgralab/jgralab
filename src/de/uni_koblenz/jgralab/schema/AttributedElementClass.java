@@ -158,11 +158,8 @@ public interface AttributedElementClass extends NamedElement,
 	 * <p>
 	 * 	Postconditions:
 	 * 	<ul>
-	 * 	 <li>The newly added attribute (newAttribute) can be found exactly one time in the element´s attribute list.<br />
-	 * 	 </li>
-	 * 	 <li>The element has one additional attribute.<br />
-	 * 		 <code>e.<i>attributeCountBeforeAdd</i> + 1 == e.getAttributeCount</code>
-	 * 	 </li>
+	 * 	 <li>The newly added attribute (newAttribute) can be found exactly one time in the element´s attribute list.<br /></li>
+	 * 	 <li>The element has one additional attribute.<br /></li>
 	 * 	</ul>
 	 * </p>
 	 * 
@@ -199,17 +196,18 @@ public interface AttributedElementClass extends NamedElement,
 	 * <p>
 	 * 	Postconditions:
 	 * 	<ul>
-	 * 	 <li>The newly added attribute (newAttribute) can be found exactly one time in the element´s attribute list.<br />
+	 * 	 <li>The newly added attribute (<code>newAttribute</code>) can be found exactly one time in the element´s attribute list.<br /></li>
 	 * 	 </li>
-	 * 	 <li>The element has one additional attribute.<br />
-	 * 		 <code>e.<i>attributeCountBeforeAdd</i> + 1 == e.getAttributeCount</code>
-	 * 	 </li>
+	 * 	 <li>The element has one additional attribute.<br /></li>
 	 * 	</ul>
 	 * </p>
 	 * 
 	 * @param anAttribute
 	 *            the attribute to be added
 	 *            
+	 * @throws NullPointerException
+	 * 			if <code>anAttribute</code> is <code>null</code>.
+	 * 
 	 * @throws SchemaException
 	 * 			if:
 	 * 			<ul>
