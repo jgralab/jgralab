@@ -36,14 +36,14 @@ import de.uni_koblenz.jgralab.schema.VertexClass;
 public interface Vertex extends GraphElement {
 
 	/**
-	 * Checks if the list of incident edges has changed with respect to the given
-	 * <code>incidenceListVersion</code>. 
+	 * Checks if the list of incident edges has changed with respect to the
+	 * given <code>incidenceListVersion</code>.
 	 */
 	public boolean isIncidenceListModified(long incidenceListVersion);
 
 	/**
-	 * Changes the incidence list version, should be called whenever 
-	 * an incidence edge is created, deleted or reordered
+	 * Changes the incidence list version, should be called whenever an
+	 * incidence edge is created, deleted or reordered
 	 */
 	public void incidenceListModified();
 
@@ -324,6 +324,7 @@ public interface Vertex extends GraphElement {
 	 * the global edge sequence eSeq nor the alpha or omega vertices, only the
 	 * order of the edges at this vertex is changed
 	 */
+	@Deprecated
 	void putEdgeBefore(Edge e, Edge n);
 
 	/**
@@ -332,6 +333,7 @@ public interface Vertex extends GraphElement {
 	 * affect the global edge sequence eSeq nor the alpha or omega vertices,
 	 * only the order of the edges at this vertex is changed
 	 */
+	@Deprecated
 	void putEdgeAfter(Edge edge, Edge previousEdge);
 
 	/**
@@ -422,12 +424,16 @@ public interface Vertex extends GraphElement {
 	 */
 	public boolean isValidOmega(Edge edge);
 
+	@Deprecated
 	public Composition getFirstComposition();
 
+	@Deprecated
 	public Composition getFirstComposition(EdgeDirection orientation);
 
+	@Deprecated
 	public Aggregation getFirstAggregation();
 
+	@Deprecated
 	public Aggregation getFirstAggregation(EdgeDirection orientation);
 
 	/**

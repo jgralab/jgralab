@@ -49,25 +49,28 @@ public interface Graph extends AttributedElement {
 
 	/**
 	 * This method checks, if the graph is currently being loaded
+	 * 
 	 * @return true if the graph is being loaded
 	 */
 	public boolean isLoading();
 
 	/**
-	 * Sets the loading flag. 
+	 * Sets the loading flag.
+	 * 
 	 * @param isLoading
 	 */
 	public void setLoading(boolean isLoading);
 
 	/**
-	 * This method is called as soon as the loading of a graph is completed.
-	 * It is used internally and one should not touch it
+	 * This method is called as soon as the loading of a graph is completed. It
+	 * is used internally and one should not touch it
 	 */
+	@Deprecated
 	public void internalLoadingCompleted();
-	
+
 	/**
-	 * This method is called as soon as the loading of a graph is completed
-	 * One may use it to perform own operations as soon as the loading is completed
+	 * This method is called as soon as the loading of a graph is completed One
+	 * may use it to perform own operations as soon as the loading is completed
 	 */
 	public void loadingCompleted();
 
@@ -173,7 +176,6 @@ public interface Graph extends AttributedElement {
 	 *             if a vertex with the same id already exists
 	 */
 	void addVertex(Vertex newVertex);
-	
 
 	/**
 	 * @return true iff this graph contains the given vertex
@@ -202,7 +204,6 @@ public interface Graph extends AttributedElement {
 	 * @return true iff this graph contains the given edge
 	 */
 	boolean containsEdge(Edge e);
-
 
 	/**
 	 * removes the specified vertex from vSeq and erases its attributes
@@ -298,6 +299,7 @@ public interface Graph extends AttributedElement {
 	 * @param aVertex
 	 * @return the next vertex object in vSeq of aVertex
 	 */
+	@Deprecated
 	public Vertex getNextVertex(Vertex aVertex);
 
 	/**
@@ -307,6 +309,7 @@ public interface Graph extends AttributedElement {
 	 *            the class of the next vertex
 	 * @return the next vertex in vSeq of class aVertexClass or its superclasses
 	 */
+	@Deprecated
 	public Vertex getNextVertexOfClass(Vertex aVertex, VertexClass aVertexClass);
 
 	/**
@@ -316,6 +319,7 @@ public interface Graph extends AttributedElement {
 	 *            the javaclass of the next vertex
 	 * @return the next vertex in vSeq of class aVertexClass or its superclasses
 	 */
+	@Deprecated
 	public Vertex getNextVertexOfClass(Vertex aVertex,
 			Class<? extends Vertex> aM1VertexClass);
 
@@ -330,6 +334,7 @@ public interface Graph extends AttributedElement {
 	 *            subclasses of the given EdgeClass will be retrieved
 	 * @return the next vertex in vSeq of explicit class aVertexClass
 	 */
+	@Deprecated
 	public Vertex getNextVertexOfClass(Vertex aVertex,
 			VertexClass aVertexClass, boolean explicitType);
 
@@ -344,9 +349,9 @@ public interface Graph extends AttributedElement {
 	 *            subclasses of the given EdgeClass will be retrieved
 	 * @return the next vertex in vSeq of explicit class aVertexClass
 	 */
+	@Deprecated
 	public Vertex getNextVertexOfClass(Vertex aVertex,
 			Class<? extends Vertex> aM1VertexClass, boolean explicitType);
-
 
 	/**
 	 * @return first edge object of eSeq
@@ -391,6 +396,7 @@ public interface Graph extends AttributedElement {
 	 * @param anEdge
 	 * @return the next edge object in eSeq of anEdge
 	 */
+	@Deprecated
 	public Edge getNextEdgeInGraph(Edge anEdge);
 
 	/**
@@ -399,6 +405,7 @@ public interface Graph extends AttributedElement {
 	 * @param anEdgeClass
 	 * @return the next object of anEdgeClass or its superclasses in eSeq
 	 */
+	@Deprecated
 	public Edge getNextEdgeOfClassInGraph(Edge anEdge, EdgeClass anEdgeClass);
 
 	/**
@@ -407,6 +414,7 @@ public interface Graph extends AttributedElement {
 	 * @param anEdgeClass
 	 * @return the next object of anEdgeClass or its superclasses in eSeq
 	 */
+	@Deprecated
 	public Edge getNextEdgeOfClassInGraph(Edge anEdge,
 			Class<? extends Edge> anEdgeClass);
 
@@ -420,6 +428,7 @@ public interface Graph extends AttributedElement {
 	 *            subclasses of the given EdgeClass will be retrieved
 	 * @return the next object of explicit anEdgeClass in eSeq
 	 */
+	@Deprecated
 	public Edge getNextEdgeOfClassInGraph(Edge anEdge, EdgeClass anEdgeClass,
 			boolean explicitType);
 
@@ -433,6 +442,7 @@ public interface Graph extends AttributedElement {
 	 *            subclasses of the given EdgeClass will be retrieved
 	 * @return the next object of explicit anEdgeClass in eSeq
 	 */
+	@Deprecated
 	public Edge getNextEdgeOfClassInGraph(Edge anEdge,
 			Class<? extends Edge> anEdgeClass, boolean explicitType);
 
@@ -441,6 +451,7 @@ public interface Graph extends AttributedElement {
 	 *            a vertex
 	 * @return the first edge in the incidence list of v
 	 */
+	@Deprecated
 	public Edge getFirstEdge(Vertex v);
 
 	/**
@@ -451,20 +462,27 @@ public interface Graph extends AttributedElement {
 	 * @return the first edge in the incidence list of v with the specified
 	 *         orientation
 	 */
+	@Deprecated
 	public Edge getFirstEdge(Vertex v, EdgeDirection orientation);
 
+	@Deprecated
 	public Edge getFirstEdgeOfClass(Vertex v, EdgeClass ec);
 
+	@Deprecated
 	public Edge getFirstEdgeOfClass(Vertex v, EdgeClass ec, boolean noSubclasses);
 
+	@Deprecated
 	public Edge getFirstEdgeOfClass(Vertex v, EdgeClass ec,
 			EdgeDirection orientation, boolean noSubclasses);
 
+	@Deprecated
 	public Edge getFirstEdgeOfClass(Vertex v, Class<? extends Edge> ec);
 
+	@Deprecated
 	public Edge getFirstEdgeOfClass(Vertex v, Class<? extends Edge> ec,
 			boolean noSubclasses);
 
+	@Deprecated
 	public Edge getFirstEdgeOfClass(Vertex v, Class<? extends Edge> ec,
 			EdgeDirection orientation, boolean noSubclasses);
 
@@ -473,6 +491,7 @@ public interface Graph extends AttributedElement {
 	 *            an edge
 	 * @return the next edge in the incidence list of this(e)
 	 */
+	@Deprecated
 	public Edge getNextEdge(Edge e);
 
 	/**
@@ -483,20 +502,27 @@ public interface Graph extends AttributedElement {
 	 * @return the next edge in the incidence list of this(e) with the specified
 	 *         orientation
 	 */
+	@Deprecated
 	public Edge getNextEdge(Edge e, EdgeDirection orientation);
 
+	@Deprecated
 	public Edge getNextEdgeOfClass(Edge e, EdgeClass ec);
 
+	@Deprecated
 	public Edge getNextEdgeOfClass(Edge e, EdgeClass ec, boolean noSubclasses);
 
+	@Deprecated
 	public Edge getNextEdgeOfClass(Edge e, EdgeClass ec,
 			EdgeDirection orientation, boolean noSubclasses);
 
+	@Deprecated
 	public Edge getNextEdgeOfClass(Edge e, Class<? extends Edge> ec);
 
+	@Deprecated
 	public Edge getNextEdgeOfClass(Edge e, Class<? extends Edge> ec,
 			boolean noSubclasses);
 
+	@Deprecated
 	public Edge getNextEdgeOfClass(Edge e, Class<? extends Edge> ec,
 			EdgeDirection orientation, boolean noSubclasses);
 
@@ -505,6 +531,7 @@ public interface Graph extends AttributedElement {
 	 *            the vertex object which degree is to be determined
 	 * @return the degree of vertex v
 	 */
+	@Deprecated
 	public int getDegree(Vertex v);
 
 	/**
@@ -513,6 +540,7 @@ public interface Graph extends AttributedElement {
 	 * @param orientation
 	 *            the orientation the next incidence should have are counted
 	 */
+	@Deprecated
 	public int getDegree(Vertex v, EdgeDirection orientation);
 
 	/**
@@ -534,6 +562,7 @@ public interface Graph extends AttributedElement {
 	 *            the edge object which alpha vertex has to be determined
 	 * @return the alpha vertex of edge e
 	 */
+	@Deprecated
 	public Vertex getAlpha(Edge e);
 
 	/**
@@ -541,6 +570,7 @@ public interface Graph extends AttributedElement {
 	 *            the edge object which omega vertex has to be determined
 	 * @return the omega vertex of edge e
 	 */
+	@Deprecated
 	public Vertex getOmega(Edge e);
 
 	/**
@@ -551,6 +581,7 @@ public interface Graph extends AttributedElement {
 	 * @param target
 	 *            a vertex
 	 */
+	@Deprecated
 	public void putAfterVertex(Vertex target, Vertex source);
 
 	/**
@@ -564,6 +595,7 @@ public interface Graph extends AttributedElement {
 	 * @return true if source is after target in the global vertex sequence of
 	 *         this graph
 	 */
+	@Deprecated
 	public boolean isAfterVertex(Vertex target, Vertex source);
 
 	/**
@@ -577,6 +609,7 @@ public interface Graph extends AttributedElement {
 	 * @return true if source is before target in the global vertex sequence of
 	 *         this graph
 	 */
+	@Deprecated
 	public boolean isBeforeVertex(Vertex target, Vertex source);
 
 	/**
@@ -587,6 +620,7 @@ public interface Graph extends AttributedElement {
 	 * @param target
 	 *            an edge
 	 */
+	@Deprecated
 	public void putAfterEdgeInGraph(Edge target, Edge source);
 
 	/**
@@ -597,6 +631,7 @@ public interface Graph extends AttributedElement {
 	 * @param target
 	 *            a vertex
 	 */
+	@Deprecated
 	public void putBeforeVertex(Vertex target, Vertex source);
 
 	/**
@@ -607,6 +642,7 @@ public interface Graph extends AttributedElement {
 	 * @param target
 	 *            an edge
 	 */
+	@Deprecated
 	public void putBeforeEdgeInGraph(Edge target, Edge source);
 
 	/**
@@ -620,6 +656,7 @@ public interface Graph extends AttributedElement {
 	 * @return true if source is after target in the global edge sequence of
 	 *         this graph
 	 */
+	@Deprecated
 	public boolean isAfterEdgeInGraph(Edge target, Edge source);
 
 	/**
@@ -633,6 +670,7 @@ public interface Graph extends AttributedElement {
 	 * @return true if source is before target in the global edge sequence of
 	 *         this graph
 	 */
+	@Deprecated
 	public boolean isBeforeEdgeInGraph(Edge target, Edge source);
 
 	/**
@@ -641,6 +679,7 @@ public interface Graph extends AttributedElement {
 	 * the global edge sequence eSeq nor the alpha or omega vertices, only the
 	 * order of the edges at the <code>this-vertex</code> of e is changed
 	 */
+	@Deprecated
 	public void putEdgeBefore(Edge edge, Edge nextEdge);
 
 	/**
@@ -650,6 +689,7 @@ public interface Graph extends AttributedElement {
 	 * only the order of the edges at the <code>this-vertex</code> of e is
 	 * changed
 	 */
+	@Deprecated
 	public void putEdgeAfter(Edge edge, Edge previousEdge);
 
 	/**
@@ -658,9 +698,11 @@ public interface Graph extends AttributedElement {
 	 * global edge sequence eSeq nor the alpha or omega vertices, only the order
 	 * of the edges at the <code>this-vertex</code> of e is changed
 	 * 
-	 * @throws GraphException if the edges this-vertex and the given vertex are
-	 *        not identical
+	 * @throws GraphException
+	 *             if the edges this-vertex and the given vertex are not
+	 *             identical
 	 */
+	@Deprecated
 	public void insertEdgeAt(Vertex vertex, Edge edge, int pos);
 
 	/**
@@ -702,6 +744,7 @@ public interface Graph extends AttributedElement {
 	 * <code>alpha</code>. Also removes the edge from the incidence sequence
 	 * of its old alpha vertex
 	 */
+	@Deprecated
 	public void setAlpha(Edge e, Vertex alpha);
 
 	/**
@@ -709,6 +752,7 @@ public interface Graph extends AttributedElement {
 	 * <code>omega</code> Also removes the edge from the incidence sequence of
 	 * its old omega vertex
 	 */
+	@Deprecated
 	public void setOmega(Edge e, Vertex omega);
 
 	/**
@@ -749,6 +793,7 @@ public interface Graph extends AttributedElement {
 	 * @return a iterable object which can be iterated through using the
 	 *         advanced for-loop
 	 */
+	@Deprecated
 	public Iterable<Aggregation> aggregations();
 
 	/**
@@ -758,6 +803,7 @@ public interface Graph extends AttributedElement {
 	 * @return a iterable object which can be iterated through using the
 	 *         advanced for-loop
 	 */
+	@Deprecated
 	public Iterable<Composition> compositions();
 
 	/**
@@ -790,6 +836,5 @@ public interface Graph extends AttributedElement {
 	 *         advanced for-loop
 	 */
 	public Iterable<Vertex> vertices(Class<? extends Vertex> vclass);
-
 
 }

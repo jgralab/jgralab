@@ -21,25 +21,32 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
- 
+
 package de.uni_koblenz.jgralab;
 
 /**
- * This interface is the basic interface for all compositionEdgeClasses in the graph schemas
+ * This interface is the basic interface for all compositionEdgeClasses in the
+ * graph schemas
  */
 public interface Composition extends Aggregation {
 
+	@Deprecated
 	public Composition getNextCompositionInGraph();
-	
+
+	@Deprecated
 	public Composition getNextCompositionInGraph(boolean noSubClasses);
-	
+
+	@Deprecated
 	public Composition getNextComposition();
 
+	@Deprecated
 	public Composition getNextComposition(EdgeDirection orientation);
 
+	@Deprecated
 	public Composition getNextComposition(boolean noSubClasses);
 
-	public Composition getNextComposition(EdgeDirection orientation, boolean noSubClasses);
+	@Deprecated
+	public Composition getNextComposition(EdgeDirection orientation,
+			boolean noSubClasses);
 
-	
 }
