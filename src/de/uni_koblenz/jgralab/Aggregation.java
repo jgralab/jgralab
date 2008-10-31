@@ -21,26 +21,32 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
- 
+
 package de.uni_koblenz.jgralab;
 
 /**
- * This interface is the basic interface for all aggregation EdgeClasses in the graph schemas
+ * This interface is the basic interface for all aggregation EdgeClasses in the
+ * graph schemas
  */
 public interface Aggregation extends Edge {
-	
-	
+
+	@Deprecated
 	public Aggregation getNextAggregationInGraph();
-	
+
+	@Deprecated
 	public Aggregation getNextAggregationInGraph(boolean noSubClasses);
-	
+
+	@Deprecated
 	public Aggregation getNextAggregation();
 
+	@Deprecated
 	public Aggregation getNextAggregation(EdgeDirection orientation);
 
+	@Deprecated
 	public Aggregation getNextAggregation(boolean noSubClasses);
 
-	public Aggregation getNextAggregation(EdgeDirection orientation, boolean noSubClasses);
+	@Deprecated
+	public Aggregation getNextAggregation(EdgeDirection orientation,
+			boolean noSubClasses);
 
-	
 }
