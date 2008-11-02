@@ -21,7 +21,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
- 
+
 package de.uni_koblenz.jgralab.codegenerator;
 
 import java.util.Set;
@@ -38,21 +38,29 @@ public class ReversedEdgeCodeGenerator extends AttributedElementCodeGenerator {
 		super(edgeClass, schemaPackageName, implementationName);
 		rootBlock.setVariable("graphElementClass", "ReversedEdge");
 		rootBlock.setVariable("isImplementationClassOnly", "true");
-		rootBlock.setVariable("className", "Reversed" + edgeClass.getSimpleName());
-		rootBlock.setVariable("simpleClassName", "Reversed" + edgeClass.getSimpleName());
-		rootBlock.setVariable("simpleImplClassName", "Reversed" + edgeClass.getSimpleName()
-				+ "Impl");
-		rootBlock.setVariable("normalQualifiedClassName", schemaRootPackageName + "." + edgeClass.getQualifiedName());
+		rootBlock.setVariable("className", "Reversed"
+				+ edgeClass.getSimpleName());
+		rootBlock.setVariable("simpleClassName", "Reversed"
+				+ edgeClass.getSimpleName());
+		rootBlock.setVariable("simpleImplClassName", "Reversed"
+				+ edgeClass.getSimpleName() + "Impl");
+		rootBlock.setVariable("normalQualifiedClassName", schemaRootPackageName
+				+ "." + edgeClass.getQualifiedName());
 	}
 
 	@Override
 	protected CodeBlock createBody(boolean createClass) {
 		if (createClass) {
-			if (aec.getAllSuperClasses().contains(aec.getSchema().getDefaultCompositionClass()))
-				rootBlock.setVariable("baseClassName", "ReversedCompositionImpl");		
-			else if (aec.getAllSuperClasses().contains(aec.getSchema().getDefaultAggregationClass()))
-					rootBlock.setVariable("baseClassName", "ReversedAggregationImpl");
-			else rootBlock.setVariable("baseClassName", "ReversedEdgeImpl");
+			if (aec.getAllSuperClasses().contains(
+					aec.getSchema().getDefaultCompositionClass()))
+				rootBlock.setVariable("baseClassName",
+						"ReversedCompositionImpl");
+			else if (aec.getAllSuperClasses().contains(
+					aec.getSchema().getDefaultAggregationClass()))
+				rootBlock.setVariable("baseClassName",
+						"ReversedAggregationImpl");
+			else
+				rootBlock.setVariable("baseClassName", "ReversedEdgeImpl");
 			addImports("#jgImplPackage#.#baseClassName#");
 		}
 		CodeList code = (CodeList) super.createBody(createClass);
@@ -63,8 +71,7 @@ public class ReversedEdgeCodeGenerator extends AttributedElementCodeGenerator {
 
 	@Override
 	protected CodeBlock createConstructor() {
-		addImports("#jgImplPackage#.EdgeImpl",
-				"#jgPackage#.Graph");
+		addImports("#jgImplPackage#.EdgeImpl", "#jgPackage#.Graph");
 		return new CodeSnippet(true, "#className#Impl(EdgeImpl e, Graph g) {",
 				"\tsuper(e, g);", "}");
 	}
@@ -76,15 +83,16 @@ public class ReversedEdgeCodeGenerator extends AttributedElementCodeGenerator {
 		code.setVariable("cName", camelCase(a.getName()));
 		code.setVariable("type", a.getDomain()
 				.getJavaAttributeImplementationTypeName(schemaRootPackageName));
-		code.setVariable("isOrGet", a.getDomain().getJavaClassName(schemaRootPackageName).equals(
-				"Boolean") ? "is" : "get");
+		code.setVariable("isOrGet", a.getDomain().getJavaClassName(
+				schemaRootPackageName).equals("Boolean") ? "is" : "get");
 
 		if (body) {
-		//	addDomainImport(a);
-			code.add(
-					"public #type# #isOrGet##cName#() {",
-					"\treturn ((#normalQualifiedClassName#)normalEdge).#isOrGet##cName#();",
-					"}");
+			// addDomainImport(a);
+			code
+					.add(
+							"public #type# #isOrGet##cName#() {",
+							"\treturn ((#normalQualifiedClassName#)normalEdge).#isOrGet##cName#();",
+							"}");
 		} else {
 			code.add("public #type# #isOrGet##cName#();");
 		}
@@ -100,10 +108,12 @@ public class ReversedEdgeCodeGenerator extends AttributedElementCodeGenerator {
 				.getJavaAttributeImplementationTypeName(schemaRootPackageName));
 
 		if (body) {
-			//addDomainImport(a);
-			code.add("public void set#cName#(#type# #name#) {",
-					"\t((#normalQualifiedClassName#)normalEdge).set#cName#(#name#);",
-					"}");
+			// addDomainImport(a);
+			code
+					.add(
+							"public void set#cName#(#type# #name#) {",
+							"\t((#normalQualifiedClassName#)normalEdge).set#cName#(#name#);",
+							"}");
 		} else {
 			code.add("public void set#cName#(#type# #name#);");
 		}
@@ -112,20 +122,12 @@ public class ReversedEdgeCodeGenerator extends AttributedElementCodeGenerator {
 
 	@Override
 	protected CodeBlock createGenericGetter(Set<Attribute> attrSet) {
-		return new CodeSnippet(
-				true,
-				"public Object getAttribute(String attributeName) throws NoSuchFieldException {",
-				"\treturn ((#normalQualifiedClassName#)normalEdge).getAttribute(attributeName);",
-				"}");
+		return null;
 	}
-	
+
 	@Override
 	protected CodeBlock createGenericSetter(Set<Attribute> attrSet) {
-		return new CodeSnippet(
-				true,
-				"public void setAttribute(String attributeName, Object data) throws NoSuchFieldException {",
-				"\t((#normalQualifiedClassName#)normalEdge).setAttribute(attributeName, data);",
-				"}");
+		return null;
 	}
 
 	private CodeBlock createNextEdgeInGraphMethods() {
@@ -149,14 +151,16 @@ public class ReversedEdgeCodeGenerator extends AttributedElementCodeGenerator {
 		return code;
 	}
 
-	private CodeBlock createNextEdgeInGraphMethod(EdgeClass ec,	boolean withTypeFlag) {
+	private CodeBlock createNextEdgeInGraphMethod(EdgeClass ec,
+			boolean withTypeFlag) {
 		CodeSnippet code = new CodeSnippet(
 				true,
 				"public #ecName# getNext#ecCamelName#InGraph(#formalParams#) {",
 				"\treturn ((#ecName#)normalEdge).getNext#ecCamelName#InGraph(#actualParams#);",
 				"}");
 
-		code.setVariable("ecName", schemaRootPackageName + "." + ec.getQualifiedName());
+		code.setVariable("ecName", schemaRootPackageName + "."
+				+ ec.getQualifiedName());
 		code.setVariable("ecCamelName", camelCase(ec.getUniqueName()));
 		code.setVariable("formalParams", (withTypeFlag ? "boolean noSubClasses"
 				: ""));
@@ -197,7 +201,8 @@ public class ReversedEdgeCodeGenerator extends AttributedElementCodeGenerator {
 				"public #ecName# getNext#ecCamelName#(#formalParams#) {",
 				"\treturn (#ecName#)getNextEdgeOfClass(#ecName#.class#actualParams#);",
 				"}");
-		code.setVariable("ecName", schemaRootPackageName + "." + ec.getQualifiedName());
+		code.setVariable("ecName", schemaRootPackageName + "."
+				+ ec.getQualifiedName());
 		code.setVariable("ecCamelName", camelCase(ec.getUniqueName()));
 		code.setVariable("formalParams",
 				(withOrientation ? "EdgeDirection orientation" : "")
