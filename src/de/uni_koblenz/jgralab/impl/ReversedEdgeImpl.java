@@ -101,6 +101,18 @@ public abstract class ReversedEdgeImpl implements Edge {
 	/*
 	 * (non-Javadoc)
 	 * 
+	 * @see de.uni_koblenz.jgralab.AttributedElement#setAttribute(java.lang.String,
+	 *      java.lang.Object)
+	 */
+	@Override
+	public void setAttribute(String name, Object data)
+			throws NoSuchFieldException {
+		normalEdge.setAttribute(name, data);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see de.uni_koblenz.jgralab.AttributedElement#getAttributedElementClass()
 	 */
 	@Override
