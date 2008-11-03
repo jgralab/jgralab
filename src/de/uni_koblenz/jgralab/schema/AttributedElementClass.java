@@ -141,86 +141,119 @@ public interface AttributedElementClass extends NamedElement,
 
 	
 	/**
-	 * Adds a new attribute to the element.
+	 * Adds a new attribute to this element.
 	 * 
 	 * <p>
-	 * 	Pattern: e.addAttribute(name, domain);
+	 * 	<b>Pattern:</b> e.addAttribute(name, domain);
 	 * </p>
 	 * 
 	 * <p>
-	 * 	Preconditions:
+	 * 	<b>Preconditions:</b>
 	 * 	<ul>
-	 * 	 <li>The attribute´s name must be distinct from the {@link de.uni_koblenz.jgralab.schema.Schema#reservedTGWords reserved TG words} and {@link de.uni_koblenz.jgralab.schema.Schema#reservedJavaWords reserved Java words}.</li> 
-	 * 	 <li>The new attribute´s name must not collide with another attribute´s name already part of the element.</li>
+	 * 	 <li>The new attribute´s name must be distinct from the {@link de.uni_koblenz.jgralab.schema.Schema#reservedTGWords reserved TG words} and {@link de.uni_koblenz.jgralab.schema.Schema#reservedJavaWords reserved Java words}.</li> 
+	 * 	 <li>The new attribute´s name must be distinct from another attribute´s name already part of this element.</li>
 	 * 	</ul>
 	 * </p>
 	 * 
 	 * <p>
-	 * 	Postconditions:
+	 * 	<b>Postconditions:</b>
 	 * 	<ul>
-	 * 	 <li>The element has one additional attribute.</li>
-	 * 	 <li>The newly added attribute (newAttribute) can be found exactly one time in the element´s attribute list.</li>
+	 * 	 <li>This element has one additional attribute.</li>
+	 * 	 <li>The newly added attribute can be found exactly once in this element´s attribute list.</li>
 	 * 	</ul>
 	 * </p>
 	 * 
 	 * @param name
-	 * 			the attribute´s name
+	 * 			the new attribute´s name
 	 * @param domain
-	 * 			the attribute´s domain
+	 * 			the new attribute´s domain
 	 * 
 	 * @throws SchemaException
 	 * 			if:
 	 * 			<ul>
-	 * 			 <li>the element already contains an attribute bearing the same name,</li>
-	 * 			 <li>or the attribute´s name clashes with a reserved TG word</li>
+	 * 			 <li>this element already contains an attribute bearing the same name,</li>
+	 * 			 <li>or the new attribute´s name matches a reserved TG or Java word</li>
 	 * 			</ul>
 	 */
 	public void addAttribute(String name, Domain domain);
 
 	
 	/**
-	 * Adds a new attribute to the element.
+	 * Adds a new attribute to this element.
 	 * 
 	 * <p>
-	 * 	Pattern: e.addAttribute(anAttribute);
+	 * 	<b>Pattern:</b> e.addAttribute(anAttribute);
 	 * </p>
 	 * 
 	 * <p>
-	 * 	Preconditions:
+	 * 	<b>Preconditions:</b>
 	 * 	<ul>
-	 * 	 <li>The attribute´s name must be distinct from the {@link de.uni_koblenz.jgralab.schema.Schema#reservedTGWords reserved TG words} and {@link de.uni_koblenz.jgralab.schema.Schema#reservedJavaWords reserved Java words}.</li> 
-	 * 	 <li>The new attribute´s name must not collide with another attribute´s name already part of the element.</li>
+	 * 	 <li>The new attribute´s name must be distinct from the {@link de.uni_koblenz.jgralab.schema.Schema#reservedTGWords reserved TG words} and {@link de.uni_koblenz.jgralab.schema.Schema#reservedJavaWords reserved Java words}.</li> 
+	 * 	 <li>The new attribute´s name must be distinct from another attribute´s name already part of the element.</li>
 	 * 	</ul>
 	 * </p>
 	 * 
 	 * <p>
-	 * 	Postconditions:
+	 * 	<b>Postconditions:</b>
 	 * 	<ul>
-	 * 	 <li>The element has one additional attribute.</li>
-	 * 	 <li>The newly added attribute (<code>newAttribute</code>) can be found exactly one time in the element´s attribute list.</li>
+	 * 	 <li>This element has one additional attribute.</li>
+	 * 	 <li>The newly added attribute can be found exactly once in this element´s attribute list.</li>
 	 * 	</ul>
 	 * </p>
 	 * 
 	 * @param anAttribute
-	 *            the attribute to be added
+	 *            the new attribute to be added
 	 *            
 	 * @throws NullPointerException
-	 * 			if <code>anAttribute</code> is <code>null</code>.
+	 * 			if <code>anAttribute</code> is <code>NULL</code>.
 	 * 
 	 * @throws SchemaException
 	 * 			if:
 	 * 			<ul>
-	 * 			 <li>the element already contains an attribute bearing the same name,</li>
-	 * 			 <li>or the attribute´s name clashes with a reserved TG word</li>
+	 * 			 <li>this element already contains an attribute bearing the same name,</li>
+	 * 			 <li>or the attribute´s name matches a reserved TG or Java word</li>
 	 * 			</ul>
 	 */
 	public void addAttribute(Attribute anAttribute);
 
+	
 	/**
-	 * adds a whole list of attributes to the element
+	 * Adds a whole list of new attributes to this element.
+	 * 
+	 * <p>
+	 * 	<b>Pattern:</b> e.addAttributes(attrs);
+	 * </p>
+	 * 
+	 * <p>
+	 * 	<b>Preconditions:</b>
+	 * 	<ul>
+	 * 	 <li>Each new attribute´s name must be distinct from the {@link de.uni_koblenz.jgralab.schema.Schema#reservedTGWords reserved TG words} and {@link de.uni_koblenz.jgralab.schema.Schema#reservedJavaWords reserved Java words}.</li> 
+	 * 	 <li>Each new attribute´s name must be distinct from another attribute´s name already part of the element.</li>
+	 * 	 <li>Different attributes in the collection must have different names.</li>
+	 * 	</ul>
+	 * </p>
+	 * 
+	 * <p>
+	 * 	<b>Postconditions:</b>
+	 * 	<ul>
+	 * 	 <li>This element has as many new attributes, as were present in the collection of new attributes.</li>
+	 * 	 <li>The newly added attributes can be found exactly once in this element´s attribute list.</li>
+	 * 	</ul>
+	 * </p>
 	 * 
 	 * @param attrs
-	 *            the list of attributes to be appended
+	 *            the list of new attributes to append to this element
+	 *            
+	 * @throws NullPointerException
+	 * 			if <code>attrs</code> is <code>NULL</code>.
+	 * 
+	 * @throws SchemaException
+	 * 			if:
+	 * 			<ul>
+	 * 			 <li>this element already contains an attribute bearing the same name,</li>
+	 * 			 <li>different collection-attributes are named equally</li>
+	 * 			 <li>or the attribute´s name matches a reserved TG or Java word</li>
+	 * 			</ul>
 	 */
 	public void addAttributes(Collection<Attribute> attrs);
 
@@ -251,9 +284,27 @@ public interface AttributedElementClass extends NamedElement,
 	public SortedSet<Attribute> getAttributeList();
 
 	/**
+	 * Checks if this element holds an attribute with the given <code>name</code>.
+	 * 
+	 * <p>
+	 * 	<b>Pattern:</b> e.addAttributes(attrs);
+	 * </p>
+	 * 
+	 * <p>
+	 * 	<b>Preconditions:</b> true
+	 * </p>
+	 * 
+	 * <p>
+	 * 	<b>Postconditions:</b>
+	 * 	<ul>
+	 * 	 <li></li>
+	 * 	</ul>
+	 * </p>
+	 * 
 	 * @param name
 	 *            the name of the attribute to search for
-	 * @return true, if the element or its superclasses contains an attribute
+	 *            
+	 * @return <code>true</code>, if the element or its super-classes contains an attribute
 	 *         with the specified name
 	 */
 	public boolean containsAttribute(String name);
