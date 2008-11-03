@@ -13,9 +13,9 @@ import de.uni_koblenz.jgralab.schema.impl.RolenameEntry;
 import de.uni_koblenz.jgralab.schema.impl.VertexEdgeEntry;
 
 public class RolenameCodeGenerator {
-	
+
 	private VertexClass vertexClass;
-	
+
 	RolenameCodeGenerator(VertexClass vertexClass) {
 		this.vertexClass = vertexClass;
 	}
@@ -47,7 +47,7 @@ public class RolenameCodeGenerator {
 			s2 = new CodeSnippet();
 			s2.add("}"	);
 			list.addNoIndent(s2);
-			
+
 			s.add(
 				"public java.util.List<? extends #targetClass#> get#roleCamelName#List() {",
 				"\tjava.util.List<#targetClass#> list = new java.util.ArrayList<#targetClass#>();",
@@ -62,15 +62,15 @@ public class RolenameCodeGenerator {
 			return list;
 		}
 	}
-	
+
 	private CodeBlock invalidRolenameSnippet(CodeSnippet s) {
 		s.add("public java.util.List<#targetClass#> get#roleCamelName#List() {");
 		s.add("\tthrow new #jgPackage#.GraphException(\"The rolename #roleName# is redefined for the VertexClass #vertexClassName#\");");
 		s.add("}");
 		return s;
 	}
-	
-	
+
+
 	private CodeBlock validAddRolenameSnippet(CodeSnippet s, boolean createClass) {
 		if (!createClass) {
 			s.add(
@@ -89,15 +89,15 @@ public class RolenameCodeGenerator {
 		}
 		return s;
 	}
-	
+
 	private CodeBlock invalidAddRolenameSnippet(CodeSnippet s, boolean createClass) {
 		s.add(
 				"public #edgeClassName# add#roleCamelName#(#vertexClassName# vertex) {",
 				"\tthrow new SchemaException(\"No edges of class \" + #edgeClassName# + \"are allowed at this vertex\");", "}");
 		return s;
 	}
-	
-	
+
+
 	private CodeBlock validRemoveRolenameSnippet(CodeSnippet s, boolean createClass ) {
 		if (!createClass) {
 			s.add(
@@ -128,15 +128,15 @@ public class RolenameCodeGenerator {
 		}
 		return s;
 	}
-	
+
 	private CodeBlock invalidRemoveRolenameSnippet(CodeSnippet s, boolean createClass) {
 		s.add(
 				"public #edgeClassName# remove#roleCamelName#(#vertexClassName# vertex) {",
 				"\tthrow new SchemaException(\"There is no rolename \" + #roleCamelName# + \" allowed at this vertex\");", "}");
 		return s;
 	}
-	
-	
+
+
 	/**
 	 * Calculates the set of EdgeClasses that are direct or indirect subclasses of the given
 	 * EdgeClass <code>superclass</code> and that do not redefine the given rolename <code>role</code>
@@ -157,16 +157,16 @@ public class RolenameCodeGenerator {
 					returnSet.add(ec);
 					returnSet.addAll(getSubsettingSubclasses(ec, role, dir));
 				}
-			}		
+			}
 		}
 		return returnSet;
 	}
-	
+
 
 	/**
-	 * creates the <code>getRolenameList()</code> methods for the current
-	 * vertex.
-	 * 
+	 * Creates the <code>getRolenameList()</code>, <code>addRolename()</code>
+	 * and <code>removeRolename()</code> methods for the current vertex.
+	 *
 	 * @param createClass
 	 *            iff set to true, also the method bodies will be created
 	 * @return the CodeBlock that contains the code for the
@@ -174,15 +174,16 @@ public class RolenameCodeGenerator {
 	 */
 	CodeBlock createRolenameMethods(boolean createClass) {
 		Map<String, RolenameEntry> rolesToGenerateGetters = vertexClass.getRolenameMap();
-		/* build map of rolenames and associated sets of directed edge classes*/ 
+		/* build map of rolenames and associated sets of directed edge classes*/
 		HashMap<String, Set<EdgeClass>> outgoingEdgeClassMap = new HashMap<String, Set<EdgeClass>>();
 		HashMap<String, Set<EdgeClass>> incommingEdgeClassMap = new HashMap<String, Set<EdgeClass>>();
-		for (RolenameEntry entry : rolesToGenerateGetters.values()) { 
+		for (RolenameEntry entry : rolesToGenerateGetters.values()) {
 			HashSet<EdgeClass> incommingSet = new HashSet<EdgeClass>();
 			HashSet<EdgeClass> outgoingSet = new HashSet<EdgeClass>();
 			for (VertexEdgeEntry edgeEntry : entry.getVertexEdgeEntryList()) {
-				if (edgeEntry.getEdge().isAbstract())
+				if (edgeEntry.getEdge().isAbstract()) {
 					continue;
+				}
 				if (edgeEntry.getDirection() == EdgeDirection.IN) {
 					incommingSet.add(edgeEntry.getEdge());
 					incommingSet.addAll(getSubsettingSubclasses(edgeEntry.getEdge(), entry.getRoleNameAtFarEnd(), EdgeDirection.IN));
@@ -195,23 +196,24 @@ public class RolenameCodeGenerator {
 			incommingEdgeClassMap.put(entry.getRoleNameAtFarEnd(), incommingSet);
 			outgoingEdgeClassMap.put(entry.getRoleNameAtFarEnd(), outgoingSet);
 		}
-			
+
 
 		CodeList code = new CodeList();
 		for (RolenameEntry entry : rolesToGenerateGetters.values()) {
 			CodeSnippet s = configureRolenameCodesnippet(entry, createClass);
-			if (entry.isRedefined())
+			if (entry.isRedefined()) {
 				code.addNoIndent(invalidRolenameSnippet(s));
-			else {
+			} else {
 				Set<EdgeClass> paramSet = incommingEdgeClassMap.get(entry.getRoleNameAtFarEnd());
 				if (paramSet.isEmpty()) {
 					paramSet = outgoingEdgeClassMap.get(entry.getRoleNameAtFarEnd());
 				}
 				code.addNoIndent(validRolenameSnippet(s, createClass, paramSet));
-			}	
+			}
 			for (VertexEdgeEntry edgeEntry : entry.getVertexEdgeEntryList()) {
-				if (edgeEntry.getEdge().isAbstract())
+				if (edgeEntry.getEdge().isAbstract()) {
 					continue;
+				}
 				String schemaRootPackageName = entry.getEdgeClassToTraverse().getEdgeClass().getSchema().getPackageName();
 				CodeSnippet addSnippet = new CodeSnippet(true);
 				addSnippet.setVariable("roleCamelName", CodeGenerator.camelCase(entry.getRoleNameAtFarEnd()));
@@ -219,7 +221,7 @@ public class RolenameCodeGenerator {
 				addSnippet.setVariable("edgeClassUniqueName", CodeGenerator.camelCase(edgeEntry.getEdge().getUniqueName()));
 				addSnippet.setVariable("graphClassName", schemaRootPackageName + "." + edgeEntry.getEdge().getGraphClass().getQualifiedName());
 				addSnippet.setVariable("vertexClassName", schemaRootPackageName + "." + edgeEntry.getVertex().getQualifiedName());
-				
+
 				if (edgeEntry.getDirection() == EdgeDirection.IN) {
 					addSnippet.setVariable("fromVertex", "vertex");
 					addSnippet.setVariable("toVertex", "this");
@@ -235,10 +237,10 @@ public class RolenameCodeGenerator {
 				if (!edgeEntry.isRedefined()) {
 					code.addNoIndent(validAddRolenameSnippet(addSnippet, createClass));
 					code.addNoIndent(validRemoveRolenameSnippet(removeSnippet, createClass));
-				} else { 
+				} else {
 					code.addNoIndent(invalidAddRolenameSnippet(addSnippet, createClass));
 					code.addNoIndent(invalidRemoveRolenameSnippet(removeSnippet, createClass));
-				}	
+				}
 			}
 		}
 		return code;
@@ -246,7 +248,7 @@ public class RolenameCodeGenerator {
 
 	/**
 	 * Creates a codeSnippet
-	 * 
+	 *
 	 * @param codeList
 	 *            The CodeList that represents the code for all Rolename Methods
 	 * @param entry
@@ -284,5 +286,5 @@ public class RolenameCodeGenerator {
 		s.setVariable("ecCamelName", CodeGenerator.camelCase(lcec.getUniqueName()));
 		return s;
 	}
-	
+
 }
