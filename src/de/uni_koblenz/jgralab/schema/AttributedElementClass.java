@@ -144,7 +144,7 @@ public interface AttributedElementClass extends NamedElement,
 	 * Adds a new attribute to this element.
 	 * 
 	 * <p>
-	 * 	<b>Pattern:</b> e.addAttribute(name, domain);
+	 * 	<b>Pattern:</b> <code>e.addAttribute(name, domain);</code>
 	 * </p>
 	 * 
 	 * <p>
@@ -182,7 +182,7 @@ public interface AttributedElementClass extends NamedElement,
 	 * Adds a new attribute to this element.
 	 * 
 	 * <p>
-	 * 	<b>Pattern:</b> e.addAttribute(anAttribute);
+	 * 	<b>Pattern:</b> <code>e.addAttribute(anAttribute);</code>
 	 * </p>
 	 * 
 	 * <p>
@@ -204,9 +204,6 @@ public interface AttributedElementClass extends NamedElement,
 	 * @param anAttribute
 	 *            the new attribute to be added
 	 *            
-	 * @throws NullPointerException
-	 * 			if <code>anAttribute</code> is <code>NULL</code>.
-	 * 
 	 * @throws SchemaException
 	 * 			if:
 	 * 			<ul>
@@ -221,7 +218,7 @@ public interface AttributedElementClass extends NamedElement,
 	 * Adds a whole list of new attributes to this element.
 	 * 
 	 * <p>
-	 * 	<b>Pattern:</b> e.addAttributes(attrs);
+	 * 	<b>Pattern:</b> <code>e.addAttributes(attrs);</code>
 	 * </p>
 	 * 
 	 * <p>
@@ -244,9 +241,6 @@ public interface AttributedElementClass extends NamedElement,
 	 * @param attrs
 	 *            the list of new attributes to append to this element
 	 *            
-	 * @throws NullPointerException
-	 * 			if <code>attrs</code> is <code>NULL</code>.
-	 * 
 	 * @throws SchemaException
 	 * 			if:
 	 * 			<ul>
@@ -284,21 +278,18 @@ public interface AttributedElementClass extends NamedElement,
 	public SortedSet<Attribute> getAttributeList();
 
 	/**
-	 * Checks if this element holds an attribute with the given <code>name</code>.
+	 * Checks if this element has an attribute with the given <code>name</code>.
 	 * 
 	 * <p>
-	 * 	<b>Pattern:</b> e.addAttributes(attrs);
+	 * 	<b>Pattern:</b> <code>e.containsAttribute(name);</code>
 	 * </p>
 	 * 
 	 * <p>
-	 * 	<b>Preconditions:</b> true
+	 * 	<b>Precondition:</b> The name of the attribute must not be empty.
 	 * </p>
 	 * 
 	 * <p>
-	 * 	<b>Postconditions:</b>
-	 * 	<ul>
-	 * 	 <li></li>
-	 * 	</ul>
+	 * 	<b>Postconditions:</b> none
 	 * </p>
 	 * 
 	 * @param name
@@ -346,7 +337,21 @@ public interface AttributedElementClass extends NamedElement,
 	public Set<AttributedElementClass> getDirectSubClasses();
 
 	/**
-	 * @return all direct and indirect subclasses of this class
+	  * Lists all direct and indirect subclasses of this element.
+	  * 
+	  * <p>
+	  * 	<b>Pattern:</b> <code>e.getAllSubClasses();</code>
+	  * </p>
+	  * 
+	  * <p>
+	  * 	<b>Preconditions:</b> none
+	  * </p>
+	  * 
+	  * <p>
+	  * 	<b>Postconditions:</b> none
+	  * </p>
+	  * 
+	  * @return all direct and indirect subclasses of this class
 	 */
 	public Set<AttributedElementClass> getAllSubClasses();
 
