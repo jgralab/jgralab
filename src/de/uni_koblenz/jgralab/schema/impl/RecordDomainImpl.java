@@ -98,10 +98,6 @@ public class RecordDomainImpl extends CompositeDomainImpl implements
 		components.remove(name);
 	}
 
-	public int getComponentCount() {
-		return components.size();
-	}
-
 	@Override
 	public Domain getDomainOfComponent(String name) {
 		return components.get(name);
