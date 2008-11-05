@@ -340,7 +340,7 @@ public interface AttributedElementClass extends NamedElement,
 	  * Lists all direct and indirect subclasses of this element.
 	  * 
 	  * <p>
-	  * 	<b>Pattern:</b> <code>e.getAllSubClasses();</code>
+	  * 	<b>Pattern:</b> <code>l = e.getAllSubClasses();</code>
 	  * </p>
 	  * 
 	  * <p>
@@ -348,7 +348,7 @@ public interface AttributedElementClass extends NamedElement,
 	  * </p>
 	  * 
 	  * <p>
-	  * 	<b>Postconditions:</b> none
+	  * 	<b>Postconditions:</b>
 	  * </p>
 	  * 
 	  * @return all direct and indirect subclasses of this class
