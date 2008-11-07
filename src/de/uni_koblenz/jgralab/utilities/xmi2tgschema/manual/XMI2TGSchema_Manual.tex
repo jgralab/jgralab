@@ -29,19 +29,21 @@
 	
 	\texttt{java -jar saxon9.jar } \texttt{-s:}\emph{source}\texttt{ -xsl:}\emph{path}\texttt{/XMI2TGSchema.xsl} \\
 	\mbox{[}\texttt{-o:}\emph{target}] \\
-	\mbox{[}\texttt{appendEdgeIds=}(\texttt{yes}|\texttt{no})]\texttt{ }[\texttt{autoCorrect=}(\texttt{yes}|\texttt{no})] \\
-	\mbox{[}\texttt{errorDetection=}(\texttt{yes}|\texttt{no})] \\
-	\mbox{[}\texttt{extendedEdgeClassNames=}(\texttt{yes}|\texttt{no})] \\
-	\mbox{[}\texttt{schemaName=}\emph{schemaName}]\texttt{ }[\texttt{tool=}\emph{tool}] \\
+	\texttt{schemaName=}\emph{schemaName} \\
+	\mbox{[}\texttt{tool=}\emph{tool}]\texttt{ }[\texttt{appendEdgeIds=}(\texttt{yes}|\texttt{no})]\texttt{ }[\texttt{autoCorrect=}(\texttt{yes}|\texttt{no})] \\
+	\mbox{[}\texttt{errorDetection=}(\texttt{yes}|\texttt{no})]\texttt{ }[\texttt{extendedEdgeClassNames=}(\texttt{yes}|\texttt{no})] \\
 	\mbox{[}\texttt{uml=}(\texttt{yes}|\texttt{no})] \\
 
-	with:
+	with the following mandatory parameters:
 	\begin{itemize}
 		\item \emph{source} -- The XMI-file to be transformed.
 		\item \emph{path} -- The path to the XSL stylesheet \texttt{XMI2TGSchema.xsl}.
-		\item \emph{target} -- The output file. If not given, the standard output device (usually the screen) is used.
+		\item \emph{schemaName} -- Defines the name of the created Schema. The name must correspond to the UML package in the modeling tool which contains the schema (e.\ g.\ \texttt{de.uni-koblenz.jgstreetmap.JgStreetMap}). If the package does not contain a class with stereotype \texttt{<<GraphClass>>}, the name of the created GraphClass is \texttt{DefaultGraphClass}.
 	\end{itemize}
+	
+	The following parameters are optional:
 	\begin{itemize}
+		\item \emph{target} -- The output file. If not given, the standard output device (usually the screen) is used.
 		\item \emph{appendEdgeIds} -- If set to \texttt{yes}, ids of associations are added to the names of corresponding EdgeClasses. This helps to avoid duplicate names, but makes code harder to understand. Default is \texttt{no}.
 		\item \emph{autoCorrect} -- If set to \texttt{yes}, the following corrections are made:
 		\begin{itemize}
@@ -58,7 +60,6 @@
 		\end{itemize}
 		It is recommended to set this parameter to \texttt{yes}. Default is \texttt{yes}.
 		\item \emph{extendedEdgeClassNames} --  If set to \texttt{yes} generated Edge Class names correspond to the extended form \emph{FromRolename}\texttt{LinksTo}\emph{ToRolename}, else names correspond to \texttt{LinksTo}\emph{ToRolename}. Default is \texttt{no}.
-		\item \emph{schemaName} -- Defines the name of the created Schema. The name must correspond to the UML package in the modeling tool which contains the schema (e.\ g.\ \texttt{de.uni-koblenz.jgstreetmap.JgStreetMap}). If the package does not contain a class with stereotype \texttt{<<GraphClass>>}, the name of the created GraphClass is \texttt{DefaultGraphClass}.
 		\item \emph{tool} -- The tool used to create the XMI file. As yet, the only possible value is \texttt{ea}. Omission of this parameter probably results in corrupted TG files (e.g.\ due to missing attribute types).
 		\item \emph{uml} -- If set to \texttt{yes}, the grUML equivalents of the following UML constructs are created:
 		\begin{itemize}
