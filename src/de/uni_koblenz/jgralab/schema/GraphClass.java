@@ -146,6 +146,7 @@ public interface GraphClass extends AttributedElementClass {
 	 * <ul>
 	 * <li><code>graphClass</code> must have one issue of freshly created
 	 * AggregationClass</li>
+	 * <li>Depending on the <code>aggregateFrom</code>-switch, one of the two vertices must be marked as being the aggregation</li>
 	 * </ul>
 	 * </p>
 	 * 
@@ -192,6 +193,7 @@ public interface GraphClass extends AttributedElementClass {
 	 * <ul>
 	 * <li><code>graphClass</code> must have one issue of freshly created
 	 * AggregationClass</li>
+	 * <li>Depending on the <code>aggregateFrom</code>-switch, one of the two vertices must be marked as being the aggregation</li>
 	 * </ul>
 	 * </p>
 	 * 
@@ -245,6 +247,7 @@ public interface GraphClass extends AttributedElementClass {
 	 * <ul>
 	 * <li><code>graphClass</code> must have one issue of freshly created
 	 * AggregationClass</li>
+	 * <li>Depending on the <code>aggregateFrom</code>-switch, one of the two vertices must be marked as being the aggregation</li>
 	 * </ul>
 	 * </p>
 	 * 
@@ -307,6 +310,7 @@ public interface GraphClass extends AttributedElementClass {
 	 * <ul>
 	 * <li><code>graphClass</code> must have one issue of freshly created
 	 * AggregationClass</li>
+	 * <li>Depending on the <code>aggregateFrom</code>-switch, one of the two vertices must be marked as being the aggregation</li>
 	 * </ul>
 	 * </p>
 	 * 
