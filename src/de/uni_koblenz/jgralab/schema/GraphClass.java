@@ -21,7 +21,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
- 
+
 package de.uni_koblenz.jgralab.schema;
 
 import java.util.List;
@@ -46,7 +46,7 @@ public interface GraphClass extends AttributedElementClass {
 	 * @return the created edge class
 	 */
 	public EdgeClass createEdgeClass(QualifiedName name, VertexClass from,
-			VertexClass to) ;
+			VertexClass to);
 
 	/**
 	 * creates an edge class between vertex class from with the rolename
@@ -66,8 +66,7 @@ public interface GraphClass extends AttributedElementClass {
 	 * @return the created edge class
 	 */
 	public EdgeClass createEdgeClass(QualifiedName name, VertexClass from,
-			String fromRoleName, VertexClass to, String toRoleName)
-			;
+			String fromRoleName, VertexClass to, String toRoleName);
 
 	/**
 	 * creates an edge class between vertex class from, multiplicity fromMin and
@@ -91,8 +90,7 @@ public interface GraphClass extends AttributedElementClass {
 	 * @return the created edge class
 	 */
 	public EdgeClass createEdgeClass(QualifiedName name, VertexClass from,
-			int fromMin, int fromMax, VertexClass to, int toMin, int toMax)
-			;
+			int fromMin, int fromMax, VertexClass to, int toMin, int toMax);
 
 	/**
 	 * creates an edge class between vertex class from, multiplicity fromMin and
@@ -121,7 +119,7 @@ public interface GraphClass extends AttributedElementClass {
 	 */
 	public EdgeClass createEdgeClass(QualifiedName name, VertexClass from,
 			int fromMin, int fromMax, String fromRoleName, VertexClass to,
-			int toMin, int toMax, String toRoleName) ;
+			int toMin, int toMax, String toRoleName);
 
 	/**
 	 * creates an aggregation class between from and to with the
@@ -140,8 +138,7 @@ public interface GraphClass extends AttributedElementClass {
 	 * @return the created aggregation class
 	 */
 	public AggregationClass createAggregationClass(QualifiedName name,
-			VertexClass from, boolean aggregateFrom, VertexClass to)
-			;
+			VertexClass from, boolean aggregateFrom, VertexClass to);
 
 	/**
 	 * creates an aggregation class between vertex class from with the rolename
@@ -166,7 +163,7 @@ public interface GraphClass extends AttributedElementClass {
 	 */
 	public AggregationClass createAggregationClass(QualifiedName name,
 			VertexClass from, String fromRoleName, boolean aggregateFrom,
-			VertexClass to, String toRoleName) ;
+			VertexClass to, String toRoleName);
 
 	/**
 	 * creates an aggregation class between vertex class from, multiplicity
@@ -199,13 +196,34 @@ public interface GraphClass extends AttributedElementClass {
 	 */
 	public AggregationClass createAggregationClass(QualifiedName name,
 			VertexClass from, int fromMin, int fromMax, boolean aggregateFrom,
-			VertexClass to, int toMin, int toMax) ;
+			VertexClass to, int toMin, int toMax);
 
 	/**
-	 * creates an aggregation class between vertex class from, multiplicity
-	 * fromMin and fromMax with the rolename fromRoleName, and vertex class to,
-	 * multiplicity toMin and toMax with the rolename toRoleName and the
-	 * aggregationclassname name
+	 * Creates an aggregation class between two vertices.
+	 * 
+	 * <p>
+	 * <b>Pattern:</b>
+	 * <code>graphClass.add(name, from, fromMin, fromMax, fromRoleName, aggregateFrom, to, toMin, toMax, toRoleName)</code>
+	 * </p>
+	 * 
+	 * <p>
+	 * <b>Preconditions:</b>
+	 * <ul>
+	 * <li><code>name</code> must not be empty</li>
+	 * <li><code>name</code> must be unique in the schema</li>
+	 * <li><code>0 <= fromMin <= fromMax <= Integer.maxValue</code></li>
+	 * <li><code>0 <= toMin <= toMax <= Integer.maxValue</code></li>
+	 * </ul>
+	 * </p>
+	 * 
+	 * <p>
+	 * <b>Postconditions:</b>
+	 * <ul>
+	 * <li></li>
+	 * <li></li>
+	 * </ul>
+	 * </p>
+	 * 
 	 * 
 	 * @param name
 	 *            a unique name in the schema
@@ -233,12 +251,14 @@ public interface GraphClass extends AttributedElementClass {
 	 *            'to-end
 	 * @param toRoleName
 	 *            the unique rolename of the 'to'-end
+	 * @throws SchemaException
+	 *            if there already is an element with the given <code>name</code> in the schema
 	 * @return the created aggregation class
 	 */
 	public AggregationClass createAggregationClass(QualifiedName name,
 			VertexClass from, int fromMin, int fromMax, String fromRoleName,
 			boolean aggregateFrom, VertexClass to, int toMin, int toMax,
-			String toRoleName) ;
+			String toRoleName);
 
 	/**
 	 * creates an composition class between from and to with the
@@ -257,8 +277,7 @@ public interface GraphClass extends AttributedElementClass {
 	 * @return the created composition class
 	 */
 	public CompositionClass createCompositionClass(QualifiedName name,
-			VertexClass from, boolean compositeFrom, VertexClass to)
-			;
+			VertexClass from, boolean compositeFrom, VertexClass to);
 
 	/**
 	 * creates a composition class between vertex class from with the rolename
@@ -283,7 +302,7 @@ public interface GraphClass extends AttributedElementClass {
 	 */
 	public CompositionClass createCompositionClass(QualifiedName name,
 			VertexClass from, String fromRoleName, boolean compositeFrom,
-			VertexClass to, String toRoleName) ;
+			VertexClass to, String toRoleName);
 
 	/**
 	 * creates a composition class between vertex class from, multiplicity
@@ -316,7 +335,7 @@ public interface GraphClass extends AttributedElementClass {
 	 */
 	public CompositionClass createCompositionClass(QualifiedName name,
 			VertexClass from, int fromMin, int fromMax, boolean compositeFrom,
-			VertexClass to, int toMin, int toMax) ;
+			VertexClass to, int toMin, int toMax);
 
 	/**
 	 * creates a composition class between vertex class from, multiplicity
@@ -355,7 +374,7 @@ public interface GraphClass extends AttributedElementClass {
 	public CompositionClass createCompositionClass(QualifiedName name,
 			VertexClass from, int fromMin, int fromMax, String fromRoleName,
 			boolean compositeFrom, VertexClass to, int toMin, int toMax,
-			String toRoleName) ;
+			String toRoleName);
 
 	/**
 	 * creates a vertex class with the vertexclassname name
@@ -364,17 +383,21 @@ public interface GraphClass extends AttributedElementClass {
 	 *            the name of the vertex class to be created
 	 * @return the created vertex class
 	 */
-	public VertexClass createVertexClass(QualifiedName name) ;
+	public VertexClass createVertexClass(QualifiedName name);
 
 	/**
-	 * addSuperClass can not be called for GraphClass and always throws a SchemaException.
+	 * addSuperClass can not be called for GraphClass and always throws a
+	 * SchemaException.
+	 * 
 	 * @param superClass
 	 *            a graph class
 	 */
-	public void addSuperClass(GraphClass superClass) ;
+	public void addSuperClass(GraphClass superClass);
 
 	/**
-	 * addSubClass can not be called for GraphClass and always throws a SchemaException.
+	 * addSubClass can not be called for GraphClass and always throws a
+	 * SchemaException.
+	 * 
 	 * @param subClass
 	 *            a graph class
 	 */
@@ -386,7 +409,7 @@ public interface GraphClass extends AttributedElementClass {
 	 * @return true, if this graph class aggregates aGraphElementClass
 	 */
 	public boolean knowsOwn(GraphElementClass aGraphElementClass);
-	
+
 	/**
 	 * @param aGraphElementClass
 	 *            a vertex/edge/aggregation/composition class
@@ -400,7 +423,7 @@ public interface GraphClass extends AttributedElementClass {
 	 * @return true, if this graph class aggregates aGraphElementClass
 	 */
 	public boolean knows(GraphElementClass aGraphElementClass);
-	
+
 	/**
 	 * @param aGraphElementClass
 	 *            a vertex/edge/aggregation/composition class name
@@ -416,104 +439,120 @@ public interface GraphClass extends AttributedElementClass {
 	public GraphElementClass getGraphElementClass(QualifiedName name);
 
 	/**
-	 * @return a list of all edge classes this graphclass knows,
-	 * excluding inherited edge classes
+	 * @return a list of all edge classes this graphclass knows, excluding
+	 *         inherited edge classes
 	 */
 	public List<EdgeClass> getOwnEdgeClasses();
-	
+
 	/**
-	 * @return a list of all EdgeClasses this graphclass knows,
-	 * including inherited EdgeClasses
+	 * @return a list of all EdgeClasses this graphclass knows, including
+	 *         inherited EdgeClasses
 	 */
 	public List<EdgeClass> getEdgeClasses();
-	
+
 	/**
 	 * @return a list of all composition classes this graphclass knows,
-	 * excluding inherited composition classes
+	 *         excluding inherited composition classes
 	 */
 	public List<CompositionClass> getOwnCompositionClasses();
-	
+
 	/**
 	 * @return a list of all composition classes this graphclass knows,
-	 * including inherited composition classes
+	 *         including inherited composition classes
 	 */
 	public List<CompositionClass> getCompositionClasses();
-	
+
 	/**
 	 * @return a list of all aggregation classes this graphclass knows,
-	 * excluding inherited aggregation classes
+	 *         excluding inherited aggregation classes
 	 */
 	public List<AggregationClass> getOwnAggregationClasses();
-	
+
 	/**
 	 * @return a list of all aggregation classes this graphclass knows,
-	 * including inherited aggregation classes
+	 *         including inherited aggregation classes
 	 */
 	public List<AggregationClass> getAggregationClasses();
-	
+
 	/**
 	 * @return a list of all the edge/vertex/aggregation/composition classes of
 	 *         this graph class, excluding inherited classes
 	 */
 	public List<GraphElementClass> getOwnGraphElementClasses();
-	
+
 	/**
 	 * @return a list of all the edge/vertex/aggregation/composition classes of
 	 *         this graph class, including inherited classes
 	 */
 	public List<GraphElementClass> getGraphElementClasses();
-	
+
 	/**
-	 * @return a list of all the vertex classes of
-	 *         this graph class, excluding inherited vertex classes
+	 * @return a list of all the vertex classes of this graph class, excluding
+	 *         inherited vertex classes
 	 */
 	public List<VertexClass> getOwnVertexClasses();
 
 	/**
-	 * @return a list of all the vertex classes of
-	 *         this graph class, including inherited vertex classes
+	 * @return a list of all the vertex classes of this graph class, including
+	 *         inherited vertex classes
 	 */
 	public List<VertexClass> getVertexClasses();
-	
+
 	/**
 	 * 
 	 * @return the number of edge classes this graph class knows, excluding
-	 * inherited edge classes
+	 *         inherited edge classes
 	 */
 	public int getOwnEdgeClassCount();
-	
+
 	/**
 	 * 
 	 * @return the number of vertex classes this graph class knows, excluding
-	 * inherited vertex classes
+	 *         inherited vertex classes
 	 */
 	public int getOwnVertexClassCount();
 
 	/**
-	 * Returns the VertexClass with the given name. This GraphClass and the superclasses will be searched for a VertexClass with this name
-	 * @param name the name of the VertexClass to search for
-	 * @return the VertexClass with the given name or null, if no such VertexClass exists
+	 * Returns the VertexClass with the given name. This GraphClass and the
+	 * superclasses will be searched for a VertexClass with this name
+	 * 
+	 * @param name
+	 *            the name of the VertexClass to search for
+	 * @return the VertexClass with the given name or null, if no such
+	 *         VertexClass exists
 	 */
 	public VertexClass getVertexClass(QualifiedName name);
-	
+
 	/**
-	 * Returns the EdgeClass with the given name. This GraphClass and the superclasses will be searched for a EdgeClass with this name
-	 * @param name the name of the EdgeClass to search for
-	 * @return the EdgeClass with the given name or null, if no such EdgeClass exists
+	 * Returns the EdgeClass with the given name. This GraphClass and the
+	 * superclasses will be searched for a EdgeClass with this name
+	 * 
+	 * @param name
+	 *            the name of the EdgeClass to search for
+	 * @return the EdgeClass with the given name or null, if no such EdgeClass
+	 *         exists
 	 */
 	public EdgeClass getEdgeClass(QualifiedName name);
-	
+
 	/**
-	 * Returns the CompositionClass with the given name. This GraphClass and the superclasses will be searched for a CompositionClass with this name
-	 * @param name the name of the CompositionClass to search for
-	 * @return the CompositionClass with the given name or null, if no such CompositionClass exists
+	 * Returns the CompositionClass with the given name. This GraphClass and the
+	 * superclasses will be searched for a CompositionClass with this name
+	 * 
+	 * @param name
+	 *            the name of the CompositionClass to search for
+	 * @return the CompositionClass with the given name or null, if no such
+	 *         CompositionClass exists
 	 */
 	public CompositionClass getCompositionClass(QualifiedName name);
-	
+
 	/**
-	 * Returns the AggregationClass with the given name. This GraphClass and the superclasses will be searched for a AggregationClass with this name
-	 * @param name the name of the AggregationClass to search for
-	 * @return the AggregationClass with the given name or null, if no such AggregationClass exists
+	 * Returns the AggregationClass with the given name. This GraphClass and the
+	 * superclasses will be searched for a AggregationClass with this name
+	 * 
+	 * @param name
+	 *            the name of the AggregationClass to search for
+	 * @return the AggregationClass with the given name or null, if no such
+	 *         AggregationClass exists
 	 */
 	public AggregationClass getAggregationClass(QualifiedName name);
 
