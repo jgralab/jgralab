@@ -122,8 +122,32 @@ public interface GraphClass extends AttributedElementClass {
 			int toMin, int toMax, String toRoleName);
 
 	/**
-	 * creates an aggregation class between from and to with the
-	 * aggregationclassname name
+	 * Creates an aggregation class between two vertices.
+	 * 
+	 * <p>
+	 * <b>Pattern:</b>
+	 * <code>graphClass.createAggregationClass(name, from, aggregateFrom, to)</code>
+	 * </p>
+	 * 
+	 * <p>
+	 * <b>Preconditions:</b>
+	 * <ul>
+	 * <li><code>name</code> must not be empty</li>
+	 * <li><code>name</code> must be unique in the schema</li>
+	 * <li><code>from</code> must be a valid (either new and unique, or an
+	 * existing) VertexClass</li>
+	 * <li><code>to</code> must be a valid (either new and unique, or an
+	 * existing) VertexClass</li>
+	 * </ul>
+	 * </p>
+	 * 
+	 * <p>
+	 * <b>Postconditions:</b>
+	 * <ul>
+	 * <li><code>graphClass</code> must have one issue of freshly created
+	 * AggregationClass</li>
+	 * </ul>
+	 * </p>
 	 * 
 	 * @param name
 	 *            a unique name in the schema
@@ -135,15 +159,41 @@ public interface GraphClass extends AttributedElementClass {
 	 *            'to'-side of the aggregation class
 	 * @param to
 	 *            the vertex class where the aggregation class ends
+	 * @throws SchemaException
+	 *             if there already is an element with the given
+	 *             <code>name</code> in the schema
 	 * @return the created aggregation class
 	 */
 	public AggregationClass createAggregationClass(QualifiedName name,
 			VertexClass from, boolean aggregateFrom, VertexClass to);
 
 	/**
-	 * creates an aggregation class between vertex class from with the rolename
-	 * fromRoleName and vertex class to with the rolename toRoleName and the
-	 * aggregationclassname name
+	 * Creates an aggregation class between two vertices.
+	 * 
+	 * <p>
+	 * <b>Pattern:</b>
+	 * <code>graphClass.createAggregationClass(name, from, fromRoleName, aggregateFrom, to, toRoleName)</code>
+	 * </p>
+	 * 
+	 * <p>
+	 * <b>Preconditions:</b>
+	 * <ul>
+	 * <li><code>name</code> must not be empty</li>
+	 * <li><code>name</code> must be unique in the schema</li>
+	 * <li><code>from</code> must be a valid (either new and unique, or an
+	 * existing) VertexClass</li>
+	 * <li><code>to</code> must be a valid (either new and unique, or an
+	 * existing) VertexClass</li>
+	 * </ul>
+	 * </p>
+	 * 
+	 * <p>
+	 * <b>Postconditions:</b>
+	 * <ul>
+	 * <li><code>graphClass</code> must have one issue of freshly created
+	 * AggregationClass</li>
+	 * </ul>
+	 * </p>
 	 * 
 	 * @param name
 	 *            a unique name in the schema
@@ -159,6 +209,9 @@ public interface GraphClass extends AttributedElementClass {
 	 *            the vertex class where the aggregation class ends
 	 * @param toRoleName
 	 *            the unique rolename of the 'to'-end
+	 * @throws SchemaException
+	 *             if there already is an element with the given
+	 *             <code>name</code> in the schema
 	 * @return the created aggregation class
 	 */
 	public AggregationClass createAggregationClass(QualifiedName name,
@@ -166,9 +219,34 @@ public interface GraphClass extends AttributedElementClass {
 			VertexClass to, String toRoleName);
 
 	/**
-	 * creates an aggregation class between vertex class from, multiplicity
-	 * fromMin and fromMax, and vertex class to, multiplicity toMin and toMax
-	 * with the aggregationclassname name
+	 * Creates an aggregation class between two vertices.
+	 * 
+	 * <p>
+	 * <b>Pattern:</b>
+	 * <code>graphClass.createAggregationClass(name, from, fromMin, fromMax, aggregateFrom, to, toMin, toMax)</code>
+	 * </p>
+	 * 
+	 * <p>
+	 * <b>Preconditions:</b>
+	 * <ul>
+	 * <li><code>name</code> must not be empty</li>
+	 * <li><code>name</code> must be unique in the schema</li>
+	 * <li><code>from</code> must be a valid (either new and unique, or an
+	 * existing) VertexClass</li>
+	 * <li><code>to</code> must be a valid (either new and unique, or an
+	 * existing) VertexClass</li>
+	 * <li><code>0 <= fromMin <= fromMax <= Integer.maxValue</code></li>
+	 * <li><code>0 <= toMin <= toMax <= Integer.maxValue</code></li>
+	 * </ul>
+	 * </p>
+	 * 
+	 * <p>
+	 * <b>Postconditions:</b>
+	 * <ul>
+	 * <li><code>graphClass</code> must have one issue of freshly created
+	 * AggregationClass</li>
+	 * </ul>
+	 * </p>
 	 * 
 	 * @param name
 	 *            a unique name in the schema
@@ -192,6 +270,9 @@ public interface GraphClass extends AttributedElementClass {
 	 * @param toMax
 	 *            the maximum multiplicity of the aggregation class on the
 	 *            'to-end
+	 * @throws SchemaException
+	 *             if there already is an element with the given
+	 *             <code>name</code> in the schema
 	 * @return the created aggregation class
 	 */
 	public AggregationClass createAggregationClass(QualifiedName name,
@@ -203,7 +284,8 @@ public interface GraphClass extends AttributedElementClass {
 	 * 
 	 * <p>
 	 * <b>Pattern:</b>
-	 * <code>graphClass.add(name, from, fromMin, fromMax, fromRoleName, aggregateFrom, to, toMin, toMax, toRoleName)</code>
+	 * 
+	 * <code>graphClass.createAggregationClass(name, from, fromMin, fromMax, fromRoleName, aggregateFrom, to, toMin, toMax, toRoleName)</code>
 	 * </p>
 	 * 
 	 * <p>
@@ -211,6 +293,10 @@ public interface GraphClass extends AttributedElementClass {
 	 * <ul>
 	 * <li><code>name</code> must not be empty</li>
 	 * <li><code>name</code> must be unique in the schema</li>
+	 * <li><code>from</code> must be a valid (either new and unique, or an
+	 * existing) VertexClass</li>
+	 * <li><code>to</code> must be a valid (either new and unique, or an
+	 * existing) VertexClass</li>
 	 * <li><code>0 <= fromMin <= fromMax <= Integer.maxValue</code></li>
 	 * <li><code>0 <= toMin <= toMax <= Integer.maxValue</code></li>
 	 * </ul>
@@ -219,8 +305,8 @@ public interface GraphClass extends AttributedElementClass {
 	 * <p>
 	 * <b>Postconditions:</b>
 	 * <ul>
-	 * <li></li>
-	 * <li></li>
+	 * <li><code>graphClass</code> must have one issue of freshly created
+	 * AggregationClass</li>
 	 * </ul>
 	 * </p>
 	 * 
@@ -252,7 +338,8 @@ public interface GraphClass extends AttributedElementClass {
 	 * @param toRoleName
 	 *            the unique rolename of the 'to'-end
 	 * @throws SchemaException
-	 *            if there already is an element with the given <code>name</code> in the schema
+	 *             if there already is an element with the given
+	 *             <code>name</code> in the schema
 	 * @return the created aggregation class
 	 */
 	public AggregationClass createAggregationClass(QualifiedName name,
