@@ -192,10 +192,12 @@ public abstract class GraphImpl extends AttributedElementImpl implements Graph {
 	 */
 	public GraphImpl(String id, GraphClass aGraphClass, int vMax, int eMax) {
 		super(aGraphClass);
-		if (vMax < 0)
+		if (vMax < 0) {
 			throw new GraphException("vMax must not be less than zero", null);
-		if (eMax < 0)
+		}
+		if (eMax < 0) {
 			throw new GraphException("eMax must not be less than zero", null);
+		}
 
 		this.schema = aGraphClass.getSchema();
 		if (id == null) {
@@ -221,29 +223,33 @@ public abstract class GraphImpl extends AttributedElementImpl implements Graph {
 	@Override
 	public void addEdge(Edge newEdge, Vertex alpha, Vertex omega) {
 		assert (newEdge.isNormal());
-		if (!alpha.isValidAlpha(newEdge))
+		if (!alpha.isValidAlpha(newEdge)) {
 			throw new GraphException("Edges of class "
 					+ newEdge.getAttributedElementClass().getUniqueName()
 					+ " may not start at vertices of class "
 					+ alpha.getAttributedElementClass().getUniqueName());
-		if (!omega.isValidOmega(newEdge))
+		}
+		if (!omega.isValidOmega(newEdge)) {
 			throw new GraphException("Edges of class "
 					+ newEdge.getAttributedElementClass().getUniqueName()
 					+ " may not end at at vertices of class "
 					+ omega.getAttributedElementClass().getUniqueName());
+		}
 
 		int eId = newEdge.getId();
 
 		if (isLoading()) {
 			if (eId != 0) {
 				// the given edge already has an id, try to use it
-				if (containsEdgeId(eId))
+				if (containsEdgeId(eId)) {
 					throw new GraphException("edge with id " + eId
 							+ " already exists");
+				}
 
-				if (eId >= eSize)
+				if (eId >= eSize) {
 					throw new GraphException("edge id " + eId
 							+ " is bigger than eSize");
+				}
 			} else {
 				throw new GraphException(
 						"a vertex that has not id may not be added while a graph is loading");
@@ -251,18 +257,21 @@ public abstract class GraphImpl extends AttributedElementImpl implements Graph {
 		} else {
 			if (eId != 0) {
 				// the given edge already has an id, try to use it
-				if (containsEdgeId(eId))
+				if (containsEdgeId(eId)) {
 					throw new GraphException("edge with id " + eId
 							+ " already exists");
+				}
 
-				if (eId >= eSize)
+				if (eId >= eSize) {
 					throw new GraphException("edge id " + eId
 							+ " is bigger than eSize");
+				}
 
 				// remove edge from free edge list
 				int i = 0;
-				while (nextEdgeInGraph[i] != eId)
+				while (nextEdgeInGraph[i] != eId) {
 					++i;
+				}
 				nextEdgeInGraph[i] = nextEdgeInGraph[eId];
 			} else {
 				if (nextEdgeInGraph[0] == 0) {
@@ -270,7 +279,7 @@ public abstract class GraphImpl extends AttributedElementImpl implements Graph {
 				}
 				eId = nextEdgeInGraph[0];
 				nextEdgeInGraph[0] = nextEdgeInGraph[eId];
-				((EdgeImpl)newEdge).setId(eId);
+				((EdgeImpl) newEdge).setId(eId);
 			}
 		}
 		++eCount;
@@ -331,13 +340,15 @@ public abstract class GraphImpl extends AttributedElementImpl implements Graph {
 		if (isLoading()) {
 			if (vId != 0) {
 				// the given vertex already has an id, try to use it
-				if (containsVertexId(vId))
+				if (containsVertexId(vId)) {
 					throw new GraphException("vertex with id " + vId
 							+ " already exists");
+				}
 
-				if (vId >= vSize)
+				if (vId >= vSize) {
 					throw new GraphException("vertex id " + vId
 							+ " is bigger than vSize");
+				}
 			} else {
 				throw new GraphException(
 						"a vertex that has not id may not be added while a graph is loading");
@@ -345,18 +356,21 @@ public abstract class GraphImpl extends AttributedElementImpl implements Graph {
 		} else {
 			if (vId != 0) {
 				// the given vertex already has an id, try to use it
-				if (containsVertexId(vId))
+				if (containsVertexId(vId)) {
 					throw new GraphException("vertex with id " + vId
 							+ " already exists");
+				}
 
-				if (vId >= vSize)
+				if (vId >= vSize) {
 					throw new GraphException("vertex id " + vId
 							+ " is bigger than vSize");
+				}
 
 				// remove vertex from free vertex list
 				int i = 0;
-				while (nextVertex[i] != vId)
+				while (nextVertex[i] != vId) {
 					++i;
+				}
 				nextVertex[i] = nextVertex[vId];
 			} else {
 				if (nextVertex[0] == 0) {
@@ -364,7 +378,7 @@ public abstract class GraphImpl extends AttributedElementImpl implements Graph {
 				}
 				vId = nextVertex[0];
 				nextVertex[0] = nextVertex[vId];
-				((VertexImpl)newVertex).setId(vId);
+				((VertexImpl) newVertex).setId(vId);
 			}
 		}
 
@@ -428,8 +442,9 @@ public abstract class GraphImpl extends AttributedElementImpl implements Graph {
 	}
 
 	private boolean containsEdgeId(int eId) {
-		if (eId < 0)
+		if (eId < 0) {
 			eId = -eId;
+		}
 		return eId > 0 && eId < eSize && edge[edgeOffset(eId)] != null;
 	}
 
@@ -508,8 +523,9 @@ public abstract class GraphImpl extends AttributedElementImpl implements Graph {
 			nextEdgeAtVertex[edgeOffset(prevId)] = nextEdgeAtVertex[edgeOffset(iNo)];
 		}
 		nextEdgeAtVertex[edgeOffset(iNo)] = 0;
-		if (vertex[vId] != null)
+		if (vertex[vId] != null) {
 			vertex[vId].incidenceListModified();
+		}
 		edgeListModified();
 	}
 
@@ -596,8 +612,9 @@ public abstract class GraphImpl extends AttributedElementImpl implements Graph {
 
 		// append new free vertex list to end of old free vertex list
 		int i = 0;
-		while (nextEdgeInGraph[i] != 0)
+		while (nextEdgeInGraph[i] != 0) {
 			++i;
+		}
 		nextEdgeInGraph[i] = oldSize;
 	}
 
@@ -657,8 +674,9 @@ public abstract class GraphImpl extends AttributedElementImpl implements Graph {
 
 		// append new free vertex list to end of old free vertex list
 		int i = 0;
-		while (nextVertex[i] != 0)
+		while (nextVertex[i] != 0) {
 			++i;
+		}
 		nextVertex[i] = oldSize;
 	}
 
@@ -778,11 +796,13 @@ public abstract class GraphImpl extends AttributedElementImpl implements Graph {
 		Edge currentEdge = getFirstEdge(v, orientation);
 		while (currentEdge != null) {
 			if (explicitType) {
-				if (anEdgeClass == currentEdge.getM1Class())
+				if (anEdgeClass == currentEdge.getM1Class()) {
 					return currentEdge;
+				}
 			} else {
-				if (anEdgeClass.isInstance(currentEdge.getNormalEdge()))
+				if (anEdgeClass.isInstance(currentEdge.getNormalEdge())) {
 					return currentEdge;
+				}
 			}
 			currentEdge = currentEdge.getNextEdge(orientation);
 		}
@@ -791,21 +811,21 @@ public abstract class GraphImpl extends AttributedElementImpl implements Graph {
 
 	@Override
 	public Edge getFirstEdgeOfClass(Vertex v, EdgeClass ec) {
-		return getFirstEdgeOfClass(v, (Class<? extends Edge>) ec.getM1Class(),
-				EdgeDirection.INOUT, false);
+		return getFirstEdgeOfClass(v, ec.getM1Class(), EdgeDirection.INOUT,
+				false);
 	}
 
 	@Override
 	public Edge getFirstEdgeOfClass(Vertex v, EdgeClass ec, boolean noSubclasses) {
-		return getFirstEdgeOfClass(v, (Class<? extends Edge>) ec.getM1Class(),
-				EdgeDirection.INOUT, noSubclasses);
+		return getFirstEdgeOfClass(v, ec.getM1Class(), EdgeDirection.INOUT,
+				noSubclasses);
 	}
 
 	@Override
 	public Edge getFirstEdgeOfClass(Vertex v, EdgeClass ec,
 			EdgeDirection orientation, boolean noSubclasses) {
-		return getFirstEdgeOfClass(v, (Class<? extends Edge>) ec.getM1Class(),
-				orientation, noSubclasses);
+		return getFirstEdgeOfClass(v, ec.getM1Class(), orientation,
+				noSubclasses);
 	}
 
 	@Override
@@ -819,11 +839,13 @@ public abstract class GraphImpl extends AttributedElementImpl implements Graph {
 		Edge currentEdge = getFirstEdgeInGraph();
 		while (currentEdge != null) {
 			if (explicitType) {
-				if (anEdgeClass == currentEdge.getM1Class())
+				if (anEdgeClass == currentEdge.getM1Class()) {
 					return currentEdge;
+				}
 			} else {
-				if (anEdgeClass.isInstance(currentEdge))
+				if (anEdgeClass.isInstance(currentEdge)) {
 					return currentEdge;
+				}
 			}
 			currentEdge = currentEdge.getNextEdgeInGraph();
 		}
@@ -832,15 +854,14 @@ public abstract class GraphImpl extends AttributedElementImpl implements Graph {
 
 	@Override
 	public Edge getFirstEdgeOfClassInGraph(EdgeClass anEdgeClass) {
-		return getFirstEdgeOfClassInGraph((Class<? extends Edge>) anEdgeClass
-				.getM1Class(), false);
+		return getFirstEdgeOfClassInGraph(anEdgeClass.getM1Class(), false);
 	}
 
 	@Override
 	public Edge getFirstEdgeOfClassInGraph(EdgeClass anEdgeClass,
 			boolean explicitType) {
-		return getFirstEdgeOfClassInGraph((Class<? extends Edge>) anEdgeClass
-				.getM1Class(), explicitType);
+		return getFirstEdgeOfClassInGraph(anEdgeClass.getM1Class(),
+				explicitType);
 	}
 
 	@Override
@@ -857,14 +878,17 @@ public abstract class GraphImpl extends AttributedElementImpl implements Graph {
 	public Vertex getFirstVertexOfClass(Class<? extends Vertex> aVertexClass,
 			boolean explicitType) {
 		Vertex firstVertex = getFirstVertex();
-		if (firstVertex == null)
+		if (firstVertex == null) {
 			return null;
+		}
 		if (explicitType) {
-			if (aVertexClass == firstVertex.getM1Class())
+			if (aVertexClass == firstVertex.getM1Class()) {
 				return firstVertex;
+			}
 		} else {
-			if (aVertexClass.isInstance(firstVertex))
+			if (aVertexClass.isInstance(firstVertex)) {
 				return firstVertex;
+			}
 		}
 		return getNextVertexOfClass(firstVertex, aVertexClass, explicitType);
 	}
@@ -877,8 +901,7 @@ public abstract class GraphImpl extends AttributedElementImpl implements Graph {
 	@Override
 	public Vertex getFirstVertexOfClass(VertexClass aVertexClass,
 			boolean explicitType) {
-		return getFirstVertexOfClass((Class<? extends Vertex>) (aVertexClass
-				.getM1Class()), explicitType);
+		return getFirstVertexOfClass((aVertexClass.getM1Class()), explicitType);
 	}
 
 	@Override
@@ -918,14 +941,16 @@ public abstract class GraphImpl extends AttributedElementImpl implements Graph {
 		int nextI = nextEdgeAtVertex[edgeOffset(eId)];
 		if (orientation == EdgeDirection.IN) {
 			while (nextI != 0) {
-				if (nextI < 0)
+				if (nextI < 0) {
 					return edge[edgeOffset(nextI)];
+				}
 				nextI = nextEdgeAtVertex[edgeOffset(nextI)];
 			}
 		} else if (orientation == EdgeDirection.OUT) {
 			while (nextI != 0) {
-				if (nextI > 0)
+				if (nextI > 0) {
 					return edge[edgeOffset(nextI)];
+				}
 				nextI = nextEdgeAtVertex[edgeOffset(nextI)];
 			}
 		} else {
@@ -959,11 +984,13 @@ public abstract class GraphImpl extends AttributedElementImpl implements Graph {
 		Edge currentEdge = getNextEdge(e, orientation);
 		while (currentEdge != null) {
 			if (explicitType) {
-				if (anEdgeClass == currentEdge.getM1Class())
+				if (anEdgeClass == currentEdge.getM1Class()) {
 					return currentEdge;
+				}
 			} else {
-				if (anEdgeClass.isInstance(currentEdge))
+				if (anEdgeClass.isInstance(currentEdge)) {
 					return currentEdge;
+				}
 			}
 			currentEdge = currentEdge.getNextEdge(orientation);
 		}
@@ -972,21 +999,20 @@ public abstract class GraphImpl extends AttributedElementImpl implements Graph {
 
 	@Override
 	public Edge getNextEdgeOfClass(Edge e, EdgeClass ec) {
-		return getNextEdgeOfClass(e, (Class<? extends Edge>) ec.getM1Class(),
-				EdgeDirection.INOUT, false);
+		return getNextEdgeOfClass(e, ec.getM1Class(), EdgeDirection.INOUT,
+				false);
 	}
 
 	@Override
 	public Edge getNextEdgeOfClass(Edge e, EdgeClass ec, boolean noSubclasses) {
-		return getNextEdgeOfClass(e, (Class<? extends Edge>) ec.getM1Class(),
-				EdgeDirection.INOUT, noSubclasses);
+		return getNextEdgeOfClass(e, ec.getM1Class(), EdgeDirection.INOUT,
+				noSubclasses);
 	}
 
 	@Override
 	public Edge getNextEdgeOfClass(Edge e, EdgeClass ec,
 			EdgeDirection orientation, boolean noSubclasses) {
-		return getNextEdgeOfClass(e, (Class<? extends Edge>) ec.getM1Class(),
-				orientation, noSubclasses);
+		return getNextEdgeOfClass(e, ec.getM1Class(), orientation, noSubclasses);
 	}
 
 	@Override
@@ -1001,11 +1027,13 @@ public abstract class GraphImpl extends AttributedElementImpl implements Graph {
 		Edge currentEdge = getNextEdgeInGraph(e);
 		while (currentEdge != null) {
 			if (explicitType) {
-				if (anEdgeClass == currentEdge.getM1Class())
+				if (anEdgeClass == currentEdge.getM1Class()) {
 					return currentEdge;
+				}
 			} else {
-				if (anEdgeClass.isInstance(currentEdge))
+				if (anEdgeClass.isInstance(currentEdge)) {
 					return currentEdge;
+				}
 			}
 			currentEdge = currentEdge.getNextEdgeInGraph();
 		}
@@ -1014,15 +1042,15 @@ public abstract class GraphImpl extends AttributedElementImpl implements Graph {
 
 	@Override
 	public Edge getNextEdgeOfClassInGraph(Edge anEdge, EdgeClass anEdgeClass) {
-		return getNextEdgeOfClassInGraph(anEdge,
-				(Class<? extends Edge>) anEdgeClass.getM1Class(), false);
+		return getNextEdgeOfClassInGraph(anEdge, anEdgeClass.getM1Class(),
+				false);
 	}
 
 	@Override
 	public Edge getNextEdgeOfClassInGraph(Edge anEdge, EdgeClass anEdgeClass,
 			boolean explicitType) {
-		return getNextEdgeOfClassInGraph(anEdge,
-				(Class<? extends Edge>) anEdgeClass.getM1Class(), explicitType);
+		return getNextEdgeOfClassInGraph(anEdge, anEdgeClass.getM1Class(),
+				explicitType);
 	}
 
 	public Vertex getNextVertex(int vId) {
@@ -1067,11 +1095,13 @@ public abstract class GraphImpl extends AttributedElementImpl implements Graph {
 		Vertex nextVertex = getNextVertex(aVertex);
 		while (nextVertex != null) {
 			if (explicitType) {
-				if (aM1VertexClass == aVertex.getM1Class())
+				if (aM1VertexClass == aVertex.getM1Class()) {
 					return nextVertex;
+				}
 			} else {
-				if (aM1VertexClass.isInstance(nextVertex))
+				if (aM1VertexClass.isInstance(nextVertex)) {
 					return nextVertex;
+				}
 			}
 			nextVertex = getNextVertex(nextVertex);
 		}
@@ -1080,15 +1110,13 @@ public abstract class GraphImpl extends AttributedElementImpl implements Graph {
 
 	@Override
 	public Vertex getNextVertexOfClass(Vertex vertex, VertexClass vertexClass) {
-		return getNextVertexOfClass(vertex,
-				(Class<? extends Vertex>) vertexClass.getM1Class(), false);
+		return getNextVertexOfClass(vertex, vertexClass.getM1Class(), false);
 	}
 
 	@Override
 	public Vertex getNextVertexOfClass(Vertex vertex, VertexClass vertexClass,
 			boolean explicitType) {
-		return getNextVertexOfClass(vertex,
-				(Class<? extends Vertex>) vertexClass.getM1Class(),
+		return getNextVertexOfClass(vertex, vertexClass.getM1Class(),
 				explicitType);
 	}
 
@@ -1129,18 +1157,20 @@ public abstract class GraphImpl extends AttributedElementImpl implements Graph {
 	public void insertEdgeAt(Vertex v, Edge e, int pos) {
 		int vertexId = v.getId();
 		int edgeId = e.getId();
-		if (targetVertex[edgeOffset(-edgeId)] != vertexId)
+		if (targetVertex[edgeOffset(-edgeId)] != vertexId) {
 			throw new GraphException("Cannot put edge " + edgeId
 					+ " at position " + pos + " at vertex " + vertexId
 					+ ", this-vertex of edge " + edgeId + " is not " + vertexId);
+		}
 		int oldPreviousEdgeId = 0;
 		int currentEdgeId = firstEdgeAtVertex[targetVertex[edgeOffset(-edgeId)]];
 		while (currentEdgeId != edgeId) {
 			oldPreviousEdgeId = currentEdgeId;
 			currentEdgeId = nextEdgeAtVertex[edgeOffset(currentEdgeId)];
 		}
-		if (oldPreviousEdgeId != 0)
+		if (oldPreviousEdgeId != 0) {
 			nextEdgeAtVertex[edgeOffset(oldPreviousEdgeId)] = nextEdgeAtVertex[edgeOffset(edgeId)];
+		}
 
 		int nextI = firstEdgeAtVertex[vertexId];
 		int currentEdge = nextI;
@@ -1159,8 +1189,9 @@ public abstract class GraphImpl extends AttributedElementImpl implements Graph {
 	}
 
 	private void internalDeleteEdge(int eId) {
-		if (eId < 0)
+		if (eId < 0) {
 			eId = -eId;
+		}
 
 		Vertex v = vertex[targetVertex[edgeOffset(eId)]];
 		if (v != null) {
@@ -1288,16 +1319,17 @@ public abstract class GraphImpl extends AttributedElementImpl implements Graph {
 
 	@Override
 	public boolean isAfterEdgeInGraph(Edge targetEdge, Edge sourceEdge) {
-		int target = targetEdge.getId();
-		int source = sourceEdge.getId();
+		int target = Math.abs(targetEdge.getId());
+		int source = Math.abs(sourceEdge.getId());
 		assert (containsEdgeId(source) && containsEdgeId(target));
-		if (source == target)
+		if (source == target) {
 			return false;
+		}
 		int nextId = nextEdgeInGraph[source];
 		while ((nextId != 0) && (nextId != target)) {
 			nextId = nextEdgeInGraph[nextId];
 		}
-		return nextId != 0;
+		return nextId == 0;
 	}
 
 	@Override
@@ -1305,8 +1337,9 @@ public abstract class GraphImpl extends AttributedElementImpl implements Graph {
 		int target = targetVertex.getId();
 		int source = sourceVertex.getId();
 		assert (containsVertexId(source) && containsVertexId(target));
-		if (source == target)
+		if (source == target) {
 			return false;
+		}
 		int nextId = nextVertex[source];
 		while ((nextId != 0) && (nextId != target)) {
 			nextId = nextVertex[nextId];
@@ -1316,16 +1349,17 @@ public abstract class GraphImpl extends AttributedElementImpl implements Graph {
 
 	@Override
 	public boolean isBeforeEdgeInGraph(Edge targetEdge, Edge sourceEdge) {
-		int target = targetEdge.getId();
-		int source = sourceEdge.getId();
+		int target = Math.abs(targetEdge.getId());
+		int source = Math.abs(sourceEdge.getId());
 		assert (containsEdgeId(source) && containsEdgeId(target));
-		if (source == target)
+		if (source == target) {
 			return false;
+		}
 		int nextId = nextEdgeInGraph[source];
 		while ((nextId != 0) && (nextId != target)) {
 			nextId = nextEdgeInGraph[nextId];
 		}
-		return nextId == 0;
+		return nextId != 0;
 	}
 
 	@Override
@@ -1333,8 +1367,9 @@ public abstract class GraphImpl extends AttributedElementImpl implements Graph {
 		int target = targetVertex.getId();
 		int source = sourceVertex.getId();
 		assert (containsVertexId(source) && containsVertexId(target));
-		if (source == target)
+		if (source == target) {
 			return false;
+		}
 		int nextId = nextVertex[source];
 		while ((nextId != 0) && (nextId != target)) {
 			nextId = nextVertex[nextId];
@@ -1397,16 +1432,18 @@ public abstract class GraphImpl extends AttributedElementImpl implements Graph {
 			int[] nextAtVertex, int[] lastAtVertex) {
 		String callingClassName = Thread.currentThread().getStackTrace()[2]
 				.getClassName();
-		if (!callingClassName.equals("de.uni_koblenz.jgralab.GraphIO"))
+		if (!callingClassName.equals("de.uni_koblenz.jgralab.GraphIO")) {
 			throw new RuntimeException(
 					"overwriteEdgeAtVertexArrays(...) must not be called from outside of GraphIO");
+		}
 
 		if ((firstAtVertex.length != firstEdgeAtVertex.length)
 				|| (nextAtVertex.length != nextEdgeAtVertex.length)
-				|| (lastAtVertex.length != lastEdgeAtVertex.length))
+				|| (lastAtVertex.length != lastEdgeAtVertex.length)) {
 			throw new RuntimeException(
 					"overwriteEdgeAtVertexArrays(...) must not be called with arrays that have"
 							+ "not the same length as the arrays used internally");
+		}
 		firstEdgeAtVertex = firstAtVertex;
 		nextEdgeAtVertex = nextAtVertex;
 		lastEdgeAtVertex = lastAtVertex;
@@ -1437,32 +1474,36 @@ public abstract class GraphImpl extends AttributedElementImpl implements Graph {
 		System.out.println();
 
 		System.out.print("firstIncidence:     ");
-		for (int i = 0; i < eSize; i++)
+		for (int i = 0; i < eSize; i++) {
 			System.out.print("     ");
+		}
 		for (int i = 1; i < vSize; i++) {
 			System.out.printf("%5d", firstEdgeAtVertex[i]);
 		}
 		System.out.println();
 
 		System.out.print("lastIncidence:      ");
-		for (int i = 0; i < eSize; i++)
+		for (int i = 0; i < eSize; i++) {
 			System.out.print("     ");
+		}
 		for (int i = 1; i < vSize; i++) {
 			System.out.printf("%5d", lastEdgeAtVertex[i]);
 		}
 		System.out.println();
 
 		System.out.print("nextVertex:         ");
-		for (int i = 1; i < eSize; i++)
+		for (int i = 1; i < eSize; i++) {
 			System.out.print("     ");
+		}
 		for (int i = 0; i < vSize; i++) {
 			System.out.printf("%5d", nextVertex[i]);
 		}
 		System.out.println();
 
 		System.out.print("nextEdge:           ");
-		for (int i = 1; i < eSize; i++)
+		for (int i = 1; i < eSize; i++) {
 			System.out.print("     ");
+		}
 		for (int i = 0; i < eSize; i++) {
 			System.out.printf("%5d", nextEdgeInGraph[i]);
 		}
@@ -1610,14 +1651,17 @@ public abstract class GraphImpl extends AttributedElementImpl implements Graph {
 		int edgeId = edge.getId();
 		int previousEdgeId = previousEdge.getId();
 		int thisVertexId = targetVertex[edgeOffset(-edgeId)];
-		if (thisVertexId != targetVertex[edgeOffset(-previousEdgeId)])
+		if (thisVertexId != targetVertex[edgeOffset(-previousEdgeId)]) {
 			throw new GraphException("Cannot put edge " + edgeId
 					+ " after edge " + previousEdgeId
 					+ ", edges have different this-vertices");
-		if (edgeId == previousEdgeId)
+		}
+		if (edgeId == previousEdgeId) {
 			return;
-		if (edgeId == nextEdgeAtVertex[edgeOffset(previousEdgeId)])
+		}
+		if (edgeId == nextEdgeAtVertex[edgeOffset(previousEdgeId)]) {
 			return;
+		}
 
 		// if edgeId is the first edge, make the next one the first one
 		if (edgeId == firstEdgeAtVertex[thisVertexId]) {
@@ -1633,65 +1677,82 @@ public abstract class GraphImpl extends AttributedElementImpl implements Graph {
 			nextEdgeAtVertex[edgeOffset(oldPreviousEdgeId)] = nextEdgeAtVertex[edgeOffset(edgeId)];
 			// if the edgeId was the last edge at the vertex, set the last edge
 			// to the previous one
-			if (lastEdgeAtVertex[thisVertexId] == edgeId)
+			if (lastEdgeAtVertex[thisVertexId] == edgeId) {
 				lastEdgeAtVertex[thisVertexId] = oldPreviousEdgeId;
+			}
 		}
 		// put edge after previous one
 		nextEdgeAtVertex[edgeOffset(edgeId)] = nextEdgeAtVertex[edgeOffset(previousEdgeId)];
 		nextEdgeAtVertex[edgeOffset(previousEdgeId)] = edgeId;
 		// if the new previous edge was the last edge at the vertex, set the
 		// last edge to edgeId
-		if (lastEdgeAtVertex[thisVertexId] == previousEdgeId)
+		if (lastEdgeAtVertex[thisVertexId] == previousEdgeId) {
 			lastEdgeAtVertex[thisVertexId] = edgeId;
+		}
 		vertex[thisVertexId].incidenceListModified();
 	}
 
 	public void putEdgeBefore(Edge edge, Edge nextEdge) {
 		int edgeId = edge.getId();
 		int nextEdgeId = nextEdge.getId();
-		if (targetVertex[edgeOffset(-edgeId)] != targetVertex[edgeOffset(-nextEdgeId)])
+		int thisVertexId = targetVertex[edgeOffset(-edgeId)];
+		if (thisVertexId != targetVertex[edgeOffset(-nextEdgeId)]) {
 			throw new GraphException("Cannot put edge " + edgeId
-					+ " before edge " + nextEdgeId
+					+ " after edge " + nextEdgeId
 					+ ", edges have different this-vertices");
-		if (edgeId == nextEdgeId)
-			return;
-		int previousEdgeId = 0;
-		int oldPreviousEdgeId = 0;
-		int currentEdgeId = firstEdgeAtVertex[targetVertex[edgeOffset(-edgeId)]];
-		while (currentEdgeId != edgeId) {
-			oldPreviousEdgeId = currentEdgeId;
-			currentEdgeId = nextEdgeAtVertex[edgeOffset(currentEdgeId)];
 		}
-		currentEdgeId = firstEdgeAtVertex[targetVertex[edgeOffset(-edgeId)]];
+		if (edgeId == nextEdgeId) {
+			return;
+		}
+		if (nextEdgeId == nextEdgeAtVertex[edgeOffset(edgeId)]) {
+			return;
+		}
+
+		// if edgeId is the first edge, make the next one the first one
+		if (edgeId == firstEdgeAtVertex[thisVertexId]) {
+			firstEdgeAtVertex[thisVertexId] = nextEdgeAtVertex[edgeOffset(edgeId)];
+		} else {
+			// otherwise remove the edge from the old position
+			int oldPreviousEdgeId = 0;
+			int currentEdgeId = firstEdgeAtVertex[targetVertex[edgeOffset(-edgeId)]];
+			while (currentEdgeId != edgeId) {
+				oldPreviousEdgeId = currentEdgeId;
+				currentEdgeId = nextEdgeAtVertex[edgeOffset(currentEdgeId)];
+			}
+			nextEdgeAtVertex[edgeOffset(oldPreviousEdgeId)] = nextEdgeAtVertex[edgeOffset(edgeId)];
+			// if the edgeId was the last edge at the vertex, set the last edge
+			// to the previous one
+			if (lastEdgeAtVertex[thisVertexId] == edgeId) {
+				lastEdgeAtVertex[thisVertexId] = oldPreviousEdgeId;
+			}
+		}
+
+		int previousEdgeId = 0;
+		int currentEdgeId = firstEdgeAtVertex[targetVertex[edgeOffset(-edgeId)]];
 		while (currentEdgeId != nextEdgeId) {
 			previousEdgeId = currentEdgeId;
 			currentEdgeId = nextEdgeAtVertex[edgeOffset(currentEdgeId)];
 		}
-		int firstEdge = firstEdgeAtVertex[targetVertex[edgeOffset(-edgeId)]];
-		int oldNextEdge = nextEdgeAtVertex[edgeOffset(edgeId)];
-		int newNextEdge = nextEdgeAtVertex[edgeOffset(previousEdgeId)];
 
-		if (oldPreviousEdgeId != 0)
-			nextEdgeAtVertex[edgeOffset(oldPreviousEdgeId)] = oldNextEdge;
-		if (previousEdgeId == 0) {
-			nextEdgeAtVertex[edgeOffset(edgeId)] = firstEdge;
-			firstEdgeAtVertex[targetVertex[edgeOffset(-edgeId)]] = edgeId;
-		} else {
-			nextEdgeAtVertex[edgeOffset(edgeId)] = newNextEdge;
+		// put edge after previous one, i.e. before the nextEdge
+		if (previousEdgeId != 0) {
 			nextEdgeAtVertex[edgeOffset(previousEdgeId)] = edgeId;
+		} else {
+			// nextEdge was the first edge in lambdaseq
+			firstEdgeAtVertex[thisVertexId] = edgeId;
 		}
-		if (lastEdgeAtVertex[targetVertex[edgeOffset(-edgeId)]] == edgeId)
-			lastEdgeAtVertex[targetVertex[edgeOffset(-edgeId)]] = oldPreviousEdgeId;
-		vertex[targetVertex[edgeOffset(-edgeId)]].incidenceListModified();
+		nextEdgeAtVertex[edgeOffset(edgeId)] = nextEdgeId;
+		vertex[thisVertexId].incidenceListModified();
 	}
 
 	@Override
 	public void setAlpha(Edge e, Vertex alpha) {
-		if (!alpha.isValidAlpha(e))
+		if (!alpha.isValidAlpha(e)) {
 			throw new GraphException("Edges of class "
 					+ e.getAttributedElementClass().getUniqueName()
 					+ " may not start at vertices of class "
 					+ alpha.getAttributedElementClass().getUniqueName());
+		}
 		int edgeId = e.getId();
 		int alphaId = alpha.getId();
 
@@ -1726,11 +1787,12 @@ public abstract class GraphImpl extends AttributedElementImpl implements Graph {
 
 	@Override
 	public void setOmega(Edge e, Vertex omega) {
-		if (!omega.isValidOmega(e))
+		if (!omega.isValidOmega(e)) {
 			throw new GraphException("Edges of class "
 					+ e.getAttributedElementClass().getUniqueName()
 					+ " may not end at at vertices of class "
 					+ omega.getAttributedElementClass().getUniqueName());
+		}
 		int edgeId = e.getId();
 		int omegaId = omega.getId();
 
@@ -1740,8 +1802,9 @@ public abstract class GraphImpl extends AttributedElementImpl implements Graph {
 			posId = -edgeId;
 			negId = edgeId;
 		}
-		if (targetVertex[edgeOffset(posId)] == omegaId)
+		if (targetVertex[edgeOffset(posId)] == omegaId) {
 			return;
+		}
 		deleteEdgeTo(targetVertex[edgeOffset(posId)], negId);
 		appendEdgeAtVertex(omegaId, negId);
 		targetVertex[edgeOffset(posId)] = omegaId;
@@ -1773,8 +1836,7 @@ public abstract class GraphImpl extends AttributedElementImpl implements Graph {
 
 	@Override
 	public Iterable<Vertex> vertices(VertexClass eclass) {
-		return new VertexIterable<Vertex>(this,
-				(Class<? extends Vertex>) eclass.getM1Class());
+		return new VertexIterable<Vertex>(this, eclass.getM1Class());
 	}
 
 }
