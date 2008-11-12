@@ -52,6 +52,7 @@ import java.util.logging.Logger;
 
 import de.uni_koblenz.jgralab.GraphIOException.GraphIOExceptionReason;
 import de.uni_koblenz.jgralab.impl.AttributeImpl;
+import de.uni_koblenz.jgralab.impl.GraphImpl;
 import de.uni_koblenz.jgralab.schema.AggregationClass;
 import de.uni_koblenz.jgralab.schema.AttributedElementClass;
 import de.uni_koblenz.jgralab.schema.CompositionClass;
@@ -101,8 +102,6 @@ public class GraphIO {
 
 	private Map<QualifiedName, Method> createMethods;
 
-	private Vertex edgeIn[], edgeOut[];
-
 	private int line; // line number
 
 	private int la; // lookahead character
@@ -123,21 +122,9 @@ public class GraphIO {
 
 	private int bufferSize;
 
-	/**
-	 * indexed with incidence-id, holds the next incidence of the current vertex
-	 * to represent iSeq
-	 */
-	private int nextEdgeAtVertex[];
-
-	/**
-	 * indexed with vertex-id, holds the first incidence-id of the vertex
-	 */
-	private int firstEdgeAtVertex[];
-
-	/**
-	 * indexed with vertex-id, holds the last incidence-id of the vertex
-	 */
-	private int lastEdgeAtVertex[];
+	private Vertex edgeIn[], edgeOut[];
+	private int[] firstIncidence;
+	private int[] nextIncidence;
 
 	private int edgeOffset;
 
@@ -463,19 +450,18 @@ public class GraphIO {
 			space();
 			writeIdentifier(aec.getSimpleName());
 			// write incident edges
-			Edge nextI = graph.getFirstEdge(nextV);
+			Edge nextI = nextV.getFirstEdge();
 			TGOut.writeBytes(" <");
 			noSpace();
 			while (nextI != null) {
-				eId = nextI.getId();
-				writeLong(eId);
-				nextI = graph.getNextEdge(nextI);
+				writeLong(nextI.getId());
+				nextI = nextI.getNextEdge();
 			}
 			TGOut.writeBytes(">");
 			space();
 			nextV.writeAttributeValues(this);
 			TGOut.writeBytes(";\n");
-			nextV = graph.getNextVertex(nextV);
+			nextV = nextV.getNextVertex();
 
 			// update progress bar
 			if (pf != null) {
@@ -508,7 +494,7 @@ public class GraphIO {
 			space();
 			nextE.writeAttributeValues(this);
 			TGOut.writeBytes(";\n");
-			nextE = graph.getNextEdgeInGraph(nextE);
+			nextE = nextE.getNextEdgeInGraph();
 
 			// update progress bar
 			if (pf != null) {
@@ -702,8 +688,10 @@ public class GraphIO {
 			Method instanceMethod = schemaClass.getMethod("instance",
 					(Class<?>[]) null);
 			io.schema = (Schema) instanceMethod.invoke(null, new Object[0]);
-			Graph g = io.graph(pf);
-			g.internalLoadingCompleted();
+			GraphImpl g = io.graph(pf);
+			g.internalLoadingCompleted(io.firstIncidence, io.nextIncidence);
+			io.firstIncidence = null;
+			io.nextIncidence = null;
 			g.loadingCompleted();
 			return g;
 		} catch (GraphIOException e) {
@@ -1501,7 +1489,7 @@ public class GraphIO {
 		buildEdgeClassHierarchy();
 	}
 
-	private String nextToken() throws GraphIOException {
+	private final String nextToken() throws GraphIOException {
 		StringBuilder out = new StringBuilder();
 		isUtfString = false;
 		try {
@@ -1555,7 +1543,7 @@ public class GraphIO {
 			GraphIOException {
 		int startLine = line;
 		la = read();
-		while (la != -1 && la != '"') {
+		LOOP: while (la != -1 && la != '"') {
 			if (la < 32 || la > 127) {
 				throw new GraphIOException("invalid character '" + (char) la
 						+ "' in string in line " + line);
@@ -1563,7 +1551,7 @@ public class GraphIO {
 			if (la == '\\') {
 				la = read();
 				if (la == -1) {
-					continue;
+					break LOOP;
 				}
 				switch (la) {
 				case '\\':
@@ -1584,22 +1572,22 @@ public class GraphIO {
 				case 'u':
 					la = read();
 					if (la == -1) {
-						continue;
+						break LOOP;
 					}
 					String unicode = "" + (char) la;
 					la = read();
 					if (la == -1) {
-						continue;
+						break LOOP;
 					}
 					unicode += (char) la;
 					la = read();
 					if (la == -1) {
-						continue;
+						break LOOP;
 					}
 					unicode += (char) la;
 					la = read();
 					if (la == -1) {
-						continue;
+						break LOOP;
 					}
 					unicode += (char) la;
 					try {
@@ -1815,7 +1803,7 @@ public class GraphIO {
 		return result;
 	}
 
-	private Graph graph(ProgressFunction pf) throws GraphIOException {
+	private GraphImpl graph(ProgressFunction pf) throws GraphIOException {
 		currentPackageName = "";
 		match("Graph");
 		String graphIdVersion = matchUtfString();
@@ -1866,27 +1854,19 @@ public class GraphIO {
 		// adjust fields for incidences
 		edgeIn = new Vertex[maxE + 1];
 		edgeOut = new Vertex[maxE + 1];
-		lastEdgeAtVertex = new int[maxV + 1];
-		firstEdgeAtVertex = new int[maxV + 1];
-		for (int i = 0; i < maxV + 1; i++) {
-			lastEdgeAtVertex[i] = 0;
-			firstEdgeAtVertex[i] = 0;
-		}
-		nextEdgeAtVertex = new int[(maxE + 1) * 2];
-		for (int i = 0; i < (maxE + 1) * 2; i++) {
-			nextEdgeAtVertex[i] = 0;
-		}
-		edgeOffset = maxE + 1;
+		firstIncidence = new int[maxV + 1];
+		nextIncidence = new int[2 * maxE + 1];
+		edgeOffset = maxE;
 
 		long graphElements = 0, currentCount = 0, interval = 1;
 		if (pf != null) {
 			pf.init(vCount + eCount);
 			interval = pf.getInterval();
 		}
-		Graph graph = null;
+		GraphImpl graph = null;
 		try {
-			graph = (Graph) schema.getGraphCreateMethod(gcName).invoke(null,
-					new Object[] { graphId, maxV, maxE });
+			graph = (GraphImpl) schema.getGraphCreateMethod(gcName).invoke(
+					null, new Object[] { graphId, maxV, maxE });
 		} catch (Exception e) {
 			throw new GraphIOException("can't create graph for class '"
 					+ gcName + "'", e);
@@ -1932,9 +1912,6 @@ public class GraphIO {
 				++eNo;
 			}
 		}
-		((de.uni_koblenz.jgralab.impl.GraphImpl) graph)
-				.overwriteEdgeAtVertexArrays(firstEdgeAtVertex,
-						nextEdgeAtVertex, lastEdgeAtVertex);
 
 		graph.setGraphVersion(graphVersion);
 		if (pf != null) {
@@ -2042,10 +2019,10 @@ public class GraphIO {
 			eId = eId();
 			// if (firstEdgeAtVertex[vId] == 0) {
 			if (first) {
-				firstEdgeAtVertex[vId] = eId;
+				firstIncidence[vId] = eId;
 				first = false;
 			} else {
-				nextEdgeAtVertex[edgeOffset + prevId] = eId;
+				nextIncidence[edgeOffset + prevId] = eId;
 			}
 			if (eId < 0) {
 				edgeIn[-eId] = v;
@@ -2054,7 +2031,6 @@ public class GraphIO {
 			}
 		}
 		match();
-		lastEdgeAtVertex[vId] = eId;
 	}
 
 	private static String toUTF(String value) {

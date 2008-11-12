@@ -26,13 +26,9 @@ package de.uni_koblenz.jgralab.impl;
 
 import de.uni_koblenz.jgralab.AttributedElement;
 import de.uni_koblenz.jgralab.Edge;
-import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.Vertex;
-import de.uni_koblenz.jgralab.schema.AttributedElementClass;
 import de.uni_koblenz.jgralab.schema.EdgeClass;
-import de.uni_koblenz.jgralab.schema.GraphClass;
-import de.uni_koblenz.jgralab.schema.Schema;
 
 /**
  * represents an incidence object, created temporarily by Graph class, delegates
@@ -40,18 +36,28 @@ import de.uni_koblenz.jgralab.schema.Schema;
  * 
  * @author Steffen Kahle
  */
-public abstract class ReversedEdgeImpl implements Edge {
-
-	/**
-	 * true, if this incidence is in the normal edge order, false otherwise
-	 */
+public abstract class ReversedEdgeImpl extends IncidenceImpl implements Edge {
+	// normal edge
 	protected EdgeImpl normalEdge;
 
-	protected Graph myGraph;
-
-	public ReversedEdgeImpl(EdgeImpl normalEdge, Graph graph) {
+	/**
+	 * @param normalEdge
+	 * @param g
+	 */
+	public ReversedEdgeImpl(EdgeImpl normalEdge, Graph g) {
+		super(g, normalEdge.theClass);
+		assert normalEdge != null;
 		this.normalEdge = normalEdge;
-		myGraph = graph;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see de.uni_koblenz.jgralab.AttributedElement#getM1Class()
+	 */
+	@Override
+	public Class<? extends AttributedElement> getM1Class() {
+		return normalEdge.getM1Class();
 	}
 
 	/*
@@ -61,11 +67,9 @@ public abstract class ReversedEdgeImpl implements Edge {
 	 */
 	@Override
 	public int compareTo(AttributedElement a) {
-		if (a instanceof Edge) {
-			Edge e = (Edge) a;
-			return getId() - e.getId();
-		}
-		return -1;
+		assert (a instanceof Edge);
+		Edge e = (Edge) a;
+		return getId() - e.getId();
 	}
 
 	/*
@@ -85,7 +89,7 @@ public abstract class ReversedEdgeImpl implements Edge {
 	 */
 	@Override
 	public Vertex getAlpha() {
-		return normalEdge.getAlpha();
+		return normalEdge.getIncidentVertex();
 	}
 
 	/*
@@ -113,71 +117,11 @@ public abstract class ReversedEdgeImpl implements Edge {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see de.uni_koblenz.jgralab.AttributedElement#getAttributedElementClass()
-	 */
-	@Override
-	public AttributedElementClass getAttributedElementClass() {
-		return normalEdge.getAttributedElementClass();
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see de.uni_koblenz.jgralab.GraphElement#getGraph()
-	 */
-	@Override
-	public final Graph getGraph() {
-		return myGraph;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see de.uni_koblenz.jgralab.AttributedElement#getGraphClass()
-	 */
-	@Override
-	public GraphClass getGraphClass() {
-		return normalEdge.getGraphClass();
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
 	 * @see de.uni_koblenz.jgralab.Edge#getId()
 	 */
 	@Override
-	public final int getId() {
+	public int getId() {
 		return -normalEdge.getId();
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see de.uni_koblenz.jgralab.AttributedElement#getM1Class()
-	 */
-	@Override
-	public final Class<? extends AttributedElement> getM1Class() {
-		return normalEdge.getM1Class();
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see de.uni_koblenz.jgralab.Edge#getNextEdge()
-	 */
-	@Override
-	public final Edge getNextEdge() {
-		return myGraph.getNextEdge(this);
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see de.uni_koblenz.jgralab.Edge#getNextEdge(de.uni_koblenz.jgralab.EdgeDirection)
-	 */
-	@Override
-	public final Edge getNextEdge(EdgeDirection orientation) {
-		return myGraph.getNextEdge(this, orientation);
 	}
 
 	/*
@@ -193,97 +137,21 @@ public abstract class ReversedEdgeImpl implements Edge {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see de.uni_koblenz.jgralab.Edge#getNextEdgeOfClass(java.lang.Class)
+	 * @see de.uni_koblenz.jgralab.Edge#getPrevEdgeInGraph()
 	 */
 	@Override
-	public Edge getNextEdgeOfClass(Class<? extends Edge> anEdgeClass) {
-		return myGraph.getNextEdgeOfClass(this, anEdgeClass);
+	public Edge getPrevEdgeInGraph() {
+		return normalEdge.getPrevEdgeInGraph();
 	}
 
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see de.uni_koblenz.jgralab.Edge#getNextEdgeOfClass(java.lang.Class,
-	 *      boolean)
+	 * @see de.uni_koblenz.jgralab.Edge#getNextEdgeOfClassInGraph(de.uni_koblenz.jgralab.schema.EdgeClass)
 	 */
 	@Override
-	public Edge getNextEdgeOfClass(Class<? extends Edge> anEdgeClass,
-			boolean explicitType) {
-		return myGraph.getNextEdgeOfClass(this, anEdgeClass,
-				EdgeDirection.INOUT, explicitType);
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see de.uni_koblenz.jgralab.Edge#getNextEdgeOfClass(java.lang.Class,
-	 *      de.uni_koblenz.jgralab.EdgeDirection)
-	 */
-	@Override
-	public Edge getNextEdgeOfClass(Class<? extends Edge> anEdgeClass,
-			EdgeDirection orientation) {
-		return myGraph
-				.getNextEdgeOfClass(this, anEdgeClass, orientation, false);
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see de.uni_koblenz.jgralab.Edge#getNextEdgeOfClass(java.lang.Class,
-	 *      de.uni_koblenz.jgralab.EdgeDirection, boolean)
-	 */
-	@Override
-	public Edge getNextEdgeOfClass(Class<? extends Edge> anEdgeClass,
-			EdgeDirection orientation, boolean explicitType) {
-		return myGraph.getNextEdgeOfClass(this, anEdgeClass, orientation,
-				explicitType);
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see de.uni_koblenz.jgralab.Edge#getNextEdgeOfClass(de.uni_koblenz.jgralab.schema.EdgeClass)
-	 */
-	@Override
-	public Edge getNextEdgeOfClass(EdgeClass anEdgeClass) {
-		return myGraph.getNextEdgeOfClass(this, anEdgeClass);
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see de.uni_koblenz.jgralab.Edge#getNextEdgeOfClass(de.uni_koblenz.jgralab.schema.EdgeClass,
-	 *      boolean)
-	 */
-	@Override
-	public Edge getNextEdgeOfClass(EdgeClass anEdgeClass, boolean explicitType) {
-		return myGraph.getNextEdgeOfClass(this, anEdgeClass,
-				EdgeDirection.INOUT, explicitType);
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see de.uni_koblenz.jgralab.Edge#getNextEdgeOfClass(de.uni_koblenz.jgralab.schema.EdgeClass,
-	 *      de.uni_koblenz.jgralab.EdgeDirection)
-	 */
-	@Override
-	public Edge getNextEdgeOfClass(EdgeClass anEdgeClass,
-			EdgeDirection orientation) {
-		return myGraph.getNextEdgeOfClass(this, anEdgeClass);
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see de.uni_koblenz.jgralab.Edge#getNextEdgeOfClass(de.uni_koblenz.jgralab.schema.EdgeClass,
-	 *      de.uni_koblenz.jgralab.EdgeDirection, boolean)
-	 */
-	@Override
-	public Edge getNextEdgeOfClass(EdgeClass anEdgeClass,
-			EdgeDirection orientation, boolean explicitType) {
-		return myGraph.getNextEdgeOfClass(this, anEdgeClass, orientation,
-				explicitType);
+	public Edge getNextEdgeOfClassInGraph(EdgeClass anEdgeClass) {
+		return normalEdge.getNextEdgeOfClassInGraph(anEdgeClass);
 	}
 
 	/*
@@ -304,19 +172,8 @@ public abstract class ReversedEdgeImpl implements Edge {
 	 */
 	@Override
 	public Edge getNextEdgeOfClassInGraph(Class<? extends Edge> anEdgeClass,
-			boolean explicitType) {
-		return myGraph.getNextEdgeOfClassInGraph(normalEdge, anEdgeClass,
-				explicitType);
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see de.uni_koblenz.jgralab.Edge#getNextEdgeOfClassInGraph(de.uni_koblenz.jgralab.schema.EdgeClass)
-	 */
-	@Override
-	public Edge getNextEdgeOfClassInGraph(EdgeClass anEdgeClass) {
-		return normalEdge.getNextEdgeOfClassInGraph(anEdgeClass);
+			boolean noSubclasses) {
+		return normalEdge.getNextEdgeOfClassInGraph(anEdgeClass, noSubclasses);
 	}
 
 	/*
@@ -327,8 +184,8 @@ public abstract class ReversedEdgeImpl implements Edge {
 	 */
 	@Override
 	public Edge getNextEdgeOfClassInGraph(EdgeClass anEdgeClass,
-			boolean explicitType) {
-		return normalEdge.getNextEdgeOfClassInGraph(anEdgeClass, explicitType);
+			boolean noSubclasses) {
+		return normalEdge.getNextEdgeOfClassInGraph(anEdgeClass, noSubclasses);
 	}
 
 	/*
@@ -337,7 +194,7 @@ public abstract class ReversedEdgeImpl implements Edge {
 	 * @see de.uni_koblenz.jgralab.Edge#getNormalEdge()
 	 */
 	@Override
-	public final Edge getNormalEdge() {
+	public Edge getNormalEdge() {
 		return normalEdge;
 	}
 
@@ -348,7 +205,7 @@ public abstract class ReversedEdgeImpl implements Edge {
 	 */
 	@Override
 	public Vertex getOmega() {
-		return normalEdge.getOmega();
+		return getIncidentVertex();
 	}
 
 	/*
@@ -357,18 +214,8 @@ public abstract class ReversedEdgeImpl implements Edge {
 	 * @see de.uni_koblenz.jgralab.Edge#getReversedEdge()
 	 */
 	@Override
-	public final Edge getReversedEdge() {
+	public Edge getReversedEdge() {
 		return normalEdge;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see de.uni_koblenz.jgralab.AttributedElement#getSchema()
-	 */
-	@Override
-	public Schema getSchema() {
-		return normalEdge.getSchema();
 	}
 
 	/*
@@ -378,7 +225,7 @@ public abstract class ReversedEdgeImpl implements Edge {
 	 */
 	@Override
 	public Vertex getThat() {
-		return normalEdge.getAlpha();
+		return getAlpha();
 	}
 
 	/*
@@ -398,7 +245,7 @@ public abstract class ReversedEdgeImpl implements Edge {
 	 */
 	@Override
 	public Vertex getThis() {
-		return normalEdge.getOmega();
+		return getOmega();
 	}
 
 	/*
@@ -427,8 +274,8 @@ public abstract class ReversedEdgeImpl implements Edge {
 	 * @see de.uni_koblenz.jgralab.Edge#isAfterInGraph(de.uni_koblenz.jgralab.Edge)
 	 */
 	@Override
-	public boolean isAfterInGraph(Edge anEdge) {
-		return normalEdge.isAfterInGraph(anEdge);
+	public boolean isAfterInGraph(Edge e) {
+		return normalEdge.isAfterInGraph(e);
 	}
 
 	/*
@@ -437,8 +284,8 @@ public abstract class ReversedEdgeImpl implements Edge {
 	 * @see de.uni_koblenz.jgralab.Edge#isBeforeInGraph(de.uni_koblenz.jgralab.Edge)
 	 */
 	@Override
-	public boolean isBeforeInGraph(Edge anEdge) {
-		return normalEdge.isBeforeInGraph(anEdge);
+	public boolean isBeforeInGraph(Edge e) {
+		return normalEdge.isBeforeInGraph(e);
 	}
 
 	/*
@@ -447,7 +294,7 @@ public abstract class ReversedEdgeImpl implements Edge {
 	 * @see de.uni_koblenz.jgralab.Edge#isNormal()
 	 */
 	@Override
-	public final boolean isNormal() {
+	public boolean isNormal() {
 		return false;
 	}
 
@@ -457,8 +304,8 @@ public abstract class ReversedEdgeImpl implements Edge {
 	 * @see de.uni_koblenz.jgralab.Edge#putAfterInGraph(de.uni_koblenz.jgralab.Edge)
 	 */
 	@Override
-	public void putAfterInGraph(Edge anEdge) {
-		normalEdge.putAfterInGraph(anEdge);
+	public void putAfterInGraph(Edge e) {
+		normalEdge.putAfterInGraph(e);
 	}
 
 	/*
@@ -467,28 +314,8 @@ public abstract class ReversedEdgeImpl implements Edge {
 	 * @see de.uni_koblenz.jgralab.Edge#putBeforeInGraph(de.uni_koblenz.jgralab.Edge)
 	 */
 	@Override
-	public void putBeforeInGraph(Edge anEdge) {
-		normalEdge.putBeforeInGraph(anEdge);
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see de.uni_koblenz.jgralab.Edge#putEdgeAfter(de.uni_koblenz.jgralab.Edge)
-	 */
-	@Override
-	public void putEdgeAfter(Edge previousEdge) {
-		myGraph.putEdgeAfter(this, previousEdge);
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see de.uni_koblenz.jgralab.Edge#putEdgeBefore(de.uni_koblenz.jgralab.Edge)
-	 */
-	@Override
-	public void putEdgeBefore(Edge nextEdge) {
-		myGraph.putEdgeBefore(this, nextEdge);
+	public void putBeforeInGraph(Edge e) {
+		normalEdge.putBeforeInGraph(e);
 	}
 
 	/*
@@ -548,7 +375,7 @@ public abstract class ReversedEdgeImpl implements Edge {
 	 * @see de.uni_koblenz.jgralab.Edge#isValid()
 	 */
 	@Override
-	public final boolean isValid() {
+	public boolean isValid() {
 		return myGraph.containsEdge(this);
 	}
 

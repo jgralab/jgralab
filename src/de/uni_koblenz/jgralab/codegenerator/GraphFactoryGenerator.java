@@ -21,7 +21,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
- 
+
 package de.uni_koblenz.jgralab.codegenerator;
 
 import de.uni_koblenz.jgralab.schema.EdgeClass;
@@ -31,33 +31,33 @@ import de.uni_koblenz.jgralab.schema.VertexClass;
 
 /**
  * This class generates the code of the GraphElement Factory.
+ * 
  * @author dbildh
- *
+ * 
  */
 public class GraphFactoryGenerator extends CodeGenerator {
-	
+
 	private Schema schema;
-	
-	public GraphFactoryGenerator(Schema schema, String schemaPackageName, String implementationName) {
+
+	public GraphFactoryGenerator(Schema schema, String schemaPackageName,
+			String implementationName) {
 		super(schemaPackageName, "");
 		this.schema = schema;
 		rootBlock.setVariable("className", schema.getSimpleName() + "Factory");
-		rootBlock.setVariable("simpleImplClassName", schema.getSimpleName() + "Factory");
-		//rootBlock.setVariable("isClassOnly", "true");
+		rootBlock.setVariable("simpleImplClassName", schema.getSimpleName()
+				+ "Factory");
 		rootBlock.setVariable("isImplementationClassOnly", "true");
 	}
 
+	@Override
 	protected CodeBlock createHeader(boolean createClass) {
-	//	addImports("#schemaPackage#.*");
 		addImports("#jgImplPackage#.GraphFactoryImpl");
 		CodeSnippet code = new CodeSnippet(true);
 		code.setVariable("className", schema.getSimpleName() + "Factory");
 		code.add("public class #className# extends GraphFactoryImpl {");
 		return code;
 	}
-	
-	
-	
+
 	@Override
 	protected CodeBlock createBody(boolean createClass) {
 		CodeList code = new CodeList();
@@ -65,7 +65,7 @@ public class GraphFactoryGenerator extends CodeGenerator {
 		code.add(createFillTableMethod());
 		return code;
 	}
-	
+
 	protected CodeBlock createConstructor() {
 		CodeSnippet code = new CodeSnippet(true);
 		code.setVariable("className", schema.getSimpleName() + "Factory");
@@ -75,7 +75,7 @@ public class GraphFactoryGenerator extends CodeGenerator {
 		code.add("}");
 		return code;
 	}
-	
+
 	protected CodeBlock createFillTableMethod() {
 		CodeList code = new CodeList();
 		CodeSnippet s = new CodeSnippet(true);
@@ -83,58 +83,71 @@ public class GraphFactoryGenerator extends CodeGenerator {
 		code.addNoIndent(s);
 		for (GraphClass graphClass : schema.getGraphClasses().values()) {
 			code.add(createFillTableForGraph(graphClass));
-			for (VertexClass vertexClass : graphClass.getOwnVertexClasses())
+			for (VertexClass vertexClass : graphClass.getOwnVertexClasses()) {
 				code.add(createFillTableForVertex(vertexClass));
-			for (EdgeClass edgeClass : graphClass.getOwnEdgeClasses())
+			}
+			for (EdgeClass edgeClass : graphClass.getOwnEdgeClasses()) {
 				code.add(createFillTableForEdge(edgeClass));
-			for (EdgeClass edgeClass : graphClass.getOwnAggregationClasses())
+			}
+			for (EdgeClass edgeClass : graphClass.getOwnAggregationClasses()) {
 				code.add(createFillTableForEdge(edgeClass));
-			for (EdgeClass edgeClass : graphClass.getOwnCompositionClasses())
+			}
+			for (EdgeClass edgeClass : graphClass.getOwnCompositionClasses()) {
 				code.add(createFillTableForEdge(edgeClass));
+			}
 		}
 		s = new CodeSnippet(true);
 		s.add("}");
 		code.addNoIndent(s);
 		return code;
 	}
-	
+
 	protected CodeBlock createFillTableForGraph(GraphClass graphClass) {
-		if (graphClass.isAbstract())
+		if (graphClass.isAbstract()) {
 			return null;
+		}
 		CodeSnippet code = new CodeSnippet(true);
-		code.setVariable("graphName", schemaRootPackageName + "." +graphClass.getQualifiedName());
-		code.setVariable("graphImplName", schemaRootPackageName + ".impl." + graphClass.getQualifiedName());
+		code.setVariable("graphName", schemaRootPackageName + "."
+				+ graphClass.getQualifiedName());
+		code.setVariable("graphImplName", schemaRootPackageName + ".impl."
+				+ graphClass.getQualifiedName());
 
 		if (!graphClass.isAbstract()) {
 			code.add("/* code for graph #graphName# */");
-			code.add("setGraphImplementationClass(#graphName#.class, #graphImplName#Impl.class);");
-		}	
+			code
+					.add("setGraphImplementationClass(#graphName#.class, #graphImplName#Impl.class);");
+		}
 		return code;
 	}
-	
+
 	protected CodeBlock createFillTableForVertex(VertexClass vertexClass) {
-		if (vertexClass.isAbstract())
+		if (vertexClass.isAbstract()) {
 			return null;
+		}
 		CodeSnippet code = new CodeSnippet(true);
-		code.setVariable("vertexName", schemaRootPackageName + "." +vertexClass.getQualifiedName());
-		code.setVariable("vertexImplName", schemaRootPackageName + ".impl." + vertexClass.getQualifiedName());
-		if (!vertexClass.isAbstract())
-		code.add("setVertexImplementationClass(#vertexName#.class, #vertexImplName#Impl.class);");
+		code.setVariable("vertexName", schemaRootPackageName + "."
+				+ vertexClass.getQualifiedName());
+		code.setVariable("vertexImplName", schemaRootPackageName + ".impl."
+				+ vertexClass.getQualifiedName());
+		if (!vertexClass.isAbstract()) {
+			code
+					.add("setVertexImplementationClass(#vertexName#.class, #vertexImplName#Impl.class);");
+		}
 		return code;
 	}
-	
+
 	protected CodeBlock createFillTableForEdge(EdgeClass edgeClass) {
-
-			//return null;
 		CodeSnippet code = new CodeSnippet(true);
-		code.setVariable("edgeName", schemaRootPackageName + "." + edgeClass.getQualifiedName());
-		code.setVariable("edgeImplName", schemaRootPackageName + ".impl." + edgeClass.getQualifiedName());
+		code.setVariable("edgeName", schemaRootPackageName + "."
+				+ edgeClass.getQualifiedName());
+		code.setVariable("edgeImplName", schemaRootPackageName + ".impl."
+				+ edgeClass.getQualifiedName());
 
-		if (!edgeClass.isAbstract())
-		code.add("setEdgeImplementationClass(#edgeName#.class, #edgeImplName#Impl.class);");
+		if (!edgeClass.isAbstract()) {
+			code
+					.add("setEdgeImplementationClass(#edgeName#.class, #edgeImplName#Impl.class);");
+		}
 		return code;
 	}
-	
-	
-	
+
 }

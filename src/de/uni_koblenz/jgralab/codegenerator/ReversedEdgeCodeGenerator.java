@@ -51,16 +51,7 @@ public class ReversedEdgeCodeGenerator extends AttributedElementCodeGenerator {
 	@Override
 	protected CodeBlock createBody(boolean createClass) {
 		if (createClass) {
-			if (aec.getAllSuperClasses().contains(
-					aec.getSchema().getDefaultCompositionClass()))
-				rootBlock.setVariable("baseClassName",
-						"ReversedCompositionImpl");
-			else if (aec.getAllSuperClasses().contains(
-					aec.getSchema().getDefaultAggregationClass()))
-				rootBlock.setVariable("baseClassName",
-						"ReversedAggregationImpl");
-			else
-				rootBlock.setVariable("baseClassName", "ReversedEdgeImpl");
+			rootBlock.setVariable("baseClassName", "ReversedEdgeImpl");
 			addImports("#jgImplPackage#.#baseClassName#");
 		}
 		CodeList code = (CodeList) super.createBody(createClass);
@@ -87,7 +78,6 @@ public class ReversedEdgeCodeGenerator extends AttributedElementCodeGenerator {
 				schemaRootPackageName).equals("Boolean") ? "is" : "get");
 
 		if (body) {
-			// addDomainImport(a);
 			code
 					.add(
 							"public #type# #isOrGet##cName#() {",
@@ -108,7 +98,6 @@ public class ReversedEdgeCodeGenerator extends AttributedElementCodeGenerator {
 				.getJavaAttributeImplementationTypeName(schemaRootPackageName));
 
 		if (body) {
-			// addDomainImport(a);
 			code
 					.add(
 							"public void set#cName#(#type# #name#) {",
@@ -143,10 +132,11 @@ public class ReversedEdgeCodeGenerator extends AttributedElementCodeGenerator {
 			}
 			EdgeClass ecl = (EdgeClass) ec;
 			code.addNoIndent(createNextEdgeInGraphMethod(ecl, false));
-			if (CodeGenerator.CREATE_METHODS_WITH_TYPEFLAG)
+			if (CodeGenerator.CREATE_METHODS_WITH_TYPEFLAG) {
 				if (!ecl.isAbstract()) {
 					code.addNoIndent(createNextEdgeInGraphMethod(ecl, true));
 				}
+			}
 		}
 		return code;
 	}

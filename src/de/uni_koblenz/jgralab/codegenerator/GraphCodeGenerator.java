@@ -89,17 +89,17 @@ public class GraphCodeGenerator extends AttributedElementCodeGenerator {
 		TreeSet<GraphElementClass> sortedClasses = new TreeSet<GraphElementClass>();
 		sortedClasses.addAll(gc.getGraphElementClasses());
 		for (GraphElementClass gec : sortedClasses) {
-			if (gec.getQualifiedName() != "Vertex" && gec.getQualifiedName() != "Edge"
+			if (gec.getQualifiedName() != "Vertex"
+					&& gec.getQualifiedName() != "Edge"
 					&& gec.getQualifiedName() != "Aggregation"
 					&& gec.getQualifiedName() != "Composition") {
-				// if (createClass) {
-				// addImports("#schemaPackage#." + gec.getName());
-				// }
 				CodeList gecCode = new CodeList();
 				code.addNoIndent(gecCode);
 
-				gecCode.addNoIndent(new CodeSnippet(true,
-					"// ------------------------ Code for #ecQualifiedName# ------------------------"));
+				gecCode
+						.addNoIndent(new CodeSnippet(
+								true,
+								"// ------------------------ Code for #ecQualifiedName# ------------------------"));
 
 				gecCode.setVariable("ecSimpleName", gec.getSimpleName());
 				gecCode.setVariable("ecUniqueName", gec.getUniqueName());
@@ -119,7 +119,6 @@ public class GraphCodeGenerator extends AttributedElementCodeGenerator {
 								.getQualifiedName())
 								+ "Impl"));
 
-				// gecCode.addNoIndent(createGetByIdMethod(gec, createClass));
 				gecCode.addNoIndent(createGetFirstMethods(gec, createClass));
 				gecCode.addNoIndent(createFactoryMethods(gec, createClass));
 			}
@@ -128,32 +127,16 @@ public class GraphCodeGenerator extends AttributedElementCodeGenerator {
 		return code;
 	}
 
-	// private CodeBlock createGetByIdMethod(GraphElementClass gec,
-	// boolean createClass) {
-	// CodeSnippet code = new CodeSnippet(true);
-	// if (!createClass) {
-	// code.add(
-	// "/**",
-	// " * @return the #ecSimpleName# #ecTypeInComment# with specified
-	// <code>id</code>",
-	// " */",
-	// "public #ecJavaClassName# get#ecCamelName#(int id);");
-	// } else {
-	// code.add("public #ecJavaClassName# get#ecCamelName#(int id) {",
-	// "\treturn (#ecJavaClassName#)get#ecType#(id);", "}");
-	// }
-	// return code;
-	//	}
-
 	private CodeBlock createGetFirstMethods(GraphElementClass gec,
 			boolean createClass) {
 		CodeList code = new CodeList();
 
 		code.addNoIndent(createGetFirstMethod(gec, false, createClass));
-		if (CodeGenerator.CREATE_METHODS_WITH_TYPEFLAG)
+		if (CodeGenerator.CREATE_METHODS_WITH_TYPEFLAG) {
 			if (!gec.isAbstract()) {
 				code.addNoIndent(createGetFirstMethod(gec, true, createClass));
 			}
+		}
 		return code;
 	}
 
@@ -161,25 +144,30 @@ public class GraphCodeGenerator extends AttributedElementCodeGenerator {
 			boolean withTypeFlag, boolean createClass) {
 		CodeSnippet code = new CodeSnippet(true);
 		if (!createClass) {
-			code.add("/**",
-					" * @return the first #ecSimpleName# #ecTypeInComment# in this graph");
+			code
+					.add("/**",
+							" * @return the first #ecSimpleName# #ecTypeInComment# in this graph");
 			if (withTypeFlag) {
-				code.add(" * @param noSubClasses if set to <code>true</code>, no subclasses of #ecSimpleName# are accepted");
+				code
+						.add(" * @param noSubClasses if set to <code>true</code>, no subclasses of #ecSimpleName# are accepted");
 			}
-			code.add(" */",
-					"public #ecJavaClassName# getFirst#ecCamelName##inGraph#(#formalParams#);");
+			code
+					.add(" */",
+							"public #ecJavaClassName# getFirst#ecCamelName##inGraph#(#formalParams#);");
 		} else {
-			code.add(
-					"public #ecJavaClassName# getFirst#ecCamelName##inGraph#(#formalParams#) {",
-					"\treturn (#ecJavaClassName#)getFirst#ecType#OfClass#inGraph#(#schemaName#.instance().#ecSchemaVariableName##actualParams#);",
-					"}");
+			code
+					.add(
+							"public #ecJavaClassName# getFirst#ecCamelName##inGraph#(#formalParams#) {",
+							"\treturn (#ecJavaClassName#)getFirst#ecType#OfClass#inGraph#(#schemaName#.instance().#ecSchemaVariableName##actualParams#);",
+							"}");
 		}
 		code.setVariable("inGraph", (gec instanceof VertexClass ? ""
 				: "InGraph"));
 		code.setVariable("formalParams", (withTypeFlag ? "boolean noSubClasses"
 				: ""));
-		code.setVariable("actualParams", (withTypeFlag ? ", noSubClasses"
-					: ""));
+		code
+				.setVariable("actualParams", (withTypeFlag ? ", noSubClasses"
+						: ""));
 
 		return code;
 	}
@@ -201,25 +189,29 @@ public class GraphCodeGenerator extends AttributedElementCodeGenerator {
 			boolean withId, boolean createClass) {
 		CodeSnippet code = new CodeSnippet(true);
 		if (!createClass) {
-			code.add(
-					"/**",
-					" * Creates a new #ecUniqueName# #ecTypeInComment# in this graph.",
-					" *");
+			code
+					.add(
+							"/**",
+							" * Creates a new #ecUniqueName# #ecTypeInComment# in this graph.",
+							" *");
 			if (withId) {
-				code.add(" * @param id the <code>id</code> of the #ecTypeInComment#");
+				code
+						.add(" * @param id the <code>id</code> of the #ecTypeInComment#");
 			}
 			if (gec instanceof EdgeClass) {
 				code.add(" * @param alpha the start vertex of the edge",
 						" * @param omega the target vertex of the edge");
 			}
-			code.add("*/",
-					"public #ecJavaClassName# create#ecCamelName#(#formalParams#);");
+			code
+					.add("*/",
+							"public #ecJavaClassName# create#ecCamelName#(#formalParams#);");
 		} else {
-			code.add(
-					"public #ecJavaClassName# create#ecCamelName#(#formalParams#) {",
-					"\t#ecJavaClassName# new#ecType# = (#ecJavaClassName#) graphFactory.create#ecType#(#ecJavaClassName#.class, #newActualParams#, this);",
-					"\tadd#ecType#(new#ecType##addActualParams#);",
-					"\treturn new#ecType#;", "}");
+			code
+					.add(
+							"public #ecJavaClassName# create#ecCamelName#(#formalParams#) {",
+							"\t#ecJavaClassName# new#ecType# = (#ecJavaClassName#) graphFactory.create#ecType#(#ecJavaClassName#.class, #newActualParams#, this);",
+							"\tadd#ecType#(new#ecType##addActualParams#);",
+							"\treturn new#ecType#;", "}");
 		}
 
 		if (gec instanceof EdgeClass) {
@@ -227,7 +219,8 @@ public class GraphCodeGenerator extends AttributedElementCodeGenerator {
 			String fromClass = ec.getFrom().getQualifiedName();
 			String toClass = ec.getTo().getQualifiedName();
 			if (fromClass.equals("Vertex")) {
-				code.setVariable("fromClass", rootBlock.getVariable("jgPackage")
+				code.setVariable("fromClass", rootBlock
+						.getVariable("jgPackage")
 						+ "." + "Vertex");
 			} else {
 				code.setVariable("fromClass", schemaRootPackageName + "."
@@ -262,11 +255,13 @@ public class GraphCodeGenerator extends AttributedElementCodeGenerator {
 		edgeClassSet.addAll(gc.getCompositionClasses());
 
 		for (EdgeClass edge : edgeClassSet) {
-			if (edge.isInternal())
+			if (edge.isInternal()) {
 				continue;
+			}
 
-			if (createClass)
+			if (createClass) {
 				addImports("#jgImplPackage#.EdgeIterable");
+			}
 
 			CodeSnippet s = new CodeSnippet(true);
 			code.addNoIndent(s);
@@ -275,30 +270,39 @@ public class GraphCodeGenerator extends AttributedElementCodeGenerator {
 			s.setVariable("edgeQualifiedName", edge.getQualifiedName());
 			s.setVariable("edgeJavaClassName", schemaRootPackageName + "."
 					+ edge.getQualifiedName());
-			/* getFooIncidences() */
+			// getFooIncidences()
 			if (!createClass) {
 				s.add("/**");
-				s.add(" * @return an Iterable for all edges of this graph that are of type #edgeQualifiedName# or subtypes.");
+				s
+						.add(" * @return an Iterable for all edges of this graph that are of type #edgeQualifiedName# or subtypes.");
 				s.add(" */");
-				s.add("public Iterable<#edgeJavaClassName#> get#edgeUniqueName#Edges();");
+				s
+						.add("public Iterable<#edgeJavaClassName#> get#edgeUniqueName#Edges();");
 			} else {
-				s.add("public Iterable<#edgeJavaClassName#> get#edgeUniqueName#Edges() {");
-				s.add("\treturn new EdgeIterable<#edgeJavaClassName#>(this, #edgeJavaClassName#.class);");
+				s
+						.add("public Iterable<#edgeJavaClassName#> get#edgeUniqueName#Edges() {");
+				s
+						.add("\treturn new EdgeIterable<#edgeJavaClassName#>(this, #edgeJavaClassName#.class);");
 				s.add("}");
 			}
 			s.add("");
-			/* getFooIncidences(boolean nosubclasses) */
+			// getFooIncidences(boolean nosubclasses)
 			if (CodeGenerator.CREATE_METHODS_WITH_TYPEFLAG) {
 				if (!createClass) {
 					s.add("/**");
-					s.add(" * @return an Iterable for all incidence edges of this graph that are of type #edgeQulifiedName#.");
+					s
+							.add(" * @return an Iterable for all incidence edges of this graph that are of type #edgeQulifiedName#.");
 					s.add(" *");
-					s.add(" * @param noSubClasses toggles wether subclasses of #edgeQualifiedName# should be excluded");
+					s
+							.add(" * @param noSubClasses toggles wether subclasses of #edgeQualifiedName# should be excluded");
 					s.add(" */");
-					s.add("public Iterable<#edgeJavaClassName#> get#edgeUniqueName#Edges(boolean noSubClasses);");
+					s
+							.add("public Iterable<#edgeJavaClassName#> get#edgeUniqueName#Edges(boolean noSubClasses);");
 				} else {
-					s.add("public Iterable<#edgeJavaClassName#> get#edgeUniqueName#Edges(boolean noSubClasses) {");
-					s.add("\treturn new EdgeIterable<#edgeJavaClassName#>(this, #edgeJavaClassName#.class, noSubClasses);");
+					s
+							.add("public Iterable<#edgeJavaClassName#> get#edgeUniqueName#Edges(boolean noSubClasses) {");
+					s
+							.add("\treturn new EdgeIterable<#edgeJavaClassName#>(this, #edgeJavaClassName#.class, noSubClasses);");
 					s.add("}\n");
 				}
 			}
@@ -316,44 +320,54 @@ public class GraphCodeGenerator extends AttributedElementCodeGenerator {
 		vertexClassSet.addAll(gc.getVertexClasses());
 
 		for (VertexClass vertex : vertexClassSet) {
-			if (vertex.isInternal())
+			if (vertex.isInternal()) {
 				continue;
+			}
 
-			if (createClass)
+			if (createClass) {
 				addImports("#jgImplPackage#.VertexIterable");
+			}
 
 			CodeSnippet s = new CodeSnippet(true);
 			code.addNoIndent(s);
 
-			// String targetClassName = ;
 			s.setVariable("vertexQualifiedName", vertex.getQualifiedName());
 			s.setVariable("vertexJavaClassName", schemaRootPackageName + "."
 					+ vertex.getQualifiedName());
 			s.setVariable("vertexCamelName", camelCase(vertex.getUniqueName()));
-			/* getFooIncidences() */
+			// getFooIncidences()
 			if (!createClass) {
 				s.add("/**");
-				s.add(" * @return an Iterable for all vertices of this graph that are of type #vertexQualifiedName# or subtypes.");
+				s
+						.add(" * @return an Iterable for all vertices of this graph that are of type #vertexQualifiedName# or subtypes.");
 				s.add(" */");
-				s.add("public Iterable<#vertexJavaClassName#> get#vertexCamelName#Vertices();");
+				s
+						.add("public Iterable<#vertexJavaClassName#> get#vertexCamelName#Vertices();");
 			} else {
-				s.add("public Iterable<#vertexJavaClassName#> get#vertexCamelName#Vertices() {");
-				s.add("\treturn new VertexIterable<#vertexJavaClassName#>(this, #vertexJavaClassName#.class);");
+				s
+						.add("public Iterable<#vertexJavaClassName#> get#vertexCamelName#Vertices() {");
+				s
+						.add("\treturn new VertexIterable<#vertexJavaClassName#>(this, #vertexJavaClassName#.class);");
 				s.add("}");
 			}
 			s.add("");
-			/* getFooIncidences(boolean nosubclasses) */
+			// getFooIncidences(boolean nosubclasses)
 			if (CodeGenerator.CREATE_METHODS_WITH_TYPEFLAG) {
 				if (!createClass) {
 					s.add("/**");
-					s.add(" * @return an Iterable for all incidence vertices of this graph that are of type #vertexQualifiedName#.");
+					s
+							.add(" * @return an Iterable for all incidence vertices of this graph that are of type #vertexQualifiedName#.");
 					s.add(" *");
-					s.add(" * @param noSubClasses toggles wether subclasses of #vertexQualifiedName# should be excluded");
+					s
+							.add(" * @param noSubClasses toggles wether subclasses of #vertexQualifiedName# should be excluded");
 					s.add(" */");
-					s.add("public Iterable<#vertexJavaClassName#> get#vertexCamelName#Vertices(boolean noSubClasses);");
+					s
+							.add("public Iterable<#vertexJavaClassName#> get#vertexCamelName#Vertices(boolean noSubClasses);");
 				} else {
-					s.add("public Iterable<#vertexJavaClassName#> get#vertexCamelName#Vertices(boolean noSubClasses) {");
-					s.add("\treturn new VertexIterable<#vertexJavaClassName#>(this, #vertexJavaClassName#.class, noSubClasses);");
+					s
+							.add("public Iterable<#vertexJavaClassName#> get#vertexCamelName#Vertices(boolean noSubClasses) {");
+					s
+							.add("\treturn new VertexIterable<#vertexJavaClassName#>(this, #vertexJavaClassName#.class, noSubClasses);");
 					s.add("}\n");
 				}
 			}

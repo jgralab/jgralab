@@ -21,7 +21,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
- 
+
 package de.uni_koblenz.jgralab.greql2.evaluator.fa;
 
 import de.uni_koblenz.jgralab.BooleanGraphMarker;
@@ -38,20 +38,19 @@ import de.uni_koblenz.jgralab.greql2.schema.ThisEdge;
 import de.uni_koblenz.jgralab.greql2.schema.ThisVertex;
 
 /**
- * This transition may fire, if the VertexEvaluator it holds as attribute returns true as result
+ * This transition may fire, if the VertexEvaluator it holds as attribute
+ * returns true as result
  * 
- * @author Daniel Bildhauer <dbildh@uni-koblenz.de> 
- * Summer 2006, Diploma Thesis
- *
+ * @author Daniel Bildhauer <dbildh@uni-koblenz.de> Summer 2006, Diploma Thesis
+ * 
  */
 public class BoolExpressionTransition extends Transition {
 
 	private VertexEvaluator boolExpressionEvaluator;
 
 	private ThisVertexEvaluator thisVertexEvaluator;
-	
+
 	private ThisEdgeEvaluator thisEdgeEvaluator;
-	
 
 	/**
 	 * returns a string which describes the edge
@@ -61,9 +60,9 @@ public class BoolExpressionTransition extends Transition {
 		return desc;
 	}
 
-
-
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see greql2.evaluator.fa.Transition#equalSymbol(greql2.evaluator.fa.EdgeTransition)
 	 */
 	public boolean equalSymbol(Transition t) {
@@ -78,23 +77,21 @@ public class BoolExpressionTransition extends Transition {
 	/**
 	 * Copy-constructor, creates a copy of the given transition
 	 */
-	protected BoolExpressionTransition(BoolExpressionTransition t, boolean addToStates) {
+	protected BoolExpressionTransition(BoolExpressionTransition t,
+			boolean addToStates) {
 		super(t, addToStates);
 		boolExpressionEvaluator = t.boolExpressionEvaluator;
 		thisVertexEvaluator = t.thisVertexEvaluator;
 		thisEdgeEvaluator = t.thisEdgeEvaluator;
 
 	}
-	
-	
+
 	/**
 	 * returns a copy of this transition
 	 */
 	public Transition copy(boolean addToStates) {
 		return new BoolExpressionTransition(this, addToStates);
 	}
-
-
 
 	/**
 	 * Creates a new transition from start state to end state. The Transition
@@ -106,13 +103,16 @@ public class BoolExpressionTransition extends Transition {
 	 *            The state where this transition starts
 	 * @param end
 	 *            The state where this transition ends
-	 * @param boolEval the VertexEvaluator which evaluates the boolean expression this 
-	 * transition accepts
+	 * @param boolEval
+	 *            the VertexEvaluator which evaluates the boolean expression
+	 *            this transition accepts
 	 */
-	public BoolExpressionTransition(State start, State end, VertexEvaluator boolEval, GraphMarker<VertexEvaluator> graphMarker) { 
+	public BoolExpressionTransition(State start, State end,
+			VertexEvaluator boolEval, GraphMarker<VertexEvaluator> graphMarker) {
 		super(start, end);
 		boolExpressionEvaluator = boolEval;
-		Vertex v = graphMarker.getGraph().getFirstVertexOfClass(ThisVertex.class);
+		Vertex v = graphMarker.getGraph().getFirstVertexOfClass(
+				ThisVertex.class);
 		if (v != null)
 			thisVertexEvaluator = (ThisVertexEvaluator) graphMarker.getMark(v);
 		v = graphMarker.getGraph().getFirstVertexOfClass(ThisEdge.class);
@@ -120,44 +120,48 @@ public class BoolExpressionTransition extends Transition {
 			thisEdgeEvaluator = (ThisEdgeEvaluator) graphMarker.getMark(v);
 	}
 
-
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see greql2.evaluator.fa.Transition#isEpsilon()
 	 */
 	public boolean isEpsilon() {
 		return false;
 	}
 
-
-	/* (non-Javadoc)
-	 * @see greql2.evaluator.fa.Transition#accepts(jgralab.Vertex, jgralab.Edge, greql2.evaluator.SubgraphTempAttribute)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see greql2.evaluator.fa.Transition#accepts(jgralab.Vertex, jgralab.Edge,
+	 *      greql2.evaluator.SubgraphTempAttribute)
 	 */
 	public boolean accepts(Vertex v, Edge e, BooleanGraphMarker subgraph)
 			throws EvaluateException {
-		System.out.println("checking if boolean expression accepts vertex " + v + " and edge " +e );
+		// System.out.println("checking if boolean expression accepts vertex " +
+		// v + " and edge " +e );
 		if (thisEdgeEvaluator != null) {
-			System.out.println("Setting thisEdge to " + e);
+			// System.out.println("Setting thisEdge to " + e);
 			thisEdgeEvaluator.setValue(new JValue(e));
-		}	
+		}
 		if (thisVertexEvaluator != null) {
 			thisVertexEvaluator.setValue(new JValue(v));
-		}	
-		System.out.println("Try to get result");
+		}
+		// System.out.println("Try to get result");
 		JValue res = boolExpressionEvaluator.getResult(subgraph);
 		if (res.isBoolean()) {
 			try {
 				if (res.toBoolean() == Boolean.TRUE) {
-					System.out.println("BooleanExpressionTransition accepting vertex");
+					// System.out.println("BooleanExpressionTransition accepting
+					// vertex");
 					return true;
-				}	
+				}
 			} catch (JValueInvalidTypeException ex) {
 				// may not happen here
 			}
 		}
 		return false;
 	}
-	
-	
+
 	public Vertex getNextVertex(Vertex v, Edge e) {
 		return v;
 	}

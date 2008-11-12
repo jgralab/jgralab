@@ -31,7 +31,6 @@ import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.GraphException;
 import de.uni_koblenz.jgralab.Vertex;
-import de.uni_koblenz.jgralab.schema.EdgeClass;
 
 /**
  * This class provides an Iterable for the Edges incident to a vertex. Using the
@@ -182,18 +181,10 @@ public class IncidenceIterable<E extends Edge> implements Iterable<E> {
 		iter = new IncidenceIteratorEdgeDirection(v, orientation);
 	}
 
-	public IncidenceIterable(Vertex v, EdgeClass ec) {
-		iter = new IncidenceIteratorClassExplicit(v, ec.getM1Class());
-	}
-
 	public IncidenceIterable(Vertex v, Class<? extends Edge> ec) {
 		iter = new IncidenceIteratorClassExplicit(v, ec);
 	}
 	
-	public IncidenceIterable(Vertex v, EdgeClass ec, EdgeDirection orientation) {
-		iter = new IncidenceIteratorClassDirection(v, ec.getM1Class(), orientation);
-	}
-
 	public IncidenceIterable(Vertex v, Class<? extends Edge> ec,
 			EdgeDirection orientation) {
 		iter = new IncidenceIteratorClassDirection(v, ec, orientation);

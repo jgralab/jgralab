@@ -40,10 +40,13 @@ public class JGraLab {
 	// to use this information inside the text place $rev for the revision
 	// information
 	// and $bid for the build id
-	private final String version = "Becklespinax";
+	private final String version = "Carnotaurus";
 
 	private final String[] info = {
-			"JGraLab - The Java graph laboratory $ver $rev  $bid",
+			"JGraLab - The Java graph laboratory",
+			"  Version : $ver",
+			"  $rev",
+			"  Build ID: $bid",
 			"(c) 2006-2008 Institute for Software Technology",
 			"              University of Koblenz-Landau, Germany",
 			"",
@@ -97,7 +100,9 @@ public class JGraLab {
 
 	/**
 	 * Prints version and license info.
-	 * @param args (ignored)
+	 * 
+	 * @param args
+	 *            (ignored)
 	 */
 	public static void main(String[] args) {
 		JGraLab jgralab = new JGraLab();
@@ -115,6 +120,7 @@ public class JGraLab {
 		return outputLine;
 	}
 
+	@Override
 	public String toString() {
 		StringBuffer output = new StringBuffer(1024);
 		output.append('\n');

@@ -47,7 +47,7 @@ import de.uni_koblenz.jgralab.codegenerator.JavaSourceFromString;
  * 
  */
 public interface Schema extends NamedElement {
-	
+
 	/**
 	 * These are words that are reserved by Java itself and may not be used for
 	 * element names
@@ -68,13 +68,14 @@ public interface Schema extends NamedElement {
 			.asList(new String[] { "Boolean", "Integer", "Long", "String",
 					"Double", "Object" }));
 
-	public static final Set<String> reservedTGWords = new TreeSet<String>(Arrays
-			.asList(new String[] { "abstract", "aggregate", "AggregationClass",
-					"Boolean", "CompositionClass", "Double", "EdgeClass",
-					"EnumDomain", "f", "from", "Graph", "GraphClass",
-					"Integer", "List", "Long", "Object", "Package",
+	public static final Set<String> reservedTGWords = new TreeSet<String>(
+			Arrays.asList(new String[] { "abstract", "aggregate",
+					"AggregationClass", "Boolean", "CompositionClass",
+					"Double", "EdgeClass", "EnumDomain", "f", "from", "Graph",
+					"GraphClass", "Integer", "List", "Long", "Package",
 					"RecordDomain", "redefines", "role", "Schema", "Set",
-					"String", "t", "to", "VertexClass", "id", "reversed", "normal" }));
+					"String", "t", "to", "VertexClass", "id", "reversed",
+					"normal" }));
 
 	/**
 	 * sets the factory that is used to create graphs, vertices and edges
@@ -115,7 +116,8 @@ public interface Schema extends NamedElement {
 	 *            a list of strings which state the constants of the enumeration
 	 * @return a new enumeration domain
 	 */
-	public EnumDomain createEnumDomain(QualifiedName qn, List<String> enumComponents);
+	public EnumDomain createEnumDomain(QualifiedName qn,
+			List<String> enumComponents);
 
 	/**
 	 * builds a new enumeration domain, multiple domains may exist in a schema
@@ -208,11 +210,12 @@ public interface Schema extends NamedElement {
 	public void compile();
 
 	/**
-	 * After creating the schema, this command serves to generate and compile code
-	 * for the m1 classes. The class files are not written to disk, but only held in
-	 * memory.
+	 * After creating the schema, this command serves to generate and compile
+	 * code for the m1 classes. The class files are not written to disk, but
+	 * only held in memory.
 	 * 
-	 * @param jgralabClassPath the classpath to JGraLab
+	 * @param jgralabClassPath
+	 *            the classpath to JGraLab
 	 */
 	public void compile(String jgralabClassPath);
 
@@ -262,7 +265,7 @@ public interface Schema extends NamedElement {
 	 * @return all the domains in the schema
 	 */
 	public Map<QualifiedName, Domain> getDomains();
-	
+
 	/**
 	 * @return all packages in the schema
 	 */
@@ -280,7 +283,7 @@ public interface Schema extends NamedElement {
 	 * @return the enum or record domain with the name domainName
 	 */
 	public Domain getDomain(QualifiedName domainName);
-	
+
 	/**
 	 * @param packageName
 	 *            the unique name of the package
@@ -378,7 +381,6 @@ public interface Schema extends NamedElement {
 	 */
 	public List<EnumDomain> getEnumDomains();
 
-	
 	/**
 	 * Returns a list of all record domains
 	 * 
@@ -489,35 +491,39 @@ public interface Schema extends NamedElement {
 	public Package createPackageWithParents(String qualifiedName);
 
 	public void addPackage(Package p);
-	
+
 	/**
-	 * This method is for internally use of JGraLab only.
-	 * It registers the given element <code>elem</code>
-	 * under the unique name <code>name</code>
+	 * This method is for internally use of JGraLab only. It registers the given
+	 * element <code>elem</code> under the unique name <code>name</code>
+	 * 
 	 * @param name
 	 * @param elem
 	 */
 	public void addToKnownElements(String name, NamedElement elem);
-	
+
 	/**
-	 * Checks if this schema supports enumeration constants 
-	 * with lowercase letters is
+	 * Checks if this schema supports enumeration constants with lowercase
+	 * letters is
+	 * 
 	 * @return true iff the schema allows lowercase enum constants
 	 */
 	public boolean allowsLowercaseEnumConstants();
 
-	
 	/**
 	 * Sets the schema to allow lowercase enum constants
-	 * @param allowLowercaseEnumConstants set to true to make the schema
-	 *  to allow lowercase enum constants 
+	 * 
+	 * @param allowLowercaseEnumConstants
+	 *            set to true to make the schema to allow lowercase enum
+	 *            constants
 	 */
-	public void setAllowLowercaseEnumConstants(boolean allowLowercaseEnumConstants);
+	public void setAllowLowercaseEnumConstants(
+			boolean allowLowercaseEnumConstants);
 
 	/**
-	 * Checks if the given name is a valid enumeration constant in this 
-	 * shcema
-	 * @param name the constant name to check
+	 * Checks if the given name is a valid enumeration constant in this shcema
+	 * 
+	 * @param name
+	 *            the constant name to check
 	 * @return true if <code>name</code> is a valid enum constant
 	 */
 	public boolean isValidEnumConstant(String name);

@@ -104,7 +104,7 @@ public class PathSystem extends PathSearch implements Greql2Function {
 	 * The graph the search is performed on
 	 */
 	private Graph graph;
-	
+
 	/**
 	 * Holds a set of states for each AttributedElement
 	 */
@@ -173,9 +173,14 @@ public class PathSystem extends PathSearch implements Greql2Function {
 		PathSystemQueueEntry currentEntry = new PathSystemQueueEntry(
 				startVertex, dfa.initialState, null, null, 0);
 		markVertex(startVertex, dfa.initialState, null /* no parent state */,
-				   null /* no parent vertex */, null /* no parent state */, 
-				   0 /*distance to root is null*/);
-		
+				null /* no parent vertex */, null /* no parent state */, 0 /*
+																			 * distance
+																			 * to
+																			 * root
+																			 * is
+																			 * null
+																			 */);
+
 		int count = 0, countWTrans = 0;
 		while (currentEntry != null) {
 			if (currentEntry.state.isFinal) {
@@ -184,7 +189,7 @@ public class PathSystem extends PathSearch implements Greql2Function {
 			Edge inc = currentEntry.vertex.getFirstEdge();
 			while (inc != null) {
 				count++;
-				
+
 				Iterator<Transition> transitionIter = currentEntry.state.outTransitions
 						.iterator();
 				while (transitionIter.hasNext()) {
@@ -212,11 +217,13 @@ public class PathSystem extends PathSearch implements Greql2Function {
 			}
 			currentEntry = queue.poll();
 		}
-		// GreqlEvaluator.errprintln("Marking vertices of path system finished");
-		System.out.println("# DFA states: " + dfa.stateList.size());
-		System.out.println("PathSystem - markVertices: " + count);
-		System.out.println("PathSystem - markVertices with transition loop: " + countWTrans);
-		
+		// GreqlEvaluator.errprintln("Marking vertices of path system
+		// finished");
+		// System.out.println("# DFA states: " + dfa.stateList.size());
+		// System.out.println("PathSystem - markVertices: " + count);
+		// System.out.println("PathSystem - markVertices with transition loop: "
+		// + countWTrans);
+
 		return finalVertices;
 	}
 
@@ -274,13 +281,21 @@ public class PathSystem extends PathSearch implements Greql2Function {
 				Object tempAttribute = currentGraphMarker.getMark(leaf);
 				if (tempAttribute != null) {
 					for (PathSystemMarkerEntry currentMarker : (PathSystemMarkerList) tempAttribute) {
-						if (!currentMarker.state.isFinal ||                           // if state of current PathSystemMarkerEntry is final or 
-								isVertexMarkedWithState(leaf, currentMarker.state)) { // (leaf, state) has already been processed 
+						if (!currentMarker.state.isFinal || // if state of
+															// current
+															// PathSystemMarkerEntry
+															// is final or
+								isVertexMarkedWithState(leaf,
+										currentMarker.state)) { // (leaf, state)
+																// has already
+																// been
+																// processed
 							continue;
 						}
 						Vertex currentVertex = leaf;
-						while (currentVertex != null && 
-								!isVertexMarkedWithState(currentVertex, currentMarker.state)) {
+						while (currentVertex != null
+								&& !isVertexMarkedWithState(currentVertex,
+										currentMarker.state)) {
 							int parentStateNumber = 0;
 							if (currentMarker.parentState != null)
 								parentStateNumber = currentMarker.parentState.number;
@@ -292,7 +307,8 @@ public class PathSystem extends PathSearch implements Greql2Function {
 									parentStateNumber,
 									currentMarker.distanceToRoot,
 									currentMarker.state.isFinal);
-							markVertexWithState(currentVertex, currentMarker.state);
+							markVertexWithState(currentVertex,
+									currentMarker.state);
 							currentVertex = currentMarker.parentVertex;
 							currentMarker = getMarkerWithState(currentVertex,
 									currentMarker.parentState);
@@ -301,16 +317,19 @@ public class PathSystem extends PathSearch implements Greql2Function {
 				}
 			}
 		}
-		System.out.println("PathSystem - createPathSystem: " + count);
-		
+		// System.out.println("PathSystem - createPathSystem: " + count);
+
 		return pathSystem;
 	}
-	
+
 	/**
-	 * Adds the given state to the set of states maintained for the given vertex. 
+	 * Adds the given state to the set of states maintained for the given
+	 * vertex.
 	 * 
-	 * @param v the vertex to be marked
-	 * @param s the state which shall be added to {@code v}'s state set
+	 * @param v
+	 *            the vertex to be marked
+	 * @param s
+	 *            the state which shall be added to {@code v}'s state set
 	 */
 	private void markVertexWithState(Vertex v, State s) {
 		if (stateMarker.getMark(v) == null) {
@@ -318,13 +337,16 @@ public class PathSystem extends PathSearch implements Greql2Function {
 		}
 		stateMarker.getMark(v).add(s);
 	}
-	
+
 	/**
 	 * Checks if the given vertex' state set contains the given state.
 	 * 
-	 * @param v the vertex to be checked
-	 * @param s the state to be checked for
-	 * @return true, if {@code v}'s set of states contains {@code s}, false else
+	 * @param v
+	 *            the vertex to be checked
+	 * @param s
+	 *            the state to be checked for
+	 * @return true, if {@code v}'s set of states contains {@code s}, false
+	 *         else
 	 */
 	private boolean isVertexMarkedWithState(Vertex v, State s) {
 		if (stateMarker.getMark(v) == null) {
@@ -336,8 +358,12 @@ public class PathSystem extends PathSearch implements Greql2Function {
 	/**
 	 * Returns the {@code PathSystemMarkerEntry} for a given vertex and state.
 	 * 
-	 * @param v the vertex for which to return the {@code PathSystemMarkerEntry}
-	 * @param s the state for which to return the {@code PathSystemMarkerEntry}
+	 * @param v
+	 *            the vertex for which to return the
+	 *            {@code PathSystemMarkerEntry}
+	 * @param s
+	 *            the state for which to return the
+	 *            {@code PathSystemMarkerEntry}
 	 * @return the {@code PathSystemMarkerEntry} for {@code v} and {@code s}
 	 */
 	private PathSystemMarkerEntry getMarkerWithState(Vertex v, State s) {

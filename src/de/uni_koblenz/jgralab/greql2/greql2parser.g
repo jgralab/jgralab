@@ -2327,7 +2327,7 @@ simplePathDescription returns [PrimaryPathDescription pathDescr = null] throws P
 	        	{
 	        		if (! dir.getDirValue().equals(direction))
 	        		{
-	        			dir = (Direction)graph.getNextVertexOfClass(dir, directionVertexClass);
+	        			dir = (Direction)dir.getNextVertexOfClass(directionVertexClass);
 	        		}
 	        		else
 	        		{
@@ -2397,7 +2397,7 @@ edgePathDescription returns [EdgePathDescription pathDescr = null] throws ParseE
 	        	{
 	        		if (! dir.getDirValue().equals(direction))
 	        		{
-	        			dir = (Direction)graph.getNextVertexOfClass(dir, directionVertexClass);
+	        			dir = (Direction)dir.getNextVertexOfClass(directionVertexClass);
 	        		}
 	        		else
 	        		{
