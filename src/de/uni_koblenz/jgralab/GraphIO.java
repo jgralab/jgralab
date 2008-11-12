@@ -618,27 +618,6 @@ public class GraphIO {
 		TGOut.writeBytes(s);
 	}
 
-	// public final void writeObject(Object o) throws IOException {
-	// writeSpace();
-	// if (o == null) {
-	// TGOut.writeBytes("\\null");
-	// return;
-	// }
-	// ByteArrayOutputStream bos = new ByteArrayOutputStream();
-	// ObjectOutputStream oos = new ObjectOutputStream(bos);
-	// oos.writeObject(o);
-	// oos.close();
-	// StringBuffer b64 = new StringBuffer(Base64.encodeBytes(bos
-	// .toByteArray()));
-	// int p = b64.indexOf("\n");
-	// while (p >= 0) {
-	// b64.deleteCharAt(p);
-	// p = b64.indexOf("\n", p);
-	// }
-	// TGOut.writeBytes("$");
-	// TGOut.writeBytes(b64.toString());
-	// }
-
 	public static Schema loadSchemaFromFile(String filename)
 			throws GraphIOException {
 		try {
@@ -1810,30 +1789,6 @@ public class GraphIO {
 		qualifiedNameMap.put(result.getQualifiedName(), result);
 		return result;
 	}
-
-	// public final Object matchObject() throws GraphIOException {
-	// if (lookAhead.equals("\\null")) {
-	// match();
-	// return null;
-	// }
-	// try {
-	// if (!(lookAhead.charAt(0) == '$')) {
-	// throw new GraphIOException(
-	// "can't read object, base64 code must start with a '$'");
-	// }
-	// byte[] array = Base64.decode(lookAhead.substring(1));
-	// ByteArrayInputStream bais = new ByteArrayInputStream(array);
-	// ObjectInputStream ois = new ObjectInputStream(bais);
-	// Object result = ois.readObject();
-	// ois.close();
-	// match();
-	// return result;
-	// } catch (IOException e) {
-	// throw new GraphIOException("can't decode object from base64", e);
-	// } catch (ClassNotFoundException e) {
-	// throw new GraphIOException("can't decode object from base64", e);
-	// }
-	// }
 
 	public final String matchUtfString() throws GraphIOException {
 		if (lookAhead.equals("\\null")) {
