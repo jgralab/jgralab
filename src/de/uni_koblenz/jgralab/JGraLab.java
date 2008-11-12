@@ -35,7 +35,7 @@ public class JGraLab {
 
 	// look but don't touch, both values are updated automatically
 	private final String revision = "$Revision$";
-	private final String buildID = "59";
+	private final String buildID = "60";
 	//
 	// to use this information inside the text place $rev for the revision
 	// information
