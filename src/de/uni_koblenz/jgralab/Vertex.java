@@ -36,16 +36,10 @@ import de.uni_koblenz.jgralab.schema.VertexClass;
 public interface Vertex extends GraphElement {
 
 	/**
-	 * Checks if the list of incident edges has changed with respect to the
-	 * given <code>incidenceListVersion</code>.
+	 * Checks if the list of incident edges has changed with respect to the given
+	 * <code>incidenceListVersion</code>. 
 	 */
 	public boolean isIncidenceListModified(long incidenceListVersion);
-
-	/**
-	 * Changes the incidence list version, should be called whenever an
-	 * incidence edge is created, deleted or reordered
-	 */
-	public void incidenceListModified();
 
 	/**
 	 * @return the internal vertex structure version
@@ -150,9 +144,14 @@ public interface Vertex extends GraphElement {
 			boolean noSubClasses);
 
 	/**
-	 * @return the next vertex in vSeq after this vertex
+	 * @return the next vertex in vSeq
 	 */
 	public Vertex getNextVertex();
+
+	/**
+	 * @return the previous vertex in vSeq
+	 */
+	public Vertex getPrevVertex();
 
 	/**
 	 * @param aVertexClass
@@ -171,28 +170,33 @@ public interface Vertex extends GraphElement {
 	/**
 	 * @param aVertexClass
 	 *            the class of the next vertex
-	 * @param explicitType
+	 * @param noSubclasses
 	 *            if true, no subclasses are returned
 	 * @return the next vertex in vSeq of explicit class aVertexClass
 	 */
 	public Vertex getNextVertexOfClass(VertexClass aVertexClass,
-			boolean explicitType);
+			boolean noSubclasses);
 
 	/**
 	 * @param aM1VertexClass
 	 *            the class of the next vertex
-	 * @param explicitType
+	 * @param noSubclasses
 	 *            if true, no subclasses are returned
 	 * @return the next vertex in vSeq of explicit class aVertexClass
 	 */
 	public Vertex getNextVertexOfClass(Class<? extends Vertex> aM1VertexClass,
-			boolean explicitType);
+			boolean noSubclasses);
 
 	/**
-	 * @return first incidence object of the graph
+	 * @return first incident edge of this vertex
 	 */
 	public Edge getFirstEdge();
 
+	/**
+	 * @return last incident edge of this vertex
+	 */
+	public Edge getLastEdge();
+	
 	/**
 	 * @param orientation
 	 *            of connected incidences,
@@ -241,23 +245,23 @@ public interface Vertex extends GraphElement {
 	/**
 	 * @param anEdgeClass
 	 *            the edge class to search for
-	 * @param explicitType
+	 * @param noSubclasses
 	 *            if true, no subclasses are returned
 	 * @return the first incidence in iSeq where the corresponding edge is of
 	 *         explicit class anEdgeClass
 	 */
-	public Edge getFirstEdgeOfClass(EdgeClass anEdgeClass, boolean explicitType);
+	public Edge getFirstEdgeOfClass(EdgeClass anEdgeClass, boolean noSubclasses);
 
 	/**
 	 * @param anEdgeClass
 	 *            the edge class to search for
-	 * @param explicitType
+	 * @param noSubclasses
 	 *            if true, no subclasses are returned
 	 * @return the first incidence in iSeq where the corresponding edge is of
 	 *         explicit class anEdgeClass
 	 */
 	public Edge getFirstEdgeOfClass(Class<? extends Edge> anEdgeClass,
-			boolean explicitType);
+			boolean noSubclasses);
 
 	/**
 	 * @param anEdgeClass
@@ -265,13 +269,13 @@ public interface Vertex extends GraphElement {
 	 * @param orientation
 	 *            set to TRUE, if edge has the 'in'-orientation, set to FALSE,
 	 *            if edge has the 'out'-orientation
-	 * @param explicitType
+	 * @param noSubclasses
 	 *            if true, no subclasses are returned
 	 * @return the first incidence in iSeq where the corresponding edge is of
 	 *         explicit class anEdgeClass
 	 */
 	public Edge getFirstEdgeOfClass(EdgeClass anEdgeClass,
-			EdgeDirection orientation, boolean explicitType);
+			EdgeDirection orientation, boolean noSubclasses);
 
 	/**
 	 * @param anEdgeClass
@@ -279,22 +283,22 @@ public interface Vertex extends GraphElement {
 	 * @param orientation
 	 *            set to TRUE, if edge has the 'in'-orientation, set to FALSE,
 	 *            if edge has the 'out'-orientation
-	 * @param explicitType
+	 * @param noSubclasses
 	 *            if true, no subclasses are returned
 	 * @return the first incidence in iSeq where the corresponding edge is of
 	 *         explicit class anEdgeClass
 	 */
 	public Edge getFirstEdgeOfClass(Class<? extends Edge> anEdgeClass,
-			EdgeDirection orientation, boolean explicitType);
+			EdgeDirection orientation, boolean noSubclasses);
 
 	/**
 	 * @param v
-	 * @return true, if this vertex is before v in vSeq
+	 * @return true, if this vertex is somewhere before v in vSeq
 	 */
 	public boolean isBefore(Vertex v);
 
 	/**
-	 * puts this vertex before v in vSeq
+	 * puts this vertex immediately before v in vSeq
 	 * 
 	 * @param v
 	 */
@@ -302,12 +306,12 @@ public interface Vertex extends GraphElement {
 
 	/**
 	 * @param v
-	 * @return true, if this vertex is after v in vSeq
+	 * @return true, if this vertex is somewhere after v in vSeq
 	 */
 	public boolean isAfter(Vertex v);
 
 	/**
-	 * puts this vertex after v in vSeq
+	 * puts this vertex immediately after v in vSeq
 	 * 
 	 * @param v
 	 */
@@ -317,24 +321,6 @@ public interface Vertex extends GraphElement {
 	 * removes this vertex from vSeq and erases its attributes
 	 */
 	public void delete();
-
-	/**
-	 * puts the given edge <code>edge</code> before the given edge
-	 * <code>nextEdge</code> in the incidence list. This does neither affect
-	 * the global edge sequence eSeq nor the alpha or omega vertices, only the
-	 * order of the edges at this vertex is changed
-	 */
-	@Deprecated
-	void putEdgeBefore(Edge e, Edge n);
-
-	/**
-	 * puts the given edge <code>edge</code> after the given edge
-	 * <code>previousEdge</code> in the incidence list. This does neither
-	 * affect the global edge sequence eSeq nor the alpha or omega vertices,
-	 * only the order of the edges at this vertex is changed
-	 */
-	@Deprecated
-	void putEdgeAfter(Edge edge, Edge previousEdge);
 
 	/**
 	 * Using this method, one can simply iterate over all incident edges of this
@@ -423,18 +409,6 @@ public interface Vertex extends GraphElement {
 	 *         vertex
 	 */
 	public boolean isValidOmega(Edge edge);
-
-	@Deprecated
-	public Composition getFirstComposition();
-
-	@Deprecated
-	public Composition getFirstComposition(EdgeDirection orientation);
-
-	@Deprecated
-	public Aggregation getFirstAggregation();
-
-	@Deprecated
-	public Aggregation getFirstAggregation(EdgeDirection orientation);
 
 	/**
 	 * returns true if this Vertex is still present in the Graph (i.e. not

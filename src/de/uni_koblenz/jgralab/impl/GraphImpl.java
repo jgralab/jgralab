@@ -27,11 +27,8 @@ package de.uni_koblenz.jgralab.impl;
 import java.util.LinkedList;
 import java.util.List;
 
-import de.uni_koblenz.jgralab.Aggregation;
 import de.uni_koblenz.jgralab.AttributedElement;
-import de.uni_koblenz.jgralab.Composition;
 import de.uni_koblenz.jgralab.Edge;
-import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.GraphException;
 import de.uni_koblenz.jgralab.GraphFactory;
@@ -49,83 +46,9 @@ import de.uni_koblenz.jgralab.schema.VertexClass;
  * 
  * @author Steffen Kahle et. al.
  */
-@SuppressWarnings("unchecked")
 public abstract class GraphImpl extends AttributedElementImpl implements Graph {
 
-	/**
-	 * indexed with incidence-id, holds the vertex-id the edge is pointing to
-	 */
-	private int targetVertex[];
-
-	/**
-	 * indexed with incidence-id, holds the next incidence of the current vertex
-	 * to represent iSeq
-	 */
-	private int nextEdgeAtVertex[];
-
-	/**
-	 * indexed with vertex-id, points to the next used vertex number to
-	 * represent vSeq
-	 */
-	private int nextVertex[];
-
-	/**
-	 * indexed with edge-id, points to the next used edge number to represent
-	 * eSeq
-	 */
-	private int nextEdgeInGraph[];
-
-	/**
-	 * indexed with vertex-id, holds the first incidence-id of the vertex
-	 */
-	private int firstEdgeAtVertex[];
-
-	/**
-	 * indexed with vertex-id, holds the last incidence-id of the vertex
-	 */
-	private int lastEdgeAtVertex[];
-
-	/**
-	 * number of vertices in the graph
-	 */
-	private int vCount = 0;
-
-	/**
-	 * number of edges in the graph
-	 */
-	private int eCount = 0;
-
-	/**
-	 * holds the id of the first edge in Eseq
-	 */
-	protected int firstEdge;
-
-	/**
-	 * holds the id of the first vertex in Vseq
-	 */
-	protected int firstVertex;
-
-	/**
-	 * holds the id of the last edge in Eseq
-	 */
-	protected int lastEdge;
-
-	/**
-	 * holds the id of the last vertex in Vseq
-	 */
-	protected int lastVertex;
-
-	private List<Integer> deleteVertexList;
-
-	/**
-	 * factor to expand the internal arrays if vertices or edges get too big
-	 */
-	protected final double EXPANSIONFACTOR = 2.0;
-
-	/**
-	 * The schema this graph belongs to
-	 */
-	private Schema schema;
+	// ------------- GRAPH VARIABLES -------------
 
 	/**
 	 * the unique id of the graph in the schema
@@ -133,24 +56,9 @@ public abstract class GraphImpl extends AttributedElementImpl implements Graph {
 	private String id;
 
 	/**
-	 * indexed with vertex-id, holds the actual vertex-object itself
+	 * The schema this graph belongs to
 	 */
-	protected Vertex vertex[];
-
-	/**
-	 * indexed with edge-id, holds the actual edge-object itself
-	 */
-	protected Edge edge[];
-
-	/**
-	 * maximum number of edges + 1
-	 */
-	protected int eSize;
-
-	/**
-	 * maximum number of vertices + 1
-	 */
-	protected int vSize;
+	private Schema schema;
 
 	/**
 	 * The GraphFactory that was used to create this graph. This factory wil lbe
@@ -164,23 +72,96 @@ public abstract class GraphImpl extends AttributedElementImpl implements Graph {
 	 * attribute value), this version number is increased by 1, It is saved in
 	 * the tg-file.
 	 */
-	protected long graphVersion;
+	private long graphVersion;
+
+	/**
+	 * Indicates if this graph is currently loading.
+	 */
+	private boolean loading;
+
+	// ------------- VERTEX LIST VARIABLES -------------
+	/**
+	 * maximum number of vertices
+	 */
+	private int vMax;
+
+	/**
+	 * number of vertices in the graph
+	 */
+	private int vCount = 0;
+
+	/**
+	 * indexed with vertex-id, holds the actual vertex-object itself
+	 */
+	private VertexImpl vertex[];
+
+	/**
+	 * free index list for vertices
+	 */
+	private FreeIndexList freeVertexList;
+
+	/**
+	 * holds the id of the first vertex in Vseq
+	 */
+	private VertexImpl firstVertex;
+
+	/**
+	 * holds the id of the last vertex in Vseq
+	 */
+	private VertexImpl lastVertex;
 
 	/**
 	 * Holds the version of the vertex sequence. For every modification (e.g.
 	 * adding/deleting a vertex or changing the vertex sequence) this version
 	 * number is increased by 1. It is set to 0 when the graph is loaded.
 	 */
-	protected long vertexListVersion;
+	private long vertexListVersion;
+
+	/**
+	 * List of vertices to be deleted by a cascading delete caused by deletion
+	 * of a composition "parent".
+	 */
+	private List<VertexImpl> deleteVertexList;
+
+	// ------------- EDGE LIST VARIABLES -------------
+
+	/**
+	 * maximum number of edges
+	 */
+	private int eMax;
+
+	/**
+	 * number of edges in the graph
+	 */
+	private int eCount = 0;
+
+	/**
+	 * indexed with edge-id, holds the actual edge-object itself
+	 */
+	private EdgeImpl edge[];
+	private ReversedEdgeImpl revEdge[];
+
+	/**
+	 * free index list for edges
+	 */
+	private FreeIndexList freeEdgeList;
+
+	/**
+	 * holds the id of the first edge in Eseq
+	 */
+	private EdgeImpl firstEdge;
+
+	/**
+	 * holds the id of the last edge in Eseq
+	 */
+	private EdgeImpl lastEdge;
 
 	/**
 	 * Holds the version of the edge sequence. For every modification (e.g.
 	 * adding/deleting an edge or changing the edge sequence) this version
 	 * number is increased by 1. It is set to 0 when the graph is loaded.
 	 */
-	protected long edgeListVersion;
-
-	private boolean loading;
+	private long edgeListVersion;
 
 	/**
 	 * @param id
@@ -199,228 +180,230 @@ public abstract class GraphImpl extends AttributedElementImpl implements Graph {
 			throw new GraphException("eMax must not be less than zero", null);
 		}
 
-		this.schema = aGraphClass.getSchema();
-		if (id == null) {
-			this.id = RandomIdGenerator.generateId();
-		} else {
-			this.id = id;
-		}
-
-		expandVertexArray(vMax + 1);
-		expandEdgeArray(eMax + 1);
+		schema = aGraphClass.getSchema();
 		graphFactory = schema.getGraphFactory();
-
-		firstVertex = 0;
-		lastVertex = 0;
-		firstEdge = 0;
-		lastEdge = 0;
-		vCount = 0;
-		eCount = 0;
+		setId(id == null ? RandomIdGenerator.generateId() : id);
 		graphVersion = 0;
-		deleteVertexList = new LinkedList<Integer>();
+
+		expandVertexArray(vMax);
+		firstVertex = null;
+		lastVertex = null;
+		vCount = 0;
+		deleteVertexList = new LinkedList<VertexImpl>();
+
+		expandEdgeArray(eMax);
+		firstEdge = null;
+		lastEdge = null;
+		eCount = 0;
 	}
 
-	@Override
-	public void addEdge(Edge newEdge, Vertex alpha, Vertex omega) {
+	/**
+	 * adds the given edge object to this graph. if the edges id is 0, a valid
+	 * id is set, otherwise the edges current id is used if possible. Should
+	 * only be used by m1-Graphs derived from Graph. To create a new Edge as
+	 * user, use the appropriate methods from the derived Graphs like
+	 * <code>createStreet(...)</code>
+	 * 
+	 * @param newEdge
+	 *            the edge to add
+	 * @param alpha
+	 *            the vertex the new edge should start at
+	 * @param omega
+	 *            the vertex the new edge should end at
+	 * @throws GraphException
+	 *             if a edge with the same id already exists
+	 */
+	protected void addEdge(Edge newEdge, Vertex alpha, Vertex omega) {
 		assert (newEdge.isNormal());
-		if (!alpha.isValidAlpha(newEdge)) {
+		EdgeImpl e = (EdgeImpl) newEdge;
+
+		VertexImpl a = (VertexImpl) alpha;
+		if (!a.isValidAlpha(e)) {
 			throw new GraphException("Edges of class "
-					+ newEdge.getAttributedElementClass().getUniqueName()
+					+ e.getAttributedElementClass().getUniqueName()
 					+ " may not start at vertices of class "
-					+ alpha.getAttributedElementClass().getUniqueName());
+					+ a.getAttributedElementClass().getUniqueName());
 		}
-		if (!omega.isValidOmega(newEdge)) {
+
+		VertexImpl o = (VertexImpl) omega;
+		if (!o.isValidOmega(e)) {
 			throw new GraphException("Edges of class "
-					+ newEdge.getAttributedElementClass().getUniqueName()
+					+ e.getAttributedElementClass().getUniqueName()
 					+ " may not end at at vertices of class "
-					+ omega.getAttributedElementClass().getUniqueName());
+					+ o.getAttributedElementClass().getUniqueName());
 		}
 
-		int eId = newEdge.getId();
-
+		int eId = e.getId();
 		if (isLoading()) {
-			if (eId != 0) {
+			if (eId > 0) {
 				// the given edge already has an id, try to use it
 				if (containsEdgeId(eId)) {
-					throw new GraphException("edge with id " + eId
+					throw new GraphException("edge with id " + e.getId()
 							+ " already exists");
 				}
 
-				if (eId >= eSize) {
-					throw new GraphException("edge id " + eId
+				if (eId > eMax) {
+					throw new GraphException("edge id " + e.getId()
 							+ " is bigger than eSize");
 				}
 			} else {
-				throw new GraphException(
-						"a vertex that has not id may not be added while a graph is loading");
+				throw new GraphException("can not load an edge with id <= 0");
 			}
 		} else {
 			if (eId != 0) {
-				// the given edge already has an id, try to use it
-				if (containsEdgeId(eId)) {
-					throw new GraphException("edge with id " + eId
-							+ " already exists");
-				}
-
-				if (eId >= eSize) {
-					throw new GraphException("edge id " + eId
-							+ " is bigger than eSize");
-				}
-
-				// remove edge from free edge list
-				int i = 0;
-				while (nextEdgeInGraph[i] != eId) {
-					++i;
-				}
-				nextEdgeInGraph[i] = nextEdgeInGraph[eId];
+				throw new GraphException("can not add an edge with id != 0");
 			} else {
-				if (nextEdgeInGraph[0] == 0) {
-					expandEdges(EXPANSIONFACTOR);
+				eId = freeEdgeList.allocateIndex();
+				if (eId == 0) {
+					expandEdgeArray(getExpandedEdgeCount());
+					eId = freeEdgeList.allocateIndex();
 				}
-				eId = nextEdgeInGraph[0];
-				nextEdgeInGraph[0] = nextEdgeInGraph[eId];
-				((EdgeImpl) newEdge).setId(eId);
+				assert eId != 0;
+				e.setId(eId);
 			}
+			a.appendIncidenceToLambaSeq(e);
+			o.appendIncidenceToLambaSeq(e.reversedEdge);
 		}
-		++eCount;
-
-		if (firstEdge == 0) {
-			firstEdge = eId;
-		}
-		if (lastEdge != 0) {
-			nextEdgeInGraph[lastEdge] = eId;
-		}
-		lastEdge = eId;
-
-		nextEdgeInGraph[eId] = 0;
-
-		edge[edgeOffset(eId)] = newEdge;
-		edge[edgeOffset(-eId)] = newEdge.getReversedEdge();
-
-		int omegaId = omega.getId();
-		int alphaId = alpha.getId();
-
-		// put in alpha and omega
-		targetVertex[edgeOffset(eId)] = omegaId;
-		targetVertex[edgeOffset(-eId)] = alphaId;
-
-		if (firstEdgeAtVertex[alphaId] == 0) {
-			// alphaId has no incident edges yet
-			firstEdgeAtVertex[alphaId] = eId;
-			lastEdgeAtVertex[alphaId] = eId;
-		} else {
-			// incident edges in alphaId present
-			// insert eNo in iSeq(alphaId)
-			nextEdgeAtVertex[edgeOffset(lastEdgeAtVertex[alphaId])] = eId;
-			lastEdgeAtVertex[alphaId] = eId;
-		}
-		if (firstEdgeAtVertex[omegaId] == 0) {
-			// omegaId has no incident edges yet
-			firstEdgeAtVertex[omegaId] = -eId;
-			lastEdgeAtVertex[omegaId] = -eId;
-		} else {
-			// incident edges in omegaId present
-			// insert -eNo in iSeq(omegaId)
-			nextEdgeAtVertex[edgeOffset(lastEdgeAtVertex[omegaId])] = -eId;
-			lastEdgeAtVertex[omegaId] = -eId;
-		}
+		appendEdgeToESeq(e);
 
 		if (!isLoading()) {
-			alpha.incidenceListModified();
-			omega.incidenceListModified();
+			a.incidenceListModified();
+			o.incidenceListModified();
 			edgeListModified();
+			edgeAdded(e);
 		}
-		edgeAdded(newEdge);
 	}
 
-	@Override
-	public void addVertex(Vertex newVertex) {
-		int vId = newVertex.getId();
+	/**
+	 * adds the given vertex object to this graph. if the vertex' id is 0, a
+	 * valid id is set, otherwise the vertex' current id is used if possible.
+	 * Should only be used by m1-Graphs derived from Graph. To create a new
+	 * Vertex as user, use the appropriate methods from the derived Graphs like
+	 * <code>createStreet(...)</code>
+	 * 
+	 * @param newVertex
+	 *            the Vertex to add
+	 * @throws GraphException
+	 *             if a vertex with the same id already exists
+	 */
+	protected void addVertex(Vertex newVertex) {
+		VertexImpl v = (VertexImpl) newVertex;
 
+		int vId = v.getId();
 		if (isLoading()) {
-			if (vId != 0) {
+			if (vId > 0) {
 				// the given vertex already has an id, try to use it
 				if (containsVertexId(vId)) {
 					throw new GraphException("vertex with id " + vId
 							+ " already exists");
 				}
 
-				if (vId >= vSize) {
+				if (vId > vMax) {
 					throw new GraphException("vertex id " + vId
 							+ " is bigger than vSize");
 				}
 			} else {
-				throw new GraphException(
-						"a vertex that has not id may not be added while a graph is loading");
+				throw new GraphException("can not load a vertex with id <= 0");
 			}
 		} else {
 			if (vId != 0) {
-				// the given vertex already has an id, try to use it
-				if (containsVertexId(vId)) {
-					throw new GraphException("vertex with id " + vId
-							+ " already exists");
-				}
-
-				if (vId >= vSize) {
-					throw new GraphException("vertex id " + vId
-							+ " is bigger than vSize");
-				}
-
-				// remove vertex from free vertex list
-				int i = 0;
-				while (nextVertex[i] != vId) {
-					++i;
-				}
-				nextVertex[i] = nextVertex[vId];
+				throw new GraphException("can not add a vertex with id != 0");
 			} else {
-				if (nextVertex[0] == 0) {
-					expandVertices(EXPANSIONFACTOR);
+				vId = freeVertexList.allocateIndex();
+				if (vId == 0) {
+					expandVertexArray(getExpandedVertexCount());
+					vId = freeVertexList.allocateIndex();
 				}
-				vId = nextVertex[0];
-				nextVertex[0] = nextVertex[vId];
-				((VertexImpl) newVertex).setId(vId);
+				assert vId != 0;
+				v.setId(vId);
 			}
 		}
 
-		++vCount;
-
-		if (firstVertex == 0) {
-			firstVertex = vId;
-		}
-
-		if (lastVertex != 0) {
-			nextVertex[lastVertex] = vId;
-		}
-
-		lastVertex = vId;
-
-		nextVertex[vId] = 0;
-
-		vertex[vId] = newVertex;
+		appendVertexToVSeq(v);
 
 		if (!isLoading()) {
 			vertexListModified();
+			vertexAdded(v);
 		}
-		vertexAdded(newVertex);
 	}
 
+	/**
+	 * Appends the edge e to the global edge sequence of this graph.
+	 * 
+	 * @param e
+	 *            an edge
+	 */
+	private final void appendEdgeToESeq(EdgeImpl e) {
+		if (firstEdge == null) {
+			firstEdge = e;
+		}
+		if (lastEdge != null) {
+			lastEdge.setNextEdgeInGraph(e);
+			e.setPrevEdgeInGraph(lastEdge);
+		}
+		lastEdge = e;
+		edge[e.getId()] = e;
+		revEdge[e.getId()] = e.reversedEdge;
+		++eCount;
+	}
+
+	/**
+	 * Appends the vertex v to the global vertex sequence of this graph.
+	 * 
+	 * @param v
+	 *            a vertex
+	 */
+	private final void appendVertexToVSeq(VertexImpl v) {
+		if (firstVertex == null) {
+			firstVertex = v;
+		}
+		if (lastVertex != null) {
+			lastVertex.setNextVertex(v);
+			v.setPrevVertex(lastVertex);
+		}
+		lastVertex = v;
+		vertex[v.getId()] = v;
+		++vCount;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see de.uni_koblenz.jgralab.Graph#getExpandedVertexCount()
+	 */
 	@Override
-	public Iterable<Aggregation> aggregations() {
-		return new EdgeIterable<Aggregation>(this, Aggregation.class);
+	public int getExpandedVertexCount() {
+		return computeNewSize(vMax);
 	}
 
-	private void appendEdgeAtVertex(int vertexId, int edgeId) {
-		int lastEdgeId = lastEdgeAtVertex[vertexId];
-		if (lastEdgeId == 0) {
-			firstEdgeAtVertex[vertexId] = edgeId;
-		} else {
-			nextEdgeAtVertex[edgeOffset(lastEdgeAtVertex[vertexId])] = edgeId;
-		}
-		lastEdgeAtVertex[vertexId] = edgeId;
-		nextEdgeAtVertex[edgeOffset(edgeId)] = 0;
-		vertex[vertexId].incidenceListModified();
+	/**
+	 * Computes new size of vertex and edge array depending on the current size.
+	 * Up to 256k elements, the size is doubled. Between 256k and 1M elements,
+	 * 256k elements are added. Beyond 1M, increase is 128k elements.
+	 * 
+	 * @param n
+	 *            current size
+	 * @return new size
+	 */
+	private int computeNewSize(int n) {
+		return (n >= 1048576) ? n + 131072 : (n >= 262144) ? n + 262144 : n + n;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see de.uni_koblenz.jgralab.Graph#getExpandedEdgeCount()
+	 */
+	@Override
+	public int getExpandedEdgeCount() {
+		return computeNewSize(eMax);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see java.lang.Comparable#compareTo(java.lang.Object)
+	 */
 	@Override
 	public int compareTo(AttributedElement a) {
 		if (a instanceof Graph) {
@@ -430,38 +413,61 @@ public abstract class GraphImpl extends AttributedElementImpl implements Graph {
 		return -1;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see de.uni_koblenz.jgralab.Graph#containsEdge(de.uni_koblenz.jgralab.Edge)
+	 */
 	@Override
-	public Iterable<Composition> compositions() {
-		return new EdgeIterable<Composition>(this, Composition.class);
-	}
-
-	@Override
-	public boolean containsEdge(Edge e) {
+	public final boolean containsEdge(Edge e) {
 		return e != null && e.getGraph() == this && containsEdgeId(e.getId())
-				&& edge[edgeOffset(e.getId())] == e;
+				&& getEdge(e.getId()) == e;
 	}
 
-	private boolean containsEdgeId(int eId) {
+	/**
+	 * Checks if the edge id eId is valid and if there is an such an edge in
+	 * this graph.
+	 * 
+	 * @param eId
+	 *            an edge id
+	 * @return true if this graph contains an edge with id eId
+	 */
+	private final boolean containsEdgeId(int eId) {
 		if (eId < 0) {
 			eId = -eId;
 		}
-		return eId > 0 && eId < eSize && edge[edgeOffset(eId)] != null;
+		return eId > 0 && eId <= eMax && edge[eId] != null
+				&& revEdge[eId] != null;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see de.uni_koblenz.jgralab.Graph#containsVertex(de.uni_koblenz.jgralab.Vertex)
+	 */
 	@Override
-	public boolean containsVertex(Vertex v) {
+	public final boolean containsVertex(Vertex v) {
 		return v != null && v.getGraph() == this && containsVertexId(v.getId())
 				&& vertex[v.getId()] == v;
 	}
 
-	private boolean containsVertexId(int vId) {
-		return vId > 0 && vId < vSize && vertex[vId] != null;
+	/**
+	 * Checks if the vertex id evd is valid and if there is an such a vertex in
+	 * this graph.
+	 * 
+	 * @param vId
+	 *            a vertex id
+	 * @return true if this graph contains a vertex with id vId
+	 */
+	private final boolean containsVertexId(int vId) {
+		return vId > 0 && vId <= vMax && vertex[vId] != null;
 	}
 
 	/**
 	 * Creates an edge of the given class and adds this edge to the graph.
 	 * <code>cls</code> has to be the "Impl" class.
 	 */
+	@SuppressWarnings("unchecked")
 	@Override
 	public <T extends Edge> T createEdge(Class<T> cls, Vertex alpha,
 			Vertex omega) {
@@ -479,6 +485,7 @@ public abstract class GraphImpl extends AttributedElementImpl implements Graph {
 	 * Creates a vertex of the given class and adds this edge to the graph.
 	 * <code>cls</code> has to be the "Impl" class.
 	 */
+	@SuppressWarnings("unchecked")
 	@Override
 	public <T extends Vertex> T createVertex(Class<T> cls) {
 		try {
@@ -491,354 +498,219 @@ public abstract class GraphImpl extends AttributedElementImpl implements Graph {
 		}
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see de.uni_koblenz.jgralab.Graph#deleteEdge(de.uni_koblenz.jgralab.Edge)
+	 */
 	@Override
 	public void deleteEdge(Edge e) {
-		deleteEdge(e.getId());
-	}
-
-	private void deleteEdge(int eId) {
-		if (!(containsEdgeId(eId) && firstEdge > 0 && eCount > 0)) {
-			throw new GraphException("Edge " + eId + " doesn't exist");
-		}
-
-		internalDeleteEdge(eId);
-
+		assert e.isValid();
+		internalDeleteEdge(e);
 		edgeListModified();
 	}
 
-	void deleteEdgeTo(int vId, int iNo) {
-		int prevId = 0;
-		if (iNo == firstEdgeAtVertex[vId]) {
-			firstEdgeAtVertex[vId] = nextEdgeAtVertex[edgeOffset(iNo)];
-		} else {
-			prevId = firstEdgeAtVertex[vId];
-			while (nextEdgeAtVertex[edgeOffset(prevId)] != iNo) {
-				prevId = nextEdgeAtVertex[edgeOffset(prevId)];
-			}
-		}
-		if (iNo == lastEdgeAtVertex[vId]) {
-			lastEdgeAtVertex[vId] = prevId;
-		}
-		if (prevId != 0) {
-			nextEdgeAtVertex[edgeOffset(prevId)] = nextEdgeAtVertex[edgeOffset(iNo)];
-		}
-		nextEdgeAtVertex[edgeOffset(iNo)] = 0;
-		if (vertex[vId] != null) {
-			vertex[vId].incidenceListModified();
-		}
-		edgeListModified();
-	}
-
-	private void deleteVertex(int vId) {
-		if (!(containsVertexId(vId) && firstVertex > 0 && vCount > 0)) {
-			throw new GraphException("Vertex " + vId + " doesn't exist");
-		}
-		deleteVertexList.add(vId);
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see de.uni_koblenz.jgralab.Graph#deleteVertex(de.uni_koblenz.jgralab.Vertex)
+	 */
+	@Override
+	public void deleteVertex(Vertex v) {
+		assert v.isValid();
+		deleteVertexList.add((VertexImpl) v);
 		internalDeleteVertex();
-		// vertexStructure of neighbours is changed in internalDeleteEdge,
-		// called by internalDeleteVertex
 		vertexListModified();
 	}
 
-	@Override
-	public void deleteVertex(Vertex v) {
-		deleteVertex(v.getId());
-	}
-
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see de.uni_koblenz.jgralab.Graph#edgeDeleted(de.uni_koblenz.jgralab.Edge)
+	 */
 	@Override
 	public void edgeDeleted(Edge e) {
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see de.uni_koblenz.jgralab.Graph#edgeAdded(de.uni_koblenz.jgralab.Edge)
+	 */
 	@Override
 	public void edgeAdded(Edge e) {
 	}
 
-	@Override
-	public final void edgeListModified() {
-		edgeListVersion++;
-		graphVersion++;
-	}
-
 	/**
-	 * @param no
-	 *            edge number (positive or negative)
-	 * @return positive id to be used as index in incidence array
+	 * Changes the graph structure version, should be called whenever the
+	 * structure of the graph is changed, for instance by creation and deletion
+	 * or reordering of vertices and edges
 	 */
-	protected final int edgeOffset(int no) {
-		return no + eSize;
+	public void edgeListModified() {
+		++edgeListVersion;
+		++graphVersion;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see de.uni_koblenz.jgralab.Graph#edges()
+	 */
 	@Override
 	public Iterable<Edge> edges() {
 		return new EdgeIterable<Edge>(this);
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see de.uni_koblenz.jgralab.Graph#edges(java.lang.Class)
+	 */
 	@Override
 	public Iterable<Edge> edges(Class<? extends Edge> eclass) {
 		return new EdgeIterable<Edge>(this, eclass);
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see de.uni_koblenz.jgralab.Graph#edges(de.uni_koblenz.jgralab.schema.EdgeClass)
+	 */
 	@Override
 	public Iterable<Edge> edges(EdgeClass eclass) {
-		return new EdgeIterable<Edge>(this, eclass);
-	}
-
-	private void expandEdgeArray(int newSize) {
-		int oldSize = eSize;
-		if (newSize <= eSize) {
-			throw new GraphException("newSize be > eSize: eSize=" + eSize
-					+ ", new size=" + newSize);
-		}
-
-		Edge[] expandedArray = new Edge[newSize * 2];
-		if (edge != null) {
-			System.arraycopy(edge, 0, expandedArray, newSize - eSize,
-					edge.length);
-		}
-		edge = expandedArray;
-		eSize = newSize;
-
-		nextEdgeInGraph = expandIntArray(nextEdgeInGraph, newSize, 0);
-		targetVertex = expandIntArray(targetVertex, newSize * 2, newSize
-				- oldSize);
-		nextEdgeAtVertex = expandIntArray(nextEdgeAtVertex, newSize * 2,
-				newSize - oldSize);
-
-		// initialize free edge list
-		for (int i = oldSize; i < eSize - 1; ++i) {
-			nextEdgeInGraph[i] = i + 1;
-		}
-		nextEdgeInGraph[eSize - 1] = 0;
-
-		// append new free vertex list to end of old free vertex list
-		int i = 0;
-		while (nextEdgeInGraph[i] != 0) {
-			++i;
-		}
-		nextEdgeInGraph[i] = oldSize;
+		return new EdgeIterable<Edge>(this, eclass.getM1Class());
 	}
 
 	/**
-	 * expand the edge array with the factor factor
+	 * Changes the size of the edge array of this graph to newSize.
 	 * 
-	 * @param factor @
-	 */
-	private void expandEdges(double factor) {
-		int newSize = (int) (eSize * factor);
-		expandEdgeArray(newSize);
-	}
-
-	/**
-	 * Expands an int array.
-	 * 
-	 * @param oldArray
-	 *            the array which shall be expanded
 	 * @param newSize
-	 *            the the new array size
-	 * @param destStart
-	 *            Indicates the new array's starting index where to insert
-	 *            array's elements
-	 * @return the expanded array
+	 *            the new size of the edge array
 	 */
-	private int[] expandIntArray(int[] oldArray, int newSize, int destStart) {
-		int[] expandedArray = new int[newSize];
-		if (oldArray != null) {
-			System.arraycopy(oldArray, 0, expandedArray, destStart,
-					oldArray.length);
+	protected void expandEdgeArray(int newSize) {
+		if (newSize <= eMax) {
+			throw new GraphException("newSize must be > eSize: eSize=" + eMax
+					+ ", newSize=" + newSize);
 		}
-		return expandedArray;
+
+		EdgeImpl[] e = new EdgeImpl[newSize + 1];
+		if (edge != null) {
+			System.arraycopy(edge, 0, e, 0, edge.length);
+		}
+		edge = e;
+
+		ReversedEdgeImpl[] r = new ReversedEdgeImpl[newSize + 1];
+		if (revEdge != null) {
+			System.arraycopy(revEdge, 0, r, 0, revEdge.length);
+		}
+		revEdge = r;
+
+		if (freeEdgeList == null) {
+			freeEdgeList = new FreeIndexList(newSize);
+		} else {
+			freeEdgeList.expandBy(newSize - eMax);
+		}
+		eMax = newSize;
 	}
 
-	private void expandVertexArray(int newSize) {
-		int oldSize = vSize;
-		if (newSize <= vSize) {
-			throw new GraphException("newSize be > vSize: vSize=" + vSize
-					+ ", new size=" + newSize);
+	/**
+	 * Changes the size of the vertex array of this graph to newSize.
+	 * 
+	 * @param newSize
+	 *            the new size of the vertex array
+	 */
+	protected void expandVertexArray(int newSize) {
+		if (newSize <= vMax) {
+			throw new GraphException("newSize must > vSize: vSize=" + vMax
+					+ ", newSize=" + newSize);
 		}
-		Vertex[] expandedArray = new Vertex[newSize];
+		VertexImpl[] expandedArray = new VertexImpl[newSize + 1];
 		if (vertex != null) {
 			System.arraycopy(vertex, 0, expandedArray, 0, vertex.length);
 		}
-		vertex = expandedArray;
-		vSize = newSize;
 
-		nextVertex = expandIntArray(nextVertex, newSize, 0);
-		firstEdgeAtVertex = expandIntArray(firstEdgeAtVertex, newSize, 0);
-		lastEdgeAtVertex = expandIntArray(lastEdgeAtVertex, newSize, 0);
-
-		// initialize free vertex list
-		for (int i = oldSize; i < vSize - 1; ++i) {
-			nextVertex[i] = i + 1;
-		}
-		nextVertex[vSize - 1] = 0;
-
-		// append new free vertex list to end of old free vertex list
-		int i = 0;
-		while (nextVertex[i] != 0) {
-			++i;
-		}
-		nextVertex[i] = oldSize;
-	}
-
-	/**
-	 * expand vertex arrays with the factor factor
-	 * 
-	 * @param factor @
-	 */
-	private void expandVertices(double factor) {
-		int newSize = (int) (vSize * factor);
-		expandVertexArray(newSize);
-	}
-
-	@Override
-	public Vertex getAlpha(Edge e) {
-		int eId = e.getId();
-		assert (containsEdgeId(eId));
-		return vertex[targetVertex[edgeOffset(eId > 0 ? -eId : eId)]];
-	}
-
-	@Override
-	public int getDegree(Vertex v) {
-		return getDegree(v, EdgeDirection.INOUT);
-	}
-
-	@Override
-	public int getDegree(Vertex v, EdgeDirection orientation) {
-		int vId = v.getId();
-		assert (containsVertexId(vId));
-		int count = 0;
-		int nextI = firstEdgeAtVertex[vId];
-		if (orientation == EdgeDirection.IN) {
-			while (nextI != 0) {
-				if (nextI < 0) {
-					count++;
-				}
-				nextI = nextEdgeAtVertex[edgeOffset(nextI)];
-			}
-		} else if (orientation == EdgeDirection.OUT) {
-			while (nextI != 0) {
-				if (nextI > 0) {
-					count++;
-				}
-				nextI = nextEdgeAtVertex[edgeOffset(nextI)];
-			}
+		if (freeVertexList == null) {
+			freeVertexList = new FreeIndexList(newSize);
 		} else {
-			while (nextI != 0) {
-				count++;
-				nextI = nextEdgeAtVertex[edgeOffset(nextI)];
-			}
+			freeVertexList.expandBy(newSize - vMax);
 		}
-		return count;
+		vertex = expandedArray;
+		vMax = newSize;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see de.uni_koblenz.jgralab.Graph#getECount()
+	 */
 	@Override
 	public int getECount() {
 		return eCount;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see de.uni_koblenz.jgralab.Graph#getEdge(int)
+	 */
 	@Override
 	public Edge getEdge(int eId) {
-		assert (containsEdgeId(eId));
-		return edge[edgeOffset(eId < 0 ? -eId : eId)];
+		assert (eId < 0 && -eId <= eMax || eId > 0 && eId <= eMax);
+		return eId < 0 ? revEdge[-eId] : edge[eId];
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see de.uni_koblenz.jgralab.Graph#getEdgeListVersion()
+	 */
 	@Override
 	public long getEdgeListVersion() {
 		return edgeListVersion;
 	}
 
-	@Override
-	public Edge getFirstEdge(Vertex v) {
-		return getFirstEdge(v, EdgeDirection.INOUT);
-	}
-
-	@Override
-	public Edge getFirstEdge(Vertex v, EdgeDirection orientation) {
-		int vId = v.getId();
-		assert (containsVertexId(vId));
-		if (orientation == EdgeDirection.INOUT) {
-			return edge[edgeOffset(firstEdgeAtVertex[vId])];
-		} else if (orientation == EdgeDirection.IN) {
-			int eId = firstEdgeAtVertex[vId];
-			while (eId != 0 && eId > 0) {
-				eId = nextEdgeAtVertex[edgeOffset(eId)];
-			}
-			return edge[edgeOffset(eId)];
-		} else {
-			int eId = firstEdgeAtVertex[vId];
-			while (eId != 0 && eId < 0) {
-				eId = nextEdgeAtVertex[edgeOffset(eId)];
-			}
-			return edge[edgeOffset(eId)];
-		}
-	}
-
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see de.uni_koblenz.jgralab.Graph#getFirstEdgeInGraph()
+	 */
 	@Override
 	public Edge getFirstEdgeInGraph() {
-		return edge[edgeOffset(firstEdge)];
+		return firstEdge;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see de.uni_koblenz.jgralab.Graph#getLastEdgeInGraph()
+	 */
 	@Override
-	public Edge getFirstEdgeOfClass(Vertex v, Class<? extends Edge> ec) {
-		return getFirstEdgeOfClass(v, ec, EdgeDirection.INOUT, false);
+	public Edge getLastEdgeInGraph() {
+		return lastEdge;
 	}
 
-	@Override
-	public Edge getFirstEdgeOfClass(Vertex v, Class<? extends Edge> ec,
-			boolean noSubclasses) {
-		return getFirstEdgeOfClass(v, ec, EdgeDirection.INOUT, noSubclasses);
-	}
-
-	@Override
-	public Edge getFirstEdgeOfClass(Vertex v,
-			Class<? extends Edge> anEdgeClass, EdgeDirection orientation,
-			boolean explicitType) {
-		Edge currentEdge = getFirstEdge(v, orientation);
-		while (currentEdge != null) {
-			if (explicitType) {
-				if (anEdgeClass == currentEdge.getM1Class()) {
-					return currentEdge;
-				}
-			} else {
-				if (anEdgeClass.isInstance(currentEdge.getNormalEdge())) {
-					return currentEdge;
-				}
-			}
-			currentEdge = currentEdge.getNextEdge(orientation);
-		}
-		return null;
-	}
-
-	@Override
-	public Edge getFirstEdgeOfClass(Vertex v, EdgeClass ec) {
-		return getFirstEdgeOfClass(v, ec.getM1Class(), EdgeDirection.INOUT,
-				false);
-	}
-
-	@Override
-	public Edge getFirstEdgeOfClass(Vertex v, EdgeClass ec, boolean noSubclasses) {
-		return getFirstEdgeOfClass(v, ec.getM1Class(), EdgeDirection.INOUT,
-				noSubclasses);
-	}
-
-	@Override
-	public Edge getFirstEdgeOfClass(Vertex v, EdgeClass ec,
-			EdgeDirection orientation, boolean noSubclasses) {
-		return getFirstEdgeOfClass(v, ec.getM1Class(), orientation,
-				noSubclasses);
-	}
-
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see de.uni_koblenz.jgralab.Graph#getFirstEdgeOfClassInGraph(java.lang.Class)
+	 */
 	@Override
 	public Edge getFirstEdgeOfClassInGraph(Class<? extends Edge> anEdgeClass) {
 		return getFirstEdgeOfClassInGraph(anEdgeClass, false);
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see de.uni_koblenz.jgralab.Graph#getFirstEdgeOfClassInGraph(java.lang.Class,
+	 *      boolean)
+	 */
 	@Override
 	public Edge getFirstEdgeOfClassInGraph(Class<? extends Edge> anEdgeClass,
-			boolean explicitType) {
+			boolean noSubclasses) {
 		Edge currentEdge = getFirstEdgeInGraph();
 		while (currentEdge != null) {
-			if (explicitType) {
+			if (noSubclasses) {
 				if (anEdgeClass == currentEdge.getM1Class()) {
 					return currentEdge;
 				}
@@ -852,36 +724,73 @@ public abstract class GraphImpl extends AttributedElementImpl implements Graph {
 		return null;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see de.uni_koblenz.jgralab.Graph#getFirstEdgeOfClassInGraph(de.uni_koblenz.jgralab.schema.EdgeClass)
+	 */
 	@Override
 	public Edge getFirstEdgeOfClassInGraph(EdgeClass anEdgeClass) {
 		return getFirstEdgeOfClassInGraph(anEdgeClass.getM1Class(), false);
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see de.uni_koblenz.jgralab.Graph#getFirstEdgeOfClassInGraph(de.uni_koblenz.jgralab.schema.EdgeClass,
+	 *      boolean)
+	 */
 	@Override
 	public Edge getFirstEdgeOfClassInGraph(EdgeClass anEdgeClass,
-			boolean explicitType) {
+			boolean noSubclasses) {
 		return getFirstEdgeOfClassInGraph(anEdgeClass.getM1Class(),
-				explicitType);
+				noSubclasses);
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see de.uni_koblenz.jgralab.Graph#getFirstVertex()
+	 */
 	@Override
 	public Vertex getFirstVertex() {
-		return vertex[firstVertex];
+		return firstVertex;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see de.uni_koblenz.jgralab.Graph#getLastVertex()
+	 */
+	@Override
+	public Vertex getLastVertex() {
+		return lastVertex;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see de.uni_koblenz.jgralab.Graph#getFirstVertexOfClass(java.lang.Class)
+	 */
 	@Override
 	public Vertex getFirstVertexOfClass(Class<? extends Vertex> aVertexClass) {
 		return getFirstVertexOfClass(aVertexClass, false);
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see de.uni_koblenz.jgralab.Graph#getFirstVertexOfClass(java.lang.Class,
+	 *      boolean)
+	 */
 	@Override
 	public Vertex getFirstVertexOfClass(Class<? extends Vertex> aVertexClass,
-			boolean explicitType) {
+			boolean noSubclasses) {
 		Vertex firstVertex = getFirstVertex();
 		if (firstVertex == null) {
 			return null;
 		}
-		if (explicitType) {
+		if (noSubclasses) {
 			if (aVertexClass == firstVertex.getM1Class()) {
 				return firstVertex;
 			}
@@ -890,950 +799,637 @@ public abstract class GraphImpl extends AttributedElementImpl implements Graph {
 				return firstVertex;
 			}
 		}
-		return getNextVertexOfClass(firstVertex, aVertexClass, explicitType);
+		return firstVertex.getNextVertexOfClass(aVertexClass, noSubclasses);
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see de.uni_koblenz.jgralab.Graph#getFirstVertexOfClass(de.uni_koblenz.jgralab.schema.VertexClass)
+	 */
 	@Override
 	public Vertex getFirstVertexOfClass(VertexClass aVertexClass) {
 		return getFirstVertexOfClass(aVertexClass, false);
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see de.uni_koblenz.jgralab.Graph#getFirstVertexOfClass(de.uni_koblenz.jgralab.schema.VertexClass,
+	 *      boolean)
+	 */
 	@Override
 	public Vertex getFirstVertexOfClass(VertexClass aVertexClass,
-			boolean explicitType) {
-		return getFirstVertexOfClass((aVertexClass.getM1Class()), explicitType);
+			boolean noSubclasses) {
+		return getFirstVertexOfClass((aVertexClass.getM1Class()), noSubclasses);
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see de.uni_koblenz.jgralab.AttributedElement#getGraphClass()
+	 */
 	@Override
 	public GraphClass getGraphClass() {
 		return (GraphClass) theClass;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see de.uni_koblenz.jgralab.Graph#getGraphVersion()
+	 */
 	@Override
 	public long getGraphVersion() {
 		return graphVersion;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see de.uni_koblenz.jgralab.Graph#getId()
+	 */
 	@Override
 	public String getId() {
 		return id;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see de.uni_koblenz.jgralab.Graph#getMaxECount()
+	 */
 	@Override
 	public int getMaxECount() {
-		return eSize - 1;
+		return eMax;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see de.uni_koblenz.jgralab.Graph#getMaxVCount()
+	 */
 	@Override
 	public int getMaxVCount() {
-		return vSize - 1;
+		return vMax;
 	}
 
-	@Override
-	public Edge getNextEdge(Edge e) {
-		return getNextEdge(e, EdgeDirection.INOUT);
-	}
-
-	@Override
-	public Edge getNextEdge(Edge e, EdgeDirection orientation) {
-		int eId = e.getId();
-		assert (containsEdgeId(eId));
-		int nextI = nextEdgeAtVertex[edgeOffset(eId)];
-		if (orientation == EdgeDirection.IN) {
-			while (nextI != 0) {
-				if (nextI < 0) {
-					return edge[edgeOffset(nextI)];
-				}
-				nextI = nextEdgeAtVertex[edgeOffset(nextI)];
-			}
-		} else if (orientation == EdgeDirection.OUT) {
-			while (nextI != 0) {
-				if (nextI > 0) {
-					return edge[edgeOffset(nextI)];
-				}
-				nextI = nextEdgeAtVertex[edgeOffset(nextI)];
-			}
-		} else {
-			if (nextI != 0) {
-				return edge[edgeOffset(nextI)];
-			}
-		}
-		return null;
-	}
-
-	@Override
-	public Edge getNextEdgeInGraph(Edge anEdge) {
-		assert (containsEdgeId(anEdge.getId()));
-		return edge[edgeOffset(nextEdgeInGraph[anEdge.getId()])];
-	}
-
-	@Override
-	public Edge getNextEdgeOfClass(Edge e, Class<? extends Edge> ec) {
-		return getNextEdgeOfClass(e, ec, EdgeDirection.INOUT, false);
-	}
-
-	@Override
-	public Edge getNextEdgeOfClass(Edge e, Class<? extends Edge> ec,
-			boolean noSubclasses) {
-		return getNextEdgeOfClass(e, ec, EdgeDirection.INOUT, noSubclasses);
-	}
-
-	@Override
-	public Edge getNextEdgeOfClass(Edge e, Class<? extends Edge> anEdgeClass,
-			EdgeDirection orientation, boolean explicitType) {
-		Edge currentEdge = getNextEdge(e, orientation);
-		while (currentEdge != null) {
-			if (explicitType) {
-				if (anEdgeClass == currentEdge.getM1Class()) {
-					return currentEdge;
-				}
-			} else {
-				if (anEdgeClass.isInstance(currentEdge)) {
-					return currentEdge;
-				}
-			}
-			currentEdge = currentEdge.getNextEdge(orientation);
-		}
-		return null;
-	}
-
-	@Override
-	public Edge getNextEdgeOfClass(Edge e, EdgeClass ec) {
-		return getNextEdgeOfClass(e, ec.getM1Class(), EdgeDirection.INOUT,
-				false);
-	}
-
-	@Override
-	public Edge getNextEdgeOfClass(Edge e, EdgeClass ec, boolean noSubclasses) {
-		return getNextEdgeOfClass(e, ec.getM1Class(), EdgeDirection.INOUT,
-				noSubclasses);
-	}
-
-	@Override
-	public Edge getNextEdgeOfClass(Edge e, EdgeClass ec,
-			EdgeDirection orientation, boolean noSubclasses) {
-		return getNextEdgeOfClass(e, ec.getM1Class(), orientation, noSubclasses);
-	}
-
-	@Override
-	public Edge getNextEdgeOfClassInGraph(Edge anEdge,
-			Class<? extends Edge> anEdgeClass) {
-		return getNextEdgeOfClassInGraph(anEdge, anEdgeClass, false);
-	}
-
-	@Override
-	public Edge getNextEdgeOfClassInGraph(Edge e,
-			Class<? extends Edge> anEdgeClass, boolean explicitType) {
-		Edge currentEdge = getNextEdgeInGraph(e);
-		while (currentEdge != null) {
-			if (explicitType) {
-				if (anEdgeClass == currentEdge.getM1Class()) {
-					return currentEdge;
-				}
-			} else {
-				if (anEdgeClass.isInstance(currentEdge)) {
-					return currentEdge;
-				}
-			}
-			currentEdge = currentEdge.getNextEdgeInGraph();
-		}
-		return null;
-	}
-
-	@Override
-	public Edge getNextEdgeOfClassInGraph(Edge anEdge, EdgeClass anEdgeClass) {
-		return getNextEdgeOfClassInGraph(anEdge, anEdgeClass.getM1Class(),
-				false);
-	}
-
-	@Override
-	public Edge getNextEdgeOfClassInGraph(Edge anEdge, EdgeClass anEdgeClass,
-			boolean explicitType) {
-		return getNextEdgeOfClassInGraph(anEdge, anEdgeClass.getM1Class(),
-				explicitType);
-	}
-
-	public Vertex getNextVertex(int vId) {
-		assert (containsVertexId(vId));
-		return vertex[nextVertex[vId]];
-	}
-
-	@Override
-	public Vertex getNextVertex(Vertex aVertex) {
-		return getNextVertex(aVertex.getId());
-	}
-
-	public Vertex getNextVertexOfClass(int vId,
-			Class<? extends Vertex> aM1VertexClass) {
-		return getNextVertexOfClass(vId, aM1VertexClass, false);
-	}
-
-	public Vertex getNextVertexOfClass(int vId,
-			Class<? extends Vertex> aM1VertexClass, boolean explicitType) {
-		return getNextVertexOfClass(getVertex(vId), aM1VertexClass,
-				explicitType);
-	}
-
-	public Vertex getNextVertexOfClass(int vId, VertexClass aVertexClass) {
-		return getNextVertexOfClass(vId, aVertexClass, false);
-	}
-
-	public Vertex getNextVertexOfClass(int vId, VertexClass aVertexClass,
-			boolean explicitType) {
-		return getNextVertexOfClass(getVertex(vId), aVertexClass, explicitType);
-	}
-
-	@Override
-	public Vertex getNextVertexOfClass(Vertex vertex,
-			Class<? extends Vertex> vertexClass) {
-		return getNextVertexOfClass(vertex, vertexClass, false);
-	}
-
-	@Override
-	public Vertex getNextVertexOfClass(Vertex aVertex,
-			Class<? extends Vertex> aM1VertexClass, boolean explicitType) {
-		Vertex nextVertex = getNextVertex(aVertex);
-		while (nextVertex != null) {
-			if (explicitType) {
-				if (aM1VertexClass == aVertex.getM1Class()) {
-					return nextVertex;
-				}
-			} else {
-				if (aM1VertexClass.isInstance(nextVertex)) {
-					return nextVertex;
-				}
-			}
-			nextVertex = getNextVertex(nextVertex);
-		}
-		return null;
-	}
-
-	@Override
-	public Vertex getNextVertexOfClass(Vertex vertex, VertexClass vertexClass) {
-		return getNextVertexOfClass(vertex, vertexClass.getM1Class(), false);
-	}
-
-	@Override
-	public Vertex getNextVertexOfClass(Vertex vertex, VertexClass vertexClass,
-			boolean explicitType) {
-		return getNextVertexOfClass(vertex, vertexClass.getM1Class(),
-				explicitType);
-	}
-
-	@Override
-	public Vertex getOmega(Edge e) {
-		int eId = e.getId();
-		assert (containsEdgeId(eId));
-		return vertex[targetVertex[edgeOffset(eId > 0 ? eId : -eId)]];
-	}
-
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see de.uni_koblenz.jgralab.AttributedElement#getSchema()
+	 */
 	@Override
 	public Schema getSchema() {
 		return schema;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see de.uni_koblenz.jgralab.Graph#getVCount()
+	 */
 	@Override
 	public int getVCount() {
 		return vCount;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see de.uni_koblenz.jgralab.Graph#getVertex(int)
+	 */
 	@Override
 	public Vertex getVertex(int vId) {
-		assert (vId >= 0 && vId < vSize);
+		assert (vId > 0 && vId <= vMax);
 		return vertex[vId];
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see de.uni_koblenz.jgralab.Graph#getVertexListVersion()
+	 */
 	@Override
 	public long getVertexListVersion() {
 		return vertexListVersion;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see de.uni_koblenz.jgralab.Graph#graphModified()
+	 */
 	@Override
-	public final void graphModified() {
-		graphVersion++;
+	public void graphModified() {
+		++graphVersion;
 	}
 
-	@Override
-	public void insertEdgeAt(Vertex v, Edge e, int pos) {
-		int vertexId = v.getId();
-		int edgeId = e.getId();
-		if (targetVertex[edgeOffset(-edgeId)] != vertexId) {
-			throw new GraphException("Cannot put edge " + edgeId
-					+ " at position " + pos + " at vertex " + vertexId
-					+ ", this-vertex of edge " + edgeId + " is not " + vertexId);
-		}
-		int oldPreviousEdgeId = 0;
-		int currentEdgeId = firstEdgeAtVertex[targetVertex[edgeOffset(-edgeId)]];
-		while (currentEdgeId != edgeId) {
-			oldPreviousEdgeId = currentEdgeId;
-			currentEdgeId = nextEdgeAtVertex[edgeOffset(currentEdgeId)];
-		}
-		if (oldPreviousEdgeId != 0) {
-			nextEdgeAtVertex[edgeOffset(oldPreviousEdgeId)] = nextEdgeAtVertex[edgeOffset(edgeId)];
-		}
+	/**
+	 * Deletes the edge from the internal structures of this graph.
+	 * 
+	 * @param edge
+	 *            an edge
+	 */
+	private void internalDeleteEdge(Edge edge) {
+		EdgeImpl e = (EdgeImpl) edge.getNormalEdge();
+		edgeDeleted(e);
 
-		int nextI = firstEdgeAtVertex[vertexId];
-		int currentEdge = nextI;
-		int count = 0;
-		while ((count < pos) && (nextI != 0)) {
-			currentEdge = nextI;
-			count++;
-			nextI = nextEdgeAtVertex[edgeOffset(nextI)];
-			if (nextI == 0) {
-				lastEdgeAtVertex[vertexId] = edgeId;
-			}
-		}
-		nextEdgeAtVertex[edgeOffset(edgeId)] = nextEdgeAtVertex[edgeOffset(currentEdge)];
-		nextEdgeAtVertex[edgeOffset(currentEdge)] = edgeId;
-		vertex[vertexId].incidenceListModified();
+		VertexImpl alpha = e.getIncidentVertex();
+		alpha.removeIncidenceFromLambaSeq(e);
+		alpha.incidenceListModified();
+
+		VertexImpl omega = e.reversedEdge.getIncidentVertex();
+		omega.removeIncidenceFromLambaSeq(e.reversedEdge);
+		omega.incidenceListModified();
+
+		removeEdgeFromESeq(e);
 	}
 
-	private void internalDeleteEdge(int eId) {
-		if (eId < 0) {
-			eId = -eId;
-		}
-
-		Vertex v = vertex[targetVertex[edgeOffset(eId)]];
-		if (v != null) {
-			v.incidenceListModified();
-		}
-		v = vertex[targetVertex[edgeOffset(-eId)]];
-		if (v != null) {
-			v.incidenceListModified();
-		}
-
-		Edge deletedEdge = edge[edgeOffset(eId)];
-		edgeDeleted(deletedEdge);
-
-		// remove edge from eSeq
-		int prevId = 0;
-		if (eId == firstEdge) {
-			firstEdge = nextEdgeInGraph[eId];
-		} else {
-			prevId = firstEdge;
-			while (nextEdgeInGraph[prevId] != eId) {
-				prevId = nextEdgeInGraph[prevId];
-			}
-		}
-		if (eId == lastEdge) {
-			lastEdge = prevId;
-		}
-		if (prevId != 0) {
-			nextEdgeInGraph[prevId] = nextEdgeInGraph[eId];
-		}
-
-		// add edge to free edge list
-		nextEdgeInGraph[eId] = nextEdgeInGraph[0];
-		nextEdgeInGraph[0] = eId;
-
-		// delete edge references
-		edge[edgeOffset(eId)] = null;
-		edge[edgeOffset(-eId)] = null;
-
-		int omegaId = targetVertex[edgeOffset(eId)];
-		targetVertex[edgeOffset(eId)] = 0;
-
-		int alphaId = targetVertex[edgeOffset(-eId)];
-		targetVertex[edgeOffset(-eId)] = 0;
-
-		deleteEdgeTo(alphaId, eId);
-		deleteEdgeTo(omegaId, -eId);
-
-		--eCount;
-	}
-
+	/**
+	 * Deletes all vertices in deleteVertexList from the internal structures of
+	 * this graph. Possibly, cascading deletes of child vertices occur when
+	 * parent vertices of Composition classes are deleted.
+	 */
 	private void internalDeleteVertex() {
 		while (!deleteVertexList.isEmpty()) {
-			int vId = deleteVertexList.remove(0);
-			vertex[vId].incidenceListModified();
-			vertexDeleted(vertex[vId]);
-			// remove vertex from vSeq
-			int prevId = 0;
-			if (vId == firstVertex) {
-				firstVertex = nextVertex[vId];
-			} else {
-				prevId = firstVertex;
-				while (nextVertex[prevId] != vId) {
-					prevId = nextVertex[prevId];
-				}
-			}
-			if (vId == lastVertex) {
-				lastVertex = prevId;
-			}
-			if (prevId != 0) {
-				nextVertex[prevId] = nextVertex[vId];
-			}
-
-			// add vertex to free vertex list
-			nextVertex[vId] = nextVertex[0];
-			nextVertex[0] = vId;
-
-			// delete vertex
-			vertex[vId] = null;
-			--vCount;
+			VertexImpl v = deleteVertexList.remove(0);
+			vertexDeleted(v);
+			removeVertexFromVSeq(v);
 
 			// delete all incident edges including incidence objects
-
-			int alphaId, omegaId;
-			int eId = firstEdgeAtVertex[vId];
-			while (eId != 0) {
-				alphaId = targetVertex[edgeOffset(eId > 0 ? -eId : eId)];
-				omegaId = targetVertex[edgeOffset(eId > 0 ? eId : -eId)];
-
+			Edge e = v.getFirstEdge();
+			while (e != null) {
 				// check for cascading delete of vertices in incident
 				// composition edges
-				AttributedElementClass aec = edge[edgeOffset(eId)]
-						.getAttributedElementClass();
+				AttributedElementClass aec = e.getAttributedElementClass();
 				if (aec instanceof CompositionClass) {
 					CompositionClass comp = (CompositionClass) aec;
 					if (comp.isAggregateFrom()) {
 						// omega vertex is to be deleted
-						if (containsVertexId(omegaId)
-								&& !deleteVertexList.contains(omegaId)) {
+						VertexImpl omega = (VertexImpl) e.getOmega();
+						if (containsVertex(omega)
+								&& !deleteVertexList.contains(omega)) {
 							// System.err.println("Delete omega vertex v" +
 							// omegaId + "
 							// of composition e" + eId);
-							deleteVertexList.add(omegaId);
+							deleteVertexList.add(omega);
 						}
 					} else {
-						if (containsVertexId(alphaId)
-								&& !deleteVertexList.contains(alphaId)) {
+						VertexImpl alpha = (VertexImpl) e.getAlpha();
+						if (containsVertex(alpha)
+								&& !deleteVertexList.contains(alpha)) {
 							// System.err.println("Delete alpha vertex v" +
 							// alphaId + "
 							// of composition e" + eId);
-							deleteVertexList.add(alphaId);
+							deleteVertexList.add(alpha);
 						}
 					}
 				}
 
-				// delete edge
-				internalDeleteEdge(eId);
-				eId = firstEdgeAtVertex[vId];
+				internalDeleteEdge(e);
+				e = v.getFirstEdge();
 			}
-
-			firstEdgeAtVertex[vId] = 0;
-			lastEdgeAtVertex[vId] = 0;
-
 		}
 	}
 
-	@Override
-	public boolean isAfterEdgeInGraph(Edge targetEdge, Edge sourceEdge) {
-		int target = Math.abs(targetEdge.getId());
-		int source = Math.abs(sourceEdge.getId());
-		assert (containsEdgeId(source) && containsEdgeId(target));
-		if (source == target) {
-			return false;
+	/**
+	 * Removes the vertex v from the global vertex sequence of this graph.
+	 * 
+	 * @param v
+	 *            a vertex
+	 */
+	private final void removeVertexFromVSeq(VertexImpl v) {
+		if (v == firstVertex) {
+			// delete at head of vertex list
+			firstVertex = (VertexImpl) v.getNextVertex();
+			if (firstVertex != null) {
+				firstVertex.setPrevVertex(null);
+			}
+			if (v == lastVertex) {
+				// this vertex was the only one...
+				lastVertex = null;
+			}
+		} else if (v == lastVertex) {
+			// delete at tail of vertex list
+			lastVertex = (VertexImpl) v.getPrevVertex();
+			if (lastVertex != null) {
+				lastVertex.setNextVertex(null);
+			}
+		} else {
+			// delete somewhere in the middle
+			((VertexImpl) v.getPrevVertex()).setNextVertex(v.getNextVertex());
+			((VertexImpl) v.getNextVertex()).setPrevVertex(v.getPrevVertex());
 		}
-		int nextId = nextEdgeInGraph[source];
-		while ((nextId != 0) && (nextId != target)) {
-			nextId = nextEdgeInGraph[nextId];
-		}
-		return nextId == 0;
+		freeVertexList.freeIndex(v.getId());
+		vertex[v.getId()] = null;
+		(v).setPrevVertex(null);
+		(v).setNextVertex(null);
+		v.setId(0);
+		--vCount;
 	}
 
-	@Override
-	public boolean isAfterVertex(Vertex targetVertex, Vertex sourceVertex) {
-		int target = targetVertex.getId();
-		int source = sourceVertex.getId();
-		assert (containsVertexId(source) && containsVertexId(target));
-		if (source == target) {
-			return false;
+	/**
+	 * Removes the edge e from the global edge sequence of this graph.
+	 * 
+	 * @param e
+	 *            an edge
+	 */
+	private final void removeEdgeFromESeq(EdgeImpl e) {
+		if (e == firstEdge) {
+			// delete at head of edge list
+			firstEdge = (EdgeImpl) e.getNextEdgeInGraph();
+			if (firstEdge != null) {
+				firstEdge.setPrevEdgeInGraph(null);
+			}
+			if (e == lastEdge) {
+				// this edge was the only one...
+				lastEdge = null;
+			}
+		} else if (e == lastEdge) {
+			// delete at tail of edge list
+			lastEdge = (EdgeImpl) e.getPrevEdgeInGraph();
+			if (lastEdge != null) {
+				lastEdge.setNextEdgeInGraph(null);
+			}
+		} else {
+			// delete somewhere in the middle
+			((EdgeImpl) e.getPrevEdgeInGraph()).setNextEdgeInGraph(e
+					.getNextEdgeInGraph());
+			((EdgeImpl) e.getNextEdgeInGraph()).setPrevEdgeInGraph(e
+					.getPrevEdgeInGraph());
 		}
-		int nextId = nextVertex[source];
-		while ((nextId != 0) && (nextId != target)) {
-			nextId = nextVertex[nextId];
-		}
-		return nextId == 0;
+
+		freeEdgeList.freeIndex(e.getId());
+		edge[e.getId()] = null;
+		revEdge[e.getId()] = null;
+		e.setPrevEdgeInGraph(null);
+		e.setNextEdgeInGraph(null);
+		e.setId(0);
+		--eCount;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see de.uni_koblenz.jgralab.Graph#isEdgeListModified(long)
+	 */
 	@Override
-	public boolean isBeforeEdgeInGraph(Edge targetEdge, Edge sourceEdge) {
-		int target = Math.abs(targetEdge.getId());
-		int source = Math.abs(sourceEdge.getId());
-		assert (containsEdgeId(source) && containsEdgeId(target));
-		if (source == target) {
-			return false;
-		}
-		int nextId = nextEdgeInGraph[source];
-		while ((nextId != 0) && (nextId != target)) {
-			nextId = nextEdgeInGraph[nextId];
-		}
-		return nextId != 0;
-	}
-
-	@Override
-	public boolean isBeforeVertex(Vertex targetVertex, Vertex sourceVertex) {
-		int target = targetVertex.getId();
-		int source = sourceVertex.getId();
-		assert (containsVertexId(source) && containsVertexId(target));
-		if (source == target) {
-			return false;
-		}
-		int nextId = nextVertex[source];
-		while ((nextId != 0) && (nextId != target)) {
-			nextId = nextVertex[nextId];
-		}
-		return nextId != 0;
-	}
-
-	@Override
-	public final boolean isEdgeListModified(long edgeListVersion) {
+	public boolean isEdgeListModified(long edgeListVersion) {
 		return (this.edgeListVersion != edgeListVersion);
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see de.uni_koblenz.jgralab.Graph#isGraphModified(long)
+	 */
 	@Override
-	public final boolean isGraphModified(long aGraphVersion) {
+	public boolean isGraphModified(long aGraphVersion) {
 		return (graphVersion != aGraphVersion);
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see de.uni_koblenz.jgralab.Graph#isLoading()
+	 */
 	@Override
 	public boolean isLoading() {
 		return loading;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see de.uni_koblenz.jgralab.Graph#isVertexListModified(long)
+	 */
 	@Override
-	public final boolean isVertexListModified(long vertexListVersion) {
+	public boolean isVertexListModified(long vertexListVersion) {
 		return (this.vertexListVersion != vertexListVersion);
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see de.uni_koblenz.jgralab.Graph#loadingCompleted()
+	 */
 	@Override
 	public void loadingCompleted() {
 	}
 
-	@Override
-	public final void internalLoadingCompleted() {
-		// initialize list of free vertex ids
-		int lastFreeVertex = 0;
-		for (int i = 1; i < vSize; i++) {
-			if (vertex[i] == null) {
-				nextVertex[lastFreeVertex] = i;
-				lastFreeVertex = i;
+	/**
+	 * Constructs incidence lists for all vertices after loading this graph.
+	 * 
+	 * @param firstIncidence
+	 *            array of edge ids of the first incidence
+	 * @param nextIncidence
+	 *            array of edge ids of subsequent edges
+	 */
+	public void internalLoadingCompleted(int[] firstIncidence,
+			int[] nextIncidence) {
+		freeVertexList.reinitialize(vertex);
+		freeEdgeList.reinitialize(edge);
+		for (int vId = 1; vId < vertex.length; ++vId) {
+			VertexImpl v = vertex[vId];
+			if (v != null) {
+				int eId = firstIncidence[vId];
+				while (eId != 0) {
+					v.appendIncidenceToLambaSeq(eId < 0 ? revEdge[-eId]
+							: edge[eId]);
+					eId = nextIncidence[eMax + eId];
+				}
 			}
 		}
-		nextVertex[lastFreeVertex] = 0;
-		int lastFreeEdge = 0;
-		for (int i = 1; i < eSize; i++) {
-			if (edge[edgeOffset(i)] == null) {
-				nextEdgeInGraph[lastFreeEdge] = i;
-				lastFreeEdge = i;
-			}
-		}
-		nextEdgeInGraph[lastFreeEdge] = 0;
 	}
 
 	/**
-	 * This method overwrites the internal arrays that store the first and last
-	 * edges at a vertex as well as the array that contains the next edge at a
-	 * vertex. You should not use this method outside of GraphIO and it will
-	 * check if it is called from outside.
+	 * Modifies eSeq such that the movedEdge is immediately after the
+	 * targetEdge.
+	 * 
+	 * @param targetEdge
+	 *            an edge
+	 * @param movedEdge
+	 *            the edge to be moved
 	 */
-	public void overwriteEdgeAtVertexArrays(int[] firstAtVertex,
-			int[] nextAtVertex, int[] lastAtVertex) {
-		String callingClassName = Thread.currentThread().getStackTrace()[2]
-				.getClassName();
-		if (!callingClassName.equals("de.uni_koblenz.jgralab.GraphIO")) {
-			throw new RuntimeException(
-					"overwriteEdgeAtVertexArrays(...) must not be called from outside of GraphIO");
+	public void putEdgeAfterInGraph(EdgeImpl targetEdge, EdgeImpl movedEdge) {
+		assert (targetEdge.isValid() && movedEdge.isValid());
+
+		if (targetEdge == movedEdge) {
+			throw new GraphException("an edge can't be put after itself");
 		}
 
-		if ((firstAtVertex.length != firstEdgeAtVertex.length)
-				|| (nextAtVertex.length != nextEdgeAtVertex.length)
-				|| (lastAtVertex.length != lastEdgeAtVertex.length)) {
-			throw new RuntimeException(
-					"overwriteEdgeAtVertexArrays(...) must not be called with arrays that have"
-							+ "not the same length as the arrays used internally");
-		}
-		firstEdgeAtVertex = firstAtVertex;
-		nextEdgeAtVertex = nextAtVertex;
-		lastEdgeAtVertex = lastAtVertex;
-	}
-
-	public void printArray() {
-		System.out.println("vCount= " + vCount + ", firstVertex=" + firstVertex
-				+ ", lastVertex=" + lastVertex);
-		System.out.println("eCount=" + eCount + ", firstEdge=" + firstEdge
-				+ ", lastEdge=" + lastEdge);
-
-		System.out.print("                    ");
-		for (int i = -eSize + 1; i < eSize; i++) {
-			System.out.printf("%5d", i);
-		}
-		System.out.println();
-
-		System.out.print("targetVertex:       ");
-		for (int i = 1; i < eSize * 2; ++i) {
-			System.out.printf("%5d", targetVertex[i]);
-		}
-		System.out.println();
-
-		System.out.print("nextEdgeAtVertex:   ");
-		for (int i = 1; i < eSize * 2; ++i) {
-			System.out.printf("%5d", nextEdgeAtVertex[i]);
-		}
-		System.out.println();
-
-		System.out.print("firstIncidence:     ");
-		for (int i = 0; i < eSize; i++) {
-			System.out.print("     ");
-		}
-		for (int i = 1; i < vSize; i++) {
-			System.out.printf("%5d", firstEdgeAtVertex[i]);
-		}
-		System.out.println();
-
-		System.out.print("lastIncidence:      ");
-		for (int i = 0; i < eSize; i++) {
-			System.out.print("     ");
-		}
-		for (int i = 1; i < vSize; i++) {
-			System.out.printf("%5d", lastEdgeAtVertex[i]);
-		}
-		System.out.println();
-
-		System.out.print("nextVertex:         ");
-		for (int i = 1; i < eSize; i++) {
-			System.out.print("     ");
-		}
-		for (int i = 0; i < vSize; i++) {
-			System.out.printf("%5d", nextVertex[i]);
-		}
-		System.out.println();
-
-		System.out.print("nextEdge:           ");
-		for (int i = 1; i < eSize; i++) {
-			System.out.print("     ");
-		}
-		for (int i = 0; i < eSize; i++) {
-			System.out.printf("%5d", nextEdgeInGraph[i]);
-		}
-		System.out.println();
-	}
-
-	@Override
-	public void putAfterEdgeInGraph(Edge targetEdge, Edge sourceEdge) {
-		assert containsEdge(targetEdge) && containsEdge(sourceEdge);
-		int source = Math.abs(sourceEdge.getId());
-		int target = Math.abs(targetEdge.getId());
-		if (target != source && nextEdgeInGraph[target] != source) {
-			// delete references to source
-			if (source == firstEdge) {
-				firstEdge = nextEdgeInGraph[source];
-			} else {
-				int prevId = firstEdge;
-				while (prevId != 0 && nextEdgeInGraph[prevId] != source) {
-					prevId = nextEdgeInGraph[prevId];
-				}
-				assert prevId != 0;
-				nextEdgeInGraph[prevId] = nextEdgeInGraph[source];
-				if (source == lastEdge) {
-					lastEdge = prevId;
-				}
-			}
-
-			// insert source in eSeq after target
-			nextEdgeInGraph[source] = nextEdgeInGraph[target];
-			nextEdgeInGraph[target] = source;
-			if (target == lastEdge) {
-				lastEdge = source;
-			}
-			edgeListModified();
-		}
-	}
-
-	@Override
-	public void putAfterVertex(Vertex targetVertex, Vertex sourceVertex) {
-		int target = targetVertex.getId();
-		int source = sourceVertex.getId();
-		assert (containsVertexId(target) && containsVertexId(source));
-		if (target != source && nextVertex[target] != source) {
-			// remove source from vSeq
-			if (source == firstVertex) {
-				firstVertex = nextVertex[source];
-			} else {
-				int prevId = firstVertex;
-				while (prevId != 0 && nextVertex[prevId] != source) {
-					prevId = nextVertex[prevId];
-				}
-				assert prevId != 0;
-				nextVertex[prevId] = nextVertex[source];
-				if (source == lastVertex) {
-					lastVertex = prevId;
-				}
-			}
-
-			// insert source in vSeq immediately after target
-			nextVertex[source] = nextVertex[target];
-			nextVertex[target] = source;
-			if (target == lastVertex) {
-				lastVertex = source;
-			}
-			vertexListModified();
-		}
-	}
-
-	@Override
-	public void putBeforeEdgeInGraph(Edge targetEdge, Edge sourceEdge) {
-		assert containsEdge(targetEdge) && containsEdge(sourceEdge);
-		int source = Math.abs(sourceEdge.getId());
-		int target = Math.abs(targetEdge.getId());
-		if (target != source && nextEdgeInGraph[source] != target) {
-			// delete references to source
-			if (source == firstEdge) {
-				firstEdge = nextEdgeInGraph[source];
-			} else {
-				int prevId = firstEdge;
-				while (prevId != 0 && nextEdgeInGraph[prevId] != source) {
-					prevId = nextEdgeInGraph[prevId];
-				}
-				assert prevId != 0;
-				nextEdgeInGraph[prevId] = nextEdgeInGraph[source];
-				if (source == lastEdge) {
-					lastEdge = prevId;
-				}
-			}
-
-			// insert source immediately before target
-			if (target == firstEdge) {
-				firstEdge = source;
-			} else {
-				int prevId = firstEdge;
-				while (prevId != 0 && nextEdgeInGraph[prevId] != target) {
-					prevId = nextEdgeInGraph[prevId];
-				}
-				assert prevId != 0;
-				nextEdgeInGraph[prevId] = source;
-			}
-			nextEdgeInGraph[source] = target;
-			edgeListModified();
-		}
-	}
-
-	@Override
-	public void putBeforeVertex(Vertex targetVertex, Vertex sourceVertex) {
-		int target = targetVertex.getId();
-		int source = sourceVertex.getId();
-		assert (containsVertexId(target) && containsVertexId(source));
-		if (target != source && nextVertex[source] != target) {
-			// remove source from vSeq
-			if (source == firstVertex) {
-				firstVertex = nextVertex[source];
-			} else {
-				int prevId = firstVertex;
-				while (prevId != 0 && nextVertex[prevId] != source) {
-					prevId = nextVertex[prevId];
-				}
-				assert prevId != 0;
-				nextVertex[prevId] = nextVertex[source];
-				if (source == lastVertex) {
-					lastVertex = prevId;
-				}
-			}
-
-			// insert source in vSeq before target
-			if (target == firstVertex) {
-				nextVertex[source] = firstVertex;
-				firstVertex = source;
-			} else {
-				int prevId = firstVertex;
-				while (prevId != 0 && nextVertex[prevId] != target) {
-					prevId = nextVertex[prevId];
-				}
-				assert prevId != 0;
-				nextVertex[source] = target;
-				nextVertex[prevId] = source;
-			}
-			vertexListModified();
-		}
-	}
-
-	public void putEdgeAfter(Edge edge, Edge previousEdge) {
-		int edgeId = edge.getId();
-		int previousEdgeId = previousEdge.getId();
-		int thisVertexId = targetVertex[edgeOffset(-edgeId)];
-		if (thisVertexId != targetVertex[edgeOffset(-previousEdgeId)]) {
-			throw new GraphException("Cannot put edge " + edgeId
-					+ " after edge " + previousEdgeId
-					+ ", edges have different this-vertices");
-		}
-		if (edgeId == previousEdgeId) {
-			return;
-		}
-		if (edgeId == nextEdgeAtVertex[edgeOffset(previousEdgeId)]) {
+		if (targetEdge.getNextEdgeInGraph() == movedEdge) {
 			return;
 		}
 
-		// if edgeId is the first edge, make the next one the first one
-		if (edgeId == firstEdgeAtVertex[thisVertexId]) {
-			firstEdgeAtVertex[thisVertexId] = nextEdgeAtVertex[edgeOffset(edgeId)];
+		assert firstEdge != lastEdge;
+
+		// remove moved edge from eSeq
+		if (movedEdge == firstEdge) {
+			firstEdge = (EdgeImpl) movedEdge.getNextEdgeInGraph();
+			((EdgeImpl) movedEdge.getNextEdgeInGraph())
+					.setPrevEdgeInGraph(null);
+		} else if (movedEdge == lastEdge) {
+			lastEdge = (EdgeImpl) movedEdge.getPrevEdgeInGraph();
+			((EdgeImpl) movedEdge.getPrevEdgeInGraph())
+					.setNextEdgeInGraph(null);
 		} else {
-			// otherwise remove the edge from the old position
-			int oldPreviousEdgeId = 0;
-			int currentEdgeId = firstEdgeAtVertex[targetVertex[edgeOffset(-edgeId)]];
-			while (currentEdgeId != edgeId) {
-				oldPreviousEdgeId = currentEdgeId;
-				currentEdgeId = nextEdgeAtVertex[edgeOffset(currentEdgeId)];
-			}
-			nextEdgeAtVertex[edgeOffset(oldPreviousEdgeId)] = nextEdgeAtVertex[edgeOffset(edgeId)];
-			// if the edgeId was the last edge at the vertex, set the last edge
-			// to the previous one
-			if (lastEdgeAtVertex[thisVertexId] == edgeId) {
-				lastEdgeAtVertex[thisVertexId] = oldPreviousEdgeId;
-			}
-		}
-		// put edge after previous one
-		nextEdgeAtVertex[edgeOffset(edgeId)] = nextEdgeAtVertex[edgeOffset(previousEdgeId)];
-		nextEdgeAtVertex[edgeOffset(previousEdgeId)] = edgeId;
-		// if the new previous edge was the last edge at the vertex, set the
-		// last edge to edgeId
-		if (lastEdgeAtVertex[thisVertexId] == previousEdgeId) {
-			lastEdgeAtVertex[thisVertexId] = edgeId;
-		}
-		vertex[thisVertexId].incidenceListModified();
-	}
-
-	public void putEdgeBefore(Edge edge, Edge nextEdge) {
-		int edgeId = edge.getId();
-		int nextEdgeId = nextEdge.getId();
-		int thisVertexId = targetVertex[edgeOffset(-edgeId)];
-		if (thisVertexId != targetVertex[edgeOffset(-nextEdgeId)]) {
-			throw new GraphException("Cannot put edge " + edgeId
-					+ " after edge " + nextEdgeId
-					+ ", edges have different this-vertices");
-		}
-		if (edgeId == nextEdgeId) {
-			return;
-		}
-		if (nextEdgeId == nextEdgeAtVertex[edgeOffset(edgeId)]) {
-			return;
+			((EdgeImpl) movedEdge.getPrevEdgeInGraph())
+					.setNextEdgeInGraph(movedEdge.getNextEdgeInGraph());
+			((EdgeImpl) movedEdge.getNextEdgeInGraph())
+					.setPrevEdgeInGraph(movedEdge.getPrevEdgeInGraph());
 		}
 
-		// if edgeId is the first edge, make the next one the first one
-		if (edgeId == firstEdgeAtVertex[thisVertexId]) {
-			firstEdgeAtVertex[thisVertexId] = nextEdgeAtVertex[edgeOffset(edgeId)];
+		// insert moved edge in eSeq immediately after target
+		if (targetEdge == lastEdge) {
+			lastEdge = movedEdge;
+			movedEdge.setNextEdgeInGraph(null);
 		} else {
-			// otherwise remove the edge from the old position
-			int oldPreviousEdgeId = 0;
-			int currentEdgeId = firstEdgeAtVertex[targetVertex[edgeOffset(-edgeId)]];
-			while (currentEdgeId != edgeId) {
-				oldPreviousEdgeId = currentEdgeId;
-				currentEdgeId = nextEdgeAtVertex[edgeOffset(currentEdgeId)];
-			}
-			nextEdgeAtVertex[edgeOffset(oldPreviousEdgeId)] = nextEdgeAtVertex[edgeOffset(edgeId)];
-			// if the edgeId was the last edge at the vertex, set the last edge
-			// to the previous one
-			if (lastEdgeAtVertex[thisVertexId] == edgeId) {
-				lastEdgeAtVertex[thisVertexId] = oldPreviousEdgeId;
-			}
+			((EdgeImpl) targetEdge.getNextEdgeInGraph())
+					.setPrevEdgeInGraph(movedEdge);
+			movedEdge.setNextEdgeInGraph(targetEdge.getNextEdgeInGraph());
 		}
-
-		int previousEdgeId = 0;
-		int currentEdgeId = firstEdgeAtVertex[targetVertex[edgeOffset(-edgeId)]];
-		while (currentEdgeId != nextEdgeId) {
-			previousEdgeId = currentEdgeId;
-			currentEdgeId = nextEdgeAtVertex[edgeOffset(currentEdgeId)];
-		}
-
-		// put edge after previous one, i.e. before the nextEdge
-		if (previousEdgeId != 0) {
-			nextEdgeAtVertex[edgeOffset(previousEdgeId)] = edgeId;
-		} else {
-			// nextEdge was the first edge in lambdaseq
-			firstEdgeAtVertex[thisVertexId] = edgeId;
-		}
-		nextEdgeAtVertex[edgeOffset(edgeId)] = nextEdgeId;
-		vertex[thisVertexId].incidenceListModified();
+		movedEdge.setPrevEdgeInGraph(targetEdge);
+		targetEdge.setNextEdgeInGraph(movedEdge);
+		edgeListModified();
 	}
 
-	@Override
-	public void setAlpha(Edge e, Vertex alpha) {
-		if (!alpha.isValidAlpha(e)) {
-			throw new GraphException("Edges of class "
-					+ e.getAttributedElementClass().getUniqueName()
-					+ " may not start at vertices of class "
-					+ alpha.getAttributedElementClass().getUniqueName());
-		}
-		int edgeId = e.getId();
-		int alphaId = alpha.getId();
+	/**
+	 * Modifies vSeq such that the movedVertex is immediately after the
+	 * targetVertex.
+	 * 
+	 * @param targetVertex
+	 *            a vertex
+	 * @param movedVertex
+	 *            the vertex to be moved
+	 */
+	public void putVertexAfter(VertexImpl targetVertex, VertexImpl movedVertex) {
+		assert (targetVertex.isValid() && movedVertex.isValid());
 
-		int posId = edgeId;
-		int negId = -edgeId;
-		if (posId < 0) {
-			posId = -edgeId;
-			negId = edgeId;
+		if (targetVertex == movedVertex) {
+			throw new GraphException("a vertex can't be put after itself");
 		}
-		if (targetVertex[edgeOffset(negId)] == alphaId) {
+
+		if (targetVertex.getNextVertex() == movedVertex) {
 			return;
 		}
-		deleteEdgeTo(targetVertex[edgeOffset(negId)], posId);
-		appendEdgeAtVertex(alphaId, posId);
-		targetVertex[edgeOffset(negId)] = alphaId;
+
+		assert firstVertex != lastVertex;
+
+		// remove moved vertex from vSeq
+		if (movedVertex == firstVertex) {
+			firstVertex = (VertexImpl) movedVertex.getNextVertex();
+			((VertexImpl) movedVertex.getNextVertex()).setPrevVertex(null);
+		} else if (movedVertex == lastVertex) {
+			lastVertex = (VertexImpl) movedVertex.getPrevVertex();
+			((VertexImpl) movedVertex.getPrevVertex()).setNextVertex(null);
+		} else {
+			((VertexImpl) movedVertex.getPrevVertex())
+					.setNextVertex(movedVertex.getNextVertex());
+			((VertexImpl) movedVertex.getNextVertex())
+					.setPrevVertex(movedVertex.getPrevVertex());
+		}
+
+		// insert moved vertex in vSeq immediately after target
+		if (targetVertex == lastVertex) {
+			lastVertex = movedVertex;
+			movedVertex.setNextVertex(null);
+		} else {
+			((VertexImpl) targetVertex.getNextVertex())
+					.setPrevVertex(movedVertex);
+			movedVertex.setNextVertex(targetVertex.getNextVertex());
+		}
+		movedVertex.setPrevVertex(targetVertex);
+		targetVertex.setNextVertex(movedVertex);
+		vertexListModified();
 	}
 
-	@Override
+	/**
+	 * Modifies eSeq such that the movedEdge is immediately before the
+	 * targetEdge.
+	 * 
+	 * @param targetEdge
+	 *            an edge
+	 * @param movedEdge
+	 *            the edge to be moved
+	 */
+	public void putEdgeBeforeInGraph(EdgeImpl targetEdge, EdgeImpl movedEdge) {
+		assert (targetEdge.isValid() && movedEdge.isValid());
+
+		if (targetEdge == movedEdge) {
+			throw new GraphException("an edge can't be put before itself");
+		}
+
+		if (targetEdge.getPrevEdgeInGraph() == movedEdge) {
+			return;
+		}
+
+		assert firstEdge != lastEdge;
+
+		// remove moved edge from eSeq
+		if (movedEdge == firstEdge) {
+			firstEdge = (EdgeImpl) movedEdge.getNextEdgeInGraph();
+			((EdgeImpl) movedEdge.getNextEdgeInGraph())
+					.setPrevEdgeInGraph(null);
+		} else if (movedEdge == lastEdge) {
+			lastEdge = (EdgeImpl) movedEdge.getPrevEdgeInGraph();
+			((EdgeImpl) movedEdge.getPrevEdgeInGraph())
+					.setNextEdgeInGraph(null);
+		} else {
+			((EdgeImpl) movedEdge.getPrevEdgeInGraph())
+					.setNextEdgeInGraph(movedEdge.getNextEdgeInGraph());
+			((EdgeImpl) movedEdge.getNextEdgeInGraph())
+					.setPrevEdgeInGraph(movedEdge.getPrevEdgeInGraph());
+		}
+
+		// insert moved edge in eSeq immediately before target
+		if (targetEdge == firstEdge) {
+			firstEdge = movedEdge;
+			movedEdge.setPrevEdgeInGraph(null);
+		} else {
+			((EdgeImpl) targetEdge.getPrevEdgeInGraph())
+					.setNextEdgeInGraph(movedEdge);
+			movedEdge.setPrevEdgeInGraph(targetEdge.getPrevEdgeInGraph());
+		}
+		movedEdge.setNextEdgeInGraph(targetEdge);
+		targetEdge.setPrevEdgeInGraph(movedEdge);
+		edgeListModified();
+	}
+
+	/**
+	 * Modifies vSeq such that the movedVertex is immediately before the
+	 * targetVertex.
+	 * 
+	 * @param targetVertex
+	 *            a vertex
+	 * @param movedVertex
+	 *            the vertex to be moved
+	 */
+	public void putVertexBefore(VertexImpl targetVertex, VertexImpl movedVertex) {
+		assert (targetVertex.isValid() && movedVertex.isValid());
+
+		if (targetVertex == movedVertex) {
+			throw new GraphException("a vertex can't be put before itself");
+		}
+
+		if (targetVertex.getPrevVertex() == movedVertex) {
+			return;
+		}
+
+		assert firstVertex != lastVertex;
+
+		// remove moved vertex from vSeq
+		if (movedVertex == firstVertex) {
+			firstVertex = (VertexImpl) movedVertex.getNextVertex();
+			((VertexImpl) movedVertex.getNextVertex()).setPrevVertex(null);
+		} else if (movedVertex == lastVertex) {
+			lastVertex = (VertexImpl) movedVertex.getPrevVertex();
+			((VertexImpl) movedVertex.getPrevVertex()).setNextVertex(null);
+		} else {
+			((VertexImpl) movedVertex.getPrevVertex())
+					.setNextVertex(movedVertex.getNextVertex());
+			((VertexImpl) movedVertex.getNextVertex())
+					.setPrevVertex(movedVertex.getPrevVertex());
+		}
+
+		// insert moved vertex in vSeq immediately before target
+		if (targetVertex == firstVertex) {
+			firstVertex = movedVertex;
+			movedVertex.setPrevVertex(null);
+		} else {
+			((VertexImpl) targetVertex.getPrevVertex())
+					.setNextVertex(movedVertex);
+			movedVertex.setPrevVertex(targetVertex.getPrevVertex());
+		}
+		movedVertex.setNextVertex(targetVertex);
+		targetVertex.setPrevVertex(movedVertex);
+		vertexListModified();
+	}
+
+	/**
+	 * Sets the version counter of this graph. Should only be called by GraphIO
+	 * immediately after loading.
+	 * 
+	 * @param graphVersion
+	 *            new version value
+	 */
 	public void setGraphVersion(long graphVersion) {
 		this.graphVersion = graphVersion;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see de.uni_koblenz.jgralab.Graph#setId(java.lang.String)
+	 */
 	@Override
 	public void setId(String id) {
 		this.id = id;
 	}
 
-	@Override
+	/**
+	 * Sets the loading flag.
+	 * 
+	 * @param isLoading
+	 */
 	public void setLoading(boolean isLoading) {
 		loading = isLoading;
 	}
 
-	@Override
-	public void setOmega(Edge e, Vertex omega) {
-		if (!omega.isValidOmega(e)) {
-			throw new GraphException("Edges of class "
-					+ e.getAttributedElementClass().getUniqueName()
-					+ " may not end at at vertices of class "
-					+ omega.getAttributedElementClass().getUniqueName());
-		}
-		int edgeId = e.getId();
-		int omegaId = omega.getId();
-
-		int posId = edgeId;
-		int negId = -edgeId;
-		if (posId < 0) {
-			posId = -edgeId;
-			negId = edgeId;
-		}
-		if (targetVertex[edgeOffset(posId)] == omegaId) {
-			return;
-		}
-		deleteEdgeTo(targetVertex[edgeOffset(posId)], negId);
-		appendEdgeAtVertex(omegaId, negId);
-		targetVertex[edgeOffset(posId)] = omegaId;
-	}
-
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see de.uni_koblenz.jgralab.Graph#vertexDeleted(de.uni_koblenz.jgralab.Vertex)
+	 */
 	@Override
 	public void vertexDeleted(Vertex v) {
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see de.uni_koblenz.jgralab.Graph#vertexAdded(de.uni_koblenz.jgralab.Vertex)
+	 */
 	@Override
 	public void vertexAdded(Vertex v) {
 	}
 
-	@Override
-	public final void vertexListModified() {
-		vertexListVersion++;
-		graphVersion++;
+	/**
+	 * Changes the graph structure version, should be called whenever the
+	 * structure of the graph is changed, for instance by creation and deletion
+	 * or reordering of vertices and edges
+	 */
+	public void vertexListModified() {
+		++vertexListVersion;
+		++graphVersion;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see de.uni_koblenz.jgralab.Graph#vertices()
+	 */
 	@Override
 	public Iterable<Vertex> vertices() {
 		return new VertexIterable<Vertex>(this);
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see de.uni_koblenz.jgralab.Graph#vertices(java.lang.Class)
+	 */
 	@Override
 	public Iterable<Vertex> vertices(Class<? extends Vertex> vclass) {
 		return new VertexIterable<Vertex>(this, vclass);
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see de.uni_koblenz.jgralab.Graph#vertices(de.uni_koblenz.jgralab.schema.VertexClass)
+	 */
 	@Override
 	public Iterable<Vertex> vertices(VertexClass eclass) {
 		return new VertexIterable<Vertex>(this, eclass.getM1Class());

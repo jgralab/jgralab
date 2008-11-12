@@ -30,35 +30,21 @@ import de.uni_koblenz.jgralab.schema.GraphClass;
 import de.uni_koblenz.jgralab.schema.Schema;
 
 public abstract class GraphElementImpl extends AttributedElementImpl {
-
-	/**
-	 * holds the version of the graphelement, for every modification 
-	 * (e.g. adding an edge or changing incidence sequence of a vertex)
-	 * this version number is increased by one
-	 * It is set to 0 when the graph is loaded.
-	 */
-	protected long graphVersion;
-	
 	public GraphElementImpl(Graph graph, AttributedElementClass cls) {
 		super(cls);
-		myGraph = graph;
-		if (graph == null) {
-			System.out.println("graph in GraphElementConstructor is null");
-			System.exit(1);
-		}
+		assert graph != null;
+		myGraph = (GraphImpl)graph;
 	}
 
-	/**
-	 * reference to the corresponding graph, all operations
-	 * are redirected to it because only myGraph knows the
-	 * whole graph structure  
-	 */
-	protected Graph myGraph;
+	protected GraphImpl myGraph;
 	
 	public Graph getGraph() {
 		return myGraph;
 	}
 	
+	/* (non-Javadoc)
+	 * @see de.uni_koblenz.jgralab.AttributedElement#getGraphClass()
+	 */
 	public GraphClass getGraphClass() {
 		return (GraphClass) myGraph.getAttributedElementClass();
 	}
@@ -70,8 +56,6 @@ public abstract class GraphElementImpl extends AttributedElementImpl {
 		return myGraph.getSchema();
 	}
 	
-
-
 	public void graphModified() {
 		myGraph.graphModified();
 	}

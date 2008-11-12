@@ -746,7 +746,7 @@ public class JGraLabFacade {
 			throws XmlRpcException {
 		Graph graph = graphContainer.getGraph(graphNo);
 
-		return createGraphElementMap(graph.getNextVertex(graph.getVertex(vId)));
+		return createGraphElementMap(graph.getVertex(vId).getNextVertex());
 	}
 
 	/**
@@ -779,9 +779,9 @@ public class JGraLabFacade {
 			String vcName) throws XmlRpcException {
 		Graph graph = graphContainer.getGraph(graphNo);
 
-		return createGraphElementMap(graph.getNextVertexOfClass(graph
-				.getVertex(vId), (VertexClass) graph.getSchema()
-				.getAttributedElementClass(new QualifiedName(vcName))));
+		return createGraphElementMap(graph.getVertex(vId).getNextVertexOfClass(
+				(VertexClass) graph.getSchema().getAttributedElementClass(
+						new QualifiedName(vcName))));
 	}
 
 	/**
@@ -809,7 +809,7 @@ public class JGraLabFacade {
 			throws XmlRpcException {
 		Graph graph = graphContainer.getGraph(graphNo);
 
-		return createGraphElementMap(graph.getFirstEdge(graph.getVertex(vId)));
+		return createGraphElementMap(graph.getVertex(vId).getFirstEdge());
 	}
 
 	/**
@@ -841,9 +841,9 @@ public class JGraLabFacade {
 			String ecName) throws XmlRpcException {
 		Graph graph = graphContainer.getGraph(graphNo);
 
-		return createGraphElementMap(graph.getFirstEdgeOfClass(graph
-				.getVertex(vId), (EdgeClass) graph.getSchema()
-				.getAttributedElementClass(new QualifiedName(ecName))));
+		return createGraphElementMap(graph.getVertex(vId).getFirstEdgeOfClass(
+				(EdgeClass) graph.getSchema().getAttributedElementClass(
+						new QualifiedName(ecName))));
 	}
 
 	/**
@@ -872,7 +872,7 @@ public class JGraLabFacade {
 			throws XmlRpcException {
 		Graph graph = graphContainer.getGraph(graphNo);
 
-		return createGraphElementMap(graph.getNextEdge(graph.getEdge(eId)));
+		return createGraphElementMap(graph.getEdge(eId).getNextEdge());
 	}
 
 	/**
@@ -904,9 +904,9 @@ public class JGraLabFacade {
 			String ecName) throws XmlRpcException {
 		Graph graph = graphContainer.getGraph(graphNo);
 
-		return createGraphElementMap(graph.getNextEdgeOfClass(graph
-				.getEdge(eId), (EdgeClass) graph.getSchema()
-				.getAttributedElementClass(new QualifiedName(ecName))));
+		return createGraphElementMap(graph.getEdge(eId).getNextEdgeOfClass(
+				(EdgeClass) graph.getSchema().getAttributedElementClass(
+						new QualifiedName(ecName))));
 	}
 
 	/**
@@ -989,8 +989,7 @@ public class JGraLabFacade {
 			throws XmlRpcException {
 		Graph graph = graphContainer.getGraph(graphNo);
 
-		return createGraphElementMap(graph.getNextEdgeInGraph(graph
-				.getEdge(eId)));
+		return createGraphElementMap(graph.getEdge(eId).getNextEdgeInGraph());
 	}
 
 	/**
@@ -1023,9 +1022,11 @@ public class JGraLabFacade {
 			String ecName) throws XmlRpcException {
 		Graph graph = graphContainer.getGraph(graphNo);
 
-		return createGraphElementMap(graph.getNextEdgeOfClassInGraph(graph
-				.getEdge(eId), (EdgeClass) graph.getSchema()
-				.getAttributedElementClass(new QualifiedName(ecName))));
+		return createGraphElementMap(graph.getEdge(eId)
+				.getNextEdgeOfClassInGraph(
+						(EdgeClass) graph.getSchema()
+								.getAttributedElementClass(
+										new QualifiedName(ecName))));
 	}
 
 	/**
@@ -1042,7 +1043,7 @@ public class JGraLabFacade {
 	public int getDegree(int graphNo, int vId) {
 		Graph graph = graphContainer.getGraph(graphNo);
 
-		return graph.getDegree(graph.getVertex(vId));
+		return graph.getVertex(vId).getDegree();
 	}
 
 	/**
@@ -1070,7 +1071,7 @@ public class JGraLabFacade {
 			throws XmlRpcException {
 		Graph graph = graphContainer.getGraph(graphNo);
 
-		return createGraphElementMap(graph.getAlpha(graph.getEdge(eId)));
+		return createGraphElementMap(graph.getEdge(eId).getAlpha());
 	}
 
 	/**
@@ -1098,7 +1099,7 @@ public class JGraLabFacade {
 			throws XmlRpcException {
 		Graph graph = graphContainer.getGraph(graphNo);
 
-		return createGraphElementMap(graph.getOmega(graph.getEdge(eId)));
+		return createGraphElementMap(graph.getEdge(eId).getOmega());
 	}
 
 	/**
@@ -1129,7 +1130,7 @@ public class JGraLabFacade {
 			throws XmlRpcException {
 		Graph graph = graphContainer.getGraph(graphNo);
 
-		graph.setAlpha(graph.getEdge(eId), graph.getVertex(vId));
+		graph.getEdge(eId).setAlpha(graph.getVertex(vId));
 
 		return createGraphElementMap(graph.getVertex(vId));
 	}
@@ -1161,44 +1162,9 @@ public class JGraLabFacade {
 			throws XmlRpcException {
 		Graph graph = graphContainer.getGraph(graphNo);
 
-		graph.setOmega(graph.getEdge(eId), graph.getVertex(vId));
+		graph.getEdge(eId).setOmega(graph.getVertex(vId));
 
 		return createGraphElementMap(graph.getVertex(vId));
-	}
-
-	/**
-	 * Inserts the edge with the id {@code eId} at the position {@code pos} of
-	 * the sequence of incident edges <i>Iseq</i> of the vertex {@code vId}
-	 * contained in the graph pointed to by {@code graphNo}. Returns a
-	 * {@code Map<String, Object>} with three entries:<br>
-	 * <br>
-	 * "id" -> {@code Integer} value representing the id of the edge<br>
-	 * "class" -> {@code String} value representing the name of the edge class
-	 * the edge is an instance of<br>
-	 * "attributes" -> {@code Map<String, Object>} representing the edge's
-	 * attributes (attribute name -> attribute value)
-	 * 
-	 * @param graphNo
-	 *            the handle of the graph containing the vertex {@code vId}
-	 * @param vId
-	 *            the id of the vertex in whose <i>Iseq</i> the edge shall be
-	 *            inserted in
-	 * @param eId
-	 *            the id of the edge which shall be inserted at {@code pos}
-	 * @param pos
-	 *            the position of <i>Iseq</i> at which the edge {@code eId}
-	 *            shall be inserted
-	 * @return a {@code Map<String, Object>} with three entries (see method
-	 *         description)
-	 * @throws XmlRpcException
-	 */
-	public Map<String, Object> insertEdgeAt(int graphNo, int vId, int eId,
-			int pos) throws XmlRpcException {
-		Graph graph = graphContainer.getGraph(graphNo);
-
-		graph.insertEdgeAt(graph.getVertex(vId), graph.getEdge(eId), pos);
-
-		return createGraphElementMap(graph.getEdge(eId));
 	}
 
 	/**
@@ -1231,7 +1197,7 @@ public class JGraLabFacade {
 			int source) throws XmlRpcException {
 		Graph graph = graphContainer.getGraph(graphNo);
 
-		graph.putAfterVertex(graph.getVertex(target), graph.getVertex(source));
+		graph.getVertex(source).putAfter(graph.getVertex(target));
 
 		return createGraphElementMap(graph.getVertex(source));
 	}
@@ -1266,7 +1232,7 @@ public class JGraLabFacade {
 			int source) throws XmlRpcException {
 		Graph graph = graphContainer.getGraph(graphNo);
 
-		graph.putBeforeVertex(graph.getVertex(target), graph.getVertex(source));
+		graph.getVertex(source).putBefore(graph.getVertex(target));
 
 		return createGraphElementMap(graph.getVertex(source));
 	}
@@ -1301,7 +1267,7 @@ public class JGraLabFacade {
 			int source) throws XmlRpcException {
 		Graph graph = graphContainer.getGraph(graphNo);
 
-		graph.putAfterEdgeInGraph(graph.getEdge(target), graph.getEdge(source));
+		graph.getEdge(source).putAfterInGraph(graph.getEdge(target));
 
 		return createGraphElementMap(graph.getEdge(source));
 	}
@@ -1336,9 +1302,7 @@ public class JGraLabFacade {
 			int source) throws XmlRpcException {
 		Graph graph = graphContainer.getGraph(graphNo);
 
-		graph
-				.putBeforeEdgeInGraph(graph.getEdge(target), graph
-						.getEdge(source));
+		graph.getEdge(source).putBeforeInGraph(graph.getEdge(target));
 
 		return createGraphElementMap(graph.getEdge(source));
 	}
@@ -1373,9 +1337,7 @@ public class JGraLabFacade {
 			int previousEdgeId) throws XmlRpcException {
 		Graph graph = graphContainer.getGraph(graphNo);
 
-		graph
-				.putEdgeAfter(graph.getEdge(edgeId), graph
-						.getEdge(previousEdgeId));
+		graph.getEdge(edgeId).putEdgeAfter(graph.getEdge(previousEdgeId));
 
 		return createGraphElementMap(graph.getEdge(edgeId));
 	}
@@ -1410,7 +1372,7 @@ public class JGraLabFacade {
 			int nextEdgeId) throws XmlRpcException {
 		Graph graph = graphContainer.getGraph(graphNo);
 
-		graph.putEdgeBefore(graph.getEdge(edgeId), graph.getEdge(nextEdgeId));
+		graph.getEdge(edgeId).putEdgeBefore(graph.getEdge(nextEdgeId));
 
 		return createGraphElementMap(graph.getEdge(edgeId));
 	}

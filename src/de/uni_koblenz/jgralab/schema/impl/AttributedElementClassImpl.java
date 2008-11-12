@@ -47,8 +47,6 @@ import de.uni_koblenz.jgralab.schema.SchemaException;
 public abstract class AttributedElementClassImpl implements
 		AttributedElementClass {
 
-	private final boolean DEBUG = false;
-
 	/**
 	 * toggles if this class is only for internal use
 	 */
@@ -309,25 +307,28 @@ public abstract class AttributedElementClassImpl implements
 	protected void addSuperClass(AttributedElementClass superClass) {
 		if ((superClass == this) || (superClass == null))
 			return;
-		if (DEBUG) {
-			System.out.println("Adding superclass: "
-					+ superClass.getQualifiedName() + " to class "
-					+ this.getName());
-		}
 		directSuperClasses.remove(getSchema().getDefaultGraphClass());
 		directSuperClasses.remove(getSchema().getDefaultEdgeClass());
 		directSuperClasses.remove(getSchema().getDefaultVertexClass());
 		for (AttributedElementClass c : directSuperClasses) {
-			if ((c != getSchema().getDefaultAggregationClass()) && (c.isSubClassOf(getSchema().getDefaultAggregationClass()))) {
-				directSuperClasses.remove(getSchema().getDefaultAggregationClass());
+			if ((c != getSchema().getDefaultAggregationClass())
+					&& (c
+							.isSubClassOf(getSchema()
+									.getDefaultAggregationClass()))) {
+				directSuperClasses.remove(getSchema()
+						.getDefaultAggregationClass());
 				break;
 			}
 		}
 		for (AttributedElementClass c : directSuperClasses) {
-			if ((c != getSchema().getDefaultCompositionClass()) && (c.isSubClassOf(getSchema().getDefaultCompositionClass()))) {
-				directSuperClasses.remove(getSchema().getDefaultCompositionClass());
+			if ((c != getSchema().getDefaultCompositionClass())
+					&& (c
+							.isSubClassOf(getSchema()
+									.getDefaultCompositionClass()))) {
+				directSuperClasses.remove(getSchema()
+						.getDefaultCompositionClass());
 				break;
-			}	
+			}
 		}
 		for (Attribute a : superClass.getAttributeList()) {
 			if (getOwnAttribute(a.getName()) != null)

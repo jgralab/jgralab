@@ -127,7 +127,6 @@ public class SchemaCodeGenerator extends CodeGenerator {
 				" * @param eMax initial edge count",
 				" */",
 				"public #gcName# create#gcCamelName#(String id, int vMax, int eMax) {",
-				// "\treturn new #gcImplName#(id, this, vMax, eMax);",
 				"\treturn (#gcCamelName#) graphFactory.createGraph(#gcCamelName#.class, id, vMax, eMax);",
 				"}",
 				"",
@@ -252,13 +251,17 @@ public class SchemaCodeGenerator extends CodeGenerator {
 		}
 		for (VertexClass vc : schema.getVertexClassesInTopologicalOrder()) {
 			code.addNoIndent(new CodeSnippet("public final VertexClass "
-						+ vc.getVariableName() + ";"));
+					+ vc.getVariableName() + ";"));
 		}
 		for (EdgeClass ec : schema.getEdgeClassesInTopologicalOrder()) {
 			if (!ec.isInternal()) {
-				code.addNoIndent(new CodeSnippet("public final " 
-						+ (ec instanceof CompositionClass ? "Composition" : ec instanceof AggregationClass ? "Aggregation" : "Edge") + "Class "
-						+ ec.getVariableName() + ";"));
+				code
+						.addNoIndent(new CodeSnippet(
+								"public final "
+										+ (ec instanceof CompositionClass ? "Composition"
+												: ec instanceof AggregationClass ? "Aggregation"
+														: "Edge") + "Class "
+										+ ec.getVariableName() + ";"));
 			}
 		}
 		return code;
@@ -437,11 +440,9 @@ public class SchemaCodeGenerator extends CodeGenerator {
 								"\tRecordDomain dom = createRecordDomain(new QualifiedName(\"#domName#\"));");
 				RecordDomain rd = (RecordDomain) dom;
 				for (String cName : rd.getComponents().keySet()) {
-					s
-							.add("\tdom.addComponent(\"" + cName
-									+ "\", getDomain(\""
-									+ rd.getComponents().get(cName).getQualifiedName()
-									+ "\"));");
+					s.add("\tdom.addComponent(\"" + cName + "\", getDomain(\""
+							+ rd.getComponents().get(cName).getQualifiedName()
+							+ "\"));");
 				}
 				s.add("}");
 			} else {

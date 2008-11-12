@@ -21,7 +21,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
- 
+
 package de.uni_koblenz.jgralab.impl;
 
 import de.uni_koblenz.jgralab.AttributedElement;
@@ -30,16 +30,17 @@ import de.uni_koblenz.jgralab.schema.AttributedElementClass;
 public abstract class AttributedElementImpl implements AttributedElement {
 
 	protected AttributedElementClass theClass;
-	
+
 	public AttributedElementImpl(AttributedElementClass cls) {
 		if (cls == null) {
-			throw new IllegalArgumentException("AttributedElementClass must not be null");
+			throw new IllegalArgumentException(
+					"AttributedElementClass must not be null");
 		}
 		theClass = cls;
 	}
-	
+
 	public final AttributedElementClass getAttributedElementClass() {
 		return theClass;
 	}
-	
+
 }

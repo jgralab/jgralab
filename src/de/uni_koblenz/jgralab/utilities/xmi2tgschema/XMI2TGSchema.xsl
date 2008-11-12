@@ -23,6 +23,13 @@
     - Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 -->
 
+<!-- TODO: Currently the stereotype <<GraphClass>> will create a deprecation
+     warning, because the stereotype <<graphclass>> should be used.  This
+     distinction blows up some XPath expressions below, so at some time in the
+     future we may want to remove the deprecated case and simply fail.
+     
+     horn on <2008-11-11 Tue> -->
+
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" 
     xmlns:uml="http://schema.omg.org/spec/UML/2.1"
     xmlns:xmi="http://schema.omg.org/spec/XMI/2.1"
@@ -64,7 +71,7 @@
         WARNING: Using this feature together with specialization of associated classes probably
         results in corrupted TG files. -->
     <xsl:param name="uml" required="no" select="'no'"/>
-    
+
     <xsl:variable name="reservedWords" select="
         'abstract', 'aggregate', 'AggregationClass', 'Boolean', 'CompositionClass', 'Double', 'EdgeClass', 'EnumDomain', 'f', 'from',
         'Graph', 'GraphClass', 'Integer', 'List', 'Long', 'Object', 'Package', 'RecordDomain', 'role', 'Schema', 'Set', 'String', 'to', 't', 'VertexClass'" 
@@ -94,11 +101,14 @@
         
         <!-- write graph class -->
         <xsl:if test="$schemaPackage//packagedElement[@xmi:type='uml:Class'
-                and exists(index-of(/xmi:XMI/uml:Model/thecustomprofile:GraphClass/@base_Class, @xmi:id))]">
+                      and (exists(index-of(/xmi:XMI/uml:Model/thecustomprofile:GraphClass/@base_Class, @xmi:id))
+		      or exists(index-of(/xmi:XMI/uml:Model/thecustomprofile:graphclass/@base_Class, @xmi:id)))]">
             <xsl:apply-templates select="$schemaPackage//packagedElement[@xmi:type='uml:Class'
-                and exists(index-of(/xmi:XMI/uml:Model/thecustomprofile:GraphClass/@base_Class, @xmi:id))]"/>    
+                and (exists(index-of(/xmi:XMI/uml:Model/thecustomprofile:GraphClass/@base_Class, @xmi:id))
+		or exists(index-of(/xmi:XMI/uml:Model/thecustomprofile:graphclass/@base_Class, @xmi:id)))]"/>    
         </xsl:if>
-        <xsl:if test="empty(/xmi:XMI/uml:Model/thecustomprofile:GraphClass/@base_Class)">
+        <xsl:if test="empty(/xmi:XMI/uml:Model/thecustomprofile:graphclass/@base_Class)
+		      and empty(/xmi:XMI/uml:Model/thecustomprofile:GraphClass/@base_Class)">
             <xsl:text>GraphClass DefaultGraphClass;&#xa;</xsl:text>    
         </xsl:if>
 
@@ -114,7 +124,8 @@
         <!-- convert to VertexClasses -->
         <xsl:apply-templates select="$schemaPackage//packagedElement[@xmi:type='uml:Class' and empty(myfunctions:getGeneralAssociationClass(.)) 
             and empty(index-of(/xmi:XMI/uml:Model//thecustomprofile:record/@base_Class, @xmi:id))
-            and empty(index-of(/xmi:XMI/uml:Model//thecustomprofile:GraphClass/@base_Class, @xmi:id))]"/>
+            and empty(index-of(/xmi:XMI/uml:Model//thecustomprofile:GraphClass/@base_Class, @xmi:id))
+	    and empty(index-of(/xmi:XMI/uml:Model//thecustomprofile:graphclass/@base_Class, @xmi:id))]"/>
         <!-- convert to EdgeClasses -->
         <xsl:apply-templates select="$schemaPackage//packagedElement[@xmi:type='uml:Association'
             or (@xmi:type = 'uml:Class' and exists(myfunctions:getGeneralAssociationClass(.)))
@@ -150,7 +161,12 @@
     </xsl:template>
     
     <xsl:template match="packagedElement[@xmi:type='uml:Class'
-            and exists(index-of(/xmi:XMI/uml:Model/thecustomprofile:GraphClass/@base_Class, @xmi:id))]">
+			 and (exists(index-of(/xmi:XMI/uml:Model/thecustomprofile:GraphClass/@base_Class, @xmi:id))
+			 or exists(index-of(/xmi:XMI/uml:Model/thecustomprofile:graphclass/@base_Class, @xmi:id)))]">
+        <xsl:if test="exists(index-of(/xmi:XMI/uml:Model/thecustomprofile:GraphClass/@base_Class, @xmi:id))">
+	  <xsl:message>// DEPRECATION WARNING: You should use the stereotype graphclass, not GraphClass!</xsl:message>
+	</xsl:if>
+
         <xsl:text>GraphClass </xsl:text>
         
         <xsl:if test="$autoCorrect = 'yes'">
@@ -161,7 +177,9 @@
         </xsl:if>
        
         <!-- GraphClass attributes -->
-        <xsl:apply-templates select="$schemaPackage/packagedElement[@xmi:id=/xmi:XMI/uml:Model/thecustomprofile:GraphClass/@base_Class and @xmi:type='uml:Class']/ownedAttribute[not(@association)]">
+        <xsl:apply-templates select="$schemaPackage/packagedElement[(@xmi:id=/xmi:XMI/uml:Model/thecustomprofile:graphclass/@base_Class
+				     or @xmi:id=/xmi:XMI/uml:Model/thecustomprofile:GraphClass/@base_Class)
+				     and @xmi:type='uml:Class']/ownedAttribute[not(@association)]">
             <xsl:with-param name="caller">attributedElementClass</xsl:with-param>
         </xsl:apply-templates>
         <xsl:text>;&#xa;</xsl:text>  
@@ -229,7 +247,8 @@
     <!-- creates VertexClass -->
     <xsl:template match="packagedElement[@xmi:type = 'uml:Class' and empty(myfunctions:getGeneralAssociationClass(.))
         and empty(index-of(/xmi:XMI/uml:Model//thecustomprofile:record/@base_Class, @xmi:id))
-        and empty(index-of(/xmi:XMI/uml:Model//thecustomprofile:GraphClass/@base_Class, @xmi:id))]">
+        and empty(index-of(/xmi:XMI/uml:Model//thecustomprofile:GraphClass/@base_Class, @xmi:id))
+	and empty(index-of(/xmi:XMI/uml:Model//thecustomprofile:graphclass/@base_Class, @xmi:id))]">
         
         <!-- convert notes and constraints to comments -->
         <xsl:apply-templates select="$schemaPackage//ownedComment[annotatedElement/@xmi:idref = current()/@xmi:id]"/>
