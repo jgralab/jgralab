@@ -33,7 +33,7 @@
   '(("//" . nil) ("/*" . "*/"))
   ;; Keywords
   '("AggregationClass" "Boolean" "CompositionClass" "Double" "EdgeClass"
-    "EnumDomain" "Graph" "GraphClass" "Integer" "List" "Object" "RecordDomain"
+    "EnumDomain" "Graph" "GraphClass" "Integer" "List" "Package" "RecordDomain"
     "Schema" "Set" "String" "VertexClass" "abstract" "aggregate" "from" "role"
     "to")
   ;; Additional expressions to highlight
