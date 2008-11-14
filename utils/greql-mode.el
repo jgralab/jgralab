@@ -140,9 +140,9 @@ queries are evaluated.  Set it with `greql-set-graph'.")
 		      "EdgeClass" "Schema" "GraphClass"
 		      (and (one-or-more (or (syntax word) (any "_."))) "Domain")))
 		 ;; Then there may be whitespaces again...
-		 (one-or-more (syntax whitespace))
+		 (zero-or-more (syntax whitespace))
 		 ;; Now comes the Meta-Model type name.
-		 (group (one-or-more (or (syntax word) (any "_."))))
+		 (or (group (one-or-more (or (syntax word) (any "_.")))) ";")
 		 ;; Superclasses
 		 (zero-or-one
 		  (and (zero-or-more (syntax whitespace)) ":" (zero-or-more (syntax whitespace))
@@ -157,11 +157,10 @@ queries are evaluated.  Set it with `greql-set-graph'.")
 	    (name (match-string 2))
 	    (superclasses (greql-parse-superclasses (match-string 3)))
 	    (attributes (greql-parse-attributes (match-string 4))))
-	;; TODO: Add domains!
 	(cond ((string= vc-or-pkg "Package")
 	       ;; All following elements belong to this package, so make it
 	       ;; current.
-	       (setq current-package (concat name ".")))
+	       (setq current-package (if name (concat name ".") "")))
 	      ((string= vc-or-pkg "VertexClass")
 	       (setq schema-alist (cons (list (intern vc-or-pkg)
 					      (concat current-package name)
@@ -180,6 +179,11 @@ queries are evaluated.  Set it with `greql-set-graph'.")
 					      (concat current-package name)
 					      superclasses
 					      attributes)
+					schema-alist)))
+	      (t
+	       ;; This must be a domain
+	       (setq schema-alist (cons (list (intern vc-or-pkg)
+					      (concat current-package name))
 					schema-alist))))))
     schema-alist))
 
@@ -205,9 +209,9 @@ queries are evaluated.  Set it with `greql-set-graph'.")
 (defun greql-completion-list (&optional types)
   (when greql-schema-alist
     (let (completions)
-      (dolist (cell greql-schema-alist)
-	(when (or (null types) (member (car cell) types))
-	  (let ((elem (cdr cell)))
+      (dolist (line greql-schema-alist)
+	(when (or (null types) (member (car line) types))
+	  (let ((elem (cadr line)))
 	    (setq completions (cons elem completions)))))
       completions)))
 
@@ -257,6 +261,9 @@ queries are evaluated.  Set it with `greql-set-graph'.")
    ((or (greql-edge-set-expression-p)
 	(greql-edge-restriction-p))
     (greql-complete-edgeclass))
+   ((greql-variable-p)
+    (let ((varinfo (greql-variable-and-types)))
+      (message "%s" varinfo)))
    (t (greql-complete-keyword-or-function))))
 
 (defun greql-complete-vertexclass ()
@@ -273,7 +280,7 @@ queries are evaluated.  Set it with `greql-set-graph'.")
 
 (defun greql-complete-keyword-or-function ()
   (interactive)
-  (greql-complete-1 '(keyword function)))
+  (greql-complete-1 '(keyword funlib)))
 
 (defun greql-execute ()
   "Execute the query in the current buffer on `greql-graph'."
@@ -289,13 +296,27 @@ queries are evaluated.  Set it with `greql-set-graph'.")
     (display-buffer buffer)))
 
 (defun greql-vertex-set-expression-p ()
-  (looking-back "V{[[:word:]._]*"))
+  (looking-back "V{[[:word:]._, ]*"))
 
 (defun greql-edge-set-expression-p ()
-  (looking-back "E{[[:word:]._]*"))
+  (looking-back "E{[[:word:]._, ]*"))
 
 (defun greql-edge-restriction-p ()
-  (looking-back "--{[[:word:]._]*"))
+  (looking-back "--{[[:word:]._, ]*"))
+
+(defun greql-variable-p ()
+  (looking-back "[^{][[:word:]]+[.][[:word:]]+"))
+
+(defun greql-variable-and-types ()
+  (save-excursion
+    (search-backward "." nil t 1)
+    (let ((end (point))
+	  var)
+      (search-backward " " nil t 1)
+      (setq var (buffer-substring-no-properties (+ 1 (point)) end))
+      (re-search-backward (concat var "[ ]*:[ ]*[VE]{\\(.*\\)}") nil t 1)
+      (let ((types (match-string 1)))
+	(list (split-string types ", ") var)))))
 
 (provide 'greql-mode)
 
