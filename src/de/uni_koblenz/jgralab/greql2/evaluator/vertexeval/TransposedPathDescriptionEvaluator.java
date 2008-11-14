@@ -38,7 +38,7 @@ import de.uni_koblenz.jgralab.greql2.schema.TransposedPathDescription;
 /**
  * Evaluates a TransposedPathDescription vertex. Creates a NFA, which accepts the
  * PathDescription the vertex describes.
- * @author Daniel Bildhauer <dbildh@uni-koblenz.de> 
+ * @author ist@uni-koblenz.de
  * Summer 2006, Diploma Thesis
  *
  */

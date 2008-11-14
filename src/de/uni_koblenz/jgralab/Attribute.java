@@ -28,7 +28,7 @@ import de.uni_koblenz.jgralab.schema.Domain;
 
 /**
  * represents an attribute in the m2 layer, consists of a name and a domain 
- * @author Steffen Kahle
+ * @author ist@uni-koblenz.de
  *
  */
 public interface Attribute {

@@ -38,7 +38,7 @@ import de.uni_koblenz.jgralab.greql2.exception.JValueInvalidTypeException;
  * and egdes with |vertex] = |edge] + 1, it can be written as v1 e1 v2 e2 v3 e3
  * ..... vn en vn+1
  * 
- * @author Daniel Bildhauer <dbildh@uni-koblenz.de> Summer 2006, Diploma Thesis
+ * @author ist@uni-koblenz.de
  * 
  */
 public class JValuePath extends JValue {

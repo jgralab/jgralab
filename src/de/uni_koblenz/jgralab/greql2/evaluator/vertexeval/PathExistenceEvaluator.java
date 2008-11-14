@@ -43,7 +43,7 @@ import de.uni_koblenz.jgralab.greql2.schema.PathExistence;
  * Evaluates a path existence, that's the question if there is a path of a
  * specific regular form form startVertex to targetVertex
  * 
- * @author Daniel Bildhauer <dbildh@uni-koblenz.de> Summer 2006, Diploma Thesis
+ * @author ist@uni-koblenz.de
  * 
  */
 public class PathExistenceEvaluator extends PathSearchEvaluator {

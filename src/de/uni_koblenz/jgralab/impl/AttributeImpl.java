@@ -21,75 +21,94 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
- 
+
 package de.uni_koblenz.jgralab.impl;
 
 import de.uni_koblenz.jgralab.Attribute;
 import de.uni_koblenz.jgralab.schema.Domain;
 
+/**
+ * TODO add comment
+ * 
+ * @author ist@uni-koblenz.de
+ */
 public class AttributeImpl implements Attribute, Comparable<Attribute> {
-	
+
 	/**
-	 * the name of the attribute 
+	 * the name of the attribute
 	 */
 	private String name;
-	
+
 	/**
-	 * the domain of the attribute 
+	 * the domain of the attribute
 	 */
 	private Domain domain;
-	
+
 	/**
-	 * defines a total order of all attributes  
+	 * defines a total order of all attributes
 	 */
 	private String sortKey;
-	
+
 	/**
 	 * builds a new attribute
-	 * @param name the name of the attribute
-	 * @param domain the domain of the attribute
+	 * 
+	 * @param name
+	 *            the name of the attribute
+	 * @param domain
+	 *            the domain of the attribute
 	 */
 	public AttributeImpl(String name, Domain domain) {
 		this.name = name;
 		this.domain = domain;
 		this.sortKey = name + ":" + domain.getQualifiedName();
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see java.lang.Object#toString()
 	 */
+	@Override
 	public String toString() {
 		return "attribute " + sortKey;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see jgralab.Attribute#getDomain()
 	 */
 	public Domain getDomain() {
 		return domain;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see jgralab.Attribute#getName()
 	 */
 	public String getName() {
 		return name;
 	}
 
+	@Override
 	public boolean equals(Object o) {
-		if (!(o instanceof AttributeImpl)) return false;
-		return sortKey.equals(((AttributeImpl)o).getSortKey());
+		if (!(o instanceof AttributeImpl)) {
+			return false;
+		}
+		return sortKey.equals(((AttributeImpl) o).getSortKey());
 	}
 
+	@Override
 	public int hashCode() {
 		return sortKey.hashCode();
 	}
-	
+
 	public int compareTo(Attribute o) {
 		return sortKey.compareTo(o.getSortKey());
 	}
-	
+
 	public String getSortKey() {
-		return sortKey; 
+		return sortKey;
 	}
 }

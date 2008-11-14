@@ -59,7 +59,7 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueSet;
  * </dd>
  * </dl>
  * 
- * @author Daniel Bildhauer <dbildh@uni-koblenz.de> Summer 2006, Diploma Thesis
+ * @author ist@uni-koblenz.de
  * 
  */
 
@@ -68,7 +68,7 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueSet;
  * the second set
  * 
  * @param set1 @param set2 @return true, if set1 is a superset of set2 (even if
- * they are equal) @author Daniel Bildhauer <dbildh@uni-koblenz.de> Summer 2006,
+ * they are equal) @author ist@uni-koblenz.de
  * Diploma Thesis
  * 
  */

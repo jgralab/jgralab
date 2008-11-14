@@ -55,14 +55,14 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
  * </dd>
  * </dl>
  * 
- * @author Daniel Bildhauer <dbildh@uni-koblenz.de> Summer 2006, Diploma Thesis
+ * @author ist@uni-koblenz.de
  * 
  */
 
 /*
  * Checks if the given graph is a tree. A tree is a graph, which the
  * restriction, that every vertex has only one outgoing edge. Costs are O(n),
- * where n is the number of vertices in the graph @author Daniel Bildhauer
+ * where n is the number of vertices in the graph @author ist@uni-koblenz.de
  * <dbildh@uni-koblenz.de> Summer 2006, Diploma Thesis
  * 
  */

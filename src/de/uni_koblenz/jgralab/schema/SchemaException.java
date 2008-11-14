@@ -21,14 +21,14 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
- 
+
 package de.uni_koblenz.jgralab.schema;
 
 /**
- * exceptions of this class are thrown if an error occurs while creating or
- * manipulating a schema
+ * Exceptions of this class are thrown when an error occurs while creating or
+ * manipulating a Schema.
  * 
- * @author Steffen Kahle
+ * @author ist@uni-koblenz.de
  */
 public class SchemaException extends RuntimeException {
 	private static final long serialVersionUID = 6680822701697571650L;

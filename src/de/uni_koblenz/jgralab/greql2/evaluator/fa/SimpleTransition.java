@@ -34,7 +34,7 @@ import de.uni_koblenz.jgralab.schema.AttributedElementClass;
 /**
  * This transition accepts a SimplePathDescription. A SimplePathDescription is for instance
  * something like v -->{isExprOf} w.
- * @author Daniel Bildhauer <dbildh@uni-koblenz.de> 
+ * @author ist@uni-koblenz.de
  * Summer 2006, Diploma Thesis
  *
  */

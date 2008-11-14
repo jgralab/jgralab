@@ -30,7 +30,7 @@ import java.util.ArrayList;
  * Models a state of the finite automaton. Is baseclass for DFAState, which
  * modells a state in the DFA.
  * 
- * @author Daniel Bildhauer <dbildh@uni-koblenz.de> Summer 2006, Diploma Thesis
+ * @author ist@uni-koblenz.de
  * 
  */
 public class State {

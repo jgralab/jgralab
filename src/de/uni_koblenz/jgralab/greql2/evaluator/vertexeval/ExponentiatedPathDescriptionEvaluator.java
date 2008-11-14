@@ -40,7 +40,7 @@ import de.uni_koblenz.jgralab.greql2.schema.PathDescription;
  * Evaluates an exponentiated path description. Creates a NFA that accepts the
  * exponentiated path description.
  * 
- * @author Daniel Bildhauer <dbildh@uni-koblenz.de> Summer 2006, Diploma Thesis
+ * @author ist@uni-koblenz.de
  * 
  */
 public class ExponentiatedPathDescriptionEvaluator extends

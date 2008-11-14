@@ -23,7 +23,7 @@ import de.uni_koblenz.jgralab.greql2.schema.SimpleDeclaration;
  * survives, all others are deleted and their {@link IsDeclaredVarOf} edges are
  * relocated to the surviving {@link SimpleDeclaration}.
  * 
- * @author Tassilo Horn (heimdall), 2007, Diploma Thesis
+ * @author ist@uni-koblenz.de
  */
 public class MergeSimpleDeclarationsOptimizer extends OptimizerBase {
 

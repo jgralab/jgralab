@@ -31,7 +31,7 @@ import java.util.Map;
  * <code>Package</code> can contain <code>Domain</code>s and
  * <code>GraphElementClass</code>es, as well as other <code>Package</code>s.
  * 
- * @author riediger
+ * @author ist@uni-koblenz.de
  */
 public interface Package extends NamedElement {
 	/**

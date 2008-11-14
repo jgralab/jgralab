@@ -32,7 +32,7 @@ import de.uni_koblenz.jgralab.greql2.schema.SourcePosition;
  * Should be thrown if an undefined function should be used, that is a function
  * that is not part of the function libary
  * 
- * @author Daniel Bildhauer <dbildh@uni-koblenz.de> Summer 2006, Diploma Thesis
+ * @author ist@uni-koblenz.de
  * 
  */
 public class UndefinedFunctionException extends QuerySourceException {

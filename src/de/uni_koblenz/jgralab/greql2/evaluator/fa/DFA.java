@@ -41,7 +41,7 @@ import de.uni_koblenz.jgralab.greql2.exception.EvaluateException;
  * accepts the same edges, for instance, there will be never two edges that
  * accept all "isExprOf" edges.
  * 
- * @author Daniel Bildhauer <dbildh@uni-koblenz.de> Summer 2006, Diploma Thesis
+ * @author ist@uni-koblenz.de
  * 
  */
 public class DFA extends FiniteAutomaton {

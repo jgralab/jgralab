@@ -8,7 +8,7 @@ import de.uni_koblenz.jgralab.greql2.optimizer.Optimizer;
 /**
  * Should be thrown on errors in an {@link Optimizer}.
  * 
- * @author Tassilo Horn (heimdall), 2008, Diploma Thesis
+ * @author ist@uni-koblenz.de
  * 
  */
 public class OptimizerException extends Greql2Exception {

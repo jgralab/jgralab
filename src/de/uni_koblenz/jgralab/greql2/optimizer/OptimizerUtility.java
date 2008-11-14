@@ -35,7 +35,7 @@ import de.uni_koblenz.jgralab.greql2.schema.Variable;
 /**
  * Holds various static methods used by {@link Optimizer}s.
  * 
- * @author Tassilo Horn (heimdall), 2008, Diploma Thesis
+ * @author ist@uni-koblenz.de
  * 
  */
 public class OptimizerUtility {

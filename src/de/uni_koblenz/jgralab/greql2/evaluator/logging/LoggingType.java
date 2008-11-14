@@ -6,7 +6,7 @@ package de.uni_koblenz.jgralab.greql2.evaluator.logging;
  * logged to a file &lt;schemaName&gt;.log. For GRAPH it will be logged to a
  * file &lt;schemaName&gt;-&lt;graphId&gt;.log.
  * 
- * @author Tassilo Horn (heimdall), 2007, Diploma Thesis
+ * @author ist@uni-koblenz.de
  */
 public enum LoggingType {
 	GENERIC, SCHEMA, GRAPH

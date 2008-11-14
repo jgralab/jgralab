@@ -43,7 +43,7 @@ import de.uni_koblenz.jgralab.greql2.schema.Declaration;
  * variable-vertex, so the evaluate()-methods don't need to know if the
  * expression is a variable or some other already evaluated expression.
  * 
- * @author Daniel Bildhauer dbildh@uni-koblenz.de
+ * @author ist@uni-koblenz.de
  * 
  */
 public class VariableDeclarationLayer implements

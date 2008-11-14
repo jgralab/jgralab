@@ -21,7 +21,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
- 
+
 package de.uni_koblenz.jgralab.schema.impl;
 
 import java.util.Map;
@@ -63,7 +63,8 @@ public class PackageImpl implements Package {
 				throw new SchemaException(
 						"the simpleName of nested packages must not be empty");
 			}
-			qName = new QualifiedName(parentPackage.getQualifiedName().toString(), simpleName);
+			qName = new QualifiedName(parentPackage.getQualifiedName()
+					.toString(), simpleName);
 		}
 		domains = new TreeMap<String, Domain>();
 		edgeClasses = new TreeMap<String, EdgeClass>();
@@ -108,21 +109,15 @@ public class PackageImpl implements Package {
 		}
 		return parentPackage.getPathName();
 	}
-	
+
 	@Override
 	public String getUniqueName() {
 		return qName.getUniqueName();
 	}
-	
+
 	@Override
 	public void setUniqueName(String uniqueName) {
 		qName.setUniqueName(this, uniqueName);
-	}
-	
-
-	@Override
-	public String getName() {
-		return getQualifiedName().toString();
 	}
 
 	@Override
@@ -144,7 +139,7 @@ public class PackageImpl implements Package {
 	public String getQualifiedName(Package pkg) {
 		throw new UnsupportedOperationException();
 	}
-	
+
 	@Override
 	public String getSimpleName() {
 		return qName.getSimpleName();
@@ -183,7 +178,7 @@ public class PackageImpl implements Package {
 	@Override
 	public void addDomain(Domain dom) {
 		domains.put(dom.getSimpleName(), dom);
-		
+
 	}
 
 	@Override
@@ -195,12 +190,12 @@ public class PackageImpl implements Package {
 	public void addVertexClass(VertexClass vc) {
 		vertexClasses.put(vc.getSimpleName(), vc);
 	}
-	
+
 	@Override
 	public QualifiedName getQName() {
 		return qName;
 	}
-	
+
 	@Override
 	public String getVariableName() {
 		throw new UnsupportedOperationException();

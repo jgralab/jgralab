@@ -16,7 +16,7 @@ import org.jdom.input.SAXBuilder;
  * Holds the data that both {@link Level2LogReader} and {@link Level2Logger}
  * share plus some internal methods both of them use.
  * 
- * @author Tassilo Horn (heimdall), 2007, Diploma Thesis
+ * @author ist@uni-koblenz.de
  * 
  */
 public abstract class Level2LoggingBase {

@@ -32,8 +32,7 @@ import de.uni_koblenz.jgralab.ProgressFunction;
  * An implementation of a ProgressFunction which displays an "ascii art"
  * progress bar on a PrintStream, e.g. System.out.
  * 
- * @author riediger
- * 
+ * @author ist@uni-koblenz.de
  */
 public class ProgressFunctionImpl implements ProgressFunction {
 	private static final int DEFAULTLENGTH = 60;

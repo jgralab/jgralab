@@ -32,7 +32,7 @@ import de.uni_koblenz.jgralab.greql2.evaluator.fa.State;
  * It contains a vertex which must be visited and a state in which the dfa is
  * when the vertex is visited
  * 
- * @author Daniel Bildhauer <dbildh@uni-koblenz.de> Summer 2006, Diploma Thesis
+ * @author ist@uni-koblenz.de
  * 
  */
 public class PathSearchQueueEntry {

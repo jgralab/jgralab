@@ -21,24 +21,32 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
- 
+
 package de.uni_koblenz.jgralab.codegenerator;
 
 import de.uni_koblenz.jgralab.schema.EnumDomain;
 
+/**
+ * TODO add comment
+ * 
+ * @author ist@uni-koblenz.de
+ * 
+ */
 public class EnumCodeGenerator extends CodeGenerator {
 	private EnumDomain enumDomain;
-	
+
 	/**
-	 * Creates a new EnumCodeGenerator which creates code for the given enumDomain object
+	 * Creates a new EnumCodeGenerator which creates code for the given
+	 * enumDomain object
 	 */
-	public EnumCodeGenerator(EnumDomain enumDomain, String schemaPackageName, String implementationName) {
+	public EnumCodeGenerator(EnumDomain enumDomain, String schemaPackageName,
+			String implementationName) {
 		super(schemaPackageName, enumDomain.getPackageName());
 		rootBlock.setVariable("simpleClassName", enumDomain.getSimpleName());
 		rootBlock.setVariable("isClassOnly", "true");
 		this.enumDomain = enumDomain;
 	}
-	
+
 	@Override
 	protected CodeBlock createBody(boolean createClass) {
 		CodeSnippet code = new CodeSnippet(true);
@@ -49,26 +57,27 @@ public class EnumCodeGenerator extends CodeGenerator {
 			constants.append(s);
 			delim = ", ";
 		}
-		code.add(constants + ";",
-				"",
-				"private static java.util.HashMap<String, #simpleClassName#> entries;",
-				"",
-				"static {",
-				"\tentries = new java.util.HashMap<String, #simpleClassName#>();",
-				"\tfor(#simpleClassName# e: values()) {",
-				"\t\tentries.put(e.toString(), e);",
-				"\t}",
-				"}",
-				"",
-				"public static #simpleClassName# fromString(String s) {",
-				"\treturn entries.get(s);",
-				"}");
+		code
+				.add(
+						constants + ";",
+						"",
+						"private static java.util.HashMap<String, #simpleClassName#> entries;",
+						"",
+						"static {",
+						"\tentries = new java.util.HashMap<String, #simpleClassName#>();",
+						"\tfor(#simpleClassName# e: values()) {",
+						"\t\tentries.put(e.toString(), e);",
+						"\t}",
+						"}",
+						"",
+						"public static #simpleClassName# fromString(String s) {",
+						"\treturn entries.get(s);", "}");
 
 		CodeList result = new CodeList();
 		result.add(code);
 		return result;
 	}
-	
+
 	@Override
 	protected CodeBlock createHeader(boolean createClass) {
 		return new CodeSnippet(true, "public enum #simpleClassName# {");

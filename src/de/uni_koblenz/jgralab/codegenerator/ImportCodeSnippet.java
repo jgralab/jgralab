@@ -21,16 +21,22 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
- 
+
 package de.uni_koblenz.jgralab.codegenerator;
 
 import java.util.SortedSet;
 import java.util.TreeSet;
 
+/**
+ * TODO add comment
+ * 
+ * @author ist@uni-koblenz.de
+ * 
+ */
 public class ImportCodeSnippet extends CodeSnippet {
 
 	private SortedSet<String> imports;
-	
+
 	public ImportCodeSnippet() {
 		this(null);
 	}
@@ -42,34 +48,34 @@ public class ImportCodeSnippet extends CodeSnippet {
 
 	@Override
 	public void add(String... addedLines) {
-		if (addedLines!=null) {
-			for (String line: addedLines) {
+		if (addedLines != null) {
+			for (String line : addedLines) {
 				imports.add(line);
 			}
 		}
 	}
-	
+
 	@Override
 	public String getCode(int indent) {
 		lines.clear();
 		String lastPackageName = null;
-		for (String imp: imports) {
+		for (String imp : imports) {
 			String packageName = imp.substring(0, imp.indexOf('.'));
 			if (lastPackageName != null && !lastPackageName.equals(packageName)) {
 				lines.add("");
 			}
 			lines.add("import " + imp + ";");
-			lastPackageName = packageName; 
+			lastPackageName = packageName;
 		}
 		return super.getCode(indent);
 	}
-	
+
 	@Override
 	public void clear() {
 		super.clear();
 		imports.clear();
 	}
-	
+
 	@Override
 	public int size() {
 		return imports.size();

@@ -18,7 +18,7 @@ import de.uni_koblenz.jgralab.greql2.schema.IsConstraintOf;
  * {@link Declaration} with {@link IsConstraintOf} edges by creating a
  * conjunction of all of them.
  * 
- * @author Tassilo Horn (horn), 2008
+ * @author ist@uni-koblenz.de
  * 
  */
 public class MergeConstraintsOptimizer extends OptimizerBase {

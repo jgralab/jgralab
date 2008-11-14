@@ -52,7 +52,7 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
  * </dd>
  * </dl>
  * 
- * @author Daniel Bildhauer <dbildh@uni-koblenz.de> Summer 2006, Diploma Thesis
+ * @author ist@uni-koblenz.de
  * 
  */
 
@@ -61,7 +61,7 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
  * argument
  * 
  * @param value the argument to return the string representation for @return the
- * strign representation of value @author Daniel Bildhauer
+ * strign representation of value @author ist@uni-koblenz.de
  * <dbildh@uni-koblenz.de>
  * 
  */

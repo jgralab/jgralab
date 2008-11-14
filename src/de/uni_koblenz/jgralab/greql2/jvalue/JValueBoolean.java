@@ -62,7 +62,7 @@ import de.uni_koblenz.jgralab.greql2.exception.JValueInvalidTypeException;
  *   These primary operations are implemented as static methods of this class, so one can use it easily. 
  *   Also, there is a conversion from boolean to TrivalentBoolean
  *   
- * @author Daniel Bildhauer <dbildh@uni-koblenz.de> 
+ * @author ist@uni-koblenz.de
  * Summer 2006, Diploma Thesis
  *
  */

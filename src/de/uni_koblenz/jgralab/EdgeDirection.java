@@ -28,6 +28,8 @@ package de.uni_koblenz.jgralab;
  * Specifies direction of edges for traversal methods. IN: Only incoming edges
  * are traversed, OUT: only outgoing edges are traversed, INOUT: both incoming
  * and outgoing edges are traversed.
+ * 
+ * @author ist@uni-koblenz.de
  */
 public enum EdgeDirection {
 

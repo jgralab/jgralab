@@ -11,7 +11,7 @@ import java.util.List;
  * {@link EvaluationLogger}s, where only one logger may access a logfile, any
  * number of readers may use the same logfile.
  * 
- * @author Tassilo Horn (heimdall), 2007, Diploma Thesis
+ * @author ist@uni-koblenz.de
  * 
  */
 public interface EvaluationLogReader {

@@ -28,7 +28,7 @@ package de.uni_koblenz.jgralab.greql2.jvalue;
  * This class is base for all ordered JValue-collections like JValueList oder JValueTupel. 
  * Beware, ordered is not the same as sorted!
  * 
- * @author Daniel Bildhauer <dbildh@uni-koblenz.de>
+ * @author ist@uni-koblenz.de
  * 
  */
 abstract public class JValueOrderedCollection extends JValueCollection {

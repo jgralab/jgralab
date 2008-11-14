@@ -36,7 +36,7 @@ import de.uni_koblenz.jgralab.greql2.schema.Identifier;
  * Evaluates an identifier vertex in the GReQL syntaxgraph. Does nothing but
  * allow the access to the identifier name via VertexEvaluator.getResult
  * 
- * @author Daniel Bildhauer <dbildh@uni-koblenz.de> Summer 2006, Diploma Thesis
+ * @author ist@uni-koblenz.de
  * 
  */
 public class IdentifierEvaluator extends VertexEvaluator {

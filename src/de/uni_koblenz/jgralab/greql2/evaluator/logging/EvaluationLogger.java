@@ -32,7 +32,7 @@ import java.util.ArrayList;
  * evaluatin logging. An {@link EvaluationLogger} has to make sure that only one
  * writes to a specific logfile.
  * 
- * @author Daniel Bildhauer <dbildh@uni-koblenz.de> Summer 2006, Diploma Thesis
+ * @author ist@uni-koblenz.de
  * 
  */
 public interface EvaluationLogger {

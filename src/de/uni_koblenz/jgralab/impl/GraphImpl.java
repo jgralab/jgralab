@@ -46,7 +46,7 @@ import de.uni_koblenz.jgralab.schema.VertexClass;
  * vSeq and lambdaSeq, while ensuring efficient direct access to vertices and
  * edges by id via vertex and edge arrays.
  * 
- * @author riediger
+ * @author ist@uni-koblenz.de
  */
 public abstract class GraphImpl extends AttributedElementImpl implements Graph {
 

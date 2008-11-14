@@ -41,7 +41,7 @@ import de.uni_koblenz.jgralab.greql2.schema.RoleId;
 /**
  * Evaluates an edge restriction, edges can be restricted with TypeIds and Roles
  * 
- * @author Daniel Bildhauer <dbildh@uni-koblenz.de> Summer 2006, Diploma Thesis
+ * @author ist@uni-koblenz.de
  * 
  */
 public class EdgeRestrictionEvaluator extends VertexEvaluator {

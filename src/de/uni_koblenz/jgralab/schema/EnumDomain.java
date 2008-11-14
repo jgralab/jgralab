@@ -21,38 +21,39 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
- 
+
 package de.uni_koblenz.jgralab.schema;
 
 import java.util.List;
 
-
 /**
- * represents an enumeration domain, instances may exist multiple times per schema
- * @author Steffen Kahle
- *
+ * Represents an enumeration domain, instances may exist multiple times per
+ * schema.
+ * 
+ * @author ist@uni-koblenz.de
  */
 public interface EnumDomain extends Domain {
 
 	/**
 	 * adds aConst to the list of enums
-	 * @param aConst constant to be added
+	 * 
+	 * @param aConst
+	 *            constant to be added
 	 */
-	public void addConst(String aConst) ;
+	public void addConst(String aConst);
 
 	/**
 	 * deletes aConst from the list of enums
+	 * 
 	 * @param aConst
 	 */
 	public void deleteConst(String aConst);
-
 
 	/*
 	 * @return the name of this enum, must be unique in schema
 	 */
 	// removed, is already defined in Domain and deprecated!
-	//	public String getName();
-	
+	// public String getName();
 	/**
 	 * @return all the enum strings of this enum domain
 	 */

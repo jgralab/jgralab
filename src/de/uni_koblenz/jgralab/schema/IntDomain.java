@@ -21,14 +21,13 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
- 
+
 package de.uni_koblenz.jgralab.schema;
 
-
 /**
- * represents the integer domain, instances exist only once per schema 
- * @author Steffen Kahle
- *
+ * Represents the Integer domain, instances exist only once per schema.
+ * 
+ * @author ist@uni-koblenz.de
  */
 public interface IntDomain extends BasicDomain {
 

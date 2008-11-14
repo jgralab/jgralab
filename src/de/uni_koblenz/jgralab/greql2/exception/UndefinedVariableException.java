@@ -31,7 +31,7 @@ import de.uni_koblenz.jgralab.greql2.schema.SourcePosition;
 /**
  * Should be thrown if a undefined Variable is used
  * 
- * @author Daniel Bildhauer <dbildh@uni-koblenz.de> Summer 2006, Diploma Thesis
+ * @author ist@uni-koblenz.de
  * 
  */
 public class UndefinedVariableException extends QuerySourceException {

@@ -21,16 +21,24 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
- 
+
 package de.uni_koblenz.jgralab;
 
 import java.util.Random;
 
+/**
+ * RandonIdGenerator creates 128 bit random IDs as string consisting of 4
+ * hexadecimal numbers.
+ * 
+ * @author ist@uni-koblenz.de
+ */
 public class RandomIdGenerator {
 	private static Random rand = new Random();
 
 	/**
-	 * @return a randomized hex string, 32 chars in length
+	 * Creates 128 random id, encoded in hexadecimal string representation.
+	 * 
+	 * @return a random id
 	 */
 	public static String generateId() {
 		return Integer.toHexString(rand.nextInt()) + "-"

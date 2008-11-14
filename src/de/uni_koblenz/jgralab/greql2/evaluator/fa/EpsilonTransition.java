@@ -36,7 +36,7 @@ import de.uni_koblenz.jgralab.greql2.exception.EvaluateException;
  * transitions are used during thompson-construction of the NFAs, but they will
  * be eliminated before path search.
  * 
- * @author Daniel Bildhauer <dbildh@uni-koblenz.de> Summer 2006, Diploma Thesis
+ * @author ist@uni-koblenz.de
  * 
  */
 public class EpsilonTransition extends Transition {

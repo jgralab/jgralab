@@ -32,7 +32,7 @@ import de.uni_koblenz.jgralab.greql2.schema.Greql2;
  * This interface should be implemented by all optimizers, that could be used
  * with GReQL 2.
  * 
- * @author Daniel Bildhauer <dbildh@uni-koblenz.de> Summer 2006, Diploma Thesis
+ * @author ist@uni-koblenz.de
  * 
  */
 public interface Optimizer {

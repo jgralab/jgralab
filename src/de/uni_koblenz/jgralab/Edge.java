@@ -29,7 +29,7 @@ import de.uni_koblenz.jgralab.schema.EdgeClass;
 /**
  * represents a signed edge, has an orientation
  * 
- * @author Steffen Kahle
+ * @author ist@uni-koblenz.de
  * 
  */
 public interface Edge extends GraphElement {

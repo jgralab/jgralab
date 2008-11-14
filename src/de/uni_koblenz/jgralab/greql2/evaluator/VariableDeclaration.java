@@ -42,7 +42,7 @@ import de.uni_koblenz.jgralab.greql2.schema.Variable;
  * over all possible values using the method iterate(). THe current value of the
  * variable is stored as temporary attribute at the variable vertex
  * 
- * @author Daniel Bildhauer <dbildh@uni-koblenz.de> Summer 2006, Diploma Thesis
+ * @author ist@uni-koblenz.de
  * 
  */
 public class VariableDeclaration implements Comparable<VariableDeclaration> {

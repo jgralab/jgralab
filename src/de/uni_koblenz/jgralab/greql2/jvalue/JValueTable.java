@@ -34,7 +34,7 @@ import java.util.logging.Logger;
  * but to hold the implementation and usage clean and fast, ony tuple are
  * allowed
  * 
- * @author Daniel Bildhauer <dbildh@uni-koblenz.de> Summer 2006, Diploma Thesis
+ * @author ist@uni-koblenz.de
  * 
  */
 public class JValueTable extends JValueCollection {

@@ -21,7 +21,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
- 
+
 package de.uni_koblenz.jgralab.xmlrpc;
 
 import org.apache.xmlrpc.webserver.ServletWebServer;
@@ -29,6 +29,7 @@ import org.apache.xmlrpc.webserver.ServletWebServer;
 /**
  * The {@code main} method of this class starts the JGraLab XML-RPC server.
  * 
+ * @author ist@uni-koblenz.de
  */
 public class JGraLabServletWebServer {
 
@@ -43,14 +44,14 @@ public class JGraLabServletWebServer {
 	 * @param args
 	 * @throws Exception
 	 */
-    public static void main(String[] args) throws Exception {
-    	System.out.println("======================");
-    	System.out.println("JGraLab XML-RPC Server");
-    	System.out.println("======================");
-    	JGraLabServlet servlet = new JGraLabServlet();
-        ServletWebServer webServer = new ServletWebServer(servlet, port);
-    	System.out.println("Listening on port " + port);
-        webServer.start();
-    }
+	public static void main(String[] args) throws Exception {
+		System.out.println("======================");
+		System.out.println("JGraLab XML-RPC Server");
+		System.out.println("======================");
+		JGraLabServlet servlet = new JGraLabServlet();
+		ServletWebServer webServer = new ServletWebServer(servlet, port);
+		System.out.println("Listening on port " + port);
+		webServer.start();
+	}
 
 }

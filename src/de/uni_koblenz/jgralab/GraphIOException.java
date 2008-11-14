@@ -28,7 +28,7 @@ package de.uni_koblenz.jgralab;
  * exceptions of this class are thrown if an error occurs while loading or
  * storing of schema and graph in tg file format
  *
- * @author Steffen Kahle
+ * @author ist@uni-koblenz.de
  */
 public class GraphIOException extends Exception {
 	private static final long serialVersionUID = 4569564712278582929L;

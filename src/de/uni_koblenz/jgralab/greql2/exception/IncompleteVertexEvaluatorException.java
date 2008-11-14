@@ -28,7 +28,7 @@ package de.uni_koblenz.jgralab.greql2.exception;
  * Should be thrown if a incomplete VertexEvaluator is instanciated, incomplete
  * means a wrong constructor or something like that
  * 
- * @author Daniel Bildhauer <dbildh@uni-koblenz.de> Summer 2006, Diploma Thesis
+ * @author ist@uni-koblenz.de
  * 
  */
 public class IncompleteVertexEvaluatorException extends EvaluateException {

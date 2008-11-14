@@ -55,7 +55,7 @@ import de.uni_koblenz.jgralab.schema.QualifiedName;
  * </dd>
  * </dl>
  * 
- * @author Daniel Bildhauer <dbildh@uni-koblenz.de> Summer 2006, Diploma Thesis
+ * @author ist@uni-koblenz.de
  * 
  */
 
@@ -63,7 +63,7 @@ import de.uni_koblenz.jgralab.schema.QualifiedName;
  * Calculates the typename of the given vertex or edge
  * 
  * @param graphelem the Graphelement (edge or vertex) to calculate the typename
- * of @return the typename of the given vertex or edge @author Daniel Bildhauer
+ * of @return the typename of the given vertex or edge @author ist@uni-koblenz.de
  * <dbildh@uni-koblenz.de> Summer 2006, Diploma Thesis
  * 
  */

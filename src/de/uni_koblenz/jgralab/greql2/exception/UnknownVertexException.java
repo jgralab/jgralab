@@ -28,7 +28,7 @@ package de.uni_koblenz.jgralab.greql2.exception;
  * Should be thrown if there is a Vertex in the GReQL Syntaxgraph for which no
  * VertexEvaluator exists
  * 
- * @author Daniel Bildhauer <dbildh@uni-koblenz.de> Summer 2006, Diploma Thesis
+ * @author ist@uni-koblenz.de
  * 
  */
 public class UnknownVertexException extends EvaluateException {

@@ -63,8 +63,8 @@ import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
  * 
  * Any additional store() will return false and nothing will be written anymore.
  * 
- * @author Daniel Bildhauer <dbildh@uni-koblenz.de> Summer 2006, Diploma Thesis
- * @author Tassilo Horn <heimdall@uni-koblenz.de>, 2008, Diploma Thesis
+ * @author ist@uni-koblenz.de
+ * @author ist@uni-koblenz.de
  */
 public class Level2Logger extends Level2LoggingBase implements EvaluationLogger {
 

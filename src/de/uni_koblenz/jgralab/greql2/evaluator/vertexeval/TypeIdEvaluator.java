@@ -45,7 +45,7 @@ import de.uni_koblenz.jgralab.schema.Schema;
 /**
  * Creates a List of types out of the TypeId-Vertex.
  *
- * @author Daniel Bildhauer <dbildh@uni-koblenz.de> Summer 2006, Diploma Thesis
+ * @author ist@uni-koblenz.de
  *
  */
 public class TypeIdEvaluator extends VertexEvaluator {

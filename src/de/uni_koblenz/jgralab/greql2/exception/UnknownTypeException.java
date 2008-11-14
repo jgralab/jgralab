@@ -33,7 +33,7 @@ import de.uni_koblenz.jgralab.greql2.schema.SourcePosition;
  * This exception should be thrown if a query accesses a type that doesn't exist
  * in the datagraph schema
  * 
- * @author Daniel Bildhauer <dbildh@uni-koblenz.de> Summer 2006, Diploma Thesis
+ * @author ist@uni-koblenz.de
  * 
  */
 public class UnknownTypeException extends QuerySourceException {

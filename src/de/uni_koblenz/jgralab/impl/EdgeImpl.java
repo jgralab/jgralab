@@ -33,10 +33,9 @@ import de.uni_koblenz.jgralab.schema.AttributedElementClass;
 import de.uni_koblenz.jgralab.schema.EdgeClass;
 
 /**
- * represents an incidence object, created temporarily by Graph class, delegates
- * nearly all methods to corresponding Graph
+ * TODO add comment
  * 
- * @author Daniel Bildhauer
+ * @author ist@uni-koblenz.de
  */
 public abstract class EdgeImpl extends IncidenceImpl implements Edge {
 	private int id;
@@ -152,11 +151,13 @@ public abstract class EdgeImpl extends IncidenceImpl implements Edge {
 		Edge currentEdge = getNextEdgeInGraph();
 		while (currentEdge != null) {
 			if (noSubclasses) {
-				if (anEdgeClass == currentEdge.getM1Class())
+				if (anEdgeClass == currentEdge.getM1Class()) {
 					return currentEdge;
+				}
 			} else {
-				if (anEdgeClass.isInstance(currentEdge))
+				if (anEdgeClass.isInstance(currentEdge)) {
 					return currentEdge;
+				}
 			}
 			currentEdge = currentEdge.getNextEdgeInGraph();
 		}

@@ -21,29 +21,33 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
- 
+
 package de.uni_koblenz.jgralab.schema;
 
 import java.util.Set;
 
-
-/** 
- * Generalizes the composite domains Enum, List, Record and Set  
+/**
+ * Base class of the composite domains Enum, List, Record and Set.
+ * 
+ * @author ist@uni-koblenz.de
  */
 public interface CompositeDomain extends Domain {
 
 	/**
-	 * Returns the component domains of the composite domain. If component composite domains 
-	 * contain other composite domains, the latter are not included in the returned Set. 
-	 * @return the Set of the composite domain's component domains 
+	 * Returns the component domains of the composite domain. If component
+	 * composite domains contain other composite domains, the latter are not
+	 * included in the returned Set.
+	 * 
+	 * @return the Set of the composite domain's component domains
 	 */
 	public Set<Domain> getAllComponentDomains();
-	
+
 	/**
-	 * Returns the component composite domains of the composite domain. If the component
-	 * composite domains contain other composite domains, the latter are not included in
-	 * the returned Set. 
-	 * @return the Set of the composite domain's component composite domains 
+	 * Returns the component composite domains of the composite domain. If the
+	 * component composite domains contain other composite domains, the latter
+	 * are not included in the returned Set.
+	 * 
+	 * @return the Set of the composite domain's component composite domains
 	 */
 	public Set<CompositeDomain> getAllComponentCompositeDomains();
 }

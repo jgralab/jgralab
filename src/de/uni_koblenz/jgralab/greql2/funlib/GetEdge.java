@@ -52,7 +52,7 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
  * </dl>
  * </dd>
  * </dl>
- * @author Daniel Bildhauer <dbildh@uni-koblenz.de> Summer 2006, Diploma Thesis
+ * @author ist@uni-koblenz.de
  * 
  */
  
@@ -64,7 +64,7 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
  * 	<li> id: Integer (the id of the edge to return)</li>
  * </ul>
  * <strong>Returns:</strong> the edge with the given id, encapsulated in a JValue
- * @author Daniel Bildhauer <dbildh@uni-koblenz.de> Summer 2006, Diploma Thesis
+ * @author ist@uni-koblenz.de
  * 
  */
 

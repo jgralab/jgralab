@@ -62,6 +62,7 @@ import de.uni_koblenz.jgralab.schema.VertexClass;
  * The public methods of this class which have return type (no {@code void})
  * can be accessed by an XML-RPC client.
  * 
+ * @author ist@uni-koblenz.de
  */
 public class JGraLabFacade {
 
@@ -1570,7 +1571,7 @@ public class JGraLabFacade {
 	 */
 	public boolean setGraphAttribute(int graphNo, int vId, String attrName,
 			Object[] value) throws XmlRpcException {
-		return setGraphAttribute(graphNo, attrName, (Object) value);
+		return setGraphAttribute(graphNo, attrName, value);
 	}
 
 	/**
@@ -1589,7 +1590,7 @@ public class JGraLabFacade {
 	 */
 	public boolean setGraphAttribute(int graphNo, int vId, String attrName,
 			Map<String, Object> value) throws XmlRpcException {
-		return setGraphAttribute(graphNo, attrName, (Object) value);
+		return setGraphAttribute(graphNo, attrName, value);
 	}
 
 	/**
@@ -1608,7 +1609,7 @@ public class JGraLabFacade {
 	 */
 	public boolean setGraphAttribute(int graphNo, int vId, String attrName,
 			byte[] value) throws XmlRpcException {
-		return setGraphAttribute(graphNo, attrName, (Object) value);
+		return setGraphAttribute(graphNo, attrName, value);
 	}
 
 	/**
@@ -2409,8 +2410,7 @@ public class JGraLabFacade {
 			Collections.addAll(list, (Object[]) value);
 
 			// call convertToJGraLabType for every list element
-			for (ListIterator<Object> i = ((List<Object>) list).listIterator(); i
-					.hasNext();) {
+			for (ListIterator<Object> i = (list).listIterator(); i.hasNext();) {
 				element = i.next();
 
 				i.set(convertToJGraLabType(element, ((CompositeDomain) domain)
@@ -2420,7 +2420,7 @@ public class JGraLabFacade {
 
 			// if domain is a Set, convert the List to a Set
 			if (domain.toString().startsWith("Set")) {
-				value = new HashSet<Object>((List<Object>) list);
+				value = new HashSet<Object>(list);
 			} else {
 				value = list;
 			}

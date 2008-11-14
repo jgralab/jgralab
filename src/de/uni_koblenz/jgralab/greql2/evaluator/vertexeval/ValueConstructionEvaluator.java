@@ -39,7 +39,7 @@ import de.uni_koblenz.jgralab.greql2.schema.ValueConstruction;
 /**
  * This is the abstract base class for all ValueConstructions
  * 
- * @author Daniel Bildhauer <dbildh@uni-koblenz.de> Summer 2006, Diploma Thesis
+ * @author ist@uni-koblenz.de
  * 
  */
 abstract public class ValueConstructionEvaluator extends VertexEvaluator {

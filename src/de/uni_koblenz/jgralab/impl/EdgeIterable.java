@@ -39,7 +39,7 @@ import de.uni_koblenz.jgralab.schema.EdgeClass;
  * graphclass contains generated methods similar to <code>edges(params)</code>
  * for every EdgeClass that is part of the GraphClass.
  * 
- * @author Daniel Bildhauer <dbildh@uni-koblenz.de>
+ * @author ist@uni-koblenz.de
  * 
  * @param <E>
  *            The type of the Edges to iterate over. To mention it again,

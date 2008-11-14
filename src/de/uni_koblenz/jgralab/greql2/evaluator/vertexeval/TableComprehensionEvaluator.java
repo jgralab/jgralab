@@ -53,7 +53,7 @@ import de.uni_koblenz.jgralab.greql2.schema.TableComprehension;
  * TableComprehension vertex is constructed using the notation reportTable
  * columHeader, rowHeader, cellContent
  * 
- * @author Daniel Bildhauer <dbildh@uni-koblenz.de> Summer 2006, Diploma Thesis
+ * @author ist@uni-koblenz.de
  * 
  */
 public class TableComprehensionEvaluator extends VertexEvaluator {

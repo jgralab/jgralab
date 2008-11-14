@@ -30,7 +30,7 @@ import de.uni_koblenz.jgralab.greql2.evaluator.fa.State;
 
 /**
  * This class modells an entry in the queue which is used for PathSystemConstruction
- * @author Daniel Bildhauer <dbildh@uni-koblenz.de> 
+ * @author ist@uni-koblenz.de
  * Summer 2006, Diploma Thesis
  *
  */

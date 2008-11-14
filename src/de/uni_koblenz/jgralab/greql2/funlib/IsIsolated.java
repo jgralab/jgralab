@@ -54,7 +54,7 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
  * </dl>
  * </dd>
  * </dl>
- * @author Daniel Bildhauer <dbildh@uni-koblenz.de> Summer 2006, Diploma Thesis
+ * @author ist@uni-koblenz.de
  * 
  */
 
@@ -65,7 +65,7 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
  * @param vertex
  *            the vertex to check for isolation
  * @return true if the given vertex has no connected edges, false otherwise
- * @author Daniel Bildhauer <dbildh@uni-koblenz.de> Summer 2006, Diploma Thesis
+ * @author ist@uni-koblenz.de
  * 
  */
 public class IsIsolated implements Greql2Function {

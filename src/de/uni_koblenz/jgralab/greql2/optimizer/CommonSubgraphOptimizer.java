@@ -43,7 +43,7 @@ import de.uni_koblenz.jgralab.greql2.schema.Variable;
  * the subgaph below it).</li>
  * </nl>
  * 
- * @author Tassilo Horn (heimdall), 2007, Diploma Thesis
+ * @author ist@uni-koblenz.de
  * 
  */
 public class CommonSubgraphOptimizer extends OptimizerBase {

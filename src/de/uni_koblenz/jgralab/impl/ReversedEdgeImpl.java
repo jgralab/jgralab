@@ -31,10 +31,9 @@ import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.schema.EdgeClass;
 
 /**
- * represents an incidence object, created temporarily by Graph class, delegates
- * nearly all methods to corresponding Graph
+ * TODO add comment
  * 
- * @author Steffen Kahle
+ * @author ist@uni-koblenz.de
  */
 public abstract class ReversedEdgeImpl extends IncidenceImpl implements Edge {
 	// normal edge

@@ -65,7 +65,7 @@ import de.uni_koblenz.jgralab.grumlschema.To;
  * This class represents any <code>Schema</code> object as an
  * <code>Graph</code> object.
  * 
- * @author Sebatian Plitt
+ * @author ist@uni-koblenz.de
  */
 public class Tg2SchemaGraph {
 

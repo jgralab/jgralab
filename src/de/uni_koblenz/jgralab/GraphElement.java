@@ -26,7 +26,7 @@ package de.uni_koblenz.jgralab;
 
 /**
  * aggregates vertices and edges
- * @author Steffen Kahle
+ * @author ist@uni-koblenz.de
  *
  */
 public interface GraphElement extends AttributedElement {

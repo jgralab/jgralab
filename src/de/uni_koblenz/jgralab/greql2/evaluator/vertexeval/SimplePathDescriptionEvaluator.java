@@ -39,7 +39,7 @@ import de.uni_koblenz.jgralab.greql2.schema.SimplePathDescription;
 /**
  * Evaluates a SimplePathDescription, that is something link v -->{isExprOf} w.
  * Creates a NFA which accepts the simplePath the vertex to evaluate describes.
- * @author Daniel Bildhauer <dbildh@uni-koblenz.de> 
+ * @author ist@uni-koblenz.de
  * Summer 2006, Diploma Thesis
  *
  */

@@ -39,7 +39,7 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueList;
  * </dd>
  * </dl>
  *
- * @author Tassilo Horn <horn@uni-koblenz.de>, 2008
+ * @author ist@uni-koblenz.de
  *
  */
 public class TopologicalSort implements Greql2Function {

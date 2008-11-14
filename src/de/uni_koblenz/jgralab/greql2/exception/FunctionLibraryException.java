@@ -32,7 +32,7 @@ import de.uni_koblenz.jgralab.greql2.schema.SourcePosition;
  * Should be thrown if something went wrong with the functionlibary that is not
  * covered by the other exceptions
  * 
- * @author Daniel Bildhauer <dbildh@uni-koblenz.de> Summer 2006, Diploma Thesis
+ * @author ist@uni-koblenz.de
  * 
  */
 public class FunctionLibraryException extends QuerySourceException {

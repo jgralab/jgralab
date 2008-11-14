@@ -34,7 +34,7 @@ import de.uni_koblenz.jgralab.impl.ReversedEdgeImpl;
  * graphelements with more specific "colors", have a look at the class
  * <code>GraphMarker</code>
  *
- * @author Daniel Bildhauer <dbildh@uni-koblenz.de> November 2006
+ * @author ist@uni-koblenz.de
  */
 public class BooleanGraphMarker {
 

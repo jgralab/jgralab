@@ -32,7 +32,7 @@ import de.uni_koblenz.jgralab.greql2.exception.EvaluateException;
 /**
  * Is baseclass of all transitions. Has one start and one endstate.
  * 
- * @author Daniel Bildhauer <dbildh@uni-koblenz.de> Summer 2006, Diploma Thesis
+ * @author ist@uni-koblenz.de
  * 
  */
 public abstract class Transition {

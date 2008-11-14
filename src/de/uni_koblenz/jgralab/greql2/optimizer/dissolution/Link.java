@@ -9,7 +9,7 @@ import java.util.Set;
 /**
  * TODO: (heimdall) Comment class!
  * 
- * @author Tassilo Horn (heimdall), 2008, Diploma Thesis
+ * @author ist@uni-koblenz.de
  * 
  */
 public class Link {

@@ -59,7 +59,7 @@ import de.uni_koblenz.jgralab.greql2.schema.PathExistence;
  * all {@link Greql2Vertex}s of a given query syntaxgraph. It uses an instance
  * of {@link EvaluationLogReader} to calculate estimations based on experience.
  * 
- * @author Tassilo Horn (heimdall), 2007, Diploma Thesis
+ * @author ist@uni-koblenz.de
  * 
  */
 public class LogCostModel extends DefaultCostModel {

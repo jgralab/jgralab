@@ -21,15 +21,15 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
- 
+
 package de.uni_koblenz.jgralab.schema;
 
-
 /**
- * instances of this class represent composition classes of the m2 layer,
- * to be used to build edges where a delete results in deleting cascades 
- * @author Steffen Kahle
- *
+ * Represents composition classes of the M2 layer, to be used to model edges
+ * with "strong ownership" semantics. Deletion of a parent vertes results in
+ * cascading deletes of Composition children.
+ * 
+ * @author ist@uni-koblenz.de
  */
 public interface CompositionClass extends AggregationClass {
 

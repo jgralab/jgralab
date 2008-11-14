@@ -21,31 +21,38 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
- 
+
 package de.uni_koblenz.jgralab.schema;
 
+/**
+ * NamedElement defines methods to access the QualifiedName components of a
+ * Schema element.
+ * 
+ * @author ist@uni-koblenz.de
+ */
 public interface NamedElement {
-	
+
 	QualifiedName getQName();
 
 	/**
-	 * @return the unique name of the element in the package
-	 * without the fully qualified package name
+	 * @return the unique name of the element in the package without the fully
+	 *         qualified package name
 	 */
 	public String getSimpleName();
-	
-	
-	/**	 
-	 * @return the unique name of the element in the schema,
-	 * if there is only one class in the schema with this short name, 
-	 * the short name is returned. Otherwise, the fully qualified package name
-	 * is returned in a camel-cased underscored manner
+
+	/**
+	 * @return the unique name of the element in the schema, if there is only
+	 *         one class in the schema with this short name, the short name is
+	 *         returned. Otherwise, the fully qualified package name is returned
+	 *         in a camel-cased underscored manner
 	 */
 	public String getUniqueName();
-	
+
 	/**
 	 * Sets the unique name of this element in the schema
-	 * @throws Exception if the same unique name is used for another element
+	 * 
+	 * @throws Exception
+	 *             if the same unique name is used for another element
 	 * @param name
 	 */
 	public void setUniqueName(String name);
@@ -53,19 +60,19 @@ public interface NamedElement {
 	public String getVariableName();
 
 	/**
-	 * @return the fully qualified name of this element in the schema.
-	 * This is the fully qualified name of the package the element is  
-	 * located in together with the short name of the element
+	 * @return the fully qualified name of this element in the schema. This is
+	 *         the fully qualified name of the package the element is located in
+	 *         together with the short name of the element
 	 */
-	public String getQualifiedName(); 
-	
-	@Deprecated
-	public String getName();
-	
+	public String getQualifiedName();
+
 	public String getQualifiedName(Package pkg);
+
 	public String getPackageName();
+
 	public String getPathName();
+
 	public String getDirectoryName();
-	
+
 	public Schema getSchema();
 }

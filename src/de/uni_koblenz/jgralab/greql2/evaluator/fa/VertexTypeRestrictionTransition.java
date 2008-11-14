@@ -34,7 +34,7 @@ import de.uni_koblenz.jgralab.schema.AttributedElementClass;
 /**
  * This transition accepts a vertex type restriction. It is used to accept
  * start- and goalrestrictions. 
- * @author Daniel Bildhauer <dbildh@uni-koblenz.de> 
+ * @author ist@uni-koblenz.de
  * Summer 2006, Diploma Thesis
  *
  */

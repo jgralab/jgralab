@@ -12,6 +12,12 @@ import de.uni_koblenz.jgralab.schema.VertexClass;
 import de.uni_koblenz.jgralab.schema.impl.RolenameEntry;
 import de.uni_koblenz.jgralab.schema.impl.VertexEdgeEntry;
 
+/**
+ * TODO add comment
+ * 
+ * @author ist@uni-koblenz.de
+ * 
+ */
 public class RolenameCodeGenerator {
 
 	private VertexClass vertexClass;

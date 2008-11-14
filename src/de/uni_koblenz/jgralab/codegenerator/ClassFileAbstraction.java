@@ -31,34 +31,42 @@ import java.net.URI;
 import javax.tools.SimpleJavaFileObject;
 
 /**
- * An object of this class holds Java bytecode (for M1 classes)
+ * A ClassFileAbstraction holds Java bytecode for M1 classes compiled in-memory .
+ * 
+ * @author ist@uni-koblenz.de
  * 
  */
 public class ClassFileAbstraction extends SimpleJavaFileObject {
 	private byte[] bytecode;
 
 	/**
-	 * Creates a new {@code ClassFileAbstraction} for the class given by {@code name}.
+	 * Creates a new {@code ClassFileAbstraction} for the class given by
+	 * {@code name}.
 	 * 
-	 * @param name the name of the class
+	 * @param name
+	 *            the name of the class
 	 */
-    public ClassFileAbstraction(String name) {
-        super(URI.create("string:///" + name.replace('.','/') + Kind.CLASS.extension), Kind.CLASS);
-    }
-    
-    public byte[] getBytecode() {
-    	return bytecode;
-    }
+	public ClassFileAbstraction(String name) {
+		super(URI.create("string:///" + name.replace('.', '/')
+				+ Kind.CLASS.extension), Kind.CLASS);
+	}
 
-    public ByteArrayOutputStream openOutputStream() {
-        return new ByteArrayOutputStream() {
-        	public void close() {
-        		bytecode = this.toByteArray();
-        	}
-        };
-    }
+	public byte[] getBytecode() {
+		return bytecode;
+	}
 
-    public ByteArrayInputStream openInputStream() {
-        return new ByteArrayInputStream(bytecode);
-    }
+	@Override
+	public ByteArrayOutputStream openOutputStream() {
+		return new ByteArrayOutputStream() {
+			@Override
+			public void close() {
+				bytecode = this.toByteArray();
+			}
+		};
+	}
+
+	@Override
+	public ByteArrayInputStream openInputStream() {
+		return new ByteArrayInputStream(bytecode);
+	}
 }
