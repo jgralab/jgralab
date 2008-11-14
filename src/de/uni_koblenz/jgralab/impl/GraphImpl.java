@@ -42,9 +42,11 @@ import de.uni_koblenz.jgralab.schema.Schema;
 import de.uni_koblenz.jgralab.schema.VertexClass;
 
 /**
- * uses an incidence array to save the whole graph structure
+ * Implementation of interface Graph with doubly linked lists realizing eSeq,
+ * vSeq and lambdaSeq, while ensuring efficient direct access to vertices and
+ * edges by id via vertex and edge arrays.
  * 
- * @author Steffen Kahle et. al.
+ * @author riediger
  */
 public abstract class GraphImpl extends AttributedElementImpl implements Graph {
 
@@ -546,7 +548,7 @@ public abstract class GraphImpl extends AttributedElementImpl implements Graph {
 	 * structure of the graph is changed, for instance by creation and deletion
 	 * or reordering of vertices and edges
 	 */
-	public void edgeListModified() {
+	protected void edgeListModified() {
 		++edgeListVersion;
 		++graphVersion;
 	}
@@ -567,8 +569,8 @@ public abstract class GraphImpl extends AttributedElementImpl implements Graph {
 	 * @see de.uni_koblenz.jgralab.Graph#edges(java.lang.Class)
 	 */
 	@Override
-	public Iterable<Edge> edges(Class<? extends Edge> eclass) {
-		return new EdgeIterable<Edge>(this, eclass);
+	public Iterable<Edge> edges(Class<? extends Edge> edgeClass) {
+		return new EdgeIterable<Edge>(this, edgeClass);
 	}
 
 	/*
@@ -577,8 +579,8 @@ public abstract class GraphImpl extends AttributedElementImpl implements Graph {
 	 * @see de.uni_koblenz.jgralab.Graph#edges(de.uni_koblenz.jgralab.schema.EdgeClass)
 	 */
 	@Override
-	public Iterable<Edge> edges(EdgeClass eclass) {
-		return new EdgeIterable<Edge>(this, eclass.getM1Class());
+	public Iterable<Edge> edges(EdgeClass edgeClass) {
+		return new EdgeIterable<Edge>(this, edgeClass.getM1Class());
 	}
 
 	/**
@@ -695,8 +697,8 @@ public abstract class GraphImpl extends AttributedElementImpl implements Graph {
 	 * @see de.uni_koblenz.jgralab.Graph#getFirstEdgeOfClassInGraph(java.lang.Class)
 	 */
 	@Override
-	public Edge getFirstEdgeOfClassInGraph(Class<? extends Edge> anEdgeClass) {
-		return getFirstEdgeOfClassInGraph(anEdgeClass, false);
+	public Edge getFirstEdgeOfClassInGraph(Class<? extends Edge> edgeClass) {
+		return getFirstEdgeOfClassInGraph(edgeClass, false);
 	}
 
 	/*
@@ -706,16 +708,16 @@ public abstract class GraphImpl extends AttributedElementImpl implements Graph {
 	 *      boolean)
 	 */
 	@Override
-	public Edge getFirstEdgeOfClassInGraph(Class<? extends Edge> anEdgeClass,
+	public Edge getFirstEdgeOfClassInGraph(Class<? extends Edge> edgeClass,
 			boolean noSubclasses) {
 		Edge currentEdge = getFirstEdgeInGraph();
 		while (currentEdge != null) {
 			if (noSubclasses) {
-				if (anEdgeClass == currentEdge.getM1Class()) {
+				if (edgeClass == currentEdge.getM1Class()) {
 					return currentEdge;
 				}
 			} else {
-				if (anEdgeClass.isInstance(currentEdge)) {
+				if (edgeClass.isInstance(currentEdge)) {
 					return currentEdge;
 				}
 			}
@@ -730,8 +732,8 @@ public abstract class GraphImpl extends AttributedElementImpl implements Graph {
 	 * @see de.uni_koblenz.jgralab.Graph#getFirstEdgeOfClassInGraph(de.uni_koblenz.jgralab.schema.EdgeClass)
 	 */
 	@Override
-	public Edge getFirstEdgeOfClassInGraph(EdgeClass anEdgeClass) {
-		return getFirstEdgeOfClassInGraph(anEdgeClass.getM1Class(), false);
+	public Edge getFirstEdgeOfClassInGraph(EdgeClass edgeClass) {
+		return getFirstEdgeOfClassInGraph(edgeClass.getM1Class(), false);
 	}
 
 	/*
@@ -741,10 +743,9 @@ public abstract class GraphImpl extends AttributedElementImpl implements Graph {
 	 *      boolean)
 	 */
 	@Override
-	public Edge getFirstEdgeOfClassInGraph(EdgeClass anEdgeClass,
+	public Edge getFirstEdgeOfClassInGraph(EdgeClass eEdgeClass,
 			boolean noSubclasses) {
-		return getFirstEdgeOfClassInGraph(anEdgeClass.getM1Class(),
-				noSubclasses);
+		return getFirstEdgeOfClassInGraph(eEdgeClass.getM1Class(), noSubclasses);
 	}
 
 	/*
@@ -773,8 +774,8 @@ public abstract class GraphImpl extends AttributedElementImpl implements Graph {
 	 * @see de.uni_koblenz.jgralab.Graph#getFirstVertexOfClass(java.lang.Class)
 	 */
 	@Override
-	public Vertex getFirstVertexOfClass(Class<? extends Vertex> aVertexClass) {
-		return getFirstVertexOfClass(aVertexClass, false);
+	public Vertex getFirstVertexOfClass(Class<? extends Vertex> vertexClass) {
+		return getFirstVertexOfClass(vertexClass, false);
 	}
 
 	/*
@@ -784,22 +785,22 @@ public abstract class GraphImpl extends AttributedElementImpl implements Graph {
 	 *      boolean)
 	 */
 	@Override
-	public Vertex getFirstVertexOfClass(Class<? extends Vertex> aVertexClass,
+	public Vertex getFirstVertexOfClass(Class<? extends Vertex> vertexClass,
 			boolean noSubclasses) {
 		Vertex firstVertex = getFirstVertex();
 		if (firstVertex == null) {
 			return null;
 		}
 		if (noSubclasses) {
-			if (aVertexClass == firstVertex.getM1Class()) {
+			if (vertexClass == firstVertex.getM1Class()) {
 				return firstVertex;
 			}
 		} else {
-			if (aVertexClass.isInstance(firstVertex)) {
+			if (vertexClass.isInstance(firstVertex)) {
 				return firstVertex;
 			}
 		}
-		return firstVertex.getNextVertexOfClass(aVertexClass, noSubclasses);
+		return firstVertex.getNextVertexOfClass(vertexClass, noSubclasses);
 	}
 
 	/*
@@ -808,8 +809,8 @@ public abstract class GraphImpl extends AttributedElementImpl implements Graph {
 	 * @see de.uni_koblenz.jgralab.Graph#getFirstVertexOfClass(de.uni_koblenz.jgralab.schema.VertexClass)
 	 */
 	@Override
-	public Vertex getFirstVertexOfClass(VertexClass aVertexClass) {
-		return getFirstVertexOfClass(aVertexClass, false);
+	public Vertex getFirstVertexOfClass(VertexClass vertexClass) {
+		return getFirstVertexOfClass(vertexClass, false);
 	}
 
 	/*
@@ -819,9 +820,9 @@ public abstract class GraphImpl extends AttributedElementImpl implements Graph {
 	 *      boolean)
 	 */
 	@Override
-	public Vertex getFirstVertexOfClass(VertexClass aVertexClass,
+	public Vertex getFirstVertexOfClass(VertexClass vertexClass,
 			boolean noSubclasses) {
-		return getFirstVertexOfClass((aVertexClass.getM1Class()), noSubclasses);
+		return getFirstVertexOfClass((vertexClass.getM1Class()), noSubclasses);
 	}
 
 	/*
@@ -915,12 +916,12 @@ public abstract class GraphImpl extends AttributedElementImpl implements Graph {
 		return vertexListVersion;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see de.uni_koblenz.jgralab.Graph#graphModified()
+	/**
+	 * Changes this graph's version. graphModified() is called whenever the
+	 * graph is changed, all changes like adding, creating and reordering of
+	 * edges and vertices or changes of attributes of the graph, an edge or a
+	 * vertex are treated as a change.
 	 */
-	@Override
 	public void graphModified() {
 		++graphVersion;
 	}
@@ -1085,8 +1086,8 @@ public abstract class GraphImpl extends AttributedElementImpl implements Graph {
 	 * @see de.uni_koblenz.jgralab.Graph#isGraphModified(long)
 	 */
 	@Override
-	public boolean isGraphModified(long aGraphVersion) {
-		return (graphVersion != aGraphVersion);
+	public boolean isGraphModified(long previousVersion) {
+		return (graphVersion != previousVersion);
 	}
 
 	/*
@@ -1105,8 +1106,8 @@ public abstract class GraphImpl extends AttributedElementImpl implements Graph {
 	 * @see de.uni_koblenz.jgralab.Graph#isVertexListModified(long)
 	 */
 	@Override
-	public boolean isVertexListModified(long vertexListVersion) {
-		return (this.vertexListVersion != vertexListVersion);
+	public boolean isVertexListModified(long previousVersion) {
+		return (this.vertexListVersion != previousVersion);
 	}
 
 	/*
@@ -1396,11 +1397,11 @@ public abstract class GraphImpl extends AttributedElementImpl implements Graph {
 	}
 
 	/**
-	 * Changes the graph structure version, should be called whenever the
-	 * structure of the graph is changed, for instance by creation and deletion
-	 * or reordering of vertices and edges
+	 * Changes the vertex sequence version of this graph. Should be called
+	 * whenever the vertex list of this graph is changed, for instance by
+	 * creation and deletion or reordering of vertices.
 	 */
-	public void vertexListModified() {
+	protected void vertexListModified() {
 		++vertexListVersion;
 		++graphVersion;
 	}
@@ -1421,8 +1422,8 @@ public abstract class GraphImpl extends AttributedElementImpl implements Graph {
 	 * @see de.uni_koblenz.jgralab.Graph#vertices(java.lang.Class)
 	 */
 	@Override
-	public Iterable<Vertex> vertices(Class<? extends Vertex> vclass) {
-		return new VertexIterable<Vertex>(this, vclass);
+	public Iterable<Vertex> vertices(Class<? extends Vertex> vertexClass) {
+		return new VertexIterable<Vertex>(this, vertexClass);
 	}
 
 	/*
@@ -1431,8 +1432,7 @@ public abstract class GraphImpl extends AttributedElementImpl implements Graph {
 	 * @see de.uni_koblenz.jgralab.Graph#vertices(de.uni_koblenz.jgralab.schema.VertexClass)
 	 */
 	@Override
-	public Iterable<Vertex> vertices(VertexClass eclass) {
-		return new VertexIterable<Vertex>(this, eclass.getM1Class());
+	public Iterable<Vertex> vertices(VertexClass vertexClass) {
+		return new VertexIterable<Vertex>(this, vertexClass.getM1Class());
 	}
-
 }

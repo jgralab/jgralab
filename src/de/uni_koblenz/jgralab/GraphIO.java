@@ -72,7 +72,7 @@ import de.uni_koblenz.jgralab.schema.impl.SchemaImpl;
 /**
  * class for loading and storing schema and graphs in tg format
  * 
- * @author riediger@uni-koblenz.de
+ * @author ist@uni-koblenz.de
  */
 public class GraphIO {
 
@@ -418,7 +418,7 @@ public class GraphIO {
 		long graphElements = 0, currentCount = 0, interval = 1;
 		if (pf != null) {
 			pf.init(graph.getVCount() + graph.getECount());
-			interval = pf.getInterval();
+			interval = pf.getUpdateInterval();
 		}
 
 		space();
@@ -1861,7 +1861,7 @@ public class GraphIO {
 		long graphElements = 0, currentCount = 0, interval = 1;
 		if (pf != null) {
 			pf.init(vCount + eCount);
-			interval = pf.getInterval();
+			interval = pf.getUpdateInterval();
 		}
 		GraphImpl graph = null;
 		try {

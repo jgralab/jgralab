@@ -28,34 +28,38 @@ package de.uni_koblenz.jgralab;
  * can be implemented by a user to build his/her own progress function, example:
  * jgralab.impl.ProgressFunctionImpl.java
  * 
- * @author Steffen Kahle
+ * @author ist@uni-koblenz.de
  */
 public interface ProgressFunction {
 
 	/**
 	 * method for initialization of progress function
 	 * 
-	 * @param steps
-	 *            number of total elements which are to be processed
+	 * @param totalElements
+	 *            total number of elements which are to be processed
 	 */
-	public void init(long steps);
+	public void init(long totalElements);
 
 	/**
-	 * method which is called every interval
+	 * Called during processing elements.
 	 * 
-	 * @param progress
-	 *            the current number of element which have been processed
+	 * @param processedElements
+	 *            the current number of elements which have been processed
 	 */
-	public void progress(long progress);
+	public void progress(long processedElements);
 
 	/**
-	 * method to finish the progress bar
+	 * Called after completion of all elements.
 	 */
 	public void finished();
 
 	/**
-	 * @return the interval how often the progress bar is being executed
+	 * Specifies the number of processed elements after which a call to
+	 * progress() occurs.
+	 * 
+	 * @return the interval (number of processed elements) which specifies how
+	 *         often the progress bar is updated
 	 */
-	public long getInterval();
+	public long getUpdateInterval();
 
 }

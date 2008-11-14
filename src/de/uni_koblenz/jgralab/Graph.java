@@ -28,125 +28,138 @@ import de.uni_koblenz.jgralab.schema.EdgeClass;
 import de.uni_koblenz.jgralab.schema.VertexClass;
 
 /**
- * Represents an m1 graph. The classes jgralab.impl.array.GraphImpl and
- * jgralab.impl.list.GraphImpl implement this interface.
+ * The interface Graph is the base of all JGraLab graphs. It provides access to
+ * global graph properties and to the Vertex and Edge sequence. Creation and
+ * removal of vertices and edges, as well as valitiy checks, are provided.
  * 
- * @author Steffen Kahle
+ * Additionally, convenient methods for traversal, either based on separate
+ * calls (getFirst/getNext) or on Iterables, can be used to travers the graph.
  * 
+ * Callback methods can be used by subclasses to get informed when a Vertex or
+ * an Edge is added or removed.
+ * 
+ * @author ist@uni-koblenz.de
  */
 public interface Graph extends AttributedElement {
 
 	/**
-	 * Creates a instance of the given class and adds this vertex to the graph
+	 * Creates a vertex the specified class <code>cls</code> and adds the new
+	 * vertex to this Graph.
 	 */
 	public <T extends Vertex> T createVertex(Class<T> cls);
 
 	/**
-	 * Creates a instance of the given class and adds this edge to the graph
+	 * Creates an edge of the specified class <code>cls</code> that connects
+	 * <code>alpha</code> and <code>omega</code> vertices and adds the new
+	 * edge to this Graph.
 	 */
 	public <T extends Edge> T createEdge(Class<T> cls, Vertex alpha,
 			Vertex omega);
 
 	/**
-	 * This method checks, if the graph is currently being loaded
+	 * Checks whether this graph is currently being loaded.
 	 * 
-	 * @return true if the graph is being loaded
+	 * @return true if the graph is currently being loaded
 	 */
 	public boolean isLoading();
 
 	/**
-	 * This method is called as soon as the loading of a graph is completed One
-	 * may use it to perform own operations as soon as the loading is completed
+	 * Callback method: Called immediately after loading of this graph is
+	 * completed. Overwrite this method to perform user defined operations after
+	 * loading a graph.
 	 */
 	public void loadingCompleted();
 
 	/**
-	 * Checks if the graph has changed with respect to the given
-	 * <code>aGraphVersion</code>. Every change in the graph, e.g. adding,
+	 * Checks whether this graph has changed with respect to the given
+	 * <code>previousVersion</code>. Every change in the graph, e.g. adding,
 	 * creating and reordering of edges and vertices or changes of attributes of
 	 * the graph, an edge or a vertex are treated as a change.
 	 * 
-	 * @param aGraphVersion
-	 *            The graphVersion to check against
+	 * @param previousVersion
+	 *            The version to check against
 	 * @return <code>true</code> if the internal graph version of the graph is
-	 *         different from the given version <code>aGraphVersion</code>.
+	 *         different from the <code>previousVersion</code>.
 	 */
-	public boolean isGraphModified(long aGraphVersion);
+	public boolean isGraphModified(long previousVersion);
 
 	/**
-	 * Changes the graph version, should be called whenever the graph is
-	 * changed, all changes like adding, creating and reordering of edges and
-	 * vertices or changes of attributes of the graph, an edge or a vertex are
-	 * treated as a change.
-	 */
-	public void graphModified();
-
-	/**
-	 * @return the internal graph version
-	 * @see #graphModified()
+	 * Returns the version counter of this graph.
+	 * 
+	 * @return the graph version
 	 * @see #isGraphModified(long)
 	 */
 	public long getGraphVersion();
 
 	/**
-	 * Checks if the graph-structure has changed with respect to the given
-	 * <code>graphStructureVersion</code>. Changes in the graph structure are
-	 * creation and deletion as well as reordering of vertices and edges, but
-	 * not changes of attribute values.
+	 * Checks if the vertex sequence of this has changed with respect to the
+	 * given <code>previousVersion</code>. Changes in the vertex sequence are
+	 * creation and deletion as well as reordering of vertices, but not changes
+	 * of attribute values.
 	 * 
-	 * @return <code>true</code> if the internal graph structure version of
-	 *         the graph is different from the given version
-	 *         <code>graphStructureVersion</code>.
+	 * @return <code>true</code> if the vertex list version of this graph is
+	 *         different from <code>previousVersion</code>.
 	 */
-	public boolean isVertexListModified(long vertexListVersion);
+	public boolean isVertexListModified(long previousVersion);
 
 	/**
-	 * @return the internal graph structure version
-	 * @see #vertexListModified()
+	 * Returns the version counter of the vertex sequence of this graph.
+	 * 
+	 * @return the vertex sequence version
 	 * @see #isVertexListModified(long)
 	 */
 	public long getVertexListVersion();
 
 	/**
-	 * Checks if the graph-structure has changed with respect to the given
-	 * <code>graphStructureVersion</code>. Changes in the graph structure are
-	 * creation and deletion as well as reordering of vertices and edges, but
-	 * not changes of attribute values.
+	 * Checks if the edge sequence of this has changed with respect to the given
+	 * <code>previousVersion</code>. Changes in the edge sequence are
+	 * creation and deletion as well as reordering of edges, but not changes of
+	 * attribute values.
 	 * 
-	 * @return <code>true</code> if the internal graph structure version of
-	 *         the graph is different from the given version
-	 *         <code>graphStructureVersion</code>.
+	 * @return <code>true</code> if the edge list version of this graph is
+	 *         different from <code>previousVersion</code>.
 	 */
 	public boolean isEdgeListModified(long edgeListVersion);
 
 	/**
-	 * @return the internal edge list version
-	 * @see #edgeListModified()
+	 * Returns the version counter of the edge sequence of this graph.
+	 * 
+	 * @return the edge sequence version
 	 * @see #isEdgeListModified(long)
 	 */
 	public long getEdgeListVersion();
 
 	/**
-	 * @return true iff this graph contains the given vertex
+	 * @return true if this graph contains the given vertex <code>v</code>.
 	 */
 	public boolean containsVertex(Vertex v);
 
 	/**
-	 * @return true iff this graph contains the given edge
+	 * @return true if this graph contains the given edge <code>e</code>.
 	 */
 	boolean containsEdge(Edge e);
 
 	/**
-	 * removes the specified vertex from vSeq and erases its attributes
+	 * Removes the vertex <code>v</code> from the vertex sequence of this
+	 * graph. Also, any edges incident to vertex <code>v</code> are deleted.
+	 * If <code>v</code> is the parent of a composition, all child vertices
+	 * are also deleted.
+	 * 
+	 * Preconditions: v.isValid()
+	 * 
+	 * Postconditions: !v.isValid() && !containsVertex(v) &&
+	 * getVertex(v.getId()) == null
 	 * 
 	 * @param v
-	 *            the id of the vertex to be deleted
+	 *            the Vertex to be deleted
 	 */
 	public void deleteVertex(Vertex v);
 
 	/**
-	 * Callback function for triggered actions just before a vertex is actually
-	 * deleted.
+	 * Callback function triggered just before the vertex <code>v</code> is
+	 * actually deleted from this Graph. Override this method to implement
+	 * user-defined behaviour upon deletion of vertices. Note that any changes
+	 * to this graph are forbidden.
 	 * 
 	 * @param v
 	 *            the deleted vertex
@@ -154,138 +167,231 @@ public interface Graph extends AttributedElement {
 	public void vertexDeleted(Vertex v);
 
 	/**
-	 * Callback function for triggered actions just after a vertex was added.
+	 * Callback function for triggered actions just after the vertex
+	 * <code>v</code> was added to this Graph. Override this method to
+	 * implement user-defined behaviour upon addition of vertices. Note that any
+	 * changes to this graph are forbidden.
 	 * 
 	 * @param v
-	 *            the deleted vertex
+	 *            the added vertex
 	 */
 	public void vertexAdded(Vertex v);
 
 	/**
-	 * removes this edge from eSeq and erases its attributes
+	 * Removes the edge <code>e</code> from the edge sequence of this graph.
+	 * This implies changes to the incidence lists of the alpha and omega vertex
+	 * of <code>e</code>.
+	 * 
+	 * Preconditions: e.isValid()
+	 * 
+	 * Postconditions: !e.isValid() && !containsEdge(e) && getEdge(e.getId()) ==
+	 * null
 	 * 
 	 * @param e
-	 *            the edge to be deleted
-	 * 
+	 *            the Edge to be deleted
 	 */
 	public void deleteEdge(Edge e);
 
 	/**
-	 * Callback function for triggered actions just before an edge is actually
-	 * deleted.
+	 * Callback function triggered just before the edge <code>e</code> is
+	 * actually deleted from this Graph. Override this method to implement
+	 * user-defined behaviour upon deletion of edges. Note that any changes to
+	 * this graph are forbidden.
 	 * 
 	 * @param e
-	 *            the deleted edge
+	 *            the deleted Edge
 	 */
 	public void edgeDeleted(Edge e);
 
 	/**
-	 * Callback function for triggered actions just after an edge was added.
+	 * Callback function for triggered actions just after the edge
+	 * <code>e</code> was added to this Graph. Override this method to
+	 * implement user-defined behaviour upon addition of edges. Note that any
+	 * changes to this graph are forbidden.
 	 * 
 	 * @param e
-	 *            the deleted vertex
+	 *            the added Edge
 	 */
 	public void edgeAdded(Edge e);
 
 	/**
-	 * @return the first vertex object of vSeq
+	 * Returns the first Vertex in the vertex sequence of this Graph.
+	 * 
+	 * @return the first Vertex, or null if this graph contains no vertices.
 	 */
 	public Vertex getFirstVertex();
 
+	/**
+	 * Returns the last Vertex in the vertex sequence of this Graph.
+	 * 
+	 * @return the last Vertex, or null if this graph contains no vertices.
+	 */
 	public Vertex getLastVertex();
 
 	/**
-	 * @param aVertexClass
-	 * @return the first vertex object of class aVertexClass in vSeq
+	 * Returns the first Vertex of the specified <code>vertexClass</code>
+	 * (including subclasses) in the vertex sequence of this Graph.
+	 * 
+	 * @param vertexClass
+	 *            a VertexClass (i.e. an instance of schema.VertexClass)
+	 * 
+	 * @return the first Vertex, or null if this graph contains no vertices of
+	 *         the specified <code>vertexClass</code>.
 	 */
-	public Vertex getFirstVertexOfClass(VertexClass aVertexClass);
+	public Vertex getFirstVertexOfClass(VertexClass vertexClass);
 
 	/**
-	 * @param aVertexClass
+	 * Returns the first Vertex of the specified <code>vertexClass</code>,
+	 * including subclasses only if <code>noSubclasses</code> is set to false,
+	 * in the vertex sequence of this Graph.
+	 * 
+	 * @param vertexClass
+	 *            a VertexClass (i.e. an instance of schema.VertexClass)
+	 * 
 	 * @param noSubclasses
-	 *            if set to true, only vertices which are explicitly of the
-	 *            given edge class will be retrieved, otherwise also vertices of
-	 *            subclasses of the given EdgeClass will be retrieved
-	 * @return the first vertex object of explicit class aVertexClass in vSeq
+	 *            if set to true, only vertices with the exact class are taken
+	 *            into account, false means that also subclasses are valid
+	 * 
+	 * @return the first Vertex, or null if this graph contains no vertices of
+	 *         the specified <code>vertexClass</code>.
 	 */
-	public Vertex getFirstVertexOfClass(VertexClass aVertexClass,
+	public Vertex getFirstVertexOfClass(VertexClass vertexClass,
 			boolean noSubclasses);
 
 	/**
-	 * @param aVertexClass
-	 * @return the first vertex object of class aVertexClass in vSeq
+	 * Returns the first Vertex of the specified <code>vertexClass</code>
+	 * (including subclasses) in the vertex sequence of this Graph.
+	 * 
+	 * @param vertexClass
+	 *            a VertexClass (i.e. an M1 interface extending Vertex)
+	 * 
+	 * @return the first Vertex, or null if this graph contains no vertices of
+	 *         the specified <code>vertexClass</code>.
 	 */
-	public Vertex getFirstVertexOfClass(Class<? extends Vertex> aVertexClass);
+	public Vertex getFirstVertexOfClass(Class<? extends Vertex> vertexClass);
 
 	/**
-	 * @param aVertexClass
+	 * Returns the first Vertex of the specified <code>vertexClass</code>,
+	 * including subclasses only if <code>noSubclasses</code> is set to false,
+	 * in the vertex sequence of this Graph.
+	 * 
+	 * @param vertexClass
+	 *            a VertexClass (i.e. an M1 interface extending Vertex)
+	 * 
 	 * @param noSubclasses
-	 *            if set to true, only vertices which are explicitly of the
-	 *            given edge class will be retrieved, otherwise also vertices of
-	 *            subclasses of the given EdgeClass will be retrieved
-	 * @return the first vertex object of explicit class aVertexClass in vSeq
+	 *            if set to true, only vertices with the exact class are taken
+	 *            into account, false means that also subclasses are valid
+	 * 
+	 * @return the first Vertex, or null if this graph contains no vertices of
+	 *         the specified <code>vertexClass</code>.
 	 */
-	public Vertex getFirstVertexOfClass(Class<? extends Vertex> aVertexClass,
+	public Vertex getFirstVertexOfClass(Class<? extends Vertex> vertexClass,
 			boolean noSubclasses);
 
 	/**
-	 * @return first edge object of eSeq
+	 * Returns the first Edge in the edge sequence of this Graph.
+	 * 
+	 * @return the first Edge, or null if this graph contains no edges.
 	 */
 	public Edge getFirstEdgeInGraph();
 
+	/**
+	 * Returns the last Edge in the edge sequence of this Graph.
+	 * 
+	 * @return the last Edge, or null if this graph contains no edges.
+	 */
 	public Edge getLastEdgeInGraph();
 
 	/**
-	 * @param anEdgeClass
-	 * @return the first edge object of anEdgeClass in eSeq
+	 * Returns the first Edge of the specified <code>edgeClass</code>
+	 * (including subclasses) in the edge sequence of this Graph.
+	 * 
+	 * @param edgeClass
+	 *            an EdgeClass (i.e. an instance of schema.EdgeClass)
+	 * 
+	 * @return the first Edge, or null if this graph contains no edges of the
+	 *         specified <code>edgeClass</code>.
 	 */
-	public Edge getFirstEdgeOfClassInGraph(EdgeClass anEdgeClass);
+	public Edge getFirstEdgeOfClassInGraph(EdgeClass edgeClass);
 
 	/**
-	 * @param anEdgeClass
-	 * @return the first edge object of anEdgeClass in eSeq
-	 */
-	public Edge getFirstEdgeOfClassInGraph(Class<? extends Edge> anEdgeClass);
-
-	/**
-	 * @param anEdgeClass
+	 * Returns the first Edge of the specified <code>edgeClass</code>,
+	 * including subclasses only if <code>noSubclasses</code> is set to false,
+	 * in the edge sequence of this Graph.
+	 * 
+	 * @param edgeClass
+	 *            an EdgeClass (i.e. an instance of schema.EdgeClass)
+	 * 
 	 * @param noSubclasses
-	 *            if set to true, only edges which are explicitly of the given
-	 *            edge class will be retrieved, otherwise also edges of
-	 *            subclasses of the given EdgeClass will be retrieved
-	 * @return the first edge object of explicit anEdgeClass in eSeq
+	 *            if set to true, only edges with the exact class are taken into
+	 *            account, false means that also subclasses are valid
+	 * 
+	 * @return the first Edge, or null if this graph contains no edges of the
+	 *         specified <code>edgeClass</code>.
 	 */
-	public Edge getFirstEdgeOfClassInGraph(EdgeClass anEdgeClass,
+	public Edge getFirstEdgeOfClassInGraph(EdgeClass edgeClass,
 			boolean noSubclasses);
 
 	/**
-	 * @param anEdgeClass
-	 * @param noSubclasses
-	 *            if set to true, only edges which are explicitly of the given
-	 *            edge class will be retrieved, otherwise also edges of
-	 *            subclasses of the given EdgeClass will be retrieved
-	 * @return the first edge object of explicit anEdgeClass in eSeq
+	 * Returns the first Edge of the specified <code>edgeClass</code>
+	 * (including subclasses) in the edge sequence of this Graph.
+	 * 
+	 * @param edgeClass
+	 *            an EdgeClass (i.e. an M1 interface extending Edge)
+	 * 
+	 * @return the first Edge, or null if this graph contains no edges of the
+	 *         specified <code>edgeClass</code>.
 	 */
-	public Edge getFirstEdgeOfClassInGraph(Class<? extends Edge> anEdgeClass,
+	public Edge getFirstEdgeOfClassInGraph(Class<? extends Edge> edgeClass);
+
+	/**
+	 * Returns the first Edge of the specified <code>edgeClass</code>,
+	 * including subclasses only if <code>noSubclasses</code> is set to false,
+	 * in the edge sequence of this Graph.
+	 * 
+	 * @param edgeClass
+	 *            an EdgeClass (i.e. an M1 interface extending Edge)
+	 * 
+	 * @param noSubclasses
+	 *            if set to true, only edges with the exact class are taken into
+	 *            account, false means that also subclasses are valid
+	 * 
+	 * @return the first Edge, or null if this graph contains no edges of the
+	 *         specified <code>edgeClass</code>.
+	 */
+	public Edge getFirstEdgeOfClassInGraph(Class<? extends Edge> edgeClass,
 			boolean noSubclasses);
 
 	/**
+	 * Returns the Vertex with the specified <code>id</code> if such a vertex
+	 * exists in this Graph.
+	 * 
+	 * Precondition: id > 0
+	 * 
 	 * @param id
 	 *            the id of the vertex
-	 * @return vertex with id-number id
+	 * @return the Vertex, or null if no such vertex exists
 	 */
 	public Vertex getVertex(int id);
 
 	/**
+	 * Returns the oriented Edge with the specified <code>id</code> if such an
+	 * edge exists in this Graph. If <code>id</code> is positive, the normal
+	 * edge is returned, otherwise, the reversed Edge is returned.
+	 * 
+	 * Precondition: id != 0
+	 * 
 	 * @param id
 	 *            the id of the edge
-	 * @return edge with id-number id
+	 * @return the Edge, or null if no such edge exists
 	 */
 	public Edge getEdge(int id);
 
 	/**
-	 * @return the maximum number of vertices which can be stored in the graph
-	 *         before the arrays are expanded
+	 * The maximum number of vertices that can be stored in the graph before the
+	 * internal array structures are expanded.
+	 * 
+	 * @return the maximum number of vertices
 	 */
 	public int getMaxVCount();
 
@@ -304,93 +410,109 @@ public interface Graph extends AttributedElement {
 	public int getExpandedEdgeCount();
 
 	/**
-	 * @return the maximum number of edges which can be stored in the graph
-	 *         before the arrays are expanded
+	 * The maximum number of edges that can be stored in the graph before the
+	 * internal array structures are expanded.
+	 * 
+	 * @return the maximum number of edges
 	 */
 	public int getMaxECount();
 
 	/**
-	 * @return the current number of vertices stored in the graph
+	 * Returns the number of vertices in this Graph.
+	 * 
+	 * @return the number of vertices
 	 */
 	public int getVCount();
 
 	/**
-	 * @return the current number of edges stored in the graph
+	 * Returns the number of edges in this Graph.
+	 * 
+	 * @return the number of edges
 	 */
 	public int getECount();
 
 	/**
-	 * @return the id of the graph
+	 * Returns the <code>id</code> of this Graph. JGraLab assigns a 128 bit
+	 * random id to all Graphs upon creation. This initial id is most likely
+	 * (but not guaranteed) unique.
+	 * 
+	 * @return the id of this graph
 	 */
 	public String getId();
 
 	/**
-	 * sets the id of the graph
+	 * Sets the <code>id</code> of this Graph.
+	 * 
+	 * Precondition: id != null && id.equals(id.trim()) && !id.equals("")
 	 * 
 	 * @param id
+	 *            the new id
 	 */
 	public void setId(String id);
 
 	/**
-	 * Using this method, one can simply iterate over all edges of this graph
-	 * using the advanced for-loop
+	 * Returns an Iterable which iterates over all edges of this Graph in the
+	 * order determined by the edge sequence.
 	 * 
-	 * @return a iterable object which can be iterated through using the
-	 *         advanced for-loop
+	 * @return an Iterable for all edges
 	 */
 	public Iterable<Edge> edges();
 
 	/**
-	 * Using this method, one can simply iterate over all edges of this graph
-	 * using the advanced for-loop
+	 * Returns an Iterable which iterates over all edges of this Graph which
+	 * have the specified <code>edgeClass</code> (including subclasses), in
+	 * the order determined by the edge sequence.
 	 * 
-	 * @param eclass
-	 *            the EdgeClass of the edges which should be iterated
-	 * @return a iterable object which can be iterated through using the
-	 *         advanced for-loop
+	 * @param edgeClass
+	 *            an EdgeClass (i.e. instance of schema.EdgeClass)
+	 * 
+	 * @return an Iterable for all edges of the specified <code>edgeClass</code>
 	 */
-	public Iterable<Edge> edges(EdgeClass eclass);
+	public Iterable<Edge> edges(EdgeClass edgeClass);
 
 	/**
-	 * Using this method, one can simply iterate over all edges of this graph
-	 * using the advanced for-loop
+	 * Returns an Iterable which iterates over all edges of this Graph which
+	 * have the specified <code>edgeClass</code> (including subclasses), in
+	 * the order determined by the edge sequence.
 	 * 
-	 * @param eclass
-	 *            the M1-Class of the edges which should be iterated
-	 * @return a iterable object which can be iterated through using the
-	 *         advanced for-loop
+	 * @param edgeClass
+	 *            an EdgeClass (i.e. an M1 interface extending Edge)
+	 * 
+	 * @return an Iterable for all edges of the specified <code>edgeClass</code>
 	 */
-	public Iterable<Edge> edges(Class<? extends Edge> eclass);
+	public Iterable<Edge> edges(Class<? extends Edge> edgeClass);
 
 	/**
-	 * Using this method, one can simply iterate over all vertices of this graph
-	 * using the advanced for-loop
+	 * Returns an Iterable which iterates over all vertices of this Graph in the
+	 * order determined by the vertex sequence.
 	 * 
-	 * @return a iterable object which can be iterated through using the
-	 *         advanced for-loop
+	 * @return an Iterable for all vertices
 	 */
 	public Iterable<Vertex> vertices();
 
 	/**
-	 * Using this method, one can simply iterate over all vertices of this graph
-	 * using the advanced for-loop
+	 * Returns an Iterable which iterates over all vertices of this Graph which
+	 * have the specified <code>vertexClass</code> (including subclasses), in
+	 * the order determined by the vertex sequence.
 	 * 
-	 * @param vclass
-	 *            the VertexClass of the vertices which should be iterated
-	 * @return a iterable object which can be iterated through using the
-	 *         advanced for-loop
+	 * @param vertexClass
+	 *            a VertexClass (i.e. instance of schema.VertexClass)
+	 * 
+	 * @return an Iterable for all vertices of the specified
+	 *         <code>vertexClass</code>
 	 */
-	public Iterable<Vertex> vertices(VertexClass vclass);
+	public Iterable<Vertex> vertices(VertexClass vertexclass);
 
 	/**
-	 * Using this method, one can simply iterate over all vertices of this graph
-	 * using the advanced for-loop
+	 * Returns an Iterable which iterates over all vertices of this Graph which
+	 * have the specified <code>vertexClass</code> (including subclasses), in
+	 * the order determined by the vertex sequence.
 	 * 
-	 * @param vclass
-	 *            the M1-Class of the vertices which should be iterated
-	 * @return a iterable object which can be iterated through using the
-	 *         advanced for-loop
+	 * @param vertexClass
+	 *            a VertexClass (i.e. an M1 interface extending Vertex)
+	 * 
+	 * @return a iterable for all vertices of the specified
+	 *         <code>vertexClass</code>
 	 */
-	public Iterable<Vertex> vertices(Class<? extends Vertex> vclass);
-
+	public Iterable<Vertex> vertices(Class<? extends Vertex> vertexClass);
 }

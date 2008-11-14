@@ -119,7 +119,7 @@ class Graph2OWL {
 		long graphElements = 0, currentCount = 0, interval = 1;
 		if (pf != null) {
 			pf.init(g.getVCount() + g.getECount());
-			interval = pf.getInterval();
+			interval = pf.getUpdateInterval();
 		}
 
 		// update progress bar
