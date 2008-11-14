@@ -148,11 +148,15 @@ queries are evaluated.  Set it with `greql-set-graph'.")
 		  (and (zero-or-more (syntax whitespace)) ":" (zero-or-more (syntax whitespace))
 		       (minimal-match (and (group (and (one-or-more anything) (not (any ",;")))) 
 					   (any " ;")))))
+		 ;; Attributes
+		 (zero-or-one (and (zero-or-more (not (any "\n")))
+				   "{" (group (zero-or-more (not (any "\n")))) "}"))
 		 ))
 	    nil t)
       (let ((vc-or-pkg (match-string 1))
 	    (name (match-string 2))
-	    (superclasses (greql-parse-superclasses (match-string 3))))
+	    (superclasses (greql-parse-superclasses (match-string 3)))
+	    (attributes (greql-parse-attributes (match-string 4))))
 	;; TODO: Add domains!
 	(cond ((string= vc-or-pkg "Package")
 	       ;; All following elements belong to this package, so make it
@@ -161,18 +165,21 @@ queries are evaluated.  Set it with `greql-set-graph'.")
 	      ((string= vc-or-pkg "VertexClass")
 	       (setq schema-alist (cons (list (intern vc-or-pkg)
 					      (concat current-package name)
-					      superclasses)
+					      superclasses
+					      attributes)
 					schema-alist)))
 	      ((string= vc-or-pkg "EdgeClass")
 	       (setq schema-alist (cons (list (intern vc-or-pkg)
 					      (concat current-package name)
-					      superclasses)
+					      superclasses
+					      attributes)
 					schema-alist)))
 	      ((or (string= vc-or-pkg "AggregationClass")
 		   (string= vc-or-pkg "CompositionClass"))
 	       (setq schema-alist (cons (list (intern vc-or-pkg)
 					      (concat current-package name)
-					      superclasses)
+					      superclasses
+					      attributes)
 					schema-alist))))))
     schema-alist))
 
@@ -181,7 +188,19 @@ queries are evaluated.  Set it with `greql-set-graph'.")
 \"Baz\")"
   (when str
     (save-match-data
-	(split-string str "[ ,]+"))))
+      (split-string str "[ ,]+"))))
+
+(defun greql-parse-attributes (str)
+  (when str
+    (save-match-data
+      (let ((list (split-string str "[ :,]+"))
+	    result
+	    (i 1))
+	(dolist (elem list)
+	  (when (= (mod i 2) 1)
+	    (setq result (cons elem result)))
+	  (setq i (+ i 1)))
+	result))))
 
 (defun greql-completion-list (&optional types)
   (when greql-schema-alist
