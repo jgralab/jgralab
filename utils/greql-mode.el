@@ -24,7 +24,7 @@
 
 
 ;;; Version:
-;; <2008-11-09 Sun 11:38>
+;; <2008-11-14 Fri 16:09>
 
 ;;; Code:
 
@@ -114,10 +114,10 @@ queries are evaluated.  Set it with `greql-set-graph'.")
     (setq greql-schema-alist schema-alist))
   ;; add keywords and functions, too
   (dolist (key greql-keywords)
-    (setq greql-schema-alist (cons (cons 'keyword key)
+    (setq greql-schema-alist (cons (list 'keyword key)
 				   greql-schema-alist)))
   (dolist (fun greql-functions)
-    (setq greql-schema-alist (cons (cons 'function fun)
+    (setq greql-schema-alist (cons (list 'funlib fun)
 				   greql-schema-alist))))
 
 (defun greql-parse-schema ()
@@ -127,7 +127,7 @@ queries are evaluated.  Set it with `greql-set-graph'.")
   (let ((current-package "")
 	schema-alist)
     (while (re-search-forward
-	    (rx bol   ;; Anchor at the beginning of line.
+	    (rx bol ;; Anchor at the beginning of line.
 		(and
 		 ;; First, there may be the keyword abstract followed by
 		 ;; whitespaces.
@@ -141,24 +141,47 @@ queries are evaluated.  Set it with `greql-set-graph'.")
 		      (and (one-or-more (or (syntax word) (any "_."))) "Domain")))
 		 ;; Then there may be whitespaces again...
 		 (one-or-more (syntax whitespace))
-		 ;; Now comes the Meta-Modes type name.  That's needed, too.
-		 (group (one-or-more (or (syntax word) (any "_."))))))
+		 ;; Now comes the Meta-Model type name.
+		 (group (one-or-more (or (syntax word) (any "_."))))
+		 ;; Superclasses
+		 (zero-or-one
+		  (and (zero-or-more (syntax whitespace)) ":" (zero-or-more (syntax whitespace))
+		       (minimal-match (and (group (and (one-or-more anything) (not (any ",;")))) 
+					   (any " ;")))))
+		 ))
 	    nil t)
-      (let ((vc-or-pkg (buffer-substring-no-properties (match-beginning 1)
-						       (match-end 1)))
-	    (name (buffer-substring-no-properties (match-beginning 2)
-						  (match-end 2))))
-	(if (string= vc-or-pkg "Package")
-	    ;; All following elements belong to this package, so make it
-	    ;; current.
-	    (setq current-package (concat name "."))
-	  ;; That's a usual element, so add a cons of the form (MM-TYPE
-	  ;; . M-TYPE), where MM-TYPE is the Meta-Meta-Model type as symbol and
-	  ;; M-TYPE is the Meta-Model type as string.
-	  (setq schema-alist (cons (cons (intern vc-or-pkg)
-					 (concat current-package name))
-				   schema-alist)))))
+      (let ((vc-or-pkg (match-string 1))
+	    (name (match-string 2))
+	    (superclasses (greql-parse-superclasses (match-string 3))))
+	;; TODO: Add domains!
+	(cond ((string= vc-or-pkg "Package")
+	       ;; All following elements belong to this package, so make it
+	       ;; current.
+	       (setq current-package (concat name ".")))
+	      ((string= vc-or-pkg "VertexClass")
+	       (setq schema-alist (cons (list (intern vc-or-pkg)
+					      (concat current-package name)
+					      superclasses)
+					schema-alist)))
+	      ((string= vc-or-pkg "EdgeClass")
+	       (setq schema-alist (cons (list (intern vc-or-pkg)
+					      (concat current-package name)
+					      superclasses)
+					schema-alist)))
+	      ((or (string= vc-or-pkg "AggregationClass")
+		   (string= vc-or-pkg "CompositionClass"))
+	       (setq schema-alist (cons (list (intern vc-or-pkg)
+					      (concat current-package name)
+					      superclasses)
+					schema-alist))))))
     schema-alist))
+
+(defun greql-parse-superclasses (str)
+  "Given a string \": Foo, Bar, Baz\" it returns (\"Foo\" \"Bar\"
+\"Baz\")"
+  (when str
+    (save-match-data
+	(split-string str "[ ,]+"))))
 
 (defun greql-completion-list (&optional types)
   (when greql-schema-alist
