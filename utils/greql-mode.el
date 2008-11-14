@@ -24,7 +24,7 @@
 
 
 ;;; Version:
-;; <2008-11-14 Fri 16:09>
+;; <2008-11-14 Fri 22:48>
 
 ;;; Code:
 
@@ -210,13 +210,15 @@ queries are evaluated.  Set it with `greql-set-graph'.")
 	    (setq completions (cons elem completions)))))
       completions)))
 
-(defun greql-complete-1 (&optional types)
+(defun greql-complete-1 (completion-list &optional backward-regexp)
   (let* ((window (get-buffer-window "*Completions*" 0))
 	 (beg (save-excursion
-		(+ 1 (or (re-search-backward "[^[:word:]._]" nil t) 0))))
+		(+ 1 (or (re-search-backward
+			  (or backward-regexp "[^[:word:]._]")
+			  nil t) 0))))
 	 (word (buffer-substring-no-properties beg (point)))
 	 (compl (try-completion word
-				(greql-completion-list types))))
+				completion-list)))
     (if (and (eq last-command this-command)
 	     window (window-live-p window) (window-buffer window)
 	     (buffer-name (window-buffer window)))
@@ -236,7 +238,7 @@ queries are evaluated.  Set it with `greql-set-graph'.")
 	(if (string= word compl)
 	    ;; Show completion buffer
 	    (let ((list (all-completions word
-					 (greql-completion-list types))))
+					 completion-list)))
 	      (setq list (sort list 'string<))
 	      (with-output-to-temp-buffer "*Completions*"
 		    (display-completion-list list word)))
@@ -259,25 +261,25 @@ queries are evaluated.  Set it with `greql-set-graph'.")
    ((greql-variable-p)
     (let* ((vartypes (greql-variable-types))
 	   (attrs (greql-attributes vartypes)))
-      (message "vartypes = %s, attrs = %s" vartypes attrs)
-      ))
+      (greql-complete-1 attrs "[.]")))
    (t (greql-complete-keyword-or-function))))
 
 (defun greql-complete-vertexclass ()
   (interactive)
-  (greql-complete-1 '(VertexClass)))
+  (greql-complete-1 (greql-completion-list '(VertexClass))))
 
 (defun greql-complete-edgeclass ()
   (interactive)
-  (greql-complete-1 '(EdgeClass)))
+  (greql-complete-1 (greql-completion-list '(EdgeClass))))
 
 (defun greql-complete-domain ()
   (interactive)
-  (greql-complete-1 '(EnumDomain RecordDomain ListDomain SetDomain BagDomain)))
+  (greql-complete-1 (greql-completion-list
+		     '(EnumDomain RecordDomain ListDomain SetDomain BagDomain))))
 
 (defun greql-complete-keyword-or-function ()
   (interactive)
-  (greql-complete-1 '(keyword funlib)))
+  (greql-complete-1 (greql-completion-list '(keyword funlib))))
 
 (defun greql-execute ()
   "Execute the query in the current buffer on `greql-graph'."
