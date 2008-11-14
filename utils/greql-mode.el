@@ -167,15 +167,10 @@ queries are evaluated.  Set it with `greql-set-graph'.")
 					      superclasses
 					      attributes)
 					schema-alist)))
-	      ((string= vc-or-pkg "EdgeClass")
-	       (setq schema-alist (cons (list (intern vc-or-pkg)
-					      (concat current-package name)
-					      superclasses
-					      attributes)
-					schema-alist)))
-	      ((or (string= vc-or-pkg "AggregationClass")
+	      ((or (string= vc-or-pkg "EdgeClass")
+		   (string= vc-or-pkg "AggregationClass")
 		   (string= vc-or-pkg "CompositionClass"))
-	       (setq schema-alist (cons (list (intern vc-or-pkg)
+	       (setq schema-alist (cons (list 'EdgeClass
 					      (concat current-package name)
 					      superclasses
 					      attributes)
@@ -262,8 +257,10 @@ queries are evaluated.  Set it with `greql-set-graph'.")
 	(greql-edge-restriction-p))
     (greql-complete-edgeclass))
    ((greql-variable-p)
-    (let ((varinfo (greql-variable-and-types)))
-      (message "%s" varinfo)))
+    (let* ((vartypes (greql-variable-types))
+	   (attrs (greql-attributes vartypes)))
+      (message "vartypes = %s, attrs = %s" vartypes attrs)
+      ))
    (t (greql-complete-keyword-or-function))))
 
 (defun greql-complete-vertexclass ()
@@ -272,7 +269,7 @@ queries are evaluated.  Set it with `greql-set-graph'.")
 
 (defun greql-complete-edgeclass ()
   (interactive)
-  (greql-complete-1 '(EdgeClass AggregationClass CompositionClass)))
+  (greql-complete-1 '(EdgeClass)))
 
 (defun greql-complete-domain ()
   (interactive)
@@ -305,18 +302,41 @@ queries are evaluated.  Set it with `greql-set-graph'.")
   (looking-back "--{[[:word:]._, ]*"))
 
 (defun greql-variable-p ()
-  (looking-back "[^{][[:word:]]+[.][[:word:]]+"))
+  (looking-back "[^{][[:word:]]+[.][[:word:]]*"))
 
-(defun greql-variable-and-types ()
+(defun greql-variable-types ()
+  "Return something like (VertexClass (Type1 Type2 Type3)."
   (save-excursion
     (search-backward "." nil t 1)
     (let ((end (point))
 	  var)
       (search-backward " " nil t 1)
       (setq var (buffer-substring-no-properties (+ 1 (point)) end))
-      (re-search-backward (concat var "[ ]*:[ ]*[VE]{\\(.*\\)}") nil t 1)
-      (let ((types (match-string 1)))
-	(list (split-string types ", ") var)))))
+      (re-search-backward (concat var "[ ]*:[ ]*\\([VE]\\){\\(.*\\)}") nil t 1)
+      (let* ((mtype-match (buffer-substring-no-properties (match-beginning 1)
+							  (match-end 1)))
+	     (mtype (cond 
+		     ((or (not mtype-match) (string= mtype-match "E")) 'EdgeClass)
+		     ((string= mtype-match "V") 'VertexClass)
+		     (t (error "Not match!"))))
+	     (types (buffer-substring-no-properties (match-beginning 2)
+						    (match-end 2))))
+	(list mtype (split-string types ", "))))))
+
+(defun greql-attributes (typelist)
+  (remove-duplicates
+   (greql-attributes-1 (car typelist) (cadr typelist))
+   :test 'string=))
+
+(defun greql-attributes-1 (mtype types)
+  (let (attrs)
+    (dolist (line greql-schema-alist)
+      (when (and (eq mtype (car line))
+		 (member (cadr line) types))
+	(setq attrs
+	      (append attrs (fourth line)
+		      (greql-attributes-1 mtype (third line))))))
+    attrs))
 
 (provide 'greql-mode)
 
