@@ -60,7 +60,7 @@ import de.uni_koblenz.jgralab.schema.GraphElementClass;
  * </dl>
  * </dd>
  * </dl>
- * @author Daniel Bildhauer <dbildh@uni-koblenz.de> Summer 2006, Diploma Thesis
+ * @author ist@uni-koblenz.de
  * 
  */
 
@@ -72,7 +72,7 @@ import de.uni_koblenz.jgralab.schema.GraphElementClass;
  * 	<li>structure: (JValueCollection | PathSystem | JValuePath)</li>
  * </ul>
  * <strong>Returns:</strong> a JValueSet of edgetypes
- * @author Daniel Bildhauer <dbildh@uni-koblenz.de> Summer 2006, Diploma Thesis
+ * @author ist@uni-koblenz.de
  * 
  */
 public class EdgeTypeSet implements Greql2Function {

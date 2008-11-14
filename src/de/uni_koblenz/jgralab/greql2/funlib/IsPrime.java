@@ -60,7 +60,7 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
  * </dd>
  * </dl>
  * 
- * @author Tassilo Horn (heimdall), 2008, Diploma Thesis
+ * @author ist@uni-koblenz.de
  */
 public class IsPrime implements Greql2Function {
 

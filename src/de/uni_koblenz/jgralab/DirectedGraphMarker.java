@@ -7,7 +7,7 @@ package de.uni_koblenz.jgralab;
  * in this case the edges are marked taking their direction into account.
  * That means, a incomming edge and the same edge in the outgoing direction
  * are marked independently 
- * @author dbildh
+ * @author ist@uni-koblenz.de
  *
  * @param <T>
  */

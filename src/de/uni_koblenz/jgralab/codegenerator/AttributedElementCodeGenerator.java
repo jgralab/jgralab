@@ -31,6 +31,12 @@ import java.util.TreeSet;
 import de.uni_koblenz.jgralab.Attribute;
 import de.uni_koblenz.jgralab.schema.AttributedElementClass;
 
+/**
+ * TODO add comment
+ * 
+ * @author ist@uni-koblenz.de
+ * 
+ */
 public class AttributedElementCodeGenerator extends CodeGenerator {
 
 	/**

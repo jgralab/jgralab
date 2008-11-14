@@ -33,7 +33,7 @@ import de.uni_koblenz.jgralab.greql2.schema.SourcePosition;
  * This is the base class for all exceptions that refeer to the querysource with
  * offset/length pairs
  * 
- * @author Daniel Bildhauer <dbildh@uni-koblenz.de> Summer 2006, Diploma Thesis
+ * @author ist@uni-koblenz.de
  * 
  */
 public class QuerySourceException extends EvaluateException {

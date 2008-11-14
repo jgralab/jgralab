@@ -24,6 +24,6 @@
 
 /**
  * This package contains the xmlrpc functionality for JGraLab.
+ * @author ist@uni-koblenz.de
  */
-
 package de.uni_koblenz.jgralab.xmlrpc;

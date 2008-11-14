@@ -66,7 +66,7 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueTypeCollection;
  * </dl>
  * @see Degree
  * @see OutDegree
- * @author Daniel Bildhauer <dbildh@uni-koblenz.de> Summer 2006, Diploma Thesis
+ * @author ist@uni-koblenz.de
  * 
  */
 

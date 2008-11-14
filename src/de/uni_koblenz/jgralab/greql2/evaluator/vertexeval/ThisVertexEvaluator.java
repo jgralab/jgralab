@@ -34,7 +34,7 @@ import de.uni_koblenz.jgralab.greql2.schema.ThisVertex;
  * difference for other VertexEvaluators, if a vertex is root of a complex
  * subgraph or a variable. Also provides a method to set the variable value.
  * 
- * @author Daniel Bildhauer <dbildh@uni-koblenz.de> Summer 2006, Diploma Thesis
+ * @author ist@uni-koblenz.de
  * 
  */
 public class ThisVertexEvaluator extends VariableEvaluator {

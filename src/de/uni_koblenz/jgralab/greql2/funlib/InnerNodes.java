@@ -54,7 +54,7 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValuePathSystem;
  * </dd>
  * </dl>
  * @see Leaves
- * @author Daniel Bildhauer <dbildh@uni-koblenz.de> Summer 2006, Diploma Thesis
+ * @author ist@uni-koblenz.de
  * 
  */
 

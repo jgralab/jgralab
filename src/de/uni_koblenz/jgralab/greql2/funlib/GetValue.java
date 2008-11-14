@@ -61,7 +61,7 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueRecord;
  * </dd>
  * </dl>
  *
- * @author Daniel Bildhauer <dbildh@uni-koblenz.de> Summer 2006, Diploma Thesis
+ * @author ist@uni-koblenz.de
  *
  */
 
@@ -74,7 +74,7 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueRecord;
  * <strong>Returns:</strong> the value of the given attribute or RecordElement,
  * encapsulated in a JValue
  *
- * @author Daniel Bildhauer <dbildh@uni-koblenz.de> Summer 2006, Diploma Thesis
+ * @author ist@uni-koblenz.de
  */
 public class GetValue implements Greql2Function {
 

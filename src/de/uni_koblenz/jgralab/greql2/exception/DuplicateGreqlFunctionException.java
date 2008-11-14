@@ -5,7 +5,7 @@ package de.uni_koblenz.jgralab.greql2.exception;
  * a GReQL function but there is already a GReQL function with 
  * the same name available in the function library.
  * 
- * @author Daniel Bildhauer <dbildh@uni-koblenz.de>
+ * @author ist@uni-koblenz.de
  *
  */
 public class DuplicateGreqlFunctionException extends RuntimeException {

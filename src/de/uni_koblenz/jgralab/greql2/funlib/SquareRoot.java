@@ -54,13 +54,13 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
  * </dd>
  * </dl>
  * 
- * @author Daniel Bildhauer <dbildh@uni-koblenz.de> Summer 2006, Diploma Thesis
+ * @author ist@uni-koblenz.de
  * 
  */
 
 /*
  * Calculates the squareRoot of the given value @param value a double value to
- * create the squareroot of @return the squareroot as double @author Daniel
+ * create the squareroot of @return the squareroot as double @author ist@uni-koblenz.de
  * Bildhauer <dbildh@uni-koblenz.de> Summer 2006, Diploma Thesis
  * 
  */

@@ -37,7 +37,7 @@ import de.uni_koblenz.jgralab.greql2.schema.TypeId;
  * This class is the base class for all VertexEvaluators, that construct an element
  * collection, for instance EdgeSetExpressionEvaluator. But it is not the base for 
  * Forward- or BackwardVertexSetEvaluator, because these are PathSearchEvaluators. 
- * @author Daniel Bildhauer <dbildh@uni-koblenz.de> 
+ * @author ist@uni-koblenz.de
  * Summer 2006, Diploma Thesis
  *
  */

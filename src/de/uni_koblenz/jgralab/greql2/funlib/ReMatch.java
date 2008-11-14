@@ -59,7 +59,7 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
  * </dd>
  * </dl>
  * 
- * @author Daniel Bildhauer <dbildh@uni-koblenz.de> Summer 2006, Diploma Thesis
+ * @author ist@uni-koblenz.de
  * 
  */
 
@@ -67,7 +67,7 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
  * calculates the Regular Match for a String s and a Stringpatterns p
  * 
  * @param s the string to check @param p the pattern used for checking @return
- * TrivalentBoolean.TRUE, is p matches the string s @author Daniel Bildhauer
+ * TrivalentBoolean.TRUE, is p matches the string s @author ist@uni-koblenz.de
  * <dbildh@uni-koblenz.de> Summer 2006, Diploma Thesis
  * 
  */

@@ -7,7 +7,7 @@ import de.uni_koblenz.jgralab.utilities.tg2dot.Tg2Dot;
  * Some utility functions that come in handy when developing with JGraLab and
  * GReQL2.
  * 
- * @author Tassilo Horn (heimdall), 2007, Diploma Thesis
+ * @author ist@uni-koblenz.de
  * 
  */
 public class Utility {

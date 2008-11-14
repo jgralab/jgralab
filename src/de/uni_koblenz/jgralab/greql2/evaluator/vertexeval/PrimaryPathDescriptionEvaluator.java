@@ -34,7 +34,7 @@ import de.uni_koblenz.jgralab.greql2.schema.PrimaryPathDescription;
 
 /**
  * abstract baseclass for SimplePathDescription and EdgePathDescription
- * @author Daniel Bildhauer <dbildh@uni-koblenz.de> 
+ * @author ist@uni-koblenz.de
  * Summer 2006, Diploma Thesis
  *
  */

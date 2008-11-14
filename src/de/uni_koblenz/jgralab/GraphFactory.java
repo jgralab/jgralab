@@ -30,7 +30,7 @@ package de.uni_koblenz.jgralab;
  * factory it is possible to extend the Graph, Vertex, or Edge classes that are
  * used in a graph.
  * 
- * @author dbildh
+ * @author ist@uni-koblenz.de
  */
 
 public interface GraphFactory {

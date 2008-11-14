@@ -37,7 +37,7 @@ import de.uni_koblenz.jgralab.greql2.schema.RecordId;
 
 /**
  * Evaluates a record element, this is for instance  name:"element" in the record-construction rec( name:"element")
- * @author Daniel Bildhauer <dbildh@uni-koblenz.de> 
+ * @author ist@uni-koblenz.de
  * November 2006
  *
  */

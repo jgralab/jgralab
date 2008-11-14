@@ -28,7 +28,7 @@ package de.uni_koblenz.jgralab;
  * exceptions of this class are thrown if an error occurs while creating or
  * manipulating a graph
  * 
- * @author Steffen Kahle
+ * @author ist@uni-koblenz.de
  */
 public class GraphException extends RuntimeException {
 

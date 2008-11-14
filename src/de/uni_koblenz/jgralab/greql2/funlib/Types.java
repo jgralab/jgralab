@@ -55,14 +55,14 @@ import de.uni_koblenz.jgralab.schema.Schema;
  * </dd>
  * </dl>
  * 
- * @author Daniel Bildhauer <dbildh@uni-koblenz.de> Summer 2006, Diploma Thesis
+ * @author ist@uni-koblenz.de
  * 
  */
 
 /*
  * returns a set which contains all types the schema of the datagraph knows
  * 
- * @author Daniel Bildhauer <dbildh@uni-koblenz.de> Summer 2006, Diploma Thesis
+ * @author ist@uni-koblenz.de
  * 
  */
 public class Types implements Greql2Function {

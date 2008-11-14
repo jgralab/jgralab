@@ -18,7 +18,7 @@ import de.uni_koblenz.jgralab.schema.Schema;
  * reads the logs and provides informations about the average input and result
  * sizes of {@link Greql2Vertex}s and the average selectivity.
  * 
- * @author Tassilo Horn (heimdall), 2007, Diploma Thesis
+ * @author ist@uni-koblenz.de
  * 
  */
 public class Level2LogReader extends Level2LoggingBase implements

@@ -8,7 +8,7 @@ import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.CostModel;
 /**
  * Should be thrown on errors in a {@link CostModel}.
  * 
- * @author Tassilo Horn (heimdall), 2007, Diploma Thesis
+ * @author ist@uni-koblenz.de
  * 
  */
 public class CostModelException extends Greql2Exception {

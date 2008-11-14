@@ -21,11 +21,17 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
- 
+
 package de.uni_koblenz.jgralab.codegenerator;
 
 import java.util.Vector;
 
+/**
+ * TODO add comment
+ * 
+ * @author ist@uni-koblenz.de
+ * 
+ */
 public class CodeList extends CodeBlock {
 	Vector<CodeBlock> blocks;
 
@@ -69,12 +75,13 @@ public class CodeList extends CodeBlock {
 	@Override
 	public String getCode(int indentLevel) {
 		StringBuilder buf = new StringBuilder();
-		for (CodeBlock block: blocks) {
+		for (CodeBlock block : blocks) {
 			buf.append(block.getCode(block.additionalIndent + indentLevel + 1));
 		}
 		return buf.toString();
 	}
 
+	@Override
 	public void clear() {
 		blocks.clear();
 	}
@@ -82,7 +89,7 @@ public class CodeList extends CodeBlock {
 	@Override
 	public int size() {
 		int result = 0;
-		for (CodeBlock block: blocks) {
+		for (CodeBlock block : blocks) {
 			result += block.size();
 		}
 		return result;

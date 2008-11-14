@@ -37,7 +37,7 @@ package de.uni_koblenz.jgralab.greql2.evaluator.costmodel;
  * ownEvaluationCosts (subtreeEvaluationCosts).</li>
  * </ul>
  * 
- * @author Daniel Bildhauer <dbildh@uni-koblenz.de> Summer 2006, Diploma Thesis
+ * @author ist@uni-koblenz.de
  * 
  */
 public class VertexCosts {

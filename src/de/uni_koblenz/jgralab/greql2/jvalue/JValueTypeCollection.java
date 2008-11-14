@@ -34,7 +34,7 @@ import de.uni_koblenz.jgralab.schema.AttributedElementClass;
 /**
  * Represents a set of allowed and forbidden types
  * 
- * @author Daniel Bildhauer <dbildh@uni-koblenz.de> November 2006
+ * @author ist@uni-koblenz.de
  * 
  */
 public class JValueTypeCollection extends JValue {

@@ -31,7 +31,7 @@ import de.uni_koblenz.jgralab.schema.GraphClass;
  * This class is needed to propagate the size of the currently used graph along
  * different calculate methods
  * 
- * @author Daniel Bildhauer <dbildh@uni-koblenz.de> Summer 2006, Diploma Thesis
+ * @author ist@uni-koblenz.de
  */
 public class GraphSize {
 

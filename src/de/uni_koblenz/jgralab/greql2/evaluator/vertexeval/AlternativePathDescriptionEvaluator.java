@@ -41,7 +41,7 @@ import de.uni_koblenz.jgralab.greql2.schema.IsAlternativePathOf;
  * Evaluates an alternative path description. Creates a NFA that accepts the
  * alternative path description.
  * 
- * @author Daniel Bildhauer <dbildh@uni-koblenz.de> Summer 2006, Diploma Thesis
+ * @author ist@uni-koblenz.de
  * 
  */
 public class AlternativePathDescriptionEvaluator extends

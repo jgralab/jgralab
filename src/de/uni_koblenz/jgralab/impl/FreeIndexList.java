@@ -74,7 +74,7 @@ import java.io.PrintStream;
  * Take care: the implementation is somehow "tricky" but well documented :-)<br/>
  * <br/>
  * 
- * @author riediger@uni-koblenz.de (Volker Riediger)
+ * @author ist@uni-koblenz.de
  */
 public class FreeIndexList {
 

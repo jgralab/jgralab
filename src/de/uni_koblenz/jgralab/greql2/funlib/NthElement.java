@@ -60,7 +60,7 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueTuple;
  * </dd>
  * </dl>
  * 
- * @author Daniel Bildhauer <dbildh@uni-koblenz.de> Summer 2006, Diploma Thesis
+ * @author ist@uni-koblenz.de
  * 
  */
 
@@ -72,7 +72,7 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueTuple;
  * element with the given index or a invlaid JValue @throw a
  * FunctionInvalidIndexException if the given structure doesn't contain a
  * element with the given index, for instance if one provides a list [1,2,3] and
- * tries to acces list[17] @author Daniel Bildhauer <dbildh@uni-koblenz.de>
+ * tries to acces list[17] @author ist@uni-koblenz.de
  * Summer 2006, Diploma Thesis
  * 
  */

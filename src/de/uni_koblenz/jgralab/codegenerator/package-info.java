@@ -24,6 +24,7 @@
 
 /**
  * This package contains all classes needed by JGraLab to generate code from TG-schema-files.
+ * @author ist@uni-koblenz.de
  */
 
 package de.uni_koblenz.jgralab.codegenerator;

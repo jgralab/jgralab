@@ -72,7 +72,7 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
  * </dd>
  * </dl>
  * 
- * @author Daniel Bildhauer <dbildh@uni-koblenz.de> Summer 2006, Diploma Thesis
+ * @author ist@uni-koblenz.de
  * 
  */
 
@@ -81,7 +81,7 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
  * <strong>Parameters:</strong> <ul> <li> a: (Integer | Long | Double | String)
  * (the first scalar value or String)</li> <li> b: (Integer | Long | Double |
  * String) (the second scalar value or string</li> </ul> <strong>Returns:</returns>
- * (a >= b): JValueBoolean @author Daniel Bildhauer <dbildh@uni-koblenz.de>
+ * (a >= b): JValueBoolean @author ist@uni-koblenz.de
  * Summer 2006, Diploma Thesis
  * 
  */

@@ -42,7 +42,7 @@ import de.uni_koblenz.jgralab.greql2.schema.Quantifier;
 /**
  * Evaluates a QuantifiedExpression, a QuantifiedExpression is something like
  * "using FOO: exists s: FOO @ s = true".
- * @author Daniel Bildhauer <dbildh@uni-koblenz.de> Summer 2006, Diploma Thesis
+ * @author ist@uni-koblenz.de
  * 
  */
 public class QuantifiedExpressionEvaluator extends VertexEvaluator {

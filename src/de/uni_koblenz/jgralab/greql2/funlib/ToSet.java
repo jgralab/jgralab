@@ -54,7 +54,7 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueSet;
  * </dd>
  * </dl>
  * 
- * @author Daniel Bildhauer <dbildh@uni-koblenz.de> Feb 2008
+ * @author ist@uni-koblenz.de
  * 
  */
 

@@ -39,7 +39,7 @@ import de.uni_koblenz.jgralab.greql2.schema.PathDescription;
  * Evaluates an iterated path description. Creates a NFA that accepts the
  * iterated path description.
  * 
- * @author Daniel Bildhauer <dbildh@uni-koblenz.de> 
+ * @author ist@uni-koblenz.de
  * Summer 2006, Diploma Thesis
  *
  */

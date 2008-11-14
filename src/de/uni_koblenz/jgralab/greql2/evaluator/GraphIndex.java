@@ -35,7 +35,7 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueSet;
 
 /**
  * This class contains the computed index for a graph
- * @author dbildh
+ * @author ist@uni-koblenz.de
  *
  */
 public class GraphIndex {

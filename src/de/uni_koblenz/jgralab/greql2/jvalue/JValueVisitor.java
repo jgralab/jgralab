@@ -28,7 +28,7 @@ package de.uni_koblenz.jgralab.greql2.jvalue;
  * This interface declares the methods that are used to traverse a complex
  * structure of JValues
  * 
- * @author Daniel Bildhauer <dbildh@uni-koblenz.de> Summer 2006, Diploma Thesis
+ * @author ist@uni-koblenz.de
  */
 public interface JValueVisitor {
 

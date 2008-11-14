@@ -4,7 +4,7 @@
 package de.uni_koblenz.jgralab.greql2.exception;
 
 /**
- * @author horn
+ * @author ist@uni-koblenz.de
  * 
  * Base class for all GReQL2 related exceptions.
  */

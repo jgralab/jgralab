@@ -29,7 +29,7 @@ import java.util.Iterator;
 /**
  * This class is base for all collections of JValue-Objects.
  *
- * @author Daniel Bildhauer <dbildh@uni-koblenz.de>
+ * @author ist@uni-koblenz.de
  *
  */
 abstract public class JValueCollection extends JValue implements

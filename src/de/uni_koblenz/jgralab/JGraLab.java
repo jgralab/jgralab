@@ -30,6 +30,7 @@ import java.util.logging.Logger;
 /**
  * This class gives information, which software was used creating JGraLab.
  * 
+ * @author ist@uni-koblenz.de
  */
 public class JGraLab {
 

@@ -36,7 +36,7 @@ import java.util.Iterator;
  * (http://www.iis.uni-stuttgart.de) under guidance of Dietmar Lippold
  * (dietmar.lippold@informatik.uni-stuttgart.de).
  * 
- * @author Daniel Bildhauer <dbildh@uni-koblenz.de>
+ * @author ist@uni-koblenz.de
  */
 public class JValueSet extends JValueCollection {
 

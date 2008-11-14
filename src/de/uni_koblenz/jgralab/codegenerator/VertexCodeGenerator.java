@@ -35,6 +35,7 @@ import de.uni_koblenz.jgralab.schema.VertexClass;
  * This class is used by the method Schema.commit() to generate the Java-classes
  * that implement the VertexClasses of a graph schema.
  * 
+ * @author ist@uni-koblenz.de
  */
 public class VertexCodeGenerator extends AttributedElementCodeGenerator {
 

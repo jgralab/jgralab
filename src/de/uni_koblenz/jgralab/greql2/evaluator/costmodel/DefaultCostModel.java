@@ -134,7 +134,7 @@ import de.uni_koblenz.jgralab.greql2.schema.WhereExpression;
  * This is the default costmodel the evaluator uses if no other costmodel is
  * set.
  * 
- * @author Daniel Bildhauer <dbildh@uni-koblenz.de> Summer 2006, Diploma Thesis
+ * @author ist@uni-koblenz.de
  * 
  */
 public class DefaultCostModel extends CostModelBase implements CostModel {

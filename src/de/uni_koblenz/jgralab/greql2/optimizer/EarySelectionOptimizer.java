@@ -40,7 +40,7 @@ import de.uni_koblenz.jgralab.greql2.schema.Variable;
  * This {@link Optimizer} implements the transformation "Selection as early as
  * possible".
  * 
- * @author Tassilo Horn (heimdall), 2007, Diploma Thesis
+ * @author ist@uni-koblenz.de
  * 
  */
 public class EarySelectionOptimizer extends OptimizerBase {

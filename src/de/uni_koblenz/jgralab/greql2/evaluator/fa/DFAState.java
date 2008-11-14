@@ -30,7 +30,7 @@ import java.util.Iterator;
 /**
  * Modells a state in the DFA. A DFAState may represent more than one NFAstate, because 
  * the DFA is created via powerset-construction (Myhill-construction) from the NFA. 
- * @author Daniel Bildhauer <dbildh@uni-koblenz.de> 
+ * @author ist@uni-koblenz.de
  * Summer 2006, Diploma Thesis
  *
  */

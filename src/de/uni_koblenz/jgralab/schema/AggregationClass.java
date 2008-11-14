@@ -21,14 +21,13 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
- 
+
 package de.uni_koblenz.jgralab.schema;
 
-
 /**
- * instances of this class represent aggregation classes of the m2 layer 
- * @author Steffen Kahle
- *
+ * Instances of this class represent aggregation classes of the M2 layer.
+ * 
+ * @author ist@uni-koblenz.de
  */
 public interface AggregationClass extends EdgeClass {
 
@@ -36,5 +35,5 @@ public interface AggregationClass extends EdgeClass {
 	 * @return true, if from-side is an aggregation
 	 */
 	public boolean isAggregateFrom();
-	
+
 }

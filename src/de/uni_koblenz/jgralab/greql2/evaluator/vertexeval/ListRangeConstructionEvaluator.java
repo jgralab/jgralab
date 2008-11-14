@@ -41,7 +41,7 @@ import de.uni_koblenz.jgralab.greql2.schema.ListRangeConstruction;
  * between the result of firstElementExpression and lastElementExpression. These
  * borders are also added to the list
  * 
- * @author Daniel Bildhauer <dbildh@uni-koblenz.de> Summer 2006, Diploma Thesis
+ * @author ist@uni-koblenz.de
  * 
  */
 public class ListRangeConstructionEvaluator extends VertexEvaluator {

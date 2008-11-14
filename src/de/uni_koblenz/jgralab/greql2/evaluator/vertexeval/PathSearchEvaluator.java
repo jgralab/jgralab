@@ -32,7 +32,7 @@ import de.uni_koblenz.jgralab.greql2.funlib.Greql2Function;
  * Abstract baseclass for all regular pathsearches, that are PathExistence,
  * ForwardVertexSet and BackwardVertexSet
  * 
- * @author Daniel Bildhauer <dbildh@uni-koblenz.de> Summer 2006, Diploma Thesis
+ * @author ist@uni-koblenz.de
  * 
  */
 public abstract class PathSearchEvaluator extends VertexEvaluator {

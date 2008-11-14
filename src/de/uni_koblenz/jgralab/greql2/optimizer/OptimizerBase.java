@@ -18,7 +18,7 @@ import de.uni_koblenz.jgralab.greql2.schema.Variable;
  * Base class for all {@link Optimizer}s which defines some useful methods that
  * are needed in derived Classes.
  * 
- * @author Tassilo Horn (heimdall), 2007, Diploma Thesis
+ * @author ist@uni-koblenz.de
  * 
  */
 public abstract class OptimizerBase implements Optimizer {

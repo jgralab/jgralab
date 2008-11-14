@@ -35,7 +35,7 @@ import de.uni_koblenz.jgralab.schema.EdgeClass;
  * Common base class for EdgeImpl and ReversedEdgeImpl. Implements incidence
  * list and related operations.
  * 
- * @author riediger@uni-koblenz.de (Volker Riediger)
+ * @author ist@uni-koblenz.de
  */
 public abstract class IncidenceImpl extends GraphElementImpl implements Edge {
 

@@ -30,45 +30,49 @@ import java.util.Map;
 import de.uni_koblenz.jgralab.codegenerator.ClassFileAbstraction;
 
 /**
- * The {@code M1ClassManager} holds the bytecode of M1 classes in a {@code Map}. As a
- * specialization of {@code ClassLoader}, it overwrites the method {@code findClass}
- * so that the {@code Map} is first searched for classes' bytecode before invoking 
- * {@code findClass} of the superclass {@code ClassLoader}.
- *
+ * The {@code M1ClassManager} holds the bytecode of M1 classes in a {@code Map}.
+ * As a specialization of {@code ClassLoader}, it overwrites the method
+ * {@code findClass} so that the {@code Map} is first searched for classes'
+ * bytecode before invoking {@code findClass} of the superclass
+ * {@code ClassLoader}.
+ * 
+ * @author ist@uni-koblenz.de
  */
 public class M1ClassManager extends ClassLoader {
 	private Map<String, ClassFileAbstraction> m1Classes;
-	
+
 	private static M1ClassManager instance;
-	
+
 	public static M1ClassManager instance() {
 		if (instance == null) {
 			instance = new M1ClassManager();
 		}
 		return instance;
 	}
-	
+
 	private M1ClassManager() {
 		m1Classes = new HashMap<String, ClassFileAbstraction>();
 	}
-	
+
 	public void putM1Class(String className, ClassFileAbstraction cfa) {
 		m1Classes.put(className, cfa);
 	}
-	
+
 	/**
 	 * Tries to find a class in the internal {@code Map}, If this fails, {@code
 	 * findClass} of {@code ClassLoader} is invoked.
 	 * 
-	 * @param name the name of the class to be found
+	 * @param name
+	 *            the name of the class to be found
 	 */
+	@Override
 	protected Class<?> findClass(String name) throws ClassNotFoundException {
 		ClassFileAbstraction cfa = m1Classes.get(name);
 		if (cfa != null) {
 			byte[] bytes = cfa.getBytecode();
 			return defineClass(name, bytes, 0, bytes.length);
 		}
-//		return super.findClass(name);
+		// return super.findClass(name);
 		return Class.forName(name);
 	}
 }

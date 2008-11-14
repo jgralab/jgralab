@@ -33,7 +33,7 @@ import de.uni_koblenz.jgralab.greql2.schema.Variable;
  * If two {@link Variable} result in the same re-evaluation costs on value
  * changes, the one with a higher cardinality is declared after the other one.
  * 
- * @author Tassilo Horn (heimdall), 2008, Diploma Thesis
+ * @author ist@uni-koblenz.de
  * 
  */
 public class VariableDeclarationOrderOptimizer extends OptimizerBase {

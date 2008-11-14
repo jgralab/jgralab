@@ -36,7 +36,7 @@ import de.uni_koblenz.jgralab.impl.ReversedEdgeImpl;
  * example how that could be done is located in the tutorial in the class
  * <code>DijkstraVertexMarker</code>.
  *
- * @author Daniel Bildhauer <dbildh@uni-koblenz.de> November 2006
+ * @author ist@uni-koblenz.de
  *
  */
 public class GraphMarker<T> {

@@ -27,10 +27,9 @@ package de.uni_koblenz.jgralab.schema;
 import de.uni_koblenz.jgralab.codegenerator.CodeBlock;
 
 /**
- * generalizes all domains
+ * Base class of all JGraLab Domains.
  * 
- * @author Steffen Kahle
- * 
+ * @author ist@uni-koblenz.de
  */
 public interface Domain extends NamedElement {
 	/**

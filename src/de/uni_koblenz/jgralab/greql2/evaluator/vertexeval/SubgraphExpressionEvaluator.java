@@ -31,7 +31,7 @@ import de.uni_koblenz.jgralab.greql2.schema.SubgraphExpression;
 
 /**
  * This is the baseclass for VertexSubgraphExpressionEvaluator and EdgeSubgraphExpressionEvaluator
- * @author Daniel Bildhauer <dbildh@uni-koblenz.de> 
+ * @author ist@uni-koblenz.de
  * Summer 2006, Diploma Thesis
  *
  */

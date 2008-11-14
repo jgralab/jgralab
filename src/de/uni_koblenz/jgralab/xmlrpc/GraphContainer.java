@@ -33,6 +33,7 @@ import de.uni_koblenz.jgralab.Graph;
  * This class holds the graphs created or loaded via the {@code JGraLabFacade},
  * mapping an integer value (the handle) to a graph.
  * 
+ * @author ist@uni-koblenz.de
  */
 public class GraphContainer {
 

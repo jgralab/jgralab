@@ -50,7 +50,7 @@ import de.uni_koblenz.jgralab.greql2.schema.Variable;
 /**
  * Evaluates a Declaration vertex in the GReQL-2 Syntaxgraph
  * 
- * @author Daniel Bildhauer <dbildh@uni-koblenz.de> Summer 2006, Diploma Thesis
+ * @author ist@uni-koblenz.de
  * 
  */
 public class DeclarationEvaluator extends VertexEvaluator {

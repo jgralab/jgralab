@@ -30,7 +30,7 @@ import de.uni_koblenz.jgralab.greql2.schema.Variable;
  * {@link FunctionApplication}s of the {@link Contains} function applied to a
  * {@link PathExpression}.
  * 
- * @author Tassilo Horn (heimdall), 2008, Diploma Thesis
+ * @author ist@uni-koblenz.de
  * 
  */
 public class PathExistenceOptimizer extends OptimizerBase {

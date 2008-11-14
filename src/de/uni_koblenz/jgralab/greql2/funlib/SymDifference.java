@@ -59,7 +59,7 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueSet;
  * @see Difference
  * @see Intersection
  * @see Union
- * @author Daniel Bildhauer <dbildh@uni-koblenz.de> Summer 2006, Diploma Thesis
+ * @author ist@uni-koblenz.de
  * 
  */
 public class SymDifference implements Greql2Function {

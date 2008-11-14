@@ -34,7 +34,7 @@ import de.uni_koblenz.jgralab.greql2.exception.JValueVisitorException;
  * visitor, which for example prints alls vertices to a list, extend this class
  * an overwrite the method visitVertex(Vertex v)
  * 
- * @author Daniel Bildhauer <dbildh@uni-koblenz.de> Summer 2006, Diploma Thesis
+ * @author ist@uni-koblenz.de
  * 
  */
 

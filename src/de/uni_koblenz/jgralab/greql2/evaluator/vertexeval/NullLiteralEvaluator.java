@@ -38,7 +38,7 @@ import de.uni_koblenz.jgralab.greql2.schema.NullLiteral;
  * difference for the other VertexEvaluators, if a value is the result of a
  * maybe complex evaluation or if it is a literal.
  * 
- * @author Daniel Bildhauer <dbildh@uni-koblenz.de> September 2008
+ * @author ist@uni-koblenz.de
  * 
  */
 public class NullLiteralEvaluator extends VertexEvaluator {

@@ -27,10 +27,9 @@ package de.uni_koblenz.jgralab.schema;
 import java.util.List;
 
 /**
- * represents a graph class in the schema, holds all graph element classes
+ * Represents a graph class in the schema, holds all graph element classes.
  * 
- * @author Steffen Kahle
- * 
+ * @author ist@uni-koblenz.de
  */
 public interface GraphClass extends AttributedElementClass {
 
@@ -133,7 +132,10 @@ public interface GraphClass extends AttributedElementClass {
 	 * <b>Preconditions:</b>
 	 * <ul>
 	 * <li>The <code>name</code> must be unique in the Schema.</li>
-	 * <li>The <code>name</code> must not contain a {@link de.uni_koblenz.jgralab.schema.Schema#reservedTGWords reserved TG word} and/or {@link de.uni_koblenz.jgralab.schema.Schema#reservedJavaWords reserved Java word}.</li>
+	 * <li>The <code>name</code> must not contain a
+	 * {@link de.uni_koblenz.jgralab.schema.Schema#reservedTGWords reserved TG word}
+	 * and/or
+	 * {@link de.uni_koblenz.jgralab.schema.Schema#reservedJavaWords reserved Java word}.</li>
 	 * </ul>
 	 * </p>
 	 * 
@@ -156,13 +158,14 @@ public interface GraphClass extends AttributedElementClass {
 	 * @param to
 	 *            the VertexClass where the AggregationClass ends
 	 * @throws SchemaException
-	 * 			if:
-	 * 			<ul>
-	 * 			 <li>there is an element with the same <code>name</code></li>
-	 * 			 <li><code>name</code> contains a reserved TG/Java word</li>
-	 * 			 <li><code>name</code> is empty</li>
-	 * 			</ul>
-	 * @return the created aggregation class AggregationClass or <code>NULL</code> if an error occured
+	 *             if:
+	 *             <ul>
+	 *             <li>there is an element with the same <code>name</code></li>
+	 *             <li><code>name</code> contains a reserved TG/Java word</li>
+	 *             <li><code>name</code> is empty</li>
+	 *             </ul>
+	 * @return the created aggregation class AggregationClass or
+	 *         <code>NULL</code> if an error occured
 	 */
 	public AggregationClass createAggregationClass(QualifiedName name,
 			VertexClass from, boolean aggregateFrom, VertexClass to);
@@ -179,7 +182,10 @@ public interface GraphClass extends AttributedElementClass {
 	 * <b>Preconditions:</b>
 	 * <ul>
 	 * <li>The <code>name</code> must be unique in the Schema.</li>
-	 * <li>The <code>name</code> must not contain a {@link de.uni_koblenz.jgralab.schema.Schema#reservedTGWords reserved TG word} and/or {@link de.uni_koblenz.jgralab.schema.Schema#reservedJavaWords reserved Java word}.</li>
+	 * <li>The <code>name</code> must not contain a
+	 * {@link de.uni_koblenz.jgralab.schema.Schema#reservedTGWords reserved TG word}
+	 * and/or
+	 * {@link de.uni_koblenz.jgralab.schema.Schema#reservedJavaWords reserved Java word}.</li>
 	 * </ul>
 	 * </p>
 	 * 
@@ -206,13 +212,14 @@ public interface GraphClass extends AttributedElementClass {
 	 * @param toRoleName
 	 *            the unique rolename of the 'to'-end
 	 * @throws SchemaException
-	 * 			if:
-	 * 			<ul>
-	 * 			 <li>there is an element with the same <code>name</code></li>
-	 * 			 <li><code>name</code> contains a reserved TG/Java word</li>
-	 * 			 <li><code>name</code> is empty</li>
-	 * 			</ul>
-	 * @return the created AggregationClass or <code>NULL</code> if an error occured
+	 *             if:
+	 *             <ul>
+	 *             <li>there is an element with the same <code>name</code></li>
+	 *             <li><code>name</code> contains a reserved TG/Java word</li>
+	 *             <li><code>name</code> is empty</li>
+	 *             </ul>
+	 * @return the created AggregationClass or <code>NULL</code> if an error
+	 *         occured
 	 */
 	public AggregationClass createAggregationClass(QualifiedName name,
 			VertexClass from, String fromRoleName, boolean aggregateFrom,
@@ -230,7 +237,10 @@ public interface GraphClass extends AttributedElementClass {
 	 * <b>Preconditions:</b>
 	 * <ul>
 	 * <li>The <code>name</code> must be unique in the Schema.</li>
-	 * <li>The <code>name</code> must not contain a {@link de.uni_koblenz.jgralab.schema.Schema#reservedTGWords reserved TG word} and/or {@link de.uni_koblenz.jgralab.schema.Schema#reservedJavaWords reserved Java word}.</li>
+	 * <li>The <code>name</code> must not contain a
+	 * {@link de.uni_koblenz.jgralab.schema.Schema#reservedTGWords reserved TG word}
+	 * and/or
+	 * {@link de.uni_koblenz.jgralab.schema.Schema#reservedJavaWords reserved Java word}.</li>
 	 * <li><code>0 <= fromMin <= fromMax <= Integer.maxValue</code></li>
 	 * <li><code>0 <= toMin <= toMax <= Integer.maxValue</code></li>
 	 * </ul>
@@ -267,13 +277,14 @@ public interface GraphClass extends AttributedElementClass {
 	 *            the maximum multiplicity of the AggregationClass on the
 	 *            'to-end
 	 * @throws SchemaException
-	 * 			if:
-	 * 			<ul>
-	 * 			 <li>there is an element with the same <code>name</code></li>
-	 * 			 <li><code>name</code> contains a reserved TG/Java word</li>
-	 * 			 <li><code>name</code> is empty</li>
-	 * 			</ul>
-	 * @return the created AggregationClass or <code>NULL</code> if an error occured
+	 *             if:
+	 *             <ul>
+	 *             <li>there is an element with the same <code>name</code></li>
+	 *             <li><code>name</code> contains a reserved TG/Java word</li>
+	 *             <li><code>name</code> is empty</li>
+	 *             </ul>
+	 * @return the created AggregationClass or <code>NULL</code> if an error
+	 *         occured
 	 */
 	public AggregationClass createAggregationClass(QualifiedName name,
 			VertexClass from, int fromMin, int fromMax, boolean aggregateFrom,
@@ -292,7 +303,10 @@ public interface GraphClass extends AttributedElementClass {
 	 * <b>Preconditions:</b>
 	 * <ul>
 	 * <li>The <code>name</code> must be unique in the Schema.</li>
-	 * <li>The <code>name</code> must not contain a {@link de.uni_koblenz.jgralab.schema.Schema#reservedTGWords reserved TG word} and/or {@link de.uni_koblenz.jgralab.schema.Schema#reservedJavaWords reserved Java word}.</li>
+	 * <li>The <code>name</code> must not contain a
+	 * {@link de.uni_koblenz.jgralab.schema.Schema#reservedTGWords reserved TG word}
+	 * and/or
+	 * {@link de.uni_koblenz.jgralab.schema.Schema#reservedJavaWords reserved Java word}.</li>
 	 * <li><code>0 <= fromMin <= fromMax <= Integer.maxValue</code></li>
 	 * <li><code>0 <= toMin <= toMax <= Integer.maxValue</code></li>
 	 * </ul>
@@ -334,13 +348,14 @@ public interface GraphClass extends AttributedElementClass {
 	 * @param toRoleName
 	 *            the unique rolename of the 'to'-end
 	 * @throws SchemaException
-	 * 			if:
-	 * 			<ul>
-	 * 			 <li>there is an element with the same <code>name</code></li>
-	 * 			 <li><code>name</code> contains a reserved TG/Java word</li>
-	 * 			 <li><code>name</code> is empty</li>
-	 * 			</ul>
-	 * @return the created AggregationClass or <code>NULL</code> if an error occured
+	 *             if:
+	 *             <ul>
+	 *             <li>there is an element with the same <code>name</code></li>
+	 *             <li><code>name</code> contains a reserved TG/Java word</li>
+	 *             <li><code>name</code> is empty</li>
+	 *             </ul>
+	 * @return the created AggregationClass or <code>NULL</code> if an error
+	 *         occured
 	 */
 	public AggregationClass createAggregationClass(QualifiedName name,
 			VertexClass from, int fromMin, int fromMax, String fromRoleName,

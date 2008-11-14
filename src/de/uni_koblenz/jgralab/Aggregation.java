@@ -21,12 +21,15 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
- 
+
 package de.uni_koblenz.jgralab;
 
 /**
- * This interface is the basic interface for all aggregation EdgeClasses in the graph schemas
+ * This interface is the basic interface for all aggregation EdgeClasses in the
+ * graph schemas
+ * 
+ * @author ist@uni-koblenz.de
  */
 public interface Aggregation extends Edge {
-		
+
 }

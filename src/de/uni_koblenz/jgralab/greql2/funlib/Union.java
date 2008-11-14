@@ -59,7 +59,7 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueSet;
  * @see Difference
  * @see SymDifference
  * @see Intersection
- * @author Daniel Bildhauer <dbildh@uni-koblenz.de> Summer 2006, Diploma Thesis
+ * @author ist@uni-koblenz.de
  * 
  */
 
@@ -68,7 +68,7 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueSet;
  * 
  * @param set1 a JValueSet @param set2 a JValueSet @return the union of set1 and
  * set2, so all element, that are part of set1 or set2 (or even both) are also
- * part of the returned set @author Daniel Bildhauer <dbildh@uni-koblenz.de>
+ * part of the returned set @author ist@uni-koblenz.de
  * Summer 2006, Diploma Thesis
  * 
  */

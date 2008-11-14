@@ -27,6 +27,12 @@ package de.uni_koblenz.jgralab.impl;
 import de.uni_koblenz.jgralab.AttributedElement;
 import de.uni_koblenz.jgralab.schema.AttributedElementClass;
 
+/**
+ * TODO add comment
+ * 
+ * @author ist@uni-koblenz.de
+ * 
+ */
 public abstract class AttributedElementImpl implements AttributedElement {
 
 	protected AttributedElementClass theClass;

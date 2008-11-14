@@ -12,7 +12,7 @@ import de.uni_koblenz.jgralab.greql2.schema.Expression;
 /**
  * TODO: (heimdall) Comment class!
  * 
- * @author Tassilo Horn (heimdall), 2008, Diploma Thesis
+ * @author ist@uni-koblenz.de
  * 
  */
 public class ConditionalExpressionUnit {

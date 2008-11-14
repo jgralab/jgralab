@@ -32,10 +32,9 @@ import de.uni_koblenz.jgralab.schema.impl.DirectedEdgeClass;
 import de.uni_koblenz.jgralab.schema.impl.RolenameEntry;
 
 /**
- * represents a vertex class in the schema, instances represent m2 classes
+ * Represents a VertexClass in the Schema.
  * 
- * @author Steffen Kahle
- * 
+ * @author ist@uni-koblenz.de
  */
 public interface VertexClass extends GraphElementClass {
 
@@ -99,11 +98,11 @@ public interface VertexClass extends GraphElementClass {
 	 */
 	public Map<String, RolenameEntry> getRolenameMap();
 
-
 	public Set<DirectedEdgeClass> getValidDirectedEdgeClasses();
-	
+
 	/*
 	 * (non-Javadoc)
+	 * 
 	 * @see de.uni_koblenz.jgralab.schema.AttributedElementClass#getM1Class()
 	 */
 	public Class<? extends Vertex> getM1Class();

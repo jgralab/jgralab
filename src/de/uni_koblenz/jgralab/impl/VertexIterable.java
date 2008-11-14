@@ -39,7 +39,7 @@ import de.uni_koblenz.jgralab.Vertex;
  * <code>vertices(params)</code> for every VertexClass that is part of the
  * GraphClass.
  * 
- * @author Daniel Bildhauer <dbildh@uni-koblenz.de>
+ * @author ist@uni-koblenz.de
  * 
  * @param <V>
  *            The type of the vertices to iterate over. To mention it again,
@@ -50,7 +50,7 @@ public class VertexIterable<V extends Vertex> implements Iterable<V> {
 	/**
 	 * This Iterator iterates over all vertices in a graph
 	 * 
-	 * @author dbildh
+	 * @author ist@uni-koblenz.de
 	 * 
 	 */
 	class VertexIterator implements Iterator<V> {

@@ -29,7 +29,7 @@ import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
 import de.uni_koblenz.jgralab.greql2.schema.ElementSetExpression;
 /**
  * This is the base class for VertexSetExpressionEvaluator and EdgeSetExpressionEvaluator
- * @author Daniel Bildhauer <dbildh@uni-koblenz.de> 
+ * @author ist@uni-koblenz.de
  * Summer 2006, Diploma Thesis
  *
  */

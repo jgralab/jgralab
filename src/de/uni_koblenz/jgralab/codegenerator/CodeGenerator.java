@@ -33,6 +33,12 @@ import java.util.logging.Logger;
 
 import de.uni_koblenz.jgralab.GraphIOException;
 
+/**
+ * TODO add comment
+ * 
+ * @author ist@uni-koblenz.de
+ * 
+ */
 public abstract class CodeGenerator {
 
 	private static Logger logger = Logger.getLogger(CodeGenerator.class
@@ -226,17 +232,20 @@ public abstract class CodeGenerator {
 	 * Transforms the given String into a CamelCase String
 	 */
 	public static String camelCase(String aString) {
-		if (aString.length() < 1)
+		if (aString.length() < 1) {
 			return aString;
-		if (aString.length() < 2)
+		}
+		if (aString.length() < 2) {
 			return aString.toUpperCase();
+		}
 		return aString.substring(0, 1).toUpperCase() + aString.substring(1);
 	}
 
 	/**
 	 * Returns {@code JavaSourceFromString}s from the generated code.
 	 * 
-	 * @return a Vector of {@code JavaSourceFromString}s from the generated code
+	 * @return a Vector of {@code JavaSourceFromString}s from the generated
+	 *         code
 	 */
 	public Vector<JavaSourceFromString> createJavaSources() {
 		String className = rootBlock.getVariable("simpleClassName");

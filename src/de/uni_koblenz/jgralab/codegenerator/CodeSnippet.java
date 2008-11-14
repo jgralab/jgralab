@@ -21,24 +21,30 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
- 
+
 package de.uni_koblenz.jgralab.codegenerator;
 
 import java.util.Vector;
 
+/**
+ * TODO add comment
+ * 
+ * @author ist@uni-koblenz.de
+ * 
+ */
 public class CodeSnippet extends CodeBlock {
 	protected Vector<String> lines;
 
 	protected boolean wantsNewLine;
-	
+
 	public CodeSnippet() {
-		this((CodeList)null);
+		this((CodeList) null);
 	}
-	
+
 	public CodeSnippet(String... initialLines) {
 		this(null, false, initialLines);
 	}
-	
+
 	public CodeSnippet(boolean newLine, String... initialLines) {
 		this(null, newLine, initialLines);
 	}
@@ -47,7 +53,7 @@ public class CodeSnippet extends CodeBlock {
 		this(parent, false, initialLines);
 	}
 
-		public CodeSnippet(CodeList parent, boolean newLine, String... initialLines) {
+	public CodeSnippet(CodeList parent, boolean newLine, String... initialLines) {
 		super(parent);
 		wantsNewLine = newLine;
 		this.lines = new Vector<String>();
@@ -83,14 +89,14 @@ public class CodeSnippet extends CodeBlock {
 			for (int i = 0; i < indentLevel; ++i) {
 				buf.append('\t');
 			}
-			if (line.length()>0) {
+			if (line.length() > 0) {
 				buf.append(replaceVariables(line));
 			}
 			buf.append('\n');
 		}
 		return buf.toString();
 	}
-	
+
 	@Override
 	public void clear() {
 		lines.clear();

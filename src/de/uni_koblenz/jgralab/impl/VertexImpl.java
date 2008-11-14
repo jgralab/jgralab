@@ -34,8 +34,9 @@ import de.uni_koblenz.jgralab.schema.EdgeClass;
 import de.uni_koblenz.jgralab.schema.VertexClass;
 
 /**
- * @author riediger
+ * TODO add comment
  * 
+ * @author ist@uni-koblenz.de
  */
 public abstract class VertexImpl extends GraphElementImpl implements Vertex {
 	private int id;

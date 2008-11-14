@@ -29,6 +29,12 @@ import java.util.Map.Entry;
 import de.uni_koblenz.jgralab.schema.Domain;
 import de.uni_koblenz.jgralab.schema.RecordDomain;
 
+/**
+ * TODO add comment
+ * 
+ * @author ist@uni-koblenz.de
+ * 
+ */
 public class RecordCodeGenerator extends CodeGenerator {
 
 	/**

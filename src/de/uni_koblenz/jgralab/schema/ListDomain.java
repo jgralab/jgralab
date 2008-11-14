@@ -21,19 +21,19 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
- 
+
 package de.uni_koblenz.jgralab.schema;
 
-
 /**
- * represents a list domain, instances may exist multiple times per schema
- * @author Steffen Kahle
- *
+ * Represents a List<...> domain, instances may exist multiple times per
+ * schema.
+ * 
+ * @author ist@uni-koblenz.de
  */
 public interface ListDomain extends CollectionDomain {
 
 	/**
-	 * @return the base domain of the list
+	 * @return the base Domain of this ListDomain
 	 */
 	public Domain getBaseDomain();
 

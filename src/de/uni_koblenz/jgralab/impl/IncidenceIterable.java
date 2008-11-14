@@ -39,7 +39,7 @@ import de.uni_koblenz.jgralab.Vertex;
  * classes. If the list of incidence edges is changed during iteration, an exception
  * if thrown
  * 
- * @author dbildh
+ * @author ist@uni-koblenz.de
  */
 public class IncidenceIterable<E extends Edge> implements Iterable<E> {
 

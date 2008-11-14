@@ -9,7 +9,7 @@ import java.io.FilenameFilter;
 /**
  * A {@link FilenameFilter} that accepts TG files.
  * 
- * @author Tassilo Horn (heimdall), 2007, Diploma Thesis
+ * @author ist@uni-koblenz.de
  */
 public class TGFilenameFilter implements FilenameFilter {
 

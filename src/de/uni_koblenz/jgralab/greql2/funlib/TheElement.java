@@ -39,7 +39,7 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueCollection;
  * </dd>
  * </dl>
  * 
- * @author Tassilo Horn (heimdall), 2007, Diploma Thesis
+ * @author ist@uni-koblenz.de
  */
 public class TheElement implements Greql2Function {
 

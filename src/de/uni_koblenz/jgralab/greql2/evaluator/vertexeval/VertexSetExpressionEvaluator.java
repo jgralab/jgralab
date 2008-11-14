@@ -41,7 +41,7 @@ import de.uni_koblenz.jgralab.greql2.schema.VertexSetExpression;
  * of vertices in the datagraph that have the type Department or a type that is
  * derived from Department
  * 
- * @author Daniel Bildhauer <dbildh@uni-koblenz.de> Summer 2006, Diploma Thesis
+ * @author ist@uni-koblenz.de
  * 
  */
 public class VertexSetExpressionEvaluator extends ElementSetExpressionEvaluator {

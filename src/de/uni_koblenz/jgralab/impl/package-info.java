@@ -21,9 +21,10 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
- 
+
 /**
- * Jgralab graph implementation.
+ * This package contains JGraLab Graph (M1) implementation classes.
+ * @author ist@uni-koblenz.de
  */
- 
- package de.uni_koblenz.jgralab.impl;
+
+package de.uni_koblenz.jgralab.impl;

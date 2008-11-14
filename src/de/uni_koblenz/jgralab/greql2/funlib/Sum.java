@@ -55,14 +55,14 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueCollection;
  * </dd>
  * </dl>
  * 
- * @author Daniel Bildhauer <dbildh@uni-koblenz.de> Summer 2006, Diploma Thesis
+ * @author ist@uni-koblenz.de
  * 
  */
 
 /*
  * calculates the sum of all elements in the given collection @param collection
  * a JValueCollection which contains only scalar values (int, double, etc.)
- * @return the result of the sum as double value @author Daniel Bildhauer
+ * @return the result of the sum as double value @author ist@uni-koblenz.de
  * <dbildh@uni-koblenz.de> Summer 2006, Diploma Thesis
  * 
  */

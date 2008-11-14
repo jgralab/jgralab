@@ -22,7 +22,7 @@ import de.uni_koblenz.jgralab.greql2.schema.IsArgumentOf;
  * graph according the rule
  * <code>a xor b = (a and not b) or (not a and b)</code>.
  * 
- * @author Tassilo Horn (horn), 2008
+ * @author ist@uni-koblenz.de
  * 
  */
 public class TransformXorFunctionApplicationOptimizer extends OptimizerBase {

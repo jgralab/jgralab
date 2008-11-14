@@ -59,7 +59,7 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
  * </dd>
  * </dl>
  *
- * @author Tassilo Horn <horn@uni-koblenz.de>, 2008
+ * @author ist@uni-koblenz.de
  *
  */
 public class IsAcyclic implements Greql2Function {

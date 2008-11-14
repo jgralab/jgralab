@@ -854,11 +854,6 @@ public class SchemaImpl implements Schema {
 	}
 
 	@Override
-	public String getName() {
-		return qName.toString();
-	}
-
-	@Override
 	public String getQualifiedName() {
 		return qName.getQualifiedName();
 	}

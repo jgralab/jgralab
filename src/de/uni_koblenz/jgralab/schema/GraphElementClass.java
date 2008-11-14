@@ -21,19 +21,20 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
- 
+
 package de.uni_koblenz.jgralab.schema;
 
 /**
- * aggregates vertex/edge/aggregation/composition classes
- * @author Steffen Kahle
- *
+ * Base class for Vertex/Edge/Aggregation/Composition classes.
+ * 
+ * @author ist@uni-koblenz.de
  */
 public interface GraphElementClass extends AttributedElementClass {
 
 	/**
-	 * @return the graph class in which this graph element class resides
+	 * Returns the GraphClass of this AttributedElementClass.
+	 * 
+	 * @return the GraphClass in which this graph element class resides
 	 */
 	public GraphClass getGraphClass();
-	
 }

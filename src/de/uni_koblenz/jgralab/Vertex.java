@@ -30,7 +30,7 @@ import de.uni_koblenz.jgralab.schema.VertexClass;
 /**
  * represents a vertex, m1 classes inherit from this class
  * 
- * @author Steffen Kahle
+ * @author ist@uni-koblenz.de
  * 
  */
 public interface Vertex extends GraphElement {

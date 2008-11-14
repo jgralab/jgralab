@@ -21,7 +21,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
- 
+
 package de.uni_koblenz.jgralab.xmlrpc;
 
 import java.net.URL;
@@ -32,7 +32,8 @@ import org.apache.xmlrpc.webserver.XmlRpcServlet;
 
 /**
  * The XML-RPC servlet for the JGraLab facade
- *
+ * 
+ * @author ist@uni-koblenz.de
  */
 public class JGraLabServlet extends XmlRpcServlet {
 
@@ -43,18 +44,21 @@ public class JGraLabServlet extends XmlRpcServlet {
 	 * {@code properties} file. These contents say that remote procedure calls
 	 * preceded by {@code jgralab} shall be directed to {@code JGraLabFacade}.
 	 */
-	protected XmlRpcHandlerMapping newXmlRpcHandlerMapping() throws XmlRpcException {
+	@Override
+	protected XmlRpcHandlerMapping newXmlRpcHandlerMapping()
+			throws XmlRpcException {
 		URL url;
 		XmlRpcHandlerMapping mapping = null;
-		
+
 		try {
-			url = new URL("file", "localhost", "src/de/uni_koblenz/jgralab/xmlrpc/properties");
-		
+			url = new URL("file", "localhost",
+					"src/de/uni_koblenz/jgralab/xmlrpc/properties");
+
 			mapping = newPropertyHandlerMapping(url);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		
+
 		return mapping;
 	}
 }

@@ -21,7 +21,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
- 
+
 package de.uni_koblenz.jgralab.impl;
 
 import de.uni_koblenz.jgralab.Graph;
@@ -29,33 +29,43 @@ import de.uni_koblenz.jgralab.schema.AttributedElementClass;
 import de.uni_koblenz.jgralab.schema.GraphClass;
 import de.uni_koblenz.jgralab.schema.Schema;
 
+/**
+ * TODO add comment
+ * 
+ * @author ist@uni-koblenz.de
+ * 
+ */
 public abstract class GraphElementImpl extends AttributedElementImpl {
 	public GraphElementImpl(Graph graph, AttributedElementClass cls) {
 		super(cls);
 		assert graph != null;
-		myGraph = (GraphImpl)graph;
+		myGraph = (GraphImpl) graph;
 	}
 
 	protected GraphImpl myGraph;
-	
+
 	public Graph getGraph() {
 		return myGraph;
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see de.uni_koblenz.jgralab.AttributedElement#getGraphClass()
 	 */
 	public GraphClass getGraphClass() {
 		return (GraphClass) myGraph.getAttributedElementClass();
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see jgralab.AttributedElement#getSchema()
 	 */
 	public Schema getSchema() {
 		return myGraph.getSchema();
 	}
-	
+
 	public void graphModified() {
 		myGraph.graphModified();
 	}

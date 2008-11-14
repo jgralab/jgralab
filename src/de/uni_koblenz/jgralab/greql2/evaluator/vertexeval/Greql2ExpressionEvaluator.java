@@ -46,7 +46,7 @@ import de.uni_koblenz.jgralab.greql2.schema.Variable;
  * the bound/free variables, that are defined via "using" and binds them to the
  * values in the variableMap of the Greql2Evaluator.
  *
- * @author Daniel Bildhauer <dbildh@uni-koblenz.de> Summer 2006, Diploma Thesis
+ * @author ist@uni-koblenz.de
  *
  */
 public class Greql2ExpressionEvaluator extends VertexEvaluator {

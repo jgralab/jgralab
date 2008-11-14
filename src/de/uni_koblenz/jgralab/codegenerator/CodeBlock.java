@@ -21,13 +21,19 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
- 
+
 package de.uni_koblenz.jgralab.codegenerator;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Stack;
 
+/**
+ * TODO add comment
+ * 
+ * @author ist@uni-koblenz.de
+ * 
+ */
 public abstract class CodeBlock {
 	private Map<String, String> variables;
 
@@ -45,8 +51,9 @@ public abstract class CodeBlock {
 		additionalIndent = 0;
 		variables = new HashMap<String, String>();
 		replacementStack = new Stack<String>();
-		if (parent != null)
+		if (parent != null) {
 			parent.add(this);
+		}
 	}
 
 	public abstract String getCode(int indentLevel);
@@ -78,7 +85,7 @@ public abstract class CodeBlock {
 				}
 				block = block.parent;
 			}
-			return "*UNDEFINED:" + name +"*";
+			return "*UNDEFINED:" + name + "*";
 		} finally {
 			replacementStack.pop();
 		}
@@ -115,4 +122,4 @@ public abstract class CodeBlock {
 	protected void setParent(CodeList newParent) {
 		parent = newParent;
 	}
-	}
+}

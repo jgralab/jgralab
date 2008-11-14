@@ -32,7 +32,7 @@ import de.uni_koblenz.jgralab.schema.Schema;
 
 /**
  * aggregates graphs, edges and vertices 
- * @author Steffen Kahle
+ * @author ist@uni-koblenz.de
  *
  */
 public interface AttributedElement extends Comparable<AttributedElement> {

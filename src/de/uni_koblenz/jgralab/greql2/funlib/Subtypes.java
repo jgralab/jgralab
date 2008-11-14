@@ -63,14 +63,14 @@ import de.uni_koblenz.jgralab.schema.Schema;
  * </dd>
  * </dl>
  * 
- * @author Daniel Bildhauer <dbildh@uni-koblenz.de> Summer 2006, Diploma Thesis
+ * @author ist@uni-koblenz.de
  * 
  */
 
 /*
  * returns a set which contains all subtypes of the given type
  * 
- * @param type a type (AttributedElementClass or String) @author Daniel
+ * @param type a type (AttributedElementClass or String) @author ist@uni-koblenz.de
  * Bildhauer <dbildh@uni-koblenz.de> Summer 2006, Diploma Thesis
  * 
  */

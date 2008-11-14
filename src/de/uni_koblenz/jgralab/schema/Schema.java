@@ -40,10 +40,9 @@ import de.uni_koblenz.jgralab.ProgressFunction;
 import de.uni_koblenz.jgralab.codegenerator.JavaSourceFromString;
 
 /**
- * represents a schema, aggregates all graph/vertex/edge/aggregation/composition
- * classes, holds all domains and can generate the m2 classes
+ * The class Schema represents a grUML Schema (M2).
  * 
- * @author Steffen Kahle
+ * @author ist@uni-koblenz.de
  * 
  */
 public interface Schema extends NamedElement {

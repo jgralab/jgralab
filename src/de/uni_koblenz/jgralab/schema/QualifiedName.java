@@ -1,10 +1,37 @@
-/**
- * 
+/*
+ * JGraLab - The Java graph laboratory
+ * (c) 2006-2008 Institute for Software Technology
+ *               University of Koblenz-Landau, Germany
+ *
+ *               ist@uni-koblenz.de
+ *
+ * Please report bugs to http://serres.uni-koblenz.de/bugzilla
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
+
 package de.uni_koblenz.jgralab.schema;
 
 import java.io.File;
 
+/**
+ * QualifiedName is used to identify any Schema element (Graph/Vertex/Edge
+ * classes, Packages, Domains, etc.).
+ * 
+ * @author ist@uni-koblenz.de
+ */
 public class QualifiedName implements Comparable<QualifiedName> {
 	private String packageName;
 
@@ -103,26 +130,27 @@ public class QualifiedName implements Comparable<QualifiedName> {
 	 *             element in the schema with the same unique name
 	 */
 	public void setUniqueName(NamedElement element, String uniqueName) {
-		if(!(uniqueName.indexOf('.')<0)){
-			throw new SchemaException("The unique name "
-					+ uniqueName
+		if (!(uniqueName.indexOf('.') < 0)) {
+			throw new SchemaException("The unique name " + uniqueName
 					+ " must not contain '.'.");
 		}
 		// Must be 1 because 0 is the default graph-class Graph
 		for (GraphClass gc : element.getSchema()
 				.getGraphClassesInTopologicalOrder()) {
-			if (gc != element)
+			if (gc != element) {
 				if (gc.getUniqueName().equals(uniqueName)) {
 					throw new SchemaException("The unique name " + uniqueName
 							+ " is already used in this schema");
 				}
+			}
 			for (VertexClass v : gc.getVertexClasses()) {
-				if (v != element)
+				if (v != element) {
 					if (v.getSimpleName().equals(uniqueName)) {
 						throw new SchemaException("The unique name "
 								+ uniqueName
 								+ " is already used in this schema");
 					}
+				}
 			}
 			for (EdgeClass e : gc.getEdgeClasses()) {
 				if (e != element) {
@@ -155,8 +183,7 @@ public class QualifiedName implements Comparable<QualifiedName> {
 		for (Domain e : element.getSchema().getDomains().values()) {
 			if (e != element) {
 				if (e.getSimpleName().equals(uniqueName)) {
-					throw new SchemaException("The unique name "
-							+ uniqueName
+					throw new SchemaException("The unique name " + uniqueName
 							+ " is already used in this schema");
 				}
 			}

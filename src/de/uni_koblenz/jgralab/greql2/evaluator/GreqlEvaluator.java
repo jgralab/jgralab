@@ -68,7 +68,7 @@ import de.uni_koblenz.jgralab.utilities.TGFilenameFilter;
  * graph. The result is a JValue-object, it can be accessed using the method
  * <code>JValue getEvaluationResult()</code>.
  *
- * @author Daniel Bildhauer <dbildh@uni-koblenz.de> Summer 2006, Diploma Thesis
+ * @author ist@uni-koblenz.de
  *
  */
 public class GreqlEvaluator {

@@ -24,7 +24,7 @@ import de.uni_koblenz.jgralab.greql2.schema.Variable;
  * {@link VariableDeclarationOrderOptimizer} to order them so that evaluation
  * costs are minimized.
  * 
- * @author Tassilo Horn (heimdall), 2008, Diploma Thesis
+ * @author ist@uni-koblenz.de
  * 
  */
 public class VariableDeclarationOrderUnit implements
