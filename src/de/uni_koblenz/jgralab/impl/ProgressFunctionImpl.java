@@ -28,58 +28,128 @@ import java.io.PrintStream;
 
 import de.uni_koblenz.jgralab.ProgressFunction;
 
+/**
+ * An implementation of a ProgressFunction which displays an "ascii art"
+ * progress bar on a PrintStream, e.g. System.out.
+ * 
+ * @author riediger
+ * 
+ */
 public class ProgressFunctionImpl implements ProgressFunction {
-	private static final int DEFAULTCHARS = 60;
+	private static final int DEFAULTLENGTH = 60;
 
-	private long size;
-	private long chars;
-	private long currentChar;
-	private long time;
-	private PrintStream out;
+	private long totalElements;
+	private long length;
+	private long startTime;
+	private int currentChar;
+	private PrintStream printStream;
 
+	/**
+	 * Creates a ProgressFunction with default length writing to System.out.
+	 */
 	public ProgressFunctionImpl() {
-		this(System.out, DEFAULTCHARS);
+		this(System.out, DEFAULTLENGTH);
 	}
 
-	public ProgressFunctionImpl(int chars) {
-		this(System.out, chars);
+	/**
+	 * Creates a ProgressFunction with the specified
+	 * <code>length</length> writing to System.out.
+	 * 
+	 * @param length
+	 *            number of characters
+	 */
+	public ProgressFunctionImpl(int length) {
+		this(System.out, length);
 	}
 
-	public ProgressFunctionImpl(PrintStream out) {
-		this(out, DEFAULTCHARS);
+	/**
+	 * Creates a ProgressFunction with default length writing to the specified
+	 * <code>printStreamStream</code>.
+	 * 
+	 * @param printStream
+	 *            a PrintStream where the progress bar is printed
+	 */
+	public ProgressFunctionImpl(PrintStream printStream) {
+		this(printStream, DEFAULTLENGTH);
 	}
 
-	public ProgressFunctionImpl(PrintStream out, int chars) {
-		this.out = out;
-		this.chars = chars;
+	/**
+	 * Creates a ProgressFunction which displays an "ascii art" progress bar on
+	 * the specified PrintStream <code>out</code> with <code>length</code>
+	 * steps. After finishing, the time consumed is also printed.
+	 * 
+	 * For example, a progress bar with length 10 looks like this after 6
+	 * updates:
+	 * 
+	 * [#######
+	 * 
+	 * and like this after finishing:
+	 * 
+	 * [##########]
+	 * 
+	 * @param printStream
+	 *            a PrintStream where the progress bar is printed
+	 * @param length
+	 *            number of characters
+	 * 
+	 */
+	public ProgressFunctionImpl(PrintStream printStream, int length) {
+		this.printStream = printStream;
+		this.length = length;
 	}
 
-	public long getInterval() {
-		return chars > size ? 1 : size / chars;
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see de.uni_koblenz.jgralab.ProgressFunction#getInterval()
+	 */
+	@Override
+	public long getUpdateInterval() {
+		return length > totalElements ? 1 : totalElements / length;
 	}
 
-	public void init(long size) {
-		out.println("processing " + size + " elements");
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see de.uni_koblenz.jgralab.ProgressFunction#init(long)
+	 */
+	@Override
+	public void init(long elements) {
+		printStream.println("processing " + elements + " elements");
 		currentChar = 0;
-		this.size = size;
-		out.print("[");
-		out.flush();
-		time = System.currentTimeMillis();
+		this.totalElements = elements;
+		printStream.print("[");
+		printStream.flush();
+		startTime = System.currentTimeMillis();
 	}
 
-	public void progress(long progress) {
-		if (currentChar < chars) {
-			out.print("#");
-			out.flush();
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see de.uni_koblenz.jgralab.ProgressFunction#progress(long)
+	 */
+	@Override
+	public void progress(long processedElements) {
+		if (currentChar < length) {
+			printStream.print("#");
+			printStream.flush();
 			currentChar++;
 		}
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see de.uni_koblenz.jgralab.ProgressFunction#finished()
+	 */
+	@Override
 	public void finished() {
-		for (long i = currentChar; i < chars; i++)
-			out.print("#");
-		out.println("]");
-		out.println("elapsed time: "
-				+ ((System.currentTimeMillis() - time) / 1000.0) + " seconds");
+		long stopTime = System.currentTimeMillis();
+		for (long i = currentChar; i < length; i++) {
+			printStream.print("#");
+		}
+		printStream.println("]");
+		printStream.println("elapsed time: "
+				+ ((stopTime - startTime) / 1000.0) + "s");
 	}
 }

@@ -93,19 +93,23 @@ public class IsPrime implements Greql2Function {
 	 */
 	private static long witness(long a, long i, long n) {
 		long x, y;
-		if (i == 0)
+		if (i == 0) {
 			return 1;
+		}
 
 		x = witness(a, i / 2, n);
-		if (x == 0)
+		if (x == 0) {
 			return 0;
+		}
 
 		y = (x * x) % n;
-		if (y == 1 && x != 1 && x != n - 1)
+		if (y == 1 && x != 1 && x != n - 1) {
 			return 0;
+		}
 
-		if (i % 2 != 0)
+		if (i % 2 != 0) {
 			y = (a * y) % n;
+		}
 		return y;
 	}
 
@@ -126,15 +130,18 @@ public class IsPrime implements Greql2Function {
 	 *         prime number with a probability of <code>1-(1/number)^noOfTestRuns</code>.
 	 */
 	private static boolean isPrime(long number, int noOfTestRuns) {
-		if (number < 2)
+		if (number < 2) {
 			return false;
-		if (number == 2)
+		}
+		if (number == 2) {
 			return true;
+		}
 		long w = 0;
 		for (int i = 0; i < noOfTestRuns; i++) {
 			w = witness(random(2, number - 1), number - 1, number);
-			if (w != 1)
+			if (w != 1) {
 				return false;
+			}
 		}
 		return true;
 	}
@@ -189,6 +196,12 @@ public class IsPrime implements Greql2Function {
 		return "(number[, noOfTestRuns])";
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see de.uni_koblenz.jgralab.greql2.funlib.Greql2Function#getSelectivity()
+	 */
+	@Override
 	public double getSelectivity() {
 
 		return SELECTIVITY;

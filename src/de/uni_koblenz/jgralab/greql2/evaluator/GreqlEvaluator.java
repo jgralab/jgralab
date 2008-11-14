@@ -409,9 +409,9 @@ public class GreqlEvaluator {
 	public final void progress(long value) {
 		progressStepsPassed += value;
 		if (progressFunction != null) {
-			while (progressStepsPassed > progressFunction.getInterval()) {
+			while (progressStepsPassed > progressFunction.getUpdateInterval()) {
 				progressFunction.progress(1);
-				progressStepsPassed -= progressFunction.getInterval();
+				progressStepsPassed -= progressFunction.getUpdateInterval();
 			}
 		}
 		passedInterpretationSteps += value;
