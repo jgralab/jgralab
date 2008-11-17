@@ -21,7 +21,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
- 
+
 package de.uni_koblenz.jgralab.greql2.funlib;
 
 import java.util.ArrayList;
@@ -37,9 +37,9 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValueSet;
 
 /**
- * Returns a set of incoming edges, which are connected to the given vertex and 
- * which are part of the given structure. If no structure is given, the graph to which
- * the vertex belongs to is used as structure.
+ * Returns a set of incoming edges, which are connected to the given vertex and
+ * which are part of the given structure. If no structure is given, the graph to
+ * which the vertex belongs to is used as structure.
  *
  * <dl>
  * <dt><b>GReQL-signature</b></dt>
@@ -48,7 +48,8 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueSet;
  * <dd><code>SET&lt;EDGE&gt; edgesTo(v:Vertex, ps:PATHSYSTEM)</code></dd>
  * <dd>&nbsp;</dd>
  * </dl>
- * <dl><dt></dt>
+ * <dl>
+ * <dt></dt>
  * <dd>
  * <dl>
  * <dt><b>Parameters:</b></dt>
@@ -61,10 +62,11 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueSet;
  * </dl>
  * </dd>
  * </dl>
+ *
  * @see EdgesConnected
  * @see EdgesFrom
  * @author ist@uni-koblenz.de
- * 
+ *
  */
 
 public class EdgesTo implements Greql2Function {
@@ -85,8 +87,9 @@ public class EdgesTo implements Greql2Function {
 			Edge inc = vertex.getFirstEdge(EdgeDirection.IN);
 			JValueSet resultSet = new JValueSet();
 			while (inc != null) {
-				if ((subgraph==null) || (subgraph.isMarked(inc)))
+				if ((subgraph == null) || (subgraph.isMarked(inc))) {
 					resultSet.add(new JValue(inc));
+				}
 				inc = inc.getNextEdge(EdgeDirection.IN);
 			}
 			return resultSet;
@@ -110,11 +113,6 @@ public class EdgesTo implements Greql2Function {
 
 	public String getExpectedParameters() {
 		return "(Vertex, PathSystem or Path or [Graph])";
-	}
-
-	@Override
-	public boolean isPredicate() {
-		return false;
 	}
 
 }

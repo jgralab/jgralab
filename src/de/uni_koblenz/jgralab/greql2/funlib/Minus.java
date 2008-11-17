@@ -66,9 +66,9 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
  * </dl>
  * </dd>
  * </dl>
- * 
+ *
  * @author ist@uni-koblenz.de
- * 
+ *
  */
 
 public class Minus implements Greql2Function {
@@ -110,8 +110,4 @@ public class Minus implements Greql2Function {
 		return "(Double, Double)";
 	}
 
-	@Override
-	public boolean isPredicate() {
-		return false;
-	}
 }

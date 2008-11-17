@@ -47,7 +47,7 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueSet;
  * Returns all vertices that are reachable from the given vertex with a path
  * that is accepted by the given dfa. A dfa is defined as regular path
  * expression.
- * 
+ *
  * <dl>
  * <dt><b>GReQL-signature</b></dt>
  * <dd><code>SET&lt;VERTEX&gt; reachableVertices(v:VERTEX, dfa: DFA)</code></dd>
@@ -67,15 +67,15 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueSet;
  * </dl>
  * </dd>
  * </dl>
- * 
+ *
  * @author ist@uni-koblenz.de
- * 
+ *
  */
 
 /*
  * Calculates the set of vertices that are reachable from startVertex over a
  * path that is accepted from this DFA
- * 
+ *
  * @param vertex the vertex to start the pathsearch from @param dfa the
  * deterministic finite automaton, which accepts the language which is created
  * by the rpe which describes the path @return a Set of vertices that are
@@ -109,11 +109,11 @@ public class ReachableVertices extends PathSearch implements Greql2Function {
 				resultSet.add(new JValue(currentEntry.vertex,
 						currentEntry.vertex));
 			}
-			//markers[currentEntry.state.number].mark(currentEntry.vertex);
+			// markers[currentEntry.state.number].mark(currentEntry.vertex);
 			Edge inc = currentEntry.vertex.getFirstEdge();
 			while (inc != null) {
 				Iterator<Transition> transitionIter = currentEntry.state.outTransitions
-				.iterator();
+						.iterator();
 				while (transitionIter.hasNext()) {
 					Transition currentTransition = transitionIter.next();
 					Vertex nextVertex = currentTransition.getNextVertex(
@@ -153,8 +153,4 @@ public class ReachableVertices extends PathSearch implements Greql2Function {
 		return "(Vertex, DFA, Subgraph" + "TempAttribute)";
 	}
 
-	@Override
-	public boolean isPredicate() {
-		return false;
-	}
 }

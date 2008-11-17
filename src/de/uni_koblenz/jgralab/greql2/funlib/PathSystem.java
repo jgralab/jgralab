@@ -24,19 +24,6 @@
 
 package de.uni_koblenz.jgralab.greql2.funlib;
 
-import de.uni_koblenz.jgralab.greql2.evaluator.fa.DFA;
-import de.uni_koblenz.jgralab.greql2.evaluator.fa.NFA;
-import de.uni_koblenz.jgralab.greql2.evaluator.fa.State;
-import de.uni_koblenz.jgralab.greql2.evaluator.fa.Transition;
-import de.uni_koblenz.jgralab.greql2.exception.EvaluateException;
-import de.uni_koblenz.jgralab.greql2.exception.WrongFunctionParameterException;
-import de.uni_koblenz.jgralab.greql2.funlib.pathsearch.PathSearch;
-import de.uni_koblenz.jgralab.greql2.funlib.pathsearch.PathSystemMarkerEntry;
-import de.uni_koblenz.jgralab.greql2.funlib.pathsearch.PathSystemMarkerList;
-import de.uni_koblenz.jgralab.greql2.funlib.pathsearch.PathSystemQueueEntry;
-import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
-import de.uni_koblenz.jgralab.greql2.jvalue.JValuePathSystem;
-
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -50,11 +37,23 @@ import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.GraphMarker;
 import de.uni_koblenz.jgralab.Vertex;
+import de.uni_koblenz.jgralab.greql2.evaluator.fa.DFA;
+import de.uni_koblenz.jgralab.greql2.evaluator.fa.NFA;
+import de.uni_koblenz.jgralab.greql2.evaluator.fa.State;
+import de.uni_koblenz.jgralab.greql2.evaluator.fa.Transition;
+import de.uni_koblenz.jgralab.greql2.exception.EvaluateException;
+import de.uni_koblenz.jgralab.greql2.exception.WrongFunctionParameterException;
+import de.uni_koblenz.jgralab.greql2.funlib.pathsearch.PathSearch;
+import de.uni_koblenz.jgralab.greql2.funlib.pathsearch.PathSystemMarkerEntry;
+import de.uni_koblenz.jgralab.greql2.funlib.pathsearch.PathSystemMarkerList;
+import de.uni_koblenz.jgralab.greql2.funlib.pathsearch.PathSystemQueueEntry;
+import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
+import de.uni_koblenz.jgralab.greql2.jvalue.JValuePathSystem;
 
 /**
  * Returns a pathsystem, based on the current graph and the given dfa, whose
  * root is the given vertex.
- * 
+ *
  * <dl>
  * <dt><b>GReQL-signature</b></dt>
  * <dd><code>PATHSYSTEM pathSystem(v:VERTEX, dfa:DFA)</code></dd>
@@ -72,24 +71,25 @@ import de.uni_koblenz.jgralab.Vertex;
  * <dd><code>v</code> - root of the returned pathsystem</dd>
  * <dd><code>dfa</code> - a dfa that accepts regular path expressions</dd>
  * <dt><b>Returns:</b></dt>
- * <dd>a pathsystem, based on the current graph and the given dfa, whose root
- * is the given vertex</dd>
+ * <dd>a pathsystem, based on the current graph and the given dfa, whose root is
+ * the given vertex</dd>
  * <dd><code>Null</code> if one of the given parameters is <code>Null</code></dd>
  * </dl>
  * </dd>
  * </dl>
- * 
+ *
  * @author ist@uni-koblenz.de
- * 
+ *
  */
 
 /*
  * Calculates the PathSystem that is constructed from the given root vertex, all
  * vertices that are reachable via a path of the given description and all
  * vertices, that are part of one of these paths
- * 
+ *
  * @param vertex the rootvertex of the pathsystem to create @param rpe the
  * regular path expression, which describes the structure of the pathsystem.
+ *
  * @return a JValuePathSystem, which contains all path in the graph, that start
  * with the givne rootvertex and match the given rpe
  */
@@ -112,7 +112,7 @@ public class PathSystem extends PathSearch implements Greql2Function {
 
 	/**
 	 * marks the given vertex with the given PathSystemMarker
-	 * 
+	 *
 	 * @return true if the vertex was marked successfull, false if it is already
 	 *         marked with this state
 	 */
@@ -136,13 +136,14 @@ public class PathSystem extends PathSearch implements Greql2Function {
 
 	/**
 	 * Checks if the given vertex is marked with the given state
-	 * 
+	 *
 	 * @return true if the vertex is marked, false otherwise
 	 */
 	protected boolean isMarked(Vertex v, State s) {
 		GraphMarker<PathSystemMarkerList> currentMarker = marker.get(s.number);
-		if (currentMarker == null)
+		if (currentMarker == null) {
 			return false;
+		}
 		PathSystemMarkerList list = currentMarker.getMark(v);
 		return (list != null);
 	}
@@ -151,7 +152,7 @@ public class PathSystem extends PathSearch implements Greql2Function {
 	 * Marks all vertices that are part of the PathSystem described by the given
 	 * rootVertex and the regular path expression which is acceptes by the given
 	 * dfa
-	 * 
+	 *
 	 * @param startVertex
 	 *            the rootVertex of the PathSystem
 	 * @param dfa
@@ -174,12 +175,12 @@ public class PathSystem extends PathSearch implements Greql2Function {
 				startVertex, dfa.initialState, null, null, 0);
 		markVertex(startVertex, dfa.initialState, null /* no parent state */,
 				null /* no parent vertex */, null /* no parent state */, 0 /*
-																			 * distance
-																			 * to
-																			 * root
-																			 * is
-																			 * null
-																			 */);
+																		 * distance
+																		 * to
+																		 * root
+																		 * is
+																		 * null
+																		 */);
 
 		int count = 0, countWTrans = 0;
 		while (currentEntry != null) {
@@ -240,15 +241,17 @@ public class PathSystem extends PathSearch implements Greql2Function {
 			if (arguments[1].isNFA()) {
 				NFA nfa = arguments[1].toNFA();
 				dfa = new DFA(nfa);
-			} else
+			} else {
 				dfa = arguments[1].toDFA();
+			}
 		} catch (Exception ex) {
 			throw new WrongFunctionParameterException(this, null, arguments);
 		}
 		marker = new ArrayList<GraphMarker<PathSystemMarkerList>>(dfa.stateList
 				.size());
-		for (int i = 0; i < dfa.stateList.size(); i++)
+		for (int i = 0; i < dfa.stateList.size(); i++) {
 			marker.add(new GraphMarker<PathSystemMarkerList>(graph));
+		}
 		List<Vertex> leaves = markVerticesOfPathSystem(startVertex, dfa,
 				subgraph);
 		JValuePathSystem resultPathSystem = createPathSystemFromMarkings(
@@ -259,7 +262,7 @@ public class PathSystem extends PathSearch implements Greql2Function {
 	/**
 	 * Creates a JValuePathSystem-object which contains all path which start at
 	 * the given root vertex andend with the given leaves
-	 * 
+	 *
 	 * @param leaves
 	 * @return
 	 */
@@ -282,14 +285,14 @@ public class PathSystem extends PathSearch implements Greql2Function {
 				if (tempAttribute != null) {
 					for (PathSystemMarkerEntry currentMarker : (PathSystemMarkerList) tempAttribute) {
 						if (!currentMarker.state.isFinal || // if state of
-															// current
-															// PathSystemMarkerEntry
-															// is final or
+								// current
+								// PathSystemMarkerEntry
+								// is final or
 								isVertexMarkedWithState(leaf,
 										currentMarker.state)) { // (leaf, state)
-																// has already
-																// been
-																// processed
+							// has already
+							// been
+							// processed
 							continue;
 						}
 						Vertex currentVertex = leaf;
@@ -297,8 +300,9 @@ public class PathSystem extends PathSearch implements Greql2Function {
 								&& !isVertexMarkedWithState(currentVertex,
 										currentMarker.state)) {
 							int parentStateNumber = 0;
-							if (currentMarker.parentState != null)
+							if (currentMarker.parentState != null) {
 								parentStateNumber = currentMarker.parentState.number;
+							}
 							count++;
 							pathSystem.addVertex(currentVertex,
 									currentMarker.state.number,
@@ -325,7 +329,7 @@ public class PathSystem extends PathSearch implements Greql2Function {
 	/**
 	 * Adds the given state to the set of states maintained for the given
 	 * vertex.
-	 * 
+	 *
 	 * @param v
 	 *            the vertex to be marked
 	 * @param s
@@ -340,13 +344,12 @@ public class PathSystem extends PathSearch implements Greql2Function {
 
 	/**
 	 * Checks if the given vertex' state set contains the given state.
-	 * 
+	 *
 	 * @param v
 	 *            the vertex to be checked
 	 * @param s
 	 *            the state to be checked for
-	 * @return true, if {@code v}'s set of states contains {@code s}, false
-	 *         else
+	 * @return true, if {@code v}'s set of states contains {@code s}, false else
 	 */
 	private boolean isVertexMarkedWithState(Vertex v, State s) {
 		if (stateMarker.getMark(v) == null) {
@@ -357,18 +360,19 @@ public class PathSystem extends PathSearch implements Greql2Function {
 
 	/**
 	 * Returns the {@code PathSystemMarkerEntry} for a given vertex and state.
-	 * 
+	 *
 	 * @param v
-	 *            the vertex for which to return the
-	 *            {@code PathSystemMarkerEntry}
+	 *            the vertex for which to return the {@code
+	 *            PathSystemMarkerEntry}
 	 * @param s
-	 *            the state for which to return the
-	 *            {@code PathSystemMarkerEntry}
+	 *            the state for which to return the {@code
+	 *            PathSystemMarkerEntry}
 	 * @return the {@code PathSystemMarkerEntry} for {@code v} and {@code s}
 	 */
 	private PathSystemMarkerEntry getMarkerWithState(Vertex v, State s) {
-		if (v == null)
+		if (v == null) {
 			return null;
+		}
 		GraphMarker<PathSystemMarkerList> currentMarker = marker.get(s.number);
 		PathSystemMarkerList list = currentMarker.getMark(v);
 		Iterator<PathSystemMarkerEntry> iter = list.iterator();
@@ -394,8 +398,4 @@ public class PathSystem extends PathSearch implements Greql2Function {
 		return "(Vertex, DFA, Subgraph" + "TempAttribute)";
 	}
 
-	@Override
-	public boolean isPredicate() {
-		return false;
-	}
 }

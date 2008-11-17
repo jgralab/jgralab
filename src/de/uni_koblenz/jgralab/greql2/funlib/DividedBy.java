@@ -66,9 +66,9 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
  * </dl>
  * </dd>
  * </dl>
- * 
+ *
  * @author ist@uni-koblenz.de
- * 
+ *
  */
 
 public class DividedBy implements Greql2Function {
@@ -93,7 +93,7 @@ public class DividedBy implements Greql2Function {
 	}
 
 	public double getSelectivity() {
-		return (float) 1;
+		return 1;
 	}
 
 	public long getEstimatedCardinality(int inElements) {
@@ -102,11 +102,6 @@ public class DividedBy implements Greql2Function {
 
 	public String getExpectedParameters() {
 		return "(Double, Double)";
-	}
-
-	@Override
-	public boolean isPredicate() {
-		return false;
 	}
 
 }

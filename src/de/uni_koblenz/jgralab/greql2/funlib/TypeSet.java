@@ -38,7 +38,7 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueSet;
 
 /**
  * Returns a set of all types that occure in the given structure.
- * 
+ *
  * <dl>
  * <dt><b>GReQL-signature</b></dt>
  * <dd><code>SET&lt;ATTRIBUTEDELEMENTCLASS&gt; TypeSet(c:COLLECTION)</code></dd>
@@ -59,19 +59,18 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueSet;
  * </dl>
  * </dd>
  * </dl>
- * 
+ *
  * @author ist@uni-koblenz.de
- * 
+ *
  */
 
 /*
  * returns a set of the types of the elements in the given structure
- * 
+ *
  * @param structure a JValueCollection, Path or Pathsystem @return a JValueSet,
  * which contains all types that exist in the given structure
- * 
+ *
  * @author ist@uni-koblenz.de
- * 
  */
 
 public class TypeSet implements Greql2Function {
@@ -86,10 +85,11 @@ public class TypeSet implements Greql2Function {
 				while (iter.hasNext()) {
 					JValue value = iter.next();
 					GraphElement elem;
-					if (value.isVertex())
+					if (value.isVertex()) {
 						elem = value.toVertex();
-					else
+					} else {
 						elem = value.toEdge();
+					}
 					resultSet.add(new JValue(elem.getAttributedElementClass(),
 							elem));
 				}
@@ -124,8 +124,4 @@ public class TypeSet implements Greql2Function {
 		return "(JValueCollection or PathSystem or Path)";
 	}
 
-	@Override
-	public boolean isPredicate() {
-		return false;
-	}
 }

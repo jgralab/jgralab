@@ -40,7 +40,7 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValuePath;
 /**
  * Calculates the nodetrace of the given path. A nodetrace is a List of all
  * vertices of this path in correct order.
- * 
+ *
  * <dl>
  * <dt><b>GReQL-signature</b></dt>
  * <dd><code>LIST&lt;VERTEX&gt; nodetrace(p:PATH)</code></dd>
@@ -58,10 +58,10 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValuePath;
  * </dl>
  * </dd>
  * </dl>
- * 
+ *
  * @see EdgeTrace
  * @author ist@uni-koblenz.de
- * 
+ *
  */
 
 public class NodeTrace implements Greql2Function {
@@ -100,8 +100,4 @@ public class NodeTrace implements Greql2Function {
 		return "(Path)";
 	}
 
-	@Override
-	public boolean isPredicate() {
-		return false;
-	}
 }

@@ -38,7 +38,7 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueTable;
 
 /**
  * Extracts the set of elements that are part of the given structure
- * 
+ *
  * <dl>
  * <dt><b>GReQL-signature</b></dt>
  * <dd><code>SET elementsIn(structure:COLLECTION)</code></dd>
@@ -55,11 +55,10 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueTable;
  * </dl>
  * </dd>
  * </dl>
- * 
+ *
  * @author ist@uni-koblenz.de
- * 
+ *
  */
-
 
 public class ElementsIn implements Greql2Function {
 
@@ -76,8 +75,9 @@ public class ElementsIn implements Greql2Function {
 					while (iter.hasNext()) {
 						JValue next = iter.next();
 						if (next.isCollection()) {
-							JValue[] params = {next};
-							set.addAll((JValueSet) evaluate(graph, subgraph, params));
+							JValue[] params = { next };
+							set.addAll((JValueSet) evaluate(graph, subgraph,
+									params));
 						} else {
 							set.add(next);
 						}
@@ -87,7 +87,7 @@ public class ElementsIn implements Greql2Function {
 				}
 			} else {
 				set.add(structure);
-			}	
+			}
 			return set;
 		} catch (Exception ex) {
 			throw new WrongFunctionParameterException(this, null, arguments);
@@ -110,8 +110,4 @@ public class ElementsIn implements Greql2Function {
 		return "(Collection)";
 	}
 
-	@Override
-	public boolean isPredicate() {
-		return false;
-	}
 }

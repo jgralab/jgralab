@@ -21,7 +21,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
- 
+
 package de.uni_koblenz.jgralab.greql2.funlib;
 
 import java.util.ArrayList;
@@ -53,9 +53,9 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
  * </dd>
  * </dl>
  * @author ist@uni-koblenz.de
- * 
+ *
  */
- 
+
 /*
  * Returns the edge with the given id in the datagraph.
  * <br /><br />
@@ -65,7 +65,7 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
  * </ul>
  * <strong>Returns:</strong> the edge with the given id, encapsulated in a JValue
  * @author ist@uni-koblenz.de
- * 
+ *
  */
 
 public class GetEdge implements Greql2Function {
@@ -73,8 +73,9 @@ public class GetEdge implements Greql2Function {
 	public JValue evaluate(Graph graph, BooleanGraphMarker subgraph,
 			JValue[] arguments) throws EvaluateException {
 		try {
-			if (arguments.length < 1)
+			if (arguments.length < 1) {
 				throw new WrongFunctionParameterException(this, null, arguments);
+			}
 			int id = arguments[0].toInteger();
 			Edge edge = graph.getEdge(id);
 			return new JValue(edge, edge);
@@ -97,11 +98,6 @@ public class GetEdge implements Greql2Function {
 
 	public String getExpectedParameters() {
 		return "(Integer)";
-	}
-
-	@Override
-	public boolean isPredicate() {
-		return false;
 	}
 
 }

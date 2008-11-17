@@ -36,10 +36,12 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueSet;
 /**
  * Returns the intersection of two given sets. That means, a set, whose elements
  * are elements in the first given set and in the second given set.
- * 
+ *
  * <dl>
  * <dt><b>GReQL-signature</b></dt>
- * <dd><code>SET&lt;OBJECT&gt; intersection(set1:SET&lt;OBJECT&gt;, set2:SET&lt;OBJECT&gt;)</code></dd>
+ * <dd>
+ * <code>SET&lt;OBJECT&gt; intersection(set1:SET&lt;OBJECT&gt;, set2:SET&lt;OBJECT&gt;)</code>
+ * </dd>
  * <dd>&nbsp;</dd>
  * </dl>
  * <dl>
@@ -56,12 +58,12 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueSet;
  * </dl>
  * </dd>
  * </dl>
- * 
+ *
  * @see Difference
  * @see SymDifference
  * @see Union
  * @author ist@uni-koblenz.de
- * 
+ *
  */
 
 public class Intersection implements Greql2Function {
@@ -95,11 +97,6 @@ public class Intersection implements Greql2Function {
 
 	public String getExpectedParameters() {
 		return "(Set, Set)";
-	}
-
-	@Override
-	public boolean isPredicate() {
-		return false;
 	}
 
 }

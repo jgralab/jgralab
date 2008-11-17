@@ -21,7 +21,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
- 
+
 package de.uni_koblenz.jgralab.greql2.funlib;
 
 import java.util.ArrayList;
@@ -41,21 +41,24 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
  * <dd><code>BOOLEAN hasAttribute(ae:ATTRIBUTEDELEMENT, name:STRING)</code></dd>
  * <dd>&nbsp;</dd>
  * </dl>
- * <dl><dt></dt>
+ * <dl>
+ * <dt></dt>
  * <dd>
  * <dl>
  * <dt><b>Parameters:</b></dt>
  * <dd><code>ae</code> - attributed element to check</dd>
  * <dd><code>name</code> - name of the element to check for</dd>
  * <dt><b>Returns:</b></dt>
- * <dd><code>true</code> if the given attributed element has an attribute with the given name</dd>
+ * <dd><code>true</code> if the given attributed element has an attribute with
+ * the given name</dd>
  * <dd><code>Null</code> if one of the parameters is <code>Null</code></dd>
  * <dd><code>false</code> otherwise</dd>
  * </dl>
  * </dd>
  * </dl>
+ *
  * @author ist@uni-koblenz.de
- * 
+ *
  */
 
 public class HasAttribute implements Greql2Function {
@@ -64,13 +67,17 @@ public class HasAttribute implements Greql2Function {
 			JValue[] arguments) throws EvaluateException {
 		GraphElement elem = null;
 		try {
-			if ((arguments.length < 2) || (arguments[0] == null) || (arguments[1] == null) || (!arguments[1].isString()))
-				throw new WrongFunctionParameterException(this, null, arguments);			
-			if (arguments[0].isVertex())
+			if ((arguments.length < 2) || (arguments[0] == null)
+					|| (arguments[1] == null) || (!arguments[1].isString())) {
+				throw new WrongFunctionParameterException(this, null, arguments);
+			}
+			if (arguments[0].isVertex()) {
 				elem = arguments[0].toVertex();
-			else
+			} else {
 				elem = arguments[0].toEdge();
-			return new JValue(elem.getAttributedElementClass().containsAttribute(arguments[1].toString()));
+			}
+			return new JValue(elem.getAttributedElementClass()
+					.containsAttribute(arguments[1].toString()));
 		} catch (Exception ex) {
 			throw new WrongFunctionParameterException(this, null, arguments);
 		}
@@ -90,11 +97,6 @@ public class HasAttribute implements Greql2Function {
 
 	public String getExpectedParameters() {
 		return "(Vertex or Edge, Type or String)";
-	}
-
-	@Override
-	public boolean isPredicate() {
-		return true;
 	}
 
 }

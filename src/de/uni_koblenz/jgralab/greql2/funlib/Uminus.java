@@ -57,9 +57,9 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
  * </dl>
  * </dd>
  * </dl>
- * 
+ *
  * @author ist@uni-koblenz.de
- * 
+ *
  */
 
 public class Uminus implements Greql2Function {
@@ -98,8 +98,4 @@ public class Uminus implements Greql2Function {
 		return "(Double)";
 	}
 
-	@Override
-	public boolean isPredicate() {
-		return false;
-	}
 }

@@ -40,14 +40,15 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueTypeCollection;
  * Returns the number of outgoing edges, which are connected to the given vertex
  * and which are part of the given structure. If no structure is given, the
  * graph to which the vertex belongs to is used as structure.
- * 
+ *
  * <dl>
  * <dt><b>GReQL-signature</b></dt>
  * <dd><code>INTEGER outDegree(v:Vertex)</code></dd>
  * <dd><code>INTEGER outDegree(v:Vertex, ps:PATH)</code></dd>
  * <dd><code>INTEGER outDegree(v:Vertex, ps:PATHSYSTEM)</code></dd>
  * <dd><code>INTEGER outDegree(v:Vertex, ps:PATH, tc:TYPECOLLECTION)</code></dd>
- * <dd><code>INTEGER outDegree(v:Vertex, ps:PATHSYSTEM, tc:TYPECOLLECTION)</code></dd>
+ * <dd>
+ * <code>INTEGER outDegree(v:Vertex, ps:PATHSYSTEM, tc:TYPECOLLECTION)</code></dd>
  * <dd>&nbsp;</dd>
  * </dl>
  * <dl>
@@ -66,11 +67,11 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueTypeCollection;
  * </dl>
  * </dd>
  * </dl>
- * 
+ *
  * @see Degree
  * @see InDegree
  * @author ist@uni-koblenz.de
- * 
+ *
  */
 
 public class OutDegree implements Greql2Function {
@@ -102,8 +103,9 @@ public class OutDegree implements Greql2Function {
 			while (inc != null) {
 				if (((subgraph == null) || (subgraph.isMarked(inc)))
 						&& ((typeCol == null) || (typeCol.acceptsType(inc
-								.getAttributedElementClass()))))
+								.getAttributedElementClass())))) {
 					count++;
+				}
 				inc = inc.getNextEdge(EdgeDirection.OUT);
 			}
 			return new JValue(count);
@@ -129,8 +131,4 @@ public class OutDegree implements Greql2Function {
 		return "(Vertex, PathSystem or Path or [Graph])";
 	}
 
-	@Override
-	public boolean isPredicate() {
-		return false;
-	}
 }

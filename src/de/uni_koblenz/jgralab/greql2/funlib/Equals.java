@@ -21,7 +21,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
- 
+
 package de.uni_koblenz.jgralab.greql2.funlib;
 
 import java.util.ArrayList;
@@ -57,7 +57,7 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueBoolean;
  * </dd>
  * </dl>
  * @author ist@uni-koblenz.de
- * 
+ *
  */
 
 public class Equals implements Greql2Function {
@@ -68,10 +68,11 @@ public class Equals implements Greql2Function {
 	public JValue evaluate(Graph graph, BooleanGraphMarker subgraph, JValue[] arguments)  throws EvaluateException {
 		if ((arguments == null) | (arguments.length < 2)) {
 			throw new WrongFunctionParameterException(this, null, arguments );
-		}	
+		}
 		boolean value = arguments[0].equals(arguments[1]);
-		if (value)
+		if (value) {
 			return new JValue(JValueBoolean.getTrueValue());
+		}
 		return new JValue(JValueBoolean.getFalseValue());
 	}
 
@@ -86,14 +87,9 @@ public class Equals implements Greql2Function {
 	public long getEstimatedCardinality(int inElements) {
 		return 1;
 	}
-	
+
 	public String getExpectedParameters() {
 		return "(Object, Object)";
-	}
-
-	@Override
-	public boolean isPredicate() {
-		return true;
 	}
 
 }

@@ -37,7 +37,7 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
  * Checks if the current graph or subgraph is a tree. That means, the graph is
  * acyclic, has exactly one vertex without incoming edges and all other vertices
  * have exactly one incoming edge.
- * 
+ *
  * <dl>
  * <dt><b>GReQL-signature</b></dt>
  * <dd><code>BOOLEAN isTree()</code></dd>
@@ -54,9 +54,9 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
  * </dl>
  * </dd>
  * </dl>
- * 
+ *
  * @author ist@uni-koblenz.de
- * 
+ *
  */
 
 /*
@@ -64,7 +64,6 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
  * restriction, that every vertex has only one outgoing edge. Costs are O(n),
  * where n is the number of vertices in the graph @author ist@uni-koblenz.de
  * <dbildh@uni-koblenz.de> Summer 2006, Diploma Thesis
- * 
  */
 
 public class IsTree implements Greql2Function {
@@ -74,8 +73,9 @@ public class IsTree implements Greql2Function {
 		Vertex currentVertex = graph.getFirstVertex();
 		Vertex firstVertex = currentVertex;
 		do {
-			if (currentVertex.getDegree(EdgeDirection.OUT) > 1)
+			if (currentVertex.getDegree(EdgeDirection.OUT) > 1) {
 				return new JValue(false);
+			}
 		} while (currentVertex != firstVertex);
 		return new JValue(true);
 	}
@@ -96,8 +96,4 @@ public class IsTree implements Greql2Function {
 		return "Graph";
 	}
 
-	@Override
-	public boolean isPredicate() {
-		return true;
-	}
 }

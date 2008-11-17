@@ -73,6 +73,7 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
  * </dl>
  * </dd>
  * </dl>
+ *
  * @author ist@uni-koblenz.de
  *
  */
@@ -88,12 +89,14 @@ public class Times implements Greql2Function {
 				String s = null;
 				StringBuffer sb = new StringBuffer();
 				int stringArg = 0;
-				if (!arguments[0].isString())
+				if (!arguments[0].isString()) {
 					stringArg = 1;
+				}
 				s = arguments[stringArg].toString();
 				long countArg = arguments[1 - stringArg].toLong();
-				for (long l = 1; l < countArg; l++)
+				for (long l = 1; l < countArg; l++) {
 					sb.append(s);
+				}
 				return new JValue(sb.toString());
 			}
 
@@ -131,8 +134,4 @@ public class Times implements Greql2Function {
 		return "(Double, Double)";
 	}
 
-	@Override
-	public boolean isPredicate() {
-		return false;
-	}
 }

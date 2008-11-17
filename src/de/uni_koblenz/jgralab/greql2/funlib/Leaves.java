@@ -37,7 +37,7 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValuePathSystem;
  * Returns all leaves of the given pathsystem as set. Leaves are all vertices
  * besides the inner nodes of the pathsystem. That means, all vertices, that are
  * an end of a path.
- * 
+ *
  * <dl>
  * <dt><b>GReQL-signature</b></dt>
  * <dd><code>SET&lt;VERTEX&gt; leaves(ps:PATHSYSTEM)</code></dd>
@@ -55,10 +55,10 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValuePathSystem;
  * </dl>
  * </dd>
  * </dl>
- * 
+ *
  * @see InnerNodes
  * @author ist@uni-koblenz.de
- * 
+ *
  */
 
 public class Leaves implements Greql2Function {
@@ -88,11 +88,6 @@ public class Leaves implements Greql2Function {
 
 	public String getExpectedParameters() {
 		return "(PathSystem)";
-	}
-
-	@Override
-	public boolean isPredicate() {
-		return false;
 	}
 
 }

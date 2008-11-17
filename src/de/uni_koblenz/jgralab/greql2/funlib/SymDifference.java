@@ -39,7 +39,9 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueSet;
  * given set. Elements that are in both sets are not in the symetric difference.
  * <dl>
  * <dt><b>GReQL-signature</b></dt>
- * <dd><code>SET&lt;OBJECT&gt; symDifference(s1:SET&lt;OBJECT&gt;, s2:SET&lt;OBJECT&gt;)</code></dd>
+ * <dd>
+ * <code>SET&lt;OBJECT&gt; symDifference(s1:SET&lt;OBJECT&gt;, s2:SET&lt;OBJECT&gt;)</code>
+ * </dd>
  * <dd>&nbsp;</dd>
  * </dl>
  * <dl>
@@ -55,12 +57,12 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueSet;
  * </dl>
  * </dd>
  * </dl>
- * 
+ *
  * @see Difference
  * @see Intersection
  * @see Union
  * @author ist@uni-koblenz.de
- * 
+ *
  */
 public class SymDifference implements Greql2Function {
 
@@ -95,8 +97,4 @@ public class SymDifference implements Greql2Function {
 		return "(Set, Set)";
 	}
 
-	@Override
-	public boolean isPredicate() {
-		return false;
-	}
 }

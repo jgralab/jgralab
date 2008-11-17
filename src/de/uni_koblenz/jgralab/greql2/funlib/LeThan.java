@@ -49,8 +49,8 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
  * <dd><code>BOOLEAN leThan(a: DOUBLE, b: DOUBLE)</code></dd>
  * <dd><code>BOOLEAN leThan(s1: STRING, s2: STRING)</code></dd>
  * <dd>&nbsp;</dd>
- * <dd>This function can be used with the (&lt;)-Operator:
- * <code>a &lt; b</code></dd>
+ * <dd>This function can be used with the (&lt;)-Operator: <code>a &lt; b</code>
+ * </dd>
  * </dl>
  * <dl>
  * <dt></dt>
@@ -72,9 +72,9 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
  * </dl>
  * </dd>
  * </dl>
- * 
+ *
  * @author ist@uni-koblenz.de
- * 
+ *
  */
 
 public class LeThan implements Greql2Function {
@@ -116,10 +116,5 @@ public class LeThan implements Greql2Function {
 
 	public String getExpectedParameters() {
 		return "(Double, Double) or (String, String)";
-	}
-
-	@Override
-	public boolean isPredicate() {
-		return true;
 	}
 }

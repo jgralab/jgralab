@@ -136,20 +136,4 @@ public class GetValue implements Greql2Function {
 		return "(AttributedElement, String)";
 	}
 
-	@Override
-	public boolean isPredicate() {
-		return false;
-	}
-
-	// private Object getAttribute(AttributedElement elem, String name) throws
-	// NoSuchFieldException, SecurityException, IllegalAccessException,
-	// IllegalArgumentException {
-	// GreqlEvaluator.println("elem.getClass(): " + elem.getClass());
-	// Field[] fields = elem.getClass().getFields();
-	// GreqlEvaluator.println("Fields are: ");
-	// for (Field f : fields)
-	// GreqlEvaluator.println("Field: " + f.toString());
-	// return elem.getClass().getField(name).get(elem);
-	// }
-
 }

@@ -37,7 +37,7 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueTuple;
 
 /**
  * Returns the index of the given object in the given List or Tuple.
- * 
+ *
  * <dl>
  * <dt><b>GReQL-signature</b></dt>
  * <dd><code>INTEGER pos(list:LIST&lt;OBJECT&gt;, element:OBJECT)</code></dd>
@@ -51,8 +51,8 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueTuple;
  * <dt><b>Parameters:</b></dt>
  * <dd><code>list</code> - list to work with</dd>
  * <dd><code>tuple</code> - tuple to work with</dd>
- * <dd><code>element</code> - element to return index for in the given list
- * or tuple</dd>
+ * <dd><code>element</code> - element to return index for in the given list or
+ * tuple</dd>
  * <dt><b>Returns:</b></dt>
  * <dd>the index of the given object in the given list or tuple</dd>
  * <dd><code>-1</code> if the given Object is not in the given list or tuple</dd>
@@ -60,9 +60,9 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueTuple;
  * </dl>
  * </dd>
  * </dl>
- * 
+ *
  * @author ist@uni-koblenz.de
- * 
+ *
  */
 
 /*
@@ -72,9 +72,8 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueTuple;
  * JValueTuple @param element the element to calculate the position for @return
  * the position of the given element in the givne collection or -1, if the given
  * object is not a member of the given collection
- * 
+ *
  * @author ist@uni-koblenz.de
- * 
  */
 
 public class Pos implements Greql2Function {
@@ -98,8 +97,8 @@ public class Pos implements Greql2Function {
 				}
 			}
 		} catch (Exception ex) { // JValueInvalidTypeException,
-									// NoSuchFieldException,
-									// IndexOutOfBoundsException
+			// NoSuchFieldException,
+			// IndexOutOfBoundsException
 			throw new WrongFunctionParameterException(this, null, arguments);
 		}
 		return new JValue(-1);
@@ -121,8 +120,4 @@ public class Pos implements Greql2Function {
 		return "(JValueList or JValueTuple, Object )";
 	}
 
-	@Override
-	public boolean isPredicate() {
-		return false;
-	}
 }

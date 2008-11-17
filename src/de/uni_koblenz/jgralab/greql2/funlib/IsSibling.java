@@ -41,7 +41,7 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValuePathSystem;
  * Checks if two given vertices are siblings. That means, they have at least one
  * same parent. If a pathsystem is given, this check is performed on two
  * vertices in this pathsystem.
- * 
+ *
  * <dl>
  * <dt><b>GReQL-signature</b></dt>
  * <dd><code>BOOLEAN isSibling(v1:VERTEX, v2:VERTEX)</code></dd>
@@ -58,17 +58,17 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValuePathSystem;
  * <dd><code>ps</code> - optional pathsystem to perform this check for two
  * vertices in this pathsystem</dd>
  * <dt><b>Returns:</b></dt>
- * <dd><code>true</code> if there is at least one same parent for the two
- * given vertices. If a pathsystem is specified, both vertices and at least one
- * parent must be in it.</dd>
+ * <dd><code>true</code> if there is at least one same parent for the two given
+ * vertices. If a pathsystem is specified, both vertices and at least one parent
+ * must be in it.</dd>
  * <dd><code>Null</code> if one of the given parameters is <code>Null</code></dd>
  * <dd><code>false</code> otherwise</dd>
  * </dl>
  * </dd>
  * </dl>
- * 
+ *
  * @author ist@uni-koblenz.de
- * 
+ *
  */
 
 public class IsSibling implements Greql2Function {
@@ -93,20 +93,23 @@ public class IsSibling implements Greql2Function {
 			while (inc1 != null) {
 				Edge inc2 = secondVertex.getFirstEdge();
 				Vertex firstFather;
-				if (inc1.getAlpha() == firstVertex)
+				if (inc1.getAlpha() == firstVertex) {
 					firstFather = inc1.getOmega();
-				else
+				} else {
 					firstFather = inc1.getAlpha();
+				}
 				if ((subgraph == null) || (subgraph.isMarked(firstFather))) {
 					while (inc2 != null) {
 						Vertex secondFather;
-						if (inc2.getAlpha() == secondVertex)
+						if (inc2.getAlpha() == secondVertex) {
 							secondFather = inc2.getOmega();
-						else
+						} else {
 							secondFather = inc2.getAlpha();
-						if (firstFather.equals(secondFather))
+						}
+						if (firstFather.equals(secondFather)) {
 							return new JValue(JValueBoolean.getTrueValue(),
 									firstVertex);
+						}
 						inc2 = inc2.getNextEdge();
 					}
 				}
@@ -135,8 +138,4 @@ public class IsSibling implements Greql2Function {
 		return "(Vertex, Vertex [, PathSystem or Subgraph])";
 	}
 
-	@Override
-	public boolean isPredicate() {
-		return true;
-	}
 }

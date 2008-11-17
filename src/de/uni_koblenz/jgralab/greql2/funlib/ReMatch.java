@@ -35,7 +35,7 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
 /**
  * Checks if the first given string matches the regular expression represented
  * by the second given string.
- * 
+ *
  * <dl>
  * <dt><b>GReQL-signature</b></dt>
  * <dd><code>BOOLEAN reMatch(s:STRING, rexp:STRING)</code></dd>
@@ -58,18 +58,9 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
  * </dl>
  * </dd>
  * </dl>
- * 
+ *
  * @author ist@uni-koblenz.de
- * 
- */
-
-/*
- * calculates the Regular Match for a String s and a Stringpatterns p
- * 
- * @param s the string to check @param p the pattern used for checking @return
- * TrivalentBoolean.TRUE, is p matches the string s @author ist@uni-koblenz.de
- * <dbildh@uni-koblenz.de> Summer 2006, Diploma Thesis
- * 
+ *
  */
 
 public class ReMatch implements Greql2Function {
@@ -102,11 +93,6 @@ public class ReMatch implements Greql2Function {
 	}
 
 	public String getExpectedParameters() {
-		return "(Double, Double) or (String, String)";
-	}
-
-	@Override
-	public boolean isPredicate() {
-		return true;
+		return "(String, String)";
 	}
 }

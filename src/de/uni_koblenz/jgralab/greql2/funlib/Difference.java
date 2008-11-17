@@ -38,7 +38,9 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueSet;
  * elements from the first given set that are not element of the second one.
  * <dl>
  * <dt><b>GReQL-signature</b></dt>
- * <dd><code>SET&lt;OBJECT&gt; difference(s1:SET&lt;OBJECT&gt;, s2:SET&lt;OBJECT&gt;)</code></dd>
+ * <dd>
+ * <code>SET&lt;OBJECT&gt; difference(s1:SET&lt;OBJECT&gt;, s2:SET&lt;OBJECT&gt;)</code>
+ * </dd>
  * <dd>&nbsp;</dd>
  * </dl>
  * <dl>
@@ -54,12 +56,12 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueSet;
  * </dl>
  * </dd>
  * </dl>
- * 
+ *
  * @see SymDifference
  * @see Union
  * @see Intersection
  * @author ist@uni-koblenz.de
- * 
+ *
  */
 
 public class Difference implements Greql2Function {
@@ -96,11 +98,6 @@ public class Difference implements Greql2Function {
 
 	public String getExpectedParameters() {
 		return "(Set, Set)";
-	}
-
-	@Override
-	public boolean isPredicate() {
-		return false;
 	}
 
 }

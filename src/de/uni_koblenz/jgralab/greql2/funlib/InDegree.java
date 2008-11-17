@@ -21,7 +21,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
- 
+
 package de.uni_koblenz.jgralab.greql2.funlib;
 
 import java.util.ArrayList;
@@ -37,9 +37,9 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValueTypeCollection;
 
 /**
- * Returns the number of incoming edges, which are connected to the given vertex and
- * which are part of the given structure. If no structure is given, the graph to which
- * the vertex belongs to is used as structure.
+ * Returns the number of incoming edges, which are connected to the given vertex
+ * and which are part of the given structure. If no structure is given, the
+ * graph to which the vertex belongs to is used as structure.
  *
  * <dl>
  * <dt><b>GReQL-signature</b></dt>
@@ -47,32 +47,37 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueTypeCollection;
  * <dd><code>INTEGER inDegree(v:Vertex, ps:PATH)</code></dd>
  * <dd><code>INTEGER inDegree(v:Vertex, ps:PATHSYSTEM)</code></dd>
  * <dd><code>INTEGER inDegree(v:Vertex, ps:PATH, tc:TYPECOLLECTION)</code></dd>
- * <dd><code>INTEGER inDegree(v:Vertex, ps:PATHSYSTEM, tc:TYPECOLLECTION)</code></dd>
+ * <dd><code>INTEGER inDegree(v:Vertex, ps:PATHSYSTEM, tc:TYPECOLLECTION)</code>
+ * </dd>
  * <dd>&nbsp;</dd>
  * </dl>
- * <dl><dt></dt>
+ * <dl>
+ * <dt></dt>
  * <dd>
  * <dl>
  * <dt><b>Parameters:</b></dt>
  * <dd><code>v</code> - vertex to calculate the indegree for</dd>
  * <dd><code>p</code> - path to limit scope to</dd>
  * <dd><code>ps</code> - pathsystem to limit scope to</dd>
- * <dd><code>tc</code> - typecollection to limit types that are taken into account</dd>
+ * <dd><code>tc</code> - typecollection to limit types that are taken into
+ * account</dd>
  * <dt><b>Returns:</b></dt>
  * <dd>the indegree of the given vertex</dd>
  * <dd><code>Null</code> if one of the parameters is <code>Null</code></dd>
  * </dl>
  * </dd>
  * </dl>
+ *
  * @see Degree
  * @see OutDegree
  * @author ist@uni-koblenz.de
- * 
+ *
  */
 
-public class InDegree  implements Greql2Function {
+public class InDegree implements Greql2Function {
 
-	public JValue evaluate(Graph graph, BooleanGraphMarker subgraph, JValue[] arguments) throws EvaluateException {
+	public JValue evaluate(Graph graph, BooleanGraphMarker subgraph,
+			JValue[] arguments) throws EvaluateException {
 		try {
 			JValueTypeCollection typeCol = null;
 			Vertex vertex = arguments[0].toVertex();
@@ -80,31 +85,37 @@ public class InDegree  implements Greql2Function {
 				if (arguments[1].isJValueTypeCollection()) {
 					typeCol = arguments[1].toJValueTypeCollection();
 				} else {
-					if ((arguments.length > 2) && (arguments[2] != null) && (arguments[2].isJValueTypeCollection())) {
+					if ((arguments.length > 2) && (arguments[2] != null)
+							&& (arguments[2].isJValueTypeCollection())) {
 						typeCol = arguments[2].toJValueTypeCollection();
 					}
 					if (arguments[1].isPathSystem()) {
-						return new JValue(arguments[1].toPathSystem().degree(vertex, true, typeCol));
+						return new JValue(arguments[1].toPathSystem().degree(
+								vertex, true, typeCol));
 					} else if (arguments[1].isPath()) {
-						return new JValue(arguments[1].toPath().degree(vertex, true));
-					} 
-				}	
+						return new JValue(arguments[1].toPath().degree(vertex,
+								true));
+					}
+				}
 			}
 			Edge inc = vertex.getFirstEdge(EdgeDirection.IN);
 			int count = 0;
 			while (inc != null) {
-				if (((subgraph==null) || (subgraph.isMarked(inc))) && ((typeCol == null) || (typeCol.acceptsType(inc.getAttributedElementClass()))))
+				if (((subgraph == null) || (subgraph.isMarked(inc)))
+						&& ((typeCol == null) || (typeCol.acceptsType(inc
+								.getAttributedElementClass())))) {
 					count++;
+				}
 				inc = inc.getNextEdge(EdgeDirection.IN);
 			}
 			return new JValue(count);
 
 		} catch (Exception ex) {
-			throw new WrongFunctionParameterException(this, null,arguments);
+			throw new WrongFunctionParameterException(this, null, arguments);
 		}
-	}	
+	}
 
-    public long getEstimatedCosts(ArrayList<Long> inElements) {
+	public long getEstimatedCosts(ArrayList<Long> inElements) {
 		return 10;
 	}
 
@@ -118,11 +129,6 @@ public class InDegree  implements Greql2Function {
 
 	public String getExpectedParameters() {
 		return "(Vertex, PathSystem or Path or [Graph])";
-	}
-
-	@Override
-	public boolean isPredicate() {
-		return false;
 	}
 
 }

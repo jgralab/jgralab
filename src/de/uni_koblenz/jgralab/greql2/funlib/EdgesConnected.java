@@ -21,7 +21,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
- 
+
 package de.uni_koblenz.jgralab.greql2.funlib;
 
 import java.util.ArrayList;
@@ -64,7 +64,7 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueSet;
  * @see EdgesFrom
  * @see EdgesTo
  * @author ist@uni-koblenz.de
- * 
+ *
  */
 
 public class EdgesConnected implements Greql2Function {
@@ -84,8 +84,9 @@ public class EdgesConnected implements Greql2Function {
 			Edge inc = vertex.getFirstEdge();
 			JValueSet resultSet = new JValueSet();
 			while (inc != null) {
-				if ((subgraph==null) || (subgraph.isMarked(inc)))
+				if ((subgraph==null) || (subgraph.isMarked(inc))) {
 					resultSet.add(new JValue(inc));
+				}
 				inc = inc.getNextEdge();
 			}
 			return resultSet;
@@ -110,11 +111,6 @@ public class EdgesConnected implements Greql2Function {
 
 	public String getExpectedParameters() {
 		return "(Vertex, PathSystem or Path or [Graph])";
-	}
-
-	@Override
-	public boolean isPredicate() {
-		return false;
 	}
 
 }

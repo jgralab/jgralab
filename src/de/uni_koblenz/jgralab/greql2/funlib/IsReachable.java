@@ -46,10 +46,12 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueBoolean;
  * Checks if there exists a path from the first given vertex to the second given
  * vertex in the graph, that is accepted by the given dfa. A dfa is defined as
  * regular path expression.
- * 
+ *
  * <dl>
  * <dt><b>GReQL-signature</b></dt>
- * <dd><code>BOOLEAN isReachable(startVertex:VERTEX, targetVertex:VERTEX, dfa: DFA)</code></dd>
+ * <dd>
+ * <code>BOOLEAN isReachable(startVertex:VERTEX, targetVertex:VERTEX, dfa: DFA)</code>
+ * </dd>
  * <dd>&nbsp;</dd>
  * </dl>
  * <dl>
@@ -61,24 +63,24 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueBoolean;
  * <dd><code>targetVertex</code> - last vertex of a potential path</dd>
  * <dd><code>dfa</code> - a dfa that accepts regular path expressions</dd>
  * <dt><b>Returns:</b></dt>
- * <dd><code>true</code> if at least one path exists from the first given
- * vertex to the second given vertex and that is accepted by the given dfa</dd>
+ * <dd><code>true</code> if at least one path exists from the first given vertex
+ * to the second given vertex and that is accepted by the given dfa</dd>
  * <dd><code>Null</code> if one of the given parameters is <code>Null</code></dd>
  * <dd><code>false</code> otherwise</dd>
  * </dl>
  * </dd>
  * </dl>
- * 
+ *
  * @author ist@uni-koblenz.de
- * 
+ *
  */
 
 /*
  * Checks if there exists a path from startVertex to targetVertex in the
  * dataGraph that is accepted by this DFA
- * 
+ *
  * @param startVertex
- * 
+ *
  * StartVertex of the Path @param endVertex TargetVertex of the Path @param dfa
  * a deterministic finite automaton, which accepts the rpe that describes the
  * path between start- and endvertex. @return true if such a path exists, false
@@ -94,8 +96,9 @@ public class IsReachable extends PathSearch implements Greql2Function {
 		// test, if start and end vertex are valid. if not, the may be
 		// restricted
 		// by a restricted expression, so return false
-		if ((!arguments[0].isValid()) || (!arguments[1].isValid()))
+		if ((!arguments[0].isValid()) || (!arguments[1].isValid())) {
 			return new JValue(JValueBoolean.getFalseValue());
+		}
 		try {
 			startVertex = arguments[0].toVertex();
 			endVertex = arguments[1].toVertex();
@@ -160,8 +163,4 @@ public class IsReachable extends PathSearch implements Greql2Function {
 		return "(Vertex, Vertex, DFA, Subgraph" + "TempAttribute)";
 	}
 
-	@Override
-	public boolean isPredicate() {
-		return true;
-	}
 }

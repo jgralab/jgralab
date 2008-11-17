@@ -38,12 +38,14 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueSet;
 
 /**
  * Returns a set of all vertex-types that occure in the given structure.
- * 
+ *
  * <dl>
  * <dt><b>GReQL-signature</b></dt>
- * <dd><code>SET&lt;ATTRIBUTEDELEMENTCLASS&gt; vertexTypeSet(c:COLLECTION)</code></dd>
+ * <dd>
+ * <code>SET&lt;ATTRIBUTEDELEMENTCLASS&gt; vertexTypeSet(c:COLLECTION)</code></dd>
  * <dd><code>SET&lt;ATTRIBUTEDELEMENTCLASS&gt; vertexTypeSet(p:PATH)</code></dd>
- * <dd><code>SET&lt;ATTRIBUTEDELEMENTCLASS&gt; vertexTypeSet(ps:PATHSYSTEM)</code></dd>
+ * <dd>
+ * <code>SET&lt;ATTRIBUTEDELEMENTCLASS&gt; vertexTypeSet(ps:PATHSYSTEM)</code></dd>
  * <dd>&nbsp;</dd>
  * </dl>
  * <dl>
@@ -59,19 +61,18 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueSet;
  * </dl>
  * </dd>
  * </dl>
- * 
+ *
  * @author ist@uni-koblenz.de
- * 
+ *
  */
 
 /*
  * returns a set of the typenames of the vertices in the given structure
- * 
+ *
  * @param structure a JValueCollection, Path or Pathsystem @return a JValueSet,
  * which contains all types that exist in the given structure
- * 
+ *
  * @author ist@uni-koblenz.de
- * 
  */
 
 public class VertexTypeSet implements Greql2Function {
@@ -123,8 +124,4 @@ public class VertexTypeSet implements Greql2Function {
 		return "(JValueCollection or PathSystem or Path)";
 	}
 
-	@Override
-	public boolean isPredicate() {
-		return false;
-	}
 }

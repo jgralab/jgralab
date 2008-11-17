@@ -40,7 +40,7 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueSet;
  * Returns all siblings of the given vertex as set. If a pathsystem is given,
  * all siblings that are in the pathsystem are returned. Two ore more vertices
  * are siblings, if they have at least one same parent.
- * 
+ *
  * <dl>
  * <dt><b>GReQL-signature</b></dt>
  * <dd><code>SET&lt;VERTEX&gt; siblings(v:VERTEX)</code></dd>
@@ -62,9 +62,9 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueSet;
  * </dl>
  * </dd>
  * </dl>
- * 
+ *
  * @author ist@uni-koblenz.de
- * 
+ *
  */
 
 public class Siblings implements Greql2Function {
@@ -116,8 +116,4 @@ public class Siblings implements Greql2Function {
 		return "(Vertex [,PathSystem])";
 	}
 
-	@Override
-	public boolean isPredicate() {
-		return false;
-	}
 }

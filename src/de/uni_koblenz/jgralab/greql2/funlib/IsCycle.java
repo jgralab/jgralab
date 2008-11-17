@@ -21,7 +21,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
- 
+
 package de.uni_koblenz.jgralab.greql2.funlib;
 
 import java.util.ArrayList;
@@ -57,7 +57,7 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValuePath;
  * </dd>
  * </dl>
  * @author ist@uni-koblenz.de
- * 
+ *
  */
 
 public class IsCycle implements Greql2Function {
@@ -86,11 +86,6 @@ public class IsCycle implements Greql2Function {
 
 	public String getExpectedParameters() {
 		return "(Path)";
-	}
-
-	@Override
-	public boolean isPredicate() {
-		return true;
 	}
 
 }

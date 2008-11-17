@@ -36,7 +36,7 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueCollection;
 
 /**
  * Calculates the arithmetic average of the given collection.
- * 
+ *
  * <dl>
  * <dt><b>GReQL-signature</b></dt>
  * <dd><code>DOUBLE avg(c:COLLECTION)</code></dd>
@@ -54,9 +54,9 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueCollection;
  * </dl>
  * </dd>
  * </dl>
- * 
+ *
  * @author ist@uni-koblenz.de
- * 
+ *
  */
 
 public class Avg implements Greql2Function {
@@ -105,11 +105,6 @@ public class Avg implements Greql2Function {
 
 	public String getExpectedParameters() {
 		return "(JValueCollection of Integers)";
-	}
-
-	@Override
-	public boolean isPredicate() {
-		return false;
 	}
 
 }

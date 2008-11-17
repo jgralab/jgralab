@@ -36,7 +36,7 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValuePath;
 /**
  * Checks if two given paths are parallel. That means, they have the same
  * start-vertex and end-vertex and no other shared vertices.
- * 
+ *
  * <dl>
  * <dt><b>GReQL-signature</b></dt>
  * <dd><code>BOOLEAN isParallel(p1:PATH, p2:PATH)</code></dd>
@@ -50,16 +50,16 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValuePath;
  * <dd><code>p1</code> - first path</dd>
  * <dd><code>p2</code> - second path</dd>
  * <dt><b>Returns:</b></dt>
- * <dd><code>true</code> if both paths have the same start- and end-vertex
- * and no other shared vertices</dd>
+ * <dd><code>true</code> if both paths have the same start- and end-vertex and
+ * no other shared vertices</dd>
  * <dd><code>Null</code> if one of the given parameters is <code>Null</code></dd>
  * <dd><code>false</code> otherwise</dd>
  * </dl>
  * </dd>
  * </dl>
- * 
+ *
  * @author ist@uni-koblenz.de
- * 
+ *
  */
 
 public class IsParallel implements Greql2Function {
@@ -94,8 +94,4 @@ public class IsParallel implements Greql2Function {
 		return "(Path, Path)";
 	}
 
-	@Override
-	public boolean isPredicate() {
-		return true;
-	}
 }

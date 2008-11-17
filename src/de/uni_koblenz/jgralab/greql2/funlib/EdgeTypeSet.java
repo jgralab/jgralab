@@ -21,7 +21,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
- 
+
 package de.uni_koblenz.jgralab.greql2.funlib;
 
 import java.util.ArrayList;
@@ -36,7 +36,6 @@ import de.uni_koblenz.jgralab.greql2.exception.WrongFunctionParameterException;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValueCollection;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValueSet;
-import de.uni_koblenz.jgralab.schema.GraphElementClass;
 
 /**
  * Returns a set of all edge-types that occure in the given structure.
@@ -45,10 +44,12 @@ import de.uni_koblenz.jgralab.schema.GraphElementClass;
  * <dt><b>GReQL-signature</b></dt>
  * <dd><code>SET&lt;ATTRIBUTEDELEMENTCLASS&gt; edgeTypeSet(c:COLLECTION)</code></dd>
  * <dd><code>SET&lt;ATTRIBUTEDELEMENTCLASS&gt; edgeTypeSet(p:PATH)</code></dd>
- * <dd><code>SET&lt;ATTRIBUTEDELEMENTCLASS&gt; edgeTypeSet(ps:PATHSYSTEM)</code></dd>
+ * <dd><code>SET&lt;ATTRIBUTEDELEMENTCLASS&gt; edgeTypeSet(ps:PATHSYSTEM)</code>
+ * </dd>
  * <dd>&nbsp;</dd>
  * </dl>
- * <dl><dt></dt>
+ * <dl>
+ * <dt></dt>
  * <dd>
  * <dl>
  * <dt><b>Parameters:</b></dt>
@@ -60,20 +61,18 @@ import de.uni_koblenz.jgralab.schema.GraphElementClass;
  * </dl>
  * </dd>
  * </dl>
+ *
  * @author ist@uni-koblenz.de
- * 
+ *
  */
 
 /*
- * Returns a set of the typenames of the edges in the given structure.
- * <br /><br />
- * <strong>Parameters:</strong>
- * <ul>
- * 	<li>structure: (JValueCollection | PathSystem | JValuePath)</li>
- * </ul>
- * <strong>Returns:</strong> a JValueSet of edgetypes
+ * Returns a set of the typenames of the edges in the given structure. <br /><br
+ * /> <strong>Parameters:</strong> <ul> <li>structure: (JValueCollection |
+ * PathSystem | JValuePath)</li> </ul> <strong>Returns:</strong> a JValueSet of
+ * edgetypes
+ *
  * @author ist@uni-koblenz.de
- * 
  */
 public class EdgeTypeSet implements Greql2Function {
 
@@ -89,7 +88,7 @@ public class EdgeTypeSet implements Greql2Function {
 					GraphElement elem;
 					if (value.isEdge()) {
 						elem = value.toEdge();
-						resultSet.add(new JValue((GraphElementClass) elem
+						resultSet.add(new JValue(elem
 								.getAttributedElementClass(), elem));
 					}
 				}
@@ -103,8 +102,7 @@ public class EdgeTypeSet implements Greql2Function {
 			}
 			return new JValueSet();
 		} catch (JValueInvalidTypeException ex) {
-			throw new WrongFunctionParameterException(this, null,
-					arguments);
+			throw new WrongFunctionParameterException(this, null, arguments);
 		}
 	}
 
@@ -122,11 +120,6 @@ public class EdgeTypeSet implements Greql2Function {
 
 	public String getExpectedParameters() {
 		return "(JValueCollection or PathSystem or Path)";
-	}
-
-	@Override
-	public boolean isPredicate() {
-		return false;
 	}
 
 }

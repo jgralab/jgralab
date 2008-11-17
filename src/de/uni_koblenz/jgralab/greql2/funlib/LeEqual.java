@@ -73,9 +73,9 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
  * </dl>
  * </dd>
  * </dl>
- * 
+ *
  * @author ist@uni-koblenz.de
- * 
+ *
  */
 public class LeEqual implements Greql2Function {
 
@@ -118,8 +118,4 @@ public class LeEqual implements Greql2Function {
 		return "(Double, Double) or (String, String)";
 	}
 
-	@Override
-	public boolean isPredicate() {
-		return true;
-	}
 }

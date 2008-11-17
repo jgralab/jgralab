@@ -21,7 +21,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
- 
+
 package de.uni_koblenz.jgralab.greql2.funlib;
 
 import java.util.ArrayList;
@@ -60,7 +60,7 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValuePathSystem;
  * </dl>
  * @see Leaves
  * @author ist@uni-koblenz.de
- * 
+ *
  */
 
 public class ExtractPath implements Greql2Function {
@@ -100,11 +100,6 @@ public class ExtractPath implements Greql2Function {
 
 	public String getExpectedParameters() {
 		return "(PathSystem [, Vertex])";
-	}
-
-	@Override
-	public boolean isPredicate() {
-		return false;
 	}
 
 }

@@ -38,7 +38,7 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueTuple;
 
 /**
  * Returns the n-th element of the given list or tuple.
- * 
+ *
  * <dl>
  * <dt><b>GReQL-signature</b></dt>
  * <dd><code>OBJECT nthElement(list:LIST&lt;OBJECT&gt;, n:INTEGER)</code></dd>
@@ -54,27 +54,27 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueTuple;
  * <dd><code>tuple</code> - tuple to return n-th element for</dd>
  * <dd><code>n</code> - index of the element to return</dd>
  * <dt><b>Returns:</b></dt>
- * <dd> the n-th element of the given list or tuple</dd>
+ * <dd>the n-th element of the given list or tuple</dd>
  * <dd><code>Null</code> if one of the parameters is <code>Null</code></dd>
  * </dl>
  * </dd>
  * </dl>
- * 
+ *
  * @author ist@uni-koblenz.de
- * 
+ *
  */
 
 /*
  * Calculates the n-th element of a list or tuple and returns it
- * 
+ *
  * @param structure a JValueList or JValueTuple to get the n. element for+
+ *
  * @param index the index of the element in the structure to access @return the
  * element with the given index or a invlaid JValue @throw a
  * FunctionInvalidIndexException if the given structure doesn't contain a
  * element with the given index, for instance if one provides a list [1,2,3] and
- * tries to acces list[17] @author ist@uni-koblenz.de
- * Summer 2006, Diploma Thesis
- * 
+ * tries to acces list[17] @author ist@uni-koblenz.de Summer 2006, Diploma
+ * Thesis
  */
 
 public class NthElement implements Greql2Function {
@@ -126,8 +126,4 @@ public class NthElement implements Greql2Function {
 		return "(JValueList or JValueTuple, integer )";
 	}
 
-	@Override
-	public boolean isPredicate() {
-		return false;
-	}
 }

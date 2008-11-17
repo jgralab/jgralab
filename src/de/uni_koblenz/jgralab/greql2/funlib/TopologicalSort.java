@@ -150,14 +150,4 @@ public class TopologicalSort implements Greql2Function {
 		return 1;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see de.uni_koblenz.jgralab.greql2.funlib.Greql2Function#isPredicate()
-	 */
-	@Override
-	public boolean isPredicate() {
-		return false;
-	}
-
 }

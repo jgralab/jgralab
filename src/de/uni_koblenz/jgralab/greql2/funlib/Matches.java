@@ -47,7 +47,7 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValuePath;
 /**
  * Checks if the given dfa matches the given path. A dfa is defined as regular
  * path expression.
- * 
+ *
  * <dl>
  * <dt><b>GReQL-signature</b></dt>
  * <dd><code>BOOLEAN matches(p1:PATH, dfa:DFA)</code></dd>
@@ -61,16 +61,16 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValuePath;
  * <dd><code>p1</code> - path to be checked against</dd>
  * <dd><code>dfa</code> - a dfa that accepts regular path expressions</dd>
  * <dt><b>Returns:</b></dt>
- * <dd><code>true</code> if the given regular path expression matches the
- * given path</dd>
+ * <dd><code>true</code> if the given regular path expression matches the given
+ * path</dd>
  * <dd><code>Null</code> if one of the given parameters is <code>Null</code></dd>
  * <dd><code>false</code> otherwise</dd>
  * </dl>
  * </dd>
  * </dl>
- * 
+ *
  * @author ist@uni-koblenz.de
- * 
+ *
  */
 
 public class Matches extends PathSearch implements Greql2Function {
@@ -84,8 +84,9 @@ public class Matches extends PathSearch implements Greql2Function {
 			if (arguments[1].isNFA()) {
 				NFA nfa = arguments[1].toNFA();
 				dfa = new DFA(nfa);
-			} else
+			} else {
 				dfa = arguments[1].toDFA();
+			}
 		} catch (Exception ex) {
 			throw new WrongFunctionParameterException(this, null, arguments);
 		}
@@ -141,8 +142,4 @@ public class Matches extends PathSearch implements Greql2Function {
 		return "(JValuePath, DFA or NFA)";
 	}
 
-	@Override
-	public boolean isPredicate() {
-		return true;
-	}
 }

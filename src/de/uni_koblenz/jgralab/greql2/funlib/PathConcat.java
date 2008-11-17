@@ -26,18 +26,18 @@ package de.uni_koblenz.jgralab.greql2.funlib;
 
 import java.util.ArrayList;
 
+import de.uni_koblenz.jgralab.BooleanGraphMarker;
+import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.greql2.exception.EvaluateException;
 import de.uni_koblenz.jgralab.greql2.exception.WrongFunctionParameterException;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValuePath;
-import de.uni_koblenz.jgralab.BooleanGraphMarker;
-import de.uni_koblenz.jgralab.Graph;
 
 /**
  * Returns the concatenation of two given paths. This function only works, if
  * the last vertex of the first path and the first vertex of the second path are
  * the same. If this is not the case, <code>null</code> is returned.
- * 
+ *
  * <dl>
  * <dt><b>GReQL-signature</b></dt>
  * <dd><code>PATH pathConcat(p1:PATH, p2:PATH)</code></dd>
@@ -56,9 +56,9 @@ import de.uni_koblenz.jgralab.Graph;
  * </dl>
  * </dd>
  * </dl>
- * 
+ *
  * @author ist@uni-koblenz.de
- * 
+ *
  */
 
 public class PathConcat implements Greql2Function {
@@ -91,8 +91,4 @@ public class PathConcat implements Greql2Function {
 		return "(Path, Path)";
 	}
 
-	@Override
-	public boolean isPredicate() {
-		return false;
-	}
 }

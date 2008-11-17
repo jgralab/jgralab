@@ -41,11 +41,13 @@ import de.uni_koblenz.jgralab.schema.Schema;
 /**
  * Returns all subtypes of the given type. The type can be given as
  * AttributedElementClass or as String which holds the typename.
- * 
+ *
  * <dl>
  * <dt><b>GReQL-signature</b></dt>
  * <dd><code>SET&lt;ATTRIBUTEDELEMENTCLASS&gt; subTypes(type:STRING)</code></dd>
- * <dd><code>SET&lt;ATTRIBUTEDELEMENTCLASS&gt; subTypes(typeA:ATTRIBUTEDELEMENTCLASS)</code></dd>
+ * <dd>
+ * <code>SET&lt;ATTRIBUTEDELEMENTCLASS&gt; subTypes(typeA:ATTRIBUTEDELEMENTCLASS)</code>
+ * </dd>
  * <dd>&nbsp;</dd>
  * </dl>
  * <dl>
@@ -62,17 +64,17 @@ import de.uni_koblenz.jgralab.schema.Schema;
  * </dl>
  * </dd>
  * </dl>
- * 
+ *
  * @author ist@uni-koblenz.de
- * 
+ *
  */
 
 /*
  * returns a set which contains all subtypes of the given type
- * 
- * @param type a type (AttributedElementClass or String) @author ist@uni-koblenz.de
- * Bildhauer <dbildh@uni-koblenz.de> Summer 2006, Diploma Thesis
- * 
+ *
+ * @param type a type (AttributedElementClass or String) @author
+ * ist@uni-koblenz.de Bildhauer <dbildh@uni-koblenz.de> Summer 2006, Diploma
+ * Thesis
  */
 
 public class Subtypes implements Greql2Function {
@@ -119,10 +121,5 @@ public class Subtypes implements Greql2Function {
 
 	public String getExpectedParameters() {
 		return "(Integer)";
-	}
-
-	@Override
-	public boolean isPredicate() {
-		return false;
 	}
 }

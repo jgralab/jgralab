@@ -37,10 +37,12 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueSet;
  * Checks if the first given set is a superset of the second given set. That
  * means, the second given set contains only elements, that are element in the
  * first given set.
- * 
+ *
  * <dl>
  * <dt><b>GReQL-signature</b></dt>
- * <dd><code>BOOLEAN isSuperSet(set1:SET&lt;OBJECT&gt;, set2:SET&lt;OBJECT&gt;)</code></dd>
+ * <dd>
+ * <code>BOOLEAN isSuperSet(set1:SET&lt;OBJECT&gt;, set2:SET&lt;OBJECT&gt;)</code>
+ * </dd>
  * <dd>&nbsp;</dd>
  * </dl>
  * <dl>
@@ -51,26 +53,24 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueSet;
  * <dd><code>set1</code> - potential superset</dd>
  * <dd><code>set2</code> - potential subset</dd>
  * <dt><b>Returns:</b></dt>
- * <dd><code>true</code> if the second given set contains only elements that
- * are element in the first given set.</dd>
+ * <dd><code>true</code> if the second given set contains only elements that are
+ * element in the first given set.</dd>
  * <dd><code>Null</code> if one of the given parameters is <code>Null</code></dd>
  * <dd><code>false</code> otherwise</dd>
  * </dl>
  * </dd>
  * </dl>
- * 
+ *
  * @author ist@uni-koblenz.de
- * 
+ *
  */
 
 /*
  * Gets two sets as parameter and returns true, if the first set is superset of
  * the second set
- * 
+ *
  * @param set1 @param set2 @return true, if set1 is a superset of set2 (even if
- * they are equal) @author ist@uni-koblenz.de
- * Diploma Thesis
- * 
+ * they are equal) @author ist@uni-koblenz.de Diploma Thesis
  */
 public class IsSuperSet implements Greql2Function {
 
@@ -105,8 +105,4 @@ public class IsSuperSet implements Greql2Function {
 		return "(Set, Set)";
 	}
 
-	@Override
-	public boolean isPredicate() {
-		return true;
-	}
 }

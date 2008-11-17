@@ -21,7 +21,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
- 
+
 package de.uni_koblenz.jgralab.greql2.funlib;
 
 import java.util.ArrayList;
@@ -35,14 +35,16 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValuePathSystem;
 
 /**
- * Calculates the distance from the root to the given vertex. If the given vertex is not in the given pathsystem, -1 is returned.
+ * Calculates the distance from the root to the given vertex. If the given
+ * vertex is not in the given pathsystem, -1 is returned.
  *
  * <dl>
  * <dt><b>GReQL-signature</b></dt>
  * <dd><code>INTEGER distance(ps:PATHSYSTEM, v:VERTEX)</code></dd>
  * <dd>&nbsp;</dd>
  * </dl>
- * <dl><dt></dt>
+ * <dl>
+ * <dt></dt>
  * <dd>
  * <dl>
  * <dt><b>Parameters:</b></dt>
@@ -55,13 +57,15 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValuePathSystem;
  * </dl>
  * </dd>
  * </dl>
+ *
  * @author ist@uni-koblenz.de
- * 
+ *
  */
 
 public class Distance implements Greql2Function {
 
-	public JValue evaluate(Graph graph, BooleanGraphMarker subgraph, JValue[] arguments) throws EvaluateException {
+	public JValue evaluate(Graph graph, BooleanGraphMarker subgraph,
+			JValue[] arguments) throws EvaluateException {
 		Vertex vertex = null;
 		JValuePathSystem pathSystem;
 		try {
@@ -89,10 +93,4 @@ public class Distance implements Greql2Function {
 	public String getExpectedParameters() {
 		return "(PathSystem , Vertex)";
 	}
-
-	@Override
-	public boolean isPredicate() {
-		return false;
-	}
-
 }

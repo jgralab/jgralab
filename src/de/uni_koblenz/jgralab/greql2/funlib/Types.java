@@ -38,7 +38,7 @@ import de.uni_koblenz.jgralab.schema.Schema;
 
 /**
  * Returns a set of all types known by the schema of the current graph.
- * 
+ *
  * <dl>
  * <dt><b>GReQL-signature</b></dt>
  * <dd><code>SET&lt;ATTRIBUTEDELEMENTCLASS&gt; Types()</code></dd>
@@ -54,16 +54,15 @@ import de.uni_koblenz.jgralab.schema.Schema;
  * </dl>
  * </dd>
  * </dl>
- * 
+ *
  * @author ist@uni-koblenz.de
- * 
+ *
  */
 
 /*
  * returns a set which contains all types the schema of the datagraph knows
- * 
+ *
  * @author ist@uni-koblenz.de
- * 
  */
 public class Types implements Greql2Function {
 
@@ -104,8 +103,4 @@ public class Types implements Greql2Function {
 		return "()";
 	}
 
-	@Override
-	public boolean isPredicate() {
-		return false;
-	}
 }

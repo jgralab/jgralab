@@ -39,7 +39,9 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueSet;
  * that are in both sets are also included.
  * <dl>
  * <dt><b>GReQL-signature</b></dt>
- * <dd><code>SET&lt;OBJECT&gt; union(s1:SET&lt;OBJECT&gt;, s2:SET&lt;OBJECT&gt;)</code></dd>
+ * <dd>
+ * <code>SET&lt;OBJECT&gt; union(s1:SET&lt;OBJECT&gt;, s2:SET&lt;OBJECT&gt;)</code>
+ * </dd>
  * <dd>&nbsp;</dd>
  * </dl>
  * <dl>
@@ -55,22 +57,21 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueSet;
  * </dl>
  * </dd>
  * </dl>
- * 
+ *
  * @see Difference
  * @see SymDifference
  * @see Intersection
  * @author ist@uni-koblenz.de
- * 
+ *
  */
 
 /*
  * Gets two sets as parameter and returns the union of these sets
- * 
+ *
  * @param set1 a JValueSet @param set2 a JValueSet @return the union of set1 and
  * set2, so all element, that are part of set1 or set2 (or even both) are also
- * part of the returned set @author ist@uni-koblenz.de
- * Summer 2006, Diploma Thesis
- * 
+ * part of the returned set @author ist@uni-koblenz.de Summer 2006, Diploma
+ * Thesis
  */
 public class Union implements Greql2Function {
 
@@ -105,8 +106,4 @@ public class Union implements Greql2Function {
 		return "(Set, Set)";
 	}
 
-	@Override
-	public boolean isPredicate() {
-		return false;
-	}
 }
