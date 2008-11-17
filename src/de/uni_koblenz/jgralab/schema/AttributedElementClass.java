@@ -133,14 +133,6 @@ public interface AttributedElementClass extends NamedElement,
 	public String getQualifiedName();
 
 	/**
-	 * @return the fully qualified name of this element in the schema. This is
-	 *         the fully qualified name of the package the element is located in
-	 *         together with the short name of the element
-	 */
-	@Deprecated
-	public String getName();
-
-	/**
 	 * Adds a new attribute to this element.
 	 * 
 	 * <p>

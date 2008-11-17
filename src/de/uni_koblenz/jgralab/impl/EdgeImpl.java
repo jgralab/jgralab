@@ -29,7 +29,6 @@ import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.GraphException;
 import de.uni_koblenz.jgralab.Vertex;
-import de.uni_koblenz.jgralab.schema.AttributedElementClass;
 import de.uni_koblenz.jgralab.schema.EdgeClass;
 
 /**
@@ -49,10 +48,9 @@ public abstract class EdgeImpl extends IncidenceImpl implements Edge {
 	/**
 	 * @param anId
 	 * @param graph
-	 * @param cls
 	 */
-	public EdgeImpl(int anId, Graph graph, AttributedElementClass cls) {
-		super(graph, cls);
+	public EdgeImpl(int anId, Graph graph) {
+		super(graph);
 		setId(anId);
 	}
 

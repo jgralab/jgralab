@@ -107,7 +107,6 @@ public class EdgeClassImpl extends GraphElementClassImpl implements EdgeClass {
 		outEdgeClass = new DirectedEdgeClass(this, EdgeDirection.OUT);
 	}
 
-
 	@Override
 	public String getVariableName() {
 		return "ec_" + getQualifiedName().replace('.', '_');
@@ -123,7 +122,7 @@ public class EdgeClassImpl extends GraphElementClassImpl implements EdgeClass {
 		mergeConnectionCardinalities();
 		mergeConnectionVertexClasses();
 	}
-	
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -172,8 +171,9 @@ public class EdgeClassImpl extends GraphElementClassImpl implements EdgeClass {
 	}
 
 	public void redefineFromRole(Set<String> redefinedRoleNames) {
-		if (redefinedRoleNames != null)
+		if (redefinedRoleNames != null) {
 			redefinedFromRoles.addAll(redefinedRoleNames);
+		}
 	}
 
 	/*
@@ -224,8 +224,9 @@ public class EdgeClassImpl extends GraphElementClassImpl implements EdgeClass {
 	}
 
 	public void redefineToRole(Set<String> redefinedRoleNames) {
-		if (redefinedRoleNames != null)
+		if (redefinedRoleNames != null) {
 			redefinedToRoles.addAll(redefinedRoleNames);
+		}
 	}
 
 	public boolean checkConnectionRestrictions() {
@@ -233,18 +234,24 @@ public class EdgeClassImpl extends GraphElementClassImpl implements EdgeClass {
 				.iterator();
 		while (iter.hasNext()) {
 			EdgeClass ec = (EdgeClass) iter.next();
-			if (to != ec.getTo() && !to.isSubClassOf(ec.getTo()))
+			if (to != ec.getTo() && !to.isSubClassOf(ec.getTo())) {
 				return false;
-			if (toMin < ec.getToMin() || toMin > ec.getToMax())
+			}
+			if (toMin < ec.getToMin() || toMin > ec.getToMax()) {
 				return false;
-			if (toMax > ec.getToMax() || toMax < ec.getToMin())
+			}
+			if (toMax > ec.getToMax() || toMax < ec.getToMin()) {
 				return false;
-			if (from != ec.getFrom() && !from.isSubClassOf(ec.getFrom()))
+			}
+			if (from != ec.getFrom() && !from.isSubClassOf(ec.getFrom())) {
 				return false;
-			if (fromMin < ec.getFromMin() || fromMin > ec.getFromMax())
+			}
+			if (fromMin < ec.getFromMin() || fromMin > ec.getFromMax()) {
 				return false;
-			if (fromMax > ec.getFromMax() || fromMax < ec.getFromMin())
+			}
+			if (fromMax > ec.getFromMax() || fromMax < ec.getFromMin()) {
 				return false;
+			}
 		}
 		return true;
 	}
@@ -259,51 +266,59 @@ public class EdgeClassImpl extends GraphElementClassImpl implements EdgeClass {
 				.iterator();
 		while (iter.hasNext()) {
 			EdgeClass ec = (EdgeClass) iter.next();
-			if (newMinTo > ec.getToMax())
+			if (newMinTo > ec.getToMax()) {
 				throw new SchemaException(
 						"Cardinalities for To-connection of EdgeClass "
-								+ this.getName()
+								+ getQualifiedName()
 								+ " cannot be merged, minimal cardinality "
 								+ newMinTo
 								+ " is bigger than maximal cardinality "
 								+ ec.getToMax() + " of inherited EdgeClass "
 								+ ec.getQualifiedName());
-			if (newMinTo < ec.getToMin())
+			}
+			if (newMinTo < ec.getToMin()) {
 				newMinTo = ec.getToMin();
-			if (newMinFrom > ec.getFromMax())
+			}
+			if (newMinFrom > ec.getFromMax()) {
 				throw new SchemaException(
 						"Cardinalities for From-connection of EdgeClass "
-								+ this.getName()
+								+ getQualifiedName()
 								+ " cannot be merged, minimal cardinality "
 								+ newMinFrom
 								+ " is bigger than maximal cardinality "
 								+ ec.getFromMax() + " of inherited EdgeClass "
 								+ ec.getQualifiedName());
-			if (newMinFrom < ec.getFromMin())
+			}
+			if (newMinFrom < ec.getFromMin()) {
 				newMinFrom = ec.getFromMin();
+			}
 
-			if (newMaxTo < ec.getToMin())
+			if (newMaxTo < ec.getToMin()) {
 				throw new SchemaException(
 						"Cardinalities for To-connection of EdgeClass "
-								+ this.getName()
+								+ getQualifiedName()
 								+ " cannot be merged, maximal cardinality "
 								+ newMaxTo
 								+ " is lesser than minimal cardinality "
 								+ ec.getToMin() + " of inherited EdgeClass "
 								+ ec.getQualifiedName());
-			if (newMaxTo > ec.getToMax())
+			}
+			if (newMaxTo > ec.getToMax()) {
 				newMaxTo = ec.getToMax();
-			if (newMaxFrom < ec.getFromMin())
+			}
+			if (newMaxFrom < ec.getFromMin()) {
 				throw new SchemaException(
 						"Cardinalities for From-connection of EdgeClass "
-								+ this.getName()
+								+ getQualifiedName()
 								+ " cannot be merged, maximal cardinality "
 								+ newMaxFrom
 								+ " is lesser than minimal cardinality "
 								+ ec.getFromMin() + " of inherited EdgeClass "
 								+ ec.getQualifiedName());
-			if (newMaxFrom > ec.getFromMax())
+			}
+			if (newMaxFrom > ec.getFromMax()) {
 				newMaxFrom = ec.getFromMax();
+			}
 		}
 		if ((fromMin != newMinFrom) || (fromMax != newMaxFrom)
 				|| (toMin != newMinTo) || (toMax != newMaxTo)) {
@@ -312,8 +327,9 @@ public class EdgeClassImpl extends GraphElementClassImpl implements EdgeClass {
 			toMin = newMinTo;
 			toMax = newMaxTo;
 			return true;
-		} else
+		} else {
 			return false;
+		}
 	}
 
 	public boolean mergeConnectionVertexClasses() {
@@ -335,27 +351,29 @@ public class EdgeClassImpl extends GraphElementClassImpl implements EdgeClass {
 				// ec.getTo().getName() + " : " +
 				// mostSpecialTo.isSubClassOf(ec.getTo()) );
 
-				if (ec.getTo().isSubClassOf(mostSpecialTo))
+				if (ec.getTo().isSubClassOf(mostSpecialTo)) {
 					mostSpecialTo = ec.getTo();
-				else
+				} else {
 					throw new SchemaException(
 							"Cannot merge ToVertexClasses for EdgeClass "
-									+ this.getName() + " VertexClass "
-									+ mostSpecialTo.getQualifiedName() + " and "
-									+ ec.getTo().getQualifiedName()
+									+ getQualifiedName() + " VertexClass "
+									+ mostSpecialTo.getQualifiedName()
+									+ " and " + ec.getTo().getQualifiedName()
 									+ " cannot be merged");
+				}
 			}
 			if ((ec.getFrom() != mostSpecialFrom)
 					&& (!mostSpecialFrom.isSubClassOf(ec.getFrom()))) {
-				if (ec.getFrom().isSubClassOf(mostSpecialFrom))
+				if (ec.getFrom().isSubClassOf(mostSpecialFrom)) {
 					mostSpecialFrom = ec.getFrom();
-				else
+				} else {
 					throw new SchemaException(
 							"Cannot merge FromVertexClasses for EdgeClass "
-									+ this.getName() + " VertexClass "
-									+ mostSpecialFrom.getQualifiedName() + " and "
-									+ ec.getFrom().getQualifiedName()
+									+ getQualifiedName() + " VertexClass "
+									+ mostSpecialFrom.getQualifiedName()
+									+ " and " + ec.getFrom().getQualifiedName()
 									+ " cannot be merged");
+				}
 			}
 		}
 		if ((mostSpecialTo != getTo()) || (mostSpecialFrom != getFrom())) {
@@ -374,9 +392,10 @@ public class EdgeClassImpl extends GraphElementClassImpl implements EdgeClass {
 		return outEdgeClass;
 	}
 
+	@Override
 	@SuppressWarnings("unchecked")
 	public Class<? extends Edge> getM1Class() {
 		return (Class<? extends Edge>) super.getM1Class();
 	}
-	
+
 }

@@ -69,6 +69,7 @@ public class ListDomainImpl extends CollectionDomainImpl implements ListDomain {
 	 * 
 	 * @see java.lang.Object#toString()
 	 */
+	@Override
 	public String toString() {
 		return "domain List<" + baseDomain.toString() + ">";
 	}
@@ -117,14 +118,18 @@ public class ListDomainImpl extends CollectionDomainImpl implements ListDomain {
 
 		code.addNoIndent(new CodeSnippet(
 				"if (!#io#.isNextToken(\"\\\\null\")) {"));
-		code.add(new CodeSnippet(
-				"#name# = new java.util.ArrayList<#basedom#>();",
-				"#io#.match(\"[\");", "while (!#io#.isNextToken(\"]\")) {",
-				"\t#basetype# #name#Element;"));
+		code
+				.add(new CodeSnippet(
+						"java.util.LinkedList<#basedom#> tmp = new java.util.LinkedList<#basedom#>();",
+						"#io#.match(\"[\");",
+						"while (!#io#.isNextToken(\"]\")) {",
+						"\t#basetype# #name#Element;"));
 		code.add(getBaseDomain().getReadMethod(schemaPrefix,
 				variableName + "Element", graphIoVariableName), 1);
-		code.add(new CodeSnippet("\t#name#.add(#name#Element);", "}",
-				"#io#.match(\"]\");"));
+		code.add(new CodeSnippet("\ttmp.add(#name#Element);", "}",
+				"#io#.match(\"]\");",
+				"#name# = new java.util.ArrayList<#basedom#>(tmp.size());",
+				"#name#.addAll(tmp);"));
 		code.addNoIndent(new CodeSnippet("} else {"));
 		code.add(new CodeSnippet("io.match(\"\\\\null\");", "#name# = null;"));
 		code.addNoIndent(new CodeSnippet("}"));
@@ -168,21 +173,25 @@ public class ListDomainImpl extends CollectionDomainImpl implements ListDomain {
 
 	@Override
 	public boolean equals(Object o) {
-		if (this == o)
+		if (this == o) {
 			return true;
+		}
 
-		if (!(o instanceof ListDomain))
+		if (!(o instanceof ListDomain)) {
 			return false;
+		}
 
 		ListDomain other = (ListDomain) o;
 		return baseDomain.equals(other.getBaseDomain());
 	}
 
+	@Override
 	public void setPackage(Package p) {
 		throw new UnsupportedOperationException(
 				"The package of a ListDomain may not be changed.");
 	}
 
+	@Override
 	public void setUniqueName(String newUniqueName) {
 		throw new UnsupportedOperationException(
 				"The unique name of a ListDomain may not be changed.");
