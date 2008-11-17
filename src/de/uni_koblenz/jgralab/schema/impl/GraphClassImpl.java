@@ -57,6 +57,26 @@ public class GraphClassImpl extends AttributedElementClassImpl implements
 
 	private Map<QualifiedName, CompositionClass> compositionClasses;
 
+	/**
+	 * Creates the <b>sole</b> <code>GraphClass</code> in the <code>Schema</code>, that holds
+	 * all <code>GraphElementClasses</code>/<code>EdgeClasses</code>/
+	 * <code>VertexClasses</code>/<code>AggregationClasses</code>/
+	 * <code>CompositionClasses</code>.
+	 * <p>
+	 * <b>Nota bene</b>: The <code>GraphClass</code> should only be created by
+	 * using
+	 * {@link de.uni_koblenz.jgralab.schema.Schema#createGraphClass(QualifiedName id)
+	 * createGraphClass(Qualified id)} in <code>Schema</code>. Unfortunately,
+	 * due to restrictions in Java, the visibility of this constructor cannot be
+	 * changed without causing serious issues in the program.
+	 * </p>
+	 * 
+	 * @param qn
+	 *            a unique name in the <code>Schema</code>
+	 * @param aSchema
+	 *            the <code>Schema</code> containing this
+	 *            <code>GraphClass</code>
+	 */
 	public GraphClassImpl(QualifiedName qn, Schema aSchema) {
 		super(qn);
 		schema = aSchema;
@@ -71,7 +91,7 @@ public class GraphClassImpl extends AttributedElementClassImpl implements
 	public String getVariableName() {
 		return "gc_" + getQualifiedName().replace('.', '_');
 	}
-	
+
 	@Override
 	public EdgeClass createEdgeClass(QualifiedName name, VertexClass from,
 			VertexClass to) {
@@ -114,7 +134,7 @@ public class GraphClassImpl extends AttributedElementClassImpl implements
 		Package pkg = schema.createPackageWithParents(qn.getPackageName());
 		ec.setPackage(pkg);
 		pkg.addEdgeClass(ec);
-		schema.addToKnownElements(qn.getUniqueName(), ec); 
+		schema.addToKnownElements(qn.getUniqueName(), ec);
 		return ec;
 	}
 
@@ -164,7 +184,7 @@ public class GraphClassImpl extends AttributedElementClassImpl implements
 		Package pkg = schema.createPackageWithParents(qn.getPackageName());
 		ac.setPackage(pkg);
 		pkg.addEdgeClass(ac);
-		schema.addToKnownElements(qn.getUniqueName(), ac); 
+		schema.addToKnownElements(qn.getUniqueName(), ac);
 		return ac;
 	}
 
@@ -216,7 +236,7 @@ public class GraphClassImpl extends AttributedElementClassImpl implements
 		Package pkg = schema.createPackageWithParents(qn.getPackageName());
 		cc.setPackage(pkg);
 		pkg.addEdgeClass(cc);
-		schema.addToKnownElements(qn.getUniqueName(), cc); 
+		schema.addToKnownElements(qn.getUniqueName(), cc);
 		return cc;
 	}
 
@@ -230,7 +250,7 @@ public class GraphClassImpl extends AttributedElementClassImpl implements
 		vc.addSuperClass(schema.getDefaultVertexClass());
 		graphElementClasses.put(qn, vc);
 		vertexClasses.put(qn, vc);
-		schema.addToKnownElements(qn.getUniqueName(), vc); 
+		schema.addToKnownElements(qn.getUniqueName(), vc);
 		Package pkg = schema.createPackageWithParents(qn.getPackageName());
 		vc.setPackage(pkg);
 		pkg.addVertexClass(vc);
@@ -386,7 +406,8 @@ public class GraphClassImpl extends AttributedElementClassImpl implements
 
 	@Override
 	public List<AggregationClass> getOwnAggregationClasses() {
-		List<AggregationClass> list = new ArrayList<AggregationClass>(aggregationClasses.values());
+		List<AggregationClass> list = new ArrayList<AggregationClass>(
+				aggregationClasses.values());
 		for (AggregationClass cc : getOwnCompositionClasses()) {
 			list.add(cc);
 		}
