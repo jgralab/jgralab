@@ -168,7 +168,6 @@ public interface GraphClass extends AttributedElementClass {
 	 *             <ul>
 	 *             <li>there is an element with the same <code>name</code></li>
 	 *             <li><code>name</code> contains a reserved TG/Java word</li>
-	 *             <li><code>name</code> is empty</li>
 	 *             </ul>
 	 * @return the created <code>AggregationClass</code> or
 	 *         <code>NULL</code> if an error occurred
@@ -223,7 +222,6 @@ public interface GraphClass extends AttributedElementClass {
 	 *             <ul>
 	 *             <li>there is an element with the same <code>name</code></li>
 	 *             <li><code>name</code> contains a reserved TG/Java word</li>
-	 *             <li><code>name</code> is empty</li>
 	 *             </ul>
 	 * @return the created <code>AggregationClass</code> or <code>NULL</code> if an error
 	 *         occurred
@@ -289,7 +287,6 @@ public interface GraphClass extends AttributedElementClass {
 	 *             <ul>
 	 *             <li>there is an element with the same <code>name</code></li>
 	 *             <li><code>name</code> contains a reserved TG/Java word</li>
-	 *             <li><code>name</code> is empty</li>
 	 *             </ul>
 	 * @return the created <code>AggregationClass</code> or <code>NULL</code> if an error
 	 *         occurred
@@ -361,7 +358,6 @@ public interface GraphClass extends AttributedElementClass {
 	 *             <ul>
 	 *             <li>there is an element with the same <code>name</code></li>
 	 *             <li><code>name</code> contains a reserved TG/Java word</li>
-	 *             <li><code>name</code> is empty</li>
 	 *             </ul>
 	 * @return the created <code>AggregationClass</code> or <code>NULL</code> if an error
 	 *         occurred
@@ -415,7 +411,6 @@ public interface GraphClass extends AttributedElementClass {
 	 *             <ul>
 	 *             <li>there is an element with the same <code>name</code></li>
 	 *             <li><code>name</code> contains a reserved TG/Java word</li>
-	 *             <li><code>name</code> is empty</li>
 	 *             </ul>
 	 * @return the created <code>CompositionClass</code> or
 	 *         <code>NULL</code> if an error occurred
