@@ -32,7 +32,9 @@ import de.uni_koblenz.jgralab.Attribute;
 import de.uni_koblenz.jgralab.AttributedElement;
 
 /**
- * Base class of Graph/Vertex/Edge/Aggregation/Composition classes.
+ * This is the base class of any <code>GraphClass</code>/<code>VertexClass</code>/<code>EdgeClass</code>/<code>AggregationClass</code>/<code>CompositionClass</code>.
+ * 
+ * In the following, <code>attrElement</code>, and <code>attrElement'</code>, will represent the states of the given <code>AttributedElementClass</code> before, respectively after, any operation.
  * 
  * @author ist@uni-koblenz.de
  */

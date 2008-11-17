@@ -27,7 +27,12 @@ package de.uni_koblenz.jgralab.schema;
 import java.util.List;
 
 /**
- * Represents a graph class in the schema, holds all graph element classes.
+ * Represents a <code>GraphClass</code> in the <code>Schema</code>, that holds
+ * all <code>GraphElementClasses</code>.
+ * 
+ * In the following, <code>graphClass</code>, and <code>graphClass'</code>, will
+ * represent the states of the given <code>GraphClass</code> before,
+ * respectively after, any operation.
  * 
  * @author ist@uni-koblenz.de
  */
@@ -121,7 +126,7 @@ public interface GraphClass extends AttributedElementClass {
 			int toMin, int toMax, String toRoleName);
 
 	/**
-	 * Creates an AggregationClass between two VertexClasses in this GraphClass.
+	 * Creates an <code>AggregationClass</code> between two <code>VertexClasses</code> in this <code>GraphClass</code>.
 	 * 
 	 * <p>
 	 * <b>Pattern:</b>
@@ -131,32 +136,33 @@ public interface GraphClass extends AttributedElementClass {
 	 * <p>
 	 * <b>Preconditions:</b>
 	 * <ul>
-	 * <li>The <code>name</code> must be unique in the Schema.</li>
+	 * <li>The <code>name</code> must be unique in the <code>Schema</code>.</li>
 	 * <li>The <code>name</code> must not contain a
-	 * {@link de.uni_koblenz.jgralab.schema.Schema#reservedTGWords reserved TG word}
-	 * and/or
-	 * {@link de.uni_koblenz.jgralab.schema.Schema#reservedJavaWords reserved Java word}.</li>
+	 * {@link de.uni_koblenz.jgralab.schema.Schema#reservedTGWords reserved TG
+	 * word} and/or
+	 * {@link de.uni_koblenz.jgralab.schema.Schema#reservedJavaWords reserved
+	 * Java word}.</li>
 	 * </ul>
 	 * </p>
 	 * 
 	 * <p>
 	 * <b>Postconditions:</b>
 	 * <ul>
-	 * <li><code>graphClass</code> must contain the freshly created
-	 * AggregationClass.</li>
+	 * <li><code>graphClass'</code> must contain the freshly created
+	 * <code>AggregationClass</code>.</li>
 	 * </ul>
 	 * </p>
 	 * 
 	 * @param name
-	 *            a unique name in the Schema
+	 *            a unique <code>name</code> in the <code>Schema</code>
 	 * @param from
-	 *            the VertexClass where the aggregation class starts
+	 *            the <code>VertexClass</code> where the <code>AggregationClass</code> starts
 	 * @param aggregateFrom
-	 *            set to TRUE, if the aggregation is on the 'from'-side of the
-	 *            AggregationClass, set to FALSE, if the aggregation is on the
-	 *            'to'-side of the AggregationClass
+	 *            set to <code>TRUE</code>, if the aggregation is on the 'from'-side of the
+	 *            <code>AggregationClass</code>, set to <code>FALSE</code>, if the aggregation is on the
+	 *            'to'-side of the <code>AggregationClass</code>
 	 * @param to
-	 *            the VertexClass where the AggregationClass ends
+	 *            the <code>VertexClass</code> where the <code>AggregationClass</code> ends
 	 * @throws SchemaException
 	 *             if:
 	 *             <ul>
@@ -164,14 +170,14 @@ public interface GraphClass extends AttributedElementClass {
 	 *             <li><code>name</code> contains a reserved TG/Java word</li>
 	 *             <li><code>name</code> is empty</li>
 	 *             </ul>
-	 * @return the created aggregation class AggregationClass or
-	 *         <code>NULL</code> if an error occured
+	 * @return the created <code>AggregationClass</code> or
+	 *         <code>NULL</code> if an error occurred
 	 */
 	public AggregationClass createAggregationClass(QualifiedName name,
 			VertexClass from, boolean aggregateFrom, VertexClass to);
 
 	/**
-	 * Creates an AggregationClass between two VertexClasses in this GraphClass
+	 * Creates an <code>AggregationClass</code> between two <code>VertexClasses</code> in this <code>GraphClass</code>.
 	 * 
 	 * <p>
 	 * <b>Pattern:</b>
@@ -181,34 +187,35 @@ public interface GraphClass extends AttributedElementClass {
 	 * <p>
 	 * <b>Preconditions:</b>
 	 * <ul>
-	 * <li>The <code>name</code> must be unique in the Schema.</li>
+	 * <li>The <code>name</code> must be unique in the <code>Schema</code>.</li>
 	 * <li>The <code>name</code> must not contain a
-	 * {@link de.uni_koblenz.jgralab.schema.Schema#reservedTGWords reserved TG word}
-	 * and/or
-	 * {@link de.uni_koblenz.jgralab.schema.Schema#reservedJavaWords reserved Java word}.</li>
+	 * {@link de.uni_koblenz.jgralab.schema.Schema#reservedTGWords reserved TG
+	 * word} and/or
+	 * {@link de.uni_koblenz.jgralab.schema.Schema#reservedJavaWords reserved
+	 * Java word}.</li>
 	 * </ul>
 	 * </p>
 	 * 
 	 * <p>
 	 * <b>Postconditions:</b>
 	 * <ul>
-	 * <li><code>graphClass</code> must contain the freshly created
-	 * AggregationClass.</li>
+	 * <li><code>graphClass'</code> must contain the freshly created
+	 * <code>AggregationClass</code>.</li>
 	 * </ul>
 	 * </p>
 	 * 
 	 * @param name
-	 *            a unique name in the Schema
+	 *            a unique name in the <code>Schema</code>
 	 * @param from
-	 *            the VertexClass where the AggregationClass starts
+	 *            the <code>VertexClass</code> where the <code>AggregationClass</code> starts
 	 * @param fromRoleName
 	 *            the unique rolename of the 'from'-end
 	 * @param aggregateFrom
-	 *            set to TRUE, if the aggregation is on the 'from'-side of the
-	 *            AggregationClass, set to FALSE, if the aggregation is on the
-	 *            'to'-side of the AggregationClass
+	 *            set to <code>TRUE</code>, if the aggregation is on the 'from'-side of the
+	 *            <code>AggregationClass</code>, set to <code>FALSE</code>, if the aggregation is on the
+	 *            'to'-side of the <code>AggregationClass</code>
 	 * @param to
-	 *            the VertexClass where the AggregationClass ends
+	 *            the <code>VertexClass</code> where the <code>AggregationClass</code> ends
 	 * @param toRoleName
 	 *            the unique rolename of the 'to'-end
 	 * @throws SchemaException
@@ -218,15 +225,15 @@ public interface GraphClass extends AttributedElementClass {
 	 *             <li><code>name</code> contains a reserved TG/Java word</li>
 	 *             <li><code>name</code> is empty</li>
 	 *             </ul>
-	 * @return the created AggregationClass or <code>NULL</code> if an error
-	 *         occured
+	 * @return the created <code>AggregationClass</code> or <code>NULL</code> if an error
+	 *         occurred
 	 */
 	public AggregationClass createAggregationClass(QualifiedName name,
 			VertexClass from, String fromRoleName, boolean aggregateFrom,
 			VertexClass to, String toRoleName);
 
 	/**
-	 * Creates an AggregationClass between two VertexClasses in this GraphClass
+	 * Creates an <code>AggregationClass between two <code>VertexClasses</code> in this <code>GraphClass</code>.
 	 * 
 	 * <p>
 	 * <b>Pattern:</b>
@@ -236,11 +243,12 @@ public interface GraphClass extends AttributedElementClass {
 	 * <p>
 	 * <b>Preconditions:</b>
 	 * <ul>
-	 * <li>The <code>name</code> must be unique in the Schema.</li>
+	 * <li>The <code>name</code> must be unique in the <code>Schema</code>.</li>
 	 * <li>The <code>name</code> must not contain a
-	 * {@link de.uni_koblenz.jgralab.schema.Schema#reservedTGWords reserved TG word}
-	 * and/or
-	 * {@link de.uni_koblenz.jgralab.schema.Schema#reservedJavaWords reserved Java word}.</li>
+	 * {@link de.uni_koblenz.jgralab.schema.Schema#reservedTGWords reserved TG
+	 * word} and/or
+	 * {@link de.uni_koblenz.jgralab.schema.Schema#reservedJavaWords reserved
+	 * Java word}.</li>
 	 * <li><code>0 <= fromMin <= fromMax <= Integer.maxValue</code></li>
 	 * <li><code>0 <= toMin <= toMax <= Integer.maxValue</code></li>
 	 * </ul>
@@ -249,32 +257,32 @@ public interface GraphClass extends AttributedElementClass {
 	 * <p>
 	 * <b>Postconditions:</b>
 	 * <ul>
-	 * <li><code>graphClass</code> must contain the freshly created
-	 * AggregationClass.</li>
+	 * <li><code>graphClass'</code> must contain the freshly created
+	 * <code>AggregationClass</code>.</li>
 	 * </ul>
 	 * </p>
 	 * 
 	 * @param name
-	 *            a unique name in the Schema
+	 *            a unique name in the <code>Schema</code>
 	 * @param from
-	 *            the VertexClass where the AggregationClass starts
+	 *            the <code>VertexClass</code> where the </code>AggregationClass/code> starts
 	 * @param fromMin
-	 *            the minimum multiplicity of the AggregationClass on the
+	 *            the minimum multiplicity of the <code>AggregationClass</code> on the
 	 *            'from'-end
 	 * @param fromMax
-	 *            the maximum multiplicity of the AggregationClass on the
+	 *            the maximum multiplicity of the <code>AggregationClass</code> on the
 	 *            'from'-end
 	 * @param aggregateFrom
-	 *            set to TRUE, if the aggregation is on the 'from'-side of the
-	 *            AggregationClass, set to FALSE, if the aggregation is on the
-	 *            'to'-side of the AggregationClass
+	 *            set to <code>TRUE/code>, if the aggregation is on the 'from'-side of the
+	 *            <code>AggregationClass</code>, set to FALSE, if the aggregation is on the
+	 *            'to'-side of the <code>AggregationClass</code>
 	 * @param to
-	 *            the VertexClass where the AggregationClass ends
+	 *            the <code>VertexClass</code> where the <code>AggregationClass</code> ends
 	 * @param toMin
-	 *            the minimum multiplicity of the AggregationClass on the
+	 *            the minimum multiplicity of the <code>AggregationClass</code> on the
 	 *            'to'-end
 	 * @param toMax
-	 *            the maximum multiplicity of the AggregationClass on the
+	 *            the maximum multiplicity of the <code>AggregationClass</code> on the
 	 *            'to-end
 	 * @throws SchemaException
 	 *             if:
@@ -283,15 +291,15 @@ public interface GraphClass extends AttributedElementClass {
 	 *             <li><code>name</code> contains a reserved TG/Java word</li>
 	 *             <li><code>name</code> is empty</li>
 	 *             </ul>
-	 * @return the created AggregationClass or <code>NULL</code> if an error
-	 *         occured
+	 * @return the created <code>AggregationClass</code> or <code>NULL</code> if an error
+	 *         occurred
 	 */
 	public AggregationClass createAggregationClass(QualifiedName name,
 			VertexClass from, int fromMin, int fromMax, boolean aggregateFrom,
 			VertexClass to, int toMin, int toMax);
 
 	/**
-	 * Creates an AggregationClass between two VertexClasses in this GraphClass
+	 * Creates an <code>AggregationClass between two <code>VertexClasses</code> in this <code>GraphClass</code>
 	 * 
 	 * <p>
 	 * <b>Pattern:</b>
@@ -302,11 +310,12 @@ public interface GraphClass extends AttributedElementClass {
 	 * <p>
 	 * <b>Preconditions:</b>
 	 * <ul>
-	 * <li>The <code>name</code> must be unique in the Schema.</li>
+	 * <li>The <code>name</code> must be unique in the <code>Schema</code>.</li>
 	 * <li>The <code>name</code> must not contain a
-	 * {@link de.uni_koblenz.jgralab.schema.Schema#reservedTGWords reserved TG word}
-	 * and/or
-	 * {@link de.uni_koblenz.jgralab.schema.Schema#reservedJavaWords reserved Java word}.</li>
+	 * {@link de.uni_koblenz.jgralab.schema.Schema#reservedTGWords reserved TG
+	 * word} and/or
+	 * {@link de.uni_koblenz.jgralab.schema.Schema#reservedJavaWords reserved
+	 * Java word}.</li>
 	 * <li><code>0 <= fromMin <= fromMax <= Integer.maxValue</code></li>
 	 * <li><code>0 <= toMin <= toMax <= Integer.maxValue</code></li>
 	 * </ul>
@@ -315,35 +324,35 @@ public interface GraphClass extends AttributedElementClass {
 	 * <p>
 	 * <b>Postconditions:</b>
 	 * <ul>
-	 * <li><code>graphClass</code> must have one issue of the freshly created
-	 * AggregationClass.</li>
+	 * <li><code>graphClass'</code> must have one issue of the freshly created
+	 * <code>AggregationClass</code>.</li>
 	 * </ul>
 	 * </p>
 	 * 
 	 * 
 	 * @param name
-	 *            a unique name in the Schema
+	 *            a unique name in the <code>Schema</code>
 	 * @param from
-	 *            the VertexClass where the AggregationClass starts
+	 *            the <code>VertexClass</code> where the <code>AggregationClass</code> starts
 	 * @param fromMin
-	 *            the minimum multiplicity of the AggregationClass on the
+	 *            the minimum multiplicity of the <code>AggregationClass</code> on the
 	 *            'from'-end
 	 * @param fromMax
-	 *            the maximum multiplicity of the AggregationClass on the
+	 *            the maximum multiplicity of the <code>AggregationClass</code> on the
 	 *            'from'-end
 	 * @param fromRoleName
 	 *            the unique rolename of the 'from'-end
 	 * @param aggregateFrom
-	 *            set to TRUE, if the aggregation is on the 'from'-side of the
-	 *            AggregationClass, set to FALSE, if the aggregation is on the
-	 *            'to'-side of the AggregationClass
+	 *            set to <code>TRUE</code>, if the aggregation is on the 'from'-side of the
+	 *            <code>AggregationClass</code>, set to <code>FALSE</code>, if the aggregation is on the
+	 *            'to'-side of the <code>AggregationClass</code>
 	 * @param to
-	 *            the VertexClass where the aggregation class ends
+	 *            the <code>VertexClass</code> where the <code>AggregationClass</code> ends
 	 * @param toMin
-	 *            the minimum multiplicity of the AggregationClass on the
+	 *            the minimum multiplicity of the <code>AggregationClass</code> on the
 	 *            'to'-end
 	 * @param toMax
-	 *            the maximum multiplicity of the AggregationClass on the
+	 *            the maximum multiplicity of the <code>AggregationClass</code> on the
 	 *            'to-end
 	 * @param toRoleName
 	 *            the unique rolename of the 'to'-end
@@ -354,29 +363,63 @@ public interface GraphClass extends AttributedElementClass {
 	 *             <li><code>name</code> contains a reserved TG/Java word</li>
 	 *             <li><code>name</code> is empty</li>
 	 *             </ul>
-	 * @return the created AggregationClass or <code>NULL</code> if an error
-	 *         occured
+	 * @return the created <code>AggregationClass</code> or <code>NULL</code> if an error
+	 *         occurred
 	 */
 	public AggregationClass createAggregationClass(QualifiedName name,
 			VertexClass from, int fromMin, int fromMax, String fromRoleName,
 			boolean aggregateFrom, VertexClass to, int toMin, int toMax,
 			String toRoleName);
-
+	
+	
 	/**
-	 * creates an composition class between from and to with the
-	 * compositionclassname name
+	 * Creates a <code>CompositionClass</code> between two <code>VertexClasses</code> in this <code>GraphClass</code>.
+	 * 
+	 * <p>
+	 * <b>Pattern:</b>
+	 * <code>graphClass.createCompositionClass(name, from, aggregateFrom, to)</code>
+	 * </p>
+	 * 
+	 * <p>
+	 * <b>Preconditions:</b>
+	 * <ul>
+	 * <li>The <code>name</code> must be unique in the <code>Schema</code>.</li>
+	 * <li>The <code>name</code> must not contain a
+	 * {@link de.uni_koblenz.jgralab.schema.Schema#reservedTGWords reserved TG
+	 * word} and/or
+	 * {@link de.uni_koblenz.jgralab.schema.Schema#reservedJavaWords reserved
+	 * Java word}.</li>
+	 * </ul>
+	 * </p>
+	 * 
+	 * <p>
+	 * <b>Postconditions:</b>
+	 * <ul>
+	 * <li><code>graphClass'</code> must contain the freshly created
+	 * <code>CompositionClass</code>.</li>
+	 * </ul>
+	 * </p>
 	 * 
 	 * @param name
-	 *            a unique name in the Schema
+	 *            a unique <code>name</code> in the <code>Schema</code>
 	 * @param from
-	 *            the vertex class where the composition class starts
-	 * @param compositeFrom
-	 *            set to TRUE, if the composition is on the 'from'-side of the
-	 *            composition class, set to FALSE, if the composition is on the
-	 *            'to'-side of the composition class
+	 *            the <code>VertexClass</code> where the <code>CompositionClass</code> starts
+	 * @param aggregateFrom
+	 *            set to <code>TRUE</code>, if the composition is on the 'from'-side of the
+	 *            <code>CompositionClass</code>, set to <code>FALSE</code>, if the composition is on the
+	 *            'to'-side of the <code>CompositionClass</code>
 	 * @param to
-	 *            the vertex class where the composition class ends
-	 * @return the created composition class
+	 *            the <code>VertexClass</code> where the <code>CompositionClass</code> ends
+	 * @throws SchemaException
+	 *             if:
+	 *             <ul>
+	 *             <li>there is an element with the same <code>name</code></li>
+	 *             <li><code>name</code> contains a reserved TG/Java word</li>
+	 *             <li><code>name</code> is empty</li>
+	 *             </ul>
+	 * @return the created <code>CompositionClass</code> or
+	 *         <code>NULL</code> if an error occurred
+	 * 
 	 */
 	public CompositionClass createCompositionClass(QualifiedName name,
 			VertexClass from, boolean compositeFrom, VertexClass to);
