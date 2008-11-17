@@ -22,7 +22,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-package de.uni_koblenz.jgralab.impl;
+package de.uni_koblenz.jgralab.schema.impl;
 
 import de.uni_koblenz.jgralab.Attribute;
 import de.uni_koblenz.jgralab.schema.Domain;

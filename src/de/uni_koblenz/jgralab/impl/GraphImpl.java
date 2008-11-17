@@ -48,7 +48,7 @@ import de.uni_koblenz.jgralab.schema.VertexClass;
  * 
  * @author ist@uni-koblenz.de
  */
-public abstract class GraphImpl extends AttributedElementImpl implements Graph {
+public abstract class GraphImpl implements Graph {
 
 	// ------------- GRAPH VARIABLES -------------
 
@@ -167,14 +167,15 @@ public abstract class GraphImpl extends AttributedElementImpl implements Graph {
 
 	/**
 	 * @param id
-	 *            the name of the graph's id
+	 *            this Graph's id
+	 * @param cls
+	 *            the GraphClass of this Graph
 	 * @param vMax
-	 *            the maximum number of vertices
+	 *            initial maximum number of vertices
 	 * @param eMax
-	 *            the maximum number of edges
+	 *            initial maximum number of edges
 	 */
-	public GraphImpl(String id, GraphClass aGraphClass, int vMax, int eMax) {
-		super(aGraphClass);
+	public GraphImpl(String id, GraphClass cls, int vMax, int eMax) {
 		if (vMax < 0) {
 			throw new GraphException("vMax must not be less than zero", null);
 		}
@@ -182,7 +183,7 @@ public abstract class GraphImpl extends AttributedElementImpl implements Graph {
 			throw new GraphException("eMax must not be less than zero", null);
 		}
 
-		schema = aGraphClass.getSchema();
+		schema = cls.getSchema();
 		graphFactory = schema.getGraphFactory();
 		setId(id == null ? RandomIdGenerator.generateId() : id);
 		graphVersion = 0;
@@ -832,7 +833,7 @@ public abstract class GraphImpl extends AttributedElementImpl implements Graph {
 	 */
 	@Override
 	public GraphClass getGraphClass() {
-		return (GraphClass) theClass;
+		return (GraphClass) getAttributedElementClass();
 	}
 
 	/*

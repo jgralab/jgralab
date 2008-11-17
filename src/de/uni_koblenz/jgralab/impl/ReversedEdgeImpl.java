@@ -41,10 +41,10 @@ public abstract class ReversedEdgeImpl extends IncidenceImpl implements Edge {
 
 	/**
 	 * @param normalEdge
-	 * @param g
+	 * @param graph
 	 */
-	public ReversedEdgeImpl(EdgeImpl normalEdge, Graph g) {
-		super(g, normalEdge.theClass);
+	public ReversedEdgeImpl(EdgeImpl normalEdge, Graph graph) {
+		super(graph);
 		assert normalEdge != null;
 		this.normalEdge = normalEdge;
 	}

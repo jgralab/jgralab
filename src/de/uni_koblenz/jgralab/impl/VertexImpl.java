@@ -55,19 +55,17 @@ public abstract class VertexImpl extends GraphElementImpl implements Vertex {
 	 * incidence sequence) this version number is increased by one. It is set to
 	 * 0 when the vertex is created or the graph is loaded.
 	 */
-	protected int incidenceListVersion = 0;
+	protected long incidenceListVersion = 0;
 
 	/**
-	 * @param anId
+	 * @param id
 	 *            the id of the vertex
-	 * @param aGraph
+	 * @param graph
 	 *            its corresponding graph
-	 * @param theClass
-	 *            the class of the vertex
 	 */
-	protected VertexImpl(int anId, Graph theGraph, VertexClass cls) {
-		super(theGraph, cls);
-		setId(anId);
+	protected VertexImpl(int id, Graph graph) {
+		super(graph);
+		setId(id);
 	}
 
 	/*
@@ -514,6 +512,10 @@ public abstract class VertexImpl extends GraphElementImpl implements Vertex {
 		return (this.incidenceListVersion != vertexStructureVersion);
 	}
 
+	/**
+	 * Must be called by all methods which manipulate the incidence list of this
+	 * Vertex.
+	 */
 	public void incidenceListModified() {
 		++incidenceListVersion;
 	}

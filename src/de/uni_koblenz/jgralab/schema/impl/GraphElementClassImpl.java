@@ -21,7 +21,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
- 
+
 package de.uni_koblenz.jgralab.schema.impl;
 
 import java.util.Iterator;
@@ -34,68 +34,80 @@ import de.uni_koblenz.jgralab.schema.QualifiedName;
 import de.uni_koblenz.jgralab.schema.Schema;
 import de.uni_koblenz.jgralab.schema.VertexClass;
 
-public abstract class GraphElementClassImpl extends AttributedElementClassImpl implements GraphElementClass {
+public abstract class GraphElementClassImpl extends AttributedElementClassImpl
+		implements GraphElementClass {
 
 	protected GraphClass graphClass;
 
 	/**
 	 * delegates its constructor to the generalized class
-	 * @param qn the unique identifier of the element in the schema
+	 * 
+	 * @param qn
+	 *            the unique identifier of the element in the schema
 	 */
 	public GraphElementClassImpl(QualifiedName qn, GraphClass aGraphClass) {
 		super(qn);
 		this.graphClass = aGraphClass;
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see jgralab.GraphElementClass#getGraphClass()
 	 */
 	public GraphClass getGraphClass() {
 		return graphClass;
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see java.lang.Object#toString()
 	 */
+	@Override
 	public String toString() {
-		String output = this.getClass().getSimpleName() + " '" + getName() + "'";
-		if (isAbstract())
+		String output = this.getClass().getSimpleName() + " '"
+				+ getQualifiedName() + "'";
+		if (isAbstract()) {
 			output += " (abstract)";
+		}
 		output += ": \n";
 
-		output += "subClasses of '" + getName() + "': ";
+		output += "subClasses of '" + getQualifiedName() + "': ";
 		Iterator<AttributedElementClass> it = getAllSubClasses().iterator();
 		while (it.hasNext()) {
-			output+= "'"+it.next().getQualifiedName() + "' ";
+			output += "'" + it.next().getQualifiedName() + "' ";
 		}
-		output += "\nsuperClasses of '" + getName() + "': ";
+		output += "\nsuperClasses of '" + getQualifiedName() + "': ";
 		it = getAllSuperClasses().iterator();
 		while (it.hasNext()) {
-			output+= "'"+it.next().getQualifiedName() + "' ";
+			output += "'" + it.next().getQualifiedName() + "' ";
 		}
-		output += "\ndirectSuperClasses of '" + getName() + "': ";
+		output += "\ndirectSuperClasses of '" + getQualifiedName() + "': ";
 		it = directSuperClasses.iterator();
 		while (it.hasNext()) {
-			output+= "'"+it.next().getQualifiedName() + "' ";
+			output += "'" + it.next().getQualifiedName() + "' ";
 		}
-		
+
 		output += attributesToString();
-		
+
 		if (this instanceof VertexClass) {
 			output += "may connect to edgeclasses: ";
-			Iterator<EdgeClass> it2 = ((VertexClass)this).getEdgeClasses().iterator();
+			Iterator<EdgeClass> it2 = ((VertexClass) this).getEdgeClasses()
+					.iterator();
 			while (it2.hasNext()) {
 				output += it2.next().getQualifiedName();
-				if (it2.hasNext())
+				if (it2.hasNext()) {
 					output += ", ";
+				}
 			}
 			output += "\n";
 		}
 		output += "\n";
-		
+
 		return output;
 	}
-	
+
 	@Override
 	public Schema getSchema() {
 		return graphClass.getSchema();

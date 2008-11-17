@@ -28,7 +28,6 @@ import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.GraphException;
-import de.uni_koblenz.jgralab.schema.AttributedElementClass;
 import de.uni_koblenz.jgralab.schema.EdgeClass;
 
 /**
@@ -48,10 +47,9 @@ public abstract class IncidenceImpl extends GraphElementImpl implements Edge {
 
 	/**
 	 * @param graph
-	 * @param cls
 	 */
-	public IncidenceImpl(Graph graph, AttributedElementClass cls) {
-		super(graph, cls);
+	public IncidenceImpl(Graph graph) {
+		super(graph);
 	}
 
 	/**

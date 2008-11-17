@@ -51,7 +51,6 @@ import java.util.Map.Entry;
 import java.util.logging.Logger;
 
 import de.uni_koblenz.jgralab.GraphIOException.GraphIOExceptionReason;
-import de.uni_koblenz.jgralab.impl.AttributeImpl;
 import de.uni_koblenz.jgralab.impl.GraphImpl;
 import de.uni_koblenz.jgralab.schema.AggregationClass;
 import de.uni_koblenz.jgralab.schema.AttributedElementClass;
@@ -67,6 +66,7 @@ import de.uni_koblenz.jgralab.schema.RecordDomain;
 import de.uni_koblenz.jgralab.schema.Schema;
 import de.uni_koblenz.jgralab.schema.SchemaException;
 import de.uni_koblenz.jgralab.schema.VertexClass;
+import de.uni_koblenz.jgralab.schema.impl.AttributeImpl;
 import de.uni_koblenz.jgralab.schema.impl.SchemaImpl;
 
 /**
@@ -1837,6 +1837,7 @@ public class GraphIO {
 		match("(");
 		int maxV = matchInteger();
 		int maxE = matchInteger();
+
 		int vCount = matchInteger();
 		int eCount = matchInteger();
 		match(")");
@@ -1928,7 +1929,7 @@ public class GraphIO {
 			return result;
 		} catch (NumberFormatException e) {
 			throw new GraphIOException("expected a double value but found '"
-					+ lookAhead + "'", e);
+					+ lookAhead + "' in line " + line, e);
 		}
 	}
 

@@ -116,14 +116,15 @@ public class GraphClassImpl extends AttributedElementClassImpl implements
 	public EdgeClass createEdgeClass(QualifiedName qn, VertexClass from,
 			int fromMin, int fromMax, String fromRoleName, VertexClass to,
 			int toMin, int toMax, String toRoleName) {
-		if (!schema.isFreeSchemaElementName(qn))
+		if (!schema.isFreeSchemaElementName(qn)) {
 			throw new SchemaException(
 					"there is already an element with the name " + qn
 							+ " in the schema", null);
+		}
 		EdgeClassImpl ec = new EdgeClassImpl(qn, this, from, fromMin, fromMax,
 				fromRoleName, to, toMin, toMax, toRoleName);
 		if (!qn.getQualifiedName().equals("Edge")) {
-			EdgeClass s = (EdgeClass) schema.getDefaultEdgeClass();
+			EdgeClass s = schema.getDefaultEdgeClass();
 			ec.addSuperClass(s);
 		}
 		from.addEdgeClass(ec);
@@ -166,17 +167,19 @@ public class GraphClassImpl extends AttributedElementClassImpl implements
 			VertexClass from, int fromMin, int fromMax, String fromRoleName,
 			boolean aggregateFrom, VertexClass to, int toMin, int toMax,
 			String toRoleName) {
-		if (!schema.isFreeSchemaElementName(qn))
+		if (!schema.isFreeSchemaElementName(qn)) {
 			throw new SchemaException(
 					"there is already an element with the name " + qn
 							+ " in the schema", null);
+		}
 		AggregationClassImpl ac = new AggregationClassImpl(qn, this, from,
 				fromMin, fromMax, fromRoleName, aggregateFrom, to, toMin,
 				toMax, toRoleName);
-		if (!qn.getQualifiedName().equals("Aggregation"))
+		if (!qn.getQualifiedName().equals("Aggregation")) {
 			ac.addSuperClass(schema.getDefaultAggregationClass());
-		else
+		} else {
 			ac.addSuperClass(schema.getDefaultEdgeClass());
+		}
 		from.addEdgeClass(ac);
 		to.addEdgeClass(ac);
 		graphElementClasses.put(qn, ac);
@@ -217,10 +220,11 @@ public class GraphClassImpl extends AttributedElementClassImpl implements
 			VertexClass from, int fromMin, int fromMax, String fromRoleName,
 			boolean compositeFrom, VertexClass to, int toMin, int toMax,
 			String toRoleName) {
-		if (!schema.isFreeSchemaElementName(qn))
+		if (!schema.isFreeSchemaElementName(qn)) {
 			throw new SchemaException(
 					"there is already an element with the name " + qn
 							+ " in the schema", null);
+		}
 		CompositionClassImpl cc = new CompositionClassImpl(qn, this, from,
 				fromMin, fromMax, fromRoleName, compositeFrom, to, toMin,
 				toMax, toRoleName);
@@ -242,10 +246,11 @@ public class GraphClassImpl extends AttributedElementClassImpl implements
 
 	@Override
 	public VertexClass createVertexClass(QualifiedName qn) {
-		if (!schema.isFreeSchemaElementName(qn))
+		if (!schema.isFreeSchemaElementName(qn)) {
 			throw new SchemaException(
 					"there is already an element with the name " + qn
 							+ " in the schema", null);
+		}
 		VertexClassImpl vc = new VertexClassImpl(qn, this);
 		vc.addSuperClass(schema.getDefaultVertexClass());
 		graphElementClasses.put(qn, vc);
@@ -283,58 +288,68 @@ public class GraphClassImpl extends AttributedElementClassImpl implements
 
 	@Override
 	public boolean knows(GraphElementClass aGraphElementClass) {
-		if (graphElementClasses.containsKey(aGraphElementClass))
+		if (graphElementClasses.containsKey(aGraphElementClass)) {
 			return true;
+		}
 		for (AttributedElementClass superClass : directSuperClasses) {
-			if (((GraphClass) superClass).knows(aGraphElementClass))
+			if (((GraphClass) superClass).knows(aGraphElementClass)) {
 				return true;
+			}
 		}
 		return false;
 	}
 
 	@Override
 	public boolean knows(QualifiedName aGraphElementClass) {
-		if (graphElementClasses.containsKey(aGraphElementClass))
+		if (graphElementClasses.containsKey(aGraphElementClass)) {
 			return true;
+		}
 		for (AttributedElementClass superClass : directSuperClasses) {
-			if (((GraphClass) superClass).knows(aGraphElementClass))
+			if (((GraphClass) superClass).knows(aGraphElementClass)) {
 				return true;
+			}
 		}
 		return false;
 	}
 
 	@Override
 	public GraphElementClass getGraphElementClass(QualifiedName qn) {
-		if (graphElementClasses.containsKey(qn))
+		if (graphElementClasses.containsKey(qn)) {
 			return graphElementClasses.get(qn);
+		}
 		for (AttributedElementClass superClass : directSuperClasses) {
-			if (((GraphClass) superClass).knows(qn))
+			if (((GraphClass) superClass).knows(qn)) {
 				return ((GraphClass) superClass).getGraphElementClass(qn);
+			}
 		}
 		return null;
 	}
 
 	@Override
 	public String toString() {
-		String output = "GraphClassImpl '" + super.getName() + "'";
-		if (isAbstract())
+		String output = "GraphClassImpl '" + getQualifiedName() + "'";
+		if (isAbstract()) {
 			output += " (abstract)";
+		}
 		output += ": \n";
 
-		output += "subClasses of '" + super.getName() + "': ";
+		output += "subClasses of '" + getQualifiedName() + "': ";
 		Iterator<AttributedElementClass> it = getAllSubClasses().iterator();
 		while (it.hasNext()) {
-			output += "'" + ((GraphClassImpl) it.next()).getName() + "' ";
+			output += "'" + ((GraphClassImpl) it.next()).getQualifiedName()
+					+ "' ";
 		}
 
-		output += "\nsuperClasses of '" + super.getName() + "': ";
+		output += "\nsuperClasses of '" + getQualifiedName() + "': ";
 		Iterator<AttributedElementClass> it2 = getAllSuperClasses().iterator();
 		while (it2.hasNext()) {
-			output += "'" + ((GraphClassImpl) it2.next()).getName() + "' ";
+			output += "'" + ((GraphClassImpl) it2.next()).getQualifiedName()
+					+ "' ";
 		}
 		output += attributesToString();
 
-		output += "\n\nGraphElementClasses of '" + super.getName() + "':\n\n";
+		output += "\n\nGraphElementClasses of '" + getQualifiedName()
+				+ "':\n\n";
 		Iterator<GraphElementClass> it3 = graphElementClasses.values()
 				.iterator();
 		while (it3.hasNext()) {
@@ -465,12 +480,14 @@ public class GraphClassImpl extends AttributedElementClassImpl implements
 	@Override
 	public VertexClass getVertexClass(QualifiedName name) {
 		VertexClass vc = vertexClasses.get(name);
-		if (vc != null)
+		if (vc != null) {
 			return vc;
+		}
 		for (AttributedElementClass superclass : directSuperClasses) {
 			vc = ((GraphClass) superclass).getVertexClass(name);
-			if (vc != null)
+			if (vc != null) {
 				return vc;
+			}
 		}
 		return null;
 	}
@@ -478,18 +495,22 @@ public class GraphClassImpl extends AttributedElementClassImpl implements
 	@Override
 	public EdgeClass getEdgeClass(QualifiedName name) {
 		EdgeClass ec = edgeClasses.get(name);
-		if (ec != null)
+		if (ec != null) {
 			return ec;
+		}
 		ec = aggregationClasses.get(name);
-		if (ec != null)
+		if (ec != null) {
 			return ec;
+		}
 		ec = compositionClasses.get(name);
-		if (ec != null)
+		if (ec != null) {
 			return ec;
+		}
 		for (AttributedElementClass superclass : directSuperClasses) {
 			ec = ((GraphClass) superclass).getEdgeClass(name);
-			if (ec != null)
+			if (ec != null) {
 				return ec;
+			}
 		}
 		return null;
 	}
@@ -497,12 +518,14 @@ public class GraphClassImpl extends AttributedElementClassImpl implements
 	@Override
 	public CompositionClass getCompositionClass(QualifiedName name) {
 		CompositionClass cc = compositionClasses.get(name);
-		if (cc != null)
+		if (cc != null) {
 			return cc;
+		}
 		for (AttributedElementClass superclass : directSuperClasses) {
 			cc = ((GraphClass) superclass).getCompositionClass(name);
-			if (cc != null)
+			if (cc != null) {
 				return cc;
+			}
 		}
 		return null;
 	}
@@ -510,15 +533,18 @@ public class GraphClassImpl extends AttributedElementClassImpl implements
 	@Override
 	public AggregationClass getAggregationClass(QualifiedName name) {
 		AggregationClass ac = aggregationClasses.get(name);
-		if (ac != null)
+		if (ac != null) {
 			return ac;
+		}
 		ac = compositionClasses.get(name);
-		if (ac != null)
+		if (ac != null) {
 			return ac;
+		}
 		for (AttributedElementClass superclass : directSuperClasses) {
 			ac = ((GraphClass) superclass).getAggregationClass(name);
-			if (ac != null)
+			if (ac != null) {
 				return ac;
+			}
 		}
 		return null;
 	}

@@ -89,6 +89,7 @@ public class AttributedElementCodeGenerator extends CodeGenerator {
 		if (createClass) {
 			code.add(createFields(aec.getAttributeList()));
 			code.add(createConstructor());
+			code.add(createGetAttributedElementClassMethod());
 			code.add(createGetM1ClassMethod());
 			code.add(createGenericGetter(aec.getAttributeList()));
 			code.add(createGenericSetter(aec.getAttributeList()));
@@ -158,25 +159,27 @@ public class AttributedElementCodeGenerator extends CodeGenerator {
 	}
 
 	protected CodeBlock createConstructor() {
-		if (!rootBlock.getVariable("graphElementClass").equals("ReversedEdge")) {
-			addImports(aec.getSchema().getQualifiedName(), "#jgPackage#.Graph");
-		}
-
 		CodeList code = new CodeList();
-		code
-				.addNoIndent(new CodeSnippet(true,
-						"public #simpleClassName#Impl(int id, Graph g) {",
-						"\tsuper(id, g, #schemaName#.instance().#schemaVariableName#);"));
+		code.addNoIndent(new CodeSnippet(true,
+				"public #simpleClassName#Impl(int id, #jgPackage#.Graph g) {",
+				"\tsuper(id, g);"));
 		code.add(createSpecialConstructorCode());
 		code.addNoIndent(new CodeSnippet("}"));
 		return code;
 	}
 
-	protected CodeBlock createGetM1ClassMethod() {
-		addImports("#jgPackage#.AttributedElement");
+	protected CodeBlock createGetAttributedElementClassMethod() {
 		return new CodeSnippet(
 				true,
-				"public java.lang.Class<? extends AttributedElement> getM1Class() {",
+				"public final #jgSchemaPackage#.AttributedElementClass getAttributedElementClass() {",
+				"\treturn #schemaPackageName#.#schemaName#.instance().#schemaVariableName#;",
+				"}");
+	}
+
+	protected CodeBlock createGetM1ClassMethod() {
+		return new CodeSnippet(
+				true,
+				"public final java.lang.Class<? extends #jgPackage#.AttributedElement> getM1Class() {",
 				"\treturn #javaClassName#.class;", "}");
 	}
 
