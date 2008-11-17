@@ -1735,12 +1735,7 @@ public class GraphIO {
 
 		String s = (lookAhead.charAt(0) == '\'') ? lookAhead.substring(1)
 				: lookAhead;
-		String c = (s.contains(".")) ? s : currentPackageName + "." + s;
-		// String c = null;
-		// if (s.contains("."))
-		// c = s;
-		// else
-		// c = currentPackageName + "." + s;
+		String c = (s.indexOf('.') >= 0) ? s : currentPackageName + "." + s;
 		QualifiedName result = qualifiedNameMap.get(c);
 		if (result != null) {
 			match();
@@ -1748,7 +1743,7 @@ public class GraphIO {
 		}
 		boolean ok = true;
 		result = new QualifiedName(s);
-		if (result.getPackageName().length() == 0 && !s.startsWith(".")) {
+		if (result.getPackageName().length() == 0 && s.charAt(0) != '.') {
 			// no need to check, because currentPackageName is already checked
 			// by parsePackage();
 			result.setPackageName(currentPackageName);
