@@ -20,7 +20,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
- * 
+ *
  */
 
 package de.uni_koblenz.jgralab.greql2.funlib;
@@ -49,24 +49,24 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
  * <dl>
  * <dt><b>Parameters:</b></dt>
  * <dd><code>number: LONG</code> - the number you want to test for primality</dd>
- * <dd><code>noOfTestRuns: INTEGER</code> - the number of test runs (defaults
- * to 10 if omitted)</dd>
+ * <dd><code>noOfTestRuns: INTEGER</code> - the number of test runs (defaults to
+ * 10 if omitted)</dd>
  * <dt><b>Returns:</b></dt>
  * <dd><code>false</code> if <code>number</code> is no prime number. If it
- * returns <code>true</code> the probability that <code>number</code> is
- * indeed prime is at least <code>1-(1/4)^noOfTestRuns</code>.</dd>
+ * returns <code>true</code> the probability that <code>number</code> is indeed
+ * prime is at least <code>1-(1/4)^noOfTestRuns</code>.</dd>
  * <dd>&nbsp;</dd>
  * </dl>
  * </dd>
  * </dl>
- * 
+ *
  * @author ist@uni-koblenz.de
  */
 public class IsPrime implements Greql2Function {
 
 	/**
 	 * The costs for an isPrime function application.
-	 * 
+	 *
 	 * Since those depend heavily on the parameter(s) of isPrime, but those
 	 * aren't available before evaluation, it's hard to set it to a "good"
 	 * value...
@@ -76,7 +76,7 @@ public class IsPrime implements Greql2Function {
 	/**
 	 * The selectivity for isPrime. The number of prime numbers < x can be
 	 * estimated with x / ln(x). So the selectivity is (x / ln(x))/x = 1/ln(x).
-	 * 
+	 *
 	 * Since we assume that isPrime is most often called with smaller values, we
 	 * use 500 for x.
 	 */
@@ -125,9 +125,9 @@ public class IsPrime implements Greql2Function {
 	}
 
 	/**
-	 * @return <code>false</code>, if <code>number</code> is no prime
-	 *         number or <true>true</code>, if <code>number</code> is a
-	 *         prime number with a probability of <code>1-(1/number)^noOfTestRuns</code>.
+	 * @return <code>false</code>, if <code>number</code> is no prime number or
+	 *         <true>true</code>, if <code>number</code> is a prime number with
+	 *         a probability of <code>1-(1/number)^noOfTestRuns</code>.
 	 */
 	private static boolean isPrime(long number, int noOfTestRuns) {
 		if (number < 2) {
@@ -198,17 +198,12 @@ public class IsPrime implements Greql2Function {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see de.uni_koblenz.jgralab.greql2.funlib.Greql2Function#getSelectivity()
 	 */
 	@Override
 	public double getSelectivity() {
 
 		return SELECTIVITY;
-	}
-
-	@Override
-	public boolean isPredicate() {
-		return true;
 	}
 }

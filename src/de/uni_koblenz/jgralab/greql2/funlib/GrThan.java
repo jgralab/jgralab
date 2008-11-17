@@ -71,9 +71,9 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
  * </dl>
  * </dd>
  * </dl>
- * 
+ *
  * @author ist@uni-koblenz.de
- * 
+ *
  */
 
 public class GrThan implements Greql2Function {
@@ -116,10 +116,4 @@ public class GrThan implements Greql2Function {
 	public String getExpectedParameters() {
 		return "(Double, Double) or (String, String)";
 	}
-
-	@Override
-	public boolean isPredicate() {
-		return true;
-	}
-
 }

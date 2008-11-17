@@ -35,7 +35,7 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValuePathSystem;
 
 /**
  * Returns the length of the longest path in the given pathsystem.
- * 
+ *
  * <dl>
  * <dt><b>GReQL-signature</b></dt>
  * <dd><code>INTEGER maxPathLenght(ps:PATHSYSTEM)</code></dd>
@@ -46,17 +46,17 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValuePathSystem;
  * <dd>
  * <dl>
  * <dt><b>Parameters:</b></dt>
- * <dd><code>ps</code> - pathsystem to calculate the length of the longest
- * path for</dd>
+ * <dd><code>ps</code> - pathsystem to calculate the length of the longest path
+ * for</dd>
  * <dt><b>Returns:</b></dt>
  * <dd>the length of the longest path of the given pathsystem</dd>
  * <dd><code>Null</code> if one of the parameters is <code>Null</code></dd>
  * </dl>
  * </dd>
  * </dl>
- * 
+ *
  * @author ist@uni-koblenz.de
- * 
+ *
  */
 
 public class MaxPathLength implements Greql2Function {
@@ -87,8 +87,4 @@ public class MaxPathLength implements Greql2Function {
 		return "(PathSystem)";
 	}
 
-	@Override
-	public boolean isPredicate() {
-		return false;
-	}
 }

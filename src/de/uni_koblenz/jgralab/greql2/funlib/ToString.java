@@ -51,19 +51,19 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
  * </dl>
  * </dd>
  * </dl>
- * 
+ *
  * @author ist@uni-koblenz.de
- * 
+ *
  */
 
 /*
  * returns a JValue which contains the String representation of the given
  * argument
- * 
+ *
  * @param value the argument to return the string representation for @return the
  * strign representation of value @author ist@uni-koblenz.de
  * <dbildh@uni-koblenz.de>
- * 
+ *
  */
 
 public class ToString implements Greql2Function {
@@ -96,8 +96,4 @@ public class ToString implements Greql2Function {
 		return "(Object)";
 	}
 
-	@Override
-	public boolean isPredicate() {
-		return false;
-	}
 }

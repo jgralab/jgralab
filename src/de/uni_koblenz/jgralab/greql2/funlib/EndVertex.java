@@ -21,7 +21,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
- 
+
 package de.uni_koblenz.jgralab.greql2.funlib;
 
 import java.util.ArrayList;
@@ -32,7 +32,6 @@ import de.uni_koblenz.jgralab.greql2.exception.EvaluateException;
 import de.uni_koblenz.jgralab.greql2.exception.WrongFunctionParameterException;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
 
-
 /**
  * Returns the end-vertex of a given path.
  *
@@ -41,7 +40,8 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
  * <dd><code>VERTEX endVertex(p:PATH)</code></dd>
  * <dd>&nbsp;</dd>
  * </dl>
- * <dl><dt></dt>
+ * <dl>
+ * <dt></dt>
  * <dd>
  * <dl>
  * <dt><b>Parameters:</b></dt>
@@ -52,19 +52,22 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
  * </dl>
  * </dd>
  * </dl>
+ *
  * @see StartVertex
  * @author ist@uni-koblenz.de
- * 
+ *
  */
 
 public class EndVertex implements Greql2Function {
 
-	public JValue evaluate(Graph graph, BooleanGraphMarker subgraph, JValue[] arguments) throws EvaluateException {
+	public JValue evaluate(Graph graph, BooleanGraphMarker subgraph,
+			JValue[] arguments) throws EvaluateException {
 		try {
-			if (arguments[0].isPath())
+			if (arguments[0].isPath()) {
 				return new JValue(arguments[0].toPath().getEndVertex());
-			else
+			} else {
 				return new JValue(arguments[0].toEdge().getOmega());
+			}
 		} catch (Exception ex) {
 			throw new WrongFunctionParameterException(this, null, arguments);
 		}
@@ -84,11 +87,6 @@ public class EndVertex implements Greql2Function {
 
 	public String getExpectedParameters() {
 		return "(Path or Edge)";
-	}
-
-	@Override
-	public boolean isPredicate() {
-		return false;
 	}
 
 }

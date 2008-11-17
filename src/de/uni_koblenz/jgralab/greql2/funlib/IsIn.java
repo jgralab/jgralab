@@ -44,7 +44,7 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
  * Checks if a given object is included in a given structure. The object can be
  * anything (for example a vertex or an edge). The structure can be something
  * like a graph, a subgraph or a pathsystem.
- * 
+ *
  * <dl>
  * <dt><b>GReQL-signature</b></dt>
  * <dd><code>BOOLEAN isIn(obj:OBJECT, struct:STRUCTURE)</code></dd>
@@ -65,9 +65,9 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
  * </dl>
  * </dd>
  * </dl>
- * 
+ *
  * @author ist@uni-koblenz.de
- * 
+ *
  */
 
 public class IsIn implements Greql2Function {
@@ -75,12 +75,14 @@ public class IsIn implements Greql2Function {
 	public JValue evaluate(Graph graph, BooleanGraphMarker subgraph,
 			JValue[] arguments) throws EvaluateException {
 		try {
-			if (arguments.length < 2)
+			if (arguments.length < 2) {
 				throw new WrongFunctionParameterException(this, null, arguments);
+			}
 			JValue value = arguments[0];
 			AttributedElement attrElem = null;
-			if (arguments[0].canConvert(JValueType.ATTRIBUTEDELEMENT))
+			if (arguments[0].canConvert(JValueType.ATTRIBUTEDELEMENT)) {
 				attrElem = value.toAttributedElement();
+			}
 			if (arguments[1].isCollection()) {
 				JValueSet firstSet = arguments[1].toCollection().toJValueSet();
 				return new JValue(firstSet.contains(value), attrElem);
@@ -128,11 +130,6 @@ public class IsIn implements Greql2Function {
 
 	public String getExpectedParameters() {
 		return "(Set or Path or Pathsystem, Object)";
-	}
-
-	@Override
-	public boolean isPredicate() {
-		return true;
 	}
 
 }

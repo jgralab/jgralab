@@ -36,10 +36,12 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueSet;
 /**
  * Checks if the first given set is a subset of the second given set. That
  * means, all elements from the first set are also elements in the second set.
- * 
+ *
  * <dl>
  * <dt><b>GReQL-signature</b></dt>
- * <dd><code>BOOLEAN isSubSet(set1:SET&lt;OBJECT&gt;, set2:SET&lt;OBJECT&gt;)</code></dd>
+ * <dd>
+ * <code>BOOLEAN isSubSet(set1:SET&lt;OBJECT&gt;, set2:SET&lt;OBJECT&gt;)</code>
+ * </dd>
  * <dd>&nbsp;</dd>
  * </dl>
  * <dl>
@@ -57,19 +59,17 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueSet;
  * </dl>
  * </dd>
  * </dl>
- * 
+ *
  * @author ist@uni-koblenz.de
- * 
+ *
  */
 
 /*
  * Gets two sets as parameter and returns true, if the first set is part of the
  * second set
- * 
+ *
  * @param set1 @param set2 @return true, is set1 is a subset (or even equal) of
- * set2 @author ist@uni-koblenz.de
- * Thesis
- * 
+ * set2 @author ist@uni-koblenz.de Thesis
  */
 public class IsSubSet implements Greql2Function {
 
@@ -104,8 +104,4 @@ public class IsSubSet implements Greql2Function {
 		return "(Set, Set)";
 	}
 
-	@Override
-	public boolean isPredicate() {
-		return true;
-	}
 }

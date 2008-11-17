@@ -50,14 +50,14 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueBoolean;
  * <dd><code>a: BOOLEAN</code> - first operand</dd>
  * <dd><code>b: BOOLEAN</code> - second operand</dd>
  * <dt><b>Returns:</b></dt>
- * <dd>the result of the logical operation <code>a or b</code> as defined
- * below:</dd>
- * <dd> <table border = "1">
+ * <dd>the result of the logical operation <code>a or b</code> as defined below:
+ * </dd>
+ * <dd>
+ * <table border = "1">
  * <tr>
  * <th>a\b</th>
- * <th bgcolor="#cc996f">false</th>
- * <th bgcolor="#bababa">Null</th>
- * <th bgcolor="#92cc90">true</th>
+ * <th bgcolor="#cc996f">false</th> <th bgcolor="#bababa">Null</th> <th
+ * bgcolor="#92cc90">true</th>
  * </tr>
  * <tr>
  * <th bgcolor="#cc996f">false</th>
@@ -77,13 +77,14 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueBoolean;
  * <td bgcolor="#b7ffb4">true</td>
  * <td bgcolor="#b7ffb4">true</td>
  * </tr>
- * </table> </dd>
+ * </table>
+ * </dd>
  * </dl>
  * </dd>
  * </dl>
- * 
+ *
  * @author ist@uni-koblenz.de
- * 
+ *
  */
 
 public class Or implements Greql2Function {
@@ -116,8 +117,4 @@ public class Or implements Greql2Function {
 		return "(TrivalentBoolean)";
 	}
 
-	@Override
-	public boolean isPredicate() {
-		return true;
-	}
 }

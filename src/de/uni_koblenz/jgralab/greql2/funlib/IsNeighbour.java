@@ -21,7 +21,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
- 
+
 package de.uni_koblenz.jgralab.greql2.funlib;
 
 import java.util.ArrayList;
@@ -60,7 +60,7 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValuePathSystem;
  * </dd>
  * </dl>
  * @author ist@uni-koblenz.de
- * 
+ *
  */
 
 public class IsNeighbour implements Greql2Function {
@@ -82,9 +82,10 @@ public class IsNeighbour implements Greql2Function {
 				Edge inc = firstVertex.getFirstEdge();
 				while (inc != null) {
 					if ((inc.getAlpha() == secondVertex)
-							|| (inc.getOmega() == secondVertex))
+							|| (inc.getOmega() == secondVertex)) {
 						return new JValue(JValueBoolean.getTrueValue(),
 								firstVertex);
+					}
 					inc = inc.getNextEdge();
 				}
 				return new JValue(JValueBoolean.getFalseValue(),
@@ -109,11 +110,6 @@ public class IsNeighbour implements Greql2Function {
 
 	public String getExpectedParameters() {
 		return "(Vertex, Vertex, [PathSystem])";
-	}
-
-	@Override
-	public boolean isPredicate() {
-		return true;
 	}
 
 }

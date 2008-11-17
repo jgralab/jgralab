@@ -35,7 +35,7 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueBoolean;
 
 /**
  * Checks if two different objects are not equal.
- * 
+ *
  * <dl>
  * <dt><b>GReQL-signature</b></dt>
  * <dd><code>BOOLEAN nequals(obj1:OBJECT, obj2:OBJECT)</code></dd>
@@ -57,9 +57,9 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueBoolean;
  * </dl>
  * </dd>
  * </dl>
- * 
+ *
  * @author ist@uni-koblenz.de
- * 
+ *
  */
 
 public class Nequals implements Greql2Function {
@@ -73,8 +73,9 @@ public class Nequals implements Greql2Function {
 			throw new WrongFunctionParameterException(this, null, arguments);
 		}
 		boolean value = arguments[0].equals(arguments[1]);
-		if (value)
+		if (value) {
 			return new JValue(JValueBoolean.getFalseValue());
+		}
 		return new JValue(JValueBoolean.getTrueValue());
 	}
 
@@ -94,8 +95,4 @@ public class Nequals implements Greql2Function {
 		return "(Object, Object)";
 	}
 
-	@Override
-	public boolean isPredicate() {
-		return true;
-	}
 }

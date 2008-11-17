@@ -21,7 +21,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
- 
+
 package de.uni_koblenz.jgralab.greql2.funlib;
 
 import java.util.ArrayList;
@@ -34,14 +34,16 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValuePathSystem;
 
 /**
- * Returns the depth of the given pathsystem. The depth of a pathsystem is the length of its longest path.
+ * Returns the depth of the given pathsystem. The depth of a pathsystem is the
+ * length of its longest path.
  *
  * <dl>
  * <dt><b>GReQL-signature</b></dt>
  * <dd><code>INTEGER depth(ps:PATHSYSTEM)</code></dd>
  * <dd>&nbsp;</dd>
  * </dl>
- * <dl><dt></dt>
+ * <dl>
+ * <dt></dt>
  * <dd>
  * <dl>
  * <dt><b>Parameters:</b></dt>
@@ -52,13 +54,15 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValuePathSystem;
  * </dl>
  * </dd>
  * </dl>
+ *
  * @author ist@uni-koblenz.de
- * 
+ *
  */
 
 public class Depth implements Greql2Function {
 
-	public JValue evaluate(Graph graph, BooleanGraphMarker subgraph, JValue[] arguments) throws EvaluateException {
+	public JValue evaluate(Graph graph, BooleanGraphMarker subgraph,
+			JValue[] arguments) throws EvaluateException {
 		JValuePathSystem pathSystem;
 		try {
 			pathSystem = arguments[0].toPathSystem();
@@ -66,7 +70,7 @@ public class Depth implements Greql2Function {
 		} catch (Exception ex) {
 			throw new WrongFunctionParameterException(this, null, arguments);
 		}
-		}
+	}
 
 	public long getEstimatedCosts(ArrayList<Long> inElements) {
 		// TODO Auto-generated method stub
@@ -83,11 +87,6 @@ public class Depth implements Greql2Function {
 
 	public String getExpectedParameters() {
 		return "(PathSystem)";
-	}
-
-	@Override
-	public boolean isPredicate() {
-		return false;
 	}
 
 }

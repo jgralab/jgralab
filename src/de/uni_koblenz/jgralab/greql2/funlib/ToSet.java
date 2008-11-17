@@ -36,10 +36,10 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueSet;
 
 /**
  * Converts a collection or even a single element into a JValueSet
- * 
+ *
  * <dl>
  * <dt><b>GReQL-signature</b></dt>
- * <dd><code>SET contains(c:COLLECTION or ELEMENT)</code></dd>
+ * <dd><code>SET toSet(c:COLLECTION or ELEMENT)</code></dd>
  * <dd>&nbsp;</dd>
  * </dl>
  * <dl>
@@ -47,15 +47,15 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueSet;
  * <dd>
  * <dl>
  * <dt><b>Parameters:</b></dt>
- * <dd><code>c</code> - collection or element to convert to a setk</dd>
+ * <dd><code>c</code> - collection or element to convert to a set</dd>
  * <dt><b>Returns:</b></dt>
  * <dd>a set containing all elements of c or the single given element</dd>
  * </dl>
  * </dd>
  * </dl>
- * 
+ *
  * @author ist@uni-koblenz.de
- * 
+ *
  */
 
 public class ToSet implements Greql2Function {
@@ -75,8 +75,8 @@ public class ToSet implements Greql2Function {
 				return set;
 			}
 		} catch (Exception ex) { // JValueInvalidTypeException,
-									// NoSuchFieldException,
-									// IndexOutOfBoundsException
+			// NoSuchFieldException,
+			// IndexOutOfBoundsException
 		}
 		throw new WrongFunctionParameterException(this, null, arguments);
 	}
@@ -95,11 +95,6 @@ public class ToSet implements Greql2Function {
 
 	public String getExpectedParameters() {
 		return "(JValueCollection or Element)";
-	}
-
-	@Override
-	public boolean isPredicate() {
-		return true;
 	}
 
 }

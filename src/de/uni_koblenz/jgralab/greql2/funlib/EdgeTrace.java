@@ -21,7 +21,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
- 
+
 package de.uni_koblenz.jgralab.greql2.funlib;
 
 import java.util.ArrayList;
@@ -37,16 +37,17 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValueList;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValuePath;
 
-
 /**
- * Calculates the edgetrace of the given path. An edgetrace is a List of all edges of this path in correct order.
+ * Calculates the edgetrace of the given path. An edgetrace is a List of all
+ * edges of this path in correct order.
  *
  * <dl>
  * <dt><b>GReQL-signature</b></dt>
  * <dd><code>LIST&lt;EDGE&gt; edgeTrace(p:PATH)</code></dd>
  * <dd>&nbsp;</dd>
  * </dl>
- * <dl><dt></dt>
+ * <dl>
+ * <dt></dt>
  * <dd>
  * <dl>
  * <dt><b>Parameters:</b></dt>
@@ -57,14 +58,16 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValuePath;
  * </dl>
  * </dd>
  * </dl>
+ *
  * @see NodeTrace
  * @author ist@uni-koblenz.de
- * 
+ *
  */
 
 public class EdgeTrace implements Greql2Function {
 
-	public JValue evaluate(Graph graph, BooleanGraphMarker subgraph, JValue[] arguments) throws EvaluateException {
+	public JValue evaluate(Graph graph, BooleanGraphMarker subgraph,
+			JValue[] arguments) throws EvaluateException {
 		JValuePath p1;
 		try {
 			p1 = arguments[0].toPath();
@@ -72,7 +75,7 @@ public class EdgeTrace implements Greql2Function {
 			throw new WrongFunctionParameterException(this, null, arguments);
 		}
 		List<Edge> list = p1.edgeTrace();
-		Iterator<Edge> iter = list.iterator(); 
+		Iterator<Edge> iter = list.iterator();
 		JValueList resultList = new JValueList();
 		while (iter.hasNext()) {
 			Edge v = iter.next();
@@ -95,11 +98,6 @@ public class EdgeTrace implements Greql2Function {
 
 	public String getExpectedParameters() {
 		return "(Path)";
-	}
-
-	@Override
-	public boolean isPredicate() {
-		return false;
 	}
 
 }

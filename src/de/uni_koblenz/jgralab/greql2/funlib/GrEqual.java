@@ -71,19 +71,18 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
  * </dl>
  * </dd>
  * </dl>
- * 
+ *
  * @author ist@uni-koblenz.de
- * 
+ *
  */
 
 /*
  * Calculates a >= b for given scalar values or String a and b. <br /><br />
  * <strong>Parameters:</strong> <ul> <li> a: (Integer | Long | Double | String)
  * (the first scalar value or String)</li> <li> b: (Integer | Long | Double |
- * String) (the second scalar value or string</li> </ul> <strong>Returns:</returns>
- * (a >= b): JValueBoolean @author ist@uni-koblenz.de
+ * String) (the second scalar value or string</li> </ul>
+ * <strong>Returns:</returns> (a >= b): JValueBoolean @author ist@uni-koblenz.de
  * Summer 2006, Diploma Thesis
- * 
  */
 public class GrEqual implements Greql2Function {
 
@@ -124,11 +123,6 @@ public class GrEqual implements Greql2Function {
 
 	public String getExpectedParameters() {
 		return "(Double, Double) or (String, String)";
-	}
-
-	@Override
-	public boolean isPredicate() {
-		return true;
 	}
 
 }

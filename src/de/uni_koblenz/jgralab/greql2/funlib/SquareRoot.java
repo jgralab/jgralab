@@ -53,18 +53,10 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
  * </dl>
  * </dd>
  * </dl>
- * 
+ *
  * @author ist@uni-koblenz.de
- * 
+ *
  */
-
-/*
- * Calculates the squareRoot of the given value @param value a double value to
- * create the squareroot of @return the squareroot as double @author ist@uni-koblenz.de
- * Bildhauer <dbildh@uni-koblenz.de> Summer 2006, Diploma Thesis
- * 
- */
-
 public class SquareRoot implements Greql2Function {
 
 	public JValue evaluate(Graph graph, BooleanGraphMarker subgraph,
@@ -93,8 +85,4 @@ public class SquareRoot implements Greql2Function {
 		return "(Number)";
 	}
 
-	@Override
-	public boolean isPredicate() {
-		return false;
-	}
 }

@@ -21,7 +21,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
- 
+
 package de.uni_koblenz.jgralab.greql2.funlib;
 
 import java.util.ArrayList;
@@ -55,26 +55,27 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
  * </dd>
  * </dl>
  * @author ist@uni-koblenz.de
- * 
+ *
  */
 
 /*
  * Gets a vertex as parameter and returns true, if this vertex is isolated, that
  * means, if it has no connected edges
- * 
+ *
  * @param vertex
  *            the vertex to check for isolation
  * @return true if the given vertex has no connected edges, false otherwise
  * @author ist@uni-koblenz.de
- * 
+ *
  */
 public class IsIsolated implements Greql2Function {
 
 	public JValue evaluate(Graph graph, BooleanGraphMarker subgraph,
 			JValue[] arguments) throws EvaluateException {
 		try {
-			if (arguments.length < 1)
+			if (arguments.length < 1) {
 				throw new WrongFunctionParameterException(this, null, arguments);
+			}
 			Vertex firstVertex = arguments[0].toVertex();
 			return new JValue(firstVertex
 					.getDegree() == 0, firstVertex);
@@ -97,11 +98,6 @@ public class IsIsolated implements Greql2Function {
 
 	public String getExpectedParameters() {
 		return "(Vertex)";
-	}
-
-	@Override
-	public boolean isPredicate() {
-		return true;
 	}
 
 }

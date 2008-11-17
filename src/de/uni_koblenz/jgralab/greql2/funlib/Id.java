@@ -21,7 +21,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
- 
+
 package de.uni_koblenz.jgralab.greql2.funlib;
 
 import java.util.ArrayList;
@@ -35,14 +35,16 @@ import de.uni_koblenz.jgralab.greql2.exception.WrongFunctionParameterException;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
 
 /**
- * Returns the id of the given graph-element. A graph-element is either a vertex or an edge.
+ * Returns the id of the given graph-element. A graph-element is either a vertex
+ * or an edge.
  * <dl>
  * <dt><b>GReQL-signature</b></dt>
  * <dd><code>INTEGER id(v:VERTEX)</code></dd>
  * <dd><code>INTEGER id(e:EDGE)</code></dd>
  * <dd>&nbsp;</dd>
  * </dl>
- * <dl><dt></dt>
+ * <dl>
+ * <dt></dt>
  * <dd>
  * <dl>
  * <dt><b>Parameters:</b></dt>
@@ -54,8 +56,9 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
  * </dl>
  * </dd>
  * </dl>
+ *
  * @author ist@uni-koblenz.de
- * 
+ *
  */
 
 public class Id implements Greql2Function {
@@ -63,8 +66,9 @@ public class Id implements Greql2Function {
 	public JValue evaluate(Graph graph, BooleanGraphMarker subgraph,
 			JValue[] arguments) throws EvaluateException {
 		try {
-			if (arguments.length < 1)
+			if (arguments.length < 1) {
 				throw new WrongFunctionParameterException(this, null, arguments);
+			}
 			if (arguments[0].isVertex()) {
 				Vertex v = arguments[0].toVertex();
 				return new JValue(v.getId(), v);
@@ -91,11 +95,6 @@ public class Id implements Greql2Function {
 
 	public String getExpectedParameters() {
 		return "(Vertex or Edge)";
-	}
-
-	@Override
-	public boolean isPredicate() {
-		return true;
 	}
 
 }

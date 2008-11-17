@@ -49,9 +49,9 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueBoolean;
  * <dt><b>Parameters:</b></dt>
  * <dd><code>a</code> - boolean value to negate</dd>
  * <dt><b>Returns:</b></dt>
- * <dd>the result of the logical operation <code>not a</code> as defined
- * below:</dd>
- * <dd> <table border = "1">
+ * <dd>the result of the logical operation <code>not a</code> as defined below:</dd>
+ * <dd>
+ * <table border = "1">
  * <tr>
  * <th>a</th>
  * <th>not a</th>
@@ -68,13 +68,14 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueBoolean;
  * <th bgcolor="#92cc90">true</th>
  * <td bgcolor="#ffbf8b">false</td>
  * </tr>
- * </table> </dd>
+ * </table>
+ * </dd>
  * </dl>
  * </dd>
  * </dl>
- * 
+ *
  * @author ist@uni-koblenz.de
- * 
+ *
  */
 
 public class Not implements Greql2Function {
@@ -107,8 +108,4 @@ public class Not implements Greql2Function {
 		return "(TrivalentBoolean)";
 	}
 
-	@Override
-	public boolean isPredicate() {
-		return true;
-	}
 }

@@ -21,7 +21,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
- 
+
 package de.uni_koblenz.jgralab.greql2.funlib;
 
 import java.util.ArrayList;
@@ -41,7 +41,8 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
  * <dd><code>VERTEX getVertex(id:INTEGER)</code></dd>
  * <dd>&nbsp;</dd>
  * </dl>
- * <dl><dt></dt>
+ * <dl>
+ * <dt></dt>
  * <dd>
  * <dl>
  * <dt><b>Parameters:</b></dt>
@@ -52,8 +53,9 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
  * </dl>
  * </dd>
  * </dl>
+ *
  * @author ist@uni-koblenz.de
- * 
+ *
  */
 
 public class GetVertex implements Greql2Function {
@@ -61,8 +63,9 @@ public class GetVertex implements Greql2Function {
 	public JValue evaluate(Graph graph, BooleanGraphMarker subgraph,
 			JValue[] arguments) throws EvaluateException {
 		try {
-			if (arguments.length < 1)
+			if (arguments.length < 1) {
 				throw new WrongFunctionParameterException(this, null, arguments);
+			}
 			int id = arguments[0].toInteger();
 			Vertex vertex = graph.getVertex(id);
 			return new JValue(vertex, vertex);
@@ -85,11 +88,6 @@ public class GetVertex implements Greql2Function {
 
 	public String getExpectedParameters() {
 		return "(Integer)";
-	}
-
-	@Override
-	public boolean isPredicate() {
-		return false;
 	}
 
 }

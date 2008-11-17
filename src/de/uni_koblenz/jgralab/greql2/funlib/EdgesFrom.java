@@ -40,7 +40,7 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueSet;
  * Returns a set of outgoing edges, which are connected to the given vertex and
  * which are part of the given structure. If no structure is given, the graph to
  * which the vertex belongs to is used as structure.
- * 
+ *
  * <dl>
  * <dt><b>GReQL-signature</b></dt>
  * <dd><code>SET&lt;EDGE&gt; edgesFrom(v:Vertex)</code></dd>
@@ -62,11 +62,11 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueSet;
  * </dl>
  * </dd>
  * </dl>
- * 
+ *
  * @see EdgesConnected
  * @see EdgesTo
  * @author ist@uni-koblenz.de
- * 
+ *
  */
 
 public class EdgesFrom implements Greql2Function {
@@ -87,8 +87,9 @@ public class EdgesFrom implements Greql2Function {
 			Edge inc = vertex.getFirstEdge(EdgeDirection.OUT);
 			JValueSet resultSet = new JValueSet();
 			while (inc != null) {
-				if ((subgraph == null) || (subgraph.isMarked(inc)))
+				if ((subgraph == null) || (subgraph.isMarked(inc))) {
 					resultSet.add(new JValue(inc));
+				}
 				inc = inc.getNextEdge(EdgeDirection.OUT);
 			}
 			return resultSet;
@@ -112,11 +113,6 @@ public class EdgesFrom implements Greql2Function {
 
 	public String getExpectedParameters() {
 		return "(Vertex, PathSystem or Path or [Graph])";
-	}
-
-	@Override
-	public boolean isPredicate() {
-		return false;
 	}
 
 }

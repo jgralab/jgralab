@@ -38,13 +38,15 @@ import de.uni_koblenz.jgralab.schema.Schema;
 
 /**
  * Checks if the first given type is a subtype of the second given type.
- * 
+ *
  * <dl>
  * <dt><b>GReQL-signature</b></dt>
  * <dd><code>BOOLEAN isA(type:STRING, supertype:STRING)</code></dd>
  * <dd><code>BOOLEAN isA(typeA:ATTRIBUTEDELEMENTCLASS, supertype:STRING)</code></dd>
  * <dd><code>BOOLEAN isA(type:STRING, supertypeA:ATTRIBUTEDELEMENTCLASS)</code></dd>
- * <dd><code>BOOLEAN isA(typeA:ATTRIBUTEDELEMENTCLASS, supertypeA:ATTRIBUTEDELEMENTCLASS)</code></dd>
+ * <dd>
+ * <code>BOOLEAN isA(typeA:ATTRIBUTEDELEMENTCLASS, supertypeA:ATTRIBUTEDELEMENTCLASS)</code>
+ * </dd>
  * <dd>&nbsp;</dd>
  * </dl>
  * <dl>
@@ -53,8 +55,8 @@ import de.uni_koblenz.jgralab.schema.Schema;
  * <dl>
  * <dt><b>Parameters:</b></dt>
  * <dd><code>type</code> - string representation of the type to check</dd>
- * <dd><code>supertype</code> - string representation of the potential
- * supertype</dd>
+ * <dd><code>supertype</code> - string representation of the potential supertype
+ * </dd>
  * <dd><code>typeA</code> - type to check</dd>
  * <dd><code>supertypeA</code> - potential supertype</dd>
  * <dt><b>Returns:</b></dt>
@@ -65,9 +67,9 @@ import de.uni_koblenz.jgralab.schema.Schema;
  * </dl>
  * </dd>
  * </dl>
- * 
+ *
  * @author ist@uni-koblenz.de
- * 
+ *
  */
 
 public class IsA implements Greql2Function {
@@ -122,11 +124,6 @@ public class IsA implements Greql2Function {
 
 	public String getExpectedParameters() {
 		return "(Integer)";
-	}
-
-	@Override
-	public boolean isPredicate() {
-		return true;
 	}
 
 }

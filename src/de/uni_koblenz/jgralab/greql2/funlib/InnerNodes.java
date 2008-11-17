@@ -21,7 +21,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
- 
+
 package de.uni_koblenz.jgralab.greql2.funlib;
 
 import java.util.ArrayList;
@@ -33,16 +33,18 @@ import de.uni_koblenz.jgralab.greql2.exception.WrongFunctionParameterException;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValuePathSystem;
 
-
 /**
- * Returns all inner nodes of the given pathsystem as set. Inner nodes are all vertices besides leaves of the pathsystem. That means, all vertices, that are not an end of a path.
+ * Returns all inner nodes of the given pathsystem as set. Inner nodes are all
+ * vertices besides leaves of the pathsystem. That means, all vertices, that are
+ * not an end of a path.
  *
  * <dl>
  * <dt><b>GReQL-signature</b></dt>
  * <dd><code>SET&lt;VERTEX&gt; innerNodes(ps:PATHSYSTEM)</code></dd>
  * <dd>&nbsp;</dd>
  * </dl>
- * <dl><dt></dt>
+ * <dl>
+ * <dt></dt>
  * <dd>
  * <dl>
  * <dt><b>Parameters:</b></dt>
@@ -53,14 +55,16 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValuePathSystem;
  * </dl>
  * </dd>
  * </dl>
+ *
  * @see Leaves
  * @author ist@uni-koblenz.de
- * 
+ *
  */
 
 public class InnerNodes implements Greql2Function {
 
-	public JValue evaluate(Graph graph, BooleanGraphMarker subgraph, JValue[] arguments) throws EvaluateException {
+	public JValue evaluate(Graph graph, BooleanGraphMarker subgraph,
+			JValue[] arguments) throws EvaluateException {
 		JValuePathSystem pathSystem;
 		try {
 			pathSystem = arguments[0].toPathSystem();
@@ -85,11 +89,6 @@ public class InnerNodes implements Greql2Function {
 
 	public String getExpectedParameters() {
 		return "(PathSystem)";
-	}
-
-	@Override
-	public boolean isPredicate() {
-		return false;
 	}
 
 }

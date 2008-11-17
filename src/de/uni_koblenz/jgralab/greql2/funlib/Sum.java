@@ -36,7 +36,7 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueCollection;
 
 /**
  * Calculates the sum of all elements in the given collection.
- * 
+ *
  * <dl>
  * <dt><b>GReQL-signature</b></dt>
  * <dd><code>DOUBLE sum(c:COLLECTION)</code></dd>
@@ -54,17 +54,17 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueCollection;
  * </dl>
  * </dd>
  * </dl>
- * 
+ *
  * @author ist@uni-koblenz.de
- * 
+ *
  */
 
 /*
  * calculates the sum of all elements in the given collection @param collection
  * a JValueCollection which contains only scalar values (int, double, etc.)
+ *
  * @return the result of the sum as double value @author ist@uni-koblenz.de
  * <dbildh@uni-koblenz.de> Summer 2006, Diploma Thesis
- * 
  */
 public class Sum implements Greql2Function {
 
@@ -92,8 +92,8 @@ public class Sum implements Greql2Function {
 				return arguments[0];
 			}
 		} catch (Exception ex) { // JValueInvalidTypeException,
-									// NoSuchFieldException,
-									// IndexOutOfBoundsException
+			// NoSuchFieldException,
+			// IndexOutOfBoundsException
 			throw new WrongFunctionParameterException(this, null, arguments);
 		}
 	}
@@ -114,8 +114,4 @@ public class Sum implements Greql2Function {
 		return "JValueCollection of Integers";
 	}
 
-	@Override
-	public boolean isPredicate() {
-		return false;
-	}
 }

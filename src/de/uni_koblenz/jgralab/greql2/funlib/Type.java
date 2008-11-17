@@ -36,7 +36,7 @@ import de.uni_koblenz.jgralab.schema.QualifiedName;
 
 /**
  * Returns the type of the given attributed element.
- * 
+ *
  * <dl>
  * <dt><b>GReQL-signature</b></dt>
  * <dd><code>ATTRIBUTEDELEMENTCLASS Type(ae:ATTRIBUTEDELEMENT)</code></dd>
@@ -54,18 +54,17 @@ import de.uni_koblenz.jgralab.schema.QualifiedName;
  * </dl>
  * </dd>
  * </dl>
- * 
+ *
  * @author ist@uni-koblenz.de
- * 
+ *
  */
 
 /*
  * Calculates the type of the given vertex or edge
- * 
+ *
  * @param graphelem the Graphelement (edge or vertex) to calculate the typename
  * of @return the type of the given vertex or edge @author ist@uni-koblenz.de
  * <dbildh@uni-koblenz.de> Summer 2006, Diploma Thesis
- * 
  */
 
 public class Type implements Greql2Function {
@@ -74,11 +73,11 @@ public class Type implements Greql2Function {
 			JValue[] arguments) throws EvaluateException {
 		GraphElement elem = null;
 		try {
-			if (arguments[0].isVertex())
+			if (arguments[0].isVertex()) {
 				elem = arguments[0].toVertex();
-			else if (arguments[0].isEdge())
+			} else if (arguments[0].isEdge()) {
 				elem = arguments[0].toEdge();
-			else if (arguments[0].isString()) {
+			} else if (arguments[0].isString()) {
 				return new JValue(graph.getSchema().getAttributedElementClass(
 						new QualifiedName(arguments[0].toString())));
 			}
@@ -105,8 +104,4 @@ public class Type implements Greql2Function {
 		return "(Vertex or Edge)";
 	}
 
-	@Override
-	public boolean isPredicate() {
-		return false;
-	}
 }

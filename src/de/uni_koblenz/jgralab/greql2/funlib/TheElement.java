@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package de.uni_koblenz.jgralab.greql2.funlib;
 
@@ -17,7 +17,7 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueCollection;
  * Returns the one and only element of the given set, bag or list. If it
  * contains more than one value an {@link WrongFunctionParameterException} is
  * thrown at you.
- * 
+ *
  * <dl>
  * <dt><b>GReQL-signature</b></dt>
  * <dd><code>OBJECT theElement(list:LIST&lt;OBJECT&gt;)</code></dd>
@@ -34,21 +34,22 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueCollection;
  * <dd><code>set</code> - set to return the element for</dd>
  * <dd><code>bog</code> - bag to return the element for</dd>
  * <dt><b>Returns:</b></dt>
- * <dd> the one and only element of the given list, set or bag</dd>
+ * <dd>the one and only element of the given list, set or bag</dd>
  * </dl>
  * </dd>
  * </dl>
- * 
+ *
  * @author ist@uni-koblenz.de
  */
 public class TheElement implements Greql2Function {
 
 	/*
 	 * (non-Javadoc)
-	 * 
-	 * @see de.uni_koblenz.jgralab.greql2.funlib.Greql2Function#evaluate(de.uni_koblenz.jgralab.Graph,
-	 *      de.uni_koblenz.jgralab.BooleanGraphMarker,
-	 *      de.uni_koblenz.jgralab.greql2.jvalue.JValue[])
+	 *
+	 * @see
+	 * de.uni_koblenz.jgralab.greql2.funlib.Greql2Function#evaluate(de.uni_koblenz
+	 * .jgralab.Graph, de.uni_koblenz.jgralab.BooleanGraphMarker,
+	 * de.uni_koblenz.jgralab.greql2.jvalue.JValue[])
 	 */
 	@Override
 	public JValue evaluate(Graph graph, BooleanGraphMarker subgraph,
@@ -72,8 +73,10 @@ public class TheElement implements Greql2Function {
 
 	/*
 	 * (non-Javadoc)
-	 * 
-	 * @see de.uni_koblenz.jgralab.greql2.funlib.Greql2Function#getEstimatedCardinality(int)
+	 *
+	 * @see
+	 * de.uni_koblenz.jgralab.greql2.funlib.Greql2Function#getEstimatedCardinality
+	 * (int)
 	 */
 	@Override
 	public long getEstimatedCardinality(int inElements) {
@@ -82,8 +85,10 @@ public class TheElement implements Greql2Function {
 
 	/*
 	 * (non-Javadoc)
-	 * 
-	 * @see de.uni_koblenz.jgralab.greql2.funlib.Greql2Function#getEstimatedCosts(int)
+	 *
+	 * @see
+	 * de.uni_koblenz.jgralab.greql2.funlib.Greql2Function#getEstimatedCosts
+	 * (int)
 	 */
 	@Override
 	public long getEstimatedCosts(ArrayList<Long> inElements) {
@@ -92,8 +97,10 @@ public class TheElement implements Greql2Function {
 
 	/*
 	 * (non-Javadoc)
-	 * 
-	 * @see de.uni_koblenz.jgralab.greql2.funlib.Greql2Function#getExpectedParameters()
+	 *
+	 * @see
+	 * de.uni_koblenz.jgralab.greql2.funlib.Greql2Function#getExpectedParameters
+	 * ()
 	 */
 	@Override
 	public String getExpectedParameters() {
@@ -102,7 +109,7 @@ public class TheElement implements Greql2Function {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see de.uni_koblenz.jgralab.greql2.funlib.Greql2Function#getSelectivity()
 	 */
 	@Override
@@ -110,8 +117,4 @@ public class TheElement implements Greql2Function {
 		return 1;
 	}
 
-	@Override
-	public boolean isPredicate() {
-		return false;
-	}
 }

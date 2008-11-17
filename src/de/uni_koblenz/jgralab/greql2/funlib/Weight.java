@@ -37,7 +37,7 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValuePathSystem;
  * Returns the weight of the given pathsystem. The weight of a pathsystem is its
  * amount of vertices. If vertices occur multiply, they are counted multiply as
  * well.
- * 
+ *
  * <dl>
  * <dt><b>GReQL-signature</b></dt>
  * <dd><code>INTEGER weight(ps:PATHSYSTEM)</code></dd>
@@ -55,9 +55,9 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValuePathSystem;
  * </dl>
  * </dd>
  * </dl>
- * 
+ *
  * @author ist@uni-koblenz.de
- * 
+ *
  */
 
 public class Weight implements Greql2Function {
@@ -89,8 +89,4 @@ public class Weight implements Greql2Function {
 		return "(PathSystem)";
 	}
 
-	@Override
-	public boolean isPredicate() {
-		return false;
-	}
 }

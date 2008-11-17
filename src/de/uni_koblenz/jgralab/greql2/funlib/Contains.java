@@ -39,7 +39,7 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValuePathSystem;
 /**
  * Checks if a given object is included in a given collection. The object can be
  * anything (for example an integer or a string).
- * 
+ *
  * <dl>
  * <dt><b>GReQL-signature</b></dt>
  * <dd><code>BOOLEAN contains(c:COLLECTION, obj:OBJECT)</code></dd>
@@ -53,16 +53,16 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValuePathSystem;
  * <dd><code>c</code> - collection to check</dd>
  * <dd><code>obj</code> - object to check</dd>
  * <dt><b>Returns:</b></dt>
- * <dd><code>true</code> if the given object is included in the given
- * collection</dd>
+ * <dd><code>true</code> if the given object is included in the given collection
+ * </dd>
  * <dd><code>Null</code> if one of the given parameters is <code>Null</code></dd>
  * <dd><code>false</code> otherwise</dd>
  * </dl>
  * </dd>
  * </dl>
- * 
+ *
  * @author ist@uni-koblenz.de
- * 
+ *
  */
 
 public class Contains implements Greql2Function {
@@ -78,19 +78,21 @@ public class Contains implements Greql2Function {
 				return new JValue(col.contains(arguments[1]));
 			} else if (arguments[0].isPath()) {
 				JValuePath path = arguments[0].toPath();
-				if (arguments[1].isVertex() || arguments[1].isEdge())
+				if (arguments[1].isVertex() || arguments[1].isEdge()) {
 					return new JValue(path.contains((GraphElement) arguments[1]
 							.toAttributedElement()));
+				}
 
 			} else if (arguments[0].isPathSystem()) {
 				JValuePathSystem path = arguments[0].toPathSystem();
-				if (arguments[1].isVertex() || arguments[1].isEdge())
+				if (arguments[1].isVertex() || arguments[1].isEdge()) {
 					return new JValue(path.contains((GraphElement) arguments[1]
 							.toAttributedElement()));
+				}
 			}
 		} catch (Exception ex) { // JValueInvalidTypeException,
-									// NoSuchFieldException,
-									// IndexOutOfBoundsException
+			// NoSuchFieldException,
+			// IndexOutOfBoundsException
 		}
 		throw new WrongFunctionParameterException(this, null, arguments);
 	}
@@ -109,11 +111,6 @@ public class Contains implements Greql2Function {
 
 	public String getExpectedParameters() {
 		return "(JValueCollection or Path or PathSystem, JValue resp. GraphElement)";
-	}
-
-	@Override
-	public boolean isPredicate() {
-		return true;
 	}
 
 }

@@ -26,16 +26,16 @@ package de.uni_koblenz.jgralab.greql2.funlib;
 
 import java.util.ArrayList;
 
+import de.uni_koblenz.jgralab.BooleanGraphMarker;
+import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.greql2.exception.EvaluateException;
 import de.uni_koblenz.jgralab.greql2.exception.WrongFunctionParameterException;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValuePath;
-import de.uni_koblenz.jgralab.BooleanGraphMarker;
-import de.uni_koblenz.jgralab.Graph;
 
 /**
  * Returns the length of the given path.
- * 
+ *
  * <dl>
  * <dt><b>GReQL-signature</b></dt>
  * <dd><code>INTEGER pathLength(p:PATH)</code></dd>
@@ -53,9 +53,9 @@ import de.uni_koblenz.jgralab.Graph;
  * </dl>
  * </dd>
  * </dl>
- * 
+ *
  * @author ist@uni-koblenz.de
- * 
+ *
  */
 
 public class PathLength implements Greql2Function {
@@ -85,10 +85,5 @@ public class PathLength implements Greql2Function {
 
 	public String getExpectedParameters() {
 		return "(Path)";
-	}
-
-	@Override
-	public boolean isPredicate() {
-		return false;
 	}
 }

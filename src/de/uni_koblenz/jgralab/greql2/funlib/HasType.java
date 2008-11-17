@@ -21,7 +21,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
- 
+
 package de.uni_koblenz.jgralab.greql2.funlib;
 
 import java.util.ArrayList;
@@ -41,16 +41,20 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueTypeCollection;
  * <dl>
  * <dt><b>GReQL-signature</b></dt>
  * <dd><code>BOOLEAN hasType(ae:ATTRIBUTEDELEMENT, type:STRING)</code></dd>
- * <dd><code>BOOLEAN hasType(ae:ATTRIBUTEDELEMENT, aec:ATTRIBUTEDELEMENTCLASS)</code></dd>
+ * <dd>
+ * <code>BOOLEAN hasType(ae:ATTRIBUTEDELEMENT, aec:ATTRIBUTEDELEMENTCLASS)</code>
+ * </dd>
  * <dd>&nbsp;</dd>
  * </dl>
- * <dl><dt></dt>
+ * <dl>
+ * <dt></dt>
  * <dd>
  * <dl>
  * <dt><b>Parameters:</b></dt>
  * <dd><code>ae</code> - attributed element to check</dd>
  * <dd><code>type</code> - name of the type to check for</dd>
- * <dd><code>aec</code> - attributed element class which is the type to check for</dd>
+ * <dd><code>aec</code> - attributed element class which is the type to check
+ * for</dd>
  * <dt><b>Returns:</b></dt>
  * <dd><code>true</code> if the given attributed element has the given type</dd>
  * <dd><code>Null</code> if one of the parameters is <code>Null</code></dd>
@@ -58,8 +62,9 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueTypeCollection;
  * </dl>
  * </dd>
  * </dl>
+ *
  * @author ist@uni-koblenz.de
- * 
+ *
  */
 
 public class HasType implements Greql2Function {
@@ -69,21 +74,26 @@ public class HasType implements Greql2Function {
 		GraphElement elem = null;
 		String typeName;
 		try {
-			if (arguments[0].isVertex())
+			if (arguments[0].isVertex()) {
 				elem = arguments[0].toVertex();
-			else
-				elem = arguments[0].toEdge();
-			if (arguments[1].isJValueTypeCollection()) {
-				JValueTypeCollection typeCollection = arguments[1].toJValueTypeCollection();
-				return new JValue(typeCollection.acceptsType(elem.getAttributedElementClass()));
 			} else {
-				if (arguments[1].isAttributedElementClass())
-					typeName = arguments[1].toAttributedElementClass().getQualifiedName();
-				else
+				elem = arguments[0].toEdge();
+			}
+			if (arguments[1].isJValueTypeCollection()) {
+				JValueTypeCollection typeCollection = arguments[1]
+						.toJValueTypeCollection();
+				return new JValue(typeCollection.acceptsType(elem
+						.getAttributedElementClass()));
+			} else {
+				if (arguments[1].isAttributedElementClass()) {
+					typeName = arguments[1].toAttributedElementClass()
+							.getQualifiedName();
+				} else {
 					typeName = arguments[1].toString();
-				return new JValue(elem
-						.getAttributedElementClass().getQualifiedName().equals(typeName), elem);
-			}	
+				}
+				return new JValue(elem.getAttributedElementClass()
+						.getQualifiedName().equals(typeName), elem);
+			}
 		} catch (Exception ex) {
 			throw new WrongFunctionParameterException(this, null, arguments);
 		}
@@ -103,11 +113,6 @@ public class HasType implements Greql2Function {
 
 	public String getExpectedParameters() {
 		return "(Vertex or Edge, Type or String)";
-	}
-
-	@Override
-	public boolean isPredicate() {
-		return true;
 	}
 
 }

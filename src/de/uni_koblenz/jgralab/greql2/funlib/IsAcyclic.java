@@ -125,9 +125,4 @@ public class IsAcyclic implements Greql2Function {
 		return "([SubgraphTempAttribute])";
 	}
 
-	@Override
-	public boolean isPredicate() {
-		return true;
-	}
-
 }

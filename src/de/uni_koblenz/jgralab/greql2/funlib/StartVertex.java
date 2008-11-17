@@ -34,7 +34,7 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
 
 /**
  * Returns the start-vertex of a given path.
- * 
+ *
  * <dl>
  * <dt><b>GReQL-signature</b></dt>
  * <dd><code>VERTEX startVertex(p:PATH)</code></dd>
@@ -52,10 +52,10 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
  * </dl>
  * </dd>
  * </dl>
- * 
+ *
  * @see EndVertex
  * @author ist@uni-koblenz.de
- * 
+ *
  */
 
 public class StartVertex implements Greql2Function {
@@ -63,10 +63,11 @@ public class StartVertex implements Greql2Function {
 	public JValue evaluate(Graph graph, BooleanGraphMarker subgraph,
 			JValue[] arguments) throws EvaluateException {
 		try {
-			if (arguments[0].isPath())
+			if (arguments[0].isPath()) {
 				return new JValue(arguments[0].toPath().getStartVertex());
-			else
+			} else {
 				return new JValue(arguments[0].toEdge().getAlpha());
+			}
 		} catch (Exception ex) {
 			throw new WrongFunctionParameterException(this, null, arguments);
 		}
@@ -88,8 +89,4 @@ public class StartVertex implements Greql2Function {
 		return "(Set, Set)";
 	}
 
-	@Override
-	public boolean isPredicate() {
-		return false;
-	}
 }

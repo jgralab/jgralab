@@ -21,7 +21,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
- 
+
 package de.uni_koblenz.jgralab.greql2.funlib;
 
 import java.util.ArrayList;
@@ -55,26 +55,27 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
  * </dd>
  * </dl>
  * @author ist@uni-koblenz.de
- * 
+ *
  */
 
 /*
  * Gets a edge as parameter and returns true, if this edge is a loop, that
  * means, if alpha nd omega vertex are identical
- * 
+ *
  * @param edge
  *            the edge to check
  * @return true if the given edge is a loop
  * @author ist@uni-koblenz.de
- * 
+ *
  */
 public class IsLoop implements Greql2Function {
 
 	public JValue evaluate(Graph graph, BooleanGraphMarker subgraph,
 			JValue[] arguments) throws EvaluateException {
 		try {
-			if (arguments.length < 1)
+			if (arguments.length < 1) {
 				throw new WrongFunctionParameterException(this, null, arguments);
+			}
 			Edge edge = arguments[0].toEdge();
 			return new JValue(edge.getAlpha() == edge.getOmega(), edge);
 		} catch (JValueInvalidTypeException ex) {
@@ -96,11 +97,6 @@ public class IsLoop implements Greql2Function {
 
 	public String getExpectedParameters() {
 		return "(Edge)";
-	}
-
-	@Override
-	public boolean isPredicate() {
-		return true;
 	}
 
 }

@@ -30,12 +30,11 @@ import de.uni_koblenz.jgralab.BooleanGraphMarker;
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.greql2.exception.EvaluateException;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
-import de.uni_koblenz.jgralab.greql2.jvalue.JValueBoolean;
 
 /**
  * This interface is implemented by every class, that implements a
- * GReQL-Function. The method <code>evaluate(...)</code> can be used to
- * evaluate the GReQL2 Function Each Function will get the following parameters:
+ * GReQL-Function. The method <code>evaluate(...)</code> can be used to evaluate
+ * the GReQL2 Function Each Function will get the following parameters:
  * <ul>
  * <li><strong>graph</strong>: A reference to the datagraph on which the
  * function will be evaluated. For a lot of functions, this reference is not
@@ -52,15 +51,15 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueBoolean;
  * </ul>
  * <strong>Returns</strong> a JValue, if the result is a boolean value,
  * jvalue.JValueBoolean is used, because the function may return "unknown"
- * 
+ *
  * @author ist@uni-koblenz.de
- * 
+ *
  */
 public interface Greql2Function {
 
 	/**
 	 * evaluates this GReQL-Function
-	 * 
+	 *
 	 * @param arguments
 	 *            the arguments this function expects
 	 * @return the result of this function as JValue
@@ -72,7 +71,7 @@ public interface Greql2Function {
 
 	/**
 	 * Calculates the estimated cost for the evaluation of this greql function
-	 * 
+	 *
 	 * @param inElements
 	 *            the number of input elements
 	 * @return The estimated costs in the abstract measure-unit "interpretation
@@ -83,7 +82,7 @@ public interface Greql2Function {
 	/**
 	 * Calculates the estimated selectivity of this boolean function. If this
 	 * function does not return a boolean value, this method should return 1
-	 * 
+	 *
 	 * @return the selectivity of this function, 0 < selectivity <= 1
 	 */
 	public double getSelectivity();
@@ -91,7 +90,7 @@ public interface Greql2Function {
 	/**
 	 * Calculates the estimated result size for the given number of input
 	 * elements
-	 * 
+	 *
 	 * @param inElements
 	 *            the number of input elements to calculate the result size for
 	 * @return the estimated number of elements in the result
@@ -104,11 +103,4 @@ public interface Greql2Function {
 	 *         applicable for the arguments (a,c)"
 	 */
 	public String getExpectedParameters();
-
-	/**
-	 * @return <code>true</code> if this function is a predicate, meaning if
-	 *         it returns a {@link JValueBoolean}, <code>false</code>
-	 *         otherwise.
-	 */
-	public boolean isPredicate();
 }

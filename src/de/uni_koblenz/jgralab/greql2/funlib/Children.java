@@ -21,7 +21,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
- 
+
 package de.uni_koblenz.jgralab.greql2.funlib;
 
 import java.util.ArrayList;
@@ -38,7 +38,8 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValuePathSystem;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValueSet;
 
 /**
- * Returns all child-vertices of the given vertex as set. If a pathsystem is given, only the child-vertices that are in the pathsystem are returned.
+ * Returns all child-vertices of the given vertex as set. If a pathsystem is
+ * given, only the child-vertices that are in the pathsystem are returned.
  *
  * <dl>
  * <dt><b>GReQL-signature</b></dt>
@@ -46,30 +47,36 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueSet;
  * <dd><code>SET&lt;VERTEX&gt; children(v:VERTEX, ps:PATHSYSTEM)</code></dd>
  * <dd>&nbsp;</dd>
  * </dl>
- * <dl><dt></dt>
+ * <dl>
+ * <dt></dt>
  * <dd>
  * <dl>
  * <dt><b>Parameters:</b></dt>
  * <dd><code>v</code> - vertex to calculate the child-vertices for</dd>
  * <dd><code>ps</code> - pathsystem to limit the calculation</dd>
  * <dt><b>Returns:</b></dt>
- * <dd>a set of vertices that contains all child-vertices of the given vertex. If a pathsystem is specified, only the child-vertices that are contained in the pathsystem are returned.</dd>
+ * <dd>a set of vertices that contains all child-vertices of the given vertex.
+ * If a pathsystem is specified, only the child-vertices that are contained in
+ * the pathsystem are returned.</dd>
  * <dd><code>Null</code> if one of the parameters is <code>Null</code></dd>
  * </dl>
  * </dd>
  * </dl>
+ *
  * @author ist@uni-koblenz.de
- * 
+ *
  */
 
 public class Children implements Greql2Function {
 
-	public JValue evaluate(Graph graph, BooleanGraphMarker subgraph, JValue[] arguments) throws EvaluateException {
+	public JValue evaluate(Graph graph, BooleanGraphMarker subgraph,
+			JValue[] arguments) throws EvaluateException {
 		Vertex vertex;
 		JValuePathSystem pathSystem;
 		try {
 			vertex = arguments[0].toVertex();
-			if ( (arguments.length > 1) && (arguments[1] != null) && (arguments[1].isPathSystem()) ) {
+			if ((arguments.length > 1) && (arguments[1] != null)
+					&& (arguments[1].isPathSystem())) {
 				pathSystem = arguments[1].toPathSystem();
 				return pathSystem.children(vertex);
 			}
@@ -78,8 +85,9 @@ public class Children implements Greql2Function {
 			JValueSet resultSet = new JValueSet();
 			while (inc != null) {
 				other = inc.getThat();
-				if ((subgraph==null) || (subgraph.isMarked(other)))
+				if ((subgraph == null) || (subgraph.isMarked(other))) {
 					resultSet.add(new JValue(other));
+				}
 				inc = inc.getNextEdge(EdgeDirection.OUT);
 			}
 			return resultSet;
@@ -103,11 +111,6 @@ public class Children implements Greql2Function {
 
 	public String getExpectedParameters() {
 		return "(Vertex [,PathSystem])";
-	}
-
-	@Override
-	public boolean isPredicate() {
-		return false;
 	}
 
 }
