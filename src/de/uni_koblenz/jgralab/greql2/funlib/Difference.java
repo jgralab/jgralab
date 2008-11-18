@@ -32,15 +32,19 @@ import de.uni_koblenz.jgralab.greql2.exception.EvaluateException;
 import de.uni_koblenz.jgralab.greql2.exception.WrongFunctionParameterException;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValueSet;
+import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
 
 /**
- * Returns the difference of two given sets. The returned set contains all
- * elements from the first given set that are not element of the second one.
+ * Returns the set difference of two given COLLECTIONS. The returned set
+ * contains all elements from the first given set that are not element of the
+ * second one.
+ *
+ * The arguments will be converted to SET before calculating the set difference.
+ *
  * <dl>
  * <dt><b>GReQL-signature</b></dt>
  * <dd>
- * <code>SET&lt;OBJECT&gt; difference(s1:SET&lt;OBJECT&gt;, s2:SET&lt;OBJECT&gt;)</code>
- * </dd>
+ * <code>SET difference(s1:COLLECTION, s2:COLLECTION)</code></dd>
  * <dd>&nbsp;</dd>
  * </dl>
  * <dl>
@@ -64,20 +68,21 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueSet;
  *
  */
 
-public class Difference implements Greql2Function {
+public class Difference extends AbstractGreql2Function {
+	{
+		JValueType[][] x = { { JValueType.COLLECTION, JValueType.COLLECTION } };
+		signatures = x;
+	}
 
 	public JValue evaluate(Graph graph, BooleanGraphMarker subgraph,
 			JValue[] arguments) throws EvaluateException {
-		if (arguments.length != 2) {
+		if (checkArguments(arguments) == -1) {
 			throw new WrongFunctionParameterException(this, null, arguments);
 		}
-		try {
-			JValueSet firstSet = arguments[0].toCollection().toJValueSet();
-			JValueSet secondSet = arguments[1].toCollection().toJValueSet();
-			return firstSet.difference(secondSet);
-		} catch (Exception ex) {
-			throw new WrongFunctionParameterException(this, null, arguments);
-		}
+
+		JValueSet firstSet = arguments[0].toCollection().toJValueSet();
+		JValueSet secondSet = arguments[1].toCollection().toJValueSet();
+		return firstSet.difference(secondSet);
 	}
 
 	public long getEstimatedCosts(ArrayList<Long> inElements) {
@@ -94,10 +99,6 @@ public class Difference implements Greql2Function {
 
 	public long getEstimatedCardinality(int inElements) {
 		return 1;
-	}
-
-	public String getExpectedParameters() {
-		return "(Set, Set)";
 	}
 
 }
