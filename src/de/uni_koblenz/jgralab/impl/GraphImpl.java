@@ -1436,4 +1436,58 @@ public abstract class GraphImpl implements Graph {
 	public Iterable<Vertex> vertices(VertexClass vertexClass) {
 		return new VertexIterable<Vertex>(this, vertexClass.getM1Class());
 	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see de.uni_koblenz.jgralab.Graph#defragment()
+	 */
+	@Override
+	public void defragment() {
+		// defragment vertex array
+		if (vCount < vMax) {
+			int vId = freeVertexList.getFirstUsedIndexAfterGap();
+			while (vId > 0) {
+				int newId = freeVertexList.allocateIndex();
+				VertexImpl v = vertex[vId];
+				v.setId(newId);
+				vertex[newId] = v;
+				vertex[vId] = null;
+				freeVertexList.freeIndex(vId);
+				vId = freeVertexList.getFirstUsedIndexAfterGap();
+			}
+			int newVMax = (vCount == 0 ? 1 : vCount);
+			if (newVMax != vMax) {
+				vMax = newVMax;
+				VertexImpl[] newVertex = new VertexImpl[vMax + 1];
+				System.arraycopy(vertex, 0, newVertex, 0, newVertex.length);
+				vertex = newVertex;
+			}
+			graphModified();
+			System.gc();
+		}
+		// defragment edge array
+		if (eCount < eMax) {
+			int eId = freeEdgeList.getFirstUsedIndexAfterGap();
+			while (eId > 0) {
+				int newId = freeEdgeList.allocateIndex();
+				EdgeImpl e = edge[eId];
+				e.setId(newId);
+				edge[newId] = e;
+				edge[eId] = null;
+				freeEdgeList.freeIndex(eId);
+				eId = freeEdgeList.getFirstUsedIndexAfterGap();
+			}
+			int newEMax = (eCount == 0 ? 1 : eCount);
+			if (newEMax != eMax) {
+				eMax = newEMax;
+				EdgeImpl[] newEdge = new EdgeImpl[eMax + 1];
+				System.arraycopy(edge, 0, newEdge, 0, newEdge.length);
+				edge = newEdge;
+				System.gc();
+			}
+			graphModified();
+			System.gc();
+		}
+	}
 }
