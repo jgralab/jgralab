@@ -24,7 +24,7 @@
 
 
 ;;; Version:
-;; <2008-11-18 Tue 16:18>
+;; <2008-11-18 Tue 20:30>
 
 ;;; Code:
 
@@ -332,37 +332,37 @@ queries are evaluated.  Set it with `greql-set-graph'.")
 	(list mtype (split-string types "[,]"))))))
 
 (defun greql-attributes (typelist)
-  (remove-duplicates
-   (greql-attributes-1 (car typelist) (cadr typelist))
-   :test 'string=))
+  (greql-attributes-1 (car typelist) (cadr typelist)))
 
 (defun greql-find-schema-line (mtype type)
   "Get the line/list of `greql-schema-alist' that corresponds to
-MTYPE and TYPE."
+MTYPE TYPE."
   (dolist (line greql-schema-alist)
     (when (and (eq mtype (car line))
 	       (string= type (second line)))
       (return line))))
 
-(defun greql-all-attributes (mtype types)
-  "Returns a list of all attribute names of TYPES which are
-instances of MTYPE."
-  (let (attrs)
-    (dolist (type types)
-      (let ((line (greql-find-schema-line mtype type)))
-	(setq attrs (append attrs
-			    (fourth line)
-			    (greql-all-attributes mtype (third line))))))
-    attrs))
+(defun greql-all-attributes (mtype type)
+  "Returns a list of all attribute names of the MTYPE TYPE (and
+its supertypes)."
+  (let ((line (greql-find-schema-line mtype type)))
+    (apply 'append
+	   (fourth line)
+	   (mapcar (lambda (supertype)
+		     (greql-all-attributes mtype supertype))
+		   (third line)))))
 
 (defun greql-attributes-1 (mtype types)
-  "Returns a list of all attribute names that are defined all
-TYPES which are MTYPE."
-  (let (attr-sets)
-    (dolist (type types)
-      (setq attr-sets (cons (greql-all-attributes mtype (list type))
-			    attr-sets)))
-    (apply 'intersection attr-sets)))
+  "Returns a list of all attribute names that are defined in all
+MTYPEs TYPES."
+  (let ((attr-list (mapcar
+		    (lambda (type)
+		      (greql-all-attributes mtype type))
+		    types)))
+    (if (= (length attr-list) 1)
+	(car attr-list)
+      (apply 'intersection
+	     attr-list))))
 
 (provide 'greql-mode)
 
