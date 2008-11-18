@@ -210,6 +210,7 @@ public class Greql2FunctionLibrary {
 						(Greql2Function) o);
 			}
 		} catch (Exception ex) {
+			ex.printStackTrace();
 			throw new RuntimeException(
 					"Error loading GReQL functions, check if folder with function classes is readable");
 		}

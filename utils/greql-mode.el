@@ -336,15 +336,33 @@ queries are evaluated.  Set it with `greql-set-graph'.")
    (greql-attributes-1 (car typelist) (cadr typelist))
    :test 'string=))
 
-(defun greql-attributes-1 (mtype types)
+(defun greql-find-schema-line (mtype type)
+  "Get the line/list of `greql-schema-alist' that corresponds to
+MTYPE and TYPE."
+  (dolist (line greql-schema-alist)
+    (when (and (eq mtype (car line))
+	       (string= type (second line)))
+      (return line))))
+
+(defun greql-all-attributes (mtype types)
+  "Returns a list of all attribute names of TYPES which are
+instances of MTYPE."
   (let (attrs)
-    (dolist (line greql-schema-alist)
-      (when (and (eq mtype (car line))
-		 (member (second line) types))
-	(setq attrs
-	      (append attrs (fourth line)
-		      (greql-attributes-1 mtype (third line))))))
+    (dolist (type types)
+      (let ((line (greql-find-schema-line mtype type)))
+	(setq attrs (append attrs
+			    (fourth line)
+			    (greql-all-attributes mtype (third line))))))
     attrs))
+
+(defun greql-attributes-1 (mtype types)
+  "Returns a list of all attribute names that are defined all
+TYPES which are MTYPE."
+  (let (attr-sets)
+    (dolist (type types)
+      (setq attr-sets (cons (greql-all-attributes mtype (list type))
+			    attr-sets)))
+    (apply 'intersection attr-sets)))
 
 (provide 'greql-mode)
 
