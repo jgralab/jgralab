@@ -515,4 +515,15 @@ public interface Graph extends AttributedElement {
 	 *         <code>vertexClass</code>
 	 */
 	public Iterable<Vertex> vertices(Class<? extends Vertex> vertexClass);
+
+	/**
+	 * Optimizes edge and vertex ids such that after defragmentation
+	 * getMaxECount() == getECount() and getMaxVCount() == getVCount(). That
+	 * means that gaps in the vertex and edge IDs are deleted (defragmented) and
+	 * that the internal arrays are shortened such that they hold exactly the
+	 * required number of vertices/edges.
+	 * 
+	 * <b>Attention:</b> defragment() possibly changes vertex and edge IDs!
+	 */
+	public void defragment();
 }

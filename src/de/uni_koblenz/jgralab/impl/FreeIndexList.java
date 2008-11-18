@@ -495,4 +495,34 @@ public class FreeIndexList {
 		free += n;
 		assert isHealthy();
 	}
+
+	/**
+	 * Returns the first used index immediately after a free run. This method is
+	 * used for defragmentation purposes. The index returned is the first used
+	 * index after a "gap" in the index sequence. If no such gap exists,
+	 * getFirstIndexAfterGap() returns 0.
+	 * 
+	 * @return the first used index immediately after a gap in the sequence, or
+	 *         0 if no such index exists.
+	 */
+	public int getFirstUsedIndexAfterGap() {
+		if (free == 0 || used == 0) {
+			// there is only one run, either all free or all used
+			return 0;
+		}
+		// there are free and used indices
+		if (runs[0] > 0) {
+			// first run is free, return the first index of the 2nd run
+			return runs[0] + 1;
+		} else {
+			// first run is used, 2nd run is free
+			if (runCount == 2) {
+				// perfect, nothing to do
+				return 0;
+			} else {
+				// more than 2 runs, return the first index of the 3rd run
+				return -runs[0] + runs[1] + 1;
+			}
+		}
+	}
 }
