@@ -21,40 +21,16 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
- 
+
 package de.uni_koblenz.jgralab.greql2.jvalue;
 
 /**
  * specifies the types that can be encapsulated in a JValue
- * @author ist@uni-koblenz.de
- * November 2006
+ *
+ * @author ist@uni-koblenz.de November 2006
  *
  */
 
 public enum JValueType {
-		BOOLEAN,
-		INTEGER,
-		LONG,
-		DOUBLE,
-		CHARACTER,
-		STRING,
-		ENUMVALUE,
-		OBJECT,
-		VERTEX,
-		EDGE,
-		GRAPH,
-		ATTRIBUTEDELEMENTCLASS,
-		ATTRIBUTEDELEMENT,
-		DFA,
-		NFA,
-		STATE,
-		TRANSITION,
-		COLLECTION,
-		RECORD,
-		SUBGRAPHTEMPATTRIBUTE,
-		DECLARATIONLAYER,
-		VARIABLEDECLARATION,
-		PATH,
-		PATHSYSTEM,
-		TYPECOLLECTION
+	BOOLEAN, INTEGER, NUMBER, LONG, DOUBLE, CHARACTER, STRING, ENUMVALUE, OBJECT, VERTEX, EDGE, GRAPH, ATTRIBUTEDELEMENTCLASS, ATTRIBUTEDELEMENT, DFA, NFA, STATE, TRANSITION, COLLECTION, RECORD, SUBGRAPHTEMPATTRIBUTE, DECLARATIONLAYER, VARIABLEDECLARATION, PATH, PATHSYSTEM, TYPECOLLECTION
 }

@@ -36,6 +36,7 @@ import de.uni_koblenz.jgralab.greql2.exception.WrongFunctionParameterException;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValuePathSystem;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValueSet;
+import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
 
 /**
  * Returns all child-vertices of the given vertex as set. If a pathsystem is
@@ -67,19 +68,32 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueSet;
  *
  */
 
-public class Children implements Greql2Function {
+public class Children extends AbstractGreql2Function {
+
+	{
+		JValueType[][] x = { { JValueType.VERTEX },
+				{ JValueType.VERTEX, JValueType.PATHSYSTEM } };
+		signatures = x;
+	}
 
 	public JValue evaluate(Graph graph, BooleanGraphMarker subgraph,
 			JValue[] arguments) throws EvaluateException {
-		Vertex vertex;
-		JValuePathSystem pathSystem;
-		try {
+		Vertex vertex = null;
+		JValuePathSystem pathSystem = null;
+
+		switch (checkArguments(arguments)) {
+		case 1:
+			pathSystem = arguments[1].toPathSystem();
+		case 0:
 			vertex = arguments[0].toVertex();
-			if ((arguments.length > 1) && (arguments[1] != null)
-					&& (arguments[1].isPathSystem())) {
-				pathSystem = arguments[1].toPathSystem();
-				return pathSystem.children(vertex);
-			}
+			break;
+		default:
+			throw new WrongFunctionParameterException(this, null, arguments);
+		}
+
+		if (pathSystem != null) {
+			return pathSystem.children(vertex);
+		} else {
 			Edge inc = vertex.getFirstEdge(EdgeDirection.IN);
 			Vertex other = null;
 			JValueSet resultSet = new JValueSet();
@@ -91,14 +105,12 @@ public class Children implements Greql2Function {
 				inc = inc.getNextEdge(EdgeDirection.OUT);
 			}
 			return resultSet;
-		} catch (Exception ex) {
-			throw new WrongFunctionParameterException(this, null, arguments);
 		}
 	}
 
 	public long getEstimatedCosts(ArrayList<Long> inElements) {
 		// TODO Auto-generated method stub
-		return 0;
+		return 5;
 	}
 
 	public double getSelectivity() {
@@ -107,10 +119,6 @@ public class Children implements Greql2Function {
 
 	public long getEstimatedCardinality(int inElements) {
 		return 2;
-	}
-
-	public String getExpectedParameters() {
-		return "(Vertex [,PathSystem])";
 	}
 
 }

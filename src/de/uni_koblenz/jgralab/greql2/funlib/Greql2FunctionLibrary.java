@@ -26,6 +26,7 @@ package de.uni_koblenz.jgralab.greql2.funlib;
 
 import java.io.File;
 import java.io.UnsupportedEncodingException;
+import java.lang.reflect.Modifier;
 import java.net.URL;
 import java.net.URLDecoder;
 import java.util.Enumeration;
@@ -201,8 +202,9 @@ public class Greql2FunctionLibrary {
 			logger.finer("Found Class: " + (clazz != null));
 			Class<?> iface = Class
 					.forName(packageName + "." + "Greql2Function");
-			if (iface.isAssignableFrom(clazz) && clazz != iface
-					&& !className.equals("AbstractGreql2Function")) {
+			if (iface.isAssignableFrom(clazz)
+					&& !(Modifier.isAbstract(clazz.getModifiers()) || Modifier
+							.isInterface(clazz.getModifiers()))) {
 				Object o = clazz.getConstructor().newInstance();
 				availableFunctions.put(toFunctionName(className),
 						(Greql2Function) o);
