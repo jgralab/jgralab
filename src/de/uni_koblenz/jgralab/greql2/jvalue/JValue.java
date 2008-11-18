@@ -351,8 +351,8 @@ public class JValue implements Comparable<JValue> {
 	}
 
 	/**
-	 * @return true if this JValue encapsulates a GraphElementClass, false
-	 *         otherwise
+	 * @return true if this JValue encapsulates a {@link AttributedElementClass}
+	 *         , false otherwise
 	 */
 	public boolean isAttributedElementClass() {
 		return (type == JValueType.ATTRIBUTEDELEMENTCLASS);
@@ -415,7 +415,7 @@ public class JValue implements Comparable<JValue> {
 	 *         either a vertex or an edge, false otherwise
 	 */
 	public boolean isAttributedElement() {
-		return (type == JValueType.ATTRIBUTEDELEMENT);
+		return (type == JValueType.ATTRIBUTEDELEMENT) || isEdge() || isVertex();
 	}
 
 	/**
@@ -472,6 +472,10 @@ public class JValue implements Comparable<JValue> {
 	 */
 	public boolean isInteger() {
 		return (type == JValueType.INTEGER);
+	}
+
+	public boolean isNumber() {
+		return isInteger() || isLong() || isDouble();
 	}
 
 	/**
@@ -1064,6 +1068,7 @@ public class JValue implements Comparable<JValue> {
 		case INTEGER:
 			switch (atype) {
 			case LONG:
+			case NUMBER:
 			case DOUBLE:
 				return true;
 			default:
@@ -1072,6 +1077,14 @@ public class JValue implements Comparable<JValue> {
 		case LONG:
 			switch (atype) {
 			case DOUBLE:
+			case NUMBER:
+				return true;
+			default:
+				return false;
+			}
+		case DOUBLE:
+			switch (atype) {
+			case NUMBER:
 				return true;
 			default:
 				return false;
@@ -1166,6 +1179,13 @@ public class JValue implements Comparable<JValue> {
 		JValue j = fromObject(o);
 		j.setBrowsingInfo(browsingInfo);
 		return j;
+	}
+
+	public Number toNumber() {
+		if (isNumber() || (canConvert(JValueType.NUMBER))) {
+			return (Number) value;
+		}
+		throw new JValueInvalidTypeException(JValueType.NUMBER, type);
 	}
 
 }

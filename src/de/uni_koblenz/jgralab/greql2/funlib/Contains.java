@@ -35,6 +35,7 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValueCollection;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValuePath;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValuePathSystem;
+import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
 
 /**
  * Checks if a given object is included in a given collection. The object can be
@@ -65,36 +66,33 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValuePathSystem;
  *
  */
 
-public class Contains implements Greql2Function {
+public class Contains extends AbstractGreql2Function {
+
+	{
+		JValueType[][] x = { { JValueType.COLLECTION, JValueType.OBJECT },
+				{ JValueType.PATH, JValueType.ATTRIBUTEDELEMENT },
+				{ JValueType.PATHSYSTEM, JValueType.ATTRIBUTEDELEMENT } };
+		signatures = x;
+	}
 
 	public JValue evaluate(Graph graph, BooleanGraphMarker subgraph,
 			JValue[] arguments) throws EvaluateException {
-		if (arguments.length < 2) {
+
+		switch (checkArguments(arguments)) {
+		case 0:
+			JValueCollection col = arguments[0].toCollection();
+			return new JValue(col.contains(arguments[1]));
+		case 1:
+			JValuePath path = arguments[0].toPath();
+			return new JValue(path.contains((GraphElement) arguments[1]
+					.toAttributedElement()));
+		case 2:
+			JValuePathSystem pathsys = arguments[0].toPathSystem();
+			return new JValue(pathsys.contains((GraphElement) arguments[1]
+					.toAttributedElement()));
+		default:
 			throw new WrongFunctionParameterException(this, null, arguments);
 		}
-		try {
-			if (arguments[0].isCollection()) {
-				JValueCollection col = arguments[0].toCollection();
-				return new JValue(col.contains(arguments[1]));
-			} else if (arguments[0].isPath()) {
-				JValuePath path = arguments[0].toPath();
-				if (arguments[1].isVertex() || arguments[1].isEdge()) {
-					return new JValue(path.contains((GraphElement) arguments[1]
-							.toAttributedElement()));
-				}
-
-			} else if (arguments[0].isPathSystem()) {
-				JValuePathSystem path = arguments[0].toPathSystem();
-				if (arguments[1].isVertex() || arguments[1].isEdge()) {
-					return new JValue(path.contains((GraphElement) arguments[1]
-							.toAttributedElement()));
-				}
-			}
-		} catch (Exception ex) { // JValueInvalidTypeException,
-			// NoSuchFieldException,
-			// IndexOutOfBoundsException
-		}
-		throw new WrongFunctionParameterException(this, null, arguments);
 	}
 
 	public long getEstimatedCosts(ArrayList<Long> inElements) {
@@ -107,10 +105,6 @@ public class Contains implements Greql2Function {
 
 	public long getEstimatedCardinality(int inElements) {
 		return 1;
-	}
-
-	public String getExpectedParameters() {
-		return "(JValueCollection or Path or PathSystem, JValue resp. GraphElement)";
 	}
 
 }

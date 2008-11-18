@@ -75,11 +75,11 @@ public class Avg extends AbstractGreql2Function {
 
 		JValueCollection col = arguments[0].toCollection();
 		Iterator<JValue> iter = col.iterator();
-		int sum = 0;
+		long sum = 0;
 		while (iter.hasNext()) {
 			JValue curVal = iter.next();
-			if (curVal.isInteger()) {
-				sum += curVal.toInteger();
+			if (curVal.isNumber()) {
+				sum += curVal.toNumber().doubleValue();
 			} else {
 				throw new WrongFunctionParameterException(this, null, arguments);
 			}
