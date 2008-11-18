@@ -31,6 +31,7 @@ import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.greql2.exception.EvaluateException;
 import de.uni_koblenz.jgralab.greql2.exception.WrongFunctionParameterException;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
+import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
 
 /**
  * Calculates the quotient (a/b) for given scalar values a and b. The quotient
@@ -71,21 +72,20 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
  *
  */
 
-public class DividedBy implements Greql2Function {
+public class DividedBy extends AbstractGreql2Function {
+
+	{
+		JValueType[][] x = { { JValueType.NUMBER, JValueType.NUMBER } };
+		signatures = x;
+	}
 
 	public JValue evaluate(Graph graph, BooleanGraphMarker subgraph,
 			JValue[] arguments) throws EvaluateException {
-		if (arguments.length != 2) {
+		if (checkArguments(arguments) == -1) {
 			throw new WrongFunctionParameterException(this, null, arguments);
 		}
-		Double a, b;
-		try {
-			a = arguments[0].toDouble();
-			b = arguments[1].toDouble();
-			return new JValue(a / b);
-		} catch (Exception ex) {
-			throw new WrongFunctionParameterException(this, null, arguments);
-		}
+
+		return new JValue(arguments[0].toDouble() / arguments[1].toDouble());
 	}
 
 	public long getEstimatedCosts(ArrayList<Long> inElements) {
@@ -98,10 +98,6 @@ public class DividedBy implements Greql2Function {
 
 	public long getEstimatedCardinality(int inElements) {
 		return 1;
-	}
-
-	public String getExpectedParameters() {
-		return "(Double, Double)";
 	}
 
 }
