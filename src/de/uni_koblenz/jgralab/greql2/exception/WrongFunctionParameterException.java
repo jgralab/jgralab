@@ -48,7 +48,7 @@ public class WrongFunctionParameterException extends QuerySourceException {
 			JValue o = args[i];
 			if (o != null) {
 				if (i > 0) {
-					argString += ",";
+					argString += ", ";
 				}
 				argString += o.getType().toString();
 			}
