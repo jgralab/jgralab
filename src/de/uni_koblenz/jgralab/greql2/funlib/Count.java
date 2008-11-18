@@ -31,7 +31,7 @@ import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.greql2.exception.EvaluateException;
 import de.uni_koblenz.jgralab.greql2.exception.WrongFunctionParameterException;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
-import de.uni_koblenz.jgralab.greql2.jvalue.JValueCollection;
+import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
 
 /**
  * Returns the number of elements in a given Object. If the object is not a
@@ -60,25 +60,24 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueCollection;
  *
  */
 
-public class Count implements Greql2Function {
+public class Count extends AbstractGreql2Function {
+
+	{
+		JValueType[][] x = { { JValueType.COLLECTION }, { JValueType.OBJECT } };
+		signatures = x;
+	}
 
 	public JValue evaluate(Graph graph, BooleanGraphMarker subgraph,
 			JValue[] arguments) throws EvaluateException {
-		if (arguments.length < 1) {
+		switch (checkArguments(arguments)) {
+		case 0:
+			return new JValue(arguments[0].toCollection().size());
+		case 1:
+			return new JValue(1);
+		default:
 			throw new WrongFunctionParameterException(this, null, arguments);
 		}
-		try {
-			if (arguments[0].isCollection()) {
-				JValueCollection col = arguments[0].toCollection();
-				return new JValue(col.size());
-			} else {
-				return new JValue(1);
-			}
-		} catch (Exception ex) { // JValueInvalidTypeException,
-									// NoSuchFieldException,
-									// IndexOutOfBoundsException
-			throw new WrongFunctionParameterException(this, null, arguments);
-		}
+
 	}
 
 	public long getEstimatedCosts(ArrayList<Long> inElements) {
@@ -91,10 +90,6 @@ public class Count implements Greql2Function {
 
 	public long getEstimatedCardinality(int inElements) {
 		return 1;
-	}
-
-	public String getExpectedParameters() {
-		return "(JValue)";
 	}
 
 }

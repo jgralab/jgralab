@@ -23,7 +23,7 @@ public abstract class AbstractGreql2Function implements Greql2Function {
 	 * @return the index in <code>signatures</code> that matches
 	 *         <code>args</code>
 	 */
-	protected int checkArguments(JValue[] args) {
+	protected final int checkArguments(JValue[] args) {
 		for (int i = 0; i < signatures.length; i++) {
 			if (signatures[i].length != args.length) {
 				// The current arglist has another length than the given one, so
@@ -48,7 +48,7 @@ public abstract class AbstractGreql2Function implements Greql2Function {
 	}
 
 	@Override
-	public String getExpectedParameters() {
+	public final String getExpectedParameters() {
 		StringBuilder sb = new StringBuilder();
 		for (int i = 0; i < signatures.length; i++) {
 			sb.append("(");
