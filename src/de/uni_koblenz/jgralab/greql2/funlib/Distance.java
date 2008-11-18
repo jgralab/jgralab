@@ -33,6 +33,7 @@ import de.uni_koblenz.jgralab.greql2.exception.EvaluateException;
 import de.uni_koblenz.jgralab.greql2.exception.WrongFunctionParameterException;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValuePathSystem;
+import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
 
 /**
  * Calculates the distance from the root to the given vertex. If the given
@@ -62,24 +63,26 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValuePathSystem;
  *
  */
 
-public class Distance implements Greql2Function {
+public class Distance extends AbstractGreql2Function {
+	{
+		JValueType[][] x = { { JValueType.PATHSYSTEM, JValueType.VERTEX } };
+		signatures = x;
+	}
 
 	public JValue evaluate(Graph graph, BooleanGraphMarker subgraph,
 			JValue[] arguments) throws EvaluateException {
-		Vertex vertex = null;
-		JValuePathSystem pathSystem;
-		try {
-			pathSystem = arguments[0].toPathSystem();
-			vertex = arguments[1].toVertex();
-		} catch (Exception ex) {
+		if (checkArguments(arguments) == -1) {
 			throw new WrongFunctionParameterException(this, null, arguments);
 		}
+
+		JValuePathSystem pathSystem = arguments[0].toPathSystem();
+		Vertex vertex = arguments[1].toVertex();
 		return new JValue(pathSystem.distance(vertex));
 	}
 
 	public long getEstimatedCosts(ArrayList<Long> inElements) {
 		// TODO Auto-generated method stub
-		return 0;
+		return 1;
 	}
 
 	public double getSelectivity() {
@@ -88,9 +91,5 @@ public class Distance implements Greql2Function {
 
 	public long getEstimatedCardinality(int inElements) {
 		return 2;
-	}
-
-	public String getExpectedParameters() {
-		return "(PathSystem , Vertex)";
 	}
 }
