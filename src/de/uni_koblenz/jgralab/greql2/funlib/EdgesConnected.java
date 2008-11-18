@@ -33,12 +33,15 @@ import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.greql2.exception.EvaluateException;
 import de.uni_koblenz.jgralab.greql2.exception.WrongFunctionParameterException;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
+import de.uni_koblenz.jgralab.greql2.jvalue.JValuePath;
+import de.uni_koblenz.jgralab.greql2.jvalue.JValuePathSystem;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValueSet;
+import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
 
 /**
  * Returns a set of edges which are connected to the given vertex and which are
- * part of the given structure. If no structure is given, the graph to which the vertex
- * belongs to, is used as structure.
+ * part of the given structure. If no structure is given, the graph to which the
+ * vertex belongs to, is used as structure.
  *
  * <dl>
  * <dt><b>GReQL-signature</b></dt>
@@ -47,7 +50,8 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueSet;
  * <dd><code>SET&lt;EDGE&gt; edgesConnected(v:Vertex, ps:PATHSYSTEM)</code></dd>
  * <dd>&nbsp;</dd>
  * </dl>
- * <dl><dt></dt>
+ * <dl>
+ * <dt></dt>
  * <dd>
  * <dl>
  * <dt><b>Parameters:</b></dt>
@@ -60,6 +64,7 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueSet;
  * </dl>
  * </dd>
  * </dl>
+ *
  * @see Degree
  * @see EdgesFrom
  * @see EdgesTo
@@ -67,34 +72,48 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueSet;
  *
  */
 
-public class EdgesConnected implements Greql2Function {
+public class EdgesConnected extends AbstractGreql2Function {
+	{
+		JValueType[][] x = { { JValueType.VERTEX },
+				{ JValueType.VERTEX, JValueType.PATH },
+				{ JValueType.VERTEX, JValueType.PATHSYSTEM } };
+		signatures = x;
+	}
 
 	public JValue evaluate(Graph graph, BooleanGraphMarker subgraph,
 			JValue[] arguments) throws EvaluateException {
-		try {
-			Vertex vertex = arguments[0].toVertex();
-			if ((arguments.length > 1) && (arguments[1] != null)) {
-				if (arguments[1].isPathSystem()) {
-					return arguments[1].toPathSystem().edgesConnected(vertex);
-				}
-				if (arguments[1].isPath()) {
-					return arguments[1].toPath().edgesConnected(vertex);
-				}
-			}
-			Edge inc = vertex.getFirstEdge();
-			JValueSet resultSet = new JValueSet();
-			while (inc != null) {
-				if ((subgraph==null) || (subgraph.isMarked(inc))) {
-					resultSet.add(new JValue(inc));
-				}
-				inc = inc.getNextEdge();
-			}
-			return resultSet;
-
-		} catch (Exception ex) {
-			throw new WrongFunctionParameterException(this, null,
-					arguments);
+		JValuePath path = null;
+		JValuePathSystem pathSystem = null;
+		switch (checkArguments(arguments)) {
+		case 0:
+			break;
+		case 1:
+			path = arguments[1].toPath();
+			break;
+		case 2:
+			pathSystem = arguments[1].toPathSystem();
+			break;
+		default:
+			throw new WrongFunctionParameterException(this, null, arguments);
 		}
+		Vertex vertex = arguments[0].toVertex();
+
+		if (path != null) {
+			return path.edgesConnected(vertex);
+		}
+		if (pathSystem != null) {
+			return pathSystem.edgesConnected(vertex);
+		}
+
+		JValueSet resultSet = new JValueSet();
+		Edge inc = vertex.getFirstEdge();
+		while (inc != null) {
+			if ((subgraph == null) || (subgraph.isMarked(inc))) {
+				resultSet.add(new JValue(inc));
+			}
+			inc = inc.getNextEdge();
+		}
+		return resultSet;
 	}
 
 	public long getEstimatedCosts(ArrayList<Long> inElements) {
@@ -107,10 +126,6 @@ public class EdgesConnected implements Greql2Function {
 
 	public long getEstimatedCardinality(int inElements) {
 		return 4;
-	}
-
-	public String getExpectedParameters() {
-		return "(Vertex, PathSystem or Path or [Graph])";
 	}
 
 }
