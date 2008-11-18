@@ -31,7 +31,7 @@ import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.greql2.exception.EvaluateException;
 import de.uni_koblenz.jgralab.greql2.exception.WrongFunctionParameterException;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
-import de.uni_koblenz.jgralab.greql2.jvalue.JValuePathSystem;
+import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
 
 /**
  * Returns the depth of the given pathsystem. The depth of a pathsystem is the
@@ -59,17 +59,18 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValuePathSystem;
  *
  */
 
-public class Depth implements Greql2Function {
+public class Depth extends AbstractGreql2Function {
+	{
+		JValueType[][] x = { { JValueType.PATHSYSTEM } };
+		signatures = x;
+	}
 
 	public JValue evaluate(Graph graph, BooleanGraphMarker subgraph,
 			JValue[] arguments) throws EvaluateException {
-		JValuePathSystem pathSystem;
-		try {
-			pathSystem = arguments[0].toPathSystem();
-			return new JValue(pathSystem.depth());
-		} catch (Exception ex) {
+		if (checkArguments(arguments) == -1) {
 			throw new WrongFunctionParameterException(this, null, arguments);
 		}
+		return new JValue(arguments[0].toPathSystem().depth());
 	}
 
 	public long getEstimatedCosts(ArrayList<Long> inElements) {
@@ -83,10 +84,6 @@ public class Depth implements Greql2Function {
 
 	public long getEstimatedCardinality(int inElements) {
 		return 1;
-	}
-
-	public String getExpectedParameters() {
-		return "(PathSystem)";
 	}
 
 }
