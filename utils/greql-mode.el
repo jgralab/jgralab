@@ -24,7 +24,7 @@
 
 
 ;;; Version:
-;; <2008-11-14 Fri 22:48>
+;; <2008-11-18 Tue 16:18>
 
 ;;; Code:
 
@@ -155,7 +155,7 @@ queries are evaluated.  Set it with `greql-set-graph'.")
 	    nil t)
       (let ((vc-or-pkg (match-string 1))
 	    (name (match-string 2))
-	    (superclasses (greql-parse-superclasses (match-string 3)))
+	    (superclasses (greql-parse-superclasses (match-string 3) current-package))
 	    (attributes (greql-parse-attributes (match-string 4))))
 	(cond ((string= vc-or-pkg "Package")
 	       ;; All following elements belong to this package, so make it
@@ -182,17 +182,21 @@ queries are evaluated.  Set it with `greql-set-graph'.")
 					schema-alist))))))
     schema-alist))
 
-(defun greql-parse-superclasses (str)
-  "Given a string \": Foo, Bar, Baz\" it returns (\"Foo\" \"Bar\"
+(defun greql-parse-superclasses (str current-package)
+  "Given a string \"Foo, Bar, Baz\" it returns (\"Foo\" \"Bar\"
 \"Baz\")"
   (when str
+    (setq str (replace-regexp-in-string "[[:space:]]+" "" str))
     (save-match-data
-      (split-string str "[ ,]+"))))
+      (mapcar
+       (lambda (class) (concat current-package class))
+       (split-string str "[,]+")))))
 
 (defun greql-parse-attributes (str)
   (when str
     (save-match-data
-      (let ((list (split-string str "[ :,]+"))
+      (setq str (replace-regexp-in-string "[[:space:]]+" "" str))
+      (let ((list (split-string str "[:,]+"))
 	    result
 	    (i 1))
 	(dolist (elem list)
@@ -307,23 +311,25 @@ queries are evaluated.  Set it with `greql-set-graph'.")
   (looking-back "[^{][[:word:]]+[.][[:word:]]*"))
 
 (defun greql-variable-types ()
-  "Return something like (VertexClass (Type1 Type2 Type3)."
+  "Return something like (VertexClass (Type1 Type2 Type3))."
   (save-excursion
     (search-backward "." nil t 1)
     (let ((end (point))
 	  var)
-      (search-backward " " nil t 1)
+      (re-search-backward "[[:space:],]" nil t 1)
       (setq var (buffer-substring-no-properties (+ 1 (point)) end))
-      (re-search-backward (concat var "[ ]*:[ ]*\\([VE]\\){\\(.*\\)}") nil t 1)
+      (re-search-backward (concat var "[[:space:]]*:[[:space:]]*\\([VE]\\){\\(.*\\)}") nil t 1)
       (let* ((mtype-match (buffer-substring-no-properties (match-beginning 1)
 							  (match-end 1)))
 	     (mtype (cond 
 		     ((or (not mtype-match) (string= mtype-match "E")) 'EdgeClass)
 		     ((string= mtype-match "V") 'VertexClass)
 		     (t (error "Not match!"))))
-	     (types (buffer-substring-no-properties (match-beginning 2)
-						    (match-end 2))))
-	(list mtype (split-string types ", "))))))
+	     (types (replace-regexp-in-string 
+		     "[[:space:]]+" ""
+		     (buffer-substring-no-properties (match-beginning 2)
+						     (match-end 2)))))
+	(list mtype (split-string types "[,]"))))))
 
 (defun greql-attributes (typelist)
   (remove-duplicates
@@ -334,7 +340,7 @@ queries are evaluated.  Set it with `greql-set-graph'.")
   (let (attrs)
     (dolist (line greql-schema-alist)
       (when (and (eq mtype (car line))
-		 (member (cadr line) types))
+		 (member (second line) types))
 	(setq attrs
 	      (append attrs (fourth line)
 		      (greql-attributes-1 mtype (third line))))))
