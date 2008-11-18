@@ -44,6 +44,8 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
  * <dl>
  * <dt><b>GReQL-signature</b></dt>
  * <dd><code>BOOLEAN contains(c:COLLECTION, obj:OBJECT)</code></dd>
+ * <dd><code>BOOLEAN contains(c:PATH, obj:ATTRIBUTEDELEMENT)</code></dd>
+ * <dd><code>BOOLEAN contains(c:PATHSYSTEM, obj:ATTRIBUTEDELEMENT)</code></dd>
  * <dd>&nbsp;</dd>
  * </dl>
  * <dl>
@@ -51,8 +53,8 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
  * <dd>
  * <dl>
  * <dt><b>Parameters:</b></dt>
- * <dd><code>c</code> - collection to check</dd>
- * <dd><code>obj</code> - object to check</dd>
+ * <dd><code>c</code> - collection or path or pathsystem to check</dd>
+ * <dd><code>obj</code> - object or attributed element to check</dd>
  * <dt><b>Returns:</b></dt>
  * <dd><code>true</code> if the given object is included in the given collection
  * </dd>
