@@ -305,7 +305,7 @@ queries are evaluated.  Set it with `greql-set-graph'.")
   (looking-back "E{[[:word:]._, ]*"))
 
 (defun greql-edge-restriction-p ()
-  (looking-back "--{[[:word:]._, ]*"))
+  (looking-back "[<]?--[>]?{[[:word:]._, ]*"))
 
 (defun greql-variable-p ()
   (looking-back "[^{][[:word:]]+[.][[:word:]]*"))
