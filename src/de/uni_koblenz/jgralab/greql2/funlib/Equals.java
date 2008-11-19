@@ -31,7 +31,7 @@ import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.greql2.exception.EvaluateException;
 import de.uni_koblenz.jgralab.greql2.exception.WrongFunctionParameterException;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
-import de.uni_koblenz.jgralab.greql2.jvalue.JValueBoolean;
+import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
 
 /**
  * Checks if two different objects are equal.
@@ -40,10 +40,12 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueBoolean;
  * <dt><b>GReQL-signature</b></dt>
  * <dd><code>BOOLEAN equals(obj1:OBJECT, obj2:OBJECT)</code></dd>
  * <dd>&nbsp;</dd>
- * <dd>This function can be used with the (=)-Operator: <code>obj1 = obj2</code></dd>
+ * <dd>This function can be used with the (=)-Operator: <code>obj1 = obj2</code>
+ * </dd>
  * <dd>&nbsp;</dd>
  * </dl>
- * <dl><dt></dt>
+ * <dl>
+ * <dt></dt>
  * <dd>
  * <dl>
  * <dt><b>Parameters:</b></dt>
@@ -56,24 +58,27 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueBoolean;
  * </dl>
  * </dd>
  * </dl>
+ *
  * @author ist@uni-koblenz.de
  *
  */
 
-public class Equals implements Greql2Function {
+public class Equals extends AbstractGreql2Function {
+
+	{
+		JValueType[][] x = { { JValueType.OBJECT, JValueType.OBJECT } };
+		signatures = x;
+	}
 
 	/**
 	 * checks if the two function parameters are semanticly identical
 	 */
-	public JValue evaluate(Graph graph, BooleanGraphMarker subgraph, JValue[] arguments)  throws EvaluateException {
-		if ((arguments == null) | (arguments.length < 2)) {
-			throw new WrongFunctionParameterException(this, null, arguments );
+	public JValue evaluate(Graph graph, BooleanGraphMarker subgraph,
+			JValue[] arguments) throws EvaluateException {
+		if (checkArguments(arguments) == -1) {
+			throw new WrongFunctionParameterException(this, null, arguments);
 		}
-		boolean value = arguments[0].equals(arguments[1]);
-		if (value) {
-			return new JValue(JValueBoolean.getTrueValue());
-		}
-		return new JValue(JValueBoolean.getFalseValue());
+		return new JValue(arguments[0].equals(arguments[1]));
 	}
 
 	public long getEstimatedCosts(ArrayList<Long> inElements) {
@@ -86,10 +91,6 @@ public class Equals implements Greql2Function {
 
 	public long getEstimatedCardinality(int inElements) {
 		return 1;
-	}
-
-	public String getExpectedParameters() {
-		return "(Object, Object)";
 	}
 
 }

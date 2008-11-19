@@ -33,9 +33,14 @@ import de.uni_koblenz.jgralab.greql2.exception.EvaluateException;
 import de.uni_koblenz.jgralab.greql2.exception.WrongFunctionParameterException;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValuePathSystem;
+import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
 
 /**
- * Returns a path from the root of the given pathsystem to the given vertex. If the given vertex is contained more then once, the first occurance will be used. If no vertex is given, the paths from the root to all leaves are returned as set. If an integer is given instead of a vertex, all paths are returned that have the length of this integer.
+ * Returns a path from the root of the given pathsystem to the given vertex. If
+ * the given vertex is contained more then once, the first occurrence will be
+ * used. If no vertex is given, the paths from the root to all leaves are
+ * returned as set. If an integer is given instead of a vertex, all paths are
+ * returned that have the length of this integer.
  *
  * <dl>
  * <dt><b>GReQL-signature</b></dt>
@@ -44,7 +49,8 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValuePathSystem;
  * <dd><code>SET&lt;PATH&gt; extractPath(ps:PATHSYSTEM, length:INTEGER)</code></dd>
  * <dd>&nbsp;</dd>
  * </dl>
- * <dl><dt></dt>
+ * <dl>
+ * <dt></dt>
  * <dd>
  * <dl>
  * <dt><b>Parameters:</b></dt>
@@ -54,36 +60,51 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValuePathSystem;
  * <dd>a path from the root of the given pathsystem to the gives vertex
  * <dd>the paths from the root to all leaves, if no vertex is given
  * <dd>all paths of given length, if an integer is given instead of a vertex
- * <dd><code>Null</code> if the given vertex is not in the pathsystem or one of the parameters is <code>Null</code>.
+ * <dd><code>Null</code> if the given vertex is not in the pathsystem or one of
+ * the parameters is <code>Null</code>.
  * </dl>
  * </dd>
  * </dl>
+ *
  * @see Leaves
  * @author ist@uni-koblenz.de
  *
  */
 
-public class ExtractPath implements Greql2Function {
+public class ExtractPath extends AbstractGreql2Function {
+
+	{
+		JValueType[][] x = { { JValueType.PATHSYSTEM },
+				{ JValueType.PATHSYSTEM, JValueType.VERTEX },
+				{ JValueType.PATHSYSTEM, JValueType.INTEGER } };
+		signatures = x;
+	}
 
 	public JValue evaluate(Graph graph, BooleanGraphMarker subgraph,
 			JValue[] arguments) throws EvaluateException {
-		JValuePathSystem pathSystem;
-		try {
-			pathSystem = arguments[0].toPathSystem();
-			if ((arguments.length >= 2) && (arguments[1] != null)) {
-				if (arguments[1].isVertex()) {
-					Vertex vertex = arguments[1].toVertex();
-					return pathSystem.extractPath(vertex);
-				}
-				if (arguments[1].isInteger()) {
-					Integer i = arguments[1].toInteger();
-					return pathSystem.extractPath(i);
-				}
-			}
-			return pathSystem.extractPath();
-		} catch (Exception ex) {
+		Vertex vertex = null;
+		Integer length = null;
+		switch (checkArguments(arguments)) {
+		case 0:
+			break;
+		case 1:
+			vertex = arguments[1].toVertex();
+			break;
+		case 2:
+			length = arguments[1].toInteger();
+		default:
 			throw new WrongFunctionParameterException(this, null, arguments);
 		}
+
+		JValuePathSystem pathSystem = arguments[0].toPathSystem();
+
+		if (vertex != null) {
+			return pathSystem.extractPath(vertex);
+		}
+		if (length != null) {
+			return pathSystem.extractPath(length);
+		}
+		return pathSystem.extractPath();
 	}
 
 	public long getEstimatedCosts(ArrayList<Long> inElements) {
@@ -96,10 +117,6 @@ public class ExtractPath implements Greql2Function {
 
 	public long getEstimatedCardinality(int inElements) {
 		return 2;
-	}
-
-	public String getExpectedParameters() {
-		return "(PathSystem [, Vertex])";
 	}
 
 }

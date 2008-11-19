@@ -47,9 +47,9 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
  * <dd>
  * <dl>
  * <dt><b>Parameters:</b></dt>
- * <dd><code>p</code> - path to determine the end-vertex for</dd>
+ * <dd><code>p</code> - path or edge to determine the end-vertex for</dd>
  * <dt><b>Returns:</b></dt>
- * <dd>the end-vertex of the given path</dd>
+ * <dd>the end-vertex of the given path or edge</dd>
  * <dd><code>Null</code> if one of the parameters is <code>Null</code></dd>
  * </dl>
  * </dd>
