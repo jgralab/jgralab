@@ -28,10 +28,11 @@ import java.util.ArrayList;
 
 import de.uni_koblenz.jgralab.BooleanGraphMarker;
 import de.uni_koblenz.jgralab.Graph;
-import de.uni_koblenz.jgralab.GraphElement;
 import de.uni_koblenz.jgralab.greql2.exception.EvaluateException;
 import de.uni_koblenz.jgralab.greql2.exception.WrongFunctionParameterException;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
+import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
+import de.uni_koblenz.jgralab.schema.AttributedElementClass;
 
 /**
  * Checks if the given attributed element has an attribute with the given name.
@@ -39,6 +40,8 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
  * <dl>
  * <dt><b>GReQL-signature</b></dt>
  * <dd><code>BOOLEAN hasAttribute(ae:ATTRIBUTEDELEMENT, name:STRING)</code></dd>
+ * <dd><code>BOOLEAN hasAttribute(ae:ATTRIBUTEDELEMENTCLASS, name:STRING)</code>
+ * </dd>
  * <dd>&nbsp;</dd>
  * </dl>
  * <dl>
@@ -46,7 +49,8 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
  * <dd>
  * <dl>
  * <dt><b>Parameters:</b></dt>
- * <dd><code>ae</code> - attributed element to check</dd>
+ * <dd><code>ae</code> - attributed element or attributed element clazz to check
+ * </dd>
  * <dd><code>name</code> - name of the element to check for</dd>
  * <dt><b>Returns:</b></dt>
  * <dd><code>true</code> if the given attributed element has an attribute with
@@ -61,26 +65,30 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
  *
  */
 
-public class HasAttribute implements Greql2Function {
+public class HasAttribute extends AbstractGreql2Function {
+
+	{
+		JValueType[][] x = {
+				{ JValueType.ATTRIBUTEDELEMENT, JValueType.STRING },
+				{ JValueType.ATTRIBUTEDELEMENTCLASS, JValueType.STRING } };
+		signatures = x;
+	}
 
 	public JValue evaluate(Graph graph, BooleanGraphMarker subgraph,
 			JValue[] arguments) throws EvaluateException {
-		GraphElement elem = null;
-		try {
-			if ((arguments.length < 2) || (arguments[0] == null)
-					|| (arguments[1] == null) || (!arguments[1].isString())) {
-				throw new WrongFunctionParameterException(this, null, arguments);
-			}
-			if (arguments[0].isVertex()) {
-				elem = arguments[0].toVertex();
-			} else {
-				elem = arguments[0].toEdge();
-			}
-			return new JValue(elem.getAttributedElementClass()
-					.containsAttribute(arguments[1].toString()));
-		} catch (Exception ex) {
+		AttributedElementClass clazz = null;
+		switch (checkArguments(arguments)) {
+		case 0:
+			clazz = arguments[0].toAttributedElement()
+					.getAttributedElementClass();
+			break;
+		case 1:
+			clazz = arguments[0].toAttributedElementClass();
+			break;
+		default:
 			throw new WrongFunctionParameterException(this, null, arguments);
 		}
+		return new JValue(clazz.containsAttribute(arguments[1].toString()));
 	}
 
 	public long getEstimatedCosts(ArrayList<Long> inElements) {
@@ -94,9 +102,4 @@ public class HasAttribute implements Greql2Function {
 	public long getEstimatedCardinality(int inElements) {
 		return 1;
 	}
-
-	public String getExpectedParameters() {
-		return "(Vertex or Edge, Type or String)";
-	}
-
 }
