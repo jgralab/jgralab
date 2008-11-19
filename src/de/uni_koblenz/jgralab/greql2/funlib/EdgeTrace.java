@@ -36,6 +36,7 @@ import de.uni_koblenz.jgralab.greql2.exception.WrongFunctionParameterException;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValueList;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValuePath;
+import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
 
 /**
  * Calculates the edgetrace of the given path. An edgetrace is a List of all
@@ -64,17 +65,20 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValuePath;
  *
  */
 
-public class EdgeTrace implements Greql2Function {
+public class EdgeTrace extends AbstractGreql2Function {
+
+	{
+		JValueType[][] x = { { JValueType.PATH } };
+		signatures = x;
+	}
 
 	public JValue evaluate(Graph graph, BooleanGraphMarker subgraph,
 			JValue[] arguments) throws EvaluateException {
-		JValuePath p1;
-		try {
-			p1 = arguments[0].toPath();
-		} catch (Exception ex) {
+		if (checkArguments(arguments) == -1) {
 			throw new WrongFunctionParameterException(this, null, arguments);
 		}
-		List<Edge> list = p1.edgeTrace();
+		JValuePath path = arguments[0].toPath();
+		List<Edge> list = path.edgeTrace();
 		Iterator<Edge> iter = list.iterator();
 		JValueList resultList = new JValueList();
 		while (iter.hasNext()) {
@@ -94,10 +98,6 @@ public class EdgeTrace implements Greql2Function {
 
 	public long getEstimatedCardinality(int inElements) {
 		return 1;
-	}
-
-	public String getExpectedParameters() {
-		return "(Path)";
 	}
 
 }

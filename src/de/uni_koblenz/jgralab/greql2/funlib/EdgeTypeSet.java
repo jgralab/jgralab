@@ -31,11 +31,11 @@ import de.uni_koblenz.jgralab.BooleanGraphMarker;
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.GraphElement;
 import de.uni_koblenz.jgralab.greql2.exception.EvaluateException;
-import de.uni_koblenz.jgralab.greql2.exception.JValueInvalidTypeException;
 import de.uni_koblenz.jgralab.greql2.exception.WrongFunctionParameterException;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValueCollection;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValueSet;
+import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
 
 /**
  * Returns a set of all edge-types that occure in the given structure.
@@ -66,42 +66,37 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueSet;
  *
  */
 
-/*
- * Returns a set of the typenames of the edges in the given structure. <br /><br
- * /> <strong>Parameters:</strong> <ul> <li>structure: (JValueCollection |
- * PathSystem | JValuePath)</li> </ul> <strong>Returns:</strong> a JValueSet of
- * edgetypes
- *
- * @author ist@uni-koblenz.de
- */
-public class EdgeTypeSet implements Greql2Function {
+public class EdgeTypeSet extends AbstractGreql2Function {
+
+	{
+		JValueType[][] x = { { JValueType.COLLECTION }, { JValueType.PATH },
+				{ JValueType.PATHSYSTEM } };
+		signatures = x;
+	}
 
 	public JValue evaluate(Graph graph, BooleanGraphMarker subgraph,
 			JValue[] arguments) throws EvaluateException {
-		try {
-			if (arguments[0].isCollection()) {
-				JValueSet resultSet = new JValueSet();
-				JValueCollection collection = arguments[0].toCollection();
-				Iterator<JValue> iter = collection.iterator();
-				while (iter.hasNext()) {
-					JValue value = iter.next();
-					GraphElement elem;
-					if (value.isEdge()) {
-						elem = value.toEdge();
-						resultSet.add(new JValue(elem
-								.getAttributedElementClass(), elem));
-					}
+
+		switch (checkArguments(arguments)) {
+		case 0:
+			JValueSet resultSet = new JValueSet();
+			JValueCollection collection = arguments[0].toCollection();
+			Iterator<JValue> iter = collection.iterator();
+			while (iter.hasNext()) {
+				JValue value = iter.next();
+				GraphElement elem;
+				if (value.isEdge()) {
+					elem = value.toEdge();
+					resultSet.add(new JValue(elem.getAttributedElementClass(),
+							elem));
 				}
-				return resultSet;
 			}
-			if (arguments[0].isPathSystem()) {
-				return arguments[0].toPathSystem().edgeTypes();
-			}
-			if (arguments[0].isPath()) {
-				return arguments[0].toPath().edgeTypes();
-			}
-			return new JValueSet();
-		} catch (JValueInvalidTypeException ex) {
+			return resultSet;
+		case 1:
+			return arguments[0].toPath().edgeTypes();
+		case 2:
+			return arguments[0].toPathSystem().edgeTypes();
+		default:
 			throw new WrongFunctionParameterException(this, null, arguments);
 		}
 	}
@@ -116,10 +111,6 @@ public class EdgeTypeSet implements Greql2Function {
 
 	public long getEstimatedCardinality(int inElements) {
 		return 100;
-	}
-
-	public String getExpectedParameters() {
-		return "(JValueCollection or PathSystem or Path)";
 	}
 
 }

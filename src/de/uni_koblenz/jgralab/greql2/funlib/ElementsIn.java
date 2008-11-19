@@ -33,8 +33,11 @@ import de.uni_koblenz.jgralab.greql2.exception.EvaluateException;
 import de.uni_koblenz.jgralab.greql2.exception.WrongFunctionParameterException;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValueCollection;
+import de.uni_koblenz.jgralab.greql2.jvalue.JValuePath;
+import de.uni_koblenz.jgralab.greql2.jvalue.JValuePathSystem;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValueSet;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValueTable;
+import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
 
 /**
  * Extracts the set of elements that are part of the given structure
@@ -42,6 +45,8 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueTable;
  * <dl>
  * <dt><b>GReQL-signature</b></dt>
  * <dd><code>SET elementsIn(structure:COLLECTION)</code></dd>
+ * <dd><code>SET elementsIn(structure:PATH)</code></dd>
+ * <dd><code>SET elementsIn(structure:PATHSYSTEM)</code></dd>
  * <dd>&nbsp;</dd>
  * </dl>
  * <dl>
@@ -60,38 +65,54 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueTable;
  *
  */
 
-public class ElementsIn implements Greql2Function {
+public class ElementsIn extends AbstractGreql2Function {
+
+	{
+		JValueType[][] x = { { JValueType.COLLECTION }, { JValueType.PATH },
+				{ JValueType.PATHSYSTEM } };
+		signatures = x;
+	}
 
 	public JValue evaluate(Graph graph, BooleanGraphMarker subgraph,
 			JValue[] arguments) throws EvaluateException {
-		try {
-			JValueSet set = new JValueSet();
-			JValue structure = arguments[0];
-			if (structure.isCollection()) {
-				JValueCollection col = structure.toCollection();
-				if (col.isJValueTable()) {
-					JValueTable tab = col.toJValueTable();
-					Iterator<JValue> iter = tab.iterator();
-					while (iter.hasNext()) {
-						JValue next = iter.next();
-						if (next.isCollection()) {
-							JValue[] params = { next };
-							set.addAll((JValueSet) evaluate(graph, subgraph,
-									params));
-						} else {
-							set.add(next);
-						}
+		JValueSet set = new JValueSet();
+		JValue structure = arguments[0];
+		switch (checkArguments(arguments)) {
+		case 0:
+			JValueCollection col = structure.toCollection();
+			if (col.isJValueTable()) {
+				JValueTable tab = col.toJValueTable();
+				Iterator<JValue> iter = tab.iterator();
+				while (iter.hasNext()) {
+					JValue next = iter.next();
+					if (next.isCollection() || next.isPath()
+							|| next.isPathSystem()) {
+						JValue[] params = { next };
+						set
+								.addAll((JValueSet) evaluate(graph, subgraph,
+										params));
+					} else {
+						set.add(next);
 					}
-				} else {
-					set = col.toJValueSet();
 				}
 			} else {
-				set.add(structure);
+				set = col.toJValueSet();
 			}
-			return set;
-		} catch (Exception ex) {
+			break;
+		case 1:
+			JValuePath path = arguments[0].toPath();
+			set.addAll(path.edgeTraceAsJValue());
+			set.addAll(path.nodeTraceAsJValue());
+			break;
+		case 2:
+			JValuePathSystem pathSystem = arguments[0].toPathSystem();
+			set.addAll(pathSystem.edges());
+			set.addAll(pathSystem.nodes());
+			break;
+		default:
 			throw new WrongFunctionParameterException(this, null, arguments);
 		}
+		return set;
 	}
 
 	public long getEstimatedCosts(ArrayList<Long> inElements) {
@@ -104,10 +125,6 @@ public class ElementsIn implements Greql2Function {
 
 	public long getEstimatedCardinality(int inElements) {
 		return inElements / 10;
-	}
-
-	public String getExpectedParameters() {
-		return "(Collection)";
 	}
 
 }
