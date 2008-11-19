@@ -24,19 +24,11 @@
 
 package de.uni_koblenz.jgralab.greql2.funlib;
 
-import java.util.ArrayList;
-
 import de.uni_koblenz.jgralab.BooleanGraphMarker;
-import de.uni_koblenz.jgralab.Edge;
+import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.Graph;
-import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.greql2.exception.EvaluateException;
-import de.uni_koblenz.jgralab.greql2.exception.WrongFunctionParameterException;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
-import de.uni_koblenz.jgralab.greql2.jvalue.JValuePath;
-import de.uni_koblenz.jgralab.greql2.jvalue.JValuePathSystem;
-import de.uni_koblenz.jgralab.greql2.jvalue.JValueSet;
-import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
 
 /**
  * Returns a set of edges which are connected to the given vertex and which are
@@ -72,58 +64,15 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
  *
  */
 
-public class EdgesConnected extends AbstractGreql2Function {
-	{
-		JValueType[][] x = { { JValueType.VERTEX },
-				{ JValueType.VERTEX, JValueType.PATH },
-				{ JValueType.VERTEX, JValueType.PATHSYSTEM } };
-		signatures = x;
-	}
+public class EdgesConnected extends Incidences {
 
+	@Override
 	public JValue evaluate(Graph graph, BooleanGraphMarker subgraph,
 			JValue[] arguments) throws EvaluateException {
-		JValuePath path = null;
-		JValuePathSystem pathSystem = null;
-		switch (checkArguments(arguments)) {
-		case 0:
-			break;
-		case 1:
-			path = arguments[1].toPath();
-			break;
-		case 2:
-			pathSystem = arguments[1].toPathSystem();
-			break;
-		default:
-			throw new WrongFunctionParameterException(this, null, arguments);
-		}
-		Vertex vertex = arguments[0].toVertex();
-
-		if (path != null) {
-			return path.edgesConnected(vertex);
-		}
-		if (pathSystem != null) {
-			return pathSystem.edgesConnected(vertex);
-		}
-
-		JValueSet resultSet = new JValueSet();
-		Edge inc = vertex.getFirstEdge();
-		while (inc != null) {
-			if ((subgraph == null) || (subgraph.isMarked(inc))) {
-				resultSet.add(new JValue(inc));
-			}
-			inc = inc.getNextEdge();
-		}
-		return resultSet;
+		return evaluate(subgraph, arguments, EdgeDirection.INOUT);
 	}
 
-	public long getEstimatedCosts(ArrayList<Long> inElements) {
-		return 10;
-	}
-
-	public double getSelectivity() {
-		return 1;
-	}
-
+	@Override
 	public long getEstimatedCardinality(int inElements) {
 		return 4;
 	}

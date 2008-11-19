@@ -24,17 +24,11 @@
 
 package de.uni_koblenz.jgralab.greql2.funlib;
 
-import java.util.ArrayList;
-
 import de.uni_koblenz.jgralab.BooleanGraphMarker;
-import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.Graph;
-import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.greql2.exception.EvaluateException;
-import de.uni_koblenz.jgralab.greql2.exception.WrongFunctionParameterException;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
-import de.uni_koblenz.jgralab.greql2.jvalue.JValueSet;
 
 /**
  * Returns a set of outgoing edges, which are connected to the given vertex and
@@ -69,50 +63,11 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueSet;
  *
  */
 
-public class EdgesFrom implements Greql2Function {
+public class EdgesFrom extends Incidences {
 
 	public JValue evaluate(Graph graph, BooleanGraphMarker subgraph,
 			JValue[] arguments) throws EvaluateException {
-		try {
-			Vertex vertex = arguments[0].toVertex();
-			if ((arguments.length > 1) && (arguments[1] != null)) {
-				if (arguments[1].isPathSystem()) {
-					return arguments[1].toPathSystem().edgesConnected(vertex,
-							false);
-				}
-				if (arguments[1].isPath()) {
-					return arguments[1].toPath().edgesConnected(vertex, false);
-				}
-			}
-			Edge inc = vertex.getFirstEdge(EdgeDirection.OUT);
-			JValueSet resultSet = new JValueSet();
-			while (inc != null) {
-				if ((subgraph == null) || (subgraph.isMarked(inc))) {
-					resultSet.add(new JValue(inc));
-				}
-				inc = inc.getNextEdge(EdgeDirection.OUT);
-			}
-			return resultSet;
-
-		} catch (Exception ex) {
-			throw new WrongFunctionParameterException(this, null, arguments);
-		}
-	}
-
-	public long getEstimatedCosts(ArrayList<Long> inElements) {
-		return 10;
-	}
-
-	public double getSelectivity() {
-		return 1;
-	}
-
-	public long getEstimatedCardinality(int inElements) {
-		return 2;
-	}
-
-	public String getExpectedParameters() {
-		return "(Vertex, PathSystem or Path or [Graph])";
+		return evaluate(subgraph, arguments, EdgeDirection.OUT);
 	}
 
 }
