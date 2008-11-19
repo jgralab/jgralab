@@ -24,14 +24,10 @@
 
 package de.uni_koblenz.jgralab.greql2.funlib;
 
-import java.util.ArrayList;
-
 import de.uni_koblenz.jgralab.BooleanGraphMarker;
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.greql2.exception.EvaluateException;
-import de.uni_koblenz.jgralab.greql2.exception.WrongFunctionParameterException;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
-import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
 
 /**
  * Calculates a > b for given scalar values a and b or s1 and s2. In case of
@@ -76,44 +72,11 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
  *
  */
 
-public class GrThan implements Greql2Function {
+public class GrThan extends CompareFunction {
 
 	public JValue evaluate(Graph graph, BooleanGraphMarker subgraph,
 			JValue[] arguments) throws EvaluateException {
-		if (arguments.length != 2) {
-			throw new WrongFunctionParameterException(this, null, arguments);
-		}
-		try {
-			if ((arguments[0].canConvert(JValueType.DOUBLE))
-					&& (arguments[1].canConvert(JValueType.DOUBLE))) {
-				Double a, b;
-				a = arguments[0].toDouble();
-				b = arguments[1].toDouble();
-				return new JValue(a > b);
-			} else {
-				String a, b;
-				a = arguments[0].toString();
-				b = arguments[1].toString();
-				return new JValue(a.compareTo(b) > 0);
-			}
-		} catch (Exception ex) {
-			throw new WrongFunctionParameterException(this, null, arguments);
-		}
+		return evaluate(arguments, CompareOperator.GR_THAN);
 	}
 
-	public long getEstimatedCosts(ArrayList<Long> inElements) {
-		return 1;
-	}
-
-	public double getSelectivity() {
-		return 0.5;
-	}
-
-	public long getEstimatedCardinality(int inElements) {
-		return 1;
-	}
-
-	public String getExpectedParameters() {
-		return "(Double, Double) or (String, String)";
-	}
 }
