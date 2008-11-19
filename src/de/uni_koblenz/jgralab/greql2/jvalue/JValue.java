@@ -948,7 +948,7 @@ public class JValue implements Comparable<JValue> {
 	 * @throws ValueInvalidTypeException
 	 *             if the JValue cannot be converted to a set
 	 */
-	public JValueCollection toJValueSet() throws JValueInvalidTypeException {
+	public JValueSet toJValueSet() throws JValueInvalidTypeException {
 		throw new JValueInvalidTypeException(JValueType.COLLECTION, type);
 	}
 
@@ -958,7 +958,7 @@ public class JValue implements Comparable<JValue> {
 	 * @throws ValueInvalidTypeException
 	 *             if the JValue cannot be converted to a bag
 	 */
-	public JValueCollection toJValueBag() throws JValueInvalidTypeException {
+	public JValueBag toJValueBag() throws JValueInvalidTypeException {
 		throw new JValueInvalidTypeException(JValueType.COLLECTION, type);
 	}
 
@@ -968,7 +968,7 @@ public class JValue implements Comparable<JValue> {
 	 * @throws ValueInvalidTypeException
 	 *             if the JValue cannot be converted to a table
 	 */
-	public JValueCollection toJValueTable() throws JValueInvalidTypeException {
+	public JValueTable toJValueTable() throws JValueInvalidTypeException {
 		throw new JValueInvalidTypeException(JValueType.COLLECTION, type);
 	}
 
@@ -978,7 +978,7 @@ public class JValue implements Comparable<JValue> {
 	 * @throws ValueInvalidTypeException
 	 *             if the JValue cannot be converted to a list
 	 */
-	public JValueCollection toJValueList() throws JValueInvalidTypeException {
+	public JValueList toJValueList() throws JValueInvalidTypeException {
 		throw new JValueInvalidTypeException(JValueType.COLLECTION, type);
 	}
 
@@ -988,7 +988,7 @@ public class JValue implements Comparable<JValue> {
 	 * @throws ValueInvalidTypeException
 	 *             if the JValue cannot be converted to a tuple
 	 */
-	public JValueCollection toJValueTuple() throws JValueInvalidTypeException {
+	public JValueTuple toJValueTuple() throws JValueInvalidTypeException {
 		throw new JValueInvalidTypeException(JValueType.COLLECTION, type);
 	}
 
@@ -998,7 +998,7 @@ public class JValue implements Comparable<JValue> {
 	 * @throws ValueInvalidTypeException
 	 *             if the JValue cannot be converted to a record
 	 */
-	public JValueCollection toJValueRecord() throws JValueInvalidTypeException {
+	public JValueRecord toJValueRecord() throws JValueInvalidTypeException {
 		throw new JValueInvalidTypeException(JValueType.RECORD, type);
 	}
 

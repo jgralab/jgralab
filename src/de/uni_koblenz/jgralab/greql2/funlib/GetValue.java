@@ -30,11 +30,10 @@ import de.uni_koblenz.jgralab.AttributedElement;
 import de.uni_koblenz.jgralab.BooleanGraphMarker;
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.greql2.exception.EvaluateException;
-import de.uni_koblenz.jgralab.greql2.exception.FunctionUnknownFieldException;
 import de.uni_koblenz.jgralab.greql2.exception.WrongFunctionParameterException;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
-import de.uni_koblenz.jgralab.greql2.jvalue.JValueCollection;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValueRecord;
+import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
 
 /**
  * Returns the given attribute or element value for a vertex, an edge or a
@@ -64,60 +63,39 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueRecord;
  * @author ist@uni-koblenz.de
  *
  */
-
-/*
- * Returns the given attribute or element value for a vertex, an edge or a
- * record. The attribute is called by its name. <br /><br />
- * <strong>Parameters:</strong> <ul> <li> elem: (AttributedElement |
- * JValueRecord) (vertex, edge or Record to acces)</li> <li> name: String (name
- * of the Attribute or RecordElement to return)</li> </ul>
- * <strong>Returns:</strong> the value of the given attribute or RecordElement,
- * encapsulated in a JValue
- *
- * @author ist@uni-koblenz.de
- */
-public class GetValue implements Greql2Function {
+public class GetValue extends AbstractGreql2Function {
+	{
+		JValueType[][] x = {
+				{ JValueType.ATTRIBUTEDELEMENT, JValueType.STRING },
+				{ JValueType.RECORD, JValueType.STRING } };
+		signatures = x;
+	}
 
 	public JValue evaluate(Graph graph, BooleanGraphMarker subgraph,
 			JValue[] arguments) throws EvaluateException {
-		if (arguments.length < 2) {
+		AttributedElement attrElem = null;
+		JValueRecord record = null;
+		switch (checkArguments(arguments)) {
+		case 0:
+			attrElem = arguments[0].toAttributedElement();
+			break;
+		case 1:
+			record = arguments[0].toJValueRecord();
+			break;
+		default:
 			throw new WrongFunctionParameterException(this, null, arguments);
 		}
 		String fieldName = arguments[1].toString();
-		AttributedElement elem = null;
-		try {
-			// check if the first argument is a graphelement, then access the
-			// attribute with the given name of this graph element
-			if (arguments[0].isEdge()) {
-				elem = arguments[0].toEdge();
-			} else if (arguments[0].isVertex()) {
-				elem = arguments[0].toVertex();
-			}
-			if (elem != null) {
-				return JValue.fromObject(elem.getAttribute(fieldName), elem);
-			}
-			// check if the first argument is a JValueCollection
-			if (arguments[0].isCollection()) {
-				JValueCollection col = arguments[0].toCollection();
-				if (col.isJValueRecord()) {
-					JValueRecord rec = col.toJValueRecord();
-					return rec.get(arguments[1].toString());
-				}
-			}
-		} catch (SecurityException ex) {
-			throw new FunctionUnknownFieldException(elem.getClass().getName(),
-					fieldName, null);
-		} catch (IllegalArgumentException ex) {
-			throw new FunctionUnknownFieldException(elem.getClass().getName(),
-					fieldName, null);
-		} catch (Exception ex) {
-			// JValueInvalidTypeException,
-			// NoSuchFieldException,
-			// IndexOutOfBoundsException
-			throw new WrongFunctionParameterException(this, null, arguments, ex);
-		}
 
-		return new JValue();
+		try {
+			if (attrElem != null) {
+				return JValue.fromObject(attrElem.getAttribute(fieldName),
+						attrElem);
+			}
+			return record.get(fieldName);
+		} catch (Exception ex) {
+			throw new EvaluateException("Evaluation of GetValue failed.", ex);
+		}
 	}
 
 	public long getEstimatedCosts(ArrayList<Long> inElements) {
@@ -130,10 +108,6 @@ public class GetValue implements Greql2Function {
 
 	public long getEstimatedCardinality(int inElements) {
 		return 1;
-	}
-
-	public String getExpectedParameters() {
-		return "(AttributedElement, String)";
 	}
 
 }

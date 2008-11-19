@@ -32,6 +32,7 @@ import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.greql2.exception.EvaluateException;
 import de.uni_koblenz.jgralab.greql2.exception.WrongFunctionParameterException;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
+import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
 
 /**
  * Returns the edge with the given id in the datagraph.
@@ -41,7 +42,8 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
  * <dd><code>EDGE getEdge(id:INTEGER)</code></dd>
  * <dd>&nbsp;</dd>
  * </dl>
- * <dl><dt></dt>
+ * <dl>
+ * <dt></dt>
  * <dd>
  * <dl>
  * <dt><b>Parameters:</b></dt>
@@ -52,36 +54,24 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
  * </dl>
  * </dd>
  * </dl>
+ *
  * @author ist@uni-koblenz.de
  *
  */
 
-/*
- * Returns the edge with the given id in the datagraph.
- * <br /><br />
- * <strong>Parameters:</strong>
- * <ul>
- * 	<li> id: Integer (the id of the edge to return)</li>
- * </ul>
- * <strong>Returns:</strong> the edge with the given id, encapsulated in a JValue
- * @author ist@uni-koblenz.de
- *
- */
-
-public class GetEdge implements Greql2Function {
+public class GetEdge extends AbstractGreql2Function {
+	{
+		JValueType[][] x = { { JValueType.INTEGER } };
+		signatures = x;
+	}
 
 	public JValue evaluate(Graph graph, BooleanGraphMarker subgraph,
 			JValue[] arguments) throws EvaluateException {
-		try {
-			if (arguments.length < 1) {
-				throw new WrongFunctionParameterException(this, null, arguments);
-			}
-			int id = arguments[0].toInteger();
-			Edge edge = graph.getEdge(id);
-			return new JValue(edge, edge);
-		} catch (Exception ex) {
+		if (checkArguments(arguments) == -1) {
 			throw new WrongFunctionParameterException(this, null, arguments);
 		}
+		Edge e = graph.getEdge(arguments[0].toInteger());
+		return new JValue(e, e);
 	}
 
 	public long getEstimatedCosts(ArrayList<Long> inElements) {
@@ -94,10 +84,6 @@ public class GetEdge implements Greql2Function {
 
 	public long getEstimatedCardinality(int inElements) {
 		return 1;
-	}
-
-	public String getExpectedParameters() {
-		return "(Integer)";
 	}
 
 }
