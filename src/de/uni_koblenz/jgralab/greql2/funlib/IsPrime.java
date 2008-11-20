@@ -30,9 +30,9 @@ import java.util.ArrayList;
 import de.uni_koblenz.jgralab.BooleanGraphMarker;
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.greql2.exception.EvaluateException;
-import de.uni_koblenz.jgralab.greql2.exception.JValueInvalidTypeException;
 import de.uni_koblenz.jgralab.greql2.exception.WrongFunctionParameterException;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
+import de.uni_koblenz.jgralab.greql2.jvalue.JValueBoolean;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
 
 /**
@@ -62,7 +62,12 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
  *
  * @author ist@uni-koblenz.de
  */
-public class IsPrime implements Greql2Function {
+public class IsPrime extends AbstractGreql2Function {
+	{
+		JValueType[][] x = { { JValueType.LONG },
+				{ JValueType.LONG, JValueType.INTEGER } };
+		signatures = x;
+	}
 
 	/**
 	 * The costs for an isPrime function application.
@@ -148,40 +153,27 @@ public class IsPrime implements Greql2Function {
 
 	public JValue evaluate(Graph graph, BooleanGraphMarker subgraph,
 			JValue[] arguments) throws EvaluateException {
-		if (arguments.length < 1 || arguments.length > 2) {
-			throw new WrongFunctionParameterException(this, null, arguments);
-		}
-		if (!(arguments[0].canConvert(JValueType.LONG))) {
-			throw new WrongFunctionParameterException(this, null, arguments);
-		}
 		int noOfTestRuns = 10;
-		if (arguments.length == 2) {
-			if (!(arguments[1].canConvert(JValueType.INTEGER))) {
-				throw new WrongFunctionParameterException(this, null, arguments);
+		switch (checkArguments(arguments)) {
+		case 0:
+			break;
+		case 1:
+			noOfTestRuns = arguments[1].toInteger();
+			if (noOfTestRuns <= 0) {
+				throw new EvaluateException(
+						"isPrime's second argument must be positive!");
 			}
-			try {
-				noOfTestRuns = arguments[1].toInteger();
-				if (noOfTestRuns <= 0) {
-					throw new WrongFunctionParameterException(this, null,
-							arguments);
-				}
-			} catch (JValueInvalidTypeException e) {
-				e.printStackTrace();
-				throw new WrongFunctionParameterException(this, null, arguments);
-			}
-		}
-		long number;
-		try {
-			number = arguments[0].toLong();
-		} catch (JValueInvalidTypeException e) {
-			e.printStackTrace();
+			break;
+		default:
 			throw new WrongFunctionParameterException(this, null, arguments);
 		}
-		if (number < 0) {
-			throw new WrongFunctionParameterException(this, null, arguments);
+		long number = arguments[0].toLong();
+
+		if (number < 2) {
+			return new JValue(JValueBoolean.getFalseValue());
 		}
 
-		return JValue.fromObject(isPrime(number, noOfTestRuns));
+		return new JValue(isPrime(number, noOfTestRuns));
 	}
 
 	public long getEstimatedCardinality(int inElements) {
@@ -190,10 +182,6 @@ public class IsPrime implements Greql2Function {
 
 	public long getEstimatedCosts(ArrayList<Long> inElements) {
 		return 10 * ESTIMATED_COSTS_PER_RUN;
-	}
-
-	public String getExpectedParameters() {
-		return "(number[, noOfTestRuns])";
 	}
 
 	/*

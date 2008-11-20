@@ -37,10 +37,9 @@ import de.uni_koblenz.jgralab.greql2.evaluator.fa.State;
 import de.uni_koblenz.jgralab.greql2.evaluator.fa.Transition;
 import de.uni_koblenz.jgralab.greql2.exception.EvaluateException;
 import de.uni_koblenz.jgralab.greql2.exception.WrongFunctionParameterException;
-import de.uni_koblenz.jgralab.greql2.funlib.pathsearch.PathSearch;
 import de.uni_koblenz.jgralab.greql2.funlib.pathsearch.PathSearchQueueEntry;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
-import de.uni_koblenz.jgralab.greql2.jvalue.JValueBoolean;
+import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
 
 /**
  * Checks if there exists a path from the first given vertex to the second given
@@ -74,38 +73,31 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueBoolean;
  * @author ist@uni-koblenz.de
  *
  */
+public class IsReachable extends AbstractGreql2Function {
 
-/*
- * Checks if there exists a path from startVertex to targetVertex in the
- * dataGraph that is accepted by this DFA
- *
- * @param startVertex
- *
- * StartVertex of the Path @param endVertex TargetVertex of the Path @param dfa
- * a deterministic finite automaton, which accepts the rpe that describes the
- * path between start- and endvertex. @return true if such a path exists, false
- * otherwise
- */
-public class IsReachable extends PathSearch implements Greql2Function {
+	{
+		JValueType[][] x = { { JValueType.VERTEX, JValueType.VERTEX,
+				JValueType.DFA } };
+		signatures = x;
+	}
 
 	public JValue evaluate(Graph graph, BooleanGraphMarker subgraph,
 			JValue[] arguments) throws EvaluateException {
-		Vertex startVertex;
-		Vertex endVertex;
-		DFA dfa;
 		// test, if start and end vertex are valid. if not, the may be
-		// restricted
-		// by a restricted expression, so return false
-		if ((!arguments[0].isValid()) || (!arguments[1].isValid())) {
-			return new JValue(JValueBoolean.getFalseValue());
-		}
-		try {
-			startVertex = arguments[0].toVertex();
-			endVertex = arguments[1].toVertex();
-			dfa = arguments[2].toDFA();
-		} catch (Exception ex) {
+		// restricted by a restricted expression, so return false.
+		// Tassilo: Not sure if that's really needed. The tests work fine
+		// without it...
+		//
+		// if (!arguments[0].isValid() || !arguments[1].isValid()) {
+		// return new JValue(JValueBoolean.getFalseValue());
+		// }
+
+		if (checkArguments(arguments) == -1) {
 			throw new WrongFunctionParameterException(this, null, arguments);
 		}
+		Vertex startVertex = arguments[0].toVertex();
+		Vertex endVertex = arguments[1].toVertex();
+		DFA dfa = arguments[2].toDFA();
 		BooleanGraphMarker[] markers = new BooleanGraphMarker[dfa.stateList
 				.size()];
 		for (State s : dfa.stateList) {
@@ -157,10 +149,6 @@ public class IsReachable extends PathSearch implements Greql2Function {
 
 	public long getEstimatedCardinality(int inElements) {
 		return 1;
-	}
-
-	public String getExpectedParameters() {
-		return "(Vertex, Vertex, DFA, Subgraph" + "TempAttribute)";
 	}
 
 }
