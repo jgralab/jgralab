@@ -43,7 +43,6 @@ import de.uni_koblenz.jgralab.greql2.evaluator.fa.State;
 import de.uni_koblenz.jgralab.greql2.evaluator.fa.Transition;
 import de.uni_koblenz.jgralab.greql2.exception.EvaluateException;
 import de.uni_koblenz.jgralab.greql2.exception.WrongFunctionParameterException;
-import de.uni_koblenz.jgralab.greql2.funlib.pathsearch.PathSearch;
 import de.uni_koblenz.jgralab.greql2.funlib.pathsearch.PathSystemMarkerEntry;
 import de.uni_koblenz.jgralab.greql2.funlib.pathsearch.PathSystemMarkerList;
 import de.uni_koblenz.jgralab.greql2.funlib.pathsearch.PathSystemQueueEntry;
@@ -81,7 +80,7 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueSlice;
  * @author ist@uni-koblenz.de
  *
  */
-public class Slice extends PathSearch implements Greql2Function {
+public class Slice implements Greql2Function {
 
 	/**
 	 * for each state in the fa (normally < 10) a seperate GraphMarker is used

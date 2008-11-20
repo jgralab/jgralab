@@ -35,9 +35,12 @@ import de.uni_koblenz.jgralab.greql2.exception.WrongFunctionParameterException;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValueBoolean;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValuePathSystem;
+import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
 
 /**
- * Checks if two given vertices are neighbours. That means, there is an edge between these two vertices. If a pathsystem is given, this check is performed on two vertices in this pathsystem.
+ * Checks if two given vertices are neighbours. That means, there is an edge
+ * between these two vertices. If a pathsystem is given, this check is performed
+ * on two vertices in this pathsystem.
  *
  * <dl>
  * <dt><b>GReQL-signature</b></dt>
@@ -45,55 +48,65 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValuePathSystem;
  * <dd><code>BOOLEAN isNeighbour(v1:VERTEX, v2:VERTEX, ps:PATHSYSTEM)</code></dd>
  * <dd>&nbsp;</dd>
  * </dl>
- * <dl><dt></dt>
+ * <dl>
+ * <dt></dt>
  * <dd>
  * <dl>
  * <dt><b>Parameters:</b></dt>
  * <dd><code>v1</code> - first vertex to check</dd>
  * <dd><code>v2</code> - second vertex to check</dd>
- * <dd><code>ps</code> - optional pathsystem to perform this check for two vertices in this pathsystem</dd>
+ * <dd><code>ps</code> - optional pathsystem to perform this check for two
+ * vertices in this pathsystem</dd>
  * <dt><b>Returns:</b></dt>
- * <dd><code>true</code> if there is at least one edge between the two given vertices. If a pathsystem is specified, both vertices and at least one edge must be in it.</dd>
+ * <dd><code>true</code> if there is at least one edge between the two given
+ * vertices. If a pathsystem is specified, both vertices and at least one edge
+ * must be in it.</dd>
  * <dd><code>Null</code> if one of the given parameters is <code>Null</code></dd>
  * <dd><code>false</code> otherwise</dd>
  * </dl>
  * </dd>
  * </dl>
+ *
  * @author ist@uni-koblenz.de
  *
  */
 
-public class IsNeighbour implements Greql2Function {
+public class IsNeighbour extends AbstractGreql2Function {
+	{
+		JValueType[][] x = { { JValueType.VERTEX, JValueType.VERTEX },
+				{ JValueType.VERTEX, JValueType.VERTEX, JValueType.PATHSYSTEM } };
+		signatures = x;
+	}
 
 	public JValue evaluate(Graph graph, BooleanGraphMarker subgraph,
 			JValue[] arguments) throws EvaluateException {
-		Vertex firstVertex = null;
-		Vertex secondVertex = null;
 		JValuePathSystem pathSystem = null;
-		try {
-			firstVertex = arguments[0].toVertex();
-			secondVertex = arguments[1].toVertex();
-			if ((arguments.length >= 3) && (arguments[2] != null)
-					&& (arguments[2].isPathSystem())) {
-				pathSystem = arguments[2].toPathSystem();
-				Boolean b = pathSystem.isNeighbour(firstVertex, secondVertex);
-				return new JValue(b, firstVertex);
-			} else {
-				Edge inc = firstVertex.getFirstEdge();
-				while (inc != null) {
-					if ((inc.getAlpha() == secondVertex)
-							|| (inc.getOmega() == secondVertex)) {
-						return new JValue(JValueBoolean.getTrueValue(),
-								firstVertex);
-					}
-					inc = inc.getNextEdge();
-				}
-				return new JValue(JValueBoolean.getFalseValue(),
-						firstVertex);
-			}
-		} catch (Exception ex) {
+		switch (checkArguments(arguments)) {
+		case 0:
+			break;
+		case 1:
+			pathSystem = arguments[2].toPathSystem();
+		default:
 			throw new WrongFunctionParameterException(this, null, arguments);
 		}
+		Vertex firstVertex = arguments[0].toVertex();
+		Vertex secondVertex = arguments[1].toVertex();
+
+		if (pathSystem != null) {
+			return new JValue(
+					pathSystem.isNeighbour(firstVertex, secondVertex),
+					firstVertex);
+		}
+
+		Edge inc = firstVertex.getFirstEdge();
+		while (inc != null) {
+			if ((inc.getAlpha() == secondVertex)
+					|| (inc.getOmega() == secondVertex)) {
+				return new JValue(JValueBoolean.getTrueValue(), firstVertex);
+			}
+			inc = inc.getNextEdge();
+		}
+		return new JValue(JValueBoolean.getFalseValue(), firstVertex);
 	}
 
 	public long getEstimatedCosts(ArrayList<Long> inElements) {
@@ -106,10 +119,6 @@ public class IsNeighbour implements Greql2Function {
 
 	public long getEstimatedCardinality(int inElements) {
 		return 2;
-	}
-
-	public String getExpectedParameters() {
-		return "(Vertex, Vertex, [PathSystem])";
 	}
 
 }

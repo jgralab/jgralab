@@ -30,19 +30,21 @@ import de.uni_koblenz.jgralab.BooleanGraphMarker;
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.greql2.exception.EvaluateException;
-import de.uni_koblenz.jgralab.greql2.exception.JValueInvalidTypeException;
 import de.uni_koblenz.jgralab.greql2.exception.WrongFunctionParameterException;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
+import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
 
 /**
- * Checks if the given edge is a loop. That means, its start- and end-vertex is the same.
+ * Checks if the given edge is a loop. That means, its start- and end-vertex is
+ * the same.
  *
  * <dl>
  * <dt><b>GReQL-signature</b></dt>
  * <dd><code>BOOLEAN isLoop(e:EDGE)</code></dd>
  * <dd>&nbsp;</dd>
  * </dl>
- * <dl><dt></dt>
+ * <dl>
+ * <dt></dt>
  * <dd>
  * <dl>
  * <dt><b>Parameters:</b></dt>
@@ -54,33 +56,24 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
  * </dl>
  * </dd>
  * </dl>
+ *
  * @author ist@uni-koblenz.de
  *
  */
+public class IsLoop extends AbstractGreql2Function {
 
-/*
- * Gets a edge as parameter and returns true, if this edge is a loop, that
- * means, if alpha nd omega vertex are identical
- *
- * @param edge
- *            the edge to check
- * @return true if the given edge is a loop
- * @author ist@uni-koblenz.de
- *
- */
-public class IsLoop implements Greql2Function {
+	{
+		JValueType[][] x = { { JValueType.EDGE } };
+		signatures = x;
+	}
 
 	public JValue evaluate(Graph graph, BooleanGraphMarker subgraph,
 			JValue[] arguments) throws EvaluateException {
-		try {
-			if (arguments.length < 1) {
-				throw new WrongFunctionParameterException(this, null, arguments);
-			}
-			Edge edge = arguments[0].toEdge();
-			return new JValue(edge.getAlpha() == edge.getOmega(), edge);
-		} catch (JValueInvalidTypeException ex) {
+		if (checkArguments(arguments) == -1) {
 			throw new WrongFunctionParameterException(this, null, arguments);
 		}
+		Edge edge = arguments[0].toEdge();
+		return new JValue(edge.getAlpha() == edge.getOmega(), edge);
 	}
 
 	public long getEstimatedCosts(ArrayList<Long> inElements) {
@@ -93,10 +86,6 @@ public class IsLoop implements Greql2Function {
 
 	public long getEstimatedCardinality(int inElements) {
 		return 1;
-	}
-
-	public String getExpectedParameters() {
-		return "(Edge)";
 	}
 
 }

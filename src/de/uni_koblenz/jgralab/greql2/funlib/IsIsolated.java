@@ -30,19 +30,21 @@ import de.uni_koblenz.jgralab.BooleanGraphMarker;
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.greql2.exception.EvaluateException;
-import de.uni_koblenz.jgralab.greql2.exception.JValueInvalidTypeException;
 import de.uni_koblenz.jgralab.greql2.exception.WrongFunctionParameterException;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
+import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
 
 /**
- * Checks if the given vertex is isolated. That means, no edges are connected to it.
+ * Checks if the given vertex is isolated. That means, no edges are connected to
+ * it.
  *
  * <dl>
  * <dt><b>GReQL-signature</b></dt>
  * <dd><code>BOOLEAN isIsolated(v:VERTEX)</code></dd>
  * <dd>&nbsp;</dd>
  * </dl>
- * <dl><dt></dt>
+ * <dl>
+ * <dt></dt>
  * <dd>
  * <dl>
  * <dt><b>Parameters:</b></dt>
@@ -54,34 +56,25 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
  * </dl>
  * </dd>
  * </dl>
+ *
  * @author ist@uni-koblenz.de
  *
  */
 
-/*
- * Gets a vertex as parameter and returns true, if this vertex is isolated, that
- * means, if it has no connected edges
- *
- * @param vertex
- *            the vertex to check for isolation
- * @return true if the given vertex has no connected edges, false otherwise
- * @author ist@uni-koblenz.de
- *
- */
-public class IsIsolated implements Greql2Function {
+public class IsIsolated extends AbstractGreql2Function {
+	{
+		JValueType[][] x = { { JValueType.VERTEX } };
+		signatures = x;
+	}
 
 	public JValue evaluate(Graph graph, BooleanGraphMarker subgraph,
 			JValue[] arguments) throws EvaluateException {
-		try {
-			if (arguments.length < 1) {
-				throw new WrongFunctionParameterException(this, null, arguments);
-			}
-			Vertex firstVertex = arguments[0].toVertex();
-			return new JValue(firstVertex
-					.getDegree() == 0, firstVertex);
-		} catch (JValueInvalidTypeException ex) {
+		if (checkArguments(arguments) == -1) {
 			throw new WrongFunctionParameterException(this, null, arguments);
 		}
+
+		Vertex firstVertex = arguments[0].toVertex();
+		return new JValue(firstVertex.getDegree() == 0, firstVertex);
 	}
 
 	public long getEstimatedCosts(ArrayList<Long> inElements) {
@@ -89,15 +82,11 @@ public class IsIsolated implements Greql2Function {
 	}
 
 	public double getSelectivity() {
-		return 0.001;
+		return 0.0001;
 	}
 
 	public long getEstimatedCardinality(int inElements) {
 		return 1;
-	}
-
-	public String getExpectedParameters() {
-		return "(Vertex)";
 	}
 
 }

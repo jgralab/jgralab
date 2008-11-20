@@ -38,7 +38,6 @@ import de.uni_koblenz.jgralab.greql2.evaluator.fa.State;
 import de.uni_koblenz.jgralab.greql2.evaluator.fa.Transition;
 import de.uni_koblenz.jgralab.greql2.exception.EvaluateException;
 import de.uni_koblenz.jgralab.greql2.exception.WrongFunctionParameterException;
-import de.uni_koblenz.jgralab.greql2.funlib.pathsearch.PathSearch;
 import de.uni_koblenz.jgralab.greql2.funlib.pathsearch.PathSearchQueueEntry;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValueSet;
@@ -82,7 +81,7 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueSet;
  * reachable over a path that is accepted by the given rpe
  */
 
-public class ReachableVertices extends PathSearch implements Greql2Function {
+public class ReachableVertices implements Greql2Function {
 
 	public JValue evaluate(Graph graph, BooleanGraphMarker subgraph,
 			JValue[] arguments) throws EvaluateException {
