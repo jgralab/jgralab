@@ -21,7 +21,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
- 
+
 package de.uni_koblenz.jgralab.greql2.evaluator.vertexeval;
 
 import de.uni_koblenz.jgralab.BooleanGraphMarker;
@@ -36,15 +36,14 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueTypeCollection;
 import de.uni_koblenz.jgralab.greql2.schema.EdgeSubgraphExpression;
 import de.uni_koblenz.jgralab.schema.AttributedElementClass;
 
-
 /**
- * Evaluates the given edgesubgraph expression. All Vertices and Edges
- * that belong to the generated subgraph are marked with a temporary
- * attribut <code>SubgraphTempAttribute</code>
+ * Evaluates the given edgesubgraph expression. All Vertices and Edges that
+ * belong to the generated subgraph are marked with a temporary attribut
+ * <code>SubgraphTempAttribute</code>
  */
 public class EdgeSubgraphExpressionEvaluator extends
 		SubgraphExpressionEvaluator {
-	
+
 	public EdgeSubgraphExpressionEvaluator(EdgeSubgraphExpression vertex,
 			GreqlEvaluator eval) {
 		super(vertex, eval);
@@ -56,40 +55,43 @@ public class EdgeSubgraphExpressionEvaluator extends
 		Edge currentEdge = getDatagraph().getFirstEdgeInGraph();
 		JValueTypeCollection typeCollection = getTypeCollection();
 		while (currentEdge != null) {
-			if ((subgraph==null) || (subgraph.isMarked(currentEdge))) {
+			if ((subgraph == null) || (subgraph.isMarked(currentEdge))) {
 				AttributedElementClass edgeClass = currentEdge
 						.getAttributedElementClass();
-				if (typeCollection.acceptsType(edgeClass))
+				if (typeCollection.acceptsType(edgeClass)) {
 					subgraphAttr.mark(currentEdge);
+				}
 			}
 			currentEdge = currentEdge.getNextEdgeInGraph();
 		}
 		// add all vertices
 		Vertex currentVertex = getDatagraph().getFirstVertex();
-		while (currentVertex != null){
-		//	GreqlEvaluator.println("Current vertex is: " + currentVertex);
+		while (currentVertex != null) {
+			// System.out.println("Current vertex is: " + currentVertex);
 			Edge inc = currentVertex.getFirstEdge();
 			while (inc != null) {
-			//	GreqlEvaluator.println("Edge is: " + inc);
+				// System.out.println("Edge is: " + inc);
 				if (subgraphAttr.isMarked(inc)) {
 					subgraphAttr.mark(currentVertex);
-			//		GreqlEvaluator.println("Marking vertex: " + currentVertex);
+					// System.out.println("Marking vertex: " + currentVertex);
 					break;
-				}	
+				}
 				inc = inc.getNextEdge();
 			}
 			currentVertex = currentVertex.getNextVertex();
 		}
 		return new JValue(subgraphAttr);
 	}
-	
+
 	@Override
 	public VertexCosts calculateSubtreeEvaluationCosts(GraphSize graphSize) {
-		return this.greqlEvaluator.getCostModel().calculateCostsEdgeSubgraphExpression(this, graphSize);
+		return this.greqlEvaluator.getCostModel()
+				.calculateCostsEdgeSubgraphExpression(this, graphSize);
 	}
 
 	public GraphSize calculateSubgraphSize(GraphSize graphSize) {
-		return this.greqlEvaluator.getCostModel().calculateEdgeSubgraphSize(this, graphSize);
+		return this.greqlEvaluator.getCostModel().calculateEdgeSubgraphSize(
+				this, graphSize);
 	}
 
 }

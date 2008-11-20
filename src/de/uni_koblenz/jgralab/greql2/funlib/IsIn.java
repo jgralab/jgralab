@@ -31,13 +31,8 @@ import de.uni_koblenz.jgralab.BooleanGraphMarker;
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.GraphElement;
 import de.uni_koblenz.jgralab.greql2.exception.EvaluateException;
-import de.uni_koblenz.jgralab.greql2.exception.JValueInvalidTypeException;
 import de.uni_koblenz.jgralab.greql2.exception.WrongFunctionParameterException;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
-import de.uni_koblenz.jgralab.greql2.jvalue.JValueBoolean;
-import de.uni_koblenz.jgralab.greql2.jvalue.JValuePath;
-import de.uni_koblenz.jgralab.greql2.jvalue.JValuePathSystem;
-import de.uni_koblenz.jgralab.greql2.jvalue.JValueSet;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
 
 /**
@@ -58,8 +53,7 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
  * <dd><code>obj</code> - object to check</dd>
  * <dd><code>struct</code> - structure to check if the object is included</dd>
  * <dt><b>Returns:</b></dt>
- * <dd><code>true</code> if the given object is included in the given
- * structure</dd>
+ * <dd><code>true</code> if the given object is included in the given structure</dd>
  * <dd><code>Null</code> if one of the given parameters is <code>Null</code></dd>
  * <dd><code>false</code> otherwise</dd>
  * </dl>
@@ -70,48 +64,46 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
  *
  */
 
-public class IsIn implements Greql2Function {
+public class IsIn extends AbstractGreql2Function {
+	{
+		JValueType[][] x = {
+				{ JValueType.OBJECT, JValueType.COLLECTION },
+				{ JValueType.ATTRIBUTEDELEMENT, JValueType.PATH },
+				{ JValueType.ATTRIBUTEDELEMENT, JValueType.PATHSYSTEM },
+				{ JValueType.PATH, JValueType.PATHSYSTEM },
+				{ JValueType.ATTRIBUTEDELEMENT,
+						JValueType.SUBGRAPHTEMPATTRIBUTE },
+				{ JValueType.ATTRIBUTEDELEMENT } };
+		signatures = x;
+	}
 
 	public JValue evaluate(Graph graph, BooleanGraphMarker subgraph,
 			JValue[] arguments) throws EvaluateException {
-		try {
-			if (arguments.length < 2) {
-				throw new WrongFunctionParameterException(this, null, arguments);
+		switch (checkArguments(arguments)) {
+		case 0:
+			return new JValue(arguments[1].toCollection().toJValueSet()
+					.contains(arguments[0]));
+		case 1:
+			return new JValue(arguments[1].toPath().contains(
+					(GraphElement) arguments[0].toAttributedElement()));
+		case 2:
+			return new JValue(arguments[1].toPathSystem().contains(
+					(GraphElement) arguments[0].toAttributedElement()));
+		case 3:
+			return new JValue(arguments[1].toPathSystem().containsPath(
+					arguments[0].toPath()));
+		case 4:
+			return new JValue(arguments[1].toSubgraphTempAttribute().isMarked(
+					arguments[0].toAttributedElement()));
+		case 5:
+			if (subgraph == null) {
+				throw new EvaluateException(
+						"There was no subgraph when evaluating IsIn.  When there's only one "
+								+ "arg to IsIn, the subgraph has to be bound in a surrounding FWR.");
 			}
-			JValue value = arguments[0];
-			AttributedElement attrElem = null;
-			if (arguments[0].canConvert(JValueType.ATTRIBUTEDELEMENT)) {
-				attrElem = value.toAttributedElement();
-			}
-			if (arguments[1].isCollection()) {
-				JValueSet firstSet = arguments[1].toCollection().toJValueSet();
-				return new JValue(firstSet.contains(value), attrElem);
-			} else {
-				if (arguments[0].canConvert(JValueType.ATTRIBUTEDELEMENT)) {
-					GraphElement elem = (GraphElement) arguments[0]
-							.toAttributedElement();
-					if (arguments[1].isPath()) {
-						JValuePath path = arguments[1].toPath();
-						return new JValue(path.contains(elem), elem);
-					}
-					if (arguments[1].isPathSystem()) {
-						JValuePathSystem system = arguments[1].toPathSystem();
-						return new JValue(system.contains(elem), elem);
-					}
-					// use subgraph
-					return new JValue((subgraph == null)
-							|| subgraph.isMarked(elem), elem);
-				}
-				if (arguments[0].isPath()) {
-					if (arguments[1].isPathSystem()) {
-						JValuePathSystem system = arguments[1].toPathSystem();
-						return new JValue(system.containsPath(arguments[0]
-								.toPath()));
-					}
-				}
-				return new JValue(JValueBoolean.NULL);
-			}
-		} catch (JValueInvalidTypeException ex) {
+			AttributedElement ae = arguments[0].toAttributedElement();
+			return new JValue(subgraph.isMarked(ae));
+		default:
 			throw new WrongFunctionParameterException(this, null, arguments);
 		}
 	}
@@ -126,10 +118,6 @@ public class IsIn implements Greql2Function {
 
 	public long getEstimatedCardinality(int inElements) {
 		return 1;
-	}
-
-	public String getExpectedParameters() {
-		return "(Set or Path or Pathsystem, Object)";
 	}
 
 }
