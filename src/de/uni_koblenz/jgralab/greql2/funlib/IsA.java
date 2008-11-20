@@ -31,8 +31,8 @@ import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.greql2.exception.EvaluateException;
 import de.uni_koblenz.jgralab.greql2.exception.WrongFunctionParameterException;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
+import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
 import de.uni_koblenz.jgralab.schema.AttributedElementClass;
-import de.uni_koblenz.jgralab.schema.GraphClass;
 import de.uni_koblenz.jgralab.schema.QualifiedName;
 import de.uni_koblenz.jgralab.schema.Schema;
 
@@ -72,42 +72,44 @@ import de.uni_koblenz.jgralab.schema.Schema;
  *
  */
 
-public class IsA implements Greql2Function {
+public class IsA extends AbstractGreql2Function {
+	{
+		JValueType[][] x = { { JValueType.STRING, JValueType.STRING },
+				{ JValueType.STRING, JValueType.ATTRIBUTEDELEMENTCLASS },
+				{ JValueType.ATTRIBUTEDELEMENTCLASS, JValueType.STRING } };
+		signatures = x;
+	}
 
 	public JValue evaluate(Graph graph, BooleanGraphMarker subgraph,
 			JValue[] arguments) throws EvaluateException {
-		try {
-			if (arguments.length >= 1) {
-				AttributedElementClass type;
-				Schema schema = null;
-				GraphClass graphClass;
-				AttributedElementClass supertype;
-				if (arguments[0].isString()) {
-					graphClass = (GraphClass) graph.getAttributedElementClass();
-					schema = graphClass.getSchema();
-					type = schema.getAttributedElementClass(new QualifiedName(
-							arguments[0].toString()));
-				} else {
-					type = arguments[0].toAttributedElementClass();
-				}
-				if (arguments[1].isString()) {
-					if (schema == null) {
-						graphClass = (GraphClass) graph
-								.getAttributedElementClass();
-						schema = graphClass.getSchema();
-					}
-					supertype = schema
-							.getAttributedElementClass(new QualifiedName(
-									arguments[1].toString()));
-				} else {
-					supertype = arguments[1].toAttributedElementClass();
-				}
-				return new JValue(type.isSubClassOf(supertype));
-			}
-			throw new WrongFunctionParameterException(this, null, arguments);
-		} catch (Exception ex) {
+		String s1 = null, s2 = null;
+		AttributedElementClass aec1 = null, aec2 = null;
+		switch (checkArguments(arguments)) {
+		case 0:
+			s1 = arguments[0].toString();
+			s2 = arguments[1].toString();
+			break;
+		case 1:
+			s1 = arguments[0].toString();
+			aec2 = arguments[1].toAttributedElementClass();
+			break;
+		case 2:
+			aec1 = arguments[0].toAttributedElementClass();
+			aec2 = arguments[1].toAttributedElementClass();
+			break;
+		default:
 			throw new WrongFunctionParameterException(this, null, arguments);
 		}
+		if (s1 != null || s2 != null) {
+			Schema schema = graph.getGraphClass().getSchema();
+			if (s1 != null) {
+				aec1 = schema.getAttributedElementClass(new QualifiedName(s1));
+			}
+			if (s2 != null) {
+				aec2 = schema.getAttributedElementClass(new QualifiedName(s2));
+			}
+		}
+		return new JValue(aec1.isSubClassOf(aec2));
 	}
 
 	public long getEstimatedCosts(ArrayList<Long> inElements) {
@@ -120,10 +122,6 @@ public class IsA implements Greql2Function {
 
 	public long getEstimatedCardinality(int inElements) {
 		return 1;
-	}
-
-	public String getExpectedParameters() {
-		return "(Integer)";
 	}
 
 }

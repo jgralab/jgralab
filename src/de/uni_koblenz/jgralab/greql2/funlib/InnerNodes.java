@@ -32,6 +32,7 @@ import de.uni_koblenz.jgralab.greql2.exception.EvaluateException;
 import de.uni_koblenz.jgralab.greql2.exception.WrongFunctionParameterException;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValuePathSystem;
+import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
 
 /**
  * Returns all inner nodes of the given pathsystem as set. Inner nodes are all
@@ -61,17 +62,19 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValuePathSystem;
  *
  */
 
-public class InnerNodes implements Greql2Function {
+public class InnerNodes extends AbstractGreql2Function {
+	{
+		JValueType[][] x = { { JValueType.PATHSYSTEM } };
+		signatures = x;
+	}
 
 	public JValue evaluate(Graph graph, BooleanGraphMarker subgraph,
 			JValue[] arguments) throws EvaluateException {
-		JValuePathSystem pathSystem;
-		try {
-			pathSystem = arguments[0].toPathSystem();
-		} catch (Exception ex) {
+		if (checkArguments(arguments) == -1) {
 			throw new WrongFunctionParameterException(this, null, arguments);
 		}
-		return pathSystem.innerNodes();
+		JValuePathSystem ps = arguments[0].toPathSystem();
+		return ps.innerNodes();
 	}
 
 	public long getEstimatedCosts(ArrayList<Long> inElements) {
@@ -85,10 +88,6 @@ public class InnerNodes implements Greql2Function {
 
 	public long getEstimatedCardinality(int inElements) {
 		return 1;
-	}
-
-	public String getExpectedParameters() {
-		return "(PathSystem)";
 	}
 
 }
