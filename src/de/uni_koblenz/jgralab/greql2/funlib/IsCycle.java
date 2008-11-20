@@ -29,22 +29,21 @@ import java.util.ArrayList;
 import de.uni_koblenz.jgralab.BooleanGraphMarker;
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.greql2.exception.EvaluateException;
-import de.uni_koblenz.jgralab.greql2.exception.JValueInvalidTypeException;
 import de.uni_koblenz.jgralab.greql2.exception.WrongFunctionParameterException;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
-import de.uni_koblenz.jgralab.greql2.jvalue.JValuePath;
-
-
+import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
 
 /**
- * Checks if the given path is a cycle. That means, the start-vertex and the end-vertex are the same.
+ * Checks if the given path is a cycle. That means, the start-vertex and the
+ * end-vertex are the same.
  *
  * <dl>
  * <dt><b>GReQL-signature</b></dt>
  * <dd><code>BOOLEAN isCycle(p:PATH)</code></dd>
  * <dd>&nbsp;</dd>
  * </dl>
- * <dl><dt></dt>
+ * <dl>
+ * <dt></dt>
  * <dd>
  * <dl>
  * <dt><b>Parameters:</b></dt>
@@ -56,20 +55,24 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValuePath;
  * </dl>
  * </dd>
  * </dl>
+ *
  * @author ist@uni-koblenz.de
  *
  */
 
-public class IsCycle implements Greql2Function {
+public class IsCycle extends AbstractGreql2Function {
 
-	public JValue evaluate(Graph graph, BooleanGraphMarker subgraph, JValue[] arguments) throws EvaluateException {
-		try {
-			JValuePath path = arguments[0].toPath();
-			return new JValue(path.isCycle(), path.getStartVertex());
-		} catch (JValueInvalidTypeException ex) {
+	{
+		JValueType[][] x = { { JValueType.PATH } };
+		signatures = x;
+	}
+
+	public JValue evaluate(Graph graph, BooleanGraphMarker subgraph,
+			JValue[] arguments) throws EvaluateException {
+		if (checkArguments(arguments) == -1) {
 			throw new WrongFunctionParameterException(this, null, arguments);
 		}
-
+		return new JValue(arguments[0].toPath().isCycle());
 	}
 
 	public long getEstimatedCosts(ArrayList<Long> inElements) {
@@ -82,10 +85,6 @@ public class IsCycle implements Greql2Function {
 
 	public long getEstimatedCardinality(int inElements) {
 		return 1;
-	}
-
-	public String getExpectedParameters() {
-		return "(Path)";
 	}
 
 }

@@ -626,7 +626,7 @@ public class JValuePathSystem extends JValue {
 	 * 
 	 * @return a set of Paths from rootVertex to leaves
 	 */
-	public JValueSet extractPath() throws JValuePathException {
+	public JValueSet extractPaths() throws JValuePathException {
 		JValueSet pathSet = new JValueSet();
 		if (leafKeys == null)
 			createLeafKeys();
@@ -643,7 +643,7 @@ public class JValuePathSystem extends JValue {
 	 * 
 	 * @return a set of Paths from rootVertex to leaves
 	 */
-	public JValueSet extractPath(int len) throws JValuePathException {
+	public JValueSet extractPaths(int len) throws JValuePathException {
 		JValueSet pathSet = new JValueSet();
 		if (leafKeys == null)
 			createLeafKeys();
@@ -838,7 +838,7 @@ public class JValuePathSystem extends JValue {
 	 */
 	public void printAscii() {
 		try {
-			JValueSet pathSet = extractPath();
+			JValueSet pathSet = extractPaths();
 			Iterator<JValue> iter = pathSet.iterator();
 			while (iter.hasNext()) {
 				JValuePath path = (JValuePath) iter.next();
@@ -855,7 +855,7 @@ public class JValuePathSystem extends JValue {
 	public String toString() {
 		StringBuffer returnString = new StringBuffer("PathSystem: \n");
 		try {
-			JValueSet pathSet = extractPath();
+			JValueSet pathSet = extractPaths();
 			Iterator<JValue> iter = pathSet.iterator();
 			while (iter.hasNext()) {
 				JValuePath path = (JValuePath) iter.next();
