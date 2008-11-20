@@ -31,7 +31,7 @@ import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.greql2.exception.EvaluateException;
 import de.uni_koblenz.jgralab.greql2.exception.WrongFunctionParameterException;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
-import de.uni_koblenz.jgralab.greql2.jvalue.JValuePathSystem;
+import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
 
 /**
  * Returns the length of the longest path in the given pathsystem.
@@ -59,16 +59,19 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValuePathSystem;
  *
  */
 
-public class MaxPathLength implements Greql2Function {
+public class MaxPathLength extends AbstractGreql2Function {
+	{
+		JValueType[][] x = { { JValueType.PATHSYSTEM } };
+		signatures = x;
+	}
 
 	public JValue evaluate(Graph graph, BooleanGraphMarker subgraph,
 			JValue[] arguments) throws EvaluateException {
-		try {
-			JValuePathSystem pathSystem = arguments[0].toPathSystem();
-			return new JValue(pathSystem.maxPathLength());
-		} catch (Exception ex) {
+		if (checkArguments(arguments) == -1) {
 			throw new WrongFunctionParameterException(this, null, arguments);
 		}
+
+		return new JValue(arguments[0].toPathSystem().maxPathLength());
 	}
 
 	public long getEstimatedCosts(ArrayList<Long> inElements) {
@@ -81,10 +84,6 @@ public class MaxPathLength implements Greql2Function {
 
 	public long getEstimatedCardinality(int inElements) {
 		return 1;
-	}
-
-	public String getExpectedParameters() {
-		return "(PathSystem)";
 	}
 
 }
