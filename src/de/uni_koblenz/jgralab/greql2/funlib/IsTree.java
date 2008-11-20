@@ -26,12 +26,16 @@ package de.uni_koblenz.jgralab.greql2.funlib;
 
 import java.util.ArrayList;
 
+import de.uni_koblenz.jgralab.AttributedElement;
 import de.uni_koblenz.jgralab.BooleanGraphMarker;
 import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.greql2.exception.EvaluateException;
+import de.uni_koblenz.jgralab.greql2.exception.WrongFunctionParameterException;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
+import de.uni_koblenz.jgralab.greql2.jvalue.JValueBoolean;
+import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
 
 /**
  * Checks if the current graph or subgraph is a tree. That means, the graph is
@@ -58,30 +62,55 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
  * @author ist@uni-koblenz.de
  *
  */
+public class IsTree extends AbstractGreql2Function {
 
-/*
- * Checks if the given graph is a tree. A tree is a graph, which the
- * restriction, that every vertex has only one outgoing edge. Costs are O(n),
- * where n is the number of vertices in the graph @author ist@uni-koblenz.de
- * <dbildh@uni-koblenz.de> Summer 2006, Diploma Thesis
- */
-
-public class IsTree implements Greql2Function {
+	{
+		JValueType[][] x = { {}, { JValueType.SUBGRAPHTEMPATTRIBUTE } };
+		signatures = x;
+	}
 
 	public JValue evaluate(Graph graph, BooleanGraphMarker subgraph,
 			JValue[] arguments) throws EvaluateException {
-		Vertex currentVertex = graph.getFirstVertex();
-		Vertex firstVertex = currentVertex;
-		do {
-			if (currentVertex.getDegree(EdgeDirection.OUT) > 1) {
-				return new JValue(false);
+		switch (checkArguments(arguments)) {
+		case 0:
+			break;
+		case 1:
+			subgraph = arguments[0].toSubgraphTempAttribute();
+		default:
+			throw new WrongFunctionParameterException(this, null, arguments);
+		}
+		boolean foundOneRoot = false;
+
+		if (subgraph != null) {
+			for (AttributedElement ae : subgraph.getMarkedElements()) {
+				if (!(ae instanceof Vertex)) {
+					continue;
+				}
+				Vertex v = (Vertex) ae;
+				int inDegree = v.getDegree(EdgeDirection.IN);
+				if (inDegree > 1 || (inDegree == 0 && foundOneRoot)) {
+					return new JValue(JValueBoolean.getFalseValue());
+				}
+				if (inDegree == 0) {
+					foundOneRoot = true;
+				}
 			}
-		} while (currentVertex != firstVertex);
-		return new JValue(true);
+		} else {
+			for (Vertex v : graph.vertices()) {
+				int inDegree = v.getDegree(EdgeDirection.IN);
+				if (inDegree > 1 || (inDegree == 0 && foundOneRoot)) {
+					return new JValue(JValueBoolean.getFalseValue());
+				}
+				if (inDegree == 0) {
+					foundOneRoot = true;
+				}
+			}
+		}
+		return new JValue(foundOneRoot);
 	}
 
 	public long getEstimatedCosts(ArrayList<Long> inElements) {
-		return 0;
+		return 5;
 	}
 
 	public double getSelectivity() {
@@ -90,10 +119,6 @@ public class IsTree implements Greql2Function {
 
 	public long getEstimatedCardinality(int inElements) {
 		return 1;
-	}
-
-	public String getExpectedParameters() {
-		return "Graph";
 	}
 
 }

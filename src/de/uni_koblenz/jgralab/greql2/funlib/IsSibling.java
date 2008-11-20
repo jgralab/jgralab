@@ -31,11 +31,11 @@ import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.greql2.exception.EvaluateException;
-import de.uni_koblenz.jgralab.greql2.exception.JValueInvalidTypeException;
 import de.uni_koblenz.jgralab.greql2.exception.WrongFunctionParameterException;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValueBoolean;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValuePathSystem;
+import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
 
 /**
  * Checks if two given vertices are siblings. That means, they have at least one
@@ -71,54 +71,63 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValuePathSystem;
  *
  */
 
-public class IsSibling implements Greql2Function {
+public class IsSibling extends AbstractGreql2Function {
+	{
+		JValueType[][] x = { { JValueType.VERTEX, JValueType.VERTEX },
+				{ JValueType.VERTEX, JValueType.VERTEX, JValueType.PATHSYSTEM } };
+		signatures = x;
+	}
 
 	public JValue evaluate(Graph graph, BooleanGraphMarker subgraph,
 			JValue[] arguments) throws EvaluateException {
-		Vertex firstVertex = null;
-		Vertex secondVertex = null;
-		JValuePathSystem pathSystem;
-		try {
-			firstVertex = arguments[0].toVertex();
-			secondVertex = arguments[1].toVertex();
-			if ((arguments.length > 2) && (arguments[2] != null)) {
-				if (arguments[2].isPathSystem()) {
-					pathSystem = arguments[2].toPathSystem();
-					return new JValue(pathSystem.isSibling(firstVertex,
-							secondVertex), firstVertex);
-				}
-			}
-			// check if the vertices are siblings in the graph
-			Edge inc1 = firstVertex.getFirstEdge();
-			while (inc1 != null) {
-				Edge inc2 = secondVertex.getFirstEdge();
-				Vertex firstFather;
-				if (inc1.getAlpha() == firstVertex) {
-					firstFather = inc1.getOmega();
-				} else {
-					firstFather = inc1.getAlpha();
-				}
-				if ((subgraph == null) || (subgraph.isMarked(firstFather))) {
-					while (inc2 != null) {
-						Vertex secondFather;
-						if (inc2.getAlpha() == secondVertex) {
-							secondFather = inc2.getOmega();
-						} else {
-							secondFather = inc2.getAlpha();
-						}
-						if (firstFather.equals(secondFather)) {
-							return new JValue(JValueBoolean.getTrueValue(),
-									firstVertex);
-						}
-						inc2 = inc2.getNextEdge();
-					}
-				}
-				inc1 = inc1.getNextEdge();
-			}
-			return new JValue(JValueBoolean.getFalseValue(), firstVertex);
-		} catch (JValueInvalidTypeException ex) {
+		JValuePathSystem pathSystem = null;
+		switch (checkArguments(arguments)) {
+		case 0:
+			break;
+		case 1:
+			pathSystem = arguments[2].toPathSystem();
+		default:
 			throw new WrongFunctionParameterException(this, null, arguments);
 		}
+		Vertex firstVertex = arguments[0].toVertex();
+		Vertex secondVertex = arguments[1].toVertex();
+
+		firstVertex = arguments[0].toVertex();
+		secondVertex = arguments[1].toVertex();
+
+		if (pathSystem != null) {
+			return new JValue(pathSystem.isSibling(firstVertex, secondVertex),
+					firstVertex);
+		}
+
+		// check if the vertices are siblings in the graph
+		Edge inc1 = firstVertex.getFirstEdge();
+		while (inc1 != null) {
+			Edge inc2 = secondVertex.getFirstEdge();
+			Vertex firstFather;
+			if (inc1.getAlpha() == firstVertex) {
+				firstFather = inc1.getOmega();
+			} else {
+				firstFather = inc1.getAlpha();
+			}
+			if ((subgraph == null) || (subgraph.isMarked(firstFather))) {
+				while (inc2 != null) {
+					Vertex secondFather;
+					if (inc2.getAlpha() == secondVertex) {
+						secondFather = inc2.getOmega();
+					} else {
+						secondFather = inc2.getAlpha();
+					}
+					if (firstFather.equals(secondFather)) {
+						return new JValue(JValueBoolean.getTrueValue(),
+								firstVertex);
+					}
+					inc2 = inc2.getNextEdge();
+				}
+			}
+			inc1 = inc1.getNextEdge();
+		}
+		return new JValue(JValueBoolean.getFalseValue(), firstVertex);
 
 	}
 
@@ -132,10 +141,6 @@ public class IsSibling implements Greql2Function {
 
 	public long getEstimatedCardinality(int inElements) {
 		return 2;
-	}
-
-	public String getExpectedParameters() {
-		return "(Vertex, Vertex [, PathSystem or Subgraph])";
 	}
 
 }
