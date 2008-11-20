@@ -35,7 +35,9 @@ import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.GraphMarker;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.greql2.exception.EvaluateException;
+import de.uni_koblenz.jgralab.greql2.exception.WrongFunctionParameterException;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
+import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
 
 /**
  * Checks if the current graph or subgraph is cycle-free.
@@ -62,12 +64,22 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
  * @author ist@uni-koblenz.de
  *
  */
-public class IsAcyclic implements Greql2Function {
+public class IsAcyclic extends AbstractGreql2Function {
+	{
+		JValueType[][] x = { {}, { JValueType.GRAPH } };
+		signatures = x;
+	}
 
 	public JValue evaluate(Graph graph, BooleanGraphMarker subgraph,
 			JValue[] arguments) throws EvaluateException {
-		if (arguments.length > 0) {
+		switch (checkArguments(arguments)) {
+		case 0:
+			break;
+		case 1:
 			subgraph = arguments[0].toSubgraphTempAttribute();
+			break;
+		default:
+			throw new WrongFunctionParameterException(this, null, arguments);
 		}
 
 		Queue<Vertex> queue = new ArrayDeque<Vertex>();
@@ -104,9 +116,7 @@ public class IsAcyclic implements Greql2Function {
 				}
 			}
 		}
-
 		return new JValue(vCount == 0);
-
 	}
 
 	public long getEstimatedCosts(ArrayList<Long> inElements) {
@@ -119,10 +129,6 @@ public class IsAcyclic implements Greql2Function {
 
 	public long getEstimatedCardinality(int inElements) {
 		return 1;
-	}
-
-	public String getExpectedParameters() {
-		return "([SubgraphTempAttribute])";
 	}
 
 }
