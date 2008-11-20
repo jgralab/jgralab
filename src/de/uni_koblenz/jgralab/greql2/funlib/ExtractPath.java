@@ -33,6 +33,7 @@ import de.uni_koblenz.jgralab.greql2.exception.EvaluateException;
 import de.uni_koblenz.jgralab.greql2.exception.WrongFunctionParameterException;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValuePathSystem;
+import de.uni_koblenz.jgralab.greql2.jvalue.JValueSet;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
 
 /**
@@ -92,6 +93,7 @@ public class ExtractPath extends AbstractGreql2Function {
 			break;
 		case 2:
 			length = arguments[1].toInteger();
+			break;
 		default:
 			throw new WrongFunctionParameterException(this, null, arguments);
 		}
@@ -102,7 +104,8 @@ public class ExtractPath extends AbstractGreql2Function {
 			return pathSystem.extractPath(vertex);
 		}
 		if (length != null) {
-			return pathSystem.extractPaths(length);
+			JValueSet paths = pathSystem.extractPaths(length);
+			return paths;
 		}
 		return pathSystem.extractPaths();
 	}

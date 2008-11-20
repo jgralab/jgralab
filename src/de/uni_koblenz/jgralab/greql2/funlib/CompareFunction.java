@@ -17,7 +17,7 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
 public abstract class CompareFunction extends AbstractGreql2Function {
 
 	protected enum CompareOperator {
-		GR_THAN, GR_EQUAL, LE_THAN, LE_EQUAL
+		GR_THAN, GR_EQUAL, LE_THAN, LE_EQUAL, NOT_EQUAL
 	}
 
 	{
@@ -43,6 +43,8 @@ public abstract class CompareFunction extends AbstractGreql2Function {
 				return new JValue(d1 <= d2);
 			case LE_THAN:
 				return new JValue(d1 < d2);
+			case NOT_EQUAL:
+				return new JValue(d1 != d2);
 			}
 			break;
 		case 1:
@@ -57,6 +59,8 @@ public abstract class CompareFunction extends AbstractGreql2Function {
 				return new JValue(s1.compareTo(s2) <= 0);
 			case LE_THAN:
 				return new JValue(s1.compareTo(s2) == -1);
+			case NOT_EQUAL:
+				return new JValue(s1.compareTo(s2) != 0);
 			}
 			break;
 		default:

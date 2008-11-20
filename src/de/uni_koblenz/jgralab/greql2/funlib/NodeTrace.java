@@ -25,8 +25,6 @@
 package de.uni_koblenz.jgralab.greql2.funlib;
 
 import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
 
 import de.uni_koblenz.jgralab.BooleanGraphMarker;
 import de.uni_koblenz.jgralab.Graph;
@@ -35,7 +33,7 @@ import de.uni_koblenz.jgralab.greql2.exception.EvaluateException;
 import de.uni_koblenz.jgralab.greql2.exception.WrongFunctionParameterException;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValueList;
-import de.uni_koblenz.jgralab.greql2.jvalue.JValuePath;
+import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
 
 /**
  * Calculates the nodetrace of the given path. A nodetrace is a List of all
@@ -64,21 +62,20 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValuePath;
  *
  */
 
-public class NodeTrace implements Greql2Function {
+public class NodeTrace extends AbstractGreql2Function {
+	{
+		JValueType[][] x = { { JValueType.PATH } };
+		signatures = x;
+	}
 
 	public JValue evaluate(Graph graph, BooleanGraphMarker subgraph,
 			JValue[] arguments) throws EvaluateException {
-		JValuePath p1;
-		try {
-			p1 = arguments[0].toPath();
-		} catch (Exception ex) {
+		if (checkArguments(arguments) == -1) {
 			throw new WrongFunctionParameterException(this, null, arguments);
 		}
-		List<Vertex> list = p1.nodeTrace();
-		Iterator<Vertex> iter = list.iterator();
+
 		JValueList resultList = new JValueList();
-		while (iter.hasNext()) {
-			Vertex v = iter.next();
+		for (Vertex v : arguments[0].toPath().nodeTrace()) {
 			resultList.add(new JValue(v));
 		}
 		return resultList;
@@ -94,10 +91,6 @@ public class NodeTrace implements Greql2Function {
 
 	public long getEstimatedCardinality(int inElements) {
 		return 1;
-	}
-
-	public String getExpectedParameters() {
-		return "(Path)";
 	}
 
 }

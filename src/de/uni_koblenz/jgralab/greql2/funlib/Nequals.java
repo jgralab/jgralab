@@ -24,14 +24,10 @@
 
 package de.uni_koblenz.jgralab.greql2.funlib;
 
-import java.util.ArrayList;
-
 import de.uni_koblenz.jgralab.BooleanGraphMarker;
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.greql2.exception.EvaluateException;
-import de.uni_koblenz.jgralab.greql2.exception.WrongFunctionParameterException;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
-import de.uni_koblenz.jgralab.greql2.jvalue.JValueBoolean;
 
 /**
  * Checks if two different objects are not equal.
@@ -62,37 +58,14 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueBoolean;
  *
  */
 
-public class Nequals implements Greql2Function {
+public class Nequals extends CompareFunction {
 
 	/**
 	 * checks if the two function parameters are semanticly identical
 	 */
 	public JValue evaluate(Graph graph, BooleanGraphMarker subgraph,
 			JValue[] arguments) throws EvaluateException {
-		if ((arguments == null) | (arguments.length < 2)) {
-			throw new WrongFunctionParameterException(this, null, arguments);
-		}
-		boolean value = arguments[0].equals(arguments[1]);
-		if (value) {
-			return new JValue(JValueBoolean.getFalseValue());
-		}
-		return new JValue(JValueBoolean.getTrueValue());
-	}
-
-	public long getEstimatedCosts(ArrayList<Long> inElements) {
-		return 2;
-	}
-
-	public double getSelectivity() {
-		return 0.95;
-	}
-
-	public long getEstimatedCardinality(int inElements) {
-		return 1;
-	}
-
-	public String getExpectedParameters() {
-		return "(Object, Object)";
+		return evaluate(arguments, CompareOperator.NOT_EQUAL);
 	}
 
 }

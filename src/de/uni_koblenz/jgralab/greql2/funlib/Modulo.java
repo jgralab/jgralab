@@ -31,6 +31,7 @@ import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.greql2.exception.EvaluateException;
 import de.uni_koblenz.jgralab.greql2.exception.WrongFunctionParameterException;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
+import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
 
 /**
  * Calculates the remainder of the integer-division (a / b) for given integer
@@ -38,8 +39,7 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
  * <dl>
  * <dt><b>GReQL-signature</b></dt>
  * <dd><code>INTEGER modulo(a: INTEGER, b: INTEGER)</code></dd>
- * <dd><code>INTEGER modulo(a: INTEGER, b: LONG)</code>
- * <dd>
+ * <dd><code>LONG modulo(a: INTEGER, b: LONG)</code>
  * <dd><code>LONG modulo(a: LONG, b: INTEGER)</code></dd>
  * <dd><code>LONG modulo(a: LONG, b: LONG)</code></dd>
  * <dd>&nbsp;</dd>
@@ -65,19 +65,22 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
  *
  */
 
-public class Modulo implements Greql2Function {
+public class Modulo extends AbstractGreql2Function {
+	{
+		JValueType[][] x = { { JValueType.LONG, JValueType.LONG },
+				{ JValueType.INTEGER, JValueType.INTEGER } };
+		signatures = x;
+	}
 
 	public JValue evaluate(Graph graph, BooleanGraphMarker subgraph,
 			JValue[] arguments) throws EvaluateException {
-		if (arguments.length != 2) {
-			throw new WrongFunctionParameterException(this, null, arguments);
-		}
-		Double a, b;
-		try {
-			a = arguments[0].toDouble();
-			b = arguments[1].toDouble();
-			return new JValue(a % b);
-		} catch (Exception ex) {
+		switch (checkArguments(arguments)) {
+		case 0:
+			return new JValue(arguments[0].toLong() % arguments[1].toLong());
+		case 1:
+			return new JValue(arguments[0].toInteger()
+					% arguments[1].toInteger());
+		default:
 			throw new WrongFunctionParameterException(this, null, arguments);
 		}
 	}
@@ -92,10 +95,6 @@ public class Modulo implements Greql2Function {
 
 	public long getEstimatedCardinality(int inElements) {
 		return 1;
-	}
-
-	public String getExpectedParameters() {
-		return "(Double, Double)";
 	}
 
 }
