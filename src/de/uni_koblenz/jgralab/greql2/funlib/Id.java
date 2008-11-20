@@ -33,6 +33,7 @@ import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.greql2.exception.EvaluateException;
 import de.uni_koblenz.jgralab.greql2.exception.WrongFunctionParameterException;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
+import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
 
 /**
  * Returns the id of the given graph-element. A graph-element is either a vertex
@@ -61,24 +62,25 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
  *
  */
 
-public class Id implements Greql2Function {
+public class Id extends AbstractGreql2Function {
+	{
+		JValueType[][] x = { { JValueType.VERTEX }, { JValueType.EDGE } };
+		signatures = x;
+	}
 
 	public JValue evaluate(Graph graph, BooleanGraphMarker subgraph,
 			JValue[] arguments) throws EvaluateException {
-		try {
-			if (arguments.length < 1) {
-				throw new WrongFunctionParameterException(this, null, arguments);
-			}
-			if (arguments[0].isVertex()) {
-				Vertex v = arguments[0].toVertex();
-				return new JValue(v.getId(), v);
-			} else {
-				Edge e = arguments[0].toEdge();
-				return new JValue(e.getId(), e);
-			}
-		} catch (Exception ex) {
+		switch (checkArguments(arguments)) {
+		case 0:
+			Vertex v = arguments[0].toVertex();
+			return new JValue(v.getId(), v);
+		case 1:
+			Edge e = arguments[0].toEdge();
+			return new JValue(e.getId(), e);
+		default:
 			throw new WrongFunctionParameterException(this, null, arguments);
 		}
+
 	}
 
 	public long getEstimatedCosts(ArrayList<Long> inElements) {
@@ -91,10 +93,6 @@ public class Id implements Greql2Function {
 
 	public long getEstimatedCardinality(int inElements) {
 		return 1;
-	}
-
-	public String getExpectedParameters() {
-		return "(Vertex or Edge)";
 	}
 
 }
