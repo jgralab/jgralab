@@ -33,8 +33,7 @@ import de.uni_koblenz.jgralab.greql2.exception.FunctionInvalidIndexException;
 import de.uni_koblenz.jgralab.greql2.exception.WrongFunctionParameterException;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValueCollection;
-import de.uni_koblenz.jgralab.greql2.jvalue.JValueList;
-import de.uni_koblenz.jgralab.greql2.jvalue.JValueTuple;
+import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
 
 /**
  * Returns the n-th element of the given list or tuple.
@@ -63,51 +62,25 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueTuple;
  * @author ist@uni-koblenz.de
  *
  */
-
-/*
- * Calculates the n-th element of a list or tuple and returns it
- *
- * @param structure a JValueList or JValueTuple to get the n. element for+
- *
- * @param index the index of the element in the structure to access @return the
- * element with the given index or a invlaid JValue @throw a
- * FunctionInvalidIndexException if the given structure doesn't contain a
- * element with the given index, for instance if one provides a list [1,2,3] and
- * tries to acces list[17] @author ist@uni-koblenz.de Summer 2006, Diploma
- * Thesis
- */
-
-public class NthElement implements Greql2Function {
+public class NthElement extends AbstractGreql2Function {
+	{
+		JValueType[][] x = { { JValueType.COLLECTION, JValueType.INTEGER } };
+		signatures = x;
+	}
 
 	public JValue evaluate(Graph graph, BooleanGraphMarker subgraph,
 			JValue[] arguments) throws EvaluateException {
-		if (arguments.length < 2) {
+		if (checkArguments(arguments) == -1) {
 			throw new WrongFunctionParameterException(this, null, arguments);
 		}
-		try {
-			int index = arguments[1].toInteger();
-			JValueCollection col = arguments[0].toCollection();
-			if (index >= col.size()) {
-				throw new FunctionInvalidIndexException(col.getClass()
-						.getName(), index, null);
-			}
-			if (col.isJValueList()) {
-				JValueList list = col.toJValueList();
-				return list.get(index);
-			}
-			// TODO shouldn't the if-block above and below be swaped? Is the
-			// block below necessary? Reason: JValueTuple is a specialisation of
-			// JValueList!
-			if (col.isJValueTuple()) {
-				JValueTuple tup = col.toJValueTuple();
-				return tup.get(index);
-			}
-			return new JValue();
-		} catch (Exception ex) { // JValueInvalidTypeException,
-			// NoSuchFieldException,
-			// IndexOutOfBoundsException
-			throw new WrongFunctionParameterException(this, null, arguments);
+		int index = arguments[1].toInteger();
+		JValueCollection col = arguments[0].toCollection();
+		if (index >= col.size()) {
+			throw new FunctionInvalidIndexException(col.getClass().getName(),
+					index, null);
 		}
+
+		return col.toJValueList().get(index);
 	}
 
 	public long getEstimatedCosts(ArrayList<Long> inElements) {
@@ -120,10 +93,6 @@ public class NthElement implements Greql2Function {
 
 	public long getEstimatedCardinality(int inElements) {
 		return 1;
-	}
-
-	public String getExpectedParameters() {
-		return "(JValueList or JValueTuple, integer )";
 	}
 
 }

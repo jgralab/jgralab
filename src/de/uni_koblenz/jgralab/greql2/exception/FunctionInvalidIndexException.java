@@ -32,9 +32,9 @@ import de.uni_koblenz.jgralab.greql2.schema.SourcePosition;
  * Should be thrown if the user tries to access a field of a type which doesn't
  * exists for this type, e.g. if the user tries to access vertex.color, but
  * vertex has no attribute color
- * 
+ *
  * @author ist@uni-koblenz.de
- * 
+ *
  */
 public class FunctionInvalidIndexException extends QuerySourceException {
 

@@ -36,7 +36,6 @@ import de.uni_koblenz.jgralab.GraphElement;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.greql2.exception.JValueInvalidTypeException;
 import de.uni_koblenz.jgralab.schema.AttributedElementClass;
-import de.uni_koblenz.jgralab.schema.GraphElementClass;
 
 public class JValuePathSystem extends JValue {
 
@@ -96,6 +95,7 @@ public class JValuePathSystem extends JValue {
 	/**
 	 * returns a JValuePathSystem-Reference to this JValue object
 	 */
+	@Override
 	public JValuePathSystem toPathSystem() throws JValueInvalidTypeException {
 		return this;
 	}
@@ -103,6 +103,7 @@ public class JValuePathSystem extends JValue {
 	/**
 	 * returns the hashcode of this PathSystem
 	 */
+	@Override
 	public int hashCode() {
 		if (hashvalue == 0) {
 			Iterator<Map.Entry<PathSystemKey, PathSystemEntry>> iter = keyToEntryMap
@@ -114,8 +115,9 @@ public class JValuePathSystem extends JValue {
 				PathSystemKey key = mapEntry.getKey();
 				hashvalue += key.hashCode() * 11 + thisEntry.hashCode() * 7;
 			}
-			if (hashvalue < 0)
+			if (hashvalue < 0) {
 				hashvalue = -hashvalue;
+			}
 		}
 		return hashvalue;
 	}
@@ -135,7 +137,7 @@ public class JValuePathSystem extends JValue {
 	/**
 	 * adds a vertex of the PathSystem which is described by the parameters to
 	 * the PathSystem
-	 * 
+	 *
 	 * @param vertex
 	 *            the vertex to add
 	 * @param stateNumber
@@ -149,8 +151,9 @@ public class JValuePathSystem extends JValue {
 		PathSystemEntry entry = new PathSystemEntry(null, null, -1, 0,
 				finalState);
 		keyToEntryMap.put(key, entry);
-		if (!vertexToFirstKeyMap.containsKey(vertex))
+		if (!vertexToFirstKeyMap.containsKey(vertex)) {
 			vertexToFirstKeyMap.put(vertex, key);
+		}
 		leafKeys = null;
 		hashvalue = 0;
 		rootVertex = vertex;
@@ -159,7 +162,7 @@ public class JValuePathSystem extends JValue {
 	/**
 	 * adds a vertex of the PathSystem which is described by the parameters to
 	 * the PathSystem
-	 * 
+	 *
 	 * @param vertex
 	 *            the vertex to add
 	 * @param stateNumber
@@ -183,8 +186,9 @@ public class JValuePathSystem extends JValue {
 			PathSystemEntry entry = new PathSystemEntry(parentVertex,
 					parentEdge, parentStateNumber, distance, finalState);
 			keyToEntryMap.put(key, entry);
-			if (!vertexToFirstKeyMap.containsKey(vertex))
+			if (!vertexToFirstKeyMap.containsKey(vertex)) {
 				vertexToFirstKeyMap.put(vertex, key);
+			}
 			leafKeys = null;
 		}
 	}
@@ -266,8 +270,9 @@ public class JValuePathSystem extends JValue {
 	 * Calculates the parent vertex of the given key in this PathSystem.
 	 */
 	public JValue parent(PathSystemKey key) {
-		if (key == null)
+		if (key == null) {
 			return new JValue();
+		}
 		PathSystemEntry entry = keyToEntryMap.get(key);
 		return new JValue(entry.getParentVertex(), entry.getParentVertex());
 	}
@@ -281,13 +286,12 @@ public class JValuePathSystem extends JValue {
 				.entrySet().iterator();
 		while (iter.hasNext()) {
 			Map.Entry<PathSystemKey, PathSystemEntry> entry = iter.next();
-			returnSet.add(new JValue((GraphElementClass) entry.getKey()
-					.getVertex().getAttributedElementClass(), entry.getKey()
-					.getVertex()));
+			returnSet.add(new JValue(entry.getKey().getVertex()
+					.getAttributedElementClass(), entry.getKey().getVertex()));
 			Edge e = entry.getValue().getParentEdge();
-			if (e != null)
-				returnSet.add(new JValue((GraphElementClass) e
-						.getAttributedElementClass(), e));
+			if (e != null) {
+				returnSet.add(new JValue(e.getAttributedElementClass(), e));
+			}
 		}
 		return returnSet;
 	}
@@ -301,9 +305,8 @@ public class JValuePathSystem extends JValue {
 				.entrySet().iterator();
 		while (iter.hasNext()) {
 			Map.Entry<PathSystemKey, PathSystemEntry> entry = iter.next();
-			returnSet.add(new JValue((GraphElementClass) entry.getKey()
-					.getVertex().getAttributedElementClass(), entry.getKey()
-					.getVertex()));
+			returnSet.add(new JValue(entry.getKey().getVertex()
+					.getAttributedElementClass(), entry.getKey().getVertex()));
 		}
 		return returnSet;
 	}
@@ -318,9 +321,9 @@ public class JValuePathSystem extends JValue {
 		while (iter.hasNext()) {
 			Map.Entry<PathSystemKey, PathSystemEntry> entry = iter.next();
 			Edge e = entry.getValue().getParentEdge();
-			if (e != null)
-				returnSet.add(new JValue((GraphElementClass) e
-						.getAttributedElementClass(), e));
+			if (e != null) {
+				returnSet.add(new JValue(e.getAttributedElementClass(), e));
+			}
 		}
 		return returnSet;
 	}
@@ -328,7 +331,7 @@ public class JValuePathSystem extends JValue {
 	/**
 	 * Checks, wether the given element (vertex or edge) is part of this
 	 * pathsystem
-	 * 
+	 *
 	 * @return true, if the element is part of this system, false otherwise
 	 */
 	public boolean contains(GraphElement elem) {
@@ -336,10 +339,12 @@ public class JValuePathSystem extends JValue {
 				.entrySet().iterator();
 		while (iter.hasNext()) {
 			Map.Entry<PathSystemKey, PathSystemEntry> entry = iter.next();
-			if (entry.getValue().getParentEdge() == elem)
+			if (entry.getValue().getParentEdge() == elem) {
 				return true;
-			if (entry.getKey().getVertex() == elem)
+			}
+			if (entry.getKey().getVertex() == elem) {
 				return true;
+			}
 		}
 		return false;
 	}
@@ -347,7 +352,7 @@ public class JValuePathSystem extends JValue {
 	/**
 	 * Checks, wether the pathsystem contains an element which has the given
 	 * type
-	 * 
+	 *
 	 * @return true, if the element is part of this system, false otherwise
 	 */
 	public boolean contains(AttributedElementClass type) {
@@ -355,10 +360,12 @@ public class JValuePathSystem extends JValue {
 				.entrySet().iterator();
 		while (iter.hasNext()) {
 			Map.Entry<PathSystemKey, PathSystemEntry> entry = iter.next();
-			if (entry.getValue().getParentEdge().getAttributedElementClass() == type)
+			if (entry.getValue().getParentEdge().getAttributedElementClass() == type) {
 				return true;
-			if (entry.getKey().getVertex().getAttributedElementClass() == type)
+			}
+			if (entry.getKey().getVertex().getAttributedElementClass() == type) {
 				return true;
+			}
 		}
 		return false;
 	}
@@ -366,7 +373,7 @@ public class JValuePathSystem extends JValue {
 	/**
 	 * Calculates the number of incomming or outgoing edges of the given vertex
 	 * which are part of this PathSystem
-	 * 
+	 *
 	 * @param vertex
 	 *            the vertex for which the number of edges gets counted
 	 * @param orientation
@@ -381,8 +388,9 @@ public class JValuePathSystem extends JValue {
 	 */
 	public int degree(Vertex vertex, boolean orientation,
 			JValueTypeCollection typeCol) {
-		if (vertex == null)
+		if (vertex == null) {
 			return -1;
+		}
 		int degree = 0;
 		Iterator<Map.Entry<PathSystemKey, PathSystemEntry>> iter = keyToEntryMap
 				.entrySet().iterator();
@@ -391,13 +399,15 @@ public class JValuePathSystem extends JValue {
 			if (orientation) {
 				if ((entry.getValue().getParentVertex() == vertex)
 						&& ((typeCol == null) || (typeCol.acceptsType(vertex
-								.getAttributedElementClass()))))
+								.getAttributedElementClass())))) {
 					degree++;
+				}
 			} else {
 				if ((entry.getKey().getVertex() == vertex)
 						&& ((typeCol == null) || (typeCol.acceptsType(vertex
-								.getAttributedElementClass()))))
+								.getAttributedElementClass())))) {
 					degree++;
+				}
 			}
 		}
 		return degree;
@@ -406,7 +416,7 @@ public class JValuePathSystem extends JValue {
 	/**
 	 * Calculates the number of incomming and outgoing edges of the given vertex
 	 * which are part of this PathSystem
-	 * 
+	 *
 	 * @param vertex
 	 *            the vertex for which the number of edges gets counted
 	 * @param typeCol
@@ -416,8 +426,9 @@ public class JValuePathSystem extends JValue {
 	 *         given vertex is not part of this pathsystem
 	 */
 	public int degree(Vertex vertex, JValueTypeCollection typeCol) {
-		if (vertex == null)
+		if (vertex == null) {
 			return -1;
+		}
 		int degree = 0;
 		Iterator<Map.Entry<PathSystemKey, PathSystemEntry>> iter = keyToEntryMap
 				.entrySet().iterator();
@@ -426,8 +437,9 @@ public class JValuePathSystem extends JValue {
 			if (((entry.getValue().getParentVertex() == vertex) || (entry
 					.getKey().getVertex() == vertex))
 					&& ((typeCol == null) || (typeCol.acceptsType(vertex
-							.getAttributedElementClass()))))
+							.getAttributedElementClass())))) {
 				degree++;
+			}
 		}
 		return degree;
 	}
@@ -435,7 +447,7 @@ public class JValuePathSystem extends JValue {
 	/**
 	 * Calculates the set of incomming or outgoing edges of the given vertex,
 	 * which are also part of this pathsystem
-	 * 
+	 *
 	 * @param vertex
 	 *            the vertex for which the edgeset will be created
 	 * @param orientation
@@ -447,18 +459,21 @@ public class JValuePathSystem extends JValue {
 	 */
 	public JValueSet edgesConnected(Vertex vertex, boolean orientation) {
 		JValueSet resultSet = new JValueSet();
-		if (vertex == null)
+		if (vertex == null) {
 			return resultSet;
+		}
 		Iterator<Map.Entry<PathSystemKey, PathSystemEntry>> iter = keyToEntryMap
 				.entrySet().iterator();
 		while (iter.hasNext()) {
 			Map.Entry<PathSystemKey, PathSystemEntry> entry = iter.next();
 			if (orientation) {
-				if (entry.getValue().getParentVertex() == vertex)
+				if (entry.getValue().getParentVertex() == vertex) {
 					resultSet.add(new JValue(entry.getValue().getParentEdge()));
+				}
 			} else {
-				if (entry.getKey().getVertex() == vertex)
+				if (entry.getKey().getVertex() == vertex) {
 					resultSet.add(new JValue(entry.getValue().getParentEdge()));
+				}
 			}
 		}
 		return resultSet;
@@ -467,7 +482,7 @@ public class JValuePathSystem extends JValue {
 	/**
 	 * Calculates the set of edges which are connected to the given vertex, and
 	 * which are also part of this pathsystem
-	 * 
+	 *
 	 * @param vertex
 	 *            the vertex for which the edgeset will be created
 	 * @return a set of edges connected to the given vertex or an empty set, if
@@ -475,16 +490,19 @@ public class JValuePathSystem extends JValue {
 	 */
 	public JValueSet edgesConnected(Vertex vertex) {
 		JValueSet resultSet = new JValueSet();
-		if (vertex == null)
+		if (vertex == null) {
 			return resultSet;
+		}
 		Iterator<Map.Entry<PathSystemKey, PathSystemEntry>> iter = keyToEntryMap
 				.entrySet().iterator();
 		while (iter.hasNext()) {
 			Map.Entry<PathSystemKey, PathSystemEntry> entry = iter.next();
-			if (entry.getValue().getParentVertex() == vertex)
+			if (entry.getValue().getParentVertex() == vertex) {
 				resultSet.add(new JValue(entry.getValue().getParentEdge()));
-			if (entry.getKey().getVertex() == vertex)
+			}
+			if (entry.getKey().getVertex() == vertex) {
 				resultSet.add(new JValue(entry.getValue().getParentEdge()));
+			}
 		}
 		return resultSet;
 	}
@@ -497,8 +515,9 @@ public class JValuePathSystem extends JValue {
 		for (Map.Entry<PathSystemKey, PathSystemEntry> mapEntry : keyToEntryMap
 				.entrySet()) {
 			PathSystemEntry thisEntry = mapEntry.getValue();
-			if (thisEntry.getParentEdge() != null)
+			if (thisEntry.getParentEdge() != null) {
 				resultSet.add(new JValue(thisEntry.getParentEdge()));
+			}
 		}
 		return resultSet;
 	}
@@ -568,8 +587,9 @@ public class JValuePathSystem extends JValue {
 	 * create the set of leave keys
 	 */
 	private void createLeafKeys() {
-		if (leafKeys != null)
+		if (leafKeys != null) {
 			return;
+		}
 		leafKeys = new ArrayList<PathSystemKey>();
 		Iterator<Map.Entry<PathSystemKey, PathSystemEntry>> iter = keyToEntryMap
 				.entrySet().iterator();
@@ -586,21 +606,22 @@ public class JValuePathSystem extends JValue {
 	 * given vertex from the PathSystem. If the given vertex exists more than
 	 * one times in this pathsystem, the first occurence if used. If the given
 	 * vertex is not part of this pathsystem, null will be returned
-	 * 
+	 *
 	 * @param vertex
 	 * @return a Path from rootVertex to given vertex
 	 */
 	public JValuePath extractPath(Vertex vertex) throws JValuePathException {
 		PathSystemKey key = vertexToFirstKeyMap.get(vertex);
-		if (key == null)
+		if (key == null) {
 			return new JValuePath((Vertex) null);
+		}
 		return extractPath(key);
 	}
 
 	/**
 	 * Extract the path which starts with the root vertex and ends with the
 	 * given vertex from the PathSystem.
-	 * 
+	 *
 	 * @param key
 	 *            the pair (Vertex, Statenumber) which is the target of the path
 	 * @return a Path from rootVertex to given vertex
@@ -623,13 +644,14 @@ public class JValuePathSystem extends JValue {
 	/**
 	 * Extract the set of paths which are part of this path system. These paths
 	 * start with the root vertex and ends with a leave.
-	 * 
+	 *
 	 * @return a set of Paths from rootVertex to leaves
 	 */
 	public JValueSet extractPaths() throws JValuePathException {
 		JValueSet pathSet = new JValueSet();
-		if (leafKeys == null)
+		if (leafKeys == null) {
 			createLeafKeys();
+		}
 		Iterator<PathSystemKey> iter = leafKeys.iterator();
 		while (iter.hasNext()) {
 			JValuePath path = extractPath(iter.next());
@@ -640,18 +662,20 @@ public class JValuePathSystem extends JValue {
 
 	/**
 	 * Extracts all paths which length equal to <code>len</code>
-	 * 
+	 *
 	 * @return a set of Paths from rootVertex to leaves
 	 */
 	public JValueSet extractPaths(int len) throws JValuePathException {
 		JValueSet pathSet = new JValueSet();
-		if (leafKeys == null)
+		if (leafKeys == null) {
 			createLeafKeys();
+		}
 		Iterator<PathSystemKey> iter = leafKeys.iterator();
 		while (iter.hasNext()) {
 			JValuePath path = extractPath(iter.next());
-			if (path.pathLength() == len)
+			if (path.pathLength() == len) {
 				pathSet.add(path);
+			}
 		}
 		return pathSet;
 	}
@@ -673,8 +697,9 @@ public class JValuePathSystem extends JValue {
 				.entrySet().iterator();
 		while (iter.hasNext()) {
 			PathSystemEntry thisEntry = iter.next().getValue();
-			if (thisEntry.getDistanceToRoot() > maxdepth)
+			if (thisEntry.getDistanceToRoot() > maxdepth) {
 				maxdepth = thisEntry.getDistanceToRoot();
+			}
 		}
 		return maxdepth;
 	}
@@ -683,7 +708,7 @@ public class JValuePathSystem extends JValue {
 	 * Calculates the distance between the root vertex of this path system and
 	 * the given vertex If the given vertices is part of the pathsystem more
 	 * than one times, the first occurence is used
-	 * 
+	 *
 	 * @return the distance or -1 if the given vertex is not part of this path
 	 *         system
 	 */
@@ -695,13 +720,14 @@ public class JValuePathSystem extends JValue {
 	/**
 	 * Calculates the distance between the root vertex of this path system and
 	 * the given key
-	 * 
+	 *
 	 * @return the distance or -1 if the given vertex is not part of this path
 	 *         system.
 	 */
 	public int distance(PathSystemKey key) {
-		if (key == null) // given vertex is not in this pathsystem
+		if (key == null) {
 			return -1;
+		}
 		PathSystemEntry entry = keyToEntryMap.get(key);
 		return entry.getDistanceToRoot();
 	}
@@ -712,14 +738,16 @@ public class JValuePathSystem extends JValue {
 	 * pathsystem
 	 */
 	public int minPathLength() {
-		if (leafKeys == null)
+		if (leafKeys == null) {
 			createLeafKeys();
+		}
 		int minDistance = Integer.MAX_VALUE;
 		Iterator<PathSystemKey> iter = leafKeys.iterator();
 		while (iter.hasNext()) {
 			PathSystemEntry entry = keyToEntryMap.get(iter.next());
-			if (entry.getDistanceToRoot() < minDistance)
+			if (entry.getDistanceToRoot() < minDistance) {
 				minDistance = entry.getDistanceToRoot();
+			}
 		}
 		return minDistance;
 	}
@@ -729,14 +757,16 @@ public class JValuePathSystem extends JValue {
 	 * root vertex, this is the length of the longest path in this pathsystem
 	 */
 	public int maxPathLength() {
-		if (leafKeys == null)
+		if (leafKeys == null) {
 			createLeafKeys();
+		}
 		int maxDistance = 0;
 		Iterator<PathSystemKey> iter = leafKeys.iterator();
 		while (iter.hasNext()) {
 			PathSystemEntry entry = keyToEntryMap.get(iter.next());
-			if (entry.getDistanceToRoot() > maxDistance)
+			if (entry.getDistanceToRoot() > maxDistance) {
 				maxDistance = entry.getDistanceToRoot();
+			}
 		}
 		return maxDistance;
 	}
@@ -762,16 +792,19 @@ public class JValuePathSystem extends JValue {
 	 *         keys is not part of this pathsystem, false is returned
 	 */
 	public boolean isNeighbour(PathSystemKey key1, PathSystemKey key2) {
-		if ((key1 == null) || (key2 == null))
+		if ((key1 == null) || (key2 == null)) {
 			return false;
+		}
 		PathSystemEntry entry1 = keyToEntryMap.get(key1);
 		PathSystemEntry entry2 = keyToEntryMap.get(key2);
 		if ((entry1.getParentVertex() == key2.getVertex())
-				&& (entry1.getParentStateNumber() == key2.getStateNumber()))
+				&& (entry1.getParentStateNumber() == key2.getStateNumber())) {
 			return true;
+		}
 		if ((entry2.getParentVertex() == key1.getVertex())
-				&& (entry2.getParentStateNumber() == key1.getStateNumber()))
+				&& (entry2.getParentStateNumber() == key1.getStateNumber())) {
 			return true;
+		}
 		return false;
 	}
 
@@ -795,14 +828,16 @@ public class JValuePathSystem extends JValue {
 	 *         keys is not part of this pathsystem, false is returned
 	 */
 	public boolean isSibling(PathSystemKey key1, PathSystemKey key2) {
-		if ((key1 == null) || (key2 == null))
+		if ((key1 == null) || (key2 == null)) {
 			return false;
+		}
 		PathSystemEntry entry1 = keyToEntryMap.get(key1);
 		PathSystemEntry entry2 = keyToEntryMap.get(key2);
 		if ((entry1.getParentVertex() == entry2.getParentVertex())
 				&& (entry1.getParentStateNumber() == entry2
-						.getParentStateNumber()))
+						.getParentStateNumber())) {
 			return true;
+		}
 		return false;
 	}
 
@@ -811,10 +846,12 @@ public class JValuePathSystem extends JValue {
 	 *         otherwise
 	 */
 	public boolean containsPath(JValuePath path) {
-		if (path.getStartVertex() != rootVertex)
+		if (path.getStartVertex() != rootVertex) {
 			return false;
-		if (leafKeys == null)
+		}
+		if (leafKeys == null) {
 			createLeafKeys();
+		}
 		Iterator<PathSystemKey> iter = leafKeys.iterator();
 		while (iter.hasNext()) {
 			PathSystemKey key = iter.next();
@@ -823,8 +860,9 @@ public class JValuePathSystem extends JValue {
 					&& (key.getVertex() == path.getEndVertex())) {
 				try {
 					JValuePath entryPath = extractPath(path.getEndVertex());
-					if (entryPath.isSubPathOf(path))
+					if (entryPath.isSubPathOf(path)) {
 						return true;
+					}
 				} catch (JValuePathException ex) {
 					ex.printStackTrace();
 				}
@@ -852,6 +890,7 @@ public class JValuePathSystem extends JValue {
 	/**
 	 * returns a string representation of this path system
 	 */
+	@Override
 	public String toString() {
 		StringBuffer returnString = new StringBuffer("PathSystem: \n");
 		try {
@@ -902,6 +941,7 @@ public class JValuePathSystem extends JValue {
 	/**
 	 * accepts te given visitor to visit this jvalue
 	 */
+	@Override
 	public void accept(JValueVisitor v) {
 		v.visitPathSystem(this);
 	}
