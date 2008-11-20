@@ -26,13 +26,15 @@ package de.uni_koblenz.jgralab.greql2.funlib;
 
 import java.util.ArrayList;
 
+import de.uni_koblenz.jgralab.AttributedElement;
 import de.uni_koblenz.jgralab.BooleanGraphMarker;
 import de.uni_koblenz.jgralab.Graph;
-import de.uni_koblenz.jgralab.GraphElement;
 import de.uni_koblenz.jgralab.greql2.exception.EvaluateException;
 import de.uni_koblenz.jgralab.greql2.exception.WrongFunctionParameterException;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
+import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValueTypeCollection;
+import de.uni_koblenz.jgralab.schema.AttributedElementClass;
 
 /**
  * Checks if the given edge or vertex has the given type. The type can be given
@@ -67,36 +69,51 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueTypeCollection;
  *
  */
 
-public class HasType implements Greql2Function {
+public class HasType extends AbstractGreql2Function {
+	{
+		JValueType[][] x = {
+				{ JValueType.ATTRIBUTEDELEMENT, JValueType.STRING },
+				{ JValueType.ATTRIBUTEDELEMENT,
+						JValueType.ATTRIBUTEDELEMENTCLASS },
+				{ JValueType.ATTRIBUTEDELEMENT, JValueType.TYPECOLLECTION } };
+		signatures = x;
+	}
 
 	public JValue evaluate(Graph graph, BooleanGraphMarker subgraph,
 			JValue[] arguments) throws EvaluateException {
-		GraphElement elem = null;
-		String typeName;
-		try {
-			if (arguments[0].isVertex()) {
-				elem = arguments[0].toVertex();
-			} else {
-				elem = arguments[0].toEdge();
-			}
-			if (arguments[1].isJValueTypeCollection()) {
-				JValueTypeCollection typeCollection = arguments[1]
-						.toJValueTypeCollection();
-				return new JValue(typeCollection.acceptsType(elem
-						.getAttributedElementClass()));
-			} else {
-				if (arguments[1].isAttributedElementClass()) {
-					typeName = arguments[1].toAttributedElementClass()
-							.getQualifiedName();
-				} else {
-					typeName = arguments[1].toString();
-				}
-				return new JValue(elem.getAttributedElementClass()
-						.getQualifiedName().equals(typeName), elem);
-			}
-		} catch (Exception ex) {
+		String typeName = null;
+		AttributedElementClass aeClass = null;
+		JValueTypeCollection typeCollection = null;
+		switch (checkArguments(arguments)) {
+		case 0:
+			typeName = arguments[1].toString();
+			System.out.println("0: " + typeName);
+			break;
+		case 1:
+			aeClass = arguments[1].toAttributedElementClass();
+			System.out.println("1: " + aeClass);
+			break;
+		case 2:
+			typeCollection = arguments[1].toJValueTypeCollection();
+			System.out.println("2: " + typeCollection);
+			break;
+		default:
 			throw new WrongFunctionParameterException(this, null, arguments);
 		}
+		AttributedElement elem = arguments[0].toAttributedElement();
+
+		if (typeCollection != null) {
+			return new JValue(typeCollection.acceptsType(elem
+					.getAttributedElementClass()), elem);
+		}
+
+		if (aeClass != null) {
+			return new JValue(elem.getAttributedElementClass() == aeClass, elem);
+		}
+
+		return new JValue(elem.getAttributedElementClass().getQualifiedName()
+				.equals(typeName), elem);
+
 	}
 
 	public long getEstimatedCosts(ArrayList<Long> inElements) {
@@ -109,10 +126,6 @@ public class HasType implements Greql2Function {
 
 	public long getEstimatedCardinality(int inElements) {
 		return 1;
-	}
-
-	public String getExpectedParameters() {
-		return "(Vertex or Edge, Type or String)";
 	}
 
 }

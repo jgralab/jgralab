@@ -1045,75 +1045,93 @@ public class JValue implements Comparable<JValue> {
 	 *         type, false otherwise
 	 */
 	public boolean canConvert(JValueType atype) {
+		return conversionCosts(atype) >= 0;
+	}
+
+	/**
+	 * @param atype
+	 *            a {@link JValueType}
+	 * @return -1 it the encapsulated value cannot be converted to
+	 *         <code>atype</code>, 0 if the value is-a <code>atype</code> and
+	 *         the conversion costs in all other cases.
+	 *
+	 *         Conversion to string and object are expensive, so that in GReQL
+	 *         functions the most special is used independently of the
+	 *         declaration order.
+	 */
+	public int conversionCosts(JValueType atype) {
 		if (this.type == atype) {
-			return true;
+			return 0;
 		}
 		if (atype == JValueType.STRING) {
 			// String representation
-			return true;
+			return 100;
 		}
 		if (atype == JValueType.OBJECT) {
-			return true;
+			return 100;
 		}
 		switch (this.type) {
 		case BOOLEAN:
-			return false;
+			return -1;
 		case CHARACTER:
 			switch (atype) {
 			case STRING:
-				return true;
+				return 1;
 			default:
-				return false;
+				return -1;
 			}
 		case INTEGER:
 			switch (atype) {
 			case LONG:
+				return 1;
 			case NUMBER:
+				return 0;
 			case DOUBLE:
-				return true;
+				return 2;
 			default:
-				return false;
+				return -1;
 			}
 		case LONG:
 			switch (atype) {
 			case DOUBLE:
+				return 2;
 			case NUMBER:
-				return true;
+				return 0;
 			default:
-				return false;
+				return -1;
 			}
 		case DOUBLE:
 			switch (atype) {
 			case NUMBER:
-				return true;
+				return 0;
 			default:
-				return false;
+				return -1;
 			}
 		case VERTEX:
 			switch (atype) {
 			case ATTRIBUTEDELEMENT:
-				return true;
+				return 0;
 			default:
-				return false;
+				return -1;
 			}
 		case EDGE:
 			switch (atype) {
 			case ATTRIBUTEDELEMENT:
-				return true;
+				return 0;
 			default:
-				return false;
+				return -1;
 			}
 		case GRAPH:
 			switch (atype) {
 			case ATTRIBUTEDELEMENT:
-				return true;
+				return 0;
 			default:
-				return false;
+				return -1;
 			}
 		case OBJECT:
-			return true;
+			return 5;
 		}
-		return false;
+		return -1;
 	}
 
 	/**
