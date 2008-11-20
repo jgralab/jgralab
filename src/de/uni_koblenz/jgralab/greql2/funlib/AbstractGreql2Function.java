@@ -33,14 +33,21 @@ public abstract class AbstractGreql2Function implements Greql2Function {
 			}
 			int conversionCosts = 0;
 			for (int j = 0; j < signatures[i].length; j++) {
-				conversionCosts += args[j].conversionCosts(signatures[i][j]);
+				int thisArgsCosts = args[j].conversionCosts(signatures[i][j]);
+				if (thisArgsCosts == -1) {
+					// conversion is not possible
+					conversionCosts = Integer.MAX_VALUE;
+					break;
+				}
+				conversionCosts += thisArgsCosts;
 			}
 			if (conversionCosts == 0) {
 				// this signature was a perfect match!
 				return i;
 			} else if (conversionCosts > 0
 					&& conversionCosts < indexAndCosts[1]) {
-				// this signature can at least be converted
+				// this signature can at least be converted and is the best till
+				// now
 				indexAndCosts[0] = i;
 				indexAndCosts[1] = conversionCosts;
 			}

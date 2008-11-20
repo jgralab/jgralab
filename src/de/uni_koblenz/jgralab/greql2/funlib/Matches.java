@@ -34,7 +34,6 @@ import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.greql2.evaluator.fa.DFA;
-import de.uni_koblenz.jgralab.greql2.evaluator.fa.NFA;
 import de.uni_koblenz.jgralab.greql2.evaluator.fa.State;
 import de.uni_koblenz.jgralab.greql2.evaluator.fa.Transition;
 import de.uni_koblenz.jgralab.greql2.exception.EvaluateException;
@@ -42,6 +41,7 @@ import de.uni_koblenz.jgralab.greql2.exception.WrongFunctionParameterException;
 import de.uni_koblenz.jgralab.greql2.funlib.pathsearch.PathSystemQueueEntry;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValuePath;
+import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
 
 /**
  * Checks if the given dfa matches the given path. A dfa is defined as regular
@@ -72,23 +72,30 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValuePath;
  *
  */
 
-public class Matches implements Greql2Function {
+public class Matches extends AbstractGreql2Function {
+
+	{
+		JValueType[][] x = { { JValueType.PATH, JValueType.DFA },
+				{ JValueType.PATH, JValueType.NFA } };
+		signatures = x;
+	}
 
 	public JValue evaluate(Graph graph, BooleanGraphMarker subgraph,
 			JValue[] arguments) throws EvaluateException {
-		JValuePath path;
-		DFA dfa;
-		try {
-			path = arguments[0].toPath();
-			if (arguments[1].isNFA()) {
-				NFA nfa = arguments[1].toNFA();
-				dfa = new DFA(nfa);
-			} else {
-				dfa = arguments[1].toDFA();
-			}
-		} catch (Exception ex) {
+		DFA dfa = null;
+		switch (checkArguments(arguments)) {
+		case 0:
+			dfa = arguments[1].toDFA();
+			break;
+		case 1:
+			dfa = new DFA(arguments[1].toNFA());
+			break;
+		default:
 			throw new WrongFunctionParameterException(this, null, arguments);
 		}
+
+		JValuePath path = arguments[0].toPath();
+
 		Queue<PathSystemQueueEntry> queue = new LinkedList<PathSystemQueueEntry>();
 		PathSystemQueueEntry currentEntry = new PathSystemQueueEntry(path
 				.getStartVertex(), dfa.initialState, null, null, 0);
@@ -135,10 +142,6 @@ public class Matches implements Greql2Function {
 
 	public long getEstimatedCardinality(int inElements) {
 		return 1;
-	}
-
-	public String getExpectedParameters() {
-		return "(JValuePath, DFA or NFA)";
 	}
 
 }
