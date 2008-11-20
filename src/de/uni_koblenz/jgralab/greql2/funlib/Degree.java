@@ -24,19 +24,11 @@
 
 package de.uni_koblenz.jgralab.greql2.funlib;
 
-import java.util.ArrayList;
-
 import de.uni_koblenz.jgralab.BooleanGraphMarker;
-import de.uni_koblenz.jgralab.Edge;
+import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.Graph;
-import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.greql2.exception.EvaluateException;
-import de.uni_koblenz.jgralab.greql2.exception.WrongFunctionParameterException;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
-import de.uni_koblenz.jgralab.greql2.jvalue.JValuePath;
-import de.uni_koblenz.jgralab.greql2.jvalue.JValuePathSystem;
-import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
-import de.uni_koblenz.jgralab.greql2.jvalue.JValueTypeCollection;
 
 /**
  * Returns the number of edges, which are connected to the given vertex and
@@ -74,76 +66,11 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueTypeCollection;
  * @author ist@uni-koblenz.de
  */
 
-public class Degree extends AbstractGreql2Function {
-	{
-		JValueType[][] x = {
-				{ JValueType.VERTEX },
-				{ JValueType.VERTEX, JValueType.TYPECOLLECTION },
-				{ JValueType.VERTEX, JValueType.PATH },
-				{ JValueType.VERTEX, JValueType.PATHSYSTEM },
-				{ JValueType.VERTEX, JValueType.PATHSYSTEM,
-						JValueType.TYPECOLLECTION } };
-		signatures = x;
-	}
+public class Degree extends DegreeFunction {
 
 	public JValue evaluate(Graph graph, BooleanGraphMarker subgraph,
 			JValue[] arguments) throws EvaluateException {
-		JValueTypeCollection typeCol = null;
-		JValuePathSystem pathSystem = null;
-		JValuePath path = null;
-		Vertex vertex = null;
-		switch (checkArguments(arguments)) {
-		case 0:
-			break;
-		case 1:
-			typeCol = arguments[1].toJValueTypeCollection();
-			break;
-		case 2:
-			path = arguments[1].toPath();
-			break;
-		case 4:
-			typeCol = arguments[2].toJValueTypeCollection();
-		case 3:
-			pathSystem = arguments[1].toPathSystem();
-			break;
-		default:
-			throw new WrongFunctionParameterException(this, null, arguments);
-		}
-		vertex = arguments[0].toVertex();
-
-		if (path == null && pathSystem == null) {
-			if (typeCol == null) {
-				return new JValue(vertex.getDegree());
-			} else {
-				Edge inc = vertex.getFirstEdge();
-				int count = 0;
-				while (inc != null) {
-					if ((subgraph == null || subgraph.isMarked(inc))
-							&& typeCol.acceptsType(inc
-									.getAttributedElementClass())) {
-						count++;
-					}
-					inc = inc.getNextEdge();
-				}
-				return new JValue(count);
-			}
-		}
-		if (path == null) {
-			return new JValue(pathSystem.degree(vertex, typeCol));
-		}
-		return new JValue(path.degree(vertex));
-	}
-
-	public long getEstimatedCosts(ArrayList<Long> inElements) {
-		return 10;
-	}
-
-	public double getSelectivity() {
-		return 1;
-	}
-
-	public long getEstimatedCardinality(int inElements) {
-		return 1;
+		return evaluate(subgraph, arguments, EdgeDirection.INOUT);
 	}
 
 }
