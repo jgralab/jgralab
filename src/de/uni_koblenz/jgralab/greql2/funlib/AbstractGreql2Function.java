@@ -24,27 +24,28 @@ public abstract class AbstractGreql2Function implements Greql2Function {
 	 *         <code>args</code>
 	 */
 	protected final int checkArguments(JValue[] args) {
+		int[] indexAndCosts = { -1, Integer.MAX_VALUE };
 		for (int i = 0; i < signatures.length; i++) {
 			if (signatures[i].length != args.length) {
 				// The current arglist has another length than the given one, so
 				// it cannot match.
 				continue;
 			}
-			boolean mismatchFound = false;
-			for (int j = 0; j < args.length; j++) {
-				if (!args[j].canConvert(signatures[i][j])) {
-					mismatchFound = true;
-					break;
-				}
+			int conversionCosts = 0;
+			for (int j = 0; j < signatures[i].length; j++) {
+				conversionCosts += args[j].conversionCosts(signatures[i][j]);
 			}
-			if (mismatchFound) {
-				continue;
+			if (conversionCosts == 0) {
+				// this signature was a perfect match!
+				return i;
+			} else if (conversionCosts > 0
+					&& conversionCosts < indexAndCosts[1]) {
+				// this signature can at least be converted
+				indexAndCosts[0] = i;
+				indexAndCosts[1] = conversionCosts;
 			}
-			// Ok, formal argument list number i matches the given
-			// input.
-			return i;
 		}
-		return -1;
+		return indexAndCosts[0];
 	}
 
 	@Override
