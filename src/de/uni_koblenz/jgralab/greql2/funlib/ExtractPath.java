@@ -102,9 +102,9 @@ public class ExtractPath extends AbstractGreql2Function {
 			return pathSystem.extractPath(vertex);
 		}
 		if (length != null) {
-			return pathSystem.extractPath(length);
+			return pathSystem.extractPaths(length);
 		}
-		return pathSystem.extractPath();
+		return pathSystem.extractPaths();
 	}
 
 	public long getEstimatedCosts(ArrayList<Long> inElements) {
