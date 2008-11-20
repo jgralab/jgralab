@@ -32,6 +32,7 @@ import de.uni_koblenz.jgralab.greql2.exception.EvaluateException;
 import de.uni_koblenz.jgralab.greql2.exception.WrongFunctionParameterException;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValueSet;
+import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
 
 /**
  * Checks if the first given set is a subset of the second given set. That
@@ -63,25 +64,23 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueSet;
  * @author ist@uni-koblenz.de
  *
  */
+public class IsSubSet extends AbstractGreql2Function {
 
-/*
- * Gets two sets as parameter and returns true, if the first set is part of the
- * second set
- *
- * @param set1 @param set2 @return true, is set1 is a subset (or even equal) of
- * set2 @author ist@uni-koblenz.de Thesis
- */
-public class IsSubSet implements Greql2Function {
+	{
+		JValueType[][] x = { { JValueType.COLLECTION, JValueType.COLLECTION } };
+		signatures = x;
+	}
 
 	public JValue evaluate(Graph graph, BooleanGraphMarker subgraph,
 			JValue[] arguments) throws EvaluateException {
-		try {
-			JValueSet firstSet = arguments[0].toCollection().toJValueSet();
-			JValueSet secondSet = arguments[1].toCollection().toJValueSet();
-			return new JValue(firstSet.isSubset(secondSet));
-		} catch (Exception ex) {
+		if (checkArguments(arguments) == -1) {
 			throw new WrongFunctionParameterException(this, null, arguments);
 		}
+
+		JValueSet firstSet = arguments[0].toCollection().toJValueSet();
+		JValueSet secondSet = arguments[1].toCollection().toJValueSet();
+		return new JValue(firstSet.isSubset(secondSet));
+
 	}
 
 	public long getEstimatedCosts(ArrayList<Long> inElements) {
@@ -98,10 +97,6 @@ public class IsSubSet implements Greql2Function {
 
 	public long getEstimatedCardinality(int inElements) {
 		return 1;
-	}
-
-	public String getExpectedParameters() {
-		return "(Set, Set)";
 	}
 
 }
