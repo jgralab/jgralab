@@ -50,9 +50,9 @@ import de.uni_koblenz.jgralab.greql2.schema.TypeId;
 
 /**
  * Evaluates a FunctionApplication vertex in the GReQL-2 Syntaxgraph
- * 
+ *
  * @author ist@uni-koblenz.de
- * 
+ *
  */
 public class FunctionApplicationEvaluator extends VertexEvaluator {
 
@@ -88,8 +88,9 @@ public class FunctionApplicationEvaluator extends VertexEvaluator {
 
 	/*
 	 * (non-Javadoc)
-	 * 
-	 * @see de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.VertexEvaluator#getLoggingName()
+	 *
+	 * @seede.uni_koblenz.jgralab.greql2.evaluator.vertexeval.VertexEvaluator#
+	 * getLoggingName()
 	 */
 	@Override
 	public String getLoggingName() {
@@ -186,15 +187,18 @@ public class FunctionApplicationEvaluator extends VertexEvaluator {
 			typeArgument = createTypeArgument();
 			parameterEvaluators = createVertexEvaluatorList();
 			int parameterCount = parameterEvaluators.size();
-			if (typeArgument != null)
+			if (typeArgument != null) {
 				parameterCount++;
+			}
 			parameters = new JValue[parameterCount];
-			if (typeArgument != null)
+			if (typeArgument != null) {
 				parameters[parameterCount - 1] = typeArgument;
+			}
 			Greql2Function func = getGreql2Function();
-			if (func == null)
+			if (func == null) {
 				throw new UndefinedFunctionException(functionName,
 						createPossibleSourcePositions());
+			}
 		}
 
 		for (int i = 0; i < parameterEvaluators.size(); i++) {

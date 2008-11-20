@@ -49,9 +49,9 @@ import de.uni_koblenz.jgralab.greql2.schema.Variable;
 
 /**
  * Evaluates a Declaration vertex in the GReQL-2 Syntaxgraph
- * 
+ *
  * @author ist@uni-koblenz.de
- * 
+ *
  */
 public class DeclarationEvaluator extends VertexEvaluator {
 
@@ -101,8 +101,9 @@ public class DeclarationEvaluator extends VertexEvaluator {
 				}
 			}
 		}
-		if (newSubgraph == null)
+		if (newSubgraph == null) {
 			newSubgraph = subgraph;
+		}
 		ArrayList<VertexEvaluator> constraintList = new ArrayList<VertexEvaluator>();
 		IsConstraintOf consInc = vertex
 				.getFirstIsConstraintOf(EdgeDirection.IN);
@@ -110,8 +111,9 @@ public class DeclarationEvaluator extends VertexEvaluator {
 			VertexEvaluator curEval = greqlEvaluator
 					.getVertexEvaluatorGraphMarker()
 					.getMark(consInc.getAlpha());
-			if (curEval != null)
+			if (curEval != null) {
 				constraintList.add(curEval);
+			}
 			consInc = consInc.getNextIsConstraintOf(EdgeDirection.IN);
 		}
 		VariableDeclarationLayer declarationLayer = new VariableDeclarationLayer(
@@ -124,9 +126,10 @@ public class DeclarationEvaluator extends VertexEvaluator {
 					.getVertexEvaluatorGraphMarker().getMark(simpleDecl);
 			try {
 				JValue simpleResult = simpleDeclEval.getResult(newSubgraph);
-				if (simpleResult == null)
+				if (simpleResult == null) {
 					throw new EvaluateException(
 							"Error creating variable declaration layer, one of the simple declarations returned a nullpointer");
+				}
 				JValueCollection resultCollection = simpleResult.toCollection();
 				Iterator<JValue> iter = resultCollection.iterator();
 				while (iter.hasNext()) {
