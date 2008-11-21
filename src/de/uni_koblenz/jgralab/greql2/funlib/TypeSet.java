@@ -25,16 +25,14 @@
 package de.uni_koblenz.jgralab.greql2.funlib;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 
 import de.uni_koblenz.jgralab.BooleanGraphMarker;
 import de.uni_koblenz.jgralab.Graph;
-import de.uni_koblenz.jgralab.GraphElement;
 import de.uni_koblenz.jgralab.greql2.exception.EvaluateException;
 import de.uni_koblenz.jgralab.greql2.exception.WrongFunctionParameterException;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
-import de.uni_koblenz.jgralab.greql2.jvalue.JValueCollection;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValueSet;
+import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
 
 /**
  * Returns a set of all types that occure in the given structure.
@@ -63,47 +61,34 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueSet;
  * @author ist@uni-koblenz.de
  *
  */
+public class TypeSet extends AbstractGreql2Function {
 
-/*
- * returns a set of the types of the elements in the given structure
- *
- * @param structure a JValueCollection, Path or Pathsystem @return a JValueSet,
- * which contains all types that exist in the given structure
- *
- * @author ist@uni-koblenz.de
- */
-
-public class TypeSet implements Greql2Function {
+	{
+		JValueType[][] x = { { JValueType.COLLECTION }, { JValueType.PATH },
+				{ JValueType.PATHSYSTEM } };
+		signatures = x;
+	}
 
 	public JValue evaluate(Graph graph, BooleanGraphMarker subgraph,
 			JValue[] arguments) throws EvaluateException {
-		try {
-			if (arguments[0].isCollection()) {
-				JValueSet resultSet = new JValueSet();
-				JValueCollection collection = arguments[0].toCollection();
-				Iterator<JValue> iter = collection.iterator();
-				while (iter.hasNext()) {
-					JValue value = iter.next();
-					GraphElement elem;
-					if (value.isVertex()) {
-						elem = value.toVertex();
-					} else {
-						elem = value.toEdge();
-					}
-					resultSet.add(new JValue(elem.getAttributedElementClass(),
-							elem));
+		switch (checkArguments(arguments)) {
+		case 0:
+			JValueSet resultSet = new JValueSet();
+			for (JValue v : arguments[0].toCollection()) {
+				if (!v.isAttributedElement()) {
+					throw new EvaluateException(
+							"Cannot calculate the typeSet for a collection that"
+									+ " doesn't contain attributed elements.");
 				}
-				return resultSet;
+				resultSet.add(new JValue(v.toAttributedElement()
+						.getAttributedElementClass(), v.toAttributedElement()));
 			}
-			if (arguments[0].isPathSystem()) {
-				return arguments[0].toPathSystem().types();
-			}
-			if (arguments[0].isPath()) {
-				return arguments[0].toPath().types();
-			}
-			return null;
-
-		} catch (Exception ex) {
+			return resultSet;
+		case 1:
+			return arguments[0].toPath().types();
+		case 2:
+			return arguments[0].toPathSystem().types();
+		default:
 			throw new WrongFunctionParameterException(this, null, arguments);
 		}
 	}
@@ -118,10 +103,6 @@ public class TypeSet implements Greql2Function {
 
 	public long getEstimatedCardinality(int inElements) {
 		return 20;
-	}
-
-	public String getExpectedParameters() {
-		return "(JValueCollection or PathSystem or Path)";
 	}
 
 }

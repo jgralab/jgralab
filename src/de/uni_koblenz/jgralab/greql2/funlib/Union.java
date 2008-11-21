@@ -32,6 +32,7 @@ import de.uni_koblenz.jgralab.greql2.exception.EvaluateException;
 import de.uni_koblenz.jgralab.greql2.exception.WrongFunctionParameterException;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValueSet;
+import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
 
 /**
  * Returns the union of two given sets. That means a set, that contains all
@@ -64,26 +65,21 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueSet;
  * @author ist@uni-koblenz.de
  *
  */
-
-/*
- * Gets two sets as parameter and returns the union of these sets
- *
- * @param set1 a JValueSet @param set2 a JValueSet @return the union of set1 and
- * set2, so all element, that are part of set1 or set2 (or even both) are also
- * part of the returned set @author ist@uni-koblenz.de Summer 2006, Diploma
- * Thesis
- */
-public class Union implements Greql2Function {
+public class Union extends AbstractGreql2Function {
+	{
+		JValueType[][] x = { { JValueType.COLLECTION, JValueType.COLLECTION } };
+		signatures = x;
+	}
 
 	public JValue evaluate(Graph graph, BooleanGraphMarker subgraph,
 			JValue[] arguments) throws EvaluateException {
-		try {
-			JValueSet firstSet = arguments[0].toCollection().toJValueSet();
-			JValueSet secondSet = arguments[1].toCollection().toJValueSet();
-			return firstSet.union(secondSet);
-		} catch (Exception ex) {
+		if (checkArguments(arguments) == -1) {
 			throw new WrongFunctionParameterException(this, null, arguments);
 		}
+
+		JValueSet firstSet = arguments[0].toCollection().toJValueSet();
+		JValueSet secondSet = arguments[1].toCollection().toJValueSet();
+		return firstSet.union(secondSet);
 	}
 
 	public long getEstimatedCosts(ArrayList<Long> inElements) {
@@ -100,10 +96,6 @@ public class Union implements Greql2Function {
 
 	public long getEstimatedCardinality(int inElements) {
 		return 1;
-	}
-
-	public String getExpectedParameters() {
-		return "(Set, Set)";
 	}
 
 }

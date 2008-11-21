@@ -25,16 +25,15 @@
 package de.uni_koblenz.jgralab.greql2.funlib;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 
+import de.uni_koblenz.jgralab.AttributedElement;
 import de.uni_koblenz.jgralab.BooleanGraphMarker;
 import de.uni_koblenz.jgralab.Graph;
-import de.uni_koblenz.jgralab.GraphElement;
 import de.uni_koblenz.jgralab.greql2.exception.EvaluateException;
 import de.uni_koblenz.jgralab.greql2.exception.WrongFunctionParameterException;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
-import de.uni_koblenz.jgralab.greql2.jvalue.JValueCollection;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValueSet;
+import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
 
 /**
  * Returns a set of all vertex-types that occure in the given structure.
@@ -66,44 +65,31 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueSet;
  *
  */
 
-/*
- * returns a set of the typenames of the vertices in the given structure
- *
- * @param structure a JValueCollection, Path or Pathsystem @return a JValueSet,
- * which contains all types that exist in the given structure
- *
- * @author ist@uni-koblenz.de
- */
-
-public class VertexTypeSet implements Greql2Function {
+public class VertexTypeSet extends AbstractGreql2Function {
+	{
+		JValueType[][] x = { { JValueType.COLLECTION }, { JValueType.PATH },
+				{ JValueType.PATHSYSTEM } };
+		signatures = x;
+	}
 
 	public JValue evaluate(Graph graph, BooleanGraphMarker subgraph,
 			JValue[] arguments) throws EvaluateException {
-		try {
-			if (arguments[0].isCollection()) {
-				JValueSet resultSet = new JValueSet();
-				JValueCollection collection = arguments[0].toCollection();
-				Iterator<JValue> iter = collection.iterator();
-				while (iter.hasNext()) {
-					JValue value = iter.next();
-					GraphElement elem;
-					if (value.isVertex()) {
-						elem = value.toVertex();
-						resultSet.add(new JValue(elem
-								.getAttributedElementClass(), elem));
-					}
+		switch (checkArguments(arguments)) {
+		case 0:
+			JValueSet resultSet = new JValueSet();
+			for (JValue v : arguments[0].toCollection()) {
+				if (v.isVertex()) {
+					AttributedElement elem = v.toVertex();
+					resultSet.add(new JValue(elem.getAttributedElementClass(),
+							elem));
 				}
-				return resultSet;
 			}
-			if (arguments[0].isPathSystem()) {
-				return arguments[0].toPathSystem().vertexTypes();
-			}
-			if (arguments[0].isPath()) {
-				return arguments[0].toPath().vertexTypes();
-			}
-			return null;
-
-		} catch (Exception ex) {
+			return resultSet;
+		case 1:
+			return arguments[0].toPath().vertexTypes();
+		case 2:
+			return arguments[0].toPathSystem().vertexTypes();
+		default:
 			throw new WrongFunctionParameterException(this, null, arguments);
 		}
 	}
@@ -118,10 +104,6 @@ public class VertexTypeSet implements Greql2Function {
 
 	public long getEstimatedCardinality(int inElements) {
 		return 10;
-	}
-
-	public String getExpectedParameters() {
-		return "(JValueCollection or PathSystem or Path)";
 	}
 
 }

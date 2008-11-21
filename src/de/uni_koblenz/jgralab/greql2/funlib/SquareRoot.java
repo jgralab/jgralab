@@ -28,7 +28,10 @@ import java.util.ArrayList;
 
 import de.uni_koblenz.jgralab.BooleanGraphMarker;
 import de.uni_koblenz.jgralab.Graph;
+import de.uni_koblenz.jgralab.greql2.exception.EvaluateException;
+import de.uni_koblenz.jgralab.greql2.exception.WrongFunctionParameterException;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
+import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
 
 /**
  * Calculates the squareroot of a given scalar.
@@ -57,16 +60,21 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
  * @author ist@uni-koblenz.de
  *
  */
-public class SquareRoot implements Greql2Function {
+public class SquareRoot extends AbstractGreql2Function {
+	{
+		JValueType[][] x = { { JValueType.DOUBLE } };
+		signatures = x;
+	}
 
+	@Override
 	public JValue evaluate(Graph graph, BooleanGraphMarker subgraph,
-			JValue[] arguments) {
-		try {
-			Double arg1 = arguments[1].toDouble();
-			return new JValue(Math.sqrt(arg1));
-		} catch (Exception ex) {
-			return new JValue();
+			JValue[] arguments) throws EvaluateException {
+		if (checkArguments(arguments) == -1) {
+			throw new WrongFunctionParameterException(this, null, arguments);
 		}
+
+		Double arg1 = arguments[1].toDouble();
+		return new JValue(Math.sqrt(arg1));
 	}
 
 	public long getEstimatedCosts(ArrayList<Long> inElements) {
@@ -79,10 +87,6 @@ public class SquareRoot implements Greql2Function {
 
 	public long getEstimatedCardinality(int inElements) {
 		return 1;
-	}
-
-	public String getExpectedParameters() {
-		return "(Number)";
 	}
 
 }

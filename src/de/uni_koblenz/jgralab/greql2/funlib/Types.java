@@ -25,23 +25,24 @@
 package de.uni_koblenz.jgralab.greql2.funlib;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 
 import de.uni_koblenz.jgralab.BooleanGraphMarker;
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.greql2.exception.EvaluateException;
 import de.uni_koblenz.jgralab.greql2.exception.WrongFunctionParameterException;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
-import de.uni_koblenz.jgralab.greql2.jvalue.JValueSet;
-import de.uni_koblenz.jgralab.schema.GraphClass;
-import de.uni_koblenz.jgralab.schema.Schema;
+import de.uni_koblenz.jgralab.greql2.jvalue.JValueList;
+import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
+import de.uni_koblenz.jgralab.schema.AttributedElementClass;
 
 /**
- * Returns a set of all types known by the schema of the current graph.
+ * Returns a set of all types known by the schema of the current graph. The list
+ * is sortet in topological order. First come the vertex classes, then the edge
+ * classes.
  *
  * <dl>
  * <dt><b>GReQL-signature</b></dt>
- * <dd><code>SET&lt;ATTRIBUTEDELEMENTCLASS&gt; Types()</code></dd>
+ * <dd><code>LIST&lt;ATTRIBUTEDELEMENTCLASS&gt; types()</code></dd>
  * <dd>&nbsp;</dd>
  * </dl>
  * <dl>
@@ -50,7 +51,7 @@ import de.uni_koblenz.jgralab.schema.Schema;
  * <dl>
  * <dt><b>Parameters:</b></dt>
  * <dt><b>Returns:</b></dt>
- * <dd>a set of all types known by the schema of the current graph</dd>
+ * <dd>a list of all types known by the schema of the current graph</dd>
  * </dl>
  * </dd>
  * </dl>
@@ -58,33 +59,29 @@ import de.uni_koblenz.jgralab.schema.Schema;
  * @author ist@uni-koblenz.de
  *
  */
+public class Types extends AbstractGreql2Function {
 
-/*
- * returns a set which contains all types the schema of the datagraph knows
- *
- * @author ist@uni-koblenz.de
- */
-public class Types implements Greql2Function {
+	{
+		JValueType[][] x = { {} };
+		signatures = x;
+	}
 
 	public JValue evaluate(Graph graph, BooleanGraphMarker subgraph,
 			JValue[] arguments) throws EvaluateException {
-		try {
-			JValueSet typeSet = new JValueSet();
-			GraphClass graphClass = (GraphClass) graph
-					.getAttributedElementClass();
-			Schema schema = graphClass.getSchema();
-			Iterator<GraphClass> iter = schema.getGraphClasses().values()
-					.iterator();
-
-			// Iterator<AttributedElementClass> iter =
-			// schema.getKnownTypes().iterator();
-			while (iter.hasNext()) {
-				typeSet.add(new JValue(iter.next()));
-			}
-			return typeSet;
-		} catch (Exception ex) {
+		if (checkArguments(arguments) == -1) {
 			throw new WrongFunctionParameterException(this, null, arguments);
 		}
+
+		JValueList typeList = new JValueList();
+		for (AttributedElementClass c : graph.getSchema()
+				.getVertexClassesInTopologicalOrder()) {
+			typeList.add(new JValue(c));
+		}
+		for (AttributedElementClass c : graph.getSchema()
+				.getEdgeClassesInTopologicalOrder()) {
+			typeList.add(new JValue(c));
+		}
+		return typeList;
 	}
 
 	public long getEstimatedCosts(ArrayList<Long> inElements) {
@@ -98,9 +95,4 @@ public class Types implements Greql2Function {
 	public long getEstimatedCardinality(int inElements) {
 		return 1;
 	}
-
-	public String getExpectedParameters() {
-		return "()";
-	}
-
 }

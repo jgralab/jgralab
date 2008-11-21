@@ -31,8 +31,8 @@ import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.greql2.exception.EvaluateException;
 import de.uni_koblenz.jgralab.greql2.exception.WrongFunctionParameterException;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
-import de.uni_koblenz.jgralab.greql2.jvalue.JValueCollection;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValueSet;
+import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
 
 /**
  * Converts a collection or even a single element into a JValueSet
@@ -58,27 +58,24 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueSet;
  *
  */
 
-public class ToSet implements Greql2Function {
+public class ToSet extends AbstractGreql2Function {
+	{
+		JValueType[][] x = { { JValueType.COLLECTION }, { JValueType.OBJECT } };
+		signatures = x;
+	}
 
 	public JValue evaluate(Graph graph, BooleanGraphMarker subgraph,
 			JValue[] arguments) throws EvaluateException {
-		if (arguments.length < 1) {
+		switch (checkArguments(arguments)) {
+		case 0:
+			return arguments[0].toCollection().toJValueSet();
+		case 1:
+			JValueSet set = new JValueSet();
+			set.add(arguments[0]);
+			return set;
+		default:
 			throw new WrongFunctionParameterException(this, null, arguments);
 		}
-		try {
-			if (arguments[0].isCollection()) {
-				JValueCollection col = arguments[0].toCollection();
-				return col.toJValueSet();
-			} else {
-				JValueSet set = new JValueSet();
-				set.add(arguments[0]);
-				return set;
-			}
-		} catch (Exception ex) { // JValueInvalidTypeException,
-			// NoSuchFieldException,
-			// IndexOutOfBoundsException
-		}
-		throw new WrongFunctionParameterException(this, null, arguments);
 	}
 
 	public long getEstimatedCosts(ArrayList<Long> inElements) {
@@ -91,10 +88,6 @@ public class ToSet implements Greql2Function {
 
 	public long getEstimatedCardinality(int inElements) {
 		return 1;
-	}
-
-	public String getExpectedParameters() {
-		return "(JValueCollection or Element)";
 	}
 
 }

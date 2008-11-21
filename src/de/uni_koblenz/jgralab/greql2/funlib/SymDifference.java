@@ -32,6 +32,7 @@ import de.uni_koblenz.jgralab.greql2.exception.EvaluateException;
 import de.uni_koblenz.jgralab.greql2.exception.WrongFunctionParameterException;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValueSet;
+import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
 
 /**
  * Returns the symetric difference of two given sets. That means a set, that
@@ -64,17 +65,20 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueSet;
  * @author ist@uni-koblenz.de
  *
  */
-public class SymDifference implements Greql2Function {
+public class SymDifference extends AbstractGreql2Function {
+	{
+		JValueType[][] x = { { JValueType.COLLECTION, JValueType.COLLECTION } };
+		signatures = x;
+	}
 
 	public JValue evaluate(Graph graph, BooleanGraphMarker subgraph,
 			JValue[] arguments) throws EvaluateException {
-		try {
-			JValueSet firstSet = arguments[0].toCollection().toJValueSet();
-			JValueSet secondSet = arguments[1].toCollection().toJValueSet();
-			return firstSet.symmetricDifference(secondSet);
-		} catch (Exception ex) {
+		if (checkArguments(arguments) == -1) {
 			throw new WrongFunctionParameterException(this, null, arguments);
 		}
+		JValueSet firstSet = arguments[0].toCollection().toJValueSet();
+		JValueSet secondSet = arguments[1].toCollection().toJValueSet();
+		return firstSet.symmetricDifference(secondSet);
 	}
 
 	public long getEstimatedCosts(ArrayList<Long> inElements) {
@@ -91,10 +95,6 @@ public class SymDifference implements Greql2Function {
 
 	public long getEstimatedCardinality(int inElements) {
 		return 1;
-	}
-
-	public String getExpectedParameters() {
-		return "(Set, Set)";
 	}
 
 }

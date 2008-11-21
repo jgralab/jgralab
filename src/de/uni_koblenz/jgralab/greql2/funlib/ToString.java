@@ -31,6 +31,7 @@ import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.greql2.exception.EvaluateException;
 import de.uni_koblenz.jgralab.greql2.exception.WrongFunctionParameterException;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
+import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
 
 /**
  * Returns the string-representation for a given object.
@@ -55,29 +56,19 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
  * @author ist@uni-koblenz.de
  *
  */
-
-/*
- * returns a JValue which contains the String representation of the given
- * argument
- *
- * @param value the argument to return the string representation for @return the
- * strign representation of value @author ist@uni-koblenz.de
- * <dbildh@uni-koblenz.de>
- *
- */
-
-public class ToString implements Greql2Function {
+public class ToString extends AbstractGreql2Function {
+	{
+		JValueType[][] x = { { JValueType.OBJECT } };
+		signatures = x;
+	}
 
 	public JValue evaluate(Graph graph, BooleanGraphMarker subgraph,
 			JValue[] arguments) throws EvaluateException {
-		if (arguments.length < 0) {
+		if (checkArguments(arguments) == -1) {
 			throw new WrongFunctionParameterException(this, null, arguments);
 		}
-		try {
-			return new JValue(arguments[0].toString());
-		} catch (Exception ex) {
-			throw new WrongFunctionParameterException(this, null, arguments);
-		}
+
+		return new JValue(arguments[0].toString());
 	}
 
 	public long getEstimatedCosts(ArrayList<Long> inElements) {
@@ -90,10 +81,6 @@ public class ToString implements Greql2Function {
 
 	public long getEstimatedCardinality(int inElements) {
 		return 1;
-	}
-
-	public String getExpectedParameters() {
-		return "(Object)";
 	}
 
 }

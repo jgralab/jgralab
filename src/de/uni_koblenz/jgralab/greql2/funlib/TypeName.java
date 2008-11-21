@@ -26,13 +26,13 @@ package de.uni_koblenz.jgralab.greql2.funlib;
 
 import java.util.ArrayList;
 
+import de.uni_koblenz.jgralab.AttributedElement;
 import de.uni_koblenz.jgralab.BooleanGraphMarker;
 import de.uni_koblenz.jgralab.Graph;
-import de.uni_koblenz.jgralab.GraphElement;
 import de.uni_koblenz.jgralab.greql2.exception.EvaluateException;
 import de.uni_koblenz.jgralab.greql2.exception.WrongFunctionParameterException;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
-import de.uni_koblenz.jgralab.schema.QualifiedName;
+import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
 
 /**
  * Returns the type of the given attributed element.
@@ -58,33 +58,19 @@ import de.uni_koblenz.jgralab.schema.QualifiedName;
  * @author ist@uni-koblenz.de
  *
  */
+public class TypeName extends AbstractGreql2Function {
 
-/*
- * Calculates the typename of the given vertex or edge
- *
- * @param graphelem the Graphelement (edge or vertex) to calculate the typename
- * of @return the typename of the given vertex or edge @author
- * ist@uni-koblenz.de <dbildh@uni-koblenz.de> Summer 2006, Diploma Thesis
- */
-
-public class TypeName implements Greql2Function {
+	{
+		JValueType[][] x = { { JValueType.ATTRIBUTEDELEMENT } };
+		signatures = x;
+	}
 
 	public JValue evaluate(Graph graph, BooleanGraphMarker subgraph,
 			JValue[] arguments) throws EvaluateException {
-		GraphElement elem = null;
-		try {
-			if (arguments[0].isVertex()) {
-				elem = arguments[0].toVertex();
-			} else if (arguments[0].isEdge()) {
-				elem = arguments[0].toEdge();
-			} else if (arguments[0].isString()) {
-				return new JValue(graph.getSchema().getAttributedElementClass(
-						new QualifiedName(arguments[0].toString())));
-			}
-
-		} catch (Exception ex) {
+		if (checkArguments(arguments) == -1) {
 			throw new WrongFunctionParameterException(this, null, arguments);
 		}
+		AttributedElement elem = arguments[0].toAttributedElement();
 		return new JValue(elem.getAttributedElementClass().getQualifiedName(),
 				elem);
 	}
@@ -99,10 +85,6 @@ public class TypeName implements Greql2Function {
 
 	public long getEstimatedCardinality(int inElements) {
 		return 1;
-	}
-
-	public String getExpectedParameters() {
-		return "(Vertex or Edge)";
 	}
 
 }
