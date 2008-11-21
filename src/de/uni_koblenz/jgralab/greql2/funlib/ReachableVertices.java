@@ -41,6 +41,7 @@ import de.uni_koblenz.jgralab.greql2.exception.WrongFunctionParameterException;
 import de.uni_koblenz.jgralab.greql2.funlib.pathsearch.PathSearchQueueEntry;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValueSet;
+import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
 
 /**
  * Returns all vertices that are reachable from the given vertex with a path
@@ -70,30 +71,22 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueSet;
  * @author ist@uni-koblenz.de
  *
  */
+public class ReachableVertices extends AbstractGreql2Function {
 
-/*
- * Calculates the set of vertices that are reachable from startVertex over a
- * path that is accepted from this DFA
- *
- * @param vertex the vertex to start the pathsearch from @param dfa the
- * deterministic finite automaton, which accepts the language which is created
- * by the rpe which describes the path @return a Set of vertices that are
- * reachable over a path that is accepted by the given rpe
- */
-
-public class ReachableVertices implements Greql2Function {
+	{
+		JValueType[][] x = { { JValueType.VERTEX, JValueType.DFA } };
+		signatures = x;
+	}
 
 	public JValue evaluate(Graph graph, BooleanGraphMarker subgraph,
 			JValue[] arguments) throws EvaluateException {
-		Vertex startVertex;
-		JValueSet resultSet = new JValueSet();
-		DFA dfa;
-		try {
-			startVertex = arguments[0].toVertex();
-			dfa = arguments[1].toDFA();
-		} catch (Exception ex) {
+		if (checkArguments(arguments) == -1) {
 			throw new WrongFunctionParameterException(this, null, arguments);
 		}
+
+		JValueSet resultSet = new JValueSet();
+		DFA dfa = arguments[1].toDFA();
+		Vertex startVertex = arguments[0].toVertex();
 		BooleanGraphMarker[] markers = new BooleanGraphMarker[dfa.stateList
 				.size()];
 		for (State s : dfa.stateList) {
@@ -146,10 +139,6 @@ public class ReachableVertices implements Greql2Function {
 
 	public long getEstimatedCardinality(int inElements) {
 		return 1;
-	}
-
-	public String getExpectedParameters() {
-		return "(Vertex, DFA, Subgraph" + "TempAttribute)";
 	}
 
 }

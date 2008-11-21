@@ -34,6 +34,7 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValueCollection;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValueList;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValueTuple;
+import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
 
 /**
  * Returns the index of the given object in the given List or Tuple.
@@ -65,43 +66,29 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueTuple;
  *
  */
 
-/*
- * Gets a ordered collection (list or tuple) and a objet as parameters and
- * returns the position of the element in the collection. The first element is,
- * as it is in Java too, the element 0. @param orderedCollection a JValueList or
- * JValueTuple @param element the element to calculate the position for @return
- * the position of the given element in the givne collection or -1, if the given
- * object is not a member of the given collection
- *
- * @author ist@uni-koblenz.de
- */
-
-public class Pos implements Greql2Function {
+public class Pos extends AbstractGreql2Function {
+	{
+		JValueType[][] x = { { JValueType.COLLECTION, JValueType.OBJECT } };
+		signatures = x;
+	}
 
 	public JValue evaluate(Graph graph, BooleanGraphMarker subgraph,
 			JValue[] arguments) throws EvaluateException {
-		if (arguments.length < 2) {
+		if (checkArguments(arguments) == -1) {
 			throw new WrongFunctionParameterException(this, null, arguments);
 		}
-		try {
-			if (arguments[0].isCollection()) {
-				JValue object = arguments[1];
-				JValueCollection col = arguments[0].toCollection();
-				if (col.isJValueList()) {
-					JValueList list = col.toJValueList();
-					return new JValue(list.indexOf(object));
-				}
-				if (col.isJValueTuple()) {
-					JValueTuple tup = col.toJValueTuple();
-					return new JValue(tup.indexOf(object));
-				}
-			}
-		} catch (Exception ex) { // JValueInvalidTypeException,
-			// NoSuchFieldException,
-			// IndexOutOfBoundsException
-			throw new WrongFunctionParameterException(this, null, arguments);
+		JValue object = arguments[1];
+		JValueCollection col = arguments[0].toCollection();
+		if (col.isJValueList()) {
+			JValueList list = col.toJValueList();
+			return new JValue(list.indexOf(object));
 		}
-		return new JValue(-1);
+		if (col.isJValueTuple()) {
+			JValueTuple tup = col.toJValueTuple();
+			return new JValue(tup.indexOf(object));
+		}
+		throw new EvaluateException(
+				"Pos has to be called with a LIST or TUPLE.");
 	}
 
 	public long getEstimatedCosts(ArrayList<Long> inElements) {
@@ -115,9 +102,4 @@ public class Pos implements Greql2Function {
 	public long getEstimatedCardinality(int inElements) {
 		return 1;
 	}
-
-	public String getExpectedParameters() {
-		return "(JValueList or JValueTuple, Object )";
-	}
-
 }

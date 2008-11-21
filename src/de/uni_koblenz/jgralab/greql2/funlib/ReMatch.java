@@ -31,6 +31,7 @@ import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.greql2.exception.EvaluateException;
 import de.uni_koblenz.jgralab.greql2.exception.WrongFunctionParameterException;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
+import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
 
 /**
  * Checks if the first given string matches the regular expression represented
@@ -63,21 +64,20 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
  *
  */
 
-public class ReMatch implements Greql2Function {
+public class ReMatch extends AbstractGreql2Function {
+	{
+		JValueType[][] x = { { JValueType.STRING, JValueType.STRING } };
+		signatures = x;
+	}
 
 	public JValue evaluate(Graph graph, BooleanGraphMarker subgraph,
 			JValue[] arguments) throws EvaluateException {
-		if (arguments.length < 1) {
+		if (checkArguments(arguments) == -1) {
 			throw new WrongFunctionParameterException(this, null, arguments);
 		}
-		try {
-			String s, p;
-			s = arguments[0].toString();
-			p = arguments[1].toString();
-			return new JValue(s.matches(p));
-		} catch (Exception ex) {
-			throw new WrongFunctionParameterException(this, null, arguments);
-		}
+		String s = arguments[0].toString();
+		String p = arguments[1].toString();
+		return new JValue(s.matches(p));
 	}
 
 	public long getEstimatedCosts(ArrayList<Long> inElements) {
@@ -90,9 +90,5 @@ public class ReMatch implements Greql2Function {
 
 	public long getEstimatedCardinality(int inElements) {
 		return 1;
-	}
-
-	public String getExpectedParameters() {
-		return "(String, String)";
 	}
 }

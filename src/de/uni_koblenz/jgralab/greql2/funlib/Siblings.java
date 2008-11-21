@@ -35,6 +35,7 @@ import de.uni_koblenz.jgralab.greql2.exception.WrongFunctionParameterException;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValuePathSystem;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValueSet;
+import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
 
 /**
  * Returns all siblings of the given vertex as set. If a pathsystem is given,
@@ -67,37 +68,47 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueSet;
  *
  */
 
-public class Siblings implements Greql2Function {
+public class Siblings extends AbstractGreql2Function {
+
+	{
+		JValueType[][] x = { { JValueType.VERTEX },
+				{ JValueType.VERTEX, JValueType.PATHSYSTEM } };
+		signatures = x;
+	}
 
 	public JValue evaluate(Graph graph, BooleanGraphMarker subgraph,
 			JValue[] arguments) throws EvaluateException {
-		Vertex vertex;
-		JValuePathSystem pathSystem;
-		try {
-			vertex = arguments[0].toVertex();
-			if ((arguments.length > 1) && (arguments[1] != null)
-					&& (arguments[1].isPathSystem())) {
-				pathSystem = arguments[1].toPathSystem();
-				return pathSystem.siblings(vertex);
-			}
-			Edge inc1 = vertex.getFirstEdge();
-			JValueSet returnSet = new JValueSet();
-			while (inc1 != null) {
-				Vertex father = inc1.getThat();
-				Edge inc2 = father.getFirstEdge();
-				while (inc2 != null) {
-					Vertex anotherVertex = inc2.getThat();
-					if (anotherVertex != vertex) {
-						returnSet.add(new JValue(anotherVertex, vertex));
-					}
-					inc2 = inc2.getNextEdge();
-				}
-				inc1 = inc1.getNextEdge();
-			}
-			return returnSet;
-		} catch (Exception ex) {
+		JValuePathSystem pathSystem = null;
+		switch (checkArguments(arguments)) {
+		case 0:
+			break;
+		case 1:
+			pathSystem = arguments[1].toPathSystem();
+		default:
 			throw new WrongFunctionParameterException(this, null, arguments);
 		}
+
+		Vertex vertex = arguments[0].toVertex();
+
+		if (pathSystem != null) {
+			return pathSystem.siblings(vertex);
+		}
+
+		Edge inc1 = vertex.getFirstEdge();
+		JValueSet returnSet = new JValueSet();
+		while (inc1 != null) {
+			Vertex father = inc1.getThat();
+			Edge inc2 = father.getFirstEdge();
+			while (inc2 != null) {
+				Vertex anotherVertex = inc2.getThat();
+				if (anotherVertex != vertex) {
+					returnSet.add(new JValue(anotherVertex, vertex));
+				}
+				inc2 = inc2.getNextEdge();
+			}
+			inc1 = inc1.getNextEdge();
+		}
+		return returnSet;
 	}
 
 	public long getEstimatedCosts(ArrayList<Long> inElements) {
@@ -110,10 +121,6 @@ public class Siblings implements Greql2Function {
 
 	public long getEstimatedCardinality(int inElements) {
 		return 2;
-	}
-
-	public String getExpectedParameters() {
-		return "(Vertex [,PathSystem])";
 	}
 
 }
