@@ -24,14 +24,10 @@
 
 package de.uni_koblenz.jgralab.greql2.funlib;
 
-import java.util.ArrayList;
-
 import de.uni_koblenz.jgralab.BooleanGraphMarker;
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.greql2.exception.EvaluateException;
-import de.uni_koblenz.jgralab.greql2.exception.WrongFunctionParameterException;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
-import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
 
 /**
  * Calculates a-b for given scalar values a and b.
@@ -72,35 +68,12 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
  *
  */
 
-public class Minus extends AbstractGreql2Function {
-	{
-		JValueType[][] x = { { JValueType.DOUBLE, JValueType.DOUBLE },
-				{ JValueType.LONG, JValueType.LONG } };
-		signatures = x;
-	}
+public class Minus extends ArithmeticFunction {
 
+	@Override
 	public JValue evaluate(Graph graph, BooleanGraphMarker subgraph,
 			JValue[] arguments) throws EvaluateException {
-		switch (checkArguments(arguments)) {
-		case 0:
-			return new JValue(arguments[0].toDouble() - arguments[1].toDouble());
-		case 1:
-			return new JValue(arguments[0].toLong() - arguments[1].toLong());
-		default:
-			throw new WrongFunctionParameterException(this, null, arguments);
-		}
-	}
-
-	public long getEstimatedCosts(ArrayList<Long> inElements) {
-		return 2;
-	}
-
-	public double getSelectivity() {
-		return 1;
-	}
-
-	public long getEstimatedCardinality(int inElements) {
-		return 1;
+		return evaluate(arguments, ArithmeticOperator.MINUS);
 	}
 
 }

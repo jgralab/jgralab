@@ -33,6 +33,7 @@ import de.uni_koblenz.jgralab.greql2.exception.EvaluateException;
 import de.uni_koblenz.jgralab.greql2.exception.WrongFunctionParameterException;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValuePathSystem;
+import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
 
 /**
  * Returns the parent-vertex of the given vertex in the given pathsystem. The
@@ -63,18 +64,20 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValuePathSystem;
  *
  */
 
-public class Parent implements Greql2Function {
+public class Parent extends AbstractGreql2Function {
+
+	{
+		JValueType[][] x = { { JValueType.PATHSYSTEM, JValueType.VERTEX } };
+		signatures = x;
+	}
 
 	public JValue evaluate(Graph graph, BooleanGraphMarker subgraph,
 			JValue[] arguments) throws EvaluateException {
-		Vertex vertex;
-		JValuePathSystem pathSystem;
-		try {
-			pathSystem = arguments[0].toPathSystem();
-			vertex = arguments[1].toVertex();
-		} catch (Exception ex) {
+		if (checkArguments(arguments) == -1) {
 			throw new WrongFunctionParameterException(this, null, arguments);
 		}
+		Vertex vertex = arguments[1].toVertex();
+		JValuePathSystem pathSystem = arguments[0].toPathSystem();
 		return pathSystem.parent(vertex);
 	}
 
@@ -88,10 +91,6 @@ public class Parent implements Greql2Function {
 
 	public long getEstimatedCardinality(int inElements) {
 		return 1;
-	}
-
-	public String getExpectedParameters() {
-		return "(PathSystem, Vertex)";
 	}
 
 }
