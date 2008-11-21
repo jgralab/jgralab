@@ -1,6 +1,15 @@
 grammar Greql2;
 options {backtrack=true; memoize=true;}
 
+tokens {
+	NUM_REAL;
+	DOTDOT;
+	DOT;
+	FUNCTIONID;
+	THISVERTEX;
+	THISEDGE;
+}
+
 @lexer::members {
   protected boolean enumIsKeyword = true;
   protected boolean assertIsKeyword = true;
@@ -29,417 +38,10 @@ import de.uni_koblenz.jgralab.greql2.funlib.Greql2FunctionLibrary;
 }
 
 @members {
-    private static Logger logger = Logger.getLogger(Greql2Parser.class.getName());
-    private final int VMAX = 100;
-    private final int EMAX = 100;
-    private Greql2Schema schema = null;
-    private Greql2 graph = null;
-    private SymbolTable variableSymbolTable = null;
-    private SymbolTable functionSymbolTable = null;
-    private SymbolTable nonterminalSymbolTable = null;
-    private GraphClass graphClass = null;
-    private boolean isAdditiveExpression = true;
 
-    class FunctionConstruct {
-    	String operatorName;  
-    	Operator op;
-    	Expression arg1 = null;
-        Expression arg2 = null;
-        FunctionId op = null;
-        int offsetArg1 = 0;
-        int lengthArg1 = 0;
-        int offsetOperator = 0;
-        int offsetArg2 = 0;
-        int lengthOperator = 0;
-        int lengthArg2 = 0;
-        boolean binary = true;
-    
-        public void preUnaryOp() {
-          binary = false;
-          offsetOperator = getLTOffset();
-        }
-    
-        public void preArg1() {
-          offsetArg1 = getLTOffset();
-        }
-        
-        public void preOp(Expression arg1) { 
-          binary = true;
-          this.arg1 = arg1;
-          lengthArg1 = getLTLength();
-          offsetOperator = getLTOffset();
-        }
-        
-        public void postOp(String op) {
-          	lengthOperator = getLTLength();
-	  		offsetArg2 = getLTOffset();
-	  		operatorName = op;
-        }
-        
-        public FunctionApplication postArg2(Expression arg2) { 
-          lengthArg2 = getLTLength();
-          this.arg2 = arg2;
-          // retrieve operator...
-  	  op = (FunctionId) functionSymbolTable.lookup(operatorName);
-    	  //... or create a new one and add it to the symboltable
-          if (op == null) {
-	      op = graph.createFunctionId();
-              op.setName(operatorName);
-              functionSymbolTable.insert(operatorName, op);
-          }
-          // add operator
-       	  return createFunctionIdAndArgumentOf(op, offsetOperator,lengthOperator, 
-	   			  arg1, offsetArg1, lengthArg1, arg2, offsetArg2, lengthArg2, binary); 	   
-        }
-    }
-
-    private void createFunctionIdAndArgumentOf(FunctionId functionId, int offsetOperator, int lengthOperator, Expression arg1, int offsetArg1, int lengthArg1, Expression arg2, int offsetArg2, int lengthArg2, boolean binary) {
-    	FunctionApplication fa = graph.createFunctionApplication();
-    	IsFunctionIdOf functionIdOf = graph.createIsFunctionIdOf(functionId, fa);
-    	functionIdOf.setSourcePositions((createSourcePositionList(lengthOperator, offsetOperator)));
-    	IsArgumentOf arg1Of = graph.createIsArgumentOf(arg1, fa);
-    	arg1Of.setSourcePositions((createSourcePositionList(lengthArg1, offsetArg1)));
-    	if (binary) {
-      	   IsArgumentOf arg2Of = graph.createIsArgumentOf(arg2, fa);
-    	   arg2Of.setSourcePositions((createSourcePositionList(lengthArg2, offsetArg2)));
-    	}  
-    }	
-    
-    private List<SourcePosition> createSourcePositionList(int length, int offset) {
-    	List<SourcePosition> list = new ArrayList<SourcePosition>();
-    	list.add(new SourcePosition(length, offset));
-    	return list;
-    }
-
-
-	private Vertex createPartsOfValueConstruction(List<VertexPosition> expressions, ValueConstruction parent) {
-		return createMultipleEdgesToParent(expressions, parent, IsPartOf.class);
-	}
-	
-	private Vertex createMultipleEdgesToParent(List<VertexPosition> expressions, Vertex parent, Class<? extends EdgeClass> edgeClass) {
-       	for (VertexPosition expr : expressions) {
-			Edge edge = graph.createEdge(edgeClass, (Expression)expr.node, parent);
-			edge.setSourcePositions((createSourcePositionList(expr.length, expr.offset)));
-		}
-		return parent;
-	}
-
-
-	public void addPathElement(Class<? extends PathDescription> vc, Class<? extends Edge> ec, PathDescription pathDescr, PathDescription part1, PathDescription part2) {
-	 	lengthPart2 = getLTLength();
-	 	Edge edge = null;
-	 	if (pathDescr == null) {
-	 		pathDescr = graph.createVertex(vc);
-	 		edge = graph.createEdge(ec, part1, pathDescr);
-	 		edge.setSourcePositions((createSourcePositionList(lengthPart1, offsetPart1)));
-	 	}
-		edge = graph.createIsEdge(ec, alt2, pathDescr);
-		edge.setSourcePositions((createSourcePositionList(lengthPart2, offsetPart2 )));
-	}
-
-    private boolean isFunctionName(String ident) {
-        return Greql2FunctionLibrary.instance().isGreqlFunction(ident);		
-    }	
-	
-	/** Returns the abstract syntax graph for the input
-     *  @return the abstract syntax graph representing a GReQL 2 query
-     */
-    public Greql2 getGraph()  {
-    	return graph;
-    }
-
-    /** Returns the schema of the abstract syntax graph
-     *  @return the schema
-     */
-    public Schema getSchema()  {
-    	return schema;
-    }
-
-    /** Loads the schema from the file "greql2Schema.tg",
-     *  creates a new graph and symbol tables for variables and
-     *  function-ids and retrieves the Greql2-graphclass (graphClass)
-     *
-     */
-    private void initialize() {
-       	schema = Greql2Schema.instance();
-		graph = Greql2Impl.create(VMAX,EMAX);
-        variableSymbolTable = new SymbolTable();
- 		functionSymbolTable = new SymbolTable();
-		nonterminalSymbolTable = new SymbolTable();
-		functionSymbolTable.blockBegin();
-        graphClass = schema.getGraphClass(new QualifiedName("Greql2"));
-   }
-   
-   private int getLTLength() {
-		return (- offset + LT(0).getColumn()-1 + LT(0).getText().length());
-   }
-   
-   private int getLTOffset() {
-		return LT(1).getColumn()-1; 
-   }
-   
-    /**
-     *	@see antlr.Parser#reportError(RecognitionException)
-     */
-  	public void reportError(RecognitionException e)
- 	{
-		int offset = -1;
-		try
-		{
-			offset = LT(1).getColumn()-1;
-		}
-		catch (Exception ex) { ex.printStackTrace(); }
-		if (offset != -1)
-				logger.severe("error: " + offset +": " + e.getMessage());
-			else logger.severe("error (offset = -1): " + e.getMessage());
-	}
-
-  	public void reportError(TokenStreamException e)
- 	{
-		int offset = -1;
-		try
-		{
-			offset = LT(1).getColumn()-1;
-		}
-		catch (Exception ex) { ex.printStackTrace(); }
-		if (offset != -1)
-				logger.severe("error: " + offset +": " + e.getMessage());
-			else logger.severe("error (offset = -1): " + e.getMessage());
-	}
-
-    /**
-    *	merges variable-vertices of the graph which represent identical variables
-    */
-    private void mergeVariables() throws DuplicateVariableException, UndefinedVariableException {
-	    // retrieve root-vertex
-		Greql2Expression root = graph.getFirstGreql2Expression();
-		mergeVariablesInGreql2Expression(root);
-	}
-
-	/**
-	*	merges variable-vertices in the subgraph with the root-vertex <code>v</code>
-	*   @param v root of the subgraph
-	*/
-    private void mergeVariables(Vertex v) throws DuplicateVariableException, UndefinedVariableException {
-		if (v instanceof DefinitionExpression) {
-			mergeVariablesInDefinitionExpression((DefinitionExpression) v);
-		} else if (v instanceof Comprehension) {
-			mergeVariablesInComprehension((Comprehension) v);
-		} else if (v instanceof QuantifiedExpression) {
-			mergeVariablesInQuantifiedExpression((QuantifiedExpression) v);
-		} else if (v instanceof Greql2Expression) {
-			mergeVariablesInGreql2Expression((Greql2Expression) v);
-		} else if (v instanceof ThisLiteral) {
-		    return;	 
-		} else if (v instanceof Variable) {
-			Vertex var = variableSymbolTable.lookup( ( (Variable) v).getName());
-			if (var != null) {
-				Edge inc = v.getFirstEdge(EdgeDirection.OUT);
-				inc.setAlpha(var);
-				if (v.getDegree() <= 0) {
-					v.delete();
-				}
-			} else {
-				Greql2Aggregation e = (Greql2Aggregation) v.getFirstEdge(EdgeDirection.OUT);
-				throw new UndefinedVariableException(((Variable)v).getName(), e.getSourcePositions() );
-			}
-		} else {
-			Edge inc = v.getFirstEdge(EdgeDirection.IN);
-			LinkedList<Edge> incidenceList = new LinkedList<Edge>();
-			while (inc != null) {
-				incidenceList.add(inc);
-				inc = inc.getNextEdge(EdgeDirection.IN);
-			}
-			for (Edge e : incidenceList) 
-				mergeVariables(e.getAlpha());
-		}
-	}
-
-	/**
-	*	Inserts variable-vertices that are declared in the <code>using</code>-clause
-	*   into the variables symbol table and
-	*	merges variables within the query-expression.
-	*   @param root root of the graph, represents a <code>Greql2Expression</code>
-	*/
-	private void mergeVariablesInGreql2Expression(Greql2Expression root) throws DuplicateVariableException, UndefinedVariableException {
-		variableSymbolTable.blockBegin();
-		IsBoundVarOf isBoundVarOf = root.getFirstIsBoundVarOf(EdgeDirection.IN);
-		while (isBoundVarOf != null) {
-		 	 variableSymbolTable.insert( ((Variable) isBoundVarOf.getAlpha()).getName(), isBoundVarOf.getAlpha());
-			 isBoundVarOf = isBoundVarOf.getNextIsBoundVarOf(EdgeDirection.IN);
-		}
-		IsQueryExprOf isQueryExprOf = root.getFirstIsQueryExprOf(EdgeDirection.IN);
-		mergeVariables(isQueryExprOf.getAlpha());
-		variableSymbolTable.blockEnd();
-	}
-
-	/**
-	*	Inserts variables that are defined in the definitions of let- or
-	*   where-expressions and merges variables used in these definitions and in the bound expression
-	*   @param v contains a let- or where-expression.
-	*/
-	private void mergeVariablesInDefinitionExpression(DefinitionExpression v) throws DuplicateVariableException, UndefinedVariableException	{
-		variableSymbolTable.blockBegin();
-		IsDefinitionOf isDefinitionOf = v.getFirstIsDefinitionOf(EdgeDirection.IN);
-		while (isDefinitionOf != null) {
-			Definition definition = (Definition) isDefinitionOf.getAlpha();
-			Variable variable = (Variable) definition.getFirstIsVarOf(EdgeDirection.IN).getAlpha();
-			variableSymbolTable.insert(variable.getName(), variable);
-			isDefinitionOf = isDefinitionOf.getNextIsDefinitionOf(EdgeDirection.IN);
-		}
-		isDefinitionOf = v.getFirstIsDefinitionOf(EdgeDirection.IN);
-		while (isDefinitionOf != null) {
-			Definition definition = (Definition) isDefinitionOf.getAlpha();
-			Expression expr = (Expression) definition.getFirstIsExprOf(EdgeDirection.IN).getAlpha();
-			mergeVariables(expr);
-			isDefinitionOf = isDefinitionOf.getNextIsDefinitionOf(EdgeDirection.IN);
-		}
-		Edge isBoundExprOf = v.getFirstIsBoundExprOfDefinition(EdgeDirection.IN);
-		mergeVariables(isBoundExprOf.getAlpha());
-		variableSymbolTable.blockEnd();
-	}
-
-	/**
-	*	Inserts variables that are declared in a declaration of a simple query
-	*   or a quantified expression into the symbol-table and merges variables
-	*   that are used in these declaration (in typeexpressions, constraints, or subgraphs)
-	*   @param v contains a declaration
-	*/
-	private void mergeVariablesInDeclaration(Declaration v) throws DuplicateVariableException, UndefinedVariableException	{
-		IsSimpleDeclOf isSimpleDeclOf = v.getFirstIsSimpleDeclOf(EdgeDirection.IN);
-		while (isSimpleDeclOf != null) {
-			SimpleDeclaration simpleDecl = (SimpleDeclaration) isSimpleDeclOf.getAlpha();
-			IsDeclaredVarOf isDeclaredVarOf = simpleDecl.getFirstIsDeclaredVarOf(EdgeDirection.IN);
-			while (isDeclaredVarOf != null)	{
-				Variable variable = (Variable) isDeclaredVarOf.getAlpha();
-				variableSymbolTable.insert(variable.getName(), variable);
-				isDeclaredVarOf = isDeclaredVarOf.getNextIsDeclaredVarOf(EdgeDirection.IN);
-			}
-			isSimpleDeclOf = isSimpleDeclOf.getNextIsSimpleDeclOf(EdgeDirection.IN);
-		}
-		isSimpleDeclOf = v.getFirstIsSimpleDeclOf(EdgeDirection.IN);
-		while (isSimpleDeclOf != null) {
-			SimpleDeclaration simpleDecl = (SimpleDeclaration) isSimpleDeclOf.getAlpha();
-			Expression expr = (Expression) simpleDecl.getFirstIsTypeExprOf(EdgeDirection.IN).getAlpha();
-			mergeVariables(expr); 
-			isSimpleDeclOf = isSimpleDeclOf.getNextIsSimpleDeclOf(EdgeDirection.IN);
-		}
-		IsSubgraphOf isSubgraphOf = v.getFirstIsSubgraphOf(EdgeDirection.IN);
-		if (isSubgraphOf != null) {
-			mergeVariables(isSubgraphOf.getAlpha());
-		}
-		IsConstraintOf isConstraintOf = v.getFirstIsConstraintOf(EdgeDirection.IN);
-		while (isConstraintOf != null) {
-			mergeVariables(isConstraintOf.getAlpha());
-			isConstraintOf = isConstraintOf.getNextIsConstraintOf(EdgeDirection.IN);
-		}
-	}
-
-	/**
-	*	Inserts variable-vertices that are declared in the quantified expression
-	*   represented by <code>v</code> into the variables symbol table and
-	*	merges variables within the bound expression.
-	*   @param v contains a quantified expression
-	*/
-	private void mergeVariablesInQuantifiedExpression(QuantifiedExpression v) throws DuplicateVariableException, UndefinedVariableException {
-		variableSymbolTable.blockBegin();
-		IsQuantifiedDeclOf isQuantifiedDeclOf = v.getFirstIsQuantifiedDeclOf(EdgeDirection.IN);
-		mergeVariablesInDeclaration((Declaration) isQuantifiedDeclOf.getAlpha());
-		IsBoundExprOfQuantifier isBoundExprOfQuantifier = v.getFirstIsBoundExprOfQuantifier(EdgeDirection.IN);
-		mergeVariables(isBoundExprOfQuantifier.getAlpha()); 
-		variableSymbolTable.blockEnd();
-	}
-
-	/**
-	*	Inserts declared variable-vertices
-	*   into the variables symbol table and
-	*	merges variables within the comprehension result and tableheaders
-	*   @param v contains a set- or a bag-comprehension
-	*/
-	private void mergeVariablesInComprehension(Comprehension v) throws DuplicateVariableException, UndefinedVariableException {
-		variableSymbolTable.blockBegin();
-		Edge IsCompDeclOf = v.getFirstIsCompDeclOf(EdgeDirection.IN);
-		mergeVariablesInDeclaration((Declaration)IsCompDeclOf.getAlpha());
-		Edge IsCompResultDefOf = v.getFirstIsCompResultDefOf(EdgeDirection.IN);
-		mergeVariables(IsCompResultDefOf.getAlpha());
-		// merge variables in table-headers if it's a bag-comprehension
-		if (v instanceof BagComprehension) {
-			IsTableHeaderOf isTableHeaderOf = v.getFirstIsTableHeaderOf(EdgeDirection.IN);
-			while (isTableHeaderOf != null)	{
-				mergeVariables(isTableHeaderOf.getAlpha());
-				isTableHeaderOf = isTableHeaderOf.getNextIsTableHeaderOf(EdgeDirection.IN);
-			}
-		}
-		if (v instanceof TableComprehension) {
-			TableComprehension tc = (TableComprehension) v;
-			IsColumnHeaderExprOf ch = tc.getFirstIsColumnHeaderExprOf(EdgeDirection.IN);
-			mergeVariables(ch.getAlpha());
-			IsRowHeaderExprOf rh = tc.getFirstIsRowHeaderExprOf(EdgeDirection.IN);
-			mergeVariables(rh.getAlpha());
-			IsTableHeaderOf th = tc.getFirstIsTableHeaderOf(EdgeDirection.IN);
-			if (th != null)
-				mergeVariables(th.getAlpha());
-		}
-		variableSymbolTable.blockEnd();
-	}
-
-
-	private String decode(String s) {
-		s = s.substring(1,s.length()-1);
-		int i = s.indexOf('\\');
-		while (i>= 0) {
-			char c = s.charAt(i+1);
-			switch(c) {
-				case 'u' :
-					char unicodeChar = (char) Integer.parseInt(s.substring(i+2, i+6), 16);
-					s = s.substring(0,i) +  unicodeChar + s.substring(i+6);
-					break;
-				case '\\':
-					s = s.substring(0,i) +  '\\' + s.substring(i+2);
-					break;
-				case '\"':
-					s = s.substring(0,i) +  '\"' + s.substring(i+2);
-					break;
-				case 'n':
-					s = s.substring(0,i) + '\n' + s.substring(i+2);
-					break;
-				case 'r':
-					s = s.substring(0,i) + '\r' + s.substring(i+2);
-					break;
-				case 't':
-					s = s.substring(0,i) + '\t' + s.substring(i+2);
-					break;
-				case 'f':
-					s = s.substring(0,i) + '\r' + s.substring(i+2);
-					break;
-				case '\'':
-					s = s.substring(0,i) + '\r' + s.substring(i+2);
-					break;
-				default:
-					if (Character.isDigit(c)) {
-						if (c < 4) {
-							char octChar = (char) Integer.parseInt(s.substring(i+1, i+4), 8);
-							s = s.substring(0,i) + octChar + s.substring(i+4);
-						} else {
-							char octChar = (char) Integer.parseInt(s.substring(i+1, i+3), 8);
-							s = s.substring(0,i) + octChar + s.substring(i+3);
-						}
-					}
-			}
-			i = s.indexOf('\\', i+1);
-		}
-		return s;
-	}
-
-	/**
-	 * saves graph to file.
-	 * @param filename name of the file.
-	 */
-	public void saveGraph(String filename) throws GraphIOException {
-		GraphIO.saveGraphToFile(filename, graph, null);
-	}
 
 }
+
 
 T		    : 'T';
 AND 		: 'and';
@@ -519,22 +121,196 @@ OUTAGGREGATION	: '<>--';
 INAGGREGATION   : '--<>';
 PATHSYSTEMSTART : '-<';	 	
 	
-IDENT :	(('a'..'z'|'A'..'Z') ('a'..'z'|'A'..'Z'|'_'|'0'..'9')*
-	{			
 
-	})
+// Whitespace -- ignored
+WS	: (' '	|	'\t' |	'\f' |
+		(	//options { generateAmbigWarnings=false; } // handle newlines
+			'\r\n'   /*DOS*/  |	'\r'    /* Macintosh vor Mac OS 9*/	|  '\n'  /* Unix */   
+		)
+	  )+
+	{ $setType(Token.SKIP); }
 ;
 
-NUM_INT :	('1'..'9')('0'..'9')+
+// Single-line comments
+SL_COMMENT
+	:	'//'
+		(~('\n'|'\r'))* ('\n'|'\r'('\n')?)?
+		{$setType(Token.SKIP);}
+	;  
+	    
+
+// multiple-line comments
+ML_COMMENT	
+@init{ 
+	int start = getColumn()-1;
+}
+:	'/*'	     
+( 		
+	//options { generateAmbigWarnings=false; 	}
+	{ LA(1) != EOF_CHAR && LA(2)!='/' }? '*'			
+			| { LA(1) != EOF_CHAR }? ('/' '*') => ML_COMMENT				    
+			| { LA(1) != EOF_CHAR }? ~('*')
+			| { LA(1) == EOF_CHAR }? { throw new TokenStreamException("Unterminated /*-comment starting at offset " + start); }
+		
+)*
+		
+'*/'
+	{$setType(Token.SKIP);}
 ;
-/**
-//		if ($getText.equals("thisEdge")) 
-//			{_ttype = THISEDGE;}
-//		else if ($getText.equals("thisVertex"))
-//			{_ttype = THISVERTEX;}
-//		else if (isFunctionName($getText))
-//			{_ttype = FUNCTIONID;} 		
-*/
+
+		
+// string literals
+STRING_LITERAL //options {  paraphrase = "a string literal";}
+@init{
+	int start = getColumn()-1; 
+}	
+	:	
+		'"' 
+		( //	options { generateAmbigWarnings=false; 	}
+			:	
+			  ESC	          
+	      |  {LA(1) != EOF_CHAR}? ~( '"' | '\\' | '\n' | '\r' )	   
+	      |  { LA(1) == EOF_CHAR }? { throw new TokenStreamException("Unterminated string-literal starting at offset "+start); }     
+	    )* 
+	    '"'
+	;
+
+
+
+// escape sequence -- note that this is protected; it can only be called
+//   from another lexer rule -- it will not ever directly return a token to
+//   the parser
+// There are various ambiguities hushed in this rule.  The optional
+// '0'...'9' digit matches should be matched here rather than letting
+// them go back to STRING_LITERAL to be matched.  ANTLR does the
+// right thing by matching immediately; hence, it's ok to shut off
+// the FOLLOW ambig warnings.
+protected
+ESC
+	:	'\\'
+		(	'n'
+		|	'r'
+		|	't'
+		|	'b'
+		|	'f'
+		|	'"'
+		|	'\''
+		|	'\\'
+		|	('u')+ HEX_DIGIT HEX_DIGIT HEX_DIGIT HEX_DIGIT
+		|	'0'..'3'
+			(
+		//		options {warnWhenFollowAmbig = false;}
+			:	'0'..'7'
+				(
+			//		options {warnWhenFollowAmbig = false;}
+				:	'0'..'7'
+				)?
+			)?
+		|	'4'..'7'
+			(
+			//	options {warnWhenFollowAmbig = false;}
+			:	'0'..'7'
+			)?
+		)
+	;
+	
+    
+// hexadecimal digit (again, note it's protected!)
+protected
+HEX_DIGIT
+	:	
+		('0'..'9'|'A'..'F'|'a'..'f')
+	;
+
+	    	
+protected 
+DIGIT
+	:	
+		
+		'0' | NONZERO_DIGIT
+	;
+	
+		
+protected
+NONZERO_DIGIT
+	:	
+		
+		('1'..'9')
+	;
+
+
+
+protected
+OCT_DIGIT
+	:	
+		
+		('0'..'7')
+	;
+	
+// a numeric literal
+NUM_INT
+@init{
+	boolean range = false;
+	boolean isDecimal = false;
+}
+	: 
+	  
+		'.' 
+	  (	( ~('0'..'9') )	=> { _ttype = DOT;}
+	  	|'.' { _ttype = DOTDOT; }
+		| (DIGIT)* (EXPONENT)? {_ttype = NUM_REAL;}
+	  )
+	| ( '0' {isDecimal = true;}
+	      ( ('x'|'X') (:HEX_DIGIT)+
+	      | ((DIGIT)* ( '.' '.' )) => (DIGIT)* 
+	      	{range = true; }
+	      | ((DIGIT)+ ( '.' (~('.') | EXPONENT) )) => (DIGIT)+	      
+	      | (OCT_DIGIT)+
+	      )?
+	    | (NONZERO_DIGIT) {isDecimal = true;}
+	      (((DIGIT)* ('.' '.')) => (DIGIT)* {range = true;}
+	       |
+	      (DIGIT)* )	    
+	  )
+	  (
+		{isDecimal & !range}?
+		( '.' (DIGIT)* (EXPONENT)?
+		| EXPONENT
+		){_ttype = NUM_REAL;}
+		
+	  )?
+	;
+
+
+// a couple protected methods to assist in matching floating point numbers
+protected
+EXPONENT
+	:	
+		('e'|'E') ('+'|'-')? ('0'..'9')+
+	;	
+
+// an identifier.  Note that testLiterals is set to true!  This means
+// that after we match the rule, we look in the literals table to see
+// if it's a literal or really an identifer
+IDENT
+	options {  
+		testLiterals=true;
+	}	
+	:	
+		(('a'..'z'|'A'..'Z') ('a'..'z'|'A'..'Z'|'_'|'0'..'9')*
+		{			
+			if ($getText.equals("thisEdge")) 
+				{_ttype = THISEDGE;}
+			else if ($getText.equals("thisVertex"))
+				{_ttype = THISVERTEX;}
+			else if (isFunctionName($getText))
+				{_ttype = FUNCTIONID;} 		
+				
+		})
+	;
+
+
+
 variableList returns [Vector<VertexPosition> variables = new Vector<VertexPosition>();] 
 @init{
     Variable var = null;
@@ -2145,35 +1921,548 @@ typeId returns [TypeId type = null]
 ;
 
 
-regBackwardVertexSetOrPathSystem returns [PathDescription retVal = null]
-@init {
-	Expression pathDescr = null;
-}
-@after {
-	retVal = pathDescr;
-}
-:
-pathDescr = 'BACKWARDVERTEXSET'// alternativePathDescription
-;
 
-regPathExistenceOrForwardVertexSet returns [PathDescription retVal = null]
-@init {
-	Expression pathDescr = null;
-}
-@after {
-	retVal = pathDescr;
-}
+/** matches string-, this-, int-, real-, boolean- and null-literals
+	@return
+*/
+literal returns [Literal literal = null]
 :
-pathDescr = 'FORWARDVERTEXSET'// alternativePathDescription
+	s=STRING_LITERAL
+    {
+       	literal = graph.createStringLiteral();
+       	((StringLiteral) literal).setStringValue(decode(s.getText()));
+    }
+|	tv=THISVERTEX
+    {
+  /*     literal = graph.getFirstThisLiteral();
+       if (literal != null)	
+	       	return literal;*/
+       literal = graph.createThisVertex();
+    }
+|	te=THISEDGE
+    {
+     	/*literal = graph.getFirstThisEdge();
+        if (literal != null)
+	      	return literal;*/
+        literal = graph.createThisEdge();
+    }
+|	i=NUM_INT
+	{
+        int value = 0;
+        if (i.getText().startsWith("0x") || i.getText().startsWith("0X") ) {
+           	value = Integer.parseInt(i.getText().substring(2),16);
+        } else if (i.getText().startsWith("0") && i.getText().length()>1) {
+         	value = Integer.parseInt(i.getText().substring(1),8);
+        } else {
+          	value = Integer.parseInt(i.getText());
+        }
+	    literal = graph.createIntLiteral();
+		((IntLiteral) literal).setIntValue(value);
+	}
+|	r=NUM_REAL
+    {
+       	literal = graph.createRealLiteral();
+		((RealLiteral) literal).setRealValue(Double.parseDouble(r.getText()));
+    }
+|	TRUE
+    {
+        literal = (Literal) graph.getFirstVertexOfClass(BoolLiteral.class);
+        /*	if (literal == null || !( (BoolLiteral) literal).isBoolValue() ) {
+	           	literal = graph.createBoolLiteral();
+   	           	((BoolLiteral) literal).setBoolValue(true);
+        }*/
+        if (literal == null || ( (BoolLiteral) literal).getBoolValue() != TrivalentBoolean.TRUE ) {
+		   	literal = graph.createBoolLiteral();
+				((BoolLiteral) literal).setBoolValue(TrivalentBoolean.TRUE);
+		}
+    }
+|	FALSE
+    {
+        literal = (Literal) graph.getFirstVertexOfClass(BoolLiteral.class);
+         /*   	if (literal == null || ( (BoolLiteral) literal).isBoolValue() ) {
+	            	literal = graph.createBoolLiteral();
+             	   ((BoolLiteral) literal).setBoolValue(false);
+   	            }*/
+   	    if (literal == null || ( (BoolLiteral) literal).getBoolValue() == TrivalentBoolean.TRUE ) {
+		   	literal = graph.createBoolLiteral();
+		   	((BoolLiteral) literal).setBoolValue(TrivalentBoolean.FALSE);
+		}
+    }
+|	NULL_VALUE
+    {
+        literal = (Literal) graph.getFirstVertexOfClass(NullLiteral.class);
+	    if (literal == null)
+		    literal = graph.createNullLiteral(); 
+    }
 ;
+	
 
-regPathOrPathSystem returns [PathDescription retVal = null]
-@init {
-	Expression pathDescr = null;
+/** matches a list of edges and vertices
+	@return
+*/
+edgeVertexList returns [EdgeVertexList eVList = null]
+@init{
+	Expression edgeExpr = null;
+	Expression  vertexExpr = null;
+	EdgeVertexList eVList2 = null;
+    int offsetV = 0;
+    int offsetE = 0;
+    int offsetEVList = 0;
+    int lengthV = 0;
+    int lengthE = 0;
+    int lengthEVList = 0;
 }
-@after {
-	retVal = pathDescr;
+	:
+		LPAREN
+        {offsetE = getLTOffset(); }
+		edgeExpr = expression
+        {lengthE = getLTLength(offsetE); }
+		COMMA
+        {offsetV = getLTOffset(); }
+		vertexExpr = expression
+        {
+        	lengthV = getLTLength(offsetV);
+            eVList = graph.createEdgeVertexList();
+            IsEdgeOrVertexExprOf eExprOf = graph.createIsEdgeOrVertexExprOf(edgeExpr, eVList);
+            eExprOf.setSourcePositions((createSourcePositionList(lengthE, offsetE)));
+            IsEdgeOrVertexExprOf vExprOf = graph.createIsEdgeOrVertexExprOf(vertexExpr, eVList);
+            vExprOf.setSourcePositions((createSourcePositionList(lengthV, offsetV)));
+        }
+		(COMMA
+        	{offsetEVList = getLTOffset(); }
+			eVList2 = edgeVertexList
+            {
+            	lengthEVList = getLTLength(offsetEVList);
+           		IsElementOf exprOf = graph.createIsElementOf(eVList2, eVList);
+            	exprOf.setSourcePositions((createSourcePositionList(lengthEVList, offsetEVList)));
+            }
+		)*
+		RPAREN
+	;	
+	
+
+
+/** matches an expression or a pathDescription
+	@return
+*/
+expressionOrPathDescription returns [Expression expr = null]
+:
+    (  (pathDescription expression) => expr = expression
+    | (expression) => expr = expression
+    | expr = pathDescription)
+;	
+	
+	
+
+/** matches a list of edge restrictions: each of them containing a
+    typeId and/or a roleId
+    @return vector containing the elements  of the list
+*/
+edgeRestrictionList returns [Vector<VertexPosition> list = new Vector<VertexPosition>();] 
+@init{
+	TypeId type = null;
+	RoleId role = null;
+	Vector<VertexPosition> eRList = null;
+	VertexPosition v = new VertexPosition();
+	EdgeRestriction er = null;
+	int offsetType = 0;
+	int offsetRole = 0;
+	int lengthType = 0;
+	int lengthRole = 0;
+}
+	:
+	(	(
+			{offsetRole = LgetLTOffset(); }
+			AT role = roleId
+			{lengthRole = getLTLength(offsetRole);}
+		)
+		|
+		(
+			{offsetType = getLTOffset(); }
+			type = typeId
+			{lengthType = getLTLength(offsetType);}
+			(	AT
+				{ offsetRole = getLTOffset(); }
+				role = roleId
+			)?
+		)
+	)
+    {
+      	lengthRole = getLTLength(offsetRole);
+       	er = graph.createEdgeRestriction();
+       	if (type != null) {
+	       	IsTypeIdOf typeIdOf = graph.createIsTypeIdOf(type, er);
+	       	typeIdOf.setSourcePositions((createSourcePositionList(lengthType, offsetType)));
+       	}
+       	if (role != null) {
+       		IsRoleIdOf roleIdOf = graph.createIsRoleIdOf(role,er);
+       		roleIdOf.setSourcePositions((createSourcePositionList(lengthRole, offsetRole)));
+       	}
+        v.node = er;
+        v.offset = offsetType;
+        v.length = -offsetType + offsetRole + lengthRole;
+       	list.add(v);
+    }
+	(	COMMA eRList = edgeRestrictionList {list.addAll(eRList);}  )?
+;	
+
+
+/** matches a report-list with labels
+	@return Bag-Comprehension-Vertex with <br>
+	a) a TupelConstruction as result or <br>
+	b) the expression as result (if the reportlist has only one element)
+*/
+labeledReportList returns [BagComprehension bagCompr = null]
+@init{
+	Expression expr = null;
+	Expression asExpr = null;
+	TupleConstruction tupConstr = null;
+    boolean hasLabel = false;
+    IsCompResultDefOf e = null;
+    int offset = 0;
+    int offsetExpr = 0;
+    int offsetAsExpr = 0;
+    int lengthExpr = 0;
+    int lengthAsExpr = 0;
+}
+	:
+    	{ offsetExpr = getLTOffset();
+    	  offset = offsetExpr;
+    	}
+		expr = expression
+ 		{ lengthExpr = getLTLength(offsetExpr); }
+        (	AS
+       		{ offsetAsExpr = getLTOffset(); }
+			asExpr = expression
+            {
+            	lengthAsExpr = getLTLength(offfsetAsExpr);
+            	hasLabel = true;
+            }
+		)?
+        {
+            bagCompr = graph.createBagComprehension();
+			tupConstr = graph.createTupleConstruction();
+			e = graph.createIsCompResultDefOf(tupConstr, bagCompr);
+			IsPartOf partOf = graph.createIsPartOf((Expression)expr, tupConstr);
+			partOf.setSourcePositions((createSourcePositionList(lengthExpr, offsetExpr)));
+		  	if (hasLabel) {
+			    IsTableHeaderOf tableHeaderOf = graph.createIsTableHeaderOf(asExpr, bagCompr);
+			    tableHeaderOf.setSourcePositions((createSourcePositionList(lengthAsExpr, offsetAsExpr)));
+			} 
+		}
+		(	{ hasLabel = false; }
+        	COMMA
+            { offsetExpr = getLTOffset(); }
+			expr = expression
+            { lengthExpr = getLTLength(offsetExpr); }
+			(	AS
+            	{ offsetAsExpr = getLTOffset(); }
+				asExpr = expression
+                {
+                	lengthAsExpr = getLTLength(offsetAsExpr);
+                	hasLabel = true;
+                }
+			)?
+            {
+			    IsPartOf partOf = graph.createIsPartOf(expr, tupConstr);
+			    partOf.setSourcePositions((createSourcePositionList(lengthExpr, offsetExpr)));
+		  	   	if (hasLabel) {
+				    IsTableHeaderOf tableHeaderOf = graph.createIsTableHeaderOf(asExpr, bagCompr);
+					tableHeaderOf.setSourcePositions((createSourcePositionList(lengthAsExpr, offsetAsExpr)));
+			    }
+		    }
+		)*
+		{
+			e.setSourcePositions((createSourcePositionList(getLTLength(offset), offset)));
+		  	if (tupConstr.getDegree(EdgeDirection.IN) == 1)	{
+				Vertex v = tupConstr.getFirstEdge(EdgeDirection.IN).getAlpha();
+				Edge e2 = tupConstr.getFirstEdge(EdgeDirection.OUT);
+				e2.setAlpha(v);
+				tupConstr.delete();
+			}
+		}
+	;
+	
+	
+
+/**	returns a comprehension including the comprehension result
+*/
+reportClause returns [Comprehension comprehension = null] 
+@init{
+	Vector<VertexPosition> reportList = new Vector<VertexPosition>();
+	int offset = 0;
+	int length = 0;
+	boolean vartable = false;
+}
+	:
+	(	REPORT
+		comprehension = labeledReportList
+	)
+	|
+	(	 REPORTBAG   {comprehension = graph.createBagComprehension();}
+	   | REPORTSET   {comprehension = graph.createSetComprehension(); }  
+	   | REPORTTABLE {comprehension = graph.createTableComprehension(); vartable = true; }
+	)
+    { offset = getLTOffset(); }
+	reportList = expressionList
+    {
+        length = getLTLength(offset);
+		IsCompResultDefOf e = null;
+	    if (!vartable) {
+	       	if (reportList.size() > 1) {
+			  	TupleConstruction tupConstr = (TupleConstruction) createMultipleEdgesToParent(reportList, graph.createTupleConstruction(), IsPartOf.class);
+	       	   	e = graph.createIsCompResultDefOf(tupConstr, comprehension);
+	       	} else {
+		    	e = graph.createIsCompResultDefOf((Expression)(reportList.get(0)).node, comprehension);
+			}
+			e.setSourcePositions((createSourcePositionList(length, offset)));
+	    } else {
+	         if ((reportList.size() != 3) && (reportList.size() != 4))
+	            throw new ParseException("reportTable columHeaderExpr, rowHeaderExpr, cellContent [,tableHeader] must be followed by three or for arguments", "reportTable", new SourcePosition(length, offset));
+					// size == 3, set columnHeader and rowHeader
+	       IsColumnHeaderExprOf cHeaderE = graph.createIsColumnHeaderExprOf((Expression)(reportList.get(0)).node, (TableComprehension)comprehension);
+	       cHeaderE.setSourcePositions((createSourcePositionList((reportList.get(0)).length, (reportList.get(0)).offset)));
+	       IsRowHeaderExprOf rHeaderE = graph.createIsRowHeaderExprOf((Expression)(reportList.get(1)).node, (TableComprehension)comprehension);
+	       rHeaderE.setSourcePositions((createSourcePositionList((reportList.get(1)).length, (reportList.get(1)).offset)));
+	       e = graph.createIsCompResultDefOf((Expression)(reportList.get(2)).node, comprehension);
+	       e.setSourcePositions((createSourcePositionList((reportList.get(2)).length, (reportList.get(2)).offset)));
+
+		   // tableheader
+	       if (reportList.size() == 4) {
+	           	IsTableHeaderOf tHeaderE = graph.createIsTableHeaderOf((Expression)(reportList.get(3)).node, (ComprehensionWithTableHeader)comprehension);
+	           	tHeaderE.setSourcePositions((createSourcePositionList((reportList.get(3)).length, (reportList.get(3)).offset)));
+	       }
+	 	}
+	}
+;	
+		
+/** matches a  fwr-expression
+*/
+simpleQuery returns [Comprehension comprehension = null]
+@init{
+	Vector<VertexPosition> declarations = new Vector<VertexPosition>();
+    Declaration declaration = null;
+    Expression subgraphExpr = null;
+    Expression constraintExpr = null;
+    int offsetDecl = 0;
+    int lengthDecl = 0;
+    int offsetSubgraph = 0;
+    int lengthSubgraph = 0;
+    int offsetConstraint = 0;
+    int lengthConstraint = 0;
+}
+	:
+		// declaration part
+		FROM
+		declarations = declarationList
+        {
+        	//TODO dbildh 21.11.08 : check if this can be replaced by call of declaration
+        	declaration = graph.createDeclaration();
+        	if (declaration.size() > 0) {
+        		offsetDecl = declaration.get(0).offset;
+        	}
+        	createMultipleEdgesToParent(declarations, declaration, IsSimpleDeclOf.class);
+        	lengthDecl = getLTLength(offsetDecl);
+        }
+        // optional subgraph-clause
+		(	IN
+			{ offsetSubgraph = getLTOffset(); }
+			subgraphExpr = expression
+            {
+	            lengthSubgraph = getLTLength(offsetSubgraph);
+	           	lengthDecl += lengthSubgraph;
+	           	IsSubgraphOf subgraphOf = graph.createIsSubgraphOf(subgraphExpr, declaration);
+	           	subgraphOf.setSourcePositions((createSourcePositionList(lengthSubgraph, offsetSubgraph)));
+			}
+		)?
+		// optional predicate
+		(	WITH
+			{ offsetConstraint = getLTOffset(); }
+			constraintExpr = expression
+            {
+            	lengthConstraint = getLTLength(offsetConstraint);
+	           	lengthDecl += lengthConstraint;
+	           	IsConstraintOf  constraintOf = graph.createIsConstraintOf(constraintExpr, declaration);
+	          	constraintOf.setSourcePositions((createSourcePositionList(lengthConstraint, offsetConstraint)));
+			}
+		)?
+		// report-clause
+		{ offsetResult = getLTOffset();}
+		comprehension = reportClause
+        {
+		    lengthResult = getLTLength(offsetResult);
+	   		IsCompDeclOf comprDeclOf = graph.createIsCompDeclOf(declaration, comprehension);
+	   		comprDeclOf.setSourcePositions((createSourcePositionList(lengthDecl, offsetDecl)));
+		}
+		END
+	;		
+		
+	
+
+/** matches regular path-existences or regular forward-vertex-sets
+	@param arg1 startvertex-expression
+	@param offsetArg1 offset of the start-expression
+	@param lengthArg1 length of the start-expression
+	@return
+*/
+regPathExistenceOrForwardVertexSet[Expression arg1, int offsetArg1, int lengthArg1]
+	returns [Expression expr = null]
+@init{
+	PathDescription pathDescr = null;
+	Expression restrExpr = null;
+	int offsetPathDescr = 0;
+	int offsetExpr = 0;
+	int lengthPathDescr = 0;
+	int lengthExpr = 0;
+}
+	:
+	{ offsetPathDescr = getLTOffset(); }
+	pathDescr = pathDescription
+    { lengthPathDescr = getLTLenth(offsetPathDescr);}
+	( 	(primaryExpression) =>
+       	{ offsetExpr = getLTOffset(); }
+       	restrExpr = restrictedExpression
+        { lengthExpr = getLTLength(offsetExpr); }
+	| /* forward vertex set */
+	)
+	{
+		if (restrExpr != null) {
+			// create new pathexistence
+			PathExistence pe = graph.createPathExistence();
+			expr = pe;
+					
+			// add start vertex
+			IsStartExprOf startVertexOf = graph.createIsStartExprOf(arg1, pe);
+			startVertexOf.setSourcePositions((createSourcePositionList(lengthArg1, offsetArg1)));
+
+			// add target vertex
+			IsTargetExprOf targetVertexOf = graph.createIsTargetExprOf(restrExpr, pe);
+			targetVertexOf.setSourcePositions((createSourcePositionList(lengthExpr, offsetExpr)));
+
+			// add pathdescription
+			IsPathOf pathOf = graph.createIsPathOf(pathDescr, pe);
+			pathOf.setSourcePositions((createSourcePositionList(lengthPathDescr, offsetPathDescr)));
+		} else {
+			// create new forward-vertex-set
+			ForwardVertexSet fvs = graph.createForwardVertexSet();
+			expr = fvs;
+			// add start expr
+			IsStartExprOf startVertexOf = graph.createIsStartExprOf(arg1, fvs);
+			startVertexOf.setSourcePositions((createSourcePositionList(lengthArg1, offsetArg1)));
+			// add pathdescr
+			IsPathOf pathOf = graph.createIsPathOf(pathDescr, fvs);
+			pathOf.setSourcePositions((createSourcePositionList(lengthPathDescr, offsetPathDescr)));
+		}
+	}
+;	
+	
+	
+/** matches expressions that compute regular paths or pathsystems starting with a
+    vertex expression
+    @param arg1 startvertex
+    @param offsetArg1 offset of the startvertex-expression
+    @param lengthArg1 length of the startvertex-expression
+*/
+//TODO: check if this is really needed
+regPathOrPathSystem[Expression arg1, int offsetArg1, int lengthArg1] returns [Expression expr = null]
+@init{
+	PathDescription pathDescr = null;
+	Expression restrExpr = null;
+    boolean isPath = false;
+    int offsetPathDescr = 0;
+    int offsetOperator1 = 0;
+    int offsetOperator2 = 0;
+    int offsetExpr = 0;
+    int lengthPathDescr = 0;
+    int lengthExpr = 0;
 }
 :
-pathDescr = 'REGPATH'// alternativePathDescription
+	{ offsetOperator1 = getLTOffset(); }
+	SMILEY
+    { offsetPathDescr = getLTOffset(); }
+	pathDescr = pathDescription
+	{ lengthPathDescr = getLTLength(offsetPathDescr);}
+    (
+    	{ offsetOperator2 = getLTOffset(); }
+        SMILEY
+      	{ offsetExpr = getLTOffset();}
+        restrExpr = restrictedExpression
+        { 
+          lengthExpr = getLTLength(offsetPathDescr);
+          isPath = true;
+        }
+	)?
+    {
+        FunctionApplication funAp = graph.createFunctionApplication();
+		expr = funAp;
+		FunctionId funId = graph.createFunctionId();
+		funId.setName("pathSystem");
+		createFunctionIdAndArgumentOf(funAp, funId, offsetOperator1, 3, 
+		   							  arg1, offsetArg1, lengthArg1, pathDescr, 
+		   							  offsetPathDescr, lengthPathDescr); 
+		if (isPath) {
+			arg1 = expr;
+			funAp = graph.createFunctionApplication();
+			expr = funAp;
+			createFunctionIdAndArgumentOf(funAp, funId, offsetOperator1, 3,
+											  arg1, offsetArg1, -offsetArg1 + offsetOperator2 + 3,
+											  restrExpr, offsetExpr, lengthExpr);
+		}
+	}
+;	
+	
+
+/** matches regular backwardvertex sets and pathsystem expressions beginning with
+     a pathdescription
+    @return
+*/
+regBackwardVertexSetOrPathSystem returns [Expression expr = null] 
+@init{
+	PathDescription pathDescr = null;
+    Expression restrExpr = null;
+    boolean isPathSystem = false;
+    int offsetPathDescr = 0;
+    int offsetExpr = 0;
+    int offsetOperator = 0;
+    int lengthPathDescr = 0;
+    int lengthExpr = 0;
+}
+	:
+		{ offsetPathDescr = getLTOffset(); }
+		// the path description
+        pathDescr = pathDescription
+        { lengthPathDescr = getLTLength(offsetPathDescr); }
+        /* is it a pathsystem ?*/
+        (
+        	{ offsetOperator = getLTOffset(); }
+            SMILEY
+            { isPathSystem = true; }
+		)?
+        { offsetExpr = getLTOffset(); }
+        // the target vertex
+		restrExpr = restrictedExpression
+		{
+		    lengthExpr = getLTLength(offsetExpr);
+	        if (isPathSystem) {
+		   		// create a path-system-functionapplication
+				FunctionApplication fa = graph.createFunctionApplication();
+				expr = fa;
+				FunctionId f = (FunctionId )functionSymbolTable.lookup("pathSystem");
+				if (f == null)	{
+		            f = graph.createFunctionId();
+		            f.setName("pathSystem");
+		            functionSymbolTable.insert("pathSystem", f);
+		        }
+		        createFunctionIdAndArgumentOf(fa, f, offsetOperator, 3, 
+				  							  pathDescr, offsetPathDescr, lengthPathDescr, restrExpr, offsetExpr, lengthExpr); 	
+	        } else {
+		    	// create a backwardvertexset
+				BackwardVertexSet bs = graph.createBackwardVertexSet();
+				expr = bs;
+	            IsTargetExprOf targetVertexOf = graph.createIsTargetExprOf(restrExpr, bs);
+	            targetVertexOf.setSourcePositions((createSourcePositionList(lengthExpr, offsetExpr)));
+				IsPathOf pathOf = graph.createIsPathOf(pathDescr, bs);
+				pathOf.setSourcePositions((createSourcePositionList(lengthPathDescr, offsetPathDescr)));
+	        }
+        }
 ;
