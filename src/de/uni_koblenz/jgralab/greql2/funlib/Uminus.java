@@ -62,28 +62,29 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
  *
  */
 
-public class Uminus implements Greql2Function {
+public class Uminus extends AbstractGreql2Function {
+	{
+		JValueType[][] x = { { JValueType.LONG }, { JValueType.INTEGER },
+				{ JValueType.DOUBLE } };
+		signatures = x;
+	}
 
 	public JValue evaluate(Graph graph, BooleanGraphMarker subgraph,
 			JValue[] arguments) throws EvaluateException {
-		if (arguments.length != 1) {
-			throw new WrongFunctionParameterException(this, null, arguments);
-		}
-		try {
-			if (arguments[0].canConvert(JValueType.INTEGER)) {
-				Integer i = arguments[0].toInteger();
-				return new JValue(-i);
-			} else {
-				Double i = arguments[0].toDouble();
-				return new JValue(-i);
-			}
-		} catch (Exception ex) {
+		switch (checkArguments(arguments)) {
+		case 0:
+			return new JValue(-arguments[0].toLong());
+		case 1:
+			return new JValue(-arguments[0].toInteger());
+		case 2:
+			return new JValue(-arguments[0].toDouble());
+		default:
 			throw new WrongFunctionParameterException(this, null, arguments);
 		}
 	}
 
 	public long getEstimatedCosts(ArrayList<Long> inElements) {
-		return 2;
+		return 1;
 	}
 
 	public double getSelectivity() {
@@ -92,10 +93,6 @@ public class Uminus implements Greql2Function {
 
 	public long getEstimatedCardinality(int inElements) {
 		return 1;
-	}
-
-	public String getExpectedParameters() {
-		return "(Double)";
 	}
 
 }

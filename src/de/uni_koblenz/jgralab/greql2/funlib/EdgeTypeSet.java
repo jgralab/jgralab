@@ -25,15 +25,13 @@
 package de.uni_koblenz.jgralab.greql2.funlib;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 
+import de.uni_koblenz.jgralab.AttributedElement;
 import de.uni_koblenz.jgralab.BooleanGraphMarker;
 import de.uni_koblenz.jgralab.Graph;
-import de.uni_koblenz.jgralab.GraphElement;
 import de.uni_koblenz.jgralab.greql2.exception.EvaluateException;
 import de.uni_koblenz.jgralab.greql2.exception.WrongFunctionParameterException;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
-import de.uni_koblenz.jgralab.greql2.jvalue.JValueCollection;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValueSet;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
 
@@ -76,17 +74,12 @@ public class EdgeTypeSet extends AbstractGreql2Function {
 
 	public JValue evaluate(Graph graph, BooleanGraphMarker subgraph,
 			JValue[] arguments) throws EvaluateException {
-
 		switch (checkArguments(arguments)) {
 		case 0:
 			JValueSet resultSet = new JValueSet();
-			JValueCollection collection = arguments[0].toCollection();
-			Iterator<JValue> iter = collection.iterator();
-			while (iter.hasNext()) {
-				JValue value = iter.next();
-				GraphElement elem;
-				if (value.isEdge()) {
-					elem = value.toEdge();
+			for (JValue v : arguments[0].toCollection()) {
+				if (v.isEdge()) {
+					AttributedElement elem = v.toEdge();
 					resultSet.add(new JValue(elem.getAttributedElementClass(),
 							elem));
 				}
@@ -102,7 +95,7 @@ public class EdgeTypeSet extends AbstractGreql2Function {
 	}
 
 	public long getEstimatedCosts(ArrayList<Long> inElements) {
-		return 1000;
+		return 45;
 	}
 
 	public double getSelectivity() {

@@ -31,6 +31,7 @@ import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.greql2.exception.EvaluateException;
 import de.uni_koblenz.jgralab.greql2.exception.WrongFunctionParameterException;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
+import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
 
 /**
  * Returns the start-vertex of a given path.
@@ -58,17 +59,20 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
  *
  */
 
-public class StartVertex implements Greql2Function {
+public class StartVertex extends AbstractGreql2Function {
+	{
+		JValueType[][] x = { { JValueType.PATH }, { JValueType.EDGE } };
+		signatures = x;
+	}
 
 	public JValue evaluate(Graph graph, BooleanGraphMarker subgraph,
 			JValue[] arguments) throws EvaluateException {
-		try {
-			if (arguments[0].isPath()) {
-				return new JValue(arguments[0].toPath().getStartVertex());
-			} else {
-				return new JValue(arguments[0].toEdge().getAlpha());
-			}
-		} catch (Exception ex) {
+		switch (checkArguments(arguments)) {
+		case 0:
+			return new JValue(arguments[0].toPath().getStartVertex());
+		case 1:
+			return new JValue(arguments[0].toEdge().getAlpha());
+		default:
 			throw new WrongFunctionParameterException(this, null, arguments);
 		}
 	}
@@ -83,10 +87,6 @@ public class StartVertex implements Greql2Function {
 
 	public long getEstimatedCardinality(int inElements) {
 		return 1;
-	}
-
-	public String getExpectedParameters() {
-		return "(Set, Set)";
 	}
 
 }

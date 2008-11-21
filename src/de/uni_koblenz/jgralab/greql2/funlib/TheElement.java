@@ -12,6 +12,7 @@ import de.uni_koblenz.jgralab.greql2.exception.EvaluateException;
 import de.uni_koblenz.jgralab.greql2.exception.WrongFunctionParameterException;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValueCollection;
+import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
 
 /**
  * Returns the one and only element of the given set, bag or list. If it
@@ -41,34 +42,28 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueCollection;
  *
  * @author ist@uni-koblenz.de
  */
-public class TheElement implements Greql2Function {
+public class TheElement extends AbstractGreql2Function {
+	{
+		JValueType[][] x = { { JValueType.COLLECTION } };
+		signatures = x;
+	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * de.uni_koblenz.jgralab.greql2.funlib.Greql2Function#evaluate(de.uni_koblenz
-	 * .jgralab.Graph, de.uni_koblenz.jgralab.BooleanGraphMarker,
-	 * de.uni_koblenz.jgralab.greql2.jvalue.JValue[])
-	 */
 	@Override
 	public JValue evaluate(Graph graph, BooleanGraphMarker subgraph,
 			JValue[] arguments) throws EvaluateException {
-		if (arguments.length != 1) {
+		if (checkArguments(arguments) == -1) {
 			throw new WrongFunctionParameterException(this, null, arguments);
 		}
-		try {
-			JValueCollection col = arguments[0].toCollection();
-			// theElement is defined only for collections with exactly one
-			// element.
-			if (col.size() != 1) {
-				throw new WrongFunctionParameterException(this, null, arguments);
-			}
-			Iterator<JValue> it = col.iterator();
-			return it.next();
-		} catch (Exception e) {
-			throw new WrongFunctionParameterException(this, null, arguments);
+
+		JValueCollection col = arguments[0].toCollection();
+		// theElement is defined only for collections with exactly one
+		// element.
+		if (col.size() != 1) {
+			throw new EvaluateException("The given collection contains "
+					+ (col.size() < 1 ? "less" : "more") + " than one element!");
 		}
+		Iterator<JValue> it = col.iterator();
+		return it.next();
 	}
 
 	/*
@@ -93,18 +88,6 @@ public class TheElement implements Greql2Function {
 	@Override
 	public long getEstimatedCosts(ArrayList<Long> inElements) {
 		return 1;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * de.uni_koblenz.jgralab.greql2.funlib.Greql2Function#getExpectedParameters
-	 * ()
-	 */
-	@Override
-	public String getExpectedParameters() {
-		return "(JValueCollection)";
 	}
 
 	/*

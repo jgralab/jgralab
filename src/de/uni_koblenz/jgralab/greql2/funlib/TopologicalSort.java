@@ -14,8 +14,10 @@ import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.GraphMarker;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.greql2.exception.EvaluateException;
+import de.uni_koblenz.jgralab.greql2.exception.WrongFunctionParameterException;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValueList;
+import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
 
 /**
  * Returns a list of vertices in topological ordering.
@@ -42,7 +44,12 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueList;
  * @author ist@uni-koblenz.de
  *
  */
-public class TopologicalSort implements Greql2Function {
+public class TopologicalSort extends AbstractGreql2Function {
+
+	{
+		JValueType[][] x = { {}, { JValueType.SUBGRAPHTEMPATTRIBUTE } };
+		signatures = x;
+	}
 
 	/*
 	 * (non-Javadoc)
@@ -55,8 +62,14 @@ public class TopologicalSort implements Greql2Function {
 	@Override
 	public JValue evaluate(Graph graph, BooleanGraphMarker subgraph,
 			JValue[] arguments) throws EvaluateException {
-		if (arguments.length > 0) {
+		switch (checkArguments(arguments)) {
+		case 0:
+			break;
+		case 1:
 			subgraph = arguments[0].toSubgraphTempAttribute();
+			break;
+		default:
+			throw new WrongFunctionParameterException(this, null, arguments);
 		}
 
 		JValueList result = new JValueList();
@@ -126,18 +139,6 @@ public class TopologicalSort implements Greql2Function {
 	@Override
 	public long getEstimatedCosts(ArrayList<Long> inElements) {
 		return 200;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * de.uni_koblenz.jgralab.greql2.funlib.Greql2Function#getExpectedParameters
-	 * ()
-	 */
-	@Override
-	public String getExpectedParameters() {
-		return "([SubgraphTempAttribute])";
 	}
 
 	/*

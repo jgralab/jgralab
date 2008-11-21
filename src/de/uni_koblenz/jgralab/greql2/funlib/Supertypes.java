@@ -25,7 +25,6 @@
 package de.uni_koblenz.jgralab.greql2.funlib;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 
 import de.uni_koblenz.jgralab.BooleanGraphMarker;
 import de.uni_koblenz.jgralab.Graph;
@@ -33,10 +32,9 @@ import de.uni_koblenz.jgralab.greql2.exception.EvaluateException;
 import de.uni_koblenz.jgralab.greql2.exception.WrongFunctionParameterException;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValueSet;
+import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
 import de.uni_koblenz.jgralab.schema.AttributedElementClass;
-import de.uni_koblenz.jgralab.schema.GraphClass;
 import de.uni_koblenz.jgralab.schema.QualifiedName;
-import de.uni_koblenz.jgralab.schema.Schema;
 
 /**
  * Returns all supertypes of the given type. The type can be given as
@@ -77,34 +75,33 @@ import de.uni_koblenz.jgralab.schema.Schema;
  * Thesis
  */
 
-public class Supertypes implements Greql2Function {
+public class Supertypes extends AbstractGreql2Function {
+	{
+		JValueType[][] x = { { JValueType.STRING },
+				{ JValueType.ATTRIBUTEDELEMENTCLASS } };
+		signatures = x;
+	}
 
 	public JValue evaluate(Graph graph, BooleanGraphMarker subgraph,
 			JValue[] arguments) throws EvaluateException {
-		try {
-			if (arguments.length >= 1) {
-				JValueSet typeSet = new JValueSet();
-				AttributedElementClass type;
-				if (arguments[0].isString()) {
-					GraphClass graphClass = (GraphClass) graph
-							.getAttributedElementClass();
-					Schema schema = graphClass.getSchema();
-					type = schema.getAttributedElementClass(new QualifiedName(
-							arguments[0].toString()));
-				} else {
-					type = arguments[0].toAttributedElementClass();
-				}
-				Iterator<AttributedElementClass> iter = type
-						.getAllSuperClasses().iterator();
-				while (iter.hasNext()) {
-					typeSet.add(new JValue(iter.next()));
-				}
-				return typeSet;
-			}
-			throw new WrongFunctionParameterException(this, null, arguments);
-		} catch (Exception ex) {
+		AttributedElementClass clazz = null;
+		switch (checkArguments(arguments)) {
+		case 0:
+			clazz = graph.getSchema().getAttributedElementClass(
+					new QualifiedName(arguments[0].toString()));
+			break;
+		case 1:
+			clazz = arguments[0].toAttributedElementClass();
+			break;
+		default:
 			throw new WrongFunctionParameterException(this, null, arguments);
 		}
+
+		JValueSet typeSet = new JValueSet();
+		for (AttributedElementClass c : clazz.getDirectSuperClasses()) {
+			typeSet.add(new JValue(c));
+		}
+		return typeSet;
 	}
 
 	public long getEstimatedCosts(ArrayList<Long> inElements) {
@@ -117,10 +114,6 @@ public class Supertypes implements Greql2Function {
 
 	public long getEstimatedCardinality(int inElements) {
 		return 1;
-	}
-
-	public String getExpectedParameters() {
-		return "(Integer)";
 	}
 
 }
