@@ -71,9 +71,9 @@ import de.uni_koblenz.jgralab.greql2.funlib.Greql2FunctionLibrary;
         }
         
         public void postOp(String op) {
-          lengthOperator = getLTLength();
-	  offsetArg2 = getLTOffset();
-	  operatorName = op;
+          	lengthOperator = getLTLength();
+	  		offsetArg2 = getLTOffset();
+	  		operatorName = op;
         }
         
         public FunctionApplication postArg2(Expression arg2) { 
@@ -149,20 +149,20 @@ import de.uni_koblenz.jgralab.greql2.funlib.Greql2FunctionLibrary;
      */
     private void initialize() {
        	schema = Greql2Schema.instance();
-	graph = Greql2Impl.create(VMAX,EMAX);
+		graph = Greql2Impl.create(VMAX,EMAX);
         variableSymbolTable = new SymbolTable();
- 	functionSymbolTable = new SymbolTable();
-	nonterminalSymbolTable = new SymbolTable();
-	functionSymbolTable.blockBegin();
+ 		functionSymbolTable = new SymbolTable();
+		nonterminalSymbolTable = new SymbolTable();
+		functionSymbolTable.blockBegin();
         graphClass = schema.getGraphClass(new QualifiedName("Greql2"));
    }
    
    private int getLTLength() {
-	return (- offset + LT(0).getColumn()-1 + LT(0).getText().length());
+		return (- offset + LT(0).getColumn()-1 + LT(0).getText().length());
    }
    
    private int getLTOffset() {
-	return LT(1).getColumn()-1; 
+		return LT(1).getColumn()-1; 
    }
    
     /**
@@ -436,16 +436,16 @@ NULL_VALUE 	: 'null';
 OR  		: 'or';
 TRUE 		: 'true';
 XOR 		: 'xor';
-AS 		: 'as';
+AS 			: 'as';
 BAG 		: 'bag';
-E 		: 'E';
+E 			: 'E';
 ESUBGRAPH	: 'eSubgraph';
 EXISTS_ONE	: 'exists!';
 EXISTS		: 'exists';
 END 		: 'end';
 FORALL		: 'forall';
 FROM  		: 'from';
-IN 		: 'in';
+IN 			: 'in';
 LET 		: 'let';
 LIST 		: 'list';
 PATH 		: 'path';
@@ -459,7 +459,7 @@ STORE		: 'store';
 SET 		: 'set';
 TUP 		: 'tup';
 USING		: 'using';
-V 		: 'V';
+V 			: 'V';
 VSUBGRAPH	: 'vSubgraph';
 WHERE 		: 'where';
 WITH 		: 'with';
@@ -467,8 +467,8 @@ QUESTION 	: '?';
 EXCL 		: '!';
 COLON 		: ':';
 COMMA 		: ',';
-DOT		: '.';
-AT		: '@';
+DOT			: '.';
+AT			: '@';
 LPAREN		: '(';
 RPAREN		: ')';
 LBRACK		: '[';
@@ -480,23 +480,23 @@ GASSIGN 	: '::=';
 EQUAL		: '=';
 MATCH 		: '=~';
 NOT_EQUAL 	: '<>';
-LE		: '<=';
-GE		: '=>';
-L_T		: '<';
-G_T		: '>';
-DIV		: '/';
+LE			: '<=';
+GE			: '=>';
+L_T			: '<';
+G_T			: '>';
+DIV			: '/';
 PLUS		: '+';
 MINUS		: '-';
 STAR		: '*';
-MOD		: '%';
+MOD			: '%';
 SEMI		: ';';
 CARET		: '^';
-BOR		: '|';
-AMP		: '&';	
+BOR			: '|';
+AMP			: '&';	
 SMILEY		: ':-)';
-//EDGESTART	: '<-';
-//EDGEEND		: '->';
-//EDGE		: '--';
+EDGESTART	: '<-';
+EDGEEND		: '->';
+EDGE		: '--';
 RARROW		: '-->';
 LARROW  	: '<--';
 ARROW		: '<->';
@@ -1519,6 +1519,9 @@ pathDescr = primaryPathDescription
 
 
 
+
+
+
 primaryPathDescription returns [PathDescription pathDescr = null]
 @init{
 	int offset = 0;
@@ -1546,6 +1549,109 @@ primaryPathDescription returns [PathDescription pathDescr = null]
 ;
 
 
+
+
+
+
+/** matches a simle pathdescription consisting of an arrow simple
+	and eventually a restriction. "thisEdge"s are replaced by
+	the corresponding simple pathdescription
+	@return
+*/
+simplePathDescription returns [PrimaryPathDescription pathDescr = null]
+@init{
+	Vector<VertexPosition> typeIds = new Vector<VertexPosition>();
+    Direction dir;
+    String direction = "any";
+    int offsetDir = 0;
+}
+:
+{offsetDir = getLTOffset();}
+/* edge symbol */
+/* TODO: insert here for aggregation */
+( RARROW { direction = "out"; }
+| LARROW { direction = "in"; }
+| ARROW
+)
+/* edge type restriction */
+(   (LCURLY (edgeRestrictionList)? RCURLY ) =>
+      (LCURLY (typeIds = edgeRestrictionList)?	RCURLY)
+| /* empty */    )
+
+{
+    pathDescr = graph.createSimplePathDescription();
+	dir = (Direction)graph.getFirstVertexOfClass(Direction.class);
+	while (dir != null ) {
+    	if (!dir.getDirValue().equals(direction)) {
+	        dir = (Direction)dir.getNextVertexOfClass(directionVertexClass);
+	    } else { 
+	    	break;
+	    }		
+		if (dir == null) {
+			dir = graph.createDirection();
+	        dir.setDirValue(direction);
+	    }
+	    IsDirectionOf directionOf = graph.createIsDirectionOf(dir, pathDescr);
+	    directionOf.setSourcePositions((createSourcePositionList(0, offsetDir)));
+		for (int i = 0; i < typeIds.size(); i++) {
+			VertexPosition t = typeIds.get(i);
+			IsEdgeRestrOf edgeRestrOf = graph.createIsEdgeRestrOf((EdgeRestriction)t.node, pathDescr);
+			edgeRestrOf.setSourcePositions((createSourcePositionList(t.length, t.offset)));
+		}
+	}	
+}
+;
+
+
+
+/** matches a edgePathDescription, i.e. am edge as part of a pathdescription
+	@return
+*/
+edgePathDescription returns [EdgePathDescription pathDescr = null] 
+@init{
+	Expression expr = null;
+	Direction dir = null;
+    boolean edgeStart = false;
+    boolean edgeEnd = false;
+    String direction = "any";
+    int offsetDir = 0;
+    int offsetExpr = 0;
+    int lengthDir = 0;
+    int lengthExpr = 0;
+}
+:	
+{offsetDir = LT(1).getColumn()-1;}
+/* TODO: insert here for aggregation */
+(EDGESTART	{ edgeStart = true; } | EDGE)
+{offsetExpr = LT(1).getColumn()-1;}
+expr = expression
+{lengthExpr = getLTLength();}
+(EDGEEND { edgeEnd = true; }| EDGE)
+{
+	lengthExpr = getLTLength();
+    pathDescr = graph.createEdgePathDescription();
+	if (edgeStart && !edgeEnd) 
+		direction = "in";
+	else if  (!edgeStart  && edgeEnd))
+        direction = "out";
+	dir = (Direction)graph.getFirstVertexOfClass(Direction.class);
+	while (dir != null ) {
+   		if (! dir.getDirValue().equals(direction)) {
+       			dir = (Direction)dir.getNextVertexOfClass(directionVertexClass);
+	    } else {
+	     	break;
+	    }	
+		if (dir == null) {
+			dir = graph.createDirection();
+	        dir.setDirValue(direction);
+	    }
+	    IsDirectionOf directionOf = graph.createIsDirectionOf(dir, pathDescr);
+	    directionOf.setSourcePositions((createSourcePositionList(lengthDir, offsetDir)));
+	    IsEdgeExprOf edgeExprOf = graph.createIsEdgeExprOf(expr, pathDescr);
+	    edgeExprOf.setSourcePositions((createSourcePositionList(lengthExpr, offsetExpr)));
+	}
+}	
+;
 
 
 
