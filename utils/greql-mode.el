@@ -24,7 +24,7 @@
 
 
 ;;; Version:
-;; <2008-11-18 Tue 20:30>
+;; <2008-11-21 Fri 16:27>
 
 ;;; Code:
 
@@ -285,18 +285,26 @@ queries are evaluated.  Set it with `greql-set-graph'.")
   (interactive)
   (greql-complete-1 (greql-completion-list '(keyword funlib))))
 
+(defvar greql-result-file nil)
+
 (defun greql-execute ()
   "Execute the query in the current buffer on `greql-graph'."
   (interactive)
   (let ((buffer (get-buffer-create "*GReQL*"))
 	(evalstr (buffer-substring-no-properties (point-min) (point-max))))
+    (setq greql-result-file (concat (or (buffer-file-name) "_greql_") ".html"))
     (with-current-buffer buffer
       (erase-buffer))
-    (start-process "GReQL process" buffer
-		   greql-script-program
-		   "-e" evalstr
-		   "-g" (expand-file-name greql-graph))
+    (let ((proc (start-process "GReQL process" buffer
+			       greql-script-program
+			       "-e" evalstr
+			       "-g" (expand-file-name greql-graph)
+			       "-r" greql-result-file)))
+      (set-process-sentinel proc 'greql-display-result))
     (display-buffer buffer)))
+
+(defun greql-display-result (proc change)
+  (w3m-find-file greql-result-file))
 
 (defun greql-vertex-set-expression-p ()
   (looking-back "V{[[:word:]._, ]*"))
