@@ -87,15 +87,16 @@ public class GetValue extends AbstractGreql2Function {
 		}
 		String fieldName = arguments[1].toString();
 
-		try {
-			if (attrElem != null) {
+		if (attrElem != null) {
+			try {
 				return JValue.fromObject(attrElem.getAttribute(fieldName),
 						attrElem);
+			} catch (NoSuchFieldException e) {
+				e.printStackTrace();
+				throw new EvaluateException("GetValue failed!", e);
 			}
-			return record.get(fieldName);
-		} catch (Exception ex) {
-			throw new EvaluateException("Evaluation of GetValue failed.", ex);
 		}
+		return record.get(fieldName);
 	}
 
 	public long getEstimatedCosts(ArrayList<Long> inElements) {
