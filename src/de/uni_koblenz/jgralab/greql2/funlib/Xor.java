@@ -24,15 +24,10 @@
 
 package de.uni_koblenz.jgralab.greql2.funlib;
 
-import java.util.ArrayList;
-
 import de.uni_koblenz.jgralab.BooleanGraphMarker;
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.greql2.exception.EvaluateException;
-import de.uni_koblenz.jgralab.greql2.exception.JValueInvalidTypeException;
-import de.uni_koblenz.jgralab.greql2.exception.WrongFunctionParameterException;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
-import de.uni_koblenz.jgralab.greql2.jvalue.JValueBoolean;
 
 /**
  * Returns the result of the logical operation <code>a xor b</code>.
@@ -87,34 +82,16 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueBoolean;
  *
  */
 
-public class Xor implements Greql2Function {
+public class Xor extends BooleanFunction {
 
 	public JValue evaluate(Graph graph, BooleanGraphMarker subgraph,
 			JValue[] arguments) throws EvaluateException {
-		if (arguments.length != 2) {
-			throw new WrongFunctionParameterException(this, null, arguments);
-		}
-		try {
-			return JValueBoolean.xor(arguments[0], arguments[1]);
-		} catch (JValueInvalidTypeException ex) {
-			throw new WrongFunctionParameterException(this, null, arguments);
-		}
+		return evaluate(arguments, BooleanOperator.XOR);
 	}
 
-	public long getEstimatedCosts(ArrayList<Long> inElements) {
-		return 2;
-	}
-
+	@Override
 	public double getSelectivity() {
 		return 2d / 9;
-	}
-
-	public long getEstimatedCardinality(int inElements) {
-		return 1;
-	}
-
-	public String getExpectedParameters() {
-		return "(TrivalentBoolean)";
 	}
 
 }

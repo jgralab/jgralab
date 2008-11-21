@@ -29,10 +29,10 @@ import java.util.ArrayList;
 import de.uni_koblenz.jgralab.BooleanGraphMarker;
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.greql2.exception.EvaluateException;
-import de.uni_koblenz.jgralab.greql2.exception.JValueInvalidTypeException;
 import de.uni_koblenz.jgralab.greql2.exception.WrongFunctionParameterException;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValueBoolean;
+import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
 
 /**
  * Returns the result of the logical operation <code>not a</code>.
@@ -78,18 +78,18 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueBoolean;
  *
  */
 
-public class Not implements Greql2Function {
+public class Not extends AbstractGreql2Function {
+	{
+		JValueType[][] x = { { JValueType.BOOLEAN } };
+		signatures = x;
+	}
 
 	public JValue evaluate(Graph graph, BooleanGraphMarker subgraph,
 			JValue[] arguments) throws EvaluateException {
-		if (arguments.length != 1) {
+		if (checkArguments(arguments) == -1) {
 			throw new WrongFunctionParameterException(this, null, arguments);
 		}
-		try {
-			return JValueBoolean.not(arguments[0]);
-		} catch (JValueInvalidTypeException ex) {
-			throw new WrongFunctionParameterException(this, null, arguments);
-		}
+		return JValueBoolean.not(arguments[0]);
 	}
 
 	public long getEstimatedCosts(ArrayList<Long> inElements) {
@@ -102,10 +102,6 @@ public class Not implements Greql2Function {
 
 	public long getEstimatedCardinality(int inElements) {
 		return 1;
-	}
-
-	public String getExpectedParameters() {
-		return "(TrivalentBoolean)";
 	}
 
 }
