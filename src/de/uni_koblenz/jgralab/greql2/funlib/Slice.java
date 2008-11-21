@@ -38,7 +38,6 @@ import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.GraphMarker;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.greql2.evaluator.fa.DFA;
-import de.uni_koblenz.jgralab.greql2.evaluator.fa.NFA;
 import de.uni_koblenz.jgralab.greql2.evaluator.fa.State;
 import de.uni_koblenz.jgralab.greql2.evaluator.fa.Transition;
 import de.uni_koblenz.jgralab.greql2.exception.EvaluateException;
@@ -47,7 +46,9 @@ import de.uni_koblenz.jgralab.greql2.funlib.pathsearch.PathSystemMarkerEntry;
 import de.uni_koblenz.jgralab.greql2.funlib.pathsearch.PathSystemMarkerList;
 import de.uni_koblenz.jgralab.greql2.funlib.pathsearch.PathSystemQueueEntry;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
+import de.uni_koblenz.jgralab.greql2.jvalue.JValueSet;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValueSlice;
+import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
 
 /**
  * Returns a slice, based on the current graph and the given dfa, whose root is
@@ -80,7 +81,15 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueSlice;
  * @author ist@uni-koblenz.de
  *
  */
-public class Slice implements Greql2Function {
+public class Slice extends AbstractGreql2Function {
+
+	{
+		JValueType[][] x = { { JValueType.COLLECTION, JValueType.DFA },
+				{ JValueType.COLLECTION, JValueType.NFA },
+				{ JValueType.VERTEX, JValueType.DFA },
+				{ JValueType.VERTEX, JValueType.NFA } };
+		signatures = x;
+	}
 
 	/**
 	 * for each state in the fa (normally < 10) a seperate GraphMarker is used
@@ -244,19 +253,34 @@ public class Slice implements Greql2Function {
 		Set<Vertex> sliCritVertices = new HashSet<Vertex>();
 		this.graph = graph;
 		DFA dfa;
-		try {
-			for (JValue v : arguments[0].toJValueSet()) {
-				sliCritVertices.add(v.toVertex());
-			}
-			if (arguments[1].isNFA()) {
-				NFA nfa = arguments[1].toNFA();
-				dfa = new DFA(nfa);
-			} else {
-				dfa = arguments[1].toDFA();
-			}
-		} catch (Exception ex) {
+		JValueSet vertices;
+		switch (checkArguments(arguments)) {
+		case 0:
+			dfa = arguments[1].toDFA();
+			vertices = arguments[0].toJValueSet();
+			break;
+		case 1:
+			dfa = new DFA(arguments[1].toNFA());
+			vertices = arguments[0].toJValueSet();
+			break;
+		case 2:
+			vertices = new JValueSet();
+			vertices.add(arguments[0]);
+			dfa = arguments[1].toDFA();
+			break;
+		case 3:
+			vertices = new JValueSet();
+			vertices.add(arguments[0]);
+			dfa = new DFA(arguments[1].toNFA());
+			break;
+		default:
 			throw new WrongFunctionParameterException(this, null, arguments);
 		}
+
+		for (JValue v : vertices) {
+			sliCritVertices.add(v.toVertex());
+		}
+
 		marker = new ArrayList<GraphMarker<PathSystemMarkerList>>(dfa.stateList
 				.size());
 		for (int i = 0; i < dfa.stateList.size(); i++) {
@@ -449,10 +473,6 @@ public class Slice implements Greql2Function {
 
 	public long getEstimatedCardinality(int inElements) {
 		return 1;
-	}
-
-	public String getExpectedParameters() {
-		return "(Set<Vertex>, DFA, Subgraph" + "TempAttribute)";
 	}
 
 }
