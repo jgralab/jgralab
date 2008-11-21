@@ -112,11 +112,16 @@ import de.uni_koblenz.jgralab.greql2.funlib.Greql2FunctionLibrary;
     }
 
 
-	private void createPartsOfValueConstruction(List<VertexPosition> expressions, ValueConstruction parent) {
+	private Vertex createPartsOfValueConstruction(List<VertexPosition> expressions, ValueConstruction parent) {
+		return createMultipleEdgesToParent(expressions, parent, IsPartOf.class);
+	}
+	
+	private Vertex createMultipleEdgesToParent(List<VertexPosition> expressions, Vertex parent, Class<? extends EdgeClass> edgeClass) {
        	for (VertexPosition expr : expressions) {
-			IsPartOf exprOf = graph.createIsPartOf((Expression)expr.node, parent);
-			exprOf.setSourcePositions((createSourcePositionList(expr.length, expr.offset)));
+			Edge edge = graph.createEdge(edgeClass, (Expression)expr.node, parent);
+			edge.setSourcePositions((createSourcePositionList(expr.length, expr.offset)));
 		}
+		return parent;
 	}
 
 
@@ -676,22 +681,6 @@ quantifiedExpression returns [Expression expr]
   rempExpression = letExpression
 ;
 
-/** matches a quantified declaration which contains
-	simple declarations and boolean expressions,
-	each of them separated by  ','.
-*/
-quantifiedDeclaration returns [Declaration declaration = null]
-@init{
-    Expression subgraphExpr = null;
-    Expression constraintExpr = null;
-    Vector<VertexPosition> declarations = new Vector<VertexPosition>();
-    int offsetConstraint = 0;
-    int offsetSubgraph = 0;
-    int lengthConstraint = 0;
-    int lengthSubgraph = 0;
-}
-:
-;
 
 /** matches a quantifier
 */
@@ -1952,6 +1941,101 @@ pathsystemConstruction returns [PathSystemConstruction pathsystemConstr = null]
 	
 	
 
+/** matches a quantified declaration which contains
+	simple declarations and boolean expressions,
+	each of them separated by  ','.
+*/
+quantifiedDeclaration returns [Declaration declaration = null]
+@init{
+	Expression subgraphExpr = null;
+	Expression constraintExpr = null;
+    Vector<VertexPosition> declarations = new Vector<VertexPosition>();
+    int offsetConstraint = 0;
+    int offsetSubgraph = 0;
+    int lengthConstraint = 0;
+    int lengthSubgraph = 0;
+}
+:
+declarations = declarationList
+{declaration = (Declaration) createMultipleEdgesToParent(declarations, graph.createDeclaration(), IsSimpleDeclOf.class);}
+(COMMA
+{ offsetConstraint = getLTOffset(); }
+constraintExpr = expression
+{
+	lengthConstraint = getLTLength(offsetConstraint);
+	IsConstraintOf constraintOf = graph.createIsConstraintOf(constraintExpr,declaration);
+	constraintOf.setSourcePositions((createSourcePositionList(lengthConstraint, offsetConstraint)));
+}
+(
+	(COMMA simpleDeclaration) => (COMMA declarations = declarationList
+	{createMultipleEdgesToParent(declarations, declaration, IsSimpleDeclOf.class);}
+	)
+| /* empty */))*
+/* subgraphs */
+(	IN
+	{ offsetSubgraph = getLTOffset();; }
+	subgraphExpr = expression
+    {
+       	lengthSubgraph = getLTLength(offsetSubgraph); 
+    	IsSubgraphOf subgraphOf = graph.createIsSubgraphOf(subgraphExpr, declaration);
+      	subgraphOf.setSourcePositions((createSourcePositionList(lengthSubgraph, offsetSubgraph)));
+    }
+)?
+;	
+
+
+
+/** matches a comma-seperated list of simple declarations
+*/
+declarationList returns [Vector<VertexPosition> declList = new Vector<VertexPosition>();] 
+@init{
+	SimpleDeclaration v = null;
+    VertexPosition simpleDecl = new VertexPosition();
+}
+:
+{ simpleDecl.offset = getLTOffset(); }
+v = simpleDeclaration
+{
+    simpleDecl.length = getLTLength(simpleDecl.offset);
+    simpleDecl.node = v;
+    declList.add(simpleDecl);
+}
+(
+COMMA
+{ simpleDecl.offset = getLTOffset(); }
+v = simpleDeclaration
+{
+    simpleDecl.length = getLTLength(simpleDecl.offset);
+    simpleDecl.node = v;
+    declList.add(simpleDecl);
+}
+)*
+;
+
+
+
+/** matches a simple declaration: variablelist ':' set-expression
+*/
+simpleDeclaration returns [SimpleDeclaration simpleDecl = null]
+@init{
+	Expression expr = null;
+    Vector<VertexPosition> variables = new Vector<VertexPosition>();
+    int offset = 0;
+    int length = 0;
+}
+:
+	variables = variableList
+	COLON
+    { offset = getLTOffset(); }
+ 	expr = expression
+    {
+       	length = getLTLength(offset);
+       	simpleDecl = (SimpleDeclaration) createMultipleEdgesToParent(variables, graph.createSimpleDeclaration(), IsDeclaredVarOf.class);
+        IsTypeExprOf typeExprOf = graph.createIsTypeExprOfDeclaration(expr, simpleDecl);
+        typeExprOf.setSourcePositions((createSourcePositionList(length, offset)));
+    }
+;
+	
 expressionList returns [Vector<VertexPosition> expressions]
 @init{
 	expressions = new Vector<VertexPosition>();
@@ -1972,6 +2056,94 @@ expr = expression
 {expressions.addAll(exprList);}
 )?
 ;
+
+
+
+
+
+/**	matches an element-set-expression: (E|V) [{typeExpressionList}]
+*/
+rangeExpression returns [Expression expr = null]
+@init{
+	Vector<VertexPosition> typeIds = new Vector<VertexPosition>();
+}
+:
+(  V {expr = graph.createVertexSetExpression();}
+ | E { expr = graph.createEdgeSetExpression(); }
+)
+( (LCURLY (typeExpressionList)? RCURLY ) =>
+  (LCURLY (typeIds = typeExpressionList)? RCURLY)
+|
+)
+{createMultipleEdgesToParent(typeIds, expr, IsTypeRestrOf.class);}
+;
+
+/** matches a subgraph expression
+	@return
+*/
+graphRangeExpression returns [Expression expr = null]
+@init{
+	Vector<VertexPosition> typeIds = new Vector<VertexPosition>();
+}
+:
+(	VSUBGRAPH { expr = graph.createVertexSubgraphExpression(); }
+|	ESUBGRAPH { expr = graph.createEdgeSubgraphExpression(); }
+)
+LCURLY typeIds = typeExpressionList	RCURLY
+{createMultipleEdgesToParent(typeIds, expr, IsTypeRestrOf.class);}
+;
+
+/** matches a list of type-descriptions: [^] typeId [!]
+	@return
+*/
+typeExpressionList returns [Vector<VertexPosition> typeIdList = new Vector<VertexPosition>();] 
+@init{
+	Expression v = null;
+	Vector<VertexPosition> list = null;
+    VertexPosition type = new VertexPosition();
+}
+:
+{ type.offset = geTLTOffset(); }
+v = typeId
+{
+    type.node = v;
+    type.length = getLTLength(type.offset);
+    typeIdList.add(type);
+}
+(COMMA list = typeExpressionList {typeIdList.addAll(list);} )?
+;
+
+
+/** mathes a qualifiedName
+*/	
+qualifiedName returns [String name = null]
+@init{
+    String newName = null;
+}
+: 
+i=IDENT {name = i.getText();}
+( DOT
+	newName = qualifiedName
+	{name = name + "." + newName;}
+)? 
+;
+
+/** matches a typeId
+	@return
+*/
+typeId returns [TypeId type = null] 
+@init{
+     String s;
+}
+:
+{type = graph.createTypeId();}
+(CARET	{ type.setExcluded(true); } )?
+( s = qualifiedName )
+{ type.setName(s); }
+/*(CARET	{ type.setExcluded(true); }	)?*/
+(EXCL	{ type.setType(true);  })?
+;
+
 
 regBackwardVertexSetOrPathSystem returns [PathDescription retVal = null]
 @init {
