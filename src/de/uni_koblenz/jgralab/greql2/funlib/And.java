@@ -24,15 +24,10 @@
 
 package de.uni_koblenz.jgralab.greql2.funlib;
 
-import java.util.ArrayList;
-
 import de.uni_koblenz.jgralab.BooleanGraphMarker;
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.greql2.exception.EvaluateException;
-import de.uni_koblenz.jgralab.greql2.exception.WrongFunctionParameterException;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
-import de.uni_koblenz.jgralab.greql2.jvalue.JValueBoolean;
-import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
 
 /**
  * Returns the result of the logical operation <code>a and b</code>.
@@ -88,31 +83,17 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
  * @author ist@uni-koblenz.de
  *
  */
-public class And extends AbstractGreql2Function {
+public class And extends BooleanFunction {
 
-	{
-		JValueType[][] x = { { JValueType.BOOLEAN, JValueType.BOOLEAN } };
-		signatures = x;
-	}
-
+	@Override
 	public JValue evaluate(Graph graph, BooleanGraphMarker subgraph,
 			JValue[] arguments) throws EvaluateException {
-		if (checkArguments(arguments) == -1) {
-			throw new WrongFunctionParameterException(this, null, arguments);
-		}
-		return JValueBoolean.and(arguments[0], arguments[1]);
+		return evaluate(arguments, BooleanOperator.AND);
 	}
 
-	public long getEstimatedCosts(ArrayList<Long> inElements) {
-		return 2;
-	}
-
+	@Override
 	public double getSelectivity() {
 		return 1d / 9;
-	}
-
-	public long getEstimatedCardinality(int inElements) {
-		return 1;
 	}
 
 }
