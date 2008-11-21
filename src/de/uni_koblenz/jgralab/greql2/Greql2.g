@@ -112,6 +112,14 @@ import de.uni_koblenz.jgralab.greql2.funlib.Greql2FunctionLibrary;
     }
 
 
+	private void createPartsOfValueConstruction(List<VertexPosition> expressions, ValueConstruction parent) {
+       	for (VertexPosition expr : expressions) {
+			IsPartOf exprOf = graph.createIsPartOf((Expression)expr.node, parent);
+			exprOf.setSourcePositions((createSourcePositionList(expr.length, expr.offset)));
+		}
+	}
+
+
 	public void addPathElement(Class<? extends PathDescription> vc, Class<? extends Edge> ec, PathDescription pathDescr, PathDescription part1, PathDescription part2) {
 	 	lengthPart2 = getLTLength();
 	 	Edge edge = null;
@@ -468,6 +476,7 @@ EXCL 		: '!';
 COLON 		: ':';
 COMMA 		: ',';
 DOT			: '.';
+DOTDOT		: '..';
 AT			: '@';
 LPAREN		: '(';
 RPAREN		: ')';
@@ -1703,6 +1712,266 @@ LPAREN (expressions = expressionList)? RPAREN
 }
 ;
 
+
+
+/** matches a construction of a complex value, i.e. one of<br>
+	- bag<br>
+	- path<br>
+	- pathsystem<br>
+	- record<br>
+	- set<br>
+	- list<br>
+	- tuple<br>
+	@return
+*/
+valueConstruction returns [Expression expr = null] 
+	:
+		expr = bagConstruction
+		|	expr = listConstruction
+		|	expr = pathConstruction
+		|	expr = pathsystemConstruction
+		|	expr = recordConstruction
+		|	expr = setConstruction
+		|	expr = tupleConstruction
+	;
+
+
+/**	matches a bag construction
+*/
+bagConstruction returns [BagConstruction bagConstr = null]
+@init{
+	Vector<VertexPosition> expressions = new Vector<VertexPosition>();
+}
+:
+	BAG
+	LPAREN ( expressions = expressionList )? RPAREN
+    {createPartsOfValueConstruction(expressions, graph.createBagConstruction()); }
+;
+	
+setConstruction returns [BagConstruction bagConstr = null]
+@init{
+	Vector<VertexPosition> expressions = new Vector<VertexPosition>();
+}
+:
+	SET
+	LPAREN ( expressions = expressionList )? RPAREN
+    {createPartsOfValueConstruction(expressions, graph.createSetConstruction()); }
+;
+
+/** matches a tupel construction
+*/
+tupleConstruction returns [TupleConstruction tupConstr = null]
+@init{
+	Vector<VertexPosition> expressions = new Vector<VertexPosition>();
+}	:
+	TUP
+	LPAREN
+	expressions = expressionList
+	RPAREN
+    {createPartsOfValueConstruction(expressions, graph.createTupleConstruction()); }
+ ;
+
+/** matches a list construction
+*/
+listConstruction returns [ListConstruction listConstr = null]
+@init{
+	Vector<VertexPosition> expressions = new Vector<VertexPosition>();
+}
+:
+LIST
+LPAREN
+(
+   	(expression DOTDOT) => listConstr = listRangeExpression
+    | (	expressions = expressionList
+        {createPartsOfValueConstruction(expressions, graph.createListConstruction()); }
+      )?
+)
+RPAREN
+;
+
+
+/** matches a listrange expression: integer-expression .. integer-expression
+	@return
+*/
+listRangeExpression returns [ListRangeConstruction expr = null] 
+@init{
+	Expression startExpr = null;
+	Expression endExpr = null;
+ 	int offsetStart = 0;
+ 	int offsetEnd = 0;
+ 	int lengthStart = 0;
+ 	int lengthEnd = 0;
+}
+:
+{ offsetStart = getLTOffset(); }
+startExpr = expression
+{ lengthStart = getLTLength();}
+DOTDOT
+{ offsetEnd = getLTOffset(); }
+endExpr = expression
+{
+   lengthEnd = getLTLength();
+   expr = graph.createListRangeConstruction();
+   IsFirstValueOf firstValueOf = graph.createIsFirstValueOf(startExpr, expr);
+   firstValueOf.setSourcePositions((createSourcePositionList(lengthStart, offsetStart)));
+   IsLastValueOf lastValueOf = graph.createIsLastValueOf(endExpr, expr);
+   lastValueOf.setSourcePositions((createSourcePositionList(lengthEnd, offsetEnd)));
+}
+;
+
+
+
+
+/** matches a record construction
+*/
+recordConstruction returns [RecordConstruction recConstr = null]
+@init{
+	Vector<VertexPosition> elements = new Vector<VertexPosition>();
+}
+	:
+	REC
+	LPAREN
+	elements = recordElementList
+	RPAREN
+    {
+		recConstr = graph.createRecordConstruction();
+		for (VertexPosition expr : elements) {
+			IsRecordElementOf exprOf = graph.createIsRecordElementOf((RecordElement)expr.node, recConstr);
+			exprOf.setSourcePositions((createSourcePositionList(expr.length, expr.offset)));
+		}
+    }
+;
+
+
+/** matches a list of record-elements
+*/
+recordElementList returns [Vector<VertexPosition> elements = new Vector<VertexPosition>();]
+@init{
+	RecordElement v = null;
+	Vector<VertexPosition> list = null;
+    VertexPosition recElement = new VertexPosition();
+}
+:   { recElement.ffset = getLTOffset(); }
+	v = recordElement
+    {
+        recElement.length = getLTLength();
+        recElement.node = v;
+        elements.add(recElement);
+    }
+	(COMMA list = recordElementList {elements.addAll(list);} )?
+;
+
+
+/** matches a record element consisting of an id, a colon and an expression
+*/
+recordElement returns [RecordElement recElement = null]
+@init{
+	RecordId recId = null;
+	Expression expr = null;
+    int offsetRecId = 0;
+    int offsetExpr = 0;
+    int lengthRecId = 0;
+    int lengthExpr = 0;
+}	
+:
+{ offsetRecId = getLTOffset(); }
+recId = recordId
+{ lengthRecId = getLTLength(); }
+COLON
+{ offsetExpr =getLTOffset(); }
+expr = expression
+{
+  	lengthExpr = getLTLength();
+    recElement = graph.createRecordElement();
+   	IsRecordIdOf recIdOf = graph.createIsRecordIdOf(recId, recElement);
+    recIdOf.setSourcePositions((createSourcePositionList(lengthRecId, offsetRecId)));
+    IsRecordExprOf  exprOf = graph.createIsRecordExprOf(expr, recElement);
+    exprOf.setSourcePositions((createSourcePositionList(lengthExpr, offsetExpr)));
+}
+;
+
+/** matches a record-id
+*/
+recordId returns [RecordId expr = null]
+:
+i=IDENT
+{
+ 	expr = graph.createRecordId();
+    expr.setName(i.getText());
+}
+;
+
+/** matches a path construction
+*/
+pathConstruction returns [PathConstruction pathConstr = null]
+@init{
+	Vector<VertexPosition> expressions = new Vector<VertexPosition>();
+}
+:
+	PATH
+	LPAREN
+	expressions = expressionList
+	RPAREN
+    {createPartsOfValueConstruction(expressions, graph.createPathConstruction()); }
+;
+	
+/** matches a pathsystem construction
+*/
+pathsystemConstruction returns [PathSystemConstruction pathsystemConstr = null] 
+@init{
+	Expression expr = null;
+    EdgeVertexList eVList = null;
+    int offsetExpr = 0;
+    int offsetEVList = 0;
+    int lengthExpr = 0;
+    int lengthEVList = 0;
+}
+	:
+		PATHSYSTEM
+		LPAREN
+        { offsetExpr = getLTOffset(); }
+		expr = expression
+        {
+        	lengthExpr = getLTLength(offsetExpr);
+    		pathsystemConstr = graph.createPathSystemConstruction();
+	       	IsRootOf rootOf = graph.createIsRootOf(expr, pathsystemConstr);
+	       	rootOf.setSourcePositions((createSourcePositionList(lengthExpr, offsetExpr)));
+        }
+		(	COMMA
+        	{ offsetEVList = LT(1).getColumn()-1; }
+			eVList = edgeVertexList
+            {
+            	lengthEVList = getLTLength(offsetEVList);
+               	IsEdgeVertexListOf exprOf = graph.createIsEdgeVertexListOf(eVList, pathsystemConstr);
+               	exprOf.setSourcePositions((createSourcePositionList(lengthEVList, offsetEVList)));
+            }
+		)*
+		RPAREN
+	;
+	
+	
+	
+
+expressionList returns [Vector<VertexPosition> expressions]
+@init{
+	expressions = new Vector<VertexPosition>();
+	Expression expr = null;
+    VertexPosition v = new VertexPosition();
+    Vector<VertexPosition> exprList = new Vector<VertexPosition>();
+}
+:  
+{ v.offset = getLTOffset();}
+expr = expression
+{
+  	v.length = -offset + LT(0).getColumn()-1 + LT(0).getText().length();
+    v.node = expr;
+    expressions.add(v);
+}
+(	COMMA
+	exprList = expressionList
+{expressions.addAll(exprList);}
+)?
+;
 
 regBackwardVertexSetOrPathSystem returns [PathDescription retVal = null]
 @init {
