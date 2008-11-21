@@ -1655,6 +1655,55 @@ expr = expression
 
 
 
+attributeId returns [AttributeId expr = null]
+:
+i=IDENT
+{
+	expr = graph.createAttributeId();
+	expr.setName(i.getText());
+}
+;
+
+
+
+
+/**	matches a function application
+*/
+functionApplication returns [FunctionApplication expr = null]
+@init{
+	Vector<VertexPosition> typeIds = new Vector<VertexPosition>();
+	Vector<VertexPosition> expressions = new Vector<VertexPosition>();
+    FunctionId functionId = null;
+}
+:
+f=FUNCTIONID
+(LCURLY	(typeIds = typeExpressionList)? RCURLY )?
+LPAREN (expressions = expressionList)? RPAREN
+{
+    expr = graph.createFunctionApplication();
+    // retrieve function id or create a new one
+    functionId = (FunctionId) functionSymbolTable.lookup(f.getText());
+    if (functionId == null) {
+    	functionId = graph.createFunctionId();
+		functionId.setName(f.getText());
+    	functionSymbolTable.insert(f.getText(), functionId);
+    }
+	IsFunctionIdOf  functionIdOf = graph.createIsFunctionIdOf(functionId, expr);
+    functionIdOf.setSourcePositions((createSourcePositionList(f.getColumn()-1, f.getText().length())));
+    for (int i = 0; i < typeIds.size(); i++) {
+		VertexPosition t = typeIds.get(i);
+		IsTypeExprOf typeOf = graph.createIsTypeExprOfFunction((Expression)t.node, expr);
+		typeOf.setSourcePositions((createSourcePositionList(t.length, t.offset)));
+	}
+	for (int i = 0; i < expressions.size(); i++) {
+		VertexPosition ex = expressions.get(i);
+		IsArgumentOf argOf = graph.createIsArgumentOf((Expression)ex.node,expr);
+		argOf.setSourcePositions((createSourcePositionList(ex.length, ex.offset)));
+	}
+}
+;
+
+
 regBackwardVertexSetOrPathSystem returns [PathDescription retVal = null]
 @init {
 	Expression pathDescr = null;
