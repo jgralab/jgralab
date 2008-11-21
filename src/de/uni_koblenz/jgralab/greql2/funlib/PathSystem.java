@@ -48,6 +48,7 @@ import de.uni_koblenz.jgralab.greql2.funlib.pathsearch.PathSystemMarkerList;
 import de.uni_koblenz.jgralab.greql2.funlib.pathsearch.PathSystemQueueEntry;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValuePathSystem;
+import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
 
 /**
  * Returns a pathsystem, based on the current graph and the given dfa, whose
@@ -80,19 +81,13 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValuePathSystem;
  * @author ist@uni-koblenz.de
  *
  */
+public class PathSystem extends AbstractGreql2Function {
 
-/*
- * Calculates the PathSystem that is constructed from the given root vertex, all
- * vertices that are reachable via a path of the given description and all
- * vertices, that are part of one of these paths
- *
- * @param vertex the rootvertex of the pathsystem to create @param rpe the
- * regular path expression, which describes the structure of the pathsystem.
- *
- * @return a JValuePathSystem, which contains all path in the graph, that start
- * with the givne rootvertex and match the given rpe
- */
-public class PathSystem implements Greql2Function {
+	{
+		JValueType[][] x = { { JValueType.VERTEX, JValueType.DFA },
+				{ JValueType.VERTEX, JValueType.NFA } };
+		signatures = x;
+	}
 
 	/**
 	 * for each state in the fa (normally < 10) a seperate GraphMarker is used
@@ -217,12 +212,6 @@ public class PathSystem implements Greql2Function {
 			}
 			currentEntry = queue.poll();
 		}
-		// GreqlEvaluator.errprintln("Marking vertices of path system
-		// finished");
-		// System.out.println("# DFA states: " + dfa.stateList.size());
-		// System.out.println("PathSystem - markVertices: " + count);
-		// System.out.println("PathSystem - markVertices with transition loop: "
-		// + countWTrans);
 
 		return finalVertices;
 	}
@@ -232,20 +221,22 @@ public class PathSystem implements Greql2Function {
 	 */
 	public JValue evaluate(Graph graph, BooleanGraphMarker subgraph,
 			JValue[] arguments) throws EvaluateException {
-		Vertex startVertex;
-		this.graph = graph;
-		DFA dfa;
-		try {
-			startVertex = arguments[0].toVertex();
-			if (arguments[1].isNFA()) {
-				NFA nfa = arguments[1].toNFA();
-				dfa = new DFA(nfa);
-			} else {
-				dfa = arguments[1].toDFA();
-			}
-		} catch (Exception ex) {
+		DFA dfa = null;
+		switch (checkArguments(arguments)) {
+		case 0:
+			dfa = arguments[1].toDFA();
+			break;
+		case 1:
+			NFA nfa = arguments[1].toNFA();
+			dfa = new DFA(nfa);
+			break;
+		default:
 			throw new WrongFunctionParameterException(this, null, arguments);
 		}
+
+		Vertex startVertex = arguments[0].toVertex();
+		this.graph = graph;
+
 		marker = new ArrayList<GraphMarker<PathSystemMarkerList>>(dfa.stateList
 				.size());
 		for (int i = 0; i < dfa.stateList.size(); i++) {
@@ -391,10 +382,6 @@ public class PathSystem implements Greql2Function {
 
 	public long getEstimatedCardinality(int inElements) {
 		return 1;
-	}
-
-	public String getExpectedParameters() {
-		return "(Vertex, DFA, Subgraph" + "TempAttribute)";
 	}
 
 }

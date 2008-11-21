@@ -24,13 +24,12 @@
 
 package de.uni_koblenz.jgralab.greql2.funlib;
 
-import java.util.ArrayList;
-
 import de.uni_koblenz.jgralab.BooleanGraphMarker;
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.greql2.exception.EvaluateException;
 import de.uni_koblenz.jgralab.greql2.exception.WrongFunctionParameterException;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
+import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
 
 /**
  * Calculates a+b for given scalar values a and b or calculates the string
@@ -79,47 +78,24 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
  *
  */
 
-public class Plus implements Greql2Function {
+public class Plus extends ArithmeticFunction {
+	{
+		JValueType[][] x = { { JValueType.DOUBLE, JValueType.DOUBLE },
+				{ JValueType.LONG, JValueType.LONG },
+				{ JValueType.STRING, JValueType.STRING } };
+		signatures = x;
+	}
 
 	public JValue evaluate(Graph graph, BooleanGraphMarker subgraph,
 			JValue[] arguments) throws EvaluateException {
-		if (arguments.length != 2) {
-			throw new WrongFunctionParameterException(this, null, arguments);
-		}
-		try {
-			if (arguments[0].isString() || arguments[1].isString()) {
-				String s = arguments[0].toString() + arguments[1].toString();
-				return new JValue(s);
-			}
-			if (arguments[0].isDouble() || arguments[1].isDouble()) {
-				Double d = arguments[0].toDouble() + arguments[1].toDouble();
-				return new JValue(d);
-			}
-			if (arguments[0].isLong() || arguments[1].isLong()) {
-				Long l = arguments[0].toLong() + arguments[1].toLong();
-				return new JValue(l);
-			}
-			Integer i = arguments[0].toInteger() + arguments[1].toInteger();
-			return new JValue(i);
-		} catch (Exception ex) {
+		switch (checkArguments(arguments)) {
+		case 0:
+		case 1:
+			return evaluate(arguments, ArithmeticOperator.PLUS);
+		case 2:
+			return new JValue(arguments[0].toString() + arguments[1].toString());
+		default:
 			throw new WrongFunctionParameterException(this, null, arguments);
 		}
 	}
-
-	public long getEstimatedCosts(ArrayList<Long> inElements) {
-		return 2;
-	}
-
-	public double getSelectivity() {
-		return 1;
-	}
-
-	public long getEstimatedCardinality(int inElements) {
-		return 1;
-	}
-
-	public String getExpectedParameters() {
-		return "(Double, Double)";
-	}
-
 }
