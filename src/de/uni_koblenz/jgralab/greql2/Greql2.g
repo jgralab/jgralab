@@ -18,29 +18,447 @@ tokens {
 
 @header {
 package de.uni_koblenz.jgralab.greql2.parser;
- 
+
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.logging.Logger;
+
+import org.antlr.runtime.RecognitionException;
+
+import antlr.TokenStreamException;
+import de.uni_koblenz.jgralab.*;
+import de.uni_koblenz.jgralab.greql2.exception.*;
 import de.uni_koblenz.jgralab.greql2.funlib.Greql2FunctionLibrary;
+import de.uni_koblenz.jgralab.greql2.schema.*;
+import de.uni_koblenz.jgralab.greql2.schema.impl.*;
+import de.uni_koblenz.jgralab.schema.*;
 }
 
 @lexer::header {
 package de.uni_koblenz.jgralab.greql2.parser;
 
-import java.util.Vector;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.logging.Logger;
+
+import org.antlr.runtime.RecognitionException;
+
+import antlr.TokenStreamException;
 import de.uni_koblenz.jgralab.*;
-import de.uni_koblenz.jgralab.schema.*;
-import de.uni_koblenz.jgralab.greql2.schema.*;
-import de.uni_koblenz.jgralab.greql2.*;
-import de.uni_koblenz.jgralab.greql2.schema.impl.*;
 import de.uni_koblenz.jgralab.greql2.exception.*;
 import de.uni_koblenz.jgralab.greql2.funlib.Greql2FunctionLibrary;
+import de.uni_koblenz.jgralab.greql2.schema.*;
+import de.uni_koblenz.jgralab.greql2.schema.impl.*;
+import de.uni_koblenz.jgralab.schema.*;
+
 }
 
 @members {
 
+    private static Logger logger = Logger.getLogger(Greql2Parser.class.getName());
+    private final int VMAX = 100;
+    private final int EMAX = 100;
+    private Greql2Schema schema = null;
+    private Greql2 graph = null;
+    private SymbolTable variableSymbolTable = null;
+    private SymbolTable functionSymbolTable = null;
+    // private GraphClass graphClass = null;
+    // private boolean isAdditiveExpression = true;
+
+    class FunctionConstruct {
+    	String operatorName;  
+    	Expression arg1 = null;
+        Expression arg2 = null;
+        FunctionId op = null;
+        int offsetArg1 = 0;
+        int lengthArg1 = 0;
+        int offsetOperator = 0;
+        int offsetArg2 = 0;
+        int lengthOperator = 0;
+        int lengthArg2 = 0;
+        boolean binary = true;
+    
+        public void preUnaryOp() {
+        	binary = false;
+          	offsetOperator = getLTOffset();
+        }
+    
+        public void preArg1() {
+        	offsetArg1 = getLTOffset();
+        }
+        
+        public void preOp(Expression arg1) { 
+        	binary = true;
+        	this.arg1 = arg1;
+        	lengthArg1 = getLTLength(offsetArg1);
+        	offsetOperator = getLTOffset();
+        }
+        
+        public void postOp(String op) {
+          	lengthOperator = getLTLength(offsetOperator);
+	  		offsetArg2 = getLTOffset();
+	  		operatorName = op;
+        }
+        
+        public FunctionApplication postArg2(Expression arg2) { 
+         	lengthArg2 = getLTLength(offsetArg2);
+         	this.arg2 = arg2;
+         	// retrieve operator...
+         	op = (FunctionId) functionSymbolTable.lookup(operatorName);
+         	//... or create a new one and add it to the symboltable
+         	if (op == null) {
+         		op = graph.createFunctionId();
+         		op.setName(operatorName);
+         		functionSymbolTable.insert(operatorName, op);
+         	}
+         	// add operator
+       	  	return createFunctionIdAndArgumentOf(op, offsetOperator,lengthOperator, 
+	   			  arg1, offsetArg1, lengthArg1, arg2, offsetArg2, lengthArg2, binary); 	   
+        }
+    }
+
+    private FunctionApplication createFunctionIdAndArgumentOf(FunctionId functionId, int offsetOperator, int lengthOperator, Expression arg1, int offsetArg1, int lengthArg1, Expression arg2, int offsetArg2, int lengthArg2, boolean binary) {
+    	FunctionApplication fa = graph.createFunctionApplication();
+    	IsFunctionIdOf functionIdOf = graph.createIsFunctionIdOf(functionId, fa);
+    	functionIdOf.setSourcePositions((createSourcePositionList(lengthOperator, offsetOperator)));
+    	IsArgumentOf arg1Of = graph.createIsArgumentOf(arg1, fa);
+    	arg1Of.setSourcePositions((createSourcePositionList(lengthArg1, offsetArg1)));
+    	if (binary) {
+      	   IsArgumentOf arg2Of = graph.createIsArgumentOf(arg2, fa);
+    	   arg2Of.setSourcePositions((createSourcePositionList(lengthArg2, offsetArg2)));
+    	}  
+    	return fa;
+    }	
+    
+    private List<SourcePosition> createSourcePositionList(int length, int offset) {
+    	List<SourcePosition> list = new ArrayList<SourcePosition>();
+    	list.add(new SourcePosition(length, offset));
+    	return list;
+    }
+
+
+	private Vertex createPartsOfValueConstruction(List<VertexPosition> expressions, ValueConstruction parent) {
+		return createMultipleEdgesToParent(expressions, parent, IsPartOf.class);
+	}
+	
+	private Vertex createMultipleEdgesToParent(List<VertexPosition> expressions, Vertex parent, Class<? extends Edge> edgeClass) {
+       	for (VertexPosition expr : expressions) {
+			Greql2Aggregation edge = (Greql2Aggregation) graph.createEdge(edgeClass, (Expression)expr.node, parent);
+			edge.setSourcePositions((createSourcePositionList(expr.length, expr.offset)));
+		}
+		return parent;
+	}
+
+
+	public void addPathElement(Class<? extends PathDescription> vc, Class<? extends Edge> ec, PathDescription pathDescr, PathDescription part1, int offsetPart1, int lengthPart1, PathDescription part2, int offsetPart2, int lengthPart2) {
+	 	Greql2Aggregation edge = null;
+	 	if (pathDescr == null) {
+	 		pathDescr = graph.createVertex(vc);
+	 		edge =  (Greql2Aggregation) graph.createEdge(ec, part1, pathDescr);
+	 		edge.setSourcePositions((createSourcePositionList(lengthPart1, offsetPart1)));
+	 	}
+		edge = (Greql2Aggregation) graph.createEdge(ec, part2, pathDescr);
+		edge.setSourcePositions((createSourcePositionList(lengthPart2, offsetPart2 )));
+	}
+
+    private boolean isFunctionName(String ident) {
+        return Greql2FunctionLibrary.instance().isGreqlFunction(ident);		
+    }	
+	
+	/** Returns the abstract syntax graph for the input
+     *  @return the abstract syntax graph representing a GReQL 2 query
+     */
+    public Greql2 getGraph()  {
+    	return graph;
+    }
+
+    /** Returns the schema of the abstract syntax graph
+     *  @return the schema
+     */
+    public Schema getSchema()  {
+    	return schema;
+    }
+
+    /** Loads the schema from the file "greql2Schema.tg",
+     *  creates a new graph and symbol tables for variables and
+     *  function-ids and retrieves the Greql2-graphclass (graphClass)
+     *
+     */
+    private void initialize() {
+       	schema = Greql2Schema.instance();
+		graph = Greql2Impl.create(VMAX,EMAX);
+        variableSymbolTable = new SymbolTable();
+ 		functionSymbolTable = new SymbolTable();
+		//nonterminalSymbolTable = new SymbolTable();
+		functionSymbolTable.blockBegin();
+        //graphClass = schema.getGraphClass(new QualifiedName("Greql2"));
+   }
+   
+   private int getLTLength(int offset) {
+		return (- offset + LT(0).getColumn()-1 + LT(0).getText().length());
+   }
+   
+   private int getLTOffset() {
+		return LT(1).getColumn()-1; 
+   }
+   
+    /**
+     *	@see antlr.Parser#reportError(RecognitionException)
+     */
+  	public void reportError(RecognitionException e) {
+		int offset = -1;
+		offset = getLTOffset();
+		if (offset != -1)
+				logger.severe("error: " + offset +": " + e.getMessage());
+			else logger.severe("error (offset = -1): " + e.getMessage());
+	}
+
+  	public void reportError(TokenStreamException e)
+ 	{
+		int offset = -1;
+		offset = getLTOffset();
+		if (offset != -1)
+				logger.severe("error: " + offset +": " + e.getMessage());
+			else logger.severe("error (offset = -1): " + e.getMessage());
+	}
+
+    /**
+    *	merges variable-vertices of the graph which represent identical variables
+    */
+    private void mergeVariables() throws DuplicateVariableException, UndefinedVariableException {
+	    // retrieve root-vertex
+		Greql2Expression root = graph.getFirstGreql2Expression();
+		mergeVariablesInGreql2Expression(root);
+	}
+
+	/**
+	*	merges variable-vertices in the subgraph with the root-vertex <code>v</code>
+	*   @param v root of the subgraph
+	*/
+    private void mergeVariables(Vertex v) throws DuplicateVariableException, UndefinedVariableException {
+		if (v instanceof DefinitionExpression) {
+			mergeVariablesInDefinitionExpression((DefinitionExpression) v);
+		} else if (v instanceof Comprehension) {
+			mergeVariablesInComprehension((Comprehension) v);
+		} else if (v instanceof QuantifiedExpression) {
+			mergeVariablesInQuantifiedExpression((QuantifiedExpression) v);
+		} else if (v instanceof Greql2Expression) {
+			mergeVariablesInGreql2Expression((Greql2Expression) v);
+		} else if (v instanceof ThisLiteral) {
+		    return;	 
+		} else if (v instanceof Variable) {
+			Vertex var = variableSymbolTable.lookup( ( (Variable) v).getName());
+			if (var != null) {
+				Edge inc = v.getFirstEdge(EdgeDirection.OUT);
+				inc.setAlpha(var);
+				if (v.getDegree() <= 0) {
+					v.delete();
+				}
+			} else {
+				Greql2Aggregation e = (Greql2Aggregation) v.getFirstEdge(EdgeDirection.OUT);
+				throw new UndefinedVariableException(((Variable)v).getName(), e.getSourcePositions() );
+			}
+		} else {
+			Edge inc = v.getFirstEdge(EdgeDirection.IN);
+			LinkedList<Edge> incidenceList = new LinkedList<Edge>();
+			while (inc != null) {
+				incidenceList.add(inc);
+				inc = inc.getNextEdge(EdgeDirection.IN);
+			}
+			for (Edge e : incidenceList) 
+				mergeVariables(e.getAlpha());
+		}
+	}
+
+	/**
+	*	Inserts variable-vertices that are declared in the <code>using</code>-clause
+	*   into the variables symbol table and
+	*	merges variables within the query-expression.
+	*   @param root root of the graph, represents a <code>Greql2Expression</code>
+	*/
+	private void mergeVariablesInGreql2Expression(Greql2Expression root) throws DuplicateVariableException, UndefinedVariableException {
+		variableSymbolTable.blockBegin();
+		IsBoundVarOf isBoundVarOf = root.getFirstIsBoundVarOf(EdgeDirection.IN);
+		while (isBoundVarOf != null) {
+		 	 variableSymbolTable.insert( ((Variable) isBoundVarOf.getAlpha()).getName(), isBoundVarOf.getAlpha());
+			 isBoundVarOf = isBoundVarOf.getNextIsBoundVarOf(EdgeDirection.IN);
+		}
+		IsQueryExprOf isQueryExprOf = root.getFirstIsQueryExprOf(EdgeDirection.IN);
+		mergeVariables(isQueryExprOf.getAlpha());
+		variableSymbolTable.blockEnd();
+	}
+
+	/**
+	*	Inserts variables that are defined in the definitions of let- or
+	*   where-expressions and merges variables used in these definitions and in the bound expression
+	*   @param v contains a let- or where-expression.
+	*/
+	private void mergeVariablesInDefinitionExpression(DefinitionExpression v) throws DuplicateVariableException, UndefinedVariableException	{
+		variableSymbolTable.blockBegin();
+		IsDefinitionOf isDefinitionOf = v.getFirstIsDefinitionOf(EdgeDirection.IN);
+		while (isDefinitionOf != null) {
+			Definition definition = (Definition) isDefinitionOf.getAlpha();
+			Variable variable = (Variable) definition.getFirstIsVarOf(EdgeDirection.IN).getAlpha();
+			variableSymbolTable.insert(variable.getName(), variable);
+			isDefinitionOf = isDefinitionOf.getNextIsDefinitionOf(EdgeDirection.IN);
+		}
+		isDefinitionOf = v.getFirstIsDefinitionOf(EdgeDirection.IN);
+		while (isDefinitionOf != null) {
+			Definition definition = (Definition) isDefinitionOf.getAlpha();
+			Expression expr = (Expression) definition.getFirstIsExprOf(EdgeDirection.IN).getAlpha();
+			mergeVariables(expr);
+			isDefinitionOf = isDefinitionOf.getNextIsDefinitionOf(EdgeDirection.IN);
+		}
+		Edge isBoundExprOf = v.getFirstIsBoundExprOfDefinition(EdgeDirection.IN);
+		mergeVariables(isBoundExprOf.getAlpha());
+		variableSymbolTable.blockEnd();
+	}
+
+	/**
+	*	Inserts variables that are declared in a declaration of a simple query
+	*   or a quantified expression into the symbol-table and merges variables
+	*   that are used in these declaration (in typeexpressions, constraints, or subgraphs)
+	*   @param v contains a declaration
+	*/
+	private void mergeVariablesInDeclaration(Declaration v) throws DuplicateVariableException, UndefinedVariableException	{
+		IsSimpleDeclOf isSimpleDeclOf = v.getFirstIsSimpleDeclOf(EdgeDirection.IN);
+		while (isSimpleDeclOf != null) {
+			SimpleDeclaration simpleDecl = (SimpleDeclaration) isSimpleDeclOf.getAlpha();
+			IsDeclaredVarOf isDeclaredVarOf = simpleDecl.getFirstIsDeclaredVarOf(EdgeDirection.IN);
+			while (isDeclaredVarOf != null)	{
+				Variable variable = (Variable) isDeclaredVarOf.getAlpha();
+				variableSymbolTable.insert(variable.getName(), variable);
+				isDeclaredVarOf = isDeclaredVarOf.getNextIsDeclaredVarOf(EdgeDirection.IN);
+			}
+			isSimpleDeclOf = isSimpleDeclOf.getNextIsSimpleDeclOf(EdgeDirection.IN);
+		}
+		isSimpleDeclOf = v.getFirstIsSimpleDeclOf(EdgeDirection.IN);
+		while (isSimpleDeclOf != null) {
+			SimpleDeclaration simpleDecl = (SimpleDeclaration) isSimpleDeclOf.getAlpha();
+			Expression expr = (Expression) simpleDecl.getFirstIsTypeExprOf(EdgeDirection.IN).getAlpha();
+			mergeVariables(expr); 
+			isSimpleDeclOf = isSimpleDeclOf.getNextIsSimpleDeclOf(EdgeDirection.IN);
+		}
+		IsSubgraphOf isSubgraphOf = v.getFirstIsSubgraphOf(EdgeDirection.IN);
+		if (isSubgraphOf != null) {
+			mergeVariables(isSubgraphOf.getAlpha());
+		}
+		IsConstraintOf isConstraintOf = v.getFirstIsConstraintOf(EdgeDirection.IN);
+		while (isConstraintOf != null) {
+			mergeVariables(isConstraintOf.getAlpha());
+			isConstraintOf = isConstraintOf.getNextIsConstraintOf(EdgeDirection.IN);
+		}
+	}
+
+	/**
+	*	Inserts variable-vertices that are declared in the quantified expression
+	*   represented by <code>v</code> into the variables symbol table and
+	*	merges variables within the bound expression.
+	*   @param v contains a quantified expression
+	*/
+	private void mergeVariablesInQuantifiedExpression(QuantifiedExpression v) throws DuplicateVariableException, UndefinedVariableException {
+		variableSymbolTable.blockBegin();
+		IsQuantifiedDeclOf isQuantifiedDeclOf = v.getFirstIsQuantifiedDeclOf(EdgeDirection.IN);
+		mergeVariablesInDeclaration((Declaration) isQuantifiedDeclOf.getAlpha());
+		IsBoundExprOfQuantifier isBoundExprOfQuantifier = v.getFirstIsBoundExprOfQuantifier(EdgeDirection.IN);
+		mergeVariables(isBoundExprOfQuantifier.getAlpha()); 
+		variableSymbolTable.blockEnd();
+	}
+
+	/**
+	*	Inserts declared variable-vertices
+	*   into the variables symbol table and
+	*	merges variables within the comprehension result and tableheaders
+	*   @param v contains a set- or a bag-comprehension
+	*/
+	private void mergeVariablesInComprehension(Comprehension v) throws DuplicateVariableException, UndefinedVariableException {
+		variableSymbolTable.blockBegin();
+		Edge IsCompDeclOf = v.getFirstIsCompDeclOf(EdgeDirection.IN);
+		mergeVariablesInDeclaration((Declaration)IsCompDeclOf.getAlpha());
+		Edge IsCompResultDefOf = v.getFirstIsCompResultDefOf(EdgeDirection.IN);
+		mergeVariables(IsCompResultDefOf.getAlpha());
+		// merge variables in table-headers if it's a bag-comprehension
+		if (v instanceof BagComprehension) {
+			IsTableHeaderOf isTableHeaderOf = v.getFirstIsTableHeaderOf(EdgeDirection.IN);
+			while (isTableHeaderOf != null)	{
+				mergeVariables(isTableHeaderOf.getAlpha());
+				isTableHeaderOf = isTableHeaderOf.getNextIsTableHeaderOf(EdgeDirection.IN);
+			}
+		}
+		if (v instanceof TableComprehension) {
+			TableComprehension tc = (TableComprehension) v;
+			IsColumnHeaderExprOf ch = tc.getFirstIsColumnHeaderExprOf(EdgeDirection.IN);
+			mergeVariables(ch.getAlpha());
+			IsRowHeaderExprOf rh = tc.getFirstIsRowHeaderExprOf(EdgeDirection.IN);
+			mergeVariables(rh.getAlpha());
+			IsTableHeaderOf th = tc.getFirstIsTableHeaderOf(EdgeDirection.IN);
+			if (th != null)
+				mergeVariables(th.getAlpha());
+		}
+		variableSymbolTable.blockEnd();
+	}
+
+
+	private String decode(String s) {
+		s = s.substring(1,s.length()-1);
+		int i = s.indexOf('\\');
+		while (i>= 0) {
+			char c = s.charAt(i+1);
+			switch(c) {
+				case 'u' :
+					char unicodeChar = (char) Integer.parseInt(s.substring(i+2, i+6), 16);
+					s = s.substring(0,i) +  unicodeChar + s.substring(i+6);
+					break;
+				case '\\':
+					s = s.substring(0,i) +  '\\' + s.substring(i+2);
+					break;
+				case '\"':
+					s = s.substring(0,i) +  '\"' + s.substring(i+2);
+					break;
+				case 'n':
+					s = s.substring(0,i) + '\n' + s.substring(i+2);
+					break;
+				case 'r':
+					s = s.substring(0,i) + '\r' + s.substring(i+2);
+					break;
+				case 't':
+					s = s.substring(0,i) + '\t' + s.substring(i+2);
+					break;
+				case 'f':
+					s = s.substring(0,i) + '\r' + s.substring(i+2);
+					break;
+				case '\'':
+					s = s.substring(0,i) + '\r' + s.substring(i+2);
+					break;
+				default:
+					if (Character.isDigit(c)) {
+						if (c < 4) {
+							char octChar = (char) Integer.parseInt(s.substring(i+1, i+4), 8);
+							s = s.substring(0,i) + octChar + s.substring(i+4);
+						} else {
+							char octChar = (char) Integer.parseInt(s.substring(i+1, i+3), 8);
+							s = s.substring(0,i) + octChar + s.substring(i+3);
+						}
+					}
+			}
+			i = s.indexOf('\\', i+1);
+		}
+		return s;
+	}
+
+	/**
+	 * saves graph to file.
+	 * @param filename name of the file.
+	 */
+	public void saveGraph(String filename) throws GraphIOException {
+		GraphIO.saveGraphToFile(filename, graph, null);
+	}
 
 }
+
+
 
 
 T		    : 'T';
@@ -311,10 +729,10 @@ IDENT
 
 
 
-variableList returns [Vector<VertexPosition> variables = new Vector<VertexPosition>();] 
+variableList returns [ArrayList<VertexPosition> variables = new ArrayList<VertexPosition>()] 
 @init{
     Variable var = null;
-    Vector<VertexPosition> list = null;
+    ArrayList<VertexPosition> list = null;
     VertexPosition v = new VertexPosition();
     int offset = 0;
     int length = 0;
@@ -329,9 +747,7 @@ variableList returns [Vector<VertexPosition> variables = new Vector<VertexPositi
         variables.add(v);
   }
   (COMMA list = variableList
-        {
-            variables.addAll(list);
-        }
+  { variables.addAll(list); }
   )?
 ;
 
@@ -341,17 +757,17 @@ variableList returns [Vector<VertexPosition> variables = new Vector<VertexPositi
 variable returns [Variable var = null] 
 	:
 		IDENT
-        {
-           	var = graph.createVariable();
+        {	
+        	var = graph.createVariable();
+        	var.setName($getText());
         }
 ;
-/**	        var.setName($getText());*/
 
 greqlExpression 
 @init{
 	Expression expr = null;
 	Token id = null;
-	Vector<VertexPosition> varList = new Vector<VertexPosition>();
+	ArrayList<VertexPosition> varList = new ArrayList<VertexPosition>();
 	int offset = 0;
 	int length = 0;
 	initialize();
@@ -363,7 +779,7 @@ greqlExpression
     expr = expression
     (STORE AS id = IDENT)?
     {
-	length = getLTLength();
+	length = getLTLength(offset);
 	Greql2Expression root = graph.createGreql2Expression();
 	// add using-variables
 	for (int i = 0; i < varList.size(); i++) {
@@ -486,7 +902,7 @@ quantifier returns [Quantifier quantifier = null]
 */
 letExpression returns [Expression expr = null]
 @init{
-	Vector<VertexPosition> defList = new Vector<VertexPosition>();
+	ArrayList<VertexPosition> defList = new ArrayList<VertexPosition>();
 	int offset = 0;
 	int length = 0;
 	Expression tempExpression = null;
@@ -531,7 +947,7 @@ letExpression returns [Expression expr = null]
 */
 whereExpression returns [Expression retVal = null]
 @init{
-	Vector<VertexPosition> defList = new Vector<VertexPosition>();
+	ArrayList<VertexPosition> defList = new ArrayList<VertexPosition>();
 	int offset = 0;
 	int length = 0;
 	Expression expr = null;
@@ -572,11 +988,11 @@ if (defList.size() != 0) { //defList is empty if it's not a where-expression
 	/** matches a list of definitions for let- or where expressions
 	@return
 */
-definitionList returns [Vector<VertexPosition> definitions = new Vector<VertexPosition>();] 
+definitionList returns [ArrayList<VertexPosition> definitions = new ArrayList<VertexPosition>()] 
 @init{
     Definition v = null;
     VertexPosition def = new VertexPosition();
-    Vector<VertexPosition> defList = new Vector<VertexPosition>();
+    ArrayList<VertexPosition> defList = new ArrayList<VertexPosition>();
     int offset = 0;
     int length = 0;
 }
@@ -1088,7 +1504,7 @@ alternativePathDescription returns [PathDescription retVal = null]
 :
   {offsetPart1 = getLTOffset(); }
   part1 = intermediateVertexPathDescription
-  {lengthPart1 = getLTLength();}
+  {lengthPart1 = getLTLength(offsetPart1);}
 ( BOR
   {offsetPart2 = getLTOffset(); }
   part2 = intermediateVertexPathDescription
@@ -1123,11 +1539,11 @@ intermediateVertexPathDescription returns [PathDescription retVal = null]
 :
   {offsetPart1 = getLTOffset(); }
   part1 = sequentialPathDescription
-  {lengthPart1 = getLTLength();}
+  {lengthPart1 = getLTLength(offsetPart1);}
 ( {offsetExpr = getLTOffset(); }
   restrExpr = restrictedExpression
   {
-   	lengthExpr = getLTLength();
+   	lengthExpr = getLTLength(offsetExpr);
   	offsetPart2 = getLTOffset(); 
   }
   part2 = intermediateVertexPathDescription
@@ -1160,7 +1576,7 @@ sequentialPathDescription returns [PathDescription retVal = null]
 :
   {offsetPart1 = getLTOffset(); }
   part1 = startRestrictedPathDescription
-  {lengthPart1 = getLTLength();}
+  {lengthPart1 = getLTLength(offsetPart1);}
 ( {offsetPart2 = getLTOffset(); }
   part2 = startRestrictedPathDescription
   {
@@ -1176,7 +1592,7 @@ sequentialPathDescription returns [PathDescription retVal = null]
 
 startRestrictedPathDescription returns [PathDescription pathDescr = null] 
 @init{
-	Vector<VertexPosition> typeIds = new Vector<VertexPosition>();
+	ArrayList<VertexPosition> typeIds = new ArrayList<VertexPosition>();
 	Expression expr = null;
 	int offset = 0;
 	int length = 0;
@@ -1186,7 +1602,7 @@ startRestrictedPathDescription returns [PathDescription pathDescr = null]
     ( typeId) =>typeIds = typeExpressionList
       | { offset = getLTOffset(); }
 	    expr = expression
-	    { length = getLTLength(); }
+	    { length = getLTLength(offset); }
 	)
   RCURLY
   AMP
@@ -1208,7 +1624,7 @@ pathDescr = goalRestrictedPathDescription
 	
 goalRestrictedPathDescription returns [PathDescription pathDescr = null] 
 @init{
-	Vector<VertexPosition> typeIds = new Vector<VertexPosition>();
+	ArrayList<VertexPosition> typeIds = new ArrayList<VertexPosition>();
 	Expression expr = null;
 	int offset = 0;
 	int length = 0;
@@ -1229,7 +1645,7 @@ pathDescr = iteratedOrTransposedPathDescription
    	      { offset = getLTOffset(); }
 		  expr = expression
 		  {
-			 length = getLTLength();
+			 length = getLTLength(offset);
    			 IsGoalRestrOf goalRestrOf = graph.createIsGoalRestrOf(expr, pathDescr);
     		 goalRestrOf.setSourcePositions((createSourcePositionList(length, offset)));
     	  }
@@ -1254,7 +1670,7 @@ iteratedOrTransposedPathDescription	returns [PathDescription retVal = null]
 :
 { offsetPath = getLTOffset();}
 pathDescr = primaryPathDescription
-{ lengthPath = getLTLength();}
+{ lengthPath = getLTLength(offsetPath);}
 (	
   	( STAR { iteration = "star"; } | PLUS {iteration ="plus"; )
       {
@@ -1311,7 +1727,7 @@ primaryPathDescription returns [PathDescription pathDescr = null]
 | ( LBRACK
     { offset = getLTOffset(); }
     pathDescr = pathDescription
-    { length = getLTLength(); }
+    { length = getLTLength(offset); }
     RBRACK
     {
 	    OptionalPathDescription optPathDescr = graph.createOptionalPathDescription();
@@ -1323,10 +1739,6 @@ primaryPathDescription returns [PathDescription pathDescr = null]
 ;
 
 
-
-
-
-
 /** matches a simle pathdescription consisting of an arrow simple
 	and eventually a restriction. "thisEdge"s are replaced by
 	the corresponding simple pathdescription
@@ -1334,7 +1746,7 @@ primaryPathDescription returns [PathDescription pathDescr = null]
 */
 simplePathDescription returns [PrimaryPathDescription pathDescr = null]
 @init{
-	Vector<VertexPosition> typeIds = new Vector<VertexPosition>();
+	ArrayList<VertexPosition> typeIds = new ArrayList<VertexPosition>();
     Direction dir;
     String direction = "any";
     int offsetDir = 0;
@@ -1399,10 +1811,10 @@ edgePathDescription returns [EdgePathDescription pathDescr = null]
 (EDGESTART	{ edgeStart = true; } | EDGE)
 {offsetExpr = LT(1).getColumn()-1;}
 expr = expression
-{lengthExpr = getLTLength();}
+{lengthExpr = getLTLength(offsetExpr);}
 (EDGEEND { edgeEnd = true; }| EDGE)
 {
-	lengthExpr = getLTLength();
+	lengthExpr = getLTLength(offsetExpr);
     pathDescr = graph.createEdgePathDescription();
 	if (edgeStart && !edgeEnd) 
 		direction = "in";
@@ -1428,7 +1840,6 @@ expr = expression
 ;
 
 
-
 attributeId returns [AttributeId expr = null]
 :
 i=IDENT
@@ -1439,14 +1850,12 @@ i=IDENT
 ;
 
 
-
-
 /**	matches a function application
 */
 functionApplication returns [FunctionApplication expr = null]
 @init{
-	Vector<VertexPosition> typeIds = new Vector<VertexPosition>();
-	Vector<VertexPosition> expressions = new Vector<VertexPosition>();
+	ArrayList<VertexPosition> typeIds = new ArrayList<VertexPosition>();
+	ArrayList<VertexPosition> expressions = new ArrayList<VertexPosition>();
     FunctionId functionId = null;
 }
 :
@@ -1505,7 +1914,7 @@ valueConstruction returns [Expression expr = null]
 */
 bagConstruction returns [BagConstruction bagConstr = null]
 @init{
-	Vector<VertexPosition> expressions = new Vector<VertexPosition>();
+	ArrayList<VertexPosition> expressions = new ArrayList<VertexPosition>();
 }
 :
 	BAG
@@ -1515,7 +1924,7 @@ bagConstruction returns [BagConstruction bagConstr = null]
 	
 setConstruction returns [BagConstruction bagConstr = null]
 @init{
-	Vector<VertexPosition> expressions = new Vector<VertexPosition>();
+	ArrayList<VertexPosition> expressions = new ArrayList<VertexPosition>();
 }
 :
 	SET
@@ -1527,7 +1936,7 @@ setConstruction returns [BagConstruction bagConstr = null]
 */
 tupleConstruction returns [TupleConstruction tupConstr = null]
 @init{
-	Vector<VertexPosition> expressions = new Vector<VertexPosition>();
+	ArrayList<VertexPosition> expressions = new ArrayList<VertexPosition>();
 }	:
 	TUP
 	LPAREN
@@ -1536,11 +1945,10 @@ tupleConstruction returns [TupleConstruction tupConstr = null]
     {createPartsOfValueConstruction(expressions, graph.createTupleConstruction()); }
  ;
 
-/** matches a list construction
-*/
+
 listConstruction returns [ListConstruction listConstr = null]
 @init{
-	Vector<VertexPosition> expressions = new Vector<VertexPosition>();
+	ArrayList<VertexPosition> expressions = new ArrayList<VertexPosition>();
 }
 :
 LIST
@@ -1555,9 +1963,6 @@ RPAREN
 ;
 
 
-/** matches a listrange expression: integer-expression .. integer-expression
-	@return
-*/
 listRangeExpression returns [ListRangeConstruction expr = null] 
 @init{
 	Expression startExpr = null;
@@ -1570,12 +1975,12 @@ listRangeExpression returns [ListRangeConstruction expr = null]
 :
 { offsetStart = getLTOffset(); }
 startExpr = expression
-{ lengthStart = getLTLength();}
+{ lengthStart = getLTLength(offsetStart);}
 DOTDOT
 { offsetEnd = getLTOffset(); }
 endExpr = expression
 {
-   lengthEnd = getLTLength();
+   lengthEnd = getLTLength(offsetEnd);
    expr = graph.createListRangeConstruction();
    IsFirstValueOf firstValueOf = graph.createIsFirstValueOf(startExpr, expr);
    firstValueOf.setSourcePositions((createSourcePositionList(lengthStart, offsetStart)));
@@ -1585,13 +1990,9 @@ endExpr = expression
 ;
 
 
-
-
-/** matches a record construction
-*/
 recordConstruction returns [RecordConstruction recConstr = null]
 @init{
-	Vector<VertexPosition> elements = new Vector<VertexPosition>();
+	ArrayList<VertexPosition> elements = new ArrayList<VertexPosition>();
 }
 	:
 	REC
@@ -1608,18 +2009,17 @@ recordConstruction returns [RecordConstruction recConstr = null]
 ;
 
 
-/** matches a list of record-elements
-*/
-recordElementList returns [Vector<VertexPosition> elements = new Vector<VertexPosition>();]
+
+recordElementList returns [ArrayList<VertexPosition> elements = new ArrayList<VertexPosition>()]
 @init{
 	RecordElement v = null;
-	Vector<VertexPosition> list = null;
+	ArrayList<VertexPosition> list = null;
     VertexPosition recElement = new VertexPosition();
 }
-:   { recElement.ffset = getLTOffset(); }
+:   { recElement.offset = getLTOffset(); }
 	v = recordElement
     {
-        recElement.length = getLTLength();
+        recElement.length = getLTLength(recElement.offset);
         recElement.node = v;
         elements.add(recElement);
     }
@@ -1627,8 +2027,7 @@ recordElementList returns [Vector<VertexPosition> elements = new Vector<VertexPo
 ;
 
 
-/** matches a record element consisting of an id, a colon and an expression
-*/
+
 recordElement returns [RecordElement recElement = null]
 @init{
 	RecordId recId = null;
@@ -1641,12 +2040,12 @@ recordElement returns [RecordElement recElement = null]
 :
 { offsetRecId = getLTOffset(); }
 recId = recordId
-{ lengthRecId = getLTLength(); }
+{ lengthRecId = getLTLength(offsetRecId); }
 COLON
 { offsetExpr =getLTOffset(); }
 expr = expression
 {
-  	lengthExpr = getLTLength();
+  	lengthExpr = getLTLength(offsetExpr);
     recElement = graph.createRecordElement();
    	IsRecordIdOf recIdOf = graph.createIsRecordIdOf(recId, recElement);
     recIdOf.setSourcePositions((createSourcePositionList(lengthRecId, offsetRecId)));
@@ -1666,11 +2065,9 @@ i=IDENT
 }
 ;
 
-/** matches a path construction
-*/
 pathConstruction returns [PathConstruction pathConstr = null]
 @init{
-	Vector<VertexPosition> expressions = new Vector<VertexPosition>();
+	ArrayList<VertexPosition> expressions = new ArrayList<VertexPosition>();
 }
 :
 	PATH
@@ -1680,8 +2077,7 @@ pathConstruction returns [PathConstruction pathConstr = null]
     {createPartsOfValueConstruction(expressions, graph.createPathConstruction()); }
 ;
 	
-/** matches a pathsystem construction
-*/
+
 pathsystemConstruction returns [PathSystemConstruction pathsystemConstr = null] 
 @init{
 	Expression expr = null;
@@ -1716,16 +2112,11 @@ pathsystemConstruction returns [PathSystemConstruction pathsystemConstr = null]
 	
 	
 	
-
-/** matches a quantified declaration which contains
-	simple declarations and boolean expressions,
-	each of them separated by  ','.
-*/
 quantifiedDeclaration returns [Declaration declaration = null]
 @init{
 	Expression subgraphExpr = null;
 	Expression constraintExpr = null;
-    Vector<VertexPosition> declarations = new Vector<VertexPosition>();
+    ArrayList<VertexPosition> declarations = new ArrayList<VertexPosition>();
     int offsetConstraint = 0;
     int offsetSubgraph = 0;
     int lengthConstraint = 0;
@@ -1743,13 +2134,16 @@ constraintExpr = expression
 	constraintOf.setSourcePositions((createSourcePositionList(lengthConstraint, offsetConstraint)));
 }
 (
-	(COMMA simpleDeclaration) => (COMMA declarations = declarationList
-	{createMultipleEdgesToParent(declarations, declaration, IsSimpleDeclOf.class);}
+	(COMMA simpleDeclaration) => 
+	(
+	  COMMA declarations = declarationList
+	  {createMultipleEdgesToParent(declarations, declaration, IsSimpleDeclOf.class);}
 	)
-| /* empty */))*
+| /* empty */)
+)*
 /* subgraphs */
 (	IN
-	{ offsetSubgraph = getLTOffset();; }
+	{ offsetSubgraph = getLTOffset(); }
 	subgraphExpr = expression
     {
        	lengthSubgraph = getLTLength(offsetSubgraph); 
@@ -1761,9 +2155,7 @@ constraintExpr = expression
 
 
 
-/** matches a comma-seperated list of simple declarations
-*/
-declarationList returns [Vector<VertexPosition> declList = new Vector<VertexPosition>();] 
+declarationList returns [ArrayList<VertexPosition> declList = new ArrayList<VertexPosition>()] 
 @init{
 	SimpleDeclaration v = null;
     VertexPosition simpleDecl = new VertexPosition();
@@ -1790,12 +2182,10 @@ v = simpleDeclaration
 
 
 
-/** matches a simple declaration: variablelist ':' set-expression
-*/
 simpleDeclaration returns [SimpleDeclaration simpleDecl = null]
 @init{
 	Expression expr = null;
-    Vector<VertexPosition> variables = new Vector<VertexPosition>();
+    ArrayList<VertexPosition> variables = new ArrayList<VertexPosition>();
     int offset = 0;
     int length = 0;
 }
@@ -1812,12 +2202,12 @@ simpleDeclaration returns [SimpleDeclaration simpleDecl = null]
     }
 ;
 	
-expressionList returns [Vector<VertexPosition> expressions]
+expressionList returns [ArrayList<VertexPosition> expressions]
 @init{
-	expressions = new Vector<VertexPosition>();
+	expressions = new ArrayList<VertexPosition>();
 	Expression expr = null;
     VertexPosition v = new VertexPosition();
-    Vector<VertexPosition> exprList = new Vector<VertexPosition>();
+    ArrayList<VertexPosition> exprList = new ArrayList<VertexPosition>();
 }
 :  
 { v.offset = getLTOffset();}
@@ -1829,7 +2219,7 @@ expr = expression
 }
 (	COMMA
 	exprList = expressionList
-{expressions.addAll(exprList);}
+	{expressions.addAll(exprList);}
 )?
 ;
 
@@ -1837,11 +2227,9 @@ expr = expression
 
 
 
-/**	matches an element-set-expression: (E|V) [{typeExpressionList}]
-*/
 rangeExpression returns [Expression expr = null]
 @init{
-	Vector<VertexPosition> typeIds = new Vector<VertexPosition>();
+	ArrayList<VertexPosition> typeIds = new ArrayList<VertexPosition>();
 }
 :
 (  V {expr = graph.createVertexSetExpression();}
@@ -1859,7 +2247,7 @@ rangeExpression returns [Expression expr = null]
 */
 graphRangeExpression returns [Expression expr = null]
 @init{
-	Vector<VertexPosition> typeIds = new Vector<VertexPosition>();
+	ArrayList<VertexPosition> typeIds = new ArrayList<VertexPosition>();
 }
 :
 (	VSUBGRAPH { expr = graph.createVertexSubgraphExpression(); }
@@ -1869,13 +2257,11 @@ LCURLY typeIds = typeExpressionList	RCURLY
 {createMultipleEdgesToParent(typeIds, expr, IsTypeRestrOf.class);}
 ;
 
-/** matches a list of type-descriptions: [^] typeId [!]
-	@return
-*/
-typeExpressionList returns [Vector<VertexPosition> typeIdList = new Vector<VertexPosition>();] 
+
+typeExpressionList returns [ArrayList<VertexPosition> typeIdList = new ArrayList<VertexPosition>()] 
 @init{
 	Expression v = null;
-	Vector<VertexPosition> list = null;
+	ArrayList<VertexPosition> list = null;
     VertexPosition type = new VertexPosition();
 }
 :
@@ -1890,8 +2276,7 @@ v = typeId
 ;
 
 
-/** mathes a qualifiedName
-*/	
+
 qualifiedName returns [String name = null]
 @init{
     String newName = null;
@@ -1904,9 +2289,7 @@ i=IDENT {name = i.getText();}
 )? 
 ;
 
-/** matches a typeId
-	@return
-*/
+
 typeId returns [TypeId type = null] 
 @init{
      String s;
@@ -1922,9 +2305,6 @@ typeId returns [TypeId type = null]
 
 
 
-/** matches string-, this-, int-, real-, boolean- and null-literals
-	@return
-*/
 literal returns [Literal literal = null]
 :
 	s=STRING_LITERAL
@@ -1997,9 +2377,6 @@ literal returns [Literal literal = null]
 ;
 	
 
-/** matches a list of edges and vertices
-	@return
-*/
 edgeVertexList returns [EdgeVertexList eVList = null]
 @init{
 	Expression edgeExpr = null;
@@ -2042,9 +2419,6 @@ edgeVertexList returns [EdgeVertexList eVList = null]
 	
 
 
-/** matches an expression or a pathDescription
-	@return
-*/
 expressionOrPathDescription returns [Expression expr = null]
 :
     (  (pathDescription expression) => expr = expression
@@ -2054,15 +2428,11 @@ expressionOrPathDescription returns [Expression expr = null]
 	
 	
 
-/** matches a list of edge restrictions: each of them containing a
-    typeId and/or a roleId
-    @return vector containing the elements  of the list
-*/
-edgeRestrictionList returns [Vector<VertexPosition> list = new Vector<VertexPosition>();] 
+edgeRestrictionList returns [ArrayList<VertexPosition> list = new ArrayList<VertexPosition>()] 
 @init{
 	TypeId type = null;
 	RoleId role = null;
-	Vector<VertexPosition> eRList = null;
+	ArrayList<VertexPosition> eRList = null;
 	VertexPosition v = new VertexPosition();
 	EdgeRestriction er = null;
 	int offsetType = 0;
@@ -2107,11 +2477,6 @@ edgeRestrictionList returns [Vector<VertexPosition> list = new Vector<VertexPosi
 ;	
 
 
-/** matches a report-list with labels
-	@return Bag-Comprehension-Vertex with <br>
-	a) a TupelConstruction as result or <br>
-	b) the expression as result (if the reportlist has only one element)
-*/
 labeledReportList returns [BagComprehension bagCompr = null]
 @init{
 	Expression expr = null;
@@ -2185,11 +2550,9 @@ labeledReportList returns [BagComprehension bagCompr = null]
 	
 	
 
-/**	returns a comprehension including the comprehension result
-*/
 reportClause returns [Comprehension comprehension = null] 
 @init{
-	Vector<VertexPosition> reportList = new Vector<VertexPosition>();
+	ArrayList<VertexPosition> reportList = new ArrayList<VertexPosition>();
 	int offset = 0;
 	int length = 0;
 	boolean vartable = false;
@@ -2236,11 +2599,10 @@ reportClause returns [Comprehension comprehension = null]
 	}
 ;	
 		
-/** matches a  fwr-expression
-*/
+
 simpleQuery returns [Comprehension comprehension = null]
 @init{
-	Vector<VertexPosition> declarations = new Vector<VertexPosition>();
+	ArrayList<VertexPosition> declarations = new ArrayList<VertexPosition>();
     Declaration declaration = null;
     Expression subgraphExpr = null;
     Expression constraintExpr = null;
@@ -2299,14 +2661,7 @@ simpleQuery returns [Comprehension comprehension = null]
 		
 	
 
-/** matches regular path-existences or regular forward-vertex-sets
-	@param arg1 startvertex-expression
-	@param offsetArg1 offset of the start-expression
-	@param lengthArg1 length of the start-expression
-	@return
-*/
-regPathExistenceOrForwardVertexSet[Expression arg1, int offsetArg1, int lengthArg1]
-	returns [Expression expr = null]
+regPathExistenceOrForwardVertexSet[Expression arg1, int offsetArg1, int lengthArg1]	returns [Expression expr = null]
 @init{
 	PathDescription pathDescr = null;
 	Expression restrExpr = null;
@@ -2356,13 +2711,7 @@ regPathExistenceOrForwardVertexSet[Expression arg1, int offsetArg1, int lengthAr
 	}
 ;	
 	
-	
-/** matches expressions that compute regular paths or pathsystems starting with a
-    vertex expression
-    @param arg1 startvertex
-    @param offsetArg1 offset of the startvertex-expression
-    @param lengthArg1 length of the startvertex-expression
-*/
+
 //TODO: check if this is really needed
 regPathOrPathSystem[Expression arg1, int offsetArg1, int lengthArg1] returns [Expression expr = null]
 @init{
@@ -2412,10 +2761,7 @@ regPathOrPathSystem[Expression arg1, int offsetArg1, int lengthArg1] returns [Ex
 ;	
 	
 
-/** matches regular backwardvertex sets and pathsystem expressions beginning with
-     a pathdescription
-    @return
-*/
+
 regBackwardVertexSetOrPathSystem returns [Expression expr = null] 
 @init{
 	PathDescription pathDescr = null;
