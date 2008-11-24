@@ -165,7 +165,7 @@ public class MapDomainImpl extends CompositeDomainImpl implements MapDomain {
 				"\t#keytype# #name#Key;", "\t#valuetype# #name#Value;"));
 		code.add(getKeyDomain().getReadMethod(schemaRootPackagePrefix,
 				variableName + "Key", graphIoVariableName), 1);
-		code.add(new CodeSnippet("\t#io#.match(\"-->\");"));
+		code.add(new CodeSnippet("\t#io#.match(\"-\");"));
 		code.add(getValueDomain().getReadMethod(schemaRootPackagePrefix,
 				variableName + "Value", graphIoVariableName), 1);
 		code.add(new CodeSnippet("\t#name#.put(#name#Key, #name#Value);", "}",
@@ -226,7 +226,7 @@ public class MapDomainImpl extends CompositeDomainImpl implements MapDomain {
 		code.add(getKeyDomain().getWriteMethod(schemaRootPackagePrefix,
 				variableName + "Key", graphIoVariableName), 1);
 
-		code.add(new CodeSnippet("\t#io#.write(\"-->\");"));
+		code.add(new CodeSnippet("\t#io#.write(\" -\");"));
 
 		code.add(getValueDomain().getWriteMethod(schemaRootPackagePrefix,
 				"#name#.get(#name#Key)", graphIoVariableName), 1);
