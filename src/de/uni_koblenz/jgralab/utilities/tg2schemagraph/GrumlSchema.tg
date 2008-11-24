@@ -28,6 +28,7 @@ AggregationClass HasAttribute from AttributedElementClass (1,1) to Attribute (0,
 EdgeClass HasBaseDomain from CollectionDomain (0,*) to Domain (1,1);
 AggregationClass ContainsDomain from 'Package (1,1) to Domain (0,*) aggregate from;
 AggregationClass HasRecordDomainComponent from 'RecordDomain (0,*) to Domain (1,*) aggregate from {name: String};
+// The key domain of a MapDomain must be any of the basic domains (IntDomain, DoubleDomain, LongDomain, StringDomain, BooleanDomain) or a EnumDomain.
 EdgeClass HasKeyDomain from MapDomain (0,*) to Domain (1,1);
 EdgeClass HasValueDomain from MapDomain (0,*) to Domain (1,1);
 EdgeClass SpecializesEdgeClass from 'EdgeClass (0,*) to 'EdgeClass (0,*);
