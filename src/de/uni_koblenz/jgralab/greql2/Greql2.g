@@ -34,14 +34,9 @@ import de.uni_koblenz.jgralab.schema.*;
 
 @lexer::header {
 package de.uni_koblenz.jgralab.greql2.parser;
-
-import java.util.ArrayList;
 import java.util.LinkedList;
-import java.util.List;
 import java.util.logging.Logger;
-
 import org.antlr.runtime.RecognitionException;
-
 import antlr.TokenStreamException;
 import de.uni_koblenz.jgralab.*;
 import de.uni_koblenz.jgralab.greql2.exception.*;
@@ -49,7 +44,6 @@ import de.uni_koblenz.jgralab.greql2.funlib.Greql2FunctionLibrary;
 import de.uni_koblenz.jgralab.greql2.schema.*;
 import de.uni_koblenz.jgralab.greql2.schema.impl.*;
 import de.uni_koblenz.jgralab.schema.*;
-
 }
 
 @members {
@@ -194,11 +188,11 @@ import de.uni_koblenz.jgralab.schema.*;
    }
    
    private int getLTLength(int offset) {
-		return (- offset + input.LT(0).getColumn()-1 + input.LT(0).getText().length());
+		return (- offset + LT(0).getColumn()-1 + LT(0).getText().length());
    }
    
    private int getLTOffset() {
-		return input.LT(1).getColumn()-1; 
+		return LT(1).getColumn()-1; 
    }
    
     /**
@@ -536,14 +530,14 @@ PATHSYSTEMSTART : '-<';
 	
 //WHitespace
 WS  :  (' '|'\r'|'\t'|'\u000C'|'\n')* 
-	{ setType(Token.SKIP); }
+	{ setType(Token.SKIP_TOKEN); }
 ;
 
 // Single-line comments
 SL_COMMENT
 	:	'//'
 		(~('\n'|'\r'))* ('\n'|'\r'('\n')?)?
-		{setType(Token.SKIP);}
+		{setType(Token.SKIP_TOKEN);}
 	;  
 	    
 
@@ -563,7 +557,7 @@ ML_COMMENT
 )*
 		
 '*/'
-	{setType(Token.SKIP);}
+	{setType(Token.SKIP_TOKEN);}
 ;
 
 		
@@ -663,7 +657,7 @@ variableList returns [ArrayList<VertexPosition> variables = new ArrayList<Vertex
     VertexPosition v = new VertexPosition();
     int offset = 0;
     int length = 0;
-    offset = input.LT(1).getColumn()-1;
+    offset = LT(1).getColumn()-1;
 }
 : var = variable
   {
@@ -702,7 +696,7 @@ greqlExpression
 }
 : (
     (USING varList = variableList COLON)?
-    { offset = input.LT(1).getColumn()-1; }
+    { offset = LT(1).getColumn()-1; }
     expr = expression
     (STORE AS id = IDENT)?
     {
@@ -766,21 +760,21 @@ quantifiedExpression returns [Expression expr]
 :
   (
     {
-       	offsetQuantifier = input.LT(1).getColumn()-1;
-       	lengthQuantifier = input.LT(1).getText().length();
+       	offsetQuantifier = LT(1).getColumn()-1;
+       	lengthQuantifier = LT(1).getText().length();
     }
     // starts with quantifier ...
     q = quantifier
-    { offsetQuantifiedDecl = input.LT(1).getColumn()-1; }
+    { offsetQuantifiedDecl = LT(1).getColumn()-1; }
     // ...followed by a declaration...
     decl = quantifiedDeclaration
-    { lengthQuantifiedDecl = - offsetQuantifiedDecl + input.LT(0).getColumn()-1 + input.LT(0).getText().length(); }
+    { lengthQuantifiedDecl = - offsetQuantifiedDecl + LT(0).getColumn()-1 + LT(0).getText().length(); }
     AT
-    { offsetQuantifiedExpr = input.LT(1).getColumn()-1; }
+    { offsetQuantifiedExpr = LT(1).getColumn()-1; }
     // ... ends with predicate: a quantifiedExpr or something of lower level
     tempExpression = quantifiedExpression
     {
-      	lengthQuantifiedExpr = - offsetQuantifiedExpr + input.LT(0).getColumn()-1 + input.LT(0).getText().length();
+      	lengthQuantifiedExpr = - offsetQuantifiedExpr + LT(0).getColumn()-1 + LT(0).getText().length();
         // create new Quantifies Expr
 	QuantifiedExpression quantifiedExprVertex = graph.createQuantifiedExpression();
 	// add quantifier
@@ -843,11 +837,11 @@ letExpression returns [Expression expr = null]
   // definitions
   defList = definitionList
   IN
-  { offset = input.LT(1).getColumn()-1; }
+  { offset = LT(1).getColumn()-1; }
   // bound expression
   tempExpression = letExpression
   {
-      length = -offset + input.LT(0).getColumn()-1 + input.LT(0).getText().length();
+      length = -offset + LT(0).getColumn()-1 + LT(0).getText().length();
       if (defList.size() != 0) {
  	// create new letexpression-vertex
 	LetExpression letExpr = graph.createLetExpression();
@@ -883,10 +877,10 @@ whereExpression returns [Expression retVal = null]
 	retVal = expr;
 }
 :
-{ offset = input.LT(1).getColumn()-1; }
+{ offset = LT(1).getColumn()-1; }
 // bound expression
 expr = conditionalExpression
-{ length = -offset + input.LT(0).getColumn()-1 + input.LT(0).getText().length(); }
+{ length = -offset + LT(0).getColumn()-1 + LT(0).getText().length(); }
        	// optional "where"-part:
 (
 	WHERE
@@ -924,10 +918,10 @@ definitionList returns [ArrayList<VertexPosition> definitions = new ArrayList<Ve
     int length = 0;
 }
 	:
-		{ offset = input.LT(1).getColumn()-1; }
+		{ offset = LT(1).getColumn()-1; }
 		v = definition
         {
-			length = -offset + input.LT(0).getColumn()-1 +input.LT(0).getText().length();
+			length = -offset + LT(0).getColumn()-1 +LT(0).getText().length();
         	def.node = v;
             def.offset = offset;
             def.length = length;
@@ -955,14 +949,14 @@ definition returns [Definition definition = null]
     	int lengthExpr = 0;
 }
 :
-	{ offsetVar = input.LT(1).getColumn()-1; }
+	{ offsetVar = LT(1).getColumn()-1; }
 	var = variable
-	{ lengthVar = -offsetVar + input.LT(0).getColumn()-1 +input.LT(0).getText().length(); }
+	{ lengthVar = -offsetVar + LT(0).getColumn()-1 +LT(0).getText().length(); }
         ASSIGN
-        { offsetExpr = input.LT(1).getColumn()-1; }
+        { offsetExpr = LT(1).getColumn()-1; }
         //  (expr = expressionOrPathDescription)
         {
-            lengthExpr = -offsetExpr + input.LT(0).getColumn()-1 +input.LT(0).getText().length();
+            lengthExpr = -offsetExpr + LT(0).getColumn()-1 +LT(0).getText().length();
             definition = graph.createDefinition();
             IsVarOf varOf = graph.createIsVarOf(var, definition);
             varOf.setSourcePositions((createSourcePositionList(lengthVar, offsetVar)));
@@ -994,28 +988,28 @@ conditionalExpression returns [Expression retVal = null]
   	retVal = expr;
 }
 :
-    { offsetExpr = input.LT(1).getColumn()-1; }
+    { offsetExpr = LT(1).getColumn()-1; }
     // condition or expression (if it's not a real conditional expr)
     expr = orExpression
-    { lengthExpr = -offsetExpr + input.LT(0).getColumn()-1 + input.LT(0).getText().length(); }
+    { lengthExpr = -offsetExpr + LT(0).getColumn()-1 + LT(0).getText().length(); }
     /* optional part */
     (
     QUESTION
-    { offsetTrueExpr = input.LT(1).getColumn()-1; }
+    { offsetTrueExpr = LT(1).getColumn()-1; }
     // expression which is evaluated if condition is true
     trueExpr = conditionalExpression
-    {lengthTrueExpr = -offsetTrueExpr + input.LT(0).getColumn()-1 + input.LT(0).getText().length(); }
+    {lengthTrueExpr = -offsetTrueExpr + LT(0).getColumn()-1 + LT(0).getText().length(); }
     COLON
-    { offsetFalseExpr = input.LT(1).getColumn()-1; }
+    { offsetFalseExpr = LT(1).getColumn()-1; }
     // expression which is evaluated if condition is true
     falseExpr = conditionalExpression
-    { lengthFalseExpr = -offsetFalseExpr + input.LT(0).getColumn()-1 + input.LT(0).getText().length(); }
+    { lengthFalseExpr = -offsetFalseExpr + LT(0).getColumn()-1 + LT(0).getText().length(); }
     COLON
-    { offsetNullExpr = input.LT(1).getColumn()-1; }
+    { offsetNullExpr = LT(1).getColumn()-1; }
     // expression which is evaluated if condition is true
     nullExpr = conditionalExpression
     {
-      lengthNullExpr = -offsetNullExpr + input.LT(0).getColumn()-1 + input.LT(0).getText().length();
+      lengthNullExpr = -offsetNullExpr + LT(0).getColumn()-1 + LT(0).getText().length();
       // create new conditional expression
       ConditionalExpression condExpr = graph.createConditionalExpression();
       // add condition
@@ -1280,9 +1274,9 @@ pathExpression returns [Expression retVal = null]
      * pfadausdruck als primaryExpr (Knotenpaare) */
     | (alternativePathDescription) =>expr = primaryExpression
 
-    | ( { offsetArg1 = input.LT(1).getColumn()-1; }
+    | ( { offsetArg1 = LT(1).getColumn()-1; }
         expr = restrictedExpression
-	{ lengthArg1 = -offsetArg1 + input.LT(0).getColumn()-1 + input.LT(0).getText().length(); }
+	{ lengthArg1 = -offsetArg1 + LT(0).getColumn()-1 + LT(0).getText().length(); }
 	( (alternativePathDescription) =>
            expr = regPathExistenceOrForwardVertexSet[expr, offsetArg1, lengthArg1]
 	| (SMILEY) => expr = regPathOrPathSystem[expr, offsetArg1, lengthArg1]
@@ -1309,15 +1303,15 @@ restrictedExpression returns [Expression retVal = null]
    retVal = expr;
 }
 :
-	{ offsetExpr = input.LT(1).getColumn()-1; }
+	{ offsetExpr = LT(1).getColumn()-1; }
 	expr = valueAccess
-	{ lengthExpr = -offsetExpr + input.LT(0).getColumn()-1 + input.LT(0).getText().length(); }
+	{ lengthExpr = -offsetExpr + LT(0).getColumn()-1 + LT(0).getText().length(); }
         (  // if followed by '&{' match this as part of this expr
            (AMP LCURLY) =>
 	   (  AMP LCURLY
-              { offsetRestr = input.LT(1).getColumn()-1; }
+              { offsetRestr = LT(1).getColumn()-1; }
               restr = expression
- 	      { lengthRestr = -offsetRestr + input.LT(0).getColumn()-1 + input.LT(0).getText().length(); }
+ 	      { lengthRestr = -offsetRestr + LT(0).getColumn()-1 + LT(0).getText().length(); }
               RCURLY
               {
                  restrExpr = graph.createRestrictedExpression();
@@ -1511,7 +1505,7 @@ sequentialPathDescription returns [PathDescription retVal = null]
 	addPathElement(AlternativePathDescription.class, IsAlternativePathOf.class, pathDescr, part1, part2);
 /*				(iteratedOrTransposedPathDescription) =>
 			pathDescr = sequentialPathDescription2[seqPathDescr, offsetSeq1,
-					-offsetSeq1 +input.LT(0).getColumn()-1 + input.LT(0).getText().length()] 
+					-offsetSeq1 +LT(0).getColumn()-1 + LT(0).getText().length()] 
 					TODO dbildh 20.11.08 : Check for what this should be good
 					*/
   })*		
@@ -1749,10 +1743,10 @@ edgePathDescription returns [EdgePathDescription pathDescr = null]
     int lengthExpr = 0;
 }
 :	
-{offsetDir = input.LT(1).getColumn()-1;}
+{offsetDir = LT(1).getColumn()-1;}
 /* TODO: insert here for aggregation */
 (EDGESTART	{ edgeStart = true; } | EDGE)
-{offsetExpr = input.LT(1).getColumn()-1;}
+{offsetExpr = LT(1).getColumn()-1;}
 expr = expression
 {lengthExpr = getLTLength(offsetExpr);}
 (EDGEEND { edgeEnd = true; }| EDGE)
@@ -2052,7 +2046,7 @@ pathsystemConstruction returns [PathSystemConstruction pathsystemConstr = null]
 	       	rootOf.setSourcePositions((createSourcePositionList(lengthExpr, offsetExpr)));
         }
 		(	COMMA
-        	{ offsetEVList = input.LT(1).getColumn()-1; }
+        	{ offsetEVList = LT(1).getColumn()-1; }
 			eVList = edgeVertexList
             {
             	lengthEVList = getLTLength(offsetEVList);
@@ -2166,7 +2160,7 @@ expressionList returns [ArrayList<VertexPosition> expressions]
 { v.offset = getLTOffset();}
 expr = expression
 {
-  	v.length = -offset + input.LT(0).getColumn()-1 + input.LT(0).getText().length();
+  	v.length = -offset + LT(0).getColumn()-1 + LT(0).getText().length();
     v.node = expr;
     expressions.add(v);
 }
