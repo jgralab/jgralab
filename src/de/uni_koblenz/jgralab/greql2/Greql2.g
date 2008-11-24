@@ -1,5 +1,5 @@
 grammar Greql2;
-options {backtrack=false; memoize=true;}
+options {backtrack=true; memoize=true;}
 
 tokens {
 	FUNCTIONID;
@@ -156,10 +156,6 @@ import de.uni_koblenz.jgralab.schema.*;
 		return pathDescr;
 	}
 
-    private boolean isFunctionName(String ident) {
-        return Greql2FunctionLibrary.instance().isGreqlFunction(ident);		
-    }	
-	
 	/** Returns the abstract syntax graph for the input
      *  @return the abstract syntax graph representing a GReQL 2 query
      */
@@ -208,8 +204,7 @@ import de.uni_koblenz.jgralab.schema.*;
 			else logger.severe("error (offset = -1): " + e.getMessage());
 	}
 
-  	public void reportError(TokenStreamException e)
- 	{
+  	public void reportError(TokenStreamException e) {
 		int offset = -1;
 		offset = getLTOffset();
 		if (offset != -1)
@@ -1225,7 +1220,6 @@ unaryOperator returns [FunctionId retVal = null]
 */
 pathExpression returns [Expression retVal = null] 
 @init{
-	Expression  p = null;
 	int offsetArg1 = 0;
 	int lengthArg1 = 0;
 }
@@ -1342,7 +1336,7 @@ primaryExpression returns [Expression retVal = null]
 }
 :
 (( LPAREN expr = expression RPAREN )
-	expr = rangeExpression 
+|	expr = rangeExpression 
 |	expr = alternativePathDescription
 |	expr = variable
 |	expr = valueConstruction
@@ -1368,8 +1362,6 @@ pathDescr = alternativePathDescription
 alternativePathDescription returns [PathDescription retVal = null] 
 @init {
 	PathDescription pathDescr = null;
-	int offsetPathDescr = 0;
-	int lengthPathDescr = 0;
 	int offsetPart1 = 0;
 	int lengthPart1 = 0;
 	int offsetPart2 = 0;
@@ -1398,8 +1390,6 @@ alternativePathDescription returns [PathDescription retVal = null]
 intermediateVertexPathDescription returns [PathDescription retVal = null] 
 @init {
 	PathDescription pathDescr = null;
-	int offsetPathDescr = 0;
-	int lengthPathDescr = 0;
 	int offsetPart1 = 0;
 	int lengthPart1 = 0;
 	int offsetPart2 = 0;
@@ -1450,7 +1440,7 @@ sequentialPathDescription returns [PathDescription retVal = null]
   {offsetPart1 = getLTOffset(); }
   part1 = startRestrictedPathDescription
   {lengthPart1 = getLTLength(offsetPart1);}
-( {offsetPart2 = getLTOffset(); }
+( /*{offsetPart2 = getLTOffset(); } TODO */
   part2 = startRestrictedPathDescription
   {
 	addPathElement(AlternativePathDescription.class, IsAlternativePathOf.class, pathDescr, part1, offsetPart1, lengthPart1, part2, offsetPart2, lengthPart2);
@@ -2074,8 +2064,6 @@ expr = expression
 	{expressions.addAll(exprList);}
 )?
 ;
-
-
 
 
 
