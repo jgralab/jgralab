@@ -546,14 +546,14 @@ WS	: (' '	|	'\t' |	'\f' |
 			'\r\n'   /*DOS*/  |	'\r'    /* Macintosh vor Mac OS 9*/	|  '\n'  /* Unix */   
 		)
 	  )+
-	{ $setType(Token.SKIP); }
+	{ setType(Token.SKIP); }
 ;
 
 // Single-line comments
 SL_COMMENT
 	:	'//'
 		(~('\n'|'\r'))* ('\n'|'\r'('\n')?)?
-		{$setType(Token.SKIP);}
+		{setType(Token.SKIP);}
 	;  
 	    
 
@@ -573,7 +573,7 @@ ML_COMMENT
 )*
 		
 '*/'
-	{$setType(Token.SKIP);}
+	{setType(Token.SKIP);}
 ;
 
 		
@@ -711,17 +711,17 @@ EXPONENT
 // that after we match the rule, we look in the literals table to see
 // if it's a literal or really an identifer
 IDENT
-	options {  
+/*	options {  
 		testLiterals=true;
-	}	
+	}	*/
 	:	
 		(('a'..'z'|'A'..'Z') ('a'..'z'|'A'..'Z'|'_'|'0'..'9')*
 		{			
-			if ($getText.equals("thisEdge")) 
+			if (getText().equals("thisEdge")) 
 				{_ttype = THISEDGE;}
-			else if ($getText.equals("thisVertex"))
+			else if (getText().equals("thisVertex"))
 				{_ttype = THISVERTEX;}
-			else if (isFunctionName($getText))
+			else if (isFunctionName(getText()))
 				{_ttype = FUNCTIONID;} 		
 				
 		})
@@ -759,7 +759,7 @@ variable returns [Variable var = null]
 		IDENT
         {	
         	var = graph.createVariable();
-        	var.setName($getText());
+        	var.setName(getText());
         }
 ;
 
@@ -1356,8 +1356,8 @@ pathExpression returns [Expression retVal = null]
         expr = restrictedExpression
 	{ lengthArg1 = -offsetArg1 + LT(0).getColumn()-1 + LT(0).getText().length(); }
 	( (alternativePathDescription) =>
-           expr = regPathExistenceOrForwardVertexSet//[expr, offsetArg1, lengthArg1]
-	| (SMILEY) => expr = regPathOrPathSystem//[expr, offsetArg1, lengthArg1]
+           expr = regPathExistenceOrForwardVertexSet[expr, offsetArg1, lengthArg1]
+	| (SMILEY) => expr = regPathOrPathSystem[expr, offsetArg1, lengthArg1]
         )
       )  
 ;
@@ -1590,20 +1590,25 @@ sequentialPathDescription returns [PathDescription retVal = null]
 ;
 
 
-startRestrictedPathDescription returns [PathDescription pathDescr = null] 
+startRestrictedPathDescription returns [PathDescription retVal = null] 
 @init{
 	ArrayList<VertexPosition> typeIds = new ArrayList<VertexPosition>();
 	Expression expr = null;
 	int offset = 0;
 	int length = 0;
-}	:
+	PathDescription pathDescr = null;
+}
+@after {
+	retVal = pathDescr;
+}
+:
 ( LCURLY
   ( 
-    ( typeId) =>typeIds = typeExpressionList
+      (typeId) =>typeIds = typeExpressionList
       | { offset = getLTOffset(); }
 	    expr = expression
 	    { length = getLTLength(offset); }
-	)
+  )
   RCURLY
   AMP
 )?
@@ -1613,8 +1618,7 @@ pathDescr = goalRestrictedPathDescription
 		IsStartRestrOf startRestrOf = graph.createIsStartRestrOf(expr, pathDescr);
 		startRestrOf.setSourcePositions((createSourcePositionList(length, offset)));
 	} else {
-		for (int i = 0; i < typeIds.size(); i++) {
-			VertexPosition t = typeIds.get(i);
+		for (VertexPosition t : typeIds) {
 			IsStartRestrOf startRestrOf = graph.createIsStartRestrOf((Expression)t.node, pathDescr);
 			startRestrOf.setSourcePositions((createSourcePositionList(t.length, t.offset)));
 		}
@@ -1622,18 +1626,22 @@ pathDescr = goalRestrictedPathDescription
 }
 ;	   
 	
-goalRestrictedPathDescription returns [PathDescription pathDescr = null] 
+goalRestrictedPathDescription returns [PathDescription retVal = null] 
 @init{
 	ArrayList<VertexPosition> typeIds = new ArrayList<VertexPosition>();
 	Expression expr = null;
 	int offset = 0;
 	int length = 0;
-}	
+	PathDescription pathDescr = null;
+}
+@after {
+	retVal = pathDescr;
+}
 :
 pathDescr = iteratedOrTransposedPathDescription
 ((AMP) => (	AMP
 	LCURLY
-	( (typeId) =>typeIds = typeExpressionList
+	( ((typeId) =>typeIds = typeExpressionList
 		{
            	for (int i = 0; i < typeIds.size(); i++) {
 				VertexPosition t = typeIds.get(i);
@@ -1641,7 +1649,7 @@ pathDescr = iteratedOrTransposedPathDescription
     			goalRestrOf.setSourcePositions((createSourcePositionList(t.length, t.offset)));
     		}
    	 	}
-   	  | (
+   	  ) | (
    	      { offset = getLTOffset(); }
 		  expr = expression
 		  {
@@ -1672,7 +1680,7 @@ iteratedOrTransposedPathDescription	returns [PathDescription retVal = null]
 pathDescr = primaryPathDescription
 { lengthPath = getLTLength(offsetPath);}
 (	
-  	( STAR { iteration = "star"; } | PLUS {iteration ="plus"; )
+  	( STAR { iteration = "star"; } | PLUS {iteration ="plus";} )
       {
 		IteratedPathDescription ipd = graph.createIteratedPathDescription();
 	    ((IteratedPathDescription)ipd).setTimes(times);
@@ -1712,10 +1720,14 @@ pathDescr = primaryPathDescription
 
 
 
-primaryPathDescription returns [PathDescription pathDescr = null]
+primaryPathDescription returns [PathDescription retVal = null]
 @init{
 	int offset = 0;
 	int length = 0;
+	PathDescription pathDescr = null;
+}
+@after {
+	retVal = pathDescr;
 }	
 :
 (
@@ -1744,12 +1756,16 @@ primaryPathDescription returns [PathDescription pathDescr = null]
 	the corresponding simple pathdescription
 	@return
 */
-simplePathDescription returns [PrimaryPathDescription pathDescr = null]
+simplePathDescription returns [PrimaryPathDescription retVal = null]
 @init{
 	ArrayList<VertexPosition> typeIds = new ArrayList<VertexPosition>();
     Direction dir;
     String direction = "any";
     int offsetDir = 0;
+	PathDescription pathDescr = null;
+}
+@after {
+	retVal = pathDescr;
 }
 :
 {offsetDir = getLTOffset();}
@@ -1779,8 +1795,7 @@ simplePathDescription returns [PrimaryPathDescription pathDescr = null]
 	    }
 	    IsDirectionOf directionOf = graph.createIsDirectionOf(dir, pathDescr);
 	    directionOf.setSourcePositions((createSourcePositionList(0, offsetDir)));
-		for (int i = 0; i < typeIds.size(); i++) {
-			VertexPosition t = typeIds.get(i);
+	    for (VertexPosition t : typeIds) {
 			IsEdgeRestrOf edgeRestrOf = graph.createIsEdgeRestrOf((EdgeRestriction)t.node, pathDescr);
 			edgeRestrOf.setSourcePositions((createSourcePositionList(t.length, t.offset)));
 		}
@@ -1898,7 +1913,13 @@ LPAREN (expressions = expressionList)? RPAREN
 	- tuple<br>
 	@return
 */
-valueConstruction returns [Expression expr = null] 
+valueConstruction returns [Expression retVal = null] 
+@init {
+	Expression expr = null;
+}
+@after {
+	retVal = expr;
+}
 	:
 		expr = bagConstruction
 		|	expr = listConstruction
@@ -1946,9 +1967,13 @@ tupleConstruction returns [TupleConstruction tupConstr = null]
  ;
 
 
-listConstruction returns [ListConstruction listConstr = null]
+listConstruction returns [ListConstruction retVal = null]
 @init{
 	ArrayList<VertexPosition> expressions = new ArrayList<VertexPosition>();
+	ListConstruction listConstr = null;
+}
+@after {
+	retVal = listConstr;
 }
 :
 LIST
@@ -2419,7 +2444,13 @@ edgeVertexList returns [EdgeVertexList eVList = null]
 	
 
 
-expressionOrPathDescription returns [Expression expr = null]
+expressionOrPathDescription returns [Expression retVal = null]
+@init{
+	Expression expr = null;
+} 
+@after {
+	retVal = expr;
+}
 :
     (  (pathDescription expression) => expr = expression
     | (expression) => expr = expression
@@ -2477,7 +2508,7 @@ edgeRestrictionList returns [ArrayList<VertexPosition> list = new ArrayList<Vert
 ;	
 
 
-labeledReportList returns [BagComprehension bagCompr = null]
+labeledReportList returns [BagComprehension retVal = null]
 @init{
 	Expression expr = null;
 	Expression asExpr = null;
@@ -2489,6 +2520,10 @@ labeledReportList returns [BagComprehension bagCompr = null]
     int offsetAsExpr = 0;
     int lengthExpr = 0;
     int lengthAsExpr = 0;
+    BagComprehension bagCompr = null;
+}
+@after {
+	retVal = bagCompr;
 }
 	:
     	{ offsetExpr = getLTOffset();
@@ -2550,12 +2585,16 @@ labeledReportList returns [BagComprehension bagCompr = null]
 	
 	
 
-reportClause returns [Comprehension comprehension = null] 
+reportClause returns [Comprehension retVal = null] 
 @init{
 	ArrayList<VertexPosition> reportList = new ArrayList<VertexPosition>();
 	int offset = 0;
 	int length = 0;
 	boolean vartable = false;
+	Comprehension comprehension = null
+}
+@after {
+	retVal = comprehension;
 }
 	:
 	(	REPORT
@@ -2600,7 +2639,7 @@ reportClause returns [Comprehension comprehension = null]
 ;	
 		
 
-simpleQuery returns [Comprehension comprehension = null]
+simpleQuery returns [Comprehension retVal = null]
 @init{
 	ArrayList<VertexPosition> declarations = new ArrayList<VertexPosition>();
     Declaration declaration = null;
@@ -2612,6 +2651,10 @@ simpleQuery returns [Comprehension comprehension = null]
     int lengthSubgraph = 0;
     int offsetConstraint = 0;
     int lengthConstraint = 0;
+	Comprehension comprehension = null
+}
+@after {
+	retVal = comprehension;
 }
 	:
 		// declaration part
