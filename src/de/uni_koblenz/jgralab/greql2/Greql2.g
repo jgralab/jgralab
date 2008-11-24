@@ -1,5 +1,5 @@
 grammar Greql2;
-options {backtrack=true; memoize=true;}
+options {backtrack=false; memoize=true;}
 
 tokens {
 	FUNCTIONID;
@@ -20,9 +20,6 @@ tokens {
 @header {
 package de.uni_koblenz.jgralab.greql2;
 
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.logging.Logger;
 
 import org.antlr.runtime.RecognitionException;
@@ -38,7 +35,7 @@ import de.uni_koblenz.jgralab.schema.*;
 
 @lexer::header {
 package de.uni_koblenz.jgralab.greql2;
-import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.logging.Logger;
 import org.antlr.runtime.RecognitionException;
 import antlr.TokenStreamException;
@@ -258,7 +255,7 @@ import de.uni_koblenz.jgralab.schema.*;
 			}
 		} else {
 			Edge inc = v.getFirstEdge(EdgeDirection.IN);
-			LinkedList<Edge> incidenceList = new LinkedList<Edge>();
+			ArrayList<Edge> incidenceList = new ArrayList<Edge>();
 			while (inc != null) {
 				incidenceList.add(inc);
 				inc = inc.getNextEdge(EdgeDirection.IN);
@@ -732,7 +729,7 @@ expression returns [Expression retVal = null]
 	//Expression expr = null;
 }
 @after{
-  expr = expr;
+  retVal = expr;
 }  
 :
 	expr = quantifiedExpression
@@ -1228,8 +1225,6 @@ unaryOperator returns [FunctionId retVal = null]
 */
 pathExpression returns [Expression retVal = null] 
 @init{
-	Expression arg1 = null;
-	Expression arg2 = null;
 	Expression  p = null;
 	int offsetArg1 = 0;
 	int lengthArg1 = 0;
@@ -1442,8 +1437,8 @@ sequentialPathDescription returns [PathDescription retVal = null]
 	PathDescription pathDescr = null;
 	int offsetPart1 = 0;
 	int lengthPart1 = 0;
-	int offsetPart2 = 0;
 	int lengthPart2 = 0;
+	int offsetPart2 = 0;
 }
 @after {
 	if (pathDescr != null)
@@ -1455,7 +1450,7 @@ sequentialPathDescription returns [PathDescription retVal = null]
   {offsetPart1 = getLTOffset(); }
   part1 = startRestrictedPathDescription
   {lengthPart1 = getLTLength(offsetPart1);}
-( {int offsetPart2 = getLTOffset(); }
+( {offsetPart2 = getLTOffset(); }
   part2 = startRestrictedPathDescription
   {
 	addPathElement(AlternativePathDescription.class, IsAlternativePathOf.class, pathDescr, part1, offsetPart1, lengthPart1, part2, offsetPart2, lengthPart2);
@@ -1859,9 +1854,9 @@ endExpr = expression
 {
    lengthEnd = getLTLength(offsetEnd);
    expr = graph.createListRangeConstruction();
-   IsFirstValueOf firstValueOf = graph.createIsFirstValueOf(startExpr, expr);
+   IsFirstValueOf firstValueOf = graph.createIsFirstValueOf(startExpr, (ListRangeConstruction) expr);
    firstValueOf.setSourcePositions((createSourcePositionList(lengthStart, offsetStart)));
-   IsLastValueOf lastValueOf = graph.createIsLastValueOf(endExpr, expr);
+   IsLastValueOf lastValueOf = graph.createIsLastValueOf(endExpr, (ListRangeConstruction) expr);
    lastValueOf.setSourcePositions((createSourcePositionList(lengthEnd, offsetEnd)));
 }
 ;
@@ -1876,7 +1871,7 @@ recordConstruction returns [ValueConstruction recConstr = null]
     {
 		recConstr = graph.createRecordConstruction();
 		for (VertexPosition expr : elements) {
-			IsRecordElementOf exprOf = graph.createIsRecordElementOf((RecordElement)expr.node, recConstr);
+			IsRecordElementOf exprOf = graph.createIsRecordElementOf((RecordElement)expr.node, (RecordConstruction) recConstr);
 			exprOf.setSourcePositions((createSourcePositionList(expr.length, expr.offset)));
 		}
     }
@@ -2070,7 +2065,7 @@ expressionList returns [ArrayList<VertexPosition> expressions]
 { v.offset = getLTOffset();}
 expr = expression
 {
-  	v.length = getLTLength(offset);;
+  	v.length = getLTLength(v.offset);;
     v.node = expr;
     expressions.add(v);
 }
@@ -2258,7 +2253,7 @@ edgeVertexList returns [EdgeVertexList eVList = null]
 	;	
 	
 
-
+/*
 expressionOrPathDescription returns [Expression retVal = null]
 @after {
 	retVal = expr;
@@ -2267,7 +2262,7 @@ expressionOrPathDescription returns [Expression retVal = null]
     (  (pathDescription expression) => expr = expression
     | (expression) => expr = expression
     | expr = pathDescription)
-;	
+;*/	
 	
 	
 
@@ -2317,7 +2312,7 @@ edgeRestrictionList returns [ArrayList<VertexPosition> list = new ArrayList<Vert
 ;	
 
 
-labeledReportList returns [BagComprehension retVal = null]
+labeledReportList returns [Comprehension retVal = null]
 @init{
 	TupleConstruction tupConstr = null;
     boolean hasLabel = false;
@@ -2454,6 +2449,7 @@ simpleQuery returns [Comprehension retVal = null]
     int offsetConstraint = 0;
     int lengthConstraint = 0;
     int offsetResult = 0;
+    int lengthResult = 0;
 }
 @after {
 	retVal = comprehension;
@@ -2583,20 +2579,16 @@ regPathOrPathSystem[Expression arg1, int offsetArg1, int lengthArg1] returns [Ex
         }
 	)?
     {
-        FunctionApplication funAp = graph.createFunctionApplication();
-		expr = funAp;
 		FunctionId funId = graph.createFunctionId();
 		funId.setName("pathSystem");
-		createFunctionIdAndArgumentOf(funAp, funId, offsetOperator1, 3, 
+		expr = createFunctionIdAndArgumentOf(funId, offsetOperator1, 3, 
 		   							  arg1, offsetArg1, lengthArg1, pathDescr, 
-		   							  offsetPathDescr, lengthPathDescr); 
+		   							  offsetPathDescr, lengthPathDescr, true); 
 		if (isPath) {
 			arg1 = expr;
-			funAp = graph.createFunctionApplication();
-			expr = funAp;
-			createFunctionIdAndArgumentOf(funAp, funId, offsetOperator1, 3,
+			expr = createFunctionIdAndArgumentOf( funId, offsetOperator1, 3,
 											  arg1, offsetArg1, -offsetArg1 + offsetOperator2 + 3,
-											  restrExpr, offsetExpr, lengthExpr);
+											  restrExpr, offsetExpr, lengthExpr, true);
 		}
 	}
 ;	
@@ -2630,16 +2622,14 @@ regBackwardVertexSetOrPathSystem returns [Expression expr = null]
 		    lengthExpr = getLTLength(offsetExpr);
 	        if (isPathSystem) {
 		   		// create a path-system-functionapplication
-				FunctionApplication fa = graph.createFunctionApplication();
-				expr = fa;
 				FunctionId f = (FunctionId )functionSymbolTable.lookup("pathSystem");
 				if (f == null)	{
 		            f = graph.createFunctionId();
 		            f.setName("pathSystem");
 		            functionSymbolTable.insert("pathSystem", f);
 		        }
-		        createFunctionIdAndArgumentOf(fa, f, offsetOperator, 3, 
-				  							  pathDescr, offsetPathDescr, lengthPathDescr, restrExpr, offsetExpr, lengthExpr); 	
+		        expr = createFunctionIdAndArgumentOf(f, offsetOperator, 3, 
+				  							  pathDescr, offsetPathDescr, lengthPathDescr, restrExpr, offsetExpr, lengthExpr, true); 	
 	        } else {
 		    	// create a backwardvertexset
 				BackwardVertexSet bs = graph.createBackwardVertexSet();
