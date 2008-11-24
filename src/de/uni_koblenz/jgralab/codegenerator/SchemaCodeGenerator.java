@@ -35,6 +35,7 @@ import de.uni_koblenz.jgralab.schema.EdgeClass;
 import de.uni_koblenz.jgralab.schema.EnumDomain;
 import de.uni_koblenz.jgralab.schema.GraphClass;
 import de.uni_koblenz.jgralab.schema.ListDomain;
+import de.uni_koblenz.jgralab.schema.MapDomain;
 import de.uni_koblenz.jgralab.schema.RecordDomain;
 import de.uni_koblenz.jgralab.schema.Schema;
 import de.uni_koblenz.jgralab.schema.SetDomain;
@@ -42,9 +43,9 @@ import de.uni_koblenz.jgralab.schema.VertexClass;
 
 /**
  * TODO add comment
- * 
+ *
  * @author ist@uni-koblenz.de
- * 
+ *
  */
 public class SchemaCodeGenerator extends CodeGenerator {
 
@@ -52,7 +53,7 @@ public class SchemaCodeGenerator extends CodeGenerator {
 
 	/**
 	 * Creates a new SchemaCodeGenerator which creates code for the given schema
-	 * 
+	 *
 	 * @param schema
 	 *            the schema to create the code for
 	 * @param schemaPackageName
@@ -438,6 +439,14 @@ public class SchemaCodeGenerator extends CodeGenerator {
 				s.setVariable("componentDomainName", ((SetDomain) dom)
 						.getBaseDomain().getQualifiedName());
 				s.add("createSetDomain(getDomain(\"#componentDomainName#\"));");
+			} else if (dom instanceof MapDomain) {
+				MapDomain mapDom = (MapDomain) dom;
+				s.setVariable("keyDomainName", mapDom.getKeyDomain()
+						.getQualifiedName());
+				s.setVariable("valueDomainName", mapDom.getValueDomain()
+						.getQualifiedName());
+				s
+						.add("createMapDomain(getDomain(\"#keyDomainName#\"), getDomain(\\\"#valueDomainName#\\\"));");
 			} else if (dom instanceof RecordDomain) {
 				addImports("#jgSchemaPackage#.RecordDomain");
 				addImports("#jgSchemaPackage#.QualifiedName");
@@ -458,5 +467,4 @@ public class SchemaCodeGenerator extends CodeGenerator {
 		}
 		return code;
 	}
-
 }
