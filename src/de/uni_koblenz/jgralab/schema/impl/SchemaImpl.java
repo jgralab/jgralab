@@ -74,6 +74,7 @@ import de.uni_koblenz.jgralab.schema.EnumDomain;
 import de.uni_koblenz.jgralab.schema.GraphClass;
 import de.uni_koblenz.jgralab.schema.GraphElementClass;
 import de.uni_koblenz.jgralab.schema.ListDomain;
+import de.uni_koblenz.jgralab.schema.MapDomain;
 import de.uni_koblenz.jgralab.schema.NamedElement;
 import de.uni_koblenz.jgralab.schema.Package;
 import de.uni_koblenz.jgralab.schema.QualifiedName;
@@ -146,7 +147,7 @@ public class SchemaImpl implements Schema {
 
 	/**
 	 * builds a new schema
-	 * 
+	 *
 	 * @param qn
 	 *            the qualified name of the schema
 	 */
@@ -237,7 +238,7 @@ public class SchemaImpl implements Schema {
 	 * elements and reserves the given unique name so it can not be used as
 	 * unique name for other elements. If the unique name is already in use, the
 	 * unique names of both elements (the known one and the new one) are changed
-	 * 
+	 *
 	 * @param name
 	 * @param elem
 	 */
@@ -265,7 +266,7 @@ public class SchemaImpl implements Schema {
 
 	/**
 	 * adds the given domains to the domainlist
-	 * 
+	 *
 	 * @return true on success, false if a domain with the same name as the
 	 *         given one already exists in the schema
 	 */
@@ -341,6 +342,19 @@ public class SchemaImpl implements Schema {
 		SetDomain d = (SetDomain) getDomain(domainName);
 		if (d == null) {
 			d = new SetDomainImpl(this, domainName, baseDomain);
+			addDomain(d);
+		}
+		return d;
+	}
+
+	@Override
+	public MapDomain createMapDomain(Domain keyDomain, Domain valueDomain) {
+		QualifiedName domainName = new QualifiedName("", "Map<"
+				+ keyDomain.getTGTypeName(null) + ","
+				+ valueDomain.getTGTypeName(null) + ">");
+		MapDomain d = (MapDomain) getDomain(domainName);
+		if (d == null) {
+			d = new MapDomainImpl(this, domainName, keyDomain, valueDomain);
 			addDomain(d);
 		}
 		return d;
@@ -614,7 +628,7 @@ public class SchemaImpl implements Schema {
 
 	/**
 	 * only used internally
-	 * 
+	 *
 	 * @return number of graphelementclasses contained in graphclass
 	 */
 	private int getNumberOfElements() {
@@ -661,7 +675,7 @@ public class SchemaImpl implements Schema {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see jgralab.Schema#getDomains()
 	 */
 	public Map<QualifiedName, Domain> getDomains() {
@@ -1008,7 +1022,7 @@ public class SchemaImpl implements Schema {
 	/**
 	 * File Manager class overwriting the method {@code getJavaFileForOutput} so
 	 * that bytecode is written to a {@code ClassFileAbstraction}.
-	 * 
+	 *
 	 */
 	private class ClassFileManager extends
 			ForwardingJavaFileManager<JavaFileManager> {
@@ -1118,4 +1132,5 @@ public class SchemaImpl implements Schema {
 		}
 		return true;
 	}
+
 }
