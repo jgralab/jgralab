@@ -446,7 +446,7 @@ public class SchemaCodeGenerator extends CodeGenerator {
 				s.setVariable("valueDomainName", mapDom.getValueDomain()
 						.getQualifiedName());
 				s
-						.add("createMapDomain(getDomain(\"#keyDomainName#\"), getDomain(\\\"#valueDomainName#\\\"));");
+						.add("createMapDomain(getDomain(\"#keyDomainName#\"), getDomain(\"#valueDomainName#\"));");
 			} else if (dom instanceof RecordDomain) {
 				addImports("#jgSchemaPackage#.RecordDomain");
 				addImports("#jgSchemaPackage#.QualifiedName");

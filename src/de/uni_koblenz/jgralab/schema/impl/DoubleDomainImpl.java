@@ -67,7 +67,7 @@ public class DoubleDomainImpl extends BasicDomainImpl implements DoubleDomain {
 	 */
 	@Override
 	public String getJavaClassName(String schemaRootPackagePrefix) {
-		return "java.lang.Double";
+		return "Double";
 	}
 
 	/*

@@ -57,7 +57,7 @@ public class BooleanDomainImpl extends BasicDomainImpl implements BooleanDomain 
 
 	@Override
 	public String getJavaClassName(String schemaRootPackagePrefix) {
-		return "java.lang.Boolean";
+		return "Boolean";
 	}
 
 	@Override
