@@ -33,9 +33,9 @@ import de.uni_koblenz.jgralab.schema.AttributedElementClass;
 
 /**
  * TODO add comment
- * 
+ *
  * @author ist@uni-koblenz.de
- * 
+ *
  */
 public class AttributedElementCodeGenerator extends CodeGenerator {
 
@@ -271,7 +271,8 @@ public class AttributedElementCodeGenerator extends CodeGenerator {
 		code.setVariable("type", attr.getDomain()
 				.getJavaAttributeImplementationTypeName(schemaRootPackageName));
 		code.setVariable("isOrGet", attr.getDomain().getJavaClassName(
-				schemaRootPackageName).equals("Boolean") ? "is" : "get");
+				schemaRootPackageName).equals("java.lang.Boolean") ? "is"
+				: "get");
 
 		if (createClass) {
 			code.add("public #type# #isOrGet##cName#() {", "\treturn #name#;",
