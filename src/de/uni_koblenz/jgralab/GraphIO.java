@@ -54,6 +54,7 @@ import de.uni_koblenz.jgralab.GraphIOException.GraphIOExceptionReason;
 import de.uni_koblenz.jgralab.impl.GraphImpl;
 import de.uni_koblenz.jgralab.schema.AggregationClass;
 import de.uni_koblenz.jgralab.schema.AttributedElementClass;
+import de.uni_koblenz.jgralab.schema.BasicDomain;
 import de.uni_koblenz.jgralab.schema.CompositionClass;
 import de.uni_koblenz.jgralab.schema.Domain;
 import de.uni_koblenz.jgralab.schema.EdgeClass;
@@ -1131,8 +1132,23 @@ public class GraphIO {
 			} else if (domainName.getQualifiedName().equals("Map<")) {
 				try {
 					it.remove();
-					return schema.createMapDomain(attrDomain(domainNames),
+					Domain keyDomain = schema.getDomain(it.next());
+					it.remove();
+					if (keyDomain == null) {
+						throw new GraphIOException(
+								"can't create map domain, because no key domain was given in line "
+										+ line);
+					}
+					if (!(keyDomain instanceof BasicDomain)
+							&& !(keyDomain instanceof EnumDomain)) {
+						throw new GraphIOException(
+								"can't create map domain. The key domain must be a basic or enum domain. Line "
+										+ line);
+					}
+					Domain result = schema.createMapDomain(keyDomain,
 							attrDomain(domainNames));
+					// System.out.println("result = " + result);
+					return result;
 				} catch (SchemaException e) {
 					throw new GraphIOException(
 							"can't create map domain in line " + line, e);
