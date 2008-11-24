@@ -26,15 +26,10 @@ package de.uni_koblenz.jgralab.schema;
 
 /**
  * represents a Set<...> domain, instances may exist multiple times per schema
- * 
+ *
  * @author ist@uni-koblenz.de
- * 
+ *
  */
 public interface SetDomain extends CollectionDomain {
-
-	/**
-	 * @return the base domain of the set
-	 */
-	public Domain getBaseDomain();
 
 }

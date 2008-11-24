@@ -55,7 +55,7 @@ public class ListDomainImpl extends CollectionDomainImpl implements ListDomain {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see jgralab.Domain#toJavaString()
 	 */
 	public String getJavaAttributeImplementationTypeName(
@@ -66,7 +66,7 @@ public class ListDomainImpl extends CollectionDomainImpl implements ListDomain {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see java.lang.Object#toString()
 	 */
 	@Override
@@ -76,7 +76,7 @@ public class ListDomainImpl extends CollectionDomainImpl implements ListDomain {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see jgralab.Domain#toJavaStringNonPrimitive()
 	 */
 	public String getJavaClassName(String schemaRootPackagePrefix) {
@@ -85,7 +85,7 @@ public class ListDomainImpl extends CollectionDomainImpl implements ListDomain {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see jgralab.Domain#toJGString()
 	 */
 	public String getTGTypeName(Package pkg) {
@@ -103,9 +103,10 @@ public class ListDomainImpl extends CollectionDomainImpl implements ListDomain {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see jgralab.Domain#getReadMethod(java.lang.String, java.lang.String)
 	 */
+	@Override
 	public CodeBlock getReadMethod(String schemaPrefix, String variableName,
 			String graphIoVariableName) {
 		CodeList code = new CodeList();
@@ -138,9 +139,10 @@ public class ListDomainImpl extends CollectionDomainImpl implements ListDomain {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see jgralab.Domain#getReadMethod(java.lang.String, java.lang.String)
 	 */
+	@Override
 	public CodeBlock getWriteMethod(String schemaRootPackagePrefix,
 			String variableName, String graphIoVariableName) {
 		CodeList code = new CodeList();
@@ -165,6 +167,7 @@ public class ListDomainImpl extends CollectionDomainImpl implements ListDomain {
 		return code;
 	}
 
+	@Override
 	public Set<Domain> getAllComponentDomains() {
 		HashSet<Domain> componentDomainSet = new HashSet<Domain>(1);
 		componentDomainSet.add(baseDomain);
