@@ -41,16 +41,17 @@ public class DoubleDomainImpl extends BasicDomainImpl implements DoubleDomain {
 
 	public DoubleDomainImpl(Schema schema) throws SchemaException {
 		QualifiedName qName = new QualifiedName("Double");
-		if (schema.getDomain(qName) != null)
+		if (schema.getDomain(qName) != null) {
 			throw new SchemaException(
 					"Cannot create another DoubleDomain for Schema "
 							+ schema.getQualifiedName());
+		}
 		initialize(schema, qName);
 	}
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see jgralab.Domain#toJavaString()
 	 */
 	@Override
@@ -61,17 +62,17 @@ public class DoubleDomainImpl extends BasicDomainImpl implements DoubleDomain {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see jgralab.Domain#toJavaStringNonPrimitive()
 	 */
 	@Override
 	public String getJavaClassName(String schemaRootPackagePrefix) {
-		return "Double";
+		return "java.lang.Double";
 	}
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see jgralab.Domain#toTGString()
 	 */
 	@Override
@@ -81,7 +82,7 @@ public class DoubleDomainImpl extends BasicDomainImpl implements DoubleDomain {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see jgralab.Domain#getReadMethod(java.lang.String, java.lang.String)
 	 */
 	@Override
@@ -93,7 +94,7 @@ public class DoubleDomainImpl extends BasicDomainImpl implements DoubleDomain {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see jgralab.Domain#getWriteMethod(java.lang.String, java.lang.String)
 	 */
 	@Override
