@@ -7,6 +7,8 @@ import java.util.HashSet;
 import java.util.Set;
 
 import de.uni_koblenz.jgralab.codegenerator.CodeBlock;
+import de.uni_koblenz.jgralab.codegenerator.CodeList;
+import de.uni_koblenz.jgralab.codegenerator.CodeSnippet;
 import de.uni_koblenz.jgralab.schema.Domain;
 import de.uni_koblenz.jgralab.schema.MapDomain;
 import de.uni_koblenz.jgralab.schema.Package;
@@ -134,10 +136,44 @@ public class MapDomainImpl extends CompositeDomainImpl implements MapDomain {
 	 * java.lang.String, java.lang.String)
 	 */
 	@Override
-	public CodeBlock getReadMethod(String schemaPrefix, String variableName,
-			String graphIoVariableName) {
+	public CodeBlock getReadMethod(String schemaRootPackagePrefix,
+			String variableName, String graphIoVariableName) {
 		// TODO Auto-generated method stub
-		return null;
+
+		CodeList code = new CodeList();
+		code.setVariable("name", variableName);
+
+		code.setVariable("keydom", getKeyDomain().getJavaClassName(
+				schemaRootPackagePrefix));
+		code.setVariable("keytype",
+				getKeyDomain().getJavaAttributeImplementationTypeName(
+						schemaRootPackagePrefix));
+
+		code.setVariable("valuedom", getValueDomain().getJavaClassName(
+				schemaRootPackagePrefix));
+		code.setVariable("valuetype",
+				getValueDomain().getJavaAttributeImplementationTypeName(
+						schemaRootPackagePrefix));
+
+		code.setVariable("io", graphIoVariableName);
+
+		code.addNoIndent(new CodeSnippet(
+				"if (!#io#.isNextToken(\"\\\\null\")) {"));
+		code.add(new CodeSnippet(
+				"#name# = new java.util.HashMap<#keydom#, #valuedom#>();",
+				"#io#.match(\"{\");", "while (!#io#.isNextToken(\"}\")) {",
+				"\t#keytype# #name#Key;", "\t#valuetype# #name#Value;"));
+		code.add(getKeyDomain().getReadMethod(schemaRootPackagePrefix,
+				variableName + "Key", graphIoVariableName), 1);
+		code.add(new CodeSnippet("\t#io#.match(\"-->\");"));
+		code.add(getValueDomain().getReadMethod(schemaRootPackagePrefix,
+				variableName + "Value", graphIoVariableName), 1);
+		code.add(new CodeSnippet("\t#name#.put(#name#Key, #name#Value);", "}",
+				"#io#.match(\"}\");"));
+		code.addNoIndent(new CodeSnippet("} else {"));
+		code.add(new CodeSnippet("io.match(\"\\\\null\");", "#name# = null;"));
+		code.addNoIndent(new CodeSnippet("}"));
+		return code;
 	}
 
 	/*
@@ -165,6 +201,12 @@ public class MapDomainImpl extends CompositeDomainImpl implements MapDomain {
 			String variableName, String graphIoVariableName) {
 		// TODO Auto-generated method stub
 		return null;
+	}
+
+	@Override
+	public String toString() {
+		return "domain Map<" + keyDomain.toString() + ", "
+				+ valueDomain.toString() + ">";
 	}
 
 }
