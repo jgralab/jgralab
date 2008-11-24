@@ -38,13 +38,14 @@ public class BooleanDomainImpl extends BasicDomainImpl implements BooleanDomain 
 	// public static BooleanDomainImpl instance() {
 	// return instance;
 	// }
-	//	
+	//
 	public BooleanDomainImpl(Schema schema) throws SchemaException {
 		QualifiedName qName = new QualifiedName("Boolean");
-		if (schema.getDomain(qName) != null)
+		if (schema.getDomain(qName) != null) {
 			throw new SchemaException(
 					"Cannot create another BooleanDomain for Schema "
 							+ schema.getQualifiedName());
+		}
 		initialize(schema, qName);
 	}
 
@@ -56,7 +57,7 @@ public class BooleanDomainImpl extends BasicDomainImpl implements BooleanDomain 
 
 	@Override
 	public String getJavaClassName(String schemaRootPackagePrefix) {
-		return "Boolean";
+		return "java.lang.Boolean";
 	}
 
 	@Override

@@ -41,10 +41,11 @@ public class IntDomainImpl extends BasicDomainImpl implements IntDomain {
 
 	public IntDomainImpl(Schema schema) throws SchemaException {
 		QualifiedName qName = new QualifiedName("Integer");
-		if (schema.getDomain(qName) != null)
+		if (schema.getDomain(qName) != null) {
 			throw new SchemaException(
 					"Cannot create another IntDomain for Schema "
 							+ schema.getQualifiedName());
+		}
 		initialize(schema, qName);
 	}
 
@@ -56,7 +57,7 @@ public class IntDomainImpl extends BasicDomainImpl implements IntDomain {
 
 	@Override
 	public String getJavaClassName(String schemaRootPackagePrefix) {
-		return "Integer";
+		return "java.lang.Integer";
 	}
 
 	@Override
