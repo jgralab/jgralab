@@ -57,7 +57,7 @@ public class IntDomainImpl extends BasicDomainImpl implements IntDomain {
 
 	@Override
 	public String getJavaClassName(String schemaRootPackagePrefix) {
-		return "java.lang.Integer";
+		return "Integer";
 	}
 
 	@Override

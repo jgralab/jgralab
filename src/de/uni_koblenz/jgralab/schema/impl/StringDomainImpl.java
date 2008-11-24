@@ -34,24 +34,25 @@ import de.uni_koblenz.jgralab.schema.StringDomain;
 
 public class StringDomainImpl extends BasicDomainImpl implements StringDomain {
 	// private static StringDomainImpl instance = new StringDomainImpl();
-	//	
+	//
 	// public static StringDomainImpl instance() {
 	// return instance;
 	// }
 
 	public StringDomainImpl(Schema schema) throws SchemaException {
 		QualifiedName qName = new QualifiedName("String");
-		if (schema.getDomain(qName) != null)
+		if (schema.getDomain(qName) != null) {
 			throw new SchemaException(
 					"Cannot create another StringDomain for Schema "
 							+ schema.getQualifiedName());
+		}
 		initialize(schema, qName);
 	}
 
 	@Override
 	public String getJavaAttributeImplementationTypeName(
 			String schemaRootPackagePrefix) {
-		return "java.lang.String";
+		return "String";
 	}
 
 	@Override

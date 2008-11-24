@@ -271,8 +271,7 @@ public class AttributedElementCodeGenerator extends CodeGenerator {
 		code.setVariable("type", attr.getDomain()
 				.getJavaAttributeImplementationTypeName(schemaRootPackageName));
 		code.setVariable("isOrGet", attr.getDomain().getJavaClassName(
-				schemaRootPackageName).equals("java.lang.Boolean") ? "is"
-				: "get");
+				schemaRootPackageName).equals("Boolean") ? "is" : "get");
 
 		if (createClass) {
 			code.add("public #type# #isOrGet##cName#() {", "\treturn #name#;",
