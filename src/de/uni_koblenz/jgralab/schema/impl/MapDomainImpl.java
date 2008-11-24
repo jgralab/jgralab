@@ -199,8 +199,45 @@ public class MapDomainImpl extends CompositeDomainImpl implements MapDomain {
 	@Override
 	public CodeBlock getWriteMethod(String schemaRootPackagePrefix,
 			String variableName, String graphIoVariableName) {
-		// TODO Auto-generated method stub
-		return null;
+		CodeList code = new CodeList();
+		code.setVariable("name", variableName);
+
+		code.setVariable("keydom", getKeyDomain().getJavaClassName(
+				schemaRootPackagePrefix));
+		code.setVariable("keytype",
+				getKeyDomain().getJavaAttributeImplementationTypeName(
+						schemaRootPackagePrefix));
+
+		code.setVariable("valuedom", getValueDomain().getJavaClassName(
+				schemaRootPackagePrefix));
+		code.setVariable("valuetype",
+				getValueDomain().getJavaAttributeImplementationTypeName(
+						schemaRootPackagePrefix));
+
+		code.setVariable("io", graphIoVariableName);
+
+		code.addNoIndent(new CodeSnippet("if (#name# != null) {"));
+		code.add(new CodeSnippet("#io#.writeSpace();", "#io#.write(\"{\");",
+				"#io#.noSpace();"));
+		code
+				.add(new CodeSnippet(
+						"for (#keytype# #name#Key: #name#.keySet()) {"));
+
+		code.add(getKeyDomain().getWriteMethod(schemaRootPackagePrefix,
+				variableName + "Key", graphIoVariableName), 1);
+
+		code.add(new CodeSnippet("\t#io#.write(\"-->\");"));
+
+		code.add(getValueDomain().getWriteMethod(schemaRootPackagePrefix,
+				"#name#.get(#name#Key)", graphIoVariableName), 1);
+
+		code.add(new CodeSnippet("}", "#io#.write(\"}\");"));
+		code.addNoIndent(new CodeSnippet("} else {"));
+		code.add(new CodeSnippet(graphIoVariableName
+				+ ".writeIdentifier(\"\\\\null\");"));
+		code.addNoIndent(new CodeSnippet("}"));
+		return code;
+
 	}
 
 	@Override
