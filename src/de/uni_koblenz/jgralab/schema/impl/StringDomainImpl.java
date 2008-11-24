@@ -52,7 +52,7 @@ public class StringDomainImpl extends BasicDomainImpl implements StringDomain {
 	@Override
 	public String getJavaAttributeImplementationTypeName(
 			String schemaRootPackagePrefix) {
-		return "String";
+		return "java.lang.String";
 	}
 
 	@Override
