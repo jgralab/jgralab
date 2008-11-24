@@ -63,7 +63,7 @@ public class GraphClassImpl extends AttributedElementClassImpl implements
 	 * <code>VertexClasses</code>/<code>AggregationClasses</code>/
 	 * <code>CompositionClasses</code>.
 	 * <p>
-	 * <b>Nota bene</b>: The <code>GraphClass</code> should only be created by
+	 * <b>Caution:</b> The <code>GraphClass</code> should only be created by
 	 * using
 	 * {@link de.uni_koblenz.jgralab.schema.Schema#createGraphClass(QualifiedName id)
 	 * createGraphClass(Qualified id)} in <code>Schema</code>. Unfortunately,

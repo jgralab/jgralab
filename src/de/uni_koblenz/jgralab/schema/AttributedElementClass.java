@@ -32,9 +32,15 @@ import de.uni_koblenz.jgralab.Attribute;
 import de.uni_koblenz.jgralab.AttributedElement;
 
 /**
- * This is the base class of any <code>GraphClass</code>/<code>VertexClass</code>/<code>EdgeClass</code>/<code>AggregationClass</code>/<code>CompositionClass</code>.
+ * This is the base class of any <code>GraphClass</code>/
+ * <code>VertexClass</code>/<code>EdgeClass</code>/<code>AggregationClass</code>
+ * /<code>CompositionClass</code>.
  * 
- * In the following, <code>attrElement</code>, and <code>attrElement'</code>, will represent the states of the given <code>AttributedElementClass</code> before, respectively after, any operation.
+ * <p>
+ * In the following, <code>attrElement</code>, and <code>attrElement'</code>, will
+ * represent the states of the given <code>AttributedElementClass</code> before,
+ * respectively after, any operation.
+ * </p>
  * 
  * @author ist@uni-koblenz.de
  */
@@ -49,8 +55,8 @@ public interface AttributedElementClass extends NamedElement,
 	public void setPackage(Package p);
 
 	/**
-	 * @return the package of this Domain, may be <code>null</code> for
-	 *         domains not associated to a package.
+	 * @return the package of this Domain, may be <code>null</code> for domains
+	 *         not associated to a package.
 	 */
 	public Package getPackage();
 
@@ -133,133 +139,121 @@ public interface AttributedElementClass extends NamedElement,
 	public String getQualifiedName();
 
 	/**
-	 * Adds a new attribute to this element.
+	 * Adds a new <code>Attribute</code> by the given <code>name</code> and
+	 * <code>domain</code> to this <code>AttributedElement</code>.
+	 * 
 	 * 
 	 * <p>
-	 * <b>Pattern:</b> <code>e.addAttribute(name, domain);</code>
+	 * <b>Pattern:</b> <code>attrElement.addAttribute(name, domain);</code>
 	 * </p>
 	 * 
 	 * <p>
 	 * <b>Preconditions:</b>
 	 * <ul>
-	 * <li>The new attribute´s name must be distinct from the
-	 * {@link de.uni_koblenz.jgralab.schema.Schema#reservedTGWords reserved TG words}
-	 * and
-	 * {@link de.uni_koblenz.jgralab.schema.Schema#reservedJavaWords reserved Java words}.</li>
-	 * <li>The new attribute´s name must be distinct from another attribute´s
-	 * name already part of this element.</li>
+	 * <li>The <code>name</code> must not contain
+	 * {@link de.uni_koblenz.jgralab.schema.Schema#reservedTGWords reserved TG
+	 * words} and/or
+	 * {@link de.uni_koblenz.jgralab.schema.Schema#reservedJavaWords reserved
+	 * Java words}.</li>
+	 * <li>The <code>name</code> must be distinct from all other
+	 * <code>Attribute</code> names in <code>attrElement</code>, and in
+	 * <code>attrElement´s</code> direct and indirect superclasses.</li>
 	 * </ul>
 	 * </p>
 	 * 
 	 * <p>
-	 * <b>Postconditions:</b>
-	 * <ul>
-	 * <li>This element has one additional attribute.</li>
-	 * <li>The newly added attribute can be found exactly once in this
-	 * element´s attribute list.</li>
-	 * </ul>
+	 * <b>Postcondition:</b> In addition to the <code>Attribute(s)</code>
+	 * already contained in <code>attrElement</code>, <code>attrElement'</code> holds
+	 * the new <code>Attribute</code> with the given <code>name</code> and
+	 * <code>domain</code>.
 	 * </p>
 	 * 
 	 * @param name
-	 *            the new attribute´s name
+	 *            a unique <code>name</code> in the list of
+	 *            <code>Attributes</code> of <code>attrElement</code>
 	 * @param domain
-	 *            the new attribute´s domain
+	 *            the <code>Domain</code> of the new <code>Attribute</code>
 	 * 
 	 * @throws SchemaException
 	 *             if:
 	 *             <ul>
-	 *             <li>this element already contains an attribute bearing the
-	 *             same name,</li>
-	 *             <li>or the new attribute´s name matches a reserved TG or
-	 *             Java word</li>
+	 *             <li>the <code>name</code> contains reserved TG/Java words</li>
+	 *             <li>there is an <code>Attribute</code> with the same
+	 *             <code>name</code> in <code>attrElement</code></li>
 	 *             </ul>
 	 */
 	public void addAttribute(String name, Domain domain);
 
 	/**
-	 * Adds a new attribute to this element.
+	 * Adds a new <code>Attribute</code> to this <code>AttributedElement</code>.
 	 * 
 	 * <p>
-	 * <b>Pattern:</b> <code>e.addAttribute(anAttribute);</code>
+	 * <b>Pattern:</b> <code>attrElement.addAttribute(anAttribute);</code>
 	 * </p>
 	 * 
 	 * <p>
-	 * <b>Preconditions:</b>
-	 * <ul>
-	 * <li>The new attribute´s name must be distinct from the
-	 * {@link de.uni_koblenz.jgralab.schema.Schema#reservedTGWords reserved TG words}
-	 * and
-	 * {@link de.uni_koblenz.jgralab.schema.Schema#reservedJavaWords reserved Java words}.</li>
-	 * <li>The new attribute´s name must be distinct from another attribute´s
-	 * name already part of the element.</li>
-	 * </ul>
+	 * <b>Precondition:</b> The <code>name</code> of <code>anAttribute</code>
+	 * must be distinct from all other <code>Attribute</code> names in
+	 * <code>attrElement</code>, and in <code>attrElement´s</code> direct and
+	 * indirect superclasses.
 	 * </p>
 	 * 
 	 * <p>
-	 * <b>Postconditions:</b>
-	 * <ul>
-	 * <li>This element has one additional attribute.</li>
-	 * <li>The newly added attribute can be found exactly once in this
-	 * element´s attribute list.</li>
-	 * </ul>
+	 * <b>Postcondition:</b> In addition to the <code>Attribute(s)</code>
+	 * already contained in <code>attrElement</code>, <code>attrElement'</code> holds
+	 * the new <code>Attribute</code>.
 	 * </p>
 	 * 
 	 * @param anAttribute
-	 *            the new attribute to be added
+	 *            the new <code>Attribute</code> to be added to
+	 *            <code>attrElement</code>
 	 * 
 	 * @throws SchemaException
-	 *             if:
-	 *             <ul>
-	 *             <li>this element already contains an attribute bearing the
-	 *             same name,</li>
-	 *             <li>or the attribute´s name matches a reserved TG or Java
-	 *             word</li>
-	 *             </ul>
+	 *             if there is an <code>Attribute</code> with the same
+	 *             <code>name</code> in <code>attrElement</code>
 	 */
 	public void addAttribute(Attribute anAttribute);
 
 	/**
-	 * Adds a whole list of new attributes to this element.
+	 * Adds multiple <code>Attributes</code> to this
+	 * <code>AttributedElement</code>.
 	 * 
 	 * <p>
-	 * <b>Pattern:</b> <code>e.addAttributes(attrs);</code>
+	 * <b>Pattern:</b> <code>attrElement.addAttributes(attrs);</code>
 	 * </p>
 	 * 
 	 * <p>
 	 * <b>Preconditions:</b>
 	 * <ul>
-	 * <li>Each new attribute´s name must be distinct from the
-	 * {@link de.uni_koblenz.jgralab.schema.Schema#reservedTGWords reserved TG words}
-	 * and
-	 * {@link de.uni_koblenz.jgralab.schema.Schema#reservedJavaWords reserved Java words}.</li>
-	 * <li>Each new attribute´s name must be distinct from another attribute´s
-	 * name already part of the element.</li>
-	 * <li>Different attributes in the collection must have different names.</li>
+	 * <li>Each <code>Attribute´s</code> <code>name</code> in <code>attrs</code>
+	 * must be distinct from the <code>name</code> of every
+	 * <code>Attribute</code> held by <code>attrElement</code>, and by
+	 * <code>attrElement´s</code> direct and indirect superclasses.</li>
+	 * <li>Different <code>Attributes</code> in <code>attrs</code> must have
+	 * distinct <code>names</code>.</li>
 	 * </ul>
 	 * </p>
 	 * 
 	 * <p>
-	 * <b>Postconditions:</b>
-	 * <ul>
-	 * <li>This element has as many new attributes, as were present in the
-	 * collection of new attributes.</li>
-	 * <li>The newly added attributes can be found exactly once in this
-	 * element´s attribute list.</li>
-	 * </ul>
+	 * <b>Postcondition:</b> In addition to the <code>Attributes</code> already
+	 * contained in <code>attrElement</code>, <code>attrElement'</code> holds as many
+	 * new <code>Attributes</code> as were in <code>attrs</code>.
 	 * </p>
 	 * 
 	 * @param attrs
-	 *            the list of new attributes to append to this element
+	 *            the list of new <code>Attributes</code> to be appended to
+	 *            <code>attrElement</code>
 	 * 
 	 * @throws SchemaException
 	 *             if:
 	 *             <ul>
-	 *             <li>this element already contains an attribute bearing the
-	 *             same name,</li>
-	 *             <li>different collection-attributes are named equally</li>
-	 *             <li>or the attribute´s name matches a reserved TG or Java
-	 *             word</li>
-	 *             </ul>
+	 *             <li><code>attrElement</code> already contains an
+	 *             <code>Attribute</code> bearing the same <code>name</code></li>
+	 *             <li>different <code>Attributes</code> in <code>attrs</code>
+	 *             are named equally</li>
+	 *             In either case, <b>none</b> of the <code>Attributes</code>
+	 *             from <code>attrs</code> will be added to
+	 *             <code>attrElement</code>.
 	 */
 	public void addAttributes(Collection<Attribute> attrs);
 
@@ -307,8 +301,8 @@ public interface AttributedElementClass extends NamedElement,
 	 * @param name
 	 *            the name of the attribute to search for
 	 * 
-	 * @return <code>true</code>, if the element or its super-classes
-	 *         contains an attribute with the specified name
+	 * @return <code>true</code>, if the element or its super-classes contains
+	 *         an attribute with the specified name
 	 */
 	public boolean containsAttribute(String name);
 
@@ -362,10 +356,10 @@ public interface AttributedElementClass extends NamedElement,
 	 * <p>
 	 * <b>Postconditions:</b>
 	 * <ul>
-	 * <li><code>subClasses</code> holds all direct and indirect subclasses
-	 * of this element</li>
-	 * <li>The number of classes in <code>subClasses</code> equals the number
-	 * of all direct and indirect subclasses</li>
+	 * <li><code>subClasses</code> holds all direct and indirect subclasses of
+	 * this element</li>
+	 * <li>The number of classes in <code>subClasses</code> equals the number of
+	 * all direct and indirect subclasses</li>
 	 * <li></li>
 	 * </ul>
 	 * </p>
