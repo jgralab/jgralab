@@ -2,9 +2,6 @@ grammar Greql2;
 options {backtrack=true; memoize=true;}
 
 tokens {
-	NUM_REAL;
-	DOTDOT;
-	DOT;
 	FUNCTIONID;
 	THISVERTEX;
 	THISEDGE;
@@ -197,11 +194,11 @@ import de.uni_koblenz.jgralab.schema.*;
    }
    
    private int getLTLength(int offset) {
-		return (- offset + LT(0).getColumn()-1 + LT(0).getText().length());
+		return (- offset + input.LT(0).getColumn()-1 + input.LT(0).getText().length());
    }
    
    private int getLTOffset() {
-		return LT(1).getColumn()-1; 
+		return input.LT(1).getColumn()-1; 
    }
    
     /**
@@ -459,8 +456,6 @@ import de.uni_koblenz.jgralab.schema.*;
 }
 
 
-
-
 T		    : 'T';
 AND 		: 'and';
 FALSE 		: 'false';
@@ -539,13 +534,8 @@ OUTAGGREGATION	: '<>--';
 INAGGREGATION   : '--<>';
 PATHSYSTEMSTART : '-<';	 	
 	
-
-// Whitespace -- ignored
-WS	: (' '	|	'\t' |	'\f' |
-		(	//options { generateAmbigWarnings=false; } // handle newlines
-			'\r\n'   /*DOS*/  |	'\r'    /* Macintosh vor Mac OS 9*/	|  '\n'  /* Unix */   
-		)
-	  )+
+//WHitespace
+WS  :  (' '|'\r'|'\t'|'\u000C'|'\n')* 
 	{ setType(Token.SKIP); }
 ;
 
@@ -586,7 +576,7 @@ STRING_LITERAL //options {  paraphrase = "a string literal";}
 		'"' 
 		( //	options { generateAmbigWarnings=false; 	}
 			:	
-			  ESC	          
+			  ESCAPE_SEQUENCE	          
 	      |  {LA(1) != EOF_CHAR}? ~( '"' | '\\' | '\n' | '\r' )	   
 	      |  { LA(1) == EOF_CHAR }? { throw new TokenStreamException("Unterminated string-literal starting at offset "+start); }     
 	    )* 
@@ -594,110 +584,47 @@ STRING_LITERAL //options {  paraphrase = "a string literal";}
 	;
 
 
+HEXLITERAL : '0' ('x'|'X') HEXDIGIT+ IntegerTypeSuffix? ;
 
-// escape sequence -- note that this is protected; it can only be called
-//   from another lexer rule -- it will not ever directly return a token to
-//   the parser
-// There are various ambiguities hushed in this rule.  The optional
-// '0'...'9' digit matches should be matched here rather than letting
-// them go back to STRING_LITERAL to be matched.  ANTLR does the
-// right thing by matching immediately; hence, it's ok to shut off
-// the FOLLOW ambig warnings.
-protected
-ESC
-	:	'\\'
-		(	'n'
-		|	'r'
-		|	't'
-		|	'b'
-		|	'f'
-		|	'"'
-		|	'\''
-		|	'\\'
-		|	('u')+ HEX_DIGIT HEX_DIGIT HEX_DIGIT HEX_DIGIT
-		|	'0'..'3'
-			(
-		//		options {warnWhenFollowAmbig = false;}
-			:	'0'..'7'
-				(
-			//		options {warnWhenFollowAmbig = false;}
-				:	'0'..'7'
-				)?
-			)?
-		|	'4'..'7'
-			(
-			//	options {warnWhenFollowAmbig = false;}
-			:	'0'..'7'
-			)?
-		)
-	;
+DECLITERAL : ('0' | '1'..'9' '0'..'9'*) IntegerTypeSuffix? ;
+
+OCTLITERAL : '0' ('0'..'7')+ IntegerTypeSuffix? ;
+
+fragment
+HEXDIGIT : ('0'..'9'|'a'..'f'|'A'..'F') ;
+
 	
-    
-// hexadecimal digit (again, note it's protected!)
-protected
-HEX_DIGIT
-	:	
-		('0'..'9'|'A'..'F'|'a'..'f')
-	;
+fragment
+IntegerTypeSuffix : ('l'|'L') ;
 
-	    	
-protected 
-DIGIT
-	:	
-		
-		'0' | NONZERO_DIGIT
-	;
 	
-		
-protected
-NONZERO_DIGIT
-	:	
-		
-		('1'..'9')
-	;
+FLOAT_LITERAL
+    :   ('0'..'9')+ '.' ('0'..'9')* Exponent? FloatTypeSuffix?
+    |   '.' ('0'..'9')+ Exponent? FloatTypeSuffix?
+    |   ('0'..'9')+ Exponent FloatTypeSuffix?
+    |   ('0'..'9')+ FloatTypeSuffix
+    ;
+
+fragment
+Exponent : ('e'|'E') ('+'|'-')? ('0'..'9')+ ;
+
+fragment
+FloatTypeSuffix : ('f'|'F'|'d'|'D') ;
 
 
+fragment
+ESCAPE_SEQUENCE
+    :   '\\' ('b'|'t'|'n'|'f'|'r'|'\"'|'\''|'\\')
+    |   OctalEscape
+    ;
 
-protected
-OCT_DIGIT
-	:	
-		
-		('0'..'7')
-	;
-	
-// a numeric literal
-NUM_INT
-@init{
-	boolean range = false;
-	boolean isDecimal = false;
-}
-	: 
-	  
-		'.' 
-	  (	( ~('0'..'9') )	=> { _ttype = DOT;}
-	  	|'.' { _ttype = DOTDOT; }
-		| (DIGIT)* (EXPONENT)? {_ttype = NUM_REAL;}
-	  )
-	| ( '0' {isDecimal = true;}
-	      ( ('x'|'X') (:HEX_DIGIT)+
-	      | ((DIGIT)* ( '.' '.' )) => (DIGIT)* 
-	      	{range = true; }
-	      | ((DIGIT)+ ( '.' (~('.') | EXPONENT) )) => (DIGIT)+	      
-	      | (OCT_DIGIT)+
-	      )?
-	    | (NONZERO_DIGIT) {isDecimal = true;}
-	      (((DIGIT)* ('.' '.')) => (DIGIT)* {range = true;}
-	       |
-	      (DIGIT)* )	    
-	  )
-	  (
-		{isDecimal & !range}?
-		( '.' (DIGIT)* (EXPONENT)?
-		| EXPONENT
-		){_ttype = NUM_REAL;}
-		
-	  )?
-	;
+fragment
+OctalEscape
+    :   '\\' ('0'..'3') ('0'..'7') ('0'..'7')
+    |   '\\' ('0'..'7') ('0'..'7')
+    |   '\\' ('0'..'7')
+    ;
+
 
 
 // a couple protected methods to assist in matching floating point numbers
@@ -736,7 +663,7 @@ variableList returns [ArrayList<VertexPosition> variables = new ArrayList<Vertex
     VertexPosition v = new VertexPosition();
     int offset = 0;
     int length = 0;
-    offset = LT(1).getColumn()-1;
+    offset = input.LT(1).getColumn()-1;
 }
 : var = variable
   {
@@ -775,7 +702,7 @@ greqlExpression
 }
 : (
     (USING varList = variableList COLON)?
-    { offset = LT(1).getColumn()-1; }
+    { offset = input.LT(1).getColumn()-1; }
     expr = expression
     (STORE AS id = IDENT)?
     {
@@ -839,21 +766,21 @@ quantifiedExpression returns [Expression expr]
 :
   (
     {
-       	offsetQuantifier = LT(1).getColumn()-1;
-       	lengthQuantifier = LT(1).getText().length();
+       	offsetQuantifier = input.LT(1).getColumn()-1;
+       	lengthQuantifier = input.LT(1).getText().length();
     }
     // starts with quantifier ...
     q = quantifier
-    { offsetQuantifiedDecl = LT(1).getColumn()-1; }
+    { offsetQuantifiedDecl = input.LT(1).getColumn()-1; }
     // ...followed by a declaration...
     decl = quantifiedDeclaration
-    { lengthQuantifiedDecl = - offsetQuantifiedDecl + LT(0).getColumn()-1 + LT(0).getText().length(); }
+    { lengthQuantifiedDecl = - offsetQuantifiedDecl + input.LT(0).getColumn()-1 + input.LT(0).getText().length(); }
     AT
-    { offsetQuantifiedExpr = LT(1).getColumn()-1; }
+    { offsetQuantifiedExpr = input.LT(1).getColumn()-1; }
     // ... ends with predicate: a quantifiedExpr or something of lower level
     tempExpression = quantifiedExpression
     {
-      	lengthQuantifiedExpr = - offsetQuantifiedExpr + LT(0).getColumn()-1 + LT(0).getText().length();
+      	lengthQuantifiedExpr = - offsetQuantifiedExpr + input.LT(0).getColumn()-1 + input.LT(0).getText().length();
         // create new Quantifies Expr
 	QuantifiedExpression quantifiedExprVertex = graph.createQuantifiedExpression();
 	// add quantifier
@@ -870,7 +797,7 @@ quantifiedExpression returns [Expression expr]
     }
 )
 | // not a "real" quantified expression
-  rempExpression = letExpression
+  tempExpression = letExpression
 ;
 
 
@@ -916,11 +843,11 @@ letExpression returns [Expression expr = null]
   // definitions
   defList = definitionList
   IN
-  { offset = LT(1).getColumn()-1; }
+  { offset = input.LT(1).getColumn()-1; }
   // bound expression
   tempExpression = letExpression
   {
-      length = -offset + LT(0).getColumn()-1 + LT(0).getText().length();
+      length = -offset + input.LT(0).getColumn()-1 + input.LT(0).getText().length();
       if (defList.size() != 0) {
  	// create new letexpression-vertex
 	LetExpression letExpr = graph.createLetExpression();
@@ -956,10 +883,10 @@ whereExpression returns [Expression retVal = null]
 	retVal = expr;
 }
 :
-{ offset = LT(1).getColumn()-1; }
+{ offset = input.LT(1).getColumn()-1; }
 // bound expression
 expr = conditionalExpression
-{ length = -offset + LT(0).getColumn()-1 + LT(0).getText().length(); }
+{ length = -offset + input.LT(0).getColumn()-1 + input.LT(0).getText().length(); }
        	// optional "where"-part:
 (
 	WHERE
@@ -997,10 +924,10 @@ definitionList returns [ArrayList<VertexPosition> definitions = new ArrayList<Ve
     int length = 0;
 }
 	:
-		{ offset = LT(1).getColumn()-1; }
+		{ offset = input.LT(1).getColumn()-1; }
 		v = definition
         {
-			length = -offset + LT(0).getColumn()-1 +LT(0).getText().length();
+			length = -offset + input.LT(0).getColumn()-1 +input.LT(0).getText().length();
         	def.node = v;
             def.offset = offset;
             def.length = length;
@@ -1028,14 +955,14 @@ definition returns [Definition definition = null]
     	int lengthExpr = 0;
 }
 :
-	{ offsetVar = LT(1).getColumn()-1; }
+	{ offsetVar = input.LT(1).getColumn()-1; }
 	var = variable
-	{ lengthVar = -offsetVar + LT(0).getColumn()-1 +LT(0).getText().length(); }
+	{ lengthVar = -offsetVar + input.LT(0).getColumn()-1 +input.LT(0).getText().length(); }
         ASSIGN
-        { offsetExpr = LT(1).getColumn()-1; }
+        { offsetExpr = input.LT(1).getColumn()-1; }
         //  (expr = expressionOrPathDescription)
         {
-            lengthExpr = -offsetExpr + LT(0).getColumn()-1 +LT(0).getText().length();
+            lengthExpr = -offsetExpr + input.LT(0).getColumn()-1 +input.LT(0).getText().length();
             definition = graph.createDefinition();
             IsVarOf varOf = graph.createIsVarOf(var, definition);
             varOf.setSourcePositions((createSourcePositionList(lengthVar, offsetVar)));
@@ -1067,28 +994,28 @@ conditionalExpression returns [Expression retVal = null]
   	retVal = expr;
 }
 :
-    { offsetExpr = LT(1).getColumn()-1; }
+    { offsetExpr = input.LT(1).getColumn()-1; }
     // condition or expression (if it's not a real conditional expr)
     expr = orExpression
-    { lengthExpr = -offsetExpr + LT(0).getColumn()-1 + LT(0).getText().length(); }
+    { lengthExpr = -offsetExpr + input.LT(0).getColumn()-1 + input.LT(0).getText().length(); }
     /* optional part */
     (
     QUESTION
-    { offsetTrueExpr = LT(1).getColumn()-1; }
+    { offsetTrueExpr = input.LT(1).getColumn()-1; }
     // expression which is evaluated if condition is true
     trueExpr = conditionalExpression
-    {lengthTrueExpr = -offsetTrueExpr + LT(0).getColumn()-1 + LT(0).getText().length(); }
+    {lengthTrueExpr = -offsetTrueExpr + input.LT(0).getColumn()-1 + input.LT(0).getText().length(); }
     COLON
-    { offsetFalseExpr = LT(1).getColumn()-1; }
+    { offsetFalseExpr = input.LT(1).getColumn()-1; }
     // expression which is evaluated if condition is true
     falseExpr = conditionalExpression
-    { lengthFalseExpr = -offsetFalseExpr + LT(0).getColumn()-1 + LT(0).getText().length(); }
+    { lengthFalseExpr = -offsetFalseExpr + input.LT(0).getColumn()-1 + input.LT(0).getText().length(); }
     COLON
-    { offsetNullExpr = LT(1).getColumn()-1; }
+    { offsetNullExpr = input.LT(1).getColumn()-1; }
     // expression which is evaluated if condition is true
     nullExpr = conditionalExpression
     {
-      lengthNullExpr = -offsetNullExpr + LT(0).getColumn()-1 + LT(0).getText().length();
+      lengthNullExpr = -offsetNullExpr + input.LT(0).getColumn()-1 + input.LT(0).getText().length();
       // create new conditional expression
       ConditionalExpression condExpr = graph.createConditionalExpression();
       // add condition
@@ -1118,16 +1045,15 @@ orExpression returns [Expression retVal]
     retVal = expr;
 }
 :
-(  
   { construct.preArg1(); }
   expr = xorExpression
   { construct.preOp(expr); }
+((OR) =>  (
   OR
   { construct.postOp("or"); }
   expr = orExpression
   { expr = construct.postArg2(expr); }
-)
-|  (expr = xorExpression )	 
+) | /* only xorExpression as fake orExpression */) 
 ;	
 
 	
@@ -1144,13 +1070,14 @@ xorExpression returns [Expression retVal]
   { construct.preArg1(); }
   expr = andExpression
   { construct.preOp(expr); }
+((XOR) =>  (
   XOR
   { construct.postOp("xor"); }
   expr = xorExpression
   { expr = construct.postArg2(expr); }
-)
-|  (expr = andExpression )	 
-;
+) | /* only andExpression as fake xorExpression */)
+) 
+;	
 
 andExpression returns [Expression retVal]
 @init{
@@ -1164,14 +1091,14 @@ andExpression returns [Expression retVal]
 (  
   { construct.preArg1(); }
   expr = equalityExpression
-  { construct.preOp(expr); }
+((AND) =>  (
   AND
   { construct.postOp("and"); }
   expr = andExpression
   { expr = construct.postArg2(expr); }
-)
-|  (expr = equalityExpression )	 
-;
+) | /* only equalityExpression as fake andExpression */) )
+;	
+
 
 equalityExpression returns [Expression retVal]
 @init{
@@ -1186,13 +1113,14 @@ equalityExpression returns [Expression retVal]
   { construct.preArg1(); }
   expr = relationalExpression
   { construct.preOp(expr); }
+((EQUAL) =>  (
   EQUAL
   { construct.postOp("="); }
   expr = equalityExpression
   { expr = construct.postArg2(expr); }
-)
-|  (expr = relationalExpression )	 
-;
+) | /* only xoRExpression as fake orExpression */) )
+;	
+
 
 relationalExpression returns [Expression retVal]
 @init{
@@ -1204,21 +1132,21 @@ relationalExpression returns [Expression retVal]
     retVal = expr;
 }
 :
-(  
   { construct.preArg1(); }
   expr = additiveExpression
   { construct.preOp(expr); }
-  (  L_T { name = "leThan"; }
-   | LE { name = "leEqual"; }
-   | G_T  { name = "grThan"; }
-   | GE { name = "grEqual"; }
-   | MATCH {name = "match"} )
-  { construct.postOp(name); }
-  expr = relationalExpression
-  { expr = construct.postArg2(expr); }
-)
-|  (expr = additiveExpression )	 
+ ((L_T | LE | G_T | GE | MATCH) => 
+  ( (  L_T { name = "leThan"; }
+    | LE { name = "leEqual"; }
+    | G_T  { name = "grThan"; }
+    | GE { name = "grEqual"; }
+    | MATCH {name = "match"} ) 
+    { construct.postOp(name); }
+    expr = relationalExpression
+    { expr = construct.postArg2(expr); }
+  )    | )
 ;
+
 
 additiveExpression returns [Expression retVal]
 @init{
@@ -1229,16 +1157,15 @@ additiveExpression returns [Expression retVal]
     retVal = expr;
 }
 :
-(  
-  { construct.preArg1(); }
+ { construct.preArg1(); }
   expr = multiplicativeExpression
   { construct.preOp(expr); }
-  (  PLUS { construct.postOp("plus"); }
-   | MINUS { construct.postOp("minus"); })
-  expr = additiveExpression
-  { expr = construct.postArg2(expr); }
-)
-|  (expr = multiplicativeExpression )	 
+  ((PLUS | MINUS) => 
+  ( (  PLUS { construct.postOp("plus"); }
+     | MINUS { construct.postOp("minus"); })
+    expr = additiveExpression
+    { expr = construct.postArg2(expr); }
+  ) | ) 	 
 ;
 
 
@@ -1251,17 +1178,18 @@ multiplicativeExpression returns [Expression retVal]
     retVal = expr;
 }
 :
-(  
+  
   { construct.preArg1(); }
   expr = unaryExpression
   { construct.preOp(expr); }
-  (  STAR { construct.postOp("times"); }
-   | MOD  { construct.postOp("modulo"); }
-   | DIV  { construct.postOp("dividedBy"); })
-  expr = multiplicativeExpression
-  { expr = construct.postArg2(expr); }
-)
-|  (expr = unaryExpression )	 
+  ( (STAR | MOD | DIV) => 
+    (( STAR { construct.postOp("times"); }
+     | MOD  { construct.postOp("modulo"); }
+     | DIV  { construct.postOp("dividedBy"); })
+     expr = multiplicativeExpression
+     { expr = construct.postArg2(expr); }
+    )
+| )	 
 ;
 
 /** matches unary Expressions (-, not)
@@ -1352,9 +1280,9 @@ pathExpression returns [Expression retVal = null]
      * pfadausdruck als primaryExpr (Knotenpaare) */
     | (alternativePathDescription) =>expr = primaryExpression
 
-    | ( { offsetArg1 = LT(1).getColumn()-1; }
+    | ( { offsetArg1 = input.LT(1).getColumn()-1; }
         expr = restrictedExpression
-	{ lengthArg1 = -offsetArg1 + LT(0).getColumn()-1 + LT(0).getText().length(); }
+	{ lengthArg1 = -offsetArg1 + input.LT(0).getColumn()-1 + input.LT(0).getText().length(); }
 	( (alternativePathDescription) =>
            expr = regPathExistenceOrForwardVertexSet[expr, offsetArg1, lengthArg1]
 	| (SMILEY) => expr = regPathOrPathSystem[expr, offsetArg1, lengthArg1]
@@ -1381,15 +1309,15 @@ restrictedExpression returns [Expression retVal = null]
    retVal = expr;
 }
 :
-	{ offsetExpr = LT(1).getColumn()-1; }
+	{ offsetExpr = input.LT(1).getColumn()-1; }
 	expr = valueAccess
-	{ lengthExpr = -offsetExpr + LT(0).getColumn()-1 + LT(0).getText().length(); }
+	{ lengthExpr = -offsetExpr + input.LT(0).getColumn()-1 + input.LT(0).getText().length(); }
         (  // if followed by '&{' match this as part of this expr
            (AMP LCURLY) =>
 	   (  AMP LCURLY
-              { offsetRestr = LT(1).getColumn()-1; }
+              { offsetRestr = input.LT(1).getColumn()-1; }
               restr = expression
- 	      { lengthRestr = -offsetRestr + LT(0).getColumn()-1 + LT(0).getText().length(); }
+ 	      { lengthRestr = -offsetRestr + input.LT(0).getColumn()-1 + input.LT(0).getText().length(); }
               RCURLY
               {
                  restrExpr = graph.createRestrictedExpression();
@@ -1583,7 +1511,7 @@ sequentialPathDescription returns [PathDescription retVal = null]
 	addPathElement(AlternativePathDescription.class, IsAlternativePathOf.class, pathDescr, part1, part2);
 /*				(iteratedOrTransposedPathDescription) =>
 			pathDescr = sequentialPathDescription2[seqPathDescr, offsetSeq1,
-					-offsetSeq1 +LT(0).getColumn()-1 + LT(0).getText().length()] 
+					-offsetSeq1 +input.LT(0).getColumn()-1 + input.LT(0).getText().length()] 
 					TODO dbildh 20.11.08 : Check for what this should be good
 					*/
   })*		
@@ -1698,7 +1626,7 @@ pathDescr = primaryPathDescription
             }
         | (// exponentedPath:
             { offsetExpr = getLTOffset(); }
-            i=NUM_INT
+            i=DECLITERAL
             { lengthExpr = getLTOffset();
 			 	ExponentiatedPathDescription epd = graph.createExponentiatedPathDescription();
 		        IsExponentiatedPathOf exponentiatedPathOf = graph.createIsExponentiatedPathOf(path, epd);
@@ -1821,10 +1749,10 @@ edgePathDescription returns [EdgePathDescription pathDescr = null]
     int lengthExpr = 0;
 }
 :	
-{offsetDir = LT(1).getColumn()-1;}
+{offsetDir = input.LT(1).getColumn()-1;}
 /* TODO: insert here for aggregation */
 (EDGESTART	{ edgeStart = true; } | EDGE)
-{offsetExpr = LT(1).getColumn()-1;}
+{offsetExpr = input.LT(1).getColumn()-1;}
 expr = expression
 {lengthExpr = getLTLength(offsetExpr);}
 (EDGEEND { edgeEnd = true; }| EDGE)
@@ -2124,7 +2052,7 @@ pathsystemConstruction returns [PathSystemConstruction pathsystemConstr = null]
 	       	rootOf.setSourcePositions((createSourcePositionList(lengthExpr, offsetExpr)));
         }
 		(	COMMA
-        	{ offsetEVList = LT(1).getColumn()-1; }
+        	{ offsetEVList = input.LT(1).getColumn()-1; }
 			eVList = edgeVertexList
             {
             	lengthEVList = getLTLength(offsetEVList);
@@ -2238,7 +2166,7 @@ expressionList returns [ArrayList<VertexPosition> expressions]
 { v.offset = getLTOffset();}
 expr = expression
 {
-  	v.length = -offset + LT(0).getColumn()-1 + LT(0).getText().length();
+  	v.length = -offset + input.LT(0).getColumn()-1 + input.LT(0).getText().length();
     v.node = expr;
     expressions.add(v);
 }
@@ -2351,7 +2279,7 @@ literal returns [Literal literal = null]
 	      	return literal;*/
         literal = graph.createThisEdge();
     }
-|	i=NUM_INT
+|	i=DECLITERAL | i=HEXLITERAL | i = OCTLITERAL
 	{
         int value = 0;
         if (i.getText().startsWith("0x") || i.getText().startsWith("0X") ) {
@@ -2364,7 +2292,7 @@ literal returns [Literal literal = null]
 	    literal = graph.createIntLiteral();
 		((IntLiteral) literal).setIntValue(value);
 	}
-|	r=NUM_REAL
+|	r=FLOAT_LITERAL
     {
        	literal = graph.createRealLiteral();
 		((RealLiteral) literal).setRealValue(Double.parseDouble(r.getText()));
