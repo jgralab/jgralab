@@ -45,6 +45,7 @@ import de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.IteratedPathDescriptio
 import de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.LetExpressionEvaluator;
 import de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.ListConstructionEvaluator;
 import de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.ListRangeConstructionEvaluator;
+import de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.MapConstructionEvaluator;
 import de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.OptionalPathDescriptionEvaluator;
 import de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.PathExistenceEvaluator;
 import de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.QuantifiedExpressionEvaluator;
@@ -67,10 +68,10 @@ import de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.WhereExpressionEvaluat
 
 /**
  * This interface is implemented by all costmodels.
- * 
+ *
  * The returntype of the several methods is a VertexCosts, its a 3-Tuple
  * containing
- * 
+ *
  * <ul>
  * <li>the costs of evaluating this vertex itself once (ownEvaluationCosts),</li>
  * <li>the costs all evaluations of this vertex that are needed when evaluating
@@ -78,9 +79,9 @@ import de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.WhereExpressionEvaluat
  * <li>the costs of evaluating the whole subtree below this vertex plus
  * ownEvaluationCosts (subtreeEvaluationCosts).</li>
  * </ul>
- * 
+ *
  * @author ist@uni-koblenz.de
- * 
+ *
  */
 public interface CostModel {
 
@@ -94,7 +95,7 @@ public interface CostModel {
 
 	/**
 	 * Set the given {@link GreqlEvaluator} for this CostModel.
-	 * 
+	 *
 	 * @param eval
 	 *            the {@link GreqlEvaluator}
 	 */
@@ -204,7 +205,7 @@ public interface CostModel {
 
 	/**
 	 * Calculates the evaluation costs of a TransposedPathDescription.
-	 * 
+	 *
 	 * @param e
 	 * @param graphSize
 	 * @return a tuple (subtreeCosts, vertexCosts) that describes the evaluation
@@ -310,6 +311,10 @@ public interface CostModel {
 			EdgeSubgraphExpressionEvaluator e, GraphSize graphSize);
 
 	public long calculateVariableAssignments(VariableEvaluator e,
+			GraphSize graphSize);
+
+	public VertexCosts calculateCostsMapConstruction(
+			MapConstructionEvaluator mapConstructionEvaluator,
 			GraphSize graphSize);
 
 }
