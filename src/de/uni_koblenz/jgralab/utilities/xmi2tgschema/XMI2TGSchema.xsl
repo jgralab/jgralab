@@ -72,9 +72,11 @@
         results in corrupted TG files. -->
     <xsl:param name="uml" required="no" select="'no'"/>
 
-    <xsl:variable name="reservedWords" select="
-        'abstract', 'aggregate', 'AggregationClass', 'Boolean', 'CompositionClass', 'Double', 'EdgeClass', 'EnumDomain', 'f', 'from',
-        'Graph', 'GraphClass', 'Integer', 'List', 'Long', 'Object', 'Package', 'RecordDomain', 'role', 'Schema', 'Set', 'String', 'to', 't', 'VertexClass'" 
+    <xsl:variable name="reservedWords" select=" 'abstract', 'aggregate',
+        'AggregationClass', 'Boolean', 'CompositionClass', 'Double',
+        'EdgeClass', 'EnumDomain', 'f', 'from', 'Graph', 'GraphClass',
+        'Integer', 'List', 'Long', 'Map', 'Object', 'Package', 'RecordDomain',
+        'role', 'Schema', 'Set', 'String', 'to', 't', 'VertexClass'"
         as="xs:string*"/>
     
     <!-- stores the package with the given schemaName -->
@@ -864,10 +866,10 @@
         <xsl:if test="$caller!='enum'">
             <xsl:text>: </xsl:text>
             <!-- if tool is EA and Domain is primitive, then data from xmi:Extension is used -->
-            <xsl:if test="$tool = 'ea' and (exists(index-of($reservedWords, /xmi:XMI/xmi:Extension/elements/element/attributes/attribute[@xmi:idref = current()/@xmi:id]/properties/@type)) or contains(/xmi:XMI/xmi:Extension/elements/element/attributes/attribute[@xmi:idref = current()/@xmi:id]/properties/@type, 'List') or contains(/xmi:XMI/xmi:Extension/elements/element/attributes/attribute[@xmi:idref = current()/@xmi:id]/properties/@type, 'Set'))">
+            <xsl:if test="$tool = 'ea' and (exists(index-of($reservedWords, /xmi:XMI/xmi:Extension/elements/element/attributes/attribute[@xmi:idref = current()/@xmi:id]/properties/@type)) or contains(/xmi:XMI/xmi:Extension/elements/element/attributes/attribute[@xmi:idref = current()/@xmi:id]/properties/@type, 'List') or contains(/xmi:XMI/xmi:Extension/elements/element/attributes/attribute[@xmi:idref = current()/@xmi:id]/properties/@type, 'Set') or contains(/xmi:XMI/xmi:Extension/elements/element/attributes/attribute[@xmi:idref = current()/@xmi:id]/properties/@type, 'Map'))">
                 <xsl:value-of select="/xmi:XMI/xmi:Extension/elements/element/attributes/attribute[@xmi:idref = current()/@xmi:id]/properties/@type"/>
             </xsl:if>
-            <xsl:if test="not($tool = 'ea' and (exists(index-of($reservedWords, /xmi:XMI/xmi:Extension/elements/element/attributes/attribute[@xmi:idref = current()/@xmi:id]/properties/@type)) or contains(/xmi:XMI/xmi:Extension/elements/element/attributes/attribute[@xmi:idref = current()/@xmi:id]/properties/@type, 'List') or contains(/xmi:XMI/xmi:Extension/elements/element/attributes/attribute[@xmi:idref = current()/@xmi:id]/properties/@type, 'Set')))">
+            <xsl:if test="not($tool = 'ea' and (exists(index-of($reservedWords, /xmi:XMI/xmi:Extension/elements/element/attributes/attribute[@xmi:idref = current()/@xmi:id]/properties/@type)) or contains(/xmi:XMI/xmi:Extension/elements/element/attributes/attribute[@xmi:idref = current()/@xmi:id]/properties/@type, 'List') or contains(/xmi:XMI/xmi:Extension/elements/element/attributes/attribute[@xmi:idref = current()/@xmi:id]/properties/@type, 'Set') or contains(/xmi:XMI/xmi:Extension/elements/element/attributes/attribute[@xmi:idref = current()/@xmi:id]/properties/@type, 'Map')))">
                 <xsl:if test="$autoCorrect = 'yes'">
                     <xsl:if test="$errorDetection='yes' and empty($schemaPackage//packagedElement[@name = /xmi:XMI/xmi:Extension/elements/element/attributes/attribute[@xmi:idref = current()/@xmi:id]/properties/@type])">
                         <xsl:value-of select="error(QName('', 'xmi2tg-Error'), concat('schema does not contain an eligible attribute type ''', /xmi:XMI/xmi:Extension/elements/element/attributes/attribute[@xmi:idref = current()/@xmi:id]/properties/@type, ''', in class ''', /xmi:XMI/xmi:Extension/elements/element[attributes/attribute[@xmi:idref = current()/@xmi:id]]/@name, ''''))"/>
