@@ -1683,4 +1683,16 @@ public class DefaultCostModel extends CostModelBase implements CostModel {
 		return new VertexCosts(ownCosts, iteratedCosts, subtreeCosts);
 	}
 
+	@Override
+	public long calculateCardinalityMapConstruction(MapConstructionEvaluator e,
+			GraphSize graphSize) {
+		long keyValuePairs = 0;
+		MapConstruction mapCons = (MapConstruction) e.getVertex();
+		for (@SuppressWarnings("unused")
+		IsKeyValueTupleOf ikvt : mapCons.getIsKeyValueTupleOfIncidences()) {
+			keyValuePairs++;
+		}
+		return keyValuePairs;
+	}
+
 }
