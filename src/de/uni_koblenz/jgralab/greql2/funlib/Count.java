@@ -35,11 +35,11 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
 
 /**
  * Returns the number of elements in a given Object. If the object is not a
- * collection, 1 is returned.
+ * collection or map, 1 is returned. For a map the number of keys is returned.
  *
  * <dl>
  * <dt><b>GReQL-signature</b></dt>
- * <dd><code>BOOLEAN contains(obj:OBJECT)</code></dd>
+ * <dd><code>INT count(obj:OBJECT)</code></dd>
  * <dd>&nbsp;</dd>
  * </dl>
  * <dl>
@@ -59,11 +59,11 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
  * @author ist@uni-koblenz.de
  *
  */
-
 public class Count extends AbstractGreql2Function {
 
 	{
-		JValueType[][] x = { { JValueType.COLLECTION }, { JValueType.OBJECT } };
+		JValueType[][] x = { { JValueType.COLLECTION }, { JValueType.OBJECT },
+				{ JValueType.MAP } };
 		signatures = x;
 	}
 
@@ -74,6 +74,8 @@ public class Count extends AbstractGreql2Function {
 			return new JValue(arguments[0].toCollection().size());
 		case 1:
 			return new JValue(1);
+		case 2:
+			return new JValue(arguments[0].toJValueMap().size());
 		default:
 			throw new WrongFunctionParameterException(this, null, arguments);
 		}

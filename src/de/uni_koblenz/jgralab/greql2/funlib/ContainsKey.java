@@ -21,31 +21,24 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
-
 package de.uni_koblenz.jgralab.greql2.funlib;
 
 import java.util.ArrayList;
 
 import de.uni_koblenz.jgralab.BooleanGraphMarker;
 import de.uni_koblenz.jgralab.Graph;
-import de.uni_koblenz.jgralab.GraphElement;
 import de.uni_koblenz.jgralab.greql2.exception.EvaluateException;
 import de.uni_koblenz.jgralab.greql2.exception.WrongFunctionParameterException;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
-import de.uni_koblenz.jgralab.greql2.jvalue.JValueCollection;
-import de.uni_koblenz.jgralab.greql2.jvalue.JValuePath;
-import de.uni_koblenz.jgralab.greql2.jvalue.JValuePathSystem;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
 
 /**
- * Checks if a given object is included in a given collection. The object can be
+ * Checks if a given object is included as key in a given map. The object can be
  * anything (for example an integer or a string).
  *
  * <dl>
  * <dt><b>GReQL-signature</b></dt>
- * <dd><code>BOOLEAN contains(c:COLLECTION, obj:OBJECT)</code></dd>
- * <dd><code>BOOLEAN contains(c:PATH, obj:ATTRIBUTEDELEMENT)</code></dd>
- * <dd><code>BOOLEAN contains(c:PATHSYSTEM, obj:ATTRIBUTEDELEMENT)</code></dd>
+ * <dd><code>BOOLEAN containsKey(m:MAP, obj:OBJECT)</code></dd>
  * <dd>&nbsp;</dd>
  * </dl>
  * <dl>
@@ -53,11 +46,10 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
  * <dd>
  * <dl>
  * <dt><b>Parameters:</b></dt>
- * <dd><code>c</code> - collection or path or pathsystem to check</dd>
+ * <dd><code>m</code> - map to check</dd>
  * <dd><code>obj</code> - object or attributed element to check</dd>
  * <dt><b>Returns:</b></dt>
- * <dd><code>true</code> if the given object is included in the given collection
- * </dd>
+ * <dd><code>true</code> if the given object is a key in the given map</dd>
  * <dd><code>Null</code> if one of the given parameters is <code>Null</code></dd>
  * <dd><code>false</code> otherwise</dd>
  * </dl>
@@ -67,46 +59,61 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
  * @author ist@uni-koblenz.de
  *
  */
-
-public class Contains extends AbstractGreql2Function {
-
+public class ContainsKey extends AbstractGreql2Function {
 	{
-		JValueType[][] x = { { JValueType.COLLECTION, JValueType.OBJECT },
-				{ JValueType.PATH, JValueType.ATTRIBUTEDELEMENT },
-				{ JValueType.PATHSYSTEM, JValueType.ATTRIBUTEDELEMENT } };
+		JValueType[][] x = { { JValueType.MAP, JValueType.OBJECT } };
 		signatures = x;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 *
+	 * @see
+	 * de.uni_koblenz.jgralab.greql2.funlib.Greql2Function#evaluate(de.uni_koblenz
+	 * .jgralab.Graph, de.uni_koblenz.jgralab.BooleanGraphMarker,
+	 * de.uni_koblenz.jgralab.greql2.jvalue.JValue[])
+	 */
+	@Override
 	public JValue evaluate(Graph graph, BooleanGraphMarker subgraph,
 			JValue[] arguments) throws EvaluateException {
-
-		switch (checkArguments(arguments)) {
-		case 0:
-			JValueCollection col = arguments[0].toCollection();
-			return new JValue(col.contains(arguments[1]));
-		case 1:
-			JValuePath path = arguments[0].toPath();
-			return new JValue(path.contains((GraphElement) arguments[1]
-					.toAttributedElement()));
-		case 2:
-			JValuePathSystem pathsys = arguments[0].toPathSystem();
-			return new JValue(pathsys.contains((GraphElement) arguments[1]
-					.toAttributedElement()));
-		default:
+		if (checkArguments(arguments) == -1) {
 			throw new WrongFunctionParameterException(this, null, arguments);
 		}
+		return new JValue(arguments[0].toJValueMap().containsKey(arguments[1]));
 	}
 
+	/*
+	 * (non-Javadoc)
+	 *
+	 * @see
+	 * de.uni_koblenz.jgralab.greql2.funlib.Greql2Function#getEstimatedCardinality
+	 * (int)
+	 */
+	@Override
+	public long getEstimatedCardinality(int inElements) {
+		return 1;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 *
+	 * @see
+	 * de.uni_koblenz.jgralab.greql2.funlib.Greql2Function#getEstimatedCosts
+	 * (java.util.ArrayList)
+	 */
+	@Override
 	public long getEstimatedCosts(ArrayList<Long> inElements) {
 		return 2;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 *
+	 * @see de.uni_koblenz.jgralab.greql2.funlib.Greql2Function#getSelectivity()
+	 */
+	@Override
 	public double getSelectivity() {
 		return 0.2;
-	}
-
-	public long getEstimatedCardinality(int inElements) {
-		return 1;
 	}
 
 }
