@@ -138,7 +138,6 @@ public class MapDomainImpl extends CompositeDomainImpl implements MapDomain {
 	@Override
 	public CodeBlock getReadMethod(String schemaRootPackagePrefix,
 			String variableName, String graphIoVariableName) {
-		// TODO Auto-generated method stub
 
 		CodeList code = new CodeList();
 		code.setVariable("name", variableName);
@@ -204,14 +203,10 @@ public class MapDomainImpl extends CompositeDomainImpl implements MapDomain {
 		code.setVariable("nameKey", variableName + "Key");
 		code.setVariable("nameValue", variableName + "Value");
 
-		code.setVariable("keydom", getKeyDomain().getJavaClassName(
-				schemaRootPackagePrefix));
 		code.setVariable("keytype",
 				getKeyDomain().getJavaAttributeImplementationTypeName(
 						schemaRootPackagePrefix));
 
-		code.setVariable("valuedom", getValueDomain().getJavaClassName(
-				schemaRootPackagePrefix));
 		code.setVariable("valuetype",
 				getValueDomain().getJavaAttributeImplementationTypeName(
 						schemaRootPackagePrefix));
