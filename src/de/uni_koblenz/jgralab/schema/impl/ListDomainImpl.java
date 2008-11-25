@@ -111,6 +111,7 @@ public class ListDomainImpl extends CollectionDomainImpl implements ListDomain {
 			String graphIoVariableName) {
 		CodeList code = new CodeList();
 		code.setVariable("name", variableName);
+		code.setVariable("tmpname", variableName + "Tmp");
 		code.setVariable("basedom", getBaseDomain().getJavaClassName(
 				schemaPrefix));
 		code.setVariable("basetype", getBaseDomain()
@@ -121,16 +122,19 @@ public class ListDomainImpl extends CollectionDomainImpl implements ListDomain {
 				"if (!#io#.isNextToken(\"\\\\null\")) {"));
 		code
 				.add(new CodeSnippet(
-						"java.util.LinkedList<#basedom#> tmp = new java.util.LinkedList<#basedom#>();",
+						"java.util.LinkedList<#basedom#> #tmpname# = new java.util.LinkedList<#basedom#>();",
 						"#io#.match(\"[\");",
 						"while (!#io#.isNextToken(\"]\")) {",
 						"\t#basetype# #name#Element;"));
 		code.add(getBaseDomain().getReadMethod(schemaPrefix,
 				variableName + "Element", graphIoVariableName), 1);
-		code.add(new CodeSnippet("\ttmp.add(#name#Element);", "}",
-				"#io#.match(\"]\");",
-				"#name# = new java.util.ArrayList<#basedom#>(tmp.size());",
-				"#name#.addAll(tmp);"));
+		code
+				.add(new CodeSnippet(
+						"\t#tmpname#.add(#name#Element);",
+						"}",
+						"#io#.match(\"]\");",
+						"#name# = new java.util.ArrayList<#basedom#>(#tmpname#.size());",
+						"#name#.addAll(#tmpname#);"));
 		code.addNoIndent(new CodeSnippet("} else {"));
 		code.add(new CodeSnippet("io.match(\"\\\\null\");", "#name# = null;"));
 		code.addNoIndent(new CodeSnippet("}"));
