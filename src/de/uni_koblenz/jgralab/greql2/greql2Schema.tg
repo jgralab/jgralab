@@ -60,6 +60,7 @@ VertexClass LetExpression: DefinitionExpression;
 VertexClass ListConstruction: ValueConstruction;
 VertexClass ListRangeConstruction: ListConstruction;
 VertexClass Literal: Expression;
+VertexClass MapConstruction : Expression;
 VertexClass Nonterminal: Symbol;
 VertexClass NullLiteral: Literal;
 VertexClass OptionalPathDescription: PathDescription;
@@ -164,6 +165,7 @@ AggregationClass IsSubgraphOf: Greql2Aggregation from Expression (0,1) to Declar
 AggregationClass IsSymbolOf: Greql2Aggregation from Symbol (0,*) to RightSide (1,*) aggregate to;
 AggregationClass IsTableHeaderOf: Greql2Aggregation from Expression (0,*) to ComprehensionWithTableHeader (0,*) aggregate to;
 AggregationClass IsTargetExprOf: Greql2Aggregation from Expression (0,1) to PathExpression (0,*) aggregate to;
+AggregationClass IsKeyValueTupleOf : Greql2Aggregation from TupleConstruction (0,1) to MapConstruction (0,*) aggregate to;
 AggregationClass IsTransposedPathOf: IsPathDescriptionOf from PathDescription (1,1) to TransposedPathDescription (0,*) aggregate to;
 AggregationClass IsTrueExprOf: Greql2Aggregation from Expression (1,1) to ConditionalExpression (0,*) aggregate to;
 AggregationClass IsTypeExprOfDeclaration: IsTypeExprOf from Expression (0,1) to SimpleDeclaration (0,*) aggregate to;
