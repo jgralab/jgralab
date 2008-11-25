@@ -24,7 +24,7 @@
 
 
 ;;; Version:
-;; <2008-11-21 Fri 16:27>
+;; <2008-11-25 Tue 16:15>
 
 ;;; Code:
 
@@ -298,8 +298,10 @@ queries are evaluated.  Set it with `greql-set-graph'.")
     (let ((proc (start-process "GReQL process" buffer
 			       greql-script-program
 			       "-e" evalstr
-			       "-g" (expand-file-name greql-graph)
-			       "-r" greql-result-file)))
+			       "-r" greql-result-file
+			       (if greql-graph
+				   (concat "-g" (expand-file-name greql-graph))
+				 ""))))
       (set-process-sentinel proc 'greql-display-result))
     (display-buffer buffer)))
 
