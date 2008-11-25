@@ -21,42 +21,36 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
-
 package de.uni_koblenz.jgralab.greql2.funlib;
 
 import java.util.ArrayList;
 
-import de.uni_koblenz.jgralab.AttributedElement;
 import de.uni_koblenz.jgralab.BooleanGraphMarker;
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.greql2.exception.EvaluateException;
 import de.uni_koblenz.jgralab.greql2.exception.WrongFunctionParameterException;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
-import de.uni_koblenz.jgralab.greql2.jvalue.JValueRecord;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
 
 /**
- * Returns the given attribute or element value for a vertex, an edge or a
- * record. The attribute is called by its name.
+ * Retrieves the value associated with a given key in the given map.
  *
  * <dl>
  * <dt><b>GReQL-signature</b></dt>
- * <dd><code>OBJECT getValue(elem:ATTRIBUTEDELEMENT, name:String)</code></dd>
- * <dd><code>OBJECT getValue(elem:RECORD, name:String)</code></dd>
+ * <dd><code>BOOLEAN get(m:MAP, obj:OBJECT)</code></dd>
  * <dd>&nbsp;</dd>
  * </dl>
- * <dd>This function can be used with the (.)-Operator: <code>elem.name</code></dd>
- * <dd>&nbsp;</dd>
  * <dl>
  * <dt></dt>
  * <dd>
  * <dl>
  * <dt><b>Parameters:</b></dt>
- * <dd><code>elem</code> - the attributed element to get the value for</dd>
- * <dd><code>name</code> - the name of the attribute to be returned</dd>
+ * <dd><code>m</code> - map to be used</dd>
+ * <dd><code>obj</code> - object serving as key</dd>
  * <dt><b>Returns:</b></dt>
- * <dd>the value of the attribute with the given name</dd>
- * <dd><code>Null</code> if one of the parameters is <code>Null</code></dd>
+ * <dd>the object which is mapped by <code>obj</code> in <code>m</code>.</dd>
+ * <dd><code>Null</code> if one of the given parameters is <code>Null</code> or
+ * if <code>obj</code> is no key in <code>m</code></dd>
  * </dl>
  * </dd>
  * </dl>
@@ -64,51 +58,60 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
  * @author ist@uni-koblenz.de
  *
  */
-public class GetValue extends AbstractGreql2Function {
+public class Get extends AbstractGreql2Function {
 	{
-		JValueType[][] x = {
-				{ JValueType.ATTRIBUTEDELEMENT, JValueType.STRING },
-				{ JValueType.RECORD, JValueType.STRING } };
+		JValueType[][] x = { { JValueType.MAP, JValueType.OBJECT } };
 		signatures = x;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 *
+	 * @see
+	 * de.uni_koblenz.jgralab.greql2.funlib.Greql2Function#evaluate(de.uni_koblenz
+	 * .jgralab.Graph, de.uni_koblenz.jgralab.BooleanGraphMarker,
+	 * de.uni_koblenz.jgralab.greql2.jvalue.JValue[])
+	 */
+	@Override
 	public JValue evaluate(Graph graph, BooleanGraphMarker subgraph,
 			JValue[] arguments) throws EvaluateException {
-		AttributedElement attrElem = null;
-		JValueRecord record = null;
-		switch (checkArguments(arguments)) {
-		case 0:
-			attrElem = arguments[0].toAttributedElement();
-			break;
-		case 1:
-			record = arguments[0].toJValueRecord();
-			break;
-		default:
+		if (checkArguments(arguments) == -1) {
 			throw new WrongFunctionParameterException(this, null, arguments);
 		}
-		String fieldName = arguments[1].toString();
-
-		if (attrElem != null) {
-			try {
-				return JValue.fromObject(attrElem.getAttribute(fieldName),
-						attrElem);
-			} catch (NoSuchFieldException e) {
-				e.printStackTrace();
-				throw new EvaluateException("GetValue failed!", e);
-			}
-		}
-		return record.get(fieldName);
+		return arguments[0].toJValueMap().get(arguments[1]);
 	}
 
+	/*
+	 * (non-Javadoc)
+	 *
+	 * @see
+	 * de.uni_koblenz.jgralab.greql2.funlib.Greql2Function#getEstimatedCardinality
+	 * (int)
+	 */
+	@Override
+	public long getEstimatedCardinality(int inElements) {
+		return 1;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 *
+	 * @see
+	 * de.uni_koblenz.jgralab.greql2.funlib.Greql2Function#getEstimatedCosts
+	 * (java.util.ArrayList)
+	 */
+	@Override
 	public long getEstimatedCosts(ArrayList<Long> inElements) {
 		return 2;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 *
+	 * @see de.uni_koblenz.jgralab.greql2.funlib.Greql2Function#getSelectivity()
+	 */
+	@Override
 	public double getSelectivity() {
-		return 1;
-	}
-
-	public long getEstimatedCardinality(int inElements) {
 		return 1;
 	}
 
