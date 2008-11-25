@@ -39,7 +39,7 @@ import java.util.Map.Entry;
  * Intelligent Systems at the University of Stuttgart
  * (http://www.iis.uni-stuttgart.de) under guidance of Dietmar Lippold
  * (dietmar.lippold@informatik.uni-stuttgart.de).
- * 
+ *
  * @author ist@uni-koblenz.de
  */
 public class JValueBag extends JValueCollection {
@@ -103,7 +103,7 @@ public class JValueBag extends JValueCollection {
 			if (hasNext()) {
 				removeEnabled = true;
 				if (multiElementIndex == 0) {
-					currentElement = (JValue) myKeySetIterator.next();
+					currentElement = myKeySetIterator.next();
 					multiElementNumber = getQuantity(currentElement);
 					multiElementIndex = multiElementNumber - 1;
 				} else {
@@ -122,7 +122,7 @@ public class JValueBag extends JValueCollection {
 				if (multiElementNumber > 1) {
 					Integer oldKeyCount, newKeyCount;
 
-					oldKeyCount = (Integer) myHashMap.get(currentElement);
+					oldKeyCount = myHashMap.get(currentElement);
 					newKeyCount = new Integer(oldKeyCount.intValue() - 1);
 					myHashMap.put(currentElement, newKeyCount);
 					multiElementNumber--;
@@ -152,7 +152,7 @@ public class JValueBag extends JValueCollection {
 	 * collection. The backing <code>HashMap</code> instance is created with
 	 * default load factor (0.75) and an initial capacity sufficient to contain
 	 * the elements in the specified collection.
-	 * 
+	 *
 	 * @param c
 	 *            the collection whose elements are to be placed into this
 	 *            multiset.
@@ -170,7 +170,7 @@ public class JValueBag extends JValueCollection {
 	 * Note that the backing <code>HashMap</code> only stores single copies of
 	 * equal elements.
 	 * <p>
-	 * 
+	 *
 	 * @param initialCapacity
 	 *            the initial capacity for distinct elements.
 	 * @throws IllegalArgumentException
@@ -185,7 +185,7 @@ public class JValueBag extends JValueCollection {
 	 * instance has specified initial capacity and load factor. Note that the
 	 * backing <code>HashMap</code> only stores single copies of equal
 	 * elements.
-	 * 
+	 *
 	 * @param initialCapacity
 	 *            the initial capacity for distinct elements.
 	 * @param loadFactor
@@ -198,6 +198,7 @@ public class JValueBag extends JValueCollection {
 		myHashMap = new HashMap<JValue, Integer>(initialCapacity, loadFactor);
 	}
 
+	@Override
 	public boolean isJValueBag() {
 		return true;
 	}
@@ -210,9 +211,10 @@ public class JValueBag extends JValueCollection {
 	 * <code>s1.hashCode()==s2.hashCode()</code> for any two multisets
 	 * <code>s1</code> and <code>s2</code>, as required by the general
 	 * contract of <code>Object.hashCode()</code>.
-	 * 
+	 *
 	 * @return the hash code value for this multiset.
 	 */
+	@Override
 	public int hashCode() {
 		if (storedHashCode == 0) {
 			int elementHashCode = 0;
@@ -236,28 +238,30 @@ public class JValueBag extends JValueCollection {
 	 * sets have the same size, and every element of the specified set is
 	 * contained in this set the same number of times.
 	 * <p>
-	 * 
+	 *
 	 * If the specified object is not this multiset itself but another
 	 * collection, this implementation first compares the sizes of this multiset
 	 * and the specified collection by invoking the <code>size</code> method
 	 * on each. If the sizes match, the sets are compared on a per-element
 	 * basis.
-	 * 
+	 *
 	 * @param o
 	 *            object to be compared for equality with this multiset.
 	 * @return <code>true</code> if the specified object is equal to this
 	 *         multiset, <code>false</code> otherwise.
 	 */
+	@Override
 	public boolean equals(Object o) {
 		if (o instanceof JValueCollection) {
 			JValueCollection foreignCollection = (JValueCollection) o;
-			if ((this.size() != foreignCollection.size()))
+			if ((this.size() != foreignCollection.size())) {
 				return false;
+			}
 			JValueBag foreignBag = foreignCollection.toJValueBag();
 			Iterator<JValue> iter = foreignBag.iterator();
 			JValue currentElement;
 			while (iter.hasNext()) {
-				currentElement = (JValue) iter.next();
+				currentElement = iter.next();
 				if (this.getQuantity(currentElement) != foreignBag
 						.getQuantity(currentElement)) {
 					return false;
@@ -272,10 +276,11 @@ public class JValueBag extends JValueCollection {
 	 * Returns an iterator over the elements in this multiset. Different
 	 * elements are returned in no particular order, however, equal elements are
 	 * always returned subsequently.
-	 * 
+	 *
 	 * @see ConcurrentModificationException
 	 * @return an Iterator over the elements in this multiset.
 	 */
+	@Override
 	public Iterator<JValue> iterator() {
 		return new JValueBagIterator();
 	}
@@ -283,9 +288,10 @@ public class JValueBag extends JValueCollection {
 	/**
 	 * Returns a shallow copy of this <code>HashMultiset</code> instance: the
 	 * elements themselves are not cloned.
-	 * 
+	 *
 	 * @return a shallow copy of this multiset.
 	 */
+	@Override
 	public Object clone() {
 		JValueBag copy = new JValueBag(this.myHashMap.size());
 		copy.myHashMap.putAll(this.myHashMap);
@@ -296,31 +302,34 @@ public class JValueBag extends JValueCollection {
 
 	/**
 	 * Returns <code>true</code> if this multiset contains no elements.
-	 * 
+	 *
 	 * @return <code>true</code> if this multiset contains no elements,
 	 *         <code>false</code> otherwise.
 	 */
+	@Override
 	public boolean isEmpty() {
 		return myHashMap.isEmpty();
 	}
 
 	/**
 	 * Returns <code>true</code> if this set contains the specified element.
-	 * 
+	 *
 	 * @param element
 	 *            element whose presence in this set is to be tested.
 	 * @return <code>true</code> if this set contains the specified element,
 	 *         <code>false</code> otherwise.
 	 */
+	@Override
 	public boolean contains(JValue element) {
 		return myHashMap.containsKey(element);
 	}
 
 	/**
 	 * Returns the number of elements in this multiset (its cardinality).
-	 * 
+	 *
 	 * @return the number of elements in this multiset (its cardinality).
 	 */
+	@Override
 	public int size() {
 		return storedSize;
 	}
@@ -328,6 +337,7 @@ public class JValueBag extends JValueCollection {
 	/**
 	 * Removes all elements from this set.
 	 */
+	@Override
 	public void clear() {
 		storedSize = 0;
 		storedHashCode = 0;
@@ -338,14 +348,14 @@ public class JValueBag extends JValueCollection {
 	/**
 	 * Returns the number of times the specified element is present in this
 	 * multiset.
-	 * 
+	 *
 	 * @param element
 	 *            element whose quantity is returned.
 	 * @return quantity of the specified element, 0 if it is not present.
 	 * @see #setQuantity
 	 */
 	public int getQuantity(JValue element) {
-		Integer keyCount = (Integer) myHashMap.get(element);
+		Integer keyCount = myHashMap.get(element);
 		if (keyCount == null) {
 			return 0;
 		} else {
@@ -357,11 +367,11 @@ public class JValueBag extends JValueCollection {
 	 * Adjusts the number of times the specified element is present in this
 	 * multiset to be the specified value (zero if the value is negative).
 	 * <p>
-	 * 
+	 *
 	 * This implementation sets <code>storedHashCode</code> to 0 (representing
 	 * an unavailable hash code value), which forces <code>hashCode()</code>
 	 * to recalculate the actual hash code value.
-	 * 
+	 *
 	 * @param element
 	 *            element whose quantity gets set.
 	 * @param quantity
@@ -392,9 +402,10 @@ public class JValueBag extends JValueCollection {
 	 * Returns a new <code>Set</code> containing the 'flattened' version of
 	 * this multiset in which every element of this multiset is present exactly
 	 * once.
-	 * 
+	 *
 	 * @return the 'flattened' version of this multiset.
 	 */
+	@Override
 	public JValueSet toJValueSet() {
 		return new JValueSet(this);
 	}
@@ -402,7 +413,7 @@ public class JValueBag extends JValueCollection {
 	/**
 	 * Returns the size of a 'flattened' version of this multiset in which every
 	 * element of this multiset is present exactly once.
-	 * 
+	 *
 	 * @return the size of the 'flattened' version of this multiset.
 	 */
 	public int elementCount() {
@@ -415,7 +426,7 @@ public class JValueBag extends JValueCollection {
 	 * collection are also present in this multiset at least the same number of
 	 * times.
 	 * <p>
-	 * 
+	 *
 	 * This implementation checks if the specified collection is an instance of
 	 * <code>Multiset</code> or <code>Set</code>. If so, the result of the
 	 * super method <code>isSuperset</code> is returned. Otherwise, it tries
@@ -425,7 +436,7 @@ public class JValueBag extends JValueCollection {
 	 * intersection multiset is greater or equal than in this HashMultiset,
 	 * false is returned. If the intersection can be built up completely, this
 	 * HashMultiset is a superset of c and true is returned.
-	 * 
+	 *
 	 * @param c
 	 *            collection to be checked for being a subset.
 	 * @return <code>true</code> if this multiset is a superset of the
@@ -437,8 +448,9 @@ public class JValueBag extends JValueCollection {
 		while (iter.hasNext()) {
 			JValue currentElement = iter.next();
 			if (this.getQuantity(currentElement) < bag
-					.getQuantity(currentElement))
+					.getQuantity(currentElement)) {
 				return false;
+			}
 		}
 		return true;
 	}
@@ -448,7 +460,7 @@ public class JValueBag extends JValueCollection {
 	 * <code>Multiset</code> containing all elements that are present in this
 	 * multiset or in the specified collection. The quantities of equal elements
 	 * get added up.
-	 * 
+	 *
 	 * @param c
 	 *            collection to be united with.
 	 * @return the union with the specified collection.
@@ -467,7 +479,7 @@ public class JValueBag extends JValueCollection {
 	 * <code>JValueBag</code> containing all elements that are present in this
 	 * bag or in the specified collection. For equal elements, the resulting
 	 * quantity is the maximum of the two given quantities.
-	 * 
+	 *
 	 * @param c
 	 *            collection to be united with.
 	 * @return the union with the specified collection.
@@ -479,9 +491,10 @@ public class JValueBag extends JValueCollection {
 			JValue currentElement = iter.next();
 			int ownQuantity = this.getQuantity(currentElement);
 			int resultingQuantity = resultingBag.getQuantity(currentElement);
-			if (ownQuantity > resultingQuantity)
+			if (ownQuantity > resultingQuantity) {
 				resultingBag.add(currentElement, ownQuantity
 						- resultingQuantity);
+			}
 		}
 		return resultingBag;
 	}
@@ -491,7 +504,7 @@ public class JValueBag extends JValueCollection {
 	 * <code>HashMultiset</code> containing all elements that are present in
 	 * this multiset as well as in the specified collection. For equal elements,
 	 * the resulting quantity is the minimum of the two given quantities.
-	 * 
+	 *
 	 * @param c
 	 *            collection to be intersected with.
 	 * @return the intersection with the specified collection.
@@ -508,10 +521,11 @@ public class JValueBag extends JValueCollection {
 			int foreignQuantity = foreignBag.getQuantity(currentElement);
 			int ownQuantity = this.getQuantity(currentElement);
 			int count;
-			if (foreignQuantity > ownQuantity)
+			if (foreignQuantity > ownQuantity) {
 				count = ownQuantity;
-			else
+			} else {
 				count = foreignQuantity;
+			}
 			resultingBag.add(currentElement, count);
 		}
 		return resultingBag;
@@ -522,7 +536,7 @@ public class JValueBag extends JValueCollection {
 	 * collection. This is a new <code>HashMultiset</code> containing all
 	 * elements that are present in this multiset but not in the specified
 	 * collection. The quantities of equal elements get subtracted.
-	 * 
+	 *
 	 * @param c
 	 *            collection from which the difference is calculated.
 	 * @return the difference with the specified collection.
@@ -540,10 +554,11 @@ public class JValueBag extends JValueCollection {
 			int ownQuantity = this.getQuantity(currentElement);
 			int difference = foreignQuantity - ownQuantity;
 			if (difference != 0) {
-				if (difference > 0)
+				if (difference > 0) {
 					resultingBag.add(currentElement, difference);
-				else
+				} else {
 					resultingBag.add(currentElement, -difference);
+				}
 			}
 		}
 		return resultingBag;
@@ -555,7 +570,7 @@ public class JValueBag extends JValueCollection {
 	 * elements that are present either in this multiset or in the specified
 	 * collection but not in both. The quantities of equal elements get
 	 * subtracted from each other (maximum minus minimum).
-	 * 
+	 *
 	 * @param c
 	 *            collection from which the symmetric difference is calculated
 	 * @return the symmetric difference with the specified collection.
@@ -573,16 +588,17 @@ public class JValueBag extends JValueCollection {
 			int ownQuantity = this.getQuantity(currentElement);
 			int difference = foreignQuantity - ownQuantity;
 			if (difference != 0) {
-				if (difference > 0)
+				if (difference > 0) {
 					resultingBag.add(currentElement, difference);
-				else
+				} else {
 					resultingBag.add(currentElement, -difference);
+				}
 			}
 		}
 		// add all elements which are in foreign bag but not in this bag
 		iter = foreignBag.iterator();
 		while (iter.hasNext()) {
-			JValue currentElement = (JValue) iter.next();
+			JValue currentElement = iter.next();
 			int ownQuantity = this.getQuantity(currentElement);
 			if (ownQuantity == 0) {
 				int foreignQuantity = foreignBag.getQuantity(currentElement);
@@ -598,12 +614,12 @@ public class JValueBag extends JValueCollection {
 	 * multiset. If <code>quantity</code> is negative or 0, the multiset
 	 * remains unchanged and <code>false</code> is returned.
 	 * <p>
-	 * 
+	 *
 	 * If the set gets altered, this implementation sets
 	 * <code>storedHashCode</code> to 0 (representing an unavailable hash code
 	 * value), which forces <code>hashCode()</code> to recalculate the actual
 	 * hash code value.
-	 * 
+	 *
 	 * @param element
 	 *            element to be added to this set.
 	 * @param quantity
@@ -625,6 +641,7 @@ public class JValueBag extends JValueCollection {
 	/**
 	 * adds the specified element 1 times to this collection
 	 */
+	@Override
 	public boolean add(JValue element) {
 		return add(element, 1);
 	}
@@ -633,12 +650,12 @@ public class JValueBag extends JValueCollection {
 	 * Removes the specified element from this multiset if it is present. If the
 	 * element is present more than once, its quantity gets decreased by one.
 	 * <p>
-	 * 
+	 *
 	 * If the set gets altered, this implementation sets
 	 * <code>storedHashCode</code> to 0 (representing an unavailable hash code
 	 * value), which forces <code>hashCode()</code> to recalculate the actual
 	 * hash code value.
-	 * 
+	 *
 	 * @param element
 	 *            object to be removed from this multiset, if present.
 	 * @return <code>true</code> if the multiset contained the specified
@@ -648,10 +665,11 @@ public class JValueBag extends JValueCollection {
 		Integer oldKeyCount;
 		Integer newKeyCount;
 
-		if (quantity < 1)
+		if (quantity < 1) {
 			return false;
+		}
 
-		oldKeyCount = (Integer) myHashMap.get(element);
+		oldKeyCount = myHashMap.get(element);
 		if (oldKeyCount != null) {
 			int i = oldKeyCount.intValue() - quantity;
 			int removedItems = quantity;
@@ -677,19 +695,21 @@ public class JValueBag extends JValueCollection {
 	/**
 	 * removes the specified element 1 times from this collection
 	 */
+	@Override
 	public boolean remove(JValue element) {
 		return remove(element, 1);
 	}
 
 	/**
 	 * replaces the old element the given newElement
-	 * 
+	 *
 	 * @param oldElement
 	 *            the element which should be replaced
 	 * @param newElement
 	 *            the element which should replace the old one
 	 * @return true if successfull, false otherwise
 	 */
+	@Override
 	public boolean replace(JValue oldElement, JValue newElement) {
 		return true;
 	}
@@ -699,6 +719,7 @@ public class JValueBag extends JValueCollection {
 	 * the right type if you guess that a JValueCollection is a bag Cleaner and
 	 * faster than casting
 	 */
+	@Override
 	public JValueBag toJValueBag() {
 		return this;
 	}
@@ -711,15 +732,17 @@ public class JValueBag extends JValueCollection {
 		Iterator<JValue> iter = iterator();
 		while (iter.hasNext()) {
 			JValue v = iter.next();
-			if (!foreignCollection.contains(v))
+			if (!foreignCollection.contains(v)) {
 				iter.remove();
+			}
 		}
 		return true;
 	}
 
 	/**
-	 * accepts te given visitor to visit this jvalue
+	 * accepts the given visitor to visit this jvalue
 	 */
+	@Override
 	public void accept(JValueVisitor v) {
 		v.visitBag(this);
 	}

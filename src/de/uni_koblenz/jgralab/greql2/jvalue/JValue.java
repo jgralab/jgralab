@@ -933,6 +933,14 @@ public class JValue implements Comparable<JValue> {
 	}
 
 	/**
+	 *
+	 * @return true if this JValue is a Map, false otherwise
+	 */
+	public boolean isMap() {
+		return false;
+	}
+
+	/**
 	 * returns a JValueCollection-Reference of this JValue
 	 *
 	 * @throws JValueInvalidTypeException
@@ -980,6 +988,16 @@ public class JValue implements Comparable<JValue> {
 	 */
 	public JValueList toJValueList() throws JValueInvalidTypeException {
 		throw new JValueInvalidTypeException(JValueType.COLLECTION, type);
+	}
+
+	/**
+	 * returns a JValueMap-Reference of this JValue
+	 *
+	 * @throws ValueInvalidTypeException
+	 *             if the JValue cannot be converted to a map
+	 */
+	public JValueMap toJValueMap() throws JValueInvalidTypeException {
+		throw new JValueInvalidTypeException(JValueType.MAP, type);
 	}
 
 	/**

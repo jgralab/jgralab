@@ -33,9 +33,9 @@ import de.uni_koblenz.jgralab.greql2.exception.JValueVisitorException;
  * structure given recursivly, but it does nothing with them. To implement a own
  * visitor, which for example prints alls vertices to a list, extend this class
  * an overwrite the method visitVertex(Vertex v)
- * 
+ *
  * @author ist@uni-koblenz.de
- * 
+ *
  */
 
 public class JValueDefaultVisitor implements JValueVisitor {
@@ -46,10 +46,11 @@ public class JValueDefaultVisitor implements JValueVisitor {
 		boolean first = true;
 		pre();
 		while (iter.hasNext()) {
-			if (first)
+			if (first) {
 				first = false;
-			else
+			} else {
 				inter();
+			}
 			iter.next().accept(this);
 		}
 		post();
@@ -61,10 +62,11 @@ public class JValueDefaultVisitor implements JValueVisitor {
 		boolean first = true;
 		pre();
 		while (iter.hasNext()) {
-			if (first)
+			if (first) {
 				first = false;
-			else
+			} else {
 				inter();
+			}
 			iter.next().accept(this);
 		}
 		post();
@@ -82,10 +84,11 @@ public class JValueDefaultVisitor implements JValueVisitor {
 		boolean first = true;
 		pre();
 		while (iter.hasNext()) {
-			if (first)
+			if (first) {
 				first = false;
-			else
+			} else {
 				inter();
+			}
 			iter.next().accept(this);
 		}
 		post();
@@ -97,10 +100,11 @@ public class JValueDefaultVisitor implements JValueVisitor {
 		boolean first = true;
 		pre();
 		while (iter.hasNext()) {
-			if (first)
+			if (first) {
 				first = false;
-			else
+			} else {
 				inter();
+			}
 			iter.next().accept(this);
 		}
 		post();
@@ -112,10 +116,11 @@ public class JValueDefaultVisitor implements JValueVisitor {
 		boolean first = true;
 		pre();
 		while (iter.hasNext()) {
-			if (first)
+			if (first) {
 				first = false;
-			else
+			} else {
 				inter();
+			}
 			iter.next().accept(this);
 		}
 		post();
@@ -127,10 +132,11 @@ public class JValueDefaultVisitor implements JValueVisitor {
 		boolean first = true;
 		pre();
 		while (eiter.hasNext()) {
-			if (first)
+			if (first) {
 				first = false;
-			else
+			} else {
 				inter();
+			}
 			eiter.next().accept(this);
 		}
 		post();
@@ -138,10 +144,11 @@ public class JValueDefaultVisitor implements JValueVisitor {
 		first = true;
 		pre();
 		while (viter.hasNext()) {
-			if (first)
+			if (first) {
 				first = false;
-			else
+			} else {
 				inter();
+			}
 			viter.next().accept(this);
 		}
 		post();
@@ -292,6 +299,22 @@ public class JValueDefaultVisitor implements JValueVisitor {
 		throw new JValueVisitorException(getClass().getSimpleName()
 				+ " can not handle " + v.getType(), null);
 
+	}
+
+	@Override
+	public void visitMap(JValueMap b) {
+		boolean first = true;
+		pre();
+		for (JValue k : b.keySet()) {
+			if (first) {
+				first = false;
+			} else {
+				inter();
+			}
+			k.accept(this);
+			b.get(k).accept(this);
+		}
+		post();
 	}
 
 }
