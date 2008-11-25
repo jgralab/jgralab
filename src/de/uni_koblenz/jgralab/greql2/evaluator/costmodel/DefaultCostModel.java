@@ -51,6 +51,7 @@ import de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.IteratedPathDescriptio
 import de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.LetExpressionEvaluator;
 import de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.ListConstructionEvaluator;
 import de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.ListRangeConstructionEvaluator;
+import de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.MapComprehensionEvaluator;
 import de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.MapConstructionEvaluator;
 import de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.OptionalPathDescriptionEvaluator;
 import de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.PathDescriptionEvaluator;
@@ -112,6 +113,7 @@ import de.uni_koblenz.jgralab.greql2.schema.IteratedPathDescription;
 import de.uni_koblenz.jgralab.greql2.schema.LetExpression;
 import de.uni_koblenz.jgralab.greql2.schema.ListConstruction;
 import de.uni_koblenz.jgralab.greql2.schema.ListRangeConstruction;
+import de.uni_koblenz.jgralab.greql2.schema.MapComprehension;
 import de.uni_koblenz.jgralab.greql2.schema.MapConstruction;
 import de.uni_koblenz.jgralab.greql2.schema.OptionalPathDescription;
 import de.uni_koblenz.jgralab.greql2.schema.PathDescription;
@@ -1693,6 +1695,41 @@ public class DefaultCostModel extends CostModelBase implements CostModel {
 			keyValuePairs++;
 		}
 		return keyValuePairs;
+	}
+
+	@Override
+	public VertexCosts calculateCostsMapComprehension(
+			MapComprehensionEvaluator e, GraphSize graphSize) {
+		MapComprehension mapComp = (MapComprehension) e.getVertex();
+		Declaration decl = (Declaration) mapComp.getFirstIsCompDeclOf()
+				.getAlpha();
+		DeclarationEvaluator declEval = (DeclarationEvaluator) greqlEvaluator
+				.getVertexEvaluatorGraphMarker().getMark(decl);
+		long declCosts = declEval.getCurrentSubtreeEvaluationCosts(graphSize);
+
+		Vertex resultDef = mapComp.getFirstIsCompResultDefOf().getAlpha();
+		VertexEvaluator resultDefEval = greqlEvaluator
+				.getVertexEvaluatorGraphMarker().getMark(resultDef);
+		long resultCosts = resultDefEval
+				.getCurrentSubtreeEvaluationCosts(graphSize);
+
+		long ownCosts = resultDefEval.getEstimatedCardinality(graphSize)
+				* addToSetCosts;
+		long iteratedCosts = ownCosts * e.getVariableCombinations(graphSize);
+		long subtreeCosts = iteratedCosts + resultCosts + declCosts;
+		return new VertexCosts(ownCosts, iteratedCosts, subtreeCosts);
+
+	}
+
+	@Override
+	public long calculateCardinalityMapComprehension(
+			MapComprehensionEvaluator e, GraphSize graphSize) {
+		MapComprehension setComp = (MapComprehension) e.getVertex();
+		Declaration decl = (Declaration) setComp.getFirstIsCompDeclOf()
+				.getAlpha();
+		DeclarationEvaluator declEval = (DeclarationEvaluator) greqlEvaluator
+				.getVertexEvaluatorGraphMarker().getMark(decl);
+		return declEval.getEstimatedCardinality(graphSize);
 	}
 
 }
