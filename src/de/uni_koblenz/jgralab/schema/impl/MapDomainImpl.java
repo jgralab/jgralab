@@ -201,6 +201,8 @@ public class MapDomainImpl extends CompositeDomainImpl implements MapDomain {
 			String variableName, String graphIoVariableName) {
 		CodeList code = new CodeList();
 		code.setVariable("name", variableName);
+		code.setVariable("nameKey", variableName + "Key");
+		code.setVariable("nameValue", variableName + "Value");
 
 		code.setVariable("keydom", getKeyDomain().getJavaClassName(
 				schemaRootPackagePrefix));
@@ -221,15 +223,17 @@ public class MapDomainImpl extends CompositeDomainImpl implements MapDomain {
 				"#io#.noSpace();"));
 		code
 				.add(new CodeSnippet(
-						"for (#keytype# #name#Key: #name#.keySet()) {"));
+						"for (#keytype# #nameKey#: #name#.keySet()) {"));
 
+		code.add(new CodeSnippet(
+				"#valuetype# #nameValue# = #name#.get(#nameKey#);"), 1);
 		code.add(getKeyDomain().getWriteMethod(schemaRootPackagePrefix,
-				variableName + "Key", graphIoVariableName), 1);
+				code.getVariable("nameKey"), graphIoVariableName), 1);
 
 		code.add(new CodeSnippet("\t#io#.write(\" -\");"));
 
 		code.add(getValueDomain().getWriteMethod(schemaRootPackagePrefix,
-				"#name#.get(#name#Key)", graphIoVariableName), 1);
+				code.getVariable("nameValue"), graphIoVariableName), 1);
 
 		code.add(new CodeSnippet("}", "#io#.write(\"}\");"));
 		code.addNoIndent(new CodeSnippet("} else {"));
