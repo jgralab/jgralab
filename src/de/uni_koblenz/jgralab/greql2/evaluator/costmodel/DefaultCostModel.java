@@ -51,6 +51,7 @@ import de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.IteratedPathDescriptio
 import de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.LetExpressionEvaluator;
 import de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.ListConstructionEvaluator;
 import de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.ListRangeConstructionEvaluator;
+import de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.MapConstructionEvaluator;
 import de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.OptionalPathDescriptionEvaluator;
 import de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.PathDescriptionEvaluator;
 import de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.PathExistenceEvaluator;
@@ -97,6 +98,7 @@ import de.uni_koblenz.jgralab.greql2.schema.IsConstraintOf;
 import de.uni_koblenz.jgralab.greql2.schema.IsDeclaredVarOf;
 import de.uni_koblenz.jgralab.greql2.schema.IsDefinitionOf;
 import de.uni_koblenz.jgralab.greql2.schema.IsFalseExprOf;
+import de.uni_koblenz.jgralab.greql2.schema.IsKeyValueTupleOf;
 import de.uni_koblenz.jgralab.greql2.schema.IsNullExprOf;
 import de.uni_koblenz.jgralab.greql2.schema.IsPartOf;
 import de.uni_koblenz.jgralab.greql2.schema.IsRecordElementOf;
@@ -110,6 +112,7 @@ import de.uni_koblenz.jgralab.greql2.schema.IteratedPathDescription;
 import de.uni_koblenz.jgralab.greql2.schema.LetExpression;
 import de.uni_koblenz.jgralab.greql2.schema.ListConstruction;
 import de.uni_koblenz.jgralab.greql2.schema.ListRangeConstruction;
+import de.uni_koblenz.jgralab.greql2.schema.MapConstruction;
 import de.uni_koblenz.jgralab.greql2.schema.OptionalPathDescription;
 import de.uni_koblenz.jgralab.greql2.schema.PathDescription;
 import de.uni_koblenz.jgralab.greql2.schema.PathExistence;
@@ -133,9 +136,9 @@ import de.uni_koblenz.jgralab.greql2.schema.WhereExpression;
 /**
  * This is the default costmodel the evaluator uses if no other costmodel is
  * set.
- * 
+ *
  * @author ist@uni-koblenz.de
- * 
+ *
  */
 public class DefaultCostModel extends CostModelBase implements CostModel {
 
@@ -152,7 +155,7 @@ public class DefaultCostModel extends CostModelBase implements CostModel {
 	/**
 	 * Creates a new CostModel for a graph whose {@link GreqlEvaluator} is given
 	 * here.
-	 * 
+	 *
 	 * @param eval
 	 *            a {@link GreqlEvaluator}
 	 */
@@ -220,10 +223,12 @@ public class DefaultCostModel extends CostModelBase implements CostModel {
 			nullCard = nullEval.getEstimatedCardinality(graphSize);
 		}
 		long maxCard = trueCard;
-		if (falseCard > maxCard)
+		if (falseCard > maxCard) {
 			maxCard = falseCard;
-		if (nullCard > maxCard)
+		}
+		if (nullCard > maxCard) {
 			maxCard = nullCard;
+		}
 		return maxCard;
 	}
 
@@ -293,10 +298,11 @@ public class DefaultCostModel extends CostModelBase implements CostModel {
 			inc = inc.getNextIsArgumentOf(EdgeDirection.IN);
 		}
 		Greql2Function func = e.getGreql2Function();
-		if (func != null)
+		if (func != null) {
 			return func.getEstimatedCardinality(elements);
-		else
+		} else {
 			return 1;
+		}
 	}
 
 	@Override
@@ -335,10 +341,11 @@ public class DefaultCostModel extends CostModelBase implements CostModel {
 				}
 			}
 		}
-		if (range > 0)
+		if (range > 0) {
 			return range;
-		else
+		} else {
 			return defaultListRangeSize;
+		}
 	}
 
 	@Override
@@ -474,7 +481,7 @@ public class DefaultCostModel extends CostModelBase implements CostModel {
 		BackwardVertexSet bwvertex = (BackwardVertexSet) e.getVertex();
 		Expression targetExpression = (Expression) bwvertex
 				.getFirstIsTargetExprOf().getAlpha();
-		VertexEvaluator vertexEval = (VertexEvaluator) greqlEvaluator
+		VertexEvaluator vertexEval = greqlEvaluator
 				.getVertexEvaluatorGraphMarker().getMark(targetExpression);
 		long targetCosts = vertexEval
 				.getCurrentSubtreeEvaluationCosts(graphSize);
@@ -494,7 +501,7 @@ public class DefaultCostModel extends CostModelBase implements CostModel {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @seede.uni_koblenz.jgralab.greql2.evaluator.costmodel.CostModel#
 	 * calculateCostsBagComprehension
 	 * (de.uni_koblenz.jgralab.greql2.evaluator.vertexeval
@@ -526,7 +533,7 @@ public class DefaultCostModel extends CostModelBase implements CostModel {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @seede.uni_koblenz.jgralab.greql2.evaluator.costmodel.CostModel#
 	 * calculateCostsBagConstruction
 	 * (de.uni_koblenz.jgralab.greql2.evaluator.vertexeval
@@ -583,10 +590,12 @@ public class DefaultCostModel extends CostModelBase implements CostModel {
 				expressionToEvaluate);
 		long nullCosts = vertexEval.getCurrentSubtreeEvaluationCosts(graphSize);
 		long maxCosts = trueCosts;
-		if (falseCosts > trueCosts)
+		if (falseCosts > trueCosts) {
 			maxCosts = falseCosts;
-		if (nullCosts > maxCosts)
+		}
+		if (nullCosts > maxCosts) {
 			maxCosts = nullCosts;
+		}
 		long ownCosts = 4;
 		long iteratedCosts = ownCosts * e.getVariableCombinations(graphSize);
 		long subtreeCosts = iteratedCosts + maxCosts + conditionCosts;
@@ -595,7 +604,7 @@ public class DefaultCostModel extends CostModelBase implements CostModel {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @seede.uni_koblenz.jgralab.greql2.evaluator.costmodel.CostModel#
 	 * calculateCostsDeclaration
 	 * (de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.DeclarationEvaluator,
@@ -638,7 +647,7 @@ public class DefaultCostModel extends CostModelBase implements CostModel {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @seede.uni_koblenz.jgralab.greql2.evaluator.costmodel.CostModel#
 	 * calculateCostsDefinition
 	 * (de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.DefinitionEvaluator,
@@ -671,7 +680,7 @@ public class DefaultCostModel extends CostModelBase implements CostModel {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @seede.uni_koblenz.jgralab.greql2.evaluator.costmodel.CostModel#
 	 * calculateCostsEdgeRestriction
 	 * (de.uni_koblenz.jgralab.greql2.evaluator.vertexeval
@@ -699,7 +708,7 @@ public class DefaultCostModel extends CostModelBase implements CostModel {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @seede.uni_koblenz.jgralab.greql2.evaluator.costmodel.CostModel#
 	 * calculateCostsEdgeSetExpression
 	 * (de.uni_koblenz.jgralab.greql2.evaluator.vertexeval
@@ -727,7 +736,7 @@ public class DefaultCostModel extends CostModelBase implements CostModel {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @seede.uni_koblenz.jgralab.greql2.evaluator.costmodel.CostModel#
 	 * calculateCostsEdgeSubgraphExpression
 	 * (de.uni_koblenz.jgralab.greql2.evaluator
@@ -806,7 +815,7 @@ public class DefaultCostModel extends CostModelBase implements CostModel {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @seede.uni_koblenz.jgralab.greql2.evaluator.costmodel.CostModel#
 	 * calculateCostsFunctionApplication
 	 * (de.uni_koblenz.jgralab.greql2.evaluator.
@@ -838,7 +847,7 @@ public class DefaultCostModel extends CostModelBase implements CostModel {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @seede.uni_koblenz.jgralab.greql2.evaluator.costmodel.CostModel#
 	 * calculateCostsGreql2Expression
 	 * (de.uni_koblenz.jgralab.greql2.evaluator.vertexeval
@@ -882,7 +891,7 @@ public class DefaultCostModel extends CostModelBase implements CostModel {
 				.getCurrentSubtreeEvaluationCosts(graphSize);
 		long secondCosts = secondPathEval
 				.getCurrentSubtreeEvaluationCosts(graphSize);
-		VertexEvaluator vertexEval = (VertexEvaluator) greqlEvaluator
+		VertexEvaluator vertexEval = greqlEvaluator
 				.getVertexEvaluatorGraphMarker().getMark(
 						pathDesc.getFirstIsIntermediateVertexOf().getAlpha());
 		long intermVertexCosts = vertexEval
@@ -911,7 +920,7 @@ public class DefaultCostModel extends CostModelBase implements CostModel {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @seede.uni_koblenz.jgralab.greql2.evaluator.costmodel.CostModel#
 	 * calculateCostsLetExpression
 	 * (de.uni_koblenz.jgralab.greql2.evaluator.vertexeval
@@ -949,7 +958,7 @@ public class DefaultCostModel extends CostModelBase implements CostModel {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @seede.uni_koblenz.jgralab.greql2.evaluator.costmodel.CostModel#
 	 * calculateCostsListConstruction
 	 * (de.uni_koblenz.jgralab.greql2.evaluator.vertexeval
@@ -1003,8 +1012,9 @@ public class DefaultCostModel extends CostModelBase implements CostModel {
 				}
 			}
 		}
-		if (range <= 0)
+		if (range <= 0) {
 			range = defaultListRangeSize;
+		}
 		long ownCosts = addToListCosts * range;
 		long iteratedCosts = ownCosts * e.getVariableCombinations(graphSize);
 		long subtreeCosts = iteratedCosts + startCosts + targetCosts;
@@ -1059,7 +1069,7 @@ public class DefaultCostModel extends CostModelBase implements CostModel {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @seede.uni_koblenz.jgralab.greql2.evaluator.costmodel.CostModel#
 	 * calculateCostsQuantifiedExpression
 	 * (de.uni_koblenz.jgralab.greql2.evaluator
@@ -1092,7 +1102,7 @@ public class DefaultCostModel extends CostModelBase implements CostModel {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @seede.uni_koblenz.jgralab.greql2.evaluator.costmodel.CostModel#
 	 * calculateCostsRecordConstruction
 	 * (de.uni_koblenz.jgralab.greql2.evaluator.vertexeval
@@ -1123,7 +1133,7 @@ public class DefaultCostModel extends CostModelBase implements CostModel {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @seede.uni_koblenz.jgralab.greql2.evaluator.costmodel.CostModel#
 	 * calculateCostsRecordElement
 	 * (de.uni_koblenz.jgralab.greql2.evaluator.vertexeval
@@ -1149,7 +1159,7 @@ public class DefaultCostModel extends CostModelBase implements CostModel {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @seede.uni_koblenz.jgralab.greql2.evaluator.costmodel.CostModel#
 	 * calculateCostsRestrictedExpression
 	 * (de.uni_koblenz.jgralab.greql2.evaluator
@@ -1202,7 +1212,7 @@ public class DefaultCostModel extends CostModelBase implements CostModel {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @seede.uni_koblenz.jgralab.greql2.evaluator.costmodel.CostModel#
 	 * calculateCostsSetComprehension
 	 * (de.uni_koblenz.jgralab.greql2.evaluator.vertexeval
@@ -1234,7 +1244,7 @@ public class DefaultCostModel extends CostModelBase implements CostModel {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @seede.uni_koblenz.jgralab.greql2.evaluator.costmodel.CostModel#
 	 * calculateCostsSetConstruction
 	 * (de.uni_koblenz.jgralab.greql2.evaluator.vertexeval
@@ -1264,7 +1274,7 @@ public class DefaultCostModel extends CostModelBase implements CostModel {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @seede.uni_koblenz.jgralab.greql2.evaluator.costmodel.CostModel#
 	 * calculateCostsSimpleDeclaration
 	 * (de.uni_koblenz.jgralab.greql2.evaluator.vertexeval
@@ -1311,7 +1321,7 @@ public class DefaultCostModel extends CostModelBase implements CostModel {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @seede.uni_koblenz.jgralab.greql2.evaluator.costmodel.CostModel#
 	 * calculateCostsTableComprehension
 	 * (de.uni_koblenz.jgralab.greql2.evaluator.vertexeval
@@ -1361,7 +1371,7 @@ public class DefaultCostModel extends CostModelBase implements CostModel {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @seede.uni_koblenz.jgralab.greql2.evaluator.costmodel.CostModel#
 	 * calculateCostsTupleConstruction
 	 * (de.uni_koblenz.jgralab.greql2.evaluator.vertexeval
@@ -1391,7 +1401,7 @@ public class DefaultCostModel extends CostModelBase implements CostModel {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @seede.uni_koblenz.jgralab.greql2.evaluator.costmodel.CostModel#
 	 * calculateCostsTypeId
 	 * (de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.TypeIdEvaluator,
@@ -1413,7 +1423,7 @@ public class DefaultCostModel extends CostModelBase implements CostModel {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @seede.uni_koblenz.jgralab.greql2.evaluator.costmodel.CostModel#
 	 * calculateCostsVertexSetExpression
 	 * (de.uni_koblenz.jgralab.greql2.evaluator.
@@ -1442,7 +1452,7 @@ public class DefaultCostModel extends CostModelBase implements CostModel {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @seede.uni_koblenz.jgralab.greql2.evaluator.costmodel.CostModel#
 	 * calculateCostsVertexSubgraphExpression
 	 * (de.uni_koblenz.jgralab.greql2.evaluator
@@ -1471,7 +1481,7 @@ public class DefaultCostModel extends CostModelBase implements CostModel {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @seede.uni_koblenz.jgralab.greql2.evaluator.costmodel.CostModel#
 	 * calculateCostsWhereExpression
 	 * (de.uni_koblenz.jgralab.greql2.evaluator.vertexeval
@@ -1509,7 +1519,7 @@ public class DefaultCostModel extends CostModelBase implements CostModel {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @seede.uni_koblenz.jgralab.greql2.evaluator.costmodel.CostModel#
 	 * calculateEdgeSubgraphSize
 	 * (de.uni_koblenz.jgralab.greql2.evaluator.vertexeval
@@ -1538,10 +1548,11 @@ public class DefaultCostModel extends CostModelBase implements CostModel {
 	public double calculateSelectivityFunctionApplication(
 			FunctionApplicationEvaluator e, GraphSize graphSize) {
 		Greql2Function func = e.getGreql2Function();
-		if (func != null)
+		if (func != null) {
 			return func.getSelectivity();
-		else
+		} else {
 			return 1;
+		}
 	}
 
 	@Override
@@ -1565,14 +1576,15 @@ public class DefaultCostModel extends CostModelBase implements CostModel {
 					.getAverageVertexSubclasses()) / 2.0;
 			selectivity = avgSubclasses / typesInSchema;
 		}
-		if (id.isExcluded())
+		if (id.isExcluded()) {
 			selectivity = 1 - selectivity;
+		}
 		return selectivity;
 	}
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @seede.uni_koblenz.jgralab.greql2.evaluator.costmodel.CostModel#
 	 * calculateVariableAssignments
 	 * (de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.VariableEvaluator,
@@ -1598,7 +1610,7 @@ public class DefaultCostModel extends CostModelBase implements CostModel {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @seede.uni_koblenz.jgralab.greql2.evaluator.costmodel.CostModel#
 	 * calculateVertexSubgraphSize
 	 * (de.uni_koblenz.jgralab.greql2.evaluator.vertexeval
@@ -1625,7 +1637,7 @@ public class DefaultCostModel extends CostModelBase implements CostModel {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * de.uni_koblenz.jgralab.greql2.evaluator.costmodel.CostModel#isEquivalent
 	 * (de.uni_koblenz.jgralab.greql2.evaluator.costmodel.CostModel)
@@ -1640,7 +1652,7 @@ public class DefaultCostModel extends CostModelBase implements CostModel {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * de.uni_koblenz.jgralab.greql2.evaluator.costmodel.CostModel#setGreqlEvaluator
 	 * (de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator)
@@ -1648,6 +1660,27 @@ public class DefaultCostModel extends CostModelBase implements CostModel {
 	@Override
 	public void setGreqlEvaluator(GreqlEvaluator eval) {
 		greqlEvaluator = eval;
+	}
+
+	@Override
+	public VertexCosts calculateCostsMapConstruction(
+			MapConstructionEvaluator e, GraphSize graphSize) {
+		MapConstruction mapCons = (MapConstruction) e.getVertex();
+		IsKeyValueTupleOf inc = mapCons.getFirstIsKeyValueTupleOf();
+		long parts = 0;
+		long partCosts = 0;
+		while (inc != null) {
+			VertexEvaluator veval = greqlEvaluator
+					.getVertexEvaluatorGraphMarker().getMark(inc.getAlpha());
+			partCosts += veval.getCurrentSubtreeEvaluationCosts(graphSize);
+			parts++;
+			inc = inc.getNextIsKeyValueTupleOf();
+		}
+
+		long ownCosts = parts * addToSetCosts + 2;
+		long iteratedCosts = ownCosts * e.getVariableCombinations(graphSize);
+		long subtreeCosts = iteratedCosts + partCosts;
+		return new VertexCosts(ownCosts, iteratedCosts, subtreeCosts);
 	}
 
 }
