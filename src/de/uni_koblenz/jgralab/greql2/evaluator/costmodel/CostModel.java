@@ -45,6 +45,7 @@ import de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.IteratedPathDescriptio
 import de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.LetExpressionEvaluator;
 import de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.ListConstructionEvaluator;
 import de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.ListRangeConstructionEvaluator;
+import de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.MapComprehensionEvaluator;
 import de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.MapConstructionEvaluator;
 import de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.OptionalPathDescriptionEvaluator;
 import de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.PathExistenceEvaluator;
@@ -319,6 +320,14 @@ public interface CostModel {
 
 	public long calculateCardinalityMapConstruction(
 			MapConstructionEvaluator mapConstructionEvaluator,
+			GraphSize graphSize);
+
+	public VertexCosts calculateCostsMapComprehension(
+			MapComprehensionEvaluator mapComprehensionEvaluator,
+			GraphSize graphSize);
+
+	public long calculateCardinalityMapComprehension(
+			MapComprehensionEvaluator mapComprehensionEvaluator,
 			GraphSize graphSize);
 
 }

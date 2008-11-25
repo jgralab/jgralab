@@ -83,7 +83,7 @@ public class SetComprehensionEvaluator extends VertexEvaluator {
 		try {
 			declLayer = declEval.getResult(subgraph).toDeclarationLayer();
 		} catch (JValueInvalidTypeException exception) {
-			throw new EvaluateException("Error evaluating BagComprehension",
+			throw new EvaluateException("Error evaluating SetComprehension",
 					exception);
 		}
 		Expression resultDef = (Expression) vertex.getFirstIsCompResultDefOf(
@@ -92,9 +92,7 @@ public class SetComprehensionEvaluator extends VertexEvaluator {
 				.getVertexEvaluatorGraphMarker().getMark(resultDef);
 		JValueSet resultSet = new JValueSet();
 
-		int noOfVarCombinations = 0;
 		while (declLayer.iterate(subgraph)) {
-			noOfVarCombinations++;
 			resultSet.add(resultDefEval.getResult(subgraph));
 		}
 		return resultSet;

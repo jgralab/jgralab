@@ -61,6 +61,7 @@ VertexClass ListConstruction: ValueConstruction;
 VertexClass ListRangeConstruction: ListConstruction;
 VertexClass Literal: Expression;
 VertexClass MapConstruction : Expression;
+VertexClass MapComprehension : Comprehension;
 VertexClass Nonterminal: Symbol;
 VertexClass NullLiteral: Literal;
 VertexClass OptionalPathDescription: PathDescription;
