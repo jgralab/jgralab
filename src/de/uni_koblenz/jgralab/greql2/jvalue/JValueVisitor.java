@@ -27,14 +27,14 @@ package de.uni_koblenz.jgralab.greql2.jvalue;
 /**
  * This interface declares the methods that are used to traverse a complex
  * structure of JValues
- * 
+ *
  * @author ist@uni-koblenz.de
  */
 public interface JValueVisitor {
 
 	/**
 	 * Method to visit a JValueSet
-	 * 
+	 *
 	 * @param s
 	 *            the set to visit
 	 */
@@ -42,15 +42,23 @@ public interface JValueVisitor {
 
 	/**
 	 * Method to visit a JValueBag
-	 * 
+	 *
 	 * @param b
 	 *            the bag to visit
 	 */
 	public void visitBag(JValueBag b);
 
 	/**
+	 * Method to visit a JValueMap
+	 *
+	 * @param b
+	 *            the bag to visit
+	 */
+	public void visitMap(JValueMap b);
+
+	/**
 	 * Method to visit a JValueTable
-	 * 
+	 *
 	 * @param t
 	 *            table
 	 */
@@ -58,7 +66,7 @@ public interface JValueVisitor {
 
 	/**
 	 * Method to visit a JValueList
-	 * 
+	 *
 	 * @param b
 	 *            the list to visit
 	 */
@@ -66,7 +74,7 @@ public interface JValueVisitor {
 
 	/**
 	 * Method to visit a JValueTuple
-	 * 
+	 *
 	 * @param t
 	 *            the tuple to visit
 	 */
@@ -74,7 +82,7 @@ public interface JValueVisitor {
 
 	/**
 	 * Method to visit a JValueRecord
-	 * 
+	 *
 	 * @param r
 	 *            the record to visit
 	 */
@@ -82,7 +90,7 @@ public interface JValueVisitor {
 
 	/**
 	 * Method to visit a Path
-	 * 
+	 *
 	 * @param p
 	 *            the path to visit
 	 */
@@ -90,7 +98,7 @@ public interface JValueVisitor {
 
 	/**
 	 * Method to visit a PathSystem
-	 * 
+	 *
 	 * @param p
 	 *            the pathSystem to visit
 	 */
@@ -98,7 +106,7 @@ public interface JValueVisitor {
 
 	/**
 	 * Method to visit a Slice
-	 * 
+	 *
 	 * @param s
 	 *            the slice to visit
 	 */
@@ -106,7 +114,7 @@ public interface JValueVisitor {
 
 	/**
 	 * Method to visit a Vertex
-	 * 
+	 *
 	 * @param v
 	 *            the Vertex to visit
 	 */
@@ -114,7 +122,7 @@ public interface JValueVisitor {
 
 	/**
 	 * Method to visit an Edge
-	 * 
+	 *
 	 * @param e
 	 *            the edge to visit
 	 */
@@ -122,7 +130,7 @@ public interface JValueVisitor {
 
 	/**
 	 * Method to visit a Number
-	 * 
+	 *
 	 * @param n
 	 *            the number to visit
 	 */
@@ -130,7 +138,7 @@ public interface JValueVisitor {
 
 	/**
 	 * Method to visit a Number
-	 * 
+	 *
 	 * @param n
 	 *            the number to visit
 	 */
@@ -138,7 +146,7 @@ public interface JValueVisitor {
 
 	/**
 	 * Method to visit a Number
-	 * 
+	 *
 	 * @param n
 	 *            the number to visit
 	 */
@@ -146,7 +154,7 @@ public interface JValueVisitor {
 
 	/**
 	 * Method to visit a Character
-	 * 
+	 *
 	 * @param c
 	 *            the Character to visit
 	 */
@@ -154,7 +162,7 @@ public interface JValueVisitor {
 
 	/**
 	 * Method to visit a String
-	 * 
+	 *
 	 * @param s
 	 *            the string to visit
 	 */
@@ -167,7 +175,7 @@ public interface JValueVisitor {
 
 	/**
 	 * Method to visit a Graph
-	 * 
+	 *
 	 * @param g
 	 *            the graph to visit
 	 */
@@ -175,7 +183,7 @@ public interface JValueVisitor {
 
 	/**
 	 * Method to visit a SubgraphTempAttribute
-	 * 
+	 *
 	 * @param s
 	 *            the subgraph to visit
 	 */
@@ -183,7 +191,7 @@ public interface JValueVisitor {
 
 	/**
 	 * The method to visit a DFA
-	 * 
+	 *
 	 * @param d
 	 *            the dfa to visit
 	 */
@@ -191,7 +199,7 @@ public interface JValueVisitor {
 
 	/**
 	 * The method to visit a NFA
-	 * 
+	 *
 	 * @param n
 	 *            the nfa to visit
 	 */
@@ -199,7 +207,7 @@ public interface JValueVisitor {
 
 	/**
 	 * The method to visit a invalid value
-	 * 
+	 *
 	 * @param i
 	 *            the invalid value to visit
 	 */
@@ -207,7 +215,7 @@ public interface JValueVisitor {
 
 	/**
 	 * The method to visit a boolean value
-	 * 
+	 *
 	 * @param b
 	 *            the boolean value to visit
 	 */
@@ -215,7 +223,7 @@ public interface JValueVisitor {
 
 	/**
 	 * The method to visit a TrivalentBoolean value
-	 * 
+	 *
 	 * @param b
 	 *            the TrivalentBoolean value to visit
 	 */
@@ -223,7 +231,7 @@ public interface JValueVisitor {
 
 	/**
 	 * The method to visit a Object value
-	 * 
+	 *
 	 * @param o
 	 *            the object value to visit
 	 */
@@ -231,7 +239,7 @@ public interface JValueVisitor {
 
 	/**
 	 * The method to visit a AttributedElementClass
-	 * 
+	 *
 	 * @param a
 	 *            the AttributedElementClass to visit
 	 */
@@ -239,7 +247,7 @@ public interface JValueVisitor {
 
 	/**
 	 * The method to visit a type collection
-	 * 
+	 *
 	 * @param a
 	 *            the type collection to visit
 	 */
@@ -247,7 +255,7 @@ public interface JValueVisitor {
 
 	/**
 	 * The method to visit a state
-	 * 
+	 *
 	 * @param s
 	 *            the state to visit
 	 */
@@ -255,7 +263,7 @@ public interface JValueVisitor {
 
 	/**
 	 * The Transition to visit
-	 * 
+	 *
 	 * @param t
 	 *            the transition to visit
 	 */
@@ -263,7 +271,7 @@ public interface JValueVisitor {
 
 	/**
 	 * The method to visit a variable declaration
-	 * 
+	 *
 	 * @param d
 	 *            the VariableDeclaration value to visit
 	 */
@@ -271,7 +279,7 @@ public interface JValueVisitor {
 
 	/**
 	 * The method to visit a variable declaration layer
-	 * 
+	 *
 	 * @param d
 	 *            the VariableDeclarationLayer to visit
 	 */
@@ -308,8 +316,9 @@ public interface JValueVisitor {
 	/**
 	 * This method should be called by visit... implementations that can not
 	 * handle a specific JValue type.
-	 * 
-	 * @throws a JValueVisitorExeption indicating the problem.
+	 *
+	 * @throws a
+	 *             JValueVisitorExeption indicating the problem.
 	 */
 	public void cantVisit(JValue v);
 
