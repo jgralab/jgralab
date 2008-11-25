@@ -317,4 +317,8 @@ public interface CostModel {
 			MapConstructionEvaluator mapConstructionEvaluator,
 			GraphSize graphSize);
 
+	public long calculateCardinalityMapConstruction(
+			MapConstructionEvaluator mapConstructionEvaluator,
+			GraphSize graphSize);
+
 }

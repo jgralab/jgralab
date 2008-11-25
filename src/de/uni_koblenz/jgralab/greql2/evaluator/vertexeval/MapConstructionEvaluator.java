@@ -45,6 +45,12 @@ public class MapConstructionEvaluator extends VertexEvaluator {
 	}
 
 	@Override
+	public long calculateEstimatedCardinality(GraphSize graphSize) {
+		return greqlEvaluator.getCostModel()
+				.calculateCardinalityMapConstruction(this, graphSize);
+	}
+
+	@Override
 	public Vertex getVertex() {
 		return mapConstruction;
 	}
