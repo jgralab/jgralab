@@ -114,7 +114,6 @@ public class FreeIndexList {
 	 * @return the first free index, or 0 if no more indexes are available.
 	 */
 	public int allocateIndex() {
-		System.out.println("allocateIndex()");
 		if (free == 0) {
 			return 0;
 		}
@@ -176,7 +175,6 @@ public class FreeIndexList {
 		}
 		--free;
 		++used;
-		printArray(System.out);
 		assert isHealthy();
 		return result;
 	}
@@ -188,9 +186,7 @@ public class FreeIndexList {
 	 *            a used index
 	 */
 	public void freeIndex(int index) {
-		System.out.println("freeIndex(" + index + ")");
 		freeRange(index, 1);
-		printArray(System.out);
 	}
 
 	/**
