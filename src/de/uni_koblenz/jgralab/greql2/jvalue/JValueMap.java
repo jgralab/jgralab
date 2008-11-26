@@ -140,4 +140,23 @@ public class JValueMap extends JValue {
 	public void accept(JValueVisitor v) {
 		v.visitMap(this);
 	}
+
+	@Override
+	public String toString() {
+		StringBuilder sb = new StringBuilder();
+		sb.append("{");
+		boolean first = true;
+		for (JValue k : map.keySet()) {
+			if (!first) {
+				sb.append(", ");
+			} else {
+				first = false;
+			}
+			sb.append(k.toString());
+			sb.append(" ==> ");
+			sb.append(map.get(k).toString());
+		}
+		sb.append("}");
+		return sb.toString();
+	}
 }
