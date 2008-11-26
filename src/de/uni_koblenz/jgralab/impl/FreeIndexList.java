@@ -495,6 +495,17 @@ public class FreeIndexList {
 	}
 
 	/**
+	 * Checks whether this FreeIndexList is fragmented, i.e. contains "gaps" of
+	 * free indices. Unfragmented lists consist of at most 2 runs, the first run
+	 * with used indices, the second with free indices.
+	 * 
+	 * @return true if this FreeIndexList is fragmented
+	 */
+	public boolean isFragmented() {
+		return (runCount > 2 || runCount == 2 && runs[0] > 0);
+	}
+
+	/**
 	 * Returns the first used index immediately after a free run. This method is
 	 * used for defragmentation purposes. The index returned is the first used
 	 * index after a "gap" in the index sequence. If no such gap exists,

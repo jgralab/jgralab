@@ -1446,15 +1446,22 @@ public abstract class GraphImpl implements Graph {
 	public void defragment() {
 		// defragment vertex array
 		if (vCount < vMax) {
-			int vId = freeVertexList.getFirstUsedIndexAfterGap();
-			while (vId > 0) {
-				int newId = freeVertexList.allocateIndex();
-				VertexImpl v = vertex[vId];
-				v.setId(newId);
-				vertex[newId] = v;
-				vertex[vId] = null;
-				freeVertexList.freeIndex(vId);
-				vId = freeVertexList.getFirstUsedIndexAfterGap();
+			if (vCount > 0) {
+				int vId = vMax;
+				while (freeVertexList.isFragmented()) {
+					while (vId >= 1 && vertex[vId] == null) {
+						--vId;
+					}
+					assert vId >= 1;
+					VertexImpl v = vertex[vId];
+					vertex[vId] = null;
+					freeVertexList.freeIndex(vId);
+					int newId = freeVertexList.allocateIndex();
+					assert newId < vId;
+					v.setId(newId);
+					vertex[newId] = v;
+					--vId;
+				}
 			}
 			int newVMax = (vCount == 0 ? 1 : vCount);
 			if (newVMax != vMax) {
@@ -1468,15 +1475,25 @@ public abstract class GraphImpl implements Graph {
 		}
 		// defragment edge array
 		if (eCount < eMax) {
-			int eId = freeEdgeList.getFirstUsedIndexAfterGap();
-			while (eId > 0) {
-				int newId = freeEdgeList.allocateIndex();
-				EdgeImpl e = edge[eId];
-				e.setId(newId);
-				edge[newId] = e;
-				edge[eId] = null;
-				freeEdgeList.freeIndex(eId);
-				eId = freeEdgeList.getFirstUsedIndexAfterGap();
+			if (eCount > 0) {
+				int eId = eMax;
+				while (freeEdgeList.isFragmented()) {
+					while (eId >= 1 && edge[eId] == null) {
+						--eId;
+					}
+					assert eId >= 1;
+					EdgeImpl e = edge[eId];
+					edge[eId] = null;
+					ReversedEdgeImpl r = revEdge[eId];
+					revEdge[eId] = null;
+					freeEdgeList.freeIndex(eId);
+					int newId = freeEdgeList.allocateIndex();
+					assert newId < eId;
+					e.setId(newId);
+					edge[newId] = e;
+					revEdge[newId] = r;
+					--eId;
+				}
 			}
 			int newEMax = (eCount == 0 ? 1 : eCount);
 			if (newEMax != eMax) {
