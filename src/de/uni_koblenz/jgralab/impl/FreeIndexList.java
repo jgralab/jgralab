@@ -114,6 +114,7 @@ public class FreeIndexList {
 	 * @return the first free index, or 0 if no more indexes are available.
 	 */
 	public int allocateIndex() {
+		System.out.println("allocateIndex()");
 		if (free == 0) {
 			return 0;
 		}
@@ -145,9 +146,6 @@ public class FreeIndexList {
 					runs = newRuns;
 				} else {
 					System.arraycopy(runs, 0, runs, 1, runCount);
-					for (int i = runCount; i > 0; --i) {
-						runs[i] = runs[i - 1];
-					}
 				}
 				++runCount;
 				runs[0] = -1;
@@ -178,6 +176,7 @@ public class FreeIndexList {
 		}
 		--free;
 		++used;
+		printArray(System.out);
 		assert isHealthy();
 		return result;
 	}
@@ -189,7 +188,9 @@ public class FreeIndexList {
 	 *            a used index
 	 */
 	public void freeIndex(int index) {
+		System.out.println("freeIndex(" + index + ")");
 		freeRange(index, 1);
+		printArray(System.out);
 	}
 
 	/**
@@ -365,6 +366,7 @@ public class FreeIndexList {
 		}
 		ps.println(" ]");
 		ps.println("---------------------------------------------------");
+		ps.flush();
 	}
 
 	/**
