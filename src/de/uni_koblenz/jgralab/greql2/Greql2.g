@@ -18,7 +18,7 @@ tokens {
 
 
 @header {
-package de.uni_koblenz.jgralab.greql2;
+package de.uni_koblenz.jgralab.greql2.parser;
 
 import java.util.logging.Logger;
 
@@ -27,14 +27,13 @@ import org.antlr.runtime.RecognitionException;
 import antlr.TokenStreamException;
 import de.uni_koblenz.jgralab.*;
 import de.uni_koblenz.jgralab.greql2.exception.*;
-import de.uni_koblenz.jgralab.greql2.funlib.Greql2FunctionLibrary;
 import de.uni_koblenz.jgralab.greql2.schema.*;
 import de.uni_koblenz.jgralab.greql2.schema.impl.*;
 import de.uni_koblenz.jgralab.schema.*;
 }
 
 @lexer::header {
-package de.uni_koblenz.jgralab.greql2;
+package de.uni_koblenz.jgralab.greql2.parser;
 import java.util.ArrayList;
 import java.util.logging.Logger;
 import org.antlr.runtime.RecognitionException;
@@ -131,8 +130,8 @@ import de.uni_koblenz.jgralab.schema.*;
     }
 
 
-	private Vertex createPartsOfValueConstruction(List<VertexPosition> expressions, ValueConstruction parent) {
-		return createMultipleEdgesToParent(expressions, parent, IsPartOf.class);
+	private ValueConstruction createPartsOfValueConstruction(List<VertexPosition> expressions, ValueConstruction parent) {
+		return (ValueConstruction) createMultipleEdgesToParent(expressions, parent, IsPartOf.class);
 	}
 	
 	private Vertex createMultipleEdgesToParent(List<VertexPosition> expressions, Vertex parent, Class<? extends Edge> edgeClass) {
@@ -183,11 +182,18 @@ import de.uni_koblenz.jgralab.schema.*;
 		//nonterminalSymbolTable = new SymbolTable();
 		functionSymbolTable.blockBegin();
         //graphClass = schema.getGraphClass(new QualifiedName("Greql2"));
-   }
+    }
    
-   private int getLTLength(int offset) {
-		return (- offset + input.LT(0).getCharPositionInLine()-1 + input.LT(0).getText().length());
-   }
+    private int getLTLength(int offset) {
+       Token token = input.LT(0);
+       if (token != null) {
+        int charPos =  token.getCharPositionInLine();
+        String text = token.getText();
+        int length = text.length();
+        return (- offset + charPos-1 + length);
+       } else
+    	   return -1;
+    }
    
    private int getLTOffset() {
 		return input.LT(1).getCharPositionInLine()-1; 
@@ -436,14 +442,6 @@ import de.uni_koblenz.jgralab.schema.*;
 		return s;
 	}
 
-	/**
-	 * saves graph to file.
-	 * @param filename name of the file.
-	 */
-	public void saveGraph(String filename) throws GraphIOException {
-		GraphIO.saveGraphToFile(filename, graph, null);
-	}
-
 }
 
 
@@ -525,54 +523,69 @@ OUTAGGREGATION	: '<>--';
 INAGGREGATION   : '--<>';
 PATHSYSTEMSTART : '-<';	 	
 	
-//WHitespace
+//Whitespace
 WS  :  (' '|'\r'|'\t'|'\u000C'|'\n')* 
-	{ setType(Token.SKIP_TOKEN); }
+	   {$channel=HIDDEN;}
 ;
 
 // Single-line comments
 SL_COMMENT
 	:	'//'
 		(~('\n'|'\r'))* ('\n'|'\r'('\n')?)?
-		{setType(Token.SKIP_TOKEN);}
+		{$channel=HIDDEN;}
 	;  
 	    
+ML_COMMENT
+@init{ 
+	int start = input.getCharPositionInLine()-1;
+}
+    :   '/*' ( options {greedy=false;} : . )* '*/' {$channel=HIDDEN;}
+    ;
+
 
 // multiple-line comments
-ML_COMMENT	
-@init{ 
-	int start = getColumn()-1;
-}
-:	'/*'	     
-( 		
-	//options { generateAmbigWarnings=false; 	}
-	{ LA(1) != EOF_CHAR && LA(2)!='/' }? '*'			
-			| { LA(1) != EOF_CHAR }? ('/' '*') => ML_COMMENT				    
-			| { LA(1) != EOF_CHAR }? ~('*')
-			| { LA(1) == EOF_CHAR }? { throw new TokenStreamException("Unterminated /*-comment starting at offset " + start); }
-		
-)*
-		
-'*/'
-	{setType(Token.SKIP_TOKEN);}
-;
+//ML_COMMENT	
+//@init{ 
+	//int start = input.getCharPositionInLine()-1;
+//}
+//:	'/*'	     
+//( 		
+//	//options { generateAmbigWarnings=false; 	}
+//	{ input.LA(1) != EOF_CHAR && input.LA(2)!='/' }? '*'			
+			//| { input.LA(1) != EOF_CHAR }? ('/' '*') => ML_COMMENT				    
+			//| { input.LA(1) != EOF_CHAR }? ~('*')
+			//| { input.LA(1) == EOF_CHAR }? { throw new TokenStreamException("Unterminated /*-comment starting at offset " + start); }
+//		
+//)*
+		//
+//'*/'
+	//{$channel=HIDDEN;}
+//;
 
 		
-// string literals
-STRING_LITERAL //options {  paraphrase = "a string literal";}
+STRING_LITERAL
 @init{
-	int start = getColumn()-1; 
+	int start = input.getCharPositionInLine()-1; 
 }	
-	:	
-		'"' 
-		( //	options { generateAmbigWarnings=false; 	}
-			:	
-			  ESCAPE_SEQUENCE	          
-	      |  {LA(1) != EOF_CHAR}? ~( '"' | '\\' | '\n' | '\r' )	   
-	      |  { LA(1) == EOF_CHAR }? { throw new TokenStreamException("Unterminated string-literal starting at offset "+start); }     
-	    )* 
-	    '"'
-	;
+    :  '"' ( ESCAPE_SEQUENCE | ~('\\'|'"') )* '"'
+    ;
+		
+//TODO: Find ANTL3 version of EOF_CHAR		
+// string literals
+//STRING_LITERAL //options {  paraphrase = "a string literal";}
+//@init{
+//	int start = input.getCharPositionInLine()-1; 
+//}	
+//	:	
+//		'"' 
+//		( //	options { generateAmbigWarnings=false; 	}
+//			:	
+//			  ESCAPE_SEQUENCE	          
+//	      |  {input.LA(1) != EOF_CHAR}? ~( '"' | '\\' | '\n' | '\r' )	   
+//	      |  { input.LA(1) == EOF_CHAR }? { throw new TokenStreamException("Unterminated string-literal starting at offset "+start); }     
+//	    )* 
+//	    '"'
+//	;
 
 
 HEXLITERAL : '0' ('x'|'X') HEXDIGIT+ IntegerTypeSuffix? ;
@@ -636,11 +649,11 @@ IDENT
 		(('a'..'z'|'A'..'Z') ('a'..'z'|'A'..'Z'|'_'|'0'..'9')*
 		{			
 			if (getText().equals("thisEdge")) 
-				{_ttype = THISEDGE;}
+				{_type = THISEDGE;}
 			else if (getText().equals("thisVertex"))
-				{_ttype = THISVERTEX;}
+				{_type = THISVERTEX;}
 			else if (isFunctionName(getText()))
-				{_ttype = FUNCTIONID;} 		
+				{_type = FUNCTIONID;} 		
 				
 		})
 	;
@@ -693,14 +706,15 @@ greqlExpression
     expr = expression
     (STORE AS id = IDENT)?
     {
+    System.out.println("Expression is: " + expr);
 	length = getLTLength(offset);
 	Greql2Expression root = graph.createGreql2Expression();
 	// add using-variables
-	for (int i = 0; i < varList.size(); i++) {
-	    VertexPosition var = varList.get(i);
-	    IsBoundVarOf isVarOf = graph.createIsBoundVarOf((Variable)var.node, root);
-	    isVarOf.setSourcePositions((createSourcePositionList(var.length, var.offset)));
-    }
+	if (varList != null)
+		for (VertexPosition var : varList) {
+	    	IsBoundVarOf isVarOf = graph.createIsBoundVarOf((Variable)var.node, root);
+	    	isVarOf.setSourcePositions((createSourcePositionList(var.length, var.offset)));
+    	}
     IsQueryExprOf e = graph.createIsQueryExprOf(expr, root);
     e.setSourcePositions((createSourcePositionList(length, offset)));
 	// query result stored as...
@@ -716,26 +730,19 @@ greqlExpression
 ;
 
 
+
 /** matches expressions
     @return  vertex representing the expression
 */
-expression returns [Expression retVal = null]
-@init{
-	//Expression expr = null;
-}
-@after{
-  retVal = expr;
-}  
-:
-	expr = quantifiedExpression
+expression returns [Expression result = null]
+: quantifiedExpression {$result = $quantifiedExpression.result;}
 ;
-
 
 
 /** matches quantifiedExpressions
     @return vertex representing the quantified expression
 */
-quantifiedExpression returns [Expression expr]
+quantifiedExpression returns [Expression result]
 @init{
 	int offsetQuantifier = 0;
 	int offsetQuantifiedDecl = 0;
@@ -744,9 +751,6 @@ quantifiedExpression returns [Expression expr]
 	int lengthQuantifiedDecl = 0;
 	int lengthQuantifiedExpr = 0;
 }
-@after{
-  expr = tempExpression;
-}  
 :
   (
     {
@@ -777,11 +781,11 @@ quantifiedExpression returns [Expression expr]
 	IsBoundExprOf boundExprOf = graph.createIsBoundExprOfQuantifier(tempExpression, quantifiedExprVertex);
 	boundExprOf.setSourcePositions((createSourcePositionList(lengthQuantifiedExpr, offsetQuantifiedExpr)));
 	// return the right vertex...
-	tempExpression = quantifiedExprVertex;
+	result = quantifiedExprVertex;
     }
 )
 | // not a "real" quantified expression
-  tempExpression = letExpression
+  letExpression {$result = $letExpression.result;}
 ;
 
 
@@ -811,14 +815,11 @@ quantifier returns [Quantifier quantifier = null]
 /** matches let-expressions
     @return
 */
-letExpression returns [Expression expr = null]
+letExpression returns [Expression result = null]
 @init{
 	int offset = 0;
 	int length = 0;
 }
-@after{
-  expr = tempExpression;
-}  
 :
 (
   LET
@@ -827,45 +828,39 @@ letExpression returns [Expression expr = null]
   IN
   { offset = getLTOffset(); }
   // bound expression
-  tempExpression = letExpression
+  boundExpr = letExpression
   {
-      length = getLTLength(offset);
-      if (defList.size() != 0) {
- 	// create new letexpression-vertex
-	LetExpression letExpr = graph.createLetExpression();
-	// set bound expression
-	IsBoundExprOf exprOf = graph.createIsBoundExprOfDefinition(tempExpression, letExpr);
-	exprOf.setSourcePositions((createSourcePositionList(length, offset)));
-	// add definitions
-	for (int i = 0; i < defList.size(); i++) {
-		VertexPosition def = defList.get(i);
-		IsDefinitionOf definitionOf = graph.createIsDefinitionOf((Definition)def.node, letExpr);
-		definitionOf.setSourcePositions((createSourcePositionList(def.length, def.offset)));
-	}
-	// return letExpr
-	tempExpression = letExpr;
-        }
+    length = getLTLength(offset);
+    if (defList.size() != 0) {
+ 	  // create new letexpression-vertex
+	  result = graph.createLetExpression();
+	  // set bound expression
+	  IsBoundExprOf exprOf = graph.createIsBoundExprOfDefinition(boundExpr, (LetExpression) result);
+	  exprOf.setSourcePositions((createSourcePositionList(length, offset)));
+	  // add definitions
+	  for (VertexPosition def : defList) {
+		  IsDefinitionOf definitionOf = graph.createIsDefinitionOf((Definition)def.node, (LetExpression) result);
+		  definitionOf.setSourcePositions((createSourcePositionList(def.length, def.offset)));
+	  }
+    }
   }
 )
 | // not a let-Expression
-  tempExpression = whereExpression
+  whereExpression {$result = $whereExpression.result;}
 ;
 
 /** matches Where-Expressions
 	@return
 */
-whereExpression returns [Expression retVal = null]
+whereExpression returns [Expression result = null]
 @init{
 	int offset = 0;
 	int length = 0;
 }
-@after {
-	retVal = expr;
-}
 :
 { offset = input.LT(1).getCharPositionInLine()-1; }
 // bound expression
-expr = conditionalExpression
+conditionalExpression
 { length = getLTLength(offset); }
        	// optional "where"-part:
 (
@@ -873,20 +868,20 @@ expr = conditionalExpression
 	defList = definitionList
 )?
 {
-if (defList.size() != 0) { //defList is empty if it's not a where-expression 
+if ((defList != null) && (!defList.isEmpty())){ //defList is empty if it's not a where-expression 
     // create new where-expression
-    WhereExpression whereExpr = graph.createWhereExpression();
+    result = graph.createWhereExpression();
     // add boundexpr
-	IsBoundExprOf exprOf = graph.createIsBoundExprOfDefinition( expr, whereExpr);
+	IsBoundExprOf exprOf = graph.createIsBoundExprOfDefinition($conditionalExpression.result, (WhereExpression) result);
 	exprOf.setSourcePositions((createSourcePositionList(length, offset)));
 	// add definitions
-	for (int i = 0; i < defList.size(); i++) {
-		VertexPosition def = defList.get(i);
-		IsDefinitionOf isDefOf = graph.createIsDefinitionOf((Definition)def.node, whereExpr);
+	for (VertexPosition def : defList) {
+		IsDefinitionOf isDefOf = graph.createIsDefinitionOf((Definition)def.node,  (WhereExpression) result);
 		isDefOf.setSourcePositions((createSourcePositionList(length, offset)));
 	}
-	expr = whereExpr;
-}
+} else {
+	$result = $conditionalExpression.result;
+}	
 }
 ;
 	
@@ -952,7 +947,7 @@ definition returns [Definition definition = null]
 /** matches conditional expressions
 @return
 */
-conditionalExpression returns [Expression retVal = null]
+conditionalExpression returns [Expression result = null]
 @init{
 	int offsetExpr = 0;
 	int offsetTrueExpr = 0;
@@ -963,14 +958,14 @@ conditionalExpression returns [Expression retVal = null]
 	int lengthFalseExpr = 0;
 	int lengthNullExpr = 0;
 }
-@after {
-  	retVal = expr;
-}
 :
     { offsetExpr = getLTOffset(); }
     // condition or expression (if it's not a real conditional expr)
-    expr = orExpression
-    { lengthExpr = getLTLength(offsetExpr); }
+    orExpression
+    { 
+      $result = $orExpression.result;
+      lengthExpr = getLTLength(offsetExpr); 
+    }
     /* optional part */
     (
     QUESTION
@@ -992,181 +987,167 @@ conditionalExpression returns [Expression retVal = null]
       // create new conditional expression
       ConditionalExpression condExpr = graph.createConditionalExpression();
       // add condition
-	IsConditionOf conditionOf = graph.createIsConditionOf(expr, condExpr);
-	conditionOf.setSourcePositions((createSourcePositionList(lengthExpr, offsetExpr)));
-	// add true-expression
-	IsTrueExprOf trueExprOf = graph.createIsTrueExprOf( trueExpr, condExpr);
-	trueExprOf.setSourcePositions((createSourcePositionList(lengthTrueExpr, offsetTrueExpr)));
-	// add false-expression
-	IsFalseExprOf falseExprOf = graph.createIsFalseExprOf( falseExpr, condExpr);
-	falseExprOf.setSourcePositions((createSourcePositionList(lengthFalseExpr, offsetFalseExpr)));
-	// add null-expression
-	IsNullExprOf  nullExprOf = graph.createIsNullExprOf(nullExpr, condExpr);
-	nullExprOf.setSourcePositions((createSourcePositionList(lengthNullExpr, offsetNullExpr)));
-	expr = condExpr;
+	  IsConditionOf conditionOf = graph.createIsConditionOf(result, condExpr);
+	  conditionOf.setSourcePositions((createSourcePositionList(lengthExpr, offsetExpr)));
+	  // add true-expression
+	  IsTrueExprOf trueExprOf = graph.createIsTrueExprOf( trueExpr, condExpr);
+	  trueExprOf.setSourcePositions((createSourcePositionList(lengthTrueExpr, offsetTrueExpr)));
+	  // add false-expression
+	  IsFalseExprOf falseExprOf = graph.createIsFalseExprOf( falseExpr, condExpr);
+	  falseExprOf.setSourcePositions((createSourcePositionList(lengthFalseExpr, offsetFalseExpr)));
+	  // add null-expression
+	  IsNullExprOf  nullExprOf = graph.createIsNullExprOf(nullExpr, condExpr);
+	  nullExprOf.setSourcePositions((createSourcePositionList(lengthNullExpr, offsetNullExpr)));
+	  $result = condExpr;
     }
   )?
 ;
 
 	
-orExpression returns [Expression retVal]
+orExpression returns [Expression result]
 @init{
     FunctionConstruct construct = new FunctionConstruct();
 }
-@after {
-    retVal = expr;
-}
 :
   { construct.preArg1(); }
-  expr = xorExpression
-  { construct.preOp(expr); }
-((OR) =>  (
-  OR
+  xorExpression 
+  { 
+    $result = $xorExpression.result;
+    construct.preOp(result); 
+  }
+(OR
   { construct.postOp("or"); }
   expr = orExpression
-  { expr = construct.postArg2(expr); }
-) | /* only xorExpression as fake orExpression */) 
+  { result = construct.postArg2(expr); }
+)?
 ;	
 
 	
-xorExpression returns [Expression retVal]
+xorExpression returns [Expression result]
 @init{
     FunctionConstruct construct = new FunctionConstruct();
 }
-@after {
-    retVal = expr;
-}
 :
-(  
   { construct.preArg1(); }
-  expr = andExpression
-  { construct.preOp(expr); }
-((XOR) =>  (
-  XOR
+  andExpression
+  { 
+    $result = $andExpression.result;
+    construct.preOp(result); 
+  }
+(XOR
   { construct.postOp("xor"); }
   expr = xorExpression
-  { expr = construct.postArg2(expr); }
-) | /* only andExpression as fake xorExpression */)
-) 
+  { result = construct.postArg2(expr); }
+)?
 ;	
 
-andExpression returns [Expression retVal]
+andExpression returns [Expression result]
 @init{
     FunctionConstruct construct = new FunctionConstruct();
 }
-@after {
-    retVal = expr;
-}
 :
-(  
   { construct.preArg1(); }
-  expr = equalityExpression
-((AND) =>  (
-  AND
+  equalityExpression
+  { 
+    $result = $equalityExpression.result;
+    construct.preOp(result); 
+  }
+(AND
   { construct.postOp("and"); }
   expr = andExpression
-  { expr = construct.postArg2(expr); }
-) | /* only equalityExpression as fake andExpression */) )
+  { result = construct.postArg2(expr); }
+)?
 ;	
 
 
-equalityExpression returns [Expression retVal]
+equalityExpression returns [Expression result]
 @init{
     FunctionConstruct construct = new FunctionConstruct();
 }
-@after {
-    retVal = expr;
-}
 :
-(  
   { construct.preArg1(); }
   expr = relationalExpression
-  { construct.preOp(expr); }
-((EQUAL) =>  (
-  EQUAL
+  { 
+    $result = $relationalExpression.result;
+    construct.preOp(result); 
+  }
+(EQUAL
   { construct.postOp("="); }
   expr = equalityExpression
-  { expr = construct.postArg2(expr); }
-) | /* only xoRExpression as fake orExpression */) )
-;	
+  { result = construct.postArg2(expr); }
+)?
+;  
+  
 
 
-relationalExpression returns [Expression retVal]
+relationalExpression returns [Expression result]
 @init{
     String name = null;
     FunctionConstruct construct = new FunctionConstruct();
 }
-@after {
-    retVal = expr;
-}
 :
   { construct.preArg1(); }
-  expr = additiveExpression
-  { construct.preOp(expr); }
- ((L_T | LE | G_T | GE | MATCH) => 
-  ( (  L_T { name = "leThan"; }
-    | LE { name = "leEqual"; }
-    | G_T  { name = "grThan"; }
-    | GE { name = "grEqual"; }
-    | MATCH {name = "match";} ) 
-    { construct.postOp(name); }
-    expr = relationalExpression
-    { expr = construct.postArg2(expr); }
-  )    | )
+  additiveExpression
+  { 
+    $result = $additiveExpression.result;
+    construct.preOp(expr); 
+  }
+( ( L_T { name = "leThan"; }
+  | LE { name = "leEqual"; }
+  | G_T  { name = "grThan"; }
+  | GE { name = "grEqual"; }
+  | MATCH {name = "match";} ) 
+  { construct.postOp(name); }
+  expr = relationalExpression
+  { result = construct.postArg2(expr); }
+) ?
 ;
 
 
-additiveExpression returns [Expression retVal]
+additiveExpression returns [Expression result]
 @init{
     FunctionConstruct construct = new FunctionConstruct();
 }
-@after {
-    retVal = expr;
-}
 :
- { construct.preArg1(); }
-  expr = multiplicativeExpression
-  { construct.preOp(expr); }
-  ((PLUS | MINUS) => 
-  ( (  PLUS { construct.postOp("plus"); }
+  { construct.preArg1(); }
+  multiplicativeExpression
+  {
+    $result = $multiplicativeExpression.result; 
+    construct.preOp(expr); 
+  }
+( (  PLUS { construct.postOp("plus"); }
      | MINUS { construct.postOp("minus"); })
     expr = additiveExpression
-    { expr = construct.postArg2(expr); }
-  ) | ) 	 
+   { result = construct.postArg2(expr); }
+)? 	 
 ;
 
 
-multiplicativeExpression returns [Expression retVal]
+multiplicativeExpression returns [Expression result]
 @init{
     FunctionConstruct construct = new FunctionConstruct();
 }
-@after {
-    retVal = expr;
-}
 :
-  
   { construct.preArg1(); }
-  expr = unaryExpression
-  { construct.preOp(expr); }
-  ( (STAR | MOD | DIV) => 
-    (( STAR { construct.postOp("times"); }
-     | MOD  { construct.postOp("modulo"); }
-     | DIV  { construct.postOp("dividedBy"); })
-     expr = multiplicativeExpression
-     { expr = construct.postArg2(expr); }
-    )
-| )	 
+  unaryExpression
+  {
+    $result = $unaryExpression.result; 
+    construct.preOp(expr); 
+  }
+  (( STAR { construct.postOp("times"); }
+   | MOD  { construct.postOp("modulo"); }
+   | DIV  { construct.postOp("dividedBy"); })
+      expr = multiplicativeExpression
+   { result = construct.postArg2(expr); }
+  )?
 ;
 
 /** matches unary Expressions (-, not)
 	@return
 */
-unaryExpression returns [Expression retVal = null]
+unaryExpression returns [Expression result = null]
 @init{
     FunctionConstruct construct = new FunctionConstruct();
-}
-@after {
-    retVal = expr;
 }
 :
 (  
@@ -1174,9 +1155,11 @@ unaryExpression returns [Expression retVal = null]
   unaryOp = unaryOperator
   { construct.postOp(unaryOp.getName()); }
   expr = pathExpression
-  { expr = construct.postArg2(expr); }
-)           
-| (expr = pathExpression)
+  { result = construct.postArg2(expr); }
+) | (
+  pathExpression
+  {$result = $pathExpression.result;}
+)
 ;
 
 /** matches a role-id
@@ -1194,16 +1177,13 @@ i = identifier
 /** matches one of the unaryOperators '-' and 'not'
  *  @return functionId-vertex representing the operator
  */
-unaryOperator returns [FunctionId retVal = null]
+unaryOperator returns [FunctionId result = null]
 @init{
    String name = "uminus"; 
    FunctionId unaryOp = null;
 }
-@after {
-   retVal = unaryOp;
-}
 :
-( NOT { name = "not";	}  | MINUS )
+( NOT { name = "not";}  | MINUS )
 {
    unaryOp = (FunctionId) functionSymbolTable.lookup(name);
    if (unaryOp == null)  {
@@ -1211,6 +1191,7 @@ unaryOperator returns [FunctionId retVal = null]
 	unaryOp.setName(name);
 	functionSymbolTable.insert(name, unaryOp);
    }
+   $result = unaryOp;
 }
 ;
 
@@ -1218,34 +1199,33 @@ unaryOperator returns [FunctionId retVal = null]
     pathexistences
     @return
 */
-pathExpression returns [Expression retVal = null] 
+pathExpression returns [Expression result = null] 
 @init{
 	int offsetArg1 = 0;
 	int lengthArg1 = 0;
 }
-@after {
-	retVal = expr;
-}
 :
-    /* matcht regBackwardVertexSetOrPathSystem, wenn der
-     * Ausdruck mit altPathDescr beginnt und ein SMILEY oder eine
-     * restrExpr folgt */
-    (alternativePathDescription (SMILEY | restrictedExpression)) =>
-    expr = regBackwardVertexSetOrPathSystem
+/* matcht regBackwardVertexSetOrPathSystem, wenn der Ausdruck mit
+ * altPathDescr beginnt und ein SMILEY oder eine restrExpr folgt */
+(alternativePathDescription (SMILEY | restrictedExpression)) =>
+   regBackwardVertexSetOrPathSystem
+   {$result = $regBackwardVertexSetOrPathSystem.result;}
 
-    /* Ausdruck beginnt zwar mit altPathDescr, danach kommt
-     * aber weder Smiley noch restrExpr --> matche also
-     * pfadausdruck als primaryExpr (Knotenpaare) */
-    | (alternativePathDescription) =>expr = primaryExpression
+/* Ausdruck beginnt zwar mit altPathDescr, danach kommt aber weder Smiley
+ * noch restrExpr --> matche also pfadausdruck als primaryExpr (Knotenpaare) */
+| (alternativePathDescription) =>
+   primaryExpression
+   {$result = $primaryExpression.result;}
 
-    | ( { offsetArg1 = getLTOffset(); }
-        expr = restrictedExpression
+| ( { offsetArg1 = getLTOffset(); }
+      expr = restrictedExpression
 	{ lengthArg1 = getLTLength(offsetArg1); }
 	( (alternativePathDescription) =>
            expr = regPathExistenceOrForwardVertexSet[expr, offsetArg1, lengthArg1]
-	| (SMILEY) => expr = regPathOrPathSystem[expr, offsetArg1, lengthArg1]
-        )
-      )  
+	  | (SMILEY) => expr = regPathOrPathSystem[expr, offsetArg1, lengthArg1]
+    )
+    {$result = expr;}
+  )  
 ;
 
 
@@ -1253,87 +1233,71 @@ pathExpression returns [Expression retVal = null]
 /** matches restricted vertex expressions
     @return
 */
-restrictedExpression returns [Expression retVal = null] 
+restrictedExpression returns [Expression result = null] 
 @init{
-    RestrictedExpression restrExpr = null;
     int offsetExpr = 0;
     int offsetRestr = 0;
     int lengthExpr = 0;
     int lengthRestr = 0;
 }
-@after {
-   retVal = expr;
-}
 :
-	{ offsetExpr = getLTOffset(); }
-	expr = valueAccess
-	{ lengthExpr = getLTLength(offsetExpr); }
-        (  // if followed by '&{' match this as part of this expr
-           (AMP LCURLY) =>
-	   (  AMP LCURLY
-              { offsetRestr = getLTOffset(); }
-              restr = expression
- 	      { lengthRestr = getLTLength(offsetRestr); }
-              RCURLY
-              {
-                 restrExpr = graph.createRestrictedExpression();
-	         // add expression
-	         IsRestrictedExprOf restrExprOf = graph.createIsRestrictedExprOf(expr, restrExpr);
-	         restrExprOf.setSourcePositions((createSourcePositionList(lengthExpr, offsetExpr)));
-		 // add restriction
-	         IsRestrictionOf restrOf = graph.createIsRestrictionOf(restr, restrExpr);
-	         restrOf.setSourcePositions((createSourcePositionList(lengthRestr, offsetRestr)));
-		 expr = restrExpr;
-              }
-            )
-	    | /*empty*/
-	)
+{ offsetExpr = getLTOffset(); }
+expr = valueAccess
+{
+  $result = expr;
+  lengthExpr = getLTLength(offsetExpr); 
+}
+(  AMP LCURLY
+   { offsetRestr = getLTOffset(); }
+   restr = expression
+   { lengthRestr = getLTLength(offsetRestr); }
+   RCURLY
+   {
+      RestrictedExpression restrExpr = graph.createRestrictedExpression();
+	  IsRestrictedExprOf restrExprOf = graph.createIsRestrictedExprOf(expr, restrExpr);
+	  restrExprOf.setSourcePositions((createSourcePositionList(lengthExpr, offsetExpr)));
+	  // add restriction
+	  IsRestrictionOf restrOf = graph.createIsRestrictionOf(restr, restrExpr);
+	  restrOf.setSourcePositions((createSourcePositionList(lengthRestr, offsetRestr)));
+	  $result = restrExpr;
+   }
+)?
 ;
 
-identifier returns [Identifier retVal]
-@init{
-    Identifier expr = null;
-}
-@after {
-	retVal = expr;
-}
+identifier returns [Identifier result]
 : i=IDENT 
-{  expr = graph.createIdentifier();
-   expr.setName(i.getText());
+{  
+   $result = graph.createIdentifier();
+   $result.setName(i.getText());
 };
 
 
-valueAccess returns [Expression retVal]
+valueAccess returns [Expression result]
 @init{
     FunctionConstruct construct = new FunctionConstruct();
-}
-@after {
-    retVal = expr;
 }
 :
 (  
   { construct.preArg1(); }
   expr = primaryExpression
   { construct.preOp(expr); }
-  (  (DOT { construct.postOp("getValue"); }
+  ( (DOT 
+     { construct.postOp("getValue"); } 
      expr = identifier)
-  | (LBRACK 
+   |(LBRACK 
      { construct.postOp("nthElement");}
      expr = expression 	//TODO: dbildh, 20.11.08 primaryExpression?
      RBRACK)
   )
-  { expr = construct.postArg2(expr); }
+  {$result = construct.postArg2(expr); }
 )
-// |  (expr = primaryExpression )  //TODO: dbildh, 20.11.08 primaryExpression?
+// |  ($result = primaryExpression )  //TODO: dbildh, 20.11.08 primaryExpression?
 ;
 
 /** matches primary expressions (elementset, literal,
 	valueConstruction, functionAppl., subgraph, simpleQuery, cfGrammar, variable)
 */
-primaryExpression returns [Expression retVal = null] 
-@after {
-	retVal = expr;
-}
+primaryExpression returns [Expression result = null] 
 :
 (( LPAREN expr = expression RPAREN )
 |	expr = rangeExpression 
@@ -1343,23 +1307,22 @@ primaryExpression returns [Expression retVal = null]
 | 	expr = functionApplication
 | 	expr = graphRangeExpression
 |	expr = literal	)
+{$result = expr;}
 ;
 
 /** matches a pathdescription
 */
-pathDescription returns [PathDescription retVal = null]
-@after {
-	retVal = pathDescr;
-}
+pathDescription returns [PathDescription result = null]
 :
-pathDescr = alternativePathDescription
+alternativePathDescription
+{$result = $alternativePathDescription.result;}
 ;
 
 
 /** matches an alternative pathdescription
 	@return
 */
-alternativePathDescription returns [PathDescription retVal = null] 
+alternativePathDescription returns [PathDescription result = null] 
 @init {
 	PathDescription pathDescr = null;
 	int offsetPart1 = 0;
@@ -1367,27 +1330,24 @@ alternativePathDescription returns [PathDescription retVal = null]
 	int offsetPart2 = 0;
 	int lengthPart2 = 0;
 }
-@after {
-	if (pathDescr != null)
-		retVal = pathDescr;
-	else 
-		retVal = part1;	
-}
 :
   {offsetPart1 = getLTOffset(); }
   part1 = intermediateVertexPathDescription
-  {lengthPart1 = getLTLength(offsetPart1);}
+  {
+    lengthPart1 = getLTLength(offsetPart1);
+    $result = part1;
+  }
 ( BOR
   {offsetPart2 = getLTOffset(); }
   part2 = intermediateVertexPathDescription
   {
-	addPathElement(AlternativePathDescription.class, IsAlternativePathOf.class, pathDescr, part1, offsetPart1, lengthPart1, part2, offsetPart2, lengthPart2);
-  })*		
+	$result = addPathElement(AlternativePathDescription.class, IsAlternativePathOf.class, pathDescr, part1, offsetPart1, lengthPart1, part2, offsetPart2, lengthPart2);
+})*		
 ;
 
 	   
 	   
-intermediateVertexPathDescription returns [PathDescription retVal = null] 
+intermediateVertexPathDescription returns [PathDescription result = null] 
 @init {
 	PathDescription pathDescr = null;
 	int offsetPart1 = 0;
@@ -1397,16 +1357,13 @@ intermediateVertexPathDescription returns [PathDescription retVal = null]
 	int offsetExpr = 0;
 	int lengthExpr = 0;
 }
-@after {
-	if (pathDescr != null)
-		retVal = pathDescr;
-	else 
-		retVal = part1;	
-}
 :
   {offsetPart1 = getLTOffset(); }
   part1 = sequentialPathDescription
-  {lengthPart1 = getLTLength(offsetPart1);}
+  {
+    $result = part1;
+    lengthPart1 = getLTLength(offsetPart1);
+  }
 ( {offsetExpr = getLTOffset(); }
   restrExpr = restrictedExpression
   {
@@ -1415,14 +1372,14 @@ intermediateVertexPathDescription returns [PathDescription retVal = null]
   }
   part2 = intermediateVertexPathDescription
   {
-	IntermediateVertexPathDescription vpd = (IntermediateVertexPathDescription) addPathElement(IntermediateVertexPathDescription.class, IsSubPathOf.class, pathDescr, part1, offsetPart1, lengthPart1, part2, offsetPart2, lengthPart2);
-	IsIntermediateVertexOf intermediateVertexOf = graph.createIsIntermediateVertexOf(restrExpr, vpd);
+	$result = (IntermediateVertexPathDescription) addPathElement(IntermediateVertexPathDescription.class, IsSubPathOf.class, pathDescr, part1, offsetPart1, lengthPart1, part2, offsetPart2, lengthPart2);
+	IsIntermediateVertexOf intermediateVertexOf = graph.createIsIntermediateVertexOf(restrExpr, (IntermediateVertexPathDescription)$result);
 	intermediateVertexOf.setSourcePositions((createSourcePositionList(lengthExpr, offsetExpr )));
   })		
 ;
 
 
-sequentialPathDescription returns [PathDescription retVal = null] 
+sequentialPathDescription returns [PathDescription result = null] 
 @init {
 	PathDescription pathDescr = null;
 	int offsetPart1 = 0;
@@ -1430,20 +1387,17 @@ sequentialPathDescription returns [PathDescription retVal = null]
 	int lengthPart2 = 0;
 	int offsetPart2 = 0;
 }
-@after {
-	if (pathDescr != null)
-		retVal = pathDescr;
-	else 
-		retVal = part1;	
-}
 :
   {offsetPart1 = getLTOffset(); }
   part1 = startRestrictedPathDescription
-  {lengthPart1 = getLTLength(offsetPart1);}
+  {
+    $result = part1;
+    lengthPart1 = getLTLength(offsetPart1);
+  }
 ( /*{offsetPart2 = getLTOffset(); } TODO */
   part2 = startRestrictedPathDescription
   {
-	addPathElement(AlternativePathDescription.class, IsAlternativePathOf.class, pathDescr, part1, offsetPart1, lengthPart1, part2, offsetPart2, lengthPart2);
+	$result = addPathElement(SequentialPathDescription.class, IsPartOf.class, pathDescr, part1, offsetPart1, lengthPart1, part2, offsetPart2, lengthPart2);
 /*				(iteratedOrTransposedPathDescription) =>
 			pathDescr = sequentialPathDescription2[seqPathDescr, offsetSeq1,
 					getLTLength(offsetSeq1)] 
@@ -1453,13 +1407,10 @@ sequentialPathDescription returns [PathDescription retVal = null]
 ;
 
 
-startRestrictedPathDescription returns [PathDescription retVal = null] 
+startRestrictedPathDescription returns [PathDescription result = null] 
 @init{
 	int offset = 0;
 	int length = 0;
-}
-@after {
-	retVal = pathDescr;
 }
 :
 ( LCURLY
@@ -1483,26 +1434,24 @@ pathDescr = goalRestrictedPathDescription
 			startRestrOf.setSourcePositions((createSourcePositionList(t.length, t.offset)));
 		}
 	}
+	$result = pathDescr;
 }
 ;	   
 	
-goalRestrictedPathDescription returns [PathDescription retVal = null] 
+goalRestrictedPathDescription returns [PathDescription result = null] 
 @init{
 	int offset = 0;
 	int length = 0;
 }
-@after {
-	retVal = pathDescr;
-}
 :
-pathDescr = iteratedOrTransposedPathDescription
-((AMP) => (	AMP
+iteratedOrTransposedPathDescription
+{$result = $iteratedOrTransposedPathDescription.result;}
+(AMP
 	LCURLY
 	( ((typeId) =>typeIds = typeExpressionList
 		{
-           	for (int i = 0; i < typeIds.size(); i++) {
-				VertexPosition t = typeIds.get(i);
-    			IsGoalRestrOf goalRestrOf = graph.createIsGoalRestrOf((Expression)t.node, pathDescr);
+           	for (VertexPosition t : typeIds) {
+    			IsGoalRestrOf goalRestrOf = graph.createIsGoalRestrOf((Expression)t.node, $result);
     			goalRestrOf.setSourcePositions((createSourcePositionList(t.length, t.offset)));
     		}
    	 	}
@@ -1511,18 +1460,17 @@ pathDescr = iteratedOrTransposedPathDescription
 		  expr = expression
 		  {
 			 length = getLTLength(offset);
-   			 IsGoalRestrOf goalRestrOf = graph.createIsGoalRestrOf(expr, pathDescr);
+   			 IsGoalRestrOf goalRestrOf = graph.createIsGoalRestrOf(expr, $result);
     		 goalRestrOf.setSourcePositions((createSourcePositionList(length, offset)));
     	  }
 		) // ende expr
-	)// ende nachLcurly
+	)
 	RCURLY
-)|  /* empty (no AMP)*/
-)
+)?
 ;
 
 
-iteratedOrTransposedPathDescription	returns [PathDescription retVal = null]
+iteratedOrTransposedPathDescription	returns [PathDescription result = null]
 @init{
    	String iteration = null;
    	PathDescription pathDesc = null;
@@ -1531,42 +1479,43 @@ iteratedOrTransposedPathDescription	returns [PathDescription retVal = null]
  	int offsetExpr = 0;
  	int lengthExpr = 0;
 }
-@after {
-	retVal = pathDescr;
-}
 :
 { offsetPath = getLTOffset();}
-pathDescr = primaryPathDescription
-{ lengthPath = getLTLength(offsetPath);}
+primaryPathDescription
+{ 
+  $result = $primaryPathDescription.result;
+  lengthPath = getLTLength(offsetPath);
+}
 (	
   	( STAR { iteration = "star"; } | PLUS {iteration ="plus";} )
       {
 		IteratedPathDescription ipd = graph.createIteratedPathDescription();
 	    ((IteratedPathDescription)ipd).setTimes(iteration);
-	    IsIteratedPathOf iteratedPathOf = graph.createIsIteratedPathOf(pathDesc, ipd);
+	    IsIteratedPathOf iteratedPathOf = graph.createIsIteratedPathOf($result, ipd);
 	    iteratedPathOf.setSourcePositions((createSourcePositionList(lengthPath, offsetPath)));
-	    pathDescr = ipd;
+	    $result = ipd;
       }
 |	( CARET
 		(	T  // transponatedPath:
            	{
 				TransposedPathDescription tpd = graph.createTransposedPathDescription();
-                IsTransposedPathOf transposedPathOf = graph.createIsTransposedPathOf(pathDescr, tpd);
+                IsTransposedPathOf transposedPathOf = graph.createIsTransposedPathOf($result, tpd);
 	            transposedPathOf.setSourcePositions((createSourcePositionList(lengthPath, offsetPath)));
-	            pathDescr = tpd;
+	            $result = tpd;
             }
         | (// exponentedPath:
             { offsetExpr = getLTOffset(); }
             i=DECLITERAL
-            { lengthExpr = getLTOffset();
+            { 
+                lengthExpr = getLTOffset();
 			 	ExponentiatedPathDescription epd = graph.createExponentiatedPathDescription();
-		        IsExponentiatedPathOf exponentiatedPathOf = graph.createIsExponentiatedPathOf(pathDescr, epd);
+		        IsExponentiatedPathOf exponentiatedPathOf = graph.createIsExponentiatedPathOf($result, epd);
 	            exponentiatedPathOf.setSourcePositions((createSourcePositionList(lengthPath, offsetPath)));
 	            IntLiteral exponent = graph.createIntLiteral();
 				exponent.setIntValue(Integer.parseInt(i.getText()));
 	            IsExponentOf exponentOf = graph.createIsExponentOf(exponent, epd);
 	            exponentOf.setSourcePositions((createSourcePositionList(lengthExpr, offsetExpr)));
-	            pathDescr = epd;
+	            $result = epd;
             }
           )
 		)
@@ -1575,25 +1524,18 @@ pathDescr = primaryPathDescription
 ;
 
 
-
-
-
-
-primaryPathDescription returns [PathDescription retVal = null]
+primaryPathDescription returns [PathDescription result = null]
 @init{
 	int offset = 0;
 	int length = 0;
 }
-@after {
-	retVal = pathDescr;
-}	
 :
 (
-    ( pathDescr = simplePathDescription
-    | pathDescr = edgePathDescription
+    ( pathDescr = simplePathDescription {$result = pathDescr;}
+    | pathDescr = edgePathDescription   {$result = pathDescr;}
     )
 )
-| ( LPAREN pathDescr = pathDescription RPAREN )
+| ( LPAREN pathDescr = pathDescription  {$result = pathDescr;} RPAREN )
 | ( LBRACK
     { offset = getLTOffset(); }
     pathDescr = pathDescription
@@ -1603,7 +1545,7 @@ primaryPathDescription returns [PathDescription retVal = null]
 	    OptionalPathDescription optPathDescr = graph.createOptionalPathDescription();
 		IsOptionalPathOf optionalPathOf = graph.createIsOptionalPathOf(pathDescr, optPathDescr);
 		optionalPathOf.setSourcePositions((createSourcePositionList(length, offset)));
-	    pathDescr = optPathDescr;
+	    $result = optPathDescr;
     }
 )
 ;
@@ -1614,15 +1556,11 @@ primaryPathDescription returns [PathDescription retVal = null]
 	the corresponding simple pathdescription
 	@return
 */
-simplePathDescription returns [PrimaryPathDescription retVal = null]
+simplePathDescription returns [PrimaryPathDescription result = null]
 @init{
     Direction dir;
     String direction = "any";
     int offsetDir = 0;
-    PathDescription pathDescr = null;
-}
-@after {
-	retVal =  (PrimaryPathDescription) pathDescr;
 }
 :
 {offsetDir = getLTOffset();}
@@ -1638,7 +1576,7 @@ simplePathDescription returns [PrimaryPathDescription retVal = null]
 | /* empty */    )
 
 {
-    pathDescr = graph.createSimplePathDescription();
+    $result = graph.createSimplePathDescription();
 	dir = (Direction)graph.getFirstVertexOfClass(Direction.class);
 	while (dir != null ) {
     	if (!dir.getDirValue().equals(direction)) {
@@ -1650,10 +1588,10 @@ simplePathDescription returns [PrimaryPathDescription retVal = null]
 			dir = graph.createDirection();
 	        dir.setDirValue(direction);
 	    }
-	    IsDirectionOf directionOf = graph.createIsDirectionOf(dir, (PrimaryPathDescription) pathDescr);
+	    IsDirectionOf directionOf = graph.createIsDirectionOf(dir, (PrimaryPathDescription) $result);
 	    directionOf.setSourcePositions((createSourcePositionList(0, offsetDir)));
 	    for (VertexPosition t : typeIds) {
-			IsEdgeRestrOf edgeRestrOf = graph.createIsEdgeRestrOf((EdgeRestriction)t.node, (PrimaryPathDescription) pathDescr);
+			IsEdgeRestrOf edgeRestrOf = graph.createIsEdgeRestrOf((EdgeRestriction)t.node, (PrimaryPathDescription) $result);
 			edgeRestrOf.setSourcePositions((createSourcePositionList(t.length, t.offset)));
 		}
 	}	
@@ -1665,7 +1603,7 @@ simplePathDescription returns [PrimaryPathDescription retVal = null]
 /** matches a edgePathDescription, i.e. am edge as part of a pathdescription
 	@return
 */
-edgePathDescription returns [EdgePathDescription pathDescr = null] 
+edgePathDescription returns [EdgePathDescription result = null] 
 @init{
 	Direction dir = null;
     boolean edgeStart = false;
@@ -1686,7 +1624,7 @@ expr = expression
 (EDGEEND { edgeEnd = true; }| EDGE)
 {
 	lengthExpr = getLTLength(offsetExpr);
-    pathDescr = graph.createEdgePathDescription();
+    $result = graph.createEdgePathDescription();
 	if (edgeStart && !edgeEnd) 
 		direction = "in";
 	else if (!edgeStart  && edgeEnd)
@@ -1702,9 +1640,9 @@ expr = expression
 			dir = graph.createDirection();
 	        dir.setDirValue(direction);
 	    }
-	    IsDirectionOf directionOf = graph.createIsDirectionOf(dir, pathDescr);
+	    IsDirectionOf directionOf = graph.createIsDirectionOf(dir, $result);
 	    directionOf.setSourcePositions((createSourcePositionList(lengthDir, offsetDir)));
-	    IsEdgeExprOf edgeExprOf = graph.createIsEdgeExprOf(expr, pathDescr);
+	    IsEdgeExprOf edgeExprOf = graph.createIsEdgeExprOf(expr, $result);
 	    edgeExprOf.setSourcePositions((createSourcePositionList(lengthExpr, offsetExpr)));
 	}
 }	
@@ -1767,67 +1705,62 @@ LPAREN (expressions = expressionList)? RPAREN
 	- tuple<br>
 	@return
 */
-valueConstruction returns [Expression retVal = null]
-@after {
-	retVal = expr;
-}
+valueConstruction returns [Expression result = null]
 	:
-		expr = bagConstruction 
+	(	expr = bagConstruction 
 	  | expr = listConstruction 
 	  |	expr = pathConstruction 
 	  | expr = pathsystemConstruction
 	  | expr = recordConstruction
 	  | expr = setConstruction 
-	  | expr = tupleConstruction
+	  | expr = tupleConstruction)
+	  {$result = expr;}
 	;
 
 
 /**	matches a bag construction
 */
-bagConstruction returns [ValueConstruction bagConstr = null]
+bagConstruction returns [ValueConstruction valueConstr = null]
 :
 	BAG
 	LPAREN ( expressions = expressionList )? RPAREN
-    {createPartsOfValueConstruction(expressions, graph.createBagConstruction()); }
+    {$valueConstr = createPartsOfValueConstruction(expressions, graph.createBagConstruction()); }
 ;
 	
-setConstruction returns [ValueConstruction bagConstr = null]
+setConstruction returns [ValueConstruction valueConstr = null]
 :
 	SET
 	LPAREN ( expressions = expressionList )? RPAREN
-    {createPartsOfValueConstruction(expressions, graph.createSetConstruction()); }
+    {$valueConstr = createPartsOfValueConstruction(expressions, graph.createSetConstruction()); }
 ;
 
 /** matches a tupel construction
 */
-tupleConstruction returns [ValueConstruction tupConstr = null]
+tupleConstruction returns [ValueConstruction valueConstr = null]
 :
 	TUP
 	LPAREN
 	expressions = expressionList
 	RPAREN
-    {createPartsOfValueConstruction(expressions, graph.createTupleConstruction()); }
+    {$valueConstr = createPartsOfValueConstruction(expressions, graph.createTupleConstruction()); }
  ;
 
 
-listConstruction returns [ValueConstruction retVal = null]
-@after {
-	retVal = listConstr;
-}
+listConstruction returns [ValueConstruction valueConstr = null]
 :
 LIST
 LPAREN
 (
-   	(expression DOTDOT) => listConstr = listRangeExpression
+   	(expression DOTDOT) => listRangeExpression {$valueConstr = $listRangeExpression.valueConstr;}
     | (	expressions = expressionList
-        {createPartsOfValueConstruction(expressions, graph.createListConstruction()); }
+        {$valueConstr = createPartsOfValueConstruction(expressions, graph.createListConstruction()); }
       )?
 )
 RPAREN
 ;
 
 
-listRangeExpression returns [ValueConstruction expr = null] 
+listRangeExpression returns [ValueConstruction valueConstr = null] 
 @init{
  	int offsetStart = 0;
  	int offsetEnd = 0;
@@ -1843,25 +1776,25 @@ DOTDOT
 endExpr = expression
 {
    lengthEnd = getLTLength(offsetEnd);
-   expr = graph.createListRangeConstruction();
-   IsFirstValueOf firstValueOf = graph.createIsFirstValueOf(startExpr, (ListRangeConstruction) expr);
+   $valueConstr = graph.createListRangeConstruction();
+   IsFirstValueOf firstValueOf = graph.createIsFirstValueOf(startExpr, (ListRangeConstruction) valueConstr);
    firstValueOf.setSourcePositions((createSourcePositionList(lengthStart, offsetStart)));
-   IsLastValueOf lastValueOf = graph.createIsLastValueOf(endExpr, (ListRangeConstruction) expr);
+   IsLastValueOf lastValueOf = graph.createIsLastValueOf(endExpr, (ListRangeConstruction) valueConstr);
    lastValueOf.setSourcePositions((createSourcePositionList(lengthEnd, offsetEnd)));
 }
 ;
 
 
-recordConstruction returns [ValueConstruction recConstr = null]
+recordConstruction returns [ValueConstruction valueConstr = null]
 :
 	REC
 	LPAREN
 	elements = recordElementList
 	RPAREN
     {
-		recConstr = graph.createRecordConstruction();
+		$valueConstr = graph.createRecordConstruction();
 		for (VertexPosition expr : elements) {
-			IsRecordElementOf exprOf = graph.createIsRecordElementOf((RecordElement)expr.node, (RecordConstruction) recConstr);
+			IsRecordElementOf exprOf = graph.createIsRecordElementOf((RecordElement)expr.node, (RecordConstruction) valueConstr);
 			exprOf.setSourcePositions((createSourcePositionList(expr.length, expr.offset)));
 		}
     }
@@ -2242,14 +2175,12 @@ edgeVertexList returns [EdgeVertexList eVList = null]
 	
 
 /*
-expressionOrPathDescription returns [Expression retVal = null]
-@after {
-	retVal = expr;
-}
+expressionOrPathDescription returns [Expression result = null]
 :
     (  (pathDescription expression) => expr = expression
     | (expression) => expr = expression
     | expr = pathDescription)
+    {$result = expr;}
 ;*/	
 	
 	
@@ -2300,7 +2231,7 @@ edgeRestrictionList returns [ArrayList<VertexPosition> list = new ArrayList<Vert
 ;	
 
 
-labeledReportList returns [Comprehension retVal = null]
+labeledReportList returns [Comprehension result = null]
 @init{
 	TupleConstruction tupConstr = null;
     boolean hasLabel = false;
@@ -2311,9 +2242,6 @@ labeledReportList returns [Comprehension retVal = null]
     int lengthExpr = 0;
     int lengthAsExpr = 0;
     BagComprehension bagCompr = null;
-}
-@after {
-	retVal = bagCompr;
 }
 	:
     	{ offsetExpr = getLTOffset();
@@ -2330,13 +2258,13 @@ labeledReportList returns [Comprehension retVal = null]
             }
 		)?
         {
-            bagCompr = graph.createBagComprehension();
+            result = graph.createBagComprehension();
 			tupConstr = graph.createTupleConstruction();
-			e = graph.createIsCompResultDefOf(tupConstr, bagCompr);
+			e = graph.createIsCompResultDefOf(tupConstr, result);
 			IsPartOf partOf = graph.createIsPartOf((Expression)expr, tupConstr);
 			partOf.setSourcePositions((createSourcePositionList(lengthExpr, offsetExpr)));
 		  	if (hasLabel) {
-			    IsTableHeaderOf tableHeaderOf = graph.createIsTableHeaderOf(asExpr, bagCompr);
+			    IsTableHeaderOf tableHeaderOf = graph.createIsTableHeaderOf(asExpr, (ComprehensionWithTableHeader)result);
 			    tableHeaderOf.setSourcePositions((createSourcePositionList(lengthAsExpr, offsetAsExpr)));
 			} 
 		}
@@ -2357,7 +2285,7 @@ labeledReportList returns [Comprehension retVal = null]
 			    IsPartOf partOf = graph.createIsPartOf(expr, tupConstr);
 			    partOf.setSourcePositions((createSourcePositionList(lengthExpr, offsetExpr)));
 		  	   	if (hasLabel) {
-				    IsTableHeaderOf tableHeaderOf = graph.createIsTableHeaderOf(asExpr, bagCompr);
+				    IsTableHeaderOf tableHeaderOf = graph.createIsTableHeaderOf(asExpr,(ComprehensionWithTableHeader) result);
 					tableHeaderOf.setSourcePositions((createSourcePositionList(lengthAsExpr, offsetAsExpr)));
 			    }
 		    }
@@ -2375,23 +2303,20 @@ labeledReportList returns [Comprehension retVal = null]
 	
 	
 
-reportClause returns [Comprehension retVal = null] 
+reportClause returns [Comprehension comprehension = null] 
 @init{
 	int offset = 0;
 	int length = 0;
 	boolean vartable = false;
 }
-@after {
-	retVal = comprehension;
-}
 	:
 	(	REPORT
-		comprehension = labeledReportList
+		labeledReportList {$comprehension = $labeledReportList.result;}
 	)
 	|
-	(	 REPORTBAG   {comprehension = graph.createBagComprehension();}
-	   | REPORTSET   {comprehension = graph.createSetComprehension(); }  
-	   | REPORTTABLE {comprehension = graph.createTableComprehension(); vartable = true; }
+	(	 REPORTBAG   {$comprehension = graph.createBagComprehension();}
+	   | REPORTSET   {$comprehension = graph.createSetComprehension(); }  
+	   | REPORTTABLE {$comprehension = graph.createTableComprehension(); vartable = true; }
 	)
     { offset = getLTOffset(); }
 	reportList = expressionList
@@ -2427,7 +2352,7 @@ reportClause returns [Comprehension retVal = null]
 ;	
 		
 
-simpleQuery returns [Comprehension retVal = null]
+simpleQuery returns [Comprehension comprehension = null]
 @init{
     Declaration declaration = null;
     int offsetDecl = 0;
@@ -2438,9 +2363,6 @@ simpleQuery returns [Comprehension retVal = null]
     int lengthConstraint = 0;
     int offsetResult = 0;
     int lengthResult = 0;
-}
-@after {
-	retVal = comprehension;
 }
 	:
 		// declaration part
@@ -2479,7 +2401,7 @@ simpleQuery returns [Comprehension retVal = null]
 		)?
 		// report-clause
 		{ offsetResult = getLTOffset();}
-		comprehension = reportClause
+		reportClause {$comprehension = $reportClause.comprehension;}
         {
 		    lengthResult = getLTLength(offsetResult);
 	   		IsCompDeclOf comprDeclOf = graph.createIsCompDeclOf(declaration, comprehension);
@@ -2583,7 +2505,7 @@ regPathOrPathSystem[Expression arg1, int offsetArg1, int lengthArg1] returns [Ex
 	
 
 
-regBackwardVertexSetOrPathSystem returns [Expression expr = null] 
+regBackwardVertexSetOrPathSystem returns [Expression result = null] 
 @init{
     boolean isPathSystem = false;
     int offsetPathDescr = 0;
@@ -2616,12 +2538,12 @@ regBackwardVertexSetOrPathSystem returns [Expression expr = null]
 		            f.setName("pathSystem");
 		            functionSymbolTable.insert("pathSystem", f);
 		        }
-		        expr = createFunctionIdAndArgumentOf(f, offsetOperator, 3, 
+		        result = createFunctionIdAndArgumentOf(f, offsetOperator, 3, 
 				  							  pathDescr, offsetPathDescr, lengthPathDescr, restrExpr, offsetExpr, lengthExpr, true); 	
 	        } else {
 		    	// create a backwardvertexset
 				BackwardVertexSet bs = graph.createBackwardVertexSet();
-				expr = bs;
+				result = bs;
 	            IsTargetExprOf targetVertexOf = graph.createIsTargetExprOf(restrExpr, bs);
 	            targetVertexOf.setSourcePositions((createSourcePositionList(lengthExpr, offsetExpr)));
 				IsPathOf pathOf = graph.createIsPathOf(pathDescr, bs);
