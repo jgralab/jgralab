@@ -1,5 +1,5 @@
 grammar Greql2;
-options {backtrack=true; memoize=true;}
+options {backtrack=false; memoize=true;}
 
 tokens {
 	FUNCTIONID;
@@ -78,6 +78,7 @@ import de.uni_koblenz.jgralab.schema.*;
     
         public void preArg1() {
         	offsetArg1 = getLTOffset();
+        	System.out.println("PreArg1 nctionConstruct: " + this);
         }
         
         public void preOp(Expression arg1) { 
@@ -85,18 +86,23 @@ import de.uni_koblenz.jgralab.schema.*;
         	this.arg1 = arg1;
         	lengthArg1 = getLTLength(offsetArg1);
         	offsetOperator = getLTOffset();
+        	System.out.println("PreOp FunctionConstruct: " + this);
         }
         
         public void postOp(String op) {
           	lengthOperator = getLTLength(offsetOperator);
 	  		offsetArg2 = getLTOffset();
-	  		operatorName = op;
+	  		this.operatorName = op;
+	  		System.out.println("Operator name is:" + this.operatorName);
+	  		System.out.println("PostOp FunctionConstruct: " + this);
         }
         
         public FunctionApplication postArg2(Expression arg2) { 
          	lengthArg2 = getLTLength(offsetArg2);
          	this.arg2 = arg2;
          	// retrieve operator...
+         	System.out.println("Creating FunctionId with operator:" + this.operatorName);
+         	System.out.println("PostArg2 FunctionConstruct: " + this);
          	op = (FunctionId) functionSymbolTable.lookup(operatorName);
          	//... or create a new one and add it to the symboltable
          	if (op == null) {
@@ -205,17 +211,19 @@ import de.uni_koblenz.jgralab.schema.*;
   	public void reportError(RecognitionException e) {
 		int offset = -1;
 		offset = getLTOffset();
-		if (offset != -1)
-				logger.severe("error: " + offset +": " + e.getMessage());
-			else logger.severe("error (offset = -1): " + e.getMessage());
+		if (offset != -1) {
+				System.out.println("RecognitionException");
+				logger.severe("error: " + offset +": RecognitionException " + e.getMessage());
+		}		
+		else logger.severe("error (offset = -1): RecognitionException " + e.getMessage());
 	}
 
   	public void reportError(TokenStreamException e) {
 		int offset = -1;
 		offset = getLTOffset();
 		if (offset != -1)
-				logger.severe("error: " + offset +": " + e.getMessage());
-			else logger.severe("error (offset = -1): " + e.getMessage());
+				logger.severe("error: " + offset +": TokenStreamException " + e.getMessage());
+			else logger.severe("error (offset = -1): TokenStreamException " + e.getMessage());
 	}
 
     /**
@@ -735,7 +743,7 @@ greqlExpression
     @return  vertex representing the expression
 */
 expression returns [Expression result = null]
-: quantifiedExpression {$result = $quantifiedExpression.result;}
+: quantifiedExpression {$result = $quantifiedExpression.result; System.out.println("QuantifiedExpression result is: " + $result);}
 ;
 
 
@@ -785,7 +793,7 @@ quantifiedExpression returns [Expression result]
     }
 )
 | // not a "real" quantified expression
-  letExpression {$result = $letExpression.result;}
+  letExpression {$result = $letExpression.result; System.out.println("LetExpression result is: " + $result);}
 ;
 
 
@@ -846,7 +854,7 @@ letExpression returns [Expression result = null]
   }
 )
 | // not a let-Expression
-  whereExpression {$result = $whereExpression.result;}
+  whereExpression {$result = $whereExpression.result; System.out.println("WhereExpression result is: " + $result);}
 ;
 
 /** matches Where-Expressions
@@ -880,7 +888,7 @@ if ((defList != null) && (!defList.isEmpty())){ //defList is empty if it's not a
 		isDefOf.setSourcePositions((createSourcePositionList(length, offset)));
 	}
 } else {
-	$result = $conditionalExpression.result;
+	$result = $conditionalExpression.result; System.out.println("ConditionalExpression result is: " + $result);
 }	
 }
 ;
@@ -964,6 +972,7 @@ conditionalExpression returns [Expression result = null]
     orExpression
     { 
       $result = $orExpression.result;
+      System.out.println("OrExpression result is: " + $result);
       lengthExpr = getLTLength(offsetExpr); 
     }
     /* optional part */
@@ -999,6 +1008,7 @@ conditionalExpression returns [Expression result = null]
 	  IsNullExprOf  nullExprOf = graph.createIsNullExprOf(nullExpr, condExpr);
 	  nullExprOf.setSourcePositions((createSourcePositionList(lengthNullExpr, offsetNullExpr)));
 	  $result = condExpr;
+	  System.out.println("Created ConditionalExpression is: " + $result);
     }
   )?
 ;
@@ -1007,18 +1017,26 @@ conditionalExpression returns [Expression result = null]
 orExpression returns [Expression result]
 @init{
     FunctionConstruct construct = new FunctionConstruct();
+    System.out.println("Init FunctionConstruct: " + construct);
 }
 :
   { construct.preArg1(); }
   xorExpression 
   { 
     $result = $xorExpression.result;
+    System.out.println("XorExpression result is: " + $result);
     construct.preOp(result); 
   }
 (OR
-  { construct.postOp("or"); }
+  {
+    System.out.println("Found orExpression"); 
+    construct.postOp("or");
+  }
   expr = orExpression
-  { result = construct.postArg2(expr); }
+  { 
+    $result = construct.postArg2(expr);
+    System.out.println("Created OrExpression is: " + $result);
+  }
 )?
 ;	
 
@@ -1032,6 +1050,7 @@ xorExpression returns [Expression result]
   andExpression
   { 
     $result = $andExpression.result;
+    System.out.println("AndExpression result is: " + $result);
     construct.preOp(result); 
   }
 (XOR
@@ -1050,6 +1069,7 @@ andExpression returns [Expression result]
   equalityExpression
   { 
     $result = $equalityExpression.result;
+    System.out.println("EqualityExpression result is: " + $result);
     construct.preOp(result); 
   }
 (AND
@@ -1069,6 +1089,7 @@ equalityExpression returns [Expression result]
   expr = relationalExpression
   { 
     $result = $relationalExpression.result;
+    System.out.println("RelationalExpression result is: " + $result);
     construct.preOp(result); 
   }
 (EQUAL
@@ -1090,6 +1111,7 @@ relationalExpression returns [Expression result]
   additiveExpression
   { 
     $result = $additiveExpression.result;
+    System.out.println("AdditiveExpression result is: " + $result);
     construct.preOp(expr); 
   }
 ( ( L_T { name = "leThan"; }
@@ -1113,6 +1135,7 @@ additiveExpression returns [Expression result]
   multiplicativeExpression
   {
     $result = $multiplicativeExpression.result; 
+    System.out.println("MultiplicativeExpression result is: " + $result);
     construct.preOp(expr); 
   }
 ( (  PLUS { construct.postOp("plus"); }
@@ -1132,6 +1155,7 @@ multiplicativeExpression returns [Expression result]
   unaryExpression
   {
     $result = $unaryExpression.result; 
+    System.out.println("UnaryExpression result is: " + $result);
     construct.preOp(expr); 
   }
   (( STAR { construct.postOp("times"); }
@@ -1155,10 +1179,10 @@ unaryExpression returns [Expression result = null]
   unaryOp = unaryOperator
   { construct.postOp(unaryOp.getName()); }
   expr = pathExpression
-  { result = construct.postArg2(expr); }
+  { $result = construct.postArg2(expr); System.out.println("Created UnaryExpression is: " + $result);}
 ) | (
   pathExpression
-  {$result = $pathExpression.result;}
+  {$result = $pathExpression.result; System.out.println("PathExpression result is: " + $result);}
 )
 ;
 
@@ -1192,6 +1216,7 @@ unaryOperator returns [FunctionId result = null]
 	functionSymbolTable.insert(name, unaryOp);
    }
    $result = unaryOp;
+   System.out.println("UnaryOp is: " + $result);
 }
 ;
 
@@ -1209,22 +1234,27 @@ pathExpression returns [Expression result = null]
  * altPathDescr beginnt und ein SMILEY oder eine restrExpr folgt */
 (alternativePathDescription (SMILEY | restrictedExpression)) =>
    regBackwardVertexSetOrPathSystem
-   {$result = $regBackwardVertexSetOrPathSystem.result;}
+   {$result = $regBackwardVertexSetOrPathSystem.result; System.out.println("PathExpression BackVSet is: " + $result);}
 
 /* Ausdruck beginnt zwar mit altPathDescr, danach kommt aber weder Smiley
  * noch restrExpr --> matche also pfadausdruck als primaryExpr (Knotenpaare) */
-| (alternativePathDescription) =>
+| (alternativePathDescription) => (
    primaryExpression
-   {$result = $primaryExpression.result;}
+   {$result = $primaryExpression.result; System.out.println("PathExpression simple is: " + $result);})
 
-| ( { offsetArg1 = getLTOffset(); }
+|  ( { offsetArg1 = getLTOffset(); }
       expr = restrictedExpression
-	{ lengthArg1 = getLTLength(offsetArg1); }
-	( (alternativePathDescription) =>
-           expr = regPathExistenceOrForwardVertexSet[expr, offsetArg1, lengthArg1]
-	  | (SMILEY) => expr = regPathOrPathSystem[expr, offsetArg1, lengthArg1]
+     {
+        System.out.println("PathExpression expr is: " + expr);
+        $result = expr;
+        System.out.println("PathExpression result=expr is: " + expr);
+	    lengthArg1 = getLTLength(offsetArg1); 
+  	 }
+  	(  (alternativePathDescription) =>  (expr = regPathExistenceOrForwardVertexSet[expr, offsetArg1, lengthArg1])
+	 | (SMILEY) =>     (expr = regPathOrPathSystem[expr, offsetArg1, lengthArg1])
+	 | 
     )
-    {$result = expr;}
+    {$result = expr; System.out.println("PathExpression is: " + $result);}
   )  
 ;
 
@@ -1245,6 +1275,7 @@ restrictedExpression returns [Expression result = null]
 expr = valueAccess
 {
   $result = expr;
+  System.out.println("RestrictedExpression1 is: " + $result);
   lengthExpr = getLTLength(offsetExpr); 
 }
 (  AMP LCURLY
@@ -1260,6 +1291,7 @@ expr = valueAccess
 	  IsRestrictionOf restrOf = graph.createIsRestrictionOf(restr, restrExpr);
 	  restrOf.setSourcePositions((createSourcePositionList(lengthRestr, offsetRestr)));
 	  $result = restrExpr;
+	  System.out.println("RestrictedExpression2 is: " + $result);
    }
 )?
 ;
@@ -1269,6 +1301,7 @@ identifier returns [Identifier result]
 {  
    $result = graph.createIdentifier();
    $result.setName(i.getText());
+   System.out.println("Identifier is: " + $result);
 };
 
 
@@ -1280,18 +1313,19 @@ valueAccess returns [Expression result]
 (  
   { construct.preArg1(); }
   expr = primaryExpression
-  { construct.preOp(expr); }
-  ( (DOT 
+  { construct.preOp(expr); $result = expr; System.out.println("PrimaryExpression result is: " + expr);}
+  ( 
+   (DOT 
      { construct.postOp("getValue"); } 
      expr = identifier)
-   |(LBRACK 
+   |
+    (LBRACK 
      { construct.postOp("nthElement");}
      expr = expression 	//TODO: dbildh, 20.11.08 primaryExpression?
      RBRACK)
-  )
-  {$result = construct.postArg2(expr); }
+  )?
+  {$result = construct.postArg2(expr); System.out.println("ValueAccess is: " + $result);}
 )
-// |  ($result = primaryExpression )  //TODO: dbildh, 20.11.08 primaryExpression?
 ;
 
 /** matches primary expressions (elementset, literal,
@@ -1307,7 +1341,7 @@ primaryExpression returns [Expression result = null]
 | 	expr = functionApplication
 | 	expr = graphRangeExpression
 |	expr = literal	)
-{$result = expr;}
+{$result = expr; System.out.println("Created PrimaryExpression is: " + $result);}
 ;
 
 /** matches a pathdescription
@@ -2105,27 +2139,34 @@ literal returns [Expression literal = null]
     }
 |	TRUE
     {
+    	System.out.println("Found true literal");
         literal = (Literal) graph.getFirstVertexOfClass(BoolLiteral.class);
+        while ( (literal != null) && ( ((BoolLiteral) literal).getBoolValue() != TrivalentBoolean.TRUE))
+        	literal = (BoolLiteral) literal.getNextVertexOfClass(BoolLiteral.class);
         /*	if (literal == null || !( (BoolLiteral) literal).isBoolValue() ) {
 	           	literal = graph.createBoolLiteral();
    	           	((BoolLiteral) literal).setBoolValue(true);
         }*/
-        if (literal == null || ( (BoolLiteral) literal).getBoolValue() != TrivalentBoolean.TRUE ) {
+        if (literal == null || ( ((BoolLiteral) literal).getBoolValue() != TrivalentBoolean.TRUE )) {
 		   	literal = graph.createBoolLiteral();
 				((BoolLiteral) literal).setBoolValue(TrivalentBoolean.TRUE);
 		}
     }
 |	FALSE
     {
+        	System.out.println("Found false  literal");
         literal = (Literal) graph.getFirstVertexOfClass(BoolLiteral.class);
+        while ((literal != null) && (((BoolLiteral) literal).getBoolValue() != TrivalentBoolean.FALSE))
+        	literal = (BoolLiteral) literal.getNextVertexOfClass(BoolLiteral.class);
          /*   	if (literal == null || ( (BoolLiteral) literal).isBoolValue() ) {
 	            	literal = graph.createBoolLiteral();
              	   ((BoolLiteral) literal).setBoolValue(false);
    	            }*/
-   	    if (literal == null || ( (BoolLiteral) literal).getBoolValue() == TrivalentBoolean.TRUE ) {
+   	    if (literal == null || ( ((BoolLiteral) literal).getBoolValue() == TrivalentBoolean.TRUE )) {
 		   	literal = graph.createBoolLiteral();
 		   	((BoolLiteral) literal).setBoolValue(TrivalentBoolean.FALSE);
 		}
+		System.out.println("Found true literal");
     }
 |	NULL_VALUE
     {
