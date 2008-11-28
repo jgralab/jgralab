@@ -1,5 +1,5 @@
 grammar Greql2;
-options {backtrack=false; memoize=true;}
+options {backtrack=false; memoize=false;}
 
 tokens {
 	FUNCTIONID;
@@ -1027,7 +1027,7 @@ orExpression returns [Expression result]
     System.out.println("XorExpression result is: " + $result);
     construct.preOp(result); 
   }
-(OR
+((OR) => (OR
   {
     System.out.println("Found orExpression"); 
     construct.postOp("or");
@@ -1036,8 +1036,8 @@ orExpression returns [Expression result]
   { 
     $result = construct.postArg2(expr);
     System.out.println("Created OrExpression is: " + $result);
-  }
-)?
+  })
+	|	 )
 ;	
 
 	
@@ -1312,19 +1312,23 @@ valueAccess returns [Expression result]
 :
 (  
   { construct.preArg1(); }
-  expr = primaryExpression
-  { construct.preOp(expr); $result = expr; System.out.println("PrimaryExpression result is: " + expr);}
-  ( 
+  primaryExpression
+  { construct.preOp($primaryExpression.result); $result = $primaryExpression.result; System.out.println("PrimaryExpression result is: " + $primaryExpression.result);}
+  ( (DOT) => 
    (DOT 
      { construct.postOp("getValue"); } 
-     expr = identifier)
-   |
+     identifier
+     { $result = $identifier.result; }
+   )  
+   | (LBRACK) =>
     (LBRACK 
      { construct.postOp("nthElement");}
-     expr = expression 	//TODO: dbildh, 20.11.08 primaryExpression?
+     expression
+     { $result = $expression.result; }
+	 	//TODO: dbildh, 20.11.08 primaryExpression?
      RBRACK)
   )?
-  {$result = construct.postArg2(expr); System.out.println("ValueAccess is: " + $result);}
+  {$result = construct.postArg2($result); System.out.println("ValueAccess is: " + $result);}
 )
 ;
 
@@ -1333,7 +1337,7 @@ valueAccess returns [Expression result]
 */
 primaryExpression returns [Expression result = null] 
 :
-(( LPAREN expr = expression RPAREN )
+(((LPAREN) => LPAREN expr = expression RPAREN )
 |	expr = rangeExpression 
 |	expr = alternativePathDescription
 |	expr = variable
@@ -1429,6 +1433,7 @@ sequentialPathDescription returns [PathDescription result = null]
     lengthPart1 = getLTLength(offsetPart1);
   }
 ( /*{offsetPart2 = getLTOffset(); } TODO */
+  (startRestrictedPathDescription) =>
   part2 = startRestrictedPathDescription
   {
 	$result = addPathElement(SequentialPathDescription.class, IsPartOf.class, pathDescr, part1, offsetPart1, lengthPart1, part2, offsetPart2, lengthPart2);
@@ -1981,7 +1986,7 @@ v = simpleDeclaration
     simpleDecl.node = v;
     declList.add(simpleDecl);
 }
-(
+((COMMA) =>
 COMMA
 { simpleDecl.offset = getLTOffset(); }
 v = simpleDeclaration
