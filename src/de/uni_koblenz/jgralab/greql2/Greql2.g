@@ -145,10 +145,11 @@ import de.uni_koblenz.jgralab.schema.*;
 	}
 	
 	private Vertex createMultipleEdgesToParent(List<VertexPosition> expressions, Vertex parent, Class<? extends Edge> edgeClass) {
-       	for (VertexPosition expr : expressions) {
-			Greql2Aggregation edge = (Greql2Aggregation) graph.createEdge(edgeClass, (Expression)expr.node, parent);
-			edge.setSourcePositions((createSourcePositionList(expr.length, expr.offset)));
-		}
+       	if (expressions != null)
+       		for (VertexPosition expr : expressions) {
+				Greql2Aggregation edge = (Greql2Aggregation) graph.createEdge(edgeClass, (Vertex)expr.node, parent);
+				edge.setSourcePositions((createSourcePositionList(expr.length, expr.offset)));
+			}
 		return parent;
 	}
 
@@ -184,7 +185,7 @@ import de.uni_koblenz.jgralab.schema.*;
      *  function-ids and retrieves the Greql2-graphclass (graphClass)
      *
      */
-    private void initialize() {
+    public void initialize() {
        	schema = Greql2Schema.instance();
 		graph = Greql2Impl.create(VMAX,EMAX);
         variableSymbolTable = new SymbolTable();
@@ -811,8 +812,8 @@ quantifier returns [Quantifier quantifier = null]
 :
 (
     FORALL {name = "forall";}
-|   ((EXISTS EXCL) => (EXISTS EXCL {name = "exists!";})
-    EXISTS {name = "exists";})
+  | EXISTS_ONE {name = "exists!";}  
+  | EXISTS {name = "exists";} 
 )
 {
     for (Quantifier q : graph.getQuantifierVertices()) {
@@ -1116,15 +1117,15 @@ relationalExpression returns [Expression result]
   additiveExpression
   { 
     $result = $additiveExpression.result;
-  //  System.out.println("AdditiveExpression result is: " + $result);
-    construct.preOp(expr); 
+    System.out.println("RelationalExpression: AdditiveExpression result is: " + $result);
+    construct.preOp($result); 
   }
 ( ( L_T { name = "leThan"; }
   | LE { name = "leEqual"; }
   | G_T  { name = "grThan"; }
   | GE { name = "grEqual"; }
   | MATCH {name = "match";} ) 
-  { construct.postOp(name); }
+  { construct.postOp(name); System.out.println("RelationalExpression: Post Relational Operator"); }
   expr = relationalExpression
   { result = construct.postArg2(expr); }
 ) ?
@@ -1349,14 +1350,15 @@ valueAccess returns [Expression result]
 primaryExpression returns [Expression result = null] 
 :
 (((LPAREN) => LPAREN expr = expression RPAREN )
-|	expr = rangeExpression 
-|	expr = alternativePathDescription
-|	expr = variable
-|	expr = valueConstruction
-| 	expr = functionApplication
-| 	expr = graphRangeExpression
-|	expr = literal	)
-{$result = expr; System.out.println("Created PrimaryExpression is: " + $result);}
+|	rangeExpression {$result = $rangeExpression.expr;}
+|	alternativePathDescription {$result = $alternativePathDescription.result;}
+|	variable {$result = $variable.var;}
+|	valueConstruction {$result = $valueConstruction.result;}
+| 	functionApplication {$result = $functionApplication.expr;}
+| 	graphRangeExpression {$result = $graphRangeExpression.expr;}
+|	literal	{$result = $literal.literal;}
+|   simpleQuery {$result = $simpleQuery.comprehension;})
+{System.out.println("Created PrimaryExpression is: " + $result);}
 ;
 
 /** matches a pathdescription
@@ -1730,16 +1732,16 @@ LPAREN (expressions = expressionList)? RPAREN
     }
 	IsFunctionIdOf  functionIdOf = graph.createIsFunctionIdOf(functionId, expr);
     functionIdOf.setSourcePositions((createSourcePositionList(f.getCharPositionInLine()-1, f.getText().length())));
-    for (int i = 0; i < typeIds.size(); i++) {
-		VertexPosition t = typeIds.get(i);
-		IsTypeExprOf typeOf = graph.createIsTypeExprOfFunction((Expression)t.node, expr);
-		typeOf.setSourcePositions((createSourcePositionList(t.length, t.offset)));
-	}
-	for (int i = 0; i < expressions.size(); i++) {
-		VertexPosition ex = expressions.get(i);
-		IsArgumentOf argOf = graph.createIsArgumentOf((Expression)ex.node,expr);
-		argOf.setSourcePositions((createSourcePositionList(ex.length, ex.offset)));
-	}
+    if (typeIds != null)
+    	for (VertexPosition t : typeIds) {
+			IsTypeExprOf typeOf = graph.createIsTypeExprOfFunction((Expression)t.node, expr);
+			typeOf.setSourcePositions((createSourcePositionList(t.length, t.offset)));
+		}
+	if (expressions != null)	
+		for (VertexPosition ex : expressions) {
+			IsArgumentOf argOf = graph.createIsArgumentOf((Expression)ex.node,expr);
+			argOf.setSourcePositions((createSourcePositionList(ex.length, ex.offset)));
+		}
 }
 ;
 
@@ -2419,6 +2421,7 @@ reportClause returns [Comprehension comprehension = null]
 
 simpleQuery returns [Comprehension comprehension = null]
 @init{
+	System.out.println("Init SimpleQuery");
     Declaration declaration = null;
     int offsetDecl = 0;
     int lengthDecl = 0;
@@ -2432,8 +2435,10 @@ simpleQuery returns [Comprehension comprehension = null]
 	:
 		// declaration part
 		FROM
+		{System.out.println("Matching SimpleQuery");}
 		declarations = declarationList
         {
+            System.out.println("Matched declarations");
         	//TODO dbildh 21.11.08 : check if this can be replaced by call of declaration
         	declaration = graph.createDeclaration();
         	if (declarations.size() > 0) {
