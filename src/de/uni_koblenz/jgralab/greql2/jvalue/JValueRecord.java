@@ -35,13 +35,13 @@ public class JValueRecord extends JValueCollection implements
 
 	/**
 	 * This map is the internal data structure
-	 * 
+	 *
 	 */
 	private Map<String, JValue> dataMap;
 
 	/**
 	 * creates a new empty JValueRecord
-	 * 
+	 *
 	 */
 	public JValueRecord() {
 		super();
@@ -72,17 +72,27 @@ public class JValueRecord extends JValueCollection implements
 		addAll(collection);
 	}
 
+	@Override
+	public boolean equals(Object o) {
+		if (o instanceof JValueRecord) {
+			JValueRecord other = (JValueRecord) o;
+			return dataMap.equals(other.dataMap);
+		}
+		return false;
+	}
+
 	/**
 	 * Returns the hash code value for this record. To get the hash code of this
 	 * record, new hash code values for every element of this record are
 	 * calculated from a polynomial of 3rd order and finally summed up. This
 	 * ensures that <code>s1.equals(s2)</code> implies that
 	 * <code>s1.hashCode()==s2.hashCode()</code> for any two record
-	 * <code>s1</code> and <code>s2</code>, as required by the general
-	 * contract of <code>Object.hashCode()</code>.
-	 * 
+	 * <code>s1</code> and <code>s2</code>, as required by the general contract
+	 * of <code>Object.hashCode()</code>.
+	 *
 	 * @return the hash code value for this record.
 	 */
+	@Override
 	public int hashCode() {
 		if (storedHashCode == 0) {
 			int elementHashCode = 0;
@@ -103,6 +113,7 @@ public class JValueRecord extends JValueCollection implements
 	/**
 	 * returns a JValueRecord-Reference to this object
 	 */
+	@Override
 	public JValueRecord toJValueRecord() {
 		return this;
 	}
@@ -110,6 +121,7 @@ public class JValueRecord extends JValueCollection implements
 	/**
 	 * returns a JValueRecord-Reference to this object
 	 */
+	@Override
 	public boolean isJValueRecord() {
 		return true;
 	}
@@ -117,6 +129,7 @@ public class JValueRecord extends JValueCollection implements
 	/**
 	 * @return the number of elements in this record
 	 */
+	@Override
 	public int size() {
 		return dataMap.size();
 	}
@@ -124,9 +137,10 @@ public class JValueRecord extends JValueCollection implements
 	/**
 	 * inherited from JValueCollection, returns false because in a record its
 	 * not possible to add an element without an id
-	 * 
+	 *
 	 * @return false
 	 */
+	@Override
 	public boolean add(JValue value) {
 		return false;
 	}
@@ -134,31 +148,34 @@ public class JValueRecord extends JValueCollection implements
 	/**
 	 * removes all elements from this record
 	 */
+	@Override
 	public void clear() {
 		dataMap.clear();
 	}
 
 	/**
 	 * Checks if this record contains the given value
-	 * 
+	 *
 	 * @return true if the record contains the given value, false otherwise
 	 */
+	@Override
 	public boolean contains(JValue value) {
 		return dataMap.containsValue(value);
 	}
 
 	/**
 	 * Checks if this record is empty
-	 * 
+	 *
 	 * @return true if the record contains no elements, false otherwise
 	 */
+	@Override
 	public boolean isEmpty() {
 		return dataMap.isEmpty();
 	}
 
 	/**
 	 * Removes the given value from this record
-	 * 
+	 *
 	 * @return true if the value was successfull removes, false if the value is
 	 *         not in this record or if it cannot be removed
 	 */
@@ -176,10 +193,11 @@ public class JValueRecord extends JValueCollection implements
 
 	/**
 	 * Removes the given value from this record
-	 * 
+	 *
 	 * @return true if the value was successfull removes, false if the value is
 	 *         not in this record or if it cannot be removed
 	 */
+	@Override
 	public boolean remove(JValue value) {
 		return removeValue(value);
 	}
@@ -187,6 +205,7 @@ public class JValueRecord extends JValueCollection implements
 	/**
 	 * Returns an Iterator to iterate over all elements
 	 */
+	@Override
 	public Iterator<JValue> iterator() {
 		Collection<JValue> values = dataMap.values();
 		return values.iterator();
@@ -195,10 +214,11 @@ public class JValueRecord extends JValueCollection implements
 	/**
 	 * Replaces the given first value with the given second value. Beware, this
 	 * method does not scale well
-	 * 
+	 *
 	 * @return if valueToReplace was successfull replaced, false if it could not
 	 *         be found in this record
 	 */
+	@Override
 	public boolean replace(JValue valueToReplace, JValue replacement) {
 		Set<String> keySet = dataMap.keySet();
 		Iterator<String> keyIter = keySet.iterator();
@@ -215,26 +235,28 @@ public class JValueRecord extends JValueCollection implements
 
 	/**
 	 * Adds the given value with the given key as id to this record
-	 * 
+	 *
 	 * @return true if the element was added successfull, false if it could not
 	 *         be added, maybe because of a duplicated key
 	 */
 	public boolean add(String key, JValue value) {
-		if (dataMap.containsKey(key))
+		if (dataMap.containsKey(key)) {
 			return false;
+		}
 		dataMap.put(key, value);
 		return true;
 	}
 
 	/**
 	 * Replaces the element with the given key with the given replacement
-	 * 
+	 *
 	 * @return true if the element was replaced successfull, false if it could
 	 *         not be replaced, maybe because there exist no such key
 	 */
 	public boolean replace(String key, JValue value) {
-		if (!dataMap.containsKey(key))
+		if (!dataMap.containsKey(key)) {
 			return false;
+		}
 		dataMap.put(key, value);
 		return true;
 	}
@@ -243,7 +265,7 @@ public class JValueRecord extends JValueCollection implements
 	 * Puts the given value with the given key in this map. If there exists also
 	 * such a key, returns the value which is associated with that key. Behaves
 	 * exactly like <code>java.util.Map.put()</code>.
-	 * 
+	 *
 	 * @return the JValue which was associated with that key before, or null if
 	 *         there is none
 	 */
@@ -253,7 +275,7 @@ public class JValueRecord extends JValueCollection implements
 
 	/**
 	 * Checks if this record contains the given key
-	 * 
+	 *
 	 * @return true if it contains this key, false otherwise
 	 */
 	public boolean containsKey(Object key) {
@@ -263,7 +285,7 @@ public class JValueRecord extends JValueCollection implements
 	/**
 	 * Checks if this record contains the given value. Behaves exactly like
 	 * <code>contains(JValue value)</code> but is defined in the Interface Map
-	 * 
+	 *
 	 * @return true if this record contains the given value, false otherwise
 	 */
 	public boolean containsValue(Object value) {
@@ -282,7 +304,7 @@ public class JValueRecord extends JValueCollection implements
 	 * If key is a String, removes the object associated with the given key from
 	 * this record If key is a JValue, calls remove(JValue) If key is something
 	 * else, does nothing If possible, use removeKey() or removeValue() instead
-	 * 
+	 *
 	 * @return If key is a String, the value associated with this string, null
 	 *         otherwise
 	 */
@@ -299,7 +321,7 @@ public class JValueRecord extends JValueCollection implements
 
 	/**
 	 * Removes the object associated with the given key from this record
-	 * 
+	 *
 	 * @return The value associated with this string, null if this key doesn't
 	 *         exist
 	 */
@@ -341,6 +363,7 @@ public class JValueRecord extends JValueCollection implements
 	/**
 	 * accepts te given visitor to visit this jvalue
 	 */
+	@Override
 	public void accept(JValueVisitor v) {
 		v.visitRecord(this);
 	}

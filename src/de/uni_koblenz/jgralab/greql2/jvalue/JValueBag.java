@@ -34,8 +34,8 @@ import java.util.Map.Entry;
 /**
  * JValueBag implements a mathematic multiset of JValue-Objects. This includes
  * methods for union, difference, intersection etc. It is based on the class
- * <code>AbstractMathSet</code> and <code>HashMathSet</code> from the
- * package MathCollection which was developed in a project at the Institute for
+ * <code>AbstractMathSet</code> and <code>HashMathSet</code> from the package
+ * MathCollection which was developed in a project at the Institute for
  * Intelligent Systems at the University of Stuttgart
  * (http://www.iis.uni-stuttgart.de) under guidance of Dietmar Lippold
  * (dietmar.lippold@informatik.uni-stuttgart.de).
@@ -65,8 +65,8 @@ public class JValueBag extends JValueCollection {
 
 	/**
 	 * An iterator that, in spite of the specific element storage technique in a
-	 * <code>Multiset</code> (equal elements get 'counted' instead of each
-	 * being stored separately), iterates over individual <code>Multiset</code>
+	 * <code>Multiset</code> (equal elements get 'counted' instead of each being
+	 * stored separately), iterates over individual <code>Multiset</code>
 	 * elements.
 	 */
 	private class JValueBagIterator implements Iterator<JValue> {
@@ -183,8 +183,7 @@ public class JValueBag extends JValueCollection {
 	/**
 	 * Constructs a new, empty multiset; the backing <code>HashMap</code>
 	 * instance has specified initial capacity and load factor. Note that the
-	 * backing <code>HashMap</code> only stores single copies of equal
-	 * elements.
+	 * backing <code>HashMap</code> only stores single copies of equal elements.
 	 *
 	 * @param initialCapacity
 	 *            the initial capacity for distinct elements.
@@ -209,8 +208,8 @@ public class JValueBag extends JValueCollection {
 	 * are calculated from a polynomial of 3rd order and finally summed up. This
 	 * ensures that <code>s1.equals(s2)</code> implies that
 	 * <code>s1.hashCode()==s2.hashCode()</code> for any two multisets
-	 * <code>s1</code> and <code>s2</code>, as required by the general
-	 * contract of <code>Object.hashCode()</code>.
+	 * <code>s1</code> and <code>s2</code>, as required by the general contract
+	 * of <code>Object.hashCode()</code>.
 	 *
 	 * @return the hash code value for this multiset.
 	 */
@@ -234,16 +233,9 @@ public class JValueBag extends JValueCollection {
 
 	/**
 	 * Compares the specified object with this bag for equality. Returns
-	 * <code>true</code> if the specified object is also a collection, the two
-	 * sets have the same size, and every element of the specified set is
-	 * contained in this set the same number of times.
-	 * <p>
-	 *
-	 * If the specified object is not this multiset itself but another
-	 * collection, this implementation first compares the sizes of this multiset
-	 * and the specified collection by invoking the <code>size</code> method
-	 * on each. If the sizes match, the sets are compared on a per-element
-	 * basis.
+	 * <code>true</code> if the specified object is also a bag, the two bags
+	 * have the same size, and every element of the specified set is contained
+	 * in this set the same number of times.
 	 *
 	 * @param o
 	 *            object to be compared for equality with this multiset.
@@ -252,18 +244,14 @@ public class JValueBag extends JValueCollection {
 	 */
 	@Override
 	public boolean equals(Object o) {
-		if (o instanceof JValueCollection) {
-			JValueCollection foreignCollection = (JValueCollection) o;
-			if ((this.size() != foreignCollection.size())) {
+		if (o instanceof JValueBag) {
+			JValueBag other = (JValueBag) o;
+			if (size() != other.size()) {
 				return false;
 			}
-			JValueBag foreignBag = foreignCollection.toJValueBag();
-			Iterator<JValue> iter = foreignBag.iterator();
-			JValue currentElement;
-			while (iter.hasNext()) {
-				currentElement = iter.next();
-				if (this.getQuantity(currentElement) != foreignBag
-						.getQuantity(currentElement)) {
+			for (JValue val : this) {
+				if (!other.contains(val)
+						|| getQuantity(val) != other.getQuantity(val)) {
 					return false;
 				}
 			}
@@ -369,8 +357,8 @@ public class JValueBag extends JValueCollection {
 	 * <p>
 	 *
 	 * This implementation sets <code>storedHashCode</code> to 0 (representing
-	 * an unavailable hash code value), which forces <code>hashCode()</code>
-	 * to recalculate the actual hash code value.
+	 * an unavailable hash code value), which forces <code>hashCode()</code> to
+	 * recalculate the actual hash code value.
 	 *
 	 * @param element
 	 *            element whose quantity gets set.
@@ -399,9 +387,8 @@ public class JValueBag extends JValueCollection {
 	}
 
 	/**
-	 * Returns a new <code>Set</code> containing the 'flattened' version of
-	 * this multiset in which every element of this multiset is present exactly
-	 * once.
+	 * Returns a new <code>Set</code> containing the 'flattened' version of this
+	 * multiset in which every element of this multiset is present exactly once.
 	 *
 	 * @return the 'flattened' version of this multiset.
 	 */
@@ -421,26 +408,25 @@ public class JValueBag extends JValueCollection {
 	}
 
 	/**
-	 * Returns <code>true</code> if this multiset is a superset of the
-	 * specified collection. That is, if all elements of the specified
-	 * collection are also present in this multiset at least the same number of
-	 * times.
+	 * Returns <code>true</code> if this multiset is a superset of the specified
+	 * collection. That is, if all elements of the specified collection are also
+	 * present in this multiset at least the same number of times.
 	 * <p>
 	 *
 	 * This implementation checks if the specified collection is an instance of
-	 * <code>Multiset</code> or <code>Set</code>. If so, the result of the
-	 * super method <code>isSuperset</code> is returned. Otherwise, it tries
-	 * to create the intersection of this HashMultiset and the specified
-	 * Collection c by iterating over c and adding common elements to a new
-	 * multiset. If an element is found whose quantity in the current
-	 * intersection multiset is greater or equal than in this HashMultiset,
-	 * false is returned. If the intersection can be built up completely, this
-	 * HashMultiset is a superset of c and true is returned.
+	 * <code>Multiset</code> or <code>Set</code>. If so, the result of the super
+	 * method <code>isSuperset</code> is returned. Otherwise, it tries to create
+	 * the intersection of this HashMultiset and the specified Collection c by
+	 * iterating over c and adding common elements to a new multiset. If an
+	 * element is found whose quantity in the current intersection multiset is
+	 * greater or equal than in this HashMultiset, false is returned. If the
+	 * intersection can be built up completely, this HashMultiset is a superset
+	 * of c and true is returned.
 	 *
 	 * @param c
 	 *            collection to be checked for being a subset.
-	 * @return <code>true</code> if this multiset is a superset of the
-	 *         specifed collection, <code>false</code> otherwise.
+	 * @return <code>true</code> if this multiset is a superset of the specifed
+	 *         collection, <code>false</code> otherwise.
 	 */
 	public boolean isSupersetOf(JValueCollection c) {
 		JValueBag bag = c.toJValueBag();
@@ -611,8 +597,8 @@ public class JValueBag extends JValueCollection {
 
 	/**
 	 * Adds the specified element <code>quantity</code> of times to this
-	 * multiset. If <code>quantity</code> is negative or 0, the multiset
-	 * remains unchanged and <code>false</code> is returned.
+	 * multiset. If <code>quantity</code> is negative or 0, the multiset remains
+	 * unchanged and <code>false</code> is returned.
 	 * <p>
 	 *
 	 * If the set gets altered, this implementation sets
