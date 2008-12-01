@@ -118,12 +118,15 @@ public class JValueMap extends JValue {
 	 *            a enumeration value)
 	 * @param v
 	 *            the value mapped by k
+	 * @return the previous value associated with the given key <code>k</code>
+	 *         or <code>null</code> if there was no association for that key (or
+	 *         the key had the value <code>null</code> before).
 	 */
-	public void put(JValue k, JValue v) {
+	public JValue put(JValue k, JValue v) {
 		assert (k.isBoolean() || k.isString() || k.isCharacter() || k
 				.isNumber()) : "The keys of a JValueMap must be numbers, booleans, "
 				+ "strings, characters or enumeration values.";
-		map.put(k, v);
+		return map.put(k, v);
 	}
 
 	@Override
