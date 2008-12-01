@@ -209,11 +209,10 @@ public class JValue implements Comparable<JValue> {
 	@Override
 	public int hashCode() {
 		if (storedHashCode == 0) {
-			if (value == null) {
-				storedHashCode = JValue.class.hashCode();
-			} else {
-				storedHashCode = value.hashCode() + JValue.class.hashCode();
-			}
+			storedHashCode = 7;
+			storedHashCode = 31 * storedHashCode + JValue.class.hashCode();
+			storedHashCode = 31 * storedHashCode
+					+ (value == null ? 0 : value.hashCode());
 		}
 		return storedHashCode;
 	}
