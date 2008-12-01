@@ -697,10 +697,11 @@ variableList returns [ArrayList<VertexPosition> variables = new ArrayList<Vertex
 */
 variable returns [Variable var = null] 
 	:
-		IDENT
+		i = IDENT
         {	
         	var = graph.createVariable();
-        	var.setName(input.LT(0).getText());
+        	var.setName(i.getText());
+        	System.out.println("Variable name is: " + var.getName());
         }
 ;
 
@@ -1757,7 +1758,7 @@ LPAREN (expressions = expressionList)? RPAREN
 valueConstruction returns [Expression result = null]
 	:
 	(	expr = bagConstruction 
-	  | expr = listConstruction 
+	  | expr = listConstruction
 	  |	expr = pathConstruction 
 	  | expr = pathsystemConstruction
 	  | expr = recordConstruction
