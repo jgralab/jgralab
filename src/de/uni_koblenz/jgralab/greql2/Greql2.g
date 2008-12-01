@@ -1,5 +1,5 @@
 grammar Greql2;
-options {backtrack=false; memoize=false;}
+options {backtrack=false;}
 
 tokens {
 	FUNCTIONID;
@@ -59,7 +59,7 @@ import de.uni_koblenz.jgralab.schema.*;
     // private boolean isAdditiveExpression = true;
 
     class FunctionConstruct {
-    	String operatorName;  
+    	String operatorName = null;  
     	Expression arg1 = null;
         Expression arg2 = null;
         FunctionId op = null;
@@ -70,6 +70,10 @@ import de.uni_koblenz.jgralab.schema.*;
         int lengthOperator = 0;
         int lengthArg2 = 0;
         boolean binary = true;
+        
+        public boolean isValidFunction() {
+        	return operatorName != null;
+        }
     
         public void preUnaryOp() {
         	binary = false;
@@ -78,7 +82,7 @@ import de.uni_koblenz.jgralab.schema.*;
     
         public void preArg1() {
         	offsetArg1 = getLTOffset();
-        	System.out.println("PreArg1 nctionConstruct: " + this);
+        //	System.out.println("PreArg1 FunctionConstruct: " + this);
         }
         
         public void preOp(Expression arg1) { 
@@ -86,7 +90,7 @@ import de.uni_koblenz.jgralab.schema.*;
         	this.arg1 = arg1;
         	lengthArg1 = getLTLength(offsetArg1);
         	offsetOperator = getLTOffset();
-        	System.out.println("PreOp FunctionConstruct: " + this);
+        //	System.out.println("PreOp FunctionConstruct: " + this);
         }
         
         public void postOp(String op) {
@@ -94,7 +98,7 @@ import de.uni_koblenz.jgralab.schema.*;
 	  		offsetArg2 = getLTOffset();
 	  		this.operatorName = op;
 	  		System.out.println("Operator name is:" + this.operatorName);
-	  		System.out.println("PostOp FunctionConstruct: " + this);
+	  	//	System.out.println("PostOp FunctionConstruct: " + this);
         }
         
         public FunctionApplication postArg2(Expression arg2) { 
@@ -102,7 +106,7 @@ import de.uni_koblenz.jgralab.schema.*;
          	this.arg2 = arg2;
          	// retrieve operator...
          	System.out.println("Creating FunctionId with operator:" + this.operatorName);
-         	System.out.println("PostArg2 FunctionConstruct: " + this);
+         //	System.out.println("PostArg2 FunctionConstruct: " + this);
          	op = (FunctionId) functionSymbolTable.lookup(operatorName);
          	//... or create a new one and add it to the symboltable
          	if (op == null) {
@@ -1024,18 +1028,18 @@ orExpression returns [Expression result]
   xorExpression 
   { 
     $result = $xorExpression.result;
-    System.out.println("XorExpression result is: " + $result);
+    System.out.println("OrExpression: XorExpression result is: " + $result);
     construct.preOp(result); 
   }
 ((OR) => (OR
   {
-    System.out.println("Found orExpression"); 
+    System.out.println("OrExpression: Post Operator OR"); 
     construct.postOp("or");
   }
   expr = orExpression
-  { 
+  {
+    System.out.println("OrExpression: Created Expression is: " + $result); 
     $result = construct.postArg2(expr);
-    System.out.println("Created OrExpression is: " + $result);
   })
 	|	 )
 ;	
@@ -1050,7 +1054,7 @@ xorExpression returns [Expression result]
   andExpression
   { 
     $result = $andExpression.result;
-    System.out.println("AndExpression result is: " + $result);
+  //  System.out.println("AndExpression result is: " + $result);
     construct.preOp(result); 
   }
 (XOR
@@ -1069,7 +1073,7 @@ andExpression returns [Expression result]
   equalityExpression
   { 
     $result = $equalityExpression.result;
-    System.out.println("EqualityExpression result is: " + $result);
+  //  System.out.println("EqualityExpression result is: " + $result);
     construct.preOp(result); 
   }
 (AND
@@ -1089,7 +1093,7 @@ equalityExpression returns [Expression result]
   expr = relationalExpression
   { 
     $result = $relationalExpression.result;
-    System.out.println("RelationalExpression result is: " + $result);
+  //  System.out.println("RelationalExpression result is: " + $result);
     construct.preOp(result); 
   }
 (EQUAL
@@ -1111,7 +1115,7 @@ relationalExpression returns [Expression result]
   additiveExpression
   { 
     $result = $additiveExpression.result;
-    System.out.println("AdditiveExpression result is: " + $result);
+  //  System.out.println("AdditiveExpression result is: " + $result);
     construct.preOp(expr); 
   }
 ( ( L_T { name = "leThan"; }
@@ -1135,7 +1139,7 @@ additiveExpression returns [Expression result]
   multiplicativeExpression
   {
     $result = $multiplicativeExpression.result; 
-    System.out.println("MultiplicativeExpression result is: " + $result);
+   // System.out.println("MultiplicativeExpression result is: " + $result);
     construct.preOp(expr); 
   }
 ( (  PLUS { construct.postOp("plus"); }
@@ -1155,7 +1159,7 @@ multiplicativeExpression returns [Expression result]
   unaryExpression
   {
     $result = $unaryExpression.result; 
-    System.out.println("UnaryExpression result is: " + $result);
+  //  System.out.println("UnaryExpression result is: " + $result);
     construct.preOp(expr); 
   }
   (( STAR { construct.postOp("times"); }
@@ -1179,10 +1183,10 @@ unaryExpression returns [Expression result = null]
   unaryOp = unaryOperator
   { construct.postOp(unaryOp.getName()); }
   expr = pathExpression
-  { $result = construct.postArg2(expr); System.out.println("Created UnaryExpression is: " + $result);}
+  { $result = construct.postArg2(expr);}
 ) | (
   pathExpression
-  {$result = $pathExpression.result; System.out.println("PathExpression result is: " + $result);}
+  {$result = $pathExpression.result;}
 )
 ;
 
@@ -1240,21 +1244,19 @@ pathExpression returns [Expression result = null]
  * noch restrExpr --> matche also pfadausdruck als primaryExpr (Knotenpaare) */
 | (alternativePathDescription) => (
    primaryExpression
-   {$result = $primaryExpression.result; System.out.println("PathExpression simple is: " + $result);})
+   {$result = $primaryExpression.result;})
 
 |  ( { offsetArg1 = getLTOffset(); }
       expr = restrictedExpression
      {
-        System.out.println("PathExpression expr is: " + expr);
         $result = expr;
-        System.out.println("PathExpression result=expr is: " + expr);
 	    lengthArg1 = getLTLength(offsetArg1); 
   	 }
   	(  (alternativePathDescription) =>  (expr = regPathExistenceOrForwardVertexSet[expr, offsetArg1, lengthArg1])
 	 | (SMILEY) =>     (expr = regPathOrPathSystem[expr, offsetArg1, lengthArg1])
 	 | 
     )
-    {$result = expr; System.out.println("PathExpression is: " + $result);}
+    {$result = expr;}
   )  
 ;
 
@@ -1275,7 +1277,6 @@ restrictedExpression returns [Expression result = null]
 expr = valueAccess
 {
   $result = expr;
-  System.out.println("RestrictedExpression1 is: " + $result);
   lengthExpr = getLTLength(offsetExpr); 
 }
 (  AMP LCURLY
@@ -1291,7 +1292,6 @@ expr = valueAccess
 	  IsRestrictionOf restrOf = graph.createIsRestrictionOf(restr, restrExpr);
 	  restrOf.setSourcePositions((createSourcePositionList(lengthRestr, offsetRestr)));
 	  $result = restrExpr;
-	  System.out.println("RestrictedExpression2 is: " + $result);
    }
 )?
 ;
@@ -1301,7 +1301,6 @@ identifier returns [Identifier result]
 {  
    $result = graph.createIdentifier();
    $result.setName(i.getText());
-   System.out.println("Identifier is: " + $result);
 };
 
 
@@ -1313,7 +1312,11 @@ valueAccess returns [Expression result]
 (  
   { construct.preArg1(); }
   primaryExpression
-  { construct.preOp($primaryExpression.result); $result = $primaryExpression.result; System.out.println("PrimaryExpression result is: " + $primaryExpression.result);}
+  { 
+    construct.preOp($primaryExpression.result); 
+    $result = $primaryExpression.result; 
+    System.out.println("PrimaryExpression result is: " + $primaryExpression.result);
+  }
   ( (DOT) => 
    (DOT 
      { construct.postOp("getValue"); } 
@@ -1328,7 +1331,11 @@ valueAccess returns [Expression result]
 	 	//TODO: dbildh, 20.11.08 primaryExpression?
      RBRACK)
   )?
-  {$result = construct.postArg2($result); System.out.println("ValueAccess is: " + $result);}
+  {
+    if (construct.isValidFunction())
+    	$result = construct.postArg2($result); 
+    System.out.println("ValueAccess is: " + $result);
+  }
 )
 ;
 
@@ -2159,7 +2166,7 @@ literal returns [Expression literal = null]
     }
 |	FALSE
     {
-        	System.out.println("Found false  literal");
+        System.out.println("Found false  literal");
         literal = (Literal) graph.getFirstVertexOfClass(BoolLiteral.class);
         while ((literal != null) && (((BoolLiteral) literal).getBoolValue() != TrivalentBoolean.FALSE))
         	literal = (BoolLiteral) literal.getNextVertexOfClass(BoolLiteral.class);
@@ -2171,7 +2178,6 @@ literal returns [Expression literal = null]
 		   	literal = graph.createBoolLiteral();
 		   	((BoolLiteral) literal).setBoolValue(TrivalentBoolean.FALSE);
 		}
-		System.out.println("Found true literal");
     }
 |	NULL_VALUE
     {
