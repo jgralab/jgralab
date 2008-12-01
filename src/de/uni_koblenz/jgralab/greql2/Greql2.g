@@ -121,17 +121,17 @@ import de.uni_koblenz.jgralab.schema.*;
     }
 
     private FunctionApplication createFunctionIdAndArgumentOf(FunctionId functionId, int offsetOperator, int lengthOperator, Expression arg1, int offsetArg1, int lengthArg1, Expression arg2, int offsetArg2, int lengthArg2, boolean binary) {
-    	FunctionApplication fa = graph.createFunctionApplication();
-    	IsFunctionIdOf functionIdOf = graph.createIsFunctionIdOf(functionId, fa);
-    	functionIdOf.setSourcePositions((createSourcePositionList(lengthOperator, offsetOperator)));
-    	IsArgumentOf arg1Of = graph.createIsArgumentOf(arg1, fa);
-    	arg1Of.setSourcePositions((createSourcePositionList(lengthArg1, offsetArg1)));
-    	if (binary) {
-      	   IsArgumentOf arg2Of = graph.createIsArgumentOf(arg2, fa);
-    	   arg2Of.setSourcePositions((createSourcePositionList(lengthArg2, offsetArg2)));
-    	}  
-    	return fa;
-    }	
+        	FunctionApplication fa = graph.createFunctionApplication();
+        	IsFunctionIdOf functionIdOf = graph.createIsFunctionIdOf(functionId, fa);
+        	functionIdOf.setSourcePositions((createSourcePositionList(lengthOperator, offsetOperator)));
+        	if (binary) {
+        	IsArgumentOf arg1Of = graph.createIsArgumentOf(arg1, fa);
+        	arg1Of.setSourcePositions((createSourcePositionList(lengthArg1, offsetArg1)));
+        	}
+          	IsArgumentOf arg2Of = graph.createIsArgumentOf(arg2, fa);
+        	arg2Of.setSourcePositions((createSourcePositionList(lengthArg2, offsetArg2)));
+        	return fa;
+    }
     
     private List<SourcePosition> createSourcePositionList(int length, int offset) {
     	List<SourcePosition> list = new ArrayList<SourcePosition>();
@@ -602,7 +602,7 @@ STRING_LITERAL
 
 HEXLITERAL : '0' ('x'|'X') HEXDIGIT+ IntegerTypeSuffix? ;
 
-DECLITERAL : ('0' | '1'..'9' '0'..'9'*) IntegerTypeSuffix? ;
+DECLITERAL : ('0' | (('1'..'9') ('0'..'9')*)) IntegerTypeSuffix? ;
 
 OCTLITERAL : '0' ('0'..'7')+ IntegerTypeSuffix? ;
 
@@ -1186,7 +1186,10 @@ unaryExpression returns [Expression result = null]
   { $result = construct.postArg2(expr);}
 ) | (
   pathExpression
-  {$result = $pathExpression.result;}
+  {
+    $result = $pathExpression.result;
+    System.out.println("UnaryExpression: Result of pathExpression is: " + $result);   
+  }
 )
 ;
 
@@ -2111,14 +2114,19 @@ typeId returns [TypeId type = null]
 
 
 literal returns [Expression literal = null]
+@init{
+	    System.out.println("Literal: ... "); 
+}
 :
 	token=STRING_LITERAL
     {
+    System.out.println("Literal: Matching StringLiteral "); 
        	literal = graph.createStringLiteral();
        	((StringLiteral) literal).setStringValue(decode(token.getText()));
     }
 |	THISVERTEX
     {
+    System.out.println("Literal: Matching ThisVertexLiteral "); 
   /*     literal = graph.getFirstThisLiteral();
        if (literal != null)	
 	       	return literal;*/
@@ -2126,13 +2134,15 @@ literal returns [Expression literal = null]
     }
 |	THISEDGE
     {
+    System.out.println("Literal: Matching ThisEdgelLiteral "); 
      	/*literal = graph.getFirstThisEdge();
         if (literal != null)
 	      	return literal;*/
         literal = graph.createThisEdge();
     }
-|	token=DECLITERAL | token=HEXLITERAL | token = OCTLITERAL
+|	(token=DECLITERAL | token=HEXLITERAL | token = OCTLITERAL)
 	{
+	    System.out.println("Literal: Matching Int literal "); 
         int value = 0;
         if (token.getText().startsWith("0x") || token.getText().startsWith("0X") ) {
            	value = Integer.parseInt(token.getText().substring(2),16);
@@ -2146,12 +2156,13 @@ literal returns [Expression literal = null]
 	}
 |	token=FLOAT_LITERAL
     {
+    System.out.println("Literal: Matching RealLiteral "); 
        	literal = graph.createRealLiteral();
 		((RealLiteral) literal).setRealValue(Double.parseDouble(token.getText()));
     }
 |	TRUE
     {
-    	System.out.println("Found true literal");
+    	System.out.println("Literal: Matching True Literal "); 
         literal = (Literal) graph.getFirstVertexOfClass(BoolLiteral.class);
         while ( (literal != null) && ( ((BoolLiteral) literal).getBoolValue() != TrivalentBoolean.TRUE))
         	literal = (BoolLiteral) literal.getNextVertexOfClass(BoolLiteral.class);
@@ -2166,7 +2177,7 @@ literal returns [Expression literal = null]
     }
 |	FALSE
     {
-        System.out.println("Found false  literal");
+        System.out.println("Literal: Matching False Literal "); 
         literal = (Literal) graph.getFirstVertexOfClass(BoolLiteral.class);
         while ((literal != null) && (((BoolLiteral) literal).getBoolValue() != TrivalentBoolean.FALSE))
         	literal = (BoolLiteral) literal.getNextVertexOfClass(BoolLiteral.class);
@@ -2181,6 +2192,7 @@ literal returns [Expression literal = null]
     }
 |	NULL_VALUE
     {
+        System.out.println("Literal: Matching Null lLiteral "); 
         literal = (Literal) graph.getFirstVertexOfClass(NullLiteral.class);
 	    if (literal == null)
 		    literal = graph.createNullLiteral(); 
