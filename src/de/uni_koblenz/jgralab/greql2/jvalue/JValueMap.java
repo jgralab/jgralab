@@ -126,6 +126,7 @@ public class JValueMap extends JValue {
 		assert (k.isBoolean() || k.isString() || k.isCharacter() || k
 				.isNumber()) : "The keys of a JValueMap must be numbers, booleans, "
 				+ "strings, characters or enumeration values.";
+		storedHashCode = 0;
 		return map.put(k, v);
 	}
 
@@ -161,5 +162,32 @@ public class JValueMap extends JValue {
 		}
 		sb.append("}");
 		return sb.toString();
+	}
+
+	@Override
+	public int hashCode() {
+		if (storedHashCode == 0) {
+			int elementHashCode = 0;
+			int newHashCode = -1;
+
+			for (JValue currentKey : map.keySet()) {
+				elementHashCode = currentKey.hashCode()
+						* map.get(currentKey).hashCode();
+				newHashCode += -1 + (3 + elementHashCode)
+						* (7 + elementHashCode) * (11 + elementHashCode);
+			}
+			newHashCode += this.getClass().hashCode();
+			storedHashCode = newHashCode;
+		}
+		return storedHashCode;
+	}
+
+	@Override
+	public boolean equals(Object o) {
+		if (o instanceof JValueMap) {
+			JValueMap other = (JValueMap) o;
+			return map.equals(other.map);
+		}
+		return false;
 	}
 }
