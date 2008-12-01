@@ -41,6 +41,30 @@ public abstract class CompositeDomainImpl extends DomainImpl implements
 		super(schema, qn);
 	}
 
+	/**
+	 * Checks if <code>baseDomain</code> is unequal null and is part of
+	 * <code>schema</code>.<br>
+	 * <br>
+	 * <b>pattern:</b> c.isDomainOfSchema(schema1, baseDomain1)<br>
+	 * <b>pre:</b> true<br>
+	 * <b>post:</b> true iff schema!=baseDomain.getSchema()<br>
+	 * <b>post:</b> false otherwise<br>
+	 * <b>post:</b> schema1'.equals(schema1) && baseDomain1'.equals(baseDomain1)
+	 * 
+	 * @param schema
+	 *            the schema in which <code>baseDomain</code> must be
+	 * @param baseDomain
+	 *            the baseDomain
+	 * @return true iff <code>baseDomain</code> is part of <code>schema</code><br>
+	 *         false otherwise
+	 */
+	protected boolean isDomainOfSchema(Schema schema, Domain baseDomain) {
+		if (schema != baseDomain.getSchema()) {
+			return false;
+		}
+		return true;
+	}
+
 	public boolean isComposite() {
 		return true;
 	}

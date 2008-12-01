@@ -14,10 +14,11 @@ import de.uni_koblenz.jgralab.schema.MapDomain;
 import de.uni_koblenz.jgralab.schema.Package;
 import de.uni_koblenz.jgralab.schema.QualifiedName;
 import de.uni_koblenz.jgralab.schema.Schema;
+import de.uni_koblenz.jgralab.schema.SchemaException;
 
 /**
  * @author Tassilo Horn <horn@uni-koblenz.de>
- *
+ * 
  */
 public class MapDomainImpl extends CompositeDomainImpl implements MapDomain {
 	/**
@@ -33,6 +34,12 @@ public class MapDomainImpl extends CompositeDomainImpl implements MapDomain {
 	public MapDomainImpl(Schema schema, QualifiedName qn, Domain aKeyDomain,
 			Domain aValueDomain) {
 		super(schema, qn);
+		if (!isDomainOfSchema(schema, aKeyDomain)
+				|| !isDomainOfSchema(schema, aValueDomain)) {
+			throw new SchemaException(aKeyDomain + " and " + aValueDomain
+					+ " must be domains of the schema "
+					+ schema.getQualifiedName());
+		}
 		keyDomain = aKeyDomain;
 		valueDomain = aValueDomain;
 	}
@@ -49,7 +56,7 @@ public class MapDomainImpl extends CompositeDomainImpl implements MapDomain {
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see
 	 * de.uni_koblenz.jgralab.schema.impl.CompositeDomainImpl#equals(java.lang
 	 * .Object)
@@ -71,7 +78,7 @@ public class MapDomainImpl extends CompositeDomainImpl implements MapDomain {
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see de.uni_koblenz.jgralab.schema.MapDomain#getKeyDomain()
 	 */
 	@Override
@@ -81,7 +88,7 @@ public class MapDomainImpl extends CompositeDomainImpl implements MapDomain {
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see de.uni_koblenz.jgralab.schema.MapDomain#getValueDomain()
 	 */
 	@Override
@@ -91,7 +98,7 @@ public class MapDomainImpl extends CompositeDomainImpl implements MapDomain {
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see
 	 * de.uni_koblenz.jgralab.schema.CompositeDomain#getAllComponentDomains()
 	 */
@@ -105,7 +112,7 @@ public class MapDomainImpl extends CompositeDomainImpl implements MapDomain {
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see
 	 * de.uni_koblenz.jgralab.schema.Domain#getJavaAttributeImplementationTypeName
 	 * (java.lang.String)
@@ -120,7 +127,7 @@ public class MapDomainImpl extends CompositeDomainImpl implements MapDomain {
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see
 	 * de.uni_koblenz.jgralab.schema.Domain#getJavaClassName(java.lang.String)
 	 */
@@ -131,7 +138,7 @@ public class MapDomainImpl extends CompositeDomainImpl implements MapDomain {
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see de.uni_koblenz.jgralab.schema.Domain#getReadMethod(java.lang.String,
 	 * java.lang.String, java.lang.String)
 	 */
@@ -177,7 +184,7 @@ public class MapDomainImpl extends CompositeDomainImpl implements MapDomain {
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see
 	 * de.uni_koblenz.jgralab.schema.Domain#getTGTypeName(de.uni_koblenz.jgralab
 	 * .schema.Package)
@@ -190,7 +197,7 @@ public class MapDomainImpl extends CompositeDomainImpl implements MapDomain {
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see
 	 * de.uni_koblenz.jgralab.schema.Domain#getWriteMethod(java.lang.String,
 	 * java.lang.String, java.lang.String)
