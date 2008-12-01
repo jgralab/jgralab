@@ -32,7 +32,11 @@ import java.util.HashMap;
  */
 public class JValueMap extends JValue {
 
-	private HashMap<JValue, JValue> map = new HashMap<JValue, JValue>();
+	private HashMap<JValue, JValue> map;
+
+	{
+		type = JValueType.MAP;
+	}
 
 	public JValueMap(int initialCapacity) {
 		map = new HashMap<JValue, JValue>(initialCapacity);
