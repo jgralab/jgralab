@@ -252,4 +252,16 @@ public class MapDomainImpl extends CompositeDomainImpl implements MapDomain {
 				+ valueDomain.toString() + ">";
 	}
 
+	@Override
+	public void setPackage(Package p) {
+		throw new UnsupportedOperationException(
+				"The package of a MapDomain may not be changed.");
+	}
+
+	@Override
+	public void setUniqueName(String newUniqueName) {
+		throw new UnsupportedOperationException(
+				"The unique name of a MapDomain may not be changed.");
+	}
+
 }
