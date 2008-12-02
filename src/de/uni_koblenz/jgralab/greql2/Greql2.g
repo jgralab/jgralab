@@ -82,7 +82,6 @@ import de.uni_koblenz.jgralab.schema.*;
     
         public void preArg1() {
         	offsetArg1 = getLTOffset();
-        //	System.out.println("PreArg1 FunctionConstruct: " + this);
         }
         
         public void preOp(Expression arg1) { 
@@ -90,23 +89,17 @@ import de.uni_koblenz.jgralab.schema.*;
         	this.arg1 = arg1;
         	lengthArg1 = getLTLength(offsetArg1);
         	offsetOperator = getLTOffset();
-        //	System.out.println("PreOp FunctionConstruct: " + this);
         }
         
         public void postOp(String op) {
           	lengthOperator = getLTLength(offsetOperator);
 	  		offsetArg2 = getLTOffset();
 	  		this.operatorName = op;
-	  		System.out.println("Operator name is:" + this.operatorName);
-	  	//	System.out.println("PostOp FunctionConstruct: " + this);
         }
         
         public FunctionApplication postArg2(Expression arg2) { 
          	lengthArg2 = getLTLength(offsetArg2);
          	this.arg2 = arg2;
-         	// retrieve operator...
-         	System.out.println("Creating FunctionId with operator:" + this.operatorName);
-         //	System.out.println("PostArg2 FunctionConstruct: " + this);
          	op = (FunctionId) functionSymbolTable.lookup(operatorName);
          	//... or create a new one and add it to the symboltable
          	if (op == null) {
@@ -125,8 +118,8 @@ import de.uni_koblenz.jgralab.schema.*;
         	IsFunctionIdOf functionIdOf = graph.createIsFunctionIdOf(functionId, fa);
         	functionIdOf.setSourcePositions((createSourcePositionList(lengthOperator, offsetOperator)));
         	if (binary) {
-        	IsArgumentOf arg1Of = graph.createIsArgumentOf(arg1, fa);
-        	arg1Of.setSourcePositions((createSourcePositionList(lengthArg1, offsetArg1)));
+        		IsArgumentOf arg1Of = graph.createIsArgumentOf(arg1, fa);
+        		arg1Of.setSourcePositions((createSourcePositionList(lengthArg1, offsetArg1)));
         	}
           	IsArgumentOf arg2Of = graph.createIsArgumentOf(arg2, fa);
         	arg2Of.setSourcePositions((createSourcePositionList(lengthArg2, offsetArg2)));
@@ -217,7 +210,6 @@ import de.uni_koblenz.jgralab.schema.*;
 		int offset = -1;
 		offset = getLTOffset();
 		if (offset != -1) {
-				System.out.println("RecognitionException");
 				logger.severe("error: " + offset +": RecognitionException " + e.getMessage());
 		}		
 		else logger.severe("error (offset = -1): RecognitionException " + e.getMessage());
@@ -708,10 +700,8 @@ variable returns [Variable var = null]
 
 greqlExpression 
 @init{
-	//ArrayList<VertexPosition> varList = new ArrayList<VertexPosition>();
 	int offset = 0;
 	int length = 0;
-	//Identifier id = null;
 	initialize();
 }
 : (
@@ -720,7 +710,6 @@ greqlExpression
     expr = expression
     (STORE AS id = IDENT)?
     {
-    System.out.println("Expression is: " + expr);
 	length = getLTLength(offset);
 	Greql2Expression root = graph.createGreql2Expression();
 	// add using-variables
@@ -749,7 +738,7 @@ greqlExpression
     @return  vertex representing the expression
 */
 expression returns [Expression result = null]
-: quantifiedExpression {$result = $quantifiedExpression.result; System.out.println("QuantifiedExpression result is: " + $result);}
+: quantifiedExpression {$result = $quantifiedExpression.result;}
 ;
 
 
@@ -909,11 +898,13 @@ definitionList returns [ArrayList<VertexPosition> definitions = new ArrayList<Ve
     VertexPosition def = new VertexPosition();
     int offset = 0;
     int length = 0;
+    System.out.println("Init Definition list: ");
 }
 	:
 		{ offset = getLTOffset(); }
 		v = definition
         {
+        	System.out.println("DefinitionList: FirstDefinition is: " + v);
 			length = getLTLength(offset);
         	def.node = v;
             def.offset = offset;
@@ -934,27 +925,36 @@ definitionList returns [ArrayList<VertexPosition> definitions = new ArrayList<Ve
 */
 definition returns [Definition definition = null]
 @init{
-	Expression expr = null;
   	int offsetVar = 0;
   	int offsetExpr = 0;
     int lengthVar = 0;
     int lengthExpr = 0;
+    System.out.println("Init Definition");
 }
 :
-	{ offsetVar = input.LT(1).getCharPositionInLine()-1; }
+	{ System.out.println("Definition: Try to match Variable: " + var);  offsetVar = getLTOffset(); }
 	var = variable
-	{ lengthVar = getLTLength(offsetVar); }
-        ASSIGN
-        { offsetExpr = input.LT(1).getCharPositionInLine()-1; }
-        //  (expr = expressionOrPathDescription)
-        {
-            lengthExpr = getLTLength(offsetExpr);
-            definition = graph.createDefinition();
-            IsVarOf varOf = graph.createIsVarOf(var, definition);
-            varOf.setSourcePositions((createSourcePositionList(lengthVar, offsetVar)));
-            IsExprOf exprOf = graph.createIsExprOf(expr, definition);
-            exprOf.setSourcePositions((createSourcePositionList(lengthExpr, offsetExpr)));
-        }
+	{
+	  System.out.println("Definition: Matched Variable: " + var); 
+	  lengthVar = getLTLength(offsetVar); 
+	  System.out.println("Definition: After getLTLength: "); 
+	}
+    ASSIGN
+    {
+      System.out.println("Definition: Matched ASSIGN "); 
+      offsetExpr = getLTOffset(); 
+    }
+    expressionOrPathDescription
+    {
+      System.out.println("Definition: Matched expressionOrPathDescription: ");
+      lengthExpr = getLTLength(offsetExpr);
+      definition = graph.createDefinition();
+      System.out.println("Definition: Creating Vertex: " + definition);
+      IsVarOf varOf = graph.createIsVarOf(var, definition);
+      varOf.setSourcePositions((createSourcePositionList(lengthVar, offsetVar)));
+      IsExprOf exprOf = graph.createIsExprOf($expressionOrPathDescription.result, definition);
+      exprOf.setSourcePositions((createSourcePositionList(lengthExpr, offsetExpr)));
+    }
 ;
 	
 	
@@ -1030,17 +1030,14 @@ orExpression returns [Expression result]
   xorExpression 
   { 
     $result = $xorExpression.result;
-    System.out.println("OrExpression: XorExpression result is: " + $result);
     construct.preOp(result); 
   }
 ((OR) => (OR
   {
-    System.out.println("OrExpression: Post Operator OR"); 
     construct.postOp("or");
   }
   expr = orExpression
   {
-    System.out.println("OrExpression: Created Expression is: " + $result); 
     $result = construct.postArg2(expr);
   })
 	|	 )
@@ -1056,7 +1053,6 @@ xorExpression returns [Expression result]
   andExpression
   { 
     $result = $andExpression.result;
-  //  System.out.println("AndExpression result is: " + $result);
     construct.preOp(result); 
   }
 (XOR
@@ -1075,7 +1071,6 @@ andExpression returns [Expression result]
   equalityExpression
   { 
     $result = $equalityExpression.result;
-  //  System.out.println("EqualityExpression result is: " + $result);
     construct.preOp(result); 
   }
 (AND
@@ -1095,7 +1090,6 @@ equalityExpression returns [Expression result]
   expr = relationalExpression
   { 
     $result = $relationalExpression.result;
-  //  System.out.println("RelationalExpression result is: " + $result);
     construct.preOp(result); 
   }
 (EQUAL
@@ -1117,7 +1111,6 @@ relationalExpression returns [Expression result]
   additiveExpression
   { 
     $result = $additiveExpression.result;
-    System.out.println("RelationalExpression: AdditiveExpression result is: " + $result);
     construct.preOp($result); 
   }
 ( ( L_T { name = "leThan"; }
@@ -1125,7 +1118,7 @@ relationalExpression returns [Expression result]
   | G_T  { name = "grThan"; }
   | GE { name = "grEqual"; }
   | MATCH {name = "match";} ) 
-  { construct.postOp(name); System.out.println("RelationalExpression: Post Relational Operator"); }
+  { construct.postOp(name); }
   expr = relationalExpression
   { result = construct.postArg2(expr); }
 ) ?
@@ -1141,15 +1134,15 @@ additiveExpression returns [Expression result]
   multiplicativeExpression
   {
     $result = $multiplicativeExpression.result; 
-   // System.out.println("MultiplicativeExpression result is: " + $result);
-    construct.preOp(expr); 
+    construct.preOp($result); 
   }
-( (  PLUS { construct.postOp("plus"); }
-     | MINUS { construct.postOp("minus"); })
-    expr = additiveExpression
-   { result = construct.postArg2(expr); }
-)? 	 
+( 
+  (PLUS) => (PLUS  {construct.postOp("plus");} expr = additiveExpression {result = construct.postArg2(expr);}) 
+  | (MINUS) => (MINUS { construct.postOp("minus");} expr = additiveExpression {result = construct.postArg2(expr);})
+  | 
+)   
 ;
+
 
 
 multiplicativeExpression returns [Expression result]
@@ -1161,8 +1154,7 @@ multiplicativeExpression returns [Expression result]
   unaryExpression
   {
     $result = $unaryExpression.result; 
-  //  System.out.println("UnaryExpression result is: " + $result);
-    construct.preOp(expr); 
+    construct.preOp($result); 
   }
   (( STAR { construct.postOp("times"); }
    | MOD  { construct.postOp("modulo"); }
@@ -1190,7 +1182,6 @@ unaryExpression returns [Expression result = null]
   pathExpression
   {
     $result = $pathExpression.result;
-    System.out.println("UnaryExpression: Result of pathExpression is: " + $result);   
   }
 )
 ;
@@ -1225,7 +1216,6 @@ unaryOperator returns [FunctionId result = null]
 	functionSymbolTable.insert(name, unaryOp);
    }
    $result = unaryOp;
-   System.out.println("UnaryOp is: " + $result);
 }
 ;
 
@@ -1320,7 +1310,6 @@ valueAccess returns [Expression result]
   { 
     construct.preOp($primaryExpression.result); 
     $result = $primaryExpression.result; 
-    System.out.println("PrimaryExpression result is: " + $primaryExpression.result);
   }
   ( (DOT) => 
    (DOT 
@@ -1339,7 +1328,6 @@ valueAccess returns [Expression result]
   {
     if (construct.isValidFunction())
     	$result = construct.postArg2($result); 
-    System.out.println("ValueAccess is: " + $result);
   }
 )
 ;
@@ -1358,7 +1346,6 @@ primaryExpression returns [Expression result = null]
 | 	graphRangeExpression {$result = $graphRangeExpression.expr;}
 |	literal	{$result = $literal.literal;}
 |   simpleQuery {$result = $simpleQuery.comprehension;})
-{System.out.println("Created PrimaryExpression is: " + $result);}
 ;
 
 /** matches a pathdescription
@@ -2117,19 +2104,14 @@ typeId returns [TypeId type = null]
 
 
 literal returns [Expression literal = null]
-@init{
-	    System.out.println("Literal: ... "); 
-}
 :
 	token=STRING_LITERAL
     {
-    System.out.println("Literal: Matching StringLiteral "); 
        	literal = graph.createStringLiteral();
        	((StringLiteral) literal).setStringValue(decode(token.getText()));
     }
 |	THISVERTEX
     {
-    System.out.println("Literal: Matching ThisVertexLiteral "); 
   /*     literal = graph.getFirstThisLiteral();
        if (literal != null)	
 	       	return literal;*/
@@ -2137,7 +2119,6 @@ literal returns [Expression literal = null]
     }
 |	THISEDGE
     {
-    System.out.println("Literal: Matching ThisEdgelLiteral "); 
      	/*literal = graph.getFirstThisEdge();
         if (literal != null)
 	      	return literal;*/
@@ -2145,7 +2126,6 @@ literal returns [Expression literal = null]
     }
 |	(token=DECLITERAL | token=HEXLITERAL | token = OCTLITERAL)
 	{
-	    System.out.println("Literal: Matching Int literal "); 
         int value = 0;
         if (token.getText().startsWith("0x") || token.getText().startsWith("0X") ) {
            	value = Integer.parseInt(token.getText().substring(2),16);
@@ -2159,13 +2139,11 @@ literal returns [Expression literal = null]
 	}
 |	token=FLOAT_LITERAL
     {
-    System.out.println("Literal: Matching RealLiteral "); 
        	literal = graph.createRealLiteral();
 		((RealLiteral) literal).setRealValue(Double.parseDouble(token.getText()));
     }
 |	TRUE
     {
-    	System.out.println("Literal: Matching True Literal "); 
         literal = (Literal) graph.getFirstVertexOfClass(BoolLiteral.class);
         while ( (literal != null) && ( ((BoolLiteral) literal).getBoolValue() != TrivalentBoolean.TRUE))
         	literal = (BoolLiteral) literal.getNextVertexOfClass(BoolLiteral.class);
@@ -2180,7 +2158,6 @@ literal returns [Expression literal = null]
     }
 |	FALSE
     {
-        System.out.println("Literal: Matching False Literal "); 
         literal = (Literal) graph.getFirstVertexOfClass(BoolLiteral.class);
         while ((literal != null) && (((BoolLiteral) literal).getBoolValue() != TrivalentBoolean.FALSE))
         	literal = (BoolLiteral) literal.getNextVertexOfClass(BoolLiteral.class);
@@ -2195,7 +2172,6 @@ literal returns [Expression literal = null]
     }
 |	NULL_VALUE
     {
-        System.out.println("Literal: Matching Null lLiteral "); 
         literal = (Literal) graph.getFirstVertexOfClass(NullLiteral.class);
 	    if (literal == null)
 		    literal = graph.createNullLiteral(); 
@@ -2241,16 +2217,25 @@ edgeVertexList returns [EdgeVertexList eVList = null]
 	;	
 	
 
-/*
+
 expressionOrPathDescription returns [Expression result = null]
 :
-    (  (pathDescription expression) => expr = expression
-    | (expression) => expr = expression
-    | expr = pathDescription)
-    {$result = expr;}
-;*/	
+    (  (pathDescription expression) => (expr = expression {$result = expr;})
+      | (expression) => (expr = expression {$result = expr;})
+      | (pathDescription {$result = $pathDescription.result;})
+    )
+;
 	
 	
+/** Original-version im Antlr2-parser: 	
+ * expressionOrPathDescription returns [Expression result = null]
+ *:
+ *   (  (pathDescription expression) => (expression {$result = $expression.result;})
+ *     | (expression) => (expression {$result = $expression.result;})
+ *     | (pathDescription {$result = $pathDescription.result;})
+ *   )
+ *;	
+ */	
 
 edgeRestrictionList returns [ArrayList<VertexPosition> list = new ArrayList<VertexPosition>()] 
 @init{
@@ -2435,10 +2420,8 @@ simpleQuery returns [Comprehension comprehension = null]
 	:
 		// declaration part
 		FROM
-		{System.out.println("Matching SimpleQuery");}
 		declarations = declarationList
         {
-            System.out.println("Matched declarations");
         	//TODO dbildh 21.11.08 : check if this can be replaced by call of declaration
         	declaration = graph.createDeclaration();
         	if (declarations.size() > 0) {
