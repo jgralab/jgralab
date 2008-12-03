@@ -637,12 +637,6 @@ HEXDIGIT : ('0'..'9'|'a'..'f'|'A'..'F') ;
 fragment
 IntegerTypeSuffix : ('l'|'L') ;
 
-	
-FLOAT_LITERAL
-    :   ('0'..'9')+ '.' ('0'..'9')+ Exponent? FloatTypeSuffix?
-    |   ('0'..'9')+ Exponent FloatTypeSuffix?
-    |   ('0'..'9')+ FloatTypeSuffix
-    ;
 
 fragment
 Exponent : ('e'|'E') ('+'|'-')? ('0'..'9')+ ;
@@ -2181,6 +2175,44 @@ typeId returns [TypeId type = null]
 ;
 
 
+numericLiteral returns [Expression literal = null]
+@init {
+	String textRepresentation = null;
+	int base = 10;
+	boolean isRealLiteral = false;
+	int offset = -1;
+}
+:
+	{offset = getLTOffset();}
+    (
+    	token=DECLITERAL
+		{
+	        textRepresentation = token.getText();
+		}
+		((DOT) => (DOT token = DECLITERAL
+			{
+				textRepresentation = textRepresentation + "." + token.getText();
+				isRealLiteral = true;
+			}
+		)|)	
+		(token = Exponent {textRepresentation += token.getText(); isRealLiteral = true;})?
+		(token = FloatTypeSuffix {isRealLiteral = true;})?
+	) |
+	(  token = HEXLITERAL {base = 16; textRepresentation = token.getText().substring(2);}
+	 | token = OCTLITERAL {base = 8; textRepresentation = token.getText().substring(1);}
+	)
+	(IntegerTypeSuffix {if (isRealLiteral) throw new ParseException("RealLiteral " + textRepresentation + " may not be followed by Integer type suffix at offset : " + offset, "N/A", new SourcePosition(offset, getLTLength(offset)));})?
+	{
+		if (isRealLiteral) {
+			literal = graph.createRealLiteral();
+			((RealLiteral) literal).setRealValue(Double.parseDouble(textRepresentation));
+		} else {
+	    	literal = graph.createIntLiteral();
+			((IntLiteral) literal).setIntValue(Integer.parseInt(textRepresentation, base));
+		}	
+	}
+;	
+
 
 literal returns [Expression literal = null]
 :
@@ -2203,25 +2235,8 @@ literal returns [Expression literal = null]
 	      	return literal;*/
         literal = graph.createThisEdge();
     }
-|	(token=DECLITERAL | token=HEXLITERAL | token = OCTLITERAL)
-	{
-        int value = 0;
-        if (token.getText().startsWith("0x") || token.getText().startsWith("0X") ) {
-           	value = Integer.parseInt(token.getText().substring(2),16);
-        } else if (token.getText().startsWith("0") && token.getText().length()>1) {
-         	value = Integer.parseInt(token.getText().substring(1),8);
-        } else {
-          	value = Integer.parseInt(token.getText());
-        }
-	    literal = graph.createIntLiteral();
-		((IntLiteral) literal).setIntValue(value);
-	}
-|	token=FLOAT_LITERAL
-    {
-        System.out.println("RealLiteral text: " + token.getText());
-       	literal = graph.createRealLiteral();
-		((RealLiteral) literal).setRealValue(Double.parseDouble(token.getText()));
-    }
+|	(numericLiteral
+	{$literal = $numericLiteral.literal;})
 |	TRUE
     {
         literal = (Literal) graph.getFirstVertexOfClass(BoolLiteral.class);
