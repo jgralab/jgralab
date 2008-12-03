@@ -98,8 +98,12 @@ public class RecordDomainImpl extends CompositeDomainImpl implements
 
 	@Override
 	public void addComponent(String name, Domain aDomain) {
+		if (name.equals("")) {
+			throw new SchemaException(
+					"Cannot create a record component with an empty name.");
+		}
 		if (components.containsKey(name)) {
-			throw new SchemaException("duplicate record component '" + name
+			throw new SchemaException("Duplicate record component '" + name
 					+ "' in RecordDomain '" + getName() + "'");
 		}
 		if (!isDomainOfSchema(getSchema(), aDomain)) {
@@ -191,11 +195,13 @@ public class RecordDomainImpl extends CompositeDomainImpl implements
 
 	@Override
 	public boolean equals(Object o) {
-		if (this == o)
+		if (this == o) {
 			return true;
+		}
 
-		if (!(o instanceof RecordDomain))
+		if (!(o instanceof RecordDomain)) {
 			return false;
+		}
 
 		RecordDomain other = (RecordDomain) o;
 		return components.equals(other.getComponents());
@@ -212,7 +218,7 @@ public class RecordDomainImpl extends CompositeDomainImpl implements
 	 * <code>domain</code><br>
 	 * false, otherwise<br>
 	 * <b>post:</b> record'.equals(record) && domain'.equals(domain)
-	 * 
+	 *
 	 * @param domain
 	 *            the domain of the component
 	 * @param fromConstructor
@@ -240,17 +246,17 @@ public class RecordDomainImpl extends CompositeDomainImpl implements
 			}
 			for (Domain d : getSchema().getCompositeDomainsInTopologicalOrder()) {
 				if (d instanceof RecordDomainImpl) {
-					if (!in.containsKey((RecordDomainImpl) d)) {
+					if (!in.containsKey(d)) {
 						in.put((RecordDomainImpl) d, 0);
 					}
 					for (Domain e : ((RecordDomainImpl) d)
 							.getAllComponentCompositeDomains()) {
 						if (e instanceof RecordDomainImpl) {
-							if (!in.containsKey((RecordDomainImpl) e)) {
+							if (!in.containsKey(e)) {
 								in.put((RecordDomainImpl) e, 1);
 							} else {
 								in.put((RecordDomainImpl) e, in
-										.get((RecordDomainImpl) e) + 1);
+										.get(e) + 1);
 							}
 						}
 					}
@@ -271,7 +277,7 @@ public class RecordDomainImpl extends CompositeDomainImpl implements
 				topologicalList.add(rec);
 				for (Domain e : rec.getAllComponentCompositeDomains()) {
 					if (e instanceof RecordDomainImpl) {
-						int i = in.get((RecordDomainImpl) e) - 1;
+						int i = in.get(e) - 1;
 						in.put((RecordDomainImpl) e, i);
 						if (i == 0) {
 							q.add((RecordDomainImpl) e);
