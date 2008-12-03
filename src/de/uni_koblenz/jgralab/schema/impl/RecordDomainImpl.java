@@ -24,17 +24,15 @@
 
 package de.uni_koblenz.jgralab.schema.impl;
 
-import java.util.HashMap;
-import java.util.LinkedList;
+import java.util.HashSet;
 import java.util.Map;
-import java.util.Queue;
 import java.util.Set;
 import java.util.TreeMap;
-import java.util.TreeSet;
 import java.util.Map.Entry;
 
 import de.uni_koblenz.jgralab.codegenerator.CodeBlock;
 import de.uni_koblenz.jgralab.codegenerator.CodeSnippet;
+import de.uni_koblenz.jgralab.schema.CompositeDomain;
 import de.uni_koblenz.jgralab.schema.Domain;
 import de.uni_koblenz.jgralab.schema.Package;
 import de.uni_koblenz.jgralab.schema.QualifiedName;
@@ -105,13 +103,35 @@ public class RecordDomainImpl extends CompositeDomainImpl implements
 					+ " must be a domain of the schema "
 					+ getSchema().getQualifiedName());
 		}
-		if (!isAcyclicAfterCreatingComponent(aDomain, false)) {
+		if (!staysAcyclicAfterAdding(aDomain)) {
 			throw new SchemaException(
 					"The Creation of a component, which has the type "
 							+ aDomain
 							+ ", would create a cycle of RecordDomains.");
 		}
 		components.put(name, aDomain);
+	}
+
+	/**
+	 * @param d
+	 *            the component domain which should be checked
+	 * @return <code>true</code> if the addition of <code>d</code> wouldn't
+	 *         create an inclusion cycle, <code>false</code> otherwise
+	 */
+	private boolean staysAcyclicAfterAdding(Domain d) {
+		if (d == this) {
+			return false;
+		}
+		if (!(d instanceof CompositeDomain)) {
+			return true;
+		}
+		CompositeDomain c = (CompositeDomain) d;
+		for (CompositeDomain comp : c.getAllComponentCompositeDomains()) {
+			if (!staysAcyclicAfterAdding(comp)) {
+				return false;
+			}
+		}
+		return true;
 	}
 
 	@Override
@@ -188,7 +208,7 @@ public class RecordDomainImpl extends CompositeDomainImpl implements
 	}
 
 	public Set<Domain> getAllComponentDomains() {
-		return new TreeSet<Domain>(components.values());
+		return new HashSet<Domain>(components.values());
 	}
 
 	@Override
@@ -205,92 +225,4 @@ public class RecordDomainImpl extends CompositeDomainImpl implements
 		return components.equals(other.getComponents());
 	}
 
-	/**
-	 * Tests if there wouln't be a cyclic inclusion of RecordDomains, if a
-	 * component of the Domain <code>domain</code> would be created.<br>
-	 * <br>
-	 * <b>pattern:</b> b=record.isAcyclicAfterCreatingComponent(domain)<br>
-	 * <b>pre:</b> domain.getSchema()=this.getSchema();<br>
-	 * <b>post:</b> true, iff all RecordDomains of this schema doesn't contain
-	 * themselves in a cyclic way after creating a a component of type
-	 * <code>domain</code><br>
-	 * false, otherwise<br>
-	 * <b>post:</b> record'.equals(record) && domain'.equals(domain)
-	 *
-	 * @param domain
-	 *            the domain of the component
-	 * @param fromConstructor
-	 *            true, if this method is called from the constructor. false,
-	 *            otherwise
-	 * @return true, iff all RecordDomains of this schema doesn't contain
-	 *         themselves in a cyclic way after creating a a component of type
-	 *         <code>domain</code><br>
-	 *         false, otherwise<br>
-	 */
-	protected boolean isAcyclicAfterCreatingComponent(Domain domain,
-			boolean fromConstructor) {
-		if (!(domain instanceof RecordDomain)) {
-			return true;
-		} else {
-			RecordDomain recDom = (RecordDomain) domain;
-			// Creates a Map of all RecordDomains and the number of references
-			// from other RecordDomains on them
-			HashMap<RecordDomain, Integer> in = new HashMap<RecordDomain, Integer>();
-			// Simulation of the situation, that this RecordDomain would have a
-			// component of type domain
-			if (fromConstructor) {
-				in.put(recDom, 0);
-			} else {
-				in.put(recDom, 1);
-			}
-			for (Domain d : getSchema().getCompositeDomainsInTopologicalOrder()) {
-				if (d instanceof RecordDomain) {
-					if (!in.containsKey(d)) {
-						in.put((RecordDomain) d, 0);
-					}
-					for (Domain e : ((RecordDomain) d)
-							.getAllComponentCompositeDomains()) {
-						if (e instanceof RecordDomain) {
-							if (!in.containsKey(e)) {
-								in.put((RecordDomain) e, 1);
-							} else {
-								in.put((RecordDomain) e, in.get(e) + 1);
-							}
-						}
-					}
-				}
-			}
-			// Creates a queue of all RecordDomains, which aren't Domains in
-			// other RecordDomains
-			Queue<RecordDomain> q = new LinkedList<RecordDomain>();
-			for (RecordDomain rec : in.keySet()) {
-				if (in.get(rec) == 0) {
-					q.add(rec);
-				}
-			}
-			// Creates a topological list of all RecordDomains
-			LinkedList<RecordDomain> topologicalList = new LinkedList<RecordDomain>();
-			while (!q.isEmpty()) {
-				RecordDomain rec = q.poll();
-				topologicalList.add(rec);
-				for (Domain d : rec.getAllComponentCompositeDomains()) {
-					if (d instanceof RecordDomain) {
-						RecordDomain dom = (RecordDomain) d;
-						int i = in.get(dom) - 1;
-						in.put(dom, i);
-						if (i == 0) {
-							q.add(dom);
-						}
-					}
-				}
-			}
-			// If topologicalList contains all RecordDomains, then it is
-			// acyclic.
-			if (topologicalList.size() == in.size()) {
-				return true;
-			} else {
-				return false;
-			}
-		}
-	}
 }
