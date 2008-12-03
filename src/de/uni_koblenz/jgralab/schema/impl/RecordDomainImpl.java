@@ -235,31 +235,32 @@ public class RecordDomainImpl extends CompositeDomainImpl implements
 	 */
 	protected boolean isAcyclicAfterCreatingComponent(Domain domain,
 			boolean fromConstructor) {
-		if (!(domain instanceof RecordDomainImpl)) {
+		if (!(domain instanceof RecordDomain)) {
 			return true;
 		} else {
+			RecordDomain recDom = (RecordDomain) domain;
 			// Creates a Map of all RecordDomains and the number of references
 			// from other RecordDomains on them
-			HashMap<RecordDomainImpl, Integer> in = new HashMap<RecordDomainImpl, Integer>();
+			HashMap<RecordDomain, Integer> in = new HashMap<RecordDomain, Integer>();
 			// Simulation of the situation, that this RecordDomain would have a
 			// component of type domain
 			if (fromConstructor) {
-				in.put((RecordDomainImpl) domain, 0);
+				in.put(recDom, 0);
 			} else {
-				in.put((RecordDomainImpl) domain, 1);
+				in.put(recDom, 1);
 			}
 			for (Domain d : getSchema().getCompositeDomainsInTopologicalOrder()) {
-				if (d instanceof RecordDomainImpl) {
+				if (d instanceof RecordDomain) {
 					if (!in.containsKey(d)) {
-						in.put((RecordDomainImpl) d, 0);
+						in.put((RecordDomain) d, 0);
 					}
-					for (Domain e : ((RecordDomainImpl) d)
+					for (Domain e : ((RecordDomain) d)
 							.getAllComponentCompositeDomains()) {
-						if (e instanceof RecordDomainImpl) {
+						if (e instanceof RecordDomain) {
 							if (!in.containsKey(e)) {
-								in.put((RecordDomainImpl) e, 1);
+								in.put((RecordDomain) e, 1);
 							} else {
-								in.put((RecordDomainImpl) e, in.get(e) + 1);
+								in.put((RecordDomain) e, in.get(e) + 1);
 							}
 						}
 					}
@@ -267,23 +268,24 @@ public class RecordDomainImpl extends CompositeDomainImpl implements
 			}
 			// Creates a queue of all RecordDomains, which aren't Domains in
 			// other RecordDomains
-			Queue<RecordDomainImpl> q = new LinkedList<RecordDomainImpl>();
-			for (RecordDomainImpl rec : in.keySet()) {
+			Queue<RecordDomain> q = new LinkedList<RecordDomain>();
+			for (RecordDomain rec : in.keySet()) {
 				if (in.get(rec) == 0) {
 					q.add(rec);
 				}
 			}
 			// Creates a topological list of all RecordDomains
-			LinkedList<RecordDomainImpl> topologicalList = new LinkedList<RecordDomainImpl>();
+			LinkedList<RecordDomain> topologicalList = new LinkedList<RecordDomain>();
 			while (!q.isEmpty()) {
-				RecordDomainImpl rec = q.poll();
+				RecordDomain rec = q.poll();
 				topologicalList.add(rec);
-				for (Domain e : rec.getAllComponentCompositeDomains()) {
-					if (e instanceof RecordDomainImpl) {
-						int i = in.get(e) - 1;
-						in.put((RecordDomainImpl) e, i);
+				for (Domain d : rec.getAllComponentCompositeDomains()) {
+					if (d instanceof RecordDomain) {
+						RecordDomain dom = (RecordDomain) d;
+						int i = in.get(dom) - 1;
+						in.put(dom, i);
 						if (i == 0) {
-							q.add((RecordDomainImpl) e);
+							q.add(dom);
 						}
 					}
 				}
