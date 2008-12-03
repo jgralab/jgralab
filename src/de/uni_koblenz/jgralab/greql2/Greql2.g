@@ -21,6 +21,10 @@ tokens {
 package de.uni_koblenz.jgralab.greql2.parser;
 
 import java.util.logging.Logger;
+import java.util.Queue;
+import java.util.LinkedList;
+import java.util.Set;
+import java.util.HashSet;
 
 import org.antlr.runtime.RecognitionException;
 
@@ -49,14 +53,13 @@ import de.uni_koblenz.jgralab.schema.*;
 @members {
 
     private static Logger logger = Logger.getLogger(Greql2Parser.class.getName());
-    private final int VMAX = 100;
-    private final int EMAX = 100;
+    private final int VMAX = 200;
+    private final int EMAX = 300;
     private Greql2Schema schema = null;
     private Greql2 graph = null;
     private SymbolTable variableSymbolTable = null;
     private SymbolTable functionSymbolTable = null;
-    // private GraphClass graphClass = null;
-    // private boolean isAdditiveExpression = true;
+    private boolean graphCleaned = false;
 
     class FunctionConstruct {
     	String operatorName = null;  
@@ -163,6 +166,35 @@ import de.uni_koblenz.jgralab.schema.*;
      *  @return the abstract syntax graph representing a GReQL 2 query
      */
     public Greql2 getGraph()  {
+    	if (!graphCleaned) {
+    	    Set<Vertex> reachableVertices = new HashSet<Vertex>();
+    	    Queue<Vertex> queue = new LinkedList<Vertex>();
+    		Greql2Expression root = graph.getFirstGreql2Expression();
+    		queue.add(root);
+    		while (!queue.isEmpty()) {
+    			Vertex current = queue.poll();
+    			for (Edge e : current.incidences()) {
+    				if (!reachableVertices.contains(e.getThat())) {
+    					queue.add(e.getThat());
+    					reachableVertices.add(e.getThat());
+    				}	
+    			}
+    		}
+    		Vertex deleteCandidate = graph.getFirstVertex();
+    		while ((deleteCandidate != null) && (!reachableVertices.contains(deleteCandidate))) {
+    			deleteCandidate.delete();
+    			deleteCandidate = graph.getFirstVertex();
+    		}
+    		while (deleteCandidate != null)  {
+    			if (!reachableVertices.contains(deleteCandidate)) {
+    				Vertex v = deleteCandidate.getNextVertex();
+    				deleteCandidate.delete();
+    				deleteCandidate = v;
+    			} else {
+    				deleteCandidate = deleteCandidate.getNextVertex();
+    			}	
+    		}
+    	}
     	return graph;
     }
 
@@ -183,9 +215,8 @@ import de.uni_koblenz.jgralab.schema.*;
 		graph = Greql2Impl.create(VMAX,EMAX);
         variableSymbolTable = new SymbolTable();
  		functionSymbolTable = new SymbolTable();
-		//nonterminalSymbolTable = new SymbolTable();
 		functionSymbolTable.blockBegin();
-        //graphClass = schema.getGraphClass(new QualifiedName("Greql2"));
+		graphCleaned = false;
     }
    
     private int getLTLength(int offset) {
@@ -608,8 +639,7 @@ IntegerTypeSuffix : ('l'|'L') ;
 
 	
 FLOAT_LITERAL
-    :   ('0'..'9')+ '.' ('0'..'9')* Exponent? FloatTypeSuffix?
-    |   '.' ('0'..'9')+ Exponent? FloatTypeSuffix?
+    :   ('0'..'9')+ '.' ('0'..'9')+ Exponent? FloatTypeSuffix?
     |   ('0'..'9')+ Exponent FloatTypeSuffix?
     |   ('0'..'9')+ FloatTypeSuffix
     ;
@@ -1786,16 +1816,64 @@ tupleConstruction returns [ValueConstruction valueConstr = null]
 
 
 listConstruction returns [ValueConstruction valueConstr = null]
+@init{
+ 	int offsetStart = 0;
+ 	int offsetEnd = 0;
+ 	int lengthStart = 0;
+ 	int lengthEnd = 0;
+ 	System.out.println("Init ListConstruction");
+}
 :
 LIST
 LPAREN
-(
-   	(expression DOTDOT) => listRangeExpression {$valueConstr = $listRangeExpression.valueConstr;}
-    | (	expressions = expressionList
-        {$valueConstr = createPartsOfValueConstruction(expressions, graph.createListConstruction()); }
-      )?
-)
+{offsetStart = getLTOffset(); }
+startExpr = expression
+{lengthStart = getLTLength(offsetStart);
+ System.out.println("LA(1):" + input.LA(1) + " DOTDOT: " + DOTDOT);
+ IntLiteral intLit = (IntLiteral) startExpr;
+ System.out.println("Recognized IntLiteral is: " + intLit.getIntValue());
+}
+( (DOTDOT) => (DOTDOT 
+   {offsetEnd = getLTOffset();}
+   endExpr = expression
+   {
+   	 System.out.println("Found ListRangeConstruction");
+     lengthEnd = getLTLength(offsetEnd);
+     $valueConstr = graph.createListRangeConstruction();
+     IsFirstValueOf firstValueOf = graph.createIsFirstValueOf(startExpr, (ListRangeConstruction) valueConstr);
+     firstValueOf.setSourcePositions((createSourcePositionList(lengthStart, offsetStart)));
+     IsLastValueOf lastValueOf = graph.createIsLastValueOf(endExpr, (ListRangeConstruction) valueConstr);
+     lastValueOf.setSourcePositions((createSourcePositionList(lengthEnd, offsetEnd)));
+   }
+  )
+  |
+  (
+  	exprList = expressionList
+  	{
+  		System.out.println("Found ListConstruction");
+  		ArrayList<VertexPosition> allExpressions = new ArrayList<VertexPosition>();
+  		VertexPosition v = new VertexPosition();
+	  	v.length = lengthStart;
+	    v.node = startExpr;
+	    allExpressions.add(v);
+	    allExpressions.addAll(exprList);
+	    $valueConstr = createPartsOfValueConstruction(exprList, graph.createListConstruction());
+	}
+  )
+)  
 RPAREN
+
+/*(
+   	((expression DOTDOT) => ({System.out.println("Try to match ListRangeExpression");
+}listRangeExpression {$valueConstr = $listRangeExpression.valueConstr;}))
+    | (	expressions = expressionList
+        {System.out.println("Matched ListConstruction"); $valueConstr = createPartsOfValueConstruction(expressions, graph.createListConstruction()); }
+      )
+      
+      expressionList returns [ArrayList<VertexPosition> expressions]
+      
+)
+RPAREN*/
 ;
 
 
@@ -1805,6 +1883,7 @@ listRangeExpression returns [ValueConstruction valueConstr = null]
  	int offsetEnd = 0;
  	int lengthStart = 0;
  	int lengthEnd = 0;
+ 	System.out.println("Init ListRangeExpression");
 }
 :
 { offsetStart = getLTOffset(); }
@@ -2139,6 +2218,7 @@ literal returns [Expression literal = null]
 	}
 |	token=FLOAT_LITERAL
     {
+        System.out.println("RealLiteral text: " + token.getText());
        	literal = graph.createRealLiteral();
 		((RealLiteral) literal).setRealValue(Double.parseDouble(token.getText()));
     }
