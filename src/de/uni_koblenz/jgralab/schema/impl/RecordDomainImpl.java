@@ -131,6 +131,10 @@ public class RecordDomainImpl extends CompositeDomainImpl implements
 
 	@Override
 	public Domain getDomainOfComponent(String name) {
+		if (!components.containsKey(name)) {
+			throw new SchemaException("RecordDomain '" + getName()
+					+ "' does not contain a component '" + name + "'");
+		}
 		return components.get(name);
 	}
 
@@ -255,8 +259,7 @@ public class RecordDomainImpl extends CompositeDomainImpl implements
 							if (!in.containsKey(e)) {
 								in.put((RecordDomainImpl) e, 1);
 							} else {
-								in.put((RecordDomainImpl) e, in
-										.get(e) + 1);
+								in.put((RecordDomainImpl) e, in.get(e) + 1);
 							}
 						}
 					}
