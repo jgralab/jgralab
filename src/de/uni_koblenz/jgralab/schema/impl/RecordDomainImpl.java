@@ -65,12 +65,6 @@ public class RecordDomainImpl extends CompositeDomainImpl implements
 						+ " must be a domain of the schema "
 						+ getSchema().getQualifiedName());
 			}
-			if (!isAcyclicAfterCreatingComponent(aDomain, true)) {
-				throw new SchemaException(
-						"The Creation of a component, which has the type "
-								+ aDomain
-								+ ", would create a cycle of RecordDomains.");
-			}
 		}
 		this.components = components;
 	}
