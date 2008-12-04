@@ -118,8 +118,7 @@ public class JValueMap extends JValue {
 	 * value before, then the old mapping is replaced.
 	 *
 	 * @param k
-	 *            the key (must be a number, a string, a character, a boolean or
-	 *            a enumeration value)
+	 *            the key
 	 * @param v
 	 *            the value mapped by k
 	 * @return the previous value associated with the given key <code>k</code>
@@ -127,9 +126,6 @@ public class JValueMap extends JValue {
 	 *         the key had the value <code>null</code> before).
 	 */
 	public JValue put(JValue k, JValue v) {
-		assert (k.isBoolean() || k.isString() || k.isCharacter() || k
-				.isNumber()) : "The keys of a JValueMap must be numbers, booleans, "
-				+ "strings, characters or enumeration values.";
 		storedHashCode = 0;
 		return map.put(k, v);
 	}
