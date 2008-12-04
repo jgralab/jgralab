@@ -218,7 +218,7 @@ public class JValue implements Comparable<JValue> {
 	}
 
 	/**
-	 * returns true if theis JValue contains a VaraibleDeclarationLayer
+	 * returns true if their JValue contains a {@link VariableDeclarationLayer}
 	 */
 	public boolean isDeclarationLayer() {
 		return (type == JValueType.DECLARATIONLAYER);
