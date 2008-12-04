@@ -868,6 +868,7 @@ letExpression returns [Expression result = null]
 	  IsBoundExprOf exprOf = graph.createIsBoundExprOfDefinition(boundExpr, (LetExpression) result);
 	  exprOf.setSourcePositions((createSourcePositionList(length, offset)));
 	  // add definitions
+	  if (defList != null)
 	  for (VertexPosition def : defList) {
 		  IsDefinitionOf definitionOf = graph.createIsDefinitionOf((Definition)def.node, (LetExpression) result);
 		  definitionOf.setSourcePositions((createSourcePositionList(def.length, def.offset)));
@@ -905,6 +906,7 @@ if ((defList != null) && (!defList.isEmpty())){ //defList is empty if it's not a
 	IsBoundExprOf exprOf = graph.createIsBoundExprOfDefinition($conditionalExpression.result, (WhereExpression) result);
 	exprOf.setSourcePositions((createSourcePositionList(length, offset)));
 	// add definitions
+	if (defList != null)
 	for (VertexPosition def : defList) {
 		IsDefinitionOf isDefOf = graph.createIsDefinitionOf((Definition)def.node,  (WhereExpression) result);
 		isDefOf.setSourcePositions((createSourcePositionList(length, offset)));
@@ -1246,41 +1248,6 @@ unaryOperator returns [FunctionId result = null]
 }
 ;
 
-/** matches regular and context free forward- and backvertex sets or
-    pathexistences
-    @return
-*/
-pathExpression returns [Expression result = null] 
-@init{
-	int offsetArg1 = 0;
-	int lengthArg1 = 0;
-}
-:
-/* matcht regBackwardVertexSetOrPathSystem, wenn der Ausdruck mit
- * altPathDescr beginnt und ein SMILEY oder eine restrExpr folgt */
-(alternativePathDescription (SMILEY | restrictedExpression)) =>
-   regBackwardVertexSetOrPathSystem
-   {$result = $regBackwardVertexSetOrPathSystem.result; System.out.println("PathExpression BackVSet is: " + $result);}
-
-/* Ausdruck beginnt zwar mit altPathDescr, danach kommt aber weder Smiley
- * noch restrExpr --> matche also pfadausdruck als primaryExpr (Knotenpaare) */
-| (alternativePathDescription) => (
-   primaryExpression
-   {$result = $primaryExpression.result;})
-
-|  ( { offsetArg1 = getLTOffset(); }
-      expr = restrictedExpression
-     {
-        $result = expr;
-	    lengthArg1 = getLTLength(offsetArg1); 
-  	 }
-  	(  (alternativePathDescription) =>  (expr = regPathExistenceOrForwardVertexSet[expr, offsetArg1, lengthArg1])
-	 | (SMILEY) =>     (expr = regPathOrPathSystem[expr, offsetArg1, lengthArg1])
-	 | 
-    )
-    {$result = expr;}
-  )  
-;
 
 
 
@@ -1394,6 +1361,7 @@ alternativePathDescription returns [PathDescription result = null]
 	int lengthPart1 = 0;
 	int offsetPart2 = 0;
 	int lengthPart2 = 0;
+	System.out.println("Init AlternativePathDescription");
 }
 :
   {offsetPart1 = getLTOffset(); }
@@ -1402,12 +1370,12 @@ alternativePathDescription returns [PathDescription result = null]
     lengthPart1 = getLTLength(offsetPart1);
     $result = part1;
   }
-( BOR
+( (BOR) => (BOR
   {offsetPart2 = getLTOffset(); }
   part2 = intermediateVertexPathDescription
   {
 	$result = addPathElement(AlternativePathDescription.class, IsAlternativePathOf.class, pathDescr, part1, offsetPart1, lengthPart1, part2, offsetPart2, lengthPart2);
-})*		
+}))*		
 ;
 
 	   
@@ -1421,6 +1389,7 @@ intermediateVertexPathDescription returns [PathDescription result = null]
 	int lengthPart2 = 0;
 	int offsetExpr = 0;
 	int lengthExpr = 0;
+	System.out.println("Init IntermediateVertexPathDescription");
 }
 :
   {offsetPart1 = getLTOffset(); }
@@ -1429,18 +1398,21 @@ intermediateVertexPathDescription returns [PathDescription result = null]
     $result = part1;
     lengthPart1 = getLTLength(offsetPart1);
   }
-( {offsetExpr = getLTOffset(); }
-  restrExpr = restrictedExpression
-  {
-   	lengthExpr = getLTLength(offsetExpr);
-  	offsetPart2 = getLTOffset(); 
-  }
-  part2 = intermediateVertexPathDescription
-  {
-	$result = (IntermediateVertexPathDescription) addPathElement(IntermediateVertexPathDescription.class, IsSubPathOf.class, pathDescr, part1, offsetPart1, lengthPart1, part2, offsetPart2, lengthPart2);
-	IsIntermediateVertexOf intermediateVertexOf = graph.createIsIntermediateVertexOf(restrExpr, (IntermediateVertexPathDescription)$result);
-	intermediateVertexOf.setSourcePositions((createSourcePositionList(lengthExpr, offsetExpr )));
-  })		
+( (restrictedExpression) => 
+  (
+    {offsetExpr = getLTOffset(); }
+    restrExpr = restrictedExpression
+    {
+     	lengthExpr = getLTLength(offsetExpr);
+  		offsetPart2 = getLTOffset(); 
+  	}
+  	part2 = intermediateVertexPathDescription
+  	{
+		$result = (IntermediateVertexPathDescription) addPathElement(IntermediateVertexPathDescription.class, IsSubPathOf.class, pathDescr, part1, offsetPart1, lengthPart1, part2, offsetPart2, lengthPart2);
+		IsIntermediateVertexOf intermediateVertexOf = graph.createIsIntermediateVertexOf(restrExpr, (IntermediateVertexPathDescription)$result);
+		intermediateVertexOf.setSourcePositions((createSourcePositionList(lengthExpr, offsetExpr )));
+  	}
+  ) | /* only sequential path description*/ )		
 ;
 
 
@@ -1451,6 +1423,7 @@ sequentialPathDescription returns [PathDescription result = null]
 	int lengthPart1 = 0;
 	int lengthPart2 = 0;
 	int offsetPart2 = 0;
+	System.out.println("Init SequentialPathDescription");
 }
 :
   {offsetPart1 = getLTOffset(); }
@@ -1477,9 +1450,10 @@ startRestrictedPathDescription returns [PathDescription result = null]
 @init{
 	int offset = 0;
 	int length = 0;
+	System.out.println("Init StartRestrictedPathDescription");
 }
 :
-( LCURLY
+( (LCURLY) => LCURLY
   ( 
       (typeId) =>typeIds = typeExpressionList
       | { offset = getLTOffset(); }
@@ -1488,13 +1462,14 @@ startRestrictedPathDescription returns [PathDescription result = null]
   )
   RCURLY
   AMP
-)?
+| )
 pathDescr = goalRestrictedPathDescription
 {
   	if (expr != null) {
 		IsStartRestrOf startRestrOf = graph.createIsStartRestrOf(expr, pathDescr);
 		startRestrOf.setSourcePositions((createSourcePositionList(length, offset)));
 	} else {
+		if(typeIds != null)
 		for (VertexPosition t : typeIds) {
 			IsStartRestrOf startRestrOf = graph.createIsStartRestrOf((Expression)t.node, pathDescr);
 			startRestrOf.setSourcePositions((createSourcePositionList(t.length, t.offset)));
@@ -1508,14 +1483,16 @@ goalRestrictedPathDescription returns [PathDescription result = null]
 @init{
 	int offset = 0;
 	int length = 0;
+	System.out.println("Init GoalRestrictedPathDescription");
 }
 :
 iteratedOrTransposedPathDescription
 {$result = $iteratedOrTransposedPathDescription.result;}
-(AMP
+((AMP) => AMP
 	LCURLY
 	( ((typeId) =>typeIds = typeExpressionList
 		{
+			if (typeIds != null)
            	for (VertexPosition t : typeIds) {
     			IsGoalRestrOf goalRestrOf = graph.createIsGoalRestrOf((Expression)t.node, $result);
     			goalRestrOf.setSourcePositions((createSourcePositionList(t.length, t.offset)));
@@ -1532,7 +1509,7 @@ iteratedOrTransposedPathDescription
 		) // ende expr
 	)
 	RCURLY
-)?
+|)
 ;
 
 
@@ -1544,6 +1521,7 @@ iteratedOrTransposedPathDescription	returns [PathDescription result = null]
  	int lengthPath = 0;
  	int offsetExpr = 0;
  	int lengthExpr = 0;
+ 		System.out.println("InitIteratedPathDescription");
 }
 :
 { offsetPath = getLTOffset();}
@@ -1552,16 +1530,16 @@ primaryPathDescription
   $result = $primaryPathDescription.result;
   lengthPath = getLTLength(offsetPath);
 }
-(	
-  	( STAR { iteration = "star"; } | PLUS {iteration ="plus";} )
+( (STAR| PLUS) =>	
+  	(( STAR { iteration = "star"; } | PLUS {iteration ="plus";} )
       {
 		IteratedPathDescription ipd = graph.createIteratedPathDescription();
 	    ((IteratedPathDescription)ipd).setTimes(iteration);
 	    IsIteratedPathOf iteratedPathOf = graph.createIsIteratedPathOf($result, ipd);
 	    iteratedPathOf.setSourcePositions((createSourcePositionList(lengthPath, offsetPath)));
 	    $result = ipd;
-      }
-|	( CARET
+      })
+| ( (CARET) => (CARET
 		(	T  // transponatedPath:
            	{
 				TransposedPathDescription tpd = graph.createTransposedPathDescription();
@@ -1585,7 +1563,7 @@ primaryPathDescription
             }
           )
 		)
-	)
+	))
 )*
 ;
 
@@ -1594,15 +1572,13 @@ primaryPathDescription returns [PathDescription result = null]
 @init{
 	int offset = 0;
 	int length = 0;
+	System.out.println("Init PrimaryPathDescription");
 }
 :
-(
-    ( pathDescr = simplePathDescription {$result = pathDescr;}
-    | pathDescr = edgePathDescription   {$result = pathDescr;}
-    )
-)
-| ( LPAREN pathDescr = pathDescription  {$result = pathDescr;} RPAREN )
-| ( LBRACK
+  ( (simplePathDescription) => (pathDescr = simplePathDescription  {$result = pathDescr;}))
+| (edgePathDescription) => (pathDescr = edgePathDescription    {$result = pathDescr;})
+| (LPAREN) => (LPAREN pathDescr = pathDescription {$result = pathDescr;} RPAREN )
+| (LBRACK) => (LBRACK
     { offset = getLTOffset(); }
     pathDescr = pathDescription
     { length = getLTLength(offset); }
@@ -1613,7 +1589,7 @@ primaryPathDescription returns [PathDescription result = null]
 		optionalPathOf.setSourcePositions((createSourcePositionList(length, offset)));
 	    $result = optPathDescr;
     }
-)
+  )
 ;
 
 
@@ -1627,21 +1603,25 @@ simplePathDescription returns [PrimaryPathDescription result = null]
     Direction dir;
     String direction = "any";
     int offsetDir = 0;
+    System.out.println("Init SimplePathDescription");
+    	System.out.println("LA(1): " + input.LA(1));
+	System.out.println("RARROW: " + RARROW);
+	System.out.println("LARROW: " + LARROW);
+	System.out.println("ARROW: " + ARROW);
 }
 :
 {offsetDir = getLTOffset();}
-/* edge symbol */
-/* TODO: insert here for aggregation */
-( RARROW { direction = "out"; }
-| LARROW { direction = "in"; }
+( (RARROW) => (RARROW { direction = "out"; System.out.println("Matched RARROW: "); })
+| (LARROW) => (LARROW { direction = "in"; })
 | ARROW
 )
+{System.out.println("Matched EdgeSymbol");}
 /* edge type restriction */
 (   (LCURLY (edgeRestrictionList)? RCURLY ) =>
       (LCURLY (typeIds = edgeRestrictionList)?	RCURLY)
-| /* empty */    )
-
+| /* empty */ )
 {
+	System.out.println("Matched SimplePathDescription");
     $result = graph.createSimplePathDescription();
 	dir = (Direction)graph.getFirstVertexOfClass(Direction.class);
 	while (dir != null ) {
@@ -1656,6 +1636,7 @@ simplePathDescription returns [PrimaryPathDescription result = null]
 	    }
 	    IsDirectionOf directionOf = graph.createIsDirectionOf(dir, (PrimaryPathDescription) $result);
 	    directionOf.setSourcePositions((createSourcePositionList(0, offsetDir)));
+	   	if (typeIds != null)
 	    for (VertexPosition t : typeIds) {
 			IsEdgeRestrOf edgeRestrOf = graph.createIsEdgeRestrOf((EdgeRestriction)t.node, (PrimaryPathDescription) $result);
 			edgeRestrOf.setSourcePositions((createSourcePositionList(t.length, t.offset)));
@@ -1859,45 +1840,8 @@ startExpr = expression
   )
 )  
 RPAREN
-
-/*(
-   	((expression DOTDOT) => ({System.out.println("Try to match ListRangeExpression");
-}listRangeExpression {$valueConstr = $listRangeExpression.valueConstr;}))
-    | (	expressions = expressionList
-        {System.out.println("Matched ListConstruction"); $valueConstr = createPartsOfValueConstruction(expressions, graph.createListConstruction()); }
-      )
-      
-      expressionList returns [ArrayList<VertexPosition> expressions]
-      
-)
-RPAREN*/
 ;
 
-
-listRangeExpression returns [ValueConstruction valueConstr = null] 
-@init{
- 	int offsetStart = 0;
- 	int offsetEnd = 0;
- 	int lengthStart = 0;
- 	int lengthEnd = 0;
- 	System.out.println("Init ListRangeExpression");
-}
-:
-{ offsetStart = getLTOffset(); }
-startExpr = expression
-{ lengthStart = getLTLength(offsetStart);}
-DOTDOT
-{ offsetEnd = getLTOffset(); }
-endExpr = expression
-{
-   lengthEnd = getLTLength(offsetEnd);
-   $valueConstr = graph.createListRangeConstruction();
-   IsFirstValueOf firstValueOf = graph.createIsFirstValueOf(startExpr, (ListRangeConstruction) valueConstr);
-   firstValueOf.setSourcePositions((createSourcePositionList(lengthStart, offsetStart)));
-   IsLastValueOf lastValueOf = graph.createIsLastValueOf(endExpr, (ListRangeConstruction) valueConstr);
-   lastValueOf.setSourcePositions((createSourcePositionList(lengthEnd, offsetEnd)));
-}
-;
 
 
 recordConstruction returns [ValueConstruction valueConstr = null]
@@ -1908,6 +1852,7 @@ recordConstruction returns [ValueConstruction valueConstr = null]
 	RPAREN
     {
 		$valueConstr = graph.createRecordConstruction();
+		if (elements != null)
 		for (VertexPosition expr : elements) {
 			IsRecordElementOf exprOf = graph.createIsRecordElementOf((RecordElement)expr.node, (RecordConstruction) valueConstr);
 			exprOf.setSourcePositions((createSourcePositionList(expr.length, expr.offset)));
@@ -2573,6 +2518,63 @@ simpleQuery returns [Comprehension comprehension = null]
 		END
 	;		
 		
+		
+/** matches regular and context free forward- and backvertex sets or
+ * pathexistences
+ *  @return
+*/
+pathExpression returns [Expression result = null] 
+@init{
+	int offsetArg1 = 0;
+	int lengthArg1 = 0;
+	System.out.println("Init PathExpression");
+}
+:
+/* AlternativePathDescrition as path of backwardVertexSet or backwardPathSystem */
+(alternativePathDescription (SMILEY | restrictedExpression)) =>
+  (regBackwardVertexSetOrPathSystem  {$result = $regBackwardVertexSetOrPathSystem.result;})
+
+| 
+
+/* AlternativePathDescription as path of forwardVertexSet, pathExistence or forwardPathSystem */
+(
+    {
+      offsetArg1 = getLTOffset(); 
+      System.out.println("Matching RestrictedExpression");
+    }
+    restrictedExpression
+    {
+      $result = $restrictedExpression.result;
+      System.out.println("Matched RestrictedExpression: " + $result);
+	  lengthArg1 = getLTLength(offsetArg1); 
+  	}
+  	
+  	(  (alternativePathDescription) =>  
+  	   ( 
+  	      {System.out.println("Matching RegPathExistence");} 
+  	      regPathExistenceOrForwardVertexSet[$result, offsetArg1, lengthArg1]
+  	      {$result = $regPathExistenceOrForwardVertexSet.result;}
+  	   )
+	 | (SMILEY) =>     
+	    (regPathOrPathSystem[$result, offsetArg1, lengthArg1]
+	     {$result = $regPathOrPathSystem.expr;}
+	    )
+    )
+)
+|  
+/* AlternativePathDescription as vertexPairs */
+
+  (alternativePathDescription) => 
+    ( 
+     {System.out.println("Matching AlternativePathDescription");}
+     primaryExpression
+     {System.out.println("Try to match primaryExpression"); $result = $primaryExpression.result;}
+    )
+
+;
+
+
+	
 	
 
 regPathExistenceOrForwardVertexSet[Expression arg1, int offsetArg1, int lengthArg1]	returns [Expression expr = null]
@@ -2581,18 +2583,20 @@ regPathExistenceOrForwardVertexSet[Expression arg1, int offsetArg1, int lengthAr
 	int offsetExpr = 0;
 	int lengthPathDescr = 0;
 	int lengthExpr = 0;
+	System.out.println("Init ForwardVertexSet");
 }
 	:
 	{ offsetPathDescr = getLTOffset(); }
 	pathDescr = pathDescription
     { lengthPathDescr = getLTLength(offsetPathDescr);}
-	( 	(primaryExpression) =>
+	( 	(primaryExpression) => (
        	{ offsetExpr = getLTOffset(); }
        	restrExpr = restrictedExpression
-        { lengthExpr = getLTLength(offsetExpr); }
+        { lengthExpr = getLTLength(offsetExpr); })
 	| /* forward vertex set */
 	)
 	{
+		System.out.println("Computing ForwardVertexSet");
 		if (restrExpr != null) {
 			// create new pathexistence
 			PathExistence pe = graph.createPathExistence();
