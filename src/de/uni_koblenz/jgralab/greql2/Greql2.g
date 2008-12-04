@@ -244,6 +244,7 @@ import de.uni_koblenz.jgralab.schema.*;
 				logger.severe("error: " + offset +": RecognitionException " + e.getMessage());
 		}		
 		else logger.severe("error (offset = -1): RecognitionException " + e.getMessage());
+		System.out.println("ERROR: " + e.getMessage());
 	}
 
   	public void reportError(TokenStreamException e) {
@@ -626,17 +627,19 @@ STRING_LITERAL
 
 HEXLITERAL : '0' ('x'|'X') HEXDIGIT+ IntegerTypeSuffix? ;
 
-DECLITERAL : ('0' | (('1'..'9') ('0'..'9')*)) IntegerTypeSuffix? ;
+INTLITERAL : ('0' | (('1'..'9') ('0'..'9')*)) IntegerTypeSuffix;
+
+FLOATLITERAL : ('0' | (('1'..'9') ('0'..'9')*)) ((Exponent FloatTypeSuffix?) | FloatTypeSuffix);
 
 OCTLITERAL : '0' ('0'..'7')+ IntegerTypeSuffix? ;
+
+DECLITERAL : ('0' | (('1'..'9') ('0'..'9')*));
 
 fragment
 HEXDIGIT : ('0'..'9'|'a'..'f'|'A'..'F') ;
 
-	
-fragment
+fragment	
 IntegerTypeSuffix : ('l'|'L') ;
-
 
 fragment
 Exponent : ('e'|'E') ('+'|'-')? ('0'..'9')+ ;
@@ -2181,28 +2184,37 @@ numericLiteral returns [Expression literal = null]
 	int base = 10;
 	boolean isRealLiteral = false;
 	int offset = -1;
+	System.out.println("Testing NumericLiteral");
 }
 :
 	{offset = getLTOffset();}
-    (
+   ( 
+   	  (token=INTLITERAL {System.out.println("Found IntLiteral"); textRepresentation = token.getText();})
+    | (token=FLOATLITERAL {System.out.println("Found FloatLiteral"); textRepresentation = token.getText();})
+   	| (token=HEXLITERAL {base = 16; textRepresentation = token.getText().substring(2);})
+	| (token=OCTLITERAL {base = 8; textRepresentation = token.getText().substring(1);})
+    | (
     	token=DECLITERAL
 		{
+			System.out.println("Found DecLiteral");
 	        textRepresentation = token.getText();
 		}
-		((DOT) => (DOT token = DECLITERAL
+		((DOT) => ( DOT
+		    ((FLOATLITERAL) => token = FLOATLITERAL |
+		     (DECLITERAL) => token = DECLITERAL)
 			{
+				System.out.println("Found RealLiteral");
 				textRepresentation = textRepresentation + "." + token.getText();
 				isRealLiteral = true;
 			}
-		)|)	
-		(token = Exponent {textRepresentation += token.getText(); isRealLiteral = true;})?
-		(token = FloatTypeSuffix {isRealLiteral = true;})?
-	) |
-	(  token = HEXLITERAL {base = 16; textRepresentation = token.getText().substring(2);}
-	 | token = OCTLITERAL {base = 8; textRepresentation = token.getText().substring(1);}
-	)
-	(IntegerTypeSuffix {if (isRealLiteral) throw new ParseException("RealLiteral " + textRepresentation + " may not be followed by Integer type suffix at offset : " + offset, "N/A", new SourcePosition(offset, getLTLength(offset)));})?
+		    )
+		 |)	
+		(token = Exponent {textRepresentation += token.getText(); isRealLiteral = true; System.out.println("Matching exponent");})?
+		(token = FloatTypeSuffix {isRealLiteral = true; System.out.println("Matching float suffix");})?
+	) 
+)	
 	{
+		System.out.println("Matched numericLiteral");
 		if (isRealLiteral) {
 			literal = graph.createRealLiteral();
 			((RealLiteral) literal).setRealValue(Double.parseDouble(textRepresentation));
@@ -2215,6 +2227,9 @@ numericLiteral returns [Expression literal = null]
 
 
 literal returns [Expression literal = null]
+@init{
+	System.out.println("Testing Literal");
+}	
 :
 	token=STRING_LITERAL
     {
