@@ -528,7 +528,7 @@ public class GreqlEvaluator {
 	public GreqlEvaluator(String query, Graph datagraph,
 			Map<String, JValue> variables, ProgressFunction progressFunction) {
 		if (datagraph == null) {
-			//this.datagraph = createMinimalGraph();
+			this.datagraph = createMinimalGraph();
 		} else {
 			this.datagraph = datagraph;
 		}
