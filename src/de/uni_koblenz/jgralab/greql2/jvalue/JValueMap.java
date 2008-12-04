@@ -184,10 +184,25 @@ public class JValueMap extends JValue {
 
 	@Override
 	public boolean equals(Object o) {
-		if (o instanceof JValueMap) {
-			JValueMap other = (JValueMap) o;
-			return map.equals(other.map);
+		if (this == o) {
+			return true;
 		}
-		return false;
+		if (!(o instanceof JValueMap)) {
+			return false;
+		}
+		JValueMap other = (JValueMap) o;
+		if (size() != other.size()) {
+			return false;
+		}
+		for (JValue k : keySet()) {
+			if (!other.containsKey(k)) {
+				return false;
+			}
+
+			if (!other.get(k).equals(get(k))) {
+				return false;
+			}
+		}
+		return true;
 	}
 }
