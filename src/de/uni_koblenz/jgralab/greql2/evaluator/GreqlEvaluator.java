@@ -30,6 +30,7 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.StringReader;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -59,7 +60,11 @@ import de.uni_koblenz.jgralab.greql2.optimizer.Optimizer;
 import de.uni_koblenz.jgralab.greql2.parser.Greql2Lexer;
 import de.uni_koblenz.jgralab.greql2.parser.Greql2Parser;
 import de.uni_koblenz.jgralab.greql2.schema.Greql2;
+import de.uni_koblenz.jgralab.schema.GraphClass;
+import de.uni_koblenz.jgralab.schema.QualifiedName;
 import de.uni_koblenz.jgralab.schema.Schema;
+import de.uni_koblenz.jgralab.schema.VertexClass;
+import de.uni_koblenz.jgralab.schema.impl.SchemaImpl;
 import de.uni_koblenz.jgralab.utilities.TGFilenameFilter;
 
 /**
@@ -522,11 +527,38 @@ public class GreqlEvaluator {
 	 */
 	public GreqlEvaluator(String query, Graph datagraph,
 			Map<String, JValue> variables, ProgressFunction progressFunction) {
-		this.datagraph = datagraph;
+		if (datagraph == null) {
+			//this.datagraph = createMinimalGraph();
+		} else {
+			this.datagraph = datagraph;
+		}
 		this.queryString = query;
 		normalizeQueryString();
 		this.variableMap = variables;
 		this.progressFunction = progressFunction;
+	}
+
+	/**
+	 * @return a minimal graph (no vertices and no edges) of a minimal schema.
+	 */
+	private Graph createMinimalGraph() {
+		Schema minS = new SchemaImpl(new QualifiedName(
+				"de.uni_koblenz.jgralab.MinimalSchema"));
+		GraphClass gc = minS
+				.createGraphClass(new QualifiedName("MinimalGraph"));
+		VertexClass n = gc.createVertexClass(new QualifiedName("Node"));
+		gc.createEdgeClass(new QualifiedName("Link"), n, n);
+		minS.compile();
+		Method graphCreateMethod = minS.getGraphCreateMethod(new QualifiedName(
+				"MinimalGraph"));
+
+		try {
+			return (Graph) (graphCreateMethod.invoke(null, new Object[] {
+					"test", 1, 1 }));
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return null;
 	}
 
 	/**
@@ -561,7 +593,11 @@ public class GreqlEvaluator {
 	public GreqlEvaluator(File queryFile, Graph datagraph,
 			Map<String, JValue> variables, ProgressFunction progressFunction)
 			throws FileNotFoundException, IOException {
-		this.datagraph = datagraph;
+		if (datagraph == null) {
+			this.datagraph = createMinimalGraph();
+		} else {
+			this.datagraph = datagraph;
+		}
 		this.variableMap = variables;
 		this.progressFunction = progressFunction;
 		BufferedReader reader = new BufferedReader(new FileReader(queryFile));
@@ -602,7 +638,11 @@ public class GreqlEvaluator {
 	 */
 	public GreqlEvaluator(Greql2 queryGraph, Graph dataGraph,
 			Map<String, JValue> variables) {
-		this.datagraph = dataGraph;
+		if (dataGraph == null) {
+			this.datagraph = createMinimalGraph();
+		} else {
+			this.datagraph = dataGraph;
+		}
 		this.queryGraph = queryGraph;
 		this.variableMap = variables;
 	}
