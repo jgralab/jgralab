@@ -1,5 +1,5 @@
 grammar Greql2;
-options {backtrack=false;}
+options {backtrack=true;}
 
 tokens {
 	FUNCTIONID;
@@ -764,6 +764,9 @@ greqlExpression
     @return  vertex representing the expression
 */
 expression returns [Expression result = null]
+@init{
+ System.out.println("Init expression");
+}
 : quantifiedExpression {$result = $quantifiedExpression.result;}
 ;
 
@@ -779,12 +782,14 @@ quantifiedExpression returns [Expression result]
 	int lengthQuantifier = 0;
 	int lengthQuantifiedDecl = 0;
 	int lengthQuantifiedExpr = 0;
+	System.out.println("Init quantifiedexpression");
 }
 :
   (
     {
        	offsetQuantifier = input.LT(1).getCharPositionInLine()-1;
        	lengthQuantifier = input.LT(1).getText().length();
+       	System.out.println("quantifiedexpression: Try real quantified expr");
     }
     // starts with quantifier ...
     q = quantifier
@@ -814,6 +819,7 @@ quantifiedExpression returns [Expression result]
     }
 )
 | // not a "real" quantified expression
+{	System.out.println("quantifiedexpression: Try LetExpression");}
   letExpression {$result = $letExpression.result;}
 ;
 
@@ -848,6 +854,7 @@ letExpression returns [Expression result = null]
 @init{
 	int offset = 0;
 	int length = 0;
+	System.out.println("Init LetExpression");
 }
 :
 (
@@ -886,6 +893,7 @@ whereExpression returns [Expression result = null]
 @init{
 	int offset = 0;
 	int length = 0;
+		System.out.println("Init WhereExpression");
 }
 :
 { offset = input.LT(1).getCharPositionInLine()-1; }
@@ -893,10 +901,10 @@ whereExpression returns [Expression result = null]
 conditionalExpression
 { length = getLTLength(offset); }
        	// optional "where"-part:
-(
-	WHERE
-	defList = definitionList
-)?
+((WHERE) =>
+	(WHERE
+	defList = definitionList) |
+)
 {
 if ((defList != null) && (!defList.isEmpty())){ //defList is empty if it's not a where-expression 
     // create new where-expression
@@ -992,6 +1000,7 @@ conditionalExpression returns [Expression result = null]
 	int lengthTrueExpr = 0;
 	int lengthFalseExpr = 0;
 	int lengthNullExpr = 0;
+		System.out.println("Init ConditionalExpression");
 }
 :
     { offsetExpr = getLTOffset(); }
@@ -1002,6 +1011,7 @@ conditionalExpression returns [Expression result = null]
       lengthExpr = getLTLength(offsetExpr); 
     }
     /* optional part */
+   ((QUESTION) =>
     (
     QUESTION
     { offsetTrueExpr = getLTOffset(); }
@@ -1035,14 +1045,13 @@ conditionalExpression returns [Expression result = null]
 	  nullExprOf.setSourcePositions((createSourcePositionList(lengthNullExpr, offsetNullExpr)));
 	  $result = condExpr;
     }
-  )?
+  ) | )
 ;
 
 	
 orExpression returns [Expression result]
 @init{
     FunctionConstruct construct = new FunctionConstruct();
-    System.out.println("Init FunctionConstruct: " + construct);
 }
 :
   { construct.preArg1(); }
@@ -1074,11 +1083,11 @@ xorExpression returns [Expression result]
     $result = $andExpression.result;
     construct.preOp(result); 
   }
-(XOR
+((XOR) => (XOR
   { construct.postOp("xor"); }
   expr = xorExpression
-  { result = construct.postArg2(expr); }
-)?
+  { result = construct.postArg2(expr); })
+| )
 ;	
 
 andExpression returns [Expression result]
@@ -1092,11 +1101,11 @@ andExpression returns [Expression result]
     $result = $equalityExpression.result;
     construct.preOp(result); 
   }
-(AND
+((AND) => (AND
   { construct.postOp("and"); }
   expr = andExpression
-  { result = construct.postArg2(expr); }
-)?
+  { result = construct.postArg2(expr); })
+| )
 ;	
 
 
@@ -1111,11 +1120,11 @@ equalityExpression returns [Expression result]
     $result = $relationalExpression.result;
     construct.preOp(result); 
   }
-(EQUAL
+((EQUAL) => (EQUAL
   { construct.postOp("="); }
   expr = equalityExpression
-  { result = construct.postArg2(expr); }
-)?
+  { result = construct.postArg2(expr); })
+| )
 ;  
   
 
@@ -1152,12 +1161,13 @@ additiveExpression returns [Expression result]
   { construct.preArg1(); }
   multiplicativeExpression
   {
-    $result = $multiplicativeExpression.result; 
+    $result = $multiplicativeExpression.result;
+    System.out.println("Matched multiplicativeExpression"); 
     construct.preOp($result); 
   }
-( 
-  (PLUS) => (PLUS  {construct.postOp("plus");} expr = additiveExpression {result = construct.postArg2(expr);}) 
-  | (MINUS) => (MINUS { construct.postOp("minus");} expr = additiveExpression {result = construct.postArg2(expr);})
+( {System.out.println("Try to match operator");}
+    (PLUS) => (PLUS  {construct.postOp("plus");} expr = additiveExpression {result = construct.postArg2(expr);}) 
+  | (MINUS) => ({System.out.println("match minus");}MINUS { construct.postOp("minus");} expr = additiveExpression {result = construct.postArg2(expr);})
   | 
 )   
 ;
@@ -1189,6 +1199,7 @@ multiplicativeExpression returns [Expression result]
 unaryExpression returns [Expression result = null]
 @init{
     FunctionConstruct construct = new FunctionConstruct();
+    System.out.println("Try to match unary expression");
 }
 :
 (  
@@ -1229,6 +1240,7 @@ unaryOperator returns [FunctionId result = null]
 ( NOT { name = "not";}  | MINUS )
 {
    unaryOp = (FunctionId) functionSymbolTable.lookup(name);
+   System.out.println("Matched unary operator: " + name); 
    if (unaryOp == null)  {
 	unaryOp = graph.createFunctionId();
 	unaryOp.setName(name);
@@ -1250,6 +1262,7 @@ restrictedExpression returns [Expression result = null]
     int offsetRestr = 0;
     int lengthExpr = 0;
     int lengthRestr = 0;
+    System.out.println("Init restricted expression");
 }
 :
 { offsetExpr = getLTOffset(); }
@@ -1258,7 +1271,7 @@ expr = valueAccess
   $result = expr;
   lengthExpr = getLTLength(offsetExpr); 
 }
-(  AMP LCURLY
+((AMP) => (AMP LCURLY
    { offsetRestr = getLTOffset(); }
    restr = expression
    { lengthRestr = getLTLength(offsetRestr); }
@@ -1272,7 +1285,7 @@ expr = valueAccess
 	  restrOf.setSourcePositions((createSourcePositionList(lengthRestr, offsetRestr)));
 	  $result = restrExpr;
    }
-)?
+) | )
 ;
 
 identifier returns [Identifier result]
@@ -1440,11 +1453,10 @@ startRestrictedPathDescription returns [PathDescription result = null]
 }
 :
 ( (LCURLY) => (LCURLY
-  ( 
-      (typeId) => (typeIds = typeExpressionList)
-      | ({ offset = getLTOffset(); }
-	    expr = expression
-	    { length = getLTLength(offset);} )
+  (
+  	   (typeId) => (typeIds = typeExpressionList)
+    |  (expression) => (expr = expression)
+       
   )
   RCURLY
   AMP)
@@ -1644,9 +1656,13 @@ edgePathDescription returns [EdgePathDescription result = null]
 {offsetDir = input.LT(1).getCharPositionInLine()-1;}
 /* TODO: insert here for aggregation */
 (EDGESTART	{ edgeStart = true; } | EDGE)
-{offsetExpr = input.LT(1).getCharPositionInLine()-1;}
+{offsetExpr = input.LT(1).getCharPositionInLine()-1;
+System.out.println("Try to match expression");
+}
 expr = expression
-{lengthExpr = getLTLength(offsetExpr);}
+{
+System.out.println("Matched expression");
+lengthExpr = getLTLength(offsetExpr);}
 (EDGEEND { edgeEnd = true; }| EDGE)
 {
 	lengthExpr = getLTLength(offsetExpr);
@@ -2489,77 +2505,58 @@ simpleQuery returns [Comprehension comprehension = null]
 	;		
 		
 		
-/** matches regular and context free forward- and backvertex sets or
- * pathexistences
- *  @return
-*/
+		
 pathExpression returns [Expression result = null] 
 @init{
 	int offsetArg1 = 0;
 	int lengthArg1 = 0;
 	System.out.println("Init PathExpression");
-}
+}		
 :
 /* AlternativePathDescrition as path of backwardVertexSet or backwardPathSystem */
-(alternativePathDescription (SMILEY | restrictedExpression)) =>
-  (regBackwardVertexSetOrPathSystem  {$result = $regBackwardVertexSetOrPathSystem.result;})
-
-| 
-
-/* AlternativePathDescription as path of forwardVertexSet, pathExistence or forwardPathSystem */
-(
-    {
-      offsetArg1 = getLTOffset(); 
-      System.out.println("Matching RestrictedExpression");
-    }
-    restrictedExpression
-    {
-      $result = $restrictedExpression.result;
-      System.out.println("Matched RestrictedExpression: " + $result);
-	  lengthArg1 = getLTLength(offsetArg1); 
-  	}
-  	
-  	(  (alternativePathDescription) =>  
-  	   ( 
-  	      {System.out.println("Matching RegPathExistence");} 
-  	      regPathExistenceOrForwardVertexSet[$result, offsetArg1, lengthArg1]
-  	      {$result = $regPathExistenceOrForwardVertexSet.expr;}
-  	   )
-	 | (SMILEY) =>     
-	    (regPathOrPathSystem[$result, offsetArg1, lengthArg1]
-	     {$result = $regPathOrPathSystem.expr;}
-	    )
-	 |   
-    )
-)
+(alternativePathDescription (SMILEY | restrictedExpression)) => 
+  ({System.out.println("Rule1");} regBackwardVertexSetOrPathSystem  {$result = $regBackwardVertexSetOrPathSystem.result;})
+|
+/* AlternativePathDescription as path of forwardVertexSet, pathExistence */
+(restrictedExpression alternativePathDescription) => ({System.out.println("Rule2");}
+  regPathExistenceOrForwardVertexSet {$result = $regPathExistenceOrForwardVertexSet.result;} )
 |  
+/* AlternativePathDescription as path of forwardPathSystem */
+(restrictedExpression SMILEY) => {System.out.println("Rule3");}
+  (regPathOrPathSystem {$result = $regPathOrPathSystem.result;})
+|  
+/* restricted expression as path path expression */
+(restrictedExpression) => ({System.out.println("Rule4");} restrictedExpression {$result = $restrictedExpression.result;})
+|
 /* AlternativePathDescription as vertexPairs */
-
-  (alternativePathDescription) => 
-    ( 
-     {System.out.println("Matching AlternativePathDescription");}
-     primaryExpression
-     {System.out.println("Try to match primaryExpression"); $result = $primaryExpression.result;}
-    )
-
-;
+(alternativePathDescription) =>  
+    ({System.out.println("Rule5");} primaryExpression {$result = $primaryExpression.result;})
+;    
 
 
-	
-	
 
-regPathExistenceOrForwardVertexSet[Expression arg1, int offsetArg1, int lengthArg1]	returns [Expression expr = null]
+
+regPathExistenceOrForwardVertexSet returns [Expression result = null]
 @init{
 	int offsetPathDescr = 0;
 	int offsetExpr = 0;
 	int lengthPathDescr = 0;
 	int lengthExpr = 0;
-	System.out.println("Init ForwardVertexSet");
+	int lengthArg1 = 0;
+	int offsetArg1 = 0;
 }
 	:
-	{ offsetPathDescr = getLTOffset(); }
+	{
+	  offsetExpr = getLTOffset();
+	  offsetArg1 = offsetExpr;
+	}
+    expr = restrictedExpression
+	{
+		lengthArg1 = getLTLength(offsetExpr);
+	    offsetPathDescr = getLTOffset();
+	}
 	pathDescr = pathDescription
-    { lengthPathDescr = getLTLength(offsetPathDescr);}
+    {lengthPathDescr = getLTLength(offsetPathDescr);}
 	( 	(primaryExpression) => (
        	{ offsetExpr = getLTOffset(); }
        	restrExpr = restrictedExpression
@@ -2571,10 +2568,10 @@ regPathExistenceOrForwardVertexSet[Expression arg1, int offsetArg1, int lengthAr
 		if (restrExpr != null) {
 			// create new pathexistence
 			PathExistence pe = graph.createPathExistence();
-			expr = pe;
+			result = pe;
 					
 			// add start vertex
-			IsStartExprOf startVertexOf = graph.createIsStartExprOf(arg1, pe);
+			IsStartExprOf startVertexOf = graph.createIsStartExprOf(expr, pe);
 			startVertexOf.setSourcePositions((createSourcePositionList(lengthArg1, offsetArg1)));
 
 			// add target vertex
@@ -2587,9 +2584,9 @@ regPathExistenceOrForwardVertexSet[Expression arg1, int offsetArg1, int lengthAr
 		} else {
 			// create new forward-vertex-set
 			ForwardVertexSet fvs = graph.createForwardVertexSet();
-			expr = fvs;
+			result  = fvs;
 			// add start expr
-			IsStartExprOf startVertexOf = graph.createIsStartExprOf(arg1, fvs);
+			IsStartExprOf startVertexOf = graph.createIsStartExprOf(expr, fvs);
 			startVertexOf.setSourcePositions((createSourcePositionList(lengthArg1, offsetArg1)));
 			// add pathdescr
 			IsPathOf pathOf = graph.createIsPathOf(pathDescr, fvs);
@@ -2599,8 +2596,8 @@ regPathExistenceOrForwardVertexSet[Expression arg1, int offsetArg1, int lengthAr
 ;	
 	
 
-//TODO: check if this is really needed
-regPathOrPathSystem[Expression arg1, int offsetArg1, int lengthArg1] returns [Expression expr = null]
+
+regPathOrPathSystem returns [Expression result = null]
 @init{
     boolean isPath = false;
     int offsetPathDescr = 0;
@@ -2609,9 +2606,19 @@ regPathOrPathSystem[Expression arg1, int offsetArg1, int lengthArg1] returns [Ex
     int offsetExpr = 0;
     int lengthPathDescr = 0;
     int lengthExpr = 0;
+    int offsetArg1 = 0;
+    int lengthArg1 = 0;
 }
 :
-	{ offsetOperator1 = getLTOffset(); }
+	{
+	  offsetExpr = getLTOffset();
+	  offsetArg1 = offsetExpr;
+	}
+    arg1 = restrictedExpression
+	{
+		lengthArg1 = getLTLength(offsetExpr);
+		offsetOperator1 = getLTOffset(); 
+	}
 	SMILEY
     { offsetPathDescr = getLTOffset(); }
 	pathDescr = pathDescription
@@ -2629,12 +2636,12 @@ regPathOrPathSystem[Expression arg1, int offsetArg1, int lengthArg1] returns [Ex
     {
 		FunctionId funId = graph.createFunctionId();
 		funId.setName("pathSystem");
-		expr = createFunctionIdAndArgumentOf(funId, offsetOperator1, 3, 
+		result = createFunctionIdAndArgumentOf(funId, offsetOperator1, 3, 
 		   							  arg1, offsetArg1, lengthArg1, pathDescr, 
 		   							  offsetPathDescr, lengthPathDescr, true); 
 		if (isPath) {
-			arg1 = expr;
-			expr = createFunctionIdAndArgumentOf( funId, offsetOperator1, 3,
+			arg1 = $result;
+			result = createFunctionIdAndArgumentOf( funId, offsetOperator1, 3,
 											  arg1, offsetArg1, -offsetArg1 + offsetOperator2 + 3,
 											  restrExpr, offsetExpr, lengthExpr, true);
 		}
