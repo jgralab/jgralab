@@ -1375,7 +1375,7 @@ alternativePathDescription returns [PathDescription result = null]
   part2 = intermediateVertexPathDescription
   {
 	$result = addPathElement(AlternativePathDescription.class, IsAlternativePathOf.class, pathDescr, part1, offsetPart1, lengthPart1, part2, offsetPart2, lengthPart2);
-}))*		
+}) )*		
 ;
 
 	   
@@ -1436,7 +1436,7 @@ sequentialPathDescription returns [PathDescription result = null]
   (startRestrictedPathDescription) =>
   part2 = startRestrictedPathDescription
   {
-	$result = addPathElement(SequentialPathDescription.class, IsPartOf.class, pathDescr, part1, offsetPart1, lengthPart1, part2, offsetPart2, lengthPart2);
+	$result = addPathElement(SequentialPathDescription.class, IsSequenceElementOf.class, pathDescr, part1, offsetPart1, lengthPart1, part2, offsetPart2, lengthPart2);
 /*				(iteratedOrTransposedPathDescription) =>
 			pathDescr = sequentialPathDescription2[seqPathDescr, offsetSeq1,
 					getLTLength(offsetSeq1)] 
@@ -2553,7 +2553,7 @@ pathExpression returns [Expression result = null]
   	   ( 
   	      {System.out.println("Matching RegPathExistence");} 
   	      regPathExistenceOrForwardVertexSet[$result, offsetArg1, lengthArg1]
-  	      {$result = $regPathExistenceOrForwardVertexSet.result;}
+  	      {$result = $regPathExistenceOrForwardVertexSet.expr;}
   	   )
 	 | (SMILEY) =>     
 	    (regPathOrPathSystem[$result, offsetArg1, lengthArg1]
