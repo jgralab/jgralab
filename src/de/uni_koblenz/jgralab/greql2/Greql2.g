@@ -721,7 +721,6 @@ variable returns [Variable var = null]
         {	
         	var = graph.createVariable();
         	var.setName(i.getText());
-        	System.out.println("Variable name is: " + var.getName());
         }
 ;
 
@@ -815,7 +814,7 @@ quantifiedExpression returns [Expression result]
     }
 )
 | // not a "real" quantified expression
-  letExpression {$result = $letExpression.result; System.out.println("LetExpression result is: " + $result);}
+  letExpression {$result = $letExpression.result;}
 ;
 
 
@@ -877,7 +876,7 @@ letExpression returns [Expression result = null]
   }
 )
 | // not a let-Expression
-  whereExpression {$result = $whereExpression.result; System.out.println("WhereExpression result is: " + $result);}
+  whereExpression {$result = $whereExpression.result;}
 ;
 
 /** matches Where-Expressions
@@ -912,7 +911,7 @@ if ((defList != null) && (!defList.isEmpty())){ //defList is empty if it's not a
 		isDefOf.setSourcePositions((createSourcePositionList(length, offset)));
 	}
 } else {
-	$result = $conditionalExpression.result; System.out.println("ConditionalExpression result is: " + $result);
+	$result = $conditionalExpression.result; 
 }	
 }
 ;
@@ -933,7 +932,6 @@ definitionList returns [ArrayList<VertexPosition> definitions = new ArrayList<Ve
 		{ offset = getLTOffset(); }
 		v = definition
         {
-        	System.out.println("DefinitionList: FirstDefinition is: " + v);
 			length = getLTLength(offset);
         	def.node = v;
             def.offset = offset;
@@ -958,27 +956,21 @@ definition returns [Definition definition = null]
   	int offsetExpr = 0;
     int lengthVar = 0;
     int lengthExpr = 0;
-    System.out.println("Init Definition");
 }
 :
-	{ System.out.println("Definition: Try to match Variable: " + var);  offsetVar = getLTOffset(); }
+	{offsetVar = getLTOffset(); }
 	var = variable
 	{
-	  System.out.println("Definition: Matched Variable: " + var); 
 	  lengthVar = getLTLength(offsetVar); 
-	  System.out.println("Definition: After getLTLength: "); 
 	}
     ASSIGN
     {
-      System.out.println("Definition: Matched ASSIGN "); 
       offsetExpr = getLTOffset(); 
     }
     expressionOrPathDescription
     {
-      System.out.println("Definition: Matched expressionOrPathDescription: ");
       lengthExpr = getLTLength(offsetExpr);
       definition = graph.createDefinition();
-      System.out.println("Definition: Creating Vertex: " + definition);
       IsVarOf varOf = graph.createIsVarOf(var, definition);
       varOf.setSourcePositions((createSourcePositionList(lengthVar, offsetVar)));
       IsExprOf exprOf = graph.createIsExprOf($expressionOrPathDescription.result, definition);
@@ -1007,7 +999,6 @@ conditionalExpression returns [Expression result = null]
     orExpression
     { 
       $result = $orExpression.result;
-      System.out.println("OrExpression result is: " + $result);
       lengthExpr = getLTLength(offsetExpr); 
     }
     /* optional part */
@@ -1043,7 +1034,6 @@ conditionalExpression returns [Expression result = null]
 	  IsNullExprOf  nullExprOf = graph.createIsNullExprOf(nullExpr, condExpr);
 	  nullExprOf.setSourcePositions((createSourcePositionList(lengthNullExpr, offsetNullExpr)));
 	  $result = condExpr;
-	  System.out.println("Created ConditionalExpression is: " + $result);
     }
   )?
 ;
@@ -1361,7 +1351,6 @@ alternativePathDescription returns [PathDescription result = null]
 	int lengthPart1 = 0;
 	int offsetPart2 = 0;
 	int lengthPart2 = 0;
-	System.out.println("Init AlternativePathDescription");
 }
 :
   {offsetPart1 = getLTOffset(); }
@@ -1389,7 +1378,6 @@ intermediateVertexPathDescription returns [PathDescription result = null]
 	int lengthPart2 = 0;
 	int offsetExpr = 0;
 	int lengthExpr = 0;
-	System.out.println("Init IntermediateVertexPathDescription");
 }
 :
   {offsetPart1 = getLTOffset(); }
@@ -1423,7 +1411,6 @@ sequentialPathDescription returns [PathDescription result = null]
 	int lengthPart1 = 0;
 	int lengthPart2 = 0;
 	int offsetPart2 = 0;
-	System.out.println("Init SequentialPathDescription");
 }
 :
   {offsetPart1 = getLTOffset(); }
@@ -1450,18 +1437,17 @@ startRestrictedPathDescription returns [PathDescription result = null]
 @init{
 	int offset = 0;
 	int length = 0;
-	System.out.println("Init StartRestrictedPathDescription");
 }
 :
-( (LCURLY) => LCURLY
+( (LCURLY) => (LCURLY
   ( 
-      (typeId) =>typeIds = typeExpressionList
-      | { offset = getLTOffset(); }
+      (typeId) => (typeIds = typeExpressionList)
+      | ({ offset = getLTOffset(); }
 	    expr = expression
-	    { length = getLTLength(offset); }
+	    { length = getLTLength(offset);} )
   )
   RCURLY
-  AMP
+  AMP)
 | )
 pathDescr = goalRestrictedPathDescription
 {
@@ -1488,7 +1474,8 @@ goalRestrictedPathDescription returns [PathDescription result = null]
 :
 iteratedOrTransposedPathDescription
 {$result = $iteratedOrTransposedPathDescription.result;}
-((AMP) => AMP
+((AMP) => 
+  (AMP
 	LCURLY
 	( ((typeId) =>typeIds = typeExpressionList
 		{
@@ -1509,6 +1496,7 @@ iteratedOrTransposedPathDescription
 		) // ende expr
 	)
 	RCURLY
+  )
 |)
 ;
 
@@ -1521,7 +1509,6 @@ iteratedOrTransposedPathDescription	returns [PathDescription result = null]
  	int lengthPath = 0;
  	int offsetExpr = 0;
  	int lengthExpr = 0;
- 		System.out.println("InitIteratedPathDescription");
 }
 :
 { offsetPath = getLTOffset();}
@@ -1572,7 +1559,6 @@ primaryPathDescription returns [PathDescription result = null]
 @init{
 	int offset = 0;
 	int length = 0;
-	System.out.println("Init PrimaryPathDescription");
 }
 :
   ( (simplePathDescription) => (pathDescr = simplePathDescription  {$result = pathDescr;}))
@@ -1603,25 +1589,18 @@ simplePathDescription returns [PrimaryPathDescription result = null]
     Direction dir;
     String direction = "any";
     int offsetDir = 0;
-    System.out.println("Init SimplePathDescription");
-    	System.out.println("LA(1): " + input.LA(1));
-	System.out.println("RARROW: " + RARROW);
-	System.out.println("LARROW: " + LARROW);
-	System.out.println("ARROW: " + ARROW);
 }
 :
 {offsetDir = getLTOffset();}
-( (RARROW) => (RARROW { direction = "out"; System.out.println("Matched RARROW: "); })
+( (RARROW) => (RARROW { direction = "out"; })
 | (LARROW) => (LARROW { direction = "in"; })
 | ARROW
 )
-{System.out.println("Matched EdgeSymbol");}
 /* edge type restriction */
 (   (LCURLY (edgeRestrictionList)? RCURLY ) =>
       (LCURLY (typeIds = edgeRestrictionList)?	RCURLY)
 | /* empty */ )
 {
-	System.out.println("Matched SimplePathDescription");
     $result = graph.createSimplePathDescription();
 	dir = (Direction)graph.getFirstVertexOfClass(Direction.class);
 	while (dir != null ) {
@@ -1799,45 +1778,43 @@ listConstruction returns [ValueConstruction valueConstr = null]
  	int offsetEnd = 0;
  	int lengthStart = 0;
  	int lengthEnd = 0;
- 	System.out.println("Init ListConstruction");
 }
 :
 LIST
 LPAREN
 {offsetStart = getLTOffset(); }
 startExpr = expression
-{lengthStart = getLTLength(offsetStart);
- System.out.println("LA(1):" + input.LA(1) + " DOTDOT: " + DOTDOT);
- IntLiteral intLit = (IntLiteral) startExpr;
- System.out.println("Recognized IntLiteral is: " + intLit.getIntValue());
+{
+ lengthStart = getLTLength(offsetStart);
 }
-( (DOTDOT) => (DOTDOT 
-   {offsetEnd = getLTOffset();}
-   endExpr = expression
-   {
-   	 System.out.println("Found ListRangeConstruction");
-     lengthEnd = getLTLength(offsetEnd);
-     $valueConstr = graph.createListRangeConstruction();
-     IsFirstValueOf firstValueOf = graph.createIsFirstValueOf(startExpr, (ListRangeConstruction) valueConstr);
-     firstValueOf.setSourcePositions((createSourcePositionList(lengthStart, offsetStart)));
-     IsLastValueOf lastValueOf = graph.createIsLastValueOf(endExpr, (ListRangeConstruction) valueConstr);
-     lastValueOf.setSourcePositions((createSourcePositionList(lengthEnd, offsetEnd)));
-   }
-  )
+( 
+  (DOTDOT) => 
+    (DOTDOT 
+   		{offsetEnd = getLTOffset();}
+   		endExpr = expression
+   		{
+     		lengthEnd = getLTLength(offsetEnd);
+     		$valueConstr = graph.createListRangeConstruction();
+     		IsFirstValueOf firstValueOf = graph.createIsFirstValueOf(startExpr, (ListRangeConstruction) valueConstr);
+     		firstValueOf.setSourcePositions((createSourcePositionList(lengthStart, offsetStart)));
+     		IsLastValueOf lastValueOf = graph.createIsLastValueOf(endExpr, (ListRangeConstruction) valueConstr);
+     		lastValueOf.setSourcePositions((createSourcePositionList(lengthEnd, offsetEnd)));
+   		}
+  	)
   |
   (
-  	exprList = expressionList
-  	{
-  		System.out.println("Found ListConstruction");
-  		ArrayList<VertexPosition> allExpressions = new ArrayList<VertexPosition>();
-  		VertexPosition v = new VertexPosition();
-	  	v.length = lengthStart;
-	    v.node = startExpr;
-	    allExpressions.add(v);
-	    allExpressions.addAll(exprList);
-	    $valueConstr = createPartsOfValueConstruction(exprList, graph.createListConstruction());
-	}
-  )
+    ((COMMA) => (COMMA exprList = expressionList) | )
+    	{
+  			ArrayList<VertexPosition> allExpressions = new ArrayList<VertexPosition>();
+  			VertexPosition v = new VertexPosition();
+		  	v.length = lengthStart;
+	    	v.node = startExpr;
+		    allExpressions.add(v);
+		    if (exprList != null)
+	    		allExpressions.addAll(exprList);
+	    	$valueConstr = createPartsOfValueConstruction(allExpressions, graph.createListConstruction());
+		}
+  )  
 )  
 RPAREN
 ;
@@ -2052,10 +2029,10 @@ expr = expression
     v.node = expr;
     expressions.add(v);
 }
-(	COMMA
+((COMMA) => (COMMA
 	exprList = expressionList
 	{expressions.addAll(exprList);}
-)?
+)|)
 ;
 
 
@@ -2195,17 +2172,13 @@ literal returns [Expression literal = null]
 	      	return literal;*/
         literal = graph.createThisEdge();
     }
-|	(numericLiteral
-	{$literal = $numericLiteral.literal;})
+|	(numericLiteral {$literal = $numericLiteral.literal;})
 |	TRUE
     {
+    	System.out.println("Found True Literal");
         literal = (Literal) graph.getFirstVertexOfClass(BoolLiteral.class);
         while ( (literal != null) && ( ((BoolLiteral) literal).getBoolValue() != TrivalentBoolean.TRUE))
         	literal = (BoolLiteral) literal.getNextVertexOfClass(BoolLiteral.class);
-        /*	if (literal == null || !( (BoolLiteral) literal).isBoolValue() ) {
-	           	literal = graph.createBoolLiteral();
-   	           	((BoolLiteral) literal).setBoolValue(true);
-        }*/
         if (literal == null || ( ((BoolLiteral) literal).getBoolValue() != TrivalentBoolean.TRUE )) {
 		   	literal = graph.createBoolLiteral();
 				((BoolLiteral) literal).setBoolValue(TrivalentBoolean.TRUE);
@@ -2213,13 +2186,10 @@ literal returns [Expression literal = null]
     }
 |	FALSE
     {
+    	System.out.println("Found False Literal");
         literal = (Literal) graph.getFirstVertexOfClass(BoolLiteral.class);
         while ((literal != null) && (((BoolLiteral) literal).getBoolValue() != TrivalentBoolean.FALSE))
         	literal = (BoolLiteral) literal.getNextVertexOfClass(BoolLiteral.class);
-         /*   	if (literal == null || ( (BoolLiteral) literal).isBoolValue() ) {
-	            	literal = graph.createBoolLiteral();
-             	   ((BoolLiteral) literal).setBoolValue(false);
-   	            }*/
    	    if (literal == null || ( ((BoolLiteral) literal).getBoolValue() == TrivalentBoolean.TRUE )) {
 		   	literal = graph.createBoolLiteral();
 		   	((BoolLiteral) literal).setBoolValue(TrivalentBoolean.FALSE);
@@ -2559,6 +2529,7 @@ pathExpression returns [Expression result = null]
 	    (regPathOrPathSystem[$result, offsetArg1, lengthArg1]
 	     {$result = $regPathOrPathSystem.expr;}
 	    )
+	 |   
     )
 )
 |  
