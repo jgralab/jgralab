@@ -41,9 +41,9 @@ import de.uni_koblenz.jgralab.greql2.schema.PathDescription;
 
 /**
  * evaluates a BackwardVertexSet
- * 
+ *
  * @author ist@uni-koblenz.de
- * 
+ *
  */
 public class BackwardVertexSetEvaluator extends PathSearchEvaluator {
 
@@ -52,6 +52,7 @@ public class BackwardVertexSetEvaluator extends PathSearchEvaluator {
 	/**
 	 * returns the vertex this VertexEvaluator evaluates
 	 */
+	@Override
 	public Vertex getVertex() {
 		return vertex;
 	}
@@ -77,8 +78,9 @@ public class BackwardVertexSetEvaluator extends PathSearchEvaluator {
 		 * check if the result is invalid, this may occur because the
 		 * restrictedExpression may return a null-value
 		 */
-		if (!res.isValid())
+		if (!res.isValid()) {
 			return new JValue();
+		}
 		Vertex targetVertex = null;
 		try {
 			targetVertex = res.toVertex();
@@ -104,7 +106,7 @@ public class BackwardVertexSetEvaluator extends PathSearchEvaluator {
 			function = Greql2FunctionLibrary.instance().getGreqlFunction(
 					"reachableVertices");
 		}
-		JValue[] arguments = new JValue[4];
+		JValue[] arguments = new JValue[3];
 		arguments[0] = new JValue(targetVertex);
 		arguments[1] = new JValue(searchAutomaton);
 		arguments[2] = new JValue(subgraph);
