@@ -103,18 +103,22 @@ import de.uni_koblenz.jgralab.schema.*;
         public FunctionApplication postArg2(Expression arg2) { 
          	lengthArg2 = getLTLength(offsetArg2);
          	this.arg2 = arg2;
-         	op = (FunctionId) functionSymbolTable.lookup(operatorName);
-         	//... or create a new one and add it to the symboltable
-         	if (op == null) {
-         		op = graph.createFunctionId();
-         		op.setName(operatorName);
-         		functionSymbolTable.insert(operatorName, op);
-         	}
-         	// add operator
+			op = getFunctionId(operatorName);
        	  	return createFunctionIdAndArgumentOf(op, offsetOperator,lengthOperator, 
 	   			  arg1, offsetArg1, lengthArg1, arg2, offsetArg2, lengthArg2, binary); 	   
         }
     }
+    
+    private FunctionId getFunctionId(String name) {
+        FunctionId functionId = (FunctionId) functionSymbolTable.lookup(name);
+		if (functionId == null) {
+			functionId = graph.createFunctionId();
+			functionId.setName(name);
+			functionSymbolTable.insert(name, functionId);
+		}
+		return functionId;
+    }
+
 
     private FunctionApplication createFunctionIdAndArgumentOf(FunctionId functionId, int offsetOperator, int lengthOperator, Expression arg1, int offsetArg1, int lengthArg1, Expression arg2, int offsetArg2, int lengthArg2, boolean binary) {
         	FunctionApplication fa = graph.createFunctionApplication();
@@ -241,7 +245,7 @@ import de.uni_koblenz.jgralab.schema.*;
 		int offset = -1;
 		offset = getLTOffset();
 		if (offset != -1) {
-				logger.severe("error: " + offset +": RecognitionException " + e.getMessage());
+				logger.severe("Error at position: " + offset +": RecognitionException " + e.getMessage());
 		}		
 		else logger.severe("error (offset = -1): RecognitionException " + e.getMessage());
 		System.out.println("ERROR: " + e.getMessage());
@@ -251,7 +255,7 @@ import de.uni_koblenz.jgralab.schema.*;
 		int offset = -1;
 		offset = getLTOffset();
 		if (offset != -1)
-				logger.severe("error: " + offset +": TokenStreamException " + e.getMessage());
+				logger.severe("Error at position: " + offset +": TokenStreamException " + e.getMessage());
 			else logger.severe("error (offset = -1): TokenStreamException " + e.getMessage());
 	}
 
@@ -1254,7 +1258,8 @@ valueAccess {$result = $valueAccess.result; System.out.println("Result of ValueA
 {
   lengthExpr = getLTLength(offsetExpr); 
 }
-(AMP LCURLY
+((AMP LCURLY) => 
+   (AMP LCURLY
    { offsetRestr = getLTOffset(); }
    restr = expression
    { lengthRestr = getLTLength(offsetRestr); }
@@ -1268,8 +1273,10 @@ valueAccess {$result = $valueAccess.result; System.out.println("Result of ValueA
 	  restrOf.setSourcePositions((createSourcePositionList(lengthRestr, offsetRestr)));
 	  $result = restrExpr;
    }
-)?
+  ) | /*value access without restriction */ )
 ;
+
+
 
 identifier returns [Identifier result]
 : i=IDENT 
@@ -1279,39 +1286,70 @@ identifier returns [Identifier result]
 };
 
 
-valueAccess returns [Expression result]
+
+/** matches first argument of value-accesses
+	@return vertex representing the value-Access-Expression
+*/
+valueAccess returns [Expression result = null] throws ParseException, DuplicateVariableException
 @init{
-    FunctionConstruct construct = new FunctionConstruct();
+	int offset = 0;
+	int length = 0;
 }
-:
-(  
-  { construct.preArg1(); }
-  primaryExpression
-  { 
-    construct.preOp($primaryExpression.result); 
-    $result = $primaryExpression.result;
-      System.out.println("Result of PrimaryExpression: " + $result); 
-  }
-  ( (DOT) => 
-   (DOT 
-     { construct.postOp("getValue"); } 
-     identifier
-     { $result = $identifier.result; }
-   )  
-   | (LBRACK) =>
-    (LBRACK 
-     { construct.postOp("nthElement");}
-     expression
-     { $result = $expression.result; }
-	 	//TODO: dbildh, 20.11.08 primaryExpression?
-     RBRACK)
-   |  
-  )
-  {
-    if (construct.isValidFunction())
-    	$result = construct.postArg2($result); 
-  }
-)
+	:
+		{ offset = getLTOffset(); }
+        expr = primaryExpression
+        { $result = expr; length = getLTLength(offset); }
+		(
+		    (LBRACK primaryPathDescription) => /*nothin*/ |
+			(DOT | LBRACK) => (expr = valueAccess2[expr, offset, length] {$result = expr;})
+			| /* nothing */
+		)
+	;
+
+/** matches operator and 2nd argument of valueAccess
+	@param arg1 first argument-expression
+	@param offsetArg1 offset of first argument-expression
+	@param lengthArg1 length of first argument-expression
+	@return vertex representing the value-access-expression
+*/
+valueAccess2[Expression arg1, int offsetArg1, int lengthArg1] returns [Expression result = null]
+@init{
+    String name = "nthElement";
+    int offsetArg2 = 0;
+    int offsetOperator = 0;
+    int lengthArg2 = 0;
+    int lengthOperator = 0;
+}
+	:	{ offsetOperator = getLTOffset(); }
+    (   (	DOT
+       		{
+       			lengthOperator = 1;
+       			offsetArg2 = getLTOffset();
+       		}
+    		arg2 = identifier
+            {
+            	name = "getValue";
+            	lengthArg2 = ((Identifier) arg2).getName().length();
+            }
+        )
+	| 	(	LBRACK
+        	{ offsetArg2 = getLTOffset(); }
+			arg2 = expression
+			{
+           		name = "nthElement";
+               	lengthArg2 =  getLTLength(offsetArg2);
+            }
+            RBRACK
+            {
+               	lengthOperator = getLTLength(offsetOperator);
+            }
+		)
+    )
+	{$result = createFunctionIdAndArgumentOf(getFunctionId(name), offsetOperator, lengthOperator, arg1, offsetArg1, lengthArg1, arg2, offsetArg2, lengthArg2, true);}
+	(	(LBRACK primaryPathDescription) => /*nothin*/ |
+		(DOT|LBRACK) => (expr = valueAccess2[$result, offsetArg1, getLTLength(offsetArg1)] {$result = expr;})
+		|
+	)
 ;
 
 /** matches primary expressions (elementset, literal,
@@ -1333,6 +1371,9 @@ primaryExpression returns [Expression result = null]
 /** matches a pathdescription
 */
 pathDescription returns [PathDescription result = null]
+@init{
+	System.out.println("Init PathDescription");
+}
 :
 alternativePathDescription
 {$result = $alternativePathDescription.result;}
@@ -1344,6 +1385,7 @@ alternativePathDescription
 */
 alternativePathDescription returns [PathDescription result = null] 
 @init {
+	System.out.println("Init AlternativePathDescription");
 	PathDescription pathDescr = null;
 	int offsetPart1 = 0;
 	int lengthPart1 = 0;
@@ -1357,12 +1399,12 @@ alternativePathDescription returns [PathDescription result = null]
     lengthPart1 = getLTLength(offsetPart1);
     $result = part1;
   }
-( (BOR) => (BOR
+((BOR) => (BOR
   {offsetPart2 = getLTOffset(); }
-  part2 = intermediateVertexPathDescription
+  part2 = alternativePathDescription
   {
 	$result = addPathElement(AlternativePathDescription.class, IsAlternativePathOf.class, pathDescr, part1, offsetPart1, lengthPart1, part2, offsetPart2, lengthPart2);
-}) )*		
+}) | )	
 ;
 
 	   
@@ -1384,7 +1426,7 @@ intermediateVertexPathDescription returns [PathDescription result = null]
     $result = part1;
     lengthPart1 = getLTLength(offsetPart1);
   }
-( (restrictedExpression) => 
+( (restrictedExpression sequentialPathDescription) => 
   (
     {offsetExpr = getLTOffset(); }
     restrExpr = restrictedExpression
@@ -1418,16 +1460,11 @@ sequentialPathDescription returns [PathDescription result = null]
     lengthPart1 = getLTLength(offsetPart1);
   }
 ( /*{offsetPart2 = getLTOffset(); } TODO */
-  (startRestrictedPathDescription) =>
-  part2 = startRestrictedPathDescription
+  (sequentialPathDescription) =>
+  (part2 = sequentialPathDescription
   {
 	$result = addPathElement(SequentialPathDescription.class, IsSequenceElementOf.class, pathDescr, part1, offsetPart1, lengthPart1, part2, offsetPart2, lengthPart2);
-/*				(iteratedOrTransposedPathDescription) =>
-			pathDescr = sequentialPathDescription2[seqPathDescr, offsetSeq1,
-					getLTLength(offsetSeq1)] 
-					TODO dbildh 20.11.08 : Check for what this should be good
-					*/
-  })*		
+  }) | /* no second part */)  	
 ;
 
 
@@ -1560,20 +1597,20 @@ primaryPathDescription returns [PathDescription result = null]
 }
 :
   ( (simplePathDescription) => (pathDescr = simplePathDescription  {$result = pathDescr;}))
-| (edgePathDescription) => (pathDescr = edgePathDescription    {$result = pathDescr;})
-| (LPAREN) => (LPAREN pathDescr = pathDescription {$result = pathDescr;} RPAREN )
-| (LBRACK) => (LBRACK
-    { offset = getLTOffset(); }
-    pathDescr = pathDescription
-    { length = getLTLength(offset); }
-    RBRACK
-    {
+  | (edgePathDescription) => (pathDescr = edgePathDescription    {$result = pathDescr;})
+  | (LPAREN) => (LPAREN pathDescr = pathDescription {$result = pathDescr;} RPAREN )
+  | (LBRACK) => (LBRACK
+      { offset = getLTOffset(); }
+      pathDescr = pathDescription
+      { length = getLTLength(offset); }
+      RBRACK
+      {
 	    OptionalPathDescription optPathDescr = graph.createOptionalPathDescription();
 		IsOptionalPathOf optionalPathOf = graph.createIsOptionalPathOf(pathDescr, optPathDescr);
 		optionalPathOf.setSourcePositions((createSourcePositionList(length, offset)));
 	    $result = optPathDescr;
-    }
-  )
+      }
+    )
 ;
 
 
@@ -1599,6 +1636,7 @@ simplePathDescription returns [PrimaryPathDescription result = null]
       (LCURLY (typeIds = edgeRestrictionList)?	RCURLY)
 | /* empty */ )
 {
+	System.out.println("TypeIds of SimplePathDescription are: " + typeIds);
     $result = graph.createSimplePathDescription();
 	dir = (Direction)graph.getFirstVertexOfClass(Direction.class);
 	while (dir != null ) {
@@ -1606,19 +1644,21 @@ simplePathDescription returns [PrimaryPathDescription result = null]
 	        dir = dir.getNextDirection();
 	    } else { 
 	    	break;
-	    }		
-		if (dir == null) {
-			dir = graph.createDirection();
-	        dir.setDirValue(direction);
-	    }
-	    IsDirectionOf directionOf = graph.createIsDirectionOf(dir, (PrimaryPathDescription) $result);
-	    directionOf.setSourcePositions((createSourcePositionList(0, offsetDir)));
-	   	if (typeIds != null)
+	    }	
+	}    	
+	if (dir == null) {
+		dir = graph.createDirection();
+	       dir.setDirValue(direction);
+	}
+	IsDirectionOf directionOf = graph.createIsDirectionOf(dir, (PrimaryPathDescription) $result);
+	directionOf.setSourcePositions((createSourcePositionList(0, offsetDir)));
+    System.out.println("Start creating TypeEdges");
+	if (typeIds != null)
 	    for (VertexPosition t : typeIds) {
+	    	System.out.println("Creating TypeEdge: " + typeIds);
 			IsEdgeRestrOf edgeRestrOf = graph.createIsEdgeRestrOf((EdgeRestriction)t.node, (PrimaryPathDescription) $result);
 			edgeRestrOf.setSourcePositions((createSourcePositionList(t.length, t.offset)));
-		}
-	}	
+		}	
 }
 ;
 
@@ -1639,14 +1679,12 @@ edgePathDescription returns [EdgePathDescription result = null]
     int lengthExpr = 0;
 }
 :	
-{offsetDir = input.LT(1).getCharPositionInLine()-1;}
+{offsetDir = getLTOffset();}
 /* TODO: insert here for aggregation */
 (EDGESTART	{ edgeStart = true; } | EDGE)
-{offsetExpr = getLTOffset();
-}
+{offsetExpr = getLTOffset();}
 expr = expression
-{
-lengthExpr = getLTLength(offsetExpr);}
+{lengthExpr = getLTLength(offsetExpr);}
 (EDGEEND { edgeEnd = true; }| EDGE)
 {
 	lengthExpr = getLTLength(offsetExpr);
@@ -2484,26 +2522,27 @@ pathExpression returns [Expression result = null]
 @init{
 	int offsetArg1 = 0;
 	int lengthArg1 = 0;
+	System.out.println("Init pathExpression");
 }		
 :
 /* AlternativePathDescrition as path of backwardVertexSet or backwardPathSystem */
 (alternativePathDescription (SMILEY | restrictedExpression)) => 
-  (regBackwardVertexSetOrPathSystem  {$result = $regBackwardVertexSetOrPathSystem.result;})
+  ({System.out.println("pathExpression -> regBackwardVertexSet");} regBackwardVertexSetOrPathSystem  {$result = $regBackwardVertexSetOrPathSystem.result;})
 |
 /* AlternativePathDescription as path of forwardVertexSet, pathExistence */
 (restrictedExpression alternativePathDescription) => 
-  (regPathExistenceOrForwardVertexSet {$result = $regPathExistenceOrForwardVertexSet.result;} )
+  ({System.out.println("pathExpression -> regPathExistence");} regPathExistenceOrForwardVertexSet {$result = $regPathExistenceOrForwardVertexSet.result;} )
 |  
 /* AlternativePathDescription as path of forwardPathSystem */
 (restrictedExpression SMILEY) => 
-  (regPathOrPathSystem {$result = $regPathOrPathSystem.result;})
+  ({System.out.println("pathExpression -> regPathOrPathSystem");} regPathOrPathSystem {$result = $regPathOrPathSystem.result;})
 |  
 /* restricted expression as path path expression */
 (restrictedExpression) => (restrictedExpression {$result = $restrictedExpression.result; System.out.println("Result of RestrictedExpression: " + $result);})
 |
 /* AlternativePathDescription as vertexPairs */
 (alternativePathDescription) =>  
-    (alternativePathDescription {$result = $alternativePathDescription.result;})
+    ({System.out.println("pathExpression -> vertexPairs");} alternativePathDescription {$result = $alternativePathDescription.result;})
 ;    
 
 
