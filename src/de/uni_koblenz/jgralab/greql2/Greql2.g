@@ -146,10 +146,8 @@ import de.uni_koblenz.jgralab.schema.*;
 	
 	
 	private Vertex createMultipleEdgesToParent(List<VertexPosition> expressions, Vertex parent, Class<? extends Edge> edgeClass) {
-       	System.out.println("Creating multiple edges from parent: " + parent);
        	if (expressions != null)
        		for (VertexPosition expr : expressions) {
-       		System.out.println("Creating edge " + edgeClass.getCanonicalName() + " from " + expr.node + " to " + parent);
 				Greql2Aggregation edge = (Greql2Aggregation) graph.createEdge(edgeClass, (Vertex)expr.node, parent);
 				edge.setSourcePositions((createSourcePositionList(expr.length, expr.offset)));
 			}
@@ -669,21 +667,7 @@ OctalEscape
     ;
 
 
-
-// a couple protected methods to assist in matching floating point numbers
-protected
-EXPONENT
-	:	
-		('e'|'E') ('+'|'-')? ('0'..'9')+
-	;	
-
-// an identifier.  Note that testLiterals is set to true!  This means
-// that after we match the rule, we look in the literals table to see
-// if it's a literal or really an identifer
 IDENT
-/*	options {  
-		testLiterals=true;
-	}	*/
 	:	
 		(('a'..'z'|'A'..'Z') ('a'..'z'|'A'..'Z'|'_'|'0'..'9')*
 		{			
@@ -1257,7 +1241,7 @@ restrictedExpression returns [Expression result = null]
 }
 :
 { offsetExpr = getLTOffset(); }
-valueAccess {$result = $valueAccess.result; System.out.println("Result of ValueAccess: " + $result);}
+valueAccess {$result = $valueAccess.result;}
 {
   lengthExpr = getLTLength(offsetExpr); 
 }
@@ -1374,9 +1358,6 @@ primaryExpression returns [Expression result = null]
 /** matches a pathdescription
 */
 pathDescription returns [PathDescription result = null]
-@init{
-	System.out.println("Init PathDescription");
-}
 :
 alternativePathDescription
 {$result = $alternativePathDescription.result;}
@@ -1388,7 +1369,6 @@ alternativePathDescription
 */
 alternativePathDescription returns [PathDescription result = null] 
 @init {
-	System.out.println("Init AlternativePathDescription");
 	PathDescription pathDescr = null;
 	int offsetPart1 = 0;
 	int lengthPart1 = 0;
@@ -1480,7 +1460,7 @@ startRestrictedPathDescription returns [PathDescription result = null]
 ( (LCURLY) => (LCURLY
   (
   	   (typeId) => (typeIds = typeExpressionList)
-    |  (expression) => ({System.out.println("Matched expression as start restriction");} expr = expression {System.out.println("Expr is: " + expr);})
+    |  (expression) => (expr = expression)
        
   )
   RCURLY
@@ -1488,9 +1468,7 @@ startRestrictedPathDescription returns [PathDescription result = null]
 | )
 pathDescr = goalRestrictedPathDescription
 {
-System.out.println("Processing startRestriction");
   	if (expr != null) {
-  	System.out.println("Creating startRestriction edge");
 		IsStartRestrOf startRestrOf = graph.createIsStartRestrOf(expr, pathDescr);
 		startRestrOf.setSourcePositions((createSourcePositionList(length, offset)));
 	} else {
@@ -1639,7 +1617,6 @@ simplePathDescription returns [PrimaryPathDescription result = null]
       (LCURLY (typeIds = edgeRestrictionList)?	RCURLY)
 | /* empty */ )
 {
-	System.out.println("TypeIds of SimplePathDescription are: " + typeIds);
     $result = graph.createSimplePathDescription();
 	dir = (Direction)graph.getFirstVertexOfClass(Direction.class);
 	while (dir != null ) {
@@ -1655,10 +1632,8 @@ simplePathDescription returns [PrimaryPathDescription result = null]
 	}
 	IsDirectionOf directionOf = graph.createIsDirectionOf(dir, (PrimaryPathDescription) $result);
 	directionOf.setSourcePositions((createSourcePositionList(0, offsetDir)));
-    System.out.println("Start creating TypeEdges");
 	if (typeIds != null)
 	    for (VertexPosition t : typeIds) {
-	    	System.out.println("Creating TypeEdge: " + typeIds);
 			IsEdgeRestrOf edgeRestrOf = graph.createIsEdgeRestrOf((EdgeRestriction)t.node, (PrimaryPathDescription) $result);
 			edgeRestrOf.setSourcePositions((createSourcePositionList(t.length, t.offset)));
 		}	
@@ -1703,15 +1678,15 @@ expr = expression
 	    } else {
 	     	break;
 	    }	
-		if (dir == null) {
-			dir = graph.createDirection();
-	        dir.setDirValue(direction);
-	    }
-	    IsDirectionOf directionOf = graph.createIsDirectionOf(dir, $result);
-	    directionOf.setSourcePositions((createSourcePositionList(lengthDir, offsetDir)));
-	    IsEdgeExprOf edgeExprOf = graph.createIsEdgeExprOf(expr, $result);
-	    edgeExprOf.setSourcePositions((createSourcePositionList(lengthExpr, offsetExpr)));
+	}    
+	if (dir == null) {
+		dir = graph.createDirection();
+	       dir.setDirValue(direction);
 	}
+	IsDirectionOf directionOf = graph.createIsDirectionOf(dir, $result);
+	directionOf.setSourcePositions((createSourcePositionList(lengthDir, offsetDir)));
+	IsEdgeExprOf edgeExprOf = graph.createIsEdgeExprOf(expr, $result);
+	edgeExprOf.setSourcePositions((createSourcePositionList(lengthExpr, offsetExpr)));
 }	
 ;
 
@@ -2022,19 +1997,12 @@ declarationList returns [ArrayList<VertexPosition> declList = new ArrayList<Vert
 { simpleDecl.offset = getLTOffset(); }
 v = simpleDeclaration
 {
-    System.out.println("Creating Vertex " + v); 
     simpleDecl.length = getLTLength(simpleDecl.offset);
     simpleDecl.node = v;
     declList.add(simpleDecl);
-    System.out.println("Elements in declList " + declList.size());
 }
 ((COMMA) => (COMMA tail = declarationList
- {
- 	declList.addAll(tail);
- 	System.out.println("Elements in declList after adding tail " + declList.size());
- 	for (Object o : declList)
- 		System.out.println("Element: " + o);
- }
+ {	declList.addAll(tail); }
 ) | /* no further declaration */ )
 ;
 
@@ -2470,13 +2438,11 @@ simpleQuery returns [Comprehension comprehension = null]
 		FROM
 		declarations = declarationList
         {
-        	System.out.println("Declarations in list: " + declarations.size());
         	//TODO dbildh 21.11.08 : check if this can be replaced by call of declaration
         	declaration = graph.createDeclaration();
         	if (declarations.size() > 0) {
         		offsetDecl = declarations.get(0).offset;
         	}
-        	System.out.println("Creating multiple edges to parent in FWR Query");
         	createMultipleEdgesToParent(declarations, declaration, IsSimpleDeclOf.class);
         	lengthDecl = getLTLength(offsetDecl);
         }
@@ -2519,27 +2485,26 @@ pathExpression returns [Expression result = null]
 @init{
 	int offsetArg1 = 0;
 	int lengthArg1 = 0;
-	System.out.println("Init pathExpression");
 }		
 :
 /* AlternativePathDescrition as path of backwardVertexSet or backwardPathSystem */
 (alternativePathDescription (SMILEY | restrictedExpression)) => 
-  ({System.out.println("pathExpression -> regBackwardVertexSet");} regBackwardVertexSetOrPathSystem  {$result = $regBackwardVertexSetOrPathSystem.result;})
+  ( regBackwardVertexSetOrPathSystem  {$result = $regBackwardVertexSetOrPathSystem.result;})
 |
 /* AlternativePathDescription as path of forwardVertexSet, pathExistence */
 (restrictedExpression alternativePathDescription) => 
-  ({System.out.println("pathExpression -> regPathExistence");} regPathExistenceOrForwardVertexSet {$result = $regPathExistenceOrForwardVertexSet.result;} )
+  ( regPathExistenceOrForwardVertexSet {$result = $regPathExistenceOrForwardVertexSet.result;} )
 |  
 /* AlternativePathDescription as path of forwardPathSystem */
 (restrictedExpression SMILEY) => 
-  ({System.out.println("pathExpression -> regPathOrPathSystem");} regPathOrPathSystem {$result = $regPathOrPathSystem.result;})
+  (regPathOrPathSystem {$result = $regPathOrPathSystem.result;})
 |  
 /* restricted expression as path path expression */
-(restrictedExpression) => (restrictedExpression {$result = $restrictedExpression.result; System.out.println("Result of RestrictedExpression: " + $result);})
+(restrictedExpression) => (restrictedExpression {$result = $restrictedExpression.result;})
 |
 /* AlternativePathDescription as vertexPairs */
 (alternativePathDescription) =>  
-    ({System.out.println("pathExpression -> vertexPairs");} alternativePathDescription {$result = $alternativePathDescription.result;})
+    (alternativePathDescription {$result = $alternativePathDescription.result;})
 ;    
 
 
@@ -2547,7 +2512,6 @@ pathExpression returns [Expression result = null]
 
 regPathExistenceOrForwardVertexSet returns [Expression result = null]
 @init{
-System.out.println("Init regPathExistence");
 	int offsetPathDescr = 0;
 	int offsetExpr = 0;
 	int lengthPathDescr = 0;
@@ -2608,7 +2572,6 @@ System.out.println("Init regPathExistence");
 
 regPathOrPathSystem returns [Expression result = null]
 @init{
-System.out.println("Init regPathOrPathSystem");
     boolean isPath = false;
     int offsetPathDescr = 0;
     int offsetOperator1 = 0;
