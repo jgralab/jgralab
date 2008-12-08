@@ -144,9 +144,12 @@ import de.uni_koblenz.jgralab.schema.*;
 		return (ValueConstruction) createMultipleEdgesToParent(expressions, parent, IsPartOf.class);
 	}
 	
+	
 	private Vertex createMultipleEdgesToParent(List<VertexPosition> expressions, Vertex parent, Class<? extends Edge> edgeClass) {
+       	System.out.println("Creating multiple edges from parent: " + parent);
        	if (expressions != null)
        		for (VertexPosition expr : expressions) {
+       		System.out.println("Creating edge " + edgeClass.getCanonicalName() + " from " + expr.node + " to " + parent);
 				Greql2Aggregation edge = (Greql2Aggregation) graph.createEdge(edgeClass, (Vertex)expr.node, parent);
 				edge.setSourcePositions((createSourcePositionList(expr.length, expr.offset)));
 			}
@@ -1320,7 +1323,7 @@ valueAccess2[Expression arg1, int offsetArg1, int lengthArg1] returns [Expressio
     int lengthArg2 = 0;
     int lengthOperator = 0;
 }
-	:	{ offsetOperator = getLTOffset(); }
+:	{ offsetOperator = getLTOffset(); }
     (   (	DOT
        		{
        			lengthOperator = 1;
@@ -1978,6 +1981,7 @@ quantifiedDeclaration returns [Declaration declaration = null]
     int lengthSubgraph = 0;
 }
 :
+/* Comment: Refactor rule */
 declarations = declarationList
 {declaration = (Declaration) createMultipleEdgesToParent(declarations, graph.createDeclaration(), IsSimpleDeclOf.class);}
 (COMMA
@@ -1991,7 +1995,7 @@ constraintExpr = expression
 (
 	(COMMA simpleDeclaration) => 
 	(
-	  COMMA declarations = declarationList
+	  COMMA declarations = declarationList 
 	  {createMultipleEdgesToParent(declarations, declaration, IsSimpleDeclOf.class);}
 	)
 | /* empty */)
@@ -2011,27 +2015,27 @@ constraintExpr = expression
 
 
 declarationList returns [ArrayList<VertexPosition> declList = new ArrayList<VertexPosition>()] 
-@init{
-    VertexPosition simpleDecl = new VertexPosition();
-}
+@init {
+	VertexPosition simpleDecl = new VertexPosition();
+}	
 :
 { simpleDecl.offset = getLTOffset(); }
 v = simpleDeclaration
 {
+    System.out.println("Creating Vertex " + v); 
     simpleDecl.length = getLTLength(simpleDecl.offset);
     simpleDecl.node = v;
     declList.add(simpleDecl);
+    System.out.println("Elements in declList " + declList.size());
 }
-((COMMA) =>
-COMMA
-{ simpleDecl.offset = getLTOffset(); }
-v = simpleDeclaration
-{
-    simpleDecl.length = getLTLength(simpleDecl.offset);
-    simpleDecl.node = v;
-    declList.add(simpleDecl);
-}
-)*
+((COMMA) => (COMMA tail = declarationList
+ {
+ 	declList.addAll(tail);
+ 	System.out.println("Elements in declList after adding tail " + declList.size());
+ 	for (Object o : declList)
+ 		System.out.println("Element: " + o);
+ }
+) | /* no further declaration */ )
 ;
 
 
@@ -2280,16 +2284,7 @@ expressionOrPathDescription returns [Expression result = null]
     )
 ;
 	
-	
-/** Original-version im Antlr2-parser: 	
- * expressionOrPathDescription returns [Expression result = null]
- *:
- *   (  (pathDescription expression) => (expression {$result = $expression.result;})
- *     | (expression) => (expression {$result = $expression.result;})
- *     | (pathDescription {$result = $pathDescription.result;})
- *   )
- *;	
- */	
+
 
 edgeRestrictionList returns [ArrayList<VertexPosition> list = new ArrayList<VertexPosition>()] 
 @init{
@@ -2475,11 +2470,13 @@ simpleQuery returns [Comprehension comprehension = null]
 		FROM
 		declarations = declarationList
         {
+        	System.out.println("Declarations in list: " + declarations.size());
         	//TODO dbildh 21.11.08 : check if this can be replaced by call of declaration
         	declaration = graph.createDeclaration();
         	if (declarations.size() > 0) {
         		offsetDecl = declarations.get(0).offset;
         	}
+        	System.out.println("Creating multiple edges to parent in FWR Query");
         	createMultipleEdgesToParent(declarations, declaration, IsSimpleDeclOf.class);
         	lengthDecl = getLTLength(offsetDecl);
         }
