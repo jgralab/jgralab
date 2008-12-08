@@ -40,9 +40,9 @@ import de.uni_koblenz.jgralab.greql2.schema.PathDescription;
 
 /**
  * Evaluates a ForwardVertexSet
- * 
+ *
  * @author ist@uni-koblenz.de
- * 
+ *
  */
 public class ForwardVertexSetEvaluator extends PathSearchEvaluator {
 
@@ -77,8 +77,9 @@ public class ForwardVertexSetEvaluator extends PathSearchEvaluator {
 		 * check if the result is invalid, this may occur because the
 		 * restrictedExpression may return a null-value
 		 */
-		if (!res.isValid())
+		if (!res.isValid()) {
 			return new JValue();
+		}
 		Vertex startVertex = null;
 		try {
 			startVertex = res.toVertex();
@@ -87,8 +88,9 @@ public class ForwardVertexSetEvaluator extends PathSearchEvaluator {
 					"Error evaluation ForwardVertexSet, StartExpression doesn't evaluate to a vertex",
 					exception);
 		}
-		if (startVertex == null)
+		if (startVertex == null) {
 			return new JValue();
+		}
 		if (searchAutomaton == null) {
 			searchAutomaton = new DFA(pathDescEval.getNFA());
 			// We log the number of states as the result size of the underlying
@@ -102,7 +104,7 @@ public class ForwardVertexSetEvaluator extends PathSearchEvaluator {
 			function = Greql2FunctionLibrary.instance().getGreqlFunction(
 					"reachableVertices");
 		}
-		JValue[] arguments = new JValue[4];
+		JValue[] arguments = new JValue[3];
 		arguments[0] = new JValue(startVertex);
 		arguments[1] = new JValue(searchAutomaton);
 		arguments[2] = new JValue(subgraph);

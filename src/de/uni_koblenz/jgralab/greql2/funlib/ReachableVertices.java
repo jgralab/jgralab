@@ -74,7 +74,10 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
 public class ReachableVertices extends AbstractGreql2Function {
 
 	{
-		JValueType[][] x = { { JValueType.VERTEX, JValueType.DFA } };
+		JValueType[][] x = {
+				{ JValueType.VERTEX, JValueType.DFA },
+				{ JValueType.VERTEX, JValueType.DFA,
+						JValueType.SUBGRAPHTEMPATTRIBUTE } };
 		signatures = x;
 	}
 
