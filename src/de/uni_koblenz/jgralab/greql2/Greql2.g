@@ -2611,14 +2611,13 @@ regPathOrPathSystem returns [Expression result = null]
         }
 	)?
     {
-		FunctionId funId = graph.createFunctionId();
-		funId.setName("pathSystem");
+		FunctionId fundId = getFunctionId("pathSystem"); 
 		result = createFunctionIdAndArgumentOf(funId, offsetOperator1, 3, 
 		   							  arg1, offsetArg1, lengthArg1, pathDescr, 
 		   							  offsetPathDescr, lengthPathDescr, true); 
 		if (isPath) {
 			arg1 = $result;
-			result = createFunctionIdAndArgumentOf( funId, offsetOperator1, 3,
+			result = createFunctionIdAndArgumentOf(funId, offsetOperator1, 3,
 											  arg1, offsetArg1, -offsetArg1 + offsetOperator2 + 3,
 											  restrExpr, offsetExpr, lengthExpr, true);
 		}
@@ -2654,12 +2653,7 @@ regBackwardVertexSetOrPathSystem returns [Expression result = null]
 		    lengthExpr = getLTLength(offsetExpr);
 	        if (isPathSystem) {
 		   		// create a path-system-functionapplication
-				FunctionId f = (FunctionId )functionSymbolTable.lookup("pathSystem");
-				if (f == null)	{
-		            f = graph.createFunctionId();
-		            f.setName("pathSystem");
-		            functionSymbolTable.insert("pathSystem", f);
-		        }
+				FunctionId f = getFunctionId("pathSystem"); 
 		        result = createFunctionIdAndArgumentOf(f, offsetOperator, 3, 
 				  							  pathDescr, offsetPathDescr, lengthPathDescr, restrExpr, offsetExpr, lengthExpr, true); 	
 	        } else {
