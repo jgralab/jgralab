@@ -120,16 +120,50 @@ import de.uni_koblenz.jgralab.schema.*;
     }
 
 
+        /**
+         * Test if all ThisLiterals occur only inside PathDescriptions because
+         * they must not be used outside PathDescriptions
+         * If any ThisLiteral that occurs outside a PathDescription is found,
+         * a ParseException is thrown.
+         */
+    	private void testIllegalThisLiterals() {
+    		for (ThisLiteral vertex : graph.getThisLiteralVertices()) {
+    			for (Edge sourcePositionEdge : vertex.incidences(EdgeDirection.OUT)) {
+    				Queue<Greql2Vertex> queue = new LinkedList<Greql2Vertex>();
+    				queue.add(vertex);
+    				while (!queue.isEmpty()) {
+    					Greql2Vertex currentVertex = queue.poll();
+    					for (Edge edge : currentVertex.incidences(EdgeDirection.OUT)) {
+    						Greql2Vertex omega = (Greql2Vertex) edge.getOmega();
+    						if (!(omega instanceof PathDescription)) {
+    							if (omega instanceof Greql2Expression) 
+    								throw new ParseException("This literals must not be used outside pathdescriptions", vertex.getName(), ((Greql2Aggregation) sourcePositionEdge).getSourcePositions().get(0) );
+    							queue.add(omega);
+    						}
+    					}
+    				}
+    			}	
+    		}
+    	}
+
+
     private FunctionApplication createFunctionIdAndArgumentOf(FunctionId functionId, int offsetOperator, int lengthOperator, Expression arg1, int offsetArg1, int lengthArg1, Expression arg2, int offsetArg2, int lengthArg2, boolean binary) {
         	FunctionApplication fa = graph.createFunctionApplication();
         	IsFunctionIdOf functionIdOf = graph.createIsFunctionIdOf(functionId, fa);
         	functionIdOf.setSourcePositions((createSourcePositionList(lengthOperator, offsetOperator)));
+        	IsArgumentOf arg1Of = null;
         	if (binary) {
-        		IsArgumentOf arg1Of = graph.createIsArgumentOf(arg1, fa);
+        		arg1Of = graph.createIsArgumentOf(arg1, fa);
         		arg1Of.setSourcePositions((createSourcePositionList(lengthArg1, offsetArg1)));
         	}
           	IsArgumentOf arg2Of = graph.createIsArgumentOf(arg2, fa);
         	arg2Of.setSourcePositions((createSourcePositionList(lengthArg2, offsetArg2)));
+        //	if (functionId.getName().equals("hasType")) {
+        		System.out.println("Argument1 Edge: " + arg1Of);
+        		System.out.println("Argument2 Edge: " + arg2Of);
+        		System.out.println("Argument1 : " + arg1);
+        		System.out.println("Argument2 : " + arg2);
+        //	}
         	return fa;
     }
     
@@ -745,7 +779,7 @@ greqlExpression
 	     isId.setSourcePositions((createSourcePositionList(id.getText().length(), getLTOffset())));
 	   }
    }
-   EOF { mergeVariables();}
+   EOF { testIllegalThisLiterals(); mergeVariables();}
   | EOF {graph = null;}/* allow empty input */ )
 ;
 
@@ -1718,12 +1752,8 @@ LPAREN (expressions = expressionList)? RPAREN
 {
     expr = graph.createFunctionApplication();
     // retrieve function id or create a new one
-    functionId = (FunctionId) functionSymbolTable.lookup(f.getText());
-    if (functionId == null) {
-    	functionId = graph.createFunctionId();
-		functionId.setName(f.getText());
-    	functionSymbolTable.insert(f.getText(), functionId);
-    }
+    functionId = getFunctionId(f.getText());
+   	System.out.println("Creating function with id: " + f.getText());
 	IsFunctionIdOf  functionIdOf = graph.createIsFunctionIdOf(functionId, expr);
     functionIdOf.setSourcePositions((createSourcePositionList(f.getCharPositionInLine()-1, f.getText().length())));
     if (typeIds != null)
@@ -1733,6 +1763,7 @@ LPAREN (expressions = expressionList)? RPAREN
 		}
 	if (expressions != null)	
 		for (VertexPosition ex : expressions) {
+		System.out.println("Creating IsArgumentOf Edge to Node: " + ex.node); 
 			IsArgumentOf argOf = graph.createIsArgumentOf((Expression)ex.node,expr);
 			argOf.setSourcePositions((createSourcePositionList(ex.length, ex.offset)));
 		}
@@ -2611,7 +2642,7 @@ regPathOrPathSystem returns [Expression result = null]
         }
 	)?
     {
-		FunctionId fundId = getFunctionId("pathSystem"); 
+		FunctionId funId = getFunctionId("pathSystem"); 
 		result = createFunctionIdAndArgumentOf(funId, offsetOperator1, 3, 
 		   							  arg1, offsetArg1, lengthArg1, pathDescr, 
 		   							  offsetPathDescr, lengthPathDescr, true); 
