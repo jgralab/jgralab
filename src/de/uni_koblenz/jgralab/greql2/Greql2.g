@@ -1101,11 +1101,15 @@ equalityExpression returns [Expression result]
     $result = $relationalExpression.result;
     construct.preOp(result); 
   }
-((EQUAL) => (EQUAL
-  { construct.postOp("="); }
-  expr = equalityExpression
-  { result = construct.postArg2(expr); })
-| )
+((EQUAL | NOT_EQUAL) => 
+  ( ( 
+      (EQUAL { construct.postOp("equals"); })
+     |(NOT_EQUAL { construct.postOp("nequals"); })
+    )  
+    expr = equalityExpression
+    { result = construct.postArg2(expr); }
+  )
+| /* RelationalExpression as fake EqualityExpression */)
 ;  
   
 
