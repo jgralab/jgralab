@@ -86,6 +86,7 @@ public class IsSibling extends AbstractGreql2Function {
 			break;
 		case 1:
 			pathSystem = arguments[2].toPathSystem();
+			break;
 		default:
 			throw new WrongFunctionParameterException(this, null, arguments);
 		}
