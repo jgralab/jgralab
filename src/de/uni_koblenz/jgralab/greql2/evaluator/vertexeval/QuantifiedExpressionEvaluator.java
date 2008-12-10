@@ -79,6 +79,7 @@ public class QuantifiedExpressionEvaluator extends VertexEvaluator {
 		DeclarationEvaluator declEval = (DeclarationEvaluator) greqlEvaluator
 				.getVertexEvaluatorGraphMarker().getMark(d);
 		VariableDeclarationLayer declLayer = null;
+		declEval.resetToInitialState();
 		try {
 			declLayer = declEval.getResult(subgraph).toDeclarationLayer();
 		} catch (JValueInvalidTypeException exception) {
@@ -112,7 +113,6 @@ public class QuantifiedExpressionEvaluator extends VertexEvaluator {
 					}
 				}
 			}
-
 			if (foundNull)
 				return new JValue(JValueBoolean.getNullValue());
 			else
@@ -126,13 +126,9 @@ public class QuantifiedExpressionEvaluator extends VertexEvaluator {
 				JValue tempResult = vertexEval.getResult(subgraph);
 				if (tempResult.isBoolean()) {
 					try {
-						// GreqlEvaluator.println("Current Value is: " +
-						// tempResult.toBoolean());
 						if (tempResult.toBoolean() == JValueBoolean
 								.getTrueValue()) {
 							if (foundTrue == true) {
-								// GreqlEvaluator.println("Returning false cause
-								// double true found");
 								return new JValue(JValueBoolean.getFalseValue());
 							} else
 								foundTrue = true;
