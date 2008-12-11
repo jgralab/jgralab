@@ -22,15 +22,15 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-package de.uni_koblenz.jgralab.schema;
+package de.uni_koblenz.jgralab.schema.exception;
 
 /**
  * Exceptions of this class are thrown when an error occurs while creating or
  * manipulating a Schema.
- * 
+ *
  * @author ist@uni-koblenz.de
  */
-public class SchemaException extends RuntimeException {
+public abstract class SchemaException extends RuntimeException {
 	private static final long serialVersionUID = 6680822701697571650L;
 
 	public SchemaException() {

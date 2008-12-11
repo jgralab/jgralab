@@ -26,6 +26,8 @@ package de.uni_koblenz.jgralab.schema;
 
 import java.util.List;
 
+import de.uni_koblenz.jgralab.schema.exception.SchemaException;
+
 /**
  * Represents a <code>GraphClass</code> in the <code>Schema</code>, that holds
  * all <code>GraphElementClasses</code>.

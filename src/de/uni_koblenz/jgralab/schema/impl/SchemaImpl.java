@@ -80,9 +80,12 @@ import de.uni_koblenz.jgralab.schema.Package;
 import de.uni_koblenz.jgralab.schema.QualifiedName;
 import de.uni_koblenz.jgralab.schema.RecordDomain;
 import de.uni_koblenz.jgralab.schema.Schema;
-import de.uni_koblenz.jgralab.schema.SchemaException;
 import de.uni_koblenz.jgralab.schema.SetDomain;
 import de.uni_koblenz.jgralab.schema.VertexClass;
+import de.uni_koblenz.jgralab.schema.exception.DuplicateNamedElementException;
+import de.uni_koblenz.jgralab.schema.exception.InvalidNameException;
+import de.uni_koblenz.jgralab.schema.exception.M1ClassAccessException;
+import de.uni_koblenz.jgralab.schema.exception.SchemaException;
 
 /**
  * @author ist@uni-koblenz.de
@@ -136,7 +139,7 @@ public class SchemaImpl implements Schema {
 
 	@Override
 	public void setUniqueName(String uniqueName) {
-		throw new SchemaException(
+		throw new InvalidNameException(
 				"It is not allowed to explicitly set the unique name of a schema");
 	}
 
@@ -154,7 +157,7 @@ public class SchemaImpl implements Schema {
 	public SchemaImpl(QualifiedName qn) {
 		qName = qn;
 		if (qName.getPackageName().length() == 0) {
-			throw new SchemaException(
+			throw new InvalidNameException(
 					"package prefix of Schema must not be empty");
 		}
 		try {
@@ -283,14 +286,15 @@ public class SchemaImpl implements Schema {
 	@Override
 	public GraphClassImpl createGraphClass(QualifiedName name) {
 		if (!isFreeSchemaElementName(name)) {
-			throw new SchemaException(
+			throw new DuplicateNamedElementException(
 					"there is already an element with the name " + name
 							+ " in the schema");
 		}
 
 		if (name.isQualified()) {
-			throw new SchemaException("GraphClass must have simple name, but "
-					+ name + " is a qualified name");
+			throw new InvalidNameException(
+					"GraphClass must have simple name, but " + name
+							+ " is a qualified name");
 
 		}
 		GraphClassImpl graphClass;
@@ -313,8 +317,9 @@ public class SchemaImpl implements Schema {
 			p.addDomain(ed);
 			return ed;
 		}
-		throw new SchemaException("there is already an element with the name "
-				+ qn + " in the schema", null);
+		throw new DuplicateNamedElementException(
+				"there is already an element with the name " + qn
+						+ " in the schema " + getQualifiedName());
 	}
 
 	@Override
@@ -370,8 +375,9 @@ public class SchemaImpl implements Schema {
 			p.addDomain(rd);
 			return rd;
 		}
-		throw new SchemaException("there is already an element with the name "
-				+ qn + " in the schema", null);
+		throw new DuplicateNamedElementException(
+				"there is already an element with the name " + qn
+						+ " in the schema " + getQualifiedName());
 	}
 
 	@Override
@@ -891,8 +897,9 @@ public class SchemaImpl implements Schema {
 			m1Class = (Class<? extends Graph>) Class.forName(implClassName,
 					true, M1ClassManager.instance());
 		} catch (ClassNotFoundException e) {
-			throw new SchemaException("can't load implementation class '"
-					+ implClassName + "'", e);
+			throw new M1ClassAccessException(
+					"can't load implementation class '" + implClassName + "'",
+					e);
 		}
 		return m1Class;
 	}
@@ -914,7 +921,7 @@ public class SchemaImpl implements Schema {
 					if (ec != null) {
 						className = ec.getQName();
 					} else {
-						throw new SchemaException("class "
+						throw new M1ClassAccessException("class "
 								+ className.getQualifiedName()
 								+ " does not exist in schema");
 					}
@@ -924,11 +931,11 @@ public class SchemaImpl implements Schema {
 						signature);
 			}
 		} catch (SecurityException e) {
-			throw new SchemaException("can't find create method in '"
+			throw new M1ClassAccessException("can't find create method in '"
 					+ m1Class.getName() + "' for '" + className.getUniqueName()
 					+ "'", e);
 		} catch (NoSuchMethodException e) {
-			throw new SchemaException("can't find create method in '"
+			throw new M1ClassAccessException("can't find create method in '"
 					+ m1Class.getName() + "' for '" + className.getUniqueName()
 					+ "'", e);
 		}
@@ -967,7 +974,7 @@ public class SchemaImpl implements Schema {
 				return m;
 			}
 		}
-		throw new SchemaException("can't find create method in '"
+		throw new M1ClassAccessException("can't find create method in '"
 				+ m1Class.getName() + "' for '" + edgeClassName.getUniqueName()
 				+ "'");
 	}

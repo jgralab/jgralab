@@ -34,8 +34,8 @@ import de.uni_koblenz.jgralab.schema.AttributedElementClass;
 import de.uni_koblenz.jgralab.schema.EdgeClass;
 import de.uni_koblenz.jgralab.schema.GraphClass;
 import de.uni_koblenz.jgralab.schema.QualifiedName;
-import de.uni_koblenz.jgralab.schema.SchemaException;
 import de.uni_koblenz.jgralab.schema.VertexClass;
+import de.uni_koblenz.jgralab.schema.exception.InheritanceException;
 
 public class EdgeClassImpl extends GraphElementClassImpl implements EdgeClass {
 
@@ -59,7 +59,7 @@ public class EdgeClassImpl extends GraphElementClassImpl implements EdgeClass {
 
 	/**
 	 * builds a new edge class
-	 * 
+	 *
 	 * @param qn
 	 *            the unique identifier of the edge class in the schema
 	 * @param from
@@ -114,7 +114,7 @@ public class EdgeClassImpl extends GraphElementClassImpl implements EdgeClass {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see jgralab.EdgeClass#addSuperClass(jgralab.EdgeClass)
 	 */
 	public void addSuperClass(EdgeClass superClass) {
@@ -125,7 +125,7 @@ public class EdgeClassImpl extends GraphElementClassImpl implements EdgeClass {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see jgralab.EdgeClass#getFrom()
 	 */
 	public VertexClass getFrom() {
@@ -134,7 +134,7 @@ public class EdgeClassImpl extends GraphElementClassImpl implements EdgeClass {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see jgralab.EdgeClass#getFromMax()
 	 */
 	public int getFromMax() {
@@ -143,7 +143,7 @@ public class EdgeClassImpl extends GraphElementClassImpl implements EdgeClass {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see jgralab.EdgeClass#getFromMin()
 	 */
 	public int getFromMin() {
@@ -152,7 +152,7 @@ public class EdgeClassImpl extends GraphElementClassImpl implements EdgeClass {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see jgralab.EdgeClass#getFromRolename()
 	 */
 	public String getFromRolename() {
@@ -178,7 +178,7 @@ public class EdgeClassImpl extends GraphElementClassImpl implements EdgeClass {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see jgralab.EdgeClass#getTo()
 	 */
 	public VertexClass getTo() {
@@ -187,7 +187,7 @@ public class EdgeClassImpl extends GraphElementClassImpl implements EdgeClass {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see jgralab.EdgeClass#getToMax()
 	 */
 	public int getToMax() {
@@ -196,7 +196,7 @@ public class EdgeClassImpl extends GraphElementClassImpl implements EdgeClass {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see jgralab.EdgeClass#getToMin()
 	 */
 	public int getToMin() {
@@ -205,7 +205,7 @@ public class EdgeClassImpl extends GraphElementClassImpl implements EdgeClass {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see jgralab.EdgeClass#getToRolename()
 	 */
 	public String getToRolename() {
@@ -229,7 +229,11 @@ public class EdgeClassImpl extends GraphElementClassImpl implements EdgeClass {
 		}
 	}
 
-	public boolean checkConnectionRestrictions() {
+	/**
+	 * @return true, if the connectable VertexClasses and cardinalities of this
+	 *         EdgeClass satisfy the restrictions of its superclasses
+	 */
+	protected boolean checkConnectionRestrictions() {
 		Iterator<? extends AttributedElementClass> iter = directSuperClasses
 				.iterator();
 		while (iter.hasNext()) {
@@ -256,7 +260,14 @@ public class EdgeClassImpl extends GraphElementClassImpl implements EdgeClass {
 		return true;
 	}
 
-	public boolean mergeConnectionCardinalities() {
+	/**
+	 * Tries to merge the cardinalities of the edges endpoints
+	 *
+	 * @return true if a merge was done successfull, false if no merge was
+	 *         needed or if a merge is not possible
+	 *
+	 */
+	protected boolean mergeConnectionCardinalities() {
 		int newMinTo = toMin;
 		int newMaxTo = toMax;
 		int newMinFrom = fromMin;
@@ -267,7 +278,7 @@ public class EdgeClassImpl extends GraphElementClassImpl implements EdgeClass {
 		while (iter.hasNext()) {
 			EdgeClass ec = (EdgeClass) iter.next();
 			if (newMinTo > ec.getToMax()) {
-				throw new SchemaException(
+				throw new InheritanceException(
 						"Cardinalities for To-connection of EdgeClass "
 								+ getQualifiedName()
 								+ " cannot be merged, minimal cardinality "
@@ -280,7 +291,7 @@ public class EdgeClassImpl extends GraphElementClassImpl implements EdgeClass {
 				newMinTo = ec.getToMin();
 			}
 			if (newMinFrom > ec.getFromMax()) {
-				throw new SchemaException(
+				throw new InheritanceException(
 						"Cardinalities for From-connection of EdgeClass "
 								+ getQualifiedName()
 								+ " cannot be merged, minimal cardinality "
@@ -294,7 +305,7 @@ public class EdgeClassImpl extends GraphElementClassImpl implements EdgeClass {
 			}
 
 			if (newMaxTo < ec.getToMin()) {
-				throw new SchemaException(
+				throw new InheritanceException(
 						"Cardinalities for To-connection of EdgeClass "
 								+ getQualifiedName()
 								+ " cannot be merged, maximal cardinality "
@@ -307,7 +318,7 @@ public class EdgeClassImpl extends GraphElementClassImpl implements EdgeClass {
 				newMaxTo = ec.getToMax();
 			}
 			if (newMaxFrom < ec.getFromMin()) {
-				throw new SchemaException(
+				throw new InheritanceException(
 						"Cardinalities for From-connection of EdgeClass "
 								+ getQualifiedName()
 								+ " cannot be merged, maximal cardinality "
@@ -332,7 +343,13 @@ public class EdgeClassImpl extends GraphElementClassImpl implements EdgeClass {
 		}
 	}
 
-	public boolean mergeConnectionVertexClasses() {
+	/**
+	 * Tries to merge the VertexClasses of the edges endpoints
+	 *
+	 * @return true if a merge was done successfull, false if no merge was
+	 *         needed or if a merge is not possible
+	 */
+	protected boolean mergeConnectionVertexClasses() {
 		Iterator<? extends AttributedElementClass> iter = directSuperClasses
 				.iterator();
 		VertexClass mostSpecialTo = getTo();
@@ -354,7 +371,7 @@ public class EdgeClassImpl extends GraphElementClassImpl implements EdgeClass {
 				if (ec.getTo().isSubClassOf(mostSpecialTo)) {
 					mostSpecialTo = ec.getTo();
 				} else {
-					throw new SchemaException(
+					throw new InheritanceException(
 							"Cannot merge ToVertexClasses for EdgeClass "
 									+ getQualifiedName() + " VertexClass "
 									+ mostSpecialTo.getQualifiedName()
@@ -367,7 +384,7 @@ public class EdgeClassImpl extends GraphElementClassImpl implements EdgeClass {
 				if (ec.getFrom().isSubClassOf(mostSpecialFrom)) {
 					mostSpecialFrom = ec.getFrom();
 				} else {
-					throw new SchemaException(
+					throw new InheritanceException(
 							"Cannot merge FromVertexClasses for EdgeClass "
 									+ getQualifiedName() + " VertexClass "
 									+ mostSpecialFrom.getQualifiedName()

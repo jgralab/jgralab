@@ -21,49 +21,44 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
- 
+
 package de.uni_koblenz.jgralab.schema.impl;
 
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 
-import de.uni_koblenz.jgralab.schema.SchemaException;
 import de.uni_koblenz.jgralab.schema.VertexClass;
-
-
+import de.uni_koblenz.jgralab.schema.exception.InheritanceException;
 
 public class RolenameEntry {
 
-
-	
-	
 	private DirectedEdgeClass edgeClassToTraverse;
-	
+
 	private VertexClass vertexClassAtFarEnd;
-	
+
 	private String roleNameAtFarEnd;
-	
+
 	private HashSet<String> rolenameAndSubsettedRolenames;
-	
+
 	/**
 	 * holds the information to which vertex class which edge should be used
 	 */
 	private List<VertexEdgeEntry> vertexEdgeEntryList;
-	
+
 	private boolean redefined;
-	
+
 	/* toggles if this entry was inherited from a superclass */
 	private boolean inherited;
-	
-	/* holds the class that defines the rolename. 
-	 * Holds the class the rolename belongs to or the
-	 * defining superclass if the rolename is an 
-	 * inherited one
+
+	/*
+	 * holds the class that defines the rolename. Holds the class the rolename
+	 * belongs to or the defining superclass if the rolename is an inherited one
 	 */
 	private VertexClass vertexClassDefiningRolename;
 
-	public RolenameEntry(VertexClass definingClass, String roleNameAtFarEnd, DirectedEdgeClass edgeClassToTraverse,
+	public RolenameEntry(VertexClass definingClass, String roleNameAtFarEnd,
+			DirectedEdgeClass edgeClassToTraverse,
 			VertexClass vertexClassAtFarEnd) {
 		super();
 		vertexClassDefiningRolename = definingClass;
@@ -107,8 +102,9 @@ public class RolenameEntry {
 	}
 
 	public void setRedefined(boolean redefined) {
-		for (VertexEdgeEntry entry : vertexEdgeEntryList)
+		for (VertexEdgeEntry entry : vertexEdgeEntryList) {
 			entry.setRedefined(true);
+		}
 		this.redefined = redefined;
 	}
 
@@ -124,37 +120,64 @@ public class RolenameEntry {
 		return vertexClassDefiningRolename;
 	}
 
-	public void setVertexClassDefiningRolename(VertexClass vertexClassDefiningRolename) {
+	public void setVertexClassDefiningRolename(
+			VertexClass vertexClassDefiningRolename) {
 		this.vertexClassDefiningRolename = vertexClassDefiningRolename;
 	}
-	
+
 	public void addVertexWithEdge(VertexClass vertex, DirectedEdgeClass edge) {
-		if ((edge.getEdgeClass() != edgeClassToTraverse.getEdgeClass()) && (!edge.getEdgeClass().isSubClassOf(edgeClassToTraverse.getEdgeClass())))
-			throw new SchemaException("Rolename '" + roleNameAtFarEnd + "' inherited from VertexClass " + vertexClassDefiningRolename.getQualifiedName() + " with EdgeClass " + edgeClassToTraverse.getEdgeClass().getQualifiedName() + " subsetted or redefined by edge class " + edge.getEdgeClass().getQualifiedName() + " which is not a subclass of " + edgeClassToTraverse.getEdgeClass().getQualifiedName());
-		if (edge.getDirection() != edgeClassToTraverse.getDirection())
-			throw new SchemaException("Rolename '" + roleNameAtFarEnd + "' inherited from VertexClass " + vertexClassDefiningRolename.getQualifiedName() + " used with wrong edge direction." +
-					"Original direction is " + edgeClassToTraverse.getDirection() + " new direction is " + edge.getDirection() + " new vertex is " + vertex.getQualifiedName() + " new edge is " + edge.getEdgeClass().getQualifiedName());
+		if ((edge.getEdgeClass() != edgeClassToTraverse.getEdgeClass())
+				&& (!edge.getEdgeClass().isSubClassOf(
+						edgeClassToTraverse.getEdgeClass()))) {
+			throw new InheritanceException("Rolename '" + roleNameAtFarEnd
+					+ "' inherited from VertexClass "
+					+ vertexClassDefiningRolename.getQualifiedName()
+					+ " with EdgeClass "
+					+ edgeClassToTraverse.getEdgeClass().getQualifiedName()
+					+ " subsetted or redefined by edge class "
+					+ edge.getEdgeClass().getQualifiedName()
+					+ " which is not a subclass of "
+					+ edgeClassToTraverse.getEdgeClass().getQualifiedName());
+		}
+		if (edge.getDirection() != edgeClassToTraverse.getDirection()) {
+			throw new InheritanceException("Rolename '" + roleNameAtFarEnd
+					+ "' inherited from VertexClass "
+					+ vertexClassDefiningRolename.getQualifiedName()
+					+ " used with wrong edge direction."
+					+ "Original direction is "
+					+ edgeClassToTraverse.getDirection() + " new direction is "
+					+ edge.getDirection() + " new vertex is "
+					+ vertex.getQualifiedName() + " new edge is "
+					+ edge.getEdgeClass().getQualifiedName());
+		}
 
 		for (VertexEdgeEntry entry : vertexEdgeEntryList) {
-			if (!edge.getEdgeClass().isAbstract() && entry.getVertex() == vertex) {
-				if (entry.getEdge().isAbstract())
+			if (!edge.getEdgeClass().isAbstract()
+					&& entry.getVertex() == vertex) {
+				if (entry.getEdge().isAbstract()) {
 					continue;
-				if (edge.getEdgeClass() == entry.getEdge() && edge.getDirection() == entry.getDirection())
+				}
+				if (edge.getEdgeClass() == entry.getEdge()
+						&& edge.getDirection() == entry.getDirection()) {
 					return;
-				else
-					throw new SchemaException("Rolename '" + roleNameAtFarEnd + "' used to connect to the " +
-							"same VertexClass " + vertex.getQualifiedName() +
-							" with two different EdgeClasses " + edge.getEdgeClass().getQualifiedName() + 
-							" and " + entry.getEdge().getQualifiedName() + 
-							" at VertexClass " + vertexClassDefiningRolename.getQualifiedName() + " or a " + 
-							" subclass");
+				} else {
+					throw new InheritanceException("Rolename '"
+							+ roleNameAtFarEnd + "' used to connect to the "
+							+ "same VertexClass " + vertex.getQualifiedName()
+							+ " with two different EdgeClasses "
+							+ edge.getEdgeClass().getQualifiedName() + " and "
+							+ entry.getEdge().getQualifiedName()
+							+ " at VertexClass "
+							+ vertexClassDefiningRolename.getQualifiedName()
+							+ " or a " + " subclass");
+				}
 			}
 		}
 		vertexEdgeEntryList.add(new VertexEdgeEntry(vertex, edge, false));
 	}
-	
+
 	public List<VertexEdgeEntry> getVertexEdgeEntryList() {
 		return vertexEdgeEntryList;
 	}
-	
+
 }

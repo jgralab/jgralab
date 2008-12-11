@@ -39,8 +39,9 @@ import de.uni_koblenz.jgralab.schema.GraphElementClass;
 import de.uni_koblenz.jgralab.schema.Package;
 import de.uni_koblenz.jgralab.schema.QualifiedName;
 import de.uni_koblenz.jgralab.schema.Schema;
-import de.uni_koblenz.jgralab.schema.SchemaException;
 import de.uni_koblenz.jgralab.schema.VertexClass;
+import de.uni_koblenz.jgralab.schema.exception.DuplicateNamedElementException;
+import de.uni_koblenz.jgralab.schema.exception.InheritanceException;
 
 public class GraphClassImpl extends AttributedElementClassImpl implements
 		GraphClass {
@@ -58,10 +59,10 @@ public class GraphClassImpl extends AttributedElementClassImpl implements
 	private Map<QualifiedName, CompositionClass> compositionClasses;
 
 	/**
-	 * Creates the <b>sole</b> <code>GraphClass</code> in the <code>Schema</code>, that holds
-	 * all <code>GraphElementClasses</code>/<code>EdgeClasses</code>/
-	 * <code>VertexClasses</code>/<code>AggregationClasses</code>/
-	 * <code>CompositionClasses</code>.
+	 * Creates the <b>sole</b> <code>GraphClass</code> in the
+	 * <code>Schema</code>, that holds all <code>GraphElementClasses</code>/
+	 * <code>EdgeClasses</code>/ <code>VertexClasses</code>/
+	 * <code>AggregationClasses</code>/ <code>CompositionClasses</code>.
 	 * <p>
 	 * <b>Caution:</b> The <code>GraphClass</code> should only be created by
 	 * using
@@ -70,7 +71,7 @@ public class GraphClassImpl extends AttributedElementClassImpl implements
 	 * due to restrictions in Java, the visibility of this constructor cannot be
 	 * changed without causing serious issues in the program.
 	 * </p>
-	 * 
+	 *
 	 * @param qn
 	 *            a unique name in the <code>Schema</code>
 	 * @param aSchema
@@ -117,9 +118,9 @@ public class GraphClassImpl extends AttributedElementClassImpl implements
 			int fromMin, int fromMax, String fromRoleName, VertexClass to,
 			int toMin, int toMax, String toRoleName) {
 		if (!schema.isFreeSchemaElementName(qn)) {
-			throw new SchemaException(
+			throw new DuplicateNamedElementException(
 					"there is already an element with the name " + qn
-							+ " in the schema", null);
+							+ " in the schema " + schema.getQualifiedName());
 		}
 		EdgeClassImpl ec = new EdgeClassImpl(qn, this, from, fromMin, fromMax,
 				fromRoleName, to, toMin, toMax, toRoleName);
@@ -168,9 +169,9 @@ public class GraphClassImpl extends AttributedElementClassImpl implements
 			boolean aggregateFrom, VertexClass to, int toMin, int toMax,
 			String toRoleName) {
 		if (!schema.isFreeSchemaElementName(qn)) {
-			throw new SchemaException(
+			throw new DuplicateNamedElementException(
 					"there is already an element with the name " + qn
-							+ " in the schema", null);
+							+ " in the schema " + schema.getQualifiedName());
 		}
 		AggregationClassImpl ac = new AggregationClassImpl(qn, this, from,
 				fromMin, fromMax, fromRoleName, aggregateFrom, to, toMin,
@@ -221,9 +222,9 @@ public class GraphClassImpl extends AttributedElementClassImpl implements
 			boolean compositeFrom, VertexClass to, int toMin, int toMax,
 			String toRoleName) {
 		if (!schema.isFreeSchemaElementName(qn)) {
-			throw new SchemaException(
+			throw new DuplicateNamedElementException(
 					"there is already an element with the name " + qn
-							+ " in the schema", null);
+							+ " in the schema " + schema.getQualifiedName());
 		}
 		CompositionClassImpl cc = new CompositionClassImpl(qn, this, from,
 				fromMin, fromMax, fromRoleName, compositeFrom, to, toMin,
@@ -247,9 +248,9 @@ public class GraphClassImpl extends AttributedElementClassImpl implements
 	@Override
 	public VertexClass createVertexClass(QualifiedName qn) {
 		if (!schema.isFreeSchemaElementName(qn)) {
-			throw new SchemaException(
+			throw new DuplicateNamedElementException(
 					"there is already an element with the name " + qn
-							+ " in the schema", null);
+							+ " in the schema " + schema.getQualifiedName());
 		}
 		VertexClassImpl vc = new VertexClassImpl(qn, this);
 		vc.addSuperClass(schema.getDefaultVertexClass());
@@ -266,14 +267,15 @@ public class GraphClassImpl extends AttributedElementClassImpl implements
 	public void addSuperClass(GraphClass superClass) {
 		// only the internal abstract base class "Graph" can be a superclass
 		if (!superClass.getQualifiedName().equals("Graph")) {
-			throw new SchemaException("GraphClass can not be generealized.");
+			throw new InheritanceException(
+					"GraphClass can not be generealized.");
 		}
 		super.addSuperClass(superClass);
 	}
 
 	@Override
 	public void addSubClass(GraphClass subClass) {
-		throw new SchemaException("GraphClass can not be generealized.");
+		throw new InheritanceException("GraphClass can not be generealized.");
 	}
 
 	@Override

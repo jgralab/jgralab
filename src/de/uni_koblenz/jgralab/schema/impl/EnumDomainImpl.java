@@ -21,7 +21,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
- 
+
 package de.uni_koblenz.jgralab.schema.impl;
 
 import java.util.ArrayList;
@@ -33,7 +33,7 @@ import de.uni_koblenz.jgralab.schema.EnumDomain;
 import de.uni_koblenz.jgralab.schema.Package;
 import de.uni_koblenz.jgralab.schema.QualifiedName;
 import de.uni_koblenz.jgralab.schema.Schema;
-import de.uni_koblenz.jgralab.schema.SchemaException;
+import de.uni_koblenz.jgralab.schema.exception.InvalidNameException;
 
 public class EnumDomainImpl extends DomainImpl implements EnumDomain {
 
@@ -48,11 +48,15 @@ public class EnumDomainImpl extends DomainImpl implements EnumDomain {
 	 * @param constants
 	 *            holds a list of the components of the enumeration
 	 */
-	public EnumDomainImpl(Schema schema, QualifiedName qn, List<String> constants) {
+	public EnumDomainImpl(Schema schema, QualifiedName qn,
+			List<String> constants) {
 		super(schema, qn);
-		for (String c : constants)
-			if (!getSchema().isValidEnumConstant(c))
-				throw new SchemaException(c + " is not a valid enumeration constant.");
+		for (String c : constants) {
+			if (!getSchema().isValidEnumConstant(c)) {
+				throw new InvalidNameException(c
+						+ " is not a valid enumeration constant.");
+			}
+		}
 		this.constants = constants;
 	}
 
@@ -79,22 +83,26 @@ public class EnumDomainImpl extends DomainImpl implements EnumDomain {
 	}
 
 	@Override
-	public void addConst(String aConst)  {
+	public void addConst(String aConst) {
 		if (constants.contains(aConst)) {
-			throw new SchemaException("Try to add duplicate constant '" + aConst + "' to EnumDomain" + getName());
+			throw new InvalidNameException("Try to add duplicate constant '"
+					+ aConst + "' to EnumDomain" + getName());
 		}
-		if (!getSchema().isValidEnumConstant(aConst))
-			throw new SchemaException(aConst + " is not a valid enumeration constant.");
+		if (!getSchema().isValidEnumConstant(aConst)) {
+			throw new InvalidNameException(aConst
+					+ " is not a valid enumeration constant.");
+		}
 		constants.add(aConst);
 	}
 
 	@Override
 	public void deleteConst(String aConst) {
-		constants.remove(aConst); 
+		constants.remove(aConst);
 	}
 
 	@Override
-	public String getJavaAttributeImplementationTypeName(String schemaRootPackagePrefix) {
+	public String getJavaAttributeImplementationTypeName(
+			String schemaRootPackagePrefix) {
 		return schemaRootPackagePrefix + "." + getQualifiedName();
 	}
 
@@ -109,7 +117,7 @@ public class EnumDomainImpl extends DomainImpl implements EnumDomain {
 	}
 
 	@Override
- 	public String getTGTypeName(Package pkg) {
+	public String getTGTypeName(Package pkg) {
 		return getQualifiedName(pkg);
 	}
 
@@ -117,25 +125,27 @@ public class EnumDomainImpl extends DomainImpl implements EnumDomain {
 	public CodeBlock getReadMethod(String schemaPrefix, String variableName,
 			String graphIoVariableName) {
 		return new CodeSnippet(variableName + " = "
-				+ getJavaAttributeImplementationTypeName(schemaPrefix) + ".fromString("
-				+ graphIoVariableName + ".matchEnumConstant());");
+				+ getJavaAttributeImplementationTypeName(schemaPrefix)
+				+ ".fromString(" + graphIoVariableName
+				+ ".matchEnumConstant());");
 	}
 
 	@Override
-	public CodeBlock getWriteMethod(String schemaRootPackagePrefix, String variableName,
-			String graphIoVariableName) {
+	public CodeBlock getWriteMethod(String schemaRootPackagePrefix,
+			String variableName, String graphIoVariableName) {
 		CodeSnippet code = new CodeSnippet();
-		
+
 		code.add("if (" + variableName + " != null) {");
 		code.add("    " + graphIoVariableName + ".writeIdentifier("
 				+ variableName + ".toString());");
 		code.add("} else {");
-		code.add("    " + graphIoVariableName + ".writeIdentifier(\"\\\\null\");");
+		code.add("    " + graphIoVariableName
+				+ ".writeIdentifier(\"\\\\null\");");
 		code.add("}");
-		
+
 		return code;
 	}
-	
+
 	public boolean isComposite() {
 		return false;
 	}

@@ -30,7 +30,7 @@ import de.uni_koblenz.jgralab.schema.BooleanDomain;
 import de.uni_koblenz.jgralab.schema.Package;
 import de.uni_koblenz.jgralab.schema.QualifiedName;
 import de.uni_koblenz.jgralab.schema.Schema;
-import de.uni_koblenz.jgralab.schema.SchemaException;
+import de.uni_koblenz.jgralab.schema.exception.DuplicateNamedElementException;
 
 public class BooleanDomainImpl extends BasicDomainImpl implements BooleanDomain {
 	// private static BooleanDomainImpl instance = new BooleanDomainImpl();
@@ -39,10 +39,10 @@ public class BooleanDomainImpl extends BasicDomainImpl implements BooleanDomain 
 	// return instance;
 	// }
 	//
-	public BooleanDomainImpl(Schema schema) throws SchemaException {
+	public BooleanDomainImpl(Schema schema) {
 		QualifiedName qName = new QualifiedName("Boolean");
 		if (schema.getDomain(qName) != null) {
-			throw new SchemaException(
+			throw new DuplicateNamedElementException(
 					"Cannot create another BooleanDomain for Schema "
 							+ schema.getQualifiedName());
 		}

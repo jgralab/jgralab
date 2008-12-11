@@ -32,8 +32,8 @@ import de.uni_koblenz.jgralab.schema.EdgeClass;
 import de.uni_koblenz.jgralab.schema.Package;
 import de.uni_koblenz.jgralab.schema.QualifiedName;
 import de.uni_koblenz.jgralab.schema.Schema;
-import de.uni_koblenz.jgralab.schema.SchemaException;
 import de.uni_koblenz.jgralab.schema.VertexClass;
+import de.uni_koblenz.jgralab.schema.exception.InvalidNameException;
 
 public class PackageImpl implements Package {
 	private QualifiedName qName;
@@ -54,13 +54,13 @@ public class PackageImpl implements Package {
 		this.schema = schema;
 		if (parentPackage == null) {
 			if (!simpleName.equals("")) {
-				throw new SchemaException(
-						"the default package must have empty name");
+				throw new InvalidNameException(
+						"the default package must have an empty name");
 			}
 			qName = new QualifiedName(simpleName);
 		} else {
 			if (simpleName.equals("")) {
-				throw new SchemaException(
+				throw new InvalidNameException(
 						"the simpleName of nested packages must not be empty");
 			}
 			qName = new QualifiedName(parentPackage.getQualifiedName()
@@ -148,8 +148,8 @@ public class PackageImpl implements Package {
 	@Override
 	public Package createSubPackage(String simpleName) {
 		if (isDefaultPackage() && simpleName.equals(SchemaImpl.IMPLPACKAGENAME)) {
-			throw new SchemaException("the package name '" + simpleName
-					+ "' is forbidden as top level package");
+			throw new InvalidNameException("the package name '"
+					+ simpleName + "' is forbidden as top level package");
 		}
 		Package p = getSubPackage(simpleName);
 		if (p == null) {

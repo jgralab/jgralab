@@ -35,8 +35,8 @@ import de.uni_koblenz.jgralab.schema.AttributedElementClass;
 import de.uni_koblenz.jgralab.schema.EdgeClass;
 import de.uni_koblenz.jgralab.schema.GraphClass;
 import de.uni_koblenz.jgralab.schema.QualifiedName;
-import de.uni_koblenz.jgralab.schema.SchemaException;
 import de.uni_koblenz.jgralab.schema.VertexClass;
+import de.uni_koblenz.jgralab.schema.exception.InheritanceException;
 
 public class VertexClassImpl extends GraphElementClassImpl implements
 		VertexClass {
@@ -45,7 +45,7 @@ public class VertexClassImpl extends GraphElementClassImpl implements
 
 	/**
 	 * builds a new vertex class object
-	 * 
+	 *
 	 * @param qn
 	 *            the unique identifier of the vertex class in the schema
 	 */
@@ -79,8 +79,9 @@ public class VertexClassImpl extends GraphElementClassImpl implements
 	@Override
 	public Set<EdgeClass> getOwnEdgeClasses() {
 		Set<EdgeClass> s = new HashSet<EdgeClass>();
-		for (DirectedEdgeClass dec : associatedEdges)
+		for (DirectedEdgeClass dec : associatedEdges) {
 			s.add(dec.getEdgeClass());
+		}
 		return s;
 	}
 
@@ -88,13 +89,16 @@ public class VertexClassImpl extends GraphElementClassImpl implements
 	public HashSet<EdgeClass> getEdgeClasses() {
 		HashSet<EdgeClass> allEdgeClasses = new HashSet<EdgeClass>();
 		allEdgeClasses.addAll(getOwnEdgeClasses());
-		for (AttributedElementClass sc : getAllSuperClasses())
+		for (AttributedElementClass sc : getAllSuperClasses()) {
 			allEdgeClasses.addAll(((VertexClass) sc).getOwnEdgeClasses());
+		}
 		HashSet<EdgeClass> edgeClassesWithSuperclasses = new HashSet<EdgeClass>();
 		edgeClassesWithSuperclasses.addAll(allEdgeClasses);
-		for (EdgeClass ec : allEdgeClasses)
-			for (AttributedElementClass ac : ec.getAllSuperClasses())
+		for (EdgeClass ec : allEdgeClasses) {
+			for (AttributedElementClass ac : ec.getAllSuperClasses()) {
 				edgeClassesWithSuperclasses.add((EdgeClass) ac);
+			}
+		}
 		return allEdgeClasses;
 	}
 
@@ -114,8 +118,7 @@ public class VertexClassImpl extends GraphElementClassImpl implements
 		return set;
 	}
 
-	@Override
-	public Set<DirectedEdgeClass> getValidDirectedEdgeClasses() {
+	protected Set<DirectedEdgeClass> getValidDirectedEdgeClasses() {
 		Set<DirectedEdgeClass> validClasses = new HashSet<DirectedEdgeClass>();
 		Map<String, RolenameEntry> rolenameMap = getRolenameMap();
 		for (DirectedEdgeClass ec : getDirectedEdgeClasses()) {
@@ -133,8 +136,9 @@ public class VertexClassImpl extends GraphElementClassImpl implements
 		for (DirectedEdgeClass dec : getValidDirectedEdgeClasses()) {
 			if ((!dec.getEdgeClass().isInternal())
 					&& (!dec.getEdgeClass().isAbstract())) {
-				if (dec.getDirection() == EdgeDirection.OUT)
+				if (dec.getDirection() == EdgeDirection.OUT) {
 					validFrom.add(dec.getEdgeClass());
+				}
 			}
 		}
 		return validFrom;
@@ -146,8 +150,9 @@ public class VertexClassImpl extends GraphElementClassImpl implements
 		for (DirectedEdgeClass dec : getValidDirectedEdgeClasses()) {
 			if ((!dec.getEdgeClass().isInternal())
 					&& (!dec.getEdgeClass().isAbstract())) {
-				if (dec.getDirection() == EdgeDirection.IN)
+				if (dec.getDirection() == EdgeDirection.IN) {
 					validTo.add(dec.getEdgeClass());
+				}
 			}
 		}
 		return validTo;
@@ -193,8 +198,9 @@ public class VertexClassImpl extends GraphElementClassImpl implements
 											.getDirection())
 											&& (ve.getEdge() == ve2.getEdge())
 											&& (ve.getVertex() == ve2
-													.getVertex()))
+													.getVertex())) {
 										foundThisEntry = true;
+									}
 								}
 								if (!foundThisEntry) {
 									sameEntry = false;
@@ -205,8 +211,9 @@ public class VertexClassImpl extends GraphElementClassImpl implements
 					} else {
 						sameEntry = false;
 					}
-					if (sameEntry)
+					if (sameEntry) {
 						continue;
+					}
 
 					// one of the classes is abstract
 					boolean foreignIsAbstract = false;
@@ -236,8 +243,9 @@ public class VertexClassImpl extends GraphElementClassImpl implements
 						continue;
 					}
 
-					if (entryIsAbstract)
+					if (entryIsAbstract) {
 						continue;
+					}
 
 					rolenamesThatMustBeRedefined.add(entry
 							.getRoleNameAtFarEnd());
@@ -254,21 +262,24 @@ public class VertexClassImpl extends GraphElementClassImpl implements
 		 */
 		for (DirectedEdgeClass dec : getOwnDirectedEdgeClasses()) {
 			String roleName = dec.getThatRolename();
-			if (roleName == null || roleName.isEmpty() || roleName.equals(""))
+			if (roleName == null || roleName.isEmpty() || roleName.equals("")) {
 				continue;
-			if (ownMap.containsKey(roleName))
-				throw new SchemaException(
+			}
+			if (ownMap.containsKey(roleName)) {
+				throw new InheritanceException(
 						"A rolename may be used only once at the far association ends at one edge class. "
 								+ "The offending rolename is \""
 								+ roleName
 								+ "\".");
+			}
 			Set<String> redefinedRolenames = dec.getRedefinedThatRolenames();
 			for (String redefinedRole : redefinedRolenames) {
 				rolenamesThatMustBeRedefined.remove(redefinedRole);
-				if (redefinedRole.equals(roleName))
+				if (redefinedRole.equals(roleName)) {
 					continue;
+				}
 				if (allRedefinedRolenames.contains((redefinedRole))) {
-					throw new SchemaException("Rolename " + redefinedRole
+					throw new InheritanceException("Rolename " + redefinedRole
 							+ " may be redefined only once at vertex "
 							+ getSimpleName() + ".");
 				}
@@ -285,17 +296,19 @@ public class VertexClassImpl extends GraphElementClassImpl implements
 		 */
 		for (String redefinedRole : allRedefinedRolenames) {
 			/* check if redefined name occurs at the same class as rolename */
-			if (ownMap.containsKey(redefinedRole))
-				throw new SchemaException(
+			if (ownMap.containsKey(redefinedRole)) {
+				throw new InheritanceException(
 						"Cannot redefine rolename "
 								+ redefinedRole
 								+ " for it is used as non-redefined rolename at the same vertex class");
+			}
 			/* check if rolename is not inherited from a superclass */
 			RolenameEntry entry = allMap.get(redefinedRole);
-			if (entry == null)
-				throw new SchemaException("Cannot redefine rolename "
+			if (entry == null) {
+				throw new InheritanceException("Cannot redefine rolename "
 						+ redefinedRole
 						+ " that is not inherited from a superclass");
+			}
 			entry.setRedefined(true);
 		}
 
@@ -316,7 +329,7 @@ public class VertexClassImpl extends GraphElementClassImpl implements
 		}
 
 		for (String s : rolenamesThatMustBeRedefined) {
-			throw new SchemaException("Multiple inherited rolename '" + s
+			throw new InheritanceException("Multiple inherited rolename '" + s
 					+ "' must be redefined at vertexclass "
 					+ getQualifiedName());
 		}
@@ -324,6 +337,7 @@ public class VertexClassImpl extends GraphElementClassImpl implements
 		return allMap;
 	}
 
+	@Override
 	@SuppressWarnings("unchecked")
 	public Class<? extends Vertex> getM1Class() {
 		return (Class<? extends Vertex>) super.getM1Class();
