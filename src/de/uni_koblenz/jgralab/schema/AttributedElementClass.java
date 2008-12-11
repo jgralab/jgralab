@@ -30,6 +30,7 @@ import java.util.SortedSet;
 
 import de.uni_koblenz.jgralab.Attribute;
 import de.uni_koblenz.jgralab.AttributedElement;
+import de.uni_koblenz.jgralab.schema.exception.SchemaException;
 
 /**
  * This is the base class of any <code>GraphClass</code>/

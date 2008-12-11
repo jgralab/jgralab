@@ -31,15 +31,15 @@ import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.GraphFactory;
 import de.uni_koblenz.jgralab.Vertex;
-import de.uni_koblenz.jgralab.schema.SchemaException;
+import de.uni_koblenz.jgralab.schema.exception.M1ClassAccessException;
 
 /**
  * This class provides a default implementation for the GraphFactory. Per
  * default, every create-method creates an instance of exactly the specified
- * class. To change this, the <code>setImplementationClass</code>-methods can
- * be used. The class is abstract because only the factories which are specific
- * for a schema should be used.
- * 
+ * class. To change this, the <code>setImplementationClass</code>-methods can be
+ * used. The class is abstract because only the factories which are specific for
+ * a schema should be used.
+ *
  * @author ist@uni-koblenz.de
  */
 public abstract class GraphFactoryImpl implements GraphFactory {
@@ -60,7 +60,7 @@ public abstract class GraphFactoryImpl implements GraphFactory {
 		try {
 			return edgeMap.get(edgeClass).newInstance(id, g);
 		} catch (Exception ex) {
-			throw new SchemaException("Cannot create edge of class "
+			throw new M1ClassAccessException("Cannot create edge of class "
 					+ edgeClass.getCanonicalName(), ex);
 		}
 	}
@@ -70,7 +70,7 @@ public abstract class GraphFactoryImpl implements GraphFactory {
 		try {
 			return graphMap.get(graphClass).newInstance(id, vMax, eMax);
 		} catch (Exception ex) {
-			throw new SchemaException("Cannot create graph of class "
+			throw new M1ClassAccessException("Cannot create graph of class "
 					+ graphClass.getCanonicalName(), ex);
 		}
 	}
@@ -80,7 +80,7 @@ public abstract class GraphFactoryImpl implements GraphFactory {
 		try {
 			return vertexMap.get(vertexClass).newInstance(id, g);
 		} catch (Exception ex) {
-			throw new SchemaException("Cannot create vertex of class "
+			throw new M1ClassAccessException("Cannot create vertex of class "
 					+ vertexClass.getCanonicalName(), ex);
 		}
 	}
@@ -95,7 +95,7 @@ public abstract class GraphFactoryImpl implements GraphFactory {
 				graphMap.put(originalClass, implementationClass
 						.getConstructor(params));
 			} catch (NoSuchMethodException ex) {
-				throw new SchemaException(
+				throw new M1ClassAccessException(
 						"Unable to locate default constructor for graphclass "
 								+ implementationClass.getName(), ex);
 			}
@@ -112,7 +112,7 @@ public abstract class GraphFactoryImpl implements GraphFactory {
 				vertexMap.put(originalClass, implementationClass
 						.getConstructor(params));
 			} catch (NoSuchMethodException ex) {
-				throw new SchemaException(
+				throw new M1ClassAccessException(
 						"Unable to locate default constructor for vertexclass"
 								+ implementationClass, ex);
 			}
@@ -128,7 +128,7 @@ public abstract class GraphFactoryImpl implements GraphFactory {
 				edgeMap.put(originalClass, implementationClass
 						.getConstructor(params));
 			} catch (NoSuchMethodException ex) {
-				throw new SchemaException(
+				throw new M1ClassAccessException(
 						"Unable to locate default constructor for edgeclass"
 								+ implementationClass, ex);
 			}
@@ -137,7 +137,7 @@ public abstract class GraphFactoryImpl implements GraphFactory {
 
 	/**
 	 * tests if a is a superclass of b or the same class than b
-	 * 
+	 *
 	 * @param a
 	 * @param b
 	 * @return
@@ -164,7 +164,7 @@ public abstract class GraphFactoryImpl implements GraphFactory {
 
 	/**
 	 * tests if class a implements the interface b
-	 * 
+	 *
 	 * @param a
 	 * @param b
 	 * @return

@@ -30,7 +30,8 @@ import de.uni_koblenz.jgralab.schema.DoubleDomain;
 import de.uni_koblenz.jgralab.schema.Package;
 import de.uni_koblenz.jgralab.schema.QualifiedName;
 import de.uni_koblenz.jgralab.schema.Schema;
-import de.uni_koblenz.jgralab.schema.SchemaException;
+import de.uni_koblenz.jgralab.schema.exception.DuplicateNamedElementException;
+import de.uni_koblenz.jgralab.schema.exception.SchemaException;
 
 public class DoubleDomainImpl extends BasicDomainImpl implements DoubleDomain {
 	// private static DoubleDomainImpl instance = new DoubleDomainImpl();
@@ -42,7 +43,7 @@ public class DoubleDomainImpl extends BasicDomainImpl implements DoubleDomain {
 	public DoubleDomainImpl(Schema schema) throws SchemaException {
 		QualifiedName qName = new QualifiedName("Double");
 		if (schema.getDomain(qName) != null) {
-			throw new SchemaException(
+			throw new DuplicateNamedElementException(
 					"Cannot create another DoubleDomain for Schema "
 							+ schema.getQualifiedName());
 		}

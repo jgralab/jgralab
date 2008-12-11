@@ -30,7 +30,8 @@ import de.uni_koblenz.jgralab.schema.IntDomain;
 import de.uni_koblenz.jgralab.schema.Package;
 import de.uni_koblenz.jgralab.schema.QualifiedName;
 import de.uni_koblenz.jgralab.schema.Schema;
-import de.uni_koblenz.jgralab.schema.SchemaException;
+import de.uni_koblenz.jgralab.schema.exception.DuplicateNamedElementException;
+import de.uni_koblenz.jgralab.schema.exception.SchemaException;
 
 public class IntDomainImpl extends BasicDomainImpl implements IntDomain {
 	// private static IntDomainImpl instance = new IntDomainImpl();
@@ -42,7 +43,7 @@ public class IntDomainImpl extends BasicDomainImpl implements IntDomain {
 	public IntDomainImpl(Schema schema) throws SchemaException {
 		QualifiedName qName = new QualifiedName("Integer");
 		if (schema.getDomain(qName) != null) {
-			throw new SchemaException(
+			throw new DuplicateNamedElementException(
 					"Cannot create another IntDomain for Schema "
 							+ schema.getQualifiedName());
 		}

@@ -32,7 +32,7 @@ import de.uni_koblenz.jgralab.schema.impl.DirectedEdgeClass;
 /**
  * Interface for Edge/Aggregation/Composition classes, instances of this class
  * represent an M2 element.
- * 
+ *
  * @author ist@uni-koblenz.de
  */
 public interface EdgeClass extends GraphElementClass {
@@ -40,11 +40,11 @@ public interface EdgeClass extends GraphElementClass {
 	/**
 	 * adds a superclass to the list of superclasses, all attributes get
 	 * inherited from those classes
-	 * 
+	 *
 	 * @param superClass
 	 *            the edge class to be added to the list of superclasses if an
 	 *            attribute name exists in superClass and in this class
-	 * 
+	 *
 	 */
 	public void addSuperClass(EdgeClass superClass);
 
@@ -80,7 +80,7 @@ public interface EdgeClass extends GraphElementClass {
 	 * of this class have the new role name as roleName on the from-end and on
 	 * the other hand that the redefined edge is not longer allowed at the
 	 * from-vertex class of this edge
-	 * 
+	 *
 	 * @param redefinedRoleName
 	 *            the rolename to redefine
 	 */
@@ -92,7 +92,7 @@ public interface EdgeClass extends GraphElementClass {
 	 * this class have the new role name as roleName on the from-end and on the
 	 * other hand that the redefined edges are not longer allowed at the
 	 * from-vertex class of this edge
-	 * 
+	 *
 	 * @param redefinedRoleNames
 	 *            the rolenames to redefine
 	 */
@@ -130,7 +130,7 @@ public interface EdgeClass extends GraphElementClass {
 	 * this class have the new role name as roleName on the to-end and on the
 	 * other hand that the redefined edge is not longer allowed at the to-vertex
 	 * class of this edge
-	 * 
+	 *
 	 * @param redefinedRoleName
 	 *            the rolename to redefine
 	 */
@@ -142,52 +142,29 @@ public interface EdgeClass extends GraphElementClass {
 	 * this class have the new role name as roleName on the to-end and on the
 	 * other hand that the redefined edges are not longer allowed at the
 	 * to-vertex class of this edge
-	 * 
+	 *
 	 * @param redefinedRoleNames
 	 *            the rolenames to redefine
 	 */
 	public void redefineToRole(Set<String> redefinedRoleNames);
 
 	/**
-	 * @return true, if the connectable VertexClasses and cardinalities of this
-	 *         EdgeClass satisfy the restrictions of its superclasses
-	 */
-	public boolean checkConnectionRestrictions();
-
-	/**
-	 * Tries to merge the cardinalities of the edges endpoints
-	 * 
-	 * @return true if a merge was done successfull, false if no merge was
-	 *         needed or if a merge is not possible
-	 * 
-	 */
-	public boolean mergeConnectionCardinalities();
-
-	/**
-	 * Tries to merge the VertexClasses of the edges endpoints
-	 * 
-	 * @return true if a merge was done successfull, false if no merge was
-	 *         needed or if a merge is not possible
-	 */
-	public boolean mergeConnectionVertexClasses();
-
-	/**
 	 * @return returns the DirectedEdgeClass-Object consisting of this edge
 	 *         class with direction EdgeDirection.IN
-	 * 
+	 *
 	 */
 	public DirectedEdgeClass getInEdgeClass();
 
 	/**
 	 * @return returns the DirectedEdgeClass-Object consisting of this edge
 	 *         class with direction EdgeDirection.OUT
-	 * 
+	 *
 	 */
 	public DirectedEdgeClass getOutEdgeClass();
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see de.uni_koblenz.jgralab.schema.AttributedElementClass#getM1Class()
 	 */
 	public Class<? extends Edge> getM1Class();

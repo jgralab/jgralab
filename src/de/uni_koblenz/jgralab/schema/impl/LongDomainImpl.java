@@ -31,22 +31,19 @@ import de.uni_koblenz.jgralab.schema.LongDomain;
 import de.uni_koblenz.jgralab.schema.Package;
 import de.uni_koblenz.jgralab.schema.QualifiedName;
 import de.uni_koblenz.jgralab.schema.Schema;
-import de.uni_koblenz.jgralab.schema.SchemaException;
+import de.uni_koblenz.jgralab.schema.exception.DuplicateNamedElementException;
+import de.uni_koblenz.jgralab.schema.exception.SchemaException;
 
 public class LongDomainImpl extends BasicDomainImpl implements IntDomain,
 		LongDomain {
-	// private static LongDomainImpl instance = new LongDomainImpl();
-	//
-	// public static LongDomainImpl instance() {
-	// return instance;
-	// }
 
 	public LongDomainImpl(Schema schema) throws SchemaException {
 		QualifiedName qName = new QualifiedName("Long");
-		if (schema.getDomain(qName) != null)
-			throw new SchemaException(
+		if (schema.getDomain(qName) != null) {
+			throw new DuplicateNamedElementException(
 					"Cannot create another LongDomain for Schema "
 							+ schema.getQualifiedName());
+		}
 		initialize(schema, qName);
 	}
 

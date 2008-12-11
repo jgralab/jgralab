@@ -38,7 +38,11 @@ import de.uni_koblenz.jgralab.schema.Package;
 import de.uni_koblenz.jgralab.schema.QualifiedName;
 import de.uni_koblenz.jgralab.schema.RecordDomain;
 import de.uni_koblenz.jgralab.schema.Schema;
-import de.uni_koblenz.jgralab.schema.SchemaException;
+import de.uni_koblenz.jgralab.schema.exception.DuplicateRecordComponentException;
+import de.uni_koblenz.jgralab.schema.exception.InvalidNameException;
+import de.uni_koblenz.jgralab.schema.exception.NoSuchRecordComponentException;
+import de.uni_koblenz.jgralab.schema.exception.RecordCycleException;
+import de.uni_koblenz.jgralab.schema.exception.WrongSchemaException;
 
 public class RecordDomainImpl extends CompositeDomainImpl implements
 		RecordDomain {
@@ -59,7 +63,7 @@ public class RecordDomainImpl extends CompositeDomainImpl implements
 		super(schema, qn);
 		for (Domain aDomain : components.values()) {
 			if (!isDomainOfSchema(getSchema(), aDomain)) {
-				throw new SchemaException(aDomain
+				throw new WrongSchemaException(aDomain
 						+ " must be a domain of the schema "
 						+ getSchema().getQualifiedName());
 			}
@@ -91,21 +95,21 @@ public class RecordDomainImpl extends CompositeDomainImpl implements
 	@Override
 	public void addComponent(String name, Domain aDomain) {
 		if (name.equals("")) {
-			throw new SchemaException(
+			throw new InvalidNameException(
 					"Cannot create a record component with an empty name.");
 		}
 		if (components.containsKey(name)) {
-			throw new SchemaException("Duplicate record component '" + name
-					+ "' in RecordDomain '" + getName() + "'");
+			throw new DuplicateRecordComponentException(name,
+					getQualifiedName());
 		}
 		if (!isDomainOfSchema(getSchema(), aDomain)) {
-			throw new SchemaException(aDomain
+			throw new WrongSchemaException(aDomain
 					+ " must be a domain of the schema "
 					+ getSchema().getQualifiedName());
 		}
 		if (!staysAcyclicAfterAdding(aDomain)) {
-			throw new SchemaException(
-					"The Creation of a component, which has the type "
+			throw new RecordCycleException(
+					"The creation of a component, which has the type "
 							+ aDomain
 							+ ", would create a cycle of RecordDomains.");
 		}
@@ -137,8 +141,7 @@ public class RecordDomainImpl extends CompositeDomainImpl implements
 	@Override
 	public void deleteComponent(String name) {
 		if (!components.containsKey(name)) {
-			throw new SchemaException("RecordDomain '" + getName()
-					+ "' does not contain a component '" + name + "'");
+			throw new NoSuchRecordComponentException(getName(), name);
 		}
 		components.remove(name);
 	}
@@ -146,8 +149,7 @@ public class RecordDomainImpl extends CompositeDomainImpl implements
 	@Override
 	public Domain getDomainOfComponent(String name) {
 		if (!components.containsKey(name)) {
-			throw new SchemaException("RecordDomain '" + getName()
-					+ "' does not contain a component '" + name + "'");
+			throw new NoSuchRecordComponentException(getName(), name);
 		}
 		return components.get(name);
 	}

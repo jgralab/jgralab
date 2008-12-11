@@ -26,10 +26,13 @@ package de.uni_koblenz.jgralab.schema;
 
 import java.io.File;
 
+import de.uni_koblenz.jgralab.schema.exception.InvalidNameException;
+import de.uni_koblenz.jgralab.schema.exception.SchemaException;
+
 /**
  * QualifiedName is used to identify any Schema element (Graph/Vertex/Edge
  * classes, Packages, Domains, etc.).
- * 
+ *
  * @author ist@uni-koblenz.de
  */
 public class QualifiedName implements Comparable<QualifiedName> {
@@ -120,7 +123,7 @@ public class QualifiedName implements Comparable<QualifiedName> {
 	 * really unique in the whole schema, the element which should have this
 	 * unique name needs to be specified. It there is any other element in the
 	 * schema which owns the same unique name, a SchemaExceptiion is thrown
-	 * 
+	 *
 	 * @param element
 	 *            The element which should be identified with the unique name
 	 * @param uniqueName
@@ -131,51 +134,51 @@ public class QualifiedName implements Comparable<QualifiedName> {
 	 */
 	public void setUniqueName(NamedElement element, String uniqueName) {
 		if (!(uniqueName.indexOf('.') < 0)) {
-			throw new SchemaException("The unique name " + uniqueName
-					+ " must not contain '.'.");
+			throw new InvalidNameException("The unique name "
+					+ uniqueName + " must not contain '.'.");
 		}
 		// Must be 1 because 0 is the default graph-class Graph
 		for (GraphClass gc : element.getSchema()
 				.getGraphClassesInTopologicalOrder()) {
 			if (gc != element) {
 				if (gc.getUniqueName().equals(uniqueName)) {
-					throw new SchemaException("The unique name " + uniqueName
-							+ " is already used in this schema");
+					throw new InvalidNameException("The unique name "
+							+ uniqueName + " is already used in this schema");
 				}
 			}
 			for (VertexClass v : gc.getVertexClasses()) {
 				if (v != element) {
 					if (v.getSimpleName().equals(uniqueName)) {
-						throw new SchemaException("The unique name "
-								+ uniqueName
-								+ " is already used in this schema");
+						throw new InvalidNameException(
+								"The unique name " + uniqueName
+										+ " is already used in this schema");
 					}
 				}
 			}
 			for (EdgeClass e : gc.getEdgeClasses()) {
 				if (e != element) {
 					if (e.getSimpleName().equals(uniqueName)) {
-						throw new SchemaException("The unique name "
-								+ uniqueName
-								+ " is already used in this schema");
+						throw new InvalidNameException(
+								"The unique name " + uniqueName
+										+ " is already used in this schema");
 					}
 				}
 			}
 			for (AggregationClass e : gc.getAggregationClasses()) {
 				if (e != element) {
 					if (e.getSimpleName().equals(uniqueName)) {
-						throw new SchemaException("The unique name "
-								+ uniqueName
-								+ " is already used in this schema");
+						throw new InvalidNameException(
+								"The unique name " + uniqueName
+										+ " is already used in this schema");
 					}
 				}
 			}
 			for (CompositionClass e : gc.getCompositionClasses()) {
 				if (e != element) {
 					if (e.getSimpleName().equals(uniqueName)) {
-						throw new SchemaException("The unique name "
-								+ uniqueName
-								+ " is already used in this schema");
+						throw new InvalidNameException(
+								"The unique name " + uniqueName
+										+ " is already used in this schema");
 					}
 				}
 			}
@@ -183,8 +186,8 @@ public class QualifiedName implements Comparable<QualifiedName> {
 		for (Domain e : element.getSchema().getDomains().values()) {
 			if (e != element) {
 				if (e.getSimpleName().equals(uniqueName)) {
-					throw new SchemaException("The unique name " + uniqueName
-							+ " is already used in this schema");
+					throw new InvalidNameException("The unique name "
+							+ uniqueName + " is already used in this schema");
 				}
 			}
 		}

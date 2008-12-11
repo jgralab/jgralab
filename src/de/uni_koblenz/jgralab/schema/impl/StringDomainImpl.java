@@ -29,20 +29,16 @@ import de.uni_koblenz.jgralab.codegenerator.CodeSnippet;
 import de.uni_koblenz.jgralab.schema.Package;
 import de.uni_koblenz.jgralab.schema.QualifiedName;
 import de.uni_koblenz.jgralab.schema.Schema;
-import de.uni_koblenz.jgralab.schema.SchemaException;
 import de.uni_koblenz.jgralab.schema.StringDomain;
+import de.uni_koblenz.jgralab.schema.exception.DuplicateNamedElementException;
+import de.uni_koblenz.jgralab.schema.exception.SchemaException;
 
 public class StringDomainImpl extends BasicDomainImpl implements StringDomain {
-	// private static StringDomainImpl instance = new StringDomainImpl();
-	//
-	// public static StringDomainImpl instance() {
-	// return instance;
-	// }
 
 	public StringDomainImpl(Schema schema) throws SchemaException {
 		QualifiedName qName = new QualifiedName("String");
 		if (schema.getDomain(qName) != null) {
-			throw new SchemaException(
+			throw new DuplicateNamedElementException(
 					"Cannot create another StringDomain for Schema "
 							+ schema.getQualifiedName());
 		}

@@ -65,8 +65,9 @@ import de.uni_koblenz.jgralab.schema.Package;
 import de.uni_koblenz.jgralab.schema.QualifiedName;
 import de.uni_koblenz.jgralab.schema.RecordDomain;
 import de.uni_koblenz.jgralab.schema.Schema;
-import de.uni_koblenz.jgralab.schema.SchemaException;
 import de.uni_koblenz.jgralab.schema.VertexClass;
+import de.uni_koblenz.jgralab.schema.exception.InvalidNameException;
+import de.uni_koblenz.jgralab.schema.exception.SchemaException;
 import de.uni_koblenz.jgralab.schema.impl.AttributeImpl;
 import de.uni_koblenz.jgralab.schema.impl.SchemaImpl;
 
@@ -1277,7 +1278,7 @@ public class GraphIO {
 					ecd.toMultiplicity[0], ecd.toMultiplicity[1],
 					ecd.toRoleName);
 		} else {
-			throw new SchemaException("Unknown type " + ecd.type);
+			throw new InvalidNameException("Unknown type " + ecd.type);
 		}
 
 		ec.addAttributes(attributes(ecd.attributes).values());

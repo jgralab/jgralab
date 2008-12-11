@@ -33,7 +33,7 @@ import de.uni_koblenz.jgralab.schema.impl.RolenameEntry;
 
 /**
  * Represents a VertexClass in the Schema.
- * 
+ *
  * @author ist@uni-koblenz.de
  */
 public interface VertexClass extends GraphElementClass {
@@ -41,17 +41,17 @@ public interface VertexClass extends GraphElementClass {
 	/**
 	 * adds a superclass to the list of superclasses, all attributes get
 	 * inherited from those classes
-	 * 
+	 *
 	 * @param superClass
 	 *            the vertex class to be added to the list of superclasses
-	 * 
+	 *
 	 */
 	public void addSuperClass(VertexClass superClass);
 
 	/**
 	 * adds an edge class to the list of edge classes to which the vertex class
 	 * may be connected to, only used internally!
-	 * 
+	 *
 	 * @param anEdgeClass
 	 */
 	public void addEdgeClass(EdgeClass anEdgeClass);
@@ -98,11 +98,9 @@ public interface VertexClass extends GraphElementClass {
 	 */
 	public Map<String, RolenameEntry> getRolenameMap();
 
-	public Set<DirectedEdgeClass> getValidDirectedEdgeClasses();
-
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see de.uni_koblenz.jgralab.schema.AttributedElementClass#getM1Class()
 	 */
 	public Class<? extends Vertex> getM1Class();

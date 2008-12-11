@@ -34,14 +34,16 @@ import java.util.TreeSet;
 
 import de.uni_koblenz.jgralab.Attribute;
 import de.uni_koblenz.jgralab.AttributedElement;
-import de.uni_koblenz.jgralab.GraphException;
 import de.uni_koblenz.jgralab.M1ClassManager;
 import de.uni_koblenz.jgralab.schema.AttributedElementClass;
 import de.uni_koblenz.jgralab.schema.Domain;
 import de.uni_koblenz.jgralab.schema.Package;
 import de.uni_koblenz.jgralab.schema.QualifiedName;
 import de.uni_koblenz.jgralab.schema.Schema;
-import de.uni_koblenz.jgralab.schema.SchemaException;
+import de.uni_koblenz.jgralab.schema.exception.DuplicateAttributeException;
+import de.uni_koblenz.jgralab.schema.exception.InheritanceException;
+import de.uni_koblenz.jgralab.schema.exception.M1ClassAccessException;
+import de.uni_koblenz.jgralab.schema.exception.ReservedWordException;
 
 public abstract class AttributedElementClassImpl implements
 		AttributedElementClass {
@@ -110,7 +112,7 @@ public abstract class AttributedElementClassImpl implements
 
 	/**
 	 * builds a new attributed element class
-	 * 
+	 *
 	 * @param qn
 	 *            the unique identifier of the element in the schema
 	 */
@@ -182,15 +184,13 @@ public abstract class AttributedElementClassImpl implements
 	@Override
 	public void addAttribute(Attribute anAttribute) {
 		if (containsAttribute(anAttribute.getName())) {
-			throw new SchemaException("duplicate attribute name '"
-					+ anAttribute.getName() + "' in class '"
-					+ getQualifiedName() + "'");
+			throw new DuplicateAttributeException(anAttribute.getName(),
+					getQualifiedName());
 		}
 		if (Schema.reservedTGWords.contains(anAttribute.getName())
 				|| Schema.reservedJavaWords.contains(anAttribute.getName())) {
-			throw new SchemaException("The name " + anAttribute.getName()
-					+ " may not be used as "
-					+ "attribute name because it is a reserved word.");
+			throw new ReservedWordException(anAttribute.getName(),
+					"attribute name");
 		}
 		attributeList.add(anAttribute);
 	}
@@ -299,7 +299,7 @@ public abstract class AttributedElementClassImpl implements
 
 	/**
 	 * adds a superClass to this class
-	 * 
+	 *
 	 * @param superClass
 	 *            the class to add as superclass
 	 */
@@ -332,41 +332,21 @@ public abstract class AttributedElementClassImpl implements
 		}
 		for (Attribute a : superClass.getAttributeList()) {
 			if (getOwnAttribute(a.getName()) != null) {
-				throw new SchemaException("Cannot add "
+				throw new InheritanceException("Cannot add "
 						+ superClass.getQualifiedName() + " as superclass of "
 						+ getQualifiedName() + ", cause: Attribute "
 						+ a.getName() + " is declared in both classes");
 			}
 		}
 		if (superClass.isSubClassOf(this)) {
-			throw new GraphException("Cycle in class hierarchie for classes: "
-					+ getQualifiedName() + " and "
-					+ superClass.getQualifiedName());
+			throw new InheritanceException(
+					"Cycle in class hierarchie for classes: "
+							+ getQualifiedName() + " and "
+							+ superClass.getQualifiedName());
 		}
 		directSuperClasses.add(superClass);
 		((AttributedElementClassImpl) superClass).directSubClasses.add(this);
 	}
-
-	// /**
-	// * adds a subclass to the list of subclasses, all attributes of this class
-	// * and all superclasses get inherited to those classes
-	// *
-	// * @param subClass
-	// * the AttributedElementClass to be added to the list of subclasses
-	// */
-	// protected void addSubClass(AttributedElementClass subClass) {
-	//		
-	// // subClasses.add(subClass);
-	// // Iterator<AttributedElementClass> it = getAllSuperClasses().iterator();
-	// // AttributedElementClass a;
-	// // while (it.hasNext()) {
-	// // a = it.next();
-	// // if (DEBUG)
-	// // System.out.println("Adding subclass " + subClass.getQualifiedName()
-	// // + " to superclass " + a.getQualifiedName());
-	// // ((AttributedElementClassImpl) a).addSubClass(subClass);
-	// // }
-	// }
 
 	@Override
 	public boolean isSuperClassOf(
@@ -467,7 +447,7 @@ public abstract class AttributedElementClassImpl implements
 				m1Class = (Class<? extends AttributedElement>) Class.forName(
 						m1ClassName, true, M1ClassManager.instance());
 			} catch (ClassNotFoundException e) {
-				throw new SchemaException(
+				throw new M1ClassAccessException(
 						"Can't load M1 class for AttributedElementClass '"
 								+ getQualifiedName() + "'", e);
 			}
@@ -478,7 +458,7 @@ public abstract class AttributedElementClassImpl implements
 	@SuppressWarnings("unchecked")
 	public Class<? extends AttributedElement> getM1ImplementationClass() {
 		if (isAbstract()) {
-			throw new SchemaException(
+			throw new M1ClassAccessException(
 					"Can't get M1 implementation class. AttributedElementClass '"
 							+ getQualifiedName() + "' is abstract!");
 		}
@@ -488,13 +468,13 @@ public abstract class AttributedElementClassImpl implements
 				m1ImplementationClass = (Class<? extends AttributedElement>) f
 						.get(m1Class);
 			} catch (SecurityException e) {
-				throw new SchemaException(e);
+				throw new M1ClassAccessException(e);
 			} catch (NoSuchFieldException e) {
-				throw new SchemaException(e);
+				throw new M1ClassAccessException(e);
 			} catch (IllegalArgumentException e) {
-				throw new SchemaException(e);
+				throw new M1ClassAccessException(e);
 			} catch (IllegalAccessException e) {
-				throw new SchemaException(e);
+				throw new M1ClassAccessException(e);
 			}
 		}
 		return m1ImplementationClass;
