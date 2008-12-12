@@ -51,7 +51,7 @@ VertexClass ExponentiatedPathDescription: PathDescription;
 VertexClass ForwardVertexSet: PathExpression;
 VertexClass FunctionApplication: Expression;
 VertexClass FunctionId: Identifier;
-VertexClass Greql2Expression: Greql2Vertex { queryText: String, optimizer: String, costModel: String };
+VertexClass Greql2Expression: Greql2Vertex { importedTypes: Set<String>, queryText: String, optimizer: String, costModel: String };
 VertexClass Identifier : Expression { name: String };
 VertexClass IntLiteral: Literal { intValue: Integer };
 VertexClass IntermediateVertexPathDescription: PathDescription;
@@ -111,6 +111,7 @@ abstract VertexClass ValueConstruction: Expression;
 // A common super-class for all Edges that connect PathDescription vertices
 abstract AggregationClass IsPathDescriptionOf : Greql2Aggregation from PathDescription (0,*) to PathDescription(0,*) aggregate to;
 
+//AggregationClass IsImportedTypeOf from TypeId (0,*) to Greql2Expression (0,1) aggregate to;
 AggregationClass IsAlternativePathOf: IsPathDescriptionOf from PathDescription (2,*) to AlternativePathDescription (0,*) aggregate to;
 AggregationClass IsArgumentOf: Greql2Aggregation from Expression (0,*) to FunctionApplication (0,*) aggregate to;
 AggregationClass IsBoundExprOfDefinition: IsBoundExprOf from Expression (1,1) to DefinitionExpression (0,1) aggregate to;

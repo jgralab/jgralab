@@ -620,6 +620,7 @@ HASH 		: '#';
 OUTAGGREGATION	: '<>--';
 INAGGREGATION   : '--<>';
 PATHSYSTEMSTART : '-<';	 	
+IMPORT     : 'import';
 	
 //Whitespace
 WS  :  (' '|'\r'|'\t'|'\u000C'|'\n')* 
@@ -775,16 +776,35 @@ greqlExpression
 @init{
 	int offset = 0;
 	int length = 0;
+	int typeOffset = 0;
+	int typeLength = 0;
 	initialize();
+	Set<String> typeNames = new HashSet<String>();
+	Set<String> shortNames = new HashSet<String>();	
+	Greql2Expression root = graph.createGreql2Expression();
 }
 : (
+    ((IMPORT) => 
+      (IMPORT
+        {typeOffset = getLTOffset();}
+        importedType = qualifiedName
+        {typeLength = getLTLength(typeOffset);}
+        SEMI 
+        {
+          String shortName = importedType.substring(importedType.lastIndexOf("."));
+          shortNames.add(shortName);
+          if (shortNames.contains(shortName))
+          	 throw new ParseException("A type with simple name " + shortName + " is imported twice!", importedType, new SourcePosition(typeLength, typeOffset) );
+          typeNames.add(importedType);	 
+        }
+      ))* 
+    {root.setImportedTypes(typeNames);}
     (USING varList = variableList COLON)?
     { offset = input.LT(1).getCharPositionInLine()-1; }
     expr = expression
     (STORE AS id = IDENT)?
     {
 	length = getLTLength(offset);
-	Greql2Expression root = graph.createGreql2Expression();
 	// add using-variables
 	if (varList != null)
 		for (VertexPosition var : varList) {
