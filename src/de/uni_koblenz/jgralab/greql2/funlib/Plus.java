@@ -82,6 +82,7 @@ public class Plus extends ArithmeticFunction {
 	{
 		JValueType[][] x = { { JValueType.DOUBLE, JValueType.DOUBLE },
 				{ JValueType.LONG, JValueType.LONG },
+				{ JValueType.INTEGER, JValueType.INTEGER },
 				{ JValueType.STRING, JValueType.STRING } };
 		signatures = x;
 	}
@@ -91,8 +92,9 @@ public class Plus extends ArithmeticFunction {
 		switch (checkArguments(arguments)) {
 		case 0:
 		case 1:
-			return evaluate(arguments, ArithmeticOperator.PLUS);
 		case 2:
+			return evaluate(arguments, ArithmeticOperator.PLUS);
+		case 3:
 			return new JValue(arguments[0].toString() + arguments[1].toString());
 		default:
 			throw new WrongFunctionParameterException(this, null, arguments);
