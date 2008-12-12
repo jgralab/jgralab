@@ -13,9 +13,7 @@ import de.uni_koblenz.jgralab.greql2.exception.EvaluateException;
 import de.uni_koblenz.jgralab.greql2.exception.JValueInvalidTypeException;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValueMap;
-import de.uni_koblenz.jgralab.greql2.jvalue.JValueTuple;
 import de.uni_koblenz.jgralab.greql2.schema.Declaration;
-import de.uni_koblenz.jgralab.greql2.schema.Expression;
 import de.uni_koblenz.jgralab.greql2.schema.MapComprehension;
 
 /**
@@ -64,22 +62,22 @@ public class MapComprehensionEvaluator extends VertexEvaluator {
 			throw new EvaluateException("Error evaluating MapComprehension",
 					exception);
 		}
-		Expression resultDef = (Expression) vertex.getFirstIsCompResultDefOf(
-				EdgeDirection.IN).getAlpha();
-		VertexEvaluator resultDefEval = greqlEvaluator
-				.getVertexEvaluatorGraphMarker().getMark(resultDef);
 
 		JValueMap resultMap = new JValueMap();
 
+		Vertex key = vertex.getFirstIsKeyExprOfComprehension(EdgeDirection.IN)
+				.getAlpha();
+		VertexEvaluator keyEval = greqlEvaluator
+				.getVertexEvaluatorGraphMarker().getMark(key);
+		Vertex val = vertex
+				.getFirstIsValueExprOfComprehension(EdgeDirection.IN)
+				.getAlpha();
+		VertexEvaluator valEval = greqlEvaluator
+				.getVertexEvaluatorGraphMarker().getMark(val);
+
 		while (declLayer.iterate(subgraph)) {
-			JValue val = resultDefEval.getResult(subgraph);
-			if (!val.isCollection() || !(val.toCollection().isJValueTuple())
-					|| !(val.toCollection().toJValueTuple().size() != 2)) {
-				throw new EvaluateException(
-						"A MapComprehension must have exactly 2 elements after reportMap.");
-			}
-			JValueTuple tup = val.toCollection().toJValueTuple();
-			resultMap.put(tup.get(0), tup.get(1));
+			resultMap.put(keyEval.getResult(subgraph), valEval
+					.getResult(subgraph));
 		}
 		return resultMap;
 	}
