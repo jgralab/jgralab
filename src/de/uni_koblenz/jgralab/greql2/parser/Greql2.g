@@ -450,32 +450,45 @@ import de.uni_koblenz.jgralab.schema.*;
 	*	merges variables within the comprehension result and tableheaders
 	*   @param v contains a set- or a bag-comprehension
 	*/
-	private void mergeVariablesInComprehension(Comprehension v) throws DuplicateVariableException, UndefinedVariableException {
-		variableSymbolTable.blockBegin();
-		Edge IsCompDeclOf = v.getFirstIsCompDeclOf(EdgeDirection.IN);
-		mergeVariablesInDeclaration((Declaration)IsCompDeclOf.getAlpha());
-		Edge IsCompResultDefOf = v.getFirstIsCompResultDefOf(EdgeDirection.IN);
-		mergeVariables(IsCompResultDefOf.getAlpha());
-		// merge variables in table-headers if it's a bag-comprehension
-		if (v instanceof BagComprehension) {
-			IsTableHeaderOf isTableHeaderOf = v.getFirstIsTableHeaderOf(EdgeDirection.IN);
-			while (isTableHeaderOf != null)	{
-				mergeVariables(isTableHeaderOf.getAlpha());
-				isTableHeaderOf = isTableHeaderOf.getNextIsTableHeaderOf(EdgeDirection.IN);
-			}
-		}
-		if (v instanceof TableComprehension) {
-			TableComprehension tc = (TableComprehension) v;
-			IsColumnHeaderExprOf ch = tc.getFirstIsColumnHeaderExprOf(EdgeDirection.IN);
-			mergeVariables(ch.getAlpha());
-			IsRowHeaderExprOf rh = tc.getFirstIsRowHeaderExprOf(EdgeDirection.IN);
-			mergeVariables(rh.getAlpha());
-			IsTableHeaderOf th = tc.getFirstIsTableHeaderOf(EdgeDirection.IN);
-			if (th != null)
-				mergeVariables(th.getAlpha());
-		}
-		variableSymbolTable.blockEnd();
-	}
+    	private void mergeVariablesInComprehension(Comprehension v) throws DuplicateVariableException, UndefinedVariableException {
+    		variableSymbolTable.blockBegin();
+    		Edge IsCompDeclOf = v.getFirstIsCompDeclOf(EdgeDirection.IN);
+    		mergeVariablesInDeclaration((Declaration)IsCompDeclOf.getAlpha());
+    		Edge isCompResultDefOf = v.getFirstIsCompResultDefOf(EdgeDirection.IN);
+    		if (isCompResultDefOf != null) {
+    			mergeVariables(isCompResultDefOf.getAlpha());
+    			// merge variables in table-headers if it's a bag-comprehension
+    			if (v instanceof BagComprehension) {
+    				IsTableHeaderOf isTableHeaderOf = v
+						.getFirstIsTableHeaderOf(EdgeDirection.IN);
+    				while (isTableHeaderOf != null) {
+    					mergeVariables(isTableHeaderOf.getAlpha());
+    					isTableHeaderOf = isTableHeaderOf
+							.getNextIsTableHeaderOf(EdgeDirection.IN);
+    				}
+    			}
+    			if (v instanceof TableComprehension) {
+    				TableComprehension tc = (TableComprehension) v;
+    				IsColumnHeaderExprOf ch = tc
+						.getFirstIsColumnHeaderExprOf(EdgeDirection.IN);
+    				mergeVariables(ch.getAlpha());
+    				IsRowHeaderExprOf rh = tc
+						.getFirstIsRowHeaderExprOf(EdgeDirection.IN);
+    				mergeVariables(rh.getAlpha());
+    				IsTableHeaderOf th = tc
+						.getFirstIsTableHeaderOf(EdgeDirection.IN);
+    				if (th != null)
+    					mergeVariables(th.getAlpha());
+    			}
+    		}
+    		if (v instanceof MapComprehension) {
+    			IsKeyExprOfComprehension keyEdge = ((MapComprehension)v).getFirstIsKeyExprOfComprehension();
+    			mergeVariables(keyEdge.getAlpha());
+    			IsValueExprOfComprehension valueEdge = ((MapComprehension)v).getFirstIsValueExprOfComprehension();
+    			mergeVariables(valueEdge.getAlpha());
+    		}
+    		variableSymbolTable.blockEnd();
+    	}
 
 
 	private String decode(String s) {
