@@ -1690,7 +1690,7 @@ simplePathDescription returns [PrimaryPathDescription result = null]
 /** matches a an aggregation pathdescription consisting of an arrow simple
 	and eventually a restriction. 
 */
-aggregationPathDescription returns [PrimaryPathDescription result = null]
+aggregationPathDescription returns [AggregationPathDescription result = null]
 @init{
     boolean outAggregation = true;
     int offsetDir = 0;
