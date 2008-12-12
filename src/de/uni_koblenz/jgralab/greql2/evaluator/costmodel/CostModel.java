@@ -25,6 +25,7 @@
 package de.uni_koblenz.jgralab.greql2.evaluator.costmodel;
 
 import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
+import de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.AggregationPathDescriptionEvaluator;
 import de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.AlternativePathDescriptionEvaluator;
 import de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.BackwardVertexSetEvaluator;
 import de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.BagComprehensionEvaluator;
@@ -194,6 +195,9 @@ public interface CostModel {
 
 	public VertexCosts calculateCostsSimplePathDescription(
 			SimplePathDescriptionEvaluator e, GraphSize graphSize);
+	
+	public VertexCosts calculateCostsAggregationPathDescription(
+			AggregationPathDescriptionEvaluator e, GraphSize graphSize);
 
 	public VertexCosts calculateCostsTableComprehension(
 			TableComprehensionEvaluator e, GraphSize graphSize);

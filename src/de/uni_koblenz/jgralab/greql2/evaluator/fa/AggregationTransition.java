@@ -24,21 +24,21 @@
  
 package de.uni_koblenz.jgralab.greql2.evaluator.fa;
 
+import de.uni_koblenz.jgralab.Aggregation;
 import de.uni_koblenz.jgralab.BooleanGraphMarker;
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.greql2.exception.EvaluateException;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValueTypeCollection;
+import de.uni_koblenz.jgralab.schema.AggregationClass;
 import de.uni_koblenz.jgralab.schema.AttributedElementClass;
 
 /**
- * This transition accepts a SimplePathDescription. A SimplePathDescription is for instance
- * something like v -->{isExprOf} w.
+ * This transition accepts an AggregationPathDescription. Am AggregationPathDescription is for instance
+ * something like v --<>{isExprOf} w.
  * @author ist@uni-koblenz.de
- * Summer 2006, Diploma Thesis
- *
  */
-public class SimpleTransition extends Transition {
+public class AggregationTransition extends Transition {
 
 	/**
 	 * The collection of types that are accepted by this transition 
@@ -51,11 +51,7 @@ public class SimpleTransition extends Transition {
 	 */
 	protected String validEdgeRole;
 
-	/**
-	 * this transition may accept edges in direction in, out or any
-	 */
-	protected AllowedEdgeDirection validDirection;
-
+	protected boolean aggregateFrom;
 
 	/**
 	 * returns a string which describes the edge
@@ -63,7 +59,7 @@ public class SimpleTransition extends Transition {
 	@Override
 	public String edgeString() {
 		//String desc = "SimpleTransition";
-		String desc = "SimpleTransition (Dir:" + validDirection.toString();
+		String desc = "AggregationTransition (aggregateFrom:" + aggregateFrom;
 		if (typeCollection != null) {
 			desc = desc + "\n " + typeCollection.toString() + "\n ";
 		}
@@ -76,14 +72,14 @@ public class SimpleTransition extends Transition {
 	 * @see greql2.evaluator.fa.Transition#equalSymbol(greql2.evaluator.fa.EdgeTransition)
 	 */
 	public boolean equalSymbol(Transition t) {
-		if (!(t instanceof SimpleTransition))
+		if (!(t instanceof AggregationTransition))
 			return false;
-		SimpleTransition et = (SimpleTransition) t;
+		AggregationTransition et = (AggregationTransition) t;
 		if (!typeCollection.equals(et.typeCollection))
 			return false;
 		if (validEdgeRole != et.validEdgeRole)
 			return false;
-		if (validDirection != et.validDirection)
+		if (aggregateFrom != et.aggregateFrom)
 			return false;
 		return true;
 	}
@@ -91,9 +87,9 @@ public class SimpleTransition extends Transition {
 	/**
 	 * Copy-constructor, creates a copy of the given transition
 	 */
-	protected SimpleTransition(SimpleTransition t, boolean addToStates) {
+	protected AggregationTransition(AggregationTransition t, boolean addToStates) {
 		super(t, addToStates);
-		validDirection = t.validDirection;
+		aggregateFrom = t.aggregateFrom;
 		typeCollection = new JValueTypeCollection(t.typeCollection);
 	}
 	
@@ -102,31 +98,32 @@ public class SimpleTransition extends Transition {
 	 * returns a copy of this transition
 	 */
 	public Transition copy(boolean addToStates) {
-		return new SimpleTransition(this, addToStates);
+		return new AggregationTransition(this, addToStates);
 	}
 
 	/**
 	 * Creates a new transition from start state to end state. The Transition
-	 * accepts all edges that have the right direction, role, startVertexType,
+	 * accepts all aggregations that have the right aggregation direction, role, startVertexType,
 	 * endVertexType, edgeType and even it's possible to define a specific edge.
 	 * 
 	 * @param start
 	 *            The state where this transition starts
 	 * @param end
 	 *            The state where this transition ends
-	 * @param dir
-	 *            The direction of the accepted edges, may be EdeDirection.IN,
-	 *            EdgeDirection.OUT or EdgeDirection.ANY
+	 * @param aggregateFrom
+	 *            The direction of the aggregation, true for an aggregation with the aggregation
+	 *            end at the near vertex, false for an aggregation with the aggregation end at the
+	 *            far vertex
 	 */
-	public SimpleTransition(State start, State end, AllowedEdgeDirection dir) {
+	public AggregationTransition(State start, State end, boolean aggregateFrom) {
 		super(start, end);
-		validDirection = dir;
+		this.aggregateFrom = aggregateFrom;
 		this.typeCollection = new JValueTypeCollection();
 	}
 
 	/**
 	 * Creates a new transition from start state to end state. The Transition
-	 * accepts all edges that have the right direction, role, startVertexType,
+	 * accepts all aggregations that have the right aggregation direction, role, startVertexType,
 	 * endVertexType, edgeType and even it's possible to define a specific edge.
 	 * This constructor creates a transition to accept a simplePathDescription
 	 * 
@@ -134,18 +131,19 @@ public class SimpleTransition extends Transition {
 	 *            The state where this transition starts
 	 * @param end
 	 *            The state where this transition ends
-	 * @param dir
-	 *            The direction of the accepted edges, may be EdeDirection.IN,
-	 *            EdgeDirection.OUT or EdgeDirection.ANY
+	 * @param aggregateFrom
+	 *            The direction of the aggregation, true for an aggregation with the aggregation
+	 *            end at the near vertex, false for an aggregation with the aggregation end at the
+	 *            far vertex
 	 * @param typeCollection
 	 *            The types which restrict the possible edges
 	 * @param role
 	 *            The accepted edge role, or null if any role is accepted
 	 */
-	public SimpleTransition(State start, State end, AllowedEdgeDirection dir,
+	public AggregationTransition(State start, State end, boolean aggregateFrom,
 			JValueTypeCollection typeCollection, String role) {
 		super(start, end);
-		validDirection = dir;
+		this.aggregateFrom = aggregateFrom;
 		validEdgeRole = role;
 		this.typeCollection = typeCollection;
 	}
@@ -157,10 +155,7 @@ public class SimpleTransition extends Transition {
 	 */
 	public void reverse() {
 		super.reverse();
-		if (validDirection == AllowedEdgeDirection.IN)
-			validDirection = AllowedEdgeDirection.OUT;
-		else if (validDirection == AllowedEdgeDirection.OUT)
-			validDirection = AllowedEdgeDirection.IN;
+		aggregateFrom = !aggregateFrom;
 	}
 
 	/* (non-Javadoc)
@@ -176,13 +171,15 @@ public class SimpleTransition extends Transition {
 	 */
 	public boolean accepts(Vertex v, Edge e, BooleanGraphMarker subgraph)
 			throws EvaluateException {
-		if (e == null)
-			return false;
-		if (validDirection == AllowedEdgeDirection.OUT) {
-			if (!e.isNormal())
+		if ( (e == null) || !(e instanceof Aggregation))
 				return false;
-		} else if (validDirection == AllowedEdgeDirection.IN) {
-			if (e.isNormal())
+		if (e.isNormal()) {
+			AggregationClass aggClass = (AggregationClass) e.getAttributedElementClass();
+			if (!aggClass.isAggregateFrom())
+				return false;
+		} else {
+			AggregationClass aggClass = (AggregationClass) e.getAttributedElementClass();
+			if (aggClass.isAggregateFrom())
 				return false;
 		} 
 	

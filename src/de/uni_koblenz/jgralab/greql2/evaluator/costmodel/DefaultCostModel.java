@@ -30,6 +30,7 @@ import java.util.logging.Logger;
 import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
+import de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.AggregationPathDescriptionEvaluator;
 import de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.AlternativePathDescriptionEvaluator;
 import de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.BackwardVertexSetEvaluator;
 import de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.BagComprehensionEvaluator;
@@ -1322,6 +1323,15 @@ public class DefaultCostModel extends CostModelBase implements CostModel {
 				transitionCosts);
 	}
 
+	
+	@Override
+	public VertexCosts calculateCostsAggregationPathDescription(
+			AggregationPathDescriptionEvaluator e, GraphSize graphSize) {
+		return new VertexCosts(transitionCosts, transitionCosts,
+				transitionCosts);
+	}
+	
+	
 	/*
 	 * (non-Javadoc)
 	 *
