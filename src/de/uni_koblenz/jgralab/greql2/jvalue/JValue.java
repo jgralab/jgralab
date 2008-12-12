@@ -74,7 +74,7 @@ public class JValue implements Comparable<JValue> {
 	}
 
 	/**
-	 * accepts te given visitor to visit this jvalue
+	 * accepts the given visitor to visit this jvalue
 	 */
 	public void accept(JValueVisitor v) {
 		switch (this.type) {
@@ -178,7 +178,7 @@ public class JValue implements Comparable<JValue> {
 	}
 
 	/**
-	 * returns truw if this JValue and the given object are equal. That means,
+	 * returns true if this JValue and the given object are equal. That means,
 	 * the given object is a JValue which contains an object of the same type
 	 * like this one and these objects are equal
 	 */
@@ -1093,7 +1093,7 @@ public class JValue implements Comparable<JValue> {
 		case CHARACTER:
 			switch (atype) {
 			case STRING:
-				return 1;
+				return 2;
 			default:
 				return -1;
 			}

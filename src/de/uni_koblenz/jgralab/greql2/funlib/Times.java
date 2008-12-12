@@ -80,6 +80,7 @@ public class Times extends ArithmeticFunction {
 	{
 		JValueType[][] x = { { JValueType.DOUBLE, JValueType.DOUBLE },
 				{ JValueType.LONG, JValueType.LONG },
+				{ JValueType.INTEGER, JValueType.INTEGER },
 				{ JValueType.STRING, JValueType.LONG } };
 		signatures = x;
 	}
@@ -89,8 +90,9 @@ public class Times extends ArithmeticFunction {
 		switch (checkArguments(arguments)) {
 		case 0:
 		case 1:
-			return evaluate(arguments, ArithmeticOperator.TIMES);
 		case 2:
+			return evaluate(arguments, ArithmeticOperator.TIMES);
+		case 3:
 			String s = arguments[0].toString();
 			long l = arguments[1].toLong();
 			StringBuffer sb = new StringBuffer();

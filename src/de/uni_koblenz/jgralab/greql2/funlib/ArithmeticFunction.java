@@ -17,7 +17,8 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
 public abstract class ArithmeticFunction extends AbstractGreql2Function {
 	{
 		JValueType[][] x = { { JValueType.DOUBLE, JValueType.DOUBLE },
-				{ JValueType.LONG, JValueType.LONG } };
+				{ JValueType.LONG, JValueType.LONG },
+				{ JValueType.INTEGER, JValueType.INTEGER } };
 		signatures = x;
 	}
 
@@ -27,12 +28,10 @@ public abstract class ArithmeticFunction extends AbstractGreql2Function {
 
 	public JValue evaluate(JValue[] arguments, ArithmeticOperator operator)
 			throws EvaluateException {
-		Double d1 = null, d2 = null;
-		Long l1 = null, l2 = null;
 		switch (checkArguments(arguments)) {
 		case 0:
-			d1 = arguments[0].toDouble();
-			d2 = arguments[1].toDouble();
+			Double d1 = arguments[0].toDouble();
+			Double d2 = arguments[1].toDouble();
 			switch (operator) {
 			case PLUS:
 				return new JValue(d1 + d2);
@@ -47,8 +46,8 @@ public abstract class ArithmeticFunction extends AbstractGreql2Function {
 						+ operator + ".");
 			}
 		case 1:
-			l1 = arguments[0].toLong();
-			l2 = arguments[1].toLong();
+			Long l1 = arguments[0].toLong();
+			Long l2 = arguments[1].toLong();
 			switch (operator) {
 			case PLUS:
 				return new JValue(l1 + l2);
@@ -58,6 +57,22 @@ public abstract class ArithmeticFunction extends AbstractGreql2Function {
 				return new JValue(new Double(l1) / l2);
 			case TIMES:
 				return new JValue(l1 * l2);
+			default:
+				throw new EvaluateException("Unknown ArithmeticOperator "
+						+ operator + ".");
+			}
+		case 2:
+			Integer i1 = arguments[0].toInteger();
+			Integer i2 = arguments[1].toInteger();
+			switch (operator) {
+			case PLUS:
+				return new JValue(i1 + i2);
+			case MINUS:
+				return new JValue(i1 - i2);
+			case DIV:
+				return new JValue(new Double(i1) / i2);
+			case TIMES:
+				return new JValue(i1 * i2);
 			default:
 				throw new EvaluateException("Unknown ArithmeticOperator "
 						+ operator + ".");
