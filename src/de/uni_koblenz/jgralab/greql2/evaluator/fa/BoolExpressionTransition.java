@@ -137,26 +137,20 @@ public class BoolExpressionTransition extends Transition {
 	 */
 	public boolean accepts(Vertex v, Edge e, BooleanGraphMarker subgraph)
 			throws EvaluateException {
-		// System.out.println("checking if boolean expression accepts vertex " +
-		// v + " and edge " +e );
 		if (thisEdgeEvaluator != null) {
-			// System.out.println("Setting thisEdge to " + e);
 			thisEdgeEvaluator.setValue(new JValue(e));
 		}
 		if (thisVertexEvaluator != null) {
 			thisVertexEvaluator.setValue(new JValue(v));
 		}
-		// System.out.println("Try to get result");
 		JValue res = boolExpressionEvaluator.getResult(subgraph);
 		if (res.isBoolean()) {
 			try {
 				if (res.toBoolean() == Boolean.TRUE) {
-					// System.out.println("BooleanExpressionTransition accepting
-					// vertex");
 					return true;
 				}
 			} catch (JValueInvalidTypeException ex) {
-				// may not happen here
+				ex.printStackTrace();
 			}
 		}
 		return false;

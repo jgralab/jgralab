@@ -22,7 +22,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
  
-package de.uni_koblenz.jgralab.greql2;
+package de.uni_koblenz.jgralab.greql2.parser;
 
 import java.util.HashMap;
 import java.util.LinkedList;

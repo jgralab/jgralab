@@ -127,6 +127,13 @@ import de.uni_koblenz.jgralab.schema.*;
          * a ParseException is thrown.
          */
     	private void testIllegalThisLiterals() {
+    		Set<Class<? extends Greql2Vertex>> allowedClassesForThisLiterals
+    		  = new HashSet<Class<? extends Greql2Vertex>> ();
+    		  allowedClassesForThisLiterals.add(PathDescription.class);
+    		  allowedClassesForThisLiterals.add(PathExistence.class);
+    		  allowedClassesForThisLiterals.add(ForwardVertexSet.class);
+    		  allowedClassesForThisLiterals.add(BackwardVertexSet.class);
+    	
     		for (ThisLiteral vertex : graph.getThisLiteralVertices()) {
     			for (Edge sourcePositionEdge : vertex.incidences(EdgeDirection.OUT)) {
     				Queue<Greql2Vertex> queue = new LinkedList<Greql2Vertex>();
@@ -135,11 +142,17 @@ import de.uni_koblenz.jgralab.schema.*;
     					Greql2Vertex currentVertex = queue.poll();
     					for (Edge edge : currentVertex.incidences(EdgeDirection.OUT)) {
     						Greql2Vertex omega = (Greql2Vertex) edge.getOmega();
-    						if (!(omega instanceof PathDescription)) {
-    							if (omega instanceof Greql2Expression) 
-    								throw new ParseException("This literals must not be used outside pathdescriptions", vertex.getName(), ((Greql2Aggregation) sourcePositionEdge).getSourcePositions().get(0) );
-    							queue.add(omega);
-    						}
+    						if (allowedClassesForThisLiterals.contains(omega.getM1Class()))
+    							continue;
+    						if (omega instanceof FunctionApplication) {
+    							FunctionApplication fa = (FunctionApplication) omega;
+    							FunctionId funid = (FunctionId) fa.getFirstIsFunctionIdOf(EdgeDirection.IN).getAlpha();
+    							if (funid.getName().equals("pathSystem"))
+    								continue;
+    						}	
+    						if (omega instanceof Greql2Expression) 
+    							throw new ParseException("This literals must not be used outside pathdescriptions", vertex.getName(), ((Greql2Aggregation) sourcePositionEdge).getSourcePositions().get(0) );
+    						queue.add(omega);
     					}
     				}
     			}	
@@ -158,12 +171,6 @@ import de.uni_koblenz.jgralab.schema.*;
         	}
           	IsArgumentOf arg2Of = graph.createIsArgumentOf(arg2, fa);
         	arg2Of.setSourcePositions((createSourcePositionList(lengthArg2, offsetArg2)));
-        //	if (functionId.getName().equals("hasType")) {
-        		System.out.println("Argument1 Edge: " + arg1Of);
-        		System.out.println("Argument2 Edge: " + arg2Of);
-        		System.out.println("Argument1 : " + arg1);
-        		System.out.println("Argument2 : " + arg2);
-        //	}
         	return fa;
     }
     
@@ -1753,7 +1760,6 @@ LPAREN (expressions = expressionList)? RPAREN
     expr = graph.createFunctionApplication();
     // retrieve function id or create a new one
     functionId = getFunctionId(f.getText());
-   	System.out.println("Creating function with id: " + f.getText());
 	IsFunctionIdOf  functionIdOf = graph.createIsFunctionIdOf(functionId, expr);
     functionIdOf.setSourcePositions((createSourcePositionList(f.getCharPositionInLine()-1, f.getText().length())));
     if (typeIds != null)
@@ -1763,7 +1769,6 @@ LPAREN (expressions = expressionList)? RPAREN
 		}
 	if (expressions != null)	
 		for (VertexPosition ex : expressions) {
-		System.out.println("Creating IsArgumentOf Edge to Node: " + ex.node); 
 			IsArgumentOf argOf = graph.createIsArgumentOf((Expression)ex.node,expr);
 			argOf.setSourcePositions((createSourcePositionList(ex.length, ex.offset)));
 		}

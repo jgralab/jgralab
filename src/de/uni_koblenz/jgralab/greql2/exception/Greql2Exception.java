@@ -8,7 +8,7 @@ package de.uni_koblenz.jgralab.greql2.exception;
  * 
  * Base class for all GReQL2 related exceptions.
  */
-public class Greql2Exception extends Exception {
+public class Greql2Exception extends RuntimeException {
 
 	/**
 	 * 

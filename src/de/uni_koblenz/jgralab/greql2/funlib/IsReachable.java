@@ -83,14 +83,6 @@ public class IsReachable extends AbstractGreql2Function {
 
 	public JValue evaluate(Graph graph, BooleanGraphMarker subgraph,
 			JValue[] arguments) throws EvaluateException {
-		// test, if start and end vertex are valid. if not, the may be
-		// restricted by a restricted expression, so return false.
-		// Tassilo: Not sure if that's really needed. The tests work fine
-		// without it...
-		//
-		// if (!arguments[0].isValid() || !arguments[1].isValid()) {
-		// return new JValue(JValueBoolean.getFalseValue());
-		// }
 
 		if (checkArguments(arguments) == -1) {
 			throw new WrongFunctionParameterException(this, null, arguments);
@@ -109,25 +101,22 @@ public class IsReachable extends AbstractGreql2Function {
 		markers[currentEntry.state.number].mark(currentEntry.vertex);
 		boolean found = false;
 		while (currentEntry != null) {
+  
 			if ((currentEntry.vertex == endVertex)
 					&& (currentEntry.state.isFinal)) {
 				found = true;
 				break;
 			}
-			// markers[currentEntry.state.number].markGraphElement(currentEntry.vertex);
-			Edge inc = currentEntry.vertex.getFirstEdge();
+  		    Edge inc = currentEntry.vertex.getFirstEdge();
 			while (inc != null) {
 				for (Transition currentTransition : currentEntry.state.outTransitions) {
 					Vertex nextVertex = currentTransition.getNextVertex(
 							currentEntry.vertex, inc);
-					if (!markers[currentTransition.getEndState().number]
-							.isMarked(nextVertex)) {
-						if (currentTransition.accepts(currentEntry.vertex, inc,
-								subgraph)) {
+					if (!markers[currentTransition.getEndState().number].isMarked(nextVertex)) {
+						if (currentTransition.accepts(currentEntry.vertex, inc, subgraph)) {
 							PathSearchQueueEntry nextEntry = new PathSearchQueueEntry(
 									nextVertex, currentTransition.getEndState());
-							markers[nextEntry.state.number]
-									.mark(nextEntry.vertex);
+							markers[nextEntry.state.number].mark(nextEntry.vertex);
 							queue.add(nextEntry);
 						}
 					}
