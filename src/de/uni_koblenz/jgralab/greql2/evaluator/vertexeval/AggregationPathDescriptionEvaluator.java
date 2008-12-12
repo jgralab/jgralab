@@ -34,7 +34,6 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValueTypeCollection;
 import de.uni_koblenz.jgralab.greql2.schema.AggregationPathDescription;
 import de.uni_koblenz.jgralab.greql2.schema.IsEdgeRestrOf;
-import de.uni_koblenz.jgralab.greql2.schema.SimplePathDescription;
 
 /**
  * Evaluates an AggregationPathDescription, that is something link v --<>{isExprOf} w.
@@ -45,7 +44,7 @@ import de.uni_koblenz.jgralab.greql2.schema.SimplePathDescription;
 public class AggregationPathDescriptionEvaluator extends
 		PrimaryPathDescriptionEvaluator {
 
-	public AggregationPathDescriptionEvaluator(SimplePathDescription vertex,
+	public AggregationPathDescriptionEvaluator(AggregationPathDescription vertex,
 			GreqlEvaluator eval) {
 		super(vertex, eval);
 	}
