@@ -61,7 +61,7 @@ public class MapComprehensionEvaluator extends VertexEvaluator {
 		try {
 			declLayer = declEval.getResult(subgraph).toDeclarationLayer();
 		} catch (JValueInvalidTypeException exception) {
-			throw new EvaluateException("Error evaluating SetComprehension",
+			throw new EvaluateException("Error evaluating MapComprehension",
 					exception);
 		}
 		Expression resultDef = (Expression) vertex.getFirstIsCompResultDefOf(
