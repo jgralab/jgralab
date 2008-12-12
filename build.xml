@@ -167,16 +167,7 @@
 			<property name="src.dir" value="${src.dir}/de/uni_koblenz/${projectname}/citymap"/>
 	   	</ant>
 	</target>
-	
-	<!-- greql2 -->
-	<!-- generates greql2 schmema sources and parser sources, compiles greql2 sources -->
-	<target name="scl" depends="tgschema2java">
-		<!-- calls target generateschema in general ant file ${ant}/build.xml -->
-		<ant dir="${common.dir}" antfile="build.xml" target="generateschema">
-			<property name="subprojectname" value = ""/>			
-			<property name="schemafile" value = "sclschema.tg"/>			
-		</ant>
-	</target>
+
 	
 	<!-- greql2 -->
 	<!-- generates greql2 schmema sources and parser sources, compiles greql2 sources -->
@@ -187,15 +178,15 @@
 			<property name="schemafile" value = "greql2Schema.tg"/>			
 	   	</ant>
 		<!-- calls target generateparser in general ant file ${ant}/build.xml -->
-		<ant dir="${common.dir}" antfile="build.xml" target="generateparser">
+		<ant dir="${common.dir}" antfile="build.xml" target="generateparser-antlr3">
 			<property name="subprojectname" value = "greql2"/>			
-			<property name="grammarfile" value = "greql2lexer.g"/>			
+			<property name="grammarfile" value = "Greql2.g"/>			
 		</ant>
 		<!-- calls target generateparser in general ant file ${ant}/build.xml -->
-		<ant dir="${common.dir}" antfile="build.xml" target="generateparser">
+<!--		<ant dir="${common.dir}" antfile="build.xml" target="generateparser">
 			<property name="subprojectname" value = "greql2"/>			
 			<property name="grammarfile" value = "greql2parser.g"/>			
-		</ant>
+		</ant>-->
 	</target>
 	<!-- compiles greql2 sources -->
 	<target name="greql2" depends="greql2sources">
