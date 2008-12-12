@@ -1858,9 +1858,8 @@ tupleConstruction returns [ValueConstruction valueConstr = null]
  
 /** matches a tupel construction
 */
-mapConstruction returns [ValueConstruction valueConstr = null]
+mapConstruction returns [MapConstruction valueConstr = null]
 @init {
-  MapConstruction mapConstr = null;
   int offsetKey = 0;
   int offsetValue = 0;
   int lengthKey = 0;
@@ -1868,11 +1867,13 @@ mapConstruction returns [ValueConstruction valueConstr = null]
   IsKeyExprOfConstruction keyEdge = null;
   IsValueExprOfConstruction valueEdge = null;
 }
-:
+:   (MAP) => (
     MAP
-    {mapConstr = graph.createMapConstruction();}
 	LPAREN
-	  (expression) =>
+	{
+	   $valueConstr = graph.createMapConstruction();
+    }
+
 	  (
 	    {offsetKey = getLTOffset();}
 		keyExpr = expression
@@ -1882,9 +1883,9 @@ mapConstruction returns [ValueConstruction valueConstr = null]
 		valueExpr = expression
 		{
 			lengthValue = getLTLength(offsetValue);
-			keyEdge = graph.createIsKeyExprOfConstruction(keyExpr, mapConstr);
+			keyEdge = graph.createIsKeyExprOfConstruction(keyExpr, $valueConstr);
 			keyEdge.setSourcePositions((createSourcePositionList(lengthKey, offsetKey)));	  
-			valueEdge = graph.createIsValueExprOfConstruction(valueExpr, mapConstr);
+			valueEdge = graph.createIsValueExprOfConstruction(valueExpr, $valueConstr);
 			valueEdge.setSourcePositions((createSourcePositionList(lengthValue, offsetValue)));	
 		}
 		((COMMA) => (
@@ -1897,15 +1898,14 @@ mapConstruction returns [ValueConstruction valueConstr = null]
 			valueExpr = expression
 			{
 				lengthValue = getLTLength(offsetValue);
-				keyEdge = graph.createIsKeyExprOfConstruction(keyExpr, mapConstr);
+				keyEdge = graph.createIsKeyExprOfConstruction(keyExpr, $valueConstr);
 				keyEdge.setSourcePositions((createSourcePositionList(lengthKey, offsetKey)));	  
-				valueEdge = graph.createIsValueExprOfConstruction(valueExpr, mapConstr);
+				valueEdge = graph.createIsValueExprOfConstruction(valueExpr, $valueConstr);
 				valueEdge.setSourcePositions((createSourcePositionList(lengthValue, offsetValue)));	
 			})
-	  	)	 
+	  	)*	 
 	  )
-	RPAREN
-	{$valueConstr = mapConstr;}
+	RPAREN)
  ; 
  
  
