@@ -344,9 +344,7 @@ public abstract class VertexEvaluator {
 		for (Edge e : getVertex().incidences(EdgeDirection.IN)) {
 			Vertex vertex = e.getThat();
 			VertexEvaluator eval = marker.getMark(vertex);
-			// GreqlEvaluator.println("Vertex: " + vertex.getClass().getName());
 			if (eval != null) {
-				// GreqlEvaluator.println("Eval: " + eval.getClass().getName());
 				eval.resetSubtreeToInitialState();
 			}
 		}
@@ -563,13 +561,6 @@ public abstract class VertexEvaluator {
 		if (possibleSourcePositions.size() == 0) {
 			return; // maybe the vertex is the root vertex, than it has no
 		}
-		// outgoing edges
-		// GreqlEvaluator.println("Available sourcePositions for Vertex " + this
-		// + "
-		// are: ");
-		// for (SourcePosition sp : possibleSourcePositions) {
-		// GreqlEvaluator.println(" (" + sp.offset + ", " + sp.length + ")" );
-		// }
 		Iterator<SourcePosition> iter = ex.getSourcePositions().iterator();
 		while (iter.hasNext()) {
 			boolean accepted = false;

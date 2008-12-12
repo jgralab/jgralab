@@ -38,31 +38,6 @@ import de.uni_koblenz.jgralab.greql2.schema.ThisVertex;
  * 
  */
 public class ThisVertexEvaluator extends VariableEvaluator {
-//
-//	private long estimatedAssignments = Long.MIN_VALUE;
-//	
-//	/**
-//	 * The variable this VariableEvaluator "evaluates"
-//	 */
-//	protected ThisVertex vertex;
-//	
-//	/**
-//	 * This is the current value of this evaluator
-//	 */
-//	protected JValue thisVertexValue;
-//
-//	/**
-//	 * returns the vertex this VertexEvaluator evaluates
-//	 */
-//	@Override
-//	public Vertex getVertex() {
-//		return vertex;
-//	}
-//
-//	
-//	public void setThisVertex(JValue thisVertex) {
-//		thisVertexValue = thisVertex;
-//	}
 	
 	/**
 	 * @param eval
@@ -72,69 +47,7 @@ public class ThisVertexEvaluator extends VariableEvaluator {
 	 */
 	public ThisVertexEvaluator(ThisVertex vertex, GreqlEvaluator eval) {
 		super(vertex, eval);
-	//	this.vertex = vertex;
 	}
 
-//	@Override
-//	public JValue evaluate() throws EvaluateException {
-//		return thisVertexValue;
-//	}
-//
-//	@Override
-//	public JValue getResult(BooleanGraphMarker subgraphMarker)
-//			throws EvaluateException {
-//		return thisVertexValue;
-//	}
-//
-//	@Override
-//	public VertexCosts calculateSubtreeEvaluationCosts(GraphSize graphSize) {
-//	//	return this.greqlEvaluator.getCostModel().calculateCostsVariable(this,
-//	//			graphSize);
-//			return new VertexCosts(1, 1, 1);
-//	}
-//
-//	@Override
-//	public Set<Variable> getNeededVariables() {
-//		if (neededVariables == null) {
-//			neededVariables = new HashSet<Variable>();
-//			neededVariables.add(vertex);
-//		}
-//		return neededVariables;
-//	}
-//
-//	@Override
-//	public Set<Variable> getDefinedVariables() {
-//		if (definedVariables == null) {
-//			definedVariables = new HashSet<Variable>();
-//		}
-//		return definedVariables;
-//	}
-//
-//	@Override
-//	public void calculateNeededAndDefinedVariables() {
-//		// for this literals, this method is not used
-//	}
-//
-//	/**
-//	 * @return the estimated number of possible different values this variable
-//	 *         may get during evaluation
-//	 */
-//	@Override
-//	public long getVariableCombinations(GraphSize graphSize) {
-//		if (estimatedAssignments == Long.MIN_VALUE) {
-//			estimatedAssignments = calculateEstimatedAssignments(graphSize);
-//		}
-//		return estimatedAssignments;
-//	}
-//
-//	/**
-//	 * calculated the estimated number of possible different values this
-//	 * variable may get during evaluation
-//	 */
-//	public long calculateEstimatedAssignments(GraphSize graphSize) {
-//		//return this.greqlEvaluator.getCostModel().calculateVariableAssignments(
-//		//		this, graphSize);
-//		return 1;
-//	}
 
 }

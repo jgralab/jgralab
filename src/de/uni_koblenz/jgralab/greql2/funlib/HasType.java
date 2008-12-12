@@ -73,8 +73,7 @@ public class HasType extends AbstractGreql2Function {
 	{
 		JValueType[][] x = {
 				{ JValueType.ATTRIBUTEDELEMENT, JValueType.STRING },
-				{ JValueType.ATTRIBUTEDELEMENT,
-						JValueType.ATTRIBUTEDELEMENTCLASS },
+				{ JValueType.ATTRIBUTEDELEMENT,	JValueType.ATTRIBUTEDELEMENTCLASS },
 				{ JValueType.ATTRIBUTEDELEMENT, JValueType.TYPECOLLECTION } };
 		signatures = x;
 	}

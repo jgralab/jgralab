@@ -159,6 +159,8 @@ public class VariableDeclarationLayer implements
 		}
 		return true;
 	}
+	
+
 
 	/**
 	 * Gets the next possible variable combination

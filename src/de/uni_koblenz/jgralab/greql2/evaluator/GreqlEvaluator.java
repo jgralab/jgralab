@@ -29,13 +29,15 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
-import java.io.StringReader;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
+
+import org.antlr.runtime.ANTLRStringStream;
+import org.antlr.runtime.CommonTokenStream;
 
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.GraphIOException;
@@ -113,7 +115,7 @@ public class GreqlEvaluator {
 	 * The directory where the {@link EvaluationLogger} stores and loads its
 	 * logfiles from.
 	 */
-	protected static File loggerDirectory;
+	protected static File evaluationLoggerDirectory;
 
 	/**
 	 * stores the graph indizes
@@ -464,11 +466,11 @@ public class GreqlEvaluator {
 	 */
 	protected void createEvaluationLogger() {
 		if (evaluationLogger == null) {
-			if (loggerDirectory == null) {
-				loggerDirectory = getTmpDirectory();
+			if (evaluationLoggerDirectory == null) {
+				evaluationLoggerDirectory = getTmpDirectory();
 			}
 			try {
-				evaluationLogger = new Level2Logger(loggerDirectory, datagraph,
+				evaluationLogger = new Level2Logger(evaluationLoggerDirectory, datagraph,
 						evaluationLoggingType);
 			} catch (InterruptedException e) {
 				// TODO (heimdall) Auto-generated catch block
@@ -674,7 +676,7 @@ public class GreqlEvaluator {
 	 * Parses the given query-string and creates the query-graph out of it
 	 */
 	protected boolean parseQuery(String query) throws EvaluateException {
-		Greql2Lexer lexer = new Greql2Lexer(new StringReader(query));
+		Greql2Lexer lexer = new Greql2Lexer(new ANTLRStringStream(query));
 		return parseQuery(lexer);
 	}
 
@@ -683,7 +685,9 @@ public class GreqlEvaluator {
 	 * it
 	 */
 	protected boolean parseQuery(Greql2Lexer lexer) throws EvaluateException {
-		Greql2Parser parser = new Greql2Parser(lexer);
+		CommonTokenStream tokens = new CommonTokenStream();
+		tokens.setTokenSource(lexer);
+		Greql2Parser parser = new Greql2Parser(tokens);
 		try {
 			parser.greqlExpression();
 		} catch (Exception e) {
@@ -820,8 +824,8 @@ public class GreqlEvaluator {
 			Level2LogReader logReader;
 			if (evaluationLogger == null) {
 				// Create only a generic log reader by default.
-				loggerDirectory = getTmpDirectory();
-				logReader = new Level2LogReader(loggerDirectory);
+				evaluationLoggerDirectory = getTmpDirectory();
+				logReader = new Level2LogReader(evaluationLoggerDirectory);
 			} else {
 				logReader = new Level2LogReader((Level2Logger) evaluationLogger);
 			}
@@ -968,8 +972,8 @@ public class GreqlEvaluator {
 	 * @return The directory where the {@link EvaluationLogger} stores and loads
 	 *         its logfiles.
 	 */
-	public static File getLoggerDirectory() {
-		return loggerDirectory;
+	public static File getEvaluationLoggerDirectory() {
+		return evaluationLoggerDirectory;
 	}
 
 	/**
@@ -977,8 +981,8 @@ public class GreqlEvaluator {
 	 *            The directory where the {@link EvaluationLogger} stores and
 	 *            loads its logfiles.
 	 */
-	public static void setLoggerDirectory(File loggerDirectory) {
-		GreqlEvaluator.loggerDirectory = loggerDirectory;
+	public static void setEvaluationLoggerDirectory(File loggerDirectory) {
+		GreqlEvaluator.evaluationLoggerDirectory = loggerDirectory;
 	}
 
 	public LoggingType getEvaluationLoggingType() {
