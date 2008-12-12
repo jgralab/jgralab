@@ -39,6 +39,8 @@ import de.uni_koblenz.jgralab.greql2.schema.Greql2Expression;
 import de.uni_koblenz.jgralab.greql2.schema.IsBoundVarOf;
 import de.uni_koblenz.jgralab.greql2.schema.IsIdOf;
 import de.uni_koblenz.jgralab.greql2.schema.Variable;
+import de.uni_koblenz.jgralab.schema.AttributedElementClass;
+import de.uni_koblenz.jgralab.schema.QualifiedName;
 
 /**
  * Evaluates a Greql2Expression vertex in the GReQL-2 Syntaxgraph. A
@@ -88,6 +90,11 @@ public class Greql2ExpressionEvaluator extends VertexEvaluator {
 	 */
 	@Override
 	public JValue evaluate() throws EvaluateException {
+		for (String importedType : vertex.getImportedTypes()) {
+			AttributedElementClass elemClass = (AttributedElementClass) vertex.getSchema()
+			.getAttributedElementClass(new QualifiedName(importedType));
+			greqlEvaluator.addKnownType(elemClass);
+		}
 		IsBoundVarOf inc = vertex.getFirstIsBoundVarOf(EdgeDirection.IN);
 		while (inc != null) {
 			Variable currentBoundVariable = (Variable) inc.getAlpha();

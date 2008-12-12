@@ -62,6 +62,7 @@ import de.uni_koblenz.jgralab.greql2.optimizer.Optimizer;
 import de.uni_koblenz.jgralab.greql2.parser.Greql2Lexer;
 import de.uni_koblenz.jgralab.greql2.parser.Greql2Parser;
 import de.uni_koblenz.jgralab.greql2.schema.Greql2;
+import de.uni_koblenz.jgralab.schema.AttributedElementClass;
 import de.uni_koblenz.jgralab.schema.GraphClass;
 import de.uni_koblenz.jgralab.schema.QualifiedName;
 import de.uni_koblenz.jgralab.schema.Schema;
@@ -126,6 +127,13 @@ public class GreqlEvaluator {
 	 * The GraphMarker that stores all vertex evaluators
 	 */
 	protected GraphMarker<VertexEvaluator> vertexEvalGraphMarker;
+	
+	/**
+	 * The map of SimpleName to Type
+	 * of types that is known in the evaluator by import statements
+	 * in the greql query
+	 */
+	protected Map<String, AttributedElementClass> knownTypes;
 
 	/**
 	 * returns the vertexEvalGraph marker that is used
@@ -535,11 +543,21 @@ public class GreqlEvaluator {
 			this.datagraph = datagraph;
 		}
 		this.queryString = query;
+		knownTypes = new HashMap<String, AttributedElementClass>();
 		normalizeQueryString();
 		this.variableMap = variables;
 		this.progressFunction = progressFunction;
 	}
 
+	
+	public void addKnownType(AttributedElementClass knownType) {
+		knownTypes.put(knownType.getSimpleName(), knownType);
+	}
+	
+	public AttributedElementClass getKnownType(String typeSimpleName) {
+		return knownTypes.get(typeSimpleName);
+	}
+	
 	/**
 	 * @return a minimal graph (no vertices and no edges) of a minimal schema.
 	 */
