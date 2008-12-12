@@ -99,7 +99,7 @@ import de.uni_koblenz.jgralab.greql2.schema.IsConstraintOf;
 import de.uni_koblenz.jgralab.greql2.schema.IsDeclaredVarOf;
 import de.uni_koblenz.jgralab.greql2.schema.IsDefinitionOf;
 import de.uni_koblenz.jgralab.greql2.schema.IsFalseExprOf;
-import de.uni_koblenz.jgralab.greql2.schema.IsKeyValueTupleOf;
+import de.uni_koblenz.jgralab.greql2.schema.IsKeyExprOfConstruction;
 import de.uni_koblenz.jgralab.greql2.schema.IsNullExprOf;
 import de.uni_koblenz.jgralab.greql2.schema.IsPartOf;
 import de.uni_koblenz.jgralab.greql2.schema.IsRecordElementOf;
@@ -109,6 +109,7 @@ import de.uni_koblenz.jgralab.greql2.schema.IsSimpleDeclOf;
 import de.uni_koblenz.jgralab.greql2.schema.IsSubPathOf;
 import de.uni_koblenz.jgralab.greql2.schema.IsTrueExprOf;
 import de.uni_koblenz.jgralab.greql2.schema.IsTypeRestrOf;
+import de.uni_koblenz.jgralab.greql2.schema.IsValueExprOfConstruction;
 import de.uni_koblenz.jgralab.greql2.schema.IteratedPathDescription;
 import de.uni_koblenz.jgralab.greql2.schema.LetExpression;
 import de.uni_koblenz.jgralab.greql2.schema.ListConstruction;
@@ -1668,15 +1669,23 @@ public class DefaultCostModel extends CostModelBase implements CostModel {
 	public VertexCosts calculateCostsMapConstruction(
 			MapConstructionEvaluator e, GraphSize graphSize) {
 		MapConstruction mapCons = (MapConstruction) e.getVertex();
-		IsKeyValueTupleOf inc = mapCons.getFirstIsKeyValueTupleOf();
+		IsKeyExprOfConstruction keyInc = mapCons
+				.getFirstIsKeyExprOfConstruction(EdgeDirection.IN);
+		IsValueExprOfConstruction valInc = mapCons
+				.getFirstIsValueExprOfConstruction(EdgeDirection.IN);
 		long parts = 0;
 		long partCosts = 0;
-		while (inc != null) {
-			VertexEvaluator veval = greqlEvaluator
-					.getVertexEvaluatorGraphMarker().getMark(inc.getAlpha());
-			partCosts += veval.getCurrentSubtreeEvaluationCosts(graphSize);
+		while (keyInc != null) {
+			VertexEvaluator keyEval = greqlEvaluator
+					.getVertexEvaluatorGraphMarker().getMark(keyInc.getAlpha());
+			partCosts += keyEval.getCurrentSubtreeEvaluationCosts(graphSize);
+			VertexEvaluator valueEval = greqlEvaluator
+					.getVertexEvaluatorGraphMarker().getMark(valInc.getAlpha());
+			partCosts += keyEval.getCurrentSubtreeEvaluationCosts(graphSize)
+					+ valueEval.getCurrentSubtreeEvaluationCosts(graphSize);
 			parts++;
-			inc = inc.getNextIsKeyValueTupleOf();
+			keyInc = keyInc.getNextIsKeyExprOfConstruction(EdgeDirection.IN);
+			valInc = valInc.getNextIsValueExprOfConstruction(EdgeDirection.IN);
 		}
 
 		long ownCosts = parts * addToSetCosts + 2;
@@ -1688,13 +1697,15 @@ public class DefaultCostModel extends CostModelBase implements CostModel {
 	@Override
 	public long calculateCardinalityMapConstruction(MapConstructionEvaluator e,
 			GraphSize graphSize) {
-		long keyValuePairs = 0;
+		long mappings = 0;
 		MapConstruction mapCons = (MapConstruction) e.getVertex();
-		for (@SuppressWarnings("unused")
-		IsKeyValueTupleOf ikvt : mapCons.getIsKeyValueTupleOfIncidences()) {
-			keyValuePairs++;
+		IsKeyExprOfConstruction inc = mapCons
+				.getFirstIsKeyExprOfConstruction(EdgeDirection.IN);
+		while (inc != null) {
+			mappings++;
+			inc = inc.getNextIsKeyExprOfConstruction(EdgeDirection.IN);
 		}
-		return keyValuePairs;
+		return mappings;
 	}
 
 	@Override
@@ -1707,13 +1718,20 @@ public class DefaultCostModel extends CostModelBase implements CostModel {
 				.getVertexEvaluatorGraphMarker().getMark(decl);
 		long declCosts = declEval.getCurrentSubtreeEvaluationCosts(graphSize);
 
-		Vertex resultDef = mapComp.getFirstIsCompResultDefOf().getAlpha();
-		VertexEvaluator resultDefEval = greqlEvaluator
-				.getVertexEvaluatorGraphMarker().getMark(resultDef);
-		long resultCosts = resultDefEval
-				.getCurrentSubtreeEvaluationCosts(graphSize);
+		Vertex key = mapComp.getFirstIsKeyExprOfComprehension(EdgeDirection.IN)
+				.getAlpha();
+		VertexEvaluator keyEval = greqlEvaluator
+				.getVertexEvaluatorGraphMarker().getMark(key);
+		Vertex value = mapComp.getFirstIsValueExprOfComprehension(
+				EdgeDirection.IN).getAlpha();
+		VertexEvaluator valEval = greqlEvaluator
+				.getVertexEvaluatorGraphMarker().getMark(value);
 
-		long ownCosts = resultDefEval.getEstimatedCardinality(graphSize)
+		long resultCosts = keyEval.getCurrentSubtreeEvaluationCosts(graphSize)
+				+ valEval.getCurrentSubtreeEvaluationCosts(graphSize);
+
+		long ownCosts = keyEval.getEstimatedCardinality(graphSize)
+				+ valEval.getEstimatedCardinality(graphSize)
 				* addToSetCosts;
 		long iteratedCosts = ownCosts * e.getVariableCombinations(graphSize);
 		long subtreeCosts = iteratedCosts + resultCosts + declCosts;
