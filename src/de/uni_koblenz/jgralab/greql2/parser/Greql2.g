@@ -538,6 +538,7 @@ TRUE 		: 'true';
 XOR 		: 'xor';
 AS 			: 'as';
 BAG 		: 'bag';
+MAP 	    : 'map';
 E 			: 'E';
 ESUBGRAPH	: 'eSubgraph';
 EXISTS_ONE	: 'exists!';
@@ -555,6 +556,7 @@ REPORT 		: 'report';
 REPORTSET	: 'reportSet';
 REPORTBAG	: 'reportBag';
 REPORTTABLE	: 'reportTable';
+REPORTMAP	: 'reportMap';
 STORE		: 'store';
 SET 		: 'set';
 TUP 		: 'tup';
@@ -950,8 +952,8 @@ if ((defList != null) && (!defList.isEmpty())){ //defList is empty if it's not a
 	
 	
 	
-	/** matches a list of definitions for let- or where expressions
-	@return
+/** matches a list of definitions for let- or where expressions
+@return
 */
 definitionList returns [ArrayList<VertexPosition> definitions = new ArrayList<VertexPosition>()] 
 @init{
@@ -1623,6 +1625,7 @@ primaryPathDescription returns [PathDescription result = null]
 }
 :
   ( (simplePathDescription) => (pathDescr = simplePathDescription  {$result = pathDescr;}))
+/*  | (aggregationPathDescription) => (pathDescr = aggregationPathDescription  {$result = pathDescr;})*/
   | (edgePathDescription) => (pathDescr = edgePathDescription    {$result = pathDescr;})
   | (LPAREN) => (LPAREN pathDescr = pathDescription {$result = pathDescr;} RPAREN )
   | (LBRACK) => (LBRACK
@@ -1641,9 +1644,7 @@ primaryPathDescription returns [PathDescription result = null]
 
 
 /** matches a simle pathdescription consisting of an arrow simple
-	and eventually a restriction. "thisEdge"s are replaced by
-	the corresponding simple pathdescription
-	@return
+	and eventually a restriction. 
 */
 simplePathDescription returns [PrimaryPathDescription result = null]
 @init{
@@ -1653,10 +1654,7 @@ simplePathDescription returns [PrimaryPathDescription result = null]
 }
 :
 {offsetDir = getLTOffset();}
-( (RARROW) => (RARROW { direction = "out"; })
-| (LARROW) => (LARROW { direction = "in"; })
-| ARROW
-)
+( (RARROW { direction = "out"; }) | (LARROW { direction = "in"; }) | ARROW)
 /* edge type restriction */
 (   (LCURLY (edgeRestrictionList)? RCURLY ) =>
       (LCURLY (typeIds = edgeRestrictionList)?	RCURLY)
@@ -1685,6 +1683,34 @@ simplePathDescription returns [PrimaryPathDescription result = null]
 }
 ;
 
+
+
+/** matches a an aggregation pathdescription consisting of an arrow simple
+	and eventually a restriction. 
+*/
+aggregationPathDescription returns [PrimaryPathDescription result = null]
+@init{
+    boolean outAggregation = true;
+    int offsetDir = 0;
+}
+:
+{offsetDir = getLTOffset();}
+((OUTAGGREGATION) | (INAGGREGATION { outAggregation = false; })
+)
+/* edge type restriction */
+(   (LCURLY (edgeRestrictionList)? RCURLY ) =>
+      (LCURLY (typeIds = edgeRestrictionList)?	RCURLY)
+| /* empty */ )
+{
+    $result = graph.createAggregationPathDescription();
+	$result.setOutAggregation(outAggregation);
+	if (typeIds != null)
+	    for (VertexPosition t : typeIds) {
+			IsEdgeRestrOf edgeRestrOf = graph.createIsEdgeRestrOf((EdgeRestriction)t.node, (PrimaryPathDescription) $result);
+			edgeRestrOf.setSourcePositions((createSourcePositionList(t.length, t.offset)));
+		}	
+}
+;
 
 
 /** matches a edgePathDescription, i.e. am edge as part of a pathdescription
@@ -1795,6 +1821,7 @@ valueConstruction returns [Expression result = null]
 	  | expr = pathsystemConstruction
 	  | expr = recordConstruction
 	  | expr = setConstruction 
+	  | expr = mapConstruction
 	  | expr = tupleConstruction)
 	  {$result = expr;}
 	;
@@ -1826,6 +1853,60 @@ tupleConstruction returns [ValueConstruction valueConstr = null]
 	RPAREN
     {$valueConstr = createPartsOfValueConstruction(expressions, graph.createTupleConstruction()); }
  ;
+ 
+/** matches a tupel construction
+*/
+mapConstruction returns [ValueConstruction valueConstr = null]
+@init {
+  MapConstruction mapConstr = null;
+  int offsetKey = 0;
+  int offsetValue = 0;
+  int lengthKey = 0;
+  int lengthValue = 0;
+  IsKeyExprOfConstruction keyEdge = null;
+  IsValueExprOfConstruction valueEdge = null;
+}
+:
+    MAP
+    {mapConstr = graph.createMapConstruction();}
+	LPAREN
+	  (expression) =>
+	  (
+	    {offsetKey = getLTOffset();}
+		keyExpr = expression
+		{lengthKey = getLTLength(offsetKey);}
+		EDGEEND
+	    {offsetValue = getLTOffset();}
+		valueExpr = expression
+		{
+			lengthValue = getLTLength(offsetValue);
+			keyEdge = graph.createIsKeyExprOfConstruction(keyExpr, mapConstr);
+			keyEdge.setSourcePositions((createSourcePositionList(lengthKey, offsetKey)));	  
+			valueEdge = graph.createIsValueExprOfConstruction(valueExpr, mapConstr);
+			valueEdge.setSourcePositions((createSourcePositionList(lengthValue, offsetValue)));	
+		}
+		((COMMA) => (
+			COMMA
+	    	{offsetKey = getLTOffset();}
+			keyExpr = expression
+			{lengthKey = getLTLength(offsetKey);}
+			EDGEEND
+		    {offsetValue = getLTOffset();}
+			valueExpr = expression
+			{
+				lengthValue = getLTLength(offsetValue);
+				keyEdge = graph.createIsKeyExprOfConstruction(keyExpr, mapConstr);
+				keyEdge.setSourcePositions((createSourcePositionList(lengthKey, offsetKey)));	  
+				valueEdge = graph.createIsValueExprOfConstruction(valueExpr, mapConstr);
+				valueEdge.setSourcePositions((createSourcePositionList(lengthValue, offsetValue)));	
+			})
+	  	)	 
+	  )
+	RPAREN
+	{$valueConstr = mapConstr;}
+ ; 
+ 
+ 
 
 
 listConstruction returns [ValueConstruction valueConstr = null]
@@ -2417,6 +2498,7 @@ reportClause returns [Comprehension comprehension = null]
 	int offset = 0;
 	int length = 0;
 	boolean vartable = false;
+	boolean map = false;
 }
 	:
 	(	REPORT
@@ -2426,22 +2508,23 @@ reportClause returns [Comprehension comprehension = null]
 	(	 REPORTBAG   {$comprehension = graph.createBagComprehension();}
 	   | REPORTSET   {$comprehension = graph.createSetComprehension(); }  
 	   | REPORTTABLE {$comprehension = graph.createTableComprehension(); vartable = true; }
+	   | REPORTMAP   {$comprehension = graph.createMapComprehension(); map = true; }
 	)
     { offset = getLTOffset(); }
 	reportList = expressionList
     {
         length = getLTLength(offset);
 		IsCompResultDefOf e = null;
-	    if (!vartable) {
-	       	if (reportList.size() > 1) {
-			  	TupleConstruction tupConstr = (TupleConstruction) createMultipleEdgesToParent(reportList, graph.createTupleConstruction(), IsPartOf.class);
-	       	   	e = graph.createIsCompResultDefOf(tupConstr, comprehension);
-	       	} else {
-		    	e = graph.createIsCompResultDefOf((Expression)(reportList.get(0)).node, comprehension);
-			}
-			e.setSourcePositions((createSourcePositionList(length, offset)));
-	    } else {
-	         if ((reportList.size() != 3) && (reportList.size() != 4))
+	    if (map) {
+	       	if (reportList.size() != 2) {
+	       	    throw new ParseException("reportMap keyExpr, valueExpr must be followed by exactly two arguments", "reportMap", new SourcePosition(length, offset));
+	       	}
+			IsKeyExprOfComprehension keyEdge = graph.createIsKeyExprOfComprehension(reportList.get(0), (MapComprehension) $comprehension);
+			IsValueExprOfComprehension keyEdge = graph.createIsValueExprOfComprehension(reportList.get(1), (MapComprehension) $comprehension);  
+	       	e = graph.createIsCompResultDefOf(tupConstr, comprehension);
+			e.setSourcePositions(createSourcePositionList(length, offset));
+	    } else if (vartable) {
+	       if ((reportList.size() != 3) && (reportList.size() != 4))
 	            throw new ParseException("reportTable columHeaderExpr, rowHeaderExpr, cellContent [,tableHeader] must be followed by three or for arguments", "reportTable", new SourcePosition(length, offset));
 					// size == 3, set columnHeader and rowHeader
 	       IsColumnHeaderExprOf cHeaderE = graph.createIsColumnHeaderExprOf((Expression)(reportList.get(0)).node, (TableComprehension)comprehension);
@@ -2449,13 +2532,21 @@ reportClause returns [Comprehension comprehension = null]
 	       IsRowHeaderExprOf rHeaderE = graph.createIsRowHeaderExprOf((Expression)(reportList.get(1)).node, (TableComprehension)comprehension);
 	       rHeaderE.setSourcePositions((createSourcePositionList((reportList.get(1)).length, (reportList.get(1)).offset)));
 	       e = graph.createIsCompResultDefOf((Expression)(reportList.get(2)).node, comprehension);
-	       e.setSourcePositions((createSourcePositionList((reportList.get(2)).length, (reportList.get(2)).offset)));
+	       e.setSourcePositions(createSourcePositionList((reportList.get(2)).length, (reportList.get(2)).offset));
 
 		   // tableheader
 	       if (reportList.size() == 4) {
 	           	IsTableHeaderOf tHeaderE = graph.createIsTableHeaderOf((Expression)(reportList.get(3)).node, (ComprehensionWithTableHeader)comprehension);
 	           	tHeaderE.setSourcePositions((createSourcePositionList((reportList.get(3)).length, (reportList.get(3)).offset)));
 	       }
+	 	} else {
+	 		if (reportList.size() > 1) {
+			  	TupleConstruction tupConstr = (TupleConstruction) createMultipleEdgesToParent(reportList, graph.createTupleConstruction(), IsPartOf.class);
+	       	   	e = graph.createIsCompResultDefOf(tupConstr, comprehension);
+	       	} else {
+		    	e = graph.createIsCompResultDefOf((Expression)(reportList.get(0)).node, comprehension);
+			}
+			e.setSourcePositions((createSourcePositionList(length, offset)));
 	 	}
 	}
 ;	
