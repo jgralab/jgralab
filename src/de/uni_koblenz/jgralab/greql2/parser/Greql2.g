@@ -772,33 +772,58 @@ variable returns [Variable var = null]
         }
 ;
 
+
+importDeclarations returns [Set<String> typeNames = new HashSet<String>();]
+@init{
+	int typeOffset = 0;
+	int typeLength = 0;
+	Set<String> shortNames = new HashSet<String>();	
+	boolean wholePackage = false;
+	System.out.println("Init import declarations");
+}
+:
+((IMPORT) => 
+  (
+    IMPORT
+	{
+    	typeOffset = getLTOffset();
+        wholePackage = false;
+    }
+    importedType = qualifiedName
+    ((DOT) => (DOT STAR {wholePackage = true;}) | )
+    {
+    	System.out.println("Adding typeNames");
+    	typeLength = getLTLength(typeOffset);
+    	if (!wholePackage) { 
+        	String shortName = importedType.substring(importedType.lastIndexOf("."));
+        	if (shortNames.contains(shortName))
+        	 	throw new ParseException("A type with simple name " + shortName + " is imported twice!", importedType, new SourcePosition(typeLength, typeOffset) );
+        	shortNames.add(shortName);	
+        	typeNames.add(importedType);	
+        } else {
+        	typeNames.add(importedType + ".*");	 	
+ 		}
+    }
+    SEMI 
+  )  
+)* 
+;
+
+
+
 greqlExpression 
 @init{
 	int offset = 0;
 	int length = 0;
-	int typeOffset = 0;
-	int typeLength = 0;
 	initialize();
-	Set<String> typeNames = new HashSet<String>();
-	Set<String> shortNames = new HashSet<String>();	
 	Greql2Expression root = graph.createGreql2Expression();
 }
 : (
-    ((IMPORT) => 
-      (IMPORT
-        {typeOffset = getLTOffset();}
-        importedType = qualifiedName
-        {typeLength = getLTLength(typeOffset);}
-        SEMI 
-        {
-          String shortName = importedType.substring(importedType.lastIndexOf("."));
-          shortNames.add(shortName);
-          if (shortNames.contains(shortName))
-          	 throw new ParseException("A type with simple name " + shortName + " is imported twice!", importedType, new SourcePosition(typeLength, typeOffset) );
-          typeNames.add(importedType);	 
-        }
-      ))* 
-    {root.setImportedTypes(typeNames);}
+    (IMPORT) => 
+    (
+    	typeNames = importDeclarations
+        {root.setImportedTypes(typeNames);}
+    )
     (USING varList = variableList COLON)?
     { offset = input.LT(1).getCharPositionInLine()-1; }
     expr = expression

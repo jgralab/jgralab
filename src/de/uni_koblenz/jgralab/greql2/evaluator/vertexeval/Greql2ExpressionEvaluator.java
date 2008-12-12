@@ -40,7 +40,10 @@ import de.uni_koblenz.jgralab.greql2.schema.IsBoundVarOf;
 import de.uni_koblenz.jgralab.greql2.schema.IsIdOf;
 import de.uni_koblenz.jgralab.greql2.schema.Variable;
 import de.uni_koblenz.jgralab.schema.AttributedElementClass;
+import de.uni_koblenz.jgralab.schema.EdgeClass;
+import de.uni_koblenz.jgralab.schema.Package;
 import de.uni_koblenz.jgralab.schema.QualifiedName;
+import de.uni_koblenz.jgralab.schema.VertexClass;
 
 /**
  * Evaluates a Greql2Expression vertex in the GReQL-2 Syntaxgraph. A
@@ -91,9 +94,23 @@ public class Greql2ExpressionEvaluator extends VertexEvaluator {
 	@Override
 	public JValue evaluate() throws EvaluateException {
 		for (String importedType : vertex.getImportedTypes()) {
-			AttributedElementClass elemClass = (AttributedElementClass) vertex.getSchema()
-			.getAttributedElementClass(new QualifiedName(importedType));
-			greqlEvaluator.addKnownType(elemClass);
+			if (importedType.endsWith(".*")) {
+				String packageName = importedType.substring(0, importedType.length()-2);
+				Package p = vertex.getSchema().getPackage(packageName);
+//				for (Domain elem : p.getDomains().values()) {
+//					greqlEvaluator.addKnownType(elem);
+//				}
+				for (VertexClass elem : p.getVertexClasses().values()) {
+					greqlEvaluator.addKnownType(elem);
+				}
+				for (EdgeClass elem : p.getEdgeClasses().values()) {
+					greqlEvaluator.addKnownType(elem);
+				}
+			} else { 
+				AttributedElementClass elemClass = (AttributedElementClass) vertex.getSchema()
+				.getAttributedElementClass(new QualifiedName(importedType));
+				greqlEvaluator.addKnownType(elemClass);
+			}	
 		}
 		IsBoundVarOf inc = vertex.getFirstIsBoundVarOf(EdgeDirection.IN);
 		while (inc != null) {
