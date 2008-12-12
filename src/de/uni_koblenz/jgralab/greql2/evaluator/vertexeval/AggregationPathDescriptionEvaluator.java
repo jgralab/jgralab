@@ -32,20 +32,20 @@ import de.uni_koblenz.jgralab.greql2.evaluator.fa.NFA;
 import de.uni_koblenz.jgralab.greql2.exception.EvaluateException;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValueTypeCollection;
+import de.uni_koblenz.jgralab.greql2.schema.AggregationPathDescription;
 import de.uni_koblenz.jgralab.greql2.schema.IsEdgeRestrOf;
 import de.uni_koblenz.jgralab.greql2.schema.SimplePathDescription;
 
 /**
- * Evaluates a SimplePathDescription, that is something link v -->{isExprOf} w.
+ * Evaluates an AggregationPathDescription, that is something link v --<>{isExprOf} w.
  * Creates a NFA which accepts the simplePath the vertex to evaluate describes.
  * @author ist@uni-koblenz.de
- * Summer 2006, Diploma Thesis
  *
  */
-public class SimplePathDescriptionEvaluator extends
+public class AggregationPathDescriptionEvaluator extends
 		PrimaryPathDescriptionEvaluator {
 
-	public SimplePathDescriptionEvaluator(SimplePathDescription vertex,
+	public AggregationPathDescriptionEvaluator(SimplePathDescription vertex,
 			GreqlEvaluator eval) {
 		super(vertex, eval);
 	}
@@ -59,16 +59,14 @@ public class SimplePathDescriptionEvaluator extends
 			edgeRestEval = (EdgeRestrictionEvaluator) greqlEvaluator.getVertexEvaluatorGraphMarker().getMark(inc.getAlpha());
 			typeCollection.addTypes(edgeRestEval.getTypeCollection());
 		}
-		createdNFA = NFA.createSimplePathDescriptionNFA(
-				getEdgeDirection(vertex), typeCollection,
-				getEdgeRole(edgeRestEval));
+		createdNFA = NFA.createAggregationPathDescriptionNFA(((AggregationPathDescription) vertex).isOutAggregation(), typeCollection,getEdgeRole(edgeRestEval));
 		return new JValue(createdNFA);
 	}
 
 	@Override
 	public VertexCosts calculateSubtreeEvaluationCosts(GraphSize graphSize) {
 		return this.greqlEvaluator.getCostModel()
-				.calculateCostsSimplePathDescription(this, graphSize);
+				.calculateCostsAggregationPathDescription(this, graphSize);
 	}
 
 }

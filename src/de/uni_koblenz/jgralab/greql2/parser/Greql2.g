@@ -1324,7 +1324,7 @@ identifier returns [Identifier result]
 /** matches first argument of value-accesses
 	@return vertex representing the value-Access-Expression
 */
-valueAccess returns [Expression result = null] throws ParseException, DuplicateVariableException
+valueAccess returns [Expression result = null]
 @init{
 	int offset = 0;
 	int length = 0;
@@ -1625,7 +1625,7 @@ primaryPathDescription returns [PathDescription result = null]
 }
 :
   ( (simplePathDescription) => (pathDescr = simplePathDescription  {$result = pathDescr;}))
-/*  | (aggregationPathDescription) => (pathDescr = aggregationPathDescription  {$result = pathDescr;})*/
+  | (aggregationPathDescription) => (pathDescr = aggregationPathDescription  {$result = pathDescr;})
   | (edgePathDescription) => (pathDescr = edgePathDescription    {$result = pathDescr;})
   | (LPAREN) => (LPAREN pathDescr = pathDescription {$result = pathDescr;} RPAREN )
   | (LBRACK) => (LBRACK
@@ -1697,7 +1697,7 @@ aggregationPathDescription returns [PrimaryPathDescription result = null]
 }
 :
 {offsetDir = getLTOffset();}
-((OUTAGGREGATION) | (INAGGREGATION { outAggregation = false; })
+((OUTAGGREGATION) =>(OUTAGGREGATION) | (INAGGREGATION { outAggregation = false; })
 )
 /* edge type restriction */
 (   (LCURLY (edgeRestrictionList)? RCURLY ) =>
@@ -2521,10 +2521,10 @@ reportClause returns [Comprehension comprehension = null]
 	       	if (reportList.size() != 2) {
 	       	    throw new ParseException("reportMap keyExpr, valueExpr must be followed by exactly two arguments", "reportMap", new SourcePosition(length, offset));
 	       	}
-			IsKeyExprOfComprehension keyEdge = graph.createIsKeyExprOfComprehension(reportList.get(0), (MapComprehension) $comprehension);
-			IsValueExprOfComprehension keyEdge = graph.createIsValueExprOfComprehension(reportList.get(1), (MapComprehension) $comprehension);  
-	       	e = graph.createIsCompResultDefOf(tupConstr, comprehension);
-			e.setSourcePositions(createSourcePositionList(length, offset));
+			IsKeyExprOfComprehension keyEdge = graph.createIsKeyExprOfComprehension((Expression) reportList.get(0).node, (MapComprehension) $comprehension);
+			IsValueExprOfComprehension valueEdge = graph.createIsValueExprOfComprehension((Expression)reportList.get(1).node, (MapComprehension) $comprehension);  
+			keyEdge.setSourcePositions(createSourcePositionList(reportList.get(0).length, reportList.get(0).offset));
+			valueEdge.setSourcePositions(createSourcePositionList(reportList.get(1).length, reportList.get(1).offset));
 	    } else if (vartable) {
 	       if ((reportList.size() != 3) && (reportList.size() != 4))
 	            throw new ParseException("reportTable columHeaderExpr, rowHeaderExpr, cellContent [,tableHeader] must be followed by three or for arguments", "reportTable", new SourcePosition(length, offset));

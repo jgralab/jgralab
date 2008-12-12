@@ -319,6 +319,24 @@ public class NFA extends FiniteAutomaton {
 		nfa.updateStateAttributes();
 		return nfa;
 	}
+	
+	/**
+	 * Constructs a NFA which accepts the given AggregationPathDescription. The
+	 * EdgeRestrictions (RoleId, TypeId) are modelled in the Transition.
+	 */
+	public static NFA createAggregationPathDescriptionNFA(
+			boolean aggregateFrom,
+			JValueTypeCollection typeCollection, String role) {
+		NFA nfa = new NFA();
+		nfa.transitionList.clear();
+		nfa.initialState.outTransitions.clear();
+		nfa.finalStates.get(0).inTransitions.clear();
+		AggregationTransition t = new AggregationTransition(nfa.initialState,
+				nfa.finalStates.get(0), aggregateFrom, typeCollection, role);
+		nfa.transitionList.add(t);
+		nfa.updateStateAttributes();
+		return nfa;
+	}
 
 	/**
 	 * Constructs a new epsilon-NFA, this is a NFA which has only two states,
