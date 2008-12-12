@@ -101,7 +101,6 @@ public class IsReachable extends AbstractGreql2Function {
 		markers[currentEntry.state.number].mark(currentEntry.vertex);
 		boolean found = false;
 		while (currentEntry != null) {
-  
 			if ((currentEntry.vertex == endVertex)
 					&& (currentEntry.state.isFinal)) {
 				found = true;

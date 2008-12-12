@@ -171,16 +171,19 @@ public class AggregationTransition extends Transition {
 	 */
 	public boolean accepts(Vertex v, Edge e, BooleanGraphMarker subgraph)
 			throws EvaluateException {
-		if ( (e == null) || !(e instanceof Aggregation))
+		if ( (e == null) || !(e instanceof Aggregation)) {
 				return false;
+		}		
 		if (e.isNormal()) {
 			AggregationClass aggClass = (AggregationClass) e.getAttributedElementClass();
-			if (!aggClass.isAggregateFrom())
+			if (aggClass.isAggregateFrom() != aggregateFrom) {
 				return false;
+			}	
 		} else {
 			AggregationClass aggClass = (AggregationClass) e.getAttributedElementClass();
-			if (aggClass.isAggregateFrom())
-				return false;
+			if (aggClass.isAggregateFrom() == aggregateFrom) {
+				return false; 
+			}	
 		} 
 	
 		// checks if the subgraphattribute is set and if the edge belongs to
@@ -198,8 +201,9 @@ public class AggregationTransition extends Transition {
 		}
 		// checks if a edgeTypeRestriction is set and if e has the right type
 		AttributedElementClass edgeClass = e.getAttributedElementClass();
-		if (!typeCollection.acceptsType(edgeClass))
+		if (!typeCollection.acceptsType(edgeClass)) {
 			return false;
+		}	
 		return true;
 	}
 	
