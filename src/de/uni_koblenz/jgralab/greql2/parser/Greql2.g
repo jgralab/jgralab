@@ -1,5 +1,5 @@
 grammar Greql2;
-options {backtrack=true;}
+options {backtrack=false;}
 
 tokens {
 	FUNCTIONID;
@@ -1654,7 +1654,9 @@ simplePathDescription returns [PrimaryPathDescription result = null]
 }
 :
 {offsetDir = getLTOffset();}
-( (RARROW { direction = "out"; }) | (LARROW { direction = "in"; }) | ARROW)
+((RARROW) => (RARROW { direction = "out"; }) 
+ |(LARROW) => (LARROW { direction = "in"; }) 
+ | ARROW)
 /* edge type restriction */
 (   (LCURLY (edgeRestrictionList)? RCURLY ) =>
       (LCURLY (typeIds = edgeRestrictionList)?	RCURLY)
