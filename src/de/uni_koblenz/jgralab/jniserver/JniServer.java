@@ -1,16 +1,24 @@
 package de.uni_koblenz.jgralab.jniserver;
 
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Hashtable;
 import java.util.Map;
 
+import de.uni_koblenz.jgralab.Attribute;
+import de.uni_koblenz.jgralab.AttributedElement;
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.GraphException;
 import de.uni_koblenz.jgralab.GraphIO;
 import de.uni_koblenz.jgralab.Vertex;
+import de.uni_koblenz.jgralab.schema.AttributedElementClass;
+import de.uni_koblenz.jgralab.schema.Domain;
+import de.uni_koblenz.jgralab.schema.EdgeClass;
+import de.uni_koblenz.jgralab.schema.EnumDomain;
 import de.uni_koblenz.jgralab.schema.QualifiedName;
 import de.uni_koblenz.jgralab.schema.Schema;
+import de.uni_koblenz.jgralab.schema.VertexClass;
 
 public class JniServer {
 	private static int keyGenerator;
@@ -22,7 +30,7 @@ public class JniServer {
 	private Map<Integer, Graph> graphs;
 
 	public JniServer() {
-		keyGenerator = 0;
+		keyGenerator = 1;
 		graphs = new Hashtable<Integer, Graph>();
 	}
 
@@ -101,6 +109,9 @@ public class JniServer {
 		}
 	}
 
+	// ----------------------------------------------------------------------------
+	// ----------------------------------------------------------------------------
+
 	public int createVertex(int graphId, String vertexClassName) {
 		Graph graph = graphs.get(graphId);
 		Class<? extends Vertex> m1Class = graph.getGraphClass().getVertexClass(
@@ -108,35 +119,44 @@ public class JniServer {
 		return graph.createVertex(m1Class).getId();
 	}
 
-	public void setVertexStringAttribute(int graphId, int vertexId,
-			String attributName, String value) {
-		try {
-			graphs.get(graphId).getVertex(vertexId).setAttribute(attributName,
-					value);
-		} catch (NoSuchFieldException e) {
-			throw new GraphException(e);
-		}
+	public void setVertexAttribute(int graphId, int vertexId,
+			String attributeName, boolean value) {
+		setAttribute(graphs.get(graphId).getVertex(vertexId), attributeName,
+				value);
 	}
 
-	public void setVertexDoubleAttribute(int graphId, int vertexId,
-			String attributName, double value) {
-		try {
-			graphs.get(graphId).getVertex(vertexId).setAttribute(attributName,
-					value);
-		} catch (NoSuchFieldException e) {
-			throw new GraphException(e);
-		}
+	public void setVertexAttribute(int graphId, int vertexId,
+			String attributeName, int value) {
+		setAttribute(graphs.get(graphId).getVertex(vertexId), attributeName,
+				value);
 	}
 
-	public void setVertexIntAttribute(int graphId, int vertexId,
-			String attributName, int value) {
-		try {
-			graphs.get(graphId).getVertex(vertexId).setAttribute(attributName,
-					value);
-		} catch (NoSuchFieldException e) {
-			throw new GraphException(e);
-		}
+	public void setVertexAttribute(int graphId, int vertexId,
+			String attributeName, long value) {
+		setAttribute(graphs.get(graphId).getVertex(vertexId), attributeName,
+				value);
 	}
+
+	public void setVertexAttribute(int graphId, int vertexId,
+			String attributeName, double value) {
+		setAttribute(graphs.get(graphId).getVertex(vertexId), attributeName,
+				value);
+	}
+
+	public void setVertexAttribute(int graphId, int vertexId,
+			String attributeName, String value) {
+		setAttribute(graphs.get(graphId).getVertex(vertexId), attributeName,
+				value);
+	}
+
+	public void setVertexEnumAttribute(int graphId, int vertexId,
+			String attributeName, String value) {
+		setEnumAttribute(graphs.get(graphId).getVertex(vertexId),
+				attributeName, value);
+	}
+
+	// ----------------------------------------------------------------------------
+	// ----------------------------------------------------------------------------
 
 	public int createEdge(int graphId, String edgeClassName, int alphaId,
 			int omegaId) {
@@ -146,4 +166,150 @@ public class JniServer {
 		return graph.createEdge(m1Class, graph.getVertex(alphaId),
 				graph.getVertex(omegaId)).getId();
 	}
+
+	public void setEdgeAttribute(int graphId, int edgeId, String attributeName,
+			boolean value) {
+		setAttribute(graphs.get(graphId).getEdge(edgeId), attributeName, value);
+	}
+
+	public void setEdgeAttribute(int graphId, int edgeId, String attributeName,
+			int value) {
+		setAttribute(graphs.get(graphId).getEdge(edgeId), attributeName, value);
+	}
+
+	public void setEdgeAttribute(int graphId, int edgeId, String attributeName,
+			long value) {
+		setAttribute(graphs.get(graphId).getEdge(edgeId), attributeName, value);
+	}
+
+	public void setEdgeAttribute(int graphId, int edgeId, String attributeName,
+			double value) {
+		setAttribute(graphs.get(graphId).getEdge(edgeId), attributeName, value);
+	}
+
+	public void setEdgeAttribute(int graphId, int edgeId, String attributeName,
+			String value) {
+		setAttribute(graphs.get(graphId).getEdge(edgeId), attributeName, value);
+	}
+
+	public void setEdgeEnumAttribute(int graphId, int edgeId,
+			String attributeName, String value) {
+		setEnumAttribute(graphs.get(graphId).getEdge(edgeId), attributeName,
+				value);
+	}
+
+	// ----------------------------------------------------------------------------
+	// ----------------------------------------------------------------------------
+
+	public int getFirstVertex(int graphId, String vertexClassName) {
+		Graph g = graphs.get(graphId);
+		Vertex v = (vertexClassName != null) ? g
+				.getFirstVertexOfClass((VertexClass) g.getSchema()
+						.getAttributedElementClass(
+								new QualifiedName(vertexClassName))) : g
+				.getFirstVertex();
+		return (v == null) ? 0 : v.getId();
+	}
+
+	public int getNextVertex(int graphId, int vertexId, String vertexClassName) {
+		Graph g = graphs.get(graphId);
+		Vertex v = (vertexClassName != null) ? g.getVertex(vertexId)
+				.getNextVertexOfClass(
+						((VertexClass) g.getSchema().getAttributedElementClass(
+								new QualifiedName(vertexClassName)))) : g
+				.getVertex(vertexId).getNextVertex();
+		return (v == null) ? 0 : v.getId();
+	}
+
+	public int getFirstEdgeInGraph(int graphId, String edgeClassName) {
+		Graph g = graphs.get(graphId);
+		Edge e = (edgeClassName != null) ? g
+				.getFirstEdgeOfClassInGraph((EdgeClass) g.getSchema()
+						.getAttributedElementClass(
+								new QualifiedName(edgeClassName))) : g
+				.getFirstEdgeInGraph();
+		return (e == null) ? 0 : e.getId();
+	}
+
+	public int getNextEdgeInGraph(int graphId, int edgeId, String edgeClassName) {
+		Graph g = graphs.get(graphId);
+		Edge e = (edgeClassName != null) ? g.getEdge(edgeId)
+				.getNextEdgeOfClassInGraph(
+						((EdgeClass) g.getSchema().getAttributedElementClass(
+								new QualifiedName(edgeClassName)))) : g
+				.getEdge(edgeId).getNextEdgeInGraph();
+		return (e == null) ? 0 : e.getId();
+	}
+
+	public int getFirstEdge(int graphId, int vertexId, String edgeClassName) {
+		Graph g = graphs.get(graphId);
+		Edge e = (edgeClassName != null) ? g.getVertex(vertexId)
+				.getFirstEdgeOfClass(
+						(EdgeClass) g.getSchema().getAttributedElementClass(
+								new QualifiedName(edgeClassName))) : g
+				.getVertex(vertexId).getFirstEdge();
+		return (e == null) ? 0 : e.getId();
+	}
+
+	public int getNextEdge(int graphId, int edgeId, String edgeClassName) {
+		Graph g = graphs.get(graphId);
+		Edge e = (edgeClassName != null) ? g.getEdge(edgeId)
+				.getNextEdgeOfClass(
+						((EdgeClass) g.getSchema().getAttributedElementClass(
+								new QualifiedName(edgeClassName)))) : g
+				.getEdge(edgeId).getNextEdge();
+		return (e == null) ? 0 : e.getId();
+	}
+
+	// ----------------------------------------------------------------------------
+	// ----------------------------------------------------------------------------
+
+	private void setEnumAttribute(AttributedElement e, String attributeName,
+			Object value) {
+		try {
+			AttributedElementClass aec = e.getAttributedElementClass();
+			Attribute attr = aec.getAttribute(attributeName);
+			if (attr == null) {
+				throw new GraphException("Attribute " + attributeName
+						+ " not defined in class " + aec.getQualifiedName());
+			}
+			Domain domain = attr.getDomain();
+			if (!(domain instanceof EnumDomain)) {
+				throw new GraphException("Domain of attribute " + attributeName
+						+ " is no EnumDomain.");
+			}
+			Class<?> attrType = Class.forName(domain.getSchema()
+					.getPackageName()
+					+ "." + domain.getQualifiedName());
+			Object enumValue = attrType.getMethod("fromString",
+					new Class[] { String.class }).invoke(null, value);
+			if (enumValue == null) {
+				throw new GraphException("Enum value " + value
+						+ " not defined in domain " + domain.getQualifiedName());
+			}
+			setAttribute(e, attributeName, enumValue);
+		} catch (ClassNotFoundException ex) {
+			throw new GraphException(ex);
+		} catch (IllegalArgumentException ex) {
+			throw new GraphException(ex);
+		} catch (SecurityException ex) {
+			throw new GraphException(ex);
+		} catch (IllegalAccessException ex) {
+			throw new GraphException(ex);
+		} catch (InvocationTargetException ex) {
+			throw new GraphException(ex);
+		} catch (NoSuchMethodException ex) {
+			throw new GraphException(ex);
+		}
+	}
+
+	private void setAttribute(AttributedElement e, String attributeName,
+			Object value) {
+		try {
+			e.setAttribute(attributeName, value);
+		} catch (NoSuchFieldException ex) {
+			throw new GraphException(ex);
+		}
+	}
+
 }
