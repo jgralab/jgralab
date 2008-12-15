@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package de.uni_koblenz.jgralab.greql2.optimizer;
 
@@ -29,12 +29,12 @@ import de.uni_koblenz.jgralab.greql2.schema.Variable;
  * {@link Declaration}, so that {@link Variable}s which produce huge costs on
  * value changes are declared before those where the needed re-evaluation of the
  * constraints is cheaper.
- * 
+ *
  * If two {@link Variable} result in the same re-evaluation costs on value
  * changes, the one with a higher cardinality is declared after the other one.
- * 
+ *
  * @author ist@uni-koblenz.de
- * 
+ *
  */
 public class VariableDeclarationOrderOptimizer extends OptimizerBase {
 
@@ -43,7 +43,7 @@ public class VariableDeclarationOrderOptimizer extends OptimizerBase {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * de.uni_koblenz.jgralab.greql2.optimizer.Optimizer#isEquivalent(de.uni_koblenz
 	 * .jgralab.greql2.optimizer.Optimizer)
@@ -58,7 +58,7 @@ public class VariableDeclarationOrderOptimizer extends OptimizerBase {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * de.uni_koblenz.jgralab.greql2.optimizer.Optimizer#optimize(de.uni_koblenz
 	 * .jgralab.greql2.evaluator.GreqlEvaluator,
@@ -80,14 +80,14 @@ public class VariableDeclarationOrderOptimizer extends OptimizerBase {
 		ArrayList<List<VariableDeclarationOrderUnit>> unitsList = new ArrayList<List<VariableDeclarationOrderUnit>>();
 		for (Declaration decl : syntaxgraph.getDeclarationVertices()) {
 			List<VariableDeclarationOrderUnit> units = new ArrayList<VariableDeclarationOrderUnit>();
-			Set<Variable> varsOfDecl = OptimizerUtility
-					.collectVariablesDeclaredBy(decl);
+			Set<Variable> varsOfDecl = collectVariablesDeclaredBy(decl);
 			if (varsOfDecl.size() < 2
 					|| decl.getFirstIsConstraintOf(EdgeDirection.IN) == null
 					|| OptimizerUtility.collectVariablesBelow(
 							decl.getFirstIsConstraintOf(EdgeDirection.IN)
-									.getAlpha()).size() == 0)
+									.getAlpha()).size() == 0) {
 				continue;
+			}
 
 			for (Variable var : varsOfDecl) {
 				units.add(new VariableDeclarationOrderUnit(var, decl, marker,
@@ -166,5 +166,25 @@ public class VariableDeclarationOrderOptimizer extends OptimizerBase {
 			varList.add(unit.getVariable());
 		}
 		return varList;
+	}
+
+	/**
+	 * Collect all {@link Variable}s declared by the {@link SimpleDeclaration}s
+	 * of <code>decl</code>.
+	 *
+	 * @param decl
+	 *            a {@link Declaration}
+	 * @return a {@link Set} of all {@link Variable}s declared by the
+	 *         {@link SimpleDeclaration}s of <code>decl</code>.
+	 */
+	private Set<Variable> collectVariablesDeclaredBy(Declaration decl) {
+		HashSet<Variable> vars = new HashSet<Variable>();
+		for (IsSimpleDeclOf inc : decl
+				.getIsSimpleDeclOfIncidences(EdgeDirection.IN)) {
+			vars.addAll(OptimizerUtility
+					.collectVariablesDeclaredBy((SimpleDeclaration) inc
+							.getAlpha()));
+		}
+		return vars;
 	}
 }
