@@ -93,25 +93,28 @@ public class Greql2ExpressionEvaluator extends VertexEvaluator {
 	 */
 	@Override
 	public JValue evaluate() throws EvaluateException {
-		for (String importedType : vertex.getImportedTypes()) {
-			if (importedType.endsWith(".*")) {
-				String packageName = importedType.substring(0, importedType.length()-2);
-				Package p = vertex.getSchema().getPackage(packageName);
-//				for (Domain elem : p.getDomains().values()) {
-//					greqlEvaluator.addKnownType(elem);
-//				}
-				for (VertexClass elem : p.getVertexClasses().values()) {
-					greqlEvaluator.addKnownType(elem);
+		if (vertex.getImportedTypes() != null)
+			for (String importedType : vertex.getImportedTypes()) {
+				if (importedType.endsWith(".*")) {
+					String packageName = importedType.substring(0, importedType
+							.length() - 2);
+					Package p = vertex.getSchema().getPackage(packageName);
+					// for (Domain elem : p.getDomains().values()) {
+					// greqlEvaluator.addKnownType(elem);
+					// }
+					for (VertexClass elem : p.getVertexClasses().values()) {
+						greqlEvaluator.addKnownType(elem);
+					}
+					for (EdgeClass elem : p.getEdgeClasses().values()) {
+						greqlEvaluator.addKnownType(elem);
+					}
+				} else {
+					AttributedElementClass elemClass = (AttributedElementClass) vertex
+							.getSchema().getAttributedElementClass(
+									new QualifiedName(importedType));
+					greqlEvaluator.addKnownType(elemClass);
 				}
-				for (EdgeClass elem : p.getEdgeClasses().values()) {
-					greqlEvaluator.addKnownType(elem);
-				}
-			} else { 
-				AttributedElementClass elemClass = (AttributedElementClass) vertex.getSchema()
-				.getAttributedElementClass(new QualifiedName(importedType));
-				greqlEvaluator.addKnownType(elemClass);
-			}	
-		}
+			}
 		IsBoundVarOf inc = vertex.getFirstIsBoundVarOf(EdgeDirection.IN);
 		while (inc != null) {
 			Variable currentBoundVariable = (Variable) inc.getAlpha();
