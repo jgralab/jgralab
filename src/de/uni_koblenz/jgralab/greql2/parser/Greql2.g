@@ -773,40 +773,16 @@ variable returns [Variable var = null]
 ;
 
 
-importDeclarations returns [Set<String> typeNames = new HashSet<String>();]
-@init{
-	int typeOffset = 0;
-	int typeLength = 0;
-	Set<String> shortNames = new HashSet<String>();	
-	boolean wholePackage = false;
-	System.out.println("Init import declarations");
-}
+importDeclarationList returns [Set<String> typeNames = new HashSet<String>();]
 :
-((IMPORT) => 
-  (
     IMPORT
-	{
-    	typeOffset = getLTOffset();
-        wholePackage = false;
-    }
     importedType = qualifiedName
-    ((DOT) => (DOT STAR {wholePackage = true;}) | )
-    {
-    	System.out.println("Adding typeNames");
-    	typeLength = getLTLength(typeOffset);
-    	if (!wholePackage) { 
-        	String shortName = importedType.substring(importedType.lastIndexOf("."));
-        	if (shortNames.contains(shortName))
-        	 	throw new ParseException("A type with simple name " + shortName + " is imported twice!", importedType, new SourcePosition(typeLength, typeOffset) );
-        	shortNames.add(shortName);	
-        	typeNames.add(importedType);	
-        } else {
-        	typeNames.add(importedType + ".*");	 	
- 		}
-    }
+    ((DOT) => (DOT STAR {importedType += ".*";}) | )
+    {typeNames.add(importedType);}
     SEMI 
-  )  
-)* 
+(
+  (IMPORT) => (followingNames = importDeclarationList {typeNames.addAll(followingNames);})
+ | /* no further imports */ )
 ;
 
 
@@ -819,11 +795,11 @@ greqlExpression
 	Greql2Expression root = graph.createGreql2Expression();
 }
 : (
-    (IMPORT) => 
+    ((IMPORT) => 
     (
-    	typeNames = importDeclarations
+    	typeNames = importDeclarationList
         {root.setImportedTypes(typeNames);}
-    )
+    ) | /* no import */)
     (USING varList = variableList COLON)?
     { offset = input.LT(1).getCharPositionInLine()-1; }
     expr = expression
