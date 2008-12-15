@@ -86,7 +86,7 @@ public class TypeIdEvaluator extends VertexEvaluator {
 		}
 		returnTypes.add(elemClass);
 		if (!vertex.isType()) {
-			returnTypes.add(elemClass);
+			returnTypes.addAll(elemClass.getAllSubClasses());
 		} 
 		return returnTypes;
 	}
