@@ -127,7 +127,7 @@ public class GreqlEvaluator {
 	 * The GraphMarker that stores all vertex evaluators
 	 */
 	protected GraphMarker<VertexEvaluator> vertexEvalGraphMarker;
-	
+
 	/**
 	 * The map of SimpleName to Type
 	 * of types that is known in the evaluator by import statements
@@ -549,15 +549,15 @@ public class GreqlEvaluator {
 		this.progressFunction = progressFunction;
 	}
 
-	
+
 	public void addKnownType(AttributedElementClass knownType) {
 		knownTypes.put(knownType.getSimpleName(), knownType);
 	}
-	
+
 	public AttributedElementClass getKnownType(String typeSimpleName) {
 		return knownTypes.get(typeSimpleName);
 	}
-	
+
 	/**
 	 * @return a minimal graph (no vertices and no edges) of a minimal schema.
 	 */

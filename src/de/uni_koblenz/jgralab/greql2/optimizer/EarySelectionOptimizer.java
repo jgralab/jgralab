@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package de.uni_koblenz.jgralab.greql2.optimizer;
 
@@ -12,8 +12,11 @@ import java.util.List;
 import java.util.Set;
 import java.util.logging.Logger;
 
+import de.uni_koblenz.jgralab.Attribute;
+import de.uni_koblenz.jgralab.AttributedElement;
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.EdgeDirection;
+import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
 import de.uni_koblenz.jgralab.greql2.exception.EvaluateException;
@@ -28,6 +31,7 @@ import de.uni_koblenz.jgralab.greql2.schema.Identifier;
 import de.uni_koblenz.jgralab.greql2.schema.IsArgumentOf;
 import de.uni_koblenz.jgralab.greql2.schema.IsConstraintOf;
 import de.uni_koblenz.jgralab.greql2.schema.IsDeclaredVarOf;
+import de.uni_koblenz.jgralab.greql2.schema.IsSimpleDeclOf;
 import de.uni_koblenz.jgralab.greql2.schema.QuantifiedExpression;
 import de.uni_koblenz.jgralab.greql2.schema.RecordConstruction;
 import de.uni_koblenz.jgralab.greql2.schema.RecordElement;
@@ -39,9 +43,9 @@ import de.uni_koblenz.jgralab.greql2.schema.Variable;
 /**
  * This {@link Optimizer} implements the transformation "Selection as early as
  * possible".
- * 
+ *
  * @author ist@uni-koblenz.de
- * 
+ *
  */
 public class EarySelectionOptimizer extends OptimizerBase {
 
@@ -52,7 +56,7 @@ public class EarySelectionOptimizer extends OptimizerBase {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * de.uni_koblenz.jgralab.greql2.optimizer.Optimizer#isEquivalent(de.uni_koblenz
 	 * .jgralab.greql2.optimizer.Optimizer)
@@ -67,7 +71,7 @@ public class EarySelectionOptimizer extends OptimizerBase {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * de.uni_koblenz.jgralab.greql2.optimizer.Optimizer#optimize(de.uni_koblenz
 	 * .jgralab.greql2.evaluator.GreqlEvaluator,
@@ -109,7 +113,7 @@ public class EarySelectionOptimizer extends OptimizerBase {
 
 	/**
 	 * Do an optimization run.
-	 * 
+	 *
 	 * @throws OptimizerException
 	 */
 	private boolean runOptimization() throws OptimizerException {
@@ -158,10 +162,12 @@ public class EarySelectionOptimizer extends OptimizerBase {
 								.getFirstIsSimpleDeclOf().getOmega();
 						Declaration decl2 = (Declaration) sd2
 								.getFirstIsSimpleDeclOf().getOmega();
-						if (OptimizerUtility.isAbove(decl1, decl2))
+						if (OptimizerUtility.isAbove(decl1, decl2)) {
 							return 1;
-						if (OptimizerUtility.isAbove(decl2, decl1))
+						}
+						if (OptimizerUtility.isAbove(decl2, decl1)) {
 							return -1;
+						}
 						return 0;
 					}
 				});
@@ -188,8 +194,7 @@ public class EarySelectionOptimizer extends OptimizerBase {
 					foundPredicateNeedingAllVars = true;
 				}
 			}
-			List<SimpleDeclaration> sdsOfParentDecl = OptimizerUtility
-					.collectSimpleDeclarationsOf(parentDecl);
+			List<SimpleDeclaration> sdsOfParentDecl = collectSimpleDeclarationsOf(parentDecl);
 
 			// If there's such a predicate that needs only part of the variables
 			// then split it, if there was no predicate that uses all variables
@@ -226,7 +231,7 @@ public class EarySelectionOptimizer extends OptimizerBase {
 	 * Split the given {@link SimpleDeclaration} so that there's one
 	 * {@link SimpleDeclaration} that declares the {@link Variable}s in
 	 * <code>varsToBeSplit</code> and one for the rest.
-	 * 
+	 *
 	 * @param sd
 	 *            the {@link SimpleDeclaration} to be split
 	 * @param varsToBeSplit
@@ -284,8 +289,9 @@ public class EarySelectionOptimizer extends OptimizerBase {
 		StringBuilder sb = new StringBuilder();
 		for (Variable var : varsDeclaredByOrigSD) {
 			sb.append(var + " (" + var.getName() + ")");
-			if (i < varsSize)
+			if (i < varsSize) {
 				sb.append(", ");
+			}
 			i++;
 		}
 		logger.info(sb.toString() + " with predicates " + predicates + ".");
@@ -444,35 +450,29 @@ public class EarySelectionOptimizer extends OptimizerBase {
 		}
 
 		ArrayList<Edge> upEdges = new ArrayList<Edge>();
-		Edge e = exp.getFirstEdge(EdgeDirection.OUT);
-		while (e != null) {
+		for (Edge e : exp.incidences(EdgeDirection.OUT)) {
 			if (e.getOmega() instanceof FunctionApplication
-					&& OptimizerUtility
-							.existsForwardPathExcludingOtherTargetClassVertices(
-									e, origDecl)) {
+					&& existsForwardPathExcludingOtherTargetClassVertices(e,
+							origDecl)) {
 				FunctionApplication father = (FunctionApplication) e.getOmega();
 				if (OptimizerUtility.isAnd(father)) {
 					upEdges.add(e);
 				}
 			}
-			e = e.getNextEdge(EdgeDirection.OUT);
 		}
 		for (Edge upEdge : upEdges) {
 			FunctionApplication funApp = (FunctionApplication) upEdge
 					.getOmega();
 			Expression otherArg = null;
-			IsArgumentOf inc = funApp.getFirstIsArgumentOf(EdgeDirection.IN);
-			while (inc != null) {
+			for (IsArgumentOf inc : funApp
+					.getIsArgumentOfIncidences(EdgeDirection.IN)) {
 				if (inc.getNormalEdge() != upEdge.getNormalEdge()) {
 					otherArg = (Expression) inc.getAlpha();
 				}
-				inc = inc.getNextIsArgumentOf(EdgeDirection.IN);
 			}
 			ArrayList<Edge> funAppEdges = new ArrayList<Edge>();
-			Edge funAppEdge = funApp.getFirstEdge(EdgeDirection.OUT);
-			while (funAppEdge != null) {
+			for (Edge funAppEdge : funApp.incidences(EdgeDirection.OUT)) {
 				funAppEdges.add(funAppEdge);
-				funAppEdge = funAppEdge.getNextEdge(EdgeDirection.OUT);
 			}
 			for (Edge fae : funAppEdges) {
 				fae.setAlpha(otherArg);
@@ -485,7 +485,7 @@ public class EarySelectionOptimizer extends OptimizerBase {
 	/**
 	 * Collects the {@link Edge}s that start at <code>startVertex</code> and
 	 * have a forward directed path to <code>targetEdge</code>.
-	 * 
+	 *
 	 * @param startVertex
 	 * @param targetEdge
 	 * @return a {@link List} of {@link Edge}s going out of
@@ -512,16 +512,15 @@ public class EarySelectionOptimizer extends OptimizerBase {
 			Set<Variable> varsToBeCopied, HashMap<Variable, Variable> copiedVars) {
 		// GreqlEvaluator.println("createConjunction()");
 		if (predicates.size() == 1) {
-			return (Expression) OptimizerUtility.copySubgraph(
-					predicates.get(0), syntaxgraph, varsToBeCopied, copiedVars);
+			return (Expression) copySubgraph(predicates.get(0), syntaxgraph,
+					varsToBeCopied, copiedVars);
 		}
 		FunctionApplication funApp = syntaxgraph.createFunctionApplication();
 		FunctionId funId = OptimizerUtility.findOrCreateFunctionId("and",
 				syntaxgraph);
 		syntaxgraph.createIsFunctionIdOf(funId, funApp);
-		syntaxgraph.createIsArgumentOf((Expression) OptimizerUtility
-				.copySubgraph(predicates.get(0), syntaxgraph, varsToBeCopied,
-						copiedVars), funApp);
+		syntaxgraph.createIsArgumentOf((Expression) copySubgraph(predicates
+				.get(0), syntaxgraph, varsToBeCopied, copiedVars), funApp);
 		syntaxgraph.createIsArgumentOf(createConjunction(predicates.subList(1,
 				predicates.size()), varsToBeCopied, copiedVars), funApp);
 		return funApp;
@@ -534,7 +533,7 @@ public class EarySelectionOptimizer extends OptimizerBase {
 	 * with exceptions for {@link FunctionId}s (never copied) and
 	 * {@link Variable}s (only those in <code>varsToBeCopied</code> will be
 	 * copied ONCE).
-	 * 
+	 *
 	 * @param predicates
 	 *            a {@link List} of {@link Expression}s
 	 * @param varsToBeCopied
@@ -555,12 +554,12 @@ public class EarySelectionOptimizer extends OptimizerBase {
 	/**
 	 * Find all {@link Expression}s below <code>exp</code> that can be moved and
 	 * return them.
-	 * 
+	 *
 	 * An {@link Expression} is considered movable if it needs only
 	 * {@link Variable}s that are locally declared in one
 	 * {@link SimpleDeclaration} and this {@link SimpleDeclaration} is not the
 	 * only one in the parent {@link Declaration}.
-	 * 
+	 *
 	 * @param exp
 	 *            the {@link Expression} below which to look for movable
 	 *            {@link Expression}s
@@ -599,7 +598,7 @@ public class EarySelectionOptimizer extends OptimizerBase {
 			// one variable.
 			Declaration parent = (Declaration) sd.getFirstIsSimpleDeclOf(
 					EdgeDirection.OUT).getOmega();
-			if (OptimizerUtility.collectSimpleDeclarationsOf(parent).size() > 1
+			if (collectSimpleDeclarationsOf(parent).size() > 1
 					|| OptimizerUtility.collectVariablesDeclaredBy(sd).size() > 1) {
 				if (movableExpressions.containsKey(sd)) {
 					movableExpressions.get(sd).add(exp);
@@ -618,7 +617,7 @@ public class EarySelectionOptimizer extends OptimizerBase {
 	 * {@link Variable}s the {@link Expression} <code>exp</code> needs. If
 	 * <code>exp</code> doesn't need any variables or such an
 	 * {@link SimpleDeclaration} doesn't exist, return <code>null</code>.
-	 * 
+	 *
 	 * @param exp
 	 *            an {@link Expression}
 	 * @return the {@link SimpleDeclaration} that declares all local
@@ -657,8 +656,7 @@ public class EarySelectionOptimizer extends OptimizerBase {
 		Set<Variable> neededVars = OptimizerUtility.collectVariablesBelow(exp);
 		Set<Variable> neededLocalVars = new HashSet<Variable>();
 		Declaration localDecl = findNearestDeclarationAbove(exp);
-		for (SimpleDeclaration sd : OptimizerUtility
-				.collectSimpleDeclarationsOf(localDecl)) {
+		for (SimpleDeclaration sd : collectSimpleDeclarationsOf(localDecl)) {
 			for (Variable var : neededVars) {
 				IsDeclaredVarOf inc = sd.getFirstIsDeclaredVarOf();
 				while (inc != null) {
@@ -674,7 +672,7 @@ public class EarySelectionOptimizer extends OptimizerBase {
 
 	/**
 	 * Find the nearest {@link Declaration} above <code>vertex</code>.
-	 * 
+	 *
 	 * @param vertex
 	 *            a {@link Vertex}
 	 * @return nearest {@link Declaration} above <code>vertex</code>
@@ -693,5 +691,162 @@ public class EarySelectionOptimizer extends OptimizerBase {
 			inc = inc.getNextEdge(EdgeDirection.OUT);
 		}
 		return null;
+	}
+
+	/**
+	 * @param edge
+	 *            the start {@link Edge}
+	 * @param target
+	 *            the target {@link Vertex}
+	 * @return <code>true</code> if there's a forward directed path from
+	 *         <code>edge</code> to <code>target</code> with no other vertices
+	 *         of <code>target</code>'s class in between, <code>false</code>
+	 *         otherwise
+	 */
+	private boolean existsForwardPathExcludingOtherTargetClassVertices(
+			Edge edge, Vertex target) {
+		Vertex omega = edge.getOmega();
+
+		if (omega == target) {
+			return true;
+		}
+
+		if (omega.getAttributedElementClass().getM1Class() == target
+				.getAttributedElementClass().getM1Class()) {
+			return false;
+		}
+
+		for (Edge e : omega.incidences(EdgeDirection.OUT)) {
+			if (existsForwardPathExcludingOtherTargetClassVertices(e, target)) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	/**
+	 * Collect all {@link SimpleDeclaration}s of <code>decl</code> in a
+	 * {@link List}.
+	 *
+	 * @param decl
+	 *            a {@link Declaration}
+	 * @return a {@link List} of all {@link SimpleDeclaration}s that are part of
+	 *         <code>decl</code>
+	 */
+	private List<SimpleDeclaration> collectSimpleDeclarationsOf(Declaration decl) {
+		ArrayList<SimpleDeclaration> sds = new ArrayList<SimpleDeclaration>();
+		for (IsSimpleDeclOf inc : decl
+				.getIsSimpleDeclOfIncidences(EdgeDirection.IN)) {
+			sds.add((SimpleDeclaration) inc.getAlpha());
+		}
+		return sds;
+	}
+
+	/**
+	 * Collect the {@link Variable}s that have no outgoing
+	 * {@link IsDeclaredVarOf} edges and are located below <code>v</code>.
+	 *
+	 * @param vertex
+	 *            the root {@link Vertex} below which to look for undeclared
+	 *            {@link Variable}s
+	 * @return a {@link Set} of {@link Variable}s that have no outgoing
+	 *         {@link IsDeclaredVarOf} edges and are located below
+	 *         <code>v</code>
+	 */
+	private Set<Variable> collectUndeclaredVariablesBelow(Vertex vertex) {
+		HashSet<Variable> undeclaredVars = new HashSet<Variable>();
+		for (Variable var : OptimizerUtility.collectVariablesBelow(vertex)) {
+			if (var.getFirstIsDeclaredVarOf(EdgeDirection.OUT) == null) {
+				undeclaredVars.add(var);
+			}
+		}
+		return undeclaredVars;
+	}
+
+	/**
+	 * Makes a deep copy of the subgraph given by <code>origVertex</code>. For
+	 * each {@link Vertex} in that subgraph a new {@link Vertex} of the same
+	 * type will be created, likewise for the {@link Edge}s. As an exception to
+	 * that rule, {@link Identifier}s other than {@link Variable}s won't be
+	 * copied. For {@link Variable}s it's quite complicated. If a
+	 * {@link Variable} is in <code>variablesToBeCopied</code> it will be copied
+	 * ONCE. After that the one and only copy is used instead of creating a new
+	 * copy. That's what <code>copiedVarMap</code> is for. So normally you'd
+	 * provide an empty {@link HashMap}.
+	 *
+	 * @param origVertex
+	 *            the root {@link Vertex} of the subgraph to be copied
+	 * @param graph
+	 *            the {@link Graph} where <code>origVertex</code> is part of
+	 * @param variablesToBeCopied
+	 *            a set of {@link Variable}s that should be copied ONCE
+	 * @param copiedVarMap
+	 *            a {@link HashMap} form the original {@link Variable} to its
+	 *            one and only copy
+	 * @return the root {@link Vertex} of the copy
+	 */
+	@SuppressWarnings("unchecked")
+	private Vertex copySubgraph(Vertex origVertex, Greql2 graph,
+			Set<Variable> variablesToBeCopied,
+			HashMap<Variable, Variable> copiedVarMap) {
+		// GreqlEvaluator.println("copySubgraph(" + origVertex + ", graph, "
+		// + variablesToBeCopied + ", " + copiedVarMap + ")");
+		if (origVertex instanceof Identifier
+				&& !(origVertex instanceof Variable)) {
+			return origVertex;
+		}
+		if (origVertex instanceof Variable) {
+			if (copiedVarMap.containsKey(origVertex)) {
+				return copiedVarMap.get(origVertex);
+			}
+			if (!variablesToBeCopied.contains(origVertex)) {
+				return origVertex;
+			}
+		}
+
+		Class<? extends Vertex> vertexClass = (Class<? extends Vertex>) origVertex
+				.getAttributedElementClass().getM1Class();
+		Vertex topVertex = graph.createVertex(vertexClass);
+		copyAttributes(origVertex, topVertex);
+
+		if (topVertex instanceof Variable) {
+			copiedVarMap.put((Variable) origVertex, (Variable) topVertex);
+		}
+
+		Edge origEdge = origVertex.getFirstEdge(EdgeDirection.IN);
+		Vertex subVertex;
+
+		while (origEdge != null) {
+			subVertex = copySubgraph(origEdge.getAlpha(), graph,
+					variablesToBeCopied, copiedVarMap);
+			Class<? extends Edge> edgeClass = (Class<? extends Edge>) origEdge
+					.getAttributedElementClass().getM1Class();
+			graph.createEdge(edgeClass, subVertex, topVertex);
+			origEdge = origEdge.getNextEdge(EdgeDirection.IN);
+		}
+
+		return topVertex;
+	}
+
+	/**
+	 * Copy the attribute values of <code>from</code> to <code>to</code>. The
+	 * types of the given {@link AttributedElement}s have to be equal.
+	 *
+	 * @param from
+	 *            an {@link AttributedElement}
+	 * @param to
+	 *            another {@link AttributedElement} whose runtime type equals
+	 *            <code>from</code>'s type.
+	 */
+	private void copyAttributes(AttributedElement from, AttributedElement to) {
+		for (Attribute attr : from.getAttributedElementClass()
+				.getAttributeList()) {
+			try {
+				to.setAttribute(attr.getName(), from.getAttribute(attr
+						.getName()));
+			} catch (NoSuchFieldException e) {
+				e.printStackTrace();
+			}
+		}
 	}
 }

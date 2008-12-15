@@ -39,7 +39,7 @@ import de.uni_koblenz.jgralab.greql2.schema.Variable;
 
 /**
  * @author ist@uni-koblenz.de
- * 
+ *
  */
 public class DefaultOptimizer extends OptimizerBase {
 
@@ -47,13 +47,13 @@ public class DefaultOptimizer extends OptimizerBase {
 			.getName());
 
 	@Override
-	String optimizerHeaderString() {
+	protected String optimizerHeaderString() {
 		return "### " + this.getClass().getSimpleName() + ": ";
 	}
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * de.uni_koblenz.jgralab.greql2.optimizer.Optimizer#isEquivalent(de.uni_koblenz
 	 * .jgralab.greql2.optimizer.Optimizer)
@@ -68,7 +68,7 @@ public class DefaultOptimizer extends OptimizerBase {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * de.uni_koblenz.jgralab.greql2.optimizer.Optimizer#optimize(de.uni_koblenz
 	 * .jgralab.greql2.evaluator.GreqlEvaluator,
