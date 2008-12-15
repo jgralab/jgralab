@@ -52,12 +52,10 @@ public class OptimizerUtility {
 		if (v1 == v2) {
 			return true;
 		}
-		Edge inc = v1.getFirstEdge(EdgeDirection.IN);
-		while (inc != null) {
+		for (Edge inc : v1.incidences(EdgeDirection.IN)) {
 			if (isAbove(inc.getAlpha(), v2)) {
 				return true;
 			}
-			inc = inc.getNextEdge(EdgeDirection.IN);
 		}
 		return false;
 	}
@@ -209,10 +207,9 @@ public class OptimizerUtility {
 	 */
 	public static Set<Variable> collectVariablesDeclaredBy(SimpleDeclaration sd) {
 		HashSet<Variable> vars = new HashSet<Variable>();
-		IsDeclaredVarOf inc = sd.getFirstIsDeclaredVarOf(EdgeDirection.IN);
-		while (inc != null) {
+		for (IsDeclaredVarOf inc : sd
+				.getIsDeclaredVarOfIncidences(EdgeDirection.IN)) {
 			vars.add((Variable) inc.getAlpha());
-			inc = inc.getNextIsDeclaredVarOf(EdgeDirection.IN);
 		}
 		return vars;
 	}
