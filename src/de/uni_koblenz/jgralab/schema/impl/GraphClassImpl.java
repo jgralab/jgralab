@@ -42,6 +42,7 @@ import de.uni_koblenz.jgralab.schema.Schema;
 import de.uni_koblenz.jgralab.schema.VertexClass;
 import de.uni_koblenz.jgralab.schema.exception.DuplicateNamedElementException;
 import de.uni_koblenz.jgralab.schema.exception.InheritanceException;
+import de.uni_koblenz.jgralab.schema.exception.ReservedWordException;
 
 public class GraphClassImpl extends AttributedElementClassImpl implements
 		GraphClass {
@@ -118,9 +119,12 @@ public class GraphClassImpl extends AttributedElementClassImpl implements
 			int fromMin, int fromMax, String fromRoleName, VertexClass to,
 			int toMin, int toMax, String toRoleName) {
 		if (!schema.isFreeSchemaElementName(qn)) {
-			throw new DuplicateNamedElementException(
-					"there is already an element with the name " + qn
-							+ " in the schema " + schema.getQualifiedName());
+			if (schema.knows(qn)) {
+				throw new DuplicateNamedElementException(
+						"there is already an element with the name " + qn
+								+ " in the schema " + schema.getQualifiedName());
+			}
+			throw new ReservedWordException(qn.getQualifiedName(), "EdgeClass");
 		}
 		EdgeClassImpl ec = new EdgeClassImpl(qn, this, from, fromMin, fromMax,
 				fromRoleName, to, toMin, toMax, toRoleName);
@@ -169,9 +173,13 @@ public class GraphClassImpl extends AttributedElementClassImpl implements
 			boolean aggregateFrom, VertexClass to, int toMin, int toMax,
 			String toRoleName) {
 		if (!schema.isFreeSchemaElementName(qn)) {
-			throw new DuplicateNamedElementException(
-					"there is already an element with the name " + qn
-							+ " in the schema " + schema.getQualifiedName());
+			if (schema.knows(qn)) {
+				throw new DuplicateNamedElementException(
+						"there is already an element with the name " + qn
+								+ " in the schema " + schema.getQualifiedName());
+			}
+			throw new ReservedWordException(qn.getQualifiedName(),
+					"AggregationClass");
 		}
 		AggregationClassImpl ac = new AggregationClassImpl(qn, this, from,
 				fromMin, fromMax, fromRoleName, aggregateFrom, to, toMin,
@@ -222,9 +230,13 @@ public class GraphClassImpl extends AttributedElementClassImpl implements
 			boolean compositeFrom, VertexClass to, int toMin, int toMax,
 			String toRoleName) {
 		if (!schema.isFreeSchemaElementName(qn)) {
-			throw new DuplicateNamedElementException(
-					"there is already an element with the name " + qn
-							+ " in the schema " + schema.getQualifiedName());
+			if (schema.knows(qn)) {
+				throw new DuplicateNamedElementException(
+						"there is already an element with the name " + qn
+								+ " in the schema " + schema.getQualifiedName());
+			}
+			throw new ReservedWordException(qn.getQualifiedName(),
+					"CompositionClass");
 		}
 		CompositionClassImpl cc = new CompositionClassImpl(qn, this, from,
 				fromMin, fromMax, fromRoleName, compositeFrom, to, toMin,
@@ -248,9 +260,13 @@ public class GraphClassImpl extends AttributedElementClassImpl implements
 	@Override
 	public VertexClass createVertexClass(QualifiedName qn) {
 		if (!schema.isFreeSchemaElementName(qn)) {
-			throw new DuplicateNamedElementException(
-					"there is already an element with the name " + qn
-							+ " in the schema " + schema.getQualifiedName());
+			if (schema.knows(qn)) {
+				throw new DuplicateNamedElementException(
+						"there is already an element with the name " + qn
+								+ " in the schema " + schema.getQualifiedName());
+			}
+			throw new ReservedWordException(qn.getQualifiedName(),
+					"VertexClass");
 		}
 		VertexClassImpl vc = new VertexClassImpl(qn, this);
 		vc.addSuperClass(schema.getDefaultVertexClass());

@@ -85,6 +85,7 @@ import de.uni_koblenz.jgralab.schema.VertexClass;
 import de.uni_koblenz.jgralab.schema.exception.DuplicateNamedElementException;
 import de.uni_koblenz.jgralab.schema.exception.InvalidNameException;
 import de.uni_koblenz.jgralab.schema.exception.M1ClassAccessException;
+import de.uni_koblenz.jgralab.schema.exception.ReservedWordException;
 import de.uni_koblenz.jgralab.schema.exception.SchemaException;
 
 /**
@@ -285,6 +286,11 @@ public class SchemaImpl implements Schema {
 
 	@Override
 	public GraphClassImpl createGraphClass(QualifiedName name) {
+		if (!isValidSchemaElementName(name)) {
+			throw new ReservedWordException(name.getQualifiedName(),
+					"GraphClass");
+		}
+
 		if (!isFreeSchemaElementName(name)) {
 			throw new DuplicateNamedElementException(
 					"there is already an element with the name " + name
@@ -310,6 +316,9 @@ public class SchemaImpl implements Schema {
 	@Override
 	public EnumDomain createEnumDomain(QualifiedName qn,
 			List<String> enumComponents) {
+		if (!isValidSchemaElementName(qn)) {
+			throw new ReservedWordException(qn.getQualifiedName(), "EnumDomain");
+		}
 		EnumDomain ed = new EnumDomainImpl(this, qn, enumComponents);
 		if (addDomain(ed)) {
 			Package p = createPackageWithParents(qn.getPackageName());
@@ -368,6 +377,10 @@ public class SchemaImpl implements Schema {
 	@Override
 	public RecordDomain createRecordDomain(QualifiedName qn,
 			Map<String, Domain> recordComponents) {
+		if (!isValidSchemaElementName(qn)) {
+			throw new ReservedWordException(qn.getQualifiedName(),
+					"RecordDomain");
+		}
 		RecordDomain rd = new RecordDomainImpl(this, qn, recordComponents);
 		if (addDomain(rd)) {
 			Package p = createPackageWithParents(qn.getPackageName());
