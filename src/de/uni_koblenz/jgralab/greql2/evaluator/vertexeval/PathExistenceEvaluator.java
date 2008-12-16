@@ -82,8 +82,9 @@ public class PathExistenceEvaluator extends PathSearchEvaluator {
 		 * check if the result is invalid, this may occur because the
 		 * restrictedExpression may return a null-value
 		 */
-		if (!res.isValid())
+		if (!res.isValid()) {
 			return new JValue();
+		}	
 		Vertex startVertex = null;
 		try {
 			startVertex = res.toVertex();
