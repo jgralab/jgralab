@@ -849,7 +849,7 @@ quantifiedExpression returns [Expression result]
 	int lengthQuantifiedExpr = 0;
 }
 :
-  (
+  ((quantifier) => ( 
     {
        	offsetQuantifier = input.LT(1).getCharPositionInLine()-1;
        	lengthQuantifier = input.LT(1).getText().length();
@@ -883,6 +883,7 @@ quantifiedExpression returns [Expression result]
 )
 | // not a "real" quantified expression
   letExpression {$result = $letExpression.result;}
+  )
 ;
 
 
@@ -1166,6 +1167,7 @@ andExpression returns [Expression result]
 | )
 ;	
 
+	
 
 equalityExpression returns [Expression result]
 @init{
@@ -1176,15 +1178,22 @@ equalityExpression returns [Expression result]
   expr = relationalExpression
   { 
     $result = $relationalExpression.result;
-    construct.preOp(result); 
+    construct.preOp($result); 
   }
-((EQUAL | NOT_EQUAL) => 
-  ( ( 
-      (EQUAL { construct.postOp("equals"); })
-     |(NOT_EQUAL { construct.postOp("nequals"); })
-    )  
+  {}
+( 
+  (EQUAL) =>
+  (
+    {}
+    EQUAL { construct.postOp("equals"); }
     expr = equalityExpression
-    { result = construct.postArg2(expr); }
+    { $result = construct.postArg2(expr);}
+  )
+| (NOT_EQUAL) =>
+  (
+    NOT_EQUAL { construct.postOp("nequals"); }
+    expr = equalityExpression
+    { $result = construct.postArg2(expr);}
   )
 | /* RelationalExpression as fake EqualityExpression */)
 ;  
@@ -1210,7 +1219,7 @@ relationalExpression returns [Expression result]
   | MATCH {name = "match";} ) 
   { construct.postOp(name); }
   expr = relationalExpression
-  { result = construct.postArg2(expr); }
+  {$result = construct.postArg2(expr); }
 ) ?
 ;
 
@@ -1226,9 +1235,11 @@ additiveExpression returns [Expression result]
     $result = $multiplicativeExpression.result;
     construct.preOp($result); 
   }
-(((PLUS) => (PLUS  {construct.postOp("plus");} expr = additiveExpression {result = construct.postArg2(expr);}) )
-  |(MINUS) => (MINUS { construct.postOp("minus");} expr = additiveExpression {result = construct.postArg2(expr);})
-)? 
+(
+   (PLUS) => (PLUS  {construct.postOp("plus");} expr = additiveExpression {$result = construct.postArg2(expr);} )
+  |(MINUS) => (MINUS { construct.postOp("minus");} expr = additiveExpression {$result = construct.postArg2(expr);})
+  | /* fake multiplicative expression */
+) 
 ;
 
 
@@ -1244,12 +1255,17 @@ multiplicativeExpression returns [Expression result]
     $result = $unaryExpression.result; 
     construct.preOp($result); 
   }
-  (( STAR { construct.postOp("times"); }
-   | MOD  { construct.postOp("modulo"); }
-   | DIV  { construct.postOp("dividedBy"); })
-      expr = multiplicativeExpression
-   { result = construct.postArg2(expr); }
-  )?
+(
+  (STAR) => (STAR { construct.postOp("times"); } expr = multiplicativeExpression)
+ |(MOD)  => (MOD  { construct.postOp("modulo"); } expr = multiplicativeExpression)
+ |(DIV)  => (DIV  { construct.postOp("dividedBy");} expr = multiplicativeExpression)
+ | /* Only unaryExpression */
+) 
+{
+    if (expr != null) 
+        $result = construct.postArg2(expr); 
+}
+ 
 ;
 
 /** matches unary Expressions (-, not)
@@ -1260,18 +1276,20 @@ unaryExpression returns [Expression result = null]
     FunctionConstruct construct = new FunctionConstruct();
 }
 :
-(  
+((unaryOperator) =>  
+ (
   { construct.preUnaryOp(); }
   unaryOp = unaryOperator
   { construct.postOp(unaryOp.getName()); }
   expr = pathExpression
-  { $result = construct.postArg2(expr);}
-) | (
-  pathExpression
-  {
-    $result = $pathExpression.result;
-  }
-)
+  { $result = construct.postArg2(expr); }
+ ) 
+ |
+ (
+  expr2 = pathExpression
+  {$result = expr2; }
+ )
+) 
 ;
 
 /** matches a role-id
@@ -2117,21 +2135,24 @@ quantifiedDeclaration returns [Declaration declaration = null]
 declarations = declarationList
 {declaration = (Declaration) createMultipleEdgesToParent(declarations, graph.createDeclaration(), IsSimpleDeclOf.class);}
 (COMMA
-{ offsetConstraint = getLTOffset(); }
-constraintExpr = expression
-{
-	lengthConstraint = getLTLength(offsetConstraint);
-	IsConstraintOf constraintOf = graph.createIsConstraintOf(constraintExpr,declaration);
-	constraintOf.setSourcePositions((createSourcePositionList(lengthConstraint, offsetConstraint)));
-}
-(
-	(COMMA simpleDeclaration) => 
+	{
+    	offsetConstraint = getLTOffset(); 
+	}
+	constraintExpr = expression
+	{
+		lengthConstraint = getLTLength(offsetConstraint);
+		IsConstraintOf constraintOf = graph.createIsConstraintOf(constraintExpr,declaration);
+		constraintOf.setSourcePositions((createSourcePositionList(lengthConstraint, offsetConstraint)));
+	}
 	(
-	  COMMA declarations = declarationList 
-	  {createMultipleEdgesToParent(declarations, declaration, IsSimpleDeclOf.class);}
-	)
-| /* empty */)
+		(COMMA simpleDeclaration) => 
+			(
+	 	 		COMMA declarations = declarationList 
+	 	 		{createMultipleEdgesToParent(declarations, declaration, IsSimpleDeclOf.class);}
+			)
+		| /* empty */)
 )*
+
 /* subgraphs */
 (	IN
 	{ offsetSubgraph = getLTOffset(); }
@@ -2158,7 +2179,7 @@ v = simpleDeclaration
     simpleDecl.node = v;
     declList.add(simpleDecl);
 }
-((COMMA) => (COMMA tail = declarationList
+((COMMA simpleDeclaration) => (COMMA tail = declarationList
  {	declList.addAll(tail); }
 ) | /* no further declaration */ )
 ;
@@ -2656,7 +2677,7 @@ pathExpression returns [Expression result = null]
 :
 /* AlternativePathDescrition as path of backwardVertexSet or backwardPathSystem */
 (alternativePathDescription (SMILEY | restrictedExpression)) => 
-  ( regBackwardVertexSetOrPathSystem  {$result = $regBackwardVertexSetOrPathSystem.result;})
+  ( regBackwardVertexSetOrPathSystem  {$result = $regBackwardVertexSetOrPathSystem.result; })
 |
 /* AlternativePathDescription as path of forwardVertexSet, pathExistence */
 (restrictedExpression alternativePathDescription) => 
@@ -2664,14 +2685,13 @@ pathExpression returns [Expression result = null]
 |  
 /* AlternativePathDescription as path of forwardPathSystem */
 (restrictedExpression SMILEY) => 
-  (regPathOrPathSystem {$result = $regPathOrPathSystem.result;})
+  (regPathOrPathSystem {$result = $regPathOrPathSystem.result; })
 |  
 /* restricted expression as path path expression */
-(restrictedExpression) => (restrictedExpression {$result = $restrictedExpression.result;})
+(restrictedExpression) => (restrictedExpression {$result = $restrictedExpression.result; }) 
 |
 /* AlternativePathDescription as vertexPairs */
-(alternativePathDescription) =>  
-    (alternativePathDescription {$result = $alternativePathDescription.result;})
+(alternativePathDescription {$result = $alternativePathDescription.result;})
 ;    
 
 
