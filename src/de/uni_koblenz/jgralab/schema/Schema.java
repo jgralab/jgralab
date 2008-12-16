@@ -456,6 +456,7 @@ public interface Schema extends NamedElement {
 	 * @see #isValidSchemaElementName(QualifiedName)
 	 * @see #knows
 	 */
+	@Deprecated
 	public boolean isFreeSchemaElementName(QualifiedName name);
 
 	/**
@@ -472,6 +473,7 @@ public interface Schema extends NamedElement {
 	 * @see #isValidSchemaElementName(QualifiedName)
 	 * @see #knows(QualifiedName)
 	 */
+	@Deprecated
 	public boolean isFreeDomainName(QualifiedName name);
 
 	/**

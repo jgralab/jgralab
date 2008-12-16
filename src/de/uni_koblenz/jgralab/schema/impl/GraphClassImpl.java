@@ -118,14 +118,15 @@ public class GraphClassImpl extends AttributedElementClassImpl implements
 	public EdgeClass createEdgeClass(QualifiedName qn, VertexClass from,
 			int fromMin, int fromMax, String fromRoleName, VertexClass to,
 			int toMin, int toMax, String toRoleName) {
-		if (!schema.isFreeSchemaElementName(qn)) {
-			if (schema.knows(qn)) {
-				throw new DuplicateNamedElementException(
-						"there is already an element with the name " + qn
-								+ " in the schema " + schema.getQualifiedName());
-			}
+		if (!schema.isValidSchemaElementName(qn)) {
 			throw new ReservedWordException(qn.getQualifiedName(), "EdgeClass");
 		}
+		if (schema.knows(qn)) {
+			throw new DuplicateNamedElementException(
+					"there is already an element with the name " + qn
+							+ " in the schema " + schema.getQualifiedName());
+		}
+
 		EdgeClassImpl ec = new EdgeClassImpl(qn, this, from, fromMin, fromMax,
 				fromRoleName, to, toMin, toMax, toRoleName);
 		if (!qn.getQualifiedName().equals("Edge")) {
@@ -172,14 +173,14 @@ public class GraphClassImpl extends AttributedElementClassImpl implements
 			VertexClass from, int fromMin, int fromMax, String fromRoleName,
 			boolean aggregateFrom, VertexClass to, int toMin, int toMax,
 			String toRoleName) {
-		if (!schema.isFreeSchemaElementName(qn)) {
-			if (schema.knows(qn)) {
-				throw new DuplicateNamedElementException(
-						"there is already an element with the name " + qn
-								+ " in the schema " + schema.getQualifiedName());
-			}
+		if (!schema.isValidSchemaElementName(qn)) {
 			throw new ReservedWordException(qn.getQualifiedName(),
 					"AggregationClass");
+		}
+		if (schema.knows(qn)) {
+			throw new DuplicateNamedElementException(
+					"there is already an element with the name " + qn
+							+ " in the schema " + schema.getQualifiedName());
 		}
 		AggregationClassImpl ac = new AggregationClassImpl(qn, this, from,
 				fromMin, fromMax, fromRoleName, aggregateFrom, to, toMin,
@@ -229,15 +230,16 @@ public class GraphClassImpl extends AttributedElementClassImpl implements
 			VertexClass from, int fromMin, int fromMax, String fromRoleName,
 			boolean compositeFrom, VertexClass to, int toMin, int toMax,
 			String toRoleName) {
-		if (!schema.isFreeSchemaElementName(qn)) {
-			if (schema.knows(qn)) {
-				throw new DuplicateNamedElementException(
-						"there is already an element with the name " + qn
-								+ " in the schema " + schema.getQualifiedName());
-			}
+		if (!schema.isValidSchemaElementName(qn)) {
 			throw new ReservedWordException(qn.getQualifiedName(),
 					"CompositionClass");
 		}
+		if (schema.knows(qn)) {
+			throw new DuplicateNamedElementException(
+					"there is already an element with the name " + qn
+							+ " in the schema " + schema.getQualifiedName());
+		}
+
 		CompositionClassImpl cc = new CompositionClassImpl(qn, this, from,
 				fromMin, fromMax, fromRoleName, compositeFrom, to, toMin,
 				toMax, toRoleName);
@@ -259,15 +261,16 @@ public class GraphClassImpl extends AttributedElementClassImpl implements
 
 	@Override
 	public VertexClass createVertexClass(QualifiedName qn) {
-		if (!schema.isFreeSchemaElementName(qn)) {
-			if (schema.knows(qn)) {
-				throw new DuplicateNamedElementException(
-						"there is already an element with the name " + qn
-								+ " in the schema " + schema.getQualifiedName());
-			}
+		if (!schema.isValidSchemaElementName(qn)) {
 			throw new ReservedWordException(qn.getQualifiedName(),
 					"VertexClass");
 		}
+		if (schema.knows(qn)) {
+			throw new DuplicateNamedElementException(
+					"there is already an element with the name " + qn
+							+ " in the schema " + schema.getQualifiedName());
+		}
+
 		VertexClassImpl vc = new VertexClassImpl(qn, this);
 		vc.addSuperClass(schema.getDefaultVertexClass());
 		graphElementClasses.put(qn, vc);
