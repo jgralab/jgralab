@@ -275,8 +275,14 @@ public class SchemaImpl implements Schema {
 	 *         given one already exists in the schema
 	 */
 	protected boolean addDomain(Domain d) {
-		if (!isFreeDomainName(d.getQName())) {
-			return false;
+		if (!isValidSchemaElementName(d.getQName())) {
+			throw new ReservedWordException(d.getQName().getQualifiedName(),
+					"Domain");
+		}
+		if (knows(d.getQName())) {
+			throw new DuplicateNamedElementException(
+					"There is already an element with the name "
+							+ d.getQualifiedName() + " in the schema");
 		}
 		domains.put(d.getQName(), d);
 		addToKnownElements(d.getUniqueName(), d);
@@ -291,7 +297,7 @@ public class SchemaImpl implements Schema {
 					"GraphClass");
 		}
 
-		if (!isFreeSchemaElementName(name)) {
+		if (knows(name)) {
 			throw new DuplicateNamedElementException(
 					"there is already an element with the name " + name
 							+ " in the schema");
@@ -1020,11 +1026,13 @@ public class SchemaImpl implements Schema {
 	}
 
 	@Override
+	@Deprecated
 	public boolean isFreeDomainName(QualifiedName name) {
 		return isValidSchemaElementName(name) && !knows(name);
 	}
 
 	@Override
+	@Deprecated
 	public boolean isFreeSchemaElementName(QualifiedName name) {
 		return isValidSchemaElementName(name) && !knows(name);
 	}
