@@ -27,9 +27,6 @@ package de.uni_koblenz.jgralab.greql2.evaluator;
 import java.util.ArrayList;
 import java.util.Iterator;
 
-import de.uni_koblenz.jgralab.Edge;
-import de.uni_koblenz.jgralab.EdgeDirection;
-import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.VariableEvaluator;
 import de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.VertexEvaluator;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
@@ -58,20 +55,9 @@ public class VariableDeclaration implements Comparable<VariableDeclaration> {
 	private VariableEvaluator variableEval;
 
 	/**
-	 * The simpledeclaration vertex the variable vertex is part of
-	 */
-	private SimpleDeclaration parentDeclaration;
-
-	/**
 	 * Used for simple Iteration over the possible values
 	 */
 	private Iterator<JValue> iter;
-
-	/**
-	 * Stores a reference to the Evaluator instance which is used to evaluate
-	 * the query
-	 */
-	private GreqlEvaluator greqlEvaluator;
 
 	/**
 	 * Holds all Vertices in the greql-syntaxgraph whose result depends on this
@@ -95,14 +81,11 @@ public class VariableDeclaration implements Comparable<VariableDeclaration> {
 	 */
 	public VariableDeclaration(Variable var, JValueCollection definitionSet,
 			SimpleDeclaration decl, GreqlEvaluator eval) {
-		greqlEvaluator = eval;
 		variableEval = (VariableEvaluator) eval.getVertexEvaluatorGraphMarker()
 				.getMark(var);
-		parentDeclaration = decl;
 		this.definitionSet = definitionSet;
 		iter = definitionSet.iterator();
 		dependingExpressions = new ArrayList<VertexEvaluator>();
-		addExpressionsDependingOnExpression(var);
 	}
 
 	/**
@@ -133,34 +116,6 @@ public class VariableDeclaration implements Comparable<VariableDeclaration> {
 		iter = definitionSet.iterator();
 	}
 
-	/**
-	 * Adds all expressions which depends on the given expression to the list of
-	 * expressions which depends on this variable
-	 * 
-	 * @param exp
-	 *            all vertices that depend on the given expression will be added
-	 * @param listToAdd
-	 *            the depending expressions will be added to this list
-	 * @param deniedList
-	 *            if exp is part of this list, the recursion will stop
-	 */
-	protected void addExpressionsDependingOnExpression(Vertex exp) {
-		VertexEvaluator eval = greqlEvaluator.getVertexEvaluatorGraphMarker()
-				.getMark(exp);
-		if (eval != null) {
-			dependingExpressions.add(eval);
-			Edge inc = exp.getFirstEdge(EdgeDirection.OUT);
-			while (inc != null) {
-				Vertex nextExpression = inc.getOmega();
-				if ((nextExpression != exp)
-						&& (nextExpression != parentDeclaration)
-						&& (!dependingExpressions.contains(nextExpression))) {
-					addExpressionsDependingOnExpression(nextExpression);
-				}
-				inc = inc.getNextEdge(EdgeDirection.OUT);
-			}
-		}
-	}
 
 	/**
 	 * deletes all intermediate results that depend on this variable
