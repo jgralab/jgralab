@@ -29,7 +29,7 @@ import java.util.logging.Logger;
 
 /**
  * This class gives information, which software was used creating JGraLab.
- * 
+ *
  * @author ist@uni-koblenz.de
  */
 public class JGraLab {
@@ -71,7 +71,7 @@ public class JGraLab {
 			"",
 			"This software uses:",
 			"",
-			"ANTLR 2.7.6",
+			"ANTLR 3.1.1",
 			"Copyright (c) 2003-2008, Terence Parr",
 			"All rights reserved.",
 			"",
@@ -91,7 +91,7 @@ public class JGraLab {
 	/**
 	 * Sets the log level for package de.uni_koblenz.jgralab and all its
 	 * children to <code>level</code>.
-	 * 
+	 *
 	 * @param level
 	 *            new log level
 	 */
@@ -101,7 +101,7 @@ public class JGraLab {
 
 	/**
 	 * Prints version and license info.
-	 * 
+	 *
 	 * @param args
 	 *            (ignored)
 	 */
