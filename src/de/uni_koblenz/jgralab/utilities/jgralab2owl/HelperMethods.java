@@ -68,28 +68,4 @@ public class HelperMethods {
 	static String firstToUpperCase(String string) {
 		return Character.toUpperCase(string.charAt(0)) + string.substring(1);
 	}
-	
-
-
-	// static String createBase64Representation(Object o) {
-	// StringBuffer b64 = null;
-	//		
-	// try {
-	// ByteArrayOutputStream bos = new ByteArrayOutputStream();
-	// ObjectOutputStream oos = new ObjectOutputStream(bos);
-	// oos.writeObject(o);
-	// oos.close();
-	// b64 = new StringBuffer(Base64.encodeBytes(bos
-	// .toByteArray()));
-	// int p = b64.indexOf("\n");
-	// while (p >= 0) {
-	// b64.deleteCharAt(p);
-	// p = b64.indexOf("\n", p);
-	// }
-	// } catch (IOException e) {
-	// e.printStackTrace();
-	// }
-	//			
-	// return b64.toString();
-	// }
 }
