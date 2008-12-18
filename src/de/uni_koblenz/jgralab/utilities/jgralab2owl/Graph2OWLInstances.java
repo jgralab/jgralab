@@ -47,7 +47,7 @@ import de.uni_koblenz.jgralab.schema.RecordDomain;
 import de.uni_koblenz.jgralab.schema.Schema;
 import de.uni_koblenz.jgralab.schema.SetDomain;
 
-class Graph2OWL {
+class Graph2OWLInstances {
 
 	/**
 	 * Represents the root of the DOM-tree.
@@ -88,7 +88,7 @@ class Graph2OWL {
 	 *            An instance of {@code ProgressFunction} to display the
 	 *            progress of the conversion in a status bar.
 	 */
-	Graph2OWL(Document doc, Graph g, boolean edgeClasses2Properties,
+	Graph2OWLInstances(Document doc, Graph g, boolean edgeClasses2Properties,
 			boolean appendSuffix2EdgeClassName, ProgressFunction pf) {
 		this.doc = doc;
 		this.edgeClasses2Properties = edgeClasses2Properties;
@@ -644,7 +644,6 @@ class Graph2OWL {
 
 		// get the base domain of the list
 		Domain baseDomain = ((ListDomain) dom).getBaseDomain();
-		;
 
 		Element attrIndividualPropertyElem = createIndividualPropertyElement(propertyName);
 		Element nextListElementProperty = attrIndividualPropertyElem;
@@ -899,12 +898,6 @@ class Graph2OWL {
 					"http://www.w3.org/2001/XMLSchema#string");
 			attrIndividualPropertyElem.appendChild(doc
 					.createTextNode((String) value));
-//		} else if (dom.getTGTypeName(null).equals("Object")) {
-//			attrIndividualPropertyElem.setAttribute("rdf:datatype",
-//					"http://www.w3.org/2001/XMLSchema#base64Binary");
-//			attrIndividualPropertyElem.appendChild(doc
-//					.createTextNode(HelperMethods
-//							.createBase64Representation(value)));
 		} else if (dom.toString().startsWith("Enum")) {
 			attrIndividualPropertyElem.setAttribute("rdf:resource", "#"
 					+ ((Enum) value).toString());
