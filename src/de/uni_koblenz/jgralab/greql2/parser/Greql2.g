@@ -1,5 +1,5 @@
 grammar Greql2;
-options {backtrack=false;}
+options {backtrack=true;}
 
 tokens {
 	FUNCTIONID;
@@ -1260,8 +1260,8 @@ multiplicativeExpression returns [Expression result]
     $result = $unaryExpression.result; 
     construct.preOp($result); 
   }
-(
-  (STAR) => (STAR { construct.postOp("times"); } expr = multiplicativeExpression)
+( 
+  (STAR) => (STAR {System.out.println("Matched star for multiplication"); construct.postOp("times"); } expr = multiplicativeExpression)
  |(MOD)  => (MOD  { construct.postOp("modulo"); } expr = multiplicativeExpression)
  |(DIV)  => (DIV  { construct.postOp("dividedBy");} expr = multiplicativeExpression)
  | /* Only unaryExpression */
@@ -1451,10 +1451,11 @@ valueAccess2[Expression arg1, int offsetArg1, int lengthArg1] returns [Expressio
 */
 primaryExpression returns [Expression result = null] 
 :
-(((LPAREN) => LPAREN expression RPAREN {$result = $expression.result;} )
+(   ((LPAREN alternativePathDescription RPAREN) => altPath = alternativePathDescription {$result = altPath;} )
+|   ((LPAREN) => LPAREN expression RPAREN {$result = $expression.result;} )
 |	(rangeExpression {$result = $rangeExpression.expr;})
-|	(alternativePathDescription {$result = $alternativePathDescription.result;})
-| 	(functionApplication) =>  (functionApplication) => (functionApplication {$result = $functionApplication.expr;})
+|	(alternativePathDescription) => (altPath = alternativePathDescription {$result = altPath;})
+| 	(functionApplication) => (functionApplication {$result = $functionApplication.expr;})
 |	(valueConstruction) => (valueConstruction {$result = $valueConstruction.result;})
 |	(variable {$result = $variable.var;})
 | 	(graphRangeExpression {$result = $graphRangeExpression.expr;})
@@ -1626,34 +1627,53 @@ iteratedOrTransposedPathDescription
 
 iteratedOrTransposedPathDescription	returns [PathDescription result = null]
 @init{
-   	String iteration = null;
    	PathDescription pathDesc = null;
- 	int offsetPath = 0;
+   	int offsetPath = 0;
  	int lengthPath = 0;
+}
+:
+{System.out.println("Started iteratedPathDescription");  offsetPath = getLTOffset();}
+primaryPathDescription
+{ 
+  System.out.println("Matching primary path description");
+  $result = $primaryPathDescription.result;
+  lengthPath = getLTLength(offsetPath);
+}
+(
+  (STAR | PLUS | CARET) 
+  => (iteration[$result, offsetPath, lengthPath] {$result = $iteration.result;})
+ | /* no iteration */
+) 
+;
+
+
+iteration[PathDescription iteratedPath, int offsetPath, int lengthPath] returns [PathDescription result = null] 
+@init{
+   	String iteration = null;
  	int offsetExpr = 0;
  	int lengthExpr = 0;
 }
 :
-{ offsetPath = getLTOffset();}
-primaryPathDescription
-{ 
-  $result = $primaryPathDescription.result;
-  lengthPath = getLTLength(offsetPath);
-}
 ( (STAR| PLUS) =>	
-  	(( STAR { iteration = "star"; } | PLUS {iteration ="plus";} )
+  	(( STAR { System.out.println("Matched star for iteration"); iteration = "star"; } | PLUS {iteration ="plus";} )
       {
 		IteratedPathDescription ipd = graph.createIteratedPathDescription();
 	    ((IteratedPathDescription)ipd).setTimes(iteration);
-	    IsIteratedPathOf iteratedPathOf = graph.createIsIteratedPathOf($result, ipd);
+	    IsIteratedPathOf iteratedPathOf = graph.createIsIteratedPathOf(iteratedPath, ipd);
 	    iteratedPathOf.setSourcePositions((createSourcePositionList(lengthPath, offsetPath)));
 	    $result = ipd;
-      })
+      }
+      ( 
+  		(STAR | PLUS | CARET) 
+  		=> (tempPathDescr = iteration[$result, offsetPath, lengthPath+1] {$result = tempPathDescr;})
+  		|
+	  )  
+    )
 | ( (CARET) => (CARET
 		(	T  // transponatedPath:
            	{
 				TransposedPathDescription tpd = graph.createTransposedPathDescription();
-                IsTransposedPathOf transposedPathOf = graph.createIsTransposedPathOf($result, tpd);
+                IsTransposedPathOf transposedPathOf = graph.createIsTransposedPathOf(iteratedPath, tpd);
 	            transposedPathOf.setSourcePositions((createSourcePositionList(lengthPath, offsetPath)));
 	            $result = tpd;
             }
@@ -1663,7 +1683,7 @@ primaryPathDescription
             { 
                 lengthExpr = getLTOffset();
 			 	ExponentiatedPathDescription epd = graph.createExponentiatedPathDescription();
-		        IsExponentiatedPathOf exponentiatedPathOf = graph.createIsExponentiatedPathOf($result, epd);
+		        IsExponentiatedPathOf exponentiatedPathOf = graph.createIsExponentiatedPathOf(iteratedPath, epd);
 	            exponentiatedPathOf.setSourcePositions((createSourcePositionList(lengthPath, offsetPath)));
 	            IntLiteral exponent = graph.createIntLiteral();
 				exponent.setIntValue(Integer.parseInt(i.getText()));
@@ -1673,8 +1693,16 @@ primaryPathDescription
             }
           )
 		)
-	))
-)*
+		( 
+ 			 (STAR | PLUS | CARET) 
+  			 => (tempPathDescr = iteration[$result, offsetPath, lengthPath+lengthExpr] {$result = tempPathDescr;})
+  		|
+		)  
+	)
+	)
+|	
+)
+
 ;
 
 
