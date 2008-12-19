@@ -1261,7 +1261,7 @@ multiplicativeExpression returns [Expression result]
     construct.preOp($result); 
   }
 ( 
-  (STAR) => (STAR {System.out.println("Matched star for multiplication"); construct.postOp("times"); } expr = multiplicativeExpression)
+  (STAR) => (STAR {construct.postOp("times"); } expr = multiplicativeExpression)
  |(MOD)  => (MOD  { construct.postOp("modulo"); } expr = multiplicativeExpression)
  |(DIV)  => (DIV  { construct.postOp("dividedBy");} expr = multiplicativeExpression)
  | /* Only unaryExpression */
@@ -1632,10 +1632,9 @@ iteratedOrTransposedPathDescription	returns [PathDescription result = null]
  	int lengthPath = 0;
 }
 :
-{System.out.println("Started iteratedPathDescription");  offsetPath = getLTOffset();}
+{offsetPath = getLTOffset();}
 primaryPathDescription
 { 
-  System.out.println("Matching primary path description");
   $result = $primaryPathDescription.result;
   lengthPath = getLTLength(offsetPath);
 }
@@ -1655,7 +1654,7 @@ iteration[PathDescription iteratedPath, int offsetPath, int lengthPath] returns 
 }
 :
 ( (STAR| PLUS) =>	
-  	(( STAR { System.out.println("Matched star for iteration"); iteration = "star"; } | PLUS {iteration ="plus";} )
+  	(( STAR {iteration = "star"; } | PLUS {iteration ="plus";} )
       {
 		IteratedPathDescription ipd = graph.createIteratedPathDescription();
 	    ((IteratedPathDescription)ipd).setTimes(iteration);
