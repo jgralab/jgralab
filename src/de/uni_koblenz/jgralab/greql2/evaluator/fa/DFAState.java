@@ -68,7 +68,7 @@ public class DFAState extends State {
 	 */
 	public ArrayList<Transition> addRepresentedState(State s) {
 		if (neaStates.contains(s))
-			return null;
+			return new ArrayList<Transition>();
 		neaStates.add(s);
 		ArrayList<Transition> oldTransList = new ArrayList<Transition>();
 		ArrayList<Transition> newTransList = new ArrayList<Transition>();
