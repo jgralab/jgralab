@@ -34,6 +34,7 @@ import de.uni_koblenz.jgralab.greql2.exception.*;
 import de.uni_koblenz.jgralab.greql2.schema.*;
 import de.uni_koblenz.jgralab.greql2.schema.impl.*;
 import de.uni_koblenz.jgralab.schema.*;
+import de.uni_koblenz.jgralab.greql2.funlib.Greql2FunctionLibrary;
 }
 
 @lexer::header {
@@ -118,6 +119,10 @@ import de.uni_koblenz.jgralab.schema.*;
 		}
 		return functionId;
     }
+    
+    private boolean isFunctionName(String ident) {
+    	return Greql2FunctionLibrary.instance().isGreqlFunction(ident);		
+ 	}	
 
 
         /**
@@ -1382,12 +1387,12 @@ valueAccess returns [Expression result = null]
 	int length = 0;
 }
 	:
-		{ offset = getLTOffset(); }
+		{offset = getLTOffset(); }
         expr = primaryExpression
-        { $result = expr; length = getLTLength(offset); }
+        {$result = expr; length = getLTLength(offset); }
 		(
-		    (LBRACK primaryPathDescription) => /*nothin*/ |
-			(DOT | LBRACK) => (expr = valueAccess2[expr, offset, length] {$result = expr;})
+		    ( LBRACK primaryPathDescription) => /*nothin*/ |
+			(DOT | LBRACK) => ( expr = valueAccess2[expr, offset, length] {$result = expr;})
 			| /* nothing */
 		)
 	;
@@ -1412,10 +1417,13 @@ valueAccess2[Expression arg1, int offsetArg1, int lengthArg1] returns [Expressio
        			lengthOperator = 1;
        			offsetArg2 = getLTOffset();
        		}
-    		arg2 = identifier
+    		arg2Token = (IDENT | FUNCTIONID)
             {
             	name = "getValue";
-            	lengthArg2 = ((Identifier) arg2).getName().length();
+            	lengthArg2 = getLTLength(offsetArg2);
+            	arg2 = graph.createIdentifier();
+  				((Identifier)arg2).setName(arg2Token.getText());
+            	//((Identifier) arg2).getName().length();
             }
         )
 	| 	(	LBRACK
@@ -1444,14 +1452,14 @@ valueAccess2[Expression arg1, int offsetArg1, int lengthArg1] returns [Expressio
 primaryExpression returns [Expression result = null] 
 :
 (((LPAREN) => LPAREN expression RPAREN {$result = $expression.result;} )
-|	rangeExpression {$result = $rangeExpression.expr;}
-|	alternativePathDescription {$result = $alternativePathDescription.result;}
-|	variable {$result = $variable.var;}
-|	valueConstruction {$result = $valueConstruction.result;}
-| 	functionApplication {$result = $functionApplication.expr;}
-| 	graphRangeExpression {$result = $graphRangeExpression.expr;}
-|	literal	{$result = $literal.literal;}
-|   simpleQuery {$result = $simpleQuery.comprehension;})
+|	(rangeExpression {$result = $rangeExpression.expr;})
+|	(alternativePathDescription {$result = $alternativePathDescription.result;})
+| 	(functionApplication) =>  (functionApplication) => (functionApplication {$result = $functionApplication.expr;})
+|	(valueConstruction) => (valueConstruction {$result = $valueConstruction.result;})
+|	(variable {$result = $variable.var;})
+| 	(graphRangeExpression {$result = $graphRangeExpression.expr;})
+|	(literal {$result = $literal.literal;})
+|   (simpleQuery {$result = $simpleQuery.comprehension;}))
 ;
 
 /** matches a pathdescription
@@ -1831,9 +1839,15 @@ i=IDENT
 functionApplication returns [FunctionApplication expr = null]
 @init{
     FunctionId functionId = null;
+    int offset = 0;
+    int length = 0;
 }
 :
+(FUNCTIONID (LCURLY | LPAREN)) => (
+{
+offset = getLTOffset();}
 f=FUNCTIONID
+{length = getLTLength(offset);}
 (LCURLY	(typeIds = typeExpressionList)? RCURLY )?
 LPAREN (expressions = expressionList)? RPAREN
 {
@@ -1852,7 +1866,7 @@ LPAREN (expressions = expressionList)? RPAREN
 			IsArgumentOf argOf = graph.createIsArgumentOf((Expression)ex.node,expr);
 			argOf.setSourcePositions((createSourcePositionList(ex.length, ex.offset)));
 		}
-}
+})
 ;
 
 
