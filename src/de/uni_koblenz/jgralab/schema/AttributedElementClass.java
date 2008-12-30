@@ -30,7 +30,8 @@ import java.util.SortedSet;
 
 import de.uni_koblenz.jgralab.Attribute;
 import de.uni_koblenz.jgralab.AttributedElement;
-import de.uni_koblenz.jgralab.schema.exception.SchemaException;
+import de.uni_koblenz.jgralab.schema.exception.DuplicateAttributeException;
+import de.uni_koblenz.jgralab.schema.exception.ReservedWordException;
 
 /**
  * This is the base class of any <code>GraphClass</code>/
@@ -175,13 +176,12 @@ public interface AttributedElementClass extends NamedElement,
 	 * @param domain
 	 *            the <code>Domain</code> of the new <code>Attribute</code>
 	 * 
-	 * @throws SchemaException
-	 *             if:
-	 *             <ul>
-	 *             <li>the <code>name</code> contains reserved TG/Java words</li>
-	 *             <li>there is an <code>Attribute</code> with the same
-	 *             <code>name</code> in <code>attrElement</code></li>
-	 *             </ul>
+	 * @throws DuplicateAttributeException
+	 *             if there is an <code>Attribute</code> with the same
+	 *             <code>name</code> in <code>attrElement</code>
+	 * 
+	 * @throws ReservedWordException
+	 *             if the <code>name</code> contains reserved TG/Java words
 	 */
 	public void addAttribute(String name, Domain domain);
 
@@ -209,7 +209,7 @@ public interface AttributedElementClass extends NamedElement,
 	 *            the new <code>Attribute</code> to be added to
 	 *            <code>attrElement</code>
 	 * 
-	 * @throws SchemaException
+	 * @throws DuplicateAttributeException
 	 *             if there is an <code>Attribute</code> with the same
 	 *             <code>name</code> in <code>attrElement</code>
 	 */
@@ -245,7 +245,7 @@ public interface AttributedElementClass extends NamedElement,
 	 *            the list of new <code>Attributes</code> to be appended to
 	 *            <code>attrElement</code>
 	 * 
-	 * @throws SchemaException
+	 * @throws DuplicateAttributeException
 	 *             if:
 	 *             <ul>
 	 *             <li><code>attrElement</code> already contains an
@@ -286,13 +286,16 @@ public interface AttributedElementClass extends NamedElement,
 
 	/**
 	 * Checks if this element has an attribute with the given <code>name</code>.
+	 * If this element has superclasses, this implies searching for the
+	 * attribute in these too.
 	 * 
 	 * <p>
-	 * <b>Pattern:</b> <code>e.containsAttribute(name);</code>
+	 * <b>Pattern:</b> <code>attrElement.containsAttribute(name);</code>
 	 * </p>
 	 * 
 	 * <p>
-	 * <b>Precondition:</b> The name of the attribute must not be empty.
+	 * <b>Precondition:</b> The <code>name</code> of the attribute to search for
+	 * must not be empty.
 	 * </p>
 	 * 
 	 * <p>
@@ -300,7 +303,7 @@ public interface AttributedElementClass extends NamedElement,
 	 * </p>
 	 * 
 	 * @param name
-	 *            the name of the attribute to search for
+	 *            the <code>name</code> of the attribute to search for
 	 * 
 	 * @return <code>true</code>, if the element or its super-classes contains
 	 *         an attribute with the specified name
