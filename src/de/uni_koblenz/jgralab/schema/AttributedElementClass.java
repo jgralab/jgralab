@@ -115,7 +115,29 @@ public interface AttributedElementClass extends NamedElement,
 	public Set<AttributedElementClass> getDirectSuperClasses();
 
 	/**
-	 * @return the set of direct and indirect superclasses
+	 * Lists all direct and indirect superclasses of this element.
+	 * 
+	 * <p>
+	 * <b>Note:</b> Each instance of a subclass of AttributedElement has at
+	 * least one default superclass. Please consult the specifications of the
+	 * used subclass of AttributedElement for details.
+	 * </p>
+	 * 
+	 * <p>
+	 * <b>Pattern:</b>
+	 * <code>superClasses = attrElement.getAllSuperClasses();</code>
+	 * </p>
+	 * 
+	 * <p>
+	 * <b>Preconditions:</b> none
+	 * </p>
+	 * 
+	 * <p>
+	 * <b>Postconditions:</b> <code>superClasses</code> holds all of this
+	 * element´s direct and indirect superclasses</li>
+	 * </p>
+	 * 
+	 * @return the set of direct and indirect superclasses of this element
 	 */
 	public Set<AttributedElementClass> getAllSuperClasses();
 
@@ -350,7 +372,7 @@ public interface AttributedElementClass extends NamedElement,
 	 * Lists all direct and indirect subclasses of this element.
 	 * 
 	 * <p>
-	 * <b>Pattern:</b> <code>subClasses = e.getAllSubClasses();</code>
+	 * <b>Pattern:</b> <code>subClasses = attrElement.getAllSubClasses();</code>
 	 * </p>
 	 * 
 	 * <p>
@@ -358,17 +380,11 @@ public interface AttributedElementClass extends NamedElement,
 	 * </p>
 	 * 
 	 * <p>
-	 * <b>Postconditions:</b>
-	 * <ul>
-	 * <li><code>subClasses</code> holds all direct and indirect subclasses of
-	 * this element</li>
-	 * <li>The number of classes in <code>subClasses</code> equals the number of
-	 * all direct and indirect subclasses</li>
-	 * <li></li>
-	 * </ul>
+	 * <b>Postconditions:</b> <code>subClasses</code> holds all of this
+	 * element´s direct and indirect subclasses</li>
 	 * </p>
 	 * 
-	 * @return all direct and indirect subclasses of this class
+	 * @return the set of direct and indirect subclasses of this element
 	 */
 	public Set<AttributedElementClass> getAllSubClasses();
 
