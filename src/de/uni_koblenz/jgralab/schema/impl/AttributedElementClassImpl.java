@@ -187,12 +187,33 @@ public abstract class AttributedElementClassImpl implements
 			throw new DuplicateAttributeException(anAttribute.getName(),
 					getQualifiedName());
 		}
+		// Check if a subclass already contains an attribute with that name. In
+		// that case, it may not be added, too.
+		if (subclassContainsAttribute(anAttribute.getName())) {
+			throw new DuplicateAttributeException(
+					"Duplicate Attribute "
+							+ anAttribute.getName()
+							+ " in AttributedElementClass "
+							+ getQualifiedName()
+							+ ". "
+							+ "A derived AttributedElementClass already contains this Attribute.");
+		}
 		if (Schema.reservedTGWords.contains(anAttribute.getName())
 				|| Schema.reservedJavaWords.contains(anAttribute.getName())) {
 			throw new ReservedWordException(anAttribute.getName(),
 					"attribute name");
 		}
 		attributeList.add(anAttribute);
+	}
+
+	protected boolean subclassContainsAttribute(String name) {
+		for (AttributedElementClass subClass : getAllSubClasses()) {
+			Attribute subclassAttr = subClass.getAttribute(name);
+			if (subclassAttr != null) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	@Override

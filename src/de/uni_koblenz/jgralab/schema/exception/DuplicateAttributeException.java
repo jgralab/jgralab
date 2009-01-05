@@ -37,8 +37,12 @@ public class DuplicateAttributeException extends SchemaException {
 
 	private static final long serialVersionUID = 8996065398207556377L;
 
-	public DuplicateAttributeException(String attrName, String attrElemName) {
-		super("Duplicate attribute " + attrElemName + " in AttributedElement "
-				+ attrElemName);
+	public DuplicateAttributeException(String attrName, String attrElemClassName) {
+		super("Duplicate attribute " + attrName + " in AttributedElementClass "
+				+ attrElemClassName);
+	}
+
+	public DuplicateAttributeException(String message) {
+		super(message);
 	}
 }
