@@ -187,9 +187,8 @@ public interface AttributedElementClass extends NamedElement,
 	 * 
 	 * <p>
 	 * <b>Postcondition:</b> In addition to the <code>Attribute(s)</code>
-	 * already contained in <code>attrElement</code>, <code>attrElement'</code> holds
-	 * the new <code>Attribute</code> with the given <code>name</code> and
-	 * <code>domain</code>.
+	 * already contained directly and indirectly in <code>attrElement</code>, <code>attrElement'</code>
+	 * holds the new <code>Attribute</code>.
 	 * </p>
 	 * 
 	 * @param name
@@ -200,7 +199,8 @@ public interface AttributedElementClass extends NamedElement,
 	 * 
 	 * @throws DuplicateAttributeException
 	 *             if there is an <code>Attribute</code> with the same
-	 *             <code>name</code> in <code>attrElement</code>
+	 *             <code>name</code> in <code>attrElement</code> or one of its
+	 *             direct or indirect super-/subclasses
 	 * 
 	 * @throws ReservedWordException
 	 *             if the <code>name</code> contains reserved TG/Java words
@@ -218,13 +218,13 @@ public interface AttributedElementClass extends NamedElement,
 	 * <b>Precondition:</b> The <code>name</code> of <code>anAttribute</code>
 	 * must be distinct from all other <code>Attribute</code> names in
 	 * <code>attrElement</code>, and in <code>attrElement´s</code> direct and
-	 * indirect superclasses.
+	 * indirect super-/subclasses.
 	 * </p>
 	 * 
 	 * <p>
 	 * <b>Postcondition:</b> In addition to the <code>Attribute(s)</code>
-	 * already contained in <code>attrElement</code>, <code>attrElement'</code> holds
-	 * the new <code>Attribute</code>.
+	 * already contained directly and indirectly in <code>attrElement</code>, <code>attrElement'</code>
+	 * holds the new <code>Attribute</code>.
 	 * </p>
 	 * 
 	 * @param anAttribute
@@ -233,7 +233,8 @@ public interface AttributedElementClass extends NamedElement,
 	 * 
 	 * @throws DuplicateAttributeException
 	 *             if there is an <code>Attribute</code> with the same
-	 *             <code>name</code> in <code>attrElement</code>
+	 *             <code>name</code> in <code>attrElement</code> or one of its
+	 *             direct or indirect super-/subclasses
 	 */
 	public void addAttribute(Attribute anAttribute);
 
@@ -250,8 +251,8 @@ public interface AttributedElementClass extends NamedElement,
 	 * <ul>
 	 * <li>Each <code>Attribute´s</code> <code>name</code> in <code>attrs</code>
 	 * must be distinct from the <code>name</code> of every
-	 * <code>Attribute</code> held by <code>attrElement</code>, and by
-	 * <code>attrElement´s</code> direct and indirect superclasses.</li>
+	 * <code>Attribute</code> held directly and indirectly by
+	 * <code>attrElement</code>.</li>
 	 * <li>Different <code>Attributes</code> in <code>attrs</code> must have
 	 * distinct <code>names</code>.</li>
 	 * </ul>
@@ -259,24 +260,25 @@ public interface AttributedElementClass extends NamedElement,
 	 * 
 	 * <p>
 	 * <b>Postcondition:</b> In addition to the <code>Attributes</code> already
-	 * contained in <code>attrElement</code>, <code>attrElement'</code> holds as many
-	 * new <code>Attributes</code> as were in <code>attrs</code>.
+	 * contained directly and indirectly in <code>attrElement</code>, <code>attrElement'</code>
+	 * holds as many new <code>Attributes</code> as were in <code>attrs</code>.
 	 * </p>
 	 * 
 	 * @param attrs
-	 *            the list of new <code>Attributes</code> to be appended to
+	 *            the list of new <code>Attributes</code> to be added to
 	 *            <code>attrElement</code>
 	 * 
 	 * @throws DuplicateAttributeException
 	 *             if:
 	 *             <ul>
-	 *             <li><code>attrElement</code> already contains an
-	 *             <code>Attribute</code> bearing the same <code>name</code></li>
+	 *             <li>there is an <code>Attribute</code> with the same
+	 *             <code>name</code> in <code>attrElement</code> or one of its
+	 *             direct or indirect super-/subclasses</li>
 	 *             <li>different <code>Attributes</code> in <code>attrs</code>
 	 *             are named equally</li>
-	 *             In either case, <b>none</b> of the <code>Attributes</code>
-	 *             from <code>attrs</code> will be added to
-	 *             <code>attrElement</code>.
+	 *             <b>NOTE:</b> In either case, <b>none</b> of the
+	 *             <code>Attributes</code> from <code>attrs</code> will be added
+	 *             to <code>attrElement</code>.
 	 */
 	public void addAttributes(Collection<Attribute> attrs);
 
@@ -307,17 +309,15 @@ public interface AttributedElementClass extends NamedElement,
 	public SortedSet<Attribute> getAttributeList();
 
 	/**
-	 * Checks if this element has an attribute with the given <code>name</code>.
-	 * If this element has superclasses, this implies searching for the
-	 * attribute in these too.
+	 * Checks if this element or a superclass has an attribute with the given
+	 * <code>name</code>.
 	 * 
 	 * <p>
 	 * <b>Pattern:</b> <code>attrElement.containsAttribute(name);</code>
 	 * </p>
 	 * 
 	 * <p>
-	 * <b>Precondition:</b> The <code>name</code> of the attribute to search for
-	 * must not be empty.
+	 * <b>Precondition:</b> The <code>name</code> must not be empty.
 	 * </p>
 	 * 
 	 * <p>
@@ -327,8 +327,8 @@ public interface AttributedElementClass extends NamedElement,
 	 * @param name
 	 *            the <code>name</code> of the attribute to search for
 	 * 
-	 * @return <code>true</code>, if the element or its super-classes contains
-	 *         an attribute with the specified name
+	 * @return <code>true</code>, if the element or a superclass contains an
+	 *         attribute with the specified <code>name</code>
 	 */
 	public boolean containsAttribute(String name);
 
