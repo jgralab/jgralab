@@ -1,5 +1,5 @@
 grammar Greql2;
-options {backtrack=true;}
+options {backtrack=false;}
 
 tokens {
 	FUNCTIONID;
@@ -1711,10 +1711,10 @@ primaryPathDescription returns [PathDescription result = null]
 	int length = 0;
 }
 :
-  ( (simplePathDescription) => (pathDescr = simplePathDescription  {$result = pathDescr;}))
+  ( (LPAREN) => (LPAREN pathDescr = pathDescription {$result = pathDescr;} RPAREN ) 
+  | (simplePathDescription) => (pathDescr = simplePathDescription  {$result = pathDescr;}))
   | (aggregationPathDescription) => (pathDescr = aggregationPathDescription  {$result = pathDescr;})
   | (edgePathDescription) => (pathDescr = edgePathDescription    {$result = pathDescr;})
-  | (LPAREN) => (LPAREN pathDescr = pathDescription {$result = pathDescr;} RPAREN )
   | (LBRACK) => (LBRACK
       { offset = getLTOffset(); }
       pathDescr = pathDescription
@@ -2375,27 +2375,26 @@ numericLiteral returns [Expression literal = null]
 
 literal returns [Expression literal = null]
 :
-	token=STRING_LITERAL
+	(token=STRING_LITERAL
     {
        	literal = graph.createStringLiteral();
        	((StringLiteral) literal).setStringValue(decode(token.getText()));
-    }
-|	THISVERTEX
+    })
+|	(THISVERTEX
     {
   /*     literal = graph.getFirstThisLiteral();
        if (literal != null)	
 	       	return literal;*/
        literal = graph.createThisVertex();
-    }
-|	THISEDGE
+    })
+|	(THISEDGE
     {
      	/*literal = graph.getFirstThisEdge();
         if (literal != null)
 	      	return literal;*/
         literal = graph.createThisEdge();
-    }
-|	(numericLiteral {$literal = $numericLiteral.literal;})
-|	TRUE
+    })
+|	(TRUE
     {
         literal = (Literal) graph.getFirstVertexOfClass(BoolLiteral.class);
         while ( (literal != null) && ( ((BoolLiteral) literal).getBoolValue() != TrivalentBoolean.TRUE))
@@ -2404,8 +2403,8 @@ literal returns [Expression literal = null]
 		   	literal = graph.createBoolLiteral();
 				((BoolLiteral) literal).setBoolValue(TrivalentBoolean.TRUE);
 		}
-    }
-|	FALSE
+    })
+|	(FALSE
     {
         literal = (Literal) graph.getFirstVertexOfClass(BoolLiteral.class);
         while ((literal != null) && (((BoolLiteral) literal).getBoolValue() != TrivalentBoolean.FALSE))
@@ -2414,13 +2413,14 @@ literal returns [Expression literal = null]
 		   	literal = graph.createBoolLiteral();
 		   	((BoolLiteral) literal).setBoolValue(TrivalentBoolean.FALSE);
 		}
-    }
-|	NULL_VALUE
+    })
+|	(NULL_VALUE
     {
         literal = (Literal) graph.getFirstVertexOfClass(NullLiteral.class);
 	    if (literal == null)
 		    literal = graph.createNullLiteral(); 
-    }
+    })
+|	(numericLiteral {$literal = $numericLiteral.literal;})    
 ;
 	
 
