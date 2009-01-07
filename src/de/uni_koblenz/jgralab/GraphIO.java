@@ -968,8 +968,10 @@ public class GraphIO {
 		GraphClass gc = schema.createGraphClass(gcData.name);
 
 		gc.setAbstract(gcData.isAbstract);
-		gc.addAttributes(attributes(gcData.attributes).values());
 
+		for (Attribute attr : attributes(gcData.attributes).values()) {
+			gc.addAttribute(attr);
+		}
 		return gc;
 	}
 
@@ -1244,10 +1246,12 @@ public class GraphIO {
 	private VertexClass createVertexClass(GraphElementClassData vcd,
 			GraphClass gc) throws GraphIOException, SchemaException {
 		VertexClass vc = gc.createVertexClass(vcd.name);
-		vc.addAttributes(attributes(vcd.attributes).values());
 		vc.setAbstract(vcd.isAbstract);
-		GECsearch.put(vc, gc);
 
+		for (Attribute attr : attributes(vcd.attributes).values()) {
+			vc.addAttribute(attr);
+		}
+		GECsearch.put(vc, gc);
 		return vc;
 	}
 
@@ -1281,7 +1285,10 @@ public class GraphIO {
 			throw new InvalidNameException("Unknown type " + ecd.type);
 		}
 
-		ec.addAttributes(attributes(ecd.attributes).values());
+		for (Attribute attr : attributes(ecd.attributes).values()) {
+			ec.addAttribute(attr);
+		}
+
 		ec.setAbstract(ecd.isAbstract);
 		ec.redefineFromRole(ecd.redefinedFromRoles);
 		ec.redefineToRole(ecd.redefinedToRoles);
