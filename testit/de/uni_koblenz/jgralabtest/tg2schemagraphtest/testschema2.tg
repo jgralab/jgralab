@@ -1,0 +1,13 @@
+Schema de.uni_koblenz.jgralabtest.tg2schemagraphtest.testschema2.TestSchema2;
+GraphClass AttributeGraph;
+EnumDomain CountEnum (ONE, TWO, THREE);
+EnumDomain attribute_subpackage.PackageEnum (ONE, TWO, THREE);
+RecordDomain Record1 (listOfSetOfCountEnum: List<Set<CountEnum>>, anInteger: Integer, anEnum: attribute_subpackage.PackageEnum);
+RecordDomain Record2 (aListOfRecord1s: List<Record1>, aRecordInAnotherPackage: attribute_subpackage.PackageRecord);
+RecordDomain ARecordThatIsNotAnAttribute (aSetOfPackageRecords: Set<attribute_subpackage.PackageRecord>, aRecord2Record: Record2);
+RecordDomain attribute_subpackage.PackageRecord (myValues: List<Integer>, myName: String);
+Package attribute_subpackage;
+Package;
+VertexClass CollectionAttributeVertex {listOfInt: List<Integer>, listOfString: List<String>, listOfDouble: List<Double>, listOfBoolean: List<Boolean>, listOfLong: List<Long>, listOfEnum: List<CountEnum>, setOfInt: Set<Integer>, setOfString: Set<String>, setOfDouble: Set<Double>, setOfBoolean: Set<Boolean>, setOfLong: Set<Long>, setOfEnum: Set<CountEnum>, setOfsetOfString: Set<Set<String>>, listOfListOfString: List<List<String>>};
+VertexClass RecordAttributeVertex {aListOfRecord1s: List<Record1>, aSetOfRecord2s: Set<Record2>, aRecordInASubpackge: attribute_subpackage.PackageRecord};
+VertexClass SimpleAttributeVertex {anInteger: Integer, aString: String, aDouble: Double, aBoolean: Boolean, aLong: Long, anEnum: CountEnum};

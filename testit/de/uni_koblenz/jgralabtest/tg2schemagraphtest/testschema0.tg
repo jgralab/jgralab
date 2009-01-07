@@ -1,0 +1,5 @@
+Schema de.uni_koblenz.jgralabtest.tg2schemagraphtest.testschema0.TestSchema0;
+GraphClass DefaultGraphClass;
+Package;
+VertexClass Place;
+EdgeClass Way from Place (1,1) role beginning to Place (1,*) role ending;

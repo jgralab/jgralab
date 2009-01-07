@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
 	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="src" path="testit"/>
 	<classpathentry kind="var" path="UKOISTHOME/jgralab/lib/plist/org.riediger.plist.jar"/>
 	<classpathentry kind="var" path="UKOISTHOME/jgralab/lib/xmlrpc/commons-logging-1.1.jar"/>
 	<classpathentry kind="var" path="UKOISTHOME/jgralab/lib/xmlrpc/ws-commons-util-1.0.1.jar"/>
@@ -13,5 +14,6 @@
 	<classpathentry kind="var" path="UKOISTHOME/common/lib/jdom/jdom.jar"/>
 	<classpathentry kind="var" path="UKOISTHOME/common/lib/javaee/javaee.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/4"/>
 	<classpathentry kind="output" path="build/classes"/>
 </classpath>
