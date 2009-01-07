@@ -53,6 +53,14 @@
 	<property name="src.dir"				
 		value="${project.dir}/src"/>
 
+	<!-- test directory -->
+	<property name="test.dir"				
+		      value="${project.dir}/testit"/>
+
+    <property name="testschemas.dir"
+	          value="${test.dir}/testschemas"/>
+
+
 	<!-- classes directory -->
 	<property name="classes.dir"			
 		value="${project.dir}/build/classes"/>
@@ -88,8 +96,9 @@
 	<target name="clean">
 		<!-- calls target clean in general ant file ${ant}/build.xml -->
 		<ant dir="${common.dir}" antfile="build.xml" target="clean">
-				<property name="subprojectname" value="jgralab/greql2"/>
+		  <property name="subprojectname" value="jgralab/greql2"/>
 		</ant>
+        <delete dir="${test.dir}/de/uni_koblenz/jgralabtest/schemas/" />
 	</target>
 	
 	<!-- clean all -->
@@ -97,8 +106,8 @@
 	<target name="cleanall">
 		<!-- calls target clean all in general ant file ${ant}/build.xml -->
 		<ant dir="${common.dir}" antfile="build.xml" target="cleanall">
-			<property name="subprojectname" value="jgralab/greql2"/>
-	</ant>	
+		  <property name="subprojectname" value="jgralab/greql2"/>
+	    </ant>	
 	</target>
 	
 	<!-- modify -->
@@ -110,8 +119,28 @@
 	
 	<!-- compile -->
 	<!-- calls targets jgralab, tgschema2java, greql2 and utilities -->
-	<target name="compile" depends="jgralab,tgschema2java,utilities,greql2"/>
-	
+	<target name="compile" depends="jgralab,tgschema2java,utilities,greql2,generatetestschemas"/>
+
+	<path id="testschemasclasspath">
+	  <pathelement location="${classes.dir}" />
+	  <fileset dir="${lib.dir}" includes="**/*.jar"/>	
+	  <fileset dir="${comlib.dir}" includes="**/*.jar"/>	
+	</path>
+
+    <target name="generatetestschemas">
+      <echo>generatetestschema started</echo>
+      <apply executable="java">
+        <arg value="-cp"/>
+        <arg pathref="testschemasclasspath"/>
+        <arg value="de.uni_koblenz.jgralab.utilities.tgschema2java.TgSchema2Java"/>
+        <arg value="-f"/>
+        <srcfile/>
+        <arg line="-p ${test.dir}"/>
+        <fileset dir="${testschemas.dir}" includes="*.tg"/>
+      </apply>
+      <echo>generatetestschemas finished</echo>
+    </target>
+
 	<!-- jgralab -->
 	<!-- compiles jgralab basic sources -->
 	<target name="jgralab">

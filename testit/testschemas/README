@@ -1,0 +1,6 @@
+This directory is for all schema TG and EAP files that are used in the tests.
+The ant file generates the Java classes from the TG files then.  Please use
+
+    de.uni_koblenz.jgralabtest.schemas
+
+as prefix for each schema.  See MinimalSchema.tg for an example.

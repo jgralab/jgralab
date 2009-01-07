@@ -1,0 +1,4 @@
+Schema de.uni_koblenz.jgralabtest.schemas.minimal.MinimalSchema;
+GraphClass MinimalGraph;
+VertexClass Node {nodeMap : Map<Integer, String>};
+EdgeClass Link from Node (0,*) role source to Node (0,*) role target;
