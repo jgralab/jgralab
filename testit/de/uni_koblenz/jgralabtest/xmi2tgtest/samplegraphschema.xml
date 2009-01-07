@@ -1,0 +1,568 @@
+<!--
+  - JGraLab - The Java graph laboratory
+  - (c) 2006-2007 Institute for Software Technology
+  -               University of Koblenz-Landau, Germany
+  -
+  -               ist@uni-koblenz.de
+  -
+  - This program is free software; you can redistribute it and/or
+  - modify it under the terms of the GNU General Public License
+  - as published by the Free Software Foundation; either version 2
+  - of the License, or (at your option) any later version.
+  -
+  - This program is distributed in the hope that it will be useful,
+  - but WITHOUT ANY WARRANTY; without even the implied warranty of
+  - MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  - GNU General Public License for more details.
+  -
+  - You should have received a copy of the GNU General Public License
+  - along with this program; if not, write to the Free Software
+  - Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+ /-->
+ 
+<?xml version="1.0" encoding="windows-1252"?>
+<xmi:XMI xmi:version="2.1" xmlns:uml="http://schema.omg.org/spec/UML/2.1" xmlns:xmi="http://schema.omg.org/spec/XMI/2.1">
+	<xmi:Documentation exporter="Enterprise Architect" exporterVersion="6.5"/>
+	<uml:Model xmi:type="uml:Model" name="EA_Model" visibility="public">
+		<packagedElement xmi:type="uml:Package" xmi:id="EAPK_F51B0763_6FD0_40b7_9A5F_4D25B07AC056" name="samplegraphschema" visibility="public">
+			<packagedElement xmi:type="uml:Package" xmi:id="EAPK_056FA087_E1CC_4168_9453_9B0E5CE06D1A" name="CityMap" visibility="public">
+				<packagedElement xmi:type="uml:Class" xmi:id="EAID_5098CCAF_5046_4878_8A27_0BEF026CC631" name="Bridge" visibility="public">
+					<ownedAttribute xmi:type="uml:Property" xmi:id="EAID_620FBA4E_27A4_4dbd_ACDC_E0C94C28CA9E" name="height" visibility="private" isDerived="false">
+						<lowerValue xmi:type="uml:LiteralInteger" xmi:id="EAID_LI000001_27A4_4dbd_ACDC_E0C94C28CA9E" value="1"/>
+						<upperValue xmi:type="uml:LiteralInteger" xmi:id="EAID_LI000002_27A4_4dbd_ACDC_E0C94C28CA9E" value="1"/>
+					</ownedAttribute>
+					<generalization xmi:type="uml:Generalization" xmi:id="EAID_667156DA_4567_4640_8C26_615A9F4C8073" general="EAID_6BCAFF98_13F9_4e16_884A_4B2B13B5C208"/>
+				</packagedElement>
+				<packagedElement xmi:type="uml:Class" xmi:id="EAID_EECEF9FA_4CFB_4bf1_B214_AB81285746FC" name="CarPark" visibility="public">
+					<ownedAttribute xmi:type="uml:Property" xmi:id="EAID_136319AA_153B_4d36_8A6D_48FA5EB0AEE4" name="capacity" visibility="private" isDerived="false">
+						<lowerValue xmi:type="uml:LiteralInteger" xmi:id="EAID_LI000003_153B_4d36_8A6D_48FA5EB0AEE4" value="1"/>
+						<upperValue xmi:type="uml:LiteralInteger" xmi:id="EAID_LI000004_153B_4d36_8A6D_48FA5EB0AEE4" value="1"/>
+					</ownedAttribute>
+					<generalization xmi:type="uml:Generalization" xmi:id="EAID_E2AEEF88_E73D_4763_B732_B9A9523E54BE" general="EAID_45877DBF_CCB1_4313_B0D6_CF2717476771"/>
+				</packagedElement>
+				<packagedElement xmi:type="uml:Class" xmi:id="EAID_E5F79659_C7EA_406d_9F45_6684522E80FF" name="Intersection" visibility="public">
+					<ownedAttribute xmi:type="uml:Property" xmi:id="EAID_0F3644D1_85E7_4de6_86CD_E3BFCBD126DD" name="roundabout" visibility="private" isDerived="false">
+						<lowerValue xmi:type="uml:LiteralInteger" xmi:id="EAID_LI000005_85E7_4de6_86CD_E3BFCBD126DD" value="1"/>
+						<upperValue xmi:type="uml:LiteralInteger" xmi:id="EAID_LI000006_85E7_4de6_86CD_E3BFCBD126DD" value="1"/>
+					</ownedAttribute>
+					<generalization xmi:type="uml:Generalization" xmi:id="EAID_7402ACF9_6BC2_4675_B7EC_6F3ECE1CB05B" general="EAID_45877DBF_CCB1_4313_B0D6_CF2717476771"/>
+				</packagedElement>
+				<packagedElement xmi:type="uml:Class" xmi:id="EAID_45877DBF_CCB1_4313_B0D6_CF2717476771" name="Junction" visibility="public" isAbstract="true">
+					<ownedAttribute xmi:type="uml:Property" xmi:id="EAID_F5CD4F61_13F9_48cb_A128_0D15C08327C1" name="name" visibility="private" isDerived="false">
+						<lowerValue xmi:type="uml:LiteralInteger" xmi:id="EAID_LI000007_13F9_48cb_A128_0D15C08327C1" value="1"/>
+						<upperValue xmi:type="uml:LiteralInteger" xmi:id="EAID_LI000008_13F9_48cb_A128_0D15C08327C1" value="1"/>
+					</ownedAttribute>
+				</packagedElement>
+				<packagedElement xmi:type="uml:AssociationClass" xmi:id="EAID_F0CA4FE0_CDCA_4248_95F0_12D8603D8E1B" name="Way" visibility="public" isAbstract="true">
+					<memberEnd xmi:idref="EAID_dstBDF2B5_3284_41cd_8D8D_AE66B6D5D874"/>
+					<ownedEnd xmi:type="uml:Property" xmi:id="EAID_dstBDF2B5_3284_41cd_8D8D_AE66B6D5D874" name="to" visibility="private" association="EAID_F0CA4FE0_CDCA_4248_95F0_12D8603D8E1B" isOrdered="false" isDerived="false" isDerivedUnion="false" aggregation="none">
+						<type xmi:idref="EAID_45877DBF_CCB1_4313_B0D6_CF2717476771"/>
+					</ownedEnd>
+					<memberEnd xmi:idref="EAID_srcBDF2B5_3284_41cd_8D8D_AE66B6D5D874"/>
+					<ownedEnd xmi:type="uml:Property" xmi:id="EAID_srcBDF2B5_3284_41cd_8D8D_AE66B6D5D874" name="from" visibility="private" association="EAID_F0CA4FE0_CDCA_4248_95F0_12D8603D8E1B" isOrdered="false" isDerived="false" isDerivedUnion="false" aggregation="none">
+						<type xmi:idref="EAID_45877DBF_CCB1_4313_B0D6_CF2717476771"/>
+					</ownedEnd>
+					<ownedAttribute xmi:type="uml:Property" xmi:id="EAID_D871980F_4267_4570_AD52_0C8A25D60CAB" name="length" visibility="private" isDerived="false">
+						<lowerValue xmi:type="uml:LiteralInteger" xmi:id="EAID_LI000011_4267_4570_AD52_0C8A25D60CAB" value="1"/>
+						<upperValue xmi:type="uml:LiteralInteger" xmi:id="EAID_LI000012_4267_4570_AD52_0C8A25D60CAB" value="1"/>
+					</ownedAttribute>
+					<ownedAttribute xmi:type="uml:Property" xmi:id="EAID_E7CDD8C7_253B_47ab_8FCE_F0FF583D933A" name="name" visibility="private" isDerived="false">
+						<lowerValue xmi:type="uml:LiteralInteger" xmi:id="EAID_LI000013_253B_47ab_8FCE_F0FF583D933A" value="1"/>
+						<upperValue xmi:type="uml:LiteralInteger" xmi:id="EAID_LI000014_253B_47ab_8FCE_F0FF583D933A" value="1"/>
+					</ownedAttribute>
+				</packagedElement>
+				<packagedElement xmi:type="uml:Class" xmi:id="EAID_A4DD7951_4F7D_4314_BE6E_FC6F0B281B20" name="ParkingGarage" visibility="public">
+					<generalization xmi:type="uml:Generalization" xmi:id="EAID_9ADA4449_FFC2_46ea_BE9C_796B257AD606" general="EAID_EECEF9FA_4CFB_4bf1_B214_AB81285746FC"/>
+				</packagedElement>
+				<packagedElement xmi:type="uml:Class" xmi:id="EAID_6BCAFF98_13F9_4e16_884A_4B2B13B5C208" name="Street" visibility="public">
+					<ownedAttribute xmi:type="uml:Property" xmi:id="EAID_43A8A1DE_1A20_4531_84F3_95132730B910" name="oneway" visibility="private" isDerived="false">
+						<lowerValue xmi:type="uml:LiteralInteger" xmi:id="EAID_LI000009_1A20_4531_84F3_95132730B910" value="1"/>
+						<upperValue xmi:type="uml:LiteralInteger" xmi:id="EAID_LI000010_1A20_4531_84F3_95132730B910" value="1"/>
+					</ownedAttribute>
+					<generalization xmi:type="uml:Generalization" xmi:id="EAID_146C6634_163C_46ce_840A_8C9A6F7E83AF" general="EAID_F0CA4FE0_CDCA_4248_95F0_12D8603D8E1B"/>
+				</packagedElement>
+			</packagedElement>
+		</packagedElement>
+	</uml:Model>
+	<xmi:Extension extender="Enterprise Architect" extenderID="6.5">
+		<elements>
+			<element xmi:idref="EAPK_F51B0763_6FD0_40b7_9A5F_4D25B07AC056" xmi:type="uml:Package" name="samplegraphschema" scope="public">
+				<model package2="EAID_F51B0763_6FD0_40b7_9A5F_4D25B07AC056" package="EAPK_679BE6D9_5274_476a_8F43_9C8E46FC39DE" tpos="0" ea_localid="6" ea_eleType="package"/>
+				<properties isSpecification="false" sType="Package" nType="0" scope="public"/>
+				<project version="1.0" phase="1.0" created="2006-10-25 10:47:32" modified="2006-10-25 11:00:36" complexity="1" status="Proposed"/>
+				<code gentype="&lt;none&gt;"/>
+				<style appearance="BackColor=-1;BorderColor=-1;BorderWidth=-1;FontColor=-1;VSwimLanes=0;HSwimLanes=0;BorderStyle=0;"/>
+				<modelDocument/>
+				<tags/>
+				<xrefs/>
+				<extendedProperties tagged="0" package_name="Class Model"/>
+				<packageproperties version="1.0"/>
+				<paths/>
+				<times created="2006-10-25 00:00:00" modified="2006-10-25 00:00:00"/>
+				<flags iscontrolled="FALSE" isprotected="FALSE" usedtd="FALSE" logxml="FALSE"/>
+			</element>
+			<element xmi:idref="EAPK_056FA087_E1CC_4168_9453_9B0E5CE06D1A" xmi:type="uml:Package" name="CityMap" scope="public">
+				<model package2="EAID_056FA087_E1CC_4168_9453_9B0E5CE06D1A" package="EAPK_F51B0763_6FD0_40b7_9A5F_4D25B07AC056" tpos="0" ea_localid="11" ea_eleType="package"/>
+				<properties isSpecification="false" sType="Package" nType="0" scope="public"/>
+				<project version="1.0" phase="1.0" created="2006-11-09 09:12:43" modified="2006-11-09 09:56:36" complexity="1" status="Proposed"/>
+				<code gentype="Java"/>
+				<style appearance="BackColor=-1;BorderColor=-1;BorderWidth=-1;FontColor=0;VSwimLanes=0;HSwimLanes=0;BorderStyle=0;"/>
+				<modelDocument/>
+				<tags/>
+				<xrefs/>
+				<extendedProperties tagged="0" package_name="samplegraphschema"/>
+				<packageproperties version="1.0"/>
+				<paths/>
+				<times created="2006-11-09 00:00:00" modified="2006-11-09 00:00:00"/>
+				<flags iscontrolled="FALSE" isprotected="FALSE" usedtd="FALSE" logxml="FALSE"/>
+			</element>
+			<element xmi:idref="EAID_5098CCAF_5046_4878_8A27_0BEF026CC631" xmi:type="uml:Class" name="Bridge" scope="public">
+				<model package="EAPK_056FA087_E1CC_4168_9453_9B0E5CE06D1A" tpos="0" ea_localid="29" ea_eleType="element"/>
+				<properties isSpecification="false" sType="Class" nType="0" scope="public" isRoot="false" isLeaf="false" isAbstract="false" isActive="false"/>
+				<project version="1.0" phase="1.0" created="2006-10-25 10:53:11" modified="2006-11-25 19:50:26" complexity="1" status="Proposed"/>
+				<code gentype="&lt;none&gt;"/>
+				<style appearance="BackColor=-1;BorderColor=-1;BorderWidth=-1;FontColor=0;VSwimLanes=0;HSwimLanes=0;BorderStyle=0;"/>
+				<modelDocument/>
+				<tags/>
+				<xrefs value="$XREFPROP=$XID={EF336E6E-12E6-4110-BE2D-5E629015A295}$XID;$NAM=CustomProperties$NAM;$TYP=element property$TYP;$VIS=Public$VIS;$DES=@PROP=@NAME=isActive@ENDNAME;@TYPE=Boolean@ENDTYPE;@VALU=@ENDVALU;@PRMT=@ENDPRMT;@ENDPROP;$DES;$CLT={5098CCAF-5046-4878-8A27-0BEF026CC631}$CLT;$SUP=&lt;none&gt;$SUP;$ENDXREF;"/>
+				<extendedProperties tagged="0" package_name="CityMap"/>
+				<attributes>
+					<attribute xmi:idref="EAID_620FBA4E_27A4_4dbd_ACDC_E0C94C28CA9E" name="height" scope="Private">
+						<initial/>
+						<documentation/>
+						<model ea_localid="4" ea_guid="{620FBA4E-27A4-4dbd-ACDC-E0C94C28CA9E}"/>
+						<properties type="Integer" derived="0" collection="false" duplicates="0" changeability="changeable"/>
+						<coords ordered="0"/>
+						<containment containment="Not Specified" position="0"/>
+						<stereotype/>
+						<bounds lower="1" upper="1"/>
+						<options/>
+						<style/>
+						<styleex value="volatile=0;"/>
+						<tags/>
+						<xrefs/>
+					</attribute>
+				</attributes>
+				<links>
+					<Generalization xmi:id="EAID_667156DA_4567_4640_8C26_615A9F4C8073" start="EAID_5098CCAF_5046_4878_8A27_0BEF026CC631" end="EAID_6BCAFF98_13F9_4e16_884A_4B2B13B5C208"/>
+				</links>
+			</element>
+			<element xmi:idref="EAID_EECEF9FA_4CFB_4bf1_B214_AB81285746FC" xmi:type="uml:Class" name="CarPark" scope="public">
+				<model package="EAPK_056FA087_E1CC_4168_9453_9B0E5CE06D1A" tpos="0" ea_localid="25" ea_eleType="element"/>
+				<properties isSpecification="false" sType="Class" nType="0" scope="public" isRoot="false" isLeaf="false" isAbstract="false" isActive="false"/>
+				<project version="1.0" phase="1.0" created="2006-10-25 10:48:09" modified="2006-11-25 19:50:26" complexity="1" status="Proposed"/>
+				<code gentype="&lt;none&gt;"/>
+				<style appearance="BackColor=-1;BorderColor=-1;BorderWidth=-1;FontColor=0;VSwimLanes=0;HSwimLanes=0;BorderStyle=0;"/>
+				<modelDocument/>
+				<tags/>
+				<xrefs value="$XREFPROP=$XID={56DED340-59C7-4662-A6CA-F0B7321830DE}$XID;$NAM=CustomProperties$NAM;$TYP=element property$TYP;$VIS=Public$VIS;$DES=@PROP=@NAME=isActive@ENDNAME;@TYPE=Boolean@ENDTYPE;@VALU=@ENDVALU;@PRMT=@ENDPRMT;@ENDPROP;$DES;$CLT={EECEF9FA-4CFB-4bf1-B214-AB81285746FC}$CLT;$SUP=&lt;none&gt;$SUP;$ENDXREF;"/>
+				<extendedProperties tagged="0" package_name="CityMap"/>
+				<attributes>
+					<attribute xmi:idref="EAID_136319AA_153B_4d36_8A6D_48FA5EB0AEE4" name="capacity" scope="Private">
+						<initial/>
+						<documentation/>
+						<model ea_localid="3" ea_guid="{136319AA-153B-4d36-8A6D-48FA5EB0AEE4}"/>
+						<properties type="Integer" derived="0" collection="false" duplicates="0" changeability="changeable"/>
+						<coords ordered="0"/>
+						<containment containment="Not Specified" position="1000"/>
+						<stereotype/>
+						<bounds lower="1" upper="1"/>
+						<options/>
+						<style/>
+						<styleex value="volatile=0;"/>
+						<tags/>
+						<xrefs/>
+					</attribute>
+				</attributes>
+				<links>
+					<Generalization xmi:id="EAID_E2AEEF88_E73D_4763_B732_B9A9523E54BE" start="EAID_EECEF9FA_4CFB_4bf1_B214_AB81285746FC" end="EAID_45877DBF_CCB1_4313_B0D6_CF2717476771"/>
+					<Generalization xmi:id="EAID_9ADA4449_FFC2_46ea_BE9C_796B257AD606" start="EAID_A4DD7951_4F7D_4314_BE6E_FC6F0B281B20" end="EAID_EECEF9FA_4CFB_4bf1_B214_AB81285746FC"/>
+				</links>
+			</element>
+			<element xmi:idref="EAID_E5F79659_C7EA_406d_9F45_6684522E80FF" xmi:type="uml:Class" name="Intersection" scope="public">
+				<model package="EAPK_056FA087_E1CC_4168_9453_9B0E5CE06D1A" tpos="0" ea_localid="26" ea_eleType="element"/>
+				<properties isSpecification="false" sType="Class" nType="0" scope="public" isRoot="false" isLeaf="false" isAbstract="false" isActive="false"/>
+				<project version="1.0" phase="1.0" created="2006-10-25 10:48:15" modified="2006-11-25 19:50:26" complexity="1" status="Proposed"/>
+				<code gentype="&lt;none&gt;"/>
+				<style appearance="BackColor=-1;BorderColor=-1;BorderWidth=-1;FontColor=0;VSwimLanes=0;HSwimLanes=0;BorderStyle=0;"/>
+				<modelDocument/>
+				<tags/>
+				<xrefs value="$XREFPROP=$XID={F3D43392-D8C2-40c4-8958-877BC6BD45D9}$XID;$NAM=CustomProperties$NAM;$TYP=element property$TYP;$VIS=Public$VIS;$DES=@PROP=@NAME=isActive@ENDNAME;@TYPE=Boolean@ENDTYPE;@VALU=@ENDVALU;@PRMT=@ENDPRMT;@ENDPROP;$DES;$CLT={E5F79659-C7EA-406d-9F45-6684522E80FF}$CLT;$SUP=&lt;none&gt;$SUP;$ENDXREF;"/>
+				<extendedProperties tagged="0" package_name="CityMap"/>
+				<attributes>
+					<attribute xmi:idref="EAID_0F3644D1_85E7_4de6_86CD_E3BFCBD126DD" name="roundabout" scope="Private">
+						<initial/>
+						<documentation/>
+						<model ea_localid="2" ea_guid="{0F3644D1-85E7-4de6-86CD-E3BFCBD126DD}"/>
+						<properties type="Boolean" derived="0" collection="false" duplicates="0" changeability="changeable"/>
+						<coords ordered="0"/>
+						<containment containment="Not Specified" position="1000"/>
+						<stereotype/>
+						<bounds lower="1" upper="1"/>
+						<options/>
+						<style/>
+						<styleex value="volatile=0;"/>
+						<tags/>
+						<xrefs/>
+					</attribute>
+				</attributes>
+				<links>
+					<Generalization xmi:id="EAID_7402ACF9_6BC2_4675_B7EC_6F3ECE1CB05B" start="EAID_E5F79659_C7EA_406d_9F45_6684522E80FF" end="EAID_45877DBF_CCB1_4313_B0D6_CF2717476771"/>
+				</links>
+			</element>
+			<element xmi:idref="EAID_45877DBF_CCB1_4313_B0D6_CF2717476771" xmi:type="uml:Class" name="Junction" scope="public">
+				<model package="EAPK_056FA087_E1CC_4168_9453_9B0E5CE06D1A" tpos="0" ea_localid="24" ea_eleType="element"/>
+				<properties isSpecification="false" sType="Class" nType="0" scope="public" isRoot="false" isLeaf="false" isAbstract="true" isActive="false"/>
+				<project version="1.0" phase="1.0" created="2006-10-25 10:47:59" modified="2006-11-25 19:53:30" complexity="1" status="Proposed"/>
+				<code gentype="&lt;none&gt;"/>
+				<style appearance="BackColor=-1;BorderColor=-1;BorderWidth=-1;FontColor=0;VSwimLanes=0;HSwimLanes=0;BorderStyle=0;"/>
+				<modelDocument/>
+				<tags/>
+				<xrefs value="$XREFPROP=$XID={26F4B0AF-DC48-4a3a-BE33-281EE51AED9A}$XID;$NAM=CustomProperties$NAM;$TYP=element property$TYP;$VIS=Public$VIS;$DES=@PROP=@NAME=isActive@ENDNAME;@TYPE=Boolean@ENDTYPE;@VALU=@ENDVALU;@PRMT=@ENDPRMT;@ENDPROP;$DES;$CLT={45877DBF-CCB1-4313-B0D6-CF2717476771}$CLT;$SUP=&lt;none&gt;$SUP;$ENDXREF;"/>
+				<extendedProperties tagged="0" package_name="CityMap"/>
+				<attributes>
+					<attribute xmi:idref="EAID_F5CD4F61_13F9_48cb_A128_0D15C08327C1" name="name" scope="Private">
+						<initial/>
+						<documentation/>
+						<model ea_localid="1" ea_guid="{F5CD4F61-13F9-48cb-A128-0D15C08327C1}"/>
+						<properties type="String" derived="0" collection="false" duplicates="0" changeability="changeable"/>
+						<coords ordered="0"/>
+						<containment containment="Not Specified" position="1000"/>
+						<stereotype/>
+						<bounds lower="1" upper="1"/>
+						<options/>
+						<style/>
+						<styleex value="volatile=0;"/>
+						<tags/>
+						<xrefs/>
+					</attribute>
+				</attributes>
+				<links>
+					<Association xmi:id="EAID_BCBDF2B5_3284_41cd_8D8D_AE66B6D5D874" start="EAID_45877DBF_CCB1_4313_B0D6_CF2717476771" end="EAID_45877DBF_CCB1_4313_B0D6_CF2717476771"/>
+					<Generalization xmi:id="EAID_7402ACF9_6BC2_4675_B7EC_6F3ECE1CB05B" start="EAID_E5F79659_C7EA_406d_9F45_6684522E80FF" end="EAID_45877DBF_CCB1_4313_B0D6_CF2717476771"/>
+					<Association xmi:id="EAID_BCBDF2B5_3284_41cd_8D8D_AE66B6D5D874" start="EAID_45877DBF_CCB1_4313_B0D6_CF2717476771" end="EAID_45877DBF_CCB1_4313_B0D6_CF2717476771"/>
+					<Generalization xmi:id="EAID_E2AEEF88_E73D_4763_B732_B9A9523E54BE" start="EAID_EECEF9FA_4CFB_4bf1_B214_AB81285746FC" end="EAID_45877DBF_CCB1_4313_B0D6_CF2717476771"/>
+				</links>
+			</element>
+			<element xmi:idref="EAID_A4DD7951_4F7D_4314_BE6E_FC6F0B281B20" xmi:type="uml:Class" name="ParkingGarage" scope="public">
+				<model package="EAPK_056FA087_E1CC_4168_9453_9B0E5CE06D1A" tpos="0" ea_localid="28" ea_eleType="element"/>
+				<properties isSpecification="false" sType="Class" nType="0" scope="public" isRoot="false" isLeaf="false" isAbstract="false" isActive="false"/>
+				<project version="1.0" phase="1.0" created="2006-10-25 10:52:09" modified="2006-11-25 19:50:26" complexity="1" status="Proposed"/>
+				<code gentype="&lt;none&gt;"/>
+				<style appearance="BackColor=-1;BorderColor=-1;BorderWidth=-1;FontColor=0;VSwimLanes=0;HSwimLanes=0;BorderStyle=0;"/>
+				<modelDocument/>
+				<tags/>
+				<xrefs value="$XREFPROP=$XID={D7DD5C08-1036-4ccf-9FBB-6FEBA503DFEC}$XID;$NAM=CustomProperties$NAM;$TYP=element property$TYP;$VIS=Public$VIS;$DES=@PROP=@NAME=isActive@ENDNAME;@TYPE=Boolean@ENDTYPE;@VALU=@ENDVALU;@PRMT=@ENDPRMT;@ENDPROP;$DES;$CLT={A4DD7951-4F7D-4314-BE6E-FC6F0B281B20}$CLT;$SUP=&lt;none&gt;$SUP;$ENDXREF;"/>
+				<extendedProperties tagged="0" package_name="CityMap"/>
+				<links>
+					<Generalization xmi:id="EAID_9ADA4449_FFC2_46ea_BE9C_796B257AD606" start="EAID_A4DD7951_4F7D_4314_BE6E_FC6F0B281B20" end="EAID_EECEF9FA_4CFB_4bf1_B214_AB81285746FC"/>
+				</links>
+			</element>
+			<element xmi:idref="EAID_6BCAFF98_13F9_4e16_884A_4B2B13B5C208" xmi:type="uml:Class" name="Street" scope="public">
+				<model package="EAPK_056FA087_E1CC_4168_9453_9B0E5CE06D1A" tpos="0" ea_localid="27" ea_eleType="element"/>
+				<properties isSpecification="false" sType="Class" nType="0" scope="public" isRoot="false" isLeaf="false" isAbstract="false" isActive="false"/>
+				<project version="1.0" phase="1.0" created="2006-10-25 10:50:32" modified="2006-11-25 19:50:26" complexity="1" status="Proposed"/>
+				<code gentype="&lt;none&gt;"/>
+				<style appearance="BackColor=-1;BorderColor=-1;BorderWidth=-1;FontColor=0;VSwimLanes=0;HSwimLanes=0;BorderStyle=0;"/>
+				<modelDocument/>
+				<tags/>
+				<xrefs value="$XREFPROP=$XID={7C163D13-14EA-4873-9223-890798B2AB74}$XID;$NAM=CustomProperties$NAM;$TYP=element property$TYP;$VIS=Public$VIS;$DES=@PROP=@NAME=isActive@ENDNAME;@TYPE=Boolean@ENDTYPE;@VALU=@ENDVALU;@PRMT=@ENDPRMT;@ENDPROP;$DES;$CLT={6BCAFF98-13F9-4e16-884A-4B2B13B5C208}$CLT;$SUP=&lt;none&gt;$SUP;$ENDXREF;"/>
+				<extendedProperties tagged="0" package_name="CityMap"/>
+				<attributes>
+					<attribute xmi:idref="EAID_43A8A1DE_1A20_4531_84F3_95132730B910" name="oneway" scope="Private">
+						<initial/>
+						<documentation/>
+						<model ea_localid="5" ea_guid="{43A8A1DE-1A20-4531-84F3-95132730B910}"/>
+						<properties type="Boolean" derived="0" collection="false" duplicates="0" changeability="changeable"/>
+						<coords ordered="0"/>
+						<containment containment="Not Specified" position="1000"/>
+						<stereotype/>
+						<bounds lower="1" upper="1"/>
+						<options/>
+						<style/>
+						<styleex value="volatile=0;"/>
+						<tags/>
+						<xrefs/>
+					</attribute>
+				</attributes>
+				<links>
+					<Generalization xmi:id="EAID_146C6634_163C_46ce_840A_8C9A6F7E83AF" start="EAID_6BCAFF98_13F9_4e16_884A_4B2B13B5C208" end="EAID_F0CA4FE0_CDCA_4248_95F0_12D8603D8E1B"/>
+					<Generalization xmi:id="EAID_667156DA_4567_4640_8C26_615A9F4C8073" start="EAID_5098CCAF_5046_4878_8A27_0BEF026CC631" end="EAID_6BCAFF98_13F9_4e16_884A_4B2B13B5C208"/>
+				</links>
+			</element>
+			<element xmi:idref="EAID_F0CA4FE0_CDCA_4248_95F0_12D8603D8E1B" xmi:type="uml:Class" name="Way" scope="public">
+				<model package="EAPK_056FA087_E1CC_4168_9453_9B0E5CE06D1A" tpos="0" ea_localid="30" ea_eleType="element"/>
+				<properties isSpecification="false" sType="Class" nType="17" scope="public" isRoot="false" isLeaf="false" isAbstract="true" isActive="false"/>
+				<project version="1.0" phase="1.0" created="2006-10-30 09:45:24" modified="2006-11-25 19:53:34" complexity="1" status="Proposed"/>
+				<code gentype="&lt;none&gt;"/>
+				<style appearance="BackColor=-1;BorderColor=-1;BorderWidth=-1;FontColor=0;VSwimLanes=0;HSwimLanes=0;BorderStyle=0;"/>
+				<modelDocument/>
+				<tags/>
+				<xrefs value="$XREFPROP=$XID={94721FBD-B5FA-4587-B831-D82A78A3F042}$XID;$NAM=CustomProperties$NAM;$TYP=element property$TYP;$VIS=Public$VIS;$DES=@PROP=@NAME=isActive@ENDNAME;@TYPE=Boolean@ENDTYPE;@VALU=@ENDVALU;@PRMT=@ENDPRMT;@ENDPROP;$DES;$CLT={F0CA4FE0-CDCA-4248-95F0-12D8603D8E1B}$CLT;$SUP=&lt;none&gt;$SUP;$ENDXREF;"/>
+				<extendedProperties tagged="0" package_name="CityMap" conID="EAID_BCBDF2B5_3284_41cd_8D8D_AE66B6D5D874"/>
+				<attributes>
+					<attribute xmi:idref="EAID_D871980F_4267_4570_AD52_0C8A25D60CAB" name="length" scope="Private">
+						<initial/>
+						<documentation/>
+						<model ea_localid="6" ea_guid="{D871980F-4267-4570-AD52-0C8A25D60CAB}"/>
+						<properties type="Integer" derived="0" collection="false" duplicates="0" changeability="changeable"/>
+						<coords ordered="0"/>
+						<containment containment="Not Specified" position="1"/>
+						<stereotype/>
+						<bounds lower="1" upper="1"/>
+						<options/>
+						<style/>
+						<styleex value="volatile=0;"/>
+						<tags/>
+						<xrefs/>
+					</attribute>
+					<attribute xmi:idref="EAID_E7CDD8C7_253B_47ab_8FCE_F0FF583D933A" name="name" scope="Private">
+						<initial/>
+						<documentation/>
+						<model ea_localid="7" ea_guid="{E7CDD8C7-253B-47ab-8FCE-F0FF583D933A}"/>
+						<properties type="String" derived="0" collection="false" duplicates="0" changeability="changeable"/>
+						<coords ordered="0"/>
+						<containment containment="Not Specified" position="0"/>
+						<stereotype/>
+						<bounds lower="1" upper="1"/>
+						<options/>
+						<style/>
+						<styleex value="volatile=0;"/>
+						<tags/>
+						<xrefs/>
+					</attribute>
+				</attributes>
+				<links>
+					<Generalization xmi:id="EAID_146C6634_163C_46ce_840A_8C9A6F7E83AF" start="EAID_6BCAFF98_13F9_4e16_884A_4B2B13B5C208" end="EAID_F0CA4FE0_CDCA_4248_95F0_12D8603D8E1B"/>
+				</links>
+			</element>
+		</elements>
+		<connectors>
+			<connector xmi:idref="EAID_667156DA_4567_4640_8C26_615A9F4C8073">
+				<source xmi:idref="EAID_5098CCAF_5046_4878_8A27_0BEF026CC631">
+					<model ea_localid="29" type="Class" name="Bridge"/>
+					<role visibility="Public" targetScope="instance"/>
+					<type aggregation="none" containment="Unspecified"/>
+					<constraints/>
+					<modifiers isOrdered="false" changeable="none" isNavigable="false"/>
+					<style value="Union=0;Derived=0;AllowDuplicates=0;"/>
+					<documentation/>
+					<xrefs/>
+					<tags/>
+				</source>
+				<target xmi:idref="EAID_6BCAFF98_13F9_4e16_884A_4B2B13B5C208">
+					<model ea_localid="27" type="Class" name="Street"/>
+					<role visibility="Public" targetScope="instance"/>
+					<type aggregation="none" containment="Unspecified"/>
+					<constraints/>
+					<modifiers isOrdered="false" changeable="none" isNavigable="true"/>
+					<style value="Union=0;Derived=0;AllowDuplicates=0;"/>
+					<documentation/>
+					<xrefs/>
+					<tags/>
+				</target>
+				<model ea_localid="20"/>
+				<properties ea_type="Generalization" direction="Source -&gt; Destination"/>
+				<documentation/>
+				<appearance linemode="3" linecolor="-1" linewidth="0" seqno="0" headStyle="0" lineStyle="0"/>
+				<labels/>
+				<extendedProperties virtualInheritance="0"/>
+				<style/>
+				<xrefs value="$XREFPROP=$XID={9AEEFDC8-9B77-4e95-AE0E-00DE63A1E4E5}$XID;$NAM=CustomProperties$NAM;$TYP=connector property$TYP;$VIS=Public$VIS;$DES=@PROP=@NAME=isSubstitutable@ENDNAME;@TYPE=Boolean@ENDTYPE;@VALU=@ENDVALU;@PRMT=@ENDPRMT;@ENDPROP;$DES;$CLT={667156DA-4567-4640-8C26-615A9F4C8073}$CLT;$SUP=&lt;none&gt;$SUP;$ENDXREF;"/>
+				<tags/>
+			</connector>
+			<connector xmi:idref="EAID_E2AEEF88_E73D_4763_B732_B9A9523E54BE">
+				<source xmi:idref="EAID_EECEF9FA_4CFB_4bf1_B214_AB81285746FC">
+					<model ea_localid="25" type="Class" name="CarPark"/>
+					<role visibility="Public" targetScope="instance"/>
+					<type aggregation="none" containment="Unspecified"/>
+					<constraints/>
+					<modifiers isOrdered="false" changeable="none" isNavigable="false"/>
+					<style value="Union=0;Derived=0;AllowDuplicates=0;"/>
+					<documentation/>
+					<xrefs/>
+					<tags/>
+				</source>
+				<target xmi:idref="EAID_45877DBF_CCB1_4313_B0D6_CF2717476771">
+					<model ea_localid="24" type="Class" name="Junction"/>
+					<role visibility="Public" targetScope="instance"/>
+					<type aggregation="none" containment="Unspecified"/>
+					<constraints/>
+					<modifiers isOrdered="false" changeable="none" isNavigable="true"/>
+					<style value="Union=0;Derived=0;AllowDuplicates=0;"/>
+					<documentation/>
+					<xrefs/>
+					<tags/>
+				</target>
+				<model ea_localid="16"/>
+				<properties ea_type="Generalization" direction="Source -&gt; Destination"/>
+				<documentation/>
+				<appearance linemode="3" linecolor="-1" linewidth="0" seqno="0" headStyle="0" lineStyle="0"/>
+				<labels/>
+				<extendedProperties virtualInheritance="0"/>
+				<style/>
+				<xrefs value="$XREFPROP=$XID={D00175D0-481D-4241-9A21-089EE5D4937C}$XID;$NAM=CustomProperties$NAM;$TYP=connector property$TYP;$VIS=Public$VIS;$DES=@PROP=@NAME=isSubstitutable@ENDNAME;@TYPE=Boolean@ENDTYPE;@VALU=@ENDVALU;@PRMT=@ENDPRMT;@ENDPROP;$DES;$CLT={E2AEEF88-E73D-4763-B732-B9A9523E54BE}$CLT;$SUP=&lt;none&gt;$SUP;$ENDXREF;"/>
+				<tags/>
+			</connector>
+			<connector xmi:idref="EAID_9ADA4449_FFC2_46ea_BE9C_796B257AD606">
+				<source xmi:idref="EAID_A4DD7951_4F7D_4314_BE6E_FC6F0B281B20">
+					<model ea_localid="28" type="Class" name="ParkingGarage"/>
+					<role visibility="Public" targetScope="instance"/>
+					<type aggregation="none" containment="Unspecified"/>
+					<constraints/>
+					<modifiers isOrdered="false" changeable="none" isNavigable="false"/>
+					<style value="Union=0;Derived=0;AllowDuplicates=0;"/>
+					<documentation/>
+					<xrefs/>
+					<tags/>
+				</source>
+				<target xmi:idref="EAID_EECEF9FA_4CFB_4bf1_B214_AB81285746FC">
+					<model ea_localid="25" type="Class" name="CarPark"/>
+					<role visibility="Public" targetScope="instance"/>
+					<type aggregation="none" containment="Unspecified"/>
+					<constraints/>
+					<modifiers isOrdered="false" changeable="none" isNavigable="true"/>
+					<style value="Union=0;Derived=0;AllowDuplicates=0;"/>
+					<documentation/>
+					<xrefs/>
+					<tags/>
+				</target>
+				<model ea_localid="18"/>
+				<properties ea_type="Generalization" direction="Source -&gt; Destination"/>
+				<documentation/>
+				<appearance linemode="3" linecolor="-1" linewidth="0" seqno="0" headStyle="0" lineStyle="0"/>
+				<labels/>
+				<extendedProperties virtualInheritance="0"/>
+				<style/>
+				<xrefs value="$XREFPROP=$XID={455F4E7F-672A-456b-A870-188CF61387F7}$XID;$NAM=CustomProperties$NAM;$TYP=connector property$TYP;$VIS=Public$VIS;$DES=@PROP=@NAME=isSubstitutable@ENDNAME;@TYPE=Boolean@ENDTYPE;@VALU=@ENDVALU;@PRMT=@ENDPRMT;@ENDPROP;$DES;$CLT={9ADA4449-FFC2-46ea-BE9C-796B257AD606}$CLT;$SUP=&lt;none&gt;$SUP;$ENDXREF;"/>
+				<tags/>
+			</connector>
+			<connector xmi:idref="EAID_7402ACF9_6BC2_4675_B7EC_6F3ECE1CB05B">
+				<source xmi:idref="EAID_E5F79659_C7EA_406d_9F45_6684522E80FF">
+					<model ea_localid="26" type="Class" name="Intersection"/>
+					<role visibility="Public" targetScope="instance"/>
+					<type aggregation="none" containment="Unspecified"/>
+					<constraints/>
+					<modifiers isOrdered="false" changeable="none" isNavigable="false"/>
+					<style value="Union=0;Derived=0;AllowDuplicates=0;"/>
+					<documentation/>
+					<xrefs/>
+					<tags/>
+				</source>
+				<target xmi:idref="EAID_45877DBF_CCB1_4313_B0D6_CF2717476771">
+					<model ea_localid="24" type="Class" name="Junction"/>
+					<role visibility="Public" targetScope="instance"/>
+					<type aggregation="none" containment="Unspecified"/>
+					<constraints/>
+					<modifiers isOrdered="false" changeable="none" isNavigable="true"/>
+					<style value="Union=0;Derived=0;AllowDuplicates=0;"/>
+					<documentation/>
+					<xrefs/>
+					<tags/>
+				</target>
+				<model ea_localid="17"/>
+				<properties ea_type="Generalization" direction="Source -&gt; Destination"/>
+				<documentation/>
+				<appearance linemode="3" linecolor="-1" linewidth="0" seqno="0" headStyle="0" lineStyle="0"/>
+				<labels/>
+				<extendedProperties virtualInheritance="0"/>
+				<style/>
+				<xrefs value="$XREFPROP=$XID={3ABB3E87-9601-415d-992B-33B06FBA64E8}$XID;$NAM=CustomProperties$NAM;$TYP=connector property$TYP;$VIS=Public$VIS;$DES=@PROP=@NAME=isSubstitutable@ENDNAME;@TYPE=Boolean@ENDTYPE;@VALU=@ENDVALU;@PRMT=@ENDPRMT;@ENDPROP;$DES;$CLT={7402ACF9-6BC2-4675-B7EC-6F3ECE1CB05B}$CLT;$SUP=&lt;none&gt;$SUP;$ENDXREF;"/>
+				<tags/>
+			</connector>
+			<connector xmi:idref="EAID_BCBDF2B5_3284_41cd_8D8D_AE66B6D5D874" name="Way">
+				<source xmi:idref="EAID_45877DBF_CCB1_4313_B0D6_CF2717476771">
+					<model ea_localid="24" type="Class" name="Junction"/>
+					<role name="from" visibility="Private" targetScope="instance"/>
+					<type multiplicity="1..6" aggregation="none" containment="Unspecified"/>
+					<constraints/>
+					<modifiers isOrdered="false" changeable="none" isNavigable="false"/>
+					<style value="Union=0;Derived=0;AllowDuplicates=0;Owned=0;Navigable=Non-Navigable;"/>
+					<documentation/>
+					<xrefs value="$XREFPROP=$XID={D980A9BE-DE88-4e51-937F-A4E4B3564EE8}$XID;$NAM=CustomProperties$NAM;$TYP=connectorSrcEnd property$TYP;$VIS=Public$VIS;$DES=@PROP=@NAME=isDerivedUnion@ENDNAME;@TYPE=Boolean@ENDTYPE;@VALU=false@ENDVALU;@PRMT=@ENDPRMT;@ENDPROP;@PROP=@NAME=isDerived@ENDNAME;@TYPE=Boolean@ENDTYPE;@VALU=false@ENDVALU;@PRMT=@ENDPRMT;@ENDPROP;@PROP=@NAME=isReadOnly@ENDNAME;@TYPE=Boolean@ENDTYPE;@VALU=false@ENDVALU;@PRMT=@ENDPRMT;@ENDPROP;@PROP=@NAME=default@ENDNAME;@TYPE=String@ENDTYPE;@VALU=@ENDVALU;@PRMT=@ENDPRMT;@ENDPROP;@PROP=@NAME=isComposite@ENDNAME;@TYPE=Boolean@ENDTYPE;@VALU=@ENDVALU;@PRMT=@ENDPRMT;@ENDPROP;@PROP=@NAME=aggregation@ENDNAME;@TYPE=AggregationKind@ENDTYPE;@VALU=none@ENDVALU;@PRMT=@ENDPRMT;@ENDPROP;$DES;$CLT={BCBDF2B5-3284-41cd-8D8D-AE66B6D5D874}$CLT;$SUP=&lt;none&gt;$SUP;$ENDXREF;"/>
+					<tags/>
+				</source>
+				<target xmi:idref="EAID_45877DBF_CCB1_4313_B0D6_CF2717476771">
+					<model ea_localid="24" type="Class" name="Junction"/>
+					<role name="to" visibility="Private" targetScope="instance"/>
+					<type multiplicity="1..6" aggregation="none" containment="Unspecified"/>
+					<constraints/>
+					<modifiers isOrdered="false" changeable="none" isNavigable="true"/>
+					<style value="Union=0;Derived=0;AllowDuplicates=0;Owned=0;Navigable=Unspecified;"/>
+					<documentation/>
+					<xrefs value="$XREFPROP=$XID={CFE8879D-A8E6-4c4e-928F-917E9F4EA34E}$XID;$NAM=CustomProperties$NAM;$TYP=connectorDestEnd property$TYP;$VIS=Public$VIS;$DES=@PROP=@NAME=isDerivedUnion@ENDNAME;@TYPE=Boolean@ENDTYPE;@VALU=false@ENDVALU;@PRMT=@ENDPRMT;@ENDPROP;@PROP=@NAME=isDerived@ENDNAME;@TYPE=Boolean@ENDTYPE;@VALU=false@ENDVALU;@PRMT=@ENDPRMT;@ENDPROP;@PROP=@NAME=isReadOnly@ENDNAME;@TYPE=Boolean@ENDTYPE;@VALU=false@ENDVALU;@PRMT=@ENDPRMT;@ENDPROP;@PROP=@NAME=default@ENDNAME;@TYPE=String@ENDTYPE;@VALU=@ENDVALU;@PRMT=@ENDPRMT;@ENDPROP;@PROP=@NAME=isComposite@ENDNAME;@TYPE=Boolean@ENDTYPE;@VALU=@ENDVALU;@PRMT=@ENDPRMT;@ENDPROP;@PROP=@NAME=aggregation@ENDNAME;@TYPE=AggregationKind@ENDTYPE;@VALU=none@ENDVALU;@PRMT=@ENDPRMT;@ENDPROP;$DES;$CLT={BCBDF2B5-3284-41cd-8D8D-AE66B6D5D874}$CLT;$SUP=&lt;none&gt;$SUP;$ENDXREF;"/>
+					<tags/>
+				</target>
+				<model ea_localid="30"/>
+				<properties ea_type="Association" subtype="Class" direction="Unspecified"/>
+				<modifiers isRoot="false" isLeaf="false"/>
+				<documentation/>
+				<appearance linemode="3" linecolor="-1" linewidth="0" seqno="0" headStyle="0" lineStyle="0"/>
+				<labels lb="1..6" lt="-from" mt="Way" rb="1..6" rt="-to"/>
+				<extendedProperties virtualInheritance="0" associationclass="EAID_F0CA4FE0_CDCA_4248_95F0_12D8603D8E1B" privatedata1="30" privatedata5="EDGE=2;SX=0;SY=0;EX=0;EY=0;SCME=1;SCTR=1;"/>
+				<style/>
+				<xrefs value="$XREFPROP=$XID={0EF3C8D8-BDA5-4605-80EB-2B4D313E2F2D}$XID;$NAM=CustomProperties$NAM;$TYP=connector property$TYP;$VIS=Public$VIS;$DES=@PROP=@NAME=isDerived@ENDNAME;@TYPE=Boolean@ENDTYPE;@VALU=false@ENDVALU;@PRMT=@ENDPRMT;@ENDPROP;$DES;$CLT={BCBDF2B5-3284-41cd-8D8D-AE66B6D5D874}$CLT;$SUP=&lt;none&gt;$SUP;$ENDXREF;"/>
+				<tags/>
+			</connector>
+			<connector xmi:idref="EAID_146C6634_163C_46ce_840A_8C9A6F7E83AF">
+				<source xmi:idref="EAID_6BCAFF98_13F9_4e16_884A_4B2B13B5C208">
+					<model ea_localid="27" type="Class" name="Street"/>
+					<role visibility="Public" targetScope="instance"/>
+					<type aggregation="none" containment="Unspecified"/>
+					<constraints/>
+					<modifiers isOrdered="false" changeable="none" isNavigable="false"/>
+					<style value="Union=0;Derived=0;AllowDuplicates=0;"/>
+					<documentation/>
+					<xrefs/>
+					<tags/>
+				</source>
+				<target xmi:idref="EAID_F0CA4FE0_CDCA_4248_95F0_12D8603D8E1B">
+					<model ea_localid="30" type="Class" name="Way"/>
+					<role visibility="Public" targetScope="instance"/>
+					<type aggregation="none" containment="Unspecified"/>
+					<constraints/>
+					<modifiers isOrdered="false" changeable="none" isNavigable="true"/>
+					<style value="Union=0;Derived=0;AllowDuplicates=0;"/>
+					<documentation/>
+					<xrefs/>
+					<tags/>
+				</target>
+				<model ea_localid="26"/>
+				<properties ea_type="Generalization" direction="Source -&gt; Destination"/>
+				<documentation/>
+				<appearance linemode="3" linecolor="-1" linewidth="0" seqno="0" headStyle="0" lineStyle="0"/>
+				<labels/>
+				<extendedProperties virtualInheritance="0"/>
+				<style/>
+				<xrefs value="$XREFPROP=$XID={67186702-CA2D-4f57-8D22-C49A34492E48}$XID;$NAM=CustomProperties$NAM;$TYP=connector property$TYP;$VIS=Public$VIS;$DES=@PROP=@NAME=isSubstitutable@ENDNAME;@TYPE=Boolean@ENDTYPE;@VALU=@ENDVALU;@PRMT=@ENDPRMT;@ENDPROP;$DES;$CLT={146C6634-163C-46ce-840A-8C9A6F7E83AF}$CLT;$SUP=&lt;none&gt;$SUP;$ENDXREF;"/>
+				<tags/>
+			</connector>
+		</connectors>
+		<diagrams>
+			<diagram xmi:id="EAID_7B6715E3_B17C_4f11_92DB_50305347E024">
+				<model package="EAPK_F51B0763_6FD0_40b7_9A5F_4D25B07AC056" localID="5" owner="EAPK_F51B0763_6FD0_40b7_9A5F_4D25B07AC056"/>
+				<properties name="samplegraphschema" type="Logical"/>
+				<project version="1.0" created="2006-10-25 10:47:32" modified="2007-02-18 17:54:51"/>
+				<style1 value="ShowPrivate=1;ShowProtected=1;ShowPublic=1;HideRelationships=0;Locked=0;Border=1;HighlightForeign=1;PackageContents=1;SequenceNotes=0;ScalePrintImage=0;PPgs.cx=0;PPgs.cy=0;DocSize.cx=827;DocSize.cy=1169;ShowDetails=0;Orientation=P;Zoom=100;ShowTags=0;OpParams=1;ShowIcons=1;CollabNums=0;HideProps=0;ShowReqs=0;ShowCons=0;PaperSize=9;HideParents=0;UseAlias=0;HideAtts=0;HideOps=0;HideStereo=0;HideElemStereo=0;ShowTests=0;ShowMaint=0;ConnectorNotation=UML 2.1;ExplicitNavigability=0;AdvancedElementProps=1;AdvancedFeatureProps=1;AdvancedConnectorProps=1;"/>
+				<style2 value="ExcludeRTF=0;DocAll=0;HideQuals=0;AttPkg=1;ShowTests=0;ShowMaint=0;SuppressFOC=1;TDurLow=0;TDurHigh=100;TDurUnit=;TDurHide=0;TConnectorNotation=UML 2.1;TExplicitNavigability=0;AdvancedElementProps=1;AdvancedFeatureProps=1;AdvancedConnectorProps=1;ProfileData=;MDGDgm=;"/>
+				<swimlanes value="locked=false;orientation=0;width=0;inbar=false;names=false;color=0;bold=false;fcol=0;;cls=0;"/>
+				<elements>
+					<element geometry="Left=520;Top=156;Right=678;Bottom=251;" subject="EAID_F0CA4FE0_CDCA_4248_95F0_12D8603D8E1B" seqno="1" style="DUID=7D6BCB9D;font=Arial;bold=0;italic=0;ul=0;fontsz=120;"/>
+					<element geometry="Left=520;Top=400;Right=678;Bottom=477;" subject="EAID_5098CCAF_5046_4878_8A27_0BEF026CC631" seqno="2" style="DUID=C0E47DC5;font=Arial;fontsz=120;bold=0;italic=0;ul=0;"/>
+					<element geometry="Left=137;Top=399;Right=295;Bottom=469;" subject="EAID_A4DD7951_4F7D_4314_BE6E_FC6F0B281B20" seqno="3" style="DUID=1C52F658;font=Arial;fontsz=120;bold=0;italic=0;ul=0;"/>
+					<element geometry="Left=517;Top=299;Right=681;Bottom=376;" subject="EAID_6BCAFF98_13F9_4e16_884A_4B2B13B5C208" seqno="4" style="DUID=D24FB99D;font=Arial;fontsz=120;bold=0;italic=0;ul=0;"/>
+					<element geometry="Left=310;Top=298;Right=509;Bottom=375;" subject="EAID_E5F79659_C7EA_406d_9F45_6684522E80FF" seqno="5" style="DUID=F3C768E3;font=Arial;fontsz=120;bold=0;italic=0;ul=0;"/>
+					<element geometry="Left=139;Top=298;Right=300;Bottom=375;" subject="EAID_EECEF9FA_4CFB_4bf1_B214_AB81285746FC" seqno="6" style="DUID=3876275B;font=Arial;fontsz=120;bold=0;italic=0;ul=0;"/>
+					<element geometry="Left=234;Top=159;Right=392;Bottom=236;" subject="EAID_45877DBF_CCB1_4313_B0D6_CF2717476771" seqno="7" style="DUID=527DD8CE;font=Arial;fontsz=120;bold=0;italic=0;ul=0;"/>
+					<element geometry="Left=103;Top=116;Right=739;Bottom=505;" subject="EAID_056FA087_E1CC_4168_9453_9B0E5CE06D1A" seqno="8" style="DUID=700CF6A6;font=Arial;fontsz=120;bold=0;italic=0;ul=0;"/>
+					<element geometry="SX=0;SY=-1;EX=0;EY=-1;EDGE=1;$LLB=;LLT=;LMT=;LMB=;LRT=;LRB=;IRHS=;ILHS=;Path=;" subject="EAID_146C6634_163C_46ce_840A_8C9A6F7E83AF" style="Mode=3;EOID=7D6BCB9D;SOID=D24FB99D;Hidden=0;"/>
+					<element geometry="SX=0;SY=0;EX=0;EY=0;EDGE=1;$LLB=;LLT=;LMT=;LMB=;LRT=;LRB=;IRHS=;ILHS=;Path=;" subject="EAID_667156DA_4567_4640_8C26_615A9F4C8073" style="Mode=3;EOID=D24FB99D;SOID=C0E47DC5;Hidden=0;"/>
+					<element geometry="SX=0;SY=0;EX=0;EY=0;EDGE=1;$LLB=;LLT=;LMT=;LMB=;LRT=;LRB=;IRHS=;ILHS=;Path=;" subject="EAID_9ADA4449_FFC2_46ea_BE9C_796B257AD606" style="Mode=3;EOID=3876275B;SOID=1C52F658;Hidden=0;"/>
+					<element geometry="SX=0;SY=0;EX=0;EY=0;EDGE=1;$LLB=;LLT=;LMT=;LMB=;LRT=;LRB=;IRHS=;ILHS=;Path=405:-286$313:-286$;" subject="EAID_7402ACF9_6BC2_4675_B7EC_6F3ECE1CB05B" style="Mode=3;EOID=527DD8CE;SOID=F3C768E3;TREE=V;Hidden=0;"/>
+					<element geometry="SX=0;SY=0;EX=0;EY=-1;EDGE=1;$LLB=;LLT=;LMT=;LMB=;LRT=;LRB=;IRHS=;ILHS=;Path=216:-286$313:-286$;" subject="EAID_E2AEEF88_E73D_4763_B732_B9A9523E54BE" style="Mode=3;EOID=527DD8CE;SOID=3876275B;TREE=V;Hidden=0;"/>
+					<element geometry="EDGE=2;SX=0;SY=0;EX=0;EY=0;SCME=1;SCTR=1;SCTR.LEFT=372;SCTR.TOP=-230;SCTR.RIGHT=464;SCTR.BOTTOM=-179;$LLB=;LLT=CX=22:CY=41:OX=28:OY=19:HDN=0:BLD=0:ITA=0:UND=0:CLR=-1:ALN=0:DIR=0:ROT=0;LMT=CX=21:CY=15:OX=-20:OY=18:HDN=0:BLD=0:ITA=0:UND=0:CLR=-1:ALN=0:DIR=1:ROT=0;LMB=;LRT=CX=19:CY=28:OX=49:OY=-15:HDN=0:BLD=0:ITA=0:UND=0:CLR=-1:ALN=2:DIR=0:ROT=0;LRB=;IRHS=;ILHS=;Path=392:-230$464:-230$464:-179$392:-179$;" subject="EAID_BCBDF2B5_3284_41cd_8D8D_AE66B6D5D874" style="Mode=3;EOID=527DD8CE;SOID=527DD8CE;Hidden=0;"/>
+				</elements>
+			</diagram>
+		</diagrams>
+	</xmi:Extension>
+</xmi:XMI>

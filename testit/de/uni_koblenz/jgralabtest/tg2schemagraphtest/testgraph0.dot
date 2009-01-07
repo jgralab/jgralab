@@ -1,0 +1,28 @@
+digraph "de.uni_koblenz.jgralabtest.tg2schemagraphtest.testschema0.TestSchema0"
+{
+ranksep="1.5";
+nodesep="0.25";
+node [shape="record" fontname="Helvetica" fontsize="14" color="#999999"];
+edge [fontname="Helvetica" fontsize="14" labelfontname="Helvetica" labelfontsize="14" color="#999999"];
+v1 [label="{{v1|Schema}|name = TestSchema0\lpackagePrefix = de.uni_koblenz.jgralabtest.tg2schemagraphtest.testschema0\l}"];
+v2 [label="{{v2|DoubleDomain}|qualifiedName = Double\l}"];
+v3 [label="{{v3|LongDomain}|qualifiedName = Long\l}"];
+v4 [label="{{v4|StringDomain}|qualifiedName = String\l}"];
+v5 [label="{{v5|IntDomain}|qualifiedName = Integer\l}"];
+v6 [label="{{v6|BooleanDomain}|qualifiedName = Boolean\l}"];
+v7 [label="{{v7|GraphClass}|isAbstract = false\lqualifiedName = DefaultGraphClass\l}"];
+v8 [label="{{v8|Package}|qualifiedName = \l}"];
+v9 [label="{{v9|VertexClass}|isAbstract = false\lqualifiedName = Place\l}"];
+v10 [label="{{v10|EdgeClass}|isAbstract = false\lqualifiedName = Way\l}"];
+v1 -> v7 [label="e1: DefinesGraphClass"];
+v1 -> v8 [label="e2: ContainsDefaultPackage"];
+v8 -> v9 [label="e3: ContainsGraphElementClass"];
+v8 -> v10 [label="e4: ContainsGraphElementClass"];
+v10 -> v9 [label="e5: From"];
+v10 -> v9 [label="e6: To"];
+v8 -> v2 [label="e7: ContainsDomain"];
+v8 -> v3 [label="e8: ContainsDomain"];
+v8 -> v4 [label="e9: ContainsDomain"];
+v8 -> v6 [label="e10: ContainsDomain"];
+v8 -> v5 [label="e11: ContainsDomain"];
+}

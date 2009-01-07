@@ -1,0 +1,41 @@
+\documentclass[a4paper,twoside,10pt]{article}
+\include{latex_packages}
+\include{latex_definitions}
+
+%\setistheader{Tg2Gxl Manual}
+
+%opening
+\title{tg2gxl test report}
+\author{Sebastian Plitt \\ splitt@uni-koblenz.de}
+
+%\makeisttitle{}
+
+\begin{document}
+\sloppy
+\pagenumbering{roman}
+\maketitle
+\nopagebreak
+\clearpage
+\tableofcontents
+\clearpage
+\pagenumbering{arabic}
+\setcounter{page}{1}
+\chapter{General approch}The \emph{tg2gxltest} package contains a set of schemas stored in .tg files. Graphs of this schemas are created by running several \emph{greql-script}s, which are located in this package, too.
+
+The resulting graphs get also stored in .tg files, which finally get trasmitted to the \emph{Tg2Gxl} converter.
+
+The resulting .gxl files syntactical correctness will be reviewed by an platform dependent GXL converter.
+Their semantical correctness has to be verified \"'by hand\"'.
+ 
+\emph{Note}
+
+Unless there exists an ant script you have to profrom following steps chronologically.
+\begin{itemize}
+\item Run ExecuteGreqlScripts.class
+\item Run ConvertGraphs2GXL.class
+\item Validate the resulting .gxl files by hand.
+\end{itemize}
+Tg2Gxl is not yet capable to handle RecordDomain attributes. Unless it does, RecordDomain attributes are NOT part of this test.
+
+
+\end{document}

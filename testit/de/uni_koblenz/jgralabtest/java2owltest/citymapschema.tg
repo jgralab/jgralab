@@ -1,0 +1,8 @@
+Schema basictest.generated.tgtest.Schema;
+EnumDomain Gate (CLOSE, OPEN);
+RecordDomain Parking (cost:Double, date:String, duration:Integer);
+GraphClass CityMap;
+abstract VertexClass Junction;
+VertexClass CarPark: Junction { capacity: Integer, gate: Gate, name: String, numberPlate: Set<String>, numberPlateHistory: List<Set<String>>, open: Boolean, parking: Parking, usage: Object, width: Double };
+VertexClass Intersection: Junction;
+EdgeClass Street from Junction (1,*) role 'from to Junction (1,*) { streetName: String };

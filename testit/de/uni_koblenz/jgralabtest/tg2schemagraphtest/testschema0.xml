@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xmi:XMI xmi:version="2.1" xmlns:uml="http://schema.omg.org/spec/UML/2.1" xmlns:xmi="http://schema.omg.org/spec/XMI/2.1">
+	<xmi:Documentation exporter="Enterprise Architect" exporterVersion="6.5"/>
+	<uml:Model xmi:type="uml:Model" name="EA_Model" visibility="public">
+		<packagedElement xmi:type="uml:Package" xmi:id="EAPK_343DFB1E_A980_4388_8CEB_2F23F782E26E" name="TestSchema0" visibility="public">
+			<packagedElement xmi:type="uml:Package" xmi:id="EAPK_1ED68805_5B44_4b65_B26C_5C74625C3292" name="de.uni_koblenz.jgralabtest.tg2schemagraphtest.testschema0.TestSchema0" visibility="public">
+				<packagedElement xmi:type="uml:Class" xmi:id="EAID_0AE6E0B9_8286_4edc_8F93_C075FECEDB8B" name="Place" visibility="public"/>
+				<packagedElement xmi:type="uml:AssociationClass" xmi:id="EAID_D7E65DA1_DB0F_497c_9332_24A139354772" name="Way" visibility="public">
+					<memberEnd xmi:idref="EAID_dst93AAA7_E818_454b_9BCE_524FC9AE42FA"/>
+					<ownedEnd xmi:type="uml:Property" xmi:id="EAID_dst93AAA7_E818_454b_9BCE_524FC9AE42FA" name="ending" visibility="public" association="EAID_D7E65DA1_DB0F_497c_9332_24A139354772" isOrdered="false" isDerived="false" isDerivedUnion="false" aggregation="none">
+						<type xmi:idref="EAID_0AE6E0B9_8286_4edc_8F93_C075FECEDB8B"/>
+						<lowerValue xmi:type="uml:LiteralInteger" xmi:id="EAID_DL000000_E818_454b_9BCE_524FC9AE42FA" value="1"/>
+						<upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="EAID_DU000000_E818_454b_9BCE_524FC9AE42FA" value="-1"/>
+					</ownedEnd>
+					<memberEnd xmi:idref="EAID_src93AAA7_E818_454b_9BCE_524FC9AE42FA"/>
+					<ownedEnd xmi:type="uml:Property" xmi:id="EAID_src93AAA7_E818_454b_9BCE_524FC9AE42FA" name="beginning" visibility="public" association="EAID_D7E65DA1_DB0F_497c_9332_24A139354772" isOrdered="false" isDerived="false" isDerivedUnion="false" aggregation="none">
+						<type xmi:idref="EAID_0AE6E0B9_8286_4edc_8F93_C075FECEDB8B"/>
+						<lowerValue xmi:type="uml:LiteralInteger" xmi:id="EAID_SL000000_E818_454b_9BCE_524FC9AE42FA" value="1"/>
+						<upperValue xmi:type="uml:LiteralInteger" xmi:id="EAID_SU000000_E818_454b_9BCE_524FC9AE42FA" value="1"/>
+					</ownedEnd>
+				</packagedElement>
+			</packagedElement>
+		</packagedElement>
+	</uml:Model>
+	<xmi:Extension extender="Enterprise Architect" extenderID="6.5">
+		<elements>
+			<element xmi:idref="EAPK_343DFB1E_A980_4388_8CEB_2F23F782E26E">
+				<packageproperties/>
+				<paths/>
+				<times lastloaddate="2008-08-20 18:22:16"/>
+				<flags iscontrolled="FALSE" isprotected="FALSE" usedtd="FALSE" logxml="FALSE" packageFlags="isModel=1;"/>
+			</element>
+			<element xmi:idref="EAPK_1ED68805_5B44_4b65_B26C_5C74625C3292" xmi:type="uml:Package" name="de.uni_koblenz.jgralabtest.tg2schemagraphtest.testschema0.TestSchema0" scope="public">
+				<model package2="EAID_1ED68805_5B44_4b65_B26C_5C74625C3292" package="EAPK_343DFB1E_A980_4388_8CEB_2F23F782E26E" tpos="6" ea_localid="2" ea_eleType="package"/>
+				<properties isSpecification="false" sType="Package" nType="0" scope="public"/>
+				<project phase="1.0" created="2008-08-20 18:22:16" modified="2008-08-20 18:25:19" complexity="1" status="Proposed"/>
+				<code/>
+				<style appearance="BackColor=-1;BorderColor=-1;BorderWidth=-1;FontColor=-1;VSwimLanes=0;HSwimLanes=0;BorderStyle=0;"/>
+				<modelDocument/>
+				<tags/>
+				<xrefs/>
+				<extendedProperties tagged="0" package_name="TestSchema0"/>
+				<packageproperties tpos="6"/>
+				<paths/>
+				<times created="2008-08-20 18:22:16" modified="2008-08-20 18:22:16" lastloaddate="2008-08-20 18:22:16" lastsavedate="2008-08-20 18:22:16"/>
+				<flags iscontrolled="FALSE" isnamespace="1" isprotected="FALSE" batchsave="0" batchload="0" usedtd="FALSE" logxml="FALSE" packageFlags="isModel=1;VICON=3;"/>
+			</element>
+			<element xmi:idref="EAID_0AE6E0B9_8286_4edc_8F93_C075FECEDB8B" xmi:type="uml:Class" name="Place" scope="public">
+				<model package="EAPK_1ED68805_5B44_4b65_B26C_5C74625C3292" tpos="0" ea_localid="18" ea_eleType="element"/>
+				<properties isSpecification="false" sType="Class" nType="0" scope="public" isRoot="false" isLeaf="false" isAbstract="false" isActive="false"/>
+				<project author="chebasqui" version="1.0" phase="1.0" created="2008-08-20 18:29:02" modified="2008-08-20 18:29:30" complexity="1" status="Proposed"/>
+				<code gentype="Java"/>
+				<style appearance="BackColor=-1;BorderColor=-1;BorderWidth=-1;FontColor=-1;VSwimLanes=0;HSwimLanes=0;BorderStyle=0;"/>
+				<modelDocument/>
+				<tags/>
+				<xrefs value="$XREFPROP=$XID={3BE2A991-677D-4c71-B1EC-3E84A2206FEE}$XID;$NAM=CustomProperties$NAM;$TYP=element property$TYP;$VIS=Public$VIS;$DES=@PROP=@NAME=isActive@ENDNAME;@TYPE=Boolean@ENDTYPE;@VALU=@ENDVALU;@PRMT=@ENDPRMT;@ENDPROP;$DES;$CLT={0AE6E0B9-8286-4edc-8F93-C075FECEDB8B}$CLT;$SUP=&lt;none&gt;$SUP;$ENDXREF;"/>
+				<extendedProperties tagged="0" package_name="de.uni_koblenz.jgralabtest.tg2schemagraphtest.testschema0.TestSchema0"/>
+				<links>
+					<Association xmi:id="EAID_9B93AAA7_E818_454b_9BCE_524FC9AE42FA" start="EAID_0AE6E0B9_8286_4edc_8F93_C075FECEDB8B" end="EAID_0AE6E0B9_8286_4edc_8F93_C075FECEDB8B"/>
+					<Association xmi:id="EAID_9B93AAA7_E818_454b_9BCE_524FC9AE42FA" start="EAID_0AE6E0B9_8286_4edc_8F93_C075FECEDB8B" end="EAID_0AE6E0B9_8286_4edc_8F93_C075FECEDB8B"/>
+				</links>
+			</element>
+			<element xmi:idref="EAID_D7E65DA1_DB0F_497c_9332_24A139354772" xmi:type="uml:Class" name="Way" scope="public">
+				<model package="EAPK_1ED68805_5B44_4b65_B26C_5C74625C3292" tpos="0" ea_localid="19" ea_eleType="element"/>
+				<properties isSpecification="false" sType="Class" nType="17" scope="public" isRoot="false" isLeaf="false" isAbstract="false" isActive="false"/>
+				<project author="chebasqui" version="1.0" phase="1.0" created="2008-08-20 18:30:52" modified="2008-08-20 18:31:01" complexity="1" status="Proposed"/>
+				<code gentype="Java"/>
+				<style appearance="BackColor=-1;BorderColor=-1;BorderWidth=-1;FontColor=-1;VSwimLanes=0;HSwimLanes=0;BorderStyle=0;"/>
+				<modelDocument/>
+				<tags/>
+				<xrefs value="$XREFPROP=$XID={604187A9-650B-4f87-B3CA-A382F445C570}$XID;$NAM=CustomProperties$NAM;$TYP=element property$TYP;$VIS=Public$VIS;$DES=@PROP=@NAME=isActive@ENDNAME;@TYPE=Boolean@ENDTYPE;@VALU=@ENDVALU;@PRMT=@ENDPRMT;@ENDPROP;$DES;$CLT={D7E65DA1-DB0F-497c-9332-24A139354772}$CLT;$SUP=&lt;none&gt;$SUP;$ENDXREF;"/>
+				<extendedProperties tagged="0" package_name="de.uni_koblenz.jgralabtest.tg2schemagraphtest.testschema0.TestSchema0" conID="EAID_9B93AAA7_E818_454b_9BCE_524FC9AE42FA"/>
+			</element>
+		</elements>
+		<connectors>
+			<connector xmi:idref="EAID_9B93AAA7_E818_454b_9BCE_524FC9AE42FA" name="leads to">
+				<source xmi:idref="EAID_0AE6E0B9_8286_4edc_8F93_C075FECEDB8B">
+					<model ea_localid="18" type="Class" name="Place"/>
+					<role name="beginning" visibility="Public" targetScope="instance"/>
+					<type multiplicity="1" aggregation="none" containment="Unspecified"/>
+					<constraints/>
+					<modifiers isOrdered="false" changeable="none" isNavigable="false"/>
+					<style value="Union=0;Derived=0;AllowDuplicates=0;Owned=0;Navigable=Unspecified;"/>
+					<documentation/>
+					<xrefs value="$XREFPROP=$XID={18C6D8F5-A926-47eb-A532-CB80EAA3C0E8}$XID;$NAM=CustomProperties$NAM;$TYP=connectorSrcEnd property$TYP;$VIS=Public$VIS;$DES=@PROP=@NAME=isDerivedUnion@ENDNAME;@TYPE=Boolean@ENDTYPE;@VALU=false@ENDVALU;@PRMT=@ENDPRMT;@ENDPROP;@PROP=@NAME=isDerived@ENDNAME;@TYPE=Boolean@ENDTYPE;@VALU=false@ENDVALU;@PRMT=@ENDPRMT;@ENDPROP;@PROP=@NAME=default@ENDNAME;@TYPE=String@ENDTYPE;@VALU=@ENDVALU;@PRMT=@ENDPRMT;@ENDPROP;@PROP=@NAME=isReadOnly@ENDNAME;@TYPE=Boolean@ENDTYPE;@VALU=false@ENDVALU;@PRMT=@ENDPRMT;@ENDPROP;@PROP=@NAME=isComposite@ENDNAME;@TYPE=Boolean@ENDTYPE;@VALU=@ENDVALU;@PRMT=@ENDPRMT;@ENDPROP;@PROP=@NAME=aggregation@ENDNAME;@TYPE=AggregationKind@ENDTYPE;@VALU=none@ENDVALU;@PRMT=@ENDPRMT;@ENDPROP;$DES;$CLT={9B93AAA7-E818-454b-9BCE-524FC9AE42FA}$CLT;$SUP=&lt;none&gt;$SUP;$ENDXREF;"/>
+					<tags/>
+				</source>
+				<target xmi:idref="EAID_0AE6E0B9_8286_4edc_8F93_C075FECEDB8B">
+					<model ea_localid="18" type="Class" name="Place"/>
+					<role name="ending" visibility="Public" targetScope="instance"/>
+					<type multiplicity="1..*" aggregation="none" containment="Unspecified"/>
+					<constraints/>
+					<modifiers isOrdered="false" changeable="none" isNavigable="true"/>
+					<style value="Union=0;Derived=0;AllowDuplicates=0;Owned=0;Navigable=Unspecified;"/>
+					<documentation/>
+					<xrefs value="$XREFPROP=$XID={ED3DE87B-76A8-4cbe-A1A3-02DEEFC90936}$XID;$NAM=CustomProperties$NAM;$TYP=connectorDestEnd property$TYP;$VIS=Public$VIS;$DES=@PROP=@NAME=isDerivedUnion@ENDNAME;@TYPE=Boolean@ENDTYPE;@VALU=false@ENDVALU;@PRMT=@ENDPRMT;@ENDPROP;@PROP=@NAME=isDerived@ENDNAME;@TYPE=Boolean@ENDTYPE;@VALU=false@ENDVALU;@PRMT=@ENDPRMT;@ENDPROP;@PROP=@NAME=default@ENDNAME;@TYPE=String@ENDTYPE;@VALU=@ENDVALU;@PRMT=@ENDPRMT;@ENDPROP;@PROP=@NAME=isReadOnly@ENDNAME;@TYPE=Boolean@ENDTYPE;@VALU=false@ENDVALU;@PRMT=@ENDPRMT;@ENDPROP;@PROP=@NAME=isComposite@ENDNAME;@TYPE=Boolean@ENDTYPE;@VALU=@ENDVALU;@PRMT=@ENDPRMT;@ENDPROP;@PROP=@NAME=aggregation@ENDNAME;@TYPE=AggregationKind@ENDTYPE;@VALU=none@ENDVALU;@PRMT=@ENDPRMT;@ENDPROP;$DES;$CLT={9B93AAA7-E818-454b-9BCE-524FC9AE42FA}$CLT;$SUP=&lt;none&gt;$SUP;$ENDXREF;"/>
+					<tags/>
+				</target>
+				<model ea_localid="6"/>
+				<properties ea_type="Association" subtype="Class" direction="Unspecified"/>
+				<modifiers isRoot="false" isLeaf="false"/>
+				<documentation/>
+				<appearance linemode="3" linecolor="-1" linewidth="1" seqno="0" headStyle="0" lineStyle="0"/>
+				<labels lb="1" lt="+beginning" mt="leads to" rb="1..*" rt="+ending"/>
+				<extendedProperties virtualInheritance="0" associationclass="EAID_D7E65DA1_DB0F_497c_9332_24A139354772" privatedata1="19"/>
+				<style/>
+				<xrefs value="$XREFPROP=$XID={7ECE1CD1-A0E1-467a-913B-9FE9E581E188}$XID;$NAM=CustomProperties$NAM;$TYP=connector property$TYP;$VIS=Public$VIS;$DES=@PROP=@NAME=isDerived@ENDNAME;@TYPE=Boolean@ENDTYPE;@VALU=false@ENDVALU;@PRMT=@ENDPRMT;@ENDPROP;$DES;$CLT={9B93AAA7-E818-454b-9BCE-524FC9AE42FA}$CLT;$SUP=&lt;none&gt;$SUP;$ENDXREF;"/>
+				<tags/>
+			</connector>
+		</connectors>
+		<diagrams>
+			<diagram xmi:id="EAID_ECAACB8E_8261_4d2a_A9F3_7D4BA34A9B95">
+				<model package="EAPK_1ED68805_5B44_4b65_B26C_5C74625C3292" localID="1" owner="EAPK_1ED68805_5B44_4b65_B26C_5C74625C3292"/>
+				<properties name="de.uni_koblenz.jgralabtest.tg2schemagraphtest.testschema0.TestSchema0" type="Logical"/>
+				<project author="chebasqui" version="1.0" created="2005-11-19 00:00:00" modified="2008-08-20 18:32:10"/>
+				<style1 value="ShowPrivate=1;ShowProtected=1;ShowPublic=1;HideRelationships=0;Locked=0;Border=0;HighlightForeign=0;PackageContents=1;SequenceNotes=0;ScalePrintImage=0;PPgs.cx=0;PPgs.cy=0;DocSize.cx=827;DocSize.cy=1169;ShowDetails=0;Orientation=P;Zoom=100;ShowTags=0;OpParams=1;VisibleAttributeDetail=0;ShowOpRetType=1;ShowIcons=1;CollabNums=0;HideProps=0;ShowReqs=0;ShowCons=0;PaperSize=9;HideParents=0;UseAlias=0;HideAtts=0;HideOps=0;HideStereo=0;HideElemStereo=0;ShowTests=0;ShowMaint=0;ConnectorNotation=;ExplicitNavigability=0;AdvancedElementProps=1;AdvancedFeatureProps=1;AdvancedConnectorProps=1;ShowNotes=0;SuppressBrackets=0;SuppConnectorLabels=0;PrintPageHeadFoot=0;"/>
+				<style2 value="ExcludeRTF=0;DocAll=0;HideQuals=0;AttPkg=1;ShowTests=0;ShowMaint=0;SuppressFOC=1;MatrixActive=0;SwimlanesActive=1;MatrixLineWidth=1;MatrixLocked=0;TConnectorNotation=;TExplicitNavigability=0;AdvancedElementProps=1;AdvancedFeatureProps=1;AdvancedConnectorProps=1;ProfileData=;MDGDgm=;STBLDgm=;ShowNotes=0;VisibleAttributeDetail=0;ShowOpRetType=1;SuppressBrackets=0;SuppConnectorLabels=0;PrintPageHeadFoot=0;"/>
+				<swimlanes value="locked=false;orientation=0;width=0;inbar=false;names=false;color=0;bold=false;fcol=0;;cls=0;"/>
+				<matrixitems value="locked=false;matrixactive=false;swimlanesactive=true;width=1;"/>
+				<elements>
+					<element geometry="Left=232;Top=65;Right=322;Bottom=135;" subject="EAID_D7E65DA1_DB0F_497c_9332_24A139354772" seqno="1" style="DUID=D194181D;"/>
+					<element geometry="Left=18;Top=19;Right=108;Bottom=89;" subject="EAID_0AE6E0B9_8286_4edc_8F93_C075FECEDB8B" seqno="2" style="DUID=302B5BD7;"/>
+					<element geometry="SX=0;SY=0;EX=0;EY=0;SCME=1;SCTR=1;EDGE=2;SCTR.LEFT=45;SCTR.TOP=-68;SCTR.RIGHT=171;SCTR.BOTTOM=-39;$LLB=;LLT=CX=64:CY=14:OX=26:OY=18:HDN=0:BLD=0:ITA=0:UND=0:CLR=-1:ALN=0:DIR=0:ROT=0;LMT=CX=38:CY=14:OX=28:OY=9:HDN=0:BLD=0:ITA=0:UND=0:CLR=-1:ALN=0:DIR=1:ROT=0;LMB=;LRT=CX=59:CY=14:OX=62:OY=-1:HDN=0:BLD=0:ITA=0:UND=0:CLR=-1:ALN=0:DIR=0:ROT=0;LRB=;IRHS=;ILHS=;Path=108:-68$171:-68$171:-39$108:-39$;" subject="EAID_9B93AAA7_E818_454b_9BCE_524FC9AE42FA" style="Mode=3;EOID=302B5BD7;SOID=302B5BD7;Color=-1;LWidth=1;Hidden=0;"/>
+				</elements>
+			</diagram>
+		</diagrams>
+	</xmi:Extension>
+</xmi:XMI>
