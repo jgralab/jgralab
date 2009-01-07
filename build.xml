@@ -63,7 +63,12 @@
 
 	<!-- classes directory -->
 	<property name="classes.dir"			
-		value="${project.dir}/build/classes"/>
+		      value="${project.dir}/build/classes"/>
+
+	<!-- test classes directory -->
+	<property name="testclasses.dir"			
+		      value="${project.dir}/build/testclasses"/>
+
 	
 	<!-- temporary directory -->
 	<!-- propterty can be overwritten from caller -->
@@ -99,6 +104,7 @@
 		  <property name="subprojectname" value="jgralab/greql2"/>
 		</ant>
         <delete dir="${test.dir}/de/uni_koblenz/jgralabtest/schemas/" />
+        <delete dir="${testclasses.dir}" />
 	</target>
 	
 	<!-- clean all -->
@@ -119,7 +125,7 @@
 	
 	<!-- compile -->
 	<!-- calls targets jgralab, tgschema2java, greql2 and utilities -->
-	<target name="compile" depends="jgralab,tgschema2java,utilities,greql2,generatetestschemas"/>
+	<target name="compile" depends="jgralab,tgschema2java,utilities,greql2,jgralabtest"/>
 
 	<path id="testschemasclasspath">
 	  <pathelement location="${classes.dir}" />
@@ -150,6 +156,26 @@
 	   		<property name="compileincludes" value="*.java schema/** codegenerator/** impl/**"/>
 			<property name="compileexcludes" value="impl/list/** xmlrpc/**"/>
 	   	</ant>
+	</target>
+
+	<!-- jgralabtest -->
+	<!-- compiles jgralab test sources -->
+	<target name="jgralabtest" depends="generatetestschemas">
+	  <!-- calls target compile in general ant file ${ant}/build.xml -->
+	  <ant dir="${common.dir}" antfile="build.xml" target="compile">
+        <!-- the src.dir is test.dir for that target -->
+        <property name="src.dir" value="${test.dir}"/>
+        <!-- include the top-level tests (which should be suites that call all
+	   	     other tests) -->
+        <property name="compileincludes"
+	   	          value="de/uni_koblenz/jgralabtest/*.java"/>
+	   	<!-- the class files may not go to original classes.dir, else they
+             would be in the jar -->
+        <property name="classes.dir" value="${testclasses.dir}"/>
+        <!-- Cause classes.dir is in common/build.xml's classpath and we
+             changed its value fix the classpath again -->
+        <property name="additional.pathelementlocation" value="${classes.dir}"/>
+	  </ant>
 	</target>
 	
 	<target name="checkxmlrpc">
