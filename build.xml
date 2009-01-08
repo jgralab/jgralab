@@ -118,7 +118,7 @@
 	
 	<!-- compile -->
 	<!-- calls targets jgralab, tgschema2java, greql2 and utilities -->
-	<target name="compile" depends="jgralab,tgschema2java,utilities,greql2"/>
+	<target name="compile" depends="jgralab,tgschema2java,utilities,greql2,generatetestschemas"/>
 
 	<!-- jgralab -->
 	<!-- compiles jgralab basic sources -->
@@ -151,13 +151,13 @@
       </apply>
     </target>
 
-    <property name="clover.jar" value="${comlib.dir}/clover/clover-2.4.2.jar"/>
-    <property name="clover.dest" value="${build.dir}/clover-report"/>
+    <property name="clover.jar" value="${lib.dir}/clover/clover-2.4.2.jar"/>
+    <property name="clover.dest" value="${project.dir}/build/clover-report"/>
     <taskdef resource="cloverlib.xml" classpath="${clover.jar}"/>
     <clover-env/>
 
 
-    <target name="test" depends="generatetestschemas">
+    <target name="test" depends="cleanall,compile">
       <ant dir="${common.dir}" antfile="build.xml" target="test">
         <property name="test.suite"
                   value="de.uni_koblenz.jgralabtest.RunTests"/>
