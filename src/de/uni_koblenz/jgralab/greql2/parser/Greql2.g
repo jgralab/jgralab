@@ -53,6 +53,8 @@ import de.uni_koblenz.jgralab.schema.*;
 
 @members {
 
+    private int[] callCount = new int[50];
+
     private static Logger logger = Logger.getLogger(Greql2Parser.class.getName());
     private final int VMAX = 200;
     private final int EMAX = 300;
@@ -246,6 +248,9 @@ import de.uni_koblenz.jgralab.schema.*;
     			}	
     		}
     	}
+   // 	System.out.println("CallCounts:");
+   // 	for (int i=0; i<callCount.length; i++)
+   // 		System.out.println("Calls of " + i + ": " + callCount[i]);
     	return graph;
     }
 
@@ -745,19 +750,20 @@ IDENT
 
 
 
-variableList returns [ArrayList<VertexPosition> variables = new ArrayList<VertexPosition>()] 
+variableList returns [ArrayList<VertexPosition> variables = null] 
 @init{
-    VertexPosition v = new VertexPosition();
     int offset = 0;
     int length = 0;
     offset = getLTOffset();
 }
 : var = variable
   {
-   	length = getLTLength(offset);
+        VertexPosition v = new VertexPosition();
+   	    length = getLTLength(offset);
         v.node = var;
         v.offset = offset;
         v.length = length;
+        variables = new ArrayList<VertexPosition>();
         variables.add(v);
   }
   (COMMA list = variableList
@@ -778,12 +784,15 @@ variable returns [Variable var = null]
 ;
 
 
-importDeclarationList returns [Set<String> typeNames = new HashSet<String>();]
+importDeclarationList returns [Set<String> typeNames = null]
 :
     IMPORT
     importedType = qualifiedName
     ((DOT) => (DOT STAR {importedType += ".*";}) | )
-    {typeNames.add(importedType);}
+    {
+      typeNames = new HashSet<String>();
+      typeNames.add(importedType);
+    }
     SEMI 
 (
   (IMPORT) => (followingNames = importDeclarationList {typeNames.addAll(followingNames);})
@@ -798,13 +807,13 @@ greqlExpression
 	int length = 0;
 	initialize();
 	Greql2Expression root = graph.createGreql2Expression();
+	callCount[33]++; 
 }
 : (
-    ((IMPORT) => 
     (
     	typeNames = importDeclarationList
         {root.setImportedTypes(typeNames);}
-    ) | /* no import */)
+    )?
     (USING varList = variableList COLON)?
     { offset = input.LT(1).getCharPositionInLine()-1; }
     expr = expression
@@ -844,7 +853,7 @@ expression returns [Expression result = null]
 /** matches quantifiedExpressions
     @return vertex representing the quantified expression
 */
-quantifiedExpression returns [Expression result]
+quantifiedExpression returns [Expression result = null]
 @init{
 	int offsetQuantifier = 0;
 	int offsetQuantifiedDecl = 0;
@@ -852,6 +861,8 @@ quantifiedExpression returns [Expression result]
 	int lengthQuantifier = 0;
 	int lengthQuantifiedDecl = 0;
 	int lengthQuantifiedExpr = 0;
+	callCount[0]++;
+	//System.out.println("Starting parsing of QuantifiedExpression");
 }
 :
   ((quantifier) => ( 
@@ -922,6 +933,8 @@ letExpression returns [Expression result = null]
 @init{
 	int offset = 0;
 	int length = 0;
+	//	System.out.println("Starting parsing of LetExpression");
+	callCount[1]++;
 }
 :
 (
@@ -960,6 +973,8 @@ whereExpression returns [Expression result = null]
 @init{
 	int offset = 0;
 	int length = 0;
+	//	System.out.println("Starting parsing of WhereExpression");
+	callCount[2]++;
 }
 :
 { offset = input.LT(1).getCharPositionInLine()-1; }
@@ -995,20 +1010,23 @@ if ((defList != null) && (!defList.isEmpty())){ //defList is empty if it's not a
 /** matches a list of definitions for let- or where expressions
 @return
 */
-definitionList returns [ArrayList<VertexPosition> definitions = new ArrayList<VertexPosition>()] 
+definitionList returns [ArrayList<VertexPosition> definitions = null] 
 @init{
-    VertexPosition def = new VertexPosition();
     int offset = 0;
     int length = 0;
+   // System.out.println("Starting parsing of DefinitionList");
+   callCount[3]++;
 }
 	:
 		{ offset = getLTOffset(); }
 		v = definition
         {
 			length = getLTLength(offset);
+			VertexPosition def = new VertexPosition();
         	def.node = v;
             def.offset = offset;
             def.length = length;
+            definitions = new ArrayList<VertexPosition>();
             definitions.add(def);
         }
 		(	(COMMA) =>
@@ -1029,6 +1047,7 @@ definition returns [Definition definition = null]
   	int offsetExpr = 0;
     int lengthVar = 0;
     int lengthExpr = 0;
+    callCount[4]++;
 }
 :
 	{offsetVar = getLTOffset(); }
@@ -1065,6 +1084,8 @@ conditionalExpression returns [Expression result = null]
 	int lengthTrueExpr = 0;
 	int lengthFalseExpr = 0;
 	int lengthNullExpr = 0;
+	callCount[5]++;
+		//System.out.println("Starting parsing of ConditionalExpression");
 }
 :
     { offsetExpr = getLTOffset(); }
@@ -1116,6 +1137,8 @@ conditionalExpression returns [Expression result = null]
 orExpression returns [Expression result]
 @init{
     FunctionConstruct construct = new FunctionConstruct();
+  //  System.out.println("Starting parsing of OrExpression");
+  callCount[6]++;
 }
 :
   { construct.preArg1(); }
@@ -1139,6 +1162,7 @@ orExpression returns [Expression result]
 xorExpression returns [Expression result]
 @init{
     FunctionConstruct construct = new FunctionConstruct();
+    callCount[7]++;
 }
 :
   { construct.preArg1(); }
@@ -1157,6 +1181,7 @@ xorExpression returns [Expression result]
 andExpression returns [Expression result]
 @init{
     FunctionConstruct construct = new FunctionConstruct();
+    callCount[8]++;
 }
 :
   { construct.preArg1(); }
@@ -1177,6 +1202,8 @@ andExpression returns [Expression result]
 equalityExpression returns [Expression result]
 @init{
     FunctionConstruct construct = new FunctionConstruct();
+    //	System.out.println("Starting parsing of EqualityExpression");
+    callCount[9]++;
 }
 :
   { construct.preArg1(); }
@@ -1209,6 +1236,8 @@ relationalExpression returns [Expression result]
 @init{
     String name = null;
     FunctionConstruct construct = new FunctionConstruct();
+    //	System.out.println("Starting parsing of RelationalExpression");
+    callCount[10]++;
 }
 :
   { construct.preArg1(); }
@@ -1232,6 +1261,8 @@ relationalExpression returns [Expression result]
 additiveExpression returns [Expression result]
 @init{
     FunctionConstruct construct = new FunctionConstruct();
+    	//System.out.println("Starting parsing of AdditiveExpression");
+    	callCount[11]++;
 }
 :
   { construct.preArg1(); }
@@ -1252,6 +1283,8 @@ additiveExpression returns [Expression result]
 multiplicativeExpression returns [Expression result]
 @init{
     FunctionConstruct construct = new FunctionConstruct();
+    	//System.out.println("Starting parsing of MultiplicatiyExpression");
+    	callCount[12]++;
 }
 :
   { construct.preArg1(); }
@@ -1279,6 +1312,7 @@ multiplicativeExpression returns [Expression result]
 unaryExpression returns [Expression result = null]
 @init{
     FunctionConstruct construct = new FunctionConstruct();
+    callCount[13]++;
 }
 :
 ((unaryOperator) =>  
@@ -1342,6 +1376,7 @@ restrictedExpression returns [Expression result = null]
     int offsetRestr = 0;
     int lengthExpr = 0;
     int lengthRestr = 0;
+    callCount[14]++;
 }
 :
 { offsetExpr = getLTOffset(); }
@@ -1385,13 +1420,14 @@ valueAccess returns [Expression result = null]
 @init{
 	int offset = 0;
 	int length = 0;
+	callCount[15]++;
 }
 	:
 		{offset = getLTOffset(); }
         expr = primaryExpression
         {$result = expr; length = getLTLength(offset); }
 		(
-		    ( LBRACK primaryPathDescription) => /*nothin*/ |
+		    ( LBRACK primaryPathDescription) => /*nothin*/ () |
 			(DOT | LBRACK) => ( expr = valueAccess2[expr, offset, length] {$result = expr;})
 			| /* nothing */
 		)
@@ -1410,6 +1446,7 @@ valueAccess2[Expression arg1, int offsetArg1, int lengthArg1] returns [Expressio
     int offsetOperator = 0;
     int lengthArg2 = 0;
     int lengthOperator = 0;
+    callCount[16]++;
 }
 :	{ offsetOperator = getLTOffset(); }
     (   (	DOT
@@ -1450,18 +1487,29 @@ valueAccess2[Expression arg1, int offsetArg1, int lengthArg1] returns [Expressio
 	valueConstruction, functionAppl., subgraph, simpleQuery, cfGrammar, variable)
 */
 primaryExpression returns [Expression result = null] 
+@init{
+callCount[17]++;
+}
 :
-(   ((LPAREN alternativePathDescription RPAREN) => altPath = alternativePathDescription {$result = altPath;} )
-|   ((LPAREN) => LPAREN expression RPAREN {$result = $expression.result;} )
+(   
+    ((LPAREN) => LPAREN parenthesedExpression {$result = $parenthesedExpression.result;} )
 |	(rangeExpression {$result = $rangeExpression.expr;})
-|	(alternativePathDescription) => (altPath = alternativePathDescription {$result = altPath;})
-| 	(functionApplication) => (functionApplication {$result = $functionApplication.expr;})
-|	(valueConstruction) => (valueConstruction {$result = $valueConstruction.result;})
+|	(altPath = alternativePathDescription {$result = altPath;})
+| 	(functionApplication {$result = $functionApplication.expr;})
+|	(valueConstruction {$result = $valueConstruction.result;})
 |	(variable {$result = $variable.var;})
 | 	(graphRangeExpression {$result = $graphRangeExpression.expr;})
 |	(literal {$result = $literal.literal;})
 |   (simpleQuery {$result = $simpleQuery.comprehension;}))
 ;
+
+
+parenthesedExpression returns [Expression result]
+:
+(alternativePathDescription RPAREN) => (alternativePathDescription {$result = $alternativePathDescription.result;} ) 
+|   (expression RPAREN {$result = $expression.result;} )
+;
+
 
 /** matches a pathdescription
 */
@@ -1477,6 +1525,7 @@ alternativePathDescription
 */
 alternativePathDescription returns [PathDescription result = null] 
 @init {
+callCount[18]++;
 	PathDescription pathDescr = null;
 	int offsetPart1 = 0;
 	int lengthPart1 = 0;
@@ -1490,18 +1539,19 @@ alternativePathDescription returns [PathDescription result = null]
     lengthPart1 = getLTLength(offsetPart1);
     $result = part1;
   }
-((BOR) => (BOR
+(BOR
   {offsetPart2 = getLTOffset(); }
   part2 = alternativePathDescription
   {
 	$result = addPathElement(AlternativePathDescription.class, IsAlternativePathOf.class, pathDescr, part1, offsetPart1, lengthPart1, part2, offsetPart2, lengthPart2);
-}) | )	
+})?
 ;
 
 	   
 	   
 intermediateVertexPathDescription returns [PathDescription result = null] 
 @init {
+callCount[19]++;
 	PathDescription pathDescr = null;
 	int offsetPart1 = 0;
 	int lengthPart1 = 0;
@@ -1517,6 +1567,7 @@ intermediateVertexPathDescription returns [PathDescription result = null]
     $result = part1;
     lengthPart1 = getLTLength(offsetPart1);
   }
+  /* Removing the following syntactiv predicate doesn't work to to nondeterminism */
 ( (restrictedExpression sequentialPathDescription) => 
   (
     {offsetExpr = getLTOffset(); }
@@ -1537,6 +1588,7 @@ intermediateVertexPathDescription returns [PathDescription result = null]
 
 sequentialPathDescription returns [PathDescription result = null] 
 @init {
+callCount[20]++;
 	PathDescription pathDescr = null;
 	int offsetPart1 = 0;
 	int lengthPart1 = 0;
@@ -1550,6 +1602,7 @@ sequentialPathDescription returns [PathDescription result = null]
     $result = part1;
     lengthPart1 = getLTLength(offsetPart1);
   }
+    /* Removing the following syntactiv predicate doesn't work to to nondeterminism */
 ( /*{offsetPart2 = getLTOffset(); } TODO */
   (sequentialPathDescription) =>
   (part2 = sequentialPathDescription
@@ -1561,6 +1614,7 @@ sequentialPathDescription returns [PathDescription result = null]
 
 startRestrictedPathDescription returns [PathDescription result = null] 
 @init{
+callCount[21]++;
 	int offset = 0;
 	int length = 0;
 }
@@ -1592,6 +1646,7 @@ pathDescr = goalRestrictedPathDescription
 	
 goalRestrictedPathDescription returns [PathDescription result = null] 
 @init{
+callCount[22]++;
 	int offset = 0;
 	int length = 0;
 }
@@ -1627,6 +1682,7 @@ iteratedOrTransposedPathDescription
 
 iteratedOrTransposedPathDescription	returns [PathDescription result = null]
 @init{
+callCount[23]++;
    	PathDescription pathDesc = null;
    	int offsetPath = 0;
  	int lengthPath = 0;
@@ -1648,6 +1704,7 @@ primaryPathDescription
 
 iteration[PathDescription iteratedPath, int offsetPath, int lengthPath] returns [PathDescription result = null] 
 @init{
+callCount[24]++;
    	String iteration = null;
  	int offsetExpr = 0;
  	int lengthExpr = 0;
@@ -1707,15 +1764,16 @@ iteration[PathDescription iteratedPath, int offsetPath, int lengthPath] returns 
 
 primaryPathDescription returns [PathDescription result = null]
 @init{
+callCount[25]++;
 	int offset = 0;
 	int length = 0;
 }
 :
-  ( (LPAREN) => (LPAREN pathDescr = pathDescription {$result = pathDescr;} RPAREN ) 
-  | (simplePathDescription) => (pathDescr = simplePathDescription  {$result = pathDescr;}))
+  ( (LPAREN pathDescription) => (LPAREN pathDescr = pathDescription {$result = pathDescr;} RPAREN )
+  | (simplePathDescription) => (pathDescr = simplePathDescription  {$result = pathDescr;})
   | (aggregationPathDescription) => (pathDescr = aggregationPathDescription  {$result = pathDescr;})
   | (edgePathDescription) => (pathDescr = edgePathDescription    {$result = pathDescr;})
-  | (LBRACK) => (LBRACK
+      | (LBRACK) => (LBRACK
       { offset = getLTOffset(); }
       pathDescr = pathDescription
       { length = getLTLength(offset); }
@@ -1726,8 +1784,11 @@ primaryPathDescription returns [PathDescription result = null]
 		optionalPathOf.setSourcePositions((createSourcePositionList(length, offset)));
 	    $result = optPathDescr;
       }
-    )
+    ) 
+  )
 ;
+
+
 
 
 /** matches a simle pathdescription consisting of an arrow simple
@@ -1735,6 +1796,7 @@ primaryPathDescription returns [PathDescription result = null]
 */
 simplePathDescription returns [PrimaryPathDescription result = null]
 @init{
+callCount[26]++;
     Direction dir;
     String direction = "any";
     int offsetDir = 0;
@@ -1779,6 +1841,7 @@ simplePathDescription returns [PrimaryPathDescription result = null]
 */
 aggregationPathDescription returns [AggregationPathDescription result = null]
 @init{
+callCount[27]++;
     boolean outAggregation = true;
     int offsetDir = 0;
 }
@@ -1807,6 +1870,7 @@ aggregationPathDescription returns [AggregationPathDescription result = null]
 */
 edgePathDescription returns [EdgePathDescription result = null] 
 @init{
+callCount[28]++;
 	Direction dir = null;
     boolean edgeStart = false;
     boolean edgeEnd = false;
@@ -1865,6 +1929,7 @@ i=IDENT
 */
 functionApplication returns [FunctionApplication expr = null]
 @init{
+callCount[29]++;
     FunctionId functionId = null;
     int offset = 0;
     int length = 0;
@@ -2374,6 +2439,9 @@ numericLiteral returns [Expression literal = null]
 
 
 literal returns [Expression literal = null]
+@init{
+callCount[30]++;
+}
 :
 	(token=STRING_LITERAL
     {
@@ -2652,6 +2720,7 @@ reportClause returns [Comprehension comprehension = null]
 
 simpleQuery returns [Comprehension comprehension = null]
 @init{
+callCount[31]++;
     Declaration declaration = null;
     int offsetDecl = 0;
     int lengthDecl = 0;
@@ -2707,55 +2776,56 @@ simpleQuery returns [Comprehension comprehension = null]
 		}
 		END
 	;		
-		
-		
-		
+			
+
+/* Original rule */		
 pathExpression returns [Expression result = null] 
 @init{
 	int offsetArg1 = 0;
 	int lengthArg1 = 0;
+	callCount[32]++;
 }		
 :
 /* AlternativePathDescrition as path of backwardVertexSet or backwardPathSystem */
 (alternativePathDescription (SMILEY | restrictedExpression)) => 
   ( regBackwardVertexSetOrPathSystem  {$result = $regBackwardVertexSetOrPathSystem.result; })
 |
-/* AlternativePathDescription as path of forwardVertexSet, pathExistence */
-(restrictedExpression alternativePathDescription) => 
-  ( regPathExistenceOrForwardVertexSet {$result = $regPathExistenceOrForwardVertexSet.result;} )
-|  
-/* AlternativePathDescription as path of forwardPathSystem */
-(restrictedExpression SMILEY) => 
-  (regPathOrPathSystem {$result = $regPathOrPathSystem.result; })
-|  
-/* restricted expression as path path expression */
-(restrictedExpression) => (restrictedExpression {$result = $restrictedExpression.result; }) 
+(restrictedExpression) => (
+  {offsetArg1 = getLTOffset();}
+  expr = restrictedExpression
+  {
+    lengthArg1 = getLTLength(offsetArg1);
+    $result = expr;
+  }
+  (
+    /* AlternativePathDescription as path of forwardVertexSet, pathExistence */
+    (alternativePathDescription) => 
+       (regPathExistenceOrForwardVertexSet[expr, offsetArg1, lengthArg1] {$result = $regPathExistenceOrForwardVertexSet.result;} )
+    |
+    /* AlternativePathDescription as path of forwardPathSystem */
+    (SMILEY) => 
+       (regPathOrPathSystem[expr, offsetArg1, lengthArg1] {$result = $regPathOrPathSystem.result; })
+    |
+      /* pure restricted expression */
+  )   
+)
 |
 /* AlternativePathDescription as vertexPairs */
-(alternativePathDescription {$result = $alternativePathDescription.result;})
-;    
+  (alternativePathDescription {$result = $alternativePathDescription.result;})
+;
 
 
-
-
-regPathExistenceOrForwardVertexSet returns [Expression result = null]
+regPathExistenceOrForwardVertexSet[Expression expr, int offsetArg1, int lengthArg1] returns [Expression result = null]
 @init{
 	int offsetPathDescr = 0;
 	int offsetExpr = 0;
 	int lengthPathDescr = 0;
 	int lengthExpr = 0;
-	int lengthArg1 = 0;
-	int offsetArg1 = 0;
 }
 	:
 	{
-	  offsetExpr = getLTOffset();
-	  offsetArg1 = offsetExpr;
-	}
-    expr = restrictedExpression
-	{
-		lengthArg1 = getLTLength(offsetExpr);
-	    offsetPathDescr = getLTOffset();
+	  offsetExpr = offsetArg1;
+	  offsetPathDescr = getLTOffset();
 	}
 	pathDescr = pathDescription
     {lengthPathDescr = getLTLength(offsetPathDescr);}
@@ -2798,7 +2868,7 @@ regPathExistenceOrForwardVertexSet returns [Expression result = null]
 	
 
 
-regPathOrPathSystem returns [Expression result = null]
+regPathOrPathSystem[Expression arg1, int offsetArg1, int lengthArg1] returns [Expression result = null]
 @init{
     boolean isPath = false;
     int offsetPathDescr = 0;
@@ -2807,18 +2877,11 @@ regPathOrPathSystem returns [Expression result = null]
     int offsetExpr = 0;
     int lengthPathDescr = 0;
     int lengthExpr = 0;
-    int offsetArg1 = 0;
-    int lengthArg1 = 0;
 }
 :
 	{
-	  offsetExpr = getLTOffset();
-	  offsetArg1 = offsetExpr;
-	}
-    arg1 = restrictedExpression
-	{
-		lengthArg1 = getLTLength(offsetExpr);
-		offsetOperator1 = getLTOffset(); 
+	   offsetExpr = offsetArg1;
+	   offsetOperator1 = getLTOffset(); 
 	}
 	SMILEY
     { offsetPathDescr = getLTOffset(); }
