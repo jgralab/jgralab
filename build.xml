@@ -80,8 +80,7 @@
 	
 	<!-- library directory -->
 	<property name="lib.dir"				
-		value="${project.dir}/lib"/>	
-
+		      value="${project.dir}/lib"/>	
 	
 	<!-- build -->
 	<!-- main target - calls targets clean and jar -->	
@@ -94,12 +93,12 @@
 	<!-- clean -->
 	<!-- deletes all classes, the jar, the temporary files and all generated schema and parser files -->
 	<target name="clean">
-		<!-- calls target clean in general ant file ${ant}/build.xml -->
-		<ant dir="${common.dir}" antfile="build.xml" target="clean">
-		  <property name="subprojectname" value="jgralab/greql2"/>
-		</ant>
-        <delete dir="${test.dir}/de/uni_koblenz/jgralabtest/schemas/" />
-	</target>
+	  <!-- calls target clean in general ant file ${ant}/build.xml -->
+	  <ant dir="${common.dir}" antfile="build.xml" target="clean">
+		<property name="subprojectname" value="jgralab/greql2"/>
+	  </ant>
+      <delete dir="${test.dir}/de/uni_koblenz/jgralabtest/schemas/" />
+    </target>
 	
 	<!-- clean all -->
 	<!-- deletes all classes, the jar, the temporary files, the documentation, the testresults and all generated schema and grammar files -->
@@ -151,6 +150,12 @@
         <fileset dir="${testschemas.dir}" includes="*.tg"/>
       </apply>
     </target>
+
+    <property name="clover.jar" value="${comlib.dir}/clover/clover-2.4.2.jar"/>
+    <property name="clover.dest" value="${build.dir}/clover-report"/>
+    <taskdef resource="cloverlib.xml" classpath="${clover.jar}"/>
+    <clover-env/>
+
 
     <target name="test" depends="generatetestschemas">
       <ant dir="${common.dir}" antfile="build.xml" target="test">
