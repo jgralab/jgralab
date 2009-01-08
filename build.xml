@@ -51,8 +51,8 @@
 	
 	<!-- source directory -->
 	<property name="src.dir"				
-		value="${project.dir}/src"/>
-
+		      value="${project.dir}/src"/>
+    
 	<!-- test directory -->
 	<property name="test.dir"				
 		      value="${project.dir}/testit"/>
@@ -65,11 +65,6 @@
 	<property name="classes.dir"			
 		      value="${project.dir}/build/classes"/>
 
-	<!-- test classes directory -->
-	<property name="testclasses.dir"			
-		      value="${project.dir}/build/testclasses"/>
-
-	
 	<!-- temporary directory -->
 	<!-- propterty can be overwritten from caller -->
 	<property name="tmp.dir" 		
@@ -104,7 +99,6 @@
 		  <property name="subprojectname" value="jgralab/greql2"/>
 		</ant>
         <delete dir="${test.dir}/de/uni_koblenz/jgralabtest/schemas/" />
-        <delete dir="${testclasses.dir}" />
 	</target>
 	
 	<!-- clean all -->
@@ -125,27 +119,7 @@
 	
 	<!-- compile -->
 	<!-- calls targets jgralab, tgschema2java, greql2 and utilities -->
-	<target name="compile" depends="jgralab,tgschema2java,utilities,greql2,jgralabtest"/>
-
-	<path id="testschemasclasspath">
-	  <pathelement location="${classes.dir}" />
-	  <fileset dir="${lib.dir}" includes="**/*.jar"/>	
-	  <fileset dir="${comlib.dir}" includes="**/*.jar"/>	
-	</path>
-
-    <target name="generatetestschemas">
-      <echo>generatetestschema started</echo>
-      <apply executable="java">
-        <arg value="-cp"/>
-        <arg pathref="testschemasclasspath"/>
-        <arg value="de.uni_koblenz.jgralab.utilities.tgschema2java.TgSchema2Java"/>
-        <arg value="-f"/>
-        <srcfile/>
-        <arg line="-p ${test.dir}"/>
-        <fileset dir="${testschemas.dir}" includes="*.tg"/>
-      </apply>
-      <echo>generatetestschemas finished</echo>
-    </target>
+	<target name="compile" depends="jgralab,tgschema2java,utilities,greql2"/>
 
 	<!-- jgralab -->
 	<!-- compiles jgralab basic sources -->
@@ -159,25 +133,33 @@
 	</target>
 
 	<!-- jgralabtest -->
-	<!-- compiles jgralab test sources -->
-	<target name="jgralabtest" depends="generatetestschemas">
-	  <!-- calls target compile in general ant file ${ant}/build.xml -->
-	  <ant dir="${common.dir}" antfile="build.xml" target="compile">
-        <!-- the src.dir is test.dir for that target -->
-        <property name="src.dir" value="${test.dir}"/>
-        <!-- include the top-level tests (which should be suites that call all
-	   	     other tests) -->
-        <property name="compileincludes"
-	   	          value="de/uni_koblenz/jgralabtest/*.java"/>
-	   	<!-- the class files may not go to original classes.dir, else they
-             would be in the jar -->
-        <property name="classes.dir" value="${testclasses.dir}"/>
-        <!-- Cause classes.dir is in common/build.xml's classpath and we
-             changed its value fix the classpath again -->
-        <property name="additional.pathelementlocation" value="${classes.dir}"/>
-	  </ant>
-	</target>
-	
+
+	<path id="testschemasclasspath">
+	  <pathelement location="${classes.dir}" />
+	  <fileset dir="${lib.dir}" includes="**/*.jar"/>	
+	  <fileset dir="${comlib.dir}" includes="**/*.jar"/>	
+	</path>
+
+    <target name="generatetestschemas">
+      <apply executable="java">
+        <arg value="-cp"/>
+        <arg pathref="testschemasclasspath"/>
+        <arg value="de.uni_koblenz.jgralab.utilities.tgschema2java.TgSchema2Java"/>
+        <arg value="-f"/>
+        <srcfile/>
+        <arg line="-p ${test.dir}"/>
+        <fileset dir="${testschemas.dir}" includes="*.tg"/>
+      </apply>
+    </target>
+
+    <target name="test" depends="generatetestschemas">
+      <ant dir="${common.dir}" antfile="build.xml" target="test">
+        <property name="test.suite"
+                  value="de.uni_koblenz.jgralabtest.RunTests"/>
+      </ant>
+    </target>
+
+	<!-- Check XML-RPC -->
 	<target name="checkxmlrpc">
 		<condition property="is_xmlrpc_enabled">
 			<or>
@@ -193,9 +175,10 @@
 	
 	<target name="xmlrpc" depends="checkxmlrpc" if="is_xmlrpc_enabled">
 		<ant dir="${common.dir}" antfile="build.xml" target="compile">
-			<property name="src.dir" value="${src.dir}/de/uni_koblenz/${projectname}"/>
+			<property name="src.dir"
+                      value="${src.dir}/de/uni_koblenz/${projectname}"/>
 			<property name="compileincludes" value="xmlrpc/**"/>
-<!-- 			<property name="compileexcludes" value="impl/list/**"/> -->
+            <!-- <property name="compileexcludes" value="impl/list/**"/> -->
 	   	</ant>
 	</target>
 	
@@ -243,6 +226,7 @@
 			<property name="grammarfile" value = "greql2parser.g"/>			
 		</ant>-->
 	</target>
+
 	<!-- compiles greql2 sources -->
 	<target name="greql2" depends="greql2sources">
 		<!-- calls target compile in general ant file ${ant}/build.xml -->
@@ -307,13 +291,6 @@
 		<ant dir="${common.dir}" antfile="build.xml" target="jar"/>
 	</target>
 			
-	<!-- test -->
-	<!-- tests all exisiting junit test cases -->
-	<target name="test" depends="compile">
-		<!-- calls target test in general ant file ../common/build.xml -->
-	   	<ant dir="${common.dir}" antfile="build.xml" target="test"/>
-	</target>
-	
 	<!-- document -->
 	<!-- documents all sources -->
 	<target name="verbosedocument" depends="grumlsources,greql2sources">
