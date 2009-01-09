@@ -86,7 +86,7 @@ public class Greql2FunctionLibrary {
 			"Matches", "MaxPathLength", "MinPathLength", "Minus", "Modulo",
 			"Nequals", "NodeTrace", "Not", "NthElement", "Or", "OutDegree",
 			"Parent", "PathConcat", "PathLength", "PathSystem", "Plus", "Pos",
-			"ReachableVertices", "ReMatch", "SchemaFunctions", "Siblings",
+			"ReachableVertices", "ReMatch", "Siblings",
 			"Slice", "SquareRoot", "StartVertex", "Subtypes", "Sum",
 			"Supertypes", "SymDifference", "TheElement", "Times",
 			"TopologicalSort", "ToSet", "ToString", "Type", "TypeName",
