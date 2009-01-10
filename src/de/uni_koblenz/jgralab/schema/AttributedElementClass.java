@@ -36,20 +36,20 @@ import de.uni_koblenz.jgralab.schema.exception.ReservedWordException;
  * This is the base class of any <code>GraphClass</code>/
  * <code>VertexClass</code>/<code>EdgeClass</code>/<code>AggregationClass</code>
  * /<code>CompositionClass</code>.
- *
+ * 
  * <p>
  * In the following, <code>attrElement</code>, and <code>attrElement'</code>, will
  * represent the states of the given <code>AttributedElementClass</code> before,
  * respectively after, any operation.
  * </p>
- *
+ * 
  * @author ist@uni-koblenz.de
  */
 public interface AttributedElementClass extends NamedElement,
 		Comparable<AttributedElementClass> {
 	/**
 	 * Sets the package of this Domain to <code>p</code>.
-	 *
+	 * 
 	 * @param p
 	 *            the package of this Domain.
 	 */
@@ -99,7 +99,7 @@ public interface AttributedElementClass extends NamedElement,
 	/**
 	 * Tests if the given Class is a subclass of this class or equal to this
 	 * class
-	 *
+	 * 
 	 * @param anAttributedElementClass
 	 *            the class to test
 	 * @return true iff the given AttributedElementClass is a subclass of this
@@ -109,33 +109,65 @@ public interface AttributedElementClass extends NamedElement,
 			AttributedElementClass anAttributedElementClass);
 
 	/**
-	 * @return the set of direct superclasses this class is subclass of
+	 * Lists all direct superclasses of this element.
+	 * 
+	 * <p>
+	 * <b>Note:</b> Each instance of a subclass of
+	 * <code>AttributedElementClass</code> has at least one default superclass.
+	 * Please consult the specifications of the used subclass for details.
+	 * </p>
+	 * 
+	 * <p>
+	 * <b>Pattern:</b>
+	 * <code>superClasses = attrElement.getDirectSuperClasses();</code>
+	 * </p>
+	 * 
+	 * <p>
+	 * <b>Preconditions:</b> none
+	 * </p>
+	 * 
+	 * <p>
+	 * <b>Postconditions:</b>
+	 * <ul>
+	 * <li><code>superClasses.size()</code> >= 0</li>
+	 * <li><code>superClasses</code> holds all of <code>attrElement´s</code>
+	 * direct superclasses</li>
+	 * <li><code>superClasses</code> does not hold any of this element´s
+	 * indirect superclasses
+	 * </ul>
+	 * </p>
+	 * 
+	 * @return the set of direct superclasses of this element
 	 */
 	public Set<AttributedElementClass> getDirectSuperClasses();
 
 	/**
 	 * Lists all direct and indirect superclasses of this element.
-	 *
+	 * 
 	 * <p>
-	 * <b>Note:</b> Each instance of a subclass of AttributedElement has at
-	 * least one default superclass. Please consult the specifications of the
-	 * used subclass of AttributedElement for details.
+	 * <b>Note:</b> Each instance of a subclass of
+	 * <code>AttributedElementClass</code> has at least one default superclass.
+	 * Please consult the specifications of the used subclass for details.
 	 * </p>
-	 *
+	 * 
 	 * <p>
 	 * <b>Pattern:</b>
 	 * <code>superClasses = attrElement.getAllSuperClasses();</code>
 	 * </p>
-	 *
+	 * 
 	 * <p>
 	 * <b>Preconditions:</b> none
 	 * </p>
-	 *
+	 * 
 	 * <p>
-	 * <b>Postconditions:</b> <code>superClasses</code> holds all of this
-	 * element´s direct and indirect superclasses</li>
+	 * <b>Postconditions:</b>
+	 * <ul>
+	 * <li><code>superClasses.size()</code> >= 0</li>
+	 * <li><code>superClasses</code> holds all of <code>attrElement´s</code>
+	 * direct and indirect superclasses</li>
+	 * </ul>
 	 * </p>
-	 *
+	 * 
 	 * @return the set of direct and indirect superclasses of this element
 	 */
 	public Set<AttributedElementClass> getAllSuperClasses();
@@ -162,14 +194,14 @@ public interface AttributedElementClass extends NamedElement,
 	public String getQualifiedName();
 
 	/**
-	 * Adds a new <code>Attribute</code> by the given <code>name</code> and
-	 * <code>domain</code> to this <code>AttributedElement</code>.
-	 *
-	 *
+	 * Adds an attribute with the given <code>name</code> and
+	 * <code>domain</code> to this element.
+	 * 
+	 * 
 	 * <p>
 	 * <b>Pattern:</b> <code>attrElement.addAttribute(name, domain);</code>
 	 * </p>
-	 *
+	 * 
 	 * <p>
 	 * <b>Preconditions:</b>
 	 * <ul>
@@ -178,69 +210,82 @@ public interface AttributedElementClass extends NamedElement,
 	 * words} and/or
 	 * {@link de.uni_koblenz.jgralab.schema.Schema#reservedJavaWords reserved
 	 * Java words}.</li>
-	 * <li>The <code>name</code> must be distinct from all other
-	 * <code>Attribute</code> names in <code>attrElement</code>, and in
-	 * <code>attrElement´s</code> direct and indirect superclasses.</li>
+	 * <li>The new attribute´s <code>name</code> must be distinct from all of
+	 * this <code>attrElement´s</code> direct and inherited attributes´ names.</li>
 	 * </ul>
 	 * </p>
-	 *
+	 * 
 	 * <p>
-	 * <b>Postcondition:</b> In addition to the <code>Attribute(s)</code>
-	 * already contained directly and indirectly in <code>attrElement</code>, <code>attrElement'</code>
-	 * holds the new <code>Attribute</code>.
+	 * <b>Postconditions:</b> In addition to the direct and inherited
+	 * attributes(s) of <code>attrElement</code>, <code>attrElement'</code> holds a new
+	 * attribute with the specified <code>name</code> and <code>domain</code>.
 	 * </p>
-	 *
+	 * 
 	 * @param name
-	 *            a unique <code>name</code> in the list of
-	 *            <code>Attributes</code> of <code>attrElement</code>
+	 *            a unique <code>name</code> in this element´s list of direct
+	 *            and inherited attributes
 	 * @param domain
-	 *            the <code>Domain</code> of the new <code>Attribute</code>
-	 *
+	 *            the <code>domain</code> of the new <code>Attribute</code>
+	 * 
 	 * @throws DuplicateAttributeException
-	 *             if there is an <code>Attribute</code> with the same
-	 *             <code>name</code> in <code>attrElement</code> or one of its
-	 *             direct or indirect super-/subclasses
-	 *
+	 *             if this element has a direct or inherited attribute with the
+	 *             same <code>name</code>
+	 * 
 	 * @throws ReservedWordException
 	 *             if the <code>name</code> contains reserved TG/Java words
 	 */
 	public void addAttribute(String name, Domain domain);
 
 	/**
-	 * Adds a new <code>Attribute</code> to this <code>AttributedElement</code>.
-	 *
+	 * Adds a new attribute to this element.
+	 * 
 	 * <p>
 	 * <b>Pattern:</b> <code>attrElement.addAttribute(anAttribute);</code>
 	 * </p>
-	 *
+	 * 
 	 * <p>
-	 * <b>Precondition:</b> The <code>name</code> of <code>anAttribute</code>
-	 * must be distinct from all other <code>Attribute</code> names in
-	 * <code>attrElement</code>, and in <code>attrElement´s</code> direct and
-	 * indirect super-/subclasses.
+	 * <b>Preconditions:</b> <code>anAttribute´s</code> name must be distinct
+	 * from all of this <code>attrElement´s</code> direct and inherited
+	 * attributes´ names.
 	 * </p>
-	 *
+	 * 
 	 * <p>
-	 * <b>Postcondition:</b> In addition to the <code>Attribute(s)</code>
-	 * already contained directly and indirectly in <code>attrElement</code>, <code>attrElement'</code>
-	 * holds the new <code>Attribute</code>.
+	 * <b>Postconditions:</b> In addition to the direct and inherited
+	 * attributes(s) of <code>attrElement</code>, <code>attrElement'</code> holds a new
+	 * attribute with the specified <code>name</code> and <code>domain</code>.
 	 * </p>
-	 *
+	 * 
 	 * @param anAttribute
-	 *            the new <code>Attribute</code> to be added to
-	 *            <code>attrElement</code>
-	 *
+	 *            the new attribute to be added to this element
+	 * 
 	 * @throws DuplicateAttributeException
-	 *             if there is an <code>Attribute</code> with the same
-	 *             <code>name</code> in <code>attrElement</code> or one of its
-	 *             direct or indirect super-/subclasses
+	 *             if this element has a direct or inherited attribute with the
+	 *             same <code>name</code>
 	 */
 	public void addAttribute(Attribute anAttribute);
 
 	/**
+	 * Fetches the attribute with the specified <code>name</code> from this
+	 * element or it´s direct and indirect superclasses.
+	 * 
+	 * <p>
+	 * <b>Pattern:</b> <code>attr = attrElement.getAttribute(name);</code>
+	 * </p>
+	 * 
+	 * <p>
+	 * <b>Preconditions:</b> The <code>name</code> must not be empty.
+	 * </p>
+	 * 
+	 * <p>
+	 * <b>Postconditions:</b> <code>attr</code> is a direct or inherited
+	 * attribute of <code>attrElement</code> and has the specified
+	 * <code>name</code>
+	 * </p>
+	 * 
 	 * @param name
-	 *            the name of the attribute
-	 * @return the attribute with the specified name
+	 *            the <code>name</code> of the attribute
+	 * @return the attribute with the specified <code>name</code> or
+	 *         <code>NULL</code> if no such attribute was found
 	 */
 	public Attribute getAttribute(String name);
 
@@ -258,6 +303,23 @@ public interface AttributedElementClass extends NamedElement,
 	public SortedSet<Attribute> getOwnAttributeList();
 
 	/**
+	 * Lists all of this element´s direct and inherited attributes.
+	 * 
+	 * <p>
+	 * <b>Pattern:</b> <code>attrs = attrElement.getAttributeList();</code>
+	 * </p>
+	 * 
+	 * <p>
+	 * <b>Preconditions: none
+	 * </p>
+	 * 
+	 * <p>
+	 * <b>Postconditions:</b>
+	 * <li><code>attrs.size()</code> >= 0</li>
+	 * <li><code>attrs</code> contains every of <code>attrElement´s</code>direct
+	 * and inherited attributes
+	 * </p>
+	 * 
 	 * @return the list of attributes of this element and all inherited
 	 *         attributes
 	 */
@@ -266,30 +328,48 @@ public interface AttributedElementClass extends NamedElement,
 	/**
 	 * Checks if this element or a superclass has an attribute with the given
 	 * <code>name</code>.
-	 *
+	 * 
 	 * <p>
-	 * <b>Pattern:</b> <code>attrElement.containsAttribute(name);</code>
+	 * <b>Pattern:</b>
+	 * <code>containsAttr = attrElement.containsAttribute(name);</code>
 	 * </p>
-	 *
+	 * 
 	 * <p>
-	 * <b>Precondition:</b> The <code>name</code> must not be empty.
+	 * <b>Preconditions:</b> The <code>name</code> must not be empty.
 	 * </p>
-	 *
+	 * 
 	 * <p>
 	 * <b>Postconditions:</b> none
 	 * </p>
-	 *
+	 * 
 	 * @param name
 	 *            the <code>name</code> of the attribute to search for
-	 *
+	 * 
 	 * @return <code>true</code>, if the element or a superclass contains an
 	 *         attribute with the specified <code>name</code>
 	 */
 	public boolean containsAttribute(String name);
 
 	/**
-	 * @return the number of attributes this element holds including inherited
-	 *         attributes
+	 * Returns the number of this element´s direct and inherited attributes.
+	 * 
+	 * <p>
+	 * <b>Pattern:</b>
+	 * <code>attrCount = attrElement.containsAttribute(name);</code>
+	 * </p>
+	 * 
+	 * <p>
+	 * <b>Preconditions:</b> none
+	 * </p>
+	 * 
+	 * <p>
+	 * <b>Postconditions:</b>
+	 * <li><code>attrCount</code> >= 0</li>
+	 * <li><code>attrCount</code> equals the number of this element´s direct and
+	 * inherited attributes</li>
+	 * </p>
+	 * 
+	 * @return the number of this element´s direct and inherited attributes
 	 */
 	public int getAttributeCount();
 
@@ -312,33 +392,59 @@ public interface AttributedElementClass extends NamedElement,
 
 	/**
 	 * defines if the element may or may not have any instances
-	 *
+	 * 
 	 * @param isAbstract
 	 *            true or false
 	 */
 	public void setAbstract(boolean isAbstract);
 
 	/**
-	 * @return all direct subclasses of this class
+	 * Lists all direct subclasses of this element.
+	 * 
+	 * <p>
+	 * <b>Pattern:</b>
+	 * <code>subClasses = attrElement.getDirectSubClasses();</code>
+	 * </p>
+	 * 
+	 * <p>
+	 * <b>Preconditions:</b> none
+	 * </p>
+	 * 
+	 * <p>
+	 * <b>Postconditions:</b>
+	 * <ul>
+	 * <li><code>subClasses.size()</code> >= 0</li>
+	 * <li><code>subClasses</code> holds all of this element´s direct subclasses
+	 * </li>
+	 * <li><code>subClasses</code> does not hold any of this element´s indirect
+	 * subclasses
+	 * </ul>
+	 * </p>
+	 * 
+	 * @return the set of direct subclasses of this element
 	 */
 	public Set<AttributedElementClass> getDirectSubClasses();
 
 	/**
 	 * Lists all direct and indirect subclasses of this element.
-	 *
+	 * 
 	 * <p>
 	 * <b>Pattern:</b> <code>subClasses = attrElement.getAllSubClasses();</code>
 	 * </p>
-	 *
+	 * 
 	 * <p>
 	 * <b>Preconditions:</b> none
 	 * </p>
-	 *
+	 * 
 	 * <p>
-	 * <b>Postconditions:</b> <code>subClasses</code> holds all of this
-	 * element´s direct and indirect subclasses</li>
+	 * <b>Postconditions:</b>
+	 * <ul>
+	 * <li><code>subClasses.size()</code> >= 0</li>
+	 * <li><code>subClasses</code> holds all of this element´s direct and
+	 * indirect subclasses</li>
+	 * </ul>
 	 * </p>
-	 *
+	 * 
 	 * @return the set of direct and indirect subclasses of this element
 	 */
 	public Set<AttributedElementClass> getAllSubClasses();
@@ -351,7 +457,7 @@ public interface AttributedElementClass extends NamedElement,
 
 	/**
 	 * Checks if this AttributedElementClass has own attributes
-	 *
+	 * 
 	 * @return true if this AttributedElementClass contains at least one
 	 *         non-inherited attributed, false otherwise
 	 */
@@ -368,7 +474,7 @@ public interface AttributedElementClass extends NamedElement,
 	 * instance, the AttributedElementClasses 'Graph', 'Vertex', 'Edge',
 	 * 'Composition' and 'Aggregation' are such AttributedElementClasses only
 	 * for internal use
-	 *
+	 * 
 	 * @param internal
 	 */
 	public void setInternal(boolean internal);
@@ -394,7 +500,7 @@ public interface AttributedElementClass extends NamedElement,
 	/**
 	 * Returns the least common superclass of this class and the given class
 	 * <code>other</code>
-	 *
+	 * 
 	 * @return the least common superclass
 	 */
 	public AttributedElementClass getLeastCommonSuperclass(
@@ -403,7 +509,7 @@ public interface AttributedElementClass extends NamedElement,
 	/**
 	 * Returns the least common superclass of this class and the classes in the
 	 * set <code>other</code>
-	 *
+	 * 
 	 * @return the least common superclass
 	 */
 	public AttributedElementClass getLeastCommonSuperclass(
