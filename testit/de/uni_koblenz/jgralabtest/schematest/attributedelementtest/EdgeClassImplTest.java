@@ -1,15 +1,18 @@
 package de.uni_koblenz.jgralabtest.schematest.attributedelementtest;
 
+import java.util.Vector;
+
 import org.junit.Before;
 import org.junit.Test;
 
+import de.uni_koblenz.jgralab.schema.AttributedElementClass;
 import de.uni_koblenz.jgralab.schema.EdgeClass;
 import de.uni_koblenz.jgralab.schema.QualifiedName;
 import de.uni_koblenz.jgralab.schema.VertexClass;
 
 public class EdgeClassImplTest extends GraphElementClassImplTest {
 
-	private EdgeClass edgeClass, edgeClass2;
+	private EdgeClass edgeClass;
 	private VertexClass edgeClassFromVertexClass, edgeClassToVertexClass;
 
 	@Before
@@ -27,246 +30,366 @@ public class EdgeClassImplTest extends GraphElementClassImplTest {
 				(int) (Math.random() * 100) + 1, "EdgeClassFromRoleName",
 				edgeClassToVertexClass, 0, (int) (Math.random() * 100) + 1,
 				"EdgeClassToRoleName");
-		attributedElement2 = edgeClass2 = graphClass.createEdgeClass(
-				new QualifiedName("EdgeClass2"), edgeClassFromVertexClass,
-				edgeClassToVertexClass);
 	}
 
 	/**
 	 * addAttribute(Attribute)
-	 *
+	 * 
 	 * TEST CASE: Adding an attribute, already contained in a superclass of this
 	 * element
 	 */
 	@Test
-	@Override
 	public void testAddAttribute4() {
-		edgeClass.addSuperClass(edgeClass2);
+		EdgeClass superClass = graphClass.createEdgeClass(new QualifiedName(
+				"EdgeClassSuperClass"), edgeClassFromVertexClass,
+				edgeClassToVertexClass);
 
-		super.testAddAttribute4();
+		edgeClass.addSuperClass(superClass);
+
+		testAddAttribute4(superClass);
 	}
 
 	/**
 	 * addAttribute(Attribute)
-	 *
+	 * 
 	 * TEST CASE: Adding an attribute, already contained in a subclass of this
 	 * element
 	 */
 	@Test
-	@Override
 	public void testAddAttribute5() {
-		edgeClass2.addSuperClass(edgeClass);
+		EdgeClass subClass = graphClass.createEdgeClass(new QualifiedName(
+				"EdgeClassSubClass"), edgeClassFromVertexClass,
+				edgeClassToVertexClass);
 
-		super.testAddAttribute5();
+		subClass.addSuperClass(edgeClass);
+
+		testAddAttribute5(subClass);
 	}
 
 	/**
 	 * containsAttribute(String)
-	 *
+	 * 
 	 * TEST CASE: looking for an attribute, present in a superclass of this
 	 * element
 	 */
 	@Test
-	@Override
 	public void testContainsAttribute3() {
-		edgeClass.addSuperClass(edgeClass2);
+		EdgeClass superClass = graphClass.createEdgeClass(new QualifiedName(
+				"EdgeClassSuperClass"), edgeClassFromVertexClass,
+				edgeClassToVertexClass);
 
-		super.testContainsAttribute3();
+		edgeClass.addSuperClass(superClass);
+
+		testContainsAttribute3(superClass);
 	}
 
 	/**
 	 * getAllSubClasses()
-	 *
+	 * 
 	 * TEST CASE: Getting all subclasses of an element with one direct subclass
 	 */
 	@Test
-	@Override
 	public void testGetAllSubClasses() {
-		String subClassName = "EdgeClassSubClass";
-		EdgeClass subClass = graphClass
-				.createEdgeClass(new QualifiedName(subClassName),
-						edgeClassFromVertexClass, edgeClassToVertexClass);
+		Vector<AttributedElementClass> expectedSubClasses = new Vector<AttributedElementClass>();
+
+		EdgeClass subClass = graphClass.createEdgeClass(new QualifiedName(
+				"EdgeClassSubClass"), edgeClassFromVertexClass,
+				edgeClassToVertexClass);
 
 		subClass.addSuperClass(edgeClass);
-		// expected names of subclasses of this element
-		expectedStrings.add(subClassName);
-		// expected subclass count
-		expectedValue = 1;
 
-		super.testGetAllSubClasses_main();
+		expectedSubClasses.add(subClass);
+
+		testGetAllSubClasses(expectedSubClasses);
 	}
 
 	/**
 	 * getAllSubClasses()
-	 *
+	 * 
 	 * TEST CASE: Getting all subclasses of an element with multiple direct
 	 * subclasses
 	 */
 	@Test
-	@Override
 	public void testGetAllSubClasses2() {
-		String subClassName = "EdgeClassSubClass";
-		String subClass2Name = "EdgeClassSubClass2";
-		EdgeClass subClass = graphClass
-				.createEdgeClass(new QualifiedName(subClassName),
-						edgeClassFromVertexClass, edgeClassToVertexClass);
+		Vector<AttributedElementClass> expectedSubClasses = new Vector<AttributedElementClass>();
+
+		EdgeClass subClass = graphClass.createEdgeClass(new QualifiedName(
+				"EdgeClassSubClass"), edgeClassFromVertexClass,
+				edgeClassToVertexClass);
 		EdgeClass subClass2 = graphClass.createEdgeClass(new QualifiedName(
-				subClass2Name), edgeClassFromVertexClass,
+				"EdgeClassSubClass2"), edgeClassFromVertexClass,
 				edgeClassToVertexClass);
 
 		subClass.addSuperClass(edgeClass);
 		subClass2.addSuperClass(edgeClass);
-		// expected names of subclasses of this element
-		expectedStrings.add(subClassName);
-		expectedStrings.add(subClass2Name);
-		// expected subclass count
-		expectedValue = 2;
 
-		super.testGetAllSubClasses_main();
+		expectedSubClasses.add(subClass);
+		expectedSubClasses.add(subClass2);
+
+		testGetAllSubClasses2(expectedSubClasses);
 	}
 
 	/**
 	 * getAllSubClasses()
-	 *
+	 * 
 	 * TEST CASE: Getting all subclasses of an element with multiple direct and
 	 * indirect subclasses
 	 */
 	@Test
-	@Override
 	public void testGetAllSubClasses3() {
-		String subClassName = "EdgeClassSubClass";
-		String subClass2Name = "EdgeClassSubClass2";
-		EdgeClass subClass = graphClass
-				.createEdgeClass(new QualifiedName(subClassName),
-						edgeClassFromVertexClass, edgeClassToVertexClass);
+		Vector<AttributedElementClass> expectedSubClasses = new Vector<AttributedElementClass>();
+
+		EdgeClass subClass = graphClass.createEdgeClass(new QualifiedName(
+				"EdgeClassSubClass"), edgeClassFromVertexClass,
+				edgeClassToVertexClass);
 		EdgeClass subClass2 = graphClass.createEdgeClass(new QualifiedName(
-				subClass2Name), edgeClassFromVertexClass,
+				"EdgeClassSubClass2"), edgeClassFromVertexClass,
 				edgeClassToVertexClass);
 
 		subClass.addSuperClass(edgeClass);
 		subClass2.addSuperClass(subClass);
-		// expected names of subclasses of this element
-		expectedStrings.add(subClassName);
-		expectedStrings.add(subClass2Name);
-		// expected subclass count
-		expectedValue = 2;
 
-		super.testGetAllSubClasses_main();
+		expectedSubClasses.add(subClass);
+		expectedSubClasses.add(subClass2);
+
+		testGetAllSubClasses3(expectedSubClasses);
 	}
 
 	/**
 	 * getAllSubClasses()
-	 *
+	 * 
 	 * TEST CASE: Getting all subclasses of an element that has no subclasses
 	 */
 	@Test
-	@Override
 	public void testGetAllSubClasses4() {
-		// expected subclass count
-		expectedValue = 0;
-
-		super.testGetAllSubClasses_main();
+		// no subclasses expected
+		testGetAllSubClasses4(new Vector<AttributedElementClass>());
 	}
 
 	/**
 	 * getAllSuperClasses()
-	 *
+	 * 
 	 * TEST CASE: Getting all superclasses of an element with one direct
 	 * superclass
 	 */
 	@Test
-	@Override
 	public void testGetAllSuperClasses() {
-		String superClassName = "EdgeClassSuperClass";
+		Vector<AttributedElementClass> expectedSuperClasses = new Vector<AttributedElementClass>();
+
 		EdgeClass superClass = graphClass.createEdgeClass(new QualifiedName(
-				superClassName), edgeClassFromVertexClass,
+				"EdgeClassSuperClass"), edgeClassFromVertexClass,
 				edgeClassToVertexClass);
 
 		edgeClass.addSuperClass(superClass);
-		// expected names of superclasses of this element
-		expectedStrings.add(schema.getDefaultEdgeClass().getSimpleName());
-		expectedStrings.add(superClassName);
-		// expected superclass count including the default superclass(es)
-		expectedValue = 2;
 
-		super.testGetAllSuperClasses_main();
+		expectedSuperClasses.add(schema.getDefaultEdgeClass());
+		expectedSuperClasses.add(superClass);
+
+		testGetAllSuperClasses(expectedSuperClasses);
 	}
 
 	/**
 	 * getAllSuperClasses()
-	 *
+	 * 
 	 * TEST CASE: Getting all superclasses of an element with multiple direct
 	 * superclasses
 	 */
 	@Test
-	@Override
 	public void testGetAllSuperClasses2() {
-		String superClassName = "EdgeClassSuperClass";
-		String superClass2Name = "EdgeClassSuperClass2";
+		Vector<AttributedElementClass> expectedSuperClasses = new Vector<AttributedElementClass>();
+
 		EdgeClass superClass = graphClass.createEdgeClass(new QualifiedName(
-				superClassName), edgeClassFromVertexClass,
+				"EdgeClassSuperClass"), edgeClassFromVertexClass,
 				edgeClassToVertexClass);
 		EdgeClass superClass2 = graphClass.createEdgeClass(new QualifiedName(
-				superClass2Name), edgeClassFromVertexClass,
+				"EdgeClassSuperClass2"), edgeClassFromVertexClass,
 				edgeClassToVertexClass);
 
 		edgeClass.addSuperClass(superClass);
 		edgeClass.addSuperClass(superClass2);
-		// expected names of superclasses of this element
-		expectedStrings.add(schema.getDefaultEdgeClass().getSimpleName());
-		expectedStrings.add(superClassName);
-		expectedStrings.add(superClass2Name);
-		// expected superclass count including the default superclass(es)
-		expectedValue = 3;
 
-		super.testGetAllSuperClasses_main();
+		expectedSuperClasses.add(schema.getDefaultEdgeClass());
+		expectedSuperClasses.add(superClass);
+		expectedSuperClasses.add(superClass2);
+
+		testGetAllSuperClasses2(expectedSuperClasses);
 	}
 
 	/**
 	 * getAllSuperClasses()
-	 *
+	 * 
 	 * TEST CASE: Getting all superclasses of an element with multiple direct
 	 * and indirect superclasses
 	 */
 	@Test
-	@Override
 	public void testGetAllSuperClasses3() {
-		String superClassName = "VertexClassSuperClass";
-		String superClass2Name = "VertexClassSuperClass2";
+		Vector<AttributedElementClass> expectedSuperClasses = new Vector<AttributedElementClass>();
+
 		EdgeClass superClass = graphClass.createEdgeClass(new QualifiedName(
-				superClassName), edgeClassFromVertexClass,
+				"VertexClassSuperClass"), edgeClassFromVertexClass,
 				edgeClassToVertexClass);
 		EdgeClass superClass2 = graphClass.createEdgeClass(new QualifiedName(
-				superClass2Name), edgeClassFromVertexClass,
+				"VertexClassSuperClass2"), edgeClassFromVertexClass,
 				edgeClassToVertexClass);
 
 		edgeClass.addSuperClass(superClass);
 		superClass.addSuperClass(superClass2);
-		// expected names of superclasses of this element
-		expectedStrings.add(schema.getDefaultEdgeClass().getSimpleName());
-		expectedStrings.add(superClassName);
-		expectedStrings.add(superClass2Name);
-		// expected superclass count including the default superclass(es)
-		expectedValue = 3;
 
-		super.testGetAllSuperClasses_main();
+		expectedSuperClasses.add(schema.getDefaultEdgeClass());
+		expectedSuperClasses.add(superClass);
+		expectedSuperClasses.add(superClass2);
+
+		testGetAllSuperClasses3(expectedSuperClasses);
 	}
 
 	/**
 	 * getAllSuperClasses()
-	 *
+	 * 
 	 * TEST CASE: Getting all superclasses of an element that has no
 	 * superclasses
 	 */
 	@Test
-	@Override
 	public void testGetAllSuperClasses4() {
-		// expected names of superclasses of this element
-		expectedStrings.add(schema.getDefaultEdgeClass().getSimpleName());
-		// expected superclass count including the default superclass(es)
-		expectedValue = 1;
+		Vector<AttributedElementClass> expectedSuperClasses = new Vector<AttributedElementClass>();
 
-		super.testGetAllSuperClasses_main();
+		expectedSuperClasses.add(schema.getDefaultEdgeClass());
+
+		testGetAllSuperClasses4(expectedSuperClasses);
+	}
+
+	/**
+	 * getAttribute()
+	 * 
+	 * TEST CASE: Getting an inherited attribute
+	 */
+	@Test
+	public void testGetAttribute2() {
+		EdgeClass superClass = graphClass.createEdgeClass(new QualifiedName(
+				"EdgeClassSuperClass"), edgeClassFromVertexClass,
+				edgeClassToVertexClass);
+
+		edgeClass.addSuperClass(superClass);
+
+		testGetAttribute2(superClass);
+	}
+
+	/**
+	 * getAttribute()
+	 * 
+	 * TEST CASE: Trying to get an attribute present in a subclass of this
+	 * element
+	 */
+	@Test
+	public void testGetAttribute5() {
+		EdgeClass subClass = graphClass.createEdgeClass(new QualifiedName(
+				"EdgeClassSubClass"), edgeClassFromVertexClass,
+				edgeClassToVertexClass);
+
+		subClass.addSuperClass(edgeClass);
+
+		testGetAttribute5(subClass);
+	}
+
+	/**
+	 * getAttributeCount()
+	 * 
+	 * TEST CASE: Getting the number of attributes of an element which has
+	 * exactly only one inherited attribute and no direct attributes
+	 */
+	@Test
+	public void testGetAttributeCount2() {
+		EdgeClass superClass = graphClass.createEdgeClass(new QualifiedName(
+				"EdgeClassSuperClass"), edgeClassFromVertexClass,
+				edgeClassToVertexClass);
+
+		edgeClass.addSuperClass(superClass);
+
+		testGetAttributeCount2(superClass);
+	}
+
+	/**
+	 * getAttributeCount()
+	 * 
+	 * TEST CASE: Getting the number of attributes of an element which has
+	 * multiple direct and indirect attributes
+	 */
+	@Test
+	public void testGetAttributeCount3() {
+		EdgeClass superClass = graphClass.createEdgeClass(new QualifiedName(
+				"EdgeClassSuperClass"), edgeClassFromVertexClass,
+				edgeClassToVertexClass);
+
+		edgeClass.addSuperClass(superClass);
+
+		testGetAttributeCount3(superClass);
+	}
+
+	/**
+	 * getAttributeCount()
+	 * 
+	 * TEST CASE: Getting the number of attributes of an element which has no
+	 * direct nor inherited attributes but whose subclass has attributes
+	 */
+	@Test
+	public void testGetAttributeCount5() {
+		EdgeClass subClass = graphClass.createEdgeClass(new QualifiedName(
+				"EdgeClassSubClass"), edgeClassFromVertexClass,
+				edgeClassToVertexClass);
+
+		subClass.addSuperClass(edgeClass);
+
+		testGetAttributeCount5(subClass);
+	}
+
+	/**
+	 * getAttributeList()
+	 * 
+	 * TEST CASE: Getting an element´s list of attributes, which has exactly one
+	 * inherited attribute and no direct attributes
+	 */
+	@Test
+	public void testGetAttributeList2() {
+		EdgeClass superClass = graphClass.createEdgeClass(new QualifiedName(
+				"EdgeClassSuperClass"), edgeClassFromVertexClass,
+				edgeClassToVertexClass);
+
+		edgeClass.addSuperClass(superClass);
+
+		testGetAttributeList2(superClass);
+	}
+
+	/**
+	 * getAttributeList()
+	 * 
+	 * TEST CASE: Getting an element´s list of attributes, which has mutliple
+	 * direct and inherited attributes
+	 */
+	@Test
+	public void testGetAttributeList3() {
+		EdgeClass superClass = graphClass.createEdgeClass(new QualifiedName(
+				"EdgeClassSuperClass"), edgeClassFromVertexClass,
+				edgeClassToVertexClass);
+
+		edgeClass.addSuperClass(superClass);
+
+		testGetAttributeList3(superClass);
+	}
+
+	/**
+	 * getAttributeList()
+	 * 
+	 * TEST CASE: Getting an element´s list of attributes, which has no direct
+	 * nor inherited attributes but whose subclass has attributes
+	 */
+	@Test
+	public void testGetAttributeList5() {
+		EdgeClass subClass = graphClass.createEdgeClass(new QualifiedName(
+				"EdgeClassSubClass"), edgeClassFromVertexClass,
+				edgeClassToVertexClass);
+
+		subClass.addSuperClass(edgeClass);
+
+		testGetAttributeList5(subClass);
 	}
 
 	@Test
