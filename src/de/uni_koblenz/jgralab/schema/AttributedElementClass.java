@@ -129,11 +129,11 @@ public interface AttributedElementClass extends NamedElement,
 	 * <p>
 	 * <b>Postconditions:</b>
 	 * <ul>
-	 * <li><code>superClasses.size()</code> >= 0</li>
+	 * <li><code>superClasses.size() >= 0</code></li>
 	 * <li><code>superClasses</code> holds all of <code>attrElement´s</code>
 	 * direct superclasses</li>
-	 * <li><code>superClasses</code> does not hold any of this element´s
-	 * indirect superclasses
+	 * <li><code>superClasses</code> does not hold any of
+	 * <code>attrElement´s</code> indirect superclasses
 	 * </ul>
 	 * </p>
 	 * 
@@ -162,7 +162,7 @@ public interface AttributedElementClass extends NamedElement,
 	 * <p>
 	 * <b>Postconditions:</b>
 	 * <ul>
-	 * <li><code>superClasses.size()</code> >= 0</li>
+	 * <li><code>superClasses.size() >= 0</code></li>
 	 * <li><code>superClasses</code> holds all of <code>attrElement´s</code>
 	 * direct and indirect superclasses</li>
 	 * </ul>
@@ -232,12 +232,16 @@ public interface AttributedElementClass extends NamedElement,
 	 *             same <code>name</code>
 	 * 
 	 * @throws ReservedWordException
-	 *             if the <code>name</code> contains reserved TG/Java words
+	 *             if the <code>name</code> contains reserved
+	 *             {@link de.uni_koblenz.jgralab.schema.Schema#reservedTGWords
+	 *             TG}/
+	 *             {@link de.uni_koblenz.jgralab.schema.Schema#reservedJavaWords
+	 *             Java} words
 	 */
 	public void addAttribute(String name, Domain domain);
 
 	/**
-	 * Adds a new attribute to this element.
+	 * Adds a new attribute <code>anAttribute</code> to this element.
 	 * 
 	 * <p>
 	 * <b>Pattern:</b> <code>attrElement.addAttribute(anAttribute);</code>
@@ -273,7 +277,7 @@ public interface AttributedElementClass extends NamedElement,
 	 * </p>
 	 * 
 	 * <p>
-	 * <b>Preconditions:</b> The <code>name</code> must not be empty.
+	 * <b>Preconditions:</b> none
 	 * </p>
 	 * 
 	 * <p>
@@ -285,7 +289,8 @@ public interface AttributedElementClass extends NamedElement,
 	 * @param name
 	 *            the <code>name</code> of the attribute
 	 * @return the attribute with the specified <code>name</code> or
-	 *         <code>NULL</code> if no such attribute was found
+	 *         <code>NULL</code> if no such attribute was found in this element
+	 *         and it´s superclasses
 	 */
 	public Attribute getAttribute(String name);
 
@@ -303,21 +308,28 @@ public interface AttributedElementClass extends NamedElement,
 	public SortedSet<Attribute> getOwnAttributeList();
 
 	/**
-	 * Lists all of this element´s direct and inherited attributes.
+	 * Lists all of this element´s direct and inherited attributes in
+	 * {@link de.uni_koblenz.jgralab.schema.impl.AttributeImpl#compareTo(Attribute)
+	 * natural order}.
 	 * 
 	 * <p>
 	 * <b>Pattern:</b> <code>attrs = attrElement.getAttributeList();</code>
 	 * </p>
 	 * 
 	 * <p>
-	 * <b>Preconditions: none
+	 * <b>Preconditions:</b> none
 	 * </p>
 	 * 
 	 * <p>
 	 * <b>Postconditions:</b>
-	 * <li><code>attrs.size()</code> >= 0</li>
+	 * <ul>
+	 * <li><code>attrs.size() >= 0</code></li>
 	 * <li><code>attrs</code> contains every of <code>attrElement´s</code>direct
 	 * and inherited attributes
+	 * <li>the attributes in <code>attrs</code> are sorted in
+	 * {@link de.uni_koblenz.jgralab.schema.impl.AttributeImpl#compareTo(Attribute)
+	 * natural order}
+	 * </ul>
 	 * </p>
 	 * 
 	 * @return the list of attributes of this element and all inherited
@@ -346,7 +358,8 @@ public interface AttributedElementClass extends NamedElement,
 	 *            the <code>name</code> of the attribute to search for
 	 * 
 	 * @return <code>true</code>, if the element or a superclass contains an
-	 *         attribute with the specified <code>name</code>
+	 *         attribute with the specified <code>name</code>.
+	 *         <code>false</code> if not.
 	 */
 	public boolean containsAttribute(String name);
 
@@ -364,9 +377,11 @@ public interface AttributedElementClass extends NamedElement,
 	 * 
 	 * <p>
 	 * <b>Postconditions:</b>
-	 * <li><code>attrCount</code> >= 0</li>
-	 * <li><code>attrCount</code> equals the number of this element´s direct and
-	 * inherited attributes</li>
+	 * <ul>
+	 * <li><code>attrCount >= 0</code></li>
+	 * <li><code>attrCount</code> equals the number of
+	 * <code>attrElement´s</code> direct and inherited attributes</li>
+	 * </ul>
 	 * </p>
 	 * 
 	 * @return the number of this element´s direct and inherited attributes
@@ -413,11 +428,11 @@ public interface AttributedElementClass extends NamedElement,
 	 * <p>
 	 * <b>Postconditions:</b>
 	 * <ul>
-	 * <li><code>subClasses.size()</code> >= 0</li>
-	 * <li><code>subClasses</code> holds all of this element´s direct subclasses
-	 * </li>
-	 * <li><code>subClasses</code> does not hold any of this element´s indirect
-	 * subclasses
+	 * <li><code>subClasses.size() >= 0</code></li>
+	 * <li><code>subClasses</code> holds all of <code>attrElement´s</code>
+	 * direct subclasses</li>
+	 * <li><code>subClasses</code> does not hold any of
+	 * <code>attrElement´s</code> indirect subclasses
 	 * </ul>
 	 * </p>
 	 * 
@@ -439,9 +454,9 @@ public interface AttributedElementClass extends NamedElement,
 	 * <p>
 	 * <b>Postconditions:</b>
 	 * <ul>
-	 * <li><code>subClasses.size()</code> >= 0</li>
-	 * <li><code>subClasses</code> holds all of this element´s direct and
-	 * indirect subclasses</li>
+	 * <li><code>subClasses.size() >= 0</code></li>
+	 * <li><code>subClasses</code> holds all of <code>attrElement´s</code>
+	 * direct and indirect subclasses</li>
 	 * </ul>
 	 * </p>
 	 * 
