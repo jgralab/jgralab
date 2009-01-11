@@ -1,15 +1,18 @@
 package de.uni_koblenz.jgralabtest.schematest.attributedelementtest;
 
+import java.util.Vector;
+
 import org.junit.Before;
 import org.junit.Test;
 
+import de.uni_koblenz.jgralab.schema.AttributedElementClass;
 import de.uni_koblenz.jgralab.schema.CompositionClass;
 import de.uni_koblenz.jgralab.schema.QualifiedName;
 import de.uni_koblenz.jgralab.schema.VertexClass;
 
 public final class CompositionClassImplTest extends AggregationClassImplTest {
 
-	private CompositionClass compositionClass, compositionClass2;
+	private CompositionClass compositionClass;
 	private VertexClass compositionClassFromVertexClass,
 			compositionClassToVertexClass;
 
@@ -33,272 +36,413 @@ public final class CompositionClassImplTest extends AggregationClassImplTest {
 						compositionClassToVertexClass, 1,
 						(int) (Math.random() * 100) + 1,
 						"CompositionClassToRoleName");
-		attributedElement2 = compositionClass2 = graphClass
-				.createCompositionClass(new QualifiedName("CompositionClass2"),
-						compositionClassFromVertexClass, true,
-						compositionClassToVertexClass);
 	}
 
 	/**
 	 * addAttribute(Attribute)
-	 *
+	 * 
 	 * TEST CASE: Adding an attribute, already contained in a superclass of this
 	 * element
 	 */
 	@Test
 	@Override
 	public void testAddAttribute4() {
-		compositionClass.addSuperClass(compositionClass2);
+		CompositionClass superClass = graphClass.createCompositionClass(
+				new QualifiedName("CompositionClassSuperClass"),
+				compositionClassFromVertexClass, true,
+				compositionClassToVertexClass);
 
-		super.testAddAttribute4();
+		compositionClass.addSuperClass(superClass);
+
+		testAddAttribute4(superClass);
 	}
 
 	/**
 	 * addAttribute(Attribute)
-	 *
+	 * 
 	 * TEST CASE: Adding an attribute, already contained in a subclass of this
 	 * element
 	 */
 	@Test
 	@Override
 	public void testAddAttribute5() {
-		compositionClass2.addSuperClass(compositionClass);
+		CompositionClass subClass = graphClass.createCompositionClass(
+				new QualifiedName("CompositionClassSubClass"),
+				compositionClassFromVertexClass, true,
+				compositionClassToVertexClass);
 
-		super.testAddAttribute5();
+		subClass.addSuperClass(compositionClass);
+
+		testAddAttribute5(subClass);
 	}
 
 	/**
 	 * containsAttribute(String)
-	 *
+	 * 
 	 * TEST CASE: looking for an attribute, present in a superclass of this
 	 * element
 	 */
 	@Test
 	@Override
 	public void testContainsAttribute3() {
-		compositionClass.addSuperClass(compositionClass2);
+		CompositionClass superClass = graphClass.createCompositionClass(
+				new QualifiedName("CompositionClassSuperClass"),
+				compositionClassFromVertexClass, true,
+				compositionClassToVertexClass);
 
-		super.testContainsAttribute3();
+		compositionClass.addSuperClass(superClass);
+
+		testContainsAttribute3(superClass);
 	}
 
 	/**
 	 * getAllSubClasses()
-	 *
+	 * 
 	 * TEST CASE: Getting all subclasses of an element with one direct subclass
 	 */
 	@Test
 	@Override
 	public void testGetAllSubClasses() {
-		String subClassName = "CompositionClassSubClass";
+		Vector<AttributedElementClass> expectedSubClasses = new Vector<AttributedElementClass>();
+
 		CompositionClass subClass = graphClass.createCompositionClass(
-				new QualifiedName(subClassName),
+				new QualifiedName("CompositionClassSubClass"),
 				compositionClassFromVertexClass, true,
 				compositionClassToVertexClass);
 
 		subClass.addSuperClass(compositionClass);
 		// expected names of subclasses of this element
-		expectedStrings.add(subClassName);
-		// expected subclass count
-		expectedValue = 1;
+		expectedSubClasses.add(subClass);
 
-		super.testGetAllSubClasses_main();
+		testGetAllSubClasses(expectedSubClasses);
 	}
 
 	/**
 	 * getAllSubClasses()
-	 *
+	 * 
 	 * TEST CASE: Getting all subclasses of an element with multiple direct
 	 * subclasses
 	 */
 	@Test
 	@Override
 	public void testGetAllSubClasses2() {
-		String subClassName = "CompositionClassSubClass";
-		String subClass2Name = "CompositionClassSubClass2";
+		Vector<AttributedElementClass> expectedSubClasses = new Vector<AttributedElementClass>();
+
 		CompositionClass subClass = graphClass.createCompositionClass(
-				new QualifiedName(subClassName),
+				new QualifiedName("CompositionClassSubClass"),
 				compositionClassFromVertexClass, true,
 				compositionClassToVertexClass);
 		CompositionClass subClass2 = graphClass.createCompositionClass(
-				new QualifiedName(subClass2Name),
+				new QualifiedName("CompositionClassSubClass2"),
 				compositionClassFromVertexClass, true,
 				compositionClassToVertexClass);
 
 		subClass.addSuperClass(compositionClass);
 		subClass2.addSuperClass(compositionClass);
-		// expected names of subclasses of this element
-		expectedStrings.add(subClassName);
-		expectedStrings.add(subClass2Name);
-		// expected subclass count
-		expectedValue = 2;
 
-		super.testGetAllSubClasses_main();
+		expectedSubClasses.add(subClass);
+		expectedSubClasses.add(subClass2);
+
+		testGetAllSubClasses2(expectedSubClasses);
 	}
 
 	/**
 	 * getAllSubClasses()
-	 *
+	 * 
 	 * TEST CASE: Getting all subclasses of an element with multiple direct and
 	 * indirect subclasses
 	 */
 	@Test
 	@Override
 	public void testGetAllSubClasses3() {
-		String subClassName = "CompositionClassSubClass";
-		String subClass2Name = "CompositionClassSubClass2";
+		Vector<AttributedElementClass> expectedSubClasses = new Vector<AttributedElementClass>();
+
 		CompositionClass subClass = graphClass.createCompositionClass(
-				new QualifiedName(subClassName),
+				new QualifiedName("CompositionClassSubClass"),
 				compositionClassFromVertexClass, true,
 				compositionClassToVertexClass);
 		CompositionClass subClass2 = graphClass.createCompositionClass(
-				new QualifiedName(subClass2Name),
+				new QualifiedName("CompositionClassSubClass2"),
 				compositionClassFromVertexClass, true,
 				compositionClassToVertexClass);
 
 		subClass.addSuperClass(compositionClass);
 		subClass2.addSuperClass(subClass);
-		// expected names of subclasses of this element
-		expectedStrings.add(subClassName);
-		expectedStrings.add(subClass2Name);
-		// expected subclass count
-		expectedValue = 2;
 
-		super.testGetAllSubClasses_main();
+		expectedSubClasses.add(subClass);
+		expectedSubClasses.add(subClass2);
+
+		testGetAllSubClasses3(expectedSubClasses);
 	}
 
 	/**
 	 * getAllSubClasses()
-	 *
+	 * 
 	 * TEST CASE: Getting all subclasses of an element that has no subclasses
 	 */
 	@Test
 	@Override
 	public void testGetAllSubClasses4() {
-		// expected subclass count
-		expectedValue = 0;
-
-		super.testGetAllSubClasses_main();
+		// no subclasses expected
+		testGetAllSubClasses4(new Vector<AttributedElementClass>());
 	}
 
 	/**
 	 * getAllSuperClasses()
-	 *
+	 * 
 	 * TEST CASE: Getting all superclasses of an element with one direct
 	 * superclass
 	 */
 	@Test
 	@Override
 	public void testGetAllSuperClasses() {
-		String superClassName = "CompositionClassSuperClass";
+		Vector<AttributedElementClass> expectedSuperClasses = new Vector<AttributedElementClass>();
+
 		CompositionClass superClass = graphClass.createCompositionClass(
-				new QualifiedName(superClassName),
+				new QualifiedName("CompositionClassSuperClass"),
 				compositionClassFromVertexClass, true,
 				compositionClassToVertexClass);
 
 		compositionClass.addSuperClass(superClass);
-		// expected names of superclasses of this element
-		expectedStrings.add(schema.getDefaultEdgeClass().getSimpleName());
-		expectedStrings
-				.add(schema.getDefaultAggregationClass().getSimpleName());
-		expectedStrings
-				.add(schema.getDefaultCompositionClass().getSimpleName());
-		expectedStrings.add(superClassName);
-		// expected superclass count including the default superclass(es)
-		expectedValue = 4;
 
-		super.testGetAllSuperClasses_main();
+		expectedSuperClasses.add(schema.getDefaultEdgeClass());
+		expectedSuperClasses.add(schema.getDefaultAggregationClass());
+		expectedSuperClasses.add(schema.getDefaultCompositionClass());
+		expectedSuperClasses.add(superClass);
+
+		testGetAllSuperClasses(expectedSuperClasses);
 	}
 
 	/**
 	 * getAllSuperClasses()
-	 *
+	 * 
 	 * TEST CASE: Getting all superclasses of an element with multiple direct
 	 * superclasses
 	 */
 	@Test
 	@Override
 	public void testGetAllSuperClasses2() {
-		String superClassName = "CompositionClassSuperClass";
-		String superClass2Name = "CompositionClassSuperClass2";
+		Vector<AttributedElementClass> expectedSuperClasses = new Vector<AttributedElementClass>();
+
 		CompositionClass superClass = graphClass.createCompositionClass(
-				new QualifiedName(superClassName),
+				new QualifiedName("CompositionClassSuperClass"),
 				compositionClassFromVertexClass, true,
 				compositionClassToVertexClass);
 		CompositionClass superClass2 = graphClass.createCompositionClass(
-				new QualifiedName(superClass2Name),
+				new QualifiedName("CompositionClassSuperClass2"),
 				compositionClassFromVertexClass, true,
 				compositionClassToVertexClass);
 
 		compositionClass.addSuperClass(superClass);
 		compositionClass.addSuperClass(superClass2);
-		// expected names of superclasses of this element
-		expectedStrings.add(schema.getDefaultEdgeClass().getSimpleName());
-		expectedStrings
-				.add(schema.getDefaultAggregationClass().getSimpleName());
-		expectedStrings
-				.add(schema.getDefaultCompositionClass().getSimpleName());
-		expectedStrings.add(superClassName);
-		expectedStrings.add(superClass2Name);
-		// expected superclass count including the default superclass(es)
-		expectedValue = 5;
 
-		super.testGetAllSuperClasses_main();
+		expectedSuperClasses.add(schema.getDefaultEdgeClass());
+		expectedSuperClasses.add(schema.getDefaultAggregationClass());
+		expectedSuperClasses.add(schema.getDefaultCompositionClass());
+		expectedSuperClasses.add(superClass);
+		expectedSuperClasses.add(superClass2);
+
+		testGetAllSuperClasses2(expectedSuperClasses);
 	}
 
 	/**
 	 * getAllSuperClasses()
-	 *
+	 * 
 	 * TEST CASE: Getting all superclasses of an element with multiple direct
 	 * and indirect superclasses
 	 */
 	@Test
 	@Override
 	public void testGetAllSuperClasses3() {
-		String superClassName = "CompositionClassSuperClass";
-		String superClass2Name = "CompositionClassSuperClass2";
+		Vector<AttributedElementClass> expectedSuperClasses = new Vector<AttributedElementClass>();
+
 		CompositionClass superClass = graphClass.createCompositionClass(
-				new QualifiedName(superClassName),
+				new QualifiedName("CompositionClassSuperClass"),
 				compositionClassFromVertexClass, true,
 				compositionClassToVertexClass);
 		CompositionClass superClass2 = graphClass.createCompositionClass(
-				new QualifiedName(superClass2Name),
+				new QualifiedName("CompositionClassSuperClass2"),
 				compositionClassFromVertexClass, true,
 				compositionClassToVertexClass);
 
 		compositionClass.addSuperClass(superClass);
 		superClass.addSuperClass(superClass2);
-		// expected names of superclasses of this element
-		expectedStrings.add(schema.getDefaultEdgeClass().getSimpleName());
-		expectedStrings
-				.add(schema.getDefaultAggregationClass().getSimpleName());
-		expectedStrings
-				.add(schema.getDefaultCompositionClass().getSimpleName());
-		expectedStrings.add(superClassName);
-		expectedStrings.add(superClass2Name);
-		// expected superclass count including the default superclass(es)
-		expectedValue = 5;
 
-		super.testGetAllSuperClasses_main();
+		expectedSuperClasses.add(schema.getDefaultEdgeClass());
+		expectedSuperClasses.add(schema.getDefaultAggregationClass());
+		expectedSuperClasses.add(schema.getDefaultCompositionClass());
+		expectedSuperClasses.add(superClass);
+		expectedSuperClasses.add(superClass2);
+
+		testGetAllSuperClasses3(expectedSuperClasses);
 	}
 
 	/**
 	 * getAllSuperClasses()
-	 *
+	 * 
 	 * TEST CASE: Getting all superclasses of an element that has no
 	 * superclasses
 	 */
 	@Test
 	@Override
 	public void testGetAllSuperClasses4() {
-		// expected names of superclasses of this element
-		expectedStrings.add(schema.getDefaultEdgeClass().getSimpleName());
-		expectedStrings
-				.add(schema.getDefaultAggregationClass().getSimpleName());
-		expectedStrings
-				.add(schema.getDefaultCompositionClass().getSimpleName());
-		// expected superclass count including the default superclass(es)
-		expectedValue = 3;
+		Vector<AttributedElementClass> expectedSuperClasses = new Vector<AttributedElementClass>();
 
-		super.testGetAllSuperClasses_main();
+		expectedSuperClasses.add(schema.getDefaultEdgeClass());
+		expectedSuperClasses.add(schema.getDefaultAggregationClass());
+		expectedSuperClasses.add(schema.getDefaultCompositionClass());
+
+		testGetAllSuperClasses4(expectedSuperClasses);
+	}
+
+	/**
+	 * getAttribute()
+	 * 
+	 * TEST CASE: Getting an inherited attribute
+	 */
+	@Test
+	@Override
+	public void testGetAttribute2() {
+		CompositionClass superClass = graphClass.createCompositionClass(
+				new QualifiedName("CompositionClassSuperClass"),
+				compositionClassFromVertexClass, true,
+				compositionClassToVertexClass);
+
+		compositionClass.addSuperClass(superClass);
+
+		testGetAttribute2(superClass);
+	}
+
+	/**
+	 * getAttribute()
+	 * 
+	 * TEST CASE: Trying to get an attribute present in a subclass of this
+	 * element
+	 */
+	@Test
+	@Override
+	public void testGetAttribute5() {
+		CompositionClass subClass = graphClass.createCompositionClass(
+				new QualifiedName("CompositionClassSubClass"),
+				compositionClassFromVertexClass, true,
+				compositionClassToVertexClass);
+
+		subClass.addSuperClass(compositionClass);
+
+		testGetAttribute5(subClass);
+	}
+
+	/**
+	 * getAttributeCount()
+	 * 
+	 * TEST CASE: Getting the number of attributes of an element which has
+	 * exactly only one inherited attribute and no direct attributes
+	 */
+	@Test
+	@Override
+	public void testGetAttributeCount2() {
+		CompositionClass superClass = graphClass.createCompositionClass(
+				new QualifiedName("CompositionClassSuperClass"),
+				compositionClassFromVertexClass, true,
+				compositionClassToVertexClass);
+
+		compositionClass.addSuperClass(superClass);
+
+		testGetAttributeCount2(superClass);
+	}
+
+	/**
+	 * getAttributeCount()
+	 * 
+	 * TEST CASE: Getting the number of attributes of an element which has
+	 * multiple direct and indirect attributes
+	 */
+	@Test
+	@Override
+	public void testGetAttributeCount3() {
+		CompositionClass superClass = graphClass.createCompositionClass(
+				new QualifiedName("CompositionClassSuperClass"),
+				compositionClassFromVertexClass, true,
+				compositionClassToVertexClass);
+
+		compositionClass.addSuperClass(superClass);
+
+		testGetAttributeCount3(superClass);
+	}
+
+	/**
+	 * getAttributeCount()
+	 * 
+	 * TEST CASE: Getting the number of attributes of an element which has no
+	 * direct nor inherited attributes but whose subclass has attributes
+	 */
+	@Test
+	@Override
+	public void testGetAttributeCount5() {
+		CompositionClass subClass = graphClass.createCompositionClass(
+				new QualifiedName("CompositionClassSubClass"),
+				compositionClassFromVertexClass, true,
+				compositionClassToVertexClass);
+
+		subClass.addSuperClass(compositionClass);
+
+		testGetAttributeCount5(subClass);
+	}
+
+	/**
+	 * getAttributeList()
+	 * 
+	 * TEST CASE: Getting an element´s list of attributes, which has exactly one
+	 * inherited attribute and no direct attributes
+	 */
+	@Test
+	@Override
+	public void testGetAttributeList2() {
+		CompositionClass superClass = graphClass.createCompositionClass(
+				new QualifiedName("CompositionClassSuperClass"),
+				compositionClassFromVertexClass, true,
+				compositionClassToVertexClass);
+
+		compositionClass.addSuperClass(superClass);
+
+		testGetAttributeList2(superClass);
+	}
+
+	/**
+	 * getAttributeList()
+	 * 
+	 * TEST CASE: Getting an element´s list of attributes, which has mutliple
+	 * direct and inherited attributes
+	 */
+	@Test
+	@Override
+	public void testGetAttributeList3() {
+		CompositionClass superClass = graphClass.createCompositionClass(
+				new QualifiedName("CompositionClassSuperClass"),
+				compositionClassFromVertexClass, true,
+				compositionClassToVertexClass);
+
+		compositionClass.addSuperClass(superClass);
+
+		testGetAttributeList3(superClass);
+	}
+
+	/**
+	 * getAttributeList()
+	 * 
+	 * TEST CASE: Getting an element´s list of attributes, which has no direct
+	 * nor inherited attributes but whose subclass has attributes
+	 */
+	@Test
+	@Override
+	public void testGetAttributeList5() {
+		CompositionClass subClass = graphClass.createCompositionClass(
+				new QualifiedName("CompositionClassSubClass"),
+				compositionClassFromVertexClass, true,
+				compositionClassToVertexClass);
+
+		subClass.addSuperClass(compositionClass);
+
+		testGetAttributeList5(subClass);
 	}
 }

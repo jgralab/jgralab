@@ -1,14 +1,17 @@
 package de.uni_koblenz.jgralabtest.schematest.attributedelementtest;
 
+import java.util.Vector;
+
 import org.junit.Before;
 import org.junit.Test;
 
+import de.uni_koblenz.jgralab.schema.AttributedElementClass;
 import de.uni_koblenz.jgralab.schema.QualifiedName;
 import de.uni_koblenz.jgralab.schema.VertexClass;
 
 public final class VertexClassImplTest extends GraphElementClassImplTest {
 
-	private VertexClass vertexClass, vertexClass2;
+	private VertexClass vertexClass;
 
 	@Before
 	@Override
@@ -17,235 +20,343 @@ public final class VertexClassImplTest extends GraphElementClassImplTest {
 
 		attributedElement = vertexClass = graphClass
 				.createVertexClass(new QualifiedName("VertexClass1"));
-		attributedElement2 = vertexClass2 = graphClass
-				.createVertexClass(new QualifiedName("VertexClass2"));
 	}
 
 	/**
 	 * addAttribute(Attribute)
-	 *
+	 * 
 	 * TEST CASE: Adding an attribute, already contained in a superclass of this
 	 * element
 	 */
 	@Test
-	@Override
 	public void testAddAttribute4() {
-		vertexClass.addSuperClass(vertexClass2);
+		VertexClass superClass = graphClass
+				.createVertexClass(new QualifiedName("VertexClassSuperClass"));
+		vertexClass.addSuperClass(superClass);
 
-		super.testAddAttribute4();
+		testAddAttribute4(superClass);
 	}
 
 	/**
 	 * addAttribute(Attribute)
-	 *
+	 * 
 	 * TEST CASE: Adding an attribute, already contained in a subclass of this
 	 * element
 	 */
 	@Test
-	@Override
 	public void testAddAttribute5() {
-		vertexClass2.addSuperClass(vertexClass);
+		VertexClass subClass = graphClass.createVertexClass(new QualifiedName(
+				"VertexClassSubClass"));
+		subClass.addSuperClass(vertexClass);
 
-		super.testAddAttribute5();
+		testAddAttribute5(subClass);
 	}
 
 	/**
 	 * containsAttribute(String)
-	 *
+	 * 
 	 * TEST CASE: looking for an attribute, present in a superclass of this
 	 * element
 	 */
 	@Test
-	@Override
 	public void testContainsAttribute3() {
-		vertexClass.addSuperClass(vertexClass2);
+		VertexClass superClass = graphClass
+				.createVertexClass(new QualifiedName("VertexClassSuperClass"));
 
-		super.testContainsAttribute3();
+		vertexClass.addSuperClass(superClass);
+
+		testContainsAttribute3(superClass);
 	}
 
 	/**
 	 * getAllSubClasses()
-	 *
+	 * 
 	 * TEST CASE: Getting all subclasses of an element with one direct subclass
 	 */
 	@Test
-	@Override
 	public void testGetAllSubClasses() {
-		String subClassName = "VertexClassSubClass";
+		Vector<AttributedElementClass> expectedSubClasses = new Vector<AttributedElementClass>();
+
 		VertexClass subClass = graphClass.createVertexClass(new QualifiedName(
-				subClassName));
+				"VertexClassSubClass"));
 
 		subClass.addSuperClass(vertexClass);
-		// expected names of subclasses of this element
-		expectedStrings.add(subClassName);
-		// expected subclass count
-		expectedValue = 1;
 
-		super.testGetAllSubClasses_main();
+		expectedSubClasses.add(subClass);
+
+		testGetAllSubClasses(expectedSubClasses);
 	}
 
 	/**
 	 * getAllSubClasses()
-	 *
+	 * 
 	 * TEST CASE: Getting all subclasses of an element with multiple direct
 	 * subclasses
 	 */
 	@Test
-	@Override
 	public void testGetAllSubClasses2() {
-		String subClassName = "VertexClassSubClass";
-		String subClass2Name = "VertexClassSubClass2";
+		Vector<AttributedElementClass> expectedSubClasses = new Vector<AttributedElementClass>();
+
 		VertexClass subClass = graphClass.createVertexClass(new QualifiedName(
-				subClassName));
+				"VertexClassSubClass"));
 		VertexClass subClass2 = graphClass.createVertexClass(new QualifiedName(
-				subClass2Name));
+				"VertexClassSubClass2"));
 
 		subClass.addSuperClass(vertexClass);
 		subClass2.addSuperClass(vertexClass);
-		// expected names of subclasses of this element
-		expectedStrings.add(subClassName);
-		expectedStrings.add(subClass2Name);
-		// expected subclass count
-		expectedValue = 2;
 
-		super.testGetAllSubClasses_main();
+		expectedSubClasses.add(subClass);
+		expectedSubClasses.add(subClass2);
+
+		testGetAllSubClasses2(expectedSubClasses);
 	}
 
 	/**
 	 * getAllSubClasses()
-	 *
+	 * 
 	 * TEST CASE: Getting all subclasses of an element with multiple direct and
 	 * indirect subclasses
 	 */
 	@Test
-	@Override
 	public void testGetAllSubClasses3() {
-		String subClassName = "VertexClassSubClass";
-		String subClass2Name = "VertexClassSubClass2";
+		Vector<AttributedElementClass> expectedSubClasses = new Vector<AttributedElementClass>();
+
 		VertexClass subClass = graphClass.createVertexClass(new QualifiedName(
-				subClassName));
+				"VertexClassSubClass"));
 		VertexClass subClass2 = graphClass.createVertexClass(new QualifiedName(
-				subClass2Name));
+				"VertexClassSubClass2"));
 
 		subClass.addSuperClass(vertexClass);
 		subClass2.addSuperClass(subClass);
-		// expected names of subclasses of this element
-		expectedStrings.add(subClassName);
-		expectedStrings.add(subClass2Name);
-		// expected subclass count
-		expectedValue = 2;
 
-		super.testGetAllSubClasses_main();
+		expectedSubClasses.add(subClass);
+		expectedSubClasses.add(subClass2);
+
+		testGetAllSubClasses3(expectedSubClasses);
 	}
 
 	/**
 	 * getAllSubClasses()
-	 *
+	 * 
 	 * TEST CASE: Getting all subclasses of an element that has no subclasses
 	 */
 	@Test
-	@Override
 	public void testGetAllSubClasses4() {
-		// expected subclass count
-		expectedValue = 0;
-
-		super.testGetAllSubClasses_main();
+		// no subclasses expected
+		testGetAllSubClasses4(new Vector<AttributedElementClass>());
 	}
 
 	/**
 	 * getAllSuperClasses()
-	 *
+	 * 
 	 * TEST CASE: Getting all superclasses of an element with one direct
 	 * superclass
 	 */
 	@Test
-	@Override
 	public void testGetAllSuperClasses() {
-		String superClassName = "VertexClassSuperClass";
+		Vector<AttributedElementClass> expectedSuperClasses = new Vector<AttributedElementClass>();
+
 		VertexClass superClass = graphClass
-				.createVertexClass(new QualifiedName(superClassName));
+				.createVertexClass(new QualifiedName("VertexClassSuperClass"));
 
 		vertexClass.addSuperClass(superClass);
-		// expected names of superclasses of this element
-		expectedStrings.add(schema.getDefaultVertexClass().getSimpleName());
-		expectedStrings.add(superClassName);
-		// expected superclass count including the default superclass(es)
-		expectedValue = 2;
 
-		super.testGetAllSuperClasses_main();
+		expectedSuperClasses.add(schema.getDefaultVertexClass());
+		expectedSuperClasses.add(superClass);
+
+		testGetAllSuperClasses(expectedSuperClasses);
 	}
 
 	/**
 	 * getAllSuperClasses()
-	 *
+	 * 
 	 * TEST CASE: Getting all superclasses of an element with multiple direct
 	 * superclasses
 	 */
 	@Test
-	@Override
 	public void testGetAllSuperClasses2() {
-		String superClassName = "VertexClassSuperClass";
-		String superClass2Name = "VertexClassSuperClass2";
+		Vector<AttributedElementClass> expectedSuperClasses = new Vector<AttributedElementClass>();
+
 		VertexClass superClass = graphClass
-				.createVertexClass(new QualifiedName(superClassName));
+				.createVertexClass(new QualifiedName("VertexClassSuperClass"));
 		VertexClass superClass2 = graphClass
-				.createVertexClass(new QualifiedName(superClass2Name));
+				.createVertexClass(new QualifiedName("VertexClassSuperClass2"));
 
 		vertexClass.addSuperClass(superClass);
 		vertexClass.addSuperClass(superClass2);
-		// expected names of superclasses of this element
-		expectedStrings.add(schema.getDefaultVertexClass().getSimpleName());
-		expectedStrings.add(superClassName);
-		expectedStrings.add(superClass2Name);
-		// expected superclass count including the default superclass(es)
-		expectedValue = 3;
 
-		super.testGetAllSuperClasses_main();
+		expectedSuperClasses.add(schema.getDefaultVertexClass());
+		expectedSuperClasses.add(superClass);
+		expectedSuperClasses.add(superClass2);
+
+		testGetAllSuperClasses2(expectedSuperClasses);
 	}
 
 	/**
 	 * getAllSuperClasses()
-	 *
+	 * 
 	 * TEST CASE: Getting all superclasses of an element with multiple direct
 	 * and indirect superclasses
 	 */
 	@Test
-	@Override
 	public void testGetAllSuperClasses3() {
-		String superClassName = "VertexClassSuperClass";
-		String superClass2Name = "VertexClassSuperClass2";
+		Vector<AttributedElementClass> expectedSuperClasses = new Vector<AttributedElementClass>();
+
 		VertexClass superClass = graphClass
-				.createVertexClass(new QualifiedName(superClassName));
+				.createVertexClass(new QualifiedName("VertexClassSuperClass"));
 		VertexClass superClass2 = graphClass
-				.createVertexClass(new QualifiedName(superClass2Name));
+				.createVertexClass(new QualifiedName("VertexClassSuperClass2"));
 
 		vertexClass.addSuperClass(superClass);
 		superClass.addSuperClass(superClass2);
-		// expected names of superclasses of this element
-		expectedStrings.add(schema.getDefaultVertexClass().getSimpleName());
-		expectedStrings.add(superClassName);
-		expectedStrings.add(superClass2Name);
-		// expected superclass count including the default superclass(es)
-		expectedValue = 3;
 
-		super.testGetAllSuperClasses_main();
+		expectedSuperClasses.add(schema.getDefaultVertexClass());
+		expectedSuperClasses.add(superClass);
+		expectedSuperClasses.add(superClass2);
+
+		testGetAllSuperClasses3(expectedSuperClasses);
 	}
 
 	/**
 	 * getAllSuperClasses()
-	 *
+	 * 
 	 * TEST CASE: Getting all superclasses of an element that has no
 	 * superclasses
 	 */
 	@Test
-	@Override
 	public void testGetAllSuperClasses4() {
-		// expected names of superclasses of this element
-		expectedStrings.add(schema.getDefaultVertexClass().getSimpleName());
-		// expected superclass count including the default superclass(es)
-		expectedValue = 1;
+		Vector<AttributedElementClass> expectedSuperClasses = new Vector<AttributedElementClass>();
 
-		super.testGetAllSuperClasses_main();
+		expectedSuperClasses.add(schema.getDefaultVertexClass());
+
+		testGetAllSuperClasses4(expectedSuperClasses);
+	}
+
+	/**
+	 * getAttribute()
+	 * 
+	 * TEST CASE: Getting an inherited attribute
+	 */
+	@Test
+	public void testGetAttribute2() {
+		VertexClass superClass = graphClass
+				.createVertexClass(new QualifiedName("VertexClassSuperClass"));
+
+		vertexClass.addSuperClass(superClass);
+
+		testGetAttribute2(superClass);
+	}
+
+	/**
+	 * getAttribute()
+	 * 
+	 * TEST CASE: Trying to get an attribute present in a subclass of this
+	 * element
+	 */
+	@Test
+	public void testGetAttribute5() {
+		VertexClass subClass = graphClass.createVertexClass(new QualifiedName(
+				"VertexClassSubClass"));
+
+		subClass.addSuperClass(vertexClass);
+
+		testGetAttribute5(subClass);
+	}
+
+	/**
+	 * getAttributeCount()
+	 * 
+	 * TEST CASE: Getting the number of attributes of an element which has
+	 * exactly only one inherited attribute and no direct attributes
+	 */
+	@Test
+	public void testGetAttributeCount2() {
+		VertexClass superClass = graphClass
+				.createVertexClass(new QualifiedName("VertexClassSuperClass"));
+
+		vertexClass.addSuperClass(superClass);
+
+		testGetAttributeCount2(superClass);
+	}
+
+	/**
+	 * getAttributeCount()
+	 * 
+	 * TEST CASE: Getting the number of attributes of an element which has
+	 * multiple direct and indirect attributes
+	 */
+	@Test
+	public void testGetAttributeCount3() {
+		VertexClass superClass = graphClass
+				.createVertexClass(new QualifiedName("VertexClassSuperClass"));
+
+		vertexClass.addSuperClass(superClass);
+
+		testGetAttributeCount3(superClass);
+	}
+
+	/**
+	 * getAttributeCount()
+	 * 
+	 * TEST CASE: Getting the number of attributes of an element which has no
+	 * direct nor inherited attributes but whose subclass has attributes
+	 */
+	@Test
+	public void testGetAttributeCount5() {
+		VertexClass subClass = graphClass.createVertexClass(new QualifiedName(
+				"VertexClassSubClass"));
+
+		subClass.addSuperClass(vertexClass);
+
+		testGetAttributeCount5(subClass);
+	}
+
+	/**
+	 * getAttributeList()
+	 * 
+	 * TEST CASE: Getting an element´s list of attributes, which has exactly one
+	 * inherited attribute and no direct attributes
+	 */
+	@Test
+	public void testGetAttributeList2() {
+		VertexClass superClass = graphClass
+				.createVertexClass(new QualifiedName("VertexClassSuperClass"));
+
+		vertexClass.addSuperClass(superClass);
+
+		testGetAttributeList2(superClass);
+	}
+
+	/**
+	 * getAttributeList()
+	 * 
+	 * TEST CASE: Getting an element´s list of attributes, which has mutliple
+	 * direct and inherited attributes
+	 */
+	@Test
+	public void testGetAttributeList3() {
+		VertexClass superClass = graphClass
+				.createVertexClass(new QualifiedName("VertexClassSuperClass"));
+
+		vertexClass.addSuperClass(superClass);
+
+		testGetAttributeList3(superClass);
+	}
+
+	/**
+	 * getAttributeList()
+	 * 
+	 * TEST CASE: Getting an element´s list of attributes, which has no direct
+	 * nor inherited attributes but whose subclass has attributes
+	 */
+	@Test
+	public void testGetAttributeList5() {
+		VertexClass subClass = graphClass.createVertexClass(new QualifiedName(
+				"VertexClassSubClass"));
+
+		subClass.addSuperClass(vertexClass);
+
+		testGetAttributeList5(subClass);
 	}
 
 	@Test
