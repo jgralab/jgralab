@@ -274,7 +274,9 @@
 	<!-- makes executable jar file out of all classes in ${classes.dir} and puts jar file into /build/jar -->
 	<target name="jar" depends="compile">
 		<!-- calls target unjar in general ant file ${ant}/build.xml -->	
-		<ant dir="${common.dir}" antfile="build.xml" target="unjar"/>
+		<ant dir="${common.dir}" antfile="build.xml" target="unjar">
+          <property name="unjarexcludes" value="**/clover*.jar"/>	   		
+        </ant>
 		<!-- unjar some commom jars -->
 		<unjar dest="${tmp.dir}">
 			<fileset dir="${comlib.dir}/getopt/" includes="**/*.jar"/>
