@@ -28,6 +28,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+
 import de.uni_koblenz.jgralab.Aggregation;
 import de.uni_koblenz.jgralab.Attribute;
 import de.uni_koblenz.jgralab.AttributedElement;
@@ -43,10 +46,6 @@ import de.uni_koblenz.jgralab.schema.ListDomain;
 import de.uni_koblenz.jgralab.schema.RecordDomain;
 import de.uni_koblenz.jgralab.schema.Schema;
 import de.uni_koblenz.jgralab.schema.SetDomain;
-
-import org.w3c.dom.DOMException;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
 
 class Graph2OWLConcepts {
 
@@ -71,7 +70,7 @@ class Graph2OWLConcepts {
 	 * The suffix appended to the OWL construct representing an EdgeClass. It is
 	 * an empty string if the parameter {@code appendSuffix2EdgeClassName} given
 	 * to the constructor is {@code false}.
-	 * 
+	 *
 	 * @see #Schema2OWL(Document doc, Schema schema, boolean
 	 *      edgeClasses2Properties, boolean appendSuffix2EdgeClassName)
 	 */
@@ -80,7 +79,7 @@ class Graph2OWLConcepts {
 	/**
 	 * Creates an instance of {@code Graph2OWL}, assigns values to the member
 	 * variables.
-	 * 
+	 *
 	 * @param doc
 	 *            The root node of the DOM-tree.
 	 * @param g
@@ -106,13 +105,13 @@ class Graph2OWLConcepts {
 	/**
 	 * Initializes {@code pf} and starts the conversion of the {@code Graph
 	 * graph} to OWL.
-	 * 
+	 *
 	 * @param g
 	 *            The graph which shall be converted to OWL.
 	 * @param pf
 	 *            An instance of {@code ProgressFunction} to display the
 	 *            progress of the conversion in a status bar.
-	 * 
+	 *
 	 * @see #convertGraph(Graph g, ProgressFunction pf)
 	 */
 	private void saveGraph(Graph g, ProgressFunction pf) {
@@ -148,43 +147,43 @@ class Graph2OWLConcepts {
 	 * contained vertices and edges.<br>
 	 * <br>
 	 * XML code written: <br>
-	 * 
+	 *
 	 * <pre>
 	 *     &lt;&lt;i&gt;g.getAttributedElementClass().getName()&lt;/i&gt; rdf:ID=&quot;&lt;i&gt;g.getId()&lt;/i&gt;&quot;&gt;
 	 *         &lt;i&gt;convertAttributeValue(g, g.getAttributedElementClass().getAttributeList().toArray(new Attribute[0])[0])&lt;/i&gt;
 	 *         &lt;i&gt;convertAttributeValue(g, g.getAttributedElementClass().getAttributeList().toArray(new Attribute[0])[1])&lt;/i&gt;
 	 *         &lt;i&gt;...&lt;/i&gt;
 	 * </pre>
-	 * 
+	 *
 	 * ------------------------------------<br>
 	 * This part is written for every {@code Vertex v} contained in {@code g},
 	 * where <i>vElemId</i> is the id of the individual representing that
 	 * {@code Vertex}.
-	 * 
+	 *
 	 * <pre>
 	 *         &lt;graphContainsVertex rdf:resource=&quot;#&lt;i&gt;vElemId&lt;/i&gt;&quot;/&gt;
 	 * </pre>
-	 * 
+	 *
 	 * If {@code edgeClasses2Properties = false}, this part is written for every
 	 * {@code Edge e} contained in {@code g}, where <i>eElemId</i> is the id of
 	 * the individual representing that {@code Edge}.
-	 * 
+	 *
 	 * <pre>
 	 *         &lt;graphContainsEdge rdf:resource=&quot;#&lt;i&gt;eElemId&lt;/i&gt;&quot;/&gt;
 	 * </pre>
-	 * 
+	 *
 	 * ------------------------------------<br>
-	 * 
+	 *
 	 * <pre>
 	 *    &lt;/&lt;i&gt;g.getAttributedElementClass().getName()&lt;/i&gt;&gt;
 	 * </pre>
-	 * 
+	 *
 	 * @param g
 	 *            The graph which shall be converted to OWL.
 	 * @param pf
 	 *            An instance of {@code ProgressFunction} to display the
 	 *            progress of the conversion in a status bar.
-	 * 
+	 *
 	 * @see #convertAttributeValue(AttributedElement ownerAe, Attribute attr)
 	 */
 	private void convertGraph(Graph g, ProgressFunction pf) {
@@ -248,7 +247,7 @@ class Graph2OWLConcepts {
 	 * edges.<br>
 	 * <br>
 	 * XML code written if {@code appendSuffix2EdgeClassName = false}: <br>
-	 * 
+	 *
 	 * <pre>
 	 *     &lt;&lt;i&gt;v.getAttributedElementClass().getName()&lt;/i&gt; rdf:ID=&quot;&lt;i&gt;vElemId&lt;/i&gt;&quot;&gt;
 	 *         &lt;i&gt;convertAttributeValue(v, v.getAttributedElementClass().getAttributeList().toArray(new Attribute[0])[0])&lt;/i&gt;
@@ -256,17 +255,17 @@ class Graph2OWLConcepts {
 	 *         &lt;i&gt;...&lt;/i&gt;
 	 *         &lt;vertexIsInGraph rdf:resource=&quot;#&lt;i&gt;v.getGraph().getId()&lt;/i&gt;&quot;/&gt;
 	 * </pre>
-	 * 
+	 *
 	 * ------------------------------------<br>
 	 * This part is only written if {@code edgeClasses2Properties = false} and
 	 * {@code e} is an {@code Edge} incident to {@code v} with {@code v} on its
 	 * "from" side. <i>eElemId</i> is the id of the individual representing that
 	 * {@code Edge}:
-	 * 
+	 *
 	 * <pre>
 	 *         &lt;&lt;i&gt;e.getAttributedElementClass().getName() + edgeClassNameSuffix&lt;/i&gt;Out rdf:resource=&quot;#&lt;i&gt;eElemId&lt;/i&gt;&quot;/&gt;
 	 * </pre>
-	 * 
+	 *
 	 * If {@code v} is on the "to" side, replace
 	 * <i>e.getAttributedElementClass().getName() + edgeClassNameSuffix</i>
 	 * {@code Out} with <i>e.getAttributedElementClass().getName() +
@@ -276,21 +275,21 @@ class Graph2OWLConcepts {
 	 * {@code e} is an {@code Edge} incident to {@code v} with {@code v} on its
 	 * "from" side. <i>eElemId</i> is the id of the individual representing that
 	 * {@code Edge}:
-	 * 
+	 *
 	 * <pre>
 	 *         &lt;&lt;i&gt;e.getAttributedElementClass().getName() + edgeClassNameSuffix&lt;/i&gt; rdf:resource=&quot;#&lt;i&gt;eElemId&lt;/i&gt;&quot;/&gt;
 	 * </pre>
-	 * 
+	 *
 	 * If {@code v} is on the "to" side, replace
 	 * <i>e.getAttributedElementClass().getName() + edgeClassNameSuffix</i> with
 	 * <i>e.getAttributedElementClass().getName() + edgeClassNameSuffix</i>
 	 * {@code -of}.<br>
 	 * ------------------------------------<br>
-	 * 
+	 *
 	 * <pre>
 	 *     &lt;/&lt;i&gt;v.getAttributedElementClass().getName()&lt;/i&gt;&gt;
 	 * </pre>
-	 * 
+	 *
 	 * @param v
 	 *            The vertex which shall be converted.
 	 * @param vElemId
@@ -298,7 +297,7 @@ class Graph2OWLConcepts {
 	 * @param pf
 	 *            An instance of {@code ProgressFunction} to display the
 	 *            progress of the conversion in a status bar.
-	 * 
+	 *
 	 * @see #convertAttributeValue(AttributedElement ownerAe, Attribute attr)
 	 */
 	private void convertVertex(Vertex v, String vElemId, ProgressFunction pf) {
@@ -392,7 +391,7 @@ class Graph2OWLConcepts {
 	 * aggregate.<br>
 	 * <br>
 	 * XML code written if: <br>
-	 * 
+	 *
 	 * <pre>
 	 *     &lt;&lt;i&gt;e.getAttributedElementClass().getName() + edgeClassNameSuffix&lt;/i&gt; rdf:ID=&quot;&lt;i&gt;eElemId&lt;/i&gt;&quot;&gt;
 	 *         &lt;i&gt;convertAttributeValue(e, e.getAttributedElementClass().getAttributeList().toArray(new Attribute[0])[0])&lt;/i&gt;
@@ -402,24 +401,24 @@ class Graph2OWLConcepts {
 	 *         &lt;edgeFromRole rdf:datatype=&quot;http://www.w3.org/2001/XMLSchema#string&quot;&gt;&lt;i&gt;e.getAttributedElementClass().getFromRolename()&lt;/i&gt;&lt;/edgeFromRole&gt;
 	 *         &lt;edgeToRole rdf:datatype=&quot;http://www.w3.org/2001/XMLSchema#string&quot;&gt;&lt;i&gt;e.getAttributedElementClass()).getToRolename()&lt;/i&gt;&lt;/edgeToRole&gt;
 	 * </pre>
-	 * 
+	 *
 	 * ------------------------------------<br>
 	 * This part is only written if {@code e} is an {@code Aggregation} or
 	 * {@code Composition} and the {@code Vertex} on the "from" side is the
 	 * aggregate, where <i>fromElemId</i> is the id is the id of the individual
 	 * representing that {@code Vertex}:
-	 * 
+	 *
 	 * <pre>
 	 *         &lt;aggregate rdf:resource=&quot;#&lt;i&gt;fromElemId&lt;/i&gt;&quot;/&gt;
 	 * </pre>
-	 * 
+	 *
 	 * If the aggregate is on the "to" side, replace <i>fromElemId</i> with
 	 * <i>toElemId</i>. ------------------------------------<br>
-	 * 
+	 *
 	 * <pre>
 	 *     &lt;/&lt;i&gt;e.getAttributedElementClass().getName() + edgeClassNameSuffix&lt;/i&gt;&gt;
 	 * </pre>
-	 * 
+	 *
 	 * @param e
 	 *            The edge which shall be converted.
 	 * @param eElemId
@@ -427,7 +426,7 @@ class Graph2OWLConcepts {
 	 * @param pf
 	 *            An instance of {@code ProgressFunction} to display the
 	 *            progress of the conversion in a status bar.
-	 * 
+	 *
 	 * @see #convertAttributeValue(AttributedElement ownerAe, Attribute attr)
 	 */
 	private void convertEdge(Edge e, String eElemId, ProgressFunction pf) {
@@ -498,15 +497,15 @@ class Graph2OWLConcepts {
 	 * and
 	 * {@link #createAttributeIndividualDatatypePropertyElement(String name, Object value, Domain dom)}
 	 * for the created XML code.
-	 * 
+	 *
 	 * @param ownerAe
 	 *            The {@code AttributedElementClass} containing {@code attr}.
 	 * @param attr
 	 *            The {@code Attribute} which shall be converted.
 	 * @return An individual property representing {@code attr}.
-	 * 
+	 *
 	 * @throws NoSuchFieldException
-	 * 
+	 *
 	 * @see #createAttributeIndividualObjectPropertyElement(String name, Object
 	 *      value, Domain dom)
 	 * @see #createAttributeIndividualDatatypePropertyElement(String name,
@@ -554,7 +553,7 @@ class Graph2OWLConcepts {
 	 * and
 	 * {@link #createRecordIndividualObjectPropertyElement(String name, Object value, Domain dom)}
 	 * for the created XML code.
-	 * 
+	 *
 	 * @param propertyName
 	 *            The name of the ObjectProperty which shall be created.
 	 * @param value
@@ -563,7 +562,7 @@ class Graph2OWLConcepts {
 	 *            The {@code Domain} of the composite attribute which shall be
 	 *            converted.
 	 * @return An individual ObjectProperty representing a composite attribute.
-	 * 
+	 *
 	 * @see #createListIndividualObjectPropertyElement(String name, Object
 	 *      value, Domain dom)
 	 * @see #createSetIndividualObjectPropertyElement(String name, Object value,
@@ -589,7 +588,7 @@ class Graph2OWLConcepts {
 	 * Creates an individual of an ObjectProperty representing the value of an
 	 * {@code Attribute} of a list type. <br>
 	 * XML-code written if the members of the list are of composite type: <br>
-	 * 
+	 *
 	 * <pre>
 	 *     &lt;&lt;i&gt;propertyName&lt;/i&gt;&gt;
 	 *         &lt;ListElement&gt;
@@ -599,15 +598,15 @@ class Graph2OWLConcepts {
 	 *                     &lt;listElementHasObject &lt;i&gt;...&lt;/i&gt;
 	 *                     &lt;hasNextListElement&gt;
 	 *                         &lt;i&gt;...&lt;/i&gt;
-	 *                     &lt;/hasNextListElement&gt; 
+	 *                     &lt;/hasNextListElement&gt;
 	 *             &lt;/hasNextListElement&gt;
 	 *         &lt;ListElement&gt;
-	 *          
+	 *
 	 *     &lt;&lt;i&gt;propertyName&lt;/i&gt;&gt;
 	 * </pre>
-	 * 
+	 *
 	 * XML-code written if the members of the list are of basic type: <br>
-	 * 
+	 *
 	 * <pre>
 	 *     &lt;&lt;i&gt;propertyName&lt;/i&gt;&gt;
 	 *         &lt;ListElement&gt;
@@ -617,19 +616,19 @@ class Graph2OWLConcepts {
 	 *                     &lt;listElementHasDatatype &lt;i&gt;...&lt;/i&gt;
 	 *                     &lt;hasNextListElement&gt;
 	 *                         &lt;i&gt;...&lt;/i&gt;
-	 *                     &lt;/hasNextListElement&gt; 
+	 *                     &lt;/hasNextListElement&gt;
 	 *             &lt;/hasNextListElement&gt;
 	 *         &lt;/ListElement&gt;
 	 *     &lt;/&lt;i&gt;propertyName&lt;/i&gt;&gt;
 	 * </pre>
-	 * 
+	 *
 	 * The child elements and/or attributes of the individuals {@code <Set>} are
 	 * determined by yet another call of
 	 * {@link #createAttributeIndividualObjectPropertyElement(String propertyName, Object value, Domain dom)}
 	 * or
 	 * {@link #createAttributeIndividualDatatypePropertyElement(String propertyName, Object value, Domain dom)}
 	 * , respectively.
-	 * 
+	 *
 	 * @param propertyName
 	 *            The name of the ObjectProperty which shall be created.
 	 * @param value
@@ -640,7 +639,7 @@ class Graph2OWLConcepts {
 	 *            be converted.
 	 * @return An individual ObjectProperty representing an attribute of type
 	 *         List.
-	 * 
+	 *
 	 * @see #createAttributeIndividualObjectPropertyElement(String propertyName,
 	 *      Object value, Domain dom)
 	 * @see #createAttributeIndividualDatatypePropertyElement(String
@@ -698,32 +697,32 @@ class Graph2OWLConcepts {
 	 * Creates an individual of an ObjectProperty representing the value of an
 	 * {@code Attribute} of a set type. <br>
 	 * XML-code written if the members of the set members are of composite type: <br>
-	 * 
+	 *
 	 * <pre>
 	 *     &lt;&lt;i&gt;propertyName&lt;/i&gt;&gt;
 	 *         &lt;Set&gt;
 	 *             &lt;setHasObject &lt;i&gt;...&lt;/i&gt;
-	 *         &lt;/Set&gt;    
+	 *         &lt;/Set&gt;
 	 *     &lt;/&lt;i&gt;propertyName&lt;/i&gt;&gt;
 	 * </pre>
-	 * 
+	 *
 	 * XML-code written if the members of the set members are of basic type: <br>
-	 * 
+	 *
 	 * <pre>
 	 *     &lt;&lt;i&gt;propertyName&lt;/i&gt;&gt;
 	 *         &lt;Set&gt;
 	 *             &lt;setHasDatatype &lt;i&gt;...&lt;/i&gt;
-	 *         &lt;/Set&gt;    
+	 *         &lt;/Set&gt;
 	 *     &lt;/&lt;i&gt;propertyName&lt;/i&gt;&gt;
 	 * </pre>
-	 * 
+	 *
 	 * The child elements and/or attributes of the individuals {@code <Set>} are
 	 * determined by yet another call of
 	 * {@link #createAttributeIndividualObjectPropertyElement(String propertyName, Object value, Domain dom)}
 	 * or
 	 * {@link #createAttributeIndividualDatatypePropertyElement(String propertyName, Object value, Domain dom)}
 	 * , respectively.
-	 * 
+	 *
 	 * @param propertyName
 	 *            The name of the ObjectProperty which shall be created.
 	 * @param value
@@ -734,7 +733,7 @@ class Graph2OWLConcepts {
 	 *            converted.
 	 * @return An individual ObjectProperty representing an attribute of type
 	 *         Set.
-	 * 
+	 *
 	 * @see #createAttributeIndividualObjectPropertyElement(String propertyName,
 	 *      Object value, Domain dom)
 	 * @see #createAttributeIndividualDatatypePropertyElement(String
@@ -778,16 +777,16 @@ class Graph2OWLConcepts {
 	 * {@code Attribute} of a record type. <br>
 	 * XML-code written, where <i>componentNameX</i> denotes the names of the
 	 * components: <br>
-	 * 
+	 *
 	 * <pre>
 	 *     &lt;&lt;i&gt;propertyName&lt;/i&gt;&gt;
 	 *         &lt;&lt;i&gt;dom.getName()&lt;/i&gt;&gt;
 	 *             &lt;&lt;i&gt;dom.getName()&lt;/i&gt;Has&lt;i&gt;componentName1&lt;/i&gt; &lt;i&gt;...&lt;/i&gt;
 	 *             &lt;&lt;i&gt;dom.getName()&lt;/i&gt;Has&lt;i&gt;componentName2&lt;/i&gt; &lt;i&gt;...&lt;/i&gt;
-	 *         &lt;/&lt;i&gt;dom.getName()&lt;/i&gt;&gt;    
+	 *         &lt;/&lt;i&gt;dom.getName()&lt;/i&gt;&gt;
 	 *     &lt;/&lt;i&gt;propertyName&lt;/i&gt;&gt;
 	 * </pre>
-	 * 
+	 *
 	 * The child elements and/or attributes of the individuals {@code <}
 	 * <i>dom.getName() </i>{@code Has}<i>componentNameX</i> are determined by a
 	 * call of
@@ -797,7 +796,7 @@ class Graph2OWLConcepts {
 	 * , respectively<br>
 	 * <br>
 	 * An example:<br>
-	 * 
+	 *
 	 * <pre>
 	 *     &lt;carParkHasParking&gt;
 	 *         &lt;Parking&gt;
@@ -807,7 +806,7 @@ class Graph2OWLConcepts {
 	 *         &lt;/Parking&gt;
 	 *     &lt;/carParkHasParking&gt;
 	 * </pre>
-	 * 
+	 *
 	 * @param propertyName
 	 *            The name of the ObjectProperty which shall be created.
 	 * @param value
@@ -818,7 +817,7 @@ class Graph2OWLConcepts {
 	 *            be converted.
 	 * @return An individual ObjectProperty representing an attribute of type
 	 *         Record.
-	 * 
+	 *
 	 * @see #createAttributeIndividualObjectPropertyElement(String propertyName,
 	 *      Object value, Domain dom)
 	 * @see #createAttributeIndividualDatatypePropertyElement(String
@@ -880,11 +879,11 @@ class Graph2OWLConcepts {
 	 * {@code Attribute} of a basic type. <br>
 	 * XML-code written:<br>
 	 * <br>
-	 * 
+	 *
 	 * <pre>
 	 *     &lt;&lt;i&gt;propertyName&lt;/i&gt; rdf:datatype=&quot;#&lt;i&gt;dom.getTGTypeName()&lt;/i&gt;&gt;&lt;i&gt;value.toString()&lt;/i&gt;&lt;/&lt;i&gt;propertyName&lt;/i&gt;&gt;
 	 * </pre>
-	 * 
+	 *
 	 * @param propertyName
 	 *            The name of the DatatypeProperty which shall be created.
 	 * @param value
@@ -923,7 +922,7 @@ class Graph2OWLConcepts {
 	/**
 	 * Creates and returns an element {@code <}<i>owlClass</i>{@code />},
 	 * representing an individual.
-	 * 
+	 *
 	 * @param owlClass
 	 *            The element's tag.
 	 * @return The created element.
@@ -937,7 +936,7 @@ class Graph2OWLConcepts {
 	/**
 	 * Creates and returns an element {@code <}<i>owlClass</i> {@code rdf:ID = }
 	 * <i>id</i>{@code />}, representing an individual.
-	 * 
+	 *
 	 * @param owlClass
 	 *            The element's tag.
 	 * @param id
@@ -947,7 +946,7 @@ class Graph2OWLConcepts {
 	// private Element createIndividualElement(String owlClass, String id) {
 	// Element elem = doc.createElement(owlClass);
 	// elem.setAttribute("rdf:ID", id);
-	//		
+	//
 	// return elem;
 	// }
 	private Element createClassElement(String owlClass, String id) {
@@ -968,7 +967,7 @@ class Graph2OWLConcepts {
 	/**
 	 * Creates and returns an element {@code <}<i>owlProperty</i>{@code />},
 	 * representing an individual's Property.
-	 * 
+	 *
 	 * @param owlProperty
 	 *            The element's tag.
 	 * @return The created element.
@@ -983,7 +982,7 @@ class Graph2OWLConcepts {
 	 * Creates and returns an element {@code <}<i>owlProperty</i> {@code
 	 * rdf:resource = } <i>id</i>{@code />}, representing an individual's
 	 * ObjectProperty.
-	 * 
+	 *
 	 * @param owlProperty
 	 *            The element's tag.
 	 * @param resource
@@ -1003,7 +1002,7 @@ class Graph2OWLConcepts {
 	 * rdf:datatype = } <i>datatype</i>{@code />}<i>value</i>{@code </}
 	 * <i>owlProperty</i>{@code >}, representing an individual's
 	 * DatatypeProperty.
-	 * 
+	 *
 	 * @param owlProperty
 	 *            The element's tag.
 	 * @param datatype

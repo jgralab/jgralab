@@ -613,7 +613,7 @@ EQUAL		: '=';
 MATCH 		: '=~';
 NOT_EQUAL 	: '<>';
 LE			: '<=';
-GE			: '=>';
+GE			: '>=';
 L_T			: '<';
 G_T			: '>';
 DIV			: '/';

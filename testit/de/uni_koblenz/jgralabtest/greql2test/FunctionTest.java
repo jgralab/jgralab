@@ -818,7 +818,7 @@ public class FunctionTest extends GenericTests {
 				+ "           in                                          "
 				+ "           from x : keySet(m) "
 				+ "           reportSet get(m, x) end";
-		JValue result = evalTestQuery("KeySet", queryString);
+		JValue result = evalTestQuery("Get", queryString);
 		JValueSet set = result.toJValueSet();
 		assertEquals(6, set.size());
 		assertTrue(set.contains(new JValue("One")));
@@ -827,5 +827,21 @@ public class FunctionTest extends GenericTests {
 		assertTrue(set.contains(new JValue("Four")));
 		assertTrue(set.contains(new JValue("Five")));
 		assertTrue(set.contains(new JValue("Six")));
+	}
+
+	@Test
+	public void testGrEqual() throws Exception {
+		assertTrue(evalTestQuery("GrEqual", "3 >= 2").toBoolean());
+		assertTrue(evalTestQuery("GrEqual", "17 >= 17").toBoolean());
+		assertTrue(evalTestQuery("GrEqual", "grEqual(17, 17.0)").toBoolean());
+		assertFalse(evalTestQuery("GrEqual", "17 >= 199)").toBoolean());
+	}
+
+	@Test
+	public void testGrEqual2() throws Exception {
+		assertTrue(evalTestQuery("GrEqual", "5.5 >= 4.7").toBoolean());
+		assertTrue(evalTestQuery("GrEqual", "33.1 >= 33.1").toBoolean());
+		assertTrue(evalTestQuery("GrEqual", "grEqual(117.4, 111)").toBoolean());
+		assertFalse(evalTestQuery("GrEqual", "37.01 >= 109.00003").toBoolean());
 	}
 }
