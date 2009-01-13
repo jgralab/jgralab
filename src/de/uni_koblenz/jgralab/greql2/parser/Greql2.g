@@ -644,6 +644,7 @@ SL_COMMENT
 		{$channel=HIDDEN;}
 	;  
 	    
+// Multi-line comments	    
 ML_COMMENT
 @init{ 
 	int start = input.getCharPositionInLine()-1;
@@ -651,25 +652,6 @@ ML_COMMENT
     :   '/*' ( options {greedy=false;} : . )* '*/' {$channel=HIDDEN;}
     ;
 
-
-// multiple-line comments
-//ML_COMMENT	
-//@init{ 
-	//int start = input.getCharPositionInLine()-1;
-//}
-//:	'/*'	     
-//( 		
-//	//options { generateAmbigWarnings=false; 	}
-//	{ input.LA(1) != EOF_CHAR && input.LA(2)!='/' }? '*'			
-			//| { input.LA(1) != EOF_CHAR }? ('/' '*') => ML_COMMENT				    
-			//| { input.LA(1) != EOF_CHAR }? ~('*')
-			//| { input.LA(1) == EOF_CHAR }? { throw new TokenStreamException("Unterminated /*-comment starting at offset " + start); }
-//		
-//)*
-		//
-//'*/'
-	//{$channel=HIDDEN;}
-//;
 
 		
 STRING_LITERAL
@@ -679,45 +661,30 @@ STRING_LITERAL
     :  '"' ( ESCAPE_SEQUENCE | ~('\\'|'"') )* '"'
     ;
 		
-//TODO: Find ANTL3 version of EOF_CHAR		
-// string literals
-//STRING_LITERAL //options {  paraphrase = "a string literal";}
-//@init{
-//	int start = input.getCharPositionInLine()-1; 
-//}	
-//	:	
-//		'"' 
-//		( //	options { generateAmbigWarnings=false; 	}
-//			:	
-//			  ESCAPE_SEQUENCE	          
-//	      |  {input.LA(1) != EOF_CHAR}? ~( '"' | '\\' | '\n' | '\r' )	   
-//	      |  { input.LA(1) == EOF_CHAR }? { throw new TokenStreamException("Unterminated string-literal starting at offset "+start); }     
-//	    )* 
-//	    '"'
-//	;
 
+HEXLITERAL : '0' ('x'|'X') HexDigit+ IntegerTypeSuffix? ;
 
-HEXLITERAL : '0' ('x'|'X') HEXDIGIT+ IntegerTypeSuffix? ;
+INTLITERAL : ('0'..'9')+ IntegerTypeSuffix;
 
-INTLITERAL : ('0' | (('1'..'9') ('0'..'9')*)) IntegerTypeSuffix;
-
-FLOATLITERAL : ('0' | (('1'..'9') ('0'..'9')*)) ((Exponent FloatTypeSuffix?) | FloatTypeSuffix);
-
-OCTLITERAL : '0' ('0'..'7')+ IntegerTypeSuffix? ;
-
-DECLITERAL : ('0' | (('1'..'9') ('0'..'9')*));
+DIGITSEQUENCE : ('0'..'9')+;
 
 fragment
-HEXDIGIT : ('0'..'9'|'a'..'f'|'A'..'F') ;
+HexDigit : ('0'..'9'|'a'..'f'|'A'..'F') ;
 
-fragment	
+fragment
 IntegerTypeSuffix : ('l'|'L') ;
+
+REALLITERAL
+    :   ('0'..'9')+ Exponent FloatTypeSuffix?
+    |   ('0'..'9')+ FloatTypeSuffix
+    ;
 
 fragment
 Exponent : ('e'|'E') ('+'|'-')? ('0'..'9')+ ;
 
 fragment
 FloatTypeSuffix : ('f'|'F'|'d'|'D') ;
+
 
 
 fragment
@@ -1735,7 +1702,7 @@ callCount[24]++;
             }
         | (// exponentedPath:
             { offsetExpr = getLTOffset(); }
-            i=DECLITERAL
+            ( (i=INTLITERAL) | (i=DIGITSEQUENCE))
             { 
                 lengthExpr = getLTOffset();
 			 	ExponentiatedPathDescription epd = graph.createExponentiatedPathDescription();
@@ -2402,39 +2369,58 @@ numericLiteral returns [Expression literal = null]
 	int offset = -1;
 }
 :
-	{offset = getLTOffset();}
-   ( 
-   	  (token=INTLITERAL {textRepresentation = token.getText();})
-    | (token=FLOATLITERAL {textRepresentation = token.getText();})
-   	| (token=HEXLITERAL {base = 16; textRepresentation = token.getText().substring(2);})
-	| (token=OCTLITERAL {base = 8; textRepresentation = token.getText().substring(1);})
-    | (
-    	token=DECLITERAL
-		{
-	        textRepresentation = token.getText();
-		}
-		((DOT) => ( DOT
-		    ((FLOATLITERAL) => token = FLOATLITERAL |
-		     (DECLITERAL) => token = DECLITERAL)
-			{
-				textRepresentation = textRepresentation + "." + token.getText();
-				isRealLiteral = true;
-			}
-		    )
-		 |)	
-		(token = Exponent {textRepresentation += token.getText(); isRealLiteral = true;})?
-		(token = FloatTypeSuffix {isRealLiteral = true;})?
-	) 
-)	
+   {offset = getLTOffset();}
+   (
+      (REALLITERAL) => (
+        /* real literal */
+        token = REALLITERAL
+        {textRepresentation = token.getText(); isRealLiteral=true;}
+      )
+      |
+      (INTLITERAL) => (
+        /* int literal */
+        token = INTLITERAL
+        {textRepresentation = token.getText();}
+      )
+      |
+      (HEXLITERAL) => (
+        /* hex literal */
+        token = HEXLITERAL
+        {
+          /* TODO: Check if 0x should be removed from text represenation */
+          textRepresentation = token.getText().substring(2);
+          System.out.println("Matched HexLiteral " + textRepresentation);
+          base=16;
+        }
+      )
+      |
+   	  (
+   	    /* numeric literal that could not be recognized by lexer */
+   	    token = DIGITSEQUENCE
+   	    {textRepresentation = token.getText();}
+   	    (
+   	      DOT
+   	      ((token = REALLITERAL) | (token = DIGITSEQUENCE))
+   	      {textRepresentation += "." + token.getText(); isRealLiteral=true;}   
+   	    )?
+   	  )
+   	)  
 	{
+	    System.out.println("Setting value of num literal " + textRepresentation);
 		if (isRealLiteral) {
 			literal = graph.createRealLiteral();
 			((RealLiteral) literal).setRealValue(Double.parseDouble(textRepresentation));
 		} else {
 	    	literal = graph.createIntLiteral();
+	    	/* check for octal literal*/
+	    	if ((base==10) && textRepresentation.startsWith("0") && !textRepresentation.startsWith("0x")) {
+	    	  base = 8;
+	    	}
+	    	System.out.println("Setting int value " + textRepresentation + " with base " + base );
 			((IntLiteral) literal).setIntValue(Integer.parseInt(textRepresentation, base));
 		}	
 	}
+	
 ;	
 
 
