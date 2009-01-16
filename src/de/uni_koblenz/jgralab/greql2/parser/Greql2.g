@@ -1217,7 +1217,7 @@ relationalExpression returns [Expression result]
   | LE { name = "leEqual"; }
   | G_T  { name = "grThan"; }
   | GE { name = "grEqual"; }
-  | MATCH {name = "match";} ) 
+  | MATCH {name = "reMatch";} ) 
   { construct.postOp(name); }
   expr = relationalExpression
   {$result = construct.postArg2(expr); }
