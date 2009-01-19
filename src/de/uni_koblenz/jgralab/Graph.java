@@ -25,19 +25,20 @@
 package de.uni_koblenz.jgralab;
 
 import de.uni_koblenz.jgralab.schema.EdgeClass;
+import de.uni_koblenz.jgralab.schema.Schema;
 import de.uni_koblenz.jgralab.schema.VertexClass;
 
 /**
  * The interface Graph is the base of all JGraLab graphs. It provides access to
  * global graph properties and to the Vertex and Edge sequence. Creation and
  * removal of vertices and edges, as well as valitiy checks, are provided.
- * 
+ *
  * Additionally, convenient methods for traversal, either based on separate
  * calls (getFirst/getNext) or on Iterables, can be used to travers the graph.
- * 
+ *
  * Callback methods can be used by subclasses to get informed when a Vertex or
  * an Edge is added or removed.
- * 
+ *
  * @author ist@uni-koblenz.de
  */
 public interface Graph extends AttributedElement {
@@ -50,15 +51,15 @@ public interface Graph extends AttributedElement {
 
 	/**
 	 * Creates an edge of the specified class <code>cls</code> that connects
-	 * <code>alpha</code> and <code>omega</code> vertices and adds the new
-	 * edge to this Graph.
+	 * <code>alpha</code> and <code>omega</code> vertices and adds the new edge
+	 * to this Graph.
 	 */
 	public <T extends Edge> T createEdge(Class<T> cls, Vertex alpha,
 			Vertex omega);
 
 	/**
 	 * Checks whether this graph is currently being loaded.
-	 * 
+	 *
 	 * @return true if the graph is currently being loaded
 	 */
 	public boolean isLoading();
@@ -75,7 +76,7 @@ public interface Graph extends AttributedElement {
 	 * <code>previousVersion</code>. Every change in the graph, e.g. adding,
 	 * creating and reordering of edges and vertices or changes of attributes of
 	 * the graph, an edge or a vertex are treated as a change.
-	 * 
+	 *
 	 * @param previousVersion
 	 *            The version to check against
 	 * @return <code>true</code> if the internal graph version of the graph is
@@ -85,7 +86,7 @@ public interface Graph extends AttributedElement {
 
 	/**
 	 * Returns the version counter of this graph.
-	 * 
+	 *
 	 * @return the graph version
 	 * @see #isGraphModified(long)
 	 */
@@ -96,7 +97,7 @@ public interface Graph extends AttributedElement {
 	 * given <code>previousVersion</code>. Changes in the vertex sequence are
 	 * creation and deletion as well as reordering of vertices, but not changes
 	 * of attribute values.
-	 * 
+	 *
 	 * @return <code>true</code> if the vertex list version of this graph is
 	 *         different from <code>previousVersion</code>.
 	 */
@@ -104,7 +105,7 @@ public interface Graph extends AttributedElement {
 
 	/**
 	 * Returns the version counter of the vertex sequence of this graph.
-	 * 
+	 *
 	 * @return the vertex sequence version
 	 * @see #isVertexListModified(long)
 	 */
@@ -112,10 +113,10 @@ public interface Graph extends AttributedElement {
 
 	/**
 	 * Checks if the edge sequence of this has changed with respect to the given
-	 * <code>previousVersion</code>. Changes in the edge sequence are
-	 * creation and deletion as well as reordering of edges, but not changes of
-	 * attribute values.
-	 * 
+	 * <code>previousVersion</code>. Changes in the edge sequence are creation
+	 * and deletion as well as reordering of edges, but not changes of attribute
+	 * values.
+	 *
 	 * @return <code>true</code> if the edge list version of this graph is
 	 *         different from <code>previousVersion</code>.
 	 */
@@ -123,7 +124,7 @@ public interface Graph extends AttributedElement {
 
 	/**
 	 * Returns the version counter of the edge sequence of this graph.
-	 * 
+	 *
 	 * @return the edge sequence version
 	 * @see #isEdgeListModified(long)
 	 */
@@ -140,16 +141,16 @@ public interface Graph extends AttributedElement {
 	boolean containsEdge(Edge e);
 
 	/**
-	 * Removes the vertex <code>v</code> from the vertex sequence of this
-	 * graph. Also, any edges incident to vertex <code>v</code> are deleted.
-	 * If <code>v</code> is the parent of a composition, all child vertices
-	 * are also deleted.
-	 * 
+	 * Removes the vertex <code>v</code> from the vertex sequence of this graph.
+	 * Also, any edges incident to vertex <code>v</code> are deleted. If
+	 * <code>v</code> is the parent of a composition, all child vertices are
+	 * also deleted.
+	 *
 	 * Preconditions: v.isValid()
-	 * 
+	 *
 	 * Postconditions: !v.isValid() && !containsVertex(v) &&
 	 * getVertex(v.getId()) == null
-	 * 
+	 *
 	 * @param v
 	 *            the Vertex to be deleted
 	 */
@@ -160,7 +161,7 @@ public interface Graph extends AttributedElement {
 	 * actually deleted from this Graph. Override this method to implement
 	 * user-defined behaviour upon deletion of vertices. Note that any changes
 	 * to this graph are forbidden.
-	 * 
+	 *
 	 * @param v
 	 *            the deleted vertex
 	 */
@@ -168,10 +169,10 @@ public interface Graph extends AttributedElement {
 
 	/**
 	 * Callback function for triggered actions just after the vertex
-	 * <code>v</code> was added to this Graph. Override this method to
-	 * implement user-defined behaviour upon addition of vertices. Note that any
-	 * changes to this graph are forbidden.
-	 * 
+	 * <code>v</code> was added to this Graph. Override this method to implement
+	 * user-defined behaviour upon addition of vertices. Note that any changes
+	 * to this graph are forbidden.
+	 *
 	 * @param v
 	 *            the added vertex
 	 */
@@ -181,12 +182,12 @@ public interface Graph extends AttributedElement {
 	 * Removes the edge <code>e</code> from the edge sequence of this graph.
 	 * This implies changes to the incidence lists of the alpha and omega vertex
 	 * of <code>e</code>.
-	 * 
+	 *
 	 * Preconditions: e.isValid()
-	 * 
+	 *
 	 * Postconditions: !e.isValid() && !containsEdge(e) && getEdge(e.getId()) ==
 	 * null
-	 * 
+	 *
 	 * @param e
 	 *            the Edge to be deleted
 	 */
@@ -197,7 +198,7 @@ public interface Graph extends AttributedElement {
 	 * actually deleted from this Graph. Override this method to implement
 	 * user-defined behaviour upon deletion of edges. Note that any changes to
 	 * this graph are forbidden.
-	 * 
+	 *
 	 * @param e
 	 *            the deleted Edge
 	 */
@@ -205,10 +206,10 @@ public interface Graph extends AttributedElement {
 
 	/**
 	 * Callback function for triggered actions just after the edge
-	 * <code>e</code> was added to this Graph. Override this method to
-	 * implement user-defined behaviour upon addition of edges. Note that any
-	 * changes to this graph are forbidden.
-	 * 
+	 * <code>e</code> was added to this Graph. Override this method to implement
+	 * user-defined behaviour upon addition of edges. Note that any changes to
+	 * this graph are forbidden.
+	 *
 	 * @param e
 	 *            the added Edge
 	 */
@@ -216,14 +217,14 @@ public interface Graph extends AttributedElement {
 
 	/**
 	 * Returns the first Vertex in the vertex sequence of this Graph.
-	 * 
+	 *
 	 * @return the first Vertex, or null if this graph contains no vertices.
 	 */
 	public Vertex getFirstVertex();
 
 	/**
 	 * Returns the last Vertex in the vertex sequence of this Graph.
-	 * 
+	 *
 	 * @return the last Vertex, or null if this graph contains no vertices.
 	 */
 	public Vertex getLastVertex();
@@ -231,10 +232,10 @@ public interface Graph extends AttributedElement {
 	/**
 	 * Returns the first Vertex of the specified <code>vertexClass</code>
 	 * (including subclasses) in the vertex sequence of this Graph.
-	 * 
+	 *
 	 * @param vertexClass
 	 *            a VertexClass (i.e. an instance of schema.VertexClass)
-	 * 
+	 *
 	 * @return the first Vertex, or null if this graph contains no vertices of
 	 *         the specified <code>vertexClass</code>.
 	 */
@@ -244,14 +245,14 @@ public interface Graph extends AttributedElement {
 	 * Returns the first Vertex of the specified <code>vertexClass</code>,
 	 * including subclasses only if <code>noSubclasses</code> is set to false,
 	 * in the vertex sequence of this Graph.
-	 * 
+	 *
 	 * @param vertexClass
 	 *            a VertexClass (i.e. an instance of schema.VertexClass)
-	 * 
+	 *
 	 * @param noSubclasses
 	 *            if set to true, only vertices with the exact class are taken
 	 *            into account, false means that also subclasses are valid
-	 * 
+	 *
 	 * @return the first Vertex, or null if this graph contains no vertices of
 	 *         the specified <code>vertexClass</code>.
 	 */
@@ -261,10 +262,10 @@ public interface Graph extends AttributedElement {
 	/**
 	 * Returns the first Vertex of the specified <code>vertexClass</code>
 	 * (including subclasses) in the vertex sequence of this Graph.
-	 * 
+	 *
 	 * @param vertexClass
 	 *            a VertexClass (i.e. an M1 interface extending Vertex)
-	 * 
+	 *
 	 * @return the first Vertex, or null if this graph contains no vertices of
 	 *         the specified <code>vertexClass</code>.
 	 */
@@ -274,14 +275,14 @@ public interface Graph extends AttributedElement {
 	 * Returns the first Vertex of the specified <code>vertexClass</code>,
 	 * including subclasses only if <code>noSubclasses</code> is set to false,
 	 * in the vertex sequence of this Graph.
-	 * 
+	 *
 	 * @param vertexClass
 	 *            a VertexClass (i.e. an M1 interface extending Vertex)
-	 * 
+	 *
 	 * @param noSubclasses
 	 *            if set to true, only vertices with the exact class are taken
 	 *            into account, false means that also subclasses are valid
-	 * 
+	 *
 	 * @return the first Vertex, or null if this graph contains no vertices of
 	 *         the specified <code>vertexClass</code>.
 	 */
@@ -290,42 +291,42 @@ public interface Graph extends AttributedElement {
 
 	/**
 	 * Returns the first Edge in the edge sequence of this Graph.
-	 * 
+	 *
 	 * @return the first Edge, or null if this graph contains no edges.
 	 */
 	public Edge getFirstEdgeInGraph();
 
 	/**
 	 * Returns the last Edge in the edge sequence of this Graph.
-	 * 
+	 *
 	 * @return the last Edge, or null if this graph contains no edges.
 	 */
 	public Edge getLastEdgeInGraph();
 
 	/**
-	 * Returns the first Edge of the specified <code>edgeClass</code>
-	 * (including subclasses) in the edge sequence of this Graph.
-	 * 
+	 * Returns the first Edge of the specified <code>edgeClass</code> (including
+	 * subclasses) in the edge sequence of this Graph.
+	 *
 	 * @param edgeClass
 	 *            an EdgeClass (i.e. an instance of schema.EdgeClass)
-	 * 
+	 *
 	 * @return the first Edge, or null if this graph contains no edges of the
 	 *         specified <code>edgeClass</code>.
 	 */
 	public Edge getFirstEdgeOfClassInGraph(EdgeClass edgeClass);
 
 	/**
-	 * Returns the first Edge of the specified <code>edgeClass</code>,
-	 * including subclasses only if <code>noSubclasses</code> is set to false,
-	 * in the edge sequence of this Graph.
-	 * 
+	 * Returns the first Edge of the specified <code>edgeClass</code>, including
+	 * subclasses only if <code>noSubclasses</code> is set to false, in the edge
+	 * sequence of this Graph.
+	 *
 	 * @param edgeClass
 	 *            an EdgeClass (i.e. an instance of schema.EdgeClass)
-	 * 
+	 *
 	 * @param noSubclasses
 	 *            if set to true, only edges with the exact class are taken into
 	 *            account, false means that also subclasses are valid
-	 * 
+	 *
 	 * @return the first Edge, or null if this graph contains no edges of the
 	 *         specified <code>edgeClass</code>.
 	 */
@@ -333,29 +334,29 @@ public interface Graph extends AttributedElement {
 			boolean noSubclasses);
 
 	/**
-	 * Returns the first Edge of the specified <code>edgeClass</code>
-	 * (including subclasses) in the edge sequence of this Graph.
-	 * 
+	 * Returns the first Edge of the specified <code>edgeClass</code> (including
+	 * subclasses) in the edge sequence of this Graph.
+	 *
 	 * @param edgeClass
 	 *            an EdgeClass (i.e. an M1 interface extending Edge)
-	 * 
+	 *
 	 * @return the first Edge, or null if this graph contains no edges of the
 	 *         specified <code>edgeClass</code>.
 	 */
 	public Edge getFirstEdgeOfClassInGraph(Class<? extends Edge> edgeClass);
 
 	/**
-	 * Returns the first Edge of the specified <code>edgeClass</code>,
-	 * including subclasses only if <code>noSubclasses</code> is set to false,
-	 * in the edge sequence of this Graph.
-	 * 
+	 * Returns the first Edge of the specified <code>edgeClass</code>, including
+	 * subclasses only if <code>noSubclasses</code> is set to false, in the edge
+	 * sequence of this Graph.
+	 *
 	 * @param edgeClass
 	 *            an EdgeClass (i.e. an M1 interface extending Edge)
-	 * 
+	 *
 	 * @param noSubclasses
 	 *            if set to true, only edges with the exact class are taken into
 	 *            account, false means that also subclasses are valid
-	 * 
+	 *
 	 * @return the first Edge, or null if this graph contains no edges of the
 	 *         specified <code>edgeClass</code>.
 	 */
@@ -365,9 +366,9 @@ public interface Graph extends AttributedElement {
 	/**
 	 * Returns the Vertex with the specified <code>id</code> if such a vertex
 	 * exists in this Graph.
-	 * 
+	 *
 	 * Precondition: id > 0
-	 * 
+	 *
 	 * @param id
 	 *            the id of the vertex
 	 * @return the Vertex, or null if no such vertex exists
@@ -378,9 +379,9 @@ public interface Graph extends AttributedElement {
 	 * Returns the oriented Edge with the specified <code>id</code> if such an
 	 * edge exists in this Graph. If <code>id</code> is positive, the normal
 	 * edge is returned, otherwise, the reversed Edge is returned.
-	 * 
+	 *
 	 * Precondition: id != 0
-	 * 
+	 *
 	 * @param id
 	 *            the id of the edge
 	 * @return the Edge, or null if no such edge exists
@@ -390,21 +391,21 @@ public interface Graph extends AttributedElement {
 	/**
 	 * The maximum number of vertices that can be stored in the graph before the
 	 * internal array structures are expanded.
-	 * 
+	 *
 	 * @return the maximum number of vertices
 	 */
 	public int getMaxVCount();
 
 	/**
 	 * Computes the new maximum number of vertices when expansion is needed.
-	 * 
+	 *
 	 * @return the new maximum number of vertices
 	 */
 	public int getExpandedVertexCount();
 
 	/**
 	 * Computes the new maximum number of edges when expansion is needed.
-	 * 
+	 *
 	 * @return the new maximum number of edges
 	 */
 	public int getExpandedEdgeCount();
@@ -412,21 +413,21 @@ public interface Graph extends AttributedElement {
 	/**
 	 * The maximum number of edges that can be stored in the graph before the
 	 * internal array structures are expanded.
-	 * 
+	 *
 	 * @return the maximum number of edges
 	 */
 	public int getMaxECount();
 
 	/**
 	 * Returns the number of vertices in this Graph.
-	 * 
+	 *
 	 * @return the number of vertices
 	 */
 	public int getVCount();
 
 	/**
 	 * Returns the number of edges in this Graph.
-	 * 
+	 *
 	 * @return the number of edges
 	 */
 	public int getECount();
@@ -435,16 +436,16 @@ public interface Graph extends AttributedElement {
 	 * Returns the <code>id</code> of this Graph. JGraLab assigns a 128 bit
 	 * random id to all Graphs upon creation. This initial id is most likely
 	 * (but not guaranteed) unique.
-	 * 
+	 *
 	 * @return the id of this graph
 	 */
 	public String getId();
 
 	/**
 	 * Sets the <code>id</code> of this Graph.
-	 * 
+	 *
 	 * Precondition: id != null && id.equals(id.trim()) && !id.equals("")
-	 * 
+	 *
 	 * @param id
 	 *            the new id
 	 */
@@ -453,31 +454,31 @@ public interface Graph extends AttributedElement {
 	/**
 	 * Returns an Iterable which iterates over all edges of this Graph in the
 	 * order determined by the edge sequence.
-	 * 
+	 *
 	 * @return an Iterable for all edges
 	 */
 	public Iterable<Edge> edges();
 
 	/**
 	 * Returns an Iterable which iterates over all edges of this Graph which
-	 * have the specified <code>edgeClass</code> (including subclasses), in
-	 * the order determined by the edge sequence.
-	 * 
+	 * have the specified <code>edgeClass</code> (including subclasses), in the
+	 * order determined by the edge sequence.
+	 *
 	 * @param edgeClass
 	 *            an EdgeClass (i.e. instance of schema.EdgeClass)
-	 * 
+	 *
 	 * @return an Iterable for all edges of the specified <code>edgeClass</code>
 	 */
 	public Iterable<Edge> edges(EdgeClass edgeClass);
 
 	/**
 	 * Returns an Iterable which iterates over all edges of this Graph which
-	 * have the specified <code>edgeClass</code> (including subclasses), in
-	 * the order determined by the edge sequence.
-	 * 
+	 * have the specified <code>edgeClass</code> (including subclasses), in the
+	 * order determined by the edge sequence.
+	 *
 	 * @param edgeClass
 	 *            an EdgeClass (i.e. an M1 interface extending Edge)
-	 * 
+	 *
 	 * @return an Iterable for all edges of the specified <code>edgeClass</code>
 	 */
 	public Iterable<Edge> edges(Class<? extends Edge> edgeClass);
@@ -485,19 +486,28 @@ public interface Graph extends AttributedElement {
 	/**
 	 * Returns an Iterable which iterates over all vertices of this Graph in the
 	 * order determined by the vertex sequence.
-	 * 
+	 *
 	 * @return an Iterable for all vertices
 	 */
 	public Iterable<Vertex> vertices();
 
 	/**
+	 * Checks if this graph is a valid instance of its {@link Schema}. For
+	 * example it checks if all multiplicity constraints on the incidences are
+	 * satisfied.
+	 *
+	 * @return an iterable over all invalidations of constraints
+	 */
+	public Iterable<ConstraintInvalidation> validate();
+
+	/**
 	 * Returns an Iterable which iterates over all vertices of this Graph which
 	 * have the specified <code>vertexClass</code> (including subclasses), in
 	 * the order determined by the vertex sequence.
-	 * 
+	 *
 	 * @param vertexClass
 	 *            a VertexClass (i.e. instance of schema.VertexClass)
-	 * 
+	 *
 	 * @return an Iterable for all vertices of the specified
 	 *         <code>vertexClass</code>
 	 */
@@ -507,10 +517,10 @@ public interface Graph extends AttributedElement {
 	 * Returns an Iterable which iterates over all vertices of this Graph which
 	 * have the specified <code>vertexClass</code> (including subclasses), in
 	 * the order determined by the vertex sequence.
-	 * 
+	 *
 	 * @param vertexClass
 	 *            a VertexClass (i.e. an M1 interface extending Vertex)
-	 * 
+	 *
 	 * @return a iterable for all vertices of the specified
 	 *         <code>vertexClass</code>
 	 */
@@ -522,7 +532,7 @@ public interface Graph extends AttributedElement {
 	 * means that gaps in the vertex and edge IDs are deleted (defragmented) and
 	 * that the internal arrays are shortened such that they hold exactly the
 	 * required number of vertices/edges.
-	 * 
+	 *
 	 * <b>Attention:</b> defragment() possibly changes vertex and edge IDs!
 	 */
 	public void defragment();

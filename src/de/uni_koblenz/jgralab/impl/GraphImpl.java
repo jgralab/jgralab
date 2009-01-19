@@ -24,16 +24,19 @@
 
 package de.uni_koblenz.jgralab.impl;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
 import de.uni_koblenz.jgralab.AttributedElement;
+import de.uni_koblenz.jgralab.ConstraintInvalidation;
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.GraphException;
 import de.uni_koblenz.jgralab.GraphFactory;
 import de.uni_koblenz.jgralab.RandomIdGenerator;
 import de.uni_koblenz.jgralab.Vertex;
+import de.uni_koblenz.jgralab.ConstraintInvalidation.ConstraintType;
 import de.uni_koblenz.jgralab.schema.AttributedElementClass;
 import de.uni_koblenz.jgralab.schema.CompositionClass;
 import de.uni_koblenz.jgralab.schema.EdgeClass;
@@ -1405,6 +1408,50 @@ public abstract class GraphImpl implements Graph {
 	 */
 	@Override
 	public void vertexDeleted(Vertex v) {
+	}
+
+	/*
+	 * (non-Javadoc)
+	 *
+	 * @see de.uni_koblenz.jgralab.Graph#validate()
+	 */
+	@Override
+	public Iterable<ConstraintInvalidation> validate() {
+		List<ConstraintInvalidation> brokenConstraints = new ArrayList<ConstraintInvalidation>();
+
+		for (EdgeClass ec : getSchema().getEdgeClassesInTopologicalOrder()) {
+			if (ec.isInternal()) {
+				continue;
+			}
+
+			int fromMin = ec.getFromMin();
+			int fromMax = ec.getFromMax();
+			int toMin = ec.getToMin();
+			int toMax = ec.getToMax();
+
+			for (Vertex v : vertices(ec.getFrom())) {
+				int degree = v.getDegree(ec);
+				if (degree < toMin || degree > toMax) {
+					brokenConstraints.add(new ConstraintInvalidation(
+							ConstraintType.MULTIPLICITY, v + " has " + degree
+									+ " outgoing " + ec.getQualifiedName()
+									+ " edges, but only " + toMin + " to "
+									+ toMax + " are allowed."));
+				}
+			}
+			for (Vertex v : vertices(ec.getTo())) {
+				int degree = v.getDegree(ec);
+				if (degree < fromMin || degree > fromMax) {
+					brokenConstraints.add(new ConstraintInvalidation(
+							ConstraintType.MULTIPLICITY, v + " has " + degree
+									+ " incoming " + ec.getQualifiedName()
+									+ " edges, but only " + fromMin + " to "
+									+ fromMax + " are allowed."));
+				}
+			}
+		}
+
+		return brokenConstraints;
 	}
 
 	/*
