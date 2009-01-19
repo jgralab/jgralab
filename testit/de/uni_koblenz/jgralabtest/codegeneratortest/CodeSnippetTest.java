@@ -55,6 +55,14 @@ public class CodeSnippetTest extends CodeBlockTest{
 		cs3=new CodeSnippet(false, "Brombeere", "Johannisbeere");
 		assertEquals("Brombeere\nJohannisbeere\n", cs3.getCode());
 		
+		//NEW ONES
+		cs3=new CodeSnippet(false, "Moltebeere", "", "Stachelbeere");
+		assertEquals("Moltebeere\n\nStachelbeere\n", cs3.getCode());
+		cs3=new CodeSnippet(true, "", "Preiselbeere");
+		assertEquals("\n\nPreiselbeere\n", cs3.getCode());
+		cs3=new CodeSnippet(true, "Granatapfel", "", "Paprika", "");
+		assertEquals("\nGranatapfel\n\nPaprika\n\n", cs3.getCode());
+		
 		//border cases
 		cs3=new CodeSnippet(true, "");
 		assertEquals("\n\n", cs3.getCode());
@@ -64,10 +72,18 @@ public class CodeSnippetTest extends CodeBlockTest{
 		assertEquals("", cs3.getCode());
 		cs3=new CodeSnippet(false, null);
 		assertEquals("", cs3.getCode());
+		
+		//ERRORS
+		//see testCodeSnippet4 
+		//if null as boolean param => cannot decide which constructor is the right one
 	}
 	
 	@Test
 	public void testCodeSnippet4(){
+		//TODO what exactly does the CodeList (calls super class, which is CodeBlock 
+		//and if the CodeList is not empty the CodeBlock is added to the CodeList
+		//=>have to check if the CodeList was changed!!!!!!!
+		
 		//normal cases
 		cs3=new CodeSnippet(cl, "Mango", "Avocado");
 		assertEquals("Mango\nAvocado\n", cs3.getCode());
@@ -75,10 +91,12 @@ public class CodeSnippetTest extends CodeBlockTest{
 		cl.add(cs1);
 		cs3=new CodeSnippet(cl, "Mango", "Pflaume", "Limette");
 		assertEquals("Mango\nPflaume\nLimette\n", cs3.getCode());
+		System.out.println("sollte jetzt Ananas enthalten\n" + cl.getCode() + "\n ENDE!");
 		cl.clear();
 		cl.add(cs1, 2);
 		cs3=new CodeSnippet(cl, "Mango", "Avocado");
 		assertEquals("Mango\nAvocado\n", cs3.getCode());
+		System.out.println(cl.getCode());
 		
 		//border cases
 		
@@ -121,11 +139,29 @@ public class CodeSnippetTest extends CodeBlockTest{
 	
 	@Test
 	public void testSetNewLine(){
+		//normal cases
+		cs1.setNewLine(true);
+		assertEquals("", cs1.getCode());
+		cs1.add("Ahornsirup");
+		assertEquals("\nAhornsirup\n", cs1.getCode());
 		
+		cs1.clear();
+		cs1.setNewLine(false);
+		cs1.add("Blaubeermarmelade", "Johannisbeergelee");
+		assertEquals("Blaubeermarmelade\nJohannisbeergelee\n", cs1.getCode());
 	}
 	
 	@Test
 	public void testAdd(){
+		//normal cases = NEW ONES
+		cs2.add("Schokolade", "Pfefferminzbonbon", "Brausepulver", "Schokoriegel");
+		assertEquals("Schokolade\nPfefferminzbonbon\nBrausepulver\nSchokoriegel\n", cs2.getCode());
+		cs2.add("");
+		assertEquals("Schokolade\nPfefferminzbonbon\nBrausepulver\nSchokoriegel\n\n", cs2.getCode());
+		cs2.clear();
+		cs2.add("", "Lakritz", "", "Karamell", "");
+		assertEquals("\nLakritz\n\nKaramell\n\n", cs2.getCode());
+		
 		//border cases
 		cs3=new CodeSnippet("");
 		cs3.add("");
@@ -134,7 +170,28 @@ public class CodeSnippetTest extends CodeBlockTest{
 		assertEquals("\n\n\n", cs3.getCode());
 		cs3.add(null);
 		assertEquals("\n\n\n", cs3.getCode());
-
+		
+		//NEW ONES
+		cs2.clear();
+		cs2.add("Praline");
+		assertEquals("Praline\n", cs2.getCode());
+		
+		//faults
+		try{
+			cs2.clear();
+			cs2.add(null, "", null);
+			assertEquals("\n", cs2.getCode());
+		}catch(NullPointerException e){
+			// :)
+		}
+		
+		try{
+			cs2.clear();
+			cs2.add("", null, "Schokofrosch", "");
+			assertEquals("\nSchokofrosch\n\n", cs2.getCode());
+		}catch(NullPointerException e){
+			// :)
+		}
 	}
 	
 	@Test

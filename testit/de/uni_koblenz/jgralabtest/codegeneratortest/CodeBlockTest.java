@@ -2,6 +2,8 @@ package de.uni_koblenz.jgralabtest.codegeneratortest;
 
 import org.junit.Before;
 import org.junit.Test;
+import static org.junit.Assert.assertEquals;
+import org.junit.Assert;
 
 import de.uni_koblenz.jgralab.codegenerator.CodeBlock;
 
