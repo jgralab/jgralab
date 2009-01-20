@@ -30,7 +30,7 @@ package de.uni_koblenz.jgralab.schema.exception;
  *
  * @author ist@uni-koblenz.de
  */
-public abstract class SchemaException extends RuntimeException {
+public class SchemaException extends RuntimeException {
 	private static final long serialVersionUID = 6680822701697571650L;
 
 	public SchemaException() {
