@@ -34,7 +34,7 @@ public class CompositionClassImpl extends AggregationClassImpl implements
 
 	/**
 	 * builds a new composition class
-	 * 
+	 *
 	 * @param qn
 	 *            the unique identifier of the composition class in the schema
 	 * @param from
@@ -75,4 +75,5 @@ public class CompositionClassImpl extends AggregationClassImpl implements
 		super(qn, aGraphClass, from, fromMin, fromMax, fromRoleName,
 				compositeFrom, to, toMin, toMax, toRoleName);
 	}
+
 }

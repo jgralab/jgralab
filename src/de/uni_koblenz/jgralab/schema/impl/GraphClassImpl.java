@@ -43,6 +43,7 @@ import de.uni_koblenz.jgralab.schema.VertexClass;
 import de.uni_koblenz.jgralab.schema.exception.DuplicateNamedElementException;
 import de.uni_koblenz.jgralab.schema.exception.InheritanceException;
 import de.uni_koblenz.jgralab.schema.exception.ReservedWordException;
+import de.uni_koblenz.jgralab.schema.exception.SchemaException;
 
 public class GraphClassImpl extends AttributedElementClassImpl implements
 		GraphClass {
@@ -238,6 +239,23 @@ public class GraphClassImpl extends AttributedElementClassImpl implements
 			throw new DuplicateNamedElementException(
 					"there is already an element with the name " + qn
 							+ " in the schema " + schema.getQualifiedName());
+		}
+
+		if (!qn.getQualifiedName().equals("Composition")) {
+			if (compositeFrom && fromMax > 1) {
+				throw new SchemaException("Couldn't create CompositionClass "
+						+ qn
+						+ ", because its multiplicity on composite side is ("
+						+ fromMin + ", " + fromMax
+						+ ").  Only (0, 1) and (1,1) are allowed.");
+			}
+			if (!compositeFrom && toMax > 1) {
+				throw new SchemaException("Couldn't create CompositionClass "
+						+ qn
+						+ ", because its multiplicity on composite side is ("
+						+ toMin + ", " + toMax
+						+ ").  Only (0, 1) and (1,1) are allowed.");
+			}
 		}
 
 		CompositionClassImpl cc = new CompositionClassImpl(qn, this, from,
