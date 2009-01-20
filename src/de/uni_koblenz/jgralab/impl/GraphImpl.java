@@ -1433,7 +1433,7 @@ public abstract class GraphImpl implements Graph {
 				int degree = v.getDegree(ec);
 				if (degree < toMin || degree > toMax) {
 					brokenConstraints.add(new ConstraintInvalidation(
-							ConstraintType.MULTIPLICITY, v + " has " + degree
+							ConstraintType.MULTIPLICITY, v, degree
 									+ " outgoing " + ec.getQualifiedName()
 									+ " edges, but only " + toMin + " to "
 									+ toMax + " are allowed."));
@@ -1443,7 +1443,7 @@ public abstract class GraphImpl implements Graph {
 				int degree = v.getDegree(ec);
 				if (degree < fromMin || degree > fromMax) {
 					brokenConstraints.add(new ConstraintInvalidation(
-							ConstraintType.MULTIPLICITY, v + " has " + degree
+							ConstraintType.MULTIPLICITY, v, degree
 									+ " incoming " + ec.getQualifiedName()
 									+ " edges, but only " + fromMin + " to "
 									+ fromMax + " are allowed."));
