@@ -283,6 +283,14 @@ public abstract class AttributedElementClassImplTest {
 	 * 
 	 * TEST CASE: Getting all subclasses of an element with one direct subclass
 	 * 
+	 * TEST CASE: Getting all subclasses of an element with multiple direct
+	 * subclasses
+	 * 
+	 * TEST CASE: Getting all subclasses of an element with multiple direct and
+	 * indirect subclasses
+	 * 
+	 * TEST CASE: Getting all subclasses of an element that has no subclasses
+	 * 
 	 * NOTE: This method is called upon in all of this classes´ subclasses.
 	 */
 	public final void testGetAllSubClasses(
@@ -302,93 +310,10 @@ public abstract class AttributedElementClassImplTest {
 					break;
 				}
 			}
-			Assert.assertTrue(expectedSubClassFound);
-		}
-	}
-
-	/**
-	 * getAllSubClasses()
-	 * 
-	 * TEST CASE: Getting all subclasses of an element with multiple direct
-	 * subclasses
-	 * 
-	 * NOTE: This method is called upon in all of this classes´ subclasses.
-	 */
-	public final void testGetAllSubClasses2(
-			Vector<AttributedElementClass> expectedSubClasses) {
-		Set<AttributedElementClass> subClasses = attributedElement
-				.getAllSubClasses();
-
-		Assert.assertEquals(expectedSubClasses.size(), subClasses.size());
-
-		// Check if this element contains all expected subclasses
-		for (AttributedElementClass expectedSubClass : expectedSubClasses) {
-			boolean expectedSubClassFound = false;
-			for (AttributedElementClass subClass : subClasses) {
-				if (subClass.getQualifiedName().equals(
-						expectedSubClass.getQualifiedName())) {
-					expectedSubClassFound = true;
-					break;
-				}
-			}
-			Assert.assertTrue(expectedSubClassFound);
-		}
-	}
-
-	/**
-	 * getAllSubClasses()
-	 * 
-	 * TEST CASE: Getting all subclasses of an element with multiple direct and
-	 * indirect subclasses
-	 * 
-	 * NOTE: This method is called upon in all of this classes´ subclasses.
-	 */
-	public final void testGetAllSubClasses3(
-			Vector<AttributedElementClass> expectedSubClasses) {
-		Set<AttributedElementClass> subClasses = attributedElement
-				.getAllSubClasses();
-
-		Assert.assertEquals(expectedSubClasses.size(), subClasses.size());
-
-		// Check if this element contains all expected subclasses
-		for (AttributedElementClass expectedSubClass : expectedSubClasses) {
-			boolean expectedSubClassFound = false;
-			for (AttributedElementClass subClass : subClasses) {
-				if (subClass.getQualifiedName().equals(
-						expectedSubClass.getQualifiedName())) {
-					expectedSubClassFound = true;
-					break;
-				}
-			}
-			Assert.assertTrue(expectedSubClassFound);
-		}
-	}
-
-	/**
-	 * getAllSubClasses()
-	 * 
-	 * TEST CASE: Getting all subclasses of an element that has no subclasses
-	 * 
-	 * NOTE: This method is called upon in all of this classes´ subclasses.
-	 */
-	public final void testGetAllSubClasses4(
-			Vector<AttributedElementClass> expectedSubClasses) {
-		Set<AttributedElementClass> subClasses = attributedElement
-				.getAllSubClasses();
-
-		Assert.assertEquals(expectedSubClasses.size(), subClasses.size());
-
-		// Check if this element contains all expected subclasses
-		for (AttributedElementClass expectedSubClass : expectedSubClasses) {
-			boolean expectedSubClassFound = false;
-			for (AttributedElementClass subClass : subClasses) {
-				if (subClass.getQualifiedName().equals(
-						expectedSubClass.getQualifiedName())) {
-					expectedSubClassFound = true;
-					break;
-				}
-			}
-			Assert.assertTrue(expectedSubClassFound);
+			Assert.assertTrue(
+					"The following subclass was expected but not found: "
+							+ expectedSubClass.getQualifiedName(),
+					expectedSubClassFound);
 		}
 	}
 
@@ -400,6 +325,15 @@ public abstract class AttributedElementClassImplTest {
 	 * 
 	 * TEST CASE: Getting all superclasses of an element with one direct
 	 * superclass
+	 * 
+	 * TEST CASE: Getting all superclasses of an element with multiple direct
+	 * superclasses
+	 * 
+	 * TEST CASE: Getting all superclasses of an element with multiple direct
+	 * and indirect superclasses
+	 * 
+	 * TEST CASE: Getting all superclasses of an element that has no
+	 * superclasses
 	 * 
 	 * NOTE: This method is called upon in all of this classes´ subclasses.
 	 */
@@ -420,94 +354,10 @@ public abstract class AttributedElementClassImplTest {
 					break;
 				}
 			}
-			Assert.assertTrue(expectedSuperClassFound);
-		}
-	}
-
-	/**
-	 * getAllSuperClasses()
-	 * 
-	 * TEST CASE: Getting all superclasses of an element with multiple direct
-	 * superclasses
-	 * 
-	 * NOTE: This method is called upon in all of this classes´ subclasses.
-	 */
-	public final void testGetAllSuperClasses2(
-			Vector<AttributedElementClass> expectedSuperClasses) {
-		Set<AttributedElementClass> superClasses = attributedElement
-				.getAllSuperClasses();
-
-		Assert.assertEquals(expectedSuperClasses.size(), superClasses.size());
-
-		// Check if this element contains all expected superclasses
-		for (AttributedElementClass expectedSuperClass : expectedSuperClasses) {
-			boolean expectedSuperClassFound = false;
-			for (AttributedElementClass superClass : superClasses) {
-				if (superClass.getQualifiedName().equals(
-						expectedSuperClass.getQualifiedName())) {
-					expectedSuperClassFound = true;
-					break;
-				}
-			}
-			Assert.assertTrue(expectedSuperClassFound);
-		}
-	}
-
-	/**
-	 * getAllSuperClasses()
-	 * 
-	 * TEST CASE: Getting all superclasses of an element with multiple direct
-	 * and indirect superclasses
-	 * 
-	 * NOTE: This method is called upon in all of this classes´ subclasses.
-	 */
-	public final void testGetAllSuperClasses3(
-			Vector<AttributedElementClass> expectedSuperClasses) {
-		Set<AttributedElementClass> superClasses = attributedElement
-				.getAllSuperClasses();
-
-		Assert.assertEquals(expectedSuperClasses.size(), superClasses.size());
-
-		// Check if this element contains all expected superclasses
-		for (AttributedElementClass expectedSuperClass : expectedSuperClasses) {
-			boolean expectedSuperClassFound = false;
-			for (AttributedElementClass superClass : superClasses) {
-				if (superClass.getQualifiedName().equals(
-						expectedSuperClass.getQualifiedName())) {
-					expectedSuperClassFound = true;
-					break;
-				}
-			}
-			Assert.assertTrue(expectedSuperClassFound);
-		}
-	}
-
-	/**
-	 * getAllSuperClasses()
-	 * 
-	 * TEST CASE: Getting all superclasses of an element that has no
-	 * superclasses
-	 * 
-	 * NOTE: This method is called upon in all of this classes´ subclasses.
-	 */
-	public final void testGetAllSuperClasses4(
-			Vector<AttributedElementClass> expectedSuperClasses) {
-		Set<AttributedElementClass> superClasses = attributedElement
-				.getAllSuperClasses();
-
-		Assert.assertEquals(expectedSuperClasses.size(), superClasses.size());
-
-		// Check if this element contains all expected superclasses
-		for (AttributedElementClass expectedSuperClass : expectedSuperClasses) {
-			boolean expectedSuperClassFound = false;
-			for (AttributedElementClass superClass : superClasses) {
-				if (superClass.getQualifiedName().equals(
-						expectedSuperClass.getQualifiedName())) {
-					expectedSuperClassFound = true;
-					break;
-				}
-			}
-			Assert.assertTrue(expectedSuperClassFound);
+			Assert.assertTrue(
+					"The following superclass was expected but not found: "
+							+ expectedSuperClass.getQualifiedName(),
+					expectedSuperClassFound);
 		}
 	}
 
@@ -758,14 +608,90 @@ public abstract class AttributedElementClassImplTest {
 		// TODO Auto-generated method stub
 	}
 
-	@Test
-	public void testGetDirectSubClasses() {
-		// TODO Auto-generated method stub
+	/*
+	 * Tests for the getDirectSubClasses() method.
+	 */
+	/**
+	 * getDirectSubClasses()
+	 * 
+	 * 
+	 * TEST CASE: Getting all direct subclasses of an element that has one
+	 * direct subclass.
+	 * 
+	 * TEST CASE: Getting all direct subclasses of an element that has multiple
+	 * direct subclasses.
+	 * 
+	 * TEST CASE: Getting all direct subclasses of an element that has multiple
+	 * direct and indirect subclasses.
+	 * 
+	 * TEST CASE: Getting all direct subclasses of an element that has no direct
+	 * subclasses.
+	 * 
+	 * NOTE: This method is called upon in all of this classes´ subclasses.
+	 */
+	public final void testGetDirectSubClasses(
+			Vector<AttributedElementClass> expectedSubClasses) {
+		Set<AttributedElementClass> subClasses = attributedElement
+				.getDirectSubClasses();
+
+		Assert.assertEquals(subClasses.size(), expectedSubClasses.size());
+
+		// Check if subClasses contains all expected subclasses, and only these
+		for (AttributedElementClass subClass : subClasses) {
+			boolean subClassFound = false;
+			for (AttributedElementClass expectedSubClass : expectedSubClasses) {
+				if (expectedSubClass.getQualifiedName().equals(
+						subClass.getQualifiedName())) {
+					subClassFound = true;
+					break;
+				}
+			}
+			Assert.assertTrue("The following subclass is unexpected: "
+					+ subClass.getQualifiedName(), subClassFound);
+		}
 	}
 
-	@Test
-	public void testGetDirectSuperClasses() {
-		// TODO Auto-generated method stub
+	/*
+	 * Tests for the getDirectSuperClasses() method.
+	 */
+	/**
+	 * getDirectSuperClasses()
+	 * 
+	 * TEST CASE: Getting all direct superclasses of an element that has one
+	 * direct superclass.
+	 * 
+	 * TEST CASE: Getting all direct superclasses of an element that has
+	 * multiple direct superclasses.
+	 * 
+	 * TEST CASE: Getting all direct superclasses of an element that has
+	 * multiple direct and indirect superclasses.
+	 * 
+	 * TEST CASE: Getting all direct superclasses of an element that has no
+	 * direct superclasses.
+	 * 
+	 * NOTE: This method is called upon in all of this classes´ subclasses.
+	 */
+	public final void testGetDirectSuperClasses(
+			Vector<AttributedElementClass> expectedSuperClasses) {
+		Set<AttributedElementClass> superClasses = attributedElement
+				.getDirectSuperClasses();
+
+		Assert.assertEquals(expectedSuperClasses.size(), superClasses.size());
+
+		// Check if superClasses contains all expected superclasses, and only
+		// these
+		for (AttributedElementClass superClass : superClasses) {
+			boolean superClassFound = false;
+			for (AttributedElementClass expectedSuperClass : expectedSuperClasses) {
+				if (expectedSuperClass.getQualifiedName().equals(
+						superClass.getQualifiedName())) {
+					superClassFound = true;
+					break;
+				}
+			}
+			Assert.assertTrue("The following superclass is unexpected: "
+					+ superClass.getQualifiedName(), superClassFound);
+		}
 	}
 
 	@Test

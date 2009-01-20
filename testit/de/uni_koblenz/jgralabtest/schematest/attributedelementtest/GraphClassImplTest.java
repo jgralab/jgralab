@@ -24,7 +24,7 @@ public final class GraphClassImplTest extends AttributedElementClassImplTest {
 	@Test
 	public void testGetAllSubClasses4() {
 		// A (virgin) GraphClass has no subclasses.
-		testGetAllSubClasses4(new Vector<AttributedElementClass>());
+		testGetAllSubClasses(new Vector<AttributedElementClass>());
 	}
 
 	/**
@@ -37,9 +37,40 @@ public final class GraphClassImplTest extends AttributedElementClassImplTest {
 	public void testGetAllSuperClasses4() {
 		Vector<AttributedElementClass> expectedSuperClasses = new Vector<AttributedElementClass>();
 
+		// Each element has a Default-Class as superclass upon creation.
+		// GraphClass does not allow other superclasses.
 		expectedSuperClasses.add(schema.getDefaultGraphClass());
 
-		testGetAllSuperClasses4(expectedSuperClasses);
+		testGetAllSuperClasses(expectedSuperClasses);
+	}
+
+	/**
+	 * getDirectSubClasses()
+	 * 
+	 * TEST CASE: Getting all direct subclasses of an element that has no direct
+	 * subclasses.
+	 */
+	@Test
+	public void testGetDirectSubClasses4() {
+		// A (virgin) GraphClass has no subclasses.
+		testGetDirectSubClasses(new Vector<AttributedElementClass>());
+	}
+
+	/**
+	 * getDirectSubClasses()
+	 * 
+	 * TEST CASE: Getting all direct superclasses of an element that has no
+	 * direct superclasses.
+	 */
+	@Test
+	public void testGetDirectSuperClasses4() {
+		Vector<AttributedElementClass> expectedSuperClasses = new Vector<AttributedElementClass>();
+
+		// Each element has a Default-Class as superclass upon creation.
+		// GraphClass does not allow other superclasses.
+		expectedSuperClasses.add(schema.getDefaultGraphClass());
+
+		testGetDirectSuperClasses(expectedSuperClasses);
 	}
 
 	@Test
