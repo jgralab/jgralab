@@ -34,9 +34,12 @@ public class ConstraintInvalidation {
 
 	private String message;
 	private ConstraintType constraintType;
+	private AttributedElement attrElem;
 
-	public ConstraintInvalidation(ConstraintType type, String message) {
+	public ConstraintInvalidation(ConstraintType type, AttributedElement elem,
+			String message) {
 		constraintType = type;
+		attrElem = elem;
 		this.message = message;
 	}
 
@@ -56,6 +59,7 @@ public class ConstraintInvalidation {
 
 	@Override
 	public String toString() {
-		return "Broken " + constraintType + " constraint: " + message;
+		return "Broken " + constraintType + " constraint at `" + attrElem
+				+ "': " + message;
 	}
 }
