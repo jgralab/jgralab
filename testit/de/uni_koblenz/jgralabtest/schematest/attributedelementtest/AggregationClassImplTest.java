@@ -143,7 +143,7 @@ public class AggregationClassImplTest extends EdgeClassImplTest {
 		expectedSubClasses.add(subClass);
 		expectedSubClasses.add(subClass2);
 
-		testGetAllSubClasses2(expectedSubClasses);
+		testGetAllSubClasses(expectedSubClasses);
 	}
 
 	/**
@@ -172,7 +172,7 @@ public class AggregationClassImplTest extends EdgeClassImplTest {
 		expectedSubClasses.add(subClass);
 		expectedSubClasses.add(subClass2);
 
-		testGetAllSubClasses3(expectedSubClasses);
+		testGetAllSubClasses(expectedSubClasses);
 	}
 
 	/**
@@ -184,7 +184,7 @@ public class AggregationClassImplTest extends EdgeClassImplTest {
 	@Override
 	public void testGetAllSubClasses4() {
 		// no subclasses expected
-		testGetAllSubClasses4(new Vector<AttributedElementClass>());
+		testGetAllSubClasses(new Vector<AttributedElementClass>());
 	}
 
 	/**
@@ -240,7 +240,7 @@ public class AggregationClassImplTest extends EdgeClassImplTest {
 		expectedSuperClasses.add(superClass);
 		expectedSuperClasses.add(superClass2);
 
-		testGetAllSuperClasses2(expectedSuperClasses);
+		testGetAllSuperClasses(expectedSuperClasses);
 	}
 
 	/**
@@ -271,7 +271,7 @@ public class AggregationClassImplTest extends EdgeClassImplTest {
 		expectedSuperClasses.add(superClass);
 		expectedSuperClasses.add(superClass2);
 
-		testGetAllSuperClasses3(expectedSuperClasses);
+		testGetAllSuperClasses(expectedSuperClasses);
 	}
 
 	/**
@@ -288,7 +288,7 @@ public class AggregationClassImplTest extends EdgeClassImplTest {
 		expectedSuperClasses.add(schema.getDefaultEdgeClass());
 		expectedSuperClasses.add(schema.getDefaultAggregationClass());
 
-		testGetAllSuperClasses4(expectedSuperClasses);
+		testGetAllSuperClasses(expectedSuperClasses);
 	}
 
 	/**
@@ -440,6 +440,195 @@ public class AggregationClassImplTest extends EdgeClassImplTest {
 		subClass.addSuperClass(aggregationClass);
 
 		testGetAttributeList5(subClass);
+	}
+
+	/**
+	 * getDirectSubClasses()
+	 * 
+	 * TEST CASE: Getting all direct subclasses of an element that has one
+	 * direct subclass.
+	 */
+	@Test
+	@Override
+	public void testGetDirectSubClasses() {
+		Vector<AttributedElementClass> expectedSubClasses = new Vector<AttributedElementClass>();
+
+		AggregationClass subClass = graphClass.createAggregationClass(
+				new QualifiedName("AggregationClassSubClass"),
+				aggregationClassFromVertexClass, true,
+				aggregationClassToVertexClass);
+
+		subClass.addSuperClass(aggregationClass);
+
+		expectedSubClasses.add(subClass);
+
+		testGetDirectSubClasses(expectedSubClasses);
+	}
+
+	/**
+	 * getDirectSubClasses()
+	 * 
+	 * TEST CASE: Getting all direct subclasses of an element that has multiple
+	 * direct subclasses.
+	 */
+	@Test
+	@Override
+	public void testGetDirectSubClasses2() {
+		Vector<AttributedElementClass> expectedSubClasses = new Vector<AttributedElementClass>();
+
+		AggregationClass subClass = graphClass.createAggregationClass(
+				new QualifiedName("AggregationClassSubClass"),
+				aggregationClassFromVertexClass, true,
+				aggregationClassToVertexClass);
+		AggregationClass subClass2 = graphClass.createAggregationClass(
+				new QualifiedName("AggregationClassSubClass2"),
+				aggregationClassFromVertexClass, true,
+				aggregationClassToVertexClass);
+
+		subClass.addSuperClass(aggregationClass);
+		subClass2.addSuperClass(aggregationClass);
+
+		expectedSubClasses.add(subClass);
+		expectedSubClasses.add(subClass2);
+
+		testGetDirectSubClasses(expectedSubClasses);
+	}
+
+	/**
+	 * getDirectSubClasses()
+	 * 
+	 * TEST CASE: Getting all direct subclasses of an element that has multiple
+	 * direct and indirect subclasses.
+	 */
+	@Test
+	@Override
+	public void testGetDirectSubClasses3() {
+		Vector<AttributedElementClass> expectedSubClasses = new Vector<AttributedElementClass>();
+
+		AggregationClass subClass = graphClass.createAggregationClass(
+				new QualifiedName("AggregationClassSubClass"),
+				aggregationClassFromVertexClass, true,
+				aggregationClassToVertexClass); // Direct subclass
+		AggregationClass subClass2 = graphClass.createAggregationClass(
+				new QualifiedName("AggregationClassSubClass2"),
+				aggregationClassFromVertexClass, true,
+				aggregationClassToVertexClass); // Indirect subclass
+
+		subClass.addSuperClass(aggregationClass);
+		subClass2.addSuperClass(subClass);
+
+		expectedSubClasses.add(subClass);
+
+		testGetDirectSubClasses(expectedSubClasses);
+	}
+
+	/**
+	 * getDirectSubClasses()
+	 * 
+	 * TEST CASE: Getting all direct subclasses of an element that has no direct
+	 * subclasses.
+	 */
+	@Test
+	@Override
+	public void testGetDirectSubClasses4() {
+		testGetDirectSubClasses(new Vector<AttributedElementClass>());
+	}
+
+	/**
+	 * getDirectSuperClasses()
+	 * 
+	 * TEST CASE: Getting all direct superclasses of an element that has one
+	 * direct superclass.
+	 */
+	@Test
+	@Override
+	public void testGetDirectSuperClasses() {
+		Vector<AttributedElementClass> expectedSuperClasses = new Vector<AttributedElementClass>();
+
+		AggregationClass superClass = graphClass.createAggregationClass(
+				new QualifiedName("AggregationClassSuperClass"),
+				aggregationClassFromVertexClass, true,
+				aggregationClassToVertexClass);
+
+		aggregationClass.addSuperClass(superClass);
+
+		expectedSuperClasses.add(superClass);
+
+		testGetDirectSuperClasses(expectedSuperClasses);
+	}
+
+	/**
+	 * getDirectSuperClasses()
+	 * 
+	 * TEST CASE: Getting all direct superclasses of an element that has
+	 * multiple direct superclasses.
+	 */
+	@Test
+	@Override
+	public void testGetDirectSuperClasses2() {
+		Vector<AttributedElementClass> expectedSuperClasses = new Vector<AttributedElementClass>();
+
+		AggregationClass superClass = graphClass.createAggregationClass(
+				new QualifiedName("AggregationClassSuperClass"),
+				aggregationClassFromVertexClass, true,
+				aggregationClassToVertexClass);
+		AggregationClass superClass2 = graphClass.createAggregationClass(
+				new QualifiedName("AggregationClassSuperClass2"),
+				aggregationClassFromVertexClass, true,
+				aggregationClassToVertexClass);
+
+		aggregationClass.addSuperClass(superClass);
+		aggregationClass.addSuperClass(superClass2);
+
+		expectedSuperClasses.add(superClass);
+		expectedSuperClasses.add(superClass2);
+
+		testGetDirectSuperClasses(expectedSuperClasses);
+	}
+
+	/**
+	 * getDirectSuperClasses()
+	 * 
+	 * TEST CASE: Getting all direct superclasses of an element that has
+	 * multiple direct and indirect superclasses.
+	 */
+	@Test
+	@Override
+	public void testGetDirectSuperClasses3() {
+		Vector<AttributedElementClass> expectedSuperClasses = new Vector<AttributedElementClass>();
+
+		AggregationClass superClass = graphClass.createAggregationClass(
+				new QualifiedName("AggregationClassSuperClass"),
+				aggregationClassFromVertexClass, true,
+				aggregationClassToVertexClass); // Direct superclass
+		AggregationClass superClass2 = graphClass.createAggregationClass(
+				new QualifiedName("AggregationClassSuperClass2"),
+				aggregationClassFromVertexClass, true,
+				aggregationClassToVertexClass); // Indirect superclass
+
+		aggregationClass.addSuperClass(superClass);
+		superClass.addSuperClass(superClass2);
+
+		expectedSuperClasses.add(superClass);
+
+		testGetDirectSuperClasses(expectedSuperClasses);
+	}
+
+	/**
+	 * getDirectSuperClasses()
+	 * 
+	 * TEST CASE: Getting all direct superclasses of an element that has no
+	 * direct superclasses.
+	 */
+	@Test
+	@Override
+	public void testGetDirectSuperClasses4() {
+		Vector<AttributedElementClass> expectedSuperClasses = new Vector<AttributedElementClass>();
+
+		expectedSuperClasses.add(schema.getDefaultEdgeClass());
+		expectedSuperClasses.add(schema.getDefaultAggregationClass());
+
+		testGetDirectSuperClasses(expectedSuperClasses);
 	}
 
 	@Test

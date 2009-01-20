@@ -108,7 +108,7 @@ public final class VertexClassImplTest extends GraphElementClassImplTest {
 		expectedSubClasses.add(subClass);
 		expectedSubClasses.add(subClass2);
 
-		testGetAllSubClasses2(expectedSubClasses);
+		testGetAllSubClasses(expectedSubClasses);
 	}
 
 	/**
@@ -132,7 +132,7 @@ public final class VertexClassImplTest extends GraphElementClassImplTest {
 		expectedSubClasses.add(subClass);
 		expectedSubClasses.add(subClass2);
 
-		testGetAllSubClasses3(expectedSubClasses);
+		testGetAllSubClasses(expectedSubClasses);
 	}
 
 	/**
@@ -143,7 +143,7 @@ public final class VertexClassImplTest extends GraphElementClassImplTest {
 	@Test
 	public void testGetAllSubClasses4() {
 		// no subclasses expected
-		testGetAllSubClasses4(new Vector<AttributedElementClass>());
+		testGetAllSubClasses(new Vector<AttributedElementClass>());
 	}
 
 	/**
@@ -189,7 +189,7 @@ public final class VertexClassImplTest extends GraphElementClassImplTest {
 		expectedSuperClasses.add(superClass);
 		expectedSuperClasses.add(superClass2);
 
-		testGetAllSuperClasses2(expectedSuperClasses);
+		testGetAllSuperClasses(expectedSuperClasses);
 	}
 
 	/**
@@ -214,7 +214,7 @@ public final class VertexClassImplTest extends GraphElementClassImplTest {
 		expectedSuperClasses.add(superClass);
 		expectedSuperClasses.add(superClass2);
 
-		testGetAllSuperClasses3(expectedSuperClasses);
+		testGetAllSuperClasses(expectedSuperClasses);
 	}
 
 	/**
@@ -229,7 +229,7 @@ public final class VertexClassImplTest extends GraphElementClassImplTest {
 
 		expectedSuperClasses.add(schema.getDefaultVertexClass());
 
-		testGetAllSuperClasses4(expectedSuperClasses);
+		testGetAllSuperClasses(expectedSuperClasses);
 	}
 
 	/**
@@ -357,6 +357,166 @@ public final class VertexClassImplTest extends GraphElementClassImplTest {
 		subClass.addSuperClass(vertexClass);
 
 		testGetAttributeList5(subClass);
+	}
+
+	/**
+	 * getDirectSubClasses()
+	 * 
+	 * TEST CASE: Getting all direct subclasses of an element that has one
+	 * direct subclass.
+	 */
+	@Test
+	public void testGetDirectSubClasses() {
+		Vector<AttributedElementClass> expectedSubClasses = new Vector<AttributedElementClass>();
+
+		VertexClass subClass = graphClass.createVertexClass(new QualifiedName(
+				"VertexClassSubClass"));
+
+		subClass.addSuperClass(vertexClass);
+
+		expectedSubClasses.add(subClass);
+
+		testGetDirectSubClasses(expectedSubClasses);
+	}
+
+	/**
+	 * getDirectSubClasses()
+	 * 
+	 * TEST CASE: Getting all direct subclasses of an element that has multiple
+	 * direct subclasses.
+	 */
+	@Test
+	public void testGetDirectSubClasses2() {
+		Vector<AttributedElementClass> expectedSubClasses = new Vector<AttributedElementClass>();
+
+		VertexClass subClass = graphClass.createVertexClass(new QualifiedName(
+				"VertexClassSubClass"));
+		VertexClass subClass2 = graphClass.createVertexClass(new QualifiedName(
+				"VertexClassSubClass2"));
+
+		subClass.addSuperClass(vertexClass);
+		subClass2.addSuperClass(vertexClass);
+
+		expectedSubClasses.add(subClass);
+		expectedSubClasses.add(subClass2);
+
+		testGetDirectSubClasses(expectedSubClasses);
+	}
+
+	/**
+	 * getDirectSubClasses()
+	 * 
+	 * TEST CASE: Getting all direct subclasses of an element that has multiple
+	 * direct and indirect subclasses.
+	 */
+	@Test
+	public void testGetDirectSubClasses3() {
+		Vector<AttributedElementClass> expectedSubClasses = new Vector<AttributedElementClass>();
+
+		VertexClass subClass = graphClass.createVertexClass(new QualifiedName(
+				"VertexClassSubClass")); // Direct subclass
+		VertexClass subClass2 = graphClass.createVertexClass(new QualifiedName(
+				"VertexClassSubClass2")); // Indirect subclass
+
+		subClass.addSuperClass(vertexClass);
+		subClass2.addSuperClass(subClass);
+
+		expectedSubClasses.add(subClass);
+
+		testGetDirectSubClasses(expectedSubClasses);
+	}
+
+	/**
+	 * getDirectSubClasses()
+	 * 
+	 * TEST CASE: Getting all direct subclasses of an element that has no direct
+	 * subclasses.
+	 */
+	@Test
+	public void testGetDirectSubClasses4() {
+		testGetDirectSubClasses(new Vector<AttributedElementClass>());
+	}
+
+	/**
+	 * getDirectSuperClasses()
+	 * 
+	 * TEST CASE: Getting all direct superclasses of an element that has one
+	 * direct superclass.
+	 */
+	@Test
+	public void testGetDirectSuperClasses() {
+		Vector<AttributedElementClass> expectedSuperClasses = new Vector<AttributedElementClass>();
+
+		VertexClass superClass = graphClass
+				.createVertexClass(new QualifiedName("VertexClassSuperClass"));
+
+		vertexClass.addSuperClass(superClass);
+
+		expectedSuperClasses.add(superClass);
+
+		testGetDirectSuperClasses(expectedSuperClasses);
+	}
+
+	/**
+	 * getDirectSuperClasses()
+	 * 
+	 * TEST CASE: Getting all direct superclasses of an element that has
+	 * multiple direct superclasses.
+	 */
+	@Test
+	public void testGetDirectSuperClasses2() {
+		Vector<AttributedElementClass> expectedSuperClasses = new Vector<AttributedElementClass>();
+
+		VertexClass superClass = graphClass
+				.createVertexClass(new QualifiedName("VertexClassSuperClass"));
+		VertexClass superClass2 = graphClass
+				.createVertexClass(new QualifiedName("VertexClassSuperClass2"));
+
+		vertexClass.addSuperClass(superClass);
+		vertexClass.addSuperClass(superClass2);
+
+		expectedSuperClasses.add(superClass);
+		expectedSuperClasses.add(superClass2);
+
+		testGetDirectSuperClasses(expectedSuperClasses);
+	}
+
+	/**
+	 * getDirectSuperClasses()
+	 * 
+	 * TEST CASE: Getting all direct superclasses of an element that has
+	 * multiple direct and indirect superclasses.
+	 */
+	@Test
+	public void testGetDirectSuperClasses3() {
+		Vector<AttributedElementClass> expectedSuperClasses = new Vector<AttributedElementClass>();
+
+		VertexClass superClass = graphClass // Direct superclass
+				.createVertexClass(new QualifiedName("VertexClassSuperClass"));
+		VertexClass superClass2 = graphClass // Indirect superclass
+				.createVertexClass(new QualifiedName("VertexClassSuperClass2"));
+
+		vertexClass.addSuperClass(superClass);
+		superClass.addSuperClass(superClass2);
+
+		expectedSuperClasses.add(superClass);
+
+		testGetDirectSuperClasses(expectedSuperClasses);
+	}
+
+	/**
+	 * getDirectSuperClasses()
+	 * 
+	 * TEST CASE: Getting all direct superclasses of an element that has no
+	 * direct superclasses.
+	 */
+	@Test
+	public void testGetDirectSuperClasses4() {
+		Vector<AttributedElementClass> expectedSuperClasses = new Vector<AttributedElementClass>();
+
+		expectedSuperClasses.add(schema.getDefaultVertexClass());
+
+		testGetDirectSuperClasses(expectedSuperClasses);
 	}
 
 	@Test

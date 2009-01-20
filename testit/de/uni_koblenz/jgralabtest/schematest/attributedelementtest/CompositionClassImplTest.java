@@ -30,8 +30,7 @@ public final class CompositionClassImplTest extends AggregationClassImplTest {
 
 		attributedElement = compositionClass = graphClass
 				.createCompositionClass(new QualifiedName("CompositionClass1"),
-						compositionClassFromVertexClass, 1, (int) (Math
-								.random() * 100) + 1,
+						compositionClassFromVertexClass, 0, 1,
 						"CompositionClassFromRoleName", true,
 						compositionClassToVertexClass, 1,
 						(int) (Math.random() * 100) + 1,
@@ -143,7 +142,7 @@ public final class CompositionClassImplTest extends AggregationClassImplTest {
 		expectedSubClasses.add(subClass);
 		expectedSubClasses.add(subClass2);
 
-		testGetAllSubClasses2(expectedSubClasses);
+		testGetAllSubClasses(expectedSubClasses);
 	}
 
 	/**
@@ -172,7 +171,7 @@ public final class CompositionClassImplTest extends AggregationClassImplTest {
 		expectedSubClasses.add(subClass);
 		expectedSubClasses.add(subClass2);
 
-		testGetAllSubClasses3(expectedSubClasses);
+		testGetAllSubClasses(expectedSubClasses);
 	}
 
 	/**
@@ -184,7 +183,7 @@ public final class CompositionClassImplTest extends AggregationClassImplTest {
 	@Override
 	public void testGetAllSubClasses4() {
 		// no subclasses expected
-		testGetAllSubClasses4(new Vector<AttributedElementClass>());
+		testGetAllSubClasses(new Vector<AttributedElementClass>());
 	}
 
 	/**
@@ -242,7 +241,7 @@ public final class CompositionClassImplTest extends AggregationClassImplTest {
 		expectedSuperClasses.add(superClass);
 		expectedSuperClasses.add(superClass2);
 
-		testGetAllSuperClasses2(expectedSuperClasses);
+		testGetAllSuperClasses(expectedSuperClasses);
 	}
 
 	/**
@@ -274,7 +273,7 @@ public final class CompositionClassImplTest extends AggregationClassImplTest {
 		expectedSuperClasses.add(superClass);
 		expectedSuperClasses.add(superClass2);
 
-		testGetAllSuperClasses3(expectedSuperClasses);
+		testGetAllSuperClasses(expectedSuperClasses);
 	}
 
 	/**
@@ -292,7 +291,7 @@ public final class CompositionClassImplTest extends AggregationClassImplTest {
 		expectedSuperClasses.add(schema.getDefaultAggregationClass());
 		expectedSuperClasses.add(schema.getDefaultCompositionClass());
 
-		testGetAllSuperClasses4(expectedSuperClasses);
+		testGetAllSuperClasses(expectedSuperClasses);
 	}
 
 	/**
@@ -444,5 +443,195 @@ public final class CompositionClassImplTest extends AggregationClassImplTest {
 		subClass.addSuperClass(compositionClass);
 
 		testGetAttributeList5(subClass);
+	}
+
+	/**
+	 * getDirectSubClasses()
+	 * 
+	 * TEST CASE: Getting all direct subclasses of an element that has one
+	 * direct subclass.
+	 */
+	@Test
+	@Override
+	public void testGetDirectSubClasses() {
+		Vector<AttributedElementClass> expectedSubClasses = new Vector<AttributedElementClass>();
+
+		CompositionClass subClass = graphClass.createCompositionClass(
+				new QualifiedName("CompositionClassSubClass"),
+				compositionClassFromVertexClass, true,
+				compositionClassToVertexClass);
+
+		subClass.addSuperClass(compositionClass);
+
+		expectedSubClasses.add(subClass);
+
+		testGetDirectSubClasses(expectedSubClasses);
+	}
+
+	/**
+	 * getDirectSubClasses()
+	 * 
+	 * TEST CASE: Getting all direct subclasses of an element that has multiple
+	 * direct subclasses.
+	 */
+	@Test
+	@Override
+	public void testGetDirectSubClasses2() {
+		Vector<AttributedElementClass> expectedSubClasses = new Vector<AttributedElementClass>();
+
+		CompositionClass subClass = graphClass.createCompositionClass(
+				new QualifiedName("CompositionClassSubClass"),
+				compositionClassFromVertexClass, true,
+				compositionClassToVertexClass);
+		CompositionClass subClass2 = graphClass.createCompositionClass(
+				new QualifiedName("CompositionClassSubClass2"),
+				compositionClassFromVertexClass, true,
+				compositionClassToVertexClass);
+
+		subClass.addSuperClass(compositionClass);
+		subClass2.addSuperClass(compositionClass);
+
+		expectedSubClasses.add(subClass);
+		expectedSubClasses.add(subClass2);
+
+		testGetDirectSubClasses(expectedSubClasses);
+	}
+
+	/**
+	 * getDirectSubClasses()
+	 * 
+	 * TEST CASE: Getting all direct subclasses of an element that has multiple
+	 * direct and indirect subclasses.
+	 */
+	@Test
+	@Override
+	public void testGetDirectSubClasses3() {
+		Vector<AttributedElementClass> expectedSubClasses = new Vector<AttributedElementClass>();
+
+		CompositionClass subClass = graphClass.createCompositionClass(
+				new QualifiedName("CompositionClassSubClass"),
+				compositionClassFromVertexClass, true,
+				compositionClassToVertexClass); // Direct subclass
+		CompositionClass subClass2 = graphClass.createCompositionClass(
+				new QualifiedName("CompositionClassSubClass2"),
+				compositionClassFromVertexClass, true,
+				compositionClassToVertexClass); // Indirect subclass
+
+		subClass.addSuperClass(compositionClass);
+		subClass2.addSuperClass(subClass);
+
+		expectedSubClasses.add(subClass);
+
+		testGetDirectSubClasses(expectedSubClasses);
+	}
+
+	/**
+	 * getDirectSubClasses()
+	 * 
+	 * TEST CASE: Getting all direct subclasses of an element that has no direct
+	 * subclasses.
+	 */
+	@Test
+	@Override
+	public void testGetDirectSubClasses4() {
+		testGetDirectSubClasses(new Vector<AttributedElementClass>());
+	}
+
+	/**
+	 * getDirectSuperClasses()
+	 * 
+	 * TEST CASE: Getting all direct superclasses of an element that has one
+	 * direct superclass.
+	 */
+	@Test
+	@Override
+	public void testGetDirectSuperClasses() {
+		Vector<AttributedElementClass> expectedSuperClasses = new Vector<AttributedElementClass>();
+
+		CompositionClass superClass = graphClass.createCompositionClass(
+				new QualifiedName("CompositionClassSuperClass"),
+				compositionClassFromVertexClass, true,
+				compositionClassToVertexClass);
+
+		compositionClass.addSuperClass(superClass);
+
+		expectedSuperClasses.add(superClass);
+
+		testGetDirectSuperClasses(expectedSuperClasses);
+	}
+
+	/**
+	 * getDirectSuperClasses()
+	 * 
+	 * TEST CASE: Getting all direct superclasses of an element that has
+	 * multiple direct superclasses.
+	 */
+	@Test
+	@Override
+	public void testGetDirectSuperClasses2() {
+		Vector<AttributedElementClass> expectedSuperClasses = new Vector<AttributedElementClass>();
+
+		CompositionClass superClass = graphClass.createCompositionClass(
+				new QualifiedName("CompositionClassSuperClass"),
+				compositionClassFromVertexClass, true,
+				compositionClassToVertexClass);
+		CompositionClass superClass2 = graphClass.createCompositionClass(
+				new QualifiedName("CompositionClassSuperClass2"),
+				compositionClassFromVertexClass, true,
+				compositionClassToVertexClass);
+
+		compositionClass.addSuperClass(superClass);
+		compositionClass.addSuperClass(superClass2);
+
+		expectedSuperClasses.add(superClass);
+		expectedSuperClasses.add(superClass2);
+
+		testGetDirectSuperClasses(expectedSuperClasses);
+	}
+
+	/**
+	 * getDirectSuperClasses()
+	 * 
+	 * TEST CASE: Getting all direct superclasses of an element that has
+	 * multiple direct and indirect superclasses.
+	 */
+	@Test
+	@Override
+	public void testGetDirectSuperClasses3() {
+		Vector<AttributedElementClass> expectedSuperClasses = new Vector<AttributedElementClass>();
+
+		CompositionClass superClass = graphClass.createCompositionClass(
+				new QualifiedName("CompositionClassSuperClass"),
+				compositionClassFromVertexClass, true,
+				compositionClassToVertexClass); // Direct superclass
+		CompositionClass superClass2 = graphClass.createCompositionClass(
+				new QualifiedName("CompositionClassSuperClass2"),
+				compositionClassFromVertexClass, true,
+				compositionClassToVertexClass); // Indirect superclass
+
+		compositionClass.addSuperClass(superClass);
+		superClass.addSuperClass(superClass2);
+
+		expectedSuperClasses.add(superClass);
+
+		testGetDirectSuperClasses(expectedSuperClasses);
+	}
+
+	/**
+	 * getDirectSuperClasses()
+	 * 
+	 * TEST CASE: Getting all direct superclasses of an element that has no
+	 * direct superclasses.
+	 */
+	@Test
+	@Override
+	public void testGetDirectSuperClasses4() {
+		Vector<AttributedElementClass> expectedSuperClasses = new Vector<AttributedElementClass>();
+
+		expectedSuperClasses.add(schema.getDefaultEdgeClass());
+		expectedSuperClasses.add(schema.getDefaultAggregationClass());
+		expectedSuperClasses.add(schema.getDefaultCompositionClass());
+
+		testGetDirectSuperClasses(expectedSuperClasses);
 	}
 }
