@@ -91,12 +91,12 @@ public class CodeSnippetTest extends CodeBlockTest{
 		cl.add(cs1);
 		cs3=new CodeSnippet(cl, "Mango", "Pflaume", "Limette");
 		assertEquals("Mango\nPflaume\nLimette\n", cs3.getCode());
-		System.out.println("sollte jetzt Ananas enthalten\n" + cl.getCode() + "\n ENDE!");
+//		System.out.println("sollte jetzt Ananas enthalten\n" + cl.getCode() + "\n ENDE!");
 		cl.clear();
 		cl.add(cs1, 2);
 		cs3=new CodeSnippet(cl, "Mango", "Avocado");
 		assertEquals("Mango\nAvocado\n", cs3.getCode());
-		System.out.println(cl.getCode());
+//		System.out.println(cl.getCode());
 		
 		//border cases
 		
