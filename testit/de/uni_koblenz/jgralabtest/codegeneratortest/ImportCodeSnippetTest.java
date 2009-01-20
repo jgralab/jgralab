@@ -36,40 +36,102 @@ public class ImportCodeSnippetTest extends CodeSnippetTest{
 		cs1=new CodeSnippet("Cabot", "Gaarder", "Sage", "Rowling");
 		cl1=new CodeList();
 		cl1.add(cs1);
-		//to make sure I don´t think something wrong about what is inside the CodeList
-		System.out.println(cl1.getCode());
 		ics1=new ImportCodeSnippet(cl1);
 		assertEquals(0, ics1.size());
+		//no matter what CodeList is passed to the constructor, the ImportCodeSnippet
+		//itself must always be empty
+		assertEquals("", ics1.getCode());		
+		//to make sure the parent was set correctly
+		assertEquals("\tCabot\n\tGaarder\n\tSage\n\tRowling\n", ics1.getParent().getCode());
+		cs1.add("Pratchett", "", "Pullman");
+		cl1.add(cs1);
+		ics1=new ImportCodeSnippet(cl1);
 		assertEquals("", ics1.getCode());
-		//TODO what else has to be controlled...
-		//no matter what CodeList is given the size of the ImportCodeSnippet always
-		//has to be zero
-		//how can I test what else is happening? perhaps with getCode as it returns
-		//the super-class-String!!!!!!!!!!!
+		assertEquals("\tCabot\n\tGaarder\n\tSage\n\tRowling\n\tPratchett\n\t\n\tPullman\n", ics1.getParent().getCode());
 		
-		/*assertEquals("\nCabot\nGaarder\nSage\nRowling\n" ,ics1.getCode(0));
-		 * should not work! getCode overwrites what is in the CodeSnippet with
-		 * what is in ImportCodeSnipper
-		 */
 		
 		//border cases
 		cl1.clear();
 		ics1.clear();
 		assertEquals(0,ics1.size());
+		assertEquals("", ics1.getParent().getCode());
 		assertEquals("", ics1.getCode());
+		cs1.clear();
+		cs1.add("");
+		cl1.add(cs1);
+		ics1=new ImportCodeSnippet(cl1);
+		assertEquals("", ics1.getCode());
+		assertEquals("\t\n", ics1.getParent().getCode());
+		cs1.add("");
+		cl1.add(cs1);
+		ics1=new ImportCodeSnippet(cl1);
+		assertEquals("", ics1.getCode());
+		assertEquals("\t\n\t\n", ics1.getParent().getCode());
+		cs1.clear();
+		cs1.add("Canavan");
+		cl1.add(cs1);
+		ics1=new ImportCodeSnippet(cl1);
+		assertEquals("", ics1.getCode());
+		assertEquals("\tCanavan\n", ics1.getParent().getCode());
 	}
 	
 	@Test
 	public void testAdd(){
+		//normal cases
 		ics1=new ImportCodeSnippet();
 		ics1.add("Der.", "Herr.", "der.", "Ringe.");
 		assertEquals(4,ics1.size());
 		assertEquals("\nimport Der.;\n\nimport Herr.;\n\nimport Ringe.;\n\nimport der.;\n", ics1.getCode(0));
+		ics1.add("Sofies.", "Welt.");
+		assertEquals(6, ics1.size());
+		assertEquals("\nimport Der.;\n\nimport Herr.;\n\nimport Ringe.;\n\nimport Sofies.;\n\nimport Welt.;\n\nimport der.;\n", ics1.getCode());
+		
+		//border cases
+		ics1.clear();
+		ics1.add("Queste.");
+		assertEquals(1, ics1.size());
+		assertEquals("\nimport Queste.;\n", ics1.getCode());
+		ics1.clear();
+		ics1.add(null);
+		assertEquals(0, ics1.size());
+		assertEquals("", ics1.getCode());
+		ics1.add("");
+		assertEquals(1, ics1.size());
+		ics1.add("eclipse.", "");
+		assertEquals(2, ics1.size());
+		ics1.add("");
+		assertEquals(2, ics1.size());
+		ics1.add(null);
+		assertEquals(2, ics1.size());
+		ics1.clear();
+		ics1.add(".");
+		assertEquals(1, ics1.size());
+		assertEquals("\nimport .;\n", ics1.getCode());
 	}
 	
 	@Test
 	public void testGetCode(){
+		ics1=new ImportCodeSnippet();
+		ics1.add("Harry.", "Potter.", "und.", "der.", "Stein.", "der.", "Weisen.");
+		assertEquals("\n\t\timport Harry.;\n\t\t\n\t\timport Potter.;\n\t\t\n\t\t" +
+				"import Stein.;\n\t\t\n\t\timport Weisen.;\n\t\t\n\t\timport der.;\n\t\t\n\t\t" +
+				"import und.;\n", ics1.getCode(2));
 		
+		//border cases
+		ics1.clear();
+		ics1.add("Der.Clan.der.Otori");
+		assertEquals("\n\timport Der.Clan.der.Otori;\n", ics1.getCode(1));
+		
+		//TODO: additional test cases, using different indent levels and with 
+		//different things added
+		
+		//faults
+		//StringIndexOutOfBoundsException, when inserting sth. without a "." inside
+		//due to usage of java.lang.String.substring
+		//TODO: stay this way?
+		ics1.clear();
+		ics1.add("");
+		//ics1.getCode(0);
 	}
 	
 	@Test
@@ -78,16 +140,36 @@ public class ImportCodeSnippetTest extends CodeSnippetTest{
 		ics3.add("Alpha", "Beta", "Gamma", "Delta");
 		ics3.clear();
 		assertEquals(0, ics3.size());
+		try{
+			ics3.getParent();
+		}catch(NullPointerException e){
+			// :)
+		}
 		ics3.add("Epsilon", "Phi", "Xsi");
 		ics3.clear();
 		assertEquals(0, ics3.size());
+		try{
+			ics3.getParent();
+		}catch(NullPointerException e){
+			// :)
+		}
 		
 		//border cases
 		ics3=new ImportCodeSnippet();
 		ics3.clear();
 		assertEquals(0, ics3.size());
+		try{
+			ics3.getParent();
+		}catch(NullPointerException e){
+			// :)
+		}
 		ics3.clear();
-		assertEquals(0, ics3.size());
+		assertEquals(0, ics3.size());		
+		try{
+			ics3.getParent();
+		}catch(NullPointerException e){
+			// :)
+		}
 	}
 	
 	@Test 
