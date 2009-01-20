@@ -73,7 +73,7 @@ public interface NamedElement {
 	public String getPathName();
 
 	/**
-	 * Names the full package/directory-path this element is in.<br />
+	 * Returns the package this element belongs to.<br />
 	 * Package layers are separated by the system-dependent default
 	 * name-separator character.
 	 * 
@@ -89,14 +89,14 @@ public interface NamedElement {
 	 * <p>
 	 * <b>Postconditions:</b>
 	 * <ul>
-	 * <li><code>directoryName</code> contains all package layers to this
+	 * <li><code>directoryName</code> contains the full directory path to this
 	 * element</li>
 	 * <li>Package layers are separated by the system-dependent default
 	 * name-separator character</li>
 	 * </ul>
 	 * </p>
 	 * 
-	 * @return the name of the directory/package this element is in
+	 * @return the package this element belongs to
 	 */
 	public String getDirectoryName();
 
