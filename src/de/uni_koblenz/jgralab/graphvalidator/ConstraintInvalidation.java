@@ -21,7 +21,9 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
-package de.uni_koblenz.jgralab;
+package de.uni_koblenz.jgralab.graphvalidator;
+
+import de.uni_koblenz.jgralab.AttributedElement;
 
 /**
  * @author Tassilo Horn <horn@uni-koblenz.de>
@@ -29,7 +31,7 @@ package de.uni_koblenz.jgralab;
  */
 public class ConstraintInvalidation {
 	public enum ConstraintType {
-		MULTIPLICITY
+		MULTIPLICITY, GRAPH_CLASS, VERTEX_CLASS, EDGE_CLASS
 	}
 
 	private String message;

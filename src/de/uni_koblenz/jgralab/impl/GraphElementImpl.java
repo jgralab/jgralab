@@ -30,9 +30,9 @@ import de.uni_koblenz.jgralab.schema.Schema;
 
 /**
  * TODO add comment
- * 
+ *
  * @author ist@uni-koblenz.de
- * 
+ *
  */
 public abstract class GraphElementImpl {
 	public GraphElementImpl(Graph graph) {
@@ -48,7 +48,7 @@ public abstract class GraphElementImpl {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see de.uni_koblenz.jgralab.AttributedElement#getGraphClass()
 	 */
 	public GraphClass getGraphClass() {
@@ -57,7 +57,7 @@ public abstract class GraphElementImpl {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see jgralab.AttributedElement#getSchema()
 	 */
 	public Schema getSchema() {

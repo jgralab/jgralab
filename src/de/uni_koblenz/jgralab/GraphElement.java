@@ -21,11 +21,12 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
- 
+
 package de.uni_koblenz.jgralab;
 
 /**
  * aggregates vertices and edges
+ *
  * @author ist@uni-koblenz.de
  *
  */
@@ -33,23 +34,23 @@ public interface GraphElement extends AttributedElement {
 
 	/**
 	 * returns the id of this graph element
+	 *
 	 * @return the id of this graph element
 	 */
 	public int getId();
-	
+
 	/**
 	 * returns the graph containing this graph element
+	 *
 	 * @return the graph containing this graph element
 	 */
 	public Graph getGraph();
-	
+
 	/**
-	 * Changes the graph version of the graph
-	 * this element belongs to.
-	 * Should be called whenever the graph is changed,
-	 * all changes like adding, creating and reordering of edges and vertices
-	 * or changes of attributes of the graph, an edge or a vertex are
-	 * treated as a change.
+	 * Changes the graph version of the graph this element belongs to. Should be
+	 * called whenever the graph is changed, all changes like adding, creating
+	 * and reordering of edges and vertices or changes of attributes of the
+	 * graph, an edge or a vertex are treated as a change.
 	 */
 	public void graphModified();
 

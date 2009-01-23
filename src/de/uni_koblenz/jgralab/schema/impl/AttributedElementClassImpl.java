@@ -99,6 +99,11 @@ public abstract class AttributedElementClassImpl implements
 	 */
 	private Class<? extends AttributedElement> m1ImplementationClass;
 
+	/**
+	 * A set of greql2 predicates which can be used to validate the graph.
+	 */
+	protected HashSet<String> constraints = new HashSet<String>(1);
+
 	@Override
 	public void setPackage(Package p) {
 		pkg = p;
@@ -544,6 +549,16 @@ public abstract class AttributedElementClassImpl implements
 			leastCommon = calculateLeastCommonSuperclass(classesWithDirectSuperclasses);
 		}
 		return leastCommon;
+	}
+
+	@Override
+	public void addConstraint(String greqlPredicate) {
+		constraints.add(greqlPredicate);
+	}
+
+	@Override
+	public Iterable<String> getConstraints() {
+		return constraints;
 	}
 
 }
