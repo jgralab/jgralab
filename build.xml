@@ -118,7 +118,7 @@
 	
 	<!-- compile -->
 	<!-- calls targets jgralab, tgschema2java, greql2 and utilities -->
-	<target name="compile" depends="jgralab,tgschema2java,utilities,greql2,generatetestschemas"/>
+	<target name="compile" depends="jgralab,tgschema2java,utilities,greql2,graphvalidator,generatetestschemas"/>
 
 	<!-- jgralab -->
 	<!-- compiles jgralab basic sources -->
@@ -130,6 +130,16 @@
 			<property name="compileexcludes" value="impl/list/** xmlrpc/**"/>
 	   	</ant>
 	</target>
+
+    <!-- graphvalidator -->
+    <target name="graphvalidator">
+	  <!-- calls target compile in general ant file ${ant}/build.xml -->
+	  <ant dir="${common.dir}" antfile="build.xml" target="compile">
+	   	<property name="src.dir" value="${src.dir}/de/uni_koblenz/jgralab/"/>
+	   	<property name="compileincludes" value="graphvalidator/**"/>
+	  </ant>
+	</target>
+
 
 	<!-- jgralabtest -->
 

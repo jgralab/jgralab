@@ -41,7 +41,7 @@ public abstract class GraphElementClassImpl extends AttributedElementClassImpl
 
 	/**
 	 * delegates its constructor to the generalized class
-	 * 
+	 *
 	 * @param qn
 	 *            the unique identifier of the element in the schema
 	 */
@@ -52,7 +52,7 @@ public abstract class GraphElementClassImpl extends AttributedElementClassImpl
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see jgralab.GraphElementClass#getGraphClass()
 	 */
 	public GraphClass getGraphClass() {
@@ -61,7 +61,7 @@ public abstract class GraphElementClassImpl extends AttributedElementClassImpl
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see java.lang.Object#toString()
 	 */
 	@Override
@@ -112,5 +112,4 @@ public abstract class GraphElementClassImpl extends AttributedElementClassImpl
 	public Schema getSchema() {
 		return graphClass.getSchema();
 	}
-
 }

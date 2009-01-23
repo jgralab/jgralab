@@ -25,7 +25,6 @@
 package de.uni_koblenz.jgralab;
 
 import de.uni_koblenz.jgralab.schema.EdgeClass;
-import de.uni_koblenz.jgralab.schema.Schema;
 import de.uni_koblenz.jgralab.schema.VertexClass;
 
 /**
@@ -490,15 +489,6 @@ public interface Graph extends AttributedElement {
 	 * @return an Iterable for all vertices
 	 */
 	public Iterable<Vertex> vertices();
-
-	/**
-	 * Checks if this graph is a valid instance of its {@link Schema}. For
-	 * example it checks if all multiplicity constraints on the incidences are
-	 * satisfied.
-	 *
-	 * @return an iterable over all invalidations of constraints
-	 */
-	public Iterable<ConstraintInvalidation> validate();
 
 	/**
 	 * Returns an Iterable which iterates over all vertices of this Graph which

@@ -944,6 +944,12 @@ public class GraphIO {
 		if (lookAhead.equals("{")) {
 			graphClass.attributes = parseAttributes();
 		}
+
+		if (lookAhead.equals("{")) {
+			// There are constraints
+			graphClass.constraints = parseConstraints();
+		}
+
 		match(";");
 
 		vertexClassBuffer.put(graphClass.name,
@@ -972,6 +978,11 @@ public class GraphIO {
 		for (Attribute attr : attributes(gcData.attributes).values()) {
 			gc.addAttribute(attr);
 		}
+
+		for (String constraint : gcData.constraints) {
+			gc.addConstraint(constraint);
+		}
+
 		return gc;
 	}
 
@@ -1206,7 +1217,6 @@ public class GraphIO {
 			if (lookAhead.equals("{")) {
 				graphElementClassData.attributes = parseAttributes();
 			}
-			match(";");
 			vertexClassBuffer.get(gcName).add(graphElementClassData);
 		} else if (lookAhead.equals("EdgeClass")
 				|| lookAhead.equals("AggregationClass")
@@ -1237,10 +1247,23 @@ public class GraphIO {
 			if (lookAhead.equals("{")) {
 				graphElementClassData.attributes = parseAttributes();
 			}
-			match(";");
-
 			edgeClassBuffer.get(gcName).add(graphElementClassData);
 		}
+		if (lookAhead.equals("{")) {
+			// There are constraints
+			graphElementClassData.constraints = parseConstraints();
+		}
+		match(";");
+	}
+
+	private Set<String> parseConstraints() throws GraphIOException {
+		HashSet<String> constraints = new HashSet<String>(1);
+		String constraint = matchUtfString();
+		while (constraint != null) {
+			constraints.add(constraint);
+		}
+		match("}");
+		return constraints;
 	}
 
 	private VertexClass createVertexClass(GraphElementClassData vcd,
@@ -1251,6 +1274,11 @@ public class GraphIO {
 		for (Attribute attr : attributes(vcd.attributes).values()) {
 			vc.addAttribute(attr);
 		}
+
+		for (String constraint : vcd.constraints) {
+			vc.addConstraint(constraint);
+		}
+
 		GECsearch.put(vc, gc);
 		return vc;
 	}
@@ -1287,6 +1315,10 @@ public class GraphIO {
 
 		for (Attribute attr : attributes(ecd.attributes).values()) {
 			ec.addAttribute(attr);
+		}
+
+		for (String constraint : ecd.constraints) {
+			ec.addConstraint(constraint);
 		}
 
 		ec.setAbstract(ecd.isAbstract);
@@ -2412,6 +2444,8 @@ public class GraphIO {
 	 * used to create a GraphClass.
 	 */
 	private class GraphClassData {
+		Set<String> constraints = new HashSet<String>(1);
+
 		QualifiedName name;
 
 		boolean isAbstract = false;
@@ -2451,5 +2485,7 @@ public class GraphIO {
 		boolean aggregateFrom;
 
 		Map<String, List<QualifiedName>> attributes = new TreeMap<String, List<QualifiedName>>();
+
+		Set<String> constraints = new HashSet<String>(1);
 	}
 }
