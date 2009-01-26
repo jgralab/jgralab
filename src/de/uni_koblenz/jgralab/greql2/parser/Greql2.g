@@ -300,7 +300,7 @@ import de.uni_koblenz.jgralab.schema.*;
 				logger.severe("Error at position: " + offset +": RecognitionException " + e.getMessage());
 		}		
 		else logger.severe("error (offset = -1): RecognitionException " + e.getMessage());
-		System.out.println("ERROR: " + e.getMessage());
+		e.printStackTrace();
 	}
 
   	public void reportError(TokenStreamException e) {

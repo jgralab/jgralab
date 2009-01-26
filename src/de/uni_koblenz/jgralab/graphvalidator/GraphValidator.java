@@ -47,7 +47,7 @@ public class GraphValidator {
 		this.graph = graph;
 	}
 
-	public Iterable<ConstraintInvalidation> validate() {
+	public Set<ConstraintInvalidation> validate() {
 		Set<ConstraintInvalidation> brokenConstraints = new HashSet<ConstraintInvalidation>();
 
 		// Check if all multiplicities are correct

@@ -23,7 +23,6 @@
  */
 package de.uni_koblenz.jgralab.graphvalidator;
 
-
 /**
  * @author Tassilo Horn <horn@uni-koblenz.de>
  *
@@ -58,5 +57,20 @@ public class ConstraintInvalidation {
 	@Override
 	public String toString() {
 		return "Broken " + constraintType + " constraint: " + message;
+	}
+
+	@Override
+	public boolean equals(Object o) {
+		if (o instanceof ConstraintInvalidation) {
+			ConstraintInvalidation other = (ConstraintInvalidation) o;
+			return constraintType == other.constraintType
+					&& message.equals(other.message);
+		}
+		return false;
+	}
+
+	@Override
+	public int hashCode() {
+		return constraintType.hashCode() + message.hashCode();
 	}
 }
