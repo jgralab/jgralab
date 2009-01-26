@@ -77,14 +77,13 @@ public class CodeSnippet extends CodeBlock {
 		this(null, newLine, initialLines);
 	}
 
-	//TODO revise, complete and control this and the next comment, especially
-	//concerning the CodeLists
 	/**
 	 * creates a <code>CodeSnippet</code> without a new line at the beginning and
 	 * adds the <code>CodeSnippet</code> to <code>parent</code>
 	 * is only called from within the codegenerator, therefore it handles exceptions
 	 * optimistically
-	 * @param parent
+	 * @param parent a <code>CodeList</code>, to which the created 
+	 * <code>CodeSnippet</code> is added, if it is not empty 
 	 * @param initialLines are put into the <code>CodeSnippet</code>, every String
 	 * will be a new line, none of the lines equals <code>null</code>	 
 	 */
@@ -94,9 +93,12 @@ public class CodeSnippet extends CodeBlock {
 
 
 	/**
+	 * creates a <code>CodeSnippet</code> containing <code>initialLines</code> and 
+	 * adds this <code>CodeSnippet</code> to <code>parent</code>
 	 * is only called from within the codegenerator, therefore it handles exceptions
 	 * optimistically
-	 * @param parent
+	 * @param parent a <code>CodeList</code>, to which the created 
+	 * <code>CodeSnippet</code> is added, if it is not empty  
 	 * @param newLine decides whether a new line is put in front of the first of the
 	 * <code>initialLines</code>, must not be <code>null</code>
 	 * @param initialLines amount of Strings, every String put into the 
