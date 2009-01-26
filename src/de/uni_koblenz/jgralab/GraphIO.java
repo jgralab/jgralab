@@ -1256,11 +1256,14 @@ public class GraphIO {
 	}
 
 	private Set<String> parseConstraints() throws GraphIOException {
+		// constraints have the form: ["greql exp", "greql exp", ...]
 		match("[");
 		HashSet<String> constraints = new HashSet<String>(1);
 		String constraint = matchUtfString();
-		while (constraint != null) {
+		while (lookAhead.equals(",")) {
+			match();
 			constraints.add(constraint);
+			constraint = matchUtfString();
 		}
 		match("]");
 		return constraints;
