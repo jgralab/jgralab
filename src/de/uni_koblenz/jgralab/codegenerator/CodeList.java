@@ -35,24 +35,45 @@ import java.util.Vector;
 public class CodeList extends CodeBlock {
 	Vector<CodeBlock> blocks;
 
+	/**
+	 * creates an empty <code>CodeList</code>
+	 */
 	public CodeList() {
 		this(null);
 	}
 
+	/**
+	 * creates a <code>CodeList</code> with an empty vector of CodeBlocks and
+	 * a CodeBlock containing <code>parent</code>
+	 * @param parent
+	 */
 	public CodeList(CodeList parent) {
 		super(parent);
 		blocks = new Vector<CodeBlock>();
 	}
 
+	/**
+	 * 
+	 * @param block
+	 */
 	public void remove(CodeBlock block) {
 		blocks.remove(block);
 		block.setParent(null);
 	}
 
+	/**
+	 * 
+	 * @param block
+	 */
 	public void add(CodeBlock block) {
 		add(block, 0);
 	}
 
+	/**
+	 * 
+	 * @param block
+	 * @param addIndent
+	 */
 	public void add(CodeBlock block, int addIndent) {
 		if (block == null) {
 			return;
@@ -65,6 +86,10 @@ public class CodeList extends CodeBlock {
 		block.setParent(this);
 	}
 
+	/**
+	 * 
+	 * @param block
+	 */
 	public void addNoIndent(CodeBlock block) {
 		if (block != null) {
 			add(block);
@@ -72,6 +97,9 @@ public class CodeList extends CodeBlock {
 		}
 	}
 
+	/**
+	 * 
+	 */
 	@Override
 	public String getCode(int indentLevel) {
 		StringBuilder buf = new StringBuilder();
@@ -81,11 +109,18 @@ public class CodeList extends CodeBlock {
 		return buf.toString();
 	}
 
+	/**
+	 * empties <code>this</code>
+	 */
 	@Override
 	public void clear() {
 		blocks.clear();
 	}
 
+	/**
+	 * @return the number of elements, which are in all the blocks of which 
+	 * <code>this</code> consists
+	 */
 	@Override
 	public int size() {
 		int result = 0;
