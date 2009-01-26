@@ -25,6 +25,7 @@
 package de.uni_koblenz.jgralab.codegenerator;
 
 import java.util.List;
+import java.util.regex.Matcher;
 
 import de.uni_koblenz.jgralab.Attribute;
 import de.uni_koblenz.jgralab.schema.AggregationClass;
@@ -242,6 +243,7 @@ public class SchemaCodeGenerator extends CodeGenerator {
 			code.add(s);
 		}
 		code.add(createAttributes(gc));
+		code.add(createConstraints(gc));
 		code.add(createVertexClasses(gc));
 		code.add(createEdgeClasses(gc));
 		code.addNoIndent(new CodeSnippet(true, "}"));
@@ -347,7 +349,7 @@ public class SchemaCodeGenerator extends CodeGenerator {
 			code.add(s);
 		}
 		code.add(createAttributes(ec));
-
+		code.add(createConstraints(ec));
 		code.addNoIndent(new CodeSnippet("}"));
 		return code;
 	}
@@ -386,7 +388,7 @@ public class SchemaCodeGenerator extends CodeGenerator {
 			code.add(s);
 		}
 		code.add(createAttributes(vc));
-
+		code.add(createConstraints(vc));
 		code.addNoIndent(new CodeSnippet("}"));
 		return code;
 	}
@@ -400,6 +402,17 @@ public class SchemaCodeGenerator extends CodeGenerator {
 			s.setVariable("attrName", attr.getName());
 			s.setVariable("domainName", attr.getDomain().getQualifiedName());
 			code.addNoIndent(s);
+		}
+		return code;
+	}
+
+	private CodeBlock createConstraints(AttributedElementClass aec) {
+		CodeList code = new CodeList();
+		for (String constraint : aec.getConstraints()) {
+			code.addNoIndent(new CodeSnippet(false,
+					"#aecVariable#.addConstraint(\""
+							+ constraint.replaceAll("\"", Matcher
+									.quoteReplacement("\\\"")) + "\");"));
 		}
 		return code;
 	}

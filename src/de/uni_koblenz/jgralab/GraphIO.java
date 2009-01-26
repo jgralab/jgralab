@@ -1251,6 +1251,8 @@ public class GraphIO {
 		if (lookAhead.equals("[")) {
 			// There are constraints
 			graphElementClassData.constraints = parseConstraints();
+			System.out.println("Constraints for " + graphElementClassData.name
+					+ ": " + graphElementClassData.constraints);
 		}
 		match(";");
 	}
@@ -1260,10 +1262,11 @@ public class GraphIO {
 		match("[");
 		HashSet<String> constraints = new HashSet<String>(1);
 		String constraint = matchUtfString();
+		constraints.add(constraint);
 		while (lookAhead.equals(",")) {
 			match();
-			constraints.add(constraint);
 			constraint = matchUtfString();
+			constraints.add(constraint);
 		}
 		match("]");
 		return constraints;
