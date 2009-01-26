@@ -28,7 +28,7 @@ import java.util.SortedSet;
 import java.util.TreeSet;
 
 /**
- * TODO add comment
+ * enables the creation of import-statements as part of the created code
  * 
  * @author ist@uni-koblenz.de
  * 
@@ -37,15 +37,30 @@ public class ImportCodeSnippet extends CodeSnippet {
 
 	private SortedSet<String> imports;
 
+	/**
+	 * creates an empty <code>ImportCodeSnippet</code> by initializing its SortedSet
+	 * and by creating a <code>CodeSnippet</code> with a new line as its only content 
+	 */
 	public ImportCodeSnippet() {
 		this(null);
 	}
 
+	/**
+	 * creates an empty <code>ImportCodeSnippet</code> and a new <code>CodeSnippet</code> 
+	 * with a new line at its start 
+	 * @param parent is passed to the <code>CodeSnippet</code>
+	 */
 	public ImportCodeSnippet(CodeList parent) {
 		super(parent, true);
 		imports = new TreeSet<String>();
 	}
 
+	/**
+	 * adds <code>addedLines</code> to <code>this</code>
+	 * if one of the Strings of <code>addedLines</code> has already been put into
+	 * <code>this</code>, it will not be added again 
+	 * @param addedLines will be added to <code>this</code>
+	 */
 	@Override
 	public void add(String... addedLines) {
 		if (addedLines != null) {
@@ -55,6 +70,15 @@ public class ImportCodeSnippet extends CodeSnippet {
 		}
 	}
 
+	/**
+	 * <code>this</code> is only called from within the codegenerator, exceptions
+	 * are therefore handled optimistically 
+	 * expects its Strings to contain a "."
+	 * @param indent defines how much each import-statement is to be interposed
+	 * @return the content of <code>this</code> as import-statements, which are
+	 * divided by an empty line between each statement 
+	 * every line is interposed according to <code>indent</code>
+	 */
 	@Override
 	public String getCode(int indent) {
 		lines.clear();
@@ -70,12 +94,20 @@ public class ImportCodeSnippet extends CodeSnippet {
 		return super.getCode(indent);
 	}
 
+	/**
+	 * clears the CodeSnippet by discarding all saved Strings
+	 * clears the parent, <code>this</code>.getParent() will afterwards throw
+	 * a NullPointerException if called
+	 */
 	@Override
 	public void clear() {
 		super.clear();
 		imports.clear();
 	}
 
+	/**
+	 * @return the number of import statements, which are currently saved
+	 */
 	@Override
 	public int size() {
 		return imports.size();
