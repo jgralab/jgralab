@@ -103,14 +103,6 @@ public class PackageImpl implements Package {
 	}
 
 	@Override
-	public String getDirectoryName() {
-		if (parentPackage == null) {
-			return "";
-		}
-		return parentPackage.getPathName();
-	}
-
-	@Override
 	public String getUniqueName() {
 		return qName.getUniqueName();
 	}
@@ -123,11 +115,6 @@ public class PackageImpl implements Package {
 	@Override
 	public String getPackageName() {
 		return qName.getPackageName();
-	}
-
-	@Override
-	public String getPathName() {
-		return qName.getPathName();
 	}
 
 	@Override
@@ -148,8 +135,8 @@ public class PackageImpl implements Package {
 	@Override
 	public Package createSubPackage(String simpleName) {
 		if (isDefaultPackage() && simpleName.equals(SchemaImpl.IMPLPACKAGENAME)) {
-			throw new InvalidNameException("the package name '"
-					+ simpleName + "' is forbidden as top level package");
+			throw new InvalidNameException("the package name '" + simpleName
+					+ "' is forbidden as top level package");
 		}
 		Package p = getSubPackage(simpleName);
 		if (p == null) {

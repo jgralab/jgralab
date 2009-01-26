@@ -95,7 +95,7 @@ public class QualifiedName implements Comparable<QualifiedName> {
 		return qualifiedName;
 	}
 
-	public String getDirectoryName() {
+	public String getFileName() {
 		return qualifiedName.replace('.', File.separatorChar);
 	}
 
@@ -134,8 +134,8 @@ public class QualifiedName implements Comparable<QualifiedName> {
 	 */
 	public void setUniqueName(NamedElement element, String uniqueName) {
 		if (!(uniqueName.indexOf('.') < 0)) {
-			throw new InvalidNameException("The unique name "
-					+ uniqueName + " must not contain '.'.");
+			throw new InvalidNameException("The unique name " + uniqueName
+					+ " must not contain '.'.");
 		}
 		// Must be 1 because 0 is the default graph-class Graph
 		for (GraphClass gc : element.getSchema()
@@ -149,36 +149,36 @@ public class QualifiedName implements Comparable<QualifiedName> {
 			for (VertexClass v : gc.getVertexClasses()) {
 				if (v != element) {
 					if (v.getSimpleName().equals(uniqueName)) {
-						throw new InvalidNameException(
-								"The unique name " + uniqueName
-										+ " is already used in this schema");
+						throw new InvalidNameException("The unique name "
+								+ uniqueName
+								+ " is already used in this schema");
 					}
 				}
 			}
 			for (EdgeClass e : gc.getEdgeClasses()) {
 				if (e != element) {
 					if (e.getSimpleName().equals(uniqueName)) {
-						throw new InvalidNameException(
-								"The unique name " + uniqueName
-										+ " is already used in this schema");
+						throw new InvalidNameException("The unique name "
+								+ uniqueName
+								+ " is already used in this schema");
 					}
 				}
 			}
 			for (AggregationClass e : gc.getAggregationClasses()) {
 				if (e != element) {
 					if (e.getSimpleName().equals(uniqueName)) {
-						throw new InvalidNameException(
-								"The unique name " + uniqueName
-										+ " is already used in this schema");
+						throw new InvalidNameException("The unique name "
+								+ uniqueName
+								+ " is already used in this schema");
 					}
 				}
 			}
 			for (CompositionClass e : gc.getCompositionClasses()) {
 				if (e != element) {
 					if (e.getSimpleName().equals(uniqueName)) {
-						throw new InvalidNameException(
-								"The unique name " + uniqueName
-										+ " is already used in this schema");
+						throw new InvalidNameException("The unique name "
+								+ uniqueName
+								+ " is already used in this schema");
 					}
 				}
 			}
