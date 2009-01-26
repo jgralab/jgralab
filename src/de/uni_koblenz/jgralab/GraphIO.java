@@ -945,7 +945,7 @@ public class GraphIO {
 			graphClass.attributes = parseAttributes();
 		}
 
-		if (lookAhead.equals("{")) {
+		if (lookAhead.equals("[")) {
 			// There are constraints
 			graphClass.constraints = parseConstraints();
 		}
@@ -1214,9 +1214,6 @@ public class GraphIO {
 			if (lookAhead.equals(":")) {
 				graphElementClassData.directSuperClasses = parseHierarchy();
 			}
-			if (lookAhead.equals("{")) {
-				graphElementClassData.attributes = parseAttributes();
-			}
 			vertexClassBuffer.get(gcName).add(graphElementClassData);
 		} else if (lookAhead.equals("EdgeClass")
 				|| lookAhead.equals("AggregationClass")
@@ -1244,12 +1241,14 @@ public class GraphIO {
 					|| graphElementClassData.type.equals("CompositionClass")) {
 				graphElementClassData.aggregateFrom = parseAggregate();
 			}
-			if (lookAhead.equals("{")) {
-				graphElementClassData.attributes = parseAttributes();
-			}
 			edgeClassBuffer.get(gcName).add(graphElementClassData);
 		}
+
 		if (lookAhead.equals("{")) {
+			graphElementClassData.attributes = parseAttributes();
+		}
+
+		if (lookAhead.equals("[")) {
 			// There are constraints
 			graphElementClassData.constraints = parseConstraints();
 		}
@@ -1262,7 +1261,7 @@ public class GraphIO {
 		while (constraint != null) {
 			constraints.add(constraint);
 		}
-		match("}");
+		match("]");
 		return constraints;
 	}
 
