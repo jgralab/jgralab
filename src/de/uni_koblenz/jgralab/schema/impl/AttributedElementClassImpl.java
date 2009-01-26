@@ -557,7 +557,7 @@ public abstract class AttributedElementClassImpl implements
 	}
 
 	@Override
-	public Iterable<String> getConstraints() {
+	public Set<String> getConstraints() {
 		return constraints;
 	}
 
