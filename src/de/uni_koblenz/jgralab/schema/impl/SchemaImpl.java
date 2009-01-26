@@ -1080,18 +1080,8 @@ public class SchemaImpl implements Schema {
 	}
 
 	@Override
-	public String getDirectoryName() {
-		return qName.getDirectoryName();
-	}
-
-	@Override
 	public String getPackageName() {
 		return qName.getPackageName();
-	}
-
-	@Override
-	public String getPathName() {
-		return qName.getPathName();
 	}
 
 	@Override

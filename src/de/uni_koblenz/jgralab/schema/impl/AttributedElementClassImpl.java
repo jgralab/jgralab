@@ -166,16 +166,6 @@ public abstract class AttributedElementClassImpl implements
 	}
 
 	@Override
-	public String getDirectoryName() {
-		return qName.getDirectoryName();
-	}
-
-	@Override
-	public String getPathName() {
-		return qName.getPathName();
-	}
-
-	@Override
 	public QualifiedName getQName() {
 		return qName;
 	}

@@ -176,25 +176,12 @@ public abstract class DomainTest {
 	}
 
 	// Test interface NamedElement
-	@Test
-	public void testGetDirectoryName() {
-		// tests if the correct directoryName is returned
-		assertEquals(expectedDirectoryName1, domain1.getDirectoryName());
-		assertEquals(expectedDirectoryName2, domain2.getDirectoryName());
-	}
 
 	@Test
 	public void testGetPackageName() {
 		// tests if the correct packageName is returned
 		assertEquals(expectedPackage1, domain1.getPackageName());
 		assertEquals(expectedPackage2, domain2.getPackageName());
-	}
-
-	@Test
-	public void testGetPathName() {
-		// tests if the correct pathName is returned
-		assertEquals(expectedPathName1, domain1.getPathName());
-		assertEquals(expectedPathName2, domain2.getPathName());
 	}
 
 	@Test

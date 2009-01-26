@@ -93,15 +93,6 @@ public class EnumDomainTest extends BasicDomainTest {
 
 	@Test
 	@Override
-	public void testGetPathName() {
-		// tests if the correct pathName is returned
-		super.testGetPathName();
-		assertEquals("package1", domain3.getPathName());
-		assertEquals("package1", domain4.getPathName());
-	}
-
-	@Test
-	@Override
 	public void testGetUniqueName() {
 		// tests if the correct uniqueName is returned
 		assertEquals("package1_Enum1", domain3.getUniqueName());
@@ -161,7 +152,7 @@ public class EnumDomainTest extends BasicDomainTest {
 	/**
 	 * Tests if the EnumDomain enum1 still contains all elements of
 	 * expectedConst expect the deleted one.
-	 * 
+	 *
 	 * @param enum1
 	 *            the EnumDomain in which a constant was deleted
 	 * @param deletedConst

@@ -27,7 +27,7 @@ package de.uni_koblenz.jgralab.schema;
 /**
  * NamedElement defines methods to access the QualifiedName components of a
  * Schema element.
- * 
+ *
  * @author ist@uni-koblenz.de
  */
 public interface NamedElement {
@@ -50,7 +50,7 @@ public interface NamedElement {
 
 	/**
 	 * Sets the unique name of this element in the schema
-	 * 
+	 *
 	 * @throws Exception
 	 *             if the same unique name is used for another element
 	 * @param name
@@ -70,15 +70,15 @@ public interface NamedElement {
 
 	/**
 	 * Returns the fully-qualified package for this element.
-	 * 
+	 *
 	 * <p>
 	 * <b>Pattern:</b> <code>pkgName = namedElement.getPackageName();</code>
 	 * </p>
-	 * 
+	 *
 	 * <p>
 	 * <b>Preconditions:</b> none
 	 * </p>
-	 * 
+	 *
 	 * <p>
 	 * <b>Postconditions:</b>
 	 * <ul>
@@ -86,37 +86,10 @@ public interface NamedElement {
 	 * <li><code>pkgName</code> is in Java package notation</li>
 	 * </ul>
 	 * </p>
-	 * 
+	 *
 	 * @return the fully-qualified package for this element
 	 */
 	public String getPackageName();
-
-	/**
-	 * Returns the path to this element; omitting the element itself.
-	 * 
-	 * <p>
-	 * <b>Pattern:</b> <code>pathName = namedElement.getDirectoryName();</code>
-	 * </p>
-	 * 
-	 * <p>
-	 * <b>Preconditions:</b> none
-	 * </p>
-	 * 
-	 * <p>
-	 * <b>Postconditions:</b>
-	 * <ul>
-	 * <li><code>pathName</code> is the path to this element</li>
-	 * <li><code>pathName</code> doesn´t containt this element´s name</li>
-	 * <li>Package layers are separated by the system-dependent default
-	 * name-separator character</li>
-	 * </ul>
-	 * </p>
-	 * 
-	 * @return the path to this element
-	 */
-	public String getPathName();
-	
-	public String getDirectoryName();
 
 	public Schema getSchema();
 }

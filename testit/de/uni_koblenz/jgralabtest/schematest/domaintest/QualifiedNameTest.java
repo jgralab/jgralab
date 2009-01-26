@@ -165,11 +165,11 @@ public class QualifiedNameTest {
 	public void testGetDirectoryName() {
 		// tests if the correct directoryName is returned
 		assertEquals("package1" + separator + "subpackage1" + separator
-				+ "TestName", qName1.getDirectoryName());
-		assertEquals("TestName", qName2.getDirectoryName());
-		assertEquals("List<Boolean>", qName3.getDirectoryName());
+				+ "TestName", qName1.getFileName());
+		assertEquals("TestName", qName2.getFileName());
+		assertEquals("List<Boolean>", qName3.getFileName());
 		assertEquals("package1" + separator + "TestName", qName5
-				.getDirectoryName());
+				.getFileName());
 	}
 
 	@Test
