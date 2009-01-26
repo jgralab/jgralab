@@ -23,14 +23,15 @@
  */
 package de.uni_koblenz.jgralab.graphvalidator;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.graphvalidator.ConstraintInvalidation.ConstraintType;
 import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
+import de.uni_koblenz.jgralab.greql2.jvalue.JValueCollection;
 import de.uni_koblenz.jgralab.schema.EdgeClass;
 import de.uni_koblenz.jgralab.schema.VertexClass;
 
@@ -47,7 +48,7 @@ public class GraphValidator {
 	}
 
 	public Iterable<ConstraintInvalidation> validate() {
-		List<ConstraintInvalidation> brokenConstraints = new ArrayList<ConstraintInvalidation>();
+		Set<ConstraintInvalidation> brokenConstraints = new HashSet<ConstraintInvalidation>();
 
 		// Check if all multiplicities are correct
 		for (EdgeClass ec : graph.getSchema()
@@ -65,7 +66,7 @@ public class GraphValidator {
 				int degree = v.getDegree(ec);
 				if (degree < toMin || degree > toMax) {
 					brokenConstraints.add(new ConstraintInvalidation(
-							ConstraintType.MULTIPLICITY, v, degree
+							ConstraintType.MULTIPLICITY, v + " has " + degree
 									+ " outgoing " + ec.getQualifiedName()
 									+ " edges, but only " + toMin + " to "
 									+ toMax + " are allowed."));
@@ -75,7 +76,7 @@ public class GraphValidator {
 				int degree = v.getDegree(ec);
 				if (degree < fromMin || degree > fromMax) {
 					brokenConstraints.add(new ConstraintInvalidation(
-							ConstraintType.MULTIPLICITY, v, degree
+							ConstraintType.MULTIPLICITY, v + " has " + degree
 									+ " incoming " + ec.getQualifiedName()
 									+ " edges, but only " + fromMin + " to "
 									+ fromMax + " are allowed."));
@@ -83,16 +84,12 @@ public class GraphValidator {
 			}
 		}
 
-		// check if all constraints are met
+		// check if all greql constraints are met
 		for (String greql2Pred : graph.getGraphClass().getConstraints()) {
 			GreqlEvaluator eval = new GreqlEvaluator(greql2Pred, graph, null);
 			eval.startEvaluation();
 			JValue result = eval.getEvaluationResult();
-			if (!result.toBoolean()) {
-				brokenConstraints.add(new ConstraintInvalidation(
-						ConstraintType.GRAPH_CLASS, graph, "\"" + greql2Pred
-								+ "\" returned " + result.toBoolean() + "."));
-			}
+			handleGreqlResult(result, greql2Pred, brokenConstraints);
 		}
 		for (VertexClass vc : graph.getSchema()
 				.getVertexClassesInTopologicalOrder()) {
@@ -101,12 +98,7 @@ public class GraphValidator {
 						null);
 				eval.startEvaluation();
 				JValue result = eval.getEvaluationResult();
-				if (!result.toBoolean()) {
-					brokenConstraints.add(new ConstraintInvalidation(
-							ConstraintType.VERTEX_CLASS, graph, "\""
-									+ greql2Pred + "\" returned "
-									+ result.toBoolean() + "."));
-				}
+				handleGreqlResult(result, greql2Pred, brokenConstraints);
 			}
 		}
 		for (EdgeClass vc : graph.getSchema()
@@ -116,16 +108,30 @@ public class GraphValidator {
 						null);
 				eval.startEvaluation();
 				JValue result = eval.getEvaluationResult();
-				if (!result.toBoolean()) {
-					brokenConstraints
-							.add(new ConstraintInvalidation(
-									ConstraintType.EDGE_CLASS, graph, "\""
-											+ greql2Pred + "\" returned "
-											+ result.toBoolean() + "."));
-				}
+				handleGreqlResult(result, greql2Pred, brokenConstraints);
 			}
 		}
 		return brokenConstraints;
 	}
 
+	private void handleGreqlResult(JValue result, String greqlExp,
+			Set<ConstraintInvalidation> brokenConstraints) {
+		if (result.isBoolean() && !result.toBoolean()) {
+			brokenConstraints.add(new ConstraintInvalidation(
+					ConstraintType.GREQL, "\"" + greqlExp + "\" returned "
+							+ result.toBoolean() + "."));
+		} else if (result.isCollection()) {
+			JValueCollection c = result.toCollection();
+			for (JValue jv : c) {
+				brokenConstraints.add(new ConstraintInvalidation(
+						ConstraintType.GREQL, jv.toString()));
+			}
+		} else {
+			// TODO: normally we shouldn't get here, so maybe we should handle
+			// that situation more appropriate...
+			brokenConstraints.add(new ConstraintInvalidation(
+					ConstraintType.GREQL, "\"" + greqlExp + "\" returned "
+							+ result.toString() + "."));
+		}
+	}
 }

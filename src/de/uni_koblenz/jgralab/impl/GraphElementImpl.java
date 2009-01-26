@@ -25,6 +25,7 @@
 package de.uni_koblenz.jgralab.impl;
 
 import de.uni_koblenz.jgralab.Graph;
+import de.uni_koblenz.jgralab.GraphElement;
 import de.uni_koblenz.jgralab.schema.GraphClass;
 import de.uni_koblenz.jgralab.schema.Schema;
 
@@ -34,7 +35,7 @@ import de.uni_koblenz.jgralab.schema.Schema;
  * @author ist@uni-koblenz.de
  *
  */
-public abstract class GraphElementImpl {
+public abstract class GraphElementImpl implements GraphElement {
 	public GraphElementImpl(Graph graph) {
 		assert graph != null;
 		myGraph = (GraphImpl) graph;

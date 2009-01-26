@@ -539,8 +539,8 @@ public interface AttributedElementClass extends NamedElement,
 	public void addConstraint(String greqlPredicate);
 
 	/**
-	 * @return an iterable over all constraints (greql predicates) set for this
+	 * @return a Set of all constraints (greql expressions) set for this
 	 *         attributed element
 	 */
-	public Iterable<String> getConstraints();
+	public Set<String> getConstraints();
 }
