@@ -68,18 +68,11 @@ public interface NamedElement {
 
 	public String getQualifiedName(Package pkg);
 
-	public String getPackageName();
-
-	public String getPathName();
-
 	/**
-	 * Returns the package this element belongs to.<br />
-	 * Package layers are separated by the system-dependent default
-	 * name-separator character.
+	 * Returns the fully-qualified package for this element.
 	 * 
 	 * <p>
-	 * <b>Pattern:</b>
-	 * <code>directoryName = namedElement.getDirectoryName();</code>
+	 * <b>Pattern:</b> <code>pkgName = namedElement.getPackageName();</code>
 	 * </p>
 	 * 
 	 * <p>
@@ -89,15 +82,40 @@ public interface NamedElement {
 	 * <p>
 	 * <b>Postconditions:</b>
 	 * <ul>
-	 * <li><code>directoryName</code> contains the full directory path to this
-	 * element</li>
+	 * <li><code>pkgName</code> is the fully-qualified package for this element</li>
+	 * <li><code>pkgName</code> is in Java package notation</li>
+	 * </ul>
+	 * </p>
+	 * 
+	 * @return the fully-qualified package for this element
+	 */
+	public String getPackageName();
+
+	/**
+	 * Returns the path to this element; omitting the element itself.
+	 * 
+	 * <p>
+	 * <b>Pattern:</b> <code>pathName = namedElement.getDirectoryName();</code>
+	 * </p>
+	 * 
+	 * <p>
+	 * <b>Preconditions:</b> none
+	 * </p>
+	 * 
+	 * <p>
+	 * <b>Postconditions:</b>
+	 * <ul>
+	 * <li><code>pathName</code> is the path to this element</li>
+	 * <li><code>pathName</code> doesn´t containt this element´s name</li>
 	 * <li>Package layers are separated by the system-dependent default
 	 * name-separator character</li>
 	 * </ul>
 	 * </p>
 	 * 
-	 * @return the package this element belongs to
+	 * @return the path to this element
 	 */
+	public String getPathName();
+	
 	public String getDirectoryName();
 
 	public Schema getSchema();
