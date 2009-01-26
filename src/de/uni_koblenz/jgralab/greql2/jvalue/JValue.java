@@ -1162,6 +1162,9 @@ public class JValue implements Comparable<JValue> {
 	 */
 	@SuppressWarnings("unchecked")
 	public static JValue fromObject(Object o) {
+		if (o == null) {
+			return new JValue(o);
+		}
 		Class objectsClass = o.getClass();
 		if (objectsClass == String.class) {
 			return new JValue((String) o);
