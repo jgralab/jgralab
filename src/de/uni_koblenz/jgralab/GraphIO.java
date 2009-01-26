@@ -1256,6 +1256,7 @@ public class GraphIO {
 	}
 
 	private Set<String> parseConstraints() throws GraphIOException {
+		match("[");
 		HashSet<String> constraints = new HashSet<String>(1);
 		String constraint = matchUtfString();
 		while (constraint != null) {
