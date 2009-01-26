@@ -116,22 +116,30 @@ public class ImportCodeSnippetTest extends CodeSnippetTest{
 		assertEquals("\n\t\timport Harry.;\n\t\t\n\t\timport Potter.;\n\t\t\n\t\t" +
 				"import Stein.;\n\t\t\n\t\timport Weisen.;\n\t\t\n\t\timport der.;\n\t\t\n\t\t" +
 				"import und.;\n", ics1.getCode(2));
+		ics1.clear();
+		ics1.add("Kammer.des.Schreckens", "Gefangene.von.Askaban");
+		assertEquals("\n\t\t\t\t\t\t\t\t\timport Gefangene.von.Askaban;\n\t\t\t\t\t\t\t\t\t" +
+				"\n\t\t\t\t\t\t\t\t\timport Kammer.des.Schreckens;\n", ics1.getCode(9));
+		ics1.add("Feuerkelch.", "Orden.des.Phoenix");
+		assertEquals("\n\timport Feuerkelch.;\n\t\n\timport " +
+				"Gefangene.von.Askaban;\n\t\n\timport Kammer.des.Schreckens;\n\t\n\timport " +
+				"Orden.des.Phoenix;\n", ics1.getCode(1));
+		ics1.clear();
+		ics1.add(".", "Halbblutprinz.", ".", "Heiligtuemer.des.Todes", ".", ".");
+		System.out.println(ics1.getCode(3));
+		assertEquals("\n\t\t\timport .;\n\t\t\t\n\t\t\timport Halbblutprinz.;\n\t\t\t" +
+				"\n\t\t\timport Heiligtuemer.des.Todes;\n", ics1.getCode(3));
 		
 		//border cases
 		ics1.clear();
 		ics1.add("Der.Clan.der.Otori");
 		assertEquals("\n\timport Der.Clan.der.Otori;\n", ics1.getCode(1));
-		
-		//TODO: additional test cases, using different indent levels and with 
-		//different things added
-		
-		//faults
-		//StringIndexOutOfBoundsException, when inserting sth. without a "." inside
-		//due to usage of java.lang.String.substring
-		//TODO: stay this way?
 		ics1.clear();
-		ics1.add("");
-		//ics1.getCode(0);
+		ics1.add(".");
+		assertEquals("\n\t\t\t\t\timport .;\n", ics1.getCode(5));
+		ics1.add(".", ".", ".");
+		assertEquals("\nimport .;\n", ics1.getCode(0));
+		assertEquals("\nimport .;\n", ics1.getCode(-20));
 	}
 	
 	@Test
@@ -192,6 +200,16 @@ public class ImportCodeSnippetTest extends CodeSnippetTest{
 		assertEquals(2,ics4.size());
 		ics4.add(null);
 		assertEquals(2, ics4.size());
+		ics4.clear();
+		ics4.add("");
+		assertEquals(1, ics4.size());
+		ics4.add(".");
+		assertEquals(2, ics4.size());
+		ics4.clear();
+		ics4.add(null);
+		assertEquals(0, ics4.size());
+		ics4.add(".");
+		assertEquals(1, ics4.size());
 	}
 
 }

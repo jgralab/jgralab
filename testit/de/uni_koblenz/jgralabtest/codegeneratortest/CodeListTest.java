@@ -5,17 +5,18 @@ import org.junit.Test;
 import static org.junit.Assert.assertEquals;
 import org.junit.Assert;
 
+import de.uni_koblenz.jgralab.codegenerator.CodeBlock;
 import de.uni_koblenz.jgralab.codegenerator.CodeList;
 import de.uni_koblenz.jgralab.codegenerator.CodeSnippet;
 
-public class CodeListTest extends CodeBlockTest{
+public class CodeListTest{// extends CodeBlockTest{
 	
 	private CodeList cl1;
 	private CodeList cl2;
 	
 	@Before
 	public void init(){
-		super.init();
+//		super.init();
 	}
 	
 	@Test
@@ -23,6 +24,7 @@ public class CodeListTest extends CodeBlockTest{
 		//only possible case using this constructor
 		cl1=new CodeList();
 		assertEquals(0, cl1.size());
+		System.out.println(cl1.getCode(0));
 	}
 	
 	@Test
