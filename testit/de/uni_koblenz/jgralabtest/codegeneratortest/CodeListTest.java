@@ -9,14 +9,14 @@ import de.uni_koblenz.jgralab.codegenerator.CodeBlock;
 import de.uni_koblenz.jgralab.codegenerator.CodeList;
 import de.uni_koblenz.jgralab.codegenerator.CodeSnippet;
 
-public class CodeListTest{// extends CodeBlockTest{
+public class CodeListTest extends CodeBlockTest{
 	
 	private CodeList cl1;
 	private CodeList cl2;
 	
 	@Before
 	public void init(){
-//		super.init();
+		super.init();
 	}
 	
 	@Test
