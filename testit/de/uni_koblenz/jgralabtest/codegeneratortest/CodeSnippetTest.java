@@ -8,7 +8,7 @@ import org.junit.Assert;
 import de.uni_koblenz.jgralab.codegenerator.CodeSnippet;
 import de.uni_koblenz.jgralab.codegenerator.CodeList;
 
-public class CodeSnippetTest{// extends CodeBlockTest{
+public class CodeSnippetTest extends CodeBlockTest{
 	
 	protected CodeSnippet cs1;
 	protected CodeSnippet cs2;
@@ -17,7 +17,7 @@ public class CodeSnippetTest{// extends CodeBlockTest{
 	
 	@Before
 	public void init(){
-		//super.init();
+		super.init();
 		cs1=new CodeSnippet();
 		cs2=new CodeSnippet();
 		cl=new CodeList();
@@ -75,54 +75,97 @@ public class CodeSnippetTest{// extends CodeBlockTest{
 	}
 	
 	@Test
-	public void testCodeSnippet4(){
-		//TODO what exactly does the CodeList (calls super class, which is CodeBlock 
-		//and if the CodeList is not empty the CodeBlock is added to the CodeList
-		//=>have to check if the CodeList was changed!!!!!!!
-		
+	public void testCodeSnippet4(){		
 		//normal cases
 		cs3=new CodeSnippet(cl, "Mango", "Avocado");
 		assertEquals("Mango\nAvocado\n", cs3.getCode());
+		assertEquals("\tMango\n\tAvocado\n", cl.getCode());//to make sure the given
+		//CodeList was changed accordingly
 		cs1.add("Ananas");
 		cl.add(cs1);
 		cs3=new CodeSnippet(cl, "Mango", "Pflaume", "Limette");
 		assertEquals("Mango\nPflaume\nLimette\n", cs3.getCode());
-//		System.out.println("sollte jetzt Ananas enthalten\n" + cl.getCode() + "\n ENDE!");
+		assertEquals("\tMango\n\tAvocado\n\tAnanas\n\tMango\n\tPflaume\n\tLimette\n", cl.getCode());
 		cl.clear();
 		cl.add(cs1, 2);
 		cs3=new CodeSnippet(cl, "Mango", "Avocado");
 		assertEquals("Mango\nAvocado\n", cs3.getCode());
-//		System.out.println(cl.getCode());
+		assertEquals("\t\t\tAnanas\n\tMango\n\tAvocado\n", cl.getCode());
+		cl.clear();
+		cs3=new CodeSnippet(cl, "Mandarine", "Orange", "Grapefruit", "Pampelmuse");
+		assertEquals("Mandarine\nOrange\nGrapefruit\nPampelmuse\n", cs3.getCode());
+		assertEquals("\tMandarine\n\tOrange\n\tGrapefruit\n\tPampelmuse\n", cl.getCode());
+		cs1.add("Drachenfrucht", "Affenbrot", "Guave");
+		cl.add(cs1, 1);
+		cs3=new CodeSnippet(cl, "Feige", "Granatapfel");
+		assertEquals("Feige\nGranatapfel\n", cs3.getCode());
+		assertEquals("\tMandarine\n\tOrange\n\tGrapefruit\n\tPampelmuse\n\t\tAnanas" +
+				"\n\t\tDrachenfrucht\n\t\tAffenbrot\n\t\tGuave\n\tFeige\n\tGranatapfel\n", 
+				cl.getCode());
 		
 		//border cases
 		//tests with an empty CodeList
 		cl.clear();
+		cl.add(cs1, 4);
+		cs3=new CodeSnippet(cl, "Dattel");
+		assertEquals("Dattel\n", cs3.getCode());
+		assertEquals("\t\t\t\t\tAnanas\n\t\t\t\t\tDrachenfrucht\n\t\t\t\t\tAffenbrot" +
+				"\n\t\t\t\t\tGuave\n\tDattel\n", cl.getCode());
+		cl.clear();
 		cs3=new CodeSnippet(cl, "Mango", "Avocado");
 		assertEquals("Mango\nAvocado\n", cs3.getCode());
+		assertEquals("\tMango\n\tAvocado\n", cl.getCode());
+		cs3=new CodeSnippet(cl, "");
+		assertEquals("\n", cs3.getCode());
+		assertEquals("\tMango\n\tAvocado\n\t\n", cl.getCode());
 		cs3=new CodeSnippet(null, null);
 		assertEquals("", cs3.getCode());
+		cl.clear();
 		cs3=new CodeSnippet(cl, null);
 		assertEquals("", cs3.getCode());
-		cs3=new CodeSnippet(cl, "Ginko");
-		assertEquals("Ginko\n", cs3.getCode());
+		assertEquals("", cl.getCode());
+		cs3=new CodeSnippet(cl, "Ginkgo");
+		assertEquals("Ginkgo\n", cs3.getCode());
+		assertEquals("\tGinkgo\n", cl.getCode());
 	}
 	
 	
 	@Test
 	public void testCodeSnippet5(){
 		//normal cases
-		
+		cs1.add("Bärlauch", "Dill", "Estragon");
+		cl.add(cs1);
+		cs3=new CodeSnippet(cl, true, "Fenchel", "Liebstöckel");
+		assertEquals("\nFenchel\nLiebstöckel\n", cs3.getCode());
+		assertEquals("\tBärlauch\n\tDill\n\tEstragon\n\n\tFenchel\n\tLiebstöckel\n", cl.getCode());
+		cl.clear();
+		cs1.add("Lorbeer");
+		cl.add(cs1, 3);
+		cs3=new CodeSnippet(cl, false, "Kresse", "Bohnenkraut", "Knöterich");
+		assertEquals("Kresse\nBohnenkraut\nKnöterich\n", cs3.getCode());
+		assertEquals("\t\t\t\tBärlauch\n\t\t\t\tDill\n\t\t\t\tEstragon\n\t\t\t\t" +
+				"Lorbeer\n\tKresse\n\tBohnenkraut\n\tKnöterich\n", cl.getCode());
+
 		
 		//border cases
+		cs3=new CodeSnippet(cl, true, "Kapuzinerkresse", "", "Löwenzahn", "");
+		assertEquals("\nKapuzinerkresse\n\nLöwenzahn\n\n", cs3.getCode());
+		assertEquals("\t\t\t\tBärlauch\n\t\t\t\tDill\n\t\t\t\tEstragon\n\t\t\t\t" +
+				"Lorbeer\n\tKresse\n\tBohnenkraut\n\tKnöterich\n\n\tKapuzinerkresse" +
+				"\n\t\n\tLöwenzahn\n\t\n", cl.getCode());
+		cl.clear();
 		cs3=new CodeSnippet(cl, true, "Gurke", "Tomate");
 		assertEquals("\nGurke\nTomate\n", cs3.getCode());
+		assertEquals("\n\tGurke\n\tTomate\n", cl.getCode());
 		cs3=new CodeSnippet(cl, false, "Schnittlauch");
 		assertEquals("Schnittlauch\n", cs3.getCode());
+		assertEquals("\n\tGurke\n\tTomate\n\tSchnittlauch\n", cl.getCode());
 		cs3=new CodeSnippet(null, true, "Melisse", "Minze");
 		assertEquals("\nMelisse\nMinze\n", cs3.getCode());
-		cs3=new CodeSnippet(cl, null, "Zimt", "Paprika", "Curry");
-
-		//assertEquals("Zimt\nPaprika\nCurry\n", cs3.getCode());
+		cl.clear();
+		cs3=new CodeSnippet(cl, true, "", "");
+		assertEquals("\n\n\n", cs3.getCode());
+		assertEquals("\n\t\n\t\n", cl.getCode());
 	}
 	
 	@Test
