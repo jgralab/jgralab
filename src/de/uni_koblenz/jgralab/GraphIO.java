@@ -1251,8 +1251,6 @@ public class GraphIO {
 		if (lookAhead.equals("[")) {
 			// There are constraints
 			graphElementClassData.constraints = parseConstraints();
-			System.out.println("Constraints for " + graphElementClassData.name
-					+ ": " + graphElementClassData.constraints);
 		}
 		match(";");
 	}
