@@ -205,17 +205,26 @@ public class GraphClassImpl extends AttributedElementClassImpl implements
 	@Override
 	public CompositionClass createCompositionClass(QualifiedName name,
 			VertexClass from, boolean compositeFrom, VertexClass to) {
-		return createCompositionClass(name, from, 0, 1, "",
-				compositeFrom, to, 0, 1, "");
+		if (compositeFrom) {
+			return createCompositionClass(name, from, 1, 1, "", compositeFrom,
+					to, 0, Integer.MAX_VALUE, "");
+		} else {
+			return createCompositionClass(name, from, 0, Integer.MAX_VALUE, "",
+					compositeFrom, to, 1, 1, "");
+		}
 	}
 
 	@Override
 	public CompositionClass createCompositionClass(QualifiedName name,
 			VertexClass from, String fromRoleName, boolean compositeFrom,
 			VertexClass to, String toRoleName) {
-		return createCompositionClass(name, from, 0, 1,
-				fromRoleName, compositeFrom, to, 0, 1,
-				toRoleName);
+		if (compositeFrom) {
+			return createCompositionClass(name, from, 1, 1, fromRoleName,
+					compositeFrom, to, 0, Integer.MAX_VALUE, toRoleName);
+		} else {
+			return createCompositionClass(name, from, 0, Integer.MAX_VALUE,
+					fromRoleName, compositeFrom, to, 1, 1, toRoleName);
+		}
 	}
 
 	@Override
