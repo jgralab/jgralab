@@ -588,7 +588,7 @@ public interface AttributedElementClass extends NamedElement,
 	public Set<String> getConstraints();
 
 	/**
-	 * Compares this element to another <code>AttributedElementClass</code>.
+	 * Compares this element to another attributed element.
 	 * <p>
 	 * This is done by
 	 * {@link de.uni_koblenz.jgralab.schema.QualifiedName#compareTo(QualifiedName o)
