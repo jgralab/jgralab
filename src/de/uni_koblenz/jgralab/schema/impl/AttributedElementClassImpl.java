@@ -506,7 +506,7 @@ public abstract class AttributedElementClassImpl implements
 		return calculateLeastCommonSuperclass(classes);
 	}
 
-	public static AttributedElementClass calculateLeastCommonSuperclass(
+	protected static AttributedElementClass calculateLeastCommonSuperclass(
 			Set<? extends AttributedElementClass> classes) {
 		AttributedElementClass leastCommon = null;
 		for (AttributedElementClass a : classes) {
