@@ -250,7 +250,7 @@ public class GraphClassImpl extends AttributedElementClassImpl implements
 							+ " in the schema " + schema.getQualifiedName());
 		}
 
-		if (!qn.getQualifiedName().equals("Composition")) {
+		//if (!qn.getQualifiedName().equals("Composition")) {
 			if (compositeFrom && fromMax > 1) {
 				throw new SchemaException("Couldn't create CompositionClass "
 						+ qn
@@ -265,7 +265,7 @@ public class GraphClassImpl extends AttributedElementClassImpl implements
 						+ toMin + ", " + toMax
 						+ ").  Only (0, 1) and (1,1) are allowed.");
 			}
-		}
+		//}
 
 		CompositionClassImpl cc = new CompositionClassImpl(qn, this, from,
 				fromMin, fromMax, fromRoleName, compositeFrom, to, toMin,
