@@ -268,79 +268,75 @@ public class EdgeClassImpl extends GraphElementClassImpl implements EdgeClass {
 	 *
 	 */
 	protected boolean mergeConnectionCardinalities() {
-		int newMinTo = toMin;
-		int newMaxTo = toMax;
-		int newMinFrom = fromMin;
-		int newMaxFrom = fromMax;
+		int newToMin = toMin;
+		int newToMax = toMax;
+		int newFromMin = fromMin;
+		int newFromMax = fromMax;
 
 		Iterator<? extends AttributedElementClass> iter = directSuperClasses
 				.iterator();
 		while (iter.hasNext()) {
 			EdgeClass ec = (EdgeClass) iter.next();
-			if (newMinTo > ec.getToMax()) {
+			if (newToMin > ec.getToMax()) {
 				throw new InheritanceException(
-						"Cardinalities for To-connection of "
-								+ getClass().getSimpleName() + " "
+						"Cardinalities for To-connection of edge class "
 								+ getQualifiedName()
 								+ " cannot be merged, minimal cardinality "
-								+ newMinTo
+								+ newToMin
 								+ " is bigger than maximal cardinality "
-								+ ec.getToMax() + " of inherited EdgeClass "
+								+ ec.getToMax() + " of inherited edge class "
 								+ ec.getQualifiedName());
 			}
-			if (newMinTo < ec.getToMin()) {
-				newMinTo = ec.getToMin();
+			if (newToMin < ec.getToMin()) {
+				newToMin = ec.getToMin();
 			}
-			if (newMinFrom > ec.getFromMax()) {
+			if (newFromMin > ec.getFromMax()) {
 				throw new InheritanceException(
-						"Cardinalities for From-connection of "
-								+ getClass().getSimpleName() + " "
+						"Cardinalities for From-connection of edge class "
 								+ getQualifiedName()
 								+ " cannot be merged, minimal cardinality "
-								+ newMinFrom
+								+ newFromMin
 								+ " is bigger than maximal cardinality "
-								+ ec.getFromMax() + " of inherited EdgeClass "
+								+ ec.getFromMax() + " of inherited edge class "
 								+ ec.getQualifiedName());
 			}
-			if (newMinFrom < ec.getFromMin()) {
-				newMinFrom = ec.getFromMin();
+			if (newFromMin < ec.getFromMin()) {
+				newFromMin = ec.getFromMin();
 			}
 
-			if (newMaxTo < ec.getToMin()) {
+			if (newToMax < ec.getToMin()) {
 				throw new InheritanceException(
-						"Cardinalities for To-connection of "
-								+ getClass().getSimpleName() + " "
+						"Cardinalities for To-connection of edge class "
 								+ getQualifiedName()
 								+ " cannot be merged, maximal cardinality "
-								+ newMaxTo
+								+ newToMax
 								+ " is lesser than minimal cardinality "
-								+ ec.getToMin() + " of inherited EdgeClass "
+								+ ec.getToMin() + " of inherited edge class "
 								+ ec.getQualifiedName());
 			}
-			if (newMaxTo > ec.getToMax()) {
-				newMaxTo = ec.getToMax();
+			if (newToMax > ec.getToMax()) {
+				newToMax = ec.getToMax();
 			}
-			if (newMaxFrom < ec.getFromMin()) {
+			if (newFromMax < ec.getFromMin()) {
 				throw new InheritanceException(
-						"Cardinalities for From-connection of "
-								+ getClass().getSimpleName() + " "
+						"Cardinalities for From-connection of edge class "
 								+ getQualifiedName()
 								+ " cannot be merged, maximal cardinality "
-								+ newMaxFrom
+								+ newFromMax
 								+ " is lesser than minimal cardinality "
-								+ ec.getFromMin() + " of inherited EdgeClass "
+								+ ec.getFromMin() + " of inherited edge class "
 								+ ec.getQualifiedName());
 			}
-			if (newMaxFrom > ec.getFromMax()) {
-				newMaxFrom = ec.getFromMax();
+			if (newFromMax > ec.getFromMax()) {
+				newFromMax = ec.getFromMax();
 			}
 		}
-		if ((fromMin != newMinFrom) || (fromMax != newMaxFrom)
-				|| (toMin != newMinTo) || (toMax != newMaxTo)) {
-			fromMin = newMinFrom;
-			fromMax = newMaxFrom;
-			toMin = newMinTo;
-			toMax = newMaxTo;
+		if ((fromMin != newFromMin) || (fromMax != newFromMax)
+				|| (toMin != newToMin) || (toMax != newToMax)) {
+			fromMin = newFromMin;
+			fromMax = newFromMax;
+			toMin = newToMin;
+			toMax = newToMax;
 			return true;
 		} else {
 			return false;
