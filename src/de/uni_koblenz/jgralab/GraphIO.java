@@ -644,13 +644,13 @@ public class GraphIO {
 			ProgressFunction pf) throws GraphIOException {
 		try {
 			logger.finer("Loading graph " + filename);
-			return loadGraphFromFile(filename, pf);
+			return loadGraphFromFile(filename, null, pf);
 		} catch (GraphIOException ex) {
 			if (ex.getReason() == GraphIOExceptionReason.UNKNOWN_SCHEMA) {
 				logger.fine("Schema was unknown, so loading that first.");
 				Schema s = loadSchemaFromFile(filename);
 				s.compile();
-				return loadGraphFromFile(filename, pf);
+				return loadGraphFromFile(filename, s, pf);
 			}
 			throw ex;
 		}
@@ -658,10 +658,15 @@ public class GraphIO {
 
 	public static Graph loadGraphFromFile(String filename, ProgressFunction pf)
 			throws GraphIOException {
+		return loadGraphFromFile(filename, null, pf);
+	}
+
+	public static Graph loadGraphFromFile(String filename, Schema schema,
+			ProgressFunction pf) throws GraphIOException {
 		try {
 			logger.finer("Loading graph " + filename);
 			return loadGraphFromStream(new BufferedInputStream(
-					new FileInputStream(filename), 10000), pf);
+					new FileInputStream(filename), 10000), schema, pf);
 		} catch (IOException ex) {
 			throw new GraphIOException("Unable to load graph from file "
 					+ filename + ", the file cannot be found", ex);
@@ -670,8 +675,13 @@ public class GraphIO {
 
 	public static Graph loadGraphFromURL(String url, ProgressFunction pf)
 			throws GraphIOException {
+		return loadGraphFromURL(url, null, pf);
+	}
+
+	public static Graph loadGraphFromURL(String url, Schema schema,
+			ProgressFunction pf) throws GraphIOException {
 		try {
-			return loadGraphFromStream(new URL(url).openStream(), pf);
+			return loadGraphFromStream(new URL(url).openStream(), schema, pf);
 		} catch (IOException ex) {
 			throw new GraphIOException("Unable to load graph from url " + url
 					+ ", the resource cannot be found", ex);
@@ -680,8 +690,14 @@ public class GraphIO {
 
 	public static Graph loadGraphFromStream(InputStream in, ProgressFunction pf)
 			throws GraphIOException {
+		return loadGraphFromStream(in, null, pf);
+	}
+
+	public static Graph loadGraphFromStream(InputStream in, Schema schema,
+			ProgressFunction pf) throws GraphIOException {
 		try {
 			GraphIO io = new GraphIO();
+			io.schema = schema;
 			io.TGIn = in;
 			io.tgfile();
 			String schemaName = io.schema.getQualifiedName();
@@ -728,6 +744,15 @@ public class GraphIO {
 	 * @throws GraphIOException
 	 */
 	private void schema() throws GraphIOException, SchemaException {
+		if (schema != null) {
+			// We already have a schema, so we don't want to load the schema
+			// from the file
+			while (!lookAhead.equals("Graph")) {
+				match();
+			}
+			return;
+		}
+
 		currentPackageName = "";
 		match("Schema");
 		QualifiedName qn = matchQualifiedName(true);
@@ -2034,8 +2059,8 @@ public class GraphIO {
 
 	private void edgeDesc(Graph graph) throws GraphIOException {
 		int eId = eId();
-		QualifiedName ecName = className(); // graph.getGraphClass().getEdgeClass
-		// (className()).getQName();
+		QualifiedName ecName = graph.getGraphClass().getEdgeClass(className())
+				.getQName();
 		Edge edge;
 		Method createMethod;
 		createMethod = createMethods.get(ecName);
