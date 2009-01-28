@@ -279,7 +279,8 @@ public class EdgeClassImpl extends GraphElementClassImpl implements EdgeClass {
 			EdgeClass ec = (EdgeClass) iter.next();
 			if (newMinTo > ec.getToMax()) {
 				throw new InheritanceException(
-						"Cardinalities for To-connection of EdgeClass "
+						"Cardinalities for To-connection of "
+								+ getClass().getSimpleName() + " "
 								+ getQualifiedName()
 								+ " cannot be merged, minimal cardinality "
 								+ newMinTo
@@ -292,7 +293,8 @@ public class EdgeClassImpl extends GraphElementClassImpl implements EdgeClass {
 			}
 			if (newMinFrom > ec.getFromMax()) {
 				throw new InheritanceException(
-						"Cardinalities for From-connection of EdgeClass "
+						"Cardinalities for From-connection of "
+								+ getClass().getSimpleName() + " "
 								+ getQualifiedName()
 								+ " cannot be merged, minimal cardinality "
 								+ newMinFrom
@@ -306,7 +308,8 @@ public class EdgeClassImpl extends GraphElementClassImpl implements EdgeClass {
 
 			if (newMaxTo < ec.getToMin()) {
 				throw new InheritanceException(
-						"Cardinalities for To-connection of EdgeClass "
+						"Cardinalities for To-connection of "
+								+ getClass().getSimpleName() + " "
 								+ getQualifiedName()
 								+ " cannot be merged, maximal cardinality "
 								+ newMaxTo
@@ -319,7 +322,8 @@ public class EdgeClassImpl extends GraphElementClassImpl implements EdgeClass {
 			}
 			if (newMaxFrom < ec.getFromMin()) {
 				throw new InheritanceException(
-						"Cardinalities for From-connection of EdgeClass "
+						"Cardinalities for From-connection of "
+								+ getClass().getSimpleName() + " "
 								+ getQualifiedName()
 								+ " cannot be merged, maximal cardinality "
 								+ newMaxFrom
