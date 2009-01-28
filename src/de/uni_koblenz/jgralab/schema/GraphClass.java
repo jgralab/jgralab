@@ -31,20 +31,20 @@ import de.uni_koblenz.jgralab.schema.exception.SchemaException;
 /**
  * Represents a <code>GraphClass</code> in the <code>Schema</code>, that holds
  * all <code>GraphElementClasses</code>.
- * 
+ *
  * <p>
  * In the following, <code>graphClass</code>, and <code>graphClass'</code>, will
  * represent the states of the given <code>GraphClass</code> before,
  * respectively after, any operation.
  * </p>
- * 
+ *
  * @author ist@uni-koblenz.de
  */
 public interface GraphClass extends AttributedElementClass {
 
 	/**
 	 * creates an edge class between from and to with the edgeclassname name
-	 * 
+	 *
 	 * @param name
 	 *            a unique name in the schema
 	 * @param from
@@ -60,7 +60,7 @@ public interface GraphClass extends AttributedElementClass {
 	 * creates an edge class between vertex class from with the rolename
 	 * fromRoleName and vertex class to with the rolename toRoleName and the
 	 * edgeclassname name
-	 * 
+	 *
 	 * @param name
 	 *            a unique name in the schema
 	 * @param from
@@ -80,7 +80,7 @@ public interface GraphClass extends AttributedElementClass {
 	 * creates an edge class between vertex class from, multiplicity fromMin and
 	 * fromMax, and vertex class to, multiplicity toMin and toMax with the
 	 * edgeclassname name
-	 * 
+	 *
 	 * @param name
 	 *            a unique name in the schema
 	 * @param from
@@ -104,7 +104,7 @@ public interface GraphClass extends AttributedElementClass {
 	 * creates an edge class between vertex class from, multiplicity fromMin and
 	 * fromMax with the rolename fromRoleName, and vertex class to, multiplicity
 	 * toMin and toMax with the rolename toRoleName and the edgeclassname name
-	 * 
+	 *
 	 * @param name
 	 *            a unique name in the schema
 	 * @param from
@@ -134,12 +134,12 @@ public interface GraphClass extends AttributedElementClass {
 	 * <code>VertexClasses</code> <code>from</code> and <code>to</code> in this
 	 * <code>GraphClass</code>. <code>from</code> and <code>to</code> have empty
 	 * rolenames and cardinalities ranging from 0 to Integer.MAX_Value.
-	 * 
+	 *
 	 * <p>
 	 * <b>Pattern:</b>
 	 * <code>graphClass.createAggregationClass(name, from, aggregateFrom, to)</code>
 	 * </p>
-	 * 
+	 *
 	 * <p>
 	 * <b>Preconditions:</b>
 	 * <ul>
@@ -156,12 +156,12 @@ public interface GraphClass extends AttributedElementClass {
 	 * createVertexClass(QualifiedName)}.</li>
 	 * </ul>
 	 * </p>
-	 * 
+	 *
 	 * <p>
 	 * <b>Postcondition:</b> <code>graphClass'</code> contains the freshly created
 	 * <code>AggregationClass</code>.
 	 * </p>
-	 * 
+	 *
 	 * @param name
 	 *            a unique <code>name</code> in the <code>Schema</code>
 	 * @param from
@@ -195,15 +195,15 @@ public interface GraphClass extends AttributedElementClass {
 	 * Creates an <code>AggregationClass</code> between the two
 	 * <code>VertexClasses</code> <code>from</code>, with the given rolename
 	 * <code>fromRoleName</code>, and <code>to</code>, with the given rolename
-	 * <code>toRoleName</code>, in this <code>GraphClass</code>. 
+	 * <code>toRoleName</code>, in this <code>GraphClass</code>.
 	 * <code>from</code> and <code>to</code> have and cardinalities ranging from
 	 * 0 to Integer.MAX_Value.
-	 * 
+	 *
 	 * <p>
 	 * <b>Pattern:</b>
 	 * <code>graphClass.createAggregationClass(name, from, fromRoleName, aggregateFrom, to, toRoleName)</code>
 	 * </p>
-	 * 
+	 *
 	 * <p>
 	 * <b>Preconditions:</b>
 	 * <ul>
@@ -220,12 +220,12 @@ public interface GraphClass extends AttributedElementClass {
 	 * createVertexClass(QualifiedName)}.</li>
 	 * </ul>
 	 * </p>
-	 * 
+	 *
 	 * <p>
 	 * <b>Postcondition:</b> <code>graphClass'</code> contains the freshly created
 	 * <code>AggregationClass</code>.
 	 * </p>
-	 * 
+	 *
 	 * @param name
 	 *            a unique <code>name</code> in the <code>Schema</code>
 	 * @param from
@@ -267,12 +267,12 @@ public interface GraphClass extends AttributedElementClass {
 	 * with cardinalities ranging from <code>toMin</code> to <code>toMax</code>,
 	 * in this <code>GraphClass</code>. <code>from</code> and <code>to</code>
 	 * have empty rolenames.
-	 * 
+	 *
 	 * <p>
 	 * <b>Pattern:</b>
 	 * <code>graphClass.createAggregationClass(name, from, fromMin, fromMax, aggregateFrom, to, toMin, toMax)</code>
 	 * </p>
-	 * 
+	 *
 	 * <p>
 	 * <b>Preconditions:</b>
 	 * <ul>
@@ -291,12 +291,12 @@ public interface GraphClass extends AttributedElementClass {
 	 * <li><code>0 <= toMin <= toMax <= Integer.maxValue</code></li>
 	 * </ul>
 	 * </p>
-	 * 
+	 *
 	 * <p>
 	 * <b>Postcondition:</b> <code>graphClass'</code> contains the freshly created
 	 * <code>AggregationClass</code>.
 	 * </p>
-	 * 
+	 *
 	 * @param name
 	 *            a unique <code>name in the <code>Schema</code>
 	 * @param from
@@ -344,13 +344,13 @@ public interface GraphClass extends AttributedElementClass {
 	 * the given rolename <code>toRoleName</code> and cardinalities ranging from
 	 * <code>toMin</code> to <code>toMax</code>, in this <code>GraphClass</code>
 	 * .
-	 * 
+	 *
 	 * <p>
 	 * <b>Pattern:</b>
-	 * 
+	 *
 	 * <code>graphClass.createAggregationClass(name, from, fromMin, fromMax, fromRoleName, aggregateFrom, to, toMin, toMax, toRoleName)</code>
 	 * </p>
-	 * 
+	 *
 	 * <p>
 	 * <b>Preconditions:</b>
 	 * <ul>
@@ -369,13 +369,13 @@ public interface GraphClass extends AttributedElementClass {
 	 * <li><code>0 <= toMin <= toMax <= Integer.maxValue</code></li>
 	 * </ul>
 	 * </p>
-	 * 
+	 *
 	 * <p>
 	 * <b>Postcondition:</b> <code>graphClass'</code> contains the freshly created
 	 * <code>AggregationClass</code>.
 	 * </p>
-	 * 
-	 * 
+	 *
+	 *
 	 * @param name
 	 *            a unique <code>name in the <code>Schema</code>
 	 * @param from
@@ -425,8 +425,9 @@ public interface GraphClass extends AttributedElementClass {
 
 	/**
 	 * Creates a <code>CompositionClass</code> between two
-	 * <code>VertexClasses</code> in this <code>GraphClass</code>.
-	 * 
+	 * <code>VertexClasses</code> in this <code>GraphClass</code>. The default
+	 * cardinality on composite side is (1,1) and (0,*) on the other side.
+	 *
 	 * @param name
 	 *            a unique <code>name</code> in the <code>Schema</code>
 	 * @param from
@@ -442,7 +443,7 @@ public interface GraphClass extends AttributedElementClass {
 	 *            <code>CompositionClass</code> ends
 	 * @return the created <code>CompositionClass</code> or <code>NULL</code> if
 	 *         an error occurred
-	 * 
+	 *
 	 */
 	public CompositionClass createCompositionClass(QualifiedName name,
 			VertexClass from, boolean compositeFrom, VertexClass to);
@@ -450,8 +451,9 @@ public interface GraphClass extends AttributedElementClass {
 	/**
 	 * creates a composition class between vertex class from with the rolename
 	 * fromRoleName and vertex class to with the rolename toRoleName and the
-	 * compositionclassname name
-	 * 
+	 * compositionclassname name. The default cardinality on composite side is
+	 * (1,1) and (0,*) on the other side.
+	 *
 	 * @param name
 	 *            a unique name in the schema
 	 * @param from
@@ -476,7 +478,7 @@ public interface GraphClass extends AttributedElementClass {
 	 * creates a composition class between vertex class from, multiplicity
 	 * fromMin and fromMax, and vertex class to, multiplicity toMin and toMax
 	 * with the compositionclassname name
-	 * 
+	 *
 	 * @param name
 	 *            a unique name in the schema
 	 * @param from
@@ -510,7 +512,7 @@ public interface GraphClass extends AttributedElementClass {
 	 * fromMin and fromMax with the rolename fromRoleName, and vertex class to,
 	 * multiplicity toMin and toMax with the rolename toRoleName and the
 	 * composition classname name
-	 * 
+	 *
 	 * @param name
 	 *            a unique name in the schema
 	 * @param from
@@ -546,7 +548,7 @@ public interface GraphClass extends AttributedElementClass {
 
 	/**
 	 * creates a vertex class with the vertexclassname name
-	 * 
+	 *
 	 * @param name
 	 *            the name of the vertex class to be created
 	 * @return the created vertex class
@@ -556,7 +558,7 @@ public interface GraphClass extends AttributedElementClass {
 	/**
 	 * addSuperClass can not be called for GraphClass and always throws a
 	 * SchemaException.
-	 * 
+	 *
 	 * @param superClass
 	 *            a graph class
 	 */
@@ -565,7 +567,7 @@ public interface GraphClass extends AttributedElementClass {
 	/**
 	 * addSubClass can not be called for GraphClass and always throws a
 	 * SchemaException.
-	 * 
+	 *
 	 * @param subClass
 	 *            a graph class
 	 */
@@ -667,14 +669,14 @@ public interface GraphClass extends AttributedElementClass {
 	public List<VertexClass> getVertexClasses();
 
 	/**
-	 * 
+	 *
 	 * @return the number of edge classes this graph class knows, excluding
 	 *         inherited edge classes
 	 */
 	public int getOwnEdgeClassCount();
 
 	/**
-	 * 
+	 *
 	 * @return the number of vertex classes this graph class knows, excluding
 	 *         inherited vertex classes
 	 */
@@ -683,7 +685,7 @@ public interface GraphClass extends AttributedElementClass {
 	/**
 	 * Returns the VertexClass with the given name. This GraphClass and the
 	 * superclasses will be searched for a VertexClass with this name
-	 * 
+	 *
 	 * @param name
 	 *            the name of the VertexClass to search for
 	 * @return the VertexClass with the given name or null, if no such
@@ -694,7 +696,7 @@ public interface GraphClass extends AttributedElementClass {
 	/**
 	 * Returns the EdgeClass with the given name. This GraphClass and the
 	 * superclasses will be searched for a EdgeClass with this name
-	 * 
+	 *
 	 * @param name
 	 *            the name of the EdgeClass to search for
 	 * @return the EdgeClass with the given name or null, if no such EdgeClass
@@ -705,7 +707,7 @@ public interface GraphClass extends AttributedElementClass {
 	/**
 	 * Returns the CompositionClass with the given name. This GraphClass and the
 	 * superclasses will be searched for a CompositionClass with this name
-	 * 
+	 *
 	 * @param name
 	 *            the name of the CompositionClass to search for
 	 * @return the CompositionClass with the given name or null, if no such
@@ -716,7 +718,7 @@ public interface GraphClass extends AttributedElementClass {
 	/**
 	 * Returns the AggregationClass with the given name. This GraphClass and the
 	 * superclasses will be searched for a AggregationClass with this name
-	 * 
+	 *
 	 * @param name
 	 *            the name of the AggregationClass to search for
 	 * @return the AggregationClass with the given name or null, if no such
