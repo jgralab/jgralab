@@ -211,8 +211,9 @@ public class SchemaImpl implements Schema {
 			defaultAggregationClass.addSuperClass(defaultEdgeClass);
 
 			defaultCompositionClass = defaultGraphClass.createCompositionClass(
-					new QualifiedName("Composition"), defaultVertexClass, true,
-					defaultVertexClass);
+					new QualifiedName("Composition"), defaultVertexClass, 0,
+					Integer.MAX_VALUE, true, defaultVertexClass, 0,
+					Integer.MAX_VALUE);
 			addToKnownElements(defaultCompositionClass.getUniqueName(),
 					defaultCompositionClass);
 			defaultCompositionClass.setInternal(true);
