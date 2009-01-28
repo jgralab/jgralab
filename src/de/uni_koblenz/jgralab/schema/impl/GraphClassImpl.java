@@ -249,24 +249,22 @@ public class GraphClassImpl extends AttributedElementClassImpl implements
 					"there is already an element with the name " + qn
 							+ " in the schema " + schema.getQualifiedName());
 		}
-		if (qn.getQualifiedName().equals("Composition")) {
-			fromMin = 0;
-			fromMax = 1;
-			toMin = 0;
-			toMax = Integer.MAX_VALUE;
-		}
 
-		if (compositeFrom && fromMax > 1) {
-			throw new SchemaException("Couldn't create CompositionClass " + qn
-					+ ", because its multiplicity on composite side is ("
-					+ fromMin + ", " + fromMax
-					+ ").  Only (0, 1) and (1,1) are allowed.");
-		}
-		if (!compositeFrom && toMax > 1) {
-			throw new SchemaException("Couldn't create CompositionClass " + qn
-					+ ", because its multiplicity on composite side is ("
-					+ toMin + ", " + toMax
-					+ ").  Only (0, 1) and (1,1) are allowed.");
+		if (!qn.getQualifiedName().equals("Composition")) {
+			if (compositeFrom && fromMax > 1) {
+				throw new SchemaException("Couldn't create CompositionClass "
+						+ qn
+						+ ", because its multiplicity on composite side is ("
+						+ fromMin + ", " + fromMax
+						+ ").  Only (0, 1) and (1,1) are allowed.");
+			}
+			if (!compositeFrom && toMax > 1) {
+				throw new SchemaException("Couldn't create CompositionClass "
+						+ qn
+						+ ", because its multiplicity on composite side is ("
+						+ toMin + ", " + toMax
+						+ ").  Only (0, 1) and (1,1) are allowed.");
+			}
 		}
 
 		CompositionClassImpl cc = new CompositionClassImpl(qn, this, from,
