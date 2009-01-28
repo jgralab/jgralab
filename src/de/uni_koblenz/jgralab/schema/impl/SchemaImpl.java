@@ -994,9 +994,9 @@ public class SchemaImpl implements Schema {
 				return m;
 			}
 		}
-		throw new M1ClassAccessException("can't find create method in '"
-				+ m1Class.getName() + "' for '" + edgeClassName.getUniqueName()
-				+ "'");
+		throw new M1ClassAccessException("can't find create method '"
+				+ methodName + "' in '" + m1Class.getName() + "' for '"
+				+ edgeClassName.getUniqueName() + "'");
 	}
 
 	public AggregationClass getDefaultAggregationClass() {

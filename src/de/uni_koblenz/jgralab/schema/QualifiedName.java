@@ -122,7 +122,7 @@ public class QualifiedName implements Comparable<QualifiedName> {
 	 * Sets the unique name of this QualifiedName. To ensure that the name is
 	 * really unique in the whole schema, the element which should have this
 	 * unique name needs to be specified. It there is any other element in the
-	 * schema which owns the same unique name, a SchemaExceptiion is thrown
+	 * schema which owns the same unique name, a SchemaException is thrown
 	 *
 	 * @param element
 	 *            The element which should be identified with the unique name
