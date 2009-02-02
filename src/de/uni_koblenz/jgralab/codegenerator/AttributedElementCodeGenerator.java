@@ -30,6 +30,7 @@ import java.util.TreeSet;
 
 import de.uni_koblenz.jgralab.Attribute;
 import de.uni_koblenz.jgralab.schema.AttributedElementClass;
+import de.uni_koblenz.jgralab.schema.EnumDomain;
 
 /**
  * TODO add comment
@@ -223,6 +224,7 @@ public class AttributedElementCodeGenerator extends CodeGenerator {
 			CodeSnippet s = new CodeSnippet();
 			s.setVariable("name", attr.getName());
 			s.setVariable("cName", camelCase(attr.getName()));
+
 			if (attr.getDomain().isComposite()) {
 				s.setVariable("attributeClassName", attr.getDomain()
 						.getJavaAttributeImplementationTypeName(
@@ -231,10 +233,27 @@ public class AttributedElementCodeGenerator extends CodeGenerator {
 				s.setVariable("attributeClassName", attr.getDomain()
 						.getJavaClassName(schemaRootPackageName));
 			}
-			s.add("if (attributeName.equals(\"#name#\")) {");
-			s.add("\tset#cName#((#attributeClassName#) data);");
-			s.add("\treturn;");
-			s.add("}");
+			boolean isEnumDomain = false;
+			if (attr.getDomain() instanceof EnumDomain) {
+				isEnumDomain = true;
+			}
+
+			if (isEnumDomain) {
+				s.add("if (attributeName.equals(\"#name#\")) {");
+				s.add("\tif (data instanceof String) {");
+				s.add("\t\t#attributeClassName#.fromString((String) data);");
+				s.add("\t} else {");
+				s.add("\t\tset#cName#((#attributeClassName#) data);");
+				s.add("\t}");
+				s.add("\treturn;");
+				s.add("}");
+			} else {
+				s.add("if (attributeName.equals(\"#name#\")) {");
+				s.add("\tset#cName#((#attributeClassName#) data);");
+				s.add("\treturn;");
+				s.add("}");
+			}
+
 			code.add(s);
 		}
 		code
