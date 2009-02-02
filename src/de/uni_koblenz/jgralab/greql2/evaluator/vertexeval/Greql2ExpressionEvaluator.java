@@ -25,6 +25,7 @@
 package de.uni_koblenz.jgralab.greql2.evaluator.vertexeval;
 
 import java.util.Map;
+import java.util.Map.Entry;
 
 import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.Vertex;
@@ -43,6 +44,7 @@ import de.uni_koblenz.jgralab.schema.AttributedElementClass;
 import de.uni_koblenz.jgralab.schema.EdgeClass;
 import de.uni_koblenz.jgralab.schema.Package;
 import de.uni_koblenz.jgralab.schema.QualifiedName;
+import de.uni_koblenz.jgralab.schema.Schema;
 import de.uni_koblenz.jgralab.schema.VertexClass;
 
 /**
@@ -93,12 +95,13 @@ public class Greql2ExpressionEvaluator extends VertexEvaluator {
 	 */
 	@Override
 	public JValue evaluate() throws EvaluateException {
-		if (vertex.getImportedTypes() != null)
+		if (vertex.getImportedTypes() != null) {
+			Schema graphSchema = graph.getSchema();
 			for (String importedType : vertex.getImportedTypes()) {
 				if (importedType.endsWith(".*")) {
 					String packageName = importedType.substring(0, importedType
 							.length() - 2);
-					Package p = vertex.getSchema().getPackage(packageName);
+					Package p = graphSchema.getPackage(packageName);
 					// for (Domain elem : p.getDomains().values()) {
 					// greqlEvaluator.addKnownType(elem);
 					// }
@@ -115,6 +118,7 @@ public class Greql2ExpressionEvaluator extends VertexEvaluator {
 					greqlEvaluator.addKnownType(elemClass);
 				}
 			}
+		}	
 		IsBoundVarOf inc = vertex.getFirstIsBoundVarOf(EdgeDirection.IN);
 		while (inc != null) {
 			Variable currentBoundVariable = (Variable) inc.getAlpha();
