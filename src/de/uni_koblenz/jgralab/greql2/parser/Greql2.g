@@ -293,7 +293,7 @@ import de.uni_koblenz.jgralab.schema.*;
     /**
      *	@see antlr.Parser#reportError(RecognitionException)
      */
-  	public void reportError(RecognitionException e) {
+  	public void reportError2(RecognitionException e) {
 		int offset = -1;
 		offset = getLTOffset();
 		if (offset != -1) {
@@ -303,7 +303,7 @@ import de.uni_koblenz.jgralab.schema.*;
 		e.printStackTrace();
 	}
 
-  	public void reportError(TokenStreamException e) {
+  	public void reportError2(TokenStreamException e) {
 		int offset = -1;
 		offset = getLTOffset();
 		if (offset != -1)
