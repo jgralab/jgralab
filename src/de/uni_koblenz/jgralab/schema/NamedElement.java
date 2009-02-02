@@ -27,7 +27,19 @@ package de.uni_koblenz.jgralab.schema;
 /**
  * NamedElement defines methods to access the QualifiedName components of a
  * Schema element.
- *
+ * 
+ * <p>
+ * <b>Note:</b> in the following, <code>namedElement</code>, and <code>namedElement'</code>
+ * , will represent the states of the given <code>NamedElement</code> before,
+ * respectively after, any operation.
+ * </p>
+ * 
+ * <p>
+ * <b>Note:</b> in the following it is understood that method arguments differ
+ * from <code>null</code>. Therefore there will be no preconditions addressing
+ * this matter.
+ * </p>
+ * 
  * @author ist@uni-koblenz.de
  */
 public interface NamedElement {
@@ -50,7 +62,7 @@ public interface NamedElement {
 
 	/**
 	 * Sets the unique name of this element in the schema
-	 *
+	 * 
 	 * @throws Exception
 	 *             if the same unique name is used for another element
 	 * @param name
@@ -69,25 +81,30 @@ public interface NamedElement {
 	public String getQualifiedName(Package pkg);
 
 	/**
-	 * Returns the fully-qualified package for this element.
-	 *
+	 * Returns the name of the fully qualified package the element is located
+	 * in.
+	 * 
 	 * <p>
 	 * <b>Pattern:</b> <code>pkgName = namedElement.getPackageName();</code>
 	 * </p>
-	 *
+	 * 
 	 * <p>
 	 * <b>Preconditions:</b> none
 	 * </p>
-	 *
+	 * 
 	 * <p>
 	 * <b>Postconditions:</b>
 	 * <ul>
-	 * <li><code>pkgName</code> is the fully-qualified package for this element</li>
-	 * <li><code>pkgName</code> is in Java package notation</li>
+	 * <li><code>pkgName</code> is the name of the fully qualified package the
+	 * element is located in.</li>
+	 * <li><code>pkgName</code> is an empty string if the element is not
+	 * contained in any package</li>
+	 * <li><code>pkgName</code> is in "Java package notation", with different
+	 * package layers being separated by a "." character</li>
 	 * </ul>
 	 * </p>
-	 *
-	 * @return the fully-qualified package for this element
+	 * 
+	 * @return the name of the fully qualified package the element is located in
 	 */
 	public String getPackageName();
 
