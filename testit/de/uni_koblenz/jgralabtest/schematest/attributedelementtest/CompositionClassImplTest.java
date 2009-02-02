@@ -556,6 +556,7 @@ public final class CompositionClassImplTest extends AggregationClassImplTest {
 		compositionClass.addSuperClass(superClass);
 
 		expectedSuperClasses.add(superClass);
+		expectedSuperClasses.add(schema.getDefaultCompositionClass());
 
 		testGetDirectSuperClasses(expectedSuperClasses);
 	}
@@ -613,6 +614,7 @@ public final class CompositionClassImplTest extends AggregationClassImplTest {
 		superClass.addSuperClass(superClass2);
 
 		expectedSuperClasses.add(superClass);
+		expectedSuperClasses.add(schema.getDefaultCompositionClass());
 
 		testGetDirectSuperClasses(expectedSuperClasses);
 	}
@@ -628,8 +630,6 @@ public final class CompositionClassImplTest extends AggregationClassImplTest {
 	public void testGetDirectSuperClasses4() {
 		Vector<AttributedElementClass> expectedSuperClasses = new Vector<AttributedElementClass>();
 
-		expectedSuperClasses.add(schema.getDefaultEdgeClass());
-		expectedSuperClasses.add(schema.getDefaultAggregationClass());
 		expectedSuperClasses.add(schema.getDefaultCompositionClass());
 
 		testGetDirectSuperClasses(expectedSuperClasses);
