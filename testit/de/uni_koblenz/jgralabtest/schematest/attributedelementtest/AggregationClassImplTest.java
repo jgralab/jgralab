@@ -553,6 +553,7 @@ public class AggregationClassImplTest extends EdgeClassImplTest {
 		aggregationClass.addSuperClass(superClass);
 
 		expectedSuperClasses.add(superClass);
+		expectedSuperClasses.add(schema.getDefaultAggregationClass());
 
 		testGetDirectSuperClasses(expectedSuperClasses);
 	}
@@ -610,6 +611,7 @@ public class AggregationClassImplTest extends EdgeClassImplTest {
 		superClass.addSuperClass(superClass2);
 
 		expectedSuperClasses.add(superClass);
+		expectedSuperClasses.add(schema.getDefaultAggregationClass());
 
 		testGetDirectSuperClasses(expectedSuperClasses);
 	}
@@ -625,7 +627,6 @@ public class AggregationClassImplTest extends EdgeClassImplTest {
 	public void testGetDirectSuperClasses4() {
 		Vector<AttributedElementClass> expectedSuperClasses = new Vector<AttributedElementClass>();
 
-		expectedSuperClasses.add(schema.getDefaultEdgeClass());
 		expectedSuperClasses.add(schema.getDefaultAggregationClass());
 
 		testGetDirectSuperClasses(expectedSuperClasses);
