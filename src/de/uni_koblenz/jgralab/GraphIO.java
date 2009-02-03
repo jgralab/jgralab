@@ -1,6 +1,6 @@
 /*
  * JGraLab - The Java graph laboratory
- * (c) 2006-2008 Institute for Software Technology
+ * (c) 2006-2009 Institute for Software Technology
  *               University of Koblenz-Landau, Germany
  *
  *               ist@uni-koblenz.de
@@ -409,9 +409,9 @@ public class GraphIO {
 
 	private void saveGraph(Graph graph, ProgressFunction pf)
 			throws IOException, GraphIOException {
-		// Write the jgralab version in a comment
+		// Write the jgralab version and license in a comment
 		TGOut.writeBytes("/*");
-		TGOut.writeBytes(new JGraLab().toString());
+		TGOut.writeBytes(JGraLab.getInfo());
 		TGOut.writeBytes("*/\n");
 
 		schema = graph.getSchema();

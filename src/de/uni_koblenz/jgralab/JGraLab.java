@@ -1,6 +1,6 @@
 /*
  * JGraLab - The Java graph laboratory
- * (c) 2006-2008 Institute for Software Technology
+ * (c) 2006-2009 Institute for Software Technology
  *               University of Koblenz-Landau, Germany
  *
  *               ist@uni-koblenz.de
@@ -35,21 +35,21 @@ import java.util.logging.Logger;
 public class JGraLab {
 
 	// look but don't touch, both values are updated automatically
-	private final String revision = "$Revision$";
+	private static final String revision = "$Revision$";
 
-	private final String buildID = "63";
+	private static final String buildID = "63";
 	//
 	// to use this information inside the text place $rev for the revision
 	// information
 	// and $bid for the build id
-	private final String version = "Carnotaurus";
+	private static final String version = "Carnotaurus";
 
-	private final String[] info = {
+	private static final String[] info = {
 			"JGraLab - The Java graph laboratory",
 			"  Version : $ver",
 			"  $rev",
 			"  Build ID: $bid",
-			"(c) 2006-2008 Institute for Software Technology",
+			"(c) 2006-2009 Institute for Software Technology",
 			"              University of Koblenz-Landau, Germany",
 			"",
 			"              ist@uni-koblenz.de",
@@ -85,10 +85,6 @@ public class JGraLab {
 			"Please note, you need the Java Enterprise Edition to make full use",
 			"of this part of the software." };
 
-	public JGraLab() {
-
-	}
-
 	/**
 	 * Sets the log level for package de.uni_koblenz.jgralab and all its
 	 * children to <code>level</code>.
@@ -107,11 +103,10 @@ public class JGraLab {
 	 *            (ignored)
 	 */
 	public static void main(String[] args) {
-		JGraLab jgralab = new JGraLab();
-		System.out.println(jgralab.toString());
+		System.out.println(JGraLab.getInfo());
 	}
 
-	private String addInfo(String inputLine) {
+	private static String addInfo(String inputLine) {
 		String outputLine = inputLine;
 		String revString = revision.replace("$R", "R").replace(" $", "");
 
@@ -122,8 +117,7 @@ public class JGraLab {
 		return outputLine;
 	}
 
-	@Override
-	public String toString() {
+	public static String getInfo() {
 		StringBuffer output = new StringBuffer(1024);
 		output.append('\n');
 		for (int i = 0; (i < info.length); i++) {
