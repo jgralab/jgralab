@@ -751,6 +751,9 @@ variable returns [Variable var = null]
 ;
 
 
+
+
+
 importDeclarationList returns [Set<String> typeNames = null]
 :
     IMPORT
@@ -762,7 +765,7 @@ importDeclarationList returns [Set<String> typeNames = null]
     }
     SEMI 
 (
-  (IMPORT) => (followingNames = importDeclarationList {typeNames.addAll(followingNames);})
+  (IMPORT) => (followingNames = importDeclarationList {if (followingNames != null) typeNames.addAll(followingNames);})
  | /* no further imports */ )
 ;
 
@@ -2342,11 +2345,15 @@ v = typeId
 
 qualifiedName returns [String name = null]
 : 
-i=IDENT {name = i.getText();}
-( DOT
-	newName = qualifiedName
-	{name = name + "." + newName;}
-)? 
+i=(IDENT | FUNCTIONID) {name = i.getText();}
+( 
+  (DOT (IDENT|FUNCTIONID)) 
+  => ( 
+       DOT
+	   newName = qualifiedName
+	   {name = name + "." + newName;}
+     ) | /* qualified name finished */
+)
 ;
 
 
