@@ -410,9 +410,7 @@ public class GraphIO {
 	private void saveGraph(Graph graph, ProgressFunction pf)
 			throws IOException, GraphIOException {
 		// Write the jgralab version and license in a comment
-		TGOut.writeBytes("/*");
-		TGOut.writeBytes(JGraLab.getInfo());
-		TGOut.writeBytes("*/\n");
+		TGOut.writeBytes(JGraLab.getInfo(true));
 
 		schema = graph.getSchema();
 		saveSchema(schema);
