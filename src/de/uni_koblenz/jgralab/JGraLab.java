@@ -68,7 +68,7 @@ public class JGraLab {
 			"",
 			"You should have received a copy of the GNU General Public License",
 			"along with this program; if not, write to the Free Software",
-			"Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.",
+			"Foundation Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.",
 			"",
 			"This software uses:",
 			"",
@@ -103,7 +103,7 @@ public class JGraLab {
 	 *            (ignored)
 	 */
 	public static void main(String[] args) {
-		System.out.println(JGraLab.getInfo());
+		System.out.println(JGraLab.getInfo(false));
 	}
 
 	private static String addInfo(String inputLine) {
@@ -117,14 +117,18 @@ public class JGraLab {
 		return outputLine;
 	}
 
-	public static String getInfo() {
+	public static String getInfo(boolean asTGComment) {
 		StringBuffer output = new StringBuffer(1024);
-		output.append('\n');
 		for (int i = 0; (i < info.length); i++) {
-			output.append(' ');
+			if (asTGComment) {
+				output.append("// ");
+			} else {
+				output.append(' ');
+			}
 			output.append(addInfo(info[i]));
 			output.append('\n');
 		}
+		output.append('\n');
 		return output.toString();
 	}
 }
