@@ -28,7 +28,8 @@ import java.io.PrintStream;
 
 /**
  * FreeIndexList manages used and free indices in the vertex and edge arrays of
- * a graph. Valid index values are &gt;= 1 and &lt;= getSize().<br/> <br/>
+ * a graph. Valid index values are &gt;= 1 and &lt;= getSize().<br/>
+ * <br/>
  * 
  * FreeIndexList resembles "Run Length Encoding" of binary images. It records
  * "runs" of used and free index areas. A negative value u in the runs array
@@ -39,14 +40,16 @@ import java.io.PrintStream;
  * <code>runs[0] > 0</code>) or in the second run (<code>runs[1]</code>).
  * FreeIndexList cares for maintaining a compacted run array at all times. This
  * means that allocating and/or freeing an index can result in reorganization
- * and/or expansion of the runs array.<br/> <br/>
+ * and/or expansion of the runs array.<br/>
+ * <br/>
  * 
- * The length of the runs array (<code>runCount</code>) is equal to the
- * maximum index value (<code>used+free</code>) in the worst case. This can
- * happen if only every second index is used. In practice, vertex and edge
- * arrays contain large contiguous areas of used and free indexes, such that the
- * size of the runs array is significantly lower than the size of the vertex and
- * edge arrays. In an optimal case, there are only 2 runs.<br/> <br/>
+ * The length of the runs array (<code>runCount</code>) is equal to the maximum
+ * index value (<code>used+free</code>) in the worst case. This can happen if
+ * only every second index is used. In practice, vertex and edge arrays contain
+ * large contiguous areas of used and free indexes, such that the size of the
+ * runs array is significantly lower than the size of the vertex and edge
+ * arrays. In an optimal case, there are only 2 runs.<br/>
+ * <br/>
  * 
  * <code>allocateIndex()</code> is O(1) if no reorganisation is required.
  * Otherwise, it is O(runs.length). Reorganisation takes place in two
@@ -56,8 +59,8 @@ import java.io.PrintStream;
  * <li>When a free run becomes empty, neighbouring used runs have to be merged.</li>
  * </ol>
  * 
- * <code>freeIndex()</code> and <code>freeRange()</code> are O(runs.length)
- * in the worst case. If no reorganisation takes place, a relatively cheap
+ * <code>freeIndex()</code> and <code>freeRange()</code> are O(runs.length) in
+ * the worst case. If no reorganisation takes place, a relatively cheap
  * O(runs.length) operation is required to locate the run where the index is
  * located (summing up the values from beginning of the runs array).
  * Reorganisation takes place in these situations:
@@ -69,7 +72,8 @@ import java.io.PrintStream;
  * 
  * FreeIndexList is implemented optimistically, e.g. the user has to take care
  * that no index is freed more than once. However, assumptions, preconditions,
- * and structure of the list can be checked by enabling assertions.<br/> <br/>
+ * and structure of the list can be checked by enabling assertions.<br/>
+ * <br/>
  * 
  * Take care: the implementation is somehow "tricky" but well documented :-)<br/>
  * <br/>
@@ -325,11 +329,11 @@ public class FreeIndexList {
 					int[] newRuns = new int[runs.length * 2];
 					System.arraycopy(runs, 0, newRuns, 0, runIndex);
 					System.arraycopy(runs, runIndex + 1, newRuns, runIndex + 3,
-							runCount - runIndex);
+							runCount - runIndex - 1);
 					runs = newRuns;
 				} else {
 					System.arraycopy(runs, runIndex + 1, runs, runIndex + 3,
-							runCount - runIndex);
+							runCount - runIndex - 1);
 				}
 				runCount += 2;
 				runs[runIndex] = -(index - begin);
@@ -367,9 +371,9 @@ public class FreeIndexList {
 
 	/**
 	 * Computes the runs in the specified array <code>a</code> and initializes
-	 * the <code>runs</code> array. Free entries are <code>== null</code>,
-	 * used entries <code>!= null</code>. The first element <code>a[0]</code>
-	 * is not considered, since valid index values start at 1.
+	 * the <code>runs</code> array. Free entries are <code>== null</code>, used
+	 * entries <code>!= null</code>. The first element <code>a[0]</code> is not
+	 * considered, since valid index values start at 1.
 	 * 
 	 * @param a
 	 *            an array of objects
@@ -467,8 +471,7 @@ public class FreeIndexList {
 	}
 
 	/**
-	 * Appends <code>n</code> free index values at the end of this
-	 * FreeIndexList
+	 * Appends <code>n</code> free index values at the end of this FreeIndexList
 	 * 
 	 * @param n
 	 *            the number of new free index values
