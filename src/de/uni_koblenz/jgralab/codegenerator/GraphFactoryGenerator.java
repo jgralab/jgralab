@@ -114,8 +114,7 @@ public class GraphFactoryGenerator extends CodeGenerator {
 
 		if (!graphClass.isAbstract()) {
 			code.add("/* code for graph #graphName# */");
-			code
-					.add("setGraphImplementationClass(#graphName#.class, #graphImplName#Impl.class);");
+			code.add("setGraphImplementationClass(#graphName#.class, #graphImplName#Impl.class);");
 		}
 		return code;
 	}
@@ -130,8 +129,7 @@ public class GraphFactoryGenerator extends CodeGenerator {
 		code.setVariable("vertexImplName", schemaRootPackageName + ".impl."
 				+ vertexClass.getQualifiedName());
 		if (!vertexClass.isAbstract()) {
-			code
-					.add("setVertexImplementationClass(#vertexName#.class, #vertexImplName#Impl.class);");
+			code.add("setVertexImplementationClass(#vertexName#.class, #vertexImplName#Impl.class);");
 		}
 		return code;
 	}
@@ -144,8 +142,7 @@ public class GraphFactoryGenerator extends CodeGenerator {
 				+ edgeClass.getQualifiedName());
 
 		if (!edgeClass.isAbstract()) {
-			code
-					.add("setEdgeImplementationClass(#edgeName#.class, #edgeImplName#Impl.class);");
+			code.add("setEdgeImplementationClass(#edgeName#.class, #edgeImplName#Impl.class);");
 		}
 		return code;
 	}
