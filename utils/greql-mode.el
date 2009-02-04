@@ -24,7 +24,7 @@
 
 
 ;;; Version:
-;; <2009-02-04 Wed 18:41>
+;; <2009-02-04 Wed 21:34>
 
 ;;; Code:
 
@@ -61,15 +61,17 @@
 (dolist (ext '("\\.greqlquery$" "\\.grq$" "\\.greql$"))
   (add-to-list 'auto-mode-alist (cons ext 'greql-mode)))
 
-(defparameter greql-fontlock-keywords-1
+(defvar greql-fontlock-keywords-1
   `(
     ;; Highlight function names
     ,(cons (concat "\\<" (regexp-opt greql-functions t) "\\>")
            font-lock-function-name-face)
+    ;; Highlight strings
+    ,(list "\".*?\"" 0 font-lock-string-face t)
     ;; Highlight one-line comments
-    ,(cons "//.*$" font-lock-comment-face)))
+    ,(list "//.*$" 0 font-lock-comment-face t)))
 
-(defparameter greql-fontlock-keywords-2
+(defvar greql-fontlock-keywords-2
   (append greql-fontlock-keywords-1
           (list (concat "\\<" (regexp-opt greql-keywords t) "\\>"))))
 
@@ -300,9 +302,7 @@ queries are evaluated.  Set it with `greql-set-graph'.")
   (interactive)
   (let ((buffer (get-buffer-create "*GReQL*"))
         (evalstr (buffer-substring-no-properties (point-min) (point-max))))
-    (when (file-exists-p greql-result-file)
-      (delete-file greql-result-file))
-    (setq greql-result-file (concat (or (buffer-file-name) "_greql_") ".html"))
+    (setq greql-result-file (make-temp-file "greql-result" nil ".html"))
     (with-current-buffer buffer
       (erase-buffer))
     (let ((proc (start-process "GReQL process" buffer
