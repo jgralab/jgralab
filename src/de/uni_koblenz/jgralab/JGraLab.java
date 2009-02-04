@@ -43,12 +43,11 @@ public class JGraLab {
 	// information
 	// and $bid for the build id
 	private static final String version = "Carnotaurus";
+	private static final String[] versionInfo = {
+			"JGraLab - The Java graph laboratory", "  Version : $ver",
+			"  $rev", "  Build ID: $bid" };
 
-	private static final String[] info = {
-			"JGraLab - The Java graph laboratory",
-			"  Version : $ver",
-			"  $rev",
-			"  Build ID: $bid",
+	private static final String[] copyrightInfo = {
 			"(c) 2006-2009 Institute for Software Technology",
 			"              University of Koblenz-Landau, Germany",
 			"",
@@ -112,20 +111,32 @@ public class JGraLab {
 
 		outputLine = outputLine.replace("$ver", version);
 		outputLine = outputLine.replace("$rev", revString);
-		outputLine = outputLine.replace("$bid", "Build ID: " + buildID);
+		outputLine = outputLine.replace("$bid", buildID);
 
 		return outputLine;
 	}
 
+	public static String getVersionInfo(boolean asTGComment) {
+		return getInfoString(versionInfo, asTGComment);
+	}
+
 	public static String getInfo(boolean asTGComment) {
+		String[] lines = new String[versionInfo.length + copyrightInfo.length];
+		System.arraycopy(versionInfo, 0, lines, 0, versionInfo.length);
+		System.arraycopy(copyrightInfo, 0, lines, versionInfo.length,
+				copyrightInfo.length);
+		return getInfoString(lines, asTGComment);
+	}
+
+	private static String getInfoString(String[] lines, boolean asTGComment) {
 		StringBuffer output = new StringBuffer(1024);
-		for (int i = 0; (i < info.length); i++) {
+		for (String line : lines) {
 			if (asTGComment) {
 				output.append("// ");
 			} else {
 				output.append(' ');
 			}
-			output.append(addInfo(info[i]));
+			output.append(addInfo(line));
 			output.append('\n');
 		}
 		output.append('\n');
