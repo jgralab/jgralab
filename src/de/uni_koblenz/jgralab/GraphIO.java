@@ -2226,8 +2226,6 @@ public class GraphIO {
 										"Integer")
 								|| componentDomain.getQualifiedName().equals(
 										"Boolean")
-								// || componentDomain.getQualifiedName().equals(
-								// "Object")
 								|| componentDomain.getQualifiedName().equals(
 										"Long")
 								|| componentDomain.getQualifiedName().equals(
@@ -2235,7 +2233,9 @@ public class GraphIO {
 								|| componentDomain.getQualifiedName().equals(
 										"Set<")
 								|| componentDomain.getQualifiedName().equals(
-										"List<")) {
+										"List<")
+								|| componentDomain.getQualifiedName().equals(
+										"Map<")) {
 							continue;
 						}
 						componentDomsInOrderedList = false;

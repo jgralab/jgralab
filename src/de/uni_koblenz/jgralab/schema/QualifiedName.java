@@ -32,7 +32,7 @@ import de.uni_koblenz.jgralab.schema.exception.SchemaException;
 /**
  * QualifiedName is used to identify any Schema element (Graph/Vertex/Edge
  * classes, Packages, Domains, etc.).
- * 
+ *
  * <p>
  * A <code>QualifiedName</code> stores informations about an element´s name and
  * package:
@@ -50,19 +50,19 @@ import de.uni_koblenz.jgralab.schema.exception.SchemaException;
  * qualified name.</li>
  * </ul>
  * </p>
- * 
+ *
  * <p>
  * <b>Note:</b> in the following, <code>qname</code>, and <code>qname'</code> , will
  * represent the states of the given <code>QualifiedName</code> before,
  * respectively after, any operation.
  * </p>
- * 
+ *
  * <p>
  * <b>Note:</b> in the following it is understood that method arguments differ
  * from <code>null</code>. Therefore there will be no preconditions addressing
  * this matter.
  * </p>
- * 
+ *
  * @author ist@uni-koblenz.de
  */
 public class QualifiedName implements Comparable<QualifiedName> {
@@ -94,15 +94,15 @@ public class QualifiedName implements Comparable<QualifiedName> {
 
 /**
 	 * Creates a new instance of <code>QualifiedName</code>.
-	 * 
+	 *
 	 * <p>
 	 * <b>Pattern:</b> <code>qname = new getQualifiedName(qn);</code>
 	 * </p>
-	 * 
+	 *
 	 * <p>
 	 * <b>Preconditions:</b> none //TODO: Potential subject to change
 	 * </p>
-	 * 
+	 *
 	 * <p>
 	 * <b>Postconditions:</b>
 	 * <ul>
@@ -139,12 +139,13 @@ public class QualifiedName implements Comparable<QualifiedName> {
 	 * <li><code>qname'.uniqueName.equals(qname'.simpleName)</code><br />This holds for as long as there is only one class in
 	 * the schema with this short name, which is the case upon instantiation. Otherwise, the unique name is the same as the qualified name.</li>
 	 * </p>
-	 * 
+	 *
 	 * @param qn
 	 *            an element´s fully qualified name
 	 */
 	public QualifiedName(String qn) {
-		if (qn.startsWith("List<") || qn.startsWith("Set<")) {
+		if (qn.startsWith("List<") || qn.startsWith("Set<")
+				|| qn.startsWith("Map<")) {
 			setPackageName("");
 			simpleName = qn;
 			qualifiedName = qn;
@@ -191,18 +192,18 @@ public class QualifiedName implements Comparable<QualifiedName> {
 	}
 
 	/**
-	 * 
+	 *
 	 * Returns the fully qualified name of an element with this
 	 * <code>QualifiedName</code>.
-	 * 
+	 *
 	 * <p>
 	 * <b>Pattern:</b> <code>qn = qname.getQualifiedName();</code>
 	 * </p>
-	 * 
+	 *
 	 * <p>
 	 * <b>Preconditions:</b> none
 	 * </p>
-	 * 
+	 *
 	 * <p>
 	 * <b>Postconditions:</b>
 	 * <ul>
@@ -213,7 +214,7 @@ public class QualifiedName implements Comparable<QualifiedName> {
 	 * <code>qn = qname.packageName + "." + qname.simpleName</code></li>
 	 * </ul>
 	 * </p>
-	 * 
+	 *
 	 * @return the fully qualified name of an element with this
 	 *         <code>QualifiedName</code>
 	 */
@@ -249,7 +250,7 @@ public class QualifiedName implements Comparable<QualifiedName> {
 	 * really unique in the whole schema, the element which should have this
 	 * unique name needs to be specified. It there is any other element in the
 	 * schema which owns the same unique name, a SchemaException is thrown
-	 * 
+	 *
 	 * @param element
 	 *            The element which should be identified with the unique name
 	 * @param uniqueName
