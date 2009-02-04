@@ -1,5 +1,8 @@
 package de.uni_koblenz.jgralabtest.codegeneratortest;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.junit.Before;
 import org.junit.Test;
 import static org.junit.Assert.assertEquals;
@@ -126,9 +129,12 @@ public class ImportCodeSnippetTest extends CodeSnippetTest{
 				"Orden.des.Phoenix;\n", ics1.getCode(1));
 		ics1.clear();
 		ics1.add(".", "Halbblutprinz.", ".", "Heiligtuemer.des.Todes", ".", ".");
-		System.out.println(ics1.getCode(3));
 		assertEquals("\n\t\t\timport .;\n\t\t\t\n\t\t\timport Halbblutprinz.;\n\t\t\t" +
 				"\n\t\t\timport Heiligtuemer.des.Todes;\n", ics1.getCode(3));
+		ics1.clear();
+		ics1.add("Heiligtuemer.Harrys", "Heiligtuemer.des.Todes");
+		assertEquals("\n\t\t\timport Heiligtuemer.Harrys;\n\t\t\timport " +
+				"Heiligtuemer.des.Todes;\n", ics1.getCode(3));
 		
 		//border cases
 		ics1.clear();
@@ -140,6 +146,43 @@ public class ImportCodeSnippetTest extends CodeSnippetTest{
 		ics1.add(".", ".", ".");
 		assertEquals("\nimport .;\n", ics1.getCode(0));
 		assertEquals("\nimport .;\n", ics1.getCode(-20));
+		ics1.clear();
+		assertEquals("", ics1.getCode(0));
+		assertEquals("", ics1.getCode(3));
+		assertEquals("", ics1.getCode(-45));
+	}
+	
+	@Test
+	//tests the inherited getCode()-method
+	public void testGetCode2(){
+		//normal cases
+		ics1=new ImportCodeSnippet();
+		ics1.add("rho.", "ny.", "iota.");
+		assertEquals("\nimport iota.;\n\nimport ny.;\n\nimport rho.;\n", ics1.getCode());
+		ics1.clear();
+		ics1.add("sigma.tau", "tau.ypsilon", "sigma.ypsilon");
+		assertEquals("\nimport sigma.tau;\nimport sigma.ypsilon;\n\nimport " +
+				"tau.ypsilon;\n", ics1.getCode());
+		ics1.clear();
+		ics1.add(".", "chi.psi", "xi.omega");
+		assertEquals("\nimport .;\n\nimport chi.psi;\n\nimport xi.omega;\n", ics1.getCode());
+		
+		//border cases
+		ics1.clear();
+		assertEquals("", ics1.getCode());
+		ics1.add(".");
+		assertEquals("\nimport .;\n", ics1.getCode());
+		ics1.add(".", ".", ".");
+		assertEquals("\nimport .;\n", ics1.getCode());
+		ics1.clear();
+		ics1.add("Omikron.o");
+		assertEquals("\nimport Omikron.o;\n", ics1.getCode());
+		ics1.add("Omikron.a", "omikron.b", "Omikron.p");
+		assertEquals("\nimport Omikron.a;\nimport Omikron.o;\nimport Omikron.p;\n\n" +
+				"import omikron.b;\n", ics1.getCode());
+		ics1.clear();
+		ics1.add("zeta.s", "Zeta.z", "zeta.a");
+		assertEquals("\nimport Zeta.z;\n\nimport zeta.a;\nimport zeta.s;\n", ics1.getCode());
 	}
 	
 	@Test
@@ -211,5 +254,86 @@ public class ImportCodeSnippetTest extends CodeSnippetTest{
 		ics4.add(".");
 		assertEquals(1, ics4.size());
 	}
+	
+	@Test
+	public void testAddVariablesAndGetVariable(){
+		//border cases
+		ics1=new ImportCodeSnippet();
+		Map<String, String> testMap=new HashMap<String, String>();
+		assertEquals("*UNDEFINED:Beta*", ics1.getVariable("Beta"));
+		assertEquals("*UNDEFINED:*", ics1.getVariable(""));
+		
+		testMap.put("1", "a");
+		ics1.addVariables(testMap);
+		assertEquals("a", ics1.getVariable("1"));
+		assertEquals("*UNDEFINED:a*", ics1.getVariable("a"));
+		assertEquals("*UNDEFINED:Test*", ics1.getVariable("Test"));
+		
+		testMap.clear();
+		testMap.put("", "");
+		ics1.addVariables(testMap);
+		assertEquals("", ics1.getVariable(""));
+		
+		testMap.put("", "b");
+		ics1.addVariables(testMap);
+		assertEquals("b", ics1.getVariable(""));
+		
 
+		testMap.clear();
+		testMap.put("a", "");
+		ics1.addVariables(testMap);
+		assertEquals("", ics1.getVariable("a"));
+		
+		testMap.clear();
+		testMap.put(null, null);
+		ics1.addVariables(testMap);
+		assertEquals(null, ics1.getVariable(null));
+		
+		testMap.clear();
+		testMap.put("7", null);
+		ics1.addVariables(testMap);
+		assertEquals(null, ics1.getVariable("7"));
+		
+		testMap.clear();
+		testMap.put(null, "k");
+		ics1.addVariables(testMap);
+		assertEquals("k", ics1.getVariable(null));
+		
+		//normal cases
+		testMap.put("5", "e");
+		ics1.addVariables(testMap);
+		assertEquals("e", ics1.getVariable("5"));
+		assertEquals("e", ics1.getVariable("5"));
+		
+		ics1.clear();
+		testMap.put("8", "h");
+		testMap.put("3", "c");
+		ics1.addVariables(testMap);
+		assertEquals("h", ics1.getVariable("8"));
+		assertEquals("c", ics1.getVariable("3"));
+		
+		testMap.put("6", "f");
+		ics1.addVariables(testMap);
+		assertEquals("f", ics1.getVariable("6"));
+	}
+	
+	@Test
+	public void testSetVariable(){
+		
+	}
+	
+	@Test
+	public void testReplaceVariables(){
+		
+	}
+	
+	@Test
+	public void testGetParent(){
+		
+	}
+	
+	@Test
+	public void testSetParent(){
+		
+	}
 }

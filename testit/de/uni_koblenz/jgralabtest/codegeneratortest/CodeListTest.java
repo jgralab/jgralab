@@ -9,6 +9,9 @@ import de.uni_koblenz.jgralab.codegenerator.CodeBlock;
 import de.uni_koblenz.jgralab.codegenerator.CodeList;
 import de.uni_koblenz.jgralab.codegenerator.CodeSnippet;
 
+//TODO überall wo CodeBlock übergibt, auch anderes als nur CodeSnippet bzw. 
+// CodeSnippet und CodeList mal übergeben & dafür Testfälle
+
 public class CodeListTest extends CodeBlockTest{
 	
 	private CodeList cl1;
@@ -293,7 +296,6 @@ public class CodeListTest extends CodeBlockTest{
 		assertEquals("\t\t\t\t\t\tGriechenland\n\t\t\t\t\t\tMoldawien\n", cl1.getCode(5));
 		cl2=new CodeList();
 		cl2.add(cl1);
-		System.out.println(cl2.getCode(9));
 		assertEquals("\t\t\t\t\t\t\t\t\t\t\tGriechenland\n\t\t\t\t\t\t\t\t\t\t\tMoldawien\n", cl2.getCode(9));		
 		
 		//border cases
@@ -312,6 +314,12 @@ public class CodeListTest extends CodeBlockTest{
 		cl1.add(cs);
 		assertEquals("\t\t\n\t\tUngarn\n", cl1.getCode(1));
 		assertEquals("\nUngarn\n", cl1.getCode(-42));
+	}
+	
+	@Test
+	//tests the inherited getCode()-method
+	public void testGetCode2(){
+		
 	}
 	
 	@Test
@@ -367,5 +375,34 @@ public class CodeListTest extends CodeBlockTest{
 		cl1.add(cs3);
 		assertEquals(12, cl1.size());
 	}
-
+	
+	@Test
+	public void testAddVariables(){
+		
+	}
+	
+	@Test
+	public void testSetVariable(){
+		
+	}
+	
+	@Test
+	public void testGetVariable(){
+		
+	}
+	
+	@Test
+	public void testReplaceVariables(){
+		
+	}
+	
+	@Test
+	public void testGetParent(){
+		
+	}
+	
+	@Test
+	public void testSetParent(){
+		
+	}
 }
