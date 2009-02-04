@@ -256,6 +256,12 @@ public class CodeSnippetTest extends CodeBlockTest{
 	}
 	
 	@Test
+	//tests the inherited getCode()-method
+	public void testGetCode2(){
+		
+	}
+	
+	@Test
 	public void testClear(){
 		//normal cases
 		cs1.add("Java", "C#", "C++", "Pascal");
@@ -303,5 +309,35 @@ public class CodeSnippetTest extends CodeBlockTest{
 		cs2.add(null);
 		assertEquals(2,cs2.size());
 
+	}
+	
+	@Test
+	public void testAddVariables(){
+		
+	}
+	
+	@Test
+	public void testSetVariable(){
+		
+	}
+	
+	@Test
+	public void testGetVariable(){
+		
+	}
+	
+	@Test
+	public void testReplaceVariables(){
+		
+	}
+	
+	@Test
+	public void testGetParent(){
+		
+	}
+	
+	@Test
+	public void testSetParent(){
+		
 	}
 }
