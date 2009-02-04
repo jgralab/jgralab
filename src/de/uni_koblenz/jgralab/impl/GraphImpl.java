@@ -165,6 +165,19 @@ public abstract class GraphImpl implements Graph {
 	 */
 	private long edgeListVersion;
 
+	
+	/**
+	 * Creates a graph of the given GraphClass with the given id 
+	 * @param id
+	 *            this Graph's id
+	 * @param cls
+	 *            the GraphClass of this Graph
+	 */
+	public GraphImpl(String id, GraphClass cls) {
+		this(id, cls, 1000, 1000);
+	}
+	
+	
 	/**
 	 * @param id
 	 *            this Graph's id
@@ -221,6 +234,8 @@ public abstract class GraphImpl implements Graph {
 		EdgeImpl e = (EdgeImpl) newEdge;
 
 		VertexImpl a = (VertexImpl) alpha;
+		if ((alpha == null) || (omega == null))
+			throw new GraphException("Alpha or Omega vertex of an edge may not be null");
 		if (!a.isValidAlpha(e)) {
 			throw new GraphException("Edges of class "
 					+ e.getAttributedElementClass().getUniqueName()

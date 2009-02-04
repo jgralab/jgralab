@@ -71,6 +71,7 @@ public class GraphCodeGenerator extends AttributedElementCodeGenerator {
 		addImports("#schemaPackageName#.#schemaName#");
 		return new CodeSnippet(
 				true,
+				"/* Constructors and create methods with values for initial vertex and edge count */",
 				"public #simpleClassName#Impl(int vMax, int eMax) {",
 				"\tthis(null, vMax, eMax);",
 				"}",
@@ -85,6 +86,23 @@ public class GraphCodeGenerator extends AttributedElementCodeGenerator {
 				"",
 				"public static #javaClassName# create(String id, int vMax, int eMax) {",
 				"\treturn (#javaClassName#) #schemaName#.instance().create#uniqueClassName#(id, vMax, eMax);",
+				"}",
+				"",
+				"/* Constructors and create methods without values for initial vertex and edge count */",
+				"public #simpleClassName#Impl() {",
+				"\tthis(null);",
+				"}",
+				"",
+				"public #simpleClassName#Impl(java.lang.String id) {",
+				"\tsuper(id, #schemaName#.instance().#schemaVariableName#);",
+				"}",
+				"",
+				"public static #javaClassName# create() {",
+				"\treturn (#javaClassName#) #schemaName#.instance().create#uniqueClassName#(null);",
+				"}",
+				"",
+				"public static #javaClassName# create(String id) {",
+				"\treturn (#javaClassName#) #schemaName#.instance().create#uniqueClassName#(id);",
 				"}");
 	}
 

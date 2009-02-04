@@ -74,6 +74,15 @@ public abstract class GraphFactoryImpl implements GraphFactory {
 					+ graphClass.getCanonicalName(), ex);
 		}
 	}
+	
+	public Graph createGraph(Class<? extends Graph> graphClass, String id) {
+		try {
+			return graphMap.get(graphClass).newInstance(id, 1000, 1000);
+		} catch (Exception ex) {
+			throw new M1ClassAccessException("Cannot create graph of class "
+					+ graphClass.getCanonicalName(), ex);
+		}
+	}
 
 	public Vertex createVertex(Class<? extends Vertex> vertexClass, int id,
 			Graph g) {
