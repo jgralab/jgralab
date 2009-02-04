@@ -111,14 +111,27 @@ public abstract class CodeBlock {
 		return line;
 	}
 
+	/**
+	 * calls the getCode(int indent)-method of the corresponding class, with zero
+	 * as an indent, thereby the resulting String varies accordingly
+	 * @return the content of <code>this</code> as a String
+	 */
 	public String getCode() {
 		return getCode(0);
 	}
 
+	/**
+	 * 
+	 * @return the <code>parent</code> of <code>this</code>
+	 */
 	public CodeList getParent() {
 		return parent;
 	}
 
+	/**
+	 * sets <code>newParent</code> as <code>parent</code> of this
+	 * @param newParent
+	 */
 	protected void setParent(CodeList newParent) {
 		parent = newParent;
 	}

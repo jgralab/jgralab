@@ -73,11 +73,15 @@ public class ImportCodeSnippet extends CodeSnippet {
 	/**
 	 * <code>this</code> is only called from within the codegenerator, exceptions
 	 * are therefore handled optimistically 
-	 * expects its Strings to contain a "."
+	 * <code>this</code> expects its Strings to contain a "."
 	 * @param indent defines how much each import-statement is to be interposed
-	 * @return the content of <code>this</code> as import-statements, which are
-	 * divided by an empty line between each statement 
+	 * @return the content of <code>this</code> as import-statements, the import-
+	 * statements are sorted, meaning that imports from the same package form an
+	 * import-statement-block with one statement per line, import-statements from
+	 * different packages are divided by an empty line between the statements 
 	 * every line is interposed according to <code>indent</code>
+	 * additionally the import-statements are sorted alphabetically
+	 * if <code>this</code> is empty, an empty String will be returned
 	 */
 	@Override
 	public String getCode(int indent) {
