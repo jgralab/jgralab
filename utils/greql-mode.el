@@ -24,7 +24,7 @@
 
 
 ;;; Version:
-;; <2009-02-04 Wed 21:34>
+;; <2009-02-05 Thu 06:42>
 
 ;;; Code:
 
@@ -34,8 +34,24 @@
     "reportBag" "reportSet" "set" "store" "tup" "using" "vSubgraph"
     "where" "with")
   "GReQL keywords that should be completed and highlighted.")
-
 (put 'greql-keywords 'risky-local-variable-p t)
+
+(defvar greql-jgralab-jar-file
+  "/home/horn/uni/repos/jgralab/build/jar/jgralab.jar")
+
+(defun greql-functions ()
+  "Returns a list of all available GReQL function lists."
+  (with-temp-buffer
+    (call-process "java" nil
+                  (current-buffer)
+                  nil
+                  "-cp" greql-jgralab-jar-file
+                  "de.uni_koblenz.jgralab.greql2.funlib.Greql2FunctionLibrary")
+    (goto-char (point-min))
+    (let (list)
+      (while (re-search-forward "\\([[:alpha:]][[:alnum:]]*\\)$" nil t)
+        (setq list (cons (match-string 1) list)))
+      list)))
 
 (defvar greql-functions
   '("and" "avg" "children" "contains" "count" "degree" "depth"
@@ -55,7 +71,6 @@
     "type" "typeName" "typeSet" "types" "uminus" "union"
     "vertexTypeSet" "weight" "xor")
   "GReQL functions that should be completed and highlighted.")
-
 (put 'greql-functions 'risky-local-variable-p t)
 
 (dolist (ext '("\\.greqlquery$" "\\.grq$" "\\.greql$"))
@@ -75,8 +90,14 @@
   (append greql-fontlock-keywords-1
           (list (concat "\\<" (regexp-opt greql-keywords t) "\\>"))))
 
+(defvar greql-fontlock-keywords-3
+  (append greql-fontlock-keywords-1
+          greql-fontlock-keywords-2
+          (list (list "{\\([[:alnum:]]+\\)}" 1 'font-lock-type-face))))
+
 (defvar greql-tab-width 2
-  "Distance between tab stops (for display of tab characters), in columns.")
+  "Distance between tab stops (for display of tab characters), in
+columns.")
 
 (defvar greql-script-program "~/bin/greqlscript"
   "The program to execute GReQL queries.")
@@ -90,7 +111,8 @@
   ;; Keywords
   (setq font-lock-defaults
         '((greql-fontlock-keywords-1
-           greql-fontlock-keywords-2)))
+           greql-fontlock-keywords-2
+           greql-fontlock-keywords-3)))
   
   (setq tab-width greql-tab-width)
 
@@ -105,7 +127,6 @@
 (defvar greql-graph nil
   "The graph which is used to extract schema information on which
 queries are evaluated.  Set it with `greql-set-graph'.")
-
 (make-variable-buffer-local 'greql-graph)
 
 (defvar greql-schema-alist nil)
@@ -155,13 +176,14 @@ queries are evaluated.  Set it with `greql-set-graph'.")
                  (or (group (one-or-more (or (syntax word) (any "_.")))) ";")
                  ;; Superclasses
                  (zero-or-one
-                  (and (zero-or-more (syntax whitespace)) ":" (zero-or-more (syntax whitespace))
-                       (minimal-match (and (group (and (one-or-more anything) (not (any ",;")))) 
+                  (and (zero-or-more (syntax whitespace))
+                       ":" (zero-or-more (syntax whitespace))
+                       (minimal-match (and (group (and (one-or-more anything)
+                                                       (not (any ",;")))) 
                                            (any " ;")))))
                  ;; Attributes
                  (zero-or-one (and (zero-or-more (not (any "\n")))
-                                   "{" (group (zero-or-more (not (any "\n")))) "}"))
-                 ))
+                                   "{" (group (zero-or-more (not (any "\n")))) "}"))))
             nil t)
       (let ((vc-or-pkg (match-string 1))
             (name (match-string 2))
