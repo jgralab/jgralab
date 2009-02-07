@@ -33,8 +33,10 @@ import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import de.uni_koblenz.jgralab.JGraLab;
 import de.uni_koblenz.jgralab.greql2.exception.DuplicateGreqlFunctionException;
 
 /**
@@ -86,12 +88,11 @@ public class Greql2FunctionLibrary {
 			"Matches", "MaxPathLength", "MinPathLength", "Minus", "Modulo",
 			"Nequals", "NodeTrace", "Not", "NthElement", "Or", "OutDegree",
 			"Parent", "PathConcat", "PathLength", "PathSystem", "Plus", "Pos",
-			"ReachableVertices", "ReMatch", "Siblings",
-			"Slice", "SquareRoot", "StartVertex", "Subtypes", "Sum",
-			"Supertypes", "SymDifference", "TheElement", "Times",
-			"TopologicalSort", "ToSet", "ToString", "Type", "TypeName",
-			"Types", "TypeSet", "Uminus", "Union", "VertexTypeSet", "Weight",
-			"Xor" };
+			"ReachableVertices", "ReMatch", "Siblings", "Slice", "SquareRoot",
+			"StartVertex", "Subtypes", "Sum", "Supertypes", "SymDifference",
+			"TheElement", "Times", "TopologicalSort", "ToSet", "ToString",
+			"Type", "TypeName", "Types", "TypeSet", "Uminus", "Union",
+			"VertexTypeSet", "Weight", "Xor" };
 
 	/**
 	 * constructs a new instance as soon as the Library gets loaded
@@ -118,6 +119,14 @@ public class Greql2FunctionLibrary {
 	 */
 	public static Greql2FunctionLibrary instance() {
 		return thisInstance;
+	}
+
+	public static void main(String[] args) {
+		JGraLab.setLogLevel(Level.OFF);
+		for (String function : Greql2FunctionLibrary.instance().availableFunctions
+				.keySet()) {
+			System.out.println(function);
+		}
 	}
 
 	/**
