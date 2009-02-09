@@ -23,17 +23,20 @@
  */
 package de.uni_koblenz.jgralab.graphvalidator;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.graphvalidator.ConstraintInvalidation.ConstraintType;
 import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
+import de.uni_koblenz.jgralab.greql2.exception.EvaluateException;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValueCollection;
+import de.uni_koblenz.jgralab.schema.AttributedElementClass;
 import de.uni_koblenz.jgralab.schema.EdgeClass;
-import de.uni_koblenz.jgralab.schema.VertexClass;
 
 /**
  * @author Tassilo Horn <horn@uni-koblenz.de>
@@ -85,30 +88,23 @@ public class GraphValidator {
 		}
 
 		// check if all greql constraints are met
-		for (String greql2Pred : graph.getGraphClass().getConstraints()) {
-			GreqlEvaluator eval = new GreqlEvaluator(greql2Pred, graph, null);
-			eval.startEvaluation();
-			JValue result = eval.getEvaluationResult();
-			handleGreqlResult(result, greql2Pred, brokenConstraints);
-		}
-		for (VertexClass vc : graph.getSchema()
-				.getVertexClassesInTopologicalOrder()) {
-			for (String greql2Pred : vc.getConstraints()) {
-				GreqlEvaluator eval = new GreqlEvaluator(greql2Pred, graph,
-						null);
-				eval.startEvaluation();
-				JValue result = eval.getEvaluationResult();
-				handleGreqlResult(result, greql2Pred, brokenConstraints);
-			}
-		}
-		for (EdgeClass vc : graph.getSchema()
-				.getEdgeClassesInTopologicalOrder()) {
-			for (String greql2Pred : vc.getConstraints()) {
-				GreqlEvaluator eval = new GreqlEvaluator(greql2Pred, graph,
-						null);
-				eval.startEvaluation();
-				JValue result = eval.getEvaluationResult();
-				handleGreqlResult(result, greql2Pred, brokenConstraints);
+		List<AttributedElementClass> aecs = new ArrayList<AttributedElementClass>();
+		aecs.addAll(graph.getSchema().getGraphClassesInTopologicalOrder());
+		aecs.addAll(graph.getSchema().getVertexClassesInTopologicalOrder());
+		aecs.addAll(graph.getSchema().getEdgeClassesInTopologicalOrder());
+		for (AttributedElementClass vc : aecs) {
+			for (String greql2Exp : vc.getConstraints()) {
+				GreqlEvaluator eval = new GreqlEvaluator(greql2Exp, graph, null);
+				try {
+					eval.startEvaluation();
+					JValue result = eval.getEvaluationResult();
+					handleGreqlResult(result, greql2Exp, brokenConstraints);
+				} catch (EvaluateException e) {
+					brokenConstraints.add(new ConstraintInvalidation(
+							ConstraintType.INVALID_GREQL_EXPRESSION,
+							"The GReQL query \"" + greql2Exp
+									+ "\" is broken.\n" + e.getMessage()));
+				}
 			}
 		}
 		return brokenConstraints;

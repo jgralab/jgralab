@@ -542,8 +542,8 @@ public abstract class AttributedElementClassImpl implements
 	}
 
 	@Override
-	public void addConstraint(String greqlPredicate) {
-		constraints.add(greqlPredicate);
+	public void addConstraint(String greqlExpression) {
+		constraints.add(greqlExpression);
 	}
 
 	@Override
