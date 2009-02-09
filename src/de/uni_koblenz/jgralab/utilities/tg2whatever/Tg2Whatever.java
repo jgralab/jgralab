@@ -21,7 +21,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
- 
+
 package de.uni_koblenz.jgralab.utilities.tg2whatever;
 
 import gnu.getopt.Getopt;
@@ -38,10 +38,17 @@ import de.uni_koblenz.jgralab.GraphIO;
 import de.uni_koblenz.jgralab.GraphIOException;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.impl.ProgressFunctionImpl;
+import de.uni_koblenz.jgralab.schema.Schema;
 
 public abstract class Tg2Whatever {
 
 	protected Graph graph = null;
+
+	protected String graphFileName = null;
+
+	protected String schemaFileName = null;
+
+	protected Schema schema = null;
 
 	protected String outputName = null;
 
@@ -75,6 +82,20 @@ public abstract class Tg2Whatever {
 	}
 
 	/**
+	 * toggles which schema to use for conversion
+	 */
+	public void setSchema(Schema s) {
+		schema = s;
+	}
+
+	/**
+	 * toggles which schema to use for conversion
+	 */
+	public void setSchema(String fileName) {
+		schemaFileName = fileName;
+	}
+
+	/**
 	 * toggles which graph to convertes
 	 */
 	public void setGraph(Graph g) {
@@ -85,8 +106,7 @@ public abstract class Tg2Whatever {
 	 * loads the graph from file
 	 */
 	public void setGraph(String fileName) throws GraphIOException {
-		graph = GraphIO.loadGraphFromFile(fileName, new ProgressFunctionImpl(
-				System.out));
+		graphFileName = fileName;
 	}
 
 	/**
@@ -140,9 +160,47 @@ public abstract class Tg2Whatever {
 	public void setPrintDomainNames(boolean print) {
 		domainNames = print;
 	}
-	
-	
+
 	public void printGraph() {
+		if (graph == null) {
+			if (schema == null) {
+				if (schemaFileName != null) {
+					try {
+						System.out.println("Loaded schema");
+						schema = GraphIO.loadSchemaFromFile(schemaFileName);
+						System.out.println("Schema loaded");
+					} catch (GraphIOException ex) {
+						System.err.println("Schema in file '" + schemaFileName
+								+ "' could not be read.");
+						System.exit(1);
+					}
+				} else {
+					try {
+						System.out.println("Loading Schema from Graph");
+						schema = GraphIO.loadSchemaFromFile(graphFileName);
+						System.out.println("Schema loaded");
+					} catch (GraphIOException ex) {
+						System.err.println("Graph in file '" + graphFileName
+								+ "' could not be read.");
+						ex.printStackTrace();
+						System.exit(1);
+					}
+				}
+
+			}
+			try {
+				System.out.println("Loading graph from file " + graphFileName);
+				graph = GraphIO.loadGraphFromFile(graphFileName, schema,
+						new ProgressFunctionImpl());
+				System.out.println("Graph loaded");
+			} catch (GraphIOException ex) {
+				System.err.println("Graph in file '" + graphFileName
+						+ "' could not be read.");
+				ex.printStackTrace();
+				System.exit(1);
+			}
+		}
+		System.out.println("Printing graph");
 		try {
 			System.out.println("Trying to print graph");
 			PrintStream out;
@@ -172,34 +230,36 @@ public abstract class Tg2Whatever {
 			System.exit(1);
 		}
 	}
-	
+
 	protected abstract void graphStart(PrintStream out);
-	
+
 	protected abstract void graphEnd(PrintStream out);
-	
+
 	protected abstract void printVertex(PrintStream out, Vertex v);
-	
+
 	protected abstract void printEdge(PrintStream out, Edge e);
-	
-	
 
 	/**
-	 * replaces characters in the given string by the escape sequences
-	 * that are appropriate for the specific output format
+	 * replaces characters in the given string by the escape sequences that are
+	 * appropriate for the specific output format
+	 * 
 	 * @param s
 	 * @return
 	 */
 	protected abstract String stringQuote(String s);
 
-
 	protected void getOptions(String[] args) {
-		LongOpt[] longOptions = new LongOpt[8];
+		LongOpt[] longOptions = new LongOpt[9];
 
 		int c = 0;
 		longOptions[c++] = new LongOpt("graph", LongOpt.REQUIRED_ARGUMENT,
 				null, 'g');
 		longOptions[c++] = new LongOpt("output", LongOpt.REQUIRED_ARGUMENT,
 				null, 'o');
+
+		longOptions[c++] = new LongOpt("alternative-schema",
+				LongOpt.REQUIRED_ARGUMENT, null, 'a');
+
 		longOptions[c++] = new LongOpt("domains", LongOpt.NO_ARGUMENT, null,
 				'd');
 
@@ -217,9 +277,10 @@ public abstract class Tg2Whatever {
 
 		longOptions[c++] = new LongOpt("help", LongOpt.NO_ARGUMENT, null, 'h');
 
-		Getopt g = new Getopt("Tg2Dot", args, "g:o:dernsh", longOptions);
+		Getopt g = new Getopt("Tg2Dot", args, "g:o:a:dernsh", longOptions);
 		c = g.getopt();
 		String graphName = null;
+		String schemaName = null;
 		while (c >= 0) {
 			switch (c) {
 			case 'g':
@@ -240,6 +301,10 @@ public abstract class Tg2Whatever {
 				if (outputName == null) {
 					usage(1);
 				}
+				break;
+			case 'a':
+				schemaName = g.getOptarg();
+				setSchema(schemaName);
 				break;
 			case 'r':
 				reversedEdges = true;
@@ -264,14 +329,14 @@ public abstract class Tg2Whatever {
 				throw new RuntimeException("FixMe (c='" + (char) c + "')");
 			}
 			c = g.getopt();
-		} 
+		}
 		if (g.getOptind() < args.length) {
 			System.err.println("Extra arguments!");
 			usage(1);
-		} 
+		}
 		if (g.getOptarg() == null) {
 			System.out.println("Missing option");
-		//	usage(1);
+			// usage(1);
 		}
 		if (outputName == null) {
 			outputName = "";
@@ -285,6 +350,8 @@ public abstract class Tg2Whatever {
 		System.err.println("Options are:");
 		System.err
 				.println("-g graphFileName   (--graph)     the graph to be converted");
+		System.err
+				.println("-a schemaFileName   (--alternative-schema)    the schema that should be used instead of the one included in the graph file");
 		System.err
 				.println("-o outputFileName  (--output)    the output file name, or empty for stdout");
 		System.err
