@@ -27,6 +27,7 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 
 import de.uni_koblenz.jgralabtest.coretest.RunCoreTests;
+import de.uni_koblenz.jgralabtest.graphvalidatortest.RunGraphValidatorTests;
 import de.uni_koblenz.jgralabtest.greql2test.RunGreql2Tests;
 import de.uni_koblenz.jgralabtest.schematest.RunSchemaTests;
 import de.uni_koblenz.jgralabtest.tg2schemagraphtest.Tg2SchemagraphTest;
@@ -37,6 +38,7 @@ import de.uni_koblenz.jgralabtest.tg2schemagraphtest.Tg2SchemagraphTest;
  */
 @RunWith(Suite.class)
 @Suite.SuiteClasses( { RunCoreTests.class, RunSchemaTests.class,
-		RunGreql2Tests.class, Tg2SchemagraphTest.class })
+		RunGreql2Tests.class, Tg2SchemagraphTest.class,
+		RunGraphValidatorTests.class })
 public class RunTests {
 }
