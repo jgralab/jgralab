@@ -112,10 +112,12 @@ public class GraphValidator {
 
 	private void handleGreqlResult(JValue result, String greqlExp,
 			Set<ConstraintInvalidation> brokenConstraints) {
-		if (result.isBoolean() && !result.toBoolean()) {
-			brokenConstraints.add(new ConstraintInvalidation(
-					ConstraintType.GREQL, "\"" + greqlExp + "\" returned "
-							+ result.toBoolean() + "."));
+		if (result.isBoolean()) {
+			if (!result.toBoolean()) {
+				brokenConstraints.add(new ConstraintInvalidation(
+						ConstraintType.GREQL, "\"" + greqlExp + "\" returned "
+								+ result.toBoolean() + "."));
+			}
 		} else if (result.isCollection()) {
 			JValueCollection c = result.toCollection();
 			for (JValue jv : c) {
