@@ -29,7 +29,7 @@ package de.uni_koblenz.jgralab.graphvalidator;
  */
 public class ConstraintInvalidation {
 	public enum ConstraintType {
-		MULTIPLICITY, GREQL
+		MULTIPLICITY, GREQL, INVALID_GREQL_EXPRESSION
 	}
 
 	private String message;
