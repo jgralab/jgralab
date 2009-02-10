@@ -45,9 +45,10 @@
     <xsl:param name="appendEdgeIds" as="xs:string" required="no" select="'no'"/>
     <!-- specifies whether to perform some automatic corrections
         these include:
-        conversion of first char in class and association names to uppercase, 
-        change of identifiers in order to avoid conflicts with reserved words,
-        creation of EdgeClass names by using role or VertexClass names, if corresponding association has no name -->
+        - conversion of first char in class and association names to uppercase, 
+        - change of identifiers in order to avoid conflicts with reserved words,
+        - creation of EdgeClass names by using role or VertexClass names, if corresponding association has no name,
+        - if something else than 0..1, or 1..1 is specified, change of composition multiplicity on the composite side to 0..1 -->
     <xsl:param name="autoCorrect" required="no" select="'yes'"/>
     <!-- specifies if some errors shall be detected and the transformation be aborted 
         the errors include:
