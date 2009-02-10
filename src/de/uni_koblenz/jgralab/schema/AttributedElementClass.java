@@ -706,9 +706,9 @@ public interface AttributedElementClass extends NamedElement,
 	 * <b>Postconditions:</b>
 	 * <ul>
 	 * <li><code>attrElement'.getConstraints().size >= 0</code></li>
-	 * <li><code>attrElement'.getConstraints().size() == attrElement.getConstraints().size() + 1</code>, if for each constraint <code>c2</code> of
+	 * <li><code>attrElement'.getConstraints().size() == attrElement.getConstraints().size() + 1</code>, if for each constraint <code>c</code> of
 	 * <code>attrElement</code> the following condition holds:
-	 * <code>!c.equals(c2)</code></li>
+	 * <code>!expr.equals(c)</code></li>
 	 * </ul>
 	 * </p>
 	 * </p>
