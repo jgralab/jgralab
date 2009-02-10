@@ -24,7 +24,10 @@
 package de.uni_koblenz.jgralabtest.graphvalidatortest;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.Set;
 
 import org.junit.Before;
@@ -112,6 +115,15 @@ public class GraphValidatorTest {
 		assertEquals(1, brokenConstraints.size());
 		assertEquals(1, getNumberOfBrokenConstraints(
 				ConstraintType.INVALID_GREQL_EXPRESSION, brokenConstraints));
+	}
+
+	@Test
+	public void createValidationReport() throws IOException {
+		g.createConstrainedNode();
+		GraphValidator v = new GraphValidator(g);
+		File f = File.createTempFile("validation-report", ".html");
+		v.createValidationReport(f.getCanonicalPath());
+		assertTrue(f.length() > 0);
 	}
 
 	private static int getNumberOfBrokenConstraints(ConstraintType type,

@@ -23,10 +23,15 @@
  */
 package de.uni_koblenz.jgralab.graphvalidator;
 
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.SortedSet;
+import java.util.TreeSet;
 
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.Vertex;
@@ -50,8 +55,14 @@ public class GraphValidator {
 		this.graph = graph;
 	}
 
-	public Set<ConstraintInvalidation> validate() {
-		Set<ConstraintInvalidation> brokenConstraints = new HashSet<ConstraintInvalidation>();
+	/**
+	 * Validate the graph
+	 *
+	 * @return a set of {@link ConstraintInvalidation} objects, one for each
+	 *         invalidation, sorted by the {@link ConstraintType}
+	 */
+	public SortedSet<ConstraintInvalidation> validate() {
+		SortedSet<ConstraintInvalidation> brokenConstraints = new TreeSet<ConstraintInvalidation>();
 
 		// Check if all multiplicities are correct
 		for (EdgeClass ec : graph.getSchema()
@@ -107,6 +118,66 @@ public class GraphValidator {
 				}
 			}
 		}
+		return brokenConstraints;
+	}
+
+	/**
+	 * Do just like {@link GraphValidator#validate()}, but generate a HTML
+	 * report saved to <code>fileName</code>, too.
+	 *
+	 * @param fileName
+	 *            the name of the HTML report file
+	 * @return a set of {@link ConstraintInvalidation} objects, one for each
+	 *         invalidation
+	 * @throws IOException
+	 *             if the given file cannot be written
+	 */
+	public SortedSet<ConstraintInvalidation> createValidationReport(
+			String fileName) throws IOException {
+		SortedSet<ConstraintInvalidation> brokenConstraints = validate();
+
+		BufferedWriter bw = new BufferedWriter(new FileWriter(
+				new File(fileName)));
+		// The header
+		bw.append("<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01//EN\"\n"
+				+ "\"http://www.w3.org/TR/html4/strict.dtd\">\n" + "<html>");
+		bw.append("<head><title>");
+		bw.append("Validation Report for the "
+				+ graph.getM1Class().getSimpleName() + " with id "
+				+ graph.getId() + ".");
+		bw.append("</title></head>");
+
+		// The body
+		bw.append("<body>");
+
+		if (brokenConstraints.size() == 0) {
+			bw.append("<p><b>The graph is perfectly valid!</b></p>");
+		} else {
+			bw.append("<p><b>The " + graph.getM1Class().getSimpleName()
+					+ " invalidates " + brokenConstraints.size()
+					+ " constraints.</b></p>");
+			// Here goes the table
+			bw.append("<table border=\"1\">");
+			bw.append("<tr>");
+			bw.append("<th>#</th>");
+			bw.append("<th>Constraint Type</th>");
+			bw.append("<th>Message</th>");
+			bw.append("</tr>");
+			int row = 1;
+			for (ConstraintInvalidation ci : brokenConstraints) {
+				bw.append("<tr>");
+				bw.append("<td align=\"right\">" + row + "</td>");
+				bw.append("<td>" + ci.getConstraintType() + "</td>");
+				bw.append("<td>" + ci.getMessage() + "</td>");
+				bw.append("</tr>");
+				row++;
+			}
+			bw.append("</table>");
+		}
+
+		bw.append("</body></html>");
+		bw.flush();
+		bw.close();
 		return brokenConstraints;
 	}
 
