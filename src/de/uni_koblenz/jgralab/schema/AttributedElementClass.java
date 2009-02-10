@@ -580,16 +580,62 @@ public interface AttributedElementClass extends NamedElement,
 	public Set<AttributedElementClass> getAllSubClasses();
 
 	/**
-	 * @return true, if the element has own or inherited attributes, false
-	 *         otherwise
+	 * Checks if this element has direct or inherited attributes.
+	 * 
+	 * <p>
+	 * <b>Pattern:</b> <code>hasAttributes = attrElement.hasAttributes();</code>
+	 * </p>
+	 * 
+	 * <p>
+	 * <b>Preconditions:</b> none
+	 * </p>
+	 * 
+	 * <p>
+	 * <b>Postconditions:</b> <code>hasAttributes</code> has one of the
+	 * following values:
+	 * <ul>
+	 * <li><code>true</code> if one of the following or both occur:
+	 * <ul>
+	 * <li><code>attrElement</code> has direct attributes</li>
+	 * <li><code>attrElement</code> has inherited attributes</li>
+	 * </ul>
+	 * </li>
+	 * <li><code>false</code> if the above is not met</li>
+	 * </ul>
+	 * </p>
+	 * 
+	 * @return <code>true</code>, if the element has own or inherited
+	 *         attributes, <code>false</code> otherwise
 	 */
 	public boolean hasAttributes();
 
 	/**
-	 * Checks if this AttributedElementClass has own attributes
+	 * Checks if this element has own attributes, that are not inherited.
 	 * 
-	 * @return true if this AttributedElementClass contains at least one
-	 *         non-inherited attributed, false otherwise
+	 * <p>
+	 * <b>Pattern:</b>
+	 * <code>hasOwnAttributes = attrElement.hasOwnAttributes();</code>
+	 * </p>
+	 * 
+	 * <p>
+	 * <b>Preconditions:</b> none
+	 * </p>
+	 * 
+	 * <p>
+	 * <b>Postconditions:</b> <code>hasOwnAttributes</code> has one of the
+	 * following values:
+	 * <ul>
+	 * <li><code>true</code> if <code>attrElement</code> has direct attributes</li>
+	 * <li><code>false</code> if <coed>attrElement</code> has:</li>
+	 * <ul>
+	 * <li>only inherited attributes</code>
+	 * <li>no attributes at all</code>
+	 * </ul>
+	 * </ul>
+	 * </p>
+	 * 
+	 * @return <code>true</code>, if the element has own attributes,
+	 *         <code>false</code> otherwise
 	 */
 	public boolean hasOwnAttributes();
 
@@ -681,7 +727,13 @@ public interface AttributedElementClass extends NamedElement,
 			Set<? extends AttributedElementClass> other);
 
 	/**
-	 * Adds a constraint given as GReQL2 expression to this graph element class.
+	 * Adds a constraint given as GReQL2 expression to this attributed element.
+	 * 
+	 * <p>
+	 * <b>Beware:</b> This method does not actually check if the parameter is a
+	 * valid GReQL2 expression. If it is not valid, there may be runtime errors
+	 * during program execution.
+	 * </p>
 	 * 
 	 * <p>
 	 * <b>Pattern:</b> <code>attrElement.addConstraint(expr);</code>
@@ -697,7 +749,7 @@ public interface AttributedElementClass extends NamedElement,
 	 * <code>false</code>.</li>
 	 * <li>The <code>expression</code> is a GReQL expression that evaluates to a
 	 * <code>JValueCollection</code> (i.e. a FWR clause). In that case
-	 * <code>GraphValidator.validate()<ode> returns one
+	 * <code>GraphValidator.validate()</code> returns one
 	 * <code>ConstraintInvalidation</code> for each element.</li>
 	 * </ul>
 	 * </p>
