@@ -27,7 +27,8 @@ package de.uni_koblenz.jgralab.graphvalidator;
  * @author Tassilo Horn <horn@uni-koblenz.de>
  *
  */
-public class ConstraintInvalidation {
+public class ConstraintInvalidation implements
+		Comparable<ConstraintInvalidation> {
 	public enum ConstraintType {
 		MULTIPLICITY, GREQL, INVALID_GREQL_EXPRESSION
 	}
@@ -72,5 +73,14 @@ public class ConstraintInvalidation {
 	@Override
 	public int hashCode() {
 		return constraintType.hashCode() + message.hashCode();
+	}
+
+	@Override
+	public int compareTo(ConstraintInvalidation ci) {
+		int typeComp = constraintType.compareTo(ci.constraintType);
+		if (typeComp == 0) {
+			return message.compareTo(ci.message);
+		}
+		return typeComp;
 	}
 }
