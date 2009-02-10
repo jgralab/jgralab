@@ -2396,7 +2396,7 @@ numericLiteral returns [Expression literal = null]
         {
           /* TODO: Check if 0x should be removed from text represenation */
           textRepresentation = token.getText().substring(2);
-          System.out.println("Matched HexLiteral " + textRepresentation);
+          // System.out.println("Matched HexLiteral " + textRepresentation);
           base=16;
         }
       )
@@ -2413,7 +2413,7 @@ numericLiteral returns [Expression literal = null]
    	  )
    	)  
 	{
-	    System.out.println("Setting value of num literal " + textRepresentation);
+	    // System.out.println("Setting value of num literal " + textRepresentation);
 		if (isRealLiteral) {
 			literal = graph.createRealLiteral();
 			((RealLiteral) literal).setRealValue(Double.parseDouble(textRepresentation));
@@ -2423,7 +2423,7 @@ numericLiteral returns [Expression literal = null]
 	    	if ((base==10) && textRepresentation.startsWith("0") && !textRepresentation.startsWith("0x")) {
 	    	  base = 8;
 	    	}
-	    	System.out.println("Setting int value " + textRepresentation + " with base " + base );
+	    	// System.out.println("Setting int value " + textRepresentation + " with base " + base );
 			((IntLiteral) literal).setIntValue(Integer.parseInt(textRepresentation, base));
 		}	
 	}
