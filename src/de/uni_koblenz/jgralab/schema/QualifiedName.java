@@ -226,6 +226,8 @@ public class QualifiedName implements Comparable<QualifiedName> {
 	 *            an element´s fully qualified package
 	 * @param sn
 	 *            an element´s simple name
+	 * 
+	 * @see #QualifiedName(String)
 	 */
 	public QualifiedName(String pn, String sn) {
 		packageName = pn;
@@ -463,7 +465,6 @@ public class QualifiedName implements Comparable<QualifiedName> {
 	 * subpackages.
 	 * </p>
 	 * 
-	 * 
 	 * <p>
 	 * <b>Pattern:</b> <code>un = qname.getUniqueName();</code>
 	 * </p>
@@ -494,15 +495,29 @@ public class QualifiedName implements Comparable<QualifiedName> {
 	 * Sets the unique name of this QualifiedName. To ensure that the name is
 	 * really unique in the whole schema, the element which should have this
 	 * unique name needs to be specified. It there is any other element in the
-	 * schema which owns the same unique name, a SchemaException is thrown
+	 * Schema which owns the same unique name, a SchemaException is thrown.
+	 * 
+	 * <p>
+	 * <b>Pattern:</b> <code>qname.setUniqueName(e, un);</code>
+	 * </p>
+	 * 
+	 * <p>
+	 * <b>Preconditions:</b> <code>un</code> contains no <code>'.'</code>
+	 * characters and thus has no package information
+	 * </p>
+	 * 
+	 * <p>
+	 * <b>Postconditions:</b> <code>qname'.uniqueName == un</code>, if <code>un</code> really is unique
+	 * in the Schema
+	 * </p>
 	 * 
 	 * @param element
-	 *            The element which should be identified with the unique name
+	 *            the element which should be identified with the unique name
 	 * @param uniqueName
-	 *            The new uniqueName of the element
+	 *            the new uniqueName of the element
 	 * @throws SchemaException
 	 *             if the uniqueName is not unique, i.e. if there is any other
-	 *             element in the schema with the same unique name
+	 *             element in the Schema with the same unique name
 	 */
 	public void setUniqueName(NamedElement element, String uniqueName) {
 		if (!(uniqueName.indexOf('.') < 0)) {
@@ -566,6 +581,39 @@ public class QualifiedName implements Comparable<QualifiedName> {
 		this.uniqueName = uniqueName;
 	}
 
+	/**
+	 * Indicates whether some other object is "equal to" this
+	 * <code>QualifiedName</code>. Apart testing if both objects refer to the
+	 * same object, it is checked if both have the same qualified name.
+	 * 
+	 * <p>
+	 * <b>Pattern:</b> <code>isEqual = qname.equals(obj);</code>
+	 * </p>
+	 * 
+	 * <p>
+	 * <b>Preconditions:</b> none
+	 * </p>
+	 * 
+	 * <p>
+	 * <b>Postconditions:</b> <code>isEqual</code> is:
+	 * <ul>
+	 * <li><code>true</code>, whether if:
+	 * <ul>
+	 * <li><code>qname</code> and <code>obj</code> represent the same object.<br />
+	 * Formally: qname == obj</li>
+	 * <li>or if <code>obj</code> is another instance of
+	 * <code>QualifiedName</code> but with the exact same qualified name</li>
+	 * </ul>
+	 * </li>
+	 * <li><code>false</code> if none of the above conditions are met</li>
+	 * </ul>
+	 * </p>
+	 * 
+	 * @return <code>true</code> if both objects refer to the same object or
+	 *         have the same qualified name; else <code>false</code>.
+	 * 
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
 	@Override
 	public boolean equals(Object obj) {
 		return (this == obj)
@@ -573,24 +621,167 @@ public class QualifiedName implements Comparable<QualifiedName> {
 						.equals(((QualifiedName) obj).qualifiedName));
 	}
 
+	/**
+	 * Returns a hash code value for the <code>QualifiedName</code> object,
+	 * based upon it´s qualified name.
+	 * 
+	 * <p>
+	 * <b>Pattern:</b> <code>hash = qname.hashCode();</code>
+	 * </p>
+	 * 
+	 * <p>
+	 * <b>Preconditions:</b> none
+	 * </p>
+	 * 
+	 * <p>
+	 * <b>Postconditions:</b> <code>hash</code> is the hash code of
+	 * <code>qname.qualifiedName</code>.<br />
+	 * It is computed as described {@link java.lang.String#hashCode() here}, and
+	 * underlies the same rules as described {@link java.lang.Object#hashCode()
+	 * here}.
+	 * </p>
+	 * 
+	 * @return a hash code value for this <code>QualifiedName</code>.
+	 * 
+	 * @see java.lang.Object#hashCode()
+	 * @see java.lang.String#hashCode()
+	 */
 	@Override
 	public int hashCode() {
 		return qualifiedName.hashCode();
 	}
 
+	/**
+	 * Compares this <code>QualifiedName</code> to another one, by comparing
+	 * their qualified names lexicographically.
+	 * 
+	 * <p>
+	 * <b>Pattern:</b> <code>comp = qname.compareTo(other);</code>
+	 * </p>
+	 * 
+	 * <p>
+	 * <b>Preconditions:</b> none
+	 * </p>
+	 * 
+	 * <p>
+	 * <b>Postconditions:</b>
+	 * <ul>
+	 * <li><code>comp < 0</code>, if this <code>QualifiedName´s</code> qualified
+	 * name is lexicographically less than the <code>other</code>
+	 * <code>QualifiedName´s</code> qualified name</li>
+	 * <li><code>comp == 0</code>, if both <code>QualifiedNames´</code>
+	 * qualified names are lexicographically equal</li>
+	 * <li><code>comp > 0</code>, if this <code>QualifiedName´s</code> qualified
+	 * name is lexicographically less than the <code>other</code>
+	 * <code>QualifiedName´s</code> qualified name</li>
+	 * </ul>
+	 * </p>
+	 * 
+	 * @return the result of the lexicographical comparison
+	 * 
+	 * @see java.lang.Comparable#compareTo(Object)
+	 * @see java.lang.String#compareTo(String)
+	 */
 	@Override
 	public int compareTo(QualifiedName o) {
 		return qualifiedName.compareTo(o.qualifiedName);
 	}
 
+	/**
+	 * Indicates if this <code>QualifiedName</code> is simple. <br />
+	 * An element bearing this <code>QualifiedName</code> is called simple, if
+	 * is not contained in any package. Thus, the package name for this
+	 * <code>QualifiedName</code> is empty.
+	 * 
+	 * <p>
+	 * <b>Pattern:</b> <code>isSimple = qname.isSimple();</code>
+	 * </p>
+	 * 
+	 * <p>
+	 * <b>Preconditions:</b> none
+	 * </p>
+	 * 
+	 * <p>
+	 * <b>Postconditions:</b> <code>isSimple</code> is:
+	 * <ul>
+	 * <li><code>true</code>, if the element with this
+	 * <code>QualifiedName</code> lays in no package</li>
+	 * <li><code>false</code> if the above is not the case</li>
+	 * </ul>
+	 * </p>
+	 * 
+	 * @return <code>true</code> if this <code>QualifiedName</code> is simple;
+	 *         <code>false</code> else
+	 * 
+	 * @see #isQualified()
+	 */
 	public boolean isSimple() {
 		return packageName.length() == 0;
 	}
 
+	/**
+	 * Indicates if this <code>QualifiedName</code> is qualified. <br />
+	 * An element bearing this <code>QualifiedName</code> is called qualified,
+	 * if is contained in a package. Thus, the package name for this
+	 * <code>QualifiedName</code> is <u>not</u> empty.
+	 * 
+	 * <p>
+	 * <b>Pattern:</b> <code>isSimple = qname.isSimple();</code>
+	 * </p>
+	 * 
+	 * <p>
+	 * <b>Preconditions:</b> none
+	 * </p>
+	 * 
+	 * <p>
+	 * <b>Postconditions:</b> <code>isSimple</code> is:
+	 * <ul>
+	 * <li><code>true</code>, if the element with this
+	 * <code>QualifiedName</code> lays in no package</li>
+	 * <li><code>false</code> if the above is not the case</li>
+	 * </ul>
+	 * </p>
+	 * 
+	 * @return <code>true</code> if this <code>QualifiedName</code> is simple;
+	 *         <code>false</code> else
+	 * 
+	 * @see #isSimple()
+	 */
 	public boolean isQualified() {
 		return packageName.length() != 0;
 	}
 
+	/**
+	 * Transforms a given qualified name to a unique name. <br />
+	 * This is achieved by replacing every occurence of the <code>'.'</code>
+	 * character in the given qualified name by <code>'_'</code> characters.
+	 * 
+	 * <p>
+	 * <b>Pattern:</b> <code>un = qname.toUniqueName(qn);</code>
+	 * </p>
+	 * 
+	 * <p>
+	 * <b>Preconditions:</b> none
+	 * </p>
+	 * 
+	 * <p>
+	 * <b>Postconditions:</b> <code>un</code> has one the following content:
+	 * <ul>
+	 * <li>it is <code>empty</code>, if <code>qn</code> is empty</li>
+	 * <li>it equals <code>qn</code>, if the given qualified name contains no
+	 * package information (represented by package delimiting <code>'.'</code>
+	 * characters)
+	 * <li>it equals <code>qn</code> in so far, that the fully qualified package
+	 * name and the simple name are the same stayed the same. The only
+	 * difference is that the package deliminiting <code>'.'</code> character
+	 * was replaced by <code>'_'</code> characters.
+	 * </ul>
+	 * <ul>
+	 * 
+	 * @param qualifiedName
+	 *            the qualified name to convert
+	 * @return the unique name deducted from the given qualified name
+	 */
 	public static String toUniqueName(String qualifiedName) {
 		return qualifiedName.replace(".", "_");
 	}
