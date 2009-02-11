@@ -28,6 +28,7 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.SortedSet;
@@ -40,6 +41,7 @@ import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
 import de.uni_koblenz.jgralab.greql2.exception.EvaluateException;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValueCollection;
+import de.uni_koblenz.jgralab.greql2.jvalue.JValueRecord;
 import de.uni_koblenz.jgralab.schema.AttributedElementClass;
 import de.uni_koblenz.jgralab.schema.EdgeClass;
 
@@ -79,21 +81,29 @@ public class GraphValidator {
 			for (Vertex v : graph.vertices(ec.getFrom())) {
 				int degree = v.getDegree(ec);
 				if (degree < toMin || degree > toMax) {
+					JValueRecord rec = new JValueRecord();
+					rec.add("vertex", new JValue(v));
+					rec.add("degree", new JValue(degree));
+					rec.add("edgeClass", new JValue(ec));
+					rec.add("direction", new JValue("outgoing"));
+					rec.add("min", new JValue(toMin));
+					rec.add("max", new JValue(toMax));
 					brokenConstraints.add(new ConstraintInvalidation(
-							ConstraintType.MULTIPLICITY, v + " has " + degree
-									+ " outgoing " + ec.getQualifiedName()
-									+ " edges, but only " + toMin + " to "
-									+ toMax + " are allowed."));
+							ConstraintType.MULTIPLICITY, rec));
 				}
 			}
 			for (Vertex v : graph.vertices(ec.getTo())) {
 				int degree = v.getDegree(ec);
 				if (degree < fromMin || degree > fromMax) {
+					JValueRecord rec = new JValueRecord();
+					rec.add("vertex", new JValue(v));
+					rec.add("degree", new JValue(degree));
+					rec.add("edgeClass", new JValue(ec));
+					rec.add("direction", new JValue("incoming"));
+					rec.add("min", new JValue(fromMin));
+					rec.add("max", new JValue(fromMax));
 					brokenConstraints.add(new ConstraintInvalidation(
-							ConstraintType.MULTIPLICITY, v + " has " + degree
-									+ " incoming " + ec.getQualifiedName()
-									+ " edges, but only " + fromMin + " to "
-									+ fromMax + " are allowed."));
+							ConstraintType.MULTIPLICITY, rec));
 				}
 			}
 		}
@@ -103,18 +113,18 @@ public class GraphValidator {
 		aecs.addAll(graph.getSchema().getGraphClassesInTopologicalOrder());
 		aecs.addAll(graph.getSchema().getVertexClassesInTopologicalOrder());
 		aecs.addAll(graph.getSchema().getEdgeClassesInTopologicalOrder());
-		for (AttributedElementClass vc : aecs) {
-			for (String greql2Exp : vc.getConstraints()) {
+		for (AttributedElementClass aec : aecs) {
+			for (String greql2Exp : aec.getConstraints()) {
 				GreqlEvaluator eval = new GreqlEvaluator(greql2Exp, graph, null);
 				try {
 					eval.startEvaluation();
 					JValue result = eval.getEvaluationResult();
-					handleGreqlResult(result, greql2Exp, brokenConstraints);
+					brokenConstraints.addAll(handleGreqlResult(result,
+							greql2Exp, aec));
 				} catch (EvaluateException e) {
 					brokenConstraints.add(new ConstraintInvalidation(
 							ConstraintType.INVALID_GREQL_EXPRESSION,
-							"The GReQL query \"" + greql2Exp
-									+ "\" is broken.\n" + e.getMessage()));
+							new JValue(greql2Exp)));
 				}
 			}
 		}
@@ -168,7 +178,7 @@ public class GraphValidator {
 				bw.append("<tr>");
 				bw.append("<td align=\"right\">" + row + "</td>");
 				bw.append("<td>" + ci.getConstraintType() + "</td>");
-				bw.append("<td>" + ci.getMessage() + "</td>");
+				bw.append("<td>" + ci.getInvalidationDescription() + "</td>");
 				bw.append("</tr>");
 				row++;
 			}
@@ -181,26 +191,38 @@ public class GraphValidator {
 		return brokenConstraints;
 	}
 
-	private void handleGreqlResult(JValue result, String greqlExp,
-			Set<ConstraintInvalidation> brokenConstraints) {
+	private Set<ConstraintInvalidation> handleGreqlResult(JValue result,
+			String greqlExp, AttributedElementClass aec) {
+		Set<ConstraintInvalidation> brokenConstraints = new HashSet<ConstraintInvalidation>();
 		if (result.isBoolean()) {
 			if (!result.toBoolean()) {
+				JValueRecord rec = new JValueRecord();
+				rec.add("greqlExpression", new JValue(greqlExp));
+				rec.add("result", new JValue(false));
+				rec.add("attributedElementClass", new JValue(aec));
 				brokenConstraints.add(new ConstraintInvalidation(
-						ConstraintType.GREQL, "\"" + greqlExp + "\" returned "
-								+ result.toBoolean() + "."));
+						ConstraintType.GREQL, rec));
 			}
 		} else if (result.isCollection()) {
 			JValueCollection c = result.toCollection();
 			for (JValue jv : c) {
+				JValueRecord rec = new JValueRecord();
+				rec.add("greqlExpression", new JValue(greqlExp));
+				rec.add("result", jv);
+				rec.add("attributedElementClass", new JValue(aec));
 				brokenConstraints.add(new ConstraintInvalidation(
-						ConstraintType.GREQL, jv.toString()));
+						ConstraintType.GREQL, rec));
 			}
 		} else {
 			// TODO: normally we shouldn't get here, so maybe we should handle
 			// that situation more appropriate...
+			JValueRecord rec = new JValueRecord();
+			rec.add("greqlExpression", new JValue(greqlExp));
+			rec.add("result", result);
+			rec.add("attributedElementClass", new JValue(aec));
 			brokenConstraints.add(new ConstraintInvalidation(
-					ConstraintType.GREQL, "\"" + greqlExp + "\" returned "
-							+ result.toString() + "."));
+					ConstraintType.GREQL, rec));
 		}
+		return brokenConstraints;
 	}
 }
