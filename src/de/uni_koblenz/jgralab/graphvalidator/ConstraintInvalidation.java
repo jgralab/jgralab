@@ -23,7 +23,12 @@
  */
 package de.uni_koblenz.jgralab.graphvalidator;
 
+import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
+import de.uni_koblenz.jgralab.greql2.jvalue.JValueRecord;
+
 /**
+ * TODO: Describe the format of the jvalue member.
+ *
  * @author Tassilo Horn <horn@uni-koblenz.de>
  *
  */
@@ -33,19 +38,12 @@ public class ConstraintInvalidation implements
 		MULTIPLICITY, GREQL, INVALID_GREQL_EXPRESSION
 	}
 
-	private String message;
+	private JValue jvalue;
 	private ConstraintType constraintType;
 
-	public ConstraintInvalidation(ConstraintType type, String message) {
+	public ConstraintInvalidation(ConstraintType type, JValue jvalue) {
 		constraintType = type;
-		this.message = message;
-	}
-
-	/**
-	 * @return the message
-	 */
-	public String getMessage() {
-		return message;
+		this.jvalue = jvalue;
 	}
 
 	/**
@@ -55,9 +53,56 @@ public class ConstraintInvalidation implements
 		return constraintType;
 	}
 
+	public String getInvalidationDescription() {
+		StringBuilder sb = new StringBuilder();
+		switch (constraintType) {
+		case MULTIPLICITY:
+			JValueRecord multRec = jvalue.toJValueRecord();
+			sb.append(multRec.get("vertex"));
+			sb.append(" has ");
+			sb.append(multRec.get("degree"));
+			sb.append(" ");
+			sb.append(multRec.get("direction"));
+			sb.append(" ");
+			sb.append(multRec.get("edgeClass").toAttributedElementClass()
+					.getQualifiedName());
+			sb.append(" edges, but only ");
+			sb.append(multRec.get("min"));
+			sb.append(" to ");
+			sb.append(multRec.get("max"));
+			sb.append(" are allowed.");
+			break;
+		case INVALID_GREQL_EXPRESSION:
+			sb.append("\"");
+			sb.append(jvalue);
+			sb.append("\"");
+			sb.append(" is no valid GReQL expression.");
+			break;
+		case GREQL:
+			JValueRecord rec = jvalue.toJValueRecord();
+			JValue result = rec.get("result");
+			JValue greqlExp = rec.get("greqlExpression");
+			JValue aec = rec.get("attributedElementClass");
+			sb.append("Query result = ");
+			sb.append(result);
+			sb.append(". (Constraint attached to ");
+			sb.append(aec.toAttributedElementClass().getQualifiedName());
+			sb.append(", query = ");
+			sb.append("\"");
+			sb.append(greqlExp);
+			sb.append("\"");
+			sb.append(")");
+			break;
+		}
+		return sb.toString();
+	}
+
 	@Override
 	public String toString() {
-		return "Broken " + constraintType + " constraint: " + message;
+		StringBuilder sb = new StringBuilder();
+		sb.append("Broken " + constraintType + " constraint: ");
+		sb.append(getInvalidationDescription());
+		return sb.toString();
 	}
 
 	@Override
@@ -65,21 +110,21 @@ public class ConstraintInvalidation implements
 		if (o instanceof ConstraintInvalidation) {
 			ConstraintInvalidation other = (ConstraintInvalidation) o;
 			return constraintType == other.constraintType
-					&& message.equals(other.message);
+					&& jvalue.equals(other.jvalue);
 		}
 		return false;
 	}
 
 	@Override
 	public int hashCode() {
-		return constraintType.hashCode() + message.hashCode();
+		return constraintType.hashCode() + jvalue.hashCode();
 	}
 
 	@Override
 	public int compareTo(ConstraintInvalidation ci) {
 		int typeComp = constraintType.compareTo(ci.constraintType);
 		if (typeComp == 0) {
-			return message.compareTo(ci.message);
+			return jvalue.compareTo(ci.jvalue);
 		}
 		return typeComp;
 	}
