@@ -33,9 +33,9 @@ import java.util.Set;
 import org.junit.Before;
 import org.junit.Test;
 
-import de.uni_koblenz.jgralab.graphvalidator.ConstraintInvalidation;
+import de.uni_koblenz.jgralab.graphvalidator.ConstraintViolation;
 import de.uni_koblenz.jgralab.graphvalidator.GraphValidator;
-import de.uni_koblenz.jgralab.graphvalidator.ConstraintInvalidation.ConstraintType;
+import de.uni_koblenz.jgralab.graphvalidator.ConstraintViolation.ConstraintType;
 import de.uni_koblenz.jgralab.schema.QualifiedName;
 import de.uni_koblenz.jgralabtest.schemas.constrained.ConstrainedGraph;
 import de.uni_koblenz.jgralabtest.schemas.constrained.ConstrainedLink;
@@ -44,7 +44,7 @@ import de.uni_koblenz.jgralabtest.schemas.constrained.ConstrainedSchema;
 
 /**
  * @author Tassilo Horn <horn@uni-koblenz.de>
- *
+ * 
  */
 public class GraphValidatorTest {
 	private ConstrainedGraph g = null;
@@ -57,9 +57,9 @@ public class GraphValidatorTest {
 	}
 
 	@Test
-	public void validate1() {
+	public void validate1() throws IOException {
 		g.createConstrainedNode();
-		Set<ConstraintInvalidation> brokenConstraints = validator.validate();
+		Set<ConstraintViolation> brokenConstraints = validator.validate();
 
 		// Only one isolated node, so the following constraints cannot be met:
 		// 1. uid is not > 0. 2. multiplicity is broken twice, cause there has
@@ -81,7 +81,7 @@ public class GraphValidatorTest {
 		g.getSchema().getAttributedElementClass(
 				new QualifiedName("ConstrainedNode")).addConstraint(
 				"fihp.c tmi imp.t");
-		Set<ConstraintInvalidation> brokenConstraints = validator.validate();
+		Set<ConstraintViolation> brokenConstraints = validator.validate();
 
 		// The graph equals the one from validate1(), but now we have one
 		// additional broken constraint, e.g. the constraint is broken itself
@@ -107,7 +107,7 @@ public class GraphValidatorTest {
 		ConstrainedLink l1 = g.createConstrainedLink(n1, n2);
 		l1.setUid(Integer.MAX_VALUE - l1.getId());
 
-		Set<ConstraintInvalidation> brokenConstraints = validator.validate();
+		Set<ConstraintViolation> brokenConstraints = validator.validate();
 
 		// This one is fine, except the broken GReQL query...
 
@@ -127,9 +127,9 @@ public class GraphValidatorTest {
 	}
 
 	private static int getNumberOfBrokenConstraints(ConstraintType type,
-			Set<ConstraintInvalidation> set) {
+			Set<ConstraintViolation> set) {
 		int number = 0;
-		for (ConstraintInvalidation ci : set) {
+		for (ConstraintViolation ci : set) {
 			if (ci.getConstraintType() == type) {
 				number++;
 			}

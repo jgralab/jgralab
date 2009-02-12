@@ -32,8 +32,8 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueRecord;
  * @author Tassilo Horn <horn@uni-koblenz.de>
  *
  */
-public class ConstraintInvalidation implements
-		Comparable<ConstraintInvalidation> {
+public class ConstraintViolation implements
+		Comparable<ConstraintViolation> {
 	public enum ConstraintType {
 		MULTIPLICITY, GREQL, INVALID_GREQL_EXPRESSION
 	}
@@ -41,7 +41,7 @@ public class ConstraintInvalidation implements
 	private JValue jvalue;
 	private ConstraintType constraintType;
 
-	public ConstraintInvalidation(ConstraintType type, JValue jvalue) {
+	public ConstraintViolation(ConstraintType type, JValue jvalue) {
 		constraintType = type;
 		this.jvalue = jvalue;
 	}
@@ -107,8 +107,8 @@ public class ConstraintInvalidation implements
 
 	@Override
 	public boolean equals(Object o) {
-		if (o instanceof ConstraintInvalidation) {
-			ConstraintInvalidation other = (ConstraintInvalidation) o;
+		if (o instanceof ConstraintViolation) {
+			ConstraintViolation other = (ConstraintViolation) o;
 			return constraintType == other.constraintType
 					&& jvalue.equals(other.jvalue);
 		}
@@ -121,7 +121,7 @@ public class ConstraintInvalidation implements
 	}
 
 	@Override
-	public int compareTo(ConstraintInvalidation ci) {
+	public int compareTo(ConstraintViolation ci) {
 		int typeComp = constraintType.compareTo(ci.constraintType);
 		if (typeComp == 0) {
 			return jvalue.compareTo(ci.jvalue);

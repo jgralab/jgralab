@@ -43,7 +43,6 @@ import de.uni_koblenz.jgralab.schema.VertexClass;
 import de.uni_koblenz.jgralab.schema.exception.DuplicateNamedElementException;
 import de.uni_koblenz.jgralab.schema.exception.InheritanceException;
 import de.uni_koblenz.jgralab.schema.exception.ReservedWordException;
-import de.uni_koblenz.jgralab.schema.exception.SchemaException;
 
 public class GraphClassImpl extends AttributedElementClassImpl implements
 		GraphClass {
@@ -73,7 +72,7 @@ public class GraphClassImpl extends AttributedElementClassImpl implements
 	 * due to restrictions in Java, the visibility of this constructor cannot be
 	 * changed without causing serious issues in the program.
 	 * </p>
-	 *
+	 * 
 	 * @param qn
 	 *            a unique name in the <code>Schema</code>
 	 * @param aSchema
@@ -250,22 +249,22 @@ public class GraphClassImpl extends AttributedElementClassImpl implements
 							+ " in the schema " + schema.getQualifiedName());
 		}
 
-		if (!qn.getQualifiedName().equals("Composition")) {
-			if (compositeFrom && fromMax > 1) {
-				throw new SchemaException("Couldn't create CompositionClass "
-						+ qn
-						+ ", because its multiplicity on composite side is ("
-						+ fromMin + ", " + fromMax
-						+ ").  Only (0, 1) and (1,1) are allowed.");
-			}
-			if (!compositeFrom && toMax > 1) {
-				throw new SchemaException("Couldn't create CompositionClass "
-						+ qn
-						+ ", because its multiplicity on composite side is ("
-						+ toMin + ", " + toMax
-						+ ").  Only (0, 1) and (1,1) are allowed.");
-			}
-		}
+		// if (!qn.getQualifiedName().equals("Composition")) {
+		// if (compositeFrom && fromMax > 1) {
+		// throw new SchemaException("Couldn't create CompositionClass "
+		// + qn
+		// + ", because its multiplicity on composite side is ("
+		// + fromMin + ", " + fromMax
+		// + ").  Only (0, 1) and (1,1) are allowed.");
+		// }
+		// if (!compositeFrom && toMax > 1) {
+		// throw new SchemaException("Couldn't create CompositionClass "
+		// + qn
+		// + ", because its multiplicity on composite side is ("
+		// + toMin + ", " + toMax
+		// + ").  Only (0, 1) and (1,1) are allowed.");
+		// }
+		// }
 
 		CompositionClassImpl cc = new CompositionClassImpl(qn, this, from,
 				fromMin, fromMax, fromRoleName, compositeFrom, to, toMin,

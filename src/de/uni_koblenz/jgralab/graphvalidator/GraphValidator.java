@@ -36,7 +36,7 @@ import java.util.TreeSet;
 
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.Vertex;
-import de.uni_koblenz.jgralab.graphvalidator.ConstraintInvalidation.ConstraintType;
+import de.uni_koblenz.jgralab.graphvalidator.ConstraintViolation.ConstraintType;
 import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
 import de.uni_koblenz.jgralab.greql2.exception.EvaluateException;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
@@ -47,7 +47,7 @@ import de.uni_koblenz.jgralab.schema.EdgeClass;
 
 /**
  * @author Tassilo Horn <horn@uni-koblenz.de>
- *
+ * 
  */
 public class GraphValidator {
 
@@ -59,12 +59,12 @@ public class GraphValidator {
 
 	/**
 	 * Validate the graph
-	 *
-	 * @return a set of {@link ConstraintInvalidation} objects, one for each
-	 *         invalidation, sorted by the {@link ConstraintType}
+	 * 
+	 * @return a set of {@link ConstraintViolation} objects, one for each
+	 *         violation, sorted by the {@link ConstraintType}
 	 */
-	public SortedSet<ConstraintInvalidation> validate() {
-		SortedSet<ConstraintInvalidation> brokenConstraints = new TreeSet<ConstraintInvalidation>();
+	public SortedSet<ConstraintViolation> validate() {
+		SortedSet<ConstraintViolation> brokenConstraints = new TreeSet<ConstraintViolation>();
 
 		// Check if all multiplicities are correct
 		for (EdgeClass ec : graph.getSchema()
@@ -88,7 +88,7 @@ public class GraphValidator {
 					rec.add("direction", new JValue("outgoing"));
 					rec.add("min", new JValue(toMin));
 					rec.add("max", new JValue(toMax));
-					brokenConstraints.add(new ConstraintInvalidation(
+					brokenConstraints.add(new ConstraintViolation(
 							ConstraintType.MULTIPLICITY, rec));
 				}
 			}
@@ -102,7 +102,7 @@ public class GraphValidator {
 					rec.add("direction", new JValue("incoming"));
 					rec.add("min", new JValue(fromMin));
 					rec.add("max", new JValue(fromMax));
-					brokenConstraints.add(new ConstraintInvalidation(
+					brokenConstraints.add(new ConstraintViolation(
 							ConstraintType.MULTIPLICITY, rec));
 				}
 			}
@@ -122,7 +122,7 @@ public class GraphValidator {
 					brokenConstraints.addAll(handleGreqlResult(result,
 							greql2Exp, aec));
 				} catch (EvaluateException e) {
-					brokenConstraints.add(new ConstraintInvalidation(
+					brokenConstraints.add(new ConstraintViolation(
 							ConstraintType.INVALID_GREQL_EXPRESSION,
 							new JValue(greql2Exp)));
 				}
@@ -134,17 +134,17 @@ public class GraphValidator {
 	/**
 	 * Do just like {@link GraphValidator#validate()}, but generate a HTML
 	 * report saved to <code>fileName</code>, too.
-	 *
+	 * 
 	 * @param fileName
 	 *            the name of the HTML report file
-	 * @return a set of {@link ConstraintInvalidation} objects, one for each
+	 * @return a set of {@link ConstraintViolation} objects, one for each
 	 *         invalidation
 	 * @throws IOException
 	 *             if the given file cannot be written
 	 */
-	public SortedSet<ConstraintInvalidation> createValidationReport(
-			String fileName) throws IOException {
-		SortedSet<ConstraintInvalidation> brokenConstraints = validate();
+	public SortedSet<ConstraintViolation> createValidationReport(String fileName)
+			throws IOException {
+		SortedSet<ConstraintViolation> brokenConstraints = validate();
 
 		BufferedWriter bw = new BufferedWriter(new FileWriter(
 				new File(fileName)));
@@ -174,7 +174,7 @@ public class GraphValidator {
 			bw.append("<th>Message</th>");
 			bw.append("</tr>");
 			int row = 1;
-			for (ConstraintInvalidation ci : brokenConstraints) {
+			for (ConstraintViolation ci : brokenConstraints) {
 				bw.append("<tr>");
 				bw.append("<td align=\"right\">" + row + "</td>");
 				bw.append("<td>" + ci.getConstraintType() + "</td>");
@@ -191,16 +191,16 @@ public class GraphValidator {
 		return brokenConstraints;
 	}
 
-	private Set<ConstraintInvalidation> handleGreqlResult(JValue result,
+	private Set<ConstraintViolation> handleGreqlResult(JValue result,
 			String greqlExp, AttributedElementClass aec) {
-		Set<ConstraintInvalidation> brokenConstraints = new HashSet<ConstraintInvalidation>();
+		Set<ConstraintViolation> brokenConstraints = new HashSet<ConstraintViolation>();
 		if (result.isBoolean()) {
 			if (!result.toBoolean()) {
 				JValueRecord rec = new JValueRecord();
 				rec.add("greqlExpression", new JValue(greqlExp));
 				rec.add("result", new JValue(false));
 				rec.add("attributedElementClass", new JValue(aec));
-				brokenConstraints.add(new ConstraintInvalidation(
+				brokenConstraints.add(new ConstraintViolation(
 						ConstraintType.GREQL, rec));
 			}
 		} else if (result.isCollection()) {
@@ -210,7 +210,7 @@ public class GraphValidator {
 				rec.add("greqlExpression", new JValue(greqlExp));
 				rec.add("result", jv);
 				rec.add("attributedElementClass", new JValue(aec));
-				brokenConstraints.add(new ConstraintInvalidation(
+				brokenConstraints.add(new ConstraintViolation(
 						ConstraintType.GREQL, rec));
 			}
 		} else {
@@ -220,8 +220,8 @@ public class GraphValidator {
 			rec.add("greqlExpression", new JValue(greqlExp));
 			rec.add("result", result);
 			rec.add("attributedElementClass", new JValue(aec));
-			brokenConstraints.add(new ConstraintInvalidation(
-					ConstraintType.GREQL, rec));
+			brokenConstraints.add(new ConstraintViolation(ConstraintType.GREQL,
+					rec));
 		}
 		return brokenConstraints;
 	}
