@@ -31,6 +31,7 @@ import java.net.URL;
 import java.net.URLDecoder;
 import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.Set;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 import java.util.logging.Level;
@@ -139,6 +140,14 @@ public class Greql2FunctionLibrary {
 	 */
 	public boolean isGreqlFunction(String name) {
 		return availableFunctions.containsKey(name);
+	}
+	
+	
+	/**
+	 * @return a list of all available function names as strings
+	 */
+	public Set<String> getAvailableGreqlFunctions() {
+		return availableFunctions.keySet();
 	}
 
 	/**

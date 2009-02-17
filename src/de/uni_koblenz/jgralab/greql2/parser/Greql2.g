@@ -1476,7 +1476,7 @@ callCount[17]++;
 
 parenthesedExpression returns [Expression result]
 :
-(alternativePathDescription RPAREN) => (alternativePathDescription {$result = $alternativePathDescription.result;} ) 
+(alternativePathDescription RPAREN) => (alternativePathDescription RPAREN {$result = $alternativePathDescription.result;} ) 
 |   (expression RPAREN {$result = $expression.result;} )
 ;
 
