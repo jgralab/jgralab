@@ -89,10 +89,39 @@ public interface AttributedElementClass extends NamedElement,
 	public Package getPackage();
 
 	/**
+	 * Checks if the current element is a direct or inherited superclass of
+	 * another attributed element.
+	 * 
+	 * <p>
+	 * <b>Pattern:</b>
+	 * <code> isSuperClass = attrElement.isSuperClass(other);</code>
+	 * </p>
+	 * 
+	 * <p>
+	 * <b>Preconditions:</b> none
+	 * </p>
+	 * 
+	 * <p>
+	 * <b>Postconditions:</b> <code>isSuperClass</code> is:
+	 * <ul>
+	 * <li><code>true</code> if the <code>other</code> attributed element is a
+	 * registered direct or inherited subclass of this element</li>
+	 * <li><code>false</code> if one of the following occurs:
+	 * <ul>
+	 * <li><code>attrElement</code> and the given <code>other</code> attributed
+	 * element are the same</li>
+	 * <li>the <code>other</code> attributed element is not registered as being
+	 * a direct or indirect subclass of <code>attrElement</code>
+	 * </ul>
+	 * </li>
+	 * </ul>
+	 * </p>
+	 * 
 	 * @param anAttributedElementClass
-	 *            the class to search for
-	 * @return true, if anAttributedElementClass is a direct or indirect
-	 *         superclass of this class
+	 *            the possible subclass of this attributed element
+	 * @return <code>true</code> if <code>anAttributedElementClass</code> is a
+	 *         direct or indirect subclass of this element, otherwise
+	 *         <code>false</code>
 	 */
 	public boolean isSuperClassOf(
 			AttributedElementClass anAttributedElementClass);
@@ -209,13 +238,43 @@ public interface AttributedElementClass extends NamedElement,
 	public boolean isSubClassOf(AttributedElementClass anAttributedElementClass);
 
 	/**
-	 * Tests if the given Class is a subclass of this class or equal to this
-	 * class
+	 * Tests if the current element equals another attributed element or is
+	 * another attributes element´s direct or inherited superclass.
+	 * 
+	 * <p>
+	 * <b>Pattern:</b>
+	 * <code> isSuperClassOrEquals = attrElement.isSuperClassOfOrEquals(other);</code>
+	 * </p>
+	 * 
+	 * <p>
+	 * <b>Preconditions:</b> none
+	 * </p>
+	 * 
+	 * <p>
+	 * <b>Postconditions:</b> <code>isSuperClassOrEquals</code> is:
+	 * <ul>
+	 * <li><code>true</code> if one of the following occurs:
+	 * <ul>
+	 * <li>the <code>other</code> attributed element is a registered direct or
+	 * inherited subclass of this element</li>
+	 * <li><code>attrElement == other</code></li>
+	 * </ul>
+	 * </li>
+	 * <li><code>false</code> if both following conditions hold:
+	 * <ul>
+	 * <li>the <code>other</code> attributed element is not registered as being
+	 * a direct or indirect subclass of <code>attrElement</code></li>
+	 * <li><code>attrElement != other</code></li>
+	 * </ul>
+	 * </li>
+	 * </ul>
+	 * </p>
 	 * 
 	 * @param anAttributedElementClass
-	 *            the class to test
-	 * @return true iff the given AttributedElementClass is a subclass of this
-	 *         class or is this class itself
+	 *            the possible subclass of this attributed element
+	 * @return <code>true</code> if <code>anAttributedElementClass</code> is a
+	 *         direct or indirect subclass of this element or <code>this</code>
+	 *         attributed element itself, otherwise <code>false</code>
 	 */
 	public boolean isSuperClassOfOrEquals(
 			AttributedElementClass anAttributedElementClass);
@@ -599,7 +658,7 @@ public interface AttributedElementClass extends NamedElement,
 	public abstract String toString();
 
 	/**
-	 * States if this attributed element is abstract. Abstract elements can not
+	 * States if this attributed element is abstract. Abstract elements can´t
 	 * have instances.
 	 * 
 	 * <p>
@@ -624,10 +683,23 @@ public interface AttributedElementClass extends NamedElement,
 	public boolean isAbstract();
 
 	/**
-	 * defines if the element may or may not have any instances
+	 * Defines if this attributed element is abstract. Abstract elements can´t
+	 * have instances.
+	 * 
+	 * <p>
+	 * <b>Pattern:</b> <code>attrElement.setAbstract(value);</code>
+	 * </p>
+	 * 
+	 * <p>
+	 * <b>Preconditions:</b> none
+	 * </p>
+	 * 
+	 * <p>
+	 * <b>Postconditions:</b> //TODO
+	 * </p>
 	 * 
 	 * @param isAbstract
-	 *            true or false
+	 *            the new value defining the state of this attributed element
 	 */
 	public void setAbstract(boolean isAbstract);
 
