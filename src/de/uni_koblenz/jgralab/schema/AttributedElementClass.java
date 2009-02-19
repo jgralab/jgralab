@@ -652,8 +652,11 @@ public interface AttributedElementClass extends NamedElement,
 	public int getOwnAttributeCount();
 
 	/**
-	 * this method has to be implemented by each specialised class, it has to
-	 * return a textual representation of that class
+	 * Returns a textual representation of this attributed element.
+	 * 
+	 * <p>
+	 * This method has to be implemented by each specialized class.
+	 * </p>
 	 */
 	public abstract String toString();
 
