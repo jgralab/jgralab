@@ -23,6 +23,9 @@
  */
 package de.uni_koblenz.jgralab.graphvalidator;
 
+import java.util.Set;
+
+import de.uni_koblenz.jgralab.AttributedElement;
 import de.uni_koblenz.jgralab.schema.AttributedElementClass;
 import de.uni_koblenz.jgralab.schema.Constraint;
 
@@ -82,7 +85,21 @@ public class BrokenGReQLConstraintViolation extends ConstraintViolation {
 		sb.append(constraint);
 		sb.append(" attached to ");
 		sb.append(attributedElementClass.getQualifiedName());
-		sb.append(" is broken.");
+		sb.append(" is no valid GReQL expression..");
 		return sb.toString();
+	}
+
+	@Override
+	public String getMessage() {
+		StringBuilder sb = new StringBuilder();
+		sb.append("The query \"");
+		sb.append(brokenPart);
+		sb.append("\" is no valid GReQL expression.");
+		return sb.toString();
+	}
+
+	@Override
+	public Set<AttributedElement> getOffendingElements() {
+		return null;
 	}
 }

@@ -25,7 +25,7 @@ package de.uni_koblenz.jgralab.graphvalidator;
 
 import java.util.Set;
 
-import de.uni_koblenz.jgralab.Vertex;
+import de.uni_koblenz.jgralab.AttributedElement;
 import de.uni_koblenz.jgralab.schema.EdgeClass;
 
 /**
@@ -34,20 +34,19 @@ import de.uni_koblenz.jgralab.schema.EdgeClass;
  */
 public class MultiplicityConstraintViolation extends ConstraintViolation {
 	private String message;
-	private Set<Vertex> offendingVertices;
 
 	public MultiplicityConstraintViolation(EdgeClass ec, String message,
-			Set<Vertex> offendingElems) {
+			Set<AttributedElement> offendingElems) {
 		super(ec);
 		this.message = message;
-		offendingVertices = offendingElems;
+		offendingElements = offendingElems;
 	}
 
 	@Override
 	public int hashCode() {
 		int hash = 23;
 		hash = hash * 571 + message.hashCode();
-		hash = hash * 571 + offendingVertices.hashCode();
+		hash = hash * 571 + offendingElements.hashCode();
 		return hash;
 	}
 
@@ -63,6 +62,7 @@ public class MultiplicityConstraintViolation extends ConstraintViolation {
 	/**
 	 * @return the message
 	 */
+	@Override
 	public String getMessage() {
 		return message;
 	}
@@ -70,8 +70,9 @@ public class MultiplicityConstraintViolation extends ConstraintViolation {
 	/**
 	 * @return the offendingElements
 	 */
-	public Set<Vertex> getOffendingVertices() {
-		return offendingVertices;
+	@Override
+	public Set<AttributedElement> getOffendingElements() {
+		return offendingElements;
 	}
 
 	@Override
@@ -83,7 +84,7 @@ public class MultiplicityConstraintViolation extends ConstraintViolation {
 		sb.append(message);
 		sb.append(" Offending vertices: ");
 		boolean first = true;
-		for (Vertex v : offendingVertices) {
+		for (AttributedElement v : offendingElements) {
 			if (first) {
 				first = false;
 			} else {

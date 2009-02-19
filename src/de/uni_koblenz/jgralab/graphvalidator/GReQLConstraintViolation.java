@@ -23,13 +23,13 @@
  */
 package de.uni_koblenz.jgralab.graphvalidator;
 
-import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
-import de.uni_koblenz.jgralab.greql2.jvalue.JValueSet;
+import java.util.Set;
+
+import de.uni_koblenz.jgralab.AttributedElement;
 import de.uni_koblenz.jgralab.schema.AttributedElementClass;
 import de.uni_koblenz.jgralab.schema.Constraint;
 
 /**
- * TODO: Describe the format of the jvalue member.
  *
  * @author Tassilo Horn <horn@uni-koblenz.de>
  *
@@ -48,14 +48,13 @@ public class GReQLConstraintViolation extends ConstraintViolation {
 	/**
 	 * @return the offendingElements
 	 */
-	public JValueSet getOffendingElements() {
+	@Override
+	public Set<AttributedElement> getOffendingElements() {
 		return offendingElements;
 	}
 
-	private JValueSet offendingElements;
-
 	public GReQLConstraintViolation(AttributedElementClass aec,
-			Constraint constraint, JValueSet offendingElems) {
+			Constraint constraint, Set<AttributedElement> offendingElems) {
 		super(aec);
 		this.constraint = constraint;
 		offendingElements = offendingElems;
@@ -81,22 +80,27 @@ public class GReQLConstraintViolation extends ConstraintViolation {
 	@Override
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
-		sb.append("Broken constraint attached to ");
+		sb.append("The predicate attached to ");
 		sb.append(attributedElementClass.getQualifiedName());
-		sb.append("! ");
+		sb.append(" is not satisfied! ");
 		sb.append(constraint.getMessage());
 		if (offendingElements != null) {
 			sb.append(" Offending elements: ");
 			boolean first = true;
-			for (JValue jv : offendingElements) {
+			for (AttributedElement ae : offendingElements) {
 				if (first) {
 					first = false;
 				} else {
 					sb.append(", ");
 				}
-				sb.append(jv.toAttributedElement());
+				sb.append(ae);
 			}
 		}
 		return sb.toString();
+	}
+
+	@Override
+	public String getMessage() {
+		return constraint.getMessage();
 	}
 }
