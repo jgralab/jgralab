@@ -34,10 +34,13 @@ import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
+import de.uni_koblenz.jgralab.AttributedElement;
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
 import de.uni_koblenz.jgralab.greql2.exception.EvaluateException;
+import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
+import de.uni_koblenz.jgralab.greql2.jvalue.JValueSet;
 import de.uni_koblenz.jgralab.schema.AttributedElementClass;
 import de.uni_koblenz.jgralab.schema.Constraint;
 import de.uni_koblenz.jgralab.schema.EdgeClass;
@@ -60,7 +63,7 @@ public class GraphValidator {
 
 		int toMin = ec.getToMin();
 		int toMax = ec.getToMax();
-		Set<Vertex> badOutgoing = new HashSet<Vertex>();
+		Set<AttributedElement> badOutgoing = new HashSet<AttributedElement>();
 		for (Vertex v : graph.vertices(ec.getFrom())) {
 			int degree = v.getDegree(ec);
 			if (degree < toMin || degree > toMax) {
@@ -78,7 +81,7 @@ public class GraphValidator {
 
 		int fromMin = ec.getFromMin();
 		int fromMax = ec.getFromMax();
-		Set<Vertex> badIncoming = new HashSet<Vertex>();
+		Set<AttributedElement> badIncoming = new HashSet<AttributedElement>();
 		for (Vertex v : graph.vertices(ec.getTo())) {
 			int degree = v.getDegree(ec);
 			if (degree < fromMin || degree > fromMax) {
@@ -97,10 +100,10 @@ public class GraphValidator {
 	}
 
 	/**
-	 * Validate the graph
+	 * Validates the graph.
 	 *
-	 * @return a set of {@link GReQLConstraintViolation} objects, one for each
-	 *         violation, sorted by the {@link ConstraintType}
+	 * @return a set of {@link ConstraintViolation} objects, one for each
+	 *         violation, sorted by their type.
 	 */
 	public SortedSet<ConstraintViolation> validate() {
 		SortedSet<ConstraintViolation> brokenConstraints = new TreeSet<ConstraintViolation>();
@@ -142,9 +145,10 @@ public class GraphValidator {
 						GreqlEvaluator eval2 = new GreqlEvaluator(query, graph,
 								null);
 						eval2.startEvaluation();
+						JValueSet resultSet = eval2.getEvaluationResult()
+								.toJValueSet();
 						brokenConstraints.add(new GReQLConstraintViolation(aec,
-								constraint, eval2.getEvaluationResult()
-										.toJValueSet()));
+								constraint, jvalueSet2Set(resultSet)));
 					} else {
 						brokenConstraints.add(new GReQLConstraintViolation(aec,
 								constraint, null));
@@ -156,6 +160,14 @@ public class GraphValidator {
 			}
 		}
 		return brokenConstraints;
+	}
+
+	private Set<AttributedElement> jvalueSet2Set(JValueSet resultSet) {
+		Set<AttributedElement> set = new HashSet<AttributedElement>();
+		for (JValue jv : resultSet) {
+			set.add(jv.toAttributedElement());
+		}
+		return set;
 	}
 
 	/**
@@ -195,7 +207,38 @@ public class GraphValidator {
 					+ " constraints.</b></p>");
 			// Here goes the table
 			bw.append("<table border=\"1\">");
-			// TODO: complete me!
+			bw.append("<tr>");
+			bw.append("<th>#</th>");
+			bw.append("<th>ConstraintType</th>");
+			bw.append("<th>AttributedElementClass</th>");
+			bw.append("<th>Message</th>");
+			bw.append("<th>Broken Elements</th>");
+			bw.append("</tr>");
+			int no = 1;
+			for (ConstraintViolation ci : brokenConstraints) {
+				bw.append("<tr>");
+				bw.append("<td>");
+				bw.append(new String(new Integer(no++).toString()));
+				bw.append("</td>");
+				bw.append("<td>");
+				bw.append(ci.getClass().getSimpleName());
+				bw.append("</td>");
+				bw.append("<td>");
+				bw.append(ci.getAttributedElementClass().getQualifiedName());
+				bw.append("</td>");
+				bw.append("<td>");
+				bw.append(ci.getMessage());
+				bw.append("</td>");
+				bw.append("<td>");
+				if (ci.getOffendingElements() != null) {
+					for (AttributedElement ae : ci.getOffendingElements()) {
+						bw.append(ae.toString());
+						bw.append("<br/>");
+					}
+				}
+				bw.append("</td>");
+				bw.append("</tr>");
+			}
 			bw.append("</table>");
 		}
 

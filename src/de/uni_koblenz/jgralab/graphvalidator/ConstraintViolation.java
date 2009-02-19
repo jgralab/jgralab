@@ -23,6 +23,9 @@
  */
 package de.uni_koblenz.jgralab.graphvalidator;
 
+import java.util.Set;
+
+import de.uni_koblenz.jgralab.AttributedElement;
 import de.uni_koblenz.jgralab.schema.AttributedElementClass;
 
 /**
@@ -33,6 +36,7 @@ public abstract class ConstraintViolation implements
 		Comparable<ConstraintViolation> {
 
 	protected AttributedElementClass attributedElementClass;
+	protected Set<AttributedElement> offendingElements;
 
 	/**
 	 * @return the attributedElementClass
@@ -62,15 +66,15 @@ public abstract class ConstraintViolation implements
 			if (result != 0) {
 				return result;
 			}
-			if (me.getOffendingVertices() != null) {
-				if (me.getOffendingVertices().equals(
-						other.getOffendingVertices())) {
+			if (me.getOffendingElements() != null) {
+				if (me.getOffendingElements().equals(
+						other.getOffendingElements())) {
 					return 0;
 				}
-				return new Integer(me.getOffendingVertices().hashCode())
-						.compareTo(other.getOffendingVertices().hashCode());
+				return new Integer(me.getOffendingElements().hashCode())
+						.compareTo(other.getOffendingElements().hashCode());
 			}
-			if (other.getOffendingVertices() == null) {
+			if (other.getOffendingElements() == null) {
 				return 0;
 			}
 			return -1;
@@ -114,8 +118,8 @@ public abstract class ConstraintViolation implements
 						other.getOffendingElements())) {
 					return 0;
 				}
-				return me.getOffendingElements().compareTo(
-						other.getOffendingElements());
+				return new Integer(me.getOffendingElements().hashCode())
+						.compareTo(other.getOffendingElements().hashCode());
 			}
 			if (other.getOffendingElements() == null) {
 				return 0;
@@ -137,4 +141,8 @@ public abstract class ConstraintViolation implements
 		}
 		return -1;
 	}
+
+	public abstract String getMessage();
+
+	public abstract Set<AttributedElement> getOffendingElements();
 }
