@@ -23,18 +23,26 @@
  */
 package de.uni_koblenz.jgralabtest.graphvalidatortest;
 
+import static org.junit.Assert.assertEquals;
+
 import java.io.IOException;
 import java.util.Set;
+import java.util.logging.Level;
 
 import org.junit.Before;
 import org.junit.Test;
 
+import de.uni_koblenz.jgralab.JGraLab;
+import de.uni_koblenz.jgralab.graphvalidator.BrokenGReQLConstraintViolation;
 import de.uni_koblenz.jgralab.graphvalidator.ConstraintViolation;
+import de.uni_koblenz.jgralab.graphvalidator.GReQLConstraintViolation;
 import de.uni_koblenz.jgralab.graphvalidator.GraphValidator;
+import de.uni_koblenz.jgralab.graphvalidator.MultiplicityConstraintViolation;
 import de.uni_koblenz.jgralabtest.schemas.constrained.ConstrainedGraph;
 import de.uni_koblenz.jgralabtest.schemas.constrained.ConstrainedLink;
 import de.uni_koblenz.jgralabtest.schemas.constrained.ConstrainedNode;
 import de.uni_koblenz.jgralabtest.schemas.constrained.ConstrainedSchema;
+import de.uni_koblenz.jgralabtest.schemas.constrained.OtherConstrainedNode;
 
 /**
  * @author Tassilo Horn <horn@uni-koblenz.de>
@@ -43,6 +51,10 @@ import de.uni_koblenz.jgralabtest.schemas.constrained.ConstrainedSchema;
 public class GraphValidatorTest {
 	private ConstrainedGraph g = null;
 	private GraphValidator validator = null;
+
+	{
+		JGraLab.setLogLevel(Level.OFF);
+	}
 
 	@Before
 	public void setup() {
@@ -60,7 +72,15 @@ public class GraphValidatorTest {
 		// to be at least one ConstrainedLink between ConstrainedNodes. 3. The
 		// name attribute is not set.
 
-		// TODO: fixme
+		// each ConstrainedNode must have (1,*) in and outgoing ConstrainedLink
+		assertEquals(2, getNumberOfBrokenConstraints(
+				MultiplicityConstraintViolation.class, brokenConstraints));
+		// uid should be > 0 and name has to be set
+		assertEquals(2, getNumberOfBrokenConstraints(
+				GReQLConstraintViolation.class, brokenConstraints));
+		// The graph class has to invalid constraints
+		assertEquals(2, getNumberOfBrokenConstraints(
+				BrokenGReQLConstraintViolation.class, brokenConstraints));
 	}
 
 	@Test
@@ -77,8 +97,24 @@ public class GraphValidatorTest {
 		Set<ConstraintViolation> brokenConstraints = validator.validate();
 
 		// This one is fine, except the broken GReQL query...
+		assertEquals(2, getNumberOfBrokenConstraints(
+				BrokenGReQLConstraintViolation.class, brokenConstraints));
+	}
 
-		// TODO: fixme
+	@Test
+	public void validate3() {
+		OtherConstrainedNode n1 = g.createOtherConstrainedNode();
+		n1.setName("n1");
+		n1.setUid(n1.getId());
+		// This should be between 0 and 20.
+		n1.setNiceness(-17);
+
+		Set<ConstraintViolation> brokenConstraints = validator
+				.validateConstraints(n1.getAttributedElementClass());
+
+		// This one is fine, except that niceness should be between 0 and 20.
+		assertEquals(1, getNumberOfBrokenConstraints(
+				GReQLConstraintViolation.class, brokenConstraints));
 	}
 
 	private static int getNumberOfBrokenConstraints(
@@ -86,7 +122,7 @@ public class GraphValidatorTest {
 			Set<ConstraintViolation> set) {
 		int number = 0;
 		for (ConstraintViolation ci : set) {
-			if (ci.getClass().isInstance(type)) {
+			if (type.isInstance(ci)) {
 				number++;
 			}
 		}

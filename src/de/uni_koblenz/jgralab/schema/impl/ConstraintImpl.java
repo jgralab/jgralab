@@ -23,6 +23,7 @@
  */
 package de.uni_koblenz.jgralab.schema.impl;
 
+import de.uni_koblenz.jgralab.codegenerator.CodeGenerator;
 import de.uni_koblenz.jgralab.schema.Constraint;
 
 /**
@@ -93,5 +94,18 @@ public class ConstraintImpl implements Constraint {
 			return result;
 		}
 		return offendingElements.compareTo(o.getOffendingElements());
+	}
+
+	@Override
+	public String toString() {
+		StringBuilder sb = new StringBuilder();
+		sb.append("{Constraint: message = \"");
+		sb.append(CodeGenerator.stringQuote(message));
+		sb.append("\", predicate = \"");
+		sb.append(CodeGenerator.stringQuote(predicate));
+		sb.append("\", offendingElements = ");
+		sb.append(offendingElements);
+		sb.append("}");
+		return sb.toString();
 	}
 }

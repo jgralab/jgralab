@@ -82,16 +82,15 @@ public class GReQLConstraintViolation extends ConstraintViolation {
 	@Override
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
-		sb.append("Broken GReQL constraint: ");
 		sb.append(constraint.getMessage());
 		if (offendingElements != null) {
 			sb.append(" Offending elements: ");
 			boolean first = true;
 			for (JValue jv : offendingElements) {
-				if (!first) {
-					sb.append(", ");
-				} else {
+				if (first) {
 					first = false;
+				} else {
+					sb.append(", ");
 				}
 				sb.append(jv.toAttributedElement());
 			}

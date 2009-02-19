@@ -70,8 +70,10 @@ public class GraphValidator {
 		if (!badOutgoing.isEmpty()) {
 			brokenConstraints.add(new MultiplicityConstraintViolation(
 					"These vertices have an invalid number of outgoing "
-							+ ec.getUniqueName() + " edges (allowed are "
-							+ toMin + " to " + toMax + ").", badOutgoing));
+							+ ec.getUniqueName() + " edges, allowed are ("
+							+ toMin + ", "
+							+ ((toMax == Integer.MAX_VALUE) ? "*" : toMax)
+							+ ").", badOutgoing));
 		}
 
 		int fromMin = ec.getFromMin();
@@ -86,8 +88,10 @@ public class GraphValidator {
 		if (!badIncoming.isEmpty()) {
 			brokenConstraints.add(new MultiplicityConstraintViolation(
 					"These vertices have an invalid number of incoming "
-							+ ec.getUniqueName() + " edges (allowed are "
-							+ fromMin + " to " + fromMax + ").", badIncoming));
+							+ ec.getUniqueName() + " edges, allowed are ("
+							+ fromMin + ", "
+							+ ((fromMax == Integer.MAX_VALUE) ? "*" : fromMax)
+							+ ").", badIncoming));
 		}
 		return brokenConstraints;
 	}
@@ -124,7 +128,7 @@ public class GraphValidator {
 		return brokenConstraints;
 	}
 
-	private SortedSet<ConstraintViolation> validateConstraints(
+	public SortedSet<ConstraintViolation> validateConstraints(
 			AttributedElementClass aec) {
 		SortedSet<ConstraintViolation> brokenConstraints = new TreeSet<ConstraintViolation>();
 		for (Constraint constraint : aec.getConstraints()) {
@@ -146,7 +150,6 @@ public class GraphValidator {
 								constraint, null));
 					}
 				}
-				brokenConstraints.add(null);
 			} catch (EvaluateException e) {
 				brokenConstraints.add(new BrokenGReQLConstraintViolation(
 						constraint, query));

@@ -39,15 +39,15 @@ public abstract class ConstraintViolation implements
 			if (result != 0) {
 				return result;
 			}
-			if (me.getOffendingElements() != null) {
-				if (me.getOffendingElements().equals(
-						other.getOffendingElements())) {
+			if (me.getOffendingVertices() != null) {
+				if (me.getOffendingVertices().equals(
+						other.getOffendingVertices())) {
 					return 0;
 				}
-				return new Integer(me.getOffendingElements().hashCode())
-						.compareTo(other.getOffendingElements().hashCode());
+				return new Integer(me.getOffendingVertices().hashCode())
+						.compareTo(other.getOffendingVertices().hashCode());
 			}
-			if (other.getOffendingElements() == null) {
+			if (other.getOffendingVertices() == null) {
 				return 0;
 			}
 			return -1;

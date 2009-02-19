@@ -707,7 +707,7 @@ public class GreqlEvaluator {
 		try {
 			parser.greqlExpression();
 		} catch (Exception e) {
-			e.printStackTrace();
+			// e.printStackTrace();
 			throw new EvaluateException("Error parsing query \"" + queryString
 					+ "\".", e);
 		}
