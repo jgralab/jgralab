@@ -68,7 +68,7 @@ public class GraphValidator {
 			}
 		}
 		if (!badOutgoing.isEmpty()) {
-			brokenConstraints.add(new MultiplicityConstraintViolation(
+			brokenConstraints.add(new MultiplicityConstraintViolation(ec,
 					"These vertices have an invalid number of outgoing "
 							+ ec.getUniqueName() + " edges, allowed are ("
 							+ toMin + ", "
@@ -86,7 +86,7 @@ public class GraphValidator {
 			}
 		}
 		if (!badIncoming.isEmpty()) {
-			brokenConstraints.add(new MultiplicityConstraintViolation(
+			brokenConstraints.add(new MultiplicityConstraintViolation(ec,
 					"These vertices have an invalid number of incoming "
 							+ ec.getUniqueName() + " edges, allowed are ("
 							+ fromMin + ", "
@@ -142,16 +142,16 @@ public class GraphValidator {
 						GreqlEvaluator eval2 = new GreqlEvaluator(query, graph,
 								null);
 						eval2.startEvaluation();
-						brokenConstraints.add(new GReQLConstraintViolation(
+						brokenConstraints.add(new GReQLConstraintViolation(aec,
 								constraint, eval2.getEvaluationResult()
 										.toJValueSet()));
 					} else {
-						brokenConstraints.add(new GReQLConstraintViolation(
+						brokenConstraints.add(new GReQLConstraintViolation(aec,
 								constraint, null));
 					}
 				}
 			} catch (EvaluateException e) {
-				brokenConstraints.add(new BrokenGReQLConstraintViolation(
+				brokenConstraints.add(new BrokenGReQLConstraintViolation(aec,
 						constraint, query));
 			}
 		}

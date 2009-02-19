@@ -23,6 +23,7 @@
  */
 package de.uni_koblenz.jgralab.graphvalidator;
 
+import de.uni_koblenz.jgralab.schema.AttributedElementClass;
 import de.uni_koblenz.jgralab.schema.Constraint;
 
 /**
@@ -34,8 +35,9 @@ public class BrokenGReQLConstraintViolation extends ConstraintViolation {
 	private Constraint constraint;
 	private String brokenPart;
 
-	public BrokenGReQLConstraintViolation(Constraint constraint,
-			String brokenPart) {
+	public BrokenGReQLConstraintViolation(AttributedElementClass aec,
+			Constraint constraint, String brokenPart) {
+		super(aec);
 		this.constraint = constraint;
 		this.brokenPart = brokenPart;
 	}
@@ -78,6 +80,8 @@ public class BrokenGReQLConstraintViolation extends ConstraintViolation {
 		sb.append(brokenPart);
 		sb.append("\" in ");
 		sb.append(constraint);
+		sb.append(" attached to ");
+		sb.append(attributedElementClass.getQualifiedName());
 		sb.append(" is broken.");
 		return sb.toString();
 	}

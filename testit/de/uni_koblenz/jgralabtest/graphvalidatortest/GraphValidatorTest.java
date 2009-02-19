@@ -67,10 +67,7 @@ public class GraphValidatorTest {
 		g.createConstrainedNode();
 		Set<ConstraintViolation> brokenConstraints = validator.validate();
 
-		// Only one isolated node, so the following constraints cannot be met:
-		// 1. uid is not > 0. 2. multiplicity is broken twice, cause there has
-		// to be at least one ConstrainedLink between ConstrainedNodes. 3. The
-		// name attribute is not set.
+		printBrokenConstraints(brokenConstraints);
 
 		// each ConstrainedNode must have (1,*) in and outgoing ConstrainedLink
 		assertEquals(2, getNumberOfBrokenConstraints(
@@ -96,6 +93,7 @@ public class GraphValidatorTest {
 
 		Set<ConstraintViolation> brokenConstraints = validator.validate();
 
+		printBrokenConstraints(brokenConstraints);
 		// This one is fine, except the broken GReQL query...
 		assertEquals(2, getNumberOfBrokenConstraints(
 				BrokenGReQLConstraintViolation.class, brokenConstraints));
@@ -112,6 +110,7 @@ public class GraphValidatorTest {
 		Set<ConstraintViolation> brokenConstraints = validator
 				.validateConstraints(n1.getAttributedElementClass());
 
+		printBrokenConstraints(brokenConstraints);
 		// This one is fine, except that niceness should be between 0 and 20.
 		assertEquals(1, getNumberOfBrokenConstraints(
 				GReQLConstraintViolation.class, brokenConstraints));
@@ -127,5 +126,13 @@ public class GraphValidatorTest {
 			}
 		}
 		return number;
+	}
+
+	private static void printBrokenConstraints(Set<ConstraintViolation> set) {
+		System.out.println(">>>------------------------------");
+		for (ConstraintViolation ci : set) {
+			System.out.println(ci);
+		}
+		System.out.println("<<<------------------------------");
 	}
 }
