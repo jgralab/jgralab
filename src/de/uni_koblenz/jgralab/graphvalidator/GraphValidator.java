@@ -36,18 +36,15 @@ import java.util.TreeSet;
 
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.Vertex;
-import de.uni_koblenz.jgralab.graphvalidator.ConstraintViolation.ConstraintType;
 import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
 import de.uni_koblenz.jgralab.greql2.exception.EvaluateException;
-import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
-import de.uni_koblenz.jgralab.greql2.jvalue.JValueCollection;
-import de.uni_koblenz.jgralab.greql2.jvalue.JValueRecord;
 import de.uni_koblenz.jgralab.schema.AttributedElementClass;
+import de.uni_koblenz.jgralab.schema.Constraint;
 import de.uni_koblenz.jgralab.schema.EdgeClass;
 
 /**
  * @author Tassilo Horn <horn@uni-koblenz.de>
- * 
+ *
  */
 public class GraphValidator {
 
@@ -57,10 +54,48 @@ public class GraphValidator {
 		this.graph = graph;
 	}
 
+	public SortedSet<MultiplicityConstraintViolation> validateMultiplicities(
+			EdgeClass ec) {
+		SortedSet<MultiplicityConstraintViolation> brokenConstraints = new TreeSet<MultiplicityConstraintViolation>();
+
+		int toMin = ec.getToMin();
+		int toMax = ec.getToMax();
+		Set<Vertex> badOutgoing = new HashSet<Vertex>();
+		for (Vertex v : graph.vertices(ec.getFrom())) {
+			int degree = v.getDegree(ec);
+			if (degree < toMin || degree > toMax) {
+				badOutgoing.add(v);
+			}
+		}
+		if (!badOutgoing.isEmpty()) {
+			brokenConstraints.add(new MultiplicityConstraintViolation(
+					"These vertices have an invalid number of outgoing "
+							+ ec.getUniqueName() + " edges (allowed are "
+							+ toMin + " to " + toMax + ").", badOutgoing));
+		}
+
+		int fromMin = ec.getFromMin();
+		int fromMax = ec.getFromMax();
+		Set<Vertex> badIncoming = new HashSet<Vertex>();
+		for (Vertex v : graph.vertices(ec.getTo())) {
+			int degree = v.getDegree(ec);
+			if (degree < fromMin || degree > fromMax) {
+				badIncoming.add(v);
+			}
+		}
+		if (!badIncoming.isEmpty()) {
+			brokenConstraints.add(new MultiplicityConstraintViolation(
+					"These vertices have an invalid number of incoming "
+							+ ec.getUniqueName() + " edges (allowed are "
+							+ fromMin + " to " + fromMax + ").", badIncoming));
+		}
+		return brokenConstraints;
+	}
+
 	/**
 	 * Validate the graph
-	 * 
-	 * @return a set of {@link ConstraintViolation} objects, one for each
+	 *
+	 * @return a set of {@link GReQLConstraintViolation} objects, one for each
 	 *         violation, sorted by the {@link ConstraintType}
 	 */
 	public SortedSet<ConstraintViolation> validate() {
@@ -72,40 +107,7 @@ public class GraphValidator {
 			if (ec.isInternal()) {
 				continue;
 			}
-
-			int fromMin = ec.getFromMin();
-			int fromMax = ec.getFromMax();
-			int toMin = ec.getToMin();
-			int toMax = ec.getToMax();
-
-			for (Vertex v : graph.vertices(ec.getFrom())) {
-				int degree = v.getDegree(ec);
-				if (degree < toMin || degree > toMax) {
-					JValueRecord rec = new JValueRecord();
-					rec.add("vertex", new JValue(v));
-					rec.add("degree", new JValue(degree));
-					rec.add("edgeClass", new JValue(ec));
-					rec.add("direction", new JValue("outgoing"));
-					rec.add("min", new JValue(toMin));
-					rec.add("max", new JValue(toMax));
-					brokenConstraints.add(new ConstraintViolation(
-							ConstraintType.MULTIPLICITY, rec));
-				}
-			}
-			for (Vertex v : graph.vertices(ec.getTo())) {
-				int degree = v.getDegree(ec);
-				if (degree < fromMin || degree > fromMax) {
-					JValueRecord rec = new JValueRecord();
-					rec.add("vertex", new JValue(v));
-					rec.add("degree", new JValue(degree));
-					rec.add("edgeClass", new JValue(ec));
-					rec.add("direction", new JValue("incoming"));
-					rec.add("min", new JValue(fromMin));
-					rec.add("max", new JValue(fromMax));
-					brokenConstraints.add(new ConstraintViolation(
-							ConstraintType.MULTIPLICITY, rec));
-				}
-			}
+			brokenConstraints.addAll(validateMultiplicities(ec));
 		}
 
 		// check if all greql constraints are met
@@ -114,18 +116,40 @@ public class GraphValidator {
 		aecs.addAll(graph.getSchema().getVertexClassesInTopologicalOrder());
 		aecs.addAll(graph.getSchema().getEdgeClassesInTopologicalOrder());
 		for (AttributedElementClass aec : aecs) {
-			for (String greql2Exp : aec.getConstraints()) {
-				GreqlEvaluator eval = new GreqlEvaluator(greql2Exp, graph, null);
-				try {
-					eval.startEvaluation();
-					JValue result = eval.getEvaluationResult();
-					brokenConstraints.addAll(handleGreqlResult(result,
-							greql2Exp, aec));
-				} catch (EvaluateException e) {
-					brokenConstraints.add(new ConstraintViolation(
-							ConstraintType.INVALID_GREQL_EXPRESSION,
-							new JValue(greql2Exp)));
+			if (aec.isInternal()) {
+				continue;
+			}
+			brokenConstraints.addAll(validateConstraints(aec));
+		}
+		return brokenConstraints;
+	}
+
+	private SortedSet<ConstraintViolation> validateConstraints(
+			AttributedElementClass aec) {
+		SortedSet<ConstraintViolation> brokenConstraints = new TreeSet<ConstraintViolation>();
+		for (Constraint constraint : aec.getConstraints()) {
+			String query = constraint.getPredicate();
+			GreqlEvaluator eval = new GreqlEvaluator(query, graph, null);
+			try {
+				eval.startEvaluation();
+				if (!eval.getEvaluationResult().toBoolean()) {
+					if (constraint.getOffendingElements() != null) {
+						query = constraint.getOffendingElements();
+						GreqlEvaluator eval2 = new GreqlEvaluator(query, graph,
+								null);
+						eval2.startEvaluation();
+						brokenConstraints.add(new GReQLConstraintViolation(
+								constraint, eval2.getEvaluationResult()
+										.toJValueSet()));
+					} else {
+						brokenConstraints.add(new GReQLConstraintViolation(
+								constraint, null));
+					}
 				}
+				brokenConstraints.add(null);
+			} catch (EvaluateException e) {
+				brokenConstraints.add(new BrokenGReQLConstraintViolation(
+						constraint, query));
 			}
 		}
 		return brokenConstraints;
@@ -134,10 +158,10 @@ public class GraphValidator {
 	/**
 	 * Do just like {@link GraphValidator#validate()}, but generate a HTML
 	 * report saved to <code>fileName</code>, too.
-	 * 
+	 *
 	 * @param fileName
 	 *            the name of the HTML report file
-	 * @return a set of {@link ConstraintViolation} objects, one for each
+	 * @return a set of {@link GReQLConstraintViolation} objects, one for each
 	 *         invalidation
 	 * @throws IOException
 	 *             if the given file cannot be written
@@ -168,61 +192,13 @@ public class GraphValidator {
 					+ " constraints.</b></p>");
 			// Here goes the table
 			bw.append("<table border=\"1\">");
-			bw.append("<tr>");
-			bw.append("<th>#</th>");
-			bw.append("<th>Constraint Type</th>");
-			bw.append("<th>Message</th>");
-			bw.append("</tr>");
-			int row = 1;
-			for (ConstraintViolation ci : brokenConstraints) {
-				bw.append("<tr>");
-				bw.append("<td align=\"right\">" + row + "</td>");
-				bw.append("<td>" + ci.getConstraintType() + "</td>");
-				bw.append("<td>" + ci.getInvalidationDescription() + "</td>");
-				bw.append("</tr>");
-				row++;
-			}
+			// TODO: complete me!
 			bw.append("</table>");
 		}
 
 		bw.append("</body></html>");
 		bw.flush();
 		bw.close();
-		return brokenConstraints;
-	}
-
-	private Set<ConstraintViolation> handleGreqlResult(JValue result,
-			String greqlExp, AttributedElementClass aec) {
-		Set<ConstraintViolation> brokenConstraints = new HashSet<ConstraintViolation>();
-		if (result.isBoolean()) {
-			if (!result.toBoolean()) {
-				JValueRecord rec = new JValueRecord();
-				rec.add("greqlExpression", new JValue(greqlExp));
-				rec.add("result", new JValue(false));
-				rec.add("attributedElementClass", new JValue(aec));
-				brokenConstraints.add(new ConstraintViolation(
-						ConstraintType.GREQL, rec));
-			}
-		} else if (result.isCollection()) {
-			JValueCollection c = result.toCollection();
-			for (JValue jv : c) {
-				JValueRecord rec = new JValueRecord();
-				rec.add("greqlExpression", new JValue(greqlExp));
-				rec.add("result", jv);
-				rec.add("attributedElementClass", new JValue(aec));
-				brokenConstraints.add(new ConstraintViolation(
-						ConstraintType.GREQL, rec));
-			}
-		} else {
-			// TODO: normally we shouldn't get here, so maybe we should handle
-			// that situation more appropriate...
-			JValueRecord rec = new JValueRecord();
-			rec.add("greqlExpression", new JValue(greqlExp));
-			rec.add("result", result);
-			rec.add("attributedElementClass", new JValue(aec));
-			brokenConstraints.add(new ConstraintViolation(ConstraintType.GREQL,
-					rec));
-		}
 		return brokenConstraints;
 	}
 }

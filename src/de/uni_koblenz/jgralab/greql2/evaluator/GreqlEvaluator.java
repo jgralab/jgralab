@@ -129,9 +129,8 @@ public class GreqlEvaluator {
 	protected GraphMarker<VertexEvaluator> vertexEvalGraphMarker;
 
 	/**
-	 * The map of SimpleName to Type
-	 * of types that is known in the evaluator by import statements
-	 * in the greql query
+	 * The map of SimpleName to Type of types that is known in the evaluator by
+	 * import statements in the greql query
 	 */
 	protected Map<String, AttributedElementClass> knownTypes;
 
@@ -478,8 +477,8 @@ public class GreqlEvaluator {
 				evaluationLoggerDirectory = getTmpDirectory();
 			}
 			try {
-				evaluationLogger = new Level2Logger(evaluationLoggerDirectory, datagraph,
-						evaluationLoggingType);
+				evaluationLogger = new Level2Logger(evaluationLoggerDirectory,
+						datagraph, evaluationLoggingType);
 			} catch (InterruptedException e) {
 				// TODO (heimdall) Auto-generated catch block
 				e.printStackTrace();
@@ -548,7 +547,6 @@ public class GreqlEvaluator {
 		this.variableMap = variables;
 		this.progressFunction = progressFunction;
 	}
-
 
 	public void addKnownType(AttributedElementClass knownType) {
 		knownTypes.put(knownType.getSimpleName(), knownType);

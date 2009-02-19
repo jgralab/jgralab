@@ -1,5 +1,5 @@
 Schema de.uni_koblenz.jgralabtest.schemas.constrained.ConstrainedSchema;
-GraphClass ConstrainedGraph;
-VertexClass ConstrainedNode { name : String, uid : Integer } ["from n : V{ConstrainedNode} with n.name = null reportSet n, \"Attribute name is not set.\" end", "forall n : V{ConstrainedNode} @ n.uid > 0"];
-VertexClass OtherConstrainedNode : ConstrainedNode {niceness : Integer} ["from n : V{OtherConstrainedNode} with n.niceness < 0 or n.niceness > 20 reportSet n, \"Attribute niceness is \" + n.niceness + \" but only values between 0 and 20 are allowed.\" end"];
-EdgeClass ConstrainedLink from ConstrainedNode (1,*) to ConstrainedNode (1,*) {uid : Integer} ["from l : E{ConstrainedLink} with l.uid <= 0 reportSet l, \"Attribute uid is \" + l.uid + \" but should be > 0.\" end"];
+GraphClass ConstrainedGraph ["I'm a broken GReQL predicate constraint." "brokenPredicate"] ["I'm a broken GReQL offendingElements constraint." "false" "brokenOffendingElements"];
+VertexClass ConstrainedNode { name : String, uid : Integer } ["Attribute name must be set." "forall n : V{ConstrainedNode} @ n.name <> null" "from n : V{ConstrainedNode} with n.name = null reportSet n end"] [ "Attribute uid must be positive." "forall n : V{ConstrainedNode} @ n.uid > 0"];
+VertexClass OtherConstrainedNode : ConstrainedNode {niceness : Integer} ["Attribute niceness has to be between 0 and 20." "forall n : V{OtherConstrainedNode} @ n.niceness >= 0 and n.niceness <= 20"];
+EdgeClass ConstrainedLink from ConstrainedNode (1,*) to ConstrainedNode (1,*) {uid : Integer} ["Attribute uid has to be positive." "forall l : E{ConstrainedLink} @ l.uid > 0" "from l : E{ConstrainedLink} with l.uid <= 0 reportSet l end"];
