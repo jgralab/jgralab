@@ -53,7 +53,7 @@ public class ConstraintImpl implements Constraint {
 	}
 
 	@Override
-	public String getOffendingElements() {
+	public String getOffendingElementsQuery() {
 		return offendingElements;
 	}
 
@@ -93,7 +93,7 @@ public class ConstraintImpl implements Constraint {
 		if (result != 0) {
 			return result;
 		}
-		return offendingElements.compareTo(o.getOffendingElements());
+		return offendingElements.compareTo(o.getOffendingElementsQuery());
 	}
 
 	@Override

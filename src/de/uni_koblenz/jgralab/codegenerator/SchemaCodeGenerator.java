@@ -436,10 +436,10 @@ public class SchemaCodeGenerator extends CodeGenerator {
 									+ CodeGenerator.stringQuote(constraint
 											.getPredicate())
 									+ "\", "
-									+ ((constraint.getOffendingElements() != null) ? "\""
+									+ ((constraint.getOffendingElementsQuery() != null) ? "\""
 											+ CodeGenerator
 													.stringQuote(constraint
-															.getOffendingElements())
+															.getOffendingElementsQuery())
 											+ "\""
 											: "null") + "));"));
 		}

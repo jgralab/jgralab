@@ -27,10 +27,17 @@ import java.util.Set;
 
 import de.uni_koblenz.jgralab.AttributedElement;
 import de.uni_koblenz.jgralab.schema.AttributedElementClass;
+import de.uni_koblenz.jgralab.schema.Constraint;
 
 /**
- * @author Tassilo Horn <horn@uni-koblenz.de>
+ * Describes a violation of some constraint, either an explicit
+ * {@link Constraint} or a multiplicity constraint.
  *
+ * @see MultiplicityConstraintViolation
+ * @see GReQLConstraintViolation
+ * @see BrokenGReQLConstraintViolation
+ *
+ * @author Tassilo Horn <horn@uni-koblenz.de>
  */
 public abstract class ConstraintViolation implements
 		Comparable<ConstraintViolation> {
@@ -39,7 +46,8 @@ public abstract class ConstraintViolation implements
 	protected Set<AttributedElement> offendingElements;
 
 	/**
-	 * @return the attributedElementClass
+	 * @return the {@link AttributedElementClass} the violated constraint is
+	 *         attached to
 	 */
 	public AttributedElementClass getAttributedElementClass() {
 		return attributedElementClass;
@@ -142,7 +150,13 @@ public abstract class ConstraintViolation implements
 		return -1;
 	}
 
+	/**
+	 * @return a message which describes the violated constraint
+	 */
 	public abstract String getMessage();
 
+	/**
+	 * @return a set of {@link AttributedElement}s which violate the constraint
+	 */
 	public abstract Set<AttributedElement> getOffendingElements();
 }

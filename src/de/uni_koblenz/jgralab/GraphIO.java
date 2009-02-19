@@ -394,8 +394,8 @@ public class GraphIO {
 			write("[");
 			writeUtfString(c.getMessage());
 			writeUtfString(c.getPredicate());
-			if (c.getOffendingElements() != null) {
-				writeUtfString(c.getOffendingElements());
+			if (c.getOffendingElementsQuery() != null) {
+				writeUtfString(c.getOffendingElementsQuery());
 			}
 			write("]");
 		}

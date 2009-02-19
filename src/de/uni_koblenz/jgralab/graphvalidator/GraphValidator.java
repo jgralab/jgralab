@@ -44,19 +44,37 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueSet;
 import de.uni_koblenz.jgralab.schema.AttributedElementClass;
 import de.uni_koblenz.jgralab.schema.Constraint;
 import de.uni_koblenz.jgralab.schema.EdgeClass;
+import de.uni_koblenz.jgralab.schema.Schema;
 
 /**
- * @author Tassilo Horn <horn@uni-koblenz.de>
+ * A <code>GraphValidator</code> can be used to check if all {@link Constraint}s
+ * specified in the {@link Schema} of a given {@link Graph} are fulfilled.
  *
+ * @author Tassilo Horn <horn@uni-koblenz.de>
  */
 public class GraphValidator {
 
 	private Graph graph;
 
+	/**
+	 * @param graph
+	 *            the {@link Graph} to validate
+	 */
 	public GraphValidator(Graph graph) {
 		this.graph = graph;
 	}
 
+	/**
+	 * Checks if all multiplicities specified for the {@link EdgeClass}
+	 * <code>ec</code> are fulfilled.
+	 *
+	 *
+	 * @param ec
+	 *            an {@link EdgeClass}
+	 * @return a set of {@link MultiplicityConstraintViolation} describing which
+	 *         and where {@link MultiplicityConstraintViolation} constraints
+	 *         where violated
+	 */
 	public SortedSet<MultiplicityConstraintViolation> validateMultiplicities(
 			EdgeClass ec) {
 		SortedSet<MultiplicityConstraintViolation> brokenConstraints = new TreeSet<MultiplicityConstraintViolation>();
@@ -100,10 +118,12 @@ public class GraphValidator {
 	}
 
 	/**
-	 * Validates the graph.
+	 * Validates all constraints of the graph.
 	 *
+	 * @see GraphValidator#validateMultiplicities(EdgeClass)
+	 * @see GraphValidator#validateConstraints(AttributedElementClass)
 	 * @return a set of {@link ConstraintViolation} objects, one for each
-	 *         violation, sorted by their type.
+	 *         violation, sorted by their type
 	 */
 	public SortedSet<ConstraintViolation> validate() {
 		SortedSet<ConstraintViolation> brokenConstraints = new TreeSet<ConstraintViolation>();
@@ -131,6 +151,14 @@ public class GraphValidator {
 		return brokenConstraints;
 	}
 
+	/**
+	 * Checks if all {@link Constraint}s attached to the
+	 * {@link AttributedElementClass} <code>aec</code> are fulfilled.
+	 *
+	 * @param aec
+	 *            an {@link AttributedElementClass}
+	 * @return a set of {@link ConstraintViolation} objects
+	 */
 	public SortedSet<ConstraintViolation> validateConstraints(
 			AttributedElementClass aec) {
 		SortedSet<ConstraintViolation> brokenConstraints = new TreeSet<ConstraintViolation>();
@@ -140,8 +168,8 @@ public class GraphValidator {
 			try {
 				eval.startEvaluation();
 				if (!eval.getEvaluationResult().toBoolean()) {
-					if (constraint.getOffendingElements() != null) {
-						query = constraint.getOffendingElements();
+					if (constraint.getOffendingElementsQuery() != null) {
+						query = constraint.getOffendingElementsQuery();
 						GreqlEvaluator eval2 = new GreqlEvaluator(query, graph,
 								null);
 						eval2.startEvaluation();
@@ -176,8 +204,9 @@ public class GraphValidator {
 	 *
 	 * @param fileName
 	 *            the name of the HTML report file
-	 * @return a set of {@link GReQLConstraintViolation} objects, one for each
-	 *         invalidation
+	 * @return a set of {@link ConstraintViolation} objects, one for each
+	 *         invalidation, sorted by their type
+	 * @see GraphValidator#validate()
 	 * @throws IOException
 	 *             if the given file cannot be written
 	 */
