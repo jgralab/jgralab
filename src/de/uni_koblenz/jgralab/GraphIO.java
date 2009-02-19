@@ -56,6 +56,7 @@ import de.uni_koblenz.jgralab.schema.AggregationClass;
 import de.uni_koblenz.jgralab.schema.AttributedElementClass;
 import de.uni_koblenz.jgralab.schema.BasicDomain;
 import de.uni_koblenz.jgralab.schema.CompositionClass;
+import de.uni_koblenz.jgralab.schema.Constraint;
 import de.uni_koblenz.jgralab.schema.Domain;
 import de.uni_koblenz.jgralab.schema.EdgeClass;
 import de.uni_koblenz.jgralab.schema.EnumDomain;
@@ -69,6 +70,7 @@ import de.uni_koblenz.jgralab.schema.VertexClass;
 import de.uni_koblenz.jgralab.schema.exception.InvalidNameException;
 import de.uni_koblenz.jgralab.schema.exception.SchemaException;
 import de.uni_koblenz.jgralab.schema.impl.AttributeImpl;
+import de.uni_koblenz.jgralab.schema.impl.ConstraintImpl;
 import de.uni_koblenz.jgralab.schema.impl.SchemaImpl;
 
 /**
@@ -228,6 +230,7 @@ public class GraphIO {
 			space();
 			writeIdentifier(gc.getSimpleName());
 			writeAttributes(null, gc);
+			writeConstraints(gc);
 			TGOut.writeBytes(";\n");
 		}
 
@@ -376,6 +379,25 @@ public class GraphIO {
 				writeAttributes(pkg, ec);
 				TGOut.writeBytes(";\n");
 			}
+		}
+	}
+
+	private void writeConstraints(AttributedElementClass aec)
+			throws IOException {
+		boolean first = true;
+		for (Constraint c : aec.getConstraints()) {
+			if (first) {
+				first = false;
+			} else {
+				write(" ");
+			}
+			write("[");
+			writeUtfString(c.getMessage());
+			writeUtfString(c.getPredicate());
+			if (c.getOffendingElements() != null) {
+				writeUtfString(c.getOffendingElements());
+			}
+			write("]");
 		}
 	}
 
@@ -1006,7 +1028,7 @@ public class GraphIO {
 			gc.addAttribute(attr);
 		}
 
-		for (String constraint : gcData.constraints) {
+		for (Constraint constraint : gcData.constraints) {
 			gc.addConstraint(constraint);
 		}
 
@@ -1282,18 +1304,21 @@ public class GraphIO {
 		match(";");
 	}
 
-	private Set<String> parseConstraints() throws GraphIOException {
-		// constraints have the form: ["greql exp", "greql exp", ...]
-		match("[");
-		HashSet<String> constraints = new HashSet<String>(1);
-		String constraint = matchUtfString();
-		constraints.add(constraint);
-		while (lookAhead.equals(",")) {
-			match();
-			constraint = matchUtfString();
-			constraints.add(constraint);
-		}
-		match("]");
+	private Set<Constraint> parseConstraints() throws GraphIOException {
+		// constraints have the form: ["msg" "pred" "optGreql"] or ["msg"
+		// "pred"] and there may be as many as one wants...
+		HashSet<Constraint> constraints = new HashSet<Constraint>(1);
+		do {
+			match("[");
+			String msg = matchUtfString();
+			String pred = matchUtfString();
+			String greql = null;
+			if (!lookAhead.equals("]")) {
+				greql = matchUtfString();
+			}
+			constraints.add(new ConstraintImpl(msg, pred, greql));
+			match("]");
+		} while (lookAhead.equals("["));
 		return constraints;
 	}
 
@@ -1306,7 +1331,7 @@ public class GraphIO {
 			vc.addAttribute(attr);
 		}
 
-		for (String constraint : vcd.constraints) {
+		for (Constraint constraint : vcd.constraints) {
 			vc.addConstraint(constraint);
 		}
 
@@ -1348,7 +1373,7 @@ public class GraphIO {
 			ec.addAttribute(attr);
 		}
 
-		for (String constraint : ecd.constraints) {
+		for (Constraint constraint : ecd.constraints) {
 			ec.addConstraint(constraint);
 		}
 
@@ -2475,7 +2500,7 @@ public class GraphIO {
 	 * used to create a GraphClass.
 	 */
 	private class GraphClassData {
-		Set<String> constraints = new HashSet<String>(1);
+		Set<Constraint> constraints = new HashSet<Constraint>(1);
 
 		QualifiedName name;
 
@@ -2517,6 +2542,6 @@ public class GraphIO {
 
 		Map<String, List<QualifiedName>> attributes = new TreeMap<String, List<QualifiedName>>();
 
-		Set<String> constraints = new HashSet<String>(1);
+		Set<Constraint> constraints = new HashSet<Constraint>(1);
 	}
 }

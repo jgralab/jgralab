@@ -37,26 +37,26 @@ import de.uni_koblenz.jgralab.schema.exception.ReservedWordException;
  * This is the base class of any <code>GraphClass</code>/
  * <code>VertexClass</code>/<code>EdgeClass</code>/<code>AggregationClass</code>
  * /<code>CompositionClass</code>.
- * 
+ *
  * <p>
  * <b>Note:</b> in the following, <code>attrElement</code>, and <code>attrElement'</code>
  * , will represent the states of the given <code>AttributedElementClass</code>
  * before, respectively after, any operation.
  * </p>
- * 
+ *
  * <p>
  * <b>Note:</b> in the following it is understood that method arguments differ
  * from <code>null</code>. Therefore there will be no preconditions addressing
  * this matter.
  * </p>
- * 
+ *
  * @author ist@uni-koblenz.de
  */
 public interface AttributedElementClass extends NamedElement,
 		Comparable<AttributedElementClass> {
 	/**
 	 * Sets the package of this Domain to <code>p</code>.
-	 * 
+	 *
 	 * @param p
 	 *            the package of this Domain.
 	 */
@@ -64,15 +64,15 @@ public interface AttributedElementClass extends NamedElement,
 
 	/**
 	 * Returns the fully qualified package the element is located in.
-	 * 
+	 *
 	 * <p>
 	 * <b>Pattern:</b> <code>pkg = attrElement.getPackage();</code>
 	 * </p>
-	 * 
+	 *
 	 * <p>
 	 * <b>Preconditions:</b> none
 	 * </p>
-	 * 
+	 *
 	 * <p>
 	 * <b>Postconditions:</b> <code>pkg</code> can adopt the following content:
 	 * <ul>
@@ -82,7 +82,7 @@ public interface AttributedElementClass extends NamedElement,
 	 * located in</li>
 	 * </ul>
 	 * </p>
-	 * 
+	 *
 	 * @return the fully qualified package the element is located in, or
 	 *         <code>null</code> if this element is not contained in any package
 	 */
@@ -126,7 +126,7 @@ public interface AttributedElementClass extends NamedElement,
 	/**
 	 * Tests if the given Class is a subclass of this class or equal to this
 	 * class
-	 * 
+	 *
 	 * @param anAttributedElementClass
 	 *            the class to test
 	 * @return true iff the given AttributedElementClass is a subclass of this
@@ -137,22 +137,22 @@ public interface AttributedElementClass extends NamedElement,
 
 	/**
 	 * Returns all direct superclasses of this element.
-	 * 
+	 *
 	 * <p>
 	 * <b>Note:</b> Each instance of a subclass of
 	 * <code>AttributedElementClass</code> has one default direct superclass.
 	 * Please consult the specifications of the used subclass for details.
 	 * </p>
-	 * 
+	 *
 	 * <p>
 	 * <b>Pattern:</b>
 	 * <code>superClasses = attrElement.getDirectSuperClasses();</code>
 	 * </p>
-	 * 
+	 *
 	 * <p>
 	 * <b>Preconditions:</b> none
 	 * </p>
-	 * 
+	 *
 	 * <p>
 	 * <b>Postconditions:</b>
 	 * <ul>
@@ -164,30 +164,30 @@ public interface AttributedElementClass extends NamedElement,
 	 * <code>attrElement´s</code> inherited superclasses
 	 * </ul>
 	 * </p>
-	 * 
+	 *
 	 * @return a Set of all direct superclasses of this element
 	 */
 	public Set<AttributedElementClass> getDirectSuperClasses();
 
 	/**
 	 * Lists all direct and indirect superclasses of this element.
-	 * 
+	 *
 	 * <p>
 	 * <b>Note:</b> Each instance of a subclass of
 	 * <code>AttributedElementClass</code> has one default direct superclass,
 	 * and in some cases multiple default indirect superclasses. Please consult
 	 * the specifications of the used subclass for details.
 	 * </p>
-	 * 
+	 *
 	 * <p>
 	 * <b>Pattern:</b>
 	 * <code>superClasses = attrElement.getAllSuperClasses();</code>
 	 * </p>
-	 * 
+	 *
 	 * <p>
 	 * <b>Preconditions:</b> none
 	 * </p>
-	 * 
+	 *
 	 * <p>
 	 * <b>Postconditions:</b>
 	 * <ul>
@@ -197,7 +197,7 @@ public interface AttributedElementClass extends NamedElement,
 	 * direct and indirect superclasses (including the default superclasse(s))</li>
 	 * </ul>
 	 * </p>
-	 * 
+	 *
 	 * @return a Set of all direct and indirect superclasses of this element
 	 */
 	public Set<AttributedElementClass> getAllSuperClasses();
@@ -224,11 +224,11 @@ public interface AttributedElementClass extends NamedElement,
 	/**
 	 * Adds an attribute with the given <code>name</code> and
 	 * <code>domain</code> to this element.
-	 * 
+	 *
 	 * <p>
 	 * <b>Pattern:</b> <code>attrElement.addAttribute(name, domain);</code>
 	 * </p>
-	 * 
+	 *
 	 * <p>
 	 * <b>Preconditions:</b>
 	 * <ul>
@@ -241,23 +241,23 @@ public interface AttributedElementClass extends NamedElement,
 	 * this <code>attrElement´s</code> direct and inherited attributes´ names.</li>
 	 * </ul>
 	 * </p>
-	 * 
+	 *
 	 * <p>
 	 * <b>Postconditions:</b> In addition to the direct and inherited
 	 * attributes(s) of <code>attrElement</code>, <code>attrElement'</code> holds a new
 	 * attribute with the specified <code>name</code> and <code>domain</code>.
 	 * </p>
-	 * 
+	 *
 	 * @param name
 	 *            a unique <code>name</code> in this element´s list of direct
 	 *            and inherited attributes
 	 * @param domain
 	 *            the <code>domain</code> of the new <code>Attribute</code>
-	 * 
+	 *
 	 * @throws DuplicateAttributeException
 	 *             if this element has a direct or inherited attribute with the
 	 *             same <code>name</code>
-	 * 
+	 *
 	 * @throws ReservedWordException
 	 *             if the <code>name</code> contains reserved
 	 *             {@link de.uni_koblenz.jgralab.schema.Schema#reservedTGWords
@@ -269,26 +269,26 @@ public interface AttributedElementClass extends NamedElement,
 
 	/**
 	 * Adds a new attribute <code>anAttribute</code> to this element.
-	 * 
+	 *
 	 * <p>
 	 * <b>Pattern:</b> <code>attrElement.addAttribute(anAttribute);</code>
 	 * </p>
-	 * 
+	 *
 	 * <p>
 	 * <b>Preconditions:</b> <code>anAttribute´s</code> name must be distinct
 	 * from all of this <code>attrElement´s</code> direct and inherited
 	 * attributes´ names.
 	 * </p>
-	 * 
+	 *
 	 * <p>
 	 * <b>Postconditions:</b> In addition to the direct and inherited
 	 * attributes(s) of <code>attrElement</code>, <code>attrElement'</code> holds a new
 	 * attribute with the specified <code>name</code> and <code>domain</code>.
 	 * </p>
-	 * 
+	 *
 	 * @param anAttribute
 	 *            the new attribute to be added to this element
-	 * 
+	 *
 	 * @throws DuplicateAttributeException
 	 *             if this element has a direct or inherited attribute with the
 	 *             same <code>name</code>
@@ -298,15 +298,15 @@ public interface AttributedElementClass extends NamedElement,
 	/**
 	 * Fetches the attribute with the specified <code>name</code> from this
 	 * element or it´s direct and indirect superclasses.
-	 * 
+	 *
 	 * <p>
 	 * <b>Pattern:</b> <code>attr = attrElement.getAttribute(name);</code>
 	 * </p>
-	 * 
+	 *
 	 * <p>
 	 * <b>Preconditions:</b> none
 	 * </p>
-	 * 
+	 *
 	 * <p>
 	 * <b>Postconditions:</b>
 	 * <ul>
@@ -316,7 +316,7 @@ public interface AttributedElementClass extends NamedElement,
 	 * or inherited attribute with the given <code>name</code</li>
 	 * </ul>
 	 * </p>
-	 * 
+	 *
 	 * @param name
 	 *            the <code>name</code> of the attribute
 	 * @return the attribute with the specified <code>name</code> or
@@ -334,15 +334,15 @@ public interface AttributedElementClass extends NamedElement,
 	 * getAttribute(String name)}, this method does not consider inherited
 	 * attributes.
 	 * </p>
-	 * 
+	 *
 	 * <p>
 	 * <b>Pattern:</b> <code>attr = attrElement.getOwnAttribute(name);</code>
 	 * </p>
-	 * 
+	 *
 	 * <p>
 	 * <b>Preconditions:</b> none
 	 * </p>
-	 * 
+	 *
 	 * <p>
 	 * <b>Postconditions:</b>
 	 * <ul>
@@ -352,7 +352,7 @@ public interface AttributedElementClass extends NamedElement,
 	 * attribute with the given <code>name</code</li>
 	 * </ul>
 	 * </p>
-	 * 
+	 *
 	 * @param name
 	 *            the <code>name</code> of the attribute
 	 * @return the attribute with the specified <code>name</code> or
@@ -363,21 +363,21 @@ public interface AttributedElementClass extends NamedElement,
 
 	/**
 	 * Returns all of this element´s attributes.
-	 * 
+	 *
 	 * <p>
 	 * Unlike
 	 * {@link de.uni_koblenz.jgralab.schema.AttributedElementClass#getAttributeList()
 	 * getAttributeList()}, this method does not consider inherited attributes.
 	 * </p>
-	 * 
+	 *
 	 * <p>
 	 * <b>Pattern:</b> <code>attrs = attrElement.getOwnAttributeList();</code>
 	 * </p>
-	 * 
+	 *
 	 * <p>
 	 * <b>Preconditions:</b> none
 	 * </p>
-	 * 
+	 *
 	 * <p>
 	 * <b>Postconditions:</b>
 	 * <ul>
@@ -391,7 +391,7 @@ public interface AttributedElementClass extends NamedElement,
 	 * their qualified name</li>
 	 * </ul>
 	 * </p>
-	 * 
+	 *
 	 * @return a SortedSet of attributes of this element
 	 */
 	public SortedSet<Attribute> getOwnAttributeList();
@@ -399,15 +399,15 @@ public interface AttributedElementClass extends NamedElement,
 	/**
 	 * Returns all of this element´s direct and inherited attributes in natural
 	 * order.
-	 * 
+	 *
 	 * <p>
 	 * <b>Pattern:</b> <code>attrs = attrElement.getAttributeList();</code>
 	 * </p>
-	 * 
+	 *
 	 * <p>
 	 * <b>Preconditions:</b> none
 	 * </p>
-	 * 
+	 *
 	 * <p>
 	 * <b>Postconditions:</b>
 	 * <ul>
@@ -419,7 +419,7 @@ public interface AttributedElementClass extends NamedElement,
 	 * their qualified name</li>
 	 * </ul>
 	 * </p>
-	 * 
+	 *
 	 * @return a SortedSet of attributes of this element and all inherited
 	 *         attributes
 	 */
@@ -428,40 +428,40 @@ public interface AttributedElementClass extends NamedElement,
 	/**
 	 * Checks if this element or a superclass has an attribute with the given
 	 * <code>name</code>.
-	 * 
+	 *
 	 * <p>
 	 * <b>Pattern:</b>
 	 * <code>containsAttr = attrElement.containsAttribute(name);</code>
 	 * </p>
-	 * 
+	 *
 	 * <p>
 	 * <b>Preconditions:</b> The <code>name</code> must not be empty.
 	 * </p>
-	 * 
+	 *
 	 * <p>
 	 * <b>Postconditions:</b> none
 	 * </p>
-	 * 
+	 *
 	 * @param name
 	 *            the <code>name</code> of the attribute to search for
-	 * 
+	 *
 	 * @return <code>true</code>, if the element or a superclass contains an
 	 *         attribute with the specified <code>name</code>
-	 * 
+	 *
 	 */
 	public boolean containsAttribute(String name);
 
 	/**
 	 * Gets the direct and inherited attribute count for this element.
-	 * 
+	 *
 	 * <p>
 	 * <b>Pattern:</b> <code>attrCount = attrElement.getAttributeCount();</code>
 	 * </p>
-	 * 
+	 *
 	 * <p>
 	 * <b>Preconditions:</b> none
 	 * </p>
-	 * 
+	 *
 	 * <p>
 	 * <b>Postconditions:</b>
 	 * <ul>
@@ -470,29 +470,29 @@ public interface AttributedElementClass extends NamedElement,
 	 * <code>attrElement´s</code> direct and inherited attributes</li>
 	 * </ul>
 	 * </p>
-	 * 
+	 *
 	 * @return the number of this element´s direct and inherited attributes
 	 */
 	public int getAttributeCount();
 
 	/**
 	 * Gets the attribute count for this element.
-	 * 
+	 *
 	 * <p>
 	 * <b>Pattern:</b>
 	 * <code>attrCount = attrElement.getOwnAttributeCount();</code>
 	 * </p>
-	 * 
+	 *
 	 * <p>
 	 * Unlike
 	 * {@link de.uni_koblenz.jgralab.schema.AttributedElementClass#getAttributeCount()
 	 * getAttributeCount()}, this method does not count inherited attributes.
 	 * </p>
-	 * 
+	 *
 	 * <p>
 	 * <b>Preconditions:</b> none
 	 * </p>
-	 * 
+	 *
 	 * <p>
 	 * <b>Postconditions:</b>
 	 * <ul>
@@ -502,7 +502,7 @@ public interface AttributedElementClass extends NamedElement,
 	 * <li><code>attrCount</code> does not contain inherited attributes</li>
 	 * </ul>
 	 * </p>
-	 * 
+	 *
 	 * @return the number of this element´s direct attributes
 	 */
 	public int getOwnAttributeCount();
@@ -520,7 +520,7 @@ public interface AttributedElementClass extends NamedElement,
 
 	/**
 	 * defines if the element may or may not have any instances
-	 * 
+	 *
 	 * @param isAbstract
 	 *            true or false
 	 */
@@ -528,16 +528,16 @@ public interface AttributedElementClass extends NamedElement,
 
 	/**
 	 * Lists all direct subclasses of this element.
-	 * 
+	 *
 	 * <p>
 	 * <b>Pattern:</b>
 	 * <code>subClasses = attrElement.getDirectSubClasses();</code>
 	 * </p>
-	 * 
+	 *
 	 * <p>
 	 * <b>Preconditions:</b> none
 	 * </p>
-	 * 
+	 *
 	 * <p>
 	 * <b>Postconditions:</b>
 	 * <ul>
@@ -549,22 +549,22 @@ public interface AttributedElementClass extends NamedElement,
 	 * <code>attrElement´s</code> inherited subclasses</li>
 	 * </ul>
 	 * </p>
-	 * 
+	 *
 	 * @return a Set of all direct subclasses of this element
 	 */
 	public Set<AttributedElementClass> getDirectSubClasses();
 
 	/**
 	 * Returns all direct and indirect subclasses of this element.
-	 * 
+	 *
 	 * <p>
 	 * <b>Pattern:</b> <code>subClasses = attrElement.getAllSubClasses();</code>
 	 * </p>
-	 * 
+	 *
 	 * <p>
 	 * <b>Preconditions:</b> none
 	 * </p>
-	 * 
+	 *
 	 * <p>
 	 * <b>Postconditions:</b>
 	 * <ul>
@@ -574,22 +574,22 @@ public interface AttributedElementClass extends NamedElement,
 	 * direct and indirect subclasses</li>
 	 * </ul>
 	 * </p>
-	 * 
+	 *
 	 * @return a Set of all direct and indirect subclasses of this element
 	 */
 	public Set<AttributedElementClass> getAllSubClasses();
 
 	/**
 	 * Checks if this element has direct or inherited attributes.
-	 * 
+	 *
 	 * <p>
 	 * <b>Pattern:</b> <code>hasAttributes = attrElement.hasAttributes();</code>
 	 * </p>
-	 * 
+	 *
 	 * <p>
 	 * <b>Preconditions:</b> none
 	 * </p>
-	 * 
+	 *
 	 * <p>
 	 * <b>Postconditions:</b> <code>hasAttributes</code> has one of the
 	 * following values:
@@ -603,7 +603,7 @@ public interface AttributedElementClass extends NamedElement,
 	 * <li><code>false</code> if the above is not met</li>
 	 * </ul>
 	 * </p>
-	 * 
+	 *
 	 * @return <code>true</code>, if the element has own or inherited
 	 *         attributes, <code>false</code> otherwise
 	 */
@@ -611,16 +611,16 @@ public interface AttributedElementClass extends NamedElement,
 
 	/**
 	 * Checks if this element has own attributes, that are not inherited.
-	 * 
+	 *
 	 * <p>
 	 * <b>Pattern:</b>
 	 * <code>hasOwnAttributes = attrElement.hasOwnAttributes();</code>
 	 * </p>
-	 * 
+	 *
 	 * <p>
 	 * <b>Preconditions:</b> none
 	 * </p>
-	 * 
+	 *
 	 * <p>
 	 * <b>Postconditions:</b> <code>hasOwnAttributes</code> has one of the
 	 * following values:
@@ -633,7 +633,7 @@ public interface AttributedElementClass extends NamedElement,
 	 * </ul>
 	 * </ul>
 	 * </p>
-	 * 
+	 *
 	 * @return <code>true</code>, if the element has own attributes,
 	 *         <code>false</code> otherwise
 	 */
@@ -650,7 +650,7 @@ public interface AttributedElementClass extends NamedElement,
 	 * instance, the AttributedElementClasses 'Graph', 'Vertex', 'Edge',
 	 * 'Composition' and 'Aggregation' are such AttributedElementClasses only
 	 * for internal use
-	 * 
+	 *
 	 * @param internal
 	 */
 	public void setInternal(boolean internal);
@@ -662,21 +662,21 @@ public interface AttributedElementClass extends NamedElement,
 
 	/**
 	 * Returns the M1 interface class for this attributed element.
-	 * 
+	 *
 	 * <p>
 	 * <b>Pattern:</b> <code>m1Class = attrElement.getM1Class();</code>
 	 * </p>
-	 * 
+	 *
 	 * <p>
 	 * <b>Preconditions:</b> not yet defined
 	 * </p>
-	 * 
+	 *
 	 * <p>
 	 * <b>Postconditions:</b> not yet defined
 	 * </p>
-	 * 
+	 *
 	 * @return the M1 interface class for this element
-	 * 
+	 *
 	 * @throws M1ClassAccessException
 	 *             if reflection exceptions occur.
 	 */
@@ -684,21 +684,21 @@ public interface AttributedElementClass extends NamedElement,
 
 	/**
 	 * Returns the M1 implementation class for this attributed element.
-	 * 
+	 *
 	 * <p>
 	 * <b>Pattern:</b> <code>m1ImplClass = attrElement.getM1Class();</code>
 	 * </p>
-	 * 
+	 *
 	 * <p>
 	 * <b>Preconditions:</b> not yet defined
 	 * </p>
-	 * 
+	 *
 	 * <p>
 	 * <b>Postconditions:</b> not yet defined
 	 * </p>
-	 * 
+	 *
 	 * @return the M1 implementation class for this element
-	 * 
+	 *
 	 * @throws M1ClassAccessException
 	 *             if:
 	 *             <ul>
@@ -711,7 +711,7 @@ public interface AttributedElementClass extends NamedElement,
 	/**
 	 * Returns the least common superclass of this class and the given class
 	 * <code>other</code>
-	 * 
+	 *
 	 * @return the least common superclass
 	 */
 	public AttributedElementClass getLeastCommonSuperclass(
@@ -720,85 +720,68 @@ public interface AttributedElementClass extends NamedElement,
 	/**
 	 * Returns the least common superclass of this class and the classes in the
 	 * set <code>other</code>
-	 * 
+	 *
 	 * @return the least common superclass
 	 */
 	public AttributedElementClass getLeastCommonSuperclass(
 			Set<? extends AttributedElementClass> other);
 
 	/**
-	 * Adds a constraint given as GReQL2 expression to this attributed element.
-	 * 
+	 * Adds a {@link Constraint} to this attributed element.
+	 *
 	 * <p>
-	 * <b>Beware:</b> This method does not actually check if the parameter is a
-	 * valid GReQL2 expression. If it is not valid, there may be runtime errors
-	 * during program execution.
+	 * <b>Pattern:</b> <code>attrElement.addConstraint(myConstraint);</code>
 	 * </p>
-	 * 
+	 *
 	 * <p>
-	 * <b>Pattern:</b> <code>attrElement.addConstraint(expr);</code>
+	 * <b>Preconditions:</b> The <code>constraint</code> is a valid
+	 * {@link Constraint} (not null).
 	 * </p>
-	 * 
-	 * <p>
-	 * <b>Preconditions:</b>
-	 * <ul>
-	 * <li>The <code>expression</code> is a GReQL predicate (e.g. it returns a
-	 * <code>JValueBoolean</code>). In that case
-	 * <code>GraphValidator.validate()</code> returns a
-	 * <code>ConstraintInvalidation</code> if the predicate evaluates to
-	 * <code>false</code>.</li>
-	 * <li>The <code>expression</code> is a GReQL expression that evaluates to a
-	 * <code>JValueCollection</code> (i.e. a FWR clause). In that case
-	 * <code>GraphValidator.validate()</code> returns one
-	 * <code>ConstraintInvalidation</code> for each element.</li>
-	 * </ul>
-	 * </p>
-	 * 
+	 *
 	 * <p>
 	 * <b>Postconditions:</b>
 	 * <ul>
 	 * <li><code>attrElement'.getConstraints().size >= 0</code></li>
 	 * <li><code>attrElement'.getConstraints().size() == attrElement.getConstraints().size() + 1</code>, if for each constraint <code>c</code> of
 	 * <code>attrElement</code> the following condition holds:
-	 * <code>!expr.equals(c)</code></li>
+	 * <code>!constraint.equals(c)</code></li>
 	 * </ul>
 	 * </p>
 	 * </p>
-	 * 
-	 * @param greqlExpression
-	 *            a GReQL2 expression as string
+	 *
+	 * @param constraint
+	 *            a {@link Constraint}
 	 */
-	public void addConstraint(String greqlExpression);
+	public void addConstraint(Constraint constraint);
 
 	/**
-	 * Returns this element´s Set of constraints.
-	 * 
+	 * Returns this element's Set of {@link Constraint}s.
+	 *
 	 * <p>
 	 * Constraints are greql2 predicates, that can be used to validate the
 	 * graph.
 	 * </p>
-	 * 
+	 *
 	 * <p>
 	 * <b>Pattern:</b> <code>constrs = attrElement.getConstraints();</code>
 	 * </p>
-	 * 
+	 *
 	 * <p>
 	 * <b>Preconditions:</b> none
 	 * </p>
-	 * 
+	 *
 	 * <p>
 	 * <b>Postconditions:</b>
 	 * <ul>
 	 * <li><code>constrs != null</code></li>
 	 * <li><code>constrs.size() >= 0</code></li>
-	 * <li><code>constrs</code> contains all of this element´s constraints</li>
+	 * <li><code>constrs</code> contains all of this element's constraints</li>
 	 * </ul>
 	 * </p>
-	 * 
-	 * @return a Set of all constraints (greql expressions) set for this
-	 *         attributed element
+	 *
+	 * @return a Set of all {@link Constraint}s of this attributed element
 	 */
-	public Set<String> getConstraints();
+	public Set<Constraint> getConstraints();
 
 	/**
 	 * Compares this element to another attributed element.
@@ -807,15 +790,15 @@ public interface AttributedElementClass extends NamedElement,
 	 * {@link de.uni_koblenz.jgralab.schema.QualifiedName#compareTo(QualifiedName o)
 	 * comparing the elements´ qualified names lexicographically}.
 	 * </p>
-	 * 
+	 *
 	 * <p>
 	 * <b>Pattern:</b> <code>comp = attrElement.compareTo(other);</code>
 	 * </p>
-	 * 
+	 *
 	 * <p>
 	 * <b>Preconditions:</b> none
 	 * </p>
-	 * 
+	 *
 	 * <p>
 	 * <b>Postconditions:</b>
 	 * <ul>
@@ -828,9 +811,9 @@ public interface AttributedElementClass extends NamedElement,
 	 * name</li>
 	 * </ul>
 	 * </p>
-	 * 
+	 *
 	 * @return the result of the lexicographical comparison
-	 * 
+	 *
 	 * @see java.lang.Comparable#compareTo(Object)
 	 */
 	public int compareTo(AttributedElementClass other);

@@ -35,6 +35,7 @@ import de.uni_koblenz.jgralab.Attribute;
 import de.uni_koblenz.jgralab.AttributedElement;
 import de.uni_koblenz.jgralab.M1ClassManager;
 import de.uni_koblenz.jgralab.schema.AttributedElementClass;
+import de.uni_koblenz.jgralab.schema.Constraint;
 import de.uni_koblenz.jgralab.schema.Domain;
 import de.uni_koblenz.jgralab.schema.Package;
 import de.uni_koblenz.jgralab.schema.QualifiedName;
@@ -100,9 +101,9 @@ public abstract class AttributedElementClassImpl implements
 	private Class<? extends AttributedElement> m1ImplementationClass;
 
 	/**
-	 * A set of greql2 predicates which can be used to validate the graph.
+	 * A set of {@link Constraint}s which can be used to validate the graph.
 	 */
-	protected HashSet<String> constraints = new HashSet<String>(1);
+	protected HashSet<Constraint> constraints = new HashSet<Constraint>(1);
 
 	@Override
 	public void setPackage(Package p) {
@@ -542,12 +543,12 @@ public abstract class AttributedElementClassImpl implements
 	}
 
 	@Override
-	public void addConstraint(String greqlExpression) {
-		constraints.add(greqlExpression);
+	public void addConstraint(Constraint constraint) {
+		constraints.add(constraint);
 	}
 
 	@Override
-	public Set<String> getConstraints() {
+	public Set<Constraint> getConstraints() {
 		return constraints;
 	}
 

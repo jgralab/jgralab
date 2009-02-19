@@ -30,14 +30,15 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Vector;
 import java.util.logging.Logger;
+import java.util.regex.Matcher;
 
 import de.uni_koblenz.jgralab.GraphIOException;
 
 /**
  * TODO add comment
- * 
+ *
  * @author ist@uni-koblenz.de
- * 
+ *
  */
 public abstract class CodeGenerator {
 
@@ -58,7 +59,7 @@ public abstract class CodeGenerator {
 
 	/**
 	 * Creates a CodeGenerator for a single class
-	 * 
+	 *
 	 * @param schemaRootPackageName
 	 *            the name of the root package of the schema, for instance
 	 *            de.uni_koblenz.jgralab.greql2
@@ -117,7 +118,7 @@ public abstract class CodeGenerator {
 
 	/**
 	 * writes the source code to location path+fileName,
-	 * 
+	 *
 	 * @param pathPrefix
 	 *            the path where the java source code is to be
 	 * @param fileName
@@ -242,10 +243,17 @@ public abstract class CodeGenerator {
 	}
 
 	/**
+	 * @param aString some String
+	 * @return the string with " quoted as \"
+	 */
+	public static String stringQuote(String aString) {
+		return aString.replaceAll("\"", Matcher.quoteReplacement("\\\""));
+	}
+
+	/**
 	 * Returns {@code JavaSourceFromString}s from the generated code.
-	 * 
-	 * @return a Vector of {@code JavaSourceFromString}s from the generated
-	 *         code
+	 *
+	 * @return a Vector of {@code JavaSourceFromString}s from the generated code
 	 */
 	public Vector<JavaSourceFromString> createJavaSources() {
 		String className = rootBlock.getVariable("simpleClassName");

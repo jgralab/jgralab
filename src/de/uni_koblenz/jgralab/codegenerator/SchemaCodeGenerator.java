@@ -25,13 +25,13 @@
 package de.uni_koblenz.jgralab.codegenerator;
 
 import java.util.List;
-import java.util.regex.Matcher;
 
 import de.uni_koblenz.jgralab.Attribute;
 import de.uni_koblenz.jgralab.schema.AggregationClass;
 import de.uni_koblenz.jgralab.schema.AttributedElementClass;
 import de.uni_koblenz.jgralab.schema.CompositeDomain;
 import de.uni_koblenz.jgralab.schema.CompositionClass;
+import de.uni_koblenz.jgralab.schema.Constraint;
 import de.uni_koblenz.jgralab.schema.EdgeClass;
 import de.uni_koblenz.jgralab.schema.EnumDomain;
 import de.uni_koblenz.jgralab.schema.GraphClass;
@@ -78,6 +78,7 @@ public class SchemaCodeGenerator extends CodeGenerator {
 	@Override
 	protected CodeBlock createHeader(boolean createClass) {
 		addImports("#jgSchemaImplPackage#.#baseClassName#");
+		addImports("#jgSchemaImplPackage#.ConstraintImpl");
 		CodeSnippet code = new CodeSnippet(
 				true,
 				"/**",
@@ -424,11 +425,23 @@ public class SchemaCodeGenerator extends CodeGenerator {
 
 	private CodeBlock createConstraints(AttributedElementClass aec) {
 		CodeList code = new CodeList();
-		for (String constraint : aec.getConstraints()) {
-			code.addNoIndent(new CodeSnippet(false,
-					"#aecVariable#.addConstraint(\""
-							+ constraint.replaceAll("\"", Matcher
-									.quoteReplacement("\\\"")) + "\");"));
+		for (Constraint constraint : aec.getConstraints()) {
+			code
+					.addNoIndent(new CodeSnippet(
+							false,
+							"#aecVariable#.addConstraint(new ConstraintImpl(\""
+									+ CodeGenerator.stringQuote(constraint
+											.getMessage())
+									+ "\", \""
+									+ CodeGenerator.stringQuote(constraint
+											.getPredicate())
+									+ "\", "
+									+ ((constraint.getOffendingElements() != null) ? "\""
+											+ CodeGenerator
+													.stringQuote(constraint
+															.getOffendingElements())
+											+ "\""
+											: "null") + "));"));
 		}
 		return code;
 	}
