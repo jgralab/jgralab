@@ -695,7 +695,7 @@ public interface AttributedElementClass extends NamedElement,
 	 * </p>
 	 * 
 	 * <p>
-	 * <b>Postconditions:</b> //TODO
+	 * <b>Postconditions:</b>//TODO
 	 * </p>
 	 * 
 	 * @param isAbstract
