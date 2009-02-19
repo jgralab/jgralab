@@ -24,14 +24,39 @@
 package de.uni_koblenz.jgralab.schema;
 
 /**
- * @author Tassilo Horn <horn@uni-koblenz.de>
+ * Describes a constraint which can be added to an
+ * {@link AttributedElementClass}. A constraint consists of three parts:
  *
+ * <nl>
+ * <li>A message which states what's wrong if the constraint is not satisfied.</li>
+ * <li>A GReQL predicate which all elements of the corresponding
+ * {@link AttributedElementClass} have to fulfill.</li>
+ * <li>A GReQL expressing returning a set of all elements which don't fulfill
+ * the predicate. (optional)</li>
+ * </nl>
+ *
+ * The <code>GraphValidator</code> can be used to check if all constraints are
+ * fulfilled.
+ *
+ * @author Tassilo Horn <horn@uni-koblenz.de>
  */
 public interface Constraint extends Comparable<Constraint> {
 
+	/**
+	 * @return the message which states what's wrong if the constraint is not
+	 *         satisfied
+	 */
 	public String getMessage();
 
+	/**
+	 * @return the GReQL predicate which all elements of the corresponding
+	 *         {@link AttributedElementClass} have to fulfill
+	 */
 	public String getPredicate();
 
-	public String getOffendingElements();
+	/**
+	 * @return the GReQL expressing returning a set of all elements which don't
+	 *         fulfill the predicate. (optional)
+	 */
+	public String getOffendingElementsQuery();
 }
