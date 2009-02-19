@@ -33,19 +33,19 @@ import de.uni_koblenz.jgralab.Vertex;
  */
 public class MultiplicityConstraintViolation extends ConstraintViolation {
 	private String message;
-	private Set<Vertex> offendingElements;
+	private Set<Vertex> offendingVertices;
 
 	public MultiplicityConstraintViolation(String message,
 			Set<Vertex> offendingElems) {
 		this.message = message;
-		offendingElements = offendingElems;
+		offendingVertices = offendingElems;
 	}
 
 	@Override
 	public int hashCode() {
 		int hash = 23;
 		hash = hash * 571 + message.hashCode();
-		hash = hash * 571 + offendingElements.hashCode();
+		hash = hash * 571 + offendingVertices.hashCode();
 		return hash;
 	}
 
@@ -68,7 +68,24 @@ public class MultiplicityConstraintViolation extends ConstraintViolation {
 	/**
 	 * @return the offendingElements
 	 */
-	public Set<Vertex> getOffendingElements() {
-		return offendingElements;
+	public Set<Vertex> getOffendingVertices() {
+		return offendingVertices;
+	}
+
+	@Override
+	public String toString() {
+		StringBuilder sb = new StringBuilder();
+		sb.append(message);
+		sb.append(" Offending vertices: ");
+		boolean first = true;
+		for (Vertex v : offendingVertices) {
+			if (first) {
+				first = false;
+			} else {
+				sb.append(", ");
+			}
+			sb.append(v);
+		}
+		return sb.toString();
 	}
 }

@@ -71,4 +71,14 @@ public class BrokenGReQLConstraintViolation extends ConstraintViolation {
 		return brokenPart;
 	}
 
+	@Override
+	public String toString() {
+		StringBuilder sb = new StringBuilder();
+		sb.append("The query \"");
+		sb.append(brokenPart);
+		sb.append("\" in ");
+		sb.append(constraint);
+		sb.append(" is broken.");
+		return sb.toString();
+	}
 }
