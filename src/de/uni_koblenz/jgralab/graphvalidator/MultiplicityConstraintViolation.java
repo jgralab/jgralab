@@ -26,6 +26,7 @@ package de.uni_koblenz.jgralab.graphvalidator;
 import java.util.Set;
 
 import de.uni_koblenz.jgralab.Vertex;
+import de.uni_koblenz.jgralab.schema.EdgeClass;
 
 /**
  * @author Tassilo Horn <horn@uni-koblenz.de>
@@ -35,8 +36,9 @@ public class MultiplicityConstraintViolation extends ConstraintViolation {
 	private String message;
 	private Set<Vertex> offendingVertices;
 
-	public MultiplicityConstraintViolation(String message,
+	public MultiplicityConstraintViolation(EdgeClass ec, String message,
 			Set<Vertex> offendingElems) {
+		super(ec);
 		this.message = message;
 		offendingVertices = offendingElems;
 	}
@@ -75,6 +77,9 @@ public class MultiplicityConstraintViolation extends ConstraintViolation {
 	@Override
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
+		sb.append("Broken constraint attached to ");
+		sb.append(attributedElementClass.getQualifiedName());
+		sb.append("! ");
 		sb.append(message);
 		sb.append(" Offending vertices: ");
 		boolean first = true;

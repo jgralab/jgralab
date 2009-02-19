@@ -25,6 +25,7 @@ package de.uni_koblenz.jgralab.graphvalidator;
 
 import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValueSet;
+import de.uni_koblenz.jgralab.schema.AttributedElementClass;
 import de.uni_koblenz.jgralab.schema.Constraint;
 
 /**
@@ -53,8 +54,9 @@ public class GReQLConstraintViolation extends ConstraintViolation {
 
 	private JValueSet offendingElements;
 
-	public GReQLConstraintViolation(Constraint constraint,
-			JValueSet offendingElems) {
+	public GReQLConstraintViolation(AttributedElementClass aec,
+			Constraint constraint, JValueSet offendingElems) {
+		super(aec);
 		this.constraint = constraint;
 		offendingElements = offendingElems;
 	}
@@ -63,10 +65,7 @@ public class GReQLConstraintViolation extends ConstraintViolation {
 	public boolean equals(Object o) {
 		if (o instanceof GReQLConstraintViolation) {
 			GReQLConstraintViolation other = (GReQLConstraintViolation) o;
-			return constraint.equals(other.constraint)
-					&& ((offendingElements != null) ? offendingElements
-							.equals(other.offendingElements)
-							: other.offendingElements == null);
+			return this.compareTo(other) == 0;
 		}
 		return false;
 	}
@@ -82,6 +81,9 @@ public class GReQLConstraintViolation extends ConstraintViolation {
 	@Override
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
+		sb.append("Broken constraint attached to ");
+		sb.append(attributedElementClass.getQualifiedName());
+		sb.append("! ");
 		sb.append(constraint.getMessage());
 		if (offendingElements != null) {
 			sb.append(" Offending elements: ");

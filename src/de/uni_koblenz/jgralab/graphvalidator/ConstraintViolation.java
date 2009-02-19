@@ -23,19 +23,42 @@
  */
 package de.uni_koblenz.jgralab.graphvalidator;
 
+import de.uni_koblenz.jgralab.schema.AttributedElementClass;
+
 /**
  * @author Tassilo Horn <horn@uni-koblenz.de>
  *
  */
 public abstract class ConstraintViolation implements
 		Comparable<ConstraintViolation> {
+
+	protected AttributedElementClass attributedElementClass;
+
+	/**
+	 * @return the attributedElementClass
+	 */
+	public AttributedElementClass getAttributedElementClass() {
+		return attributedElementClass;
+	}
+
+	public ConstraintViolation(AttributedElementClass aec) {
+		attributedElementClass = aec;
+	}
+
 	@Override
 	public int compareTo(ConstraintViolation ci) {
 		if (this instanceof MultiplicityConstraintViolation
 				&& ci instanceof MultiplicityConstraintViolation) {
 			MultiplicityConstraintViolation me = (MultiplicityConstraintViolation) this;
 			MultiplicityConstraintViolation other = (MultiplicityConstraintViolation) ci;
-			int result = me.getMessage().compareTo(other.getMessage());
+			int result = me.getAttributedElementClass().getQualifiedName()
+					.compareTo(
+							other.getAttributedElementClass()
+									.getQualifiedName());
+			if (result != 0) {
+				return result;
+			}
+			result = me.getMessage().compareTo(other.getMessage());
 			if (result != 0) {
 				return result;
 			}
@@ -57,7 +80,14 @@ public abstract class ConstraintViolation implements
 				&& ci instanceof BrokenGReQLConstraintViolation) {
 			BrokenGReQLConstraintViolation me = (BrokenGReQLConstraintViolation) this;
 			BrokenGReQLConstraintViolation other = (BrokenGReQLConstraintViolation) ci;
-			int result = me.getConstraint().compareTo(other.getConstraint());
+			int result = me.getAttributedElementClass().getQualifiedName()
+					.compareTo(
+							other.getAttributedElementClass()
+									.getQualifiedName());
+			if (result != 0) {
+				return result;
+			}
+			result = me.getConstraint().compareTo(other.getConstraint());
 			if (result != 0) {
 				return result;
 			}
@@ -68,7 +98,14 @@ public abstract class ConstraintViolation implements
 				&& ci instanceof GReQLConstraintViolation) {
 			GReQLConstraintViolation me = (GReQLConstraintViolation) this;
 			GReQLConstraintViolation other = (GReQLConstraintViolation) ci;
-			int result = me.getConstraint().compareTo(other.getConstraint());
+			int result = me.getAttributedElementClass().getQualifiedName()
+					.compareTo(
+							other.getAttributedElementClass()
+									.getQualifiedName());
+			if (result != 0) {
+				return result;
+			}
+			result = me.getConstraint().compareTo(other.getConstraint());
 			if (result != 0) {
 				return result;
 			}
