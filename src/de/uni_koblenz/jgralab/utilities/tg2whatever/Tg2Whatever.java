@@ -58,6 +58,20 @@ public abstract class Tg2Whatever {
 
 	protected boolean reversedEdges = false;
 
+	/**
+	 * @return the reversedEdges
+	 */
+	public boolean isReversedEdges() {
+		return reversedEdges;
+	}
+
+	/**
+	 * @param reversedEdges the reversedEdges to set
+	 */
+	public void setReversedEdges(boolean reversedEdges) {
+		this.reversedEdges = reversedEdges;
+	}
+
 	protected boolean roleNames = false;
 
 	protected boolean shortenStrings = false;
@@ -118,7 +132,7 @@ public abstract class Tg2Whatever {
 
 	/**
 	 * toggles wether to print rolenames or not
-	 * 
+	 *
 	 * @param print
 	 */
 	public void setPrintRoleNames(boolean print) {
@@ -127,7 +141,7 @@ public abstract class Tg2Whatever {
 
 	/**
 	 * toggles wether to shorten long strings
-	 * 
+	 *
 	 * @param shorten
 	 */
 	public void setShortenStrings(boolean shorten) {
@@ -136,7 +150,7 @@ public abstract class Tg2Whatever {
 
 	/**
 	 * toggles wether to print edgeAttributes or not
-	 * 
+	 *
 	 * @param print
 	 */
 	public void setPrintEdgeAttributes(boolean print) {
@@ -145,7 +159,7 @@ public abstract class Tg2Whatever {
 
 	/**
 	 * toggles wether to print reversed edges or not
-	 * 
+	 *
 	 * @param print
 	 */
 	public void setPrintReversedEdges(boolean print) {
@@ -154,7 +168,7 @@ public abstract class Tg2Whatever {
 
 	/**
 	 * toggles wether to print domain names of attributes or not
-	 * 
+	 *
 	 * @param print
 	 */
 	public void setPrintDomainNames(boolean print) {
@@ -178,6 +192,7 @@ public abstract class Tg2Whatever {
 					try {
 						System.out.println("Loading Schema from Graph");
 						schema = GraphIO.loadSchemaFromFile(graphFileName);
+						schema.compile();
 						System.out.println("Schema loaded");
 					} catch (GraphIOException ex) {
 						System.err.println("Graph in file '" + graphFileName
@@ -212,15 +227,17 @@ public abstract class Tg2Whatever {
 			graphStart(out);
 			Vertex v = graph.getFirstVertex();
 			while (v != null) {
-				if ((marker == null) || (marker.isMarked(v)))
+				if ((marker == null) || (marker.isMarked(v))) {
 					printVertex(out, v);
+				}
 				v = v.getNextVertex();
 			}
 
 			Edge e = graph.getFirstEdgeInGraph();
 			while (e != null) {
-				if ((marker == null) || (marker.isMarked(e)))
+				if ((marker == null) || (marker.isMarked(e))) {
 					printEdge(out, e);
+				}
 				e = e.getNextEdgeInGraph();
 			}
 			graphEnd(out);
@@ -242,7 +259,7 @@ public abstract class Tg2Whatever {
 	/**
 	 * replaces characters in the given string by the escape sequences that are
 	 * appropriate for the specific output format
-	 * 
+	 *
 	 * @param s
 	 * @return
 	 */
