@@ -219,11 +219,42 @@ public class GraphValidator {
 		// The header
 		bw.append("<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01//EN\"\n"
 				+ "\"http://www.w3.org/TR/html4/strict.dtd\">\n" + "<html>");
-		bw.append("<head><title>");
+		bw.append("<head>");
+
+		bw.append("<style type=\"text/css\">");
+		bw.append("th {");
+		bw.append("	font: bold 11px sans-serif;");
+		bw.append("	color: MidnightBlue;");
+		bw.append("	border-right: 1px solid #C1DAD7;");
+		bw.append("	border-bottom: 1px solid #C1DAD7;");
+		bw.append("	border-top: 1px solid #C1DAD7;");
+		bw.append("	letter-spacing: 2px;");
+		bw.append("	text-align: left;");
+		bw.append(" padding: 6px 6px 6px 12px;");
+		bw.append("	background: #CAE8EA;");
+		bw.append("}");
+		bw.append("td {");
+		bw.append(" border-right: 1px solid #C1DAD7;");
+		bw.append("	border-bottom: 1px solid #C1DAD7;");
+		bw.append("	background: #fff;");
+		bw.append("	padding: 6px 6px 6px 12px;");
+		bw.append("	color: DimGrey;");
+		bw.append("}");
+		bw.append("td.other {");
+		bw.append(" border-right: 1px solid #C1DAD7;");
+		bw.append("	border-bottom: 1px solid #C1DAD7;");
+		bw.append("	background: AliceBlue;");
+		bw.append("	padding: 6px 6px 6px 12px;");
+		bw.append("	color: DimGrey;");
+		bw.append("}");
+		bw.append("</style>");
+
+		bw.append("<title>");
 		bw.append("Validation Report for the "
 				+ graph.getM1Class().getSimpleName() + " with id "
 				+ graph.getId() + ".");
-		bw.append("</title></head>");
+		bw.append("</title>");
+		bw.append("</head>");
 
 		// The body
 		bw.append("<body>");
@@ -244,21 +275,27 @@ public class GraphValidator {
 			bw.append("<th>Broken Elements</th>");
 			bw.append("</tr>");
 			int no = 1;
+			String cssClass = "";
 			for (ConstraintViolation ci : brokenConstraints) {
+				if (no % 2 == 0) {
+					cssClass = "other";
+				} else {
+					cssClass = "";
+				}
 				bw.append("<tr>");
-				bw.append("<td>");
+				bw.append("<td class=\"" + cssClass + "\">");
 				bw.append(new String(new Integer(no++).toString()));
 				bw.append("</td>");
-				bw.append("<td>");
+				bw.append("<td class=\"" + cssClass + "\">");
 				bw.append(ci.getClass().getSimpleName());
 				bw.append("</td>");
-				bw.append("<td>");
+				bw.append("<td class=\"" + cssClass + "\">");
 				bw.append(ci.getAttributedElementClass().getQualifiedName());
 				bw.append("</td>");
-				bw.append("<td>");
+				bw.append("<td class=\"" + cssClass + "\">");
 				bw.append(ci.getMessage());
 				bw.append("</td>");
-				bw.append("<td>");
+				bw.append("<td class=\"" + cssClass + "\">");
 				if (ci.getOffendingElements() != null) {
 					for (AttributedElement ae : ci.getOffendingElements()) {
 						bw.append(ae.toString());
