@@ -15,7 +15,15 @@ import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.schema.EdgeClass;
-import de.uni_koblenz.jgralabtest.schemas.vertextest.*;
+import de.uni_koblenz.jgralabtest.schemas.vertextest.AbstractSuperNode;
+import de.uni_koblenz.jgralabtest.schemas.vertextest.DoubleSubNode;
+import de.uni_koblenz.jgralabtest.schemas.vertextest.Link;
+import de.uni_koblenz.jgralabtest.schemas.vertextest.LinkBack;
+import de.uni_koblenz.jgralabtest.schemas.vertextest.SubLink;
+import de.uni_koblenz.jgralabtest.schemas.vertextest.SubNode;
+import de.uni_koblenz.jgralabtest.schemas.vertextest.SuperNode;
+import de.uni_koblenz.jgralabtest.schemas.vertextest.VertexTestGraph;
+import de.uni_koblenz.jgralabtest.schemas.vertextest.VertexTestSchema;
 
 public class VertexTest {
 
@@ -41,7 +49,7 @@ public class VertexTest {
 	 */
 	@Test
 	public void isIncidenceListModifiedTest0() {
-		AbstractSuperNode asn = (AbstractSuperNode) graph.createSubNode();
+		AbstractSuperNode asn = graph.createSubNode();
 		SuperNode sn = graph.createSuperNode();
 		DoubleSubNode dsn = graph.createDoubleSubNode();
 		long asnIncidenceListVersion = asn.getIncidenceListVersion();
@@ -60,7 +68,7 @@ public class VertexTest {
 	public void isIncidenceListModifiedTest1() {
 		Vertex[] nodes = new Vertex[3];
 		long[] versions = new long[3];
-		nodes[0] = (AbstractSuperNode) graph.createSubNode();
+		nodes[0] = graph.createSubNode();
 		versions[0] = nodes[0].getIncidenceListVersion();
 		nodes[1] = graph.createDoubleSubNode();
 		versions[1] = nodes[1].getIncidenceListVersion();
@@ -121,7 +129,7 @@ public class VertexTest {
 	@Test
 	public void getIncidenceListVersionTest0() {
 		Vertex[] nodes = new Vertex[3];
-		nodes[0] = (AbstractSuperNode) graph.createSubNode();
+		nodes[0] = graph.createSubNode();
 		nodes[1] = graph.createDoubleSubNode();
 		nodes[2] = graph.createSuperNode();
 		long[] expectedVersions = new long[] { 0, 0, 0 };
@@ -209,7 +217,7 @@ public class VertexTest {
 	@Test
 	public void getDegreeTest2() {
 		Vertex[] nodes = new Vertex[3];
-		nodes[0] = (AbstractSuperNode) graph.createSubNode();
+		nodes[0] = graph.createSubNode();
 		nodes[1] = graph.createDoubleSubNode();
 		nodes[2] = graph.createSuperNode();
 		int[] expectedDegrees = new int[] { 0, 0, 0 };
@@ -237,10 +245,10 @@ public class VertexTest {
 			vertices.put(end, vertices.get(end) - 1);
 			graph.deleteEdge(l);
 			if (start != end) {
-				assertEquals(vertices.get(start), start.getDegree());
-				assertEquals(vertices.get(end), end.getDegree());
+				assertEquals(vertices.get(start).intValue(), start.getDegree());
+				assertEquals(vertices.get(end).intValue(), end.getDegree());
 			} else {
-				assertEquals(vertices.get(start), start.getDegree());
+				assertEquals(vertices.get(start).intValue(), start.getDegree());
 			}
 		}
 	}
@@ -294,7 +302,7 @@ public class VertexTest {
 	@Test
 	public void getDegreeTestEdgeDirection2() {
 		Vertex[] nodes = new Vertex[3];
-		nodes[0] = (AbstractSuperNode) graph.createSubNode();
+		nodes[0] = graph.createSubNode();
 		nodes[1] = graph.createDoubleSubNode();
 		nodes[2] = graph.createSuperNode();
 		int[] expectedInOut = new int[] { 0, 0, 0 };
@@ -405,7 +413,7 @@ public class VertexTest {
 	@Test
 	public void getDegreeTestEdgeClass2() {
 		Vertex[] nodes = new Vertex[3];
-		nodes[0] = (AbstractSuperNode) graph.createSubNode();
+		nodes[0] = graph.createSubNode();
 		nodes[1] = graph.createDoubleSubNode();
 		nodes[2] = graph.createSuperNode();
 		int[] expectedLink = new int[] { 0, 0, 0 };
@@ -479,7 +487,7 @@ public class VertexTest {
 
 	/**
 	 * Tests if a Vertex has the expected degree considering the EdgeClass.
-	 * 
+	 *
 	 * @param forNode
 	 *            the Vertex, which degrees should be tested
 	 * @param expectedLink
@@ -548,7 +556,7 @@ public class VertexTest {
 	@Test
 	public void getDegreeTestClass2() {
 		Vertex[] nodes = new Vertex[3];
-		nodes[0] = (AbstractSuperNode) graph.createSubNode();
+		nodes[0] = graph.createSubNode();
 		nodes[1] = graph.createDoubleSubNode();
 		nodes[2] = graph.createSuperNode();
 		int[] expectedLink = new int[] { 0, 0, 0 };
@@ -685,7 +693,7 @@ public class VertexTest {
 	@Test
 	public void getDegreeTestEdgeClassBoolean3() {
 		Vertex[] nodes = new Vertex[3];
-		nodes[0] = (AbstractSuperNode) graph.createSubNode();
+		nodes[0] = graph.createSubNode();
 		nodes[1] = graph.createDoubleSubNode();
 		nodes[2] = graph.createSuperNode();
 		int[] expectedLink = new int[] { 0, 0, 0 };
@@ -760,7 +768,7 @@ public class VertexTest {
 	/**
 	 * Tests if a Vertex has the expected degree considering the EdgeClass and
 	 * SubClasses.
-	 * 
+	 *
 	 * @param forNode
 	 *            the Vertex, which degrees should be tested
 	 * @param expectedLink
@@ -836,7 +844,7 @@ public class VertexTest {
 	@Test
 	public void getDegreeTestClassBoolean3() {
 		Vertex[] nodes = new Vertex[3];
-		nodes[0] = (AbstractSuperNode) graph.createSubNode();
+		nodes[0] = graph.createSubNode();
 		nodes[1] = graph.createDoubleSubNode();
 		nodes[2] = graph.createSuperNode();
 		int[] expectedLink = new int[] { 0, 0, 0 };
@@ -911,7 +919,7 @@ public class VertexTest {
 	/**
 	 * Tests if a Vertex has the expected degree considering the Classes
 	 * extending Edge and SubClasses.
-	 * 
+	 *
 	 * @param forNode
 	 *            the Vertex, which degrees should be tested
 	 * @param expectedLink
@@ -985,7 +993,7 @@ public class VertexTest {
 	@Test
 	public void getDegreeTestEdgeClassEdgeDirection2() {
 		SuperNode dsubn = graph.createSuperNode();
-		AbstractSuperNode supern = (AbstractSuperNode) graph.createSubNode();
+		AbstractSuperNode supern = graph.createSubNode();
 		graph.createLinkBack(dsubn, supern);
 		testVertexForEdgeClassEdgeDirection(dsubn, 0, 0, 0, EdgeDirection.IN);
 		testVertexForEdgeClassEdgeDirection(dsubn, 0, 0, 1, EdgeDirection.OUT);
@@ -1005,7 +1013,7 @@ public class VertexTest {
 	@Test
 	public void getDegreeTestEdgeClassEdgeDirection3() {
 		Vertex[] nodes = new Vertex[3];
-		nodes[0] = (AbstractSuperNode) graph.createSubNode();
+		nodes[0] = graph.createSubNode();
 		nodes[1] = graph.createDoubleSubNode();
 		nodes[2] = graph.createSuperNode();
 		int[] expectedLinkIn = new int[] { 0, 0, 0 };
@@ -1131,7 +1139,7 @@ public class VertexTest {
 	/**
 	 * Tests if a Vertex has the expected degree considering the EdgeClass and
 	 * the EdgeDirection.
-	 * 
+	 *
 	 * @param forNode
 	 *            the Vertex, which degrees should be tested
 	 * @param expectedLink
