@@ -105,13 +105,15 @@ public interface AttributedElementClass extends NamedElement,
 	 * <b>Postconditions:</b> <code>isSuperClass</code> is:
 	 * <ul>
 	 * <li><code>true</code> if the <code>other</code> attributed element is a
-	 * registered direct or inherited subclass of this element</li>
+	 * direct or inherited subclass of this element</li>
 	 * <li><code>false</code> if one of the following occurs:
 	 * <ul>
 	 * <li><code>attrElement</code> and the given <code>other</code> attributed
 	 * element are the same</li>
-	 * <li>the <code>other</code> attributed element is not registered as being
-	 * a direct or indirect subclass of <code>attrElement</code>
+	 * <li>the <code>other</code> attributed element is not a direct or indirect
+	 * subclass of <code>attrElement</code></li>
+	 * <li>the <code>other</code> attributed element has no relation with
+	 * <code>attrElement</code></li>
 	 * </ul>
 	 * </li>
 	 * </ul>
@@ -143,13 +145,15 @@ public interface AttributedElementClass extends NamedElement,
 	 * <b>Postconditions:</b> <code>isDirectSuperClass</code> is:
 	 * <ul>
 	 * <li><code>true</code> if the <code>other</code> attributed element is a
-	 * registered direct subclass of this element</li>
+	 * direct subclass of this element</li>
 	 * <li><code>false</code> if one of the following occurs:
 	 * <ul>
 	 * <li><code>attrElement</code> and the given <code>other</code> attributed
 	 * element are the same</li>
-	 * <li>the <code>other</code> attributed element is not registered as being
-	 * a direct subclass of <code>attrElement</code>
+	 * <li>the <code>other</code> attributed element is not a direct subclass of
+	 * <code>attrElement</code></li>
+	 * <li>the <code>other</code> attributed element has no relation with
+	 * <code>attrElement</code></li>
 	 * </ul>
 	 * </li>
 	 * </ul>
@@ -180,13 +184,15 @@ public interface AttributedElementClass extends NamedElement,
 	 * <b>Postconditions:</b> <code>isDirectSubClass</code> is:
 	 * <ul>
 	 * <li><code>true</code> if the <code>other</code> attributed element is a
-	 * registered direct superclass of this element</li>
+	 * direct superclass of this element</li>
 	 * <li><code>false</code> if one of the following occurs:
 	 * <ul>
 	 * <li><code>attrElement</code> and the given <code>other</code> attributed
 	 * element are the same</li>
-	 * <li>the <code>other</code> attributed element is not registered as being
-	 * a direct superclass of <code>attrElement</code>
+	 * <li>the <code>other</code> attributed element is not a direct superclass
+	 * of <code>attrElement</code></li>
+	 * <li>the <code>other</code> attributed element has no relation with
+	 * <code>attrElement</code></li>
 	 * </ul>
 	 * </li>
 	 * </ul>
@@ -217,13 +223,15 @@ public interface AttributedElementClass extends NamedElement,
 	 * <b>Postconditions:</b> <code>isSubClass</code> is:
 	 * <ul>
 	 * <li><code>true</code> if the <code>other</code> attributed element is a
-	 * registered direct or inherited superclass of this element</li>
+	 * direct or inherited superclass of this element</li>
 	 * <li><code>false</code> if one of the following occurs:
 	 * <ul>
 	 * <li><code>attrElement</code> and the given <code>other</code> attributed
 	 * element are the same</li>
-	 * <li>the <code>other</code> attributed element is not registered as being
-	 * a direct or inherited superclass of <code>attrElement</code>
+	 * <li>the <code>other</code> attributed element is not a direct or
+	 * inherited superclass of <code>attrElement</code></li>
+	 * <li>the <code>other</code> attributed element has no relation with
+	 * <code>attrElement</code></li>
 	 * </ul>
 	 * </li>
 	 * </ul>
@@ -239,7 +247,7 @@ public interface AttributedElementClass extends NamedElement,
 
 	/**
 	 * Tests if the current element equals another attributed element or is
-	 * another attributes element´s direct or inherited superclass.
+	 * another attributes element´s direct or indirect superclass.
 	 * 
 	 * <p>
 	 * <b>Pattern:</b>
@@ -255,18 +263,14 @@ public interface AttributedElementClass extends NamedElement,
 	 * <ul>
 	 * <li><code>true</code> if one of the following occurs:
 	 * <ul>
-	 * <li>the <code>other</code> attributed element is a registered direct or
-	 * inherited subclass of this element</li>
+	 * <li>the <code>other</code> attributed element is a direct or indirect
+	 * subclass of this element</li>
 	 * <li><code>attrElement == other</code></li>
 	 * </ul>
 	 * </li>
-	 * <li><code>false</code> if both following conditions hold:
-	 * <ul>
-	 * <li>the <code>other</code> attributed element is not registered as being
-	 * a direct or indirect subclass of <code>attrElement</code></li>
-	 * <li><code>attrElement != other</code></li>
-	 * </ul>
-	 * </li>
+	 * <li><code>false</code> if the <code>other</code> attributed element has
+	 * no relation with <code>attrElement</code> (not the same, not a direct or
+	 * indirect subclass)</li>
 	 * </ul>
 	 * </p>
 	 * 
@@ -889,8 +893,23 @@ public interface AttributedElementClass extends NamedElement,
 	public Class<? extends AttributedElement> getM1ImplementationClass();
 
 	/**
-	 * Returns the least common superclass of this class and the given class
-	 * <code>other</code>
+	 * Returns the least common superclass of this element and another given
+	 * attributed element.
+	 * 
+	 * <p>
+	 * <b>Pattern:</b> <code>lcs = attrElement.getLeastCommonSuperclass(other);</code>
+	 * </p>
+	 * 
+	 * <p>
+	 * <b>Preconditions:</b> none
+	 * </p>
+	 * 
+	 * <p>
+	 * <b>Postconditions:</b>
+	 * </p>
+	 * 
+	 * @param other
+	 * 		the other attributed element
 	 * 
 	 * @return the least common superclass
 	 */
@@ -907,15 +926,19 @@ public interface AttributedElementClass extends NamedElement,
 			Set<? extends AttributedElementClass> other);
 
 	/**
-	 * Adds a {@link Constraint} to this attributed element.
+	 * Adds a {@link Constraint} to this attributed element. Constraints are
+	 * greql2 predicates, that can be used to validate the graph.
 	 * 
 	 * <p>
-	 * <b>Pattern:</b> <code>attrElement.addConstraint(myConstraint);</code>
+	 * <b>Note:</b> Constraints are not inheritable.
 	 * </p>
 	 * 
 	 * <p>
-	 * <b>Preconditions:</b> The <code>constraint</code> is a valid
-	 * {@link Constraint} (not null).
+	 * <b>Pattern:</b> <code>attrElement.addConstraint(constr);</code>
+	 * </p>
+	 * 
+	 * <p>
+	 * <b>Preconditions:</b> <code>constr</code> is a valid Constraint.
 	 * </p>
 	 * 
 	 * <p>
@@ -924,7 +947,9 @@ public interface AttributedElementClass extends NamedElement,
 	 * <li><code>attrElement'.getConstraints().size >= 0</code></li>
 	 * <li><code>attrElement'.getConstraints().size() == attrElement.getConstraints().size() + 1</code>, if for each constraint <code>c</code> of
 	 * <code>attrElement</code> the following condition holds:
-	 * <code>!constraint.equals(c)</code></li>
+	 * <code>!constr.equals(c)</code></li>
+	 * <li><code>attrElement'.getConstraints()</code> does not contain any inherited constraints from
+	 * possible superclasses of <code>attrElement</code></li>
 	 * </ul>
 	 * </p>
 	 * </p>
@@ -987,7 +1012,7 @@ public interface AttributedElementClass extends NamedElement,
 	 * name</li>
 	 * <li><code>comp == 0</code>, if both element´s qualified names are equal</li>
 	 * <li><code>comp > 0</code>, if this element´s qualified name is
-	 * lexicographically less than the <code>other</code> element´s qualified
+	 * lexicographically greater than the <code>other</code> element´s qualified
 	 * name</li>
 	 * </ul>
 	 * </p>
