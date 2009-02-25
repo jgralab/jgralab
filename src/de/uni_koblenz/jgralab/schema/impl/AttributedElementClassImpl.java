@@ -37,13 +37,17 @@ import de.uni_koblenz.jgralab.M1ClassManager;
 import de.uni_koblenz.jgralab.schema.AttributedElementClass;
 import de.uni_koblenz.jgralab.schema.Constraint;
 import de.uni_koblenz.jgralab.schema.Domain;
+import de.uni_koblenz.jgralab.schema.EdgeClass;
+import de.uni_koblenz.jgralab.schema.GraphClass;
 import de.uni_koblenz.jgralab.schema.Package;
 import de.uni_koblenz.jgralab.schema.QualifiedName;
 import de.uni_koblenz.jgralab.schema.Schema;
+import de.uni_koblenz.jgralab.schema.VertexClass;
 import de.uni_koblenz.jgralab.schema.exception.DuplicateAttributeException;
 import de.uni_koblenz.jgralab.schema.exception.InheritanceException;
 import de.uni_koblenz.jgralab.schema.exception.M1ClassAccessException;
 import de.uni_koblenz.jgralab.schema.exception.ReservedWordException;
+import de.uni_koblenz.jgralab.schema.exception.SchemaException;
 
 public abstract class AttributedElementClassImpl implements
 		AttributedElementClass {
@@ -400,8 +404,6 @@ public abstract class AttributedElementClassImpl implements
 		HashSet<AttributedElementClass> allSuperClasses = new HashSet<AttributedElementClass>();
 		allSuperClasses.addAll(directSuperClasses);
 		for (AttributedElementClass superClass : directSuperClasses) {
-			// System.out.println("Getting superclasses for class: " +
-			// superClass.getName());
 			allSuperClasses.addAll(superClass.getAllSuperClasses());
 		}
 		return allSuperClasses;
@@ -509,22 +511,30 @@ public abstract class AttributedElementClassImpl implements
 
 	protected static AttributedElementClass calculateLeastCommonSuperclass(
 			Set<? extends AttributedElementClass> classes) {
+		boolean foundEdgeClass = false;
+		boolean foundVertexClass = false;
+		boolean foundGraphClass = false;
+		for (AttributedElementClass currentClass : classes) {
+			if (currentClass instanceof VertexClass) {
+				foundVertexClass = true;
+			} else if (currentClass instanceof EdgeClass) {
+				foundEdgeClass = true;
+			} else if (currentClass instanceof GraphClass) {
+				foundGraphClass = true;
+			}
+		}
+		if (!(foundEdgeClass ^ foundVertexClass ^ foundGraphClass))
+			throw new SchemaException("Method calculateLestCommonSuperclass must not be called with different kinds of classes (e.g. an EdgeClass and a VertexClass)"); 
 		AttributedElementClass leastCommon = null;
 		for (AttributedElementClass a : classes) {
 			boolean leastCommonCandidate = true;
 			for (AttributedElementClass b : classes) {
-				// if (a == null)
-				// System.out.println(" A is null");
 				if (!a.isSuperClassOfOrEquals(b)) {
-					// System.out.println(a.getName() + " is not a superclass of
-					// " + b.getName());
 					leastCommonCandidate = false;
 					break;
 				}
 			}
 			if (leastCommonCandidate) {
-				// System.out.println("Found least common candidate: " +
-				// leastCommon);
 				if ((leastCommon == null) || (a.isSubClassOf(leastCommon))) {
 					leastCommon = a;
 				}

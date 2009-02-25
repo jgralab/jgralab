@@ -671,12 +671,8 @@ public class SchemaImpl implements Schema {
 		String aeClassName = anAttributedElement.getAttributedElementClass()
 				.getQualifiedName()
 				+ "Impl";
-		aeClassName = aeClassName.substring(0, aeClassName.length() - 4); // cut
-		// "Impl"
-		// off
-		// at
-		// the
-		// back
+		aeClassName = aeClassName.substring(0, aeClassName.length() - 4); 
+		// cut "Impl" off at the back
 
 		// search for class in graphclasses and each of their
 		// graphelementclasses
