@@ -264,6 +264,7 @@ public interface Schema extends NamedElement {
 	 * @return the m2 element of anAttributedElement (instances of
 	 *         AttributedElementClass)
 	 */
+	@Deprecated
 	public AttributedElementClass getClass(AttributedElement anAttributedElement);
 
 	/**
