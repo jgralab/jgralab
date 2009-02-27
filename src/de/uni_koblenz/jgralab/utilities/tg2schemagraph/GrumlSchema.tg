@@ -38,6 +38,6 @@ AggregationClass To from 'EdgeClass (0,*) to 'VertexClass (1,1) aggregate from {
 AggregationClass From from 'EdgeClass (0,*) to 'VertexClass (1,1) aggregate from {max: Integer, min: Integer, redefinedRoles: Set<String>, roleName: String};
 CompositionClass DefinesGraphClass from 'Schema (1,1) to 'GraphClass (1,1) aggregate from;
 CompositionClass ContainsGraphElementClass from 'Package (1,1) to GraphElementClass (0,*) aggregate from;
-AggregationClass ContainsSubPackage from 'Package (0,*) to 'Package (0,1) aggregate to;
+AggregationClass ContainsSubPackage from 'Package (0,1) to 'Package (0,*) aggregate from;
 AggregationClass ContainsDefaultPackage from 'Schema (0,1) to 'Package (1,1) aggregate from;
 EdgeClass SpecializesVertexClass from 'VertexClass (0,*) to 'VertexClass (0,*);

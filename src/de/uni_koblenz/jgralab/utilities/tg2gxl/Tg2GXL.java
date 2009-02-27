@@ -130,6 +130,7 @@ public class Tg2GXL extends Tg2Whatever {
 	 * @param out
 	 *            the output stream
 	 */
+	@Override
 	protected void graphStart(PrintStream out) {
 
 		out.println("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
@@ -171,16 +172,18 @@ public class Tg2GXL extends Tg2Whatever {
 	 * @param v
 	 *            the processed vertex
 	 */
+	@Override
 	protected void printVertex(PrintStream out, Vertex v) {
 		AttributedElementClass elemClass = v.getAttributedElementClass();
 
 		try {
 			if (printSchema && !(v instanceof Schema)) {
 
-				if (v instanceof de.uni_koblenz.jgralab.grumlschema.AttributedElementClass)
+				if (v instanceof de.uni_koblenz.jgralab.grumlschema.AttributedElementClass) {
 					out.println("<node id=\"" + v.getAttribute("name") + "\">");
-				else
+				} else {
 					out.println("<node id=\"v:" + v.getId() + "\">");
+				}
 				out.println("<type xlink:href=\"" + gxlMetaSchema + "#"
 						+ grUML2GXL.get(elemClass.getQualifiedName())
 						+ "\" xlink:type=\" simple\"/>");
@@ -193,8 +196,8 @@ public class Tg2GXL extends Tg2Whatever {
 
 			else if (!printSchema) {
 				out.println("<node id=\"v:" + v.getId() + "\">");
-				out.println("<type xlink:href=\"" + schemaGraphOutputName
-						+ "#" + elemClass.getQualifiedName()
+				out.println("<type xlink:href=\"" + schemaGraphOutputName + "#"
+						+ elemClass.getQualifiedName()
 						+ "\" xlink:type=\" simple\"/>");
 
 				// print attributes
@@ -220,8 +223,9 @@ public class Tg2GXL extends Tg2Whatever {
 	protected int getEdgeIncidence(Edge e, Vertex v) {
 		int i = 0;
 		for (Edge e0 : v.incidences()) {
-			if ((e0 == e) && (e0.isNormal() == e.isNormal()))
+			if ((e0 == e) && (e0.isNormal() == e.isNormal())) {
 				return i;
+			}
 			i++;
 		}
 		return -1;
@@ -238,6 +242,7 @@ public class Tg2GXL extends Tg2Whatever {
 	 * @param e
 	 *            the processed edge
 	 */
+	@Override
 	protected void printEdge(PrintStream out, Edge e) {
 		AttributedElementClass elemClass = e.getAttributedElementClass();
 
@@ -247,10 +252,12 @@ public class Tg2GXL extends Tg2Whatever {
 			String thatVertex = "v:" + e.getThat().getId();
 
 			try {
-				if (e.getThis() instanceof de.uni_koblenz.jgralab.grumlschema.AttributedElementClass)
+				if (e.getThis() instanceof de.uni_koblenz.jgralab.grumlschema.AttributedElementClass) {
 					thisVertex = "" + e.getThis().getAttribute("name");
-				if (e.getThat() instanceof de.uni_koblenz.jgralab.grumlschema.AttributedElementClass)
+				}
+				if (e.getThat() instanceof de.uni_koblenz.jgralab.grumlschema.AttributedElementClass) {
 					thatVertex = "" + e.getThat().getAttribute("name");
+				}
 			} catch (NoSuchFieldException ex) {
 				ex.printStackTrace();
 			}
@@ -274,7 +281,8 @@ public class Tg2GXL extends Tg2Whatever {
 					+ e.getThis().getId() + "\" toorder=\" " + toOrder
 					+ "\" fromorder=\" " + fromOrder + "\">");
 			out.println("<type xlink:href=\"" + schemaGraphOutputName + "#"
-					+ elemClass.getQualifiedName() + "\" xlink:type=\" simple\"/>");
+					+ elemClass.getQualifiedName()
+					+ "\" xlink:type=\" simple\"/>");
 			// printAttributes
 			if (elemClass.getAttributeCount() > 0) {
 				printAttributes(out, e);
@@ -289,6 +297,7 @@ public class Tg2GXL extends Tg2Whatever {
 	 * @param out
 	 *            the output stream
 	 */
+	@Override
 	protected void graphEnd(PrintStream out) {
 		out.println("</graph>");
 		out.println("</gxl>");
@@ -297,8 +306,7 @@ public class Tg2GXL extends Tg2Whatever {
 	/**
 	 * prints the \<attr\> ... \</attr\> tag for each attribute of
 	 * <code>elem</code>. The methods <code>printComposite(...)</code> and
-	 * <code>printValue(...)</code> are responsible for the attributes
-	 * interior.
+	 * <code>printValue(...)</code> are responsible for the attributes interior.
 	 * 
 	 * @param out
 	 *            the output stream
@@ -330,8 +338,8 @@ public class Tg2GXL extends Tg2Whatever {
 
 	/**
 	 * each attributes domain is submitted to this method with the attributes
-	 * value. While the domain is a <code>CompositeDomain</code>, this method
-	 * is called recursively. The break condition is the appearance of a
+	 * value. While the domain is a <code>CompositeDomain</code>, this method is
+	 * called recursively. The break condition is the appearance of a
 	 * <Code>BasicDomain</Code>.
 	 * 
 	 * @param out
@@ -341,11 +349,10 @@ public class Tg2GXL extends Tg2Whatever {
 	 * @param val
 	 *            the value of the attribute having this domain
 	 */
-	@SuppressWarnings("unchecked")
 	private void printComposite(PrintStream out, Domain dom, Object val) {
-		if (!dom.isComposite())
+		if (!dom.isComposite()) {
 			printValue(out, dom, val);
-		else {
+		} else {
 			if (dom instanceof SetDomain) {
 				out.println("<Set>");
 
@@ -372,8 +379,7 @@ public class Tg2GXL extends Tg2Whatever {
 						.entrySet()) {
 					out.println("<Tup>");
 					out.println("<String>");
-					out.println(""
-							+ stringQuote((String) component.getKey()));
+					out.println("" + stringQuote(component.getKey()));
 					out.println("</String>");
 					try {
 						printComposite(out, component.getValue(), val
@@ -390,8 +396,8 @@ public class Tg2GXL extends Tg2Whatever {
 	}
 
 	/**
-	 * prints the value <code>val</code> of a basic domain <code>dom</code>
-	 * to the print stream <code>out</code>. this method acts as the break
+	 * prints the value <code>val</code> of a basic domain <code>dom</code> to
+	 * the print stream <code>out</code>. this method acts as the break
 	 * condition for the recursive function
 	 * <code>printComposite(PrintStram out, Domain dom, Object val)</code>
 	 * 
@@ -406,10 +412,12 @@ public class Tg2GXL extends Tg2Whatever {
 		String attrValue = "null";
 
 		if (val != null) {
-			if (val instanceof Double)
+			if (val instanceof Double) {
 				val = Float.parseFloat(val.toString());
-			if (val instanceof Long)
+			}
+			if (val instanceof Long) {
 				val = Integer.parseInt(val.toString());
+			}
 			attrValue = stringQuote(val.toString());
 		}
 
@@ -454,9 +462,10 @@ public class Tg2GXL extends Tg2Whatever {
 	/**
 	 * overrides the <code>printGraph()</code> method in Tg2Whatever. The
 	 * <code>boolean printSchema</code> variable is used in every method,
-	 * invoked by <code>super.printGraph()</code> to decide, if either the M1
-	 * or the M2 graph is printed.
+	 * invoked by <code>super.printGraph()</code> to decide, if either the M1 or
+	 * the M2 graph is printed.
 	 */
+	@Override
 	public void printGraph() {
 		printSchema = false;
 		setOutputFile(graphOutputName);
@@ -475,6 +484,7 @@ public class Tg2GXL extends Tg2Whatever {
 	 * processed. -o --output point at the .gxl output file, where the converted
 	 * graph will be stored. -h --help print usage information on System.out
 	 */
+	@Override
 	protected void getOptions(String[] args) {
 		LongOpt[] longOptions = new LongOpt[3];
 
@@ -542,6 +552,7 @@ public class Tg2GXL extends Tg2Whatever {
 	 * prints usage information on System.out if requested by command-line
 	 * parameter -h or if the command-line parameter set is malformed.
 	 */
+	@Override
 	protected void usage(int exitCode) {
 		System.err.println("Usage: Tg2GXL -g graphFileName [options]");
 		System.err
@@ -566,6 +577,7 @@ public class Tg2GXL extends Tg2Whatever {
 	 * adds an escape sequence to special characters in a string
 	 * 
 	 */
+	@Override
 	protected String stringQuote(String s) {
 		StringBuffer sb = new StringBuffer();
 		for (char ch : s.toCharArray()) {

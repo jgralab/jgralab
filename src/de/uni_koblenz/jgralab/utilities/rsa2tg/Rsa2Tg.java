@@ -21,6 +21,8 @@ import de.uni_koblenz.jgralab.GraphIO;
 import de.uni_koblenz.jgralab.GraphIOException;
 import de.uni_koblenz.jgralab.GraphMarker;
 import de.uni_koblenz.jgralab.Vertex;
+import de.uni_koblenz.jgralab.graphvalidator.GraphValidator;
+import de.uni_koblenz.jgralab.grumlschema.Attribute;
 import de.uni_koblenz.jgralab.grumlschema.AttributedElementClass;
 import de.uni_koblenz.jgralab.grumlschema.ContainsGraphElementClass;
 import de.uni_koblenz.jgralab.grumlschema.EdgeClass;
@@ -44,6 +46,7 @@ public class Rsa2Tg extends org.xml.sax.helpers.DefaultHandler {
 	private int ignore;
 	private String currentClassId;
 	private AttributedElementClass currentClass;
+	private Attribute currentAttribute;
 	private GraphMarker<Set<String>> generalizations;
 	private GraphMarker<String> attributeType;
 
@@ -82,10 +85,38 @@ public class Rsa2Tg extends org.xml.sax.helpers.DefaultHandler {
 		assert stack.size() == 0;
 		assert ignore == 0;
 		linkGeneralizations();
+		createMissingDomains();
+		linkAttributeDomains();
 		removeEmptyPackages();
 		String schemaName = sg.getFirstSchema().getName() + ".gruml.tg";
 		createDotFile(schemaName);
 		saveGraph(schemaName);
+		validateGraph();
+	}
+
+	private void validateGraph() {
+		GraphValidator validator = new GraphValidator(sg);
+		try {
+			validator.createValidationReport("validationreport.html");
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+
+	private void linkAttributeDomains() {
+		// TODO
+		// for (Attribute att : sg.getAttributeVertices()) {
+		// Domain dom = (Domain) idMap.get(attributeType.getMark(att));
+		// assert (dom != null);
+		// sg.createHasDomain(att, dom);
+		// }
+		// attributeType.clear();
+	}
+
+	private void createMissingDomains() {
+		// TODO Auto-generated method stub
+
 	}
 
 	private void createDotFile(String schemaName) {
@@ -110,7 +141,7 @@ public class Rsa2Tg extends org.xml.sax.helpers.DefaultHandler {
 				AttributedElementClass sup = (AttributedElementClass) idMap
 						.get(id);
 				assert (sup != null);
-				if (sup.getM1Class() == VertexClass.class) {
+				if (sup instanceof VertexClass) {
 					sg.createSpecializesVertexClass((VertexClass) ae,
 							(VertexClass) sup);
 				} else {
@@ -162,9 +193,14 @@ public class Rsa2Tg extends org.xml.sax.helpers.DefaultHandler {
 		} else if (ignore == 0) {
 			Vertex v = idMap.get(xmiId);
 			if (v != null) {
-				if (v.getM1Class() == Package.class) {
+				if (v instanceof Package) {
 					assert packageStack.size() > 1;
 					packageStack.pop();
+				} else if (v instanceof AttributedElementClass) {
+					currentClassId = null;
+					currentClass = null;
+				} else if (v instanceof Attribute) {
+					currentAttribute = null;
 				}
 			}
 			if (name.equals("uml:Package")) {
@@ -247,6 +283,16 @@ public class Rsa2Tg extends org.xml.sax.helpers.DefaultHandler {
 				} else if (type.equals("uml:Association")) {
 
 				} else if (type.equals("uml:AssociationClass")) {
+					EdgeClass ec = sg.createEdgeClass();
+					idVertex = ec;
+					currentClassId = xmiId;
+					currentClass = ec;
+					String abs = atts.getValue("isAbstract");
+					ec.setIsAbstract(abs != null && abs.equals("true"));
+					ec
+							.setQualifiedName(getQualifiedName(atts
+									.getValue("name")));
+					sg.createContainsGraphElementClass(packageStack.peek(), ec);
 
 				} else if (type.equals("uml:Enumeration")) {
 					EnumDomain ed = sg.createEnumDomain();
@@ -255,7 +301,7 @@ public class Rsa2Tg extends org.xml.sax.helpers.DefaultHandler {
 					ed
 							.setQualifiedName(getQualifiedName(atts
 									.getValue("name")));
-					sg.createContainsEnumDomain(p, ed);
+					sg.createContainsDomain(p, ed);
 					ed.setEnumConstants(new ArrayList<String>());
 
 				} else if (type.equals("uml:PrimitiveType")) {
@@ -265,6 +311,43 @@ public class Rsa2Tg extends org.xml.sax.helpers.DefaultHandler {
 							+ " of type " + type);
 				}
 
+			} else if (name.equals("ownedAttribute")) {
+				if (type.equals("uml:Property")) {
+					assert currentClass != null;
+					String association = atts.getValue("association");
+					if (association != null) {
+						// we have an "ordinary" attribute
+						String attrName = atts.getValue("name");
+						assert attrName != null;
+						attrName = attrName.trim();
+						assert attrName.length() > 0;
+
+						Attribute att = sg.createAttribute();
+						currentAttribute = att;
+						att.setName(attrName);
+						sg.createHasAttribute(currentClass, att);
+
+						String typeId = atts.getValue("type");
+						if (typeId != null) {
+							attributeType.mark(att, typeId);
+						}
+					} else {
+						// we have an association end
+					}
+				} else {
+					throw new SAXException("unexpected element " + name
+							+ " of type " + type);
+				}
+
+			} else if (name.equals("type")) {
+				if (type.equals("uml:PrimitiveType")) {
+					assert currentAttribute != null;
+					// TODO attribute type
+
+				} else {
+					throw new SAXException("unexpected element " + name
+							+ " of type " + type);
+				}
 			} else if (name.equals("ownedLiteral")) {
 				if (type.equals("uml:EnumerationLiteral")) {
 					String classifier = atts.getValue("classifier");
@@ -297,6 +380,8 @@ public class Rsa2Tg extends org.xml.sax.helpers.DefaultHandler {
 				String key = atts.getValue("key");
 				if (key.equals("graphclass")) {
 					// convert currentClass to graphClass
+					assert currentClass != null;
+					assert currentClass instanceof VertexClass;
 					AttributedElementClass aec = (AttributedElementClass) idMap
 							.get(currentClassId);
 					GraphClass gc = sg.createGraphClass();
@@ -304,7 +389,7 @@ public class Rsa2Tg extends org.xml.sax.helpers.DefaultHandler {
 					Edge e = aec.getFirstEdge();
 					while (e != null) {
 						Edge n = e.getNextEdge();
-						if (e.getM1Class() == ContainsGraphElementClass.class) {
+						if (e instanceof ContainsGraphElementClass) {
 							e.delete();
 						} else {
 							e.setThis(gc);
@@ -314,7 +399,9 @@ public class Rsa2Tg extends org.xml.sax.helpers.DefaultHandler {
 					sg.createDefinesGraphClass(schema, gc);
 					aec.delete();
 				} else if (key.equals("record")) {
-
+					// convert current VertexClass to a record domain
+					assert currentClass != null;
+					assert currentClass instanceof VertexClass;
 				} else {
 					throw new SAXException("unexpected stereotype " + key);
 				}
