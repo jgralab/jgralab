@@ -1,5 +1,5 @@
 Schema de.uni_koblenz.jgralab.grumlschema.GrumlSchema;
-GraphClass DefaultGraphClass;
+GraphClass SchemaGraph;
 Package;
 VertexClass 'AggregationClass: EdgeClass {aggregateFrom: Boolean};
 VertexClass Attribute {name: String};
