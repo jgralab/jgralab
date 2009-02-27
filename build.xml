@@ -119,7 +119,7 @@
 	
 	<!-- compile -->
 	<!-- calls targets jgralab, tgschema2java, greql2 and utilities -->
-	<target name="compile" depends="jgralab,tgschema2java,utilities,greql2,graphvalidator,generatetestschemas"/>
+	<target name="compile" depends="jgralab,tgschema2java,tgschema2java,greql2,utilities,graphvalidator,generatetestschemas"/>
 
 	<!-- jgralab -->
 	<!-- compiles jgralab basic sources -->
