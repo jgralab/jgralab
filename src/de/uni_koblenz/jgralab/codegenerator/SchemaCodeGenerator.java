@@ -44,9 +44,9 @@ import de.uni_koblenz.jgralab.schema.VertexClass;
 
 /**
  * TODO add comment
- *
+ * 
  * @author ist@uni-koblenz.de
- *
+ * 
  */
 public class SchemaCodeGenerator extends CodeGenerator {
 
@@ -54,7 +54,7 @@ public class SchemaCodeGenerator extends CodeGenerator {
 
 	/**
 	 * Creates a new SchemaCodeGenerator which creates code for the given schema
-	 *
+	 * 
 	 * @param schema
 	 *            the schema to create the code for
 	 * @param schemaPackageName
@@ -78,7 +78,6 @@ public class SchemaCodeGenerator extends CodeGenerator {
 	@Override
 	protected CodeBlock createHeader(boolean createClass) {
 		addImports("#jgSchemaImplPackage#.#baseClassName#");
-		addImports("#jgSchemaImplPackage#.ConstraintImpl");
 		CodeSnippet code = new CodeSnippet(
 				true,
 				"/**",
@@ -426,6 +425,7 @@ public class SchemaCodeGenerator extends CodeGenerator {
 	private CodeBlock createConstraints(AttributedElementClass aec) {
 		CodeList code = new CodeList();
 		for (Constraint constraint : aec.getConstraints()) {
+			addImports("#jgSchemaImplPackage#.ConstraintImpl");
 			code
 					.addNoIndent(new CodeSnippet(
 							false,
