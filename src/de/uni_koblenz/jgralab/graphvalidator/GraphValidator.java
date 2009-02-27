@@ -35,6 +35,7 @@ import java.util.SortedSet;
 import java.util.TreeSet;
 
 import de.uni_koblenz.jgralab.AttributedElement;
+import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
@@ -49,7 +50,7 @@ import de.uni_koblenz.jgralab.schema.Schema;
 /**
  * A <code>GraphValidator</code> can be used to check if all {@link Constraint}s
  * specified in the {@link Schema} of a given {@link Graph} are fulfilled.
- *
+ * 
  * @author Tassilo Horn <horn@uni-koblenz.de>
  */
 public class GraphValidator {
@@ -67,8 +68,8 @@ public class GraphValidator {
 	/**
 	 * Checks if all multiplicities specified for the {@link EdgeClass}
 	 * <code>ec</code> are fulfilled.
-	 *
-	 *
+	 * 
+	 * 
 	 * @param ec
 	 *            an {@link EdgeClass}
 	 * @return a set of {@link MultiplicityConstraintViolation} describing which
@@ -83,7 +84,7 @@ public class GraphValidator {
 		int toMax = ec.getToMax();
 		Set<AttributedElement> badOutgoing = new HashSet<AttributedElement>();
 		for (Vertex v : graph.vertices(ec.getFrom())) {
-			int degree = v.getDegree(ec);
+			int degree = v.getDegree(ec, EdgeDirection.OUT);
 			if (degree < toMin || degree > toMax) {
 				badOutgoing.add(v);
 			}
@@ -101,7 +102,7 @@ public class GraphValidator {
 		int fromMax = ec.getFromMax();
 		Set<AttributedElement> badIncoming = new HashSet<AttributedElement>();
 		for (Vertex v : graph.vertices(ec.getTo())) {
-			int degree = v.getDegree(ec);
+			int degree = v.getDegree(ec, EdgeDirection.IN);
 			if (degree < fromMin || degree > fromMax) {
 				badIncoming.add(v);
 			}
@@ -119,7 +120,7 @@ public class GraphValidator {
 
 	/**
 	 * Validates all constraints of the graph.
-	 *
+	 * 
 	 * @see GraphValidator#validateMultiplicities(EdgeClass)
 	 * @see GraphValidator#validateConstraints(AttributedElementClass)
 	 * @return a set of {@link ConstraintViolation} objects, one for each
@@ -154,7 +155,7 @@ public class GraphValidator {
 	/**
 	 * Checks if all {@link Constraint}s attached to the
 	 * {@link AttributedElementClass} <code>aec</code> are fulfilled.
-	 *
+	 * 
 	 * @param aec
 	 *            an {@link AttributedElementClass}
 	 * @return a set of {@link ConstraintViolation} objects
@@ -201,7 +202,7 @@ public class GraphValidator {
 	/**
 	 * Do just like {@link GraphValidator#validate()}, but generate a HTML
 	 * report saved to <code>fileName</code>, too.
-	 *
+	 * 
 	 * @param fileName
 	 *            the name of the HTML report file
 	 * @return a set of {@link ConstraintViolation} objects, one for each
