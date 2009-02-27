@@ -263,7 +263,7 @@ public class GraphValidator {
 			bw.append("<p><b>The graph is perfectly valid!</b></p>");
 		} else {
 			bw.append("<p><b>The " + graph.getM1Class().getSimpleName()
-					+ " invalidates " + brokenConstraints.size()
+					+ " violates " + brokenConstraints.size()
 					+ " constraints.</b></p>");
 			// Here goes the table
 			bw.append("<table border=\"1\">");
