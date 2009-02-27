@@ -98,6 +98,7 @@
 		<property name="subprojectname" value="jgralab/greql2"/>
 	  </ant>
       <delete dir="${test.dir}/de/uni_koblenz/jgralabtest/schemas/" />
+      <delete dir="${src.dir}/de/uni_koblenz/jgralab/grumlschema/" />
     </target>
 	
 	<!-- clean all -->
