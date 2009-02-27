@@ -46,7 +46,7 @@ public class SetDomainImpl extends CollectionDomainImpl implements SetDomain {
 	public SetDomainImpl(Schema schema, QualifiedName qn, Domain aBaseDomain) {
 		super(schema, qn, aBaseDomain);
 	}
-	
+
 	public SetDomainImpl(Schema schema, Domain aBaseDomain) {
 		this(schema, new QualifiedName("Set<"
 				+ aBaseDomain.getTGTypeName(schema.getDefaultPackage()) + ">"),
@@ -111,7 +111,7 @@ public class SetDomainImpl extends CollectionDomainImpl implements SetDomain {
 		code.add(getBaseDomain().getReadMethod(schemaRootPackagePrefix,
 				variableName + "Element", graphIoVariableName), 1);
 		code.add(new CodeSnippet("\t#name#.add(#name#Element);", "}",
-				"#io#.match(\"}\");"));
+				"#io#.match(\"}\");", "#io#.space();"));
 		code.addNoIndent(new CodeSnippet("} else {"));
 		code.add(new CodeSnippet("io.match(\"\\\\null\");", "#name# = null;"));
 		code.addNoIndent(new CodeSnippet("}"));
@@ -150,21 +150,25 @@ public class SetDomainImpl extends CollectionDomainImpl implements SetDomain {
 
 	@Override
 	public boolean equals(Object o) {
-		if (this == o)
+		if (this == o) {
 			return true;
+		}
 
-		if (!(o instanceof SetDomain))
+		if (!(o instanceof SetDomain)) {
 			return false;
+		}
 
 		SetDomain other = (SetDomain) o;
 		return baseDomain.equals(other.getBaseDomain());
 	}
-	
+
+	@Override
 	public void setPackage(Package p) {
 		throw new UnsupportedOperationException(
 				"The package of a SetDomain may not be changed.");
 	}
 
+	@Override
 	public void setUniqueName(String newUniqueName) {
 		throw new UnsupportedOperationException(
 				"The unique name of a SetDomain may not be changed.");
