@@ -1,11 +1,17 @@
 package de.uni_koblenz.jgralabtest.schematest.attributedelementtest;
 
+import java.util.HashSet;
 import java.util.Vector;
 
 import org.junit.Before;
 import org.junit.Test;
 
 import de.uni_koblenz.jgralab.schema.AttributedElementClass;
+import de.uni_koblenz.jgralab.schema.GraphClass;
+import de.uni_koblenz.jgralab.schema.QualifiedName;
+import de.uni_koblenz.jgralab.schema.Schema;
+import de.uni_koblenz.jgralab.schema.VertexClass;
+import de.uni_koblenz.jgralab.schema.impl.SchemaImpl;
 
 public final class GraphClassImplTest extends AttributedElementClassImplTest {
 
@@ -14,6 +20,119 @@ public final class GraphClassImplTest extends AttributedElementClassImplTest {
 	public void setUp() {
 		super.setUp();
 		attributedElement = graphClass;
+	}
+
+	/**
+	 * compareTo(AttributedElementClass)
+	 * 
+	 * TEST CASE: Comparing this element to another, where this element´s
+	 * qualified name is lexicographically less than the other´s
+	 */
+	@Test
+	public void testCompareTo() {
+		GraphClass other = schema.createGraphClass(new QualifiedName("Z"));
+
+		testCompareTo(other);
+	}
+
+	/**
+	 * compareTo(AttributedElementClass)
+	 * 
+	 * TEST CASE: Comparing this element to another, where this element´s
+	 * qualified name is lexicographically greater than the other´s
+	 */
+	@Test
+	public void testCompareTo2() {
+		GraphClass other = schema.createGraphClass(new QualifiedName("A"));
+
+		testCompareTo2(other);
+	}
+
+	/**
+	 * compareTo(AttributedElementClass)
+	 * 
+	 * TEST CASE: Comparing this element to another, where both element´s
+	 * qualified names are equal
+	 */
+	@Test
+	public void testCompareTo3() {
+		Schema schema2 = new SchemaImpl(new QualifiedName(
+				"de.uni_koblenz.jgralabtest.schematest.TestSchema2"));
+		GraphClass other = schema2.createGraphClass(new QualifiedName(
+				graphClass.getQualifiedName()));
+
+		testCompareTo3(other);
+	}
+
+	/**
+	 * compareTo(AttributedElementClass)
+	 * 
+	 * TEST CASE: Comparing an element to itself
+	 */
+	@Test
+	public void testCompareTo4() {
+		testCompareTo3(graphClass);
+	}
+
+	/**
+	 * getLeastCommonSuperclass(...)
+	 * 
+	 * TEST CASE: The elements are the same
+	 */
+	@Test
+	public void testGetLeastCommonSuperclass4() {
+		AttributedElementClass expectedLCS = graphClass;
+
+		HashSet<AttributedElementClass> others = new HashSet<AttributedElementClass>();
+		others.add(graphClass);
+
+		testGetLeastCommonSuperclass(others, expectedLCS);
+	}
+
+	/**
+	 * getLeastCommonSuperclass(...)
+	 * 
+	 * TEST CASE: The elements have no common superclasses, except the default
+	 * class
+	 */
+	@Test
+	public void testGetLeastCommonSuperclass5() {
+		AttributedElementClass expectedLCS = schema.getDefaultGraphClass();
+
+		HashSet<AttributedElementClass> others = new HashSet<AttributedElementClass>();
+		GraphClass graphClass2 = schema.createGraphClass(new QualifiedName(
+				"GraphClass2"));
+		others.add(graphClass2);
+
+		testGetLeastCommonSuperclass(others, expectedLCS);
+	}
+
+	/**
+	 * getLeastCommonSuperclass(...)
+	 * 
+	 * TEST CASE: The element array is empty
+	 */
+	@Test
+	public void testGetLeastCommonSuperclass6() {
+		AttributedElementClass expectedLCS = graphClass;
+		HashSet<AttributedElementClass> others = new HashSet<AttributedElementClass>();
+
+		testGetLeastCommonSuperclass(others, expectedLCS);
+	}
+
+	/**
+	 * getLeastCommonSuperclass(...)
+	 * 
+	 * TEST CASE: The elements are from different kinds
+	 */
+	@Test
+	public void testGetLeastCommonSuperclass7() {
+		HashSet<AttributedElementClass> others = new HashSet<AttributedElementClass>();
+		VertexClass vertexClass = graphClass
+				.createVertexClass(new QualifiedName("VertexClass1"));
+		others.add(vertexClass);
+
+		testGetLeastCommonSuperclass(others, null);
 	}
 
 	/**

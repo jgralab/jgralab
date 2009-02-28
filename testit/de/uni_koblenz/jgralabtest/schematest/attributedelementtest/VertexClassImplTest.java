@@ -53,6 +53,36 @@ public final class VertexClassImplTest extends GraphElementClassImplTest {
 	}
 
 	/**
+	 * addConstraint(Constraint)
+	 * 
+	 * TEST CASE: Adding a constraint, already contained in a superclass of this
+	 * element
+	 */
+	@Test
+	public void testAddConstraint4() {
+		VertexClass superClass = graphClass
+				.createVertexClass(new QualifiedName("VertexClassSuperClass"));
+		vertexClass.addSuperClass(superClass);
+
+		testAddConstraint4(superClass);
+	}
+
+	/**
+	 * addConstraint(Constraint)
+	 * 
+	 * TEST CASE: Adding a constraint, already contained in a subclass of this
+	 * element
+	 */
+	@Test
+	public void testAddConstraint5() {
+		VertexClass subClass = graphClass.createVertexClass(new QualifiedName(
+				"VertexClassSubClass"));
+		subClass.addSuperClass(vertexClass);
+
+		testAddConstraint5(subClass);
+	}
+
+	/**
 	 * containsAttribute(String)
 	 * 
 	 * TEST CASE: looking for an attribute, present in a superclass of this
@@ -357,6 +387,22 @@ public final class VertexClassImplTest extends GraphElementClassImplTest {
 		subClass.addSuperClass(vertexClass);
 
 		testGetAttributeList5(subClass);
+	}
+
+	/**
+	 * getConstraints()
+	 * 
+	 * TEST CASE: Getting an element´s list of constraints, that has a
+	 * superclass with constraints
+	 */
+	@Test
+	public void testGetConstraints4() {
+		VertexClass superClass = graphClass
+				.createVertexClass(new QualifiedName("VertexClassSuperClass"));
+
+		vertexClass.addSuperClass(superClass);
+
+		testGetConstraints4(superClass);
 	}
 
 	/**

@@ -10,12 +10,15 @@ import org.junit.Test;
 
 import de.uni_koblenz.jgralab.Attribute;
 import de.uni_koblenz.jgralab.schema.AttributedElementClass;
+import de.uni_koblenz.jgralab.schema.Constraint;
 import de.uni_koblenz.jgralab.schema.GraphClass;
 import de.uni_koblenz.jgralab.schema.QualifiedName;
 import de.uni_koblenz.jgralab.schema.Schema;
 import de.uni_koblenz.jgralab.schema.exception.DuplicateAttributeException;
 import de.uni_koblenz.jgralab.schema.exception.ReservedWordException;
+import de.uni_koblenz.jgralab.schema.exception.SchemaException;
 import de.uni_koblenz.jgralab.schema.impl.AttributeImpl;
+import de.uni_koblenz.jgralab.schema.impl.ConstraintImpl;
 import de.uni_koblenz.jgralab.schema.impl.SchemaImpl;
 
 public abstract class AttributedElementClassImplTest {
@@ -225,6 +228,162 @@ public abstract class AttributedElementClassImplTest {
 				.getAttributeCount());
 		Assert.assertFalse(attributedElement
 				.containsAttribute(invalidAttributeName));
+	}
+
+	/*
+	 * Tests for the addConstraint(String) method.
+	 */
+
+	/**
+	 * addConstraint(Constraint)
+	 * 
+	 * TEST CASE: Adding a constraint, which is not yet present in this element,
+	 * nor in this element´s direct and indirect super-/subclasses
+	 */
+	@Test
+	public final void testAddConstraint() {
+		Constraint constr = new ConstraintImpl("", "SomeConstraint", "");
+
+		int constraintCountBefore = attributedElement.getConstraints().size();
+
+		attributedElement.addConstraint(constr);
+
+		Assert.assertEquals(constraintCountBefore + 1, attributedElement
+				.getConstraints().size());
+		Assert.assertTrue(attributedElement.getConstraints().contains(constr));
+	}
+
+	/**
+	 * addConstraint(Constraint)
+	 * 
+	 * TEST CASE: Adding two distinct constraints which are not yet present in
+	 * this element, nor in this element´s direct and indirect super-/subclasses
+	 */
+	@Test
+	public final void testAddConstraint2() {
+		Constraint constr = new ConstraintImpl("", "SomeConstraint", "");
+		Constraint constr2 = new ConstraintImpl("", "SomeOtherConstraint", "");
+
+		int constraintCountBefore = attributedElement.getConstraints().size();
+
+		attributedElement.addConstraint(constr);
+		attributedElement.addConstraint(constr2);
+
+		Assert.assertEquals(constraintCountBefore + 2, attributedElement
+				.getConstraints().size());
+		Assert.assertTrue(attributedElement.getConstraints().contains(constr));
+		Assert.assertTrue(attributedElement.getConstraints().contains(constr2));
+	}
+
+	/**
+	 * addConstraint(Constraint)
+	 * 
+	 * TEST CASE: Adding a constraint, already contained directly in this
+	 * element
+	 */
+	@Test
+	public final void testAddConstraint3() {
+		Constraint constr = new ConstraintImpl("", "SomeConstraint", "");
+
+		attributedElement.addConstraint(constr);
+
+		int constraintCountBefore = attributedElement.getConstraints().size();
+
+		attributedElement.addConstraint(constr);
+
+		Assert.assertEquals(constraintCountBefore, attributedElement
+				.getConstraints().size());
+		Assert.assertTrue(attributedElement.getConstraints().contains(constr));
+	}
+
+	/**
+	 * addConstraint(Constraint)
+	 * 
+	 * TEST CASE: Adding a constraint, already contained in a superclass of this
+	 * element
+	 * 
+	 * NOTE: This method is called upon in all of this classes´ subclasses.
+	 */
+	public final void testAddConstraint4(AttributedElementClass superClass) {
+		Constraint constr = new ConstraintImpl("", "SomeConstraint", "");
+
+		int constraintCountBefore = attributedElement.getConstraints().size();
+
+		superClass.addConstraint(constr);
+		attributedElement.addConstraint(constr);
+
+		Assert.assertEquals(constraintCountBefore + 1, attributedElement
+				.getConstraints().size());
+		Assert.assertTrue(attributedElement.getConstraints().contains(constr));
+	}
+
+	/**
+	 * addConstraint(Constraint)
+	 * 
+	 * TEST CASE: Adding a constraint, already contained in a subclass of this
+	 * element
+	 * 
+	 * NOTE: This method is called upon in all of this classes´ subclasses.
+	 */
+	public final void testAddConstraint5(AttributedElementClass subClass) {
+		Constraint constr = new ConstraintImpl("", "SomeConstraint", "");
+
+		int constraintCountBefore = attributedElement.getConstraints().size();
+
+		subClass.addConstraint(constr);
+		attributedElement.addConstraint(constr);
+
+		Assert.assertEquals(constraintCountBefore + 1, attributedElement
+				.getConstraints().size());
+		Assert.assertTrue(attributedElement.getConstraints().contains(constr));
+	}
+
+	/*
+	 * Tests for the compareTo(AttributedElementClass) method
+	 */
+
+	/**
+	 * compareTo(AttributedElementClass)
+	 * 
+	 * TEST CASE: Comparing this element to another, where this element´s
+	 * qualified name is lexicographically less than the other´s
+	 * 
+	 * Note: This method is called upon in all of this classes´ subclasses.
+	 */
+	public final void testCompareTo(AttributedElementClass other) {
+		int comp = attributedElement.compareTo(other);
+
+		Assert.assertTrue(comp < 0);
+	}
+
+	/**
+	 * compareTo(AttributedElementClass)
+	 * 
+	 * TEST CASE: Comparing this element to another, where this element´s
+	 * qualified name is lexicographically greater than the other´s
+	 * 
+	 * Note: This method is called upon in all of this classes´ subclasses.
+	 */
+	public final void testCompareTo2(AttributedElementClass other) {
+		int comp = attributedElement.compareTo(other);
+
+		Assert.assertTrue(comp > 0);
+	}
+
+	/**
+	 * compareTo(AttributedElementClass)
+	 * 
+	 * TEST CASE: Comparing this element to another, where both element´s
+	 * qualified names are equal
+	 * 
+	 * TEST CASE: Comparing an element to itself
+	 * 
+	 * Note: This method is called upon in all of this classes´ subclasses.
+	 */
+	public final void testCompareTo3(AttributedElementClass other) {
+		int comp = attributedElement.compareTo(other);
+
+		Assert.assertTrue(comp == 0);
 	}
 
 	/*
@@ -603,6 +762,73 @@ public abstract class AttributedElementClassImplTest {
 		Assert.assertTrue(attributedElement.getAttributeList().isEmpty());
 	}
 
+	/*
+	 * Tests for the getConstraints() method.
+	 */
+	/**
+	 * getConstraints()
+	 * 
+	 * TEST CASE: Getting an element´s list of constraints, that has only one
+	 * constraint
+	 */
+	@Test
+	public final void testGetConstraints() {
+		Constraint constr = new ConstraintImpl("", "SomeConstraint", "");
+
+		attributedElement.addConstraint(constr);
+
+		Assert.assertEquals(1, attributedElement.getConstraints().size());
+		Assert.assertTrue(attributedElement.getConstraints().contains(constr));
+	}
+
+	/**
+	 * getConstraints()
+	 * 
+	 * TEST CASE: Getting an element´s list of constraints, that has only one
+	 * constraint
+	 */
+	@Test
+	public final void testGetConstraints2() {
+		Constraint constr = new ConstraintImpl("", "SomeConstraint", "");
+		Constraint constr2 = new ConstraintImpl("", "SomeOtherConstraint", "");
+
+		attributedElement.addConstraint(constr);
+		attributedElement.addConstraint(constr2);
+
+		Assert.assertEquals(2, attributedElement.getConstraints().size());
+		Assert.assertTrue(attributedElement.getConstraints().contains(constr));
+		Assert.assertTrue(attributedElement.getConstraints().contains(constr2));
+	}
+
+	/**
+	 * getConstraints()
+	 * 
+	 * TEST CASE: Getting an element´s list of constraints, that has no
+	 * constraints at all
+	 */
+	@Test
+	public void testGetConstraints3() {
+		Assert.assertTrue(attributedElement.getConstraints().isEmpty());
+	}
+
+	/**
+	 * getConstraints()
+	 * 
+	 * TEST CASE: Getting an element´s list of constraints, that has a
+	 * superclass with constraints
+	 * 
+	 * Note: This method is called upon in all of this classes´ subclasses.
+	 */
+	public void testGetConstraints4(AttributedElementClass superClass) {
+		Constraint constr = new ConstraintImpl("", "SomeConstraint", "");
+		Constraint constr2 = new ConstraintImpl("", "SomeOtherConstraint", "");
+
+		superClass.addConstraint(constr);
+		superClass.addConstraint(constr2);
+
+		Assert.assertTrue(attributedElement.getConstraints().isEmpty());
+	}
+
 	@Test
 	public void testGetDirectoryName() {
 		// TODO Auto-generated method stub
@@ -694,9 +920,49 @@ public abstract class AttributedElementClassImplTest {
 		}
 	}
 
-	@Test
-	public void testGetLeastCommonSuperclass() {
-		// TODO Auto-generated method stub
+	/*
+	 * Tests for the getLeastCommonSuperclass() method.
+	 * 
+	 * As getLeastCommonSuperClass(AttributedElement) and
+	 * getLeastCommonSuperClass(Set<? extends AttributedElementClass>) are
+	 * basically the same, they are tested together.
+	 */
+	/**
+	 * getLeastCommonSuperclass(...)
+	 * 
+	 * TEST CASE: The elements (other(s) & this) have one common direct
+	 * superclass
+	 * 
+	 * TEST CASE: The elements have multiple common direct superclasses
+	 * 
+	 * TEST CASE: The elements have multiple common superclasses
+	 * 
+	 * TEST CASE: The elements are the same
+	 * 
+	 * TEST CASE: The elements have no common superclasses, except the default
+	 * class
+	 * 
+	 * TEST CASE: The element array is empty
+	 * 
+	 * TEST CASE: The elements are from different kinds
+	 * 
+	 * NOTE: This method is called upon in all of this classes´ subclasses.
+	 */
+	public final void testGetLeastCommonSuperclass(
+			Set<AttributedElementClass> others,
+			AttributedElementClass expectedLCS) {
+
+		if (expectedLCS != null) {
+			AttributedElementClass lcs = attributedElement
+					.getLeastCommonSuperclass(others);
+			Assert.assertEquals(expectedLCS, lcs);
+		} else { // last test case
+			try {
+				attributedElement.getLeastCommonSuperclass(others);
+				Assert.fail();
+			} catch (SchemaException e) {
+			}
+		}
 	}
 
 	@Test

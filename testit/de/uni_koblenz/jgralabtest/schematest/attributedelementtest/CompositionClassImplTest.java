@@ -7,8 +7,11 @@ import org.junit.Test;
 
 import de.uni_koblenz.jgralab.schema.AttributedElementClass;
 import de.uni_koblenz.jgralab.schema.CompositionClass;
+import de.uni_koblenz.jgralab.schema.GraphClass;
 import de.uni_koblenz.jgralab.schema.QualifiedName;
+import de.uni_koblenz.jgralab.schema.Schema;
 import de.uni_koblenz.jgralab.schema.VertexClass;
+import de.uni_koblenz.jgralab.schema.impl.SchemaImpl;
 
 public final class CompositionClassImplTest extends AggregationClassImplTest {
 
@@ -73,6 +76,114 @@ public final class CompositionClassImplTest extends AggregationClassImplTest {
 		subClass.addSuperClass(compositionClass);
 
 		testAddAttribute5(subClass);
+	}
+
+	/**
+	 * addConstraint(Constraint)
+	 * 
+	 * TEST CASE: Adding a constraint, already contained in a superclass of this
+	 * element
+	 */
+	@Test
+	@Override
+	public void testAddConstraint4() {
+		CompositionClass superClass = graphClass.createCompositionClass(
+				new QualifiedName("CompositionClassSuperClass"),
+				compositionClassFromVertexClass, true,
+				compositionClassToVertexClass);
+
+		compositionClass.addSuperClass(superClass);
+
+		testAddConstraint4(superClass);
+	}
+
+	/**
+	 * addConstraint(Constraint)
+	 * 
+	 * TEST CASE: Adding a constraint, already contained in a subclass of this
+	 * element
+	 */
+	@Test
+	@Override
+	public void testAddConstraint5() {
+		CompositionClass subClass = graphClass.createCompositionClass(
+				new QualifiedName("CompositionClassSubClass"),
+				compositionClassFromVertexClass, true,
+				compositionClassToVertexClass);
+
+		subClass.addSuperClass(compositionClass);
+
+		testAddConstraint5(subClass);
+	}
+
+	/**
+	 * compareTo(AttributedElementClass)
+	 * 
+	 * TEST CASE: Comparing this element to another, where this element´s
+	 * qualified name is lexicographically less than the other´s
+	 */
+	@Test
+	@Override
+	public void testCompareTo() {
+		CompositionClass other = graphClass.createCompositionClass(
+				new QualifiedName("Z"), compositionClassFromVertexClass, true,
+				compositionClassToVertexClass);
+
+		testCompareTo(other);
+	}
+
+	/**
+	 * compareTo(AttributedElementClass)
+	 * 
+	 * TEST CASE: Comparing this element to another, where this element´s
+	 * qualified name is lexicographically greater than the other´s
+	 */
+	@Test
+	@Override
+	public void testCompareTo2() {
+		CompositionClass other = graphClass.createCompositionClass(
+				new QualifiedName("A"), compositionClassFromVertexClass, true,
+				compositionClassToVertexClass);
+
+		testCompareTo2(other);
+	}
+
+	/**
+	 * compareTo(AttributedElementClass)
+	 * 
+	 * TEST CASE: Comparing this element to another, where both element´s
+	 * qualified names are equal
+	 */
+	@Test
+	@Override
+	public void testCompareTo3() {
+		Schema schema2 = new SchemaImpl(new QualifiedName(
+				"de.uni_koblenz.jgralabtest.schematest.TestSchema2"));
+		GraphClass graphClass2 = schema2.createGraphClass(new QualifiedName(
+				graphClass.getQualifiedName()));
+		VertexClass compositionClassFromVertexClass2 = graphClass2
+				.createVertexClass(new QualifiedName(
+						"CompositionClassFromVertexClass"));
+		VertexClass compositionClassToVertexClass2 = graphClass2
+				.createVertexClass(new QualifiedName(
+						"CompositionClassToVertexClass"));
+		CompositionClass other = graphClass2.createCompositionClass(
+				new QualifiedName(compositionClass.getQualifiedName()),
+				compositionClassFromVertexClass2, true,
+				compositionClassToVertexClass2);
+
+		testCompareTo3(other);
+	}
+
+	/**
+	 * compareTo(AttributedElementClass)
+	 * 
+	 * TEST CASE: Comparing an element to itself
+	 */
+	@Test
+	@Override
+	public void testCompareTo4() {
+		testCompareTo3(compositionClass);
 	}
 
 	/**
@@ -443,6 +554,24 @@ public final class CompositionClassImplTest extends AggregationClassImplTest {
 		subClass.addSuperClass(compositionClass);
 
 		testGetAttributeList5(subClass);
+	}
+
+	/**
+	 * getConstraints()
+	 * 
+	 * TEST CASE: Getting an element´s list of constraints, that has a
+	 * superclass with constraints
+	 */
+	@Test
+	public void testGetConstraints4() {
+		CompositionClass superClass = graphClass.createCompositionClass(
+				new QualifiedName("CompositionClassSuperClass"),
+				compositionClassFromVertexClass, true,
+				compositionClassToVertexClass);
+
+		compositionClass.addSuperClass(superClass);
+
+		testGetConstraints4(superClass);
 	}
 
 	/**
