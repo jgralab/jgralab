@@ -7,8 +7,11 @@ import org.junit.Test;
 
 import de.uni_koblenz.jgralab.schema.AttributedElementClass;
 import de.uni_koblenz.jgralab.schema.EdgeClass;
+import de.uni_koblenz.jgralab.schema.GraphClass;
 import de.uni_koblenz.jgralab.schema.QualifiedName;
+import de.uni_koblenz.jgralab.schema.Schema;
 import de.uni_koblenz.jgralab.schema.VertexClass;
+import de.uni_koblenz.jgralab.schema.impl.SchemaImpl;
 
 public class EdgeClassImplTest extends GraphElementClassImplTest {
 
@@ -64,6 +67,101 @@ public class EdgeClassImplTest extends GraphElementClassImplTest {
 		subClass.addSuperClass(edgeClass);
 
 		testAddAttribute5(subClass);
+	}
+
+	/**
+	 * addConstraint(Constraint)
+	 * 
+	 * TEST CASE: Adding a constraint, already contained in a superclass of this
+	 * element
+	 */
+	@Test
+	public void testAddConstraint4() {
+		EdgeClass superClass = graphClass.createEdgeClass(new QualifiedName(
+				"EdgeClassSuperClass"), edgeClassFromVertexClass,
+				edgeClassToVertexClass);
+
+		edgeClass.addSuperClass(superClass);
+
+		testAddConstraint4(superClass);
+	}
+
+	/**
+	 * addConstraint(Constraint)
+	 * 
+	 * TEST CASE: Adding a constraint, already contained in a subclass of this
+	 * element
+	 */
+	@Test
+	public void testAddConstraint5() {
+		EdgeClass subClass = graphClass.createEdgeClass(new QualifiedName(
+				"EdgeClassSubClass"), edgeClassFromVertexClass,
+				edgeClassToVertexClass);
+
+		subClass.addSuperClass(edgeClass);
+
+		testAddConstraint5(subClass);
+	}
+
+	/**
+	 * compareTo(AttributedElementClass)
+	 * 
+	 * TEST CASE: Comparing this element to another, where this element´s
+	 * qualified name is lexicographically less than the other´s
+	 */
+	@Test
+	public void testCompareTo() {
+		EdgeClass other = graphClass.createEdgeClass(new QualifiedName("Z"),
+				edgeClassFromVertexClass, edgeClassToVertexClass);
+
+		testCompareTo(other);
+	}
+
+	/**
+	 * compareTo(AttributedElementClass)
+	 * 
+	 * TEST CASE: Comparing this element to another, where this element´s
+	 * qualified name is lexicographically greater than the other´s
+	 */
+	@Test
+	public void testCompareTo2() {
+		EdgeClass other = graphClass.createEdgeClass(new QualifiedName("A"),
+				edgeClassFromVertexClass, edgeClassToVertexClass);
+
+		testCompareTo2(other);
+	}
+
+	/**
+	 * compareTo(AttributedElementClass)
+	 * 
+	 * TEST CASE: Comparing this element to another, where both element´s
+	 * qualified names are equal
+	 */
+	@Test
+	public void testCompareTo3() {
+		Schema schema2 = new SchemaImpl(new QualifiedName(
+				"de.uni_koblenz.jgralabtest.schematest.TestSchema2"));
+		GraphClass graphClass2 = schema2.createGraphClass(new QualifiedName(
+				graphClass.getQualifiedName()));
+		VertexClass edgeClassFromVertexClass2 = graphClass2
+				.createVertexClass(new QualifiedName("EdgeClassFromVertexClass"));
+		VertexClass edgeClassToVertexClass2 = graphClass2
+				.createVertexClass(new QualifiedName("EdgeClassToVertexClass"));
+		EdgeClass other = graphClass2.createEdgeClass(new QualifiedName(
+				edgeClass.getQualifiedName()), edgeClassFromVertexClass2,
+				edgeClassToVertexClass2);
+
+		testCompareTo3(other);
+	}
+
+	/**
+	 * compareTo(AttributedElementClass)
+	 * 
+	 * TEST CASE: Comparing an element to itself
+	 */
+	@Test
+	public void testCompareTo4() {
+		testCompareTo3(edgeClass);
 	}
 
 	/**
@@ -390,6 +488,23 @@ public class EdgeClassImplTest extends GraphElementClassImplTest {
 		subClass.addSuperClass(edgeClass);
 
 		testGetAttributeList5(subClass);
+	}
+
+	/**
+	 * getConstraints()
+	 * 
+	 * TEST CASE: Getting an element´s list of constraints, that has a
+	 * superclass with constraints
+	 */
+	@Test
+	public void testGetConstraints4() {
+		EdgeClass superClass = graphClass.createEdgeClass(new QualifiedName(
+				"EdgeClassSuperClass"), edgeClassFromVertexClass,
+				edgeClassToVertexClass);
+
+		edgeClass.addSuperClass(superClass);
+
+		testGetConstraints4(superClass);
 	}
 
 	/**

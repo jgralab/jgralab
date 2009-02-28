@@ -7,8 +7,11 @@ import org.junit.Test;
 
 import de.uni_koblenz.jgralab.schema.AggregationClass;
 import de.uni_koblenz.jgralab.schema.AttributedElementClass;
+import de.uni_koblenz.jgralab.schema.GraphClass;
 import de.uni_koblenz.jgralab.schema.QualifiedName;
+import de.uni_koblenz.jgralab.schema.Schema;
 import de.uni_koblenz.jgralab.schema.VertexClass;
+import de.uni_koblenz.jgralab.schema.impl.SchemaImpl;
 
 public class AggregationClassImplTest extends EdgeClassImplTest {
 
@@ -74,6 +77,114 @@ public class AggregationClassImplTest extends EdgeClassImplTest {
 		subClass.addSuperClass(aggregationClass);
 
 		testAddAttribute5(subClass);
+	}
+
+	/**
+	 * addConstraint(Constraint)
+	 * 
+	 * TEST CASE: Adding a constraint, already contained in a superclass of this
+	 * element
+	 */
+	@Test
+	@Override
+	public void testAddConstraint4() {
+		AggregationClass superClass = graphClass.createAggregationClass(
+				new QualifiedName("AggregationClassSuperClass"),
+				aggregationClassFromVertexClass, true,
+				aggregationClassToVertexClass);
+
+		aggregationClass.addSuperClass(superClass);
+
+		testAddConstraint4(superClass);
+	}
+
+	/**
+	 * addConstraint(Constraint)
+	 * 
+	 * TEST CASE: Adding a constraint, already contained in a subclass of this
+	 * element
+	 */
+	@Test
+	@Override
+	public void testAddConstraint5() {
+		AggregationClass subClass = graphClass.createAggregationClass(
+				new QualifiedName("AggregationClassSubClass"),
+				aggregationClassFromVertexClass, true,
+				aggregationClassToVertexClass);
+
+		subClass.addSuperClass(aggregationClass);
+
+		testAddConstraint5(subClass);
+	}
+
+	/**
+	 * compareTo(AttributedElementClass)
+	 * 
+	 * TEST CASE: Comparing this element to another, where this element´s
+	 * qualified name is lexicographically less than the other´s
+	 */
+	@Test
+	@Override
+	public void testCompareTo() {
+		AggregationClass other = graphClass.createAggregationClass(
+				new QualifiedName("Z"), aggregationClassFromVertexClass, true,
+				aggregationClassToVertexClass);
+
+		testCompareTo(other);
+	}
+
+	/**
+	 * compareTo(AttributedElementClass)
+	 * 
+	 * TEST CASE: Comparing this element to another, where this element´s
+	 * qualified name is lexicographically greater than the other´s
+	 */
+	@Test
+	@Override
+	public void testCompareTo2() {
+		AggregationClass other = graphClass.createAggregationClass(
+				new QualifiedName("A"), aggregationClassFromVertexClass, true,
+				aggregationClassToVertexClass);
+
+		testCompareTo2(other);
+	}
+
+	/**
+	 * compareTo(AttributedElementClass)
+	 * 
+	 * TEST CASE: Comparing this element to another, where both element´s
+	 * qualified names are equal
+	 */
+	@Test
+	@Override
+	public void testCompareTo3() {
+		Schema schema2 = new SchemaImpl(new QualifiedName(
+				"de.uni_koblenz.jgralabtest.schematest.TestSchema2"));
+		GraphClass graphClass2 = schema2.createGraphClass(new QualifiedName(
+				graphClass.getQualifiedName()));
+		VertexClass aggregationClassFromVertexClass2 = graphClass2
+				.createVertexClass(new QualifiedName(
+						"AggregationClassFromVertexClass"));
+		VertexClass aggregationClassToVertexClass2 = graphClass2
+				.createVertexClass(new QualifiedName(
+						"AggregationClassToVertexClass"));
+		AggregationClass other = graphClass2.createAggregationClass(
+				new QualifiedName(aggregationClass.getQualifiedName()),
+				aggregationClassFromVertexClass2, true,
+				aggregationClassToVertexClass2);
+
+		testCompareTo3(other);
+	}
+
+	/**
+	 * compareTo(AttributedElementClass)
+	 * 
+	 * TEST CASE: Comparing an element to itself
+	 */
+	@Test
+	@Override
+	public void testCompareTo4() {
+		testCompareTo3(aggregationClass);
 	}
 
 	/**
@@ -440,6 +551,24 @@ public class AggregationClassImplTest extends EdgeClassImplTest {
 		subClass.addSuperClass(aggregationClass);
 
 		testGetAttributeList5(subClass);
+	}
+
+	/**
+	 * getConstraints()
+	 * 
+	 * TEST CASE: Getting an element´s list of constraints, that has a
+	 * superclass with constraints
+	 */
+	@Test
+	public void testGetConstraints4() {
+		AggregationClass superClass = graphClass.createAggregationClass(
+				new QualifiedName("AggregationClassSuperClass"),
+				aggregationClassFromVertexClass, true,
+				aggregationClassToVertexClass);
+
+		aggregationClass.addSuperClass(superClass);
+
+		testGetConstraints4(superClass);
 	}
 
 	/**
