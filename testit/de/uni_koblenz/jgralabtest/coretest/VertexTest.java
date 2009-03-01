@@ -487,7 +487,7 @@ public class VertexTest {
 
 	/**
 	 * Tests if a Vertex has the expected degree considering the EdgeClass.
-	 *
+	 * 
 	 * @param forNode
 	 *            the Vertex, which degrees should be tested
 	 * @param expectedLink
@@ -499,11 +499,29 @@ public class VertexTest {
 	 */
 	private void testVertexForEdgeClass(Vertex forNode, int expectedLink,
 			int expectedSubLink, int expectedLinkBack) {
+		EdgeClass[] ecs=getEdgeClasses();
+		assertEquals(expectedLink, forNode.getDegree(ecs[0]));
+		assertEquals(expectedSubLink, forNode.getDegree(ecs[1]));
+		assertEquals(expectedLinkBack, forNode.getDegree(ecs[2]));
+	}
+
+	/**
+	 * Creates an array of the EdgeClasses.
+	 * @return {Link, SubLink, LinkBack}
+	 */
+	private EdgeClass[] getEdgeClasses() {
+		EdgeClass[] ecs=new EdgeClass[3];
 		List<EdgeClass> a = graph.getSchema()
 				.getEdgeClassesInTopologicalOrder();
-		assertEquals(expectedLink, forNode.getDegree(a.get(4)));
-		assertEquals(expectedSubLink, forNode.getDegree(a.get(5)));
-		assertEquals(expectedLinkBack, forNode.getDegree(a.get(3)));
+		for(EdgeClass ec:a){
+			if(ec.getSimpleName().equals("Link")){
+				ecs[0]=ec;
+			}else if(ec.getSimpleName().equals("SubLink")){
+				ecs[1]=ec;
+			}if(ec.getSimpleName().equals("LinkBack")){
+				ecs[2]=ec;
+			}
+		}return ecs;
 	}
 
 	// tests of the method getDegree(Class<? extends Edge> ec)
@@ -768,7 +786,7 @@ public class VertexTest {
 	/**
 	 * Tests if a Vertex has the expected degree considering the EdgeClass and
 	 * SubClasses.
-	 *
+	 * 
 	 * @param forNode
 	 *            the Vertex, which degrees should be tested
 	 * @param expectedLink
@@ -780,15 +798,14 @@ public class VertexTest {
 	 */
 	private void testVertexForEdgeClassSubClass(Vertex forNode,
 			int expectedLink, int expectedSubLink, int expectedLinkBack) {
-		List<EdgeClass> a = graph.getSchema()
-				.getEdgeClassesInTopologicalOrder();
+		EdgeClass[] ecs=getEdgeClasses();
 		assertEquals(expectedLink - expectedSubLink, forNode.getDegree(
-				a.get(4), true));
-		assertEquals(expectedLink, forNode.getDegree(a.get(4), false));
-		assertEquals(expectedSubLink, forNode.getDegree(a.get(5), true));
-		assertEquals(expectedSubLink, forNode.getDegree(a.get(5), false));
-		assertEquals(expectedLinkBack, forNode.getDegree(a.get(3), true));
-		assertEquals(expectedLinkBack, forNode.getDegree(a.get(3), false));
+				ecs[0], true));
+		assertEquals(expectedLink, forNode.getDegree(ecs[0], false));
+		assertEquals(expectedSubLink, forNode.getDegree(ecs[1], true));
+		assertEquals(expectedSubLink, forNode.getDegree(ecs[1], false));
+		assertEquals(expectedLinkBack, forNode.getDegree(ecs[2], true));
+		assertEquals(expectedLinkBack, forNode.getDegree(ecs[2], false));
 	}
 
 	// tests of the method getDegree(Class<? extends Edge> ec, boolean
@@ -919,7 +936,7 @@ public class VertexTest {
 	/**
 	 * Tests if a Vertex has the expected degree considering the Classes
 	 * extending Edge and SubClasses.
-	 *
+	 * 
 	 * @param forNode
 	 *            the Vertex, which degrees should be tested
 	 * @param expectedLink
@@ -970,8 +987,7 @@ public class VertexTest {
 		graph.createLinkBack(dsubn, subn);
 		testVertexForEdgeClassEdgeDirection(dsubnWithout, 0, 0, 0,
 				EdgeDirection.INOUT);
-		testVertexForEdgeClassEdgeDirection(dsubnWithout, 0, 0, 0,
-				EdgeDirection.IN);
+		testVertexForEdgeClassEdgeDirection(dsubnWithout, 0, 0, 0, EdgeDirection.IN);
 		testVertexForEdgeClassEdgeDirection(dsubnWithout, 0, 0, 0,
 				EdgeDirection.OUT);
 		testVertexForEdgeClassEdgeDirection(subn, 1, 0, 1, EdgeDirection.INOUT);
@@ -980,8 +996,7 @@ public class VertexTest {
 		testVertexForEdgeClassEdgeDirection(dsubn, 3, 1, 2, EdgeDirection.INOUT);
 		testVertexForEdgeClassEdgeDirection(dsubn, 1, 0, 1, EdgeDirection.IN);
 		testVertexForEdgeClassEdgeDirection(dsubn, 2, 1, 1, EdgeDirection.OUT);
-		testVertexForEdgeClassEdgeDirection(supern, 2, 1, 1,
-				EdgeDirection.INOUT);
+		testVertexForEdgeClassEdgeDirection(supern, 2, 1, 1, EdgeDirection.INOUT);
 		testVertexForEdgeClassEdgeDirection(supern, 2, 1, 0, EdgeDirection.IN);
 		testVertexForEdgeClassEdgeDirection(supern, 0, 0, 1, EdgeDirection.OUT);
 	}
@@ -1000,8 +1015,7 @@ public class VertexTest {
 		testVertexForEdgeClassEdgeDirection(dsubn, 0, 0, 1, EdgeDirection.INOUT);
 		testVertexForEdgeClassEdgeDirection(supern, 0, 0, 1, EdgeDirection.IN);
 		testVertexForEdgeClassEdgeDirection(supern, 0, 0, 0, EdgeDirection.OUT);
-		testVertexForEdgeClassEdgeDirection(supern, 0, 0, 1,
-				EdgeDirection.INOUT);
+		testVertexForEdgeClassEdgeDirection(supern, 0, 0, 1, EdgeDirection.INOUT);
 	}
 
 	/**
@@ -1139,7 +1153,7 @@ public class VertexTest {
 	/**
 	 * Tests if a Vertex has the expected degree considering the EdgeClass and
 	 * the EdgeDirection.
-	 *
+	 * 
 	 * @param forNode
 	 *            the Vertex, which degrees should be tested
 	 * @param expectedLink
@@ -1154,10 +1168,763 @@ public class VertexTest {
 	private void testVertexForEdgeClassEdgeDirection(Vertex forNode,
 			int expectedLink, int expectedSubLink, int expectedLinkBack,
 			EdgeDirection direction) {
-		List<EdgeClass> a = graph.getSchema()
-				.getEdgeClassesInTopologicalOrder();
-		assertEquals(expectedLink, forNode.getDegree(a.get(4), direction));
-		assertEquals(expectedSubLink, forNode.getDegree(a.get(5), direction));
-		assertEquals(expectedLinkBack, forNode.getDegree(a.get(3), direction));
+		EdgeClass[] ecs=getEdgeClasses();
+		assertEquals(expectedLink, forNode.getDegree(ecs[0], direction));
+		assertEquals(expectedSubLink, forNode.getDegree(ecs[1], direction));
+		assertEquals(expectedLinkBack, forNode.getDegree(ecs[2], direction));
 	}
+
+	// tests of the method getDegree(Class<? extends Edge> ec, EdgeDirection
+	// orientation)
+
+	/**
+	 * A vertex with no connected incidences has to have a degree of 0 for each
+	 * Class.
+	 */
+	@Test
+	public void getDegreeTestClassEdgeDirection0() {
+		Vertex v = graph.createDoubleSubNode();
+		testVertexForClassEdgeDirection(v, 0, 0, 0, EdgeDirection.INOUT);
+		testVertexForClassEdgeDirection(v, 0, 0, 0, EdgeDirection.IN);
+		testVertexForClassEdgeDirection(v, 0, 0, 0, EdgeDirection.OUT);
+	}
+
+	/**
+	 * Checks the degrees in a manually build graph.
+	 */
+	@Test
+	public void getDegreeTestClassEdgeDirection1() {
+		SubNode subn = graph.createSubNode();
+		DoubleSubNode dsubn = graph.createDoubleSubNode();
+		DoubleSubNode dsubnWithout = graph.createDoubleSubNode();
+		SuperNode supern = graph.createSuperNode();
+		graph.createLink(subn, supern);
+		graph.createLink(dsubn, dsubn);
+		graph.createSubLink(dsubn, supern);
+		graph.createLinkBack(supern, dsubn);
+		graph.createLinkBack(dsubn, subn);
+		testVertexForClassEdgeDirection(dsubnWithout, 0, 0, 0,
+				EdgeDirection.INOUT);
+		testVertexForClassEdgeDirection(dsubnWithout, 0, 0, 0,
+				EdgeDirection.IN);
+		testVertexForClassEdgeDirection(dsubnWithout, 0, 0, 0,
+				EdgeDirection.OUT);
+		testVertexForClassEdgeDirection(subn, 1, 0, 1, EdgeDirection.INOUT);
+		testVertexForClassEdgeDirection(subn, 0, 0, 1, EdgeDirection.IN);
+		testVertexForClassEdgeDirection(subn, 1, 0, 0, EdgeDirection.OUT);
+		testVertexForClassEdgeDirection(dsubn, 3, 1, 2, EdgeDirection.INOUT);
+		testVertexForClassEdgeDirection(dsubn, 1, 0, 1, EdgeDirection.IN);
+		testVertexForClassEdgeDirection(dsubn, 2, 1, 1, EdgeDirection.OUT);
+		testVertexForClassEdgeDirection(supern, 2, 1, 1,
+				EdgeDirection.INOUT);
+		testVertexForClassEdgeDirection(supern, 2, 1, 0, EdgeDirection.IN);
+		testVertexForClassEdgeDirection(supern, 0, 0, 1, EdgeDirection.OUT);
+	}
+
+	/**
+	 * Checks the degrees in a manually build graph, which has only one
+	 * LinkBack.
+	 */
+	@Test
+	public void getDegreeTestClassEdgeDirection2() {
+		SuperNode dsubn = graph.createSuperNode();
+		AbstractSuperNode supern = graph.createSubNode();
+		graph.createLinkBack(dsubn, supern);
+		testVertexForClassEdgeDirection(dsubn, 0, 0, 0, EdgeDirection.IN);
+		testVertexForClassEdgeDirection(dsubn, 0, 0, 1, EdgeDirection.OUT);
+		testVertexForClassEdgeDirection(dsubn, 0, 0, 1, EdgeDirection.INOUT);
+		testVertexForClassEdgeDirection(supern, 0, 0, 1, EdgeDirection.IN);
+		testVertexForClassEdgeDirection(supern, 0, 0, 0, EdgeDirection.OUT);
+		testVertexForClassEdgeDirection(supern, 0, 0, 1,
+				EdgeDirection.INOUT);
+	}
+
+	/**
+	 * Generates a number of different edges and checks the correct degrees of
+	 * the vertices considering the different Classes and their EdgeDirections.
+	 * After that it deletes the edges and checks the degrees again.
+	 */
+	@Test
+	public void getDegreeTestClassEdgeDirection3() {
+		Vertex[] nodes = new Vertex[3];
+		nodes[0] = graph.createSubNode();
+		nodes[1] = graph.createDoubleSubNode();
+		nodes[2] = graph.createSuperNode();
+		int[] expectedLinkIn = new int[] { 0, 0, 0 };
+		int[] expectedLinkOut = new int[] { 0, 0, 0 };
+		int[] expectedLinkBackIn = new int[] { 0, 0, 0 };
+		int[] expectedLinkBackOut = new int[] { 0, 0, 0 };
+		int[] expectedSubLinkIn = new int[] { 0, 0, 0 };
+		int[] expectedSubLinkOut = new int[] { 0, 0, 0 };
+		// create new edges
+		for (int i = 0; i < 1000; i++) {
+			// decides which edge should be created
+			int edge = rand.nextInt(3);
+			int start = rand.nextInt(2);
+			int end = rand.nextInt(2) + 1;
+			if (edge == 0) {
+				// create a Link
+				graph.createLink((AbstractSuperNode) nodes[start],
+						(SuperNode) nodes[end]);
+				expectedLinkOut[start]++;
+				expectedLinkIn[end]++;
+			} else if (edge == 1) {
+				// create a LinkBack
+				graph.createLinkBack((SuperNode) nodes[end],
+						(AbstractSuperNode) nodes[start]);
+				expectedLinkBackOut[end]++;
+				expectedLinkBackIn[start]++;
+			} else {
+				// create a SubLink
+				start = 1;
+				graph.createSubLink((DoubleSubNode) nodes[start],
+						(SuperNode) nodes[end]);
+				expectedLinkOut[start]++;
+				expectedLinkIn[end]++;
+				expectedSubLinkOut[start]++;
+				expectedSubLinkIn[end]++;
+			}
+			testVertexForClassEdgeDirection(nodes[0], expectedLinkIn[0],
+					expectedSubLinkIn[0], expectedLinkBackIn[0],
+					EdgeDirection.IN);
+			testVertexForClassEdgeDirection(nodes[0], expectedLinkOut[0],
+					expectedSubLinkOut[0], expectedLinkBackOut[0],
+					EdgeDirection.OUT);
+			testVertexForClassEdgeDirection(nodes[0], expectedLinkIn[0]
+					+ expectedLinkOut[0], expectedSubLinkIn[0]
+					+ expectedSubLinkOut[0], expectedLinkBackIn[0]
+					+ expectedLinkBackOut[0], EdgeDirection.INOUT);
+			testVertexForClassEdgeDirection(nodes[1], expectedLinkIn[1],
+					expectedSubLinkIn[1], expectedLinkBackIn[1],
+					EdgeDirection.IN);
+			testVertexForClassEdgeDirection(nodes[1], expectedLinkOut[1],
+					expectedSubLinkOut[1], expectedLinkBackOut[1],
+					EdgeDirection.OUT);
+			testVertexForClassEdgeDirection(nodes[1], expectedLinkIn[1]
+					+ expectedLinkOut[1], expectedSubLinkIn[1]
+					+ expectedSubLinkOut[1], expectedLinkBackIn[1]
+					+ expectedLinkBackOut[1], EdgeDirection.INOUT);
+			testVertexForClassEdgeDirection(nodes[2], expectedLinkIn[2],
+					expectedSubLinkIn[2], expectedLinkBackIn[2],
+					EdgeDirection.IN);
+			testVertexForClassEdgeDirection(nodes[2], expectedLinkOut[2],
+					expectedSubLinkOut[2], expectedLinkBackOut[2],
+					EdgeDirection.OUT);
+			testVertexForClassEdgeDirection(nodes[2], expectedLinkIn[2]
+					+ expectedLinkOut[2], expectedSubLinkIn[2]
+					+ expectedSubLinkOut[2], expectedLinkBackIn[2]
+					+ expectedLinkBackOut[2], EdgeDirection.INOUT);
+		}
+		// delete the edges
+		HashMap<Vertex, Integer> numbers = new HashMap<Vertex, Integer>();
+		numbers.put(nodes[0], 0);
+		numbers.put(nodes[1], 1);
+		numbers.put(nodes[2], 2);
+		for (int i = graph.getFirstEdgeInGraph().getId(); i < graph.getECount(); i++) {
+			Edge e = graph.getEdge(i);
+			int start = numbers.get(e.getAlpha());
+			int end = numbers.get(e.getOmega());
+			if (e instanceof SubLink) {
+				expectedLinkOut[start]--;
+				expectedLinkIn[end]--;
+				expectedSubLinkOut[start]--;
+				expectedSubLinkIn[end]--;
+			} else if (e instanceof LinkBack) {
+				expectedLinkBackOut[start]--;
+				expectedLinkBackIn[end]--;
+			} else {
+				expectedLinkOut[start]--;
+				expectedLinkIn[end]--;
+			}
+			graph.deleteEdge(e);
+			testVertexForClassEdgeDirection(nodes[0], expectedLinkIn[0],
+					expectedSubLinkIn[0], expectedLinkBackIn[0],
+					EdgeDirection.IN);
+			testVertexForClassEdgeDirection(nodes[0], expectedLinkOut[0],
+					expectedSubLinkOut[0], expectedLinkBackOut[0],
+					EdgeDirection.OUT);
+			testVertexForClassEdgeDirection(nodes[0], expectedLinkIn[0]
+					+ expectedLinkOut[0], expectedSubLinkIn[0]
+					+ expectedSubLinkOut[0], expectedLinkBackIn[0]
+					+ expectedLinkBackOut[0], EdgeDirection.INOUT);
+			testVertexForClassEdgeDirection(nodes[1], expectedLinkIn[1],
+					expectedSubLinkIn[1], expectedLinkBackIn[1],
+					EdgeDirection.IN);
+			testVertexForClassEdgeDirection(nodes[1], expectedLinkOut[1],
+					expectedSubLinkOut[1], expectedLinkBackOut[1],
+					EdgeDirection.OUT);
+			testVertexForClassEdgeDirection(nodes[1], expectedLinkIn[1]
+					+ expectedLinkOut[1], expectedSubLinkIn[1]
+					+ expectedSubLinkOut[1], expectedLinkBackIn[1]
+					+ expectedLinkBackOut[1], EdgeDirection.INOUT);
+			testVertexForClassEdgeDirection(nodes[2], expectedLinkIn[2],
+					expectedSubLinkIn[2], expectedLinkBackIn[2],
+					EdgeDirection.IN);
+			testVertexForClassEdgeDirection(nodes[2], expectedLinkOut[2],
+					expectedSubLinkOut[2], expectedLinkBackOut[2],
+					EdgeDirection.OUT);
+			testVertexForClassEdgeDirection(nodes[2], expectedLinkIn[2]
+					+ expectedLinkOut[2], expectedSubLinkIn[2]
+					+ expectedSubLinkOut[2], expectedLinkBackIn[2]
+					+ expectedLinkBackOut[2], EdgeDirection.INOUT);
+		}
+	}
+
+	/**
+	 * Tests if a Vertex has the expected degree considering the Class and the
+	 * EdgeDirection.
+	 * 
+	 * @param forNode
+	 *            the Vertex, which degrees should be tested
+	 * @param expectedLink
+	 *            the expected number of incident Links
+	 * @param expectedSubLink
+	 *            the expected number of incident SubLinks
+	 * @param expectedLinkBack
+	 *            the expected number of incident LinkBacks
+	 * @param direction
+	 *            the direction of the incidences
+	 */
+	private void testVertexForClassEdgeDirection(Vertex forNode,
+			int expectedLink, int expectedSubLink, int expectedLinkBack,
+			EdgeDirection direction) {
+		assertEquals(expectedLink, forNode.getDegree(Link.class, direction));
+		assertEquals(expectedSubLink, forNode.getDegree(SubLink.class,
+				direction));
+		assertEquals(expectedLinkBack, forNode.getDegree(LinkBack.class,
+				direction));
+	}
+
+	// tests of the method getDegree(EdgeClass ec, EdgeDirection orientation,
+	// boolean noSubClasses)
+
+	/**
+	 * A vertex with no connected incidences has to have a degree of 0 for each
+	 * EdgeClass.
+	 */
+	@Test
+	public void getDegreeTestEdgeClassEdgeDirectionBoolean0() {
+		Vertex v = graph.createDoubleSubNode();
+		testVertexForEdgeClassEdgeDirectionBoolean(v, 0, 0, 0,
+				EdgeDirection.INOUT);
+		testVertexForEdgeClassEdgeDirectionBoolean(v, 0, 0, 0, EdgeDirection.IN);
+		testVertexForEdgeClassEdgeDirectionBoolean(v, 0, 0, 0,
+				EdgeDirection.OUT);
+	}
+
+	/**
+	 * Checks the degrees in a manually build graph.
+	 */
+	@Test
+	public void getDegreeTestEdgeClassEdgeDirectionBoolean1() {
+		SubNode subn = graph.createSubNode();
+		DoubleSubNode dsubn = graph.createDoubleSubNode();
+		DoubleSubNode dsubnWithout = graph.createDoubleSubNode();
+		SuperNode supern = graph.createSuperNode();
+		graph.createLink(subn, supern);
+		graph.createLink(dsubn, dsubn);
+		graph.createSubLink(dsubn, supern);
+		graph.createLinkBack(supern, dsubn);
+		graph.createLinkBack(dsubn, subn);
+		testVertexForEdgeClassEdgeDirectionBoolean(dsubnWithout, 0, 0, 0,
+				EdgeDirection.INOUT);
+		testVertexForEdgeClassEdgeDirectionBoolean(dsubnWithout, 0, 0, 0,
+				EdgeDirection.IN);
+		testVertexForEdgeClassEdgeDirectionBoolean(dsubnWithout, 0, 0, 0,
+				EdgeDirection.OUT);
+		testVertexForEdgeClassEdgeDirectionBoolean(subn, 1, 0, 1,
+				EdgeDirection.INOUT);
+		testVertexForEdgeClassEdgeDirectionBoolean(subn, 0, 0, 1,
+				EdgeDirection.IN);
+		testVertexForEdgeClassEdgeDirectionBoolean(subn, 1, 0, 0,
+				EdgeDirection.OUT);
+		testVertexForEdgeClassEdgeDirectionBoolean(dsubn, 3, 1, 2,
+				EdgeDirection.INOUT);
+		testVertexForEdgeClassEdgeDirectionBoolean(dsubn, 1, 0, 1,
+				EdgeDirection.IN);
+		testVertexForEdgeClassEdgeDirectionBoolean(dsubn, 2, 1, 1,
+				EdgeDirection.OUT);
+		testVertexForEdgeClassEdgeDirectionBoolean(supern, 2, 1, 1,
+				EdgeDirection.INOUT);
+		testVertexForEdgeClassEdgeDirectionBoolean(supern, 2, 1, 0,
+				EdgeDirection.IN);
+		testVertexForEdgeClassEdgeDirectionBoolean(supern, 0, 0, 1,
+				EdgeDirection.OUT);
+	}
+
+	/**
+	 * Checks the degrees in a manually build graph, which has only one
+	 * LinkBack.
+	 */
+	@Test
+	public void getDegreeTestEdgeClassEdgeDirectionBoolean2() {
+		SuperNode dsubn = graph.createSuperNode();
+		AbstractSuperNode supern = graph.createSubNode();
+		graph.createLinkBack(dsubn, supern);
+		testVertexForEdgeClassEdgeDirectionBoolean(dsubn, 0, 0, 0,
+				EdgeDirection.IN);
+		testVertexForEdgeClassEdgeDirectionBoolean(dsubn, 0, 0, 1,
+				EdgeDirection.OUT);
+		testVertexForEdgeClassEdgeDirectionBoolean(dsubn, 0, 0, 1,
+				EdgeDirection.INOUT);
+		testVertexForEdgeClassEdgeDirectionBoolean(supern, 0, 0, 1,
+				EdgeDirection.IN);
+		testVertexForEdgeClassEdgeDirectionBoolean(supern, 0, 0, 0,
+				EdgeDirection.OUT);
+		testVertexForEdgeClassEdgeDirectionBoolean(supern, 0, 0, 1,
+				EdgeDirection.INOUT);
+	}
+
+	/**
+	 * Checks the degrees in a manually build graph, which has only one Link.
+	 */
+	@Test
+	public void getDegreeTestEdgeClassEdgeDirectionBoolean3() {
+		SuperNode dsubn = graph.createSuperNode();
+		AbstractSuperNode supern = graph.createSubNode();
+		graph.createLink(supern, dsubn);
+		testVertexForEdgeClassEdgeDirectionBoolean(dsubn, 1, 0, 0,
+				EdgeDirection.IN);
+		testVertexForEdgeClassEdgeDirectionBoolean(dsubn, 0, 0, 0,
+				EdgeDirection.OUT);
+		testVertexForEdgeClassEdgeDirectionBoolean(dsubn, 1, 0, 0,
+				EdgeDirection.INOUT);
+		testVertexForEdgeClassEdgeDirectionBoolean(supern, 0, 0, 0,
+				EdgeDirection.IN);
+		testVertexForEdgeClassEdgeDirectionBoolean(supern, 1, 0, 0,
+				EdgeDirection.OUT);
+		testVertexForEdgeClassEdgeDirectionBoolean(supern, 1, 0, 0,
+				EdgeDirection.INOUT);
+	}
+
+	/**
+	 * Generates a number of different edges and checks the correct degrees of
+	 * the vertices considering the different Edgeclasses, their EdgeDirections
+	 * and their SubClasses. After that it deletes the edges and checks the
+	 * degrees again.
+	 */
+	@Test
+	public void getDegreeTestEdgeClassEdgeDirectionBoolean5() {
+		Vertex[] nodes = new Vertex[3];
+		nodes[0] = graph.createSubNode();
+		nodes[1] = graph.createDoubleSubNode();
+		nodes[2] = graph.createSuperNode();
+		int[] expectedLinkIn = new int[] { 0, 0, 0 };
+		int[] expectedLinkOut = new int[] { 0, 0, 0 };
+		int[] expectedLinkBackIn = new int[] { 0, 0, 0 };
+		int[] expectedLinkBackOut = new int[] { 0, 0, 0 };
+		int[] expectedSubLinkIn = new int[] { 0, 0, 0 };
+		int[] expectedSubLinkOut = new int[] { 0, 0, 0 };
+		// create new edges
+		for (int i = 0; i < 1000; i++) {
+			// decides which edge should be created
+			int edge = rand.nextInt(3);
+			int start = rand.nextInt(2);
+			int end = rand.nextInt(2) + 1;
+			if (edge == 0) {
+				// create a Link
+				graph.createLink((AbstractSuperNode) nodes[start],
+						(SuperNode) nodes[end]);
+				expectedLinkOut[start]++;
+				expectedLinkIn[end]++;
+			} else if (edge == 1) {
+				// create a LinkBack
+				graph.createLinkBack((SuperNode) nodes[end],
+						(AbstractSuperNode) nodes[start]);
+				expectedLinkBackOut[end]++;
+				expectedLinkBackIn[start]++;
+			} else {
+				// create a SubLink
+				start = 1;
+				graph.createSubLink((DoubleSubNode) nodes[start],
+						(SuperNode) nodes[end]);
+				expectedLinkOut[start]++;
+				expectedLinkIn[end]++;
+				expectedSubLinkOut[start]++;
+				expectedSubLinkIn[end]++;
+			}
+			testVertexForEdgeClassEdgeDirectionBoolean(nodes[0],
+					expectedLinkIn[0], expectedSubLinkIn[0],
+					expectedLinkBackIn[0], EdgeDirection.IN);
+			testVertexForEdgeClassEdgeDirectionBoolean(nodes[0],
+					expectedLinkOut[0], expectedSubLinkOut[0],
+					expectedLinkBackOut[0], EdgeDirection.OUT);
+			testVertexForEdgeClassEdgeDirectionBoolean(nodes[0],
+					expectedLinkIn[0] + expectedLinkOut[0],
+					expectedSubLinkIn[0] + expectedSubLinkOut[0],
+					expectedLinkBackIn[0] + expectedLinkBackOut[0],
+					EdgeDirection.INOUT);
+			testVertexForEdgeClassEdgeDirectionBoolean(nodes[1],
+					expectedLinkIn[1], expectedSubLinkIn[1],
+					expectedLinkBackIn[1], EdgeDirection.IN);
+			testVertexForEdgeClassEdgeDirectionBoolean(nodes[1],
+					expectedLinkOut[1], expectedSubLinkOut[1],
+					expectedLinkBackOut[1], EdgeDirection.OUT);
+			testVertexForEdgeClassEdgeDirectionBoolean(nodes[1],
+					expectedLinkIn[1] + expectedLinkOut[1],
+					expectedSubLinkIn[1] + expectedSubLinkOut[1],
+					expectedLinkBackIn[1] + expectedLinkBackOut[1],
+					EdgeDirection.INOUT);
+			testVertexForEdgeClassEdgeDirectionBoolean(nodes[2],
+					expectedLinkIn[2], expectedSubLinkIn[2],
+					expectedLinkBackIn[2], EdgeDirection.IN);
+			testVertexForEdgeClassEdgeDirectionBoolean(nodes[2],
+					expectedLinkOut[2], expectedSubLinkOut[2],
+					expectedLinkBackOut[2], EdgeDirection.OUT);
+			testVertexForEdgeClassEdgeDirectionBoolean(nodes[2],
+					expectedLinkIn[2] + expectedLinkOut[2],
+					expectedSubLinkIn[2] + expectedSubLinkOut[2],
+					expectedLinkBackIn[2] + expectedLinkBackOut[2],
+					EdgeDirection.INOUT);
+		}
+		// delete the edges
+		HashMap<Vertex, Integer> numbers = new HashMap<Vertex, Integer>();
+		numbers.put(nodes[0], 0);
+		numbers.put(nodes[1], 1);
+		numbers.put(nodes[2], 2);
+		for (int i = graph.getFirstEdgeInGraph().getId(); i < graph.getECount(); i++) {
+			Edge e = graph.getEdge(i);
+			int start = numbers.get(e.getAlpha());
+			int end = numbers.get(e.getOmega());
+			if (e instanceof SubLink) {
+				expectedLinkOut[start]--;
+				expectedLinkIn[end]--;
+				expectedSubLinkOut[start]--;
+				expectedSubLinkIn[end]--;
+			} else if (e instanceof LinkBack) {
+				expectedLinkBackOut[start]--;
+				expectedLinkBackIn[end]--;
+			} else {
+				expectedLinkOut[start]--;
+				expectedLinkIn[end]--;
+			}
+			graph.deleteEdge(e);
+			testVertexForEdgeClassEdgeDirectionBoolean(nodes[0],
+					expectedLinkIn[0], expectedSubLinkIn[0],
+					expectedLinkBackIn[0], EdgeDirection.IN);
+			testVertexForEdgeClassEdgeDirectionBoolean(nodes[0],
+					expectedLinkOut[0], expectedSubLinkOut[0],
+					expectedLinkBackOut[0], EdgeDirection.OUT);
+			testVertexForEdgeClassEdgeDirectionBoolean(nodes[0],
+					expectedLinkIn[0] + expectedLinkOut[0],
+					expectedSubLinkIn[0] + expectedSubLinkOut[0],
+					expectedLinkBackIn[0] + expectedLinkBackOut[0],
+					EdgeDirection.INOUT);
+			testVertexForEdgeClassEdgeDirectionBoolean(nodes[1],
+					expectedLinkIn[1], expectedSubLinkIn[1],
+					expectedLinkBackIn[1], EdgeDirection.IN);
+			testVertexForEdgeClassEdgeDirectionBoolean(nodes[1],
+					expectedLinkOut[1], expectedSubLinkOut[1],
+					expectedLinkBackOut[1], EdgeDirection.OUT);
+			testVertexForEdgeClassEdgeDirectionBoolean(nodes[1],
+					expectedLinkIn[1] + expectedLinkOut[1],
+					expectedSubLinkIn[1] + expectedSubLinkOut[1],
+					expectedLinkBackIn[1] + expectedLinkBackOut[1],
+					EdgeDirection.INOUT);
+			testVertexForEdgeClassEdgeDirectionBoolean(nodes[2],
+					expectedLinkIn[2], expectedSubLinkIn[2],
+					expectedLinkBackIn[2], EdgeDirection.IN);
+			testVertexForEdgeClassEdgeDirectionBoolean(nodes[2],
+					expectedLinkOut[2], expectedSubLinkOut[2],
+					expectedLinkBackOut[2], EdgeDirection.OUT);
+			testVertexForEdgeClassEdgeDirectionBoolean(nodes[2],
+					expectedLinkIn[2] + expectedLinkOut[2],
+					expectedSubLinkIn[2] + expectedSubLinkOut[2],
+					expectedLinkBackIn[2] + expectedLinkBackOut[2],
+					EdgeDirection.INOUT);
+		}
+	}
+
+	/**
+	 * Tests if a Vertex has the expected degree considering the EdgeClass, the
+	 * EdgeDirection and the Subclasses.
+	 * 
+	 * @param forNode
+	 *            the Vertex, which degrees should be tested
+	 * @param expectedLink
+	 *            the expected number of incident Links
+	 * @param expectedSubLink
+	 *            the expected number of incident SubLinks
+	 * @param expectedLinkBack
+	 *            the expected number of incident LinkBacks
+	 * @param direction
+	 *            the direction of the incidences
+	 */
+	private void testVertexForEdgeClassEdgeDirectionBoolean(Vertex forNode,
+			int expectedLink, int expectedSubLink, int expectedLinkBack,
+			EdgeDirection direction) {
+		EdgeClass[] ecs=getEdgeClasses();
+		assertEquals(expectedLink, forNode
+				.getDegree(ecs[0], direction, false));
+		assertEquals(expectedLink - expectedSubLink, forNode.getDegree(
+				ecs[0], direction, true));
+		assertEquals(expectedSubLink, forNode.getDegree(ecs[1], direction,
+				false));
+		assertEquals(expectedSubLink, forNode.getDegree(ecs[1], direction,
+				true));
+		assertEquals(expectedLinkBack, forNode.getDegree(ecs[2], direction,
+				false));
+		assertEquals(expectedLinkBack, forNode.getDegree(ecs[2], direction,
+				true));
+	}
+
+	// tests of the method getDegree(Class<? extends Edge> ec, EdgeDirection
+	// orientation, boolean noSubClasses)
+
+	/**
+	 * A vertex with no connected incidences has to have a degree of 0 for each
+	 * Class.
+	 */
+	@Test
+	public void getDegreeTestClassEdgeDirectionBoolean0() {
+		Vertex v = graph.createDoubleSubNode();
+		testVertexForClassEdgeDirectionBoolean(v, 0, 0, 0, EdgeDirection.INOUT);
+		testVertexForClassEdgeDirectionBoolean(v, 0, 0, 0, EdgeDirection.IN);
+		testVertexForClassEdgeDirectionBoolean(v, 0, 0, 0, EdgeDirection.OUT);
+	}
+
+	/**
+	 * Checks the degrees in a manually build graph.
+	 */
+	@Test
+	public void getDegreeTestClassEdgeDirectionBoolean1() {
+		SubNode subn = graph.createSubNode();
+		DoubleSubNode dsubn = graph.createDoubleSubNode();
+		DoubleSubNode dsubnWithout = graph.createDoubleSubNode();
+		SuperNode supern = graph.createSuperNode();
+		graph.createLink(subn, supern);
+		graph.createLink(dsubn, dsubn);
+		graph.createSubLink(dsubn, supern);
+		graph.createLinkBack(supern, dsubn);
+		graph.createLinkBack(dsubn, subn);
+		testVertexForClassEdgeDirectionBoolean(dsubnWithout, 0, 0, 0,
+				EdgeDirection.INOUT);
+		testVertexForClassEdgeDirectionBoolean(dsubnWithout, 0, 0, 0,
+				EdgeDirection.IN);
+		testVertexForClassEdgeDirectionBoolean(dsubnWithout, 0, 0, 0,
+				EdgeDirection.OUT);
+		testVertexForClassEdgeDirectionBoolean(subn, 1, 0, 1,
+				EdgeDirection.INOUT);
+		testVertexForClassEdgeDirectionBoolean(subn, 0, 0, 1, EdgeDirection.IN);
+		testVertexForClassEdgeDirectionBoolean(subn, 1, 0, 0, EdgeDirection.OUT);
+		testVertexForClassEdgeDirectionBoolean(dsubn, 3, 1, 2,
+				EdgeDirection.INOUT);
+		testVertexForClassEdgeDirectionBoolean(dsubn, 1, 0, 1, EdgeDirection.IN);
+		testVertexForClassEdgeDirectionBoolean(dsubn, 2, 1, 1,
+				EdgeDirection.OUT);
+		testVertexForClassEdgeDirectionBoolean(supern, 2, 1, 1,
+				EdgeDirection.INOUT);
+		testVertexForClassEdgeDirectionBoolean(supern, 2, 1, 0,
+				EdgeDirection.IN);
+		testVertexForClassEdgeDirectionBoolean(supern, 0, 0, 1,
+				EdgeDirection.OUT);
+	}
+
+	/**
+	 * Checks the degrees in a manually build graph, which has only one
+	 * LinkBack.
+	 */
+	@Test
+	public void getDegreeTestClassEdgeDirectionBoolean2() {
+		SuperNode dsubn = graph.createSuperNode();
+		AbstractSuperNode supern = graph.createSubNode();
+		graph.createLinkBack(dsubn, supern);
+		testVertexForClassEdgeDirectionBoolean(dsubn, 0, 0, 0, EdgeDirection.IN);
+		testVertexForClassEdgeDirectionBoolean(dsubn, 0, 0, 1,
+				EdgeDirection.OUT);
+		testVertexForClassEdgeDirectionBoolean(dsubn, 0, 0, 1,
+				EdgeDirection.INOUT);
+		testVertexForClassEdgeDirectionBoolean(supern, 0, 0, 1,
+				EdgeDirection.IN);
+		testVertexForClassEdgeDirectionBoolean(supern, 0, 0, 0,
+				EdgeDirection.OUT);
+		testVertexForClassEdgeDirectionBoolean(supern, 0, 0, 1,
+				EdgeDirection.INOUT);
+	}
+
+	/**
+	 * Checks the degrees in a manually build graph, which has only one Link.
+	 */
+	@Test
+	public void getDegreeTestClassEdgeDirectionBoolean3() {
+		SuperNode dsubn = graph.createSuperNode();
+		AbstractSuperNode supern = graph.createSubNode();
+		graph.createLink(supern, dsubn);
+		testVertexForClassEdgeDirectionBoolean(dsubn, 1, 0, 0, EdgeDirection.IN);
+		testVertexForClassEdgeDirectionBoolean(dsubn, 0, 0, 0,
+				EdgeDirection.OUT);
+		testVertexForClassEdgeDirectionBoolean(dsubn, 1, 0, 0,
+				EdgeDirection.INOUT);
+		testVertexForClassEdgeDirectionBoolean(supern, 0, 0, 0,
+				EdgeDirection.IN);
+		testVertexForClassEdgeDirectionBoolean(supern, 1, 0, 0,
+				EdgeDirection.OUT);
+		testVertexForClassEdgeDirectionBoolean(supern, 1, 0, 0,
+				EdgeDirection.INOUT);
+	}
+
+	/**
+	 * Generates a number of different edges and checks the correct degrees of
+	 * the vertices considering the different Classes, their EdgeDirections and
+	 * their SubClasses. After that it deletes the edges and checks the degrees
+	 * again.
+	 */
+	@Test
+	public void getDegreeTestClassEdgeDirectionBoolean5() {
+		Vertex[] nodes = new Vertex[3];
+		nodes[0] = graph.createSubNode();
+		nodes[1] = graph.createDoubleSubNode();
+		nodes[2] = graph.createSuperNode();
+		int[] expectedLinkIn = new int[] { 0, 0, 0 };
+		int[] expectedLinkOut = new int[] { 0, 0, 0 };
+		int[] expectedLinkBackIn = new int[] { 0, 0, 0 };
+		int[] expectedLinkBackOut = new int[] { 0, 0, 0 };
+		int[] expectedSubLinkIn = new int[] { 0, 0, 0 };
+		int[] expectedSubLinkOut = new int[] { 0, 0, 0 };
+		// create new edges
+		for (int i = 0; i < 1000; i++) {
+			// decides which edge should be created
+			int edge = rand.nextInt(3);
+			int start = rand.nextInt(2);
+			int end = rand.nextInt(2) + 1;
+			if (edge == 0) {
+				// create a Link
+				graph.createLink((AbstractSuperNode) nodes[start],
+						(SuperNode) nodes[end]);
+				expectedLinkOut[start]++;
+				expectedLinkIn[end]++;
+			} else if (edge == 1) {
+				// create a LinkBack
+				graph.createLinkBack((SuperNode) nodes[end],
+						(AbstractSuperNode) nodes[start]);
+				expectedLinkBackOut[end]++;
+				expectedLinkBackIn[start]++;
+			} else {
+				// create a SubLink
+				start = 1;
+				graph.createSubLink((DoubleSubNode) nodes[start],
+						(SuperNode) nodes[end]);
+				expectedLinkOut[start]++;
+				expectedLinkIn[end]++;
+				expectedSubLinkOut[start]++;
+				expectedSubLinkIn[end]++;
+			}
+			testVertexForClassEdgeDirectionBoolean(nodes[0], expectedLinkIn[0],
+					expectedSubLinkIn[0], expectedLinkBackIn[0],
+					EdgeDirection.IN);
+			testVertexForClassEdgeDirectionBoolean(nodes[0],
+					expectedLinkOut[0], expectedSubLinkOut[0],
+					expectedLinkBackOut[0], EdgeDirection.OUT);
+			testVertexForClassEdgeDirectionBoolean(nodes[0], expectedLinkIn[0]
+					+ expectedLinkOut[0], expectedSubLinkIn[0]
+					+ expectedSubLinkOut[0], expectedLinkBackIn[0]
+					+ expectedLinkBackOut[0], EdgeDirection.INOUT);
+			testVertexForClassEdgeDirectionBoolean(nodes[1], expectedLinkIn[1],
+					expectedSubLinkIn[1], expectedLinkBackIn[1],
+					EdgeDirection.IN);
+			testVertexForClassEdgeDirectionBoolean(nodes[1],
+					expectedLinkOut[1], expectedSubLinkOut[1],
+					expectedLinkBackOut[1], EdgeDirection.OUT);
+			testVertexForClassEdgeDirectionBoolean(nodes[1], expectedLinkIn[1]
+					+ expectedLinkOut[1], expectedSubLinkIn[1]
+					+ expectedSubLinkOut[1], expectedLinkBackIn[1]
+					+ expectedLinkBackOut[1], EdgeDirection.INOUT);
+			testVertexForClassEdgeDirectionBoolean(nodes[2], expectedLinkIn[2],
+					expectedSubLinkIn[2], expectedLinkBackIn[2],
+					EdgeDirection.IN);
+			testVertexForClassEdgeDirectionBoolean(nodes[2],
+					expectedLinkOut[2], expectedSubLinkOut[2],
+					expectedLinkBackOut[2], EdgeDirection.OUT);
+			testVertexForClassEdgeDirectionBoolean(nodes[2], expectedLinkIn[2]
+					+ expectedLinkOut[2], expectedSubLinkIn[2]
+					+ expectedSubLinkOut[2], expectedLinkBackIn[2]
+					+ expectedLinkBackOut[2], EdgeDirection.INOUT);
+		}
+		// delete the edges
+		HashMap<Vertex, Integer> numbers = new HashMap<Vertex, Integer>();
+		numbers.put(nodes[0], 0);
+		numbers.put(nodes[1], 1);
+		numbers.put(nodes[2], 2);
+		for (int i = graph.getFirstEdgeInGraph().getId(); i < graph.getECount(); i++) {
+			Edge e = graph.getEdge(i);
+			int start = numbers.get(e.getAlpha());
+			int end = numbers.get(e.getOmega());
+			if (e instanceof SubLink) {
+				expectedLinkOut[start]--;
+				expectedLinkIn[end]--;
+				expectedSubLinkOut[start]--;
+				expectedSubLinkIn[end]--;
+			} else if (e instanceof LinkBack) {
+				expectedLinkBackOut[start]--;
+				expectedLinkBackIn[end]--;
+			} else {
+				expectedLinkOut[start]--;
+				expectedLinkIn[end]--;
+			}
+			graph.deleteEdge(e);
+			testVertexForClassEdgeDirectionBoolean(nodes[0], expectedLinkIn[0],
+					expectedSubLinkIn[0], expectedLinkBackIn[0],
+					EdgeDirection.IN);
+			testVertexForClassEdgeDirectionBoolean(nodes[0],
+					expectedLinkOut[0], expectedSubLinkOut[0],
+					expectedLinkBackOut[0], EdgeDirection.OUT);
+			testVertexForClassEdgeDirectionBoolean(nodes[0], expectedLinkIn[0]
+					+ expectedLinkOut[0], expectedSubLinkIn[0]
+					+ expectedSubLinkOut[0], expectedLinkBackIn[0]
+					+ expectedLinkBackOut[0], EdgeDirection.INOUT);
+			testVertexForClassEdgeDirectionBoolean(nodes[1], expectedLinkIn[1],
+					expectedSubLinkIn[1], expectedLinkBackIn[1],
+					EdgeDirection.IN);
+			testVertexForClassEdgeDirectionBoolean(nodes[1],
+					expectedLinkOut[1], expectedSubLinkOut[1],
+					expectedLinkBackOut[1], EdgeDirection.OUT);
+			testVertexForClassEdgeDirectionBoolean(nodes[1], expectedLinkIn[1]
+					+ expectedLinkOut[1], expectedSubLinkIn[1]
+					+ expectedSubLinkOut[1], expectedLinkBackIn[1]
+					+ expectedLinkBackOut[1], EdgeDirection.INOUT);
+			testVertexForClassEdgeDirectionBoolean(nodes[2], expectedLinkIn[2],
+					expectedSubLinkIn[2], expectedLinkBackIn[2],
+					EdgeDirection.IN);
+			testVertexForClassEdgeDirectionBoolean(nodes[2],
+					expectedLinkOut[2], expectedSubLinkOut[2],
+					expectedLinkBackOut[2], EdgeDirection.OUT);
+			testVertexForClassEdgeDirectionBoolean(nodes[2], expectedLinkIn[2]
+					+ expectedLinkOut[2], expectedSubLinkIn[2]
+					+ expectedSubLinkOut[2], expectedLinkBackIn[2]
+					+ expectedLinkBackOut[2], EdgeDirection.INOUT);
+		}
+	}
+
+	/**
+	 * Tests if a Vertex has the expected degree considering the Class, the
+	 * EdgeDirection and the Subclasses.
+	 * 
+	 * @param forNode
+	 *            the Vertex, which degrees should be tested
+	 * @param expectedLink
+	 *            the expected number of incident Links
+	 * @param expectedSubLink
+	 *            the expected number of incident SubLinks
+	 * @param expectedLinkBack
+	 *            the expected number of incident LinkBacks
+	 * @param direction
+	 *            the direction of the incidences
+	 */
+	private void testVertexForClassEdgeDirectionBoolean(Vertex forNode,
+			int expectedLink, int expectedSubLink, int expectedLinkBack,
+			EdgeDirection direction) {
+		assertEquals(expectedLink, forNode.getDegree(Link.class, direction,
+				false));
+		assertEquals(expectedLink - expectedSubLink, forNode.getDegree(
+				Link.class, direction, true));
+		assertEquals(expectedSubLink, forNode.getDegree(SubLink.class,
+				direction, false));
+		assertEquals(expectedSubLink, forNode.getDegree(SubLink.class,
+				direction, true));
+		assertEquals(expectedLinkBack, forNode.getDegree(LinkBack.class,
+				direction, false));
+		assertEquals(expectedLinkBack, forNode.getDegree(LinkBack.class,
+				direction, true));
+	}
+
 }
