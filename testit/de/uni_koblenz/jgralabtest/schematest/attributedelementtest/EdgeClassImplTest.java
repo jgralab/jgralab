@@ -723,6 +723,38 @@ public class EdgeClassImplTest extends GraphElementClassImplTest {
 		// TODO Auto-generated method stub
 	}
 
+	/**
+	 * getOwnAttribute()
+	 * 
+	 * TEST CASE: Trying to get an attribute present in a superclass of this
+	 * element
+	 */
+	@Test
+	public void testGetOwnAttribute4() {
+		EdgeClass superClass = graphClass.createEdgeClass(new QualifiedName(
+				"EdgeClassSuperClass"), edgeClassFromVertexClass,
+				edgeClassToVertexClass);
+		edgeClass.addSuperClass(superClass);
+
+		testGetOwnAttribute4(superClass);
+	}
+
+	/**
+	 * getOwnAttribute()
+	 * 
+	 * TEST CASE: Trying to get an attribute present in a subclass of this
+	 * element
+	 */
+	@Test
+	public void testGetOwnAttribute5() {
+		EdgeClass subClass = graphClass.createEdgeClass(new QualifiedName(
+				"EdgeClassSubClass"), edgeClassFromVertexClass,
+				edgeClassToVertexClass);
+		subClass.addSuperClass(edgeClass);
+
+		testGetOwnAttribute4(subClass);
+	}
+
 	@Test
 	public void testGetRedefinedFromRoles() {
 		// TODO Auto-generated method stub

@@ -807,7 +807,7 @@ public abstract class AttributedElementClassImplTest {
 	 * constraints at all
 	 */
 	@Test
-	public void testGetConstraints3() {
+	public final void testGetConstraints3() {
 		Assert.assertTrue(attributedElement.getConstraints().isEmpty());
 	}
 
@@ -819,7 +819,7 @@ public abstract class AttributedElementClassImplTest {
 	 * 
 	 * Note: This method is called upon in all of this classes´ subclasses.
 	 */
-	public void testGetConstraints4(AttributedElementClass superClass) {
+	public final void testGetConstraints4(AttributedElementClass superClass) {
 		Constraint constr = new ConstraintImpl("", "SomeConstraint", "");
 		Constraint constr2 = new ConstraintImpl("", "SomeOtherConstraint", "");
 
@@ -980,9 +980,67 @@ public abstract class AttributedElementClassImplTest {
 		// TODO Auto-generated method stub
 	}
 
+	/*
+	 * Tests for the getOwnAttribute() method.
+	 */
+
+	/**
+	 * getOwnAttribute()
+	 * 
+	 * TEST CASE: Getting a direct attribute
+	 */
 	@Test
-	public void testGetOwnAttribute() {
-		// TODO Auto-generated method stub
+	public final void testGetOwnAttribute() {
+		Attribute attribute = new AttributeImpl("testAttribute", schema
+				.getDomain(new QualifiedName("Boolean")));
+
+		attributedElement.addAttribute(attribute);
+
+		Attribute attr = attributedElement.getOwnAttribute(attribute.getName());
+
+		Assert.assertSame(attribute, attr);
+	}
+
+	/**
+	 * getOwnAttribute()
+	 * 
+	 * TEST CASE: Trying to get a non existent attribute
+	 */
+	@Test
+	public final void testGetOwnAttribute2() {
+		Assert.assertNull(attributedElement
+				.getOwnAttribute("nonexistentAttribute"));
+	}
+
+	/**
+	 * getOwnAttribute()
+	 * 
+	 * TEST CASE: Trying to get an attribute with an empty name
+	 */
+	@Test
+	public final void testGetOwnAttribute3() {
+		Assert.assertNull(attributedElement.getOwnAttribute(""));
+	}
+
+	/**
+	 * getOwnAttribute()
+	 * 
+	 * TEST CASE: Trying to get an attribute present in a superclass of this
+	 * element
+	 * 
+	 * TEST CASE: Trying to get an attribute present in a subclass of this
+	 * element
+	 * 
+	 * NOTE: This method is called upon in all of this classes´ subclasses.
+	 */
+	public final void testGetOwnAttribute4(AttributedElementClass otherClass) {
+		Attribute attribute = new AttributeImpl("testAttribute", schema
+				.getDomain(new QualifiedName("Boolean")));
+
+		otherClass.addAttribute(attribute);
+
+		Assert.assertNull(attributedElement
+				.getOwnAttribute(attribute.getName()));
 	}
 
 	@Test

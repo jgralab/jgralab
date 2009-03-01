@@ -1,5 +1,6 @@
 package de.uni_koblenz.jgralabtest.schematest.attributedelementtest;
 
+import java.util.HashSet;
 import java.util.Vector;
 
 import org.junit.Before;
@@ -583,6 +584,170 @@ public final class VertexClassImplTest extends GraphElementClassImplTest {
 	@Test
 	public void testGetEdgeClasses() {
 		// TODO Auto-generated method stub
+	}
+
+	/**
+	 * getLeastCommonSuperclass(...)
+	 * 
+	 * TEST CASE: The elements (other(s) & this) have one common direct
+	 * superclass
+	 */
+	@Test
+	public void testGetLeastCommonSuperclass() {
+		VertexClass vertexClass2 = graphClass
+				.createVertexClass(new QualifiedName("VertexClass2"));
+		VertexClass superclass = graphClass
+				.createVertexClass(new QualifiedName("Superclass"));
+		VertexClass superclass2 = graphClass
+				.createVertexClass(new QualifiedName("Superclass2"));
+		VertexClass superclass3 = graphClass
+				.createVertexClass(new QualifiedName("Superclass3"));
+
+		vertexClass.addSuperClass(superclass);
+		vertexClass.addSuperClass(superclass2);
+		vertexClass2.addSuperClass(superclass);
+		vertexClass2.addSuperClass(superclass3);
+
+		HashSet<AttributedElementClass> others = new HashSet<AttributedElementClass>();
+		others.add(vertexClass2);
+		others.add(superclass);
+		others.add(superclass2);
+		others.add(superclass3);
+
+		// superclass == expected least common superclass
+		testGetLeastCommonSuperclass(others, superclass);
+
+	}
+
+	/**
+	 * getLeastCommonSuperclass(...)
+	 * 
+	 * TEST CASE: The elements have multiple common direct superclasses
+	 */
+	@Test
+	public void testGetLeastCommonSuperclass2() {
+		VertexClass vertexClass2 = graphClass
+				.createVertexClass(new QualifiedName("VertexClass2"));
+		VertexClass superclass = graphClass
+				.createVertexClass(new QualifiedName("Superclass"));
+		VertexClass superclass2 = graphClass
+				.createVertexClass(new QualifiedName("Superclass2"));
+		VertexClass superclass3 = graphClass
+				.createVertexClass(new QualifiedName("Superclass3"));
+
+		vertexClass.addSuperClass(superclass);
+		vertexClass.addSuperClass(superclass2);
+		vertexClass2.addSuperClass(superclass);
+		vertexClass2.addSuperClass(superclass2);
+		vertexClass2.addSuperClass(superclass3);
+
+		HashSet<AttributedElementClass> others = new HashSet<AttributedElementClass>();
+		others.add(vertexClass2);
+		others.add(superclass);
+		others.add(superclass2);
+		others.add(superclass3);
+
+		// superclass == expected least common superclass
+		testGetLeastCommonSuperclass(others, superclass);
+	}
+
+	/**
+	 * getLeastCommonSuperclass(...)
+	 * 
+	 * TEST CASE: The elements have multiple common superclasses
+	 */
+	@Test
+	public void testGetLeastCommonSuperclass3() {
+		// TODO write method
+	}
+
+	/**
+	 * getLeastCommonSuperclass(...)
+	 * 
+	 * TEST CASE: The elements are the same
+	 */
+	@Test
+	public void testGetLeastCommonSuperclass4() {
+		HashSet<AttributedElementClass> others = new HashSet<AttributedElementClass>();
+		others.add(vertexClass);
+
+		// vertexClass == expected least common superclass
+		testGetLeastCommonSuperclass(others, vertexClass);
+	}
+
+	/**
+	 * getLeastCommonSuperclass(...)
+	 * 
+	 * TEST CASE: The elements have no common superclasses, except the default
+	 * class
+	 */
+	@Test
+	public void testGetLeastCommonSuperclass5() {
+		VertexClass vertexClass2 = graphClass
+				.createVertexClass(new QualifiedName("VertexClass2"));
+		HashSet<AttributedElementClass> others = new HashSet<AttributedElementClass>();
+
+		others.add(vertexClass2);
+
+		// DefaultVertexClass == expected least common superclass
+		testGetLeastCommonSuperclass(others, schema.getDefaultVertexClass());
+	}
+
+	/**
+	 * getLeastCommonSuperclass(...)
+	 * 
+	 * TEST CASE: The element array is empty
+	 */
+	@Test
+	public void testGetLeastCommonSuperclass6() {
+		// vertexClass == expected least common superclass
+		testGetLeastCommonSuperclass(new HashSet<AttributedElementClass>(),
+				vertexClass);
+	}
+
+	/**
+	 * getLeastCommonSuperclass(...)
+	 * 
+	 * TEST CASE: The elements are from different kinds
+	 */
+	@Test
+	public void testGetLeastCommonSuperclass7() {
+		HashSet<AttributedElementClass> others = new HashSet<AttributedElementClass>();
+
+		others.add(vertexClass);
+		others.add(graphClass);
+
+		testGetLeastCommonSuperclass(others, null);
+	}
+
+	/**
+	 * getOwnAttribute()
+	 * 
+	 * TEST CASE: Trying to get an attribute present in a superclass of this
+	 * element
+	 */
+	@Test
+	public void testGetOwnAttribute4() {
+		VertexClass superClass = graphClass
+				.createVertexClass(new QualifiedName("Superclass"));
+		vertexClass.addSuperClass(superClass);
+
+		testGetOwnAttribute4(superClass);
+	}
+
+	/**
+	 * getOwnAttribute()
+	 * 
+	 * TEST CASE: Trying to get an attribute present in a subclass of this
+	 * element
+	 */
+	@Test
+	public void testGetOwnAttribute5() {
+		VertexClass subClass = graphClass.createVertexClass(new QualifiedName(
+				"Subclass"));
+		subClass.addSuperClass(vertexClass);
+
+		testGetOwnAttribute4(subClass);
 	}
 
 	@Override

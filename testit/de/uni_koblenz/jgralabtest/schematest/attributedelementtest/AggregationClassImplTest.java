@@ -761,6 +761,42 @@ public class AggregationClassImplTest extends EdgeClassImplTest {
 		testGetDirectSuperClasses(expectedSuperClasses);
 	}
 
+	/**
+	 * getOwnAttribute()
+	 * 
+	 * TEST CASE: Trying to get an attribute present in a superclass of this
+	 * element
+	 */
+	@Test
+	@Override
+	public void testGetOwnAttribute4() {
+		AggregationClass superClass = graphClass.createAggregationClass(
+				new QualifiedName("AggregationClassSuperClass"),
+				aggregationClassFromVertexClass, true,
+				aggregationClassToVertexClass);
+		aggregationClass.addSuperClass(superClass);
+
+		testGetOwnAttribute4(superClass);
+	}
+
+	/**
+	 * getOwnAttribute()
+	 * 
+	 * TEST CASE: Trying to get an attribute present in a subclass of this
+	 * element
+	 */
+	@Test
+	@Override
+	public void testGetOwnAttribute5() {
+		AggregationClass subClass = graphClass.createAggregationClass(
+				new QualifiedName("AggregationClassSuperClass"),
+				aggregationClassFromVertexClass, true,
+				aggregationClassToVertexClass);
+		subClass.addSuperClass(aggregationClass);
+
+		testGetOwnAttribute4(subClass);
+	}
+
 	@Test
 	public void testIsAggregateFrom() {
 		// TODO Auto-generated method stub
