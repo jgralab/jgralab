@@ -946,7 +946,7 @@ public interface AttributedElementClass extends NamedElement,
 	 * </p>
 	 * 
 	 * <p>
-	 * <b>Preconditions:</b> all elements in <code>other</code> are from the
+	 * <b>Preconditions:</b> all elements in <code>others</code> are from the
 	 * same kind (e.g. all VertexClasses, or all EdgeClasses)
 	 * </p>
 	 * 
