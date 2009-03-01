@@ -81,12 +81,11 @@ public final class GraphClassImplTest extends AttributedElementClassImplTest {
 	 */
 	@Test
 	public void testGetLeastCommonSuperclass4() {
-		AttributedElementClass expectedLCS = graphClass;
-
 		HashSet<AttributedElementClass> others = new HashSet<AttributedElementClass>();
 		others.add(graphClass);
 
-		testGetLeastCommonSuperclass(others, expectedLCS);
+		// graphClass == expected least common superclass
+		testGetLeastCommonSuperclass(others, graphClass);
 	}
 
 	/**
@@ -97,14 +96,13 @@ public final class GraphClassImplTest extends AttributedElementClassImplTest {
 	 */
 	@Test
 	public void testGetLeastCommonSuperclass5() {
-		AttributedElementClass expectedLCS = schema.getDefaultGraphClass();
-
 		HashSet<AttributedElementClass> others = new HashSet<AttributedElementClass>();
 		GraphClass graphClass2 = schema.createGraphClass(new QualifiedName(
 				"GraphClass2"));
 		others.add(graphClass2);
 
-		testGetLeastCommonSuperclass(others, expectedLCS);
+		// DefaultGraphClass == expected least common superclass
+		testGetLeastCommonSuperclass(others, schema.getDefaultGraphClass());
 	}
 
 	/**
@@ -114,10 +112,10 @@ public final class GraphClassImplTest extends AttributedElementClassImplTest {
 	 */
 	@Test
 	public void testGetLeastCommonSuperclass6() {
-		AttributedElementClass expectedLCS = graphClass;
-		HashSet<AttributedElementClass> others = new HashSet<AttributedElementClass>();
-
-		testGetLeastCommonSuperclass(others, expectedLCS);
+		// empty 'others' element list
+		// graphClass == expected least common superclass
+		testGetLeastCommonSuperclass(new HashSet<AttributedElementClass>(),
+				graphClass);
 	}
 
 	/**

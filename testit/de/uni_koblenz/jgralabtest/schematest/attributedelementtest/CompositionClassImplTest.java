@@ -763,4 +763,40 @@ public final class CompositionClassImplTest extends AggregationClassImplTest {
 
 		testGetDirectSuperClasses(expectedSuperClasses);
 	}
+
+	/**
+	 * getOwnAttribute()
+	 * 
+	 * TEST CASE: Trying to get an attribute present in a superclass of this
+	 * element
+	 */
+	@Test
+	@Override
+	public void testGetOwnAttribute4() {
+		CompositionClass superClass = graphClass.createCompositionClass(
+				new QualifiedName("CompositionClassSuperClass"),
+				compositionClassFromVertexClass, true,
+				compositionClassToVertexClass);
+		compositionClass.addSuperClass(superClass);
+
+		testGetOwnAttribute4(superClass);
+	}
+
+	/**
+	 * getOwnAttribute()
+	 * 
+	 * TEST CASE: Trying to get an attribute present in a subclass of this
+	 * element
+	 */
+	@Test
+	@Override
+	public void testGetOwnAttribute5() {
+		CompositionClass subClass = graphClass.createCompositionClass(
+				new QualifiedName("CompositionClassSubClass"),
+				compositionClassFromVertexClass, true,
+				compositionClassToVertexClass);
+		subClass.addSuperClass(compositionClass);
+
+		testGetOwnAttribute4(subClass);
+	}
 }
