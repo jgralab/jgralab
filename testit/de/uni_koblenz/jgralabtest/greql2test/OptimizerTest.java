@@ -23,7 +23,6 @@ import de.uni_koblenz.jgralab.greql2.optimizer.VariableDeclarationOrderOptimizer
 import de.uni_koblenz.jgralab.greql2.parser.Greql2Lexer;
 import de.uni_koblenz.jgralab.greql2.parser.Greql2Parser;
 import de.uni_koblenz.jgralab.greql2.schema.Greql2;
-import de.uni_koblenz.jgralab.utilities.Utility;
 
 public class OptimizerTest extends GenericTests {
 
@@ -312,7 +311,6 @@ public class OptimizerTest extends GenericTests {
 		parser.greqlExpression();
 		Graph g = parser.getGraph();
 		// parser.saveGraph("createdTestGraph.tg");
-		Utility.convertGraphToDot(g, "/tmp/PathExistenceOptimizerTestGraph");
 		return g;
 	}
 
