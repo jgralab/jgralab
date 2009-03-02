@@ -750,6 +750,36 @@ public final class VertexClassImplTest extends GraphElementClassImplTest {
 		testGetOwnAttribute4(subClass);
 	}
 
+	/**
+	 * getOwnAttributeCount()
+	 * 
+	 * TEST CASE: Getting the number of attributes of an element that only has
+	 * inherited attributes and no direct attributes
+	 */
+	@Test
+	public void testGetOwnAttributeCount4() {
+		VertexClass superClass = graphClass
+				.createVertexClass(new QualifiedName("Superclass"));
+		vertexClass.addSuperClass(superClass);
+
+		testGetOwnAttributeCount4(superClass);
+	}
+
+	/**
+	 * getOwnAttributeList()
+	 * 
+	 * TEST CASE: Getting an element´s list of attributes, that only has
+	 * inherited attributes and no direct attributes
+	 */
+	@Test
+	public void testGetOwnAttributeList4() {
+		VertexClass superClass = graphClass
+				.createVertexClass(new QualifiedName("Superclass"));
+		vertexClass.addSuperClass(superClass);
+
+		testGetOwnAttributeList4(superClass);
+	}
+
 	@Override
 	@Test
 	public void testGetM1Class() {
@@ -791,4 +821,141 @@ public final class VertexClassImplTest extends GraphElementClassImplTest {
 		// TODO Auto-generated method stub
 	}
 
+	/**
+	 * hasAttributes()
+	 * 
+	 * TEST CASE: The element has one inherited attribute
+	 */
+	@Test
+	public void testHasAttributes3() {
+		VertexClass superClass = graphClass
+				.createVertexClass(new QualifiedName("Superclass"));
+		vertexClass.addSuperClass(superClass);
+
+		testHasAttributes3(superClass);
+	}
+
+	/**
+	 * hasAttributes()
+	 * 
+	 * TEST CASE: The element has multiple inherited attributes
+	 */
+	@Test
+	public void testHasAttributes4() {
+		VertexClass superClass = graphClass
+				.createVertexClass(new QualifiedName("Superclass"));
+		vertexClass.addSuperClass(superClass);
+
+		testHasAttributes4(superClass);
+	}
+
+	/**
+	 * hasAttributes()
+	 * 
+	 * TEST CASE: The element has multiple direct and indirect attributes
+	 */
+	@Test
+	public void testHasAttributes5() {
+		VertexClass superClass = graphClass
+				.createVertexClass(new QualifiedName("Superclass"));
+		vertexClass.addSuperClass(superClass);
+
+		testHasAttributes5(superClass);
+	}
+
+	/**
+	 * hasOwnAttributes()
+	 * 
+	 * TEST CASE: The element has direct and inherited attributes
+	 */
+	@Test
+	public void testHasOwnAttributes4() {
+		VertexClass superClass = graphClass
+				.createVertexClass(new QualifiedName("Superclass"));
+		vertexClass.addSuperClass(superClass);
+
+		testHasOwnAttributes4(superClass);
+	}
+
+	/**
+	 * hasOwnAttributes()
+	 * 
+	 * TEST CASE: The element has no direct but indirect attributes
+	 */
+	@Test
+	public void testHasOwnAttributes5() {
+		VertexClass superClass = graphClass
+				.createVertexClass(new QualifiedName("Superclass"));
+		vertexClass.addSuperClass(superClass);
+
+		testHasOwnAttributes5(superClass);
+	}
+
+	/**
+	 * isDirectSubClassOf()
+	 * 
+	 * TEST CASE: The other element is a direct superclass of this element
+	 */
+	@Test
+	public void testIsDirectSubClassOf() {
+		VertexClass superClass = graphClass
+				.createVertexClass(new QualifiedName("Superclass"));
+		vertexClass.addSuperClass(superClass);
+
+		testIsDirectSubClassOf(superClass);
+	}
+
+	/**
+	 * isDirectSubClassOf()
+	 * 
+	 * TEST CASE: The other element is an inherited superclass of this element
+	 */
+	@Test
+	public void testIsDirectSubClassOf2() {
+		VertexClass superClass = graphClass
+				.createVertexClass(new QualifiedName("Superclass"));
+		VertexClass superClass2 = graphClass
+				.createVertexClass(new QualifiedName("Superclass2"));
+		vertexClass.addSuperClass(superClass);
+		superClass.addSuperClass(superClass2);
+
+		testIsDirectSubClassOf2(superClass2);
+	}
+
+	/**
+	 * isDirectSubClassOf()
+	 * 
+	 * TEST CASE: The other element is a subclass of this element
+	 */
+	@Test
+	public void testIsDirectSubClassOf3() {
+		VertexClass subClass = graphClass.createVertexClass(new QualifiedName(
+				"SubClass"));
+		subClass.addSuperClass(vertexClass);
+
+		testIsDirectSubClassOf2(subClass);
+	}
+
+	/**
+	 * isDirectSubClassOf()
+	 * 
+	 * TEST CASE: The other element has no relation with this element
+	 */
+	@Test
+	public void testIsDirectSubClassOf4() {
+		VertexClass vertexClass2 = graphClass
+				.createVertexClass(new QualifiedName("VertexClass2"));
+
+		testIsDirectSubClassOf2(vertexClass2);
+	}
+
+	/**
+	 * isDirectSubClassOf()
+	 * 
+	 * TEST CASE: The other element and this element are the same
+	 */
+	@Test
+	public void testIsDirectSubClassOf5() {
+		testIsDirectSubClassOf2(vertexClass);
+	}
 }

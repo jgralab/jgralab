@@ -693,6 +693,7 @@ public abstract class AttributedElementClassImplTest {
 
 		Assert.assertEquals(1, attrs.size());
 		Assert.assertTrue(attrs.contains(attribute));
+		Assert.assertNull(attrs.comparator());
 	}
 
 	/**
@@ -713,6 +714,7 @@ public abstract class AttributedElementClassImplTest {
 
 		Assert.assertEquals(1, attrs.size());
 		Assert.assertTrue(attrs.contains(attribute));
+		Assert.assertNull(attrs.comparator());
 	}
 
 	/**
@@ -737,6 +739,7 @@ public abstract class AttributedElementClassImplTest {
 		Assert.assertEquals(2, attrs.size());
 		Assert.assertTrue(attrs.contains(attribute));
 		Assert.assertTrue(attrs.contains(attribute2));
+		Assert.assertNull(attrs.comparator());
 	}
 
 	/**
@@ -1043,14 +1046,144 @@ public abstract class AttributedElementClassImplTest {
 				.getOwnAttribute(attribute.getName()));
 	}
 
+	/*
+	 * Tests for the getOwnAttributeCount() method.
+	 */
+	/**
+	 * getOwnAttributeCount()
+	 * 
+	 * TEST CASE: Getting the number of attributes of an element that only has
+	 * one direct attribute
+	 */
 	@Test
-	public void testGetOwnAttributeCount() {
-		// TODO Auto-generated method stub
+	public final void testGetOwnAttributeCount() {
+		Attribute attribute = new AttributeImpl("testAttribute", schema
+				.getDomain(new QualifiedName("Boolean")));
+
+		attributedElement.addAttribute(attribute);
+
+		Assert.assertEquals(1, attributedElement.getOwnAttributeCount());
 	}
 
+	/**
+	 * getOwnAttributeCount()
+	 * 
+	 * TEST CASE: Getting the number of attributes of an element that has
+	 * multiple direct attributes
+	 */
 	@Test
-	public void testGetOwnAttributeList() {
-		// TODO Auto-generated method stub
+	public final void testGetOwnAttributeCount2() {
+		Attribute attribute = new AttributeImpl("testAttribute", schema
+				.getDomain(new QualifiedName("Boolean")));
+		Attribute attribute2 = new AttributeImpl("testAttribute2", schema
+				.getDomain(new QualifiedName("Boolean")));
+
+		attributedElement.addAttribute(attribute);
+		attributedElement.addAttribute(attribute2);
+
+		Assert.assertEquals(2, attributedElement.getOwnAttributeCount());
+	}
+
+	/**
+	 * getOwnAttributeCount()
+	 * 
+	 * TEST CASE: Getting the number of attributes of an element that has no
+	 * direct attributes
+	 */
+	@Test
+	public final void testGetOwnAttributeCount3() {
+		Assert.assertEquals(0, attributedElement.getOwnAttributeCount());
+	}
+
+	/**
+	 * getOwnAttributeCount()
+	 * 
+	 * TEST CASE: Getting the number of attributes of an element that only has
+	 * inherited attributes and no direct attributes
+	 * 
+	 * NOTE: This method is called upon in all of this classes´ subclasses.
+	 */
+	public final void testGetOwnAttributeCount4(
+			AttributedElementClass superClass) {
+		Attribute attribute = new AttributeImpl("testAttribute", schema
+				.getDomain(new QualifiedName("Boolean")));
+		superClass.addAttribute(attribute);
+
+		Assert.assertEquals(0, attributedElement.getOwnAttributeCount());
+	}
+
+	/*
+	 * Tests for the getOwnAttributeList() method.
+	 */
+	/**
+	 * getOwnAttributeList()
+	 * 
+	 * TEST CASE: Getting an element´s list of attributes, that has one direct
+	 * attribute
+	 */
+	@Test
+	public final void testGetOwnAttributeList() {
+		Attribute attribute = new AttributeImpl("testAttribute", schema
+				.getDomain(new QualifiedName("Boolean")));
+
+		attributedElement.addAttribute(attribute);
+
+		SortedSet<Attribute> attrs = attributedElement.getOwnAttributeList();
+
+		Assert.assertEquals(1, attrs.size());
+		Assert.assertTrue(attrs.contains(attribute));
+		Assert.assertNull(attrs.comparator());
+	}
+
+	/**
+	 * getOwnAttributeList()
+	 * 
+	 * TEST CASE: Getting an element´s list of attributes, that has mutliple
+	 * direct attributes
+	 */
+	@Test
+	public final void testGetOwnAttributeList2() {
+		Attribute attribute = new AttributeImpl("testAttribute", schema
+				.getDomain(new QualifiedName("Boolean")));
+		Attribute attribute2 = new AttributeImpl("testAttribute2", schema
+				.getDomain(new QualifiedName("Boolean")));
+
+		attributedElement.addAttribute(attribute);
+		attributedElement.addAttribute(attribute2);
+
+		SortedSet<Attribute> attrs = attributedElement.getOwnAttributeList();
+
+		Assert.assertEquals(2, attrs.size());
+		Assert.assertTrue(attrs.contains(attribute));
+		Assert.assertTrue(attrs.contains(attribute2));
+		Assert.assertNull(attrs.comparator());
+	}
+
+	/**
+	 * getOwnAttributeList()
+	 * 
+	 * TEST CASE: Getting an element´s list of attributes, that has no direct
+	 * attributes
+	 */
+	@Test
+	public final void testGetOwnAttributeList3() {
+		Assert.assertTrue(attributedElement.getOwnAttributeList().isEmpty());
+	}
+
+	/**
+	 * getOwnAttributeList()
+	 * 
+	 * TEST CASE: Getting an element´s list of attributes, that only has
+	 * inherited attributes and no direct attributes
+	 * 
+	 * NOTE: This method is called upon in all of this classes´ subclasses.
+	 */
+	public final void testGetOwnAttributeList4(AttributedElementClass superClass) {
+		Attribute attribute = new AttributeImpl("testAttribute", schema
+				.getDomain(new QualifiedName("Boolean")));
+		superClass.addAttribute(attribute);
+
+		Assert.assertTrue(attributedElement.getOwnAttributeList().isEmpty());
 	}
 
 	@Test
@@ -1088,24 +1221,240 @@ public abstract class AttributedElementClassImplTest {
 		// TODO Auto-generated method stub
 	}
 
+	/*
+	 * Tests for the hasAttributes() method.
+	 */
+	/**
+	 * hasAttributes()
+	 * 
+	 * TEST CASE: The element has one direct attribute
+	 */
 	@Test
-	public void testHasAttributes() {
-		// TODO Auto-generated method stub
+	public final void testHasAttributes() {
+		Attribute attribute = new AttributeImpl("testAttribute", schema
+				.getDomain(new QualifiedName("Boolean")));
+		attributedElement.addAttribute(attribute);
+
+		Assert.assertTrue(attributedElement.hasAttributes());
 	}
 
+	/**
+	 * hasAttributes()
+	 * 
+	 * TEST CASE: The element has multiple direct attributes
+	 */
 	@Test
-	public void testHasOwnAttributes() {
-		// TODO Auto-generated method stub
+	public final void testHasAttributes2() {
+		Attribute attribute = new AttributeImpl("testAttribute", schema
+				.getDomain(new QualifiedName("Boolean")));
+		Attribute attribute2 = new AttributeImpl("testAttribute2", schema
+				.getDomain(new QualifiedName("Boolean")));
+		attributedElement.addAttribute(attribute);
+		attributedElement.addAttribute(attribute2);
+
+		Assert.assertTrue(attributedElement.hasAttributes());
 	}
 
-	@Test
-	public void testIsAbstract() {
-		// TODO Auto-generated method stub
+	/**
+	 * hasAttributes()
+	 * 
+	 * TEST CASE: The element has one inherited attribute
+	 * 
+	 * NOTE: This method is called upon in all of this classes´ subclasses.
+	 */
+	public final void testHasAttributes3(AttributedElementClass superClass) {
+		Attribute attribute = new AttributeImpl("testAttribute", schema
+				.getDomain(new QualifiedName("Boolean")));
+		superClass.addAttribute(attribute);
+
+		Assert.assertTrue(attributedElement.hasAttributes());
 	}
 
+	/**
+	 * hasAttributes()
+	 * 
+	 * TEST CASE: The element has multiple inherited attributes
+	 * 
+	 * NOTE: This method is called upon in all of this classes´ subclasses.
+	 */
+	public final void testHasAttributes4(AttributedElementClass superClass) {
+		Attribute attribute = new AttributeImpl("testAttribute", schema
+				.getDomain(new QualifiedName("Boolean")));
+		Attribute attribute2 = new AttributeImpl("testAttribute2", schema
+				.getDomain(new QualifiedName("Boolean")));
+		superClass.addAttribute(attribute);
+		superClass.addAttribute(attribute2);
+
+		Assert.assertTrue(attributedElement.hasAttributes());
+	}
+
+	/**
+	 * hasAttributes()
+	 * 
+	 * TEST CASE: The element has multiple direct and indirect attributes
+	 * 
+	 * NOTE: This method is called upon in all of this classes´ subclasses.
+	 */
+	public final void testHasAttributes5(AttributedElementClass superClass) {
+		Attribute attribute = new AttributeImpl("testAttribute", schema
+				.getDomain(new QualifiedName("Boolean")));
+		Attribute attribute2 = new AttributeImpl("testAttribute2", schema
+				.getDomain(new QualifiedName("Boolean")));
+		Attribute attribute3 = new AttributeImpl("testAttribute3", schema
+				.getDomain(new QualifiedName("Boolean")));
+		Attribute attribute4 = new AttributeImpl("testAttribute4", schema
+				.getDomain(new QualifiedName("Boolean")));
+		attributedElement.addAttribute(attribute);
+		attributedElement.addAttribute(attribute2);
+		superClass.addAttribute(attribute3);
+		superClass.addAttribute(attribute4);
+
+		Assert.assertTrue(attributedElement.hasAttributes());
+	}
+
+	/**
+	 * hasAttributes()
+	 * 
+	 * TEST CASE: The element has no direct and no indirect attributes
+	 */
 	@Test
-	public void testIsDirectSubClassOf() {
-		// TODO Auto-generated method stub
+	public final void testHasAttributes6() {
+		Assert.assertFalse(attributedElement.hasAttributes());
+	}
+
+	/*
+	 * Tests for the hasOwnAttributes() method.
+	 */
+	/**
+	 * hasOwnAttributes()
+	 * 
+	 * TEST CASE: The element has one direct attribute
+	 */
+	@Test
+	public final void testHasOwnAttributes() {
+		Attribute attribute = new AttributeImpl("testAttribute", schema
+				.getDomain(new QualifiedName("Boolean")));
+		attributedElement.addAttribute(attribute);
+
+		Assert.assertTrue(attributedElement.hasOwnAttributes());
+	}
+
+	/**
+	 * hasOwnAttributes()
+	 * 
+	 * TEST CASE: The element has multiple direct attributes
+	 */
+	@Test
+	public final void testHasOwnAttributes2() {
+		Attribute attribute = new AttributeImpl("testAttribute", schema
+				.getDomain(new QualifiedName("Boolean")));
+		Attribute attribute2 = new AttributeImpl("testAttribute2", schema
+				.getDomain(new QualifiedName("Boolean")));
+		attributedElement.addAttribute(attribute);
+		attributedElement.addAttribute(attribute2);
+
+		Assert.assertTrue(attributedElement.hasOwnAttributes());
+	}
+
+	/**
+	 * hasOwnAttributes()
+	 * 
+	 * TEST CASE: The element has no direct and no indirect attributes
+	 */
+	@Test
+	public final void testHasOwnAttributes3() {
+		Assert.assertFalse(attributedElement.hasOwnAttributes());
+	}
+
+	/**
+	 * hasOwnAttributes()
+	 * 
+	 * TEST CASE: The element has direct and inherited attributes
+	 * 
+	 * NOTE: This method is called upon in all of this classes´ subclasses.
+	 */
+	public final void testHasOwnAttributes4(AttributedElementClass superClass) {
+		Attribute attribute = new AttributeImpl("testAttribute", schema
+				.getDomain(new QualifiedName("Boolean")));
+		Attribute attribute2 = new AttributeImpl("testAttribute2", schema
+				.getDomain(new QualifiedName("Boolean")));
+		attributedElement.addAttribute(attribute);
+		superClass.addAttribute(attribute2);
+
+		Assert.assertTrue(attributedElement.hasOwnAttributes());
+	}
+
+	/**
+	 * hasOwnAttributes()
+	 * 
+	 * TEST CASE: The element has no direct but indirect attributes
+	 * 
+	 * NOTE: This method is called upon in all of this classes´ subclasses.
+	 */
+	public final void testHasOwnAttributes5(AttributedElementClass superClass) {
+		Attribute attribute = new AttributeImpl("testAttribute", schema
+				.getDomain(new QualifiedName("Boolean")));
+		Attribute attribute2 = new AttributeImpl("testAttribute2", schema
+				.getDomain(new QualifiedName("Boolean")));
+		superClass.addAttribute(attribute);
+		superClass.addAttribute(attribute2);
+
+		Assert.assertFalse(attributedElement.hasOwnAttributes());
+	}
+
+	/*
+	 * Tests for the isAbstract() method.
+	 */
+	/**
+	 * isAbstract()
+	 * 
+	 * TEST CASE: The element is abstract
+	 */
+	@Test
+	public final void testIsAbstract() {
+		attributedElement.setAbstract(true);
+
+		Assert.assertTrue(attributedElement.isAbstract());
+
+	}
+
+	/**
+	 * isAbstract()
+	 * 
+	 * TEST CASE: The element is not abstract
+	 */
+	@Test
+	public final void testIsAbstract2() {
+		attributedElement.setAbstract(false);
+
+		Assert.assertFalse(attributedElement.isAbstract());
+	}
+
+	/*
+	 * Tests for the isDirectSubClassOf() method.
+	 */
+	/**
+	 * isDirectSubClassOf()
+	 * 
+	 * TEST CASE: The other element is a direct superclass of this element
+	 */
+	public final void testIsDirectSubClassOf(AttributedElementClass other) {
+		Assert.assertTrue(attributedElement.isDirectSubClassOf(other));
+	}
+
+	/**
+	 * isDirectSubClassOf()
+	 * 
+	 * TEST CASE: The other element is an inherited superclass of this element
+	 * 
+	 * TEST CASE: The other element is a subclass of this element
+	 * 
+	 * TEST CASE: The other element has no relation with this element
+	 * 
+	 * TEST CASE: The other element and this element are the same
+	 */
+	public final void testIsDirectSubClassOf2(AttributedElementClass other) {
+		Assert.assertFalse(attributedElement.isDirectSubClassOf(other));
 	}
 
 	@Test
