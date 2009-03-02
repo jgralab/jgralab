@@ -797,9 +797,213 @@ public class AggregationClassImplTest extends EdgeClassImplTest {
 		testGetOwnAttribute4(subClass);
 	}
 
+	/**
+	 * getOwnAttributeCount()
+	 * 
+	 * TEST CASE: Getting the number of attributes of an element that only has
+	 * inherited attributes and no direct attributes
+	 */
+	@Test
+	@Override
+	public void testGetOwnAttributeCount4() {
+		AggregationClass superClass = graphClass.createAggregationClass(
+				new QualifiedName("AggregationClassSuperClass"),
+				aggregationClassFromVertexClass, true,
+				aggregationClassToVertexClass);
+		aggregationClass.addSuperClass(superClass);
+
+		testGetOwnAttributeCount4(superClass);
+	}
+
+	/**
+	 * getOwnAttributeList()
+	 * 
+	 * TEST CASE: Getting an element´s list of attributes, that only has
+	 * inherited attributes and no direct attributes
+	 */
+	@Test
+	@Override
+	public void testGetOwnAttributeList4() {
+		AggregationClass superClass = graphClass.createAggregationClass(
+				new QualifiedName("AggregationClassSuperClass"),
+				aggregationClassFromVertexClass, true,
+				aggregationClassToVertexClass);
+		aggregationClass.addSuperClass(superClass);
+
+		testGetOwnAttributeList4(superClass);
+	}
+
+	/**
+	 * hasAttributes()
+	 * 
+	 * TEST CASE: The element has one inherited attribute
+	 */
+	@Test
+	@Override
+	public void testHasAttributes3() {
+		AggregationClass superClass = graphClass.createAggregationClass(
+				new QualifiedName("AggregationClassSuperClass"),
+				aggregationClassFromVertexClass, true,
+				aggregationClassToVertexClass);
+		aggregationClass.addSuperClass(superClass);
+
+		testHasAttributes3(superClass);
+	}
+
+	/**
+	 * hasAttributes()
+	 * 
+	 * TEST CASE: The element has multiple inherited attributes
+	 */
+	@Test
+	@Override
+	public void testHasAttributes4() {
+		AggregationClass superClass = graphClass.createAggregationClass(
+				new QualifiedName("AggregationClassSuperClass"),
+				aggregationClassFromVertexClass, true,
+				aggregationClassToVertexClass);
+		aggregationClass.addSuperClass(superClass);
+
+		testHasAttributes4(superClass);
+	}
+
+	/**
+	 * hasAttributes()
+	 * 
+	 * TEST CASE: The element has multiple direct and indirect attributes
+	 */
+	@Test
+	@Override
+	public void testHasAttributes5() {
+		AggregationClass superClass = graphClass.createAggregationClass(
+				new QualifiedName("AggregationClassSuperClass"),
+				aggregationClassFromVertexClass, true,
+				aggregationClassToVertexClass);
+		aggregationClass.addSuperClass(superClass);
+
+		testHasAttributes5(superClass);
+	}
+
+	/**
+	 * hasOwnAttributes()
+	 * 
+	 * TEST CASE: The element has direct and inherited attributes
+	 */
+	@Test
+	@Override
+	public void testHasOwnAttributes4() {
+		AggregationClass superClass = graphClass.createAggregationClass(
+				new QualifiedName("AggregationClassSuperClass"),
+				aggregationClassFromVertexClass, true,
+				aggregationClassToVertexClass);
+		aggregationClass.addSuperClass(superClass);
+
+		testHasOwnAttributes4(superClass);
+	}
+
+	/**
+	 * hasOwnAttributes()
+	 * 
+	 * TEST CASE: The element has no direct but indirect attributes
+	 */
+	@Test
+	@Override
+	public void testHasOwnAttributes5() {
+		AggregationClass superClass = graphClass.createAggregationClass(
+				new QualifiedName("AggregationClassSuperClass"),
+				aggregationClassFromVertexClass, true,
+				aggregationClassToVertexClass);
+		aggregationClass.addSuperClass(superClass);
+
+		testHasOwnAttributes5(superClass);
+	}
+
 	@Test
 	public void testIsAggregateFrom() {
 		// TODO Auto-generated method stub
+	}
+
+	/**
+	 * isDirectSubClassOf()
+	 * 
+	 * TEST CASE: The other element is a direct superclass of this element
+	 */
+	@Test
+	@Override
+	public void testIsDirectSubClassOf() {
+		AggregationClass superClass = graphClass.createAggregationClass(
+				new QualifiedName("AggregationClassSuperClass"),
+				aggregationClassFromVertexClass, true,
+				aggregationClassToVertexClass);
+		aggregationClass.addSuperClass(superClass);
+
+		testIsDirectSubClassOf(superClass);
+	}
+
+	/**
+	 * isDirectSubClassOf()
+	 * 
+	 * TEST CASE: The other element is an inherited superclass of this element
+	 */
+	@Test
+	@Override
+	public void testIsDirectSubClassOf2() {
+		AggregationClass superClass = graphClass.createAggregationClass(
+				new QualifiedName("AggregationClassSuperClass"),
+				aggregationClassFromVertexClass, true,
+				aggregationClassToVertexClass);
+		AggregationClass superClass2 = graphClass.createAggregationClass(
+				new QualifiedName("AggregationClassSuperClass2"),
+				aggregationClassFromVertexClass, true,
+				aggregationClassToVertexClass);
+		aggregationClass.addSuperClass(superClass);
+		superClass.addSuperClass(superClass2);
+
+		testIsDirectSubClassOf2(superClass2);
+	}
+
+	/**
+	 * isDirectSubClassOf()
+	 * 
+	 * TEST CASE: The other element is a subclass of this element
+	 */
+	@Test
+	@Override
+	public void testIsDirectSubClassOf3() {
+		AggregationClass subClass = graphClass.createAggregationClass(
+				new QualifiedName("AggregationClassSubClass"),
+				aggregationClassFromVertexClass, true,
+				aggregationClassToVertexClass);
+		subClass.addSuperClass(aggregationClass);
+
+		testIsDirectSubClassOf2(subClass);
+	}
+
+	/**
+	 * isDirectSubClassOf()
+	 * 
+	 * TEST CASE: The other element has no relation with this element
+	 */
+	@Test
+	@Override
+	public void testIsDirectSubClassOf4() {
+		AggregationClass aggregationClass2 = graphClass.createAggregationClass(
+				new QualifiedName("AggregationClass2"),
+				aggregationClassFromVertexClass, true,
+				aggregationClassToVertexClass);
+
+		testIsDirectSubClassOf2(aggregationClass2);
+	}
+
+	/**
+	 * isDirectSubClassOf()
+	 * 
+	 * TEST CASE: The other element and this element are the same
+	 */
+	@Test
+	@Override
+	public void testIsDirectSubClassOf5() {
+		testIsDirectSubClassOf2(aggregationClass);
 	}
 
 }

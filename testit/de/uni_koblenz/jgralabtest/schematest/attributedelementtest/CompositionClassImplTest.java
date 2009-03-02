@@ -799,4 +799,208 @@ public final class CompositionClassImplTest extends AggregationClassImplTest {
 
 		testGetOwnAttribute4(subClass);
 	}
+
+	/**
+	 * getOwnAttributeCount()
+	 * 
+	 * TEST CASE: Getting the number of attributes of an element that only has
+	 * inherited attributes and no direct attributes
+	 */
+	@Test
+	@Override
+	public void testGetOwnAttributeCount4() {
+		CompositionClass superClass = graphClass.createCompositionClass(
+				new QualifiedName("CompositionClassSuperClass"),
+				compositionClassFromVertexClass, true,
+				compositionClassToVertexClass);
+		compositionClass.addSuperClass(superClass);
+
+		testGetOwnAttributeCount4(superClass);
+	}
+
+	/**
+	 * getOwnAttributeList()
+	 * 
+	 * TEST CASE: Getting an element´s list of attributes, that only has
+	 * inherited attributes and no direct attributes
+	 */
+	@Test
+	@Override
+	public void testGetOwnAttributeList4() {
+		CompositionClass superClass = graphClass.createCompositionClass(
+				new QualifiedName("CompositionClassSuperClass"),
+				compositionClassFromVertexClass, true,
+				compositionClassToVertexClass);
+		compositionClass.addSuperClass(superClass);
+
+		testGetOwnAttributeList4(superClass);
+	}
+
+	/**
+	 * hasAttributes()
+	 * 
+	 * TEST CASE: The element has one inherited attribute
+	 */
+	@Test
+	@Override
+	public void testHasAttributes3() {
+		CompositionClass superClass = graphClass.createCompositionClass(
+				new QualifiedName("CompositionClassSuperClass"),
+				compositionClassFromVertexClass, true,
+				compositionClassToVertexClass);
+		compositionClass.addSuperClass(superClass);
+
+		testHasAttributes3(superClass);
+	}
+
+	/**
+	 * hasAttributes()
+	 * 
+	 * TEST CASE: The element has multiple inherited attributes
+	 */
+	@Test
+	@Override
+	public void testHasAttributes4() {
+		CompositionClass superClass = graphClass.createCompositionClass(
+				new QualifiedName("CompositionClassSuperClass"),
+				compositionClassFromVertexClass, true,
+				compositionClassToVertexClass);
+		compositionClass.addSuperClass(superClass);
+
+		testHasAttributes4(superClass);
+	}
+
+	/**
+	 * hasAttributes()
+	 * 
+	 * TEST CASE: The element has multiple direct and indirect attributes
+	 */
+	@Test
+	@Override
+	public void testHasAttributes5() {
+		CompositionClass superClass = graphClass.createCompositionClass(
+				new QualifiedName("CompositionClassSuperClass"),
+				compositionClassFromVertexClass, true,
+				compositionClassToVertexClass);
+		compositionClass.addSuperClass(superClass);
+
+		testHasAttributes5(superClass);
+	}
+
+	/**
+	 * hasOwnAttributes()
+	 * 
+	 * TEST CASE: The element has direct and inherited attributes
+	 */
+	@Test
+	@Override
+	public void testHasOwnAttributes4() {
+		CompositionClass superClass = graphClass.createCompositionClass(
+				new QualifiedName("CompositionClassSuperClass"),
+				compositionClassFromVertexClass, true,
+				compositionClassToVertexClass);
+		compositionClass.addSuperClass(superClass);
+
+		testHasOwnAttributes4(superClass);
+	}
+
+	/**
+	 * hasOwnAttributes()
+	 * 
+	 * TEST CASE: The element has no direct but indirect attributes
+	 */
+	@Test
+	@Override
+	public void testHasOwnAttributes5() {
+		CompositionClass superClass = graphClass.createCompositionClass(
+				new QualifiedName("CompositionClassSuperClass"),
+				compositionClassFromVertexClass, true,
+				compositionClassToVertexClass);
+		compositionClass.addSuperClass(superClass);
+
+		testHasOwnAttributes5(superClass);
+	}
+
+	/**
+	 * isDirectSubClassOf()
+	 * 
+	 * TEST CASE: The other element is a direct superclass of this element
+	 */
+	@Test
+	@Override
+	public void testIsDirectSubClassOf() {
+		CompositionClass superClass = graphClass.createCompositionClass(
+				new QualifiedName("CompositionClassSuperClass"),
+				compositionClassFromVertexClass, true,
+				compositionClassToVertexClass);
+		compositionClass.addSuperClass(superClass);
+
+		testIsDirectSubClassOf(superClass);
+	}
+
+	/**
+	 * isDirectSubClassOf()
+	 * 
+	 * TEST CASE: The other element is an inherited superclass of this element
+	 */
+	@Test
+	@Override
+	public void testIsDirectSubClassOf2() {
+		CompositionClass superClass = graphClass.createCompositionClass(
+				new QualifiedName("CompositionClassSuperClass"),
+				compositionClassFromVertexClass, true,
+				compositionClassToVertexClass);
+		CompositionClass superClass2 = graphClass.createCompositionClass(
+				new QualifiedName("CompositionClassSuperClass2"),
+				compositionClassFromVertexClass, true,
+				compositionClassToVertexClass);
+		compositionClass.addSuperClass(superClass);
+		superClass.addSuperClass(superClass2);
+
+		testIsDirectSubClassOf2(superClass2);
+	}
+
+	/**
+	 * isDirectSubClassOf()
+	 * 
+	 * TEST CASE: The other element is a subclass of this element
+	 */
+	@Test
+	@Override
+	public void testIsDirectSubClassOf3() {
+		CompositionClass subClass = graphClass.createCompositionClass(
+				new QualifiedName("CompositionClassSubClass"),
+				compositionClassFromVertexClass, true,
+				compositionClassToVertexClass);
+		subClass.addSuperClass(compositionClass);
+
+		testIsDirectSubClassOf2(subClass);
+	}
+
+	/**
+	 * isDirectSubClassOf()
+	 * 
+	 * TEST CASE: The other element has no relation with this element
+	 */
+	@Test
+	@Override
+	public void testIsDirectSubClassOf4() {
+		CompositionClass compositionClass2 = graphClass.createCompositionClass(
+				new QualifiedName("CompositionClass2"),
+				compositionClassFromVertexClass, true,
+				compositionClassToVertexClass);
+
+		testIsDirectSubClassOf2(compositionClass2);
+	}
+
+	/**
+	 * isDirectSubClassOf()
+	 * 
+	 * TEST CASE: The other element and this element are the same
+	 */
+	@Test
+	@Override
+	public void testIsDirectSubClassOf5() {
+		testIsDirectSubClassOf2(compositionClass);
+	}
 }
