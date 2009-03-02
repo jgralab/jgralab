@@ -39,7 +39,6 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueCollection;
 import de.uni_koblenz.jgralab.greql2.optimizer.Optimizer;
 import de.uni_koblenz.jgralab.greql2.parser.Greql2Lexer;
 import de.uni_koblenz.jgralab.greql2.parser.Greql2Parser;
-import de.uni_koblenz.jgralab.utilities.Utility;
 import de.uni_koblenz.jgralabtest.schemas.minimal.MinimalGraph;
 import de.uni_koblenz.jgralabtest.schemas.minimal.MinimalSchema;
 import de.uni_koblenz.jgralabtest.schemas.minimal.Node;
@@ -66,10 +65,6 @@ public class GenericTests {
 		System.out.println("END       " + functionName);
 		System.out
 				.println("<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<");
-	}
-
-	protected void printGraphAsDottyFile(String path) {
-		Utility.convertGraphToDot(graph, path);
 	}
 
 	@Before
