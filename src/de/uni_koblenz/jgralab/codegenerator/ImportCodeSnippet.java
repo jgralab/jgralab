@@ -35,6 +35,9 @@ import java.util.TreeSet;
  */
 public class ImportCodeSnippet extends CodeSnippet {
 
+	/**
+	 * stores the import-statements
+	 */
 	private SortedSet<String> imports;
 
 	/**

@@ -27,7 +27,7 @@ package de.uni_koblenz.jgralab.codegenerator;
 import java.util.Vector;
 
 /**
- * represents snippets of code
+ * represents little parts of code
  * code may be put into it in the form of Strings and this code may be formated
  * using new lines and tabulators
  * 
@@ -35,8 +35,14 @@ import java.util.Vector;
  * 
  */
 public class CodeSnippet extends CodeBlock {
+	/**
+	 * stores the lines of the code of <code>this</code>
+	 */
 	protected Vector<String> lines;
 
+	/**
+	 * defines if a new line should start the CodeSnippet
+	 */
 	protected boolean wantsNewLine;
 
 	/**

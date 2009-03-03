@@ -35,6 +35,9 @@ import java.util.Vector;
  * 
  */
 public class CodeList extends CodeBlock {
+	/**
+	 * contains the <code>CodeBlock</code>s building <code>this</code> 
+	 */
 	Vector<CodeBlock> blocks;
 
 	/**
