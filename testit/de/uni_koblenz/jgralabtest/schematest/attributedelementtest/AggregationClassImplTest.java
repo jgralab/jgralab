@@ -1006,4 +1006,335 @@ public class AggregationClassImplTest extends EdgeClassImplTest {
 		testIsDirectSubClassOf2(aggregationClass);
 	}
 
+	/**
+	 * isDirectSuperClassOf()
+	 * 
+	 * TEST CASE: The other element is a direct subclass of this element
+	 */
+	@Test
+	@Override
+	public void testIsDirectSuperClassOf() {
+		AggregationClass subClass = graphClass.createAggregationClass(
+				new QualifiedName("AggregationClassSubClass"),
+				aggregationClassFromVertexClass, true,
+				aggregationClassToVertexClass);
+		subClass.addSuperClass(aggregationClass);
+
+		testIsDirectSuperClassOf(subClass);
+	}
+
+	/**
+	 * isDirectSuperClassOf()
+	 * 
+	 * TEST CASE: The other element is an inherited subclass of this element
+	 */
+	@Test
+	@Override
+	public void testIsDirectSuperClassOf2() {
+		AggregationClass subClass = graphClass.createAggregationClass(
+				new QualifiedName("AggregationClassSubClass"),
+				aggregationClassFromVertexClass, true,
+				aggregationClassToVertexClass);
+		AggregationClass subClass2 = graphClass.createAggregationClass(
+				new QualifiedName("AggregationClassSubClass2"),
+				aggregationClassFromVertexClass, true,
+				aggregationClassToVertexClass);
+		subClass.addSuperClass(aggregationClass);
+		subClass2.addSuperClass(subClass);
+
+		testIsDirectSuperClassOf2(subClass2);
+	}
+
+	/**
+	 * isDirectSuperClassOf()
+	 * 
+	 * TEST CASE: The other element is a superclass of this element
+	 */
+	@Test
+	@Override
+	public void testIsDirectSuperClassOf3() {
+		AggregationClass superClass = graphClass.createAggregationClass(
+				new QualifiedName("AggregationClassSuperClass"),
+				aggregationClassFromVertexClass, true,
+				aggregationClassToVertexClass);
+		aggregationClass.addSuperClass(superClass);
+
+		testIsDirectSuperClassOf2(superClass);
+	}
+
+	/**
+	 * isDirectSuperClassOf()
+	 * 
+	 * TEST CASE: The other element has no relation with this element
+	 */
+	@Test
+	@Override
+	public void testIsDirectSuperClassOf4() {
+		AggregationClass aggregationClass2 = graphClass.createAggregationClass(
+				new QualifiedName("AggregationClass2"),
+				aggregationClassFromVertexClass, true,
+				aggregationClassToVertexClass);
+
+		testIsDirectSuperClassOf2(aggregationClass2);
+	}
+
+	/**
+	 * isDirectSuperClassOf()
+	 * 
+	 * TEST CASE: The other element and this element are the same
+	 */
+	@Test
+	@Override
+	public void testIsDirectSuperClassOf5() {
+		testIsDirectSuperClassOf2(aggregationClass);
+	}
+
+	/**
+	 * isSubClassOf()
+	 * 
+	 * TEST CASE: The other element is a direct superclass of this element
+	 */
+	@Test
+	@Override
+	public void testIsSubClassOf() {
+		AggregationClass superClass = graphClass.createAggregationClass(
+				new QualifiedName("AggregationClassSuperClass"),
+				aggregationClassFromVertexClass, true,
+				aggregationClassToVertexClass);
+		aggregationClass.addSuperClass(superClass);
+
+		testIsSubClassOf(superClass);
+	}
+
+	/**
+	 * isSubClassOf()
+	 * 
+	 * TEST CASE: The other element is an inherited superclass of this element
+	 */
+	@Test
+	@Override
+	public void testIsSubClassOf2() {
+		AggregationClass superClass = graphClass.createAggregationClass(
+				new QualifiedName("AggregationClassSuperClass"),
+				aggregationClassFromVertexClass, true,
+				aggregationClassToVertexClass);
+		AggregationClass superClass2 = graphClass.createAggregationClass(
+				new QualifiedName("AggregationClassSuperClass2"),
+				aggregationClassFromVertexClass, true,
+				aggregationClassToVertexClass);
+		aggregationClass.addSuperClass(superClass);
+		superClass.addSuperClass(superClass2);
+
+		testIsSubClassOf(superClass2);
+	}
+
+	/**
+	 * isSubClassOf()
+	 * 
+	 * TEST CASE: The other element is a subclass of this element
+	 */
+	@Test
+	@Override
+	public void testIsSubClassOf3() {
+		AggregationClass subClass = graphClass.createAggregationClass(
+				new QualifiedName("AggregationClassSubClass"),
+				aggregationClassFromVertexClass, true,
+				aggregationClassToVertexClass);
+		subClass.addSuperClass(aggregationClass);
+
+		testIsSubClassOf2(subClass);
+	}
+
+	/**
+	 * isSubClassOf()
+	 * 
+	 * TEST CASE: The other element has no relation with this element
+	 */
+	@Test
+	@Override
+	public void testIsSubClassOf4() {
+		AggregationClass aggregationClass2 = graphClass.createAggregationClass(
+				new QualifiedName("AggregationClass2"),
+				aggregationClassFromVertexClass, true,
+				aggregationClassToVertexClass);
+
+		testIsSubClassOf2(aggregationClass2);
+	}
+
+	/**
+	 * isSubClassOf()
+	 * 
+	 * TEST CASE: The other element and this element are the same
+	 */
+	@Test
+	@Override
+	public void testIsSubClassOf5() {
+		testIsSubClassOf2(aggregationClass);
+	}
+
+	/**
+	 * isSuperClassOf()
+	 * 
+	 * TEST CASE: The other element is a direct subclass of this element
+	 */
+	@Test
+	@Override
+	public void testIsSuperClassOf() {
+		AggregationClass subClass = graphClass.createAggregationClass(
+				new QualifiedName("AggregationClassSubClass"),
+				aggregationClassFromVertexClass, true,
+				aggregationClassToVertexClass);
+		subClass.addSuperClass(aggregationClass);
+
+		testIsSuperClassOf(subClass);
+	}
+
+	/**
+	 * isSuperClassOf()
+	 * 
+	 * TEST CASE: The other element is an inherited subclass of this element
+	 */
+	@Test
+	@Override
+	public void testIsSuperClassOf2() {
+		AggregationClass subClass = graphClass.createAggregationClass(
+				new QualifiedName("AggregationClassSubClass"),
+				aggregationClassFromVertexClass, true,
+				aggregationClassToVertexClass);
+		AggregationClass subClass2 = graphClass.createAggregationClass(
+				new QualifiedName("AggregationClassSubClass2"),
+				aggregationClassFromVertexClass, true,
+				aggregationClassToVertexClass);
+		subClass.addSuperClass(aggregationClass);
+		subClass2.addSuperClass(subClass);
+
+		testIsSuperClassOf(subClass2);
+	}
+
+	/**
+	 * isSuperClassOf()
+	 * 
+	 * TEST CASE: The other element is a superclass of this element
+	 */
+	@Test
+	@Override
+	public void testIsSuperClassOf3() {
+		AggregationClass superClass = graphClass.createAggregationClass(
+				new QualifiedName("AggregationClassSuperClass"),
+				aggregationClassFromVertexClass, true,
+				aggregationClassToVertexClass);
+		aggregationClass.addSuperClass(superClass);
+
+		testIsSuperClassOf2(superClass);
+	}
+
+	/**
+	 * isSuperClassOf()
+	 * 
+	 * TEST CASE: The other element has no relation with this element
+	 */
+	@Test
+	@Override
+	public void testIsSuperClassOf4() {
+		AggregationClass aggregationClass2 = graphClass.createAggregationClass(
+				new QualifiedName("AggregationClass2"),
+				aggregationClassFromVertexClass, true,
+				aggregationClassToVertexClass);
+
+		testIsSuperClassOf2(aggregationClass2);
+	}
+
+	/**
+	 * isSuperClassOf()
+	 * 
+	 * TEST CASE: The other element and this element are the same
+	 */
+	@Test
+	@Override
+	public void testIsSuperClassOf5() {
+		testIsSuperClassOf2(aggregationClass);
+	}
+
+	/**
+	 * isSuperClassOfOrEquals()
+	 * 
+	 * TEST CASE: The other element is a direct subclass of this element
+	 */
+	@Test
+	@Override
+	public void testIsSuperClassOfOrEquals() {
+		AggregationClass subClass = graphClass.createAggregationClass(
+				new QualifiedName("AggregationClassSubClass"),
+				aggregationClassFromVertexClass, true,
+				aggregationClassToVertexClass);
+		subClass.addSuperClass(aggregationClass);
+
+		testIsSuperClassOfOrEquals(subClass);
+	}
+
+	/**
+	 * isSuperClassOfOrEquals()
+	 * 
+	 * TEST CASE: The other element is an inherited subclass of this element
+	 */
+	@Test
+	@Override
+	public void testIsSuperClassOfOrEquals2() {
+		AggregationClass subClass = graphClass.createAggregationClass(
+				new QualifiedName("AggregationClassSubClass"),
+				aggregationClassFromVertexClass, true,
+				aggregationClassToVertexClass);
+		AggregationClass subClass2 = graphClass.createAggregationClass(
+				new QualifiedName("AggregationClassSubClass2"),
+				aggregationClassFromVertexClass, true,
+				aggregationClassToVertexClass);
+		subClass.addSuperClass(aggregationClass);
+		subClass2.addSuperClass(subClass);
+
+		testIsSuperClassOfOrEquals(subClass2);
+	}
+
+	/**
+	 * isSuperClassOfOrEquals()
+	 * 
+	 * TEST CASE: The other element and this element are the same
+	 */
+	@Test
+	@Override
+	public void testIsSuperClassOfOrEquals3() {
+		testIsSuperClassOfOrEquals(aggregationClass);
+	}
+
+	/**
+	 * isSuperClassOfOrEquals()
+	 * 
+	 * TEST CASE: The other element has no relation with this element
+	 */
+	@Test
+	@Override
+	public void testIsSuperClassOfOrEquals4() {
+		AggregationClass aggregationClass2 = graphClass.createAggregationClass(
+				new QualifiedName("AggregationClass2"),
+				aggregationClassFromVertexClass, true,
+				aggregationClassToVertexClass);
+
+		testIsSuperClassOfOrEquals2(aggregationClass2);
+	}
+
+	/**
+	 * isSuperClassOfOrEquals()
+	 * 
+	 * TEST CASE: The other element is a superclass of this element
+	 */
+	@Test
+	@Override
+	public void testIsSuperClassOfOrEquals5() {
+		AggregationClass superClass = graphClass.createAggregationClass(
+				new QualifiedName("AggregationClassSuperClass"),
+				aggregationClassFromVertexClass, true,
+				aggregationClassToVertexClass);
+		aggregationClass.addSuperClass(superClass);
+
+		testIsSuperClassOfOrEquals2(superClass);
+	}
 }

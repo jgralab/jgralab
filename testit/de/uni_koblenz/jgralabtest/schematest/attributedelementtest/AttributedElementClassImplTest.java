@@ -1457,39 +1457,193 @@ public abstract class AttributedElementClassImplTest {
 		Assert.assertFalse(attributedElement.isDirectSubClassOf(other));
 	}
 
-	@Test
-	public void testIsDirectSuperClassOf() {
-		// TODO Auto-generated method stub
+	/*
+	 * Tests for the isDirectSuperClassOf() method.
+	 */
+	/**
+	 * isDirectSuperClassOf()
+	 * 
+	 * TEST CASE: The other element is a direct subclass of this element
+	 */
+	public final void testIsDirectSuperClassOf(AttributedElementClass other) {
+		Assert.assertTrue(attributedElement.isDirectSuperClassOf(other));
 	}
 
+	/**
+	 * isDirectSuperClassOf()
+	 * 
+	 * TEST CASE: The other element is an inherited subclass of this element
+	 * 
+	 * TEST CASE: The other element is a superclass of this element
+	 * 
+	 * TEST CASE: The other element has no relation with this element
+	 * 
+	 * TEST CASE: The other element and this element are the same
+	 */
+	public final void testIsDirectSuperClassOf2(AttributedElementClass other) {
+		Assert.assertFalse(attributedElement.isDirectSuperClassOf(other));
+	}
+
+	/*
+	 * Tests for the isInternal() method.
+	 */
+	/**
+	 * isInternal()
+	 * 
+	 * TEST CASE: The element is for internal use
+	 */
 	@Test
 	public void testIsInternal() {
-		// TODO Auto-generated method stub
+		attributedElement.setInternal(true);
+
+		Assert.assertTrue(attributedElement.isInternal());
 	}
 
+	/**
+	 * isInternal()
+	 * 
+	 * TEST CASE: The element is not for internal use
+	 */
 	@Test
-	public void testIsSubClassOf() {
-		// TODO Auto-generated method stub
+	public void testIsInternal2() {
+		attributedElement.setInternal(false);
+
+		Assert.assertFalse(attributedElement.isInternal());
 	}
 
-	@Test
-	public void testIsSuperClassOf() {
-		// TODO Auto-generated method stub
+	/*
+	 * Tests for the isSubClassOf() method.
+	 */
+	/**
+	 * isSubClassOf()
+	 * 
+	 * TEST CASE: The other element is a direct superclass of this element
+	 * 
+	 * TEST CASE: The other element is an inherited superclass of this element
+	 */
+	public final void testIsSubClassOf(AttributedElementClass other) {
+		Assert.assertTrue(attributedElement.isSubClassOf(other));
 	}
 
-	@Test
-	public void testIsSuperClassOfOrEquals() {
-		// TODO Auto-generated method stub
+	/**
+	 * isSubClassOf()
+	 * 
+	 * TEST CASE: The other element is a subclass of this element
+	 * 
+	 * TEST CASE: The other element has no relation with this element
+	 * 
+	 * TEST CASE: The other element and this element are the same
+	 */
+	public final void testIsSubClassOf2(AttributedElementClass other) {
+		Assert.assertFalse(attributedElement.isSubClassOf(other));
 	}
 
+	/*
+	 * Tests for the isSuperClassOf() method.
+	 */
+	/**
+	 * isSuperClassOf()
+	 * 
+	 * TEST CASE: The other element is a direct subclass of this element
+	 * 
+	 * TEST CASE: The other element is an inherited subclass of this element
+	 */
+	public final void testIsSuperClassOf(AttributedElementClass other) {
+		Assert.assertTrue(attributedElement.isSuperClassOf(other));
+	}
+
+	/**
+	 * isDirectSuperClassOf()
+	 * 
+	 * TEST CASE: The other element is a superclass of this element
+	 * 
+	 * TEST CASE: The other element has no relation with this element
+	 * 
+	 * TEST CASE: The other element and this element are the same
+	 */
+	public final void testIsSuperClassOf2(AttributedElementClass other) {
+		Assert.assertFalse(attributedElement.isSuperClassOf(other));
+	}
+
+	/*
+	 * Tests for the isSuperClassOfOrEquals() method.
+	 */
+	/**
+	 * isSuperClassOfOrEquals()
+	 * 
+	 * TEST CASE: The other element is a direct subclass of this element
+	 * 
+	 * TEST CASE: The other element is an inherited subclass of this element
+	 * 
+	 * TEST CASE: The other element is a superclass of this element
+	 */
+	public final void testIsSuperClassOfOrEquals(AttributedElementClass other) {
+		Assert.assertTrue(attributedElement.isSuperClassOfOrEquals(other));
+	}
+
+	/**
+	 * isSuperClassOfOrEquals()
+	 * 
+	 * TEST CASE: The other element has no relation with this element
+	 * 
+	 * TEST CASE: The other element and this element are the same
+	 */
+	public final void testIsSuperClassOfOrEquals2(AttributedElementClass other) {
+		Assert.assertFalse(attributedElement.isSuperClassOfOrEquals(other));
+	}
+
+	/*
+	 * Tests for the setAbstract() method.
+	 */
+	/**
+	 * setAbstract()
+	 * 
+	 * TEST CASE: The element is set to an abstract state
+	 */
 	@Test
 	public void testSetAbstract() {
-		// TODO Auto-generated method stub
+		attributedElement.setAbstract(true);
+
+		Assert.assertTrue(attributedElement.isAbstract());
 	}
 
+	/**
+	 * setAbstract()
+	 * 
+	 * TEST CASE: The element is set to a non-abstract state
+	 */
+	@Test
+	public void testSetAbstract2() {
+		attributedElement.setAbstract(false);
+
+		Assert.assertFalse(attributedElement.isAbstract());
+	}
+
+	/*
+	 * Tests for the setInternal() method.
+	 */
+	/**
+	 * setInternal()
+	 * 
+	 * TEST CASE: The element is flagged for internal use
+	 */
 	@Test
 	public void testSetInternal() {
-		// TODO Auto-generated method stub
+		attributedElement.setInternal(true);
+
+		Assert.assertTrue(attributedElement.isAbstract());
+	}
+
+	/**
+	 * setInternal()
+	 * 
+	 * TEST CASE: The element is flagged for common use
+	 */
+	@Test
+	public void testSetInternal2() {
+		attributedElement.setInternal(false);
+
+		Assert.assertFalse(attributedElement.isAbstract());
 	}
 
 	@Test
