@@ -970,6 +970,298 @@ public class EdgeClassImplTest extends GraphElementClassImplTest {
 		testIsDirectSubClassOf2(edgeClass);
 	}
 
+	/**
+	 * isDirectSuperClassOf()
+	 * 
+	 * TEST CASE: The other element is a direct subclass of this element
+	 */
+	@Test
+	public void testIsDirectSuperClassOf() {
+		EdgeClass subClass = graphClass.createEdgeClass(new QualifiedName(
+				"EdgeClassSubClass"), edgeClassFromVertexClass,
+				edgeClassToVertexClass);
+		subClass.addSuperClass(edgeClass);
+
+		testIsDirectSuperClassOf(subClass);
+	}
+
+	/**
+	 * isDirectSuperClassOf()
+	 * 
+	 * TEST CASE: The other element is an inherited subclass of this element
+	 */
+	@Test
+	public void testIsDirectSuperClassOf2() {
+		EdgeClass subClass = graphClass.createEdgeClass(new QualifiedName(
+				"EdgeClassSubClass"), edgeClassFromVertexClass,
+				edgeClassToVertexClass);
+		EdgeClass subClass2 = graphClass.createEdgeClass(new QualifiedName(
+				"EdgeClassSubClass2"), edgeClassFromVertexClass,
+				edgeClassToVertexClass);
+		subClass.addSuperClass(edgeClass);
+		subClass2.addSuperClass(subClass);
+
+		testIsDirectSuperClassOf2(subClass2);
+	}
+
+	/**
+	 * isDirectSuperClassOf()
+	 * 
+	 * TEST CASE: The other element is a superclass of this element
+	 */
+	@Test
+	public void testIsDirectSuperClassOf3() {
+		EdgeClass superClass = graphClass.createEdgeClass(new QualifiedName(
+				"EdgeClassSuperClass"), edgeClassFromVertexClass,
+				edgeClassToVertexClass);
+		edgeClass.addSuperClass(superClass);
+
+		testIsDirectSuperClassOf2(superClass);
+	}
+
+	/**
+	 * isDirectSuperClassOf()
+	 * 
+	 * TEST CASE: The other element has no relation with this element
+	 */
+	@Test
+	public void testIsDirectSuperClassOf4() {
+		EdgeClass edgeClass2 = graphClass
+				.createEdgeClass(new QualifiedName("EdgeClass2"),
+						edgeClassFromVertexClass, edgeClassToVertexClass);
+
+		testIsDirectSuperClassOf2(edgeClass2);
+	}
+
+	/**
+	 * isDirectSuperClassOf()
+	 * 
+	 * TEST CASE: The other element and this element are the same
+	 */
+	@Test
+	public void testIsDirectSuperClassOf5() {
+		testIsDirectSuperClassOf2(edgeClass);
+	}
+
+	/**
+	 * isSubClassOf()
+	 * 
+	 * TEST CASE: The other element is a direct superclass of this element
+	 */
+	@Test
+	public void testIsSubClassOf() {
+		EdgeClass superClass = graphClass.createEdgeClass(new QualifiedName(
+				"EdgeClassSuperClass"), edgeClassFromVertexClass,
+				edgeClassToVertexClass);
+		edgeClass.addSuperClass(superClass);
+
+		testIsSubClassOf(superClass);
+	}
+
+	/**
+	 * isSubClassOf()
+	 * 
+	 * TEST CASE: The other element is an inherited superclass of this element
+	 */
+	@Test
+	public void testIsSubClassOf2() {
+		EdgeClass superClass = graphClass.createEdgeClass(new QualifiedName(
+				"EdgeClassSuperClass"), edgeClassFromVertexClass,
+				edgeClassToVertexClass);
+		EdgeClass superClass2 = graphClass.createEdgeClass(new QualifiedName(
+				"EdgeClassSuperClass2"), edgeClassFromVertexClass,
+				edgeClassToVertexClass);
+		edgeClass.addSuperClass(superClass);
+		superClass.addSuperClass(superClass2);
+
+		testIsSubClassOf(superClass2);
+	}
+
+	/**
+	 * isSubClassOf()
+	 * 
+	 * TEST CASE: The other element is a subclass of this element
+	 */
+	@Test
+	public void testIsSubClassOf3() {
+		EdgeClass subClass = graphClass.createEdgeClass(new QualifiedName(
+				"EdgeClassSubClass"), edgeClassFromVertexClass,
+				edgeClassToVertexClass);
+		subClass.addSuperClass(edgeClass);
+
+		testIsSubClassOf2(subClass);
+	}
+
+	/**
+	 * isSubClassOf()
+	 * 
+	 * TEST CASE: The other element has no relation with this element
+	 */
+	@Test
+	public void testIsSubClassOf4() {
+		EdgeClass edgeClass2 = graphClass
+				.createEdgeClass(new QualifiedName("EdgeClass2"),
+						edgeClassFromVertexClass, edgeClassToVertexClass);
+
+		testIsSubClassOf2(edgeClass2);
+	}
+
+	/**
+	 * isSubClassOf()
+	 * 
+	 * TEST CASE: The other element and this element are the same
+	 */
+	@Test
+	public void testIsSubClassOf5() {
+		testIsSubClassOf2(edgeClass);
+	}
+
+	/**
+	 * isSuperClassOf()
+	 * 
+	 * TEST CASE: The other element is a direct subclass of this element
+	 */
+	@Test
+	public void testIsSuperClassOf() {
+		EdgeClass subClass = graphClass.createEdgeClass(new QualifiedName(
+				"EdgeClassSubClass"), edgeClassFromVertexClass,
+				edgeClassToVertexClass);
+		subClass.addSuperClass(edgeClass);
+
+		testIsSuperClassOf(subClass);
+	}
+
+	/**
+	 * isSuperClassOf()
+	 * 
+	 * TEST CASE: The other element is an inherited subclass of this element
+	 */
+	@Test
+	public void testIsSuperClassOf2() {
+		EdgeClass subClass = graphClass.createEdgeClass(new QualifiedName(
+				"EdgeClassSubClass"), edgeClassFromVertexClass,
+				edgeClassToVertexClass);
+		EdgeClass subClass2 = graphClass.createEdgeClass(new QualifiedName(
+				"EdgeClassSubClass2"), edgeClassFromVertexClass,
+				edgeClassToVertexClass);
+		subClass.addSuperClass(edgeClass);
+		subClass2.addSuperClass(subClass);
+
+		testIsSuperClassOf(subClass2);
+	}
+
+	/**
+	 * isSuperClassOf()
+	 * 
+	 * TEST CASE: The other element is a superclass of this element
+	 */
+	@Test
+	public void testIsSuperClassOf3() {
+		EdgeClass superClass = graphClass.createEdgeClass(new QualifiedName(
+				"EdgeClassSuperClass"), edgeClassFromVertexClass,
+				edgeClassToVertexClass);
+		edgeClass.addSuperClass(superClass);
+
+		testIsSuperClassOf2(superClass);
+	}
+
+	/**
+	 * isSuperClassOf()
+	 * 
+	 * TEST CASE: The other element has no relation with this element
+	 */
+	@Test
+	public void testIsSuperClassOf4() {
+		EdgeClass edgeClass2 = graphClass
+				.createEdgeClass(new QualifiedName("EdgeClass2"),
+						edgeClassFromVertexClass, edgeClassToVertexClass);
+
+		testIsSuperClassOf2(edgeClass2);
+	}
+
+	/**
+	 * isSuperClassOf()
+	 * 
+	 * TEST CASE: The other element and this element are the same
+	 */
+	@Test
+	public void testIsSuperClassOf5() {
+		testIsSuperClassOf2(edgeClass);
+	}
+
+	/**
+	 * isSuperClassOfOrEquals()
+	 * 
+	 * TEST CASE: The other element is a direct subclass of this element
+	 */
+	@Test
+	public void testIsSuperClassOfOrEquals() {
+		EdgeClass subClass = graphClass.createEdgeClass(new QualifiedName(
+				"EdgeClassSubClass"), edgeClassFromVertexClass,
+				edgeClassToVertexClass);
+		subClass.addSuperClass(edgeClass);
+
+		testIsSuperClassOfOrEquals(subClass);
+	}
+
+	/**
+	 * isSuperClassOfOrEquals()
+	 * 
+	 * TEST CASE: The other element is an inherited subclass of this element
+	 */
+	@Test
+	public void testIsSuperClassOfOrEquals2() {
+		EdgeClass subClass = graphClass.createEdgeClass(new QualifiedName(
+				"EdgeClassSubClass"), edgeClassFromVertexClass,
+				edgeClassToVertexClass);
+		EdgeClass subClass2 = graphClass.createEdgeClass(new QualifiedName(
+				"EdgeClassSubClass2"), edgeClassFromVertexClass,
+				edgeClassToVertexClass);
+		subClass.addSuperClass(edgeClass);
+		subClass2.addSuperClass(subClass);
+
+		testIsSuperClassOfOrEquals(subClass2);
+	}
+
+	/**
+	 * isSuperClassOfOrEquals()
+	 * 
+	 * TEST CASE: The other element and this element are the same
+	 */
+	@Test
+	public void testIsSuperClassOfOrEquals3() {
+		testIsSuperClassOfOrEquals(edgeClass);
+	}
+
+	/**
+	 * isSuperClassOfOrEquals()
+	 * 
+	 * TEST CASE: The other element has no relation with this element
+	 */
+	@Test
+	public void testIsSuperClassOfOrEquals4() {
+		EdgeClass edgeClass2 = graphClass
+				.createEdgeClass(new QualifiedName("EdgeClass2"),
+						edgeClassFromVertexClass, edgeClassToVertexClass);
+
+		testIsSuperClassOfOrEquals2(edgeClass2);
+	}
+
+	/**
+	 * isSuperClassOfOrEquals()
+	 * 
+	 * TEST CASE: The other element is a superclass of this element
+	 */
+	@Test
+	public void testIsSuperClassOfOrEquals5() {
+		EdgeClass superClass = graphClass.createEdgeClass(new QualifiedName(
+				"EdgeClassSuperClass"), edgeClassFromVertexClass,
+				edgeClassToVertexClass);
+		edgeClass.addSuperClass(superClass);
+
+		testIsSuperClassOfOrEquals2(superClass);
+	}
+
 	@Test
 	public void testMergeConnectionCardinalities() {
 		// TODO Auto-generated method stub

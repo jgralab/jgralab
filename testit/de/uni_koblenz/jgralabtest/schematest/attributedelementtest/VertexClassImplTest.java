@@ -958,4 +958,276 @@ public final class VertexClassImplTest extends GraphElementClassImplTest {
 	public void testIsDirectSubClassOf5() {
 		testIsDirectSubClassOf2(vertexClass);
 	}
+
+	/**
+	 * isDirectSuperClassOf()
+	 * 
+	 * TEST CASE: The other element is a direct subclass of this element
+	 */
+	@Test
+	public void testIsDirectSuperClassOf() {
+		VertexClass subClass = graphClass.createVertexClass(new QualifiedName(
+				"Subclass"));
+		subClass.addSuperClass(vertexClass);
+
+		testIsDirectSuperClassOf(subClass);
+	}
+
+	/**
+	 * isDirectSuperClassOf()
+	 * 
+	 * TEST CASE: The other element is an inherited subclass of this element
+	 */
+	@Test
+	public void testIsDirectSuperClassOf2() {
+		VertexClass subClass = graphClass.createVertexClass(new QualifiedName(
+				"SubClass"));
+		VertexClass subClass2 = graphClass.createVertexClass(new QualifiedName(
+				"SubClass2"));
+		subClass.addSuperClass(vertexClass);
+		subClass2.addSuperClass(subClass);
+
+		testIsDirectSuperClassOf2(subClass2);
+	}
+
+	/**
+	 * isDirectSuperClassOf()
+	 * 
+	 * TEST CASE: The other element is a superclass of this element
+	 */
+	@Test
+	public void testIsDirectSuperClassOf3() {
+		VertexClass superClass = graphClass
+				.createVertexClass(new QualifiedName("SuperClass"));
+		vertexClass.addSuperClass(superClass);
+
+		testIsDirectSuperClassOf2(superClass);
+	}
+
+	/**
+	 * isDirectSuperClassOf()
+	 * 
+	 * TEST CASE: The other element has no relation with this element
+	 */
+	@Test
+	public void testIsDirectSuperClassOf4() {
+		VertexClass vertexClass2 = graphClass
+				.createVertexClass(new QualifiedName("VertexClass2"));
+
+		testIsDirectSuperClassOf2(vertexClass2);
+	}
+
+	/**
+	 * isDirectSuperClassOf()
+	 * 
+	 * TEST CASE: The other element and this element are the same
+	 */
+	@Test
+	public void testIsDirectSuperClassOf5() {
+		testIsDirectSuperClassOf2(vertexClass);
+	}
+
+	/**
+	 * isSubClassOf()
+	 * 
+	 * TEST CASE: The other element is a direct superclass of this element
+	 */
+	@Test
+	public void testIsSubClassOf() {
+		VertexClass superClass = graphClass
+				.createVertexClass(new QualifiedName("Superclass"));
+		vertexClass.addSuperClass(superClass);
+
+		testIsSubClassOf(superClass);
+	}
+
+	/**
+	 * isSubClassOf()
+	 * 
+	 * TEST CASE: The other element is an inherited superclass of this element
+	 */
+	@Test
+	public void testIsSubClassOf2() {
+		VertexClass superClass = graphClass
+				.createVertexClass(new QualifiedName("Superclass"));
+		VertexClass superClass2 = graphClass
+				.createVertexClass(new QualifiedName("Superclass2"));
+		vertexClass.addSuperClass(superClass);
+		superClass.addSuperClass(superClass2);
+
+		testIsSubClassOf(superClass2);
+	}
+
+	/**
+	 * isSubClassOf()
+	 * 
+	 * TEST CASE: The other element is a subclass of this element
+	 */
+	@Test
+	public void testIsSubClassOf3() {
+		VertexClass subClass = graphClass.createVertexClass(new QualifiedName(
+				"SubClass"));
+		subClass.addSuperClass(vertexClass);
+
+		testIsSubClassOf2(subClass);
+	}
+
+	/**
+	 * isSubClassOf()
+	 * 
+	 * TEST CASE: The other element has no relation with this element
+	 */
+	@Test
+	public void testIsSubClassOf4() {
+		VertexClass vertexClass2 = graphClass
+				.createVertexClass(new QualifiedName("VertexClass2"));
+
+		testIsSubClassOf2(vertexClass2);
+	}
+
+	/**
+	 * isSubClassOf()
+	 * 
+	 * TEST CASE: The other element and this element are the same
+	 */
+	@Test
+	public void testIsSubClassOf5() {
+		testIsSubClassOf2(vertexClass);
+	}
+
+	/**
+	 * isSuperClassOf()
+	 * 
+	 * TEST CASE: The other element is a direct subclass of this element
+	 */
+	@Test
+	public void testIsSuperClassOf() {
+		VertexClass subClass = graphClass.createVertexClass(new QualifiedName(
+				"Subclass"));
+		subClass.addSuperClass(vertexClass);
+
+		testIsSuperClassOf(subClass);
+	}
+
+	/**
+	 * isSuperClassOf()
+	 * 
+	 * TEST CASE: The other element is an inherited subclass of this element
+	 */
+	@Test
+	public void testIsSuperClassOf2() {
+		VertexClass subClass = graphClass.createVertexClass(new QualifiedName(
+				"SubClass"));
+		VertexClass subClass2 = graphClass.createVertexClass(new QualifiedName(
+				"SubClass2"));
+		subClass.addSuperClass(vertexClass);
+		subClass2.addSuperClass(subClass);
+
+		testIsSuperClassOf(subClass2);
+	}
+
+	/**
+	 * isSuperClassOf()
+	 * 
+	 * TEST CASE: The other element is a superclass of this element
+	 */
+	@Test
+	public void testIsSuperClassOf3() {
+		VertexClass superClass = graphClass
+				.createVertexClass(new QualifiedName("SuperClass"));
+		vertexClass.addSuperClass(superClass);
+
+		testIsSuperClassOf2(superClass);
+	}
+
+	/**
+	 * isSuperClassOf()
+	 * 
+	 * TEST CASE: The other element has no relation with this element
+	 */
+	@Test
+	public void testIsSuperClassOf4() {
+		VertexClass vertexClass2 = graphClass
+				.createVertexClass(new QualifiedName("VertexClass2"));
+
+		testIsSuperClassOf2(vertexClass2);
+	}
+
+	/**
+	 * isSuperClassOf()
+	 * 
+	 * TEST CASE: The other element and this element are the same
+	 */
+	@Test
+	public void testIsSuperClassOf5() {
+		testIsSuperClassOf2(vertexClass);
+	}
+
+	/**
+	 * isSuperClassOfOrEquals()
+	 * 
+	 * TEST CASE: The other element is a direct subclass of this element
+	 */
+	@Test
+	public void testIsSuperClassOfOrEquals() {
+		VertexClass subClass = graphClass.createVertexClass(new QualifiedName(
+				"Subclass"));
+		subClass.addSuperClass(vertexClass);
+
+		testIsSuperClassOfOrEquals(subClass);
+	}
+
+	/**
+	 * isSuperClassOfOrEquals()
+	 * 
+	 * TEST CASE: The other element is an indirect subclass of this element
+	 */
+	@Test
+	public void testIsSuperClassOfOrEquals2() {
+		VertexClass subClass = graphClass.createVertexClass(new QualifiedName(
+				"SubClass"));
+		VertexClass subClass2 = graphClass.createVertexClass(new QualifiedName(
+				"SubClass2"));
+		subClass.addSuperClass(vertexClass);
+		subClass2.addSuperClass(subClass);
+
+		testIsSuperClassOfOrEquals(subClass2);
+	}
+
+	/**
+	 * isSuperClassOfOrEquals()
+	 * 
+	 * TEST CASE: The other element and this element are the same
+	 */
+	@Test
+	public void testIsSuperClassOfOrEquals3() {
+		testIsSuperClassOfOrEquals(vertexClass);
+	}
+
+	/**
+	 * isSuperClassOfOrEquals()
+	 * 
+	 * TEST CASE: The other element has no relation with this element
+	 */
+	@Test
+	public void testIsSuperClassOfOrEquals4() {
+		VertexClass vertexClass2 = graphClass
+				.createVertexClass(new QualifiedName("VertexClass2"));
+
+		testIsSuperClassOfOrEquals2(vertexClass2);
+	}
+
+	/**
+	 * isSuperClassOfOrEquals()
+	 * 
+	 * TEST CASE: The other element is a superclass of this element
+	 */
+	@Test
+	public void testIsSuperClassOfOrEquals5() {
+		VertexClass superClass = graphClass
+				.createVertexClass(new QualifiedName("SuperClass"));
+		vertexClass.addSuperClass(superClass);
+
+		testIsSuperClassOfOrEquals2(superClass);
+	}
 }

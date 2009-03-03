@@ -1003,4 +1003,336 @@ public final class CompositionClassImplTest extends AggregationClassImplTest {
 	public void testIsDirectSubClassOf5() {
 		testIsDirectSubClassOf2(compositionClass);
 	}
+
+	/**
+	 * isDirectSuperClassOf()
+	 * 
+	 * TEST CASE: The other element is a direct subclass of this element
+	 */
+	@Test
+	@Override
+	public void testIsDirectSuperClassOf() {
+		CompositionClass subClass = graphClass.createCompositionClass(
+				new QualifiedName("CompositionClassSubClass"),
+				compositionClassFromVertexClass, true,
+				compositionClassToVertexClass);
+		subClass.addSuperClass(compositionClass);
+
+		testIsDirectSuperClassOf(subClass);
+	}
+
+	/**
+	 * isDirectSuperClassOf()
+	 * 
+	 * TEST CASE: The other element is an inherited subclass of this element
+	 */
+	@Test
+	@Override
+	public void testIsDirectSuperClassOf2() {
+		CompositionClass subClass = graphClass.createCompositionClass(
+				new QualifiedName("CompositionClassSubClass"),
+				compositionClassFromVertexClass, true,
+				compositionClassToVertexClass);
+		CompositionClass subClass2 = graphClass.createCompositionClass(
+				new QualifiedName("CompositionClassSubClass2"),
+				compositionClassFromVertexClass, true,
+				compositionClassToVertexClass);
+		subClass.addSuperClass(compositionClass);
+		subClass2.addSuperClass(subClass);
+
+		testIsDirectSuperClassOf2(subClass2);
+	}
+
+	/**
+	 * isDirectSuperClassOf()
+	 * 
+	 * TEST CASE: The other element is a superclass of this element
+	 */
+	@Test
+	@Override
+	public void testIsDirectSuperClassOf3() {
+		CompositionClass superClass = graphClass.createCompositionClass(
+				new QualifiedName("CompositionClassSuperClass"),
+				compositionClassFromVertexClass, true,
+				compositionClassToVertexClass);
+		compositionClass.addSuperClass(superClass);
+
+		testIsDirectSuperClassOf2(superClass);
+	}
+
+	/**
+	 * isDirectSuperClassOf()
+	 * 
+	 * TEST CASE: The other element has no relation with this element
+	 */
+	@Test
+	@Override
+	public void testIsDirectSuperClassOf4() {
+		CompositionClass compositionClass2 = graphClass.createCompositionClass(
+				new QualifiedName("CompositionClass2"),
+				compositionClassFromVertexClass, true,
+				compositionClassToVertexClass);
+
+		testIsDirectSuperClassOf2(compositionClass2);
+	}
+
+	/**
+	 * isDirectSuperClassOf()
+	 * 
+	 * TEST CASE: The other element and this element are the same
+	 */
+	@Test
+	@Override
+	public void testIsDirectSuperClassOf5() {
+		testIsDirectSuperClassOf2(compositionClass);
+	}
+
+	/**
+	 * isSubClassOf()
+	 * 
+	 * TEST CASE: The other element is a direct superclass of this element
+	 */
+	@Test
+	@Override
+	public void testIsSubClassOf() {
+		CompositionClass superClass = graphClass.createCompositionClass(
+				new QualifiedName("CompositionClassSuperClass"),
+				compositionClassFromVertexClass, true,
+				compositionClassToVertexClass);
+		compositionClass.addSuperClass(superClass);
+
+		testIsSubClassOf(superClass);
+	}
+
+	/**
+	 * isSubClassOf()
+	 * 
+	 * TEST CASE: The other element is an inherited superclass of this element
+	 */
+	@Test
+	@Override
+	public void testIsSubClassOf2() {
+		CompositionClass superClass = graphClass.createCompositionClass(
+				new QualifiedName("CompositionClassSuperClass"),
+				compositionClassFromVertexClass, true,
+				compositionClassToVertexClass);
+		CompositionClass superClass2 = graphClass.createCompositionClass(
+				new QualifiedName("CompositionClassSuperClass2"),
+				compositionClassFromVertexClass, true,
+				compositionClassToVertexClass);
+		compositionClass.addSuperClass(superClass);
+		superClass.addSuperClass(superClass2);
+
+		testIsSubClassOf(superClass2);
+	}
+
+	/**
+	 * isSubClassOf()
+	 * 
+	 * TEST CASE: The other element is a subclass of this element
+	 */
+	@Test
+	@Override
+	public void testIsSubClassOf3() {
+		CompositionClass subClass = graphClass.createCompositionClass(
+				new QualifiedName("CompositionClassSubClass"),
+				compositionClassFromVertexClass, true,
+				compositionClassToVertexClass);
+		subClass.addSuperClass(compositionClass);
+
+		testIsSubClassOf2(subClass);
+	}
+
+	/**
+	 * isSubClassOf()
+	 * 
+	 * TEST CASE: The other element has no relation with this element
+	 */
+	@Test
+	@Override
+	public void testIsSubClassOf4() {
+		CompositionClass compositionClass2 = graphClass.createCompositionClass(
+				new QualifiedName("CompositionClass2"),
+				compositionClassFromVertexClass, true,
+				compositionClassToVertexClass);
+
+		testIsSubClassOf2(compositionClass2);
+	}
+
+	/**
+	 * isSubClassOf()
+	 * 
+	 * TEST CASE: The other element and this element are the same
+	 */
+	@Test
+	@Override
+	public void testIsSubClassOf5() {
+		testIsSubClassOf2(compositionClass);
+	}
+
+	/**
+	 * isSuperClassOf()
+	 * 
+	 * TEST CASE: The other element is a direct subclass of this element
+	 */
+	@Test
+	@Override
+	public void testIsSuperClassOf() {
+		CompositionClass subClass = graphClass.createCompositionClass(
+				new QualifiedName("CompositionClassSubClass"),
+				compositionClassFromVertexClass, true,
+				compositionClassToVertexClass);
+		subClass.addSuperClass(compositionClass);
+
+		testIsSuperClassOf(subClass);
+	}
+
+	/**
+	 * isSuperClassOf()
+	 * 
+	 * TEST CASE: The other element is an inherited subclass of this element
+	 */
+	@Test
+	@Override
+	public void testIsSuperClassOf2() {
+		CompositionClass subClass = graphClass.createCompositionClass(
+				new QualifiedName("CompositionClassSubClass"),
+				compositionClassFromVertexClass, true,
+				compositionClassToVertexClass);
+		CompositionClass subClass2 = graphClass.createCompositionClass(
+				new QualifiedName("CompositionClassSubClass2"),
+				compositionClassFromVertexClass, true,
+				compositionClassToVertexClass);
+		subClass.addSuperClass(compositionClass);
+		subClass2.addSuperClass(subClass);
+
+		testIsSuperClassOf(subClass2);
+	}
+
+	/**
+	 * isSuperClassOf()
+	 * 
+	 * TEST CASE: The other element is a superclass of this element
+	 */
+	@Test
+	@Override
+	public void testIsSuperClassOf3() {
+		CompositionClass superClass = graphClass.createCompositionClass(
+				new QualifiedName("CompositionClassSuperClass"),
+				compositionClassFromVertexClass, true,
+				compositionClassToVertexClass);
+		compositionClass.addSuperClass(superClass);
+
+		testIsSuperClassOf2(superClass);
+	}
+
+	/**
+	 * isSuperClassOf()
+	 * 
+	 * TEST CASE: The other element has no relation with this element
+	 */
+	@Test
+	@Override
+	public void testIsSuperClassOf4() {
+		CompositionClass compositionClass2 = graphClass.createCompositionClass(
+				new QualifiedName("CompositionClass2"),
+				compositionClassFromVertexClass, true,
+				compositionClassToVertexClass);
+
+		testIsSuperClassOf2(compositionClass2);
+	}
+
+	/**
+	 * isSuperClassOf()
+	 * 
+	 * TEST CASE: The other element and this element are the same
+	 */
+	@Test
+	@Override
+	public void testIsSuperClassOf5() {
+		testIsSuperClassOf2(compositionClass);
+	}
+
+	/**
+	 * isSuperClassOfOrEquals()
+	 * 
+	 * TEST CASE: The other element is a direct subclass of this element
+	 */
+	@Test
+	@Override
+	public void testIsSuperClassOfOrEquals() {
+		CompositionClass subClass = graphClass.createCompositionClass(
+				new QualifiedName("CompositionClassSubClass"),
+				compositionClassFromVertexClass, true,
+				compositionClassToVertexClass);
+		subClass.addSuperClass(compositionClass);
+
+		testIsSuperClassOfOrEquals(subClass);
+	}
+
+	/**
+	 * isSuperClassOfOrEquals()
+	 * 
+	 * TEST CASE: The other element is an inherited subclass of this element
+	 */
+	@Test
+	@Override
+	public void testIsSuperClassOfOrEquals2() {
+		CompositionClass subClass = graphClass.createCompositionClass(
+				new QualifiedName("CompositionClassSubClass"),
+				compositionClassFromVertexClass, true,
+				compositionClassToVertexClass);
+		CompositionClass subClass2 = graphClass.createCompositionClass(
+				new QualifiedName("CompositionClassSubClass2"),
+				compositionClassFromVertexClass, true,
+				compositionClassToVertexClass);
+		subClass.addSuperClass(compositionClass);
+		subClass2.addSuperClass(subClass);
+
+		testIsSuperClassOfOrEquals(subClass2);
+	}
+
+	/**
+	 * isSuperClassOfOrEquals()
+	 * 
+	 * TEST CASE: The other element and this element are the same
+	 */
+	@Test
+	@Override
+	public void testIsSuperClassOfOrEquals3() {
+		testIsSuperClassOfOrEquals(compositionClass);
+	}
+
+	/**
+	 * isSuperClassOfOrEquals()
+	 * 
+	 * TEST CASE: The other element has no relation with this element
+	 */
+	@Test
+	@Override
+	public void testIsSuperClassOfOrEquals4() {
+		CompositionClass compositionClass2 = graphClass.createCompositionClass(
+				new QualifiedName("CompositionClass2"),
+				compositionClassFromVertexClass, true,
+				compositionClassToVertexClass);
+
+		testIsSuperClassOfOrEquals2(compositionClass2);
+	}
+
+	/**
+	 * isSuperClassOfOrEquals()
+	 * 
+	 * TEST CASE: The other element is a superclass of this element
+	 */
+	@Test
+	@Override
+	public void testIsSuperClassOfOrEquals5() {
+		CompositionClass superClass = graphClass.createCompositionClass(
+				new QualifiedName("CompositionClassSuperClass"),
+				compositionClassFromVertexClass, true,
+				compositionClassToVertexClass);
+		compositionClass.addSuperClass(superClass);
+
+		testIsSuperClassOfOrEquals2(superClass);
+	}
 }
