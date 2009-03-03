@@ -702,7 +702,8 @@ public interface AttributedElementClass extends NamedElement,
 	 * </p>
 	 * 
 	 * <p>
-	 * <b>Postconditions:</b>//TODO
+	 * <b>Postconditions:</b> <code>attrElement'</code> is abstract and no new instances
+	 * can be created
 	 * </p>
 	 * 
 	 * @param isAbstract
@@ -829,13 +830,28 @@ public interface AttributedElementClass extends NamedElement,
 	public boolean isInternal();
 
 	/**
-	 * sets the <code>internal</code>-flag of this AttributedElementClass, if
-	 * this is set, the AttributedElementClass is only for internal use (for
-	 * instance, the AttributedElementClasses 'Graph', 'Vertex', 'Edge',
-	 * 'Composition' and 'Aggregation' are such AttributedElementClasses only
-	 * for internal use
+	 * Defines if this attributed element is for 'internal' use only.
+	 * 
+	 * <p>
+	 * For instance, the AttributedElementClasses 'Graph', 'Vertex', 'Edge',
+	 * 'Composition' and 'Aggregation' are such attributed elements only for
+	 * internal use.
+	 * </p>
+	 * 
+	 * <p>
+	 * <b>Pattern:</b> <code>attrElement.setInternal(value);</code>
+	 * </p>
+	 * 
+	 * <p>
+	 * <b>Preconditions:</b> none
+	 * </p>
+	 * 
+	 * <p>
+	 * <b>Postconditions:</b> <code>attrElement'</code> is for internal use only
+	 * </p>
 	 * 
 	 * @param internal
+	 *            the new value defining the state of this attributed element
 	 */
 	public void setInternal(boolean internal);
 
