@@ -5,9 +5,11 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 import java.util.Stack;
 import java.util.TreeSet;
+import java.util.Map.Entry;
 
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
@@ -24,9 +26,11 @@ import de.uni_koblenz.jgralab.GraphIOException;
 import de.uni_koblenz.jgralab.GraphMarker;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.graphvalidator.GraphValidator;
+import de.uni_koblenz.jgralab.grumlschema.AggregationClass;
 import de.uni_koblenz.jgralab.grumlschema.Attribute;
 import de.uni_koblenz.jgralab.grumlschema.AttributedElementClass;
 import de.uni_koblenz.jgralab.grumlschema.CollectionDomain;
+import de.uni_koblenz.jgralab.grumlschema.CompositionClass;
 import de.uni_koblenz.jgralab.grumlschema.ContainsGraphElementClass;
 import de.uni_koblenz.jgralab.grumlschema.Domain;
 import de.uni_koblenz.jgralab.grumlschema.EdgeClass;
@@ -54,7 +58,7 @@ public class Rsa2Tg extends org.xml.sax.helpers.DefaultHandler {
 	private Schema schema;
 	private GraphClass graphClass;
 	private Stack<Package> packageStack;
-	private HashMap<String, AttributedElement> idMap;
+	private Map<String, AttributedElement> idMap;
 	private Set<String> ignoredElements;
 	private int ignore;
 	private String currentClassId;
@@ -65,9 +69,10 @@ public class Rsa2Tg extends org.xml.sax.helpers.DefaultHandler {
 	private GraphMarker<Set<String>> generalizations;
 	private GraphMarker<String> attributeType;
 	private GraphMarker<String> recordComponentType;
-	private HashMap<String, Domain> domainMap;
+	private Map<String, Domain> domainMap;
 	private Set<Vertex> preliminaryVertices;
 	private Edge currentAssociationEnd;
+	private Set<Edge> aggregateEnds;
 
 	public Rsa2Tg() {
 		ignoredElements = new TreeSet<String>();
@@ -79,6 +84,7 @@ public class Rsa2Tg extends org.xml.sax.helpers.DefaultHandler {
 
 	public static void main(String[] args) {
 		new Rsa2Tg().process("/Users/riediger/Desktop/OsmSchema.xmi");
+		// new Rsa2Tg().process("/Users/riediger/Desktop/test.xmi");
 	}
 
 	public void process(String xmiFileName) {
@@ -108,7 +114,8 @@ public class Rsa2Tg extends org.xml.sax.helpers.DefaultHandler {
 		linkGeneralizations();
 		linkRecordDomainComponents();
 		linkAttributeDomains();
-		swapRoles();
+		setAggregateFrom();
+		createEdgeClassNames();
 		removeUnusedDomains();
 		removeEmptyPackages();
 		if (!preliminaryVertices.isEmpty()) {
@@ -119,9 +126,22 @@ public class Rsa2Tg extends org.xml.sax.helpers.DefaultHandler {
 			}
 		}
 		String schemaName = sg.getFirstSchema().getName();
+		// TODO sg.defragment();
 		createDotFile(schemaName);
 		saveGraph(schemaName);
 		validateGraph();
+	}
+
+	private void setAggregateFrom() {
+		for (Edge e : aggregateEnds) {
+			((AggregationClass) e.getAlpha()).setAggregateFrom(e instanceof To);
+		}
+		aggregateEnds.clear();
+	}
+
+	private void createEdgeClassNames() {
+		// TODO Auto-generated method stub
+
 	}
 
 	private void removeUnusedDomains() {
@@ -138,30 +158,6 @@ public class Rsa2Tg extends org.xml.sax.helpers.DefaultHandler {
 			} else {
 				d = n;
 			}
-		}
-	}
-
-	private void swapRoles() {
-		for (EdgeClass ec : sg.getEdgeClassVertices()) {
-			From f = ec.getFirstFrom();
-			To t = ec.getFirstTo();
-			assert f != null && t != null;
-
-			int h = f.getMin();
-			f.setMin(t.getMin());
-			t.setMin(h);
-
-			h = f.getMax();
-			f.setMax(t.getMax());
-			t.setMax(h);
-
-			String s = f.getRoleName();
-			f.setRoleName(t.getRoleName());
-			t.setRoleName(s);
-
-			Set<String> r = f.getRedefinedRoles();
-			f.setRedefinedRoles(t.getRedefinedRoles());
-			t.setRedefinedRoles(r);
 		}
 	}
 
@@ -330,6 +326,7 @@ public class Rsa2Tg extends org.xml.sax.helpers.DefaultHandler {
 		recordComponentType = new GraphMarker<String>(sg);
 		domainMap = new HashMap<String, Domain>();
 		preliminaryVertices = new HashSet<Vertex>();
+		aggregateEnds = new HashSet<Edge>();
 		ignore = 0;
 	}
 
@@ -434,8 +431,8 @@ public class Rsa2Tg extends org.xml.sax.helpers.DefaultHandler {
 					assert memberEnd != null;
 					memberEnd = memberEnd.trim().replaceAll("\\s+", " ");
 					int p = memberEnd.indexOf(' ');
-					String sourceEnd = memberEnd.substring(0, p);
-					String targetEnd = memberEnd.substring(p + 1);
+					String targetEnd = memberEnd.substring(0, p);
+					String sourceEnd = memberEnd.substring(p + 1);
 
 					Edge e = (Edge) idMap.get(sourceEnd);
 					if (e == null) {
@@ -456,6 +453,10 @@ public class Rsa2Tg extends org.xml.sax.helpers.DefaultHandler {
 						to.setRoleName(from.getRoleName());
 						to.setRedefinedRoles(from.getRedefinedRoles());
 						e.delete();
+						if (aggregateEnds.contains(from)) {
+							aggregateEnds.remove(from);
+							aggregateEnds.add(to);
+						}
 						idMap.put(targetEnd, to);
 					} else {
 						VertexClass vc = sg.createVertexClass();
@@ -487,12 +488,7 @@ public class Rsa2Tg extends org.xml.sax.helpers.DefaultHandler {
 						// there was a preliminary vertex for this domain
 						// link the edges to the correct one
 						assert preliminaryVertices.contains(dom);
-						Edge e = dom.getFirstEdge();
-						while (e != null) {
-							Edge n = e.getNextEdge();
-							e.setThis(ed);
-							e = n;
-						}
+						reconnectEdges(dom, ed);
 						// delete preliminary vertex
 						dom.delete();
 						preliminaryVertices.remove(dom);
@@ -770,60 +766,77 @@ public class Rsa2Tg extends org.xml.sax.helpers.DefaultHandler {
 		if (endName == null) {
 			endName = "";
 		}
+
+		String agg = atts.getValue("aggregation");
+		boolean aggregation = agg != null && agg.equals("shared");
+		boolean composition = agg != null && agg.equals("composite");
+
 		Edge e = (Edge) idMap.get(xmiId);
 		if (e == null) {
 			// try to find the end's VertexClass
 			// if not found, create a preliminary VertexClass
 			VertexClass vc = null;
-			if (currentClass instanceof VertexClass) {
-				// we have an "ownedAttribute", so the end's VertexClass is the
-				// currentClass
-				vc = (VertexClass) currentClass;
+			// we have an "ownedEnd", vertex class id is in "type" attribute
+			String typeId = atts.getValue("type");
+			assert typeId != null;
+			AttributedElement ae = idMap.get(typeId);
+			if (ae != null) {
+				// VertexClass found
+				assert ae instanceof VertexClass;
+				vc = (VertexClass) ae;
 			} else {
-				// we have an "ownedEnd", vertex class id is in "type" attribute
-				String typeId = atts.getValue("type");
-				assert typeId != null;
-				AttributedElement ae = idMap.get(typeId);
-				if (ae != null) {
-					// VertexClass found
-					assert ae instanceof VertexClass;
-					vc = (VertexClass) ae;
-				} else {
-					// create a preliminary vertex class
-					vc = sg.createVertexClass();
-					preliminaryVertices.add(vc);
-					vc.setQualifiedName(typeId);
-					idMap.put(typeId, vc);
-				}
+				// create a preliminary vertex class
+				vc = sg.createVertexClass();
+				preliminaryVertices.add(vc);
+				vc.setQualifiedName(typeId);
+				idMap.put(typeId, vc);
 			}
 
 			// try to find the end's EdgeClass
 			EdgeClass ec = null;
 			if (currentClass instanceof EdgeClass) {
-				// we have an "ownedAttribute", so the end's VertexClass is the
+				// we have an "ownedEnd", so the end's Edge is the
 				// currentClass
-				ec = (EdgeClass) currentClass;
+				ec = correctAggregationAndComposition((EdgeClass) currentClass,
+						aggregation, composition);
+				currentClass = ec;
+				idMap.put(currentClassId, currentClass);
 			} else {
 				// we have an ownedAttribute
 				// edge class id is in "association"
 				String association = atts.getValue("association");
 				assert association != null;
-				AttributedElement ae = idMap.get(association);
+				ae = idMap.get(association);
 				if (ae != null) {
 					// EdgeClass found
 					assert ae instanceof EdgeClass;
-					ec = (EdgeClass) ae;
+					ec = correctAggregationAndComposition((EdgeClass) ae,
+							aggregation, composition);
 				} else {
 					// create a preliminary edge class
-					ec = sg.createEdgeClass();
-					preliminaryVertices.add(ec);
-					idMap.put(association, ec);
+					ec = composition ? sg.createCompositionClass()
+							: aggregation ? sg.createAggregationClass() : sg
+									.createEdgeClass();
 				}
+				preliminaryVertices.add(ec);
+				idMap.put(association, ec);
 			}
 
 			assert vc != null && ec != null;
 			e = sg.createFrom(ec, vc);
 		} else {
+			EdgeClass ec = (EdgeClass) e.getAlpha();
+			String id = null;
+			for (Entry<String, AttributedElement> idEntry : idMap.entrySet()) {
+				if (idEntry.getValue() == ec) {
+					id = idEntry.getKey();
+					break;
+				}
+			}
+			assert id != null;
+			ec = correctAggregationAndComposition(ec, aggregation, composition);
+			idMap.put(id, ec);
+
 			if (currentClass instanceof EdgeClass) {
 				// an ownedEnd of an association with a possibly preliminary
 				// vertex class
@@ -845,6 +858,9 @@ public class Rsa2Tg extends org.xml.sax.helpers.DefaultHandler {
 		assert e != null;
 		assert e instanceof From || e instanceof To;
 		currentAssociationEnd = e;
+		if (aggregation || composition) {
+			aggregateEnds.add(e);
+		}
 		idMap.put(xmiId, e);
 		if (e instanceof To) {
 			To to = (To) e;
@@ -858,8 +874,47 @@ public class Rsa2Tg extends org.xml.sax.helpers.DefaultHandler {
 		System.out.println("\t"
 				+ (currentClass instanceof EdgeClass ? "ownedEnd"
 						: "ownedAttribute") + " " + endName + " " + xmiId
-				+ " (" + e + ")");
+				+ " (" + e + " " + e.getOmega() + " "
+				+ ((VertexClass) e.getOmega()).getQualifiedName() + ")");
 
+	}
+
+	private EdgeClass correctAggregationAndComposition(EdgeClass ec,
+			boolean aggregation, boolean composition) {
+		if (composition && ec.getM1Class() != CompositionClass.class) {
+			EdgeClass cls = sg.createCompositionClass();
+			cls.setQualifiedName(ec.getQualifiedName());
+			cls.setIsAbstract(ec.isIsAbstract());
+			reconnectEdges(ec, cls);
+			ec.delete();
+			if (preliminaryVertices.contains(ec)) {
+				preliminaryVertices.remove(ec);
+				preliminaryVertices.add(cls);
+			}
+			return cls;
+		}
+		if (aggregation && ec.getM1Class() != AggregationClass.class) {
+			EdgeClass cls = sg.createAggregationClass();
+			cls.setQualifiedName(ec.getQualifiedName());
+			cls.setIsAbstract(ec.isIsAbstract());
+			reconnectEdges(ec, cls);
+			ec.delete();
+			if (preliminaryVertices.contains(ec)) {
+				preliminaryVertices.remove(ec);
+				preliminaryVertices.add(cls);
+			}
+			return cls;
+		}
+		return ec;
+	}
+
+	private void reconnectEdges(Vertex oldVertex, Vertex newVertex) {
+		Edge curr = oldVertex.getFirstEdge();
+		while (curr != null) {
+			Edge next = curr.getNextEdge();
+			curr.setThis(newVertex);
+			curr = next;
+		}
 	}
 
 	/**
