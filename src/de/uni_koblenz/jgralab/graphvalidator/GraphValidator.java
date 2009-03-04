@@ -261,7 +261,7 @@ public class GraphValidator {
 		bw.append("<body>");
 
 		if (brokenConstraints.size() == 0) {
-			bw.append("<p><b>The graph is perfectly valid!</b></p>");
+			bw.append("<p><b>The graph is valid!</b></p>");
 		} else {
 			bw.append("<p><b>The " + graph.getM1Class().getSimpleName()
 					+ " violates " + brokenConstraints.size()

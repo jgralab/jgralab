@@ -26,7 +26,7 @@ VertexClass StringDomain: Domain;
 VertexClass 'VertexClass: GraphElementClass;
 EdgeClass HasDomain from Attribute (0,*) to Domain (1,1);
 AggregationClass HasAttribute from AttributedElementClass (1,1) to Attribute (0,*) aggregate from;
-CompositionClass HasConstraint from Constraint (0,*) to AttributedElementClass (1,1) aggregate to;
+CompositionClass HasConstraint from AttributedElementClass (1,1)  to Constraint (0,*) aggregate from;
 EdgeClass HasBaseDomain from CollectionDomain (0,*) to Domain (1,1);
 CompositionClass ContainsDomain from 'Package (1,1) to Domain (0,*) aggregate from;
 AggregationClass HasRecordDomainComponent from 'RecordDomain (0,*) to Domain (1,*) aggregate from {name: String};
