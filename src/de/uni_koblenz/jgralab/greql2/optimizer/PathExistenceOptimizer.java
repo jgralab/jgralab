@@ -144,9 +144,9 @@ public class PathExistenceOptimizer extends OptimizerBase {
 			}
 		};
 		TreeSet<Variable> startExpVars = new TreeSet<Variable>(comparator);
-		startExpVars.addAll(OptimizerUtility.collectVariablesBelow(startExp));
+		startExpVars.addAll(OptimizerUtility.collectInternallyDeclaredVariablesBelow(startExp));
 		TreeSet<Variable> targetExpVars = new TreeSet<Variable>(comparator);
-		targetExpVars.addAll(OptimizerUtility.collectVariablesBelow(targetExp));
+		targetExpVars.addAll(OptimizerUtility.collectInternallyDeclaredVariablesBelow(targetExp));
 
 		if (startExpVars.isEmpty() && targetExpVars.isEmpty()) {
 			return;

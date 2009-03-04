@@ -215,7 +215,9 @@ public class OptimizerUtility {
 	}
 
 	/**
-	 * Collect all of {@link Variable}s that are located below <code>v</code>.
+	 * Collect all of {@link Variable}s that are located below <code>v</code>,
+	 * and that are declared in the current query (not bound variables of the
+	 * expression).
 	 *
 	 * @param vertex
 	 *            the root {@link Vertex} below which to look for
@@ -223,29 +225,37 @@ public class OptimizerUtility {
 	 * @return a {@link Set} of {@link Variable}s that are located below
 	 *         <code>v</code>
 	 */
-	public static Set<Variable> collectVariablesBelow(Vertex vertex) {
-		return collectVariablesBelow(vertex, new HashSet<Variable>());
+	public static Set<Variable> collectInternallyDeclaredVariablesBelow(
+			Vertex vertex) {
+		return collectInternallyDeclaredVariablesBelow(vertex,
+				new HashSet<Variable>());
 	}
 
 	/**
 	 * Add all {@link Variable} vertices to <code>vars</code> that are in the
-	 * subgraph below <code>vertex</code>. Return <code>vars</code>.
+	 * subgraph below <code>vertex</code>, and that are declared in the current
+	 * query (not bound variables of the expression). Return <code>vars</code>.
 	 *
 	 * @param vertex
 	 * @param vars
 	 * @return the set of {@link Variable} vertices that are located in the
 	 *         subgraph below <code>vertex</code>
 	 */
-	private static Set<Variable> collectVariablesBelow(Vertex vertex,
-			Set<Variable> vars) {
+	private static Set<Variable> collectInternallyDeclaredVariablesBelow(
+			Vertex vertex, Set<Variable> vars) {
 		// GreqlEvaluator.println("collectVariablesBelow(" + vertex + ")");
 		if (vertex instanceof Variable) {
-			vars.add((Variable) vertex);
+			Variable v = (Variable) vertex;
+			if (v.getFirstIsBoundVarOf(EdgeDirection.OUT) == null) {
+				// it's no externally bound variable, but a variable declared in
+				// that query...
+				vars.add(v);
+			}
 			return vars;
 		}
 		for (Edge inc : vertex.incidences(EdgeDirection.IN)) {
 			// GreqlEvaluator.println(inc + " <-- " + inc.getAlpha());
-			collectVariablesBelow(inc.getAlpha(), vars);
+			collectInternallyDeclaredVariablesBelow(inc.getAlpha(), vars);
 		}
 		return vars;
 	}

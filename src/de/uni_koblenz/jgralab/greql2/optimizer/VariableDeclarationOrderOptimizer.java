@@ -83,7 +83,7 @@ public class VariableDeclarationOrderOptimizer extends OptimizerBase {
 			Set<Variable> varsOfDecl = collectVariablesDeclaredBy(decl);
 			if (varsOfDecl.size() < 2
 					|| decl.getFirstIsConstraintOf(EdgeDirection.IN) == null
-					|| OptimizerUtility.collectVariablesBelow(
+					|| OptimizerUtility.collectInternallyDeclaredVariablesBelow(
 							decl.getFirstIsConstraintOf(EdgeDirection.IN)
 									.getAlpha()).size() == 0) {
 				continue;

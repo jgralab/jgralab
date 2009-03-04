@@ -653,7 +653,7 @@ public class EarySelectionOptimizer extends OptimizerBase {
 	 *         {@link Declaration} above <code>exp</code>.
 	 */
 	private Set<Variable> collectNeededLocalVariables(Expression exp) {
-		Set<Variable> neededVars = OptimizerUtility.collectVariablesBelow(exp);
+		Set<Variable> neededVars = OptimizerUtility.collectInternallyDeclaredVariablesBelow(exp);
 		Set<Variable> neededLocalVars = new HashSet<Variable>();
 		Declaration localDecl = findNearestDeclarationAbove(exp);
 		for (SimpleDeclaration sd : collectSimpleDeclarationsOf(localDecl)) {
@@ -755,7 +755,7 @@ public class EarySelectionOptimizer extends OptimizerBase {
 	 */
 	private Set<Variable> collectUndeclaredVariablesBelow(Vertex vertex) {
 		HashSet<Variable> undeclaredVars = new HashSet<Variable>();
-		for (Variable var : OptimizerUtility.collectVariablesBelow(vertex)) {
+		for (Variable var : OptimizerUtility.collectInternallyDeclaredVariablesBelow(vertex)) {
 			if (var.getFirstIsDeclaredVarOf(EdgeDirection.OUT) == null) {
 				undeclaredVars.add(var);
 			}
