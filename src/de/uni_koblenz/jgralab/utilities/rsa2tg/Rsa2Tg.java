@@ -5,6 +5,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.Stack;
@@ -31,6 +33,7 @@ import de.uni_koblenz.jgralab.grumlschema.Attribute;
 import de.uni_koblenz.jgralab.grumlschema.AttributedElementClass;
 import de.uni_koblenz.jgralab.grumlschema.CollectionDomain;
 import de.uni_koblenz.jgralab.grumlschema.CompositionClass;
+import de.uni_koblenz.jgralab.grumlschema.Constraint;
 import de.uni_koblenz.jgralab.grumlschema.ContainsGraphElementClass;
 import de.uni_koblenz.jgralab.grumlschema.Domain;
 import de.uni_koblenz.jgralab.grumlschema.EdgeClass;
@@ -73,13 +76,14 @@ public class Rsa2Tg extends org.xml.sax.helpers.DefaultHandler {
 	private Set<Vertex> preliminaryVertices;
 	private Edge currentAssociationEnd;
 	private Set<Edge> aggregateEnds;
+	private boolean inConstraint;
+	private String constrainedElementId;
+	private Map<String, List<String>> constraints;
 
 	public Rsa2Tg() {
 		ignoredElements = new TreeSet<String>();
 		ignoredElements.add("profileApplication");
 		ignoredElements.add("packageImport");
-
-		ignoredElements.add("ownedRule"); // TODO
 	}
 
 	public static void main(String[] args) {
@@ -115,7 +119,8 @@ public class Rsa2Tg extends org.xml.sax.helpers.DefaultHandler {
 		linkRecordDomainComponents();
 		linkAttributeDomains();
 		setAggregateFrom();
-		createEdgeClassNames();
+		attachConstraints();
+		createEdgeClassNames(false);
 		removeUnusedDomains();
 		removeEmptyPackages();
 		if (!preliminaryVertices.isEmpty()) {
@@ -132,6 +137,28 @@ public class Rsa2Tg extends org.xml.sax.helpers.DefaultHandler {
 		validateGraph();
 	}
 
+	private void attachConstraints() throws SAXException {
+		for (String constrainedElementId : constraints.keySet()) {
+			List<String> l = constraints.get(constrainedElementId);
+			AttributedElement ae = idMap.get(constrainedElementId);
+			if (ae == null) {
+				ae = graphClass;
+			}
+			assert ae instanceof AttributedElementClass || ae instanceof From
+					|| ae instanceof To;
+			if (ae instanceof AttributedElementClass) {
+				for (String text : l) {
+					if (ae instanceof AttributedElementClass) {
+						addGreqlConstraint((AttributedElementClass) ae, text);
+					}
+				}
+			} else {
+				assert l.size() == 1 : "Only one redefines allowed";
+				addRedefinesConstraint((Edge) ae, l.get(0));
+			}
+		}
+	}
+
 	private void setAggregateFrom() {
 		for (Edge e : aggregateEnds) {
 			((AggregationClass) e.getAlpha()).setAggregateFrom(e instanceof To);
@@ -139,9 +166,58 @@ public class Rsa2Tg extends org.xml.sax.helpers.DefaultHandler {
 		aggregateEnds.clear();
 	}
 
-	private void createEdgeClassNames() {
-		// TODO Auto-generated method stub
-
+	private void createEdgeClassNames(boolean useFromRole) {
+		for (EdgeClass ec : sg.getEdgeClassVertices()) {
+			String name = ec.getQualifiedName().trim();
+			if (name != null && !name.equals("") && !name.endsWith(".")) {
+				continue;
+			}
+			if (name == null) {
+				name = "";
+			}
+			String ecName = null;
+			// invent edgeclass name
+			String toRole = ec.getFirstTo().getRoleName();
+			if (toRole == null || toRole.equals("")) {
+				toRole = ((VertexClass) ec.getFirstTo().getOmega())
+						.getQualifiedName();
+				int p = toRole.lastIndexOf('.');
+				if (p >= 0) {
+					toRole = toRole.substring(p + 1);
+				}
+			} else {
+				toRole = Character.toUpperCase(toRole.charAt(0))
+						+ toRole.substring(1);
+			}
+			assert toRole != null && toRole.length() > 0;
+			if (ec instanceof AggregationClass) {
+				if (((AggregationClass) ec).isAggregateFrom()) {
+					ecName = "Contains" + toRole;
+				} else {
+					ecName = "IsPartOf" + toRole;
+				}
+			} else {
+				ecName = "LinksTo" + toRole;
+			}
+			if (useFromRole) {
+				String fromRole = ec.getFirstFrom().getRoleName();
+				if (fromRole == null || fromRole.equals("")) {
+					fromRole = ((VertexClass) ec.getFirstFrom().getOmega())
+							.getQualifiedName();
+					int p = fromRole.lastIndexOf('.');
+					if (p >= 0) {
+						fromRole = fromRole.substring(p + 1);
+					}
+				} else {
+					fromRole = Character.toUpperCase(fromRole.charAt(0))
+							+ fromRole.substring(1);
+				}
+				assert fromRole != null && fromRole.length() > 0;
+				name = fromRole + ecName;
+			}
+			assert ecName != null && ecName.length() > 0;
+			ec.setQualifiedName(name + ecName);
+		}
 	}
 
 	private void removeUnusedDomains() {
@@ -277,11 +353,10 @@ public class Rsa2Tg extends org.xml.sax.helpers.DefaultHandler {
 		String topName = s.substring(0, p);
 		String xmiId = s.substring(p + 1);
 		assert topName.equals(name);
-		s = elementContent.peek().toString().trim();
-		if (s.length() > 0) {
-			// System.out.println("Content '" + s + "'");
+		if (inConstraint && name.equals("body")) {
+			s = elementContent.peek().toString().trim();
+			handleConstraint(s);
 		}
-		// System.out.println("End " + name);
 		elementNameStack.pop();
 		elementContent.pop();
 		if (ignoredElements.contains(name)) {
@@ -310,7 +385,105 @@ public class Rsa2Tg extends org.xml.sax.helpers.DefaultHandler {
 				currentAssociationEnd = null;
 			} else if (name.equals("ownedEnd")) {
 				currentAssociationEnd = null;
+			} else if (name.equals("ownedRulke")) {
+				inConstraint = false;
+				constrainedElementId = null;
 			}
+		}
+	}
+
+	private void handleConstraint(String text) throws SAXException {
+		if (text.startsWith("redefines") || text.startsWith("\"")) {
+			List<String> l = constraints.get(constrainedElementId);
+			if (l == null) {
+				l = new LinkedList<String>();
+				constraints.put(constrainedElementId, l);
+			}
+			l.add(text);
+		} else {
+			throw new SAXException("Illegal constraint format.");
+		}
+	}
+
+	private void addRedefinesConstraint(Edge constrainedEnd, String text)
+			throws SAXException {
+		assert constrainedEnd instanceof From || constrainedEnd instanceof To;
+
+		text = text.trim().replaceAll("\\s+", " ");
+		if (!text.startsWith("redefines ")) {
+			throw new SAXException("Wrong redefines constraint format.");
+		}
+		String[] roles = text.substring(10).split("\\s*,\\s*");
+		assert roles.length >= 1;
+		Set<String> redefinedRoles = new TreeSet<String>();
+		for (String role : roles) {
+			assert role.length() >= 1;
+			redefinedRoles.add(role);
+		}
+		assert redefinedRoles.size() >= 1;
+		if (constrainedEnd instanceof From) {
+			((From) constrainedEnd).setRedefinedRoles(redefinedRoles);
+		} else {
+			((To) constrainedEnd).setRedefinedRoles(redefinedRoles);
+		}
+	}
+
+	private void addGreqlConstraint(AttributedElementClass constrainedClass,
+			String text) throws SAXException {
+
+		assert constrainedClass != null;
+		Constraint constraint = sg.createConstraint();
+		sg.createHasConstraint(constrainedClass, constraint);
+
+		// the "text" must contain 2 or 3 space-separated quoted ("...") strings
+		int stringCount = 0;
+		char[] ch = text.toCharArray();
+		boolean inString = false;
+		boolean escape = false;
+		int beginIndex = 0;
+		for (int i = 0; i < ch.length; ++i) {
+			char c = ch[i];
+			if (inString) {
+				if (escape) {
+					// do nothing
+				} else if (c == '\\') {
+					escape = true;
+				} else if (c == '"') {
+					++stringCount;
+					switch (stringCount) {
+					case 1:
+						constraint.setMessage(text.substring(beginIndex + 1, i)
+								.trim());
+						break;
+					case 2:
+						constraint.setPredicate(text.substring(beginIndex + 1,
+								i).trim());
+						break;
+					case 3:
+						constraint.setOffendingElementsQuery(text.substring(
+								beginIndex + 1, i).trim());
+						break;
+					default:
+						throw new SAXException("Illegal constraint format.");
+					}
+					inString = false;
+				}
+			} else {
+				if (Character.isWhitespace(c)) {
+					// ignore
+				} else {
+					if (c == '"') {
+						inString = true;
+						beginIndex = i;
+					} else {
+						throw new SAXException("Illegal constraint format.");
+					}
+				}
+			}
+
+		}
+		if (inString || escape || stringCount < 2 || stringCount > 3) {
+			throw new SAXException("Illegal constraint format.");
 		}
 	}
 
@@ -328,6 +501,7 @@ public class Rsa2Tg extends org.xml.sax.helpers.DefaultHandler {
 		preliminaryVertices = new HashSet<Vertex>();
 		aggregateEnds = new HashSet<Edge>();
 		ignore = 0;
+		constraints = new HashMap<String, List<String>>();
 	}
 
 	@Override
@@ -422,9 +596,12 @@ public class Rsa2Tg extends org.xml.sax.helpers.DefaultHandler {
 					currentClass = ec;
 					String abs = atts.getValue("isAbstract");
 					ec.setIsAbstract(abs != null && abs.equals("true"));
-					ec
-							.setQualifiedName(getQualifiedName(atts
-									.getValue("name")));
+					String n = atts.getValue("name");
+					n = (n == null) ? "" : n.trim();
+					if (n.length() > 0) {
+						n = Character.toUpperCase(n.charAt(0)) + n.substring(1);
+					}
+					ec.setQualifiedName(getQualifiedName(n));
 					sg.createContainsGraphElementClass(packageStack.peek(), ec);
 
 					String memberEnd = atts.getValue("memberEnd");
@@ -472,8 +649,6 @@ public class Rsa2Tg extends org.xml.sax.helpers.DefaultHandler {
 					System.out.println("\ttarget " + targetEnd + " -> "
 							+ idMap.get(targetEnd));
 
-					// TODO how are abstract associations represented?
-
 				} else if (type.equals("uml:Enumeration")) {
 					EnumDomain ed = sg.createEnumDomain();
 					idVertex = ed;
@@ -506,6 +681,18 @@ public class Rsa2Tg extends org.xml.sax.helpers.DefaultHandler {
 				} else {
 					throw new SAXException("unexpected element " + name
 							+ " of type " + type);
+				}
+
+			} else if (name.equals("ownedRule")) {
+				inConstraint = true;
+				constrainedElementId = atts.getValue("constrainedElement");
+				// the ID may be null, in this case, the constraint is attached
+				// to the GraphClass vertex.
+
+			} else if (name.equals("specification") || name.equals("language")
+					|| name.equals("body")) {
+				if (!inConstraint) {
+					throw new SAXException("unecpected element <" + name + ">");
 				}
 
 			} else if (name.equals("ownedEnd")) {
@@ -725,6 +912,9 @@ public class Rsa2Tg extends org.xml.sax.helpers.DefaultHandler {
 					System.out
 							.println("currentClass = null, currentRecordDomain = "
 									+ rd + " " + rd.getQualifiedName());
+				} else if (key.equals("abstract")) {
+					assert currentClass != null;
+					currentClass.setIsAbstract(true);
 				} else {
 					throw new SAXException("unexpected stereotype " + key);
 				}
@@ -751,7 +941,7 @@ public class Rsa2Tg extends org.xml.sax.helpers.DefaultHandler {
 					((To) currentAssociationEnd).setMax(n);
 				}
 			} else {
-				System.out.println(">>> unexpected element " + name
+				throw new SAXException("unexpected element " + name
 						+ " of type " + type);
 			}
 		}
@@ -761,12 +951,7 @@ public class Rsa2Tg extends org.xml.sax.helpers.DefaultHandler {
 	}
 
 	private void handleAssociatioEnd(Attributes atts, String xmiId) {
-		// TODO handle Aggregations/Compositions
 		String endName = atts.getValue("name");
-		if (endName == null) {
-			endName = "";
-		}
-
 		String agg = atts.getValue("aggregation");
 		boolean aggregation = agg != null && agg.equals("shared");
 		boolean composition = agg != null && agg.equals("composite");
@@ -1005,7 +1190,6 @@ public class Rsa2Tg extends org.xml.sax.helpers.DefaultHandler {
 	private String getQualifiedName(String s) {
 		assert s != null;
 		s = s.trim();
-		assert s.length() > 0;
 		Package p = packageStack.peek();
 		assert p != null;
 		if (p.getQualifiedName().equals("")) {

@@ -46,6 +46,7 @@ public class Tg2Dot extends Tg2Whatever {
 	/**
 	 * prints the graph to the output file
 	 */
+	@Override
 	public void graphStart(PrintStream out) {
 		out.println("digraph \"" + graph.getId() + "\"");
 		out.println("{");
@@ -67,10 +68,12 @@ public class Tg2Dot extends Tg2Whatever {
 				+ "\" labelfontsize=\"" + fontsize + "\" color=\"#999999\"];");
 	}
 
+	@Override
 	public void graphEnd(PrintStream out) {
 		out.println("}");
 	}
 
+	@Override
 	protected void printVertex(PrintStream out, Vertex v) {
 		AttributedElementClass cls = v.getAttributedElementClass();
 		out.print("v" + v.getId() + " [label=\"{{v" + v.getId() + "|"
@@ -82,6 +85,7 @@ public class Tg2Dot extends Tg2Whatever {
 		out.println("}\"];");
 	}
 
+	@Override
 	protected String stringQuote(String s) {
 		StringBuffer sb = new StringBuffer();
 		for (char ch : s.toCharArray()) {
@@ -130,12 +134,14 @@ public class Tg2Dot extends Tg2Whatever {
 		return sb.toString();
 	}
 
+	@Override
 	protected void printEdge(PrintStream out, Edge e) {
 		Vertex alpha = (reversedEdges ? e.getOmega() : e.getAlpha());
 		Vertex omega = (reversedEdges ? e.getAlpha() : e.getOmega());
 		out.print("v" + alpha.getId() + " -> v" + omega.getId() + " [");
-		if (reversedEdges)
+		if (reversedEdges) {
 			out.print("dir=back ");
+		}
 
 		EdgeClass cls = (EdgeClass) e.getAttributedElementClass();
 
@@ -168,20 +174,24 @@ public class Tg2Dot extends Tg2Whatever {
 			try {
 				if (abbreviateEdgeAttributeNames && elem instanceof Edge) {
 					// sourcePosition => sP
-					// fooBarBaz      => fBB
+					// fooBarBaz => fBB
 					out.print(attr.getName().charAt(0)
 							+ attr.getName().replaceAll("[a-z]+", ""));
 				} else {
 					out.print(attr.getName());
 				}
 				if (domainNames) {
-					out.print(": " + stringQuote(attr.getDomain().getQualifiedName()));
+					out.print(": "
+							+ stringQuote(attr.getDomain().getQualifiedName()));
 				}
 				Object attribute = elem.getAttribute(attr.getName());
 				String attributeString = (attribute != null) ? attribute
 						.toString() : "null";
 				if (shortenStrings && attributeString.length() > 17) {
 					attributeString = attributeString.substring(0, 18) + "...";
+				}
+				if (attribute instanceof String) {
+					attributeString = '"' + attributeString + '"';
 				}
 				out.print(" = " + stringQuote(attributeString) + "\\l");
 			} catch (NoSuchFieldException e1) {
