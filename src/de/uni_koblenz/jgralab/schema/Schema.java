@@ -33,7 +33,6 @@ import java.util.TreeSet;
 import java.util.Vector;
 
 import de.uni_koblenz.jgralab.Attribute;
-import de.uni_koblenz.jgralab.AttributedElement;
 import de.uni_koblenz.jgralab.GraphFactory;
 import de.uni_koblenz.jgralab.GraphIOException;
 import de.uni_koblenz.jgralab.ProgressFunction;
@@ -41,9 +40,9 @@ import de.uni_koblenz.jgralab.codegenerator.JavaSourceFromString;
 
 /**
  * The class Schema represents a grUML Schema (M2).
- *
+ * 
  * @author ist@uni-koblenz.de
- *
+ * 
  */
 public interface Schema extends NamedElement {
 
@@ -88,7 +87,7 @@ public interface Schema extends NamedElement {
 
 	/**
 	 * Creates a new Attribute <code>name</code> with domain <code>dom</code>.
-	 *
+	 * 
 	 * @param name
 	 *            the attribute name
 	 * @param dom
@@ -99,7 +98,7 @@ public interface Schema extends NamedElement {
 
 	/**
 	 * builds a new graphclass and saves it to the schema object
-	 *
+	 * 
 	 * @param id
 	 *            the unique identifier of the graphclass in the schema
 	 * @return the new graphclass
@@ -108,7 +107,7 @@ public interface Schema extends NamedElement {
 
 	/**
 	 * builds a new enumeration domain, multiple domains may exist in a schema
-	 *
+	 * 
 	 * @param qn
 	 *            a unique name which identifies the enum in the schema
 	 * @param enumComponents
@@ -120,7 +119,7 @@ public interface Schema extends NamedElement {
 
 	/**
 	 * builds a new enumeration domain, multiple domains may exist in a schema
-	 *
+	 * 
 	 * @param qn
 	 *            a unique name which identifies the enum in the schema
 	 * @return a new enumeration domain
@@ -129,7 +128,7 @@ public interface Schema extends NamedElement {
 
 	/**
 	 * builds a new list domain, multiple domains may exist in a schema
-	 *
+	 * 
 	 * @param baseDomain
 	 *            the domain of which all elements in the list are built of
 	 * @return the new list domain
@@ -138,7 +137,7 @@ public interface Schema extends NamedElement {
 
 	/**
 	 * builds a new set domain, multiple domains may exist in a schema
-	 *
+	 * 
 	 * @param baseDomain
 	 *            the domain of which all elements in the set are built of
 	 * @return the new set domain
@@ -147,7 +146,7 @@ public interface Schema extends NamedElement {
 
 	/**
 	 * builds a new map domain, multiple domains may exist in a schema
-	 *
+	 * 
 	 * @param keyDomain
 	 *            the domain of which all keys in the set are built of
 	 * @param keyDomain
@@ -158,7 +157,7 @@ public interface Schema extends NamedElement {
 
 	/**
 	 * builds a new record domain, multiple domains may exist in a schema
-	 *
+	 * 
 	 * @param qn
 	 *            a unique name which identifies the record in the schema
 	 * @param recordComponents
@@ -172,7 +171,7 @@ public interface Schema extends NamedElement {
 
 	/**
 	 * builds a new record domain, multiple domains may exist in a schema
-	 *
+	 * 
 	 * @param qn
 	 *            a unique name which identifies the record in the schema
 	 * @return the new record domain
@@ -182,11 +181,11 @@ public interface Schema extends NamedElement {
 	/**
 	 * after creating the schema, this command serves to make it permanent, m2
 	 * classes are generated to represent the object oriented access layer
-	 *
+	 * 
 	 * @param path
 	 *            the path to the m1 classes which are to be generated
-	 *
-	 *
+	 * 
+	 * 
 	 * @throws GraphIOException
 	 *             if an error occured during optional compilation
 	 */
@@ -195,7 +194,7 @@ public interface Schema extends NamedElement {
 	/**
 	 * after creating the schema, this command serves to make it permanent, m2
 	 * classes are generated to represent the object oriented access layer
-	 *
+	 * 
 	 * @param path
 	 *            the path to the m1 classes which are to be generated
 	 * @param progressFunction
@@ -223,7 +222,7 @@ public interface Schema extends NamedElement {
 	 * After creating the schema, this command serves to generate and compile
 	 * code for the m1 classes. The class files are not written to disk, but
 	 * only held in memory.
-	 *
+	 * 
 	 * @param jgralabClassPath
 	 *            the classpath to JGraLab
 	 */
@@ -249,23 +248,6 @@ public interface Schema extends NamedElement {
 	 *         hierarchy of those classes
 	 */
 	public String toString();
-
-	/**
-	 * sets the prefix for the generation of the m2 elements, the prefix is
-	 * added prior to the generated package, example: prefix.schemaname
-	 *
-	 * @param prefix
-	 *            the prefix to set
-	 */
-	// public void setPrefix(String prefix);
-	/**
-	 * @param anAttributedElement
-	 *            the element which class should be returned
-	 * @return the m2 element of anAttributedElement (instances of
-	 *         AttributedElementClass)
-	 */
-	@Deprecated
-	public AttributedElementClass getClass(AttributedElement anAttributedElement);
 
 	/**
 	 * @return all the graph classes in the schema
@@ -311,7 +293,7 @@ public interface Schema extends NamedElement {
 
 	/**
 	 * Gets the method to create a new graphwith the given name
-	 *
+	 * 
 	 * @param graphClassName
 	 *            the name of the graph class
 	 * @return the Method-Object that represents the method to create such
@@ -321,7 +303,7 @@ public interface Schema extends NamedElement {
 
 	/**
 	 * Gets the method to create a new vertex with the given name
-	 *
+	 * 
 	 * @param vertexClassName
 	 *            the name of the vertex to create
 	 * @param graphClassName
@@ -334,7 +316,7 @@ public interface Schema extends NamedElement {
 
 	/**
 	 * Gets the method to create a new edge with the given name
-	 *
+	 * 
 	 * @param edgeClassName
 	 *            the name of the edge to create
 	 * @param graphClassName
@@ -380,21 +362,21 @@ public interface Schema extends NamedElement {
 	 * First, the list contains the classes without a superclass (except the
 	 * default graph class). The next entries in the list represent those graph
 	 * classes which only inherit from the classes without a superclass, etc.
-	 *
+	 * 
 	 * @return an topologically ordered list of all graph classes
 	 */
 	public List<GraphClass> getGraphClassesInTopologicalOrder();
 
 	/**
 	 * Returns a list of all enum domains
-	 *
+	 * 
 	 * @return a list of all enum domains
 	 */
 	public List<EnumDomain> getEnumDomains();
 
 	/**
 	 * Returns a list of all record domains
-	 *
+	 * 
 	 * @return a list of all record domains
 	 */
 	public List<RecordDomain> getRecordDomains();
@@ -405,7 +387,7 @@ public interface Schema extends NamedElement {
 	 * First, the list contains the domains which only contain basic domains.
 	 * The next entries in the list represent those domains which exclusively
 	 * contain domains with only basic classes as components, etc.
-	 *
+	 * 
 	 * @return an topologically ordered list of all composite domains
 	 */
 	public List<CompositeDomain> getCompositeDomainsInTopologicalOrder();
@@ -417,7 +399,7 @@ public interface Schema extends NamedElement {
 	 * superclass (except the default vertex class). The next entries in the
 	 * list represent those vertex classes which only inherit from the classes
 	 * without a superclass, etc.
-	 *
+	 * 
 	 * @return an topologically ordered list of all vertex classes
 	 */
 	public List<VertexClass> getVertexClassesInTopologicalOrder();
@@ -429,7 +411,7 @@ public interface Schema extends NamedElement {
 	 * contains the classes without a superclass (except the default edge
 	 * class). The next entries in the list represent those edge classes which
 	 * only inherit from the classes without a superclass, etc.
-	 *
+	 * 
 	 * @return an topologically ordered list of all edge classes
 	 */
 	public List<EdgeClass> getEdgeClassesInTopologicalOrder();
@@ -438,44 +420,12 @@ public interface Schema extends NamedElement {
 	 * Checks if the given name is already known in thsi schema. If this is the
 	 * case, it's not allowed to use it for any other element in this schema.
 	 * Even it'S not allowed to use a domain name also as name of a VertexClass.
-	 *
+	 * 
 	 * @param name
 	 *            the name to check
 	 * @return true if the name is already known, false otherwise
 	 */
 	public boolean knows(QualifiedName name);
-
-	/**
-	 * Checks if the given name is a valid name for a new Element in this
-	 * schema. This includes that it's not the name of a Java-Keyword and not
-	 * already in use by any other element in this schema
-	 *
-	 * @param name
-	 *            the name to check
-	 * @return true, if the given name can be used for a new element in the
-	 *         schema, false otherwise
-	 * @see #isValidSchemaElementName(QualifiedName)
-	 * @see #knows
-	 */
-	@Deprecated
-	public boolean isFreeSchemaElementName(QualifiedName name);
-
-	/**
-	 * Checks if the given name is a valid name for a new domain in this schema.
-	 * This includes that it's not the name of a Java-Keyword and not already in
-	 * use by any other element in this schema. This is not the same as
-	 * isFreeSchemaElementName, because some words, like "String" or "Integer"
-	 * can be used for the domains but not for any other element
-	 *
-	 * @param name
-	 *            the name to check
-	 * @return true, if the given name can be used for a new domain in the
-	 *         schema, false otherwise
-	 * @see #isValidSchemaElementName(QualifiedName)
-	 * @see #knows(QualifiedName)
-	 */
-	@Deprecated
-	public boolean isFreeDomainName(QualifiedName name);
 
 	/**
 	 * Checks if the given name is a allowed name for a element in this schema.
@@ -484,7 +434,7 @@ public interface Schema extends NamedElement {
 	 * with the name in the schema, use isFreeSchemaElementName instead, it
 	 * checks if the name is allowed and if there already exists a element with
 	 * this name.
-	 *
+	 * 
 	 * @param name
 	 *            the name to check
 	 * @return true if the given name is an allowed element name, false
@@ -496,7 +446,7 @@ public interface Schema extends NamedElement {
 
 	/**
 	 * Returns the default package of this Schema.
-	 *
+	 * 
 	 * @return the default package, guaranteed to be != null
 	 */
 	public Package getDefaultPackage();
@@ -508,7 +458,7 @@ public interface Schema extends NamedElement {
 	/**
 	 * This method is for internally use of JGraLab only. It registers the given
 	 * element <code>elem</code> under the unique name <code>name</code>
-	 *
+	 * 
 	 * @param name
 	 * @param elem
 	 */
@@ -517,14 +467,14 @@ public interface Schema extends NamedElement {
 	/**
 	 * Checks if this schema supports enumeration constants with lowercase
 	 * letters is
-	 *
+	 * 
 	 * @return true iff the schema allows lowercase enum constants
 	 */
 	public boolean allowsLowercaseEnumConstants();
 
 	/**
 	 * Sets the schema to allow lowercase enum constants
-	 *
+	 * 
 	 * @param allowLowercaseEnumConstants
 	 *            set to true to make the schema to allow lowercase enum
 	 *            constants
@@ -534,7 +484,7 @@ public interface Schema extends NamedElement {
 
 	/**
 	 * Checks if the given name is a valid enumeration constant in this shcema
-	 *
+	 * 
 	 * @param name
 	 *            the constant name to check
 	 * @return true if <code>name</code> is a valid enum constant

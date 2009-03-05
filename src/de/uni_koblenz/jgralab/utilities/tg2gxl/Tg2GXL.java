@@ -36,9 +36,8 @@ import de.uni_koblenz.jgralab.AttributedElement;
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.GraphIOException;
 import de.uni_koblenz.jgralab.Vertex;
-import de.uni_koblenz.jgralab.grumlschema.DefinesGraphClass;
-import de.uni_koblenz.jgralab.grumlschema.HasRecordDomainComponent;
-import de.uni_koblenz.jgralab.grumlschema.Schema;
+import de.uni_koblenz.jgralab.grumlschema.domains.HasRecordDomainComponent;
+import de.uni_koblenz.jgralab.grumlschema.structure.Schema;
 import de.uni_koblenz.jgralab.schema.AttributedElementClass;
 import de.uni_koblenz.jgralab.schema.BooleanDomain;
 import de.uni_koblenz.jgralab.schema.Domain;
@@ -179,7 +178,7 @@ public class Tg2GXL extends Tg2Whatever {
 		try {
 			if (printSchema && !(v instanceof Schema)) {
 
-				if (v instanceof de.uni_koblenz.jgralab.grumlschema.AttributedElementClass) {
+				if (v instanceof de.uni_koblenz.jgralab.grumlschema.structure.AttributedElementClass) {
 					out.println("<node id=\"" + v.getAttribute("name") + "\">");
 				} else {
 					out.println("<node id=\"v:" + v.getId() + "\">");
@@ -246,16 +245,17 @@ public class Tg2GXL extends Tg2Whatever {
 	protected void printEdge(PrintStream out, Edge e) {
 		AttributedElementClass elemClass = e.getAttributedElementClass();
 
-		if (printSchema && !(e instanceof DefinesGraphClass)
+		if (printSchema
+				&& !(e instanceof de.uni_koblenz.jgralab.grumlschema.structure.DefinesGraphClass)
 				&& !(e instanceof HasRecordDomainComponent)) {
 			String thisVertex = "v:" + e.getThis().getId();
 			String thatVertex = "v:" + e.getThat().getId();
 
 			try {
-				if (e.getThis() instanceof de.uni_koblenz.jgralab.grumlschema.AttributedElementClass) {
+				if (e.getThis() instanceof de.uni_koblenz.jgralab.grumlschema.structure.AttributedElementClass) {
 					thisVertex = "" + e.getThis().getAttribute("name");
 				}
-				if (e.getThat() instanceof de.uni_koblenz.jgralab.grumlschema.AttributedElementClass) {
+				if (e.getThat() instanceof de.uni_koblenz.jgralab.grumlschema.structure.AttributedElementClass) {
 					thatVertex = "" + e.getThat().getAttribute("name");
 				}
 			} catch (NoSuchFieldException ex) {

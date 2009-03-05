@@ -66,7 +66,8 @@ public abstract class Tg2Whatever {
 	}
 
 	/**
-	 * @param reversedEdges the reversedEdges to set
+	 * @param reversedEdges
+	 *            the reversedEdges to set
 	 */
 	public void setReversedEdges(boolean reversedEdges) {
 		this.reversedEdges = reversedEdges;
@@ -132,7 +133,7 @@ public abstract class Tg2Whatever {
 
 	/**
 	 * toggles wether to print rolenames or not
-	 *
+	 * 
 	 * @param print
 	 */
 	public void setPrintRoleNames(boolean print) {
@@ -141,7 +142,7 @@ public abstract class Tg2Whatever {
 
 	/**
 	 * toggles wether to shorten long strings
-	 *
+	 * 
 	 * @param shorten
 	 */
 	public void setShortenStrings(boolean shorten) {
@@ -150,7 +151,7 @@ public abstract class Tg2Whatever {
 
 	/**
 	 * toggles wether to print edgeAttributes or not
-	 *
+	 * 
 	 * @param print
 	 */
 	public void setPrintEdgeAttributes(boolean print) {
@@ -159,7 +160,7 @@ public abstract class Tg2Whatever {
 
 	/**
 	 * toggles wether to print reversed edges or not
-	 *
+	 * 
 	 * @param print
 	 */
 	public void setPrintReversedEdges(boolean print) {
@@ -168,7 +169,7 @@ public abstract class Tg2Whatever {
 
 	/**
 	 * toggles wether to print domain names of attributes or not
-	 *
+	 * 
 	 * @param print
 	 */
 	public void setPrintDomainNames(boolean print) {
@@ -215,9 +216,7 @@ public abstract class Tg2Whatever {
 				System.exit(1);
 			}
 		}
-		System.out.println("Printing graph");
 		try {
-			System.out.println("Trying to print graph");
 			PrintStream out;
 			if (outputName.equals("")) {
 				out = System.out;
@@ -259,7 +258,7 @@ public abstract class Tg2Whatever {
 	/**
 	 * replaces characters in the given string by the escape sequences that are
 	 * appropriate for the specific output format
-	 *
+	 * 
 	 * @param s
 	 * @return
 	 */
