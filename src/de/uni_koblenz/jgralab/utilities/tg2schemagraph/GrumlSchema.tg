@@ -2,11 +2,11 @@ Schema de.uni_koblenz.jgralab.grumlschema.GrumlSchema;
 
 GraphClass SchemaGraph 
   ["The GraphClass may not be abstract."
-  "forall gc: V{GraphClass} @ not gc.isAbstract"
-  "from gc: V{GraphClass} with gc.isAbstract reportSet gc end"]
+  "forall gc: V{structure.GraphClass} @ not gc.isAbstract"
+  "from gc: V{structure.GraphClass} with gc.isAbstract reportSet gc end"]
   ["There must be exactly one GraphClass."
-  "count(V{GraphClass}) = 1"
-  "V{GraphClass}"];
+  "count(V{structure.GraphClass}) = 1"
+  "V{structure.GraphClass}"];
 
 Package structure;
 VertexClass Schema {name: String, packagePrefix: String};
@@ -18,7 +18,7 @@ VertexClass Constraint {message: String, offendingElementsQuery: String, predica
 VertexClass EdgeClass: GraphElementClass;
 VertexClass GraphClass: AttributedElementClass;
 abstract VertexClass GraphElementClass: AttributedElementClass;
-VertexClass Package {qualifiedName: String} ["A Package must either be default or subpackage, but not both" "forall p: V{Package} @ degree{ContainsDefaultPackage}(p) + degree{ContainsSubPackage}(p) = 1"];
+VertexClass Package {qualifiedName: String} ["A Package must either be default or subpackage, but not both" "forall p: V{structure.Package} @ degree{structure.ContainsDefaultPackage}(p) + degree{structure.ContainsSubPackage}(p) = 1"];
 VertexClass VertexClass: GraphElementClass;
 
 EdgeClass HasDomain from Attribute (0,*) to domains.Domain (1,1);
@@ -43,7 +43,7 @@ VertexClass ListDomain: CollectionDomain;
 VertexClass LongDomain: Domain;
 VertexClass MapDomain: Domain
   ["The key domain of a MapDomain must not be a collection, record, or map"
-  "forall m: V{MapDomain} @ (forall d: m -->{HasKeyDomain} @ not hasType{CollectionDomain, RecordDomain, MapDomain}(d))"];
+  "forall m: V{domain.MapDomain} @ (forall d: m -->{domain.HasKeyDomain} @ not hasType{domain.CollectionDomain, domain.RecordDomain, domain.MapDomain}(d))"];
 VertexClass BooleanDomain: Domain;
 abstract VertexClass CollectionDomain: Domain;
 VertexClass SetDomain: CollectionDomain;

@@ -103,8 +103,8 @@ public class Rsa2Tg extends org.xml.sax.helpers.DefaultHandler {
 		r.setUseNavigability(true);
 		r
 				.process("/Users/riediger/src/re-group/project/jgralab/manual/grUML/grUML-M3.xmi");
-		r.process("/Users/riediger/Desktop/OsmSchema.xmi");
-		r.process("/Users/riediger/Desktop/test.xmi");
+		// r.process("/Users/riediger/Desktop/OsmSchema.xmi");
+		// r.process("/Users/riediger/Desktop/test.xmi");
 		System.out.println("Fini.");
 	}
 
@@ -145,7 +145,7 @@ public class Rsa2Tg extends org.xml.sax.helpers.DefaultHandler {
 			removeUnusedDomains();
 		}
 		removeEmptyPackages();
-		assert preliminaryVertices.isEmpty();
+		// assert preliminaryVertices.isEmpty();
 		if (!preliminaryVertices.isEmpty()) {
 			System.err.println("Remaining preliminary vertices ("
 					+ preliminaryVertices.size() + "):");
@@ -154,7 +154,7 @@ public class Rsa2Tg extends org.xml.sax.helpers.DefaultHandler {
 			}
 		}
 		String schemaName = sg.getFirstSchema().getName();
-		sg.defragment();
+		// sg.defragment();
 		createDotFile(schemaName);
 		saveGraph(schemaName);
 		validateGraph();
@@ -1008,6 +1008,7 @@ public class Rsa2Tg extends org.xml.sax.helpers.DefaultHandler {
 		if (e == null) {
 			VertexClass vc = sg.createVertexClass();
 			preliminaryVertices.add(vc);
+			vc.setQualifiedName("preliminary for source end " + sourceEnd);
 			e = sg.createFrom(ec, vc);
 			idMap.put(sourceEnd, e);
 		}
@@ -1035,6 +1036,7 @@ public class Rsa2Tg extends org.xml.sax.helpers.DefaultHandler {
 		} else {
 			VertexClass vc = sg.createVertexClass();
 			preliminaryVertices.add(vc);
+			vc.setQualifiedName("preliminary for target end " + targetEnd);
 			e = sg.createTo(ec, vc);
 			idMap.put(targetEnd, e);
 		}
@@ -1165,6 +1167,11 @@ public class Rsa2Tg extends org.xml.sax.helpers.DefaultHandler {
 						e.setOmega((VertexClass) ae);
 						vc.delete();
 						preliminaryVertices.remove(vc);
+					} else if (ae == null) {
+						idMap.put(typeId, vc);
+					} else {
+						throw new RuntimeException(
+								"FIXME: You should not get here!");
 					}
 				}
 			}
