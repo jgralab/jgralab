@@ -35,7 +35,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.Vector;
-import java.util.Map.Entry;
 
 import javax.tools.FileObject;
 import javax.tools.ForwardingJavaFileManager;
@@ -46,7 +45,6 @@ import javax.tools.ToolProvider;
 import javax.tools.JavaFileObject.Kind;
 
 import de.uni_koblenz.jgralab.Attribute;
-import de.uni_koblenz.jgralab.AttributedElement;
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.GraphFactory;
 import de.uni_koblenz.jgralab.GraphIOException;
@@ -151,7 +149,7 @@ public class SchemaImpl implements Schema {
 
 	/**
 	 * builds a new schema
-	 *
+	 * 
 	 * @param qn
 	 *            the qualified name of the schema
 	 */
@@ -243,7 +241,7 @@ public class SchemaImpl implements Schema {
 	 * elements and reserves the given unique name so it can not be used as
 	 * unique name for other elements. If the unique name is already in use, the
 	 * unique names of both elements (the known one and the new one) are changed
-	 *
+	 * 
 	 * @param name
 	 * @param elem
 	 */
@@ -271,7 +269,7 @@ public class SchemaImpl implements Schema {
 
 	/**
 	 * adds the given domains to the domainlist
-	 *
+	 * 
 	 * @return true on success, false if a domain with the same name as the
 	 *         given one already exists in the schema
 	 */
@@ -654,7 +652,7 @@ public class SchemaImpl implements Schema {
 
 	/**
 	 * only used internally
-	 *
+	 * 
 	 * @return number of graphelementclasses contained in graphclass
 	 */
 	private int getNumberOfElements() {
@@ -665,39 +663,9 @@ public class SchemaImpl implements Schema {
 		return count;
 	}
 
-	@Override
-	public AttributedElementClass getClass(AttributedElement anAttributedElement) {
-		// String aeClassName = anAttributedElement.getClass().getSimpleName();
-		String aeClassName = anAttributedElement.getAttributedElementClass()
-				.getQualifiedName()
-				+ "Impl";
-		aeClassName = aeClassName.substring(0, aeClassName.length() - 4); 
-		// cut "Impl" off at the back
-
-		// search for class in graphclasses and each of their
-		// graphelementclasses
-		Iterator<Entry<QualifiedName, GraphClass>> it = graphClasses.entrySet()
-				.iterator();
-		while (it.hasNext()) {
-			Entry<QualifiedName, GraphClass> gc = it.next();
-			if (gc.getKey().equals(aeClassName)) {
-				return gc.getValue();
-			}
-			Iterator<GraphElementClass> it2 = gc.getValue()
-					.getOwnGraphElementClasses().iterator();
-			while (it2.hasNext()) {
-				GraphElementClass gec = it2.next();
-				if (gec.getQualifiedName().equals(aeClassName)) {
-					return gec;
-				}
-			}
-		}
-		return null;
-	}
-
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see jgralab.Schema#getDomains()
 	 */
 	public Map<QualifiedName, Domain> getDomains() {
@@ -1023,18 +991,6 @@ public class SchemaImpl implements Schema {
 	}
 
 	@Override
-	@Deprecated
-	public boolean isFreeDomainName(QualifiedName name) {
-		return isValidSchemaElementName(name) && !knows(name);
-	}
-
-	@Override
-	@Deprecated
-	public boolean isFreeSchemaElementName(QualifiedName name) {
-		return isValidSchemaElementName(name) && !knows(name);
-	}
-
-	@Override
 	public boolean isValidSchemaElementName(QualifiedName name) {
 		return !reservedJavaWords.contains(name.getQualifiedName());
 	}
@@ -1047,7 +1003,7 @@ public class SchemaImpl implements Schema {
 	/**
 	 * File Manager class overwriting the method {@code getJavaFileForOutput} so
 	 * that bytecode is written to a {@code ClassFileAbstraction}.
-	 *
+	 * 
 	 */
 	private class ClassFileManager extends
 			ForwardingJavaFileManager<JavaFileManager> {

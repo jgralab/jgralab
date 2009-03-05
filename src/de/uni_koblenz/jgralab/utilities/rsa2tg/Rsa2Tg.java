@@ -12,6 +12,7 @@ import java.util.Set;
 import java.util.Stack;
 import java.util.TreeSet;
 import java.util.Map.Entry;
+import java.util.logging.Level;
 
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
@@ -26,31 +27,31 @@ import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.GraphIO;
 import de.uni_koblenz.jgralab.GraphIOException;
 import de.uni_koblenz.jgralab.GraphMarker;
+import de.uni_koblenz.jgralab.JGraLab;
 import de.uni_koblenz.jgralab.Vertex;
+import de.uni_koblenz.jgralab.graphvalidator.ConstraintViolation;
 import de.uni_koblenz.jgralab.graphvalidator.GraphValidator;
-import de.uni_koblenz.jgralab.grumlschema.AggregationClass;
-import de.uni_koblenz.jgralab.grumlschema.Attribute;
-import de.uni_koblenz.jgralab.grumlschema.AttributedElementClass;
-import de.uni_koblenz.jgralab.grumlschema.CollectionDomain;
-import de.uni_koblenz.jgralab.grumlschema.CompositionClass;
-import de.uni_koblenz.jgralab.grumlschema.Constraint;
-import de.uni_koblenz.jgralab.grumlschema.ContainsGraphElementClass;
-import de.uni_koblenz.jgralab.grumlschema.Domain;
-import de.uni_koblenz.jgralab.grumlschema.EdgeClass;
-import de.uni_koblenz.jgralab.grumlschema.EnumDomain;
-import de.uni_koblenz.jgralab.grumlschema.From;
-import de.uni_koblenz.jgralab.grumlschema.GraphClass;
 import de.uni_koblenz.jgralab.grumlschema.GrumlSchema;
-import de.uni_koblenz.jgralab.grumlschema.HasAttribute;
-import de.uni_koblenz.jgralab.grumlschema.HasDomain;
-import de.uni_koblenz.jgralab.grumlschema.HasRecordDomainComponent;
-import de.uni_koblenz.jgralab.grumlschema.MapDomain;
-import de.uni_koblenz.jgralab.grumlschema.Package;
-import de.uni_koblenz.jgralab.grumlschema.RecordDomain;
-import de.uni_koblenz.jgralab.grumlschema.Schema;
-import de.uni_koblenz.jgralab.grumlschema.StringDomain;
-import de.uni_koblenz.jgralab.grumlschema.To;
-import de.uni_koblenz.jgralab.grumlschema.VertexClass;
+import de.uni_koblenz.jgralab.grumlschema.domains.CollectionDomain;
+import de.uni_koblenz.jgralab.grumlschema.domains.Domain;
+import de.uni_koblenz.jgralab.grumlschema.domains.EnumDomain;
+import de.uni_koblenz.jgralab.grumlschema.domains.HasRecordDomainComponent;
+import de.uni_koblenz.jgralab.grumlschema.domains.MapDomain;
+import de.uni_koblenz.jgralab.grumlschema.domains.RecordDomain;
+import de.uni_koblenz.jgralab.grumlschema.domains.StringDomain;
+import de.uni_koblenz.jgralab.grumlschema.structure.AggregationClass;
+import de.uni_koblenz.jgralab.grumlschema.structure.Attribute;
+import de.uni_koblenz.jgralab.grumlschema.structure.AttributedElementClass;
+import de.uni_koblenz.jgralab.grumlschema.structure.CompositionClass;
+import de.uni_koblenz.jgralab.grumlschema.structure.Constraint;
+import de.uni_koblenz.jgralab.grumlschema.structure.ContainsGraphElementClass;
+import de.uni_koblenz.jgralab.grumlschema.structure.EdgeClass;
+import de.uni_koblenz.jgralab.grumlschema.structure.From;
+import de.uni_koblenz.jgralab.grumlschema.structure.HasAttribute;
+import de.uni_koblenz.jgralab.grumlschema.structure.HasDomain;
+import de.uni_koblenz.jgralab.grumlschema.structure.Package;
+import de.uni_koblenz.jgralab.grumlschema.structure.To;
+import de.uni_koblenz.jgralab.grumlschema.structure.VertexClass;
 import de.uni_koblenz.jgralab.utilities.tg2dot.Tg2Dot;
 
 public class Rsa2Tg extends org.xml.sax.helpers.DefaultHandler {
@@ -58,17 +59,17 @@ public class Rsa2Tg extends org.xml.sax.helpers.DefaultHandler {
 	private Stack<String> elementNameStack;
 	private Stack<StringBuilder> elementContent;
 	private de.uni_koblenz.jgralab.grumlschema.SchemaGraph sg;
-	private Schema schema;
-	private GraphClass graphClass;
-	private Stack<Package> packageStack;
+	private de.uni_koblenz.jgralab.grumlschema.structure.Schema schema;
+	private de.uni_koblenz.jgralab.grumlschema.structure.GraphClass graphClass;
+	private Stack<de.uni_koblenz.jgralab.grumlschema.structure.Package> packageStack;
 	private Map<String, AttributedElement> idMap;
 	private Set<String> ignoredElements;
 	private int ignore;
 	private String currentClassId;
-	private AttributedElementClass currentClass;
-	private RecordDomain currentRecordDomain;
-	private HasRecordDomainComponent currentRecordDomainComponent;
-	private Attribute currentAttribute;
+	private de.uni_koblenz.jgralab.grumlschema.structure.AttributedElementClass currentClass;
+	private de.uni_koblenz.jgralab.grumlschema.domains.RecordDomain currentRecordDomain;
+	private de.uni_koblenz.jgralab.grumlschema.domains.HasRecordDomainComponent currentRecordDomainComponent;
+	private de.uni_koblenz.jgralab.grumlschema.structure.Attribute currentAttribute;
 	private GraphMarker<Set<String>> generalizations;
 	private GraphMarker<String> attributeType;
 	private GraphMarker<String> recordComponentType;
@@ -76,19 +77,35 @@ public class Rsa2Tg extends org.xml.sax.helpers.DefaultHandler {
 	private Set<Vertex> preliminaryVertices;
 	private Edge currentAssociationEnd;
 	private Set<Edge> aggregateEnds;
+	private Set<Edge> ownedEnds;
 	private boolean inConstraint;
 	private String constrainedElementId;
 	private Map<String, List<String>> constraints;
+
+	// option variables
+	private boolean useFromRole;
+	private boolean removeUnusedDomains;
+	private boolean useNavigability;
 
 	public Rsa2Tg() {
 		ignoredElements = new TreeSet<String>();
 		ignoredElements.add("profileApplication");
 		ignoredElements.add("packageImport");
+		ignoredElements.add("ownedComment");
 	}
 
 	public static void main(String[] args) {
-		new Rsa2Tg().process("/Users/riediger/Desktop/OsmSchema.xmi");
-		// new Rsa2Tg().process("/Users/riediger/Desktop/test.xmi");
+		System.out.println("RSA to TG");
+		JGraLab.setLogLevel(Level.OFF);
+		Rsa2Tg r = new Rsa2Tg();
+		r.setUseFromRole(true);
+		r.setRemoveUnusedDomains(true);
+		r.setUseNavigability(true);
+		r
+				.process("/Users/riediger/src/re-group/project/jgralab/manual/grUML/grUML-M3.xmi");
+		r.process("/Users/riediger/Desktop/OsmSchema.xmi");
+		r.process("/Users/riediger/Desktop/test.xmi");
+		System.out.println("Fini.");
 	}
 
 	public void process(String xmiFileName) {
@@ -119,10 +136,16 @@ public class Rsa2Tg extends org.xml.sax.helpers.DefaultHandler {
 		linkRecordDomainComponents();
 		linkAttributeDomains();
 		setAggregateFrom();
+		if (isUseNavigability()) {
+			correctEdgeDirection();
+		}
 		attachConstraints();
-		createEdgeClassNames(false);
-		removeUnusedDomains();
+		createEdgeClassNames();
+		if (isRemoveUnusedDomains()) {
+			removeUnusedDomains();
+		}
 		removeEmptyPackages();
+		assert preliminaryVertices.isEmpty();
 		if (!preliminaryVertices.isEmpty()) {
 			System.err.println("Remaining preliminary vertices ("
 					+ preliminaryVertices.size() + "):");
@@ -131,10 +154,61 @@ public class Rsa2Tg extends org.xml.sax.helpers.DefaultHandler {
 			}
 		}
 		String schemaName = sg.getFirstSchema().getName();
-		// TODO sg.defragment();
+		sg.defragment();
 		createDotFile(schemaName);
 		saveGraph(schemaName);
 		validateGraph();
+	}
+
+	private void correctEdgeDirection() {
+		if (!isUseNavigability()) {
+			return;
+		}
+
+		for (EdgeClass e : sg.getEdgeClassVertices()) {
+			From from = e.getFirstFrom();
+			To to = e.getFirstTo();
+			assert from != null && to != null;
+			boolean fromIsNavigable = !ownedEnds.contains(from);
+			boolean toIsNavigable = !ownedEnds.contains(to);
+			if (fromIsNavigable == toIsNavigable) {
+				// no navigability specified or both ends navigable:
+				// do nothing, edge direction is determined by order of memerEnd
+				// in association
+				continue;
+			}
+			if (toIsNavigable) {
+				// "to" end is marked navigable, nothing to change
+				continue;
+			}
+
+			// "from" end is marked navigable, swap edge direction
+			VertexClass vc = (VertexClass) to.getThat();
+			to.setThat(from.getThat());
+			from.setThat(vc);
+
+			int h = to.getMin();
+			to.setMin(from.getMin());
+			from.setMin(h);
+
+			h = to.getMax();
+			to.setMax(from.getMax());
+			from.setMax(h);
+
+			String r = to.getRoleName();
+			to.setRoleName(from.getRoleName());
+			from.setRoleName(r);
+
+			Set<String> rd = to.getRedefinedRoles();
+			to.setRedefinedRoles(from.getRedefinedRoles());
+			from.setRedefinedRoles(rd);
+
+			if (e instanceof AggregationClass) {
+				AggregationClass ac = (AggregationClass) e;
+				ac.setAggregateFrom(!ac.isAggregateFrom());
+			}
+		}
+
 	}
 
 	private void attachConstraints() throws SAXException {
@@ -166,7 +240,7 @@ public class Rsa2Tg extends org.xml.sax.helpers.DefaultHandler {
 		aggregateEnds.clear();
 	}
 
-	private void createEdgeClassNames(boolean useFromRole) {
+	private void createEdgeClassNames() {
 		for (EdgeClass ec : sg.getEdgeClassVertices()) {
 			String name = ec.getQualifiedName().trim();
 			if (name != null && !name.equals("") && !name.endsWith(".")) {
@@ -199,7 +273,7 @@ public class Rsa2Tg extends org.xml.sax.helpers.DefaultHandler {
 			} else {
 				ecName = "LinksTo" + toRole;
 			}
-			if (useFromRole) {
+			if (isUseFromRole()) {
 				String fromRole = ec.getFirstFrom().getRoleName();
 				if (fromRole == null || fromRole.equals("")) {
 					fromRole = ((VertexClass) ec.getFirstFrom().getOmega())
@@ -221,14 +295,17 @@ public class Rsa2Tg extends org.xml.sax.helpers.DefaultHandler {
 	}
 
 	private void removeUnusedDomains() {
+		if (!isRemoveUnusedDomains()) {
+			return;
+		}
 		Domain d = sg.getFirstDomain();
 		while (d != null) {
 			Domain n = d.getNextDomain();
 			// unused if degree <=1 (one incoming egde is the ContainsDomain
 			// edge from a Package)
 			if (d.getDegree(EdgeDirection.IN) <= 1) {
-				System.out.println("...remove unused domain '"
-						+ d.getQualifiedName() + "'");
+				// System.out.println("...remove unused domain '"
+				// + d.getQualifiedName() + "'");
 				d.delete();
 				d = sg.getFirstDomain();
 			} else {
@@ -264,7 +341,11 @@ public class Rsa2Tg extends org.xml.sax.helpers.DefaultHandler {
 	private void validateGraph() {
 		GraphValidator validator = new GraphValidator(sg);
 		try {
-			validator.createValidationReport("validationreport.html");
+			Set<ConstraintViolation> s = validator
+					.createValidationReport("validationreport.html");
+			if (!s.isEmpty()) {
+				System.err.println("The schema graph is not valid :-(");
+			}
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -327,12 +408,14 @@ public class Rsa2Tg extends org.xml.sax.helpers.DefaultHandler {
 
 	private void removeEmptyPackages() {
 		// remove all empty packages except the default package
-		Package p = sg.getFirstPackage();
+		de.uni_koblenz.jgralab.grumlschema.structure.Package p = sg
+				.getFirstPackage();
 		while (p != null) {
-			Package n = p.getNextPackage();
+			de.uni_koblenz.jgralab.grumlschema.structure.Package n = p
+					.getNextPackage();
 			if (p.getDegree() == 1 && p.getQualifiedName().length() > 0) {
-				System.out.println("...remove empty package '"
-						+ p.getQualifiedName() + "'");
+				// System.out.println("...remove empty package '"
+				// + p.getQualifiedName() + "'");
 				p.delete();
 				// start over to capture packages that become empty after
 				// deletion of p
@@ -353,16 +436,14 @@ public class Rsa2Tg extends org.xml.sax.helpers.DefaultHandler {
 		String topName = s.substring(0, p);
 		String xmiId = s.substring(p + 1);
 		assert topName.equals(name);
-		if (inConstraint && name.equals("body")) {
-			s = elementContent.peek().toString().trim();
-			handleConstraint(s);
-		}
-		elementNameStack.pop();
-		elementContent.pop();
 		if (ignoredElements.contains(name)) {
 			assert ignore > 0;
 			--ignore;
 		} else if (ignore == 0) {
+			if (inConstraint && name.equals("body")) {
+				s = elementContent.peek().toString().trim().replace("\\s", " ");
+				handleConstraint(s);
+			}
 			AttributedElement elem = idMap.get(xmiId);
 			if (elem != null) {
 				if (elem instanceof Package) {
@@ -390,6 +471,8 @@ public class Rsa2Tg extends org.xml.sax.helpers.DefaultHandler {
 				constrainedElementId = null;
 			}
 		}
+		elementNameStack.pop();
+		elementContent.pop();
 	}
 
 	private void handleConstraint(String text) throws SAXException {
@@ -401,7 +484,7 @@ public class Rsa2Tg extends org.xml.sax.helpers.DefaultHandler {
 			}
 			l.add(text);
 		} else {
-			throw new SAXException("Illegal constraint format.");
+			throw new SAXException("Illegal constraint format: " + text);
 		}
 	}
 
@@ -456,8 +539,8 @@ public class Rsa2Tg extends org.xml.sax.helpers.DefaultHandler {
 								.trim());
 						break;
 					case 2:
-						constraint.setPredicate(text.substring(beginIndex + 1,
-								i).trim());
+						constraint.setPredicateQuery(text.substring(
+								beginIndex + 1, i).trim());
 						break;
 					case 3:
 						constraint.setOffendingElementsQuery(text.substring(
@@ -492,7 +575,7 @@ public class Rsa2Tg extends org.xml.sax.helpers.DefaultHandler {
 		elementNameStack = new Stack<String>();
 		elementContent = new Stack<StringBuilder>();
 		idMap = new HashMap<String, AttributedElement>();
-		packageStack = new Stack<Package>();
+		packageStack = new Stack<de.uni_koblenz.jgralab.grumlschema.structure.Package>();
 		sg = GrumlSchema.instance().createSchemaGraph();
 		generalizations = new GraphMarker<Set<String>>(sg);
 		attributeType = new GraphMarker<String>(sg);
@@ -500,6 +583,7 @@ public class Rsa2Tg extends org.xml.sax.helpers.DefaultHandler {
 		domainMap = new HashMap<String, Domain>();
 		preliminaryVertices = new HashSet<Vertex>();
 		aggregateEnds = new HashSet<Edge>();
+		ownedEnds = new HashSet<Edge>();
 		ignore = 0;
 		constraints = new HashMap<String, List<String>>();
 	}
@@ -508,7 +592,6 @@ public class Rsa2Tg extends org.xml.sax.helpers.DefaultHandler {
 	public void startElement(String uri, String localName, String name,
 			Attributes atts) throws SAXException {
 		String xmiId = atts.getValue("xmi:id");
-		// System.out.println("Start " + name + "(" + xmiId + ")");
 
 		elementNameStack.push(name + ">" + (xmiId != null ? xmiId : ""));
 		elementContent.push(new StringBuilder());
@@ -516,6 +599,8 @@ public class Rsa2Tg extends org.xml.sax.helpers.DefaultHandler {
 		if (ignoredElements.contains(name)) {
 			++ignore;
 		}
+		System.out.println("<" + name + "> (id=" + xmiId + ") "
+				+ (ignore > 0 ? "ignored" : "processed"));
 		if (ignore > 0) {
 			return;
 		}
@@ -533,7 +618,8 @@ public class Rsa2Tg extends org.xml.sax.helpers.DefaultHandler {
 				graphClass = sg.createGraphClass();
 				sg.createDefinesGraphClass(schema, graphClass);
 
-				Package defaultPackage = sg.createPackage();
+				de.uni_koblenz.jgralab.grumlschema.structure.Package defaultPackage = sg
+						.createPackage();
 				defaultPackage.setQualifiedName("");
 				sg.createContainsDefaultPackage(schema, defaultPackage);
 				packageStack.push(defaultPackage);
@@ -545,149 +631,34 @@ public class Rsa2Tg extends org.xml.sax.helpers.DefaultHandler {
 			String type = atts.getValue("xmi:type");
 			if (name.equals("packagedElement")) {
 				if (type.equals("uml:Package")) {
-					Package pkg = sg.createPackage();
-					idVertex = pkg;
-					pkg
-							.setQualifiedName(getQualifiedName(atts
-									.getValue("name")));
-					sg.createContainsSubPackage(packageStack.peek(), pkg);
-					packageStack.push(pkg);
-
+					idVertex = handlePackage(atts);
 				} else if (type.equals("uml:Class")) {
-					AttributedElement ae = idMap.get(xmiId);
-					VertexClass vc = null;
-					if (ae != null) {
-						assert ae instanceof VertexClass;
-						assert preliminaryVertices.contains(ae);
-						preliminaryVertices.remove(ae);
-						vc = (VertexClass) ae;
-					} else {
-						vc = sg.createVertexClass();
-					}
-					idVertex = vc;
-					currentClassId = xmiId;
-					currentClass = vc;
-					String abs = atts.getValue("isAbstract");
-					vc.setIsAbstract(abs != null && abs.equals("true"));
-					vc
-							.setQualifiedName(getQualifiedName(atts
-									.getValue("name")));
-					sg.createContainsGraphElementClass(packageStack.peek(), vc);
-
-					System.out.println("currentClass = " + currentClass + " "
-							+ currentClass.getQualifiedName());
-
+					idVertex = handleClass(atts, xmiId);
 				} else if (type.equals("uml:Association")
 						|| type.equals("uml:AssociationClass")) {
-					// create an EdgeClass at first, probably, this has to
-					// become an Aggregation or Composition later...
-					AttributedElement ae = idMap.get(xmiId);
-					EdgeClass ec = null;
-					if (ae != null) {
-						assert ae instanceof EdgeClass;
-						assert preliminaryVertices.contains(ae);
-						preliminaryVertices.remove(ae);
-						ec = (EdgeClass) ae;
-					} else {
-						ec = sg.createEdgeClass();
-					}
-					idVertex = ec;
-					currentClassId = xmiId;
-					currentClass = ec;
-					String abs = atts.getValue("isAbstract");
-					ec.setIsAbstract(abs != null && abs.equals("true"));
-					String n = atts.getValue("name");
-					n = (n == null) ? "" : n.trim();
-					if (n.length() > 0) {
-						n = Character.toUpperCase(n.charAt(0)) + n.substring(1);
-					}
-					ec.setQualifiedName(getQualifiedName(n));
-					sg.createContainsGraphElementClass(packageStack.peek(), ec);
-
-					String memberEnd = atts.getValue("memberEnd");
-					assert memberEnd != null;
-					memberEnd = memberEnd.trim().replaceAll("\\s+", " ");
-					int p = memberEnd.indexOf(' ');
-					String targetEnd = memberEnd.substring(0, p);
-					String sourceEnd = memberEnd.substring(p + 1);
-
-					Edge e = (Edge) idMap.get(sourceEnd);
-					if (e == null) {
-						VertexClass vc = sg.createVertexClass();
-						preliminaryVertices.add(vc);
-						e = sg.createFrom(ec, vc);
-						idMap.put(sourceEnd, e);
-					}
-
-					e = (Edge) idMap.get(targetEnd);
-					if (e != null) {
-						assert e.isValid();
-						assert e instanceof From;
-						From from = (From) e;
-						To to = sg.createTo(ec, (VertexClass) from.getOmega());
-						to.setMax(from.getMax());
-						to.setMin(from.getMin());
-						to.setRoleName(from.getRoleName());
-						to.setRedefinedRoles(from.getRedefinedRoles());
-						e.delete();
-						if (aggregateEnds.contains(from)) {
-							aggregateEnds.remove(from);
-							aggregateEnds.add(to);
-						}
-						idMap.put(targetEnd, to);
-					} else {
-						VertexClass vc = sg.createVertexClass();
-						preliminaryVertices.add(vc);
-						e = sg.createTo(ec, vc);
-						idMap.put(targetEnd, e);
-					}
-
-					System.out.println("currentClass = " + currentClass + " "
-							+ currentClass.getQualifiedName());
-					System.out.println("\tsource " + sourceEnd + " -> "
-							+ idMap.get(sourceEnd));
-					System.out.println("\ttarget " + targetEnd + " -> "
-							+ idMap.get(targetEnd));
-
+					idVertex = handleAssociation(atts, xmiId);
 				} else if (type.equals("uml:Enumeration")) {
-					EnumDomain ed = sg.createEnumDomain();
-					idVertex = ed;
-					Package p = packageStack.peek();
-					ed
-							.setQualifiedName(getQualifiedName(atts
-									.getValue("name")));
-					sg.createContainsDomain(p, ed);
-					ed.setEnumConstants(new ArrayList<String>());
-					Domain dom = domainMap.get(ed.getQualifiedName());
-					if (dom != null) {
-						// there was a preliminary vertex for this domain
-						// link the edges to the correct one
-						assert preliminaryVertices.contains(dom);
-						reconnectEdges(dom, ed);
-						// delete preliminary vertex
-						dom.delete();
-						preliminaryVertices.remove(dom);
-					}
-					domainMap.put(ed.getQualifiedName(), ed);
-
+					idVertex = handleEnumeration(atts);
 				} else if (type.equals("uml:PrimitiveType")) {
-					String typeName = atts.getValue("name");
-					assert typeName != null;
-					typeName = typeName.replaceAll("\\s", "");
-					assert typeName.length() > 0;
-					Domain dom = createDomain(typeName);
-					assert dom != null;
-					idVertex = dom;
+					idVertex = handlePrimitiveType(atts);
 				} else {
 					throw new SAXException("unexpected element " + name
 							+ " of type " + type);
 				}
-
 			} else if (name.equals("ownedRule")) {
 				inConstraint = true;
 				constrainedElementId = atts.getValue("constrainedElement");
-				// the ID may be null, in this case, the constraint is attached
-				// to the GraphClass vertex.
+				// If the ID is null, the constraint is attached to the
+				// GraphClass
+
+				if (constrainedElementId != null) {
+					// There can be more than one ID, separated by spaces ==>
+					// the constraint is attached to the GraphClass.
+					int p = constrainedElementId.indexOf(' ');
+					if (p >= 0) {
+						constrainedElementId = null;
+					}
+				}
 
 			} else if (name.equals("specification") || name.equals("language")
 					|| name.equals("body")) {
@@ -696,258 +667,417 @@ public class Rsa2Tg extends org.xml.sax.helpers.DefaultHandler {
 				}
 
 			} else if (name.equals("ownedEnd")) {
-				if (type.equals("uml:Property")) {
-					assert currentClass != null;
-					assert currentClass instanceof EdgeClass;
+				if (type.equals("uml:Property")
+						&& currentClass instanceof EdgeClass) {
 					handleAssociatioEnd(atts, xmiId);
 				} else {
-					throw new SAXException("unexpected element " + name
-							+ " of type " + type);
+					throw new SAXException("unexpected element <" + name
+							+ "> of type " + type);
 				}
 			} else if (name.equals("ownedAttribute")) {
 				if (type.equals("uml:Property")) {
-					assert currentClass != null || currentRecordDomain != null;
-					String association = atts.getValue("association");
-					if (association == null) {
-						// this property is not an association end
-						String attrName = atts.getValue("name");
-						assert attrName != null;
-						attrName = attrName.trim();
-						assert attrName.length() > 0;
-
-						if (currentClass != null) {
-							// property is an "ordinary" attribute
-							Attribute att = sg.createAttribute();
-							currentAttribute = att;
-							att.setName(attrName);
-							sg.createHasAttribute(currentClass, att);
-
-							String typeId = atts.getValue("type");
-							if (typeId != null) {
-								attributeType.mark(att, typeId);
-							}
-						} else {
-							// property is a record component
-							assert currentRecordDomain != null;
-							currentAttribute = null;
-							String typeId = atts.getValue("type");
-							currentRecordDomainComponent = null;
-							if (typeId != null) {
-								Vertex v = (Vertex) idMap.get(typeId);
-								if (v != null) {
-									assert v instanceof Domain;
-									currentRecordDomainComponent = sg
-											.createHasRecordDomainComponent(
-													currentRecordDomain,
-													(Domain) v);
-								} else {
-									Domain dom = sg.createStringDomain();
-									dom.setQualifiedName(typeId);
-									preliminaryVertices.add(dom);
-									currentRecordDomainComponent = sg
-											.createHasRecordDomainComponent(
-													currentRecordDomain, dom);
-									recordComponentType.mark(
-											currentRecordDomainComponent,
-											typeId);
-								}
-							} else {
-								Domain dom = sg.createStringDomain();
-								preliminaryVertices.add(dom);
-								currentRecordDomainComponent = sg
-										.createHasRecordDomainComponent(
-												currentRecordDomain, dom);
-							}
-							currentRecordDomainComponent.setName(attrName);
-						}
-					} else {
-						assert currentClass != null
-								&& currentRecordDomain == null;
-						handleAssociatioEnd(atts, xmiId);
-					}
+					handleOwnedAttribute(atts, xmiId);
 				} else {
-					throw new SAXException("unexpected element " + name
-							+ " of type " + type);
+					throw new SAXException("unexpected element <" + name
+							+ "> of type " + type);
 				}
-
 			} else if (name.equals("type")) {
 				if (type.equals("uml:PrimitiveType")) {
-					assert currentAttribute != null
-							|| currentRecordDomain != null;
-					String href = atts.getValue("href");
-					assert href != null;
-					Domain dom = null;
-					if (href.endsWith("#String")) {
-						dom = createDomain("String");
-					} else if (href.endsWith("#Integer")) {
-						dom = createDomain("Integer");
-					} else if (href.endsWith("#Boolean")) {
-						dom = createDomain("Boolean");
-					} else {
-						throw new SAXException("unexpected " + type
-								+ " with href " + href);
-					}
-					if (currentRecordDomain != null) {
-						assert currentRecordDomainComponent != null;
-						if (dom != null) {
-							Domain d = (Domain) currentRecordDomainComponent
-									.getOmega();
-							assert d instanceof StringDomain
-									&& d.getQualifiedName() == null
-									&& preliminaryVertices.contains(d);
-							currentRecordDomainComponent.setOmega(dom);
-							d.delete();
-							preliminaryVertices.remove(d);
-							recordComponentType
-									.removeMark(currentRecordDomainComponent);
-						}
-					} else {
-						assert currentAttribute != null;
-						if (dom != null) {
-							sg.createHasDomain(currentAttribute, dom);
-							attributeType.removeMark(currentAttribute);
-						}
-					}
+					handleNestedTypeElement(atts, type);
 				} else {
-					throw new SAXException("unexpected element " + name
-							+ " of type " + type);
+					throw new SAXException("unexpected element <" + name
+							+ "> of type " + type);
 				}
 			} else if (name.equals("ownedLiteral")) {
 				if (type.equals("uml:EnumerationLiteral")) {
-					String classifier = atts.getValue("classifier");
-					assert classifier != null;
-					EnumDomain ed = (EnumDomain) idMap.get(classifier);
-					String s = atts.getValue("name");
-					assert s != null;
-					s = s.trim();
-					assert s.length() > 0;
-					ed.getEnumConstants().add(s);
+					handleEnumerationLiteral(atts);
 				} else {
-					throw new SAXException("unexpected element " + name
-							+ " of type " + type);
+					throw new SAXException("unexpected element <" + name
+							+ "> of type " + type);
 				}
-
 			} else if (name.equals("xmi:Extension")) {
 				// ignore
 			} else if (name.equals("eAnnotations")) {
 				// ignore
 			} else if (name.equals("generalization")) {
-				String general = atts.getValue("general");
-				Set<String> gens = generalizations.getMark(currentClass);
-				if (gens == null) {
-					gens = new TreeSet<String>();
-					generalizations.mark(currentClass, gens);
-				}
-				gens.add(general);
-
+				handleGeneralization(atts);
 			} else if (name.equals("details")) {
-				String key = atts.getValue("key");
-				if (key.equals("graphclass")) {
-					// convert currentClass to graphClass
-					assert currentClass != null;
-					assert currentClass instanceof VertexClass;
-					AttributedElementClass aec = (AttributedElementClass) idMap
-							.get(currentClassId);
-					graphClass.setQualifiedName(aec.getQualifiedName());
-					Edge e = aec.getFirstEdge();
-					while (e != null) {
-						Edge n = e.getNextEdge();
-						if (e instanceof ContainsGraphElementClass) {
-							e.delete();
-						} else {
-							e.setThis(graphClass);
-						}
-						e = n;
-					}
-					aec.delete();
-					currentClass = graphClass;
-					System.out.println("currentClass = " + currentClass + " "
-							+ currentClass.getQualifiedName());
-
-				} else if (key.equals("record")) {
-					// convert current class to RecordDomain
-					assert currentClass != null;
-					assert currentClass instanceof VertexClass;
-					RecordDomain rd = sg.createRecordDomain();
-					rd.setQualifiedName(currentClass.getQualifiedName());
-					Edge e = currentClass.getFirstEdge();
-					while (e != null) {
-						Edge n = e.getNextEdge();
-						if (e instanceof ContainsGraphElementClass) {
-							sg.createContainsDomain((Package) e.getThat(), rd);
-							e.delete();
-						} else if (e instanceof HasAttribute) {
-							Attribute att = (Attribute) e.getThat();
-							Edge d = att.getFirstHasDomain();
-							if (d != null) {
-								Domain dom = (Domain) e.getThat();
-								HasRecordDomainComponent comp = sg
-										.createHasRecordDomainComponent(rd, dom);
-								comp.setName(att.getName());
-							} else {
-								String typeId = attributeType.getMark(att);
-								assert typeId != null;
-								Domain dom = sg.createStringDomain();
-								dom.setQualifiedName(typeId);
-								preliminaryVertices.add(dom);
-								HasRecordDomainComponent comp = sg
-										.createHasRecordDomainComponent(rd, dom);
-								recordComponentType.mark(comp, typeId);
-								attributeType.removeMark(att);
-							}
-							att.delete();
-						} else {
-							System.err.println("Can't handle " + e);
-						}
-						e = n;
-					}
-					assert currentClass.getDegree() == 0;
-					domainMap.put(rd.getQualifiedName(), rd);
-					idMap.put(currentClassId, rd);
-					currentRecordDomain = rd;
-					currentClass.delete();
-					currentClass = null;
-					currentClassId = null;
-
-					System.out
-							.println("currentClass = null, currentRecordDomain = "
-									+ rd + " " + rd.getQualifiedName());
-				} else if (key.equals("abstract")) {
-					assert currentClass != null;
-					currentClass.setIsAbstract(true);
-				} else {
-					throw new SAXException("unexpected stereotype " + key);
-				}
-
+				handleStereotype(atts);
 			} else if (name.equals("lowerValue")) {
-				assert currentAssociationEnd != null;
-				String val = atts.getValue("value");
-				int n = (val == null) ? 0 : val.equals("*") ? Integer.MAX_VALUE
-						: Integer.parseInt(val);
-				if (currentAssociationEnd instanceof From) {
-					((From) currentAssociationEnd).setMin(n);
-				} else {
-					((To) currentAssociationEnd).setMin(n);
-				}
-
+				handleLowerValue(atts);
 			} else if (name.equals("upperValue")) {
-				assert currentAssociationEnd != null;
-				String val = atts.getValue("value");
-				int n = (val == null) ? 0 : val.equals("*") ? Integer.MAX_VALUE
-						: Integer.parseInt(val);
-				if (currentAssociationEnd instanceof From) {
-					((From) currentAssociationEnd).setMax(n);
-				} else {
-					((To) currentAssociationEnd).setMax(n);
-				}
+				hanleUpperValue(atts);
 			} else {
-				throw new SAXException("unexpected element " + name
-						+ " of type " + type);
+				throw new SAXException("unexpected element <" + name
+						+ "> of type " + type);
 			}
 		}
 		if (xmiId != null && idVertex != null) {
 			idMap.put(xmiId, idVertex);
 		}
+	}
+
+	private void hanleUpperValue(Attributes atts) {
+		assert currentAssociationEnd != null;
+		String val = atts.getValue("value");
+		int n = (val == null) ? 0 : val.equals("*") ? Integer.MAX_VALUE
+				: Integer.parseInt(val);
+		if (currentAssociationEnd instanceof From) {
+			((From) currentAssociationEnd).setMax(n);
+		} else {
+			((To) currentAssociationEnd).setMax(n);
+		}
+	}
+
+	private void handleLowerValue(Attributes atts) {
+		assert currentAssociationEnd != null;
+		String val = atts.getValue("value");
+		int n = (val == null) ? 0 : val.equals("*") ? Integer.MAX_VALUE
+				: Integer.parseInt(val);
+		if (currentAssociationEnd instanceof From) {
+			((From) currentAssociationEnd).setMin(n);
+		} else {
+			((To) currentAssociationEnd).setMin(n);
+		}
+	}
+
+	private void handleStereotype(Attributes atts) throws SAXException {
+		String key = atts.getValue("key");
+		if (key.equals("graphclass")) {
+			// convert currentClass to graphClass
+			assert currentClass != null;
+			assert currentClass instanceof VertexClass;
+			AttributedElementClass aec = (AttributedElementClass) idMap
+					.get(currentClassId);
+			graphClass.setQualifiedName(aec.getQualifiedName());
+			Edge e = aec.getFirstEdge();
+			while (e != null) {
+				Edge n = e.getNextEdge();
+				if (e instanceof ContainsGraphElementClass) {
+					e.delete();
+				} else {
+					e.setThis(graphClass);
+				}
+				e = n;
+			}
+			aec.delete();
+			currentClass = graphClass;
+
+			// System.out.println("currentClass = " + currentClass + " "
+			// + currentClass.getQualifiedName());
+
+		} else if (key.equals("record")) {
+			// convert current class to RecordDomain
+			assert currentClass != null;
+			assert currentClass instanceof VertexClass;
+			RecordDomain rd = sg.createRecordDomain();
+			rd.setQualifiedName(currentClass.getQualifiedName());
+			Edge e = currentClass.getFirstEdge();
+			while (e != null) {
+				Edge n = e.getNextEdge();
+				if (e instanceof ContainsGraphElementClass) {
+					sg
+							.createContainsDomain(
+									(de.uni_koblenz.jgralab.grumlschema.structure.Package) e
+											.getThat(), rd);
+					e.delete();
+				} else if (e instanceof HasAttribute) {
+					Attribute att = (Attribute) e.getThat();
+					Edge d = att.getFirstHasDomain();
+					if (d != null) {
+						Domain dom = (Domain) e.getThat();
+						HasRecordDomainComponent comp = sg
+								.createHasRecordDomainComponent(rd, dom);
+						comp.setName(att.getName());
+					} else {
+						String typeId = attributeType.getMark(att);
+						assert typeId != null;
+						Domain dom = sg.createStringDomain();
+						dom.setQualifiedName(typeId);
+						preliminaryVertices.add(dom);
+						HasRecordDomainComponent comp = sg
+								.createHasRecordDomainComponent(rd, dom);
+						recordComponentType.mark(comp, typeId);
+						attributeType.removeMark(att);
+					}
+					att.delete();
+				} else {
+					System.err.println("Can't handle " + e);
+				}
+				e = n;
+			}
+			assert currentClass.getDegree() == 0;
+			domainMap.put(rd.getQualifiedName(), rd);
+			idMap.put(currentClassId, rd);
+			currentRecordDomain = rd;
+			currentClass.delete();
+			currentClass = null;
+			currentClassId = null;
+
+			// System.out
+			// .println("currentClass = null, currentRecordDomain = "
+			// + rd + " " + rd.getQualifiedName());
+		} else if (key.equals("abstract")) {
+			assert currentClass != null;
+			currentClass.setIsAbstract(true);
+		} else {
+			throw new SAXException("unexpected stereotype " + key);
+		}
+	}
+
+	private void handleGeneralization(Attributes atts) {
+		String general = atts.getValue("general");
+		Set<String> gens = generalizations.getMark(currentClass);
+		if (gens == null) {
+			gens = new TreeSet<String>();
+			generalizations.mark(currentClass, gens);
+		}
+		gens.add(general);
+	}
+
+	private void handleNestedTypeElement(Attributes atts, String type)
+			throws SAXException {
+		assert currentAttribute != null || currentRecordDomain != null;
+		String href = atts.getValue("href");
+		assert href != null;
+		Domain dom = null;
+		if (href.endsWith("#String")) {
+			dom = createDomain("String");
+		} else if (href.endsWith("#Integer")) {
+			dom = createDomain("Integer");
+		} else if (href.endsWith("#Boolean")) {
+			dom = createDomain("Boolean");
+		} else {
+			throw new SAXException("unexpected " + type + " with href " + href);
+		}
+		if (currentRecordDomain != null) {
+			assert currentRecordDomainComponent != null;
+			if (dom != null) {
+				Domain d = (Domain) currentRecordDomainComponent.getOmega();
+				assert d instanceof StringDomain
+						&& d.getQualifiedName() == null
+						&& preliminaryVertices.contains(d);
+				currentRecordDomainComponent.setOmega(dom);
+				d.delete();
+				preliminaryVertices.remove(d);
+				recordComponentType.removeMark(currentRecordDomainComponent);
+			}
+		} else {
+			assert currentAttribute != null;
+			if (dom != null) {
+				sg.createHasDomain(currentAttribute, dom);
+				attributeType.removeMark(currentAttribute);
+			}
+		}
+	}
+
+	private void handleEnumerationLiteral(Attributes atts) {
+		String classifier = atts.getValue("classifier");
+		assert classifier != null;
+		EnumDomain ed = (EnumDomain) idMap.get(classifier);
+		String s = atts.getValue("name");
+		assert s != null;
+		s = s.trim();
+		assert s.length() > 0;
+		ed.getEnumConstants().add(s);
+	}
+
+	private void handleOwnedAttribute(Attributes atts, String xmiId) {
+		assert currentClass != null || currentRecordDomain != null;
+		String association = atts.getValue("association");
+		if (association == null) {
+			// this property is not an association end
+			String attrName = atts.getValue("name");
+			assert attrName != null;
+			attrName = attrName.trim();
+			assert attrName.length() > 0;
+
+			if (currentClass != null) {
+				// property is an "ordinary" attribute
+				Attribute att = sg.createAttribute();
+				currentAttribute = att;
+				att.setName(attrName);
+				sg.createHasAttribute(currentClass, att);
+
+				String typeId = atts.getValue("type");
+				if (typeId != null) {
+					attributeType.mark(att, typeId);
+				}
+			} else {
+				// property is a record component
+				assert currentRecordDomain != null;
+				currentAttribute = null;
+				String typeId = atts.getValue("type");
+				currentRecordDomainComponent = null;
+				if (typeId != null) {
+					Vertex v = (Vertex) idMap.get(typeId);
+					if (v != null) {
+						assert v instanceof Domain;
+						currentRecordDomainComponent = sg
+								.createHasRecordDomainComponent(
+										currentRecordDomain, (Domain) v);
+					} else {
+						Domain dom = sg.createStringDomain();
+						dom.setQualifiedName(typeId);
+						preliminaryVertices.add(dom);
+						currentRecordDomainComponent = sg
+								.createHasRecordDomainComponent(
+										currentRecordDomain, dom);
+						recordComponentType.mark(currentRecordDomainComponent,
+								typeId);
+					}
+				} else {
+					Domain dom = sg.createStringDomain();
+					preliminaryVertices.add(dom);
+					currentRecordDomainComponent = sg
+							.createHasRecordDomainComponent(
+									currentRecordDomain, dom);
+				}
+				currentRecordDomainComponent.setName(attrName);
+			}
+		} else {
+			assert currentClass != null && currentRecordDomain == null;
+			handleAssociatioEnd(atts, xmiId);
+		}
+	}
+
+	private Vertex handlePrimitiveType(Attributes atts) {
+		String typeName = atts.getValue("name");
+		assert typeName != null;
+		typeName = typeName.replaceAll("\\s", "");
+		assert typeName.length() > 0;
+		Domain dom = createDomain(typeName);
+		assert dom != null;
+		return dom;
+	}
+
+	private Vertex handleEnumeration(Attributes atts) {
+		EnumDomain ed = sg.createEnumDomain();
+		de.uni_koblenz.jgralab.grumlschema.structure.Package p = packageStack
+				.peek();
+		ed.setQualifiedName(getQualifiedName(atts.getValue("name")));
+		sg.createContainsDomain(p, ed);
+		ed.setEnumConstants(new ArrayList<String>());
+		Domain dom = domainMap.get(ed.getQualifiedName());
+		if (dom != null) {
+			// there was a preliminary vertex for this domain
+			// link the edges to the correct one
+			assert preliminaryVertices.contains(dom);
+			reconnectEdges(dom, ed);
+			// delete preliminary vertex
+			dom.delete();
+			preliminaryVertices.remove(dom);
+		}
+		domainMap.put(ed.getQualifiedName(), ed);
+		return ed;
+	}
+
+	private Vertex handleAssociation(Attributes atts, String xmiId) {
+		// create an EdgeClass at first, probably, this has to
+		// become an Aggregation or Composition later...
+		AttributedElement ae = idMap.get(xmiId);
+		EdgeClass ec = null;
+		if (ae != null) {
+			assert ae instanceof EdgeClass;
+			assert preliminaryVertices.contains(ae);
+			preliminaryVertices.remove(ae);
+			ec = (EdgeClass) ae;
+		} else {
+			ec = sg.createEdgeClass();
+		}
+		currentClassId = xmiId;
+		currentClass = ec;
+		String abs = atts.getValue("isAbstract");
+		ec.setIsAbstract(abs != null && abs.equals("true"));
+		String n = atts.getValue("name");
+		n = (n == null) ? "" : n.trim();
+		if (n.length() > 0) {
+			n = Character.toUpperCase(n.charAt(0)) + n.substring(1);
+		}
+		ec.setQualifiedName(getQualifiedName(n));
+		sg.createContainsGraphElementClass(packageStack.peek(), ec);
+
+		String memberEnd = atts.getValue("memberEnd");
+		assert memberEnd != null;
+		memberEnd = memberEnd.trim().replaceAll("\\s+", " ");
+		int p = memberEnd.indexOf(' ');
+		String targetEnd = memberEnd.substring(0, p);
+		String sourceEnd = memberEnd.substring(p + 1);
+
+		Edge e = (Edge) idMap.get(sourceEnd);
+		if (e == null) {
+			VertexClass vc = sg.createVertexClass();
+			preliminaryVertices.add(vc);
+			e = sg.createFrom(ec, vc);
+			idMap.put(sourceEnd, e);
+		}
+
+		e = (Edge) idMap.get(targetEnd);
+		if (e != null) {
+			assert e.isValid();
+			assert e instanceof From;
+			From from = (From) e;
+			To to = sg.createTo(ec, (VertexClass) from.getOmega());
+			to.setMax(from.getMax());
+			to.setMin(from.getMin());
+			to.setRoleName(from.getRoleName());
+			to.setRedefinedRoles(from.getRedefinedRoles());
+			if (ownedEnds.contains(from)) {
+				ownedEnds.remove(from);
+				ownedEnds.add(to);
+			}
+			if (aggregateEnds.contains(from)) {
+				aggregateEnds.remove(from);
+				aggregateEnds.add(to);
+			}
+			e.delete();
+			idMap.put(targetEnd, to);
+		} else {
+			VertexClass vc = sg.createVertexClass();
+			preliminaryVertices.add(vc);
+			e = sg.createTo(ec, vc);
+			idMap.put(targetEnd, e);
+		}
+
+		// System.out.println("currentClass = " + currentClass + " "
+		// + currentClass.getQualifiedName());
+		// System.out.println("\tsource " + sourceEnd + " -> "
+		// + idMap.get(sourceEnd));
+		// System.out.println("\ttarget " + targetEnd + " -> "
+		// + idMap.get(targetEnd));
+		return ec;
+	}
+
+	private Vertex handleClass(Attributes atts, String xmiId) {
+		AttributedElement ae = idMap.get(xmiId);
+		VertexClass vc = null;
+		if (ae != null) {
+			assert ae instanceof VertexClass;
+			assert preliminaryVertices.contains(ae);
+			preliminaryVertices.remove(ae);
+			vc = (VertexClass) ae;
+		} else {
+			vc = sg.createVertexClass();
+		}
+		currentClassId = xmiId;
+		currentClass = vc;
+		String abs = atts.getValue("isAbstract");
+		vc.setIsAbstract(abs != null && abs.equals("true"));
+		vc.setQualifiedName(getQualifiedName(atts.getValue("name")));
+		sg.createContainsGraphElementClass(packageStack.peek(), vc);
+
+		// System.out.println("currentClass = " + currentClass + " "
+		// + currentClass.getQualifiedName());
+		return vc;
+	}
+
+	private Vertex handlePackage(Attributes atts) {
+		de.uni_koblenz.jgralab.grumlschema.structure.Package pkg = sg
+				.createPackage();
+		pkg.setQualifiedName(getQualifiedName(atts.getValue("name")));
+		sg.createContainsSubPackage(packageStack.peek(), pkg);
+		packageStack.push(pkg);
+		return pkg;
 	}
 
 	private void handleAssociatioEnd(Attributes atts, String xmiId) {
@@ -1046,21 +1176,22 @@ public class Rsa2Tg extends org.xml.sax.helpers.DefaultHandler {
 		if (aggregation || composition) {
 			aggregateEnds.add(e);
 		}
+		if (currentClass instanceof EdgeClass) {
+			ownedEnds.add(e);
+		}
 		idMap.put(xmiId, e);
 		if (e instanceof To) {
-			To to = (To) e;
-			to.setRoleName(endName);
+			((To) e).setRoleName(endName);
 		} else if (e instanceof From) {
-			From fr = (From) e;
-			fr.setRoleName(endName);
+			((From) e).setRoleName(endName);
 		} else {
 			throw new RuntimeException("FIXME! Should never get here.");
 		}
-		System.out.println("\t"
-				+ (currentClass instanceof EdgeClass ? "ownedEnd"
-						: "ownedAttribute") + " " + endName + " " + xmiId
-				+ " (" + e + " " + e.getOmega() + " "
-				+ ((VertexClass) e.getOmega()).getQualifiedName() + ")");
+		// System.out.println("\t"
+		// + (currentClass instanceof EdgeClass ? "ownedEnd"
+		// : "ownedAttribute") + " " + endName + " " + xmiId
+		// + " (" + e + " " + e.getOmega() + " "
+		// + ((VertexClass) e.getOmega()).getQualifiedName() + ")");
 
 	}
 
@@ -1197,5 +1328,29 @@ public class Rsa2Tg extends org.xml.sax.helpers.DefaultHandler {
 		} else {
 			return p.getQualifiedName() + "." + s;
 		}
+	}
+
+	private void setUseFromRole(boolean useFromRole) {
+		this.useFromRole = useFromRole;
+	}
+
+	private boolean isUseFromRole() {
+		return useFromRole;
+	}
+
+	private void setRemoveUnusedDomains(boolean removeUnusedDomains) {
+		this.removeUnusedDomains = removeUnusedDomains;
+	}
+
+	private boolean isRemoveUnusedDomains() {
+		return removeUnusedDomains;
+	}
+
+	private void setUseNavigability(boolean useNavigability) {
+		this.useNavigability = useNavigability;
+	}
+
+	private boolean isUseNavigability() {
+		return useNavigability;
 	}
 }
