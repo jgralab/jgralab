@@ -143,14 +143,14 @@ public interface Edge extends GraphElement {
 			EdgeDirection orientation, boolean noSubclasses);
 
 	/**
-	 * @return the "this" vertex object, described in the orientation chapter of
-	 *         the thesis
+	 * @return the "this" vertex object, that is the object this directed edge
+	 * 		   starts at
 	 */
 	public Vertex getThis();
 
 	/**
-	 * @return the "that" vertex object, described in the orientation chapter of
-	 *         the thesis
+	 * @return the "that" vertex object, that is the object this directed edge
+	 * 		   ends at
 	 */
 	public Vertex getThat();
 

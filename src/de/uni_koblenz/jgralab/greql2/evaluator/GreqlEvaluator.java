@@ -831,7 +831,8 @@ public class GreqlEvaluator {
 		long parseStartTime = System.currentTimeMillis();
 		parseQuery(queryString);
 		parseTime = System.currentTimeMillis() - parseStartTime;
-
+		if (queryGraph == null)
+			throw new RuntimeException("Empty query graph supplied, no evaluation possible");
 		createVertexEvaluators();
 
 		// Initialize the CostModel if there's none
