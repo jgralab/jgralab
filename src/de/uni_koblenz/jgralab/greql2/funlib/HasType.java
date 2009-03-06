@@ -86,15 +86,12 @@ public class HasType extends AbstractGreql2Function {
 		switch (checkArguments(arguments)) {
 		case 0:
 			typeName = arguments[1].toString();
-			System.out.println("0: " + typeName);
 			break;
 		case 1:
 			aeClass = arguments[1].toAttributedElementClass();
-			System.out.println("1: " + aeClass);
 			break;
 		case 2:
 			typeCollection = arguments[1].toJValueTypeCollection();
-			System.out.println("2: " + typeCollection);
 			break;
 		default:
 			throw new WrongFunctionParameterException(this, null, arguments);
