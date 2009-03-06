@@ -32,6 +32,7 @@ import de.uni_koblenz.jgralab.AttributedElement;
 import de.uni_koblenz.jgralab.schema.exception.DuplicateAttributeException;
 import de.uni_koblenz.jgralab.schema.exception.M1ClassAccessException;
 import de.uni_koblenz.jgralab.schema.exception.ReservedWordException;
+import de.uni_koblenz.jgralab.schema.exception.SchemaException;
 
 /**
  * This is the base class of any <code>GraphClass</code>/

@@ -268,7 +268,6 @@ public class PathExistenceOptimizer extends OptimizerBase {
 		if (var1 == var2) {
 			return false;
 		}
-
 		SimpleDeclaration sd1 = (SimpleDeclaration) var1
 				.getFirstIsDeclaredVarOf(EdgeDirection.OUT).getOmega();
 		Declaration decl1 = (Declaration) sd1.getFirstIsSimpleDeclOf(

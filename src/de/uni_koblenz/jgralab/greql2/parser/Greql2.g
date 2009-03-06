@@ -122,10 +122,6 @@ import de.uni_koblenz.jgralab.schema.*;
 		return functionId;
     }
     
-    private boolean isFunctionName(String ident) {
-    	return Greql2FunctionLibrary.instance().isGreqlFunction(ident);		
- 	}	
-
 
         /**
          * Test if all ThisLiterals occur only inside PathDescriptions because
@@ -219,10 +215,14 @@ import de.uni_koblenz.jgralab.schema.*;
      *  @return the abstract syntax graph representing a GReQL 2 query
      */
     public Greql2 getGraph()  {
+    	if (graph == null)
+    		return null;
     	if (!graphCleaned) {
     	    Set<Vertex> reachableVertices = new HashSet<Vertex>();
     	    Queue<Vertex> queue = new LinkedList<Vertex>();
     		Greql2Expression root = graph.getFirstGreql2Expression();
+    		if (root == null)
+    			return null;
     		queue.add(root);
     		while (!queue.isEmpty()) {
     			Vertex current = queue.poll();
@@ -248,9 +248,6 @@ import de.uni_koblenz.jgralab.schema.*;
     			}	
     		}
     	}
-   // 	System.out.println("CallCounts:");
-   // 	for (int i=0; i<callCount.length; i++)
-   // 		System.out.println("Calls of " + i + ": " + callCount[i]);
     	return graph;
     }
 
@@ -637,19 +634,23 @@ WS  :  (' '|'\r'|'\t'|'\u000C'|'\n')*
 	   {$channel=HIDDEN;}
 ;
 
-// Single-line comments
 SL_COMMENT
-	:	'//'
-		(~('\n'|'\r'))* ('\n'|'\r'('\n')?)?
-		{$channel=HIDDEN;}
-	;  
-	    
+    :   '//' ~('\n'|'\r')*  ('\r\n' | '\r' | '\n') 
+            {
+                skip();
+            }
+    |   '//' ~('\n'|'\r')*     // a line comment could appear at the end of the file without CR/LF
+            {
+                skip();
+            }
+;            
+            	    
 // Multi-line comments	    
 ML_COMMENT
 @init{ 
 	int start = input.getCharPositionInLine()-1;
 }
-    :   '/*' ( options {greedy=false;} : . )* '*/' {$channel=HIDDEN;}
+    :   '/*' ( options {greedy=false;} : . )* '*/' {skip();}
     ;
 
 
