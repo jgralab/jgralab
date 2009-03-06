@@ -1,14 +1,14 @@
 package de.uni_koblenz.jgralabtest.tg2schemagraphtest;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 
 import java.io.File;
 import java.io.FilenameFilter;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
-import java.util.NoSuchElementException;
+import java.util.List;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -17,11 +17,14 @@ import org.junit.runners.Parameterized.Parameters;
 
 import de.uni_koblenz.jgralab.Attribute;
 import de.uni_koblenz.jgralab.Edge;
+import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.GraphIO;
 import de.uni_koblenz.jgralab.GraphIOException;
 import de.uni_koblenz.jgralab.GraphMarker;
 import de.uni_koblenz.jgralab.Vertex;
+import de.uni_koblenz.jgralab.schema.AggregationClass;
 import de.uni_koblenz.jgralab.schema.AttributedElementClass;
+import de.uni_koblenz.jgralab.schema.CompositionClass;
 import de.uni_koblenz.jgralab.schema.EdgeClass;
 import de.uni_koblenz.jgralab.schema.GraphClass;
 import de.uni_koblenz.jgralab.schema.QualifiedName;
@@ -34,7 +37,7 @@ import de.uni_koblenz.jgralab.utilities.tg2schemagraph.Tg2SchemaGraph;
 @RunWith(Parameterized.class)
 public class Tg2SchemagraphTest {
 
-	private static final String pathName = "src/de/uni_koblenz/jgralabtest/tg2schemagraphtest/";
+	private static final String pathName = "testit/de/uni_koblenz/jgralabtest/tg2schemagraphtest/";
 	private de.uni_koblenz.jgralab.schema.Schema schema;
 	private de.uni_koblenz.jgralab.Graph schemagraph;
 
@@ -50,13 +53,14 @@ public class Tg2SchemagraphTest {
 	public static Collection<Object[]> data() {
 		String[] tgfiles = new File(pathName).list(new FilenameFilter() {
 			public boolean accept(File dir, String name) {
-				return name.endsWith(".tg");
+				return name.matches(".*[Ss]chema.*\\.tg$");
 			}
 		});
 		Object[][] data = new Object[tgfiles.length][];
 
 		for (int i = 0; i < data.length; i++) {
 			data[i] = new Object[2];
+			System.out.println(i + " = " + tgfiles[i]);
 			try {
 				de.uni_koblenz.jgralab.schema.Schema s = GraphIO
 						.loadSchemaFromFile(pathName + tgfiles[i]);
@@ -65,7 +69,7 @@ public class Tg2SchemagraphTest {
 				data[i][0] = s;
 				data[i][1] = sGraph;
 			} catch (GraphIOException e) {
-
+				e.printStackTrace();
 			}
 		}
 		return Arrays.asList(data);
@@ -80,7 +84,7 @@ public class Tg2SchemagraphTest {
 	 */
 	@Test
 	public void schemagraphContainsExactlyOneSchemaVertex() {
-		int schemaVertexCount = countClassVertices("Schema");
+		int schemaVertexCount = countClassVertices("structure.Schema");
 		assertEquals(
 				"The Schemagraph does not contain exactly one Schema vertex.",
 				1, schemaVertexCount);
@@ -127,7 +131,7 @@ public class Tg2SchemagraphTest {
 	 */
 	@Test
 	public void schemagraphContainsExactlyOneDefinesGraphClassEdge() {
-		int definesGraphClassCount = countClassVertices("DefinesGraphClass");
+		int definesGraphClassCount = countClassVertices("structure.DefinesGraphClass");
 		assertEquals(
 				"The Schemagraph does not define exactly one DefaultGraphClass.",
 				1, definesGraphClassCount);
@@ -139,7 +143,7 @@ public class Tg2SchemagraphTest {
 	 */
 	@Test
 	public void schemagraphContainsExactlyOneContainsDefaultPackageEdge() {
-		int containsDefaultPackageCount = countClassVertices("ContainsDefaultPackage");
+		int containsDefaultPackageCount = countClassVertices("structure.ContainsDefaultPackage");
 		assertEquals(
 				"The schemagraph contains not exactly one DefaultPackage.", 1,
 				containsDefaultPackageCount);
@@ -153,7 +157,7 @@ public class Tg2SchemagraphTest {
 	@Test
 	public void schemagraphContainsPackageVertices() {
 		int packagesInSchema = schema.getPackages().size();
-		int packageVerticesInSchemagraph = countClassVertices("Package");
+		int packageVerticesInSchemagraph = countClassVertices("structure.Package");
 
 		assertEquals(
 				"The schemagraph does not contain exactly as many packages as the schema.",
@@ -162,7 +166,7 @@ public class Tg2SchemagraphTest {
 
 	/**
 	 * Obsolete.
-	 * 
+	 *
 	 * @see everyQualifiedNameAttributeOfTheSchemagraphsVertexClassVerticesEqualsExactlyOneQualifiedNameOfAVertexClassInTheSchema
 	 *      ()
 	 */
@@ -174,7 +178,7 @@ public class Tg2SchemagraphTest {
 				vertexClassesInSchema++;
 			}
 		}
-		int vertexClassVerticesInSchemagraph = countClassVertices("VertexClass");
+		int vertexClassVerticesInSchemagraph = countClassVertices("structure.VertexClass");
 		assertEquals(
 				"The schemagraph does not contain exactly as many packages as the schema.",
 				vertexClassesInSchema, vertexClassVerticesInSchemagraph);
@@ -182,7 +186,7 @@ public class Tg2SchemagraphTest {
 
 	/**
 	 * Obsolete.
-	 * 
+	 *
 	 * @see everyQualifiedNameAttributeOfTheSchemagraphsEdgeClassVerticesEqualsExactlyOneQualifiedNameOfAEdgeClassInTheSchema
 	 *      ()
 	 */
@@ -194,7 +198,7 @@ public class Tg2SchemagraphTest {
 				edgeClassesInSchema++;
 			}
 		}
-		int edgeClassVerticesInSchemagraph = countClassVertices("EdgeClass");
+		int edgeClassVerticesInSchemagraph = countClassVertices("structure.EdgeClass");
 		assertEquals(
 				"The schemagraph does not contain exactly as many edge class vertices as the schema defines edge classes.\nEdge classes in schema: "
 						+ edgeClassesInSchema
@@ -205,7 +209,7 @@ public class Tg2SchemagraphTest {
 
 	/**
 	 * Obsolete.
-	 * 
+	 *
 	 * @see everyQualifiedNameAttributeOfTheSchemagraphsEdgeClassVerticesEqualsExactlyOneQualifiedNameOfAEdgeClassInTheSchema
 	 *      ()
 	 */
@@ -213,12 +217,11 @@ public class Tg2SchemagraphTest {
 	public void schemagraphContainsCompositionClassVertices() {
 		int edgeClassesInSchema = 0;
 		for (EdgeClass ec : schema.getEdgeClassesInTopologicalOrder()) {
-			if (!ec.isInternal()
-					&& ec.getClass().equals(CompositionClassImpl.class)) {
+			if (!ec.isInternal() && ec instanceof CompositionClass) {
 				edgeClassesInSchema++;
 			}
 		}
-		int edgeClassVerticesInSchemagraph = countClassVertices("CompositionClass");
+		int edgeClassVerticesInSchemagraph = countClassVertices("structure.CompositionClass");
 		assertEquals(
 				"The schemagraph does not contain exactly as many edge class vertices as the schema defines edge classes.\nEdge classes in schema: "
 						+ edgeClassesInSchema
@@ -229,7 +232,7 @@ public class Tg2SchemagraphTest {
 
 	/**
 	 * Obsolete.
-	 * 
+	 *
 	 * @see everyQualifiedNameAttributeOfTheSchemagraphsEdgeClassVerticesEqualsExactlyOneQualifiedNameOfAEdgeClassInTheSchema
 	 *      ()
 	 */
@@ -237,14 +240,17 @@ public class Tg2SchemagraphTest {
 	public void schemagraphContainsAggregationClassVertices() {
 		int edgeClassesInSchema = 0;
 		for (EdgeClass ec : schema.getEdgeClassesInTopologicalOrder()) {
-			if (!ec.isInternal()
-					&& ec.getClass().equals(AggregationClassImpl.class)) {
+			if (!ec.isInternal() && ec instanceof AggregationClass) {
 				edgeClassesInSchema++;
 			}
 		}
-		int edgeClassVerticesInSchemagraph = countClassVertices("AggregationClass");
+		int edgeClassVerticesInSchemagraph = countClassVertices("structure.AggregationClass");
 		assertEquals(
-				"The schemagraph does not contain exactly as many edge class vertices as the schema defines edge classes.\nEdge classes in schema: "
+				"The schemagraph "
+						+ schemagraph
+						+ " of "
+						+ schema.getQualifiedName()
+						+ " does not contain exactly as many aggregation class vertices as the schema defines edge classes.\nEdge classes in schema: "
 						+ edgeClassesInSchema
 						+ "\nEdgeclass vertices in schemagraph: "
 						+ edgeClassVerticesInSchemagraph, edgeClassesInSchema,
@@ -258,7 +264,7 @@ public class Tg2SchemagraphTest {
 	@Test
 	public void schemagraphContainsDomainVertices() {
 		int domainsInSchema = schema.getDomains().size();
-		int domainVerticesInSchemagraph = countClassVertices("Domain");
+		int domainVerticesInSchemagraph = countClassVertices("domains.Domain");
 		assertEquals(
 				"The schemagraph doe not contains as many Domain Vertices as the schema defines Domains.",
 				domainsInSchema, domainVerticesInSchemagraph);
@@ -266,20 +272,20 @@ public class Tg2SchemagraphTest {
 
 	/**
 	 * This test iterates over every VertexClass in the schema.
-	 * 
+	 *
 	 * A GraphMarker marks every 'VertexClass'-Vertex in the schemagraph if
-	 * 
+	 *
 	 * 1. its attribute 'qualifiedName' equals the qualifiedName of the
 	 * VertexClass of the current iteration.
-	 * 
+	 *
 	 * 2. the 'VertexClass'-Vertex has not been marked before.
-	 * 
+	 *
 	 * After the loop the number of marked elements should be equal to the
 	 * number of 'VertexClass'-Vertices in the schemagraph. It verifies that
-	 * 
+	 *
 	 * 1. every VertexClass has a correspondent VertexClass-Vertex in the
 	 * schemagraph
-	 * 
+	 *
 	 * 2. there are no VertexClass-Vertices in the schemagraph that have no
 	 * correspondence in the schema.
 	 */
@@ -292,7 +298,8 @@ public class Tg2SchemagraphTest {
 				for (Vertex vcv : schemagraph
 						.vertices((VertexClass) schemagraph.getSchema()
 								.getAttributedElementClass(
-										new QualifiedName("VertexClass")))) {
+										new QualifiedName(
+												"structure.VertexClass")))) {
 					if (marker.getMark(vcv) == null) {
 						try {
 							if (((de.uni_koblenz.jgralab.grumlschema.structure.VertexClass) vcv)
@@ -305,16 +312,13 @@ public class Tg2SchemagraphTest {
 						}
 					}
 				}
-
 			}
 		}
 		int markedSchemagraphVertexClassVertices = marker.size();
-		int schemagraphVertices = countClassVertices("VertexClass");
-
+		int schemagraphVertices = countClassVertices("structure.VertexClass");
 		assertEquals(
 				"Not all name attributes in the schemagraphs VertexClass vertices have a corresponding qualified name in the schemas VertexClasses.",
 				markedSchemagraphVertexClassVertices, schemagraphVertices);
-
 	}
 
 	/**
@@ -326,7 +330,7 @@ public class Tg2SchemagraphTest {
 		boolean success = true;
 		for (Vertex v : schemagraph.vertices((VertexClass) schemagraph
 				.getSchema().getAttributedElementClass(
-						new QualifiedName("EdgeClass")))) {
+						new QualifiedName("structure.EdgeClass")))) {
 			de.uni_koblenz.jgralab.grumlschema.structure.EdgeClass ecv = (de.uni_koblenz.jgralab.grumlschema.structure.EdgeClass) v;
 			de.uni_koblenz.jgralab.grumlschema.structure.To to = ecv
 					.getFirstTo();
@@ -338,9 +342,7 @@ public class Tg2SchemagraphTest {
 			boolean hasNotTwoFromEdges = from.getNextFrom() == null;
 			success &= hasOneToEdge && hasNotTwoToEdges && hasOneFromEdge
 					&& hasNotTwoFromEdges;
-
 		}
-
 		assertEquals(
 				"To- and From-Edges are not unique per EdgeClass-Vertex in the schemagraph.",
 				true, success);
@@ -361,7 +363,8 @@ public class Tg2SchemagraphTest {
 				for (Vertex gcv : schemagraph
 						.vertices((VertexClass) schemagraph.getSchema()
 								.getAttributedElementClass(
-										new QualifiedName("GraphClass")))) {
+										new QualifiedName(
+												"structure.GraphClass")))) {
 					try {
 						if ((((de.uni_koblenz.jgralab.grumlschema.structure.GraphClass) gcv)
 								.getAttribute("qualifiedName").equals(gc
@@ -372,8 +375,6 @@ public class Tg2SchemagraphTest {
 						success = false;
 					}
 				}
-				this.sizeOfIterableEqualsInt(schemagraphGraphClass
-						.getHasAttributeIncidences(), gc.getAttributeCount());
 				for (Attribute attr : gc.getAttributeList()) {
 					boolean schemagraphsAttributeHasExactlyOneDomain = true;
 					boolean matchingSchemagraphAttributeExists = false;
@@ -415,6 +416,30 @@ public class Tg2SchemagraphTest {
 	}
 
 	/**
+	 * Tests if all of the schemagraph's AttributedElementClass-Vertices have
+	 * exactly one HasDomain-Edge.
+	 */
+	@Test
+	public void attributeHasExactlyOneDomainTest() {
+		boolean result = true;
+		for (Vertex aecv : schemagraph.vertices((VertexClass) schemagraph
+				.getSchema().getAttributedElementClass(
+						new QualifiedName("structure.AttributedElementClass")))) {
+			Iterator<de.uni_koblenz.jgralab.grumlschema.structure.HasAttribute> iter = ((de.uni_koblenz.jgralab.grumlschema.structure.AttributedElementClass) aecv)
+					.getHasAttributeIncidences().iterator();
+			while (iter.hasNext()) {
+				de.uni_koblenz.jgralab.grumlschema.structure.Attribute hasAttributeEdge = (de.uni_koblenz.jgralab.grumlschema.structure.Attribute) iter
+						.next().getThat();
+				result &= (hasAttributeEdge.getFirstHasDomain()
+						.getNextHasDomain() == null);
+			}
+		}
+		assertEquals(
+				"Not all of the schemagraph's AttributedElementClass-Vertices Attributes have exactly one domain.",
+				true, result);
+	}
+
+	/**
 	 * Tests if every Attribute of VertexClass vertices in the schemagraph is
 	 * arranged correctly. 1) links it to the correct Domain-Vertex 2) links it
 	 * to exactly one Domain-Vertex
@@ -429,7 +454,8 @@ public class Tg2SchemagraphTest {
 				for (Vertex vcv : schemagraph
 						.vertices((VertexClass) schemagraph.getSchema()
 								.getAttributedElementClass(
-										new QualifiedName("VertexClass")))) {
+										new QualifiedName(
+												"structure.VertexClass")))) {
 					try {
 						if ((((de.uni_koblenz.jgralab.grumlschema.structure.VertexClass) vcv)
 								.getAttribute("qualifiedName").equals(vc
@@ -440,59 +466,53 @@ public class Tg2SchemagraphTest {
 						success = false;
 					}
 				}
-				this.sizeOfIterableEqualsInt(schemagraphVertexClass
-						.getHasAttributeIncidences(), vc.getAttributeCount());
 				for (Attribute attr : vc.getAttributeList()) {
-					boolean schemagraphsAttributeHasExactlyOneDomain = true;
 					boolean matchingSchemagraphAttributeExists = false;
 					String attrName = attr.getName();
 					String attrDomainName = attr.getDomain().getQualifiedName();
-					Iterator<de.uni_koblenz.jgralab.grumlschema.structure.HasAttribute> iter = schemagraphVertexClass
-							.getHasAttributeIncidences().iterator();
-					while (iter.hasNext()) {
-						de.uni_koblenz.jgralab.grumlschema.structure.Attribute hasAttributeEdge = (de.uni_koblenz.jgralab.grumlschema.structure.Attribute) iter
-								.next().getThat();
+					List<de.uni_koblenz.jgralab.grumlschema.structure.Attribute> sgAttrs = getAllVCInstanceAndSuperAttributes(schemagraphVertexClass);
+					for (de.uni_koblenz.jgralab.grumlschema.structure.Attribute sgAttr : sgAttrs) {
 						String schemagraphAttrName = "";
 						String schemagraphAttrDomainName = "";
-						schemagraphAttrName = hasAttributeEdge.getName();
-						schemagraphAttrDomainName = ((de.uni_koblenz.jgralab.grumlschema.domains.Domain) hasAttributeEdge
+						schemagraphAttrName = sgAttr.getName();
+						schemagraphAttrDomainName = ((de.uni_koblenz.jgralab.grumlschema.domains.Domain) sgAttr
 								.getFirstHasDomain().getThat())
 								.getQualifiedName();
-						schemagraphsAttributeHasExactlyOneDomain = hasAttributeEdge
-								.getFirstHasDomain().getNextHasDomain() == null;
-
 						if (schemagraphAttrName.equals(attrName)
 								&& schemagraphAttrDomainName
 										.equals(attrDomainName)) {
 							matchingSchemagraphAttributeExists = true;
 							break;
-						} else {
-							System.out.println("Wrong domain name: "
-									+ schemagraphAttrDomainName
-									+ ", attrDomainName = " + attrDomainName
-									+ ", schemagraphAttrName = "
-									+ schemagraphAttrName + ", attrName = "
-									+ attrName);
 						}
-
 					}
-					success &= schemagraphsAttributeHasExactlyOneDomain
-							&& matchingSchemagraphAttributeExists;
-					if (success == false
-							&& !(schemagraphsAttributeHasExactlyOneDomain && matchingSchemagraphAttributeExists)) {
-						System.out.println(vc.getQualifiedName() + " "
-								+ attrName + " " + attrDomainName + " in "
-								+ " attributeExists = "
-								+ matchingSchemagraphAttributeExists
-								+ ", oneDomain = "
-								+ schemagraphsAttributeHasExactlyOneDomain);
-					}
+					success &= matchingSchemagraphAttributeExists;
 				}
 			}
 		}
-		assertTrue(
+		assertEquals(
 				"VertexClass attributes are not correctly arranged in the schemagraph.",
-				success);
+				true, success);
+	}
+
+	private List<de.uni_koblenz.jgralab.grumlschema.structure.Attribute> getAllVCInstanceAndSuperAttributes(
+			de.uni_koblenz.jgralab.grumlschema.structure.VertexClass sVC) {
+		List<de.uni_koblenz.jgralab.grumlschema.structure.Attribute> result = new ArrayList<de.uni_koblenz.jgralab.grumlschema.structure.Attribute>();
+		Iterator<de.uni_koblenz.jgralab.grumlschema.structure.HasAttribute> iter = sVC
+				.getHasAttributeIncidences().iterator();
+		while (iter.hasNext()) {
+			result
+					.add((de.uni_koblenz.jgralab.grumlschema.structure.Attribute) (iter
+							.next().getOmega()));
+		}
+		Iterator<de.uni_koblenz.jgralab.grumlschema.structure.SpecializesVertexClass> iter2 = sVC
+				.getSpecializesVertexClassIncidences(EdgeDirection.IN)
+				.iterator();
+		while (iter2.hasNext()) {
+			result
+					.addAll(getAllVCInstanceAndSuperAttributes((de.uni_koblenz.jgralab.grumlschema.structure.VertexClass) (iter2
+							.next().getAlpha())));
+		}
+		return result;
 	}
 
 	/**
@@ -508,9 +528,10 @@ public class Tg2SchemagraphTest {
 				// get the correspondent graphClass in the schemagraph
 				de.uni_koblenz.jgralab.grumlschema.structure.EdgeClass schemagraphEdgeClass = null;
 				for (Vertex ecv : schemagraph
-						.vertices((VertexClass) schemagraph.getSchema()
+						.vertices((VertexClass) schemagraph
+								.getSchema()
 								.getAttributedElementClass(
-										new QualifiedName("EdgeClass")))) {
+										new QualifiedName("structure.EdgeClass")))) {
 					try {
 						if ((((de.uni_koblenz.jgralab.grumlschema.structure.EdgeClass) ecv)
 								.getAttribute("qualifiedName").equals(ec
@@ -521,52 +542,53 @@ public class Tg2SchemagraphTest {
 						success = false;
 					}
 				}
-				this.sizeOfIterableEqualsInt(schemagraphEdgeClass
-						.getHasAttributeIncidences(), ec.getAttributeCount());
+				// for all attributes...
 				for (Attribute attr : ec.getAttributeList()) {
-					boolean schemagraphsAttributeHasExactlyOneDomain = true;
 					boolean matchingSchemagraphAttributeExists = false;
 					String attrName = attr.getName();
 					String attrDomainName = attr.getDomain().getQualifiedName();
-					Iterator<de.uni_koblenz.jgralab.grumlschema.structure.HasAttribute> iter = schemagraphEdgeClass
-							.getHasAttributeIncidences().iterator();
-					while (iter.hasNext()) {
-						de.uni_koblenz.jgralab.grumlschema.structure.Attribute hasAttributeEdge = (de.uni_koblenz.jgralab.grumlschema.structure.Attribute) iter
-								.next().getThat();
+					List<de.uni_koblenz.jgralab.grumlschema.structure.Attribute> sgAttrs = getAllECInstanceAndSuperAttributes(schemagraphEdgeClass);
+					for (de.uni_koblenz.jgralab.grumlschema.structure.Attribute sgAttr : sgAttrs) {
 						String schemagraphAttrName = "";
 						String schemagraphAttrDomainName = "";
-						schemagraphAttrName = hasAttributeEdge.getName();
-						schemagraphAttrDomainName = ((de.uni_koblenz.jgralab.grumlschema.domains.Domain) hasAttributeEdge
+						schemagraphAttrName = sgAttr.getName();
+						schemagraphAttrDomainName = ((de.uni_koblenz.jgralab.grumlschema.domains.Domain) sgAttr
 								.getFirstHasDomain().getThat())
 								.getQualifiedName();
-						schemagraphsAttributeHasExactlyOneDomain = hasAttributeEdge
-								.getFirstHasDomain().getNextHasDomain() == null;
-
 						if (schemagraphAttrName.equals(attrName)
 								&& schemagraphAttrDomainName
 										.equals(attrDomainName)) {
 							matchingSchemagraphAttributeExists = true;
 							break;
 						}
-
 					}
-					success &= schemagraphsAttributeHasExactlyOneDomain
-							&& matchingSchemagraphAttributeExists;
-					if (success == false
-							&& !(schemagraphsAttributeHasExactlyOneDomain && matchingSchemagraphAttributeExists)) {
-						System.out.println(ec.getQualifiedName() + " "
-								+ attrName + " " + attrDomainName + " in "
-								+ " attributeExists = "
-								+ matchingSchemagraphAttributeExists
-								+ ", oneDomain = "
-								+ schemagraphsAttributeHasExactlyOneDomain);
-					}
+					success &= matchingSchemagraphAttributeExists;
 				}
 			}
 		}
 		assertEquals(
 				"EdgeClass attributes are not correctly arranged in the schemagraph.",
 				true, success);
+	}
+
+	private List<de.uni_koblenz.jgralab.grumlschema.structure.Attribute> getAllECInstanceAndSuperAttributes(
+			de.uni_koblenz.jgralab.grumlschema.structure.EdgeClass sEC) {
+		List<de.uni_koblenz.jgralab.grumlschema.structure.Attribute> result = new ArrayList<de.uni_koblenz.jgralab.grumlschema.structure.Attribute>();
+		Iterator<de.uni_koblenz.jgralab.grumlschema.structure.HasAttribute> iter = sEC
+				.getHasAttributeIncidences().iterator();
+		while (iter.hasNext()) {
+			result
+					.add((de.uni_koblenz.jgralab.grumlschema.structure.Attribute) (iter
+							.next().getOmega()));
+		}
+		Iterator<de.uni_koblenz.jgralab.grumlschema.structure.SpecializesEdgeClass> iter2 = sEC
+				.getSpecializesEdgeClassIncidences(EdgeDirection.IN).iterator();
+		while (iter2.hasNext()) {
+			result
+					.addAll(getAllECInstanceAndSuperAttributes((de.uni_koblenz.jgralab.grumlschema.structure.EdgeClass) (iter2
+							.next().getAlpha())));
+		}
+		return result;
 	}
 
 	/**
@@ -587,9 +609,10 @@ public class Tg2SchemagraphTest {
 				// get the correspondent edge class in the schemagraph
 				de.uni_koblenz.jgralab.grumlschema.structure.EdgeClass schemagraphEdgeClass = null;
 				for (Vertex ecv : schemagraph
-						.vertices((VertexClass) schemagraph.getSchema()
+						.vertices((VertexClass) schemagraph
+								.getSchema()
 								.getAttributedElementClass(
-										new QualifiedName("EdgeClass")))) {
+										new QualifiedName("structure.EdgeClass")))) {
 					try {
 						if ((((de.uni_koblenz.jgralab.grumlschema.structure.EdgeClass) ecv)
 								.getAttribute("qualifiedName").equals(ec
@@ -603,7 +626,6 @@ public class Tg2SchemagraphTest {
 				// /////////////////
 				// Examine the To-Edge
 				// /////////////////
-
 				// determine if qualifiedName of the To-Edge's VertexClass
 				// equals.
 				String to_qNameSchema = ec.getTo().getQualifiedName();
@@ -616,20 +638,16 @@ public class Tg2SchemagraphTest {
 				}
 				boolean to_qualifiedNameEquals = to_qNameSchema
 						.equals(to_qNameSchemagraph);
-
 				// determine if the min attribute of the To-Edge equals
 				int to_minSchema = ec.getToMin();
 				int to_minSchemagraph = schemagraphEdgeClass.getFirstTo()
 						.getMin();
-
 				boolean to_minEquals = to_minSchema == to_minSchemagraph;
-
 				// determine if the max attribute of the To-Edge equals
 				int to_maxSchema = ec.getToMax();
 				int to_maxSchemagraph = schemagraphEdgeClass.getFirstTo()
 						.getMax();
 				boolean to_maxEquals = to_maxSchema == to_maxSchemagraph;
-
 				// determine if the rolename of the To-Edges equals
 				String to_rolenameSchema = ec.getToRolename();
 				String to_rolenameSchemagraph = schemagraphEdgeClass
@@ -639,11 +657,9 @@ public class Tg2SchemagraphTest {
 
 				boolean to_equals = to_qualifiedNameEquals && to_minEquals
 						&& to_maxEquals && to_rolenameEquals;
-
 				// /////////////////
 				// Examine the From-Edge
 				// /////////////////
-
 				// determine if qualifiedName of the From-Edge's VertexClass
 				// equals.
 				String from_qNameSchema = ec.getFrom().getQualifiedName();
@@ -656,14 +672,11 @@ public class Tg2SchemagraphTest {
 				}
 				boolean from_qualifiedNameEquals = from_qNameSchema
 						.equals(from_qNameSchemagraph);
-
 				// determine if the min attribute of the From-Edge equals
 				int from_minSchema = ec.getFromMin();
 				int from_minSchemagraph = schemagraphEdgeClass.getFirstFrom()
 						.getMin();
-
 				boolean from_minEquals = from_minSchema == from_minSchemagraph;
-
 				// determine if the max attribute of the From-Edge equals
 				int from_maxSchema = ec.getFromMax();
 				int from_maxSchemagraph = schemagraphEdgeClass.getFirstFrom()
@@ -676,15 +689,12 @@ public class Tg2SchemagraphTest {
 						.getFirstFrom().getRoleName();
 				boolean from_rolenameEquals = from_rolenameSchema
 						.equals(from_rolenameSchemagraph);
-
 				boolean from_equals = from_qualifiedNameEquals
 						&& from_minEquals && from_maxEquals
 						&& from_rolenameEquals;
-
 				success &= to_equals && from_equals;
 			}
 		}
-
 		assertEquals(
 				"To- and From-Edges in the schmagraph do not match the schema.",
 				true, success);
@@ -692,24 +702,24 @@ public class Tg2SchemagraphTest {
 
 	/**
 	 * This test iterates over every EdgeClass of the schema.
-	 * 
+	 *
 	 * A GraphMarker marks an 'EdgeClass'-Vertex of the schemagraph if
-	 * 
+	 *
 	 * 1. its attribute 'qualifiedName' matches the qualified Name of the
 	 * schemas EdgeClass.
-	 * 
+	 *
 	 * 2. the 'EdgeClass'-Vertex has not been marked before.
-	 * 
+	 *
 	 * 3. the subclass of the EdgeClass and the 'EdgeClass'-Vertex equals (i.e
 	 * de.uni_koblenz.jgralab.schema.impl.AggregationClassImpl equals
 	 * de.uni_koblenz.jgralab.grumlschema.impl.AggregationClassImpl).
-	 * 
+	 *
 	 * When after this loop the number of marked 'EdgeClass'-Vertices equals the
 	 * total number of 'EdgeClass'-Vertices it shows that
-	 * 
+	 *
 	 * 1. every EdgeClass has a correspondent 'EdgeClass'-Vertex (qualifiedName
 	 * used as identifier)
-	 * 
+	 *
 	 * 2. there is no 'EdgeClass'-Vertex in the schemagraph that has no
 	 * corresponding EdgeClass in the schema.
 	 */
@@ -720,9 +730,10 @@ public class Tg2SchemagraphTest {
 			if (!ec.isInternal()) {
 				String edgeClassesQualifiedName = ec.getQualifiedName();
 				for (Vertex ecv : schemagraph
-						.vertices((VertexClass) schemagraph.getSchema()
+						.vertices((VertexClass) schemagraph
+								.getSchema()
 								.getAttributedElementClass(
-										new QualifiedName("EdgeClass")))) {
+										new QualifiedName("structure.EdgeClass")))) {
 					if (marker.getMark(ecv) == null) {
 						try {
 							if ( // the qualified name equals
@@ -747,34 +758,18 @@ public class Tg2SchemagraphTest {
 													de.uni_koblenz.jgralab.grumlschema.impl.structure.CompositionClassImpl.class)))) {
 								marker.mark(ecv, new Object());
 							}
-
 						} catch (NoSuchFieldException e) {
 							e.printStackTrace();
 						}
 					}
 				}
-
 			}
 		}
 		int markedSchemagraphEdgeClassVertices = marker.size();
-		int schemagraphVertices = countClassVertices("EdgeClass");
-
+		int schemagraphVertices = countClassVertices("structure.EdgeClass");
 		assertEquals(
 				"Not all name attributes in the schemagraphs VertexClass vertices have a corresponding qualified name in the schemas VertexClasses.",
 				markedSchemagraphEdgeClassVertices, schemagraphVertices);
-
-	}
-
-	private boolean sizeOfIterableEqualsInt(Iterable<?> itr, int size) {
-		Iterator<?> iter = itr.iterator();
-		try {
-			for (int i = 0; i < size; i++) {
-				iter.next();
-			}
-		} catch (NoSuchElementException e) {
-			return false;
-		}
-		return !iter.hasNext();
 	}
 
 	private int countClassVertices(String attributedElementClassName) {
