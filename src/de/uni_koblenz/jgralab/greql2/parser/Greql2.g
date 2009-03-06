@@ -832,8 +832,6 @@ quantifiedExpression returns [Expression result = null]
 	int lengthQuantifier = 0;
 	int lengthQuantifiedDecl = 0;
 	int lengthQuantifiedExpr = 0;
-	callCount[0]++;
-	//System.out.println("Starting parsing of QuantifiedExpression");
 }
 :
   ((quantifier) => ( 
@@ -904,8 +902,6 @@ letExpression returns [Expression result = null]
 @init{
 	int offset = 0;
 	int length = 0;
-	//	System.out.println("Starting parsing of LetExpression");
-	callCount[1]++;
 }
 :
 (
@@ -944,8 +940,6 @@ whereExpression returns [Expression result = null]
 @init{
 	int offset = 0;
 	int length = 0;
-	//	System.out.println("Starting parsing of WhereExpression");
-	callCount[2]++;
 }
 :
 { offset = input.LT(1).getCharPositionInLine()-1; }
@@ -985,8 +979,6 @@ definitionList returns [ArrayList<VertexPosition> definitions = null]
 @init{
     int offset = 0;
     int length = 0;
-   // System.out.println("Starting parsing of DefinitionList");
-   callCount[3]++;
 }
 	:
 		{ offset = getLTOffset(); }
@@ -1055,8 +1047,6 @@ conditionalExpression returns [Expression result = null]
 	int lengthTrueExpr = 0;
 	int lengthFalseExpr = 0;
 	int lengthNullExpr = 0;
-	callCount[5]++;
-		//System.out.println("Starting parsing of ConditionalExpression");
 }
 :
     { offsetExpr = getLTOffset(); }
@@ -1108,8 +1098,6 @@ conditionalExpression returns [Expression result = null]
 orExpression returns [Expression result]
 @init{
     FunctionConstruct construct = new FunctionConstruct();
-  //  System.out.println("Starting parsing of OrExpression");
-  callCount[6]++;
 }
 :
   { construct.preArg1(); }
@@ -1173,8 +1161,6 @@ andExpression returns [Expression result]
 equalityExpression returns [Expression result]
 @init{
     FunctionConstruct construct = new FunctionConstruct();
-    //	System.out.println("Starting parsing of EqualityExpression");
-    callCount[9]++;
 }
 :
   { construct.preArg1(); }
@@ -1207,8 +1193,6 @@ relationalExpression returns [Expression result]
 @init{
     String name = null;
     FunctionConstruct construct = new FunctionConstruct();
-    //	System.out.println("Starting parsing of RelationalExpression");
-    callCount[10]++;
 }
 :
   { construct.preArg1(); }
@@ -1232,8 +1216,6 @@ relationalExpression returns [Expression result]
 additiveExpression returns [Expression result]
 @init{
     FunctionConstruct construct = new FunctionConstruct();
-    	//System.out.println("Starting parsing of AdditiveExpression");
-    	callCount[11]++;
 }
 :
   { construct.preArg1(); }
@@ -1254,8 +1236,6 @@ additiveExpression returns [Expression result]
 multiplicativeExpression returns [Expression result]
 @init{
     FunctionConstruct construct = new FunctionConstruct();
-    	//System.out.println("Starting parsing of MultiplicatiyExpression");
-    	callCount[12]++;
 }
 :
   { construct.preArg1(); }
@@ -2395,9 +2375,7 @@ numericLiteral returns [Expression literal = null]
         /* hex literal */
         token = HEXLITERAL
         {
-          /* TODO: Check if 0x should be removed from text represenation */
           textRepresentation = token.getText().substring(2);
-          // System.out.println("Matched HexLiteral " + textRepresentation);
           base=16;
         }
       )
@@ -2414,7 +2392,6 @@ numericLiteral returns [Expression literal = null]
    	  )
    	)  
 	{
-	    // System.out.println("Setting value of num literal " + textRepresentation);
 		if (isRealLiteral) {
 			literal = graph.createRealLiteral();
 			((RealLiteral) literal).setRealValue(Double.parseDouble(textRepresentation));
@@ -2424,7 +2401,6 @@ numericLiteral returns [Expression literal = null]
 	    	if ((base==10) && textRepresentation.startsWith("0") && !textRepresentation.startsWith("0x")) {
 	    	  base = 8;
 	    	}
-	    	// System.out.println("Setting int value " + textRepresentation + " with base " + base );
 			((IntLiteral) literal).setIntValue(Integer.parseInt(textRepresentation, base));
 		}	
 	}
@@ -2433,9 +2409,6 @@ numericLiteral returns [Expression literal = null]
 
 
 literal returns [Expression literal = null]
-@init{
-callCount[30]++;
-}
 :
 	(token=STRING_LITERAL
     {
