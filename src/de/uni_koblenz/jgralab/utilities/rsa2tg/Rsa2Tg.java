@@ -526,9 +526,11 @@ public class Rsa2Tg extends DefaultHandler {
 						.get(id);
 				assert (sup != null);
 				if (sup instanceof VertexClass) {
+					assert ae instanceof VertexClass;
 					sg.createSpecializesVertexClass((VertexClass) ae,
 							(VertexClass) sup);
 				} else {
+					assert ae instanceof EdgeClass;
 					sg.createSpecializesEdgeClass((EdgeClass) ae,
 							(EdgeClass) sup);
 				}
@@ -730,8 +732,8 @@ public class Rsa2Tg extends DefaultHandler {
 		if (ignoredElements.contains(name)) {
 			++ignore;
 		}
-		System.out.println("<" + name + "> (id=" + xmiId + ") "
-				+ (ignore > 0 ? "ignored" : "processed"));
+		// System.out.println("<" + name + "> (id=" + xmiId + ") "
+		// + (ignore > 0 ? "ignored" : "processed"));
 		if (ignore > 0) {
 			return;
 		}
@@ -1456,15 +1458,27 @@ public class Rsa2Tg extends DefaultHandler {
 		return dom;
 	}
 
-	private String getQualifiedName(String s) {
-		assert s != null;
-		s = s.trim();
+	/**
+	 * Returns the qualified name for the simple name <code>simpleName</code>.
+	 * The qualified name consists the (already qualified) name of the package
+	 * on top of the package stack and the name <code>simpleName</code>,
+	 * separated by a dot. If the top package is the default package, the name
+	 * <code>simpleName</code> is already the qualified name. If the package
+	 * stack is empty
+	 * 
+	 * @param simpleName
+	 *            a simple name of a class or package
+	 * @return the qualified name for the simple name
+	 */
+	private String getQualifiedName(String simpleName) {
+		assert simpleName != null;
+		simpleName = simpleName.trim();
 		Package p = packageStack.peek();
 		assert p != null;
 		if (p.getQualifiedName().equals("")) {
-			return s;
+			return simpleName;
 		} else {
-			return p.getQualifiedName() + "." + s;
+			return p.getQualifiedName() + "." + simpleName;
 		}
 	}
 
