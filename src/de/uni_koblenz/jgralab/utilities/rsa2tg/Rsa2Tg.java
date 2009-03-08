@@ -20,6 +20,7 @@ import javax.xml.parsers.SAXParserFactory;
 
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
+import org.xml.sax.helpers.DefaultHandler;
 
 import de.uni_koblenz.jgralab.AttributedElement;
 import de.uni_koblenz.jgralab.Edge;
@@ -32,6 +33,7 @@ import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.graphvalidator.ConstraintViolation;
 import de.uni_koblenz.jgralab.graphvalidator.GraphValidator;
 import de.uni_koblenz.jgralab.grumlschema.GrumlSchema;
+import de.uni_koblenz.jgralab.grumlschema.SchemaGraph;
 import de.uni_koblenz.jgralab.grumlschema.domains.CollectionDomain;
 import de.uni_koblenz.jgralab.grumlschema.domains.Domain;
 import de.uni_koblenz.jgralab.grumlschema.domains.EnumDomain;
@@ -47,44 +49,174 @@ import de.uni_koblenz.jgralab.grumlschema.structure.Constraint;
 import de.uni_koblenz.jgralab.grumlschema.structure.ContainsGraphElementClass;
 import de.uni_koblenz.jgralab.grumlschema.structure.EdgeClass;
 import de.uni_koblenz.jgralab.grumlschema.structure.From;
+import de.uni_koblenz.jgralab.grumlschema.structure.GraphClass;
 import de.uni_koblenz.jgralab.grumlschema.structure.HasAttribute;
 import de.uni_koblenz.jgralab.grumlschema.structure.HasDomain;
 import de.uni_koblenz.jgralab.grumlschema.structure.Package;
+import de.uni_koblenz.jgralab.grumlschema.structure.Schema;
 import de.uni_koblenz.jgralab.grumlschema.structure.To;
 import de.uni_koblenz.jgralab.grumlschema.structure.VertexClass;
 import de.uni_koblenz.jgralab.utilities.tg2dot.Tg2Dot;
 
-public class Rsa2Tg extends org.xml.sax.helpers.DefaultHandler {
-
+public class Rsa2Tg extends DefaultHandler {
+	/**
+	 * Contains XML element names in the format "name>xmiId"
+	 */
 	private Stack<String> elementNameStack;
+
+	/**
+	 * Collects character data per element
+	 */
 	private Stack<StringBuilder> elementContent;
-	private de.uni_koblenz.jgralab.grumlschema.SchemaGraph sg;
-	private de.uni_koblenz.jgralab.grumlschema.structure.Schema schema;
-	private de.uni_koblenz.jgralab.grumlschema.structure.GraphClass graphClass;
-	private Stack<de.uni_koblenz.jgralab.grumlschema.structure.Package> packageStack;
-	private Map<String, AttributedElement> idMap;
+
+	/**
+	 * Names of XML elements which are completely ignored (including children)
+	 */
 	private Set<String> ignoredElements;
+
+	/**
+	 * Counter for ignored state. ignre>0 ==> elements are ingnored, ignore==0
+	 * ==> elements are processed.
+	 */
 	private int ignore;
+
+	/**
+	 * The schema graph.
+	 */
+	private SchemaGraph sg;
+
+	/**
+	 * The Schema vertex of the schema graph.
+	 */
+	private Schema schema;
+
+	/**
+	 * The GraphClass vertex of the schema graph.
+	 */
+	private GraphClass graphClass;
+
+	/**
+	 * A Stack containing the package hierarchy. Packages and their nesting are
+	 * represented as tree in XML. The top element is the current package.
+	 */
+	private Stack<Package> packageStack;
+
+	/**
+	 * Maps XMI-Ids to vertices and egdes of the schema graph.
+	 */
+	private Map<String, AttributedElement> idMap;
+
+	/**
+	 * Remembers the current class id for processing of nested elements.
+	 */
 	private String currentClassId;
-	private de.uni_koblenz.jgralab.grumlschema.structure.AttributedElementClass currentClass;
-	private de.uni_koblenz.jgralab.grumlschema.domains.RecordDomain currentRecordDomain;
-	private de.uni_koblenz.jgralab.grumlschema.domains.HasRecordDomainComponent currentRecordDomainComponent;
-	private de.uni_koblenz.jgralab.grumlschema.structure.Attribute currentAttribute;
+
+	/**
+	 * Remembers the current VertexClass/EdgeClass vertex for processing of
+	 * nested elements.
+	 */
+	private AttributedElementClass currentClass;
+
+	/**
+	 * Remembers the current RecordDomain vertex for processing of nested
+	 * elements.
+	 */
+	private RecordDomain currentRecordDomain;
+
+	/**
+	 * Remembers the current domain component edge for processing of nested
+	 * elements.
+	 */
+	private HasRecordDomainComponent currentRecordDomainComponent;
+
+	/**
+	 * Remembers the current Attribute vertex for processing of nested elements.
+	 */
+	private Attribute currentAttribute;
+
+	/**
+	 * Marks Vertex/EdgeClass vertices with a set of XMI Ids of superclasses.
+	 */
 	private GraphMarker<Set<String>> generalizations;
+
+	/**
+	 * Marks Attribute vertices with the XMI Id of its type if the type can not
+	 * be resolved at the time the Attribute is processed.
+	 */
 	private GraphMarker<String> attributeType;
+
+	/**
+	 * Marks RecordDomainComponent edges with the XMI Id of its type if the type
+	 * can not be resolved at the time the component is processed.
+	 */
 	private GraphMarker<String> recordComponentType;
+
+	/**
+	 * Maps qualified names of domains to the corresponding Domain vertex.
+	 */
 	private Map<String, Domain> domainMap;
+
+	/**
+	 * A set of preliminary vertices which are created to have a target vertex
+	 * for edges where the real target can only be created later (i.e. forward
+	 * references in XMI). After processing is finished, this set must be empty,
+	 * since each preliminary vertex has to be replaced by the correct vertex.
+	 */
 	private Set<Vertex> preliminaryVertices;
+
+	/**
+	 * Remembers the current association end edge (To/From edge), which can be
+	 * an ownedEnd or an ownedAttribute, for processing of nested elements.
+	 */
 	private Edge currentAssociationEnd;
+
+	/**
+	 * The set of To/From edges which are the aggregate side of an
+	 * AggregationClass/CompositionClass (use to determine the aggregateFrom
+	 * attribute).
+	 */
 	private Set<Edge> aggregateEnds;
+
+	/**
+	 * The set of To/From edges which are represended by ownedEnd elements (used
+	 * to determine the direction of edges).
+	 */
 	private Set<Edge> ownedEnds;
+
+	/**
+	 * True if currently processing a constraint (ownedRule) element.
+	 */
 	private boolean inConstraint;
+
+	/**
+	 * The XMI Id of the constrained element if the constraint has exactly one
+	 * constrained element, null otherwise. If set to null, the constraint will
+	 * be attached to the GraphClass vertex.
+	 */
 	private String constrainedElementId;
+
+	/**
+	 * Maps the XMI Id of constrained elements to the list of constraints.
+	 * Constrains are the character data inside a body element of ownedRule
+	 * elements.
+	 */
 	private Map<String, List<String>> constraints;
 
-	// option variables
+	/**
+	 * When creating EdgeClass names, also use the rolename of the "from" end.
+	 */
 	private boolean useFromRole;
+
+	/**
+	 * After processing is complete, remove Domain vertices which are not used
+	 * by an attribute or by a record domain component.
+	 */
 	private boolean removeUnusedDomains;
+
+	/**
+	 * When dertermining the edge direction, also take navigability of
+	 * associations into account (rather than the drawing direction only).
+	 */
 	private boolean useNavigability;
 
 	public Rsa2Tg() {
@@ -101,9 +233,9 @@ public class Rsa2Tg extends org.xml.sax.helpers.DefaultHandler {
 		r.setUseFromRole(true);
 		r.setRemoveUnusedDomains(true);
 		r.setUseNavigability(true);
-		r
-				.process("/Users/riediger/src/re-group/project/jgralab/manual/grUML/grUML-M3.xmi");
-		// r.process("/Users/riediger/Desktop/OsmSchema.xmi");
+		// r
+		// .process("/Users/riediger/src/re-group/project/jgralab/manual/grUML/grUML-M3.xmi");
+		r.process("/Users/riediger/Desktop/OsmSchema.xmi");
 		// r.process("/Users/riediger/Desktop/test.xmi");
 		System.out.println("Fini.");
 	}
@@ -347,7 +479,6 @@ public class Rsa2Tg extends org.xml.sax.helpers.DefaultHandler {
 				System.err.println("The schema graph is not valid :-(");
 			}
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
