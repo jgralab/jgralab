@@ -18,7 +18,7 @@ VertexClass Constraint {message: String, offendingElementsQuery: String, predica
 VertexClass EdgeClass: GraphElementClass;
 VertexClass GraphClass: AttributedElementClass;
 abstract VertexClass GraphElementClass: AttributedElementClass;
-VertexClass Package {qualifiedName: String} ["A Package must either be default or subpackage, but not both" "forall p: V{structure.Package} @ degree{structure.ContainsDefaultPackage}(p) + degree{structure.ContainsSubPackage}(p) = 1"];
+VertexClass Package {qualifiedName: String} ["A Package must either be default or subpackage, but not both" "forall p: V{structure.Package} @ inDegree{structure.ContainsDefaultPackage}(p) + inDegree{structure.ContainsSubPackage}(p) = 1"];
 VertexClass VertexClass: GraphElementClass;
 
 EdgeClass HasDomain from Attribute (0,*) to domains.Domain (1,1);
@@ -43,7 +43,7 @@ VertexClass ListDomain: CollectionDomain;
 VertexClass LongDomain: Domain;
 VertexClass MapDomain: Domain
   ["The key domain of a MapDomain must not be a collection, record, or map"
-  "forall m: V{domain.MapDomain} @ (forall d: m -->{domain.HasKeyDomain} @ not hasType{domain.CollectionDomain, domain.RecordDomain, domain.MapDomain}(d))"];
+  "forall m: V{domains.MapDomain} @ (forall d: m -->{domains.HasKeyDomain} @ not hasType{domains.CollectionDomain, domains.RecordDomain, domains.MapDomain}(d))"];
 VertexClass BooleanDomain: Domain;
 abstract VertexClass CollectionDomain: Domain;
 VertexClass SetDomain: CollectionDomain;
