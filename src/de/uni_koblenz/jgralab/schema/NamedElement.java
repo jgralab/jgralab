@@ -27,19 +27,19 @@ package de.uni_koblenz.jgralab.schema;
 /**
  * NamedElement defines methods to access the QualifiedName components of a
  * Schema element.
- * 
+ *
  * <p>
  * <b>Note:</b> in the following, <code>namedElement</code>, and <code>namedElement'</code>
  * , will represent the states of the given <code>NamedElement</code> before,
  * respectively after, any operation.
  * </p>
- * 
+ *
  * <p>
  * <b>Note:</b> in the following it is understood that method arguments differ
  * from <code>null</code>. Therefore there will be no preconditions addressing
  * this matter.
  * </p>
- * 
+ *
  * @author ist@uni-koblenz.de
  */
 public interface NamedElement {
@@ -62,7 +62,7 @@ public interface NamedElement {
 
 	/**
 	 * Sets the unique name of this element in the schema
-	 * 
+	 *
 	 * @throws Exception
 	 *             if the same unique name is used for another element
 	 * @param name
@@ -81,15 +81,15 @@ public interface NamedElement {
 	/**
 	 * Returns the name of the fully qualified package the element is located
 	 * in.
-	 * 
+	 *
 	 * <p>
 	 * <b>Pattern:</b> <code>pkgName = namedElement.getPackageName();</code>
 	 * </p>
-	 * 
+	 *
 	 * <p>
 	 * <b>Preconditions:</b> none
 	 * </p>
-	 * 
+	 *
 	 * <p>
 	 * <b>Postconditions:</b>
 	 * <ul>
@@ -101,10 +101,13 @@ public interface NamedElement {
 	 * package layers being separated by a "." character</li>
 	 * </ul>
 	 * </p>
-	 * 
+	 *
 	 * @return the name of the fully qualified package the element is located in
 	 */
 	public String getPackageName();
 
+	/**
+	 * Returns thr grUML Schema of this NamedElement.
+	 */
 	public Schema getSchema();
 }
