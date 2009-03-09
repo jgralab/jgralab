@@ -49,11 +49,6 @@ public abstract class AttributedElementClassImpl implements
 		AttributedElementClass {
 
 	/**
-	 * toggles if this class is only for internal use
-	 */
-	private boolean internal = false;
-
-	/**
 	 * the package this attributed element class belongs to
 	 */
 	private Package pkg;
@@ -117,7 +112,7 @@ public abstract class AttributedElementClassImpl implements
 
 	/**
 	 * builds a new attributed element class
-	 * 
+	 *
 	 * @param qn
 	 *            the unique identifier of the element in the schema
 	 */
@@ -308,7 +303,7 @@ public abstract class AttributedElementClassImpl implements
 
 	/**
 	 * adds a superClass to this class
-	 * 
+	 *
 	 * @param superClass
 	 *            the class to add as superclass
 	 */
@@ -432,12 +427,13 @@ public abstract class AttributedElementClassImpl implements
 
 	@Override
 	public boolean isInternal() {
-		return internal;
-	}
-
-	@Override
-	public void setInternal(boolean internal) {
-		this.internal = internal;
+		Schema s = getSchema();
+		return this == s.getDefaultAggregationClass()
+				|| this == s.getDefaultCompositionClass()
+				|| this == s.getDefaultEdgeClass()
+				|| this == s.getDefaultGraphClass()
+				|| this == s.getDefaultPackage()
+				|| this == s.getDefaultVertexClass();
 	}
 
 	@Override

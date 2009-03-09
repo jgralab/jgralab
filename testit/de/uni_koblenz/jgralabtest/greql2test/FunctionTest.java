@@ -834,7 +834,7 @@ public class FunctionTest extends GenericTests {
 		assertTrue(evalTestQuery("GrEqual", "3 >= 2").toBoolean());
 		assertTrue(evalTestQuery("GrEqual", "17 >= 17").toBoolean());
 		assertTrue(evalTestQuery("GrEqual", "grEqual(17, 17.0)").toBoolean());
-		assertFalse(evalTestQuery("GrEqual", "17 >= 199)").toBoolean());
+		assertFalse(evalTestQuery("GrEqual", "17 >= 199").toBoolean());
 		assertTrue(evalTestQuery("GrEqual", "5.50 >= 4.701").toBoolean());
 		assertTrue(evalTestQuery("GrEqual", "33.1 >= 33.1").toBoolean());
 		assertTrue(evalTestQuery("GrEqual", "grEqual(117.4, 111)").toBoolean());
