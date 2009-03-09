@@ -32,7 +32,6 @@ import de.uni_koblenz.jgralab.AttributedElement;
 import de.uni_koblenz.jgralab.schema.exception.DuplicateAttributeException;
 import de.uni_koblenz.jgralab.schema.exception.M1ClassAccessException;
 import de.uni_koblenz.jgralab.schema.exception.ReservedWordException;
-import de.uni_koblenz.jgralab.schema.exception.SchemaException;
 
 /**
  * This is the base class of any <code>GraphClass</code>/
@@ -908,98 +907,6 @@ public interface AttributedElementClass extends NamedElement,
 	 *             </ul>
 	 */
 	public Class<? extends AttributedElement> getM1ImplementationClass();
-
-	/**
-	 * Returns the least common superclass of this element and another given
-	 * attributed element.
-	 * 
-	 * <p>
-	 * <b>Pattern:</b>
-	 * <code>lcs = attrElement.getLeastCommonSuperclass(other);</code>
-	 * </p>
-	 * 
-	 * <p>
-	 * <b>Preconditions:</b> <code>attrElement</code> and <code>other</code> are
-	 * from the same kind as attrElement(e.g. both VertexClasses, or both
-	 * EdgeClasses)
-	 * </p>
-	 * 
-	 * <p>
-	 * <b>Postconditions:</b>
-	 * <ul>
-	 * <li>if <code>attr == other</code>, the least common superclass is</li>
-	 * <li>if <code>attr != other</code>, and:
-	 * <ul>
-	 * <li>both have one equal superclass which is the highest in the
-	 * inheritance hierarchy, then that superclass is the least common
-	 * superclass</li>
-	 * <li>both have multiple same superclasses being on the same hierarchy
-	 * level, then</li>
-	 * <li>both have no common superclass, then the least common superclass is
-	 * the default class</li>
-	 * </ul>
-	 * </li>
-	 * </ul>
-	 * </p>
-	 * 
-	 * @param other
-	 *            the other attributed element
-	 * 
-	 * @throws SchemaException
-	 *             if the method is called with different kind of classes
-	 * 
-	 * @return the least common superclass
-	 */
-	public AttributedElementClass getLeastCommonSuperclass(
-			AttributedElementClass other);
-
-	/**
-	 * Returns the least common superclass of this element and other given
-	 * attributed elements.
-	 * 
-	 * <p>
-	 * <b>Pattern:</b>
-	 * <code>lcs = attrElement.getLeastCommonSuperclass(others);</code>
-	 * </p>
-	 * 
-	 * <p>
-	 * <b>Preconditions:</b> all elements in <code>others</code> are from the
-	 * same kind (e.g. all VertexClasses, or all EdgeClasses)
-	 * </p>
-	 * 
-	 * <p>
-	 * <b>Postconditions:</b>
-	 * <ul>
-	 * <li>if <code>others.isEmpty() == true</code>, then
-	 * <code>attrElement</code> is the least common superclass</li>
-	 * <li>if all <code>other</code> elements are the same as
-	 * <code>attrElement</code>, then <code>attrElement</code> is the least
-	 * common superclass</li>
-	 * <li>if at least one <code>other</code> element is different from
-	 * <code>attrElement</code>, and:
-	 * <ul>
-	 * <li>the elements have one equal superclass which is the highest in the
-	 * inheritance hierarchy, then that superclass is the least common
-	 * superclass</li>
-	 * <li>the elements have multiple same superclasses being on the same
-	 * hierarchy level, then</li>
-	 * <li>the elements have no common superclass, then the default class for
-	 * this type of element is the least common least common superclass</li>
-	 * </ul>
-	 * </li>
-	 * </ul>
-	 * </p>
-	 * 
-	 * @param other
-	 *            the other attributed element(s)
-	 * 
-	 * @throws SchemaException
-	 *             if the method is called with different kind of classes
-	 * 
-	 * @return the least common superclass
-	 */
-	public AttributedElementClass getLeastCommonSuperclass(
-			Set<? extends AttributedElementClass> other);
 
 	/**
 	 * Adds a {@link Constraint} to this attributed element. Constraints are

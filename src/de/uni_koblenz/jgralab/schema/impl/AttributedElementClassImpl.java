@@ -37,17 +37,13 @@ import de.uni_koblenz.jgralab.M1ClassManager;
 import de.uni_koblenz.jgralab.schema.AttributedElementClass;
 import de.uni_koblenz.jgralab.schema.Constraint;
 import de.uni_koblenz.jgralab.schema.Domain;
-import de.uni_koblenz.jgralab.schema.EdgeClass;
-import de.uni_koblenz.jgralab.schema.GraphClass;
 import de.uni_koblenz.jgralab.schema.Package;
 import de.uni_koblenz.jgralab.schema.QualifiedName;
 import de.uni_koblenz.jgralab.schema.Schema;
-import de.uni_koblenz.jgralab.schema.VertexClass;
 import de.uni_koblenz.jgralab.schema.exception.DuplicateAttributeException;
 import de.uni_koblenz.jgralab.schema.exception.InheritanceException;
 import de.uni_koblenz.jgralab.schema.exception.M1ClassAccessException;
 import de.uni_koblenz.jgralab.schema.exception.ReservedWordException;
-import de.uni_koblenz.jgralab.schema.exception.SchemaException;
 
 public abstract class AttributedElementClassImpl implements
 		AttributedElementClass {
@@ -121,7 +117,7 @@ public abstract class AttributedElementClassImpl implements
 
 	/**
 	 * builds a new attributed element class
-	 *
+	 * 
 	 * @param qn
 	 *            the unique identifier of the element in the schema
 	 */
@@ -312,7 +308,7 @@ public abstract class AttributedElementClassImpl implements
 
 	/**
 	 * adds a superClass to this class
-	 *
+	 * 
 	 * @param superClass
 	 *            the class to add as superclass
 	 */
@@ -489,67 +485,6 @@ public abstract class AttributedElementClassImpl implements
 			}
 		}
 		return m1ImplementationClass;
-	}
-
-	@Override
-	public AttributedElementClass getLeastCommonSuperclass(
-			AttributedElementClass other) {
-		HashSet<AttributedElementClass> classes = new HashSet<AttributedElementClass>();
-		classes.add(this);
-		classes.add(other);
-		return calculateLeastCommonSuperclass(classes);
-	}
-
-	@Override
-	public AttributedElementClass getLeastCommonSuperclass(
-			Set<? extends AttributedElementClass> other) {
-		HashSet<AttributedElementClass> classes = new HashSet<AttributedElementClass>();
-		classes.add(this);
-		classes.addAll(other);
-		return calculateLeastCommonSuperclass(classes);
-	}
-
-	protected static AttributedElementClass calculateLeastCommonSuperclass(
-			Set<? extends AttributedElementClass> classes) {
-		boolean foundEdgeClass = false;
-		boolean foundVertexClass = false;
-		boolean foundGraphClass = false;
-		for (AttributedElementClass currentClass : classes) {
-			if (currentClass instanceof VertexClass) {
-				foundVertexClass = true;
-			} else if (currentClass instanceof EdgeClass) {
-				foundEdgeClass = true;
-			} else if (currentClass instanceof GraphClass) {
-				foundGraphClass = true;
-			}
-		}
-		if (!(foundEdgeClass ^ foundVertexClass ^ foundGraphClass))
-			throw new SchemaException("Method calculateLestCommonSuperclass must not be called with different kinds of classes (e.g. an EdgeClass and a VertexClass)"); 
-		AttributedElementClass leastCommon = null;
-		for (AttributedElementClass a : classes) {
-			boolean leastCommonCandidate = true;
-			for (AttributedElementClass b : classes) {
-				if (!a.isSuperClassOfOrEquals(b)) {
-					leastCommonCandidate = false;
-					break;
-				}
-			}
-			if (leastCommonCandidate) {
-				if ((leastCommon == null) || (a.isSubClassOf(leastCommon))) {
-					leastCommon = a;
-				}
-			}
-		}
-		if (leastCommon == null) {
-			// return null;
-			HashSet<AttributedElementClass> classesWithDirectSuperclasses = new HashSet<AttributedElementClass>();
-			classesWithDirectSuperclasses.addAll(classes);
-			for (AttributedElementClass a : classes) {
-				classesWithDirectSuperclasses.addAll(a.getDirectSuperClasses());
-			}
-			leastCommon = calculateLeastCommonSuperclass(classesWithDirectSuperclasses);
-		}
-		return leastCommon;
 	}
 
 	@Override
