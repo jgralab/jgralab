@@ -297,6 +297,16 @@ public class Rsa2Tg extends DefaultHandler {
 		createDotFile(schemaName);
 		saveGraph(schemaName);
 		validateGraph();
+		saveSchemagraphAsTg(schemaName);
+	}
+
+	private void saveSchemagraphAsTg(String schemaName) {
+		try {
+			new SchemaGraph2Tg(sg, schemaName + ".rsa.tg").run();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 	private void correctEdgeDirection() {
