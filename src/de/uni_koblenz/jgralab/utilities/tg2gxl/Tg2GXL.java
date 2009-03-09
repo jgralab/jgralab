@@ -36,6 +36,7 @@ import de.uni_koblenz.jgralab.AttributedElement;
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.GraphIOException;
 import de.uni_koblenz.jgralab.Vertex;
+import de.uni_koblenz.jgralab.WorkInProgress;
 import de.uni_koblenz.jgralab.grumlschema.domains.HasRecordDomainComponent;
 import de.uni_koblenz.jgralab.grumlschema.structure.Schema;
 import de.uni_koblenz.jgralab.schema.AttributedElementClass;
@@ -61,6 +62,7 @@ import de.uni_koblenz.jgralab.utilities.tg2whatever.Tg2Whatever;
  * 2. The <code>Schema</code> contains NOT ANY <code>RecordDomain</code>.
  * 
  */
+@WorkInProgress(description = "untested, suspected problems with record/enum domains and schema extraction")
 public class Tg2GXL extends Tg2Whatever {
 
 	// it might be suggestive to copy << gxl-1.0.dtd >> to a locale destination.

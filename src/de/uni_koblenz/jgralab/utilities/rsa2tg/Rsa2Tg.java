@@ -30,6 +30,7 @@ import de.uni_koblenz.jgralab.GraphIOException;
 import de.uni_koblenz.jgralab.GraphMarker;
 import de.uni_koblenz.jgralab.JGraLab;
 import de.uni_koblenz.jgralab.Vertex;
+import de.uni_koblenz.jgralab.WorkInProgress;
 import de.uni_koblenz.jgralab.graphvalidator.ConstraintViolation;
 import de.uni_koblenz.jgralab.graphvalidator.GraphValidator;
 import de.uni_koblenz.jgralab.grumlschema.GrumlSchema;
@@ -58,6 +59,12 @@ import de.uni_koblenz.jgralab.grumlschema.structure.To;
 import de.uni_koblenz.jgralab.grumlschema.structure.VertexClass;
 import de.uni_koblenz.jgralab.utilities.tg2dot.Tg2Dot;
 
+/**
+ * TODO add comment
+ * 
+ * @author ist@uni-koblenz.de
+ */
+@WorkInProgress(description = "Schema graph to TG missing, comments not recorded, missing command line interface", responsibleDevelopers = "riediger, mmce", expectedFinishingDate = "2009/04/20")
 public class Rsa2Tg extends DefaultHandler {
 	/**
 	 * Contains XML element names in the format "name>xmiId"
@@ -235,8 +242,8 @@ public class Rsa2Tg extends DefaultHandler {
 		r.setUseNavigability(true);
 		// r
 		// .process("/Users/riediger/src/re-group/project/jgralab/manual/grUML/grUML-M3.xmi");
-		r.process("/Users/riediger/Desktop/OsmSchema.xmi");
-		// r.process("/Users/riediger/Desktop/test.xmi");
+		// r.process("/Users/riediger/Desktop/OsmSchema.xmi");
+		r.process("/Users/riediger/Desktop/test.xmi");
 		System.out.println("Fini.");
 	}
 

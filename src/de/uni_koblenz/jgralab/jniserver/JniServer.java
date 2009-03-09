@@ -12,6 +12,7 @@ import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.GraphException;
 import de.uni_koblenz.jgralab.GraphIO;
 import de.uni_koblenz.jgralab.Vertex;
+import de.uni_koblenz.jgralab.WorkInProgress;
 import de.uni_koblenz.jgralab.schema.AttributedElementClass;
 import de.uni_koblenz.jgralab.schema.Domain;
 import de.uni_koblenz.jgralab.schema.EdgeClass;
@@ -20,6 +21,13 @@ import de.uni_koblenz.jgralab.schema.QualifiedName;
 import de.uni_koblenz.jgralab.schema.Schema;
 import de.uni_koblenz.jgralab.schema.VertexClass;
 
+/**
+ * A JNI server class for calling JGraLab from C++.
+ * 
+ * @author ist@uni-koblenz.de
+ * 
+ */
+@WorkInProgress(description = "totally incomplete, mainly untested", responsibleDevelopers = "riediger")
 public class JniServer {
 	private static int keyGenerator;
 
