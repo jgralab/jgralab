@@ -1,7 +1,7 @@
 /**
  * 
  */
-package de.uni_koblenz.jgralab.greql2;
+package de.uni_koblenz.jgralab.utilities.greqlinterface;
 
 import java.io.File;
 import java.io.FilenameFilter;

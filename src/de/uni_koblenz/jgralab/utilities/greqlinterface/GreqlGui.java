@@ -1,4 +1,4 @@
-package de.uni_koblenz.jgralab.greql2;
+package de.uni_koblenz.jgralab.utilities.greqlinterface;
 
 import java.awt.Color;
 import java.awt.GridLayout;
