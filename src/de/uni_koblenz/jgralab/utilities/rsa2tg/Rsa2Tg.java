@@ -235,15 +235,16 @@ public class Rsa2Tg extends DefaultHandler {
 
 	public static void main(String[] args) {
 		System.out.println("RSA to TG");
+		System.out.println("=========");
 		JGraLab.setLogLevel(Level.OFF);
 		Rsa2Tg r = new Rsa2Tg();
 		r.setUseFromRole(true);
 		r.setRemoveUnusedDomains(true);
 		r.setUseNavigability(true);
-		// r
-		// .process("/Users/riediger/src/re-group/project/jgralab/manual/grUML/grUML-M3.xmi");
-		// r.process("/Users/riediger/Desktop/OsmSchema.xmi");
-		r.process("/Users/riediger/Desktop/test.xmi");
+		for (String xmiFileName : args) {
+			System.out.println("processing: " + xmiFileName);
+			r.process(xmiFileName);
+		}
 		System.out.println("Fini.");
 	}
 
@@ -296,7 +297,7 @@ public class Rsa2Tg extends DefaultHandler {
 		// sg.defragment();
 		createDotFile(schemaName);
 		saveGraph(schemaName);
-		validateGraph();
+		validateGraph(schemaName);
 		saveSchemagraphAsTg(schemaName);
 	}
 
@@ -487,11 +488,12 @@ public class Rsa2Tg extends DefaultHandler {
 		assert recordComponentType.isEmpty();
 	}
 
-	private void validateGraph() {
+	private void validateGraph(String schemaName) {
 		GraphValidator validator = new GraphValidator(sg);
 		try {
 			Set<ConstraintViolation> s = validator
-					.createValidationReport("validationreport.html");
+					.createValidationReport(schemaName
+							+ ".validationreport.html");
 			if (!s.isEmpty()) {
 				System.err.println("The schema graph is not valid :-(");
 			}

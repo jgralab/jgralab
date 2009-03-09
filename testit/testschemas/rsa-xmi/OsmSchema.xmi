@@ -1,0 +1,204 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<uml:Package xmi:version="2.1" xmlns:xmi="http://schema.omg.org/spec/XMI/2.1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore" xmlns:uml="http://schema.omg.org/spec/UML/2.1.1" xsi:schemaLocation="http://schema.omg.org/spec/UML/2.1.1 http://www.eclipse.org/uml2/2.1.0/UML" xmi:id="_0Hk2_QpbEd6B4uCv4341gg" name="de.uni_koblenz.jgstreetmap.osmschema.OsmSchema">
+  <packageImport xmi:type="uml:PackageImport" xmi:id="_0Hk2_gpbEd6B4uCv4341gg">
+    <importedPackage xmi:type="uml:Model" href="http://schema.omg.org/spec/UML/2.1.1/uml.xml#_0"/>
+  </packageImport>
+  <packagedElement xmi:type="uml:Class" xmi:id="_0Hk2_wpbEd6B4uCv4341gg" name="OsmGraph">
+    <xmi:Extension extender="http://www.eclipse.org/emf/2002/Ecore">
+      <eAnnotations xmi:type="ecore:EAnnotation" xmi:id="_0Hk3AApbEd6B4uCv4341gg" source="http://www.eclipse.org/uml2/2.0.0/UML">
+        <details xmi:type="ecore:EStringToStringMapEntry" xmi:id="_0Hk3AQpbEd6B4uCv4341gg" key="graphclass"/>
+      </eAnnotations>
+    </xmi:Extension>
+  </packagedElement>
+  <packagedElement xmi:type="uml:Package" xmi:id="_0Hk3AgpbEd6B4uCv4341gg" name="map">
+    <packagedElement xmi:type="uml:Class" xmi:id="_0Hk3AwpbEd6B4uCv4341gg" name="Node">
+      <ownedRule xmi:type="uml:Constraint" xmi:id="_0Hk3BApbEd6B4uCv4341gg" name="Range of latitude and longitude" constrainedElement="_0Hk3AwpbEd6B4uCv4341gg">
+        <specification xmi:type="uml:OpaqueExpression" xmi:id="_0Hk3BQpbEd6B4uCv4341gg">
+          <language></language>
+          <body>&quot;In each Node, |latitude| must be &lt;= 90.0° and  |longitude| must be &lt;= 180.0°&quot;&#xD;&#xA;&quot;forall n: V{map.Node0} @ abs(n.latitude) &lt;= 90.0 and abs(n.longitude) &lt;= 180.0&quot;&#xD;&#xA;&quot;from n: V{Node} with abs(n.latitude)>90.0 or n.longitude>180.0 report n end&quot;</body>
+        </specification>
+      </ownedRule>
+      <generalization xmi:type="uml:Generalization" xmi:id="_0Hk3BgpbEd6B4uCv4341gg" general="_0Hk3DwpbEd6B4uCv4341gg"/>
+      <ownedAttribute xmi:type="uml:Property" xmi:id="_0Hk3BwpbEd6B4uCv4341gg" name="longitude" visibility="private" type="_0Hk3dgpbEd6B4uCv4341gg"/>
+      <ownedAttribute xmi:type="uml:Property" xmi:id="_0Hk3CApbEd6B4uCv4341gg" name="latitude" visibility="private" type="_0Hk3dgpbEd6B4uCv4341gg"/>
+      <ownedAttribute xmi:type="uml:Property" xmi:id="_0Hk3CQpbEd6B4uCv4341gg" name="way" visibility="private" type="_0Hk3FApbEd6B4uCv4341gg" association="_0Hk3GwpbEd6B4uCv4341gg">
+        <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_0Hk3CgpbEd6B4uCv4341gg" value="*"/>
+        <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_0Hk3CwpbEd6B4uCv4341gg"/>
+      </ownedAttribute>
+      <ownedAttribute xmi:type="uml:Property" xmi:id="_0Hk3DApbEd6B4uCv4341gg" name="set" visibility="private" type="_0Hk3VApbEd6B4uCv4341gg" association="_0Hk3XApbEd6B4uCv4341gg">
+        <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_0Hk3DQpbEd6B4uCv4341gg" value="1"/>
+        <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_0Hk3DgpbEd6B4uCv4341gg"/>
+      </ownedAttribute>
+    </packagedElement>
+    <packagedElement xmi:type="uml:Class" xmi:id="_0Hk3DwpbEd6B4uCv4341gg" name="OsmPrimitive" isAbstract="true">
+      <ownedAttribute xmi:type="uml:Property" xmi:id="_0Hk3EApbEd6B4uCv4341gg" name="osmId" visibility="private" type="_0Hk3dwpbEd6B4uCv4341gg"/>
+      <ownedAttribute xmi:type="uml:Property" xmi:id="_0Hk3EQpbEd6B4uCv4341gg" name="tags" visibility="private" type="_0Hk3dQpbEd6B4uCv4341gg"/>
+      <ownedAttribute xmi:type="uml:Property" xmi:id="_0Hk3EgpbEd6B4uCv4341gg" name="timeStamp" visibility="private" type="_0Hk3dwpbEd6B4uCv4341gg"/>
+      <ownedAttribute xmi:type="uml:Property" xmi:id="_0Hk3EwpbEd6B4uCv4341gg" name="user" visibility="private">
+        <type xmi:type="uml:PrimitiveType" href="http://schema.omg.org/spec/UML/2.1.1/uml.xml#String"/>
+      </ownedAttribute>
+    </packagedElement>
+    <packagedElement xmi:type="uml:Class" xmi:id="_0Hk3FApbEd6B4uCv4341gg" name="Way">
+      <generalization xmi:type="uml:Generalization" xmi:id="_0Hk3FQpbEd6B4uCv4341gg" general="_0Hk3DwpbEd6B4uCv4341gg"/>
+      <ownedAttribute xmi:type="uml:Property" xmi:id="_0Hk3FgpbEd6B4uCv4341gg" name="node" visibility="private" type="_0Hk3AwpbEd6B4uCv4341gg" aggregation="shared" association="_0Hk3GwpbEd6B4uCv4341gg">
+        <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_0Hk3FwpbEd6B4uCv4341gg" value="*"/>
+        <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_0Hk3GApbEd6B4uCv4341gg" value="1"/>
+      </ownedAttribute>
+      <ownedAttribute xmi:type="uml:Property" xmi:id="_0Hk3GQpbEd6B4uCv4341gg" name="closed" visibility="private">
+        <type xmi:type="uml:PrimitiveType" href="http://schema.omg.org/spec/UML/2.1.1/uml.xml#Boolean"/>
+      </ownedAttribute>
+      <ownedAttribute xmi:type="uml:Property" xmi:id="_0Hk3GgpbEd6B4uCv4341gg" name="wayType" visibility="private" type="_0Hk3NgpbEd6B4uCv4341gg"/>
+    </packagedElement>
+    <packagedElement xmi:type="uml:Association" xmi:id="_0Hk3GwpbEd6B4uCv4341gg" name="HasNode" memberEnd="_0Hk3FgpbEd6B4uCv4341gg _0Hk3CQpbEd6B4uCv4341gg">
+      <xmi:Extension extender="http://www.eclipse.org/emf/2002/Ecore">
+        <eAnnotations xmi:type="ecore:EAnnotation" xmi:id="_0Hk3HApbEd6B4uCv4341gg" source="http://www.eclipse.org/uml2/2.0.0/UML"/>
+      </xmi:Extension>
+    </packagedElement>
+    <packagedElement xmi:type="uml:Class" xmi:id="_0Hk3HQpbEd6B4uCv4341gg" name="Area">
+      <generalization xmi:type="uml:Generalization" xmi:id="_0Hk3HgpbEd6B4uCv4341gg" general="_0Hk3FApbEd6B4uCv4341gg"/>
+    </packagedElement>
+    <packagedElement xmi:type="uml:Class" xmi:id="_0Hk3HwpbEd6B4uCv4341gg" name="Relation">
+      <generalization xmi:type="uml:Generalization" xmi:id="_0Hk3IApbEd6B4uCv4341gg" general="_0Hk3DwpbEd6B4uCv4341gg"/>
+    </packagedElement>
+    <packagedElement xmi:type="uml:AssociationClass" xmi:id="_0Hk3IQpbEd6B4uCv4341gg" name="HasMember" memberEnd="_0Hk3JApbEd6B4uCv4341gg _0Hk3JwpbEd6B4uCv4341gg">
+      <ownedAttribute xmi:type="uml:Property" xmi:id="_0Hk3IgpbEd6B4uCv4341gg" name="memberType" visibility="private">
+        <type xmi:type="uml:PrimitiveType" href="http://schema.omg.org/spec/UML/2.1.1/uml.xml#String"/>
+      </ownedAttribute>
+      <ownedAttribute xmi:type="uml:Property" xmi:id="_0Hk3IwpbEd6B4uCv4341gg" name="memberRole" visibility="private">
+        <type xmi:type="uml:PrimitiveType" href="http://schema.omg.org/spec/UML/2.1.1/uml.xml#String"/>
+      </ownedAttribute>
+      <ownedEnd xmi:type="uml:Property" xmi:id="_0Hk3JApbEd6B4uCv4341gg" name="member" visibility="private" type="_0Hk3DwpbEd6B4uCv4341gg" aggregation="shared" association="_0Hk3IQpbEd6B4uCv4341gg">
+        <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_0Hk3JQpbEd6B4uCv4341gg" value="*"/>
+        <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_0Hk3JgpbEd6B4uCv4341gg"/>
+      </ownedEnd>
+      <ownedEnd xmi:type="uml:Property" xmi:id="_0Hk3JwpbEd6B4uCv4341gg" name="relation" visibility="private" type="_0Hk3HwpbEd6B4uCv4341gg" association="_0Hk3IQpbEd6B4uCv4341gg">
+        <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_0Hk3KApbEd6B4uCv4341gg" value="*"/>
+        <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_0Hk3KQpbEd6B4uCv4341gg"/>
+      </ownedEnd>
+    </packagedElement>
+  </packagedElement>
+  <packagedElement xmi:type="uml:Package" xmi:id="_0Hk3KgpbEd6B4uCv4341gg" name="routing">
+    <packagedElement xmi:type="uml:AssociationClass" xmi:id="_0Hk3KwpbEd6B4uCv4341gg" name="Segment" memberEnd="_0Hk3MApbEd6B4uCv4341gg _0Hk3MwpbEd6B4uCv4341gg">
+      <ownedAttribute xmi:type="uml:Property" xmi:id="_0Hk3LApbEd6B4uCv4341gg" name="oneway" visibility="private">
+        <type xmi:type="uml:PrimitiveType" href="http://schema.omg.org/spec/UML/2.1.1/uml.xml#Boolean"/>
+      </ownedAttribute>
+      <ownedAttribute xmi:type="uml:Property" xmi:id="_0Hk3LQpbEd6B4uCv4341gg" name="wayType" visibility="private" type="_0Hk3NgpbEd6B4uCv4341gg"/>
+      <ownedAttribute xmi:type="uml:Property" xmi:id="_0Hk3LgpbEd6B4uCv4341gg" name="length" visibility="private" type="_0Hk3dgpbEd6B4uCv4341gg"/>
+      <ownedAttribute xmi:type="uml:Property" xmi:id="_0Hk3LwpbEd6B4uCv4341gg" name="wayId" visibility="private" type="_0Hk3dwpbEd6B4uCv4341gg"/>
+      <ownedEnd xmi:type="uml:Property" xmi:id="_0Hk3MApbEd6B4uCv4341gg" name="" visibility="private" type="_0Hk3AwpbEd6B4uCv4341gg" association="_0Hk3KwpbEd6B4uCv4341gg">
+        <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_0Hk3MQpbEd6B4uCv4341gg" value="*"/>
+        <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_0Hk3MgpbEd6B4uCv4341gg"/>
+      </ownedEnd>
+      <ownedEnd xmi:type="uml:Property" xmi:id="_0Hk3MwpbEd6B4uCv4341gg" name="" visibility="private" type="_0Hk3AwpbEd6B4uCv4341gg" association="_0Hk3KwpbEd6B4uCv4341gg">
+        <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_0Hk3NApbEd6B4uCv4341gg" value="*"/>
+        <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_0Hk3NQpbEd6B4uCv4341gg"/>
+      </ownedEnd>
+    </packagedElement>
+    <packagedElement xmi:type="uml:Enumeration" xmi:id="_0Hk3NgpbEd6B4uCv4341gg" name="SegmentType">
+      <ownedLiteral xmi:type="uml:EnumerationLiteral" xmi:id="_0Hk3NwpbEd6B4uCv4341gg" name="NOWAY" classifier="_0Hk3NgpbEd6B4uCv4341gg"/>
+      <ownedLiteral xmi:type="uml:EnumerationLiteral" xmi:id="_0Hk3OApbEd6B4uCv4341gg" name="CYCLEWAY" classifier="_0Hk3NgpbEd6B4uCv4341gg"/>
+      <ownedLiteral xmi:type="uml:EnumerationLiteral" xmi:id="_0Hk3OQpbEd6B4uCv4341gg" name="MOTORWAY" classifier="_0Hk3NgpbEd6B4uCv4341gg"/>
+      <ownedLiteral xmi:type="uml:EnumerationLiteral" xmi:id="_0Hk3OgpbEd6B4uCv4341gg" name="PRIMARY" classifier="_0Hk3NgpbEd6B4uCv4341gg"/>
+      <ownedLiteral xmi:type="uml:EnumerationLiteral" xmi:id="_0Hk3OwpbEd6B4uCv4341gg" name="SECONDARY" classifier="_0Hk3NgpbEd6B4uCv4341gg"/>
+      <ownedLiteral xmi:type="uml:EnumerationLiteral" xmi:id="_0Hk3PApbEd6B4uCv4341gg" name="TERTIARY" classifier="_0Hk3NgpbEd6B4uCv4341gg"/>
+      <ownedLiteral xmi:type="uml:EnumerationLiteral" xmi:id="_0Hk3PQpbEd6B4uCv4341gg" name="RESIDENTIAL" classifier="_0Hk3NgpbEd6B4uCv4341gg"/>
+      <ownedLiteral xmi:type="uml:EnumerationLiteral" xmi:id="_0Hk3PgpbEd6B4uCv4341gg" name="FOOTWAY" classifier="_0Hk3NgpbEd6B4uCv4341gg"/>
+      <ownedLiteral xmi:type="uml:EnumerationLiteral" xmi:id="_0Hk3PwpbEd6B4uCv4341gg" name="UNSURFACED" classifier="_0Hk3NgpbEd6B4uCv4341gg"/>
+      <ownedLiteral xmi:type="uml:EnumerationLiteral" xmi:id="_0Hk3QApbEd6B4uCv4341gg" name="SERVICE" classifier="_0Hk3NgpbEd6B4uCv4341gg"/>
+      <ownedLiteral xmi:type="uml:EnumerationLiteral" xmi:id="_0Hk3QQpbEd6B4uCv4341gg" name="WORMHOLE" classifier="_0Hk3NgpbEd6B4uCv4341gg"/>
+    </packagedElement>
+  </packagedElement>
+  <packagedElement xmi:type="uml:Package" xmi:id="_0Hk3QgpbEd6B4uCv4341gg" name="kdtree">
+    <packagedElement xmi:type="uml:Class" xmi:id="_0Hk3QwpbEd6B4uCv4341gg" name="KDTree">
+      <ownedRule xmi:type="uml:Constraint" xmi:id="_0Hk3RApbEd6B4uCv4341gg" name="KDTree existence" constrainedElement="_0Hk3QwpbEd6B4uCv4341gg">
+        <specification xmi:type="uml:OpaqueExpression" xmi:id="_0Hk3RQpbEd6B4uCv4341gg">
+          <language></language>
+          <body>&quot;Each OSM Graph must contain exactly one KDTree vertex.&quot;&#xD;&#xA;&quot;exists! t: V{kdtree.KDTree] @ true&quot;</body>
+        </specification>
+      </ownedRule>
+      <ownedRule xmi:type="uml:Constraint" xmi:id="_0Hk3RgpbEd6B4uCv4341gg" name="KDTree Levels" constrainedElement="_0Hk3QwpbEd6B4uCv4341gg">
+        <specification xmi:type="uml:OpaqueExpression" xmi:id="_0Hk3RwpbEd6B4uCv4341gg">
+          <body>&quot;KDTree must have at least one  level.&quot;&#xD;&#xA;&quot;forall t: V{kdtree.KDTree} @ t.levels>=1&quot;&#xD;&#xA;&quot;from t: V{KDTree} with t.levels&lt;1 report t end&quot;</body>
+        </specification>
+      </ownedRule>
+      <ownedAttribute xmi:type="uml:Property" xmi:id="_0Hk3SApbEd6B4uCv4341gg" name="levels" visibility="private">
+        <type xmi:type="uml:PrimitiveType" href="http://schema.omg.org/spec/UML/2.1.1/uml.xml#Integer"/>
+      </ownedAttribute>
+      <ownedAttribute xmi:type="uml:Property" xmi:id="_0Hk3SQpbEd6B4uCv4341gg" name="root" visibility="private" type="_0Hk3TApbEd6B4uCv4341gg" aggregation="shared" association="_0Hk3cQpbEd6B4uCv4341gg">
+        <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_0Hk3SgpbEd6B4uCv4341gg" value="1"/>
+        <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_0Hk3SwpbEd6B4uCv4341gg" value="1"/>
+      </ownedAttribute>
+    </packagedElement>
+    <packagedElement xmi:type="uml:Class" xmi:id="_0Hk3TApbEd6B4uCv4341gg" name="Key" isAbstract="true">
+      <ownedAttribute xmi:type="uml:Property" xmi:id="_0Hk3TQpbEd6B4uCv4341gg" name="keyValue" visibility="private" type="_0Hk3dgpbEd6B4uCv4341gg"/>
+      <ownedAttribute xmi:type="uml:Property" xmi:id="_0Hk3TgpbEd6B4uCv4341gg" name="set" visibility="private" type="_0Hk3VApbEd6B4uCv4341gg" association="_0Hk3WwpbEd6B4uCv4341gg">
+        <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_0Hk3TwpbEd6B4uCv4341gg" value="1"/>
+        <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_0Hk3UApbEd6B4uCv4341gg"/>
+      </ownedAttribute>
+      <ownedAttribute xmi:type="uml:Property" xmi:id="_0Hk3UQpbEd6B4uCv4341gg" name="tree" visibility="private" type="_0Hk3QwpbEd6B4uCv4341gg" association="_0Hk3cQpbEd6B4uCv4341gg">
+        <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_0Hk3UgpbEd6B4uCv4341gg" value="1"/>
+        <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_0Hk3UwpbEd6B4uCv4341gg"/>
+      </ownedAttribute>
+    </packagedElement>
+    <packagedElement xmi:type="uml:Class" xmi:id="_0Hk3VApbEd6B4uCv4341gg" name="NodeSet">
+      <ownedAttribute xmi:type="uml:Property" xmi:id="_0Hk3VQpbEd6B4uCv4341gg" name="key" visibility="private" type="_0Hk3TApbEd6B4uCv4341gg" association="_0Hk3WwpbEd6B4uCv4341gg">
+        <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_0Hk3VgpbEd6B4uCv4341gg" value="1"/>
+        <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_0Hk3VwpbEd6B4uCv4341gg" value="1"/>
+      </ownedAttribute>
+      <ownedAttribute xmi:type="uml:Property" xmi:id="_0Hk3WApbEd6B4uCv4341gg" name="element" visibility="private" type="_0Hk3AwpbEd6B4uCv4341gg" aggregation="shared" association="_0Hk3XApbEd6B4uCv4341gg">
+        <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_0Hk3WQpbEd6B4uCv4341gg" value="*"/>
+        <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_0Hk3WgpbEd6B4uCv4341gg" value="1"/>
+      </ownedAttribute>
+    </packagedElement>
+    <packagedElement xmi:type="uml:Association" xmi:id="_0Hk3WwpbEd6B4uCv4341gg" name="HasNodeSet" memberEnd="_0Hk3TgpbEd6B4uCv4341gg _0Hk3VQpbEd6B4uCv4341gg"/>
+    <packagedElement xmi:type="uml:Association" xmi:id="_0Hk3XApbEd6B4uCv4341gg" name="HasElement" memberEnd="_0Hk3WApbEd6B4uCv4341gg _0Hk3DApbEd6B4uCv4341gg"/>
+    <packagedElement xmi:type="uml:Class" xmi:id="_0Hk3XQpbEd6B4uCv4341gg" name="XKey">
+      <ownedRule xmi:type="uml:Constraint" xmi:id="_0Hk3XgpbEd6B4uCv4341gg" name="Check XKeys" constrainedElement="_0Hk3XQpbEd6B4uCv4341gg">
+        <specification xmi:type="uml:OpaqueExpression" xmi:id="_0Hk3XwpbEd6B4uCv4341gg">
+          <body>&quot;Each XKey is either an inner node with 2 children or a leaf with a NodeSet.&quot;&#xD;&#xA;&quot;forall k: V{kdtree.XKey} @ degree{kdtree.HasYChild}(v) = 2 xor degree{kdtree.HasNodeSet}(v) = 1&quot;</body>
+        </specification>
+      </ownedRule>
+      <generalization xmi:type="uml:Generalization" xmi:id="_0Hk3YApbEd6B4uCv4341gg" general="_0Hk3TApbEd6B4uCv4341gg"/>
+      <ownedAttribute xmi:type="uml:Property" xmi:id="_0Hk3YQpbEd6B4uCv4341gg" name="parent" visibility="private" type="_0Hk3ZwpbEd6B4uCv4341gg" association="_0Hk3cgpbEd6B4uCv4341gg">
+        <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_0Hk3YgpbEd6B4uCv4341gg" value="1"/>
+        <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_0Hk3YwpbEd6B4uCv4341gg"/>
+      </ownedAttribute>
+      <ownedAttribute xmi:type="uml:Property" xmi:id="_0Hk3ZApbEd6B4uCv4341gg" name="child" visibility="private" type="_0Hk3ZwpbEd6B4uCv4341gg" aggregation="shared" association="_0Hk3cwpbEd6B4uCv4341gg">
+        <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_0Hk3ZQpbEd6B4uCv4341gg" value="2"/>
+        <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_0Hk3ZgpbEd6B4uCv4341gg"/>
+      </ownedAttribute>
+    </packagedElement>
+    <packagedElement xmi:type="uml:Class" xmi:id="_0Hk3ZwpbEd6B4uCv4341gg" name="YKey">
+      <ownedRule xmi:type="uml:Constraint" xmi:id="_0Hk3aApbEd6B4uCv4341gg" name="Check YKeys" constrainedElement="_0Hk3ZwpbEd6B4uCv4341gg">
+        <specification xmi:type="uml:OpaqueExpression" xmi:id="_0Hk3aQpbEd6B4uCv4341gg">
+          <body>&quot;Each YKey is either an inner node with 2 childred or a leaf with a NodeSet.&quot;&#xD;&#xA;&quot;forall k: V{kdtree.YKey} @ degree{kdtree.HasXChild}(v) = 2 xor degree{kdtree.HasNodeSet}(v) = 1&quot;</body>
+        </specification>
+      </ownedRule>
+      <generalization xmi:type="uml:Generalization" xmi:id="_0Hk3agpbEd6B4uCv4341gg" general="_0Hk3TApbEd6B4uCv4341gg"/>
+      <ownedAttribute xmi:type="uml:Property" xmi:id="_0Hk3awpbEd6B4uCv4341gg" name="child" visibility="private" type="_0Hk3XQpbEd6B4uCv4341gg" aggregation="shared" association="_0Hk3cgpbEd6B4uCv4341gg">
+        <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_0Hk3bApbEd6B4uCv4341gg" value="2"/>
+        <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_0Hk3bQpbEd6B4uCv4341gg"/>
+      </ownedAttribute>
+      <ownedAttribute xmi:type="uml:Property" xmi:id="_0Hk3bgpbEd6B4uCv4341gg" name="parent" visibility="private" type="_0Hk3XQpbEd6B4uCv4341gg" association="_0Hk3cwpbEd6B4uCv4341gg">
+        <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_0Hk3bwpbEd6B4uCv4341gg" value="1"/>
+        <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_0Hk3cApbEd6B4uCv4341gg"/>
+      </ownedAttribute>
+    </packagedElement>
+    <packagedElement xmi:type="uml:Association" xmi:id="_0Hk3cQpbEd6B4uCv4341gg" name="HasRoot" memberEnd="_0Hk3SQpbEd6B4uCv4341gg _0Hk3UQpbEd6B4uCv4341gg"/>
+    <packagedElement xmi:type="uml:Association" xmi:id="_0Hk3cgpbEd6B4uCv4341gg" name="HasXChild" memberEnd="_0Hk3awpbEd6B4uCv4341gg _0Hk3YQpbEd6B4uCv4341gg"/>
+    <packagedElement xmi:type="uml:Association" xmi:id="_0Hk3cwpbEd6B4uCv4341gg" name="HasYChild" memberEnd="_0Hk3ZApbEd6B4uCv4341gg _0Hk3bgpbEd6B4uCv4341gg"/>
+  </packagedElement>
+  <packagedElement xmi:type="uml:Package" xmi:id="_0Hk3dApbEd6B4uCv4341gg" name="PrimitiveTypes">
+    <packagedElement xmi:type="uml:PrimitiveType" xmi:id="_0Hk3dQpbEd6B4uCv4341gg" name="Map&lt;String, String>"/>
+    <packagedElement xmi:type="uml:PrimitiveType" xmi:id="_0Hk3dgpbEd6B4uCv4341gg" name="Double"/>
+    <packagedElement xmi:type="uml:PrimitiveType" xmi:id="_0Hk3dwpbEd6B4uCv4341gg" name="Long"/>
+  </packagedElement>
+  <profileApplication xmi:type="uml:ProfileApplication" xmi:id="_0Hk3eApbEd6B4uCv4341gg">
+    <xmi:Extension extender="http://www.eclipse.org/emf/2002/Ecore">
+      <eAnnotations xmi:type="ecore:EAnnotation" xmi:id="_0Hk3eQpbEd6B4uCv4341gg" source="http://www.eclipse.org/uml2/2.0.0/UML">
+        <references xmi:type="ecore:EPackage" href="http://schema.omg.org/spec/UML/2.1.1/StandardProfileL2.xmi#_yzU58YinEdqtvbnfB2L_5w"/>
+      </eAnnotations>
+    </xmi:Extension>
+    <appliedProfile xmi:type="uml:Profile" href="http://schema.omg.org/spec/UML/2.1.1/StandardProfileL2.xmi#_0"/>
+  </profileApplication>
+</uml:Package>
