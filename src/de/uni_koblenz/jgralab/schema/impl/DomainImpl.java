@@ -129,8 +129,4 @@ public abstract class DomainImpl implements Domain, Comparable<Domain> {
 		return qName.getQualifiedName();
 	}
 
-	@Override
-	public String getVariableName() {
-		throw new UnsupportedOperationException();
-	}
 }

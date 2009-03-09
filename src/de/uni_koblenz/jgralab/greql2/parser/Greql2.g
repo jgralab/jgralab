@@ -8,8 +8,8 @@ tokens {
 }
 
 @lexer::members {
-  protected boolean enumIsKeyword = true;
-  protected boolean assertIsKeyword = true;
+//  protected boolean enumIsKeyword = true;
+//  protected boolean assertIsKeyword = true;
   
   private boolean isFunctionName(String ident) {
        return Greql2FunctionLibrary.instance().isGreqlFunction(ident);		
@@ -20,7 +20,6 @@ tokens {
 @header {
 package de.uni_koblenz.jgralab.greql2.parser;
 
-import java.util.logging.Logger;
 import java.util.Queue;
 import java.util.LinkedList;
 import java.util.Set;
@@ -34,30 +33,16 @@ import de.uni_koblenz.jgralab.greql2.exception.*;
 import de.uni_koblenz.jgralab.greql2.schema.*;
 import de.uni_koblenz.jgralab.greql2.schema.impl.*;
 import de.uni_koblenz.jgralab.schema.*;
-import de.uni_koblenz.jgralab.greql2.funlib.Greql2FunctionLibrary;
 }
 
 @lexer::header {
 package de.uni_koblenz.jgralab.greql2.parser;
-import java.util.ArrayList;
-import java.util.logging.Logger;
 import org.antlr.runtime.RecognitionException;
 import antlr.TokenStreamException;
-import de.uni_koblenz.jgralab.*;
-import de.uni_koblenz.jgralab.greql2.exception.*;
 import de.uni_koblenz.jgralab.greql2.funlib.Greql2FunctionLibrary;
-import de.uni_koblenz.jgralab.greql2.schema.*;
-import de.uni_koblenz.jgralab.greql2.schema.impl.*;
-import de.uni_koblenz.jgralab.schema.*;
 }
 
 @members {
-
-    private int[] callCount = new int[50];
-
-    private static Logger logger = Logger.getLogger(Greql2Parser.class.getName());
-    private final int VMAX = 200;
-    private final int EMAX = 300;
     private Greql2Schema schema = null;
     private Greql2 graph = null;
     private SymbolTable variableSymbolTable = null;
@@ -265,12 +250,14 @@ import de.uni_koblenz.jgralab.schema.*;
      */
     public void initialize() {
        	schema = Greql2Schema.instance();
-		graph = Greql2Impl.create(VMAX,EMAX);
+		graph = Greql2Impl.create();
         variableSymbolTable = new SymbolTable();
  		functionSymbolTable = new SymbolTable();
 		functionSymbolTable.blockBegin();
 		graphCleaned = false;
     }
+    
+    private int currentLength = 0;
    
     private int getLTLength(int offset) {
        Token token = input.LT(0);
@@ -278,36 +265,33 @@ import de.uni_koblenz.jgralab.schema.*;
         int charPos =  token.getCharPositionInLine();
         String text = token.getText();
         int length = text.length();
-        return (- offset + charPos-1 + length);
-       } else
-    	   return -1;
+        currentLength = (- offset + charPos-1 + length);
+        return currentLength;
+       } else {
+       		currentLength = -1;
+    	    return -1;
+       }	    
     }
+    
+    private int currentOffset = 0;
    
    private int getLTOffset() {
-		return input.LT(1).getCharPositionInLine()-1; 
+		currentOffset = input.LT(1).getCharPositionInLine()-1;
+		return currentOffset; 
    }
    
-    /**
-     *	@see antlr.Parser#reportError(RecognitionException)
-     */
-  	public void reportError2(RecognitionException e) {
-		int offset = -1;
-		offset = getLTOffset();
-		if (offset != -1) {
-				logger.severe("Error at position: " + offset +": RecognitionException " + e.getMessage());
-		}		
-		else logger.severe("error (offset = -1): RecognitionException " + e.getMessage());
-		e.printStackTrace();
-	}
-
-  	public void reportError2(TokenStreamException e) {
-		int offset = -1;
-		offset = getLTOffset();
-		if (offset != -1)
-				logger.severe("Error at position: " + offset +": TokenStreamException " + e.getMessage());
-			else logger.severe("error (offset = -1): TokenStreamException " + e.getMessage());
-	}
-
+   public void displayRecognitionError(String[] tokenNames, RecognitionException e) {
+        String msg = getErrorMessage(e, tokenNames);
+        String elementName = "";
+        int length = -1;
+        if (tokenNames.length > 0) {
+        	length = tokenNames[0].length();
+        	elementName = tokenNames[0];	
+        }	
+        SourcePosition pos = new SourcePosition(currentOffset, length);
+        throw new ParseException("Error parsing query at offset: " + currentOffset + ", length: " + length + ". " + msg, elementName, pos, e ); 
+   }
+   
     /**
     *	merges variable-vertices of the graph which represent identical variables
     */
@@ -778,7 +762,6 @@ greqlExpression
 	int length = 0;
 	initialize();
 	Greql2Expression root = graph.createGreql2Expression();
-	callCount[33]++; 
 }
 : (
     (
@@ -1010,7 +993,6 @@ definition returns [Definition definition = null]
   	int offsetExpr = 0;
     int lengthVar = 0;
     int lengthExpr = 0;
-    callCount[4]++;
 }
 :
 	{offsetVar = getLTOffset(); }
@@ -1121,7 +1103,6 @@ orExpression returns [Expression result]
 xorExpression returns [Expression result]
 @init{
     FunctionConstruct construct = new FunctionConstruct();
-    callCount[7]++;
 }
 :
   { construct.preArg1(); }
@@ -1140,7 +1121,6 @@ xorExpression returns [Expression result]
 andExpression returns [Expression result]
 @init{
     FunctionConstruct construct = new FunctionConstruct();
-    callCount[8]++;
 }
 :
   { construct.preArg1(); }
@@ -1263,7 +1243,6 @@ multiplicativeExpression returns [Expression result]
 unaryExpression returns [Expression result = null]
 @init{
     FunctionConstruct construct = new FunctionConstruct();
-    callCount[13]++;
 }
 :
 ((unaryOperator) =>  
@@ -1327,7 +1306,6 @@ restrictedExpression returns [Expression result = null]
     int offsetRestr = 0;
     int lengthExpr = 0;
     int lengthRestr = 0;
-    callCount[14]++;
 }
 :
 { offsetExpr = getLTOffset(); }
@@ -1371,7 +1349,6 @@ valueAccess returns [Expression result = null]
 @init{
 	int offset = 0;
 	int length = 0;
-	callCount[15]++;
 }
 	:
 		{offset = getLTOffset(); }
@@ -1397,7 +1374,6 @@ valueAccess2[Expression arg1, int offsetArg1, int lengthArg1] returns [Expressio
     int offsetOperator = 0;
     int lengthArg2 = 0;
     int lengthOperator = 0;
-    callCount[16]++;
 }
 :	{ offsetOperator = getLTOffset(); }
     (   (	DOT
@@ -1438,9 +1414,6 @@ valueAccess2[Expression arg1, int offsetArg1, int lengthArg1] returns [Expressio
 	valueConstruction, functionAppl., subgraph, simpleQuery, cfGrammar, variable)
 */
 primaryExpression returns [Expression result = null] 
-@init{
-callCount[17]++;
-}
 :
 (   
     ((LPAREN) => LPAREN parenthesedExpression {$result = $parenthesedExpression.result;} )
@@ -1476,7 +1449,6 @@ alternativePathDescription
 */
 alternativePathDescription returns [PathDescription result = null] 
 @init {
-callCount[18]++;
 	PathDescription pathDescr = null;
 	int offsetPart1 = 0;
 	int lengthPart1 = 0;
@@ -1502,7 +1474,6 @@ callCount[18]++;
 	   
 intermediateVertexPathDescription returns [PathDescription result = null] 
 @init {
-callCount[19]++;
 	PathDescription pathDescr = null;
 	int offsetPart1 = 0;
 	int lengthPart1 = 0;
@@ -1539,7 +1510,6 @@ callCount[19]++;
 
 sequentialPathDescription returns [PathDescription result = null] 
 @init {
-callCount[20]++;
 	PathDescription pathDescr = null;
 	int offsetPart1 = 0;
 	int lengthPart1 = 0;
@@ -1565,7 +1535,6 @@ callCount[20]++;
 
 startRestrictedPathDescription returns [PathDescription result = null] 
 @init{
-callCount[21]++;
 	int offset = 0;
 	int length = 0;
 }
@@ -1597,7 +1566,6 @@ pathDescr = goalRestrictedPathDescription
 	
 goalRestrictedPathDescription returns [PathDescription result = null] 
 @init{
-callCount[22]++;
 	int offset = 0;
 	int length = 0;
 }
@@ -1633,7 +1601,6 @@ iteratedOrTransposedPathDescription
 
 iteratedOrTransposedPathDescription	returns [PathDescription result = null]
 @init{
-callCount[23]++;
    	PathDescription pathDesc = null;
    	int offsetPath = 0;
  	int lengthPath = 0;
@@ -1655,7 +1622,6 @@ primaryPathDescription
 
 iteration[PathDescription iteratedPath, int offsetPath, int lengthPath] returns [PathDescription result = null] 
 @init{
-callCount[24]++;
    	String iteration = null;
  	int offsetExpr = 0;
  	int lengthExpr = 0;
@@ -1715,7 +1681,6 @@ callCount[24]++;
 
 primaryPathDescription returns [PathDescription result = null]
 @init{
-callCount[25]++;
 	int offset = 0;
 	int length = 0;
 }
@@ -1747,7 +1712,6 @@ callCount[25]++;
 */
 simplePathDescription returns [PrimaryPathDescription result = null]
 @init{
-callCount[26]++;
     Direction dir;
     String direction = "any";
     int offsetDir = 0;
@@ -1792,7 +1756,6 @@ callCount[26]++;
 */
 aggregationPathDescription returns [AggregationPathDescription result = null]
 @init{
-callCount[27]++;
     boolean outAggregation = true;
     int offsetDir = 0;
 }
@@ -1821,7 +1784,6 @@ callCount[27]++;
 */
 edgePathDescription returns [EdgePathDescription result = null] 
 @init{
-callCount[28]++;
 	Direction dir = null;
     boolean edgeStart = false;
     boolean edgeEnd = false;
@@ -1880,7 +1842,6 @@ i=IDENT
 */
 functionApplication returns [FunctionApplication expr = null]
 @init{
-callCount[29]++;
     FunctionId functionId = null;
     int offset = 0;
     int length = 0;
@@ -2344,7 +2305,6 @@ typeId returns [TypeId type = null]
 (CARET	{ type.setExcluded(true); } )?
 ( s = qualifiedName )
 { type.setName(s); }
-/*(CARET	{ type.setExcluded(true); }	)?*/
 (EXCL	{ type.setType(true);  })?
 ;
 
@@ -2687,7 +2647,6 @@ reportClause returns [Comprehension comprehension = null]
 
 simpleQuery returns [Comprehension comprehension = null]
 @init{
-callCount[31]++;
     Declaration declaration = null;
     int offsetDecl = 0;
     int lengthDecl = 0;
@@ -2750,7 +2709,6 @@ pathExpression returns [Expression result = null]
 @init{
 	int offsetArg1 = 0;
 	int lengthArg1 = 0;
-	callCount[32]++;
 }		
 :
 /* AlternativePathDescrition as path of backwardVertexSet or backwardPathSystem */

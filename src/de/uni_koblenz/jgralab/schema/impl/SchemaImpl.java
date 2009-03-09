@@ -1053,11 +1053,6 @@ public class SchemaImpl implements Schema {
 	}
 
 	@Override
-	public String getVariableName() {
-		throw new UnsupportedOperationException();
-	}
-
-	@Override
 	public Package createPackageWithParents(String qualifiedName) {
 		if (qualifiedName.length() == 0) {
 			return defaultPackage;
