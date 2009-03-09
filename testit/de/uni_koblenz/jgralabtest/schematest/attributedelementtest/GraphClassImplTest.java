@@ -1,6 +1,5 @@
 package de.uni_koblenz.jgralabtest.schematest.attributedelementtest;
 
-import java.util.HashSet;
 import java.util.Vector;
 
 import org.junit.Before;
@@ -10,7 +9,6 @@ import de.uni_koblenz.jgralab.schema.AttributedElementClass;
 import de.uni_koblenz.jgralab.schema.GraphClass;
 import de.uni_koblenz.jgralab.schema.QualifiedName;
 import de.uni_koblenz.jgralab.schema.Schema;
-import de.uni_koblenz.jgralab.schema.VertexClass;
 import de.uni_koblenz.jgralab.schema.impl.SchemaImpl;
 
 public final class GraphClassImplTest extends AttributedElementClassImplTest {
@@ -72,65 +70,6 @@ public final class GraphClassImplTest extends AttributedElementClassImplTest {
 	@Test
 	public void testCompareTo4() {
 		testCompareTo3(graphClass);
-	}
-
-	/**
-	 * getLeastCommonSuperclass(...)
-	 * 
-	 * TEST CASE: The elements are the same
-	 */
-	@Test
-	public void testGetLeastCommonSuperclass4() {
-		HashSet<AttributedElementClass> others = new HashSet<AttributedElementClass>();
-		others.add(graphClass);
-
-		// graphClass == expected least common superclass
-		testGetLeastCommonSuperclass(others, graphClass);
-	}
-
-	/**
-	 * getLeastCommonSuperclass(...)
-	 * 
-	 * TEST CASE: The elements have no common superclasses, except the default
-	 * class
-	 */
-	@Test
-	public void testGetLeastCommonSuperclass5() {
-		HashSet<AttributedElementClass> others = new HashSet<AttributedElementClass>();
-		GraphClass graphClass2 = schema.createGraphClass(new QualifiedName(
-				"GraphClass2"));
-		others.add(graphClass2);
-
-		// DefaultGraphClass == expected least common superclass
-		testGetLeastCommonSuperclass(others, schema.getDefaultGraphClass());
-	}
-
-	/**
-	 * getLeastCommonSuperclass(...)
-	 * 
-	 * TEST CASE: The element array is empty
-	 */
-	@Test
-	public void testGetLeastCommonSuperclass6() {
-		// empty 'others' element list
-		// graphClass == expected least common superclass
-		testGetLeastCommonSuperclass(new HashSet<AttributedElementClass>(),
-				graphClass);
-	}
-
-	/**
-	 * getLeastCommonSuperclass(...)
-	 * 
-	 * TEST CASE: The elements are from different kinds
-	 */
-	@Test
-	public void testGetLeastCommonSuperclass7() {
-		HashSet<AttributedElementClass> others = new HashSet<AttributedElementClass>();
-		VertexClass vertexClass = graphClass
-				.createVertexClass(new QualifiedName("VertexClass1"));
-		others.add(vertexClass);
-
-		testGetLeastCommonSuperclass(others, null);
 	}
 
 	/**
