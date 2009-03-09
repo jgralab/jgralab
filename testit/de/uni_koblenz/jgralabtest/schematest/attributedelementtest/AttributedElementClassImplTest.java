@@ -16,7 +16,6 @@ import de.uni_koblenz.jgralab.schema.QualifiedName;
 import de.uni_koblenz.jgralab.schema.Schema;
 import de.uni_koblenz.jgralab.schema.exception.DuplicateAttributeException;
 import de.uni_koblenz.jgralab.schema.exception.ReservedWordException;
-import de.uni_koblenz.jgralab.schema.exception.SchemaException;
 import de.uni_koblenz.jgralab.schema.impl.AttributeImpl;
 import de.uni_koblenz.jgralab.schema.impl.ConstraintImpl;
 import de.uni_koblenz.jgralab.schema.impl.SchemaImpl;
@@ -920,51 +919,6 @@ public abstract class AttributedElementClassImplTest {
 			}
 			Assert.assertTrue("The following superclass is unexpected: "
 					+ superClass.getQualifiedName(), superClassFound);
-		}
-	}
-
-	/*
-	 * Tests for the getLeastCommonSuperclass() method.
-	 * 
-	 * As getLeastCommonSuperClass(AttributedElement) and
-	 * getLeastCommonSuperClass(Set<? extends AttributedElementClass>) are
-	 * basically the same, they are tested together.
-	 */
-	/**
-	 * getLeastCommonSuperclass(...)
-	 * 
-	 * TEST CASE: The elements (other(s) & this) have one common direct
-	 * superclass
-	 * 
-	 * TEST CASE: The elements have multiple common direct superclasses
-	 * 
-	 * TEST CASE: The elements have multiple common superclasses
-	 * 
-	 * TEST CASE: The elements are the same
-	 * 
-	 * TEST CASE: The elements have no common superclasses, except the default
-	 * class
-	 * 
-	 * TEST CASE: The element array is empty
-	 * 
-	 * TEST CASE: The elements are from different kinds
-	 * 
-	 * NOTE: This method is called upon in all of this classes´ subclasses.
-	 */
-	public final void testGetLeastCommonSuperclass(
-			Set<AttributedElementClass> others,
-			AttributedElementClass expectedLCS) {
-
-		if (expectedLCS != null) {
-			AttributedElementClass lcs = attributedElement
-					.getLeastCommonSuperclass(others);
-			Assert.assertEquals(expectedLCS, lcs);
-		} else { // last test case
-			try {
-				attributedElement.getLeastCommonSuperclass(others);
-				Assert.fail();
-			} catch (SchemaException e) {
-			}
 		}
 	}
 
