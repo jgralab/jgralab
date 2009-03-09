@@ -219,17 +219,6 @@ public abstract class DomainTest {
 		assertEquals(expectedUniqueName2, domain2.getUniqueName());
 	}
 
-	@Test(expected = UnsupportedOperationException.class)
-	public void testGetVariableName1() {
-		// tests if an exception is thrown
-		domain1.getVariableName();
-	}
-
-	@Test(expected = UnsupportedOperationException.class)
-	public void testGetVariableName2() {
-		// tests if an exception is thrown
-		domain2.getVariableName();
-	}
 
 	@Test
 	public void testSetUniqueName1() {

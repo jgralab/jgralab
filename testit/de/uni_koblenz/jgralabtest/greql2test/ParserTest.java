@@ -1089,6 +1089,12 @@ public class ParserTest {
 	public void testPathSystemConstruction() throws Exception {
 		fail("NYI");
 	}
+	
+	@Test
+	public void testErrorInTypeExpression() throws Exception {
+		String query = "from v:V{Greql2Expression, ^TypeExpression ^Quantifier} report v end";
+		parseQuery(query);
+	}
 
 	// TODO: The parser has huge problems with parens. This simple query doesn't
 	// finish in 5 seconds!!!
