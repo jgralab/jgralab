@@ -31,6 +31,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Method;
@@ -79,6 +80,26 @@ import de.uni_koblenz.jgralab.schema.impl.SchemaImpl;
  * @author ist@uni-koblenz.de
  */
 public class GraphIO {
+	/**
+	 * A {@link FilenameFilter} that accepts TG files.
+	 *
+	 * @author ist@uni-koblenz.de
+	 */
+	public static class TGFilenameFilter implements FilenameFilter {
+
+		/*
+		 * (non-Javadoc)
+		 *
+		 * @see java.io.FilenameFilter#accept(java.io.File, java.lang.String)
+		 */
+		@Override
+		public boolean accept(File dir, String name) {
+			if (name.matches(".*\\.[Tt][Gg]$")) {
+				return true;
+			}
+			return false;
+		}
+	}
 
 	private static Logger logger = Logger.getLogger(GraphIO.class.getName());
 
