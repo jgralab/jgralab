@@ -94,7 +94,7 @@ public class GraphIO {
 		 */
 		@Override
 		public boolean accept(File dir, String name) {
-			if (name.matches(".*\\.[Tt][Gg]$")) {
+			if (name.matches(".+\\.[Tt][Gg]$")) {
 				return true;
 			}
 			return false;
