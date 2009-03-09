@@ -11,9 +11,11 @@ import org.junit.Test;
 import de.uni_koblenz.jgralab.Attribute;
 import de.uni_koblenz.jgralab.schema.AttributedElementClass;
 import de.uni_koblenz.jgralab.schema.Constraint;
+import de.uni_koblenz.jgralab.schema.EdgeClass;
 import de.uni_koblenz.jgralab.schema.GraphClass;
 import de.uni_koblenz.jgralab.schema.QualifiedName;
 import de.uni_koblenz.jgralab.schema.Schema;
+import de.uni_koblenz.jgralab.schema.VertexClass;
 import de.uni_koblenz.jgralab.schema.exception.DuplicateAttributeException;
 import de.uni_koblenz.jgralab.schema.exception.ReservedWordException;
 import de.uni_koblenz.jgralab.schema.impl.AttributeImpl;
@@ -1441,18 +1443,6 @@ public abstract class AttributedElementClassImplTest {
 	/*
 	 * Tests for the isInternal() method.
 	 */
-	/**
-	 * isInternal()
-	 *
-	 * TEST CASE: The element is for internal use
-	 */
-	@Test
-	public void testIsInternal() {
-		// TODO: setInternal() is history, so fix me!
-		// attributedElement.setInternal(true);
-
-		// Assert.assertTrue(attributedElement.isInternal());
-	}
 
 	/**
 	 * isInternal()
@@ -1460,11 +1450,32 @@ public abstract class AttributedElementClassImplTest {
 	 * TEST CASE: The element is not for internal use
 	 */
 	@Test
-	public void testIsInternal2() {
-		// TODO: setInternal() is history, so fix me!
-		// attributedElement.setInternal(false);
+	public void testIsInternal() {
+		for (VertexClass vc : schema.getVertexClassesInTopologicalOrder()) {
+			if (vc == schema.getDefaultVertexClass()) {
+				Assert.assertTrue(vc.isInternal());
+			} else {
+				Assert.assertFalse(vc.isInternal());
+			}
+		}
 
-		// Assert.assertFalse(attributedElement.isInternal());
+		for (EdgeClass ec : schema.getEdgeClassesInTopologicalOrder()) {
+			if (ec == schema.getDefaultEdgeClass()
+					|| ec == schema.getDefaultAggregationClass()
+					|| ec == schema.getDefaultCompositionClass()) {
+				Assert.assertTrue(ec.isInternal());
+			} else {
+				Assert.assertFalse(ec.isInternal());
+			}
+		}
+
+		for (GraphClass gc : schema.getGraphClassesInTopologicalOrder()) {
+			if (gc == schema.getDefaultGraphClass()) {
+				Assert.assertTrue(gc.isInternal());
+			} else {
+				Assert.assertFalse(gc.isInternal());
+			}
+		}
 	}
 
 	/*

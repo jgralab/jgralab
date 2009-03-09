@@ -432,7 +432,6 @@ public abstract class AttributedElementClassImpl implements
 				|| this == s.getDefaultCompositionClass()
 				|| this == s.getDefaultEdgeClass()
 				|| this == s.getDefaultGraphClass()
-				|| this == s.getDefaultPackage()
 				|| this == s.getDefaultVertexClass();
 	}
 
