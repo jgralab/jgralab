@@ -69,8 +69,6 @@ public interface NamedElement {
 	 */
 	public void setUniqueName(String name);
 
-	public String getVariableName();
-
 	/**
 	 * @return the fully qualified name of this element in the schema. This is
 	 *         the fully qualified name of the package the element is located in

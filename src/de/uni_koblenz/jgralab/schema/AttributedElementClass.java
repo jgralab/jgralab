@@ -1007,4 +1007,11 @@ public interface AttributedElementClass extends NamedElement,
 	 * @see java.lang.Comparable#compareTo(Object)
 	 */
 	public int compareTo(AttributedElementClass other);
+	
+	/**
+	 * Retrieves the name used for elements of this AttributedElementClass
+	 * in files created by the code generator
+	 * @return
+	 */
+	public String getVariableName();
 }

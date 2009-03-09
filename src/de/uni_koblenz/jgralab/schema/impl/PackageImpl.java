@@ -183,8 +183,4 @@ public class PackageImpl implements Package {
 		return qName;
 	}
 
-	@Override
-	public String getVariableName() {
-		throw new UnsupportedOperationException();
-	}
 }
