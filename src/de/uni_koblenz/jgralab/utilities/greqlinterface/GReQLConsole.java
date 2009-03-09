@@ -1,4 +1,4 @@
-package de.uni_koblenz.jgralab.greql2;
+package de.uni_koblenz.jgralab.utilities.greqlinterface;
 
 import java.io.BufferedReader;
 import java.io.File;

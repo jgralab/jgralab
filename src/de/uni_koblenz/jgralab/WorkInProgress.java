@@ -7,6 +7,9 @@ package de.uni_koblenz.jgralab;
  * You should NOT use WorkInProgress parts of JGraLab without exactly knowning
  * what you do!
  * 
+ * This annotation should be used when branching would be too much of a hassle,
+ * AND if the public JGraLab API is not changed.
+ * 
  * @author ist@uni-koblenz.de
  */
 public @interface WorkInProgress {
