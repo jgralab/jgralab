@@ -35,6 +35,7 @@ import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.GraphIO;
 import de.uni_koblenz.jgralab.GraphIOException;
 import de.uni_koblenz.jgralab.ProgressFunction;
+import de.uni_koblenz.jgralab.WorkInProgress;
 import de.uni_koblenz.jgralab.grumlschema.GrumlSchema;
 import de.uni_koblenz.jgralab.grumlschema.SchemaGraph;
 import de.uni_koblenz.jgralab.grumlschema.domains.HasRecordDomainComponent;
@@ -50,6 +51,7 @@ import de.uni_koblenz.jgralab.schema.Domain;
 import de.uni_koblenz.jgralab.schema.DoubleDomain;
 import de.uni_koblenz.jgralab.schema.EdgeClass;
 import de.uni_koblenz.jgralab.schema.EnumDomain;
+import de.uni_koblenz.jgralab.schema.GraphClass;
 import de.uni_koblenz.jgralab.schema.IntDomain;
 import de.uni_koblenz.jgralab.schema.ListDomain;
 import de.uni_koblenz.jgralab.schema.LongDomain;
@@ -67,6 +69,7 @@ import de.uni_koblenz.jgralab.schema.VertexClass;
  * 
  * @author ist@uni-koblenz.de
  */
+@WorkInProgress(description = "Problems with forward links to domains, constraints missing", responsibleDevelopers = "riediger")
 public class Tg2SchemaGraph {
 
 	/**
@@ -78,9 +81,6 @@ public class Tg2SchemaGraph {
 		tg2sg.getOptions(args);
 		tg2sg.saveSchemaGraphToFile();
 	}
-
-	private int MAX_VERTICES = 1000;
-	private int MAX_EDGES = 1000;
 
 	private String outputFilename;
 	// the schema this class was instantiated with.
@@ -131,7 +131,7 @@ public class Tg2SchemaGraph {
 
 			// create the schemagraph
 			schemagraph = GrumlSchema.instance().createSchemaGraph(
-					schema.getQualifiedName(), MAX_VERTICES, MAX_EDGES);
+					schema.getQualifiedName());
 
 			// create a vertex for the schema
 			de.uni_koblenz.jgralab.grumlschema.structure.Schema schemaVertex = schemagraph
@@ -155,9 +155,9 @@ public class Tg2SchemaGraph {
 					.createGraphClass();
 			schemagraph.createDefinesGraphClass(schemaVertex, graphClassVertex);
 
-			graphClassVertex.setQualifiedName(schema
-					.getGraphClassesInTopologicalOrder().get(1)
-					.getQualifiedName());
+			GraphClass gc = schema.getGraphClassesInTopologicalOrder().get(1);
+			graphClassVertex.setQualifiedName(gc.getQualifiedName());
+
 			// create vertex for the default package and set its attributes
 			// create incident edge containsDefaultPackage
 			de.uni_koblenz.jgralab.schema.Package defaultPackage = schema
@@ -168,6 +168,10 @@ public class Tg2SchemaGraph {
 					.getQualifiedName());
 			schemagraph.createContainsDefaultPackage(schemaVertex,
 					defaultPackageVertex);
+
+			for (Attribute attr : gc.getOwnAttributeList()) {
+				createSchemagraphAttribute(attr, graphClassVertex);
+			}
 
 			//
 			createSchemagraphPackageAndContents(defaultPackage,

@@ -21,11 +21,14 @@ import javax.swing.filechooser.FileFilter;
 
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.GraphIO;
+import de.uni_koblenz.jgralab.WorkInProgress;
 import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValueHTMLOutputVisitor;
 import de.uni_koblenz.jgralab.impl.ProgressFunctionImpl;
+import de.uni_koblenz.jgralab.utilities.tg2dot.Tg2Dot;
 
+@WorkInProgress(description = "insufficcient result presentation, simplistic GUI, no optimizer control, no load/save functionality, ...", responsibleDevelopers = "horn")
 public class GreqlGui extends JFrame {
 	private static final long serialVersionUID = 1L;
 
@@ -114,10 +117,19 @@ public class GreqlGui extends JFrame {
 			public void actionPerformed(ActionEvent e) {
 				String query = queryArea.getText();
 				GreqlEvaluator eval = new GreqlEvaluator(query, graph, null);
+				eval.setOptimize(false);
 				try {
+					if (eval.parseQuery()) {
+						assert eval.getSyntaxGraph() != null;
+						Tg2Dot t2d = new Tg2Dot();
+						t2d.setGraph(eval.getSyntaxGraph());
+						t2d.setPrintEdgeAttributes(true);
+						t2d.setPrintReversedEdges(true);
+						t2d.setOutputFile("query.greql.dot");
+						t2d.printGraph();
+					}
 					eval.startEvaluation();
 					JValue result = eval.getEvaluationResult();
-
 					File resultFile = File.createTempFile("greqlQueryResult",
 							".html");
 					new JValueHTMLOutputVisitor(result, resultFile

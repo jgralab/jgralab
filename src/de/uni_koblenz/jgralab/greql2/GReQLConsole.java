@@ -15,6 +15,7 @@ import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.GraphIO;
 import de.uni_koblenz.jgralab.GraphIOException;
 import de.uni_koblenz.jgralab.JGraLab;
+import de.uni_koblenz.jgralab.WorkInProgress;
 import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
 import de.uni_koblenz.jgralab.greql2.exception.EvaluateException;
 import de.uni_koblenz.jgralab.greql2.exception.OptimizerException;
@@ -23,42 +24,51 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueHTMLOutputVisitor;
 import de.uni_koblenz.jgralab.impl.ProgressFunctionImpl;
 import de.uni_koblenz.jgralab.schema.Schema;
 
+@WorkInProgress(responsibleDevelopers = "dbildh")
 public class GReQLConsole {
 
-Graph graph = null;
-	
+	Graph graph = null;
+
 	/**
-	 * Creates a new instance of this class, reads the graph and the schema from the
-	 * file given as parameter filename
-	 * @param filename the name of the file that contains the schema and the graph
+	 * Creates a new instance of this class, reads the graph and the schema from
+	 * the file given as parameter filename
+	 * 
+	 * @param filename
+	 *            the name of the file that contains the schema and the graph
 	 */
 	public GReQLConsole(String filename) {
 		try {
 			Schema schema = GraphIO.loadSchemaFromFile(filename);
 			schema.compile();
-			graph = GraphIO.loadGraphFromFile(filename, new ProgressFunctionImpl());
+			graph = GraphIO.loadGraphFromFile(filename,
+					new ProgressFunctionImpl());
 		} catch (GraphIOException e) {
 			e.printStackTrace();
 		}
 	}
-	
+
 	/**
-	 * Loads all queries stored in a given file and returns a list of query strings
-	 * @param queryFile the file with queries to load
+	 * Loads all queries stored in a given file and returns a list of query
+	 * strings
+	 * 
+	 * @param queryFile
+	 *            the file with queries to load
 	 * @return a list containing all queries stored in the queryFile
-	 * @throws IOException if the file is not found
+	 * @throws IOException
+	 *             if the file is not found
 	 */
-	private List<String> loadQueries(File queryFile) throws IOException  {
+	private List<String> loadQueries(File queryFile) throws IOException {
 		List<String> queries = new ArrayList<String>();
 		BufferedReader reader = new BufferedReader(new FileReader(queryFile));
 		String line = null;
 		StringBuilder builder = new StringBuilder();
 		while ((line = reader.readLine()) != null) {
 			String trimmedLine = line.trim();
-			if (trimmedLine.startsWith("//"))
+			if (trimmedLine.startsWith("//")) {
 				continue;
+			}
 			if (trimmedLine.length() == 0) {
-				//found end of a query
+				// found end of a query
 				if (builder.length() != 0) {
 					String query = builder.toString();
 					builder = new StringBuilder();
@@ -66,7 +76,7 @@ Graph graph = null;
 				}
 			} else {
 				builder.append(line + " \n");
-			}	
+			}
 		}
 		if (builder.length() != 0) {
 			String query = builder.toString();
@@ -75,10 +85,13 @@ Graph graph = null;
 		}
 		return queries;
 	}
-	
+
 	/**
-	 * Performs a query given as a string representation in GReQL on the loaded graph 
-	 * @param queryString the GReQL representation of the query to perform
+	 * Performs a query given as a string representation in GReQL on the loaded
+	 * graph
+	 * 
+	 * @param queryString
+	 *            the GReQL representation of the query to perform
 	 * @return the calculated query result
 	 */
 	private JValue performQuery(File queryFile) {
@@ -88,13 +101,17 @@ Graph graph = null;
 			for (String query : loadQueries(queryFile)) {
 				System.out.println("Evaluating query: ");
 				System.out.println(query);
-				GreqlEvaluator eval = new GreqlEvaluator(query, graph, boundVariables, new ProgressFunctionImpl());
-		//		System.out.println("Query parsing took " + eval.getParseTime() + " Milliseconds");
-		//		System.out.println("Optimization took " + eval.getOptimizationTime() + " Milliseconds");
-		//		System.out.println("Whole evaluation took " + eval.getOverallEvaluationTime() + " Milliseconds");
+				GreqlEvaluator eval = new GreqlEvaluator(query, graph,
+						boundVariables, new ProgressFunctionImpl());
+				// System.out.println("Query parsing took " +
+				// eval.getParseTime() + " Milliseconds");
+				// System.out.println("Optimization took " +
+				// eval.getOptimizationTime() + " Milliseconds");
+				// System.out.println("Whole evaluation took " +
+				// eval.getOverallEvaluationTime() + " Milliseconds");
 				eval.startEvaluation();
 				result = eval.getEvaluationResult();
-			}	
+			}
 		} catch (EvaluateException e) {
 			e.printStackTrace();
 		} catch (OptimizerException e) {
@@ -106,9 +123,10 @@ Graph graph = null;
 		}
 		return result;
 	}
-	
+
 	/**
-	 * Prints the JValue given as first parameter to the file with the name given as second parameter
+	 * Prints the JValue given as first parameter to the file with the name
+	 * given as second parameter
 	 */
 	private void resultToHTML(JValue result, String outputFile) {
 		new JValueHTMLOutputVisitor(result, outputFile, graph);
@@ -116,32 +134,30 @@ Graph graph = null;
 
 	/**
 	 * Performs some queries, extend this method to perform more queries
+	 * 
 	 * @param args
 	 */
 	public static void main(String[] args) {
 		String queryFile = null;
 		String inputFile = null;
-		
-		if(args.length < 2) {
+
+		if (args.length < 2) {
 			System.out.println("GReQL2 QUERY_FILE INPUT_FILE [HTML_FILE]");
 			System.exit(-1);
 		}
-		
+
 		queryFile = args[0];
 		inputFile = args[1];
-		
-		
+
 		JGraLab.setLogLevel(Level.SEVERE);
 		GReQLConsole example = new GReQLConsole(inputFile);
 		JValue result = example.performQuery(new File(queryFile));
-		
+
 		System.out.println("Result: " + result);
-		
-		if(args.length == 3)
+
+		if (args.length == 3) {
 			example.resultToHTML(result, args[2]);
+		}
 	}
 
-	
-	
-	
 }

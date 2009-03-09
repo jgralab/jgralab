@@ -36,6 +36,7 @@ CompositionClass ContainsDomain from Package (1,1) to domains.Domain (0,*) aggre
 
 Package domains;
 abstract VertexClass Domain {qualifiedName: String};
+abstract VertexClass CompositeDomain: Domain;
 VertexClass EnumDomain: Domain {enumConstants: List<String>};
 VertexClass DoubleDomain: Domain;
 VertexClass IntDomain: Domain;
