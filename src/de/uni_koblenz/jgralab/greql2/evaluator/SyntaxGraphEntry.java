@@ -69,7 +69,7 @@ public class SyntaxGraphEntry {
 
 	/**
 	 * Locks this graph,
-	 * 
+	 *
 	 * @return true on success, false otherwise
 	 */
 	public boolean lock() {
@@ -109,20 +109,21 @@ public class SyntaxGraphEntry {
 
 	/**
 	 * Locks the given SyntaxGraphEntry
-	 * 
+	 *
 	 * @param entry
 	 * @return
 	 */
 	private static synchronized boolean lockGraph(SyntaxGraphEntry entry) {
-		if (entry.locked)
+		if (entry.locked) {
 			return false;
+		}
 		entry.locked = true;
 		return true;
 	}
 
 	/**
 	 * Releases the lock of this syntaxGraph
-	 * 
+	 *
 	 * @return true on success, false otherwise
 	 */
 	public boolean release() {
@@ -131,20 +132,21 @@ public class SyntaxGraphEntry {
 
 	/**
 	 * Releases the given SyntaxGraphEntry
-	 * 
+	 *
 	 * @param entry
 	 * @return
 	 */
 	private static synchronized boolean releaseGraph(SyntaxGraphEntry entry) {
-		if (!entry.locked)
+		if (!entry.locked) {
 			return false;
+		}
 		entry.locked = false;
 		return true;
 	}
 
 	/**
 	 * Creates a new SyntaxGraphEntry
-	 * 
+	 *
 	 * @param graph
 	 *            the Greql2 Syntaxgraph to store in this entry
 	 * @param optimizer
@@ -165,7 +167,7 @@ public class SyntaxGraphEntry {
 
 	/**
 	 * Load a {@link SyntaxGraphEntry} from the given file.
-	 * 
+	 *
 	 * @param fileName
 	 *            the tg file where the {@link SyntaxGraphEntry} should be
 	 *            loaded from
@@ -213,7 +215,7 @@ public class SyntaxGraphEntry {
 	/**
 	 * Save this {@link SyntaxGraphEntry} to the given directory in the form
 	 * '"queryText.hashCode()" + ".tg"'.
-	 * 
+	 *
 	 * @param directory
 	 *            the directory where this {@link SyntaxGraphEntry} should be
 	 *            stored
@@ -225,24 +227,22 @@ public class SyntaxGraphEntry {
 		String optimizerClassSimple = "";
 		String costModelClass = "";
 		String costModelClassSimple = "";
-		try {
-			Greql2Expression g2e = syntaxGraph.getFirstGreql2Expression();
-			g2e.setAttribute("_queryText", queryText);
 
-			if (optimizer != null) {
-				optimizerClass = optimizer.getClass().getName();
-				optimizerClassSimple = optimizer.getClass().getSimpleName();
-			}
-			g2e.setAttribute("_optimizer", optimizerClass);
+		Greql2Expression g2e = syntaxGraph.getFirstGreql2Expression();
+		g2e.setQueryText(queryText);
 
-			if (costModel != null) {
-				costModelClass = costModel.getClass().getName();
-				costModelClassSimple = costModel.getClass().getSimpleName();
-			}
-			g2e.setAttribute("_costModel", costModelClass);
-		} catch (NoSuchFieldException e) {
-			e.printStackTrace();
+		if (optimizer != null) {
+			optimizerClass = optimizer.getClass().getName();
+			optimizerClassSimple = optimizer.getClass().getSimpleName();
 		}
+		g2e.setOptimizer(optimizerClass);
+
+		if (costModel != null) {
+			costModelClass = costModel.getClass().getName();
+			costModelClassSimple = costModel.getClass().getSimpleName();
+		}
+		g2e.setCostModel(costModelClass);
+
 		String fileName = directory.getPath() + File.separator
 				+ queryText.hashCode() + "-" + costModelClassSimple + "-"
 				+ optimizerClassSimple + ".tg";
@@ -255,7 +255,7 @@ public class SyntaxGraphEntry {
 	 * object's type is {@link SyntaxGraphEntry}, it has the same queryText, and
 	 * its optimizer and costModel have the same type this
 	 * {@link SyntaxGraphEntry}'s have.
-	 * 
+	 *
 	 * (@see java.lang.Object#equals(java.lang.Object))
 	 */
 	@Override
