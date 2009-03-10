@@ -15,6 +15,7 @@ import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.schema.EdgeClass;
+import de.uni_koblenz.jgralab.schema.VertexClass;
 import de.uni_koblenz.jgralabtest.schemas.vertextest.AbstractSuperNode;
 import de.uni_koblenz.jgralabtest.schemas.vertextest.DoubleSubNode;
 import de.uni_koblenz.jgralabtest.schemas.vertextest.Link;
@@ -499,7 +500,7 @@ public class VertexTest {
 	 */
 	private void testVertexForEdgeClass(Vertex forNode, int expectedLink,
 			int expectedSubLink, int expectedLinkBack) {
-		EdgeClass[] ecs=getEdgeClasses();
+		EdgeClass[] ecs = getEdgeClasses();
 		assertEquals(expectedLink, forNode.getDegree(ecs[0]));
 		assertEquals(expectedSubLink, forNode.getDegree(ecs[1]));
 		assertEquals(expectedLinkBack, forNode.getDegree(ecs[2]));
@@ -507,21 +508,24 @@ public class VertexTest {
 
 	/**
 	 * Creates an array of the EdgeClasses.
+	 * 
 	 * @return {Link, SubLink, LinkBack}
 	 */
 	private EdgeClass[] getEdgeClasses() {
-		EdgeClass[] ecs=new EdgeClass[3];
+		EdgeClass[] ecs = new EdgeClass[3];
 		List<EdgeClass> a = graph.getSchema()
 				.getEdgeClassesInTopologicalOrder();
-		for(EdgeClass ec:a){
-			if(ec.getSimpleName().equals("Link")){
-				ecs[0]=ec;
-			}else if(ec.getSimpleName().equals("SubLink")){
-				ecs[1]=ec;
-			}if(ec.getSimpleName().equals("LinkBack")){
-				ecs[2]=ec;
+		for (EdgeClass ec : a) {
+			if (ec.getSimpleName().equals("Link")) {
+				ecs[0] = ec;
+			} else if (ec.getSimpleName().equals("SubLink")) {
+				ecs[1] = ec;
 			}
-		}return ecs;
+			if (ec.getSimpleName().equals("LinkBack")) {
+				ecs[2] = ec;
+			}
+		}
+		return ecs;
 	}
 
 	// tests of the method getDegree(Class<? extends Edge> ec)
@@ -798,9 +802,9 @@ public class VertexTest {
 	 */
 	private void testVertexForEdgeClassSubClass(Vertex forNode,
 			int expectedLink, int expectedSubLink, int expectedLinkBack) {
-		EdgeClass[] ecs=getEdgeClasses();
-		assertEquals(expectedLink - expectedSubLink, forNode.getDegree(
-				ecs[0], true));
+		EdgeClass[] ecs = getEdgeClasses();
+		assertEquals(expectedLink - expectedSubLink, forNode.getDegree(ecs[0],
+				true));
 		assertEquals(expectedLink, forNode.getDegree(ecs[0], false));
 		assertEquals(expectedSubLink, forNode.getDegree(ecs[1], true));
 		assertEquals(expectedSubLink, forNode.getDegree(ecs[1], false));
@@ -987,7 +991,8 @@ public class VertexTest {
 		graph.createLinkBack(dsubn, subn);
 		testVertexForEdgeClassEdgeDirection(dsubnWithout, 0, 0, 0,
 				EdgeDirection.INOUT);
-		testVertexForEdgeClassEdgeDirection(dsubnWithout, 0, 0, 0, EdgeDirection.IN);
+		testVertexForEdgeClassEdgeDirection(dsubnWithout, 0, 0, 0,
+				EdgeDirection.IN);
 		testVertexForEdgeClassEdgeDirection(dsubnWithout, 0, 0, 0,
 				EdgeDirection.OUT);
 		testVertexForEdgeClassEdgeDirection(subn, 1, 0, 1, EdgeDirection.INOUT);
@@ -996,7 +1001,8 @@ public class VertexTest {
 		testVertexForEdgeClassEdgeDirection(dsubn, 3, 1, 2, EdgeDirection.INOUT);
 		testVertexForEdgeClassEdgeDirection(dsubn, 1, 0, 1, EdgeDirection.IN);
 		testVertexForEdgeClassEdgeDirection(dsubn, 2, 1, 1, EdgeDirection.OUT);
-		testVertexForEdgeClassEdgeDirection(supern, 2, 1, 1, EdgeDirection.INOUT);
+		testVertexForEdgeClassEdgeDirection(supern, 2, 1, 1,
+				EdgeDirection.INOUT);
 		testVertexForEdgeClassEdgeDirection(supern, 2, 1, 0, EdgeDirection.IN);
 		testVertexForEdgeClassEdgeDirection(supern, 0, 0, 1, EdgeDirection.OUT);
 	}
@@ -1015,7 +1021,8 @@ public class VertexTest {
 		testVertexForEdgeClassEdgeDirection(dsubn, 0, 0, 1, EdgeDirection.INOUT);
 		testVertexForEdgeClassEdgeDirection(supern, 0, 0, 1, EdgeDirection.IN);
 		testVertexForEdgeClassEdgeDirection(supern, 0, 0, 0, EdgeDirection.OUT);
-		testVertexForEdgeClassEdgeDirection(supern, 0, 0, 1, EdgeDirection.INOUT);
+		testVertexForEdgeClassEdgeDirection(supern, 0, 0, 1,
+				EdgeDirection.INOUT);
 	}
 
 	/**
@@ -1168,7 +1175,7 @@ public class VertexTest {
 	private void testVertexForEdgeClassEdgeDirection(Vertex forNode,
 			int expectedLink, int expectedSubLink, int expectedLinkBack,
 			EdgeDirection direction) {
-		EdgeClass[] ecs=getEdgeClasses();
+		EdgeClass[] ecs = getEdgeClasses();
 		assertEquals(expectedLink, forNode.getDegree(ecs[0], direction));
 		assertEquals(expectedSubLink, forNode.getDegree(ecs[1], direction));
 		assertEquals(expectedLinkBack, forNode.getDegree(ecs[2], direction));
@@ -1205,8 +1212,7 @@ public class VertexTest {
 		graph.createLinkBack(dsubn, subn);
 		testVertexForClassEdgeDirection(dsubnWithout, 0, 0, 0,
 				EdgeDirection.INOUT);
-		testVertexForClassEdgeDirection(dsubnWithout, 0, 0, 0,
-				EdgeDirection.IN);
+		testVertexForClassEdgeDirection(dsubnWithout, 0, 0, 0, EdgeDirection.IN);
 		testVertexForClassEdgeDirection(dsubnWithout, 0, 0, 0,
 				EdgeDirection.OUT);
 		testVertexForClassEdgeDirection(subn, 1, 0, 1, EdgeDirection.INOUT);
@@ -1215,8 +1221,7 @@ public class VertexTest {
 		testVertexForClassEdgeDirection(dsubn, 3, 1, 2, EdgeDirection.INOUT);
 		testVertexForClassEdgeDirection(dsubn, 1, 0, 1, EdgeDirection.IN);
 		testVertexForClassEdgeDirection(dsubn, 2, 1, 1, EdgeDirection.OUT);
-		testVertexForClassEdgeDirection(supern, 2, 1, 1,
-				EdgeDirection.INOUT);
+		testVertexForClassEdgeDirection(supern, 2, 1, 1, EdgeDirection.INOUT);
 		testVertexForClassEdgeDirection(supern, 2, 1, 0, EdgeDirection.IN);
 		testVertexForClassEdgeDirection(supern, 0, 0, 1, EdgeDirection.OUT);
 	}
@@ -1235,8 +1240,7 @@ public class VertexTest {
 		testVertexForClassEdgeDirection(dsubn, 0, 0, 1, EdgeDirection.INOUT);
 		testVertexForClassEdgeDirection(supern, 0, 0, 1, EdgeDirection.IN);
 		testVertexForClassEdgeDirection(supern, 0, 0, 0, EdgeDirection.OUT);
-		testVertexForClassEdgeDirection(supern, 0, 0, 1,
-				EdgeDirection.INOUT);
+		testVertexForClassEdgeDirection(supern, 0, 0, 1, EdgeDirection.INOUT);
 	}
 
 	/**
@@ -1653,15 +1657,14 @@ public class VertexTest {
 	private void testVertexForEdgeClassEdgeDirectionBoolean(Vertex forNode,
 			int expectedLink, int expectedSubLink, int expectedLinkBack,
 			EdgeDirection direction) {
-		EdgeClass[] ecs=getEdgeClasses();
-		assertEquals(expectedLink, forNode
-				.getDegree(ecs[0], direction, false));
-		assertEquals(expectedLink - expectedSubLink, forNode.getDegree(
-				ecs[0], direction, true));
+		EdgeClass[] ecs = getEdgeClasses();
+		assertEquals(expectedLink, forNode.getDegree(ecs[0], direction, false));
+		assertEquals(expectedLink - expectedSubLink, forNode.getDegree(ecs[0],
+				direction, true));
 		assertEquals(expectedSubLink, forNode.getDegree(ecs[1], direction,
 				false));
-		assertEquals(expectedSubLink, forNode.getDegree(ecs[1], direction,
-				true));
+		assertEquals(expectedSubLink, forNode
+				.getDegree(ecs[1], direction, true));
 		assertEquals(expectedLinkBack, forNode.getDegree(ecs[2], direction,
 				false));
 		assertEquals(expectedLinkBack, forNode.getDegree(ecs[2], direction,
@@ -1925,6 +1928,1090 @@ public class VertexTest {
 				direction, false));
 		assertEquals(expectedLinkBack, forNode.getDegree(LinkBack.class,
 				direction, true));
+	}
+
+	// tests of the method getPrevVertex();
+
+	/**
+	 * Tests the method if there is only one Vertex in the graph.
+	 */
+	@Test
+	public void getPrevVertexTest0() {
+		Vertex v = graph.createSuperNode();
+		// TODO check the expected result
+		assertEquals(null, v.getPrevVertex());
+	}
+
+	/**
+	 * Tests the correctness in a manually build graph.
+	 */
+	@Test
+	public void getPrevVertexTest1() {
+		Vertex v0 = graph.createDoubleSubNode();
+		Vertex v1 = graph.createSubNode();
+		Vertex v2 = graph.createSuperNode();
+		Vertex v3 = graph.createSuperNode();
+		Vertex v4 = graph.createDoubleSubNode();
+		assertEquals(v3, v4.getPrevVertex());
+		assertEquals(v2, v3.getPrevVertex());
+		assertEquals(v1, v2.getPrevVertex());
+		assertEquals(v0, v1.getPrevVertex());
+		assertEquals(null, v0.getPrevVertex());
+	}
+
+	/**
+	 * Tests the correctness in an random graph.
+	 */
+	@Test
+	public void getPrevVertexTest2() {
+		for (int i = 0; i < 1000; i++) {
+			graph = VertexTestSchema.instance().createVertexTestGraph(100, 100);
+			Vertex[] vertices = new Vertex[30];
+			// Create Vertices
+			for (int j = 0; j < vertices.length; j++) {
+				vertices[j] = graph.createDoubleSubNode();
+			}
+			// Check correctness
+			for (int j = vertices.length - 1; j >= 0; j--) {
+				assertEquals(j == 0 ? null : vertices[j - 1], vertices[j]
+						.getPrevVertex());
+			}
+		}
+	}
+
+	// tests of the method getNextVertex();
+
+	/**
+	 * Tests the method if there is only one Vertex in the graph.
+	 */
+	@Test
+	public void getNextVertexTest0() {
+		Vertex v = graph.createSuperNode();
+		// TODO check the expected result
+		assertEquals(null, v.getNextVertex());
+	}
+
+	/**
+	 * Tests the correctness in a manually build graph.
+	 */
+	@Test
+	public void getNextVertexTest1() {
+		Vertex v0 = graph.createDoubleSubNode();
+		Vertex v1 = graph.createSubNode();
+		Vertex v2 = graph.createSuperNode();
+		Vertex v3 = graph.createSuperNode();
+		Vertex v4 = graph.createDoubleSubNode();
+		assertEquals(v1, v0.getNextVertex());
+		assertEquals(v2, v1.getNextVertex());
+		assertEquals(v3, v2.getNextVertex());
+		assertEquals(v4, v3.getNextVertex());
+		assertEquals(null, v4.getNextVertex());
+	}
+
+	/**
+	 * Tests the correctness in an random graph.
+	 */
+	@Test
+	public void getNextVertexTest2() {
+		for (int i = 0; i < 1000; i++) {
+			graph = VertexTestSchema.instance().createVertexTestGraph(100, 100);
+			Vertex[] vertices = new Vertex[30];
+			// Create Vertices
+			for (int j = 0; j < vertices.length; j++) {
+				vertices[j] = graph.createDoubleSubNode();
+			}
+			// Check correctness
+			for (int j = 0; j < vertices.length; j++) {
+				assertEquals(j == vertices.length - 1 ? null : vertices[j + 1],
+						vertices[j].getNextVertex());
+			}
+		}
+	}
+
+	// tests of the method getNextVertex(VertexClass aVertexClass);
+
+	/**
+	 * Creates an array <code>ret</code> of all VertexClasses.<br>
+	 * ret[0]=AbstractSuperNode<br>
+	 * ret[1]=SubNode<br>
+	 * ret[2]=SuperNode<br>
+	 * ret[3]=DoubleSubNode
+	 * 
+	 * @return an array <code>ret</code> of all VertexClasses
+	 */
+	private VertexClass[] getVertexClasses() {
+		List<VertexClass> vclasses = graph.getSchema()
+				.getVertexClassesInTopologicalOrder();
+		VertexClass[] vcret = new VertexClass[4];
+		for (VertexClass vc : vclasses) {
+			if (vc.getSimpleName().equals("AbstractSuperNode")) {
+				vcret[0] = vc;
+			} else if (vc.getSimpleName().equals("SubNode")) {
+				vcret[1] = vc;
+			} else if (vc.getSimpleName().equals("SuperNode")) {
+				vcret[2] = vc;
+			} else if (vc.getSimpleName().equals("DoubleSubNode")) {
+				vcret[3] = vc;
+			}
+		}
+		return vcret;
+	}
+
+	/**
+	 * Tests if there is only one vertex in the graph.
+	 */
+	@Test
+	public void getNextVertexTestVertexClass0() {
+		VertexClass[] vertices = getVertexClasses();
+		Vertex v = graph.createSubNode();
+		assertEquals(null, v.getNextVertexOfClass(vertices[0]));
+		assertEquals(null, v.getNextVertexOfClass(vertices[1]));
+		assertEquals(null, v.getNextVertexOfClass(vertices[2]));
+		assertEquals(null, v.getNextVertexOfClass(vertices[3]));
+	}
+
+	/**
+	 * The next vertex is an instance of a class which is a subclass of another
+	 * vertexclass.
+	 */
+	@Test
+	public void getNextVertexTestVertexClass1() {
+		VertexClass[] vertices = getVertexClasses();
+		Vertex v0 = graph.createDoubleSubNode();
+		Vertex v1 = graph.createSubNode();
+		assertEquals(v1, v0.getNextVertexOfClass(vertices[0]));
+		assertEquals(v1, v0.getNextVertexOfClass(vertices[1]));
+		assertEquals(null, v0.getNextVertexOfClass(vertices[2]));
+		assertEquals(null, v0.getNextVertexOfClass(vertices[3]));
+	}
+
+	/**
+	 * The next vertex is an instance of a class which is a subclass of tow
+	 * other vertexclasses.
+	 */
+	@Test
+	public void getNextVertexTestVertexClass2() {
+		VertexClass[] vertices = getVertexClasses();
+		Vertex v0 = graph.createDoubleSubNode();
+		Vertex v1 = graph.createDoubleSubNode();
+		assertEquals(v1, v0.getNextVertexOfClass(vertices[0]));
+		assertEquals(v1, v0.getNextVertexOfClass(vertices[1]));
+		assertEquals(v1, v0.getNextVertexOfClass(vertices[2]));
+		assertEquals(v1, v0.getNextVertexOfClass(vertices[3]));
+	}
+
+	/**
+	 * Test in a manually build graph: SubNode SuperNode DoubleSubNode SuperNode
+	 * SubNode SuperNode DoubleSubNode
+	 */
+	@Test
+	public void getNextVertexTestVertexClass3() {
+		VertexClass[] vertices = getVertexClasses();
+		Vertex v0 = graph.createSubNode();
+		Vertex v1 = graph.createSuperNode();
+		Vertex v2 = graph.createDoubleSubNode();
+		Vertex v3 = graph.createSuperNode();
+		Vertex v4 = graph.createSubNode();
+		Vertex v5 = graph.createSuperNode();
+		Vertex v6 = graph.createDoubleSubNode();
+
+		assertEquals(v2, v0.getNextVertexOfClass(vertices[0]));
+		assertEquals(v2, v0.getNextVertexOfClass(vertices[1]));
+		assertEquals(v1, v0.getNextVertexOfClass(vertices[2]));
+		assertEquals(v2, v0.getNextVertexOfClass(vertices[3]));
+
+		assertEquals(v2, v1.getNextVertexOfClass(vertices[0]));
+		assertEquals(v2, v1.getNextVertexOfClass(vertices[1]));
+		assertEquals(v2, v1.getNextVertexOfClass(vertices[2]));
+		assertEquals(v2, v1.getNextVertexOfClass(vertices[3]));
+
+		assertEquals(v4, v2.getNextVertexOfClass(vertices[0]));
+		assertEquals(v4, v2.getNextVertexOfClass(vertices[1]));
+		assertEquals(v3, v2.getNextVertexOfClass(vertices[2]));
+		assertEquals(v6, v2.getNextVertexOfClass(vertices[3]));
+
+		assertEquals(v4, v3.getNextVertexOfClass(vertices[0]));
+		assertEquals(v4, v3.getNextVertexOfClass(vertices[1]));
+		assertEquals(v5, v3.getNextVertexOfClass(vertices[2]));
+		assertEquals(v6, v3.getNextVertexOfClass(vertices[3]));
+
+		assertEquals(v6, v4.getNextVertexOfClass(vertices[0]));
+		assertEquals(v6, v4.getNextVertexOfClass(vertices[1]));
+		assertEquals(v5, v4.getNextVertexOfClass(vertices[2]));
+		assertEquals(v6, v4.getNextVertexOfClass(vertices[3]));
+
+		assertEquals(v6, v5.getNextVertexOfClass(vertices[0]));
+		assertEquals(v6, v5.getNextVertexOfClass(vertices[1]));
+		assertEquals(v6, v5.getNextVertexOfClass(vertices[2]));
+		assertEquals(v6, v5.getNextVertexOfClass(vertices[3]));
+
+		assertEquals(null, v6.getNextVertexOfClass(vertices[0]));
+		assertEquals(null, v6.getNextVertexOfClass(vertices[1]));
+		assertEquals(null, v6.getNextVertexOfClass(vertices[2]));
+		assertEquals(null, v6.getNextVertexOfClass(vertices[3]));
+	}
+
+	/**
+	 * RandomTests
+	 */
+	@Test
+	public void getNextVertexTestVertexClass4() {
+		VertexClass[] vClasses = getVertexClasses();
+		for (int i = 0; i < 1000; i++) {
+			graph = VertexTestSchema.instance().createVertexTestGraph();
+			// all vertices in the graph
+			Vertex[] vertices = new Vertex[20];
+			// the next AbstractSuperNode for the i-th Vertex
+			Vertex[] nextAbstractSuperNode = new Vertex[vertices.length];
+			// the position of the last Vertex which has a nextApstractSuperNode
+			int lastAbstractSuperNode = -1;
+			Vertex[] nextSubNode = new Vertex[vertices.length];
+			int lastSubNode = -1;
+			Vertex[] nextSuperNode = new Vertex[vertices.length];
+			int lastSuperNode = -1;
+			Vertex[] nextDoubleSubNode = new Vertex[vertices.length];
+			int lastDoubleSubNode = -1;
+			for (int j = 0; j < vertices.length; j++) {
+				// create vertices
+				int vclass = rand.nextInt(3);
+				switch (vclass) {
+				case 0:
+					vertices[j] = graph.createSubNode();
+					// all vertices until j(exclusive) have the new vertex as
+					// next AbstractSuperNode
+					while (lastAbstractSuperNode < j) {
+						if (lastAbstractSuperNode >= 0) {
+							nextAbstractSuperNode[lastAbstractSuperNode] = vertices[j];
+						}
+						lastAbstractSuperNode++;
+					}
+					// all vertices until j(exclusive) have the new vertex as
+					// next SubNode
+					while (lastSubNode < j) {
+						if (lastSubNode >= 0) {
+							nextSubNode[lastSubNode] = vertices[j];
+						}
+						lastSubNode++;
+					}
+					break;
+				case 1:
+					vertices[j] = graph.createSuperNode();
+					// all vertices until j(exclusive) have the new vertex as
+					// next SuperNode
+					while (lastSuperNode < j) {
+						if (lastSuperNode >= 0) {
+							nextSuperNode[lastSuperNode] = vertices[j];
+						}
+						lastSuperNode++;
+					}
+					break;
+				case 2:
+					vertices[j] = graph.createDoubleSubNode();
+					// all vertices until j(exclusive) have the new vertex as
+					// next AbstractSuperNode
+					while (lastAbstractSuperNode < j) {
+						if (lastAbstractSuperNode >= 0) {
+							nextAbstractSuperNode[lastAbstractSuperNode] = vertices[j];
+						}
+						lastAbstractSuperNode++;
+					}
+					// all vertices until j(exclusive) have the new vertex as
+					// next SubNode
+					while (lastSubNode < j) {
+						if (lastSubNode >= 0) {
+							nextSubNode[lastSubNode] = vertices[j];
+						}
+						lastSubNode++;
+					}
+					// all vertices until j(exclusive) have the new vertex as
+					// next SuperNode
+					while (lastSuperNode < j) {
+						if (lastSuperNode >= 0) {
+							nextSuperNode[lastSuperNode] = vertices[j];
+						}
+						lastSuperNode++;
+					}
+					// all vertices until j(exclusive) have the new vertex as
+					// next DoubleSubNode
+					while (lastDoubleSubNode < j) {
+						if (lastDoubleSubNode >= 0) {
+							nextDoubleSubNode[lastDoubleSubNode] = vertices[j];
+						}
+						lastDoubleSubNode++;
+					}
+					break;
+				}
+			}
+			// check nextVertex after creating
+			for (int j = 0; j < vertices.length; j++) {
+				assertEquals(nextAbstractSuperNode[j], vertices[j]
+						.getNextVertexOfClass(vClasses[0]));
+				assertEquals(nextSubNode[j], vertices[j]
+						.getNextVertexOfClass(vClasses[1]));
+				assertEquals(nextSuperNode[j], vertices[j]
+						.getNextVertexOfClass(vClasses[2]));
+				assertEquals(nextDoubleSubNode[j], vertices[j]
+						.getNextVertexOfClass(vClasses[3]));
+			}
+		}
+	}
+
+	// tests of the method getNextVertex(Class<? extends Vertex>
+	// aM1VertexClass);
+
+	/**
+	 * Tests if there is only one vertex in the graph.
+	 */
+	@Test
+	public void getNextVertexTestClass0() {
+		Vertex v = graph.createSubNode();
+		assertEquals(null, v.getNextVertexOfClass(AbstractSuperNode.class));
+		assertEquals(null, v.getNextVertexOfClass(SubNode.class));
+		assertEquals(null, v.getNextVertexOfClass(SuperNode.class));
+		assertEquals(null, v.getNextVertexOfClass(DoubleSubNode.class));
+	}
+
+	/**
+	 * The next vertex is an instance of a class which is a subclass of another
+	 * vertexclass.
+	 */
+	@Test
+	public void getNextVertexTestClass1() {
+		Vertex v0 = graph.createDoubleSubNode();
+		Vertex v1 = graph.createSubNode();
+		assertEquals(v1, v0.getNextVertexOfClass(AbstractSuperNode.class));
+		assertEquals(v1, v0.getNextVertexOfClass(SubNode.class));
+		assertEquals(null, v0.getNextVertexOfClass(SuperNode.class));
+		assertEquals(null, v0.getNextVertexOfClass(DoubleSubNode.class));
+	}
+
+	/**
+	 * The next vertex is an instance of a class which is a subclass of tow
+	 * other vertexclasses.
+	 */
+	@Test
+	public void getNextVertexTestClass2() {
+		Vertex v0 = graph.createDoubleSubNode();
+		Vertex v1 = graph.createDoubleSubNode();
+		assertEquals(v1, v0.getNextVertexOfClass(AbstractSuperNode.class));
+		assertEquals(v1, v0.getNextVertexOfClass(SubNode.class));
+		assertEquals(v1, v0.getNextVertexOfClass(SuperNode.class));
+		assertEquals(v1, v0.getNextVertexOfClass(DoubleSubNode.class));
+	}
+
+	/**
+	 * Test in a manually build graph: SubNode SuperNode DoubleSubNode SuperNode
+	 * SubNode SuperNode DoubleSubNode
+	 */
+	@Test
+	public void getNextVertexTestClass3() {
+		Vertex v0 = graph.createSubNode();
+		Vertex v1 = graph.createSuperNode();
+		Vertex v2 = graph.createDoubleSubNode();
+		Vertex v3 = graph.createSuperNode();
+		Vertex v4 = graph.createSubNode();
+		Vertex v5 = graph.createSuperNode();
+		Vertex v6 = graph.createDoubleSubNode();
+
+		assertEquals(v2, v0.getNextVertexOfClass(AbstractSuperNode.class));
+		assertEquals(v2, v0.getNextVertexOfClass(SubNode.class));
+		assertEquals(v1, v0.getNextVertexOfClass(SuperNode.class));
+		assertEquals(v2, v0.getNextVertexOfClass(DoubleSubNode.class));
+
+		assertEquals(v2, v1.getNextVertexOfClass(AbstractSuperNode.class));
+		assertEquals(v2, v1.getNextVertexOfClass(SubNode.class));
+		assertEquals(v2, v1.getNextVertexOfClass(SuperNode.class));
+		assertEquals(v2, v1.getNextVertexOfClass(DoubleSubNode.class));
+
+		assertEquals(v4, v2.getNextVertexOfClass(AbstractSuperNode.class));
+		assertEquals(v4, v2.getNextVertexOfClass(SubNode.class));
+		assertEquals(v3, v2.getNextVertexOfClass(SuperNode.class));
+		assertEquals(v6, v2.getNextVertexOfClass(DoubleSubNode.class));
+
+		assertEquals(v4, v3.getNextVertexOfClass(AbstractSuperNode.class));
+		assertEquals(v4, v3.getNextVertexOfClass(SubNode.class));
+		assertEquals(v5, v3.getNextVertexOfClass(SuperNode.class));
+		assertEquals(v6, v3.getNextVertexOfClass(DoubleSubNode.class));
+
+		assertEquals(v6, v4.getNextVertexOfClass(AbstractSuperNode.class));
+		assertEquals(v6, v4.getNextVertexOfClass(SubNode.class));
+		assertEquals(v5, v4.getNextVertexOfClass(SuperNode.class));
+		assertEquals(v6, v4.getNextVertexOfClass(DoubleSubNode.class));
+
+		assertEquals(v6, v5.getNextVertexOfClass(AbstractSuperNode.class));
+		assertEquals(v6, v5.getNextVertexOfClass(SubNode.class));
+		assertEquals(v6, v5.getNextVertexOfClass(SuperNode.class));
+		assertEquals(v6, v5.getNextVertexOfClass(DoubleSubNode.class));
+
+		assertEquals(null, v6.getNextVertexOfClass(AbstractSuperNode.class));
+		assertEquals(null, v6.getNextVertexOfClass(SubNode.class));
+		assertEquals(null, v6.getNextVertexOfClass(SuperNode.class));
+		assertEquals(null, v6.getNextVertexOfClass(DoubleSubNode.class));
+	}
+
+	/**
+	 * RandomTests
+	 */
+	@Test
+	public void getNextVertexTestClass4() {
+		for (int i = 0; i < 1000; i++) {
+			graph = VertexTestSchema.instance().createVertexTestGraph();
+			// all vertices in the graph
+			Vertex[] vertices = new Vertex[20];
+			// the next AbstractSuperNode for the i-th Vertex
+			Vertex[] nextAbstractSuperNode = new Vertex[vertices.length];
+			// the position of the last Vertex which has a nextApstractSuperNode
+			int lastAbstractSuperNode = -1;
+			Vertex[] nextSubNode = new Vertex[vertices.length];
+			int lastSubNode = -1;
+			Vertex[] nextSuperNode = new Vertex[vertices.length];
+			int lastSuperNode = -1;
+			Vertex[] nextDoubleSubNode = new Vertex[vertices.length];
+			int lastDoubleSubNode = -1;
+			for (int j = 0; j < vertices.length; j++) {
+				// create vertices
+				int vclass = rand.nextInt(3);
+				switch (vclass) {
+				case 0:
+					vertices[j] = graph.createSubNode();
+					// all vertices until j(exclusive) have the new vertex as
+					// next AbstractSuperNode
+					while (lastAbstractSuperNode < j) {
+						if (lastAbstractSuperNode >= 0) {
+							nextAbstractSuperNode[lastAbstractSuperNode] = vertices[j];
+						}
+						lastAbstractSuperNode++;
+					}
+					// all vertices until j(exclusive) have the new vertex as
+					// next SubNode
+					while (lastSubNode < j) {
+						if (lastSubNode >= 0) {
+							nextSubNode[lastSubNode] = vertices[j];
+						}
+						lastSubNode++;
+					}
+					break;
+				case 1:
+					vertices[j] = graph.createSuperNode();
+					// all vertices until j(exclusive) have the new vertex as
+					// next SuperNode
+					while (lastSuperNode < j) {
+						if (lastSuperNode >= 0) {
+							nextSuperNode[lastSuperNode] = vertices[j];
+						}
+						lastSuperNode++;
+					}
+					break;
+				case 2:
+					vertices[j] = graph.createDoubleSubNode();
+					// all vertices until j(exclusive) have the new vertex as
+					// next AbstractSuperNode
+					while (lastAbstractSuperNode < j) {
+						if (lastAbstractSuperNode >= 0) {
+							nextAbstractSuperNode[lastAbstractSuperNode] = vertices[j];
+						}
+						lastAbstractSuperNode++;
+					}
+					// all vertices until j(exclusive) have the new vertex as
+					// next SubNode
+					while (lastSubNode < j) {
+						if (lastSubNode >= 0) {
+							nextSubNode[lastSubNode] = vertices[j];
+						}
+						lastSubNode++;
+					}
+					// all vertices until j(exclusive) have the new vertex as
+					// next SuperNode
+					while (lastSuperNode < j) {
+						if (lastSuperNode >= 0) {
+							nextSuperNode[lastSuperNode] = vertices[j];
+						}
+						lastSuperNode++;
+					}
+					// all vertices until j(exclusive) have the new vertex as
+					// next DoubleSubNode
+					while (lastDoubleSubNode < j) {
+						if (lastDoubleSubNode >= 0) {
+							nextDoubleSubNode[lastDoubleSubNode] = vertices[j];
+						}
+						lastDoubleSubNode++;
+					}
+					break;
+				}
+			}
+			// check nextVertex after creating
+			for (int j = 0; j < vertices.length; j++) {
+				assertEquals(nextAbstractSuperNode[j], vertices[j]
+						.getNextVertexOfClass(AbstractSuperNode.class));
+				assertEquals(nextSubNode[j], vertices[j]
+						.getNextVertexOfClass(SubNode.class));
+				assertEquals(nextSuperNode[j], vertices[j]
+						.getNextVertexOfClass(SuperNode.class));
+				assertEquals(nextDoubleSubNode[j], vertices[j]
+						.getNextVertexOfClass(DoubleSubNode.class));
+			}
+		}
+	}
+
+	// tests of the method getNextVertex(VertexClass aVertexClass, boolean
+	// noSubclasses);
+
+	/**
+	 * Tests if there is only one vertex in the graph.
+	 */
+	@Test
+	public void getNextVertexTestVertexClassBoolean0() {
+		VertexClass[] vertices = getVertexClasses();
+		Vertex v = graph.createSubNode();
+		assertEquals(null, v.getNextVertexOfClass(vertices[0], false));
+		assertEquals(null, v.getNextVertexOfClass(vertices[0], true));
+		assertEquals(null, v.getNextVertexOfClass(vertices[1], false));
+		assertEquals(null, v.getNextVertexOfClass(vertices[1], true));
+		assertEquals(null, v.getNextVertexOfClass(vertices[2], false));
+		assertEquals(null, v.getNextVertexOfClass(vertices[2], true));
+		assertEquals(null, v.getNextVertexOfClass(vertices[3], false));
+		assertEquals(null, v.getNextVertexOfClass(vertices[3], true));
+	}
+
+	/**
+	 * The next vertex is an instance of a class which is a subclass of another
+	 * vertexclass.
+	 */
+	@Test
+	public void getNextVertexTestVertexClassBoolean1() {
+		VertexClass[] vertices = getVertexClasses();
+		Vertex v0 = graph.createDoubleSubNode();
+		Vertex v1 = graph.createSubNode();
+		assertEquals(v1, v0.getNextVertexOfClass(vertices[0], false));
+		assertEquals(null, v0.getNextVertexOfClass(vertices[0], true));
+		assertEquals(v1, v0.getNextVertexOfClass(vertices[1], false));
+		assertEquals(v1, v0.getNextVertexOfClass(vertices[1], true));
+		assertEquals(null, v0.getNextVertexOfClass(vertices[2], false));
+		assertEquals(null, v0.getNextVertexOfClass(vertices[2], true));
+		assertEquals(null, v0.getNextVertexOfClass(vertices[3], false));
+		assertEquals(null, v0.getNextVertexOfClass(vertices[3], true));
+	}
+
+	/**
+	 * The next vertex is an instance of a class which is a subclass of tow
+	 * other vertexclasses.
+	 */
+	@Test
+	public void getNextVertexTestVertexClassBoolean2() {
+		VertexClass[] vertices = getVertexClasses();
+		Vertex v0 = graph.createDoubleSubNode();
+		Vertex v1 = graph.createDoubleSubNode();
+		assertEquals(v1, v0.getNextVertexOfClass(vertices[0], false));
+		assertEquals(null, v0.getNextVertexOfClass(vertices[0], true));
+		assertEquals(v1, v0.getNextVertexOfClass(vertices[1], false));
+		assertEquals(null, v0.getNextVertexOfClass(vertices[1], true));
+		assertEquals(v1, v0.getNextVertexOfClass(vertices[2], false));
+		assertEquals(null, v0.getNextVertexOfClass(vertices[2], true));
+		assertEquals(v1, v0.getNextVertexOfClass(vertices[3], false));
+		assertEquals(v1, v0.getNextVertexOfClass(vertices[3], true));
+	}
+
+	/**
+	 * Test in a manually build graph: SubNode SuperNode DoubleSubNode SuperNode
+	 * SubNode SuperNode DoubleSubNode
+	 */
+	@Test
+	public void getNextVertexTestVertexClassBoolean3() {
+		VertexClass[] vertices = getVertexClasses();
+		Vertex v0 = graph.createSubNode();
+		Vertex v1 = graph.createSuperNode();
+		Vertex v2 = graph.createDoubleSubNode();
+		Vertex v3 = graph.createSuperNode();
+		Vertex v4 = graph.createSubNode();
+		Vertex v5 = graph.createSuperNode();
+		Vertex v6 = graph.createDoubleSubNode();
+
+		assertEquals(v2, v0.getNextVertexOfClass(vertices[0], false));
+		assertEquals(v2, v0.getNextVertexOfClass(vertices[1], false));
+		assertEquals(v1, v0.getNextVertexOfClass(vertices[2], false));
+		assertEquals(v2, v0.getNextVertexOfClass(vertices[3], false));
+		assertEquals(null, v0.getNextVertexOfClass(vertices[0], true));
+		assertEquals(v4, v0.getNextVertexOfClass(vertices[1], true));
+		assertEquals(v1, v0.getNextVertexOfClass(vertices[2], true));
+		assertEquals(v2, v0.getNextVertexOfClass(vertices[3], true));
+
+		assertEquals(v2, v1.getNextVertexOfClass(vertices[0], false));
+		assertEquals(v2, v1.getNextVertexOfClass(vertices[1], false));
+		assertEquals(v2, v1.getNextVertexOfClass(vertices[2], false));
+		assertEquals(v2, v1.getNextVertexOfClass(vertices[3], false));
+		assertEquals(null, v1.getNextVertexOfClass(vertices[0], true));
+		assertEquals(v4, v1.getNextVertexOfClass(vertices[1], true));
+		assertEquals(v3, v1.getNextVertexOfClass(vertices[2], true));
+		assertEquals(v2, v1.getNextVertexOfClass(vertices[3], true));
+
+		assertEquals(v4, v2.getNextVertexOfClass(vertices[0], false));
+		assertEquals(v4, v2.getNextVertexOfClass(vertices[1], false));
+		assertEquals(v3, v2.getNextVertexOfClass(vertices[2], false));
+		assertEquals(v6, v2.getNextVertexOfClass(vertices[3], false));
+		assertEquals(null, v2.getNextVertexOfClass(vertices[0], true));
+		assertEquals(v4, v2.getNextVertexOfClass(vertices[1], true));
+		assertEquals(v3, v2.getNextVertexOfClass(vertices[2], true));
+		assertEquals(v6, v2.getNextVertexOfClass(vertices[3], true));
+
+		assertEquals(v4, v3.getNextVertexOfClass(vertices[0], false));
+		assertEquals(v4, v3.getNextVertexOfClass(vertices[1], false));
+		assertEquals(v5, v3.getNextVertexOfClass(vertices[2], false));
+		assertEquals(v6, v3.getNextVertexOfClass(vertices[3], false));
+		assertEquals(null, v3.getNextVertexOfClass(vertices[0], true));
+		assertEquals(v4, v3.getNextVertexOfClass(vertices[1], true));
+		assertEquals(v5, v3.getNextVertexOfClass(vertices[2], true));
+		assertEquals(v6, v3.getNextVertexOfClass(vertices[3], true));
+
+		assertEquals(v6, v4.getNextVertexOfClass(vertices[0], false));
+		assertEquals(v6, v4.getNextVertexOfClass(vertices[1], false));
+		assertEquals(v5, v4.getNextVertexOfClass(vertices[2], false));
+		assertEquals(v6, v4.getNextVertexOfClass(vertices[3], false));
+		assertEquals(null, v4.getNextVertexOfClass(vertices[0], true));
+		assertEquals(null, v4.getNextVertexOfClass(vertices[1], true));
+		assertEquals(v5, v4.getNextVertexOfClass(vertices[2], true));
+		assertEquals(v6, v4.getNextVertexOfClass(vertices[3], true));
+
+		assertEquals(v6, v5.getNextVertexOfClass(vertices[0], false));
+		assertEquals(v6, v5.getNextVertexOfClass(vertices[1], false));
+		assertEquals(v6, v5.getNextVertexOfClass(vertices[2], false));
+		assertEquals(v6, v5.getNextVertexOfClass(vertices[3], false));
+		assertEquals(null, v5.getNextVertexOfClass(vertices[0], true));
+		assertEquals(null, v5.getNextVertexOfClass(vertices[1], true));
+		assertEquals(null, v5.getNextVertexOfClass(vertices[2], true));
+		assertEquals(v6, v5.getNextVertexOfClass(vertices[3], true));
+
+		assertEquals(null, v6.getNextVertexOfClass(vertices[0], false));
+		assertEquals(null, v6.getNextVertexOfClass(vertices[1], false));
+		assertEquals(null, v6.getNextVertexOfClass(vertices[2], false));
+		assertEquals(null, v6.getNextVertexOfClass(vertices[3], false));
+		assertEquals(null, v6.getNextVertexOfClass(vertices[0], true));
+		assertEquals(null, v6.getNextVertexOfClass(vertices[1], true));
+		assertEquals(null, v6.getNextVertexOfClass(vertices[2], true));
+		assertEquals(null, v6.getNextVertexOfClass(vertices[3], true));
+	}
+
+	/**
+	 * RandomTests
+	 */
+	@Test
+	public void getNextVertexTestVertexClassBoolean4() {
+		VertexClass[] vClasses = getVertexClasses();
+		for (int i = 0; i < 1000; i++) {
+			graph = VertexTestSchema.instance().createVertexTestGraph();
+			// all vertices in the graph
+			Vertex[] vertices = new Vertex[20];
+			// the next AbstractSuperNode for the i-th Vertex
+			Vertex[] nextAbstractSuperNodeFalse = new Vertex[vertices.length];
+			// the position of the last Vertex which has a next
+			// AbstractSuperNode
+			int lastAbstractSuperNodeFalse = -1;
+			// the next AbstractSuperNode(no subclasses) for the i-th Vertex
+			// Vertex[] nextAbstractSuperNodeTrue = new Vertex[vertices.length];
+			// the position of the last Vertex which has a next
+			// AbstractSuperNode(no subclasses)
+			// int lastAbstractSuperNodeTrue = -1;
+			Vertex[] nextSubNodeFalse = new Vertex[vertices.length];
+			int lastSubNodeFalse = -1;
+			Vertex[] nextSubNodeTrue = new Vertex[vertices.length];
+			int lastSubNodeTrue = -1;
+			Vertex[] nextSuperNodeFalse = new Vertex[vertices.length];
+			int lastSuperNodeFalse = -1;
+			Vertex[] nextSuperNodeTrue = new Vertex[vertices.length];
+			int lastSuperNodeTrue = -1;
+			Vertex[] nextDoubleSubNodeFalse = new Vertex[vertices.length];
+			int lastDoubleSubNodeFalse = -1;
+			Vertex[] nextDoubleSubNodeTrue = new Vertex[vertices.length];
+			int lastDoubleSubNodeTrue = -1;
+			for (int j = 0; j < vertices.length; j++) {
+				// create vertices
+				int vclass = rand.nextInt(3);
+				switch (vclass) {
+				case 0:
+					vertices[j] = graph.createSubNode();
+					// all vertices until j(exclusive) have the new vertex as
+					// next AbstractSuperNode
+					while (lastAbstractSuperNodeFalse < j) {
+						if (lastAbstractSuperNodeFalse >= 0) {
+							nextAbstractSuperNodeFalse[lastAbstractSuperNodeFalse] = vertices[j];
+						}
+						lastAbstractSuperNodeFalse++;
+					}
+					// all vertices until j(exclusive) have the new vertex as
+					// next SubNode
+					while (lastSubNodeFalse < j) {
+						if (lastSubNodeFalse >= 0) {
+							nextSubNodeFalse[lastSubNodeFalse] = vertices[j];
+						}
+						lastSubNodeFalse++;
+					}
+					// with no subclasses
+					while (lastSubNodeTrue < j) {
+						if (lastSubNodeTrue >= 0) {
+							nextSubNodeTrue[lastSubNodeTrue] = vertices[j];
+						}
+						lastSubNodeTrue++;
+					}
+					break;
+				case 1:
+					vertices[j] = graph.createSuperNode();
+					// all vertices until j(exclusive) have the new vertex as
+					// next SuperNode
+					while (lastSuperNodeFalse < j) {
+						if (lastSuperNodeFalse >= 0) {
+							nextSuperNodeFalse[lastSuperNodeFalse] = vertices[j];
+						}
+						lastSuperNodeFalse++;
+					}
+					// with no subclasses
+					while (lastSuperNodeTrue < j) {
+						if (lastSuperNodeTrue >= 0) {
+							nextSuperNodeTrue[lastSuperNodeTrue] = vertices[j];
+						}
+						lastSuperNodeTrue++;
+					}
+					break;
+				case 2:
+					vertices[j] = graph.createDoubleSubNode();
+					// all vertices until j(exclusive) have the new vertex as
+					// next AbstractSuperNode
+					while (lastAbstractSuperNodeFalse < j) {
+						if (lastAbstractSuperNodeFalse >= 0) {
+							nextAbstractSuperNodeFalse[lastAbstractSuperNodeFalse] = vertices[j];
+						}
+						lastAbstractSuperNodeFalse++;
+					}
+					// all vertices until j(exclusive) have the new vertex as
+					// next SubNode
+					while (lastSubNodeFalse < j) {
+						if (lastSubNodeFalse >= 0) {
+							nextSubNodeFalse[lastSubNodeFalse] = vertices[j];
+						}
+						lastSubNodeFalse++;
+					}
+					// all vertices until j(exclusive) have the new vertex as
+					// next SuperNode
+					while (lastSuperNodeFalse < j) {
+						if (lastSuperNodeFalse >= 0) {
+							nextSuperNodeFalse[lastSuperNodeFalse] = vertices[j];
+						}
+						lastSuperNodeFalse++;
+					}
+					// all vertices until j(exclusive) have the new vertex as
+					// next DoubleSubNode
+					while (lastDoubleSubNodeFalse < j) {
+						if (lastDoubleSubNodeFalse >= 0) {
+							nextDoubleSubNodeFalse[lastDoubleSubNodeFalse] = vertices[j];
+						}
+						lastDoubleSubNodeFalse++;
+					}
+					// with no subclasses
+					while (lastDoubleSubNodeTrue < j) {
+						if (lastDoubleSubNodeTrue >= 0) {
+							nextDoubleSubNodeTrue[lastDoubleSubNodeTrue] = vertices[j];
+						}
+						lastDoubleSubNodeTrue++;
+					}
+					break;
+				}
+			}
+			// check nextVertex after creating
+			for (int j = 0; j < vertices.length; j++) {
+				assertEquals(nextAbstractSuperNodeFalse[j], vertices[j]
+						.getNextVertexOfClass(vClasses[0], false));
+				assertEquals(nextSubNodeFalse[j], vertices[j]
+						.getNextVertexOfClass(vClasses[1], false));
+				assertEquals(nextSuperNodeFalse[j], vertices[j]
+						.getNextVertexOfClass(vClasses[2], false));
+				assertEquals(nextDoubleSubNodeFalse[j], vertices[j]
+						.getNextVertexOfClass(vClasses[3], false));
+				assertEquals(null, vertices[j]
+						.getNextVertexOfClass(vClasses[0], true));
+				assertEquals(nextSubNodeTrue[j], vertices[j]
+						.getNextVertexOfClass(vClasses[1], true));
+				assertEquals(nextSuperNodeTrue[j], vertices[j]
+						.getNextVertexOfClass(vClasses[2], true));
+				assertEquals(nextDoubleSubNodeTrue[j], vertices[j]
+						.getNextVertexOfClass(vClasses[3], true));
+			}
+		}
+	}
+
+	// tests of the method getNextVertex(Class<? extends Vertex> aM1VertexClass, boolean
+	// noSubclasses);
+
+	/**
+	 * Tests if there is only one vertex in the graph.
+	 */
+	@Test
+	public void getNextVertexTestClassBoolean0() {
+		Vertex v = graph.createSubNode();
+		assertEquals(null, v.getNextVertexOfClass(AbstractSuperNode.class, false));
+		assertEquals(null, v.getNextVertexOfClass(AbstractSuperNode.class, true));
+		assertEquals(null, v.getNextVertexOfClass(SubNode.class, false));
+		assertEquals(null, v.getNextVertexOfClass(SubNode.class, true));
+		assertEquals(null, v.getNextVertexOfClass(SuperNode.class, false));
+		assertEquals(null, v.getNextVertexOfClass(SuperNode.class, true));
+		assertEquals(null, v.getNextVertexOfClass(DoubleSubNode.class, false));
+		assertEquals(null, v.getNextVertexOfClass(DoubleSubNode.class, true));
+	}
+
+	/**
+	 * The next vertex is an instance of a class which is a subclass of another
+	 * vertexclass.
+	 */
+	@Test
+	public void getNextVertexTestClassBoolean1() {
+		Vertex v0 = graph.createDoubleSubNode();
+		Vertex v1 = graph.createSubNode();
+		assertEquals(v1, v0.getNextVertexOfClass(AbstractSuperNode.class, false));
+		assertEquals(null, v0.getNextVertexOfClass(AbstractSuperNode.class, true));
+		assertEquals(v1, v0.getNextVertexOfClass(SubNode.class, false));
+		assertEquals(v1, v0.getNextVertexOfClass(SubNode.class, true));
+		assertEquals(null, v0.getNextVertexOfClass(SuperNode.class, false));
+		assertEquals(null, v0.getNextVertexOfClass(SuperNode.class, true));
+		assertEquals(null, v0.getNextVertexOfClass(DoubleSubNode.class, false));
+		assertEquals(null, v0.getNextVertexOfClass(DoubleSubNode.class, true));
+	}
+	
+	/**
+	 * The next vertex is an instance of a class which is a subclass of tow
+	 * other vertexclasses.
+	 */
+	@Test
+	public void getNextVertexTestClassBoolean2() {
+		Vertex v0 = graph.createDoubleSubNode();
+		Vertex v1 = graph.createDoubleSubNode();
+		assertEquals(v1, v0.getNextVertexOfClass(AbstractSuperNode.class, false));
+		assertEquals(null, v0.getNextVertexOfClass(AbstractSuperNode.class, true));
+		assertEquals(v1, v0.getNextVertexOfClass(SubNode.class, false));
+		assertEquals(null, v0.getNextVertexOfClass(SubNode.class, true));
+		assertEquals(v1, v0.getNextVertexOfClass(SuperNode.class, false));
+		assertEquals(null, v0.getNextVertexOfClass(SuperNode.class, true));
+		assertEquals(v1, v0.getNextVertexOfClass(DoubleSubNode.class, false));
+		assertEquals(v1, v0.getNextVertexOfClass(DoubleSubNode.class, true));
+	}
+
+	/**
+	 * Test in a manually build graph: SubNode SuperNode DoubleSubNode SuperNode
+	 * SubNode SuperNode DoubleSubNode
+	 */
+	@Test
+	public void getNextVertexTestClassBoolean3() {
+		Vertex v0 = graph.createSubNode();
+		Vertex v1 = graph.createSuperNode();
+		Vertex v2 = graph.createDoubleSubNode();
+		Vertex v3 = graph.createSuperNode();
+		Vertex v4 = graph.createSubNode();
+		Vertex v5 = graph.createSuperNode();
+		Vertex v6 = graph.createDoubleSubNode();
+
+		assertEquals(v2, v0.getNextVertexOfClass(AbstractSuperNode.class, false));
+		assertEquals(v2, v0.getNextVertexOfClass(SubNode.class, false));
+		assertEquals(v1, v0.getNextVertexOfClass(SuperNode.class, false));
+		assertEquals(v2, v0.getNextVertexOfClass(DoubleSubNode.class, false));
+		assertEquals(null, v0.getNextVertexOfClass(AbstractSuperNode.class, true));
+		assertEquals(v4, v0.getNextVertexOfClass(SubNode.class, true));
+		assertEquals(v1, v0.getNextVertexOfClass(SuperNode.class, true));
+		assertEquals(v2, v0.getNextVertexOfClass(DoubleSubNode.class, true));
+
+		assertEquals(v2, v1.getNextVertexOfClass(AbstractSuperNode.class, false));
+		assertEquals(v2, v1.getNextVertexOfClass(SubNode.class, false));
+		assertEquals(v2, v1.getNextVertexOfClass(SuperNode.class, false));
+		assertEquals(v2, v1.getNextVertexOfClass(DoubleSubNode.class, false));
+		assertEquals(null, v1.getNextVertexOfClass(AbstractSuperNode.class, true));
+		assertEquals(v4, v1.getNextVertexOfClass(SubNode.class, true));
+		assertEquals(v3, v1.getNextVertexOfClass(SuperNode.class, true));
+		assertEquals(v2, v1.getNextVertexOfClass(DoubleSubNode.class, true));
+
+		assertEquals(v4, v2.getNextVertexOfClass(AbstractSuperNode.class, false));
+		assertEquals(v4, v2.getNextVertexOfClass(SubNode.class, false));
+		assertEquals(v3, v2.getNextVertexOfClass(SuperNode.class, false));
+		assertEquals(v6, v2.getNextVertexOfClass(DoubleSubNode.class, false));
+		assertEquals(null, v2.getNextVertexOfClass(AbstractSuperNode.class, true));
+		assertEquals(v4, v2.getNextVertexOfClass(SubNode.class, true));
+		assertEquals(v3, v2.getNextVertexOfClass(SuperNode.class, true));
+		assertEquals(v6, v2.getNextVertexOfClass(DoubleSubNode.class, true));
+
+		assertEquals(v4, v3.getNextVertexOfClass(AbstractSuperNode.class, false));
+		assertEquals(v4, v3.getNextVertexOfClass(SubNode.class, false));
+		assertEquals(v5, v3.getNextVertexOfClass(SuperNode.class, false));
+		assertEquals(v6, v3.getNextVertexOfClass(DoubleSubNode.class, false));
+		assertEquals(null, v3.getNextVertexOfClass(AbstractSuperNode.class, true));
+		assertEquals(v4, v3.getNextVertexOfClass(SubNode.class, true));
+		assertEquals(v5, v3.getNextVertexOfClass(SuperNode.class, true));
+		assertEquals(v6, v3.getNextVertexOfClass(DoubleSubNode.class, true));
+
+		assertEquals(v6, v4.getNextVertexOfClass(AbstractSuperNode.class, false));
+		assertEquals(v6, v4.getNextVertexOfClass(SubNode.class, false));
+		assertEquals(v5, v4.getNextVertexOfClass(SuperNode.class, false));
+		assertEquals(v6, v4.getNextVertexOfClass(DoubleSubNode.class, false));
+		assertEquals(null, v4.getNextVertexOfClass(AbstractSuperNode.class, true));
+		assertEquals(null, v4.getNextVertexOfClass(SubNode.class, true));
+		assertEquals(v5, v4.getNextVertexOfClass(SuperNode.class, true));
+		assertEquals(v6, v4.getNextVertexOfClass(DoubleSubNode.class, true));
+
+		assertEquals(v6, v5.getNextVertexOfClass(AbstractSuperNode.class, false));
+		assertEquals(v6, v5.getNextVertexOfClass(SubNode.class, false));
+		assertEquals(v6, v5.getNextVertexOfClass(SuperNode.class, false));
+		assertEquals(v6, v5.getNextVertexOfClass(DoubleSubNode.class, false));
+		assertEquals(null, v5.getNextVertexOfClass(AbstractSuperNode.class, true));
+		assertEquals(null, v5.getNextVertexOfClass(SubNode.class, true));
+		assertEquals(null, v5.getNextVertexOfClass(SuperNode.class, true));
+		assertEquals(v6, v5.getNextVertexOfClass(DoubleSubNode.class, true));
+
+		assertEquals(null, v6.getNextVertexOfClass(AbstractSuperNode.class, false));
+		assertEquals(null, v6.getNextVertexOfClass(SubNode.class, false));
+		assertEquals(null, v6.getNextVertexOfClass(SuperNode.class, false));
+		assertEquals(null, v6.getNextVertexOfClass(DoubleSubNode.class, false));
+		assertEquals(null, v6.getNextVertexOfClass(AbstractSuperNode.class, true));
+		assertEquals(null, v6.getNextVertexOfClass(SubNode.class, true));
+		assertEquals(null, v6.getNextVertexOfClass(SuperNode.class, true));
+		assertEquals(null, v6.getNextVertexOfClass(DoubleSubNode.class, true));
+	}
+
+	/**
+	 * RandomTests
+	 */
+	@Test
+	public void getNextVertexTestVertexBoolean4() {
+		for (int i = 0; i < 1000; i++) {
+			graph = VertexTestSchema.instance().createVertexTestGraph();
+			// all vertices in the graph
+			Vertex[] vertices = new Vertex[20];
+			// the next AbstractSuperNode for the i-th Vertex
+			Vertex[] nextAbstractSuperNodeFalse = new Vertex[vertices.length];
+			// the position of the last Vertex which has a next
+			// AbstractSuperNode
+			int lastAbstractSuperNodeFalse = -1;
+			// the next AbstractSuperNode(no subclasses) for the i-th Vertex
+			// Vertex[] nextAbstractSuperNodeTrue = new Vertex[vertices.length];
+			// the position of the last Vertex which has a next
+			// AbstractSuperNode(no subclasses)
+			// int lastAbstractSuperNodeTrue = -1;
+			Vertex[] nextSubNodeFalse = new Vertex[vertices.length];
+			int lastSubNodeFalse = -1;
+			Vertex[] nextSubNodeTrue = new Vertex[vertices.length];
+			int lastSubNodeTrue = -1;
+			Vertex[] nextSuperNodeFalse = new Vertex[vertices.length];
+			int lastSuperNodeFalse = -1;
+			Vertex[] nextSuperNodeTrue = new Vertex[vertices.length];
+			int lastSuperNodeTrue = -1;
+			Vertex[] nextDoubleSubNodeFalse = new Vertex[vertices.length];
+			int lastDoubleSubNodeFalse = -1;
+			Vertex[] nextDoubleSubNodeTrue = new Vertex[vertices.length];
+			int lastDoubleSubNodeTrue = -1;
+			for (int j = 0; j < vertices.length; j++) {
+				// create vertices
+				int vclass = rand.nextInt(3);
+				switch (vclass) {
+				case 0:
+					vertices[j] = graph.createSubNode();
+					// all vertices until j(exclusive) have the new vertex as
+					// next AbstractSuperNode
+					while (lastAbstractSuperNodeFalse < j) {
+						if (lastAbstractSuperNodeFalse >= 0) {
+							nextAbstractSuperNodeFalse[lastAbstractSuperNodeFalse] = vertices[j];
+						}
+						lastAbstractSuperNodeFalse++;
+					}
+					// all vertices until j(exclusive) have the new vertex as
+					// next SubNode
+					while (lastSubNodeFalse < j) {
+						if (lastSubNodeFalse >= 0) {
+							nextSubNodeFalse[lastSubNodeFalse] = vertices[j];
+						}
+						lastSubNodeFalse++;
+					}
+					// with no subclasses
+					while (lastSubNodeTrue < j) {
+						if (lastSubNodeTrue >= 0) {
+							nextSubNodeTrue[lastSubNodeTrue] = vertices[j];
+						}
+						lastSubNodeTrue++;
+					}
+					break;
+				case 1:
+					vertices[j] = graph.createSuperNode();
+					// all vertices until j(exclusive) have the new vertex as
+					// next SuperNode
+					while (lastSuperNodeFalse < j) {
+						if (lastSuperNodeFalse >= 0) {
+							nextSuperNodeFalse[lastSuperNodeFalse] = vertices[j];
+						}
+						lastSuperNodeFalse++;
+					}
+					// with no subclasses
+					while (lastSuperNodeTrue < j) {
+						if (lastSuperNodeTrue >= 0) {
+							nextSuperNodeTrue[lastSuperNodeTrue] = vertices[j];
+						}
+						lastSuperNodeTrue++;
+					}
+					break;
+				case 2:
+					vertices[j] = graph.createDoubleSubNode();
+					// all vertices until j(exclusive) have the new vertex as
+					// next AbstractSuperNode
+					while (lastAbstractSuperNodeFalse < j) {
+						if (lastAbstractSuperNodeFalse >= 0) {
+							nextAbstractSuperNodeFalse[lastAbstractSuperNodeFalse] = vertices[j];
+						}
+						lastAbstractSuperNodeFalse++;
+					}
+					// all vertices until j(exclusive) have the new vertex as
+					// next SubNode
+					while (lastSubNodeFalse < j) {
+						if (lastSubNodeFalse >= 0) {
+							nextSubNodeFalse[lastSubNodeFalse] = vertices[j];
+						}
+						lastSubNodeFalse++;
+					}
+					// all vertices until j(exclusive) have the new vertex as
+					// next SuperNode
+					while (lastSuperNodeFalse < j) {
+						if (lastSuperNodeFalse >= 0) {
+							nextSuperNodeFalse[lastSuperNodeFalse] = vertices[j];
+						}
+						lastSuperNodeFalse++;
+					}
+					// all vertices until j(exclusive) have the new vertex as
+					// next DoubleSubNode
+					while (lastDoubleSubNodeFalse < j) {
+						if (lastDoubleSubNodeFalse >= 0) {
+							nextDoubleSubNodeFalse[lastDoubleSubNodeFalse] = vertices[j];
+						}
+						lastDoubleSubNodeFalse++;
+					}
+					// with no subclasses
+					while (lastDoubleSubNodeTrue < j) {
+						if (lastDoubleSubNodeTrue >= 0) {
+							nextDoubleSubNodeTrue[lastDoubleSubNodeTrue] = vertices[j];
+						}
+						lastDoubleSubNodeTrue++;
+					}
+					break;
+				}
+			}
+			// check nextVertex after creating
+			for (int j = 0; j < vertices.length; j++) {
+				assertEquals(nextAbstractSuperNodeFalse[j], vertices[j]
+						.getNextVertexOfClass(AbstractSuperNode.class, false));
+				assertEquals(nextSubNodeFalse[j], vertices[j]
+						.getNextVertexOfClass(SubNode.class, false));
+				assertEquals(nextSuperNodeFalse[j], vertices[j]
+						.getNextVertexOfClass(SuperNode.class, false));
+				assertEquals(nextDoubleSubNodeFalse[j], vertices[j]
+						.getNextVertexOfClass(DoubleSubNode.class, false));
+				assertEquals(null, vertices[j]
+						.getNextVertexOfClass(AbstractSuperNode.class, true));
+				assertEquals(nextSubNodeTrue[j], vertices[j]
+						.getNextVertexOfClass(SubNode.class, true));
+				assertEquals(nextSuperNodeTrue[j], vertices[j]
+						.getNextVertexOfClass(SuperNode.class, true));
+				assertEquals(nextDoubleSubNodeTrue[j], vertices[j]
+						.getNextVertexOfClass(DoubleSubNode.class, true));
+			}
+		}
 	}
 
 }
