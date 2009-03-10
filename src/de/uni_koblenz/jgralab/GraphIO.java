@@ -317,6 +317,7 @@ public class GraphIO {
 				writeIdentifier(vc.getSimpleName());
 				writeHierarchy(pkg, vc);
 				writeAttributes(pkg, vc);
+				writeConstraints(vc);
 				TGOut.writeBytes(";\n");
 			}
 
@@ -398,6 +399,7 @@ public class GraphIO {
 				}
 
 				writeAttributes(pkg, ec);
+				writeConstraints(ec);
 				TGOut.writeBytes(";\n");
 			}
 		}
@@ -405,20 +407,18 @@ public class GraphIO {
 
 	private void writeConstraints(AttributedElementClass aec)
 			throws IOException {
-		boolean first = true;
 		for (Constraint c : aec.getConstraints()) {
-			if (first) {
-				first = false;
-			} else {
-				write(" ");
-			}
+			writeSpace();
 			write("[");
+			noSpace();
 			writeUtfString(c.getMessage());
 			writeUtfString(c.getPredicate());
 			if (c.getOffendingElementsQuery() != null) {
 				writeUtfString(c.getOffendingElementsQuery());
 			}
+			noSpace();
 			write("]");
+			space();
 		}
 	}
 
