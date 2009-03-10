@@ -76,20 +76,20 @@ import de.uni_koblenz.jgralab.schema.impl.SchemaImpl;
 
 /**
  * class for loading and storing schema and graphs in tg format
- *
+ * 
  * @author ist@uni-koblenz.de
  */
 public class GraphIO {
 	/**
 	 * A {@link FilenameFilter} that accepts TG files.
-	 *
+	 * 
 	 * @author ist@uni-koblenz.de
 	 */
 	public static class TGFilenameFilter implements FilenameFilter {
 
 		/*
 		 * (non-Javadoc)
-		 *
+		 * 
 		 * @see java.io.FilenameFilter#accept(java.io.File, java.lang.String)
 		 */
 		@Override
@@ -470,7 +470,7 @@ public class GraphIO {
 
 		space();
 		TGOut.writeBytes("\nGraph "
-				+ toUTF(graph.getId() + "_" + graph.getGraphVersion()));
+				+ toUtfString(graph.getId() + "_" + graph.getGraphVersion()));
 		writeIdentifier(graph.getAttributedElementClass().getQualifiedName());
 		TGOut.writeBytes(" (" + graph.getMaxVCount() + " "
 				+ graph.getMaxECount() + " " + graph.getVCount() + " "
@@ -639,7 +639,7 @@ public class GraphIO {
 		if (s == null) {
 			TGOut.writeBytes("\\null");
 		} else {
-			TGOut.writeBytes(toUTF(s));
+			TGOut.writeBytes(toUtfString(s));
 		}
 	}
 
@@ -785,7 +785,7 @@ public class GraphIO {
 	/**
 	 * Reads a Schema together with its Domains, GraphClasses and
 	 * GraphElementClasses from a TG-file. Subsequently, the Schema is created.
-	 *
+	 * 
 	 * @throws GraphIOException
 	 */
 	private void schema() throws GraphIOException, SchemaException {
@@ -836,7 +836,7 @@ public class GraphIO {
 
 	/**
 	 * Creates the Domains contained in a Schema.
-	 *
+	 * 
 	 * @return A Map of the Domain names to the concrete Domain objects.
 	 * @throws GraphIOException
 	 */
@@ -859,7 +859,7 @@ public class GraphIO {
 
 	/**
 	 * Reads an EnumDomain, i.e. its name along with the enum constants.
-	 *
+	 * 
 	 * @throws GraphIOException
 	 */
 	private void parseEnumDomain() throws GraphIOException {
@@ -884,7 +884,7 @@ public class GraphIO {
 
 	/**
 	 * Read a RecordDomain, i.e. its name along with the components.
-	 *
+	 * 
 	 * @throws GraphIOException
 	 */
 	private void parseRecordDomain() throws GraphIOException {
@@ -913,7 +913,7 @@ public class GraphIO {
 	 * Each list represents a component's domain. This Map is converted to a Map
 	 * of the component names to Domain objects corresponding to the domains
 	 * represented in the lists.
-	 *
+	 * 
 	 * @param componentsData
 	 *            A Map of record component names to lists of Strings. Each list
 	 *            represents a component's domain.
@@ -938,7 +938,7 @@ public class GraphIO {
 	/**
 	 * Reads Schema's Domains and GraphClasses with contained
 	 * GraphElementClasses from TG-file.
-	 *
+	 * 
 	 * @throws GraphIOException
 	 */
 	private void parseSchema() throws GraphIOException, SchemaException {
@@ -982,7 +982,7 @@ public class GraphIO {
 	/**
 	 * Creates the GraphClass contained in the Schema along with its
 	 * GraphElementClasses.
-	 *
+	 * 
 	 * @throws GraphIOException
 	 * @throws SchemaException
 	 */
@@ -1000,7 +1000,7 @@ public class GraphIO {
 
 	/**
 	 * Reads a GraphClass from a TG-file.
-	 *
+	 * 
 	 * @return The name of the read GraphClass.
 	 * @throws GraphIOException
 	 * @throws SchemaException
@@ -1032,7 +1032,7 @@ public class GraphIO {
 
 	/**
 	 * Creates a GraphClass based on the given GraphClassData.
-	 *
+	 * 
 	 * @param gcData
 	 *            The GraphClassData used to create the GraphClass.
 	 * @return The created GraphClass.
@@ -1059,7 +1059,7 @@ public class GraphIO {
 	/**
 	 * Reads the direct superclasses of a GraphClass or a GraphElementClass from
 	 * the TG-file.
-	 *
+	 * 
 	 * @return A list of the direct super classes.
 	 * @throws GraphIOException
 	 */
@@ -1077,7 +1077,7 @@ public class GraphIO {
 	/**
 	 * Reads the attributes (names and domains) of a GraphClass or a
 	 * GraphElementClass from the TG-file.
-	 *
+	 * 
 	 * @return A Map of attribute names to lists of Strings. Each list
 	 *         represents an attribute's domain.
 	 * @throws GraphIOException
@@ -1114,7 +1114,7 @@ public class GraphIO {
 	 * list represents an attribute's domain. This Map is converted to a Map of
 	 * the attribute names to Domain objects corresponding to the domains
 	 * represented in the lists.
-	 *
+	 * 
 	 * @param componentsData
 	 *            A Map of attribute names to lists of Strings. Each list
 	 *            represents an attribute's domain.
@@ -1140,7 +1140,7 @@ public class GraphIO {
 	/**
 	 * Reads an Attribute's domain from the TG-file and stores it in the list
 	 * given as argument.
-	 *
+	 * 
 	 * @param attrDomain
 	 *            The list to which an attribute's domain shall be added.
 	 * @throws GraphIOException
@@ -1185,7 +1185,7 @@ public class GraphIO {
 	/**
 	 * Creates a Domain corresponding to a list of domain names representing a,
 	 * probably composite, domain.
-	 *
+	 * 
 	 * @param domainNames
 	 *            The list containing the names of, probably composite, domains.
 	 * @return The created Domain.
@@ -1261,7 +1261,7 @@ public class GraphIO {
 	/**
 	 * Reads the a GraphElementClass of the GraphClass indicated by the given
 	 * name.
-	 *
+	 * 
 	 * @throws GraphIOException
 	 */
 	private void parseGraphElementClass(QualifiedName gcName)
@@ -1408,7 +1408,7 @@ public class GraphIO {
 
 	/**
 	 * Reads a multiplicity of an EdgeClass.
-	 *
+	 * 
 	 * @return An array with two elements. The first element represents the
 	 *         multiplicity's lower bound. The second element represents the
 	 *         upper bound.
@@ -1443,7 +1443,7 @@ public class GraphIO {
 
 	/**
 	 * Reads a role name of an EdgeClass.
-	 *
+	 * 
 	 * @return A role name.
 	 * @throws GraphIOException
 	 */
@@ -1458,7 +1458,7 @@ public class GraphIO {
 
 	/**
 	 * Reads the redefinition of a rolename of an EdgeClass
-	 *
+	 * 
 	 * @return A Set<String> of redefined rolenames or <code>null</code> if no
 	 *         rolenames were redefined
 	 * @throw GraphIOException
@@ -1482,7 +1482,7 @@ public class GraphIO {
 	/**
 	 * Reads whether an AggregationClass or a CompositionClass has its aggregate
 	 * at its "from" VertexClass or at its "to" VertexClass.
-	 *
+	 * 
 	 * @return True, if the aggregate is at the "from" end. False, if the
 	 *         aggregate is at the "to" end.
 	 * @throws GraphIOException
@@ -1523,7 +1523,7 @@ public class GraphIO {
 
 	/**
 	 * Reads the components of a RecordDomain from the TG-file.
-	 *
+	 * 
 	 * @return A map of component names to lists of Strings representing the
 	 *         component's domain.
 	 * @throws GraphIOException
@@ -1555,7 +1555,7 @@ public class GraphIO {
 	/**
 	 * Reads the constants of an EnumDomain. Duplicate constant names are
 	 * rejected.
-	 *
+	 * 
 	 * @return A list of String containing the constants.
 	 * @throws GraphIOException
 	 *             if duplicate constant names are read.
@@ -1853,7 +1853,7 @@ public class GraphIO {
 
 	/**
 	 * Parses an identifier, checks it for validity and returns it.
-	 *
+	 * 
 	 * @param isUpperCase
 	 *            If true, the identifier must begin with an uppercase character
 	 * @return the parsed identifier
@@ -1877,7 +1877,7 @@ public class GraphIO {
 
 	/**
 	 * Parses an identifier, checks it for validity and returns it.
-	 *
+	 * 
 	 * @param isUpperCase
 	 *            If true, the identifier must begin with an uppercase character
 	 * @return the parsed identifier
@@ -2182,54 +2182,63 @@ public class GraphIO {
 		match();
 	}
 
-	private static String toUTF(String value) {
+	/**
+	 * Converts a String value with arbitrary characters to a quoted string
+	 * value containing only ASCII characters and escaped unicode sequences as
+	 * required by the TG file format.
+	 * 
+	 * @param value
+	 *            a string
+	 * @return a quoted string suitable for storage in TG files.
+	 */
+	public static String toUtfString(String value) {
 		if (value == null) {
 			return "";
 		}
-		String out = "\""; // "
+		StringBuilder out = new StringBuilder("\""); // "
 		CharBuffer cb = CharBuffer.wrap(value);
 		char c;
 		while (cb.hasRemaining()) {
 			c = cb.get();
 			switch (c) {
 			case '"':
-				out += "\\\"";
+				out.append("\\\"");
 				break;
 			case '\n':
-				out += "\\n";
+				out.append("\\n");
 				break;
 			case '\r':
-				out += "\\r";
+				out.append("\\r");
 				break;
 			case '\\':
-				out += "\\\\";
+				out.append("\\\\");
 				break;
 			case '\t':
-				out += "\\t";
+				out.append("\\t");
 				break;
 			default:
-				if (c < 127) {
-					out += c;
+				if (c >= 32 && c <= 127) {
+					out.append(c);
 				} else {
-					out += "\\u";
+					out.append("\\u");
 					String s = Integer.toHexString(c);
 					switch (s.length()) {
 					case 1:
-						out += "000";
+						out.append("000");
 						break;
 					case 2:
-						out += "00";
+						out.append("00");
 						break;
 					case 3:
-						out += "0";
+						out.append("0");
 						break;
 					}
-					out += s;
+					out.append(s);
 				}
 			}
 		}
-		out += "\"";
-		return out;
+		out.append("\"");
+		return out.toString();
 	}
 
 	private static boolean isValidIdentifier(String s) {
