@@ -80,16 +80,11 @@ public class ImportCodeSnippetTest extends CodeSnippetTest{
 		assertEquals(1, ics.size());
 		assertEquals("\nimport Queste.;\n", ics.getCode());
 		ics.clear();
-		ics.add(null);
-		assertEquals(0, ics.size());
-		assertEquals("", ics.getCode());
 		ics.add("");
 		assertEquals(1, ics.size());
 		ics.add("eclipse.", "");
 		assertEquals(2, ics.size());
 		ics.add("");
-		assertEquals(2, ics.size());
-		ics.add(null);
 		assertEquals(2, ics.size());
 		ics.clear();
 		ics.add(".");
@@ -234,16 +229,12 @@ public class ImportCodeSnippetTest extends CodeSnippetTest{
 		assertEquals(1,ics2.size());
 		ics2.add("");
 		assertEquals(2,ics2.size());
-		ics2.add(null);
-		assertEquals(2, ics2.size());
 		ics2.clear();
 		ics2.add("");
 		assertEquals(1, ics2.size());
 		ics2.add(".");
 		assertEquals(2, ics2.size());
 		ics2.clear();
-		ics2.add(null);
-		assertEquals(0, ics2.size());
 		ics2.add(".");
 		assertEquals(1, ics2.size());
 	}

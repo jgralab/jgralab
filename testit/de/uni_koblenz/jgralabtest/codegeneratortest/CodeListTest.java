@@ -474,14 +474,11 @@ public class CodeListTest{
 		CodeSnippet cs=new CodeSnippet("");
 		cl.add(cs);
 		assertEquals("\t\n", cl.getCode());
-		cs.add(null);
-		assertEquals("\t\n", cl.getCode());
 		cs.add("Marokko");
 		assertEquals("\t\n\tMarokko\n", cl.getCode());
 		cl.clear();
 		
 		ImportCodeSnippet ics=new ImportCodeSnippet();
-		ics.add(null);
 		cl.add(ics);
 		assertEquals("", cl.getCode());
 		ics.add("Afrika.");
