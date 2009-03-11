@@ -31,8 +31,6 @@ public class CodeSnippetTest{
 		//border cases
 		cs=new CodeSnippet("");
 		assertEquals("\n", cs.getCode());
-		cs=new CodeSnippet(null);
-		assertEquals("", cs.getCode());
 		cs=new CodeSnippet("Pflaume");
 		assertEquals("Pflaume\n", cs.getCode());
 	}
@@ -56,10 +54,6 @@ public class CodeSnippetTest{
 		assertEquals("\n\n", cs.getCode());
 		cs=new CodeSnippet(false, "");
 		assertEquals("\n", cs.getCode());
-		cs=new CodeSnippet(true, null);
-		assertEquals("", cs.getCode());
-		cs=new CodeSnippet(false, null);
-		assertEquals("", cs.getCode());
 	}
 	
 	@Test
@@ -107,12 +101,11 @@ public class CodeSnippetTest{
 		cs1=new CodeSnippet(cl, "");
 		assertEquals("\n", cs1.getCode());
 		assertEquals("\tMango\n\tAvocado\n\t\n", cl.getCode());
-		cs1=new CodeSnippet(null, null);
-		assertEquals("", cs1.getCode());
 		cl.clear();
-		cs1=new CodeSnippet(cl, null);
-		assertEquals("", cs1.getCode());
-		assertEquals("", cl.getCode());
+		cs1=new CodeSnippet(cl, "");
+		assertEquals("\n", cs1.getCode());
+		assertEquals("\t\n", cl.getCode());
+		cl.clear();
 		cs1=new CodeSnippet(cl, "Ginkgo");
 		assertEquals("Ginkgo\n", cs1.getCode());
 		assertEquals("\tGinkgo\n", cl.getCode());
@@ -204,8 +197,6 @@ public class CodeSnippetTest{
 		assertEquals("\n\n", cs2.getCode());
 		cs2.add("");
 		assertEquals("\n\n\n", cs2.getCode());
-		cs2.add(null);
-		assertEquals("\n\n\n", cs2.getCode());
 		cs.clear();
 		cs.add("Praline");
 		assertEquals("Praline\n", cs.getCode());
@@ -234,10 +225,12 @@ public class CodeSnippetTest{
 		cs.clear();
 		assertEquals("", cs.getCode(12));
 		
-		//tests if adding null does not change the CodeSnippet
-		cs.add(null);
-		assertEquals("", cs.getCode(0));
+		//tests if adding an empty String adds an \n
+		cs.add("");
+		System.out.println(cs.getCode(0));
+		assertEquals("\n", cs.getCode(0));
 		
+		cs.clear();
 		cs.add("violett");
 		assertEquals("\tviolett\n", cs.getCode(1));
 		
@@ -256,9 +249,6 @@ public class CodeSnippetTest{
 		
 		cs=new CodeSnippet("", "");
 		assertEquals("\n\n", cs.getCode());
-		
-		cs=new CodeSnippet(null);
-		assertEquals("", cs.getCode());
 		
 		cs=new CodeSnippet("gelb");
 		assertEquals("gelb\n", cs.getCode());
@@ -299,9 +289,6 @@ public class CodeSnippetTest{
 		
 		//border cases
 		assertEquals(0, cs.size());
-		cs.add(null);
-		cs.clear();
-		assertEquals(0, cs.size());
 		cs.clear();
 		assertEquals(0, cs.size());		
 	}
@@ -326,8 +313,6 @@ public class CodeSnippetTest{
 		cs.add("Füller");
 		assertEquals(1,cs.size());
 		cs.add("");
-		assertEquals(2,cs.size());
-		cs.add(null);
 		assertEquals(2,cs.size());
 
 	}
