@@ -165,9 +165,9 @@ public abstract class GraphImpl implements Graph {
 	 */
 	private long edgeListVersion;
 
-	
 	/**
-	 * Creates a graph of the given GraphClass with the given id 
+	 * Creates a graph of the given GraphClass with the given id
+	 *
 	 * @param id
 	 *            this Graph's id
 	 * @param cls
@@ -176,8 +176,7 @@ public abstract class GraphImpl implements Graph {
 	public GraphImpl(String id, GraphClass cls) {
 		this(id, cls, 1000, 1000);
 	}
-	
-	
+
 	/**
 	 * @param id
 	 *            this Graph's id
@@ -231,24 +230,30 @@ public abstract class GraphImpl implements Graph {
 	 */
 	protected void addEdge(Edge newEdge, Vertex alpha, Vertex omega) {
 		assert (newEdge.isNormal());
+		assert (newEdge.getSchema() == alpha.getSchema() && newEdge.getSchema() == omega
+				.getSchema()) : "The schemas don't match!";
+		assert (alpha.getGraph() == omega.getGraph() && alpha.getGraph() == this) : "alpha, omega and this graph don't match!";
+
 		EdgeImpl e = (EdgeImpl) newEdge;
 
 		VertexImpl a = (VertexImpl) alpha;
-		if ((alpha == null) || (omega == null))
-			throw new GraphException("Alpha or Omega vertex of an edge may not be null");
+		if ((alpha == null) || (omega == null)) {
+			throw new GraphException(
+					"Alpha or Omega vertex of an edge may not be null");
+		}
 		if (!a.isValidAlpha(e)) {
 			throw new GraphException("Edges of class "
-					+ e.getAttributedElementClass().getUniqueName()
+					+ e.getAttributedElementClass().getQualifiedName()
 					+ " may not start at vertices of class "
-					+ a.getAttributedElementClass().getUniqueName());
+					+ a.getAttributedElementClass().getQualifiedName());
 		}
 
 		VertexImpl o = (VertexImpl) omega;
 		if (!o.isValidOmega(e)) {
 			throw new GraphException("Edges of class "
-					+ e.getAttributedElementClass().getUniqueName()
+					+ e.getAttributedElementClass().getQualifiedName()
 					+ " may not end at at vertices of class "
-					+ o.getAttributedElementClass().getUniqueName());
+					+ o.getAttributedElementClass().getQualifiedName());
 		}
 
 		int eId = e.getId();
