@@ -3194,4 +3194,452 @@ public class VertexTest {
 			assertEquals(firstInOutEdge[2],vertices[2].getFirstEdge(EdgeDirection.INOUT));
 		}
 	}
+
+	// tests of the method Edge getFirstEdgeOfClass(EdgeClass anEdgeClass);
+	
+	/**
+	 * Tests if a node has no Edges
+	 */
+	@Test
+	public void getFirstEdgeTestEdgeClass0() {
+		EdgeClass[] eclasses=getEdgeClasses();
+		Vertex v0 = graph.createDoubleSubNode();
+		assertEquals(null, v0.getFirstEdgeOfClass(eclasses[0]));
+		assertEquals(null, v0.getFirstEdgeOfClass(eclasses[1]));
+		assertEquals(null, v0.getFirstEdgeOfClass(eclasses[2]));
+	}
+
+	/**
+	 * Tests if a node has only one Edge
+	 */
+	@Test
+	public void getFirstEdgeTestEdgeClass1() {
+		EdgeClass[] eclasses=getEdgeClasses();
+		Vertex v0 = graph.createDoubleSubNode();
+		Vertex v1 = graph.createDoubleSubNode();
+		Edge e = graph.createLink((AbstractSuperNode) v0, (SuperNode) v1);
+		assertEquals(e, v0.getFirstEdgeOfClass(eclasses[0]));
+		assertEquals(null, v0.getFirstEdgeOfClass(eclasses[1]));
+		assertEquals(null, v0.getFirstEdgeOfClass(eclasses[2]));
+		assertEquals(e.getReversedEdge(), v1.getFirstEdgeOfClass(eclasses[0]));
+		assertEquals(null, v1.getFirstEdgeOfClass(eclasses[1]));
+		assertEquals(null, v1.getFirstEdgeOfClass(eclasses[2]));
+	}
+
+	/**
+	 * Tests if a node has an edge which extends another edge
+	 */
+	@Test
+	public void getFirstEdgeTestEdgeClass2() {
+		EdgeClass[] eclasses=getEdgeClasses();
+		Vertex v0 = graph.createDoubleSubNode();
+		Vertex v1 = graph.createDoubleSubNode();
+		Edge e1 = graph.createSubLink((DoubleSubNode) v0, (SuperNode) v1);
+		assertEquals(e1, v0.getFirstEdgeOfClass(eclasses[0]));
+		assertEquals(e1, v0.getFirstEdgeOfClass(eclasses[1]));
+		assertEquals(null, v0.getFirstEdgeOfClass(eclasses[2]));
+		assertEquals(e1.getReversedEdge(), v1.getFirstEdgeOfClass(eclasses[0]));
+		assertEquals(e1.getReversedEdge(), v1.getFirstEdgeOfClass(eclasses[1]));
+		assertEquals(null, v1.getFirstEdgeOfClass(eclasses[2]));
+	}
+
+	/**
+	 * Tests if a node has two Edges.
+	 */
+	@Test
+	public void getFirstEdgeTestEdgeClass3() {
+		EdgeClass[] eclasses=getEdgeClasses();
+		Vertex v0 = graph.createDoubleSubNode();
+		Vertex v1 = graph.createDoubleSubNode();
+		Edge e1 = graph.createLink((AbstractSuperNode) v0, (SuperNode) v1);
+		Edge e2 = graph.createLinkBack((SuperNode) v1, (AbstractSuperNode) v0);
+		assertEquals(e1, v0.getFirstEdgeOfClass(eclasses[0]));
+		assertEquals(null, v0.getFirstEdgeOfClass(eclasses[1]));
+		assertEquals(e2.getReversedEdge(), v0.getFirstEdgeOfClass(eclasses[2]));
+		assertEquals(e1.getReversedEdge(), v1.getFirstEdgeOfClass(eclasses[0]));
+		assertEquals(null, v1.getFirstEdgeOfClass(eclasses[1]));
+		assertEquals(e2, v1.getFirstEdgeOfClass(eclasses[2]));
+	}
+
+	/**
+	 * Tests if alpha and omega of an Edge is the same Vertex.
+	 */
+	@Test
+	public void getFirstEdgeTestEdgeClass4() {
+		EdgeClass[] eclasses=getEdgeClasses();
+		Vertex v0 = graph.createDoubleSubNode();
+		Edge e1 = graph.createLink((AbstractSuperNode) v0, (SuperNode) v0);
+		assertEquals(e1, v0.getFirstEdgeOfClass(eclasses[0]));
+		assertEquals(null, v0.getFirstEdgeOfClass(eclasses[1]));
+		assertEquals(null, v0.getFirstEdgeOfClass(eclasses[2]));
+	}
+
+	/**
+	 * Random tests
+	 */
+	@Test
+	public void getFirstEdgeTestEdgeClass5() {
+		EdgeClass[] eclasses=getEdgeClasses();
+		for (int i = 0; i < 1000; i++) {
+			graph=VertexTestSchema.instance().createVertexTestGraph();
+			Vertex[] vertices = new Vertex[] { graph.createSubNode(), graph.createDoubleSubNode(),
+					graph.createSuperNode() };
+			Edge[] firstLink = new Edge[3];
+			Edge[] firstLinkBack = new Edge[3];
+			Edge[] firstSubLink = new Edge[3];
+			for (int j = 0; j < 5; j++) {
+				int edgetype = rand.nextInt(3);
+				int start = rand.nextInt(2);
+				int end = rand.nextInt(2) + 1;
+				switch (edgetype) {
+				case 0:
+					Edge e0 = graph.createLink(
+							(AbstractSuperNode) vertices[start],
+							(SuperNode) vertices[end]);
+					if (firstLink[start] == null) {
+						firstLink[start] = e0;
+					}
+					if (firstLink[end] == null) {
+						firstLink[end] = e0.getReversedEdge();
+					}
+					break;
+				case 1:
+					Edge e1 = graph.createLinkBack((SuperNode) vertices[end],
+							(AbstractSuperNode) vertices[start]);
+					if (firstLinkBack[end] == null) {
+						firstLinkBack[end] = e1;
+					}
+					if (firstLinkBack[start] == null) {
+						firstLinkBack[start] = e1.getReversedEdge();
+					}
+					break;
+				case 2:
+					Edge e2 = graph.createSubLink((DoubleSubNode) vertices[1],
+							(SuperNode) vertices[end]);
+					if (firstLink[1] == null) {
+						firstLink[1] = e2;
+					}
+					if (firstSubLink[1] == null) {
+						firstSubLink[1] = e2;
+					}
+					if (firstLink[end] == null) {
+						firstLink[end] = e2.getReversedEdge();
+					}
+					if (firstSubLink[end] == null) {
+						firstSubLink[end] = e2.getReversedEdge();
+					}
+					break;
+				}
+			}
+			assertEquals(firstLink[0],vertices[0].getFirstEdgeOfClass(eclasses[0]));
+			assertEquals(firstLink[1],vertices[1].getFirstEdgeOfClass(eclasses[0]));
+			assertEquals(firstLink[2],vertices[2].getFirstEdgeOfClass(eclasses[0]));
+			assertEquals(firstLinkBack[0],vertices[0].getFirstEdgeOfClass(eclasses[2]));
+			assertEquals(firstLinkBack[1],vertices[1].getFirstEdgeOfClass(eclasses[2]));
+			assertEquals(firstLinkBack[2],vertices[2].getFirstEdgeOfClass(eclasses[2]));
+			assertEquals(firstSubLink[0],vertices[0].getFirstEdgeOfClass(eclasses[1]));
+			assertEquals(firstSubLink[1],vertices[1].getFirstEdgeOfClass(eclasses[1]));
+			assertEquals(firstSubLink[2],vertices[2].getFirstEdgeOfClass(eclasses[1]));
+		}
+	}
+
+	// tests of the method Edge getFirstEdgeOfClass(Class<? extends Edge> anEdgeClass);
+	
+	/**
+	 * Tests if a node has no Edges
+	 */
+	@Test
+	public void getFirstEdgeTestClass0() {
+		Vertex v0 = graph.createDoubleSubNode();
+		assertEquals(null, v0.getFirstEdgeOfClass(Link.class));
+		assertEquals(null, v0.getFirstEdgeOfClass(SubLink.class));
+		assertEquals(null, v0.getFirstEdgeOfClass(LinkBack.class));
+	}
+
+	/**
+	 * Tests if a node has only one Edge
+	 */
+	@Test
+	public void getFirstEdgeTestClass1() {
+		Vertex v0 = graph.createDoubleSubNode();
+		Vertex v1 = graph.createDoubleSubNode();
+		Edge e = graph.createLink((AbstractSuperNode) v0, (SuperNode) v1);
+		assertEquals(e, v0.getFirstEdgeOfClass(Link.class));
+		assertEquals(null, v0.getFirstEdgeOfClass(SubLink.class));
+		assertEquals(null, v0.getFirstEdgeOfClass(LinkBack.class));
+		assertEquals(e.getReversedEdge(), v1.getFirstEdgeOfClass(Link.class));
+		assertEquals(null, v1.getFirstEdgeOfClass(SubLink.class));
+		assertEquals(null, v1.getFirstEdgeOfClass(LinkBack.class));
+	}
+
+	/**
+	 * Tests if a node has an edge which extends another edge
+	 */
+	@Test
+	public void getFirstEdgeTestClass2() {
+		Vertex v0 = graph.createDoubleSubNode();
+		Vertex v1 = graph.createDoubleSubNode();
+		Edge e1 = graph.createSubLink((DoubleSubNode) v0, (SuperNode) v1);
+		assertEquals(e1, v0.getFirstEdgeOfClass(Link.class));
+		assertEquals(e1, v0.getFirstEdgeOfClass(SubLink.class));
+		assertEquals(null, v0.getFirstEdgeOfClass(LinkBack.class));
+		assertEquals(e1.getReversedEdge(), v1.getFirstEdgeOfClass(Link.class));
+		assertEquals(e1.getReversedEdge(), v1.getFirstEdgeOfClass(SubLink.class));
+		assertEquals(null, v1.getFirstEdgeOfClass(LinkBack.class));
+	}
+
+	/**
+	 * Tests if a node has two Edges.
+	 */
+	@Test
+	public void getFirstEdgeTestClass3() {
+		Vertex v0 = graph.createDoubleSubNode();
+		Vertex v1 = graph.createDoubleSubNode();
+		Edge e1 = graph.createLink((AbstractSuperNode) v0, (SuperNode) v1);
+		Edge e2 = graph.createLinkBack((SuperNode) v1, (AbstractSuperNode) v0);
+		assertEquals(e1, v0.getFirstEdgeOfClass(Link.class));
+		assertEquals(null, v0.getFirstEdgeOfClass(SubLink.class));
+		assertEquals(e2.getReversedEdge(), v0.getFirstEdgeOfClass(LinkBack.class));
+		assertEquals(e1.getReversedEdge(), v1.getFirstEdgeOfClass(Link.class));
+		assertEquals(null, v1.getFirstEdgeOfClass(SubLink.class));
+		assertEquals(e2, v1.getFirstEdgeOfClass(LinkBack.class));
+	}
+
+	/**
+	 * Tests if alpha and omega of an Edge is the same Vertex.
+	 */
+	@Test
+	public void getFirstEdgeTestClass4() {
+		Vertex v0 = graph.createDoubleSubNode();
+		Edge e1 = graph.createLink((AbstractSuperNode) v0, (SuperNode) v0);
+		assertEquals(e1, v0.getFirstEdgeOfClass(Link.class));
+		assertEquals(null, v0.getFirstEdgeOfClass(SubLink.class));
+		assertEquals(null, v0.getFirstEdgeOfClass(LinkBack.class));
+	}
+
+	/**
+	 * Random tests
+	 */
+	@Test
+	public void getFirstEdgeTestClass5() {
+		for (int i = 0; i < 1000; i++) {
+			graph=VertexTestSchema.instance().createVertexTestGraph();
+			Vertex[] vertices = new Vertex[] { graph.createSubNode(), graph.createDoubleSubNode(),
+					graph.createSuperNode() };
+			Edge[] firstLink = new Edge[3];
+			Edge[] firstLinkBack = new Edge[3];
+			Edge[] firstSubLink = new Edge[3];
+			for (int j = 0; j < 5; j++) {
+				int edgetype = rand.nextInt(3);
+				int start = rand.nextInt(2);
+				int end = rand.nextInt(2) + 1;
+				switch (edgetype) {
+				case 0:
+					Edge e0 = graph.createLink(
+							(AbstractSuperNode) vertices[start],
+							(SuperNode) vertices[end]);
+					if (firstLink[start] == null) {
+						firstLink[start] = e0;
+					}
+					if (firstLink[end] == null) {
+						firstLink[end] = e0.getReversedEdge();
+					}
+					break;
+				case 1:
+					Edge e1 = graph.createLinkBack((SuperNode) vertices[end],
+							(AbstractSuperNode) vertices[start]);
+					if (firstLinkBack[end] == null) {
+						firstLinkBack[end] = e1;
+					}
+					if (firstLinkBack[start] == null) {
+						firstLinkBack[start] = e1.getReversedEdge();
+					}
+					break;
+				case 2:
+					Edge e2 = graph.createSubLink((DoubleSubNode) vertices[1],
+							(SuperNode) vertices[end]);
+					if (firstLink[1] == null) {
+						firstLink[1] = e2;
+					}
+					if (firstSubLink[1] == null) {
+						firstSubLink[1] = e2;
+					}
+					if (firstLink[end] == null) {
+						firstLink[end] = e2.getReversedEdge();
+					}
+					if (firstSubLink[end] == null) {
+						firstSubLink[end] = e2.getReversedEdge();
+					}
+					break;
+				}
+			}
+			assertEquals(firstLink[0],vertices[0].getFirstEdgeOfClass(Link.class));
+			assertEquals(firstLink[1],vertices[1].getFirstEdgeOfClass(Link.class));
+			assertEquals(firstLink[2],vertices[2].getFirstEdgeOfClass(Link.class));
+			assertEquals(firstLinkBack[0],vertices[0].getFirstEdgeOfClass(LinkBack.class));
+			assertEquals(firstLinkBack[1],vertices[1].getFirstEdgeOfClass(LinkBack.class));
+			assertEquals(firstLinkBack[2],vertices[2].getFirstEdgeOfClass(LinkBack.class));
+			assertEquals(firstSubLink[0],vertices[0].getFirstEdgeOfClass(SubLink.class));
+			assertEquals(firstSubLink[1],vertices[1].getFirstEdgeOfClass(SubLink.class));
+			assertEquals(firstSubLink[2],vertices[2].getFirstEdgeOfClass(SubLink.class));
+		}
+	}
+
+// tests of the method Edge getFirstEdgeOfClass(EdgeClass anEdgeClass, EdgeDirection orientation);;
+	
+	/**
+	 * Tests if a node has no Edges
+	 */
+	@Test
+	public void getFirstEdgeTestEdgeClassEdgeDirection0() {
+		EdgeClass[] eclasses=getEdgeClasses();
+		Vertex v0 = graph.createDoubleSubNode();
+		
+		assertEquals(null, v0.getFirstEdgeOfClass(eclasses[0],EdgeDirection.INOUT));
+		assertEquals(null, v0.getFirstEdgeOfClass(eclasses[1],EdgeDirection.INOUT));
+		assertEquals(null, v0.getFirstEdgeOfClass(eclasses[2],EdgeDirection.INOUT));
+		
+		assertEquals(null, v0.getFirstEdgeOfClass(eclasses[0],EdgeDirection.OUT));
+		assertEquals(null, v0.getFirstEdgeOfClass(eclasses[1],EdgeDirection.OUT));
+		assertEquals(null, v0.getFirstEdgeOfClass(eclasses[2],EdgeDirection.OUT));
+		
+		assertEquals(null, v0.getFirstEdgeOfClass(eclasses[0],EdgeDirection.IN));
+		assertEquals(null, v0.getFirstEdgeOfClass(eclasses[1],EdgeDirection.IN));
+		assertEquals(null, v0.getFirstEdgeOfClass(eclasses[2],EdgeDirection.IN));
+	}
+
+//	/**
+//	 * Tests if a node has only one Edge
+//	 */
+//	@Test
+//	public void getFirstEdgeTestEdgeClassEdgeDirection1() {
+//		EdgeClass[] eclasses=getEdgeClasses();
+//		Vertex v0 = graph.createDoubleSubNode();
+//		Vertex v1 = graph.createDoubleSubNode();
+//		Edge e = graph.createLink((AbstractSuperNode) v0, (SuperNode) v1);
+//		assertEquals(e, v0.getFirstEdgeOfClass(eclasses[0]));
+//		assertEquals(null, v0.getFirstEdgeOfClass(eclasses[1]));
+//		assertEquals(null, v0.getFirstEdgeOfClass(eclasses[2]));
+//		assertEquals(e.getReversedEdge(), v1.getFirstEdgeOfClass(eclasses[0]));
+//		assertEquals(null, v1.getFirstEdgeOfClass(eclasses[1]));
+//		assertEquals(null, v1.getFirstEdgeOfClass(eclasses[2]));
+//	}
+//
+//	/**
+//	 * Tests if a node has an edge which extends another edge
+//	 */
+//	@Test
+//	public void getFirstEdgeTestEdgeClassEdgeDirection2() {
+//		EdgeClass[] eclasses=getEdgeClasses();
+//		Vertex v0 = graph.createDoubleSubNode();
+//		Vertex v1 = graph.createDoubleSubNode();
+//		Edge e1 = graph.createSubLink((DoubleSubNode) v0, (SuperNode) v1);
+//		assertEquals(e1, v0.getFirstEdgeOfClass(eclasses[0]));
+//		assertEquals(e1, v0.getFirstEdgeOfClass(eclasses[1]));
+//		assertEquals(null, v0.getFirstEdgeOfClass(eclasses[2]));
+//		assertEquals(e1.getReversedEdge(), v1.getFirstEdgeOfClass(eclasses[0]));
+//		assertEquals(e1.getReversedEdge(), v1.getFirstEdgeOfClass(eclasses[1]));
+//		assertEquals(null, v1.getFirstEdgeOfClass(eclasses[2]));
+//	}
+//
+//	/**
+//	 * Tests if a node has two Edges.
+//	 */
+//	@Test
+//	public void getFirstEdgeTestEdgeClassEdgeDirection3() {
+//		EdgeClass[] eclasses=getEdgeClasses();
+//		Vertex v0 = graph.createDoubleSubNode();
+//		Vertex v1 = graph.createDoubleSubNode();
+//		Edge e1 = graph.createLink((AbstractSuperNode) v0, (SuperNode) v1);
+//		Edge e2 = graph.createLinkBack((SuperNode) v1, (AbstractSuperNode) v0);
+//		assertEquals(e1, v0.getFirstEdgeOfClass(eclasses[0]));
+//		assertEquals(null, v0.getFirstEdgeOfClass(eclasses[1]));
+//		assertEquals(e2.getReversedEdge(), v0.getFirstEdgeOfClass(eclasses[2]));
+//		assertEquals(e1.getReversedEdge(), v1.getFirstEdgeOfClass(eclasses[0]));
+//		assertEquals(null, v1.getFirstEdgeOfClass(eclasses[1]));
+//		assertEquals(e2, v1.getFirstEdgeOfClass(eclasses[2]));
+//	}
+//
+//	/**
+//	 * Tests if alpha and omega of an Edge is the same Vertex.
+//	 */
+//	@Test
+//	public void getFirstEdgeTestEdgeClassEdgeDirection4() {
+//		EdgeClass[] eclasses=getEdgeClasses();
+//		Vertex v0 = graph.createDoubleSubNode();
+//		Edge e1 = graph.createLink((AbstractSuperNode) v0, (SuperNode) v0);
+//		assertEquals(e1, v0.getFirstEdgeOfClass(eclasses[0]));
+//		assertEquals(null, v0.getFirstEdgeOfClass(eclasses[1]));
+//		assertEquals(null, v0.getFirstEdgeOfClass(eclasses[2]));
+//	}
+//
+//	/**
+//	 * Random tests
+//	 */
+//	@Test
+//	public void getFirstEdgeTestEdgeClassEdgeDirection5() {
+//		EdgeClass[] eclasses=getEdgeClasses();
+//		for (int i = 0; i < 1000; i++) {
+//			graph=VertexTestSchema.instance().createVertexTestGraph();
+//			Vertex[] vertices = new Vertex[] { graph.createSubNode(), graph.createDoubleSubNode(),
+//					graph.createSuperNode() };
+//			Edge[] firstLink = new Edge[3];
+//			Edge[] firstLinkBack = new Edge[3];
+//			Edge[] firstSubLink = new Edge[3];
+//			for (int j = 0; j < 5; j++) {
+//				int edgetype = rand.nextInt(3);
+//				int start = rand.nextInt(2);
+//				int end = rand.nextInt(2) + 1;
+//				switch (edgetype) {
+//				case 0:
+//					Edge e0 = graph.createLink(
+//							(AbstractSuperNode) vertices[start],
+//							(SuperNode) vertices[end]);
+//					if (firstLink[start] == null) {
+//						firstLink[start] = e0;
+//					}
+//					if (firstLink[end] == null) {
+//						firstLink[end] = e0.getReversedEdge();
+//					}
+//					break;
+//				case 1:
+//					Edge e1 = graph.createLinkBack((SuperNode) vertices[end],
+//							(AbstractSuperNode) vertices[start]);
+//					if (firstLinkBack[end] == null) {
+//						firstLinkBack[end] = e1;
+//					}
+//					if (firstLinkBack[start] == null) {
+//						firstLinkBack[start] = e1.getReversedEdge();
+//					}
+//					break;
+//				case 2:
+//					Edge e2 = graph.createSubLink((DoubleSubNode) vertices[1],
+//							(SuperNode) vertices[end]);
+//					if (firstLink[1] == null) {
+//						firstLink[1] = e2;
+//					}
+//					if (firstSubLink[1] == null) {
+//						firstSubLink[1] = e2;
+//					}
+//					if (firstLink[end] == null) {
+//						firstLink[end] = e2.getReversedEdge();
+//					}
+//					if (firstSubLink[end] == null) {
+//						firstSubLink[end] = e2.getReversedEdge();
+//					}
+//					break;
+//				}
+//			}
+//			assertEquals(firstLink[0],vertices[0].getFirstEdgeOfClass(eclasses[0]));
+//			assertEquals(firstLink[1],vertices[1].getFirstEdgeOfClass(eclasses[0]));
+//			assertEquals(firstLink[2],vertices[2].getFirstEdgeOfClass(eclasses[0]));
+//			assertEquals(firstLinkBack[0],vertices[0].getFirstEdgeOfClass(eclasses[2]));
+//			assertEquals(firstLinkBack[1],vertices[1].getFirstEdgeOfClass(eclasses[2]));
+//			assertEquals(firstLinkBack[2],vertices[2].getFirstEdgeOfClass(eclasses[2]));
+//			assertEquals(firstSubLink[0],vertices[0].getFirstEdgeOfClass(eclasses[1]));
+//			assertEquals(firstSubLink[1],vertices[1].getFirstEdgeOfClass(eclasses[1]));
+//			assertEquals(firstSubLink[2],vertices[2].getFirstEdgeOfClass(eclasses[1]));
+//		}
+//	}
+
 }
