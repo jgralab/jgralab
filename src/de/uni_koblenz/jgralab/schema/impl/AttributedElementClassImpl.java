@@ -112,7 +112,7 @@ public abstract class AttributedElementClassImpl implements
 
 	/**
 	 * builds a new attributed element class
-	 *
+	 * 
 	 * @param qn
 	 *            the unique identifier of the element in the schema
 	 */
@@ -303,7 +303,7 @@ public abstract class AttributedElementClassImpl implements
 
 	/**
 	 * adds a superClass to this class
-	 *
+	 * 
 	 * @param superClass
 	 *            the class to add as superclass
 	 */
@@ -387,7 +387,7 @@ public abstract class AttributedElementClassImpl implements
 
 	@Override
 	public Set<AttributedElementClass> getDirectSuperClasses() {
-		return new HashSet<AttributedElementClass>(directSuperClasses);
+		return directSuperClasses;
 	}
 
 	@Override

@@ -84,7 +84,10 @@ import de.uni_koblenz.jgralab.grumlschema.structure.VertexClass;
 import de.uni_koblenz.jgralab.utilities.tg2dot.Tg2Dot;
 
 /**
- * TODO add comment
+ * Rsa2Tg is a utility that converts XMI files exported from IBM (tm) Rational
+ * Software Architect (tm) into a TG schema file. The converter is based on a
+ * SAX parser. As intermediate format, a grUML schema graph is created from the
+ * XMI elements.
  * 
  * @author ist@uni-koblenz.de
  */
@@ -250,6 +253,9 @@ public class Rsa2Tg extends DefaultHandler {
 	 */
 	private boolean useNavigability;
 
+	/**
+	 * Creates a Rsa2Tg converter.
+	 */
 	public Rsa2Tg() {
 		ignoredElements = new TreeSet<String>();
 		ignoredElements.add("profileApplication");
@@ -258,6 +264,17 @@ public class Rsa2Tg extends DefaultHandler {
 	}
 
 	public static void main(String[] args) {
+		de.uni_koblenz.jgralab.schema.Schema s = GrumlSchema.instance();
+		for (de.uni_koblenz.jgralab.schema.VertexClass vc : s
+				.getVertexClassesInTopologicalOrder()) {
+			System.out.println(vc.getQualifiedName());
+		}
+
+		for (de.uni_koblenz.jgralab.schema.EdgeClass ec : s
+				.getEdgeClassesInTopologicalOrder()) {
+			System.out.println(ec.getQualifiedName());
+		}
+
 		System.out.println("RSA to TG");
 		System.out.println("=========");
 		JGraLab.setLogLevel(Level.OFF);
@@ -272,6 +289,14 @@ public class Rsa2Tg extends DefaultHandler {
 		System.out.println("Fini.");
 	}
 
+	/**
+	 * Processes one RSA XMI file by creating a SAX parser and submitting this
+	 * file to the parse() method. All actions take place in overrided mehtods
+	 * of the SAX DefaultHandler.
+	 * 
+	 * @param xmiFileName
+	 *            the name of the XMI file to convert
+	 */
 	public void process(String xmiFileName) {
 		SAXParser parser;
 		try {
@@ -286,20 +311,33 @@ public class Rsa2Tg extends DefaultHandler {
 		}
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.xml.sax.helpers.DefaultHandler#characters(char[], int, int)
+	 */
 	@Override
 	public void characters(char[] ch, int start, int length)
 			throws SAXException {
+		// collect character data inside an XML element in a StringBuilder
+		// associated with the element on top of the stack
 		elementContent.peek().append(ch, start, length);
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.xml.sax.helpers.DefaultHandler#endDocument()
+	 */
 	@Override
 	public void endDocument() throws SAXException {
+		// finalizes processing by creating missing links
 		assert elementNameStack.size() == 0;
 		assert ignore == 0;
 		linkGeneralizations();
 		linkRecordDomainComponents();
 		linkAttributeDomains();
-		setAggregateFrom();
+		setAggregateFromAttributes();
 		if (isUseNavigability()) {
 			correctEdgeDirection();
 		}
@@ -309,7 +347,8 @@ public class Rsa2Tg extends DefaultHandler {
 			removeUnusedDomains();
 		}
 		removeEmptyPackages();
-		// assert preliminaryVertices.isEmpty();
+		// preliminaryVertices must be empty at this time of processing,
+		// otherwise there is an error...
 		if (!preliminaryVertices.isEmpty()) {
 			System.err.println("Remaining preliminary vertices ("
 					+ preliminaryVertices.size() + "):");
@@ -317,7 +356,10 @@ public class Rsa2Tg extends DefaultHandler {
 				System.err.println(v);
 			}
 		}
-		String schemaName = sg.getFirstSchema().getName();
+		assert preliminaryVertices.isEmpty();
+		assert schema != null;
+		String schemaName = schema.getName();
+		assert schemaName != null;
 		// sg.defragment();
 		createDotFile(schemaName);
 		saveGraph(schemaName);
@@ -407,7 +449,7 @@ public class Rsa2Tg extends DefaultHandler {
 		}
 	}
 
-	private void setAggregateFrom() {
+	private void setAggregateFromAttributes() {
 		for (Edge e : aggregateEnds) {
 			((AggregationClass) e.getAlpha()).setAggregateFrom(e instanceof To);
 		}
