@@ -229,10 +229,11 @@ public abstract class GraphImpl implements Graph {
 	 *             if a edge with the same id already exists
 	 */
 	protected void addEdge(Edge newEdge, Vertex alpha, Vertex omega) {
-		assert (newEdge.isNormal());
-		assert (newEdge.getSchema() == alpha.getSchema() && newEdge.getSchema() == omega
-				.getSchema()) : "The schemas don't match!";
-		assert (alpha.getGraph() == omega.getGraph() && alpha.getGraph() == this) : "alpha, omega and this graph don't match!";
+		assert (newEdge.isNormal()) : "The edge to be added";
+		assert (alpha.getSchema() == omega.getSchema()
+				&& alpha.getSchema() == this.schema && newEdge.getSchema() == this.schema) : "The schemas of alpha, omega, newEdge and this graph don't match!";
+		assert (alpha.getGraph() == omega.getGraph()
+				&& alpha.getGraph() == this && newEdge.getGraph() == this) : "The graph of alpha, omega, newEdge and this graph don't match!";
 
 		EdgeImpl e = (EdgeImpl) newEdge;
 

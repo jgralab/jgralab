@@ -33,19 +33,6 @@ package de.uni_koblenz.jgralab;
 public class GraphIOException extends Exception {
 	private static final long serialVersionUID = 4569564712278582929L;
 
-	private GraphIOExceptionReason reason = GraphIOExceptionReason.UNDEFINED;
-
-	/**
-	 * @return the reason
-	 */
-	public GraphIOExceptionReason getReason() {
-		return reason;
-	}
-
-	public enum GraphIOExceptionReason {
-		UNDEFINED, UNKNOWN_SCHEMA
-	};
-
 	public GraphIOException() {
 	}
 
@@ -59,11 +46,5 @@ public class GraphIOException extends Exception {
 
 	public GraphIOException(String msg, Throwable t) {
 		super(msg, t);
-	}
-
-	public GraphIOException(String msg, Throwable t,
-			GraphIOExceptionReason cause) {
-		super(msg, t);
-		this.reason = cause;
 	}
 }
