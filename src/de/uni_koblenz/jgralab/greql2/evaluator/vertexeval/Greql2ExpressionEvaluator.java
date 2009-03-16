@@ -24,6 +24,7 @@
 
 package de.uni_koblenz.jgralab.greql2.evaluator.vertexeval;
 
+import java.util.ArrayList;
 import java.util.Map;
 
 import de.uni_koblenz.jgralab.EdgeDirection;
@@ -33,11 +34,13 @@ import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.GraphSize;
 import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.VertexCosts;
 import de.uni_koblenz.jgralab.greql2.exception.EvaluateException;
 import de.uni_koblenz.jgralab.greql2.exception.UndefinedVariableException;
+import de.uni_koblenz.jgralab.greql2.exception.UnknownTypeException;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
 import de.uni_koblenz.jgralab.greql2.schema.Expression;
 import de.uni_koblenz.jgralab.greql2.schema.Greql2Expression;
 import de.uni_koblenz.jgralab.greql2.schema.IsBoundVarOf;
 import de.uni_koblenz.jgralab.greql2.schema.IsIdOf;
+import de.uni_koblenz.jgralab.greql2.schema.SourcePosition;
 import de.uni_koblenz.jgralab.greql2.schema.Variable;
 import de.uni_koblenz.jgralab.schema.AttributedElementClass;
 import de.uni_koblenz.jgralab.schema.EdgeClass;
@@ -101,6 +104,8 @@ public class Greql2ExpressionEvaluator extends VertexEvaluator {
 					String packageName = importedType.substring(0, importedType
 							.length() - 2);
 					Package p = graphSchema.getPackage(packageName);
+					if (p == null)
+						throw new UnknownTypeException(importedType, new ArrayList<SourcePosition>());
 					// for (Domain elem : p.getDomains().values()) {
 					// greqlEvaluator.addKnownType(elem);
 					// }
@@ -114,6 +119,8 @@ public class Greql2ExpressionEvaluator extends VertexEvaluator {
 					AttributedElementClass elemClass = (AttributedElementClass) vertex
 							.getSchema().getAttributedElementClass(
 									new QualifiedName(importedType));
+					if (elemClass == null)
+						throw new UnknownTypeException(importedType, new ArrayList<SourcePosition>());
 					greqlEvaluator.addKnownType(elemClass);
 				}
 			}

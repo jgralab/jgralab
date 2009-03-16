@@ -209,7 +209,6 @@ public abstract class VertexEvaluator {
 	 */
 	public JValue getResult(BooleanGraphMarker subgraphMarker)
 			throws EvaluateException {
-		// GreqlEvaluator.println("Try to retrieve result for: " + this);
 		if (result != null && this.subgraph == subgraphMarker) {
 			// greqlEvaluator.progress(1);
 			return result;
