@@ -193,7 +193,7 @@ public class SchemaGraph2Tg {
 		stream = new PrintWriter(outputFilename);
 
 		// This line is for debugging and developing purposes only.
-//		 stream = new PrintWriter(System.out);
+//		stream = new PrintWriter(System.out);
 
 		printTGSchema(schemaGraph);
 
@@ -216,7 +216,6 @@ public class SchemaGraph2Tg {
 	 * All EBNF rules, used in this method, are enlisted below:
 	 * 
 	 * <pre>
-	 * &lt;code&gt;
 	 *   TGSchema ::= &quot;Schema&quot; SchemaName &quot;;&quot;
 	 * 		GraphClassDefinition
 	 * 		{
@@ -237,7 +236,6 @@ public class SchemaGraph2Tg {
 	 *   SchemaClassName ::= ClassNameString
 	 *   
 	 *   PackageName ::= PackageNameString
-	 * &lt;/code&gt;
 	 * </pre>
 	 * 
 	 * @param schemaGraph
@@ -307,21 +305,21 @@ public class SchemaGraph2Tg {
 	 * 
 	 * <pre>
 	 * 
-	 * &#064;param graph
-	 *            {@link GraphClass}
-	 * , which should be transformed to TG string.
+	 * @param graph
+	 *            {@link GraphClass}, which should be transformed to TG string.
 	 */
 	private void printGraphClassDefinition(
 			de.uni_koblenz.jgralab.grumlschema.structure.GraphClass graph) {
 
 		assert (graph != null) : "Object of type GraphClass is null!";
-		println(GRAPH_CLASS, SPACE, graph.getQualifiedName(), DELIMITER);
+		print(GRAPH_CLASS, SPACE, graph.getQualifiedName());
 
 		// Prints all outgoing edges of type HasAttribute are interesting
 		printAttributes(graph.getFirstHasAttribute(OUTGOING));
 
 		// Only outgoing edges of type HasConstraint are interesting
 		printConstraints(graph.getFirstHasConstraint(OUTGOING));
+		println(DELIMITER);
 	}
 
 	/**
@@ -333,11 +331,9 @@ public class SchemaGraph2Tg {
 	 * All EBNF rules, used in this method, are enlisted below:
 	 * 
 	 * <pre>
-	 * &lt;code&gt;
 	 *   PackageDeclaration ::= &quot;Package&quot; [ {PackageName &quot;.&quot;} PackageName ]
 	 *   
 	 *   PackageName ::= PackageNameString
-	 * &lt;/code&gt;
 	 * </pre>
 	 * 
 	 * @param tgPackage
@@ -410,7 +406,6 @@ public class SchemaGraph2Tg {
 	 * All EBNF rules, used in this method, are enlisted below:
 	 * 
 	 * <pre>
-	 * &lt;code&gt;
 	 *   VertexClassDefinition ::= [&quot;abstract&quot;] &quot;VertexClass&quot; VertexClassName
 	 *   	[SuperClasses] [Attributes] { Constraint }
 	 *   
@@ -421,7 +416,6 @@ public class SchemaGraph2Tg {
 	 *   Qualifier ::= &quot;.&quot; | { PackageName &quot;.&quot; }
 	 *   
 	 *   PackageName ::= PackageNameString
-	 * &lt;/code&gt;
 	 * </pre>
 	 * 
 	 * @param vertexClass
@@ -456,7 +450,6 @@ public class SchemaGraph2Tg {
 	 * All EBNF rules, used in this method, are enlisted below:
 	 * 
 	 * <pre>
-	 * &lt;code&gt;
 	 *   EdgeClassDefinition ::= [&quot;abstract&quot;] &quot;EdgeClass&quot; EdgeClassName [SuperClasses]
 	 *     &quot;from&quot; VertexClassName Multiplicity [Role] &quot;to&quot; VertexClassName Multiplicity [Role]
 	 *     [Attributes] { Constraint }
@@ -476,7 +469,6 @@ public class SchemaGraph2Tg {
 	 *   AggregationClassName ::= QualifiedClassName
 	 *   
 	 *   CompositionClassName ::= QualifiedClassName
-	 * &lt;/code&gt;
 	 * </pre>
 	 * 
 	 * <strong>Note:</strong> The EBNF rules EdgeClassDefinition,
@@ -754,11 +746,11 @@ public class SchemaGraph2Tg {
 	private void printDomainDefinition(Domain domain) {
 
 		// As mentioned above, only instances of RecordDomain and EnumDomain
-		// needs to be printed.
+		// need to be printed.
 
 		if (domain instanceof RecordDomain) {
 			printRecordDomain((RecordDomain) domain);
-		}
+		} else
 
 		if (domain instanceof EnumDomain) {
 			printEnumDomain((EnumDomain) domain);
@@ -774,7 +766,6 @@ public class SchemaGraph2Tg {
 	 * All EBNF rules, used in this method, are enlisted below:
 	 * 
 	 * <pre>
-	 * &lt;code&gt;
 	 *   RecordDefinition ::= &quot;RecordDomain&quot; DomainName &quot;(&quot; RecordComponent { &quot;,&quot; RecordComponent } &quot;)&quot;
 	 *   
 	 *   DomainName ::= QualifiedClassName
@@ -786,7 +777,6 @@ public class SchemaGraph2Tg {
 	 *   Qualifier ::= &quot;.&quot; | { PackageName &quot;.&quot; }
 	 *   
 	 *   PackageName ::= PackageNameString
-	 * &lt;/code&gt;
 	 * </pre>
 	 * 
 	 * @param domain
@@ -1082,13 +1072,11 @@ public class SchemaGraph2Tg {
 	 * All EBNF rules, used in this method, are enlisted below:
 	 * 
 	 * <pre>
-	 * &lt;code&gt;
 	 *   Domain ::= DomainName | &quot;Boolean&quot; | &quot;Integer&quot; | &quot;Long&quot; | &quot;Double&quot; |
 	 *   	&quot;String&quot; | ( (&quot;List&quot; | &quot;Set&quot;) &quot;&lt;&quot; Domain &quot;&gt;&quot; ) | (&quot;Map&quot; &quot;&lt;&quot; Domain &quot;,&quot;
 	 *   	Domain &quot;&gt;&quot;)
 	 *   
 	 *   DomainName ::= QualifiedClassName
-	 * &lt;/code&gt;
 	 * </pre>
 	 * 
 	 * @param domain
@@ -1109,7 +1097,6 @@ public class SchemaGraph2Tg {
 	 * All EBNF rules, used in this method, are enlisted below:
 	 * 
 	 * <pre>
-	 * &lt;code&gt;
 	 *   Constraint ::= &quot;[&quot; Message PredicateQuery [ OffendingElementsQuery ] &quot;]&quot;
 	 *   
 	 *   Message ::= String
@@ -1117,7 +1104,6 @@ public class SchemaGraph2Tg {
 	 *   PredicateQuery ::= GReQLString
 	 *   
 	 *   OffendingElementsQuery ::= GReQLString
-	 * &lt;/code&gt;
 	 * </pre>
 	 * 
 	 * @param constraint
@@ -1140,7 +1126,6 @@ public class SchemaGraph2Tg {
 	 * All EBNF rules, used in this method, are enlisted below: *
 	 * 
 	 * <pre>
-	 * &lt;code&gt;
 	 *   Constraint ::= &quot;[&quot; Message PredicateQuery [ OffendingElementsQuery ] &quot;]&quot;
 	 *   
 	 *   Message ::= String
@@ -1148,7 +1133,6 @@ public class SchemaGraph2Tg {
 	 *   PredicateQuery ::= GReQLString
 	 *   
 	 *   OffendingElementsQuery ::= GReQLString
-	 * &lt;/code&gt;
 	 * </pre>
 	 * 
 	 * @param constraint
@@ -1227,7 +1211,8 @@ public class SchemaGraph2Tg {
 	 */
 	private String getName(Domain element) {
 		assert (element != null) : "Object of type AttributedElementClass is null!";
-		return getName(element.getQualifiedName());
+		String name = element.getQualifiedName();
+		return getName(name);
 	}
 	
 	/**
@@ -1286,22 +1271,18 @@ public class SchemaGraph2Tg {
 	 * Instead of writing
 	 * 
 	 * <pre>
-	 * &lt;code&gt;  
 	 *   stream.print(SCHEMA);
 	 *   stream.print(SPACE);
 	 *   stream.print(s.getPackageName());
 	 *   stream.print(POINT);
 	 *   stream.print(s.getSimpleName());
 	 *   stream.print(DELIMITER);
-	 * &lt;/code&gt;
 	 * </pre>
 	 * 
 	 * it is possible to simply write
 	 * 
 	 * <pre>
-	 * &lt;code&gt;  
 	 *   print(SCHEMA, SPACE, &quot;node&quot;, POINT, &quot;Nothing&quot;, DELIMITER);
-	 * &lt;/code&gt;
 	 * </pre>
 	 * 
 	 * @param strings
@@ -1325,23 +1306,19 @@ public class SchemaGraph2Tg {
 	 * 
 	 * Instead of writing
 	 * 
-	 * <pre>
-	 * &lt;code&gt;  
+	 * <pre> 
 	 *   stream.print(SCHEMA);
 	 *   stream.print(SPACE);
 	 *   stream.print(s.getPackageName());
 	 *   stream.print(POINT);
 	 *   stream.print(s.getSimpleName());
 	 *   stream.print(DELIMITER);
-	 * &lt;/code&gt;
 	 * </pre>
 	 * 
 	 * it is possible to simply write
 	 * 
 	 * <pre>
-	 * &lt;code&gt;  
 	 *   print(SCHEMA, SPACE, &quot;node&quot;, POINT, &quot;Nothing&quot;, DELIMITER);
-	 * &lt;/code&gt;
 	 * </pre>
 	 * 
 	 * @param strings
