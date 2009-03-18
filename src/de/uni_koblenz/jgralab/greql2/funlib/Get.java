@@ -37,7 +37,7 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
  *
  * <dl>
  * <dt><b>GReQL-signature</b></dt>
- * <dd><code>BOOLEAN get(m:MAP, obj:OBJECT)</code></dd>
+ * <dd><code>OBJECT get(m:MAP, obj:OBJECT)</code></dd>
  * <dd>&nbsp;</dd>
  * </dl>
  * <dl>
