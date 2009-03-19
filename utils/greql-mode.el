@@ -53,23 +53,7 @@
         (setq list (cons (match-string 1) list)))
       list)))
 
-(defvar greql-functions
-  '("and" "avg" "children" "contains" "count" "degree" "depth"
-    "difference" "distance" "dividedBy" "edgesConnected" "edgesFrom"
-    "edgesTo" "edgeTrace" "edgeTypeSet" "endVertex" "equals"
-    "extractPath" "getEdge" "getValue" "getVertex" "grEqual" "grThan"
-    "hasAttribute" "hasType" "id" "inDegree" "innerNodes"
-    "intersection" "isAcyclic" "isA" "isCycle" "isIn" "isIsolated"
-    "isLoop" "isNeighbour" "isParallel" "isPrime" "isReachable"
-    "isSibling" "isSubPathOfPath" "isSubSet" "isSuperSet" "isTrail"
-    "isTree" "leaves" "leEqual" "leThan" "matches" "maxPathLength"
-    "minPathLength" "minus" "modulo" "nequals" "nodeTrace" "not"
-    "nthElement" "or" "outDegree" "parent" "pathConcat" "pathLength"
-    "pathSystem" "plus" "pos" "reachableVertices" "reMatch"
-    "schemaFunctions" "siblings" "squareRoot" "startVertex"
-    "subtypes" "sum" "supertypes" "symDifference" "times" "toString"
-    "type" "typeName" "typeSet" "types" "uminus" "union"
-    "vertexTypeSet" "weight" "xor")
+(defvar greql-functions (greql-functions)
   "GReQL functions that should be completed and highlighted.")
 (put 'greql-functions 'risky-local-variable-p t)
 
