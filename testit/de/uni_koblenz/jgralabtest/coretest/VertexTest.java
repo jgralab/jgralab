@@ -7,6 +7,7 @@ import static org.junit.Assert.assertTrue;
 import java.util.ConcurrentModificationException;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
 
@@ -5358,8 +5359,8 @@ public class VertexTest {
 		assertEquals(null, v0.getFirstEdgeOfClass(LinkBack.class,
 				EdgeDirection.OUT, false));
 
-		assertEquals(null, v0.getFirstEdgeOfClass(Link.class,
-				EdgeDirection.IN, false));
+		assertEquals(null, v0.getFirstEdgeOfClass(Link.class, EdgeDirection.IN,
+				false));
 		assertEquals(null, v0.getFirstEdgeOfClass(SubLink.class,
 				EdgeDirection.IN, false));
 		assertEquals(null, v0.getFirstEdgeOfClass(LinkBack.class,
@@ -5379,8 +5380,8 @@ public class VertexTest {
 		assertEquals(null, v0.getFirstEdgeOfClass(LinkBack.class,
 				EdgeDirection.OUT, true));
 
-		assertEquals(null, v0.getFirstEdgeOfClass(Link.class,
-				EdgeDirection.IN, true));
+		assertEquals(null, v0.getFirstEdgeOfClass(Link.class, EdgeDirection.IN,
+				true));
 		assertEquals(null, v0.getFirstEdgeOfClass(SubLink.class,
 				EdgeDirection.IN, true));
 		assertEquals(null, v0.getFirstEdgeOfClass(LinkBack.class,
@@ -5396,8 +5397,8 @@ public class VertexTest {
 		Vertex v1 = graph.createDoubleSubNode();
 		Edge e = graph.createLink((AbstractSuperNode) v0, (SuperNode) v1);
 
-		assertEquals(e, v0.getFirstEdgeOfClass(Link.class,
-				EdgeDirection.INOUT, false));
+		assertEquals(e, v0.getFirstEdgeOfClass(Link.class, EdgeDirection.INOUT,
+				false));
 		assertEquals(null, v0.getFirstEdgeOfClass(SubLink.class,
 				EdgeDirection.INOUT, false));
 		assertEquals(null, v0.getFirstEdgeOfClass(LinkBack.class,
@@ -5422,8 +5423,8 @@ public class VertexTest {
 		assertEquals(null, v1.getFirstEdgeOfClass(LinkBack.class,
 				EdgeDirection.OUT, false));
 
-		assertEquals(null, v0.getFirstEdgeOfClass(Link.class,
-				EdgeDirection.IN, false));
+		assertEquals(null, v0.getFirstEdgeOfClass(Link.class, EdgeDirection.IN,
+				false));
 		assertEquals(null, v0.getFirstEdgeOfClass(SubLink.class,
 				EdgeDirection.IN, false));
 		assertEquals(null, v0.getFirstEdgeOfClass(LinkBack.class,
@@ -5435,8 +5436,8 @@ public class VertexTest {
 		assertEquals(null, v1.getFirstEdgeOfClass(LinkBack.class,
 				EdgeDirection.IN, false));
 
-		assertEquals(e, v0.getFirstEdgeOfClass(Link.class,
-				EdgeDirection.INOUT, true));
+		assertEquals(e, v0.getFirstEdgeOfClass(Link.class, EdgeDirection.INOUT,
+				true));
 		assertEquals(null, v0.getFirstEdgeOfClass(SubLink.class,
 				EdgeDirection.INOUT, true));
 		assertEquals(null, v0.getFirstEdgeOfClass(LinkBack.class,
@@ -5461,8 +5462,8 @@ public class VertexTest {
 		assertEquals(null, v1.getFirstEdgeOfClass(LinkBack.class,
 				EdgeDirection.OUT, true));
 
-		assertEquals(null, v0.getFirstEdgeOfClass(Link.class,
-				EdgeDirection.IN, true));
+		assertEquals(null, v0.getFirstEdgeOfClass(Link.class, EdgeDirection.IN,
+				true));
 		assertEquals(null, v0.getFirstEdgeOfClass(SubLink.class,
 				EdgeDirection.IN, true));
 		assertEquals(null, v0.getFirstEdgeOfClass(LinkBack.class,
@@ -5492,15 +5493,15 @@ public class VertexTest {
 				EdgeDirection.INOUT, false));
 		assertEquals(e1.getReversedEdge(), v1.getFirstEdgeOfClass(Link.class,
 				EdgeDirection.INOUT, false));
-		assertEquals(e1.getReversedEdge(), v1.getFirstEdgeOfClass(SubLink.class,
-				EdgeDirection.INOUT, false));
+		assertEquals(e1.getReversedEdge(), v1.getFirstEdgeOfClass(
+				SubLink.class, EdgeDirection.INOUT, false));
 		assertEquals(null, v1.getFirstEdgeOfClass(LinkBack.class,
 				EdgeDirection.INOUT, false));
 
 		assertEquals(e1, v0.getFirstEdgeOfClass(Link.class, EdgeDirection.OUT,
 				false));
-		assertEquals(e1, v0.getFirstEdgeOfClass(SubLink.class, EdgeDirection.OUT,
-				false));
+		assertEquals(e1, v0.getFirstEdgeOfClass(SubLink.class,
+				EdgeDirection.OUT, false));
 		assertEquals(null, v0.getFirstEdgeOfClass(LinkBack.class,
 				EdgeDirection.OUT, false));
 		assertEquals(null, v1.getFirstEdgeOfClass(Link.class,
@@ -5510,16 +5511,16 @@ public class VertexTest {
 		assertEquals(null, v1.getFirstEdgeOfClass(LinkBack.class,
 				EdgeDirection.OUT, false));
 
-		assertEquals(null, v0.getFirstEdgeOfClass(Link.class,
-				EdgeDirection.IN, false));
+		assertEquals(null, v0.getFirstEdgeOfClass(Link.class, EdgeDirection.IN,
+				false));
 		assertEquals(null, v0.getFirstEdgeOfClass(SubLink.class,
 				EdgeDirection.IN, false));
 		assertEquals(null, v0.getFirstEdgeOfClass(LinkBack.class,
 				EdgeDirection.IN, false));
 		assertEquals(e1.getReversedEdge(), v1.getFirstEdgeOfClass(Link.class,
 				EdgeDirection.IN, false));
-		assertEquals(e1.getReversedEdge(), v1.getFirstEdgeOfClass(SubLink.class,
-				EdgeDirection.IN, false));
+		assertEquals(e1.getReversedEdge(), v1.getFirstEdgeOfClass(
+				SubLink.class, EdgeDirection.IN, false));
 		assertEquals(null, v1.getFirstEdgeOfClass(LinkBack.class,
 				EdgeDirection.IN, false));
 
@@ -5531,15 +5532,15 @@ public class VertexTest {
 				EdgeDirection.INOUT, true));
 		assertEquals(null, v1.getFirstEdgeOfClass(Link.class,
 				EdgeDirection.INOUT, true));
-		assertEquals(e1.getReversedEdge(), v1.getFirstEdgeOfClass(SubLink.class,
-				EdgeDirection.INOUT, true));
+		assertEquals(e1.getReversedEdge(), v1.getFirstEdgeOfClass(
+				SubLink.class, EdgeDirection.INOUT, true));
 		assertEquals(null, v1.getFirstEdgeOfClass(LinkBack.class,
 				EdgeDirection.INOUT, true));
 
 		assertEquals(null, v0.getFirstEdgeOfClass(Link.class,
 				EdgeDirection.OUT, true));
-		assertEquals(e1, v0.getFirstEdgeOfClass(SubLink.class, EdgeDirection.OUT,
-				true));
+		assertEquals(e1, v0.getFirstEdgeOfClass(SubLink.class,
+				EdgeDirection.OUT, true));
 		assertEquals(null, v0.getFirstEdgeOfClass(LinkBack.class,
 				EdgeDirection.OUT, true));
 		assertEquals(null, v1.getFirstEdgeOfClass(Link.class,
@@ -5549,16 +5550,16 @@ public class VertexTest {
 		assertEquals(null, v1.getFirstEdgeOfClass(LinkBack.class,
 				EdgeDirection.OUT, true));
 
-		assertEquals(null, v0.getFirstEdgeOfClass(Link.class,
-				EdgeDirection.IN, true));
+		assertEquals(null, v0.getFirstEdgeOfClass(Link.class, EdgeDirection.IN,
+				true));
 		assertEquals(null, v0.getFirstEdgeOfClass(SubLink.class,
 				EdgeDirection.IN, true));
 		assertEquals(null, v0.getFirstEdgeOfClass(LinkBack.class,
 				EdgeDirection.IN, true));
-		assertEquals(null, v1.getFirstEdgeOfClass(Link.class,
-				EdgeDirection.IN, true));
-		assertEquals(e1.getReversedEdge(), v1.getFirstEdgeOfClass(SubLink.class,
-				EdgeDirection.IN, true));
+		assertEquals(null, v1.getFirstEdgeOfClass(Link.class, EdgeDirection.IN,
+				true));
+		assertEquals(e1.getReversedEdge(), v1.getFirstEdgeOfClass(
+				SubLink.class, EdgeDirection.IN, true));
 		assertEquals(null, v1.getFirstEdgeOfClass(LinkBack.class,
 				EdgeDirection.IN, true));
 	}
@@ -5577,8 +5578,8 @@ public class VertexTest {
 				EdgeDirection.INOUT, false));
 		assertEquals(null, v0.getFirstEdgeOfClass(SubLink.class,
 				EdgeDirection.INOUT, false));
-		assertEquals(e2.getReversedEdge(), v0.getFirstEdgeOfClass(LinkBack.class,
-				EdgeDirection.INOUT, false));
+		assertEquals(e2.getReversedEdge(), v0.getFirstEdgeOfClass(
+				LinkBack.class, EdgeDirection.INOUT, false));
 		assertEquals(e1.getReversedEdge(), v1.getFirstEdgeOfClass(Link.class,
 				EdgeDirection.INOUT, false));
 		assertEquals(null, v1.getFirstEdgeOfClass(SubLink.class,
@@ -5596,15 +5597,15 @@ public class VertexTest {
 				EdgeDirection.OUT, false));
 		assertEquals(null, v1.getFirstEdgeOfClass(SubLink.class,
 				EdgeDirection.OUT, false));
-		assertEquals(e2, v1.getFirstEdgeOfClass(LinkBack.class, EdgeDirection.OUT,
-				false));
+		assertEquals(e2, v1.getFirstEdgeOfClass(LinkBack.class,
+				EdgeDirection.OUT, false));
 
-		assertEquals(null, v0.getFirstEdgeOfClass(Link.class,
-				EdgeDirection.IN, false));
+		assertEquals(null, v0.getFirstEdgeOfClass(Link.class, EdgeDirection.IN,
+				false));
 		assertEquals(null, v0.getFirstEdgeOfClass(SubLink.class,
 				EdgeDirection.IN, false));
-		assertEquals(e2.getReversedEdge(), v0.getFirstEdgeOfClass(LinkBack.class,
-				EdgeDirection.IN, false));
+		assertEquals(e2.getReversedEdge(), v0.getFirstEdgeOfClass(
+				LinkBack.class, EdgeDirection.IN, false));
 		assertEquals(e1.getReversedEdge(), v1.getFirstEdgeOfClass(Link.class,
 				EdgeDirection.IN, false));
 		assertEquals(null, v1.getFirstEdgeOfClass(SubLink.class,
@@ -5616,8 +5617,8 @@ public class VertexTest {
 				EdgeDirection.INOUT, true));
 		assertEquals(null, v0.getFirstEdgeOfClass(SubLink.class,
 				EdgeDirection.INOUT, true));
-		assertEquals(e2.getReversedEdge(), v0.getFirstEdgeOfClass(LinkBack.class,
-				EdgeDirection.INOUT, true));
+		assertEquals(e2.getReversedEdge(), v0.getFirstEdgeOfClass(
+				LinkBack.class, EdgeDirection.INOUT, true));
 		assertEquals(e1.getReversedEdge(), v1.getFirstEdgeOfClass(Link.class,
 				EdgeDirection.INOUT, true));
 		assertEquals(null, v1.getFirstEdgeOfClass(SubLink.class,
@@ -5635,15 +5636,15 @@ public class VertexTest {
 				EdgeDirection.OUT, true));
 		assertEquals(null, v1.getFirstEdgeOfClass(SubLink.class,
 				EdgeDirection.OUT, true));
-		assertEquals(e2, v1.getFirstEdgeOfClass(LinkBack.class, EdgeDirection.OUT,
-				true));
+		assertEquals(e2, v1.getFirstEdgeOfClass(LinkBack.class,
+				EdgeDirection.OUT, true));
 
-		assertEquals(null, v0.getFirstEdgeOfClass(Link.class,
-				EdgeDirection.IN, true));
+		assertEquals(null, v0.getFirstEdgeOfClass(Link.class, EdgeDirection.IN,
+				true));
 		assertEquals(null, v0.getFirstEdgeOfClass(SubLink.class,
 				EdgeDirection.IN, true));
-		assertEquals(e2.getReversedEdge(), v0.getFirstEdgeOfClass(LinkBack.class,
-				EdgeDirection.IN, true));
+		assertEquals(e2.getReversedEdge(), v0.getFirstEdgeOfClass(
+				LinkBack.class, EdgeDirection.IN, true));
 		assertEquals(e1.getReversedEdge(), v1.getFirstEdgeOfClass(Link.class,
 				EdgeDirection.IN, true));
 		assertEquals(null, v1.getFirstEdgeOfClass(SubLink.class,
@@ -5834,15 +5835,15 @@ public class VertexTest {
 					break;
 				}
 			}
-			assertEquals(firstLinkInOutFalse[0], vertices[0]
-					.getFirstEdgeOfClass(Link.class, EdgeDirection.INOUT,
-							false));
-			assertEquals(firstLinkInOutFalse[1], vertices[1]
-					.getFirstEdgeOfClass(Link.class, EdgeDirection.INOUT,
-							false));
-			assertEquals(firstLinkInOutFalse[2], vertices[2]
-					.getFirstEdgeOfClass(Link.class, EdgeDirection.INOUT,
-							false));
+			assertEquals(firstLinkInOutFalse[0],
+					vertices[0].getFirstEdgeOfClass(Link.class,
+							EdgeDirection.INOUT, false));
+			assertEquals(firstLinkInOutFalse[1],
+					vertices[1].getFirstEdgeOfClass(Link.class,
+							EdgeDirection.INOUT, false));
+			assertEquals(firstLinkInOutFalse[2],
+					vertices[2].getFirstEdgeOfClass(Link.class,
+							EdgeDirection.INOUT, false));
 			assertEquals(firstLinkBackInOutFalse[0], vertices[0]
 					.getFirstEdgeOfClass(LinkBack.class, EdgeDirection.INOUT,
 							false));
@@ -5869,17 +5870,23 @@ public class VertexTest {
 			assertEquals(firstLinkOutFalse[2], vertices[2].getFirstEdgeOfClass(
 					Link.class, EdgeDirection.OUT, false));
 			assertEquals(firstLinkBackOutFalse[0], vertices[0]
-					.getFirstEdgeOfClass(LinkBack.class, EdgeDirection.OUT, false));
+					.getFirstEdgeOfClass(LinkBack.class, EdgeDirection.OUT,
+							false));
 			assertEquals(firstLinkBackOutFalse[1], vertices[1]
-					.getFirstEdgeOfClass(LinkBack.class, EdgeDirection.OUT, false));
+					.getFirstEdgeOfClass(LinkBack.class, EdgeDirection.OUT,
+							false));
 			assertEquals(firstLinkBackOutFalse[2], vertices[2]
-					.getFirstEdgeOfClass(LinkBack.class, EdgeDirection.OUT, false));
+					.getFirstEdgeOfClass(LinkBack.class, EdgeDirection.OUT,
+							false));
 			assertEquals(firstSubLinkOutFalse[0], vertices[0]
-					.getFirstEdgeOfClass(SubLink.class, EdgeDirection.OUT, false));
+					.getFirstEdgeOfClass(SubLink.class, EdgeDirection.OUT,
+							false));
 			assertEquals(firstSubLinkOutFalse[1], vertices[1]
-					.getFirstEdgeOfClass(SubLink.class, EdgeDirection.OUT, false));
+					.getFirstEdgeOfClass(SubLink.class, EdgeDirection.OUT,
+							false));
 			assertEquals(firstSubLinkOutFalse[2], vertices[2]
-					.getFirstEdgeOfClass(SubLink.class, EdgeDirection.OUT, false));
+					.getFirstEdgeOfClass(SubLink.class, EdgeDirection.OUT,
+							false));
 
 			assertEquals(firstLinkInFalse[0], vertices[0].getFirstEdgeOfClass(
 					Link.class, EdgeDirection.IN, false));
@@ -5888,45 +5895,48 @@ public class VertexTest {
 			assertEquals(firstLinkInFalse[2], vertices[2].getFirstEdgeOfClass(
 					Link.class, EdgeDirection.IN, false));
 			assertEquals(firstLinkBackInFalse[0], vertices[0]
-					.getFirstEdgeOfClass(LinkBack.class, EdgeDirection.IN, false));
+					.getFirstEdgeOfClass(LinkBack.class, EdgeDirection.IN,
+							false));
 			assertEquals(firstLinkBackInFalse[1], vertices[1]
-					.getFirstEdgeOfClass(LinkBack.class, EdgeDirection.IN, false));
+					.getFirstEdgeOfClass(LinkBack.class, EdgeDirection.IN,
+							false));
 			assertEquals(firstLinkBackInFalse[2], vertices[2]
-					.getFirstEdgeOfClass(LinkBack.class, EdgeDirection.IN, false));
-			assertEquals(firstSubLinkInFalse[0], vertices[0]
-					.getFirstEdgeOfClass(SubLink.class, EdgeDirection.IN, false));
-			assertEquals(firstSubLinkInFalse[1], vertices[1]
-					.getFirstEdgeOfClass(SubLink.class, EdgeDirection.IN, false));
-			assertEquals(firstSubLinkInFalse[2], vertices[2]
-					.getFirstEdgeOfClass(SubLink.class, EdgeDirection.IN, false));
-
-			assertEquals(firstLinkInOutTrue[0],
-					vertices[0].getFirstEdgeOfClass(Link.class,
-							EdgeDirection.INOUT, true));
-			assertEquals(firstLinkInOutTrue[1],
-					vertices[1].getFirstEdgeOfClass(Link.class,
-							EdgeDirection.INOUT, true));
-			assertEquals(firstLinkInOutTrue[2],
-					vertices[2].getFirstEdgeOfClass(Link.class,
-							EdgeDirection.INOUT, true));
-			assertEquals(firstLinkBackInOutTrue[0],
-					vertices[0].getFirstEdgeOfClass(LinkBack.class,
-							EdgeDirection.INOUT, true));
-			assertEquals(firstLinkBackInOutTrue[1],
-					vertices[1].getFirstEdgeOfClass(LinkBack.class,
-							EdgeDirection.INOUT, true));
-			assertEquals(firstLinkBackInOutTrue[2],
-					vertices[2].getFirstEdgeOfClass(LinkBack.class,
-							EdgeDirection.INOUT, true));
-			assertEquals(firstSubLinkInOutTrue[0],
+					.getFirstEdgeOfClass(LinkBack.class, EdgeDirection.IN,
+							false));
+			assertEquals(firstSubLinkInFalse[0],
 					vertices[0].getFirstEdgeOfClass(SubLink.class,
-							EdgeDirection.INOUT, true));
-			assertEquals(firstSubLinkInOutTrue[1],
+							EdgeDirection.IN, false));
+			assertEquals(firstSubLinkInFalse[1],
 					vertices[1].getFirstEdgeOfClass(SubLink.class,
-							EdgeDirection.INOUT, true));
-			assertEquals(firstSubLinkInOutTrue[2],
+							EdgeDirection.IN, false));
+			assertEquals(firstSubLinkInFalse[2],
 					vertices[2].getFirstEdgeOfClass(SubLink.class,
-							EdgeDirection.INOUT, true));
+							EdgeDirection.IN, false));
+
+			assertEquals(firstLinkInOutTrue[0], vertices[0]
+					.getFirstEdgeOfClass(Link.class, EdgeDirection.INOUT, true));
+			assertEquals(firstLinkInOutTrue[1], vertices[1]
+					.getFirstEdgeOfClass(Link.class, EdgeDirection.INOUT, true));
+			assertEquals(firstLinkInOutTrue[2], vertices[2]
+					.getFirstEdgeOfClass(Link.class, EdgeDirection.INOUT, true));
+			assertEquals(firstLinkBackInOutTrue[0], vertices[0]
+					.getFirstEdgeOfClass(LinkBack.class, EdgeDirection.INOUT,
+							true));
+			assertEquals(firstLinkBackInOutTrue[1], vertices[1]
+					.getFirstEdgeOfClass(LinkBack.class, EdgeDirection.INOUT,
+							true));
+			assertEquals(firstLinkBackInOutTrue[2], vertices[2]
+					.getFirstEdgeOfClass(LinkBack.class, EdgeDirection.INOUT,
+							true));
+			assertEquals(firstSubLinkInOutTrue[0], vertices[0]
+					.getFirstEdgeOfClass(SubLink.class, EdgeDirection.INOUT,
+							true));
+			assertEquals(firstSubLinkInOutTrue[1], vertices[1]
+					.getFirstEdgeOfClass(SubLink.class, EdgeDirection.INOUT,
+							true));
+			assertEquals(firstSubLinkInOutTrue[2], vertices[2]
+					.getFirstEdgeOfClass(SubLink.class, EdgeDirection.INOUT,
+							true));
 
 			assertEquals(firstLinkOutTrue[0], vertices[0].getFirstEdgeOfClass(
 					Link.class, EdgeDirection.OUT, true));
@@ -5935,17 +5945,23 @@ public class VertexTest {
 			assertEquals(firstLinkOutTrue[2], vertices[2].getFirstEdgeOfClass(
 					Link.class, EdgeDirection.OUT, true));
 			assertEquals(firstLinkBackOutTrue[0], vertices[0]
-					.getFirstEdgeOfClass(LinkBack.class, EdgeDirection.OUT, true));
+					.getFirstEdgeOfClass(LinkBack.class, EdgeDirection.OUT,
+							true));
 			assertEquals(firstLinkBackOutTrue[1], vertices[1]
-					.getFirstEdgeOfClass(LinkBack.class, EdgeDirection.OUT, true));
+					.getFirstEdgeOfClass(LinkBack.class, EdgeDirection.OUT,
+							true));
 			assertEquals(firstLinkBackOutTrue[2], vertices[2]
-					.getFirstEdgeOfClass(LinkBack.class, EdgeDirection.OUT, true));
-			assertEquals(firstSubLinkOutTrue[0], vertices[0]
-					.getFirstEdgeOfClass(SubLink.class, EdgeDirection.OUT, true));
-			assertEquals(firstSubLinkOutTrue[1], vertices[1]
-					.getFirstEdgeOfClass(SubLink.class, EdgeDirection.OUT, true));
-			assertEquals(firstSubLinkOutTrue[2], vertices[2]
-					.getFirstEdgeOfClass(SubLink.class, EdgeDirection.OUT, true));
+					.getFirstEdgeOfClass(LinkBack.class, EdgeDirection.OUT,
+							true));
+			assertEquals(firstSubLinkOutTrue[0],
+					vertices[0].getFirstEdgeOfClass(SubLink.class,
+							EdgeDirection.OUT, true));
+			assertEquals(firstSubLinkOutTrue[1],
+					vertices[1].getFirstEdgeOfClass(SubLink.class,
+							EdgeDirection.OUT, true));
+			assertEquals(firstSubLinkOutTrue[2],
+					vertices[2].getFirstEdgeOfClass(SubLink.class,
+							EdgeDirection.OUT, true));
 
 			assertEquals(firstLinkInTrue[0], vertices[0].getFirstEdgeOfClass(
 					Link.class, EdgeDirection.IN, true));
@@ -5953,12 +5969,15 @@ public class VertexTest {
 					Link.class, EdgeDirection.IN, true));
 			assertEquals(firstLinkInTrue[2], vertices[2].getFirstEdgeOfClass(
 					Link.class, EdgeDirection.IN, true));
-			assertEquals(firstLinkBackInTrue[0], vertices[0]
-					.getFirstEdgeOfClass(LinkBack.class, EdgeDirection.IN, true));
-			assertEquals(firstLinkBackInTrue[1], vertices[1]
-					.getFirstEdgeOfClass(LinkBack.class, EdgeDirection.IN, true));
-			assertEquals(firstLinkBackInTrue[2], vertices[2]
-					.getFirstEdgeOfClass(LinkBack.class, EdgeDirection.IN, true));
+			assertEquals(firstLinkBackInTrue[0],
+					vertices[0].getFirstEdgeOfClass(LinkBack.class,
+							EdgeDirection.IN, true));
+			assertEquals(firstLinkBackInTrue[1],
+					vertices[1].getFirstEdgeOfClass(LinkBack.class,
+							EdgeDirection.IN, true));
+			assertEquals(firstLinkBackInTrue[2],
+					vertices[2].getFirstEdgeOfClass(LinkBack.class,
+							EdgeDirection.IN, true));
 			assertEquals(firstSubLinkInTrue[0], vertices[0]
 					.getFirstEdgeOfClass(SubLink.class, EdgeDirection.IN, true));
 			assertEquals(firstSubLinkInTrue[1], vertices[1]
@@ -5970,111 +5989,346 @@ public class VertexTest {
 
 	// tests of the method boolean isBefore(Vertex v);
 	// (tested in VertexList Test)
-	
+
 	// tests of the method void putBefore(Vertex v);
 	// (tested in VertexList Test)
-	
+
 	// tests of the method boolean isAfter(Vertex v);
 	// (tested in VertexList Test)
-	
+
 	// tests of the method void putAfter(Vertex v);
 	// (tested in VertexList Test)
-	
+
 	// tests of the method void delete(Vertex v);
 	// (tested in VertexList Test)
-	
+
 	// tests of the method Iterable<Edge> incidences();
 	// (tested in VertexList Test except failfast)
-	
+
 	/**
 	 * An exception should occur if the current edge is deleted.
 	 */
-	@Test(expected=ConcurrentModificationException.class)
-	public void incidencetsTestFailFast0(){
-		Vertex v0=graph.createDoubleSubNode();
-		Vertex v1=graph.createDoubleSubNode();
-		graph.createLink((AbstractSuperNode)v0, (SuperNode)v1);
-		graph.createLink((AbstractSuperNode)v0, (SuperNode)v1);
-		graph.createLink((AbstractSuperNode)v0, (SuperNode)v1);
-		Iterator<Edge> iter=v0.incidences().iterator();
+	@Test(expected = ConcurrentModificationException.class)
+	public void incidencesTestFailFast0() {
+		Vertex v0 = graph.createDoubleSubNode();
+		Vertex v1 = graph.createDoubleSubNode();
+		graph.createLink((AbstractSuperNode) v0, (SuperNode) v1);
+		graph.createLink((AbstractSuperNode) v0, (SuperNode) v1);
+		graph.createLink((AbstractSuperNode) v0, (SuperNode) v1);
+		Iterator<Edge> iter = v0.incidences().iterator();
 		iter.hasNext();
-		Edge e=iter.next();
+		Edge e = iter.next();
 		e.delete();
 		iter.hasNext();
 		iter.next();
 	}
-	
+
 	/**
 	 * An exception should occur if the position of the current edge is changed.
 	 */
-	@Test(expected=ConcurrentModificationException.class)
-	public void incidencetsTestFailFast1(){
-		Vertex v0=graph.createDoubleSubNode();
-		Vertex v1=graph.createDoubleSubNode();
-		graph.createLink((AbstractSuperNode)v0, (SuperNode)v1);
-		graph.createLink((AbstractSuperNode)v0, (SuperNode)v1);
-		Edge last=graph.createLink((AbstractSuperNode)v0, (SuperNode)v1);
-		Iterator<Edge> iter=v0.incidences().iterator();
+	@Test(expected = ConcurrentModificationException.class)
+	public void incidencesTestFailFast1() {
+		Vertex v0 = graph.createDoubleSubNode();
+		Vertex v1 = graph.createDoubleSubNode();
+		graph.createLink((AbstractSuperNode) v0, (SuperNode) v1);
+		graph.createLink((AbstractSuperNode) v0, (SuperNode) v1);
+		Edge last = graph.createLink((AbstractSuperNode) v0, (SuperNode) v1);
+		Iterator<Edge> iter = v0.incidences().iterator();
 		iter.hasNext();
-		Edge e=iter.next();
+		Edge e = iter.next();
 		e.putEdgeAfter(last);
 		iter.hasNext();
 		iter.next();
 	}
-	
+
 	/**
 	 * An exception should occur if a previous edge is deleted.
 	 */
-	@Test(expected=ConcurrentModificationException.class)
-	public void incidencetsTestFailFast2(){
-		Vertex v0=graph.createDoubleSubNode();
-		Vertex v1=graph.createDoubleSubNode();
-		graph.createLink((AbstractSuperNode)v0, (SuperNode)v1);
-		graph.createLink((AbstractSuperNode)v0, (SuperNode)v1);
-		graph.createLink((AbstractSuperNode)v0, (SuperNode)v1);
-		Iterator<Edge> iter=v0.incidences().iterator();
+	@Test(expected = ConcurrentModificationException.class)
+	public void incidencesTestFailFast2() {
+		Vertex v0 = graph.createDoubleSubNode();
+		Vertex v1 = graph.createDoubleSubNode();
+		graph.createLink((AbstractSuperNode) v0, (SuperNode) v1);
+		graph.createLink((AbstractSuperNode) v0, (SuperNode) v1);
+		graph.createLink((AbstractSuperNode) v0, (SuperNode) v1);
+		Iterator<Edge> iter = v0.incidences().iterator();
 		iter.hasNext();
-		Edge e=iter.next();
+		Edge e = iter.next();
 		iter.hasNext();
 		iter.next();
 		e.delete();
 		iter.hasNext();
 		iter.next();
 	}
-	
+
 	/**
 	 * An exception should occur if a following edge is deleted.
 	 */
-	@Test(expected=ConcurrentModificationException.class)
-	public void incidencetsTestFailFast3(){
-		Vertex v0=graph.createDoubleSubNode();
-		Vertex v1=graph.createDoubleSubNode();
-		graph.createLink((AbstractSuperNode)v0, (SuperNode)v1);
-		graph.createLink((AbstractSuperNode)v0, (SuperNode)v1);
-		Edge last=graph.createLink((AbstractSuperNode)v0, (SuperNode)v1);
-		Iterator<Edge> iter=v0.incidences().iterator();
+	@Test(expected = ConcurrentModificationException.class)
+	public void incidencesTestFailFast3() {
+		Vertex v0 = graph.createDoubleSubNode();
+		Vertex v1 = graph.createDoubleSubNode();
+		graph.createLink((AbstractSuperNode) v0, (SuperNode) v1);
+		graph.createLink((AbstractSuperNode) v0, (SuperNode) v1);
+		Edge last = graph.createLink((AbstractSuperNode) v0, (SuperNode) v1);
+		Iterator<Edge> iter = v0.incidences().iterator();
 		last.delete();
 		iter.hasNext();
 		iter.next();
 	}
-	
+
 	/**
 	 * An exception should occur if an edge is added.
 	 */
-	@Test(expected=ConcurrentModificationException.class)
-	public void incidencetsTestFailFast4(){
-		Vertex v0=graph.createDoubleSubNode();
-		Vertex v1=graph.createDoubleSubNode();
-		graph.createLink((AbstractSuperNode)v0, (SuperNode)v1);
-		graph.createLink((AbstractSuperNode)v0, (SuperNode)v1);
-		graph.createLink((AbstractSuperNode)v0, (SuperNode)v1);
-		Iterator<Edge> iter=v0.incidences().iterator();
-		graph.createLink((AbstractSuperNode)v0, (SuperNode)v1);
+	@Test(expected = ConcurrentModificationException.class)
+	public void incidencesTestFailFast4() {
+		Vertex v0 = graph.createDoubleSubNode();
+		Vertex v1 = graph.createDoubleSubNode();
+		graph.createLink((AbstractSuperNode) v0, (SuperNode) v1);
+		graph.createLink((AbstractSuperNode) v0, (SuperNode) v1);
+		graph.createLink((AbstractSuperNode) v0, (SuperNode) v1);
+		Iterator<Edge> iter = v0.incidences().iterator();
+		graph.createLink((AbstractSuperNode) v0, (SuperNode) v1);
 		iter.hasNext();
 		iter.next();
 	}
-	
+
+	/**
+	 * An exception should occur if an edge gets another alpha vertex.
+	 */
+	@Test(expected = ConcurrentModificationException.class)
+	public void incidencesTestFailFast5() {
+		Vertex v0 = graph.createDoubleSubNode();
+		Vertex v1 = graph.createDoubleSubNode();
+		graph.createLink((AbstractSuperNode) v0, (SuperNode) v1);
+		graph.createLink((AbstractSuperNode) v0, (SuperNode) v1);
+		Edge e = graph.createLink((AbstractSuperNode) v0, (SuperNode) v1);
+		Iterator<Edge> iter = v0.incidences().iterator();
+		e.setAlpha(v1);
+		iter.hasNext();
+		iter.next();
+	}
+
 	// tests of the method Iterable<Edge> incidences(EdgeDirection dir);
-	
-	
+
+	/**
+	 * Checks if the expected incidences equals the returned incidences.
+	 * 
+	 * @param v
+	 *            the node of which the incidences should be tested
+	 * @param ec
+	 *            or <code>c</code> must be <code>null</code>
+	 * @param c
+	 *            or <code>ec</code> must be <code>null</code>
+	 * @param dir
+	 *            must be != <code>null</code> if ec==null and c==null
+	 * @param expectedIncidences
+	 *            the expected incidences
+	 */
+	private void checkIncidenceList(Vertex v, EdgeClass ec,
+			Class<? extends Edge> c, EdgeDirection dir,
+			List<Edge> expectedIncidences) {
+		int i=0;
+		if (dir == null) {
+			if (ec == null) {
+				for(Edge e:v.incidences(c)){
+					assertEquals(expectedIncidences.get(i),e);
+					i++;
+				}
+			} else {
+				for(Edge e:v.incidences(ec)){
+					assertEquals(expectedIncidences.get(i),e);
+					i++;
+				}
+			}
+		} else {
+			if (ec != null) {
+				for(Edge e:v.incidences(ec,dir)){
+					assertEquals(expectedIncidences.get(i),e);
+					i++;
+				}
+			} else if (c != null) {
+				for(Edge e:v.incidences(c,dir)){
+					assertEquals(expectedIncidences.get(i),e);
+					i++;
+				}
+			} else {
+				for(Edge e:v.incidences(dir)){
+					assertEquals(expectedIncidences.get(i),e);
+					i++;
+				}
+			}
+		}
+	}
+
+	/**
+	 * Checks if a vertex has no incidences.
+	 */
+	@Test
+	public void incidencesTestEdgeDirection0() {
+		Vertex v0 = graph.createDoubleSubNode();
+		checkIncidenceList(v0, null, null, EdgeDirection.INOUT,
+				new LinkedList<Edge>());
+		checkIncidenceList(v0, null, null, EdgeDirection.OUT,
+				new LinkedList<Edge>());
+		checkIncidenceList(v0, null, null, EdgeDirection.IN,
+				new LinkedList<Edge>());
+	}
+
+	/**
+	 * Checks if a vertex has only outgoing or ingoing incidences.
+	 */
+	@Test
+	public void incidencesTestEdgeDirection1() {
+		Vertex v0 = graph.createDoubleSubNode();
+		Vertex v1 = graph.createDoubleSubNode();
+		LinkedList<Edge> v0inout = new LinkedList<Edge>();
+		LinkedList<Edge> v0out = new LinkedList<Edge>();
+		LinkedList<Edge> v0in = new LinkedList<Edge>();
+		LinkedList<Edge> v1inout = new LinkedList<Edge>();
+		LinkedList<Edge> v1out = new LinkedList<Edge>();
+		LinkedList<Edge> v1in = new LinkedList<Edge>();
+		Edge e = graph.createLink((AbstractSuperNode) v0, (SuperNode) v1);
+		v0inout.add(e);
+		v0out.add(e);
+		v1inout.add(e.getReversedEdge());
+		v1in.add(e.getReversedEdge());
+
+		checkIncidenceList(v0, null, null, EdgeDirection.INOUT, v0inout);
+		checkIncidenceList(v0, null, null, EdgeDirection.OUT, v0out);
+		checkIncidenceList(v0, null, null, EdgeDirection.IN, v0in);
+
+		checkIncidenceList(v1, null, null, EdgeDirection.INOUT, v1inout);
+		checkIncidenceList(v1, null, null, EdgeDirection.OUT, v1out);
+		checkIncidenceList(v1, null, null, EdgeDirection.IN, v1in);
+	}
+
+	/**
+	 * Checks incidences in a manually build graph.
+	 */
+	@Test
+	public void incidencesTestEdgeDirection2() {
+		Vertex v0 = graph.createSubNode();
+		Vertex v1 = graph.createDoubleSubNode();
+		Vertex v2 = graph.createSuperNode();
+		LinkedList<Edge> v0inout = new LinkedList<Edge>();
+		LinkedList<Edge> v0out = new LinkedList<Edge>();
+		LinkedList<Edge> v0in = new LinkedList<Edge>();
+		LinkedList<Edge> v1inout = new LinkedList<Edge>();
+		LinkedList<Edge> v1out = new LinkedList<Edge>();
+		LinkedList<Edge> v1in = new LinkedList<Edge>();
+		LinkedList<Edge> v2inout = new LinkedList<Edge>();
+		LinkedList<Edge> v2out = new LinkedList<Edge>();
+		LinkedList<Edge> v2in = new LinkedList<Edge>();
+		Edge e = graph.createLink((AbstractSuperNode) v0, (SuperNode) v1);
+		v0inout.add(e);
+		v0out.add(e);
+		v1inout.add(e.getReversedEdge());
+		v1in.add(e.getReversedEdge());
+		e = graph.createSubLink((DoubleSubNode) v1, (SuperNode) v2);
+		v1inout.add(e);
+		v1out.add(e);
+		v2inout.add(e.getReversedEdge());
+		v2in.add(e.getReversedEdge());
+		e = graph.createLinkBack((SuperNode) v2, (DoubleSubNode) v1);
+		v2inout.add(e);
+		v2out.add(e);
+		v1inout.add(e.getReversedEdge());
+		v1in.add(e.getReversedEdge());
+		e = graph.createLinkBack((SuperNode) v1, (DoubleSubNode) v1);
+		v1inout.add(e);
+		v1out.add(e);
+		v1inout.add(e.getReversedEdge());
+		v1in.add(e.getReversedEdge());
+
+		checkIncidenceList(v0, null, null, EdgeDirection.INOUT, v0inout);
+		checkIncidenceList(v0, null, null, EdgeDirection.OUT, v0out);
+		checkIncidenceList(v0, null, null, EdgeDirection.IN, v0in);
+
+		checkIncidenceList(v1, null, null, EdgeDirection.INOUT, v1inout);
+		checkIncidenceList(v1, null, null, EdgeDirection.OUT, v1out);
+		checkIncidenceList(v1, null, null, EdgeDirection.IN, v1in);
+
+		checkIncidenceList(v2, null, null, EdgeDirection.INOUT, v2inout);
+		checkIncidenceList(v2, null, null, EdgeDirection.OUT, v2out);
+		checkIncidenceList(v2, null, null, EdgeDirection.IN, v2in);
+	}
+
+	/**
+	 * Random test.
+	 */
+	@Test
+	public void incidencesTestEdgeDirection3() {
+		Vertex[] vertices = new Vertex[] { graph.createSubNode(),
+				graph.createDoubleSubNode(), graph.createSuperNode() };
+		LinkedList<LinkedList<Edge>> inout = new LinkedList<LinkedList<Edge>>();
+		inout.add(new LinkedList<Edge>());
+		inout.add(new LinkedList<Edge>());
+		inout.add(new LinkedList<Edge>());
+		LinkedList<LinkedList<Edge>> out = new LinkedList<LinkedList<Edge>>();
+		out.add(new LinkedList<Edge>());
+		out.add(new LinkedList<Edge>());
+		out.add(new LinkedList<Edge>());
+		LinkedList<LinkedList<Edge>> in = new LinkedList<LinkedList<Edge>>();
+		in.add(new LinkedList<Edge>());
+		in.add(new LinkedList<Edge>());
+		in.add(new LinkedList<Edge>());
+
+		for (int i = 0; i < 100; i++) {
+			graph=VertexTestSchema.instance().createVertexTestGraph();
+			for (int j = 0; j < 30; j++) {
+				int edge = rand.nextInt(3);
+				int start = rand.nextInt(2);
+				int end = rand.nextInt(2) + 1;
+				Edge e = null;
+				switch (edge) {
+				case 0:
+					e = graph.createLink((AbstractSuperNode) vertices[start],
+							(SuperNode) vertices[end]);
+					inout.get(start).add(e);
+					out.get(start).add(e);
+					inout.get(end).add(e.getReversedEdge());
+					in.get(end).add(e.getReversedEdge());
+					break;
+				case 1:
+					e = graph.createLinkBack((SuperNode) vertices[end],
+							(AbstractSuperNode) vertices[start]);
+					inout.get(end).add(e);
+					out.get(end).add(e);
+					inout.get(start).add(e.getReversedEdge());
+					in.get(start).add(e.getReversedEdge());
+					break;
+				case 2:
+					e = graph.createSubLink((DoubleSubNode) vertices[1],
+							(SuperNode) vertices[end]);
+					inout.get(1).add(e);
+					out.get(1).add(e);
+					inout.get(end).add(e.getReversedEdge());
+					in.get(end).add(e.getReversedEdge());
+					break;
+				}
+			}
+
+			checkIncidenceList(vertices[0], null, null, EdgeDirection.INOUT,
+					inout.get(0));
+			checkIncidenceList(vertices[0], null, null, EdgeDirection.OUT, out
+					.get(0));
+			checkIncidenceList(vertices[0], null, null, EdgeDirection.IN, in
+					.get(0));
+
+			checkIncidenceList(vertices[1], null, null, EdgeDirection.INOUT,
+					inout.get(1));
+			checkIncidenceList(vertices[1], null, null, EdgeDirection.OUT, out
+					.get(1));
+			checkIncidenceList(vertices[1], null, null, EdgeDirection.IN, in
+					.get(1));
+
+			checkIncidenceList(vertices[2], null, null, EdgeDirection.INOUT,
+					inout.get(2));
+			checkIncidenceList(vertices[2], null, null, EdgeDirection.OUT, out
+					.get(2));
+			checkIncidenceList(vertices[2], null, null, EdgeDirection.IN, in
+					.get(2));
+		}
+	}
 }
