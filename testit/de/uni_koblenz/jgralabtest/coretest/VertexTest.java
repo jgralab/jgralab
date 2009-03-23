@@ -6331,4 +6331,20 @@ public class VertexTest {
 					.get(2));
 		}
 	}
+
+	/**
+	 * If the IN-edges are iterated the OUT-edges could be changed.
+	 */
+	@Test
+	public void inciencesTestEdgeDirectionFailFast0(){
+		Vertex v0 = graph.createDoubleSubNode();
+		Vertex v1 = graph.createDoubleSubNode();
+		Edge e0 = graph.createLink((AbstractSuperNode)v0,(SuperNode)v1);
+		graph.createLinkBack((SuperNode)v1, (AbstractSuperNode)v0);
+		graph.createLinkBack((SuperNode)v1, (AbstractSuperNode)v0);
+		Iterator<Edge> it=v0.incidences(EdgeDirection.IN).iterator();
+		e0.delete();
+		it.hasNext();
+		it.next();//TODO 
+	}
 }
