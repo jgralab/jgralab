@@ -6128,33 +6128,33 @@ public class VertexTest {
 	private void checkIncidenceList(Vertex v, EdgeClass ec,
 			Class<? extends Edge> c, EdgeDirection dir,
 			List<Edge> expectedIncidences) {
-		int i=0;
+		int i = 0;
 		if (dir == null) {
 			if (ec == null) {
-				for(Edge e:v.incidences(c)){
-					assertEquals(expectedIncidences.get(i),e);
+				for (Edge e : v.incidences(c)) {
+					assertEquals(expectedIncidences.get(i), e);
 					i++;
 				}
 			} else {
-				for(Edge e:v.incidences(ec)){
-					assertEquals(expectedIncidences.get(i),e);
+				for (Edge e : v.incidences(ec)) {
+					assertEquals(expectedIncidences.get(i), e);
 					i++;
 				}
 			}
 		} else {
 			if (ec != null) {
-				for(Edge e:v.incidences(ec,dir)){
-					assertEquals(expectedIncidences.get(i),e);
+				for (Edge e : v.incidences(ec, dir)) {
+					assertEquals(expectedIncidences.get(i), e);
 					i++;
 				}
 			} else if (c != null) {
-				for(Edge e:v.incidences(c,dir)){
-					assertEquals(expectedIncidences.get(i),e);
+				for (Edge e : v.incidences(c, dir)) {
+					assertEquals(expectedIncidences.get(i), e);
 					i++;
 				}
 			} else {
-				for(Edge e:v.incidences(dir)){
-					assertEquals(expectedIncidences.get(i),e);
+				for (Edge e : v.incidences(dir)) {
+					assertEquals(expectedIncidences.get(i), e);
 					i++;
 				}
 			}
@@ -6275,7 +6275,7 @@ public class VertexTest {
 		in.add(new LinkedList<Edge>());
 
 		for (int i = 0; i < 100; i++) {
-			graph=VertexTestSchema.instance().createVertexTestGraph();
+			graph = VertexTestSchema.instance().createVertexTestGraph();
 			for (int j = 0; j < 30; j++) {
 				int edge = rand.nextInt(3);
 				int start = rand.nextInt(2);
@@ -6333,18 +6333,1193 @@ public class VertexTest {
 	}
 
 	/**
-	 * If the IN-edges are iterated the OUT-edges could be changed.
+	 * If the IN-edges are iterated the OUT-edges could not be deleted.
 	 */
-	@Test
-	public void inciencesTestEdgeDirectionFailFast0(){
+	@Test(expected = ConcurrentModificationException.class)
+	public void inciencesTestEdgeDirectionFailFast0() {
 		Vertex v0 = graph.createDoubleSubNode();
 		Vertex v1 = graph.createDoubleSubNode();
-		Edge e0 = graph.createLink((AbstractSuperNode)v0,(SuperNode)v1);
-		graph.createLinkBack((SuperNode)v1, (AbstractSuperNode)v0);
-		graph.createLinkBack((SuperNode)v1, (AbstractSuperNode)v0);
-		Iterator<Edge> it=v0.incidences(EdgeDirection.IN).iterator();
+		Edge e0 = graph.createLink((AbstractSuperNode) v0, (SuperNode) v1);
+		graph.createLinkBack((SuperNode) v1, (AbstractSuperNode) v0);
+		graph.createLinkBack((SuperNode) v1, (AbstractSuperNode) v0);
+		Iterator<Edge> it = v0.incidences(EdgeDirection.IN).iterator();
 		e0.delete();
 		it.hasNext();
-		it.next();//TODO 
+		it.next();// TODO
+	}
+
+	/**
+	 * If the IN-edges are iterated the OUT-edges could not be changed.
+	 */
+	@Test(expected = ConcurrentModificationException.class)
+	public void inciencesTestEdgeDirectionFailFast1() {
+		Vertex v0 = graph.createDoubleSubNode();
+		Vertex v1 = graph.createDoubleSubNode();
+		Edge e0 = graph.createLink((AbstractSuperNode) v0, (SuperNode) v1);
+		graph.createLinkBack((SuperNode) v1, (AbstractSuperNode) v0);
+		graph.createLinkBack((SuperNode) v1, (AbstractSuperNode) v0);
+		Iterator<Edge> it = v0.incidences(EdgeDirection.IN).iterator();
+		e0.setAlpha(v1);
+		it.hasNext();
+		it.next();// TODO
+	}
+
+	/**
+	 * If the IN-edges are iterated a new OUT-edges could not be created.
+	 */
+	@Test(expected = ConcurrentModificationException.class)
+	public void inciencesTestEdgeDirectionFailFast2() {
+		Vertex v0 = graph.createDoubleSubNode();
+		Vertex v1 = graph.createDoubleSubNode();
+		graph.createLink((AbstractSuperNode) v0, (SuperNode) v1);
+		graph.createLinkBack((SuperNode) v1, (AbstractSuperNode) v0);
+		graph.createLinkBack((SuperNode) v1, (AbstractSuperNode) v0);
+		Iterator<Edge> it = v0.incidences(EdgeDirection.IN).iterator();
+		graph.createLink((AbstractSuperNode) v0, (SuperNode) v1);
+		it.hasNext();
+		it.next();// TODO
+	}
+
+	/**
+	 * If the OUT-edges are iterated the IN-edges could not be deleted.
+	 */
+	@Test(expected = ConcurrentModificationException.class)
+	public void inciencesTestEdgeDirectionFailFast3() {
+		Vertex v0 = graph.createDoubleSubNode();
+		Vertex v1 = graph.createDoubleSubNode();
+		graph.createLink((AbstractSuperNode) v0, (SuperNode) v1);
+		Edge e0 = graph.createLinkBack((SuperNode) v1, (AbstractSuperNode) v0);
+		graph.createLinkBack((SuperNode) v1, (AbstractSuperNode) v0);
+		Iterator<Edge> it = v0.incidences(EdgeDirection.OUT).iterator();
+		e0.delete();
+		it.hasNext();
+		it.next();// TODO
+	}
+
+	/**
+	 * If the OUT-edges are iterated the IN-edges could not be changed.
+	 */
+	@Test(expected = ConcurrentModificationException.class)
+	public void inciencesTestEdgeDirectionFailFast4() {
+		Vertex v0 = graph.createDoubleSubNode();
+		Vertex v1 = graph.createDoubleSubNode();
+		graph.createLink((AbstractSuperNode) v0, (SuperNode) v1);
+		Edge e0 = graph.createLinkBack((SuperNode) v1, (AbstractSuperNode) v0);
+		graph.createLinkBack((SuperNode) v1, (AbstractSuperNode) v0);
+		Iterator<Edge> it = v0.incidences(EdgeDirection.OUT).iterator();
+		e0.setAlpha(v0);
+		it.hasNext();
+		it.next();// TODO
+	}
+
+	/**
+	 * If the OUT-edges are iterated a new IN-edges could not be created.
+	 */
+	@Test(expected = ConcurrentModificationException.class)
+	public void inciencesTestEdgeDirectionFailFast5() {
+		Vertex v0 = graph.createDoubleSubNode();
+		Vertex v1 = graph.createDoubleSubNode();
+		graph.createLink((AbstractSuperNode) v0, (SuperNode) v1);
+		graph.createLinkBack((SuperNode) v1, (AbstractSuperNode) v0);
+		graph.createLinkBack((SuperNode) v1, (AbstractSuperNode) v0);
+		Iterator<Edge> it = v0.incidences(EdgeDirection.OUT).iterator();
+		graph.createLink((AbstractSuperNode) v0, (SuperNode) v1);
+		it.hasNext();
+		it.next();// TODO
+	}
+
+	// tests of the method Iterable<Edge> incidences(EdgeClass eclass);
+
+	/**
+	 * Checks if a vertex has no incidences.
+	 */
+	@Test
+	public void incidencesTestEdgeClass0() {
+		EdgeClass[] ecs = getEdgeClasses();
+		Vertex v0 = graph.createDoubleSubNode();
+		checkIncidenceList(v0, ecs[0], null, null, new LinkedList<Edge>());
+		checkIncidenceList(v0, ecs[1], null, null, new LinkedList<Edge>());
+		checkIncidenceList(v0, ecs[2], null, null, new LinkedList<Edge>());
+	}
+
+	/**
+	 * Checks if a vertex has only incident edges of type SubLink.
+	 */
+	@Test
+	public void incidencesTestEdgeClass1() {
+		EdgeClass[] ecs = getEdgeClasses();
+		Vertex v0 = graph.createDoubleSubNode();
+		Vertex v1 = graph.createDoubleSubNode();
+		LinkedList<Edge> v0link = new LinkedList<Edge>();
+		LinkedList<Edge> v0sublink = new LinkedList<Edge>();
+		LinkedList<Edge> v0linkback = new LinkedList<Edge>();
+		LinkedList<Edge> v1link = new LinkedList<Edge>();
+		LinkedList<Edge> v1sublink = new LinkedList<Edge>();
+		LinkedList<Edge> v1linkback = new LinkedList<Edge>();
+		Edge e = graph.createSubLink((DoubleSubNode) v0, (SuperNode) v1);
+		v0link.add(e);
+		v0sublink.add(e);
+		v1link.add(e.getReversedEdge());
+		v1sublink.add(e.getReversedEdge());
+
+		checkIncidenceList(v0, ecs[0], null, null, v0link);
+		checkIncidenceList(v0, ecs[1], null, null, v0sublink);
+		checkIncidenceList(v0, ecs[2], null, null, v0linkback);
+
+		checkIncidenceList(v1, ecs[0], null, null, v1link);
+		checkIncidenceList(v1, ecs[1], null, null, v1sublink);
+		checkIncidenceList(v1, ecs[2], null, null, v1linkback);
+	}
+
+	/**
+	 * Checks incidences in a manually build graph.
+	 */
+	@Test
+	public void incidencesTestEdgeClass2() {
+		EdgeClass[] ecs = getEdgeClasses();
+		Vertex v0 = graph.createSubNode();
+		Vertex v1 = graph.createDoubleSubNode();
+		Vertex v2 = graph.createSuperNode();
+		LinkedList<Edge> v0link = new LinkedList<Edge>();
+		LinkedList<Edge> v0sublink = new LinkedList<Edge>();
+		LinkedList<Edge> v0linkback = new LinkedList<Edge>();
+		LinkedList<Edge> v1link = new LinkedList<Edge>();
+		LinkedList<Edge> v1sublink = new LinkedList<Edge>();
+		LinkedList<Edge> v1linkback = new LinkedList<Edge>();
+		LinkedList<Edge> v2link = new LinkedList<Edge>();
+		LinkedList<Edge> v2sublink = new LinkedList<Edge>();
+		LinkedList<Edge> v2linkback = new LinkedList<Edge>();
+		Edge e = graph.createLink((AbstractSuperNode) v0, (SuperNode) v1);
+		v0link.add(e);
+		v1link.add(e.getReversedEdge());
+		e = graph.createSubLink((DoubleSubNode) v1, (SuperNode) v2);
+		v1link.add(e);
+		v1sublink.add(e);
+		v2link.add(e.getReversedEdge());
+		v2sublink.add(e.getReversedEdge());
+		e = graph.createLinkBack((SuperNode) v2, (DoubleSubNode) v1);
+		v2linkback.add(e);
+		v1linkback.add(e.getReversedEdge());
+		e = graph.createLinkBack((SuperNode) v1, (DoubleSubNode) v1);
+		v1linkback.add(e);
+		v1linkback.add(e.getReversedEdge());
+
+		checkIncidenceList(v0, ecs[0], null, null, v0link);
+		checkIncidenceList(v0, ecs[1], null, null, v0sublink);
+		checkIncidenceList(v0, ecs[2], null, null, v0linkback);
+
+		checkIncidenceList(v1, ecs[0], null, null, v1link);
+		checkIncidenceList(v1, ecs[1], null, null, v1sublink);
+		checkIncidenceList(v1, ecs[2], null, null, v1linkback);
+
+		checkIncidenceList(v2, ecs[0], null, null, v2link);
+		checkIncidenceList(v2, ecs[1], null, null, v2sublink);
+		checkIncidenceList(v2, ecs[2], null, null, v2linkback);
+	}
+
+	/**
+	 * Random test.
+	 */
+	@Test
+	public void incidencesTestEdgeClass3() {
+		EdgeClass[] ecs = getEdgeClasses();
+		Vertex[] vertices = new Vertex[] { graph.createSubNode(),
+				graph.createDoubleSubNode(), graph.createSuperNode() };
+		LinkedList<LinkedList<Edge>> link = new LinkedList<LinkedList<Edge>>();
+		link.add(new LinkedList<Edge>());
+		link.add(new LinkedList<Edge>());
+		link.add(new LinkedList<Edge>());
+		LinkedList<LinkedList<Edge>> sublink = new LinkedList<LinkedList<Edge>>();
+		sublink.add(new LinkedList<Edge>());
+		sublink.add(new LinkedList<Edge>());
+		sublink.add(new LinkedList<Edge>());
+		LinkedList<LinkedList<Edge>> linkback = new LinkedList<LinkedList<Edge>>();
+		linkback.add(new LinkedList<Edge>());
+		linkback.add(new LinkedList<Edge>());
+		linkback.add(new LinkedList<Edge>());
+
+		for (int i = 0; i < 100; i++) {
+			graph = VertexTestSchema.instance().createVertexTestGraph();
+			for (int j = 0; j < 30; j++) {
+				int edge = rand.nextInt(3);
+				int start = rand.nextInt(2);
+				int end = rand.nextInt(2) + 1;
+				Edge e = null;
+				switch (edge) {
+				case 0:
+					e = graph.createLink((AbstractSuperNode) vertices[start],
+							(SuperNode) vertices[end]);
+					link.get(start).add(e);
+					link.get(end).add(e.getReversedEdge());
+					break;
+				case 1:
+					e = graph.createLinkBack((SuperNode) vertices[end],
+							(AbstractSuperNode) vertices[start]);
+					linkback.get(end).add(e);
+					linkback.get(start).add(e.getReversedEdge());
+					break;
+				case 2:
+					e = graph.createSubLink((DoubleSubNode) vertices[1],
+							(SuperNode) vertices[end]);
+					link.get(1).add(e);
+					sublink.get(1).add(e);
+					link.get(end).add(e.getReversedEdge());
+					sublink.get(end).add(e.getReversedEdge());
+					break;
+				}
+			}
+
+			checkIncidenceList(vertices[0], ecs[0], null, null, link.get(0));
+			checkIncidenceList(vertices[0], ecs[1], null, null, sublink.get(0));
+			checkIncidenceList(vertices[0], ecs[2], null, null, linkback.get(0));
+
+			checkIncidenceList(vertices[1], ecs[0], null, null, link.get(1));
+			checkIncidenceList(vertices[1], ecs[1], null, null, sublink.get(1));
+			checkIncidenceList(vertices[1], ecs[2], null, null, linkback.get(1));
+
+			checkIncidenceList(vertices[2], ecs[0], null, null, link.get(2));
+			checkIncidenceList(vertices[2], ecs[1], null, null, sublink.get(2));
+			checkIncidenceList(vertices[2], ecs[2], null, null, linkback.get(2));
+		}
+	}
+
+	// tests of the method Iterable<Edge> incidences(Class<? extends Edge>
+	// eclass);
+
+	/**
+	 * Checks if a vertex has no incidences.
+	 */
+	@Test
+	public void incidencesTestClass0() {
+		Vertex v0 = graph.createDoubleSubNode();
+		checkIncidenceList(v0, null, Link.class, null, new LinkedList<Edge>());
+		checkIncidenceList(v0, null, SubLink.class, null,
+				new LinkedList<Edge>());
+		checkIncidenceList(v0, null, LinkBack.class, null,
+				new LinkedList<Edge>());
+	}
+
+	/**
+	 * Checks if a vertex has only incident edges of type SubLink.
+	 */
+	@Test
+	public void incidencesTestClass1() {
+		Vertex v0 = graph.createDoubleSubNode();
+		Vertex v1 = graph.createDoubleSubNode();
+		LinkedList<Edge> v0link = new LinkedList<Edge>();
+		LinkedList<Edge> v0sublink = new LinkedList<Edge>();
+		LinkedList<Edge> v0linkback = new LinkedList<Edge>();
+		LinkedList<Edge> v1link = new LinkedList<Edge>();
+		LinkedList<Edge> v1sublink = new LinkedList<Edge>();
+		LinkedList<Edge> v1linkback = new LinkedList<Edge>();
+		Edge e = graph.createSubLink((DoubleSubNode) v0, (SuperNode) v1);
+		v0link.add(e);
+		v0sublink.add(e);
+		v1link.add(e.getReversedEdge());
+		v1sublink.add(e.getReversedEdge());
+
+		checkIncidenceList(v0, null, Link.class, null, v0link);
+		checkIncidenceList(v0, null, SubLink.class, null, v0sublink);
+		checkIncidenceList(v0, null, LinkBack.class, null, v0linkback);
+
+		checkIncidenceList(v1, null, Link.class, null, v1link);
+		checkIncidenceList(v1, null, SubLink.class, null, v1sublink);
+		checkIncidenceList(v1, null, LinkBack.class, null, v1linkback);
+	}
+
+	/**
+	 * Checks incidences in a manually build graph.
+	 */
+	@Test
+	public void incidencesTestClass2() {
+		Vertex v0 = graph.createSubNode();
+		Vertex v1 = graph.createDoubleSubNode();
+		Vertex v2 = graph.createSuperNode();
+		LinkedList<Edge> v0link = new LinkedList<Edge>();
+		LinkedList<Edge> v0sublink = new LinkedList<Edge>();
+		LinkedList<Edge> v0linkback = new LinkedList<Edge>();
+		LinkedList<Edge> v1link = new LinkedList<Edge>();
+		LinkedList<Edge> v1sublink = new LinkedList<Edge>();
+		LinkedList<Edge> v1linkback = new LinkedList<Edge>();
+		LinkedList<Edge> v2link = new LinkedList<Edge>();
+		LinkedList<Edge> v2sublink = new LinkedList<Edge>();
+		LinkedList<Edge> v2linkback = new LinkedList<Edge>();
+		Edge e = graph.createLink((AbstractSuperNode) v0, (SuperNode) v1);
+		v0link.add(e);
+		v1link.add(e.getReversedEdge());
+		e = graph.createSubLink((DoubleSubNode) v1, (SuperNode) v2);
+		v1link.add(e);
+		v1sublink.add(e);
+		v2link.add(e.getReversedEdge());
+		v2sublink.add(e.getReversedEdge());
+		e = graph.createLinkBack((SuperNode) v2, (DoubleSubNode) v1);
+		v2linkback.add(e);
+		v1linkback.add(e.getReversedEdge());
+		e = graph.createLinkBack((SuperNode) v1, (DoubleSubNode) v1);
+		v1linkback.add(e);
+		v1linkback.add(e.getReversedEdge());
+
+		checkIncidenceList(v0, null, Link.class, null, v0link);
+		checkIncidenceList(v0, null, SubLink.class, null, v0sublink);
+		checkIncidenceList(v0, null, LinkBack.class, null, v0linkback);
+
+		checkIncidenceList(v1, null, Link.class, null, v1link);
+		checkIncidenceList(v1, null, SubLink.class, null, v1sublink);
+		checkIncidenceList(v1, null, LinkBack.class, null, v1linkback);
+
+		checkIncidenceList(v2, null, Link.class, null, v2link);
+		checkIncidenceList(v2, null, SubLink.class, null, v2sublink);
+		checkIncidenceList(v2, null, LinkBack.class, null, v2linkback);
+	}
+
+	/**
+	 * Random test.
+	 */
+	@Test
+	public void incidencesTestClass3() {
+		Vertex[] vertices = new Vertex[] { graph.createSubNode(),
+				graph.createDoubleSubNode(), graph.createSuperNode() };
+		LinkedList<LinkedList<Edge>> link = new LinkedList<LinkedList<Edge>>();
+		link.add(new LinkedList<Edge>());
+		link.add(new LinkedList<Edge>());
+		link.add(new LinkedList<Edge>());
+		LinkedList<LinkedList<Edge>> sublink = new LinkedList<LinkedList<Edge>>();
+		sublink.add(new LinkedList<Edge>());
+		sublink.add(new LinkedList<Edge>());
+		sublink.add(new LinkedList<Edge>());
+		LinkedList<LinkedList<Edge>> linkback = new LinkedList<LinkedList<Edge>>();
+		linkback.add(new LinkedList<Edge>());
+		linkback.add(new LinkedList<Edge>());
+		linkback.add(new LinkedList<Edge>());
+
+		for (int i = 0; i < 100; i++) {
+			graph = VertexTestSchema.instance().createVertexTestGraph();
+			for (int j = 0; j < 30; j++) {
+				int edge = rand.nextInt(3);
+				int start = rand.nextInt(2);
+				int end = rand.nextInt(2) + 1;
+				Edge e = null;
+				switch (edge) {
+				case 0:
+					e = graph.createLink((AbstractSuperNode) vertices[start],
+							(SuperNode) vertices[end]);
+					link.get(start).add(e);
+					link.get(end).add(e.getReversedEdge());
+					break;
+				case 1:
+					e = graph.createLinkBack((SuperNode) vertices[end],
+							(AbstractSuperNode) vertices[start]);
+					linkback.get(end).add(e);
+					linkback.get(start).add(e.getReversedEdge());
+					break;
+				case 2:
+					e = graph.createSubLink((DoubleSubNode) vertices[1],
+							(SuperNode) vertices[end]);
+					link.get(1).add(e);
+					sublink.get(1).add(e);
+					link.get(end).add(e.getReversedEdge());
+					sublink.get(end).add(e.getReversedEdge());
+					break;
+				}
+			}
+
+			checkIncidenceList(vertices[0], null, Link.class, null, link.get(0));
+			checkIncidenceList(vertices[0], null, SubLink.class, null, sublink
+					.get(0));
+			checkIncidenceList(vertices[0], null, LinkBack.class, null,
+					linkback.get(0));
+
+			checkIncidenceList(vertices[1], null, Link.class, null, link.get(1));
+			checkIncidenceList(vertices[1], null, SubLink.class, null, sublink
+					.get(1));
+			checkIncidenceList(vertices[1], null, LinkBack.class, null,
+					linkback.get(1));
+
+			checkIncidenceList(vertices[2], null, Link.class, null, link.get(2));
+			checkIncidenceList(vertices[2], null, SubLink.class, null, sublink
+					.get(2));
+			checkIncidenceList(vertices[2], null, LinkBack.class, null,
+					linkback.get(2));
+		}
+	}
+
+	// tests of the method Iterable<Edge> incidences(EdgeClass eclass,
+	// EdgeDirection dir);
+
+	/**
+	 * Checks if a vertex has no incidences.
+	 */
+	@Test
+	public void incidencesTestEdgeClassEdgeDirection0() {
+		EdgeClass[] ecs = getEdgeClasses();
+		Vertex v0 = graph.createDoubleSubNode();
+
+		checkIncidenceList(v0, ecs[0], null, EdgeDirection.INOUT,
+				new LinkedList<Edge>());
+		checkIncidenceList(v0, ecs[0], null, EdgeDirection.OUT,
+				new LinkedList<Edge>());
+		checkIncidenceList(v0, ecs[0], null, EdgeDirection.IN,
+				new LinkedList<Edge>());
+
+		checkIncidenceList(v0, ecs[1], null, EdgeDirection.INOUT,
+				new LinkedList<Edge>());
+		checkIncidenceList(v0, ecs[1], null, EdgeDirection.OUT,
+				new LinkedList<Edge>());
+		checkIncidenceList(v0, ecs[1], null, EdgeDirection.IN,
+				new LinkedList<Edge>());
+
+		checkIncidenceList(v0, ecs[2], null, EdgeDirection.INOUT,
+				new LinkedList<Edge>());
+		checkIncidenceList(v0, ecs[2], null, EdgeDirection.OUT,
+				new LinkedList<Edge>());
+		checkIncidenceList(v0, ecs[2], null, EdgeDirection.IN,
+				new LinkedList<Edge>());
+	}
+
+	/**
+	 * Checks if a vertex has only incident edges of type SubLink.
+	 */
+	@Test
+	public void incidencesTestEdgeClassEdgeDirection1() {
+		EdgeClass[] ecs = getEdgeClasses();
+		Vertex v0 = graph.createDoubleSubNode();
+		Vertex v1 = graph.createDoubleSubNode();
+		LinkedList<Edge> v0linkInout = new LinkedList<Edge>();
+		LinkedList<Edge> v0linkOut = new LinkedList<Edge>();
+		LinkedList<Edge> v0linkIn = new LinkedList<Edge>();
+		LinkedList<Edge> v0sublinkInout = new LinkedList<Edge>();
+		LinkedList<Edge> v0sublinkOut = new LinkedList<Edge>();
+		LinkedList<Edge> v0sublinkIn = new LinkedList<Edge>();
+		LinkedList<Edge> v0linkbackInout = new LinkedList<Edge>();
+		LinkedList<Edge> v0linkbackOut = new LinkedList<Edge>();
+		LinkedList<Edge> v0linkbackIn = new LinkedList<Edge>();
+		LinkedList<Edge> v1linkInout = new LinkedList<Edge>();
+		LinkedList<Edge> v1linkOut = new LinkedList<Edge>();
+		LinkedList<Edge> v1linkIn = new LinkedList<Edge>();
+		LinkedList<Edge> v1sublinkInout = new LinkedList<Edge>();
+		LinkedList<Edge> v1sublinkOut = new LinkedList<Edge>();
+		LinkedList<Edge> v1sublinkIn = new LinkedList<Edge>();
+		LinkedList<Edge> v1linkbackInout = new LinkedList<Edge>();
+		LinkedList<Edge> v1linkbackOut = new LinkedList<Edge>();
+		LinkedList<Edge> v1linkbackIn = new LinkedList<Edge>();
+		Edge e = graph.createSubLink((DoubleSubNode) v0, (SuperNode) v1);
+		v0linkInout.add(e);
+		v0linkOut.add(e);
+		v0sublinkInout.add(e);
+		v0sublinkOut.add(e);
+		v1linkInout.add(e.getReversedEdge());
+		v1linkIn.add(e.getReversedEdge());
+		v1sublinkInout.add(e.getReversedEdge());
+		v1sublinkIn.add(e.getReversedEdge());
+
+		checkIncidenceList(v0, ecs[0], null, EdgeDirection.INOUT, v0linkInout);
+		checkIncidenceList(v0, ecs[0], null, EdgeDirection.OUT, v0linkOut);
+		checkIncidenceList(v0, ecs[0], null, EdgeDirection.IN, v0linkIn);
+
+		checkIncidenceList(v0, ecs[1], null, EdgeDirection.INOUT,
+				v0sublinkInout);
+		checkIncidenceList(v0, ecs[1], null, EdgeDirection.OUT, v0sublinkOut);
+		checkIncidenceList(v0, ecs[1], null, EdgeDirection.IN, v0sublinkIn);
+
+		checkIncidenceList(v0, ecs[2], null, EdgeDirection.INOUT,
+				v0linkbackInout);
+		checkIncidenceList(v0, ecs[2], null, EdgeDirection.OUT, v0linkbackOut);
+		checkIncidenceList(v0, ecs[2], null, EdgeDirection.IN, v0linkbackIn);
+
+		checkIncidenceList(v1, ecs[0], null, EdgeDirection.INOUT, v1linkInout);
+		checkIncidenceList(v1, ecs[0], null, EdgeDirection.OUT, v1linkOut);
+		checkIncidenceList(v1, ecs[0], null, EdgeDirection.IN, v1linkIn);
+
+		checkIncidenceList(v1, ecs[1], null, EdgeDirection.INOUT,
+				v1sublinkInout);
+		checkIncidenceList(v1, ecs[1], null, EdgeDirection.OUT, v1sublinkOut);
+		checkIncidenceList(v1, ecs[1], null, EdgeDirection.IN, v1sublinkIn);
+
+		checkIncidenceList(v1, ecs[2], null, EdgeDirection.INOUT,
+				v1linkbackInout);
+		checkIncidenceList(v1, ecs[2], null, EdgeDirection.OUT, v1linkbackOut);
+		checkIncidenceList(v1, ecs[2], null, EdgeDirection.IN, v1linkbackIn);
+	}
+
+	/**
+	 * Checks incidences in a manually build graph.
+	 */
+	@Test
+	public void incidencesTestEdgeClassEdgeDirection2() {
+		EdgeClass[] ecs = getEdgeClasses();
+		Vertex v0 = graph.createSubNode();
+		Vertex v1 = graph.createDoubleSubNode();
+		Vertex v2 = graph.createSuperNode();
+		LinkedList<Edge> v0linkInout = new LinkedList<Edge>();
+		LinkedList<Edge> v0linkOut = new LinkedList<Edge>();
+		LinkedList<Edge> v0linkIn = new LinkedList<Edge>();
+		LinkedList<Edge> v0sublinkInout = new LinkedList<Edge>();
+		LinkedList<Edge> v0sublinkOut = new LinkedList<Edge>();
+		LinkedList<Edge> v0sublinkIn = new LinkedList<Edge>();
+		LinkedList<Edge> v0linkbackInout = new LinkedList<Edge>();
+		LinkedList<Edge> v0linkbackOut = new LinkedList<Edge>();
+		LinkedList<Edge> v0linkbackIn = new LinkedList<Edge>();
+		LinkedList<Edge> v1linkInout = new LinkedList<Edge>();
+		LinkedList<Edge> v1linkOut = new LinkedList<Edge>();
+		LinkedList<Edge> v1linkIn = new LinkedList<Edge>();
+		LinkedList<Edge> v1sublinkInout = new LinkedList<Edge>();
+		LinkedList<Edge> v1sublinkOut = new LinkedList<Edge>();
+		LinkedList<Edge> v1sublinkIn = new LinkedList<Edge>();
+		LinkedList<Edge> v1linkbackInout = new LinkedList<Edge>();
+		LinkedList<Edge> v1linkbackOut = new LinkedList<Edge>();
+		LinkedList<Edge> v1linkbackIn = new LinkedList<Edge>();
+		LinkedList<Edge> v2linkInout = new LinkedList<Edge>();
+		LinkedList<Edge> v2linkOut = new LinkedList<Edge>();
+		LinkedList<Edge> v2linkIn = new LinkedList<Edge>();
+		LinkedList<Edge> v2sublinkInout = new LinkedList<Edge>();
+		LinkedList<Edge> v2sublinkOut = new LinkedList<Edge>();
+		LinkedList<Edge> v2sublinkIn = new LinkedList<Edge>();
+		LinkedList<Edge> v2linkbackInout = new LinkedList<Edge>();
+		LinkedList<Edge> v2linkbackOut = new LinkedList<Edge>();
+		LinkedList<Edge> v2linkbackIn = new LinkedList<Edge>();
+		Edge e = graph.createLink((AbstractSuperNode) v0, (SuperNode) v1);
+		v0linkInout.add(e);
+		v0linkOut.add(e);
+		v1linkInout.add(e.getReversedEdge());
+		v1linkIn.add(e.getReversedEdge());
+		e = graph.createSubLink((DoubleSubNode) v1, (SuperNode) v2);
+		v1linkInout.add(e);
+		v1linkOut.add(e);
+		v1sublinkInout.add(e);
+		v1sublinkOut.add(e);
+		v2linkInout.add(e.getReversedEdge());
+		v2linkIn.add(e.getReversedEdge());
+		v2sublinkInout.add(e.getReversedEdge());
+		v2sublinkIn.add(e.getReversedEdge());
+		e = graph.createLinkBack((SuperNode) v2, (DoubleSubNode) v1);
+		v2linkbackInout.add(e);
+		v2linkbackOut.add(e);
+		v1linkbackInout.add(e.getReversedEdge());
+		v1linkbackIn.add(e.getReversedEdge());
+		e = graph.createLinkBack((SuperNode) v1, (DoubleSubNode) v1);
+		v1linkbackInout.add(e);
+		v1linkbackOut.add(e);
+		v1linkbackInout.add(e.getReversedEdge());
+		v1linkbackIn.add(e.getReversedEdge());
+
+		checkIncidenceList(v0, ecs[0], null, EdgeDirection.INOUT, v0linkInout);
+		checkIncidenceList(v0, ecs[0], null, EdgeDirection.OUT, v0linkOut);
+		checkIncidenceList(v0, ecs[0], null, EdgeDirection.IN, v0linkIn);
+
+		checkIncidenceList(v0, ecs[1], null, EdgeDirection.INOUT,
+				v0sublinkInout);
+		checkIncidenceList(v0, ecs[1], null, EdgeDirection.OUT, v0sublinkOut);
+		checkIncidenceList(v0, ecs[1], null, EdgeDirection.IN, v0sublinkIn);
+
+		checkIncidenceList(v0, ecs[2], null, EdgeDirection.INOUT,
+				v0linkbackInout);
+		checkIncidenceList(v0, ecs[2], null, EdgeDirection.OUT, v0linkbackOut);
+		checkIncidenceList(v0, ecs[2], null, EdgeDirection.IN, v0linkbackIn);
+
+		checkIncidenceList(v1, ecs[0], null, EdgeDirection.INOUT, v1linkInout);
+		checkIncidenceList(v1, ecs[0], null, EdgeDirection.OUT, v1linkOut);
+		checkIncidenceList(v1, ecs[0], null, EdgeDirection.IN, v1linkIn);
+
+		checkIncidenceList(v1, ecs[1], null, EdgeDirection.INOUT,
+				v1sublinkInout);
+		checkIncidenceList(v1, ecs[1], null, EdgeDirection.OUT, v1sublinkOut);
+		checkIncidenceList(v1, ecs[1], null, EdgeDirection.IN, v1sublinkIn);
+
+		checkIncidenceList(v1, ecs[2], null, EdgeDirection.INOUT,
+				v1linkbackInout);
+		checkIncidenceList(v1, ecs[2], null, EdgeDirection.OUT, v1linkbackOut);
+		checkIncidenceList(v1, ecs[2], null, EdgeDirection.IN, v1linkbackIn);
+
+		checkIncidenceList(v2, ecs[0], null, EdgeDirection.INOUT, v2linkInout);
+		checkIncidenceList(v2, ecs[0], null, EdgeDirection.OUT, v2linkOut);
+		checkIncidenceList(v2, ecs[0], null, EdgeDirection.IN, v2linkIn);
+
+		checkIncidenceList(v2, ecs[1], null, EdgeDirection.INOUT,
+				v2sublinkInout);
+		checkIncidenceList(v2, ecs[1], null, EdgeDirection.OUT, v2sublinkOut);
+		checkIncidenceList(v2, ecs[1], null, EdgeDirection.IN, v2sublinkIn);
+
+		checkIncidenceList(v2, ecs[2], null, EdgeDirection.INOUT,
+				v2linkbackInout);
+		checkIncidenceList(v2, ecs[2], null, EdgeDirection.OUT, v2linkbackOut);
+		checkIncidenceList(v2, ecs[2], null, EdgeDirection.IN, v2linkbackIn);
+	}
+
+	/**
+	 * Random test.
+	 */
+	@Test
+	public void incidencesTestEdgeClassEdgeDirection3() {
+		EdgeClass[] ecs = getEdgeClasses();
+		Vertex[] vertices = new Vertex[] { graph.createSubNode(),
+				graph.createDoubleSubNode(), graph.createSuperNode() };
+		LinkedList<LinkedList<Edge>> linkinout = new LinkedList<LinkedList<Edge>>();
+		linkinout.add(new LinkedList<Edge>());
+		linkinout.add(new LinkedList<Edge>());
+		linkinout.add(new LinkedList<Edge>());
+		LinkedList<LinkedList<Edge>> linkout = new LinkedList<LinkedList<Edge>>();
+		linkout.add(new LinkedList<Edge>());
+		linkout.add(new LinkedList<Edge>());
+		linkout.add(new LinkedList<Edge>());
+		LinkedList<LinkedList<Edge>> linkin = new LinkedList<LinkedList<Edge>>();
+		linkin.add(new LinkedList<Edge>());
+		linkin.add(new LinkedList<Edge>());
+		linkin.add(new LinkedList<Edge>());
+
+		LinkedList<LinkedList<Edge>> sublinkinout = new LinkedList<LinkedList<Edge>>();
+		sublinkinout.add(new LinkedList<Edge>());
+		sublinkinout.add(new LinkedList<Edge>());
+		sublinkinout.add(new LinkedList<Edge>());
+		LinkedList<LinkedList<Edge>> sublinkout = new LinkedList<LinkedList<Edge>>();
+		sublinkout.add(new LinkedList<Edge>());
+		sublinkout.add(new LinkedList<Edge>());
+		sublinkout.add(new LinkedList<Edge>());
+		LinkedList<LinkedList<Edge>> sublinkin = new LinkedList<LinkedList<Edge>>();
+		sublinkin.add(new LinkedList<Edge>());
+		sublinkin.add(new LinkedList<Edge>());
+		sublinkin.add(new LinkedList<Edge>());
+
+		LinkedList<LinkedList<Edge>> linkbackinout = new LinkedList<LinkedList<Edge>>();
+		linkbackinout.add(new LinkedList<Edge>());
+		linkbackinout.add(new LinkedList<Edge>());
+		linkbackinout.add(new LinkedList<Edge>());
+		LinkedList<LinkedList<Edge>> linkbackout = new LinkedList<LinkedList<Edge>>();
+		linkbackout.add(new LinkedList<Edge>());
+		linkbackout.add(new LinkedList<Edge>());
+		linkbackout.add(new LinkedList<Edge>());
+		LinkedList<LinkedList<Edge>> linkbackin = new LinkedList<LinkedList<Edge>>();
+		linkbackin.add(new LinkedList<Edge>());
+		linkbackin.add(new LinkedList<Edge>());
+		linkbackin.add(new LinkedList<Edge>());
+
+		for (int i = 0; i < 100; i++) {
+			graph = VertexTestSchema.instance().createVertexTestGraph();
+			for (int j = 0; j < 30; j++) {
+				int edge = rand.nextInt(3);
+				int start = rand.nextInt(2);
+				int end = rand.nextInt(2) + 1;
+				Edge e = null;
+				switch (edge) {
+				case 0:
+					e = graph.createLink((AbstractSuperNode) vertices[start],
+							(SuperNode) vertices[end]);
+					linkinout.get(start).add(e);
+					linkout.get(start).add(e);
+					linkinout.get(end).add(e.getReversedEdge());
+					linkin.get(end).add(e.getReversedEdge());
+					break;
+				case 1:
+					e = graph.createLinkBack((SuperNode) vertices[end],
+							(AbstractSuperNode) vertices[start]);
+					linkbackinout.get(end).add(e);
+					linkbackout.get(end).add(e);
+					linkbackinout.get(start).add(e.getReversedEdge());
+					linkbackin.get(start).add(e.getReversedEdge());
+					break;
+				case 2:
+					e = graph.createSubLink((DoubleSubNode) vertices[1],
+							(SuperNode) vertices[end]);
+					linkinout.get(1).add(e);
+					linkout.get(1).add(e);
+					sublinkinout.get(1).add(e);
+					sublinkout.get(1).add(e);
+					linkinout.get(end).add(e.getReversedEdge());
+					linkin.get(end).add(e.getReversedEdge());
+					sublinkinout.get(end).add(e.getReversedEdge());
+					sublinkin.get(end).add(e.getReversedEdge());
+					break;
+				}
+			}
+
+			checkIncidenceList(vertices[0], ecs[0], null, EdgeDirection.INOUT,
+					linkinout.get(0));
+			checkIncidenceList(vertices[0], ecs[0], null, EdgeDirection.OUT,
+					linkout.get(0));
+			checkIncidenceList(vertices[0], ecs[0], null, EdgeDirection.IN,
+					linkin.get(0));
+
+			checkIncidenceList(vertices[0], ecs[1], null, EdgeDirection.INOUT,
+					sublinkinout.get(0));
+			checkIncidenceList(vertices[0], ecs[1], null, EdgeDirection.OUT,
+					sublinkout.get(0));
+			checkIncidenceList(vertices[0], ecs[1], null, EdgeDirection.IN,
+					sublinkin.get(0));
+
+			checkIncidenceList(vertices[0], ecs[2], null, EdgeDirection.INOUT,
+					linkbackinout.get(0));
+			checkIncidenceList(vertices[0], ecs[2], null, EdgeDirection.OUT,
+					linkbackout.get(0));
+			checkIncidenceList(vertices[0], ecs[2], null, EdgeDirection.IN,
+					linkbackin.get(0));
+
+			checkIncidenceList(vertices[1], ecs[0], null, EdgeDirection.INOUT,
+					linkinout.get(1));
+			checkIncidenceList(vertices[1], ecs[0], null, EdgeDirection.OUT,
+					linkout.get(1));
+			checkIncidenceList(vertices[1], ecs[0], null, EdgeDirection.IN,
+					linkin.get(1));
+
+			checkIncidenceList(vertices[1], ecs[1], null, EdgeDirection.INOUT,
+					sublinkinout.get(1));
+			checkIncidenceList(vertices[1], ecs[1], null, EdgeDirection.OUT,
+					sublinkout.get(1));
+			checkIncidenceList(vertices[1], ecs[1], null, EdgeDirection.IN,
+					sublinkin.get(1));
+
+			checkIncidenceList(vertices[1], ecs[2], null, EdgeDirection.INOUT,
+					linkbackinout.get(1));
+			checkIncidenceList(vertices[1], ecs[2], null, EdgeDirection.OUT,
+					linkbackout.get(1));
+			checkIncidenceList(vertices[1], ecs[2], null, EdgeDirection.IN,
+					linkbackin.get(1));
+
+			checkIncidenceList(vertices[2], ecs[0], null, EdgeDirection.INOUT,
+					linkinout.get(2));
+			checkIncidenceList(vertices[2], ecs[0], null, EdgeDirection.OUT,
+					linkout.get(2));
+			checkIncidenceList(vertices[2], ecs[0], null, EdgeDirection.IN,
+					linkin.get(2));
+
+			checkIncidenceList(vertices[2], ecs[1], null, EdgeDirection.INOUT,
+					sublinkinout.get(2));
+			checkIncidenceList(vertices[2], ecs[1], null, EdgeDirection.OUT,
+					sublinkout.get(2));
+			checkIncidenceList(vertices[2], ecs[1], null, EdgeDirection.IN,
+					sublinkin.get(2));
+
+			checkIncidenceList(vertices[2], ecs[2], null, EdgeDirection.INOUT,
+					linkbackinout.get(2));
+			checkIncidenceList(vertices[2], ecs[2], null, EdgeDirection.OUT,
+					linkbackout.get(2));
+			checkIncidenceList(vertices[2], ecs[2], null, EdgeDirection.IN,
+					linkbackin.get(2));
+		}
+	}
+
+	// tests of the method Iterable<Edge> incidences(Class<? extends Edge>
+	// eclass, EdgeDirection dir);
+
+	/**
+	 * Checks if a vertex has no incidences.
+	 */
+	@Test
+	public void incidencesTestClassEdgeDirection0() {
+		Vertex v0 = graph.createDoubleSubNode();
+
+		checkIncidenceList(v0, null, Link.class, EdgeDirection.INOUT,
+				new LinkedList<Edge>());
+		checkIncidenceList(v0, null, Link.class, EdgeDirection.OUT,
+				new LinkedList<Edge>());
+		checkIncidenceList(v0, null, Link.class, EdgeDirection.IN,
+				new LinkedList<Edge>());
+
+		checkIncidenceList(v0, null, SubLink.class, EdgeDirection.INOUT,
+				new LinkedList<Edge>());
+		checkIncidenceList(v0, null, SubLink.class, EdgeDirection.OUT,
+				new LinkedList<Edge>());
+		checkIncidenceList(v0, null, SubLink.class, EdgeDirection.IN,
+				new LinkedList<Edge>());
+
+		checkIncidenceList(v0, null, LinkBack.class, EdgeDirection.INOUT,
+				new LinkedList<Edge>());
+		checkIncidenceList(v0, null, LinkBack.class, EdgeDirection.OUT,
+				new LinkedList<Edge>());
+		checkIncidenceList(v0, null, LinkBack.class, EdgeDirection.IN,
+				new LinkedList<Edge>());
+	}
+
+	/**
+	 * Checks if a vertex has only incident edges of type SubLink.
+	 */
+	@Test
+	public void incidencesTestClassEdgeDirection1() {
+		Vertex v0 = graph.createDoubleSubNode();
+		Vertex v1 = graph.createDoubleSubNode();
+		LinkedList<Edge> v0linkInout = new LinkedList<Edge>();
+		LinkedList<Edge> v0linkOut = new LinkedList<Edge>();
+		LinkedList<Edge> v0linkIn = new LinkedList<Edge>();
+		LinkedList<Edge> v0sublinkInout = new LinkedList<Edge>();
+		LinkedList<Edge> v0sublinkOut = new LinkedList<Edge>();
+		LinkedList<Edge> v0sublinkIn = new LinkedList<Edge>();
+		LinkedList<Edge> v0linkbackInout = new LinkedList<Edge>();
+		LinkedList<Edge> v0linkbackOut = new LinkedList<Edge>();
+		LinkedList<Edge> v0linkbackIn = new LinkedList<Edge>();
+		LinkedList<Edge> v1linkInout = new LinkedList<Edge>();
+		LinkedList<Edge> v1linkOut = new LinkedList<Edge>();
+		LinkedList<Edge> v1linkIn = new LinkedList<Edge>();
+		LinkedList<Edge> v1sublinkInout = new LinkedList<Edge>();
+		LinkedList<Edge> v1sublinkOut = new LinkedList<Edge>();
+		LinkedList<Edge> v1sublinkIn = new LinkedList<Edge>();
+		LinkedList<Edge> v1linkbackInout = new LinkedList<Edge>();
+		LinkedList<Edge> v1linkbackOut = new LinkedList<Edge>();
+		LinkedList<Edge> v1linkbackIn = new LinkedList<Edge>();
+		Edge e = graph.createSubLink((DoubleSubNode) v0, (SuperNode) v1);
+		v0linkInout.add(e);
+		v0linkOut.add(e);
+		v0sublinkInout.add(e);
+		v0sublinkOut.add(e);
+		v1linkInout.add(e.getReversedEdge());
+		v1linkIn.add(e.getReversedEdge());
+		v1sublinkInout.add(e.getReversedEdge());
+		v1sublinkIn.add(e.getReversedEdge());
+
+		checkIncidenceList(v0, null, Link.class, EdgeDirection.INOUT,
+				v0linkInout);
+		checkIncidenceList(v0, null, Link.class, EdgeDirection.OUT, v0linkOut);
+		checkIncidenceList(v0, null, Link.class, EdgeDirection.IN, v0linkIn);
+
+		checkIncidenceList(v0, null, SubLink.class, EdgeDirection.INOUT,
+				v0sublinkInout);
+		checkIncidenceList(v0, null, SubLink.class, EdgeDirection.OUT,
+				v0sublinkOut);
+		checkIncidenceList(v0, null, SubLink.class, EdgeDirection.IN,
+				v0sublinkIn);
+
+		checkIncidenceList(v0, null, LinkBack.class, EdgeDirection.INOUT,
+				v0linkbackInout);
+		checkIncidenceList(v0, null, LinkBack.class, EdgeDirection.OUT,
+				v0linkbackOut);
+		checkIncidenceList(v0, null, LinkBack.class, EdgeDirection.IN,
+				v0linkbackIn);
+
+		checkIncidenceList(v1, null, Link.class, EdgeDirection.INOUT,
+				v1linkInout);
+		checkIncidenceList(v1, null, Link.class, EdgeDirection.OUT, v1linkOut);
+		checkIncidenceList(v1, null, Link.class, EdgeDirection.IN, v1linkIn);
+
+		checkIncidenceList(v1, null, SubLink.class, EdgeDirection.INOUT,
+				v1sublinkInout);
+		checkIncidenceList(v1, null, SubLink.class, EdgeDirection.OUT,
+				v1sublinkOut);
+		checkIncidenceList(v1, null, SubLink.class, EdgeDirection.IN,
+				v1sublinkIn);
+
+		checkIncidenceList(v1, null, LinkBack.class, EdgeDirection.INOUT,
+				v1linkbackInout);
+		checkIncidenceList(v1, null, LinkBack.class, EdgeDirection.OUT,
+				v1linkbackOut);
+		checkIncidenceList(v1, null, LinkBack.class, EdgeDirection.IN,
+				v1linkbackIn);
+	}
+
+	/**
+	 * Checks incidences in a manually build graph.
+	 */
+	@Test
+	public void incidencesTestClassEdgeDirection2() {
+		Vertex v0 = graph.createSubNode();
+		Vertex v1 = graph.createDoubleSubNode();
+		Vertex v2 = graph.createSuperNode();
+		LinkedList<Edge> v0linkInout = new LinkedList<Edge>();
+		LinkedList<Edge> v0linkOut = new LinkedList<Edge>();
+		LinkedList<Edge> v0linkIn = new LinkedList<Edge>();
+		LinkedList<Edge> v0sublinkInout = new LinkedList<Edge>();
+		LinkedList<Edge> v0sublinkOut = new LinkedList<Edge>();
+		LinkedList<Edge> v0sublinkIn = new LinkedList<Edge>();
+		LinkedList<Edge> v0linkbackInout = new LinkedList<Edge>();
+		LinkedList<Edge> v0linkbackOut = new LinkedList<Edge>();
+		LinkedList<Edge> v0linkbackIn = new LinkedList<Edge>();
+		LinkedList<Edge> v1linkInout = new LinkedList<Edge>();
+		LinkedList<Edge> v1linkOut = new LinkedList<Edge>();
+		LinkedList<Edge> v1linkIn = new LinkedList<Edge>();
+		LinkedList<Edge> v1sublinkInout = new LinkedList<Edge>();
+		LinkedList<Edge> v1sublinkOut = new LinkedList<Edge>();
+		LinkedList<Edge> v1sublinkIn = new LinkedList<Edge>();
+		LinkedList<Edge> v1linkbackInout = new LinkedList<Edge>();
+		LinkedList<Edge> v1linkbackOut = new LinkedList<Edge>();
+		LinkedList<Edge> v1linkbackIn = new LinkedList<Edge>();
+		LinkedList<Edge> v2linkInout = new LinkedList<Edge>();
+		LinkedList<Edge> v2linkOut = new LinkedList<Edge>();
+		LinkedList<Edge> v2linkIn = new LinkedList<Edge>();
+		LinkedList<Edge> v2sublinkInout = new LinkedList<Edge>();
+		LinkedList<Edge> v2sublinkOut = new LinkedList<Edge>();
+		LinkedList<Edge> v2sublinkIn = new LinkedList<Edge>();
+		LinkedList<Edge> v2linkbackInout = new LinkedList<Edge>();
+		LinkedList<Edge> v2linkbackOut = new LinkedList<Edge>();
+		LinkedList<Edge> v2linkbackIn = new LinkedList<Edge>();
+		Edge e = graph.createLink((AbstractSuperNode) v0, (SuperNode) v1);
+		v0linkInout.add(e);
+		v0linkOut.add(e);
+		v1linkInout.add(e.getReversedEdge());
+		v1linkIn.add(e.getReversedEdge());
+		e = graph.createSubLink((DoubleSubNode) v1, (SuperNode) v2);
+		v1linkInout.add(e);
+		v1linkOut.add(e);
+		v1sublinkInout.add(e);
+		v1sublinkOut.add(e);
+		v2linkInout.add(e.getReversedEdge());
+		v2linkIn.add(e.getReversedEdge());
+		v2sublinkInout.add(e.getReversedEdge());
+		v2sublinkIn.add(e.getReversedEdge());
+		e = graph.createLinkBack((SuperNode) v2, (DoubleSubNode) v1);
+		v2linkbackInout.add(e);
+		v2linkbackOut.add(e);
+		v1linkbackInout.add(e.getReversedEdge());
+		v1linkbackIn.add(e.getReversedEdge());
+		e = graph.createLinkBack((SuperNode) v1, (DoubleSubNode) v1);
+		v1linkbackInout.add(e);
+		v1linkbackOut.add(e);
+		v1linkbackInout.add(e.getReversedEdge());
+		v1linkbackIn.add(e.getReversedEdge());
+
+		checkIncidenceList(v0, null, Link.class, EdgeDirection.INOUT,
+				v0linkInout);
+		checkIncidenceList(v0, null, Link.class, EdgeDirection.OUT, v0linkOut);
+		checkIncidenceList(v0, null, Link.class, EdgeDirection.IN, v0linkIn);
+
+		checkIncidenceList(v0, null, SubLink.class, EdgeDirection.INOUT,
+				v0sublinkInout);
+		checkIncidenceList(v0, null, SubLink.class, EdgeDirection.OUT,
+				v0sublinkOut);
+		checkIncidenceList(v0, null, SubLink.class, EdgeDirection.IN,
+				v0sublinkIn);
+
+		checkIncidenceList(v0, null, LinkBack.class, EdgeDirection.INOUT,
+				v0linkbackInout);
+		checkIncidenceList(v0, null, LinkBack.class, EdgeDirection.OUT,
+				v0linkbackOut);
+		checkIncidenceList(v0, null, LinkBack.class, EdgeDirection.IN,
+				v0linkbackIn);
+
+		checkIncidenceList(v1, null, Link.class, EdgeDirection.INOUT,
+				v1linkInout);
+		checkIncidenceList(v1, null, Link.class, EdgeDirection.OUT, v1linkOut);
+		checkIncidenceList(v1, null, Link.class, EdgeDirection.IN, v1linkIn);
+
+		checkIncidenceList(v1, null, SubLink.class, EdgeDirection.INOUT,
+				v1sublinkInout);
+		checkIncidenceList(v1, null, SubLink.class, EdgeDirection.OUT,
+				v1sublinkOut);
+		checkIncidenceList(v1, null, SubLink.class, EdgeDirection.IN,
+				v1sublinkIn);
+
+		checkIncidenceList(v1, null, LinkBack.class, EdgeDirection.INOUT,
+				v1linkbackInout);
+		checkIncidenceList(v1, null, LinkBack.class, EdgeDirection.OUT,
+				v1linkbackOut);
+		checkIncidenceList(v1, null, LinkBack.class, EdgeDirection.IN,
+				v1linkbackIn);
+
+		checkIncidenceList(v2, null, Link.class, EdgeDirection.INOUT,
+				v2linkInout);
+		checkIncidenceList(v2, null, Link.class, EdgeDirection.OUT, v2linkOut);
+		checkIncidenceList(v2, null, Link.class, EdgeDirection.IN, v2linkIn);
+
+		checkIncidenceList(v2, null, SubLink.class, EdgeDirection.INOUT,
+				v2sublinkInout);
+		checkIncidenceList(v2, null, SubLink.class, EdgeDirection.OUT,
+				v2sublinkOut);
+		checkIncidenceList(v2, null, SubLink.class, EdgeDirection.IN,
+				v2sublinkIn);
+
+		checkIncidenceList(v2, null, LinkBack.class, EdgeDirection.INOUT,
+				v2linkbackInout);
+		checkIncidenceList(v2, null, LinkBack.class, EdgeDirection.OUT,
+				v2linkbackOut);
+		checkIncidenceList(v2, null, LinkBack.class, EdgeDirection.IN,
+				v2linkbackIn);
+	}
+
+	/**
+	 * Random test.
+	 */
+	@Test
+	public void incidencesTestClassEdgeDirection3() {
+		Vertex[] vertices = new Vertex[] { graph.createSubNode(),
+				graph.createDoubleSubNode(), graph.createSuperNode() };
+		LinkedList<LinkedList<Edge>> linkinout = new LinkedList<LinkedList<Edge>>();
+		linkinout.add(new LinkedList<Edge>());
+		linkinout.add(new LinkedList<Edge>());
+		linkinout.add(new LinkedList<Edge>());
+		LinkedList<LinkedList<Edge>> linkout = new LinkedList<LinkedList<Edge>>();
+		linkout.add(new LinkedList<Edge>());
+		linkout.add(new LinkedList<Edge>());
+		linkout.add(new LinkedList<Edge>());
+		LinkedList<LinkedList<Edge>> linkin = new LinkedList<LinkedList<Edge>>();
+		linkin.add(new LinkedList<Edge>());
+		linkin.add(new LinkedList<Edge>());
+		linkin.add(new LinkedList<Edge>());
+
+		LinkedList<LinkedList<Edge>> sublinkinout = new LinkedList<LinkedList<Edge>>();
+		sublinkinout.add(new LinkedList<Edge>());
+		sublinkinout.add(new LinkedList<Edge>());
+		sublinkinout.add(new LinkedList<Edge>());
+		LinkedList<LinkedList<Edge>> sublinkout = new LinkedList<LinkedList<Edge>>();
+		sublinkout.add(new LinkedList<Edge>());
+		sublinkout.add(new LinkedList<Edge>());
+		sublinkout.add(new LinkedList<Edge>());
+		LinkedList<LinkedList<Edge>> sublinkin = new LinkedList<LinkedList<Edge>>();
+		sublinkin.add(new LinkedList<Edge>());
+		sublinkin.add(new LinkedList<Edge>());
+		sublinkin.add(new LinkedList<Edge>());
+
+		LinkedList<LinkedList<Edge>> linkbackinout = new LinkedList<LinkedList<Edge>>();
+		linkbackinout.add(new LinkedList<Edge>());
+		linkbackinout.add(new LinkedList<Edge>());
+		linkbackinout.add(new LinkedList<Edge>());
+		LinkedList<LinkedList<Edge>> linkbackout = new LinkedList<LinkedList<Edge>>();
+		linkbackout.add(new LinkedList<Edge>());
+		linkbackout.add(new LinkedList<Edge>());
+		linkbackout.add(new LinkedList<Edge>());
+		LinkedList<LinkedList<Edge>> linkbackin = new LinkedList<LinkedList<Edge>>();
+		linkbackin.add(new LinkedList<Edge>());
+		linkbackin.add(new LinkedList<Edge>());
+		linkbackin.add(new LinkedList<Edge>());
+
+		for (int i = 0; i < 100; i++) {
+			graph = VertexTestSchema.instance().createVertexTestGraph();
+			for (int j = 0; j < 30; j++) {
+				int edge = rand.nextInt(3);
+				int start = rand.nextInt(2);
+				int end = rand.nextInt(2) + 1;
+				Edge e = null;
+				switch (edge) {
+				case 0:
+					e = graph.createLink((AbstractSuperNode) vertices[start],
+							(SuperNode) vertices[end]);
+					linkinout.get(start).add(e);
+					linkout.get(start).add(e);
+					linkinout.get(end).add(e.getReversedEdge());
+					linkin.get(end).add(e.getReversedEdge());
+					break;
+				case 1:
+					e = graph.createLinkBack((SuperNode) vertices[end],
+							(AbstractSuperNode) vertices[start]);
+					linkbackinout.get(end).add(e);
+					linkbackout.get(end).add(e);
+					linkbackinout.get(start).add(e.getReversedEdge());
+					linkbackin.get(start).add(e.getReversedEdge());
+					break;
+				case 2:
+					e = graph.createSubLink((DoubleSubNode) vertices[1],
+							(SuperNode) vertices[end]);
+					linkinout.get(1).add(e);
+					linkout.get(1).add(e);
+					sublinkinout.get(1).add(e);
+					sublinkout.get(1).add(e);
+					linkinout.get(end).add(e.getReversedEdge());
+					linkin.get(end).add(e.getReversedEdge());
+					sublinkinout.get(end).add(e.getReversedEdge());
+					sublinkin.get(end).add(e.getReversedEdge());
+					break;
+				}
+			}
+
+			checkIncidenceList(vertices[0], null, Link.class,
+					EdgeDirection.INOUT, linkinout.get(0));
+			checkIncidenceList(vertices[0], null, Link.class,
+					EdgeDirection.OUT, linkout.get(0));
+			checkIncidenceList(vertices[0], null, Link.class, EdgeDirection.IN,
+					linkin.get(0));
+
+			checkIncidenceList(vertices[0], null, SubLink.class,
+					EdgeDirection.INOUT, sublinkinout.get(0));
+			checkIncidenceList(vertices[0], null, SubLink.class,
+					EdgeDirection.OUT, sublinkout.get(0));
+			checkIncidenceList(vertices[0], null, SubLink.class,
+					EdgeDirection.IN, sublinkin.get(0));
+
+			checkIncidenceList(vertices[0], null, LinkBack.class,
+					EdgeDirection.INOUT, linkbackinout.get(0));
+			checkIncidenceList(vertices[0], null, LinkBack.class,
+					EdgeDirection.OUT, linkbackout.get(0));
+			checkIncidenceList(vertices[0], null, LinkBack.class,
+					EdgeDirection.IN, linkbackin.get(0));
+
+			checkIncidenceList(vertices[1], null, Link.class,
+					EdgeDirection.INOUT, linkinout.get(1));
+			checkIncidenceList(vertices[1], null, Link.class,
+					EdgeDirection.OUT, linkout.get(1));
+			checkIncidenceList(vertices[1], null, Link.class, EdgeDirection.IN,
+					linkin.get(1));
+
+			checkIncidenceList(vertices[1], null, SubLink.class,
+					EdgeDirection.INOUT, sublinkinout.get(1));
+			checkIncidenceList(vertices[1], null, SubLink.class,
+					EdgeDirection.OUT, sublinkout.get(1));
+			checkIncidenceList(vertices[1], null, SubLink.class,
+					EdgeDirection.IN, sublinkin.get(1));
+
+			checkIncidenceList(vertices[1], null, LinkBack.class,
+					EdgeDirection.INOUT, linkbackinout.get(1));
+			checkIncidenceList(vertices[1], null, LinkBack.class,
+					EdgeDirection.OUT, linkbackout.get(1));
+			checkIncidenceList(vertices[1], null, LinkBack.class,
+					EdgeDirection.IN, linkbackin.get(1));
+
+			checkIncidenceList(vertices[2], null, Link.class,
+					EdgeDirection.INOUT, linkinout.get(2));
+			checkIncidenceList(vertices[2], null, Link.class,
+					EdgeDirection.OUT, linkout.get(2));
+			checkIncidenceList(vertices[2], null, Link.class, EdgeDirection.IN,
+					linkin.get(2));
+
+			checkIncidenceList(vertices[2], null, SubLink.class,
+					EdgeDirection.INOUT, sublinkinout.get(2));
+			checkIncidenceList(vertices[2], null, SubLink.class,
+					EdgeDirection.OUT, sublinkout.get(2));
+			checkIncidenceList(vertices[2], null, SubLink.class,
+					EdgeDirection.IN, sublinkin.get(2));
+
+			checkIncidenceList(vertices[2], null, LinkBack.class,
+					EdgeDirection.INOUT, linkbackinout.get(2));
+			checkIncidenceList(vertices[2], null, LinkBack.class,
+					EdgeDirection.OUT, linkbackout.get(2));
+			checkIncidenceList(vertices[2], null, LinkBack.class,
+					EdgeDirection.IN, linkbackin.get(2));
+		}
+	}
+
+	// tests of the method boolean isValidAlpha(Edge edge);
+
+	/**
+	 * Checks some cases for true and false considering heredity.
+	 */
+	@Test
+	public void isValidAlphaTest0() {
+		Vertex v0 = graph.createSubNode();
+		Vertex v1 = graph.createSuperNode();
+		Vertex v2 = graph.createDoubleSubNode();
+		Edge e0 = graph.createLink((AbstractSuperNode) v2, (SuperNode) v2);
+		Edge e1 = graph.createSubLink((DoubleSubNode) v2, (SuperNode) v2);
+		assertTrue(v0.isValidAlpha(e0));
+		assertFalse(v1.isValidAlpha(e0));
+		assertTrue(v2.isValidAlpha(e0));
+		assertFalse(v0.isValidAlpha(e1));
+		assertFalse(v1.isValidAlpha(e1));
+		assertTrue(v2.isValidAlpha(e1));
+	}
+
+	// tests of the method boolean isValidOmega(Edge edge);
+
+	/**
+	 * Checks some cases for true and false.
+	 */
+	@Test
+	public void isValidOmegaTest0() {
+		Vertex v0 = graph.createSubNode();
+		Vertex v1 = graph.createSuperNode();
+		assertTrue(v0.isValid());
+		assertTrue(v1.isValid());
+		v0.delete();
+		assertFalse(v0.isValid());
+		assertTrue(v1.isValid());
+	}
+
+	/*
+	 * Test of the Interface GraphElement
+	 */
+
+	// tests of the method Graph getGraph();
+	
+	@Test
+	public void getGraphTest(){
+		VertexTestGraph anotherGraph=((VertexTestSchema)graph.getSchema()).createVertexTestGraph();
+		Vertex v0=graph.createDoubleSubNode();
+		Vertex v1=anotherGraph.createDoubleSubNode();
+		Vertex v2=graph.createDoubleSubNode();
+		assertEquals(graph,v0.getGraph());
+		assertEquals(anotherGraph,v1.getGraph());
+		assertEquals(graph,v2.getGraph());
 	}
 }
