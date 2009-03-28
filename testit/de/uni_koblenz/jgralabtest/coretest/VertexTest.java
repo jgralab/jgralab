@@ -18,6 +18,8 @@ import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.schema.EdgeClass;
+import de.uni_koblenz.jgralab.schema.GraphClass;
+import de.uni_koblenz.jgralab.schema.QualifiedName;
 import de.uni_koblenz.jgralab.schema.VertexClass;
 import de.uni_koblenz.jgralabtest.schemas.vertextest.AbstractSuperNode;
 import de.uni_koblenz.jgralabtest.schemas.vertextest.DoubleSubNode;
@@ -7511,15 +7513,118 @@ public class VertexTest {
 	 */
 
 	// tests of the method Graph getGraph();
-	
+	/**
+	 * Checks some cases for true and false.
+	 */
 	@Test
-	public void getGraphTest(){
-		VertexTestGraph anotherGraph=((VertexTestSchema)graph.getSchema()).createVertexTestGraph();
-		Vertex v0=graph.createDoubleSubNode();
-		Vertex v1=anotherGraph.createDoubleSubNode();
-		Vertex v2=graph.createDoubleSubNode();
-		assertEquals(graph,v0.getGraph());
-		assertEquals(anotherGraph,v1.getGraph());
-		assertEquals(graph,v2.getGraph());
+	public void getGraphTest() {
+		VertexTestGraph anotherGraph = ((VertexTestSchema) graph.getSchema())
+				.createVertexTestGraph();
+		Vertex v0 = graph.createDoubleSubNode();
+		Vertex v1 = anotherGraph.createDoubleSubNode();
+		Vertex v2 = graph.createDoubleSubNode();
+		assertEquals(graph, v0.getGraph());
+		assertEquals(anotherGraph, v1.getGraph());
+		assertEquals(graph, v2.getGraph());
 	}
+
+	// tests of the method void graphModified();
+
+	/**
+	 * Tests if the graphversion is increased if the method is called.
+	 */
+	@Test
+	public void graphModifiedTest0() {
+		Vertex v = graph.createDoubleSubNode();
+		long graphversion = graph.getGraphVersion();
+		v.graphModified();
+		assertEquals(++graphversion, graph.getGraphVersion());
+	}
+
+	/**
+	 * Tests if the graphversion is increased by creating a new vertex.
+	 */
+	@Test
+	public void graphModifiedTest1() {
+		long graphversion = graph.getGraphVersion();
+		graph.createDoubleSubNode();
+		assertEquals(++graphversion, graph.getGraphVersion());
+	}
+
+	/**
+	 * Tests if the graphversion is increased by deleting a vertex.
+	 */
+	@Test
+	public void graphModifiedTest2() {
+		Vertex v = graph.createDoubleSubNode();
+		long graphversion = graph.getGraphVersion();
+		v.delete();
+		assertEquals(++graphversion, graph.getGraphVersion());
+	}
+
+	/**
+	 * Tests if the graphversion is increased by changing the attributes of a
+	 * vertex.
+	 */
+	@Test
+	public void graphModifiedTest3() {
+		Vertex v = graph.createDoubleSubNode();
+		long graphversion = graph.getGraphVersion();
+		((DoubleSubNode) v).setNumber(4);
+		assertEquals(++graphversion, graph.getGraphVersion());
+	}
+
+	/*
+	 * Test of the Interface AttributedElement
+	 */
+
+	// tests of the method AttributedElementClass getAttributedElementClass();
+	/**
+	 * Some test cases for getAttributedElementClass
+	 */
+	@Test
+	public void getAttributedElementClassTest() {
+		VertexClass[] vertices = getVertexClasses();
+		Vertex v0 = graph.createDoubleSubNode();
+		Vertex v1 = graph.createSubNode();
+		Vertex v2 = graph.createSuperNode();
+		assertEquals(vertices[3], v0.getAttributedElementClass());
+		assertEquals(vertices[1], v1.getAttributedElementClass());
+		assertEquals(vertices[2], v2.getAttributedElementClass());
+	}
+
+	// tests of the method AttributedElementClass getAttributedElementClass();
+
+	/**
+	 * Some test cases for getM1Class
+	 */
+	@Test
+	public void getM1ClassTest() {
+		Vertex v0 = graph.createDoubleSubNode();
+		Vertex v1 = graph.createSubNode();
+		Vertex v2 = graph.createSuperNode();
+		assertEquals(DoubleSubNode.class, v0.getM1Class());
+		assertEquals(SubNode.class, v1.getM1Class());
+		assertEquals(SuperNode.class, v2.getM1Class());
+	}
+
+	// tests of the method GraphClass getGraphClass();
+
+	/**
+	 * Some test cases for getGraphClass
+	 */
+	@Test
+	public void getGraphClassTest() {
+		VertexTestGraph anotherGraph = ((VertexTestSchema) graph.getSchema())
+				.createVertexTestGraph();
+		GraphClass gc = ((VertexTestSchema) graph.getSchema())
+				.getGraphClasses().get(new QualifiedName("VertexTestGraph"));
+		Vertex v0 = graph.createDoubleSubNode();
+		Vertex v1 = anotherGraph.createDoubleSubNode();
+		Vertex v2 = graph.createDoubleSubNode();
+		assertEquals(gc, v0.getGraphClass());
+		assertEquals(gc, v1.getGraphClass());
+		assertEquals(gc, v2.getGraphClass());
+	}
+
 }
