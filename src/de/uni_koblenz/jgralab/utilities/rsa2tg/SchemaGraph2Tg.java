@@ -353,10 +353,10 @@ public class SchemaGraph2Tg {
 		println(PACKAGE, SPACE, tgPackage.getQualifiedName(), DELIMITER);
 
 		if (hierarchical) {
-			Iterator<ContainsDomain> itDomain = tgPackage
-					.getContainsDomainIncidences(OUTGOING).iterator();
-			while (itDomain.hasNext()) {
-				printDomainDefinition(itDomain.next());
+			ContainsDomain domain = tgPackage.getFirstContainsDomain(OUTGOING);
+
+			if (domain != null) {
+				printDomainDefinition(domain);
 			}
 
 			// First only VertexClass should be printed!
@@ -783,7 +783,7 @@ public class SchemaGraph2Tg {
 	 *            {@link RecordDomain}, which should be transformed to TG
 	 *            string.
 	 */
-	private Domain printRecordDomain(RecordDomain domain) {
+	private void printRecordDomain(RecordDomain domain) {
 		// Gets the first outgoing HasRecordDomainComponent edge
 		HasRecordDomainComponent hasComponent = domain
 				.getFirstHasRecordDomainComponent(OUTGOING);
@@ -813,7 +813,6 @@ public class SchemaGraph2Tg {
 					.getNextHasRecordDomainComponent(OUTGOING);
 		}
 		println(ROUND_BRACKET_CLOSED, DELIMITER);
-		return domain;
 	}
 
 	/**
