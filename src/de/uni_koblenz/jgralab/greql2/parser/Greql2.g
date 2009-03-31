@@ -97,6 +97,15 @@ import de.uni_koblenz.jgralab.greql2.funlib.Greql2FunctionLibrary;
         }
     }
     
+    /**
+     * @return a set of variables names used in this query that are still valid 
+     *         at the current position during the parsing process
+     * After a successful parsing, this set should be empty 
+     */
+    public Set<String> getUsedVariableNames() {
+   		return variableSymbolTable.getKnownIdentifierSet();
+    }
+    
     private FunctionId getFunctionId(String name) {
         FunctionId functionId = (FunctionId) functionSymbolTable.lookup(name);
 		if (functionId == null) {
