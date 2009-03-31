@@ -20,6 +20,7 @@ import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.schema.EdgeClass;
 import de.uni_koblenz.jgralab.schema.GraphClass;
 import de.uni_koblenz.jgralab.schema.QualifiedName;
+import de.uni_koblenz.jgralab.schema.Schema;
 import de.uni_koblenz.jgralab.schema.VertexClass;
 import de.uni_koblenz.jgralabtest.schemas.vertextest.AbstractSuperNode;
 import de.uni_koblenz.jgralabtest.schemas.vertextest.DoubleSubNode;
@@ -7627,4 +7628,144 @@ public class VertexTest {
 		assertEquals(gc, v2.getGraphClass());
 	}
 
+	// tests of the method Object getAttribute(String name) throws
+	// NoSuchFieldException;
+
+	/**
+	 * Tests if the value of the correct attribute is returned.
+	 */
+	@Test
+	public void getAttributeTest0() throws NoSuchFieldException {
+		DoubleSubNode v = graph.createDoubleSubNode();
+		HashMap<Integer, String> map = new HashMap<Integer, String>();
+		v.setNodeMap(map);
+		v.setName("test");
+		v.setNumber(4);
+		assertEquals(map, v.getAttribute("nodeMap"));
+		assertEquals("test", v.getAttribute("name"));
+		assertEquals(4, v.getAttribute("number"));
+	}
+
+	/**
+	 * Tests if an exception is thrown if you want to get an attribute which
+	 * doesn't exist.
+	 */
+	@Test(expected = NoSuchFieldException.class)
+	public void getAttributeTest1() throws NoSuchFieldException {
+		DoubleSubNode v = graph.createDoubleSubNode();
+		v.getAttribute("cd");
+	}
+
+	/**
+	 * Tests if an exception is thrown if you want to get an attribute with an
+	 * empty name.
+	 */
+	@Test(expected = NoSuchFieldException.class)
+	public void getAttributeTest2() throws NoSuchFieldException {
+		DoubleSubNode v = graph.createDoubleSubNode();
+		v.getAttribute("");
+	}
+
+	// tests of the method void setAttribute(String name, Object data) throws
+	// NoSuchFieldException;
+
+	/**
+	 * Tests if an existing attribute is correct set.
+	 */
+	@Test
+	public void setAttributeTest0() throws NoSuchFieldException {
+		DoubleSubNode v = graph.createDoubleSubNode();
+		HashMap<Integer, String> map = new HashMap<Integer, String>();
+		v.setAttribute("nodeMap", map);
+		v.setAttribute("name", "test");
+		v.setAttribute("number", 4);
+		assertEquals(map, v.getAttribute("nodeMap"));
+		assertEquals("test", v.getAttribute("name"));
+		assertEquals(4, v.getAttribute("number"));
+	}
+
+	/**
+	 * Tests if an existing attribute is set to null.
+	 */
+	@Test
+	public void setAttributeTest1() throws NoSuchFieldException {
+		DoubleSubNode v = graph.createDoubleSubNode();
+		v.setAttribute("nodeMap", null);
+		v.setAttribute("name", null);
+		// TODO setting an attribute to null possible?
+		v.setAttribute("number", null);
+		assertEquals(null, v.getAttribute("nodeMap"));
+		assertEquals(null, v.getAttribute("name"));
+		assertEquals(null, v.getAttribute("number"));
+	}
+
+	/**
+	 * Tests if an exception is thrown if you want to get an attribute which
+	 * doesn't exist.
+	 */
+	@Test(expected = NoSuchFieldException.class)
+	public void setAttributeTest2() throws NoSuchFieldException {
+		DoubleSubNode v = graph.createDoubleSubNode();
+		v.setAttribute("cd", "a");
+	}
+
+	/**
+	 * Tests if an exception is thrown if you want to get an attribute with an
+	 * empty name.
+	 */
+	@Test(expected = NoSuchFieldException.class)
+	public void setAttributeTest3() throws NoSuchFieldException {
+		DoubleSubNode v = graph.createDoubleSubNode();
+		v.setAttribute("", "a");
+	}
+
+	// tests of the method Schema getSchema();
+
+	/**
+	 * Some tests.
+	 */
+	@Test
+	public void getSchemaTest() {
+		Vertex v0 = graph.createDoubleSubNode();
+		Vertex v1 = graph.createSubNode();
+		Vertex v2 = graph.createSuperNode();
+		Schema schema = graph.getSchema();
+		assertEquals(schema, v0.getSchema());
+		assertEquals(schema, v1.getSchema());
+		assertEquals(schema, v2.getSchema());
+	}
+
+	/*
+	 * Test of the Interface AttributedElementComparable
+	 */
+
+	// tests of the method int compareTo(AttributedElement a);
+	/**
+	 * Test if a vertex is equal to itself.
+	 */
+	@Test
+	public void compareToTest0() {
+		Vertex v0 = graph.createDoubleSubNode();
+		assertEquals(0, v0.compareTo(v0));
+	}
+
+	/**
+	 * Test if a vertex is smaller than another.
+	 */
+	@Test
+	public void compareToTest1() {
+		Vertex v0 = graph.createDoubleSubNode();
+		Vertex v1 = graph.createDoubleSubNode();
+		assertTrue(v0.compareTo(v1) < 0);
+	}
+
+	/**
+	 * Test if a vertex is greater than another.
+	 */
+	@Test
+	public void compareToTest2() {
+		Vertex v0 = graph.createDoubleSubNode();
+		Vertex v1 = graph.createDoubleSubNode();
+		assertTrue(v1.compareTo(v0) > 0);
+	}
 }
