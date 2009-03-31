@@ -21,11 +21,13 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
- 
+
 package de.uni_koblenz.jgralab.greql2.parser;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedList;
+import java.util.Set;
 
 import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.Vertex;
@@ -36,67 +38,68 @@ import de.uni_koblenz.jgralab.greql2.schema.IsDeclaredVarOf;
 import de.uni_koblenz.jgralab.greql2.schema.IsVarOf;
 import de.uni_koblenz.jgralab.greql2.schema.SourcePosition;
 
+public class SymbolTable {
 
-public class SymbolTable 
-{
-	
-	private LinkedList<HashMap<String, Vertex> > list = null;
+	private LinkedList<HashMap<String, Vertex>> list = null;
 
-	public SymbolTable()
-	{
-		
-		list = new LinkedList<HashMap<String, Vertex> >();
+	public SymbolTable() {
+		list = new LinkedList<HashMap<String, Vertex>>();
 	}
-	
-	
-	public void blockBegin()
-	{
+
+	public void blockBegin() {
 		HashMap<String, Vertex> map = new HashMap<String, Vertex>();
-		list.addFirst(map);		
+		list.addFirst(map);
 	}
-	
-	public void blockEnd()
-	{
-		if (! list.isEmpty())
+
+	public void blockEnd() {
+		if (!list.isEmpty())
 			list.removeFirst();
-		
+
 	}
-	
-	public void insert(String ident, Vertex v) throws DuplicateVariableException
-	{
-		
-		if (! list.getFirst().containsKey(ident))
-		{
-			list.getFirst().put(ident, v);			
-		}
-		else
-		{	
-			Vertex var = list.get(0).get(ident);
-			int offset  = -1;
-			if (var.getFirstEdge(EdgeDirection.OUT) instanceof IsDeclaredVarOf)
-			{
-				offset = ((IsDeclaredVarOf) var.getFirstEdge(EdgeDirection.OUT)).getSourcePositions().get(0).offset;
+
+	public void insert(String ident, Vertex v)
+			throws DuplicateVariableException {
+
+		if (!list.getFirst().containsKey(ident)) {
+			list.getFirst().put(ident, v);
+		} else {
+			Vertex var = list.getFirst().get(ident);
+			int offset = -1;
+			if (var.getFirstEdge(EdgeDirection.OUT) instanceof IsDeclaredVarOf) {
+				offset = ((IsDeclaredVarOf) var.getFirstEdge(EdgeDirection.OUT))
+						.getSourcePositions().get(0).offset;
+			} else if (var.getFirstEdge(EdgeDirection.OUT) instanceof IsBoundVarOf) {
+				offset = ((IsBoundVarOf) var.getFirstEdge(EdgeDirection.OUT))
+						.getSourcePositions().get(0).offset;
+			} else if (var.getFirstEdge(EdgeDirection.OUT) instanceof IsVarOf) {
+				offset = ((IsVarOf) var.getFirstEdge(EdgeDirection.OUT))
+						.getSourcePositions().get(0).offset;
 			}
-			else if (var.getFirstEdge(EdgeDirection.OUT) instanceof IsBoundVarOf)
-			{				
-				offset = ((IsBoundVarOf) var.getFirstEdge(EdgeDirection.OUT)).getSourcePositions().get(0).offset;			
-			}
-			else if (var.getFirstEdge(EdgeDirection.OUT) instanceof IsVarOf)
-			{				
-				offset = ((IsVarOf) var.getFirstEdge(EdgeDirection.OUT)).getSourcePositions().get(0).offset;			
-			}
-			throw new DuplicateVariableException(ident, ((Greql2Aggregation) v.getFirstEdge(EdgeDirection.IN)).getSourcePositions(), new SourcePosition(offset, ident.length()));
+			throw new DuplicateVariableException(ident, ((Greql2Aggregation) v
+					.getFirstEdge(EdgeDirection.IN)).getSourcePositions(),
+					new SourcePosition(offset, ident.length()));
 		}
 	}
-	
-	public Vertex lookup(String ident) 
-	{
-		for (int i = 0; i< list.size(); i++)
-		{
-			if (list.get(i).containsKey(ident))
-				return list.get(i).get(ident); 
+
+	public Vertex lookup(String ident) {
+		for (HashMap<String, Vertex> keyMap : list) {
+			if (keyMap.containsKey(ident))
+				return keyMap.get(ident);
 		}
-		return null;	   
+		return null;
 	}
 	
+	
+	/**
+	 * returns a set of known identifiers
+	 * @return
+	 */
+	public Set<String> getKnownIdentifierSet() {
+		Set<String> result = new HashSet<String>();
+		for (HashMap<String, Vertex> keyMap : list) {
+			result.addAll(keyMap.keySet());
+		}
+		return result;
+	}
+
 }
