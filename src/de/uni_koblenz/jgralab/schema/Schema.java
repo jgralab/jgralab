@@ -64,13 +64,13 @@ public interface Schema extends NamedElement {
 
 	public static final Set<String> basicDomains = new TreeSet<String>(Arrays
 			.asList(new String[] { "Boolean", "Integer", "Long", "String",
-					"Double", "Object" }));
+					"Double" }));
 
 	public static final Set<String> reservedTGWords = new TreeSet<String>(
 			Arrays.asList(new String[] { "abstract", "aggregate",
 					"AggregationClass", "Boolean", "CompositionClass",
 					"Double", "EdgeClass", "EnumDomain", "f", "from", "Graph",
-					"GraphClass", "Integer", "List", "Long", "Package",
+					"GraphClass", "Integer", "List", "Long", "Map", "Package",
 					"RecordDomain", "redefines", "role", "Schema", "Set",
 					"String", "t", "to", "VertexClass", "id", "reversed",
 					"normal" }));
