@@ -88,7 +88,7 @@ import de.uni_koblenz.jgralab.utilities.tg2dot.Tg2Dot;
  * Software Architect (tm) into a TG schema file. The converter is based on a
  * SAX parser. As intermediate format, a grUML schema graph is created from the
  * XMI elements.
- * 
+ *
  * @author ist@uni-koblenz.de
  */
 @WorkInProgress(description = "Schema graph to TG missing, comments not recorded, missing command line interface", responsibleDevelopers = "riediger, mmce", expectedFinishingDate = "2009/04/20")
@@ -282,38 +282,36 @@ public class Rsa2Tg extends DefaultHandler {
 		r.setUseFromRole(true);
 		r.setRemoveUnusedDomains(true);
 		r.setUseNavigability(true);
-		for (String xmiFileName : args) {
-			System.out.println("processing: " + xmiFileName);
-			r.process(xmiFileName);
+		try {
+			for (String xmiFileName : args) {
+				System.out.println("processing: " + xmiFileName);
+				r.process(xmiFileName);
+			}
+			System.out.println("Fini.");
+		} catch (Exception e) {
+			System.err
+					.println("An Exception occured while processing XMI file.");
+			e.printStackTrace();
 		}
-		System.out.println("Fini.");
 	}
 
 	/**
 	 * Processes one RSA XMI file by creating a SAX parser and submitting this
 	 * file to the parse() method. All actions take place in overrided mehtods
 	 * of the SAX DefaultHandler.
-	 * 
+	 *
 	 * @param xmiFileName
 	 *            the name of the XMI file to convert
 	 */
-	public void process(String xmiFileName) {
-		SAXParser parser;
-		try {
-			parser = SAXParserFactory.newInstance().newSAXParser();
-			parser.parse(new File(xmiFileName), this);
-		} catch (ParserConfigurationException e) {
-			e.printStackTrace();
-		} catch (SAXException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+	public void process(String xmiFileName)
+			throws ParserConfigurationException, SAXException, IOException {
+		SAXParser parser = SAXParserFactory.newInstance().newSAXParser();
+		parser.parse(new File(xmiFileName), this);
 	}
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.xml.sax.helpers.DefaultHandler#characters(char[], int, int)
 	 */
 	@Override
@@ -326,7 +324,7 @@ public class Rsa2Tg extends DefaultHandler {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.xml.sax.helpers.DefaultHandler#endDocument()
 	 */
 	@Override
@@ -1461,11 +1459,11 @@ public class Rsa2Tg extends DefaultHandler {
 	/**
 	 * Creates a Domain vertex corresponding to the specified
 	 * <code>typeName</code>.
-	 * 
+	 *
 	 * This vertex can also be a preliminary vertex which has to be replaced by
 	 * the correct Domain later. In this case, there is no "ContainsDomain"
 	 * edge, and the type is "StringDomain".
-	 * 
+	 *
 	 * @param typeName
 	 * @return
 	 */
@@ -1550,7 +1548,7 @@ public class Rsa2Tg extends DefaultHandler {
 	 * separated by a dot. If the top package is the default package, the name
 	 * <code>simpleName</code> is already the qualified name. If the package
 	 * stack is empty
-	 * 
+	 *
 	 * @param simpleName
 	 *            a simple name of a class or package
 	 * @return the qualified name for the simple name
