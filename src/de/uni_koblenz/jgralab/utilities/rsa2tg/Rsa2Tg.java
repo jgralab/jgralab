@@ -282,17 +282,18 @@ public class Rsa2Tg extends DefaultHandler {
 		r.setUseFromRole(true);
 		r.setRemoveUnusedDomains(true);
 		r.setUseNavigability(true);
-		try {
-			for (String xmiFileName : args) {
-				System.out.println("processing: " + xmiFileName);
+
+		for (String xmiFileName : args) {
+			System.out.println("processing: " + xmiFileName);
+			try {
 				r.process(xmiFileName);
+			} catch (Exception e) {
+				System.err.println("An Exception occured while processing "
+						+ xmiFileName + ".");
+				e.printStackTrace();
 			}
-			System.out.println("Fini.");
-		} catch (Exception e) {
-			System.err
-					.println("An Exception occured while processing XMI file.");
-			e.printStackTrace();
 		}
+		System.out.println("Fini.");
 	}
 
 	/**
