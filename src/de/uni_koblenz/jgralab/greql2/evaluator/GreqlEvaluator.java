@@ -677,8 +677,7 @@ public class GreqlEvaluator {
 		queryString = queryString.replaceAll("\\s{2,}", " ");
 		// Delete the space at the front and at the end of the query.
 		queryString = queryString.trim();
-		// GreqlEvaluator.println("Normalized Query = \"" + queryString +
-		// "\".");
+		// System.out.println("Normalized Query = \"" + queryString + "\".");
 	}
 
 	/**
