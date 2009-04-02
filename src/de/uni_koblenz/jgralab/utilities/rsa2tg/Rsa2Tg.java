@@ -205,6 +205,11 @@ public class Rsa2Tg extends DefaultHandler {
 	private Edge currentAssociationEnd;
 
 	/**
+	 * The XMI file that's currently processed.
+	 */
+	private File currentXmiFile;
+
+	/**
 	 * The set of To/From edges which are the aggregate side of an
 	 * AggregationClass/CompositionClass (use to determine the aggregateFrom
 	 * attribute).
@@ -296,7 +301,8 @@ public class Rsa2Tg extends DefaultHandler {
 	public void process(String xmiFileName)
 			throws ParserConfigurationException, SAXException, IOException {
 		SAXParser parser = SAXParserFactory.newInstance().newSAXParser();
-		parser.parse(new File(xmiFileName), this);
+		currentXmiFile = new File(xmiFileName);
+		parser.parse(currentXmiFile, this);
 	}
 
 	/*
@@ -361,7 +367,8 @@ public class Rsa2Tg extends DefaultHandler {
 
 	private void saveSchemagraphAsTg(String schemaName) {
 		try {
-			new SchemaGraph2Tg(sg, schemaName + ".rsa.tg").run();
+			new SchemaGraph2Tg(sg, currentXmiFile.getParent() + File.separator
+					+ schemaName + ".rsa.tg").run();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -549,7 +556,8 @@ public class Rsa2Tg extends DefaultHandler {
 	private void validateGraph(String schemaName) {
 		GraphValidator validator = new GraphValidator(sg);
 		try {
-			String validationReportFile = schemaName + ".validationreport.html";
+			String validationReportFile = currentXmiFile.getParent()
+					+ File.separator + schemaName + ".validationreport.html";
 			Set<ConstraintViolation> s = validator
 					.createValidationReport(validationReportFile);
 			if (!s.isEmpty()) {
@@ -584,13 +592,15 @@ public class Rsa2Tg extends DefaultHandler {
 		Tg2Dot tg2Dot = new Tg2Dot();
 		tg2Dot.setGraph(sg);
 		tg2Dot.setPrintEdgeAttributes(true);
-		tg2Dot.setOutputFile(schemaName + ".gruml.dot");
+		tg2Dot.setOutputFile(currentXmiFile.getParent() + File.separator
+				+ schemaName + ".gruml.dot");
 		tg2Dot.printGraph();
 	}
 
 	private void saveGraph(String schemaName) throws SAXException {
 		try {
-			GraphIO.saveGraphToFile(schemaName + ".gruml.tg", sg, null);
+			GraphIO.saveGraphToFile(currentXmiFile.getParent() + File.separator
+					+ schemaName + ".gruml.tg", sg, null);
 		} catch (GraphIOException e) {
 			throw new SAXException(e);
 		}
