@@ -88,7 +88,7 @@ import de.uni_koblenz.jgralab.utilities.tg2dot.Tg2Dot;
  * Software Architect (tm) into a TG schema file. The converter is based on a
  * SAX parser. As intermediate format, a grUML schema graph is created from the
  * XMI elements.
- * 
+ *
  * @author ist@uni-koblenz.de
  */
 @WorkInProgress(description = "Schema graph to TG missing, comments not recorded, missing command line interface", responsibleDevelopers = "riediger, mmce", expectedFinishingDate = "2009/04/20")
@@ -289,7 +289,7 @@ public class Rsa2Tg extends DefaultHandler {
 	 * Processes one RSA XMI file by creating a SAX parser and submitting this
 	 * file to the parse() method. All actions take place in overrided mehtods
 	 * of the SAX DefaultHandler.
-	 * 
+	 *
 	 * @param xmiFileName
 	 *            the name of the XMI file to convert
 	 */
@@ -301,7 +301,7 @@ public class Rsa2Tg extends DefaultHandler {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.xml.sax.helpers.DefaultHandler#characters(char[], int, int)
 	 */
 	@Override
@@ -314,7 +314,7 @@ public class Rsa2Tg extends DefaultHandler {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.xml.sax.helpers.DefaultHandler#endDocument()
 	 */
 	@Override
@@ -549,11 +549,12 @@ public class Rsa2Tg extends DefaultHandler {
 	private void validateGraph(String schemaName) {
 		GraphValidator validator = new GraphValidator(sg);
 		try {
+			String validationReportFile = schemaName + ".validationreport.html";
 			Set<ConstraintViolation> s = validator
-					.createValidationReport(schemaName
-							+ ".validationreport.html");
+					.createValidationReport(validationReportFile);
 			if (!s.isEmpty()) {
-				System.err.println("The schema graph is not valid :-(");
+				System.err.println("The schema graph is not valid :-(\nSee "
+						+ validationReportFile + " for details.");
 			}
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -1454,11 +1455,11 @@ public class Rsa2Tg extends DefaultHandler {
 	/**
 	 * Creates a Domain vertex corresponding to the specified
 	 * <code>typeName</code>.
-	 * 
+	 *
 	 * This vertex can also be a preliminary vertex which has to be replaced by
 	 * the correct Domain later. In this case, there is no "ContainsDomain"
 	 * edge, and the type is "StringDomain".
-	 * 
+	 *
 	 * @param typeName
 	 * @return
 	 */
@@ -1543,7 +1544,7 @@ public class Rsa2Tg extends DefaultHandler {
 	 * separated by a dot. If the top package is the default package, the name
 	 * <code>simpleName</code> is already the qualified name. If the package
 	 * stack is empty
-	 * 
+	 *
 	 * @param simpleName
 	 *            a simple name of a class or package
 	 * @return the qualified name for the simple name
