@@ -3,7 +3,12 @@ package de.uni_koblenz.jgralabtest.coretest;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.LineNumberReader;
 import java.util.ConcurrentModificationException;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -16,6 +21,8 @@ import org.junit.Test;
 
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.EdgeDirection;
+import de.uni_koblenz.jgralab.GraphIO;
+import de.uni_koblenz.jgralab.GraphIOException;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.schema.EdgeClass;
 import de.uni_koblenz.jgralab.schema.GraphClass;
@@ -7628,6 +7635,105 @@ public class VertexTest {
 		assertEquals(gc, v2.getGraphClass());
 	}
 
+	// tests of the methods
+	// void writeAttributeValues(GraphIO io) throws IOException,
+	// GraphIOException;
+	// and
+	// void readAttributeValues(GraphIO io) throws GraphIOException;
+
+	/**
+	 * Test with null values.
+	 */
+	@Test
+	public void writeReadAttributeValues0() throws GraphIOException,
+			IOException {
+		DoubleSubNode v0 = graph.createDoubleSubNode();
+		// test of writeAttributeValues
+		GraphIO.saveGraphToFile("test.tg", graph, null);
+		LineNumberReader reader = new LineNumberReader(
+				new FileReader("test.tg"));
+		String line = "";
+		String[] parts = null;
+		while ((line = reader.readLine()) != null) {
+			if (line.length() > 0) {
+				line = line.substring(0, line.length() - 1);
+			}
+			parts = line.split(" ");
+			if (parts[0].equals(((Integer) v0.getId()).toString())) {
+				break;
+			}
+		}
+		assertEquals("\\null", parts[3]);
+		assertEquals("\\null", parts[4]);
+		assertEquals("0", parts[5]);
+		// test of readAttributeValues
+		VertexTestGraph loadedgraph = (VertexTestGraph) GraphIO
+				.loadGraphFromFile("test.tg", null);
+		DoubleSubNode loadedv0 = loadedgraph.getFirstDoubleSubNode();
+		assertEquals(v0.getName(), loadedv0.getName());
+		assertEquals(v0.getNumber(), loadedv0.getNumber());
+		assertEquals(v0.getNodeMap(), loadedv0.getNodeMap());
+		// delete created file
+		System.gc();
+		reader.close();
+		File f = new File("test.tg");
+		f.delete();
+	}
+
+	/**
+	 * Test with values.
+	 */
+	@Test
+	public void writeReadAttributeValues1() throws GraphIOException,
+			IOException {
+		DoubleSubNode v0 = graph.createDoubleSubNode();
+		v0.setName("NameVonV0");
+		v0.setNumber(17);
+		HashMap<Integer, String> map = new HashMap<Integer, String>();
+		map.put(1, "First");
+		map.put(2, "Second");
+		v0.setNodeMap(map);
+		// test of writeAttributeValues
+		GraphIO.saveGraphToFile("test.tg", graph, null);
+		LineNumberReader reader = new LineNumberReader(
+				new FileReader("test.tg"));
+		String line = "";
+		String[] parts = null;
+		while ((line = reader.readLine()) != null) {
+			if (line.length() > 0) {
+				line = line.substring(0, line.length() - 1);
+			}
+			parts = line.split(" ");
+			if (parts[0].equals(((Integer) v0.getId()).toString())) {
+				break;
+			}
+		}
+		assertEquals("\"NameVonV0\"", parts[3]);
+		String mapString = map.toString();
+		mapString = mapString.replace("=", " - \"");
+		mapString = mapString.replace(", ", "\" ");
+		mapString = mapString.replace("}", "\"}");
+		String[] mapParts = mapString.split(" ");
+		int i = 0;
+		while (i < mapParts.length) {
+			assertEquals(mapParts[i], parts[i + 4]);
+			i++;
+		}
+		assertEquals("17", parts[i + 4]);
+		// test of readAttributeValues
+		VertexTestGraph loadedgraph = (VertexTestGraph) GraphIO
+				.loadGraphFromFile("test.tg", null);
+		DoubleSubNode loadedv0 = loadedgraph.getFirstDoubleSubNode();
+		assertEquals(v0.getName(), loadedv0.getName());
+		assertEquals(v0.getNumber(), loadedv0.getNumber());
+		assertEquals(v0.getNodeMap(), loadedv0.getNodeMap());
+		// delete created file
+		System.gc();
+		reader.close();
+		File f = new File("test.tg");
+		f.delete();
+	}
+
 	// tests of the method Object getAttribute(String name) throws
 	// NoSuchFieldException;
 
@@ -7692,11 +7798,8 @@ public class VertexTest {
 		DoubleSubNode v = graph.createDoubleSubNode();
 		v.setAttribute("nodeMap", null);
 		v.setAttribute("name", null);
-		// TODO setting an attribute to null possible?
-		v.setAttribute("number", null);
 		assertEquals(null, v.getAttribute("nodeMap"));
 		assertEquals(null, v.getAttribute("name"));
-		assertEquals(null, v.getAttribute("number"));
 	}
 
 	/**
@@ -7736,7 +7839,7 @@ public class VertexTest {
 	}
 
 	/*
-	 * Test of the Interface AttributedElementComparable
+	 * Test of the Interface Comparable
 	 */
 
 	// tests of the method int compareTo(AttributedElement a);
@@ -7768,4 +7871,522 @@ public class VertexTest {
 		Vertex v1 = graph.createDoubleSubNode();
 		assertTrue(v1.compareTo(v0) > 0);
 	}
+
+	/*
+	 * Test of the generated methods
+	 */
+
+	// tests of the methods setName and getName
+	@Test
+	public void setGetNameTest0() {
+		DoubleSubNode v0 = graph.createDoubleSubNode();
+		v0.setName("aName");
+		assertEquals("aName", v0.getName());
+		v0.setName("bName");
+		assertEquals("bName", v0.getName());
+		v0.setName("cName");
+		assertEquals("cName", v0.getName());
+	}
+
+	// tests of the methods setNumber and getNumber
+	@Test
+	public void setGetNumberTest0() {
+		DoubleSubNode v0 = graph.createDoubleSubNode();
+		v0.setNumber(0);
+		assertEquals(0, v0.getNumber());
+		v0.setNumber(1);
+		assertEquals(1, v0.getNumber());
+		v0.setNumber(-1);
+		assertEquals(-1, v0.getNumber());
+	}
+
+	// tests of the methods setNodeMap and getNodeMap
+	@Test
+	public void setGetNodeMapTest0() {
+		DoubleSubNode v0 = graph.createDoubleSubNode();
+		HashMap<Integer, String> map = new HashMap<Integer, String>();
+		v0.setNodeMap(map);
+		assertEquals(map, v0.getNodeMap());
+		map.put(1, "first");
+		v0.setNodeMap(map);
+		assertEquals(map, v0.getNodeMap());
+		map.put(2, "second");
+		v0.setNodeMap(map);
+		assertEquals(map, v0.getNodeMap());
+	}
+
+	// tests of the method addSource
+	@Test
+	public void addSourceTest0() {
+		DoubleSubNode v0 = graph.createDoubleSubNode();
+		// v0 -->{Link} v0
+		Link e0 = v0.addSource(v0);
+		assertEquals(v0, e0.getAlpha());
+		assertEquals(v0, e0.getOmega());
+		// v1 -->{Link} v0
+		DoubleSubNode v1 = graph.createDoubleSubNode();
+		Link e1 = v0.addSource(v1);
+		assertEquals(v1, e1.getAlpha());
+		assertEquals(v0, e1.getOmega());
+		// v0 -->{Link} v1
+		Link e2 = v1.addSource(v0);
+		assertEquals(v0, e2.getAlpha());
+		assertEquals(v1, e2.getOmega());
+		// checks if the edges are in the edge-list of the graph
+		int i = 0;
+		for (Edge e : graph.edges()) {
+			switch (i) {
+			case 0:
+				assertEquals(e0, e);
+				i++;
+				break;
+			case 1:
+				assertEquals(e1, e);
+				i++;
+				break;
+			case 2:
+				assertEquals(e2, e);
+				i++;
+				break;
+			default:
+				fail("No further edges expected!");
+			}
+		}
+		// checks if the edges are in the incidenceList of both vertices
+		i = 0;
+		for (Edge e : v0.incidences()) {
+			switch (i) {
+			case 0:
+				assertEquals(e0, e);
+				i++;
+				break;
+			case 1:
+				assertEquals(e0.getReversedEdge(), e);
+				i++;
+				break;
+			case 2:
+				assertEquals(e1.getReversedEdge(), e);
+				i++;
+				break;
+			case 3:
+				assertEquals(e2, e);
+				i++;
+				break;
+			default:
+				fail("No further edges expected!");
+			}
+		}
+		i = 0;
+		for (Edge e : v1.incidences()) {
+			switch (i) {
+			case 0:
+				assertEquals(e1, e);
+				i++;
+				break;
+			case 1:
+				assertEquals(e2.getReversedEdge(), e);
+				i++;
+				break;
+			default:
+				fail("No further edges expected!");
+			}
+		}
+	}
+
+	// tests of the method removeSource
+	@Test
+	public void removeSourceTest0() {
+		//TODO
+	}
+
+	// tests of the method addSourceb
+	@Test
+	public void addSourcebTest0() {
+		DoubleSubNode v0 = graph.createDoubleSubNode();
+		// v0 -->{LinkBack} v0
+		LinkBack e0 = v0.addSourceb(v0);
+		assertEquals(v0, e0.getAlpha());
+		assertEquals(v0, e0.getOmega());
+		// v1 -->{LinkBack} v0
+		DoubleSubNode v1 = graph.createDoubleSubNode();
+		LinkBack e1 = v0.addSourceb(v1);
+		assertEquals(v1, e1.getAlpha());
+		assertEquals(v0, e1.getOmega());
+		// v0 -->{LinkBack} v1
+		LinkBack e2 = v1.addSourceb(v0);
+		assertEquals(v0, e2.getAlpha());
+		assertEquals(v1, e2.getOmega());
+		// checks if the edges are in the edge-list of the graph
+		int i = 0;
+		for (Edge e : graph.edges()) {
+			switch (i) {
+			case 0:
+				assertEquals(e0, e);
+				i++;
+				break;
+			case 1:
+				assertEquals(e1, e);
+				i++;
+				break;
+			case 2:
+				assertEquals(e2, e);
+				i++;
+				break;
+			default:
+				fail("No further edges expected!");
+			}
+		}
+		// checks if the edges are in the incidenceList of both vertices
+		i = 0;
+		for (Edge e : v0.incidences()) {
+			switch (i) {
+			case 0:
+				assertEquals(e0, e);
+				i++;
+				break;
+			case 1:
+				assertEquals(e0.getReversedEdge(), e);
+				i++;
+				break;
+			case 2:
+				assertEquals(e1.getReversedEdge(), e);
+				i++;
+				break;
+			case 3:
+				assertEquals(e2, e);
+				i++;
+				break;
+			default:
+				fail("No further edges expected!");
+			}
+		}
+		i = 0;
+		for (Edge e : v1.incidences()) {
+			switch (i) {
+			case 0:
+				assertEquals(e1, e);
+				i++;
+				break;
+			case 1:
+				assertEquals(e2.getReversedEdge(), e);
+				i++;
+				break;
+			default:
+				fail("No further edges expected!");
+			}
+		}
+	}
+
+	// tests of the method addSourcec
+	@Test
+	public void addSourcecTest0() {
+		DoubleSubNode v0 = graph.createDoubleSubNode();
+		// v0 -->{SubLink} v0
+		SubLink e0 = v0.addSourcec(v0);
+		assertEquals(v0, e0.getAlpha());
+		assertEquals(v0, e0.getOmega());
+		// v1 -->{SubLink} v0
+		DoubleSubNode v1 = graph.createDoubleSubNode();
+		SubLink e1 = v0.addSourcec(v1);
+		assertEquals(v1, e1.getAlpha());
+		assertEquals(v0, e1.getOmega());
+		// v0 -->{SubLink} v1
+		SubLink e2 = v1.addSourcec(v0);
+		assertEquals(v0, e2.getAlpha());
+		assertEquals(v1, e2.getOmega());
+		// checks if the edges are in the edge-list of the graph
+		int i = 0;
+		for (Edge e : graph.edges()) {
+			switch (i) {
+			case 0:
+				assertEquals(e0, e);
+				i++;
+				break;
+			case 1:
+				assertEquals(e1, e);
+				i++;
+				break;
+			case 2:
+				assertEquals(e2, e);
+				i++;
+				break;
+			default:
+				fail("No further edges expected!");
+			}
+		}
+		// checks if the edges are in the incidenceList of both vertices
+		i = 0;
+		for (Edge e : v0.incidences()) {
+			switch (i) {
+			case 0:
+				assertEquals(e0, e);
+				i++;
+				break;
+			case 1:
+				assertEquals(e0.getReversedEdge(), e);
+				i++;
+				break;
+			case 2:
+				assertEquals(e1.getReversedEdge(), e);
+				i++;
+				break;
+			case 3:
+				assertEquals(e2, e);
+				i++;
+				break;
+			default:
+				fail("No further edges expected!");
+			}
+		}
+		i = 0;
+		for (Edge e : v1.incidences()) {
+			switch (i) {
+			case 0:
+				assertEquals(e1, e);
+				i++;
+				break;
+			case 1:
+				assertEquals(e2.getReversedEdge(), e);
+				i++;
+				break;
+			default:
+				fail("No further edges expected!");
+			}
+		}
+	}
+
+	// tests of the method addTarget
+	@Test
+	public void addTargetTest0() {
+		DoubleSubNode v0 = graph.createDoubleSubNode();
+		// v0 -->{Link} v0
+		Link e0 = v0.addTarget(v0);
+		assertEquals(v0, e0.getAlpha());
+		assertEquals(v0, e0.getOmega());
+		// v0 -->{Link} v1
+		DoubleSubNode v1 = graph.createDoubleSubNode();
+		Link e1 = v0.addTarget(v1);
+		assertEquals(v0, e1.getAlpha());
+		assertEquals(v1, e1.getOmega());
+		// v1 -->{Link} v0
+		Link e2 = v1.addTarget(v0);
+		assertEquals(v1, e2.getAlpha());
+		assertEquals(v0, e2.getOmega());
+		// checks if the edges are in the edge-list of the graph
+		int i = 0;
+		for (Edge e : graph.edges()) {
+			switch (i) {
+			case 0:
+				assertEquals(e0, e);
+				i++;
+				break;
+			case 1:
+				assertEquals(e1, e);
+				i++;
+				break;
+			case 2:
+				assertEquals(e2, e);
+				i++;
+				break;
+			default:
+				fail("No further edges expected!");
+			}
+		}
+		// checks if the edges are in the incidenceList of both vertices
+		i = 0;
+		for (Edge e : v0.incidences()) {
+			switch (i) {
+			case 0:
+				assertEquals(e0, e);
+				i++;
+				break;
+			case 1:
+				assertEquals(e0.getReversedEdge(), e);
+				i++;
+				break;
+			case 2:
+				assertEquals(e1, e);
+				i++;
+				break;
+			case 3:
+				assertEquals(e2.getReversedEdge(), e);
+				i++;
+				break;
+			default:
+				fail("No further edges expected!");
+			}
+		}
+		i = 0;
+		for (Edge e : v1.incidences()) {
+			switch (i) {
+			case 0:
+				assertEquals(e1.getReversedEdge(), e);
+				i++;
+				break;
+			case 1:
+				assertEquals(e2, e);
+				i++;
+				break;
+			default:
+				fail("No further edges expected!");
+			}
+		}
+	}
+
+	// tests of the method addTargetb
+	@Test
+	public void addTargetbTest0() {
+		DoubleSubNode v0 = graph.createDoubleSubNode();
+		// v0 -->{LinkBack} v0
+		LinkBack e0 = v0.addTargetb(v0);
+		assertEquals(v0, e0.getAlpha());
+		assertEquals(v0, e0.getOmega());
+		// v0 -->{LinkBack} v1
+		DoubleSubNode v1 = graph.createDoubleSubNode();
+		LinkBack e1 = v0.addTargetb(v1);
+		assertEquals(v0, e1.getAlpha());
+		assertEquals(v1, e1.getOmega());
+		// v1 -->{LinkBack} v0
+		LinkBack e2 = v1.addTargetb(v0);
+		assertEquals(v1, e2.getAlpha());
+		assertEquals(v0, e2.getOmega());
+		// checks if the edges are in the edge-list of the graph
+		int i = 0;
+		for (Edge e : graph.edges()) {
+			switch (i) {
+			case 0:
+				assertEquals(e0, e);
+				i++;
+				break;
+			case 1:
+				assertEquals(e1, e);
+				i++;
+				break;
+			case 2:
+				assertEquals(e2, e);
+				i++;
+				break;
+			default:
+				fail("No further edges expected!");
+			}
+		}
+		// checks if the edges are in the incidenceList of both vertices
+		i = 0;
+		for (Edge e : v0.incidences()) {
+			switch (i) {
+			case 0:
+				assertEquals(e0, e);
+				i++;
+				break;
+			case 1:
+				assertEquals(e0.getReversedEdge(), e);
+				i++;
+				break;
+			case 2:
+				assertEquals(e1, e);
+				i++;
+				break;
+			case 3:
+				assertEquals(e2.getReversedEdge(), e);
+				i++;
+				break;
+			default:
+				fail("No further edges expected!");
+			}
+		}
+		i = 0;
+		for (Edge e : v1.incidences()) {
+			switch (i) {
+			case 0:
+				assertEquals(e1.getReversedEdge(), e);
+				i++;
+				break;
+			case 1:
+				assertEquals(e2, e);
+				i++;
+				break;
+			default:
+				fail("No further edges expected!");
+			}
+		}
+	}
+
+	// tests of the method addTargetc
+	@Test
+	public void addTargetcTest0() {
+		DoubleSubNode v0 = graph.createDoubleSubNode();
+		// v0 -->{SubLink} v0
+		SubLink e0 = v0.addTargetc(v0);
+		assertEquals(v0, e0.getAlpha());
+		assertEquals(v0, e0.getOmega());
+		// v0 -->{SubLink} v1
+		DoubleSubNode v1 = graph.createDoubleSubNode();
+		SubLink e1 = v0.addTargetc(v1);
+		assertEquals(v0, e1.getAlpha());
+		assertEquals(v1, e1.getOmega());
+		// v1 -->{SubLink} v0
+		SubLink e2 = v1.addTargetc(v0);
+		assertEquals(v1, e2.getAlpha());
+		assertEquals(v0, e2.getOmega());
+		// checks if the edges are in the edge-list of the graph
+		int i = 0;
+		for (Edge e : graph.edges()) {
+			switch (i) {
+			case 0:
+				assertEquals(e0, e);
+				i++;
+				break;
+			case 1:
+				assertEquals(e1, e);
+				i++;
+				break;
+			case 2:
+				assertEquals(e2, e);
+				i++;
+				break;
+			default:
+				fail("No further edges expected!");
+			}
+		}
+		// checks if the edges are in the incidenceList of both vertices
+		i = 0;
+		for (Edge e : v0.incidences()) {
+			switch (i) {
+			case 0:
+				assertEquals(e0, e);
+				i++;
+				break;
+			case 1:
+				assertEquals(e0.getReversedEdge(), e);
+				i++;
+				break;
+			case 2:
+				assertEquals(e1, e);
+				i++;
+				break;
+			case 3:
+				assertEquals(e2.getReversedEdge(), e);
+				i++;
+				break;
+			default:
+				fail("No further edges expected!");
+			}
+		}
+		i = 0;
+		for (Edge e : v1.incidences()) {
+			switch (i) {
+			case 0:
+				assertEquals(e1.getReversedEdge(), e);
+				i++;
+				break;
+			case 1:
+				assertEquals(e2, e);
+				i++;
+				break;
+			default:
+				fail("No further edges expected!");
+			}
+		}
+	}
+
 }
