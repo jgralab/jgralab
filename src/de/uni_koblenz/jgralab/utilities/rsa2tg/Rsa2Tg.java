@@ -362,16 +362,17 @@ public class Rsa2Tg extends DefaultHandler {
 		createDotFile(schemaName);
 		saveGraph(schemaName);
 		validateGraph(schemaName);
-		saveSchemagraphAsTg(schemaName);
+		saveSchemagraphAsTg(schemaName, false);
 	}
 
-	private void saveSchemagraphAsTg(String schemaName) {
+	private void saveSchemagraphAsTg(String schemaName, boolean formatTg) {
 		try {
-			new SchemaGraph2Tg(sg, currentXmiFile.getParent() + File.separator
-					+ schemaName + ".rsa.tg").run();
+			SchemaGraph2Tg sg2tg=	new SchemaGraph2Tg(sg, currentXmiFile.getParent() + File.separator
+					+ schemaName + ".rsa.tg");
+			sg2tg.setIsFormatted(formatTg);
+			sg2tg.run();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			throw new RuntimeException("SchemaGraph2Tg faild with an IOException!",e);
 		}
 	}
 
