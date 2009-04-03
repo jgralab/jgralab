@@ -124,8 +124,8 @@ public class RolenameCodeGenerator {
 							"/**",
 							" * removes the given vertex as <code>#roleCamelName#</code> from this vertex, i.e. "
 									+ " * deletes the <code>#edgeClassName#</code> edge connection this vertex with ",
-							" * the given one. The given vertex is only deleted if the edge is a composition",
-							" * which implies a existential dependency between the composition and the child vertex",
+							" * the given one.",// The given vertex is only deleted if the edge is a composition",
+//							" * which implies a existential dependency between the composition and the child vertex",
 							" */",
 							"public void remove#roleCamelName#(#vertexClassName# vertex);");
 		} else {
