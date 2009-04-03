@@ -174,6 +174,13 @@ public class Rsa2Tg extends DefaultHandler {
 	private GraphMarker<Set<String>> generalizations;
 
 	/**
+	 * Keeps track of uml:Realizations (key = client id, value = set of supplier
+	 * ids) as workaround for missing generalizations between association and
+	 * association class.
+	 */
+	private Map<String, Set<String>> realizations;
+
+	/**
 	 * Marks Attribute vertices with the XMI Id of its type if the type can not
 	 * be resolved at the time the Attribute is processed.
 	 */
@@ -608,6 +615,19 @@ public class Rsa2Tg extends DefaultHandler {
 	}
 
 	private void linkGeneralizations() {
+		for (String clientId : realizations.keySet()) {
+			Set<String> suppliers = realizations.get(clientId);
+			AttributedElementClass client = (AttributedElementClass) idMap
+					.get(clientId);
+			if (suppliers.size() > 0) {
+				Set<String> superClasses = generalizations.getMark(client);
+				if (superClasses == null) {
+					superClasses = new TreeSet<String>();
+					generalizations.mark(client, superClasses);
+				}
+				superClasses.addAll(suppliers);
+			}
+		}
 		for (AttributedElement ae : generalizations.getMarkedElements()) {
 			Set<String> superclasses = generalizations.getMark(ae);
 			for (String id : superclasses) {
@@ -800,6 +820,7 @@ public class Rsa2Tg extends DefaultHandler {
 		packageStack = new Stack<de.uni_koblenz.jgralab.grumlschema.structure.Package>();
 		sg = GrumlSchema.instance().createSchemaGraph();
 		generalizations = new GraphMarker<Set<String>>(sg);
+		realizations = new HashMap<String, Set<String>>();
 		attributeType = new GraphMarker<String>(sg);
 		recordComponentType = new GraphMarker<String>(sg);
 		domainMap = new HashMap<String, Domain>();
@@ -864,6 +885,8 @@ public class Rsa2Tg extends DefaultHandler {
 					idVertex = handleEnumeration(atts);
 				} else if (type.equals("uml:PrimitiveType")) {
 					idVertex = handlePrimitiveType(atts);
+				} else if (type.equals("uml:Realization")) {
+					handleRealization(atts);
 				} else {
 					throw new SAXException("unexpected element " + name
 							+ " of type " + type);
@@ -938,6 +961,17 @@ public class Rsa2Tg extends DefaultHandler {
 		if (xmiId != null && idVertex != null) {
 			idMap.put(xmiId, idVertex);
 		}
+	}
+
+	private void handleRealization(Attributes atts) {
+		String supplier = atts.getValue("supplier");
+		String client = atts.getValue("client");
+		Set<String> reals = realizations.get(client);
+		if (reals == null) {
+			reals = new TreeSet<String>();
+			realizations.put(client, reals);
+		}
+		reals.add(supplier);
 	}
 
 	private void hanleUpperValue(Attributes atts) {
