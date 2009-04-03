@@ -7933,70 +7933,96 @@ public class VertexTest {
 		assertEquals(v0, e2.getAlpha());
 		assertEquals(v1, e2.getOmega());
 		// checks if the edges are in the edge-list of the graph
-		int i = 0;
-		for (Edge e : graph.edges()) {
-			switch (i) {
-			case 0:
-				assertEquals(e0, e);
-				i++;
-				break;
-			case 1:
-				assertEquals(e1, e);
-				i++;
-				break;
-			case 2:
-				assertEquals(e2, e);
-				i++;
-				break;
-			default:
-				fail("No further edges expected!");
-			}
-		}
+		checkEdgeList(e0, e1, e2);
 		// checks if the edges are in the incidenceList of both vertices
-		i = 0;
-		for (Edge e : v0.incidences()) {
-			switch (i) {
-			case 0:
-				assertEquals(e0, e);
-				i++;
-				break;
-			case 1:
-				assertEquals(e0.getReversedEdge(), e);
-				i++;
-				break;
-			case 2:
-				assertEquals(e1.getReversedEdge(), e);
-				i++;
-				break;
-			case 3:
-				assertEquals(e2, e);
-				i++;
-				break;
-			default:
-				fail("No further edges expected!");
-			}
-		}
-		i = 0;
-		for (Edge e : v1.incidences()) {
-			switch (i) {
-			case 0:
-				assertEquals(e1, e);
-				i++;
-				break;
-			case 1:
-				assertEquals(e2.getReversedEdge(), e);
-				i++;
-				break;
-			default:
-				fail("No further edges expected!");
-			}
-		}
+		checkIncidences(v0, e0, e0.getReversedEdge(), e1.getReversedEdge(), e2);
+		checkIncidences(v1, e1, e2.getReversedEdge());
 	}
 
 	// tests of the method removeSource
 	@Test
 	public void removeSourceTest0() {
-		//TODO
+		DoubleSubNode v0 = graph.createDoubleSubNode();
+		DoubleSubNode v1 = graph.createDoubleSubNode();
+		Link e0 = v0.addSource(v0);
+		v0.addSource(v1);
+		Link e2 = v1.addSource(v1);
+		v0.addSource(v1);
+		// remove all edges v1 --> v0
+		v0.removeSource(v1);
+		checkEdgeList(e0, e2);
+		checkIncidences(v0, e0, e0.getReversedEdge());
+		checkIncidences(v1, e2, e2.getReversedEdge());
+		// remove all edges v0 --> v0
+		v0.removeSource(v0);
+		checkEdgeList(e2);
+		checkIncidences(v0);
+		checkIncidences(v1, e2, e2.getReversedEdge());
+		// remove all edges v1 --> v1
+		v1.removeSource(v1);
+		checkEdgeList();
+		checkIncidences(v0);
+		checkIncidences(v1);
+	}
+
+	// tests of the method getSourceList
+	@Test
+	public void getSourceListTest0() {
+		DoubleSubNode v0 = graph.createDoubleSubNode();
+		SuperNode v1 = graph.createSuperNode();
+		SubNode v2 = graph.createSubNode();
+		v0.addSource(v0);
+		v0.addSource(v2);
+		v1.addSource(v0);
+		List<? extends AbstractSuperNode> nodes = v0.getSourceList();
+		assertEquals(2, nodes.size());
+		assertEquals(v0, nodes.get(0));
+		assertEquals(v2, nodes.get(1));
+		nodes = v1.getSourceList();
+		assertEquals(1, nodes.size());
+		assertEquals(v0, nodes.get(0));
+	}
+
+	/**
+	 * Checks if <code>v.incidences()</code> has the same elements in the same
+	 * order like <code>e</code>.
+	 * 
+	 * @param v
+	 *            the Vertex which incident edges should be checked
+	 * @param e
+	 *            the edges to check
+	 */
+	private void checkIncidences(Vertex v, Edge... e) {
+		assertEquals(v.getDegree(), e.length);
+		int i = 0;
+		for (Edge f : v.incidences()) {
+			if (i >= e.length) {
+				fail("No further edges expected!");
+			} else {
+				assertEquals(f, e[i]);
+				i++;
+			}
+		}
+	}
+
+	/**
+	 * Checks if <code>graph.edges()</code> has the same elements in the same
+	 * order like <code>e</code>.
+	 * 
+	 * @param e
+	 *            the edges to check
+	 */
+	private void checkEdgeList(Edge... e) {
+		assertEquals(graph.getECount(), e.length);
+		int i = 0;
+		for (Edge f : graph.edges()) {
+			if (i >= e.length) {
+				fail("No further edges expected!");
+			} else {
+				assertEquals(f, e[i]);
+				i++;
+			}
+		}
 	}
 
 	// tests of the method addSourceb
@@ -8017,64 +8043,54 @@ public class VertexTest {
 		assertEquals(v0, e2.getAlpha());
 		assertEquals(v1, e2.getOmega());
 		// checks if the edges are in the edge-list of the graph
-		int i = 0;
-		for (Edge e : graph.edges()) {
-			switch (i) {
-			case 0:
-				assertEquals(e0, e);
-				i++;
-				break;
-			case 1:
-				assertEquals(e1, e);
-				i++;
-				break;
-			case 2:
-				assertEquals(e2, e);
-				i++;
-				break;
-			default:
-				fail("No further edges expected!");
-			}
-		}
+		checkEdgeList(e0, e1, e2);
 		// checks if the edges are in the incidenceList of both vertices
-		i = 0;
-		for (Edge e : v0.incidences()) {
-			switch (i) {
-			case 0:
-				assertEquals(e0, e);
-				i++;
-				break;
-			case 1:
-				assertEquals(e0.getReversedEdge(), e);
-				i++;
-				break;
-			case 2:
-				assertEquals(e1.getReversedEdge(), e);
-				i++;
-				break;
-			case 3:
-				assertEquals(e2, e);
-				i++;
-				break;
-			default:
-				fail("No further edges expected!");
-			}
-		}
-		i = 0;
-		for (Edge e : v1.incidences()) {
-			switch (i) {
-			case 0:
-				assertEquals(e1, e);
-				i++;
-				break;
-			case 1:
-				assertEquals(e2.getReversedEdge(), e);
-				i++;
-				break;
-			default:
-				fail("No further edges expected!");
-			}
-		}
+		checkIncidences(v0, e0, e0.getReversedEdge(), e1.getReversedEdge(), e2);
+		checkIncidences(v1, e1, e2.getReversedEdge());
+	}
+
+	// tests of the method removeSourceb
+	@Test
+	public void removeSourcebTest0() {
+		DoubleSubNode v0 = graph.createDoubleSubNode();
+		DoubleSubNode v1 = graph.createDoubleSubNode();
+		LinkBack e0 = v0.addSourceb(v0);
+		v0.addSourceb(v1);
+		LinkBack e2 = v1.addSourceb(v1);
+		v0.addSourceb(v1);
+		// remove all edges v1 --> v0
+		v0.removeSourceb(v1);
+		checkEdgeList(e0, e2);
+		checkIncidences(v0, e0, e0.getReversedEdge());
+		checkIncidences(v1, e2, e2.getReversedEdge());
+		// remove all edges v0 --> v0
+		v0.removeSourceb(v0);
+		checkEdgeList(e2);
+		checkIncidences(v0);
+		checkIncidences(v1, e2, e2.getReversedEdge());
+		// remove all edges v1 --> v1
+		v1.removeSourceb(v1);
+		checkEdgeList();
+		checkIncidences(v0);
+		checkIncidences(v1);
+	}
+
+	// tests of the method getSourcebList
+	@Test
+	public void getSourcebListTest0() {
+		DoubleSubNode v0 = graph.createDoubleSubNode();
+		SuperNode v1 = graph.createSuperNode();
+		SubNode v2 = graph.createSubNode();
+		v0.addSourceb(v0);
+		v0.addSourceb(v1);
+		v2.addSourceb(v0);
+		List<? extends SuperNode> nodes = v0.getSourcebList();
+		assertEquals(2, nodes.size());
+		assertEquals(v0, nodes.get(0));
+		assertEquals(v1, nodes.get(1));
+		nodes = v2.getSourcebList();
+		assertEquals(1, nodes.size());
+		assertEquals(v0, nodes.get(0));
 	}
 
 	// tests of the method addSourcec
@@ -8095,64 +8111,41 @@ public class VertexTest {
 		assertEquals(v0, e2.getAlpha());
 		assertEquals(v1, e2.getOmega());
 		// checks if the edges are in the edge-list of the graph
-		int i = 0;
-		for (Edge e : graph.edges()) {
-			switch (i) {
-			case 0:
-				assertEquals(e0, e);
-				i++;
-				break;
-			case 1:
-				assertEquals(e1, e);
-				i++;
-				break;
-			case 2:
-				assertEquals(e2, e);
-				i++;
-				break;
-			default:
-				fail("No further edges expected!");
-			}
-		}
+		checkEdgeList(e0, e1, e2);
 		// checks if the edges are in the incidenceList of both vertices
-		i = 0;
-		for (Edge e : v0.incidences()) {
-			switch (i) {
-			case 0:
-				assertEquals(e0, e);
-				i++;
-				break;
-			case 1:
-				assertEquals(e0.getReversedEdge(), e);
-				i++;
-				break;
-			case 2:
-				assertEquals(e1.getReversedEdge(), e);
-				i++;
-				break;
-			case 3:
-				assertEquals(e2, e);
-				i++;
-				break;
-			default:
-				fail("No further edges expected!");
-			}
+		checkIncidences(v0, e0, e0.getReversedEdge(), e1.getReversedEdge(), e2);
+		checkIncidences(v1, e1, e2.getReversedEdge());
+	}
+
+	// tests of the method removeSourcec
+	/**
+	 * Removes the sourcec of v0 --&gt v0. This is a composition which means
+	 * that v0 should be deleted as well.
+	 */
+	@Test
+	public void removeSourcecTest0() {
+		DoubleSubNode v0 = graph.createDoubleSubNode();
+		v0.addSourcec(v0);
+		v0.removeSourcec(v0);
+		assertEquals(0, graph.getVCount());
+		assertEquals(0, graph.getECount());
+	}
+	
+	/**
+	 * Removes the sourcec of v0 --&gt v1. This is a composition which means
+	 * that v1 should be deleted as well.
+	 */
+	@Test
+	public void removeSourcecTest1() {
+		DoubleSubNode v0 = graph.createDoubleSubNode();
+		SuperNode v1 = graph.createSuperNode();
+		v1.addSourcec(v0);
+		v1.removeSourcec(v0);
+		assertEquals(1, graph.getVCount());
+		for(Vertex v:graph.vertices()){
+			assertEquals(v0,v);
 		}
-		i = 0;
-		for (Edge e : v1.incidences()) {
-			switch (i) {
-			case 0:
-				assertEquals(e1, e);
-				i++;
-				break;
-			case 1:
-				assertEquals(e2.getReversedEdge(), e);
-				i++;
-				break;
-			default:
-				fail("No further edges expected!");
-			}
-		}
+		assertEquals(0, graph.getECount());
 	}
 
 	// tests of the method addTarget
