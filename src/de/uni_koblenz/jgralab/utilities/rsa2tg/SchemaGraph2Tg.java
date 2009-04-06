@@ -294,9 +294,6 @@ public class SchemaGraph2Tg {
 		for (EdgeClass e : schemaGraph.getEdgeClassVertices()) {
 			System.out.println(e + " " + e.getQualifiedName());
 		}
-		AggregationClass a = schemaGraph.createAggregationClass();
-
-		de.uni_koblenz.jgralab.schema.VertexClass v;
 
 		Schema schema = schemaGraph.getFirstSchema();
 		println(SCHEMA, SPACE, schema.getPackagePrefix(), POINT, schema
