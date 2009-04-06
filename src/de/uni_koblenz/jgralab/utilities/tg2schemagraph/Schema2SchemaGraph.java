@@ -324,7 +324,7 @@ public class Schema2SchemaGraph {
 
 		Package gSubPackage;
 
-		for (de.uni_koblenz.jgralab.schema.Package subPackage : defaultPackage
+		for (de.uni_koblenz.jgralab.schema.Package subPackage : Package
 				.getSubPackages().values()) {
 			gSubPackage = schemaGraph.createPackage();
 			gSubPackage.setQualifiedName(subPackage.getQualifiedName());
