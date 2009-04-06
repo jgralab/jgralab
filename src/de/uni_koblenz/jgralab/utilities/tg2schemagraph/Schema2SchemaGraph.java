@@ -6,7 +6,12 @@ import java.util.Map.Entry;
 
 import de.uni_koblenz.jgralab.WorkInProgress;
 import de.uni_koblenz.jgralab.grumlschema.SchemaGraph;
+import de.uni_koblenz.jgralab.grumlschema.domains.CollectionDomain;
 import de.uni_koblenz.jgralab.grumlschema.domains.Domain;
+import de.uni_koblenz.jgralab.grumlschema.domains.EnumDomain;
+import de.uni_koblenz.jgralab.grumlschema.domains.ListDomain;
+import de.uni_koblenz.jgralab.grumlschema.domains.MapDomain;
+import de.uni_koblenz.jgralab.grumlschema.domains.RecordDomain;
 import de.uni_koblenz.jgralab.grumlschema.impl.SchemaGraphImpl;
 import de.uni_koblenz.jgralab.grumlschema.structure.AggregationClass;
 import de.uni_koblenz.jgralab.grumlschema.structure.Attribute;
@@ -99,6 +104,8 @@ public class Schema2SchemaGraph {
 
 		createEdgeClasses();
 
+		finalizeDomains();
+
 		createSpecializations();
 
 		createAttributes();
@@ -112,6 +119,21 @@ public class Schema2SchemaGraph {
 		tearDown();
 
 		return schemaGraph;
+	}
+
+	private void finalizeDomains() {
+		for (Entry<de.uni_koblenz.jgralab.schema.Domain, Domain> entry : domainMap
+				.entrySet()) {
+			finalizeDomains(entry.getKey(), entry.getValue());
+		}
+	}
+
+	private void finalizeDomains(de.uni_koblenz.jgralab.schema.Domain domain,
+			Domain gDomain) {
+
+		if (domain instanceof de.uni_koblenz.jgralab.schema.RecordDomain) {
+
+		}
 	}
 
 	private void createEdges() {
@@ -343,7 +365,6 @@ public class Schema2SchemaGraph {
 		for (de.uni_koblenz.jgralab.schema.Domain domain : Package.getDomains()
 				.values()) {
 			gDomain = createDomain(domain);
-			domainMap.put(domain, gDomain);
 
 			schemaGraph.createContainsDomain(gPackage, gDomain);
 		}
@@ -367,15 +388,13 @@ public class Schema2SchemaGraph {
 		} else if (domain instanceof de.uni_koblenz.jgralab.schema.StringDomain) {
 			gDomain = schemaGraph.createStringDomain();
 		} else if (domain instanceof de.uni_koblenz.jgralab.schema.RecordDomain) {
-			gDomain = schemaGraph.createRecordDomain();
-		} else if (domain instanceof de.uni_koblenz.jgralab.schema.ListDomain) {
-			gDomain = schemaGraph.createListDomain();
-		} else if (domain instanceof de.uni_koblenz.jgralab.schema.SetDomain) {
-			gDomain = schemaGraph.createSetDomain();
+			gDomain = createRecordDomain((de.uni_koblenz.jgralab.schema.RecordDomain) domain);
+		} else if (domain instanceof de.uni_koblenz.jgralab.schema.CollectionDomain) {
+			gDomain = createCollectionDomain((de.uni_koblenz.jgralab.schema.CollectionDomain) domain);
 		} else if (domain instanceof de.uni_koblenz.jgralab.schema.MapDomain) {
-			gDomain = schemaGraph.createMapDomain();
+			gDomain = createMapDomain((de.uni_koblenz.jgralab.schema.MapDomain) domain);
 		} else if (domain instanceof de.uni_koblenz.jgralab.schema.EnumDomain) {
-			gDomain = schemaGraph.createEnumDomain();
+			gDomain = createEnumDomain((de.uni_koblenz.jgralab.schema.EnumDomain) domain);
 		} else {
 			throw new RuntimeException("FIXME: Unforseen domain occured! "
 					+ domain);
@@ -383,6 +402,68 @@ public class Schema2SchemaGraph {
 
 		assert (gDomain != null);
 		gDomain.setQualifiedName(domain.getQualifiedName());
+
+		domainMap.put(domain, gDomain);
+
+		return gDomain;
+	}
+
+	private MapDomain createMapDomain(
+			de.uni_koblenz.jgralab.schema.MapDomain domain) {
+
+		MapDomain gDomain = schemaGraph.createMapDomain();
+
+		schemaGraph.createHasKeyDomain(gDomain, queryGDomain(domain
+				.getKeyDomain()));
+		schemaGraph.createHasValueDomain(gDomain, queryGDomain(domain
+				.getValueDomain()));
+		return gDomain;
+	}
+
+	private EnumDomain createEnumDomain(
+			de.uni_koblenz.jgralab.schema.EnumDomain domain) {
+
+		EnumDomain gDomain = schemaGraph.createEnumDomain();
+
+		gDomain.setEnumConstants(domain.getConsts());
+		return gDomain;
+	}
+
+	private CollectionDomain createCollectionDomain(
+			de.uni_koblenz.jgralab.schema.CollectionDomain domain) {
+
+		CollectionDomain gDomain = (domain instanceof ListDomain) ? schemaGraph
+				.createListDomain() : schemaGraph.createSetDomain();
+
+		schemaGraph.createHasBaseDomain(gDomain, queryGDomain(domain
+				.getBaseDomain()));
+		return gDomain;
+	}
+
+	private RecordDomain createRecordDomain(
+			de.uni_koblenz.jgralab.schema.RecordDomain domain) {
+
+		RecordDomain gDomain = schemaGraph.createRecordDomain();
+
+		for (Entry<String, de.uni_koblenz.jgralab.schema.Domain> entry : domain
+				.getComponents().entrySet()) {
+
+			// Creates a new hasRecordDomainComponent-edge and sets its name.
+			schemaGraph.createHasRecordDomainComponent(gDomain,
+					queryGDomain(entry.getValue())).setName(entry.getKey());
+		}
+
+		return gDomain;
+	}
+
+	private Domain queryGDomain(de.uni_koblenz.jgralab.schema.Domain domain) {
+
+		Domain gDomain = domainMap.get(domain);
+
+		if (gDomain == null) {
+			gDomain = createDomain(domain);
+		}
+
 		return gDomain;
 	}
 
