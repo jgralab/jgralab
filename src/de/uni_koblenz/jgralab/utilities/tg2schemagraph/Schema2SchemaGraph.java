@@ -206,6 +206,11 @@ public class Schema2SchemaGraph {
 				.entrySet()) {
 			for (de.uni_koblenz.jgralab.schema.AttributedElementClass superClass : entry
 					.getKey().getDirectSuperClasses()) {
+
+				if (superClass.isInternal()) {
+					continue;
+				}
+
 				schemaGraph.createSpecializesVertexClass(entry.getValue(),
 						vertexClassMap.get(superClass));
 			}
@@ -215,6 +220,11 @@ public class Schema2SchemaGraph {
 				.entrySet()) {
 			for (de.uni_koblenz.jgralab.schema.AttributedElementClass superClass : entry
 					.getKey().getDirectSuperClasses()) {
+
+				if (superClass.isInternal()) {
+					continue;
+				}
+
 				schemaGraph.createSpecializesEdgeClass(entry.getValue(),
 						edgeClassMap.get(superClass));
 			}
@@ -269,6 +279,10 @@ public class Schema2SchemaGraph {
 		for (de.uni_koblenz.jgralab.schema.EdgeClass edgeClass : Package
 				.getEdgeClasses().values()) {
 
+			if (edgeClass.isInternal()) {
+				continue;
+			}
+
 			gEdgeClass = createEdgeClass(edgeClass);
 
 			attributedElementClassMap.put(edgeClass, gEdgeClass);
@@ -312,6 +326,10 @@ public class Schema2SchemaGraph {
 		VertexClass gVertexClass;
 		for (de.uni_koblenz.jgralab.schema.VertexClass vertexClass : Package
 				.getVertexClasses().values()) {
+
+			if (vertexClass.isInternal()) {
+				continue;
+			}
 
 			gVertexClass = schemaGraph.createVertexClass();
 			gVertexClass.setIsAbstract(vertexClass.isAbstract());
@@ -466,8 +484,8 @@ public class Schema2SchemaGraph {
 
 		gSchema = schemaGraph.createSchema();
 
-		gSchema.setName(schema.getQualifiedName());
-		gSchema.setPackagePrefix(schema.getQualifiedName());
+		gSchema.setName(schema.getSimpleName());
+		gSchema.setPackagePrefix(schema.getPackageName());
 	}
 
 	private void createGraphClass() {
@@ -476,8 +494,23 @@ public class Schema2SchemaGraph {
 		assert (schema != null);
 		assert (gSchema != null);
 
-		this.graphClass = schema.getDefaultGraphClass();
 		this.gGraphClass = schemaGraph.createGraphClass();
+
+		for (de.uni_koblenz.jgralab.schema.GraphClass graphClass : schema
+				.getGraphClasses().values()) {
+			this.graphClass = graphClass;
+			if (!graphClass.isInternal()) {
+				break;
+			}
+		}
+
+		assert (!graphClass.isInternal()) : "There have to be a GraphClass, which isn't internal!";
+
+		for (de.uni_koblenz.jgralab.schema.GraphClass gc : schema
+				.getGraphClasses().values()) {
+			System.out.println("" + gc.getQualifiedName() + " "
+					+ gc.isInternal());
+		}
 
 		// Is needed to reference to the new AttributedElementClass-objects.
 		attributedElementClassMap.put(graphClass, gGraphClass);
