@@ -106,10 +106,10 @@ public class Rsa2Tg extends DefaultHandler {
 	/**
 	 * Names of XML elements which are completely ignored (including children)
 	 */
-	private Set<String> ignoredElements;
+	private final Set<String> ignoredElements;
 
 	/**
-	 * Counter for ignored state. ignre>0 ==> elements are ingnored, ignore==0
+	 * Counter for ignored state. ignore>0 ==> elements are ingnored, ignore==0
 	 * ==> elements are processed.
 	 */
 	private int ignore;
@@ -952,7 +952,7 @@ public class Rsa2Tg extends DefaultHandler {
 			} else if (name.equals("lowerValue")) {
 				handleLowerValue(atts);
 			} else if (name.equals("upperValue")) {
-				hanleUpperValue(atts);
+				handleUpperValue(atts);
 			} else {
 				throw new SAXException("unexpected element <" + name
 						+ "> of type " + type);
@@ -974,7 +974,7 @@ public class Rsa2Tg extends DefaultHandler {
 		reals.add(supplier);
 	}
 
-	private void hanleUpperValue(Attributes atts) {
+	private void handleUpperValue(Attributes atts) {
 		assert currentAssociationEnd != null;
 		String val = atts.getValue("value");
 		int n = (val == null) ? 0 : val.equals("*") ? Integer.MAX_VALUE
