@@ -104,8 +104,6 @@ public class Schema2SchemaGraph {
 
 		createEdgeClasses();
 
-		finalizeDomains();
-
 		createSpecializations();
 
 		createAttributes();
@@ -119,21 +117,6 @@ public class Schema2SchemaGraph {
 		tearDown();
 
 		return schemaGraph;
-	}
-
-	private void finalizeDomains() {
-		for (Entry<de.uni_koblenz.jgralab.schema.Domain, Domain> entry : domainMap
-				.entrySet()) {
-			finalizeDomains(entry.getKey(), entry.getValue());
-		}
-	}
-
-	private void finalizeDomains(de.uni_koblenz.jgralab.schema.Domain domain,
-			Domain gDomain) {
-
-		if (domain instanceof de.uni_koblenz.jgralab.schema.RecordDomain) {
-
-		}
 	}
 
 	private void createEdges() {
@@ -377,33 +360,39 @@ public class Schema2SchemaGraph {
 
 		Domain gDomain = null;
 
-		if (domain instanceof de.uni_koblenz.jgralab.schema.BooleanDomain) {
-			gDomain = schemaGraph.createBooleanDomain();
-		} else if (domain instanceof de.uni_koblenz.jgralab.schema.IntDomain) {
-			gDomain = schemaGraph.createIntDomain();
-		} else if (domain instanceof de.uni_koblenz.jgralab.schema.LongDomain) {
-			gDomain = schemaGraph.createLongDomain();
-		} else if (domain instanceof de.uni_koblenz.jgralab.schema.DoubleDomain) {
-			gDomain = schemaGraph.createDoubleDomain();
-		} else if (domain instanceof de.uni_koblenz.jgralab.schema.StringDomain) {
-			gDomain = schemaGraph.createStringDomain();
-		} else if (domain instanceof de.uni_koblenz.jgralab.schema.RecordDomain) {
-			gDomain = createRecordDomain((de.uni_koblenz.jgralab.schema.RecordDomain) domain);
-		} else if (domain instanceof de.uni_koblenz.jgralab.schema.CollectionDomain) {
-			gDomain = createCollectionDomain((de.uni_koblenz.jgralab.schema.CollectionDomain) domain);
-		} else if (domain instanceof de.uni_koblenz.jgralab.schema.MapDomain) {
-			gDomain = createMapDomain((de.uni_koblenz.jgralab.schema.MapDomain) domain);
-		} else if (domain instanceof de.uni_koblenz.jgralab.schema.EnumDomain) {
-			gDomain = createEnumDomain((de.uni_koblenz.jgralab.schema.EnumDomain) domain);
+		if (domainMap.containsKey(domain)) {
+			gDomain = domainMap.get(domain);
 		} else {
-			throw new RuntimeException("FIXME: Unforseen domain occured! "
-					+ domain);
+			if (domain instanceof de.uni_koblenz.jgralab.schema.BooleanDomain) {
+
+				gDomain = schemaGraph.createBooleanDomain();
+			} else if (domain instanceof de.uni_koblenz.jgralab.schema.IntDomain) {
+				gDomain = schemaGraph.createIntDomain();
+			} else if (domain instanceof de.uni_koblenz.jgralab.schema.LongDomain) {
+				gDomain = schemaGraph.createLongDomain();
+			} else if (domain instanceof de.uni_koblenz.jgralab.schema.DoubleDomain) {
+				gDomain = schemaGraph.createDoubleDomain();
+			} else if (domain instanceof de.uni_koblenz.jgralab.schema.StringDomain) {
+				gDomain = schemaGraph.createStringDomain();
+			} else if (domain instanceof de.uni_koblenz.jgralab.schema.RecordDomain) {
+				gDomain = createRecordDomain((de.uni_koblenz.jgralab.schema.RecordDomain) domain);
+			} else if (domain instanceof de.uni_koblenz.jgralab.schema.CollectionDomain) {
+				gDomain = createCollectionDomain((de.uni_koblenz.jgralab.schema.CollectionDomain) domain);
+			} else if (domain instanceof de.uni_koblenz.jgralab.schema.MapDomain) {
+				gDomain = createMapDomain((de.uni_koblenz.jgralab.schema.MapDomain) domain);
+			} else if (domain instanceof de.uni_koblenz.jgralab.schema.EnumDomain) {
+				gDomain = createEnumDomain((de.uni_koblenz.jgralab.schema.EnumDomain) domain);
+			} else {
+				throw new RuntimeException("FIXME: Unforseen domain occured! "
+						+ domain);
+			}
+
+			gDomain.setQualifiedName(domain.getQualifiedName());
+
+			domainMap.put(domain, gDomain);
 		}
 
 		assert (gDomain != null);
-		gDomain.setQualifiedName(domain.getQualifiedName());
-
-		domainMap.put(domain, gDomain);
 
 		return gDomain;
 	}
