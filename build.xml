@@ -118,8 +118,8 @@
 	</target>
 	
 	<!-- compile -->
-	<!-- calls targets jgralab, tgschema2java, greql2 and utilities -->
-	<target name="compile" depends="jgralab,tgschema2java,tgschema2java,greql2,utilities,graphvalidator,rsa2tg,generatetestschemas"/>
+	<!-- calls targets jgralab, tgtools, greql2 and utilities -->
+	<target name="compile" depends="jgralab,tgtools,greql2,utilities,graphvalidator,rsa2tg,generatetestschemas"/>
 
 	<!-- jgralab -->
 	<!-- compiles jgralab basic sources -->
@@ -208,20 +208,20 @@
 	   	</ant>
 	</target>
 	
-	<!-- tgschema2java (special utility) -->
-	<!-- compiles tgschema2java sources -->
-	<target name="tgschema2java" depends="jgralab">
+	<!-- tgtools (utils which are needed for schema creation (TgSchema2Java)
+	     and that don't depend on schemas themselves) -->
+	<target name="tgtools" depends="jgralab">
 		<!-- calls target compile in general ant file ${ant}/build.xml -->
 	   	<ant dir="${common.dir}" antfile="build.xml" target="compile">
 	   		<property name="compileincludes" 
-	   			value="**/utilities/tgschema2java/**"/>
+	   			value="**/utilities/tgschema2java/** **/utilities/tg2dot/** **/utilities/tg2whatever/**"/>
 	   	</ant>
 	</target>
 	
 	
 	<!-- greql2 -->
 	<!-- generates greql2 schmema sources and parser sources, compiles greql2 sources -->
-	<target name="citymap" depends="tgschema2java">
+	<target name="citymap" depends="tgtools">
 		<!-- calls target generateschema in general ant file ${ant}/build.xml -->
 		<ant dir="${common.dir}" antfile="build.xml" target="generateschema">
 			<property name="subprojectname" value = "jgralab/citymap"/>			
@@ -235,7 +235,7 @@
 	
 	<!-- greql2 -->
 	<!-- generates greql2 schmema sources and parser sources, compiles greql2 sources -->
-	<target name="greql2sources" depends="tgschema2java">
+	<target name="greql2sources" depends="tgtools">
 		<!-- calls target generateschema in general ant file ${ant}/build.xml -->
 	   	<ant dir="${common.dir}" antfile="build.xml" target="generateschema">
 			<property name="subprojectname" value = "greql2"/>			
@@ -262,9 +262,7 @@
 	   	</ant>
 	</target>
 	
-	<!-- utilities -->
-	<!-- compiles utility sources -->
-	<target name="grumlsources" depends="xmlrpc,tgschema2java">
+	<target name="grumlsources" depends="xmlrpc,tgtools">
 		<!-- calls target generateschema in general ant file ${ant}/build.xml -->
 	   	<ant dir="${common.dir}" antfile="build.xml" target="generateschema">
 			<property name="subprojectname" value = "utilities/tg2schemagraph/"/>	
@@ -279,7 +277,9 @@
 			<property name="src.dir" value="${src.dir}/de/uni_koblenz/${projectname}/grumlschema"/>
 		</ant>
 	</target>
-	
+
+	<!-- utilities -->
+	<!-- compiles utility sources -->	
 	<target name="utilities" depends="grumlsourcesCompile">
 		<!-- calls target compile in general ant file ${ant}/build.xml -->
 	   	<ant dir="${common.dir}" antfile="build.xml" target="compile">
@@ -287,7 +287,8 @@
 	   		<!--	
 	   		-->
 	   		<property name="additional.pathelementlocation" value="${classes.dir}/de/uni_koblenz/jgralab/grumlschema/**"/>
-	   		<property name="compileexcludes" value="tgschema2java/** rsa2tg/**"/>	   		
+            <!-- Those have been compiled before -->
+	   		<property name="compileexcludes" value="tgschema2java/** rsa2tg/** tg2dot/** tg2whatever/**"/>	   		
 	   	</ant>
 	</target>
 	

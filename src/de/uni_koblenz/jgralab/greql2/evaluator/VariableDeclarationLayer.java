@@ -42,9 +42,9 @@ import de.uni_koblenz.jgralab.greql2.schema.Declaration;
  * iterate(). The value of each variable is stored as temporary attribute at the
  * variable-vertex, so the evaluate()-methods don't need to know if the
  * expression is a variable or some other already evaluated expression.
- * 
+ *
  * @author ist@uni-koblenz.de
- * 
+ *
  */
 public class VariableDeclarationLayer implements
 		Comparable<VariableDeclarationLayer> {
@@ -77,7 +77,7 @@ public class VariableDeclarationLayer implements
 	/**
 	 * Creates a new {@link VariableDeclarationLayer} for iterating over all
 	 * variable combinations that fulfil the constraints in constraintList.
-	 * 
+	 *
 	 * @param constraintList
 	 *            a list of constraints
 	 * @param logger
@@ -97,7 +97,7 @@ public class VariableDeclarationLayer implements
 
 	/**
 	 * Adds the given VariableDeclaration to the DeclarationLayer
-	 * 
+	 *
 	 * @return true if the VariableDeclaration was added successfull, false
 	 *         otherwise
 	 */
@@ -114,7 +114,7 @@ public class VariableDeclarationLayer implements
 	 * sets the next possible combination of values to the variable-vertices. If
 	 * it is called the first time, it returns true if the first possible
 	 * combination is valid
-	 * 
+	 *
 	 * @return true if another possible combination was found, false otherwise
 	 */
 	public boolean iterate(BooleanGraphMarker subgraph)
@@ -145,7 +145,7 @@ public class VariableDeclarationLayer implements
 
 	/**
 	 * Gets the first possible Variable Combination
-	 * 
+	 *
 	 * @param subgraph
 	 * @return true if a first combination exists, false otherwise
 	 * @throws EvaluateException
@@ -154,17 +154,16 @@ public class VariableDeclarationLayer implements
 			throws EvaluateException {
 		for (int i = 0; i < variableDeclarations.size(); i++) {
 			VariableDeclaration currDecl = variableDeclarations.get(i);
-			if (!currDecl.iterate())
+			if (!currDecl.iterate()) {
 				return false;
+			}
 		}
 		return true;
 	}
-	
-
 
 	/**
 	 * Gets the next possible variable combination
-	 * 
+	 *
 	 * @param subgraphMarker
 	 * @return true if a next combination exists, false otherwise
 	 * @throws EvaluateException
@@ -186,33 +185,32 @@ public class VariableDeclarationLayer implements
 
 	/**
 	 * Checks if the current variable combination fullfills the constraints.
-	 * 
+	 *
 	 * @param subgraphMarker
 	 * @return true if the combination fullfills the constraint, false otherwise
 	 * @throws EvaluateException
 	 */
 	private boolean fullfillsConstraints(BooleanGraphMarker subgraphMarker)
 			throws EvaluateException {
-		if ((constraintList == null) || (constraintList.isEmpty()))
+		if ((constraintList == null) || (constraintList.isEmpty())) {
 			return true;
+		}
 		for (VertexEvaluator currentEval : constraintList) {
 			JValue tempResult = currentEval.getResult(subgraphMarker);
 			try {
 				if (tempResult.isBoolean()) {
-					if (tempResult.toBoolean() != Boolean.TRUE)  {
+					if (tempResult.toBoolean() != Boolean.TRUE) {
 						return false;
-					}	
+					}
 				} else {
-					throw new WrongResultTypeException(currentEval.getClass()
-							.getSimpleName(), "Boolean",
-							tempResult.getClass().getName(), currentEval
-									.createPossibleSourcePositions());
+					throw new WrongResultTypeException(currentEval.getVertex(),
+							"Boolean", tempResult.getClass().getSimpleName(),
+							currentEval.createPossibleSourcePositions());
 				}
 			} catch (JValueInvalidTypeException ex) {
-				throw new WrongResultTypeException(currentEval.getClass()
-						.getSimpleName(), "Boolean",
-						tempResult.getClass().getName(), currentEval
-								.createPossibleSourcePositions());
+				throw new WrongResultTypeException(currentEval.getVertex(),
+						"Boolean", tempResult.getClass().getSimpleName(),
+						currentEval.createPossibleSourcePositions());
 			}
 		}
 		return true;
@@ -220,10 +218,12 @@ public class VariableDeclarationLayer implements
 
 	public int getId() {
 		if (identifier == 0) {
-			for (VertexEvaluator currentEval : constraintList)
+			for (VertexEvaluator currentEval : constraintList) {
 				identifier += currentEval.getVertex().getId();
-			for (VariableDeclaration currDecl : variableDeclarations)
+			}
+			for (VariableDeclaration currDecl : variableDeclarations) {
 				identifier += currDecl.hashCode();
+			}
 		}
 		return identifier;
 	}

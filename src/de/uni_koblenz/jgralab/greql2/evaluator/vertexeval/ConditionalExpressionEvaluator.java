@@ -30,15 +30,16 @@ import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
 import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.GraphSize;
 import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.VertexCosts;
 import de.uni_koblenz.jgralab.greql2.exception.EvaluateException;
+import de.uni_koblenz.jgralab.greql2.exception.WrongResultTypeException;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
 import de.uni_koblenz.jgralab.greql2.schema.ConditionalExpression;
 import de.uni_koblenz.jgralab.greql2.schema.Expression;
 
 /**
  * Evaluates a ConditionalExpression vertex in the GReQL-2 Syntaxgraph
- * 
+ *
  * @author ist@uni-koblenz.de
- * 
+ *
  */
 public class ConditionalExpressionEvaluator extends VertexEvaluator {
 
@@ -57,7 +58,7 @@ public class ConditionalExpressionEvaluator extends VertexEvaluator {
 
 	/**
 	 * Creates a new ConditionExpressionEvaluator for the given vertex
-	 * 
+	 *
 	 * @param eval
 	 *            the GreqlEvaluator instance this VertexEvaluator belong to
 	 * @param vertex
@@ -74,8 +75,8 @@ public class ConditionalExpressionEvaluator extends VertexEvaluator {
 	 */
 	@Override
 	public JValue evaluate() throws EvaluateException {
-		Expression condition = (Expression) vertex.getFirstIsConditionOf()
-				.getAlpha();
+		Expression condition = (Expression) vertex.getFirstIsConditionOf(
+				EdgeDirection.IN).getAlpha();
 		VertexEvaluator conditionEvaluator = greqlEvaluator
 				.getVertexEvaluatorGraphMarker().getMark(condition);
 		JValue conditionResult = conditionEvaluator.getResult(subgraph);
@@ -92,8 +93,10 @@ public class ConditionalExpressionEvaluator extends VertexEvaluator {
 						.getFirstIsNullExprOf(EdgeDirection.IN).getAlpha();
 			}
 		} else {
-			expressionToEvaluate = (Expression) vertex.getFirstIsNullExprOf(
-					EdgeDirection.IN).getAlpha();
+			throw new WrongResultTypeException(vertex, "Boolean",
+					conditionResult.getClass().getSimpleName(), null);
+			// expressionToEvaluate = (Expression) vertex.getFirstIsNullExprOf(
+			// EdgeDirection.IN).getAlpha();
 		}
 		VertexEvaluator exprEvaluator = greqlEvaluator
 				.getVertexEvaluatorGraphMarker().getMark(expressionToEvaluate);
