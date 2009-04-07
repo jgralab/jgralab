@@ -311,8 +311,12 @@ public class JValueDefaultVisitor implements JValueVisitor {
 			} else {
 				inter();
 			}
-			k.accept(this);
-			b.get(k).accept(this);
+			JValueTuple tup = new JValueTuple(b.size());
+			tup.add(k);
+			tup.add(b.get(k));
+			tup.accept(this);
+			// k.accept(this);
+			// b.get(k).accept(this);
 		}
 		post();
 	}

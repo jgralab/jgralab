@@ -24,14 +24,14 @@
 
 
 ;;; Version:
-;; <2009-02-05 Thu 06:42>
+;; <2009-04-07 Tue 13:33>
 
 ;;; Code:
 
 (defvar greql-keywords
   '("E" "V" "as" "bag" "eSubgraph" "end" "exists!" "exists" "forall"
     "from" "in" "let" "list" "path" "pathSystem" "rec" "report"
-    "reportBag" "reportSet" "set" "store" "tup" "using" "vSubgraph"
+    "reportBag" "reportSet" "reportMap" "set" "store" "tup" "using" "vSubgraph"
     "where" "with")
   "GReQL keywords that should be completed and highlighted.")
 (put 'greql-keywords 'risky-local-variable-p t)
