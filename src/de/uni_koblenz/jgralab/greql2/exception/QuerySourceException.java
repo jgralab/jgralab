@@ -32,9 +32,9 @@ import de.uni_koblenz.jgralab.greql2.schema.SourcePosition;
 /**
  * This is the base class for all exceptions that refeer to the querysource with
  * offset/length pairs
- * 
+ *
  * @author ist@uni-koblenz.de
- * 
+ *
  */
 public class QuerySourceException extends EvaluateException {
 
@@ -56,7 +56,7 @@ public class QuerySourceException extends EvaluateException {
 	private String errorMessage;
 
 	/**
-	 * 
+	 *
 	 * @param elementName
 	 *            the name of the element that caused the error
 	 * @param sourcePositions
@@ -67,14 +67,15 @@ public class QuerySourceException extends EvaluateException {
 		super(errorMessage + elementName, cause);
 		this.elementName = elementName;
 		this.errorMessage = errorMessage;
-		if (sourcePositions != null)
+		if (sourcePositions != null) {
 			positions = sourcePositions;
-		else
+		} else {
 			positions = new ArrayList<SourcePosition>();
+		}
 	}
 
 	/**
-	 * 
+	 *
 	 * @param elementName
 	 *            the name of the element that caused the error
 	 * @param sourcePosition
@@ -90,7 +91,7 @@ public class QuerySourceException extends EvaluateException {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param elementName
 	 *            the name of the element that caused the error
 	 * @param sourcePositions
@@ -102,7 +103,7 @@ public class QuerySourceException extends EvaluateException {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param elementName
 	 *            the name of the element that caused the error
 	 * @param sourcePosition
@@ -119,11 +120,12 @@ public class QuerySourceException extends EvaluateException {
 	@Override
 	public String getMessage() {
 		if (positions.size() > 0) {
-			return errorMessage + elementName + " at position ("
+			return errorMessage + " " + elementName + " at position ("
 					+ positions.get(0).offset + ", " + positions.get(0).length
 					+ ")";
-		} else
+		} else {
 			return errorMessage + elementName + " at unknown position in query";
+		}
 	}
 
 	/**
@@ -137,8 +139,9 @@ public class QuerySourceException extends EvaluateException {
 	 * @return the position where the undefined varialbe is used
 	 */
 	public int getOffset() {
-		if (positions.size() < 0)
+		if (positions.size() < 0) {
 			return 0;
+		}
 		return positions.get(0).offset;
 	}
 
@@ -146,8 +149,9 @@ public class QuerySourceException extends EvaluateException {
 	 * @return the length of the usage of the undefined variable
 	 */
 	public int getLength() {
-		if (positions.size() < 0)
+		if (positions.size() < 0) {
 			return 0;
+		}
 		return positions.get(0).length;
 	}
 
