@@ -2,6 +2,7 @@ package de.uni_koblenz.jgralabtest.coretest;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
@@ -6012,6 +6013,69 @@ public class VertexTest {
 	// tests of the method void delete(Vertex v);
 	// (tested in VertexList Test)
 
+	/**
+	 * Deleting v3 in v1<>---e1----v2<>-----e2-----v3
+	 */
+	@Test
+	public void deleteTest0() {
+		DoubleSubNode v1 = graph.createDoubleSubNode();
+		DoubleSubNode v2 = graph.createDoubleSubNode();
+		DoubleSubNode v3 = graph.createDoubleSubNode();
+		SubLink e1 = graph.createSubLink(v1, v2);
+		graph.createSubLink(v2, v3);
+		v3.delete();
+		checkEdgeList(e1);
+		assertEquals(2, graph.getVCount());
+		boolean first = true;
+		for (Vertex v : graph.vertices()) {
+			if (first) {
+				assertEquals(v1, v);
+				first = false;
+			} else {
+				assertEquals(v2, v);
+			}
+		}
+	}
+
+	/**
+	 * Deleting v2 in v1<>---e1----v2<>-----e2-----v3
+	 */
+	@Test
+	public void deleteTest1() {
+		DoubleSubNode v1 = graph.createDoubleSubNode();
+		DoubleSubNode v2 = graph.createDoubleSubNode();
+		DoubleSubNode v3 = graph.createDoubleSubNode();
+		graph.createSubLink(v1, v2);
+		graph.createSubLink(v2, v3);
+		v2.delete();
+		assertEquals(0, graph.getECount());
+		assertEquals(1, graph.getVCount());
+		boolean first = true;
+		for (Vertex v : graph.vertices()) {
+			if (first) {
+				assertEquals(v1, v);
+				first = false;
+			} else {
+				fail("No further vertices expected!");
+			}
+		}
+	}
+
+	/**
+	 * Deleting v2 in v1<>---e1----v2<>-----e2-----v3
+	 */
+	@Test
+	public void deleteTest2() {
+		DoubleSubNode v1 = graph.createDoubleSubNode();
+		DoubleSubNode v2 = graph.createDoubleSubNode();
+		DoubleSubNode v3 = graph.createDoubleSubNode();
+		graph.createSubLink(v1, v2);
+		graph.createSubLink(v2, v3);
+		v1.delete();
+		assertEquals(0, graph.getECount());
+		assertEquals(0, graph.getVCount());
+	}
+
 	// tests of the method Iterable<Edge> incidences();
 	// (tested in VertexList Test except failfast)
 
@@ -6355,7 +6419,7 @@ public class VertexTest {
 		Iterator<Edge> it = v0.incidences(EdgeDirection.IN).iterator();
 		e0.delete();
 		it.hasNext();
-		it.next();// TODO
+		it.next();
 	}
 
 	/**
@@ -6371,7 +6435,7 @@ public class VertexTest {
 		Iterator<Edge> it = v0.incidences(EdgeDirection.IN).iterator();
 		e0.setAlpha(v1);
 		it.hasNext();
-		it.next();// TODO
+		it.next();
 	}
 
 	/**
@@ -6387,7 +6451,7 @@ public class VertexTest {
 		Iterator<Edge> it = v0.incidences(EdgeDirection.IN).iterator();
 		graph.createLink((AbstractSuperNode) v0, (SuperNode) v1);
 		it.hasNext();
-		it.next();// TODO
+		it.next();
 	}
 
 	/**
@@ -6403,7 +6467,7 @@ public class VertexTest {
 		Iterator<Edge> it = v0.incidences(EdgeDirection.OUT).iterator();
 		e0.delete();
 		it.hasNext();
-		it.next();// TODO
+		it.next();
 	}
 
 	/**
@@ -6419,7 +6483,7 @@ public class VertexTest {
 		Iterator<Edge> it = v0.incidences(EdgeDirection.OUT).iterator();
 		e0.setAlpha(v0);
 		it.hasNext();
-		it.next();// TODO
+		it.next();
 	}
 
 	/**
@@ -6435,7 +6499,7 @@ public class VertexTest {
 		Iterator<Edge> it = v0.incidences(EdgeDirection.OUT).iterator();
 		graph.createLink((AbstractSuperNode) v0, (SuperNode) v1);
 		it.hasNext();
-		it.next();// TODO
+		it.next();
 	}
 
 	// tests of the method Iterable<Edge> incidences(EdgeClass eclass);
@@ -8119,21 +8183,18 @@ public class VertexTest {
 
 	// tests of the method removeSourcec
 	/**
-	 * Removes the sourcec of v0 --&gt v0. This is a composition which means
-	 * that v0 should be deleted as well.
+	 * Removes the sourcec of v0 --&gt v0.
 	 */
 	@Test
 	public void removeSourcecTest0() {
 		DoubleSubNode v0 = graph.createDoubleSubNode();
 		v0.addSourcec(v0);
 		v0.removeSourcec(v0);
-		assertEquals(0, graph.getVCount());
 		assertEquals(0, graph.getECount());
 	}
-	
+
 	/**
-	 * Removes the sourcec of v0 --&gt v1. This is a composition which means
-	 * that v1 should be deleted as well.
+	 * Removes the sourcec of v0 --&gt v1.
 	 */
 	@Test
 	public void removeSourcecTest1() {
@@ -8141,11 +8202,24 @@ public class VertexTest {
 		SuperNode v1 = graph.createSuperNode();
 		v1.addSourcec(v0);
 		v1.removeSourcec(v0);
-		assertEquals(1, graph.getVCount());
-		for(Vertex v:graph.vertices()){
-			assertEquals(v0,v);
-		}
 		assertEquals(0, graph.getECount());
+	}
+
+	// tests of the method getSourcecList
+	@Test
+	public void getSourcecListTest0() {
+		DoubleSubNode v0 = graph.createDoubleSubNode();
+		SuperNode v1 = graph.createSuperNode();
+		v0.addSourcec(v0);
+		v0.addSourcec(v0);
+		v1.addSourcec(v0);
+		List<? extends SuperNode> nodes = v0.getSourcecList();
+		assertEquals(2, nodes.size());
+		assertEquals(v0, nodes.get(0));
+		assertEquals(v0, nodes.get(1));
+		nodes = v1.getSourcecList();
+		assertEquals(1, nodes.size());
+		assertEquals(v0, nodes.get(0));
 	}
 
 	// tests of the method addTarget
@@ -8226,6 +8300,50 @@ public class VertexTest {
 		}
 	}
 
+	// tests of the method removeTarget
+	@Test
+	public void removeTargetTest0() {
+		DoubleSubNode v0 = graph.createDoubleSubNode();
+		DoubleSubNode v1 = graph.createDoubleSubNode();
+		Link e0 = v0.addTarget(v0);
+		v0.addTarget(v1);
+		Link e2 = v1.addTarget(v1);
+		v0.addTarget(v1);
+		// remove all edges v1 --> v0
+		v0.removeTarget(v1);
+		checkEdgeList(e0, e2);
+		checkIncidences(v0, e0, e0.getReversedEdge());
+		checkIncidences(v1, e2, e2.getReversedEdge());
+		// remove all edges v0 --> v0
+		v0.removeTarget(v0);
+		checkEdgeList(e2);
+		checkIncidences(v0);
+		checkIncidences(v1, e2, e2.getReversedEdge());
+		// remove all edges v1 --> v1
+		v1.removeTarget(v1);
+		checkEdgeList();
+		checkIncidences(v0);
+		checkIncidences(v1);
+	}
+
+	// tests of the method getTargetList
+	@Test
+	public void getTargetListTest0() {
+		DoubleSubNode v0 = graph.createDoubleSubNode();
+		SuperNode v1 = graph.createSuperNode();
+		SubNode v2 = graph.createSubNode();
+		v0.addTarget(v0);
+		v2.addTarget(v0);
+		v0.addTarget(v1);
+		List<? extends SuperNode> nodes = v0.getTargetList();
+		assertEquals(2, nodes.size());
+		assertEquals(v0, nodes.get(0));
+		assertEquals(v1, nodes.get(1));
+		nodes = v2.getTargetList();
+		assertEquals(1, nodes.size());
+		assertEquals(v0, nodes.get(0));
+	}
+
 	// tests of the method addTargetb
 	@Test
 	public void addTargetbTest0() {
@@ -8302,6 +8420,50 @@ public class VertexTest {
 				fail("No further edges expected!");
 			}
 		}
+	}
+
+	// tests of the method removeTargetb
+	@Test
+	public void removeTargetbTest0() {
+		DoubleSubNode v0 = graph.createDoubleSubNode();
+		DoubleSubNode v1 = graph.createDoubleSubNode();
+		LinkBack e0 = v0.addTargetb(v0);
+		v0.addTargetb(v1);
+		LinkBack e2 = v1.addTargetb(v1);
+		v0.addTargetb(v1);
+		// remove all edges v1 --> v0
+		v0.removeTargetb(v1);
+		checkEdgeList(e0, e2);
+		checkIncidences(v0, e0, e0.getReversedEdge());
+		checkIncidences(v1, e2, e2.getReversedEdge());
+		// remove all edges v0 --> v0
+		v0.removeTargetb(v0);
+		checkEdgeList(e2);
+		checkIncidences(v0);
+		checkIncidences(v1, e2, e2.getReversedEdge());
+		// remove all edges v1 --> v1
+		v1.removeTargetb(v1);
+		checkEdgeList();
+		checkIncidences(v0);
+		checkIncidences(v1);
+	}
+
+	// tests of the method getTargetbList
+	@Test
+	public void getTargetbListTest0() {
+		DoubleSubNode v0 = graph.createDoubleSubNode();
+		SuperNode v1 = graph.createSuperNode();
+		SubNode v2 = graph.createSubNode();
+		v0.addTargetb(v0);
+		v0.addTargetb(v2);
+		v1.addTargetb(v0);
+		List<? extends AbstractSuperNode> nodes = v0.getTargetbList();
+		assertEquals(2, nodes.size());
+		assertEquals(v0, nodes.get(0));
+		assertEquals(v2, nodes.get(1));
+		nodes = v1.getTargetbList();
+		assertEquals(1, nodes.size());
+		assertEquals(v0, nodes.get(0));
 	}
 
 	// tests of the method addTargetc
@@ -8382,4 +8544,196 @@ public class VertexTest {
 		}
 	}
 
+	// tests of the method removeTargetc
+	@Test
+	public void removeTargetcTest0() {
+		DoubleSubNode v0 = graph.createDoubleSubNode();
+		DoubleSubNode v1 = graph.createDoubleSubNode();
+		SubLink e0 = v0.addTargetc(v0);
+		v0.addTargetc(v1);
+		SubLink e2 = v1.addTargetc(v1);
+		v0.addTargetc(v1);
+		// remove all edges v1 --> v0
+		v0.removeTargetc(v1);
+		checkEdgeList(e0, e2);
+		checkIncidences(v0, e0, e0.getReversedEdge());
+		checkIncidences(v1, e2, e2.getReversedEdge());
+		// remove all edges v0 --> v0
+		v0.removeTargetc(v0);
+		checkEdgeList(e2);
+		checkIncidences(v0);
+		checkIncidences(v1, e2, e2.getReversedEdge());
+		// remove all edges v1 --> v1
+		v1.removeTargetc(v1);
+		checkEdgeList();
+		checkIncidences(v0);
+		checkIncidences(v1);
+	}
+
+	// tests of the method getTargetcList
+	@Test
+	public void getTargetcListTest0() {
+		DoubleSubNode v0 = graph.createDoubleSubNode();
+		SuperNode v1 = graph.createSuperNode();
+		v0.addTargetc(v0);
+		v0.addTargetc(v1);
+		List<? extends SuperNode> nodes = v0.getTargetcList();
+		assertEquals(2, nodes.size());
+		assertEquals(v0, nodes.get(0));
+		assertEquals(v1, nodes.get(1));
+	}
+
+	// tests of the method getNextAbstractSuperNode
+	@Test
+	public void getNextAbstractSuperNodeTest0() {
+		DoubleSubNode v0 = graph.createDoubleSubNode();
+		graph.createSuperNode();
+		SubNode v2 = graph.createSubNode();
+		graph.createSuperNode();
+		DoubleSubNode v4 = graph.createDoubleSubNode();
+		DoubleSubNode v5 = graph.createDoubleSubNode();
+		assertEquals(v2, v0.getNextAbstractSuperNode());
+		assertEquals(v4, v2.getNextAbstractSuperNode());
+		assertEquals(v5, v4.getNextAbstractSuperNode());
+		assertNull(v5.getNextAbstractSuperNode());
+	}
+
+	// tests of the method getNextSubNode
+	@Test
+	public void getNextSubNodeTest0() {
+		DoubleSubNode v0 = graph.createDoubleSubNode();
+		graph.createSuperNode();
+		SubNode v2 = graph.createSubNode();
+		graph.createSuperNode();
+		DoubleSubNode v4 = graph.createDoubleSubNode();
+		DoubleSubNode v5 = graph.createDoubleSubNode();
+		assertEquals(v2, v0.getNextSubNode());
+		assertEquals(v4, v2.getNextSubNode());
+		assertEquals(v5, v4.getNextSubNode());
+		assertNull(v5.getNextSubNode());
+	}
+
+	// tests of the method getNextSuperNode
+	@Test
+	public void getNextSuperNodeTest0() {
+		SuperNode v0 = graph.createSuperNode();
+		graph.createSubNode();
+		SuperNode v2 = graph.createSuperNode();
+		graph.createSubNode();
+		DoubleSubNode v4 = graph.createDoubleSubNode();
+		DoubleSubNode v5 = graph.createDoubleSubNode();
+		assertEquals(v2, v0.getNextSuperNode());
+		assertEquals(v4, v2.getNextSuperNode());
+		assertEquals(v5, v4.getNextSuperNode());
+		assertNull(v5.getNextSuperNode());
+	}
+
+	// tests of the method getNextDoubleSubNode
+	@Test
+	public void getNextDoubleSubNodeTest0() {
+		DoubleSubNode v0 = graph.createDoubleSubNode();
+		graph.createSubNode();
+		DoubleSubNode v2 = graph.createDoubleSubNode();
+		graph.createSuperNode();
+		DoubleSubNode v4 = graph.createDoubleSubNode();
+		DoubleSubNode v5 = graph.createDoubleSubNode();
+		assertEquals(v2, v0.getNextDoubleSubNode());
+		assertEquals(v4, v2.getNextDoubleSubNode());
+		assertEquals(v5, v4.getNextDoubleSubNode());
+		assertNull(v5.getNextDoubleSubNode());
+	}
+
+	// tests of the method getFirstLink
+	@Test
+	public void getFirstLinkTest0() {
+		DoubleSubNode v0 = graph.createDoubleSubNode();
+		DoubleSubNode v1 = graph.createDoubleSubNode();
+		graph.createLinkBack(v0, v1);
+		SubLink e1 = graph.createSubLink(v0, v0);
+		Link e2 = graph.createLink(v0, v1);
+		graph.createSubLink(v1, v1);
+		assertEquals(e1, v0.getFirstLink());
+		assertEquals(e2.getReversedEdge(), v1.getFirstLink());
+	}
+
+	// tests of the method getFirstLink(EdgeDirection)
+	@Test
+	public void getFirstLinkEdgeDirectionTest0() {
+		DoubleSubNode v0 = graph.createDoubleSubNode();
+		DoubleSubNode v1 = graph.createDoubleSubNode();
+		graph.createLinkBack(v0, v1);
+		SubLink e1 = graph.createSubLink(v0, v0);
+		Link e2 = graph.createLink(v0, v1);
+		SubLink e3 = graph.createSubLink(v1, v1);
+		assertEquals(e1, v0.getFirstLink(EdgeDirection.INOUT));
+		assertEquals(e1, v0.getFirstLink(EdgeDirection.OUT));
+		assertEquals(e1.getReversedEdge(), v0.getFirstLink(EdgeDirection.IN));
+		assertEquals(e2.getReversedEdge(), v1.getFirstLink(EdgeDirection.INOUT));
+		assertEquals(e3, v1.getFirstLink(EdgeDirection.OUT));
+		assertEquals(e2.getReversedEdge(), v1.getFirstLink(EdgeDirection.IN));
+	}
+
+	// tests of the method getFirstLinkBack
+	@Test
+	public void getFirstLinkBackTest0() {
+		DoubleSubNode v0 = graph.createDoubleSubNode();
+		DoubleSubNode v1 = graph.createDoubleSubNode();
+		graph.createLink(v0, v1);
+		LinkBack e1 = graph.createLinkBack(v0, v0);
+		LinkBack e2 = graph.createLinkBack(v0, v1);
+		graph.createLinkBack(v1, v1);
+		assertEquals(e1, v0.getFirstLinkBack());
+		assertEquals(e2.getReversedEdge(), v1.getFirstLinkBack());
+	}
+
+	// tests of the method getFirstLinkBack(EdgeDirection)
+	@Test
+	public void getFirstLinkBackEdgeDirectionTest0() {
+		DoubleSubNode v0 = graph.createDoubleSubNode();
+		DoubleSubNode v1 = graph.createDoubleSubNode();
+		graph.createLink(v0, v1);
+		LinkBack e1 = graph.createLinkBack(v0, v0);
+		LinkBack e2 = graph.createLinkBack(v0, v1);
+		LinkBack e3 = graph.createLinkBack(v1, v1);
+		assertEquals(e1, v0.getFirstLinkBack(EdgeDirection.INOUT));
+		assertEquals(e1, v0.getFirstLinkBack(EdgeDirection.OUT));
+		assertEquals(e1.getReversedEdge(), v0
+				.getFirstLinkBack(EdgeDirection.IN));
+		assertEquals(e2.getReversedEdge(), v1
+				.getFirstLinkBack(EdgeDirection.INOUT));
+		assertEquals(e3, v1.getFirstLinkBack(EdgeDirection.OUT));
+		assertEquals(e2.getReversedEdge(), v1
+				.getFirstLinkBack(EdgeDirection.IN));
+	}
+
+	// tests of the method getFirstSubLink
+	@Test
+	public void getFirstSubLinkTest0() {
+		DoubleSubNode v0 = graph.createDoubleSubNode();
+		DoubleSubNode v1 = graph.createDoubleSubNode();
+		graph.createLink(v0, v1);
+		SubLink e1 = graph.createSubLink(v0, v0);
+		SubLink e2 = graph.createSubLink(v0, v1);
+		graph.createSubLink(v1, v1);
+		assertEquals(e1, v0.getFirstSubLink());
+		assertEquals(e2.getReversedEdge(), v1.getFirstSubLink());
+	}
+
+	// tests of the method getFirstSubLink(EdgeDirection)
+	@Test
+	public void getFirstSubLinkEdgeDirectionTest0() {
+		DoubleSubNode v0 = graph.createDoubleSubNode();
+		DoubleSubNode v1 = graph.createDoubleSubNode();
+		graph.createLink(v0, v1);
+		SubLink e1 = graph.createSubLink(v0, v0);
+		SubLink e2 = graph.createSubLink(v0, v1);
+		SubLink e3 = graph.createSubLink(v1, v1);
+		assertEquals(e1, v0.getFirstSubLink(EdgeDirection.INOUT));
+		assertEquals(e1, v0.getFirstSubLink(EdgeDirection.OUT));
+		assertEquals(e1.getReversedEdge(), v0.getFirstSubLink(EdgeDirection.IN));
+		assertEquals(e2.getReversedEdge(), v1
+				.getFirstSubLink(EdgeDirection.INOUT));
+		assertEquals(e3, v1.getFirstSubLink(EdgeDirection.OUT));
+		assertEquals(e2.getReversedEdge(), v1.getFirstSubLink(EdgeDirection.IN));
+	}
 }
