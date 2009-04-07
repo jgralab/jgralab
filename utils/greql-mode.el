@@ -24,7 +24,7 @@
 
 
 ;;; Version:
-;; <2009-04-07 Tue 13:33>
+;; <2009-04-07 Tue 16:58>
 
 ;;; Code:
 
@@ -32,7 +32,7 @@
   '("E" "V" "as" "bag" "eSubgraph" "end" "exists!" "exists" "forall"
     "from" "in" "let" "list" "path" "pathSystem" "rec" "report"
     "reportBag" "reportSet" "reportMap" "set" "store" "tup" "using" "vSubgraph"
-    "where" "with")
+    "where" "with" "thisVertex")
   "GReQL keywords that should be completed and highlighted.")
 (put 'greql-keywords 'risky-local-variable-p t)
 
@@ -274,14 +274,20 @@ queries are evaluated.  Set it with `greql-set-graph'.")
   "Complete word at point somehow intelligently."
   (interactive)
   (cond
-   ((greql-vertex-set-expression-p) (greql-complete-vertexclass))
+   ;; Complete vertex classes
+   ((or (greql-vertex-set-expression-p)
+        (greql-start-or-goal-restriction-p))
+    (greql-complete-vertexclass))
+   ;; Complete edge classes
    ((or (greql-edge-set-expression-p)
         (greql-edge-restriction-p))
     (greql-complete-edgeclass))
+   ;; complete attributes
    ((greql-variable-p)
     (let* ((vartypes (greql-variable-types))
            (attrs (greql-attributes vartypes)))
       (greql-complete-1 attrs "[.]")))
+   ;; complete keywords
    (t (greql-complete-keyword-or-function))))
 
 (defun greql-complete-vertexclass ()
@@ -327,11 +333,14 @@ queries are evaluated.  Set it with `greql-set-graph'.")
 (defun greql-vertex-set-expression-p ()
   (looking-back "V{[[:word:]._, ]*"))
 
+(defun greql-start-or-goal-restriction-p ()
+  (looking-back "[^-VE>]{[[:word:]._, ]*"))
+
 (defun greql-edge-set-expression-p ()
   (looking-back "E{[[:word:]._, ]*"))
 
 (defun greql-edge-restriction-p ()
-  (looking-back "[<]?--[>]?{[[:word:]._, ]*"))
+  (looking-back "\\(<--\\|-->\\|<>--\\|--<>\\)[ ]*{[[:word:]._, ]*"))
 
 (defun greql-variable-p ()
   (looking-back "[^{][[:word:]]+[.][[:word:]]*"))
