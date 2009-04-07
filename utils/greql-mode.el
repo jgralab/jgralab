@@ -24,15 +24,15 @@
 
 
 ;;; Version:
-;; <2009-04-07 Tue 16:58>
+;; <2009-04-07 Tue 21:52>
 
 ;;; Code:
 
 (defvar greql-keywords
   '("E" "V" "as" "bag" "eSubgraph" "end" "exists!" "exists" "forall"
     "from" "in" "let" "list" "path" "pathSystem" "rec" "report"
-    "reportBag" "reportSet" "reportMap" "set" "store" "tup" "using" "vSubgraph"
-    "where" "with" "thisVertex")
+    "reportBag" "reportSet" "reportMap" "set" "store" "tup" "using"
+    "vSubgraph" "where" "with" "thisVertex" "map")
   "GReQL keywords that should be completed and highlighted.")
 (put 'greql-keywords 'risky-local-variable-p t)
 
@@ -99,6 +99,7 @@ columns.")
            greql-fontlock-keywords-3)))
   
   (setq tab-width greql-tab-width)
+  (set (make-local-variable 'indent-line-function) 'greql-indent-line)
 
   ;; List of functions to be run when mode is activated
   (define-key greql-mode-map (kbd "M-TAB")   'greql-complete)
@@ -398,6 +399,43 @@ MTYPEs TYPES."
         (car attr-list)
       (apply 'intersection
              attr-list))))
+
+(defun greql-indent-keywords ()
+  (remove-if (lambda (s)
+               (string-match "^\\(E\\|V\\|using\\)" s))
+             greql-keywords))
+
+(defparameter greql-indent-regexp
+  (concat "\\([()]\\|\\_<" 
+          (regexp-opt (greql-indent-keywords))
+          "\\_>\\)"))
+
+(defun greql-indent-line ()
+  (interactive)
+  (save-excursion
+    (let* ((col (save-excursion
+                  (beginning-of-line)
+                  (let ((run t))
+                    (while (and run 
+                                (not (and 
+                                      (or (re-search-backward
+                                           greql-indent-regexp nil t)
+                                          (setq run nil))
+                                      (not (save-match-data
+                                             (looking-back "^.*//.*"))))))))
+                  (current-indentation)))
+           (key (and col (match-string 0))))
+      (when key
+        (cond
+         ((string-match (regexp-opt '(")" "end")) key)
+          (indent-line-to (- col tab-width)))
+         ((string-match
+           "[ ]*\\([)]\\|\\(with\\|report\\|end\\(Set\\|Map\\Bag\\)?\\)\\_>\\)"
+           (buffer-substring-no-properties
+            (line-beginning-position)
+            (line-end-position)))
+          (indent-line-to col))
+         (t (indent-line-to (+ col tab-width))))))))
 
 (provide 'greql-mode)
 
