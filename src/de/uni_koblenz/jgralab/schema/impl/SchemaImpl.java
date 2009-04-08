@@ -149,7 +149,7 @@ public class SchemaImpl implements Schema {
 
 	/**
 	 * builds a new schema
-	 * 
+	 *
 	 * @param qn
 	 *            the qualified name of the schema
 	 */
@@ -258,7 +258,7 @@ public class SchemaImpl implements Schema {
 	 * elements and reserves the given unique name so it can not be used as
 	 * unique name for other elements. If the unique name is already in use, the
 	 * unique names of both elements (the known one and the new one) are changed
-	 * 
+	 *
 	 * @param name
 	 * @param elem
 	 */
@@ -286,7 +286,7 @@ public class SchemaImpl implements Schema {
 
 	/**
 	 * adds the given domains to the domainlist
-	 * 
+	 *
 	 * @return true on success, false if a domain with the same name as the
 	 *         given one already exists in the schema
 	 */
@@ -366,6 +366,7 @@ public class SchemaImpl implements Schema {
 		if (d == null) {
 			d = new ListDomainImpl(this, domainName, baseDomain);
 			addDomain(d);
+			defaultPackage.addDomain(d);
 		}
 		return d;
 	}
@@ -379,6 +380,7 @@ public class SchemaImpl implements Schema {
 		if (d == null) {
 			d = new SetDomainImpl(this, domainName, baseDomain);
 			addDomain(d);
+			defaultPackage.addDomain(d);
 		}
 		return d;
 	}
@@ -392,6 +394,7 @@ public class SchemaImpl implements Schema {
 		if (d == null) {
 			d = new MapDomainImpl(this, domainName, keyDomain, valueDomain);
 			addDomain(d);
+			defaultPackage.addDomain(d);
 		}
 		return d;
 	}
@@ -669,7 +672,7 @@ public class SchemaImpl implements Schema {
 
 	/**
 	 * only used internally
-	 * 
+	 *
 	 * @return number of graphelementclasses contained in graphclass
 	 */
 	private int getNumberOfElements() {
@@ -682,7 +685,7 @@ public class SchemaImpl implements Schema {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see jgralab.Schema#getDomains()
 	 */
 	public Map<QualifiedName, Domain> getDomains() {
@@ -1020,7 +1023,7 @@ public class SchemaImpl implements Schema {
 	/**
 	 * File Manager class overwriting the method {@code getJavaFileForOutput} so
 	 * that bytecode is written to a {@code ClassFileAbstraction}.
-	 * 
+	 *
 	 */
 	private class ClassFileManager extends
 			ForwardingJavaFileManager<JavaFileManager> {
