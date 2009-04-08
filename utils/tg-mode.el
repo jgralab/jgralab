@@ -23,19 +23,19 @@
 ;; Major mode for editing TG files with Emacs
 
 
-;;; History:
-;; <2007-08-04 Sat>: First version
+;;; Version
+;; <2009-04-08 Wed 17:14>
 
 ;;; Code:
 
 (define-generic-mode tg-mode
   ;; Comments
-  '(("//" . nil) ("/*" . "*/"))
+  '(("//" . nil))
   ;; Keywords
   '("AggregationClass" "Boolean" "CompositionClass" "Double" "EdgeClass"
     "EnumDomain" "Graph" "GraphClass" "Integer" "List" "Package" "RecordDomain"
     "Schema" "Set" "String" "VertexClass" "abstract" "aggregate" "from" "role"
-    "to")
+    "to" "Map")
   ;; Additional expressions to highlight
   nil
   ;; Enable greql-mode for files matching this patterns

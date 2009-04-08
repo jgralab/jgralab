@@ -23,8 +23,8 @@
 ;; Major mode for editing greqlscript files with emacs
 
 
-;;; History:
-;; <2008-06-23 Mon 13:01>: First version
+;;; Version:
+;; <2009-04-08 Wed 17:16>
 
 ;;; Code:
 
@@ -36,7 +36,7 @@
     "foreach" "hastype" "if" "import" "importjava" "return"
     "typeswitch" "var" "while")
   ;; Additional expressions to highlight 
-  '()
+  nil
   ;; Enable greql-mode for files matching this patterns
   '("\\.greqlscript$")
   ;; List of functions to be run when mode is activated

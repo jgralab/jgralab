@@ -89,9 +89,10 @@ columns.")
 (define-derived-mode greql-mode text-mode "GReQL"
   "A major mode for GReQL2."
   ;; Comments
-  (setq comment-start "/*"
-        comment-start-skip "\\(//+\\|/\\*+\\)\\s *"
-        comment-end " */")
+  (set (make-local-variable 'comment-start)      "/*")
+  (set (make-local-variable 'comment-start-skip) "\\(//+\\|/\\*+\\)\\s *")
+  (set (make-local-variable 'comment-end)        " */")
+
   ;; Keywords
   (setq font-lock-defaults
         '((greql-fontlock-keywords-1
