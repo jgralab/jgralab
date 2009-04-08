@@ -119,7 +119,7 @@
 	
 	<!-- compile -->
 	<!-- calls targets jgralab, tgtools, greql2 and utilities -->
-	<target name="compile" depends="jgralab,tgtools,greql2,utilities,graphvalidator,rsa2tg,generatetestschemas"/>
+	<target name="compile" depends="jgralab,tgtools,greql2,graphvalidator,rsa2tg,utilities,generatetestschemas"/>
 
 	<!-- jgralab -->
 	<!-- compiles jgralab basic sources -->
@@ -141,12 +141,12 @@
 	  </ant>
 	</target>
 
-    <target name="rsa2tg">
+    <target name="rsa2tg" depends="grumlsourcesCompile">
       <!-- calls target compile in general ant file ${ant}/build.xml -->
 	  <ant dir="${common.dir}" antfile="build.xml" target="compile">
 		<property name="src.dir"
                   value="${src.dir}/de/uni_koblenz/${projectname}/utilities/"/>
-		<property name="compileincludes" value="rsa2tg/**"/>
+		<property name="compileincludes" value="rsa2tg/** tg2schemagraph/**"/>
       </ant>
 	</target>
 	
@@ -213,8 +213,8 @@
 	<target name="tgtools" depends="jgralab">
 		<!-- calls target compile in general ant file ${ant}/build.xml -->
 	   	<ant dir="${common.dir}" antfile="build.xml" target="compile">
-	   		<property name="compileincludes" 
-	   			value="**/utilities/tgschema2java/** **/utilities/tg2dot/** **/utilities/tg2whatever/**"/>
+	   	  <property name="compileincludes" 
+	   			    value="**/utilities/tgschema2java/** **/utilities/tg2dot/** **/utilities/tg2whatever/**"/>
 	   	</ant>
 	</target>
 	
