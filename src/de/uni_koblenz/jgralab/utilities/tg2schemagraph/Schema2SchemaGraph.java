@@ -1,7 +1,10 @@
 package de.uni_koblenz.jgralab.utilities.tg2schemagraph;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 import java.util.Map.Entry;
 
 import de.uni_koblenz.jgralab.WorkInProgress;
@@ -9,7 +12,6 @@ import de.uni_koblenz.jgralab.grumlschema.SchemaGraph;
 import de.uni_koblenz.jgralab.grumlschema.domains.CollectionDomain;
 import de.uni_koblenz.jgralab.grumlschema.domains.Domain;
 import de.uni_koblenz.jgralab.grumlschema.domains.EnumDomain;
-import de.uni_koblenz.jgralab.grumlschema.domains.ListDomain;
 import de.uni_koblenz.jgralab.grumlschema.domains.MapDomain;
 import de.uni_koblenz.jgralab.grumlschema.domains.RecordDomain;
 import de.uni_koblenz.jgralab.grumlschema.impl.SchemaGraphImpl;
@@ -64,7 +66,6 @@ public class Schema2SchemaGraph {
 		edgeClassMap = new HashMap<de.uni_koblenz.jgralab.schema.EdgeClass, EdgeClass>();
 
 		schemaGraph = new SchemaGraphImpl();
-
 	}
 
 	private void tearDown() {
@@ -130,20 +131,29 @@ public class Schema2SchemaGraph {
 	private void createEdges(de.uni_koblenz.jgralab.schema.EdgeClass edgeClass,
 			EdgeClass gEdgeClass) {
 
+		Set<String> redefinedRoles;
+
 		VertexClass vertexClass = vertexClassMap.get(edgeClass.getTo());
 		To to = schemaGraph.createTo(gEdgeClass, vertexClass);
 		to.setMin(edgeClass.getToMin());
 		to.setMax(edgeClass.getToMax());
 		to.setRoleName(edgeClass.getToRolename());
-		to.setRedefinedRoles(edgeClass.getRedefinedToRoles());
+
+		redefinedRoles = edgeClass.getRedefinedToRoles();
+		if (redefinedRoles != null && redefinedRoles.size() != 0) {
+			to.setRedefinedRoles(new HashSet<String>(redefinedRoles));
+		}
 
 		vertexClass = vertexClassMap.get(edgeClass.getFrom());
 		From from = schemaGraph.createFrom(gEdgeClass, vertexClass);
 		from.setMin(edgeClass.getFromMin());
 		from.setMax(edgeClass.getFromMax());
 		from.setRoleName(edgeClass.getFromRolename());
-		from.setRedefinedRoles(edgeClass.getRedefinedFromRoles());
 
+		redefinedRoles = edgeClass.getRedefinedFromRoles();
+		if (redefinedRoles != null && redefinedRoles.size() != 0) {
+			from.setRedefinedRoles(new HashSet<String>(redefinedRoles));
+		}
 	}
 
 	private void createConstraints() {
@@ -352,7 +362,7 @@ public class Schema2SchemaGraph {
 			gSubPackage = schemaGraph.createPackage();
 			gSubPackage.setQualifiedName(subPackage.getQualifiedName());
 
-			createDomains(subPackage, gSubPackage);
+			packageMap.put(subPackage, gSubPackage);
 
 			schemaGraph.createContainsSubPackage(gPackage, gSubPackage);
 			createSubPackages(subPackage, gSubPackage);
@@ -362,12 +372,9 @@ public class Schema2SchemaGraph {
 	private void createDomains(de.uni_koblenz.jgralab.schema.Package Package,
 			Package gPackage) {
 
-		Domain gDomain;
 		for (de.uni_koblenz.jgralab.schema.Domain domain : Package.getDomains()
 				.values()) {
-			gDomain = createDomain(domain);
-
-			schemaGraph.createContainsDomain(gPackage, gDomain);
+			createDomain(domain);
 		}
 	}
 
@@ -382,7 +389,6 @@ public class Schema2SchemaGraph {
 			gDomain = domainMap.get(domain);
 		} else {
 			if (domain instanceof de.uni_koblenz.jgralab.schema.BooleanDomain) {
-
 				gDomain = schemaGraph.createBooleanDomain();
 			} else if (domain instanceof de.uni_koblenz.jgralab.schema.IntDomain) {
 				gDomain = schemaGraph.createIntDomain();
@@ -406,6 +412,8 @@ public class Schema2SchemaGraph {
 			}
 
 			gDomain.setQualifiedName(domain.getQualifiedName());
+			Package gPackage = packageMap.get(domain.getPackage());
+			schemaGraph.createContainsDomain(gPackage, gDomain);
 
 			domainMap.put(domain, gDomain);
 		}
@@ -432,15 +440,16 @@ public class Schema2SchemaGraph {
 
 		EnumDomain gDomain = schemaGraph.createEnumDomain();
 
-		gDomain.setEnumConstants(domain.getConsts());
+		gDomain.setEnumConstants(new ArrayList<String>(domain.getConsts()));
 		return gDomain;
 	}
 
 	private CollectionDomain createCollectionDomain(
 			de.uni_koblenz.jgralab.schema.CollectionDomain domain) {
 
-		CollectionDomain gDomain = (domain instanceof ListDomain) ? schemaGraph
-				.createListDomain() : schemaGraph.createSetDomain();
+		CollectionDomain gDomain = (domain instanceof de.uni_koblenz.jgralab.schema.ListDomain) ? schemaGraph
+				.createListDomain()
+				: schemaGraph.createSetDomain();
 
 		schemaGraph.createHasBaseDomain(gDomain, queryGDomain(domain
 				.getBaseDomain()));
@@ -505,12 +514,6 @@ public class Schema2SchemaGraph {
 		}
 
 		assert (!graphClass.isInternal()) : "There have to be a GraphClass, which isn't internal!";
-
-		for (de.uni_koblenz.jgralab.schema.GraphClass gc : schema
-				.getGraphClasses().values()) {
-			System.out.println("" + gc.getQualifiedName() + " "
-					+ gc.isInternal());
-		}
 
 		// Is needed to reference to the new AttributedElementClass-objects.
 		attributedElementClassMap.put(graphClass, gGraphClass);
