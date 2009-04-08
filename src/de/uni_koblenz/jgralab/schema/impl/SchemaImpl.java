@@ -105,7 +105,7 @@ public class SchemaImpl implements Schema {
 	 */
 	private boolean allowLowercaseEnumConstants = true;
 
-	private QualifiedName qName;
+	private final QualifiedName qName;
 
 	private Map<QualifiedName, Package> packages;
 
@@ -149,7 +149,7 @@ public class SchemaImpl implements Schema {
 
 	/**
 	 * builds a new schema
-	 *
+	 * 
 	 * @param qn
 	 *            the qualified name of the schema
 	 */
@@ -173,11 +173,33 @@ public class SchemaImpl implements Schema {
 			// addDomain(StringDomainImpl.instance());
 			// addDomain(DoubleDomainImpl.instance());
 			// addDomain(ObjectDomainImpl.instance());
-			addDomain(new BooleanDomainImpl(this));
-			addDomain(new IntDomainImpl(this));
-			addDomain(new LongDomainImpl(this));
-			addDomain(new StringDomainImpl(this));
-			addDomain(new DoubleDomainImpl(this));
+			Domain domain;
+
+			// Adding BooleanDomain
+			domain = new BooleanDomainImpl(this);
+			addDomain(domain);
+			defaultPackage.addDomain(domain);
+
+			// Adding IntDomain
+			domain = new IntDomainImpl(this);
+			addDomain(domain);
+			defaultPackage.addDomain(domain);
+
+			// Adding LongDomain
+			domain = new LongDomainImpl(this);
+			addDomain(domain);
+			defaultPackage.addDomain(domain);
+
+			// Adding StringDomain
+			domain = new StringDomainImpl(this);
+			addDomain(domain);
+			defaultPackage.addDomain(domain);
+
+			// Adding DoubleDomain
+			domain = new DoubleDomainImpl(this);
+			addDomain(domain);
+			defaultPackage.addDomain(domain);
+
 			defaultGraphClass = createGraphClass(new QualifiedName("Graph"));
 			addToKnownElements(defaultGraphClass.getUniqueName(),
 					defaultGraphClass);
@@ -236,7 +258,7 @@ public class SchemaImpl implements Schema {
 	 * elements and reserves the given unique name so it can not be used as
 	 * unique name for other elements. If the unique name is already in use, the
 	 * unique names of both elements (the known one and the new one) are changed
-	 *
+	 * 
 	 * @param name
 	 * @param elem
 	 */
@@ -264,7 +286,7 @@ public class SchemaImpl implements Schema {
 
 	/**
 	 * adds the given domains to the domainlist
-	 *
+	 * 
 	 * @return true on success, false if a domain with the same name as the
 	 *         given one already exists in the schema
 	 */
@@ -647,7 +669,7 @@ public class SchemaImpl implements Schema {
 
 	/**
 	 * only used internally
-	 *
+	 * 
 	 * @return number of graphelementclasses contained in graphclass
 	 */
 	private int getNumberOfElements() {
@@ -660,7 +682,7 @@ public class SchemaImpl implements Schema {
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see jgralab.Schema#getDomains()
 	 */
 	public Map<QualifiedName, Domain> getDomains() {
@@ -998,7 +1020,7 @@ public class SchemaImpl implements Schema {
 	/**
 	 * File Manager class overwriting the method {@code getJavaFileForOutput} so
 	 * that bytecode is written to a {@code ClassFileAbstraction}.
-	 *
+	 * 
 	 */
 	private class ClassFileManager extends
 			ForwardingJavaFileManager<JavaFileManager> {
