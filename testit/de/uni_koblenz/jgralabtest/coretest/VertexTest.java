@@ -6062,7 +6062,7 @@ public class VertexTest {
 	}
 
 	/**
-	 * Deleting v2 in v1<>---e1----v2<>-----e2-----v3
+	 * Deleting v1 in v1<>---e1----v2<>-----e2-----v3
 	 */
 	@Test
 	public void deleteTest2() {
@@ -6074,6 +6074,50 @@ public class VertexTest {
 		v1.delete();
 		assertEquals(0, graph.getECount());
 		assertEquals(0, graph.getVCount());
+	}
+	
+	/**
+	 * Deleting v1 in v1<>---e1----v2 v1<>-----e2-----v3
+	 */
+	@Test
+	public void deleteTest3() {
+		DoubleSubNode v1 = graph.createDoubleSubNode();
+		DoubleSubNode v2 = graph.createDoubleSubNode();
+		DoubleSubNode v3 = graph.createDoubleSubNode();
+		graph.createSubLink(v1, v2);
+		graph.createSubLink(v1, v3);
+		v1.delete();
+		assertEquals(0, graph.getECount());
+		assertEquals(0, graph.getVCount());
+	}
+	
+	/**
+	 * Deleting v1 in v1<>---e1----v2 v1<>-----e2-----v2
+	 */
+	@Test
+	public void deleteTest4() {
+		DoubleSubNode v1 = graph.createDoubleSubNode();
+		DoubleSubNode v2 = graph.createDoubleSubNode();
+		graph.createSubLink(v1, v2);
+		graph.createSubLink(v1, v2);
+		v1.delete();
+		assertEquals(0, graph.getECount());
+		assertEquals(0, graph.getVCount());
+	}
+	
+	/**
+	 * Deleting v1 in v1<>---e1----v2-----e2-----v3
+	 */
+	@Test
+	public void deleteTest5() {
+		DoubleSubNode v1 = graph.createDoubleSubNode();
+		DoubleSubNode v2 = graph.createDoubleSubNode();
+		DoubleSubNode v3 = graph.createDoubleSubNode();
+		graph.createSubLink(v1, v2);
+		graph.createLink(v2, v3);
+		v1.delete();
+		assertEquals(0, graph.getECount());
+		assertEquals(1, graph.getVCount());
 	}
 
 	// tests of the method Iterable<Edge> incidences();
@@ -8735,5 +8779,122 @@ public class VertexTest {
 				.getFirstSubLink(EdgeDirection.INOUT));
 		assertEquals(e3, v1.getFirstSubLink(EdgeDirection.OUT));
 		assertEquals(e2.getReversedEdge(), v1.getFirstSubLink(EdgeDirection.IN));
+	}
+
+	/**
+	 * Checks if the edges which are returned by an get#Edge#incidences are the
+	 * expected ones.
+	 * 
+	 * @param incidenceName
+	 *            Name of #Edge#
+	 * @param v
+	 *            the vertex which incident edges should be checked
+	 * @param direction
+	 *            the direction of the iterated edges or null
+	 * @param edges
+	 *            the expected edges
+	 */
+	private void checkGeneratedIncidences(String incidenceName,
+			DoubleSubNode v, EdgeDirection direction, Edge... edges) {
+		int i = 0;
+		if (direction == null) {
+			if (incidenceName.equals("Link")) {
+				for (Edge e : v.getLinkIncidences()) {
+					assertEquals(edges[i], e);
+					i++;
+				}
+			} else if (incidenceName.equals("LinkBack")) {
+				for (Edge e : v.getLinkBackIncidences()) {
+					assertEquals(edges[i], e);
+					i++;
+				}
+			} else if (incidenceName.equals("SubLink")) {
+				for (Edge e : v.getSubLinkIncidences()) {
+					assertEquals(edges[i], e);
+					i++;
+				}
+			}
+		} else {
+			if (incidenceName.equals("Link")) {
+				for (Edge e : v.getLinkIncidences(direction)) {
+					assertEquals(edges[i], e);
+					i++;
+				}
+			} else if (incidenceName.equals("LinkBack")) {
+				for (Edge e : v.getLinkBackIncidences(direction)) {
+					assertEquals(edges[i], e);
+					i++;
+				}
+			} else if (incidenceName.equals("SubLink")) {
+				for (Edge e : v.getSubLinkIncidences(direction)) {
+					assertEquals(edges[i], e);
+					i++;
+				}
+			}
+		}
+		if (i != edges.length) {
+			fail("There were more edges expected");
+		}
+	}
+
+	// tests of the method get#Edge#Incidences
+	@Test
+	public void getLinkIncidencesTest0() {
+		DoubleSubNode v0 = graph.createDoubleSubNode();
+		DoubleSubNode v1 = graph.createDoubleSubNode();
+		LinkBack e0 = graph.createLinkBack(v0, v1);
+		SubLink e1 = graph.createSubLink(v0, v0);
+		Link e2 = graph.createLink(v1, v0);
+		SubLink e3 = graph.createSubLink(v1, v1);
+		LinkBack e4 = graph.createLinkBack(v1, v0);
+		checkGeneratedIncidences("Link", v0, null, e1, e1.getReversedEdge(), e2
+				.getReversedEdge());
+		checkGeneratedIncidences("Link", v1, null, e2, e3, e3.getReversedEdge());
+		checkGeneratedIncidences("LinkBack", v0, null, e0, e4.getReversedEdge());
+		checkGeneratedIncidences("LinkBack", v1, null, e0.getReversedEdge(), e4);
+		checkGeneratedIncidences("SubLink", v0, null, e1, e1.getReversedEdge());
+		checkGeneratedIncidences("SubLink", v1, null, e3, e3.getReversedEdge());
+	}
+
+	// tests of the method get#Edge#Incidences(EdgeDirection)
+	@Test
+	public void getLinkIncidencesTestEdgeDirection0() {
+		DoubleSubNode v0 = graph.createDoubleSubNode();
+		DoubleSubNode v1 = graph.createDoubleSubNode();
+		LinkBack e0 = graph.createLinkBack(v0, v1);
+		SubLink e1 = graph.createSubLink(v0, v0);
+		Link e2 = graph.createLink(v1, v0);
+		SubLink e3 = graph.createSubLink(v1, v1);
+		LinkBack e4 = graph.createLinkBack(v1, v0);
+		checkGeneratedIncidences("Link", v0, EdgeDirection.INOUT, e1, e1
+				.getReversedEdge(), e2.getReversedEdge());
+		checkGeneratedIncidences("Link", v1, EdgeDirection.INOUT, e2, e3, e3
+				.getReversedEdge());
+		checkGeneratedIncidences("Link", v0, EdgeDirection.OUT, e1);
+		checkGeneratedIncidences("Link", v1, EdgeDirection.OUT, e2, e3);
+		checkGeneratedIncidences("Link", v0, EdgeDirection.IN, e1
+				.getReversedEdge(), e2.getReversedEdge());
+		checkGeneratedIncidences("Link", v1, EdgeDirection.IN, e3
+				.getReversedEdge());
+		checkGeneratedIncidences("LinkBack", v0, EdgeDirection.INOUT, e0, e4
+				.getReversedEdge());
+		checkGeneratedIncidences("LinkBack", v1, EdgeDirection.INOUT, e0
+				.getReversedEdge(), e4);
+		checkGeneratedIncidences("LinkBack", v0, EdgeDirection.OUT, e0);
+		checkGeneratedIncidences("LinkBack", v1, EdgeDirection.OUT, e4);
+		checkGeneratedIncidences("LinkBack", v0, EdgeDirection.IN, e4
+				.getReversedEdge());
+		checkGeneratedIncidences("LinkBack", v1, EdgeDirection.IN, e0
+				.getReversedEdge());
+		checkGeneratedIncidences("SubLink", v0, EdgeDirection.INOUT, e1, e1
+				.getReversedEdge());
+		checkGeneratedIncidences("SubLink", v1, EdgeDirection.INOUT, e3, e3
+				.getReversedEdge());
+		checkGeneratedIncidences("SubLink", v0, EdgeDirection.OUT, e1);
+		checkGeneratedIncidences("SubLink", v1, EdgeDirection.OUT, e3);
+		checkGeneratedIncidences("SubLink", v0, EdgeDirection.IN, e1
+				.getReversedEdge());
+		checkGeneratedIncidences("SubLink", v1, EdgeDirection.IN, e3
+				.getReversedEdge());
 	}
 }
