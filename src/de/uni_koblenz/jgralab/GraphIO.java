@@ -1143,19 +1143,19 @@ public class GraphIO {
 	 */
 	private void parseAttrDomain(List<QualifiedName> attrDomain)
 			throws GraphIOException {
-		if (lookAhead.equals("List")) {
+		if (lookAhead.matches("[.]?List")) {
 			match();
 			match("<");
 			attrDomain.add(new QualifiedName("List<"));
 			parseAttrDomain(attrDomain);
 			match(">");
-		} else if (lookAhead.equals("Set")) {
+		} else if (lookAhead.matches("[.]?Set")) {
 			match();
 			match("<");
 			attrDomain.add(new QualifiedName("Set<"));
 			parseAttrDomain(attrDomain);
 			match(">");
-		} else if (lookAhead.equals("Map")) {
+		} else if (lookAhead.matches("[.]?Map")) {
 			match();
 			match("<");
 			attrDomain.add(new QualifiedName("Map<"));
@@ -1175,6 +1175,9 @@ public class GraphIO {
 	}
 
 	private boolean isBasicDomainName(String s) {
+		if (s.startsWith(".")) {
+			s = s.substring(1);
+		}
 		return Schema.basicDomains.contains(s);
 	}
 
