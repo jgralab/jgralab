@@ -397,9 +397,8 @@ class Schema2OWL {
 					"http://www.w3.org/2002/07/owl#FunctionalProperty");
 			
 			// if "component" has a CompositeDomain or an EnumDomain (no Object)
-			if ((component.getValue().isComposite() 
-						&& !component.getValue().getTGTypeName(null).equals("Object"))
-					|| component.getValue().toString().startsWith("Enum")) {
+			if (component.getValue().isComposite()
+					|| component.getValue().toString().contains("Enum")) {
 				componentElem = createOwlObjectPropertyElement();
 				
 				if (component.getValue().getTGTypeName(null).startsWith("List<")) {
@@ -1223,18 +1222,17 @@ class Schema2OWL {
 			domainElem = createRdfsDomainElement("#" + aecElemName);
 			rangeElem = createRdfsRangeElement();
 			
-			// if "attr" has a CompositeDomain or an EnumDomain as type (no Object)
-			if ((attr.getDomain().isComposite() 
-						&& !attr.getDomain().getTGTypeName(null).equals("Object"))
-					|| attr.getDomain().toString().startsWith("Enum")) {
+			// if "attr" has a CompositeDomain or an EnumDomain as type
+			if (attr.getDomain().isComposite() 		
+					|| attr.getDomain().toString().contains("Enum")) {
 				attrElem = createOwlObjectPropertyElement(
 						HelperMethods.firstToLowerCase(aecElemName)
 						+ "Has" 
 						+ HelperMethods.firstToUpperCase(attr.getName()));
 				
-				if (attr.getDomain().getTGTypeName(null).startsWith("List<")) {
+				if (attr.getDomain().getTGTypeName(null).contains("List<")) {
 					rangeElem.setAttribute("rdf:resource", "#ListElement");
-				} else if (attr.getDomain().getTGTypeName(null).startsWith("Set<")) {
+				} else if (attr.getDomain().getTGTypeName(null).contains("Set<")) {
 					rangeElem.setAttribute("rdf:resource", "#Set");
 				} else {
 					rangeElem.setAttribute("rdf:resource", 
@@ -1250,9 +1248,6 @@ class Schema2OWL {
 				if (attr.getDomain().getTGTypeName(null).equals("String")) {
 					rangeElem.setAttribute("rdf:resource", 
 							"http://www.w3.org/2001/XMLSchema#string");
-				} else if (attr.getDomain().getTGTypeName(null).equals("Object")) {
-					rangeElem.setAttribute("rdf:resource", 
-							"http://www.w3.org/2001/XMLSchema#base64Binary");
 				} else {
 					rangeElem.setAttribute("rdf:resource", 
 							"http://www.w3.org/2001/XMLSchema#"	+ attr.getDomain()
@@ -1284,8 +1279,6 @@ class Schema2OWL {
 	 * 
 	 * @param from Indicates whether the Property for the role name on the "from" side or
 	 * for the role name on the "to" side shall be created.
-	 * @param gecStringRep The name of the {@code GraphElementClass} for which the Property
-	 * shall be created.
 	 * @return The created {@code DatatypeProperty}.
 	 */
 	private Element createRoleElement(boolean from) {
