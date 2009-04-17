@@ -12,96 +12,44 @@ import de.uni_koblenz.jgralab.codegenerator.CodeSnippet;
 import de.uni_koblenz.jgralab.schema.Domain;
 import de.uni_koblenz.jgralab.schema.MapDomain;
 import de.uni_koblenz.jgralab.schema.Package;
-import de.uni_koblenz.jgralab.schema.QualifiedName;
 import de.uni_koblenz.jgralab.schema.Schema;
-import de.uni_koblenz.jgralab.schema.exception.WrongSchemaException;
 
 /**
  * @author Tassilo Horn <horn@uni-koblenz.de>
  * 
  */
-public class MapDomainImpl extends CompositeDomainImpl implements MapDomain {
+public final class MapDomainImpl extends CompositeDomainImpl implements
+		MapDomain {
 	/**
 	 * The domain of this MapDomain's keys.
 	 */
-	protected Domain keyDomain;
+	private final Domain keyDomain;
 
 	/**
 	 * The domain of this MapDomain's values.
 	 */
-	protected Domain valueDomain;
+	private final Domain valueDomain;
 
-	public MapDomainImpl(Schema schema, QualifiedName qn, Domain aKeyDomain,
-			Domain aValueDomain) {
-		super(schema, qn);
-		if (!isDomainOfSchema(schema, aKeyDomain)
-				|| !isDomainOfSchema(schema, aValueDomain)) {
-			throw new WrongSchemaException(aKeyDomain + " and " + aValueDomain
-					+ " must be domains of the schema "
-					+ schema.getQualifiedName());
-		}
+	MapDomainImpl(Schema schema, Domain aKeyDomain, Domain aValueDomain) {
+		super(MAPDOMAIN_NAME + "<"
+				+ aKeyDomain.getTGTypeName(schema.getDefaultPackage()) + ", "
+				+ aValueDomain.getTGTypeName(schema.getDefaultPackage()) + ">",
+				schema.getDefaultPackage());
+
+		assert parentPackage.getSchema().getDomain(aKeyDomain.getQualifiedName()) != null : aKeyDomain
+				.getQualifiedName()
+				+ " must be a domain of the schema "
+				+ parentPackage.getSchema().getQualifiedName();
+
+		assert parentPackage.getSchema().getDomain(aValueDomain.getQualifiedName()) != null : aValueDomain
+				.getQualifiedName()
+				+ " must be a domain of the schema "
+				+ parentPackage.getSchema().getQualifiedName();
+
 		keyDomain = aKeyDomain;
 		valueDomain = aValueDomain;
 	}
 
-	public MapDomainImpl(Schema schema, Domain aKeyDomain, Domain aValueDomain) {
-		this(schema,
-				new QualifiedName("Map<"
-						+ aKeyDomain.getTGTypeName(schema.getDefaultPackage())
-						+ ", "
-						+ aValueDomain
-								.getTGTypeName(schema.getDefaultPackage())
-						+ ">"), aKeyDomain, aValueDomain);
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * de.uni_koblenz.jgralab.schema.impl.CompositeDomainImpl#equals(java.lang
-	 * .Object)
-	 */
-	@Override
-	public boolean equals(Object o) {
-		if (this == o) {
-			return true;
-		}
-
-		if (!(o instanceof MapDomain)) {
-			return false;
-		}
-
-		MapDomain other = (MapDomain) o;
-		return keyDomain.equals(other.getKeyDomain())
-				&& valueDomain.equals(other.getValueDomain());
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see de.uni_koblenz.jgralab.schema.MapDomain#getKeyDomain()
-	 */
-	@Override
-	public Domain getKeyDomain() {
-		return keyDomain;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see de.uni_koblenz.jgralab.schema.MapDomain#getValueDomain()
-	 */
-	@Override
-	public Domain getValueDomain() {
-		return valueDomain;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * de.uni_koblenz.jgralab.schema.CompositeDomain#getAllComponentDomains()
-	 */
 	@Override
 	public Set<Domain> getAllComponentDomains() {
 		HashSet<Domain> allComponentDomains = new HashSet<Domain>(2);
@@ -110,38 +58,24 @@ public class MapDomainImpl extends CompositeDomainImpl implements MapDomain {
 		return allComponentDomains;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * de.uni_koblenz.jgralab.schema.Domain#getJavaAttributeImplementationTypeName
-	 * (java.lang.String)
-	 */
 	@Override
 	public String getJavaAttributeImplementationTypeName(
 			String schemaRootPackagePrefix) {
-		return "java.util.Map<"
+		return "java.util." + MAPDOMAIN_NAME + "<"
 				+ keyDomain.getJavaClassName(schemaRootPackagePrefix) + ", "
 				+ valueDomain.getJavaClassName(schemaRootPackagePrefix) + ">";
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * de.uni_koblenz.jgralab.schema.Domain#getJavaClassName(java.lang.String)
-	 */
 	@Override
 	public String getJavaClassName(String schemaRootPackagePrefix) {
 		return getJavaAttributeImplementationTypeName(schemaRootPackagePrefix);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see de.uni_koblenz.jgralab.schema.Domain#getReadMethod(java.lang.String,
-	 * java.lang.String, java.lang.String)
-	 */
+	@Override
+	public Domain getKeyDomain() {
+		return keyDomain;
+	}
+
 	@Override
 	public CodeBlock getReadMethod(String schemaRootPackagePrefix,
 			String variableName, String graphIoVariableName) {
@@ -182,26 +116,17 @@ public class MapDomainImpl extends CompositeDomainImpl implements MapDomain {
 		return code;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * de.uni_koblenz.jgralab.schema.Domain#getTGTypeName(de.uni_koblenz.jgralab
-	 * .schema.Package)
-	 */
 	@Override
 	public String getTGTypeName(Package pkg) {
-		return "Map<" + keyDomain.getTGTypeName(pkg) + ", "
+		return MAPDOMAIN_NAME + "<" + keyDomain.getTGTypeName(pkg) + ", "
 				+ valueDomain.getTGTypeName(pkg) + ">";
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * de.uni_koblenz.jgralab.schema.Domain#getWriteMethod(java.lang.String,
-	 * java.lang.String, java.lang.String)
-	 */
+	@Override
+	public Domain getValueDomain() {
+		return valueDomain;
+	}
+
 	@Override
 	public CodeBlock getWriteMethod(String schemaRootPackagePrefix,
 			String variableName, String graphIoVariableName) {
@@ -248,20 +173,8 @@ public class MapDomainImpl extends CompositeDomainImpl implements MapDomain {
 
 	@Override
 	public String toString() {
-		return "domain Map<" + keyDomain.toString() + ", "
+		return "domain " + MAPDOMAIN_NAME + "<" + keyDomain.toString() + ", "
 				+ valueDomain.toString() + ">";
-	}
-
-	@Override
-	public void setPackage(Package p) {
-		throw new UnsupportedOperationException(
-				"The package of a MapDomain may not be changed.");
-	}
-
-	@Override
-	public void setUniqueName(String newUniqueName) {
-		throw new UnsupportedOperationException(
-				"The unique name of a MapDomain may not be changed.");
 	}
 
 }

@@ -54,7 +54,6 @@ import de.uni_koblenz.jgralab.schema.CompositeDomain;
 import de.uni_koblenz.jgralab.schema.Domain;
 import de.uni_koblenz.jgralab.schema.EdgeClass;
 import de.uni_koblenz.jgralab.schema.MapDomain;
-import de.uni_koblenz.jgralab.schema.QualifiedName;
 import de.uni_koblenz.jgralab.schema.RecordDomain;
 import de.uni_koblenz.jgralab.schema.Schema;
 import de.uni_koblenz.jgralab.schema.VertexClass;
@@ -77,7 +76,7 @@ public class JGraLabFacade {
 	}
 
 	/**
-	 * Creates a graph of type {@code graphClassName} with random id. The
+	 * Creates a graph of conforming to the given schema with random id. The
 	 * maximum number of vertices and edges is initially set to 100 each.
 	 * Returns a {@code Map<String, Object>} with four entries:<br>
 	 * <br>
@@ -92,17 +91,14 @@ public class JGraLabFacade {
 	 * @param schemaName
 	 *            the name of the Java class of the graph schema. This class
 	 *            must be on the classpath of the XMLRPC server.
-	 * @param graphClassName
-	 *            the name of the graph class the created graph shall be an
-	 *            instance of
 	 * @return a {@code Map<String, Object>} with four entries (see method
 	 *         description)
 	 *
 	 * @throws XmlRpcException
 	 */
-	public Map<String, Object> createGraph(String schemaName,
-			String graphClassName) throws XmlRpcException {
-		return createGraph(schemaName, graphClassName, null, 100, 100);
+	public Map<String, Object> createGraph(String schemaName)
+			throws XmlRpcException {
+		return createGraph(schemaName, null, 100, 100);
 	}
 
 	/**
@@ -131,13 +127,13 @@ public class JGraLabFacade {
 	 *
 	 * @throws XmlRpcException
 	 */
-	public Map<String, Object> createGraph(String schemaName,
-			String graphClassName, String graphId) throws XmlRpcException {
-		return createGraph(schemaName, graphClassName, graphId, 100, 100);
+	public Map<String, Object> createGraph(String schemaName, String graphId)
+			throws XmlRpcException {
+		return createGraph(schemaName, graphId, 100, 100);
 	}
 
 	/**
-	 * Creates a graph of type {@code graphClassName} with id {@code graphId},
+	 * Creates a graph of the given {@code schemaName} with id {@code graphId},
 	 * and maximum numbers of vertices and edges of {@code vMax} and {@code
 	 * eMax}, respectively. Returns a {@code Map<String, Object>} with four
 	 * entries:<br>
@@ -153,8 +149,6 @@ public class JGraLabFacade {
 	 * @param schemaName
 	 *            the name of the Java class of the graph schema. This class
 	 *            must be on the classpath of the XMLRPC server.
-	 * @param graphClassName
-	 *            the name of the graph class of the new graph
 	 * @param graphId
 	 *            the id of the created graph
 	 * @param vMax
@@ -166,17 +160,15 @@ public class JGraLabFacade {
 	 *
 	 * @throws XmlRpcException
 	 */
-	public Map<String, Object> createGraph(String schemaName,
-			String graphClassName, String graphId, int vMax, int eMax)
-			throws XmlRpcException {
+	public Map<String, Object> createGraph(String schemaName, String graphId,
+			int vMax, int eMax) throws XmlRpcException {
 		try {
 			Class<?> schemaClass = Class.forName(schemaName, true,
 					M1ClassManager.instance());
 			Schema schema = (Schema) (schemaClass.getMethod("instance",
 					(Class[]) null).invoke(null));
 
-			Method graphCreateMethod = schema
-					.getGraphCreateMethod(new QualifiedName(graphClassName));
+			Method graphCreateMethod = schema.getGraphCreateMethod();
 
 			Graph graph = (Graph) (graphCreateMethod.invoke(null, new Object[] {
 					graphId, vMax, eMax }));
@@ -308,8 +300,7 @@ public class JGraLabFacade {
 				schema.compile();
 			}
 
-			graphCreateMethod = schema.getGraphCreateMethod(new QualifiedName(
-					graphClassName));
+			graphCreateMethod = schema.getGraphCreateMethod();
 			graph = (Graph) graphCreateMethod.invoke(null, new Object[] {
 					graphId, vMax, eMax });
 
@@ -472,8 +463,8 @@ public class JGraLabFacade {
 		Graph graph;
 
 		graph = graphContainer.getGraph(graphNo);
-		m1VertexClass = graph.getGraphClass().getVertexClass(
-				new QualifiedName(vertexClassName)).getM1Class();
+		m1VertexClass = graph.getGraphClass().getVertexClass(vertexClassName)
+				.getM1Class();
 
 		return createGraphElementMap(graph.createVertex(m1VertexClass));
 	}
@@ -513,8 +504,8 @@ public class JGraLabFacade {
 		alpha = graph.getVertex(alphaId);
 		omega = graph.getVertex(omegaId);
 
-		m1EdgeClass = graph.getGraphClass().getEdgeClass(
-				new QualifiedName(edgeClassName)).getM1Class();
+		m1EdgeClass = graph.getGraphClass().getEdgeClass(edgeClassName)
+				.getM1Class();
 
 		return createGraphElementMap(graph
 				.createEdge(m1EdgeClass, alpha, omega));
@@ -717,8 +708,7 @@ public class JGraLabFacade {
 		return createGraphElementMap(graphContainer.getGraph(graphNo)
 				.getFirstVertexOfClass(
 						(VertexClass) graphContainer.getGraph(graphNo)
-								.getSchema().getAttributedElementClass(
-										new QualifiedName(vcName))));
+								.getSchema().getAttributedElementClass(vcName)));
 	}
 
 	/**
@@ -782,7 +772,7 @@ public class JGraLabFacade {
 
 		return createGraphElementMap(graph.getVertex(vId).getNextVertexOfClass(
 				(VertexClass) graph.getSchema().getAttributedElementClass(
-						new QualifiedName(vcName))));
+						vcName)));
 	}
 
 	/**
@@ -842,9 +832,10 @@ public class JGraLabFacade {
 			String ecName) throws XmlRpcException {
 		Graph graph = graphContainer.getGraph(graphNo);
 
-		return createGraphElementMap(graph.getVertex(vId).getFirstEdgeOfClass(
-				(EdgeClass) graph.getSchema().getAttributedElementClass(
-						new QualifiedName(ecName))));
+		return createGraphElementMap(graph.getVertex(vId)
+				.getFirstEdgeOfClass(
+						(EdgeClass) graph.getSchema()
+								.getAttributedElementClass(ecName)));
 	}
 
 	/**
@@ -905,9 +896,10 @@ public class JGraLabFacade {
 			String ecName) throws XmlRpcException {
 		Graph graph = graphContainer.getGraph(graphNo);
 
-		return createGraphElementMap(graph.getEdge(eId).getNextEdgeOfClass(
-				(EdgeClass) graph.getSchema().getAttributedElementClass(
-						new QualifiedName(ecName))));
+		return createGraphElementMap(graph.getEdge(eId)
+				.getNextEdgeOfClass(
+						(EdgeClass) graph.getSchema()
+								.getAttributedElementClass(ecName)));
 	}
 
 	/**
@@ -961,7 +953,7 @@ public class JGraLabFacade {
 
 		return createGraphElementMap(graph
 				.getFirstEdgeOfClassInGraph((EdgeClass) graph.getSchema()
-						.getAttributedElementClass(new QualifiedName(ecName))));
+						.getAttributedElementClass(ecName)));
 	}
 
 	/**
@@ -1025,8 +1017,7 @@ public class JGraLabFacade {
 		return createGraphElementMap(graph.getEdge(eId)
 				.getNextEdgeOfClassInGraph(
 						(EdgeClass) graph.getSchema()
-								.getAttributedElementClass(
-										new QualifiedName(ecName))));
+								.getAttributedElementClass(ecName)));
 	}
 
 	/**
@@ -2431,7 +2422,7 @@ public class JGraLabFacade {
 	@SuppressWarnings("unchecked")
 	private Object convertToJGraLabType(Object value, Domain domain, Graph graph)
 			throws XmlRpcException {
-		String prefix = graph.getSchema().getPackageName();
+		String prefix = graph.getSchema().getPackagePrefix();
 
 		if (domain.toString().startsWith("Enum")) {
 			// value if of type String

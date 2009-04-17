@@ -29,33 +29,20 @@ import java.util.List;
 /**
  * Represents an enumeration domain, instances may exist multiple times per
  * schema.
- * 
+ *
  * @author ist@uni-koblenz.de
  */
 public interface EnumDomain extends Domain {
 
 	/**
-	 * adds aConst to the list of enums
-	 * 
-	 * @param aConst
-	 *            constant to be added
-	 */
-	public void addConst(String aConst);
-
-	/**
-	 * deletes aConst from the list of enums
-	 * 
-	 * @param aConst
-	 */
-	public void deleteConst(String aConst);
-
-	/*
-	 * @return the name of this enum, must be unique in schema
-	 */
-	// removed, is already defined in Domain and deprecated!
-	// public String getName();
-	/**
-	 * @return all the enum strings of this enum domain
+	 * @return all the enum constants of this enum domain
 	 */
 	public List<String> getConsts();
+
+	/**
+	 * add an enum constant
+	 *
+	 * @param constName
+	 */
+	void addConst(String constName);
 }

@@ -37,27 +37,33 @@ import de.uni_koblenz.jgralab.schema.EdgeClass;
 import de.uni_koblenz.jgralab.schema.GraphClass;
 import de.uni_koblenz.jgralab.schema.GraphElementClass;
 import de.uni_koblenz.jgralab.schema.Package;
-import de.uni_koblenz.jgralab.schema.QualifiedName;
-import de.uni_koblenz.jgralab.schema.Schema;
 import de.uni_koblenz.jgralab.schema.VertexClass;
-import de.uni_koblenz.jgralab.schema.exception.DuplicateNamedElementException;
 import de.uni_koblenz.jgralab.schema.exception.InheritanceException;
-import de.uni_koblenz.jgralab.schema.exception.ReservedWordException;
 
-public class GraphClassImpl extends AttributedElementClassImpl implements
+public final class GraphClassImpl extends AttributedElementClassImpl implements
 		GraphClass {
 
-	private Schema schema;
+	private Map<String, AggregationClass> aggregationClasses = new HashMap<String, AggregationClass>();
 
-	private Map<QualifiedName, GraphElementClass> graphElementClasses;
+	private Map<String, CompositionClass> compositionClasses = new HashMap<String, CompositionClass>();
 
-	private Map<QualifiedName, EdgeClass> edgeClasses;
+	private Map<String, EdgeClass> edgeClasses = new HashMap<String, EdgeClass>();
 
-	private Map<QualifiedName, VertexClass> vertexClasses;
+	private Map<String, GraphElementClass> graphElementClasses = new HashMap<String, GraphElementClass>();
 
-	private Map<QualifiedName, AggregationClass> aggregationClasses;
+	private Map<String, VertexClass> vertexClasses = new HashMap<String, VertexClass>();
 
-	private Map<QualifiedName, CompositionClass> compositionClasses;
+	static GraphClass createDefaultGraphClass(SchemaImpl schema) {
+		assert schema.getDefaultPackage() != null : "DefaultPackage has not yet been created!";
+		assert schema.getDefaultGraphClass() == null : "DefaultGraphClass already created!";
+		GraphClass gc = new GraphClassImpl(schema);
+		gc.setAbstract(true);
+		return gc;
+	}
+
+	private GraphClassImpl(SchemaImpl schema) {
+		this(DEFAULTGRAPHCLASS_NAME, schema);
+	}
 
 	/**
 	 * Creates the <b>sole</b> <code>GraphClass</code> in the
@@ -67,256 +73,63 @@ public class GraphClassImpl extends AttributedElementClassImpl implements
 	 * <p>
 	 * <b>Caution:</b> The <code>GraphClass</code> should only be created by
 	 * using
-	 * {@link de.uni_koblenz.jgralab.schema.Schema#createGraphClass(QualifiedName id)
-	 * createGraphClass(Qualified id)} in <code>Schema</code>. Unfortunately,
-	 * due to restrictions in Java, the visibility of this constructor cannot be
-	 * changed without causing serious issues in the program.
+	 * {@link de.uni_koblenz.jgralab.schema.Schema#createGraphClass(String qualifiedName)}
+	 * in <code>Schema</code>. Unfortunately, due to restrictions in Java, the
+	 * visibility of this constructor cannot be changed without causing serious
+	 * issues in the program.
 	 * </p>
-	 * 
+	 *
 	 * @param qn
 	 *            a unique name in the <code>Schema</code>
 	 * @param aSchema
 	 *            the <code>Schema</code> containing this
 	 *            <code>GraphClass</code>
 	 */
-	public GraphClassImpl(QualifiedName qn, Schema aSchema) {
-		super(qn);
-		schema = aSchema;
-		graphElementClasses = new HashMap<QualifiedName, GraphElementClass>();
-		edgeClasses = new HashMap<QualifiedName, EdgeClass>();
-		vertexClasses = new HashMap<QualifiedName, VertexClass>();
-		aggregationClasses = new HashMap<QualifiedName, AggregationClass>();
-		compositionClasses = new HashMap<QualifiedName, CompositionClass>();
+	GraphClassImpl(String gcName, SchemaImpl schema) {
+		super(gcName, schema.getDefaultPackage(), schema);
+		register();
 	}
 
-	@Override
-	public String getVariableName() {
-		return "gc_" + getQualifiedName().replace('.', '_');
+	void addAggregationClass(AggregationClass ac) {
+		assert !aggregationClasses.containsKey(ac.getQualifiedName()) : "There already is an AggregationClass with the qualified name: "
+				+ ac.getQualifiedName() + " in the GraphClass!";
+		assert !graphElementClasses.containsKey(ac.getQualifiedName()) : "There already is a GraphElementClass with the qualified name: "
+				+ ac.getQualifiedName() + " in this GraphClass!";
+
+		graphElementClasses.put(ac.getQualifiedName(), ac);
+		aggregationClasses.put(ac.getQualifiedName(), ac);
 	}
 
-	@Override
-	public EdgeClass createEdgeClass(QualifiedName name, VertexClass from,
-			VertexClass to) {
-		return createEdgeClass(name, from, 0, Integer.MAX_VALUE, "", to, 0,
-				Integer.MAX_VALUE, "");
+	void addCompositionClass(CompositionClass cc) {
+		assert !compositionClasses.containsKey(cc.getQualifiedName()) : "There already is a CompositionClass with the qualified name: "
+				+ cc.getQualifiedName() + " in the GraphClass!";
+		assert !graphElementClasses.containsKey(cc.getQualifiedName()) : "There already is a GraphElementClass with the qualified name: "
+				+ cc.getQualifiedName() + " in this GraphClass!";
+
+		graphElementClasses.put(cc.getQualifiedName(), cc);
+		compositionClasses.put(cc.getQualifiedName(), cc);
 	}
 
-	@Override
-	public EdgeClass createEdgeClass(QualifiedName name, VertexClass from,
-			String fromRoleName, VertexClass to, String toRoleName) {
-		return createEdgeClass(name, from, 0, Integer.MAX_VALUE, fromRoleName,
-				to, 0, Integer.MAX_VALUE, toRoleName);
+	void addEdgeClass(EdgeClass ec) {
+		assert !edgeClasses.containsKey(ec.getQualifiedName()) : "There already is an EdgeClass with the qualified name: "
+				+ ec.getQualifiedName() + " in the GraphClass!";
+		assert !graphElementClasses.containsKey(ec.getQualifiedName()) : "There already is a GraphElementClass with the qualified name: "
+				+ ec.getQualifiedName() + " in this GraphClass!";
+
+		graphElementClasses.put(ec.getQualifiedName(), ec);
+		edgeClasses.put(ec.getQualifiedName(), ec);
 	}
 
-	public EdgeClass createEdgeClass(QualifiedName name, VertexClass from,
-			int fromMin, int fromMax, VertexClass to, int toMin, int toMax) {
-		return createEdgeClass(name, from, fromMin, fromMax, "", to, toMin,
-				toMax, "");
-	}
+	void addVertexClass(VertexClass vc) {
+		assert !vertexClasses.containsKey(vc.getQualifiedName()) : "There already is a VertexClass with the qualified name '"
+				+ vc.getQualifiedName()
+				+ "' in the GraphClass '"
+				+ qualifiedName + "'.";
+		assert !graphElementClasses.containsKey(vc.getQualifiedName()) : "There already is a GraphElementClass with the qualified name: "
+				+ vc.getQualifiedName() + " in this GraphClass!";
 
-	@Override
-	public EdgeClass createEdgeClass(QualifiedName qn, VertexClass from,
-			int fromMin, int fromMax, String fromRoleName, VertexClass to,
-			int toMin, int toMax, String toRoleName) {
-		if (!schema.isValidSchemaElementName(qn)) {
-			throw new ReservedWordException(qn.getQualifiedName(), "EdgeClass");
-		}
-		if (schema.knows(qn)) {
-			throw new DuplicateNamedElementException(
-					"there is already an element with the name " + qn
-							+ " in the schema " + schema.getQualifiedName());
-		}
-
-		EdgeClassImpl ec = new EdgeClassImpl(qn, this, from, fromMin, fromMax,
-				fromRoleName, to, toMin, toMax, toRoleName);
-		if (!qn.getQualifiedName().equals("Edge")) {
-			EdgeClass s = schema.getDefaultEdgeClass();
-			ec.addSuperClass(s);
-		}
-		from.addEdgeClass(ec);
-		to.addEdgeClass(ec);
-
-		graphElementClasses.put(qn, ec);
-		edgeClasses.put(qn, ec);
-		Package pkg = schema.createPackageWithParents(qn.getPackageName());
-		ec.setPackage(pkg);
-		pkg.addEdgeClass(ec);
-		schema.addToKnownElements(qn.getUniqueName(), ec);
-		return ec;
-	}
-
-	@Override
-	public AggregationClass createAggregationClass(QualifiedName name,
-			VertexClass from, boolean aggregateFrom, VertexClass to) {
-		return createAggregationClass(name, from, 0, Integer.MAX_VALUE, "",
-				aggregateFrom, to, 0, Integer.MAX_VALUE, "");
-	}
-
-	@Override
-	public AggregationClass createAggregationClass(QualifiedName name,
-			VertexClass from, String fromRoleName, boolean aggregateFrom,
-			VertexClass to, String toRoleName) {
-		return createAggregationClass(name, from, 0, Integer.MAX_VALUE, "",
-				aggregateFrom, to, 0, Integer.MAX_VALUE, "");
-	}
-
-	@Override
-	public AggregationClass createAggregationClass(QualifiedName name,
-			VertexClass from, int fromMin, int fromMax, boolean aggregateFrom,
-			VertexClass to, int toMin, int toMax) {
-		return createAggregationClass(name, from, fromMin, fromMax, "",
-				aggregateFrom, to, toMin, toMax, "");
-	}
-
-	@Override
-	public AggregationClass createAggregationClass(QualifiedName qn,
-			VertexClass from, int fromMin, int fromMax, String fromRoleName,
-			boolean aggregateFrom, VertexClass to, int toMin, int toMax,
-			String toRoleName) {
-		if (!schema.isValidSchemaElementName(qn)) {
-			throw new ReservedWordException(qn.getQualifiedName(),
-					"AggregationClass");
-		}
-		if (schema.knows(qn)) {
-			throw new DuplicateNamedElementException(
-					"there is already an element with the name " + qn
-							+ " in the schema " + schema.getQualifiedName());
-		}
-		AggregationClassImpl ac = new AggregationClassImpl(qn, this, from,
-				fromMin, fromMax, fromRoleName, aggregateFrom, to, toMin,
-				toMax, toRoleName);
-		if (!qn.getQualifiedName().equals("Aggregation")) {
-			ac.addSuperClass(schema.getDefaultAggregationClass());
-		} else {
-			ac.addSuperClass(schema.getDefaultEdgeClass());
-		}
-		from.addEdgeClass(ac);
-		to.addEdgeClass(ac);
-		graphElementClasses.put(qn, ac);
-		aggregationClasses.put(qn, ac);
-		Package pkg = schema.createPackageWithParents(qn.getPackageName());
-		ac.setPackage(pkg);
-		pkg.addEdgeClass(ac);
-		schema.addToKnownElements(qn.getUniqueName(), ac);
-		return ac;
-	}
-
-	@Override
-	public CompositionClass createCompositionClass(QualifiedName name,
-			VertexClass from, boolean compositeFrom, VertexClass to) {
-		if (compositeFrom) {
-			return createCompositionClass(name, from, 1, 1, "", compositeFrom,
-					to, 0, Integer.MAX_VALUE, "");
-		} else {
-			return createCompositionClass(name, from, 0, Integer.MAX_VALUE, "",
-					compositeFrom, to, 1, 1, "");
-		}
-	}
-
-	@Override
-	public CompositionClass createCompositionClass(QualifiedName name,
-			VertexClass from, String fromRoleName, boolean compositeFrom,
-			VertexClass to, String toRoleName) {
-		if (compositeFrom) {
-			return createCompositionClass(name, from, 1, 1, fromRoleName,
-					compositeFrom, to, 0, Integer.MAX_VALUE, toRoleName);
-		} else {
-			return createCompositionClass(name, from, 0, Integer.MAX_VALUE,
-					fromRoleName, compositeFrom, to, 1, 1, toRoleName);
-		}
-	}
-
-	@Override
-	public CompositionClass createCompositionClass(QualifiedName name,
-			VertexClass from, int fromMin, int fromMax, boolean compositeFrom,
-			VertexClass to, int toMin, int toMax) {
-		return createCompositionClass(name, from, fromMin, fromMax, "",
-				compositeFrom, to, toMin, toMax, "");
-	}
-
-	@Override
-	public CompositionClass createCompositionClass(QualifiedName qn,
-			VertexClass from, int fromMin, int fromMax, String fromRoleName,
-			boolean compositeFrom, VertexClass to, int toMin, int toMax,
-			String toRoleName) {
-		if (!schema.isValidSchemaElementName(qn)) {
-			throw new ReservedWordException(qn.getQualifiedName(),
-					"CompositionClass");
-		}
-		if (schema.knows(qn)) {
-			throw new DuplicateNamedElementException(
-					"there is already an element with the name " + qn
-							+ " in the schema " + schema.getQualifiedName());
-		}
-
-		// if (!qn.getQualifiedName().equals("Composition")) {
-		// if (compositeFrom && fromMax > 1) {
-		// throw new SchemaException("Couldn't create CompositionClass "
-		// + qn
-		// + ", because its multiplicity on composite side is ("
-		// + fromMin + ", " + fromMax
-		// + ").  Only (0, 1) and (1,1) are allowed.");
-		// }
-		// if (!compositeFrom && toMax > 1) {
-		// throw new SchemaException("Couldn't create CompositionClass "
-		// + qn
-		// + ", because its multiplicity on composite side is ("
-		// + toMin + ", " + toMax
-		// + ").  Only (0, 1) and (1,1) are allowed.");
-		// }
-		// }
-
-		CompositionClassImpl cc = new CompositionClassImpl(qn, this, from,
-				fromMin, fromMax, fromRoleName, compositeFrom, to, toMin,
-				toMax, toRoleName);
-
-		if (!qn.getQualifiedName().equals("Composition")) {
-			cc.addSuperClass(schema.getDefaultCompositionClass());
-		} else {
-			cc.addSuperClass(schema.getDefaultAggregationClass());
-		}
-		from.addEdgeClass(cc);
-		to.addEdgeClass(cc);
-		graphElementClasses.put(qn, cc);
-		compositionClasses.put(qn, cc);
-		Package pkg = schema.createPackageWithParents(qn.getPackageName());
-		cc.setPackage(pkg);
-		pkg.addEdgeClass(cc);
-		schema.addToKnownElements(qn.getUniqueName(), cc);
-		return cc;
-	}
-
-	@Override
-	public VertexClass createVertexClass(QualifiedName qn) {
-		if (!schema.isValidSchemaElementName(qn)) {
-			throw new ReservedWordException(qn.getQualifiedName(),
-					"VertexClass");
-		}
-		if (schema.knows(qn)) {
-			throw new DuplicateNamedElementException(
-					"there is already an element with the name " + qn
-							+ " in the schema " + schema.getQualifiedName());
-		}
-
-		VertexClassImpl vc = new VertexClassImpl(qn, this);
-		vc.addSuperClass(schema.getDefaultVertexClass());
-		graphElementClasses.put(qn, vc);
-		vertexClasses.put(qn, vc);
-		schema.addToKnownElements(qn.getUniqueName(), vc);
-		Package pkg = schema.createPackageWithParents(qn.getPackageName());
-		vc.setPackage(pkg);
-		pkg.addVertexClass(vc);
-		return vc;
-	}
-
-	@Override
-	public void addSuperClass(GraphClass superClass) {
-		// only the internal abstract base class "Graph" can be a superclass
-		if (!superClass.getQualifiedName().equals("Graph")) {
-			throw new InheritanceException(
-					"GraphClass can not be generealized.");
-		}
-		super.addSuperClass(superClass);
+		graphElementClasses.put(vc.getQualifiedName(), vc);
+		vertexClasses.put(vc.getQualifiedName(), vc);
 	}
 
 	@Override
@@ -325,13 +138,191 @@ public class GraphClassImpl extends AttributedElementClassImpl implements
 	}
 
 	@Override
+	public void addSuperClass(GraphClass superClass) {
+		// only the internal abstract base class "Graph" can be a superclass
+		if (!superClass.getQualifiedName().equals(
+				getSchema().getDefaultGraphClass().getQualifiedName())) {
+			throw new InheritanceException(
+					"GraphClass can not be generealized.");
+		}
+		super.addSuperClass(superClass);
+	}
+
+	@Override
+	protected final void register() {
+		assert parentPackage == getSchema().getDefaultPackage() : "A GraphClass must be in the default package.";
+		((PackageImpl) parentPackage).addGraphClass(this);
+		if (!getSimpleName().equals(GraphClass.DEFAULTGRAPHCLASS_NAME)) {
+			((SchemaImpl) getSchema()).setGraphClass(this);
+		}
+	}
+
+	@Override
+	public String getVariableName() {
+		return "gc_" + getQualifiedName().replace('.', '_');
+	}
+
+	@Override
+	public EdgeClass createEdgeClass(String qualifiedName, VertexClass from,
+			VertexClass to) {
+		return createEdgeClass(qualifiedName, from, 0, Integer.MAX_VALUE, "",
+				to, 0, Integer.MAX_VALUE, "");
+	}
+
+	@Override
+	public EdgeClass createEdgeClass(String qualifiedName, VertexClass from,
+			String fromRoleName, VertexClass to, String toRoleName) {
+		return createEdgeClass(qualifiedName, from, 0, Integer.MAX_VALUE,
+				fromRoleName, to, 0, Integer.MAX_VALUE, toRoleName);
+	}
+
+	public EdgeClass createEdgeClass(String qualifiedName, VertexClass from,
+			int fromMin, int fromMax, VertexClass to, int toMin, int toMax) {
+		return createEdgeClass(qualifiedName, from, fromMin, fromMax, "", to,
+				toMin, toMax, "");
+	}
+
+	@Override
+	public EdgeClass createEdgeClass(String qualifiedName, VertexClass from,
+			int fromMin, int fromMax, String fromRoleName, VertexClass to,
+			int toMin, int toMax, String toRoleName) {
+		String[] qn = SchemaImpl.splitQualifiedName(qualifiedName);
+		Package parent = ((SchemaImpl) getSchema())
+				.createPackageWithParents(qn[0]);
+		EdgeClassImpl ec = new EdgeClassImpl(qn[1], parent, this, from,
+				fromMin, fromMax, fromRoleName, to, toMin, toMax, toRoleName);
+		if (!ec.getQualifiedName().equals(EdgeClass.DEFAULTEDGECLASS_NAME)) {
+			EdgeClass s = getSchema().getDefaultEdgeClass();
+			ec.addSuperClass(s);
+		}
+		from.addEdgeClass(ec);
+		to.addEdgeClass(ec);
+		return ec;
+	}
+
+	@Override
+	public AggregationClass createAggregationClass(String qualifiedName,
+			VertexClass from, boolean aggregateFrom, VertexClass to) {
+		return createAggregationClass(qualifiedName, from, 0,
+				Integer.MAX_VALUE, "", aggregateFrom, to, 0, Integer.MAX_VALUE,
+				"");
+	}
+
+	@Override
+	public AggregationClass createAggregationClass(String qualifiedName,
+			VertexClass from, String fromRoleName, boolean aggregateFrom,
+			VertexClass to, String toRoleName) {
+		return createAggregationClass(qualifiedName, from, 0,
+				Integer.MAX_VALUE, "", aggregateFrom, to, 0, Integer.MAX_VALUE,
+				"");
+	}
+
+	@Override
+	public AggregationClass createAggregationClass(String qualifiedName,
+			VertexClass from, int fromMin, int fromMax, boolean aggregateFrom,
+			VertexClass to, int toMin, int toMax) {
+		return createAggregationClass(qualifiedName, from, fromMin, fromMax,
+				"", aggregateFrom, to, toMin, toMax, "");
+	}
+
+	@Override
+	public AggregationClass createAggregationClass(String qualifiedName,
+			VertexClass from, int fromMin, int fromMax, String fromRoleName,
+			boolean aggregateFrom, VertexClass to, int toMin, int toMax,
+			String toRoleName) {
+		String[] qn = SchemaImpl.splitQualifiedName(qualifiedName);
+		Package parent = ((SchemaImpl) getSchema())
+				.createPackageWithParents(qn[0]);
+		AggregationClassImpl ac = new AggregationClassImpl(qn[1], parent, this,
+				from, fromMin, fromMax, fromRoleName, aggregateFrom, to, toMin,
+				toMax, toRoleName);
+		if (!ac.getQualifiedName().equals(
+				AggregationClass.DEFAULTAGGREGATIONCLASS_NAME)) {
+			ac.addSuperClass(getSchema().getDefaultAggregationClass());
+		} else {
+			ac.addSuperClass(getSchema().getDefaultEdgeClass());
+		}
+		from.addEdgeClass(ac);
+		to.addEdgeClass(ac);
+		return ac;
+	}
+
+	@Override
+	public CompositionClass createCompositionClass(String qualifiedName,
+			VertexClass from, boolean compositeFrom, VertexClass to) {
+		if (compositeFrom) {
+			return createCompositionClass(qualifiedName, from, 1, 1, "",
+					compositeFrom, to, 0, Integer.MAX_VALUE, "");
+		} else {
+			return createCompositionClass(qualifiedName, from, 0,
+					Integer.MAX_VALUE, "", compositeFrom, to, 1, 1, "");
+		}
+	}
+
+	@Override
+	public CompositionClass createCompositionClass(String qualifiedName,
+			VertexClass from, String fromRoleName, boolean compositeFrom,
+			VertexClass to, String toRoleName) {
+		if (compositeFrom) {
+			return createCompositionClass(qualifiedName, from, 1, 1,
+					fromRoleName, compositeFrom, to, 0, Integer.MAX_VALUE,
+					toRoleName);
+		} else {
+			return createCompositionClass(qualifiedName, from, 0,
+					Integer.MAX_VALUE, fromRoleName, compositeFrom, to, 1, 1,
+					toRoleName);
+		}
+	}
+
+	@Override
+	public CompositionClass createCompositionClass(String qualifiedName,
+			VertexClass from, int fromMin, int fromMax, boolean compositeFrom,
+			VertexClass to, int toMin, int toMax) {
+		return createCompositionClass(qualifiedName, from, fromMin, fromMax,
+				"", compositeFrom, to, toMin, toMax, "");
+	}
+
+	@Override
+	public CompositionClass createCompositionClass(String qualifiedName,
+			VertexClass from, int fromMin, int fromMax, String fromRoleName,
+			boolean compositeFrom, VertexClass to, int toMin, int toMax,
+			String toRoleName) {
+		String[] qn = SchemaImpl.splitQualifiedName(qualifiedName);
+		Package parent = ((SchemaImpl) getSchema())
+				.createPackageWithParents(qn[0]);
+		CompositionClassImpl cc = new CompositionClassImpl(qn[1], parent, this,
+				from, fromMin, fromMax, fromRoleName, compositeFrom, to, toMin,
+				toMax, toRoleName);
+
+		if (!cc.getQualifiedName().equals(
+				CompositionClass.DEFAULTCOMPOSITIONCLASS_NAME)) {
+			cc.addSuperClass(getSchema().getDefaultCompositionClass());
+		} else {
+			cc.addSuperClass(getSchema().getDefaultAggregationClass());
+		}
+		from.addEdgeClass(cc);
+		to.addEdgeClass(cc);
+		return cc;
+	}
+
+	@Override
+	public VertexClass createVertexClass(String qualifiedName) {
+		String[] qn = SchemaImpl.splitQualifiedName(qualifiedName);
+		Package parent = ((SchemaImpl) getSchema())
+				.createPackageWithParents(qn[0]);
+		VertexClassImpl vc = new VertexClassImpl(qn[1], parent, this);
+		vc.addSuperClass(getSchema().getDefaultVertexClass());
+		return vc;
+	}
+
+	@Override
 	public boolean knowsOwn(GraphElementClass aGraphElementClass) {
 		return (graphElementClasses.containsValue(aGraphElementClass));
 	}
 
 	@Override
-	public boolean knowsOwn(QualifiedName aGraphElementClass) {
-		return (graphElementClasses.containsKey(aGraphElementClass));
+	public boolean knowsOwn(String qn) {
+		return (graphElementClasses.containsKey(qn));
 	}
 
 	@Override
@@ -348,12 +339,12 @@ public class GraphClassImpl extends AttributedElementClassImpl implements
 	}
 
 	@Override
-	public boolean knows(QualifiedName aGraphElementClass) {
-		if (graphElementClasses.containsKey(aGraphElementClass)) {
+	public boolean knows(String qn) {
+		if (graphElementClasses.containsKey(qn)) {
 			return true;
 		}
 		for (AttributedElementClass superClass : directSuperClasses) {
-			if (((GraphClass) superClass).knows(aGraphElementClass)) {
+			if (((GraphClass) superClass).knows(qn)) {
 				return true;
 			}
 		}
@@ -361,7 +352,7 @@ public class GraphClassImpl extends AttributedElementClassImpl implements
 	}
 
 	@Override
-	public GraphElementClass getGraphElementClass(QualifiedName qn) {
+	public GraphElementClass getGraphElementClass(String qn) {
 		if (graphElementClasses.containsKey(qn)) {
 			return graphElementClasses.get(qn);
 		}
@@ -511,11 +502,6 @@ public class GraphClassImpl extends AttributedElementClassImpl implements
 	}
 
 	@Override
-	public Schema getSchema() {
-		return schema;
-	}
-
-	@Override
 	public int getOwnEdgeClassCount() {
 		return edgeClasses.size();
 	}
@@ -526,13 +512,13 @@ public class GraphClassImpl extends AttributedElementClassImpl implements
 	}
 
 	@Override
-	public VertexClass getVertexClass(QualifiedName name) {
-		VertexClass vc = vertexClasses.get(name);
+	public VertexClass getVertexClass(String qn) {
+		VertexClass vc = vertexClasses.get(qn);
 		if (vc != null) {
 			return vc;
 		}
 		for (AttributedElementClass superclass : directSuperClasses) {
-			vc = ((GraphClass) superclass).getVertexClass(name);
+			vc = ((GraphClass) superclass).getVertexClass(qn);
 			if (vc != null) {
 				return vc;
 			}
@@ -541,21 +527,21 @@ public class GraphClassImpl extends AttributedElementClassImpl implements
 	}
 
 	@Override
-	public EdgeClass getEdgeClass(QualifiedName name) {
-		EdgeClass ec = edgeClasses.get(name);
+	public EdgeClass getEdgeClass(String qn) {
+		EdgeClass ec = edgeClasses.get(qn);
 		if (ec != null) {
 			return ec;
 		}
-		ec = aggregationClasses.get(name);
+		ec = aggregationClasses.get(qn);
 		if (ec != null) {
 			return ec;
 		}
-		ec = compositionClasses.get(name);
+		ec = compositionClasses.get(qn);
 		if (ec != null) {
 			return ec;
 		}
 		for (AttributedElementClass superclass : directSuperClasses) {
-			ec = ((GraphClass) superclass).getEdgeClass(name);
+			ec = ((GraphClass) superclass).getEdgeClass(qn);
 			if (ec != null) {
 				return ec;
 			}
@@ -564,13 +550,13 @@ public class GraphClassImpl extends AttributedElementClassImpl implements
 	}
 
 	@Override
-	public CompositionClass getCompositionClass(QualifiedName name) {
-		CompositionClass cc = compositionClasses.get(name);
+	public CompositionClass getCompositionClass(String qn) {
+		CompositionClass cc = compositionClasses.get(qn);
 		if (cc != null) {
 			return cc;
 		}
 		for (AttributedElementClass superclass : directSuperClasses) {
-			cc = ((GraphClass) superclass).getCompositionClass(name);
+			cc = ((GraphClass) superclass).getCompositionClass(qn);
 			if (cc != null) {
 				return cc;
 			}
@@ -579,17 +565,17 @@ public class GraphClassImpl extends AttributedElementClassImpl implements
 	}
 
 	@Override
-	public AggregationClass getAggregationClass(QualifiedName name) {
-		AggregationClass ac = aggregationClasses.get(name);
+	public AggregationClass getAggregationClass(String qn) {
+		AggregationClass ac = aggregationClasses.get(qn);
 		if (ac != null) {
 			return ac;
 		}
-		ac = compositionClasses.get(name);
+		ac = compositionClasses.get(qn);
 		if (ac != null) {
 			return ac;
 		}
 		for (AttributedElementClass superclass : directSuperClasses) {
-			ac = ((GraphClass) superclass).getAggregationClass(name);
+			ac = ((GraphClass) superclass).getAggregationClass(qn);
 			if (ac != null) {
 				return ac;
 			}

@@ -21,48 +21,53 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
- 
+
 package de.uni_koblenz.jgralab.utilities.jgralab2owl;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
-public class HelperMethods {
+public final class HelperMethods {
 	/**
-	 * Returns the element which has an {@code rdf:ID} attribute with the given id as value. 
-	 * 
-	 * @param id The value for {@code rdf:ID} which shall be searched for.
-	 * @return The element which has an {@code rdf:ID} attribute with the given id as value.
+	 * Returns the element which has an {@code rdf:ID} attribute with the given
+	 * id as value.
+	 *
+	 * @param id
+	 *            The value for {@code rdf:ID} which shall be searched for.
+	 * @return The element which has an {@code rdf:ID} attribute with the given
+	 *         id as value.
 	 */
 	static Element getOwlElement(Document doc, String id) {
 		Node currentElem = doc.getFirstChild().getFirstChild();
-		String currentID = ((Element)currentElem).getAttribute("rdf:ID");
-				
+		String currentID = ((Element) currentElem).getAttribute("rdf:ID");
+
 		while (!currentID.equals(id)) {
 			currentElem = currentElem.getNextSibling();
-			currentID = ((Element)currentElem).getAttribute("rdf:ID");
+			currentID = ((Element) currentElem).getAttribute("rdf:ID");
 		}
-		
-		return (Element)currentElem;
+
+		return (Element) currentElem;
 	}
-	
+
 	/**
-	 * Changes the first character of {@code string} to lower case and returns the
-	 * resulting String.
-	 * 
-	 * @param string String whose first character shall be changed to lower case.
+	 * Changes the first character of {@code string} to lower case and returns
+	 * the resulting String.
+	 *
+	 * @param string
+	 *            String whose first character shall be changed to lower case.
 	 * @return The given String with its first character changed to lower case.
 	 */
 	static String firstToLowerCase(String string) {
 		return Character.toLowerCase(string.charAt(0)) + string.substring(1);
 	}
-	
+
 	/**
-	 * Changes the first character of {@code string} to upper case and returns the
-	 * resulting String.
-	 * 
-	 * @param string String whose first character shall be changed to upper case.
+	 * Changes the first character of {@code string} to upper case and returns
+	 * the resulting String.
+	 *
+	 * @param string
+	 *            String whose first character shall be changed to upper case.
 	 * @return The given String with its first character changed to upper case.
 	 */
 	static String firstToUpperCase(String string) {

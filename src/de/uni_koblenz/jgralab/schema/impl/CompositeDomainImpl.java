@@ -31,44 +31,16 @@ import java.util.Set;
 import de.uni_koblenz.jgralab.schema.BasicDomain;
 import de.uni_koblenz.jgralab.schema.CompositeDomain;
 import de.uni_koblenz.jgralab.schema.Domain;
-import de.uni_koblenz.jgralab.schema.QualifiedName;
-import de.uni_koblenz.jgralab.schema.Schema;
+import de.uni_koblenz.jgralab.schema.Package;
 
 public abstract class CompositeDomainImpl extends DomainImpl implements
 		CompositeDomain {
 
-	public CompositeDomainImpl(Schema schema, QualifiedName qn) {
-		super(schema, qn);
+	protected CompositeDomainImpl(String simpleName, Package pkg) {
+		super(simpleName, pkg);
 	}
 
-	/**
-	 * Checks if <code>baseDomain</code> is unequal null and is part of
-	 * <code>schema</code>.<br>
-	 * <br>
-	 * <b>pattern:</b> c.isDomainOfSchema(schema1, baseDomain1)<br>
-	 * <b>pre:</b> true<br>
-	 * <b>post:</b> true iff schema!=baseDomain.getSchema()<br>
-	 * <b>post:</b> false otherwise<br>
-	 * <b>post:</b> schema1'.equals(schema1) && baseDomain1'.equals(baseDomain1)
-	 * 
-	 * @param schema
-	 *            the schema in which <code>baseDomain</code> must be
-	 * @param baseDomain
-	 *            the baseDomain
-	 * @return true iff <code>baseDomain</code> is part of <code>schema</code><br>
-	 *         false otherwise
-	 */
-	protected boolean isDomainOfSchema(Schema schema, Domain baseDomain) {
-		if (schema != baseDomain.getSchema()) {
-			return false;
-		}
-		return true;
-	}
-
-	public boolean isComposite() {
-		return true;
-	}
-
+	@Override
 	public Set<CompositeDomain> getAllComponentCompositeDomains() {
 		Domain d;
 		HashSet<CompositeDomain> componentCompositeDomains = new HashSet<CompositeDomain>();
@@ -77,15 +49,18 @@ public abstract class CompositeDomainImpl extends DomainImpl implements
 		for (Iterator<Domain> cdit = componentDomains.iterator(); cdit
 				.hasNext();) {
 			d = cdit.next();
-			if (d instanceof BasicDomain)
+			if (d instanceof BasicDomain) {
 				cdit.remove();
-			else
+			} else {
 				componentCompositeDomains.add((CompositeDomain) d);
+			}
 		}
 
 		return componentCompositeDomains;
 	}
 
 	@Override
-	public abstract boolean equals(Object o);
+	public boolean isComposite() {
+		return true;
+	}
 }

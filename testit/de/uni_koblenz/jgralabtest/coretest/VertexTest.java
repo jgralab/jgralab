@@ -27,7 +27,6 @@ import de.uni_koblenz.jgralab.GraphIOException;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.schema.EdgeClass;
 import de.uni_koblenz.jgralab.schema.GraphClass;
-import de.uni_koblenz.jgralab.schema.QualifiedName;
 import de.uni_koblenz.jgralab.schema.Schema;
 import de.uni_koblenz.jgralab.schema.VertexClass;
 import de.uni_koblenz.jgralabtest.schemas.vertextest.AbstractSuperNode;
@@ -502,7 +501,7 @@ public class VertexTest {
 
 	/**
 	 * Tests if a Vertex has the expected degree considering the EdgeClass.
-	 * 
+	 *
 	 * @param forNode
 	 *            the Vertex, which degrees should be tested
 	 * @param expectedLink
@@ -522,7 +521,7 @@ public class VertexTest {
 
 	/**
 	 * Creates an array of the EdgeClasses.
-	 * 
+	 *
 	 * @return {Link, SubLink, LinkBack}
 	 */
 	private EdgeClass[] getEdgeClasses() {
@@ -804,7 +803,7 @@ public class VertexTest {
 	/**
 	 * Tests if a Vertex has the expected degree considering the EdgeClass and
 	 * SubClasses.
-	 * 
+	 *
 	 * @param forNode
 	 *            the Vertex, which degrees should be tested
 	 * @param expectedLink
@@ -954,7 +953,7 @@ public class VertexTest {
 	/**
 	 * Tests if a Vertex has the expected degree considering the Classes
 	 * extending Edge and SubClasses.
-	 * 
+	 *
 	 * @param forNode
 	 *            the Vertex, which degrees should be tested
 	 * @param expectedLink
@@ -1174,7 +1173,7 @@ public class VertexTest {
 	/**
 	 * Tests if a Vertex has the expected degree considering the EdgeClass and
 	 * the EdgeDirection.
-	 * 
+	 *
 	 * @param forNode
 	 *            the Vertex, which degrees should be tested
 	 * @param expectedLink
@@ -1391,7 +1390,7 @@ public class VertexTest {
 	/**
 	 * Tests if a Vertex has the expected degree considering the Class and the
 	 * EdgeDirection.
-	 * 
+	 *
 	 * @param forNode
 	 *            the Vertex, which degrees should be tested
 	 * @param expectedLink
@@ -1656,7 +1655,7 @@ public class VertexTest {
 	/**
 	 * Tests if a Vertex has the expected degree considering the EdgeClass, the
 	 * EdgeDirection and the Subclasses.
-	 * 
+	 *
 	 * @param forNode
 	 *            the Vertex, which degrees should be tested
 	 * @param expectedLink
@@ -1915,7 +1914,7 @@ public class VertexTest {
 	/**
 	 * Tests if a Vertex has the expected degree considering the Class, the
 	 * EdgeDirection and the Subclasses.
-	 * 
+	 *
 	 * @param forNode
 	 *            the Vertex, which degrees should be tested
 	 * @param expectedLink
@@ -2049,7 +2048,7 @@ public class VertexTest {
 	 * ret[1]=SubNode<br>
 	 * ret[2]=SuperNode<br>
 	 * ret[3]=DoubleSubNode
-	 * 
+	 *
 	 * @return an array <code>ret</code> of all VertexClasses
 	 */
 	private VertexClass[] getVertexClasses() {
@@ -6075,7 +6074,7 @@ public class VertexTest {
 		assertEquals(0, graph.getECount());
 		assertEquals(0, graph.getVCount());
 	}
-	
+
 	/**
 	 * Deleting v1 in v1<>---e1----v2 v1<>-----e2-----v3
 	 */
@@ -6090,7 +6089,7 @@ public class VertexTest {
 		assertEquals(0, graph.getECount());
 		assertEquals(0, graph.getVCount());
 	}
-	
+
 	/**
 	 * Deleting v1 in v1<>---e1----v2 v1<>-----e2-----v2
 	 */
@@ -6104,7 +6103,7 @@ public class VertexTest {
 		assertEquals(0, graph.getECount());
 		assertEquals(0, graph.getVCount());
 	}
-	
+
 	/**
 	 * Deleting v1 in v1<>---e1----v2-----e2-----v3
 	 */
@@ -6231,7 +6230,7 @@ public class VertexTest {
 
 	/**
 	 * Checks if the expected incidences equals the returned incidences.
-	 * 
+	 *
 	 * @param v
 	 *            the node of which the incidences should be tested
 	 * @param ec
@@ -7733,8 +7732,7 @@ public class VertexTest {
 	public void getGraphClassTest() {
 		VertexTestGraph anotherGraph = ((VertexTestSchema) graph.getSchema())
 				.createVertexTestGraph();
-		GraphClass gc = ((VertexTestSchema) graph.getSchema())
-				.getGraphClasses().get(new QualifiedName("VertexTestGraph"));
+		GraphClass gc = graph.getSchema().getGraphClass();
 		Vertex v0 = graph.createDoubleSubNode();
 		Vertex v1 = anotherGraph.createDoubleSubNode();
 		Vertex v2 = graph.createDoubleSubNode();
@@ -8094,7 +8092,7 @@ public class VertexTest {
 	/**
 	 * Checks if <code>v.incidences()</code> has the same elements in the same
 	 * order like <code>e</code>.
-	 * 
+	 *
 	 * @param v
 	 *            the Vertex which incident edges should be checked
 	 * @param e
@@ -8116,7 +8114,7 @@ public class VertexTest {
 	/**
 	 * Checks if <code>graph.edges()</code> has the same elements in the same
 	 * order like <code>e</code>.
-	 * 
+	 *
 	 * @param e
 	 *            the edges to check
 	 */
@@ -8784,7 +8782,7 @@ public class VertexTest {
 	/**
 	 * Checks if the edges which are returned by an get#Edge#incidences are the
 	 * expected ones.
-	 * 
+	 *
 	 * @param incidenceName
 	 *            Name of #Edge#
 	 * @param v

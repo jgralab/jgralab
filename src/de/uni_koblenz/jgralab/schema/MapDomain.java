@@ -27,11 +27,14 @@ package de.uni_koblenz.jgralab.schema;
 /**
  * Represents a Map<..., ...> domain. Instances may exist multiple times per
  * schema.
- *
+ * 
  * @author ist@uni-koblenz.de
- *
+ * 
  */
 public interface MapDomain extends CompositeDomain {
+
+	public static final String MAPDOMAIN_NAME = "Map";
+
 	/**
 	 * @return the key domain of the collection
 	 */

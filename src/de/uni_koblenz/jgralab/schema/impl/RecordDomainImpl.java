@@ -35,22 +35,20 @@ import de.uni_koblenz.jgralab.codegenerator.CodeSnippet;
 import de.uni_koblenz.jgralab.schema.CompositeDomain;
 import de.uni_koblenz.jgralab.schema.Domain;
 import de.uni_koblenz.jgralab.schema.Package;
-import de.uni_koblenz.jgralab.schema.QualifiedName;
 import de.uni_koblenz.jgralab.schema.RecordDomain;
-import de.uni_koblenz.jgralab.schema.Schema;
 import de.uni_koblenz.jgralab.schema.exception.DuplicateRecordComponentException;
 import de.uni_koblenz.jgralab.schema.exception.InvalidNameException;
 import de.uni_koblenz.jgralab.schema.exception.NoSuchRecordComponentException;
 import de.uni_koblenz.jgralab.schema.exception.RecordCycleException;
-import de.uni_koblenz.jgralab.schema.exception.WrongSchemaException;
+import de.uni_koblenz.jgralab.schema.exception.SchemaException;
 
-public class RecordDomainImpl extends CompositeDomainImpl implements
+public final class RecordDomainImpl extends CompositeDomainImpl implements
 		RecordDomain {
 
 	/**
 	 * holds a list of the components of the record
 	 */
-	private Map<String, Domain> components;
+	private final Map<String, Domain> components = new TreeMap<String, Domain>();
 
 	/**
 	 * @param qn
@@ -58,43 +56,17 @@ public class RecordDomainImpl extends CompositeDomainImpl implements
 	 * @param components
 	 *            a list of the components of the record
 	 */
-	public RecordDomainImpl(Schema schema, QualifiedName qn,
-			Map<String, Domain> components) {
-		super(schema, qn);
-		for (Domain aDomain : components.values()) {
-			if (!isDomainOfSchema(getSchema(), aDomain)) {
-				throw new WrongSchemaException(aDomain
-						+ " must be a domain of the schema "
-						+ getSchema().getQualifiedName());
-			}
-		}
-		this.components = components;
-	}
+	RecordDomainImpl(String sn, Package pkg, Map<String, Domain> components) {
+		super(sn, pkg);
 
-	/**
-	 * @param qn
-	 *            the unique name of the record in the schema
-	 */
-	public RecordDomainImpl(Schema schema, QualifiedName qn) {
-		super(schema, qn);
-		this.components = new TreeMap<String, Domain>();
-	}
-
-	@Override
-	public String toString() {
-		String output = "Record " + getName();
-		String delim = " (";
-		for (Entry<String, Domain> c : components.entrySet()) {
-			output += delim + c.toString();
-			delim = ", ";
+		for (String name : components.keySet()) {
+			addComponent(name, components.get(name));
 		}
-		output += ")";
-		return output;
 	}
 
 	@Override
 	public void addComponent(String name, Domain aDomain) {
-		if (name.equals("")) {
+		if (name.isEmpty()) {
 			throw new InvalidNameException(
 					"Cannot create a record component with an empty name.");
 		}
@@ -102,10 +74,10 @@ public class RecordDomainImpl extends CompositeDomainImpl implements
 			throw new DuplicateRecordComponentException(name,
 					getQualifiedName());
 		}
-		if (!isDomainOfSchema(getSchema(), aDomain)) {
-			throw new WrongSchemaException(aDomain
+		if (parentPackage.getSchema().getDomain(aDomain.getQualifiedName()) == null) {
+			throw new SchemaException(aDomain.getQualifiedName()
 					+ " must be a domain of the schema "
-					+ getSchema().getQualifiedName());
+					+ parentPackage.getSchema().getQualifiedName());
 		}
 		if (!staysAcyclicAfterAdding(aDomain)) {
 			throw new RecordCycleException(
@@ -114,6 +86,74 @@ public class RecordDomainImpl extends CompositeDomainImpl implements
 							+ ", would create a cycle of RecordDomains.");
 		}
 		components.put(name, aDomain);
+	}
+
+	@Override
+	public Set<Domain> getAllComponentDomains() {
+		return new HashSet<Domain>(components.values());
+	}
+
+	@Override
+	public Map<String, Domain> getComponents() {
+		return components;
+	}
+
+	@Override
+	public Domain getDomainOfComponent(String name) {
+		if (!components.containsKey(name)) {
+			throw new NoSuchRecordComponentException(getQualifiedName(), name);
+		}
+		return components.get(name);
+	}
+
+	@Override
+	public String getJavaAttributeImplementationTypeName(
+			String schemaRootPackagePrefix) {
+		return schemaRootPackagePrefix + "." + getQualifiedName();
+	}
+
+	@Override
+	public String getJavaClassName(String schemaRootPackagePrefix) {
+		return getJavaAttributeImplementationTypeName(schemaRootPackagePrefix);
+	}
+
+	@Override
+	public CodeBlock getReadMethod(String schemaPrefix, String variableName,
+			String graphIoVariableName) {
+		CodeSnippet code = new CodeSnippet();
+
+		code.add("if (!" + graphIoVariableName
+				+ ".isNextToken(\"\\\\null\")) {");
+		code.add("    " + variableName + " = new "
+				+ getJavaAttributeImplementationTypeName(schemaPrefix) + "("
+				+ graphIoVariableName + ");");
+		code.add("} else {");
+		code.add("    io.match(\"\\\\null\");");
+		code.add("    " + variableName + " = null;");
+		code.add("}");
+
+		return code;
+	}
+
+	@Override
+	public String getTGTypeName(Package pkg) {
+		return getQualifiedName(pkg);
+	}
+
+	@Override
+	public CodeBlock getWriteMethod(String schemaRootPackagePrefix,
+			String variableName, String graphIoVariableName) {
+		CodeSnippet code = new CodeSnippet();
+
+		code.add("if (" + variableName + " != null) {");
+		code.add("    " + variableName + ".writeComponentValues("
+				+ graphIoVariableName + ");");
+		code.add("} else {");
+		code.add("    " + graphIoVariableName
+				+ ".writeIdentifier(\"\\\\null\");");
+		code.add("}");
+
+		return code;
 	}
 
 	/**
@@ -139,92 +179,14 @@ public class RecordDomainImpl extends CompositeDomainImpl implements
 	}
 
 	@Override
-	public void deleteComponent(String name) {
-		if (!components.containsKey(name)) {
-			throw new NoSuchRecordComponentException(getName(), name);
+	public String toString() {
+		String output = "Record " + getQualifiedName();
+		String delim = " (";
+		for (Entry<String, Domain> c : components.entrySet()) {
+			output += delim + c.toString();
+			delim = ", ";
 		}
-		components.remove(name);
+		output += ")";
+		return output;
 	}
-
-	@Override
-	public Domain getDomainOfComponent(String name) {
-		if (!components.containsKey(name)) {
-			throw new NoSuchRecordComponentException(getName(), name);
-		}
-		return components.get(name);
-	}
-
-	@Override
-	public String getJavaAttributeImplementationTypeName(
-			String schemaRootPackagePrefix) {
-		return schemaRootPackagePrefix + "." + getQualifiedName();
-	}
-
-	@Override
-	public String getJavaClassName(String schemaRootPackagePrefix) {
-		return getJavaAttributeImplementationTypeName(schemaRootPackagePrefix);
-	}
-
-	@Override
-	public Map<String, Domain> getComponents() {
-		return components;
-	}
-
-	@Override
-	public String getTGTypeName(Package pkg) {
-		return getQualifiedName(pkg);
-	}
-
-	@Override
-	public CodeBlock getReadMethod(String schemaPrefix, String variableName,
-			String graphIoVariableName) {
-		CodeSnippet code = new CodeSnippet();
-
-		code.add("if (!" + graphIoVariableName
-				+ ".isNextToken(\"\\\\null\")) {");
-		code.add("    " + variableName + " = new "
-				+ getJavaAttributeImplementationTypeName(schemaPrefix) + "("
-				+ graphIoVariableName + ");");
-		code.add("} else {");
-		code.add("    io.match(\"\\\\null\");");
-		code.add("    " + variableName + " = null;");
-		code.add("}");
-
-		return code;
-	}
-
-	@Override
-	public CodeBlock getWriteMethod(String schemaRootPackagePrefix,
-			String variableName, String graphIoVariableName) {
-		CodeSnippet code = new CodeSnippet();
-
-		code.add("if (" + variableName + " != null) {");
-		code.add("    " + variableName + ".writeComponentValues("
-				+ graphIoVariableName + ");");
-		code.add("} else {");
-		code.add("    " + graphIoVariableName
-				+ ".writeIdentifier(\"\\\\null\");");
-		code.add("}");
-
-		return code;
-	}
-
-	public Set<Domain> getAllComponentDomains() {
-		return new HashSet<Domain>(components.values());
-	}
-
-	@Override
-	public boolean equals(Object o) {
-		if (this == o) {
-			return true;
-		}
-
-		if (!(o instanceof RecordDomain)) {
-			return false;
-		}
-
-		RecordDomain other = (RecordDomain) o;
-		return components.equals(other.getComponents());
-	}
-
 }

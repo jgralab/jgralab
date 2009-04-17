@@ -8,7 +8,6 @@ import org.junit.Test;
 import de.uni_koblenz.jgralab.schema.AggregationClass;
 import de.uni_koblenz.jgralab.schema.AttributedElementClass;
 import de.uni_koblenz.jgralab.schema.GraphClass;
-import de.uni_koblenz.jgralab.schema.QualifiedName;
 import de.uni_koblenz.jgralab.schema.Schema;
 import de.uni_koblenz.jgralab.schema.VertexClass;
 import de.uni_koblenz.jgralab.schema.impl.SchemaImpl;
@@ -25,14 +24,12 @@ public class AggregationClassImplTest extends EdgeClassImplTest {
 		super.setUp();
 
 		aggregationClassFromVertexClass = graphClass
-				.createVertexClass(new QualifiedName(
-						"AggregationClassFromVertexClass"));
+				.createVertexClass("AggregationClassFromVertexClass");
 		aggregationClassToVertexClass = graphClass
-				.createVertexClass(new QualifiedName(
-						"AggregationClassToVertexClass"));
+				.createVertexClass("AggregationClassToVertexClass");
 
 		attributedElement = aggregationClass = graphClass
-				.createAggregationClass(new QualifiedName("AggregationClass1"),
+				.createAggregationClass("AggregationClass1",
 						aggregationClassFromVertexClass, 0, (int) (Math
 								.random() * 100) + 1,
 						"AggregationClassFromRoleName", true,
@@ -51,9 +48,8 @@ public class AggregationClassImplTest extends EdgeClassImplTest {
 	@Override
 	public void testAddAttribute4() {
 		AggregationClass superClass = graphClass.createAggregationClass(
-				new QualifiedName("AggregationClassSuperClass"),
-				aggregationClassFromVertexClass, true,
-				aggregationClassToVertexClass);
+				"AggregationClassSuperClass", aggregationClassFromVertexClass,
+				true, aggregationClassToVertexClass);
 
 		aggregationClass.addSuperClass(superClass);
 
@@ -70,9 +66,8 @@ public class AggregationClassImplTest extends EdgeClassImplTest {
 	@Override
 	public void testAddAttribute5() {
 		AggregationClass subClass = graphClass.createAggregationClass(
-				new QualifiedName("AggregationClassSubClass"),
-				aggregationClassFromVertexClass, true,
-				aggregationClassToVertexClass);
+				"AggregationClassSubClass", aggregationClassFromVertexClass,
+				true, aggregationClassToVertexClass);
 
 		subClass.addSuperClass(aggregationClass);
 
@@ -89,9 +84,8 @@ public class AggregationClassImplTest extends EdgeClassImplTest {
 	@Override
 	public void testAddConstraint4() {
 		AggregationClass superClass = graphClass.createAggregationClass(
-				new QualifiedName("AggregationClassSuperClass"),
-				aggregationClassFromVertexClass, true,
-				aggregationClassToVertexClass);
+				"AggregationClassSuperClass", aggregationClassFromVertexClass,
+				true, aggregationClassToVertexClass);
 
 		aggregationClass.addSuperClass(superClass);
 
@@ -108,9 +102,8 @@ public class AggregationClassImplTest extends EdgeClassImplTest {
 	@Override
 	public void testAddConstraint5() {
 		AggregationClass subClass = graphClass.createAggregationClass(
-				new QualifiedName("AggregationClassSubClass"),
-				aggregationClassFromVertexClass, true,
-				aggregationClassToVertexClass);
+				"AggregationClassSubClass", aggregationClassFromVertexClass,
+				true, aggregationClassToVertexClass);
 
 		subClass.addSuperClass(aggregationClass);
 
@@ -126,8 +119,8 @@ public class AggregationClassImplTest extends EdgeClassImplTest {
 	@Test
 	@Override
 	public void testCompareTo() {
-		AggregationClass other = graphClass.createAggregationClass(
-				new QualifiedName("Z"), aggregationClassFromVertexClass, true,
+		AggregationClass other = graphClass.createAggregationClass("Z",
+				aggregationClassFromVertexClass, true,
 				aggregationClassToVertexClass);
 
 		testCompareTo(other);
@@ -142,8 +135,8 @@ public class AggregationClassImplTest extends EdgeClassImplTest {
 	@Test
 	@Override
 	public void testCompareTo2() {
-		AggregationClass other = graphClass.createAggregationClass(
-				new QualifiedName("A"), aggregationClassFromVertexClass, true,
+		AggregationClass other = graphClass.createAggregationClass("A",
+				aggregationClassFromVertexClass, true,
 				aggregationClassToVertexClass);
 
 		testCompareTo2(other);
@@ -158,18 +151,16 @@ public class AggregationClassImplTest extends EdgeClassImplTest {
 	@Test
 	@Override
 	public void testCompareTo3() {
-		Schema schema2 = new SchemaImpl(new QualifiedName(
-				"de.uni_koblenz.jgralabtest.schematest.TestSchema2"));
-		GraphClass graphClass2 = schema2.createGraphClass(new QualifiedName(
-				graphClass.getQualifiedName()));
+		Schema schema2 = new SchemaImpl("TestSchema2",
+				"de.uni_koblenz.jgralabtest.schematest");
+		GraphClass graphClass2 = schema2.createGraphClass(graphClass
+				.getSimpleName());
 		VertexClass aggregationClassFromVertexClass2 = graphClass2
-				.createVertexClass(new QualifiedName(
-						"AggregationClassFromVertexClass"));
+				.createVertexClass("AggregationClassFromVertexClass");
 		VertexClass aggregationClassToVertexClass2 = graphClass2
-				.createVertexClass(new QualifiedName(
-						"AggregationClassToVertexClass"));
+				.createVertexClass("AggregationClassToVertexClass");
 		AggregationClass other = graphClass2.createAggregationClass(
-				new QualifiedName(aggregationClass.getQualifiedName()),
+				aggregationClass.getQualifiedName(),
 				aggregationClassFromVertexClass2, true,
 				aggregationClassToVertexClass2);
 
@@ -197,9 +188,8 @@ public class AggregationClassImplTest extends EdgeClassImplTest {
 	@Override
 	public void testContainsAttribute3() {
 		AggregationClass superClass = graphClass.createAggregationClass(
-				new QualifiedName("AggregationClassSuperClass"),
-				aggregationClassFromVertexClass, true,
-				aggregationClassToVertexClass);
+				"AggregationClassSuperClass", aggregationClassFromVertexClass,
+				true, aggregationClassToVertexClass);
 
 		aggregationClass.addSuperClass(superClass);
 
@@ -217,9 +207,8 @@ public class AggregationClassImplTest extends EdgeClassImplTest {
 		Vector<AttributedElementClass> expectedSubClasses = new Vector<AttributedElementClass>();
 
 		AggregationClass subClass = graphClass.createAggregationClass(
-				new QualifiedName("AggregationClassSubClass"),
-				aggregationClassFromVertexClass, true,
-				aggregationClassToVertexClass);
+				"AggregationClassSubClass", aggregationClassFromVertexClass,
+				true, aggregationClassToVertexClass);
 
 		subClass.addSuperClass(aggregationClass);
 
@@ -240,13 +229,11 @@ public class AggregationClassImplTest extends EdgeClassImplTest {
 		Vector<AttributedElementClass> expectedSubClasses = new Vector<AttributedElementClass>();
 
 		AggregationClass subClass = graphClass.createAggregationClass(
-				new QualifiedName("AggregationClassSubClass"),
-				aggregationClassFromVertexClass, true,
-				aggregationClassToVertexClass);
+				"AggregationClassSubClass", aggregationClassFromVertexClass,
+				true, aggregationClassToVertexClass);
 		AggregationClass subClass2 = graphClass.createAggregationClass(
-				new QualifiedName("AggregationClassSubClass2"),
-				aggregationClassFromVertexClass, true,
-				aggregationClassToVertexClass);
+				"AggregationClassSubClass2", aggregationClassFromVertexClass,
+				true, aggregationClassToVertexClass);
 
 		subClass.addSuperClass(aggregationClass);
 		subClass2.addSuperClass(aggregationClass);
@@ -269,13 +256,11 @@ public class AggregationClassImplTest extends EdgeClassImplTest {
 		Vector<AttributedElementClass> expectedSubClasses = new Vector<AttributedElementClass>();
 
 		AggregationClass subClass = graphClass.createAggregationClass(
-				new QualifiedName("AggregationClassSubClass"),
-				aggregationClassFromVertexClass, true,
-				aggregationClassToVertexClass);
+				"AggregationClassSubClass", aggregationClassFromVertexClass,
+				true, aggregationClassToVertexClass);
 		AggregationClass subClass2 = graphClass.createAggregationClass(
-				new QualifiedName("AggregationClassSubClass2"),
-				aggregationClassFromVertexClass, true,
-				aggregationClassToVertexClass);
+				"AggregationClassSubClass2", aggregationClassFromVertexClass,
+				true, aggregationClassToVertexClass);
 
 		subClass.addSuperClass(aggregationClass);
 		subClass2.addSuperClass(subClass);
@@ -310,9 +295,8 @@ public class AggregationClassImplTest extends EdgeClassImplTest {
 		Vector<AttributedElementClass> expectedSuperClasses = new Vector<AttributedElementClass>();
 
 		AggregationClass superClass = graphClass.createAggregationClass(
-				new QualifiedName("AggregationClassSuperClass"),
-				aggregationClassFromVertexClass, true,
-				aggregationClassToVertexClass);
+				"AggregationClassSuperClass", aggregationClassFromVertexClass,
+				true, aggregationClassToVertexClass);
 
 		aggregationClass.addSuperClass(superClass);
 
@@ -335,13 +319,11 @@ public class AggregationClassImplTest extends EdgeClassImplTest {
 		Vector<AttributedElementClass> expectedSuperClasses = new Vector<AttributedElementClass>();
 
 		AggregationClass superClass = graphClass.createAggregationClass(
-				new QualifiedName("AggregationClassSuperClass"),
-				aggregationClassFromVertexClass, true,
-				aggregationClassToVertexClass);
+				"AggregationClassSuperClass", aggregationClassFromVertexClass,
+				true, aggregationClassToVertexClass);
 		AggregationClass superClass2 = graphClass.createAggregationClass(
-				new QualifiedName("AggregationClassSuperClass2"),
-				aggregationClassFromVertexClass, true,
-				aggregationClassToVertexClass);
+				"AggregationClassSuperClass2", aggregationClassFromVertexClass,
+				true, aggregationClassToVertexClass);
 
 		aggregationClass.addSuperClass(superClass);
 		aggregationClass.addSuperClass(superClass2);
@@ -366,13 +348,11 @@ public class AggregationClassImplTest extends EdgeClassImplTest {
 		Vector<AttributedElementClass> expectedSuperClasses = new Vector<AttributedElementClass>();
 
 		AggregationClass superClass = graphClass.createAggregationClass(
-				new QualifiedName("AggregationClassSuperClass"),
-				aggregationClassFromVertexClass, true,
-				aggregationClassToVertexClass);
+				"AggregationClassSuperClass", aggregationClassFromVertexClass,
+				true, aggregationClassToVertexClass);
 		AggregationClass superClass2 = graphClass.createAggregationClass(
-				new QualifiedName("AggregationClassSuperClass2"),
-				aggregationClassFromVertexClass, true,
-				aggregationClassToVertexClass);
+				"AggregationClassSuperClass2", aggregationClassFromVertexClass,
+				true, aggregationClassToVertexClass);
 
 		aggregationClass.addSuperClass(superClass);
 		superClass.addSuperClass(superClass2);
@@ -411,9 +391,8 @@ public class AggregationClassImplTest extends EdgeClassImplTest {
 	@Override
 	public void testGetAttribute2() {
 		AggregationClass superClass = graphClass.createAggregationClass(
-				new QualifiedName("AggregationClassSuperClass"),
-				aggregationClassFromVertexClass, true,
-				aggregationClassToVertexClass);
+				"AggregationClassSuperClass", aggregationClassFromVertexClass,
+				true, aggregationClassToVertexClass);
 
 		aggregationClass.addSuperClass(superClass);
 
@@ -430,9 +409,8 @@ public class AggregationClassImplTest extends EdgeClassImplTest {
 	@Override
 	public void testGetAttribute5() {
 		AggregationClass subClass = graphClass.createAggregationClass(
-				new QualifiedName("AggregationClassSubClass"),
-				aggregationClassFromVertexClass, true,
-				aggregationClassToVertexClass);
+				"AggregationClassSubClass", aggregationClassFromVertexClass,
+				true, aggregationClassToVertexClass);
 
 		subClass.addSuperClass(aggregationClass);
 
@@ -449,9 +427,8 @@ public class AggregationClassImplTest extends EdgeClassImplTest {
 	@Override
 	public void testGetAttributeCount2() {
 		AggregationClass superClass = graphClass.createAggregationClass(
-				new QualifiedName("AggregationClassSuperClass"),
-				aggregationClassFromVertexClass, true,
-				aggregationClassToVertexClass);
+				"AggregationClassSuperClass", aggregationClassFromVertexClass,
+				true, aggregationClassToVertexClass);
 
 		aggregationClass.addSuperClass(superClass);
 
@@ -468,9 +445,8 @@ public class AggregationClassImplTest extends EdgeClassImplTest {
 	@Override
 	public void testGetAttributeCount3() {
 		AggregationClass superClass = graphClass.createAggregationClass(
-				new QualifiedName("AggregationClassSuperClass"),
-				aggregationClassFromVertexClass, true,
-				aggregationClassToVertexClass);
+				"AggregationClassSuperClass", aggregationClassFromVertexClass,
+				true, aggregationClassToVertexClass);
 
 		aggregationClass.addSuperClass(superClass);
 
@@ -487,9 +463,8 @@ public class AggregationClassImplTest extends EdgeClassImplTest {
 	@Override
 	public void testGetAttributeCount5() {
 		AggregationClass subClass = graphClass.createAggregationClass(
-				new QualifiedName("AggregationClassSubClass"),
-				aggregationClassFromVertexClass, true,
-				aggregationClassToVertexClass);
+				"AggregationClassSubClass", aggregationClassFromVertexClass,
+				true, aggregationClassToVertexClass);
 
 		subClass.addSuperClass(aggregationClass);
 
@@ -506,9 +481,8 @@ public class AggregationClassImplTest extends EdgeClassImplTest {
 	@Override
 	public void testGetAttributeList2() {
 		AggregationClass superClass = graphClass.createAggregationClass(
-				new QualifiedName("AggregationClassSuperClass"),
-				aggregationClassFromVertexClass, true,
-				aggregationClassToVertexClass);
+				"AggregationClassSuperClass", aggregationClassFromVertexClass,
+				true, aggregationClassToVertexClass);
 
 		aggregationClass.addSuperClass(superClass);
 
@@ -525,9 +499,8 @@ public class AggregationClassImplTest extends EdgeClassImplTest {
 	@Override
 	public void testGetAttributeList3() {
 		AggregationClass superClass = graphClass.createAggregationClass(
-				new QualifiedName("AggregationClassSuperClass"),
-				aggregationClassFromVertexClass, true,
-				aggregationClassToVertexClass);
+				"AggregationClassSuperClass", aggregationClassFromVertexClass,
+				true, aggregationClassToVertexClass);
 
 		aggregationClass.addSuperClass(superClass);
 
@@ -544,9 +517,8 @@ public class AggregationClassImplTest extends EdgeClassImplTest {
 	@Override
 	public void testGetAttributeList5() {
 		AggregationClass subClass = graphClass.createAggregationClass(
-				new QualifiedName("AggregationClassSubClass"),
-				aggregationClassFromVertexClass, true,
-				aggregationClassToVertexClass);
+				"AggregationClassSubClass", aggregationClassFromVertexClass,
+				true, aggregationClassToVertexClass);
 
 		subClass.addSuperClass(aggregationClass);
 
@@ -559,12 +531,12 @@ public class AggregationClassImplTest extends EdgeClassImplTest {
 	 * TEST CASE: Getting an element´s list of constraints, that has a
 	 * superclass with constraints
 	 */
+	@Override
 	@Test
 	public void testGetConstraints4() {
 		AggregationClass superClass = graphClass.createAggregationClass(
-				new QualifiedName("AggregationClassSuperClass"),
-				aggregationClassFromVertexClass, true,
-				aggregationClassToVertexClass);
+				"AggregationClassSuperClass", aggregationClassFromVertexClass,
+				true, aggregationClassToVertexClass);
 
 		aggregationClass.addSuperClass(superClass);
 
@@ -583,9 +555,8 @@ public class AggregationClassImplTest extends EdgeClassImplTest {
 		Vector<AttributedElementClass> expectedSubClasses = new Vector<AttributedElementClass>();
 
 		AggregationClass subClass = graphClass.createAggregationClass(
-				new QualifiedName("AggregationClassSubClass"),
-				aggregationClassFromVertexClass, true,
-				aggregationClassToVertexClass);
+				"AggregationClassSubClass", aggregationClassFromVertexClass,
+				true, aggregationClassToVertexClass);
 
 		subClass.addSuperClass(aggregationClass);
 
@@ -606,13 +577,11 @@ public class AggregationClassImplTest extends EdgeClassImplTest {
 		Vector<AttributedElementClass> expectedSubClasses = new Vector<AttributedElementClass>();
 
 		AggregationClass subClass = graphClass.createAggregationClass(
-				new QualifiedName("AggregationClassSubClass"),
-				aggregationClassFromVertexClass, true,
-				aggregationClassToVertexClass);
+				"AggregationClassSubClass", aggregationClassFromVertexClass,
+				true, aggregationClassToVertexClass);
 		AggregationClass subClass2 = graphClass.createAggregationClass(
-				new QualifiedName("AggregationClassSubClass2"),
-				aggregationClassFromVertexClass, true,
-				aggregationClassToVertexClass);
+				"AggregationClassSubClass2", aggregationClassFromVertexClass,
+				true, aggregationClassToVertexClass);
 
 		subClass.addSuperClass(aggregationClass);
 		subClass2.addSuperClass(aggregationClass);
@@ -635,13 +604,11 @@ public class AggregationClassImplTest extends EdgeClassImplTest {
 		Vector<AttributedElementClass> expectedSubClasses = new Vector<AttributedElementClass>();
 
 		AggregationClass subClass = graphClass.createAggregationClass(
-				new QualifiedName("AggregationClassSubClass"),
-				aggregationClassFromVertexClass, true,
-				aggregationClassToVertexClass); // Direct subclass
+				"AggregationClassSubClass", aggregationClassFromVertexClass,
+				true, aggregationClassToVertexClass); // Direct subclass
 		AggregationClass subClass2 = graphClass.createAggregationClass(
-				new QualifiedName("AggregationClassSubClass2"),
-				aggregationClassFromVertexClass, true,
-				aggregationClassToVertexClass); // Indirect subclass
+				"AggregationClassSubClass2", aggregationClassFromVertexClass,
+				true, aggregationClassToVertexClass); // Indirect subclass
 
 		subClass.addSuperClass(aggregationClass);
 		subClass2.addSuperClass(subClass);
@@ -675,9 +642,8 @@ public class AggregationClassImplTest extends EdgeClassImplTest {
 		Vector<AttributedElementClass> expectedSuperClasses = new Vector<AttributedElementClass>();
 
 		AggregationClass superClass = graphClass.createAggregationClass(
-				new QualifiedName("AggregationClassSuperClass"),
-				aggregationClassFromVertexClass, true,
-				aggregationClassToVertexClass);
+				"AggregationClassSuperClass", aggregationClassFromVertexClass,
+				true, aggregationClassToVertexClass);
 
 		aggregationClass.addSuperClass(superClass);
 
@@ -699,13 +665,11 @@ public class AggregationClassImplTest extends EdgeClassImplTest {
 		Vector<AttributedElementClass> expectedSuperClasses = new Vector<AttributedElementClass>();
 
 		AggregationClass superClass = graphClass.createAggregationClass(
-				new QualifiedName("AggregationClassSuperClass"),
-				aggregationClassFromVertexClass, true,
-				aggregationClassToVertexClass);
+				"AggregationClassSuperClass", aggregationClassFromVertexClass,
+				true, aggregationClassToVertexClass);
 		AggregationClass superClass2 = graphClass.createAggregationClass(
-				new QualifiedName("AggregationClassSuperClass2"),
-				aggregationClassFromVertexClass, true,
-				aggregationClassToVertexClass);
+				"AggregationClassSuperClass2", aggregationClassFromVertexClass,
+				true, aggregationClassToVertexClass);
 
 		aggregationClass.addSuperClass(superClass);
 		aggregationClass.addSuperClass(superClass2);
@@ -728,13 +692,11 @@ public class AggregationClassImplTest extends EdgeClassImplTest {
 		Vector<AttributedElementClass> expectedSuperClasses = new Vector<AttributedElementClass>();
 
 		AggregationClass superClass = graphClass.createAggregationClass(
-				new QualifiedName("AggregationClassSuperClass"),
-				aggregationClassFromVertexClass, true,
-				aggregationClassToVertexClass); // Direct superclass
+				"AggregationClassSuperClass", aggregationClassFromVertexClass,
+				true, aggregationClassToVertexClass); // Direct superclass
 		AggregationClass superClass2 = graphClass.createAggregationClass(
-				new QualifiedName("AggregationClassSuperClass2"),
-				aggregationClassFromVertexClass, true,
-				aggregationClassToVertexClass); // Indirect superclass
+				"AggregationClassSuperClass2", aggregationClassFromVertexClass,
+				true, aggregationClassToVertexClass); // Indirect superclass
 
 		aggregationClass.addSuperClass(superClass);
 		superClass.addSuperClass(superClass2);
@@ -771,9 +733,8 @@ public class AggregationClassImplTest extends EdgeClassImplTest {
 	@Override
 	public void testGetOwnAttribute4() {
 		AggregationClass superClass = graphClass.createAggregationClass(
-				new QualifiedName("AggregationClassSuperClass"),
-				aggregationClassFromVertexClass, true,
-				aggregationClassToVertexClass);
+				"AggregationClassSuperClass", aggregationClassFromVertexClass,
+				true, aggregationClassToVertexClass);
 		aggregationClass.addSuperClass(superClass);
 
 		testGetOwnAttribute4(superClass);
@@ -789,9 +750,8 @@ public class AggregationClassImplTest extends EdgeClassImplTest {
 	@Override
 	public void testGetOwnAttribute5() {
 		AggregationClass subClass = graphClass.createAggregationClass(
-				new QualifiedName("AggregationClassSuperClass"),
-				aggregationClassFromVertexClass, true,
-				aggregationClassToVertexClass);
+				"AggregationClassSuperClass", aggregationClassFromVertexClass,
+				true, aggregationClassToVertexClass);
 		subClass.addSuperClass(aggregationClass);
 
 		testGetOwnAttribute4(subClass);
@@ -807,9 +767,8 @@ public class AggregationClassImplTest extends EdgeClassImplTest {
 	@Override
 	public void testGetOwnAttributeCount4() {
 		AggregationClass superClass = graphClass.createAggregationClass(
-				new QualifiedName("AggregationClassSuperClass"),
-				aggregationClassFromVertexClass, true,
-				aggregationClassToVertexClass);
+				"AggregationClassSuperClass", aggregationClassFromVertexClass,
+				true, aggregationClassToVertexClass);
 		aggregationClass.addSuperClass(superClass);
 
 		testGetOwnAttributeCount4(superClass);
@@ -825,9 +784,8 @@ public class AggregationClassImplTest extends EdgeClassImplTest {
 	@Override
 	public void testGetOwnAttributeList4() {
 		AggregationClass superClass = graphClass.createAggregationClass(
-				new QualifiedName("AggregationClassSuperClass"),
-				aggregationClassFromVertexClass, true,
-				aggregationClassToVertexClass);
+				"AggregationClassSuperClass", aggregationClassFromVertexClass,
+				true, aggregationClassToVertexClass);
 		aggregationClass.addSuperClass(superClass);
 
 		testGetOwnAttributeList4(superClass);
@@ -842,9 +800,8 @@ public class AggregationClassImplTest extends EdgeClassImplTest {
 	@Override
 	public void testHasAttributes3() {
 		AggregationClass superClass = graphClass.createAggregationClass(
-				new QualifiedName("AggregationClassSuperClass"),
-				aggregationClassFromVertexClass, true,
-				aggregationClassToVertexClass);
+				"AggregationClassSuperClass", aggregationClassFromVertexClass,
+				true, aggregationClassToVertexClass);
 		aggregationClass.addSuperClass(superClass);
 
 		testHasAttributes3(superClass);
@@ -859,9 +816,8 @@ public class AggregationClassImplTest extends EdgeClassImplTest {
 	@Override
 	public void testHasAttributes4() {
 		AggregationClass superClass = graphClass.createAggregationClass(
-				new QualifiedName("AggregationClassSuperClass"),
-				aggregationClassFromVertexClass, true,
-				aggregationClassToVertexClass);
+				"AggregationClassSuperClass", aggregationClassFromVertexClass,
+				true, aggregationClassToVertexClass);
 		aggregationClass.addSuperClass(superClass);
 
 		testHasAttributes4(superClass);
@@ -876,9 +832,8 @@ public class AggregationClassImplTest extends EdgeClassImplTest {
 	@Override
 	public void testHasAttributes5() {
 		AggregationClass superClass = graphClass.createAggregationClass(
-				new QualifiedName("AggregationClassSuperClass"),
-				aggregationClassFromVertexClass, true,
-				aggregationClassToVertexClass);
+				"AggregationClassSuperClass", aggregationClassFromVertexClass,
+				true, aggregationClassToVertexClass);
 		aggregationClass.addSuperClass(superClass);
 
 		testHasAttributes5(superClass);
@@ -893,9 +848,8 @@ public class AggregationClassImplTest extends EdgeClassImplTest {
 	@Override
 	public void testHasOwnAttributes4() {
 		AggregationClass superClass = graphClass.createAggregationClass(
-				new QualifiedName("AggregationClassSuperClass"),
-				aggregationClassFromVertexClass, true,
-				aggregationClassToVertexClass);
+				"AggregationClassSuperClass", aggregationClassFromVertexClass,
+				true, aggregationClassToVertexClass);
 		aggregationClass.addSuperClass(superClass);
 
 		testHasOwnAttributes4(superClass);
@@ -910,9 +864,8 @@ public class AggregationClassImplTest extends EdgeClassImplTest {
 	@Override
 	public void testHasOwnAttributes5() {
 		AggregationClass superClass = graphClass.createAggregationClass(
-				new QualifiedName("AggregationClassSuperClass"),
-				aggregationClassFromVertexClass, true,
-				aggregationClassToVertexClass);
+				"AggregationClassSuperClass", aggregationClassFromVertexClass,
+				true, aggregationClassToVertexClass);
 		aggregationClass.addSuperClass(superClass);
 
 		testHasOwnAttributes5(superClass);
@@ -932,9 +885,8 @@ public class AggregationClassImplTest extends EdgeClassImplTest {
 	@Override
 	public void testIsDirectSubClassOf() {
 		AggregationClass superClass = graphClass.createAggregationClass(
-				new QualifiedName("AggregationClassSuperClass"),
-				aggregationClassFromVertexClass, true,
-				aggregationClassToVertexClass);
+				"AggregationClassSuperClass", aggregationClassFromVertexClass,
+				true, aggregationClassToVertexClass);
 		aggregationClass.addSuperClass(superClass);
 
 		testIsDirectSubClassOf(superClass);
@@ -949,13 +901,11 @@ public class AggregationClassImplTest extends EdgeClassImplTest {
 	@Override
 	public void testIsDirectSubClassOf2() {
 		AggregationClass superClass = graphClass.createAggregationClass(
-				new QualifiedName("AggregationClassSuperClass"),
-				aggregationClassFromVertexClass, true,
-				aggregationClassToVertexClass);
+				"AggregationClassSuperClass", aggregationClassFromVertexClass,
+				true, aggregationClassToVertexClass);
 		AggregationClass superClass2 = graphClass.createAggregationClass(
-				new QualifiedName("AggregationClassSuperClass2"),
-				aggregationClassFromVertexClass, true,
-				aggregationClassToVertexClass);
+				"AggregationClassSuperClass2", aggregationClassFromVertexClass,
+				true, aggregationClassToVertexClass);
 		aggregationClass.addSuperClass(superClass);
 		superClass.addSuperClass(superClass2);
 
@@ -971,9 +921,8 @@ public class AggregationClassImplTest extends EdgeClassImplTest {
 	@Override
 	public void testIsDirectSubClassOf3() {
 		AggregationClass subClass = graphClass.createAggregationClass(
-				new QualifiedName("AggregationClassSubClass"),
-				aggregationClassFromVertexClass, true,
-				aggregationClassToVertexClass);
+				"AggregationClassSubClass", aggregationClassFromVertexClass,
+				true, aggregationClassToVertexClass);
 		subClass.addSuperClass(aggregationClass);
 
 		testIsDirectSubClassOf2(subClass);
@@ -988,8 +937,7 @@ public class AggregationClassImplTest extends EdgeClassImplTest {
 	@Override
 	public void testIsDirectSubClassOf4() {
 		AggregationClass aggregationClass2 = graphClass.createAggregationClass(
-				new QualifiedName("AggregationClass2"),
-				aggregationClassFromVertexClass, true,
+				"AggregationClass2", aggregationClassFromVertexClass, true,
 				aggregationClassToVertexClass);
 
 		testIsDirectSubClassOf2(aggregationClass2);
@@ -1015,9 +963,8 @@ public class AggregationClassImplTest extends EdgeClassImplTest {
 	@Override
 	public void testIsDirectSuperClassOf() {
 		AggregationClass subClass = graphClass.createAggregationClass(
-				new QualifiedName("AggregationClassSubClass"),
-				aggregationClassFromVertexClass, true,
-				aggregationClassToVertexClass);
+				"AggregationClassSubClass", aggregationClassFromVertexClass,
+				true, aggregationClassToVertexClass);
 		subClass.addSuperClass(aggregationClass);
 
 		testIsDirectSuperClassOf(subClass);
@@ -1032,13 +979,11 @@ public class AggregationClassImplTest extends EdgeClassImplTest {
 	@Override
 	public void testIsDirectSuperClassOf2() {
 		AggregationClass subClass = graphClass.createAggregationClass(
-				new QualifiedName("AggregationClassSubClass"),
-				aggregationClassFromVertexClass, true,
-				aggregationClassToVertexClass);
+				"AggregationClassSubClass", aggregationClassFromVertexClass,
+				true, aggregationClassToVertexClass);
 		AggregationClass subClass2 = graphClass.createAggregationClass(
-				new QualifiedName("AggregationClassSubClass2"),
-				aggregationClassFromVertexClass, true,
-				aggregationClassToVertexClass);
+				"AggregationClassSubClass2", aggregationClassFromVertexClass,
+				true, aggregationClassToVertexClass);
 		subClass.addSuperClass(aggregationClass);
 		subClass2.addSuperClass(subClass);
 
@@ -1054,9 +999,8 @@ public class AggregationClassImplTest extends EdgeClassImplTest {
 	@Override
 	public void testIsDirectSuperClassOf3() {
 		AggregationClass superClass = graphClass.createAggregationClass(
-				new QualifiedName("AggregationClassSuperClass"),
-				aggregationClassFromVertexClass, true,
-				aggregationClassToVertexClass);
+				"AggregationClassSuperClass", aggregationClassFromVertexClass,
+				true, aggregationClassToVertexClass);
 		aggregationClass.addSuperClass(superClass);
 
 		testIsDirectSuperClassOf2(superClass);
@@ -1071,8 +1015,7 @@ public class AggregationClassImplTest extends EdgeClassImplTest {
 	@Override
 	public void testIsDirectSuperClassOf4() {
 		AggregationClass aggregationClass2 = graphClass.createAggregationClass(
-				new QualifiedName("AggregationClass2"),
-				aggregationClassFromVertexClass, true,
+				"AggregationClass2", aggregationClassFromVertexClass, true,
 				aggregationClassToVertexClass);
 
 		testIsDirectSuperClassOf2(aggregationClass2);
@@ -1098,9 +1041,8 @@ public class AggregationClassImplTest extends EdgeClassImplTest {
 	@Override
 	public void testIsSubClassOf() {
 		AggregationClass superClass = graphClass.createAggregationClass(
-				new QualifiedName("AggregationClassSuperClass"),
-				aggregationClassFromVertexClass, true,
-				aggregationClassToVertexClass);
+				"AggregationClassSuperClass", aggregationClassFromVertexClass,
+				true, aggregationClassToVertexClass);
 		aggregationClass.addSuperClass(superClass);
 
 		testIsSubClassOf(superClass);
@@ -1115,13 +1057,11 @@ public class AggregationClassImplTest extends EdgeClassImplTest {
 	@Override
 	public void testIsSubClassOf2() {
 		AggregationClass superClass = graphClass.createAggregationClass(
-				new QualifiedName("AggregationClassSuperClass"),
-				aggregationClassFromVertexClass, true,
-				aggregationClassToVertexClass);
+				"AggregationClassSuperClass", aggregationClassFromVertexClass,
+				true, aggregationClassToVertexClass);
 		AggregationClass superClass2 = graphClass.createAggregationClass(
-				new QualifiedName("AggregationClassSuperClass2"),
-				aggregationClassFromVertexClass, true,
-				aggregationClassToVertexClass);
+				"AggregationClassSuperClass2", aggregationClassFromVertexClass,
+				true, aggregationClassToVertexClass);
 		aggregationClass.addSuperClass(superClass);
 		superClass.addSuperClass(superClass2);
 
@@ -1137,9 +1077,8 @@ public class AggregationClassImplTest extends EdgeClassImplTest {
 	@Override
 	public void testIsSubClassOf3() {
 		AggregationClass subClass = graphClass.createAggregationClass(
-				new QualifiedName("AggregationClassSubClass"),
-				aggregationClassFromVertexClass, true,
-				aggregationClassToVertexClass);
+				"AggregationClassSubClass", aggregationClassFromVertexClass,
+				true, aggregationClassToVertexClass);
 		subClass.addSuperClass(aggregationClass);
 
 		testIsSubClassOf2(subClass);
@@ -1154,8 +1093,7 @@ public class AggregationClassImplTest extends EdgeClassImplTest {
 	@Override
 	public void testIsSubClassOf4() {
 		AggregationClass aggregationClass2 = graphClass.createAggregationClass(
-				new QualifiedName("AggregationClass2"),
-				aggregationClassFromVertexClass, true,
+				"AggregationClass2", aggregationClassFromVertexClass, true,
 				aggregationClassToVertexClass);
 
 		testIsSubClassOf2(aggregationClass2);
@@ -1181,9 +1119,8 @@ public class AggregationClassImplTest extends EdgeClassImplTest {
 	@Override
 	public void testIsSuperClassOf() {
 		AggregationClass subClass = graphClass.createAggregationClass(
-				new QualifiedName("AggregationClassSubClass"),
-				aggregationClassFromVertexClass, true,
-				aggregationClassToVertexClass);
+				"AggregationClassSubClass", aggregationClassFromVertexClass,
+				true, aggregationClassToVertexClass);
 		subClass.addSuperClass(aggregationClass);
 
 		testIsSuperClassOf(subClass);
@@ -1198,13 +1135,11 @@ public class AggregationClassImplTest extends EdgeClassImplTest {
 	@Override
 	public void testIsSuperClassOf2() {
 		AggregationClass subClass = graphClass.createAggregationClass(
-				new QualifiedName("AggregationClassSubClass"),
-				aggregationClassFromVertexClass, true,
-				aggregationClassToVertexClass);
+				"AggregationClassSubClass", aggregationClassFromVertexClass,
+				true, aggregationClassToVertexClass);
 		AggregationClass subClass2 = graphClass.createAggregationClass(
-				new QualifiedName("AggregationClassSubClass2"),
-				aggregationClassFromVertexClass, true,
-				aggregationClassToVertexClass);
+				"AggregationClassSubClass2", aggregationClassFromVertexClass,
+				true, aggregationClassToVertexClass);
 		subClass.addSuperClass(aggregationClass);
 		subClass2.addSuperClass(subClass);
 
@@ -1220,9 +1155,8 @@ public class AggregationClassImplTest extends EdgeClassImplTest {
 	@Override
 	public void testIsSuperClassOf3() {
 		AggregationClass superClass = graphClass.createAggregationClass(
-				new QualifiedName("AggregationClassSuperClass"),
-				aggregationClassFromVertexClass, true,
-				aggregationClassToVertexClass);
+				"AggregationClassSuperClass", aggregationClassFromVertexClass,
+				true, aggregationClassToVertexClass);
 		aggregationClass.addSuperClass(superClass);
 
 		testIsSuperClassOf2(superClass);
@@ -1237,8 +1171,7 @@ public class AggregationClassImplTest extends EdgeClassImplTest {
 	@Override
 	public void testIsSuperClassOf4() {
 		AggregationClass aggregationClass2 = graphClass.createAggregationClass(
-				new QualifiedName("AggregationClass2"),
-				aggregationClassFromVertexClass, true,
+				"AggregationClass2", aggregationClassFromVertexClass, true,
 				aggregationClassToVertexClass);
 
 		testIsSuperClassOf2(aggregationClass2);
@@ -1264,9 +1197,8 @@ public class AggregationClassImplTest extends EdgeClassImplTest {
 	@Override
 	public void testIsSuperClassOfOrEquals() {
 		AggregationClass subClass = graphClass.createAggregationClass(
-				new QualifiedName("AggregationClassSubClass"),
-				aggregationClassFromVertexClass, true,
-				aggregationClassToVertexClass);
+				"AggregationClassSubClass", aggregationClassFromVertexClass,
+				true, aggregationClassToVertexClass);
 		subClass.addSuperClass(aggregationClass);
 
 		testIsSuperClassOfOrEquals(subClass);
@@ -1281,13 +1213,11 @@ public class AggregationClassImplTest extends EdgeClassImplTest {
 	@Override
 	public void testIsSuperClassOfOrEquals2() {
 		AggregationClass subClass = graphClass.createAggregationClass(
-				new QualifiedName("AggregationClassSubClass"),
-				aggregationClassFromVertexClass, true,
-				aggregationClassToVertexClass);
+				"AggregationClassSubClass", aggregationClassFromVertexClass,
+				true, aggregationClassToVertexClass);
 		AggregationClass subClass2 = graphClass.createAggregationClass(
-				new QualifiedName("AggregationClassSubClass2"),
-				aggregationClassFromVertexClass, true,
-				aggregationClassToVertexClass);
+				"AggregationClassSubClass2", aggregationClassFromVertexClass,
+				true, aggregationClassToVertexClass);
 		subClass.addSuperClass(aggregationClass);
 		subClass2.addSuperClass(subClass);
 
@@ -1314,8 +1244,7 @@ public class AggregationClassImplTest extends EdgeClassImplTest {
 	@Override
 	public void testIsSuperClassOfOrEquals4() {
 		AggregationClass aggregationClass2 = graphClass.createAggregationClass(
-				new QualifiedName("AggregationClass2"),
-				aggregationClassFromVertexClass, true,
+				"AggregationClass2", aggregationClassFromVertexClass, true,
 				aggregationClassToVertexClass);
 
 		testIsSuperClassOfOrEquals2(aggregationClass2);
@@ -1330,9 +1259,8 @@ public class AggregationClassImplTest extends EdgeClassImplTest {
 	@Override
 	public void testIsSuperClassOfOrEquals5() {
 		AggregationClass superClass = graphClass.createAggregationClass(
-				new QualifiedName("AggregationClassSuperClass"),
-				aggregationClassFromVertexClass, true,
-				aggregationClassToVertexClass);
+				"AggregationClassSuperClass", aggregationClassFromVertexClass,
+				true, aggregationClassToVertexClass);
 		aggregationClass.addSuperClass(superClass);
 
 		testIsSuperClassOfOrEquals2(superClass);

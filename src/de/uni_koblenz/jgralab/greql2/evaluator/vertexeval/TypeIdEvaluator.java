@@ -38,7 +38,6 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValueTypeCollection;
 import de.uni_koblenz.jgralab.greql2.schema.TypeId;
 import de.uni_koblenz.jgralab.schema.AttributedElementClass;
-import de.uni_koblenz.jgralab.schema.QualifiedName;
 import de.uni_koblenz.jgralab.schema.Schema;
 
 /**
@@ -74,20 +73,21 @@ public class TypeIdEvaluator extends VertexEvaluator {
 	protected List<AttributedElementClass> createTypeList(Schema schema)
 			throws EvaluateException {
 		ArrayList<AttributedElementClass> returnTypes = new ArrayList<AttributedElementClass>();
-		AttributedElementClass elemClass = (AttributedElementClass) schema
-		.getAttributedElementClass(new QualifiedName(vertex.getName()));
+		AttributedElementClass elemClass = schema
+				.getAttributedElementClass(vertex.getName());
 		if (elemClass == null) {
 			elemClass = greqlEvaluator.getKnownType(vertex.getName());
-			if (elemClass == null)
+			if (elemClass == null) {
 				throw new UnknownTypeException(vertex.getName(),
-					createPossibleSourcePositions());
-			else
+						createPossibleSourcePositions());
+			} else {
 				vertex.setName(elemClass.getQualifiedName());
+			}
 		}
 		returnTypes.add(elemClass);
 		if (!vertex.isType()) {
 			returnTypes.addAll(elemClass.getAllSubClasses());
-		} 
+		}
 		return returnTypes;
 	}
 

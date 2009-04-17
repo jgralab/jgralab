@@ -14,9 +14,9 @@ import de.uni_koblenz.jgralab.schema.impl.VertexEdgeEntry;
 
 /**
  * TODO add comment
- * 
+ *
  * @author ist@uni-koblenz.de
- * 
+ *
  */
 public class RolenameCodeGenerator {
 
@@ -49,7 +49,7 @@ public class RolenameCodeGenerator {
 			for (EdgeClass ec : connectedEdgeSet) {
 				s2 = new CodeSnippet();
 				s2.setVariable("roleCamelName", s.getVariable("roleCamelName"));
-				s2.setVariable("edgeName", ec.getSchema().getPackageName()
+				s2.setVariable("edgeName", ec.getSchema().getPackagePrefix()
 						+ "." + ec.getQualifiedName());
 				s2
 						.add("connected#roleCamelName#EdgeSet.add(#edgeName#.class);");
@@ -156,7 +156,7 @@ public class RolenameCodeGenerator {
 	 * of the given EdgeClass <code>superclass</code> and that do not redefine
 	 * the given rolename <code>role</code> in the given {@link EdgeDirection}
 	 * <code>dir</code>
-	 * 
+	 *
 	 * @return
 	 */
 	private Set<EdgeClass> getSubsettingSubclasses(EdgeClass superclass,
@@ -182,7 +182,7 @@ public class RolenameCodeGenerator {
 	/**
 	 * Creates the <code>getRolenameList()</code>, <code>addRolename()</code>
 	 * and <code>removeRolename()</code> methods for the current vertex.
-	 * 
+	 *
 	 * @param createClass
 	 *            iff set to true, also the method bodies will be created
 	 * @return the CodeBlock that contains the code for the
@@ -240,7 +240,7 @@ public class RolenameCodeGenerator {
 					continue;
 				}
 				String schemaRootPackageName = entry.getEdgeClassToTraverse()
-						.getEdgeClass().getSchema().getPackageName();
+						.getEdgeClass().getSchema().getPackagePrefix();
 				CodeSnippet addSnippet = new CodeSnippet(true);
 				addSnippet.setVariable("roleCamelName", CodeGenerator
 						.camelCase(entry.getRoleNameAtFarEnd()));
@@ -292,12 +292,11 @@ public class RolenameCodeGenerator {
 
 	/**
 	 * Creates a codeSnippet
-	 * 
+	 *
 	 * @param codeList
 	 *            The CodeList that represents the code for all Rolename Methods
 	 * @param entry
-	 *            the pair <Rolename, Set<EdgeClassTriple>> to generate code
-	 *            for
+	 *            the pair <Rolename, Set<EdgeClassTriple>> to generate code for
 	 * @param allRoles
 	 *            all roles that are related to the VertexClass currently
 	 *            creating code for
@@ -313,7 +312,7 @@ public class RolenameCodeGenerator {
 			s.setVariable("targetClass", "#jgPackage#."
 					+ lcvc.getQualifiedName());
 		} else {
-			s.setVariable("targetClass", lcvc.getSchema().getPackageName()
+			s.setVariable("targetClass", lcvc.getSchema().getPackagePrefix()
 					+ "." + lcvc.getQualifiedName());
 		}
 		s.setVariable("targetSimpleName", lcvc.getSimpleName());
@@ -327,7 +326,8 @@ public class RolenameCodeGenerator {
 			s.setVariable("ecQualifiedName", "#jgPackage#."
 					+ lcec.getSimpleName());
 		} else {
-			s.setVariable("ecQualifiedName", lcvc.getSchema().getPackageName()
+			s.setVariable("ecQualifiedName", lcvc.getSchema()
+					.getPackagePrefix()
 					+ "." + lcec.getQualifiedName());
 		}
 		s.setVariable("ecCamelName", CodeGenerator.camelCase(lcec

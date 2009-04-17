@@ -14,16 +14,15 @@ import org.junit.Test;
 import de.uni_koblenz.jgralab.schema.CompositeDomain;
 import de.uni_koblenz.jgralab.schema.Domain;
 import de.uni_koblenz.jgralab.schema.MapDomain;
-import de.uni_koblenz.jgralab.schema.QualifiedName;
 import de.uni_koblenz.jgralab.schema.RecordDomain;
 import de.uni_koblenz.jgralab.schema.exception.RecordCycleException;
 import de.uni_koblenz.jgralab.schema.exception.WrongSchemaException;
 
 /**
  * TODO: More testing!
- * 
+ *
  * @author Tassilo Horn <horn@uni-koblenz.de>
- * 
+ *
  */
 public class MapDomainTest extends CompositeDomainTest {
 
@@ -67,13 +66,11 @@ public class MapDomainTest extends CompositeDomainTest {
 		expectedSimpleName = expectedUniqueName1 = expectedQualifiedName1;
 		expectedUniqueName2 = expectedQualifiedName2;
 		// Initializing for the CompositeDomainTest
-		keyDomain3 = (CompositeDomain) schema1.createListDomain(schema1
-				.getDomain("Integer"));
+		keyDomain3 = schema1.createListDomain(schema1.getDomain("Integer"));
 		HashMap<String, Domain> components = new HashMap<String, Domain>();
 		components.put("aList", keyDomain3);
 		components.put("aMap", domain1);
-		valueDomain3 = schema1.createRecordDomain(new QualifiedName("Record1"),
-				components);
+		valueDomain3 = schema1.createRecordDomain("Record1", components);
 		keyDomain4 = valueDomain4 = domain3 = schema1.createMapDomain(
 				keyDomain3, valueDomain3);
 		domain4 = schema1.createMapDomain(domain3, domain3);
@@ -96,11 +93,11 @@ public class MapDomainTest extends CompositeDomainTest {
 		 * RecordDomain, which contains another MapDomain, which contains a
 		 * RecordDomain, which contains M.
 		 */
-		schema1.createRecordDomain(new QualifiedName("Record3"));
+		schema1.createRecordDomain("Record3");
 		RecordDomain rec3 = (RecordDomain) schema1.getDomain("Record3");
 		schema1.createMapDomain(schema1.getDomain("Boolean"), rec3);
 		Domain map1 = schema1.getDomain("Map<Boolean,.Record3>");
-		schema1.createRecordDomain(new QualifiedName("Record2"));
+		schema1.createRecordDomain("Record2");
 		RecordDomain rec2 = (RecordDomain) schema1.getDomain("Record2");
 		schema1.createMapDomain(schema1.getDomain("Boolean"), rec2);
 		Domain map2 = schema1.getDomain("Map<Boolean,.Record2>");
@@ -115,7 +112,7 @@ public class MapDomainTest extends CompositeDomainTest {
 		 * Tests the rejection of the following case: A MapDomain has a
 		 * KeyDomain which is not part of the same schema.
 		 */
-		schema2.createEnumDomain(new QualifiedName("enum1"));
+		schema2.createEnumDomain("enum1");
 		schema1.createMapDomain(schema2.getDomain("enum1"), schema1
 				.getDomain("Integer"));
 	}
@@ -126,7 +123,7 @@ public class MapDomainTest extends CompositeDomainTest {
 		 * Tests the rejection of the following case: A MapDomain has a
 		 * ValueDomain which is not part of the same schema.
 		 */
-		schema2.createEnumDomain(new QualifiedName("enum1"));
+		schema2.createEnumDomain("enum1");
 		schema1.createMapDomain(schema1.getDomain("Integer"), schema2
 				.getDomain("enum1"));
 	}
@@ -138,8 +135,8 @@ public class MapDomainTest extends CompositeDomainTest {
 		 * KeyDomain and ValueDomain which are not part of the same schema like
 		 * the Map Domain.
 		 */
-		schema2.createEnumDomain(new QualifiedName("enum1"));
-		schema2.createEnumDomain(new QualifiedName("enum2"));
+		schema2.createEnumDomain("enum1");
+		schema2.createEnumDomain("enum2");
 		schema1.createMapDomain(schema2.getDomain("enum1"), schema2
 				.getDomain("enum2"));
 	}
@@ -156,31 +153,6 @@ public class MapDomainTest extends CompositeDomainTest {
 		// A MapDomains with a different ValueDomain must not be equal
 		assertFalse(schema1.getDomain("Map<String,Double>")
 				.equals(otherDomain2));
-	}
-
-	@Test(expected = UnsupportedOperationException.class)
-	@Override
-	public void testSetPackage() {
-		// The package of a MapDomain must not be changed.
-		schema1.createPackageWithParents(schema1Package + ".subpackage");
-		domain1.setPackage(schema1.getPackage(schema1Package + ".subpackage"));
-	}
-
-	@Test(expected = UnsupportedOperationException.class)
-	@Override
-	public void testSetUniqueName1() {
-		// The uniqueName of a MapDomain must not be changed.
-		domain1.setUniqueName("Hugo");
-	}
-
-	@Test
-	@Override
-	public void testSetUniqueName2() {
-	}
-
-	@Test
-	@Override
-	public void testSetUniqueName3() {
 	}
 
 	@Test

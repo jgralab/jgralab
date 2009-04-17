@@ -45,7 +45,6 @@ import de.uni_koblenz.jgralab.greql2.schema.Variable;
 import de.uni_koblenz.jgralab.schema.AttributedElementClass;
 import de.uni_koblenz.jgralab.schema.EdgeClass;
 import de.uni_koblenz.jgralab.schema.Package;
-import de.uni_koblenz.jgralab.schema.QualifiedName;
 import de.uni_koblenz.jgralab.schema.Schema;
 import de.uni_koblenz.jgralab.schema.VertexClass;
 
@@ -104,8 +103,10 @@ public class Greql2ExpressionEvaluator extends VertexEvaluator {
 					String packageName = importedType.substring(0, importedType
 							.length() - 2);
 					Package p = graphSchema.getPackage(packageName);
-					if (p == null)
-						throw new UnknownTypeException(importedType, new ArrayList<SourcePosition>());
+					if (p == null) {
+						throw new UnknownTypeException(importedType,
+								new ArrayList<SourcePosition>());
+					}
 					// for (Domain elem : p.getDomains().values()) {
 					// greqlEvaluator.addKnownType(elem);
 					// }
@@ -116,15 +117,17 @@ public class Greql2ExpressionEvaluator extends VertexEvaluator {
 						greqlEvaluator.addKnownType(elem);
 					}
 				} else {
-					AttributedElementClass elemClass = (AttributedElementClass) vertex
-							.getSchema().getAttributedElementClass(
-									new QualifiedName(importedType));
-					if (elemClass == null)
-						throw new UnknownTypeException(importedType, new ArrayList<SourcePosition>());
+					AttributedElementClass elemClass = vertex
+							.getSchema()
+							.getAttributedElementClass(importedType);
+					if (elemClass == null) {
+						throw new UnknownTypeException(importedType,
+								new ArrayList<SourcePosition>());
+					}
 					greqlEvaluator.addKnownType(elemClass);
 				}
 			}
-		}	
+		}
 		IsBoundVarOf inc = vertex.getFirstIsBoundVarOf(EdgeDirection.IN);
 		while (inc != null) {
 			Variable currentBoundVariable = (Variable) inc.getAlpha();
@@ -142,8 +145,8 @@ public class Greql2ExpressionEvaluator extends VertexEvaluator {
 		}
 		Expression boundExpression = (Expression) vertex.getFirstIsQueryExprOf(
 				EdgeDirection.IN).getAlpha();
-		VertexEvaluator eval = greqlEvaluator
-				.getVertexEvaluatorGraphMarker().getMark(boundExpression);
+		VertexEvaluator eval = greqlEvaluator.getVertexEvaluatorGraphMarker()
+				.getMark(boundExpression);
 		JValue result = eval.getResult(subgraph);
 		// if the query contains a "store as " - clause, there is a
 		// "isIdOfInc"-Incidence connected with the Greql2Expression

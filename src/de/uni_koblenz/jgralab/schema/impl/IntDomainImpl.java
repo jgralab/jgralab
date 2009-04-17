@@ -28,26 +28,12 @@ import de.uni_koblenz.jgralab.codegenerator.CodeBlock;
 import de.uni_koblenz.jgralab.codegenerator.CodeSnippet;
 import de.uni_koblenz.jgralab.schema.IntDomain;
 import de.uni_koblenz.jgralab.schema.Package;
-import de.uni_koblenz.jgralab.schema.QualifiedName;
 import de.uni_koblenz.jgralab.schema.Schema;
-import de.uni_koblenz.jgralab.schema.exception.DuplicateNamedElementException;
-import de.uni_koblenz.jgralab.schema.exception.SchemaException;
 
-public class IntDomainImpl extends BasicDomainImpl implements IntDomain {
-	// private static IntDomainImpl instance = new IntDomainImpl();
-	//
-	// public static IntDomainImpl instance() {
-	// return instance;
-	// }
+public final class IntDomainImpl extends BasicDomainImpl implements IntDomain {
 
-	public IntDomainImpl(Schema schema) throws SchemaException {
-		QualifiedName qName = new QualifiedName("Integer");
-		if (schema.getDomain(qName) != null) {
-			throw new DuplicateNamedElementException(
-					"Cannot create another IntDomain for Schema "
-							+ schema.getQualifiedName());
-		}
-		initialize(schema, qName);
+	IntDomainImpl(Schema schema) {
+		super(INTDOMAIN_NAME, schema.getDefaultPackage());
 	}
 
 	@Override
@@ -58,12 +44,7 @@ public class IntDomainImpl extends BasicDomainImpl implements IntDomain {
 
 	@Override
 	public String getJavaClassName(String schemaRootPackagePrefix) {
-		return "Integer";
-	}
-
-	@Override
-	public String getTGTypeName(Package pkg) {
-		return "Integer";
+		return INTDOMAIN_NAME;
 	}
 
 	@Override
@@ -71,6 +52,11 @@ public class IntDomainImpl extends BasicDomainImpl implements IntDomain {
 			String graphIoVariableName) {
 		return new CodeSnippet(variableName + " = " + graphIoVariableName
 				+ ".matchInteger();");
+	}
+
+	@Override
+	public String getTGTypeName(Package pkg) {
+		return INTDOMAIN_NAME;
 	}
 
 	@Override

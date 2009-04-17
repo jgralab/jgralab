@@ -31,4 +31,5 @@ package de.uni_koblenz.jgralab.schema;
  */
 public interface IntDomain extends BasicDomain {
 
+	public static final String INTDOMAIN_NAME = "Integer";
 }

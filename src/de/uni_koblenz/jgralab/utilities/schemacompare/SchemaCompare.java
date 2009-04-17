@@ -30,31 +30,27 @@ public class SchemaCompare {
 	}
 
 	public void compareSchemas() {
-		for (GraphClass gc : s.getGraphClassesInTopologicalOrder()) {
-			compareGraphClass(gc, t.getGraphClass(gc.getQName()));
-		}
+		compareGraphClass(s.getGraphClass(), t.getGraphClass());
 
 		for (RecordDomain r : s.getRecordDomains()) {
-			compareRecordDomain(r, t.getDomain(r.getQName()));
+			compareRecordDomain(r, t.getDomain(r.getQualifiedName()));
 		}
 
 		for (EnumDomain r : s.getEnumDomains()) {
-			compareEnumDomain(r, t.getDomain(r.getQName()));
+			compareEnumDomain(r, t.getDomain(r.getQualifiedName()));
 		}
 
 		System.out.println("\nReverse run...\n");
 		reverseRun = true;
 
-		for (GraphClass gc : t.getGraphClassesInTopologicalOrder()) {
-			compareGraphClass(gc, s.getGraphClass(gc.getQName()));
-		}
+		compareGraphClass(t.getGraphClass(), s.getGraphClass());
 
 		for (RecordDomain r : t.getRecordDomains()) {
-			compareRecordDomain(r, s.getDomain(r.getQName()));
+			compareRecordDomain(r, s.getDomain(r.getQualifiedName()));
 		}
 
 		for (EnumDomain r : t.getEnumDomains()) {
-			compareEnumDomain(r, s.getDomain(r.getQName()));
+			compareEnumDomain(r, s.getDomain(r.getQualifiedName()));
 		}
 
 		if (diffCount > 0) {
@@ -145,8 +141,9 @@ public class SchemaCompare {
 	}
 
 	private void compareGraphClass(GraphClass g, GraphClass h) {
-		if (h == null) {
-			reportDiff("GraphClass: " + g.getQualifiedName(), "null");
+		if (!g.getQualifiedName().equals(h.getQualifiedName())) {
+			reportDiff("GraphClass: " + g.getQualifiedName(), "GraphClass: "
+					+ h.getQualifiedName());
 			return;
 		}
 
@@ -155,8 +152,8 @@ public class SchemaCompare {
 		}
 
 		for (GraphElementClass gec : g.getGraphElementClasses()) {
-			compareGraphElementClass(gec, h
-					.getGraphElementClass(gec.getQName()));
+			compareGraphElementClass(gec, h.getGraphElementClass(gec
+					.getQualifiedName()));
 		}
 
 		marked.add(g);

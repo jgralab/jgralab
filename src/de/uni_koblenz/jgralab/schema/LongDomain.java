@@ -31,4 +31,5 @@ package de.uni_koblenz.jgralab.schema;
  */
 public interface LongDomain extends BasicDomain {
 
+	public static final String LONGDOMAIN_NAME = "Long";
 }

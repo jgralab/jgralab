@@ -33,7 +33,6 @@ import de.uni_koblenz.jgralab.greql2.exception.WrongFunctionParameterException;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
 import de.uni_koblenz.jgralab.schema.AttributedElementClass;
-import de.uni_koblenz.jgralab.schema.QualifiedName;
 import de.uni_koblenz.jgralab.schema.Schema;
 
 /**
@@ -103,10 +102,10 @@ public class IsA extends AbstractGreql2Function {
 		if (s1 != null || s2 != null) {
 			Schema schema = graph.getGraphClass().getSchema();
 			if (s1 != null) {
-				aec1 = schema.getAttributedElementClass(new QualifiedName(s1));
+				aec1 = schema.getAttributedElementClass(s1);
 			}
 			if (s2 != null) {
-				aec2 = schema.getAttributedElementClass(new QualifiedName(s2));
+				aec2 = schema.getAttributedElementClass(s2);
 			}
 		}
 		return new JValue(aec1.isSubClassOf(aec2));

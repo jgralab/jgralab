@@ -26,11 +26,26 @@ package de.uni_koblenz.jgralab.schema.impl;
 
 import de.uni_koblenz.jgralab.schema.CompositionClass;
 import de.uni_koblenz.jgralab.schema.GraphClass;
-import de.uni_koblenz.jgralab.schema.QualifiedName;
+import de.uni_koblenz.jgralab.schema.Package;
+import de.uni_koblenz.jgralab.schema.Schema;
 import de.uni_koblenz.jgralab.schema.VertexClass;
 
-public class CompositionClassImpl extends AggregationClassImpl implements
+public final class CompositionClassImpl extends AggregationClassImpl implements
 		CompositionClass {
+
+	static CompositionClass createDefaultCompositionClass(Schema schema) {
+		assert schema.getDefaultGraphClass() != null : "DefaultGraphClass has not yet been created!";
+		assert schema.getDefaultVertexClass() != null : "DefaultVertexClass has not yet been created!";
+		assert schema.getDefaultCompositionClass() == null : "DefaultCompositionClass already created!";
+		CompositionClass cc = schema.getDefaultGraphClass()
+				.createCompositionClass(DEFAULTCOMPOSITIONCLASS_NAME,
+						schema.getDefaultVertexClass(), 0, Integer.MAX_VALUE,
+						true, schema.getDefaultVertexClass(), 0,
+						Integer.MAX_VALUE);
+		cc.setAbstract(true);
+		cc.addSuperClass(schema.getDefaultAggregationClass());
+		return cc;
+	}
 
 	/**
 	 * builds a new composition class
@@ -68,12 +83,18 @@ public class CompositionClassImpl extends AggregationClassImpl implements
 	 *            a name which identifies the 'to' side of the composition class
 	 *            in a unique way
 	 */
-	public CompositionClassImpl(QualifiedName qn, GraphClass aGraphClass,
-			VertexClass from, int fromMin, int fromMax, String fromRoleName,
-			boolean compositeFrom, VertexClass to, int toMin, int toMax,
-			String toRoleName) {
-		super(qn, aGraphClass, from, fromMin, fromMax, fromRoleName,
-				compositeFrom, to, toMin, toMax, toRoleName);
+	protected CompositionClassImpl(String simpleName, Package pkg,
+			GraphClass aGraphClass, VertexClass from, int fromMin, int fromMax,
+			String fromRoleName, boolean compositeFrom, VertexClass to,
+			int toMin, int toMax, String toRoleName) {
+		super(simpleName, pkg, aGraphClass, from, fromMin, fromMax,
+				fromRoleName, compositeFrom, to, toMin, toMax, toRoleName);
+	}
+
+	@Override
+	protected void register() {
+		((PackageImpl) parentPackage).addEdgeClass(this);
+		((GraphClassImpl) graphClass).addCompositionClass(this);
 	}
 
 }

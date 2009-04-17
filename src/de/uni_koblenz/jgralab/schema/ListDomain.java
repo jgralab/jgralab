@@ -25,11 +25,12 @@
 package de.uni_koblenz.jgralab.schema;
 
 /**
- * Represents a List<...> domain, instances may exist multiple times per
- * schema.
- *
+ * Represents a List<...> domain, instances may exist multiple times per schema.
+ * 
  * @author ist@uni-koblenz.de
  */
 public interface ListDomain extends CollectionDomain {
+
+	public final static String LISTDOMAIN_NAME = "List";
 
 }

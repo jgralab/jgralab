@@ -7,7 +7,6 @@ import org.junit.Test;
 
 import de.uni_koblenz.jgralab.schema.AttributedElementClass;
 import de.uni_koblenz.jgralab.schema.GraphClass;
-import de.uni_koblenz.jgralab.schema.QualifiedName;
 import de.uni_koblenz.jgralab.schema.Schema;
 import de.uni_koblenz.jgralab.schema.impl.SchemaImpl;
 
@@ -28,7 +27,7 @@ public final class GraphClassImplTest extends AttributedElementClassImplTest {
 	 */
 	@Test
 	public void testCompareTo() {
-		GraphClass other = schema.createGraphClass(new QualifiedName("Z"));
+		GraphClass other = schema.createGraphClass("Z");
 
 		testCompareTo(other);
 	}
@@ -41,7 +40,7 @@ public final class GraphClassImplTest extends AttributedElementClassImplTest {
 	 */
 	@Test
 	public void testCompareTo2() {
-		GraphClass other = schema.createGraphClass(new QualifiedName("A"));
+		GraphClass other = schema.createGraphClass("A");
 
 		testCompareTo2(other);
 	}
@@ -54,10 +53,9 @@ public final class GraphClassImplTest extends AttributedElementClassImplTest {
 	 */
 	@Test
 	public void testCompareTo3() {
-		Schema schema2 = new SchemaImpl(new QualifiedName(
-				"de.uni_koblenz.jgralabtest.schematest.TestSchema2"));
-		GraphClass other = schema2.createGraphClass(new QualifiedName(
-				graphClass.getQualifiedName()));
+		Schema schema2 = new SchemaImpl("TestSchema2",
+				"de.uni_koblenz.jgralabtest.schematest");
+		GraphClass other = schema2.createGraphClass(graphClass.getSimpleName());
 
 		testCompareTo3(other);
 	}

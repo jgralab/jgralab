@@ -29,7 +29,7 @@ import de.uni_koblenz.jgralab.grumlschema.structure.VertexClass;
 
 /**
  * Allows to convert a Schema to a SchemaGraph.
- * 
+ *
  * @author mmce
  */
 
@@ -493,8 +493,8 @@ public class Schema2SchemaGraph {
 
 		gSchema = schemaGraph.createSchema();
 
-		gSchema.setName(schema.getSimpleName());
-		gSchema.setPackagePrefix(schema.getPackageName());
+		gSchema.setName(schema.getName());
+		gSchema.setPackagePrefix(schema.getPackagePrefix());
 	}
 
 	private void createGraphClass() {
@@ -505,13 +505,7 @@ public class Schema2SchemaGraph {
 
 		this.gGraphClass = schemaGraph.createGraphClass();
 
-		for (de.uni_koblenz.jgralab.schema.GraphClass graphClass : schema
-				.getGraphClasses().values()) {
-			this.graphClass = graphClass;
-			if (!graphClass.isInternal()) {
-				break;
-			}
-		}
+		this.graphClass = schema.getGraphClass();
 
 		assert (!graphClass.isInternal()) : "There have to be a GraphClass, which isn't internal!";
 

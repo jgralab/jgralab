@@ -27,7 +27,6 @@ import de.uni_koblenz.jgralab.schema.AttributedElementClass;
 import de.uni_koblenz.jgralab.schema.CompositionClass;
 import de.uni_koblenz.jgralab.schema.EdgeClass;
 import de.uni_koblenz.jgralab.schema.GraphClass;
-import de.uni_koblenz.jgralab.schema.QualifiedName;
 import de.uni_koblenz.jgralab.schema.VertexClass;
 import de.uni_koblenz.jgralab.schema.impl.AggregationClassImpl;
 import de.uni_koblenz.jgralab.schema.impl.CompositionClassImpl;
@@ -99,7 +98,7 @@ public class Tg2SchemagraphTest {
 		try {
 			assertEquals(
 					"The package name of the schema does not match the attribute packagePrefix of the schemagraphs schema vertex.",
-					schema.getPackageName(),
+					schema.getPackagePrefix(),
 					((de.uni_koblenz.jgralab.grumlschema.structure.Schema) schemagraph
 							.getFirstVertexOfClass(de.uni_koblenz.jgralab.grumlschema.structure.Schema.class))
 							.getAttribute("packagePrefix"));
@@ -117,7 +116,7 @@ public class Tg2SchemagraphTest {
 		try {
 			assertEquals(
 					"The name of the schema does not match the attribute name of the schemagraphs schema vertex.",
-					schema.getSimpleName(),
+					schema.getName(),
 					((de.uni_koblenz.jgralab.grumlschema.structure.Schema) schemagraph
 							.getFirstVertexOfClass(de.uni_koblenz.jgralab.grumlschema.structure.Schema.class))
 							.getAttribute("name"));
@@ -298,8 +297,7 @@ public class Tg2SchemagraphTest {
 				for (Vertex vcv : schemagraph
 						.vertices((VertexClass) schemagraph.getSchema()
 								.getAttributedElementClass(
-										new QualifiedName(
-												"structure.VertexClass")))) {
+										"structure.VertexClass"))) {
 					if (marker.getMark(vcv) == null) {
 						try {
 							if (((de.uni_koblenz.jgralab.grumlschema.structure.VertexClass) vcv)
@@ -329,8 +327,7 @@ public class Tg2SchemagraphTest {
 	public void schemagraphsEdgeClassesHaveOnlyOneToAndFromEdge() {
 		boolean success = true;
 		for (Vertex v : schemagraph.vertices((VertexClass) schemagraph
-				.getSchema().getAttributedElementClass(
-						new QualifiedName("structure.EdgeClass")))) {
+				.getSchema().getAttributedElementClass("structure.EdgeClass"))) {
 			de.uni_koblenz.jgralab.grumlschema.structure.EdgeClass ecv = (de.uni_koblenz.jgralab.grumlschema.structure.EdgeClass) v;
 			de.uni_koblenz.jgralab.grumlschema.structure.To to = ecv
 					.getFirstTo();
@@ -356,60 +353,55 @@ public class Tg2SchemagraphTest {
 	@Test
 	public void eachGraphClassAttributeMatches() {
 		boolean success = true;
-		for (GraphClass gc : schema.getGraphClassesInTopologicalOrder()) {
-			if (!gc.isInternal()) {
-				// get the correspondent graphClass in the schemagraph
-				de.uni_koblenz.jgralab.grumlschema.structure.GraphClass schemagraphGraphClass = null;
-				for (Vertex gcv : schemagraph
-						.vertices((VertexClass) schemagraph.getSchema()
-								.getAttributedElementClass(
-										new QualifiedName(
-												"structure.GraphClass")))) {
-					try {
-						if ((((de.uni_koblenz.jgralab.grumlschema.structure.GraphClass) gcv)
-								.getAttribute("qualifiedName").equals(gc
-								.getQualifiedName()))) {
-							schemagraphGraphClass = (de.uni_koblenz.jgralab.grumlschema.structure.GraphClass) gcv;
-						}
-					} catch (NoSuchFieldException e) {
-						success = false;
-					}
+
+		// get the correspondent graphClass in the schemagraph
+		de.uni_koblenz.jgralab.grumlschema.structure.GraphClass schemagraphGraphClass = null;
+		GraphClass gc = schema.getGraphClass();
+		for (Vertex gcv : schemagraph.vertices((VertexClass) schemagraph
+				.getSchema().getAttributedElementClass("structure.GraphClass"))) {
+			try {
+				if ((((de.uni_koblenz.jgralab.grumlschema.structure.GraphClass) gcv)
+						.getAttribute("qualifiedName").equals(gc
+						.getQualifiedName()))) {
+					schemagraphGraphClass = (de.uni_koblenz.jgralab.grumlschema.structure.GraphClass) gcv;
 				}
-				for (Attribute attr : gc.getAttributeList()) {
-					boolean schemagraphsAttributeHasExactlyOneDomain = true;
-					boolean matchingSchemagraphAttributeExists = false;
-					String attrName = attr.getName();
-					String attrDomainName = attr.getDomain().getQualifiedName();
-					Iterator<de.uni_koblenz.jgralab.grumlschema.structure.HasAttribute> iter = schemagraphGraphClass
-							.getHasAttributeIncidences().iterator();
-					while (iter.hasNext()) {
-						de.uni_koblenz.jgralab.grumlschema.structure.Attribute hasAttributeEdge = (de.uni_koblenz.jgralab.grumlschema.structure.Attribute) iter
-								.next().getThat();
-						String schemagraphAttrName = "";
-						String schemagraphAttrDomainName = "";
-						try {
-							schemagraphAttrName = hasAttributeEdge
-									.getAttribute("name").toString();
-							schemagraphAttrDomainName = hasAttributeEdge
-									.getFirstHasDomain().getThat()
-									.getAttribute("qualifiedName").toString();
-							schemagraphsAttributeHasExactlyOneDomain = hasAttributeEdge
-									.getFirstHasDomain().getNextHasDomain() == null;
-						} catch (NoSuchFieldException e) {
-							success = false;
-						}
-						if (schemagraphAttrName.equals(attrName)
-								&& schemagraphAttrDomainName
-										.equals(attrDomainName)) {
-							matchingSchemagraphAttributeExists = true;
-							break;
-						}
-					}
-					success &= schemagraphsAttributeHasExactlyOneDomain
-							&& matchingSchemagraphAttributeExists;
-				}
+			} catch (NoSuchFieldException e) {
+				success = false;
 			}
 		}
+		for (Attribute attr : gc.getAttributeList()) {
+			boolean schemagraphsAttributeHasExactlyOneDomain = true;
+			boolean matchingSchemagraphAttributeExists = false;
+			String attrName = attr.getName();
+			String attrDomainName = attr.getDomain().getQualifiedName();
+			Iterator<de.uni_koblenz.jgralab.grumlschema.structure.HasAttribute> iter = schemagraphGraphClass
+					.getHasAttributeIncidences().iterator();
+			while (iter.hasNext()) {
+				de.uni_koblenz.jgralab.grumlschema.structure.Attribute hasAttributeEdge = (de.uni_koblenz.jgralab.grumlschema.structure.Attribute) iter
+						.next().getThat();
+				String schemagraphAttrName = "";
+				String schemagraphAttrDomainName = "";
+				try {
+					schemagraphAttrName = hasAttributeEdge.getAttribute("name")
+							.toString();
+					schemagraphAttrDomainName = hasAttributeEdge
+							.getFirstHasDomain().getThat().getAttribute(
+									"qualifiedName").toString();
+					schemagraphsAttributeHasExactlyOneDomain = hasAttributeEdge
+							.getFirstHasDomain().getNextHasDomain() == null;
+				} catch (NoSuchFieldException e) {
+					success = false;
+				}
+				if (schemagraphAttrName.equals(attrName)
+						&& schemagraphAttrDomainName.equals(attrDomainName)) {
+					matchingSchemagraphAttributeExists = true;
+					break;
+				}
+			}
+			success &= schemagraphsAttributeHasExactlyOneDomain
+					&& matchingSchemagraphAttributeExists;
+		}
+
 		assertEquals(
 				"GraphClass attributes are not correctly arranged in the schemagraph.",
 				true, success);
@@ -424,7 +416,7 @@ public class Tg2SchemagraphTest {
 		boolean result = true;
 		for (Vertex aecv : schemagraph.vertices((VertexClass) schemagraph
 				.getSchema().getAttributedElementClass(
-						new QualifiedName("structure.AttributedElementClass")))) {
+						"structure.AttributedElementClass"))) {
 			Iterator<de.uni_koblenz.jgralab.grumlschema.structure.HasAttribute> iter = ((de.uni_koblenz.jgralab.grumlschema.structure.AttributedElementClass) aecv)
 					.getHasAttributeIncidences().iterator();
 			while (iter.hasNext()) {
@@ -454,8 +446,7 @@ public class Tg2SchemagraphTest {
 				for (Vertex vcv : schemagraph
 						.vertices((VertexClass) schemagraph.getSchema()
 								.getAttributedElementClass(
-										new QualifiedName(
-												"structure.VertexClass")))) {
+										"structure.VertexClass"))) {
 					try {
 						if ((((de.uni_koblenz.jgralab.grumlschema.structure.VertexClass) vcv)
 								.getAttribute("qualifiedName").equals(vc
@@ -528,10 +519,9 @@ public class Tg2SchemagraphTest {
 				// get the correspondent graphClass in the schemagraph
 				de.uni_koblenz.jgralab.grumlschema.structure.EdgeClass schemagraphEdgeClass = null;
 				for (Vertex ecv : schemagraph
-						.vertices((VertexClass) schemagraph
-								.getSchema()
+						.vertices((VertexClass) schemagraph.getSchema()
 								.getAttributedElementClass(
-										new QualifiedName("structure.EdgeClass")))) {
+										"structure.EdgeClass"))) {
 					try {
 						if ((((de.uni_koblenz.jgralab.grumlschema.structure.EdgeClass) ecv)
 								.getAttribute("qualifiedName").equals(ec
@@ -609,10 +599,9 @@ public class Tg2SchemagraphTest {
 				// get the correspondent edge class in the schemagraph
 				de.uni_koblenz.jgralab.grumlschema.structure.EdgeClass schemagraphEdgeClass = null;
 				for (Vertex ecv : schemagraph
-						.vertices((VertexClass) schemagraph
-								.getSchema()
+						.vertices((VertexClass) schemagraph.getSchema()
 								.getAttributedElementClass(
-										new QualifiedName("structure.EdgeClass")))) {
+										"structure.EdgeClass"))) {
 					try {
 						if ((((de.uni_koblenz.jgralab.grumlschema.structure.EdgeClass) ecv)
 								.getAttribute("qualifiedName").equals(ec
@@ -730,10 +719,9 @@ public class Tg2SchemagraphTest {
 			if (!ec.isInternal()) {
 				String edgeClassesQualifiedName = ec.getQualifiedName();
 				for (Vertex ecv : schemagraph
-						.vertices((VertexClass) schemagraph
-								.getSchema()
+						.vertices((VertexClass) schemagraph.getSchema()
 								.getAttributedElementClass(
-										new QualifiedName("structure.EdgeClass")))) {
+										"structure.EdgeClass"))) {
 					if (marker.getMark(ecv) == null) {
 						try {
 							if ( // the qualified name equals
@@ -775,8 +763,7 @@ public class Tg2SchemagraphTest {
 	private int countClassVertices(String attributedElementClassName) {
 		int count = 0;
 		AttributedElementClass aec = schemagraph.getSchema()
-				.getAttributedElementClass(
-						new QualifiedName(attributedElementClassName));
+				.getAttributedElementClass(attributedElementClassName);
 		if (aec instanceof VertexClass) {
 			for (@SuppressWarnings("unused")
 			Vertex v : schemagraph.vertices((VertexClass) aec)) {

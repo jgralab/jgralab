@@ -28,7 +28,7 @@ import java.util.Map;
 
 /**
  * Represents a RecordDomain, instances may exist multiple times per schema.
- * 
+ *
  * @author ist@uni-koblenz.de
  */
 public interface RecordDomain extends CompositeDomain {
@@ -39,29 +39,20 @@ public interface RecordDomain extends CompositeDomain {
 	public Map<String, Domain> getComponents();
 
 	/**
-	 * adds a record domain component to the internal list
-	 * 
+	 * @param name
+	 *            the name of the record domain component in the record domain
+	 * @return the domain of the component with the name name
+	 */
+	public Domain getDomainOfComponent(String name);
+
+	/**
+	 * Adds a record domain component to the internal list
+	 *
 	 * @param name
 	 *            the unique name of the record domain component in the record
 	 *            domain
 	 * @param aDomain
 	 *            the domain of the component
 	 */
-	public void addComponent(String name, Domain aDomain);
-
-	/**
-	 * removes the component from the record domain
-	 * 
-	 * @param name
-	 *            the name of the component
-	 * 
-	 */
-	public void deleteComponent(String name);
-
-	/**
-	 * @param name
-	 *            the name of the record domain component in the record domain
-	 * @return the domain of the component with the name name
-	 */
-	public Domain getDomainOfComponent(String name);
+	public void addComponent(String name, Domain domain);
 }

@@ -41,15 +41,14 @@ import de.uni_koblenz.jgralab.schema.AttributedElementClass;
 import de.uni_koblenz.jgralab.schema.Domain;
 import de.uni_koblenz.jgralab.schema.EdgeClass;
 import de.uni_koblenz.jgralab.schema.EnumDomain;
-import de.uni_koblenz.jgralab.schema.QualifiedName;
 import de.uni_koblenz.jgralab.schema.Schema;
 import de.uni_koblenz.jgralab.schema.VertexClass;
 
 /**
  * A JNI server class for calling JGraLab from C++.
- * 
+ *
  * @author ist@uni-koblenz.de
- * 
+ *
  */
 @WorkInProgress(description = "totally incomplete, mainly untested", responsibleDevelopers = "riediger")
 public class JniServer {
@@ -68,7 +67,7 @@ public class JniServer {
 
 	/**
 	 * Stores {@code graph} and returns the graphId for accessing the graph.
-	 * 
+	 *
 	 * @param graph
 	 *            a graph
 	 * @return handle for accessing a graph in the Map {@code graphs}
@@ -85,7 +84,7 @@ public class JniServer {
 
 	/**
 	 * Removes the graph with id {@code graphId} from this JniServer.
-	 * 
+	 *
 	 * @param graphId
 	 *            the id of the graph to be deleted
 	 */
@@ -95,7 +94,7 @@ public class JniServer {
 
 	/**
 	 * Checks whether a graph with the handle {@code graphId} exists.
-	 * 
+	 *
 	 * @param graphId
 	 *            the handle for which the existence of a graph shall be checked
 	 * @return {@code true} if a graph with handle {@code graphNo} exists,
@@ -105,16 +104,14 @@ public class JniServer {
 		return graphs.containsKey(graphId);
 	}
 
-	public int createGraph(String schemaName, String graphClassName, int vMax,
-			int eMax) {
+	public int createGraph(String schemaName, int vMax, int eMax) {
 		Class<?> schemaClass;
 		try {
 			schemaClass = Class.forName(schemaName);
 			Schema schema = (Schema) (schemaClass.getMethod("instance",
 					(Class[]) null).invoke(null));
 
-			Method graphCreateMethod = schema
-					.getGraphCreateMethod(new QualifiedName(graphClassName));
+			Method graphCreateMethod = schema.getGraphCreateMethod();
 
 			Graph g = (Graph) (graphCreateMethod.invoke(null, new Object[] {
 					null, vMax, eMax }));
@@ -147,7 +144,7 @@ public class JniServer {
 	public int createVertex(int graphId, String vertexClassName) {
 		Graph graph = graphs.get(graphId);
 		Class<? extends Vertex> m1Class = graph.getGraphClass().getVertexClass(
-				new QualifiedName(vertexClassName)).getM1Class();
+				vertexClassName).getM1Class();
 		return graph.createVertex(m1Class).getId();
 	}
 
@@ -194,7 +191,7 @@ public class JniServer {
 			int omegaId) {
 		Graph graph = graphs.get(graphId);
 		Class<? extends Edge> m1Class = graph.getGraphClass().getEdgeClass(
-				new QualifiedName(edgeClassName)).getM1Class();
+				edgeClassName).getM1Class();
 		return graph.createEdge(m1Class, graph.getVertex(alphaId),
 				graph.getVertex(omegaId)).getId();
 	}
@@ -237,8 +234,7 @@ public class JniServer {
 		Graph g = graphs.get(graphId);
 		Vertex v = (vertexClassName != null) ? g
 				.getFirstVertexOfClass((VertexClass) g.getSchema()
-						.getAttributedElementClass(
-								new QualifiedName(vertexClassName))) : g
+						.getAttributedElementClass(vertexClassName)) : g
 				.getFirstVertex();
 		return (v == null) ? 0 : v.getId();
 	}
@@ -248,8 +244,8 @@ public class JniServer {
 		Vertex v = (vertexClassName != null) ? g.getVertex(vertexId)
 				.getNextVertexOfClass(
 						((VertexClass) g.getSchema().getAttributedElementClass(
-								new QualifiedName(vertexClassName)))) : g
-				.getVertex(vertexId).getNextVertex();
+								vertexClassName))) : g.getVertex(vertexId)
+				.getNextVertex();
 		return (v == null) ? 0 : v.getId();
 	}
 
@@ -257,8 +253,7 @@ public class JniServer {
 		Graph g = graphs.get(graphId);
 		Edge e = (edgeClassName != null) ? g
 				.getFirstEdgeOfClassInGraph((EdgeClass) g.getSchema()
-						.getAttributedElementClass(
-								new QualifiedName(edgeClassName))) : g
+						.getAttributedElementClass(edgeClassName)) : g
 				.getFirstEdgeInGraph();
 		return (e == null) ? 0 : e.getId();
 	}
@@ -268,8 +263,8 @@ public class JniServer {
 		Edge e = (edgeClassName != null) ? g.getEdge(edgeId)
 				.getNextEdgeOfClassInGraph(
 						((EdgeClass) g.getSchema().getAttributedElementClass(
-								new QualifiedName(edgeClassName)))) : g
-				.getEdge(edgeId).getNextEdgeInGraph();
+								edgeClassName))) : g.getEdge(edgeId)
+				.getNextEdgeInGraph();
 		return (e == null) ? 0 : e.getId();
 	}
 
@@ -278,8 +273,8 @@ public class JniServer {
 		Edge e = (edgeClassName != null) ? g.getVertex(vertexId)
 				.getFirstEdgeOfClass(
 						(EdgeClass) g.getSchema().getAttributedElementClass(
-								new QualifiedName(edgeClassName))) : g
-				.getVertex(vertexId).getFirstEdge();
+								edgeClassName)) : g.getVertex(vertexId)
+				.getFirstEdge();
 		return (e == null) ? 0 : e.getId();
 	}
 
@@ -288,8 +283,8 @@ public class JniServer {
 		Edge e = (edgeClassName != null) ? g.getEdge(edgeId)
 				.getNextEdgeOfClass(
 						((EdgeClass) g.getSchema().getAttributedElementClass(
-								new QualifiedName(edgeClassName)))) : g
-				.getEdge(edgeId).getNextEdge();
+								edgeClassName))) : g.getEdge(edgeId)
+				.getNextEdge();
 		return (e == null) ? 0 : e.getId();
 	}
 
@@ -311,7 +306,7 @@ public class JniServer {
 						+ " is no EnumDomain.");
 			}
 			Class<?> attrType = Class.forName(domain.getSchema()
-					.getPackageName()
+					.getPackagePrefix()
 					+ "." + domain.getQualifiedName());
 			Object enumValue = attrType.getMethod("fromString",
 					new Class[] { String.class }).invoke(null, value);

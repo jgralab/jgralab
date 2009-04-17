@@ -33,47 +33,11 @@ import de.uni_koblenz.jgralab.codegenerator.CodeList;
 import de.uni_koblenz.jgralab.codegenerator.CodeSnippet;
 import de.uni_koblenz.jgralab.schema.Domain;
 import de.uni_koblenz.jgralab.schema.Package;
-import de.uni_koblenz.jgralab.schema.QualifiedName;
 import de.uni_koblenz.jgralab.schema.Schema;
 import de.uni_koblenz.jgralab.schema.SetDomain;
 
-public class SetDomainImpl extends CollectionDomainImpl implements SetDomain {
-
-	/**
-	 * @param aBaseDomain
-	 *            the base domain of the set
-	 */
-	public SetDomainImpl(Schema schema, QualifiedName qn, Domain aBaseDomain) {
-		super(schema, qn, aBaseDomain);
-	}
-
-	public SetDomainImpl(Schema schema, Domain aBaseDomain) {
-		this(schema, new QualifiedName("Set<"
-				+ aBaseDomain.getTGTypeName(schema.getDefaultPackage()) + ">"),
-				aBaseDomain);
-	}
-
-	@Override
-	public String toString() {
-		return "domain Set<" + baseDomain.toString() + ">";
-	}
-
-	@Override
-	public String getJavaAttributeImplementationTypeName(
-			String schemaRootPackagePrefix) {
-		return "java.util.Set<"
-				+ baseDomain.getJavaClassName(schemaRootPackagePrefix) + ">";
-	}
-
-	@Override
-	public String getJavaClassName(String schemaRootPackagePrefix) {
-		return getJavaAttributeImplementationTypeName(schemaRootPackagePrefix);
-	}
-
-	@Override
-	public String getTGTypeName(Package pkg) {
-		return "Set<" + baseDomain.getTGTypeName(pkg) + ">";
-	}
+public final class SetDomainImpl extends CollectionDomainImpl implements
+		SetDomain {
 
 	/**
 	 * @param aSet
@@ -85,11 +49,32 @@ public class SetDomainImpl extends CollectionDomainImpl implements SetDomain {
 		return (List) aSet;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see jgralab.Domain#getReadMethod(java.lang.String, java.lang.String)
-	 */
+	SetDomainImpl(Schema schema, Domain aBaseDomain) {
+		super(SETDOMAIN_NAME + "<"
+				+ aBaseDomain.getTGTypeName(schema.getDefaultPackage()) + ">",
+				schema.getDefaultPackage(), aBaseDomain);
+	}
+
+	@Override
+	public Set<Domain> getAllComponentDomains() {
+		HashSet<Domain> componentDomainSet = new HashSet<Domain>(1);
+		componentDomainSet.add(baseDomain);
+		return componentDomainSet;
+	}
+
+	@Override
+	public String getJavaAttributeImplementationTypeName(
+			String schemaRootPackagePrefix) {
+		return "java.util." + SETDOMAIN_NAME + "<"
+				+ baseDomain.getJavaClassName(schemaRootPackagePrefix) + ">";
+	}
+
+	@Override
+	public String getJavaClassName(String schemaRootPackagePrefix) {
+		return getJavaAttributeImplementationTypeName(schemaRootPackagePrefix);
+	}
+
+	@Override
 	public CodeBlock getReadMethod(String schemaRootPackagePrefix,
 			String variableName, String graphIoVariableName) {
 
@@ -118,6 +103,12 @@ public class SetDomainImpl extends CollectionDomainImpl implements SetDomain {
 		return code;
 	}
 
+	@Override
+	public String getTGTypeName(Package pkg) {
+		return SETDOMAIN_NAME + "<" + baseDomain.getTGTypeName(pkg) + ">";
+	}
+
+	@Override
 	public CodeBlock getWriteMethod(String schemaRootPackagePrefix,
 			String variableName, String graphIoVariableName) {
 		CodeList code = new CodeList();
@@ -142,35 +133,8 @@ public class SetDomainImpl extends CollectionDomainImpl implements SetDomain {
 		return code;
 	}
 
-	public Set<Domain> getAllComponentDomains() {
-		HashSet<Domain> componentDomainSet = new HashSet<Domain>(1);
-		componentDomainSet.add(baseDomain);
-		return componentDomainSet;
-	}
-
 	@Override
-	public boolean equals(Object o) {
-		if (this == o) {
-			return true;
-		}
-
-		if (!(o instanceof SetDomain)) {
-			return false;
-		}
-
-		SetDomain other = (SetDomain) o;
-		return baseDomain.equals(other.getBaseDomain());
-	}
-
-	@Override
-	public void setPackage(Package p) {
-		throw new UnsupportedOperationException(
-				"The package of a SetDomain may not be changed.");
-	}
-
-	@Override
-	public void setUniqueName(String newUniqueName) {
-		throw new UnsupportedOperationException(
-				"The unique name of a SetDomain may not be changed.");
+	public String toString() {
+		return "domain " + SETDOMAIN_NAME + "<" + baseDomain.toString() + ">";
 	}
 }

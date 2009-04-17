@@ -31,17 +31,14 @@ import de.uni_koblenz.jgralab.codegenerator.CodeBlock;
 import de.uni_koblenz.jgralab.codegenerator.CodeSnippet;
 import de.uni_koblenz.jgralab.schema.EnumDomain;
 import de.uni_koblenz.jgralab.schema.Package;
-import de.uni_koblenz.jgralab.schema.QualifiedName;
-import de.uni_koblenz.jgralab.schema.Schema;
 import de.uni_koblenz.jgralab.schema.exception.InvalidNameException;
-import de.uni_koblenz.jgralab.schema.exception.NoSuchEnumConstantException;
 
-public class EnumDomainImpl extends DomainImpl implements EnumDomain {
+public final class EnumDomainImpl extends DomainImpl implements EnumDomain {
 
 	/**
 	 * holds a list of the components of the enumeration
 	 */
-	private List<String> constants;
+	private final List<String> constants = new ArrayList<String>();
 
 	/**
 	 * @param qn
@@ -49,45 +46,18 @@ public class EnumDomainImpl extends DomainImpl implements EnumDomain {
 	 * @param constants
 	 *            holds a list of the components of the enumeration
 	 */
-	public EnumDomainImpl(Schema schema, QualifiedName qn,
-			List<String> constants) {
-		super(schema, qn);
+	EnumDomainImpl(String sn, Package pkg, List<String> constants) {
+		super(sn, pkg);
 		for (String c : constants) {
-			if (!getSchema().isValidEnumConstant(c)) {
-				throw new InvalidNameException(c
-						+ " is not a valid enumeration constant.");
-			}
+			addConst(c);
 		}
-		this.constants = constants;
-	}
-
-	/**
-	 * @param qn
-	 *            the unique name of the enum in the schema
-	 */
-	public EnumDomainImpl(Schema schema, QualifiedName qn) {
-		super(schema, qn);
-		this.constants = new ArrayList<String>();
-	}
-
-	@Override
-	public String toString() {
-		String output = "domain Enum " + getName() + " (";
-		String delim = "";
-		int count = 0;
-		for (String s : constants) {
-			output += delim + count++ + ": " + s;
-			delim = ", ";
-		}
-		output += ")";
-		return output;
 	}
 
 	@Override
 	public void addConst(String aConst) {
 		if (constants.contains(aConst)) {
 			throw new InvalidNameException("Try to add duplicate constant '"
-					+ aConst + "' to EnumDomain" + getName());
+					+ aConst + "' to EnumDomain" + getQualifiedName());
 		}
 		if (!getSchema().isValidEnumConstant(aConst)) {
 			throw new InvalidNameException(aConst
@@ -97,11 +67,8 @@ public class EnumDomainImpl extends DomainImpl implements EnumDomain {
 	}
 
 	@Override
-	public void deleteConst(String aConst) {
-		if (!constants.contains(aConst)) {
-			throw new NoSuchEnumConstantException(aConst, getQualifiedName());
-		}
-		constants.remove(aConst);
+	public List<String> getConsts() {
+		return constants;
 	}
 
 	@Override
@@ -116,22 +83,17 @@ public class EnumDomainImpl extends DomainImpl implements EnumDomain {
 	}
 
 	@Override
-	public List<String> getConsts() {
-		return constants;
-	}
-
-	@Override
-	public String getTGTypeName(Package pkg) {
-		return getQualifiedName(pkg);
-	}
-
-	@Override
 	public CodeBlock getReadMethod(String schemaPrefix, String variableName,
 			String graphIoVariableName) {
 		return new CodeSnippet(variableName + " = "
 				+ getJavaAttributeImplementationTypeName(schemaPrefix)
 				+ ".fromString(" + graphIoVariableName
 				+ ".matchEnumConstant());");
+	}
+
+	@Override
+	public String getTGTypeName(Package pkg) {
+		return getQualifiedName(pkg);
 	}
 
 	@Override
@@ -150,7 +112,21 @@ public class EnumDomainImpl extends DomainImpl implements EnumDomain {
 		return code;
 	}
 
+	@Override
 	public boolean isComposite() {
 		return false;
+	}
+
+	@Override
+	public String toString() {
+		String output = "domain Enum " + getQualifiedName() + " (";
+		String delim = "";
+		int count = 0;
+		for (String s : constants) {
+			output += delim + count++ + ": " + s;
+			delim = ", ";
+		}
+		output += ")";
+		return output;
 	}
 }

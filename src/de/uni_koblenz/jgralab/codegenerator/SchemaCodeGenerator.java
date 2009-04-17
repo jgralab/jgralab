@@ -24,8 +24,6 @@
 
 package de.uni_koblenz.jgralab.codegenerator;
 
-import java.util.List;
-
 import de.uni_koblenz.jgralab.Attribute;
 import de.uni_koblenz.jgralab.schema.AggregationClass;
 import de.uni_koblenz.jgralab.schema.AttributedElementClass;
@@ -44,9 +42,9 @@ import de.uni_koblenz.jgralab.schema.VertexClass;
 
 /**
  * TODO add comment
- * 
+ *
  * @author ist@uni-koblenz.de
- * 
+ *
  */
 public class SchemaCodeGenerator extends CodeGenerator {
 
@@ -54,7 +52,7 @@ public class SchemaCodeGenerator extends CodeGenerator {
 
 	/**
 	 * Creates a new SchemaCodeGenerator which creates code for the given schema
-	 * 
+	 *
 	 * @param schema
 	 *            the schema to create the code for
 	 * @param schemaPackageName
@@ -67,8 +65,8 @@ public class SchemaCodeGenerator extends CodeGenerator {
 		super(schemaPackageName, "");
 		this.schema = schema;
 
-		rootBlock.setVariable("simpleClassName", schema.getSimpleName());
-		rootBlock.setVariable("simpleImplClassName", schema.getSimpleName());
+		rootBlock.setVariable("simpleClassName", schema.getName());
+		rootBlock.setVariable("simpleImplClassName", schema.getName());
 		rootBlock.setVariable("baseClassName", "SchemaImpl");
 		rootBlock.setVariable("isAbstractClass", "false");
 		rootBlock.setVariable("isClassOnly", "true");
@@ -98,17 +96,8 @@ public class SchemaCodeGenerator extends CodeGenerator {
 	}
 
 	private CodeBlock createGraphFactoryMethods() {
-		List<GraphClass> graphClasses = schema
-				.getGraphClassesInTopologicalOrder();
-		if (graphClasses.size() == 0) {
-			return null;
-		}
 		CodeList code = new CodeList();
-		for (GraphClass gc : graphClasses) {
-			if (!gc.isInternal()) {
-				code.addNoIndent(createGraphFactoryMethods(gc));
-			}
-		}
+		code.addNoIndent(createGraphFactoryMethods(schema.getGraphClass()));
 		return code;
 	}
 
@@ -187,7 +176,6 @@ public class SchemaCodeGenerator extends CodeGenerator {
 
 	private CodeBlock createConstructor() {
 		CodeList code = new CodeList();
-		addImports("#jgSchemaPackage#.QualifiedName");
 		code
 				.addNoIndent(new CodeSnippet(
 						true,
@@ -211,7 +199,7 @@ public class SchemaCodeGenerator extends CodeGenerator {
 						" * This constructor is private. Use the <code>instance()</code> method",
 						" * to acess the schema.", " */",
 						"private #simpleClassName#() {",
-						"\tsuper(new QualifiedName(\"#schemaPackage#\", \"#simpleClassName#\"));"));
+						"\tsuper(\"#simpleClassName#\", \"#schemaPackage#\");"));
 
 		code.add(new CodeSnippet("vc_Vertex = getDefaultVertexClass();"));
 		code.add(createEnumDomains());
@@ -227,11 +215,7 @@ public class SchemaCodeGenerator extends CodeGenerator {
 
 	private CodeBlock createGraphClasses() {
 		CodeList code = new CodeList();
-		for (GraphClass gc : schema.getGraphClassesInTopologicalOrder()) {
-			if (!gc.isInternal()) {
-				code.addNoIndent(createGraphClass(gc));
-			}
-		}
+		code.addNoIndent(createGraphClass(schema.getGraphClass()));
 		return code;
 	}
 
@@ -247,14 +231,14 @@ public class SchemaCodeGenerator extends CodeGenerator {
 				.addNoIndent(new CodeSnippet(
 						true,
 						"{",
-						"\tGraphClass #gcVariable# = #schemaVariable# = createGraphClass(new QualifiedName(\"#gcName#\"));",
+						"\tGraphClass #gcVariable# = #schemaVariable# = createGraphClass(\"#gcName#\");",
 						"\t#gcVariable#.setAbstract(#gcAbstract#);"));
 		for (AttributedElementClass superClass : gc.getDirectSuperClasses()) {
 			if (superClass.isInternal()) {
 				continue;
 			}
 			CodeSnippet s = new CodeSnippet(
-					"#gcVariable#.addSuperClass(getGraphClass(new QualifiedName(\"#superClassName#\")));");
+					"#gcVariable#.addSuperClass(getGraphClass(\"#superClassName#\"));");
 			s.setVariable("superClassName", superClass.getQualifiedName());
 			code.add(s);
 		}
@@ -268,12 +252,10 @@ public class SchemaCodeGenerator extends CodeGenerator {
 
 	private CodeBlock createVariables() {
 		CodeList code = new CodeList();
-		for (GraphClass gc : schema.getGraphClassesInTopologicalOrder()) {
-			if (!gc.isInternal()) {
-				code.addNoIndent(new CodeSnippet("public final GraphClass "
-						+ gc.getVariableName() + ";"));
-			}
-		}
+
+		code.addNoIndent(new CodeSnippet("public final GraphClass "
+				+ schema.getGraphClass().getVariableName() + ";"));
+
 		for (VertexClass vc : schema.getVertexClassesInTopologicalOrder()) {
 			code.addNoIndent(new CodeSnippet("public final VertexClass "
 					+ vc.getVariableName() + ";"));
@@ -338,7 +320,7 @@ public class SchemaCodeGenerator extends CodeGenerator {
 				.addNoIndent(new CodeSnippet(
 						true,
 						"{",
-						"\t#ecType# #ecVariable# = #schemaVariable# = #gcVariable#.create#ecType#(new QualifiedName(\"#ecName#\"),",
+						"\t#ecType# #ecVariable# = #schemaVariable# = #gcVariable#.create#ecType#(\"#ecName#\",",
 						"\t\t#fromPart##aggregateFrom#,", "\t\t#toPart#);",
 						"\t#ecVariable#.setAbstract(#ecAbstract#);"));
 		for (String redefinedFromRole : ec.getRedefinedFromRoles()) {
@@ -392,7 +374,7 @@ public class SchemaCodeGenerator extends CodeGenerator {
 				.addNoIndent(new CodeSnippet(
 						true,
 						"{",
-						"\tVertexClass #vcVariable# = #schemaVariable# = #gcVariable#.createVertexClass(new QualifiedName(\"#vcName#\"));",
+						"\tVertexClass #vcVariable# = #schemaVariable# = #gcVariable#.createVertexClass(\"#vcName#\");",
 						"\t#vcVariable#.setAbstract(#vcAbstract#);"));
 		for (AttributedElementClass superClass : vc.getDirectSuperClasses()) {
 			if (superClass.isInternal()) {
@@ -453,10 +435,7 @@ public class SchemaCodeGenerator extends CodeGenerator {
 			s.setVariable("domName", dom.getQualifiedName());
 			code.addNoIndent(s);
 			addImports("#jgSchemaPackage#.EnumDomain");
-			addImports("#jgSchemaPackage#.QualifiedName");
-			s
-					.add("{",
-							"\tEnumDomain dom = createEnumDomain(new QualifiedName(\"#domName#\"));");
+			s.add("{", "\tEnumDomain dom = createEnumDomain(\"#domName#\");");
 			for (String c : dom.getConsts()) {
 				s.add("\tdom.addConst(\"" + c + "\");");
 			}
@@ -491,10 +470,9 @@ public class SchemaCodeGenerator extends CodeGenerator {
 						.add("createMapDomain(getDomain(\"#keyDomainName#\"), getDomain(\"#valueDomainName#\"));");
 			} else if (dom instanceof RecordDomain) {
 				addImports("#jgSchemaPackage#.RecordDomain");
-				addImports("#jgSchemaPackage#.QualifiedName");
 				s
 						.add("{",
-								"\tRecordDomain dom = createRecordDomain(new QualifiedName(\"#domName#\"));");
+								"\tRecordDomain dom = createRecordDomain(\"#domName#\");");
 				RecordDomain rd = (RecordDomain) dom;
 				for (String cName : rd.getComponents().keySet()) {
 					s.add("\tdom.addComponent(\"" + cName + "\", getDomain(\""

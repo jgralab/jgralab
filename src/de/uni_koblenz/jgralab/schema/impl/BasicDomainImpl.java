@@ -26,30 +26,19 @@ package de.uni_koblenz.jgralab.schema.impl;
 
 import de.uni_koblenz.jgralab.schema.BasicDomain;
 import de.uni_koblenz.jgralab.schema.Package;
-import de.uni_koblenz.jgralab.schema.QualifiedName;
-import de.uni_koblenz.jgralab.schema.Schema;
 
 public abstract class BasicDomainImpl extends DomainImpl implements BasicDomain {
 
-	protected BasicDomainImpl(Schema schema, QualifiedName qn) {
-		super(schema, qn);
+	protected BasicDomainImpl(String simpleName, Package pkg) {
+		super(simpleName, pkg);
 	}
 
-	protected BasicDomainImpl() {
-	}
-
+	@Override
 	public boolean isComposite() {
 		return false;
 	}
 
-	public void setPackage(Package p) {
-		throw new UnsupportedOperationException(
-				"The package of a BasicDomain may not be changed.");
+	public static final boolean isBasicDomain(String domainName) {
+		return BASIC_DOMAINS.contains(domainName);
 	}
-
-	public void setUniqueName(String newUniqueName) {
-		throw new UnsupportedOperationException(
-				"The unique name of a BasicDomain may not be changed.");
-	}
-
 }

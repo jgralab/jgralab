@@ -9,10 +9,7 @@ import java.io.File;
 import org.junit.Test;
 
 import de.uni_koblenz.jgralab.schema.Domain;
-import de.uni_koblenz.jgralab.schema.Package;
-import de.uni_koblenz.jgralab.schema.QualifiedName;
 import de.uni_koblenz.jgralab.schema.Schema;
-import de.uni_koblenz.jgralab.schema.exception.InvalidNameException;
 import de.uni_koblenz.jgralab.schema.impl.DomainImpl;
 import de.uni_koblenz.jgralab.schema.impl.SchemaImpl;
 
@@ -94,8 +91,8 @@ public abstract class DomainTest {
 	protected String expectedUniqueName2;
 
 	public void init() {
-		schema1 = new SchemaImpl(new QualifiedName(schema1Package, schema1Name));
-		schema2 = new SchemaImpl(new QualifiedName(schema2Package, schema2Name));
+		schema1 = new SchemaImpl(schema1Name, schema1Package);
+		schema2 = new SchemaImpl(schema2Name, schema2Package);
 	}
 
 	// interface Domain
@@ -103,7 +100,8 @@ public abstract class DomainTest {
 	@Test
 	public void testEquals() {
 		// test if same types of Domains based on different schemas are equal
-		assertEquals(domain1, domain2);
+		// They shouldn't. A domain belongs to one schema.
+		assertFalse(domain1.equals(domain2));
 
 		// test if a domain is equal to itself
 		assertEquals(domain1, domain1);
@@ -162,14 +160,6 @@ public abstract class DomainTest {
 	}
 
 	@Test
-	public void testSetPackage() {
-		// tests if the changing of the package works correctly
-		Package p = schema1.createPackageWithParents("subpackage");
-		domain1.setPackage(schema1.getPackage("subpackage"));
-		assertEquals(p, domain1.getPackage());
-	}
-
-	@Test
 	public void testToString() {
 		// tests if the correct StringRepresentation is returned
 		assertEquals(expectedStringRepresentation, domain1.toString());
@@ -182,13 +172,6 @@ public abstract class DomainTest {
 		// tests if the correct packageName is returned
 		assertEquals(expectedPackage1, domain1.getPackageName());
 		assertEquals(expectedPackage2, domain2.getPackageName());
-	}
-
-	@Test
-	public void testGetQName() {
-		// tests if the correct qualifiedName is returned
-		assertEquals(expectedQualifiedName1, domain1.getQName().toString());
-		assertEquals(expectedQualifiedName2, domain2.getQName().toString());
 	}
 
 	@Test
@@ -217,27 +200,6 @@ public abstract class DomainTest {
 		// tests if the correct uniqueName is returned
 		assertEquals(expectedUniqueName1, domain1.getUniqueName());
 		assertEquals(expectedUniqueName2, domain2.getUniqueName());
-	}
-
-
-	@Test
-	public void testSetUniqueName1() {
-		// tests if the uniqueName has changed after changing it
-		domain1.setUniqueName("package1_subpackage1_" + expectedSimpleName);
-		assertEquals("package1_subpackage1_" + expectedSimpleName, domain1
-				.getUniqueName());
-	}
-
-	@Test(expected = InvalidNameException.class)
-	public void testSetUniqueName2() {
-		// Tests if an exception occurs if the uniqueName contains a '.'
-		domain1.setUniqueName("package1.subpackage1." + expectedSimpleName);
-	}
-
-	@Test(expected = NullPointerException.class)
-	public void testSetUniqueName3() {
-		// Tests if an exception occurs if the uniqueName is null
-		domain1.setUniqueName(null);
 	}
 
 	@Test

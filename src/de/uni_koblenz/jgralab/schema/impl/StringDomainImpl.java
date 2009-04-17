@@ -27,22 +27,14 @@ package de.uni_koblenz.jgralab.schema.impl;
 import de.uni_koblenz.jgralab.codegenerator.CodeBlock;
 import de.uni_koblenz.jgralab.codegenerator.CodeSnippet;
 import de.uni_koblenz.jgralab.schema.Package;
-import de.uni_koblenz.jgralab.schema.QualifiedName;
 import de.uni_koblenz.jgralab.schema.Schema;
 import de.uni_koblenz.jgralab.schema.StringDomain;
-import de.uni_koblenz.jgralab.schema.exception.DuplicateNamedElementException;
-import de.uni_koblenz.jgralab.schema.exception.SchemaException;
 
-public class StringDomainImpl extends BasicDomainImpl implements StringDomain {
+public final class StringDomainImpl extends BasicDomainImpl implements
+		StringDomain {
 
-	public StringDomainImpl(Schema schema) throws SchemaException {
-		QualifiedName qName = new QualifiedName("String");
-		if (schema.getDomain(qName) != null) {
-			throw new DuplicateNamedElementException(
-					"Cannot create another StringDomain for Schema "
-							+ schema.getQualifiedName());
-		}
-		initialize(schema, qName);
+	StringDomainImpl(Schema schema) {
+		super(STRINGDOMAIN_NAME, schema.getDefaultPackage());
 	}
 
 	@Override
@@ -52,23 +44,9 @@ public class StringDomainImpl extends BasicDomainImpl implements StringDomain {
 	}
 
 	@Override
-	public String toString() {
-		return "domain String";
-	}
-
-	public boolean isBasic() {
-		return true;
-	}
-
-	@Override
 	public String getJavaClassName(String schemaRootPackagePrefix) {
 		return getJavaAttributeImplementationTypeName(schemaRootPackagePrefix);
 	}
-
-	@Override
-	public String getTGTypeName(Package pkg) {
-		return "String";
-	};
 
 	@Override
 	public CodeBlock getReadMethod(String schemaPrefix, String variableName,
@@ -76,6 +54,11 @@ public class StringDomainImpl extends BasicDomainImpl implements StringDomain {
 		return new CodeSnippet(variableName + " = " + graphIoVariableName
 				+ ".matchUtfString();");
 	}
+
+	@Override
+	public String getTGTypeName(Package pkg) {
+		return STRINGDOMAIN_NAME;
+	};
 
 	@Override
 	public CodeBlock getWriteMethod(String schemaRootPackagePrefix,

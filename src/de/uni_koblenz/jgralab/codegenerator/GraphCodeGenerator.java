@@ -35,9 +35,9 @@ import de.uni_koblenz.jgralab.schema.VertexClass;
 
 /**
  * TODO add comment
- * 
+ *
  * @author ist@uni-koblenz.de
- * 
+ *
  */
 public class GraphCodeGenerator extends AttributedElementCodeGenerator {
 
@@ -113,10 +113,7 @@ public class GraphCodeGenerator extends AttributedElementCodeGenerator {
 		TreeSet<GraphElementClass> sortedClasses = new TreeSet<GraphElementClass>();
 		sortedClasses.addAll(gc.getGraphElementClasses());
 		for (GraphElementClass gec : sortedClasses) {
-			if (gec.getQualifiedName() != "Vertex"
-					&& gec.getQualifiedName() != "Edge"
-					&& gec.getQualifiedName() != "Aggregation"
-					&& gec.getQualifiedName() != "Composition") {
+			if (!gec.isInternal()) {
 				CodeList gecCode = new CodeList();
 				code.addNoIndent(gecCode);
 

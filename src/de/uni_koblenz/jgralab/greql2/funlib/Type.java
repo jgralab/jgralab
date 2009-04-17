@@ -32,7 +32,6 @@ import de.uni_koblenz.jgralab.greql2.exception.EvaluateException;
 import de.uni_koblenz.jgralab.greql2.exception.WrongFunctionParameterException;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
-import de.uni_koblenz.jgralab.schema.QualifiedName;
 
 /**
  * Returns the type of the given attributed element.
@@ -73,7 +72,7 @@ public class Type extends AbstractGreql2Function {
 					.getAttributedElementClass());
 		case 1:
 			return new JValue(graph.getSchema().getAttributedElementClass(
-					new QualifiedName(arguments[0].toString())));
+					arguments[0].toString()));
 		default:
 			throw new WrongFunctionParameterException(this, null, arguments);
 		}

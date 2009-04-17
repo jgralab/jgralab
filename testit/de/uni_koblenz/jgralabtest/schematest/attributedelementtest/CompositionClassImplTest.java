@@ -8,7 +8,6 @@ import org.junit.Test;
 import de.uni_koblenz.jgralab.schema.AttributedElementClass;
 import de.uni_koblenz.jgralab.schema.CompositionClass;
 import de.uni_koblenz.jgralab.schema.GraphClass;
-import de.uni_koblenz.jgralab.schema.QualifiedName;
 import de.uni_koblenz.jgralab.schema.Schema;
 import de.uni_koblenz.jgralab.schema.VertexClass;
 import de.uni_koblenz.jgralab.schema.impl.SchemaImpl;
@@ -25,14 +24,12 @@ public final class CompositionClassImplTest extends AggregationClassImplTest {
 		super.setUp();
 
 		compositionClassFromVertexClass = graphClass
-				.createVertexClass(new QualifiedName(
-						"CompositionClassFromVertexClass"));
+				.createVertexClass("CompositionClassFromVertexClass");
 		compositionClassToVertexClass = graphClass
-				.createVertexClass(new QualifiedName(
-						"CompositionClassToVertexClass"));
+				.createVertexClass("CompositionClassToVertexClass");
 
 		attributedElement = compositionClass = graphClass
-				.createCompositionClass(new QualifiedName("CompositionClass1"),
+				.createCompositionClass("CompositionClass1",
 						compositionClassFromVertexClass, 0, 1,
 						"CompositionClassFromRoleName", true,
 						compositionClassToVertexClass, 1,
@@ -50,9 +47,8 @@ public final class CompositionClassImplTest extends AggregationClassImplTest {
 	@Override
 	public void testAddAttribute4() {
 		CompositionClass superClass = graphClass.createCompositionClass(
-				new QualifiedName("CompositionClassSuperClass"),
-				compositionClassFromVertexClass, true,
-				compositionClassToVertexClass);
+				"CompositionClassSuperClass", compositionClassFromVertexClass,
+				true, compositionClassToVertexClass);
 
 		compositionClass.addSuperClass(superClass);
 
@@ -69,9 +65,8 @@ public final class CompositionClassImplTest extends AggregationClassImplTest {
 	@Override
 	public void testAddAttribute5() {
 		CompositionClass subClass = graphClass.createCompositionClass(
-				new QualifiedName("CompositionClassSubClass"),
-				compositionClassFromVertexClass, true,
-				compositionClassToVertexClass);
+				"CompositionClassSubClass", compositionClassFromVertexClass,
+				true, compositionClassToVertexClass);
 
 		subClass.addSuperClass(compositionClass);
 
@@ -88,9 +83,8 @@ public final class CompositionClassImplTest extends AggregationClassImplTest {
 	@Override
 	public void testAddConstraint4() {
 		CompositionClass superClass = graphClass.createCompositionClass(
-				new QualifiedName("CompositionClassSuperClass"),
-				compositionClassFromVertexClass, true,
-				compositionClassToVertexClass);
+				"CompositionClassSuperClass", compositionClassFromVertexClass,
+				true, compositionClassToVertexClass);
 
 		compositionClass.addSuperClass(superClass);
 
@@ -107,9 +101,8 @@ public final class CompositionClassImplTest extends AggregationClassImplTest {
 	@Override
 	public void testAddConstraint5() {
 		CompositionClass subClass = graphClass.createCompositionClass(
-				new QualifiedName("CompositionClassSubClass"),
-				compositionClassFromVertexClass, true,
-				compositionClassToVertexClass);
+				"CompositionClassSubClass", compositionClassFromVertexClass,
+				true, compositionClassToVertexClass);
 
 		subClass.addSuperClass(compositionClass);
 
@@ -125,8 +118,8 @@ public final class CompositionClassImplTest extends AggregationClassImplTest {
 	@Test
 	@Override
 	public void testCompareTo() {
-		CompositionClass other = graphClass.createCompositionClass(
-				new QualifiedName("Z"), compositionClassFromVertexClass, true,
+		CompositionClass other = graphClass.createCompositionClass("Z",
+				compositionClassFromVertexClass, true,
 				compositionClassToVertexClass);
 
 		testCompareTo(other);
@@ -141,8 +134,8 @@ public final class CompositionClassImplTest extends AggregationClassImplTest {
 	@Test
 	@Override
 	public void testCompareTo2() {
-		CompositionClass other = graphClass.createCompositionClass(
-				new QualifiedName("A"), compositionClassFromVertexClass, true,
+		CompositionClass other = graphClass.createCompositionClass("A",
+				compositionClassFromVertexClass, true,
 				compositionClassToVertexClass);
 
 		testCompareTo2(other);
@@ -157,18 +150,16 @@ public final class CompositionClassImplTest extends AggregationClassImplTest {
 	@Test
 	@Override
 	public void testCompareTo3() {
-		Schema schema2 = new SchemaImpl(new QualifiedName(
-				"de.uni_koblenz.jgralabtest.schematest.TestSchema2"));
-		GraphClass graphClass2 = schema2.createGraphClass(new QualifiedName(
-				graphClass.getQualifiedName()));
+		Schema schema2 = new SchemaImpl("TestSchema2",
+				"de.uni_koblenz.jgralabtest.schematest");
+		GraphClass graphClass2 = schema2.createGraphClass(graphClass
+				.getSimpleName());
 		VertexClass compositionClassFromVertexClass2 = graphClass2
-				.createVertexClass(new QualifiedName(
-						"CompositionClassFromVertexClass"));
+				.createVertexClass("CompositionClassFromVertexClass");
 		VertexClass compositionClassToVertexClass2 = graphClass2
-				.createVertexClass(new QualifiedName(
-						"CompositionClassToVertexClass"));
+				.createVertexClass("CompositionClassToVertexClass");
 		CompositionClass other = graphClass2.createCompositionClass(
-				new QualifiedName(compositionClass.getQualifiedName()),
+				compositionClass.getQualifiedName(),
 				compositionClassFromVertexClass2, true,
 				compositionClassToVertexClass2);
 
@@ -196,9 +187,8 @@ public final class CompositionClassImplTest extends AggregationClassImplTest {
 	@Override
 	public void testContainsAttribute3() {
 		CompositionClass superClass = graphClass.createCompositionClass(
-				new QualifiedName("CompositionClassSuperClass"),
-				compositionClassFromVertexClass, true,
-				compositionClassToVertexClass);
+				"CompositionClassSuperClass", compositionClassFromVertexClass,
+				true, compositionClassToVertexClass);
 
 		compositionClass.addSuperClass(superClass);
 
@@ -216,9 +206,8 @@ public final class CompositionClassImplTest extends AggregationClassImplTest {
 		Vector<AttributedElementClass> expectedSubClasses = new Vector<AttributedElementClass>();
 
 		CompositionClass subClass = graphClass.createCompositionClass(
-				new QualifiedName("CompositionClassSubClass"),
-				compositionClassFromVertexClass, true,
-				compositionClassToVertexClass);
+				"CompositionClassSubClass", compositionClassFromVertexClass,
+				true, compositionClassToVertexClass);
 
 		subClass.addSuperClass(compositionClass);
 		// expected names of subclasses of this element
@@ -239,13 +228,11 @@ public final class CompositionClassImplTest extends AggregationClassImplTest {
 		Vector<AttributedElementClass> expectedSubClasses = new Vector<AttributedElementClass>();
 
 		CompositionClass subClass = graphClass.createCompositionClass(
-				new QualifiedName("CompositionClassSubClass"),
-				compositionClassFromVertexClass, true,
-				compositionClassToVertexClass);
+				"CompositionClassSubClass", compositionClassFromVertexClass,
+				true, compositionClassToVertexClass);
 		CompositionClass subClass2 = graphClass.createCompositionClass(
-				new QualifiedName("CompositionClassSubClass2"),
-				compositionClassFromVertexClass, true,
-				compositionClassToVertexClass);
+				"CompositionClassSubClass2", compositionClassFromVertexClass,
+				true, compositionClassToVertexClass);
 
 		subClass.addSuperClass(compositionClass);
 		subClass2.addSuperClass(compositionClass);
@@ -268,13 +255,11 @@ public final class CompositionClassImplTest extends AggregationClassImplTest {
 		Vector<AttributedElementClass> expectedSubClasses = new Vector<AttributedElementClass>();
 
 		CompositionClass subClass = graphClass.createCompositionClass(
-				new QualifiedName("CompositionClassSubClass"),
-				compositionClassFromVertexClass, true,
-				compositionClassToVertexClass);
+				"CompositionClassSubClass", compositionClassFromVertexClass,
+				true, compositionClassToVertexClass);
 		CompositionClass subClass2 = graphClass.createCompositionClass(
-				new QualifiedName("CompositionClassSubClass2"),
-				compositionClassFromVertexClass, true,
-				compositionClassToVertexClass);
+				"CompositionClassSubClass2", compositionClassFromVertexClass,
+				true, compositionClassToVertexClass);
 
 		subClass.addSuperClass(compositionClass);
 		subClass2.addSuperClass(subClass);
@@ -309,9 +294,8 @@ public final class CompositionClassImplTest extends AggregationClassImplTest {
 		Vector<AttributedElementClass> expectedSuperClasses = new Vector<AttributedElementClass>();
 
 		CompositionClass superClass = graphClass.createCompositionClass(
-				new QualifiedName("CompositionClassSuperClass"),
-				compositionClassFromVertexClass, true,
-				compositionClassToVertexClass);
+				"CompositionClassSuperClass", compositionClassFromVertexClass,
+				true, compositionClassToVertexClass);
 
 		compositionClass.addSuperClass(superClass);
 
@@ -335,13 +319,11 @@ public final class CompositionClassImplTest extends AggregationClassImplTest {
 		Vector<AttributedElementClass> expectedSuperClasses = new Vector<AttributedElementClass>();
 
 		CompositionClass superClass = graphClass.createCompositionClass(
-				new QualifiedName("CompositionClassSuperClass"),
-				compositionClassFromVertexClass, true,
-				compositionClassToVertexClass);
+				"CompositionClassSuperClass", compositionClassFromVertexClass,
+				true, compositionClassToVertexClass);
 		CompositionClass superClass2 = graphClass.createCompositionClass(
-				new QualifiedName("CompositionClassSuperClass2"),
-				compositionClassFromVertexClass, true,
-				compositionClassToVertexClass);
+				"CompositionClassSuperClass2", compositionClassFromVertexClass,
+				true, compositionClassToVertexClass);
 
 		compositionClass.addSuperClass(superClass);
 		compositionClass.addSuperClass(superClass2);
@@ -367,13 +349,11 @@ public final class CompositionClassImplTest extends AggregationClassImplTest {
 		Vector<AttributedElementClass> expectedSuperClasses = new Vector<AttributedElementClass>();
 
 		CompositionClass superClass = graphClass.createCompositionClass(
-				new QualifiedName("CompositionClassSuperClass"),
-				compositionClassFromVertexClass, true,
-				compositionClassToVertexClass);
+				"CompositionClassSuperClass", compositionClassFromVertexClass,
+				true, compositionClassToVertexClass);
 		CompositionClass superClass2 = graphClass.createCompositionClass(
-				new QualifiedName("CompositionClassSuperClass2"),
-				compositionClassFromVertexClass, true,
-				compositionClassToVertexClass);
+				"CompositionClassSuperClass2", compositionClassFromVertexClass,
+				true, compositionClassToVertexClass);
 
 		compositionClass.addSuperClass(superClass);
 		superClass.addSuperClass(superClass2);
@@ -414,9 +394,8 @@ public final class CompositionClassImplTest extends AggregationClassImplTest {
 	@Override
 	public void testGetAttribute2() {
 		CompositionClass superClass = graphClass.createCompositionClass(
-				new QualifiedName("CompositionClassSuperClass"),
-				compositionClassFromVertexClass, true,
-				compositionClassToVertexClass);
+				"CompositionClassSuperClass", compositionClassFromVertexClass,
+				true, compositionClassToVertexClass);
 
 		compositionClass.addSuperClass(superClass);
 
@@ -433,9 +412,8 @@ public final class CompositionClassImplTest extends AggregationClassImplTest {
 	@Override
 	public void testGetAttribute5() {
 		CompositionClass subClass = graphClass.createCompositionClass(
-				new QualifiedName("CompositionClassSubClass"),
-				compositionClassFromVertexClass, true,
-				compositionClassToVertexClass);
+				"CompositionClassSubClass", compositionClassFromVertexClass,
+				true, compositionClassToVertexClass);
 
 		subClass.addSuperClass(compositionClass);
 
@@ -452,9 +430,8 @@ public final class CompositionClassImplTest extends AggregationClassImplTest {
 	@Override
 	public void testGetAttributeCount2() {
 		CompositionClass superClass = graphClass.createCompositionClass(
-				new QualifiedName("CompositionClassSuperClass"),
-				compositionClassFromVertexClass, true,
-				compositionClassToVertexClass);
+				"CompositionClassSuperClass", compositionClassFromVertexClass,
+				true, compositionClassToVertexClass);
 
 		compositionClass.addSuperClass(superClass);
 
@@ -471,9 +448,8 @@ public final class CompositionClassImplTest extends AggregationClassImplTest {
 	@Override
 	public void testGetAttributeCount3() {
 		CompositionClass superClass = graphClass.createCompositionClass(
-				new QualifiedName("CompositionClassSuperClass"),
-				compositionClassFromVertexClass, true,
-				compositionClassToVertexClass);
+				"CompositionClassSuperClass", compositionClassFromVertexClass,
+				true, compositionClassToVertexClass);
 
 		compositionClass.addSuperClass(superClass);
 
@@ -490,9 +466,8 @@ public final class CompositionClassImplTest extends AggregationClassImplTest {
 	@Override
 	public void testGetAttributeCount5() {
 		CompositionClass subClass = graphClass.createCompositionClass(
-				new QualifiedName("CompositionClassSubClass"),
-				compositionClassFromVertexClass, true,
-				compositionClassToVertexClass);
+				"CompositionClassSubClass", compositionClassFromVertexClass,
+				true, compositionClassToVertexClass);
 
 		subClass.addSuperClass(compositionClass);
 
@@ -509,9 +484,8 @@ public final class CompositionClassImplTest extends AggregationClassImplTest {
 	@Override
 	public void testGetAttributeList2() {
 		CompositionClass superClass = graphClass.createCompositionClass(
-				new QualifiedName("CompositionClassSuperClass"),
-				compositionClassFromVertexClass, true,
-				compositionClassToVertexClass);
+				"CompositionClassSuperClass", compositionClassFromVertexClass,
+				true, compositionClassToVertexClass);
 
 		compositionClass.addSuperClass(superClass);
 
@@ -528,9 +502,8 @@ public final class CompositionClassImplTest extends AggregationClassImplTest {
 	@Override
 	public void testGetAttributeList3() {
 		CompositionClass superClass = graphClass.createCompositionClass(
-				new QualifiedName("CompositionClassSuperClass"),
-				compositionClassFromVertexClass, true,
-				compositionClassToVertexClass);
+				"CompositionClassSuperClass", compositionClassFromVertexClass,
+				true, compositionClassToVertexClass);
 
 		compositionClass.addSuperClass(superClass);
 
@@ -547,9 +520,8 @@ public final class CompositionClassImplTest extends AggregationClassImplTest {
 	@Override
 	public void testGetAttributeList5() {
 		CompositionClass subClass = graphClass.createCompositionClass(
-				new QualifiedName("CompositionClassSubClass"),
-				compositionClassFromVertexClass, true,
-				compositionClassToVertexClass);
+				"CompositionClassSubClass", compositionClassFromVertexClass,
+				true, compositionClassToVertexClass);
 
 		subClass.addSuperClass(compositionClass);
 
@@ -562,12 +534,12 @@ public final class CompositionClassImplTest extends AggregationClassImplTest {
 	 * TEST CASE: Getting an element´s list of constraints, that has a
 	 * superclass with constraints
 	 */
+	@Override
 	@Test
 	public void testGetConstraints4() {
 		CompositionClass superClass = graphClass.createCompositionClass(
-				new QualifiedName("CompositionClassSuperClass"),
-				compositionClassFromVertexClass, true,
-				compositionClassToVertexClass);
+				"CompositionClassSuperClass", compositionClassFromVertexClass,
+				true, compositionClassToVertexClass);
 
 		compositionClass.addSuperClass(superClass);
 
@@ -586,9 +558,8 @@ public final class CompositionClassImplTest extends AggregationClassImplTest {
 		Vector<AttributedElementClass> expectedSubClasses = new Vector<AttributedElementClass>();
 
 		CompositionClass subClass = graphClass.createCompositionClass(
-				new QualifiedName("CompositionClassSubClass"),
-				compositionClassFromVertexClass, true,
-				compositionClassToVertexClass);
+				"CompositionClassSubClass", compositionClassFromVertexClass,
+				true, compositionClassToVertexClass);
 
 		subClass.addSuperClass(compositionClass);
 
@@ -609,13 +580,11 @@ public final class CompositionClassImplTest extends AggregationClassImplTest {
 		Vector<AttributedElementClass> expectedSubClasses = new Vector<AttributedElementClass>();
 
 		CompositionClass subClass = graphClass.createCompositionClass(
-				new QualifiedName("CompositionClassSubClass"),
-				compositionClassFromVertexClass, true,
-				compositionClassToVertexClass);
+				"CompositionClassSubClass", compositionClassFromVertexClass,
+				true, compositionClassToVertexClass);
 		CompositionClass subClass2 = graphClass.createCompositionClass(
-				new QualifiedName("CompositionClassSubClass2"),
-				compositionClassFromVertexClass, true,
-				compositionClassToVertexClass);
+				"CompositionClassSubClass2", compositionClassFromVertexClass,
+				true, compositionClassToVertexClass);
 
 		subClass.addSuperClass(compositionClass);
 		subClass2.addSuperClass(compositionClass);
@@ -638,13 +607,11 @@ public final class CompositionClassImplTest extends AggregationClassImplTest {
 		Vector<AttributedElementClass> expectedSubClasses = new Vector<AttributedElementClass>();
 
 		CompositionClass subClass = graphClass.createCompositionClass(
-				new QualifiedName("CompositionClassSubClass"),
-				compositionClassFromVertexClass, true,
-				compositionClassToVertexClass); // Direct subclass
+				"CompositionClassSubClass", compositionClassFromVertexClass,
+				true, compositionClassToVertexClass); // Direct subclass
 		CompositionClass subClass2 = graphClass.createCompositionClass(
-				new QualifiedName("CompositionClassSubClass2"),
-				compositionClassFromVertexClass, true,
-				compositionClassToVertexClass); // Indirect subclass
+				"CompositionClassSubClass2", compositionClassFromVertexClass,
+				true, compositionClassToVertexClass); // Indirect subclass
 
 		subClass.addSuperClass(compositionClass);
 		subClass2.addSuperClass(subClass);
@@ -678,9 +645,8 @@ public final class CompositionClassImplTest extends AggregationClassImplTest {
 		Vector<AttributedElementClass> expectedSuperClasses = new Vector<AttributedElementClass>();
 
 		CompositionClass superClass = graphClass.createCompositionClass(
-				new QualifiedName("CompositionClassSuperClass"),
-				compositionClassFromVertexClass, true,
-				compositionClassToVertexClass);
+				"CompositionClassSuperClass", compositionClassFromVertexClass,
+				true, compositionClassToVertexClass);
 
 		compositionClass.addSuperClass(superClass);
 
@@ -702,13 +668,11 @@ public final class CompositionClassImplTest extends AggregationClassImplTest {
 		Vector<AttributedElementClass> expectedSuperClasses = new Vector<AttributedElementClass>();
 
 		CompositionClass superClass = graphClass.createCompositionClass(
-				new QualifiedName("CompositionClassSuperClass"),
-				compositionClassFromVertexClass, true,
-				compositionClassToVertexClass);
+				"CompositionClassSuperClass", compositionClassFromVertexClass,
+				true, compositionClassToVertexClass);
 		CompositionClass superClass2 = graphClass.createCompositionClass(
-				new QualifiedName("CompositionClassSuperClass2"),
-				compositionClassFromVertexClass, true,
-				compositionClassToVertexClass);
+				"CompositionClassSuperClass2", compositionClassFromVertexClass,
+				true, compositionClassToVertexClass);
 
 		compositionClass.addSuperClass(superClass);
 		compositionClass.addSuperClass(superClass2);
@@ -731,13 +695,11 @@ public final class CompositionClassImplTest extends AggregationClassImplTest {
 		Vector<AttributedElementClass> expectedSuperClasses = new Vector<AttributedElementClass>();
 
 		CompositionClass superClass = graphClass.createCompositionClass(
-				new QualifiedName("CompositionClassSuperClass"),
-				compositionClassFromVertexClass, true,
-				compositionClassToVertexClass); // Direct superclass
+				"CompositionClassSuperClass", compositionClassFromVertexClass,
+				true, compositionClassToVertexClass); // Direct superclass
 		CompositionClass superClass2 = graphClass.createCompositionClass(
-				new QualifiedName("CompositionClassSuperClass2"),
-				compositionClassFromVertexClass, true,
-				compositionClassToVertexClass); // Indirect superclass
+				"CompositionClassSuperClass2", compositionClassFromVertexClass,
+				true, compositionClassToVertexClass); // Indirect superclass
 
 		compositionClass.addSuperClass(superClass);
 		superClass.addSuperClass(superClass2);
@@ -774,9 +736,8 @@ public final class CompositionClassImplTest extends AggregationClassImplTest {
 	@Override
 	public void testGetOwnAttribute4() {
 		CompositionClass superClass = graphClass.createCompositionClass(
-				new QualifiedName("CompositionClassSuperClass"),
-				compositionClassFromVertexClass, true,
-				compositionClassToVertexClass);
+				"CompositionClassSuperClass", compositionClassFromVertexClass,
+				true, compositionClassToVertexClass);
 		compositionClass.addSuperClass(superClass);
 
 		testGetOwnAttribute4(superClass);
@@ -792,9 +753,8 @@ public final class CompositionClassImplTest extends AggregationClassImplTest {
 	@Override
 	public void testGetOwnAttribute5() {
 		CompositionClass subClass = graphClass.createCompositionClass(
-				new QualifiedName("CompositionClassSubClass"),
-				compositionClassFromVertexClass, true,
-				compositionClassToVertexClass);
+				"CompositionClassSubClass", compositionClassFromVertexClass,
+				true, compositionClassToVertexClass);
 		subClass.addSuperClass(compositionClass);
 
 		testGetOwnAttribute4(subClass);
@@ -810,9 +770,8 @@ public final class CompositionClassImplTest extends AggregationClassImplTest {
 	@Override
 	public void testGetOwnAttributeCount4() {
 		CompositionClass superClass = graphClass.createCompositionClass(
-				new QualifiedName("CompositionClassSuperClass"),
-				compositionClassFromVertexClass, true,
-				compositionClassToVertexClass);
+				"CompositionClassSuperClass", compositionClassFromVertexClass,
+				true, compositionClassToVertexClass);
 		compositionClass.addSuperClass(superClass);
 
 		testGetOwnAttributeCount4(superClass);
@@ -828,9 +787,8 @@ public final class CompositionClassImplTest extends AggregationClassImplTest {
 	@Override
 	public void testGetOwnAttributeList4() {
 		CompositionClass superClass = graphClass.createCompositionClass(
-				new QualifiedName("CompositionClassSuperClass"),
-				compositionClassFromVertexClass, true,
-				compositionClassToVertexClass);
+				"CompositionClassSuperClass", compositionClassFromVertexClass,
+				true, compositionClassToVertexClass);
 		compositionClass.addSuperClass(superClass);
 
 		testGetOwnAttributeList4(superClass);
@@ -845,9 +803,8 @@ public final class CompositionClassImplTest extends AggregationClassImplTest {
 	@Override
 	public void testHasAttributes3() {
 		CompositionClass superClass = graphClass.createCompositionClass(
-				new QualifiedName("CompositionClassSuperClass"),
-				compositionClassFromVertexClass, true,
-				compositionClassToVertexClass);
+				"CompositionClassSuperClass", compositionClassFromVertexClass,
+				true, compositionClassToVertexClass);
 		compositionClass.addSuperClass(superClass);
 
 		testHasAttributes3(superClass);
@@ -862,9 +819,8 @@ public final class CompositionClassImplTest extends AggregationClassImplTest {
 	@Override
 	public void testHasAttributes4() {
 		CompositionClass superClass = graphClass.createCompositionClass(
-				new QualifiedName("CompositionClassSuperClass"),
-				compositionClassFromVertexClass, true,
-				compositionClassToVertexClass);
+				"CompositionClassSuperClass", compositionClassFromVertexClass,
+				true, compositionClassToVertexClass);
 		compositionClass.addSuperClass(superClass);
 
 		testHasAttributes4(superClass);
@@ -879,9 +835,8 @@ public final class CompositionClassImplTest extends AggregationClassImplTest {
 	@Override
 	public void testHasAttributes5() {
 		CompositionClass superClass = graphClass.createCompositionClass(
-				new QualifiedName("CompositionClassSuperClass"),
-				compositionClassFromVertexClass, true,
-				compositionClassToVertexClass);
+				"CompositionClassSuperClass", compositionClassFromVertexClass,
+				true, compositionClassToVertexClass);
 		compositionClass.addSuperClass(superClass);
 
 		testHasAttributes5(superClass);
@@ -896,9 +851,8 @@ public final class CompositionClassImplTest extends AggregationClassImplTest {
 	@Override
 	public void testHasOwnAttributes4() {
 		CompositionClass superClass = graphClass.createCompositionClass(
-				new QualifiedName("CompositionClassSuperClass"),
-				compositionClassFromVertexClass, true,
-				compositionClassToVertexClass);
+				"CompositionClassSuperClass", compositionClassFromVertexClass,
+				true, compositionClassToVertexClass);
 		compositionClass.addSuperClass(superClass);
 
 		testHasOwnAttributes4(superClass);
@@ -913,9 +867,8 @@ public final class CompositionClassImplTest extends AggregationClassImplTest {
 	@Override
 	public void testHasOwnAttributes5() {
 		CompositionClass superClass = graphClass.createCompositionClass(
-				new QualifiedName("CompositionClassSuperClass"),
-				compositionClassFromVertexClass, true,
-				compositionClassToVertexClass);
+				"CompositionClassSuperClass", compositionClassFromVertexClass,
+				true, compositionClassToVertexClass);
 		compositionClass.addSuperClass(superClass);
 
 		testHasOwnAttributes5(superClass);
@@ -930,9 +883,8 @@ public final class CompositionClassImplTest extends AggregationClassImplTest {
 	@Override
 	public void testIsDirectSubClassOf() {
 		CompositionClass superClass = graphClass.createCompositionClass(
-				new QualifiedName("CompositionClassSuperClass"),
-				compositionClassFromVertexClass, true,
-				compositionClassToVertexClass);
+				"CompositionClassSuperClass", compositionClassFromVertexClass,
+				true, compositionClassToVertexClass);
 		compositionClass.addSuperClass(superClass);
 
 		testIsDirectSubClassOf(superClass);
@@ -947,13 +899,11 @@ public final class CompositionClassImplTest extends AggregationClassImplTest {
 	@Override
 	public void testIsDirectSubClassOf2() {
 		CompositionClass superClass = graphClass.createCompositionClass(
-				new QualifiedName("CompositionClassSuperClass"),
-				compositionClassFromVertexClass, true,
-				compositionClassToVertexClass);
+				"CompositionClassSuperClass", compositionClassFromVertexClass,
+				true, compositionClassToVertexClass);
 		CompositionClass superClass2 = graphClass.createCompositionClass(
-				new QualifiedName("CompositionClassSuperClass2"),
-				compositionClassFromVertexClass, true,
-				compositionClassToVertexClass);
+				"CompositionClassSuperClass2", compositionClassFromVertexClass,
+				true, compositionClassToVertexClass);
 		compositionClass.addSuperClass(superClass);
 		superClass.addSuperClass(superClass2);
 
@@ -969,9 +919,8 @@ public final class CompositionClassImplTest extends AggregationClassImplTest {
 	@Override
 	public void testIsDirectSubClassOf3() {
 		CompositionClass subClass = graphClass.createCompositionClass(
-				new QualifiedName("CompositionClassSubClass"),
-				compositionClassFromVertexClass, true,
-				compositionClassToVertexClass);
+				"CompositionClassSubClass", compositionClassFromVertexClass,
+				true, compositionClassToVertexClass);
 		subClass.addSuperClass(compositionClass);
 
 		testIsDirectSubClassOf2(subClass);
@@ -986,8 +935,7 @@ public final class CompositionClassImplTest extends AggregationClassImplTest {
 	@Override
 	public void testIsDirectSubClassOf4() {
 		CompositionClass compositionClass2 = graphClass.createCompositionClass(
-				new QualifiedName("CompositionClass2"),
-				compositionClassFromVertexClass, true,
+				"CompositionClass2", compositionClassFromVertexClass, true,
 				compositionClassToVertexClass);
 
 		testIsDirectSubClassOf2(compositionClass2);
@@ -1013,9 +961,8 @@ public final class CompositionClassImplTest extends AggregationClassImplTest {
 	@Override
 	public void testIsDirectSuperClassOf() {
 		CompositionClass subClass = graphClass.createCompositionClass(
-				new QualifiedName("CompositionClassSubClass"),
-				compositionClassFromVertexClass, true,
-				compositionClassToVertexClass);
+				"CompositionClassSubClass", compositionClassFromVertexClass,
+				true, compositionClassToVertexClass);
 		subClass.addSuperClass(compositionClass);
 
 		testIsDirectSuperClassOf(subClass);
@@ -1030,13 +977,11 @@ public final class CompositionClassImplTest extends AggregationClassImplTest {
 	@Override
 	public void testIsDirectSuperClassOf2() {
 		CompositionClass subClass = graphClass.createCompositionClass(
-				new QualifiedName("CompositionClassSubClass"),
-				compositionClassFromVertexClass, true,
-				compositionClassToVertexClass);
+				"CompositionClassSubClass", compositionClassFromVertexClass,
+				true, compositionClassToVertexClass);
 		CompositionClass subClass2 = graphClass.createCompositionClass(
-				new QualifiedName("CompositionClassSubClass2"),
-				compositionClassFromVertexClass, true,
-				compositionClassToVertexClass);
+				"CompositionClassSubClass2", compositionClassFromVertexClass,
+				true, compositionClassToVertexClass);
 		subClass.addSuperClass(compositionClass);
 		subClass2.addSuperClass(subClass);
 
@@ -1052,9 +997,8 @@ public final class CompositionClassImplTest extends AggregationClassImplTest {
 	@Override
 	public void testIsDirectSuperClassOf3() {
 		CompositionClass superClass = graphClass.createCompositionClass(
-				new QualifiedName("CompositionClassSuperClass"),
-				compositionClassFromVertexClass, true,
-				compositionClassToVertexClass);
+				"CompositionClassSuperClass", compositionClassFromVertexClass,
+				true, compositionClassToVertexClass);
 		compositionClass.addSuperClass(superClass);
 
 		testIsDirectSuperClassOf2(superClass);
@@ -1069,8 +1013,7 @@ public final class CompositionClassImplTest extends AggregationClassImplTest {
 	@Override
 	public void testIsDirectSuperClassOf4() {
 		CompositionClass compositionClass2 = graphClass.createCompositionClass(
-				new QualifiedName("CompositionClass2"),
-				compositionClassFromVertexClass, true,
+				"CompositionClass2", compositionClassFromVertexClass, true,
 				compositionClassToVertexClass);
 
 		testIsDirectSuperClassOf2(compositionClass2);
@@ -1096,9 +1039,8 @@ public final class CompositionClassImplTest extends AggregationClassImplTest {
 	@Override
 	public void testIsSubClassOf() {
 		CompositionClass superClass = graphClass.createCompositionClass(
-				new QualifiedName("CompositionClassSuperClass"),
-				compositionClassFromVertexClass, true,
-				compositionClassToVertexClass);
+				"CompositionClassSuperClass", compositionClassFromVertexClass,
+				true, compositionClassToVertexClass);
 		compositionClass.addSuperClass(superClass);
 
 		testIsSubClassOf(superClass);
@@ -1113,13 +1055,11 @@ public final class CompositionClassImplTest extends AggregationClassImplTest {
 	@Override
 	public void testIsSubClassOf2() {
 		CompositionClass superClass = graphClass.createCompositionClass(
-				new QualifiedName("CompositionClassSuperClass"),
-				compositionClassFromVertexClass, true,
-				compositionClassToVertexClass);
+				"CompositionClassSuperClass", compositionClassFromVertexClass,
+				true, compositionClassToVertexClass);
 		CompositionClass superClass2 = graphClass.createCompositionClass(
-				new QualifiedName("CompositionClassSuperClass2"),
-				compositionClassFromVertexClass, true,
-				compositionClassToVertexClass);
+				"CompositionClassSuperClass2", compositionClassFromVertexClass,
+				true, compositionClassToVertexClass);
 		compositionClass.addSuperClass(superClass);
 		superClass.addSuperClass(superClass2);
 
@@ -1135,9 +1075,8 @@ public final class CompositionClassImplTest extends AggregationClassImplTest {
 	@Override
 	public void testIsSubClassOf3() {
 		CompositionClass subClass = graphClass.createCompositionClass(
-				new QualifiedName("CompositionClassSubClass"),
-				compositionClassFromVertexClass, true,
-				compositionClassToVertexClass);
+				"CompositionClassSubClass", compositionClassFromVertexClass,
+				true, compositionClassToVertexClass);
 		subClass.addSuperClass(compositionClass);
 
 		testIsSubClassOf2(subClass);
@@ -1152,8 +1091,7 @@ public final class CompositionClassImplTest extends AggregationClassImplTest {
 	@Override
 	public void testIsSubClassOf4() {
 		CompositionClass compositionClass2 = graphClass.createCompositionClass(
-				new QualifiedName("CompositionClass2"),
-				compositionClassFromVertexClass, true,
+				"CompositionClass2", compositionClassFromVertexClass, true,
 				compositionClassToVertexClass);
 
 		testIsSubClassOf2(compositionClass2);
@@ -1179,9 +1117,8 @@ public final class CompositionClassImplTest extends AggregationClassImplTest {
 	@Override
 	public void testIsSuperClassOf() {
 		CompositionClass subClass = graphClass.createCompositionClass(
-				new QualifiedName("CompositionClassSubClass"),
-				compositionClassFromVertexClass, true,
-				compositionClassToVertexClass);
+				"CompositionClassSubClass", compositionClassFromVertexClass,
+				true, compositionClassToVertexClass);
 		subClass.addSuperClass(compositionClass);
 
 		testIsSuperClassOf(subClass);
@@ -1196,13 +1133,11 @@ public final class CompositionClassImplTest extends AggregationClassImplTest {
 	@Override
 	public void testIsSuperClassOf2() {
 		CompositionClass subClass = graphClass.createCompositionClass(
-				new QualifiedName("CompositionClassSubClass"),
-				compositionClassFromVertexClass, true,
-				compositionClassToVertexClass);
+				"CompositionClassSubClass", compositionClassFromVertexClass,
+				true, compositionClassToVertexClass);
 		CompositionClass subClass2 = graphClass.createCompositionClass(
-				new QualifiedName("CompositionClassSubClass2"),
-				compositionClassFromVertexClass, true,
-				compositionClassToVertexClass);
+				"CompositionClassSubClass2", compositionClassFromVertexClass,
+				true, compositionClassToVertexClass);
 		subClass.addSuperClass(compositionClass);
 		subClass2.addSuperClass(subClass);
 
@@ -1218,9 +1153,8 @@ public final class CompositionClassImplTest extends AggregationClassImplTest {
 	@Override
 	public void testIsSuperClassOf3() {
 		CompositionClass superClass = graphClass.createCompositionClass(
-				new QualifiedName("CompositionClassSuperClass"),
-				compositionClassFromVertexClass, true,
-				compositionClassToVertexClass);
+				"CompositionClassSuperClass", compositionClassFromVertexClass,
+				true, compositionClassToVertexClass);
 		compositionClass.addSuperClass(superClass);
 
 		testIsSuperClassOf2(superClass);
@@ -1235,8 +1169,7 @@ public final class CompositionClassImplTest extends AggregationClassImplTest {
 	@Override
 	public void testIsSuperClassOf4() {
 		CompositionClass compositionClass2 = graphClass.createCompositionClass(
-				new QualifiedName("CompositionClass2"),
-				compositionClassFromVertexClass, true,
+				"CompositionClass2", compositionClassFromVertexClass, true,
 				compositionClassToVertexClass);
 
 		testIsSuperClassOf2(compositionClass2);
@@ -1262,9 +1195,8 @@ public final class CompositionClassImplTest extends AggregationClassImplTest {
 	@Override
 	public void testIsSuperClassOfOrEquals() {
 		CompositionClass subClass = graphClass.createCompositionClass(
-				new QualifiedName("CompositionClassSubClass"),
-				compositionClassFromVertexClass, true,
-				compositionClassToVertexClass);
+				"CompositionClassSubClass", compositionClassFromVertexClass,
+				true, compositionClassToVertexClass);
 		subClass.addSuperClass(compositionClass);
 
 		testIsSuperClassOfOrEquals(subClass);
@@ -1279,13 +1211,11 @@ public final class CompositionClassImplTest extends AggregationClassImplTest {
 	@Override
 	public void testIsSuperClassOfOrEquals2() {
 		CompositionClass subClass = graphClass.createCompositionClass(
-				new QualifiedName("CompositionClassSubClass"),
-				compositionClassFromVertexClass, true,
-				compositionClassToVertexClass);
+				"CompositionClassSubClass", compositionClassFromVertexClass,
+				true, compositionClassToVertexClass);
 		CompositionClass subClass2 = graphClass.createCompositionClass(
-				new QualifiedName("CompositionClassSubClass2"),
-				compositionClassFromVertexClass, true,
-				compositionClassToVertexClass);
+				"CompositionClassSubClass2", compositionClassFromVertexClass,
+				true, compositionClassToVertexClass);
 		subClass.addSuperClass(compositionClass);
 		subClass2.addSuperClass(subClass);
 
@@ -1312,8 +1242,7 @@ public final class CompositionClassImplTest extends AggregationClassImplTest {
 	@Override
 	public void testIsSuperClassOfOrEquals4() {
 		CompositionClass compositionClass2 = graphClass.createCompositionClass(
-				new QualifiedName("CompositionClass2"),
-				compositionClassFromVertexClass, true,
+				"CompositionClass2", compositionClassFromVertexClass, true,
 				compositionClassToVertexClass);
 
 		testIsSuperClassOfOrEquals2(compositionClass2);
@@ -1328,9 +1257,8 @@ public final class CompositionClassImplTest extends AggregationClassImplTest {
 	@Override
 	public void testIsSuperClassOfOrEquals5() {
 		CompositionClass superClass = graphClass.createCompositionClass(
-				new QualifiedName("CompositionClassSuperClass"),
-				compositionClassFromVertexClass, true,
-				compositionClassToVertexClass);
+				"CompositionClassSuperClass", compositionClassFromVertexClass,
+				true, compositionClassToVertexClass);
 		compositionClass.addSuperClass(superClass);
 
 		testIsSuperClassOfOrEquals2(superClass);

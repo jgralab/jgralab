@@ -6,7 +6,6 @@ import org.junit.Before;
 import org.junit.Test;
 
 import de.uni_koblenz.jgralab.schema.AttributedElementClass;
-import de.uni_koblenz.jgralab.schema.QualifiedName;
 import de.uni_koblenz.jgralab.schema.VertexClass;
 
 public final class VertexClassImplTest extends GraphElementClassImplTest {
@@ -19,7 +18,7 @@ public final class VertexClassImplTest extends GraphElementClassImplTest {
 		super.setUp();
 
 		attributedElement = vertexClass = graphClass
-				.createVertexClass(new QualifiedName("VertexClass1"));
+				.createVertexClass("VertexClass1");
 	}
 
 	/**
@@ -31,7 +30,7 @@ public final class VertexClassImplTest extends GraphElementClassImplTest {
 	@Test
 	public void testAddAttribute4() {
 		VertexClass superClass = graphClass
-				.createVertexClass(new QualifiedName("VertexClassSuperClass"));
+				.createVertexClass("VertexClassSuperClass");
 		vertexClass.addSuperClass(superClass);
 
 		testAddAttribute4(superClass);
@@ -45,8 +44,8 @@ public final class VertexClassImplTest extends GraphElementClassImplTest {
 	 */
 	@Test
 	public void testAddAttribute5() {
-		VertexClass subClass = graphClass.createVertexClass(new QualifiedName(
-				"VertexClassSubClass"));
+		VertexClass subClass = graphClass
+				.createVertexClass("VertexClassSubClass");
 		subClass.addSuperClass(vertexClass);
 
 		testAddAttribute5(subClass);
@@ -61,7 +60,7 @@ public final class VertexClassImplTest extends GraphElementClassImplTest {
 	@Test
 	public void testAddConstraint4() {
 		VertexClass superClass = graphClass
-				.createVertexClass(new QualifiedName("VertexClassSuperClass"));
+				.createVertexClass("VertexClassSuperClass");
 		vertexClass.addSuperClass(superClass);
 
 		testAddConstraint4(superClass);
@@ -75,8 +74,8 @@ public final class VertexClassImplTest extends GraphElementClassImplTest {
 	 */
 	@Test
 	public void testAddConstraint5() {
-		VertexClass subClass = graphClass.createVertexClass(new QualifiedName(
-				"VertexClassSubClass"));
+		VertexClass subClass = graphClass
+				.createVertexClass("VertexClassSubClass");
 		subClass.addSuperClass(vertexClass);
 
 		testAddConstraint5(subClass);
@@ -91,7 +90,7 @@ public final class VertexClassImplTest extends GraphElementClassImplTest {
 	@Test
 	public void testContainsAttribute3() {
 		VertexClass superClass = graphClass
-				.createVertexClass(new QualifiedName("VertexClassSuperClass"));
+				.createVertexClass("VertexClassSuperClass");
 
 		vertexClass.addSuperClass(superClass);
 
@@ -107,8 +106,8 @@ public final class VertexClassImplTest extends GraphElementClassImplTest {
 	public void testGetAllSubClasses() {
 		Vector<AttributedElementClass> expectedSubClasses = new Vector<AttributedElementClass>();
 
-		VertexClass subClass = graphClass.createVertexClass(new QualifiedName(
-				"VertexClassSubClass"));
+		VertexClass subClass = graphClass
+				.createVertexClass("VertexClassSubClass");
 
 		subClass.addSuperClass(vertexClass);
 
@@ -127,10 +126,10 @@ public final class VertexClassImplTest extends GraphElementClassImplTest {
 	public void testGetAllSubClasses2() {
 		Vector<AttributedElementClass> expectedSubClasses = new Vector<AttributedElementClass>();
 
-		VertexClass subClass = graphClass.createVertexClass(new QualifiedName(
-				"VertexClassSubClass"));
-		VertexClass subClass2 = graphClass.createVertexClass(new QualifiedName(
-				"VertexClassSubClass2"));
+		VertexClass subClass = graphClass
+				.createVertexClass("VertexClassSubClass");
+		VertexClass subClass2 = graphClass
+				.createVertexClass("VertexClassSubClass2");
 
 		subClass.addSuperClass(vertexClass);
 		subClass2.addSuperClass(vertexClass);
@@ -151,10 +150,10 @@ public final class VertexClassImplTest extends GraphElementClassImplTest {
 	public void testGetAllSubClasses3() {
 		Vector<AttributedElementClass> expectedSubClasses = new Vector<AttributedElementClass>();
 
-		VertexClass subClass = graphClass.createVertexClass(new QualifiedName(
-				"VertexClassSubClass"));
-		VertexClass subClass2 = graphClass.createVertexClass(new QualifiedName(
-				"VertexClassSubClass2"));
+		VertexClass subClass = graphClass
+				.createVertexClass("VertexClassSubClass");
+		VertexClass subClass2 = graphClass
+				.createVertexClass("VertexClassSubClass2");
 
 		subClass.addSuperClass(vertexClass);
 		subClass2.addSuperClass(subClass);
@@ -187,7 +186,7 @@ public final class VertexClassImplTest extends GraphElementClassImplTest {
 		Vector<AttributedElementClass> expectedSuperClasses = new Vector<AttributedElementClass>();
 
 		VertexClass superClass = graphClass
-				.createVertexClass(new QualifiedName("VertexClassSuperClass"));
+				.createVertexClass("VertexClassSuperClass");
 
 		vertexClass.addSuperClass(superClass);
 
@@ -208,9 +207,9 @@ public final class VertexClassImplTest extends GraphElementClassImplTest {
 		Vector<AttributedElementClass> expectedSuperClasses = new Vector<AttributedElementClass>();
 
 		VertexClass superClass = graphClass
-				.createVertexClass(new QualifiedName("VertexClassSuperClass"));
+				.createVertexClass("VertexClassSuperClass");
 		VertexClass superClass2 = graphClass
-				.createVertexClass(new QualifiedName("VertexClassSuperClass2"));
+				.createVertexClass("VertexClassSuperClass2");
 
 		vertexClass.addSuperClass(superClass);
 		vertexClass.addSuperClass(superClass2);
@@ -233,9 +232,9 @@ public final class VertexClassImplTest extends GraphElementClassImplTest {
 		Vector<AttributedElementClass> expectedSuperClasses = new Vector<AttributedElementClass>();
 
 		VertexClass superClass = graphClass
-				.createVertexClass(new QualifiedName("VertexClassSuperClass"));
+				.createVertexClass("VertexClassSuperClass");
 		VertexClass superClass2 = graphClass
-				.createVertexClass(new QualifiedName("VertexClassSuperClass2"));
+				.createVertexClass("VertexClassSuperClass2");
 
 		vertexClass.addSuperClass(superClass);
 		superClass.addSuperClass(superClass2);
@@ -270,7 +269,7 @@ public final class VertexClassImplTest extends GraphElementClassImplTest {
 	@Test
 	public void testGetAttribute2() {
 		VertexClass superClass = graphClass
-				.createVertexClass(new QualifiedName("VertexClassSuperClass"));
+				.createVertexClass("VertexClassSuperClass");
 
 		vertexClass.addSuperClass(superClass);
 
@@ -285,8 +284,8 @@ public final class VertexClassImplTest extends GraphElementClassImplTest {
 	 */
 	@Test
 	public void testGetAttribute5() {
-		VertexClass subClass = graphClass.createVertexClass(new QualifiedName(
-				"VertexClassSubClass"));
+		VertexClass subClass = graphClass
+				.createVertexClass("VertexClassSubClass");
 
 		subClass.addSuperClass(vertexClass);
 
@@ -302,7 +301,7 @@ public final class VertexClassImplTest extends GraphElementClassImplTest {
 	@Test
 	public void testGetAttributeCount2() {
 		VertexClass superClass = graphClass
-				.createVertexClass(new QualifiedName("VertexClassSuperClass"));
+				.createVertexClass("VertexClassSuperClass");
 
 		vertexClass.addSuperClass(superClass);
 
@@ -318,7 +317,7 @@ public final class VertexClassImplTest extends GraphElementClassImplTest {
 	@Test
 	public void testGetAttributeCount3() {
 		VertexClass superClass = graphClass
-				.createVertexClass(new QualifiedName("VertexClassSuperClass"));
+				.createVertexClass("VertexClassSuperClass");
 
 		vertexClass.addSuperClass(superClass);
 
@@ -333,8 +332,8 @@ public final class VertexClassImplTest extends GraphElementClassImplTest {
 	 */
 	@Test
 	public void testGetAttributeCount5() {
-		VertexClass subClass = graphClass.createVertexClass(new QualifiedName(
-				"VertexClassSubClass"));
+		VertexClass subClass = graphClass
+				.createVertexClass("VertexClassSubClass");
 
 		subClass.addSuperClass(vertexClass);
 
@@ -350,7 +349,7 @@ public final class VertexClassImplTest extends GraphElementClassImplTest {
 	@Test
 	public void testGetAttributeList2() {
 		VertexClass superClass = graphClass
-				.createVertexClass(new QualifiedName("VertexClassSuperClass"));
+				.createVertexClass("VertexClassSuperClass");
 
 		vertexClass.addSuperClass(superClass);
 
@@ -366,7 +365,7 @@ public final class VertexClassImplTest extends GraphElementClassImplTest {
 	@Test
 	public void testGetAttributeList3() {
 		VertexClass superClass = graphClass
-				.createVertexClass(new QualifiedName("VertexClassSuperClass"));
+				.createVertexClass("VertexClassSuperClass");
 
 		vertexClass.addSuperClass(superClass);
 
@@ -381,8 +380,8 @@ public final class VertexClassImplTest extends GraphElementClassImplTest {
 	 */
 	@Test
 	public void testGetAttributeList5() {
-		VertexClass subClass = graphClass.createVertexClass(new QualifiedName(
-				"VertexClassSubClass"));
+		VertexClass subClass = graphClass
+				.createVertexClass("VertexClassSubClass");
 
 		subClass.addSuperClass(vertexClass);
 
@@ -398,7 +397,7 @@ public final class VertexClassImplTest extends GraphElementClassImplTest {
 	@Test
 	public void testGetConstraints4() {
 		VertexClass superClass = graphClass
-				.createVertexClass(new QualifiedName("VertexClassSuperClass"));
+				.createVertexClass("VertexClassSuperClass");
 
 		vertexClass.addSuperClass(superClass);
 
@@ -415,8 +414,8 @@ public final class VertexClassImplTest extends GraphElementClassImplTest {
 	public void testGetDirectSubClasses() {
 		Vector<AttributedElementClass> expectedSubClasses = new Vector<AttributedElementClass>();
 
-		VertexClass subClass = graphClass.createVertexClass(new QualifiedName(
-				"VertexClassSubClass"));
+		VertexClass subClass = graphClass
+				.createVertexClass("VertexClassSubClass");
 
 		subClass.addSuperClass(vertexClass);
 
@@ -435,10 +434,10 @@ public final class VertexClassImplTest extends GraphElementClassImplTest {
 	public void testGetDirectSubClasses2() {
 		Vector<AttributedElementClass> expectedSubClasses = new Vector<AttributedElementClass>();
 
-		VertexClass subClass = graphClass.createVertexClass(new QualifiedName(
-				"VertexClassSubClass"));
-		VertexClass subClass2 = graphClass.createVertexClass(new QualifiedName(
-				"VertexClassSubClass2"));
+		VertexClass subClass = graphClass
+				.createVertexClass("VertexClassSubClass");
+		VertexClass subClass2 = graphClass
+				.createVertexClass("VertexClassSubClass2");
 
 		subClass.addSuperClass(vertexClass);
 		subClass2.addSuperClass(vertexClass);
@@ -459,10 +458,10 @@ public final class VertexClassImplTest extends GraphElementClassImplTest {
 	public void testGetDirectSubClasses3() {
 		Vector<AttributedElementClass> expectedSubClasses = new Vector<AttributedElementClass>();
 
-		VertexClass subClass = graphClass.createVertexClass(new QualifiedName(
-				"VertexClassSubClass")); // Direct subclass
-		VertexClass subClass2 = graphClass.createVertexClass(new QualifiedName(
-				"VertexClassSubClass2")); // Indirect subclass
+		VertexClass subClass = graphClass
+				.createVertexClass("VertexClassSubClass"); // Direct subclass
+		VertexClass subClass2 = graphClass
+				.createVertexClass("VertexClassSubClass2"); // Indirect subclass
 
 		subClass.addSuperClass(vertexClass);
 		subClass2.addSuperClass(subClass);
@@ -494,7 +493,7 @@ public final class VertexClassImplTest extends GraphElementClassImplTest {
 		Vector<AttributedElementClass> expectedSuperClasses = new Vector<AttributedElementClass>();
 
 		VertexClass superClass = graphClass
-				.createVertexClass(new QualifiedName("VertexClassSuperClass"));
+				.createVertexClass("VertexClassSuperClass");
 
 		vertexClass.addSuperClass(superClass);
 
@@ -514,9 +513,9 @@ public final class VertexClassImplTest extends GraphElementClassImplTest {
 		Vector<AttributedElementClass> expectedSuperClasses = new Vector<AttributedElementClass>();
 
 		VertexClass superClass = graphClass
-				.createVertexClass(new QualifiedName("VertexClassSuperClass"));
+				.createVertexClass("VertexClassSuperClass");
 		VertexClass superClass2 = graphClass
-				.createVertexClass(new QualifiedName("VertexClassSuperClass2"));
+				.createVertexClass("VertexClassSuperClass2");
 
 		vertexClass.addSuperClass(superClass);
 		vertexClass.addSuperClass(superClass2);
@@ -538,9 +537,9 @@ public final class VertexClassImplTest extends GraphElementClassImplTest {
 		Vector<AttributedElementClass> expectedSuperClasses = new Vector<AttributedElementClass>();
 
 		VertexClass superClass = graphClass // Direct superclass
-				.createVertexClass(new QualifiedName("VertexClassSuperClass"));
+				.createVertexClass("VertexClassSuperClass");
 		VertexClass superClass2 = graphClass // Indirect superclass
-				.createVertexClass(new QualifiedName("VertexClassSuperClass2"));
+				.createVertexClass("VertexClassSuperClass2");
 
 		vertexClass.addSuperClass(superClass);
 		superClass.addSuperClass(superClass2);
@@ -593,8 +592,7 @@ public final class VertexClassImplTest extends GraphElementClassImplTest {
 	 */
 	@Test
 	public void testGetOwnAttribute4() {
-		VertexClass superClass = graphClass
-				.createVertexClass(new QualifiedName("Superclass"));
+		VertexClass superClass = graphClass.createVertexClass("Superclass");
 		vertexClass.addSuperClass(superClass);
 
 		testGetOwnAttribute4(superClass);
@@ -608,8 +606,7 @@ public final class VertexClassImplTest extends GraphElementClassImplTest {
 	 */
 	@Test
 	public void testGetOwnAttribute5() {
-		VertexClass subClass = graphClass.createVertexClass(new QualifiedName(
-				"Subclass"));
+		VertexClass subClass = graphClass.createVertexClass("Subclass");
 		subClass.addSuperClass(vertexClass);
 
 		testGetOwnAttribute4(subClass);
@@ -623,8 +620,7 @@ public final class VertexClassImplTest extends GraphElementClassImplTest {
 	 */
 	@Test
 	public void testGetOwnAttributeCount4() {
-		VertexClass superClass = graphClass
-				.createVertexClass(new QualifiedName("Superclass"));
+		VertexClass superClass = graphClass.createVertexClass("Superclass");
 		vertexClass.addSuperClass(superClass);
 
 		testGetOwnAttributeCount4(superClass);
@@ -638,8 +634,7 @@ public final class VertexClassImplTest extends GraphElementClassImplTest {
 	 */
 	@Test
 	public void testGetOwnAttributeList4() {
-		VertexClass superClass = graphClass
-				.createVertexClass(new QualifiedName("Superclass"));
+		VertexClass superClass = graphClass.createVertexClass("Superclass");
 		vertexClass.addSuperClass(superClass);
 
 		testGetOwnAttributeList4(superClass);
@@ -693,8 +688,7 @@ public final class VertexClassImplTest extends GraphElementClassImplTest {
 	 */
 	@Test
 	public void testHasAttributes3() {
-		VertexClass superClass = graphClass
-				.createVertexClass(new QualifiedName("Superclass"));
+		VertexClass superClass = graphClass.createVertexClass("Superclass");
 		vertexClass.addSuperClass(superClass);
 
 		testHasAttributes3(superClass);
@@ -707,8 +701,7 @@ public final class VertexClassImplTest extends GraphElementClassImplTest {
 	 */
 	@Test
 	public void testHasAttributes4() {
-		VertexClass superClass = graphClass
-				.createVertexClass(new QualifiedName("Superclass"));
+		VertexClass superClass = graphClass.createVertexClass("Superclass");
 		vertexClass.addSuperClass(superClass);
 
 		testHasAttributes4(superClass);
@@ -721,8 +714,7 @@ public final class VertexClassImplTest extends GraphElementClassImplTest {
 	 */
 	@Test
 	public void testHasAttributes5() {
-		VertexClass superClass = graphClass
-				.createVertexClass(new QualifiedName("Superclass"));
+		VertexClass superClass = graphClass.createVertexClass("Superclass");
 		vertexClass.addSuperClass(superClass);
 
 		testHasAttributes5(superClass);
@@ -735,8 +727,7 @@ public final class VertexClassImplTest extends GraphElementClassImplTest {
 	 */
 	@Test
 	public void testHasOwnAttributes4() {
-		VertexClass superClass = graphClass
-				.createVertexClass(new QualifiedName("Superclass"));
+		VertexClass superClass = graphClass.createVertexClass("Superclass");
 		vertexClass.addSuperClass(superClass);
 
 		testHasOwnAttributes4(superClass);
@@ -749,8 +740,7 @@ public final class VertexClassImplTest extends GraphElementClassImplTest {
 	 */
 	@Test
 	public void testHasOwnAttributes5() {
-		VertexClass superClass = graphClass
-				.createVertexClass(new QualifiedName("Superclass"));
+		VertexClass superClass = graphClass.createVertexClass("Superclass");
 		vertexClass.addSuperClass(superClass);
 
 		testHasOwnAttributes5(superClass);
@@ -763,8 +753,7 @@ public final class VertexClassImplTest extends GraphElementClassImplTest {
 	 */
 	@Test
 	public void testIsDirectSubClassOf() {
-		VertexClass superClass = graphClass
-				.createVertexClass(new QualifiedName("Superclass"));
+		VertexClass superClass = graphClass.createVertexClass("Superclass");
 		vertexClass.addSuperClass(superClass);
 
 		testIsDirectSubClassOf(superClass);
@@ -777,10 +766,8 @@ public final class VertexClassImplTest extends GraphElementClassImplTest {
 	 */
 	@Test
 	public void testIsDirectSubClassOf2() {
-		VertexClass superClass = graphClass
-				.createVertexClass(new QualifiedName("Superclass"));
-		VertexClass superClass2 = graphClass
-				.createVertexClass(new QualifiedName("Superclass2"));
+		VertexClass superClass = graphClass.createVertexClass("Superclass");
+		VertexClass superClass2 = graphClass.createVertexClass("Superclass2");
 		vertexClass.addSuperClass(superClass);
 		superClass.addSuperClass(superClass2);
 
@@ -794,8 +781,7 @@ public final class VertexClassImplTest extends GraphElementClassImplTest {
 	 */
 	@Test
 	public void testIsDirectSubClassOf3() {
-		VertexClass subClass = graphClass.createVertexClass(new QualifiedName(
-				"SubClass"));
+		VertexClass subClass = graphClass.createVertexClass("SubClass");
 		subClass.addSuperClass(vertexClass);
 
 		testIsDirectSubClassOf2(subClass);
@@ -808,8 +794,7 @@ public final class VertexClassImplTest extends GraphElementClassImplTest {
 	 */
 	@Test
 	public void testIsDirectSubClassOf4() {
-		VertexClass vertexClass2 = graphClass
-				.createVertexClass(new QualifiedName("VertexClass2"));
+		VertexClass vertexClass2 = graphClass.createVertexClass("VertexClass2");
 
 		testIsDirectSubClassOf2(vertexClass2);
 	}
@@ -831,8 +816,7 @@ public final class VertexClassImplTest extends GraphElementClassImplTest {
 	 */
 	@Test
 	public void testIsDirectSuperClassOf() {
-		VertexClass subClass = graphClass.createVertexClass(new QualifiedName(
-				"Subclass"));
+		VertexClass subClass = graphClass.createVertexClass("Subclass");
 		subClass.addSuperClass(vertexClass);
 
 		testIsDirectSuperClassOf(subClass);
@@ -845,10 +829,8 @@ public final class VertexClassImplTest extends GraphElementClassImplTest {
 	 */
 	@Test
 	public void testIsDirectSuperClassOf2() {
-		VertexClass subClass = graphClass.createVertexClass(new QualifiedName(
-				"SubClass"));
-		VertexClass subClass2 = graphClass.createVertexClass(new QualifiedName(
-				"SubClass2"));
+		VertexClass subClass = graphClass.createVertexClass("SubClass");
+		VertexClass subClass2 = graphClass.createVertexClass("SubClass2");
 		subClass.addSuperClass(vertexClass);
 		subClass2.addSuperClass(subClass);
 
@@ -862,8 +844,7 @@ public final class VertexClassImplTest extends GraphElementClassImplTest {
 	 */
 	@Test
 	public void testIsDirectSuperClassOf3() {
-		VertexClass superClass = graphClass
-				.createVertexClass(new QualifiedName("SuperClass"));
+		VertexClass superClass = graphClass.createVertexClass("SuperClass");
 		vertexClass.addSuperClass(superClass);
 
 		testIsDirectSuperClassOf2(superClass);
@@ -876,8 +857,7 @@ public final class VertexClassImplTest extends GraphElementClassImplTest {
 	 */
 	@Test
 	public void testIsDirectSuperClassOf4() {
-		VertexClass vertexClass2 = graphClass
-				.createVertexClass(new QualifiedName("VertexClass2"));
+		VertexClass vertexClass2 = graphClass.createVertexClass("VertexClass2");
 
 		testIsDirectSuperClassOf2(vertexClass2);
 	}
@@ -899,8 +879,7 @@ public final class VertexClassImplTest extends GraphElementClassImplTest {
 	 */
 	@Test
 	public void testIsSubClassOf() {
-		VertexClass superClass = graphClass
-				.createVertexClass(new QualifiedName("Superclass"));
+		VertexClass superClass = graphClass.createVertexClass("Superclass");
 		vertexClass.addSuperClass(superClass);
 
 		testIsSubClassOf(superClass);
@@ -913,10 +892,8 @@ public final class VertexClassImplTest extends GraphElementClassImplTest {
 	 */
 	@Test
 	public void testIsSubClassOf2() {
-		VertexClass superClass = graphClass
-				.createVertexClass(new QualifiedName("Superclass"));
-		VertexClass superClass2 = graphClass
-				.createVertexClass(new QualifiedName("Superclass2"));
+		VertexClass superClass = graphClass.createVertexClass("Superclass");
+		VertexClass superClass2 = graphClass.createVertexClass("Superclass2");
 		vertexClass.addSuperClass(superClass);
 		superClass.addSuperClass(superClass2);
 
@@ -930,8 +907,7 @@ public final class VertexClassImplTest extends GraphElementClassImplTest {
 	 */
 	@Test
 	public void testIsSubClassOf3() {
-		VertexClass subClass = graphClass.createVertexClass(new QualifiedName(
-				"SubClass"));
+		VertexClass subClass = graphClass.createVertexClass("SubClass");
 		subClass.addSuperClass(vertexClass);
 
 		testIsSubClassOf2(subClass);
@@ -944,8 +920,7 @@ public final class VertexClassImplTest extends GraphElementClassImplTest {
 	 */
 	@Test
 	public void testIsSubClassOf4() {
-		VertexClass vertexClass2 = graphClass
-				.createVertexClass(new QualifiedName("VertexClass2"));
+		VertexClass vertexClass2 = graphClass.createVertexClass("VertexClass2");
 
 		testIsSubClassOf2(vertexClass2);
 	}
@@ -967,8 +942,7 @@ public final class VertexClassImplTest extends GraphElementClassImplTest {
 	 */
 	@Test
 	public void testIsSuperClassOf() {
-		VertexClass subClass = graphClass.createVertexClass(new QualifiedName(
-				"Subclass"));
+		VertexClass subClass = graphClass.createVertexClass("Subclass");
 		subClass.addSuperClass(vertexClass);
 
 		testIsSuperClassOf(subClass);
@@ -981,10 +955,8 @@ public final class VertexClassImplTest extends GraphElementClassImplTest {
 	 */
 	@Test
 	public void testIsSuperClassOf2() {
-		VertexClass subClass = graphClass.createVertexClass(new QualifiedName(
-				"SubClass"));
-		VertexClass subClass2 = graphClass.createVertexClass(new QualifiedName(
-				"SubClass2"));
+		VertexClass subClass = graphClass.createVertexClass("SubClass");
+		VertexClass subClass2 = graphClass.createVertexClass("SubClass2");
 		subClass.addSuperClass(vertexClass);
 		subClass2.addSuperClass(subClass);
 
@@ -998,8 +970,7 @@ public final class VertexClassImplTest extends GraphElementClassImplTest {
 	 */
 	@Test
 	public void testIsSuperClassOf3() {
-		VertexClass superClass = graphClass
-				.createVertexClass(new QualifiedName("SuperClass"));
+		VertexClass superClass = graphClass.createVertexClass("SuperClass");
 		vertexClass.addSuperClass(superClass);
 
 		testIsSuperClassOf2(superClass);
@@ -1012,8 +983,7 @@ public final class VertexClassImplTest extends GraphElementClassImplTest {
 	 */
 	@Test
 	public void testIsSuperClassOf4() {
-		VertexClass vertexClass2 = graphClass
-				.createVertexClass(new QualifiedName("VertexClass2"));
+		VertexClass vertexClass2 = graphClass.createVertexClass("VertexClass2");
 
 		testIsSuperClassOf2(vertexClass2);
 	}
@@ -1035,8 +1005,7 @@ public final class VertexClassImplTest extends GraphElementClassImplTest {
 	 */
 	@Test
 	public void testIsSuperClassOfOrEquals() {
-		VertexClass subClass = graphClass.createVertexClass(new QualifiedName(
-				"Subclass"));
+		VertexClass subClass = graphClass.createVertexClass("Subclass");
 		subClass.addSuperClass(vertexClass);
 
 		testIsSuperClassOfOrEquals(subClass);
@@ -1049,10 +1018,8 @@ public final class VertexClassImplTest extends GraphElementClassImplTest {
 	 */
 	@Test
 	public void testIsSuperClassOfOrEquals2() {
-		VertexClass subClass = graphClass.createVertexClass(new QualifiedName(
-				"SubClass"));
-		VertexClass subClass2 = graphClass.createVertexClass(new QualifiedName(
-				"SubClass2"));
+		VertexClass subClass = graphClass.createVertexClass("SubClass");
+		VertexClass subClass2 = graphClass.createVertexClass("SubClass2");
 		subClass.addSuperClass(vertexClass);
 		subClass2.addSuperClass(subClass);
 
@@ -1076,8 +1043,7 @@ public final class VertexClassImplTest extends GraphElementClassImplTest {
 	 */
 	@Test
 	public void testIsSuperClassOfOrEquals4() {
-		VertexClass vertexClass2 = graphClass
-				.createVertexClass(new QualifiedName("VertexClass2"));
+		VertexClass vertexClass2 = graphClass.createVertexClass("VertexClass2");
 
 		testIsSuperClassOfOrEquals2(vertexClass2);
 	}
@@ -1089,8 +1055,7 @@ public final class VertexClassImplTest extends GraphElementClassImplTest {
 	 */
 	@Test
 	public void testIsSuperClassOfOrEquals5() {
-		VertexClass superClass = graphClass
-				.createVertexClass(new QualifiedName("SuperClass"));
+		VertexClass superClass = graphClass.createVertexClass("SuperClass");
 		vertexClass.addSuperClass(superClass);
 
 		testIsSuperClassOfOrEquals2(superClass);

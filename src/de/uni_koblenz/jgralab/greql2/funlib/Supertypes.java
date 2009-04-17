@@ -34,7 +34,6 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValueSet;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
 import de.uni_koblenz.jgralab.schema.AttributedElementClass;
-import de.uni_koblenz.jgralab.schema.QualifiedName;
 
 /**
  * Returns all supertypes of the given type. The type can be given as
@@ -88,7 +87,7 @@ public class Supertypes extends AbstractGreql2Function {
 		switch (checkArguments(arguments)) {
 		case 0:
 			clazz = graph.getSchema().getAttributedElementClass(
-					new QualifiedName(arguments[0].toString()));
+					arguments[0].toString());
 			break;
 		case 1:
 			clazz = arguments[0].toAttributedElementClass();

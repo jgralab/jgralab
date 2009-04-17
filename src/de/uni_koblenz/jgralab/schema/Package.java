@@ -30,108 +30,108 @@ import java.util.Map;
  * The class <code>Package</code> represents a grUML package. A
  * <code>Package</code> can contain <code>Domain</code>s and
  * <code>GraphElementClass</code>es, as well as other <code>Package</code>s.
- *
+ * 
  * @author ist@uni-koblenz.de
  */
-public interface Package extends NamedElement {
+public interface Package extends NamedElement, Comparable<Package> {
 
-	/**
-	 * Checks if this Package is the default Package.
-	 *
-	 * @return true iff this Package is the default Package.
+	/*
+	 * Touch and die!
 	 */
-	public boolean isDefaultPackage();
+	public static final String DEFAULTPACKAGE_NAME = "";
 
 	/**
-	 * Returns the parent Package of this Package.
-	 *
-	 * @return the parent Package, or <code>null</code> if this Package is the
-	 *         default Package.
-	 */
-	public Package getParentPackage();
-
-	/**
-	 * Returns all subpackages of this Package.
-	 *
-	 * @return a Map containing all subpackages of this Package, mapped to their
-	 *         simple names.
-	 */
-	public Map<String, Package> getSubPackages();
-
-	/**
-	 * Checks if this Package directly contains a subpackge with the specified
-	 * <code>simpleName</code>.
-	 *
-	 * @param simpleName
-	 *            the name of the subpackage
-	 * @return true iff this package contains the specified subpackage.
-	 */
-	public boolean containsSubPackage(String simpleName);
-
-	/**
-	 * Creates a new subpackage with the specified <code>simpleName</code> in
-	 * this Package.
-	 *
-	 * @param simpleName
-	 *            the name of the new subpackage
-	 * @return the new subpackage.
-	 */
-	public Package createSubPackage(String simpleName);
-
-	/**
-	 * Returns the subpackage with the specified </code>simpleName</code>.
-	 *
-	 * @param simpleName
-	 *            the name of the subpackage
-	 * @return the subpackage, or <code>null</code> if no such package exists.
-	 */
-	public Package getSubPackage(String simpleName);
-
-	/**
-	 * Returns all Domains of this package.
-	 *
-	 * @return a Map containing all Domains of this Package, mapped to their
-	 *         simple names.
-	 */
-	public Map<String, Domain> getDomains();
-
-	/**
-	 * Adds the Domain <code>dom</code> to this Package.
-	 *
-	 * @param dom
-	 *            a Domain
-	 */
-	public void addDomain(Domain dom);
-
-	/**
-	 * Returns all VertexClasses of this package.
-	 *
-	 * @return a Map containing all VertexClasses of this Package, mapped to
-	 *         their simple names.
-	 */
-	public Map<String, VertexClass> getVertexClasses();
-
-	/**
-	 * Adds the VertexClass <code>vc</code> to this Package.
-	 *
-	 * @param vc
-	 *            a VertexClass
-	 */
-	public void addVertexClass(VertexClass vc);
-
-	/**
-	 * Returns all VertexClasses of this package.
-	 *
+	 * Returns all EdgeClasses of this package.
+	 * 
 	 * @return a Map containing all EdgeClasses of this Package, mapped to their
 	 *         simple names.
 	 */
 	public Map<String, EdgeClass> getEdgeClasses();
 
 	/**
-	 * Adds the EdgeClass <code>ec</code> to this Package.
-	 *
-	 * @param ec
-	 *            an EdgeClass
+	 * Returns all Domains of this package.
+	 * 
+	 * @return a Map containing all Domains of this Package, mapped to their
+	 *         simple names.
 	 */
-	public void addEdgeClass(EdgeClass ec);
+	public Map<String, Domain> getDomains();
+
+	public Map<String, GraphClass> getGraphClasses();
+
+	/**
+	 * Retrieves the subpackage with the given simple name.
+	 * 
+	 * <p>
+	 * <b>Pattern:</b> <code>p = package.getSubPackage(sn);</code>
+	 * </p>
+	 * 
+	 * <p>
+	 * <b>Preconditions:</b> none<br/>
+	 * </p>
+	 * 
+	 * <p>
+	 * <b>Postconditions:</b> p takes one of the following values:
+	 * <ul>
+	 * <li><code>null</code> if no subpackage with the given simple name was
+	 * found in this package</li>
+	 * <li>the package in the other case</code>
+	 * </ul>
+	 * </p>
+	 * 
+	 * @param sn
+	 *            the simple name of the subpackage to obtain from this package
+	 * @return the subpackage matching the simple name in this package,
+	 *         <code>null</code> if no match is found
+	 */
+	public Package getSubPackage(String sn);
+
+	/**
+	 * Returns all subpackages of this Package.
+	 * 
+	 * @return a Map containing all subpackages of this Package, mapped to their
+	 *         simple names.
+	 */
+	public Map<String, Package> getSubPackages();
+
+	/**
+	 * Returns all VertexClasses of this package.
+	 * 
+	 * @return a Map containing all VertexClasses of this Package, mapped to
+	 *         their simple names.
+	 */
+	public Map<String, VertexClass> getVertexClasses();
+
+	/**
+	 * Checks if this package contains a named element with the given simple
+	 * name.
+	 * 
+	 * <p>
+	 * <b>Pattern:</b>
+	 * <code>containsNE = package.containsNamedElement(sn);</code>
+	 * </p>
+	 * 
+	 * <p>
+	 * <b>Preconditions:</b> none<br/>
+	 * </p>
+	 * 
+	 * <p>
+	 * <b>Postconditions:</b> <code>containsNE</code> is <code>true</code>, if
+	 * this package contains a named element with the given simple name. Else it
+	 * is <code>false</code>.
+	 * </p>
+	 * 
+	 * @param sn
+	 *            the simple name of the named element to look for in this
+	 *            package
+	 * @return <code>true</code>, if this package contains a named element with
+	 *         the given simple name
+	 */
+	public boolean containsNamedElement(String sn);
+
+	/**
+	 * Checks if this Package is the default Package.
+	 * 
+	 * @return true iff this Package is the default Package.
+	 */
+	public boolean isDefaultPackage();
 }

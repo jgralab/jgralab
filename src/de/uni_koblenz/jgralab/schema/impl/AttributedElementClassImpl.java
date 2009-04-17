@@ -38,43 +38,36 @@ import de.uni_koblenz.jgralab.schema.AttributedElementClass;
 import de.uni_koblenz.jgralab.schema.Constraint;
 import de.uni_koblenz.jgralab.schema.Domain;
 import de.uni_koblenz.jgralab.schema.Package;
-import de.uni_koblenz.jgralab.schema.QualifiedName;
 import de.uni_koblenz.jgralab.schema.Schema;
 import de.uni_koblenz.jgralab.schema.exception.DuplicateAttributeException;
 import de.uni_koblenz.jgralab.schema.exception.InheritanceException;
 import de.uni_koblenz.jgralab.schema.exception.M1ClassAccessException;
 import de.uni_koblenz.jgralab.schema.exception.ReservedWordException;
 
-public abstract class AttributedElementClassImpl implements
-		AttributedElementClass {
-
-	/**
-	 * the package this attributed element class belongs to
-	 */
-	private Package pkg;
-
-	/**
-	 * the immediate super classes of this class
-	 */
-	protected HashSet<AttributedElementClass> directSuperClasses;
-
-	/**
-	 * the immediate sub classes of this class
-	 */
-	protected HashSet<AttributedElementClass> directSubClasses;
+public abstract class AttributedElementClassImpl extends NamedElementImpl
+		implements AttributedElementClass {
 
 	/**
 	 * a list of attributes which belongs to the m2 element
 	 * (edgeclass/vertexclass/graphclass). Only the own attributes of this class
 	 * are stored here, no inherited attributes
 	 */
-	private TreeSet<Attribute> attributeList;
+	private final TreeSet<Attribute> attributeList = new TreeSet<Attribute>();
 
 	/**
-	 * a unique identifier of the m2 element in the schema
-	 * (edgeclass/vertexclass/graphclass)
+	 * A set of {@link Constraint}s which can be used to validate the graph.
 	 */
-	private QualifiedName qName;
+	protected HashSet<Constraint> constraints = new HashSet<Constraint>(1);
+
+	/**
+	 * the immediate sub classes of this class
+	 */
+	protected HashSet<AttributedElementClass> directSubClasses = new HashSet<AttributedElementClass>();
+
+	/**
+	 * the immediate super classes of this class
+	 */
+	protected HashSet<AttributedElementClass> directSuperClasses = new HashSet<AttributedElementClass>();
 
 	/**
 	 * defines the m2 element as abstract, i.e. that it may not have any
@@ -96,79 +89,14 @@ public abstract class AttributedElementClassImpl implements
 	private Class<? extends AttributedElement> m1ImplementationClass;
 
 	/**
-	 * A set of {@link Constraint}s which can be used to validate the graph.
-	 */
-	protected HashSet<Constraint> constraints = new HashSet<Constraint>(1);
-
-	@Override
-	public void setPackage(Package p) {
-		pkg = p;
-	}
-
-	@Override
-	public Package getPackage() {
-		return pkg;
-	}
-
-	/**
 	 * builds a new attributed element class
-	 * 
+	 *
 	 * @param qn
 	 *            the unique identifier of the element in the schema
 	 */
-	public AttributedElementClassImpl(QualifiedName qn) {
-		qName = qn;
-		m1Class = null;
-		m1ImplementationClass = null;
-		attributeList = new TreeSet<Attribute>();
-		directSubClasses = new HashSet<AttributedElementClass>();
-		directSuperClasses = new HashSet<AttributedElementClass>();
-	}
-
-	@Override
-	public String getSimpleName() {
-		return qName.getSimpleName();
-	}
-
-	@Override
-	public String getQualifiedName() {
-		return qName.getQualifiedName();
-	}
-
-	@Override
-	public String getQualifiedName(Package pkg) {
-		if (this.pkg == pkg) {
-			return qName.getSimpleName();
-		} else if (this.pkg.isDefaultPackage()) {
-			return "." + qName.getSimpleName();
-		} else {
-			return qName.getQualifiedName();
-		}
-	}
-
-	@Override
-	public String getUniqueName() {
-		return qName.getUniqueName();
-	}
-
-	@Override
-	public void setUniqueName(String uniqueName) {
-		qName.setUniqueName(this, uniqueName);
-	}
-
-	@Override
-	public String getPackageName() {
-		return qName.getPackageName();
-	}
-
-	@Override
-	public QualifiedName getQName() {
-		return qName;
-	}
-
-	@Override
-	public void addAttribute(String name, Domain domain) {
-		addAttribute(new AttributeImpl(name, domain));
+	protected AttributedElementClassImpl(String simpleName, Package pkg,
+			Schema schema) {
+		super(simpleName, pkg, schema);
 	}
 
 	@Override
@@ -188,122 +116,26 @@ public abstract class AttributedElementClassImpl implements
 							+ ". "
 							+ "A derived AttributedElementClass already contains this Attribute.");
 		}
-		if (Schema.reservedTGWords.contains(anAttribute.getName())
-				|| Schema.reservedJavaWords.contains(anAttribute.getName())) {
+		if (Schema.RESERVED_JAVA_WORDS.contains(anAttribute.getName())) {
 			throw new ReservedWordException(anAttribute.getName(),
 					"attribute name");
 		}
 		attributeList.add(anAttribute);
 	}
 
-	protected boolean subclassContainsAttribute(String name) {
-		for (AttributedElementClass subClass : getAllSubClasses()) {
-			Attribute subclassAttr = subClass.getAttribute(name);
-			if (subclassAttr != null) {
-				return true;
-			}
-		}
-		return false;
+	@Override
+	public void addAttribute(String name, Domain domain) {
+		addAttribute(new AttributeImpl(name, domain));
 	}
 
 	@Override
-	public Attribute getOwnAttribute(String name) {
-		Iterator<Attribute> it = attributeList.iterator();
-		Attribute a;
-		while (it.hasNext()) {
-			a = it.next();
-			if (a.getName().equals(name)) {
-				return a;
-			}
-		}
-		return null;
-	}
-
-	@Override
-	public Attribute getAttribute(String name) {
-		Attribute ownAttr = getOwnAttribute(name);
-		if (ownAttr != null) {
-			return ownAttr;
-		}
-		for (AttributedElementClass superClass : directSuperClasses) {
-			Attribute inheritedAttr = superClass.getAttribute(name);
-			if (inheritedAttr != null) {
-				return inheritedAttr;
-			}
-		}
-		return null;
-	}
-
-	@Override
-	public SortedSet<Attribute> getOwnAttributeList() {
-		return attributeList;
-	}
-
-	@Override
-	public SortedSet<Attribute> getAttributeList() {
-		TreeSet<Attribute> attrList = new TreeSet<Attribute>();
-		attrList.addAll(attributeList);
-		for (AttributedElementClass superClass : directSuperClasses) {
-			attrList.addAll(superClass.getAttributeList());
-		}
-		return attrList;
-	}
-
-	@Override
-	public boolean containsAttribute(String name) {
-		return (getAttribute(name) != null);
-	}
-
-	@Override
-	public int getOwnAttributeCount() {
-		return attributeList.size();
-	}
-
-	@Override
-	public int getAttributeCount() {
-		int attrCount = getOwnAttributeCount();
-		for (AttributedElementClass superClass : directSuperClasses) {
-			attrCount += superClass.getAttributeCount();
-		}
-		return attrCount;
-	}
-
-	@Override
-	public abstract String toString();
-
-	/**
-	 * @return a textual representation of all attributes the element holds
-	 */
-	protected String attributesToString() {
-		String output = "\nSelf Attributes:\n";
-		Iterator<Attribute> it = attributeList.iterator();
-		Attribute a;
-		while (it.hasNext()) {
-			a = it.next();
-			output += a.toString() + "\n";
-		}
-		output += "\nSelf + Inherited Attributes:\n";
-		it = getAttributeList().iterator();
-		while (it.hasNext()) {
-			a = it.next();
-			output += a.toString() + "\n";
-		}
-		return output;
-	}
-
-	@Override
-	public boolean isAbstract() {
-		return isAbstract;
-	}
-
-	@Override
-	public void setAbstract(boolean isAbstract) {
-		this.isAbstract = isAbstract;
+	public void addConstraint(Constraint constraint) {
+		constraints.add(constraint);
 	}
 
 	/**
 	 * adds a superClass to this class
-	 * 
+	 *
 	 * @param superClass
 	 *            the class to add as superclass
 	 */
@@ -352,52 +184,65 @@ public abstract class AttributedElementClassImpl implements
 		((AttributedElementClassImpl) superClass).directSubClasses.add(this);
 	}
 
-	@Override
-	public boolean isSuperClassOf(
-			AttributedElementClass anAttributedElementClass) {
-		// System.out.println(this.getName() + " is superclass of " +
-		// anAttributedElementClass.getName() + ": " +
-		// anAttributedElementClass.getAllSuperClasses().contains(this));
-		return anAttributedElementClass.getAllSuperClasses().contains(this);
-	}
-
-	@Override
-	public boolean isDirectSuperClassOf(
-			AttributedElementClass anAttributedElementClass) {
-		return (((AttributedElementClassImpl) anAttributedElementClass).directSuperClasses
-				.contains(this));
-	}
-
-	@Override
-	public boolean isSuperClassOfOrEquals(
-			AttributedElementClass anAttributedElementClass) {
-		return ((this == anAttributedElementClass) || (isSuperClassOf(anAttributedElementClass)));
-	}
-
-	@Override
-	public boolean isSubClassOf(AttributedElementClass anAttributedElementClass) {
-		return getAllSuperClasses().contains(anAttributedElementClass);
-	}
-
-	@Override
-	public boolean isDirectSubClassOf(
-			AttributedElementClass anAttributedElementClass) {
-		return directSuperClasses.contains(anAttributedElementClass);
-	}
-
-	@Override
-	public Set<AttributedElementClass> getDirectSuperClasses() {
-		return directSuperClasses;
-	}
-
-	@Override
-	public Set<AttributedElementClass> getAllSuperClasses() {
-		HashSet<AttributedElementClass> allSuperClasses = new HashSet<AttributedElementClass>();
-		allSuperClasses.addAll(directSuperClasses);
-		for (AttributedElementClass superClass : directSuperClasses) {
-			allSuperClasses.addAll(superClass.getAllSuperClasses());
+	/**
+	 * @return a textual representation of all attributes the element holds
+	 */
+	protected String attributesToString() {
+		String output = "\nSelf Attributes:\n";
+		Iterator<Attribute> it = attributeList.iterator();
+		Attribute a;
+		while (it.hasNext()) {
+			a = it.next();
+			output += a.toString() + "\n";
 		}
-		return allSuperClasses;
+		output += "\nSelf + Inherited Attributes:\n";
+		it = getAttributeList().iterator();
+		while (it.hasNext()) {
+			a = it.next();
+			output += a.toString() + "\n";
+		}
+		return output;
+	}
+
+	/**
+	 * Compares this element to another attributed element.
+	 * <p>
+	 * This is done by comparing the elements´ qualified names
+	 * lexicographically.
+	 * </p>
+	 *
+	 * <p>
+	 * <b>Pattern:</b> <code>comp = attrElement.compareTo(other);</code>
+	 * </p>
+	 *
+	 * <p>
+	 * <b>Preconditions:</b> none
+	 * </p>
+	 *
+	 * <p>
+	 * <b>Postconditions:</b>
+	 * <ul>
+	 * <li><code>comp < 0</code>, if this element´s qualified name is
+	 * lexicographically less than the <code>other</code> element´s qualified
+	 * name</li>
+	 * <li><code>comp == 0</code>, if both element´s qualified names are equal</li>
+	 * <li><code>comp > 0</code>, if this element´s qualified name is
+	 * lexicographically greater than the <code>other</code> element´s qualified
+	 * name</li>
+	 * </ul>
+	 * </p>
+	 *
+	 * @return the result of the lexicographical comparison
+	 *
+	 */
+	@Override
+	public int compareTo(AttributedElementClass other) {
+		return this.qualifiedName.compareTo(other.getQualifiedName());
+	}
+
+	@Override
+	public boolean containsAttribute(String name) {
+		return (getAttribute(name) != null);
 	}
 
 	@Override
@@ -411,39 +256,69 @@ public abstract class AttributedElementClassImpl implements
 	}
 
 	@Override
+	public Set<AttributedElementClass> getAllSuperClasses() {
+		HashSet<AttributedElementClass> allSuperClasses = new HashSet<AttributedElementClass>();
+		allSuperClasses.addAll(directSuperClasses);
+		for (AttributedElementClass superClass : directSuperClasses) {
+			allSuperClasses.addAll(superClass.getAllSuperClasses());
+		}
+		return allSuperClasses;
+	}
+
+	@Override
+	public Attribute getAttribute(String name) {
+		Attribute ownAttr = getOwnAttribute(name);
+		if (ownAttr != null) {
+			return ownAttr;
+		}
+		for (AttributedElementClass superClass : directSuperClasses) {
+			Attribute inheritedAttr = superClass.getAttribute(name);
+			if (inheritedAttr != null) {
+				return inheritedAttr;
+			}
+		}
+		return null;
+	}
+
+	@Override
+	public int getAttributeCount() {
+		int attrCount = getOwnAttributeCount();
+		for (AttributedElementClass superClass : directSuperClasses) {
+			attrCount += superClass.getAttributeCount();
+		}
+		return attrCount;
+	}
+
+	@Override
+	public SortedSet<Attribute> getAttributeList() {
+		TreeSet<Attribute> attrList = new TreeSet<Attribute>();
+		attrList.addAll(attributeList);
+		for (AttributedElementClass superClass : directSuperClasses) {
+			attrList.addAll(superClass.getAttributeList());
+		}
+		return attrList;
+	}
+
+	@Override
+	public Set<Constraint> getConstraints() {
+		return constraints;
+	}
+
+	@Override
 	public Set<AttributedElementClass> getDirectSubClasses() {
 		return directSubClasses;
 	}
 
 	@Override
-	public boolean hasAttributes() {
-		return !getAttributeList().isEmpty();
-	}
-
-	@Override
-	public boolean hasOwnAttributes() {
-		return !attributeList.isEmpty();
-	}
-
-	@Override
-	public boolean isInternal() {
-		Schema s = getSchema();
-		return this == s.getDefaultAggregationClass()
-				|| this == s.getDefaultCompositionClass()
-				|| this == s.getDefaultEdgeClass()
-				|| this == s.getDefaultGraphClass()
-				|| this == s.getDefaultVertexClass();
-	}
-
-	@Override
-	public int compareTo(AttributedElementClass another) {
-		return qName.compareTo(another.getQName());
+	public Set<AttributedElementClass> getDirectSuperClasses() {
+		return new HashSet<AttributedElementClass>(directSuperClasses);
 	}
 
 	@SuppressWarnings("unchecked")
+	@Override
 	public Class<? extends AttributedElement> getM1Class() {
 		if (m1Class == null) {
-			String m1ClassName = getSchema().getPackageName() + "."
+			String m1ClassName = getSchema().getPackagePrefix() + "."
 					+ getQualifiedName();
 			try {
 				m1Class = (Class<? extends AttributedElement>) Class.forName(
@@ -458,6 +333,7 @@ public abstract class AttributedElementClassImpl implements
 	}
 
 	@SuppressWarnings("unchecked")
+	@Override
 	public Class<? extends AttributedElement> getM1ImplementationClass() {
 		if (isAbstract()) {
 			throw new M1ClassAccessException(
@@ -483,13 +359,98 @@ public abstract class AttributedElementClassImpl implements
 	}
 
 	@Override
-	public void addConstraint(Constraint constraint) {
-		constraints.add(constraint);
+	public Attribute getOwnAttribute(String name) {
+		Iterator<Attribute> it = attributeList.iterator();
+		Attribute a;
+		while (it.hasNext()) {
+			a = it.next();
+			if (a.getName().equals(name)) {
+				return a;
+			}
+		}
+		return null;
 	}
 
 	@Override
-	public Set<Constraint> getConstraints() {
-		return constraints;
+	public int getOwnAttributeCount() {
+		return attributeList.size();
 	}
 
+	@Override
+	public SortedSet<Attribute> getOwnAttributeList() {
+		return attributeList;
+	}
+
+	@Override
+	public boolean hasAttributes() {
+		return !getAttributeList().isEmpty();
+	}
+
+	@Override
+	public boolean hasOwnAttributes() {
+		return !attributeList.isEmpty();
+	}
+
+	@Override
+	public boolean isAbstract() {
+		return isAbstract;
+	}
+
+	@Override
+	public boolean isDirectSubClassOf(
+			AttributedElementClass anAttributedElementClass) {
+		return directSuperClasses.contains(anAttributedElementClass);
+	}
+
+	@Override
+	public boolean isDirectSuperClassOf(
+			AttributedElementClass anAttributedElementClass) {
+		return (((AttributedElementClassImpl) anAttributedElementClass).directSuperClasses
+				.contains(this));
+	}
+
+	@Override
+	public boolean isInternal() {
+		Schema s = getSchema();
+		return this == s.getDefaultAggregationClass()
+				|| this == s.getDefaultCompositionClass()
+				|| this == s.getDefaultEdgeClass()
+				|| this == s.getDefaultGraphClass()
+				|| this == s.getDefaultVertexClass();
+	}
+
+	@Override
+	public boolean isSubClassOf(AttributedElementClass anAttributedElementClass) {
+		return getAllSuperClasses().contains(anAttributedElementClass);
+	}
+
+	@Override
+	public boolean isSuperClassOf(
+			AttributedElementClass anAttributedElementClass) {
+		// System.out.println(this.getName() + " is superclass of " +
+		// anAttributedElementClass.getName() + ": " +
+		// anAttributedElementClass.getAllSuperClasses().contains(this));
+		return anAttributedElementClass.getAllSuperClasses().contains(this);
+	}
+
+	@Override
+	public boolean isSuperClassOfOrEquals(
+			AttributedElementClass anAttributedElementClass) {
+		return ((this == anAttributedElementClass) || (isSuperClassOf(anAttributedElementClass)));
+	}
+
+	@Override
+	public void setAbstract(boolean isAbstract) {
+		this.isAbstract = isAbstract;
+	}
+
+	protected boolean subclassContainsAttribute(String name) {
+		for (AttributedElementClass subClass : getAllSubClasses()) {
+			Attribute subclassAttr = subClass.getAttribute(name);
+			if (subclassAttr != null) {
+				return true;
+			}
+		}
+		return false;
+	}
 }

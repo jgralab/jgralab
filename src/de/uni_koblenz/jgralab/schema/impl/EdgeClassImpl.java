@@ -33,7 +33,8 @@ import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.schema.AttributedElementClass;
 import de.uni_koblenz.jgralab.schema.EdgeClass;
 import de.uni_koblenz.jgralab.schema.GraphClass;
-import de.uni_koblenz.jgralab.schema.QualifiedName;
+import de.uni_koblenz.jgralab.schema.Package;
+import de.uni_koblenz.jgralab.schema.Schema;
 import de.uni_koblenz.jgralab.schema.VertexClass;
 import de.uni_koblenz.jgralab.schema.exception.InheritanceException;
 
@@ -41,21 +42,32 @@ public class EdgeClassImpl extends GraphElementClassImpl implements EdgeClass {
 
 	private VertexClass from, to;
 	private int fromMin, fromMax, toMin, toMax;
-	private String fromRolename, toRolename;
+	private final String fromRolename, toRolename;
 
 	/**
 	 * Holds the set of rolenames that are redefined by the fromRolename
 	 */
-	private Set<String> redefinedFromRoles;
+	private final Set<String> redefinedFromRoles;
 
 	/**
 	 * Holds the set of rolenames that are redefined by the toRolename
 	 */
-	private Set<String> redefinedToRoles;
+	private final Set<String> redefinedToRoles;
 
-	private DirectedEdgeClass inEdgeClass;
+	private final DirectedEdgeClass inEdgeClass;
 
-	private DirectedEdgeClass outEdgeClass;
+	private final DirectedEdgeClass outEdgeClass;
+
+	static EdgeClass createDefaultEdgeClass(Schema schema) {
+		assert schema.getDefaultGraphClass() != null : "DefaultGraphClass has not yet been created!";
+		assert schema.getDefaultVertexClass() != null : "DefaultVertexClass has not yet been created!";
+		assert schema.getDefaultEdgeClass() == null : "DefaultEdgeClass already created!";
+		EdgeClass ec = schema.getDefaultGraphClass().createEdgeClass(
+				DEFAULTEDGECLASS_NAME, schema.getDefaultVertexClass(),
+				schema.getDefaultVertexClass());
+		ec.setAbstract(true);
+		return ec;
+	}
 
 	/**
 	 * builds a new edge class
@@ -89,10 +101,11 @@ public class EdgeClassImpl extends GraphElementClassImpl implements EdgeClass {
 	 *            a name which identifies the 'to' side of the edge class in a
 	 *            unique way
 	 */
-	public EdgeClassImpl(QualifiedName qn, GraphClass aGraphClass,
-			VertexClass from, int fromMin, int fromMax, String fromRoleName,
-			VertexClass to, int toMin, int toMax, String toRoleName) {
-		super(qn, aGraphClass);
+	protected EdgeClassImpl(String simpleName, Package pkg,
+			GraphClass aGraphClass, VertexClass from, int fromMin, int fromMax,
+			String fromRoleName, VertexClass to, int toMin, int toMax,
+			String toRoleName) {
+		super(simpleName, pkg, aGraphClass);
 		this.from = from;
 		this.to = to;
 		this.fromMin = fromMin;
@@ -105,6 +118,13 @@ public class EdgeClassImpl extends GraphElementClassImpl implements EdgeClass {
 		redefinedToRoles = new HashSet<String>();
 		inEdgeClass = new DirectedEdgeClass(this, EdgeDirection.IN);
 		outEdgeClass = new DirectedEdgeClass(this, EdgeDirection.OUT);
+		register();
+	}
+
+	@Override
+	protected void register() {
+		((PackageImpl) parentPackage).addEdgeClass(this);
+		((GraphClassImpl) graphClass).addEdgeClass(this);
 	}
 
 	@Override
@@ -112,117 +132,81 @@ public class EdgeClassImpl extends GraphElementClassImpl implements EdgeClass {
 		return "ec_" + getQualifiedName().replace('.', '_');
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see jgralab.EdgeClass#addSuperClass(jgralab.EdgeClass)
-	 */
+	@Override
 	public void addSuperClass(EdgeClass superClass) {
 		super.addSuperClass(superClass);
 		mergeConnectionCardinalities();
 		mergeConnectionVertexClasses();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see jgralab.EdgeClass#getFrom()
-	 */
+	@Override
 	public VertexClass getFrom() {
 		return from;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see jgralab.EdgeClass#getFromMax()
-	 */
+	@Override
 	public int getFromMax() {
 		return fromMax;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see jgralab.EdgeClass#getFromMin()
-	 */
+	@Override
 	public int getFromMin() {
 		return fromMin;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see jgralab.EdgeClass#getFromRolename()
-	 */
+	@Override
 	public String getFromRolename() {
 		return fromRolename;
 	}
 
-	/*
-	 * @see jgralab.EdgeClass#getRedefinesFromRoles()
-	 */
+	@Override
 	public Set<String> getRedefinedFromRoles() {
 		return redefinedFromRoles;
 	}
 
+	@Override
 	public void redefineFromRole(String redefinedRoleName) {
 		redefinedFromRoles.add(redefinedRoleName);
 	}
 
+	@Override
 	public void redefineFromRole(Set<String> redefinedRoleNames) {
 		if (redefinedRoleNames != null) {
 			redefinedFromRoles.addAll(redefinedRoleNames);
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see jgralab.EdgeClass#getTo()
-	 */
+	@Override
 	public VertexClass getTo() {
 		return to;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see jgralab.EdgeClass#getToMax()
-	 */
+	@Override
 	public int getToMax() {
 		return toMax;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see jgralab.EdgeClass#getToMin()
-	 */
+	@Override
 	public int getToMin() {
 		return toMin;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see jgralab.EdgeClass#getToRolename()
-	 */
+	@Override
 	public String getToRolename() {
 		return toRolename;
 	}
 
-	/*
-	 * @see jgralab.EdgeClass#getRedefinesToRoles()
-	 */
+	@Override
 	public Set<String> getRedefinedToRoles() {
 		return redefinedToRoles;
 	}
 
+	@Override
 	public void redefineToRole(String redefinedRoleName) {
 		redefinedToRoles.add(redefinedRoleName);
 	}
 
+	@Override
 	public void redefineToRole(Set<String> redefinedRoleNames) {
 		if (redefinedRoleNames != null) {
 			redefinedToRoles.addAll(redefinedRoleNames);
@@ -401,10 +385,12 @@ public class EdgeClassImpl extends GraphElementClassImpl implements EdgeClass {
 		return false;
 	}
 
+	@Override
 	public DirectedEdgeClass getInEdgeClass() {
 		return inEdgeClass;
 	}
 
+	@Override
 	public DirectedEdgeClass getOutEdgeClass() {
 		return outEdgeClass;
 	}
