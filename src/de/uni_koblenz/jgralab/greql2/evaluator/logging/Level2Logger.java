@@ -45,14 +45,14 @@ import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
  * This class implements the Level2 logging component of the GreqlEvaluator. It
  * logs average values for selectivity, input and result size of the vertextypes
  * in the GReQL Syntaxgraph.
- * 
+ *
  * It is thread-safe, meaning that many {@link GreqlEvaluator}s can evaluate
  * different queries in parallel with logging enabled. If more than one logger
  * need to read and store to a logfile, the second logger will be blocked until
  * the first one stores the logfile. To make this work, be sure that a logger
  * lifetime looks like this.<br>
  * <br>
- * 
+ *
  * <code>
  * EvaluationLogger logger = new Level2Logger(loggerDirectory, dataGraph, LoggingType.SCHEMA);<br>
  * ...<br>
@@ -60,9 +60,9 @@ import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
  * ...<br>
  * logger.store();<br>
  * </code>
- * 
+ *
  * Any additional store() will return false and nothing will be written anymore.
- * 
+ *
  * @author ist@uni-koblenz.de
  * @author ist@uni-koblenz.de
  */
@@ -91,7 +91,7 @@ public class Level2Logger extends Level2LoggingBase implements EvaluationLogger 
 
 	/**
 	 * Creates a new {@link Level2Logger}
-	 * 
+	 *
 	 * @param logDirectory
 	 *            the directory where the log should be stored
 	 * @param dataGraph
@@ -106,7 +106,7 @@ public class Level2Logger extends Level2LoggingBase implements EvaluationLogger 
 		this();
 		loggerDirectory = logDirectory;
 		if (dataGraph != null) {
-			schemaName = dataGraph.getSchema().getSimpleName();
+			schemaName = dataGraph.getSchema().getQualifiedName();
 			dataGraphId = dataGraph.getId();
 		}
 		this.loggingType = loggingType;
@@ -124,7 +124,7 @@ public class Level2Logger extends Level2LoggingBase implements EvaluationLogger 
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see de.uni_koblenz.jgralab.greql2.evaluator.logging.EvaluationLogger#logSelectivity(java.lang.String,
 	 *      boolean)
 	 */
@@ -135,15 +135,16 @@ public class Level2Logger extends Level2LoggingBase implements EvaluationLogger 
 			entry = new SimpleLogEntry(name);
 			selectivity.put(entry.getName(), entry);
 		}
-		if (wasSelected)
+		if (wasSelected) {
 			entry.logSum(1);
-		else
+		} else {
 			entry.logSum(0);
+		}
 	}
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see de.uni_koblenz.jgralab.greql2.evaluator.logging.EvaluationLogger#logResultSize(java.lang.String,
 	 *      long)
 	 */
@@ -159,7 +160,7 @@ public class Level2Logger extends Level2LoggingBase implements EvaluationLogger 
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see de.uni_koblenz.jgralab.greql2.evaluator.logging.EvaluationLogger#logInputSize(java.lang.String,
 	 *      java.util.ArrayList)
 	 */
@@ -175,7 +176,7 @@ public class Level2Logger extends Level2LoggingBase implements EvaluationLogger 
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see de.uni_koblenz.jgralab.greql2.evaluator.logging.EvaluationLogger#store()
 	 */
 	@Override
@@ -236,7 +237,7 @@ public class Level2Logger extends Level2LoggingBase implements EvaluationLogger 
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see de.uni_koblenz.jgralab.greql2.evaluator.logging.EvaluationLogger#getLogfileName()
 	 */
 	@Override
@@ -246,7 +247,7 @@ public class Level2Logger extends Level2LoggingBase implements EvaluationLogger 
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see de.uni_koblenz.jgralab.greql2.evaluator.logging.EvaluationLogger#load()
 	 */
 	@Override

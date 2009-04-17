@@ -62,7 +62,7 @@ public class AttributedElementCodeGenerator extends CodeGenerator {
 		aec = attributedElementClass;
 		rootBlock.setVariable("ecName", aec.getSimpleName());
 		rootBlock.setVariable("qualifiedClassName", aec.getQualifiedName());
-		rootBlock.setVariable("schemaName", aec.getSchema().getSimpleName());
+		rootBlock.setVariable("schemaName", aec.getSchema().getName());
 		rootBlock.setVariable("schemaVariableName", aec.getVariableName());
 		rootBlock.setVariable("javaClassName", schemaRootPackageName + "."
 				+ aec.getQualifiedName());

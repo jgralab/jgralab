@@ -28,64 +28,26 @@ import de.uni_koblenz.jgralab.codegenerator.CodeBlock;
 import de.uni_koblenz.jgralab.codegenerator.CodeSnippet;
 import de.uni_koblenz.jgralab.schema.DoubleDomain;
 import de.uni_koblenz.jgralab.schema.Package;
-import de.uni_koblenz.jgralab.schema.QualifiedName;
 import de.uni_koblenz.jgralab.schema.Schema;
-import de.uni_koblenz.jgralab.schema.exception.DuplicateNamedElementException;
-import de.uni_koblenz.jgralab.schema.exception.SchemaException;
 
-public class DoubleDomainImpl extends BasicDomainImpl implements DoubleDomain {
-	// private static DoubleDomainImpl instance = new DoubleDomainImpl();
+public final class DoubleDomainImpl extends BasicDomainImpl implements
+		DoubleDomain {
 
-	// public static DoubleDomainImpl instance() {
-	// return instance;
-	// }
-
-	public DoubleDomainImpl(Schema schema) throws SchemaException {
-		QualifiedName qName = new QualifiedName("Double");
-		if (schema.getDomain(qName) != null) {
-			throw new DuplicateNamedElementException(
-					"Cannot create another DoubleDomain for Schema "
-							+ schema.getQualifiedName());
-		}
-		initialize(schema, qName);
+	DoubleDomainImpl(Schema schema) {
+		super(DOUBLEDOMAIN_NAME, schema.getDefaultPackage());
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see jgralab.Domain#toJavaString()
-	 */
 	@Override
 	public String getJavaAttributeImplementationTypeName(
 			String schemaRootPackagePrefix) {
-		return "double";
+		return DOUBLEDOMAIN_NAME.toLowerCase();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see jgralab.Domain#toJavaStringNonPrimitive()
-	 */
 	@Override
 	public String getJavaClassName(String schemaRootPackagePrefix) {
-		return "Double";
+		return DOUBLEDOMAIN_NAME;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see jgralab.Domain#toTGString()
-	 */
-	@Override
-	public String getTGTypeName(Package pkg) {
-		return "Double";
-	}
-
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see jgralab.Domain#getReadMethod(java.lang.String, java.lang.String)
-	 */
 	@Override
 	public CodeBlock getReadMethod(String schemaPrefix, String variableName,
 			String graphIoVariableName) {
@@ -93,11 +55,11 @@ public class DoubleDomainImpl extends BasicDomainImpl implements DoubleDomain {
 				+ ".matchDouble();");
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see jgralab.Domain#getWriteMethod(java.lang.String, java.lang.String)
-	 */
+	@Override
+	public String getTGTypeName(Package pkg) {
+		return DOUBLEDOMAIN_NAME;
+	}
+
 	@Override
 	public CodeBlock getWriteMethod(String schemaRootPackagePrefix,
 			String variableName, String graphIoVariableName) {

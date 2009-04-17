@@ -34,63 +34,10 @@ import de.uni_koblenz.jgralab.codegenerator.CodeSnippet;
 import de.uni_koblenz.jgralab.schema.Domain;
 import de.uni_koblenz.jgralab.schema.ListDomain;
 import de.uni_koblenz.jgralab.schema.Package;
-import de.uni_koblenz.jgralab.schema.QualifiedName;
 import de.uni_koblenz.jgralab.schema.Schema;
 
-public class ListDomainImpl extends CollectionDomainImpl implements ListDomain {
-
-	/**
-	 * @param aBaseDomain
-	 *            the base domain for the list
-	 */
-	public ListDomainImpl(Schema schema, QualifiedName qn, Domain aBaseDomain) {
-		super(schema, qn, aBaseDomain);
-	}
-
-	public ListDomainImpl(Schema schema, Domain aBaseDomain) {
-		this(schema, new QualifiedName("List<"
-				+ aBaseDomain.getTGTypeName(schema.getDefaultPackage()) + ">"),
-				aBaseDomain);
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see jgralab.Domain#toJavaString()
-	 */
-	public String getJavaAttributeImplementationTypeName(
-			String schemaRootPackagePrefix) {
-		return "java.util.List<"
-				+ baseDomain.getJavaClassName(schemaRootPackagePrefix) + ">";
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see java.lang.Object#toString()
-	 */
-	@Override
-	public String toString() {
-		return "domain List<" + baseDomain.toString() + ">";
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see jgralab.Domain#toJavaStringNonPrimitive()
-	 */
-	public String getJavaClassName(String schemaRootPackagePrefix) {
-		return getJavaAttributeImplementationTypeName(schemaRootPackagePrefix);
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see jgralab.Domain#toJGString()
-	 */
-	public String getTGTypeName(Package pkg) {
-		return "List<" + baseDomain.getTGTypeName(pkg) + ">";
-	}
+public final class ListDomainImpl extends CollectionDomainImpl implements
+		ListDomain {
 
 	/**
 	 * @param aList
@@ -101,11 +48,31 @@ public class ListDomainImpl extends CollectionDomainImpl implements ListDomain {
 		return new HashSet<Object>(aList);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see jgralab.Domain#getReadMethod(java.lang.String, java.lang.String)
-	 */
+	ListDomainImpl(Schema schema, Domain aBaseDomain) {
+		super(LISTDOMAIN_NAME + "<"
+				+ aBaseDomain.getTGTypeName(schema.getDefaultPackage()) + ">",
+				schema.getDefaultPackage(), aBaseDomain);
+	}
+
+	@Override
+	public Set<Domain> getAllComponentDomains() {
+		HashSet<Domain> componentDomainSet = new HashSet<Domain>(1);
+		componentDomainSet.add(baseDomain);
+		return componentDomainSet;
+	}
+
+	@Override
+	public String getJavaAttributeImplementationTypeName(
+			String schemaRootPackagePrefix) {
+		return "java.util." + LISTDOMAIN_NAME + "<"
+				+ baseDomain.getJavaClassName(schemaRootPackagePrefix) + ">";
+	}
+
+	@Override
+	public String getJavaClassName(String schemaRootPackagePrefix) {
+		return getJavaAttributeImplementationTypeName(schemaRootPackagePrefix);
+	}
+
 	@Override
 	public CodeBlock getReadMethod(String schemaPrefix, String variableName,
 			String graphIoVariableName) {
@@ -141,11 +108,11 @@ public class ListDomainImpl extends CollectionDomainImpl implements ListDomain {
 		return code;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see jgralab.Domain#getReadMethod(java.lang.String, java.lang.String)
-	 */
+	@Override
+	public String getTGTypeName(Package pkg) {
+		return LISTDOMAIN_NAME + "<" + baseDomain.getTGTypeName(pkg) + ">";
+	}
+
 	@Override
 	public CodeBlock getWriteMethod(String schemaRootPackagePrefix,
 			String variableName, String graphIoVariableName) {
@@ -172,35 +139,8 @@ public class ListDomainImpl extends CollectionDomainImpl implements ListDomain {
 	}
 
 	@Override
-	public Set<Domain> getAllComponentDomains() {
-		HashSet<Domain> componentDomainSet = new HashSet<Domain>(1);
-		componentDomainSet.add(baseDomain);
-		return componentDomainSet;
+	public String toString() {
+		return "domain " + LISTDOMAIN_NAME + "<" + baseDomain.toString() + ">";
 	}
 
-	@Override
-	public boolean equals(Object o) {
-		if (this == o) {
-			return true;
-		}
-
-		if (!(o instanceof ListDomain)) {
-			return false;
-		}
-
-		ListDomain other = (ListDomain) o;
-		return baseDomain.equals(other.getBaseDomain());
-	}
-
-	@Override
-	public void setPackage(Package p) {
-		throw new UnsupportedOperationException(
-				"The package of a ListDomain may not be changed.");
-	}
-
-	@Override
-	public void setUniqueName(String newUniqueName) {
-		throw new UnsupportedOperationException(
-				"The unique name of a ListDomain may not be changed.");
-	}
 }

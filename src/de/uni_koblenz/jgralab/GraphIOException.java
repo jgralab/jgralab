@@ -27,7 +27,7 @@ package de.uni_koblenz.jgralab;
 /**
  * exceptions of this class are thrown if an error occurs while loading or
  * storing of schema and graph in tg file format
- *
+ * 
  * @author ist@uni-koblenz.de
  */
 public class GraphIOException extends Exception {

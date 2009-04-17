@@ -31,6 +31,8 @@ package de.uni_koblenz.jgralab.schema;
  */
 public interface AggregationClass extends EdgeClass {
 
+	public static final String DEFAULTAGGREGATIONCLASS_NAME = "Aggregation";
+
 	/**
 	 * @return true, if from-side is an aggregation
 	 */

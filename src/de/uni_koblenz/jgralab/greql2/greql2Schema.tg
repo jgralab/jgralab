@@ -179,6 +179,6 @@ AggregationClass IsTypeExprOfFunction: IsTypeExprOf from Expression (0,1) to Fun
 AggregationClass IsTypeIdOf: Greql2Aggregation from TypeId (0,1) to EdgeRestriction (0,*) aggregate to;
 AggregationClass IsTypeRestrOf: Greql2Aggregation from TypeId (0,*) to Expression (0,*) aggregate to;
 AggregationClass IsVarOf: Greql2Aggregation from Variable (1,1) to Definition (0,1) aggregate to;
-abstract AggregationClass Greql2Aggregation from Vertex (0,*) to Vertex (0,*) aggregate to { sourcePositions: List<SourcePosition> };
-abstract AggregationClass IsBoundExprOf: Greql2Aggregation from Expression (1,1) to Vertex (0,*) aggregate to;
-abstract AggregationClass IsTypeExprOf: Greql2Aggregation from Expression (0,*) to Vertex (0,*) aggregate to;
+abstract AggregationClass Greql2Aggregation from Greql2Vertex (0,*) to Greql2Vertex (0,*) aggregate to { sourcePositions: List<SourcePosition> };
+abstract AggregationClass IsBoundExprOf: Greql2Aggregation from Expression (1,1) to Greql2Vertex (0,*) aggregate to;
+abstract AggregationClass IsTypeExprOf: Greql2Aggregation from Expression (0,*) to Greql2Vertex (0,*) aggregate to;

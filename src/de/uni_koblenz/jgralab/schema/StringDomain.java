@@ -31,4 +31,5 @@ package de.uni_koblenz.jgralab.schema;
  */
 public interface StringDomain extends BasicDomain {
 
+	public static final String STRINGDOMAIN_NAME = "String";
 }

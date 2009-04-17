@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package de.uni_koblenz.jgralab.greql2.evaluator.logging;
 
@@ -17,9 +17,9 @@ import de.uni_koblenz.jgralab.schema.Schema;
  * responsible for creating logs (in a thread-safe way), whereas this log reader
  * reads the logs and provides informations about the average input and result
  * sizes of {@link Greql2Vertex}s and the average selectivity.
- * 
+ *
  * @author ist@uni-koblenz.de
- * 
+ *
  */
 public class Level2LogReader extends Level2LoggingBase implements
 		EvaluationLogReader {
@@ -35,7 +35,7 @@ public class Level2LogReader extends Level2LoggingBase implements
 
 	/**
 	 * Creates a new {@link Level2LogReader}.
-	 * 
+	 *
 	 * @param logDirectory
 	 *            the directory where the corresponding {@link Level2Logger}
 	 *            stored the logfiles
@@ -69,7 +69,7 @@ public class Level2LogReader extends Level2LoggingBase implements
 	 * Creates a new {@link Level2LogReader} that uses the same values for
 	 * logDirectory, schemaName, graphId and loggingType as the given
 	 * {@link Level2Logger}.
-	 * 
+	 *
 	 * @param l2logger
 	 *            the {@link Level2Logger} which's values to use
 	 */
@@ -93,7 +93,7 @@ public class Level2LogReader extends Level2LoggingBase implements
 	 * Creates a new {@link Level2LogReader} which can read logfiles for
 	 * {@link LoggingType#GENERIC} and {@link LoggingType#SCHEMA}, but no
 	 * datagraph specific logfiles.
-	 * 
+	 *
 	 * @param logDirectory
 	 *            the directory where the corresponding {@link Level2Logger}
 	 *            stored the logfiles
@@ -110,7 +110,7 @@ public class Level2LogReader extends Level2LoggingBase implements
 		this();
 		loggerDirectory = logDirectory;
 		if (schema != null) {
-			schemaName = schema.getSimpleName();
+			schemaName = schema.getQualifiedName();
 		}
 		this.loggingType = loggingType;
 
@@ -126,7 +126,7 @@ public class Level2LogReader extends Level2LoggingBase implements
 	/**
 	 * A shorthand for
 	 * <code>new Level2LogReader(logDir, null, LoggingType.GENERIC);</code>
-	 * 
+	 *
 	 * @param logDirectory
 	 *            the directory where the corresponding {@link Level2Logger}
 	 *            stored the logfiles
@@ -147,7 +147,7 @@ public class Level2LogReader extends Level2LoggingBase implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @seede.uni_koblenz.jgralab.greql2.evaluator.logging.EvaluationLogReader#
 	 * getAvgSelectivity(java.lang.String)
 	 */
@@ -163,7 +163,7 @@ public class Level2LogReader extends Level2LoggingBase implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @seede.uni_koblenz.jgralab.greql2.evaluator.logging.EvaluationLogReader#
 	 * getAvgResultSize(java.lang.String)
 	 */
@@ -179,7 +179,7 @@ public class Level2LogReader extends Level2LoggingBase implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @seede.uni_koblenz.jgralab.greql2.evaluator.logging.EvaluationLogReader#
 	 * getAvgInputSize(java.lang.String)
 	 */

@@ -28,41 +28,24 @@ import de.uni_koblenz.jgralab.codegenerator.CodeBlock;
 import de.uni_koblenz.jgralab.codegenerator.CodeSnippet;
 import de.uni_koblenz.jgralab.schema.BooleanDomain;
 import de.uni_koblenz.jgralab.schema.Package;
-import de.uni_koblenz.jgralab.schema.QualifiedName;
 import de.uni_koblenz.jgralab.schema.Schema;
-import de.uni_koblenz.jgralab.schema.exception.DuplicateNamedElementException;
 
-public class BooleanDomainImpl extends BasicDomainImpl implements BooleanDomain {
-	// private static BooleanDomainImpl instance = new BooleanDomainImpl();
+public final class BooleanDomainImpl extends BasicDomainImpl implements
+		BooleanDomain {
 
-	// public static BooleanDomainImpl instance() {
-	// return instance;
-	// }
-	//
-	public BooleanDomainImpl(Schema schema) {
-		QualifiedName qName = new QualifiedName("Boolean");
-		if (schema.getDomain(qName) != null) {
-			throw new DuplicateNamedElementException(
-					"Cannot create another BooleanDomain for Schema "
-							+ schema.getQualifiedName());
-		}
-		initialize(schema, qName);
+	BooleanDomainImpl(Schema schema) {
+		super(BOOLEANDOMAIN_NAME, schema.getDefaultPackage());
 	}
 
 	@Override
 	public String getJavaAttributeImplementationTypeName(
 			String schemaRootPackagePrefix) {
-		return "boolean";
+		return BOOLEANDOMAIN_NAME.toLowerCase();
 	}
 
 	@Override
 	public String getJavaClassName(String schemaRootPackagePrefix) {
-		return "Boolean";
-	}
-
-	@Override
-	public String getTGTypeName(Package pkg) {
-		return "Boolean";
+		return BOOLEANDOMAIN_NAME;
 	}
 
 	@Override
@@ -70,6 +53,11 @@ public class BooleanDomainImpl extends BasicDomainImpl implements BooleanDomain 
 			String graphIoVariableName) {
 		return new CodeSnippet(variableName + " = " + graphIoVariableName
 				+ ".matchBoolean();");
+	}
+
+	@Override
+	public String getTGTypeName(Package pkg) {
+		return BOOLEANDOMAIN_NAME;
 	}
 
 	@Override

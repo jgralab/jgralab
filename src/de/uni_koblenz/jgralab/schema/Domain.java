@@ -31,36 +31,10 @@ import de.uni_koblenz.jgralab.codegenerator.CodeBlock;
  * 
  * @author ist@uni-koblenz.de
  */
-public interface Domain extends NamedElement {
-	/**
-	 * Sets the package of this Domain to <code>p</code>.
-	 * 
-	 * @param p
-	 *            the package of this Domain.
-	 */
-	public void setPackage(Package p);
+public interface Domain extends NamedElement, Comparable<Domain> {
 
 	/**
-	 * @return the package of this Domain, may be <code>null</code> for
-	 *         domains not associated to a package.
-	 */
-	public Package getPackage();
-
-	/**
-	 * @return true if this domain is a composite domain
-	 */
-	public boolean isComposite();
-
-	/**
-	 * @param o
-	 *            the domain which is to be compared
-	 * @return true, if domains are equal
-	 */
-	public boolean equals(Object o);
-
-	/**
-	 * example: int for integer List<Boolean> for a list with basedomain
-	 * boolean
+	 * example: int for integer List<Boolean> for a list with basedomain boolean
 	 * 
 	 * @return java representation of this attribute
 	 */
@@ -76,11 +50,11 @@ public interface Domain extends NamedElement {
 	public String getJavaClassName(String schemaRootPackagePrefix);
 
 	/**
-	 * example: List<Boolean> returns "list with basedomain boolean"
-	 * 
-	 * @return a textual representation of this attribute
+	 * @return a code fragment to read a value of this domain from the GraphIO
+	 *         object named graphIoVariablename into the variableName
 	 */
-	public String toString();
+	public CodeBlock getReadMethod(String schemaPrefix, String variableName,
+			String graphIoVariableName);
 
 	/**
 	 * example: List<String>
@@ -90,16 +64,14 @@ public interface Domain extends NamedElement {
 	public String getTGTypeName(Package pkg);
 
 	/**
-	 * @return a code fragment to read a value of this domain from the GraphIO
-	 *         object named graphIoVariablename into the variableName
-	 */
-	public CodeBlock getReadMethod(String schemaPrefix, String variableName,
-			String graphIoVariableName);
-
-	/**
 	 * @return a code fragment to write a value of this domain to the GraphIO
 	 *         oject named graphIoVariablename into the variableName
 	 */
 	public CodeBlock getWriteMethod(String schemaRootPackagePrefix,
 			String variableName, String graphIoVariableName);
+
+	/**
+	 * @return true if this domain is a composite domain
+	 */
+	public boolean isComposite();
 }

@@ -29,47 +29,178 @@ import java.util.TreeMap;
 
 import de.uni_koblenz.jgralab.schema.Domain;
 import de.uni_koblenz.jgralab.schema.EdgeClass;
+import de.uni_koblenz.jgralab.schema.GraphClass;
 import de.uni_koblenz.jgralab.schema.Package;
-import de.uni_koblenz.jgralab.schema.QualifiedName;
 import de.uni_koblenz.jgralab.schema.Schema;
 import de.uni_koblenz.jgralab.schema.VertexClass;
-import de.uni_koblenz.jgralab.schema.exception.InvalidNameException;
+import de.uni_koblenz.jgralab.schema.exception.SchemaException;
 
-public class PackageImpl implements Package {
-	private QualifiedName qName;
-	private Package parentPackage;
-	private Schema schema;
+public final class PackageImpl extends NamedElementImpl implements Package {
 
-	private Map<String, Package> subPackages;
-	private Map<String, Domain> domains;
-	private Map<String, EdgeClass> edgeClasses;
-	private Map<String, VertexClass> vertexClasses;
+	private final Map<String, Domain> domains = new TreeMap<String, Domain>();
 
-	public static Package createDefaultPackage(Schema schema) {
-		return new PackageImpl("", null, schema);
+	private final Map<String, EdgeClass> edgeClasses = new TreeMap<String, EdgeClass>();
+
+	private final Map<String, GraphClass> graphClasses = new TreeMap<String, GraphClass>();
+
+	private final Schema schema;
+
+	private final Map<String, Package> subPackages = new TreeMap<String, Package>();
+
+	private final Map<String, VertexClass> vertexClasses = new TreeMap<String, VertexClass>();
+
+	/**
+	 * Creates a new <code>DefaultPackage</code> in the given Schema.
+	 *
+	 * <p>
+	 * <b>Pattern:</b>
+	 * <code>p = PackageImpl.createDefaultPackage(schema);</code>
+	 * </p>
+	 *
+	 * <p>
+	 * <b>Preconditions:</b> none<br/>
+	 * </p>
+	 *
+	 * <p>
+	 * <b>Postconditions:</b> p is the newly created <code>DefaultPackage</code>
+	 * for this schema
+	 * </p>
+	 *
+	 * @param schema
+	 *            the schema containing the new <code>DefaultPackage</code>
+	 * @return the newly created <code>DefaultPackage</code> for the given
+	 *         schema
+	 * @throws SchemaException
+	 *             if the <code>DefaultPackage</code> already exists in the
+	 *             given schema
+	 */
+	static Package createDefaultPackage(Schema schema) {
+		assert schema.getDefaultPackage() == null : "DefaultPackage already created!";
+		return new PackageImpl(schema);
 	}
 
-	private PackageImpl(String simpleName, Package ParentPackage, Schema schema) {
-		this.parentPackage = ParentPackage;
+	/**
+	 * Constructor for the default package
+	 *
+	 * @param schema
+	 */
+	private PackageImpl(Schema schema) {
+		this(Package.DEFAULTPACKAGE_NAME, null, schema);
+	}
+
+	PackageImpl(String simpleName, Package parentPackage, Schema schema) {
+		super(simpleName, parentPackage, schema);
 		this.schema = schema;
-		if (parentPackage == null) {
-			if (!simpleName.equals("")) {
-				throw new InvalidNameException(
-						"the default package must have an empty name");
-			}
-			qName = new QualifiedName(simpleName);
-		} else {
-			if (simpleName.equals("")) {
-				throw new InvalidNameException(
-						"the simpleName of nested packages must not be empty");
-			}
-			qName = new QualifiedName(parentPackage.getQualifiedName()
-					.toString(), simpleName);
+		register();
+	}
+
+	@Override
+	protected void register() {
+		if (parentPackage != null) {
+			((PackageImpl) parentPackage).addSubPackage(this);
 		}
-		domains = new TreeMap<String, Domain>();
-		edgeClasses = new TreeMap<String, EdgeClass>();
-		vertexClasses = new TreeMap<String, VertexClass>();
-		subPackages = new TreeMap<String, Package>();
+		((SchemaImpl) schema).addPackage(this);
+	}
+
+	void addDomain(Domain dom) {
+		assert dom.getPackage() == this : "The domain does not belong into this package ("
+				+ getQualifiedName()
+				+ "). It belongs here: "
+				+ dom.getPackageName();
+		assert !domains.containsKey(dom.getSimpleName())
+				&& !domains.containsValue(dom) : "This package ("
+				+ getQualifiedName() + ") already contains a domain called "
+				+ dom.getSimpleName();
+		domains.put(dom.getSimpleName(), dom);
+	}
+
+	/**
+	 * Adds the EdgeClass <code>ec</code> to this Package.
+	 *
+	 * @param ec
+	 *            an EdgeClass
+	 */
+	void addEdgeClass(EdgeClass ec) {
+		assert ec.getPackage() == this : "The edge class '"
+				+ ec.getQualifiedName()
+				+ "' does not belong into the package '" + getQualifiedName()
+				+ "' but into '" + ec.getPackageName() + "'.";
+		assert !edgeClasses.containsKey(ec.getSimpleName())
+				&& !edgeClasses.containsValue(ec) : "This package ("
+				+ getQualifiedName()
+				+ ") already contains an edge class called "
+				+ ec.getSimpleName();
+		edgeClasses.put(ec.getSimpleName(), ec);
+	}
+
+	/**
+	 * Adds the GraphClass gc to this Package. This action is only allowed, if
+	 * this package is the DefaultPackage.
+	 */
+	void addGraphClass(GraphClass gc) {
+		if (!isDefaultPackage()) {
+			throw new SchemaException(
+					"The GraphClass must be situated in the DefaultPackage.");
+		}
+		assert !graphClasses.containsKey(gc.getSimpleName())
+				&& !graphClasses.containsValue(gc) : "This package ("
+				+ getQualifiedName()
+				+ ") already contains a graph class called "
+				+ gc.getSimpleName();
+
+		graphClasses.put(gc.getQualifiedName(), gc);
+	}
+
+	/**
+	 * Adds the subpackage <code>subPkg</code> to this Package.
+	 *
+	 * @param subPkg
+	 *            a subpackage
+	 */
+	void addSubPackage(Package subPkg) {
+		assert subPkg.getPackage() == this : "The subpackage does not belong into the package '"
+				+ getQualifiedName()
+				+ "' but into '"
+				+ subPkg.getPackageName()
+				+ "'.";
+		assert !subPackages.containsKey(subPkg.getSimpleName()) : "The package '"
+				+ getQualifiedName()
+				+ "' already contains a subpackage called '"
+				+ subPkg.getSimpleName() + "'.";
+		subPackages.put(subPkg.getSimpleName(), subPkg);
+	}
+
+	/**
+	 * Adds the VertexClass <code>vc</code> to this Package.
+	 *
+	 * @param vc
+	 *            a VertexClass
+	 */
+	void addVertexClass(VertexClass vc) {
+		assert vc != null : "The given VertexClass is null.";
+		assert vc.getPackage() == this : "The vertex class '"
+				+ vc.getQualifiedName()
+				+ "' does not belong into the package '" + getQualifiedName()
+				+ "' but into '" + vc.getPackageName() + "'";
+		assert !vertexClasses.containsKey(vc.getSimpleName())
+				&& !vertexClasses.containsValue(vc) : "This package ("
+				+ getQualifiedName()
+				+ ") already contains a vertex class called \""
+				+ vc.getSimpleName() + "\"";
+		vertexClasses.put(vc.getSimpleName(), vc);
+	}
+
+	@Override
+	public int compareTo(Package other) {
+		return this.qualifiedName.compareTo(other.getQualifiedName());
+	}
+
+	@Override
+	public boolean containsNamedElement(String sn) {
+		return domains.containsKey(sn)
+				|| edgeClasses.containsKey(sn)
+				|| (isDefaultPackage() && schema.getDefaultGraphClass() != null)
+				|| vertexClasses.containsKey(sn) || subPackages.containsKey(sn);
 	}
 
 	@Override
@@ -83,8 +214,18 @@ public class PackageImpl implements Package {
 	}
 
 	@Override
-	public Package getParentPackage() {
-		return parentPackage;
+	public Map<String, GraphClass> getGraphClasses() {
+		return graphClasses;
+	}
+
+	@Override
+	public Schema getSchema() {
+		return schema;
+	}
+
+	@Override
+	public Package getSubPackage(String sn) {
+		return subPackages.get(sn);
 	}
 
 	@Override
@@ -99,88 +240,11 @@ public class PackageImpl implements Package {
 
 	@Override
 	public boolean isDefaultPackage() {
-		return parentPackage == null;
+		return this == schema.getDefaultPackage();
 	}
 
 	@Override
-	public String getUniqueName() {
-		return qName.getUniqueName();
+	public String toString() {
+		return "package " + qualifiedName;
 	}
-
-	@Override
-	public void setUniqueName(String uniqueName) {
-		qName.setUniqueName(this, uniqueName);
-	}
-
-	@Override
-	public String getPackageName() {
-		return qName.getPackageName();
-	}
-
-	@Override
-	public String getQualifiedName() {
-		return qName.getQualifiedName();
-	}
-
-	@Override
-	public String getQualifiedName(Package pkg) {
-		throw new UnsupportedOperationException();
-	}
-
-	@Override
-	public String getSimpleName() {
-		return qName.getSimpleName();
-	}
-
-	@Override
-	public Package createSubPackage(String simpleName) {
-		if (isDefaultPackage() && simpleName.equals(SchemaImpl.IMPLPACKAGENAME)) {
-			throw new InvalidNameException("the package name '" + simpleName
-					+ "' is forbidden as top level package");
-		}
-		Package p = getSubPackage(simpleName);
-		if (p == null) {
-			p = new PackageImpl(simpleName, this, schema);
-			subPackages.put(simpleName, p);
-			schema.addPackage(p);
-		}
-		return p;
-	}
-
-	@Override
-	public boolean containsSubPackage(String simpleName) {
-		return subPackages.keySet().contains(simpleName);
-	}
-
-	@Override
-	public Package getSubPackage(String simpleName) {
-		return subPackages.get(simpleName);
-	}
-
-	@Override
-	public Schema getSchema() {
-		return schema;
-	}
-
-	@Override
-	public void addDomain(Domain dom) {
-		domains.put(dom.getSimpleName(), dom);
-
-	}
-
-	@Override
-	public void addEdgeClass(EdgeClass ec) {
-		edgeClasses.put(ec.getSimpleName(), ec);
-	}
-
-	@Override
-	public void addVertexClass(VertexClass vc) {
-		vertexClasses.put(vc.getSimpleName(), vc);
-	}
-
-	@Override
-	public QualifiedName getQName() {
-		return qName;
-	}
-
 }

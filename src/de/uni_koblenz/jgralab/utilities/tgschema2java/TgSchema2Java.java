@@ -151,13 +151,12 @@ public class TgSchema2Java {
 
 	private boolean deleteFolder(String path) {
 		File folder = new File(path);
-		File file = new File(path);
 
 		if (!folder.exists()) {
 			return false;
 		}
 		for (String filename : folder.list()) {
-			file = new File(path + File.separator + filename);
+			File file = new File(path + File.separator + filename);
 			if (file.isDirectory()) {
 				deleteFolder(file.getPath());
 			} else {
@@ -200,18 +199,18 @@ public class TgSchema2Java {
 	 */
 	private boolean isExistingSchema(Schema schema) {
 		String pathName;
-		String schemaPath = schema.getQName().getPathName();
+		String schemaPath = schema.getPathName();
 		Set<String> existingFilePaths = getGeneratedFilePaths(commitPath
 				+ File.separator + schemaPath);
 		Set<String> requiredFilePaths = new HashSet<String>();
 
 		requiredFilePaths.add(commitPath + File.separator
-				+ schema.getQName().getFileName() + ".java");
+				+ schema.getFileName() + ".java");
 		requiredFilePaths.add(commitPath + File.separator
-				+ schema.getQName().getPathName() + File.separator + "impl"
-				+ File.separator + schema.getSimpleName() + "Factory.java");
+				+ schema.getPathName() + File.separator + "impl"
+				+ File.separator + schema.getName() + "Factory.java");
 		for (Domain d : schema.getDomains().values()) {
-			pathName = d.getQName().getPathName();
+			pathName = d.getPathName();
 
 			if (pathName != "") {
 				pathName = pathName.concat(File.separator);
@@ -224,32 +223,26 @@ public class TgSchema2Java {
 			}
 		}
 
-		for (GraphClass gc : schema.getGraphClassesInTopologicalOrder()) {
-			if (!gc.isInternal()) {
-				requiredFilePaths.add(commitPath + File.separator + schemaPath
-						+ File.separator + gc.getQName().getFileName()
-						+ ".java");
-				if (!gc.isAbstract()) {
-					pathName = gc.getQName().getPathName();
+		GraphClass gc = schema.getGraphClass();
+		requiredFilePaths.add(commitPath + File.separator + schemaPath
+				+ File.separator + gc.getFileName() + ".java");
+		if (!gc.isAbstract()) {
+			pathName = gc.getPathName();
 
-					if (pathName != "") {
-						pathName = pathName.concat(File.separator);
-					}
-					requiredFilePaths.add(commitPath + File.separator
-							+ schemaPath + File.separator + "impl"
-							+ File.separator + pathName + gc.getSimpleName()
-							+ "Impl.java");
-				}
+			if (pathName != "") {
+				pathName = pathName.concat(File.separator);
 			}
+			requiredFilePaths.add(commitPath + File.separator + schemaPath
+					+ File.separator + "impl" + File.separator + pathName
+					+ gc.getSimpleName() + "Impl.java");
 		}
 
 		for (VertexClass vc : schema.getVertexClassesInTopologicalOrder()) {
 			if (!vc.isInternal()) {
 				requiredFilePaths.add(commitPath + File.separator + schemaPath
-						+ File.separator + vc.getQName().getFileName()
-						+ ".java");
+						+ File.separator + vc.getFileName() + ".java");
 				if (!vc.isAbstract()) {
-					pathName = vc.getQName().getPathName();
+					pathName = vc.getPathName();
 
 					if (pathName != "") {
 						pathName = pathName.concat(File.separator);
@@ -261,13 +254,13 @@ public class TgSchema2Java {
 				}
 			}
 		}
+
 		for (EdgeClass ec : schema.getEdgeClassesInTopologicalOrder()) {
 			if (!ec.isInternal()) {
 				requiredFilePaths.add(commitPath + File.separator + schemaPath
-						+ File.separator + ec.getQName().getFileName()
-						+ ".java");
+						+ File.separator + ec.getFileName() + ".java");
 				if (!ec.isAbstract()) {
-					pathName = ec.getQName().getPathName();
+					pathName = ec.getPathName();
 
 					if (pathName != "") {
 						pathName = pathName.concat(File.separator);
@@ -291,7 +284,6 @@ public class TgSchema2Java {
 				|| !requiredFilePaths.containsAll(existingFilePaths)) {
 			return false;
 		}
-
 		return true;
 	}
 
@@ -378,7 +370,7 @@ public class TgSchema2Java {
 	}
 
 	public void compile() throws Exception {
-		String packageFolder = schema.getQName().getPathName();
+		String packageFolder = schema.getPathName();
 		File folder = new File(commitPath + File.separator + packageFolder);
 		List<File> files1 = findFilesInDirectory(folder);
 
@@ -432,8 +424,7 @@ public class TgSchema2Java {
 				}
 			}
 			if (overwrite) {
-				deleteFolder(commitPath + File.separator
-						+ schema.getQName().getFileName());
+				deleteFolder(commitPath + File.separator + schema.getPathName());
 				System.out.println("Committing schema "
 						+ schema.getQualifiedName());
 				schema.commit(commitPath);
@@ -460,7 +451,7 @@ public class TgSchema2Java {
 	 */
 	private void generateJarFile() {
 		SchemaJarGenerator jarGenerator = new SchemaJarGenerator(commitPath,
-				schema.getQName().getFileName(), jarFileName);
+				schema.getFileName(), jarFileName);
 		try {
 			jarGenerator.createJar();
 		} catch (Exception ex) {

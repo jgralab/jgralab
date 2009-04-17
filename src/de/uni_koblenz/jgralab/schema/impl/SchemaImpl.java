@@ -34,7 +34,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
+import java.util.TreeSet;
 import java.util.Vector;
+import java.util.regex.Pattern;
 
 import javax.tools.FileObject;
 import javax.tools.ForwardingJavaFileManager;
@@ -64,363 +66,265 @@ import de.uni_koblenz.jgralab.codegenerator.SchemaCodeGenerator;
 import de.uni_koblenz.jgralab.codegenerator.VertexCodeGenerator;
 import de.uni_koblenz.jgralab.schema.AggregationClass;
 import de.uni_koblenz.jgralab.schema.AttributedElementClass;
+import de.uni_koblenz.jgralab.schema.BooleanDomain;
 import de.uni_koblenz.jgralab.schema.CompositeDomain;
 import de.uni_koblenz.jgralab.schema.CompositionClass;
 import de.uni_koblenz.jgralab.schema.Domain;
+import de.uni_koblenz.jgralab.schema.DoubleDomain;
 import de.uni_koblenz.jgralab.schema.EdgeClass;
 import de.uni_koblenz.jgralab.schema.EnumDomain;
 import de.uni_koblenz.jgralab.schema.GraphClass;
 import de.uni_koblenz.jgralab.schema.GraphElementClass;
+import de.uni_koblenz.jgralab.schema.IntDomain;
 import de.uni_koblenz.jgralab.schema.ListDomain;
+import de.uni_koblenz.jgralab.schema.LongDomain;
 import de.uni_koblenz.jgralab.schema.MapDomain;
 import de.uni_koblenz.jgralab.schema.NamedElement;
 import de.uni_koblenz.jgralab.schema.Package;
-import de.uni_koblenz.jgralab.schema.QualifiedName;
 import de.uni_koblenz.jgralab.schema.RecordDomain;
 import de.uni_koblenz.jgralab.schema.Schema;
 import de.uni_koblenz.jgralab.schema.SetDomain;
+import de.uni_koblenz.jgralab.schema.StringDomain;
 import de.uni_koblenz.jgralab.schema.VertexClass;
-import de.uni_koblenz.jgralab.schema.exception.DuplicateNamedElementException;
 import de.uni_koblenz.jgralab.schema.exception.InvalidNameException;
 import de.uni_koblenz.jgralab.schema.exception.M1ClassAccessException;
-import de.uni_koblenz.jgralab.schema.exception.ReservedWordException;
 import de.uni_koblenz.jgralab.schema.exception.SchemaException;
 
 /**
  * @author ist@uni-koblenz.de
  */
 public class SchemaImpl implements Schema {
+	/**
+	 * File Manager class overwriting the method {@code getJavaFileForOutput} so
+	 * that bytecode is written to a {@code ClassFileAbstraction}.
+	 *
+	 */
+	private class ClassFileManager extends
+			ForwardingJavaFileManager<JavaFileManager> {
+		Vector<JavaSourceFromString> sources;
 
-	private static final String GRAPHIMPLEMENTATIONPACKAGE = "array";
+		public ClassFileManager(JavaFileManager fm) {
+			super(fm);
+		}
+
+		@Override
+		public JavaFileObject getJavaFileForOutput(Location location,
+				String className, Kind kind, FileObject sibling) {
+			ClassFileAbstraction cfa = new ClassFileAbstraction(className);
+
+			M1ClassManager.instance().putM1Class(className, cfa);
+			return cfa;
+		}
+
+		public void setSources(Vector<JavaSourceFromString> sources) {
+			this.sources = sources;
+		}
+	}
+
+	private static final String GRAPH_IMPLEMENTATION_PACKAGE = "array";
+
+	static final Class<?>[] GRAPHCLASS_CREATE_SIGNATURE = { String.class,
+			int.class, int.class };
 
 	/**
 	 * This is the name of the package into which the implementation classes for
 	 * this schema are generated. The impl package is child of the package for
 	 * the Schema.
 	 */
-	public static final String IMPLPACKAGENAME = "impl";
+	public static final String IMPL_PACKAGE_NAME = "impl";
+
+	static final Class<?>[] VERTEX_CLASS_CREATE_SIGNATURE = { int.class };
 
 	/**
 	 * Toggles if the schema allows lowercase enumeration constants
 	 */
 	private boolean allowLowercaseEnumConstants = true;
 
-	private final QualifiedName qName;
-
-	private Map<QualifiedName, Package> packages;
-
-	private Map<QualifiedName, Domain> domains;
-
-	private Map<QualifiedName, GraphClass> graphClasses;
-
-	private Map<String, NamedElement> namedElements;
-
-	private Set<String> reservedUniqueNames;
-
-	private Package defaultPackage;
-
-	private EdgeClass defaultEdgeClass;
-
-	private VertexClass defaultVertexClass;
-
 	private AggregationClass defaultAggregationClass;
 
 	private CompositionClass defaultCompositionClass;
 
+	private EdgeClass defaultEdgeClass;
+
 	private GraphClass defaultGraphClass;
 
+	private Package defaultPackage;
+
+	private VertexClass defaultVertexClass;
+
+	/**
+	 * Maps from qualified name to the {@link Domain}.
+	 */
+	private Map<String, Domain> domains = new HashMap<String, Domain>();
+
+	/**
+	 * Holds a reference to the {@link GraphClass} of this schema (not the
+	 * default graph class {@link GraphClass})
+	 */
+	private GraphClass graphClass;
+
+	/**
+	 * The {@link GraphFactory} for this schemas {@link GraphClass}, see {
+	 * {@link #graphClass}.
+	 */
 	protected GraphFactory graphFactory;
 
-	@Override
-	public Schema getSchema() {
-		return this;
-	}
-
-	@Override
-	public void setUniqueName(String uniqueName) {
-		throw new InvalidNameException(
-				"It is not allowed to explicitly set the unique name of a schema");
-	}
-
-	@Override
-	public String getUniqueName() {
-		return qName.getUniqueName();
-	}
-
 	/**
-	 * builds a new schema
-	 *
-	 * @param qn
-	 *            the qualified name of the schema
+	 * The name of this schema without the package prefix.
 	 */
-	public SchemaImpl(QualifiedName qn) {
-		qName = qn;
-		if (qName.getPackageName().length() == 0) {
-			throw new InvalidNameException(
-					"package prefix of Schema must not be empty");
-		}
-		try {
-			packages = new TreeMap<QualifiedName, Package>();
-			defaultPackage = PackageImpl.createDefaultPackage(this);
-			addPackage(defaultPackage);
-			namedElements = new HashMap<String, NamedElement>();
-			reservedUniqueNames = new HashSet<String>();
-			domains = new HashMap<QualifiedName, Domain>();
-			graphClasses = new HashMap<QualifiedName, GraphClass>();
-			// addDomain(BooleanDomainImpl.instance());
-			// addDomain(IntDomainImpl.instance());
-			// addDomain(LongDomainImpl.instance());
-			// addDomain(StringDomainImpl.instance());
-			// addDomain(DoubleDomainImpl.instance());
-			// addDomain(ObjectDomainImpl.instance());
-			Domain domain;
-
-			// Adding BooleanDomain
-			domain = new BooleanDomainImpl(this);
-			addDomain(domain);
-			defaultPackage.addDomain(domain);
-
-			// Adding IntDomain
-			domain = new IntDomainImpl(this);
-			addDomain(domain);
-			defaultPackage.addDomain(domain);
-
-			// Adding LongDomain
-			domain = new LongDomainImpl(this);
-			addDomain(domain);
-			defaultPackage.addDomain(domain);
-
-			// Adding StringDomain
-			domain = new StringDomainImpl(this);
-			addDomain(domain);
-			defaultPackage.addDomain(domain);
-
-			// Adding DoubleDomain
-			domain = new DoubleDomainImpl(this);
-			addDomain(domain);
-			defaultPackage.addDomain(domain);
-
-			defaultGraphClass = createGraphClass(new QualifiedName("Graph"));
-			addToKnownElements(defaultGraphClass.getUniqueName(),
-					defaultGraphClass);
-			defaultGraphClass.setAbstract(true);
-
-			defaultVertexClass = defaultGraphClass
-					.createVertexClass(new QualifiedName("Vertex"));
-			addToKnownElements(defaultVertexClass.getUniqueName(),
-					defaultVertexClass);
-			defaultVertexClass.setAbstract(true);
-
-			defaultEdgeClass = defaultGraphClass.createEdgeClass(
-					new QualifiedName("Edge"), defaultVertexClass,
-					defaultVertexClass);
-			addToKnownElements(defaultEdgeClass.getUniqueName(),
-					defaultEdgeClass);
-			defaultEdgeClass.setAbstract(true);
-
-			defaultAggregationClass = defaultGraphClass.createAggregationClass(
-					new QualifiedName("Aggregation"), defaultVertexClass, true,
-					defaultVertexClass);
-			addToKnownElements(defaultAggregationClass.getUniqueName(),
-					defaultAggregationClass);
-			defaultAggregationClass.setAbstract(true);
-			defaultAggregationClass.addSuperClass(defaultEdgeClass);
-
-			defaultCompositionClass = defaultGraphClass.createCompositionClass(
-					new QualifiedName("Composition"), defaultVertexClass, 0,
-					Integer.MAX_VALUE, true, defaultVertexClass, 0,
-					Integer.MAX_VALUE);
-			addToKnownElements(defaultCompositionClass.getUniqueName(),
-					defaultCompositionClass);
-			defaultCompositionClass.setAbstract(true);
-			defaultCompositionClass.addSuperClass(defaultAggregationClass);
-		} catch (SchemaException e) {
-			// this may not happen, because the generated vertex and edge class
-			// is the first one, so no other edge oder vertex
-			// class with the same name may exist
-			throw new RuntimeException("FIXME! This exception must not happen",
-					e);
-		}
-	}
-
-	@Override
-	public void setGraphFactory(GraphFactory factory) {
-		graphFactory = factory;
-	}
-
-	@Override
-	public GraphFactory getGraphFactory() {
-		return graphFactory;
-	}
+	private String name;
 
 	/**
-	 * Adds the given element with the given uniquename to the list of known
-	 * elements and reserves the given unique name so it can not be used as
-	 * unique name for other elements. If the unique name is already in use, the
-	 * unique names of both elements (the known one and the new one) are changed
+	 * The package prefix of this schema.
+	 */
+	private String packagePrefix;
+	/**
+	 * Maps from simple names to a set of {@link NamedElement}s which have this
+	 * simple name. Used for creation of unique names.
+	 */
+	private Map<String, Set<NamedElement>> namedElements = new HashMap<String, Set<NamedElement>>();
+
+	/**
+	 * Maps from qualified name to the {@link Package} with that qualified name.
+	 */
+	private Map<String, Package> packages = new TreeMap<String, Package>();
+
+	/**
+	 * The qualified name of this schema, that is {@link #packagePrefix} DOT
+	 * {@link #name}
+	 */
+	private String qualifiedName;
+
+	/**
+	 * A set of all qualified names known to this schema.
+	 */
+	private Set<String> knownQualifiedNames = new TreeSet<String>();
+
+	private BooleanDomain booleanDomain;
+
+	private DoubleDomain doubleDomain;
+
+	private IntDomain integerDomain;
+
+	private LongDomain longDomain;
+
+	private StringDomain stringDomain;
+
+	private static final Pattern SCHEMA_NAME_PATTERN = Pattern
+			.compile("^\\p{Upper}(\\p{Alnum}|[_])*\\p{Alnum}$");
+
+	private static final Pattern PACKAGE_PREFIX_PATTERN = Pattern
+			.compile("^\\p{Lower}\\w*(\\.\\p{Lower}\\w*)*$");
+
+	/**
+	 * Creates a new schema object.
 	 *
 	 * @param name
-	 * @param elem
+	 *            The name of the schema
+	 * @param packagePrefix
+	 *            the package prefix of the schema
 	 */
-	public void addToKnownElements(String name, NamedElement elem) {
-		if (reservedUniqueNames.contains(name)) {
-			NamedElement known = namedElements.get(name);
-			if (known != null) {
-				String uniqueName = QualifiedName.toUniqueName(known
-						.getQualifiedName());
-				known.setUniqueName(uniqueName);
-				namedElements.remove(name);
-				namedElements.put(uniqueName, known);
-				reservedUniqueNames.add(uniqueName);
-			}
-			String uniqueName = QualifiedName.toUniqueName(elem
-					.getQualifiedName());
-			elem.setUniqueName(uniqueName);
-			namedElements.put(uniqueName, elem);
-			reservedUniqueNames.add(uniqueName);
-		} else {
-			namedElements.put(name, elem);
-			reservedUniqueNames.add(name);
-		}
-	}
-
-	/**
-	 * adds the given domains to the domainlist
-	 *
-	 * @return true on success, false if a domain with the same name as the
-	 *         given one already exists in the schema
-	 */
-	protected boolean addDomain(Domain d) {
-		if (!isValidSchemaElementName(d.getQName())) {
-			throw new ReservedWordException(d.getQName().getQualifiedName(),
-					"Domain");
-		}
-		if (knows(d.getQName())) {
-			throw new DuplicateNamedElementException(
-					"There is already an element with the name "
-							+ d.getQualifiedName() + " in the schema");
-		}
-		domains.put(d.getQName(), d);
-		addToKnownElements(d.getUniqueName(), d);
-
-		return true;
-	}
-
-	@Override
-	public GraphClassImpl createGraphClass(QualifiedName name) {
-		if (!isValidSchemaElementName(name)) {
-			throw new ReservedWordException(name.getQualifiedName(),
-					"GraphClass");
-		}
-
-		if (knows(name)) {
-			throw new DuplicateNamedElementException(
-					"there is already an element with the name " + name
-							+ " in the schema");
-		}
-
-		if (name.isQualified()) {
+	public SchemaImpl(String name, String packagePrefix) {
+		if (!SCHEMA_NAME_PATTERN.matcher(name).matches()) {
 			throw new InvalidNameException(
-					"GraphClass must have simple name, but " + name
-							+ " is a qualified name");
+					"Invalid schema name '"
+							+ name
+							+ "'.\n"
+							+ "The name must not be empty.\n"
+							+ "The name must start with a capital letter.\n"
+							+ "Any following character must be alphanumeric and/or a '_' character.\n"
+							+ "The name must end with an alphanumeric character.");
 
 		}
-		GraphClassImpl graphClass;
-		graphClass = new GraphClassImpl(name, this);
-		graphClasses.put(name, graphClass);
-		addToKnownElements(graphClass.getUniqueName(), graphClass);
-		if (!name.getQualifiedName().equals("Graph")) {
-			graphClass.addSuperClass(getDefaultGraphClass());
+		if (!PACKAGE_PREFIX_PATTERN.matcher(packagePrefix).matches()) {
+			throw new InvalidNameException(
+					"Invalid schema package prefix '"
+							+ packagePrefix
+							+ "'.\n"
+							+ "The packagePrefix must not be empty.\n"
+							+ "The package prefix must start with a small letter.\n"
+							+ "The first character after each '.' must be a small letter.\n"
+							+ "Following characters may be alphanumeric and/or '_' characters.\n"
+							+ "The last character before a '.' and the end of the line must be an alphanumeric character.");
 		}
-		return graphClass;
+
+		this.name = name;
+		this.packagePrefix = packagePrefix;
+		qualifiedName = packagePrefix + "." + name;
+
+		// Needs to be created before any NamedElement can be created
+		defaultPackage = PackageImpl.createDefaultPackage(this);
+
+		// Creation of the BasicDomains
+		createBooleanDomain();
+		createDoubleDomain();
+		createIntegerDomain();
+		createLongDomain();
+		createStringDomain();
+
+		/*
+		 * Needs to be created before any GraphElementClass element can be
+		 * created
+		 */
+		defaultGraphClass = GraphClassImpl.createDefaultGraphClass(this);
+
+		// Creation of the default GraphElementClasses
+		defaultVertexClass = VertexClassImpl.createDefaultVertexClass(this);
+		defaultEdgeClass = EdgeClassImpl.createDefaultEdgeClass(this);
+		defaultAggregationClass = AggregationClassImpl
+				.createDefaultAggregationClass(this);
+		defaultCompositionClass = CompositionClassImpl
+				.createDefaultCompositionClass(this);
+	}
+
+	void addDomain(Domain dom) {
+		assert !domains.containsKey(dom.getQualifiedName()) : "There already is a Domain with the qualified name: "
+				+ dom.getQualifiedName() + " in the Schema!";
+
+		domains.put(dom.getQualifiedName(), dom);
+	}
+
+	void addPackage(PackageImpl pkg) {
+		assert !packages.containsKey(pkg.getQualifiedName()) : "There already is a Package with the qualified name '"
+				+ pkg.getQualifiedName() + "' in the Schema!";
+		packages.put(pkg.getQualifiedName(), pkg);
+	}
+
+	void addToKnownElements(NamedElement namedElement) {
+		assert !knownQualifiedNames.contains(namedElement.getQualifiedName()) : "You are trying to add the NamedElement '"
+				+ namedElement.getQualifiedName()
+				+ "' to this Schema, but that does already exist!";
+
+		knownQualifiedNames.add(namedElement.getQualifiedName());
+
+		/*
+		 * Check if any element´s unique name needs adaptation after the add of
+		 * the new named element.
+		 */
+		Set<NamedElement> elementsWithSameSimpleName = namedElements
+				.get(namedElement.getSimpleName());
+		// add the element to the map
+		if (elementsWithSameSimpleName != null
+				&& !elementsWithSameSimpleName.isEmpty()) {
+			elementsWithSameSimpleName.add(namedElement);
+		} else {
+			elementsWithSameSimpleName = new TreeSet<NamedElement>();
+			elementsWithSameSimpleName.add(namedElement);
+			namedElements.put(namedElement.getSimpleName(),
+					elementsWithSameSimpleName);
+		}
+
+		// uniquify if needed
+		if (elementsWithSameSimpleName.size() >= 2) {
+			for (NamedElement other : elementsWithSameSimpleName) {
+				((NamedElementImpl) other).changeUniqueName();
+			}
+		}
 	}
 
 	@Override
-	public EnumDomain createEnumDomain(QualifiedName qn,
-			List<String> enumComponents) {
-		if (!isValidSchemaElementName(qn)) {
-			throw new ReservedWordException(qn.getQualifiedName(), "EnumDomain");
-		}
-		EnumDomain ed = new EnumDomainImpl(this, qn, enumComponents);
-		if (addDomain(ed)) {
-			Package p = createPackageWithParents(qn.getPackageName());
-			ed.setPackage(p);
-			p.addDomain(ed);
-			return ed;
-		}
-		throw new DuplicateNamedElementException(
-				"there is already an element with the name " + qn
-						+ " in the schema " + getQualifiedName());
-	}
-
-	@Override
-	public EnumDomain createEnumDomain(QualifiedName qn) {
-		return createEnumDomain(qn, new ArrayList<String>());
-	}
-
-	@Override
-	public ListDomain createListDomain(Domain baseDomain) {
-		QualifiedName domainName = new QualifiedName("", "List<"
-				+ baseDomain.getTGTypeName(null) + ">");
-		ListDomain d = (ListDomain) getDomain(domainName);
-		if (d == null) {
-			d = new ListDomainImpl(this, domainName, baseDomain);
-			addDomain(d);
-			defaultPackage.addDomain(d);
-		}
-		return d;
-	}
-
-	@Override
-	public SetDomain createSetDomain(Domain baseDomain) {
-		// TODO check if there should be an exception
-		QualifiedName domainName = new QualifiedName("", "Set<"
-				+ baseDomain.getTGTypeName(null) + ">");
-		SetDomain d = (SetDomain) getDomain(domainName);
-		if (d == null) {
-			d = new SetDomainImpl(this, domainName, baseDomain);
-			addDomain(d);
-			defaultPackage.addDomain(d);
-		}
-		return d;
-	}
-
-	@Override
-	public MapDomain createMapDomain(Domain keyDomain, Domain valueDomain) {
-		QualifiedName domainName = new QualifiedName("", "Map<"
-				+ keyDomain.getTGTypeName(null) + ","
-				+ valueDomain.getTGTypeName(null) + ">");
-		MapDomain d = (MapDomain) getDomain(domainName);
-		if (d == null) {
-			d = new MapDomainImpl(this, domainName, keyDomain, valueDomain);
-			addDomain(d);
-			defaultPackage.addDomain(d);
-		}
-		return d;
-	}
-
-	@Override
-	public RecordDomain createRecordDomain(QualifiedName qn,
-			Map<String, Domain> recordComponents) {
-		if (!isValidSchemaElementName(qn)) {
-			throw new ReservedWordException(qn.getQualifiedName(),
-					"RecordDomain");
-		}
-		RecordDomain rd = new RecordDomainImpl(this, qn, recordComponents);
-		if (addDomain(rd)) {
-			Package p = createPackageWithParents(qn.getPackageName());
-			rd.setPackage(p);
-			p.addDomain(rd);
-			return rd;
-		}
-		throw new DuplicateNamedElementException(
-				"there is already an element with the name " + qn
-						+ " in the schema " + getQualifiedName());
-	}
-
-	@Override
-	public RecordDomain createRecordDomain(QualifiedName qn) {
-		return createRecordDomain(qn, new TreeMap<String, Domain>());
+	public boolean allowsLowercaseEnumConstants() {
+		return allowLowercaseEnumConstants;
 	}
 
 	@Override
@@ -430,104 +334,66 @@ public class SchemaImpl implements Schema {
 
 		// generate schema class
 		CodeGenerator schemaCodeGenerator = new SchemaCodeGenerator(this,
-				getPackageName(), GRAPHIMPLEMENTATIONPACKAGE);
+				packagePrefix, GRAPH_IMPLEMENTATION_PACKAGE);
 		javaSources.addAll(schemaCodeGenerator.createJavaSources());
 
 		// generate factory
 		CodeGenerator factoryCodeGenerator = new GraphFactoryGenerator(this,
-				getPackageName(), GRAPHIMPLEMENTATIONPACKAGE);
+				packagePrefix, GRAPH_IMPLEMENTATION_PACKAGE);
 		javaSources.addAll(factoryCodeGenerator.createJavaSources());
 
 		// generate graph classes
-		for (GraphClass graphClass : graphClasses.values()) {
-			if (graphClass.getQualifiedName().equals("Graph")) {
-				continue;
+
+		if (graphClass.getQualifiedName().equals("Graph")) {
+			throw new SchemaException(
+					"The defined GraphClass must not be named Graph!");
+		}
+
+		GraphCodeGenerator graphCodeGenerator = new GraphCodeGenerator(
+				graphClass, packagePrefix, GRAPH_IMPLEMENTATION_PACKAGE, name);
+		javaSources.addAll(graphCodeGenerator.createJavaSources());
+
+		// build graphelementclasses
+		AttributedElementCodeGenerator codeGenerator = null;
+		for (GraphElementClass graphElementClass : graphClass
+				.getOwnGraphElementClasses()) {
+			if (graphElementClass instanceof VertexClass) {
+				codeGenerator = new VertexCodeGenerator(
+						(VertexClass) graphElementClass, packagePrefix,
+						GRAPH_IMPLEMENTATION_PACKAGE);
+				javaSources.addAll(codeGenerator.createJavaSources());
 			}
+			if (graphElementClass instanceof EdgeClass) {
+				codeGenerator = new EdgeCodeGenerator(
+						(EdgeClass) graphElementClass, packagePrefix,
+						GRAPH_IMPLEMENTATION_PACKAGE);
+				javaSources.addAll(codeGenerator.createJavaSources());
 
-			GraphCodeGenerator graphCodeGenerator = new GraphCodeGenerator(
-					graphClass, getPackageName(), GRAPHIMPLEMENTATIONPACKAGE,
-					getSimpleName());
-			javaSources.addAll(graphCodeGenerator.createJavaSources());
-
-			// build graphelementclasses
-			AttributedElementCodeGenerator codeGenerator = null;
-			for (GraphElementClass graphElementClass : graphClass
-					.getOwnGraphElementClasses()) {
-				if (graphElementClass instanceof VertexClass) {
-					codeGenerator = new VertexCodeGenerator(
-							(VertexClass) graphElementClass, getPackageName(),
-							GRAPHIMPLEMENTATIONPACKAGE);
+				if (!graphElementClass.isAbstract()) {
+					codeGenerator = new ReversedEdgeCodeGenerator(
+							(EdgeClass) graphElementClass, packagePrefix,
+							GRAPH_IMPLEMENTATION_PACKAGE);
 					javaSources.addAll(codeGenerator.createJavaSources());
-				}
-				if (graphElementClass instanceof EdgeClass) {
-					codeGenerator = new EdgeCodeGenerator(
-							(EdgeClass) graphElementClass, getPackageName(),
-							GRAPHIMPLEMENTATIONPACKAGE);
-					javaSources.addAll(codeGenerator.createJavaSources());
-
-					if (!graphElementClass.isAbstract()) {
-						codeGenerator = new ReversedEdgeCodeGenerator(
-								(EdgeClass) graphElementClass, qName
-										.getPackageName(),
-								GRAPHIMPLEMENTATIONPACKAGE);
-						javaSources.addAll(codeGenerator.createJavaSources());
-					}
 				}
 			}
 		}
+
 		// build records and enums
 		for (Domain domain : domains.values()) {
 			if (domain instanceof RecordDomain) {
 				CodeGenerator rcode = new RecordCodeGenerator(
-						(RecordDomain) domain, getPackageName(),
-						GRAPHIMPLEMENTATIONPACKAGE);
+						(RecordDomain) domain, packagePrefix,
+						GRAPH_IMPLEMENTATION_PACKAGE);
 				javaSources.addAll(rcode.createJavaSources());
 			} else if (domain instanceof EnumDomain) {
 				CodeGenerator ecode = new EnumCodeGenerator(
-						(EnumDomain) domain, getPackageName(),
-						GRAPHIMPLEMENTATIONPACKAGE);
+						(EnumDomain) domain, packagePrefix,
+						GRAPH_IMPLEMENTATION_PACKAGE);
 				javaSources.addAll(ecode.createJavaSources());
 			}
 		}
 
 		return javaSources;
-	}
-
-	@Override
-	public void compile() {
-		compile(null);
-	}
-
-	@Override
-	public void compile(String jgralabClassPath) {
-		JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
-		JavaFileManager jfm = null;
-
-		// commit
-		Vector<JavaSourceFromString> javaSources = commit();
-		// compile
-		try {
-			jfm = compiler.getStandardFileManager(null, null, null);
-		} catch (NullPointerException e) {
-			System.out
-					.println("Cannot compile schema " + getSimpleName() + ".");
-			System.out.println("Most probably you use a JRE instead of a JDK. "
-					+ "The JRE does not provide a compiler.");
-			e.printStackTrace();
-		}
-
-		ClassFileManager manager = new ClassFileManager(jfm);
-
-		manager.setSources(javaSources);
-
-		Vector<String> options = new Vector<String>();
-		if (jgralabClassPath != null) {
-			options.add("-cp");
-			options.add(jgralabClassPath);
-		}
-
-		compiler.getTask(null, manager, null, options, null, javaSources)
-				.call();
 	}
 
 	@Override
@@ -554,76 +420,70 @@ public class SchemaImpl implements Schema {
 
 		// generate schema class
 		CodeGenerator schemaCodeGenerator = new SchemaCodeGenerator(this,
-				getPackageName(), GRAPHIMPLEMENTATIONPACKAGE);
+				packagePrefix, GRAPH_IMPLEMENTATION_PACKAGE);
 		schemaCodeGenerator.createFiles(pathPrefix);
 
 		// generate factory
 		CodeGenerator factoryCodeGenerator = new GraphFactoryGenerator(this,
-				getPackageName(), GRAPHIMPLEMENTATIONPACKAGE);
+				packagePrefix, GRAPH_IMPLEMENTATION_PACKAGE);
 		factoryCodeGenerator.createFiles(pathPrefix);
 
 		// generate graph classes
-		Iterator<GraphClass> gcit = graphClasses.values().iterator();
-		while (gcit.hasNext()) {
-			GraphClass graphClass = gcit.next();
-			if (graphClass.getQualifiedName().equals("Graph")) {
-				continue;
-			}
-
-			GraphCodeGenerator graphCodeGenerator = new GraphCodeGenerator(
-					graphClass, getPackageName(), GRAPHIMPLEMENTATIONPACKAGE,
-					qName.getSimpleName());
-			graphCodeGenerator.createFiles(pathPrefix);
-
-			// build graphelementclasses
-			Iterator<GraphElementClass> gecit = graphClass
-					.getOwnGraphElementClasses().iterator();
-			AttributedElementCodeGenerator codeGenerator = null;
-			while (gecit.hasNext()) {
-				GraphElementClass graphElementClass = gecit.next();
-				if (graphElementClass instanceof VertexClass) {
-					codeGenerator = new VertexCodeGenerator(
-							(VertexClass) graphElementClass, getPackageName(),
-							GRAPHIMPLEMENTATIONPACKAGE);
-					codeGenerator.createFiles(pathPrefix);
-				}
-				if (graphElementClass instanceof EdgeClass) {
-					codeGenerator = new EdgeCodeGenerator(
-							(EdgeClass) graphElementClass, getPackageName(),
-							GRAPHIMPLEMENTATIONPACKAGE);
-					codeGenerator.createFiles(pathPrefix);
-
-					if (!graphElementClass.isAbstract()) {
-						codeGenerator = new ReversedEdgeCodeGenerator(
-								(EdgeClass) graphElementClass,
-								getPackageName(), GRAPHIMPLEMENTATIONPACKAGE);
-						codeGenerator.createFiles(pathPrefix);
-					}
-				}
-
-				// updateprogress bar
-				if (progressFunction != null) {
-					schemaElements++;
-					currentCount++;
-					if (currentCount == interval) {
-						progressFunction.progress(schemaElements);
-						currentCount = 0;
-					}
-				}
-			}
+		if (graphClass.getQualifiedName().equals("Graph")) {
+			throw new SchemaException(
+					"The defined GraphClass must not be named Graph!");
 		}
-		Iterator<Domain> iter = domains.values().iterator();
-		while (iter.hasNext()) {
-			Domain domain = iter.next();
+
+		GraphCodeGenerator graphCodeGenerator = new GraphCodeGenerator(
+				graphClass, packagePrefix, GRAPH_IMPLEMENTATION_PACKAGE, name);
+		graphCodeGenerator.createFiles(pathPrefix);
+
+		// build graphelementclasses
+		AttributedElementCodeGenerator codeGenerator = null;
+		for (GraphElementClass graphElementClass : graphClass
+				.getOwnGraphElementClasses()) {
+			if (graphElementClass instanceof VertexClass) {
+				codeGenerator = new VertexCodeGenerator(
+						(VertexClass) graphElementClass, packagePrefix,
+						GRAPH_IMPLEMENTATION_PACKAGE);
+				codeGenerator.createFiles(pathPrefix);
+			}
+			if (graphElementClass instanceof EdgeClass) {
+				codeGenerator = new EdgeCodeGenerator(
+						(EdgeClass) graphElementClass, packagePrefix,
+						GRAPH_IMPLEMENTATION_PACKAGE);
+				codeGenerator.createFiles(pathPrefix);
+
+				if (!graphElementClass.isAbstract()) {
+					codeGenerator = new ReversedEdgeCodeGenerator(
+							(EdgeClass) graphElementClass, packagePrefix,
+							GRAPH_IMPLEMENTATION_PACKAGE);
+					codeGenerator.createFiles(pathPrefix);
+				}
+			}
+
+			// updateprogress bar
+			if (progressFunction != null) {
+				schemaElements++;
+				currentCount++;
+				if (currentCount == interval) {
+					progressFunction.progress(schemaElements);
+					currentCount = 0;
+				}
+			}
+
+		}
+
+		for (Domain domain : domains.values()) {
 			if (domain instanceof RecordDomain) {
 				CodeGenerator rcode = new RecordCodeGenerator(
-						(RecordDomain) domain, getPackageName(),
-						GRAPHIMPLEMENTATIONPACKAGE);
+						(RecordDomain) domain, packagePrefix,
+						GRAPH_IMPLEMENTATION_PACKAGE);
 				rcode.createFiles(pathPrefix);
 			} else if (domain instanceof EnumDomain) {
 				CodeGenerator ecode = new EnumCodeGenerator(
-						(EnumDomain) domain, getPackageName(),
-						GRAPHIMPLEMENTATIONPACKAGE);
+						(EnumDomain) domain, packagePrefix,
+						GRAPH_IMPLEMENTATION_PACKAGE);
 				ecode.createFiles(pathPrefix);
 			}
 			// update progress bar
@@ -644,207 +504,281 @@ public class SchemaImpl implements Schema {
 	}
 
 	@Override
-	public boolean containsGraphClass(GraphClass aGraphClass) {
-		if (graphClasses.containsValue(aGraphClass)) {
-			return true;
-		}
-		return false;
+	public int compareTo(Schema other) {
+		return this.qualifiedName.compareTo(other.getQualifiedName());
 	}
 
 	@Override
-	public GraphClass getGraphClass(QualifiedName name) {
-		if (!graphClasses.containsKey(name)) {
-			return null;
-		}
-		return graphClasses.get(name);
+	public void compile() {
+		compile(null);
 	}
 
 	@Override
-	public String toString() {
-		String output = "GraphClasses of schema '" + qName.getQualifiedName()
-				+ "':\n\n\n";
-		for (GraphClass gc : graphClasses.values()) {
-			output += gc.toString();
+	public void compile(String jgralabClassPath) {
+		JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
+		JavaFileManager jfm = null;
+
+		// commit
+		Vector<JavaSourceFromString> javaSources = commit();
+		// compile
+		try {
+			jfm = compiler.getStandardFileManager(null, null, null);
+		} catch (NullPointerException e) {
+			System.out.println("Cannot compile schema " + qualifiedName + ".");
+			System.out.println("Most probably you use a JRE instead of a JDK. "
+					+ "The JRE does not provide a compiler.");
+			e.printStackTrace();
 		}
 
-		return output;
+		ClassFileManager manager = new ClassFileManager(jfm);
+
+		manager.setSources(javaSources);
+
+		Vector<String> options = new Vector<String>();
+		if (jgralabClassPath != null) {
+			options.add("-cp");
+			options.add(jgralabClassPath);
+		}
+
+		compiler.getTask(null, manager, null, options, null, javaSources)
+				.call();
+	}
+
+	@Override
+	public Attribute createAttribute(String name, Domain dom) {
+		return new AttributeImpl(name, dom);
+	}
+
+	@Override
+	public EnumDomain createEnumDomain(String qualifiedName) {
+		return createEnumDomain(qualifiedName, new ArrayList<String>());
+	}
+
+	@Override
+	public EnumDomain createEnumDomain(String qualifiedName,
+			List<String> enumComponents) {
+		String[] components = splitQualifiedName(qualifiedName);
+		PackageImpl parent = (PackageImpl) createPackageWithParents(components[0]);
+		String simpleName = components[1];
+		return new EnumDomainImpl(simpleName, parent, enumComponents);
+	}
+
+	@Override
+	public GraphClass createGraphClass(String simpleName) {
+		if (graphClass != null) {
+			throw new SchemaException(
+					"Only one GraphClass (except DefaultGraphClass) is allowed in a Schema! '"
+							+ graphClass.getQualifiedName()
+							+ "' is already there.");
+		}
+
+		if (simpleName.equals(GraphClass.DEFAULTGRAPHCLASS_NAME)) {
+			throw new InvalidNameException(
+					"A GraphClass must not be named like the default GraphClass ("
+							+ GraphClass.DEFAULTGRAPHCLASS_NAME + ")");
+		}
+
+		if (simpleName.contains(".")) {
+			throw new InvalidNameException(
+					"A GraphClass must always be in the default package!");
+		}
+		GraphClass gc = new GraphClassImpl(simpleName, this);
+		gc.addSuperClass(defaultGraphClass);
+		return gc;
+	}
+
+	private BooleanDomain createBooleanDomain() {
+		if (booleanDomain != null) {
+			throw new SchemaException(
+					"The BooleanDomain for this Schema was already created!");
+		}
+		booleanDomain = new BooleanDomainImpl(this);
+		return booleanDomain;
+	}
+
+	private DoubleDomain createDoubleDomain() {
+		if (doubleDomain != null) {
+			throw new SchemaException(
+					"The DoubleDomain for this Schema was already created!");
+		}
+
+		doubleDomain = new DoubleDomainImpl(this);
+		return doubleDomain;
+	}
+
+	private IntDomain createIntegerDomain() {
+		if (integerDomain != null) {
+			throw new SchemaException(
+					"The IntegerDomain for this Schema was already created!");
+		}
+
+		integerDomain = new IntDomainImpl(this);
+		return integerDomain;
+	}
+
+	private LongDomain createLongDomain() {
+		if (longDomain != null) {
+			throw new SchemaException(
+					"The LongDomain for this Schema was already created!");
+		}
+
+		longDomain = new LongDomainImpl(this);
+		return longDomain;
+	}
+
+	private StringDomain createStringDomain() {
+		if (stringDomain != null) {
+			throw new SchemaException(
+					"The StringDomain for this Schema was already created!");
+		}
+
+		stringDomain = new StringDomainImpl(this);
+		return stringDomain;
+	}
+
+	@Override
+	public ListDomain createListDomain(Domain baseDomain) {
+		String qn = "List<" + baseDomain.getQualifiedName() + ">";
+		if (domains.containsKey(qn)) {
+			return (ListDomain) domains.get(qn);
+		}
+		return new ListDomainImpl(this, baseDomain);
+	}
+
+	@Override
+	public MapDomain createMapDomain(Domain keyDomain, Domain valueDomain) {
+		String qn = "Map<" + keyDomain.getQualifiedName() + ", "
+				+ valueDomain.getQualifiedName() + ">";
+		if (domains.containsKey(qn)) {
+			return (MapDomain) domains.get(qn);
+		}
+		return new MapDomainImpl(this, keyDomain, valueDomain);
+	}
+
+	Package createPackage(String sn, Package parentPkg) {
+		return new PackageImpl(sn, parentPkg, this);
 	}
 
 	/**
-	 * only used internally
+	 * Creates a {@link Package} with the given qualified name, or returns the
+	 * existing package with this qualified name.
 	 *
-	 * @return number of graphelementclasses contained in graphclass
+	 * @param qn
+	 *            the qualified name of the package
+	 * @return a new {@link Package} with the given qualified name, or an
+	 *         existing package with this qualified name.
 	 */
-	private int getNumberOfElements() {
-		int count = 0;
-		for (GraphClass gc : graphClasses.values()) {
-			count += gc.getOwnGraphElementClasses().size() + 1;
+	Package createPackageWithParents(String qn) {
+		if (packages.containsKey(qn)) {
+			return packages.get(qn);
 		}
-		return count;
+
+		String[] components = splitQualifiedName(qn);
+		String parent = components[0];
+		String pkgSimpleName = components[1];
+
+		assert !pkgSimpleName.contains(".") : "The package simple name '"
+				+ pkgSimpleName + "' must not contain a dot!";
+
+		Package currentParent = defaultPackage;
+		String currentPkgQName = "";
+
+		if (!packages.containsKey(parent)) {
+			// the parent doesn't exist!
+
+			for (String component : parent.split("\\.")) {
+				if (currentParent != defaultPackage) {
+					currentPkgQName = currentParent.getQualifiedName() + "."
+							+ component;
+				} else {
+					currentPkgQName = component;
+				}
+				if (packages.containsKey(currentPkgQName)) {
+					currentParent = packages.get(currentPkgQName);
+					continue;
+				}
+				currentParent = createPackage(component, currentParent);
+			}
+		} else {
+			currentParent = packages.get(parent);
+		}
+
+		// ok, parent existid or is created;
+		assert currentParent.getQualifiedName().equals(parent) : "Something went wrong when creating a package with parents: "
+				+ "parent should be \""
+				+ parent
+				+ "\" but created was \""
+				+ currentParent.getQualifiedName() + "\".";
+		assert (currentParent.getQualifiedName().isEmpty() ? currentParent == defaultPackage
+				: true) : "The parent package of package '" + pkgSimpleName
+				+ "' is empty, but not the default package.";
+		return createPackage(pkgSimpleName, currentParent);
 	}
 
-	/*
-	 * (non-Javadoc)
+	/**
+	 * Given a qualified name like foo.bar.baz returns a string array with two
+	 * components: the package prefix (foo.bar) and the simple name (baz).
 	 *
-	 * @see jgralab.Schema#getDomains()
+	 * @param qualifiedName
+	 *            a qualified name
+	 * @return a string array with two components: the package prefix and the
+	 *         simple name
 	 */
-	public Map<QualifiedName, Domain> getDomains() {
-		return domains;
-	}
-
-	public Map<QualifiedName, GraphClass> getGraphClasses() {
-		return graphClasses;
-	}
-
-	public Map<QualifiedName, Package> getPackages() {
-		return packages;
-	}
-
-	public Package getPackage(String packageName) {
-		return packages.get(new QualifiedName(packageName));
+	public static String[] splitQualifiedName(String qualifiedName) {
+		int lastIndex = qualifiedName.lastIndexOf('.');
+		String[] components = new String[2];
+		if (lastIndex == -1) {
+			components[0] = "";
+			components[1] = qualifiedName;
+		} else {
+			components[0] = qualifiedName.substring(0, lastIndex);
+			components[1] = qualifiedName.substring(lastIndex + 1);
+		}
+		return components;
 	}
 
 	@Override
-	public AttributedElementClass getAttributedElementClass(QualifiedName name) {
-		AttributedElementClass search;
-		if (graphClasses.containsKey(name)) {
-			return graphClasses.get(name);
-		}
-		for (GraphClass graphClass : graphClasses.values()) {
-			search = graphClass.getGraphElementClass(name);
-			if (search != null) {
-				return search;
-			}
-		}
-		return null;
+	public RecordDomain createRecordDomain(String qualifiedName) {
+		return createRecordDomain(qualifiedName, new TreeMap<String, Domain>());
 	}
 
-	public List<GraphClass> getGraphClassesInTopologicalOrder() {
-		ArrayList<GraphClass> topologicalOrderList = new ArrayList<GraphClass>();
-		GraphClass gc;
-		HashSet<GraphClass> graphClassSet = new HashSet<GraphClass>();
-
-		// store graph classes in graphClassSet
-		for (GraphClass gcl : graphClasses.values()) {
-			graphClassSet.add(gcl);
-		}
-
-		// topologicalOrderList.add(getDefaultGraphClass());
-
-		// iteratively add classes from graphClassSet,
-		// whose superclasses already are in topologicalOrderList,
-		// to topologicalOrderList
-		// the added classes are removed from graphClassSet
-		while (!graphClassSet.isEmpty()) {
-			for (Iterator<GraphClass> gcit = graphClassSet.iterator(); gcit
-					.hasNext();) {
-				gc = gcit.next();
-				if (topologicalOrderList.containsAll(gc.getAllSuperClasses())) {
-					topologicalOrderList.add(gc);
-					gcit.remove();
-				}
-			}
-		}
-
-		return topologicalOrderList;
+	@Override
+	public RecordDomain createRecordDomain(String qualifiedName,
+			Map<String, Domain> recordComponents) {
+		String[] components = splitQualifiedName(qualifiedName);
+		PackageImpl parent = (PackageImpl) createPackageWithParents(components[0]);
+		String simpleName = components[1];
+		return new RecordDomainImpl(simpleName, parent, recordComponents);
 	}
 
-	public List<VertexClass> getVertexClassesInTopologicalOrder() {
-		ArrayList<VertexClass> topologicalOrderList = new ArrayList<VertexClass>();
-		VertexClass vc;
-		HashSet<VertexClass> vertexClassSet = new HashSet<VertexClass>();
-		List<GraphClass> graphClassList = getGraphClassesInTopologicalOrder();
-
-		for (GraphClass gc : graphClassList) {
-			// store vertex classes in vertexClassSet
-			for (VertexClass vcl : gc.getOwnVertexClasses()) {
-				vertexClassSet.add(vcl);
-			}
-
-			// topologicalOrderList.add(getDefaultVertexClass());
-
-			// iteratively add classes from vertexClassSet,
-			// whose superclasses already are in topologicalOrderList,
-			// to topologicalOrderList
-			// the added classes are removed from vertexClassSet
-			while (!vertexClassSet.isEmpty()) {
-				for (Iterator<VertexClass> vcit = vertexClassSet.iterator(); vcit
-						.hasNext();) {
-					vc = vcit.next();
-					if (topologicalOrderList.containsAll(vc
-							.getAllSuperClasses())) {
-						topologicalOrderList.add(vc);
-						vcit.remove();
-					}
-				}
-			}
+	@Override
+	public SetDomain createSetDomain(Domain baseDomain) {
+		String qn = "Set<" + baseDomain.getQualifiedName() + ">";
+		if (domains.containsKey(qn)) {
+			return (SetDomain) domains.get(qn);
 		}
-
-		return topologicalOrderList;
+		return new SetDomainImpl(this, baseDomain);
 	}
 
-	public List<EdgeClass> getEdgeClassesInTopologicalOrder() {
-		ArrayList<EdgeClass> topologicalOrderList = new ArrayList<EdgeClass>();
-		EdgeClass ec;
-		HashSet<EdgeClass> edgeClassSet = new HashSet<EdgeClass>();
-		List<GraphClass> graphClassList = getGraphClassesInTopologicalOrder();
-
-		for (GraphClass gc : graphClassList) {
-			// store edge classes in edgeClassSet
-			for (EdgeClass ecl : gc.getOwnEdgeClasses()) {
-				edgeClassSet.add(ecl);
-			}
-			for (EdgeClass ecl : gc.getOwnAggregationClasses()) {
-				edgeClassSet.add(ecl);
-			}
-			for (EdgeClass ecl : gc.getOwnCompositionClasses()) {
-				edgeClassSet.add(ecl);
-			}
-
-			// iteratively add classes from edgeClassSet,
-			// whose superclasses already are in topologicalOrderList,
-			// to topologicalOrderList
-			// the added classes are removed from edgeClassSet
-			while (!edgeClassSet.isEmpty()) {
-				for (Iterator<EdgeClass> ecit = edgeClassSet.iterator(); ecit
-						.hasNext();) {
-					ec = ecit.next();
-					if (topologicalOrderList.containsAll(ec
-							.getAllSuperClasses())) {
-						topologicalOrderList.add(ec);
-						ecit.remove();
-					}
-				}
-			}
-		}
-
-		return topologicalOrderList;
+	@Override
+	public boolean equals(Object other) {
+		return other.equals(this)
+				|| ((other instanceof Schema) && this.qualifiedName
+						.equals(((Schema) other).getQualifiedName()));
 	}
 
-	public List<EnumDomain> getEnumDomains() {
-		ArrayList<EnumDomain> enumList = new ArrayList<EnumDomain>();
-
-		for (Domain dl : domains.values()) {
-			if (dl instanceof EnumDomain) {
-				enumList.add((EnumDomain) dl);
-			}
+	@Override
+	public AttributedElementClass getAttributedElementClass(String qualifiedName) {
+		if (graphClass == null) {
+			return null;
+		} else if (graphClass.getQualifiedName().equals(qualifiedName)) {
+			return graphClass;
+		} else {
+			return graphClass.getGraphElementClass(qualifiedName);
 		}
-
-		return enumList;
 	}
 
-	public List<RecordDomain> getRecordDomains() {
-		ArrayList<RecordDomain> recordList = new ArrayList<RecordDomain>();
-
-		for (Domain dl : domains.values()) {
-			if (dl instanceof RecordDomain) {
-				recordList.add((RecordDomain) dl);
-			}
-		}
-
-		return recordList;
-	}
-
+	@Override
 	public List<CompositeDomain> getCompositeDomainsInTopologicalOrder() {
 		ArrayList<CompositeDomain> topologicalOrderList = new ArrayList<CompositeDomain>();
 		CompositeDomain cd;
@@ -876,26 +810,183 @@ public class SchemaImpl implements Schema {
 		return topologicalOrderList;
 	}
 
-	@Override
-	public String getQualifiedName() {
-		return qName.getQualifiedName();
+	private Method getCreateMethod(String className, String graphClassName,
+			Class<?>[] signature) {
+		Class<? extends Graph> m1Class = null;
+		AttributedElementClass aec = null;
+		try {
+			m1Class = getGraphClassImpl();
+			if (className.equals(graphClassName)) {
+				return m1Class.getMethod("create", signature);
+			} else {
+				aec = graphClass.getVertexClass(className);
+				if (aec == null) {
+					aec = graphClass.getEdgeClass(className);
+					if (aec == null) {
+						throw new M1ClassAccessException("class " + className
+								+ " does not exist in schema");
+					}
+				}
+				return m1Class.getMethod("create"
+						+ CodeGenerator.camelCase(aec.getUniqueName()),
+						signature);
+			}
+		} catch (SecurityException e) {
+			throw new M1ClassAccessException(
+					"can't find create method in '" + m1Class.getName()
+							+ "' for '" + aec.getUniqueName() + "'", e);
+		} catch (NoSuchMethodException e) {
+			throw new M1ClassAccessException(
+					"can't find create method in '" + m1Class.getName()
+							+ "' for '" + aec.getUniqueName() + "'", e);
+		}
 	}
 
 	@Override
-	public Domain getDomain(QualifiedName domainName) {
-		return domains.get(domainName);
+	public AggregationClass getDefaultAggregationClass() {
+		return defaultAggregationClass;
+	}
+
+	@Override
+	public CompositionClass getDefaultCompositionClass() {
+		return defaultCompositionClass;
+	}
+
+	@Override
+	public EdgeClass getDefaultEdgeClass() {
+		return defaultEdgeClass;
+	}
+
+	@Override
+	public GraphClass getDefaultGraphClass() {
+		return defaultGraphClass;
+	}
+
+	@Override
+	public Package getDefaultPackage() {
+		return defaultPackage;
+	}
+
+	@Override
+	public VertexClass getDefaultVertexClass() {
+		return defaultVertexClass;
 	}
 
 	@Override
 	public Domain getDomain(String domainName) {
-		return domains.get(new QualifiedName(domainName));
+		return domains.get(domainName);
+	}
+
+	@Override
+	public Map<String, Domain> getDomains() {
+		return domains;
+	}
+
+	@Override
+	public List<EdgeClass> getEdgeClassesInTopologicalOrder() {
+		ArrayList<EdgeClass> topologicalOrderList = new ArrayList<EdgeClass>();
+		HashSet<EdgeClass> edgeClassSet = new HashSet<EdgeClass>();
+
+		// store edge classes in edgeClassSet
+		edgeClassSet.addAll(graphClass.getOwnEdgeClasses());
+		edgeClassSet.addAll(graphClass.getOwnAggregationClasses());
+		edgeClassSet.addAll(graphClass.getOwnCompositionClasses());
+
+		topologicalOrderList.add(defaultEdgeClass);
+		topologicalOrderList.add(defaultAggregationClass);
+		topologicalOrderList.add(defaultCompositionClass);
+
+		// iteratively add classes from edgeClassSet,
+		// whose superclasses already are in topologicalOrderList,
+		// to topologicalOrderList
+		// the added classes are removed from edgeClassSet
+		while (!edgeClassSet.isEmpty()) {
+			for (EdgeClass ec : edgeClassSet) {
+				if (topologicalOrderList.containsAll(ec.getAllSuperClasses())) {
+					topologicalOrderList.add(ec);
+				}
+			}
+			edgeClassSet.removeAll(topologicalOrderList);
+		}
+
+		return topologicalOrderList;
+	}
+
+	@Override
+	public Method getEdgeCreateMethod(String edgeClassName) {
+		// Edge class create method cannot be found directly by its signature
+		// because the vertex parameters are subclassed to match the to- and
+		// from-class. Those subclasses are unknown in this method. Therefore,
+		// we look for a method with correct name and 3 parameters
+		// (int, vertex, Vertex).
+		AttributedElementClass aec = getAttributedElementClass(edgeClassName);
+		if (aec == null || !(aec instanceof EdgeClass)) {
+			throw new SchemaException(
+					"There's no EdgeClass with qualified name " + edgeClassName
+							+ "!");
+		}
+		EdgeClass ec = (EdgeClass) aec;
+		String methodName = "create"
+				+ CodeGenerator.camelCase(ec.getUniqueName());
+		Class<?> m1Class = getGraphClassImpl();
+		for (Method m : m1Class.getMethods()) {
+			if (m.getName().equals(methodName)
+					&& m.getParameterTypes().length == 3) {
+				return m;
+			}
+		}
+		throw new M1ClassAccessException("can't find create method '"
+				+ methodName + "' in '" + m1Class.getName() + "' for '"
+				+ ec.getUniqueName() + "'");
+	}
+
+	@Override
+	public List<EnumDomain> getEnumDomains() {
+		ArrayList<EnumDomain> enumList = new ArrayList<EnumDomain>();
+
+		for (Domain dl : domains.values()) {
+			if (dl instanceof EnumDomain) {
+				enumList.add((EnumDomain) dl);
+			}
+		}
+
+		return enumList;
+	}
+
+	@Override
+	public BooleanDomain getBooleanDomain() {
+		return booleanDomain;
+	}
+
+	@Override
+	public DoubleDomain getDoubleDomain() {
+		return doubleDomain;
+	}
+
+	@Override
+	public IntDomain getIntegerDomain() {
+		return integerDomain;
+	}
+
+	@Override
+	public LongDomain getLongDomain() {
+		return longDomain;
+	}
+
+	@Override
+	public StringDomain getStringDomain() {
+		return stringDomain;
+	}
+
+	@Override
+	public GraphClass getGraphClass() {
+		return graphClass;
 	}
 
 	@SuppressWarnings("unchecked")
-	private Class<? extends Graph> getGraphClassImpl(
-			QualifiedName graphClassName) {
-		String implClassName = getPackageName() + "." + IMPLPACKAGENAME + "."
-				+ graphClassName.getSimpleName() + "Impl";
+	private Class<? extends Graph> getGraphClassImpl() {
+		String implClassName = packagePrefix + "." + IMPL_PACKAGE_NAME + "."
+				+ graphClass.getSimpleName() + "Impl";
 		Class<? extends Graph> m1Class;
 		try {
 			m1Class = (Class<? extends Graph>) Class.forName(implClassName,
@@ -908,215 +999,158 @@ public class SchemaImpl implements Schema {
 		return m1Class;
 	}
 
-	private Method getCreateMethod(QualifiedName className,
-			QualifiedName graphClassName, Class<?>[] signature) {
-		Class<? extends Graph> m1Class = null;
-		try {
-			m1Class = getGraphClassImpl(graphClassName);
-			if (className.equals(graphClassName)) {
-				return m1Class.getMethod("create", signature);
-			} else {
-				GraphClass gc = getGraphClasses().get(graphClassName);
-				VertexClass vc = gc.getVertexClass(className);
-				if (vc != null) {
-					className = vc.getQName();
-				} else {
-					EdgeClass ec = gc.getEdgeClass(className);
-					if (ec != null) {
-						className = ec.getQName();
-					} else {
-						throw new M1ClassAccessException("class "
-								+ className.getQualifiedName()
-								+ " does not exist in schema");
-					}
-				}
-				return m1Class.getMethod("create"
-						+ CodeGenerator.camelCase(className.getUniqueName()),
-						signature);
-			}
-		} catch (SecurityException e) {
-			throw new M1ClassAccessException("can't find create method in '"
-					+ m1Class.getName() + "' for '" + className.getUniqueName()
-					+ "'", e);
-		} catch (NoSuchMethodException e) {
-			throw new M1ClassAccessException("can't find create method in '"
-					+ m1Class.getName() + "' for '" + className.getUniqueName()
-					+ "'", e);
-		}
-	}
-
-	static final Class<?>[] graphClassCreateSignature = { String.class,
-			int.class, int.class };
-
-	public Method getGraphCreateMethod(QualifiedName graphClassName) {
-		return getCreateMethod(graphClassName, graphClassName,
-				graphClassCreateSignature);
-	}
-
-	static final Class<?>[] vertexClassCreateSignature = { int.class };
-
-	public Method getVertexCreateMethod(QualifiedName vertexClassName,
-			QualifiedName graphClassName) {
-		return getCreateMethod(vertexClassName, graphClassName,
-				vertexClassCreateSignature);
-	}
-
-	public Method getEdgeCreateMethod(QualifiedName edgeClassName,
-			QualifiedName graphClassName) {
-
-		// Edge class create method cannot be found directly by its signature
-		// because the vertex parameters are subclassed to match the to- and
-		// from-class. Those subclasses are unknown in this method. Therefore,
-		// we look for a method with correct name and 3 parameters
-		// (int, vertex, Vertex).
-		String methodName = "create"
-				+ CodeGenerator.camelCase(edgeClassName.getUniqueName());
-		Class<?> m1Class = getGraphClassImpl(graphClassName);
-		for (Method m : m1Class.getMethods()) {
-			if (m.getName().equals(methodName)
-					&& m.getParameterTypes().length == 3) {
-				return m;
-			}
-		}
-		throw new M1ClassAccessException("can't find create method '"
-				+ methodName + "' in '" + m1Class.getName() + "' for '"
-				+ edgeClassName.getUniqueName() + "'");
-	}
-
-	public AggregationClass getDefaultAggregationClass() {
-		return defaultAggregationClass;
-	}
-
-	public CompositionClass getDefaultCompositionClass() {
-		return defaultCompositionClass;
-	}
-
-	public EdgeClass getDefaultEdgeClass() {
-		return defaultEdgeClass;
-	}
-
-	public GraphClass getDefaultGraphClass() {
-		return defaultGraphClass;
-	}
-
-	public VertexClass getDefaultVertexClass() {
-		return defaultVertexClass;
+	@Override
+	public Method getGraphCreateMethod() {
+		return getCreateMethod(graphClass.getSimpleName(), graphClass
+				.getSimpleName(), GRAPHCLASS_CREATE_SIGNATURE);
 	}
 
 	@Override
-	public boolean knows(QualifiedName name) {
-		return getAttributedElementClass(name) != null
-				|| domains.get(name) != null || getGraphClass(name) != null
-				|| getSimpleName().equals(name);
+	public GraphFactory getGraphFactory() {
+		return graphFactory;
 	}
 
 	@Override
-	public boolean isValidSchemaElementName(QualifiedName name) {
-		return !reservedJavaWords.contains(name.getQualifiedName());
-	}
-
-	@Override
-	public Attribute createAttribute(String name, Domain dom) {
-		return new AttributeImpl(name, dom);
+	public String getName() {
+		return name;
 	}
 
 	/**
-	 * File Manager class overwriting the method {@code getJavaFileForOutput} so
-	 * that bytecode is written to a {@code ClassFileAbstraction}.
+	 * only used internally
 	 *
+	 * @return number of graphelementclasses contained in graphclass
 	 */
-	private class ClassFileManager extends
-			ForwardingJavaFileManager<JavaFileManager> {
-		Vector<JavaSourceFromString> sources;
-
-		public ClassFileManager(JavaFileManager fm) {
-			super(fm);
-		}
-
-		@Override
-		public JavaFileObject getJavaFileForOutput(Location location,
-				String className, Kind kind, FileObject sibling) {
-			ClassFileAbstraction cfa = new ClassFileAbstraction(className);
-
-			M1ClassManager.instance().putM1Class(className, cfa);
-			return cfa;
-		}
-
-		public void setSources(Vector<JavaSourceFromString> sources) {
-			this.sources = sources;
-		}
+	private int getNumberOfElements() {
+		return graphClass.getOwnGraphElementClasses().size() + 1;
 	}
 
 	@Override
-	public Package getDefaultPackage() {
-		return defaultPackage;
+	public Package getPackage(String packageName) {
+		return packages.get(packageName);
 	}
 
 	@Override
-	public String getPackageName() {
-		return qName.getPackageName();
+	public String getPackagePrefix() {
+		return packagePrefix;
 	}
 
 	@Override
-	public String getSimpleName() {
-		return qName.getSimpleName();
+	public Map<String, Package> getPackages() {
+		return packages;
 	}
 
 	@Override
-	public QualifiedName getQName() {
-		return qName;
+	public String getQualifiedName() {
+		return qualifiedName;
 	}
 
 	@Override
-	public String getQualifiedName(Package pkg) {
-		throw new UnsupportedOperationException();
-	}
+	public List<RecordDomain> getRecordDomains() {
+		ArrayList<RecordDomain> recordList = new ArrayList<RecordDomain>();
 
-	@Override
-	public Package createPackageWithParents(String qualifiedName) {
-		if (qualifiedName.length() == 0) {
-			return defaultPackage;
-		}
-		String[] simpleNames = qualifiedName.split("\\.");
-		Package p = defaultPackage;
-		for (String simpleName : simpleNames) {
-			if (p.containsSubPackage(simpleName)) {
-				p = p.getSubPackage(simpleName);
-			} else {
-				p = p.createSubPackage(simpleName);
+		for (Domain dl : domains.values()) {
+			if (dl instanceof RecordDomain) {
+				recordList.add((RecordDomain) dl);
 			}
 		}
-		return p;
+
+		return recordList;
 	}
 
 	@Override
-	public void addPackage(Package p) {
-		packages.put(p.getQName(), p);
-		// TODO check if packages should have unique names
-		// addToKnownElements(p.getUniqueName(), p);
+	public List<VertexClass> getVertexClassesInTopologicalOrder() {
+		ArrayList<VertexClass> topologicalOrderList = new ArrayList<VertexClass>();
+		HashSet<VertexClass> vertexClassSet = new HashSet<VertexClass>();
+
+		// store vertex classes in vertexClassSet
+		vertexClassSet.addAll(graphClass.getOwnVertexClasses());
+		// first only the default vertex class is in the topo list
+		topologicalOrderList.add(defaultVertexClass);
+
+		// iteratively add classes from vertexClassSet,
+		// whose superclasses already are in topologicalOrderList,
+		// to topologicalOrderList
+		// the added classes are removed from vertexClassSet
+		while (!vertexClassSet.isEmpty()) {
+			for (VertexClass vc : vertexClassSet) {
+				if (topologicalOrderList.containsAll(vc.getAllSuperClasses())) {
+					topologicalOrderList.add(vc);
+				}
+			}
+			vertexClassSet.removeAll(topologicalOrderList);
+		}
+		return topologicalOrderList;
 	}
 
-	public boolean allowsLowercaseEnumConstants() {
-		return allowLowercaseEnumConstants;
+	@Override
+	public Method getVertexCreateMethod(String vertexClassName) {
+		return getCreateMethod(vertexClassName, graphClass.getSimpleName(),
+				VERTEX_CLASS_CREATE_SIGNATURE);
 	}
 
+	@Override
+	public boolean isValidEnumConstant(String name) {
+		if (name.isEmpty()) {
+			return false;
+		}
+		if (!allowLowercaseEnumConstants && !name.equals(name.toUpperCase())) {
+			return false;
+		}
+		if (RESERVED_JAVA_WORDS.contains(name)) {
+			return false;
+		}
+		return true;
+	}
+
+	@Override
+	public boolean knows(String qn) {
+		return knownQualifiedNames.contains(qn);
+	}
+
+	@Override
+	public boolean isSimpleNameUnique(String sn) {
+		return namedElements.containsKey(sn);
+	}
+
+	@Override
 	public void setAllowLowercaseEnumConstants(
 			boolean allowLowercaseEnumConstants) {
 		this.allowLowercaseEnumConstants = allowLowercaseEnumConstants;
 	}
 
-	public boolean isValidEnumConstant(String name) {
-		if (!allowsLowercaseEnumConstants()) {
-			for (int i = 0; i < name.length(); i++) {
-				if (Character.isLowerCase(name.charAt(i))) {
-					return false;
-				}
-			}
+	@Override
+	public void setGraphFactory(GraphFactory factory) {
+		graphFactory = factory;
+	}
+
+	void setGraphClass(GraphClass gc) {
+		if (graphClass != null) {
+			throw new SchemaException("There already is a GraphClass named: "
+					+ graphClass.getQualifiedName() + "in the Schema!");
 		}
-		if (reservedJavaWords.contains(name)) {
-			return false;
-		}
-		return true;
+		graphClass = gc;
+	}
+
+	/**
+	 * @return the textual representation of the schema with all graph classes,
+	 *         their edge and vertex classes, all attributes and the whole
+	 *         hierarchy of those classes
+	 */
+	@Override
+	public String toString() {
+		return "GraphClass of schema '" + qualifiedName + "':\n\n\n"
+				+ graphClass.toString();
+
+	}
+
+	@Override
+	public String getFileName() {
+		return qualifiedName.replace('.', File.separatorChar);
+	}
+
+	@Override
+	public String getPathName() {
+		return packagePrefix.replace('.', File.separatorChar);
 	}
 
 }

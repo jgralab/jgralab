@@ -1,7 +1,6 @@
 package de.uni_koblenz.jgralabtest.schematest.domaintest;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import java.util.List;
@@ -10,9 +9,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import de.uni_koblenz.jgralab.schema.EnumDomain;
-import de.uni_koblenz.jgralab.schema.QualifiedName;
 import de.uni_koblenz.jgralab.schema.exception.InvalidNameException;
-import de.uni_koblenz.jgralab.schema.exception.NoSuchEnumConstantException;
 
 public class EnumDomainTest extends BasicDomainTest {
 
@@ -24,13 +21,9 @@ public class EnumDomainTest extends BasicDomainTest {
 	public void init() {
 		super.init();
 		// Initializing DomainTest
-		schema1
-				.createEnumDomain(new QualifiedName(
-						"package1.subpackage1.Enum1"));
+		schema1.createEnumDomain("package1.subpackage1.Enum1");
 		domain1 = schema1.getDomain("package1.subpackage1.Enum1");
-		schema2
-				.createEnumDomain(new QualifiedName(
-						"package1.subpackage1.Enum1"));
+		schema2.createEnumDomain("package1.subpackage1.Enum1");
 		domain2 = schema2.getDomain("package1.subpackage1.Enum1");
 		otherDomain1 = schema1.getDomain("Boolean");
 		otherDomain2 = schema2.getDomain("String");
@@ -53,14 +46,14 @@ public class EnumDomainTest extends BasicDomainTest {
 
 		// same domainname as Domain1 but in other package (for testing
 		// getUniqueName)
-		schema1.createEnumDomain(new QualifiedName("package1.Enum1"));
+		schema1.createEnumDomain("package1.Enum1");
 		domain3 = (EnumDomain) schema1.getDomain("package1.Enum1");
 		domain3.addConst("Hugo");
 		domain3.addConst("Sebastian");
 		domain3.addConst("Volker");
 		domain3.addConst("Kerstin");
 		domain3.addConst("Sascha");
-		schema1.createEnumDomain(new QualifiedName("package1.Domain2"));
+		schema1.createEnumDomain("package1.Domain2");
 		domain4 = (EnumDomain) schema1.getDomain("package1.Domain2");
 	}
 
@@ -126,55 +119,6 @@ public class EnumDomainTest extends BasicDomainTest {
 	public void testAddConst3() {
 		// add constant that already exists
 		domain3.addConst("Sebastian");
-	}
-
-	@Test
-	public void testDeleteConst1() {
-		// delete last constant
-		domain3.deleteConst("Sascha");
-		testPostDeleteConst1(domain3, "Sascha", new String[] { "Hugo",
-				"Sebastian", "Volker", "Kerstin" });
-		// delete first constant
-		domain3.deleteConst("Hugo");
-		testPostDeleteConst1(domain3, "Hugo", new String[] { "Sebastian",
-				"Volker", "Kerstin" });
-		// delete constant in the middle
-		domain3.deleteConst("Volker");
-		testPostDeleteConst1(domain3, "Volker", new String[] { "Sebastian",
-				"Kerstin" });
-		domain3.deleteConst("Kerstin");
-		testPostDeleteConst1(domain3, "Kerstin", new String[] { "Sebastian" });
-		// delete the last existing constant
-		domain3.deleteConst("Sebastian");
-		testPostDeleteConst1(domain3, "Sebastian", new String[0]);
-	}
-
-	/**
-	 * Tests if the EnumDomain enum1 still contains all elements of
-	 * expectedConst expect the deleted one.
-	 *
-	 * @param enum1
-	 *            the EnumDomain in which a constant was deleted
-	 * @param deletedConst
-	 *            the constant which was deleted
-	 * @param expectedConst
-	 *            the constants which should be still existing after deleting
-	 *            one constant
-	 */
-	private void testPostDeleteConst1(EnumDomain enum1, String deletedConst,
-			String[] expectedConst) {
-		List<String> consts = enum1.getConsts();
-		assertEquals(expectedConst.length, consts.size());
-		assertFalse(consts.contains(deletedConst));
-		for (String aConst : expectedConst) {
-			assertTrue(consts.contains(aConst));
-		}
-	}
-
-	@Test(expected = NoSuchEnumConstantException.class)
-	public void testDeleteConst2() {
-		// delete constant that does not exist
-		domain3.deleteConst("Nonsense");
 	}
 
 	@Test

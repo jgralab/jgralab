@@ -40,17 +40,17 @@ import de.uni_koblenz.jgralab.codegenerator.JavaSourceFromString;
 
 /**
  * The class Schema represents a grUML Schema (M2).
- * 
+ *
  * @author ist@uni-koblenz.de
- * 
+ *
  */
-public interface Schema extends NamedElement {
+public interface Schema extends Comparable<Schema> {
 
 	/**
-	 * These are words that are reserved by Java itself and may not be used for
-	 * element names
+	 * Reserved Java words that are not allowed as a name for any NamedElement
+	 * and/or Schema.
 	 */
-	public static final Set<String> reservedJavaWords = new TreeSet<String>(
+	public static final Set<String> RESERVED_JAVA_WORDS = new TreeSet<String>(
 			Arrays.asList(new String[] { "abstract", "continue", "for", "new",
 					"switch", "assert", "default", "goto", "package",
 					"synchronized", "boolean", "do", "if", "private", "this",
@@ -62,130 +62,28 @@ public interface Schema extends NamedElement {
 					"strictfp", "volatile", "const", "float", "native",
 					"super", "while" }));
 
-	public static final Set<String> basicDomains = new TreeSet<String>(Arrays
-			.asList(new String[] { "Boolean", "Integer", "Long", "String",
-					"Double" }));
-
-	public static final Set<String> reservedTGWords = new TreeSet<String>(
-			Arrays.asList(new String[] { "abstract", "aggregate",
-					"AggregationClass", "Boolean", "CompositionClass",
-					"Double", "EdgeClass", "EnumDomain", "f", "from", "Graph",
-					"GraphClass", "Integer", "List", "Long", "Map", "Package",
-					"RecordDomain", "redefines", "role", "Schema", "Set",
-					"String", "t", "to", "VertexClass", "id", "reversed",
-					"normal" }));
+	/**
+	 * Checks if this schema supports enumeration constants with lowercase
+	 * letters.
+	 *
+	 * @return true iff the schema allows lowercase enum constants
+	 */
+	public boolean allowsLowercaseEnumConstants();
 
 	/**
-	 * sets the factory that is used to create graphs, vertices and edges
+	 * After creating the schema, this command serves to generate code for the
+	 * m1 classes, contained in {@code JavaSourceFromString} objects.
 	 */
-	public void setGraphFactory(GraphFactory factory);
-
-	/**
-	 * @return the factory that is used to create graphs, vertices and edges
-	 */
-	public GraphFactory getGraphFactory();
-
-	/**
-	 * Creates a new Attribute <code>name</code> with domain <code>dom</code>.
-	 * 
-	 * @param name
-	 *            the attribute name
-	 * @param dom
-	 *            the domain for the attribute
-	 * @return the new Attribute
-	 */
-	public Attribute createAttribute(String name, Domain dom);
-
-	/**
-	 * builds a new graphclass and saves it to the schema object
-	 * 
-	 * @param id
-	 *            the unique identifier of the graphclass in the schema
-	 * @return the new graphclass
-	 */
-	public GraphClass createGraphClass(QualifiedName id);
-
-	/**
-	 * builds a new enumeration domain, multiple domains may exist in a schema
-	 * 
-	 * @param qn
-	 *            a unique name which identifies the enum in the schema
-	 * @param enumComponents
-	 *            a list of strings which state the constants of the enumeration
-	 * @return a new enumeration domain
-	 */
-	public EnumDomain createEnumDomain(QualifiedName qn,
-			List<String> enumComponents);
-
-	/**
-	 * builds a new enumeration domain, multiple domains may exist in a schema
-	 * 
-	 * @param qn
-	 *            a unique name which identifies the enum in the schema
-	 * @return a new enumeration domain
-	 */
-	public EnumDomain createEnumDomain(QualifiedName qn);
-
-	/**
-	 * builds a new list domain, multiple domains may exist in a schema
-	 * 
-	 * @param baseDomain
-	 *            the domain of which all elements in the list are built of
-	 * @return the new list domain
-	 */
-	public ListDomain createListDomain(Domain baseDomain);
-
-	/**
-	 * builds a new set domain, multiple domains may exist in a schema
-	 * 
-	 * @param baseDomain
-	 *            the domain of which all elements in the set are built of
-	 * @return the new set domain
-	 */
-	public SetDomain createSetDomain(Domain baseDomain);
-
-	/**
-	 * builds a new map domain, multiple domains may exist in a schema
-	 * 
-	 * @param keyDomain
-	 *            the domain of which all keys in the set are built of
-	 * @param keyDomain
-	 *            the domain of which all values in the set are built of
-	 * @return the new map domain
-	 */
-	public MapDomain createMapDomain(Domain keyDomain, Domain valueDomain);
-
-	/**
-	 * builds a new record domain, multiple domains may exist in a schema
-	 * 
-	 * @param qn
-	 *            a unique name which identifies the record in the schema
-	 * @param recordComponents
-	 *            a list of record domain components which state the individual
-	 *            components of the record, each consisting of a name and a
-	 *            domain
-	 * @return the new record domain
-	 */
-	public RecordDomain createRecordDomain(QualifiedName qn,
-			Map<String, Domain> recordComponents);
-
-	/**
-	 * builds a new record domain, multiple domains may exist in a schema
-	 * 
-	 * @param qn
-	 *            a unique name which identifies the record in the schema
-	 * @return the new record domain
-	 */
-	public RecordDomain createRecordDomain(QualifiedName qn);
+	public Vector<JavaSourceFromString> commit();
 
 	/**
 	 * after creating the schema, this command serves to make it permanent, m2
 	 * classes are generated to represent the object oriented access layer
-	 * 
+	 *
 	 * @param path
 	 *            the path to the m1 classes which are to be generated
-	 * 
-	 * 
+	 *
+	 *
 	 * @throws GraphIOException
 	 *             if an error occured during optional compilation
 	 */
@@ -194,7 +92,7 @@ public interface Schema extends NamedElement {
 	/**
 	 * after creating the schema, this command serves to make it permanent, m2
 	 * classes are generated to represent the object oriented access layer
-	 * 
+	 *
 	 * @param path
 	 *            the path to the m1 classes which are to be generated
 	 * @param progressFunction
@@ -204,12 +102,6 @@ public interface Schema extends NamedElement {
 	 */
 	public void commit(String path, ProgressFunction progressFunction)
 			throws GraphIOException;
-
-	/**
-	 * After creating the schema, this command serves to generate code for the
-	 * m1 classes, contained in {@code JavaSourceFromString} objects.
-	 */
-	public Vector<JavaSourceFromString> commit();
 
 	/**
 	 * After creating the schema, this command serves to generate and compile
@@ -222,109 +114,125 @@ public interface Schema extends NamedElement {
 	 * After creating the schema, this command serves to generate and compile
 	 * code for the m1 classes. The class files are not written to disk, but
 	 * only held in memory.
-	 * 
+	 *
 	 * @param jgralabClassPath
 	 *            the classpath to JGraLab
 	 */
 	public void compile(String jgralabClassPath);
 
 	/**
-	 * @param aGraphClass
-	 *            the graph class which is being searched for
-	 * @return true, if the graph class is part of the schema
+	 * Creates a new Attribute <code>name</code> with domain <code>dom</code>.
+	 *
+	 * @param name
+	 *            the attribute name
+	 * @param dom
+	 *            the domain for the attribute
+	 * @return the new Attribute
 	 */
-	public boolean containsGraphClass(GraphClass aGraphClass);
+	public Attribute createAttribute(String name, Domain dom);
 
 	/**
-	 * @param id
-	 *            the unique identifier of the graph class in the schema
-	 * @return the graph class associated with the id
+	 * Builds a new enumeration domain, multiple domains may exist in a schema.
+	 *
+	 * @param qualifiedName
+	 *            the qualified name of the {@link EnumDomain}
+	 * @return a new enumeration domain
 	 */
-	public GraphClass getGraphClass(QualifiedName id);
+	public EnumDomain createEnumDomain(String qualifiedName);
 
 	/**
-	 * @return the textual representation of the schema with all graph classes,
-	 *         their edge and vertex classes, all attributes and the whole
-	 *         hierarchy of those classes
+	 * Builds a new enumeration domain, multiple domains may exist in a schema
+	 *
+	 * @param qualifiedName
+	 *            the qualified name of the {@link EnumDomain}
+	 * @param enumComponents
+	 *            a list of strings which state the constants of the enumeration
+	 * @return a new enumeration domain
 	 */
-	public String toString();
+	public EnumDomain createEnumDomain(String qualifiedName,
+			List<String> enumComponents);
 
 	/**
-	 * @return all the graph classes in the schema
+	 * Creates a new {@link GraphClass} and saves it to the schema object
+	 *
+	 * @param simpleName
+	 *            the simple name of the graphclass in the schema
+	 * @return the new graphclass
 	 */
-	public Map<QualifiedName, GraphClass> getGraphClasses();
+	public GraphClass createGraphClass(String simpleName);
 
 	/**
-	 * @return all the domains in the schema
+	 * builds a new list domain, multiple domains may exist in a schema
+	 *
+	 * @param baseDomain
+	 *            the domain of which all elements in the list are built of
+	 * @return the new list domain
 	 */
-	public Map<QualifiedName, Domain> getDomains();
+	public ListDomain createListDomain(Domain baseDomain);
 
 	/**
-	 * @return all packages in the schema
+	 * builds a new map domain, multiple domains may exist in a schema
+	 *
+	 * @param keyDomain
+	 *            the domain of which all keys in the set are built of
+	 * @param keyDomain
+	 *            the domain of which all values in the set are built of
+	 * @return the new map domain
 	 */
-	public Map<QualifiedName, Package> getPackages();
+	public MapDomain createMapDomain(Domain keyDomain, Domain valueDomain);
 
 	/**
-	 * @param id
-	 * @return the attributed element class with the specified id
+	 * builds a new record domain, multiple domains may exist in a schema
+	 *
+	 * @param qualifiedName
+	 *            the qualified name of this RecordDomain
+	 * @return the new record domain
 	 */
-	public AttributedElementClass getAttributedElementClass(QualifiedName id);
+	public RecordDomain createRecordDomain(String qualifiedName);
 
 	/**
-	 * @param domainName
-	 *            the unique name of the enum/record domain
-	 * @return the enum or record domain with the name domainName
+	 * builds a new record domain, multiple domains may exist in a schema
+	 *
+	 * @param qualifiedName
+	 *            the qualified name of this RecordDomain
+	 * @param recordComponents
+	 *            a list of record domain components which state the individual
+	 *            components of the record, each consisting of a name and a
+	 *            domain
+	 * @return the new record domain
 	 */
-	public Domain getDomain(QualifiedName domainName);
+	public RecordDomain createRecordDomain(String qualifiedName,
+			Map<String, Domain> recordComponents);
 
 	/**
-	 * @param packageName
-	 *            the unique name of the package
-	 * @return the package name packageName
+	 * builds a new set domain, multiple domains may exist in a schema
+	 *
+	 * @param baseDomain
+	 *            the domain of which all elements in the set are built of
+	 * @return the new set domain
 	 */
-	public Package getPackage(String packageName);
+	public SetDomain createSetDomain(Domain baseDomain);
+
+	public boolean equals(Object other);
 
 	/**
-	 * @param domainName
-	 *            the unique name of the enum/record domain
-	 * @return the enum or record domain with the name domainName
+	 * @param qn
+	 * @return the attributed element class with the specified qualified name
 	 */
-	public Domain getDomain(String domainName);
+	public AttributedElementClass getAttributedElementClass(String qn);
+
+	public BooleanDomain getBooleanDomain();
 
 	/**
-	 * Gets the method to create a new graphwith the given name
-	 * 
-	 * @param graphClassName
-	 *            the name of the graph class
-	 * @return the Method-Object that represents the method to create such
-	 *         graphs
+	 * Returns an topologically ordered list of all composite domains, i.e. the
+	 * domains are ordered according to the hierarchy of their components.
+	 * First, the list contains the domains which only contain basic domains.
+	 * The next entries in the list represent those domains which exclusively
+	 * contain domains with only basic classes as components, etc.
+	 *
+	 * @return an topologically ordered list of all composite domains
 	 */
-	public Method getGraphCreateMethod(QualifiedName graphClassName);
-
-	/**
-	 * Gets the method to create a new vertex with the given name
-	 * 
-	 * @param vertexClassName
-	 *            the name of the vertex to create
-	 * @param graphClassName
-	 *            the name of the graph class the VertexClass belongs to
-	 * @return the Method-Object that represents the method to create such
-	 *         vertices
-	 */
-	public Method getVertexCreateMethod(QualifiedName vertexClassName,
-			QualifiedName graphClassName);
-
-	/**
-	 * Gets the method to create a new edge with the given name
-	 * 
-	 * @param edgeClassName
-	 *            the name of the edge to create
-	 * @param graphClassName
-	 *            the name of the graph class the EdgeClass belongs to
-	 * @return the Method-Object that represents the method to create such edges
-	 */
-	public Method getEdgeCreateMethod(QualifiedName edgeClassName,
-			QualifiedName graphClassName);
+	public List<CompositeDomain> getCompositeDomainsInTopologicalOrder();
 
 	/**
 	 * @return the default AggregationClass of the schema, that is the
@@ -351,58 +259,31 @@ public interface Schema extends NamedElement {
 	public GraphClass getDefaultGraphClass();
 
 	/**
+	 * Returns the default package of this Schema.
+	 *
+	 * @return the default package, guaranteed to be != null
+	 */
+	public Package getDefaultPackage();
+
+	/**
 	 * @return the default VertexClass of the schema, that is the VertexClass
 	 *         with the name "Vertex"
 	 */
 	public VertexClass getDefaultVertexClass();
 
 	/**
-	 * Returns an topologically ordered list of all graph classes, i.e. the
-	 * graph classes are ordered according to their inheritance hierarchy.
-	 * First, the list contains the classes without a superclass (except the
-	 * default graph class). The next entries in the list represent those graph
-	 * classes which only inherit from the classes without a superclass, etc.
-	 * 
-	 * @return an topologically ordered list of all graph classes
+	 * @param domainName
+	 *            the unique name of the enum/record domain
+	 * @return the enum or record domain with the name domainName
 	 */
-	public List<GraphClass> getGraphClassesInTopologicalOrder();
+	public Domain getDomain(String domainName);
 
 	/**
-	 * Returns a list of all enum domains
-	 * 
-	 * @return a list of all enum domains
+	 * @return all the domains in the schema
 	 */
-	public List<EnumDomain> getEnumDomains();
+	public Map<String, Domain> getDomains();
 
-	/**
-	 * Returns a list of all record domains
-	 * 
-	 * @return a list of all record domains
-	 */
-	public List<RecordDomain> getRecordDomains();
-
-	/**
-	 * Returns an topologically ordered list of all composite domains, i.e. the
-	 * domains are ordered according to the hierarchy of their components.
-	 * First, the list contains the domains which only contain basic domains.
-	 * The next entries in the list represent those domains which exclusively
-	 * contain domains with only basic classes as components, etc.
-	 * 
-	 * @return an topologically ordered list of all composite domains
-	 */
-	public List<CompositeDomain> getCompositeDomainsInTopologicalOrder();
-
-	/**
-	 * Returns an topologically ordered list of all vertex classes in the
-	 * schema, i.e. the vertex classes are ordered according to their
-	 * inheritance hierarchy. First, the list contains the classes without a
-	 * superclass (except the default vertex class). The next entries in the
-	 * list represent those vertex classes which only inherit from the classes
-	 * without a superclass, etc.
-	 * 
-	 * @return an topologically ordered list of all vertex classes
-	 */
-	public List<VertexClass> getVertexClassesInTopologicalOrder();
+	public DoubleDomain getDoubleDomain();
 
 	/**
 	 * Returns an topologically ordered list of all edge classes in the schema
@@ -411,70 +292,127 @@ public interface Schema extends NamedElement {
 	 * contains the classes without a superclass (except the default edge
 	 * class). The next entries in the list represent those edge classes which
 	 * only inherit from the classes without a superclass, etc.
-	 * 
+	 *
 	 * @return an topologically ordered list of all edge classes
 	 */
 	public List<EdgeClass> getEdgeClassesInTopologicalOrder();
 
 	/**
-	 * Checks if the given name is already known in thsi schema. If this is the
+	 * Gets the method to create a new edge with the given name
+	 *
+	 * @param edgeClassName
+	 *            the name of the edge to create
+	 * @return the Method-Object that represents the method to create such edges
+	 */
+	public Method getEdgeCreateMethod(String edgeClassName);
+
+	/**
+	 * Returns a list of all enum domains
+	 *
+	 * @return a list of all enum domains
+	 */
+	public List<EnumDomain> getEnumDomains();
+
+	public String getFileName();
+
+	/**
+	 * @return the {@link GraphClass} defined by this schema
+	 */
+	public GraphClass getGraphClass();
+
+	/**
+	 * Gets the method to create a new graph of this schema
+	 *
+	 * @return the Method-Object that represents the method to create graphs of
+	 *         this schema
+	 */
+	public Method getGraphCreateMethod();
+
+	/**
+	 * @return the factory that is used to create graphs, vertices and edges
+	 */
+	public GraphFactory getGraphFactory();
+
+	public IntDomain getIntegerDomain();
+
+	public String getName();
+
+	public LongDomain getLongDomain();
+
+	/**
+	 * @param packageName
+	 *            the qualified name of the package
+	 * @return the package name packageName
+	 */
+	public Package getPackage(String qn);
+
+	public String getPackagePrefix();
+
+	/**
+	 * @return all packages in the schema
+	 */
+	public Map<String, Package> getPackages();
+
+	public String getPathName();
+
+	public String getQualifiedName();
+
+	/**
+	 * Returns a list of all record domains
+	 *
+	 * @return a list of all record domains
+	 */
+	public List<RecordDomain> getRecordDomains();
+
+	public StringDomain getStringDomain();
+
+	/**
+	 * Returns an topologically ordered list of all vertex classes in the
+	 * schema, i.e. the vertex classes are ordered according to their
+	 * inheritance hierarchy. First, the list contains the classes without a
+	 * superclass (except the default vertex class). The next entries in the
+	 * list represent those vertex classes which only inherit from the classes
+	 * without a superclass, etc.
+	 *
+	 * @return an topologically ordered list of all vertex classes
+	 */
+	public List<VertexClass> getVertexClassesInTopologicalOrder();
+
+	/**
+	 * Gets the method to create a new vertex with the given name
+	 *
+	 * @param vertexClassQName
+	 *            the qualified name of the vertex to create
+	 * @return the Method-Object that represents the method to create such
+	 *         vertices
+	 */
+	public Method getVertexCreateMethod(String vertexClassQName);
+
+	public boolean isSimpleNameUnique(String sn);
+
+	/**
+	 * Checks if the given name is a valid enumeration constant in this Schema.
+	 *
+	 * @param name
+	 *            the constant name to check
+	 * @return true if <code>name</code> is a valid enum constant
+	 */
+	public boolean isValidEnumConstant(String name);
+
+	/**
+	 * Checks if the given name is already known in this Schema. If this is the
 	 * case, it's not allowed to use it for any other element in this schema.
 	 * Even it'S not allowed to use a domain name also as name of a VertexClass.
-	 * 
-	 * @param name
-	 *            the name to check
+	 *
+	 * @param qn
+	 *            the qualified name to check for
 	 * @return true if the name is already known, false otherwise
 	 */
-	public boolean knows(QualifiedName name);
-
-	/**
-	 * Checks if the given name is a allowed name for a element in this schema.
-	 * Words that are reserved by the .tg-format or Java itself are not allowed
-	 * as element names. If you want to know if you may create a new element
-	 * with the name in the schema, use isFreeSchemaElementName instead, it
-	 * checks if the name is allowed and if there already exists a element with
-	 * this name.
-	 * 
-	 * @param name
-	 *            the name to check
-	 * @return true if the given name is an allowed element name, false
-	 *         otherwise
-	 * @see #isFreeDomainName(QualifiedName)
-	 * @see #knows(QualifiedName)
-	 */
-	public boolean isValidSchemaElementName(QualifiedName name);
-
-	/**
-	 * Returns the default package of this Schema.
-	 * 
-	 * @return the default package, guaranteed to be != null
-	 */
-	public Package getDefaultPackage();
-
-	public Package createPackageWithParents(String qualifiedName);
-
-	public void addPackage(Package p);
-
-	/**
-	 * This method is for internally use of JGraLab only. It registers the given
-	 * element <code>elem</code> under the unique name <code>name</code>
-	 * 
-	 * @param name
-	 * @param elem
-	 */
-	public void addToKnownElements(String name, NamedElement elem);
-
-	/**
-	 * Checks if this schema supports enumeration constants with lowercase
-	 * letters is
-	 * 
-	 * @return true iff the schema allows lowercase enum constants
-	 */
-	public boolean allowsLowercaseEnumConstants();
+	public boolean knows(String qn);
 
 	/**
 	 * Sets the schema to allow lowercase enum constants
-	 * 
+	 *
 	 * @param allowLowercaseEnumConstants
 	 *            set to true to make the schema to allow lowercase enum
 	 *            constants
@@ -483,11 +421,8 @@ public interface Schema extends NamedElement {
 			boolean allowLowercaseEnumConstants);
 
 	/**
-	 * Checks if the given name is a valid enumeration constant in this shcema
-	 * 
-	 * @param name
-	 *            the constant name to check
-	 * @return true if <code>name</code> is a valid enum constant
+	 * sets the factory that is used to create graphs, vertices and edges
 	 */
-	public boolean isValidEnumConstant(String name);
+	public void setGraphFactory(GraphFactory factory);
+
 }

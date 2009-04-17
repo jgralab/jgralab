@@ -31,4 +31,5 @@ package de.uni_koblenz.jgralab.schema;
  */
 public interface DoubleDomain extends BasicDomain {
 
+	public static final String DOUBLEDOMAIN_NAME = "Double";
 }

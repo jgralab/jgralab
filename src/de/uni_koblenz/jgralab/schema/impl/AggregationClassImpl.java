@@ -26,7 +26,8 @@ package de.uni_koblenz.jgralab.schema.impl;
 
 import de.uni_koblenz.jgralab.schema.AggregationClass;
 import de.uni_koblenz.jgralab.schema.GraphClass;
-import de.uni_koblenz.jgralab.schema.QualifiedName;
+import de.uni_koblenz.jgralab.schema.Package;
+import de.uni_koblenz.jgralab.schema.Schema;
 import de.uni_koblenz.jgralab.schema.VertexClass;
 
 public class AggregationClassImpl extends EdgeClassImpl implements
@@ -37,9 +38,22 @@ public class AggregationClassImpl extends EdgeClassImpl implements
 	 */
 	private boolean aggregateFrom;
 
+	static AggregationClass createDefaultAggregationClass(Schema schema) {
+		assert schema.getDefaultGraphClass() != null : "DefaultGraphClass has not yet been created!";
+		assert schema.getDefaultVertexClass() != null : "DefaultVertexClass has not yet been created!";
+		assert schema.getDefaultAggregationClass() == null : "DefaultVertexClass already created!";
+		AggregationClass ac = schema.getDefaultGraphClass()
+				.createAggregationClass(DEFAULTAGGREGATIONCLASS_NAME,
+						schema.getDefaultVertexClass(), true,
+						schema.getDefaultVertexClass());
+		ac.setAbstract(true);
+		ac.addSuperClass(schema.getDefaultEdgeClass());
+		return ac;
+	}
+
 	/**
 	 * builds a new aggregation class
-	 * 
+	 *
 	 * @param qn
 	 *            the unique identifier of the aggregation class in the schema
 	 * @param from
@@ -73,20 +87,22 @@ public class AggregationClassImpl extends EdgeClassImpl implements
 	 *            a name which identifies the 'to' side of the aggregation class
 	 *            in a unique way
 	 */
-	public AggregationClassImpl(QualifiedName qn, GraphClass aGraphClass,
-			VertexClass from, int fromMin, int fromMax, String fromRoleName,
-			boolean aggregateFrom, VertexClass to, int toMin, int toMax,
-			String toRoleName) {
-		super(qn, aGraphClass, from, fromMin, fromMax, fromRoleName, to, toMin,
-				toMax, toRoleName);
+	protected AggregationClassImpl(String simpleName, Package pkg,
+			GraphClass aGraphClass, VertexClass from, int fromMin, int fromMax,
+			String fromRoleName, boolean aggregateFrom, VertexClass to,
+			int toMin, int toMax, String toRoleName) {
+		super(simpleName, pkg, aGraphClass, from, fromMin, fromMax,
+				fromRoleName, to, toMin, toMax, toRoleName);
 		this.aggregateFrom = aggregateFrom;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see jgralab.AggregationClass#isAggregateFrom()
-	 */
+	@Override
+	protected void register() {
+		((PackageImpl) parentPackage).addEdgeClass(this);
+		((GraphClassImpl) graphClass).addAggregationClass(this);
+	}
+
+	@Override
 	public boolean isAggregateFrom() {
 		return aggregateFrom;
 	}

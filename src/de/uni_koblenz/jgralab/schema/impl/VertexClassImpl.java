@@ -34,14 +34,24 @@ import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.schema.AttributedElementClass;
 import de.uni_koblenz.jgralab.schema.EdgeClass;
 import de.uni_koblenz.jgralab.schema.GraphClass;
-import de.uni_koblenz.jgralab.schema.QualifiedName;
+import de.uni_koblenz.jgralab.schema.Package;
+import de.uni_koblenz.jgralab.schema.Schema;
 import de.uni_koblenz.jgralab.schema.VertexClass;
 import de.uni_koblenz.jgralab.schema.exception.InheritanceException;
 
-public class VertexClassImpl extends GraphElementClassImpl implements
+public final class VertexClassImpl extends GraphElementClassImpl implements
 		VertexClass {
 
-	private Set<DirectedEdgeClass> associatedEdges;
+	private final Set<DirectedEdgeClass> associatedEdges = new HashSet<DirectedEdgeClass>();
+
+	static VertexClass createDefaultVertexClass(Schema schema) {
+		assert schema.getDefaultGraphClass() != null : "DefaultGraphClass has not yet been created!";
+		assert schema.getDefaultVertexClass() == null : "DefaultVertexClass already created!";
+		VertexClass vc = schema.getDefaultGraphClass().createVertexClass(
+				DEFAULTVERTEXCLASS_NAME);
+		vc.setAbstract(true);
+		return vc;
+	}
 
 	/**
 	 * builds a new vertex class object
@@ -49,9 +59,16 @@ public class VertexClassImpl extends GraphElementClassImpl implements
 	 * @param qn
 	 *            the unique identifier of the vertex class in the schema
 	 */
-	public VertexClassImpl(QualifiedName qn, GraphClass aGraphClass) {
-		super(qn, aGraphClass);
-		associatedEdges = new HashSet<DirectedEdgeClass>();
+	protected VertexClassImpl(String simpleName, Package pkg,
+			GraphClass aGraphClass) {
+		super(simpleName, pkg, aGraphClass);
+		register();
+	}
+
+	@Override
+	protected void register() {
+		((PackageImpl) parentPackage).addVertexClass(this);
+		((GraphClassImpl) graphClass).addVertexClass(this);
 	}
 
 	@Override

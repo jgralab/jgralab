@@ -2,35 +2,30 @@ package de.uni_koblenz.jgralab.schema.impl;
 
 import de.uni_koblenz.jgralab.schema.CollectionDomain;
 import de.uni_koblenz.jgralab.schema.Domain;
-import de.uni_koblenz.jgralab.schema.QualifiedName;
-import de.uni_koblenz.jgralab.schema.Schema;
-import de.uni_koblenz.jgralab.schema.exception.WrongSchemaException;
+import de.uni_koblenz.jgralab.schema.Package;
 
 public abstract class CollectionDomainImpl extends CompositeDomainImpl
 		implements CollectionDomain {
 
 	/**
-	 * the base domain, every element of an instance of a collection must be of
+	 * The base domain, every element of an instance of a collection must be of
 	 * that domain
 	 */
 	protected Domain baseDomain;
 
-	public CollectionDomainImpl(Schema schema, QualifiedName qn,
+	protected CollectionDomainImpl(String simpleName, Package pkg,
 			Domain baseDomain) {
-		super(schema, qn);
-		if (!isDomainOfSchema(schema, baseDomain)) {
-			throw new WrongSchemaException(baseDomain
-					+ " must be a domain of the schema "
-					+ schema.getQualifiedName());
-		}
+		super(simpleName, pkg);
+
+		assert pkg.getSchema().getDomain(baseDomain.getQualifiedName()) != null : baseDomain
+				.getQualifiedName()
+				+ " must be a domain of the schema "
+				+ pkg.getSchema().getQualifiedName();
+
 		this.baseDomain = baseDomain;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see jgralab.CollectionDomain#getBaseDomain()
-	 */
+	@Override
 	public Domain getBaseDomain() {
 		return baseDomain;
 	}

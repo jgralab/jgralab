@@ -55,7 +55,6 @@ import de.uni_koblenz.jgralab.greql2.schema.SourcePosition;
 import de.uni_koblenz.jgralab.greql2.schema.Variable;
 import de.uni_koblenz.jgralab.schema.AttributedElementClass;
 import de.uni_koblenz.jgralab.schema.EdgeClass;
-import de.uni_koblenz.jgralab.schema.QualifiedName;
 import de.uni_koblenz.jgralab.schema.VertexClass;
 
 /**
@@ -242,9 +241,8 @@ public abstract class VertexEvaluator {
 				} else {
 					aec = col.getForbiddenTypes().iterator().next();
 				}
-				QualifiedName qn = new QualifiedName("Vertex");
 				if (aec.isSubClassOf(aec.getSchema().getAttributedElementClass(
-						qn))) {
+						"Vertex"))) {
 					// The typeId restricts vertex classes
 					for (VertexClass vc : greqlEvaluator.getDatagraph()
 							.getSchema().getVertexClassesInTopologicalOrder()) {

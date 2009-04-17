@@ -26,107 +26,27 @@ package de.uni_koblenz.jgralab.schema.impl;
 
 import de.uni_koblenz.jgralab.schema.Domain;
 import de.uni_koblenz.jgralab.schema.Package;
-import de.uni_koblenz.jgralab.schema.QualifiedName;
-import de.uni_koblenz.jgralab.schema.Schema;
 
-public abstract class DomainImpl implements Domain, Comparable<Domain> {
+public abstract class DomainImpl extends NamedElementImpl implements Domain {
 
-	private QualifiedName qName;
-	private Package pkg;
-	private Schema schema;
-
-	@Override
-	public Schema getSchema() {
-		return schema;
-	}
-
-	protected DomainImpl() {
-	}
-
-	protected DomainImpl(Schema schema, QualifiedName qn) {
-		initialize(schema, qn);
-	}
-
-	protected void initialize(Schema schema, QualifiedName qn) {
-		qName = qn;
-		this.schema = schema;
-		pkg = schema.getDefaultPackage();
+	protected DomainImpl(String simpleName, Package pkg) {
+		super(simpleName, pkg, pkg.getSchema());
+		register();
 	}
 
 	@Override
-	public boolean equals(Object obj) {
-		return (this == obj)
-				|| ((obj instanceof Domain) && getQName().equals(
-						((Domain) obj).getQName()));
+	protected final void register() {
+		((SchemaImpl) getSchema()).addDomain(this);
+		((PackageImpl) parentPackage).addDomain(this);
 	}
 
 	@Override
-	public void setPackage(Package p) {
-		pkg = p;
-	}
-
-	@Override
-	public Package getPackage() {
-		return pkg;
-	}
-
-	@Override
-	public String getSimpleName() {
-		return qName.getSimpleName();
-	}
-
-	@Override
-	public String getQualifiedName() {
-		return qName.getQualifiedName();
-	}
-
-	@Override
-	public String getQualifiedName(Package pkg) {
-		if (this.pkg == pkg) {
-			return qName.getSimpleName();
-		} else if (this.pkg.isDefaultPackage()) {
-			return "." + qName.getSimpleName();
-		} else {
-			return qName.getQualifiedName();
-		}
-	}
-
-	@Override
-	public String getPackageName() {
-		return qName.getPackageName();
-	}
-
-	@Override
-	public QualifiedName getQName() {
-		return qName;
-	}
-
-	@Override
-	public String getUniqueName() {
-		return qName.getUniqueName();
-	}
-
-	@Override
-	public void setUniqueName(String uniqueName) {
-		qName.setUniqueName(this, uniqueName);
-	}
-
-	@Override
-	public int hashCode() {
-		return qName.hashCode();
+	public int compareTo(Domain other) {
+		return this.qualifiedName.compareTo(other.getQualifiedName());
 	}
 
 	@Override
 	public String toString() {
-		return "domain " + qName.getQualifiedName();
+		return "domain " + qualifiedName;
 	}
-
-	public int compareTo(Domain o) {
-		return qName.compareTo(o.getQName());
-	}
-
-	public String getName() {
-		return qName.getQualifiedName();
-	}
-
 }

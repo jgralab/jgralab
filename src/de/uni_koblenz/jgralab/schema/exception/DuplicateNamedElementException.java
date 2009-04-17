@@ -24,12 +24,10 @@
 package de.uni_koblenz.jgralab.schema.exception;
 
 import de.uni_koblenz.jgralab.schema.NamedElement;
-import de.uni_koblenz.jgralab.schema.QualifiedName;
 
 /**
- * Thrown when trying to create a {@link NamedElement} which has a
- * {@link QualifiedName} that equals the {@link QualifiedName} of another schema
- * element.
+ * Thrown when trying to create a {@link NamedElement} which has a qualified
+ * name that equals the qualified name of another schema element.
  *
  * @author ist@uni-koblenz.de
  *

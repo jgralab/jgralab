@@ -24,14 +24,10 @@
 
 package de.uni_koblenz.jgralab.schema.impl;
 
-import java.util.Iterator;
-
 import de.uni_koblenz.jgralab.schema.AttributedElementClass;
-import de.uni_koblenz.jgralab.schema.EdgeClass;
 import de.uni_koblenz.jgralab.schema.GraphClass;
 import de.uni_koblenz.jgralab.schema.GraphElementClass;
-import de.uni_koblenz.jgralab.schema.QualifiedName;
-import de.uni_koblenz.jgralab.schema.Schema;
+import de.uni_koblenz.jgralab.schema.Package;
 import de.uni_koblenz.jgralab.schema.VertexClass;
 
 public abstract class GraphElementClassImpl extends AttributedElementClassImpl
@@ -45,71 +41,60 @@ public abstract class GraphElementClassImpl extends AttributedElementClassImpl
 	 * @param qn
 	 *            the unique identifier of the element in the schema
 	 */
-	public GraphElementClassImpl(QualifiedName qn, GraphClass aGraphClass) {
-		super(qn);
-		this.graphClass = aGraphClass;
+	protected GraphElementClassImpl(String simpleName, Package pkg,
+			GraphClass graphClass) {
+		super(simpleName, pkg, graphClass.getSchema());
+		this.graphClass = graphClass;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see jgralab.GraphElementClass#getGraphClass()
-	 */
+	@Override
 	public GraphClass getGraphClass() {
 		return graphClass;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see java.lang.Object#toString()
-	 */
 	@Override
 	public String toString() {
-		String output = this.getClass().getSimpleName() + " '"
-				+ getQualifiedName() + "'";
+		StringBuilder output = new StringBuilder(this.getClass()
+				.getSimpleName()
+				+ " '" + getQualifiedName() + "'");
 		if (isAbstract()) {
-			output += " (abstract)";
+			output.append(" (abstract)");
 		}
-		output += ": \n";
+		output.append(": \n");
 
-		output += "subClasses of '" + getQualifiedName() + "': ";
-		Iterator<AttributedElementClass> it = getAllSubClasses().iterator();
-		while (it.hasNext()) {
-			output += "'" + it.next().getQualifiedName() + "' ";
+		output.append("subClasses of '" + getQualifiedName() + "': ");
+
+		for (AttributedElementClass aec : getAllSubClasses()) {
+			output.append("'" + aec.getQualifiedName() + "' ");
 		}
-		output += "\nsuperClasses of '" + getQualifiedName() + "': ";
-		it = getAllSuperClasses().iterator();
-		while (it.hasNext()) {
-			output += "'" + it.next().getQualifiedName() + "' ";
+		output.append("\nsuperClasses of '" + getQualifiedName() + "': ");
+		for (AttributedElementClass aec : getAllSuperClasses()) {
+			output.append("'" + aec.getQualifiedName() + "' ");
 		}
-		output += "\ndirectSuperClasses of '" + getQualifiedName() + "': ";
-		it = directSuperClasses.iterator();
-		while (it.hasNext()) {
-			output += "'" + it.next().getQualifiedName() + "' ";
+		output.append("\ndirectSuperClasses of '" + getQualifiedName() + "': ");
+		for (AttributedElementClass aec : getDirectSuperClasses()) {
+			output.append("'" + aec.getQualifiedName() + "' ");
 		}
 
-		output += attributesToString();
+		output.append(attributesToString());
 
 		if (this instanceof VertexClass) {
-			output += "may connect to edgeclasses: ";
-			Iterator<EdgeClass> it2 = ((VertexClass) this).getEdgeClasses()
-					.iterator();
-			while (it2.hasNext()) {
-				output += it2.next().getQualifiedName();
-				if (it2.hasNext()) {
-					output += ", ";
+			output.append("may connect to edgeclasses: ");
+			boolean first = true;
+			for (AttributedElementClass aec : ((VertexClass) this)
+					.getEdgeClasses()) {
+				if (first) {
+					first = false;
+				} else {
+					output.append(", ");
 				}
+				output.append(aec.getQualifiedName());
+
 			}
-			output += "\n";
+			output.append("\n");
 		}
-		output += "\n";
+		output.append("\n");
 
-		return output;
-	}
-
-	@Override
-	public Schema getSchema() {
-		return graphClass.getSchema();
+		return output.toString();
 	}
 }

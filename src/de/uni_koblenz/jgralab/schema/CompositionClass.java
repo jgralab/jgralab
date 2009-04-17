@@ -33,4 +33,6 @@ package de.uni_koblenz.jgralab.schema;
  */
 public interface CompositionClass extends AggregationClass {
 
+	public static final String DEFAULTCOMPOSITIONCLASS_NAME = "Composition";
+
 }

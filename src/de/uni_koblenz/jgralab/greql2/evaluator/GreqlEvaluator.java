@@ -65,7 +65,6 @@ import de.uni_koblenz.jgralab.greql2.parser.Greql2Parser;
 import de.uni_koblenz.jgralab.greql2.schema.Greql2;
 import de.uni_koblenz.jgralab.schema.AttributedElementClass;
 import de.uni_koblenz.jgralab.schema.GraphClass;
-import de.uni_koblenz.jgralab.schema.QualifiedName;
 import de.uni_koblenz.jgralab.schema.Schema;
 import de.uni_koblenz.jgralab.schema.VertexClass;
 import de.uni_koblenz.jgralab.schema.impl.SchemaImpl;
@@ -560,15 +559,12 @@ public class GreqlEvaluator {
 	 * @return a minimal graph (no vertices and no edges) of a minimal schema.
 	 */
 	private Graph createMinimalGraph() {
-		Schema minS = new SchemaImpl(new QualifiedName(
-				"de.uni_koblenz.jgralab.MinimalSchema"));
-		GraphClass gc = minS
-				.createGraphClass(new QualifiedName("MinimalGraph"));
-		VertexClass n = gc.createVertexClass(new QualifiedName("Node"));
-		gc.createEdgeClass(new QualifiedName("Link"), n, n);
+		Schema minS = new SchemaImpl("MinimalSchema", "de.uni_koblenz.jgralab");
+		GraphClass gc = minS.createGraphClass("MinimalGraph");
+		VertexClass n = gc.createVertexClass("Node");
+		gc.createEdgeClass("Link", n, n);
 		minS.compile();
-		Method graphCreateMethod = minS.getGraphCreateMethod(new QualifiedName(
-				"MinimalGraph"));
+		Method graphCreateMethod = minS.getGraphCreateMethod();
 
 		try {
 			return (Graph) (graphCreateMethod.invoke(null, new Object[] {

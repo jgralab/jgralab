@@ -12,7 +12,6 @@ import org.junit.Test;
 import de.uni_koblenz.jgralab.schema.CompositeDomain;
 import de.uni_koblenz.jgralab.schema.Domain;
 import de.uni_koblenz.jgralab.schema.ListDomain;
-import de.uni_koblenz.jgralab.schema.QualifiedName;
 import de.uni_koblenz.jgralab.schema.RecordDomain;
 import de.uni_koblenz.jgralab.schema.Schema;
 import de.uni_koblenz.jgralab.schema.exception.InvalidNameException;
@@ -33,16 +32,14 @@ public class RecordDomainTest extends CompositeDomainTest {
 		elements.put("double1", schema1.getDomain("Double"));
 		elements.put("bool1", schema1.getDomain("Boolean"));
 		elements.put("string1", schema1.getDomain("String"));
-		schema1.createRecordDomain(new QualifiedName("package1.Record1"),
-				elements);
+		schema1.createRecordDomain("package1.Record1", elements);
 		domain1 = schema1.getDomain("package1.Record1");
 		elements = new HashMap<String, Domain>();
 		elements.put("int1", schema2.getDomain("Integer"));
 		elements.put("double1", schema2.getDomain("Double"));
 		elements.put("bool1", schema2.getDomain("Boolean"));
 		elements.put("string1", schema2.getDomain("String"));
-		schema2.createRecordDomain(new QualifiedName("package1.Record1"),
-				elements);
+		schema2.createRecordDomain("package1.Record1", elements);
 		domain2 = schema2.getDomain("package1.Record1");
 		otherDomain1 = schema1.getDomain("Boolean");
 		otherDomain2 = schema1.getDomain("Integer");
@@ -67,7 +64,7 @@ public class RecordDomainTest extends CompositeDomainTest {
 		HashMap<String, Domain> element = new HashMap<String, Domain>();
 		element.put("aList", schema1.getDomain("List<Boolean>"));
 		element.put("aRecord", domain1);
-		schema1.createRecordDomain(new QualifiedName("Record4"), element);
+		schema1.createRecordDomain("Record4", element);
 		domain4 = (CompositeDomain) schema1.getDomain("Record4");
 		expectedCompositeDomains1 = new HashSet<CompositeDomain>();
 		expectedCompositeDomains2 = new HashSet<CompositeDomain>();
@@ -94,7 +91,7 @@ public class RecordDomainTest extends CompositeDomainTest {
 		// testOfCyclicInclusion
 		// testOfIncludingNewDomains
 		// test of normal cases
-		schema1.createRecordDomain(new QualifiedName("package1.Rec1"));
+		schema1.createRecordDomain("package1.Rec1");
 		RecordDomain rec1 = (RecordDomain) schema1.getDomain("package1.Rec1");
 		rec1.addComponent("component1", schema1.getDomain("Boolean"));
 		assertEquals(1, rec1.getComponents().size());
@@ -114,8 +111,8 @@ public class RecordDomainTest extends CompositeDomainTest {
 	@Test(expected = InvalidNameException.class)
 	public void testAddComponentWithEmptyNameRejected() {
 		// tests if an empty component name is rejected
-		Schema schema1 = new SchemaImpl(new QualifiedName("package1.Schema1"));
-		schema1.createRecordDomain(new QualifiedName("package1.Record1"));
+		Schema schema1 = new SchemaImpl("Schema1", "pkgPrefix1");
+		schema1.createRecordDomain("package1.Record1");
 		RecordDomain record1 = (RecordDomain) schema1
 				.getDomain("package1.Record1");
 		record1.addComponent("", schema1.getDomain("Boolean"));
@@ -125,8 +122,8 @@ public class RecordDomainTest extends CompositeDomainTest {
 	public void testOfSelfInclusion() {
 		// tests if an exception occurs during creating a RecordDomain which
 		// includes itself
-		Schema schema1 = new SchemaImpl(new QualifiedName("package1.Schema1"));
-		schema1.createRecordDomain(new QualifiedName("package1.Record1"));
+		Schema schema1 = new SchemaImpl("Schema1", "pkgPrefix1");
+		schema1.createRecordDomain("package1.Record1");
 		RecordDomain record1 = (RecordDomain) schema1
 				.getDomain("package1.Record1");
 		record1.addComponent("this", record1);
@@ -136,11 +133,9 @@ public class RecordDomainTest extends CompositeDomainTest {
 	public void testOfCyclicInclusion() {
 		// tests if an exception occurs during creating two RecordDomains which
 		// include each other
-		Schema schema1 = new SchemaImpl(new QualifiedName("package1.Schema1"));
-		RecordDomain record2 = schema1.createRecordDomain(new QualifiedName(
-				"package1.Record2"));
-		RecordDomain record3 = schema1.createRecordDomain(new QualifiedName(
-				"package1.Record3"));
+		Schema schema1 = new SchemaImpl("Schema1", "pkgPrefix1");
+		RecordDomain record2 = schema1.createRecordDomain("package1.Record2");
+		RecordDomain record3 = schema1.createRecordDomain("package1.Record3");
 		record2.addComponent("theOther", record3);
 		record3.addComponent("theOther", record2);
 	}
@@ -149,13 +144,10 @@ public class RecordDomainTest extends CompositeDomainTest {
 	public void testOfCyclicInclusion2() {
 		// tests if an exception occurs during creating two RecordDomains which
 		// include each other
-		Schema schema1 = new SchemaImpl(new QualifiedName("package1.Schema1"));
-		RecordDomain record2 = schema1.createRecordDomain(new QualifiedName(
-				"package1.Record2"));
-		RecordDomain record3 = schema1.createRecordDomain(new QualifiedName(
-				"package1.Record3"));
-		RecordDomain record4 = schema1.createRecordDomain(new QualifiedName(
-				"package1.Record4"));
+		Schema schema1 = new SchemaImpl("Schema1", "pkgPrefix1");
+		RecordDomain record2 = schema1.createRecordDomain("package1.Record2");
+		RecordDomain record3 = schema1.createRecordDomain("package1.Record3");
+		RecordDomain record4 = schema1.createRecordDomain("package1.Record4");
 		record2.addComponent("theOther", record3);
 		record3.addComponent("theOther", record4);
 		record4.addComponent("theOther", record2);
@@ -163,9 +155,9 @@ public class RecordDomainTest extends CompositeDomainTest {
 
 	@Test(expected = RecordCycleException.class)
 	public void testOfCyclicInclusion3() {
-		Schema s = new SchemaImpl(new QualifiedName("test.MySchema"));
-		RecordDomain r1 = s.createRecordDomain(new QualifiedName("test.R1"));
-		RecordDomain r2 = s.createRecordDomain(new QualifiedName("test.R2"));
+		Schema s = new SchemaImpl("MySchema", "pkgPrefix1");
+		RecordDomain r1 = s.createRecordDomain("test.R1");
+		RecordDomain r2 = s.createRecordDomain("test.R2");
 
 		r1.addComponent("myList", s.createListDomain(s.createMapDomain(s
 				.getDomain("String"), r2)));
@@ -174,8 +166,7 @@ public class RecordDomainTest extends CompositeDomainTest {
 
 		HashMap<String, Domain> r3CompMap = new HashMap<String, Domain>();
 		r3CompMap.put("myR2", r2);
-		RecordDomain r3 = s.createRecordDomain(new QualifiedName("test.R3"),
-				r3CompMap);
+		RecordDomain r3 = s.createRecordDomain("test.R3", r3CompMap);
 
 		// now r1 <>-- r2 --<> r3 holds
 
@@ -187,13 +178,10 @@ public class RecordDomainTest extends CompositeDomainTest {
 	public void testOfNoCyclicInclusion() {
 		// record2 contains record3
 		// record2 contains record4 contains record3
-		Schema schema1 = new SchemaImpl(new QualifiedName("package1.Schema1"));
-		RecordDomain record2 = schema1.createRecordDomain(new QualifiedName(
-				"package1.Record2"));
-		RecordDomain record3 = schema1.createRecordDomain(new QualifiedName(
-				"package1.Record3"));
-		RecordDomain record4 = schema1.createRecordDomain(new QualifiedName(
-				"package1.Record4"));
+		Schema schema1 = new SchemaImpl("Schema1", "pkgPrefix1");
+		RecordDomain record2 = schema1.createRecordDomain("package1.Record2");
+		RecordDomain record3 = schema1.createRecordDomain("package1.Record3");
+		RecordDomain record4 = schema1.createRecordDomain("package1.Record4");
 		record2.addComponent("theR3", record3);
 		record2.addComponent("theR4", record4);
 		record4.addComponent("theR3", record3);
@@ -203,11 +191,11 @@ public class RecordDomainTest extends CompositeDomainTest {
 	public void testOfIncludingDomainsFromOtherSchema() {
 		// test if the creation of an component with a domain from another
 		// schema is rejected
-		Schema schema1 = new SchemaImpl(new QualifiedName("package1.Schema1"));
-		schema1.createRecordDomain(new QualifiedName("package1.Record1"));
+		Schema schema1 = new SchemaImpl("Schema1", "pkgPrefix1");
+		schema1.createRecordDomain("package1.Record1");
 		RecordDomain record1 = (RecordDomain) schema1
 				.getDomain("package1.Record1");
-		schema2.createEnumDomain(new QualifiedName("Enum1"));
+		schema2.createEnumDomain("Enum1");
 		record1.addComponent("newDomain", schema2.getDomain("Enum1"));
 	}
 
@@ -223,50 +211,23 @@ public class RecordDomainTest extends CompositeDomainTest {
 	public void testGetUniqueNameOfElementsWithSameSimpleName() {
 		// Test if uniqueName is changed if two elements have the same
 		// simpleName
-		schema1.createRecordDomain(new QualifiedName("package1.rec1"));
-		schema1.createRecordDomain(new QualifiedName("package2.rec1"));
+		schema1.createRecordDomain("package1.rec1");
+		schema1.createRecordDomain("package2.rec1");
 		Domain domain1 = schema1.getDomain("package1.rec1");
 		Domain domain2 = schema1.getDomain("package2.rec1");
 		assertEquals("package1_rec1", domain1.getUniqueName());
 		assertEquals("package2_rec1", domain2.getUniqueName());
 		// Test if uniqueName of a third element with the same simpleName is
 		// changed
-		schema1.createRecordDomain(new QualifiedName("package3.rec1"));
+		schema1.createRecordDomain("package3.rec1");
 		Domain domain3 = schema1.getDomain("package3.rec1");
 		assertEquals("package3_rec1", domain3.getUniqueName());
 	}
 
 	@Test
-	public void testDeleteComponent() {
-		HashMap<String, Domain> elements = new HashMap<String, Domain>();
-		elements.put("double1", schema1.getDomain("Double"));
-		elements.put("bool1", schema1.getDomain("Boolean"));
-		elements.put("string1", schema1.getDomain("String"));
-		RecordDomain domain1 = (RecordDomain) this.domain1;
-		// delete first component
-		domain1.deleteComponent("int1");
-		assertEquals(elements, domain1.getComponents());
-		// delete second component
-		domain1.deleteComponent("string1");
-		elements.remove("string1");
-		assertEquals(elements, domain1.getComponents());
-		// delete all remaining components
-		domain1.deleteComponent("double1");
-		domain1.deleteComponent("bool1");
-		assertEquals(new HashMap<String, Domain>(), domain1.getComponents());
-	}
-
-	@Test(expected = NoSuchRecordComponentException.class)
-	public void testDeleteComponentOfNoExistingComponent() {
-		// tests if the deletion of a not existing component
-		RecordDomain domain1 = (RecordDomain) this.domain1;
-		domain1.deleteComponent("nonsense");
-	}
-
-	@Test
 	public void testGetComponents() {
 		// tests if a map with all components is returned
-		schema1.createRecordDomain(new QualifiedName("package1.Rec1"));
+		schema1.createRecordDomain("package1.Rec1");
 		RecordDomain rec1 = (RecordDomain) schema1.getDomain("package1.Rec1");
 		assertEquals(new HashMap<String, Domain>(), rec1.getComponents());
 		HashMap<String, Domain> elements = new HashMap<String, Domain>();

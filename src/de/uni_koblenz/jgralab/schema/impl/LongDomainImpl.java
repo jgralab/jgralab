@@ -29,38 +29,24 @@ import de.uni_koblenz.jgralab.codegenerator.CodeSnippet;
 import de.uni_koblenz.jgralab.schema.IntDomain;
 import de.uni_koblenz.jgralab.schema.LongDomain;
 import de.uni_koblenz.jgralab.schema.Package;
-import de.uni_koblenz.jgralab.schema.QualifiedName;
 import de.uni_koblenz.jgralab.schema.Schema;
-import de.uni_koblenz.jgralab.schema.exception.DuplicateNamedElementException;
-import de.uni_koblenz.jgralab.schema.exception.SchemaException;
 
-public class LongDomainImpl extends BasicDomainImpl implements IntDomain,
+public final class LongDomainImpl extends BasicDomainImpl implements IntDomain,
 		LongDomain {
 
-	public LongDomainImpl(Schema schema) throws SchemaException {
-		QualifiedName qName = new QualifiedName("Long");
-		if (schema.getDomain(qName) != null) {
-			throw new DuplicateNamedElementException(
-					"Cannot create another LongDomain for Schema "
-							+ schema.getQualifiedName());
-		}
-		initialize(schema, qName);
+	LongDomainImpl(Schema schema) {
+		super(LONGDOMAIN_NAME, schema.getDefaultPackage());
 	}
 
 	@Override
 	public String getJavaAttributeImplementationTypeName(
 			String schemaRootPackagePrefix) {
-		return "long";
+		return LONGDOMAIN_NAME.toLowerCase();
 	}
 
 	@Override
 	public String getJavaClassName(String schemaRootPackagePrefix) {
-		return "Long";
-	}
-
-	@Override
-	public String getTGTypeName(Package pkg) {
-		return "Long";
+		return LONGDOMAIN_NAME;
 	}
 
 	@Override
@@ -68,6 +54,11 @@ public class LongDomainImpl extends BasicDomainImpl implements IntDomain,
 			String graphIoVariableName) {
 		return new CodeSnippet(variableName + " = " + graphIoVariableName
 				+ ".matchLong();");
+	}
+
+	@Override
+	public String getTGTypeName(Package pkg) {
+		return LONGDOMAIN_NAME;
 	}
 
 	@Override
