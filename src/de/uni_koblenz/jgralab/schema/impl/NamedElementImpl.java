@@ -240,8 +240,8 @@ public abstract class NamedElementImpl implements NamedElement {
 				+ simpleName;
 
 		/*
-		 * The package for Basic- and Collection-Domains must be the
-		 * DefaultPackage.
+		 * The package for Basic-/Map-/Collection-Domains (List, Set) and
+		 * GraphClass must be the DefaultPackage.
 		 */
 		if (this instanceof BasicDomain || this instanceof CollectionDomain
 				|| this instanceof MapDomain || this instanceof GraphClass) {
@@ -257,12 +257,8 @@ public abstract class NamedElementImpl implements NamedElement {
 
 		/*
 		 * Check if there already is a named element with the same qualified
-		 * name in the schema. As the DefaultPackage does not have a parent
-		 * package, this check is skipped there. Instead the
-		 * PackageImpl.createDefaultPackage()-method checks if there already is
-		 * a DefaultPackage.
+		 * name in the schema.
 		 */
-
 		if (schema.knows(qualifiedName)) {
 			throw new SchemaException(
 					"The Schema already contains a named element with qualified name '"
@@ -270,7 +266,7 @@ public abstract class NamedElementImpl implements NamedElement {
 		}
 
 		/*
-		 * if the unique name is in use, then addToKnownElements() will change
+		 * If the unique name is in use, then addToKnownElements() will change
 		 * it.
 		 */
 		uniqueName = simpleName;
@@ -281,53 +277,24 @@ public abstract class NamedElementImpl implements NamedElement {
 	 * Register this named element wherever it has to be known.
 	 * 
 	 * For example, a package has to be added as subpackage of its parent
-	 * package and to the schema; same for holds for domains.
+	 * package and to the schema; the same holds for domains.
 	 * 
 	 * A vertex class has to add itself to the graph class and the package; same
 	 * holds for edge classes (+ subclasses).
 	 */
 	protected abstract void register();
 
+	/**
+	 * This method is invoked on one or more element´s bearing the same unique
+	 * name, when a new element is added to the schema.
+	 * 
+	 * The unique name is changed to match the qualified name, with all '.'
+	 * replaced by '$' characters.
+	 */
 	final void changeUniqueName() {
 		uniqueName = toUniqueNameNotation(qualifiedName);
 	}
 
-	/**
-	 * Indicates whether some other object is "equal to" this
-	 * <code>NamedElement</code>. Apart testing if both objects refer to the
-	 * same object, it is checked if both have the same qualified name.
-	 * 
-	 * <p>
-	 * <b>Pattern:</b> <code>isEqual = namedElement.equals(other);</code>
-	 * </p>
-	 * 
-	 * <p>
-	 * <b>Preconditions:</b> none
-	 * </p>
-	 * 
-	 * <p>
-	 * <b>Postconditions:</b> <code>isEqual</code> is:
-	 * <ul>
-	 * <li><code>true</code>, whether if:
-	 * <ul>
-	 * <li><code>namedElement</code> and <code>other</code> represent the same
-	 * object.<br />
-	 * Formally: namedElement == other</li>
-	 * <li>or if <code>other</code> is another instance of
-	 * <code>NamedElement</code> and with the exact same qualified name</li>
-	 * </ul>
-	 * </li>
-	 * <li><code>false</code> if none of the above conditions are met</li>
-	 * </ul>
-	 * </p>
-	 * 
-	 * @return <code>true</code> if both objects refer to the same object or
-	 *         have the same qualified name; else <code>false</code>.
-	 * 
-	 * @see java.lang.Object#equals(java.lang.Object)
-	 */
-	// @Override
-	// public abstract boolean equals(Object other);
 	@Override
 	public final String getFileName() {
 		return qualifiedName.replace('.', File.separatorChar);
