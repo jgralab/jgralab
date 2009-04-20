@@ -76,6 +76,7 @@ public class SchemaCodeGenerator extends CodeGenerator {
 	@Override
 	protected CodeBlock createHeader(boolean createClass) {
 		addImports("#jgSchemaImplPackage#.#baseClassName#");
+		addImports("#jgSchemaPackage#.VertexClass");
 		CodeSnippet code = new CodeSnippet(
 				true,
 				"/**",
@@ -364,7 +365,6 @@ public class SchemaCodeGenerator extends CodeGenerator {
 
 	private CodeBlock createVertexClass(VertexClass vc) {
 		CodeList code = new CodeList();
-		addImports("#jgSchemaPackage#.VertexClass");
 		code.setVariable("vcName", vc.getQualifiedName());
 		code.setVariable("vcVariable", "vc");
 		code.setVariable("aecVariable", "vc");
