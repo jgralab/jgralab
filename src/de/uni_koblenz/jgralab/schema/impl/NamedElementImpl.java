@@ -42,23 +42,23 @@ public abstract class NamedElementImpl implements NamedElement {
 	 */
 	protected String uniqueName;
 
-	private static final Pattern COLLECTON_OR_MAPDOMAIN_NAME_PATTERN = Pattern
+	private static final Pattern COLLECTION_OR_MAPDOMAIN_NAME_PATTERN = Pattern
 			.compile("[.]?\\p{Upper}\\w*<[<>., _\\w]+>$");
 
 	private static final Pattern PACKAGE_NAME_PATTERN = Pattern
 			.compile("\\p{Lower}(\\w*\\p{Alnum})?");
 
 	private static final Pattern ATTRELEM_OR_NOCOLLDOMAIN_PATTERN = Pattern
-			.compile("[a-zA-Z](\\w*\\p{Alnum})?");
+			.compile("\\p{Upper}(\\w*\\p{Alnum})?");
 
 	/**
 	 * Creates a new named element with the specified name and parent package.
-	 *
+	 * 
 	 * <p>
 	 * <b>Pattern:</b>
 	 * <code>namedElement = new NamedElementImpl(sn, pkg);</code>
 	 * </p>
-	 *
+	 * 
 	 * <p>
 	 * <b>Preconditions:</b>
 	 * <ul>
@@ -82,7 +82,7 @@ public abstract class NamedElementImpl implements NamedElement {
 	 * element is the <code>DefaultPackage</code>.</li>
 	 * </ul>
 	 * </p>
-	 *
+	 * 
 	 * <p>
 	 * <b>Postconditions:</b>
 	 * <ul>
@@ -123,7 +123,7 @@ public abstract class NamedElementImpl implements NamedElement {
 	 * </ul>
 	 * </ul>
 	 * </p>
-	 *
+	 * 
 	 * @param pkg
 	 *            the package containing this named element
 	 * @param simpleName
@@ -159,7 +159,16 @@ public abstract class NamedElementImpl implements NamedElement {
 	 *             </ul>
 	 */
 	protected NamedElementImpl(String simpleName, Package pkg, Schema schema) {
+		/*
+		 * An empty (null) parent package is only allowed for the
+		 * DefaultPackage.
+		 */
 		if (pkg == null) {
+			/*
+			 * The DefaultPackage must have the predefined standart simple name,
+			 * and the schema in which it is created must not already contain a
+			 * DefaultPackage.
+			 */
 			if (simpleName.equals(Package.DEFAULTPACKAGE_NAME)
 					&& this instanceof PackageImpl
 					&& schema.getDefaultPackage() == null) {
@@ -177,19 +186,20 @@ public abstract class NamedElementImpl implements NamedElement {
 		this.parentPackage = pkg;
 
 		/*
-		 * The simple name must not be emtpy (except for the DefaultPackage).
-		 * The simple name must start with a letter. Any following character
-		 * must be alphanumeric and/or a '_' character (Composite-/EnumDomain
-		 * simple names may also have '.<>,' characters). The simple name must
-		 * end with an alphanumeric character.
-		 *
+		 * The simple name must not be empty (except for the DefaultPackage).
+		 * The simple name must start with a letter (expect for
+		 * Map-/Set-/List-/Collection-Domains which may start with a '.'). Any
+		 * following character must be alphanumeric and/or a '_' character
+		 * (Composite-/EnumDomain simple names may also have '.<>,' characters).
+		 * The simple name must end with an alphanumeric character.
+		 * 
 		 * Simple names of Domains & AttributedElements start with a capital
 		 * letter, whereas the simple name for a Package starts with a small
 		 * letter.
 		 */
-
 		if (this instanceof CollectionDomain || this instanceof MapDomain) {
-			if (!COLLECTON_OR_MAPDOMAIN_NAME_PATTERN.matcher(simpleName).matches()) {
+			if (!COLLECTION_OR_MAPDOMAIN_NAME_PATTERN.matcher(simpleName)
+					.matches()) {
 				throw new InvalidNameException(
 						"Invalid simpleName '"
 								+ simpleName
@@ -202,7 +212,8 @@ public abstract class NamedElementImpl implements NamedElement {
 								+ simpleName
 								+ "': The simple name must start with a small letter. Any following character must be alphanumeric and/or a '_' character. The simple name must end with an alphanumeric character.");
 			}
-		} else if (!ATTRELEM_OR_NOCOLLDOMAIN_PATTERN.matcher(simpleName).matches()) {
+		} else if (!ATTRELEM_OR_NOCOLLDOMAIN_PATTERN.matcher(simpleName)
+				.matches()) {
 			throw new InvalidNameException(
 					"Invalid simpleName '"
 							+ simpleName
@@ -222,13 +233,10 @@ public abstract class NamedElementImpl implements NamedElement {
 
 		/*
 		 * The qualifiedName is made of: packageName + "." + simpleName In the
-		 * event, that this element is the DefaultPackage or an element directly
-		 * contained in the DefaultPackage, the qualifiedName equals the
-		 * simpleName.
+		 * event that this element is directly contained in the DefaultPackage,
+		 * the qualifiedName equals the simpleName.
 		 */
-		qualifiedName = (pkg != null && !pkg.isDefaultPackage() ? pkg
-				.getQualifiedName()
-				+ "." : "")
+		qualifiedName = (pkg != null ? pkg.getQualifiedName() + "." : "")
 				+ simpleName;
 
 		/*
@@ -271,10 +279,10 @@ public abstract class NamedElementImpl implements NamedElement {
 
 	/**
 	 * Register this named element wherever it has to be known.
-	 *
+	 * 
 	 * For example, a package has to be added as subpackage of its parent
 	 * package and to the schema; same for holds for domains.
-	 *
+	 * 
 	 * A vertex class has to add itself to the graph class and the package; same
 	 * holds for edge classes (+ subclasses).
 	 */
@@ -288,15 +296,15 @@ public abstract class NamedElementImpl implements NamedElement {
 	 * Indicates whether some other object is "equal to" this
 	 * <code>NamedElement</code>. Apart testing if both objects refer to the
 	 * same object, it is checked if both have the same qualified name.
-	 *
+	 * 
 	 * <p>
 	 * <b>Pattern:</b> <code>isEqual = namedElement.equals(other);</code>
 	 * </p>
-	 *
+	 * 
 	 * <p>
 	 * <b>Preconditions:</b> none
 	 * </p>
-	 *
+	 * 
 	 * <p>
 	 * <b>Postconditions:</b> <code>isEqual</code> is:
 	 * <ul>
@@ -312,10 +320,10 @@ public abstract class NamedElementImpl implements NamedElement {
 	 * <li><code>false</code> if none of the above conditions are met</li>
 	 * </ul>
 	 * </p>
-	 *
+	 * 
 	 * @return <code>true</code> if both objects refer to the same object or
 	 *         have the same qualified name; else <code>false</code>.
-	 *
+	 * 
 	 * @see java.lang.Object#equals(java.lang.Object)
 	 */
 	// @Override
@@ -376,15 +384,15 @@ public abstract class NamedElementImpl implements NamedElement {
 	/**
 	 * Returns a hash code value for this named element, based upon it´s
 	 * qualified name.
-	 *
+	 * 
 	 * <p>
 	 * <b>Pattern:</b> <code>hash = namedElement.hashCode();</code>
 	 * </p>
-	 *
+	 * 
 	 * <p>
 	 * <b>Preconditions:</b> none
 	 * </p>
-	 *
+	 * 
 	 * <p>
 	 * <b>Postconditions:</b> <code>hash</code> is the hash code of
 	 * <code>namedElement.qualifiedName</code>.<br />
@@ -392,9 +400,9 @@ public abstract class NamedElementImpl implements NamedElement {
 	 * underlies the same rules as described {@link java.lang.Object#hashCode()
 	 * here}.
 	 * </p>
-	 *
+	 * 
 	 * @return a hash code value for this named element
-	 *
+	 * 
 	 * @see java.lang.Object#hashCode()
 	 * @see java.lang.String#hashCode()
 	 */
@@ -412,23 +420,23 @@ public abstract class NamedElementImpl implements NamedElement {
 	 * Transforms a qualified name into unique name notation. This is achieved
 	 * by replacing every occurrence of the <code>'.'</code> character in the
 	 * given qualified name by a<code>'$'</code> character.
-	 *
+	 * 
 	 * <p>
 	 * <b>Pattern:</b> <code>un = NamedElementImpl.toUniqueName(qn);</code>
 	 * </p>
-	 *
+	 * 
 	 * <p>
 	 * <b>Preconditions:</b> none
 	 * </p>
-	 *
+	 * 
 	 * <p>
 	 * <b>Postconditions:</b> <code>un</code> equals <code>qn</code>, except
 	 * every occurrence of '.' by '$'
 	 * </p>
-	 *
+	 * 
 	 * @param qualifiedName
 	 *            the qualified name to convert to unique name notation
-	 *
+	 * 
 	 * @return the unique name derived from a given qualified name
 	 */
 	public static String toUniqueNameNotation(String qualifiedName) {
