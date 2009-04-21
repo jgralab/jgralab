@@ -25,6 +25,8 @@
 package de.uni_koblenz.jgralab.greql2.jvalue;
 
 import java.util.HashMap;
+import java.util.Set;
+import java.util.Map.Entry;
 
 /**
  * @author Tassilo Horn <horn@uni-koblenz.de>
@@ -91,6 +93,13 @@ public class JValueMap extends JValue {
 			set.add(k);
 		}
 		return set;
+	}
+
+	/**
+	 * @return a set of all entries of this map
+	 */
+	public Set<Entry<JValue, JValue>> entrySet() {
+		return map.entrySet();
 	}
 
 	/**

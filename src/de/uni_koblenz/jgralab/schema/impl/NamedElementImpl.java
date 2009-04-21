@@ -223,7 +223,7 @@ public abstract class NamedElementImpl implements NamedElement {
 							+ simpleName
 							+ "': The simple name must not be empty. "
 							+ "The simple name must start with a letter. "
-							+ "Any following character must be alphanumeric and/or a '_' character (List-/Map-/Set-Domain simple names may also have '.<>,' characters). "
+							+ "Any following character must be alphanumeric and/or a '_' character. "
 							+ "The simple name must end with an alphanumeric character.");
 		}
 
