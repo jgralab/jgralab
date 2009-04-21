@@ -201,23 +201,30 @@ public abstract class NamedElementImpl implements NamedElement {
 			if (!COLLECTION_OR_MAPDOMAIN_NAME_PATTERN.matcher(simpleName)
 					.matches()) {
 				throw new InvalidNameException(
-						"Invalid simpleName '"
+						"Invalid simpleName for Collection- or MapDomain '"
 								+ simpleName
-								+ "': The simple name must not be empty. The simple name must start with a uppercase letter. Any following character must be alphanumeric or a '_' character (List-/Map-/Set-Domain simple names may also have '.<>,' characters).");
+								+ "': The simple name must not be empty. "
+								+ "The simple name must start with a uppercase letter. "
+								+ "Any following character must be alphanumeric or a '_' character (List-/Map-/Set-Domain simple names may also have '.<>,' characters).");
 			}
 		} else if (this instanceof Package) {
 			if (!PACKAGE_NAME_PATTERN.matcher(simpleName).matches()) {
 				throw new InvalidNameException(
-						"Invalid simpleName '"
+						"Invalid simpleName for Package '"
 								+ simpleName
-								+ "': The simple name must start with a small letter. Any following character must be alphanumeric and/or a '_' character. The simple name must end with an alphanumeric character.");
+								+ "': The simple name must start with a small letter. "
+								+ "Any following character must be alphanumeric and/or a '_' character. "
+								+ "The simple name must end with an alphanumeric character.");
 			}
 		} else if (!ATTRELEM_OR_NOCOLLDOMAIN_PATTERN.matcher(simpleName)
 				.matches()) {
 			throw new InvalidNameException(
-					"Invalid simpleName '"
+					"Invalid simpleName for AttributedElementClass or Domain '"
 							+ simpleName
-							+ "': The simple name must not be empty. The simple name must start with a letter. Any following character must be alphanumeric and/or a '_' character (List-/Map-/Set-Domain simple names may also have '.<>,' characters). The simple name must end with an alphanumeric character.");
+							+ "': The simple name must not be empty. "
+							+ "The simple name must start with a letter. "
+							+ "Any following character must be alphanumeric and/or a '_' character (List-/Map-/Set-Domain simple names may also have '.<>,' characters). "
+							+ "The simple name must end with an alphanumeric character.");
 		}
 
 		/*
