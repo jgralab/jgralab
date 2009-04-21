@@ -53,12 +53,12 @@ public abstract class NamedElementImpl implements NamedElement {
 
 	/**
 	 * Creates a new named element with the specified name and parent package.
-	 * 
+	 *
 	 * <p>
 	 * <b>Pattern:</b>
 	 * <code>namedElement = new NamedElementImpl(sn, pkg);</code>
 	 * </p>
-	 * 
+	 *
 	 * <p>
 	 * <b>Preconditions:</b>
 	 * <ul>
@@ -82,7 +82,7 @@ public abstract class NamedElementImpl implements NamedElement {
 	 * element is the <code>DefaultPackage</code>.</li>
 	 * </ul>
 	 * </p>
-	 * 
+	 *
 	 * <p>
 	 * <b>Postconditions:</b>
 	 * <ul>
@@ -123,7 +123,7 @@ public abstract class NamedElementImpl implements NamedElement {
 	 * </ul>
 	 * </ul>
 	 * </p>
-	 * 
+	 *
 	 * @param pkg
 	 *            the package containing this named element
 	 * @param simpleName
@@ -192,7 +192,7 @@ public abstract class NamedElementImpl implements NamedElement {
 		 * following character must be alphanumeric and/or a '_' character
 		 * (Composite-/EnumDomain simple names may also have '.<>,' characters).
 		 * The simple name must end with an alphanumeric character.
-		 * 
+		 *
 		 * Simple names of Domains & AttributedElements start with a capital
 		 * letter, whereas the simple name for a Package starts with a small
 		 * letter.
@@ -236,7 +236,9 @@ public abstract class NamedElementImpl implements NamedElement {
 		 * event that this element is directly contained in the DefaultPackage,
 		 * the qualifiedName equals the simpleName.
 		 */
-		qualifiedName = (pkg != null ? pkg.getQualifiedName() + "." : "")
+		qualifiedName = ((pkg == null || pkg.getQualifiedName().equals(
+				Package.DEFAULTPACKAGE_NAME)) ? "" : pkg.getQualifiedName()
+				+ ".")
 				+ simpleName;
 
 		/*
@@ -275,10 +277,10 @@ public abstract class NamedElementImpl implements NamedElement {
 
 	/**
 	 * Register this named element wherever it has to be known.
-	 * 
+	 *
 	 * For example, a package has to be added as subpackage of its parent
 	 * package and to the schema; the same holds for domains.
-	 * 
+	 *
 	 * A vertex class has to add itself to the graph class and the package; same
 	 * holds for edge classes (+ subclasses).
 	 */
@@ -287,7 +289,7 @@ public abstract class NamedElementImpl implements NamedElement {
 	/**
 	 * This method is invoked on one or more element's bearing the same unique
 	 * name, when a new element is added to the schema.
-	 * 
+	 *
 	 * The unique name is changed to match the qualified name, with all '.'
 	 * replaced by '$' characters.
 	 */
@@ -351,15 +353,15 @@ public abstract class NamedElementImpl implements NamedElement {
 	/**
 	 * Returns a hash code value for this named element, based upon itÂ´s
 	 * qualified name.
-	 * 
+	 *
 	 * <p>
 	 * <b>Pattern:</b> <code>hash = namedElement.hashCode();</code>
 	 * </p>
-	 * 
+	 *
 	 * <p>
 	 * <b>Preconditions:</b> none
 	 * </p>
-	 * 
+	 *
 	 * <p>
 	 * <b>Postconditions:</b> <code>hash</code> is the hash code of
 	 * <code>namedElement.qualifiedName</code>.<br />
@@ -367,9 +369,9 @@ public abstract class NamedElementImpl implements NamedElement {
 	 * underlies the same rules as described {@link java.lang.Object#hashCode()
 	 * here}.
 	 * </p>
-	 * 
+	 *
 	 * @return a hash code value for this named element
-	 * 
+	 *
 	 * @see java.lang.Object#hashCode()
 	 * @see java.lang.String#hashCode()
 	 */
@@ -387,23 +389,23 @@ public abstract class NamedElementImpl implements NamedElement {
 	 * Transforms a qualified name into unique name notation. This is achieved
 	 * by replacing every occurrence of the <code>'.'</code> character in the
 	 * given qualified name by a<code>'$'</code> character.
-	 * 
+	 *
 	 * <p>
 	 * <b>Pattern:</b> <code>un = NamedElementImpl.toUniqueName(qn);</code>
 	 * </p>
-	 * 
+	 *
 	 * <p>
 	 * <b>Preconditions:</b> none
 	 * </p>
-	 * 
+	 *
 	 * <p>
 	 * <b>Postconditions:</b> <code>un</code> equals <code>qn</code>, except
 	 * every occurrence of '.' by '$'
 	 * </p>
-	 * 
+	 *
 	 * @param qualifiedName
 	 *            the qualified name to convert to unique name notation
-	 * 
+	 *
 	 * @return the unique name derived from a given qualified name
 	 */
 	public static String toUniqueNameNotation(String qualifiedName) {
