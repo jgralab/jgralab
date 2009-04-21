@@ -23,7 +23,7 @@ public abstract class NamedElementImpl implements NamedElement {
 	/**
 	 * The fully qualified name of an element in a schema. It is composed of the
 	 * {@link #packageName name of the package} the element is located in and
-	 * the {@link #simpleName simple name} of the element. <br />
+	 * the {@link #simpleName simple name} of the element. <br/>
 	 * <code>qualifiedName = packageName + "." + simpleName</code>
 	 */
 	protected final String qualifiedName;
@@ -74,7 +74,7 @@ public abstract class NamedElementImpl implements NamedElement {
 	 * <li>The simple name ends with an alphanumeric character, or in the case
 	 * of a List-/Map-/Set-Domain with a '>' character.</li>
 	 * <li>The qualified name, made of the package name and the simple name,
-	 * must differ from any other element´s name in the schema.</li>
+	 * must differ from any other elementÂ´s name in the schema.</li>
 	 * <li>The simple name of Package-instances starts with a small letter.</li>
 	 * <li>The simple name of Domain-/AttributedElementClass-instances starts
 	 * with a capital letter.</li>
@@ -127,7 +127,7 @@ public abstract class NamedElementImpl implements NamedElement {
 	 * @param pkg
 	 *            the package containing this named element
 	 * @param simpleName
-	 *            this named element´s simple name
+	 *            this named elementÂ´s simple name
 	 * @throws InvalidNameException
 	 *             if:
 	 *             <ul>
@@ -285,7 +285,7 @@ public abstract class NamedElementImpl implements NamedElement {
 	protected abstract void register();
 
 	/**
-	 * This method is invoked on one or more element�s bearing the same unique
+	 * This method is invoked on one or more element's bearing the same unique
 	 * name, when a new element is added to the schema.
 	 * 
 	 * The unique name is changed to match the qualified name, with all '.'
@@ -349,7 +349,7 @@ public abstract class NamedElementImpl implements NamedElement {
 	}
 
 	/**
-	 * Returns a hash code value for this named element, based upon it´s
+	 * Returns a hash code value for this named element, based upon itÂ´s
 	 * qualified name.
 	 * 
 	 * <p>
