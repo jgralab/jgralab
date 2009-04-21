@@ -829,16 +829,7 @@ public class GraphIO {
 	 */
 	private Map<String, Domain> domDef() throws GraphIOException,
 			SchemaException {
-		domains.put(schema.getDomain("Boolean").getQualifiedName(), schema
-				.getDomain("Boolean"));
-		domains.put(schema.getDomain("Integer").getQualifiedName(), schema
-				.getDomain("Integer"));
-		domains.put(schema.getDomain("Long").getQualifiedName(), schema
-				.getDomain("Long"));
-		domains.put(schema.getDomain("Double").getQualifiedName(), schema
-				.getDomain("Double"));
-		domains.put(schema.getDomain("String").getQualifiedName(), schema
-				.getDomain("String"));
+		// basic domains are created automatically
 		enumDomains(); // create EnumDomains
 		recordDomains(); // create RecordDomains
 		return domains;
