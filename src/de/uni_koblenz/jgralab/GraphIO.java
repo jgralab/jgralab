@@ -1490,7 +1490,7 @@ public class GraphIO {
 		}
 	}
 
-	private boolean isValidPackageName(String s) {
+	private static boolean isValidPackageName(String s) {
 		if (s == null || s.length() == 0) {
 			return false;
 		}
@@ -1981,7 +1981,7 @@ public class GraphIO {
 		}
 
 		gcName = matchAndNext();
-		assert gcName.contains(".") && isValidIdentifier(gcName) : "illegal characters in graph class '"
+		assert !gcName.contains(".") && isValidIdentifier(gcName) : "illegal characters in graph class '"
 				+ gcName + "'";
 		// check if classname is known in the schema
 		if (!schema.getGraphClass().getQualifiedName().equals(gcName)) {
