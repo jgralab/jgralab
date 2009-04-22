@@ -258,72 +258,107 @@ public class Schema2SchemaGraph {
 
 		Package gSubPackage;
 
+		// Loop over all subpackages of the given Package.
 		for (de.uni_koblenz.jgralab.schema.Package subPackage : xPackage
 				.getSubPackages().values()) {
+			// Creates the subpackage and sets the QualifiedName.
 			gSubPackage = schemaGraph.createPackage();
 			gSubPackage.setQualifiedName(subPackage.getQualifiedName());
 
+			// Stores the Package for further linking
 			packageMap.put(subPackage, gSubPackage);
 
+			// Links the new Package to its parent Package.
 			schemaGraph.createContainsSubPackage(gPackage, gSubPackage);
+			// All subpackages of the new Package are created.
 			createSubPackages(subPackage, gSubPackage);
 		}
 	}
 
+	/**
+	 * Creates all Domains of all known Package objects.
+	 */
 	private void createDomains() {
 
+		// Loop over all Packages
 		for (Entry<de.uni_koblenz.jgralab.schema.Package, Package> entry : packageMap
 				.entrySet()) {
-			createDomains(entry.getKey(), entry.getValue());
+
+			// Loop over all Domains in the current Package
+			for (de.uni_koblenz.jgralab.schema.Domain domain : entry.getKey()
+					.getDomains().values()) {
+				createDomain(domain);
+			}
 		}
 	}
 
-	private void createDomains(de.uni_koblenz.jgralab.schema.Package Package,
-			Package gPackage) {
-
-		for (de.uni_koblenz.jgralab.schema.Domain domain : Package.getDomains()
-				.values()) {
-			createDomain(domain);
-		}
-	}
-
+	/**
+	 * Creates to a given Domain a corresponding Domain in the SchemaGraph and
+	 * links it to its Package.
+	 * 
+	 * @param domain
+	 *            Domain of which a a corresponding Domain is created.
+	 * @return New Domain.
+	 */
 	private Domain createDomain(de.uni_koblenz.jgralab.schema.Domain domain) {
 
-		assert (schemaGraph != null);
-		assert (domain != null);
+		assert (schemaGraph != null) : "FIXME! SchemaGraph is not set.";
+		assert (domain != null) : "FIXME! Domain is not set.";
 
 		Domain gDomain = null;
 
+		// In the case of an existing Domain, no new Domain is created.
 		if (domainMap.containsKey(domain)) {
 			gDomain = domainMap.get(domain);
-		} else {
+		} else { // No Domain exists. Create a new Domain
+
 			if (domain instanceof de.uni_koblenz.jgralab.schema.BooleanDomain) {
+
 				gDomain = schemaGraph.createBooleanDomain();
+
 			} else if (domain instanceof de.uni_koblenz.jgralab.schema.IntDomain) {
+
 				gDomain = schemaGraph.createIntDomain();
+
 			} else if (domain instanceof de.uni_koblenz.jgralab.schema.LongDomain) {
+
 				gDomain = schemaGraph.createLongDomain();
+
 			} else if (domain instanceof de.uni_koblenz.jgralab.schema.DoubleDomain) {
+
 				gDomain = schemaGraph.createDoubleDomain();
+
 			} else if (domain instanceof de.uni_koblenz.jgralab.schema.StringDomain) {
+
 				gDomain = schemaGraph.createStringDomain();
-			} else if (domain instanceof de.uni_koblenz.jgralab.schema.RecordDomain) {
-				gDomain = createRecordDomain((de.uni_koblenz.jgralab.schema.RecordDomain) domain);
+
 			} else if (domain instanceof de.uni_koblenz.jgralab.schema.CollectionDomain) {
+
 				gDomain = createCollectionDomain((de.uni_koblenz.jgralab.schema.CollectionDomain) domain);
+
 			} else if (domain instanceof de.uni_koblenz.jgralab.schema.MapDomain) {
+
 				gDomain = createMapDomain((de.uni_koblenz.jgralab.schema.MapDomain) domain);
+
+			} else if (domain instanceof de.uni_koblenz.jgralab.schema.RecordDomain) {
+
+				gDomain = createRecordDomain((de.uni_koblenz.jgralab.schema.RecordDomain) domain);
+
 			} else if (domain instanceof de.uni_koblenz.jgralab.schema.EnumDomain) {
+
 				gDomain = createEnumDomain((de.uni_koblenz.jgralab.schema.EnumDomain) domain);
+
 			} else {
 				throw new RuntimeException("FIXME: Unforseen domain occured! "
 						+ domain);
 			}
 
+			// General attributes are set.
 			gDomain.setQualifiedName(domain.getQualifiedName());
 			Package gPackage = packageMap.get(domain.getPackage());
 			schemaGraph.createContainsDomain(gPackage, gDomain);
 
+			// Domain is registered in the domain Map.
 			domainMap.put(domain, gDomain);
 		}
 
@@ -332,6 +367,13 @@ public class Schema2SchemaGraph {
 		return gDomain;
 	}
 
+	/**
+	 * Creates a new MapDomain, which corresponds to the given Domain.
+	 * 
+	 * @param domain
+	 *            Given Domain.
+	 * @return New MapDomain.
+	 */
 	private MapDomain createMapDomain(
 			de.uni_koblenz.jgralab.schema.MapDomain domain) {
 
@@ -344,6 +386,13 @@ public class Schema2SchemaGraph {
 		return gDomain;
 	}
 
+	/**
+	 * Creates a new EnumDomain, which corresponds to the given Domain.
+	 * 
+	 * @param domain
+	 *            Given Domain.
+	 * @return New EnumDomain.
+	 */
 	private EnumDomain createEnumDomain(
 			de.uni_koblenz.jgralab.schema.EnumDomain domain) {
 
@@ -353,6 +402,13 @@ public class Schema2SchemaGraph {
 		return gDomain;
 	}
 
+	/**
+	 * Creates a new ListDomain or a new SetDomain, which corresponds to the
+	 * given Domain.
+	 * 
+	 * @param domain
+	 * @return
+	 */
 	private CollectionDomain createCollectionDomain(
 			de.uni_koblenz.jgralab.schema.CollectionDomain domain) {
 
