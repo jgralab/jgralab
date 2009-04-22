@@ -12,6 +12,7 @@ import de.uni_koblenz.jgralab.grumlschema.SchemaGraph;
 import de.uni_koblenz.jgralab.grumlschema.domains.CollectionDomain;
 import de.uni_koblenz.jgralab.grumlschema.domains.Domain;
 import de.uni_koblenz.jgralab.grumlschema.domains.EnumDomain;
+import de.uni_koblenz.jgralab.grumlschema.domains.HasRecordDomainComponent;
 import de.uni_koblenz.jgralab.grumlschema.domains.MapDomain;
 import de.uni_koblenz.jgralab.grumlschema.domains.RecordDomain;
 import de.uni_koblenz.jgralab.grumlschema.impl.SchemaGraphImpl;
@@ -39,7 +40,7 @@ import de.uni_koblenz.jgralab.grumlschema.structure.VertexClass;
  * variables from the package "de.uni_koblenz.jgralab.grumlschema.structure" are
  * written with an prefix "g".
  * 
- * @author mmce Eckhard Groﬂmann
+ * @author mmce Eckhard Gro√ümann
  */
 
 @WorkInProgress(responsibleDevelopers = "mmce")
@@ -377,8 +378,10 @@ public class Schema2SchemaGraph {
 	private MapDomain createMapDomain(
 			de.uni_koblenz.jgralab.schema.MapDomain domain) {
 
+		// MapDomain is created
 		MapDomain gDomain = schemaGraph.createMapDomain();
 
+		// Links this Domain with its key- and value domains
 		schemaGraph.createHasKeyDomain(gDomain, queryGDomain(domain
 				.getKeyDomain()));
 		schemaGraph.createHasValueDomain(gDomain, queryGDomain(domain
@@ -396,8 +399,10 @@ public class Schema2SchemaGraph {
 	private EnumDomain createEnumDomain(
 			de.uni_koblenz.jgralab.schema.EnumDomain domain) {
 
+		// EnumDomain is created
 		EnumDomain gDomain = schemaGraph.createEnumDomain();
 
+		// The existing ArrayList is copied and set as EnumConstants
 		gDomain.setEnumConstants(new ArrayList<String>(domain.getConsts()));
 		return gDomain;
 	}
@@ -412,61 +417,101 @@ public class Schema2SchemaGraph {
 	private CollectionDomain createCollectionDomain(
 			de.uni_koblenz.jgralab.schema.CollectionDomain domain) {
 
+		// A ListDomain or SetDomain is created.
 		CollectionDomain gDomain = (domain instanceof de.uni_koblenz.jgralab.schema.ListDomain) ? schemaGraph
 				.createListDomain()
 				: schemaGraph.createSetDomain();
 
+		// Links a base domain to this CollectionDomain
 		schemaGraph.createHasBaseDomain(gDomain, queryGDomain(domain
 				.getBaseDomain()));
 		return gDomain;
 	}
 
+	/**
+	 * Creates a new RecordDomain, which corresponds to the given Domain.
+	 * 
+	 * @param domain
+	 *            Given Domain of which a new Domain in the SchemaGraph is
+	 *            created.
+	 * @return New Domain.
+	 */
 	private RecordDomain createRecordDomain(
 			de.uni_koblenz.jgralab.schema.RecordDomain domain) {
 
+		// RecordDomain is created
 		RecordDomain gDomain = schemaGraph.createRecordDomain();
 
+		// Loop over all Domain entries
 		for (Entry<String, de.uni_koblenz.jgralab.schema.Domain> entry : domain
 				.getComponents().entrySet()) {
 
-			// Creates a new hasRecordDomainComponent-edge and sets its name.
-			schemaGraph.createHasRecordDomainComponent(gDomain,
-					queryGDomain(entry.getValue())).setName(entry.getKey());
+			// Creates a new hasRecordDomainComponent-edge and sets its name
+			// afterwards.
+			HasRecordDomainComponent edge = schemaGraph
+					.createHasRecordDomainComponent(gDomain, queryGDomain(entry
+							.getValue()));
+			edge.setName(entry.getKey());
 		}
 
 		return gDomain;
 	}
 
+	/**
+	 * Creates all VertexClass object.
+	 */
 	private void createVertexClasses() {
 
+		// Loop over all packages
 		for (Entry<de.uni_koblenz.jgralab.schema.Package, Package> entry : packageMap
 				.entrySet()) {
+			// Creates a new VertexClass with the given old and new Package
 			createVertexClasses(entry.getKey(), entry.getValue());
 		}
 	}
 
+	/**
+	 * Creates for all VertexClass objects in the given Package new VertexClass
+	 * objects and links them to the given new Package.
+	 * 
+	 * @param xPackage
+	 *            Package of which all VertexClass objects are created.
+	 * @param gPackage
+	 *            Package to which all VertexClass objects are linked.
+	 */
 	private void createVertexClasses(
-			de.uni_koblenz.jgralab.schema.Package Package, Package gPackage) {
+			de.uni_koblenz.jgralab.schema.Package xPackage, Package gPackage) {
 
 		VertexClass gVertexClass;
-		for (de.uni_koblenz.jgralab.schema.VertexClass vertexClass : Package
+		// Loop over all existing VertexClass objects
+		for (de.uni_koblenz.jgralab.schema.VertexClass vertexClass : xPackage
 				.getVertexClasses().values()) {
 
+			// Skips object, which already exists internal
 			if (vertexClass.isInternal()) {
 				continue;
 			}
 
+			// Creates an VertexClass
 			gVertexClass = schemaGraph.createVertexClass();
+
+			// Sets all general attributes
 			gVertexClass.setIsAbstract(vertexClass.isAbstract());
 			gVertexClass.setQualifiedName(vertexClass.getQualifiedName());
 
+			// Registers the new object with the old object as key
 			attributedElementClassMap.put(vertexClass, gVertexClass);
+			// The same
 			vertexClassMap.put(vertexClass, gVertexClass);
 
+			// Links the new VertexClass with the given Package
 			schemaGraph.createContainsGraphElementClass(gPackage, gVertexClass);
 		}
 	}
 
+	/**
+	 * 
+	 */
 	private void createEdgeClasses() {
 
 		for (Entry<de.uni_koblenz.jgralab.schema.Package, Package> entry : packageMap
