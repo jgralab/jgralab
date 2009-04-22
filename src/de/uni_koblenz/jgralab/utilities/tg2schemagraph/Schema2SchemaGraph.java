@@ -165,75 +165,113 @@ public class Schema2SchemaGraph {
 	}
 
 	/**
-	 * Creates a Schema in the SchemaGraph.
+	 * Creates a corresponding Schema in the SchemaGraph to the existing Schema.
 	 */
 	private void createSchema() {
-	
-		assert (schemaGraph != null) : "No SchemaGraph created! (setUp()-Methode may not been executed.)";
-		assert (schema != null) : "No schema defined!";
-	
+
+		assert (schemaGraph != null) : "FIXME! No SchemaGraph created! (setUp()-Methode may not been executed.)";
+		assert (schema != null) : "FIXME! No schema defined!";
+
+		// Creates a Schema in a SchemaGraph
 		gSchema = schemaGraph.createSchema();
-	
+		assert (gSchema != null) : "FIXME! No Schema has been created";
+
+		assert (schema.getName() != null) : "FIXME! Schema name of a Schema shouldn't be null.";
+		assert schema.getPackagePrefix() != null : "FIXME! Package prefix should exist.";
+
+		// Sets all necessary Attributes
 		gSchema.setName(schema.getName());
 		gSchema.setPackagePrefix(schema.getPackagePrefix());
 	}
 
+	/**
+	 * Creates to the existing GraphClass a corresponding GraphClass in the
+	 * SchemaGraph. Also the GraphClass is linked to the new Schema.
+	 */
 	private void createGraphClass() {
-	
+
 		assert (schemaGraph != null);
 		assert (schema != null);
 		assert (gSchema != null);
-	
+
+		// Creates the new GraphClass in the SchemaGraph.
 		this.gGraphClass = schemaGraph.createGraphClass();
-	
 		this.graphClass = schema.getGraphClass();
-	
+
 		assert (!graphClass.isInternal()) : "There have to be a GraphClass, which isn't internal!";
-	
+
 		// Is needed to reference to the new AttributedElementClass-objects.
 		attributedElementClassMap.put(graphClass, gGraphClass);
-	
+
+		// Sets all general attributes of the GraphClass.
 		gGraphClass.setIsAbstract(graphClass.isAbstract());
 		gGraphClass.setQualifiedName(graphClass.getQualifiedName());
-	
+
+		// Links the new GraphClass to the new Schema.
 		schemaGraph.createDefinesGraphClass(gSchema, gGraphClass);
 	}
 
+	/**
+	 * Traverses all Packages and creates corresponding Packages in the
+	 * SchemaGraph.
+	 */
 	private void createPackages() {
+		// Creates first the DefaultPackage
 		createDefaultPackage();
-	
+
+		// Creates all SubPackages of the defaultPackage
+		// This method creates recursively
 		createSubPackages(defaultPackage, gDefaultPackage);
 	}
 
+	/**
+	 * Creates a corresponding DefaultPackage to the DefaultPackage in the given
+	 * Schema.
+	 */
 	private void createDefaultPackage() {
-		defaultPackage = schema.getDefaultPackage();
+
+		// Creates a new DefaultPackage in the SchemaGraph
 		gDefaultPackage = schemaGraph.createPackage();
-	
+		defaultPackage = schema.getDefaultPackage();
+
+		// Sets all general attributes
 		gDefaultPackage.setQualifiedName(defaultPackage.getQualifiedName());
 		packageMap.put(defaultPackage, gDefaultPackage);
-	
+
+		// Links the new DefaultPackage to the new Schema
 		schemaGraph.createContainsDefaultPackage(gSchema, gDefaultPackage);
 	}
 
+	/**
+	 * Creates all subpackages of the given Package and links them to the
+	 * corresponding given Package of the SchemaGraph.
+	 * 
+	 * @param xPackage
+	 *            Package of the given Schema, of which all subpackages should
+	 *            be created.
+	 * @param gPackage
+	 *            Package of the SchemaGraph, to which all new created
+	 *            subpackages should be linked to.
+	 */
 	private void createSubPackages(
-			de.uni_koblenz.jgralab.schema.Package Package, Package gPackage) {
-	
+			de.uni_koblenz.jgralab.schema.Package xPackage, Package gPackage) {
+
 		Package gSubPackage;
-	
-		for (de.uni_koblenz.jgralab.schema.Package subPackage : Package
+
+		for (de.uni_koblenz.jgralab.schema.Package subPackage : xPackage
 				.getSubPackages().values()) {
 			gSubPackage = schemaGraph.createPackage();
 			gSubPackage.setQualifiedName(subPackage.getQualifiedName());
-	
+
 			packageMap.put(subPackage, gSubPackage);
-	
+
 			schemaGraph.createContainsSubPackage(gPackage, gSubPackage);
 			createSubPackages(subPackage, gSubPackage);
 		}
 	}
 
 	private void createDomains() {
-	
+
 		for (Entry<de.uni_koblenz.jgralab.schema.Package, Package> entry : packageMap
 				.entrySet()) {
 			createDomains(entry.getKey(), entry.getValue());
@@ -242,7 +280,7 @@ public class Schema2SchemaGraph {
 
 	private void createDomains(de.uni_koblenz.jgralab.schema.Package Package,
 			Package gPackage) {
-	
+
 		for (de.uni_koblenz.jgralab.schema.Domain domain : Package.getDomains()
 				.values()) {
 			createDomain(domain);
@@ -250,12 +288,12 @@ public class Schema2SchemaGraph {
 	}
 
 	private Domain createDomain(de.uni_koblenz.jgralab.schema.Domain domain) {
-	
+
 		assert (schemaGraph != null);
 		assert (domain != null);
-	
+
 		Domain gDomain = null;
-	
+
 		if (domainMap.containsKey(domain)) {
 			gDomain = domainMap.get(domain);
 		} else {
@@ -281,24 +319,24 @@ public class Schema2SchemaGraph {
 				throw new RuntimeException("FIXME: Unforseen domain occured! "
 						+ domain);
 			}
-	
+
 			gDomain.setQualifiedName(domain.getQualifiedName());
 			Package gPackage = packageMap.get(domain.getPackage());
 			schemaGraph.createContainsDomain(gPackage, gDomain);
-	
+
 			domainMap.put(domain, gDomain);
 		}
-	
+
 		assert (gDomain != null);
-	
+
 		return gDomain;
 	}
 
 	private MapDomain createMapDomain(
 			de.uni_koblenz.jgralab.schema.MapDomain domain) {
-	
+
 		MapDomain gDomain = schemaGraph.createMapDomain();
-	
+
 		schemaGraph.createHasKeyDomain(gDomain, queryGDomain(domain
 				.getKeyDomain()));
 		schemaGraph.createHasValueDomain(gDomain, queryGDomain(domain
@@ -308,20 +346,20 @@ public class Schema2SchemaGraph {
 
 	private EnumDomain createEnumDomain(
 			de.uni_koblenz.jgralab.schema.EnumDomain domain) {
-	
+
 		EnumDomain gDomain = schemaGraph.createEnumDomain();
-	
+
 		gDomain.setEnumConstants(new ArrayList<String>(domain.getConsts()));
 		return gDomain;
 	}
 
 	private CollectionDomain createCollectionDomain(
 			de.uni_koblenz.jgralab.schema.CollectionDomain domain) {
-	
+
 		CollectionDomain gDomain = (domain instanceof de.uni_koblenz.jgralab.schema.ListDomain) ? schemaGraph
 				.createListDomain()
 				: schemaGraph.createSetDomain();
-	
+
 		schemaGraph.createHasBaseDomain(gDomain, queryGDomain(domain
 				.getBaseDomain()));
 		return gDomain;
@@ -329,22 +367,22 @@ public class Schema2SchemaGraph {
 
 	private RecordDomain createRecordDomain(
 			de.uni_koblenz.jgralab.schema.RecordDomain domain) {
-	
+
 		RecordDomain gDomain = schemaGraph.createRecordDomain();
-	
+
 		for (Entry<String, de.uni_koblenz.jgralab.schema.Domain> entry : domain
 				.getComponents().entrySet()) {
-	
+
 			// Creates a new hasRecordDomainComponent-edge and sets its name.
 			schemaGraph.createHasRecordDomainComponent(gDomain,
 					queryGDomain(entry.getValue())).setName(entry.getKey());
 		}
-	
+
 		return gDomain;
 	}
 
 	private void createVertexClasses() {
-	
+
 		for (Entry<de.uni_koblenz.jgralab.schema.Package, Package> entry : packageMap
 				.entrySet()) {
 			createVertexClasses(entry.getKey(), entry.getValue());
@@ -353,28 +391,28 @@ public class Schema2SchemaGraph {
 
 	private void createVertexClasses(
 			de.uni_koblenz.jgralab.schema.Package Package, Package gPackage) {
-	
+
 		VertexClass gVertexClass;
 		for (de.uni_koblenz.jgralab.schema.VertexClass vertexClass : Package
 				.getVertexClasses().values()) {
-	
+
 			if (vertexClass.isInternal()) {
 				continue;
 			}
-	
+
 			gVertexClass = schemaGraph.createVertexClass();
 			gVertexClass.setIsAbstract(vertexClass.isAbstract());
 			gVertexClass.setQualifiedName(vertexClass.getQualifiedName());
-	
+
 			attributedElementClassMap.put(vertexClass, gVertexClass);
 			vertexClassMap.put(vertexClass, gVertexClass);
-	
+
 			schemaGraph.createContainsGraphElementClass(gPackage, gVertexClass);
 		}
 	}
 
 	private void createEdgeClasses() {
-	
+
 		for (Entry<de.uni_koblenz.jgralab.schema.Package, Package> entry : packageMap
 				.entrySet()) {
 			createEdgeClasses(entry.getKey(), entry.getValue());
@@ -383,18 +421,18 @@ public class Schema2SchemaGraph {
 
 	private void createEdgeClasses(
 			de.uni_koblenz.jgralab.schema.Package Package, Package gPackage) {
-	
+
 		EdgeClass gEdgeClass;
-	
+
 		for (de.uni_koblenz.jgralab.schema.EdgeClass edgeClass : Package
 				.getEdgeClasses().values()) {
-	
+
 			if (edgeClass.isInternal()) {
 				continue;
 			}
-	
+
 			gEdgeClass = createEdgeClass(edgeClass);
-	
+
 			attributedElementClassMap.put(edgeClass, gEdgeClass);
 			edgeClassMap.put(edgeClass, gEdgeClass);
 			schemaGraph.createContainsGraphElementClass(gPackage, gEdgeClass);
@@ -403,9 +441,9 @@ public class Schema2SchemaGraph {
 
 	private EdgeClass createEdgeClass(
 			de.uni_koblenz.jgralab.schema.EdgeClass edgeClass) {
-	
+
 		EdgeClass gEdgeClass = null;
-	
+
 		if (edgeClass instanceof de.uni_koblenz.jgralab.schema.AggregationClass) {
 			AggregationClass gAggregationClass;
 			if (edgeClass instanceof de.uni_koblenz.jgralab.schema.CompositionClass) {
@@ -413,48 +451,48 @@ public class Schema2SchemaGraph {
 			} else {
 				gAggregationClass = schemaGraph.createAggregationClass();
 			}
-	
+
 			de.uni_koblenz.jgralab.schema.AggregationClass aggregationClass = (de.uni_koblenz.jgralab.schema.AggregationClass) edgeClass;
 			gAggregationClass.setAggregateFrom(aggregationClass
 					.isAggregateFrom());
 			gEdgeClass = gAggregationClass;
-	
+
 		} else {
 			gEdgeClass = schemaGraph.createEdgeClass();
 		}
-	
+
 		gEdgeClass.setIsAbstract(edgeClass.isAbstract());
 		gEdgeClass.setQualifiedName(edgeClass.getQualifiedName());
-	
+
 		assert (gEdgeClass != null);
 		return gEdgeClass;
 	}
 
 	private void createSpecializations() {
-	
+
 		for (Entry<de.uni_koblenz.jgralab.schema.VertexClass, VertexClass> entry : vertexClassMap
 				.entrySet()) {
 			for (de.uni_koblenz.jgralab.schema.AttributedElementClass superClass : entry
 					.getKey().getDirectSuperClasses()) {
-	
+
 				if (superClass.isInternal()) {
 					continue;
 				}
-	
+
 				schemaGraph.createSpecializesVertexClass(entry.getValue(),
 						vertexClassMap.get(superClass));
 			}
 		}
-	
+
 		for (Entry<de.uni_koblenz.jgralab.schema.EdgeClass, EdgeClass> entry : edgeClassMap
 				.entrySet()) {
 			for (de.uni_koblenz.jgralab.schema.AttributedElementClass superClass : entry
 					.getKey().getDirectSuperClasses()) {
-	
+
 				if (superClass.isInternal()) {
 					continue;
 				}
-	
+
 				schemaGraph.createSpecializesEdgeClass(entry.getValue(),
 						edgeClassMap.get(superClass));
 			}
@@ -471,19 +509,19 @@ public class Schema2SchemaGraph {
 	private void createAttributes(
 			de.uni_koblenz.jgralab.schema.AttributedElementClass element,
 			AttributedElementClass gElement) {
-	
+
 		Attribute gAttribute;
 		Domain gDomain;
-	
+
 		for (de.uni_koblenz.jgralab.Attribute attribute : element
 				.getAttributeList()) {
-	
+
 			gAttribute = schemaGraph.createAttribute();
 			gAttribute.setName(attribute.getName());
-	
+
 			gDomain = domainMap.get(attribute.getDomain());
 			assert (gDomain != null) : "";
-	
+
 			schemaGraph.createHasAttribute(gElement, gAttribute);
 			schemaGraph.createHasDomain(gAttribute, gDomain);
 		}
@@ -499,9 +537,9 @@ public class Schema2SchemaGraph {
 	private void createConstraints(
 			de.uni_koblenz.jgralab.schema.AttributedElementClass element,
 			AttributedElementClass gElement) {
-	
+
 		Constraint gConstraint;
-	
+
 		for (de.uni_koblenz.jgralab.schema.Constraint constraint : element
 				.getConstraints()) {
 			gConstraint = schemaGraph.createConstraint();
@@ -509,10 +547,10 @@ public class Schema2SchemaGraph {
 			gConstraint.setPredicateQuery(constraint.getPredicate());
 			gConstraint.setOffendingElementsQuery(constraint
 					.getOffendingElementsQuery());
-	
+
 			schemaGraph.createHasConstraint(gElement, gConstraint);
 		}
-	
+
 	}
 
 	private void createEdges() {
