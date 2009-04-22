@@ -697,7 +697,7 @@ OctalEscape
 
 IDENT
 	:	
-		(('a'..'z'|'A'..'Z') ('a'..'z'|'A'..'Z'|'_'|'0'..'9')*
+		(('a'..'z'|'A'..'Z'|'$') ('a'..'z'|'A'..'Z'|'_'|'$'|'0'..'9')*
 		{			
 			if (getText().equals("thisEdge")) 
 				{_type = THISEDGE;}
