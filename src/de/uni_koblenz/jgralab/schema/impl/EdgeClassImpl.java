@@ -134,6 +134,11 @@ public class EdgeClassImpl extends GraphElementClassImpl implements EdgeClass {
 
 	@Override
 	public void addSuperClass(EdgeClass superClass) {
+		if (!superClass.getClass().isInstance(this)) {
+			throw new InheritanceException(qualifiedName
+					+ " cannot derive from " + superClass.getQualifiedName()
+					+ ", because that is more special.");
+		}
 		super.addSuperClass(superClass);
 		mergeConnectionCardinalities();
 		mergeConnectionVertexClasses();
