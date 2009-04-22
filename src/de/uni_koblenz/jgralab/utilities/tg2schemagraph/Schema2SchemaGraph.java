@@ -28,9 +28,18 @@ import de.uni_koblenz.jgralab.grumlschema.structure.To;
 import de.uni_koblenz.jgralab.grumlschema.structure.VertexClass;
 
 /**
- * Allows to convert a Schema to a SchemaGraph.
- *
- * @author mmce
+ * Converts a Schema to a SchemaGraph. This class is mend to be a reusable
+ * converter class. This class is not thread safe!
+ * 
+ * Note for Developers:
+ * 
+ * All variables from the package "de.uni_koblenz.jgralab.schema" are written
+ * normal with the exception of the variable for a package. "package" is a
+ * keyword. In this case the variable is written with a prefix "x". All
+ * variables from the package "de.uni_koblenz.jgralab.grumlschema.structure" are
+ * written with an prefix "g".
+ * 
+ * @author mmce Eckhard Groﬂmann
  */
 
 @WorkInProgress(responsibleDevelopers = "mmce")
@@ -53,10 +62,17 @@ public class Schema2SchemaGraph {
 
 	private SchemaGraph schemaGraph;
 
+	/**
+	 * Constructs a converter for transforming a Schema to a SchemaGraph. This
+	 * constructor is empty, because the real work is done by the method
+	 * convert2SchemaGraph(Schema).
+	 */
 	public Schema2SchemaGraph() {
-
 	}
 
+	/**
+	 * SetUp method, which instantiates all necessary resources.
+	 */
 	private void setUp() {
 
 		packageMap = new HashMap<de.uni_koblenz.jgralab.schema.Package, Package>();
@@ -68,7 +84,13 @@ public class Schema2SchemaGraph {
 		schemaGraph = new SchemaGraphImpl();
 	}
 
+	/**
+	 * Sets all member variables to null to indirectly free resources and
+	 * performs a garbage collection.
+	 */
 	private void tearDown() {
+		// All member variables are set to null
+		// This should free resources after a garbage collection
 		packageMap = null;
 		attributedElementClassMap = null;
 		domainMap = null;
@@ -82,39 +104,61 @@ public class Schema2SchemaGraph {
 
 		schemaGraph = null;
 
+		// Calls the garbage collector
 		System.gc();
 		System.runFinalization();
 	}
 
+	/**
+	 * Converts a given Schema to a SchemaGraph and returns it.
+	 * 
+	 * @param schema
+	 *            Schema, which should be convert to a SchemaGraph.
+	 * @return New SchemaGraph object.
+	 */
 	public SchemaGraph convert2SchemaGraph(
 			de.uni_koblenz.jgralab.schema.Schema schema) {
 
+		// Sets all resources up.
 		setUp();
 
 		this.schema = schema;
 
+		// Creates the Schema
 		createSchema();
 
+		// Creates the GraphClass
 		createGraphClass();
 
+		// Creates all Packages
 		createPackages();
 
+		// Creates all Domains
 		createDomains();
 
+		// Creates all VertexClasses
 		createVertexClasses();
 
+		// Creates all EdgeClasses
 		createEdgeClasses();
 
+		// Creates all SpecializationEdges
 		createSpecializations();
 
+		// Creates all Attributes
 		createAttributes();
 
+		// Creates all Constraints
 		createConstraints();
 
+		// Creates all "From" and "To" Edges
 		createEdges();
 
+		// Stores the schemaGraph object, so that it will not be lost after
+		// calling the tearDown Method.
 		SchemaGraph schemaGraph = this.schemaGraph;
 
+		// Frees all used and no longer needed resources
 		tearDown();
 
 		return schemaGraph;
