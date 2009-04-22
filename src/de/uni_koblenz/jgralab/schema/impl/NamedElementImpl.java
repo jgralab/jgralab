@@ -52,15 +52,18 @@ public abstract class NamedElementImpl implements NamedElement {
 			.compile("\\p{Upper}(\\w*\\p{Alnum})?");
 
 	/**
-	 * Creates a new named element with the specified name and parent package.
-	 *
+	 * Creates a new named element with the specified name in the given parent
+	 * package and schema.
+	 * 
 	 * <p>
 	 * <b>Pattern:</b>
-	 * <code>namedElement = new NamedElementImpl(sn, pkg);</code>
+	 * <code>namedElement = new NamedElementImpl(sn, pkg, schema);</code>
 	 * </p>
-	 *
+	 * 
 	 * <p>
 	 * <b>Preconditions:</b>
+	 * <ul>
+	 * <li>simpleName:
 	 * <ul>
 	 * <li>The simple name is not empty, except if this named element is the
 	 * <code>DefaultPackage</code> and the
@@ -74,91 +77,114 @@ public abstract class NamedElementImpl implements NamedElement {
 	 * <li>The simple name ends with an alphanumeric character, or in the case
 	 * of a List-/Map-/Set-Domain with a '>' character.</li>
 	 * <li>The qualified name, made of the package name and the simple name,
-	 * must differ from any other elementÂ´s name in the schema.</li>
+	 * must differ from any other element´s name in the schema.</li>
 	 * <li>The simple name of Package-instances starts with a small letter.</li>
 	 * <li>The simple name of Domain-/AttributedElementClass-instances starts
 	 * with a capital letter.</li>
-	 * <li>The parent package is not <code>null</code>, except if this named
+	 * </ul>
+	 * </li>
+	 * <li>pkg:
+	 * <ul>
+	 * <li>The parent package is not <code>null</code>, except if the named
 	 * element is the <code>DefaultPackage</code>.</li>
+	 * <li>The specified parent package for any Basic-/Collection-/Map-Domain-
+	 * and/or GraphClass-element, must be the <code>DefaultPackage</code>.</li>
+	 * </ul>
+	 * </li>
+	 * <li>schema:
+	 * <ul>
+	 * <li>Each and every named element must be contained in a schema. Therefore
+	 * schema must not be <code>null</code>.</li>
+	 * </ul>
+	 * </li>
 	 * </ul>
 	 * </p>
-	 *
+	 * 
 	 * <p>
 	 * <b>Postconditions:</b>
 	 * <ul>
-	 * <li><code>namedElement'.package</code> has one the following values:
+	 * <li><code>namedElement.package</code> has one the following values:
 	 * <ul>
 	 * <li><code>null</code> if <code>namedElement</code> is the
 	 * <code>DefaultPackage</code></li>
-	 * <li>a valid (not <code>null</code>) parent package</li>
-	 * <li>
+	 * <li>a valid (not <code>null</code>) parent package, in any other case</li>
 	 * </ul>
 	 * </li>
-	 * <li><code>namedElement'.qualifiedName</code> has one of the following values:
+	 * <li><code>namedElement.qualifiedName</code> has one of the following
+	 * values:
 	 * <ul>
 	 * <li>if <code>namedElement</code> is the <code>DefaultPackage</code>, then
 	 * it equals the <code>simpleName</code></li>
 	 * <li>in any other case, it is a composition of the
 	 * <code>packageName</code>, a '.' character and the <code>simpleName</code>
-	 * . Formally: <code>qualifiedName = packageName + "." + simpleName</li>
+	 * .<br />
+	 * Formally: <code>qualifiedName = packageName + "." + simpleName</li>
 	 * </ul>
 	 * </li>
-	 * <li><code>namedElement'.simpleName</code> has one of the following values:
+	 * <li><code>namedElement.schema</code> is the given schema containing this
+	 * named element</li>
+	 * <li><code>namedElement.simpleName</code> has one of the following values:
 	 * <ul>
 	 * <li>it equals
 	 * {@link de.uni_koblenz.jgralab.schema.Package.DEFAULTPACKAGE_NAME
-	 * DEFAULTPACKAGE_NAME} if <code>namedElement'</code> represents the
+	 * DEFAULTPACKAGE_NAME} if <code>namedElement</code> represents the
 	 * <code>DefaultPackage</code></li>
 	 * <li>any other valid value</li>
 	 * </ul>
 	 * </li>
-	 * <li><code>namedElement'.uniqueName</code> has one of the following values:
+	 * <li><code>namedElement.uniqueName</code> has one of the following values:
 	 * <ul>
-	 * <li>it equals <code>namedElement'.simpleName</code> if there is no other named element with
-	 * this <code>simpleName</code> in the containing schema</li>
+	 * <li>it equals <code>namedElement.simpleName</code> if there is no other
+	 * named element with this <code>simpleName</code> in the containing schema</li>
 	 * <li>it equals the composition of the package name and
-	 * <code>simpleName</code>, with all '.' characters replaced by '$'
-	 * characters, if there is another named element with the same
-	 * <code>simpleName</code> in the containing schema.</li>
+	 * <code>simpleName</code></li>
 	 * </ul>
+	 * In either case, all '.' characters are replaced by '$' characters.</li>
 	 * </ul>
 	 * </p>
-	 *
+	 * 
+	 * @param simpleName
+	 *            this named element´s simple name
 	 * @param pkg
 	 *            the package containing this named element
-	 * @param simpleName
-	 *            this named elementÂ´s simple name
+	 * @param schema
+	 *            the schema containing this named element
 	 * @throws InvalidNameException
 	 *             if:
 	 *             <ul>
 	 *             <li>the simple name does not meet the required format (see
 	 *             preconditions)</li>
 	 *             <li>the simple name is a reserved Java word</li>
-	 *             <li>the element is a Package-instance and the parent package
-	 *             is <code>null</code>, but the simple name is not the
-	 *             {@link de.uni_koblenz.jgralab.schema.Package.DEFAULTPACKAGE_NAME
-	 *             DEFAULTPACKAGE_NAME}</li>
-	 *             <li>the simple name is empty, for any other element then the
-	 *             <code>DefaultPackage</code></li>
 	 *             </ul>
 	 * @throws SchemaException
 	 *             if:
 	 *             <ul>
-	 *             <li>the element is of any other type then
-	 *             <code>Package</code> and the parent package is
-	 *             <code>null</code></li>
+	 *             <li>no schema was specified</li>
+	 *             <li>the package is
+	 *             <code>null</null> for any other element then the <code>DefaultPackage</code>
+	 *             </li>
 	 *             <li>the element is a
 	 *             {@link de.uni_koblenz.jgralab.schema.BasicDomain BasicDomain}
-	 *             , a {@link de.uni_koblenz.jgralab.schema.CollectionDomain
-	 *             CollectionDomain} or a
-	 *             {@link de.uni_koblenz.jgralab.schema.GraphClass GraphClass}
+	 *             / {@link de.uni_koblenz.jgralab.schema.CollectionDomain
+	 *             CollectionDomain} /
+	 *             {@link de.uni_koblenz.jgralab.schema.MapDomain MapDomain} or
+	 *             a {@link de.uni_koblenz.jgralab.schema.GraphClass GraphClass}
 	 *             and the parent package is not the <code>DefaultPackage</code>
 	 *             </li>
-	 *             <li>there is already an element in the containing schema,
+	 *             <li>there already is an element in the containing schema,
 	 *             that has the exact same qualified name</li>
 	 *             </ul>
 	 */
 	protected NamedElementImpl(String simpleName, Package pkg, Schema schema) {
+		/*
+		 * Every named element must be contained in a schema.
+		 */
+		if (schema == null) {
+			throw new SchemaException("Cannot create the element '"
+					+ simpleName
+					+ "' because no containing schema was specified.");
+		}
+
 		/*
 		 * An empty (null) parent package is only allowed for the
 		 * DefaultPackage.
@@ -192,7 +218,7 @@ public abstract class NamedElementImpl implements NamedElement {
 		 * following character must be alphanumeric and/or a '_' character
 		 * (Composite-/EnumDomain simple names may also have '.<>,' characters).
 		 * The simple name must end with an alphanumeric character.
-		 *
+		 * 
 		 * Simple names of Domains & AttributedElements start with a capital
 		 * letter, whereas the simple name for a Package starts with a small
 		 * letter.
@@ -284,10 +310,10 @@ public abstract class NamedElementImpl implements NamedElement {
 
 	/**
 	 * Register this named element wherever it has to be known.
-	 *
+	 * 
 	 * For example, a package has to be added as subpackage of its parent
 	 * package and to the schema; the same holds for domains.
-	 *
+	 * 
 	 * A vertex class has to add itself to the graph class and the package; same
 	 * holds for edge classes (+ subclasses).
 	 */
@@ -296,7 +322,7 @@ public abstract class NamedElementImpl implements NamedElement {
 	/**
 	 * This method is invoked on one or more element's bearing the same unique
 	 * name, when a new element is added to the schema.
-	 *
+	 * 
 	 * The unique name is changed to match the qualified name, with all '.'
 	 * replaced by '$' characters.
 	 */
@@ -360,15 +386,15 @@ public abstract class NamedElementImpl implements NamedElement {
 	/**
 	 * Returns a hash code value for this named element, based upon itÂ´s
 	 * qualified name.
-	 *
+	 * 
 	 * <p>
 	 * <b>Pattern:</b> <code>hash = namedElement.hashCode();</code>
 	 * </p>
-	 *
+	 * 
 	 * <p>
 	 * <b>Preconditions:</b> none
 	 * </p>
-	 *
+	 * 
 	 * <p>
 	 * <b>Postconditions:</b> <code>hash</code> is the hash code of
 	 * <code>namedElement.qualifiedName</code>.<br />
@@ -376,9 +402,9 @@ public abstract class NamedElementImpl implements NamedElement {
 	 * underlies the same rules as described {@link java.lang.Object#hashCode()
 	 * here}.
 	 * </p>
-	 *
+	 * 
 	 * @return a hash code value for this named element
-	 *
+	 * 
 	 * @see java.lang.Object#hashCode()
 	 * @see java.lang.String#hashCode()
 	 */
@@ -396,23 +422,23 @@ public abstract class NamedElementImpl implements NamedElement {
 	 * Transforms a qualified name into unique name notation. This is achieved
 	 * by replacing every occurrence of the <code>'.'</code> character in the
 	 * given qualified name by a<code>'$'</code> character.
-	 *
+	 * 
 	 * <p>
 	 * <b>Pattern:</b> <code>un = NamedElementImpl.toUniqueName(qn);</code>
 	 * </p>
-	 *
+	 * 
 	 * <p>
 	 * <b>Preconditions:</b> none
 	 * </p>
-	 *
+	 * 
 	 * <p>
 	 * <b>Postconditions:</b> <code>un</code> equals <code>qn</code>, except
 	 * every occurrence of '.' by '$'
 	 * </p>
-	 *
+	 * 
 	 * @param qualifiedName
 	 *            the qualified name to convert to unique name notation
-	 *
+	 * 
 	 * @return the unique name derived from a given qualified name
 	 */
 	public static String toUniqueNameNotation(String qualifiedName) {
