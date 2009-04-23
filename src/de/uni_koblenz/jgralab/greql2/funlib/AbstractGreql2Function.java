@@ -55,6 +55,12 @@ public abstract class AbstractGreql2Function implements Greql2Function {
 		return indexAndCosts[0];
 	}
 
+	protected final void printArguments(JValue[] args) {
+		for (int i = 0; i < args.length; i++) {
+			System.out.println("  args[" + i + "] = " + args[i]);
+		}
+	}
+
 	@Override
 	public final String getExpectedParameters() {
 		StringBuilder sb = new StringBuilder();
