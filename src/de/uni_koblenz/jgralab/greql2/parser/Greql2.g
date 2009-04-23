@@ -154,6 +154,28 @@ import de.uni_koblenz.jgralab.greql2.funlib.Greql2FunctionLibrary;
     				}
     			}	
     		}
+    		ThisVertex firstThisVertex = null;
+    		for (ThisVertex thisVertex : graph.getThisVertexVertices()) {
+    			if (firstThisVertex == null) {
+    				firstThisVertex = thisVertex;
+    			} else {
+    				while (thisVertex.getFirstEdge() != null) {
+    					Edge e = thisVertex.getFirstEdge();
+    					e.setThis(firstThisVertex);
+    				}
+    			}
+    		}
+    		ThisEdge firstThisEdge = null;
+    		for (ThisEdge thisEdge : graph.getThisEdgeVertices()) {
+    			if (firstThisEdge == null) {
+    				firstThisEdge = thisEdge;
+    			} else {
+    				while (thisEdge.getFirstEdge() != null) {
+    					Edge e = thisEdge.getFirstEdge();
+    					e.setThis(firstThisEdge);
+    				}
+    			}
+    		}
     	}
 
 
