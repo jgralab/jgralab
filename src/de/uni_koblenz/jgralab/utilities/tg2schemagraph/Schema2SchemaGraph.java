@@ -571,71 +571,104 @@ public class Schema2SchemaGraph {
 
 		EdgeClass gEdgeClass = null;
 
-		// 
+		// Checks whether the given object is an instance of an AggregationClass
+		// (CompositionClass) or not
 		if (edgeClass instanceof de.uni_koblenz.jgralab.schema.AggregationClass) {
 			AggregationClass gAggregationClass;
-			// 
-			// Checking of an CompositionClass instance wouldn't be wise!
+			// Checking if the given object is an instance of an
+			// CompositionClass
+			// Checking of an CompositionClass instance instead wouldn't be
+			// wise!
 			if (edgeClass instanceof de.uni_koblenz.jgralab.schema.CompositionClass) {
 				gAggregationClass = schemaGraph.createCompositionClass();
 			} else {
 				gAggregationClass = schemaGraph.createAggregationClass();
 			}
+			assert (gAggregationClass != null) : "FIXME! No AggregationClass / CompositionClass has been created!";
 
+			// AggregationClass is the common parent / type and there are no
+			// additional attributes to set for a CompositionClass
 			de.uni_koblenz.jgralab.schema.AggregationClass aggregationClass = (de.uni_koblenz.jgralab.schema.AggregationClass) edgeClass;
+
 			gAggregationClass.setAggregateFrom(aggregationClass
 					.isAggregateFrom());
 			gEdgeClass = gAggregationClass;
 
 		} else {
-			gEdgeClass = schemaGraph.createEdgeClass();
-		}
 
+			// An EdgeClass is created.
+			gEdgeClass = schemaGraph.createEdgeClass();
+
+		}
+		assert (gEdgeClass != null) : "FIXME! No EdgeClass has been created!";
+
+		// Sets all general attributes of an EdgeClass
 		gEdgeClass.setIsAbstract(edgeClass.isAbstract());
 		gEdgeClass.setQualifiedName(edgeClass.getQualifiedName());
 
-		assert (gEdgeClass != null);
 		return gEdgeClass;
 	}
 
+	/**
+	 * Links all direct super classes with its subclasses.
+	 */
 	private void createSpecializations() {
 
+		// Loop over all VertexClass objects
 		for (Entry<de.uni_koblenz.jgralab.schema.VertexClass, VertexClass> entry : vertexClassMap
 				.entrySet()) {
+			// Loop over all superclass's of the current entry
 			for (de.uni_koblenz.jgralab.schema.AttributedElementClass superClass : entry
 					.getKey().getDirectSuperClasses()) {
 
+				// Skips predefined classes
 				if (superClass.isInternal()) {
 					continue;
 				}
 
+				// Links the superclass with its subclass.
 				schemaGraph.createSpecializesVertexClass(entry.getValue(),
 						vertexClassMap.get(superClass));
 			}
 		}
 
+		// Loop over all EdgeClass objects
 		for (Entry<de.uni_koblenz.jgralab.schema.EdgeClass, EdgeClass> entry : edgeClassMap
 				.entrySet()) {
+			// Loop over all superclass's of the current entry
 			for (de.uni_koblenz.jgralab.schema.AttributedElementClass superClass : entry
 					.getKey().getDirectSuperClasses()) {
 
+				// Skips predefined classes
 				if (superClass.isInternal()) {
 					continue;
 				}
 
+				// Links the superclass with its subclass
 				schemaGraph.createSpecializesEdgeClass(entry.getValue(),
 						edgeClassMap.get(superClass));
 			}
 		}
 	}
 
+	/**
+	 * Creates all Attribute objects and links them with an
+	 * AttributesElementClass.
+	 */
 	private void createAttributes() {
+		// Loop over all AttributeElementClass entries.
 		for (Entry<de.uni_koblenz.jgralab.schema.AttributedElementClass, AttributedElementClass> entry : attributedElementClassMap
 				.entrySet()) {
+			// Creates all Attribute objects for this entry
 			createAttributes(entry.getKey(), entry.getValue());
 		}
 	}
 
+	/**
+	 * 
+	 * @param element
+	 * @param gElement
+	 */
 	private void createAttributes(
 			de.uni_koblenz.jgralab.schema.AttributedElementClass element,
 			AttributedElementClass gElement) {
