@@ -440,6 +440,7 @@ MTYPEs TYPES."
           (indent-line-to col))
          (t (indent-line-to (+ col tab-width))))))))
 
+;; TODO: Escape strings, too.
 (defun greql-kill-region-as-java-string (beg end)
   "Puts the marked region as java string on the kill-ring."
   (interactive "r")
