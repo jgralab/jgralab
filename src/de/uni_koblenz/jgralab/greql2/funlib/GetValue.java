@@ -76,6 +76,7 @@ public class GetValue extends AbstractGreql2Function {
 			JValue[] arguments) throws EvaluateException {
 		AttributedElement attrElem = null;
 		JValueRecord record = null;
+
 		switch (checkArguments(arguments)) {
 		case 0:
 			attrElem = arguments[0].toAttributedElement();

@@ -311,16 +311,18 @@ queries are evaluated.  Set it with `greql-set-graph'.")
 
 (defvar greql-result-file nil)
 
-(defun greql-execute ()
+(defun greql-execute (arg)
   "Execute the query in the current buffer on `greql-graph'."
-  (interactive)
+  (interactive "P")
   (let ((buffer (get-buffer-create "*GReQL*"))
+        (extra-args (when arg (read-from-minibuffer "Extra arguments: ")))
         (evalstr (buffer-substring-no-properties (point-min) (point-max))))
     (setq greql-result-file (make-temp-file "greql-result" nil ".html"))
     (with-current-buffer buffer
       (erase-buffer))
     (let ((proc (start-process "GReQL process" buffer
                                greql-script-program
+                               (or extra-args "")
                                "-e" evalstr
                                "-r" greql-result-file
                                (if greql-graph
