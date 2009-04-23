@@ -440,11 +440,10 @@ class Graph2OWLInstances {
 		String fromElemId = HelperMethods.firstToLowerCase(fromVertex
 				.getAttributedElementClass().getQualifiedName())
 				+ fromVertex.getId();
-		;
+		
 		String toElemId = HelperMethods.firstToLowerCase(toVertex
 				.getAttributedElementClass().getQualifiedName())
 				+ toVertex.getId();
-		;
 
 		// convert attributes of e
 		try {
