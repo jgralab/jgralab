@@ -569,8 +569,14 @@ class Schema2OWL {
 		Element fromRoleElem;
 		Element toRoleElem;
 		Element unionOfElem;
+		
+		// create OWL class for Default GraphClass
+		GraphClass gc = schema.getDefaultGraphClass();
+		gcElem = createOwlClassElement(gc.getQualifiedName());
+		rdfElem.appendChild(gcElem);
 
-		GraphClass gc = schema.getGraphClass();
+		// create OWL class for "other" GraphClass
+		gc = schema.getGraphClass();
 		gcElem = createOwlClassElement(gc.getQualifiedName());
 		rdfElem.appendChild(gcElem);
 
@@ -672,7 +678,7 @@ class Schema2OWL {
 		Element unionOfElem;
 
 		// for each VertexClass in gc
-		for (VertexClass vc : gc.getOwnVertexClasses()) {
+		for (VertexClass vc : gc.getVertexClasses()) {
 			vcElem = createOwlClassElement(vc.getQualifiedName());
 			rdfElem.appendChild(vcElem);
 
@@ -713,7 +719,7 @@ class Schema2OWL {
 	 */
 	private void convertEdgeClasses(GraphClass gc) {
 		// for each GraphElementClass gec contained in GraphClass "gc"
-		for (GraphElementClass gec : gc.getOwnGraphElementClasses()) {
+		for (GraphElementClass gec : gc.getGraphElementClasses()) {
 			// if gec is of type EdgeClass
 			if (gec instanceof EdgeClass) {
 				if (edgeClasses2Properties) {

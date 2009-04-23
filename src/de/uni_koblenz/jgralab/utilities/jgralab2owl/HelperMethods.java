@@ -59,7 +59,8 @@ public final class HelperMethods {
 	 * @return The given String with its first character changed to lower case.
 	 */
 	static String firstToLowerCase(String string) {
-		return Character.toLowerCase(string.charAt(0)) + string.substring(1);
+		char first = Character.toLowerCase(string.charAt(0));
+		return string.replaceFirst(".", Character.toString(first));
 	}
 
 	/**
@@ -71,6 +72,7 @@ public final class HelperMethods {
 	 * @return The given String with its first character changed to upper case.
 	 */
 	static String firstToUpperCase(String string) {
-		return Character.toUpperCase(string.charAt(0)) + string.substring(1);
+		char first = Character.toUpperCase(string.charAt(0));
+		return string.replaceFirst(".", Character.toString(first));
 	}
 }
