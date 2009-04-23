@@ -438,6 +438,19 @@ MTYPEs TYPES."
           (indent-line-to col))
          (t (indent-line-to (+ col tab-width))))))))
 
+(defun greql-kill-region-as-java-string (beg end)
+  "Puts the marked region as java string on the kill-ring."
+  (interactive "r")
+  (let ((text (buffer-substring-no-properties beg end)))
+    (with-temp-buffer
+      (insert text)
+      (goto-char (point-min))
+      (insert "\"")
+      (while (re-search-forward "\n" nil t)
+        (replace-match " \"\n+ \""))
+      (insert "\"")
+      (kill-region (point-min) (point-max)))))
+
 (provide 'greql-mode)
 
 ;;; greql-mode.el ends here
