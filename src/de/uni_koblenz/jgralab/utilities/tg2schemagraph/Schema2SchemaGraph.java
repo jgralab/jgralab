@@ -510,43 +510,72 @@ public class Schema2SchemaGraph {
 	}
 
 	/**
-	 * 
+	 * Creates corresponding EdgeClass, AggregationClass and CompositionClass
+	 * objects of objects present in all packages.
 	 */
 	private void createEdgeClasses() {
 
+		// Loop over all packages entries
 		for (Entry<de.uni_koblenz.jgralab.schema.Package, Package> entry : packageMap
 				.entrySet()) {
+			// Creates all EdgeClass objects and links them to the new Package
 			createEdgeClasses(entry.getKey(), entry.getValue());
 		}
 	}
 
+	/**
+	 * Creates corresponding EdgeClass, AggregationClass and CompositionClass
+	 * objects of objects present in given Package and links them to the new
+	 * Package.
+	 * 
+	 * @param xPackage
+	 *            Package, of which all new objects are created.
+	 * @param gPackage
+	 *            Package, to which all new objects are linked.
+	 */
 	private void createEdgeClasses(
-			de.uni_koblenz.jgralab.schema.Package Package, Package gPackage) {
+			de.uni_koblenz.jgralab.schema.Package xPackage, Package gPackage) {
 
 		EdgeClass gEdgeClass;
-
-		for (de.uni_koblenz.jgralab.schema.EdgeClass edgeClass : Package
+		// Loop over all old Packages
+		for (de.uni_koblenz.jgralab.schema.EdgeClass edgeClass : xPackage
 				.getEdgeClasses().values()) {
 
+			// Skips all internal present objects.
 			if (edgeClass.isInternal()) {
 				continue;
 			}
 
+			// Creates an EdgeClass, an AggregationClass or a CompositionClass.
 			gEdgeClass = createEdgeClass(edgeClass);
 
+			// Registers the new and old objects in the appropriate Map
 			attributedElementClassMap.put(edgeClass, gEdgeClass);
 			edgeClassMap.put(edgeClass, gEdgeClass);
+			// Links the new object with its Package
 			schemaGraph.createContainsGraphElementClass(gPackage, gEdgeClass);
 		}
 	}
 
+	/**
+	 * Creates an EdgeClass, AggregationClass or and CompositionClass of an
+	 * existing object.
+	 * 
+	 * @param edgeClass
+	 *            EdgeClass, of which a new corresponding object should be
+	 *            created.
+	 * @return New EdgeClass, AggregationClass or CompositionClass object.
+	 */
 	private EdgeClass createEdgeClass(
 			de.uni_koblenz.jgralab.schema.EdgeClass edgeClass) {
 
 		EdgeClass gEdgeClass = null;
 
+		// 
 		if (edgeClass instanceof de.uni_koblenz.jgralab.schema.AggregationClass) {
 			AggregationClass gAggregationClass;
+			// 
+			// Checking of an CompositionClass instance wouldn't be wise!
 			if (edgeClass instanceof de.uni_koblenz.jgralab.schema.CompositionClass) {
 				gAggregationClass = schemaGraph.createCompositionClass();
 			} else {
