@@ -381,6 +381,11 @@ public class Schema2SchemaGraph {
 		// MapDomain is created
 		MapDomain gDomain = schemaGraph.createMapDomain();
 
+		// Registers this Domain in the Domain map. This is must be done, before
+		// an non-existing Domain is created with the method
+		// "queryGDomain(Domain)".
+		domainMap.put(domain, gDomain);
+
 		// Links this Domain with its key- and value domains
 		schemaGraph.createHasKeyDomain(gDomain, queryGDomain(domain
 				.getKeyDomain()));
@@ -422,6 +427,11 @@ public class Schema2SchemaGraph {
 				.createListDomain()
 				: schemaGraph.createSetDomain();
 
+		// Registers this Domain in the Domain map. This is must be done, before
+		// an non-existing Domain is created with the method
+		// "queryGDomain(Domain)".
+		domainMap.put(domain, gDomain);
+
 		// Links a base domain to this CollectionDomain
 		schemaGraph.createHasBaseDomain(gDomain, queryGDomain(domain
 				.getBaseDomain()));
@@ -441,6 +451,11 @@ public class Schema2SchemaGraph {
 
 		// RecordDomain is created
 		RecordDomain gDomain = schemaGraph.createRecordDomain();
+
+		// Registers this Domain in the Domain map. This is must be done, before
+		// an non-existing Domain is created with the method
+		// "queryGDomain(Domain)".
+		domainMap.put(domain, gDomain);
 
 		// Loop over all Domain entries
 		for (Entry<String, de.uni_koblenz.jgralab.schema.Domain> entry : domain
@@ -665,9 +680,13 @@ public class Schema2SchemaGraph {
 	}
 
 	/**
+	 * Creates all corresponding Attribute of all Attribute object of the given
+	 * AttributedElementClass object.
 	 * 
 	 * @param element
+	 *            AttributedElementClass, of which all attributes are created.
 	 * @param gElement
+	 *            AttributeElementClass, to which all attributes are linked.
 	 */
 	private void createAttributes(
 			de.uni_koblenz.jgralab.schema.AttributedElementClass element,
@@ -676,87 +695,147 @@ public class Schema2SchemaGraph {
 		Attribute gAttribute;
 		Domain gDomain;
 
+		// Loop over all Attribute objects in the given element.
 		for (de.uni_koblenz.jgralab.Attribute attribute : element
 				.getAttributeList()) {
 
+			// An new Attribute is created and its name is set.
 			gAttribute = schemaGraph.createAttribute();
 			gAttribute.setName(attribute.getName());
 
+			// Corresponding new Domain for the new Attribute is queried.
 			gDomain = domainMap.get(attribute.getDomain());
-			assert (gDomain != null) : "";
+			assert (gDomain != null) : "FIXME! Given Schema malformed, "
+					+ "because the requested Domain is not registered in its Package";
 
+			// Attribute is linked with its AttributedElementClass object and
+			// the Domain is linked with its Attribute.
 			schemaGraph.createHasAttribute(gElement, gAttribute);
 			schemaGraph.createHasDomain(gAttribute, gDomain);
 		}
 	}
 
+	/**
+	 * All Constraints are created and linked with their corresponding
+	 * AttributedElementClass.
+	 */
 	private void createConstraints() {
+		// Loop over all AttributeElementClass entries.
 		for (Entry<de.uni_koblenz.jgralab.schema.AttributedElementClass, AttributedElementClass> entry : attributedElementClassMap
 				.entrySet()) {
+			// Creates all Constraint objects for the current
+			// AttributeElementClass entry
 			createConstraints(entry.getKey(), entry.getValue());
 		}
 	}
 
+	/**
+	 * Creates all Constraints corresponding to the Constraints contained in the
+	 * given AttributedElementClass and links the new objects with the new
+	 * AttributedElementClass object.
+	 * 
+	 * @param element
+	 *            AttributedElementClass, of which all Constraints are created.
+	 * @param gElement
+	 *            AttributedElementClass, to which all Constraints are linked.
+	 */
 	private void createConstraints(
 			de.uni_koblenz.jgralab.schema.AttributedElementClass element,
 			AttributedElementClass gElement) {
 
 		Constraint gConstraint;
 
+		// Loop over all Constraints contained by the given old
+		// AttributedElementClass object.
 		for (de.uni_koblenz.jgralab.schema.Constraint constraint : element
 				.getConstraints()) {
+			// A new Constraint is created.
 			gConstraint = schemaGraph.createConstraint();
+
+			// Sets all general attributes.
 			gConstraint.setMessage(constraint.getMessage());
 			gConstraint.setPredicateQuery(constraint.getPredicate());
 			gConstraint.setOffendingElementsQuery(constraint
 					.getOffendingElementsQuery());
 
+			// Links the new Constraint with its AttributedElementClass.
 			schemaGraph.createHasConstraint(gElement, gConstraint);
 		}
-
 	}
 
+	/**
+	 * Creates all From and To edges of all EdgeClasses
+	 */
 	private void createEdges() {
 
+		// Loop over all EdgeClass objects
 		for (Entry<de.uni_koblenz.jgralab.schema.EdgeClass, EdgeClass> entry : edgeClassMap
 				.entrySet()) {
+			// Creates From and To edge
 			createEdges(entry.getKey(), entry.getValue());
 		}
 	}
 
+	/**
+	 * Creates the From and To edge of an given EdgeClass.
+	 * 
+	 * @param edgeClass
+	 *            EdgeClass, of which all edges are created.
+	 * @param gEdgeClass
+	 *            EdgeClass, to which all edges are linked.
+	 */
 	private void createEdges(de.uni_koblenz.jgralab.schema.EdgeClass edgeClass,
 			EdgeClass gEdgeClass) {
 
 		Set<String> redefinedRoles;
 
+		// First the To edge
+		// Queries the VertexClass to which the To edge points.
 		VertexClass vertexClass = vertexClassMap.get(edgeClass.getTo());
+		// Creates the To edge
 		To to = schemaGraph.createTo(gEdgeClass, vertexClass);
+		// Sets all general attributes
 		to.setMin(edgeClass.getToMin());
 		to.setMax(edgeClass.getToMax());
 		to.setRoleName(edgeClass.getToRolename());
 
 		redefinedRoles = edgeClass.getRedefinedToRoles();
 		if (redefinedRoles != null && redefinedRoles.size() != 0) {
+			// Clones the existing HashSet
 			to.setRedefinedRoles(new HashSet<String>(redefinedRoles));
 		}
 
+		// First the To edge
+		// Queries the VertexClass to which the To edge points.
 		vertexClass = vertexClassMap.get(edgeClass.getFrom());
+		// Creates the To edge
 		From from = schemaGraph.createFrom(gEdgeClass, vertexClass);
+		// Sets all general attributes
 		from.setMin(edgeClass.getFromMin());
 		from.setMax(edgeClass.getFromMax());
 		from.setRoleName(edgeClass.getFromRolename());
 
 		redefinedRoles = edgeClass.getRedefinedFromRoles();
 		if (redefinedRoles != null && redefinedRoles.size() != 0) {
+			// Clones the existing HashSet.
 			from.setRedefinedRoles(new HashSet<String>(redefinedRoles));
 		}
 	}
 
+	/**
+	 * Query a new Domain or creates a new Domain in case of a failed query.
+	 * 
+	 * @param domain
+	 *            Domain, to which a corresponding Domain should be found.
+	 * @return Found or created Domain.
+	 */
 	private Domain queryGDomain(de.uni_koblenz.jgralab.schema.Domain domain) {
 
+		// Query
 		Domain gDomain = domainMap.get(domain);
 
 		if (gDomain == null) {
+			// In case of a failed query a new Domain is created!
 			gDomain = createDomain(domain);
 		}
 
