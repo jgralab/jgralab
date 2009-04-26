@@ -74,10 +74,10 @@
   (append greql-fontlock-keywords-1
           (list (concat "\\<" (regexp-opt greql-keywords t) "\\>"))))
 
-(defvar greql-fontlock-keywords-3
+(defparameter greql-fontlock-keywords-3
   (append greql-fontlock-keywords-1
           greql-fontlock-keywords-2
-          (list (list "{\\([[:alnum:]]+\\)}" 1 'font-lock-type-face))))
+          (list (list "{\\([,^ ]*\\([[:alnum:]]+\\)\\)+}" 2 'font-lock-type-face))))
 
 (defvar greql-tab-width 2
   "Distance between tab stops (for display of tab characters), in
@@ -440,13 +440,13 @@ MTYPEs TYPES."
           (indent-line-to col))
          (t (indent-line-to (+ col tab-width))))))))
 
-;; TODO: Escape strings, too.
 (defun greql-kill-region-as-java-string (beg end)
   "Puts the marked region as java string on the kill-ring."
   (interactive "r")
   (let ((text (buffer-substring-no-properties beg end)))
     (with-temp-buffer
       (insert text)
+      (replace-string "\"" "\\\"" nil (point-min) (point-max))
       (goto-char (point-min))
       (insert "\"")
       (while (re-search-forward "\n" nil t)
