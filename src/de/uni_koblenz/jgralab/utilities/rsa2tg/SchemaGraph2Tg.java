@@ -507,14 +507,14 @@ public class SchemaGraph2Tg {
 		printFromEdge(edge.getFirstFrom(OUTGOING));
 		printToEdge(edge.getFirstTo(OUTGOING));
 
-		printAttributes(edge.getFirstHasAttribute(OUTGOING));
-
 		if (edge instanceof AggregationClass
 				|| edge instanceof CompositionClass) {
 			AggregationClass aggregation = (AggregationClass) edge;
 			print(SUBELEMENT, AGGREGATE, SPACE,
 					aggregation.isAggregateFrom() ? FROM : TO);
 		}
+
+		printAttributes(edge.getFirstHasAttribute(OUTGOING));
 
 		printConstraints(edge.getFirstHasConstraint(OUTGOING));
 
