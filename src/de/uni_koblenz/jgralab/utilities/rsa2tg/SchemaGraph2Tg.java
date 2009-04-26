@@ -139,9 +139,9 @@ public class SchemaGraph2Tg {
 	 * out a hierarchical schema. This means all qualified names will be simple
 	 * names.<br>
 	 * <br>
-	 *
+	 * 
 	 * <strong>Note:</strong> run() have to be executed to get a TG file.
-	 *
+	 * 
 	 * @param sg
 	 *            {@link SchemaGraph}, which will be written to a TG file.
 	 * @param outputFilename
@@ -165,9 +165,9 @@ public class SchemaGraph2Tg {
 	 * output will be hierarchical ordered. This means all qualified names will
 	 * be simple names.<br>
 	 * <br>
-	 *
+	 * 
 	 * <strong>Note:</strong> run() have to be executed to get a TG file.
-	 *
+	 * 
 	 * @param sg
 	 *            {@link SchemaGraph}, which will be written to a TG file.
 	 * @param outputFilename
@@ -179,12 +179,8 @@ public class SchemaGraph2Tg {
 	}
 
 	/**
-	 * <<<<<<< .mine Gives the possibility to either format the output or not.
-	 *
-	 * ======= Gives the possibility to either format the output or not.
-	 *
-	 * >>>>>>> .r1156
-	 *
+	 * Gives the possibility to either format the output or not.
+	 * 
 	 * @param isFormated
 	 *            <code>true</code> will format the output.
 	 */
@@ -193,14 +189,9 @@ public class SchemaGraph2Tg {
 	}
 
 	/**
-	 * Returns a boolean value indicating if the output is formated. <<<<<<<
-	 * .mine
-	 *
+	 * Returns a boolean value indicating if the output is formated.
+	 * 
 	 * @return <code>true</code>, if output is formated else <code>false</code>.
-	 *         =======
-	 *
-	 * @return <code>true</code>, if output is formated else <code>false</code>.
-	 *         >>>>>>> .r1156
 	 */
 	public boolean isFormatted() {
 		return SUBELEMENT == DEFAULT_SUBELEMENT;
@@ -210,21 +201,15 @@ public class SchemaGraph2Tg {
 	 * Prints the specified {@link SchemaGraph} to a location according to the
 	 * given outputFilename via a {@link PrintWriter}.<br>
 	 * <br>
-	 * Output is formated. For unformatted output <<<<<<< .mine
-	 *
-	 * =======
-	 *
-	 * >>>>>>> .r1156
-	 *
+	 * Output is formated. For unformatted output
+	 * 
 	 * <pre>
 	 * setIsFormated(true);
 	 * &lt;&lt;&lt;&lt;&lt;&lt;&lt; .mine
 	 * </pre>
-	 *
-	 * ======= </pre>
-	 *
-	 * >>>>>>> .r1156 have to be executed!
-	 *
+	 * 
+	 * have to be executed!
+	 * 
 	 * @throws IOException
 	 */
 	public void run() throws IOException {
@@ -257,9 +242,9 @@ public class SchemaGraph2Tg {
 	 * <code>CompositionClassDefinition</code> are encapsulated in methods
 	 * corresponding to a prefix "print" and the name of the EBNF rule.<br>
 	 * <br>
-	 *
+	 * 
 	 * All EBNF rules, used in this method, are enlisted below:
-	 *
+	 * 
 	 * <pre>
 	 *   TGSchema ::= &quot;Schema&quot; SchemaName &quot;;&quot;
 	 * 		GraphClassDefinition
@@ -278,21 +263,11 @@ public class SchemaGraph2Tg {
 	 *   SchemaClassName ::= ClassNameString
 	 *   PackageName ::= PackageNameString
 	 * </pre>
-	 *
+	 * 
 	 * @param schemaGraph
 	 *            {@link SchemaGraph}, which should be transformed to TG string.
 	 */
 	private void printTGSchema(SchemaGraph schemaGraph) {
-
-		System.out.println("Vertex");
-		for (VertexClass v : schemaGraph.getVertexClassVertices()) {
-			System.out.println(v + " " + v.getQualifiedName());
-		}
-
-		System.out.println("Edge");
-		for (EdgeClass e : schemaGraph.getEdgeClassVertices()) {
-			System.out.println(e + " " + e.getQualifiedName());
-		}
 
 		Schema schema = schemaGraph.getFirstSchema();
 		println(SCHEMA, SPACE, schema.getPackagePrefix(), POINT, schema
@@ -346,25 +321,16 @@ public class SchemaGraph2Tg {
 	 * <code>Constraint</code> are encapsulated in methods corresponding to a
 	 * prefix "print" and the name of the EBNF rule.<br>
 	 * <br>
-	 *
+	 * 
 	 * All EBNF rules, used in this method, are enlisted below:
-	 *
-	 * <pre><code>
-	 *   GraphClassDefinition ::= "GraphClass" GraphClassName [Attributes] { Constraint }
-	 *
-	 *   GraphClassName ::= ClassNameString
-	 * </code>
-	 *
+	 * 
 	 * <pre>
-	 * &lt;&lt;&lt;&lt;&lt;&lt;&lt; .mine
-	 * &#064;param graph
-	 *            {@link GraphClass}
-	 * , which should be transformed to TG string.
-	 * =======
-	 * &#064;param graph
-	 *            {@link GraphClass}
-	 * , which should be transformed to TG string.
-	 * >>>>>>> .r1156
+	 *   GraphClassDefinition ::= &quot;GraphClass&quot; GraphClassName [Attributes] { Constraint }
+	 *   GraphClassName ::= ClassNameString
+	 * </pre>
+	 * 
+	 * @param graph
+	 *            {@link GraphClass} , which should be transformed to TG string.
 	 */
 	private void printGraphClassDefinition(
 			de.uni_koblenz.jgralab.grumlschema.structure.GraphClass graph) {
@@ -385,14 +351,14 @@ public class SchemaGraph2Tg {
 	 * {@link PrintWriter} object stored in the member variable
 	 * <code>stream</code>.<br>
 	 * <br>
-	 *
+	 * 
 	 * All EBNF rules, used in this method, are enlisted below:
-	 *
+	 * 
 	 * <pre>
 	 *   PackageDeclaration ::= &quot;Package&quot; [ {PackageName &quot;.&quot;} PackageName ]
 	 *   PackageName ::= PackageNameString
 	 * </pre>
-	 *
+	 * 
 	 * @param tgPackage
 	 *            {@link Package}, which should be transformed to TG string.
 	 */
@@ -459,9 +425,9 @@ public class SchemaGraph2Tg {
 	 * <code>Attributes</code> and <code>Constraint</code> are encapsulated in
 	 * methods corresponding to a prefix "print" and the name of the EBNF rule.<br>
 	 * <br>
-	 *
+	 * 
 	 * All EBNF rules, used in this method, are enlisted below:
-	 *
+	 * 
 	 * <pre>
 	 *   VertexClassDefinition ::= [&quot;abstract&quot;] &quot;VertexClass&quot; VertexClassName
 	 *   	[SuperClasses] [Attributes] { Constraint }
@@ -470,7 +436,7 @@ public class SchemaGraph2Tg {
 	 *   Qualifier ::= &quot;.&quot; | { PackageName &quot;.&quot; }
 	 *   PackageName ::= PackageNameString
 	 * </pre>
-	 *
+	 * 
 	 * @param vertexClass
 	 *            {@link VertexClass}, which should be transformed to TG string.
 	 */
@@ -499,9 +465,9 @@ public class SchemaGraph2Tg {
 	 * <code>Constraint</code> are encapsulated in methods corresponding to a
 	 * prefix "print" and the name of the EBNF rule.<br>
 	 * <br>
-	 *
+	 * 
 	 * All EBNF rules, used in this method, are enlisted below:
-	 *
+	 * 
 	 * <pre>
 	 *   EdgeClassDefinition ::= [&quot;abstract&quot;] &quot;EdgeClass&quot; EdgeClassName [SuperClasses]
 	 *     &quot;from&quot; VertexClassName Multiplicity [Role] &quot;to&quot; VertexClassName Multiplicity [Role]
@@ -517,11 +483,11 @@ public class SchemaGraph2Tg {
 	 *   AggregationClassName ::= QualifiedClassName
 	 *   CompositionClassName ::= QualifiedClassName
 	 * </pre>
-	 *
+	 * 
 	 * <strong>Note:</strong> The EBNF rules EdgeClassDefinition,
 	 * AggregationClassDefinition and CompositionClassDefinition are much the
 	 * same. That is the reason, why they were merged.
-	 *
+	 * 
 	 * @param edge
 	 *            {@link EdgeClass}, which will be transformed to a TG string.
 	 */
@@ -561,25 +527,23 @@ public class SchemaGraph2Tg {
 	 * <code>stream</code>. The transformation rules <code>Multiplicity</code>,
 	 * <code>Role</code>, are encapsulated in methods corresponding to a prefix
 	 * "print" and the name of the EBNF rule.
-	 *
+	 * 
 	 * <pre>
-	 * &lt;code&gt;
 	 *     (&quot;from&quot; | &quot;to&quot;) VertexClassName Multiplicity [Role]
-	 * &lt;/code&gt;
 	 * </pre>
-	 *
+	 * 
 	 * This is a part of a EBNF rule which is not explicitly defined! The
 	 * original rule is written below. As you can see, the first time this
 	 * method is called "from" has to be chosen to get a valid EBNF syntax. To
 	 * achieve this, an instance of {@link From} have to be the parameter
 	 * <code>aggregation</code>.
-	 *
+	 * 
 	 * <pre>
 	 *   EdgeClassDefinition ::= [&quot;abstract&quot;] &quot;EdgeClass&quot; EdgeClassName [SuperClasses]
 	 *     &quot;from&quot; VertexClassName Multiplicity [Role] &quot;to&quot; VertexClassName Multiplicity [Role]
 	 *     [Attributes] { Constraint }
 	 * </pre>
-	 *
+	 * 
 	 * @param aggreation
 	 *            A {@link From} object, which will be transformed into a TG
 	 *            string.
@@ -602,25 +566,25 @@ public class SchemaGraph2Tg {
 	 * <code>stream</code>. The transformation rules <code>Multiplicity</code>,
 	 * <code>Role</code>, are encapsulated in methods corresponding to a prefix
 	 * "print" and the name of the EBNF rule.
-	 *
+	 * 
 	 * <pre>
 	 * &lt;code&gt;
 	 *     (&quot;from&quot; | &quot;to&quot;) VertexClassName Multiplicity [Role]
 	 * &lt;/code&gt;
 	 * </pre>
-	 *
+	 * 
 	 * This is a part of a EBNF rule which is not explicitly defined! The
 	 * original rule is written below. As you can see, the first time this
 	 * method is called "from" has to be chosen to get a valid EBNF syntax. To
 	 * achieve this, an instance of {@link From} have to be the parameter
 	 * <code>aggregation</code>.
-	 *
+	 * 
 	 * <pre>
 	 *   EdgeClassDefinition ::= [&quot;abstract&quot;] &quot;EdgeClass&quot; EdgeClassName [SuperClasses]
 	 *     &quot;from&quot; VertexClassName Multiplicity [Role] &quot;to&quot; VertexClassName Multiplicity [Role]
 	 *     [Attributes] { Constraint }
 	 * </pre>
-	 *
+	 * 
 	 * @param aggreation
 	 *            A To object, which will be transformed into a TG string.
 	 */
@@ -643,25 +607,25 @@ public class SchemaGraph2Tg {
 	 * <code>stream</code>. The transformation rules <code>Multiplicity</code>,
 	 * <code>Role</code>, are encapsulated in methods corresponding to a prefix
 	 * "print" and the name of the EBNF rule.
-	 *
+	 * 
 	 * <pre>
 	 * &lt;code&gt;
 	 *     (&quot;from&quot; | &quot;to&quot;) VertexClassName Multiplicity [Role]
 	 * &lt;/code&gt;
 	 * </pre>
-	 *
+	 * 
 	 * This is a part of a EBNF rule which is not explicitly defined! The
 	 * original rule is written below. As you can see, the first time this
 	 * method is called "from" has to be chosen to get a valid EBNF syntax. To
 	 * achieve this, an instance of {@link From} have to be the parameter
 	 * <code>aggregation</code>.
-	 *
+	 * 
 	 * <pre>
 	 *   EdgeClassDefinition ::= [&quot;abstract&quot;] &quot;EdgeClass&quot; EdgeClassName [SuperClasses]
 	 *     &quot;from&quot; VertexClassName Multiplicity [Role] &quot;to&quot; VertexClassName Multiplicity [Role]
 	 *     [Attributes] { Constraint }
 	 * </pre>
-	 *
+	 * 
 	 * @param aggreation
 	 *            A To object, which will be transformed into a TG string.
 	 */
@@ -682,9 +646,9 @@ public class SchemaGraph2Tg {
 	 * {@link PrintWriter} object stored in the member variable
 	 * <code>stream</code>.<br>
 	 * <br>
-	 *
+	 * 
 	 * All EBNF rule, used in this method, are enlisted below:
-	 *
+	 * 
 	 * <pre>
 	 * &lt;code&gt;
 	 *   Role ::= &quot;role&quot; RoleName [ Redefinitions ]
@@ -692,7 +656,7 @@ public class SchemaGraph2Tg {
 	 *   Redefinitions ::= &quot;redefines&quot; RoleName { &quot;,&quot; RoleName }
 	 * &lt;/code&gt;
 	 * </pre>
-	 *
+	 * 
 	 * @param role
 	 *            {@link String} object, which specifies the role name for.
 	 * @param redefinedRoles
@@ -724,15 +688,15 @@ public class SchemaGraph2Tg {
 	 * which is written to a {@link PrintWriter} object stored in the member
 	 * variable <code>stream</code>.<br>
 	 * <br>
-	 *
+	 * 
 	 * The EBNF rule, used in this method, is enlisted below:
-	 *
+	 * 
 	 * <pre>
 	 * &lt;code&gt;
 	 *   Multiplicity ::= &quot;(&quot; ( NaturalNumber | &quot;0&quot; ) &quot;,&quot; ( NaturalNumber | &quot;*&quot; ) &quot;)&quot;
 	 * &lt;/code&gt;
 	 * </pre>
-	 *
+	 * 
 	 * @param to
 	 *            {@link To} edge, which will be transformed to TG string.
 	 */
@@ -752,7 +716,7 @@ public class SchemaGraph2Tg {
 	 * {@link ContainsDomain} edges of a Package. This method iterates over all
 	 * ContainsDomain edges and uses <code>printDomainDefinition(Domain)</Code>
 	 * to get a formated output.
-	 *
+	 * 
 	 * @param containsDomain
 	 *            First {@link ContainsDomain} edge, which should be transformed
 	 *            to a TG String.
@@ -772,19 +736,19 @@ public class SchemaGraph2Tg {
 	 * encapsulated in methods corresponding to a prefix "print" and the name of
 	 * the EBNF rule.<br>
 	 * <br>
-	 *
+	 * 
 	 * Only {@link RecordDomain} objects or {@link EnumDomain} objects are
 	 * transformed. All other {@link Domain} objects are predefined.<br>
 	 * <br>
-	 *
+	 * 
 	 * The EBNF rule, used in this method, is enlisted below:
-	 *
+	 * 
 	 * <pre>
 	 * &lt;code&gt;
 	 *   DomainDefinition ::= RecordDefinition | EnumDefinition
 	 * &lt;/code&gt;
 	 * </pre>
-	 *
+	 * 
 	 * @param domain
 	 *            {@link Domain}, which should be transformed to TG string.
 	 */
@@ -807,9 +771,9 @@ public class SchemaGraph2Tg {
 	 * {@link PrintWriter} object stored in the member variable
 	 * <code>stream</code>.<br>
 	 * <br>
-	 *
+	 * 
 	 * All EBNF rules, used in this method, are enlisted below:
-	 *
+	 * 
 	 * <pre>
 	 *   RecordDefinition ::= &quot;RecordDomain&quot; DomainName &quot;(&quot; RecordComponent { &quot;,&quot; RecordComponent } &quot;)&quot;
 	 *   DomainName ::= QualifiedClassName
@@ -818,7 +782,7 @@ public class SchemaGraph2Tg {
 	 *   Qualifier ::= &quot;.&quot; | { PackageName &quot;.&quot; }
 	 *   PackageName ::= PackageNameString
 	 * </pre>
-	 *
+	 * 
 	 * @param recordDomain
 	 *            {@link RecordDomain}, which should be transformed to TG
 	 *            string.
@@ -864,9 +828,9 @@ public class SchemaGraph2Tg {
 	 * {@link PrintWriter} object stored in the member variable
 	 * <code>stream</code>.<br>
 	 * <br>
-	 *
+	 * 
 	 * All EBNF rules, used in this method, are enlisted below:
-	 *
+	 * 
 	 * <pre>
 	 * &lt;code&gt;
 	 *   EnumDefinition ::= &quot;EnumDomain&quot; DomainName &quot;(&quot; EnumComponent { &quot;,&quot; EnumComponent } &quot;)&quot;
@@ -877,7 +841,7 @@ public class SchemaGraph2Tg {
 	 *   PackageName ::= PackageNameString
 	 * &lt;/code&gt;
 	 * </pre>
-	 *
+	 * 
 	 * @param domain
 	 *            {@link EnumDomain}, which should be transformed to TG string.
 	 */
@@ -910,12 +874,12 @@ public class SchemaGraph2Tg {
 	 * string, which is written to a {@link PrintWriter} object stored in the
 	 * member variable <code>stream</code>.<br>
 	 * <br>
-	 *
+	 * 
 	 * Note: There are no loops for specialization allowed.<br>
 	 * <br>
-	 *
+	 * 
 	 * All EBNF rules, used in this method, are enlisted below:
-	 *
+	 * 
 	 * <pre>
 	 * &lt;code&gt;
 	 *   SuperClasses ::= &quot;:&quot; SuperClassName { &quot;,&quot; SuperClassName }
@@ -925,7 +889,7 @@ public class SchemaGraph2Tg {
 	 *   PackageName ::= PackageNameString
 	 * &lt;/code&gt;
 	 * </pre>
-	 *
+	 * 
 	 * @param vertex
 	 *            {@link VertexClass} of which all superclasses should be
 	 *            transformed to TG string.
@@ -941,12 +905,12 @@ public class SchemaGraph2Tg {
 	 * which is written to a {@link PrintWriter} object stored in the member
 	 * variable <code>stream</code>.<br>
 	 * <br>
-	 *
+	 * 
 	 * <strong>Note:</strong> There are no loops for specialization allowed.<br>
 	 * <br>
-	 *
+	 * 
 	 * All EBNF rules, used in this method, are enlisted below:
-	 *
+	 * 
 	 * <pre>
 	 * &lt;code&gt;
 	 *   SuperClasses ::= &quot;:&quot; SuperClassName { &quot;,&quot; SuperClassName }
@@ -956,7 +920,7 @@ public class SchemaGraph2Tg {
 	 *   PackageName ::= PackageNameString
 	 * &lt;/code&gt;
 	 * </pre>
-	 *
+	 * 
 	 * @param edge
 	 *            {@link EdgeClass} of which all superclasses should be
 	 *            transformed to TG string.
@@ -972,12 +936,12 @@ public class SchemaGraph2Tg {
 	 * string, which is written to a {@link PrintWriter} object stored in the
 	 * member variable <code>stream</code>.<br>
 	 * <br>
-	 *
+	 * 
 	 * <strong>Note:</strong> There are no loops for specialization allowed.<br>
 	 * <br>
-	 *
+	 * 
 	 * All EBNF rules, used in this method, are enlisted below:
-	 *
+	 * 
 	 * <pre>
 	 * &lt;code&gt;
 	 *   SuperClasses ::= &quot;:&quot; SuperClassName { &quot;,&quot; SuperClassName }
@@ -987,7 +951,7 @@ public class SchemaGraph2Tg {
 	 *   PackageName ::= PackageNameString
 	 * &lt;/code&gt;
 	 * </pre>
-	 *
+	 * 
 	 * @param superClassEdge
 	 *            First {@link SpecializesEdgeClass} or
 	 *            {@link SpecializesVertexClass} edge, which should be
@@ -1035,9 +999,9 @@ public class SchemaGraph2Tg {
 	 * <code>Domain</code> is encapsulated in methods corresponding to the name
 	 * of the EBNF rule.<br>
 	 * <br>
-	 *
+	 * 
 	 * All EBNF rules, used in this method, are enlisted below:
-	 *
+	 * 
 	 *<pre>
 	 * &lt;code&gt;
 	 *   Attributes ::= &quot;{&quot; Attribute { &quot;,&quot; Attribute } &quot;}&quot;
@@ -1045,7 +1009,7 @@ public class SchemaGraph2Tg {
 	 *   AttributeName ::= IdentifierString
 	 * &lt;/code&gt;
 	 * </pre>
-	 *
+	 * 
 	 * @param hasAttribute
 	 *            {@link HasAttribute}, which should be transformed to TG
 	 *            string.
@@ -1093,16 +1057,16 @@ public class SchemaGraph2Tg {
 	 * {@link PrintWriter} object stored in the member variable
 	 * <code>stream</code>.<br>
 	 * <br>
-	 *
+	 * 
 	 * All EBNF rules, used in this method, are enlisted below:
-	 *
+	 * 
 	 * <pre>
 	 *   Domain ::= DomainName | &quot;Boolean&quot; | &quot;Integer&quot; | &quot;Long&quot; | &quot;Double&quot; |
 	 *   	&quot;String&quot; | ( (&quot;List&quot; | &quot;Set&quot;) &quot;&lt;&quot; Domain &quot;&gt;&quot; ) | (&quot;Map&quot; &quot;&lt;&quot; Domain &quot;,&quot;
 	 *   	Domain &quot;&gt;&quot;)
 	 *   DomainName ::= QualifiedClassName
 	 * </pre>
-	 *
+	 * 
 	 * @param domain
 	 *            {@link Domain}, which should be transformed to TG string.
 	 */
@@ -1117,16 +1081,16 @@ public class SchemaGraph2Tg {
 	 * {@link PrintWriter} object stored in the member variable
 	 * <code>stream</code>.<br>
 	 * <br>
-	 *
+	 * 
 	 * All EBNF rules, used in this method, are enlisted below:
-	 *
+	 * 
 	 * <pre>
 	 *   Constraint ::= &quot;[&quot; Message PredicateQuery [ OffendingElementsQuery ] &quot;]&quot;
 	 *   Message ::= String
 	 *   PredicateQuery ::= GReQLString
 	 *   OffendingElementsQuery ::= GReQLString
 	 * </pre>
-	 *
+	 * 
 	 * @param constraint
 	 *            {@link Constraint}, which should be transformed to TG string.
 	 */
@@ -1143,16 +1107,16 @@ public class SchemaGraph2Tg {
 	 * {@link PrintWriter} object stored in the member variable
 	 * <code>stream</code>.<br>
 	 * <br>
-	 *
+	 * 
 	 * All EBNF rules, used in this method, are enlisted below: *
-	 *
+	 * 
 	 * <pre>
 	 *   Constraint ::= &quot;[&quot; Message PredicateQuery [ OffendingElementsQuery ] &quot;]&quot;
 	 *   Message ::= String
 	 *   PredicateQuery ::= GReQLString
 	 *   OffendingElementsQuery ::= GReQLString
 	 * </pre>
-	 *
+	 * 
 	 * @param constraint
 	 *            {@link Constraint}, which should be transformed to TG string.
 	 */
@@ -1173,20 +1137,20 @@ public class SchemaGraph2Tg {
 	/**
 	 * Returns the correct class name for a specified {@link EdgeClass}.<br>
 	 * <br>
-	 *
+	 * 
 	 * Possible return values are:<br>
 	 * <br>
-	 *
+	 * 
 	 * "EdgeClass" for an EdgeClass or subclasses "AggregationClass" for an
 	 * AggregationClass or subclasses "CompositionClass" for an CompositionClass
 	 * or subclasses<br>
 	 * <br>
-	 *
+	 * 
 	 * Subclasses means subclasses of the three possible types. Normally
 	 * {@link EdgeClass} is specialized by {@link AggregationClass} and
 	 * {@link AggregationClass} is specialized by {@link CompositionClass}. This
 	 * means the class name of the deepest class will be chosen as return value.
-	 *
+	 * 
 	 * @param edge
 	 *            {@link EdgeClass}, of which the class name should be returned.
 	 * @return The correct class name of the specified {@link EdgeClass}.
@@ -1208,7 +1172,7 @@ public class SchemaGraph2Tg {
 	 * Returns the qualified name of an {@link AttributedElementClass}, if the
 	 * member variable <code>hierarchical</code> is <code>false</code> and the
 	 * simple name if it's true.
-	 *
+	 * 
 	 * @param element
 	 *            {@link AttributedElementClass} of which the name is retrieved.
 	 * @return The name of the specified {@link AttributedElementClass} object.
@@ -1219,16 +1183,10 @@ public class SchemaGraph2Tg {
 	}
 
 	/**
-	 * <<<<<<< .mine Returns the qualified name of an {@link AttributedElement},
-	 * if the member variable <code>hierarchical</code> is <code>false</code>
-	 * and the simple name if it's true.
-	 *
-	 * ======= Returns the qualified name of an {@link AttributedElement}, if
-	 * the member variable <code>hierarchical</code> is <code>false</code> and
-	 * the simple name if it's true.
-	 *
-	 * >>>>>>> .r1156
-	 *
+	 * Returns the qualified name of an {@link AttributedElement}, if the member
+	 * variable <code>hierarchical</code> is <code>false</code> and the simple
+	 * name if it's true.
+	 * 
 	 * @param element
 	 *            {@link AttributedElement} of which the name is retrieved.
 	 * @return The name of the specified {@link AttributedElement} object.
@@ -1243,7 +1201,7 @@ public class SchemaGraph2Tg {
 	 * Returns the qualified name of an {@link AttributedElement}, if the member
 	 * variable <code>hierarchical</code> is <code>false</code> and the simple
 	 * name if it's true.
-	 *
+	 * 
 	 * @param element
 	 *            {@link AttributedElement} of which the name is retrieved.
 	 * @return The name of the specified {@link AttributedElement} object.
@@ -1255,8 +1213,8 @@ public class SchemaGraph2Tg {
 		}
 
 		int index = name.lastIndexOf('.');
-		String pkgName = name.substring(0, index);
-		String simpleName = name.substring(index);
+		String pkgName = (index == -1) ? "" : name.substring(0, index);
+		String simpleName = (index == -1) ? name : name.substring(index);
 
 		if (pkgName.equals(packageName)) {
 			return simpleName;
@@ -1274,7 +1232,7 @@ public class SchemaGraph2Tg {
 	/**
 	 * Retrieves the simple name {@link String} of a qualified name
 	 * {@link String}.
-	 *
+	 * 
 	 * @param qualifiedName
 	 *            Qualified name {@link String} of which the simple name String
 	 *            will be retrieved.
@@ -1298,9 +1256,9 @@ public class SchemaGraph2Tg {
 	 * multiple {@link String} objects to the member variable
 	 * <code>stream</code>.<br>
 	 * <br>
-	 *
+	 * 
 	 * Instead of writing
-	 *
+	 * 
 	 * <pre>
 	 * stream.print(SCHEMA);
 	 * stream.print(SPACE);
@@ -1309,13 +1267,13 @@ public class SchemaGraph2Tg {
 	 * stream.print(s.getSimpleName());
 	 * stream.print(DELIMITER);
 	 * </pre>
-	 *
+	 * 
 	 * it is possible to simply write
-	 *
+	 * 
 	 * <pre>
 	 * print(SCHEMA, SPACE, &quot;node&quot;, POINT, &quot;Nothing&quot;, DELIMITER);
 	 * </pre>
-	 *
+	 * 
 	 * @param strings
 	 *            Variable parameter list with all {@link String} objects, which
 	 *            should be added to the member variable <code>stream</code>.
@@ -1334,9 +1292,9 @@ public class SchemaGraph2Tg {
 	 * of appending multiple {@link String} objects to the member variable
 	 * <code>stream</code>.<br>
 	 * <br>
-	 *
-	 * Instead of writing <<<<<<< .mine
-	 *
+	 * 
+	 * Instead of writing
+	 * 
 	 * <pre>
 	 * stream.print(SCHEMA);
 	 * stream.print(SPACE);
@@ -1344,24 +1302,14 @@ public class SchemaGraph2Tg {
 	 * stream.print(POINT);
 	 * stream.print(s.getSimpleName());
 	 * stream.print(DELIMITER);
-	 * =======
-	 *
-	 * <pre>
-	 * stream.print(SCHEMA);
-	 * stream.print(SPACE);
-	 * stream.print(s.getPackageName());
-	 * stream.print(POINT);
-	 * stream.print(s.getSimpleName());
-	 * stream.print(DELIMITER);
-	 * &gt;&gt;&gt;&gt;&gt;&gt;&gt; .r1156
 	 * </pre>
-	 *
+	 * 
 	 * it is possible to simply write
-	 *
+	 * 
 	 * <pre>
 	 * print(SCHEMA, SPACE, &quot;node&quot;, POINT, &quot;Nothing&quot;, DELIMITER);
 	 * </pre>
-	 *
+	 * 
 	 * @param strings
 	 *            Variable parameter list with all {@link String} objects, which
 	 *            should be added to the member variable <code>stream</code>.
