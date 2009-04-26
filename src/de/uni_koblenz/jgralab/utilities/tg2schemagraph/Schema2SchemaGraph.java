@@ -34,11 +34,15 @@ import de.uni_koblenz.jgralab.grumlschema.structure.VertexClass;
  * 
  * Note for Developers:
  * 
- * All variables from the package "de.uni_koblenz.jgralab.schema" are written
- * normal with the exception of the variable for a package. "package" is a
- * keyword. In this case the variable is written with a prefix "x". All
- * variables from the package "de.uni_koblenz.jgralab.grumlschema.structure" are
- * written with an prefix "g".
+ * All variables are written like their classes from the package
+ * "de.uni_koblenz.jgralab.schema" normal with the exception of the variable for
+ * a package. "package" is a keyword. In this case the variable is written with
+ * a prefix "x". All variables from the package
+ * "de.uni_koblenz.jgralab.grumlschema.structure" are written with an prefix
+ * "g".
+ * 
+ * All types from "de.uni_koblenz.jgralab.schema" are fully qualified with their
+ * package name.
  * 
  * @author mmce Eckhard Großmann
  */
@@ -46,14 +50,10 @@ import de.uni_koblenz.jgralab.grumlschema.structure.VertexClass;
 @WorkInProgress(responsibleDevelopers = "mmce")
 public class Schema2SchemaGraph {
 
-	private Schema gSchema;
 	private de.uni_koblenz.jgralab.schema.Schema schema;
 
 	private Package gDefaultPackage;
 	private de.uni_koblenz.jgralab.schema.Package defaultPackage;
-
-	private GraphClass gGraphClass;
-	private de.uni_koblenz.jgralab.schema.GraphClass graphClass;
 
 	private Map<de.uni_koblenz.jgralab.schema.Package, Package> packageMap;
 	private Map<de.uni_koblenz.jgralab.schema.AttributedElementClass, AttributedElementClass> attributedElementClassMap;
@@ -100,8 +100,6 @@ public class Schema2SchemaGraph {
 
 		defaultPackage = null;
 		gDefaultPackage = null;
-		graphClass = null;
-		gGraphClass = null;
 
 		schemaGraph = null;
 
@@ -174,7 +172,7 @@ public class Schema2SchemaGraph {
 		assert (schema != null) : "FIXME! No schema defined!";
 
 		// Creates a Schema in a SchemaGraph
-		gSchema = schemaGraph.createSchema();
+		Schema gSchema = schemaGraph.createSchema();
 		assert (gSchema != null) : "FIXME! No Schema has been created";
 
 		assert (schema.getName() != null) : "FIXME! Schema name of a Schema shouldn't be null.";
@@ -193,11 +191,14 @@ public class Schema2SchemaGraph {
 
 		assert (schemaGraph != null);
 		assert (schema != null);
+
+		Schema gSchema = schemaGraph.getFirstSchema();
 		assert (gSchema != null);
 
 		// Creates the new GraphClass in the SchemaGraph.
-		this.gGraphClass = schemaGraph.createGraphClass();
-		this.graphClass = schema.getGraphClass();
+		GraphClass gGraphClass = schemaGraph.createGraphClass();
+		de.uni_koblenz.jgralab.schema.GraphClass graphClass = schema
+				.getGraphClass();
 
 		assert (!graphClass.isInternal()) : "There have to be a GraphClass, which isn't internal!";
 
@@ -240,7 +241,8 @@ public class Schema2SchemaGraph {
 		packageMap.put(defaultPackage, gDefaultPackage);
 
 		// Links the new DefaultPackage to the new Schema
-		schemaGraph.createContainsDefaultPackage(gSchema, gDefaultPackage);
+		schemaGraph.createContainsDefaultPackage(schemaGraph.getFirstSchema(),
+				gDefaultPackage);
 	}
 
 	/**
@@ -697,7 +699,7 @@ public class Schema2SchemaGraph {
 
 		// Loop over all Attribute objects in the given element.
 		for (de.uni_koblenz.jgralab.Attribute attribute : element
-				.getAttributeList()) {
+				.getOwnAttributeList()) {
 
 			// An new Attribute is created and its name is set.
 			gAttribute = schemaGraph.createAttribute();
