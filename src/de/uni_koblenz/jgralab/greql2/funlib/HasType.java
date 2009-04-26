@@ -105,13 +105,15 @@ public class HasType extends AbstractGreql2Function {
 		}
 
 		if (aeClass != null) {
-			return new JValue(elem.getAttributedElementClass() == aeClass, elem);
+			return new JValue(elem.getAttributedElementClass() == aeClass
+					|| elem.getAttributedElementClass().isSubClassOf(aeClass),
+					elem);
 		}
 
 		AttributedElementClass type = elem.getSchema()
 				.getAttributedElementClass(typeName);
-		return new JValue(type.getClass().isInstance(elem.getAttributedElementClass()), elem);
-
+		return new JValue(elem.getAttributedElementClass() == type
+				|| elem.getAttributedElementClass().isSubClassOf(type), elem);
 	}
 
 	public long getEstimatedCosts(ArrayList<Long> inElements) {
