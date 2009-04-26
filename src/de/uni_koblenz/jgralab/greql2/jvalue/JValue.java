@@ -186,15 +186,18 @@ public class JValue implements Comparable<JValue> {
 	public boolean equals(Object anObject) {
 		if (anObject instanceof JValue) {
 			JValue anotherValue = (JValue) anObject;
-			if ((anotherValue.type == this.type)
-					|| (anotherValue.type == JValueType.OBJECT)
-					|| (this.type == JValueType.OBJECT)) {
-				if (anotherValue.value == null) {
-					return (this.value == null);
+			if (anotherValue.type == this.type
+					|| anotherValue.type == JValueType.OBJECT
+					|| this.type == JValueType.OBJECT) {
+				if (this.value == null) {
+					return (anotherValue.value == null);
 				}
-				if (anotherValue.value.equals(this.value)) {
-					return true;
-				}
+				return value.equals(anotherValue.value);
+			} else if (
+			// In GReQL enum values can only specified as string for comparison
+			(this.type == JValueType.ENUMVALUE && anotherValue.type == JValueType.STRING)
+					|| (this.type == JValueType.STRING && anotherValue.type == JValueType.ENUMVALUE)) {
+				return value.toString().equals(anotherValue.value.toString());
 			}
 		}
 		return false;
@@ -1169,7 +1172,7 @@ public class JValue implements Comparable<JValue> {
 		if (objectsClass == String.class) {
 			return new JValue((String) o);
 		}
-		if (objectsClass == Enum.class) {
+		if (o instanceof Enum) {
 			return new JValue((Enum) o);
 		}
 		if (objectsClass == Integer.class) {
@@ -1190,13 +1193,13 @@ public class JValue implements Comparable<JValue> {
 		if (objectsClass == Character.class) {
 			return new JValue((Character) o);
 		}
-		if (objectsClass == Edge.class) {
+		if (o instanceof Edge) {
 			return new JValue((Edge) o);
 		}
-		if (objectsClass == Vertex.class) {
+		if (o instanceof Vertex) {
 			return new JValue((Vertex) o);
 		}
-		if (objectsClass == Graph.class) {
+		if (o instanceof Graph) {
 			return new JValue((Graph) o);
 		}
 		return new JValue(o);

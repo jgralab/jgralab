@@ -73,7 +73,8 @@ public class HasType extends AbstractGreql2Function {
 	{
 		JValueType[][] x = {
 				{ JValueType.ATTRIBUTEDELEMENT, JValueType.STRING },
-				{ JValueType.ATTRIBUTEDELEMENT,	JValueType.ATTRIBUTEDELEMENTCLASS },
+				{ JValueType.ATTRIBUTEDELEMENT,
+						JValueType.ATTRIBUTEDELEMENTCLASS },
 				{ JValueType.ATTRIBUTEDELEMENT, JValueType.TYPECOLLECTION } };
 		signatures = x;
 	}
@@ -107,8 +108,9 @@ public class HasType extends AbstractGreql2Function {
 			return new JValue(elem.getAttributedElementClass() == aeClass, elem);
 		}
 
-		return new JValue(elem.getAttributedElementClass().getQualifiedName()
-				.equals(typeName), elem);
+		AttributedElementClass type = elem.getSchema()
+				.getAttributedElementClass(typeName);
+		return new JValue(type.getClass().isInstance(elem.getAttributedElementClass()), elem);
 
 	}
 
