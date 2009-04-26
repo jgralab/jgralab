@@ -97,9 +97,6 @@ public class SchemaGraph2Tg {
 	private final static String AGGREGATION_CLASS = "AggregationClass";
 	private final static String COMPOSITION_CLASS = "CompositionClass";
 
-	private final static String[] DOMAINNAMES = { "Boolean", "Integer", "Long",
-			"Double", "String" };
-
 	private final static EdgeDirection OUTGOING = EdgeDirection.OUT;
 
 	/**
@@ -1193,8 +1190,17 @@ public class SchemaGraph2Tg {
 	 */
 	private String getName(Domain element) {
 		assert (element != null) : "Object of type AttributedElementClass is null!";
-		String name = element.getQualifiedName();
-		return getName(name);
+
+		String qualifiedName = element.getQualifiedName();
+
+		if (element instanceof RecordDomain || element instanceof EnumDomain) {
+			return getName(qualifiedName);
+		} else {
+			int index = qualifiedName.lastIndexOf('.');
+
+			assert (index == -1 || qualifiedName.substring(0, index).length() == 0) : "FIXME! A basic domain is not mapped the default package.";
+			return qualifiedName;
+		}
 	}
 
 	/**
@@ -1214,19 +1220,17 @@ public class SchemaGraph2Tg {
 
 		int index = name.lastIndexOf('.');
 		String pkgName = (index == -1) ? "" : name.substring(0, index);
-		String simpleName = (index == -1) ? name : name.substring(index);
+		String simpleName = (index == -1) ? name : name.substring(index + 1);
 
 		if (pkgName.equals(packageName)) {
 			return simpleName;
 		}
 
-		boolean isDefault = false;
-		for (String element : DOMAINNAMES) {
-			isDefault |= element.equals(name);
+		if (pkgName.length() == 0) {
+			return POINT + simpleName;
 		}
 
-		return (pkgName.equals(EMPTY) && !isDefault) ? POINT + simpleName
-				: simpleName;
+		return name;
 	}
 
 	/**
