@@ -38,6 +38,9 @@ public interface Package extends NamedElement, Comparable<Package> {
 	/*
 	 * Touch and die!
 	 */
+	/**
+	 * The name of the <code>DefaultPackage</code>.
+	 */
 	public static final String DEFAULTPACKAGE_NAME = "";
 
 	/**

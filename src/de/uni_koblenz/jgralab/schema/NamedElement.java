@@ -59,8 +59,8 @@ public interface NamedElement {
 	 * <p>
 	 * <b>Postconditions:</b> the file name <code>fn</code> is represented by
 	 * the qualified name, where every <code>'.'</code>-character has been
-	 * replaced by the default separator character depending on the execution
-	 * environment.
+	 * replaced by the default separator character depending on the used
+	 * execution environment.
 	 * </p>
 	 * 
 	 * @return the full path to this named element
@@ -83,7 +83,7 @@ public interface NamedElement {
 	 * <b>Postconditions:</b> <code>p</code> has one of the following values:
 	 * <ul>
 	 * <li><code>null</code> if this named element is the
-	 * <code>DefaultPackage</code></li>
+	 * <code>DefaultPackage</code> and therefore has no parent package</li>
 	 * <li>the Package holding <code>namedElement</code></li>
 	 * </ul>
 	 * </p>
@@ -97,11 +97,6 @@ public interface NamedElement {
 	 * of Package this is the name of the parent package.
 	 * 
 	 * <p>
-	 * <b>Note:</b> the <code>DefaultPackage</code> does not have a parent
-	 * package and thus <code>null</code> is returned.
-	 * </p>
-	 * 
-	 * <p>
 	 * <b>Pattern:</b> <code>pn = namedElement.getPackageName();</code>
 	 * </p>
 	 * 
@@ -113,23 +108,18 @@ public interface NamedElement {
 	 * <b>Postconditions:</b> <code>pn</code> has one of the following values:
 	 * <ul>
 	 * <li><code>null</code> if this named element is the
-	 * <code>DefaultPackage</code></li>
+	 * <code>DefaultPackage</code>, and therefore has no parent package</li>
 	 * <li>the qualified name of the Package holding <code>namedElement</code></li>
 	 * </ul>
 	 * </p>
 	 * 
-	 * @return the name of the package holding this named element
+	 * @return the qualified name of the package holding this named element
 	 */
 	public String getPackageName();
 
 	/**
 	 * Returns the full path name to the directory holding this named element.
-	 * For instances of Package this is the parent package.
-	 * 
-	 * <p>
-	 * <b>Note:</b> the <code>DefaultPackage</code> does not have a parent
-	 * package and thus <code>null</code> is returned.
-	 * </p>
+	 * For instances of Package this is the name of the parent package.
 	 * 
 	 * <p>
 	 * <b>Pattern:</b> <code>pathName = namedElement.getPathName();</code>
@@ -140,10 +130,15 @@ public interface NamedElement {
 	 * </p>
 	 * 
 	 * <p>
-	 * <b>Postconditions:</b> the <code>pathName</code> is represented by the
-	 * package name, where every <code>'.'</code>-character has been replaced by
-	 * the default separator character which depends on the used execution
-	 * environment.
+	 * <b>Postconditions:</b> <code>pathName</code> has one of the following
+	 * values:
+	 * <ul>
+	 * <li><code>null</code> if this named element is the
+	 * <code>DefaultPackage</code>, and therefore has no parent package</li>
+	 * <li>the package name, where every <code>'.'</code> character has been
+	 * replaced by the default separator character depending on the used
+	 * execution environment.</li>
+	 * </ul>
 	 * </p>
 	 * 
 	 * @return the fully qualified path name to the directory holding this
@@ -167,23 +162,27 @@ public interface NamedElement {
 	 * <b>Postconditions:</b> <code>qn</code> takes one of the following values:
 	 * <ul>
 	 * <li>if this named element is the <code>DefaultPackage</code> (
-	 * <code>pkg</code> is <code>null</code>), then the qualified name is the
-	 * simple name</li>
-	 * <li>if the above does not apply, then the qualified name is composed of
+	 * <code>namedElement.parentPackage</code> is <code>null</code>) and
+	 * {@link de.uni_koblenz.jgralab.schema.Package.DEFAULTPACKAGE_NAME
+	 * DEFAULTPACKAGE_NAME} is an empty String, then the qualified name equals
+	 * this named element's simple name</li>
+	 * <li>if the above does not apply, but this named element's parent package
+	 * is the <code>DefaultPackage</code>, then the qualified name equals this
+	 * named element's simple name
+	 * <li>if none of the above holds, then the qualified name is composed of
 	 * the package name and the simple name, separated by a '.' character</li>
 	 * </ul>
 	 * </p>
 	 * 
-	 * @return the fully qualified name of this named element
+	 * @return the qualified name of this named element
 	 */
 	public String getQualifiedName();
 
 	/**
-	 * Return the relative qualified name to the given package.
+	 * Return the qualified name relatively to the given package.
 	 * 
 	 * <p>
-	 * <b>Pattern:</b>
-	 * <code>relQn = namedElement.getQualifiedName(package);</code>
+	 * <b>Pattern:</b> <code>relQn = namedElement.getQualifiedName(pkg);</code>
 	 * </p>
 	 * 
 	 * <p>
@@ -195,13 +194,13 @@ public interface NamedElement {
 	 * values:
 	 * <ul>
 	 * <li><code>relQn</code> is the simple name, if the given package is this
-	 * element´s parent package</li>
-	 * <li>if this element´s parent package is the <code>DefaultPackage</code>,
-	 * then <code>relQn</code> is the composition of the
-	 * {@link de.uni_koblenz.jgralab.schema.Package.DEFAULTPACKAGE_NAME
+	 * element's parent package</li>
+	 * <li>if the above does not apply and this element's parent package is the
+	 * <code>DefaultPackage</code>, then <code>relQn</code> is the composition
+	 * of the {@link de.uni_koblenz.jgralab.schema.Package.DEFAULTPACKAGE_NAME
 	 * DEFAULTPACKAGE_NAME} + "." + <code>namedElement.simpleName</code></li>
-	 * <li>in any other case, <code>relQn</code> is
-	 * <code>namedElement.qualifiedName</code></li>
+	 * <li>in any other case, <code>relQn</code> is this named element's
+	 * qualified name</li>
 	 * </ul>
 	 * 
 	 * @param pkg
@@ -260,13 +259,6 @@ public interface NamedElement {
 	 * </p>
 	 * 
 	 * <p>
-	 * <b>Note:</b> Keep in mind, that if the simple name is not unique in the
-	 * Schema, then the unique name is the qualified name with <code>'$'</code>
-	 * characters instead of <code>'.'</code> separating the different
-	 * subpackages.
-	 * </p>
-	 * 
-	 * <p>
 	 * <b>Pattern:</b> <code>un = namedElement.getUniqueName();</code>
 	 * </p>
 	 * 
@@ -278,10 +270,10 @@ public interface NamedElement {
 	 * <b>Postconditions:</b> <code>un == namedElement.uniqueName</code>, where
 	 * the unique name is one of the following:
 	 * <ul>
-	 * <li>unique name equals simple name, if there is only one class with this
-	 * simple name in the Schema</li>
-	 * <li>unique name equals qualified name, if there is another class with
-	 * this simple name in the Schema</li>
+	 * <li>unique name equals this named element's simple name, if there is only
+	 * one class with this named element's simple name in the Schema</li>
+	 * <li>unique name equals this named element's qualified name, if there is
+	 * another class with this named element's simple name in the Schema</li>
 	 * </ul>
 	 * </p>
 	 * 
@@ -290,8 +282,7 @@ public interface NamedElement {
 	public String getUniqueName();
 
 	/**
-	 * Checks if this named element is in the <code>DefaultPackage</code> (root
-	 * package).
+	 * Checks if this named element is in the <code>DefaultPackage</code>.
 	 * 
 	 * <p>
 	 * <b>Pattern:</b>

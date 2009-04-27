@@ -16,38 +16,59 @@ import de.uni_koblenz.jgralab.schema.exception.SchemaException;
 public abstract class NamedElementImpl implements NamedElement {
 
 	/**
-	 * The package containing this named element.
+	 * The package containing this named element. <code>null</code> if this
+	 * named element is the <code>DefaultPackage</code>.
 	 */
 	protected final Package parentPackage;
 
 	/**
-	 * The fully qualified name of an element in a schema. It is composed of the
-	 * {@link #packageName name of the package} the element is located in and
-	 * the {@link #simpleName simple name} of the element. <br/>
+	 * The fully qualified name of an element in a schema.<br />
+	 * If this named element is the <code>DefaultPackage</code> or this named
+	 * element lies directly in the <code>DefaultPackage</code>, then the
+	 * qualified name equals this named element's simple name.<br />
+	 * Else it is composed of this named element's {@link #parentPackage
+	 * parentPackage} name, and {@link #simpleName simpleName}, seperated by a
+	 * '.' character. <br/>
 	 * <code>qualifiedName = packageName + "." + simpleName</code>
 	 */
 	protected final String qualifiedName;
 
 	/**
-	 * Unique name of an element in a package without the fully qualified
-	 * package name.
+	 * Unique name of an element in a package without the qualified package
+	 * name.
 	 */
 	protected final String simpleName;
 
 	/**
 	 * The unique name of an element in a schema. If there is only one class in
-	 * the schema with this short name, the unique name is the short name.
+	 * the schema with this simple name, the unique name is the simple name.
 	 * Otherwise, the unique name is the same as the qualified name, except that
 	 * all <code>'.'</code> are replaced by <code>'$'</code>characters.
 	 */
 	protected String uniqueName;
 
+	/**
+	 * Pattern to match the simple name of Collection-/Map-Domain elements with.<br />
+	 * Check the preconditions section
+	 * {@link #NamedElementImpl(String, Package, Schema) here} for details.
+	 */
 	private static final Pattern COLLECTION_OR_MAPDOMAIN_NAME_PATTERN = Pattern
 			.compile("[.]?\\p{Upper}\\w*<[<>., _\\w]+>$");
 
+	/**
+	 * Pattern to match the simple name of Package elements with.<br />
+	 * Check the preconditions section
+	 * {@link #NamedElementImpl(String, Package, Schema) here} for details.
+	 */
 	private static final Pattern PACKAGE_NAME_PATTERN = Pattern
 			.compile("\\p{Lower}(\\w*\\p{Alnum})?");
 
+	/**
+	 * Pattern to match the simple name of AttributedElementClass and any Domain
+	 * other then Collection-Domain elements with.<br />
+	 * Check the preconditions section
+	 * {@link #NamedElementImpl(String, Package, Schema) here} for details.
+	 */
 	private static final Pattern ATTRELEM_OR_NOCOLLDOMAIN_PATTERN = Pattern
 			.compile("\\p{Upper}(\\w*\\p{Alnum})?");
 
@@ -144,7 +165,7 @@ public abstract class NamedElementImpl implements NamedElement {
 	 * </p>
 	 * 
 	 * @param simpleName
-	 *            this named element´s simple name
+	 *            this named element's simple name
 	 * @param pkg
 	 *            the package containing this named element
 	 * @param schema
@@ -358,9 +379,9 @@ public abstract class NamedElementImpl implements NamedElement {
 
 	@Override
 	public final String getQualifiedName(Package pkg) {
-		if (this.parentPackage == pkg) {
+		if (parentPackage == pkg) {
 			return simpleName;
-		} else if (this.parentPackage.isDefaultPackage()) {
+		} else if (parentPackage.isDefaultPackage()) {
 			return Package.DEFAULTPACKAGE_NAME + "." + simpleName;
 		} else {
 			return qualifiedName;
@@ -384,7 +405,7 @@ public abstract class NamedElementImpl implements NamedElement {
 	}
 
 	/**
-	 * Returns a hash code value for this named element, based upon itÂ´s
+	 * Returns a hash code value for this named element, based upon it's
 	 * qualified name.
 	 * 
 	 * <p>
@@ -420,8 +441,8 @@ public abstract class NamedElementImpl implements NamedElement {
 
 	/**
 	 * Transforms a qualified name into unique name notation. This is achieved
-	 * by replacing every occurrence of the <code>'.'</code> character in the
-	 * given qualified name by a<code>'$'</code> character.
+	 * by replacing every occurrence of a <code>'.'</code> characters in the
+	 * given qualified name by a <code>'$'</code> character.
 	 * 
 	 * <p>
 	 * <b>Pattern:</b> <code>un = NamedElementImpl.toUniqueName(qn);</code>
@@ -433,7 +454,9 @@ public abstract class NamedElementImpl implements NamedElement {
 	 * 
 	 * <p>
 	 * <b>Postconditions:</b> <code>un</code> equals <code>qn</code>, except
-	 * every occurrence of '.' by '$'
+	 * that every occurrence of a '.' character has been replaced by a '$'
+	 * character. As no named element allows for '$' characters in it's
+	 * qualified name, there is no problem here.
 	 * </p>
 	 * 
 	 * @param qualifiedName
