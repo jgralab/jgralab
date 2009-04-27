@@ -24,10 +24,8 @@
 
 package de.uni_koblenz.jgralab.utilities.jgralab2owl;
 
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Queue;
 import java.util.Set;
 
 import org.w3c.dom.Document;
@@ -66,7 +64,7 @@ class Graph2OWLInstances {
 	 * discarding possible attributes. If {@code false}, an EdgeClass is
 	 * converted to an OWL class and two Properties.
 	 */
-	private boolean edgeClasses2Properties;
+	private boolean edgeClasses2Props;
 
 	/**
 	 * The suffix appended to the OWL construct representing an EdgeClass. It is
@@ -74,9 +72,43 @@ class Graph2OWLInstances {
 	 * to the constructor is {@code false}.
 	 * 
 	 * @see #Schema2OWL(Document doc, Schema schema, boolean
-	 *      edgeClasses2Properties, boolean appendSuffix2EdgeClassName)
+	 *      edgeClasses2Props, boolean appendSuffix2EdgeClassName)
 	 */
 	private String edgeClassNameSuffix;
+
+	/**
+	 * The name of the property linking the Graph Individual to the Vertex
+	 * Individuals
+	 */
+	private String graphContainsVertexPropName;
+
+	/**
+	 * The name of the property linking the Vertex Individual to the Graph
+	 * Individuals
+	 */
+	private String vertexIsInGraphPropName;
+
+	/**
+	 * The name of the property linking the Graph Individual to the Edge
+	 * Individuals
+	 */
+	private String graphContainsEdgePropName;
+
+	/**
+	 * The name of the property linking the Edge Individual to the Graph
+	 * Individuals
+	 */
+	private String edgeIsInGraphPropName;
+	
+	/**
+	 * A prefix used for Properties linking an Edge Class to its role
+	 */
+	private String edgeRolePropPrefix;
+	
+	/**
+	 * An Infix used for Properties linking Edge Individuals to Attributes (Datatypes or Individuals)
+	 */
+	private String edgeAttrPropInfix;
 
 	/**
 	 * Creates an instance of {@code Graph2OWL}, assigns values to the member
@@ -90,15 +122,23 @@ class Graph2OWLInstances {
 	 *            An instance of {@code ProgressFunction} to display the
 	 *            progress of the conversion in a status bar.
 	 */
-	Graph2OWLInstances(Document doc, Graph g, boolean edgeClasses2Properties,
+	Graph2OWLInstances(Document doc, Graph g, boolean edgeClasses2Props,
 			boolean appendSuffix2EdgeClassName, ProgressFunction pf) {
 		this.doc = doc;
-		this.edgeClasses2Properties = edgeClasses2Properties;
+		this.edgeClasses2Props = edgeClasses2Props;
 		if (appendSuffix2EdgeClassName) {
 			edgeClassNameSuffix = "EC";
 		} else {
 			edgeClassNameSuffix = "";
 		}
+
+		graphContainsVertexPropName = "graphContainsVertex";
+		vertexIsInGraphPropName = "vertexIsInGraph";
+		graphContainsEdgePropName = "graphContainsEdge"
+				+ edgeClassNameSuffix;
+		edgeIsInGraphPropName = "edge" + edgeClassNameSuffix + "IsInGraph";
+		edgeRolePropPrefix = "edge" + edgeClassNameSuffix;
+		edgeAttrPropInfix = edgeClassNameSuffix + "Has";
 
 		rdfElem = (Element) doc.getElementsByTagName("rdf:RDF").item(0);
 		saveGraph(g, pf);
@@ -191,17 +231,22 @@ class Graph2OWLInstances {
 	private void convertGraph(Graph g, ProgressFunction pf) {
 		String eElemId;
 		String vElemId;
+		String gId = g.getId();
+		String hashedGId = "#" + gId;
+		String attrName;
 
 		// create Individual for Graph g
 		Element gElem = createIndividualElement(g.getAttributedElementClass()
-				.getQualifiedName(), g.getId());
+				.getQualifiedName(), gId);
 
 		// convert attributes of g
 		try {
 			for (Attribute attr : g.getAttributedElementClass()
 					.getAttributeList()) {
-				if (g.getAttribute(attr.getName()) != null) {
-					gElem.appendChild(convertAttributeValue(g, attr));
+				attrName = attr.getName();
+				
+				if (g.getAttribute(attrName) != null) {
+					gElem.appendChild(convertAttributeValue(g, attr, attrName));
 				}
 			}
 		} catch (NoSuchFieldException nsfe) {
@@ -216,22 +261,21 @@ class Graph2OWLInstances {
 			vElemId = HelperMethods.firstToLowerCase(v
 					.getAttributedElementClass().getQualifiedName())
 					+ String.valueOf(v.getId());
-			gElem.appendChild(createIndividualObjectPropertyElement(
-					"graphContainsVertex", "#" + vElemId));
-			convertVertex(v, vElemId, pf);
+			gElem.appendChild(createIndividualObjectPropElement(
+					graphContainsVertexPropName, "#" + vElemId));
+			convertVertex(hashedGId, v, vElemId, pf);
 		}
 
-		if (!edgeClasses2Properties) {
+		if (!edgeClasses2Props) {
 			// convert edges
 			for (Edge e : g.edges()) {
 				eElemId = HelperMethods.firstToLowerCase(e
 						.getAttributedElementClass().getQualifiedName())
 						+ edgeClassNameSuffix + String.valueOf(e.getId());
-				gElem.appendChild(createIndividualObjectPropertyElement(
-						"graphContainsEdge" + edgeClassNameSuffix, "#"
-								+ eElemId));
+				gElem.appendChild(createIndividualObjectPropElement(
+						graphContainsEdgePropName, "#" + eElemId));
 
-				convertEdge(e, eElemId, pf);
+				convertEdge(hashedGId, e, eElemId, pf);
 			}
 		}
 	}
@@ -298,81 +342,71 @@ class Graph2OWLInstances {
 	 * 
 	 * @see #convertAttributeValue(AttributedElement ownerAe, Attribute attr)
 	 */
-	private void convertVertex(Vertex v, String vElemId, ProgressFunction pf) {
+	private void convertVertex(String hashedGId, Vertex v, String vElemId,
+			ProgressFunction pf) {
 		AttributedElementClass vc = v.getAttributedElementClass();
-		Edge e = v.getFirstEdge();
+		Vertex incidentVertex;
 
 		// create the Individual representing v
 		Element vElem = createIndividualElement(vc.getQualifiedName(), vElemId);
 
-		String eElemId;
+		String attrName, eElemId;
 
 		// convert Attributes of v
 		try {
-			for (Attribute attr : v.getAttributedElementClass()
-					.getAttributeList()) {
-				if (v.getAttribute(attr.getName()) != null) {
-					vElem.appendChild(convertAttributeValue(v, attr));
+			for (Attribute attr : vc.getAttributeList()) {
+				attrName = attr.getName();
+				
+				if (v.getAttribute(attrName) != null) {
+					vElem.appendChild(convertAttributeValue(v, attr, attrName));
 				}
 			}
 		} catch (NoSuchFieldException nsfe) {
 			nsfe.printStackTrace();
 		}
 
-		vElem.appendChild(createIndividualObjectPropertyElement(
-				"vertexIsInGraph", "#" + v.getGraph().getId()));
+		vElem.appendChild(createIndividualObjectPropElement(
+				vertexIsInGraphPropName, hashedGId));
 
 		// create individual properties referring to individuals representing
 		// incident edges
-		while (e != null) {
-			eElemId = HelperMethods.firstToLowerCase(e
+		for (Edge e : v.incidences()) {
+			String eSuffixedLowerCaseQName = HelperMethods.firstToLowerCase(e
 					.getAttributedElementClass().getQualifiedName())
-					+ edgeClassNameSuffix
+					+ edgeClassNameSuffix;
+
+			eElemId = eSuffixedLowerCaseQName
 					+ String.valueOf(e.getNormalEdge().getId());
 
-			if (edgeClasses2Properties) {
+			if (edgeClasses2Props) {
 				if (e.getAlpha() == v) {
-					vElem.appendChild(createIndividualObjectPropertyElement(
-							HelperMethods.firstToLowerCase(e
-									.getAttributedElementClass()
-									.getQualifiedName()
-									+ edgeClassNameSuffix), "#"
-									+ HelperMethods.firstToLowerCase(e
-											.getOmega()
+					incidentVertex = e.getOmega();
+					
+					vElem.appendChild(createIndividualObjectPropElement(
+							eSuffixedLowerCaseQName, "#"
+									+ HelperMethods.firstToLowerCase(incidentVertex
 											.getAttributedElementClass()
 											.getQualifiedName())
-									+ e.getOmega().getId()));
+									+ incidentVertex.getId()));
 				} else {
-					vElem.appendChild(createIndividualObjectPropertyElement(
-							HelperMethods.firstToLowerCase(e
-									.getAttributedElementClass()
-									.getQualifiedName()
-									+ edgeClassNameSuffix + "-of"), "#"
-									+ HelperMethods.firstToLowerCase(e
-											.getAlpha()
+					incidentVertex = e.getAlpha();
+					
+					vElem.appendChild(createIndividualObjectPropElement(
+							eSuffixedLowerCaseQName + "-of", "#"
+									+ HelperMethods.firstToLowerCase(incidentVertex
 											.getAttributedElementClass()
 											.getQualifiedName())
-									+ e.getAlpha().getId()));
+									+ incidentVertex.getId()));
 				}
 			} else {
 				if (e.getAlpha() == v) {
-					vElem.appendChild(createIndividualObjectPropertyElement(
-							HelperMethods.firstToLowerCase(e
-									.getAttributedElementClass()
-									.getQualifiedName()
-									+ edgeClassNameSuffix + "Out"), "#"
-									+ eElemId));
+					vElem.appendChild(createIndividualObjectPropElement(
+							eSuffixedLowerCaseQName + "Out", "#" + eElemId));
 				} else {
-					vElem.appendChild(createIndividualObjectPropertyElement(
-							HelperMethods.firstToLowerCase(e
-									.getAttributedElementClass()
-									.getQualifiedName()
-									+ edgeClassNameSuffix + "In"), "#"
-									+ eElemId));
+					vElem.appendChild(createIndividualObjectPropElement(
+							eSuffixedLowerCaseQName + "In", "#" + eElemId));
 				}
 			}
-
-			e = e.getNextEdge();
 		}
 
 		rdfElem.appendChild(vElem);
@@ -427,10 +461,12 @@ class Graph2OWLInstances {
 	 * 
 	 * @see #convertAttributeValue(AttributedElement ownerAe, Attribute attr)
 	 */
-	private void convertEdge(Edge e, String eElemId, ProgressFunction pf) {
+	private void convertEdge(String hashedGId, Edge e, String eElemId, ProgressFunction pf) {
 		AttributedElementClass ec = e.getAttributedElementClass();
 		Vertex fromVertex = e.getAlpha();
 		Vertex toVertex = e.getOmega();
+		
+		String attrName;
 
 		Element eElem = createIndividualElement(ec.getQualifiedName()
 				+ edgeClassNameSuffix, eElemId);
@@ -440,17 +476,18 @@ class Graph2OWLInstances {
 		String fromElemId = HelperMethods.firstToLowerCase(fromVertex
 				.getAttributedElementClass().getQualifiedName())
 				+ fromVertex.getId();
-		
+
 		String toElemId = HelperMethods.firstToLowerCase(toVertex
 				.getAttributedElementClass().getQualifiedName())
 				+ toVertex.getId();
 
 		// convert attributes of e
 		try {
-			for (Attribute attr : e.getAttributedElementClass()
-					.getAttributeList()) {
-				if (e.getAttribute(attr.getName()) != null) {
-					eElem.appendChild(convertAttributeValue(e, attr));
+			for (Attribute attr : ec.getAttributeList()) {
+				attrName = attr.getName();
+				
+				if (e.getAttribute(attrName) != null) {
+					eElem.appendChild(convertAttributeValue(e, attr, attrName));
 				}
 			}
 		} catch (NoSuchFieldException nsfe) {
@@ -458,27 +495,23 @@ class Graph2OWLInstances {
 		}
 
 		eElem
-				.appendChild(createIndividualObjectPropertyElement("edge"
-						+ edgeClassNameSuffix + "IsInGraph", "#"
-						+ e.getGraph().getId()));
+				.appendChild(createIndividualObjectPropElement(edgeIsInGraphPropName, hashedGId));
 
 		// create properties for role names
-		eElem.appendChild(createIndividualDatatypePropertyElement("edge"
-				+ edgeClassNameSuffix + "OutRole",
-				"http://www.w3.org/2001/XMLSchema#string", ((EdgeClass) e
-						.getAttributedElementClass()).getFromRolename()));
-		eElem.appendChild(createIndividualDatatypePropertyElement("edge"
-				+ edgeClassNameSuffix + "InRole",
-				"http://www.w3.org/2001/XMLSchema#string", ((EdgeClass) e
-						.getAttributedElementClass()).getToRolename()));
+		eElem.appendChild(createIndividualDatatypePropElement(edgeRolePropPrefix + "OutRole",
+				"http://www.w3.org/2001/XMLSchema#string", ((EdgeClass) ec)
+						.getFromRolename()));
+		eElem.appendChild(createIndividualDatatypePropElement(edgeRolePropPrefix + "InRole",
+				"http://www.w3.org/2001/XMLSchema#string", ((EdgeClass) ec)
+						.getToRolename()));
 
 		// create properties for aggregate if e is an Aggregation or Composition
 		if (e instanceof Aggregation) {
 			if (((AggregationClass) ec).isAggregateFrom()) {
-				eElem.appendChild(createIndividualObjectPropertyElement(
+				eElem.appendChild(createIndividualObjectPropElement(
 						"aggregate", "#" + fromElemId));
 			} else {
-				eElem.appendChild(createIndividualObjectPropertyElement(
+				eElem.appendChild(createIndividualObjectPropElement(
 						"aggregate", "#" + toElemId));
 			}
 		}
@@ -489,9 +522,9 @@ class Graph2OWLInstances {
 	/**
 	 * Converts the value of the {@code Attribute attr} to an individual of a
 	 * Property. See
-	 * {@link #createAttributeIndividualObjectPropertyElement(String name, Object value, Domain dom)}
+	 * {@link #createAttributeIndividualObjectPropElement(String name, Object value, Domain dom)}
 	 * and
-	 * {@link #createAttributeIndividualDatatypePropertyElement(String name, Object value, Domain dom)}
+	 * {@link #createAttributeIndividualDatatypePropElement(String name, Object value, Domain dom)}
 	 * for the created XML code.
 	 * 
 	 * @param ownerAe
@@ -502,50 +535,39 @@ class Graph2OWLInstances {
 	 * 
 	 * @throws NoSuchFieldException
 	 * 
-	 * @see #createAttributeIndividualObjectPropertyElement(String name, Object
+	 * @see #createAttributeIndividualObjectPropElement(String name, Object
 	 *      value, Domain dom)
-	 * @see #createAttributeIndividualDatatypePropertyElement(String name,
+	 * @see #createAttributeIndividualDatatypePropElement(String name,
 	 *      Object value, Domain dom)
 	 */
 	private Element convertAttributeValue(AttributedElement ownerAe,
-			Attribute attr) throws NoSuchFieldException {
+			Attribute attr, String attrName) throws NoSuchFieldException {
 		String attrPropertyName;
-		String attrName = attr.getName();
 		Object value = ownerAe.getAttribute(attrName);
 
-		AttributedElementClass ownersAec = ownerAe.getAttributedElementClass();
-
-		// Find AttributedElementClass owning attr. This can be a superclass of
-		// the initial ownersAec.
-		Queue<AttributedElementClass> q = new LinkedList<AttributedElementClass>();
-		q.add(ownersAec);
-		while (ownersAec.getOwnAttribute(attrName) == null) {
-			q.addAll(ownersAec.getDirectSuperClasses());
-			ownersAec = q.remove();
-		}
-
-		Domain dom = attr.getDomain();
+		AttributedElementClass owningAec = attr.getAttributedElementClass();		
 
 		// The name of the Property representing the attribute
-		if (ownersAec instanceof EdgeClass) {
-			attrPropertyName = HelperMethods.firstToLowerCase(ownersAec
+		if (owningAec instanceof EdgeClass) {
+			attrPropertyName = HelperMethods.firstToLowerCase(owningAec
 					.getQualifiedName())
-					+ edgeClassNameSuffix
-					+ "Has"
+					+ edgeAttrPropInfix
 					+ HelperMethods.firstToUpperCase(attrName);
 		} else {
-			attrPropertyName = HelperMethods.firstToLowerCase(ownersAec
+			attrPropertyName = HelperMethods.firstToLowerCase(owningAec
 					.getQualifiedName())
 					+ "Has" + HelperMethods.firstToUpperCase(attrName);
 		}
+		
+		Domain dom = attr.getDomain();
 
 		// if "attr" has a CompositeDomain as type (no Object)
 		if (dom.isComposite()) {
-			return createAttributeIndividualObjectPropertyElement(
+			return createAttributeIndividualObjectPropElement(
 					attrPropertyName, value, dom);
 			// if "attr" has a BasicDomain as type
 		} else {
-			return createAttributeIndividualDatatypePropertyElement(
+			return createAttributeIndividualDatatypePropElement(
 					attrPropertyName, value, dom);
 		}
 	}
@@ -553,14 +575,14 @@ class Graph2OWLInstances {
 	/**
 	 * Creates an individual of an ObjectProperty representing the value of a
 	 * composite {@code Attribute}. See
-	 * {@link #createListIndividualObjectPropertyElement(String name, Object value, Domain dom)}
+	 * {@link #createListIndividualObjectPropElement(String name, Object value, Domain dom)}
 	 * ,
-	 * {@link #createSetIndividualObjectPropertyElement(String name, Object value, Domain dom)}
+	 * {@link #createSetIndividualObjectPropElement(String name, Object value, Domain dom)}
 	 * and
-	 * {@link #createRecordIndividualObjectPropertyElement(String name, Object value, Domain dom)}
+	 * {@link #createRecordIndividualObjectPropElement(String name, Object value, Domain dom)}
 	 * for the created XML code.
 	 * 
-	 * @param propertyName
+	 * @param propName
 	 *            The name of the ObjectProperty which shall be created.
 	 * @param value
 	 *            The value of the composite attribute which shall be converted.
@@ -569,23 +591,23 @@ class Graph2OWLInstances {
 	 *            converted.
 	 * @return An individual ObjectProperty representing a composite attribute.
 	 * 
-	 * @see #createListIndividualObjectPropertyElement(String name, Object
+	 * @see #createListIndividualObjectPropElement(String name, Object
 	 *      value, Domain dom)
-	 * @see #createSetIndividualObjectPropertyElement(String name, Object value,
+	 * @see #createSetIndividualObjectPropElement(String name, Object value,
 	 *      Domain dom)
-	 * @see #createRecordIndividualObjectPropertyElement(String name, Object
+	 * @see #createRecordIndividualObjectPropElement(String name, Object
 	 *      value, Domain dom)
 	 */
-	private Element createAttributeIndividualObjectPropertyElement(
-			String propertyName, Object value, Domain dom) {
+	private Element createAttributeIndividualObjectPropElement(
+			String propName, Object value, Domain dom) {
 		if (dom.getTGTypeName(null).startsWith("List<")) {
-			return createListIndividualObjectPropertyElement(propertyName,
+			return createListIndividualObjectPropElement(propName,
 					value, dom);
 		} else if (dom.getTGTypeName(null).startsWith("Set<")) {
-			return createSetIndividualObjectPropertyElement(propertyName,
+			return createSetIndividualObjectPropElement(propName,
 					value, dom);
 		} else {
-			return createRecordIndividualObjectPropertyElement(propertyName,
+			return createRecordIndividualObjectPropElement(propName,
 					value, dom);
 		}
 	}
@@ -630,12 +652,12 @@ class Graph2OWLInstances {
 	 * 
 	 * The child elements and/or attributes of the individuals {@code <Set>} are
 	 * determined by yet another call of
-	 * {@link #createAttributeIndividualObjectPropertyElement(String propertyName, Object value, Domain dom)}
+	 * {@link #createAttributeIndividualObjectPropElement(String propertyName, Object value, Domain dom)}
 	 * or
-	 * {@link #createAttributeIndividualDatatypePropertyElement(String propertyName, Object value, Domain dom)}
+	 * {@link #createAttributeIndividualDatatypePropElement(String propertyName, Object value, Domain dom)}
 	 * , respectively.
 	 * 
-	 * @param propertyName
+	 * @param propName
 	 *            The name of the ObjectProperty which shall be created.
 	 * @param value
 	 *            The value of the attribute of type List which shall be
@@ -646,21 +668,21 @@ class Graph2OWLInstances {
 	 * @return An individual ObjectProperty representing an attribute of type
 	 *         List.
 	 * 
-	 * @see #createAttributeIndividualObjectPropertyElement(String propertyName,
+	 * @see #createAttributeIndividualObjectPropElement(String propertyName,
 	 *      Object value, Domain dom)
-	 * @see #createAttributeIndividualDatatypePropertyElement(String
+	 * @see #createAttributeIndividualDatatypePropElement(String
 	 *      propertyName, Object value, Domain dom)
 	 */
 	@SuppressWarnings("unchecked")
-	private Element createListIndividualObjectPropertyElement(
-			String propertyName, Object value, Domain dom) {
+	private Element createListIndividualObjectPropElement(
+			String propName, Object value, Domain dom) {
 		Object componentValue;
 
 		// get the base domain of the list
 		Domain baseDomain = ((ListDomain) dom).getBaseDomain();
 
-		Element attrIndividualPropertyElem = createIndividualPropertyElement(propertyName);
-		Element nextListElementProperty = attrIndividualPropertyElem;
+		Element attrIndividualPropElem = doc.createElement(propName);
+		Element nextListElementProp = attrIndividualPropElem;
 		Element compositeIndividualElem;
 
 		// for each value inside the list
@@ -672,17 +694,17 @@ class Graph2OWLInstances {
 			// the "hasNextListElement" individual property of the last
 			// iteration
 			compositeIndividualElem = createAnonymousIndividualElement("ListElement");
-			nextListElementProperty.appendChild(compositeIndividualElem);
+			nextListElementProp.appendChild(compositeIndividualElem);
 
 			// create individual properties for the ListElement's value
 			if (baseDomain.isComposite()) {
 				compositeIndividualElem
-						.appendChild(createAttributeIndividualObjectPropertyElement(
+						.appendChild(createAttributeIndividualObjectPropElement(
 								"listElementHasObject", componentValue,
 								baseDomain));
 			} else {
 				compositeIndividualElem
-						.appendChild(createAttributeIndividualDatatypePropertyElement(
+						.appendChild(createAttributeIndividualDatatypePropElement(
 								"listElementHasDatatype", componentValue,
 								baseDomain));
 			}
@@ -690,12 +712,12 @@ class Graph2OWLInstances {
 			// if i is not the index of the last ListElement, create property
 			// "hasNextListElement"
 			if (i < ((List) value).size() - 1) {
-				nextListElementProperty = createIndividualPropertyElement("hasNextListElement");
-				compositeIndividualElem.appendChild(nextListElementProperty);
+				nextListElementProp = doc.createElement("hasNextListElement");
+				compositeIndividualElem.appendChild(nextListElementProp);
 			}
 		}
 
-		return attrIndividualPropertyElem;
+		return attrIndividualPropElem;
 	}
 
 	/**
@@ -723,9 +745,9 @@ class Graph2OWLInstances {
 	 * 
 	 * The child elements and/or attributes of the individuals {@code <Set>} are
 	 * determined by yet another call of
-	 * {@link #createAttributeIndividualObjectPropertyElement(String propertyName, Object value, Domain dom)}
+	 * {@link #createAttributeIndividualObjectPropElement(String propertyName, Object value, Domain dom)}
 	 * or
-	 * {@link #createAttributeIndividualDatatypePropertyElement(String propertyName, Object value, Domain dom)}
+	 * {@link #createAttributeIndividualDatatypePropElement(String propertyName, Object value, Domain dom)}
 	 * , respectively.
 	 * 
 	 * @param propertyName
@@ -739,20 +761,20 @@ class Graph2OWLInstances {
 	 * @return An individual ObjectProperty representing an attribute of type
 	 *         Set.
 	 * 
-	 * @see #createAttributeIndividualObjectPropertyElement(String propertyName,
+	 * @see #createAttributeIndividualObjectPropElement(String propertyName,
 	 *      Object value, Domain dom)
-	 * @see #createAttributeIndividualDatatypePropertyElement(String
+	 * @see #createAttributeIndividualDatatypePropElement(String
 	 *      propertyName, Object value, Domain dom)
 	 */
 	@SuppressWarnings("unchecked")
-	private Element createSetIndividualObjectPropertyElement(
+	private Element createSetIndividualObjectPropElement(
 			String propertyName, Object value, Domain dom) {
 		// get the base domain of the Set
 		Domain baseDomain = ((SetDomain) dom).getBaseDomain();
 
 		Element compositeIndividualElem = createAnonymousIndividualElement("Set");
 
-		Element attrIndividualPropertyElem = createIndividualPropertyElement(propertyName);
+		Element attrIndividualPropertyElem = doc.createElement(propertyName);
 		attrIndividualPropertyElem.appendChild(compositeIndividualElem);
 
 		// if the base domain is a composite domain
@@ -760,7 +782,7 @@ class Graph2OWLInstances {
 			// for each value inside the Set
 			for (Object componentValue : (Set) value) {
 				compositeIndividualElem
-						.appendChild(createAttributeIndividualObjectPropertyElement(
+						.appendChild(createAttributeIndividualObjectPropElement(
 								"setHasObject", componentValue, baseDomain));
 			}
 			// if the base domain is a basic domain
@@ -768,7 +790,7 @@ class Graph2OWLInstances {
 			// for each value inside the Set
 			for (Object componentValue : (Set) value) {
 				compositeIndividualElem
-						.appendChild(createAttributeIndividualDatatypePropertyElement(
+						.appendChild(createAttributeIndividualDatatypePropElement(
 								"setHasDatatype", componentValue, baseDomain));
 			}
 		}
@@ -794,9 +816,9 @@ class Graph2OWLInstances {
 	 * The child elements and/or attributes of the individuals {@code <}
 	 * <i>dom.getName() </i>{@code Has}<i>componentNameX</i> are determined by a
 	 * call of
-	 * {@link #createAttributeIndividualObjectPropertyElement(String propertyName, Object value, Domain dom)}
+	 * {@link #createAttributeIndividualObjectPropElement(String propertyName, Object value, Domain dom)}
 	 * or
-	 * {@link #createAttributeIndividualDatatypePropertyElement(String propertyName, Object value, Domain dom)}
+	 * {@link #createAttributeIndividualDatatypePropElement(String propertyName, Object value, Domain dom)}
 	 * , respectively<br>
 	 * <br>
 	 * An example:<br>
@@ -811,7 +833,7 @@ class Graph2OWLInstances {
 	 *     &lt;/carParkHasParking&gt;
 	 * </pre>
 	 * 
-	 * @param propertyName
+	 * @param propName
 	 *            The name of the ObjectProperty which shall be created.
 	 * @param value
 	 *            The value of the attribute of type Record which shall be
@@ -822,17 +844,17 @@ class Graph2OWLInstances {
 	 * @return An individual ObjectProperty representing an attribute of type
 	 *         Record.
 	 * 
-	 * @see #createAttributeIndividualObjectPropertyElement(String propertyName,
+	 * @see #createAttributeIndividualObjectPropElement(String propertyName,
 	 *      Object value, Domain dom)
-	 * @see #createAttributeIndividualDatatypePropertyElement(String
+	 * @see #createAttributeIndividualDatatypePropElement(String
 	 *      propertyName, Object value, Domain dom)
 	 */
-	private Element createRecordIndividualObjectPropertyElement(
-			String propertyName, Object value, Domain dom) {
+	private Element createRecordIndividualObjectPropElement(
+			String propName, Object value, Domain dom) {
 		Element compositeIndividualElem = createAnonymousIndividualElement(dom
 				.getQualifiedName());
 
-		Element attrIndividualPropertyElem = createIndividualPropertyElement(propertyName);
+		Element attrIndividualPropertyElem = doc.createElement(propName);
 		attrIndividualPropertyElem.appendChild(compositeIndividualElem);
 
 		// for every component of the Record
@@ -851,7 +873,7 @@ class Graph2OWLInstances {
 			// if the component is of composite type
 			if (component.getValue().isComposite()) {
 				compositeIndividualElem
-						.appendChild(createAttributeIndividualObjectPropertyElement(
+						.appendChild(createAttributeIndividualObjectPropElement(
 								HelperMethods.firstToLowerCase(dom
 										.getQualifiedName())
 										+ "Has"
@@ -862,7 +884,7 @@ class Graph2OWLInstances {
 				// if the component is of basic type
 			} else {
 				compositeIndividualElem
-						.appendChild(createAttributeIndividualDatatypePropertyElement(
+						.appendChild(createAttributeIndividualDatatypePropElement(
 								HelperMethods.firstToLowerCase(dom
 										.getQualifiedName())
 										+ "Has"
@@ -886,7 +908,7 @@ class Graph2OWLInstances {
 	 *     &lt;&lt;i&gt;propertyName&lt;/i&gt; rdf:datatype=&quot;#&lt;i&gt;dom.getTGTypeName()&lt;/i&gt;&gt;&lt;i&gt;value.toString()&lt;/i&gt;&lt;/&lt;i&gt;propertyName&lt;/i&gt;&gt;
 	 * </pre>
 	 * 
-	 * @param propertyName
+	 * @param propName
 	 *            The name of the DatatypeProperty which shall be created.
 	 * @param value
 	 *            The value of the attribute of basic type which shall be
@@ -898,9 +920,9 @@ class Graph2OWLInstances {
 	 *         type.
 	 */
 	@SuppressWarnings("unchecked")
-	private Element createAttributeIndividualDatatypePropertyElement(
-			String propertyName, Object value, Domain dom) {
-		Element attrIndividualPropertyElem = createIndividualPropertyElement(propertyName);
+	private Element createAttributeIndividualDatatypePropElement(
+			String propName, Object value, Domain dom) {
+		Element attrIndividualPropertyElem = doc.createElement(propName);
 
 		if (dom.getTGTypeName(null).equals("String")) {
 			attrIndividualPropertyElem.setAttribute("rdf:datatype",
@@ -953,33 +975,19 @@ class Graph2OWLInstances {
 	}
 
 	/**
-	 * Creates and returns an element {@code <}<i>owlProperty</i>{@code />},
-	 * representing an individual's Property.
-	 * 
-	 * @param owlProperty
-	 *            The element's tag.
-	 * @return The created element.
-	 */
-	private Element createIndividualPropertyElement(String owlProperty) {
-		Element elem = doc.createElement(owlProperty);
-
-		return elem;
-	}
-
-	/**
 	 * Creates and returns an element {@code <}<i>owlProperty</i> {@code
 	 * rdf:resource = } <i>id</i>{@code />}, representing an individual's
 	 * ObjectProperty.
 	 * 
-	 * @param owlProperty
+	 * @param owlProp
 	 *            The element's tag.
 	 * @param resource
 	 *            The value of the "rdf:resource" attribute.
 	 * @return The created element.
 	 */
-	private Element createIndividualObjectPropertyElement(String owlProperty,
+	private Element createIndividualObjectPropElement(String owlProp,
 			String resource) {
-		Element elem = doc.createElement(owlProperty);
+		Element elem = doc.createElement(owlProp);
 		elem.setAttribute("rdf:resource", resource);
 
 		return elem;
@@ -991,7 +999,7 @@ class Graph2OWLInstances {
 	 * <i>owlProperty</i>{@code >}, representing an individual's
 	 * DatatypeProperty.
 	 * 
-	 * @param owlProperty
+	 * @param owlProp
 	 *            The element's tag.
 	 * @param datatype
 	 *            The property's datatype.
@@ -999,9 +1007,9 @@ class Graph2OWLInstances {
 	 *            The text node representing the property's value.
 	 * @return The created element.
 	 */
-	private Element createIndividualDatatypePropertyElement(String owlProperty,
+	private Element createIndividualDatatypePropElement(String owlProp,
 			String datatype, String value) {
-		Element elem = doc.createElement(owlProperty);
+		Element elem = doc.createElement(owlProp);
 		elem.setAttribute("rdf:datatype", datatype);
 		elem.appendChild(doc.createTextNode(value));
 

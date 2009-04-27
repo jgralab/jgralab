@@ -396,9 +396,10 @@ public class SchemaCodeGenerator extends CodeGenerator {
 		for (Attribute attr : aec.getOwnAttributeList()) {
 			CodeSnippet s = new CodeSnippet(
 					false,
-					"#aecVariable#.addAttribute(createAttribute(\"#attrName#\", getDomain(\"#domainName#\")));");
+					"#aecVariable#.addAttribute(createAttribute(\"#attrName#\", getDomain(\"#domainName#\"), getAttributedElementClass(\"#aecName#\")));");
 			s.setVariable("attrName", attr.getName());
 			s.setVariable("domainName", attr.getDomain().getQualifiedName());
+			s.setVariable("aecName", aec.getQualifiedName());
 			code.addNoIndent(s);
 		}
 		return code;

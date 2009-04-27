@@ -40,9 +40,9 @@ import de.uni_koblenz.jgralab.codegenerator.JavaSourceFromString;
 
 /**
  * The class Schema represents a grUML Schema (M2).
- *
+ * 
  * @author ist@uni-koblenz.de
- *
+ * 
  */
 public interface Schema extends Comparable<Schema> {
 
@@ -65,7 +65,7 @@ public interface Schema extends Comparable<Schema> {
 	/**
 	 * Checks if this schema supports enumeration constants with lowercase
 	 * letters.
-	 *
+	 * 
 	 * @return true iff the schema allows lowercase enum constants
 	 */
 	public boolean allowsLowercaseEnumConstants();
@@ -79,11 +79,11 @@ public interface Schema extends Comparable<Schema> {
 	/**
 	 * after creating the schema, this command serves to make it permanent, m2
 	 * classes are generated to represent the object oriented access layer
-	 *
+	 * 
 	 * @param path
 	 *            the path to the m1 classes which are to be generated
-	 *
-	 *
+	 * 
+	 * 
 	 * @throws GraphIOException
 	 *             if an error occured during optional compilation
 	 */
@@ -92,7 +92,7 @@ public interface Schema extends Comparable<Schema> {
 	/**
 	 * after creating the schema, this command serves to make it permanent, m2
 	 * classes are generated to represent the object oriented access layer
-	 *
+	 * 
 	 * @param path
 	 *            the path to the m1 classes which are to be generated
 	 * @param progressFunction
@@ -114,7 +114,7 @@ public interface Schema extends Comparable<Schema> {
 	 * After creating the schema, this command serves to generate and compile
 	 * code for the m1 classes. The class files are not written to disk, but
 	 * only held in memory.
-	 *
+	 * 
 	 * @param jgralabClassPath
 	 *            the classpath to JGraLab
 	 */
@@ -122,18 +122,21 @@ public interface Schema extends Comparable<Schema> {
 
 	/**
 	 * Creates a new Attribute <code>name</code> with domain <code>dom</code>.
-	 *
+	 * 
 	 * @param name
 	 *            the attribute name
 	 * @param dom
 	 *            the domain for the attribute
+	 * @param aec
+	 *            the {@link AttributedElementClass} owning the
+	 *            {@link Attribute}
 	 * @return the new Attribute
 	 */
-	public Attribute createAttribute(String name, Domain dom);
+	public Attribute createAttribute(String name, Domain dom, AttributedElementClass aec);
 
 	/**
 	 * Builds a new enumeration domain, multiple domains may exist in a schema.
-	 *
+	 * 
 	 * @param qualifiedName
 	 *            the qualified name of the {@link EnumDomain}
 	 * @return a new enumeration domain
@@ -142,7 +145,7 @@ public interface Schema extends Comparable<Schema> {
 
 	/**
 	 * Builds a new enumeration domain, multiple domains may exist in a schema
-	 *
+	 * 
 	 * @param qualifiedName
 	 *            the qualified name of the {@link EnumDomain}
 	 * @param enumComponents
@@ -154,7 +157,7 @@ public interface Schema extends Comparable<Schema> {
 
 	/**
 	 * Creates a new {@link GraphClass} and saves it to the schema object
-	 *
+	 * 
 	 * @param simpleName
 	 *            the simple name of the graphclass in the schema
 	 * @return the new graphclass
@@ -163,7 +166,7 @@ public interface Schema extends Comparable<Schema> {
 
 	/**
 	 * builds a new list domain, multiple domains may exist in a schema
-	 *
+	 * 
 	 * @param baseDomain
 	 *            the domain of which all elements in the list are built of
 	 * @return the new list domain
@@ -172,7 +175,7 @@ public interface Schema extends Comparable<Schema> {
 
 	/**
 	 * builds a new map domain, multiple domains may exist in a schema
-	 *
+	 * 
 	 * @param keyDomain
 	 *            the domain of which all keys in the set are built of
 	 * @param keyDomain
@@ -183,7 +186,7 @@ public interface Schema extends Comparable<Schema> {
 
 	/**
 	 * builds a new record domain, multiple domains may exist in a schema
-	 *
+	 * 
 	 * @param qualifiedName
 	 *            the qualified name of this RecordDomain
 	 * @return the new record domain
@@ -192,7 +195,7 @@ public interface Schema extends Comparable<Schema> {
 
 	/**
 	 * builds a new record domain, multiple domains may exist in a schema
-	 *
+	 * 
 	 * @param qualifiedName
 	 *            the qualified name of this RecordDomain
 	 * @param recordComponents
@@ -206,7 +209,7 @@ public interface Schema extends Comparable<Schema> {
 
 	/**
 	 * builds a new set domain, multiple domains may exist in a schema
-	 *
+	 * 
 	 * @param baseDomain
 	 *            the domain of which all elements in the set are built of
 	 * @return the new set domain
@@ -229,7 +232,7 @@ public interface Schema extends Comparable<Schema> {
 	 * First, the list contains the domains which only contain basic domains.
 	 * The next entries in the list represent those domains which exclusively
 	 * contain domains with only basic classes as components, etc.
-	 *
+	 * 
 	 * @return an topologically ordered list of all composite domains
 	 */
 	public List<CompositeDomain> getCompositeDomainsInTopologicalOrder();
@@ -260,7 +263,7 @@ public interface Schema extends Comparable<Schema> {
 
 	/**
 	 * Returns the default package of this Schema.
-	 *
+	 * 
 	 * @return the default package, guaranteed to be != null
 	 */
 	public Package getDefaultPackage();
@@ -292,14 +295,14 @@ public interface Schema extends Comparable<Schema> {
 	 * contains the classes without a superclass (except the default edge
 	 * class). The next entries in the list represent those edge classes which
 	 * only inherit from the classes without a superclass, etc.
-	 *
+	 * 
 	 * @return an topologically ordered list of all edge classes
 	 */
 	public List<EdgeClass> getEdgeClassesInTopologicalOrder();
 
 	/**
 	 * Gets the method to create a new edge with the given name
-	 *
+	 * 
 	 * @param edgeClassName
 	 *            the name of the edge to create
 	 * @return the Method-Object that represents the method to create such edges
@@ -308,7 +311,7 @@ public interface Schema extends Comparable<Schema> {
 
 	/**
 	 * Returns a list of all enum domains
-	 *
+	 * 
 	 * @return a list of all enum domains
 	 */
 	public List<EnumDomain> getEnumDomains();
@@ -322,7 +325,7 @@ public interface Schema extends Comparable<Schema> {
 
 	/**
 	 * Gets the method to create a new graph of this schema
-	 *
+	 * 
 	 * @return the Method-Object that represents the method to create graphs of
 	 *         this schema
 	 */
@@ -359,7 +362,7 @@ public interface Schema extends Comparable<Schema> {
 
 	/**
 	 * Returns a list of all record domains
-	 *
+	 * 
 	 * @return a list of all record domains
 	 */
 	public List<RecordDomain> getRecordDomains();
@@ -373,14 +376,14 @@ public interface Schema extends Comparable<Schema> {
 	 * superclass (except the default vertex class). The next entries in the
 	 * list represent those vertex classes which only inherit from the classes
 	 * without a superclass, etc.
-	 *
+	 * 
 	 * @return an topologically ordered list of all vertex classes
 	 */
 	public List<VertexClass> getVertexClassesInTopologicalOrder();
 
 	/**
 	 * Gets the method to create a new vertex with the given name
-	 *
+	 * 
 	 * @param vertexClassQName
 	 *            the qualified name of the vertex to create
 	 * @return the Method-Object that represents the method to create such
@@ -392,7 +395,7 @@ public interface Schema extends Comparable<Schema> {
 
 	/**
 	 * Checks if the given name is a valid enumeration constant in this Schema.
-	 *
+	 * 
 	 * @param name
 	 *            the constant name to check
 	 * @return true if <code>name</code> is a valid enum constant
@@ -403,7 +406,7 @@ public interface Schema extends Comparable<Schema> {
 	 * Checks if the given name is already known in this Schema. If this is the
 	 * case, it's not allowed to use it for any other element in this schema.
 	 * Even it'S not allowed to use a domain name also as name of a VertexClass.
-	 *
+	 * 
 	 * @param qn
 	 *            the qualified name to check for
 	 * @return true if the name is already known, false otherwise
@@ -412,7 +415,7 @@ public interface Schema extends Comparable<Schema> {
 
 	/**
 	 * Sets the schema to allow lowercase enum constants
-	 *
+	 * 
 	 * @param allowLowercaseEnumConstants
 	 *            set to true to make the schema to allow lowercase enum
 	 *            constants
