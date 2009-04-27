@@ -545,8 +545,8 @@ public class SchemaImpl implements Schema {
 	}
 
 	@Override
-	public Attribute createAttribute(String name, Domain dom) {
-		return new AttributeImpl(name, dom);
+	public Attribute createAttribute(String name, Domain dom, AttributedElementClass aec) {
+		return new AttributeImpl(name, dom, aec);
 	}
 
 	@Override

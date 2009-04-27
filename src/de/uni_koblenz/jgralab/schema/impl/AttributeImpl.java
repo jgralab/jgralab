@@ -25,6 +25,7 @@
 package de.uni_koblenz.jgralab.schema.impl;
 
 import de.uni_koblenz.jgralab.Attribute;
+import de.uni_koblenz.jgralab.schema.AttributedElementClass;
 import de.uni_koblenz.jgralab.schema.Domain;
 
 /**
@@ -43,6 +44,11 @@ public class AttributeImpl implements Attribute, Comparable<Attribute> {
 	 * the domain of the attribute
 	 */
 	private Domain domain;
+	
+	/**
+	 * the owning AttributedElementClass of the atribute
+	 */
+	private AttributedElementClass aec;
 
 	/**
 	 * defines a total order of all attributes
@@ -56,10 +62,13 @@ public class AttributeImpl implements Attribute, Comparable<Attribute> {
 	 *            the name of the attribute
 	 * @param domain
 	 *            the domain of the attribute
+	 * @param aec
+	 * 			  the {@link AttributedElementClass} owning the {@link Attribute}
 	 */
-	public AttributeImpl(String name, Domain domain) {
+	public AttributeImpl(String name, Domain domain, AttributedElementClass aec) {
 		this.name = name;
 		this.domain = domain;
+		this.aec = aec;
 		this.sortKey = name + ":" + domain.getQualifiedName();
 	}
 
@@ -89,6 +98,10 @@ public class AttributeImpl implements Attribute, Comparable<Attribute> {
 	 */
 	public String getName() {
 		return name;
+	}
+	
+	public AttributedElementClass getAttributedElementClass() {
+		return aec;
 	}
 
 	@Override

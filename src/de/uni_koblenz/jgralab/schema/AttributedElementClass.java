@@ -115,6 +115,8 @@ public interface AttributedElementClass extends NamedElement,
 	 *            and inherited attributes
 	 * @param domain
 	 *            the <code>domain</code> of the new <code>Attribute</code>
+	 * @param aec
+	 *            the {@link AttributedElementClass} owning the {@link Attribute}
 	 * 
 	 * @throws DuplicateAttributeException
 	 *             if this element has a direct or inherited attribute with the
@@ -127,7 +129,7 @@ public interface AttributedElementClass extends NamedElement,
 	 *             {@link de.uni_koblenz.jgralab.schema.Schema#reservedJavaWords
 	 *             Java} words
 	 */
-	public void addAttribute(String name, Domain domain);
+	public void addAttribute(String name, Domain domain, AttributedElementClass aec);
 
 	/**
 	 * Adds a {@link Constraint} to this attributed element. Constraints are

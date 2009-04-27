@@ -1025,7 +1025,7 @@ public class GraphIO {
 
 		gc.setAbstract(gcData.isAbstract);
 
-		for (Attribute attr : attributes(gcData.attributes).values()) {
+		for (Attribute attr : attributes(gcData.attributes, gc).values()) {
 			gc.addAttribute(attr);
 		}
 
@@ -1099,18 +1099,20 @@ public class GraphIO {
 	 * @param componentsData
 	 *            A Map of attribute names to lists of Strings. Each list
 	 *            represents an attribute's domain.
+	 * @param aec
+	 * 			  the {@link AttributedElementClass} owning the {@link Attribute}s to be created
 	 * @return A Map of attribute names to corresponding Domain objects.
 	 * @throws GraphIOException
 	 */
 	private Map<String, Attribute> attributes(
-			Map<String, List<String>> attributesData) throws GraphIOException {
+			Map<String, List<String>> attributesData, AttributedElementClass aec) throws GraphIOException {
 		Map<String, Attribute> attributes = new TreeMap<String, Attribute>();
 		Attribute attribute;
 
 		for (Entry<String, List<String>> attributeData : attributesData
 				.entrySet()) {
 			Domain domain = attrDomain(attributeData.getValue());
-			attribute = new AttributeImpl(attributeData.getKey(), domain);
+			attribute = new AttributeImpl(attributeData.getKey(), domain, aec);
 			attributes.put(attribute.getName(), attribute);
 		}
 
@@ -1336,7 +1338,7 @@ public class GraphIO {
 		VertexClass vc = gc.createVertexClass(vcd.getQualifiedName());
 		vc.setAbstract(vcd.isAbstract);
 
-		for (Attribute attr : attributes(vcd.attributes).values()) {
+		for (Attribute attr : attributes(vcd.attributes, vc).values()) {
 			vc.addAttribute(attr);
 		}
 
@@ -1378,7 +1380,7 @@ public class GraphIO {
 			throw new InvalidNameException("Unknown type " + ecd.type);
 		}
 
-		for (Attribute attr : attributes(ecd.attributes).values()) {
+		for (Attribute attr : attributes(ecd.attributes, ec).values()) {
 			ec.addAttribute(attr);
 		}
 

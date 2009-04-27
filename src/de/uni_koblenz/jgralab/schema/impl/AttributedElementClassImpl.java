@@ -124,8 +124,8 @@ public abstract class AttributedElementClassImpl extends NamedElementImpl
 	}
 
 	@Override
-	public void addAttribute(String name, Domain domain) {
-		addAttribute(new AttributeImpl(name, domain));
+	public void addAttribute(String name, Domain domain, AttributedElementClass aec) {
+		addAttribute(new AttributeImpl(name, domain, aec));
 	}
 
 	@Override

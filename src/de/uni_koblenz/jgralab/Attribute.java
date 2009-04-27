@@ -24,6 +24,7 @@
  
 package de.uni_koblenz.jgralab;
 
+import de.uni_koblenz.jgralab.schema.AttributedElementClass;
 import de.uni_koblenz.jgralab.schema.Domain;
 
 /**
@@ -47,6 +48,11 @@ public interface Attribute {
 	 * @return the name of the attribute
 	 */
 	public String getName();
+	
+	/**
+	 * @return the owning AttributedElementClass
+	 */
+	public AttributedElementClass getAttributedElementClass();
 	
 	public String getSortKey();
 }
