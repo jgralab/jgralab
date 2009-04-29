@@ -50,105 +50,145 @@ import de.uni_koblenz.jgralab.grumlschema.structure.SpecializesVertexClass;
 import de.uni_koblenz.jgralab.grumlschema.structure.To;
 import de.uni_koblenz.jgralab.grumlschema.structure.VertexClass;
 
+/**
+ * Compares a given Schema and SchemaGraph with each other.
+ * 
+ * Note:
+ * 
+ * This class exists only for test purposes. Because of the use of a lot of
+ * Assert of JUnit, it will crash without catching these exceptions.
+ * 
+ * @author mmce, Eckhard Großmann
+ */
 @WorkInProgress(responsibleDevelopers = "mmce, Eckhard Großmann", expectedFinishingDate = "2009-04-29")
 public class CompareSchemaWithSchemaGraph {
 
-	private de.uni_koblenz.jgralab.schema.Schema schema;
-
+	/**
+	 * Only used EdgeDirection in this comparison.
+	 */
 	private static final EdgeDirection OUTGOING = EdgeDirection.OUT;
 
+	/**
+	 * Schema, which is compared.
+	 */
+	private de.uni_koblenz.jgralab.schema.Schema schema;
+
+	/**
+	 * Empty constructor.
+	 */
 	public CompareSchemaWithSchemaGraph() {
-		// TODO Auto-generated constructor stub
 	}
 
-	public boolean compare(de.uni_koblenz.jgralab.schema.Schema schema,
+	/**
+	 * Compares the given Schema with the given SchemaGraph.
+	 * 
+	 * @param schema
+	 *            Schema, which should be compared.
+	 * @param schemaGraph
+	 *            SchemaGraph, which should be compared.
+	 */
+	final public void compare(de.uni_koblenz.jgralab.schema.Schema schema,
 			SchemaGraph schemaGraph) {
 
 		this.schema = schema;
 
-		return compareSchema(schema, schemaGraph.getFirstSchema());
+		compareSchema(schema, schemaGraph.getFirstSchema());
 	}
 
-	public boolean compareSchema(de.uni_koblenz.jgralab.schema.Schema schema,
-			Schema gSchema) {
+	/**
+	 * Compares a Schema and a Schema from a SchemaGraph with each other.
+	 * 
+	 * @param schema
+	 *            Schema, which is compared.
+	 * @param gSchema
+	 *            Schema of a SchemaGraph, which is compared.
+	 */
+	final public void compareSchema(
+			de.uni_koblenz.jgralab.schema.Schema schema, Schema gSchema) {
 
+		// Compares there names and package prefixes
 		assertEquals("Both Schema objects have a different name.", schema
 				.getName(), gSchema.getName());
 		assertEquals("Both Schema objects have a different package prefix.",
 				schema.getPackagePrefix(), gSchema.getPackagePrefix());
 
+		// Get the only defined GraphClass in the SchemaGraph
 		Iterator<DefinesGraphClass> it = gSchema
 				.getDefinesGraphClassIncidences().iterator();
-
+		// There should be one GraphClass
 		assertTrue("No GraphClass is defined.", it.hasNext());
 		Vertex vertex = it.next().getOmega();
 		assertTrue("Omega should be an instance of \"GraphClass\".",
 				vertex instanceof GraphClass);
 		assertFalse("There is more than one GraphClass defined.", it.hasNext());
 
-		compareGraphClass(schema.getGraphClass(), (GraphClass) vertex);
+		// Compares both GraphClass objects
+		compareAttributedElementClass(schema.getGraphClass(),
+				(GraphClass) vertex);
 
+		// Gets the only defined DefaultPackage
 		Iterator<ContainsDefaultPackage> packageIt = gSchema
 				.getContainsDefaultPackageIncidences().iterator();
+		// There should be one DefaultPackage
 		assertTrue("No DefaultPackage is defined.", packageIt.hasNext());
 		vertex = packageIt.next().getOmega();
 		assertFalse("There is more than one DefaultPackage defined.", packageIt
 				.hasNext());
 		assertTrue("Omega should be an instance of \"Package\".",
 				vertex instanceof Package);
+		// Compares both Package objects with each other.
 		comparePackage(schema.getDefaultPackage(), (Package) vertex);
-
-		return true;
 	}
 
+	/**
+	 * Compares a Package of a Schema and a Package of a SchemaGraph with each
+	 * other.
+	 * 
+	 * It also compares all subpackages.
+	 * 
+	 * @param xPackage
+	 *            Package, which should be compared.
+	 * @param gPackage
+	 *            Package of a SchemaGraph, which should be compared.
+	 */
 	final private void comparePackage(
 			de.uni_koblenz.jgralab.schema.Package xPackage, Package gPackage) {
 
+		// Comparison of the QualifiedName
 		assertEquals("Both Package objects have a different name.", xPackage
 				.getQualifiedName(), gPackage.getQualifiedName());
 
+		// DOMAINS
+
+		// Gets all Domains (clone of the map) of a Schema
 		Map<String, de.uni_koblenz.jgralab.schema.Domain> domains = new HashMap<String, de.uni_koblenz.jgralab.schema.Domain>(
 				xPackage.getDomains());
 
+		// Loop over all ContainsDomain edges
 		for (ContainsDomain containsDomain : gPackage
 				.getContainsDomainIncidences(OUTGOING)) {
+			// Checking if the reference is right
 			assertTrue("Omega should be an instance of Domain.", containsDomain
 					.getOmega() instanceof Domain);
 			Domain domain = (Domain) containsDomain.getOmega();
-
+			// Gets the simpleName for querying a the right domain
 			String simpleName = schema.getDomain(domain.getQualifiedName())
 					.getSimpleName();
-
+			// Gets, removes and compare at the same time both Domain objects.
 			compareDomain(domains.remove(simpleName), domain);
 		}
+		// After all this, the Domain map should be empty
 		assertTrue(
 				"There are more Domains in the Schema then in the SchemaGraph.",
 				domains.isEmpty());
 
-		Map<String, de.uni_koblenz.jgralab.schema.Package> subPackages = new HashMap<String, de.uni_koblenz.jgralab.schema.Package>(
-				xPackage.getSubPackages());
-
-		for (ContainsSubPackage containsSubPackage : gPackage
-				.getContainsSubPackageIncidences(OUTGOING)) {
-			assertTrue("Omega should be an instance of \"Package\".",
-					containsSubPackage.getOmega() instanceof Package);
-			Package subPackage = (Package) containsSubPackage.getOmega();
-			assertTrue("There is no corresponding Package in Schema.",
-					subPackages.containsKey(subPackage.getQualifiedName()));
-
-			comparePackage(subPackages.remove(subPackage.getQualifiedName()),
-					subPackage);
-		}
-
-		assertTrue(
-				"There are more Packages in the Schema then in the SchemaGraph.",
-				subPackages.isEmpty());
-
+		// Gets a cloned map of all VertexClass and EdgeClass objects
 		Map<String, de.uni_koblenz.jgralab.schema.VertexClass> vertexClasses = new HashMap<String, de.uni_koblenz.jgralab.schema.VertexClass>(
 				xPackage.getVertexClasses());
 		Map<String, de.uni_koblenz.jgralab.schema.EdgeClass> edgeClasses = new HashMap<String, de.uni_koblenz.jgralab.schema.EdgeClass>(
 				xPackage.getEdgeClasses());
 
+		// This loop prevents the comparison of internal structures
 		for (Iterator<Entry<String, de.uni_koblenz.jgralab.schema.VertexClass>> it = vertexClasses
 				.entrySet().iterator(); it.hasNext();) {
 			if (it.next().getValue().isInternal()) {
@@ -156,6 +196,7 @@ public class CompareSchemaWithSchemaGraph {
 			}
 		}
 
+		// This loop prevents the comparison of internal structures
 		for (Iterator<Entry<String, de.uni_koblenz.jgralab.schema.EdgeClass>> it = edgeClasses
 				.entrySet().iterator(); it.hasNext();) {
 			if (it.next().getValue().isInternal()) {
@@ -163,39 +204,77 @@ public class CompareSchemaWithSchemaGraph {
 			}
 		}
 
+		// Loop over all ContainsGraphElementClass edges
 		for (ContainsGraphElementClass containsGraphElementClass : gPackage
 				.getContainsGraphElementClassIncidences(OUTGOING)) {
 
+			// The referenced object should be at least a FraphElementClass
 			assertTrue(
 					"Omega should be an instance of GraphElementClass.",
 					containsGraphElementClass.getOmega() instanceof GraphElementClass);
 
+			// Distinguishing between VertexClass and EdgeClass
 			if (containsGraphElementClass.getOmega() instanceof VertexClass) {
 				VertexClass gVertexClass = (VertexClass) containsGraphElementClass
 						.getOmega();
-
+				// Retrieving the simple name of the corresponding VertexClass
 				String simpleName = schema.getAttributedElementClass(
 						gVertexClass.getQualifiedName()).getSimpleName();
-
+				// Querys, removes and compares at the same time two VertexClass
+				// objects
 				compareVertexClass(vertexClasses.remove(simpleName),
 						gVertexClass);
 			} else {
+				// The Same for the EdgeClass comparison
 				EdgeClass gEdgeClass = (EdgeClass) containsGraphElementClass
 						.getOmega();
-
+				// Retrieving the simple name of the corresponding VertexClass
 				String simpleName = schema.getAttributedElementClass(
 						gEdgeClass.getQualifiedName()).getSimpleName();
-
+				// Queries, removes and compares at the same time two EdgeClass
+				// objects
 				compareEdgeClass(edgeClasses.remove(simpleName), gEdgeClass);
 			}
 		}
 
+		// Both maps should be empty.
 		assertTrue(
 				"There are more VertexClasses in Schema then in the SchemaGraph.",
 				vertexClasses.isEmpty());
 		assertTrue(
 				"There are more EdgeClasses in Schema then in the SchemaGraph.",
 				edgeClasses.isEmpty());
+
+		// SUBPACKAGES
+
+		// Map of SubPackages is cloned
+		Map<String, de.uni_koblenz.jgralab.schema.Package> subPackages = new HashMap<String, de.uni_koblenz.jgralab.schema.Package>(
+				xPackage.getSubPackages());
+
+		// Loop over all ContainsSubPackage edges
+		for (ContainsSubPackage containsSubPackage : gPackage
+				.getContainsSubPackageIncidences(OUTGOING)) {
+
+			assertTrue("Omega should be an instance of \"Package\".",
+					containsSubPackage.getOmega() instanceof Package);
+			Package gSubPackage = (Package) containsSubPackage.getOmega();
+			de.uni_koblenz.jgralab.schema.Package subpackage = schema
+					.getPackage(gSubPackage.getQualifiedName());
+
+			// The references shouldn't be null
+			assertTrue("There is no corresponding Package in Schema.",
+					subpackage != null);
+			assertTrue("There is no corresponding Package in Schema.",
+					subPackages.containsKey(subpackage.getSimpleName()));
+
+			// Gets, removes and compares both Package objects with each other
+			comparePackage(subPackages.remove(subpackage.getSimpleName()),
+					gSubPackage);
+		}
+		// There shouldn't be any Package left in the map
+		assertTrue(
+				"There are more Packages in the Schema then in the SchemaGraph.",
+				subPackages.isEmpty());
 	}
 
 	final private void compareAttributedElementClass(
@@ -428,11 +507,10 @@ public class CompareSchemaWithSchemaGraph {
 			Domain domainComponent = (Domain) hasRecordDomainComponent
 					.getOmega();
 
-			assertEquals(
-					"Both DomainComponents don't have an equal QualifiedName.",
-					components.remove(domainComponent.getQualifiedName())
-							.getQualifiedName(), hasRecordDomainComponent
-							.getName());
+			assertEquals("Both DomainComponents don't have an equal name.",
+					components.remove(hasRecordDomainComponent.getName())
+							.getQualifiedName(), domainComponent
+							.getQualifiedName());
 		}
 		assertTrue("There are more Components in Schema then in SchemaGraph",
 				components.isEmpty());
@@ -502,13 +580,6 @@ public class CompareSchemaWithSchemaGraph {
 				.containsAll(enumConstants));
 		assertTrue("Not all Constants are included.", enumConstants
 				.containsAll(gEnumConstants));
-	}
-
-	final private void compareGraphClass(
-			de.uni_koblenz.jgralab.schema.GraphClass graphClass,
-			GraphClass gGraphClass) {
-
-		compareAttributedElementClass(graphClass, gGraphClass);
 	}
 
 	final private void compareAttributes(
