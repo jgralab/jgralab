@@ -24,6 +24,7 @@ import de.uni_koblenz.jgralab.grumlschema.domains.HasRecordDomainComponent;
 import de.uni_koblenz.jgralab.grumlschema.domains.HasValueDomain;
 import de.uni_koblenz.jgralab.grumlschema.domains.MapDomain;
 import de.uni_koblenz.jgralab.grumlschema.domains.RecordDomain;
+import de.uni_koblenz.jgralab.grumlschema.structure.AggregationClass;
 import de.uni_koblenz.jgralab.grumlschema.structure.Attribute;
 import de.uni_koblenz.jgralab.grumlschema.structure.AttributedElementClass;
 import de.uni_koblenz.jgralab.grumlschema.structure.Constraint;
@@ -233,6 +234,19 @@ public class CompareSchemaWithSchemaGraph {
 
 		assertTrue("", superClasses.isEmpty());
 
+		assertEquals(
+				"",
+				edgeClass instanceof de.uni_koblenz.jgralab.schema.AggregationClass,
+				gEdgeClass instanceof AggregationClass);
+
+		// TODO "To" and "From" edges have to be compared
+
+		if (gEdgeClass instanceof AggregationClass) {
+			de.uni_koblenz.jgralab.schema.AggregationClass aggregationClass = (de.uni_koblenz.jgralab.schema.AggregationClass) edgeClass;
+			AggregationClass gAggregationClass = (AggregationClass) gEdgeClass;
+			assertEquals("", aggregationClass.isAggregateFrom(),
+					gAggregationClass.isIsAbstract());
+		}
 	}
 
 	final private void compareDomain(
