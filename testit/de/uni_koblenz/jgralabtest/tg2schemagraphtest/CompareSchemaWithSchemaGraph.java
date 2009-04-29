@@ -1,13 +1,14 @@
 package de.uni_koblenz.jgralabtest.tg2schemagraphtest;
 
+import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertFalse;
-import static junit.framework.Assert.assertSame;
 import static junit.framework.Assert.assertTrue;
 
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.SortedSet;
 
 import de.uni_koblenz.jgralab.EdgeDirection;
@@ -28,14 +29,20 @@ import de.uni_koblenz.jgralab.grumlschema.structure.AttributedElementClass;
 import de.uni_koblenz.jgralab.grumlschema.structure.Constraint;
 import de.uni_koblenz.jgralab.grumlschema.structure.ContainsDefaultPackage;
 import de.uni_koblenz.jgralab.grumlschema.structure.ContainsDomain;
+import de.uni_koblenz.jgralab.grumlschema.structure.ContainsGraphElementClass;
 import de.uni_koblenz.jgralab.grumlschema.structure.ContainsSubPackage;
 import de.uni_koblenz.jgralab.grumlschema.structure.DefinesGraphClass;
+import de.uni_koblenz.jgralab.grumlschema.structure.EdgeClass;
 import de.uni_koblenz.jgralab.grumlschema.structure.GraphClass;
+import de.uni_koblenz.jgralab.grumlschema.structure.GraphElementClass;
 import de.uni_koblenz.jgralab.grumlschema.structure.HasAttribute;
 import de.uni_koblenz.jgralab.grumlschema.structure.HasConstraint;
 import de.uni_koblenz.jgralab.grumlschema.structure.HasDomain;
 import de.uni_koblenz.jgralab.grumlschema.structure.Package;
 import de.uni_koblenz.jgralab.grumlschema.structure.Schema;
+import de.uni_koblenz.jgralab.grumlschema.structure.SpecializesEdgeClass;
+import de.uni_koblenz.jgralab.grumlschema.structure.SpecializesVertexClass;
+import de.uni_koblenz.jgralab.grumlschema.structure.VertexClass;
 
 @WorkInProgress(responsibleDevelopers = "mmce", expectedFinishingDate = "2009-04-29")
 public class CompareSchemaWithSchemaGraph {
@@ -58,8 +65,8 @@ public class CompareSchemaWithSchemaGraph {
 	public boolean compareSchema(de.uni_koblenz.jgralab.schema.Schema schema,
 			Schema gSchema) {
 
-		assertSame("Different name.", schema.getName(), gSchema.getName());
-		assertSame("Different package prefix.", schema.getPackagePrefix(),
+		assertEquals("Different name.", schema.getName(), gSchema.getName());
+		assertEquals("Different package prefix.", schema.getPackagePrefix(),
 				gSchema.getPackagePrefix());
 
 		Iterator<DefinesGraphClass> it = schemaGraph
@@ -84,10 +91,11 @@ public class CompareSchemaWithSchemaGraph {
 	final private void comparePackage(
 			de.uni_koblenz.jgralab.schema.Package xPackage, Package gPackage) {
 
-		assertSame("", xPackage.getQualifiedName(), gPackage.getQualifiedName());
+		assertEquals("", xPackage.getQualifiedName(), gPackage
+				.getQualifiedName());
 
-		Map<String, de.uni_koblenz.jgralab.schema.Domain> domains = xPackage
-				.getDomains();
+		Map<String, de.uni_koblenz.jgralab.schema.Domain> domains = new HashMap<String, de.uni_koblenz.jgralab.schema.Domain>(
+				xPackage.getDomains());
 
 		for (ContainsDomain containsDomain : gPackage
 				.getContainsDomainIncidences(OUTGOING)) {
@@ -95,11 +103,12 @@ public class CompareSchemaWithSchemaGraph {
 			Domain domain = (Domain) containsDomain.getOmega();
 			assertTrue("", domains.containsKey(domain.getQualifiedName()));
 
-			compareDomain(domains.get(domain.getQualifiedName()), domain);
+			compareDomain(domains.remove(domain.getQualifiedName()), domain);
 		}
+		assertTrue("", domains.isEmpty());
 
-		Map<String, de.uni_koblenz.jgralab.schema.Package> subPackages = xPackage
-				.getSubPackages();
+		Map<String, de.uni_koblenz.jgralab.schema.Package> subPackages = new HashMap<String, de.uni_koblenz.jgralab.schema.Package>(
+				xPackage.getSubPackages());
 
 		for (ContainsSubPackage containsSubPackage : gPackage
 				.getContainsSubPackageIncidences(OUTGOING)) {
@@ -108,18 +117,130 @@ public class CompareSchemaWithSchemaGraph {
 			assertTrue("", subPackages.containsKey(subPackage
 					.getQualifiedName()));
 
-			comparePackage(subPackages.get(subPackage.getQualifiedName()),
+			comparePackage(subPackages.remove(subPackage.getQualifiedName()),
 					subPackage);
 		}
+
+		assertTrue("", subPackages.isEmpty());
+
+		Map<String, de.uni_koblenz.jgralab.schema.VertexClass> vertexClasses = new HashMap<String, de.uni_koblenz.jgralab.schema.VertexClass>(
+				xPackage.getVertexClasses());
+		Map<String, de.uni_koblenz.jgralab.schema.EdgeClass> edgeClasses = new HashMap<String, de.uni_koblenz.jgralab.schema.EdgeClass>(
+				xPackage.getEdgeClasses());
+
+		for (de.uni_koblenz.jgralab.schema.VertexClass element : vertexClasses
+				.values()) {
+			if (element.isInternal()) {
+				vertexClasses.remove(element.getQualifiedName());
+			}
+		}
+
+		for (de.uni_koblenz.jgralab.schema.EdgeClass element : edgeClasses
+				.values()) {
+			if (element.isInternal()) {
+				edgeClasses.remove(element.getQualifiedName());
+			}
+		}
+
+		for (ContainsGraphElementClass containsGraphElementClass : gPackage
+				.getContainsGraphElementClassIncidences(OUTGOING)) {
+
+			assertTrue(
+					"",
+					containsGraphElementClass.getOmega() instanceof GraphElementClass);
+
+			if (containsGraphElementClass.getOmega() instanceof VertexClass) {
+				VertexClass gVertexClass = (VertexClass) containsGraphElementClass
+						.getOmega();
+				compareVertexClass(vertexClasses.remove(gVertexClass
+						.getQualifiedName()), gVertexClass);
+			} else {
+				EdgeClass gEdgeClass = (EdgeClass) containsGraphElementClass
+						.getOmega();
+				compareEdgeClass(edgeClasses.remove(gEdgeClass
+						.getQualifiedName()), gEdgeClass);
+			}
+		}
+
+		assertTrue("", vertexClasses.isEmpty());
+		assertTrue("", vertexClasses.isEmpty());
+	}
+
+	private void compareAttributedElementClass(
+			de.uni_koblenz.jgralab.schema.AttributedElementClass element,
+			AttributedElementClass gElement) {
+
+		assertEquals("Attribute \"isAbstract\" is different.", element
+				.isAbstract(), gElement.isIsAbstract());
+		assertEquals("Attribute \"qualifiedName\" is different.", element
+				.getQualifiedName(), gElement.getQualifiedName());
+
+		compareAttributes(element, gElement);
+		compareConstraints(element, gElement);
+
+	}
+
+	private void compareVertexClass(
+			de.uni_koblenz.jgralab.schema.VertexClass vertexClass,
+			VertexClass gVertexClass) {
+
+		compareAttributedElementClass(vertexClass, gVertexClass);
+
+		Map<String, de.uni_koblenz.jgralab.schema.AttributedElementClass> superClasses = getAttributedElementClassMap(vertexClass
+				.getDirectSuperClasses());
+
+		for (SpecializesVertexClass specializesVertexClass : gVertexClass
+				.getSpecializesVertexClassIncidences(OUTGOING)) {
+			AttributedElementClass element = (AttributedElementClass) specializesVertexClass
+					.getOmega();
+
+			assertEquals("", superClasses.remove(element.getQualifiedName()),
+					element.getQualifiedName());
+		}
+
+		assertTrue("", superClasses.isEmpty());
+	}
+
+	private Map<String, de.uni_koblenz.jgralab.schema.AttributedElementClass> getAttributedElementClassMap(
+			Set<de.uni_koblenz.jgralab.schema.AttributedElementClass> elementSet) {
+
+		Map<String, de.uni_koblenz.jgralab.schema.AttributedElementClass> map = new HashMap<String, de.uni_koblenz.jgralab.schema.AttributedElementClass>();
+
+		for (de.uni_koblenz.jgralab.schema.AttributedElementClass element : elementSet) {
+			map.put(element.getQualifiedName(), element);
+		}
+
+		return map;
+	}
+
+	private void compareEdgeClass(
+			de.uni_koblenz.jgralab.schema.EdgeClass edgeClass,
+			EdgeClass gEdgeClass) {
+
+		compareAttributedElementClass(edgeClass, gEdgeClass);
+
+		Map<String, de.uni_koblenz.jgralab.schema.AttributedElementClass> superClasses = getAttributedElementClassMap(edgeClass
+				.getDirectSuperClasses());
+
+		for (SpecializesEdgeClass specializesEdgeClass : gEdgeClass
+				.getSpecializesEdgeClassIncidences(OUTGOING)) {
+			AttributedElementClass element = (AttributedElementClass) specializesEdgeClass
+					.getOmega();
+
+			assertEquals("", superClasses.remove(element.getQualifiedName()),
+					element.getQualifiedName());
+		}
+
+		assertTrue("", superClasses.isEmpty());
 
 	}
 
 	final private void compareDomain(
 			de.uni_koblenz.jgralab.schema.Domain domain, Domain gDomain) {
 
-		assertSame("", domain.getQualifiedName(), gDomain.getQualifiedName());
+		assertEquals("", domain.getQualifiedName(), gDomain.getQualifiedName());
 
-		assertSame("", domain.getClass().getSimpleName(), gDomain.getClass()
+		assertEquals("", domain.getClass().getSimpleName(), gDomain.getClass()
 				.getSimpleName());
 
 		if (domain instanceof de.uni_koblenz.jgralab.schema.MapDomain
@@ -154,8 +275,8 @@ public class CompareSchemaWithSchemaGraph {
 			de.uni_koblenz.jgralab.schema.RecordDomain domain,
 			RecordDomain gDomain) {
 
-		Map<String, de.uni_koblenz.jgralab.schema.Domain> components = domain
-				.getComponents();
+		Map<String, de.uni_koblenz.jgralab.schema.Domain> components = new HashMap<String, de.uni_koblenz.jgralab.schema.Domain>(
+				domain.getComponents());
 
 		for (HasRecordDomainComponent hasRecordDomainComponent : gDomain
 				.getHasRecordDomainComponentIncidences(OUTGOING)) {
@@ -165,11 +286,11 @@ public class CompareSchemaWithSchemaGraph {
 			Domain domainComponent = (Domain) hasRecordDomainComponent
 					.getOmega();
 
-			assertTrue("", components.containsKey(hasRecordDomainComponent
-					.getName()));
-			assertSame("", components.get(hasRecordDomainComponent.getName())
-					.getQualifiedName(), domainComponent.getQualifiedName());
+			assertEquals("", components.remove(
+					hasRecordDomainComponent.getName()).getQualifiedName(),
+					domainComponent.getQualifiedName());
 		}
+		assertTrue("", components.isEmpty());
 	}
 
 	final private void compareDomain(
@@ -182,7 +303,7 @@ public class CompareSchemaWithSchemaGraph {
 		assertFalse("", keyIt.hasNext());
 		Domain gKeyDomain = (Domain) vertex;
 
-		assertSame("", domain.getKeyDomain().getQualifiedName(), gKeyDomain
+		assertEquals("", domain.getKeyDomain().getQualifiedName(), gKeyDomain
 				.getQualifiedName());
 
 		Iterator<HasValueDomain> valueIt = gDomain.getHasValueDomainIncidences(
@@ -192,8 +313,8 @@ public class CompareSchemaWithSchemaGraph {
 		assertFalse("", valueIt.hasNext());
 		Domain gValueDomain = (Domain) vertex;
 
-		assertSame("", domain.getValueDomain().getQualifiedName(), gValueDomain
-				.getQualifiedName());
+		assertEquals("", domain.getValueDomain().getQualifiedName(),
+				gValueDomain.getQualifiedName());
 	}
 
 	final private void compareDomain(
@@ -207,7 +328,7 @@ public class CompareSchemaWithSchemaGraph {
 		assertFalse("", it.hasNext());
 		Domain gBaseDomain = (Domain) vertex;
 
-		assertSame("", domain.getBaseDomain().getQualifiedName(), gBaseDomain
+		assertEquals("", domain.getBaseDomain().getQualifiedName(), gBaseDomain
 				.getQualifiedName());
 	}
 
@@ -220,19 +341,14 @@ public class CompareSchemaWithSchemaGraph {
 		assertTrue("", enumConstants.size() == gEnumConstants.size());
 
 		assertTrue("", gEnumConstants.containsAll(enumConstants));
+		assertTrue("", enumConstants.containsAll(gEnumConstants));
 	}
 
 	final private void compareGraphClass(
 			de.uni_koblenz.jgralab.schema.GraphClass graphClass,
 			GraphClass gGraphClass) {
 
-		assertSame("Attribute \"isAbstract\" is different.", graphClass
-				.isAbstract(), gGraphClass.isIsAbstract());
-		assertSame("Attribute \"qualifiedName\" is different.", graphClass
-				.getQualifiedName(), gGraphClass.getQualifiedName());
-
-		compareAttributes(graphClass, gGraphClass);
-		compareConstraints(graphClass, gGraphClass);
+		compareAttributedElementClass(graphClass, gGraphClass);
 	}
 
 	final private void compareAttributes(
@@ -254,10 +370,10 @@ public class CompareSchemaWithSchemaGraph {
 			assertTrue("", vertex instanceof Domain);
 			assertFalse("", it.hasNext());
 
-			compareDomain(attributes.get(gAttribute.getName()).getDomain(),
+			compareDomain(attributes.remove(gAttribute.getName()).getDomain(),
 					(Domain) vertex);
-
 		}
+		assertTrue("", attributes.isEmpty());
 	}
 
 	private Map<String, de.uni_koblenz.jgralab.Attribute> getAttributeMap(
@@ -303,6 +419,5 @@ public class CompareSchemaWithSchemaGraph {
 
 			assertTrue("", foundMatch);
 		}
-
 	}
 }
