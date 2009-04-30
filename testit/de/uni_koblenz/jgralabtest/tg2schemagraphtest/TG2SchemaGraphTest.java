@@ -13,6 +13,7 @@ public class TG2SchemaGraphTest {
 	@Test
 	public void testSchema2SchemaGraph() throws GraphIOException {
 
+		// All Schema files, with which the Converter should be tested.
 		String[] tgFiles = {
 				"testit/de/uni_koblenz/jgralabtest/tg2schemagraphtest/OsmSchema.rsa.tg",
 				"testit/de/uni_koblenz/jgralabtest/tg2schemagraphtest/GrumlSchema.rsa.tg",
@@ -23,17 +24,22 @@ public class TG2SchemaGraphTest {
 				"testit/testschemas/VertexTestSchema.tg",
 				"testit/de/uni_koblenz/jgralabtest/tg2schemagraphtest/testschema0.tg",
 				"testit/de/uni_koblenz/jgralabtest/tg2schemagraphtest/testschema1.tg" };
+
+		// Loop over all files
 		for (String filename : tgFiles) {
+			// Loads the Schema
 			System.out.println("Testing with: " + filename);
 			System.out.print("Loading TG and creating Schema ... ");
 			Schema schema = GraphIO.loadSchemaFromFile(filename);
 			System.out.println("\tdone");
 
+			// Converts the Schema to a SchemaGraph
 			System.out.print("Converting Schema to SchemaGraph ...");
 			SchemaGraph schemaGraph = new Schema2SchemaGraph()
 					.convert2SchemaGraph(schema);
 			System.out.println("\tdone");
 
+			// Compares the Schema with the created SchemaGraph
 			System.out.print("Testing ...");
 			new CompareSchemaWithSchemaGraph().compare(schema, schemaGraph);
 			System.out.println("\t\t\t\tdone");
