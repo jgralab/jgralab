@@ -58,17 +58,51 @@ import de.uni_koblenz.jgralab.grumlschema.structure.VertexClass;
  */
 public class Schema2SchemaGraph {
 
+	/**
+	 * Schema, which will be converted.
+	 */
 	private de.uni_koblenz.jgralab.schema.Schema schema;
 
+	/**
+	 * DefaultPackage of the SchemaGraph.
+	 */
 	private Package gDefaultPackage;
+
+	/**
+	 * DefaultPackage of the given Schema.
+	 */
 	private de.uni_koblenz.jgralab.schema.Package defaultPackage;
 
+	/**
+	 * Semaphore to prevent any additional conversion process.
+	 */
 	private boolean workInProgress;
 
+	/**
+	 * Map to reference a Package of a Schema to a Package of a SchemaGraph.
+	 */
 	private Map<de.uni_koblenz.jgralab.schema.Package, Package> packageMap;
+
+	/**
+	 * Map to reference a AttributedElementClass of a Schema to a
+	 * AttributedElementClass of a SchemaGraph.
+	 */
 	private Map<de.uni_koblenz.jgralab.schema.AttributedElementClass, AttributedElementClass> attributedElementClassMap;
+
+	/**
+	 * Map to reference a VertexClass of a Schema to a VertexClass of a
+	 * SchemaGraph.
+	 */
 	private Map<de.uni_koblenz.jgralab.schema.VertexClass, VertexClass> vertexClassMap;
+
+	/**
+	 * Map to reference a EdgeClass of a Schema to a EdgeClass of a SchemaGraph.
+	 */
 	private Map<de.uni_koblenz.jgralab.schema.EdgeClass, EdgeClass> edgeClassMap;
+
+	/**
+	 * Map to reference a Domain of a Schema to a Domain of a SchemaGraph.
+	 */
 	private Map<de.uni_koblenz.jgralab.schema.Domain, Domain> domainMap;
 
 	private SchemaGraph schemaGraph;
