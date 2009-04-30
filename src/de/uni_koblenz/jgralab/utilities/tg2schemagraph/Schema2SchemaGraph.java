@@ -8,7 +8,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.Map.Entry;
 
-import de.uni_koblenz.jgralab.WorkInProgress;
 import de.uni_koblenz.jgralab.grumlschema.SchemaGraph;
 import de.uni_koblenz.jgralab.grumlschema.domains.CollectionDomain;
 import de.uni_koblenz.jgralab.grumlschema.domains.Domain;
@@ -57,8 +56,6 @@ import de.uni_koblenz.jgralab.grumlschema.structure.VertexClass;
  * 
  * @author mmce Eckhard Großmann
  */
-
-@WorkInProgress(responsibleDevelopers = "mmce")
 public class Schema2SchemaGraph {
 
 	private de.uni_koblenz.jgralab.schema.Schema schema;
