@@ -3,6 +3,7 @@ package de.uni_koblenz.jgralab.utilities.tg2schemagraph;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Set;
 import java.util.Map.Entry;
 
 import de.uni_koblenz.jgralab.EdgeDirection;
@@ -19,15 +20,27 @@ import de.uni_koblenz.jgralab.grumlschema.domains.ListDomain;
 import de.uni_koblenz.jgralab.grumlschema.domains.MapDomain;
 import de.uni_koblenz.jgralab.grumlschema.domains.RecordDomain;
 import de.uni_koblenz.jgralab.grumlschema.domains.SetDomain;
+import de.uni_koblenz.jgralab.grumlschema.structure.AggregationClass;
+import de.uni_koblenz.jgralab.grumlschema.structure.Attribute;
+import de.uni_koblenz.jgralab.grumlschema.structure.CompositionClass;
+import de.uni_koblenz.jgralab.grumlschema.structure.Constraint;
 import de.uni_koblenz.jgralab.grumlschema.structure.ContainsDefaultPackage;
 import de.uni_koblenz.jgralab.grumlschema.structure.ContainsDomain;
 import de.uni_koblenz.jgralab.grumlschema.structure.ContainsGraphElementClass;
 import de.uni_koblenz.jgralab.grumlschema.structure.ContainsSubPackage;
 import de.uni_koblenz.jgralab.grumlschema.structure.DefinesGraphClass;
+import de.uni_koblenz.jgralab.grumlschema.structure.EdgeClass;
+import de.uni_koblenz.jgralab.grumlschema.structure.From;
 import de.uni_koblenz.jgralab.grumlschema.structure.GraphClass;
 import de.uni_koblenz.jgralab.grumlschema.structure.GraphElementClass;
+import de.uni_koblenz.jgralab.grumlschema.structure.HasAttribute;
+import de.uni_koblenz.jgralab.grumlschema.structure.HasConstraint;
+import de.uni_koblenz.jgralab.grumlschema.structure.HasDomain;
 import de.uni_koblenz.jgralab.grumlschema.structure.Package;
 import de.uni_koblenz.jgralab.grumlschema.structure.Schema;
+import de.uni_koblenz.jgralab.grumlschema.structure.To;
+import de.uni_koblenz.jgralab.grumlschema.structure.VertexClass;
+import de.uni_koblenz.jgralab.schema.impl.ConstraintImpl;
 import de.uni_koblenz.jgralab.schema.impl.SchemaImpl;
 
 /**
@@ -62,7 +75,174 @@ public class SchemaGraph2Schema {
 
 		createAllDomains();
 
+		createAllGraphElementClasses();
+
 		return null;
+	}
+
+	private void createAllGraphElementClasses() {
+
+		graphElementClasses = new HashMap<String, de.uni_koblenz.jgralab.schema.GraphElementClass>();
+
+		de.uni_koblenz.jgralab.schema.Package defaultPackage = schema
+				.getDefaultPackage();
+		graphElementClasses.putAll(defaultPackage.getEdgeClasses());
+		graphElementClasses.putAll(defaultPackage.getVertexClasses());
+
+		for (Entry<String, GraphElementClass> entry : gGraphElementClasses
+				.entrySet()) {
+
+			createGraphElementClass(entry.getValue());
+		}
+	}
+
+	private de.uni_koblenz.jgralab.schema.GraphElementClass createGraphElementClass(
+			GraphElementClass gElement) {
+
+		de.uni_koblenz.jgralab.schema.GraphElementClass element = null;
+
+		if (gElement instanceof VertexClass) {
+			element = graphClass.createVertexClass(gElement.getQualifiedName());
+
+		} else if (gElement instanceof EdgeClass) {
+
+			EdgeClass gEdgeClass = (EdgeClass) gElement;
+
+			Iterator<To> toIt = gEdgeClass.getToIncidences(EdgeDirection.OUT)
+					.iterator();
+			Iterator<From> fromIt = gEdgeClass.getFromIncidences(
+					EdgeDirection.OUT).iterator();
+
+			if (!toIt.hasNext() || !fromIt.hasNext()) {
+				throw new GraphException(
+						"No \"To\" or \"From\" edge has been defined.");
+			}
+
+			To gTo = toIt.next();
+			From gFrom = fromIt.next();
+			de.uni_koblenz.jgralab.schema.VertexClass to, from;
+			int fromMin, fromMax, toMin, toMax;
+			String fromRoleName, toRoleName;
+			Set<String> fromRedefinedRoles, toRedefinedRoles;
+
+			assert (gTo != null && gTo.getOmega() instanceof VertexClass
+					&& gFrom != null && gFrom.getOmega() instanceof VertexClass);
+
+			to = queryVertexClass((VertexClass) gTo.getOmega());
+			toMin = gTo.getMin();
+			toMax = gTo.getMax();
+			toRoleName = gTo.getRoleName();
+			toRedefinedRoles = gTo.getRedefinedRoles();
+
+			from = queryVertexClass((VertexClass) gFrom.getOmega());
+			fromMin = gFrom.getMin();
+			fromMax = gFrom.getMax();
+			fromRoleName = gFrom.getRoleName();
+			fromRedefinedRoles = gFrom.getRedefinedRoles();
+
+			String qualifiedName = gElement.getQualifiedName();
+			boolean isAggegatedFrom = (gElement instanceof AggregationClass) ? ((AggregationClass) gElement)
+					.isAggregateFrom()
+					: false;
+
+			de.uni_koblenz.jgralab.schema.EdgeClass edgeClass;
+
+			if (gElement instanceof CompositionClass) {
+
+				edgeClass = graphClass.createCompositionClass(qualifiedName,
+						from, fromMin, fromMax, fromRoleName, isAggegatedFrom,
+						to, toMin, toMax, toRoleName);
+
+			} else if (gElement instanceof AggregationClass) {
+
+				edgeClass = graphClass.createAggregationClass(qualifiedName,
+						from, fromMin, fromMax, fromRoleName, isAggegatedFrom,
+						to, toMin, toMax, toRoleName);
+
+			} else {
+
+				edgeClass = graphClass.createEdgeClass(qualifiedName, from,
+						fromMin, fromMax, fromRoleName, to, toMin, toMax,
+						toRoleName);
+			}
+
+			edgeClass.getRedefinedFromRoles().addAll(fromRedefinedRoles);
+			edgeClass.getRedefinedFromRoles().addAll(toRedefinedRoles);
+			edgeClass.setAbstract(gEdgeClass.isIsAbstract());
+		}
+
+		if (element == null) {
+			throw new GraphException("FIXME!");
+		}
+
+		createAllAttributes(element, gElement);
+		createAllConstraints(element, gElement);
+
+		graphElementClasses.put(element.getQualifiedName(), element);
+
+		return element;
+	}
+
+	private de.uni_koblenz.jgralab.schema.GraphElementClass queryGraphElementClass(
+			GraphElementClass gElement) {
+		de.uni_koblenz.jgralab.schema.GraphElementClass element = graphElementClasses
+				.get(gElement.getQualifiedName());
+		if (element == null) {
+			element = createGraphElementClass(gElement);
+		}
+
+		return element;
+	}
+
+	private de.uni_koblenz.jgralab.schema.VertexClass queryVertexClass(
+			GraphElementClass gElement) {
+		de.uni_koblenz.jgralab.schema.GraphElementClass element = graphElementClasses
+				.get(gElement.getQualifiedName());
+		if (element == null) {
+			element = createGraphElementClass(gElement);
+		}
+
+		return (element instanceof de.uni_koblenz.jgralab.schema.VertexClass) ? (de.uni_koblenz.jgralab.schema.VertexClass) element
+				: null;
+	}
+
+	private void createAllConstraints(
+			de.uni_koblenz.jgralab.schema.GraphElementClass element,
+			GraphElementClass gElement) {
+
+		for (HasConstraint hasConstraint : gElement
+				.getHasConstraintIncidences(EdgeDirection.OUT)) {
+			assert (hasConstraint != null && hasConstraint.getOmega() instanceof Constraint);
+
+			Constraint constraint = (Constraint) hasConstraint.getOmega();
+
+			element.addConstraint(new ConstraintImpl(constraint.getMessage(),
+					constraint.getPredicateQuery(), constraint
+							.getOffendingElementsQuery()));
+		}
+	}
+
+	private void createAllAttributes(
+			de.uni_koblenz.jgralab.schema.GraphElementClass element,
+			GraphElementClass gElement) {
+
+		for (HasAttribute hasAttribute : gElement
+				.getHasAttributeIncidences(EdgeDirection.OUT)) {
+			assert (hasAttribute != null && hasAttribute.getOmega() instanceof Attribute);
+
+			Attribute attribute = (Attribute) hasAttribute.getOmega();
+
+			Iterator<HasDomain> it = attribute.getHasDomainIncidences(
+					EdgeDirection.OUT).iterator();
+			if (!it.hasNext()) {
+				throw new GraphException(
+						"No \"HasDomain\" edge has been defined.");
+			}
+			assert (it.next() != null && it.next().getOmega() instanceof Domain);
+
+			element.addAttribute(attribute.getName(), queryDomain((Domain) it
+					.next().getOmega()), element);
+		}
 	}
 
 	private void createAllDomains() {
@@ -71,9 +251,8 @@ public class SchemaGraph2Schema {
 		domains.putAll(schema.getDomains());
 
 		for (Entry<String, Domain> entry : gDomains.entrySet()) {
-			Domain gDomain = entry.getValue();
 
-			createDomain(gDomain);
+			createDomain(entry.getValue());
 		}
 	}
 
