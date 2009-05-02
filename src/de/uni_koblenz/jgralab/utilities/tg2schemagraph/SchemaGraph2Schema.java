@@ -1,5 +1,6 @@
 package de.uni_koblenz.jgralab.utilities.tg2schemagraph;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -38,8 +39,11 @@ import de.uni_koblenz.jgralab.grumlschema.structure.HasConstraint;
 import de.uni_koblenz.jgralab.grumlschema.structure.HasDomain;
 import de.uni_koblenz.jgralab.grumlschema.structure.Package;
 import de.uni_koblenz.jgralab.grumlschema.structure.Schema;
+import de.uni_koblenz.jgralab.grumlschema.structure.SpecializesEdgeClass;
+import de.uni_koblenz.jgralab.grumlschema.structure.SpecializesVertexClass;
 import de.uni_koblenz.jgralab.grumlschema.structure.To;
 import de.uni_koblenz.jgralab.grumlschema.structure.VertexClass;
+import de.uni_koblenz.jgralab.schema.AttributedElementClass;
 import de.uni_koblenz.jgralab.schema.impl.ConstraintImpl;
 import de.uni_koblenz.jgralab.schema.impl.SchemaImpl;
 
@@ -56,8 +60,6 @@ public class SchemaGraph2Schema {
 
 	private Map<String, GraphElementClass> gGraphElementClasses;
 	private Map<String, Domain> gDomains;
-
-	private Map<String, de.uni_koblenz.jgralab.schema.GraphElementClass> graphElementClasses;
 	private Map<String, de.uni_koblenz.jgralab.schema.Domain> domains;
 
 	private de.uni_koblenz.jgralab.schema.GraphClass graphClass;
@@ -77,20 +79,115 @@ public class SchemaGraph2Schema {
 
 		createAllGraphElementClasses();
 
+		createAllGraphElementClasses();
+
+		linkSuperClasses();
+
 		return null;
+	}
+
+	private void linkSuperClasses() {
+
+		for (Entry<String, GraphElementClass> entry : gGraphElementClasses
+				.entrySet()) {
+
+			AttributedElementClass element = schema
+					.getAttributedElementClass(entry.getValue()
+							.getQualifiedName());
+
+			if (entry.getValue() instanceof VertexClass) {
+
+				VertexClass gVertexClass = (VertexClass) entry.getValue();
+				assert (element instanceof de.uni_koblenz.jgralab.schema.VertexClass);
+
+				linkSuperClasses(
+						(de.uni_koblenz.jgralab.schema.VertexClass) element,
+						gVertexClass);
+
+			} else {
+
+				assert (entry.getValue() instanceof EdgeClass);
+				EdgeClass gEdgeClass = (EdgeClass) entry.getValue();
+				assert (element instanceof de.uni_koblenz.jgralab.schema.EdgeClass);
+
+				linkSuperClasses(
+						(de.uni_koblenz.jgralab.schema.EdgeClass) element,
+						gEdgeClass);
+			}
+		}
+	}
+
+	private void linkSuperClasses(
+			de.uni_koblenz.jgralab.schema.EdgeClass edgeClass,
+			EdgeClass gEdgeClass) {
+
+		ArrayList<de.uni_koblenz.jgralab.schema.EdgeClass> superClasses = new ArrayList<de.uni_koblenz.jgralab.schema.EdgeClass>();
+
+		for (SpecializesEdgeClass specializesEdgeClass : gEdgeClass
+				.getSpecializesEdgeClassIncidences()) {
+
+			assert (specializesEdgeClass.getOmega() instanceof EdgeClass);
+
+			EdgeClass gSuperClass = (EdgeClass) specializesEdgeClass.getOmega();
+			AttributedElementClass superClass = schema
+					.getAttributedElementClass(gSuperClass.getQualifiedName());
+			assert (superClass instanceof de.uni_koblenz.jgralab.schema.EdgeClass);
+			superClasses
+					.add((de.uni_koblenz.jgralab.schema.EdgeClass) superClass);
+		}
+
+		for (de.uni_koblenz.jgralab.schema.EdgeClass superClass : superClasses) {
+			edgeClass.addSuperClass(superClass);
+		}
+	}
+
+	private void linkSuperClasses(
+			de.uni_koblenz.jgralab.schema.VertexClass vertexClass,
+			VertexClass gVertexClass) {
+
+		ArrayList<de.uni_koblenz.jgralab.schema.VertexClass> superClasses = new ArrayList<de.uni_koblenz.jgralab.schema.VertexClass>();
+
+		for (SpecializesVertexClass specializesVertexClass : gVertexClass
+				.getSpecializesVertexClassIncidences()) {
+
+			assert (specializesVertexClass.getOmega() instanceof VertexClass);
+
+			VertexClass gSuperClass = (VertexClass) specializesVertexClass
+					.getOmega();
+
+			AttributedElementClass superClass = schema
+					.getAttributedElementClass(gSuperClass.getQualifiedName());
+			assert (superClass instanceof de.uni_koblenz.jgralab.schema.VertexClass);
+			superClasses
+					.add((de.uni_koblenz.jgralab.schema.VertexClass) superClass);
+		}
+
+		for (de.uni_koblenz.jgralab.schema.VertexClass superClass : superClasses) {
+			vertexClass.addSuperClass(superClass);
+		}
 	}
 
 	private void createAllGraphElementClasses() {
 
-		graphElementClasses = new HashMap<String, de.uni_koblenz.jgralab.schema.GraphElementClass>();
-
 		de.uni_koblenz.jgralab.schema.Package defaultPackage = schema
 				.getDefaultPackage();
-		graphElementClasses.putAll(defaultPackage.getEdgeClasses());
-		graphElementClasses.putAll(defaultPackage.getVertexClasses());
 
 		for (Entry<String, GraphElementClass> entry : gGraphElementClasses
 				.entrySet()) {
+
+			if (entry.getValue() instanceof EdgeClass) {
+				continue;
+			}
+
+			createGraphElementClass(entry.getValue());
+		}
+
+		for (Entry<String, GraphElementClass> entry : gGraphElementClasses
+				.entrySet()) {
+
+			if (entry.getValue() instanceof VertexClass) {
+				continue;
+			}
 
 			createGraphElementClass(entry.getValue());
 		}
@@ -178,26 +275,13 @@ public class SchemaGraph2Schema {
 		createAllAttributes(element, gElement);
 		createAllConstraints(element, gElement);
 
-		graphElementClasses.put(element.getQualifiedName(), element);
-
-		return element;
-	}
-
-	private de.uni_koblenz.jgralab.schema.GraphElementClass queryGraphElementClass(
-			GraphElementClass gElement) {
-		de.uni_koblenz.jgralab.schema.GraphElementClass element = graphElementClasses
-				.get(gElement.getQualifiedName());
-		if (element == null) {
-			element = createGraphElementClass(gElement);
-		}
-
 		return element;
 	}
 
 	private de.uni_koblenz.jgralab.schema.VertexClass queryVertexClass(
 			GraphElementClass gElement) {
-		de.uni_koblenz.jgralab.schema.GraphElementClass element = graphElementClasses
-				.get(gElement.getQualifiedName());
+		de.uni_koblenz.jgralab.schema.AttributedElementClass element = schema
+				.getAttributedElementClass(gElement.getQualifiedName());
 		if (element == null) {
 			element = createGraphElementClass(gElement);
 		}
