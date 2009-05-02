@@ -10,6 +10,7 @@ import org.junit.Test;
 
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.EdgeDirection;
+import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.schema.EdgeClass;
 import de.uni_koblenz.jgralabtest.schemas.vertextest.*;
 
@@ -2474,4 +2475,143 @@ public class EdgeTest {
 			}
 		}
 	}
+
+	// tests for the method Vertex getThis();
+
+	private Vertex[] createRandomGraph(boolean retThis) {
+		Vertex[] nodes = new Vertex[] { graph.createSubNode(),
+				graph.createDoubleSubNode(), graph.createSuperNode() };
+		Vertex[] ret = new Vertex[1000];
+		for (int i = 0; i < 1000; i++) {
+			int edge = rand.nextInt(3);
+			switch (edge) {
+			case 0:
+				Vertex start = nodes[rand.nextInt(2)];
+				Vertex end = nodes[rand.nextInt(2) + 1];
+				graph.createLink((AbstractSuperNode) start, (SuperNode) end);
+				ret[i] = retThis ? start : end;
+				break;
+			case 1:
+				start = nodes[1];
+				end = nodes[rand.nextInt(2) + 1];
+				graph.createSubLink((DoubleSubNode) start, (SuperNode) end);
+				ret[i] = retThis ? start : end;
+				break;
+			case 2:
+				start = nodes[rand.nextInt(2) + 1];
+				end = nodes[rand.nextInt(2)];
+				graph
+						.createLinkBack((SuperNode) start,
+								(AbstractSuperNode) end);
+				ret[i] = retThis ? start : end;
+				break;
+			}
+		}
+		return ret;
+	}
+
+	/**
+	 * Test in a manually built graph.
+	 */
+	@Test
+	public void getThisTest0() {
+		DoubleSubNode v1 = graph.createDoubleSubNode();
+		DoubleSubNode v2 = graph.createDoubleSubNode();
+		DoubleSubNode v3 = graph.createDoubleSubNode();
+		Edge e1 = graph.createLink(v1, v2);
+		Edge e2 = graph.createLinkBack(v2, v3);
+		Edge e3 = graph.createSubLink(v1, v3);
+		assertEquals(v1, e1.getThis());
+		assertEquals(v2, e1.getReversedEdge().getThis());
+		assertEquals(v2, e2.getThis());
+		assertEquals(v3, e2.getReversedEdge().getThis());
+		assertEquals(v1, e3.getThis());
+		assertEquals(v3, e3.getReversedEdge().getThis());
+	}
+
+	/**
+	 * Test in a randomly built graph.
+	 */
+	@Test
+	public void getThisTest1() {
+		Vertex[] thisVertices=createRandomGraph(true);
+		for(int i=0;i<graph.getECount();i++){
+			assertEquals(thisVertices[i],graph.getEdge(i+1).getThis());
+		}
+	}
+	
+	// tests for the method Vertex getThat();
+
+	/**
+	 * Test in a manually built graph.
+	 */
+	@Test
+	public void getThatTest0() {
+		DoubleSubNode v1 = graph.createDoubleSubNode();
+		DoubleSubNode v2 = graph.createDoubleSubNode();
+		DoubleSubNode v3 = graph.createDoubleSubNode();
+		Edge e1 = graph.createLink(v1, v2);
+		Edge e2 = graph.createLinkBack(v2, v3);
+		Edge e3 = graph.createSubLink(v1, v3);
+		assertEquals(v2, e1.getThat());
+		assertEquals(v1, e1.getReversedEdge().getThat());
+		assertEquals(v3, e2.getThat());
+		assertEquals(v2, e2.getReversedEdge().getThat());
+		assertEquals(v3, e3.getThat());
+		assertEquals(v1, e3.getReversedEdge().getThat());
+	}
+
+	/**
+	 * Test in a randomly built graph.
+	 */
+	@Test
+	public void getThatTest1() {
+		Vertex[] thisVertices=createRandomGraph(false);
+		for(int i=0;i<graph.getECount();i++){
+			assertEquals(thisVertices[i],graph.getEdge(i+1).getThat());
+		}
+	}
+	
+	// tests for the method String getThisRole();
+	
+	/**
+	 * Test in a manually built graph.
+	 */
+	@Test
+	public void getThisRoleTest(){
+		DoubleSubNode v1=graph.createDoubleSubNode();
+		DoubleSubNode v2=graph.createDoubleSubNode();
+		Edge e1=graph.createLink(v1, v2);
+		Edge e2=graph.createSubLink(v1, v2);
+		Edge e3=graph.createLinkBack(v1, v2);
+		assertEquals("source",e1.getThisRole());
+		assertEquals("target",e1.getReversedEdge().getThisRole());
+		assertEquals("sourcec",e2.getThisRole());
+		assertEquals("targetc",e2.getReversedEdge().getThisRole());
+		assertEquals("sourceb",e3.getThisRole());
+		assertEquals("targetb",e3.getReversedEdge().getThisRole());
+	}
+	
+	// tests for the method String getThisRole();
+	
+	/**
+	 * Test in a manually built graph.
+	 */
+	@Test
+	public void getThatRoleTest(){
+		DoubleSubNode v1=graph.createDoubleSubNode();
+		DoubleSubNode v2=graph.createDoubleSubNode();
+		Edge e1=graph.createLink(v1, v2);
+		Edge e2=graph.createSubLink(v1, v2);
+		Edge e3=graph.createLinkBack(v1, v2);
+		assertEquals("target",e1.getThatRole());
+		assertEquals("source",e1.getReversedEdge().getThatRole());
+		assertEquals("targetc",e2.getThatRole());
+		assertEquals("sourcec",e2.getReversedEdge().getThatRole());
+		assertEquals("targetb",e3.getThatRole());
+		assertEquals("sourceb",e3.getReversedEdge().getThatRole());
+	}
+	
+	// tests for the method Edge getNextEdgeInGraph();
+	// (already tested in LoadTest.java)
 }
