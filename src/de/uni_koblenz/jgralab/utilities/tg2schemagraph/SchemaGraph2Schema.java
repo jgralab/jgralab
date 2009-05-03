@@ -49,7 +49,7 @@ import de.uni_koblenz.jgralab.schema.impl.SchemaImpl;
 
 /**
  * TODO: - Code - Comments - Test
- * 
+ *
  * @author mmce, Eckhard Großmann
  */
 @WorkInProgress(responsibleDevelopers = "mmce, Eckhard Großmann")
@@ -325,7 +325,7 @@ public class SchemaGraph2Schema {
 			assert (it.next() != null && it.next().getOmega() instanceof Domain);
 
 			element.addAttribute(attribute.getName(), queryDomain((Domain) it
-					.next().getOmega()), element);
+					.next().getOmega()));
 		}
 	}
 
