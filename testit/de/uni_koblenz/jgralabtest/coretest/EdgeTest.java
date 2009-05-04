@@ -1,7 +1,9 @@
 package de.uni_koblenz.jgralabtest.coretest;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -12,6 +14,7 @@ import org.junit.Test;
 
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.EdgeDirection;
+import de.uni_koblenz.jgralab.GraphException;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.schema.EdgeClass;
 import de.uni_koblenz.jgralabtest.schemas.vertextest.*;
@@ -3123,4 +3126,145 @@ public class EdgeTest {
 			counter = counter.getNextEdgeOfClassInGraph(LinkBack.class,true);
 		}
 	}
+	
+	// tests of the method Vertex getAlpha();
+	// (tested in IncidenceListTest.java)
+	
+	// tests of the method Vertex getOmega();
+	// (tested in IncidenceListTest.java)
+	
+	// tests of the method boolean isBefore(Edge e);
+	
+	/**
+	 * Tests if an edge is before itself.
+	 */
+	@Test
+	public void isBeforeTest0(){
+		DoubleSubNode v1=graph.createDoubleSubNode();
+		Edge e1=graph.createLink(v1, v1);
+		assertFalse(e1.isBefore(e1));
+	}
+	
+	/**
+	 * Tests if an exception is thrown, when two edges have not the same this-vertex.
+	 */
+	@Test(expected=GraphException.class)
+	public void isBeforeTest1(){
+		DoubleSubNode v1=graph.createDoubleSubNode();
+		DoubleSubNode v2=graph.createDoubleSubNode();
+		Edge e1=graph.createLink(v1, v2);
+		Edge e2=graph.createLink(v2, v1);
+		assertFalse(e1.isBefore(e2));
+	}
+	
+	/**
+	 * Tests if an edge is direct before another.
+	 */
+	@Test
+	public void isBeforeTest2(){
+		DoubleSubNode v1=graph.createDoubleSubNode();
+		DoubleSubNode v2=graph.createDoubleSubNode();
+		Edge e1=graph.createLink(v1, v2);
+		Edge e2=graph.createLink(v1, v2);
+		assertTrue(e1.isBefore(e2));
+	}
+	
+	/**
+	 * Tests if an edge is before another.
+	 */
+	@Test
+	public void isBeforeTest3(){
+		DoubleSubNode v1=graph.createDoubleSubNode();
+		DoubleSubNode v2=graph.createDoubleSubNode();
+		Edge e1=graph.createLink(v1, v2);
+		graph.createLink(v1, v2);
+		Edge e2=graph.createLink(v1, v2);
+		assertTrue(e1.isBefore(e2));
+		assertFalse(e2.isBefore(e1));
+	}
+	
+	// tests of the method boolean isAfter(Edge e);
+	
+	/**
+	 * Tests if an edge is after itself.
+	 */
+	@Test
+	public void isAfterTest0(){
+		DoubleSubNode v1=graph.createDoubleSubNode();
+		Edge e1=graph.createLink(v1, v1);
+		assertFalse(e1.isAfter(e1));
+	}
+	
+	/**
+	 * Tests if an exception is thrown, when two edges have not the same this-vertex.
+	 */
+	@Test(expected=GraphException.class)
+	public void isAfterTest1(){
+		DoubleSubNode v1=graph.createDoubleSubNode();
+		DoubleSubNode v2=graph.createDoubleSubNode();
+		Edge e1=graph.createLink(v1, v2);
+		Edge e2=graph.createLink(v2, v1);
+		assertFalse(e1.isAfter(e2));
+	}
+	
+	/**
+	 * Tests if an edge is direct after another.
+	 */
+	@Test
+	public void isAfterTest2(){
+		DoubleSubNode v1=graph.createDoubleSubNode();
+		DoubleSubNode v2=graph.createDoubleSubNode();
+		Edge e1=graph.createLink(v1, v2);
+		Edge e2=graph.createLink(v1, v2);
+		assertTrue(e2.isAfter(e1));
+	}
+	
+	/**
+	 * Tests if an edge is after another.
+	 */
+	@Test
+	public void isAfterTest3(){
+		DoubleSubNode v1=graph.createDoubleSubNode();
+		DoubleSubNode v2=graph.createDoubleSubNode();
+		Edge e1=graph.createLink(v1, v2);
+		graph.createLink(v1, v2);
+		Edge e2=graph.createLink(v1, v2);
+		assertTrue(e2.isAfter(e1));
+		assertFalse(e1.isAfter(e2));
+	}
+	
+	// tests of the method boolean isBeforeInGraph(Edge e);
+	// (tested in EdgeListTest.java)
+	
+	/**
+	 * Tests if an edge is before itself.
+	 */
+	@Test
+	public void isBeforeInGraphTest0(){
+		DoubleSubNode v1=graph.createDoubleSubNode();
+		Edge e1=graph.createLink(v1, v1);
+		assertFalse(e1.isBeforeInGraph(e1));
+	}
+	
+	// tests of the method boolean isAfterInGraph(Edge e);
+	// (tested in EdgeListTest.java)
+	
+	/**
+	 * Tests if an edge is before itself.
+	 */
+	@Test
+	public void isAfterInGraphTest0(){
+		DoubleSubNode v1=graph.createDoubleSubNode();
+		Edge e1=graph.createLink(v1, v1);
+		assertFalse(e1.isAfterInGraph(e1));
+	}
+	
+	// tests of the method void putBeforeInGraph(Edge e);
+	// (tested in EdgeListTest.java)
+	
+	// tests of the method void putAfterInGraph(Edge e);
+	// (tested in EdgeListTest.java)
+	
+	// tests of the method void delete();
+	// (tested in EdgeListTest.java)
 }
