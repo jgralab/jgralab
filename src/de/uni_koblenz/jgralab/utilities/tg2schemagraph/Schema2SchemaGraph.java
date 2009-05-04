@@ -46,15 +46,15 @@ import de.uni_koblenz.jgralab.grumlschema.structure.VertexClass;
  * 
  * All variables are written like their classes from the package
  * "de.uni_koblenz.jgralab.schema" normal with the exception of the variable for
- * a package. "package" is a keyword. In this case the variable is written with
- * a prefix "x". All variables from the package
+ * packages. "package" is a keyword. In this case the variable is written with a
+ * prefix "x". All variables from the package
  * "de.uni_koblenz.jgralab.grumlschema.structure" are written with an prefix
  * "g".
  * 
  * All types from "de.uni_koblenz.jgralab.schema" are fully qualified with their
  * package name.
  * 
- * @author mmce Eckhard Großmann
+ * @author ist@uni-koblenz.de, Eckhard Großmann
  */
 public class Schema2SchemaGraph {
 
