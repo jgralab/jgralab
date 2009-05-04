@@ -114,14 +114,15 @@ public class CompareSchemaWithSchemaGraph {
 		// GRAPHCLASS
 
 		// Get the only defined GraphClass in the SchemaGraph
-		Iterator<DefinesGraphClass> it = gSchema
-				.getDefinesGraphClassIncidences().iterator();
+		DefinesGraphClass definesGraphClass = gSchema
+				.getFirstDefinesGraphClass(OUTGOING);
 		// There should be one GraphClass
-		assertTrue("No GraphClass is defined.", it.hasNext());
-		Vertex vertex = it.next().getOmega();
-		assertTrue("Omega should be an instance of \"GraphClass\".",
+		assertTrue("No GraphClass is defined.", definesGraphClass != null);
+		Vertex vertex = definesGraphClass.getThat();
+		assertTrue("That should be an instance of \"GraphClass\".",
 				vertex instanceof GraphClass);
-		assertFalse("There is more than one GraphClass defined.", it.hasNext());
+		assertFalse("There is more than one GraphClass defined.",
+				definesGraphClass.getNextDefinesGraphClass(OUTGOING) != null);
 
 		// Compares both GraphClass objects
 		compareAttributedElementClass(schema.getGraphClass(),
@@ -130,14 +131,16 @@ public class CompareSchemaWithSchemaGraph {
 		// DEFAULTPACKAGE
 
 		// Gets the only defined DefaultPackage
-		Iterator<ContainsDefaultPackage> packageIt = gSchema
-				.getContainsDefaultPackageIncidences().iterator();
+		ContainsDefaultPackage containsDefaultPackage = gSchema
+				.getFirstContainsDefaultPackage(OUTGOING);
 		// There should be one DefaultPackage
-		assertTrue("No DefaultPackage is defined.", packageIt.hasNext());
-		vertex = packageIt.next().getOmega();
-		assertFalse("There is more than one DefaultPackage defined.", packageIt
-				.hasNext());
-		assertTrue("Omega should be an instance of \"Package\".",
+		assertTrue("No DefaultPackage is defined.",
+				containsDefaultPackage != null);
+		vertex = containsDefaultPackage.getThat();
+		assertFalse(
+				"There is more than one DefaultPackage defined.",
+				containsDefaultPackage.getNextContainsDefaultPackage(OUTGOING) != null);
+		assertTrue("That should be an instance of \"Package\".",
 				vertex instanceof Package);
 		// Compares both Package objects with each other.
 		comparePackage(schema.getDefaultPackage(), (Package) vertex);
@@ -421,13 +424,13 @@ public class CompareSchemaWithSchemaGraph {
 			de.uni_koblenz.jgralab.schema.MapDomain domain, MapDomain gDomain) {
 
 		// KEY DOMAIN
-		Iterator<HasKeyDomain> keyIt = gDomain.getHasKeyDomainIncidences(
-				OUTGOING).iterator();
-		assertTrue("There is no key Domain defined.", keyIt.hasNext());
-		Vertex vertex = keyIt.next().getOmega();
-		assertTrue("Omega should be an instance of Domain.",
+		HasKeyDomain hasKeyDomain = gDomain.getFirstHasKeyDomain(OUTGOING);
+		assertTrue("There is no key Domain defined.", hasKeyDomain != null);
+		Vertex vertex = hasKeyDomain.getThat();
+		assertTrue("That should be an instance of Domain.",
 				vertex instanceof Domain);
-		assertFalse("There is more than one key Domain.", keyIt.hasNext());
+		assertFalse("There is more than one key Domain.", hasKeyDomain
+				.getNextHasKeyDomain(OUTGOING) != null);
 		Domain gKeyDomain = (Domain) vertex;
 
 		// Compares the QualifiedName of the key domain
@@ -437,13 +440,14 @@ public class CompareSchemaWithSchemaGraph {
 						.getQualifiedName());
 
 		// VALUE DOMAIN
-		Iterator<HasValueDomain> valueIt = gDomain.getHasValueDomainIncidences(
-				OUTGOING).iterator();
-		assertTrue("There is no value Domain defined.", valueIt.hasNext());
-		vertex = valueIt.next().getOmega();
-		assertTrue("Omega should be an instance of Domain.",
+		HasValueDomain hasValueDomain = gDomain
+				.getFirstHasValueDomain(OUTGOING);
+		assertTrue("There is no value Domain defined.", hasValueDomain != null);
+		vertex = hasValueDomain.getThat();
+		assertTrue("That should be an instance of Domain.",
 				vertex instanceof Domain);
-		assertFalse("There is more than one value Domain.", valueIt.hasNext());
+		assertFalse("There is more than one value Domain.", hasValueDomain
+				.getNextHasValueDomain(OUTGOING) != null);
 		Domain gValueDomain = (Domain) vertex;
 
 		// Compares the QualifiedName
@@ -467,13 +471,13 @@ public class CompareSchemaWithSchemaGraph {
 			CollectionDomain gDomain) {
 
 		// BASE DOMAIN
-		Iterator<HasBaseDomain> it = gDomain.getHasBaseDomainIncidences(
-				OUTGOING).iterator();
-		assertTrue("There should be a base Domain.", it.hasNext());
-		Vertex vertex = it.next().getOmega();
-		assertTrue("Omega should be an instance of Domain.",
+		HasBaseDomain hasBaseDomain = gDomain.getFirstHasBaseDomain(OUTGOING);
+		assertTrue("There should be a base Domain.", hasBaseDomain != null);
+		Vertex vertex = hasBaseDomain.getThat();
+		assertTrue("That should be an instance of Domain.",
 				vertex instanceof Domain);
-		assertFalse("There is more than one base Domain.", it.hasNext());
+		assertFalse("There is more than one base Domain.", hasBaseDomain
+				.getNextHasBaseDomain(OUTGOING) != null);
 		Domain gBaseDomain = (Domain) vertex;
 
 		// Compares the QualifiedName
@@ -664,15 +668,16 @@ public class CompareSchemaWithSchemaGraph {
 			EdgeClass gEdgeClass) {
 		VertexClass vertexClass;
 		// TO
-		Iterator<To> toIt = gEdgeClass.getToIncidences(OUTGOING).iterator();
+		To to = gEdgeClass.getFirstTo(OUTGOING);
 		// There should be one To edge
-		assertTrue("There is no \"To\" edge defined.", toIt.hasNext());
-		To to = toIt.next();
+		assertTrue("There is no \"To\" edge defined.", to != null);
 		// Checking if there are more than one To edge
-		assertFalse("There are more than one To edge defined.", toIt.hasNext());
-		assertTrue("Omega should be an instance of \"VertexClass\".", to
-				.getOmega() instanceof VertexClass);
-		vertexClass = (VertexClass) to.getOmega();
+		assertFalse("There are more than one To edge defined.", to
+				.getNextTo(OUTGOING) != null);
+		assertTrue("That should be an instance of \"VertexClass\".", to
+				.getThat() instanceof VertexClass);
+		vertexClass = (VertexClass) to.getThat();
+
 		// QualifiedName, min, max and rolename are compared.
 		assertEquals("Both \"To\" edges should have the same QualifiedName.",
 				edgeClass.getTo().getQualifiedName(), vertexClass
@@ -711,18 +716,16 @@ public class CompareSchemaWithSchemaGraph {
 		Set<String> redefinedRoles;
 		Set<String> gRedefinedRoles;
 		// FROM
-		Iterator<From> fromIt = gEdgeClass.getFromIncidences(OUTGOING)
-				.iterator();
+		From from = gEdgeClass.getFirstFrom(OUTGOING);
 		// There should be one From edge
-		assertTrue("There is no \"From\" edge defined.", fromIt.hasNext());
-		From from = fromIt.next();
-
+		assertTrue("There is no \"From\" edge defined.", from != null);
 		// Checking if there are more than one From edge
-		assertFalse("There are more than one From edge defined.", fromIt
-				.hasNext());
+		assertFalse("There are more than one From edge defined.", from
+				.getNextFrom(OUTGOING) != null);
 		assertTrue("Omega should be an instance of \"VertexClass\".", from
-				.getOmega() instanceof VertexClass);
-		vertexClass = (VertexClass) from.getOmega();
+				.getThat() instanceof VertexClass);
+		vertexClass = (VertexClass) from.getThat();
+
 		// QualifiedName, min, max and rolename are compared.
 		assertEquals("Both \"From\" edges should have the same QualifiedName.",
 				edgeClass.getFrom().getQualifiedName(), vertexClass
@@ -797,13 +800,13 @@ public class CompareSchemaWithSchemaGraph {
 					attributes.containsKey(gAttribute.getName()));
 
 			// Get the Domain
-			Iterator<HasDomain> it = gAttribute
-					.getHasDomainIncidences(OUTGOING).iterator();
-			assertTrue("There is no Domain defined.", it.hasNext());
-			Vertex vertex = it.next().getOmega();
+			HasDomain hasDomain = gAttribute.getFirstHasDomain(OUTGOING);
+			assertTrue("There is no Domain defined.", hasDomain != null);
+			Vertex vertex = hasDomain.getThat();
 			assertTrue("Omega should be an instance of Domain.",
 					vertex instanceof Domain);
-			assertFalse("There is more than one Domain defined.", it.hasNext());
+			assertFalse("There is more than one Domain defined.", hasDomain
+					.getNextHasDomain(OUTGOING) != null);
 
 			// Compares both Domain object with their QualifiedName
 			compareDomain(attributes.remove(gAttribute.getName()).getDomain(),
