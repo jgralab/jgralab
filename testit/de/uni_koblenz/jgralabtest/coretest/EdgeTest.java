@@ -1,7 +1,9 @@
 package de.uni_koblenz.jgralabtest.coretest;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
@@ -2534,12 +2536,12 @@ public class EdgeTest {
 	 */
 	@Test
 	public void getThisTest1() {
-		Vertex[] thisVertices=createRandomGraph(true);
-		for(int i=0;i<graph.getECount();i++){
-			assertEquals(thisVertices[i],graph.getEdge(i+1).getThis());
+		Vertex[] thisVertices = createRandomGraph(true);
+		for (int i = 0; i < graph.getECount(); i++) {
+			assertEquals(thisVertices[i], graph.getEdge(i + 1).getThis());
 		}
 	}
-	
+
 	// tests for the method Vertex getThat();
 
 	/**
@@ -2566,52 +2568,559 @@ public class EdgeTest {
 	 */
 	@Test
 	public void getThatTest1() {
-		Vertex[] thisVertices=createRandomGraph(false);
-		for(int i=0;i<graph.getECount();i++){
-			assertEquals(thisVertices[i],graph.getEdge(i+1).getThat());
+		Vertex[] thisVertices = createRandomGraph(false);
+		for (int i = 0; i < graph.getECount(); i++) {
+			assertEquals(thisVertices[i], graph.getEdge(i + 1).getThat());
 		}
 	}
-	
+
 	// tests for the method String getThisRole();
-	
+
 	/**
 	 * Test in a manually built graph.
 	 */
 	@Test
-	public void getThisRoleTest(){
-		DoubleSubNode v1=graph.createDoubleSubNode();
-		DoubleSubNode v2=graph.createDoubleSubNode();
-		Edge e1=graph.createLink(v1, v2);
-		Edge e2=graph.createSubLink(v1, v2);
-		Edge e3=graph.createLinkBack(v1, v2);
-		assertEquals("source",e1.getThisRole());
-		assertEquals("target",e1.getReversedEdge().getThisRole());
-		assertEquals("sourcec",e2.getThisRole());
-		assertEquals("targetc",e2.getReversedEdge().getThisRole());
-		assertEquals("sourceb",e3.getThisRole());
-		assertEquals("targetb",e3.getReversedEdge().getThisRole());
+	public void getThisRoleTest() {
+		DoubleSubNode v1 = graph.createDoubleSubNode();
+		DoubleSubNode v2 = graph.createDoubleSubNode();
+		Edge e1 = graph.createLink(v1, v2);
+		Edge e2 = graph.createSubLink(v1, v2);
+		Edge e3 = graph.createLinkBack(v1, v2);
+		assertEquals("source", e1.getThisRole());
+		assertEquals("target", e1.getReversedEdge().getThisRole());
+		assertEquals("sourcec", e2.getThisRole());
+		assertEquals("targetc", e2.getReversedEdge().getThisRole());
+		assertEquals("sourceb", e3.getThisRole());
+		assertEquals("targetb", e3.getReversedEdge().getThisRole());
 	}
-	
+
 	// tests for the method String getThisRole();
-	
+
 	/**
 	 * Test in a manually built graph.
 	 */
 	@Test
-	public void getThatRoleTest(){
-		DoubleSubNode v1=graph.createDoubleSubNode();
-		DoubleSubNode v2=graph.createDoubleSubNode();
-		Edge e1=graph.createLink(v1, v2);
-		Edge e2=graph.createSubLink(v1, v2);
-		Edge e3=graph.createLinkBack(v1, v2);
-		assertEquals("target",e1.getThatRole());
-		assertEquals("source",e1.getReversedEdge().getThatRole());
-		assertEquals("targetc",e2.getThatRole());
-		assertEquals("sourcec",e2.getReversedEdge().getThatRole());
-		assertEquals("targetb",e3.getThatRole());
-		assertEquals("sourceb",e3.getReversedEdge().getThatRole());
+	public void getThatRoleTest() {
+		DoubleSubNode v1 = graph.createDoubleSubNode();
+		DoubleSubNode v2 = graph.createDoubleSubNode();
+		Edge e1 = graph.createLink(v1, v2);
+		Edge e2 = graph.createSubLink(v1, v2);
+		Edge e3 = graph.createLinkBack(v1, v2);
+		assertEquals("target", e1.getThatRole());
+		assertEquals("source", e1.getReversedEdge().getThatRole());
+		assertEquals("targetc", e2.getThatRole());
+		assertEquals("sourcec", e2.getReversedEdge().getThatRole());
+		assertEquals("targetb", e3.getThatRole());
+		assertEquals("sourceb", e3.getReversedEdge().getThatRole());
 	}
-	
+
 	// tests for the method Edge getNextEdgeInGraph();
 	// (already tested in LoadTest.java)
+
+	// tests for the method Edge getPrevEdgeInGraph();
+
+	/**
+	 * Creates an randomly build graph an returns an 2-dim ArrayList of Edges,
+	 * which are needed to check the equality in respect to the parameters of
+	 * the methods.
+	 * 
+	 * @param classedge
+	 * @param nosubclasses
+	 * @return
+	 */
+	private ArrayList<ArrayList<Edge>> createRandomGraph(boolean edgeClass,
+			boolean nosubclasses) {
+		Vertex[] nodes = new Vertex[] { graph.createSubNode(),
+				graph.createDoubleSubNode(), graph.createSuperNode() };
+		ArrayList<ArrayList<Edge>> ret = new ArrayList<ArrayList<Edge>>();
+		if (!edgeClass) {
+			// edges for getPrevEdgeInGraph() are needed
+			ret.add(new ArrayList<Edge>());
+		} else if (!nosubclasses) {
+			// edges for getNextEdgeOfClassInGraph(EdgeClass anEdgeClass) are
+			// needed
+			// 0=Link
+			ret.add(new ArrayList<Edge>());
+			// 1=SubLink
+			ret.add(new ArrayList<Edge>());
+			// 2=LinkBack
+			ret.add(new ArrayList<Edge>());
+		} else {
+			// edges for getNextEdgeOfClassInGraph(EdgeClass anEdgeClass,
+			// boolean noSubclasses) are needed
+			// 0=Link false
+			ret.add(new ArrayList<Edge>());
+			// 1=SubLink false
+			ret.add(new ArrayList<Edge>());
+			// 2=LinkBack false
+			ret.add(new ArrayList<Edge>());
+			// 3=Link true
+			ret.add(new ArrayList<Edge>());
+			// 4=SubLink true
+			ret.add(new ArrayList<Edge>());
+			// 5=LinkBack true
+			ret.add(new ArrayList<Edge>());
+		}
+		for (int i = 0; i < 1000; i++) {
+			int edge = rand.nextInt(3);
+			Edge e = null;
+			switch (edge) {
+			case 0:
+				Vertex start = nodes[rand.nextInt(2)];
+				Vertex end = nodes[rand.nextInt(2) + 1];
+				e = graph
+						.createLink((AbstractSuperNode) start, (SuperNode) end);
+				if (!edgeClass) {
+					ret.get(0).add(e);
+				} else if (!nosubclasses) {
+					ret.get(0).add(e);
+				} else {
+					ret.get(0).add(e);
+					ret.get(3).add(e);
+				}
+				break;
+			case 1:
+				start = nodes[1];
+				end = nodes[rand.nextInt(2) + 1];
+				e = graph.createSubLink((DoubleSubNode) start, (SuperNode) end);
+				if (!edgeClass) {
+					ret.get(0).add(e);
+				} else if (!nosubclasses) {
+					ret.get(0).add(e);
+					ret.get(1).add(e);
+				} else {
+					ret.get(0).add(e);
+					ret.get(1).add(e);
+					ret.get(4).add(e);
+				}
+				break;
+			case 2:
+				start = nodes[rand.nextInt(2) + 1];
+				end = nodes[rand.nextInt(2)];
+				e = graph.createLinkBack((SuperNode) start,
+						(AbstractSuperNode) end);
+				if (!edgeClass) {
+					ret.get(0).add(e);
+				} else if (!nosubclasses) {
+					ret.get(2).add(e);
+				} else {
+					ret.get(2).add(e);
+					ret.get(5).add(e);
+				}
+				break;
+			}
+		}
+		return ret;
+	}
+
+	/**
+	 * Tests if an edge has no previous edge in graph.
+	 */
+	@Test
+	public void getPrevEdgeInGraphTest0() {
+		DoubleSubNode v1 = graph.createDoubleSubNode();
+		Edge e1 = graph.createLink(v1, v1);
+		assertNull(e1.getPrevEdgeInGraph());
+	}
+
+	/**
+	 * Test in a manually built graph.
+	 */
+	@Test
+	public void getPrevEdgeInGraphTest1() {
+		DoubleSubNode v1 = graph.createDoubleSubNode();
+		DoubleSubNode v2 = graph.createDoubleSubNode();
+		Edge e1 = graph.createLink(v1, v1);
+		Edge e2 = graph.createLink(v2, v2);
+		Edge e3 = graph.createLink(v1, v2);
+		assertEquals(e2, e3.getPrevEdgeInGraph());
+		assertEquals(e1, e2.getPrevEdgeInGraph());
+		assertNull(e1.getPrevEdgeInGraph());
+	}
+
+	/**
+	 * Test in a randomly built graph.
+	 */
+	@Test
+	public void getPrevEdgeInGraphTest2() {
+		ArrayList<ArrayList<Edge>> result = createRandomGraph(false, false);
+		Edge current = graph.getLastEdgeInGraph();
+		for (int i = graph.getECount() - 1; i >= 0; i--) {
+			assertEquals(result.get(0).get(i), current);
+			current = current.getPrevEdgeInGraph();
+		}
+	}
+
+	// tests for the method Edge getNextEdgeOfClassInGraph(EdgeClass
+	// anEdgeClass);
+
+	/**
+	 * An edge which has no following edges.
+	 */
+	@Test
+	public void getNextEdgeOfClassInGraphTestEdgeClass0() {
+		EdgeClass[] ecs = getEdgeClasses();
+		DoubleSubNode v1 = graph.createDoubleSubNode();
+		DoubleSubNode v2 = graph.createDoubleSubNode();
+		Edge e1 = graph.createLink(v1, v2);
+		assertEquals(null, e1.getNextEdgeOfClassInGraph(ecs[0]));
+		assertEquals(null, e1.getNextEdgeOfClassInGraph(ecs[1]));
+		assertEquals(null, e1.getNextEdgeOfClassInGraph(ecs[2]));
+	}
+
+	/**
+	 * Test in a manually built graph.
+	 */
+	@Test
+	public void getNextEdgeOfClassInGraphTestEdgeClass1() {
+		EdgeClass[] ecs = getEdgeClasses();
+		DoubleSubNode v1 = graph.createDoubleSubNode();
+		DoubleSubNode v2 = graph.createDoubleSubNode();
+		Edge e1 = graph.createLink(v1, v2);
+		Edge e2 = graph.createLinkBack(v1, v2);
+		Edge e3 = graph.createSubLink(v2, v1);
+		Edge e4 = graph.createLink(v1, v1);
+		Edge e5 = graph.createLinkBack(v1, v2);
+		// test of edge e1
+		assertEquals(e3, e1.getNextEdgeOfClassInGraph(ecs[0]));
+		assertEquals(e3, e1.getNextEdgeOfClassInGraph(ecs[1]));
+		assertEquals(e2, e1.getNextEdgeOfClassInGraph(ecs[2]));
+		// test of edge e2
+		assertEquals(e3, e2.getNextEdgeOfClassInGraph(ecs[0]));
+		assertEquals(e3, e2.getNextEdgeOfClassInGraph(ecs[1]));
+		assertEquals(e5, e2.getNextEdgeOfClassInGraph(ecs[2]));
+		// test of edge e3
+		assertEquals(e4, e3.getNextEdgeOfClassInGraph(ecs[0]));
+		assertEquals(null, e3.getNextEdgeOfClassInGraph(ecs[1]));
+		assertEquals(e5, e3.getNextEdgeOfClassInGraph(ecs[2]));
+		// test of edge e4
+		assertEquals(null, e4.getNextEdgeOfClassInGraph(ecs[0]));
+		assertEquals(null, e4.getNextEdgeOfClassInGraph(ecs[1]));
+		assertEquals(e5, e4.getNextEdgeOfClassInGraph(ecs[2]));
+		// test of edge e5
+		assertEquals(null, e5.getNextEdgeOfClassInGraph(ecs[0]));
+		assertEquals(null, e5.getNextEdgeOfClassInGraph(ecs[1]));
+		assertEquals(null, e5.getNextEdgeOfClassInGraph(ecs[2]));
+	}
+
+	/**
+	 * Test in a randomly built graph.
+	 */
+	@Test
+	public void getNextEdgeOfClassInGraphTestEdgeClass2() {
+		EdgeClass[] ecs = getEdgeClasses();
+		ArrayList<ArrayList<Edge>> result = createRandomGraph(true, false);
+		Edge counter = graph.getFirstEdgeOfClassInGraph(ecs[0]);
+		for (Edge e : result.get(0)) {
+			assertEquals(e, counter);
+			counter = counter.getNextEdgeOfClassInGraph(ecs[0]);
+		}
+		counter = graph.getFirstEdgeOfClassInGraph(ecs[1]);
+		for (Edge e : result.get(1)) {
+			assertEquals(e, counter);
+			counter = counter.getNextEdgeOfClassInGraph(ecs[1]);
+		}
+		counter = graph.getFirstEdgeOfClassInGraph(ecs[2]);
+		for (Edge e : result.get(2)) {
+			assertEquals(e, counter);
+			counter = counter.getNextEdgeOfClassInGraph(ecs[2]);
+		}
+	}
+
+	// tests for the method Edge getNextEdgeOfClassInGraph(Class<? extends Edge>
+	// anEdgeClass);
+
+	/**
+	 * An edge which has no following edges.
+	 */
+	@Test
+	public void getNextEdgeOfClassInGraphTestClass0() {
+		DoubleSubNode v1 = graph.createDoubleSubNode();
+		DoubleSubNode v2 = graph.createDoubleSubNode();
+		Edge e1 = graph.createLink(v1, v2);
+		assertEquals(null, e1.getNextEdgeOfClassInGraph(Link.class));
+		assertEquals(null, e1.getNextEdgeOfClassInGraph(SubLink.class));
+		assertEquals(null, e1.getNextEdgeOfClassInGraph(LinkBack.class));
+	}
+
+	/**
+	 * Test in a manually built graph.
+	 */
+	@Test
+	public void getNextEdgeOfClassInGraphTestClass1() {
+		DoubleSubNode v1 = graph.createDoubleSubNode();
+		DoubleSubNode v2 = graph.createDoubleSubNode();
+		Edge e1 = graph.createLink(v1, v2);
+		Edge e2 = graph.createLinkBack(v1, v2);
+		Edge e3 = graph.createSubLink(v2, v1);
+		Edge e4 = graph.createLink(v1, v1);
+		Edge e5 = graph.createLinkBack(v1, v2);
+		// test of edge e1
+		assertEquals(e3, e1.getNextEdgeOfClassInGraph(Link.class));
+		assertEquals(e3, e1.getNextEdgeOfClassInGraph(SubLink.class));
+		assertEquals(e2, e1.getNextEdgeOfClassInGraph(LinkBack.class));
+		// test of edge e2
+		assertEquals(e3, e2.getNextEdgeOfClassInGraph(Link.class));
+		assertEquals(e3, e2.getNextEdgeOfClassInGraph(SubLink.class));
+		assertEquals(e5, e2.getNextEdgeOfClassInGraph(LinkBack.class));
+		// test of edge e3
+		assertEquals(e4, e3.getNextEdgeOfClassInGraph(Link.class));
+		assertEquals(null, e3.getNextEdgeOfClassInGraph(SubLink.class));
+		assertEquals(e5, e3.getNextEdgeOfClassInGraph(LinkBack.class));
+		// test of edge e4
+		assertEquals(null, e4.getNextEdgeOfClassInGraph(Link.class));
+		assertEquals(null, e4.getNextEdgeOfClassInGraph(SubLink.class));
+		assertEquals(e5, e4.getNextEdgeOfClassInGraph(LinkBack.class));
+		// test of edge e5
+		assertEquals(null, e5.getNextEdgeOfClassInGraph(Link.class));
+		assertEquals(null, e5.getNextEdgeOfClassInGraph(SubLink.class));
+		assertEquals(null, e5.getNextEdgeOfClassInGraph(LinkBack.class));
+	}
+
+	/**
+	 * Test in a randomly built graph.
+	 */
+	@Test
+	public void getNextEdgeOfClassInGraphTestClass2() {
+		ArrayList<ArrayList<Edge>> result = createRandomGraph(true, false);
+		Edge counter = graph.getFirstEdgeOfClassInGraph(Link.class);
+		for (Edge e : result.get(0)) {
+			assertEquals(e, counter);
+			counter = counter.getNextEdgeOfClassInGraph(Link.class);
+		}
+		counter = graph.getFirstEdgeOfClassInGraph(SubLink.class);
+		for (Edge e : result.get(1)) {
+			assertEquals(e, counter);
+			counter = counter.getNextEdgeOfClassInGraph(SubLink.class);
+		}
+		counter = graph.getFirstEdgeOfClassInGraph(LinkBack.class);
+		for (Edge e : result.get(2)) {
+			assertEquals(e, counter);
+			counter = counter.getNextEdgeOfClassInGraph(LinkBack.class);
+		}
+	}
+
+	// tests for the method Edge getNextEdgeOfClassInGraph(EdgeClass
+	// anEdgeClass);
+
+	/**
+	 * An edge which has no following edges.
+	 */
+	@Test
+	public void getNextEdgeOfClassInGraphTestEdgeClassBoolean0() {
+		EdgeClass[] ecs = getEdgeClasses();
+		DoubleSubNode v1 = graph.createDoubleSubNode();
+		DoubleSubNode v2 = graph.createDoubleSubNode();
+		Edge e1 = graph.createLink(v1, v2);
+		assertEquals(null, e1.getNextEdgeOfClassInGraph(ecs[0], false));
+		assertEquals(null, e1.getNextEdgeOfClassInGraph(ecs[1], false));
+		assertEquals(null, e1.getNextEdgeOfClassInGraph(ecs[2], false));
+		assertEquals(null, e1.getNextEdgeOfClassInGraph(ecs[0], true));
+		assertEquals(null, e1.getNextEdgeOfClassInGraph(ecs[1], true));
+		assertEquals(null, e1.getNextEdgeOfClassInGraph(ecs[2], true));
+	}
+
+	/**
+	 * Test in a manually built graph.
+	 */
+	@Test
+	public void getNextEdgeOfClassInGraphTestEdgeClassBoolean1() {
+		EdgeClass[] ecs = getEdgeClasses();
+		DoubleSubNode v1 = graph.createDoubleSubNode();
+		DoubleSubNode v2 = graph.createDoubleSubNode();
+		Edge e1 = graph.createLink(v1, v2);
+		Edge e2 = graph.createLinkBack(v1, v2);
+		Edge e3 = graph.createSubLink(v2, v1);
+		Edge e4 = graph.createLink(v1, v1);
+		Edge e5 = graph.createLinkBack(v1, v2);
+		// test of edge e1
+		assertEquals(e3, e1.getNextEdgeOfClassInGraph(ecs[0],false));
+		assertEquals(e3, e1.getNextEdgeOfClassInGraph(ecs[1],false));
+		assertEquals(e2, e1.getNextEdgeOfClassInGraph(ecs[2],false));
+		
+		assertEquals(e4, e1.getNextEdgeOfClassInGraph(ecs[0],true));
+		assertEquals(e3, e1.getNextEdgeOfClassInGraph(ecs[1],true));
+		assertEquals(e2, e1.getNextEdgeOfClassInGraph(ecs[2],true));
+		// test of edge e2
+		assertEquals(e3, e2.getNextEdgeOfClassInGraph(ecs[0],false));
+		assertEquals(e3, e2.getNextEdgeOfClassInGraph(ecs[1],false));
+		assertEquals(e5, e2.getNextEdgeOfClassInGraph(ecs[2],false));
+
+		assertEquals(e4, e2.getNextEdgeOfClassInGraph(ecs[0],true));
+		assertEquals(e3, e2.getNextEdgeOfClassInGraph(ecs[1],true));
+		assertEquals(e5, e2.getNextEdgeOfClassInGraph(ecs[2],true));
+		// test of edge e3
+		assertEquals(e4, e3.getNextEdgeOfClassInGraph(ecs[0],false));
+		assertEquals(null, e3.getNextEdgeOfClassInGraph(ecs[1],false));
+		assertEquals(e5, e3.getNextEdgeOfClassInGraph(ecs[2],false));
+
+		assertEquals(e4, e3.getNextEdgeOfClassInGraph(ecs[0],true));
+		assertEquals(null, e3.getNextEdgeOfClassInGraph(ecs[1],true));
+		assertEquals(e5, e3.getNextEdgeOfClassInGraph(ecs[2],true));
+		// test of edge e4
+		assertEquals(null, e4.getNextEdgeOfClassInGraph(ecs[0],false));
+		assertEquals(null, e4.getNextEdgeOfClassInGraph(ecs[1],false));
+		assertEquals(e5, e4.getNextEdgeOfClassInGraph(ecs[2],false));
+
+		assertEquals(null, e4.getNextEdgeOfClassInGraph(ecs[0],true));
+		assertEquals(null, e4.getNextEdgeOfClassInGraph(ecs[1],true));
+		assertEquals(e5, e4.getNextEdgeOfClassInGraph(ecs[2],true));
+		// test of edge e5
+		assertEquals(null, e5.getNextEdgeOfClassInGraph(ecs[0],false));
+		assertEquals(null, e5.getNextEdgeOfClassInGraph(ecs[1],false));
+		assertEquals(null, e5.getNextEdgeOfClassInGraph(ecs[2],false));
+
+		assertEquals(null, e5.getNextEdgeOfClassInGraph(ecs[0],true));
+		assertEquals(null, e5.getNextEdgeOfClassInGraph(ecs[1],true));
+		assertEquals(null, e5.getNextEdgeOfClassInGraph(ecs[2],true));
+	}
+
+	/**
+	 * Test in a randomly built graph.
+	 */
+	@Test
+	public void getNextEdgeOfClassInGraphTestEdgeClassBoolean2() {
+		EdgeClass[] ecs = getEdgeClasses();
+		ArrayList<ArrayList<Edge>> result = createRandomGraph(true, true);
+		Edge counter = graph.getFirstEdgeOfClassInGraph(ecs[0],false);
+		for (Edge e : result.get(0)) {
+			assertEquals(e, counter);
+			counter = counter.getNextEdgeOfClassInGraph(ecs[0],false);
+		}
+		counter = graph.getFirstEdgeOfClassInGraph(ecs[0],true);
+		for (Edge e : result.get(3)) {
+			assertEquals(e, counter);
+			counter = counter.getNextEdgeOfClassInGraph(ecs[0],true);
+		}
+		counter = graph.getFirstEdgeOfClassInGraph(ecs[1],false);
+		for (Edge e : result.get(1)) {
+			assertEquals(e, counter);
+			counter = counter.getNextEdgeOfClassInGraph(ecs[1],false);
+		}
+		counter = graph.getFirstEdgeOfClassInGraph(ecs[1],true);
+		for (Edge e : result.get(4)) {
+			assertEquals(e, counter);
+			counter = counter.getNextEdgeOfClassInGraph(ecs[1],true);
+		}
+		counter = graph.getFirstEdgeOfClassInGraph(ecs[2],false);
+		for (Edge e : result.get(2)) {
+			assertEquals(e, counter);
+			counter = counter.getNextEdgeOfClassInGraph(ecs[2],false);
+		}
+		counter = graph.getFirstEdgeOfClassInGraph(ecs[2],true);
+		for (Edge e : result.get(5)) {
+			assertEquals(e, counter);
+			counter = counter.getNextEdgeOfClassInGraph(ecs[2],true);
+		}
+	}
+
+	// tests for the method Edge getNextEdgeOfClassInGraph(Class<? extends Edge> anEdgeClass, boolean noSubclasses);
+
+	/**
+	 * An edge which has no following edges.
+	 */
+	@Test
+	public void getNextEdgeOfClassInGraphTestClassBoolean0() {
+		DoubleSubNode v1 = graph.createDoubleSubNode();
+		DoubleSubNode v2 = graph.createDoubleSubNode();
+		Edge e1 = graph.createLink(v1, v2);
+		assertEquals(null, e1.getNextEdgeOfClassInGraph(Link.class,false));
+		assertEquals(null, e1.getNextEdgeOfClassInGraph(SubLink.class,false));
+		assertEquals(null, e1.getNextEdgeOfClassInGraph(LinkBack.class,false));
+		assertEquals(null, e1.getNextEdgeOfClassInGraph(Link.class,true));
+		assertEquals(null, e1.getNextEdgeOfClassInGraph(SubLink.class,true));
+		assertEquals(null, e1.getNextEdgeOfClassInGraph(LinkBack.class,true));
+	}
+
+	/**
+	 * Test in a manually built graph.
+	 */
+	@Test
+	public void getNextEdgeOfClassInGraphTestClassBoolean1() {
+		DoubleSubNode v1 = graph.createDoubleSubNode();
+		DoubleSubNode v2 = graph.createDoubleSubNode();
+		Edge e1 = graph.createLink(v1, v2);
+		Edge e2 = graph.createLinkBack(v1, v2);
+		Edge e3 = graph.createSubLink(v2, v1);
+		Edge e4 = graph.createLink(v1, v1);
+		Edge e5 = graph.createLinkBack(v1, v2);
+		// test of edge e1
+		assertEquals(e3, e1.getNextEdgeOfClassInGraph(Link.class,false));
+		assertEquals(e3, e1.getNextEdgeOfClassInGraph(SubLink.class,false));
+		assertEquals(e2, e1.getNextEdgeOfClassInGraph(LinkBack.class,false));
+		
+		assertEquals(e4, e1.getNextEdgeOfClassInGraph(Link.class,true));
+		assertEquals(e3, e1.getNextEdgeOfClassInGraph(SubLink.class,true));
+		assertEquals(e2, e1.getNextEdgeOfClassInGraph(LinkBack.class,true));
+		// test of edge e2
+		assertEquals(e3, e2.getNextEdgeOfClassInGraph(Link.class,false));
+		assertEquals(e3, e2.getNextEdgeOfClassInGraph(SubLink.class,false));
+		assertEquals(e5, e2.getNextEdgeOfClassInGraph(LinkBack.class,false));
+
+		assertEquals(e4, e2.getNextEdgeOfClassInGraph(Link.class,true));
+		assertEquals(e3, e2.getNextEdgeOfClassInGraph(SubLink.class,true));
+		assertEquals(e5, e2.getNextEdgeOfClassInGraph(LinkBack.class,true));
+		// test of edge e3
+		assertEquals(e4, e3.getNextEdgeOfClassInGraph(Link.class,false));
+		assertEquals(null, e3.getNextEdgeOfClassInGraph(SubLink.class,false));
+		assertEquals(e5, e3.getNextEdgeOfClassInGraph(LinkBack.class,false));
+
+		assertEquals(e4, e3.getNextEdgeOfClassInGraph(Link.class,true));
+		assertEquals(null, e3.getNextEdgeOfClassInGraph(SubLink.class,true));
+		assertEquals(e5, e3.getNextEdgeOfClassInGraph(LinkBack.class,true));
+		// test of edge e4
+		assertEquals(null, e4.getNextEdgeOfClassInGraph(Link.class,false));
+		assertEquals(null, e4.getNextEdgeOfClassInGraph(SubLink.class,false));
+		assertEquals(e5, e4.getNextEdgeOfClassInGraph(LinkBack.class,false));
+
+		assertEquals(null, e4.getNextEdgeOfClassInGraph(Link.class,true));
+		assertEquals(null, e4.getNextEdgeOfClassInGraph(SubLink.class,true));
+		assertEquals(e5, e4.getNextEdgeOfClassInGraph(LinkBack.class,true));
+		// test of edge e5
+		assertEquals(null, e5.getNextEdgeOfClassInGraph(Link.class,false));
+		assertEquals(null, e5.getNextEdgeOfClassInGraph(SubLink.class,false));
+		assertEquals(null, e5.getNextEdgeOfClassInGraph(LinkBack.class,false));
+
+		assertEquals(null, e5.getNextEdgeOfClassInGraph(Link.class,true));
+		assertEquals(null, e5.getNextEdgeOfClassInGraph(SubLink.class,true));
+		assertEquals(null, e5.getNextEdgeOfClassInGraph(LinkBack.class,true));
+	}
+
+	/**
+	 * Test in a randomly built graph.
+	 */
+	@Test
+	public void getNextEdgeOfClassInGraphTestClassBoolean2() {
+		ArrayList<ArrayList<Edge>> result = createRandomGraph(true, true);
+		Edge counter = graph.getFirstEdgeOfClassInGraph(Link.class,false);
+		for (Edge e : result.get(0)) {
+			assertEquals(e, counter);
+			counter = counter.getNextEdgeOfClassInGraph(Link.class,false);
+		}
+		counter = graph.getFirstEdgeOfClassInGraph(Link.class,true);
+		for (Edge e : result.get(3)) {
+			assertEquals(e, counter);
+			counter = counter.getNextEdgeOfClassInGraph(Link.class,true);
+		}
+		counter = graph.getFirstEdgeOfClassInGraph(SubLink.class,false);
+		for (Edge e : result.get(1)) {
+			assertEquals(e, counter);
+			counter = counter.getNextEdgeOfClassInGraph(SubLink.class,false);
+		}
+		counter = graph.getFirstEdgeOfClassInGraph(SubLink.class,true);
+		for (Edge e : result.get(4)) {
+			assertEquals(e, counter);
+			counter = counter.getNextEdgeOfClassInGraph(SubLink.class,true);
+		}
+		counter = graph.getFirstEdgeOfClassInGraph(LinkBack.class,false);
+		for (Edge e : result.get(2)) {
+			assertEquals(e, counter);
+			counter = counter.getNextEdgeOfClassInGraph(LinkBack.class,false);
+		}
+		counter = graph.getFirstEdgeOfClassInGraph(LinkBack.class,true);
+		for (Edge e : result.get(5)) {
+			assertEquals(e, counter);
+			counter = counter.getNextEdgeOfClassInGraph(LinkBack.class,true);
+		}
+	}
 }
