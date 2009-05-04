@@ -206,6 +206,17 @@ public class CompareSchemaWithSchemaGraph {
 			// Gets, removes and compare at the same time both Domain objects.
 			compareDomain(domains.remove(simpleName), domain);
 		}
+
+		// TODO
+		// // THIS IS A FIX ---- NEEDS TO BE REMOVED
+		// for (Iterator<Entry<String, de.uni_koblenz.jgralab.schema.Domain>> it
+		// = domains
+		// .entrySet().iterator(); it.hasNext();) {
+		// if (it.next().getValue().isInDefaultPackage()) {
+		// it.remove();
+		// }
+		// }
+
 		// After all this, the Domain map should be empty
 		assertTrue(
 				"There are more Domains in the Schema then in the SchemaGraph.",
@@ -793,9 +804,10 @@ public class CompareSchemaWithSchemaGraph {
 			// Gets the Attribute
 			assertTrue("Omega should be an instance of Attribute.",
 					hasAttribute.getOmega() instanceof Attribute);
-			Attribute gAttribute = (Attribute) hasAttribute.getOmega();
+			Attribute gAttribute = (Attribute) hasAttribute.getThat();
 			// Checks if the Attribute object has an corresponding object in the
 			// map
+
 			assertTrue("Attribute is not include in the AttributeMap.",
 					attributes.containsKey(gAttribute.getName()));
 
