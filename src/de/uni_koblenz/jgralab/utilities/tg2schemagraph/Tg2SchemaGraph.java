@@ -65,7 +65,7 @@ import de.uni_koblenz.jgralab.schema.VertexClass;
 /**
  * This class represents any <code>Schema</code> object as an <code>Graph</code>
  * object.
- *
+ * 
  * @author ist@uni-koblenz.de
  */
 @WorkInProgress(description = "Problems with forward links to domains, constraints missing", responsibleDevelopers = "riediger")
@@ -99,7 +99,7 @@ public class Tg2SchemaGraph {
 	 * This class must be instantiated with a schema. You cannot change the
 	 * <code>Schema</code> afterwards hence for every schemagraph you want to
 	 * create a new instance of this class is needed.
-	 *
+	 * 
 	 * @param schema
 	 *            Any desired <code>Schema</code> object.
 	 */
@@ -118,7 +118,7 @@ public class Tg2SchemaGraph {
 	/**
 	 * creates an instance graph of the grUML language's meta schema. Its result
 	 * is a <code>Graph</code>, that represents any desired <code>Schema</code>.
-	 *
+	 * 
 	 * @return a <code>Graph</code> object that represents a <code>Schema</code>
 	 *         .
 	 */
@@ -194,7 +194,7 @@ public class Tg2SchemaGraph {
 	 * Sets up a <code>schemagraph</code> <code>Package</code> vertex. For each
 	 * subpackge of <code>jGraLabSuperPackage</code> this method gets called
 	 * recursively.
-	 *
+	 * 
 	 * @param jGraLabSuperPackage
 	 *            a JGraLab package
 	 * @param schemagraphSuperPackage
@@ -232,7 +232,7 @@ public class Tg2SchemaGraph {
 	 * for a given package and the required incident edges of it. For each
 	 * attribute of the <code>VertexClass</code>es
 	 * <code>createSchemagraphAttribute</code> gets called.
-	 *
+	 * 
 	 * @param schemagraphPackage
 	 *            a vertex representing package <code>jGraLabPackage</code>
 	 * @param jGraLabPackage
@@ -276,7 +276,7 @@ public class Tg2SchemaGraph {
 	 * <code>ContainsGraphElementClass</code>). For each attribute of the
 	 * <code>EdgeClass</code>es <code>createSchemagraphAttribute</code> gets
 	 * called.
-	 *
+	 * 
 	 * @param schemagraphPackage
 	 * @param jGraLabPackage
 	 */
@@ -388,7 +388,7 @@ public class Tg2SchemaGraph {
 	/**
 	 * creates a <code>schemagraph</code> <code>Attribute</code> vertex and the
 	 * <code>HasAttribute</code> and <code>HasDomain</code> edges.
-	 *
+	 * 
 	 * @param jGraLabAttribute
 	 *            a JGraLab attribute
 	 * @param schemagraphAttributedElementClass
@@ -417,7 +417,7 @@ public class Tg2SchemaGraph {
 	 * . i.e. <code>domainMap.get(de.uni_koblenz.jgralab.schema.Domain d)</code>
 	 * return the corresponding
 	 * <code>de.uni_koblenz.jgralab.grumlschema.Domain</code> object.
-	 *
+	 * 
 	 * At first only the <code>BasicDomain</code>s get mapped. The
 	 * <code>CompositeDomain</code>s get mapped in the order of the
 	 * "domain-depth" of their base domains or RecordDomainComponents. First,
