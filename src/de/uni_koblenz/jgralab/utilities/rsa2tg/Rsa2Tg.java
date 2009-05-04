@@ -88,7 +88,7 @@ import de.uni_koblenz.jgralab.utilities.tg2dot.Tg2Dot;
  * Software Architect (tm) into a TG schema file. The converter is based on a
  * SAX parser. As intermediate format, a grUML schema graph is created from the
  * XMI elements.
- *
+ * 
  * @author ist@uni-koblenz.de
  */
 @WorkInProgress(description = "Schema graph to TG missing, comments not recorded, missing command line interface", responsibleDevelopers = "riediger, mmce", expectedFinishingDate = "2009/04/20")
@@ -109,7 +109,7 @@ public class Rsa2Tg extends DefaultHandler {
 	private final Set<String> ignoredElements;
 
 	/**
-	 * Counter for ignored state. ignore>0 ==> elements are ingnored, ignore==0
+	 * Counter for ignored state. ignore>0 ==> elements are ignored, ignore==0
 	 * ==> elements are processed.
 	 */
 	private int ignore;
@@ -136,7 +136,7 @@ public class Rsa2Tg extends DefaultHandler {
 	private Stack<Package> packageStack;
 
 	/**
-	 * Maps XMI-Ids to vertices and egdes of the schema graph.
+	 * Maps XMI-Ids to vertices and edges of the schema graph.
 	 */
 	private Map<String, AttributedElement> idMap;
 
@@ -224,7 +224,7 @@ public class Rsa2Tg extends DefaultHandler {
 	private Set<Edge> aggregateEnds;
 
 	/**
-	 * The set of To/From edges which are represended by ownedEnd elements (used
+	 * The set of To/From edges which are represented by ownedEnd elements (used
 	 * to determine the direction of edges).
 	 */
 	private Set<Edge> ownedEnds;
@@ -260,10 +260,20 @@ public class Rsa2Tg extends DefaultHandler {
 	private boolean removeUnusedDomains;
 
 	/**
-	 * When dertermining the edge direction, also take navigability of
+	 * When determining the edge direction, also take navigability of
 	 * associations into account (rather than the drawing direction only).
 	 */
 	private boolean useNavigability;
+
+	/**
+	 * Suppresses the direct output into a dot- and tg-file.
+	 */
+	private boolean suppressOutput;
+
+	/**
+	 * Marks whether or not the xmi-file has been processed.
+	 */
+	private boolean processed;
 
 	/**
 	 * Creates a Rsa2Tg converter.
@@ -299,9 +309,9 @@ public class Rsa2Tg extends DefaultHandler {
 
 	/**
 	 * Processes one RSA XMI file by creating a SAX parser and submitting this
-	 * file to the parse() method. All actions take place in overrided mehtods
+	 * file to the parse() method. All actions take place in overridden methods
 	 * of the SAX DefaultHandler.
-	 *
+	 * 
 	 * @param xmiFileName
 	 *            the name of the XMI file to convert
 	 */
@@ -314,7 +324,7 @@ public class Rsa2Tg extends DefaultHandler {
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see org.xml.sax.helpers.DefaultHandler#characters(char[], int, int)
 	 */
 	@Override
@@ -327,7 +337,7 @@ public class Rsa2Tg extends DefaultHandler {
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see org.xml.sax.helpers.DefaultHandler#endDocument()
 	 */
 	@Override
@@ -362,24 +372,41 @@ public class Rsa2Tg extends DefaultHandler {
 			}
 		}
 		assert preliminaryVertices.isEmpty();
-		assert schema != null;
-		String schemaName = schema.getName();
-		assert schemaName != null;
-		// sg.defragment();
-		createDotFile(schemaName);
-		saveGraph(schemaName);
-		validateGraph(schemaName);
-		saveSchemagraphAsTg(schemaName, false);
+
+		processed = true;
+		if (!suppressOutput) {
+			writeOutput();
+		}
+	}
+
+	/**
+	 * Write a dot-file and a tg-file out.
+	 * 
+	 * @throws SAXException
+	 */
+	public void writeOutput() throws SAXException {
+		if (processed) {
+			assert schema != null;
+			String schemaName = schema.getName();
+			assert schemaName != null;
+
+			createDotFile(schemaName);
+			saveGraph(schemaName);
+			validateGraph(schemaName);
+			saveSchemagraphAsTg(schemaName, false);
+		}
 	}
 
 	private void saveSchemagraphAsTg(String schemaName, boolean formatTg) {
 		try {
-			SchemaGraph2Tg sg2tg=	new SchemaGraph2Tg(sg, currentXmiFile.getParent() + File.separator
-					+ schemaName + ".rsa.tg");
+			SchemaGraph2Tg sg2tg = new SchemaGraph2Tg(sg, currentXmiFile
+					.getParent()
+					+ File.separator + schemaName + ".rsa.tg");
 			sg2tg.setIsFormatted(formatTg);
 			sg2tg.run();
 		} catch (IOException e) {
-			throw new RuntimeException("SchemaGraph2Tg faild with an IOException!",e);
+			throw new RuntimeException(
+					"SchemaGraph2Tg faild with an IOException!", e);
 		}
 	}
 
@@ -524,7 +551,7 @@ public class Rsa2Tg extends DefaultHandler {
 		Domain d = sg.getFirstDomain();
 		while (d != null) {
 			Domain n = d.getNextDomain();
-			// unused if degree <=1 (one incoming egde is the ContainsDomain
+			// unused if degree <=1 (one incoming edge is the ContainsDomain
 			// edge from a Package)
 			if (d.getDegree(EdgeDirection.IN) <= 1) {
 				// System.out.println("...remove unused domain '"
@@ -834,6 +861,7 @@ public class Rsa2Tg extends DefaultHandler {
 	@Override
 	public void startElement(String uri, String localName, String name,
 			Attributes atts) throws SAXException {
+
 		String xmiId = atts.getValue("xmi:id");
 
 		elementNameStack.push(name + ">" + (xmiId != null ? xmiId : ""));
@@ -1500,11 +1528,11 @@ public class Rsa2Tg extends DefaultHandler {
 	/**
 	 * Creates a Domain vertex corresponding to the specified
 	 * <code>typeName</code>.
-	 *
+	 * 
 	 * This vertex can also be a preliminary vertex which has to be replaced by
 	 * the correct Domain later. In this case, there is no "ContainsDomain"
 	 * edge, and the type is "StringDomain".
-	 *
+	 * 
 	 * @param typeName
 	 * @return
 	 */
@@ -1589,7 +1617,7 @@ public class Rsa2Tg extends DefaultHandler {
 	 * separated by a dot. If the top package is the default package, the name
 	 * <code>simpleName</code> is already the qualified name. If the package
 	 * stack is empty
-	 *
+	 * 
 	 * @param simpleName
 	 *            a simple name of a class or package
 	 * @return the qualified name for the simple name
@@ -1606,7 +1634,7 @@ public class Rsa2Tg extends DefaultHandler {
 		}
 	}
 
-	private void setUseFromRole(boolean useFromRole) {
+	public void setUseFromRole(boolean useFromRole) {
 		this.useFromRole = useFromRole;
 	}
 
@@ -1614,7 +1642,7 @@ public class Rsa2Tg extends DefaultHandler {
 		return useFromRole;
 	}
 
-	private void setRemoveUnusedDomains(boolean removeUnusedDomains) {
+	public void setRemoveUnusedDomains(boolean removeUnusedDomains) {
 		this.removeUnusedDomains = removeUnusedDomains;
 	}
 
@@ -1622,11 +1650,19 @@ public class Rsa2Tg extends DefaultHandler {
 		return removeUnusedDomains;
 	}
 
-	private void setUseNavigability(boolean useNavigability) {
+	public void setUseNavigability(boolean useNavigability) {
 		this.useNavigability = useNavigability;
 	}
 
 	private boolean isUseNavigability() {
 		return useNavigability;
+	}
+
+	public SchemaGraph getSchemaGraph() {
+		return sg;
+	}
+
+	public void setSuppressOutput(boolean suppressOutput) {
+		this.suppressOutput = suppressOutput;
 	}
 }

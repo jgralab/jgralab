@@ -202,7 +202,6 @@ public class SchemaGraph2Tg {
 	 * 
 	 * <pre>
 	 * setIsFormated(true);
-	 * &lt;&lt;&lt;&lt;&lt;&lt;&lt; .mine
 	 * </pre>
 	 * 
 	 * have to be executed!
