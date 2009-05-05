@@ -211,16 +211,16 @@ public class RecordDomainTest extends CompositeDomainTest {
 	public void testGetUniqueNameOfElementsWithSameSimpleName() {
 		// Test if uniqueName is changed if two elements have the same
 		// simpleName
-		schema1.createRecordDomain("package1.rec1");
-		schema1.createRecordDomain("package2.rec1");
-		Domain domain1 = schema1.getDomain("package1.rec1");
-		Domain domain2 = schema1.getDomain("package2.rec1");
+		schema1.createRecordDomain("package1.Rec1");
+		schema1.createRecordDomain("package2.Rec1");
+		Domain domain1 = schema1.getDomain("package1.Rec1");
+		Domain domain2 = schema1.getDomain("package2.Rec1");
 		assertEquals("package1_rec1", domain1.getUniqueName());
 		assertEquals("package2_rec1", domain2.getUniqueName());
 		// Test if uniqueName of a third element with the same simpleName is
 		// changed
-		schema1.createRecordDomain("package3.rec1");
-		Domain domain3 = schema1.getDomain("package3.rec1");
+		schema1.createRecordDomain("package3.Rec1");
+		Domain domain3 = schema1.getDomain("package3.Rec1");
 		assertEquals("package3_rec1", domain3.getUniqueName());
 	}
 

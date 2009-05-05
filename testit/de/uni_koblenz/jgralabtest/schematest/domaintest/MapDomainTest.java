@@ -96,11 +96,11 @@ public class MapDomainTest extends CompositeDomainTest {
 		schema1.createRecordDomain("Record3");
 		RecordDomain rec3 = (RecordDomain) schema1.getDomain("Record3");
 		schema1.createMapDomain(schema1.getDomain("Boolean"), rec3);
-		Domain map1 = schema1.getDomain("Map<Boolean,.Record3>");
+		Domain map1 = schema1.getDomain("Map<Boolean, Record3>");
 		schema1.createRecordDomain("Record2");
 		RecordDomain rec2 = (RecordDomain) schema1.getDomain("Record2");
 		schema1.createMapDomain(schema1.getDomain("Boolean"), rec2);
-		Domain map2 = schema1.getDomain("Map<Boolean,.Record2>");
+		Domain map2 = schema1.getDomain("Map<Boolean, Record2>");
 		rec3.addComponent("map2", map2);
 		rec2.addComponent("map1", map1);
 		System.out.println(schema1.getDomains());
@@ -112,8 +112,8 @@ public class MapDomainTest extends CompositeDomainTest {
 		 * Tests the rejection of the following case: A MapDomain has a
 		 * KeyDomain which is not part of the same schema.
 		 */
-		schema2.createEnumDomain("enum1");
-		schema1.createMapDomain(schema2.getDomain("enum1"), schema1
+		schema2.createEnumDomain("Enum1");
+		schema1.createMapDomain(schema2.getDomain("Enum1"), schema1
 				.getDomain("Integer"));
 	}
 
@@ -123,9 +123,9 @@ public class MapDomainTest extends CompositeDomainTest {
 		 * Tests the rejection of the following case: A MapDomain has a
 		 * ValueDomain which is not part of the same schema.
 		 */
-		schema2.createEnumDomain("enum1");
+		schema2.createEnumDomain("Enum1");
 		schema1.createMapDomain(schema1.getDomain("Integer"), schema2
-				.getDomain("enum1"));
+				.getDomain("Enum1"));
 	}
 
 	@Test(expected = WrongSchemaException.class)
@@ -135,10 +135,10 @@ public class MapDomainTest extends CompositeDomainTest {
 		 * KeyDomain and ValueDomain which are not part of the same schema like
 		 * the Map Domain.
 		 */
-		schema2.createEnumDomain("enum1");
-		schema2.createEnumDomain("enum2");
-		schema1.createMapDomain(schema2.getDomain("enum1"), schema2
-				.getDomain("enum2"));
+		schema2.createEnumDomain("Enum1");
+		schema2.createEnumDomain("Enum2");
+		schema1.createMapDomain(schema2.getDomain("Enum1"), schema2
+				.getDomain("Enum2"));
 	}
 
 	@Override
