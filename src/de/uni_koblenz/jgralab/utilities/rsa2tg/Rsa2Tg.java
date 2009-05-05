@@ -1580,6 +1580,10 @@ public class Rsa2Tg extends DefaultHandler {
 			assert valueDomain != null;
 			sg.createHasKeyDomain((MapDomain) dom, keyDomain);
 			sg.createHasValueDomain((MapDomain) dom, valueDomain);
+
+			// Adds a space between
+			typeName = "Map<" + keyDomainName + ", " + valueDomainName + '>';
+
 		} else if (typeName.startsWith("List<") && typeName.endsWith(">")) {
 			dom = sg.createListDomain();
 			String compTypeName = typeName.substring(5, typeName.length() - 1);
