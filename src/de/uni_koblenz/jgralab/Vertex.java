@@ -29,15 +29,15 @@ import de.uni_koblenz.jgralab.schema.VertexClass;
 
 /**
  * represents a vertex, m1 classes inherit from this class
- * 
+ *
  * @author ist@uni-koblenz.de
- * 
+ *
  */
 public interface Vertex extends GraphElement {
 
 	/**
-	 * Checks if the list of incident edges has changed with respect to the given
-	 * <code>incidenceListVersion</code>. 
+	 * Checks if the list of incident edges has changed with respect to the
+	 * given <code>incidenceListVersion</code>.
 	 */
 	public boolean isIncidenceListModified(long incidenceListVersion);
 
@@ -47,11 +47,6 @@ public interface Vertex extends GraphElement {
 	 * @see #isIncidenceListModified(long)
 	 */
 	public long getIncidenceListVersion();
-
-	/**
-	 * @return the id of the vertex
-	 */
-	public int getId();
 
 	/**
 	 * @return the number of connected incidences to the vertex
@@ -83,8 +78,8 @@ public interface Vertex extends GraphElement {
 	 * @param ec
 	 *            an EdgeClass
 	 * @param noSubClasses
-	 *            if set to <code>true</code>, subclasses of <code>ec</code>
-	 *            are not counted
+	 *            if set to <code>true</code>, subclasses of <code>ec</code> are
+	 *            not counted
 	 * @return number of IN or OUT incidences of the specified EdgeClass
 	 */
 	public int getDegree(EdgeClass ec, boolean noSubClasses);
@@ -93,8 +88,8 @@ public interface Vertex extends GraphElement {
 	 * @param ec
 	 *            an EdgeClass
 	 * @param noSubClasses
-	 *            if set to <code>true</code>, subclasses of <code>ec</code>
-	 *            are not counted
+	 *            if set to <code>true</code>, subclasses of <code>ec</code> are
+	 *            not counted
 	 * @return number of IN or OUT incidences of the specified EdgeClass
 	 */
 	public int getDegree(Class<? extends Edge> ec, boolean noSubClasses);
@@ -123,8 +118,8 @@ public interface Vertex extends GraphElement {
 	 * @param orientation
 	 *            of connected incidences,
 	 * @param noSubClasses
-	 *            if set to <code>true</code>, subclasses of <code>ec</code>
-	 *            are not counted
+	 *            if set to <code>true</code>, subclasses of <code>ec</code> are
+	 *            not counted
 	 * @return number of IN or OUT incidences connected to the vertex
 	 */
 	public int getDegree(EdgeClass ec, EdgeDirection orientation,
@@ -136,8 +131,8 @@ public interface Vertex extends GraphElement {
 	 * @param orientation
 	 *            of connected incidences,
 	 * @param noSubClasses
-	 *            if set to <code>true</code>, subclasses of <code>ec</code>
-	 *            are not counted
+	 *            if set to <code>true</code>, subclasses of <code>ec</code> are
+	 *            not counted
 	 * @return number of IN or OUT incidences connected to the vertex
 	 */
 	public int getDegree(Class<? extends Edge> ec, EdgeDirection orientation,
@@ -196,7 +191,7 @@ public interface Vertex extends GraphElement {
 	 * @return last incident edge of this vertex
 	 */
 	public Edge getLastEdge();
-	
+
 	/**
 	 * @param orientation
 	 *            of connected incidences,
@@ -299,7 +294,7 @@ public interface Vertex extends GraphElement {
 
 	/**
 	 * puts this vertex immediately before v in vSeq
-	 * 
+	 *
 	 * @param v
 	 */
 	public void putBefore(Vertex v);
@@ -312,7 +307,7 @@ public interface Vertex extends GraphElement {
 
 	/**
 	 * puts this vertex immediately after v in vSeq
-	 * 
+	 *
 	 * @param v
 	 */
 	public void putAfter(Vertex v);
@@ -325,7 +320,7 @@ public interface Vertex extends GraphElement {
 	/**
 	 * Using this method, one can simply iterate over all incident edges of this
 	 * vertex using the advanced for-loop
-	 * 
+	 *
 	 * @return a iterable object which can be iterated through using the
 	 *         advanced for-loop
 	 */
@@ -334,7 +329,7 @@ public interface Vertex extends GraphElement {
 	/**
 	 * Using this method, one can simply iterate over all incident edges of this
 	 * vertex using the advanced for-loop
-	 * 
+	 *
 	 * @param dir
 	 *            the direction of the edges which should be iterated, either
 	 *            EdgeDirection.IN or EdgeDirection.OUT
@@ -346,7 +341,7 @@ public interface Vertex extends GraphElement {
 	/**
 	 * Using this method, one can simply iterate over all incident edges of this
 	 * vertex using the advanced for-loop
-	 * 
+	 *
 	 * @param eclass
 	 *            the EdgeClass of the edges which should be iterated
 	 * @param dir
@@ -360,7 +355,7 @@ public interface Vertex extends GraphElement {
 	/**
 	 * Using this method, one can simply iterate over all incident edges of this
 	 * vertex using the advanced for-loop
-	 * 
+	 *
 	 * @param eclass
 	 *            the M1-Class of the edges which should be iterated
 	 * @param dir
@@ -375,7 +370,7 @@ public interface Vertex extends GraphElement {
 	/**
 	 * Using this method, one can simply iterate over all incident edges of this
 	 * vertex using the advanced for-loop
-	 * 
+	 *
 	 * @param eclass
 	 *            the EdgeClass of the edges which should be iterated
 	 * @return a iterable object which can be iterated through using the
@@ -386,7 +381,7 @@ public interface Vertex extends GraphElement {
 	/**
 	 * Using this method, one can simply iterate over all incident edges of this
 	 * vertex using the advanced for-loop
-	 * 
+	 *
 	 * @param eclass
 	 *            the M1-Class of the edges which should be iterated
 	 * @return a iterable object which can be iterated through using the
@@ -396,24 +391,16 @@ public interface Vertex extends GraphElement {
 
 	/**
 	 * tests if the Edge <code>edge</code> may start at this vertex
-	 * 
-	 * @return <code>true</code> iff <code>edge</code> may start at this
-	 *         vertex
+	 *
+	 * @return <code>true</code> iff <code>edge</code> may start at this vertex
 	 */
 	public boolean isValidAlpha(Edge edge);
 
 	/**
 	 * tests if the Edge <code>edge</code> may end at this vertex
-	 * 
-	 * @return <code>true</code> iff <code>edge</code> may end at this
-	 *         vertex
+	 *
+	 * @return <code>true</code> iff <code>edge</code> may end at this vertex
 	 */
 	public boolean isValidOmega(Edge edge);
-
-	/**
-	 * returns true if this Vertex is still present in the Graph (i.e. not
-	 * deleted). This check is equivalent to getGraph().containsVertex(this).
-	 */
-	public boolean isValid();
 
 }

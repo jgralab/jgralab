@@ -33,11 +33,10 @@ import de.uni_koblenz.jgralab.schema.EdgeClass;
 
 /**
  * TODO add comment
- * 
+ *
  * @author ist@uni-koblenz.de
  */
 public abstract class EdgeImpl extends IncidenceImpl implements Edge {
-	private int id;
 
 	// global egde sequence
 	private Edge nextEdge;
@@ -56,7 +55,7 @@ public abstract class EdgeImpl extends IncidenceImpl implements Edge {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see java.lang.Comparable#compareTo(java.lang.Object)
 	 */
 	@Override
@@ -68,17 +67,17 @@ public abstract class EdgeImpl extends IncidenceImpl implements Edge {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see de.uni_koblenz.jgralab.Edge#delete()
 	 */
 	@Override
 	public void delete() {
-		myGraph.deleteEdge(this);
+		graph.deleteEdge(this);
 	}
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see de.uni_koblenz.jgralab.Edge#getAlpha()
 	 */
 	@Override
@@ -88,16 +87,7 @@ public abstract class EdgeImpl extends IncidenceImpl implements Edge {
 
 	/*
 	 * (non-Javadoc)
-	 * 
-	 * @see de.uni_koblenz.jgralab.Edge#getId()
-	 */
-	public int getId() {
-		return id;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see de.uni_koblenz.jgralab.Edge#getNextEdgeInGraph()
 	 */
 	@Override
@@ -107,7 +97,7 @@ public abstract class EdgeImpl extends IncidenceImpl implements Edge {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see de.uni_koblenz.jgralab.Edge#getNextEdgeOfClassInGraph(java.lang.Class)
 	 */
 	@Override
@@ -117,7 +107,7 @@ public abstract class EdgeImpl extends IncidenceImpl implements Edge {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see de.uni_koblenz.jgralab.Edge#getNextEdgeOfClassInGraph(de.uni_koblenz.jgralab.schema.EdgeClass)
 	 */
 	@Override
@@ -127,7 +117,7 @@ public abstract class EdgeImpl extends IncidenceImpl implements Edge {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see de.uni_koblenz.jgralab.Edge#getNextEdgeOfClassInGraph(de.uni_koblenz.jgralab.schema.EdgeClass,
 	 *      boolean)
 	 */
@@ -139,7 +129,7 @@ public abstract class EdgeImpl extends IncidenceImpl implements Edge {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see de.uni_koblenz.jgralab.Edge#getNextEdgeOfClassInGraph(java.lang.Class,
 	 *      boolean)
 	 */
@@ -164,7 +154,7 @@ public abstract class EdgeImpl extends IncidenceImpl implements Edge {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see de.uni_koblenz.jgralab.Edge#getNormalEdge()
 	 */
 	@Override
@@ -174,7 +164,7 @@ public abstract class EdgeImpl extends IncidenceImpl implements Edge {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see de.uni_koblenz.jgralab.Edge#getOmega()
 	 */
 	@Override
@@ -184,7 +174,7 @@ public abstract class EdgeImpl extends IncidenceImpl implements Edge {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see de.uni_koblenz.jgralab.Edge#getReversedEdge()
 	 */
 	@Override
@@ -194,7 +184,7 @@ public abstract class EdgeImpl extends IncidenceImpl implements Edge {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see de.uni_koblenz.jgralab.Edge#getThat()
 	 */
 	@Override
@@ -204,7 +194,7 @@ public abstract class EdgeImpl extends IncidenceImpl implements Edge {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see de.uni_koblenz.jgralab.Edge#getThatRole()
 	 */
 	@Override
@@ -214,7 +204,7 @@ public abstract class EdgeImpl extends IncidenceImpl implements Edge {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see de.uni_koblenz.jgralab.Edge#getThis()
 	 */
 	@Override
@@ -224,7 +214,7 @@ public abstract class EdgeImpl extends IncidenceImpl implements Edge {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see de.uni_koblenz.jgralab.Edge#getThisRole()
 	 */
 	@Override
@@ -234,7 +224,7 @@ public abstract class EdgeImpl extends IncidenceImpl implements Edge {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see de.uni_koblenz.jgralab.Edge#isAfterInGraph(de.uni_koblenz.jgralab.Edge)
 	 */
 	@Override
@@ -252,7 +242,7 @@ public abstract class EdgeImpl extends IncidenceImpl implements Edge {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see de.uni_koblenz.jgralab.Edge#isBeforeInGraph(de.uni_koblenz.jgralab.Edge)
 	 */
 	@Override
@@ -270,7 +260,7 @@ public abstract class EdgeImpl extends IncidenceImpl implements Edge {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see de.uni_koblenz.jgralab.Edge#isNormal()
 	 */
 	@Override
@@ -280,27 +270,27 @@ public abstract class EdgeImpl extends IncidenceImpl implements Edge {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see de.uni_koblenz.jgralab.Edge#putAfterInGraph(de.uni_koblenz.jgralab.Edge)
 	 */
 	@Override
 	public void putAfterInGraph(Edge e) {
-		myGraph.putEdgeAfterInGraph((EdgeImpl) e.getNormalEdge(), this);
+		graph.putEdgeAfterInGraph((EdgeImpl) e.getNormalEdge(), this);
 	}
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see de.uni_koblenz.jgralab.Edge#putBeforeInGraph(de.uni_koblenz.jgralab.Edge)
 	 */
 	@Override
 	public void putBeforeInGraph(Edge e) {
-		myGraph.putEdgeBeforeInGraph((EdgeImpl) e.getNormalEdge(), this);
+		graph.putEdgeBeforeInGraph((EdgeImpl) e.getNormalEdge(), this);
 	}
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see de.uni_koblenz.jgralab.Edge#setAlpha(de.uni_koblenz.jgralab.Vertex)
 	 */
 	@Override
@@ -329,7 +319,7 @@ public abstract class EdgeImpl extends IncidenceImpl implements Edge {
 
 	/**
 	 * sets the id field of this edge
-	 * 
+	 *
 	 * @param id
 	 */
 	void setId(int id) {
@@ -339,7 +329,7 @@ public abstract class EdgeImpl extends IncidenceImpl implements Edge {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see de.uni_koblenz.jgralab.Edge#setOmega(de.uni_koblenz.jgralab.Vertex)
 	 */
 	@Override
@@ -368,7 +358,7 @@ public abstract class EdgeImpl extends IncidenceImpl implements Edge {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see de.uni_koblenz.jgralab.Edge#setThat(de.uni_koblenz.jgralab.Vertex)
 	 */
 	@Override
@@ -378,7 +368,7 @@ public abstract class EdgeImpl extends IncidenceImpl implements Edge {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see de.uni_koblenz.jgralab.Edge#setThis(de.uni_koblenz.jgralab.Vertex)
 	 */
 	@Override
@@ -388,7 +378,7 @@ public abstract class EdgeImpl extends IncidenceImpl implements Edge {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see java.lang.Object#toString()
 	 */
 	@Override
@@ -399,12 +389,12 @@ public abstract class EdgeImpl extends IncidenceImpl implements Edge {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see de.uni_koblenz.jgralab.Edge#isValid()
 	 */
 	@Override
 	public boolean isValid() {
-		return myGraph.containsEdge(this);
+		return graph.containsEdge(this);
 	}
 
 	/**
@@ -423,7 +413,7 @@ public abstract class EdgeImpl extends IncidenceImpl implements Edge {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see de.uni_koblenz.jgralab.Edge#getPrevEdgeInGraph()
 	 */
 	public Edge getPrevEdgeInGraph() {

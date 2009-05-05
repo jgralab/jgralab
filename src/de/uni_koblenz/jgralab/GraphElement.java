@@ -54,4 +54,10 @@ public interface GraphElement extends AttributedElement {
 	 */
 	public void graphModified();
 
+	/**
+	 * returns true if this GraphElement is still present in the Graph (i.e. not
+	 * deleted). This check is equivalent to getGraph().containsVertex(this) or
+	 * getGraph().containsEdge(this).
+	 */
+	public boolean isValid();
 }
