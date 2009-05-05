@@ -28,17 +28,11 @@ import de.uni_koblenz.jgralab.schema.EdgeClass;
 
 /**
  * represents a signed edge, has an orientation
- * 
+ *
  * @author ist@uni-koblenz.de
- * 
+ *
  */
 public interface Edge extends GraphElement {
-
-	/**
-	 * @return the signed id of the incidence, corresponding edge has abs(id)
-	 *         for id
-	 */
-	public int getId();
 
 	/**
 	 * @return the next incidence object in iSeq of current vertex
@@ -236,7 +230,7 @@ public interface Edge extends GraphElement {
 
 	/**
 	 * puts this edge immediately before e in eSeq
-	 * 
+	 *
 	 * @param e
 	 */
 	public void putBeforeInGraph(Edge e);
@@ -249,7 +243,7 @@ public interface Edge extends GraphElement {
 
 	/**
 	 * puts this edge immediately after anEdge in eSeq
-	 * 
+	 *
 	 * @param e
 	 */
 	public void putAfterInGraph(Edge e);
@@ -262,7 +256,7 @@ public interface Edge extends GraphElement {
 
 	/**
 	 * sets the alpha vertex to v
-	 * 
+	 *
 	 * @param v
 	 *            a vertex
 	 */
@@ -270,7 +264,7 @@ public interface Edge extends GraphElement {
 
 	/**
 	 * sets the omega vertex to v
-	 * 
+	 *
 	 * @param v
 	 *            a vertex
 	 */
@@ -278,7 +272,7 @@ public interface Edge extends GraphElement {
 
 	/**
 	 * sets the this vertex to v
-	 * 
+	 *
 	 * @param v
 	 *            a vertex
 	 */
@@ -286,7 +280,7 @@ public interface Edge extends GraphElement {
 
 	/**
 	 * sets the that vertex to v
-	 * 
+	 *
 	 * @param v
 	 *            a vertex
 	 */
@@ -326,9 +320,4 @@ public interface Edge extends GraphElement {
 	 */
 	public boolean isNormal();
 
-	/**
-	 * returns true if this Edge is still present in the Graph (i.e. not
-	 * deleted). This check is equivalent to getGraph().containsEdge(this).
-	 */
-	public boolean isValid();
 }

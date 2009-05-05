@@ -264,7 +264,7 @@ public abstract class ReversedEdgeImpl extends IncidenceImpl implements Edge {
 	 */
 	@Override
 	public void graphModified() {
-		myGraph.graphModified();
+		graph.graphModified();
 	}
 
 	/*
@@ -375,7 +375,7 @@ public abstract class ReversedEdgeImpl extends IncidenceImpl implements Edge {
 	 */
 	@Override
 	public boolean isValid() {
-		return myGraph.containsEdge(this);
+		return graph.containsEdge(this);
 	}
 
 }

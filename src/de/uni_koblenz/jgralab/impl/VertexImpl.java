@@ -35,11 +35,10 @@ import de.uni_koblenz.jgralab.schema.VertexClass;
 
 /**
  * TODO add comment
- * 
+ *
  * @author ist@uni-koblenz.de
  */
 public abstract class VertexImpl extends GraphElementImpl implements Vertex {
-	private int id;
 
 	// global vertex sequence
 	private VertexImpl nextVertex;
@@ -70,7 +69,7 @@ public abstract class VertexImpl extends GraphElementImpl implements Vertex {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see de.uni_koblenz.jgralab.Vertex#getDegree()
 	 */
 	@Override
@@ -80,7 +79,7 @@ public abstract class VertexImpl extends GraphElementImpl implements Vertex {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see de.uni_koblenz.jgralab.Vertex#getDegree(de.uni_koblenz.jgralab.EdgeDirection)
 	 */
 	@Override
@@ -117,7 +116,7 @@ public abstract class VertexImpl extends GraphElementImpl implements Vertex {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see de.uni_koblenz.jgralab.Vertex#getNextVertex()
 	 */
 	@Override
@@ -128,7 +127,7 @@ public abstract class VertexImpl extends GraphElementImpl implements Vertex {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see de.uni_koblenz.jgralab.Vertex#getNextVertexOfClass(java.lang.Class)
 	 */
 	@Override
@@ -138,7 +137,7 @@ public abstract class VertexImpl extends GraphElementImpl implements Vertex {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see de.uni_koblenz.jgralab.Vertex#getNextVertexOfClass(java.lang.Class,
 	 *      boolean)
 	 */
@@ -164,7 +163,7 @@ public abstract class VertexImpl extends GraphElementImpl implements Vertex {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see de.uni_koblenz.jgralab.Vertex#getNextVertexOfClass(de.uni_koblenz.jgralab.schema.VertexClass)
 	 */
 	@Override
@@ -174,7 +173,7 @@ public abstract class VertexImpl extends GraphElementImpl implements Vertex {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see de.uni_koblenz.jgralab.Vertex#getNextVertexOfClass(de.uni_koblenz.jgralab.schema.VertexClass,
 	 *      boolean)
 	 */
@@ -186,7 +185,7 @@ public abstract class VertexImpl extends GraphElementImpl implements Vertex {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see de.uni_koblenz.jgralab.Vertex#isBefore(de.uni_koblenz.jgralab.Vertex)
 	 */
 	@Override
@@ -204,17 +203,17 @@ public abstract class VertexImpl extends GraphElementImpl implements Vertex {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see de.uni_koblenz.jgralab.Vertex#putBefore(de.uni_koblenz.jgralab.Vertex)
 	 */
 	@Override
 	public void putBefore(Vertex v) {
-		myGraph.putVertexBefore((VertexImpl) v, this);
+		graph.putVertexBefore((VertexImpl) v, this);
 	}
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see de.uni_koblenz.jgralab.Vertex#isAfter(de.uni_koblenz.jgralab.Vertex)
 	 */
 	@Override
@@ -232,17 +231,17 @@ public abstract class VertexImpl extends GraphElementImpl implements Vertex {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see de.uni_koblenz.jgralab.Vertex#putAfter(de.uni_koblenz.jgralab.Vertex)
 	 */
 	@Override
 	public void putAfter(Vertex v) {
-		myGraph.putVertexAfter((VertexImpl) v, this);
+		graph.putVertexAfter((VertexImpl) v, this);
 	}
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see de.uni_koblenz.jgralab.Vertex#getFirstEdge()
 	 */
 	@Override
@@ -252,7 +251,7 @@ public abstract class VertexImpl extends GraphElementImpl implements Vertex {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see de.uni_koblenz.jgralab.Vertex#getLastEdge()
 	 */
 	@Override
@@ -270,7 +269,7 @@ public abstract class VertexImpl extends GraphElementImpl implements Vertex {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see de.uni_koblenz.jgralab.Vertex#getFirstEdge(de.uni_koblenz.jgralab.EdgeDirection)
 	 */
 	@Override
@@ -296,7 +295,7 @@ public abstract class VertexImpl extends GraphElementImpl implements Vertex {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see de.uni_koblenz.jgralab.Vertex#getFirstEdgeOfClass(de.uni_koblenz.jgralab.schema.EdgeClass)
 	 */
 	@Override
@@ -307,7 +306,7 @@ public abstract class VertexImpl extends GraphElementImpl implements Vertex {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see de.uni_koblenz.jgralab.Vertex#getFirstEdgeOfClass(java.lang.Class)
 	 */
 	@Override
@@ -317,7 +316,7 @@ public abstract class VertexImpl extends GraphElementImpl implements Vertex {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see de.uni_koblenz.jgralab.Vertex#getFirstEdgeOfClass(de.uni_koblenz.jgralab.schema.EdgeClass,
 	 *      de.uni_koblenz.jgralab.EdgeDirection)
 	 */
@@ -329,7 +328,7 @@ public abstract class VertexImpl extends GraphElementImpl implements Vertex {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see de.uni_koblenz.jgralab.Vertex#getFirstEdgeOfClass(java.lang.Class,
 	 *      de.uni_koblenz.jgralab.EdgeDirection)
 	 */
@@ -341,7 +340,7 @@ public abstract class VertexImpl extends GraphElementImpl implements Vertex {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see de.uni_koblenz.jgralab.Vertex#getFirstEdgeOfClass(de.uni_koblenz.jgralab.schema.EdgeClass,
 	 *      boolean)
 	 */
@@ -353,7 +352,7 @@ public abstract class VertexImpl extends GraphElementImpl implements Vertex {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see de.uni_koblenz.jgralab.Vertex#getFirstEdgeOfClass(java.lang.Class,
 	 *      boolean)
 	 */
@@ -366,7 +365,7 @@ public abstract class VertexImpl extends GraphElementImpl implements Vertex {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see de.uni_koblenz.jgralab.Vertex#getFirstEdgeOfClass(de.uni_koblenz.jgralab.schema.EdgeClass,
 	 *      de.uni_koblenz.jgralab.EdgeDirection, boolean)
 	 */
@@ -379,7 +378,7 @@ public abstract class VertexImpl extends GraphElementImpl implements Vertex {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see de.uni_koblenz.jgralab.Vertex#getFirstEdgeOfClass(java.lang.Class,
 	 *      de.uni_koblenz.jgralab.EdgeDirection, boolean)
 	 */
@@ -404,12 +403,12 @@ public abstract class VertexImpl extends GraphElementImpl implements Vertex {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see de.uni_koblenz.jgralab.Vertex#delete()
 	 */
 	@Override
 	public void delete() {
-		myGraph.deleteVertex(this);
+		graph.deleteVertex(this);
 	}
 
 	public void putIncidenceAfter(IncidenceImpl target, IncidenceImpl moved) {
@@ -494,7 +493,7 @@ public abstract class VertexImpl extends GraphElementImpl implements Vertex {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see de.uni_koblenz.jgralab.Vertex#getVertexVersion()
 	 */
 	@Override
@@ -504,7 +503,7 @@ public abstract class VertexImpl extends GraphElementImpl implements Vertex {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see de.uni_koblenz.jgralab.Vertex#isVertexModified()
 	 */
 	@Override
@@ -522,7 +521,7 @@ public abstract class VertexImpl extends GraphElementImpl implements Vertex {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see jgralab.Vertex#getDegree(jgralab.EdgeClass)
 	 */
 	@Override
@@ -532,7 +531,7 @@ public abstract class VertexImpl extends GraphElementImpl implements Vertex {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see jgralab.Vertex#getDegree(Class)
 	 */
 	@Override
@@ -542,7 +541,7 @@ public abstract class VertexImpl extends GraphElementImpl implements Vertex {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see jgralab.Vertex#getDegree(jgralab.EdgeClass, boolean)
 	 */
 	@Override
@@ -558,7 +557,7 @@ public abstract class VertexImpl extends GraphElementImpl implements Vertex {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see jgralab.Vertex#getDegree(Class, boolean)
 	 */
 	@Override
@@ -574,7 +573,7 @@ public abstract class VertexImpl extends GraphElementImpl implements Vertex {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see jgralab.Vertex#getDegree(jgralab.EdgeClass, jgralab.EdgeDirection)
 	 */
 	@Override
@@ -584,7 +583,7 @@ public abstract class VertexImpl extends GraphElementImpl implements Vertex {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see jgralab.Vertex#getDegree(Class, jgralab.EdgeDirection)
 	 */
 	@Override
@@ -594,7 +593,7 @@ public abstract class VertexImpl extends GraphElementImpl implements Vertex {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see jgralab.Vertex#getDegree(jgralab.EdgeClass, jgralab.EdgeDirection,
 	 *      boolean)
 	 */
@@ -612,7 +611,7 @@ public abstract class VertexImpl extends GraphElementImpl implements Vertex {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see jgralab.Vertex#getDegree(Class, jgralab.EdgeDirection, boolean)
 	 */
 	@Override
@@ -627,19 +626,9 @@ public abstract class VertexImpl extends GraphElementImpl implements Vertex {
 		return degree;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see jgralab.Vertex#getId()
-	 */
-	@Override
-	public int getId() {
-		return id;
-	}
-
 	/**
 	 * sets the id field of this vertex
-	 * 
+	 *
 	 * @param id
 	 *            an id
 	 */
@@ -650,7 +639,7 @@ public abstract class VertexImpl extends GraphElementImpl implements Vertex {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see java.lang.Object#toString()
 	 */
 	@Override
@@ -661,7 +650,7 @@ public abstract class VertexImpl extends GraphElementImpl implements Vertex {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see java.lang.Comparable#compareTo(java.lang.Object)
 	 */
 	@Override
@@ -673,7 +662,7 @@ public abstract class VertexImpl extends GraphElementImpl implements Vertex {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see de.uni_koblenz.jgralab.Vertex#incidences()
 	 */
 	@Override
@@ -683,7 +672,7 @@ public abstract class VertexImpl extends GraphElementImpl implements Vertex {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see de.uni_koblenz.jgralab.Vertex#incidences(de.uni_koblenz.jgralab.EdgeDirection)
 	 */
 	@Override
@@ -693,7 +682,7 @@ public abstract class VertexImpl extends GraphElementImpl implements Vertex {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see de.uni_koblenz.jgralab.Vertex#incidences(de.uni_koblenz.jgralab.schema.EdgeClass,
 	 *      de.uni_koblenz.jgralab.EdgeDirection)
 	 */
@@ -704,7 +693,7 @@ public abstract class VertexImpl extends GraphElementImpl implements Vertex {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see de.uni_koblenz.jgralab.Vertex#incidences(java.lang.Class,
 	 *      de.uni_koblenz.jgralab.EdgeDirection)
 	 */
@@ -716,7 +705,7 @@ public abstract class VertexImpl extends GraphElementImpl implements Vertex {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see de.uni_koblenz.jgralab.Vertex#incidences(de.uni_koblenz.jgralab.schema.EdgeClass)
 	 */
 	@Override
@@ -726,7 +715,7 @@ public abstract class VertexImpl extends GraphElementImpl implements Vertex {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see de.uni_koblenz.jgralab.Vertex#incidences(java.lang.Class)
 	 */
 	@Override
@@ -736,12 +725,12 @@ public abstract class VertexImpl extends GraphElementImpl implements Vertex {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see de.uni_koblenz.jgralab.Vertex#isValid()
 	 */
 	@Override
 	public boolean isValid() {
-		return myGraph.containsVertex(this);
+		return graph.containsVertex(this);
 	}
 
 	protected void setNextVertex(Vertex nextVertex) {

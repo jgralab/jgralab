@@ -42,7 +42,7 @@ import de.uni_koblenz.jgralab.schema.exception.InheritanceException;
 public final class VertexClassImpl extends GraphElementClassImpl implements
 		VertexClass {
 
-	private final Set<DirectedEdgeClass> associatedEdges = new HashSet<DirectedEdgeClass>();
+	private final Set<DirectedEdgeClass> associatedEdgeClasses = new HashSet<DirectedEdgeClass>();
 
 	static VertexClass createDefaultVertexClass(Schema schema) {
 		assert schema.getDefaultGraphClass() != null : "DefaultGraphClass has not yet been created!";
@@ -85,18 +85,18 @@ public final class VertexClassImpl extends GraphElementClassImpl implements
 	public void addEdgeClass(EdgeClass anEdgeClass) {
 		if (anEdgeClass.getTo() == this) {
 			DirectedEdgeClass dec = anEdgeClass.getInEdgeClass();
-			associatedEdges.add(dec);
+			associatedEdgeClasses.add(dec);
 		}
 		if (anEdgeClass.getFrom() == this) {
 			DirectedEdgeClass dec = anEdgeClass.getOutEdgeClass();
-			associatedEdges.add(dec);
+			associatedEdgeClasses.add(dec);
 		}
 	}
 
 	@Override
 	public Set<EdgeClass> getOwnEdgeClasses() {
 		Set<EdgeClass> s = new HashSet<EdgeClass>();
-		for (DirectedEdgeClass dec : associatedEdges) {
+		for (DirectedEdgeClass dec : associatedEdgeClasses) {
 			s.add(dec.getEdgeClass());
 		}
 		return s;
@@ -121,7 +121,7 @@ public final class VertexClassImpl extends GraphElementClassImpl implements
 
 	@Override
 	public Set<DirectedEdgeClass> getOwnDirectedEdgeClasses() {
-		return associatedEdges;
+		return associatedEdgeClasses;
 	}
 
 	@Override
