@@ -40,7 +40,7 @@ import de.uni_koblenz.jgralab.schema.exception.DuplicateRecordComponentException
 import de.uni_koblenz.jgralab.schema.exception.InvalidNameException;
 import de.uni_koblenz.jgralab.schema.exception.NoSuchRecordComponentException;
 import de.uni_koblenz.jgralab.schema.exception.RecordCycleException;
-import de.uni_koblenz.jgralab.schema.exception.SchemaException;
+import de.uni_koblenz.jgralab.schema.exception.WrongSchemaException;
 
 public final class RecordDomainImpl extends CompositeDomainImpl implements
 		RecordDomain {
@@ -74,8 +74,8 @@ public final class RecordDomainImpl extends CompositeDomainImpl implements
 			throw new DuplicateRecordComponentException(name,
 					getQualifiedName());
 		}
-		if (parentPackage.getSchema().getDomain(aDomain.getQualifiedName()) == null) {
-			throw new SchemaException(aDomain.getQualifiedName()
+		if (parentPackage.getSchema().getDomain(aDomain.getQualifiedName()) != aDomain) {
+			throw new WrongSchemaException(aDomain.getQualifiedName()
 					+ " must be a domain of the schema "
 					+ parentPackage.getSchema().getQualifiedName());
 		}

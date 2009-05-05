@@ -30,7 +30,6 @@ import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
 import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.GraphSize;
 import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.VertexCosts;
 import de.uni_koblenz.jgralab.greql2.exception.EvaluateException;
-import de.uni_koblenz.jgralab.greql2.exception.WrongResultTypeException;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
 import de.uni_koblenz.jgralab.greql2.schema.ConditionalExpression;
 import de.uni_koblenz.jgralab.greql2.schema.Expression;
@@ -93,11 +92,10 @@ public class ConditionalExpressionEvaluator extends VertexEvaluator {
 						.getFirstIsNullExprOf(EdgeDirection.IN).getAlpha();
 			}
 		} else {
-			throw new WrongResultTypeException(vertex, "Boolean",
-					conditionResult.getClass().getSimpleName(), null);
-			// expressionToEvaluate = (Expression) vertex.getFirstIsNullExprOf(
-			// EdgeDirection.IN).getAlpha();
+			expressionToEvaluate = (Expression) vertex.getFirstIsNullExprOf(
+					EdgeDirection.IN).getAlpha();
 		}
+
 		VertexEvaluator exprEvaluator = greqlEvaluator
 				.getVertexEvaluatorGraphMarker().getMark(expressionToEvaluate);
 		result = exprEvaluator.getResult(subgraph);
