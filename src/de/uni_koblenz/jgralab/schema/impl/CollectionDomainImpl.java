@@ -3,6 +3,7 @@ package de.uni_koblenz.jgralab.schema.impl;
 import de.uni_koblenz.jgralab.schema.CollectionDomain;
 import de.uni_koblenz.jgralab.schema.Domain;
 import de.uni_koblenz.jgralab.schema.Package;
+import de.uni_koblenz.jgralab.schema.exception.WrongSchemaException;
 
 public abstract class CollectionDomainImpl extends CompositeDomainImpl
 		implements CollectionDomain {
@@ -17,10 +18,11 @@ public abstract class CollectionDomainImpl extends CompositeDomainImpl
 			Domain baseDomain) {
 		super(simpleName, pkg);
 
-		assert pkg.getSchema().getDomain(baseDomain.getQualifiedName()) != null : baseDomain
-				.getQualifiedName()
-				+ " must be a domain of the schema "
-				+ pkg.getSchema().getQualifiedName();
+		if (pkg.getSchema().getDomain(baseDomain.getQualifiedName()) != baseDomain) {
+			throw new WrongSchemaException(baseDomain.getQualifiedName()
+					+ " must be a domain of the schema "
+					+ pkg.getSchema().getQualifiedName());
+		}
 
 		this.baseDomain = baseDomain;
 	}

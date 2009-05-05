@@ -34,7 +34,7 @@ public class CollectionDomainTest extends CompositeDomainTest {
 	@Test(expected = WrongSchemaException.class)
 	public void testRejectionOfForeignSchemas() {
 		// test if baseDomains of a foreign schema are rejected
-		schema2.createEnumDomain("enum1");
-		schema1.createListDomain(schema2.getDomain("enum1"));
+		schema2.createEnumDomain("Enum1");
+		schema1.createListDomain(schema2.getDomain("Enum1"));
 	}
 }

@@ -148,10 +148,10 @@ public class MapDomainTest extends CompositeDomainTest {
 		schema1.createMapDomain(schema1.getDomain("String"), schema1
 				.getDomain("Double"));
 		// A MapDomains with a different KeyDomain must not be equal
-		assertFalse(schema1.getDomain("Map<String,Double>")
+		assertFalse(schema1.getDomain("Map<String, Double>")
 				.equals(otherDomain1));
 		// A MapDomains with a different ValueDomain must not be equal
-		assertFalse(schema1.getDomain("Map<String,Double>")
+		assertFalse(schema1.getDomain("Map<String, Double>")
 				.equals(otherDomain2));
 	}
 
