@@ -97,7 +97,7 @@ public class SchemaImpl implements Schema {
 	/**
 	 * File Manager class overwriting the method {@code getJavaFileForOutput} so
 	 * that bytecode is written to a {@code ClassFileAbstraction}.
-	 *
+	 * 
 	 */
 	private class ClassFileManager extends
 			ForwardingJavaFileManager<JavaFileManager> {
@@ -218,7 +218,7 @@ public class SchemaImpl implements Schema {
 
 	/**
 	 * Creates a new schema object.
-	 *
+	 * 
 	 * @param name
 	 *            The name of the schema
 	 * @param packagePrefix
@@ -545,7 +545,8 @@ public class SchemaImpl implements Schema {
 	}
 
 	@Override
-	public Attribute createAttribute(String name, Domain dom, AttributedElementClass aec) {
+	public Attribute createAttribute(String name, Domain dom,
+			AttributedElementClass aec) {
 		return new AttributeImpl(name, dom, aec);
 	}
 
@@ -662,7 +663,7 @@ public class SchemaImpl implements Schema {
 	/**
 	 * Creates a {@link Package} with the given qualified name, or returns the
 	 * existing package with this qualified name.
-	 *
+	 * 
 	 * @param qn
 	 *            the qualified name of the package
 	 * @return a new {@link Package} with the given qualified name, or an
@@ -718,7 +719,7 @@ public class SchemaImpl implements Schema {
 	/**
 	 * Given a qualified name like foo.bar.baz returns a string array with two
 	 * components: the package prefix (foo.bar) and the simple name (baz).
-	 *
+	 * 
 	 * @param qualifiedName
 	 *            a qualified name
 	 * @return a string array with two components: the package prefix and the
@@ -762,7 +763,7 @@ public class SchemaImpl implements Schema {
 
 	@Override
 	public boolean equals(Object other) {
-		return other.equals(this)
+		return this == other
 				|| ((other instanceof Schema) && this.qualifiedName
 						.equals(((Schema) other).getQualifiedName()));
 	}
@@ -1017,7 +1018,7 @@ public class SchemaImpl implements Schema {
 
 	/**
 	 * only used internally
-	 *
+	 * 
 	 * @return number of graphelementclasses contained in graphclass
 	 */
 	private int getNumberOfElements() {
