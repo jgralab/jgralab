@@ -203,19 +203,10 @@ public class CompareSchemaWithSchemaGraph {
 			// Gets the simpleName for querying a the right domain
 			String simpleName = schema.getDomain(domain.getQualifiedName())
 					.getSimpleName();
+
 			// Gets, removes and compare at the same time both Domain objects.
 			compareDomain(domains.remove(simpleName), domain);
 		}
-
-		// TODO
-		// // THIS IS A FIX ---- NEEDS TO BE REMOVED
-		// for (Iterator<Entry<String, de.uni_koblenz.jgralab.schema.Domain>> it
-		// = domains
-		// .entrySet().iterator(); it.hasNext();) {
-		// if (it.next().getValue().isInDefaultPackage()) {
-		// it.remove();
-		// }
-		// }
 
 		// After all this, the Domain map should be empty
 		assertTrue(
