@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package de.uni_koblenz.jgralab.greql2.optimizer.condexp;
 
@@ -10,9 +10,9 @@ import de.uni_koblenz.jgralab.greql2.schema.FunctionId;
 
 /**
  * TODO: (heimdall) Comment class!
- * 
+ *
  * @author ist@uni-koblenz.de
- * 
+ *
  */
 public class And extends BinaryOperator {
 
@@ -47,6 +47,10 @@ public class And extends BinaryOperator {
 	public Formula simplify() {
 		Formula lhs = leftHandSide.simplify();
 		Formula rhs = rightHandSide.simplify();
+
+		if (lhs.equals(new Not(rhs)) || new Not(lhs).equals(rhs)) {
+			return new False();
+		}
 
 		if (lhs instanceof False) {
 			simplifiedOrOptimized = true;
