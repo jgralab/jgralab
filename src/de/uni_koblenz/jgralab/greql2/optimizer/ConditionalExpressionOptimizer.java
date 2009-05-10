@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package de.uni_koblenz.jgralab.greql2.optimizer;
 
@@ -17,9 +17,9 @@ import de.uni_koblenz.jgralab.greql2.schema.Greql2;
 
 /**
  * TODO: (heimdall) Comment class!
- * 
+ *
  * @author ist@uni-koblenz.de
- * 
+ *
  */
 public class ConditionalExpressionOptimizer extends OptimizerBase {
 
@@ -28,21 +28,22 @@ public class ConditionalExpressionOptimizer extends OptimizerBase {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * de.uni_koblenz.jgralab.greql2.optimizer.Optimizer#isEquivalent(de.uni_koblenz
 	 * .jgralab.greql2.optimizer.Optimizer)
 	 */
 	@Override
 	public boolean isEquivalent(Optimizer optimizer) {
-		if (optimizer instanceof ConditionalExpressionOptimizer)
+		if (optimizer instanceof ConditionalExpressionOptimizer) {
 			return true;
+		}
 		return false;
 	}
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * de.uni_koblenz.jgralab.greql2.optimizer.Optimizer#optimize(de.uni_koblenz
 	 * .jgralab.greql2.evaluator.GreqlEvaluator,
@@ -62,8 +63,9 @@ public class ConditionalExpressionOptimizer extends OptimizerBase {
 			declarations.add(decl);
 		}
 		for (Declaration decl : declarations) {
-			if (decl.getFirstIsConstraintOf() == null)
+			if (decl.getFirstIsConstraintOf() == null) {
 				continue;
+			}
 
 			Expression topLevelExpression = (Expression) decl
 					.getFirstIsConstraintOf().getAlpha();
@@ -89,6 +91,8 @@ public class ConditionalExpressionOptimizer extends OptimizerBase {
 			throw new OptimizerException(
 					"Exception while re-creating VertexEvaluators.", e);
 		}
+
+
 
 		OptimizerUtility.createMissingSourcePositions(syntaxgraph);
 
