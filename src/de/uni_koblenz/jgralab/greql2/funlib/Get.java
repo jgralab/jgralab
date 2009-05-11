@@ -37,7 +37,7 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
  *
  * <dl>
  * <dt><b>GReQL-signature</b></dt>
- * <dd><code>OBJECT get(m:MAP, obj:OBJECT)</code></dd>
+ * <dd><code>OBJECT get(m:MAP, key:OBJECT)</code></dd>
  * <dd>&nbsp;</dd>
  * </dl>
  * <dl>
@@ -46,7 +46,7 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
  * <dl>
  * <dt><b>Parameters:</b></dt>
  * <dd><code>m</code> - map to be used</dd>
- * <dd><code>obj</code> - object serving as key</dd>
+ * <dd><code>key</code> - object serving as key</dd>
  * <dt><b>Returns:</b></dt>
  * <dd>the object which is mapped by <code>obj</code> in <code>m</code>.</dd>
  * <dd><code>Null</code> if one of the given parameters is <code>Null</code> or
