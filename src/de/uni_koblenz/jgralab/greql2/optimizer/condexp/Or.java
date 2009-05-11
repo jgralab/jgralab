@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package de.uni_koblenz.jgralab.greql2.optimizer.condexp;
 
@@ -10,9 +10,9 @@ import de.uni_koblenz.jgralab.greql2.schema.FunctionId;
 
 /**
  * TODO: (heimdall) Comment class!
- * 
+ *
  * @author ist@uni-koblenz.de
- * 
+ *
  */
 public class Or extends BinaryOperator {
 
@@ -47,6 +47,9 @@ public class Or extends BinaryOperator {
 	public Formula simplify() {
 		Formula lhs = leftHandSide.simplify();
 		Formula rhs = rightHandSide.simplify();
+
+		// BEWARE: (x | ~x) is NOT always true in GReQL, cause it's null, if x
+		// evaluates to null...
 
 		if (lhs instanceof True) {
 			simplifiedOrOptimized = true;
