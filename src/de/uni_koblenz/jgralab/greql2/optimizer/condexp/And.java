@@ -48,6 +48,9 @@ public class And extends BinaryOperator {
 		Formula lhs = leftHandSide.simplify();
 		Formula rhs = rightHandSide.simplify();
 
+		// BEWARE: (x & ~x) is NOT always false in GReQL, cause it's null, if x
+		// evaluates to null...
+
 		if (lhs.equals(new Not(rhs)) || new Not(lhs).equals(rhs)) {
 			return new False();
 		}
