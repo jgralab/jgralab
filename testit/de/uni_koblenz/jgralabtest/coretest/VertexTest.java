@@ -1951,7 +1951,7 @@ public class VertexTest {
 	@Test
 	public void getPrevVertexTest0() {
 		Vertex v = graph.createSuperNode();
-		assertEquals(null, v.getPrevVertex());
+		assertNull(v.getPrevVertex());
 	}
 
 	/**
@@ -1968,7 +1968,7 @@ public class VertexTest {
 		assertEquals(v2, v3.getPrevVertex());
 		assertEquals(v1, v2.getPrevVertex());
 		assertEquals(v0, v1.getPrevVertex());
-		assertEquals(null, v0.getPrevVertex());
+		assertNull(v0.getPrevVertex());
 	}
 
 	/**
@@ -2000,7 +2000,7 @@ public class VertexTest {
 	@Test
 	public void getNextVertexTest0() {
 		Vertex v = graph.createSuperNode();
-		assertEquals(null, v.getNextVertex());
+		assertNull(v.getNextVertex());
 	}
 
 	/**
@@ -2017,7 +2017,7 @@ public class VertexTest {
 		assertEquals(v2, v1.getNextVertex());
 		assertEquals(v3, v2.getNextVertex());
 		assertEquals(v4, v3.getNextVertex());
-		assertEquals(null, v4.getNextVertex());
+		assertNull(v4.getNextVertex());
 	}
 
 	/**
@@ -2076,10 +2076,10 @@ public class VertexTest {
 	public void getNextVertexTestVertexClass0() {
 		VertexClass[] vertices = getVertexClasses();
 		Vertex v = graph.createSubNode();
-		assertEquals(null, v.getNextVertexOfClass(vertices[0]));
-		assertEquals(null, v.getNextVertexOfClass(vertices[1]));
-		assertEquals(null, v.getNextVertexOfClass(vertices[2]));
-		assertEquals(null, v.getNextVertexOfClass(vertices[3]));
+		assertNull(v.getNextVertexOfClass(vertices[0]));
+		assertNull(v.getNextVertexOfClass(vertices[1]));
+		assertNull(v.getNextVertexOfClass(vertices[2]));
+		assertNull(v.getNextVertexOfClass(vertices[3]));
 	}
 
 	/**
@@ -2093,8 +2093,8 @@ public class VertexTest {
 		Vertex v1 = graph.createSubNode();
 		assertEquals(v1, v0.getNextVertexOfClass(vertices[0]));
 		assertEquals(v1, v0.getNextVertexOfClass(vertices[1]));
-		assertEquals(null, v0.getNextVertexOfClass(vertices[2]));
-		assertEquals(null, v0.getNextVertexOfClass(vertices[3]));
+		assertNull(v0.getNextVertexOfClass(vertices[2]));
+		assertNull(v0.getNextVertexOfClass(vertices[3]));
 	}
 
 	/**
@@ -2157,10 +2157,10 @@ public class VertexTest {
 		assertEquals(v6, v5.getNextVertexOfClass(vertices[2]));
 		assertEquals(v6, v5.getNextVertexOfClass(vertices[3]));
 
-		assertEquals(null, v6.getNextVertexOfClass(vertices[0]));
-		assertEquals(null, v6.getNextVertexOfClass(vertices[1]));
-		assertEquals(null, v6.getNextVertexOfClass(vertices[2]));
-		assertEquals(null, v6.getNextVertexOfClass(vertices[3]));
+		assertNull(v6.getNextVertexOfClass(vertices[0]));
+		assertNull(v6.getNextVertexOfClass(vertices[1]));
+		assertNull(v6.getNextVertexOfClass(vertices[2]));
+		assertNull(v6.getNextVertexOfClass(vertices[3]));
 	}
 
 	/**
@@ -2277,10 +2277,10 @@ public class VertexTest {
 	@Test
 	public void getNextVertexTestClass0() {
 		Vertex v = graph.createSubNode();
-		assertEquals(null, v.getNextVertexOfClass(AbstractSuperNode.class));
-		assertEquals(null, v.getNextVertexOfClass(SubNode.class));
-		assertEquals(null, v.getNextVertexOfClass(SuperNode.class));
-		assertEquals(null, v.getNextVertexOfClass(DoubleSubNode.class));
+		assertNull(v.getNextVertexOfClass(AbstractSuperNode.class));
+		assertNull(v.getNextVertexOfClass(SubNode.class));
+		assertNull(v.getNextVertexOfClass(SuperNode.class));
+		assertNull(v.getNextVertexOfClass(DoubleSubNode.class));
 	}
 
 	/**
@@ -2293,8 +2293,8 @@ public class VertexTest {
 		Vertex v1 = graph.createSubNode();
 		assertEquals(v1, v0.getNextVertexOfClass(AbstractSuperNode.class));
 		assertEquals(v1, v0.getNextVertexOfClass(SubNode.class));
-		assertEquals(null, v0.getNextVertexOfClass(SuperNode.class));
-		assertEquals(null, v0.getNextVertexOfClass(DoubleSubNode.class));
+		assertNull(v0.getNextVertexOfClass(SuperNode.class));
+		assertNull(v0.getNextVertexOfClass(DoubleSubNode.class));
 	}
 
 	/**
@@ -2355,10 +2355,10 @@ public class VertexTest {
 		assertEquals(v6, v5.getNextVertexOfClass(SuperNode.class));
 		assertEquals(v6, v5.getNextVertexOfClass(DoubleSubNode.class));
 
-		assertEquals(null, v6.getNextVertexOfClass(AbstractSuperNode.class));
-		assertEquals(null, v6.getNextVertexOfClass(SubNode.class));
-		assertEquals(null, v6.getNextVertexOfClass(SuperNode.class));
-		assertEquals(null, v6.getNextVertexOfClass(DoubleSubNode.class));
+		assertNull(v6.getNextVertexOfClass(AbstractSuperNode.class));
+		assertNull(v6.getNextVertexOfClass(SubNode.class));
+		assertNull(v6.getNextVertexOfClass(SuperNode.class));
+		assertNull(v6.getNextVertexOfClass(DoubleSubNode.class));
 	}
 
 	/**
@@ -2475,14 +2475,14 @@ public class VertexTest {
 	public void getNextVertexTestVertexClassBoolean0() {
 		VertexClass[] vertices = getVertexClasses();
 		Vertex v = graph.createSubNode();
-		assertEquals(null, v.getNextVertexOfClass(vertices[0], false));
-		assertEquals(null, v.getNextVertexOfClass(vertices[0], true));
-		assertEquals(null, v.getNextVertexOfClass(vertices[1], false));
-		assertEquals(null, v.getNextVertexOfClass(vertices[1], true));
-		assertEquals(null, v.getNextVertexOfClass(vertices[2], false));
-		assertEquals(null, v.getNextVertexOfClass(vertices[2], true));
-		assertEquals(null, v.getNextVertexOfClass(vertices[3], false));
-		assertEquals(null, v.getNextVertexOfClass(vertices[3], true));
+		assertNull(v.getNextVertexOfClass(vertices[0], false));
+		assertNull(v.getNextVertexOfClass(vertices[0], true));
+		assertNull(v.getNextVertexOfClass(vertices[1], false));
+		assertNull(v.getNextVertexOfClass(vertices[1], true));
+		assertNull(v.getNextVertexOfClass(vertices[2], false));
+		assertNull(v.getNextVertexOfClass(vertices[2], true));
+		assertNull(v.getNextVertexOfClass(vertices[3], false));
+		assertNull(v.getNextVertexOfClass(vertices[3], true));
 	}
 
 	/**
@@ -2495,13 +2495,13 @@ public class VertexTest {
 		Vertex v0 = graph.createDoubleSubNode();
 		Vertex v1 = graph.createSubNode();
 		assertEquals(v1, v0.getNextVertexOfClass(vertices[0], false));
-		assertEquals(null, v0.getNextVertexOfClass(vertices[0], true));
+		assertNull(v0.getNextVertexOfClass(vertices[0], true));
 		assertEquals(v1, v0.getNextVertexOfClass(vertices[1], false));
 		assertEquals(v1, v0.getNextVertexOfClass(vertices[1], true));
-		assertEquals(null, v0.getNextVertexOfClass(vertices[2], false));
-		assertEquals(null, v0.getNextVertexOfClass(vertices[2], true));
-		assertEquals(null, v0.getNextVertexOfClass(vertices[3], false));
-		assertEquals(null, v0.getNextVertexOfClass(vertices[3], true));
+		assertNull(v0.getNextVertexOfClass(vertices[2], false));
+		assertNull(v0.getNextVertexOfClass(vertices[2], true));
+		assertNull(v0.getNextVertexOfClass(vertices[3], false));
+		assertNull(v0.getNextVertexOfClass(vertices[3], true));
 	}
 
 	/**
@@ -2514,11 +2514,11 @@ public class VertexTest {
 		Vertex v0 = graph.createDoubleSubNode();
 		Vertex v1 = graph.createDoubleSubNode();
 		assertEquals(v1, v0.getNextVertexOfClass(vertices[0], false));
-		assertEquals(null, v0.getNextVertexOfClass(vertices[0], true));
+		assertNull(v0.getNextVertexOfClass(vertices[0], true));
 		assertEquals(v1, v0.getNextVertexOfClass(vertices[1], false));
-		assertEquals(null, v0.getNextVertexOfClass(vertices[1], true));
+		assertNull(v0.getNextVertexOfClass(vertices[1], true));
 		assertEquals(v1, v0.getNextVertexOfClass(vertices[2], false));
-		assertEquals(null, v0.getNextVertexOfClass(vertices[2], true));
+		assertNull(v0.getNextVertexOfClass(vertices[2], true));
 		assertEquals(v1, v0.getNextVertexOfClass(vertices[3], false));
 		assertEquals(v1, v0.getNextVertexOfClass(vertices[3], true));
 	}
@@ -2542,7 +2542,7 @@ public class VertexTest {
 		assertEquals(v2, v0.getNextVertexOfClass(vertices[1], false));
 		assertEquals(v1, v0.getNextVertexOfClass(vertices[2], false));
 		assertEquals(v2, v0.getNextVertexOfClass(vertices[3], false));
-		assertEquals(null, v0.getNextVertexOfClass(vertices[0], true));
+		assertNull(v0.getNextVertexOfClass(vertices[0], true));
 		assertEquals(v4, v0.getNextVertexOfClass(vertices[1], true));
 		assertEquals(v1, v0.getNextVertexOfClass(vertices[2], true));
 		assertEquals(v2, v0.getNextVertexOfClass(vertices[3], true));
@@ -2551,7 +2551,7 @@ public class VertexTest {
 		assertEquals(v2, v1.getNextVertexOfClass(vertices[1], false));
 		assertEquals(v2, v1.getNextVertexOfClass(vertices[2], false));
 		assertEquals(v2, v1.getNextVertexOfClass(vertices[3], false));
-		assertEquals(null, v1.getNextVertexOfClass(vertices[0], true));
+		assertNull(v1.getNextVertexOfClass(vertices[0], true));
 		assertEquals(v4, v1.getNextVertexOfClass(vertices[1], true));
 		assertEquals(v3, v1.getNextVertexOfClass(vertices[2], true));
 		assertEquals(v2, v1.getNextVertexOfClass(vertices[3], true));
@@ -2560,7 +2560,7 @@ public class VertexTest {
 		assertEquals(v4, v2.getNextVertexOfClass(vertices[1], false));
 		assertEquals(v3, v2.getNextVertexOfClass(vertices[2], false));
 		assertEquals(v6, v2.getNextVertexOfClass(vertices[3], false));
-		assertEquals(null, v2.getNextVertexOfClass(vertices[0], true));
+		assertNull(v2.getNextVertexOfClass(vertices[0], true));
 		assertEquals(v4, v2.getNextVertexOfClass(vertices[1], true));
 		assertEquals(v3, v2.getNextVertexOfClass(vertices[2], true));
 		assertEquals(v6, v2.getNextVertexOfClass(vertices[3], true));
@@ -2569,7 +2569,7 @@ public class VertexTest {
 		assertEquals(v4, v3.getNextVertexOfClass(vertices[1], false));
 		assertEquals(v5, v3.getNextVertexOfClass(vertices[2], false));
 		assertEquals(v6, v3.getNextVertexOfClass(vertices[3], false));
-		assertEquals(null, v3.getNextVertexOfClass(vertices[0], true));
+		assertNull(v3.getNextVertexOfClass(vertices[0], true));
 		assertEquals(v4, v3.getNextVertexOfClass(vertices[1], true));
 		assertEquals(v5, v3.getNextVertexOfClass(vertices[2], true));
 		assertEquals(v6, v3.getNextVertexOfClass(vertices[3], true));
@@ -2578,8 +2578,8 @@ public class VertexTest {
 		assertEquals(v6, v4.getNextVertexOfClass(vertices[1], false));
 		assertEquals(v5, v4.getNextVertexOfClass(vertices[2], false));
 		assertEquals(v6, v4.getNextVertexOfClass(vertices[3], false));
-		assertEquals(null, v4.getNextVertexOfClass(vertices[0], true));
-		assertEquals(null, v4.getNextVertexOfClass(vertices[1], true));
+		assertNull(v4.getNextVertexOfClass(vertices[0], true));
+		assertNull(v4.getNextVertexOfClass(vertices[1], true));
 		assertEquals(v5, v4.getNextVertexOfClass(vertices[2], true));
 		assertEquals(v6, v4.getNextVertexOfClass(vertices[3], true));
 
@@ -2587,19 +2587,19 @@ public class VertexTest {
 		assertEquals(v6, v5.getNextVertexOfClass(vertices[1], false));
 		assertEquals(v6, v5.getNextVertexOfClass(vertices[2], false));
 		assertEquals(v6, v5.getNextVertexOfClass(vertices[3], false));
-		assertEquals(null, v5.getNextVertexOfClass(vertices[0], true));
-		assertEquals(null, v5.getNextVertexOfClass(vertices[1], true));
-		assertEquals(null, v5.getNextVertexOfClass(vertices[2], true));
+		assertNull(v5.getNextVertexOfClass(vertices[0], true));
+		assertNull(v5.getNextVertexOfClass(vertices[1], true));
+		assertNull(v5.getNextVertexOfClass(vertices[2], true));
 		assertEquals(v6, v5.getNextVertexOfClass(vertices[3], true));
 
-		assertEquals(null, v6.getNextVertexOfClass(vertices[0], false));
-		assertEquals(null, v6.getNextVertexOfClass(vertices[1], false));
-		assertEquals(null, v6.getNextVertexOfClass(vertices[2], false));
-		assertEquals(null, v6.getNextVertexOfClass(vertices[3], false));
-		assertEquals(null, v6.getNextVertexOfClass(vertices[0], true));
-		assertEquals(null, v6.getNextVertexOfClass(vertices[1], true));
-		assertEquals(null, v6.getNextVertexOfClass(vertices[2], true));
-		assertEquals(null, v6.getNextVertexOfClass(vertices[3], true));
+		assertNull(v6.getNextVertexOfClass(vertices[0], false));
+		assertNull(v6.getNextVertexOfClass(vertices[1], false));
+		assertNull(v6.getNextVertexOfClass(vertices[2], false));
+		assertNull(v6.getNextVertexOfClass(vertices[3], false));
+		assertNull(v6.getNextVertexOfClass(vertices[0], true));
+		assertNull(v6.getNextVertexOfClass(vertices[1], true));
+		assertNull(v6.getNextVertexOfClass(vertices[2], true));
+		assertNull(v6.getNextVertexOfClass(vertices[3], true));
 	}
 
 	/**
@@ -2736,7 +2736,7 @@ public class VertexTest {
 						.getNextVertexOfClass(vClasses[2], false));
 				assertEquals(nextDoubleSubNodeFalse[j], vertices[j]
 						.getNextVertexOfClass(vClasses[3], false));
-				assertEquals(null, vertices[j].getNextVertexOfClass(
+				assertNull(vertices[j].getNextVertexOfClass(
 						vClasses[0], true));
 				assertEquals(nextSubNodeTrue[j], vertices[j]
 						.getNextVertexOfClass(vClasses[1], true));
@@ -2758,16 +2758,16 @@ public class VertexTest {
 	@Test
 	public void getNextVertexTestClassBoolean0() {
 		Vertex v = graph.createSubNode();
-		assertEquals(null, v.getNextVertexOfClass(AbstractSuperNode.class,
+		assertNull(v.getNextVertexOfClass(AbstractSuperNode.class,
 				false));
-		assertEquals(null, v
+		assertNull(v
 				.getNextVertexOfClass(AbstractSuperNode.class, true));
-		assertEquals(null, v.getNextVertexOfClass(SubNode.class, false));
-		assertEquals(null, v.getNextVertexOfClass(SubNode.class, true));
-		assertEquals(null, v.getNextVertexOfClass(SuperNode.class, false));
-		assertEquals(null, v.getNextVertexOfClass(SuperNode.class, true));
-		assertEquals(null, v.getNextVertexOfClass(DoubleSubNode.class, false));
-		assertEquals(null, v.getNextVertexOfClass(DoubleSubNode.class, true));
+		assertNull(v.getNextVertexOfClass(SubNode.class, false));
+		assertNull(v.getNextVertexOfClass(SubNode.class, true));
+		assertNull(v.getNextVertexOfClass(SuperNode.class, false));
+		assertNull(v.getNextVertexOfClass(SuperNode.class, true));
+		assertNull(v.getNextVertexOfClass(DoubleSubNode.class, false));
+		assertNull(v.getNextVertexOfClass(DoubleSubNode.class, true));
 	}
 
 	/**
@@ -2780,14 +2780,14 @@ public class VertexTest {
 		Vertex v1 = graph.createSubNode();
 		assertEquals(v1, v0
 				.getNextVertexOfClass(AbstractSuperNode.class, false));
-		assertEquals(null, v0.getNextVertexOfClass(AbstractSuperNode.class,
+		assertNull(v0.getNextVertexOfClass(AbstractSuperNode.class,
 				true));
 		assertEquals(v1, v0.getNextVertexOfClass(SubNode.class, false));
 		assertEquals(v1, v0.getNextVertexOfClass(SubNode.class, true));
-		assertEquals(null, v0.getNextVertexOfClass(SuperNode.class, false));
-		assertEquals(null, v0.getNextVertexOfClass(SuperNode.class, true));
-		assertEquals(null, v0.getNextVertexOfClass(DoubleSubNode.class, false));
-		assertEquals(null, v0.getNextVertexOfClass(DoubleSubNode.class, true));
+		assertNull(v0.getNextVertexOfClass(SuperNode.class, false));
+		assertNull(v0.getNextVertexOfClass(SuperNode.class, true));
+		assertNull(v0.getNextVertexOfClass(DoubleSubNode.class, false));
+		assertNull(v0.getNextVertexOfClass(DoubleSubNode.class, true));
 	}
 
 	/**
@@ -2800,12 +2800,12 @@ public class VertexTest {
 		Vertex v1 = graph.createDoubleSubNode();
 		assertEquals(v1, v0
 				.getNextVertexOfClass(AbstractSuperNode.class, false));
-		assertEquals(null, v0.getNextVertexOfClass(AbstractSuperNode.class,
+		assertNull(v0.getNextVertexOfClass(AbstractSuperNode.class,
 				true));
 		assertEquals(v1, v0.getNextVertexOfClass(SubNode.class, false));
-		assertEquals(null, v0.getNextVertexOfClass(SubNode.class, true));
+		assertNull(v0.getNextVertexOfClass(SubNode.class, true));
 		assertEquals(v1, v0.getNextVertexOfClass(SuperNode.class, false));
-		assertEquals(null, v0.getNextVertexOfClass(SuperNode.class, true));
+		assertNull(v0.getNextVertexOfClass(SuperNode.class, true));
 		assertEquals(v1, v0.getNextVertexOfClass(DoubleSubNode.class, false));
 		assertEquals(v1, v0.getNextVertexOfClass(DoubleSubNode.class, true));
 	}
@@ -2829,7 +2829,7 @@ public class VertexTest {
 		assertEquals(v2, v0.getNextVertexOfClass(SubNode.class, false));
 		assertEquals(v1, v0.getNextVertexOfClass(SuperNode.class, false));
 		assertEquals(v2, v0.getNextVertexOfClass(DoubleSubNode.class, false));
-		assertEquals(null, v0.getNextVertexOfClass(AbstractSuperNode.class,
+		assertNull(v0.getNextVertexOfClass(AbstractSuperNode.class,
 				true));
 		assertEquals(v4, v0.getNextVertexOfClass(SubNode.class, true));
 		assertEquals(v1, v0.getNextVertexOfClass(SuperNode.class, true));
@@ -2840,7 +2840,7 @@ public class VertexTest {
 		assertEquals(v2, v1.getNextVertexOfClass(SubNode.class, false));
 		assertEquals(v2, v1.getNextVertexOfClass(SuperNode.class, false));
 		assertEquals(v2, v1.getNextVertexOfClass(DoubleSubNode.class, false));
-		assertEquals(null, v1.getNextVertexOfClass(AbstractSuperNode.class,
+		assertNull(v1.getNextVertexOfClass(AbstractSuperNode.class,
 				true));
 		assertEquals(v4, v1.getNextVertexOfClass(SubNode.class, true));
 		assertEquals(v3, v1.getNextVertexOfClass(SuperNode.class, true));
@@ -2851,7 +2851,7 @@ public class VertexTest {
 		assertEquals(v4, v2.getNextVertexOfClass(SubNode.class, false));
 		assertEquals(v3, v2.getNextVertexOfClass(SuperNode.class, false));
 		assertEquals(v6, v2.getNextVertexOfClass(DoubleSubNode.class, false));
-		assertEquals(null, v2.getNextVertexOfClass(AbstractSuperNode.class,
+		assertNull(v2.getNextVertexOfClass(AbstractSuperNode.class,
 				true));
 		assertEquals(v4, v2.getNextVertexOfClass(SubNode.class, true));
 		assertEquals(v3, v2.getNextVertexOfClass(SuperNode.class, true));
@@ -2862,7 +2862,7 @@ public class VertexTest {
 		assertEquals(v4, v3.getNextVertexOfClass(SubNode.class, false));
 		assertEquals(v5, v3.getNextVertexOfClass(SuperNode.class, false));
 		assertEquals(v6, v3.getNextVertexOfClass(DoubleSubNode.class, false));
-		assertEquals(null, v3.getNextVertexOfClass(AbstractSuperNode.class,
+		assertNull(v3.getNextVertexOfClass(AbstractSuperNode.class,
 				true));
 		assertEquals(v4, v3.getNextVertexOfClass(SubNode.class, true));
 		assertEquals(v5, v3.getNextVertexOfClass(SuperNode.class, true));
@@ -2873,9 +2873,9 @@ public class VertexTest {
 		assertEquals(v6, v4.getNextVertexOfClass(SubNode.class, false));
 		assertEquals(v5, v4.getNextVertexOfClass(SuperNode.class, false));
 		assertEquals(v6, v4.getNextVertexOfClass(DoubleSubNode.class, false));
-		assertEquals(null, v4.getNextVertexOfClass(AbstractSuperNode.class,
+		assertNull(v4.getNextVertexOfClass(AbstractSuperNode.class,
 				true));
-		assertEquals(null, v4.getNextVertexOfClass(SubNode.class, true));
+		assertNull(v4.getNextVertexOfClass(SubNode.class, true));
 		assertEquals(v5, v4.getNextVertexOfClass(SuperNode.class, true));
 		assertEquals(v6, v4.getNextVertexOfClass(DoubleSubNode.class, true));
 
@@ -2884,22 +2884,22 @@ public class VertexTest {
 		assertEquals(v6, v5.getNextVertexOfClass(SubNode.class, false));
 		assertEquals(v6, v5.getNextVertexOfClass(SuperNode.class, false));
 		assertEquals(v6, v5.getNextVertexOfClass(DoubleSubNode.class, false));
-		assertEquals(null, v5.getNextVertexOfClass(AbstractSuperNode.class,
+		assertNull(v5.getNextVertexOfClass(AbstractSuperNode.class,
 				true));
-		assertEquals(null, v5.getNextVertexOfClass(SubNode.class, true));
-		assertEquals(null, v5.getNextVertexOfClass(SuperNode.class, true));
+		assertNull(v5.getNextVertexOfClass(SubNode.class, true));
+		assertNull(v5.getNextVertexOfClass(SuperNode.class, true));
 		assertEquals(v6, v5.getNextVertexOfClass(DoubleSubNode.class, true));
 
-		assertEquals(null, v6.getNextVertexOfClass(AbstractSuperNode.class,
+		assertNull(v6.getNextVertexOfClass(AbstractSuperNode.class,
 				false));
-		assertEquals(null, v6.getNextVertexOfClass(SubNode.class, false));
-		assertEquals(null, v6.getNextVertexOfClass(SuperNode.class, false));
-		assertEquals(null, v6.getNextVertexOfClass(DoubleSubNode.class, false));
-		assertEquals(null, v6.getNextVertexOfClass(AbstractSuperNode.class,
+		assertNull(v6.getNextVertexOfClass(SubNode.class, false));
+		assertNull(v6.getNextVertexOfClass(SuperNode.class, false));
+		assertNull(v6.getNextVertexOfClass(DoubleSubNode.class, false));
+		assertNull(v6.getNextVertexOfClass(AbstractSuperNode.class,
 				true));
-		assertEquals(null, v6.getNextVertexOfClass(SubNode.class, true));
-		assertEquals(null, v6.getNextVertexOfClass(SuperNode.class, true));
-		assertEquals(null, v6.getNextVertexOfClass(DoubleSubNode.class, true));
+		assertNull(v6.getNextVertexOfClass(SubNode.class, true));
+		assertNull(v6.getNextVertexOfClass(SuperNode.class, true));
+		assertNull(v6.getNextVertexOfClass(DoubleSubNode.class, true));
 	}
 
 	/**
@@ -3035,7 +3035,7 @@ public class VertexTest {
 						.getNextVertexOfClass(SuperNode.class, false));
 				assertEquals(nextDoubleSubNodeFalse[j], vertices[j]
 						.getNextVertexOfClass(DoubleSubNode.class, false));
-				assertEquals(null, vertices[j].getNextVertexOfClass(
+				assertNull(vertices[j].getNextVertexOfClass(
 						AbstractSuperNode.class, true));
 				assertEquals(nextSubNodeTrue[j], vertices[j]
 						.getNextVertexOfClass(SubNode.class, true));
@@ -3061,9 +3061,9 @@ public class VertexTest {
 	@Test
 	public void getFirstEdgeTestEdgeDirection0() {
 		Vertex v0 = graph.createDoubleSubNode();
-		assertEquals(null, v0.getFirstEdge(EdgeDirection.INOUT));
-		assertEquals(null, v0.getFirstEdge(EdgeDirection.IN));
-		assertEquals(null, v0.getFirstEdge(EdgeDirection.OUT));
+		assertNull(v0.getFirstEdge(EdgeDirection.INOUT));
+		assertNull(v0.getFirstEdge(EdgeDirection.IN));
+		assertNull(v0.getFirstEdge(EdgeDirection.OUT));
 	}
 
 	/**
@@ -3076,9 +3076,9 @@ public class VertexTest {
 		Edge e = graph.createLink((AbstractSuperNode) v0, (SuperNode) v1);
 		assertEquals(e.getReversedEdge(), v1.getFirstEdge(EdgeDirection.INOUT));
 		assertEquals(e.getReversedEdge(), v1.getFirstEdge(EdgeDirection.IN));
-		assertEquals(null, v1.getFirstEdge(EdgeDirection.OUT));
+		assertNull(v1.getFirstEdge(EdgeDirection.OUT));
 		assertEquals(e, v0.getFirstEdge(EdgeDirection.INOUT));
-		assertEquals(null, v0.getFirstEdge(EdgeDirection.IN));
+		assertNull(v0.getFirstEdge(EdgeDirection.IN));
 		assertEquals(e, v0.getFirstEdge(EdgeDirection.OUT));
 	}
 
@@ -3093,9 +3093,9 @@ public class VertexTest {
 		graph.createLink((AbstractSuperNode) v0, (SuperNode) v1);
 		assertEquals(e1.getReversedEdge(), v1.getFirstEdge(EdgeDirection.INOUT));
 		assertEquals(e1.getReversedEdge(), v1.getFirstEdge(EdgeDirection.IN));
-		assertEquals(null, v1.getFirstEdge(EdgeDirection.OUT));
+		assertNull(v1.getFirstEdge(EdgeDirection.OUT));
 		assertEquals(e1, v0.getFirstEdge(EdgeDirection.INOUT));
-		assertEquals(null, v0.getFirstEdge(EdgeDirection.IN));
+		assertNull(v0.getFirstEdge(EdgeDirection.IN));
 		assertEquals(e1, v0.getFirstEdge(EdgeDirection.OUT));
 	}
 
@@ -3226,9 +3226,9 @@ public class VertexTest {
 	public void getFirstEdgeTestEdgeClass0() {
 		EdgeClass[] eclasses = getEdgeClasses();
 		Vertex v0 = graph.createDoubleSubNode();
-		assertEquals(null, v0.getFirstEdgeOfClass(eclasses[0]));
-		assertEquals(null, v0.getFirstEdgeOfClass(eclasses[1]));
-		assertEquals(null, v0.getFirstEdgeOfClass(eclasses[2]));
+		assertNull(v0.getFirstEdgeOfClass(eclasses[0]));
+		assertNull(v0.getFirstEdgeOfClass(eclasses[1]));
+		assertNull(v0.getFirstEdgeOfClass(eclasses[2]));
 	}
 
 	/**
@@ -3241,11 +3241,11 @@ public class VertexTest {
 		Vertex v1 = graph.createDoubleSubNode();
 		Edge e = graph.createLink((AbstractSuperNode) v0, (SuperNode) v1);
 		assertEquals(e, v0.getFirstEdgeOfClass(eclasses[0]));
-		assertEquals(null, v0.getFirstEdgeOfClass(eclasses[1]));
-		assertEquals(null, v0.getFirstEdgeOfClass(eclasses[2]));
+		assertNull(v0.getFirstEdgeOfClass(eclasses[1]));
+		assertNull(v0.getFirstEdgeOfClass(eclasses[2]));
 		assertEquals(e.getReversedEdge(), v1.getFirstEdgeOfClass(eclasses[0]));
-		assertEquals(null, v1.getFirstEdgeOfClass(eclasses[1]));
-		assertEquals(null, v1.getFirstEdgeOfClass(eclasses[2]));
+		assertNull(v1.getFirstEdgeOfClass(eclasses[1]));
+		assertNull(v1.getFirstEdgeOfClass(eclasses[2]));
 	}
 
 	/**
@@ -3259,10 +3259,10 @@ public class VertexTest {
 		Edge e1 = graph.createSubLink((DoubleSubNode) v0, (SuperNode) v1);
 		assertEquals(e1, v0.getFirstEdgeOfClass(eclasses[0]));
 		assertEquals(e1, v0.getFirstEdgeOfClass(eclasses[1]));
-		assertEquals(null, v0.getFirstEdgeOfClass(eclasses[2]));
+		assertNull(v0.getFirstEdgeOfClass(eclasses[2]));
 		assertEquals(e1.getReversedEdge(), v1.getFirstEdgeOfClass(eclasses[0]));
 		assertEquals(e1.getReversedEdge(), v1.getFirstEdgeOfClass(eclasses[1]));
-		assertEquals(null, v1.getFirstEdgeOfClass(eclasses[2]));
+		assertNull(v1.getFirstEdgeOfClass(eclasses[2]));
 	}
 
 	/**
@@ -3276,10 +3276,10 @@ public class VertexTest {
 		Edge e1 = graph.createLink((AbstractSuperNode) v0, (SuperNode) v1);
 		Edge e2 = graph.createLinkBack((SuperNode) v1, (AbstractSuperNode) v0);
 		assertEquals(e1, v0.getFirstEdgeOfClass(eclasses[0]));
-		assertEquals(null, v0.getFirstEdgeOfClass(eclasses[1]));
+		assertNull(v0.getFirstEdgeOfClass(eclasses[1]));
 		assertEquals(e2.getReversedEdge(), v0.getFirstEdgeOfClass(eclasses[2]));
 		assertEquals(e1.getReversedEdge(), v1.getFirstEdgeOfClass(eclasses[0]));
-		assertEquals(null, v1.getFirstEdgeOfClass(eclasses[1]));
+		assertNull(v1.getFirstEdgeOfClass(eclasses[1]));
 		assertEquals(e2, v1.getFirstEdgeOfClass(eclasses[2]));
 	}
 
@@ -3292,8 +3292,8 @@ public class VertexTest {
 		Vertex v0 = graph.createDoubleSubNode();
 		Edge e1 = graph.createLink((AbstractSuperNode) v0, (SuperNode) v0);
 		assertEquals(e1, v0.getFirstEdgeOfClass(eclasses[0]));
-		assertEquals(null, v0.getFirstEdgeOfClass(eclasses[1]));
-		assertEquals(null, v0.getFirstEdgeOfClass(eclasses[2]));
+		assertNull(v0.getFirstEdgeOfClass(eclasses[1]));
+		assertNull(v0.getFirstEdgeOfClass(eclasses[2]));
 	}
 
 	/**
@@ -3383,9 +3383,9 @@ public class VertexTest {
 	@Test
 	public void getFirstEdgeTestClass0() {
 		Vertex v0 = graph.createDoubleSubNode();
-		assertEquals(null, v0.getFirstEdgeOfClass(Link.class));
-		assertEquals(null, v0.getFirstEdgeOfClass(SubLink.class));
-		assertEquals(null, v0.getFirstEdgeOfClass(LinkBack.class));
+		assertNull(v0.getFirstEdgeOfClass(Link.class));
+		assertNull(v0.getFirstEdgeOfClass(SubLink.class));
+		assertNull(v0.getFirstEdgeOfClass(LinkBack.class));
 	}
 
 	/**
@@ -3397,11 +3397,11 @@ public class VertexTest {
 		Vertex v1 = graph.createDoubleSubNode();
 		Edge e = graph.createLink((AbstractSuperNode) v0, (SuperNode) v1);
 		assertEquals(e, v0.getFirstEdgeOfClass(Link.class));
-		assertEquals(null, v0.getFirstEdgeOfClass(SubLink.class));
-		assertEquals(null, v0.getFirstEdgeOfClass(LinkBack.class));
+		assertNull(v0.getFirstEdgeOfClass(SubLink.class));
+		assertNull(v0.getFirstEdgeOfClass(LinkBack.class));
 		assertEquals(e.getReversedEdge(), v1.getFirstEdgeOfClass(Link.class));
-		assertEquals(null, v1.getFirstEdgeOfClass(SubLink.class));
-		assertEquals(null, v1.getFirstEdgeOfClass(LinkBack.class));
+		assertNull(v1.getFirstEdgeOfClass(SubLink.class));
+		assertNull(v1.getFirstEdgeOfClass(LinkBack.class));
 	}
 
 	/**
@@ -3414,11 +3414,11 @@ public class VertexTest {
 		Edge e1 = graph.createSubLink((DoubleSubNode) v0, (SuperNode) v1);
 		assertEquals(e1, v0.getFirstEdgeOfClass(Link.class));
 		assertEquals(e1, v0.getFirstEdgeOfClass(SubLink.class));
-		assertEquals(null, v0.getFirstEdgeOfClass(LinkBack.class));
+		assertNull(v0.getFirstEdgeOfClass(LinkBack.class));
 		assertEquals(e1.getReversedEdge(), v1.getFirstEdgeOfClass(Link.class));
 		assertEquals(e1.getReversedEdge(), v1
 				.getFirstEdgeOfClass(SubLink.class));
-		assertEquals(null, v1.getFirstEdgeOfClass(LinkBack.class));
+		assertNull(v1.getFirstEdgeOfClass(LinkBack.class));
 	}
 
 	/**
@@ -3431,11 +3431,11 @@ public class VertexTest {
 		Edge e1 = graph.createLink((AbstractSuperNode) v0, (SuperNode) v1);
 		Edge e2 = graph.createLinkBack((SuperNode) v1, (AbstractSuperNode) v0);
 		assertEquals(e1, v0.getFirstEdgeOfClass(Link.class));
-		assertEquals(null, v0.getFirstEdgeOfClass(SubLink.class));
+		assertNull(v0.getFirstEdgeOfClass(SubLink.class));
 		assertEquals(e2.getReversedEdge(), v0
 				.getFirstEdgeOfClass(LinkBack.class));
 		assertEquals(e1.getReversedEdge(), v1.getFirstEdgeOfClass(Link.class));
-		assertEquals(null, v1.getFirstEdgeOfClass(SubLink.class));
+		assertNull(v1.getFirstEdgeOfClass(SubLink.class));
 		assertEquals(e2, v1.getFirstEdgeOfClass(LinkBack.class));
 	}
 
@@ -3447,8 +3447,8 @@ public class VertexTest {
 		Vertex v0 = graph.createDoubleSubNode();
 		Edge e1 = graph.createLink((AbstractSuperNode) v0, (SuperNode) v0);
 		assertEquals(e1, v0.getFirstEdgeOfClass(Link.class));
-		assertEquals(null, v0.getFirstEdgeOfClass(SubLink.class));
-		assertEquals(null, v0.getFirstEdgeOfClass(LinkBack.class));
+		assertNull(v0.getFirstEdgeOfClass(SubLink.class));
+		assertNull(v0.getFirstEdgeOfClass(LinkBack.class));
 	}
 
 	/**
@@ -3539,25 +3539,25 @@ public class VertexTest {
 		EdgeClass[] eclasses = getEdgeClasses();
 		Vertex v0 = graph.createDoubleSubNode();
 
-		assertEquals(null, v0.getFirstEdgeOfClass(eclasses[0],
+		assertNull(v0.getFirstEdgeOfClass(eclasses[0],
 				EdgeDirection.INOUT));
-		assertEquals(null, v0.getFirstEdgeOfClass(eclasses[1],
+		assertNull(v0.getFirstEdgeOfClass(eclasses[1],
 				EdgeDirection.INOUT));
-		assertEquals(null, v0.getFirstEdgeOfClass(eclasses[2],
+		assertNull(v0.getFirstEdgeOfClass(eclasses[2],
 				EdgeDirection.INOUT));
 
-		assertEquals(null, v0.getFirstEdgeOfClass(eclasses[0],
+		assertNull(v0.getFirstEdgeOfClass(eclasses[0],
 				EdgeDirection.OUT));
-		assertEquals(null, v0.getFirstEdgeOfClass(eclasses[1],
+		assertNull(v0.getFirstEdgeOfClass(eclasses[1],
 				EdgeDirection.OUT));
-		assertEquals(null, v0.getFirstEdgeOfClass(eclasses[2],
+		assertNull(v0.getFirstEdgeOfClass(eclasses[2],
 				EdgeDirection.OUT));
 
-		assertEquals(null, v0
+		assertNull(v0
 				.getFirstEdgeOfClass(eclasses[0], EdgeDirection.IN));
-		assertEquals(null, v0
+		assertNull(v0
 				.getFirstEdgeOfClass(eclasses[1], EdgeDirection.IN));
-		assertEquals(null, v0
+		assertNull(v0
 				.getFirstEdgeOfClass(eclasses[2], EdgeDirection.IN));
 	}
 
@@ -3573,40 +3573,40 @@ public class VertexTest {
 
 		assertEquals(e, v0
 				.getFirstEdgeOfClass(eclasses[0], EdgeDirection.INOUT));
-		assertEquals(null, v0.getFirstEdgeOfClass(eclasses[1],
+		assertNull(v0.getFirstEdgeOfClass(eclasses[1],
 				EdgeDirection.INOUT));
-		assertEquals(null, v0.getFirstEdgeOfClass(eclasses[2],
+		assertNull(v0.getFirstEdgeOfClass(eclasses[2],
 				EdgeDirection.INOUT));
 		assertEquals(e.getReversedEdge(), v1.getFirstEdgeOfClass(eclasses[0],
 				EdgeDirection.INOUT));
-		assertEquals(null, v1.getFirstEdgeOfClass(eclasses[1],
+		assertNull(v1.getFirstEdgeOfClass(eclasses[1],
 				EdgeDirection.INOUT));
-		assertEquals(null, v1.getFirstEdgeOfClass(eclasses[2],
+		assertNull(v1.getFirstEdgeOfClass(eclasses[2],
 				EdgeDirection.INOUT));
 
 		assertEquals(e, v0.getFirstEdgeOfClass(eclasses[0], EdgeDirection.OUT));
-		assertEquals(null, v0.getFirstEdgeOfClass(eclasses[1],
+		assertNull(v0.getFirstEdgeOfClass(eclasses[1],
 				EdgeDirection.OUT));
-		assertEquals(null, v0.getFirstEdgeOfClass(eclasses[2],
+		assertNull(v0.getFirstEdgeOfClass(eclasses[2],
 				EdgeDirection.OUT));
-		assertEquals(null, v1.getFirstEdgeOfClass(eclasses[0],
+		assertNull(v1.getFirstEdgeOfClass(eclasses[0],
 				EdgeDirection.OUT));
-		assertEquals(null, v1.getFirstEdgeOfClass(eclasses[1],
+		assertNull(v1.getFirstEdgeOfClass(eclasses[1],
 				EdgeDirection.OUT));
-		assertEquals(null, v1.getFirstEdgeOfClass(eclasses[2],
+		assertNull(v1.getFirstEdgeOfClass(eclasses[2],
 				EdgeDirection.OUT));
 
-		assertEquals(null, v0
+		assertNull(v0
 				.getFirstEdgeOfClass(eclasses[0], EdgeDirection.IN));
-		assertEquals(null, v0
+		assertNull(v0
 				.getFirstEdgeOfClass(eclasses[1], EdgeDirection.IN));
-		assertEquals(null, v0
+		assertNull(v0
 				.getFirstEdgeOfClass(eclasses[2], EdgeDirection.IN));
 		assertEquals(e.getReversedEdge(), v1.getFirstEdgeOfClass(eclasses[0],
 				EdgeDirection.IN));
-		assertEquals(null, v1
+		assertNull(v1
 				.getFirstEdgeOfClass(eclasses[1], EdgeDirection.IN));
-		assertEquals(null, v1
+		assertNull(v1
 				.getFirstEdgeOfClass(eclasses[2], EdgeDirection.IN));
 	}
 
@@ -3624,37 +3624,37 @@ public class VertexTest {
 				EdgeDirection.INOUT));
 		assertEquals(e1, v0.getFirstEdgeOfClass(eclasses[1],
 				EdgeDirection.INOUT));
-		assertEquals(null, v0.getFirstEdgeOfClass(eclasses[2],
+		assertNull(v0.getFirstEdgeOfClass(eclasses[2],
 				EdgeDirection.INOUT));
 		assertEquals(e1.getReversedEdge(), v1.getFirstEdgeOfClass(eclasses[0],
 				EdgeDirection.INOUT));
 		assertEquals(e1.getReversedEdge(), v1.getFirstEdgeOfClass(eclasses[1],
 				EdgeDirection.INOUT));
-		assertEquals(null, v1.getFirstEdgeOfClass(eclasses[2],
+		assertNull(v1.getFirstEdgeOfClass(eclasses[2],
 				EdgeDirection.INOUT));
 
 		assertEquals(e1, v0.getFirstEdgeOfClass(eclasses[0], EdgeDirection.OUT));
 		assertEquals(e1, v0.getFirstEdgeOfClass(eclasses[1], EdgeDirection.OUT));
-		assertEquals(null, v0.getFirstEdgeOfClass(eclasses[2],
+		assertNull(v0.getFirstEdgeOfClass(eclasses[2],
 				EdgeDirection.OUT));
-		assertEquals(null, v1.getFirstEdgeOfClass(eclasses[0],
+		assertNull(v1.getFirstEdgeOfClass(eclasses[0],
 				EdgeDirection.OUT));
-		assertEquals(null, v1.getFirstEdgeOfClass(eclasses[1],
+		assertNull(v1.getFirstEdgeOfClass(eclasses[1],
 				EdgeDirection.OUT));
-		assertEquals(null, v1.getFirstEdgeOfClass(eclasses[2],
+		assertNull(v1.getFirstEdgeOfClass(eclasses[2],
 				EdgeDirection.OUT));
 
-		assertEquals(null, v0
+		assertNull(v0
 				.getFirstEdgeOfClass(eclasses[0], EdgeDirection.IN));
-		assertEquals(null, v0
+		assertNull(v0
 				.getFirstEdgeOfClass(eclasses[1], EdgeDirection.IN));
-		assertEquals(null, v0
+		assertNull(v0
 				.getFirstEdgeOfClass(eclasses[2], EdgeDirection.IN));
 		assertEquals(e1.getReversedEdge(), v1.getFirstEdgeOfClass(eclasses[0],
 				EdgeDirection.IN));
 		assertEquals(e1.getReversedEdge(), v1.getFirstEdgeOfClass(eclasses[1],
 				EdgeDirection.IN));
-		assertEquals(null, v1
+		assertNull(v1
 				.getFirstEdgeOfClass(eclasses[2], EdgeDirection.IN));
 	}
 
@@ -3671,39 +3671,39 @@ public class VertexTest {
 
 		assertEquals(e1, v0.getFirstEdgeOfClass(eclasses[0],
 				EdgeDirection.INOUT));
-		assertEquals(null, v0.getFirstEdgeOfClass(eclasses[1],
+		assertNull(v0.getFirstEdgeOfClass(eclasses[1],
 				EdgeDirection.INOUT));
 		assertEquals(e2.getReversedEdge(), v0.getFirstEdgeOfClass(eclasses[2],
 				EdgeDirection.INOUT));
 		assertEquals(e1.getReversedEdge(), v1.getFirstEdgeOfClass(eclasses[0],
 				EdgeDirection.INOUT));
-		assertEquals(null, v1.getFirstEdgeOfClass(eclasses[1],
+		assertNull(v1.getFirstEdgeOfClass(eclasses[1],
 				EdgeDirection.INOUT));
 		assertEquals(e2, v1.getFirstEdgeOfClass(eclasses[2],
 				EdgeDirection.INOUT));
 
 		assertEquals(e1, v0.getFirstEdgeOfClass(eclasses[0], EdgeDirection.OUT));
-		assertEquals(null, v0.getFirstEdgeOfClass(eclasses[1],
+		assertNull(v0.getFirstEdgeOfClass(eclasses[1],
 				EdgeDirection.OUT));
-		assertEquals(null, v0.getFirstEdgeOfClass(eclasses[2],
+		assertNull(v0.getFirstEdgeOfClass(eclasses[2],
 				EdgeDirection.OUT));
-		assertEquals(null, v1.getFirstEdgeOfClass(eclasses[0],
+		assertNull(v1.getFirstEdgeOfClass(eclasses[0],
 				EdgeDirection.OUT));
-		assertEquals(null, v1.getFirstEdgeOfClass(eclasses[1],
+		assertNull(v1.getFirstEdgeOfClass(eclasses[1],
 				EdgeDirection.OUT));
 		assertEquals(e2, v1.getFirstEdgeOfClass(eclasses[2], EdgeDirection.OUT));
 
-		assertEquals(null, v0
+		assertNull(v0
 				.getFirstEdgeOfClass(eclasses[0], EdgeDirection.IN));
-		assertEquals(null, v0
+		assertNull(v0
 				.getFirstEdgeOfClass(eclasses[1], EdgeDirection.IN));
 		assertEquals(e2.getReversedEdge(), v0.getFirstEdgeOfClass(eclasses[2],
 				EdgeDirection.IN));
 		assertEquals(e1.getReversedEdge(), v1.getFirstEdgeOfClass(eclasses[0],
 				EdgeDirection.IN));
-		assertEquals(null, v1
+		assertNull(v1
 				.getFirstEdgeOfClass(eclasses[1], EdgeDirection.IN));
-		assertEquals(null, v1
+		assertNull(v1
 				.getFirstEdgeOfClass(eclasses[2], EdgeDirection.IN));
 	}
 
@@ -3718,22 +3718,22 @@ public class VertexTest {
 
 		assertEquals(e1, v0.getFirstEdgeOfClass(eclasses[0],
 				EdgeDirection.INOUT));
-		assertEquals(null, v0.getFirstEdgeOfClass(eclasses[1],
+		assertNull(v0.getFirstEdgeOfClass(eclasses[1],
 				EdgeDirection.INOUT));
-		assertEquals(null, v0.getFirstEdgeOfClass(eclasses[2],
+		assertNull(v0.getFirstEdgeOfClass(eclasses[2],
 				EdgeDirection.INOUT));
 
 		assertEquals(e1, v0.getFirstEdgeOfClass(eclasses[0], EdgeDirection.OUT));
-		assertEquals(null, v0.getFirstEdgeOfClass(eclasses[1],
+		assertNull(v0.getFirstEdgeOfClass(eclasses[1],
 				EdgeDirection.OUT));
-		assertEquals(null, v0.getFirstEdgeOfClass(eclasses[2],
+		assertNull(v0.getFirstEdgeOfClass(eclasses[2],
 				EdgeDirection.OUT));
 
 		assertEquals(e1.getReversedEdge(), v0.getFirstEdgeOfClass(eclasses[0],
 				EdgeDirection.IN));
-		assertEquals(null, v0
+		assertNull(v0
 				.getFirstEdgeOfClass(eclasses[1], EdgeDirection.IN));
-		assertEquals(null, v0
+		assertNull(v0
 				.getFirstEdgeOfClass(eclasses[2], EdgeDirection.IN));
 	}
 
@@ -3893,24 +3893,24 @@ public class VertexTest {
 	public void getFirstEdgeTestClassEdgeDirection0() {
 		Vertex v0 = graph.createDoubleSubNode();
 
-		assertEquals(null, v0.getFirstEdgeOfClass(Link.class,
+		assertNull(v0.getFirstEdgeOfClass(Link.class,
 				EdgeDirection.INOUT));
-		assertEquals(null, v0.getFirstEdgeOfClass(SubLink.class,
+		assertNull(v0.getFirstEdgeOfClass(SubLink.class,
 				EdgeDirection.INOUT));
-		assertEquals(null, v0.getFirstEdgeOfClass(LinkBack.class,
+		assertNull(v0.getFirstEdgeOfClass(LinkBack.class,
 				EdgeDirection.INOUT));
 
-		assertEquals(null, v0
+		assertNull(v0
 				.getFirstEdgeOfClass(Link.class, EdgeDirection.OUT));
-		assertEquals(null, v0.getFirstEdgeOfClass(SubLink.class,
+		assertNull(v0.getFirstEdgeOfClass(SubLink.class,
 				EdgeDirection.OUT));
-		assertEquals(null, v0.getFirstEdgeOfClass(LinkBack.class,
+		assertNull(v0.getFirstEdgeOfClass(LinkBack.class,
 				EdgeDirection.OUT));
 
-		assertEquals(null, v0.getFirstEdgeOfClass(Link.class, EdgeDirection.IN));
-		assertEquals(null, v0.getFirstEdgeOfClass(SubLink.class,
+		assertNull(v0.getFirstEdgeOfClass(Link.class, EdgeDirection.IN));
+		assertNull(v0.getFirstEdgeOfClass(SubLink.class,
 				EdgeDirection.IN));
-		assertEquals(null, v0.getFirstEdgeOfClass(LinkBack.class,
+		assertNull(v0.getFirstEdgeOfClass(LinkBack.class,
 				EdgeDirection.IN));
 	}
 
@@ -3924,39 +3924,39 @@ public class VertexTest {
 		Edge e = graph.createLink((AbstractSuperNode) v0, (SuperNode) v1);
 
 		assertEquals(e, v0.getFirstEdgeOfClass(Link.class, EdgeDirection.INOUT));
-		assertEquals(null, v0.getFirstEdgeOfClass(SubLink.class,
+		assertNull(v0.getFirstEdgeOfClass(SubLink.class,
 				EdgeDirection.INOUT));
-		assertEquals(null, v0.getFirstEdgeOfClass(LinkBack.class,
+		assertNull(v0.getFirstEdgeOfClass(LinkBack.class,
 				EdgeDirection.INOUT));
 		assertEquals(e.getReversedEdge(), v1.getFirstEdgeOfClass(Link.class,
 				EdgeDirection.INOUT));
-		assertEquals(null, v1.getFirstEdgeOfClass(SubLink.class,
+		assertNull(v1.getFirstEdgeOfClass(SubLink.class,
 				EdgeDirection.INOUT));
-		assertEquals(null, v1.getFirstEdgeOfClass(LinkBack.class,
+		assertNull(v1.getFirstEdgeOfClass(LinkBack.class,
 				EdgeDirection.INOUT));
 
 		assertEquals(e, v0.getFirstEdgeOfClass(Link.class, EdgeDirection.OUT));
-		assertEquals(null, v0.getFirstEdgeOfClass(SubLink.class,
+		assertNull(v0.getFirstEdgeOfClass(SubLink.class,
 				EdgeDirection.OUT));
-		assertEquals(null, v0.getFirstEdgeOfClass(LinkBack.class,
+		assertNull(v0.getFirstEdgeOfClass(LinkBack.class,
 				EdgeDirection.OUT));
-		assertEquals(null, v1
+		assertNull(v1
 				.getFirstEdgeOfClass(Link.class, EdgeDirection.OUT));
-		assertEquals(null, v1.getFirstEdgeOfClass(SubLink.class,
+		assertNull(v1.getFirstEdgeOfClass(SubLink.class,
 				EdgeDirection.OUT));
-		assertEquals(null, v1.getFirstEdgeOfClass(LinkBack.class,
+		assertNull(v1.getFirstEdgeOfClass(LinkBack.class,
 				EdgeDirection.OUT));
 
-		assertEquals(null, v0.getFirstEdgeOfClass(Link.class, EdgeDirection.IN));
-		assertEquals(null, v0.getFirstEdgeOfClass(SubLink.class,
+		assertNull(v0.getFirstEdgeOfClass(Link.class, EdgeDirection.IN));
+		assertNull(v0.getFirstEdgeOfClass(SubLink.class,
 				EdgeDirection.IN));
-		assertEquals(null, v0.getFirstEdgeOfClass(LinkBack.class,
+		assertNull(v0.getFirstEdgeOfClass(LinkBack.class,
 				EdgeDirection.IN));
 		assertEquals(e.getReversedEdge(), v1.getFirstEdgeOfClass(Link.class,
 				EdgeDirection.IN));
-		assertEquals(null, v1.getFirstEdgeOfClass(SubLink.class,
+		assertNull(v1.getFirstEdgeOfClass(SubLink.class,
 				EdgeDirection.IN));
-		assertEquals(null, v1.getFirstEdgeOfClass(LinkBack.class,
+		assertNull(v1.getFirstEdgeOfClass(LinkBack.class,
 				EdgeDirection.IN));
 	}
 
@@ -3973,37 +3973,37 @@ public class VertexTest {
 				.getFirstEdgeOfClass(Link.class, EdgeDirection.INOUT));
 		assertEquals(e1, v0.getFirstEdgeOfClass(SubLink.class,
 				EdgeDirection.INOUT));
-		assertEquals(null, v0.getFirstEdgeOfClass(LinkBack.class,
+		assertNull(v0.getFirstEdgeOfClass(LinkBack.class,
 				EdgeDirection.INOUT));
 		assertEquals(e1.getReversedEdge(), v1.getFirstEdgeOfClass(Link.class,
 				EdgeDirection.INOUT));
 		assertEquals(e1.getReversedEdge(), v1.getFirstEdgeOfClass(
 				SubLink.class, EdgeDirection.INOUT));
-		assertEquals(null, v1.getFirstEdgeOfClass(LinkBack.class,
+		assertNull(v1.getFirstEdgeOfClass(LinkBack.class,
 				EdgeDirection.INOUT));
 
 		assertEquals(e1, v0.getFirstEdgeOfClass(Link.class, EdgeDirection.OUT));
 		assertEquals(e1, v0.getFirstEdgeOfClass(SubLink.class,
 				EdgeDirection.OUT));
-		assertEquals(null, v0.getFirstEdgeOfClass(LinkBack.class,
+		assertNull(v0.getFirstEdgeOfClass(LinkBack.class,
 				EdgeDirection.OUT));
-		assertEquals(null, v1
+		assertNull(v1
 				.getFirstEdgeOfClass(Link.class, EdgeDirection.OUT));
-		assertEquals(null, v1.getFirstEdgeOfClass(SubLink.class,
+		assertNull(v1.getFirstEdgeOfClass(SubLink.class,
 				EdgeDirection.OUT));
-		assertEquals(null, v1.getFirstEdgeOfClass(LinkBack.class,
+		assertNull(v1.getFirstEdgeOfClass(LinkBack.class,
 				EdgeDirection.OUT));
 
-		assertEquals(null, v0.getFirstEdgeOfClass(Link.class, EdgeDirection.IN));
-		assertEquals(null, v0.getFirstEdgeOfClass(SubLink.class,
+		assertNull(v0.getFirstEdgeOfClass(Link.class, EdgeDirection.IN));
+		assertNull(v0.getFirstEdgeOfClass(SubLink.class,
 				EdgeDirection.IN));
-		assertEquals(null, v0.getFirstEdgeOfClass(LinkBack.class,
+		assertNull(v0.getFirstEdgeOfClass(LinkBack.class,
 				EdgeDirection.IN));
 		assertEquals(e1.getReversedEdge(), v1.getFirstEdgeOfClass(Link.class,
 				EdgeDirection.IN));
 		assertEquals(e1.getReversedEdge(), v1.getFirstEdgeOfClass(
 				SubLink.class, EdgeDirection.IN));
-		assertEquals(null, v1.getFirstEdgeOfClass(LinkBack.class,
+		assertNull(v1.getFirstEdgeOfClass(LinkBack.class,
 				EdgeDirection.IN));
 	}
 
@@ -4019,39 +4019,39 @@ public class VertexTest {
 
 		assertEquals(e1, v0
 				.getFirstEdgeOfClass(Link.class, EdgeDirection.INOUT));
-		assertEquals(null, v0.getFirstEdgeOfClass(SubLink.class,
+		assertNull(v0.getFirstEdgeOfClass(SubLink.class,
 				EdgeDirection.INOUT));
 		assertEquals(e2.getReversedEdge(), v0.getFirstEdgeOfClass(
 				LinkBack.class, EdgeDirection.INOUT));
 		assertEquals(e1.getReversedEdge(), v1.getFirstEdgeOfClass(Link.class,
 				EdgeDirection.INOUT));
-		assertEquals(null, v1.getFirstEdgeOfClass(SubLink.class,
+		assertNull(v1.getFirstEdgeOfClass(SubLink.class,
 				EdgeDirection.INOUT));
 		assertEquals(e2, v1.getFirstEdgeOfClass(LinkBack.class,
 				EdgeDirection.INOUT));
 
 		assertEquals(e1, v0.getFirstEdgeOfClass(Link.class, EdgeDirection.OUT));
-		assertEquals(null, v0.getFirstEdgeOfClass(SubLink.class,
+		assertNull(v0.getFirstEdgeOfClass(SubLink.class,
 				EdgeDirection.OUT));
-		assertEquals(null, v0.getFirstEdgeOfClass(LinkBack.class,
+		assertNull(v0.getFirstEdgeOfClass(LinkBack.class,
 				EdgeDirection.OUT));
-		assertEquals(null, v1
+		assertNull(v1
 				.getFirstEdgeOfClass(Link.class, EdgeDirection.OUT));
-		assertEquals(null, v1.getFirstEdgeOfClass(SubLink.class,
+		assertNull(v1.getFirstEdgeOfClass(SubLink.class,
 				EdgeDirection.OUT));
 		assertEquals(e2, v1.getFirstEdgeOfClass(LinkBack.class,
 				EdgeDirection.OUT));
 
-		assertEquals(null, v0.getFirstEdgeOfClass(Link.class, EdgeDirection.IN));
-		assertEquals(null, v0.getFirstEdgeOfClass(SubLink.class,
+		assertNull(v0.getFirstEdgeOfClass(Link.class, EdgeDirection.IN));
+		assertNull(v0.getFirstEdgeOfClass(SubLink.class,
 				EdgeDirection.IN));
 		assertEquals(e2.getReversedEdge(), v0.getFirstEdgeOfClass(
 				LinkBack.class, EdgeDirection.IN));
 		assertEquals(e1.getReversedEdge(), v1.getFirstEdgeOfClass(Link.class,
 				EdgeDirection.IN));
-		assertEquals(null, v1.getFirstEdgeOfClass(SubLink.class,
+		assertNull(v1.getFirstEdgeOfClass(SubLink.class,
 				EdgeDirection.IN));
-		assertEquals(null, v1.getFirstEdgeOfClass(LinkBack.class,
+		assertNull(v1.getFirstEdgeOfClass(LinkBack.class,
 				EdgeDirection.IN));
 	}
 
@@ -4065,22 +4065,22 @@ public class VertexTest {
 
 		assertEquals(e1, v0
 				.getFirstEdgeOfClass(Link.class, EdgeDirection.INOUT));
-		assertEquals(null, v0.getFirstEdgeOfClass(SubLink.class,
+		assertNull(v0.getFirstEdgeOfClass(SubLink.class,
 				EdgeDirection.INOUT));
-		assertEquals(null, v0.getFirstEdgeOfClass(LinkBack.class,
+		assertNull(v0.getFirstEdgeOfClass(LinkBack.class,
 				EdgeDirection.INOUT));
 
 		assertEquals(e1, v0.getFirstEdgeOfClass(Link.class, EdgeDirection.OUT));
-		assertEquals(null, v0.getFirstEdgeOfClass(SubLink.class,
+		assertNull(v0.getFirstEdgeOfClass(SubLink.class,
 				EdgeDirection.OUT));
-		assertEquals(null, v0.getFirstEdgeOfClass(LinkBack.class,
+		assertNull(v0.getFirstEdgeOfClass(LinkBack.class,
 				EdgeDirection.OUT));
 
 		assertEquals(e1.getReversedEdge(), v0.getFirstEdgeOfClass(Link.class,
 				EdgeDirection.IN));
-		assertEquals(null, v0.getFirstEdgeOfClass(SubLink.class,
+		assertNull(v0.getFirstEdgeOfClass(SubLink.class,
 				EdgeDirection.IN));
-		assertEquals(null, v0.getFirstEdgeOfClass(LinkBack.class,
+		assertNull(v0.getFirstEdgeOfClass(LinkBack.class,
 				EdgeDirection.IN));
 	}
 
@@ -4240,13 +4240,13 @@ public class VertexTest {
 		EdgeClass[] eclasses = getEdgeClasses();
 		Vertex v0 = graph.createDoubleSubNode();
 
-		assertEquals(null, v0.getFirstEdgeOfClass(eclasses[0], false));
-		assertEquals(null, v0.getFirstEdgeOfClass(eclasses[1], false));
-		assertEquals(null, v0.getFirstEdgeOfClass(eclasses[2], false));
+		assertNull(v0.getFirstEdgeOfClass(eclasses[0], false));
+		assertNull(v0.getFirstEdgeOfClass(eclasses[1], false));
+		assertNull(v0.getFirstEdgeOfClass(eclasses[2], false));
 
-		assertEquals(null, v0.getFirstEdgeOfClass(eclasses[0], true));
-		assertEquals(null, v0.getFirstEdgeOfClass(eclasses[1], true));
-		assertEquals(null, v0.getFirstEdgeOfClass(eclasses[2], true));
+		assertNull(v0.getFirstEdgeOfClass(eclasses[0], true));
+		assertNull(v0.getFirstEdgeOfClass(eclasses[1], true));
+		assertNull(v0.getFirstEdgeOfClass(eclasses[2], true));
 	}
 
 	/**
@@ -4260,20 +4260,20 @@ public class VertexTest {
 		Edge e = graph.createLink((AbstractSuperNode) v0, (SuperNode) v1);
 
 		assertEquals(e, v0.getFirstEdgeOfClass(eclasses[0], false));
-		assertEquals(null, v0.getFirstEdgeOfClass(eclasses[1], false));
-		assertEquals(null, v0.getFirstEdgeOfClass(eclasses[2], false));
+		assertNull(v0.getFirstEdgeOfClass(eclasses[1], false));
+		assertNull(v0.getFirstEdgeOfClass(eclasses[2], false));
 		assertEquals(e.getReversedEdge(), v1.getFirstEdgeOfClass(eclasses[0],
 				false));
-		assertEquals(null, v1.getFirstEdgeOfClass(eclasses[1], false));
-		assertEquals(null, v1.getFirstEdgeOfClass(eclasses[2], false));
+		assertNull(v1.getFirstEdgeOfClass(eclasses[1], false));
+		assertNull(v1.getFirstEdgeOfClass(eclasses[2], false));
 
 		assertEquals(e, v0.getFirstEdgeOfClass(eclasses[0], true));
-		assertEquals(null, v0.getFirstEdgeOfClass(eclasses[1], true));
-		assertEquals(null, v0.getFirstEdgeOfClass(eclasses[2], true));
+		assertNull(v0.getFirstEdgeOfClass(eclasses[1], true));
+		assertNull(v0.getFirstEdgeOfClass(eclasses[2], true));
 		assertEquals(e.getReversedEdge(), v1.getFirstEdgeOfClass(eclasses[0],
 				true));
-		assertEquals(null, v1.getFirstEdgeOfClass(eclasses[1], true));
-		assertEquals(null, v1.getFirstEdgeOfClass(eclasses[2], true));
+		assertNull(v1.getFirstEdgeOfClass(eclasses[1], true));
+		assertNull(v1.getFirstEdgeOfClass(eclasses[2], true));
 	}
 
 	/**
@@ -4288,20 +4288,20 @@ public class VertexTest {
 
 		assertEquals(e1, v0.getFirstEdgeOfClass(eclasses[0], false));
 		assertEquals(e1, v0.getFirstEdgeOfClass(eclasses[1], false));
-		assertEquals(null, v0.getFirstEdgeOfClass(eclasses[2], false));
+		assertNull(v0.getFirstEdgeOfClass(eclasses[2], false));
 		assertEquals(e1.getReversedEdge(), v1.getFirstEdgeOfClass(eclasses[0],
 				false));
 		assertEquals(e1.getReversedEdge(), v1.getFirstEdgeOfClass(eclasses[1],
 				false));
-		assertEquals(null, v1.getFirstEdgeOfClass(eclasses[2], false));
+		assertNull(v1.getFirstEdgeOfClass(eclasses[2], false));
 
-		assertEquals(null, v0.getFirstEdgeOfClass(eclasses[0], true));
+		assertNull(v0.getFirstEdgeOfClass(eclasses[0], true));
 		assertEquals(e1, v0.getFirstEdgeOfClass(eclasses[1], true));
-		assertEquals(null, v0.getFirstEdgeOfClass(eclasses[2], true));
-		assertEquals(null, v1.getFirstEdgeOfClass(eclasses[0], true));
+		assertNull(v0.getFirstEdgeOfClass(eclasses[2], true));
+		assertNull(v1.getFirstEdgeOfClass(eclasses[0], true));
 		assertEquals(e1.getReversedEdge(), v1.getFirstEdgeOfClass(eclasses[1],
 				true));
-		assertEquals(null, v1.getFirstEdgeOfClass(eclasses[2], true));
+		assertNull(v1.getFirstEdgeOfClass(eclasses[2], true));
 	}
 
 	/**
@@ -4316,21 +4316,21 @@ public class VertexTest {
 		Edge e2 = graph.createLinkBack((SuperNode) v1, (AbstractSuperNode) v0);
 
 		assertEquals(e1, v0.getFirstEdgeOfClass(eclasses[0], false));
-		assertEquals(null, v0.getFirstEdgeOfClass(eclasses[1], false));
+		assertNull(v0.getFirstEdgeOfClass(eclasses[1], false));
 		assertEquals(e2.getReversedEdge(), v0.getFirstEdgeOfClass(eclasses[2],
 				false));
 		assertEquals(e1.getReversedEdge(), v1.getFirstEdgeOfClass(eclasses[0],
 				false));
-		assertEquals(null, v1.getFirstEdgeOfClass(eclasses[1], false));
+		assertNull(v1.getFirstEdgeOfClass(eclasses[1], false));
 		assertEquals(e2, v1.getFirstEdgeOfClass(eclasses[2], false));
 
 		assertEquals(e1, v0.getFirstEdgeOfClass(eclasses[0], true));
-		assertEquals(null, v0.getFirstEdgeOfClass(eclasses[1], true));
+		assertNull(v0.getFirstEdgeOfClass(eclasses[1], true));
 		assertEquals(e2.getReversedEdge(), v0.getFirstEdgeOfClass(eclasses[2],
 				true));
 		assertEquals(e1.getReversedEdge(), v1.getFirstEdgeOfClass(eclasses[0],
 				true));
-		assertEquals(null, v1.getFirstEdgeOfClass(eclasses[1], true));
+		assertNull(v1.getFirstEdgeOfClass(eclasses[1], true));
 		assertEquals(e2, v1.getFirstEdgeOfClass(eclasses[2], true));
 	}
 
@@ -4344,12 +4344,12 @@ public class VertexTest {
 		Edge e1 = graph.createLink((AbstractSuperNode) v0, (SuperNode) v0);
 
 		assertEquals(e1, v0.getFirstEdgeOfClass(eclasses[0], false));
-		assertEquals(null, v0.getFirstEdgeOfClass(eclasses[1], false));
-		assertEquals(null, v0.getFirstEdgeOfClass(eclasses[2], false));
+		assertNull(v0.getFirstEdgeOfClass(eclasses[1], false));
+		assertNull(v0.getFirstEdgeOfClass(eclasses[2], false));
 
 		assertEquals(e1, v0.getFirstEdgeOfClass(eclasses[0], true));
-		assertEquals(null, v0.getFirstEdgeOfClass(eclasses[1], true));
-		assertEquals(null, v0.getFirstEdgeOfClass(eclasses[2], true));
+		assertNull(v0.getFirstEdgeOfClass(eclasses[1], true));
+		assertNull(v0.getFirstEdgeOfClass(eclasses[2], true));
 	}
 
 	/**
@@ -4480,13 +4480,13 @@ public class VertexTest {
 	public void getFirstEdgeTestClassBoolean0() {
 		Vertex v0 = graph.createDoubleSubNode();
 
-		assertEquals(null, v0.getFirstEdgeOfClass(Link.class, false));
-		assertEquals(null, v0.getFirstEdgeOfClass(SubLink.class, false));
-		assertEquals(null, v0.getFirstEdgeOfClass(LinkBack.class, false));
+		assertNull(v0.getFirstEdgeOfClass(Link.class, false));
+		assertNull(v0.getFirstEdgeOfClass(SubLink.class, false));
+		assertNull(v0.getFirstEdgeOfClass(LinkBack.class, false));
 
-		assertEquals(null, v0.getFirstEdgeOfClass(Link.class, true));
-		assertEquals(null, v0.getFirstEdgeOfClass(SubLink.class, true));
-		assertEquals(null, v0.getFirstEdgeOfClass(LinkBack.class, true));
+		assertNull(v0.getFirstEdgeOfClass(Link.class, true));
+		assertNull(v0.getFirstEdgeOfClass(SubLink.class, true));
+		assertNull(v0.getFirstEdgeOfClass(LinkBack.class, true));
 	}
 
 	/**
@@ -4499,20 +4499,20 @@ public class VertexTest {
 		Edge e = graph.createLink((AbstractSuperNode) v0, (SuperNode) v1);
 
 		assertEquals(e, v0.getFirstEdgeOfClass(Link.class, false));
-		assertEquals(null, v0.getFirstEdgeOfClass(SubLink.class, false));
-		assertEquals(null, v0.getFirstEdgeOfClass(LinkBack.class, false));
+		assertNull(v0.getFirstEdgeOfClass(SubLink.class, false));
+		assertNull(v0.getFirstEdgeOfClass(LinkBack.class, false));
 		assertEquals(e.getReversedEdge(), v1.getFirstEdgeOfClass(Link.class,
 				false));
-		assertEquals(null, v1.getFirstEdgeOfClass(SubLink.class, false));
-		assertEquals(null, v1.getFirstEdgeOfClass(LinkBack.class, false));
+		assertNull(v1.getFirstEdgeOfClass(SubLink.class, false));
+		assertNull(v1.getFirstEdgeOfClass(LinkBack.class, false));
 
 		assertEquals(e, v0.getFirstEdgeOfClass(Link.class, true));
-		assertEquals(null, v0.getFirstEdgeOfClass(SubLink.class, true));
-		assertEquals(null, v0.getFirstEdgeOfClass(LinkBack.class, true));
+		assertNull(v0.getFirstEdgeOfClass(SubLink.class, true));
+		assertNull(v0.getFirstEdgeOfClass(LinkBack.class, true));
 		assertEquals(e.getReversedEdge(), v1.getFirstEdgeOfClass(Link.class,
 				true));
-		assertEquals(null, v1.getFirstEdgeOfClass(SubLink.class, true));
-		assertEquals(null, v1.getFirstEdgeOfClass(LinkBack.class, true));
+		assertNull(v1.getFirstEdgeOfClass(SubLink.class, true));
+		assertNull(v1.getFirstEdgeOfClass(LinkBack.class, true));
 	}
 
 	/**
@@ -4526,20 +4526,20 @@ public class VertexTest {
 
 		assertEquals(e1, v0.getFirstEdgeOfClass(Link.class, false));
 		assertEquals(e1, v0.getFirstEdgeOfClass(SubLink.class, false));
-		assertEquals(null, v0.getFirstEdgeOfClass(LinkBack.class, false));
+		assertNull(v0.getFirstEdgeOfClass(LinkBack.class, false));
 		assertEquals(e1.getReversedEdge(), v1.getFirstEdgeOfClass(Link.class,
 				false));
 		assertEquals(e1.getReversedEdge(), v1.getFirstEdgeOfClass(
 				SubLink.class, false));
-		assertEquals(null, v1.getFirstEdgeOfClass(LinkBack.class, false));
+		assertNull(v1.getFirstEdgeOfClass(LinkBack.class, false));
 
-		assertEquals(null, v0.getFirstEdgeOfClass(Link.class, true));
+		assertNull(v0.getFirstEdgeOfClass(Link.class, true));
 		assertEquals(e1, v0.getFirstEdgeOfClass(SubLink.class, true));
-		assertEquals(null, v0.getFirstEdgeOfClass(LinkBack.class, true));
-		assertEquals(null, v1.getFirstEdgeOfClass(Link.class, true));
+		assertNull(v0.getFirstEdgeOfClass(LinkBack.class, true));
+		assertNull(v1.getFirstEdgeOfClass(Link.class, true));
 		assertEquals(e1.getReversedEdge(), v1.getFirstEdgeOfClass(
 				SubLink.class, true));
-		assertEquals(null, v1.getFirstEdgeOfClass(LinkBack.class, true));
+		assertNull(v1.getFirstEdgeOfClass(LinkBack.class, true));
 	}
 
 	/**
@@ -4553,21 +4553,21 @@ public class VertexTest {
 		Edge e2 = graph.createLinkBack((SuperNode) v1, (AbstractSuperNode) v0);
 
 		assertEquals(e1, v0.getFirstEdgeOfClass(Link.class, false));
-		assertEquals(null, v0.getFirstEdgeOfClass(SubLink.class, false));
+		assertNull(v0.getFirstEdgeOfClass(SubLink.class, false));
 		assertEquals(e2.getReversedEdge(), v0.getFirstEdgeOfClass(
 				LinkBack.class, false));
 		assertEquals(e1.getReversedEdge(), v1.getFirstEdgeOfClass(Link.class,
 				false));
-		assertEquals(null, v1.getFirstEdgeOfClass(SubLink.class, false));
+		assertNull(v1.getFirstEdgeOfClass(SubLink.class, false));
 		assertEquals(e2, v1.getFirstEdgeOfClass(LinkBack.class, false));
 
 		assertEquals(e1, v0.getFirstEdgeOfClass(Link.class, true));
-		assertEquals(null, v0.getFirstEdgeOfClass(SubLink.class, true));
+		assertNull(v0.getFirstEdgeOfClass(SubLink.class, true));
 		assertEquals(e2.getReversedEdge(), v0.getFirstEdgeOfClass(
 				LinkBack.class, true));
 		assertEquals(e1.getReversedEdge(), v1.getFirstEdgeOfClass(Link.class,
 				true));
-		assertEquals(null, v1.getFirstEdgeOfClass(SubLink.class, true));
+		assertNull(v1.getFirstEdgeOfClass(SubLink.class, true));
 		assertEquals(e2, v1.getFirstEdgeOfClass(LinkBack.class, true));
 	}
 
@@ -4580,12 +4580,12 @@ public class VertexTest {
 		Edge e1 = graph.createLink((AbstractSuperNode) v0, (SuperNode) v0);
 
 		assertEquals(e1, v0.getFirstEdgeOfClass(Link.class, false));
-		assertEquals(null, v0.getFirstEdgeOfClass(SubLink.class, false));
-		assertEquals(null, v0.getFirstEdgeOfClass(LinkBack.class, false));
+		assertNull(v0.getFirstEdgeOfClass(SubLink.class, false));
+		assertNull(v0.getFirstEdgeOfClass(LinkBack.class, false));
 
 		assertEquals(e1, v0.getFirstEdgeOfClass(Link.class, true));
-		assertEquals(null, v0.getFirstEdgeOfClass(SubLink.class, true));
-		assertEquals(null, v0.getFirstEdgeOfClass(LinkBack.class, true));
+		assertNull(v0.getFirstEdgeOfClass(SubLink.class, true));
+		assertNull(v0.getFirstEdgeOfClass(LinkBack.class, true));
 	}
 
 	/**
@@ -4716,46 +4716,46 @@ public class VertexTest {
 		EdgeClass[] eclasses = getEdgeClasses();
 		Vertex v0 = graph.createDoubleSubNode();
 
-		assertEquals(null, v0.getFirstEdgeOfClass(eclasses[0],
+		assertNull(v0.getFirstEdgeOfClass(eclasses[0],
 				EdgeDirection.INOUT, false));
-		assertEquals(null, v0.getFirstEdgeOfClass(eclasses[1],
+		assertNull(v0.getFirstEdgeOfClass(eclasses[1],
 				EdgeDirection.INOUT, false));
-		assertEquals(null, v0.getFirstEdgeOfClass(eclasses[2],
+		assertNull(v0.getFirstEdgeOfClass(eclasses[2],
 				EdgeDirection.INOUT, false));
 
-		assertEquals(null, v0.getFirstEdgeOfClass(eclasses[0],
+		assertNull(v0.getFirstEdgeOfClass(eclasses[0],
 				EdgeDirection.OUT, false));
-		assertEquals(null, v0.getFirstEdgeOfClass(eclasses[1],
+		assertNull(v0.getFirstEdgeOfClass(eclasses[1],
 				EdgeDirection.OUT, false));
-		assertEquals(null, v0.getFirstEdgeOfClass(eclasses[2],
+		assertNull(v0.getFirstEdgeOfClass(eclasses[2],
 				EdgeDirection.OUT, false));
 
-		assertEquals(null, v0.getFirstEdgeOfClass(eclasses[0],
+		assertNull(v0.getFirstEdgeOfClass(eclasses[0],
 				EdgeDirection.IN, false));
-		assertEquals(null, v0.getFirstEdgeOfClass(eclasses[1],
+		assertNull(v0.getFirstEdgeOfClass(eclasses[1],
 				EdgeDirection.IN, false));
-		assertEquals(null, v0.getFirstEdgeOfClass(eclasses[2],
+		assertNull(v0.getFirstEdgeOfClass(eclasses[2],
 				EdgeDirection.IN, false));
 
-		assertEquals(null, v0.getFirstEdgeOfClass(eclasses[0],
+		assertNull(v0.getFirstEdgeOfClass(eclasses[0],
 				EdgeDirection.INOUT, true));
-		assertEquals(null, v0.getFirstEdgeOfClass(eclasses[1],
+		assertNull(v0.getFirstEdgeOfClass(eclasses[1],
 				EdgeDirection.INOUT, true));
-		assertEquals(null, v0.getFirstEdgeOfClass(eclasses[2],
+		assertNull(v0.getFirstEdgeOfClass(eclasses[2],
 				EdgeDirection.INOUT, true));
 
-		assertEquals(null, v0.getFirstEdgeOfClass(eclasses[0],
+		assertNull(v0.getFirstEdgeOfClass(eclasses[0],
 				EdgeDirection.OUT, true));
-		assertEquals(null, v0.getFirstEdgeOfClass(eclasses[1],
+		assertNull(v0.getFirstEdgeOfClass(eclasses[1],
 				EdgeDirection.OUT, true));
-		assertEquals(null, v0.getFirstEdgeOfClass(eclasses[2],
+		assertNull(v0.getFirstEdgeOfClass(eclasses[2],
 				EdgeDirection.OUT, true));
 
-		assertEquals(null, v0.getFirstEdgeOfClass(eclasses[0],
+		assertNull(v0.getFirstEdgeOfClass(eclasses[0],
 				EdgeDirection.IN, true));
-		assertEquals(null, v0.getFirstEdgeOfClass(eclasses[1],
+		assertNull(v0.getFirstEdgeOfClass(eclasses[1],
 				EdgeDirection.IN, true));
-		assertEquals(null, v0.getFirstEdgeOfClass(eclasses[2],
+		assertNull(v0.getFirstEdgeOfClass(eclasses[2],
 				EdgeDirection.IN, true));
 	}
 
@@ -4771,80 +4771,80 @@ public class VertexTest {
 
 		assertEquals(e, v0.getFirstEdgeOfClass(eclasses[0],
 				EdgeDirection.INOUT, false));
-		assertEquals(null, v0.getFirstEdgeOfClass(eclasses[1],
+		assertNull(v0.getFirstEdgeOfClass(eclasses[1],
 				EdgeDirection.INOUT, false));
-		assertEquals(null, v0.getFirstEdgeOfClass(eclasses[2],
+		assertNull(v0.getFirstEdgeOfClass(eclasses[2],
 				EdgeDirection.INOUT, false));
 		assertEquals(e.getReversedEdge(), v1.getFirstEdgeOfClass(eclasses[0],
 				EdgeDirection.INOUT, false));
-		assertEquals(null, v1.getFirstEdgeOfClass(eclasses[1],
+		assertNull(v1.getFirstEdgeOfClass(eclasses[1],
 				EdgeDirection.INOUT, false));
-		assertEquals(null, v1.getFirstEdgeOfClass(eclasses[2],
+		assertNull(v1.getFirstEdgeOfClass(eclasses[2],
 				EdgeDirection.INOUT, false));
 
 		assertEquals(e, v0.getFirstEdgeOfClass(eclasses[0], EdgeDirection.OUT,
 				false));
-		assertEquals(null, v0.getFirstEdgeOfClass(eclasses[1],
+		assertNull(v0.getFirstEdgeOfClass(eclasses[1],
 				EdgeDirection.OUT, false));
-		assertEquals(null, v0.getFirstEdgeOfClass(eclasses[2],
+		assertNull(v0.getFirstEdgeOfClass(eclasses[2],
 				EdgeDirection.OUT, false));
-		assertEquals(null, v1.getFirstEdgeOfClass(eclasses[0],
+		assertNull(v1.getFirstEdgeOfClass(eclasses[0],
 				EdgeDirection.OUT, false));
-		assertEquals(null, v1.getFirstEdgeOfClass(eclasses[1],
+		assertNull(v1.getFirstEdgeOfClass(eclasses[1],
 				EdgeDirection.OUT, false));
-		assertEquals(null, v1.getFirstEdgeOfClass(eclasses[2],
+		assertNull(v1.getFirstEdgeOfClass(eclasses[2],
 				EdgeDirection.OUT, false));
 
-		assertEquals(null, v0.getFirstEdgeOfClass(eclasses[0],
+		assertNull(v0.getFirstEdgeOfClass(eclasses[0],
 				EdgeDirection.IN, false));
-		assertEquals(null, v0.getFirstEdgeOfClass(eclasses[1],
+		assertNull(v0.getFirstEdgeOfClass(eclasses[1],
 				EdgeDirection.IN, false));
-		assertEquals(null, v0.getFirstEdgeOfClass(eclasses[2],
+		assertNull(v0.getFirstEdgeOfClass(eclasses[2],
 				EdgeDirection.IN, false));
 		assertEquals(e.getReversedEdge(), v1.getFirstEdgeOfClass(eclasses[0],
 				EdgeDirection.IN, false));
-		assertEquals(null, v1.getFirstEdgeOfClass(eclasses[1],
+		assertNull(v1.getFirstEdgeOfClass(eclasses[1],
 				EdgeDirection.IN, false));
-		assertEquals(null, v1.getFirstEdgeOfClass(eclasses[2],
+		assertNull(v1.getFirstEdgeOfClass(eclasses[2],
 				EdgeDirection.IN, false));
 
 		assertEquals(e, v0.getFirstEdgeOfClass(eclasses[0],
 				EdgeDirection.INOUT, true));
-		assertEquals(null, v0.getFirstEdgeOfClass(eclasses[1],
+		assertNull(v0.getFirstEdgeOfClass(eclasses[1],
 				EdgeDirection.INOUT, true));
-		assertEquals(null, v0.getFirstEdgeOfClass(eclasses[2],
+		assertNull(v0.getFirstEdgeOfClass(eclasses[2],
 				EdgeDirection.INOUT, true));
 		assertEquals(e.getReversedEdge(), v1.getFirstEdgeOfClass(eclasses[0],
 				EdgeDirection.INOUT, true));
-		assertEquals(null, v1.getFirstEdgeOfClass(eclasses[1],
+		assertNull(v1.getFirstEdgeOfClass(eclasses[1],
 				EdgeDirection.INOUT, true));
-		assertEquals(null, v1.getFirstEdgeOfClass(eclasses[2],
+		assertNull(v1.getFirstEdgeOfClass(eclasses[2],
 				EdgeDirection.INOUT, true));
 
 		assertEquals(e, v0.getFirstEdgeOfClass(eclasses[0], EdgeDirection.OUT,
 				true));
-		assertEquals(null, v0.getFirstEdgeOfClass(eclasses[1],
+		assertNull(v0.getFirstEdgeOfClass(eclasses[1],
 				EdgeDirection.OUT, true));
-		assertEquals(null, v0.getFirstEdgeOfClass(eclasses[2],
+		assertNull(v0.getFirstEdgeOfClass(eclasses[2],
 				EdgeDirection.OUT, true));
-		assertEquals(null, v1.getFirstEdgeOfClass(eclasses[0],
+		assertNull(v1.getFirstEdgeOfClass(eclasses[0],
 				EdgeDirection.OUT, true));
-		assertEquals(null, v1.getFirstEdgeOfClass(eclasses[1],
+		assertNull(v1.getFirstEdgeOfClass(eclasses[1],
 				EdgeDirection.OUT, true));
-		assertEquals(null, v1.getFirstEdgeOfClass(eclasses[2],
+		assertNull(v1.getFirstEdgeOfClass(eclasses[2],
 				EdgeDirection.OUT, true));
 
-		assertEquals(null, v0.getFirstEdgeOfClass(eclasses[0],
+		assertNull(v0.getFirstEdgeOfClass(eclasses[0],
 				EdgeDirection.IN, true));
-		assertEquals(null, v0.getFirstEdgeOfClass(eclasses[1],
+		assertNull(v0.getFirstEdgeOfClass(eclasses[1],
 				EdgeDirection.IN, true));
-		assertEquals(null, v0.getFirstEdgeOfClass(eclasses[2],
+		assertNull(v0.getFirstEdgeOfClass(eclasses[2],
 				EdgeDirection.IN, true));
 		assertEquals(e.getReversedEdge(), v1.getFirstEdgeOfClass(eclasses[0],
 				EdgeDirection.IN, true));
-		assertEquals(null, v1.getFirstEdgeOfClass(eclasses[1],
+		assertNull(v1.getFirstEdgeOfClass(eclasses[1],
 				EdgeDirection.IN, true));
-		assertEquals(null, v1.getFirstEdgeOfClass(eclasses[2],
+		assertNull(v1.getFirstEdgeOfClass(eclasses[2],
 				EdgeDirection.IN, true));
 	}
 
@@ -4862,78 +4862,78 @@ public class VertexTest {
 				EdgeDirection.INOUT, false));
 		assertEquals(e1, v0.getFirstEdgeOfClass(eclasses[1],
 				EdgeDirection.INOUT, false));
-		assertEquals(null, v0.getFirstEdgeOfClass(eclasses[2],
+		assertNull(v0.getFirstEdgeOfClass(eclasses[2],
 				EdgeDirection.INOUT, false));
 		assertEquals(e1.getReversedEdge(), v1.getFirstEdgeOfClass(eclasses[0],
 				EdgeDirection.INOUT, false));
 		assertEquals(e1.getReversedEdge(), v1.getFirstEdgeOfClass(eclasses[1],
 				EdgeDirection.INOUT, false));
-		assertEquals(null, v1.getFirstEdgeOfClass(eclasses[2],
+		assertNull(v1.getFirstEdgeOfClass(eclasses[2],
 				EdgeDirection.INOUT, false));
 
 		assertEquals(e1, v0.getFirstEdgeOfClass(eclasses[0], EdgeDirection.OUT,
 				false));
 		assertEquals(e1, v0.getFirstEdgeOfClass(eclasses[1], EdgeDirection.OUT,
 				false));
-		assertEquals(null, v0.getFirstEdgeOfClass(eclasses[2],
+		assertNull(v0.getFirstEdgeOfClass(eclasses[2],
 				EdgeDirection.OUT, false));
-		assertEquals(null, v1.getFirstEdgeOfClass(eclasses[0],
+		assertNull(v1.getFirstEdgeOfClass(eclasses[0],
 				EdgeDirection.OUT, false));
-		assertEquals(null, v1.getFirstEdgeOfClass(eclasses[1],
+		assertNull(v1.getFirstEdgeOfClass(eclasses[1],
 				EdgeDirection.OUT, false));
-		assertEquals(null, v1.getFirstEdgeOfClass(eclasses[2],
+		assertNull(v1.getFirstEdgeOfClass(eclasses[2],
 				EdgeDirection.OUT, false));
 
-		assertEquals(null, v0.getFirstEdgeOfClass(eclasses[0],
+		assertNull(v0.getFirstEdgeOfClass(eclasses[0],
 				EdgeDirection.IN, false));
-		assertEquals(null, v0.getFirstEdgeOfClass(eclasses[1],
+		assertNull(v0.getFirstEdgeOfClass(eclasses[1],
 				EdgeDirection.IN, false));
-		assertEquals(null, v0.getFirstEdgeOfClass(eclasses[2],
+		assertNull(v0.getFirstEdgeOfClass(eclasses[2],
 				EdgeDirection.IN, false));
 		assertEquals(e1.getReversedEdge(), v1.getFirstEdgeOfClass(eclasses[0],
 				EdgeDirection.IN, false));
 		assertEquals(e1.getReversedEdge(), v1.getFirstEdgeOfClass(eclasses[1],
 				EdgeDirection.IN, false));
-		assertEquals(null, v1.getFirstEdgeOfClass(eclasses[2],
+		assertNull(v1.getFirstEdgeOfClass(eclasses[2],
 				EdgeDirection.IN, false));
 
-		assertEquals(null, v0.getFirstEdgeOfClass(eclasses[0],
+		assertNull(v0.getFirstEdgeOfClass(eclasses[0],
 				EdgeDirection.INOUT, true));
 		assertEquals(e1, v0.getFirstEdgeOfClass(eclasses[1],
 				EdgeDirection.INOUT, true));
-		assertEquals(null, v0.getFirstEdgeOfClass(eclasses[2],
+		assertNull(v0.getFirstEdgeOfClass(eclasses[2],
 				EdgeDirection.INOUT, true));
-		assertEquals(null, v1.getFirstEdgeOfClass(eclasses[0],
+		assertNull(v1.getFirstEdgeOfClass(eclasses[0],
 				EdgeDirection.INOUT, true));
 		assertEquals(e1.getReversedEdge(), v1.getFirstEdgeOfClass(eclasses[1],
 				EdgeDirection.INOUT, true));
-		assertEquals(null, v1.getFirstEdgeOfClass(eclasses[2],
+		assertNull(v1.getFirstEdgeOfClass(eclasses[2],
 				EdgeDirection.INOUT, true));
 
-		assertEquals(null, v0.getFirstEdgeOfClass(eclasses[0],
+		assertNull(v0.getFirstEdgeOfClass(eclasses[0],
 				EdgeDirection.OUT, true));
 		assertEquals(e1, v0.getFirstEdgeOfClass(eclasses[1], EdgeDirection.OUT,
 				true));
-		assertEquals(null, v0.getFirstEdgeOfClass(eclasses[2],
+		assertNull(v0.getFirstEdgeOfClass(eclasses[2],
 				EdgeDirection.OUT, true));
-		assertEquals(null, v1.getFirstEdgeOfClass(eclasses[0],
+		assertNull(v1.getFirstEdgeOfClass(eclasses[0],
 				EdgeDirection.OUT, true));
-		assertEquals(null, v1.getFirstEdgeOfClass(eclasses[1],
+		assertNull(v1.getFirstEdgeOfClass(eclasses[1],
 				EdgeDirection.OUT, true));
-		assertEquals(null, v1.getFirstEdgeOfClass(eclasses[2],
+		assertNull(v1.getFirstEdgeOfClass(eclasses[2],
 				EdgeDirection.OUT, true));
 
-		assertEquals(null, v0.getFirstEdgeOfClass(eclasses[0],
+		assertNull(v0.getFirstEdgeOfClass(eclasses[0],
 				EdgeDirection.IN, true));
-		assertEquals(null, v0.getFirstEdgeOfClass(eclasses[1],
+		assertNull(v0.getFirstEdgeOfClass(eclasses[1],
 				EdgeDirection.IN, true));
-		assertEquals(null, v0.getFirstEdgeOfClass(eclasses[2],
+		assertNull(v0.getFirstEdgeOfClass(eclasses[2],
 				EdgeDirection.IN, true));
-		assertEquals(null, v1.getFirstEdgeOfClass(eclasses[0],
+		assertNull(v1.getFirstEdgeOfClass(eclasses[0],
 				EdgeDirection.IN, true));
 		assertEquals(e1.getReversedEdge(), v1.getFirstEdgeOfClass(eclasses[1],
 				EdgeDirection.IN, true));
-		assertEquals(null, v1.getFirstEdgeOfClass(eclasses[2],
+		assertNull(v1.getFirstEdgeOfClass(eclasses[2],
 				EdgeDirection.IN, true));
 	}
 
@@ -4950,80 +4950,80 @@ public class VertexTest {
 
 		assertEquals(e1, v0.getFirstEdgeOfClass(eclasses[0],
 				EdgeDirection.INOUT, false));
-		assertEquals(null, v0.getFirstEdgeOfClass(eclasses[1],
+		assertNull(v0.getFirstEdgeOfClass(eclasses[1],
 				EdgeDirection.INOUT, false));
 		assertEquals(e2.getReversedEdge(), v0.getFirstEdgeOfClass(eclasses[2],
 				EdgeDirection.INOUT, false));
 		assertEquals(e1.getReversedEdge(), v1.getFirstEdgeOfClass(eclasses[0],
 				EdgeDirection.INOUT, false));
-		assertEquals(null, v1.getFirstEdgeOfClass(eclasses[1],
+		assertNull(v1.getFirstEdgeOfClass(eclasses[1],
 				EdgeDirection.INOUT, false));
 		assertEquals(e2, v1.getFirstEdgeOfClass(eclasses[2],
 				EdgeDirection.INOUT, false));
 
 		assertEquals(e1, v0.getFirstEdgeOfClass(eclasses[0], EdgeDirection.OUT,
 				false));
-		assertEquals(null, v0.getFirstEdgeOfClass(eclasses[1],
+		assertNull(v0.getFirstEdgeOfClass(eclasses[1],
 				EdgeDirection.OUT, false));
-		assertEquals(null, v0.getFirstEdgeOfClass(eclasses[2],
+		assertNull(v0.getFirstEdgeOfClass(eclasses[2],
 				EdgeDirection.OUT, false));
-		assertEquals(null, v1.getFirstEdgeOfClass(eclasses[0],
+		assertNull(v1.getFirstEdgeOfClass(eclasses[0],
 				EdgeDirection.OUT, false));
-		assertEquals(null, v1.getFirstEdgeOfClass(eclasses[1],
+		assertNull(v1.getFirstEdgeOfClass(eclasses[1],
 				EdgeDirection.OUT, false));
 		assertEquals(e2, v1.getFirstEdgeOfClass(eclasses[2], EdgeDirection.OUT,
 				false));
 
-		assertEquals(null, v0.getFirstEdgeOfClass(eclasses[0],
+		assertNull(v0.getFirstEdgeOfClass(eclasses[0],
 				EdgeDirection.IN, false));
-		assertEquals(null, v0.getFirstEdgeOfClass(eclasses[1],
+		assertNull(v0.getFirstEdgeOfClass(eclasses[1],
 				EdgeDirection.IN, false));
 		assertEquals(e2.getReversedEdge(), v0.getFirstEdgeOfClass(eclasses[2],
 				EdgeDirection.IN, false));
 		assertEquals(e1.getReversedEdge(), v1.getFirstEdgeOfClass(eclasses[0],
 				EdgeDirection.IN, false));
-		assertEquals(null, v1.getFirstEdgeOfClass(eclasses[1],
+		assertNull(v1.getFirstEdgeOfClass(eclasses[1],
 				EdgeDirection.IN, false));
-		assertEquals(null, v1.getFirstEdgeOfClass(eclasses[2],
+		assertNull(v1.getFirstEdgeOfClass(eclasses[2],
 				EdgeDirection.IN, false));
 
 		assertEquals(e1, v0.getFirstEdgeOfClass(eclasses[0],
 				EdgeDirection.INOUT, true));
-		assertEquals(null, v0.getFirstEdgeOfClass(eclasses[1],
+		assertNull(v0.getFirstEdgeOfClass(eclasses[1],
 				EdgeDirection.INOUT, true));
 		assertEquals(e2.getReversedEdge(), v0.getFirstEdgeOfClass(eclasses[2],
 				EdgeDirection.INOUT, true));
 		assertEquals(e1.getReversedEdge(), v1.getFirstEdgeOfClass(eclasses[0],
 				EdgeDirection.INOUT, true));
-		assertEquals(null, v1.getFirstEdgeOfClass(eclasses[1],
+		assertNull(v1.getFirstEdgeOfClass(eclasses[1],
 				EdgeDirection.INOUT, true));
 		assertEquals(e2, v1.getFirstEdgeOfClass(eclasses[2],
 				EdgeDirection.INOUT, true));
 
 		assertEquals(e1, v0.getFirstEdgeOfClass(eclasses[0], EdgeDirection.OUT,
 				true));
-		assertEquals(null, v0.getFirstEdgeOfClass(eclasses[1],
+		assertNull(v0.getFirstEdgeOfClass(eclasses[1],
 				EdgeDirection.OUT, true));
-		assertEquals(null, v0.getFirstEdgeOfClass(eclasses[2],
+		assertNull(v0.getFirstEdgeOfClass(eclasses[2],
 				EdgeDirection.OUT, true));
-		assertEquals(null, v1.getFirstEdgeOfClass(eclasses[0],
+		assertNull(v1.getFirstEdgeOfClass(eclasses[0],
 				EdgeDirection.OUT, true));
-		assertEquals(null, v1.getFirstEdgeOfClass(eclasses[1],
+		assertNull(v1.getFirstEdgeOfClass(eclasses[1],
 				EdgeDirection.OUT, true));
 		assertEquals(e2, v1.getFirstEdgeOfClass(eclasses[2], EdgeDirection.OUT,
 				true));
 
-		assertEquals(null, v0.getFirstEdgeOfClass(eclasses[0],
+		assertNull(v0.getFirstEdgeOfClass(eclasses[0],
 				EdgeDirection.IN, true));
-		assertEquals(null, v0.getFirstEdgeOfClass(eclasses[1],
+		assertNull(v0.getFirstEdgeOfClass(eclasses[1],
 				EdgeDirection.IN, true));
 		assertEquals(e2.getReversedEdge(), v0.getFirstEdgeOfClass(eclasses[2],
 				EdgeDirection.IN, true));
 		assertEquals(e1.getReversedEdge(), v1.getFirstEdgeOfClass(eclasses[0],
 				EdgeDirection.IN, true));
-		assertEquals(null, v1.getFirstEdgeOfClass(eclasses[1],
+		assertNull(v1.getFirstEdgeOfClass(eclasses[1],
 				EdgeDirection.IN, true));
-		assertEquals(null, v1.getFirstEdgeOfClass(eclasses[2],
+		assertNull(v1.getFirstEdgeOfClass(eclasses[2],
 				EdgeDirection.IN, true));
 	}
 
@@ -5038,44 +5038,44 @@ public class VertexTest {
 
 		assertEquals(e1, v0.getFirstEdgeOfClass(eclasses[0],
 				EdgeDirection.INOUT, false));
-		assertEquals(null, v0.getFirstEdgeOfClass(eclasses[1],
+		assertNull(v0.getFirstEdgeOfClass(eclasses[1],
 				EdgeDirection.INOUT, false));
-		assertEquals(null, v0.getFirstEdgeOfClass(eclasses[2],
+		assertNull(v0.getFirstEdgeOfClass(eclasses[2],
 				EdgeDirection.INOUT, false));
 
 		assertEquals(e1, v0.getFirstEdgeOfClass(eclasses[0], EdgeDirection.OUT,
 				false));
-		assertEquals(null, v0.getFirstEdgeOfClass(eclasses[1],
+		assertNull(v0.getFirstEdgeOfClass(eclasses[1],
 				EdgeDirection.OUT, false));
-		assertEquals(null, v0.getFirstEdgeOfClass(eclasses[2],
+		assertNull(v0.getFirstEdgeOfClass(eclasses[2],
 				EdgeDirection.OUT, false));
 
 		assertEquals(e1.getReversedEdge(), v0.getFirstEdgeOfClass(eclasses[0],
 				EdgeDirection.IN, false));
-		assertEquals(null, v0.getFirstEdgeOfClass(eclasses[1],
+		assertNull(v0.getFirstEdgeOfClass(eclasses[1],
 				EdgeDirection.IN, false));
-		assertEquals(null, v0.getFirstEdgeOfClass(eclasses[2],
+		assertNull(v0.getFirstEdgeOfClass(eclasses[2],
 				EdgeDirection.IN, false));
 
 		assertEquals(e1, v0.getFirstEdgeOfClass(eclasses[0],
 				EdgeDirection.INOUT, true));
-		assertEquals(null, v0.getFirstEdgeOfClass(eclasses[1],
+		assertNull(v0.getFirstEdgeOfClass(eclasses[1],
 				EdgeDirection.INOUT, true));
-		assertEquals(null, v0.getFirstEdgeOfClass(eclasses[2],
+		assertNull(v0.getFirstEdgeOfClass(eclasses[2],
 				EdgeDirection.INOUT, true));
 
 		assertEquals(e1, v0.getFirstEdgeOfClass(eclasses[0], EdgeDirection.OUT,
 				true));
-		assertEquals(null, v0.getFirstEdgeOfClass(eclasses[1],
+		assertNull(v0.getFirstEdgeOfClass(eclasses[1],
 				EdgeDirection.OUT, true));
-		assertEquals(null, v0.getFirstEdgeOfClass(eclasses[2],
+		assertNull(v0.getFirstEdgeOfClass(eclasses[2],
 				EdgeDirection.OUT, true));
 
 		assertEquals(e1.getReversedEdge(), v0.getFirstEdgeOfClass(eclasses[0],
 				EdgeDirection.IN, true));
-		assertEquals(null, v0.getFirstEdgeOfClass(eclasses[1],
+		assertNull(v0.getFirstEdgeOfClass(eclasses[1],
 				EdgeDirection.IN, true));
-		assertEquals(null, v0.getFirstEdgeOfClass(eclasses[2],
+		assertNull(v0.getFirstEdgeOfClass(eclasses[2],
 				EdgeDirection.IN, true));
 	}
 
@@ -5355,46 +5355,46 @@ public class VertexTest {
 	public void getFirstEdgeTestClassEdgeDirectionBoolean0() {
 		Vertex v0 = graph.createDoubleSubNode();
 
-		assertEquals(null, v0.getFirstEdgeOfClass(Link.class,
+		assertNull(v0.getFirstEdgeOfClass(Link.class,
 				EdgeDirection.INOUT, false));
-		assertEquals(null, v0.getFirstEdgeOfClass(SubLink.class,
+		assertNull(v0.getFirstEdgeOfClass(SubLink.class,
 				EdgeDirection.INOUT, false));
-		assertEquals(null, v0.getFirstEdgeOfClass(LinkBack.class,
+		assertNull(v0.getFirstEdgeOfClass(LinkBack.class,
 				EdgeDirection.INOUT, false));
 
-		assertEquals(null, v0.getFirstEdgeOfClass(Link.class,
+		assertNull(v0.getFirstEdgeOfClass(Link.class,
 				EdgeDirection.OUT, false));
-		assertEquals(null, v0.getFirstEdgeOfClass(SubLink.class,
+		assertNull(v0.getFirstEdgeOfClass(SubLink.class,
 				EdgeDirection.OUT, false));
-		assertEquals(null, v0.getFirstEdgeOfClass(LinkBack.class,
+		assertNull(v0.getFirstEdgeOfClass(LinkBack.class,
 				EdgeDirection.OUT, false));
 
-		assertEquals(null, v0.getFirstEdgeOfClass(Link.class, EdgeDirection.IN,
+		assertNull(v0.getFirstEdgeOfClass(Link.class, EdgeDirection.IN,
 				false));
-		assertEquals(null, v0.getFirstEdgeOfClass(SubLink.class,
+		assertNull(v0.getFirstEdgeOfClass(SubLink.class,
 				EdgeDirection.IN, false));
-		assertEquals(null, v0.getFirstEdgeOfClass(LinkBack.class,
+		assertNull(v0.getFirstEdgeOfClass(LinkBack.class,
 				EdgeDirection.IN, false));
 
-		assertEquals(null, v0.getFirstEdgeOfClass(Link.class,
+		assertNull(v0.getFirstEdgeOfClass(Link.class,
 				EdgeDirection.INOUT, true));
-		assertEquals(null, v0.getFirstEdgeOfClass(SubLink.class,
+		assertNull(v0.getFirstEdgeOfClass(SubLink.class,
 				EdgeDirection.INOUT, true));
-		assertEquals(null, v0.getFirstEdgeOfClass(LinkBack.class,
+		assertNull(v0.getFirstEdgeOfClass(LinkBack.class,
 				EdgeDirection.INOUT, true));
 
-		assertEquals(null, v0.getFirstEdgeOfClass(Link.class,
+		assertNull(v0.getFirstEdgeOfClass(Link.class,
 				EdgeDirection.OUT, true));
-		assertEquals(null, v0.getFirstEdgeOfClass(SubLink.class,
+		assertNull(v0.getFirstEdgeOfClass(SubLink.class,
 				EdgeDirection.OUT, true));
-		assertEquals(null, v0.getFirstEdgeOfClass(LinkBack.class,
+		assertNull(v0.getFirstEdgeOfClass(LinkBack.class,
 				EdgeDirection.OUT, true));
 
-		assertEquals(null, v0.getFirstEdgeOfClass(Link.class, EdgeDirection.IN,
+		assertNull(v0.getFirstEdgeOfClass(Link.class, EdgeDirection.IN,
 				true));
-		assertEquals(null, v0.getFirstEdgeOfClass(SubLink.class,
+		assertNull(v0.getFirstEdgeOfClass(SubLink.class,
 				EdgeDirection.IN, true));
-		assertEquals(null, v0.getFirstEdgeOfClass(LinkBack.class,
+		assertNull(v0.getFirstEdgeOfClass(LinkBack.class,
 				EdgeDirection.IN, true));
 	}
 
@@ -5409,80 +5409,80 @@ public class VertexTest {
 
 		assertEquals(e, v0.getFirstEdgeOfClass(Link.class, EdgeDirection.INOUT,
 				false));
-		assertEquals(null, v0.getFirstEdgeOfClass(SubLink.class,
+		assertNull(v0.getFirstEdgeOfClass(SubLink.class,
 				EdgeDirection.INOUT, false));
-		assertEquals(null, v0.getFirstEdgeOfClass(LinkBack.class,
+		assertNull(v0.getFirstEdgeOfClass(LinkBack.class,
 				EdgeDirection.INOUT, false));
 		assertEquals(e.getReversedEdge(), v1.getFirstEdgeOfClass(Link.class,
 				EdgeDirection.INOUT, false));
-		assertEquals(null, v1.getFirstEdgeOfClass(SubLink.class,
+		assertNull(v1.getFirstEdgeOfClass(SubLink.class,
 				EdgeDirection.INOUT, false));
-		assertEquals(null, v1.getFirstEdgeOfClass(LinkBack.class,
+		assertNull(v1.getFirstEdgeOfClass(LinkBack.class,
 				EdgeDirection.INOUT, false));
 
 		assertEquals(e, v0.getFirstEdgeOfClass(Link.class, EdgeDirection.OUT,
 				false));
-		assertEquals(null, v0.getFirstEdgeOfClass(SubLink.class,
+		assertNull(v0.getFirstEdgeOfClass(SubLink.class,
 				EdgeDirection.OUT, false));
-		assertEquals(null, v0.getFirstEdgeOfClass(LinkBack.class,
+		assertNull(v0.getFirstEdgeOfClass(LinkBack.class,
 				EdgeDirection.OUT, false));
-		assertEquals(null, v1.getFirstEdgeOfClass(Link.class,
+		assertNull(v1.getFirstEdgeOfClass(Link.class,
 				EdgeDirection.OUT, false));
-		assertEquals(null, v1.getFirstEdgeOfClass(SubLink.class,
+		assertNull(v1.getFirstEdgeOfClass(SubLink.class,
 				EdgeDirection.OUT, false));
-		assertEquals(null, v1.getFirstEdgeOfClass(LinkBack.class,
+		assertNull(v1.getFirstEdgeOfClass(LinkBack.class,
 				EdgeDirection.OUT, false));
 
-		assertEquals(null, v0.getFirstEdgeOfClass(Link.class, EdgeDirection.IN,
+		assertNull(v0.getFirstEdgeOfClass(Link.class, EdgeDirection.IN,
 				false));
-		assertEquals(null, v0.getFirstEdgeOfClass(SubLink.class,
+		assertNull(v0.getFirstEdgeOfClass(SubLink.class,
 				EdgeDirection.IN, false));
-		assertEquals(null, v0.getFirstEdgeOfClass(LinkBack.class,
+		assertNull(v0.getFirstEdgeOfClass(LinkBack.class,
 				EdgeDirection.IN, false));
 		assertEquals(e.getReversedEdge(), v1.getFirstEdgeOfClass(Link.class,
 				EdgeDirection.IN, false));
-		assertEquals(null, v1.getFirstEdgeOfClass(SubLink.class,
+		assertNull(v1.getFirstEdgeOfClass(SubLink.class,
 				EdgeDirection.IN, false));
-		assertEquals(null, v1.getFirstEdgeOfClass(LinkBack.class,
+		assertNull(v1.getFirstEdgeOfClass(LinkBack.class,
 				EdgeDirection.IN, false));
 
 		assertEquals(e, v0.getFirstEdgeOfClass(Link.class, EdgeDirection.INOUT,
 				true));
-		assertEquals(null, v0.getFirstEdgeOfClass(SubLink.class,
+		assertNull(v0.getFirstEdgeOfClass(SubLink.class,
 				EdgeDirection.INOUT, true));
-		assertEquals(null, v0.getFirstEdgeOfClass(LinkBack.class,
+		assertNull(v0.getFirstEdgeOfClass(LinkBack.class,
 				EdgeDirection.INOUT, true));
 		assertEquals(e.getReversedEdge(), v1.getFirstEdgeOfClass(Link.class,
 				EdgeDirection.INOUT, true));
-		assertEquals(null, v1.getFirstEdgeOfClass(SubLink.class,
+		assertNull(v1.getFirstEdgeOfClass(SubLink.class,
 				EdgeDirection.INOUT, true));
-		assertEquals(null, v1.getFirstEdgeOfClass(LinkBack.class,
+		assertNull(v1.getFirstEdgeOfClass(LinkBack.class,
 				EdgeDirection.INOUT, true));
 
 		assertEquals(e, v0.getFirstEdgeOfClass(Link.class, EdgeDirection.OUT,
 				true));
-		assertEquals(null, v0.getFirstEdgeOfClass(SubLink.class,
+		assertNull(v0.getFirstEdgeOfClass(SubLink.class,
 				EdgeDirection.OUT, true));
-		assertEquals(null, v0.getFirstEdgeOfClass(LinkBack.class,
+		assertNull(v0.getFirstEdgeOfClass(LinkBack.class,
 				EdgeDirection.OUT, true));
-		assertEquals(null, v1.getFirstEdgeOfClass(Link.class,
+		assertNull(v1.getFirstEdgeOfClass(Link.class,
 				EdgeDirection.OUT, true));
-		assertEquals(null, v1.getFirstEdgeOfClass(SubLink.class,
+		assertNull(v1.getFirstEdgeOfClass(SubLink.class,
 				EdgeDirection.OUT, true));
-		assertEquals(null, v1.getFirstEdgeOfClass(LinkBack.class,
+		assertNull(v1.getFirstEdgeOfClass(LinkBack.class,
 				EdgeDirection.OUT, true));
 
-		assertEquals(null, v0.getFirstEdgeOfClass(Link.class, EdgeDirection.IN,
+		assertNull(v0.getFirstEdgeOfClass(Link.class, EdgeDirection.IN,
 				true));
-		assertEquals(null, v0.getFirstEdgeOfClass(SubLink.class,
+		assertNull(v0.getFirstEdgeOfClass(SubLink.class,
 				EdgeDirection.IN, true));
-		assertEquals(null, v0.getFirstEdgeOfClass(LinkBack.class,
+		assertNull(v0.getFirstEdgeOfClass(LinkBack.class,
 				EdgeDirection.IN, true));
 		assertEquals(e.getReversedEdge(), v1.getFirstEdgeOfClass(Link.class,
 				EdgeDirection.IN, true));
-		assertEquals(null, v1.getFirstEdgeOfClass(SubLink.class,
+		assertNull(v1.getFirstEdgeOfClass(SubLink.class,
 				EdgeDirection.IN, true));
-		assertEquals(null, v1.getFirstEdgeOfClass(LinkBack.class,
+		assertNull(v1.getFirstEdgeOfClass(LinkBack.class,
 				EdgeDirection.IN, true));
 	}
 
@@ -5499,78 +5499,78 @@ public class VertexTest {
 				EdgeDirection.INOUT, false));
 		assertEquals(e1, v0.getFirstEdgeOfClass(SubLink.class,
 				EdgeDirection.INOUT, false));
-		assertEquals(null, v0.getFirstEdgeOfClass(LinkBack.class,
+		assertNull(v0.getFirstEdgeOfClass(LinkBack.class,
 				EdgeDirection.INOUT, false));
 		assertEquals(e1.getReversedEdge(), v1.getFirstEdgeOfClass(Link.class,
 				EdgeDirection.INOUT, false));
 		assertEquals(e1.getReversedEdge(), v1.getFirstEdgeOfClass(
 				SubLink.class, EdgeDirection.INOUT, false));
-		assertEquals(null, v1.getFirstEdgeOfClass(LinkBack.class,
+		assertNull(v1.getFirstEdgeOfClass(LinkBack.class,
 				EdgeDirection.INOUT, false));
 
 		assertEquals(e1, v0.getFirstEdgeOfClass(Link.class, EdgeDirection.OUT,
 				false));
 		assertEquals(e1, v0.getFirstEdgeOfClass(SubLink.class,
 				EdgeDirection.OUT, false));
-		assertEquals(null, v0.getFirstEdgeOfClass(LinkBack.class,
+		assertNull(v0.getFirstEdgeOfClass(LinkBack.class,
 				EdgeDirection.OUT, false));
-		assertEquals(null, v1.getFirstEdgeOfClass(Link.class,
+		assertNull(v1.getFirstEdgeOfClass(Link.class,
 				EdgeDirection.OUT, false));
-		assertEquals(null, v1.getFirstEdgeOfClass(SubLink.class,
+		assertNull(v1.getFirstEdgeOfClass(SubLink.class,
 				EdgeDirection.OUT, false));
-		assertEquals(null, v1.getFirstEdgeOfClass(LinkBack.class,
+		assertNull(v1.getFirstEdgeOfClass(LinkBack.class,
 				EdgeDirection.OUT, false));
 
-		assertEquals(null, v0.getFirstEdgeOfClass(Link.class, EdgeDirection.IN,
+		assertNull(v0.getFirstEdgeOfClass(Link.class, EdgeDirection.IN,
 				false));
-		assertEquals(null, v0.getFirstEdgeOfClass(SubLink.class,
+		assertNull(v0.getFirstEdgeOfClass(SubLink.class,
 				EdgeDirection.IN, false));
-		assertEquals(null, v0.getFirstEdgeOfClass(LinkBack.class,
+		assertNull(v0.getFirstEdgeOfClass(LinkBack.class,
 				EdgeDirection.IN, false));
 		assertEquals(e1.getReversedEdge(), v1.getFirstEdgeOfClass(Link.class,
 				EdgeDirection.IN, false));
 		assertEquals(e1.getReversedEdge(), v1.getFirstEdgeOfClass(
 				SubLink.class, EdgeDirection.IN, false));
-		assertEquals(null, v1.getFirstEdgeOfClass(LinkBack.class,
+		assertNull(v1.getFirstEdgeOfClass(LinkBack.class,
 				EdgeDirection.IN, false));
 
-		assertEquals(null, v0.getFirstEdgeOfClass(Link.class,
+		assertNull(v0.getFirstEdgeOfClass(Link.class,
 				EdgeDirection.INOUT, true));
 		assertEquals(e1, v0.getFirstEdgeOfClass(SubLink.class,
 				EdgeDirection.INOUT, true));
-		assertEquals(null, v0.getFirstEdgeOfClass(LinkBack.class,
+		assertNull(v0.getFirstEdgeOfClass(LinkBack.class,
 				EdgeDirection.INOUT, true));
-		assertEquals(null, v1.getFirstEdgeOfClass(Link.class,
+		assertNull(v1.getFirstEdgeOfClass(Link.class,
 				EdgeDirection.INOUT, true));
 		assertEquals(e1.getReversedEdge(), v1.getFirstEdgeOfClass(
 				SubLink.class, EdgeDirection.INOUT, true));
-		assertEquals(null, v1.getFirstEdgeOfClass(LinkBack.class,
+		assertNull(v1.getFirstEdgeOfClass(LinkBack.class,
 				EdgeDirection.INOUT, true));
 
-		assertEquals(null, v0.getFirstEdgeOfClass(Link.class,
+		assertNull(v0.getFirstEdgeOfClass(Link.class,
 				EdgeDirection.OUT, true));
 		assertEquals(e1, v0.getFirstEdgeOfClass(SubLink.class,
 				EdgeDirection.OUT, true));
-		assertEquals(null, v0.getFirstEdgeOfClass(LinkBack.class,
+		assertNull(v0.getFirstEdgeOfClass(LinkBack.class,
 				EdgeDirection.OUT, true));
-		assertEquals(null, v1.getFirstEdgeOfClass(Link.class,
+		assertNull(v1.getFirstEdgeOfClass(Link.class,
 				EdgeDirection.OUT, true));
-		assertEquals(null, v1.getFirstEdgeOfClass(SubLink.class,
+		assertNull(v1.getFirstEdgeOfClass(SubLink.class,
 				EdgeDirection.OUT, true));
-		assertEquals(null, v1.getFirstEdgeOfClass(LinkBack.class,
+		assertNull(v1.getFirstEdgeOfClass(LinkBack.class,
 				EdgeDirection.OUT, true));
 
-		assertEquals(null, v0.getFirstEdgeOfClass(Link.class, EdgeDirection.IN,
+		assertNull(v0.getFirstEdgeOfClass(Link.class, EdgeDirection.IN,
 				true));
-		assertEquals(null, v0.getFirstEdgeOfClass(SubLink.class,
+		assertNull(v0.getFirstEdgeOfClass(SubLink.class,
 				EdgeDirection.IN, true));
-		assertEquals(null, v0.getFirstEdgeOfClass(LinkBack.class,
+		assertNull(v0.getFirstEdgeOfClass(LinkBack.class,
 				EdgeDirection.IN, true));
-		assertEquals(null, v1.getFirstEdgeOfClass(Link.class, EdgeDirection.IN,
+		assertNull(v1.getFirstEdgeOfClass(Link.class, EdgeDirection.IN,
 				true));
 		assertEquals(e1.getReversedEdge(), v1.getFirstEdgeOfClass(
 				SubLink.class, EdgeDirection.IN, true));
-		assertEquals(null, v1.getFirstEdgeOfClass(LinkBack.class,
+		assertNull(v1.getFirstEdgeOfClass(LinkBack.class,
 				EdgeDirection.IN, true));
 	}
 
@@ -5586,80 +5586,80 @@ public class VertexTest {
 
 		assertEquals(e1, v0.getFirstEdgeOfClass(Link.class,
 				EdgeDirection.INOUT, false));
-		assertEquals(null, v0.getFirstEdgeOfClass(SubLink.class,
+		assertNull(v0.getFirstEdgeOfClass(SubLink.class,
 				EdgeDirection.INOUT, false));
 		assertEquals(e2.getReversedEdge(), v0.getFirstEdgeOfClass(
 				LinkBack.class, EdgeDirection.INOUT, false));
 		assertEquals(e1.getReversedEdge(), v1.getFirstEdgeOfClass(Link.class,
 				EdgeDirection.INOUT, false));
-		assertEquals(null, v1.getFirstEdgeOfClass(SubLink.class,
+		assertNull(v1.getFirstEdgeOfClass(SubLink.class,
 				EdgeDirection.INOUT, false));
 		assertEquals(e2, v1.getFirstEdgeOfClass(LinkBack.class,
 				EdgeDirection.INOUT, false));
 
 		assertEquals(e1, v0.getFirstEdgeOfClass(Link.class, EdgeDirection.OUT,
 				false));
-		assertEquals(null, v0.getFirstEdgeOfClass(SubLink.class,
+		assertNull(v0.getFirstEdgeOfClass(SubLink.class,
 				EdgeDirection.OUT, false));
-		assertEquals(null, v0.getFirstEdgeOfClass(LinkBack.class,
+		assertNull(v0.getFirstEdgeOfClass(LinkBack.class,
 				EdgeDirection.OUT, false));
-		assertEquals(null, v1.getFirstEdgeOfClass(Link.class,
+		assertNull(v1.getFirstEdgeOfClass(Link.class,
 				EdgeDirection.OUT, false));
-		assertEquals(null, v1.getFirstEdgeOfClass(SubLink.class,
+		assertNull(v1.getFirstEdgeOfClass(SubLink.class,
 				EdgeDirection.OUT, false));
 		assertEquals(e2, v1.getFirstEdgeOfClass(LinkBack.class,
 				EdgeDirection.OUT, false));
 
-		assertEquals(null, v0.getFirstEdgeOfClass(Link.class, EdgeDirection.IN,
+		assertNull(v0.getFirstEdgeOfClass(Link.class, EdgeDirection.IN,
 				false));
-		assertEquals(null, v0.getFirstEdgeOfClass(SubLink.class,
+		assertNull(v0.getFirstEdgeOfClass(SubLink.class,
 				EdgeDirection.IN, false));
 		assertEquals(e2.getReversedEdge(), v0.getFirstEdgeOfClass(
 				LinkBack.class, EdgeDirection.IN, false));
 		assertEquals(e1.getReversedEdge(), v1.getFirstEdgeOfClass(Link.class,
 				EdgeDirection.IN, false));
-		assertEquals(null, v1.getFirstEdgeOfClass(SubLink.class,
+		assertNull(v1.getFirstEdgeOfClass(SubLink.class,
 				EdgeDirection.IN, false));
-		assertEquals(null, v1.getFirstEdgeOfClass(LinkBack.class,
+		assertNull(v1.getFirstEdgeOfClass(LinkBack.class,
 				EdgeDirection.IN, false));
 
 		assertEquals(e1, v0.getFirstEdgeOfClass(Link.class,
 				EdgeDirection.INOUT, true));
-		assertEquals(null, v0.getFirstEdgeOfClass(SubLink.class,
+		assertNull(v0.getFirstEdgeOfClass(SubLink.class,
 				EdgeDirection.INOUT, true));
 		assertEquals(e2.getReversedEdge(), v0.getFirstEdgeOfClass(
 				LinkBack.class, EdgeDirection.INOUT, true));
 		assertEquals(e1.getReversedEdge(), v1.getFirstEdgeOfClass(Link.class,
 				EdgeDirection.INOUT, true));
-		assertEquals(null, v1.getFirstEdgeOfClass(SubLink.class,
+		assertNull(v1.getFirstEdgeOfClass(SubLink.class,
 				EdgeDirection.INOUT, true));
 		assertEquals(e2, v1.getFirstEdgeOfClass(LinkBack.class,
 				EdgeDirection.INOUT, true));
 
 		assertEquals(e1, v0.getFirstEdgeOfClass(Link.class, EdgeDirection.OUT,
 				true));
-		assertEquals(null, v0.getFirstEdgeOfClass(SubLink.class,
+		assertNull(v0.getFirstEdgeOfClass(SubLink.class,
 				EdgeDirection.OUT, true));
-		assertEquals(null, v0.getFirstEdgeOfClass(LinkBack.class,
+		assertNull(v0.getFirstEdgeOfClass(LinkBack.class,
 				EdgeDirection.OUT, true));
-		assertEquals(null, v1.getFirstEdgeOfClass(Link.class,
+		assertNull(v1.getFirstEdgeOfClass(Link.class,
 				EdgeDirection.OUT, true));
-		assertEquals(null, v1.getFirstEdgeOfClass(SubLink.class,
+		assertNull(v1.getFirstEdgeOfClass(SubLink.class,
 				EdgeDirection.OUT, true));
 		assertEquals(e2, v1.getFirstEdgeOfClass(LinkBack.class,
 				EdgeDirection.OUT, true));
 
-		assertEquals(null, v0.getFirstEdgeOfClass(Link.class, EdgeDirection.IN,
+		assertNull(v0.getFirstEdgeOfClass(Link.class, EdgeDirection.IN,
 				true));
-		assertEquals(null, v0.getFirstEdgeOfClass(SubLink.class,
+		assertNull(v0.getFirstEdgeOfClass(SubLink.class,
 				EdgeDirection.IN, true));
 		assertEquals(e2.getReversedEdge(), v0.getFirstEdgeOfClass(
 				LinkBack.class, EdgeDirection.IN, true));
 		assertEquals(e1.getReversedEdge(), v1.getFirstEdgeOfClass(Link.class,
 				EdgeDirection.IN, true));
-		assertEquals(null, v1.getFirstEdgeOfClass(SubLink.class,
+		assertNull(v1.getFirstEdgeOfClass(SubLink.class,
 				EdgeDirection.IN, true));
-		assertEquals(null, v1.getFirstEdgeOfClass(LinkBack.class,
+		assertNull(v1.getFirstEdgeOfClass(LinkBack.class,
 				EdgeDirection.IN, true));
 	}
 
@@ -5673,44 +5673,44 @@ public class VertexTest {
 
 		assertEquals(e1, v0.getFirstEdgeOfClass(Link.class,
 				EdgeDirection.INOUT, false));
-		assertEquals(null, v0.getFirstEdgeOfClass(SubLink.class,
+		assertNull(v0.getFirstEdgeOfClass(SubLink.class,
 				EdgeDirection.INOUT, false));
-		assertEquals(null, v0.getFirstEdgeOfClass(LinkBack.class,
+		assertNull(v0.getFirstEdgeOfClass(LinkBack.class,
 				EdgeDirection.INOUT, false));
 
 		assertEquals(e1, v0.getFirstEdgeOfClass(Link.class, EdgeDirection.OUT,
 				false));
-		assertEquals(null, v0.getFirstEdgeOfClass(SubLink.class,
+		assertNull(v0.getFirstEdgeOfClass(SubLink.class,
 				EdgeDirection.OUT, false));
-		assertEquals(null, v0.getFirstEdgeOfClass(LinkBack.class,
+		assertNull(v0.getFirstEdgeOfClass(LinkBack.class,
 				EdgeDirection.OUT, false));
 
 		assertEquals(e1.getReversedEdge(), v0.getFirstEdgeOfClass(Link.class,
 				EdgeDirection.IN, false));
-		assertEquals(null, v0.getFirstEdgeOfClass(SubLink.class,
+		assertNull(v0.getFirstEdgeOfClass(SubLink.class,
 				EdgeDirection.IN, false));
-		assertEquals(null, v0.getFirstEdgeOfClass(LinkBack.class,
+		assertNull(v0.getFirstEdgeOfClass(LinkBack.class,
 				EdgeDirection.IN, false));
 
 		assertEquals(e1, v0.getFirstEdgeOfClass(Link.class,
 				EdgeDirection.INOUT, true));
-		assertEquals(null, v0.getFirstEdgeOfClass(SubLink.class,
+		assertNull(v0.getFirstEdgeOfClass(SubLink.class,
 				EdgeDirection.INOUT, true));
-		assertEquals(null, v0.getFirstEdgeOfClass(LinkBack.class,
+		assertNull(v0.getFirstEdgeOfClass(LinkBack.class,
 				EdgeDirection.INOUT, true));
 
 		assertEquals(e1, v0.getFirstEdgeOfClass(Link.class, EdgeDirection.OUT,
 				true));
-		assertEquals(null, v0.getFirstEdgeOfClass(SubLink.class,
+		assertNull(v0.getFirstEdgeOfClass(SubLink.class,
 				EdgeDirection.OUT, true));
-		assertEquals(null, v0.getFirstEdgeOfClass(LinkBack.class,
+		assertNull(v0.getFirstEdgeOfClass(LinkBack.class,
 				EdgeDirection.OUT, true));
 
 		assertEquals(e1.getReversedEdge(), v0.getFirstEdgeOfClass(Link.class,
 				EdgeDirection.IN, true));
-		assertEquals(null, v0.getFirstEdgeOfClass(SubLink.class,
+		assertNull(v0.getFirstEdgeOfClass(SubLink.class,
 				EdgeDirection.IN, true));
-		assertEquals(null, v0.getFirstEdgeOfClass(LinkBack.class,
+		assertNull(v0.getFirstEdgeOfClass(LinkBack.class,
 				EdgeDirection.IN, true));
 	}
 
@@ -7904,8 +7904,8 @@ public class VertexTest {
 		DoubleSubNode v = graph.createDoubleSubNode();
 		v.setAttribute("nodeMap", null);
 		v.setAttribute("name", null);
-		assertEquals(null, v.getAttribute("nodeMap"));
-		assertEquals(null, v.getAttribute("name"));
+		assertNull(v.getAttribute("nodeMap"));
+		assertNull(v.getAttribute("name"));
 	}
 
 	/**
