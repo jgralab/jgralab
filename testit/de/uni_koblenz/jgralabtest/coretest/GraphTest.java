@@ -64,7 +64,50 @@ public class GraphTest {
 	
 	@Test
 	public void testCreateEdge(){
+		SubNode v1 = graph.createSubNode();
+		SubNode v2 = graph.createSubNode();
+		SuperNode v3 = graph.createSuperNode();
+		SuperNode v4 = graph.createSuperNode();
+		DoubleSubNode v5 = graph.createDoubleSubNode();
+		DoubleSubNode v6 = graph.createDoubleSubNode();
+		DoubleSubNode v7 = graph2.createDoubleSubNode();
 		
+		Edge e1 = graph.createEdge(SubLink.class, v5, v3);
+		Edge e2 = graph.createEdge(SubLink.class, v6, v4);
+		Edge e3 = graph.createEdge(SubLink.class, v7, v3);
+		Edge e4 = graph.createEdge(Link.class, v1, v3);
+		Edge e5 = graph.createEdge(Link.class, v2, v4);
+		Edge e6 = graph.createEdge(Link.class, v5, v4);
+		Edge e7 = graph.createEdge(Link.class, v6, v3);
+		Edge e8 = graph.createEdge(Link.class, v7, v4);
+		Edge e9 = graph.createEdge(LinkBack.class, v3, v1);
+		Edge e10 = graph.createEdge(LinkBack.class, v4, v2);
+		Edge e11 = graph.createEdge(LinkBack.class, v3, v5);
+		Edge e12 = graph.createEdge(LinkBack.class, v4, v6);
+		Edge e13 = graph.createEdge(LinkBack.class, v3, v7);
+		
+		assertTrue(graph.containsEdge(e1));
+		assertTrue(graph.containsEdge(e2));
+		assertTrue(graph.containsEdge(e3));
+		assertTrue(graph.containsEdge(e4));
+		assertTrue(graph.containsEdge(e5));
+		assertTrue(graph.containsEdge(e6));
+		assertTrue(graph.containsEdge(e7));
+		assertTrue(graph.containsEdge(e8));
+		assertTrue(graph.containsEdge(e9));
+		assertTrue(graph.containsEdge(e10));
+		assertFalse(graph2.containsEdge(e1));
+		assertFalse(graph2.containsEdge(e2));	
+		assertFalse(graph2.containsEdge(e3));	
+		assertFalse(graph2.containsEdge(e4));	
+		assertFalse(graph2.containsEdge(e5));	
+		assertFalse(graph2.containsEdge(e6));	
+		assertFalse(graph2.containsEdge(e7));	
+		assertFalse(graph2.containsEdge(e8));	
+		assertFalse(graph2.containsEdge(e9));	
+		assertFalse(graph2.containsEdge(e10));
+		
+		System.out.println("Done testing createEdge.");
 	}
 	
 	@Test
@@ -83,10 +126,23 @@ public class GraphTest {
 	
 	@Test
 	public void testGetGraphVersion(){
-/*		long l = graph.getGraphVersion();
-		System.out.println("GraphVersion:" + l);
-		long l2 = graph.getGraphVersion();
-		System.out.println("GraphVersion:" + l2);*/
+		assertEquals(0, graph.getGraphVersion());
+		graph.createDoubleSubNode();
+		assertEquals(1, graph.getGraphVersion());
+		graph.createDoubleSubNode();
+		assertEquals(2, graph.getGraphVersion());
+		DoubleSubNode v1 = graph.createDoubleSubNode();
+		graph.createDoubleSubNode();
+		assertEquals(4, graph.getGraphVersion());
+		for (int i = 0; i < 20; i++){
+			graph.createSubNode();
+			assertEquals(i+5, graph.getGraphVersion());
+		}
+		assertEquals(24, graph.getGraphVersion());
+		graph.deleteVertex(v1);
+		assertEquals(25, graph.getGraphVersion());
+		
+		System.out.println("Done testing getGraphVersion.");
 	}
 	
 	@Test
@@ -171,7 +227,53 @@ public class GraphTest {
 	
 	@Test
 	public void testDeleteVertex(){
+		SubNode v1 = graph.createSubNode();
+		SubNode v2 = graph.createSubNode();
+		SubNode v3 = graph.createSubNode();
+		SuperNode v4 = graph.createSuperNode();
+		SuperNode v5 = graph.createSuperNode();
+		SuperNode v6 = graph.createSuperNode();
+		DoubleSubNode v7 = graph.createDoubleSubNode();
+		DoubleSubNode v8 = graph.createDoubleSubNode();
+		DoubleSubNode v9 = graph.createDoubleSubNode();
 		
+		SubNode v10 = graph2.createSubNode();
+		SuperNode v11 = graph2.createSuperNode();
+		DoubleSubNode v12 = graph2.createDoubleSubNode();
+		
+		graph.deleteVertex(v1);
+		assertFalse(graph.containsVertex(v1));
+		graph.deleteVertex(v2);
+		assertFalse(graph.containsVertex(v2));
+		graph.deleteVertex(v3);
+		assertFalse(graph.containsVertex(v3));
+		graph.deleteVertex(v4);
+		assertFalse(graph.containsVertex(v4));
+		graph.deleteVertex(v5);
+		assertFalse(graph.containsVertex(v5));
+		graph.deleteVertex(v6);
+		assertFalse(graph.containsVertex(v6));
+		graph.deleteVertex(v7);
+		assertFalse(graph.containsVertex(v7));
+		graph.deleteVertex(v8);
+		assertFalse(graph.containsVertex(v8));
+		graph.deleteVertex(v9);
+		assertFalse(graph.containsVertex(v9));
+		try{
+			graph.deleteVertex(v10);
+		}catch(NullPointerException e){
+		}
+		try{
+			graph.deleteVertex(v11);
+		}catch(NullPointerException e){
+			
+		}
+		try{
+			graph.deleteVertex(v12);
+		}catch(NullPointerException e){
+			
+		}
+		System.out.println("Done testing deleteVertex.");
 	}
 	
 	@Test
@@ -186,7 +288,43 @@ public class GraphTest {
 	
 	@Test
 	public void testDeleteEdge(){
+		SubNode v1 = graph.createSubNode();
+		SubNode v2 = graph.createSubNode();
+		SubNode v3 = graph2.createSubNode();
+		SuperNode v4 = graph.createSuperNode();
+		SuperNode v5 = graph.createSuperNode();
+		SuperNode v6 = graph2.createSuperNode();
+		DoubleSubNode v7 = graph.createDoubleSubNode();
+		DoubleSubNode v8 = graph.createDoubleSubNode();
+		DoubleSubNode v9 = graph2.createDoubleSubNode();
 		
+		Link e1 = graph.createLink(v1, v4);
+		Link e2 = graph.createLink(v7, v5);
+		Link e3 = graph.createLink(v2, v6);
+		SubLink e4 = graph.createSubLink(v7, v4);
+		SubLink e5 = graph.createSubLink(v9, v5);
+		LinkBack e6 = graph.createLinkBack(v4, v7);
+		LinkBack e7 = graph.createLinkBack(v5, v2);
+		LinkBack e8 = graph.createLinkBack(v6, v3);
+		
+		graph.deleteEdge(e1);
+		assertFalse(graph.containsEdge(e1));
+		graph.deleteEdge(e2);
+		assertFalse(graph.containsEdge(e2));
+		graph.deleteEdge(e3);
+		assertFalse(graph.containsEdge(e3));
+		graph.deleteEdge(e4);
+		assertFalse(graph.containsEdge(e4));
+		graph.deleteEdge(e5);
+		assertFalse(graph.containsEdge(e5));
+		graph.deleteEdge(e6);
+		assertFalse(graph.containsEdge(e6));
+		graph.deleteEdge(e7);
+		assertFalse(graph.containsEdge(e7));
+		graph.deleteEdge(e8);
+		assertFalse(graph.containsEdge(e8));
+		
+		System.out.println("Done testing deleteEdge");
 	}
 	
 	@Test
@@ -201,7 +339,22 @@ public class GraphTest {
 	
 	@Test
 	public void testGetFirstVertex(){
+		assertEquals(null, graph.getFirstVertex());
+		assertEquals(null, graph2.getFirstVertex());
 		
+		SubNode v1 = graph.createSubNode();
+		SuperNode v2 = graph.createSuperNode();
+		
+		assertEquals(v1, graph.getFirstVertex());
+		
+		DoubleSubNode v3 = graph2.createDoubleSubNode();
+		SubNode v4 = graph2.createSubNode();
+		assertEquals(v3, graph2.getFirstVertex());
+		
+		DoubleSubNode v5 = graph.createDoubleSubNode();
+		assertEquals(v1, graph.getFirstVertex());
+		
+		System.out.println("Done testing getFirstVertex.");
 	}
 	
 	@Test
