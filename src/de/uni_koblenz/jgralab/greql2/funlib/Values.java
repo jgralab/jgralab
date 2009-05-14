@@ -10,11 +10,11 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
 
 /**
- * Retrieves the keys of the given map.
+ * Retrieves the values of the given map.
  *
  * <dl>
  * <dt><b>GReQL-signature</b></dt>
- * <dd><code>SET keySet(m:MAP)</code></dd>
+ * <dd><code>BAG values(m:MAP)</code></dd>
  * <dd>&nbsp;</dd>
  * </dl>
  * <dl>
@@ -24,7 +24,7 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
  * <dt><b>Parameters:</b></dt>
  * <dd><code>m</code> - map to be used</dd>
  * <dt><b>Returns:</b></dt>
- * <dd>the SET of keys in <code>m</code>.</dd>
+ * <dd>the BAG of values in <code>m</code>.</dd>
  * </dl>
  * </dd>
  * </dl>
@@ -32,7 +32,7 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
  * @author ist@uni-koblenz.de
  *
  */
-public class KeySet extends AbstractGreql2Function {
+public class Values extends AbstractGreql2Function {
 	{
 		JValueType[][] x = { { JValueType.MAP } };
 		signatures = x;
@@ -44,7 +44,7 @@ public class KeySet extends AbstractGreql2Function {
 		if (checkArguments(arguments) == -1) {
 			throw new WrongFunctionParameterException(this, null, arguments);
 		}
-		return arguments[0].toJValueMap().keySet();
+		return arguments[0].toJValueMap().values();
 	}
 
 	@Override
