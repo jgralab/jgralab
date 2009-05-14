@@ -1,4 +1,4 @@
-package de.uni_koblenz.jgralabtest.core;
+package de.uni_koblenz.jgralabtest;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
