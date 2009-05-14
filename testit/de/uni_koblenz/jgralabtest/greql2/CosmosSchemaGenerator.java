@@ -1,6 +1,6 @@
 /*
  * JGraLab - The Java graph laboratory
- * (c) 2006-2009 Institute for Software Technology
+ * (c) 2006-2007 Institute for Software Technology
  *               University of Koblenz-Landau, Germany
  *
  *               ist@uni-koblenz.de
@@ -21,24 +21,25 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
-package de.uni_koblenz.jgralabtest;
 
-import org.junit.runner.RunWith;
-import org.junit.runners.Suite;
+package de.uni_koblenz.jgralabtest.greql2;
 
-import de.uni_koblenz.jgralabtest.core.RunCoreTests;
-import de.uni_koblenz.jgralabtest.graphvalidator.RunGraphValidatorTests;
-import de.uni_koblenz.jgralabtest.greql2.RunGreql2Tests;
-import de.uni_koblenz.jgralabtest.schema.RunSchemaTests;
-import de.uni_koblenz.jgralabtest.utilities.tg2schemagraph.TG2SchemaGraphTest;
+import de.uni_koblenz.jgralab.GraphIO;
+import de.uni_koblenz.jgralab.schema.Schema;
 
-/**
- * @author ist@uni-koblenz.de
- * 
- */
-@RunWith(Suite.class)
-@Suite.SuiteClasses( { RunCoreTests.class, RunSchemaTests.class,
-		RunGreql2Tests.class, TG2SchemaGraphTest.class,
-		RunGraphValidatorTests.class })
-public class RunTests {
+public class CosmosSchemaGenerator {
+	/**
+	 * @param args
+	 */
+	public static void main(String[] args) {
+		try {
+			Schema t = GraphIO.loadSchemaFromFile("cosmos-client.tg");
+			t.commit("./src");
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+	}
+
 }
