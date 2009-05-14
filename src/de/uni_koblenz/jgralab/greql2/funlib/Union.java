@@ -31,17 +31,24 @@ import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.greql2.exception.EvaluateException;
 import de.uni_koblenz.jgralab.greql2.exception.WrongFunctionParameterException;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
+import de.uni_koblenz.jgralab.greql2.jvalue.JValueMap;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValueSet;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
 
 /**
- * Returns the union of two given sets. That means a set, that contains all
- * elements that are in the first given set or in the second given set. Elements
- * that are in both sets are also included.
+ * Returns the union of two given sets or maps. That means a set, that contains
+ * all elements that are in the first given set or in the second given set.
+ * Elements that are in both sets are also included.
+ *
+ * In case of maps be aware of the fact that if the keys are not different, then
+ * the mappings of the second map overwrite the mappings of the first one.
+ *
  * <dl>
  * <dt><b>GReQL-signature</b></dt>
  * <dd>
- * <code>SET&lt;OBJECT&gt; union(s1:SET&lt;OBJECT&gt;, s2:SET&lt;OBJECT&gt;)</code>
+ * <code>SET&lt;OBJECT&gt; union(s1:SET&lt;OBJECT&gt;, s2:SET&lt;OBJECT&gt;)
+ * </code>
+ * <code>MAP&lt;OBJECT,OBJECT&gt; union(s1:MAP&lt;OBJECT,OBJECT&gt;, s2:MAP&lt;OBJECT,OBJECT&gt;)</code>
  * </dd>
  * <dd>&nbsp;</dd>
  * </dl>
@@ -50,10 +57,10 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
  * <dd>
  * <dl>
  * <dt><b>Parameters:</b></dt>
- * <dd><code>s1</code> - first set</dd>
- * <dd><code>s2</code> - second set</dd>
+ * <dd><code>s1</code> - first set or map</dd>
+ * <dd><code>s2</code> - second set or map</dd>
  * <dt><b>Returns:</b></dt>
- * <dd>the union of the two given sets</dd>
+ * <dd>the union of the two given sets or maps</dd>
  * <dd><code>Null</code> if one of the parameters is <code>Null</code></dd>
  * </dl>
  * </dd>
@@ -67,19 +74,28 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
  */
 public class Union extends AbstractGreql2Function {
 	{
-		JValueType[][] x = { { JValueType.COLLECTION, JValueType.COLLECTION } };
+		JValueType[][] x = { { JValueType.COLLECTION, JValueType.COLLECTION },
+				{ JValueType.MAP, JValueType.MAP } };
 		signatures = x;
 	}
 
 	public JValue evaluate(Graph graph, BooleanGraphMarker subgraph,
 			JValue[] arguments) throws EvaluateException {
-		if (checkArguments(arguments) == -1) {
+		switch (checkArguments(arguments)) {
+		case 0:
+			JValueSet firstSet = arguments[0].toCollection().toJValueSet();
+			JValueSet secondSet = arguments[1].toCollection().toJValueSet();
+			return firstSet.union(secondSet);
+		case 1:
+			JValueMap firstMap = arguments[0].toJValueMap();
+			JValueMap secondMap = arguments[1].toJValueMap();
+			for (JValue key : secondMap.keySet()) {
+				firstMap.put(key, secondMap.get(key));
+			}
+			return firstMap;
+		default:
 			throw new WrongFunctionParameterException(this, null, arguments);
 		}
-
-		JValueSet firstSet = arguments[0].toCollection().toJValueSet();
-		JValueSet secondSet = arguments[1].toCollection().toJValueSet();
-		return firstSet.union(secondSet);
 	}
 
 	public long getEstimatedCosts(ArrayList<Long> inElements) {
