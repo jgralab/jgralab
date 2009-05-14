@@ -40,6 +40,7 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
  * <dd><code>SET&lt;EDGE&gt; edgesTo(v:Vertex)</code></dd>
  * <dd><code>SET&lt;EDGE&gt; edgesTo(v:Vertex, ps:PATH)</code></dd>
  * <dd><code>SET&lt;EDGE&gt; edgesTo(v:Vertex, ps:PATHSYSTEM)</code></dd>
+ * <dd><code>SET&lt;EDGE&gt; edgesConnected(v:Vertex, tc:TYPECOLLECTION)</code></dd> 
  * <dd>&nbsp;</dd>
  * </dl>
  * <dl>
@@ -50,6 +51,7 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
  * <dd><code>v</code> - vertex to calculate the outgoing edges for</dd>
  * <dd><code>p</code> - path to limit scope to</dd>
  * <dd><code>ps</code> - pathsystem to limit scope to</dd>
+ * <dd><code>tc</code> - typecollection to limit scope to</dd>
  * <dt><b>Returns:</b></dt>
  * <dd>a set of outgoing edges of the given vertex</dd>
  * <dd><code>Null</code> if one of the parameters is <code>Null</code></dd>
