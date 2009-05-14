@@ -1,6 +1,6 @@
 /*
  * JGraLab - The Java graph laboratory
- * (c) 2006-2009 Institute for Software Technology
+ * (c) 2006-2007 Institute for Software Technology
  *               University of Koblenz-Landau, Germany
  *
  *               ist@uni-koblenz.de
@@ -21,27 +21,27 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
-package de.uni_koblenz.jgralabtest.greql2;
 
-import org.junit.runner.RunWith;
-import org.junit.runners.Suite;
+package de.uni_koblenz.jgralabtest.greql2.exception;
 
-import de.uni_koblenz.jgralabtest.greql2.evaluator.GreqlEvaluatorTest;
-import de.uni_koblenz.jgralabtest.greql2.exception.ExceptionTest;
-import de.uni_koblenz.jgralabtest.greql2.funlib.SliceTest;
-import de.uni_koblenz.jgralabtest.greql2.jvalue.JValueTest;
-import de.uni_koblenz.jgralabtest.greql2.optimizer.OptimizerTest;
+import org.junit.Test;
 
-/**
- * @author ist@uni-koblenz.de
- *
- */
-@RunWith(Suite.class)
-@Suite.SuiteClasses( { ExceptionTest.class, FunctionTest.class,
-		GreqlEvaluatorTest.class, JValueTest.class, OptimizerTest.class,
-		ParserTest.class, PathSystemTest.class, ProgressTest.class,
-		SliceTest.class, SpeedTest.class, StoreJValueTest.class,
-		SystemTest.class, ThisLiteralTest.class })
-public class RunGreql2Tests {
+import de.uni_koblenz.jgralab.greql2.exception.UnknownTypeException;
+import de.uni_koblenz.jgralab.greql2.exception.WrongFunctionParameterException;
+import de.uni_koblenz.jgralabtest.greql2.GenericTests;
+
+public class ExceptionTest extends GenericTests {
+
+	@Test(expected = WrongFunctionParameterException.class)
+	public void testFunctionException() throws Exception {
+		String queryString = "let x:=list(\"a\",4 ,5) in avg(x)";
+		evalTestQuery("FunctionException", queryString);
+	}
+
+	@Test(expected = UnknownTypeException.class)
+	public void testUnknownTypeException() throws Exception {
+		String queryString = "from e:E{isEdgeOf} report e end";
+		evalTestQuery("UnknownTypeException", queryString);
+	}
 
 }

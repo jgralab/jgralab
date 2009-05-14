@@ -45,7 +45,7 @@ import de.uni_koblenz.jgralabtest.schemas.minimal.Node;
 
 public class GenericTests {
 
-	Map<String, JValue> boundVariables;
+	protected Map<String, JValue> boundVariables;
 
 	Graph graph = null;
 	Graph cyclicGraph = null;
