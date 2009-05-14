@@ -21,24 +21,20 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
-package de.uni_koblenz.jgralabtest;
+package de.uni_koblenz.jgralabtest.schema;
 
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 
-import de.uni_koblenz.jgralabtest.core.RunCoreTests;
-import de.uni_koblenz.jgralabtest.graphvalidator.RunGraphValidatorTests;
-import de.uni_koblenz.jgralabtest.greql2.RunGreql2Tests;
-import de.uni_koblenz.jgralabtest.schema.RunSchemaTests;
-import de.uni_koblenz.jgralabtest.utilities.tg2schemagraph.TG2SchemaGraphTest;
+import de.uni_koblenz.jgralabtest.schema.attributedelement.RunAttributedElementTests;
+import de.uni_koblenz.jgralabtest.schema.domain.RunDomainTests;
 
 /**
  * @author ist@uni-koblenz.de
- * 
+ *
  */
 @RunWith(Suite.class)
-@Suite.SuiteClasses( { RunCoreTests.class, RunSchemaTests.class,
-		RunGreql2Tests.class, TG2SchemaGraphTest.class,
-		RunGraphValidatorTests.class })
-public class RunTests {
+@Suite.SuiteClasses( { RunDomainTests.class, RunAttributedElementTests.class })
+public class RunSchemaTests {
+
 }
