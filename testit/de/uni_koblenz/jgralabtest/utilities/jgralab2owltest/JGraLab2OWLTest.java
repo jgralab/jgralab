@@ -14,7 +14,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-package de.uni_koblenz.jgralabtest.java2owltest;
+package de.uni_koblenz.jgralabtest.utilities.jgralab2owltest;
 
 import java.io.IOException;
 
@@ -23,7 +23,7 @@ import de.uni_koblenz.jgralab.GraphIOException;
 import de.uni_koblenz.jgralab.schema.Schema;
 import de.uni_koblenz.jgralab.utilities.jgralab2owl.JGraLab2OWL;
 
-public class Java2OWLTest {
+public class JGraLab2OWLTest {
 
 	public static void main(String[] args) {
 		try {
