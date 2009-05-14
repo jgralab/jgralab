@@ -14,18 +14,30 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-package de.uni_koblenz.jgralabtest.basictest;
+package de.uni_koblenz.jgralabtest;
 
-import de.uni_koblenz.jgralab.GraphIO;
-import de.uni_koblenz.jgralab.GraphIOException;
-import de.uni_koblenz.jgralab.schema.Schema;
+import de.uni_koblenz.jgralab.impl.ProgressFunctionImpl;
 
-public class GraphIOTest {
+public class ProgressFunctionTest {
 
-	public static void main(String[] args) throws GraphIOException {
-		Schema ioTest = GraphIO.loadSchemaFromFile("GraphIOTestInput.tg");
-
-		GraphIO.saveSchemaToFile("GraphIOTestOutput.tg", ioTest);
+	public static void main(String[] args) {
+		ProgressFunctionImpl pf = new ProgressFunctionImpl(80);
+		final long size = 2000000000;
+		pf.init(size);
+		long i = 0, count = 0;
+		long interval = pf.getUpdateInterval();
+		// long time;
+		while (i < size) {
+			// time = System.currentTimeMillis();
+			// while (time+10 > System.currentTimeMillis()) {}
+			i++;
+			count++;
+			if (count == interval) {
+				pf.progress(i);
+				count = 0;
+			}
+		}
+		pf.finished();
 	}
 
 }
