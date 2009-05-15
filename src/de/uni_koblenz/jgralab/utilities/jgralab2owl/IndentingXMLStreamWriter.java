@@ -154,6 +154,10 @@ public class IndentingXMLStreamWriter implements XMLStreamWriter {
 
 	@Override
 	public void writeEndDocument() throws XMLStreamException {
+		do {
+			writeEndElement();
+		} while (indentationLevel > 0);
+		
 		writer.writeEndDocument();
 	}
 
