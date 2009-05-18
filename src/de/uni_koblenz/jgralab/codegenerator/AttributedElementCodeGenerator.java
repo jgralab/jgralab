@@ -241,7 +241,7 @@ public class AttributedElementCodeGenerator extends CodeGenerator {
 			if (isEnumDomain) {
 				s.add("if (attributeName.equals(\"#name#\")) {");
 				s.add("\tif (data instanceof String) {");
-				s.add("\t\t#attributeClassName#.fromString((String) data);");
+				s.add("\t\tset#cName#(#attributeClassName#.fromString((String) data));");
 				s.add("\t} else {");
 				s.add("\t\tset#cName#((#attributeClassName#) data);");
 				s.add("\t}");
