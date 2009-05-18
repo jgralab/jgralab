@@ -1,6 +1,6 @@
 /*
  * JGraLab - The Java graph laboratory
- * (c) 2006-2009 Institute for Software Technology
+ * (c) 2006-2008 Institute for Software Technology
  *               University of Koblenz-Landau, Germany
  *
  *               ist@uni-koblenz.de
@@ -21,7 +21,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
-
 package de.uni_koblenz.jgralab.greql2.funlib;
 
 import java.util.ArrayList;
@@ -32,22 +31,17 @@ import de.uni_koblenz.jgralab.greql2.exception.EvaluateException;
 import de.uni_koblenz.jgralab.greql2.exception.WrongFunctionParameterException;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValueMap;
-import de.uni_koblenz.jgralab.greql2.jvalue.JValueSet;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
 
 /**
- * Returns the union of two given sets or maps. That means a set, that contains
- * all elements that are in the first given set or in the second given set.
- * Elements that are in both sets are also included.
- *
- * In case of maps be aware of the fact that the keys have to be disjoint.
+ * Merges the given two maps (the values must be COLLECTIONS (set, list, ...)).
+ * That means that the returned map contains mappings for the union of the keys,
+ * and if both maps contain a mapping for a key, the values are merged.
  *
  * <dl>
  * <dt><b>GReQL-signature</b></dt>
  * <dd>
- * <code>SET&lt;OBJECT&gt; union(s1:SET&lt;OBJECT&gt;, s2:SET&lt;OBJECT&gt;)
- * </code>
- * <code>MAP&lt;OBJECT,OBJECT&gt; union(s1:MAP&lt;OBJECT,OBJECT&gt;, s2:MAP&lt;OBJECT,OBJECT&gt;)</code>
+ * <code>MAP&lt;OBJECT,COLLECTION&lt;OBJECT&gt;&gt; mergeMap(m1:MAP&lt;OBJECT,COLLECTION&lt;OBJECT&gt;&gt;, m2:MAP&lt;OBJECT,COLLECTION&lt;OBJECT&gt;&gt;)</code>
  * </dd>
  * <dd>&nbsp;</dd>
  * </dl>
@@ -56,59 +50,80 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
  * <dd>
  * <dl>
  * <dt><b>Parameters:</b></dt>
- * <dd><code>s1</code> - first set or map</dd>
- * <dd><code>s2</code> - second set or map</dd>
+ * <dd><code>m1</code> - first map</dd>
+ * <dd><code>m2</code> - second map</dd>
  * <dt><b>Returns:</b></dt>
- * <dd>the union of the two given sets or maps</dd>
+ * <dd>a map which is a union of both argument maps</dd>
  * <dd><code>Null</code> if one of the parameters is <code>Null</code></dd>
  * </dl>
  * </dd>
  * </dl>
  *
- * @see Difference
- * @see SymDifference
- * @see Intersection
- * @see MergeMaps
+ * @see Union
  * @author ist@uni-koblenz.de
  *
  */
-public class Union extends AbstractGreql2Function {
+public class MergeMaps extends AbstractGreql2Function {
 	{
-		JValueType[][] x = { { JValueType.COLLECTION, JValueType.COLLECTION },
-				{ JValueType.MAP, JValueType.MAP } };
+		JValueType[][] x = { { JValueType.MAP, JValueType.MAP } };
 		signatures = x;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 *
+	 * @see
+	 * de.uni_koblenz.jgralab.greql2.funlib.Greql2Function#evaluate(de.uni_koblenz
+	 * .jgralab.Graph, de.uni_koblenz.jgralab.BooleanGraphMarker,
+	 * de.uni_koblenz.jgralab.greql2.jvalue.JValue[])
+	 */
+	@Override
 	public JValue evaluate(Graph graph, BooleanGraphMarker subgraph,
 			JValue[] arguments) throws EvaluateException {
-		switch (checkArguments(arguments)) {
-		case 0:
-			JValueSet firstSet = arguments[0].toCollection().toJValueSet();
-			JValueSet secondSet = arguments[1].toCollection().toJValueSet();
-			return firstSet.union(secondSet);
-		case 1:
-			JValueMap firstMap = arguments[0].toJValueMap();
-			JValueMap secondMap = arguments[1].toJValueMap();
-			return firstMap.union(secondMap);
-		default:
+		if (checkArguments(arguments) < 0) {
 			throw new WrongFunctionParameterException(this, null, arguments);
 		}
+		JValueMap m1 = arguments[0].toJValueMap();
+		JValueMap m2 = arguments[1].toJValueMap();
+		return m1.merge(m2);
 	}
 
+	/*
+	 * (non-Javadoc)
+	 *
+	 * @see
+	 * de.uni_koblenz.jgralab.greql2.funlib.Greql2Function#getEstimatedCardinality
+	 * (int)
+	 */
+	@Override
+	public long getEstimatedCardinality(int inElements) {
+		return inElements;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 *
+	 * @see
+	 * de.uni_koblenz.jgralab.greql2.funlib.Greql2Function#getEstimatedCosts
+	 * (java.util.ArrayList)
+	 */
+	@Override
 	public long getEstimatedCosts(ArrayList<Long> inElements) {
 		long elems = 0;
 		for (Long i : inElements) {
 			elems += i;
 		}
-		return elems * 2;
+		return elems * 3;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 *
+	 * @see de.uni_koblenz.jgralab.greql2.funlib.Greql2Function#getSelectivity()
+	 */
+	@Override
 	public double getSelectivity() {
 		return 1;
-	}
-
-	public long getEstimatedCardinality(int inElements) {
-		return inElements;
 	}
 
 }
