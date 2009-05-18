@@ -28,7 +28,6 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
-import de.uni_koblenz.jgralab.schema.BasicDomain;
 import de.uni_koblenz.jgralab.schema.CompositeDomain;
 import de.uni_koblenz.jgralab.schema.Domain;
 import de.uni_koblenz.jgralab.schema.Package;
@@ -49,10 +48,10 @@ public abstract class CompositeDomainImpl extends DomainImpl implements
 		for (Iterator<Domain> cdit = componentDomains.iterator(); cdit
 				.hasNext();) {
 			d = cdit.next();
-			if (d instanceof BasicDomain) {
-				cdit.remove();
-			} else {
+			if (d instanceof CompositeDomain) {
 				componentCompositeDomains.add((CompositeDomain) d);
+			} else {
+				cdit.remove();
 			}
 		}
 
