@@ -43,18 +43,27 @@ public class WrongFunctionParameterException extends QuerySourceException {
 	static final long serialVersionUID = -1234561;
 
 	private static String parametersToString(JValue[] args) {
-		String argString = "(";
+		StringBuffer sb = new StringBuffer("(");
 		for (int i = 0; i < args.length; i++) {
 			JValue o = args[i];
 			if (o != null) {
 				if (i > 0) {
-					argString += ", ";
+					sb.append(", ");
 				}
-				argString += o.getType().toString();
+				sb.append(elide(o.toString()));
+				sb.append(" : ");
+				sb.append(o.getType().toString());
 			}
 		}
-		argString += ")";
-		return argString;
+		sb.append(")");
+		return sb.toString();
+	}
+
+	private static String elide(String s) {
+		if (s.length() > 50) {
+			return s.substring(0, 50);
+		}
+		return s;
 	}
 
 	public WrongFunctionParameterException(Greql2Function function,
