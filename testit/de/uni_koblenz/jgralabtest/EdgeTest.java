@@ -6,7 +6,12 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.LineNumberReader;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Random;
 
@@ -16,8 +21,12 @@ import org.junit.Test;
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.GraphException;
+import de.uni_koblenz.jgralab.GraphIO;
+import de.uni_koblenz.jgralab.GraphIOException;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.schema.EdgeClass;
+import de.uni_koblenz.jgralab.schema.GraphClass;
+import de.uni_koblenz.jgralab.schema.Schema;
 import de.uni_koblenz.jgralabtest.schemas.vertextest.*;
 
 public class EdgeTest {
@@ -3629,4 +3638,414 @@ public class EdgeTest {
 		assertEquals(e3.getReversedEdge(), e3.getReversedEdge());
 		assertEquals(e3, e3.getReversedEdge().getReversedEdge());
 	}
+
+	// tests of the method boolean isNormal();
+
+	/**
+	 * Tests on edges and reversedEdges.
+	 */
+	@Test
+	public void isNormalTest0() {
+		DoubleSubNode v1 = graph.createDoubleSubNode();
+		SuperNode v2 = graph.createSuperNode();
+		SubNode v3 = graph.createSubNode();
+		Edge e1 = graph.createLink(v3, v2);
+		Edge e2 = graph.createSubLink(v1, v2);
+		Edge e3 = graph.createLinkBack(v2, v3);
+		assertFalse(e1.getReversedEdge().isNormal());
+		assertTrue(e1.isNormal());
+		assertFalse(e2.getReversedEdge().isNormal());
+		assertTrue(e2.isNormal());
+		assertFalse(e3.getReversedEdge().isNormal());
+		assertTrue(e3.isNormal());
+	}
+
+	// tests of the method boolean isValid();
+
+	/**
+	 * Tests on edges and reversedEdges.
+	 */
+	@Test
+	public void isValidTest0() {
+		DoubleSubNode v1 = graph.createDoubleSubNode();
+		SuperNode v2 = graph.createSuperNode();
+		SubNode v3 = graph.createSubNode();
+		Edge e1 = graph.createLink(v3, v2);
+		Edge e2 = graph.createSubLink(v1, v2);
+		Edge e3 = graph.createLinkBack(v2, v3);
+		e3.delete();
+		graph.deleteEdge(e2);
+		assertTrue(e1.isValid());
+		assertFalse(e2.isValid());
+		assertFalse(e3.isValid());
+	}
+
+	/*
+	 * Test of the Interface GraphElement
+	 */
+
+	// tests of the method Graph getGraph();
+	/**
+	 * Test with edges of two graphs.
+	 */
+	@Test
+	public void getGraphTest() {
+		VertexTestGraph anotherGraph = ((VertexTestSchema) graph.getSchema())
+				.createVertexTestGraph();
+		DoubleSubNode v1 = graph.createDoubleSubNode();
+		DoubleSubNode v2 = graph.createDoubleSubNode();
+		DoubleSubNode v1a = anotherGraph.createDoubleSubNode();
+		DoubleSubNode v2a = anotherGraph.createDoubleSubNode();
+		Edge e1 = graph.createLink(v1, v2);
+		Edge e1a = anotherGraph.createLink(v1a, v2a);
+		assertEquals(graph, e1.getGraph());
+		assertEquals(anotherGraph, e1a.getGraph());
+		assertEquals(graph, e1.getReversedEdge().getGraph());
+		assertEquals(anotherGraph, e1a.getReversedEdge().getGraph());
+	}
+
+	// tests of the method void graphModified();
+
+	/**
+	 * Tests if the graphversion is increased if the method is called.
+	 */
+	@Test
+	public void graphModifiedTest0() {
+		DoubleSubNode v = graph.createDoubleSubNode();
+		Edge e1 = graph.createLink(v, v);
+		long graphversion = graph.getGraphVersion();
+		e1.graphModified();
+		assertEquals(++graphversion, graph.getGraphVersion());
+	}
+
+	/**
+	 * Tests if the graphversion is increased by creating a new edge.
+	 */
+	@Test
+	public void graphModifiedTest1() {
+		DoubleSubNode v1 = graph.createDoubleSubNode();
+		long graphversion = graph.getGraphVersion();
+		graph.createLink(v1, v1);
+		assertEquals(++graphversion, graph.getGraphVersion());
+	}
+
+	/**
+	 * Tests if the graphversion is increased by deleting an edge.
+	 */
+	@Test
+	public void graphModifiedTest2() {
+		DoubleSubNode v1 = graph.createDoubleSubNode();
+		Edge e1 = graph.createLink(v1, v1);
+		long graphversion = graph.getGraphVersion();
+		e1.delete();
+		assertEquals(++graphversion, graph.getGraphVersion());
+	}
+
+	/**
+	 * Tests if the graphversion is increased by changing the attributes of an
+	 * edge.
+	 */
+	@Test
+	public void graphModifiedTest3() {
+		DoubleSubNode v1 = graph.createDoubleSubNode();
+		Edge e1 = graph.createLink(v1, v1);
+		long graphversion = graph.getGraphVersion();
+		((Link) e1).setAString("Test");
+		assertEquals(++graphversion, graph.getGraphVersion());
+	}
+
+	/*
+	 * Test of the Interface AttributedElement
+	 */
+
+	// tests of the method AttributedElementClass getAttributedElementClass();
+	/**
+	 * Some test cases for getAttributedElementClass
+	 */
+	@Test
+	public void getAttributedElementClassTest() {
+		EdgeClass[] edges = getEdgeClasses();
+		DoubleSubNode v1 = graph.createDoubleSubNode();
+		SubNode v2 = graph.createSubNode();
+		SuperNode v3 = graph.createSuperNode();
+		Edge e1 = graph.createLink(v2, v3);
+		Edge e2 = graph.createSubLink(v1, v3);
+		Edge e3 = graph.createLinkBack(v3, v2);
+		assertEquals(edges[0], e1.getAttributedElementClass());
+		assertEquals(edges[1], e2.getAttributedElementClass());
+		assertEquals(edges[2], e3.getAttributedElementClass());
+	}
+
+	// tests of the method Class<? extends AttributedElement> getM1Class();
+
+	/**
+	 * Some test cases for getM1Class
+	 */
+	@Test
+	public void getM1ClassTest() {
+		DoubleSubNode v1 = graph.createDoubleSubNode();
+		SubNode v2 = graph.createSubNode();
+		SuperNode v3 = graph.createSuperNode();
+		Edge e1 = graph.createLink(v2, v3);
+		Edge e2 = graph.createSubLink(v1, v3);
+		Edge e3 = graph.createLinkBack(v3, v2);
+		assertEquals(Link.class, e1.getM1Class());
+		assertEquals(SubLink.class, e2.getM1Class());
+		assertEquals(LinkBack.class, e3.getM1Class());
+	}
+
+	// tests of the method GraphClass getGraphClass();
+
+	/**
+	 * Some test cases for getGraphClass
+	 */
+	@Test
+	public void getGraphClassTest() {
+		VertexTestGraph anotherGraph = ((VertexTestSchema) graph.getSchema())
+				.createVertexTestGraph();
+		GraphClass gc = graph.getSchema().getGraphClass();
+		DoubleSubNode v1 = graph.createDoubleSubNode();
+		DoubleSubNode v1a = anotherGraph.createDoubleSubNode();
+		Edge e1 = graph.createLink(v1, v1);
+		Edge e1a = graph.createLink(v1a, v1a);
+		assertEquals(gc, e1.getGraphClass());
+		assertEquals(gc, e1a.getGraphClass());
+		assertEquals(gc, e1.getReversedEdge().getGraphClass());
+		assertEquals(gc, e1a.getReversedEdge().getGraphClass());
+	}
+
+	// tests of the methods
+	// void writeAttributeValues(GraphIO io) throws IOException,
+	// GraphIOException;
+	// and
+	// void readAttributeValues(GraphIO io) throws GraphIOException;
+
+	/**
+	 * Test with null values.
+	 */
+	@Test
+	public void writeReadAttributeValues0() throws GraphIOException,
+			IOException {
+		DoubleSubNode v1 = graph.createDoubleSubNode();
+		DoubleSubNode v2 = graph.createDoubleSubNode();
+		SubLink e1 = graph.createSubLink(v1, v2);
+		// test of writeAttributeValues
+		GraphIO.saveGraphToFile("test.tg", graph, null);
+		LineNumberReader reader = new LineNumberReader(
+				new FileReader("test.tg"));
+		String line = "";
+		String[] parts = null;
+		while ((line = reader.readLine()) != null) {
+			if (line.length() > 0) {
+				line = line.substring(0, line.length() - 1);
+			}
+			parts = line.split(" ");
+			if (parts[0].equals(((Integer) e1.getId()).toString())
+					&& parts[1].equals(e1.getClass().getName())) {
+				break;
+			}
+		}
+		assertEquals("\\null", parts[2]);
+		assertEquals("0", parts[3]);
+		// test of readAttributeValues
+		VertexTestGraph loadedgraph = (VertexTestGraph) GraphIO
+				.loadGraphFromFile("test.tg", null);
+		SubLink loadede1 = loadedgraph.getFirstSubLinkInGraph();
+		assertEquals(e1.getAString(), loadede1.getAString());
+		assertEquals(e1.getAnInt(), loadede1.getAnInt());
+		// delete created file
+		System.gc();
+		reader.close();
+		File f = new File("test.tg");
+		f.delete();
+	}
+
+	/**
+	 * Test with values.
+	 */
+	@Test
+	public void writeReadAttributeValues1() throws GraphIOException,
+			IOException {
+		DoubleSubNode v1 = graph.createDoubleSubNode();
+		DoubleSubNode v2 = graph.createDoubleSubNode();
+		SubLink e1 = graph.createSubLink(v1, v2);
+		e1.setAnInt(3);
+		e1.setAString("HelloWorld!");
+		// test of writeAttributeValues
+		GraphIO.saveGraphToFile("test.tg", graph, null);
+		LineNumberReader reader = new LineNumberReader(
+				new FileReader("test.tg"));
+		String line = "";
+		String[] parts = null;
+		while ((line = reader.readLine()) != null) {
+			if (line.length() > 0) {
+				line = line.substring(0, line.length() - 1);
+			}
+			parts = line.split(" ");
+			if (parts[0].equals(((Integer) e1.getId()).toString())
+					&& parts[1].equals(e1.getClass().getName())) {
+				break;
+			}
+		}
+		assertEquals("\"HelloWorld!\"", parts[2]);
+		assertEquals("3", parts[3]);
+		// test of readAttributeValues
+		VertexTestGraph loadedgraph = (VertexTestGraph) GraphIO
+				.loadGraphFromFile("test.tg", null);
+		SubLink loadede1 = loadedgraph.getFirstSubLinkInGraph();
+		assertEquals(e1.getAString(), loadede1.getAString());
+		assertEquals(e1.getAnInt(), loadede1.getAnInt());
+		// delete created file
+		System.gc();
+		reader.close();
+		File f = new File("test.tg");
+		f.delete();
+	}
+
+	// tests of the method Object getAttribute(String name) throws
+	// NoSuchFieldException;
+
+	/**
+	 * Tests if the value of the correct attribute is returned.
+	 */
+	@Test
+	public void getAttributeTest0() throws NoSuchFieldException {
+		DoubleSubNode v = graph.createDoubleSubNode();
+		SubLink e=graph.createSubLink(v, v);
+		e.setAString("test");
+		e.setAnInt(4);
+		assertEquals("test", e.getAttribute("aString"));
+		assertEquals(4, e.getAttribute("anInt"));
+	}
+
+	/**
+	 * Tests if an exception is thrown if you want to get an attribute which
+	 * doesn't exist.
+	 */
+	@Test(expected = NoSuchFieldException.class)
+	public void getAttributeTest1() throws NoSuchFieldException {
+		DoubleSubNode v = graph.createDoubleSubNode();
+		SubLink e=graph.createSubLink(v, v);
+		e.getAttribute("cd");
+	}
+
+	/**
+	 * Tests if an exception is thrown if you want to get an attribute with an
+	 * empty name.
+	 */
+	@Test(expected = NoSuchFieldException.class)
+	public void getAttributeTest2() throws NoSuchFieldException {
+		DoubleSubNode v = graph.createDoubleSubNode();
+		SubLink e=graph.createSubLink(v, v);
+		e.getAttribute("");
+	}
+
+	// tests of the method void setAttribute(String name, Object data) throws
+	// NoSuchFieldException;
+
+	/**
+	 * Tests if an existing attribute is correct set.
+	 */
+	@Test
+	public void setAttributeTest0() throws NoSuchFieldException {
+		DoubleSubNode v = graph.createDoubleSubNode();
+		SubLink e=graph.createSubLink(v, v);
+		e.setAttribute("aString","test");
+		e.setAttribute("anInt",4);
+		assertEquals("test", e.getAttribute("aString"));
+		assertEquals(4, e.getAttribute("anInt"));
+	}
+
+	/**
+	 * Tests if an existing attribute is set to null.
+	 */
+	@Test
+	public void setAttributeTest1() throws NoSuchFieldException {
+		DoubleSubNode v = graph.createDoubleSubNode();
+		SubLink e=graph.createSubLink(v, v);
+		e.setAttribute("aString", null);
+		assertNull(e.getAttribute("aString"));
+	}
+
+	/**
+	 * Tests if an exception is thrown if you want to get an attribute which
+	 * doesn't exist.
+	 */
+	@Test(expected = NoSuchFieldException.class)
+	public void setAttributeTest2() throws NoSuchFieldException {
+		DoubleSubNode v = graph.createDoubleSubNode();
+		SubLink e=graph.createSubLink(v, v);
+		e.setAttribute("cd", "a");
+	}
+
+	/**
+	 * Tests if an exception is thrown if you want to get an attribute with an
+	 * empty name.
+	 */
+	@Test(expected = NoSuchFieldException.class)
+	public void setAttributeTest3() throws NoSuchFieldException {
+		DoubleSubNode v = graph.createDoubleSubNode();
+		SubLink e=graph.createSubLink(v, v);
+		e.setAttribute("", "a");
+	}
+
+	// tests of the method Schema getSchema();
+
+	/**
+	 * Some tests.
+	 */
+	@Test
+	public void getSchemaTest() {
+		DoubleSubNode v1 = graph.createDoubleSubNode();
+		SubNode v2 = graph.createSubNode();
+		SuperNode v3 = graph.createSuperNode();
+		Edge e1=graph.createLink(v2, v3);
+		Edge e2=graph.createSubLink(v1, v3);
+		Edge e3=graph.createLinkBack(v3,v2);
+		Schema schema = graph.getSchema();
+		assertEquals(schema, e1.getSchema());
+		assertEquals(schema, e2.getSchema());
+		assertEquals(schema, e3.getSchema());
+		assertEquals(schema, e1.getReversedEdge().getSchema());
+		assertEquals(schema, e2.getReversedEdge().getSchema());
+		assertEquals(schema, e3.getReversedEdge().getSchema());
+	}
+
+	/*
+	 * Test of the Interface Comparable
+	 */
+
+	// tests of the method int compareTo(AttributedElement a);
+	/**
+	 * Test if a vertex is equal to itself.
+	 */
+	@Test
+	public void compareToTest0() {
+		DoubleSubNode v1 = graph.createDoubleSubNode();
+		Edge e1=graph.createLink(v1, v1);
+		assertEquals(0, e1.compareTo(e1));
+	}
+
+	/**
+	 * Test if a vertex is smaller than another.
+	 */
+	@Test
+	public void compareToTest1() {
+		DoubleSubNode v1 = graph.createDoubleSubNode();
+		Edge e1=graph.createLink(v1, v1);
+		Edge e2=graph.createLink(v1, v1);
+		assertTrue(e1.compareTo(e2) < 0);
+	}
+
+	/**
+	 * Test if a vertex is greater than another.
+	 */
+	@Test
+	public void compareToTest2() {
+		DoubleSubNode v1 = graph.createDoubleSubNode();
+		Edge e1=graph.createLink(v1, v1);
+		Edge e2=graph.createLink(v1, v1);
+		assertTrue(e2.compareTo(e1) > 0);
+	}
+
 }
