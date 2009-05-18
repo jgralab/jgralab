@@ -29,11 +29,11 @@ import org.junit.runners.Suite;
 
 /**
  * @author ist@uni-koblenz.de
- *
+ * 
  */
 @RunWith(Suite.class)
 @Suite.SuiteClasses( { EdgeListTest.class, IncidenceListTest.class,
-		LoadTest.class, VertexListTest.class })
+		LoadTest.class, VertexListTest.class, VertexTest.class, EdgeTest.class })
 public class RunCoreTests {
 
 }

@@ -4,6 +4,6 @@ abstract VertexClass AbstractSuperNode {name : String};
 VertexClass SuperNode {number : Integer};
 VertexClass SubNode : AbstractSuperNode;
 VertexClass DoubleSubNode : SubNode, SuperNode {nodeMap : Map<Integer, String>};
-EdgeClass Link from AbstractSuperNode (0,*) role source to SuperNode (0,*) role target;
+EdgeClass Link from AbstractSuperNode (0,*) role source to SuperNode (0,*) role target {aString: String};
 AggregationClass LinkBack from SuperNode (0,*) role sourceb to AbstractSuperNode (0,*) role targetb aggregate from;
-CompositionClass SubLink: Link from DoubleSubNode (0,*) role sourcec to SuperNode (0,*) role targetc aggregate from;
+CompositionClass SubLink: Link from DoubleSubNode (0,*) role sourcec to SuperNode (0,*) role targetc aggregate from {anInt: Integer};
