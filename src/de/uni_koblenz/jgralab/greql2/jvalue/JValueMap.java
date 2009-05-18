@@ -28,6 +28,8 @@ import java.util.HashMap;
 import java.util.Set;
 import java.util.Map.Entry;
 
+import de.uni_koblenz.jgralab.greql2.exception.EvaluateException;
+
 /**
  * @author Tassilo Horn <horn@uni-koblenz.de>
  *
@@ -213,5 +215,46 @@ public class JValueMap extends JValue {
 			}
 		}
 		return true;
+	}
+
+	public JValueMap merge(JValueMap other) {
+		JValueSet allKeys = new JValueSet();
+		allKeys.addAll(keySet());
+		allKeys.addAll(other.keySet());
+		JValueMap newMap = new JValueMap();
+		for (JValue k : allKeys) {
+			JValueCollection newValue = null;
+			if (containsKey(k) && other.containsKey(k)) {
+				newValue = (JValueCollection) get(k);
+				newValue.addAll((JValueCollection) other.get(k));
+			} else if (containsKey(k)) {
+				newValue = (JValueCollection) get(k);
+			} else {
+				newValue = (JValueCollection) other.get(k);
+			}
+			newMap.put(k, newValue);
+		}
+		return newMap;
+	}
+
+	public JValueMap union(JValueMap other) {
+		JValueSet allKeys = new JValueSet();
+		allKeys.addAll(keySet());
+		allKeys.addAll(other.keySet());
+		JValueMap newMap = new JValueMap();
+		for (JValue k : allKeys) {
+			if (containsKey(k) && other.containsKey(k)) {
+				throw new EvaluateException(
+						"Cannot create the union of the given two maps. "
+								+ "Their key sets are not disjoint.");
+			}
+
+			if (containsKey(k)) {
+				newMap.put(k, get(k));
+			} else {
+				newMap.put(k, other.get(k));
+			}
+		}
+		return newMap;
 	}
 }
