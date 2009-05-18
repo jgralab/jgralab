@@ -2411,23 +2411,10 @@ enumLiteral returns [Expression result = null]
        	((StringLiteral) fieldLiteral).setStringValue(decode(enumField.getText()));
         FunctionId id = getFunctionId("enumConstant");
         result = createFunctionIdAndArgumentOf(id, 0, 0, typeLiteral, 0, 0, fieldLiteral, 0, 0, true);
-    })
+    }
 ;
 
 
-    private FunctionApplication createFunctionIdAndArgumentOf(FunctionId functionId, int offsetOperator, int lengthOperator, Expression arg1, int offsetArg1, int lengthArg1, Expression arg2, int offsetArg2, int lengthArg2, boolean binary) {
-        	FunctionApplication fa = graph.createFunctionApplication();
-        	IsFunctionIdOf functionIdOf = graph.createIsFunctionIdOf(functionId, fa);
-        	functionIdOf.setSourcePositions((createSourcePositionList(lengthOperator, offsetOperator)));
-        	IsArgumentOf arg1Of = null;
-        	if (binary) {
-        		arg1Of = graph.createIsArgumentOf(arg1, fa);
-        		arg1Of.setSourcePositions((createSourcePositionList(lengthArg1, offsetArg1)));
-        	}
-          	IsArgumentOf arg2Of = graph.createIsArgumentOf(arg2, fa);
-        	arg2Of.setSourcePositions((createSourcePositionList(lengthArg2, offsetArg2)));
-        	return fa;
-    }
 
 
 literal returns [Expression literal = null]
@@ -2478,7 +2465,7 @@ literal returns [Expression literal = null]
 		    literal = graph.createNullLiteral(); 
     })
 |	(numericLiteral {$literal = $numericLiteral.literal;})    
-|       (enumLiteral ($literal = $enumLiteral.result;})
+|       (enumLiteral {$literal = $enumLiteral.result;})
 ;
 	
 
