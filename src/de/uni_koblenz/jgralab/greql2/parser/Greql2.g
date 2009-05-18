@@ -1035,13 +1035,13 @@ definition returns [Definition definition = null]
     {
       offsetExpr = getLTOffset(); 
     }
-    expressionOrPathDescription
+    expression
     {
       lengthExpr = getLTLength(offsetExpr);
       definition = graph.createDefinition();
       IsVarOf varOf = graph.createIsVarOf(var, definition);
       varOf.setSourcePositions((createSourcePositionList(lengthVar, offsetVar)));
-      IsExprOf exprOf = graph.createIsExprOf($expressionOrPathDescription.result, definition);
+      IsExprOf exprOf = graph.createIsExprOf($expression.result, definition);
       exprOf.setSourcePositions((createSourcePositionList(lengthExpr, offsetExpr)));
     }
 ;
@@ -1070,7 +1070,6 @@ conditionalExpression returns [Expression result = null]
       lengthExpr = getLTLength(offsetExpr); 
     }
     /* optional part */
-   ((QUESTION) =>
     (
     QUESTION
     { offsetTrueExpr = getLTOffset(); }
@@ -1104,7 +1103,7 @@ conditionalExpression returns [Expression result = null]
 	  nullExprOf.setSourcePositions((createSourcePositionList(lengthNullExpr, offsetNullExpr)));
 	  $result = condExpr;
     }
-  ) | )
+    )?
 ;
 
 	
@@ -1119,15 +1118,14 @@ orExpression returns [Expression result]
     $result = $xorExpression.result;
     construct.preOp(result); 
   }
-((OR) => (OR
+(OR
   {
     construct.postOp("or");
   }
   expr = orExpression
   {
     $result = construct.postArg2(expr);
-  })
-	|	 )
+  })?
 ;	
 
 	
@@ -1142,11 +1140,10 @@ xorExpression returns [Expression result]
     $result = $andExpression.result;
     construct.preOp(result); 
   }
-((XOR) => (XOR
+(XOR
   { construct.postOp("xor"); }
   expr = xorExpression
-  { result = construct.postArg2(expr); })
-| )
+  { result = construct.postArg2(expr); })?
 ;	
 
 andExpression returns [Expression result]
@@ -1160,11 +1157,10 @@ andExpression returns [Expression result]
     $result = $equalityExpression.result;
     construct.preOp(result); 
   }
-((AND) => (AND
+(AND
   { construct.postOp("and"); }
   expr = andExpression
-  { result = construct.postArg2(expr); })
-| )
+  { result = construct.postArg2(expr); })?
 ;	
 
 	
@@ -1382,7 +1378,7 @@ valueAccess returns [Expression result = null]
 	int length = 0;
 }
 	:
-		{offset = getLTOffset(); }
+	{offset = getLTOffset(); }
         expr = primaryExpression
         {$result = expr; length = getLTLength(offset); }
 		(
@@ -1459,9 +1455,15 @@ primaryExpression returns [Expression result = null]
 ;
 
 
+//parenthesedExpression returns [Expression result]
+//:
+//(alternativePathDescription RPAREN) => (alternativePathDescription RPAREN {$result = $alternativePathDescription.result;} ) 
+//|   (expression RPAREN {$result = $expression.result;} )
+//;
+
 parenthesedExpression returns [Expression result]
 :
-(alternativePathDescription RPAREN) => (alternativePathDescription RPAREN {$result = $alternativePathDescription.result;} ) 
+(alternativePathDescription RPAREN {$result = $alternativePathDescription.result;}) 
 |   (expression RPAREN {$result = $expression.result;} )
 ;
 
@@ -2399,6 +2401,35 @@ numericLiteral returns [Expression literal = null]
 ;	
 
 
+enumLiteral returns [Expression result = null]
+:
+    enumType = STRING_LITERAL COLON COLON enumField = STRING_LITERAL
+    {
+        Literal typeLiteral = graph.createStringLiteral();
+       	((StringLiteral) typeLiteral).setStringValue(decode(enumType.getText()));
+	Literal fieldLiteral = graph.createStringLiteral();
+       	((StringLiteral) fieldLiteral).setStringValue(decode(enumField.getText()));
+        FunctionId id = getFunctionId("enumConstant");
+        result = createFunctionIdAndArgumentOf(id, 0, 0, typeLiteral, 0, 0, fieldLiteral, 0, 0, true);
+    })
+;
+
+
+    private FunctionApplication createFunctionIdAndArgumentOf(FunctionId functionId, int offsetOperator, int lengthOperator, Expression arg1, int offsetArg1, int lengthArg1, Expression arg2, int offsetArg2, int lengthArg2, boolean binary) {
+        	FunctionApplication fa = graph.createFunctionApplication();
+        	IsFunctionIdOf functionIdOf = graph.createIsFunctionIdOf(functionId, fa);
+        	functionIdOf.setSourcePositions((createSourcePositionList(lengthOperator, offsetOperator)));
+        	IsArgumentOf arg1Of = null;
+        	if (binary) {
+        		arg1Of = graph.createIsArgumentOf(arg1, fa);
+        		arg1Of.setSourcePositions((createSourcePositionList(lengthArg1, offsetArg1)));
+        	}
+          	IsArgumentOf arg2Of = graph.createIsArgumentOf(arg2, fa);
+        	arg2Of.setSourcePositions((createSourcePositionList(lengthArg2, offsetArg2)));
+        	return fa;
+    }
+
+
 literal returns [Expression literal = null]
 :
 	(token=STRING_LITERAL
@@ -2447,6 +2478,7 @@ literal returns [Expression literal = null]
 		    literal = graph.createNullLiteral(); 
     })
 |	(numericLiteral {$literal = $numericLiteral.literal;})    
+|       (enumLiteral ($literal = $enumLiteral.result;})
 ;
 	
 
