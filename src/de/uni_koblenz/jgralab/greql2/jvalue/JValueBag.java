@@ -24,6 +24,7 @@
 
 package de.uni_koblenz.jgralab.greql2.jvalue;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.ConcurrentModificationException;
 import java.util.HashMap;
@@ -731,5 +732,14 @@ public class JValueBag extends JValueCollection {
 	@Override
 	public void accept(JValueVisitor v) {
 		v.visitBag(this);
+	}
+
+	@Override
+	public Object toObject() {
+		ArrayList<Object> result = new ArrayList<Object>(myHashMap.size());
+		for (JValue jv : myHashMap.keySet()) {
+			result.add(jv.toObject());
+		}
+		return result;
 	}
 }

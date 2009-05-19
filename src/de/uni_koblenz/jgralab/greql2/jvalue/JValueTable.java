@@ -27,6 +27,8 @@ package de.uni_koblenz.jgralab.greql2.jvalue;
 import java.util.Iterator;
 import java.util.logging.Logger;
 
+import de.uni_koblenz.jgralab.greql2.exception.JValueInvalidTypeException;
+
 /**
  * A JValueTable is the Java "replacement" for CvTable (but in fact it has not
  * much common with it) It's based on bag of Tuples with an additional header
@@ -426,6 +428,11 @@ public class JValueTable extends JValueCollection {
 	@Override
 	public void accept(JValueVisitor v) {
 		v.visitTable(this);
+	}
+
+	@Override
+	public Object toObject() throws JValueInvalidTypeException {
+		return data.toObject();
 	}
 
 }

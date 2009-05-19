@@ -561,4 +561,12 @@ public class JValueSet extends JValueCollection {
 		v.visitSet(this);
 	}
 
+	@Override
+	public Object toObject() {
+		HashSet<Object> result = new HashSet<Object>(itemHashSet.size());
+		for (JValue jv : itemHashSet) {
+			result.add(jv.toObject());
+		}
+		return result;
+	}
 }

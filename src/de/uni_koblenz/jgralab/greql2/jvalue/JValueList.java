@@ -254,4 +254,12 @@ public class JValueList extends JValueOrderedCollection {
 		v.visitList(this);
 	}
 
+	@Override
+	public Object toObject() {
+		ArrayList<Object> result = new ArrayList<Object>(itemList.size());
+		for (JValue jv : itemList) {
+			result.add(jv.toObject());
+		}
+		return result;
+	}
 }
