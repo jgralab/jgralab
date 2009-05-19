@@ -24,32 +24,8 @@
 
 package de.uni_koblenz.jgralab.utilities.jgralab2owl;
 
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-
 public final class HelperMethods {
-	/**
-	 * Returns the element which has an {@code rdf:ID} attribute with the given
-	 * id as value.
-	 *
-	 * @param id
-	 *            The value for {@code rdf:ID} which shall be searched for.
-	 * @return The element which has an {@code rdf:ID} attribute with the given
-	 *         id as value.
-	 */
-	static Element getOwlElement(Document doc, String id) {
-		Node currentElem = doc.getFirstChild().getFirstChild();
-		String currentID = ((Element) currentElem).getAttribute("rdf:ID");
-
-		while (!currentID.equals(id)) {
-			currentElem = currentElem.getNextSibling();
-			currentID = ((Element) currentElem).getAttribute("rdf:ID");
-		}
-
-		return (Element) currentElem;
-	}
-
+	
 	/**
 	 * Changes the first character of {@code string} to lower case and returns
 	 * the resulting String.
