@@ -11,7 +11,6 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.LineNumberReader;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Random;
 
@@ -2524,6 +2523,24 @@ public class EdgeTest {
 
 	// tests for the method Edge getNextEdgeInGraph();
 	// (already tested in LoadTest.java)
+	
+	/**
+	 * Test for reversedEdge.
+	 */
+	@Test
+	public void getNextEdgeInGraphTestR0(){
+		DoubleSubNode v1 = graph.createDoubleSubNode();
+		DoubleSubNode v2 = graph.createDoubleSubNode();
+		Edge e1 = graph.createLink(v1, v2);
+		Edge e2 = graph.createSubLink(v1, v2);
+		Edge e3 = graph.createLinkBack(v1, v2);
+		Edge e1R=e1.getReversedEdge();
+		Edge e2R=e2.getReversedEdge();
+		Edge e3R=e3.getReversedEdge();
+		assertEquals(e2,e1R.getNextEdgeInGraph());
+		assertEquals(e3,e2R.getNextEdgeInGraph());
+		assertNull(e3R.getNextEdgeInGraph());
+	}
 
 	// tests for the method Edge getPrevEdgeInGraph();
 
@@ -2620,6 +2637,24 @@ public class EdgeTest {
 		}
 		return ret;
 	}
+	
+	/**
+	 * Test for reversedEdge.
+	 */
+	@Test
+	public void getPrevEdgeInGraphTestR0(){
+		DoubleSubNode v1 = graph.createDoubleSubNode();
+		DoubleSubNode v2 = graph.createDoubleSubNode();
+		Edge e1 = graph.createLink(v1, v2);
+		Edge e2 = graph.createSubLink(v1, v2);
+		Edge e3 = graph.createLinkBack(v1, v2);
+		Edge e1R=e1.getReversedEdge();
+		Edge e2R=e2.getReversedEdge();
+		Edge e3R=e3.getReversedEdge();
+		assertEquals(e2,e3R.getPrevEdgeInGraph());
+		assertEquals(e1,e2R.getPrevEdgeInGraph());
+		assertNull(e1R.getPrevEdgeInGraph());
+	}
 
 	/**
 	 * Tests if an edge has no previous edge in graph.
@@ -2709,6 +2744,32 @@ public class EdgeTest {
 		assertNull(e5.getNextEdgeOfClassInGraph(ecs[0]));
 		assertNull(e5.getNextEdgeOfClassInGraph(ecs[1]));
 		assertNull(e5.getNextEdgeOfClassInGraph(ecs[2]));
+		// test for reversedEdge
+		Edge e1R=e1.getReversedEdge();
+		Edge e2R=e2.getReversedEdge();
+		Edge e3R=e3.getReversedEdge();
+		Edge e4R=e4.getReversedEdge();
+		Edge e5R=e5.getReversedEdge();
+		// test of edge e1
+		assertEquals(e3, e1R.getNextEdgeOfClassInGraph(ecs[0]));
+		assertEquals(e3, e1R.getNextEdgeOfClassInGraph(ecs[1]));
+		assertEquals(e2, e1R.getNextEdgeOfClassInGraph(ecs[2]));
+		// test of edge e2
+		assertEquals(e3, e2R.getNextEdgeOfClassInGraph(ecs[0]));
+		assertEquals(e3, e2R.getNextEdgeOfClassInGraph(ecs[1]));
+		assertEquals(e5, e2R.getNextEdgeOfClassInGraph(ecs[2]));
+		// test of edge e3
+		assertEquals(e4, e3R.getNextEdgeOfClassInGraph(ecs[0]));
+		assertNull(e3R.getNextEdgeOfClassInGraph(ecs[1]));
+		assertEquals(e5, e3R.getNextEdgeOfClassInGraph(ecs[2]));
+		// test of edge e4
+		assertNull(e4R.getNextEdgeOfClassInGraph(ecs[0]));
+		assertNull(e4R.getNextEdgeOfClassInGraph(ecs[1]));
+		assertEquals(e5, e4R.getNextEdgeOfClassInGraph(ecs[2]));
+		// test of edge e5
+		assertNull(e5R.getNextEdgeOfClassInGraph(ecs[0]));
+		assertNull(e5R.getNextEdgeOfClassInGraph(ecs[1]));
+		assertNull(e5R.getNextEdgeOfClassInGraph(ecs[2]));
 	}
 
 	/**
@@ -2779,6 +2840,32 @@ public class EdgeTest {
 		assertNull(e4.getNextEdgeOfClassInGraph(Link.class));
 		assertNull(e4.getNextEdgeOfClassInGraph(SubLink.class));
 		assertEquals(e5, e4.getNextEdgeOfClassInGraph(LinkBack.class));
+		// test of edge e5
+		assertNull(e5.getNextEdgeOfClassInGraph(Link.class));
+		assertNull(e5.getNextEdgeOfClassInGraph(SubLink.class));
+		assertNull(e5.getNextEdgeOfClassInGraph(LinkBack.class));
+		//test of reversedEdges
+		e1 = e1.getReversedEdge();
+		e2 = e2.getReversedEdge();
+		e3 = e3.getReversedEdge();
+		e4 = e4.getReversedEdge();
+		e5 = e5.getReversedEdge();
+		// test of edge e1
+		assertEquals(e3.getNormalEdge(), e1.getNextEdgeOfClassInGraph(Link.class));
+		assertEquals(e3.getNormalEdge(), e1.getNextEdgeOfClassInGraph(SubLink.class));
+		assertEquals(e2.getNormalEdge(), e1.getNextEdgeOfClassInGraph(LinkBack.class));
+		// test of edge e2
+		assertEquals(e3.getNormalEdge(), e2.getNextEdgeOfClassInGraph(Link.class));
+		assertEquals(e3.getNormalEdge(), e2.getNextEdgeOfClassInGraph(SubLink.class));
+		assertEquals(e5.getNormalEdge(), e2.getNextEdgeOfClassInGraph(LinkBack.class));
+		// test of edge e3
+		assertEquals(e4.getNormalEdge(), e3.getNextEdgeOfClassInGraph(Link.class));
+		assertNull(e3.getNextEdgeOfClassInGraph(SubLink.class));
+		assertEquals(e5.getNormalEdge(), e3.getNextEdgeOfClassInGraph(LinkBack.class));
+		// test of edge e4
+		assertNull(e4.getNextEdgeOfClassInGraph(Link.class));
+		assertNull(e4.getNextEdgeOfClassInGraph(SubLink.class));
+		assertEquals(e5.getNormalEdge(), e4.getNextEdgeOfClassInGraph(LinkBack.class));
 		// test of edge e5
 		assertNull(e5.getNextEdgeOfClassInGraph(Link.class));
 		assertNull(e5.getNextEdgeOfClassInGraph(SubLink.class));
@@ -2881,6 +2968,52 @@ public class EdgeTest {
 		assertNull(e5.getNextEdgeOfClassInGraph(ecs[0], true));
 		assertNull(e5.getNextEdgeOfClassInGraph(ecs[1], true));
 		assertNull(e5.getNextEdgeOfClassInGraph(ecs[2], true));
+		// test for reversedEdge
+		Edge e1R=e1.getReversedEdge();
+		Edge e2R=e2.getReversedEdge();
+		Edge e3R=e3.getReversedEdge();
+		Edge e4R=e4.getReversedEdge();
+		Edge e5R=e5.getReversedEdge();
+		// test of edge e1
+		assertEquals(e3, e1R.getNextEdgeOfClassInGraph(ecs[0], false));
+		assertEquals(e3, e1R.getNextEdgeOfClassInGraph(ecs[1], false));
+		assertEquals(e2, e1R.getNextEdgeOfClassInGraph(ecs[2], false));
+
+		assertEquals(e4, e1R.getNextEdgeOfClassInGraph(ecs[0], true));
+		assertEquals(e3, e1R.getNextEdgeOfClassInGraph(ecs[1], true));
+		assertEquals(e2, e1R.getNextEdgeOfClassInGraph(ecs[2], true));
+		// test of edge e2
+		assertEquals(e3, e2R.getNextEdgeOfClassInGraph(ecs[0], false));
+		assertEquals(e3, e2R.getNextEdgeOfClassInGraph(ecs[1], false));
+		assertEquals(e5, e2R.getNextEdgeOfClassInGraph(ecs[2], false));
+
+		assertEquals(e4, e2R.getNextEdgeOfClassInGraph(ecs[0], true));
+		assertEquals(e3, e2R.getNextEdgeOfClassInGraph(ecs[1], true));
+		assertEquals(e5, e2R.getNextEdgeOfClassInGraph(ecs[2], true));
+		// test of edge e3
+		assertEquals(e4, e3R.getNextEdgeOfClassInGraph(ecs[0], false));
+		assertNull(e3R.getNextEdgeOfClassInGraph(ecs[1], false));
+		assertEquals(e5, e3R.getNextEdgeOfClassInGraph(ecs[2], false));
+
+		assertEquals(e4, e3R.getNextEdgeOfClassInGraph(ecs[0], true));
+		assertNull(e3R.getNextEdgeOfClassInGraph(ecs[1], true));
+		assertEquals(e5, e3R.getNextEdgeOfClassInGraph(ecs[2], true));
+		// test of edge e4
+		assertNull(e4R.getNextEdgeOfClassInGraph(ecs[0], false));
+		assertNull(e4R.getNextEdgeOfClassInGraph(ecs[1], false));
+		assertEquals(e5, e4R.getNextEdgeOfClassInGraph(ecs[2], false));
+
+		assertNull(e4R.getNextEdgeOfClassInGraph(ecs[0], true));
+		assertNull(e4R.getNextEdgeOfClassInGraph(ecs[1], true));
+		assertEquals(e5, e4R.getNextEdgeOfClassInGraph(ecs[2], true));
+		// test of edge e5
+		assertNull(e5R.getNextEdgeOfClassInGraph(ecs[0], false));
+		assertNull(e5R.getNextEdgeOfClassInGraph(ecs[1], false));
+		assertNull(e5R.getNextEdgeOfClassInGraph(ecs[2], false));
+
+		assertNull(e5R.getNextEdgeOfClassInGraph(ecs[0], true));
+		assertNull(e5R.getNextEdgeOfClassInGraph(ecs[1], true));
+		assertNull(e5R.getNextEdgeOfClassInGraph(ecs[2], true));
 	}
 
 	/**
@@ -2993,6 +3126,52 @@ public class EdgeTest {
 		assertNull(e5.getNextEdgeOfClassInGraph(Link.class, true));
 		assertNull(e5.getNextEdgeOfClassInGraph(SubLink.class, true));
 		assertNull(e5.getNextEdgeOfClassInGraph(LinkBack.class, true));
+		// test for reversedEdge
+		Edge e1R=e1.getReversedEdge();
+		Edge e2R=e2.getReversedEdge();
+		Edge e3R=e3.getReversedEdge();
+		Edge e4R=e4.getReversedEdge();
+		Edge e5R=e5.getReversedEdge();
+		// test of edge e1
+		assertEquals(e3, e1R.getNextEdgeOfClassInGraph(Link.class, false));
+		assertEquals(e3, e1R.getNextEdgeOfClassInGraph(SubLink.class, false));
+		assertEquals(e2, e1R.getNextEdgeOfClassInGraph(LinkBack.class, false));
+
+		assertEquals(e4, e1R.getNextEdgeOfClassInGraph(Link.class, true));
+		assertEquals(e3, e1R.getNextEdgeOfClassInGraph(SubLink.class, true));
+		assertEquals(e2, e1R.getNextEdgeOfClassInGraph(LinkBack.class, true));
+		// test of edge e2
+		assertEquals(e3, e2R.getNextEdgeOfClassInGraph(Link.class, false));
+		assertEquals(e3, e2R.getNextEdgeOfClassInGraph(SubLink.class, false));
+		assertEquals(e5, e2R.getNextEdgeOfClassInGraph(LinkBack.class, false));
+
+		assertEquals(e4, e2R.getNextEdgeOfClassInGraph(Link.class, true));
+		assertEquals(e3, e2R.getNextEdgeOfClassInGraph(SubLink.class, true));
+		assertEquals(e5, e2R.getNextEdgeOfClassInGraph(LinkBack.class, true));
+		// test of edge e3
+		assertEquals(e4, e3R.getNextEdgeOfClassInGraph(Link.class, false));
+		assertNull(e3R.getNextEdgeOfClassInGraph(SubLink.class, false));
+		assertEquals(e5, e3R.getNextEdgeOfClassInGraph(LinkBack.class, false));
+
+		assertEquals(e4, e3R.getNextEdgeOfClassInGraph(Link.class, true));
+		assertNull(e3R.getNextEdgeOfClassInGraph(SubLink.class, true));
+		assertEquals(e5, e3R.getNextEdgeOfClassInGraph(LinkBack.class, true));
+		// test of edge e4
+		assertNull(e4R.getNextEdgeOfClassInGraph(Link.class, false));
+		assertNull(e4R.getNextEdgeOfClassInGraph(SubLink.class, false));
+		assertEquals(e5, e4R.getNextEdgeOfClassInGraph(LinkBack.class, false));
+
+		assertNull(e4R.getNextEdgeOfClassInGraph(Link.class, true));
+		assertNull(e4R.getNextEdgeOfClassInGraph(SubLink.class, true));
+		assertEquals(e5, e4R.getNextEdgeOfClassInGraph(LinkBack.class, true));
+		// test of edge e5
+		assertNull(e5R.getNextEdgeOfClassInGraph(Link.class, false));
+		assertNull(e5R.getNextEdgeOfClassInGraph(SubLink.class, false));
+		assertNull(e5R.getNextEdgeOfClassInGraph(LinkBack.class, false));
+
+		assertNull(e5R.getNextEdgeOfClassInGraph(Link.class, true));
+		assertNull(e5R.getNextEdgeOfClassInGraph(SubLink.class, true));
+		assertNull(e5R.getNextEdgeOfClassInGraph(LinkBack.class, true));
 	}
 
 	/**
@@ -3215,6 +3394,28 @@ public class EdgeTest {
 		testIncidenceList(v2, e1.getReversedEdge());
 		testIncidenceList(v3, e1);
 	}
+	
+	/**
+	 * Alpha of an reversedEdge is changed to another vertex.
+	 */
+	@Test
+	public void setAlphaTestR0() {
+		DoubleSubNode v1 = graph.createDoubleSubNode();
+		DoubleSubNode v2 = graph.createDoubleSubNode();
+		DoubleSubNode v3 = graph.createDoubleSubNode();
+		Edge e1 = graph.createLink(v1, v2).getReversedEdge();
+		long v1vers = v1.getIncidenceListVersion();
+		long v2vers = v2.getIncidenceListVersion();
+		long v3vers = v3.getIncidenceListVersion();
+		e1.setAlpha(v3);
+		assertEquals(v3, e1.getAlpha());
+		assertTrue(v1.isIncidenceListModified(v1vers));
+		assertFalse(v2.isIncidenceListModified(v2vers));
+		assertTrue(v3.isIncidenceListModified(v3vers));
+		testIncidenceList(v1);
+		testIncidenceList(v2, e1);
+		testIncidenceList(v3, e1.getReversedEdge());
+	}
 
 	/**
 	 * Alpha of an edge is set to the previous alpha vertex.
@@ -3399,6 +3600,28 @@ public class EdgeTest {
 		testIncidenceList(v1, e1);
 		testIncidenceList(v2);
 		testIncidenceList(v3, e1.getReversedEdge());
+	}
+
+	/**
+	 * Omega of an reversedEdge is changed to another vertex.
+	 */
+	@Test
+	public void setOmegaTestR0() {
+		DoubleSubNode v1 = graph.createDoubleSubNode();
+		DoubleSubNode v2 = graph.createDoubleSubNode();
+		DoubleSubNode v3 = graph.createDoubleSubNode();
+		Edge e1 = graph.createLink(v1, v2).getReversedEdge();
+		long v1vers = v1.getIncidenceListVersion();
+		long v2vers = v2.getIncidenceListVersion();
+		long v3vers = v3.getIncidenceListVersion();
+		e1.setOmega(v3);
+		assertEquals(v3, e1.getOmega());
+		assertFalse(v1.isIncidenceListModified(v1vers));
+		assertTrue(v2.isIncidenceListModified(v2vers));
+		assertTrue(v3.isIncidenceListModified(v3vers));
+		testIncidenceList(v1, e1.getReversedEdge());
+		testIncidenceList(v2);
+		testIncidenceList(v3, e1);
 	}
 
 	/**
@@ -3717,6 +3940,18 @@ public class EdgeTest {
 		e1.graphModified();
 		assertEquals(++graphversion, graph.getGraphVersion());
 	}
+	
+	/**
+	 * Tests if the graphversion is increased if the method is called on ReversedEdge.
+	 */
+	@Test
+	public void graphModifiedTestR0() {
+		DoubleSubNode v = graph.createDoubleSubNode();
+		Edge e1 = graph.createLink(v, v).getReversedEdge();
+		long graphversion = graph.getGraphVersion();
+		e1.graphModified();
+		assertEquals(++graphversion, graph.getGraphVersion());
+	}
 
 	/**
 	 * Tests if the graphversion is increased by creating a new edge.
@@ -3919,6 +4154,19 @@ public class EdgeTest {
 	}
 
 	/**
+	 * Tests if the value of the correct attribute is returned. reversedEdge
+	 */
+	@Test
+	public void getAttributeTestR0() throws NoSuchFieldException {
+		DoubleSubNode v = graph.createDoubleSubNode();
+		SubLink e=(SubLink)graph.createSubLink(v, v).getReversedEdge();
+		e.setAString("test");
+		e.setAnInt(4);
+		assertEquals("test", e.getAttribute("aString"));
+		assertEquals(4, e.getAttribute("anInt"));
+	}
+
+	/**
 	 * Tests if an exception is thrown if you want to get an attribute which
 	 * doesn't exist.
 	 */
@@ -3950,6 +4198,19 @@ public class EdgeTest {
 	public void setAttributeTest0() throws NoSuchFieldException {
 		DoubleSubNode v = graph.createDoubleSubNode();
 		SubLink e=graph.createSubLink(v, v);
+		e.setAttribute("aString","test");
+		e.setAttribute("anInt",4);
+		assertEquals("test", e.getAttribute("aString"));
+		assertEquals(4, e.getAttribute("anInt"));
+	}
+
+	/**
+	 * Tests if an existing attribute is correct set. reversedEdge
+	 */
+	@Test
+	public void setAttributeTestR0() throws NoSuchFieldException {
+		DoubleSubNode v = graph.createDoubleSubNode();
+		SubLink e=(SubLink)graph.createSubLink(v, v).getReversedEdge();
 		e.setAttribute("aString","test");
 		e.setAttribute("anInt",4);
 		assertEquals("test", e.getAttribute("aString"));
@@ -4047,5 +4308,184 @@ public class EdgeTest {
 		Edge e2=graph.createLink(v1, v1);
 		assertTrue(e2.compareTo(e1) > 0);
 	}
+	
+	// tests of the method int compareTo(AttributedElement a); reversedEdge
+	/**
+	 * Test if a vertex is equal to itself.
+	 */
+	@Test
+	public void compareToTestR0() {
+		DoubleSubNode v1 = graph.createDoubleSubNode();
+		Edge e1=graph.createLink(v1, v1).getReversedEdge();
+		assertEquals(0, e1.compareTo(e1));
+	}
 
+	/**
+	 * Test if a vertex is smaller than another.
+	 */
+	@Test
+	public void compareToTestR1() {
+		DoubleSubNode v1 = graph.createDoubleSubNode();
+		Edge e1=graph.createLink(v1, v1).getReversedEdge();
+		Edge e2=graph.createLink(v1, v1).getReversedEdge();
+		assertTrue(e1.compareTo(e2) < 0);
+	}
+
+	/**
+	 * Test if a vertex is greater than another.
+	 */
+	@Test
+	public void compareToTestR2() {
+		DoubleSubNode v1 = graph.createDoubleSubNode();
+		Edge e1=graph.createLink(v1, v1).getReversedEdge();
+		Edge e2=graph.createLink(v1, v1).getReversedEdge();
+		assertTrue(e2.compareTo(e1) > 0);
+	}
+	
+	// tests of the method int compareTo(AttributedElement a); reversedEdge and normalEdge
+	/**
+	 * Test if a vertex is equal to itself.
+	 */
+	@Test
+	public void compareToTestM0() {
+		DoubleSubNode v1 = graph.createDoubleSubNode();
+		Edge e1=graph.createLink(v1, v1).getReversedEdge();
+		assertTrue(e1.compareTo(e1.getReversedEdge())<0);
+	}
+
+	/*
+	 * Test of the generated methods.
+	 */
+	
+	//test of the methods getAnInt and setAnInt
+	@Test
+	public void getAnIntTest(){
+		DoubleSubNode v1=graph.createDoubleSubNode();
+		SubLink e1=graph.createSubLink(v1, v1);
+		e1.setAnInt(1);
+		assertEquals(1,e1.getAnInt());
+		e1.setAnInt(2);
+		assertEquals(2,e1.getAnInt());
+		e1.setAnInt(3);
+		assertEquals(3,e1.getAnInt());
+	}
+	
+	//test of the methods getAString and setAString
+	@Test
+	public void getAStringTest(){
+		DoubleSubNode v1=graph.createDoubleSubNode();
+		SubLink e1=graph.createSubLink(v1, v1);
+		e1.setAString("Test1");
+		assertEquals("Test1",e1.getAString());
+		e1.setAString("Test2");
+		assertEquals("Test2",e1.getAString());
+		e1.setAString("");
+		assertEquals("",e1.getAString());
+	}
+	
+	//test of the method getNextLinkInGraph
+	@Test
+	public void getNextLinkInGraphTest(){
+		DoubleSubNode v1=graph.createDoubleSubNode();
+		SubNode v2=graph.createSubNode();
+		SuperNode v3=graph.createSuperNode();
+		SubLink e1=graph.createSubLink(v1, v1);
+		graph.createLinkBack(v3, v2);
+		SubLink e3=graph.createSubLink(v1, v3);
+		Link e4=graph.createLink(v2, v1);
+		assertEquals(e3,e1.getNextLinkInGraph());
+		assertEquals(e4,e3.getNextLinkInGraph());
+		assertEquals(null,e4.getNextLinkInGraph());
+	}
+	
+	//test of the method getNextSubLinkInGraph
+	@Test
+	public void getNextSubLinkInGraphTest(){
+		DoubleSubNode v1=graph.createDoubleSubNode();
+		SubNode v2=graph.createSubNode();
+		SuperNode v3=graph.createSuperNode();
+		SubLink e1=graph.createSubLink(v1, v1);
+		graph.createLinkBack(v3, v2);
+		graph.createLink(v2, v1);
+		SubLink e4=graph.createSubLink(v1, v3);
+		assertEquals(e4,e1.getNextSubLinkInGraph());
+		assertEquals(null,e4.getNextSubLinkInGraph());
+	}
+	
+	//test of the method getNextLink
+	@Test
+	public void getNextLinkTest(){
+		DoubleSubNode v1=graph.createDoubleSubNode();
+		DoubleSubNode v2=graph.createDoubleSubNode();
+		SubLink e1=graph.createSubLink(v1, v1);
+		graph.createLinkBack(v1, v2);
+		Link e3=graph.createLink(v2, v1);
+		graph.createSubLink(v2, v2);
+		assertEquals(e1.getReversedEdge(),e1.getNextLink());
+		assertEquals(e3.getReversedEdge(),((SubLink)e1.getReversedEdge()).getNextLink());
+		assertEquals(null,((Link)e3.getReversedEdge()).getNextLink());
+	}
+	
+	//test of the method getNextSubLink
+	@Test
+	public void getNextSubLinkTest(){
+		DoubleSubNode v1=graph.createDoubleSubNode();
+		DoubleSubNode v2=graph.createDoubleSubNode();
+		SubLink e1=graph.createSubLink(v1, v1);
+		graph.createLinkBack(v1, v2);
+		graph.createLink(v2, v1);
+		SubLink e4=graph.createSubLink(v1, v2);
+		assertEquals(e1.getReversedEdge(),e1.getNextSubLink());
+		assertEquals(e4,((SubLink)e1.getReversedEdge()).getNextSubLink());
+		assertEquals(null,e4.getNextSubLink());
+	}
+	
+	//test of the method getNextLink(EdgeDirection orientation)
+	@Test
+	public void getNextLinkTestEdgeDirection(){
+		DoubleSubNode v1=graph.createDoubleSubNode();
+		DoubleSubNode v2=graph.createDoubleSubNode();
+		SubLink e1=graph.createSubLink(v1, v1);
+		graph.createLinkBack(v1, v2);
+		Link e3=graph.createLink(v2, v1);
+		graph.createSubLink(v2, v2);
+		Link e5=graph.createLink(v1, v2);
+		assertEquals(e1.getReversedEdge(),e1.getNextLink(EdgeDirection.INOUT));
+		assertEquals(e1.getReversedEdge(),e1.getNextLink(EdgeDirection.IN));
+		assertEquals(e5,e1.getNextLink(EdgeDirection.OUT));
+		assertEquals(e3.getReversedEdge(),((SubLink)e1.getReversedEdge()).getNextLink(EdgeDirection.INOUT));
+		assertEquals(e3.getReversedEdge(),((SubLink)e1.getReversedEdge()).getNextLink(EdgeDirection.IN));
+		assertEquals(e5,((SubLink)e1.getReversedEdge()).getNextLink(EdgeDirection.OUT));
+		assertEquals(e5,((Link)e3.getReversedEdge()).getNextLink(EdgeDirection.INOUT));
+		assertEquals(null,((Link)e3.getReversedEdge()).getNextLink(EdgeDirection.IN));
+		assertEquals(e5,((Link)e3.getReversedEdge()).getNextLink(EdgeDirection.OUT));
+		assertEquals(null,e5.getNextLink(EdgeDirection.INOUT));
+		assertEquals(null,e5.getNextLink(EdgeDirection.IN));
+		assertEquals(null,e5.getNextLink(EdgeDirection.OUT));
+	}
+	
+	//test of the method getNextSubLink(EdgeDirection orientation)
+	@Test
+	public void getNextSubLinkTestEdgeDirection(){
+		DoubleSubNode v1=graph.createDoubleSubNode();
+		DoubleSubNode v2=graph.createDoubleSubNode();
+		SubLink e1=graph.createSubLink(v1, v1);
+		graph.createLinkBack(v1, v2);
+		graph.createLink(v2, v1);
+		graph.createSubLink(v2, v2);
+		SubLink e5=graph.createSubLink(v1, v2);
+		SubLink e6=graph.createSubLink(v2, v1);
+		assertEquals(e1.getReversedEdge(),e1.getNextSubLink(EdgeDirection.INOUT));
+		assertEquals(e1.getReversedEdge(),e1.getNextSubLink(EdgeDirection.IN));
+		assertEquals(e5,e1.getNextLink(EdgeDirection.OUT));
+		assertEquals(e5,((SubLink)e1.getReversedEdge()).getNextSubLink(EdgeDirection.INOUT));
+		assertEquals(e6.getReversedEdge(),((SubLink)e1.getReversedEdge()).getNextSubLink(EdgeDirection.IN));
+		assertEquals(e5,((SubLink)e1.getReversedEdge()).getNextSubLink(EdgeDirection.OUT));
+		assertEquals(e6.getReversedEdge(),e5.getNextSubLink(EdgeDirection.INOUT));
+		assertEquals(e6.getReversedEdge(),e5.getNextSubLink(EdgeDirection.IN));
+		assertEquals(null,e5.getNextSubLink(EdgeDirection.OUT));
+		assertEquals(null,((SubLink)e6.getReversedEdge()).getNextSubLink(EdgeDirection.INOUT));
+		assertEquals(null,((SubLink)e6.getReversedEdge()).getNextSubLink(EdgeDirection.IN));
+		assertEquals(null,((SubLink)e6.getReversedEdge()).getNextSubLink(EdgeDirection.OUT));
+	}
 }
