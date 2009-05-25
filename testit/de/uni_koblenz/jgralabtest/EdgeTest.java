@@ -4349,8 +4349,18 @@ public class EdgeTest {
 	@Test
 	public void compareToTestM0() {
 		DoubleSubNode v1 = graph.createDoubleSubNode();
-		Edge e1=graph.createLink(v1, v1).getReversedEdge();
+		Edge e1=graph.createLink(v1, v1);
 		assertTrue(e1.compareTo(e1.getReversedEdge())<0);
+	}
+	
+	/**
+	 * Test if a vertex is equal to itself.
+	 */
+	@Test
+	public void compareToTestM1() {
+		DoubleSubNode v1 = graph.createDoubleSubNode();
+		Edge e1=graph.createLink(v1, v1);
+		assertTrue(e1.getReversedEdge().compareTo(e1)>0);
 	}
 
 	/*
