@@ -840,4 +840,25 @@ public class FunctionTest extends GenericTests {
 		assertTrue(evalTestQuery("GrEqual", "grEqual(117.4, 111)").toBoolean());
 		assertFalse(evalTestQuery("GrEqual", "3 >= 187.00001").toBoolean());
 	}
+
+	@Test
+	public void testMergeMaps1() throws Exception {
+		// merging equal maps should return an equal map
+		assertEquals(
+				evalTestQuery("expected MergeMaps",
+						"map(tup(1,2) -> set(3), tup(3,4) -> set(7))"),
+				evalTestQuery(
+						"MergeMaps",
+						"mergeMaps(map(tup(1,2) -> set(3), tup(3,4) -> set(7)), map(tup(1,2) -> set(3), tup(3,4) -> set(7)))"));
+	}
+
+	@Test
+	public void testMergeMaps2() throws Exception {
+		assertEquals(
+				evalTestQuery("expected MergeMaps",
+						"map(tup(1,2) -> set(3,4), tup(3,4) -> set(7,8,9))"),
+				evalTestQuery(
+						"MergeMaps",
+						"mergeMaps(map(tup(1,2) -> set(3), tup(3,4) -> set(7)), map(tup(1,2) -> set(4), tup(3,4) -> set(8,9)))"));
+	}
 }

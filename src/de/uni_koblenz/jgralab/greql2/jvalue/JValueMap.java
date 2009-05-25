@@ -234,6 +234,9 @@ public class JValueMap extends JValue {
 			}
 			newMap.put(k, newValue);
 		}
+		// System.out.println("merged " + this + "\nand    " + other +
+		// "\n   ==> "
+		// + newMap);
 		return newMap;
 	}
 
