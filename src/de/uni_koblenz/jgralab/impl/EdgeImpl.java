@@ -62,7 +62,10 @@ public abstract class EdgeImpl extends IncidenceImpl implements Edge {
 	public int compareTo(AttributedElement a) {
 		assert a instanceof Edge;
 		Edge e = (Edge) a;
-		return getId() - e.getId();
+		if (e == this.getReversedEdge())
+			return -1;
+		else
+			return Math.abs(getId()) - Math.abs(e.getId());
 	}
 
 	/*
