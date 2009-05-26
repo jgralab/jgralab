@@ -100,7 +100,9 @@ public class IsReachable extends AbstractGreql2Function {
 				startVertex, dfa.initialState);
 		markers[currentEntry.state.number].mark(currentEntry.vertex);
 		boolean found = false;
-		while (currentEntry != null) {
+		queue.add(currentEntry);
+		while (!queue.isEmpty()) {
+			currentEntry = queue.poll();
 			if ((currentEntry.vertex == endVertex)
 					&& (currentEntry.state.isFinal)) {
 				found = true;
@@ -122,7 +124,6 @@ public class IsReachable extends AbstractGreql2Function {
 				}
 				inc = inc.getNextEdge();
 			}
-			currentEntry = queue.poll();
 		}
 		return new JValue(found, startVertex);
 	}

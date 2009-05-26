@@ -86,7 +86,6 @@ public class ReachableVertices extends AbstractGreql2Function {
 		if (checkArguments(arguments) == -1) {
 			throw new WrongFunctionParameterException(this, null, arguments);
 		}
-
 		JValueSet resultSet = new JValueSet();
 		DFA dfa = arguments[1].toDFA();
 		Vertex startVertex = arguments[0].toVertex();
@@ -96,10 +95,11 @@ public class ReachableVertices extends AbstractGreql2Function {
 			markers[s.number] = new BooleanGraphMarker(graph);
 		}
 		Queue<PathSearchQueueEntry> queue = new LinkedList<PathSearchQueueEntry>();
-		PathSearchQueueEntry currentEntry = new PathSearchQueueEntry(
-				startVertex, dfa.initialState);
+		PathSearchQueueEntry currentEntry = new PathSearchQueueEntry(startVertex, dfa.initialState);
 		markers[currentEntry.state.number].mark(currentEntry.vertex);
-		while (currentEntry != null) {
+		queue.add(currentEntry);
+		while (!queue.isEmpty()) {
+			currentEntry = queue.poll();
 			if (currentEntry.state.isFinal) {
 				resultSet.add(new JValue(currentEntry.vertex,
 						currentEntry.vertex));
@@ -127,7 +127,6 @@ public class ReachableVertices extends AbstractGreql2Function {
 				}
 				inc = inc.getNextEdge();
 			}
-			currentEntry = queue.poll();
 		}
 		return resultSet;
 	}
