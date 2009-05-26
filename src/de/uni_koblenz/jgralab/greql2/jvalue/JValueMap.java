@@ -238,6 +238,10 @@ public class JValueMap extends JValue {
 		return newMap;
 	}
 
+	/**
+	 * @param other
+	 * @return
+	 */
 	public JValueMap union(JValueMap other) {
 		JValueSet allKeys = new JValueSet();
 		allKeys.addAll(keySet());
