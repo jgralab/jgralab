@@ -26,6 +26,8 @@ package de.uni_koblenz.jgralab.greql2.jvalue;
 
 import java.util.Iterator;
 
+import de.uni_koblenz.jgralab.greql2.exception.JValueInvalidTypeException;
+
 /**
  * This class is base for all collections of JValue-Objects.
  *
@@ -40,6 +42,32 @@ abstract public class JValueCollection extends JValue implements
 	 */
 	public JValueCollection() {
 		type = JValueType.COLLECTION;
+	}
+
+	/**
+	 * @param c
+	 * @return a shallow copy of {@code c}
+	 */
+	public static JValueCollection shallowCopy(JValueCollection c) {
+		if (c instanceof JValueBag) {
+			return new JValueBag(c);
+		}
+		if (c instanceof JValueList) {
+			return new JValueList(c);
+		}
+		if (c instanceof JValueRecord) {
+			return new JValueRecord(c);
+		}
+		if (c instanceof JValueSet) {
+			return new JValueSet(c);
+		}
+		if (c instanceof JValueTable) {
+			return new JValueTable(c);
+		}
+
+		throw new JValueInvalidTypeException("Cannot create a shallow copy of "
+				+ c + ", because its type " + c.getClass().getCanonicalName()
+				+ " is not recognized.");
 	}
 
 	/**
@@ -82,9 +110,8 @@ abstract public class JValueCollection extends JValue implements
 	 * @return true if successfull, false otherwise
 	 */
 	public boolean addAll(JValueCollection collection) {
-		Iterator<JValue> collectionIterator = collection.iterator();
-		while (collectionIterator.hasNext()) {
-			add(collectionIterator.next());
+		for (JValue j : collection) {
+			add(j);
 		}
 		return true;
 	}
@@ -102,9 +129,8 @@ abstract public class JValueCollection extends JValue implements
 	 *         collection, false otherwise
 	 */
 	public boolean containsAll(JValueCollection collection) {
-		Iterator<JValue> collectionIterator = collection.iterator();
-		while (collectionIterator.hasNext()) {
-			if (!contains(collectionIterator.next())) {
+		for (JValue j : collection) {
+			if (!contains(j)) {
 				return false;
 			}
 		}
@@ -128,9 +154,8 @@ abstract public class JValueCollection extends JValue implements
 	 * @return true if have been removed, false otherwise
 	 */
 	public boolean removeAll(JValueCollection collection) {
-		Iterator<JValue> collectionIterator = collection.iterator();
-		while (collectionIterator.hasNext()) {
-			remove(collectionIterator.next());
+		for (JValue j : collection) {
+			remove(j);
 		}
 		return true;
 	}
@@ -284,14 +309,13 @@ abstract public class JValueCollection extends JValue implements
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
 		sb.append("{");
-		Iterator<JValue> iter = this.iterator();
 		boolean first = true;
-		while (iter.hasNext()) {
+		for (JValue j : this) {
 			if (!first) {
 				sb.append(", ");
 			}
 			first = false;
-			sb.append(iter.next().toString());
+			sb.append(j.toString());
 		}
 		sb.append("}");
 		return sb.toString();
