@@ -28,8 +28,6 @@ import java.util.HashMap;
 import java.util.Set;
 import java.util.Map.Entry;
 
-import de.uni_koblenz.jgralab.greql2.exception.EvaluateException;
-
 /**
  * @author Tassilo Horn <horn@uni-koblenz.de>
  *
@@ -225,18 +223,18 @@ public class JValueMap extends JValue {
 		for (JValue k : allKeys) {
 			JValueCollection newValue = null;
 			if (containsKey(k) && other.containsKey(k)) {
-				newValue = (JValueCollection) get(k);
+				newValue = JValueCollection
+						.shallowCopy((JValueCollection) get(k));
 				newValue.addAll((JValueCollection) other.get(k));
 			} else if (containsKey(k)) {
-				newValue = (JValueCollection) get(k);
+				newValue = JValueCollection
+						.shallowCopy((JValueCollection) get(k));
 			} else {
-				newValue = (JValueCollection) other.get(k);
+				newValue = JValueCollection
+						.shallowCopy((JValueCollection) other.get(k));
 			}
 			newMap.put(k, newValue);
 		}
-		// System.out.println("merged " + this + "\nand    " + other +
-		// "\n   ==> "
-		// + newMap);
 		return newMap;
 	}
 
@@ -247,7 +245,7 @@ public class JValueMap extends JValue {
 		JValueMap newMap = new JValueMap();
 		for (JValue k : allKeys) {
 			if (containsKey(k) && other.containsKey(k)) {
-				throw new EvaluateException(
+				throw new RuntimeException(
 						"Cannot create the union of the given two maps. "
 								+ "Their key sets are not disjoint.");
 			}
