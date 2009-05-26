@@ -27,7 +27,6 @@ package de.uni_koblenz.jgralab.greql2.evaluator.vertexeval;
 import java.util.ArrayList;
 import java.util.List;
 
-import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
 import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.GraphSize;
@@ -93,10 +92,9 @@ public class TypeIdEvaluator extends VertexEvaluator {
 
 	@Override
 	public JValue evaluate() throws EvaluateException {
-		Graph datagraph = getDatagraph();
-		Schema schema = datagraph.getSchema();
-		return new JValueTypeCollection(createTypeList(schema), vertex
-				.isExcluded());
+		List<AttributedElementClass> typeList = createTypeList(getDatagraph()
+				.getSchema());
+		return new JValueTypeCollection(typeList, vertex.isExcluded());
 	}
 
 	@Override

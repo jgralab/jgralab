@@ -21,7 +21,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
- 
+
 package de.uni_koblenz.jgralab.greql2.evaluator.vertexeval;
 
 import de.uni_koblenz.jgralab.EdgeDirection;
@@ -38,8 +38,8 @@ import de.uni_koblenz.jgralab.greql2.schema.SimplePathDescription;
 /**
  * Evaluates a SimplePathDescription, that is something link v -->{isExprOf} w.
  * Creates a NFA which accepts the simplePath the vertex to evaluate describes.
- * @author ist@uni-koblenz.de
- * Summer 2006, Diploma Thesis
+ *
+ * @author ist@uni-koblenz.de Summer 2006, Diploma Thesis
  *
  */
 public class SimplePathDescriptionEvaluator extends
@@ -53,12 +53,16 @@ public class SimplePathDescriptionEvaluator extends
 	@Override
 	public JValue evaluate() throws EvaluateException {
 		JValueTypeCollection typeCollection = new JValueTypeCollection();
-		IsEdgeRestrOf inc = vertex.getFirstIsEdgeRestrOf(EdgeDirection.IN);
 		EdgeRestrictionEvaluator edgeRestEval = null;
-		if (inc != null) {
-			edgeRestEval = (EdgeRestrictionEvaluator) greqlEvaluator.getVertexEvaluatorGraphMarker().getMark(inc.getAlpha());
+		for (IsEdgeRestrOf inc : vertex
+				.getIsEdgeRestrOfIncidences(EdgeDirection.IN)) {
+			edgeRestEval = (EdgeRestrictionEvaluator) greqlEvaluator
+					.getVertexEvaluatorGraphMarker().getMark(inc.getAlpha());
 			typeCollection.addTypes(edgeRestEval.getTypeCollection());
 		}
+		// TODO (Daniel): What's that "role" here? Since there can be many
+		// EdgeRestrictions below a SimplePD, which role to choose, or how to
+		// combine them?
 		createdNFA = NFA.createSimplePathDescriptionNFA(
 				getEdgeDirection(vertex), typeCollection,
 				getEdgeRole(edgeRestEval));
