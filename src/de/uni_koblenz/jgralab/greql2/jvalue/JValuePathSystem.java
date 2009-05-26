@@ -49,11 +49,12 @@ public class JValuePathSystem extends JValue {
 	private HashMap<PathSystemKey, PathSystemEntry> keyToEntryMap;
 
 	/**
-	 * This HashMap stores references from a vertex to the first occurence of
-	 * this vertex in the above HashMap<PathSystemKey, PathSystemEntry>
+	 * This HashMap stores references from a vertex which is a leaf
+	 * is the path system to the first occurence of
+	 * this vertex as a leaf in the above HashMap<PathSystemKey, PathSystemEntry>
 	 * keyToEntryMap
 	 */
-	private HashMap<Vertex, PathSystemKey> vertexToFirstKeyMap;
+	private HashMap<Vertex, PathSystemKey> leafVertexToLeafKeyMap;
 
 	/**
 	 * This is the rootvertex of the pathsystem
@@ -129,7 +130,7 @@ public class JValuePathSystem extends JValue {
 	public JValuePathSystem(Graph graph) {
 		datagraph = graph;
 		keyToEntryMap = new HashMap<PathSystemKey, PathSystemEntry>();
-		vertexToFirstKeyMap = new HashMap<Vertex, PathSystemKey>();
+		leafVertexToLeafKeyMap = new HashMap<Vertex, PathSystemKey>();
 		type = JValueType.PATHSYSTEM;
 
 	}
@@ -151,8 +152,8 @@ public class JValuePathSystem extends JValue {
 		PathSystemEntry entry = new PathSystemEntry(null, null, -1, 0,
 				finalState);
 		keyToEntryMap.put(key, entry);
-		if (!vertexToFirstKeyMap.containsKey(vertex)) {
-			vertexToFirstKeyMap.put(vertex, key);
+		if (finalState && !leafVertexToLeafKeyMap.containsKey(vertex)) {
+			leafVertexToLeafKeyMap.put(vertex, key);
 		}
 		leafKeys = null;
 		hashvalue = 0;
@@ -186,8 +187,8 @@ public class JValuePathSystem extends JValue {
 			PathSystemEntry entry = new PathSystemEntry(parentVertex,
 					parentEdge, parentStateNumber, distance, finalState);
 			keyToEntryMap.put(key, entry);
-			if (!vertexToFirstKeyMap.containsKey(vertex)) {
-				vertexToFirstKeyMap.put(vertex, key);
+			if (finalState && !leafVertexToLeafKeyMap.containsKey(vertex)) {
+				leafVertexToLeafKeyMap.put(vertex, key);
 			}
 			leafKeys = null;
 		}
@@ -199,7 +200,7 @@ public class JValuePathSystem extends JValue {
 	 * occurrence if used.
 	 */
 	public JValueSet children(Vertex vertex) {
-		PathSystemKey key = vertexToFirstKeyMap.get(vertex);
+		PathSystemKey key = leafVertexToLeafKeyMap.get(vertex);
 		return children(key);
 	}
 
@@ -229,7 +230,7 @@ public class JValuePathSystem extends JValue {
 	 * occurence if used.
 	 */
 	public JValueSet siblings(Vertex vertex) {
-		PathSystemKey key = vertexToFirstKeyMap.get(vertex);
+		PathSystemKey key = leafVertexToLeafKeyMap.get(vertex);
 		return siblings(key);
 	}
 
@@ -262,7 +263,7 @@ public class JValuePathSystem extends JValue {
 	 * invalid JValue will be returned
 	 */
 	public JValue parent(Vertex vertex) {
-		PathSystemKey key = vertexToFirstKeyMap.get(vertex);
+		PathSystemKey key = leafVertexToLeafKeyMap.get(vertex);
 		return parent(key);
 	}
 
@@ -611,7 +612,7 @@ public class JValuePathSystem extends JValue {
 	 * @return a Path from rootVertex to given vertex
 	 */
 	public JValuePath extractPath(Vertex vertex) throws JValuePathException {
-		PathSystemKey key = vertexToFirstKeyMap.get(vertex);
+		PathSystemKey key = leafVertexToLeafKeyMap.get(vertex);
 		if (key == null) {
 			return new JValuePath((Vertex) null);
 		}
@@ -713,7 +714,7 @@ public class JValuePathSystem extends JValue {
 	 *         system
 	 */
 	public int distance(Vertex vertex) {
-		PathSystemKey key = vertexToFirstKeyMap.get(vertex);
+		PathSystemKey key = leafVertexToLeafKeyMap.get(vertex);
 		return distance(key);
 	}
 
@@ -780,8 +781,8 @@ public class JValuePathSystem extends JValue {
 	 *         returned
 	 */
 	public boolean isNeighbour(Vertex v1, Vertex v2) {
-		PathSystemKey key1 = vertexToFirstKeyMap.get(v1);
-		PathSystemKey key2 = vertexToFirstKeyMap.get(v2);
+		PathSystemKey key1 = leafVertexToLeafKeyMap.get(v1);
+		PathSystemKey key2 = leafVertexToLeafKeyMap.get(v2);
 		return isNeighbour(key1, key2);
 	}
 
@@ -816,8 +817,8 @@ public class JValuePathSystem extends JValue {
 	 *         part of this pathsystem, false is returned
 	 */
 	public boolean isSibling(Vertex v1, Vertex v2) {
-		PathSystemKey key1 = vertexToFirstKeyMap.get(v1);
-		PathSystemKey key2 = vertexToFirstKeyMap.get(v2);
+		PathSystemKey key1 = leafVertexToLeafKeyMap.get(v1);
+		PathSystemKey key2 = leafVertexToLeafKeyMap.get(v2);
 		return isSibling(key1, key2);
 	}
 
@@ -927,7 +928,7 @@ public class JValuePathSystem extends JValue {
 	 * prints the <vertex, key map
 	 */
 	public void printKeyMap() {
-		Iterator<Map.Entry<Vertex, PathSystemKey>> iter = vertexToFirstKeyMap
+		Iterator<Map.Entry<Vertex, PathSystemKey>> iter = leafVertexToLeafKeyMap
 				.entrySet().iterator();
 		logger.info("<Vertex, FirstKey> Set of PathSystem is:");
 		while (iter.hasNext()) {
