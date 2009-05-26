@@ -37,15 +37,16 @@ import de.uni_koblenz.jgralab.greql2.exception.JValueInvalidTypeException;
  * Represents a path in the Datagraph. A path is a alternating list of vertices
  * and egdes with |vertex] = |edge] + 1, it can be written as v1 e1 v2 e2 v3 e3
  * ..... vn en vn+1
- * 
+ *
  * @author ist@uni-koblenz.de
- * 
+ *
  */
 public class JValuePath extends JValue {
 
 	/**
 	 * returns a JValuePath-Reference to this JValue object
 	 */
+	@Override
 	public JValuePath toPath() throws JValueInvalidTypeException {
 		return this;
 	}
@@ -67,15 +68,16 @@ public class JValuePath extends JValue {
 
 	/**
 	 * creates a new JValuePath,
-	 * 
+	 *
 	 * @param firstVertex
 	 *            the first vertex in the path
 	 */
 	public JValuePath(Vertex firstVertex) {
 		edges = new ArrayList<Edge>();
 		vertices = new ArrayList<Vertex>();
-		if (firstVertex != null)
+		if (firstVertex != null) {
 			vertices.add(firstVertex);
+		}
 		type = JValueType.PATH;
 	}
 
@@ -101,6 +103,7 @@ public class JValuePath extends JValue {
 	/**
 	 * returns a string representation of this path
 	 */
+	@Override
 	public String toString() {
 		StringBuffer returnString = new StringBuffer();
 		Iterator<Vertex> vertexIter = vertices.iterator();
@@ -124,6 +127,7 @@ public class JValuePath extends JValue {
 	/**
 	 * returns a hashValue for this path
 	 */
+	@Override
 	public int hashCode() {
 		if (hashvalue == 0) {
 			int i = 1;
@@ -147,7 +151,7 @@ public class JValuePath extends JValue {
 	 * vertex will be added after this edge, so it will be the last vertex in
 	 * the path. The edge to be added must start at the last vertex in the path.
 	 * costs are O(1)
-	 * 
+	 *
 	 * @param e
 	 *            the Edge to add
 	 * @throws JValuePathException
@@ -155,13 +159,14 @@ public class JValuePath extends JValue {
 	 *             the path
 	 */
 	public void addEdge(Edge e) throws JValuePathException {
-		if (vertices.get(vertices.size() - 1) != e.getThis())
+		if (vertices.get(vertices.size() - 1) != e.getThis()) {
 			throw new JValuePathException(
 					"The edge "
 							+ e.toString()
 							+ " could not be added to the path "
 							+ this.toString()
 							+ " because the last vertex in the path is not the this-vertex of the edge");
+		}
 		edges.add(e);
 		vertices.add(e.getThat());
 		hashvalue = 0;
@@ -170,16 +175,20 @@ public class JValuePath extends JValue {
 	/**
 	 * returns true if this path is a trail, that means, it doesn't contain any
 	 * duplicated vertex,
-	 * 
+	 *
 	 * costs worst-case costs, if the path is a trail, are O(n * n/2)
 	 */
 	public boolean isTrail() {
-		if (!isValidPath())
+		if (!isValidPath()) {
 			return false;
-		for (int i = 0; i < vertices.size() - 1; i++)
-			for (int j = i + 1; j < vertices.size(); j++)
-				if (vertices.get(i) == vertices.get(j))
+		}
+		for (int i = 0; i < vertices.size() - 1; i++) {
+			for (int j = i + 1; j < vertices.size(); j++) {
+				if (vertices.get(i) == vertices.get(j)) {
 					return false;
+				}
+			}
+		}
 		return true;
 	}
 
@@ -226,8 +235,9 @@ public class JValuePath extends JValue {
 	 * @return the start vertex of this path
 	 */
 	public Vertex getStartVertex() {
-		if (vertices.isEmpty())
+		if (vertices.isEmpty()) {
 			return null;
+		}
 		return vertices.get(0);
 	}
 
@@ -235,8 +245,9 @@ public class JValuePath extends JValue {
 	 * @return the end vertex of this path
 	 */
 	public Vertex getEndVertex() {
-		if (vertices.isEmpty())
+		if (vertices.isEmpty()) {
 			return null;
+		}
 		return vertices.get(vertices.size() - 1);
 	}
 
@@ -268,7 +279,7 @@ public class JValuePath extends JValue {
 	}
 
 	/**
-	 * @return the edgetrace, but all edges are encalpsulated in jvalues
+	 * @return the edgetrace, but all edges are encapsulated in jvalues
 	 */
 	public JValueList edgeTraceAsJValue() {
 		JValueList edgeList = new JValueList();
@@ -281,8 +292,25 @@ public class JValuePath extends JValue {
 	}
 
 	/**
+	 * @return the trace (v e v e v), but all vertices/edges are encapsulated in
+	 *         jvalues
+	 */
+	public JValueList traceAsJValue() {
+		JValueList list = new JValueList();
+		Iterator<Edge> eiter = edges.iterator();
+		Iterator<Vertex> viter = vertices.iterator();
+		while (viter.hasNext()) {
+			list.add(new JValue(viter.next()));
+			if (eiter.hasNext()) {
+				list.add(new JValue(eiter.next()));
+			}
+		}
+		return list;
+	}
+
+	/**
 	 * calculates the degree of the given vertex in this path
-	 * 
+	 *
 	 * @param vertex
 	 *            the vertex to calculate the degree for
 	 * @return -1 (vertex is not part of this path) 0 (vertex is the only vertex
@@ -291,20 +319,24 @@ public class JValuePath extends JValue {
 	 */
 	public int degree(Vertex vertex) {
 		int position = vertices.indexOf(vertex);
-		if (position < 0)
+		if (position < 0) {
 			return -1;
-		if (vertices.size() == 1)
+		}
+		if (vertices.size() == 1) {
 			return 0;
-		if (isCycle())
+		}
+		if (isCycle()) {
 			return 2;
-		if ((vertex == getEndVertex()) || (vertex == getStartVertex()))
+		}
+		if ((vertex == getEndVertex()) || (vertex == getStartVertex())) {
 			return 1;
+		}
 		return 2;
 	}
 
 	/**
 	 * calculates the in or out degree of the given vertex in this path
-	 * 
+	 *
 	 * @param vertex
 	 *            the vertex to calculate the degree for
 	 * @param orientation
@@ -316,23 +348,28 @@ public class JValuePath extends JValue {
 	 */
 	public int degree(Vertex vertex, boolean orientation) {
 		int position = vertices.indexOf(vertex);
-		if (position < 0)
+		if (position < 0) {
 			return -1;
-		if (vertices.size() == 1)
+		}
+		if (vertices.size() == 1) {
 			return 0;
-		if (isCycle())
+		}
+		if (isCycle()) {
 			return 2;
-		if ((vertex == getEndVertex()) && (!orientation))
+		}
+		if ((vertex == getEndVertex()) && (!orientation)) {
 			return 0;
-		if ((vertex == getStartVertex()) && (orientation))
+		}
+		if ((vertex == getStartVertex()) && (orientation)) {
 			return 0;
+		}
 		return 1;
 	}
 
 	/**
 	 * returns the edges which are incomming or outgoing to the given vertex in
 	 * this path
-	 * 
+	 *
 	 * @param vertex
 	 *            the vertex for which the connected edge will be returned
 	 * @param orientation
@@ -343,18 +380,21 @@ public class JValuePath extends JValue {
 	public JValueSet edgesConnected(Vertex vertex, boolean orientation) {
 		JValueSet returnSet = new JValueSet();
 		int index = vertices.indexOf(vertex);
-		if (index == -1)
+		if (index == -1) {
 			return returnSet;
+		}
 		for (int i = index - 1; i <= index; i++) {
 			if ((index < edges.size()) && (index > 0)) {
 				if (orientation) {
-					if (edges.get(index).getOmega() == vertex)
+					if (edges.get(index).getOmega() == vertex) {
 						returnSet.add(new JValue(edges.get(index), edges
 								.get(index)));
+					}
 				} else {
-					if (edges.get(index).getAlpha() == vertex)
+					if (edges.get(index).getAlpha() == vertex) {
 						returnSet.add(new JValue(edges.get(index), edges
 								.get(index)));
+					}
 				}
 			}
 		}
@@ -363,7 +403,7 @@ public class JValuePath extends JValue {
 
 	/**
 	 * returns the edges which are connected to the given vertex in this path
-	 * 
+	 *
 	 * @param vertex
 	 *            the vertex for which the connected edge will be returned
 	 * @return the edges connected to the given vertex in the given orientation
@@ -371,14 +411,16 @@ public class JValuePath extends JValue {
 	public JValueSet edgesConnected(Vertex vertex) {
 		JValueSet returnSet = new JValueSet();
 		int index = vertices.indexOf(vertex);
-		if (index == -1)
+		if (index == -1) {
 			return returnSet;
+		}
 		for (int i = index - 1; i <= index; i++) {
 			if ((index < edges.size()) && (index > 0)) {
 				if ((edges.get(index).getOmega() == vertex)
-						|| (edges.get(index).getAlpha() == vertex))
+						|| (edges.get(index).getAlpha() == vertex)) {
 					returnSet
 							.add(new JValue(edges.get(index), edges.get(index)));
+				}
 			}
 		}
 		return returnSet;
@@ -424,10 +466,11 @@ public class JValuePath extends JValue {
 	 * returns true, if this path contains the given graphelement
 	 */
 	public boolean contains(GraphElement elem) {
-		if (elem instanceof Vertex)
+		if (elem instanceof Vertex) {
 			return contains((Vertex) elem);
-		else
+		} else {
 			return contains((Edge) elem);
+		}
 	}
 
 	/**
@@ -450,17 +493,21 @@ public class JValuePath extends JValue {
 	 *         vertices
 	 */
 	public boolean isParallel(JValuePath path) {
-		if (path.getEndVertex() != this.getEndVertex())
+		if (path.getEndVertex() != this.getEndVertex()) {
 			return false;
-		if (path.getStartVertex() != this.getStartVertex())
+		}
+		if (path.getStartVertex() != this.getStartVertex()) {
 			return false;
-		if (path.pathLength() != this.pathLength())
+		}
+		if (path.pathLength() != this.pathLength()) {
 			return false;
+		}
 		Iterator<Vertex> iter1 = vertices.iterator();
 		Iterator<Vertex> iter2 = path.vertices.iterator();
 		while (iter1.hasNext() && iter2.hasNext()) {
-			if (iter1.next() == iter2.next())
+			if (iter1.next() == iter2.next()) {
 				return false;
+			}
 		}
 		return true;
 	}
@@ -470,8 +517,9 @@ public class JValuePath extends JValue {
 	 *         vertex are the same
 	 */
 	public boolean isCycle() {
-		if (!isValidPath())
+		if (!isValidPath()) {
 			return false;
+		}
 		return (getEndVertex() == getStartVertex());
 	}
 
@@ -479,20 +527,23 @@ public class JValuePath extends JValue {
 	 * @return true, if this path is a subpath of the given path
 	 */
 	public boolean isSubPathOf(JValuePath path) {
-		if (this.pathLength() > path.pathLength())
+		if (this.pathLength() > path.pathLength()) {
 			return false;
+		}
 		Iterator<Vertex> iter1 = path.vertices.iterator();
 		Iterator<Vertex> iter2 = vertices.iterator();
 		Vertex vertex1;
-		if (iter1.hasNext())
+		if (iter1.hasNext()) {
 			vertex1 = iter1.next();
-		else
+		} else {
 			return false;
+		}
 		Vertex vertex2;
-		if (iter2.hasNext())
+		if (iter2.hasNext()) {
 			vertex2 = iter2.next();
-		else
+		} else {
 			return false;
+		}
 		while ((vertex1 != vertex2) && (iter1.hasNext())) {
 			vertex1 = iter1.next();
 		}
@@ -500,8 +551,9 @@ public class JValuePath extends JValue {
 			vertex1 = iter1.next();
 			vertex2 = iter2.next();
 		}
-		if (iter2.hasNext())
+		if (iter2.hasNext()) {
 			return false; // there are more vertices in this path that are not
+		}
 		// in the given path
 		return true;
 	}
@@ -511,28 +563,32 @@ public class JValuePath extends JValue {
 	 *         the given object if also a path and it contains the same vertices
 	 *         and edges in the same order
 	 */
+	@Override
 	public boolean equals(Object o) {
 		if (o instanceof JValuePath) {
 			JValuePath path = (JValuePath) o;
 			Iterator<Vertex> iter1 = path.vertices.iterator();
 			Iterator<Vertex> iter2 = vertices.iterator();
 			Vertex vertex1;
-			if (iter1.hasNext())
+			if (iter1.hasNext()) {
 				vertex1 = iter1.next();
-			else
+			} else {
 				return false;
+			}
 			Vertex vertex2;
-			if (iter2.hasNext())
+			if (iter2.hasNext()) {
 				vertex2 = iter2.next();
-			else
+			} else {
 				return false;
+			}
 			while ((vertex1 == vertex2) && (iter1.hasNext())
 					&& (iter2.hasNext())) {
 				vertex1 = iter1.next();
 				vertex2 = iter2.next();
 			}
-			if (iter1.hasNext() || iter2.hasNext())
+			if (iter1.hasNext() || iter2.hasNext()) {
 				return false;
+			}
 			return true;
 		}
 		return false;
@@ -544,8 +600,9 @@ public class JValuePath extends JValue {
 	 * start vertex of the given path must be the same
 	 */
 	public JValuePath pathConcat(JValuePath p2) {
-		if (this.getEndVertex() != p2.getStartVertex())
+		if (this.getEndVertex() != p2.getStartVertex()) {
 			return null;
+		}
 		JValuePath newPath = new JValuePath(this);
 		newPath.vertices.addAll(p2.vertices);
 		newPath.edges.addAll(p2.edges);
@@ -555,6 +612,7 @@ public class JValuePath extends JValue {
 	/**
 	 * accepts te given visitor to visit this jvalue
 	 */
+	@Override
 	public void accept(JValueVisitor v) {
 		v.visitPath(this);
 	}

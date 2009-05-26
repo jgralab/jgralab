@@ -128,7 +128,7 @@ public class JValueDefaultVisitor implements JValueVisitor {
 
 	@Override
 	public void visitPath(JValuePath p) {
-		Iterator<JValue> eiter = p.edgeTraceAsJValue().iterator();
+		Iterator<JValue> eiter = p.traceAsJValue().iterator();
 		boolean first = true;
 		pre();
 		while (eiter.hasNext()) {
@@ -138,18 +138,6 @@ public class JValueDefaultVisitor implements JValueVisitor {
 				inter();
 			}
 			eiter.next().accept(this);
-		}
-		post();
-		Iterator<JValue> viter = p.nodeTraceAsJValue().iterator();
-		first = true;
-		pre();
-		while (viter.hasNext()) {
-			if (first) {
-				first = false;
-			} else {
-				inter();
-			}
-			viter.next().accept(this);
 		}
 		post();
 	}

@@ -292,7 +292,7 @@ public interface JValueVisitor {
 	public void post();
 
 	/**
-	 * This method should be called before the last element in a collection was
+	 * This method should be called before the first element in a collection was
 	 * visited
 	 */
 	public void pre();
