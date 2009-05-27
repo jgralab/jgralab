@@ -15,6 +15,7 @@ import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralabtest.schemas.vertextest.*;
 
 //TODO source out duplicat code fragments (f.ex. isEdgeListModified)
+//TODO create identical edges
 
 public class GraphTest {
 	private VertexTestGraph graph;
@@ -662,7 +663,7 @@ public class GraphTest {
 		graph.deleteEdge(e8);
 		assertFalse(graph.containsEdge(e8));
 		
-		System.out.println("Done testing deleteEdge");
+		System.out.println("Done testing deleteEdge.");
 	}
 	
 	@Test
@@ -885,82 +886,257 @@ public class GraphTest {
 	
 	@Test
 	public void testGetVertex(){
+		Vertex v1 = graph.createVertex(SubNode.class);
+		Vertex v2 = graph.createVertex(SubNode.class);
+		Vertex v3 = graph.createVertex(SubNode.class);
+		Vertex v4 = graph.createVertex(SubNode.class);
+		Vertex v5 = graph.createVertex(SuperNode.class);
+		Vertex v6 = graph.createVertex(SuperNode.class);
+		Vertex v7 = graph.createVertex(SuperNode.class);
+		Vertex v8 = graph.createVertex(SuperNode.class);
+		Vertex v9 = graph.createVertex(DoubleSubNode.class);
+		Vertex v10 = graph.createVertex(DoubleSubNode.class);
+		Vertex v11 = graph.createVertex(DoubleSubNode.class);
+		Vertex v12 = graph.createVertex(DoubleSubNode.class);
+		Vertex v13 = graph.createVertex(SubNode.class);
+		Vertex v14 = graph.createVertex(DoubleSubNode.class);
+		Vertex v15 = graph.createVertex(SuperNode.class);
+		Vertex v16 = graph2.createVertex(SubNode.class);
+		Vertex v17 = graph2.createVertex(SuperNode.class);
+		Vertex v18 = graph2.createVertex(DoubleSubNode.class);
 		
+		//faults
+		//TODO these cases are not caught yet
+//		assertEquals(null, graph.getVertex(-5));
+//		graph.getVertex(Integer.MAX_VALUE);
+//		graph.getVertex(Integer.MIN_VALUE);
+		
+		//border cases
+		assertEquals(v1, graph.getVertex(1));
+		assertEquals(v16, graph2.getVertex(1));
+		assertEquals(null, graph.getVertex(0));
+		assertEquals(null, graph.getVertex(42));
+		assertEquals(null, graph.getVertex(33));
+		assertEquals(null, graph2.getVertex(4));
+
+		//normal cases
+		assertEquals(v2, graph.getVertex(2));
+		assertEquals(v3, graph.getVertex(3));
+		assertEquals(v4, graph.getVertex(4));
+		assertEquals(v5, graph.getVertex(5));
+		assertEquals(v6, graph.getVertex(6));
+		assertEquals(v7, graph.getVertex(7));
+		assertEquals(v8, graph.getVertex(8));
+		assertEquals(v9, graph.getVertex(9));
+		assertEquals(v10, graph.getVertex(10));
+		assertEquals(v11, graph.getVertex(11));
+		assertEquals(v12, graph.getVertex(12));
+		assertEquals(v13, graph.getVertex(13));
+		assertEquals(v14, graph.getVertex(14));
+		assertEquals(v15, graph.getVertex(15));
+		assertEquals(v17, graph2.getVertex(2));
+		assertEquals(v18, graph2.getVertex(3));
+		
+		System.out.println("Done testing getVertex.");		
 	}
 	
 	@Test
 	public void testGetEdge(){
+		Vertex v1 = graph.createVertex(SubNode.class);
+		Vertex v2 = graph.createVertex(SubNode.class);
+		Vertex v3 = graph.createVertex(SubNode.class);
+		Vertex v4 = graph.createVertex(SubNode.class);
+		Vertex v5 = graph.createVertex(SuperNode.class);
+		Vertex v6 = graph.createVertex(SuperNode.class);
+		Vertex v7 = graph.createVertex(SuperNode.class);
+		Vertex v8 = graph.createVertex(SuperNode.class);
+		Vertex v9 = graph.createVertex(DoubleSubNode.class);
+		Vertex v10 = graph.createVertex(DoubleSubNode.class);
+		Vertex v11 = graph.createVertex(DoubleSubNode.class);
+		Vertex v12 = graph.createVertex(DoubleSubNode.class);
 		
+		Edge e1 = graph.createEdge(LinkBack.class, v5, v1);
+		Edge e2 = graph.createEdge(Link.class, v2, v7);
+		Edge e3 = graph.createEdge(LinkBack.class, v8, v4);
+		Edge e4 = graph.createEdge(SubLink.class, v11, v6);
+		Edge e5 = graph.createEdge(Link.class, v2, v5);
+		Edge e6 = graph.createEdge(LinkBack.class, v7, v12);
+		Edge e7 = graph.createEdge(SubLink.class, v9, v8);
+		Edge e8 = graph.createEdge(SubLink.class, v10, v6);
+		Edge e9 = graph.createEdge(Link.class, v3, v7);
+		Edge e10 = graph.createEdge(Link.class, v3, v7);
+		
+		//faults
+//		assertEquals(null, graph.getEdge(Integer.MAX_VALUE));
+//		assertEquals(null, graph.getEdge(Integer.MIN_VALUE));
+		
+		//border cases
+		assertEquals(null, graph.getEdge(0));
+		assertEquals(null, graph.getEdge(42));
+		assertEquals(null, graph.getEdge(-42));
+		assertEquals(e1, graph.getEdge(1));
+		
+		//normal cases
+		assertEquals(e2, graph.getEdge(2));
+		assertEquals(e3, graph.getEdge(3));
+		assertEquals(e4, graph.getEdge(4));
+		assertEquals(e5, graph.getEdge(5));
+		assertEquals(e6, graph.getEdge(6));
+		assertEquals(e7, graph.getEdge(7));
+		assertEquals(e8, graph.getEdge(8));
+		assertEquals(e9, graph.getEdge(9));
+		assertEquals(e10, graph.getEdge(10));
+		
+		System.out.println("Done testing getEdge.");
 	}
 	
 	@Test
-	public void testGetMaxVCount(){
-		
+	public void testGetMaxVCount(){	
 	}
 	
 	@Test
 	public void testGetExpandedVertexCount(){
-		
 	}
 	
 	@Test
 	public void testGetExpandedEdgeCount(){
-		
 	}
 	
 	@Test
 	public void testGetMaxECount(){
-		
 	}
 	
 	@Test
 	public void testGetVCount(){
+		//border cases
+		assertEquals(0, graph.getVCount());
+		assertEquals(0, graph2.getVCount());
 		
+		Vertex v1 = graph.createVertex(SubNode.class);
+		assertEquals(1, graph.getVCount());
+		
+		graph.deleteVertex(v1);
+		assertEquals(0, graph.getVCount());
+		
+		graph.createVertex(SubNode.class);
+		assertEquals(1, graph.getVCount());
+		
+		//normal cases
+		Vertex v2 = graph.createVertex(SubNode.class);
+		assertEquals(2, graph.getVCount());
+		
+		graph.createVertex(SubNode.class);
+		assertEquals(3, graph.getVCount());
+		
+		graph.deleteVertex(v2);
+		assertEquals(2, graph.getVCount());
+		
+		graph.createVertex(SuperNode.class);
+		assertEquals(3, graph.getVCount());
+		
+		Vertex v3 = graph.createVertex(SuperNode.class);
+		assertEquals(4, graph.getVCount());
+		
+		graph.deleteVertex(v3);
+		assertEquals(3, graph.getVCount());
+		
+		Vertex v4 = graph.createVertex(SuperNode.class);
+		assertEquals(4, graph.getVCount());
+		
+		graph.createVertex(SuperNode.class);
+		assertEquals(5, graph.getVCount());
+		
+		graph.createVertex(DoubleSubNode.class);
+		assertEquals(6, graph.getVCount());
+		
+		graph.createVertex(DoubleSubNode.class);
+		assertEquals(7, graph.getVCount());
+		
+		graph.deleteVertex(v4);
+		assertEquals(6, graph.getVCount());
+		
+		graph.createVertex(DoubleSubNode.class);
+		assertEquals(7, graph.getVCount());
+		
+		graph.createVertex(DoubleSubNode.class);
+		assertEquals(8, graph.getVCount());
+		
+		for(int i=9; i<20; i++){
+			graph.createVertex(SuperNode.class);
+			assertEquals(i, graph.getVCount());
+		}
+		
+		for(int i=20; i<32; i++){
+			graph.createVertex(DoubleSubNode.class);
+			assertEquals(i, graph.getVCount());
+		}
+		
+		for(int i=32; i<42; i++){
+			graph.createVertex(SubNode.class);
+			assertEquals(i, graph.getVCount());
+		}
+		
+		System.out.println("Done testing getVCount.");
 	}
 	
 	@Test
 	public void testGetECount(){
+
+		Vertex v1 = graph.createVertex(SubNode.class);
+		Vertex v2 = graph.createVertex(SubNode.class);
+		Vertex v3 = graph.createVertex(SubNode.class);
+		Vertex v4 = graph.createVertex(SubNode.class);
+		Vertex v5 = graph.createVertex(SuperNode.class);
+		Vertex v6 = graph.createVertex(SuperNode.class);
+		Vertex v7 = graph.createVertex(SuperNode.class);
+		Vertex v8 = graph.createVertex(SuperNode.class);
+		Vertex v9 = graph.createVertex(DoubleSubNode.class);
+		Vertex v10 = graph.createVertex(DoubleSubNode.class);
+		Vertex v11 = graph.createVertex(DoubleSubNode.class);
+		Vertex v12 = graph.createVertex(DoubleSubNode.class);
 		
+		Edge e1 = graph.createEdge(LinkBack.class, v5, v1);
+		Edge e2 = graph.createEdge(Link.class, v2, v7);
+		Edge e3 = graph.createEdge(LinkBack.class, v8, v4);
+		Edge e4 = graph.createEdge(SubLink.class, v11, v6);
+		Edge e5 = graph.createEdge(Link.class, v2, v5);
+		Edge e6 = graph.createEdge(LinkBack.class, v7, v12);
+		Edge e7 = graph.createEdge(SubLink.class, v9, v8);
+		Edge e8 = graph.createEdge(SubLink.class, v10, v6);
+		Edge e9 = graph.createEdge(Link.class, v3, v7);
+		Edge e10 = graph.createEdge(Link.class, v3, v7);
 	}
 	
 	@Test
 	public void testGetId(){
-		
 	}
 	
 	@Test
 	public void testSetId(){
-		
 	}
 	
 	@Test
 	public void testEdges(){
-		
 	}
 	
 	@Test
 	public void testEdges2(){
-		
 	}
 	
 	@Test
 	public void testEdges3(){
-		
 	}
 	
 	@Test
 	public void testVertices(){
-		
 	}
 	
 	@Test
 	public void testVertices2(){
-		
 	}
 	
 	@Test
 	public void testVertices3(){
-		
 	}
 
 	@Test
