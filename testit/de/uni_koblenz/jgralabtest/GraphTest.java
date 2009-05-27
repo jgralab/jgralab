@@ -5,7 +5,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
-import java.util.Iterator;
+//import java.util.Iterator;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -13,6 +13,8 @@ import org.junit.Test;
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralabtest.schemas.vertextest.*;
+
+//TODO source out duplicat code fragments (f.ex. isEdgeListModified)
 
 public class GraphTest {
 	private VertexTestGraph graph;
@@ -32,6 +34,8 @@ public class GraphTest {
 		Vertex v4 = graph2.createVertex(SuperNode.class);
 		Vertex v5 = graph.createVertex(DoubleSubNode.class);
 		Vertex v6 = graph2.createVertex(DoubleSubNode.class);
+		Vertex[] graphVertices = {v1, v3, v5};
+		Vertex[] graph2Vertices = {v2, v4, v6};
 		
 		//tests whether the vertex is an instance of the expected class 
 		assertTrue(v1 instanceof SubNode);
@@ -39,25 +43,21 @@ public class GraphTest {
 		assertTrue(v3 instanceof SuperNode);
 		assertTrue(v4 instanceof SuperNode);
 		assertTrue(v5 instanceof DoubleSubNode);
-		assertTrue(v6 instanceof DoubleSubNode);
-		
-		//tests whether the graphs now contain the right vertices 
-		assertTrue(graph.containsVertex(v1));
-		assertTrue(graph2.containsVertex(v2));
-		assertTrue(graph.containsVertex(v3));
-		assertTrue(graph2.containsVertex(v4));
-		assertTrue(graph.containsVertex(v5));
-		assertTrue(graph2.containsVertex(v6));
-		
-		assertFalse(graph2.containsVertex(v1));
-		assertFalse(graph.containsVertex(v2));
-		assertFalse(graph2.containsVertex(v3));
-		assertFalse(graph.containsVertex(v4));
-		assertFalse(graph2.containsVertex(v5));
-		assertFalse(graph.containsVertex(v6));		
+		assertTrue(v6 instanceof DoubleSubNode);	
 
+		//tests whether the graphs contain the right vertices in the right order
 /*		for(Iterator<Vertex> i = graph.vertices().iterator();  i.hasNext(); i.next()){
 		}*/
+		int i = 0;//the position of the vertex corresponding to the one currently returned by the iterator
+		for (Vertex v : graph.vertices()){
+			assertEquals(graphVertices[i], v);
+			i++;
+		}
+		i = 0;
+		for (Vertex v : graph2.vertices()){
+			assertEquals(graph2Vertices[i], v);
+			i++;
+		}
 		
 		System.out.println("Done testing createVertex.");
 	}
@@ -86,26 +86,30 @@ public class GraphTest {
 		Edge e12 = graph.createEdge(LinkBack.class, v4, v6);
 		Edge e13 = graph.createEdge(LinkBack.class, v3, v7);
 		
-		assertTrue(graph.containsEdge(e1));
-		assertTrue(graph.containsEdge(e2));
-		assertTrue(graph.containsEdge(e3));
-		assertTrue(graph.containsEdge(e4));
-		assertTrue(graph.containsEdge(e5));
-		assertTrue(graph.containsEdge(e6));
-		assertTrue(graph.containsEdge(e7));
-		assertTrue(graph.containsEdge(e8));
-		assertTrue(graph.containsEdge(e9));
-		assertTrue(graph.containsEdge(e10));
-		assertFalse(graph2.containsEdge(e1));
-		assertFalse(graph2.containsEdge(e2));	
-		assertFalse(graph2.containsEdge(e3));	
-		assertFalse(graph2.containsEdge(e4));	
-		assertFalse(graph2.containsEdge(e5));	
-		assertFalse(graph2.containsEdge(e6));	
-		assertFalse(graph2.containsEdge(e7));	
-		assertFalse(graph2.containsEdge(e8));	
-		assertFalse(graph2.containsEdge(e9));	
-		assertFalse(graph2.containsEdge(e10));
+		//tests whether the edge is an instance of the expected class
+		assertTrue(e1 instanceof SubLink);
+		assertTrue(e2 instanceof SubLink);
+		assertTrue(e3 instanceof SubLink);
+		assertTrue(e4 instanceof Link);
+		assertTrue(e5 instanceof Link);
+		assertTrue(e6 instanceof Link);
+		assertTrue(e7 instanceof Link);
+		assertTrue(e8 instanceof Link);
+		assertTrue(e9 instanceof LinkBack);
+		assertTrue(e10 instanceof LinkBack);
+		assertTrue(e11 instanceof LinkBack);
+		assertTrue(e12 instanceof LinkBack);
+		assertTrue(e13 instanceof LinkBack);
+			
+		/*tests whether the edges are part of the right graph and have been inserted 
+		 * in the right order
+		 */
+		Edge[] graphEdges = {e1, e2, e3, e4, e5, e6, e7, e8, e9, e10, e11, e12, e13};
+		int i = 0;//refers to the position of the edge which the iterator currently returns
+		for (Edge e : graph.edges()){
+			assertEquals(graphEdges[i], e);
+			i++;
+		}
 		
 		System.out.println("Done testing createEdge.");
 	}
@@ -116,7 +120,6 @@ public class GraphTest {
 	
 	@Test
 	public void testLoadingCompleted(){
-		
 	}
 	
 	@Test
@@ -147,22 +150,357 @@ public class GraphTest {
 	
 	@Test
 	public void testIsVertexListModified(){
+		//border cases
+		long l1 = graph.getVertexListVersion();
+		long l2 = graph2.getVertexListVersion();
+		assertFalse(graph.isVertexListModified(l1));
+		assertFalse(graph2.isVertexListModified(l2));
 		
+		Vertex v1 = graph.createVertex(DoubleSubNode.class);
+		assertTrue(graph.isVertexListModified(l1));
+		l1 = graph.getVertexListVersion();
+		assertFalse(graph.isVertexListModified(l1));
+		
+		Vertex v2 = graph.createVertex(SuperNode.class);
+		assertTrue(graph.isVertexListModified(l1));
+		l1 = graph.getVertexListVersion();
+		assertFalse(graph.isVertexListModified(l1));
+		
+		//makes sure that changing edges does not affect the vertexList
+		graph.createEdge(SubLink.class, v1, v2);
+		assertFalse(graph.isVertexListModified(l1));
+		graph.createEdge(Link.class, v1, v2);
+		assertFalse(graph.isVertexListModified(l1));
+		l1 = graph.getVertexListVersion();
+		assertFalse(graph.isVertexListModified(l1));
+		
+		graph.deleteVertex(v2);
+		assertTrue(graph.isVertexListModified(l1));
+		l1 = graph.getVertexListVersion();
+		assertFalse(graph.isVertexListModified(l1));
+		
+		//normal cases
+		for (int i = 0; i< 21; i++){
+			graph.createVertex(SubNode.class);
+			assertTrue(graph.isVertexListModified(l1));
+			l1 = graph.getVertexListVersion();
+			assertFalse(graph.isVertexListModified(l1));
+		}
+		
+		graph.deleteVertex(v1);
+		assertTrue(graph.isVertexListModified(l1));
+		l1 = graph.getVertexListVersion();
+		assertFalse(graph.isVertexListModified(l1));
+		
+		for (int i=0; i<12; i++){
+			graph.createVertex(SuperNode.class);
+			assertTrue(graph.isVertexListModified(l1));
+			l1 = graph.getVertexListVersion();
+			assertFalse(graph.isVertexListModified(l1));
+		}
+		
+		System.out.println("Done testing isVertexListModified.");
 	}
 	
 	@Test
 	public void testGetVertexListVersion(){
+		//border cases
+		assertEquals(0, graph.getVertexListVersion());
+		assertEquals(0, graph2.getVertexListVersion());
+		graph.createVertex(SubNode.class);
+		assertEquals(1, graph.getVertexListVersion());
+		Vertex v1 = graph2.createVertex(SuperNode.class);
+		assertEquals(1, graph2.getVertexListVersion());		
 		
+		//normal cases
+		graph.createVertex(SuperNode.class);
+		assertEquals(2, graph.getVertexListVersion());
+		graph.createVertex(DoubleSubNode.class);
+		assertEquals(3, graph.getVertexListVersion());
+		for(int i = 4; i < 100; i++){
+			graph.createVertex(SuperNode.class);
+			assertEquals(i, graph.getVertexListVersion());
+		}
+		graph.createVertex(DoubleSubNode.class);
+		assertEquals(100, graph.getVertexListVersion());
+		
+		//tests whether the version changes correctly if vertices are deleted 
+		graph2.deleteVertex(v1);
+		assertEquals(2, graph2.getVertexListVersion());
+		for(int i = 3; i<21; i+=3){
+			graph2.createVertex(DoubleSubNode.class);
+			assertEquals(i, graph2.getVertexListVersion());
+			graph2.createVertex(SubNode.class);
+			assertEquals(i+1, graph2.getVertexListVersion());
+			graph2.createVertex(SuperNode.class);
+			assertEquals(i+2, graph2.getVertexListVersion());
+		}
+		Vertex v2 = graph2.createVertex(SuperNode.class);
+		assertEquals(21, graph2.getVertexListVersion());
+		Vertex v3 = graph2.createVertex(DoubleSubNode.class);
+		assertEquals(22, graph2.getVertexListVersion());
+		graph2.deleteVertex(v3);
+		assertEquals(23, graph2.getVertexListVersion());
+		graph2.deleteVertex(v2);
+		assertEquals(24, graph2.getVertexListVersion());
+		
+		//makes sure that editing edges does not change the vertexList
+		graph2.createEdge(SubLink.class, v3, v2);
+		assertEquals(24, graph2.getVertexListVersion());
+		graph2.createEdge(LinkBack.class, v2, v3);
+		assertEquals(24, graph2.getVertexListVersion());
+		
+		System.out.println("Done testing getVertexListVersion.");
 	}
 	
 	@Test
 	public void testIsEdgeListModified(){
+		//preparations...
+		Vertex v1 = graph.createVertex(SubNode.class);
+		Vertex v2 = graph.createVertex(SubNode.class);
+		Vertex v3 = graph.createVertex(SubNode.class);
+		Vertex v4 = graph.createVertex(SubNode.class);
+		Vertex v5 = graph.createVertex(SuperNode.class);
+		Vertex v6 = graph.createVertex(SuperNode.class);
+		Vertex v7 = graph.createVertex(SuperNode.class);
+		Vertex v8 = graph.createVertex(SuperNode.class);
+		Vertex v9 = graph.createVertex(DoubleSubNode.class);
+		Vertex v10 = graph.createVertex(DoubleSubNode.class);
+		Vertex v11 = graph.createVertex(DoubleSubNode.class);
+		Vertex v12 = graph.createVertex(DoubleSubNode.class);
 		
+		//border cases
+		long elv1 = graph.getEdgeListVersion();
+		long elv2 = graph2.getEdgeListVersion();
+		assertFalse(graph.isEdgeListModified(elv1));
+		assertFalse(graph2.isEdgeListModified(elv2));
+		
+		graph.createEdge(SubLink.class, v11, v7);
+		Edge e1 = graph2.createEdge(Link.class, v3, v7);
+		assertTrue(graph.isEdgeListModified(elv1));
+		assertTrue(graph2.isEdgeListModified(elv2));
+		elv1 = graph.getEdgeListVersion();
+		elv2 = graph2.getEdgeListVersion();
+		assertFalse(graph.isEdgeListModified(elv1));
+		assertFalse(graph2.isEdgeListModified(elv2));
+		
+		graph2.deleteEdge(e1);
+		assertTrue(graph2.isEdgeListModified(elv2));
+		elv2 = graph2.getEdgeListVersion();
+		assertFalse(graph2.isEdgeListModified(elv2));
+		
+		//normal cases
+		graph2.createEdge(LinkBack.class, v7, v3);
+		assertTrue(graph2.isEdgeListModified(elv2));
+		elv2 = graph2.getEdgeListVersion();
+		assertFalse(graph2.isEdgeListModified(elv2));
+
+		graph2.createEdge(Link.class, v3, v7);
+		assertTrue(graph2.isEdgeListModified(elv2));
+		elv2 = graph2.getEdgeListVersion();
+		assertFalse(graph2.isEdgeListModified(elv2));
+
+		Edge e2 = graph2.createEdge(SubLink.class, v11, v7);
+		assertTrue(graph2.isEdgeListModified(elv2));
+		elv2 = graph2.getEdgeListVersion();
+		assertFalse(graph2.isEdgeListModified(elv2));
+
+		graph2.createEdge(Link.class, v4, v8);
+		assertTrue(graph2.isEdgeListModified(elv2));
+		elv2 = graph2.getEdgeListVersion();
+		assertFalse(graph2.isEdgeListModified(elv2));
+
+		Edge e3 = graph2.createEdge(Link.class, v11, v8);
+		assertTrue(graph2.isEdgeListModified(elv2));
+		elv2 = graph2.getEdgeListVersion();
+		assertFalse(graph2.isEdgeListModified(elv2));
+
+		graph2.createEdge(Link.class, v12, v7);
+		assertTrue(graph2.isEdgeListModified(elv2));
+		elv2 = graph2.getEdgeListVersion();
+		assertFalse(graph2.isEdgeListModified(elv2));
+
+		graph2.createEdge(LinkBack.class, v8, v4);
+		assertTrue(graph2.isEdgeListModified(elv2));
+		elv2 = graph2.getEdgeListVersion();
+		assertFalse(graph2.isEdgeListModified(elv2));
+
+		Edge e4 = graph2.createEdge(SubLink.class, v12, v8);
+		assertTrue(graph2.isEdgeListModified(elv2));
+		elv2 = graph2.getEdgeListVersion();
+		assertFalse(graph2.isEdgeListModified(elv2));
+		
+		graph2.deleteEdge(e2);
+		assertTrue(graph2.isEdgeListModified(elv2));
+		elv2 = graph2.getEdgeListVersion();
+		assertFalse(graph2.isEdgeListModified(elv2));
+
+		graph2.createEdge(LinkBack.class, v7, v11);
+		assertTrue(graph2.isEdgeListModified(elv2));
+		elv2 = graph2.getEdgeListVersion();
+		assertFalse(graph2.isEdgeListModified(elv2));
+
+		graph2.createEdge(LinkBack.class, v8, v12);
+		assertTrue(graph2.isEdgeListModified(elv2));
+		elv2 = graph2.getEdgeListVersion();
+		assertFalse(graph2.isEdgeListModified(elv2));
+
+		graph2.deleteEdge(e4);
+		assertTrue(graph2.isEdgeListModified(elv2));
+		elv2 = graph2.getEdgeListVersion();
+		assertFalse(graph2.isEdgeListModified(elv2));
+		
+		graph2.deleteEdge(e3);
+		assertTrue(graph2.isEdgeListModified(elv2));
+		elv2 = graph2.getEdgeListVersion();
+		assertFalse(graph2.isEdgeListModified(elv2));
+		
+		graph2.createEdge(SubLink.class, v9, v5);
+		assertTrue(graph2.isEdgeListModified(elv2));
+		elv2 = graph2.getEdgeListVersion();
+		assertFalse(graph2.isEdgeListModified(elv2));
+		
+		graph2.createEdge(Link.class, v1, v6);
+		assertTrue(graph2.isEdgeListModified(elv2));
+		elv2 = graph2.getEdgeListVersion();
+		assertFalse(graph2.isEdgeListModified(elv2));
+		
+		graph2.createEdge(LinkBack.class, v5, v2);
+		assertTrue(graph2.isEdgeListModified(elv2));
+		elv2 = graph2.getEdgeListVersion();
+		assertFalse(graph2.isEdgeListModified(elv2));
+		
+		graph2.createEdge(Link.class, v10, v6);
+		assertTrue(graph2.isEdgeListModified(elv2));
+		elv2 = graph2.getEdgeListVersion();
+		assertFalse(graph2.isEdgeListModified(elv2));
+		
+		System.out.println("Done testing isEdgeListModified.");
 	}
 	
 	@Test
 	public void testGetEdgeListVersion(){
+		//preparations...
+		Vertex v1 = graph.createVertex(SubNode.class);
+		Vertex v2 = graph.createVertex(SubNode.class);
+		Vertex v3 = graph.createVertex(SubNode.class);
+		Vertex v4 = graph.createVertex(SubNode.class);
+		Vertex v5 = graph.createVertex(SuperNode.class);
+		Vertex v6 = graph.createVertex(SuperNode.class);
+		Vertex v7 = graph.createVertex(SuperNode.class);
+		Vertex v8 = graph.createVertex(SuperNode.class);
+		Vertex v9 = graph.createVertex(DoubleSubNode.class);
+		Vertex v10 = graph.createVertex(DoubleSubNode.class);
+		Vertex v11 = graph.createVertex(DoubleSubNode.class);
+		Vertex v12 = graph.createVertex(DoubleSubNode.class);
 		
+		//border cases
+		assertEquals(0, graph.getEdgeListVersion());
+		assertEquals(0, graph2.getEdgeListVersion());
+		
+		Edge e1 = graph.createEdge(SubLink.class, v9, v7);
+		assertEquals(1, graph.getEdgeListVersion());
+		
+		graph.deleteEdge(e1);
+		assertEquals(2, graph.getEdgeListVersion());
+		
+		//normal cases
+		graph.createEdge(SubLink.class, v10, v5);
+		assertEquals(3, graph.getEdgeListVersion());
+		graph.createEdge(SubLink.class, v10, v6);
+		assertEquals(4, graph.getEdgeListVersion());
+		graph.createEdge(SubLink.class, v10, v7);
+		assertEquals(5, graph.getEdgeListVersion());
+		graph.createEdge(SubLink.class, v10, v8);
+		assertEquals(6, graph.getEdgeListVersion());
+		graph.createEdge(SubLink.class, v11, v5);
+		assertEquals(7, graph.getEdgeListVersion());
+		graph.createEdge(SubLink.class, v11, v6);
+		assertEquals(8, graph.getEdgeListVersion());
+		graph.createEdge(SubLink.class, v11, v7);
+		assertEquals(9, graph.getEdgeListVersion());
+		//Edge e2 = 
+		graph.createEdge(SubLink.class, v11, v8);
+		assertEquals(10, graph.getEdgeListVersion());
+		graph.createEdge(SubLink.class, v12, v5);
+		assertEquals(11, graph.getEdgeListVersion());
+		graph.createEdge(SubLink.class, v12, v6);
+		assertEquals(12, graph.getEdgeListVersion());
+		graph.createEdge(SubLink.class, v12, v7);
+		assertEquals(13, graph.getEdgeListVersion());
+		Edge e3 = graph.createEdge(SubLink.class, v12, v8);
+		assertEquals(14, graph.getEdgeListVersion());
+		graph.createEdge(SubLink.class, v9, v6);
+		assertEquals(15, graph.getEdgeListVersion());
+		graph.createEdge(SubLink.class, v9, v7);
+		assertEquals(16, graph.getEdgeListVersion());
+		graph.createEdge(SubLink.class, v9, v8);
+		assertEquals(17, graph.getEdgeListVersion());
+
+		graph.deleteEdge(e3);
+		assertEquals(18, graph.getEdgeListVersion());
+		//making sure that changing a vertex does not affect the edges
+		graph.deleteVertex(v9);
+		assertEquals(18, graph.getEdgeListVersion());
+		
+//		graph.deleteEdge(e2);
+//		assertEquals(19, graph.getEdgeListVersion());
+/*
+ * TODO apparently one cannot delete ALL edges of the same type (here: SubLink) after deleting a vertex?
+ */		
+		graph.createEdge(Link.class, v1, v5);
+		assertEquals(19, graph.getEdgeListVersion());
+		graph.createEdge(Link.class, v2, v5);
+		assertEquals(20, graph.getEdgeListVersion());
+		graph.createEdge(Link.class, v3, v5);
+		assertEquals(21, graph.getEdgeListVersion());
+		graph.createEdge(Link.class, v4, v5);
+		assertEquals(22, graph.getEdgeListVersion());
+		//how can this work if I have already deleted v9?
+		graph.createEdge(Link.class, v9, v5);
+		assertEquals(23, graph.getEdgeListVersion());
+		graph.createEdge(Link.class, v10, v5);
+		assertEquals(24, graph.getEdgeListVersion());
+		graph.createEdge(Link.class, v11, v5);
+		assertEquals(25, graph.getEdgeListVersion());
+		graph.createEdge(Link.class, v12, v5);
+		assertEquals(26, graph.getEdgeListVersion());
+		graph.createEdge(Link.class, v1, v6);
+		assertEquals(27, graph.getEdgeListVersion());
+		graph.createEdge(Link.class, v1, v7);
+		assertEquals(28, graph.getEdgeListVersion());
+		graph.createEdge(Link.class, v1, v8);
+		assertEquals(29, graph.getEdgeListVersion());
+		Edge e4 = graph.createEdge(Link.class, v3, v7);
+		assertEquals(30, graph.getEdgeListVersion());
+		graph.createEdge(Link.class, v11, v8);
+		assertEquals(31, graph.getEdgeListVersion());
+		
+		graph.createEdge(LinkBack.class, v5, v1);
+		assertEquals(32, graph.getEdgeListVersion());
+		graph.createEdge(LinkBack.class, v6, v2);
+		assertEquals(33, graph.getEdgeListVersion());
+		Edge e5 = graph.createEdge(LinkBack.class, v7, v3);
+		assertEquals(34, graph.getEdgeListVersion());
+		graph.createEdge(LinkBack.class, v8, v4);
+		assertEquals(35, graph.getEdgeListVersion());
+		graph.createEdge(LinkBack.class, v8, v9);
+		assertEquals(36, graph.getEdgeListVersion());
+		graph.createEdge(LinkBack.class, v7, v10);
+		assertEquals(37, graph.getEdgeListVersion());
+		graph.createEdge(LinkBack.class, v6, v11);
+		assertEquals(38, graph.getEdgeListVersion());
+		Edge e6 = graph.createEdge(LinkBack.class, v5, v12);
+		assertEquals(39, graph.getEdgeListVersion());
+
+		graph.deleteEdge(e4);
+		assertEquals(40, graph.getEdgeListVersion());
+		graph.deleteEdge(e5);
+		assertEquals(41, graph.getEdgeListVersion());
+		graph.deleteEdge(e6);
+		assertEquals(42, graph.getEdgeListVersion());
+		
+		System.out.println("Done testing getEdgeListVersion.");
 	}
 	
 	@Test
@@ -278,16 +616,16 @@ public class GraphTest {
 	
 	@Test
 	public void testVertexDeleted(){
-		
 	}
 	
 	@Test
 	public void testVertexAdded(){
-		
 	}
 	
 	@Test
 	public void testDeleteEdge(){
+		//TODO continue + test: what happens when vertex is deleted with the edges to which it belongs!,
+
 		SubNode v1 = graph.createSubNode();
 		SubNode v2 = graph.createSubNode();
 		SubNode v3 = graph2.createSubNode();
@@ -329,12 +667,10 @@ public class GraphTest {
 	
 	@Test
 	public void testEdgeDeleted(){
-		
 	}
 	
 	@Test
 	public void testEdgeAdded(){
-		
 	}
 	
 	@Test
@@ -343,15 +679,15 @@ public class GraphTest {
 		assertEquals(null, graph2.getFirstVertex());
 		
 		SubNode v1 = graph.createSubNode();
-		SuperNode v2 = graph.createSuperNode();
+		graph.createSuperNode();
 		
 		assertEquals(v1, graph.getFirstVertex());
 		
 		DoubleSubNode v3 = graph2.createDoubleSubNode();
-		SubNode v4 = graph2.createSubNode();
+		graph2.createSubNode();
 		assertEquals(v3, graph2.getFirstVertex());
 		
-		DoubleSubNode v5 = graph.createDoubleSubNode();
+		graph.createDoubleSubNode();
 		assertEquals(v1, graph.getFirstVertex());
 		
 		System.out.println("Done testing getFirstVertex.");
@@ -359,12 +695,147 @@ public class GraphTest {
 	
 	@Test
 	public void testGetLastVertex(){
+		//border cases
+		assertEquals(null, graph.getLastVertex());
+		assertEquals(null, graph2.getLastVertex());
 		
+		Vertex v1 = graph.createVertex(SubNode.class);
+		assertEquals(v1, graph.getLastVertex());
+		
+		//normal cases
+		Vertex v2 = graph.createVertex(SubNode.class);
+		assertEquals(v2, graph.getLastVertex());
+		
+		Vertex v3 = graph.createVertex(SubNode.class);
+		assertEquals(v3, graph.getLastVertex());
+		
+		Vertex v4 = graph.createVertex(SubNode.class);
+		assertEquals(v4, graph.getLastVertex());
+		
+		Vertex v5 = graph.createVertex(SuperNode.class);
+		assertEquals(v5, graph.getLastVertex());
+		
+		Vertex v6 = graph.createVertex(SuperNode.class);
+		assertEquals(v6, graph.getLastVertex());
+		
+		Vertex v7 = graph.createVertex(SuperNode.class);
+		assertEquals(v7, graph.getLastVertex());
+		
+		Vertex v8 = graph.createVertex(SuperNode.class);
+		assertEquals(v8, graph.getLastVertex());
+		
+		Vertex v9 = graph.createVertex(DoubleSubNode.class);
+		assertEquals(v9, graph.getLastVertex());
+		
+		Vertex v10 = graph.createVertex(DoubleSubNode.class);
+		assertEquals(v10, graph.getLastVertex());
+		
+		Vertex v11 = graph.createVertex(DoubleSubNode.class);
+		assertEquals(v11, graph.getLastVertex());
+		
+		Vertex v12 = graph.createVertex(DoubleSubNode.class);
+		assertEquals(v12, graph.getLastVertex());
+	
+		System.out.println("Done testing getLastVertex.");
 	}
 	
 	@Test
 	public void testGetFirstVertexOfClass(){
+		assertEquals(null, graph.getFirstVertexOfClass(SubNode.class));
+		assertEquals(null, graph.getFirstVertexOfClass(SuperNode.class));
+		assertEquals(null, graph.getFirstVertexOfClass(DoubleSubNode.class));
+
+		Vertex v1 = graph.createVertex(SubNode.class);
+		assertEquals(v1, graph.getFirstVertexOfClass(SubNode.class));
+		assertEquals(null, graph.getFirstVertexOfClass(SuperNode.class));
+		assertEquals(null, graph.getFirstVertexOfClass(DoubleSubNode.class));
+
+		Vertex v2 = graph.createVertex(SuperNode.class);
+		assertEquals(v1, graph.getFirstVertexOfClass(SubNode.class));
+		assertEquals(v2, graph.getFirstVertexOfClass(SuperNode.class));
+		assertEquals(null, graph.getFirstVertexOfClass(DoubleSubNode.class));
+
+		Vertex v3 = graph.createVertex(SubNode.class);
+		assertEquals(v1, graph.getFirstVertexOfClass(SubNode.class));
+		assertEquals(v2, graph.getFirstVertexOfClass(SuperNode.class));
+		assertEquals(null, graph.getFirstVertexOfClass(DoubleSubNode.class));
+
+		Vertex v4 = graph.createVertex(SubNode.class);
+		assertEquals(v1, graph.getFirstVertexOfClass(SubNode.class));
+		assertEquals(v2, graph.getFirstVertexOfClass(SuperNode.class));
+		assertEquals(null, graph.getFirstVertexOfClass(DoubleSubNode.class));
+
+		Vertex v5 = graph.createVertex(DoubleSubNode.class);
+		assertEquals(v1, graph.getFirstVertexOfClass(SubNode.class));
+		assertEquals(v2, graph.getFirstVertexOfClass(SuperNode.class));
+		assertEquals(v5, graph.getFirstVertexOfClass(DoubleSubNode.class));
+
+		Vertex v6 = graph.createVertex(SuperNode.class);
+		assertEquals(v1, graph.getFirstVertexOfClass(SubNode.class));
+		assertEquals(v2, graph.getFirstVertexOfClass(SuperNode.class));
+		assertEquals(v5, graph.getFirstVertexOfClass(DoubleSubNode.class));
+
+		Vertex v7 = graph.createVertex(SubNode.class);
+		assertEquals(v1, graph.getFirstVertexOfClass(SubNode.class));
+		assertEquals(v2, graph.getFirstVertexOfClass(SuperNode.class));
+		assertEquals(v5, graph.getFirstVertexOfClass(DoubleSubNode.class));
+
+		Vertex v8 = graph.createVertex(DoubleSubNode.class);
+		assertEquals(v1, graph.getFirstVertexOfClass(SubNode.class));
+		assertEquals(v2, graph.getFirstVertexOfClass(SuperNode.class));
+		assertEquals(v5, graph.getFirstVertexOfClass(DoubleSubNode.class));
+
+		graph.deleteVertex(v2);
+		assertEquals(v1, graph.getFirstVertexOfClass(SubNode.class));
+		assertEquals(v5, graph.getFirstVertexOfClass(SuperNode.class));
+		assertEquals(v5, graph.getFirstVertexOfClass(DoubleSubNode.class));
 		
+		Vertex v9 = graph.createVertex(DoubleSubNode.class);
+		assertEquals(v1, graph.getFirstVertexOfClass(SubNode.class));
+		assertEquals(v5, graph.getFirstVertexOfClass(SuperNode.class));
+		assertEquals(v5, graph.getFirstVertexOfClass(DoubleSubNode.class));
+
+		graph.deleteVertex(v4);
+		assertEquals(v1, graph.getFirstVertexOfClass(SubNode.class));
+		assertEquals(v5, graph.getFirstVertexOfClass(SuperNode.class));
+		assertEquals(v5, graph.getFirstVertexOfClass(DoubleSubNode.class));
+		
+		graph.createVertex(SuperNode.class);
+		assertEquals(v1, graph.getFirstVertexOfClass(SubNode.class));
+		assertEquals(v5, graph.getFirstVertexOfClass(SuperNode.class));
+		assertEquals(v5, graph.getFirstVertexOfClass(DoubleSubNode.class));
+
+		graph.createVertex(DoubleSubNode.class);
+		assertEquals(v1, graph.getFirstVertexOfClass(SubNode.class));
+		assertEquals(v5, graph.getFirstVertexOfClass(SuperNode.class));
+		assertEquals(v5, graph.getFirstVertexOfClass(DoubleSubNode.class));
+		
+		graph.deleteVertex(v1);
+		assertEquals(v3, graph.getFirstVertexOfClass(SubNode.class));
+		assertEquals(v5, graph.getFirstVertexOfClass(SuperNode.class));
+		assertEquals(v5, graph.getFirstVertexOfClass(DoubleSubNode.class));
+		
+		graph.deleteVertex(v5);
+		assertEquals(v3, graph.getFirstVertexOfClass(SubNode.class));
+		assertEquals(v6, graph.getFirstVertexOfClass(SuperNode.class));
+		assertEquals(v8, graph.getFirstVertexOfClass(DoubleSubNode.class));
+		
+		graph.deleteVertex(v8);
+		assertEquals(v3, graph.getFirstVertexOfClass(SubNode.class));
+		assertEquals(v6, graph.getFirstVertexOfClass(SuperNode.class));
+		assertEquals(v9, graph.getFirstVertexOfClass(DoubleSubNode.class));
+		
+		graph.createVertex(SuperNode.class);
+		assertEquals(v3, graph.getFirstVertexOfClass(SubNode.class));
+		assertEquals(v6, graph.getFirstVertexOfClass(SuperNode.class));
+		assertEquals(v9, graph.getFirstVertexOfClass(DoubleSubNode.class));
+		
+		graph.deleteVertex(v3);
+		assertEquals(v7, graph.getFirstVertexOfClass(SubNode.class));
+		assertEquals(v6, graph.getFirstVertexOfClass(SuperNode.class));
+		assertEquals(v9, graph.getFirstVertexOfClass(DoubleSubNode.class));
+		
+		System.out.println("Done testing getFirstVertexOfClass.");
 	}
 	
 	@Test
@@ -494,7 +965,12 @@ public class GraphTest {
 
 	@Test
 	public void testDefragment(){
-		
+		/* Testen der defragment()-Methode: Ein Vorher-Nachher Abbild von Vertex-
+		* Referenzen sammeln und vergleichen, genauso mit Kantenseq. Inzidenzen
+		* sind nicht betroffen (von defragment() zumindest das, was einfach zu testen
+		* ist); Dafür bedarf es einen Graph, indem gelöscht wurde und dadurch
+		* Lücken entstanden sind, sodass defragment() zum Einsatz kommen kann
+		*/
 	}
 	
 }
