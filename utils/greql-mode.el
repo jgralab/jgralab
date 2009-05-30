@@ -22,9 +22,8 @@
 
 ;; Major mode for editing GReQL2 files with Emacs and executing queries.
 
-
 ;;; Version:
-;; <2009-04-07 Tue 21:52>
+;; <2009-05-29 Fri 19:46>
 
 ;;; Code:
 
@@ -74,10 +73,26 @@
   (append greql-fontlock-keywords-1
           (list (concat "\\<" (regexp-opt greql-keywords t) "\\>"))))
 
-(defparameter greql-fontlock-keywords-3
-  (append greql-fontlock-keywords-1
-          greql-fontlock-keywords-2
-          (list (list "{\\([,^ ]*\\([[:alnum:]]+\\)\\)+}" 2 'font-lock-type-face))))
+(defvar greql-fontlock-keywords-3 greql-fontlock-keywords-2)
+(make-variable-buffer-local 'greql-fontlock-keywords-3)
+
+(defun greql-set-fontlock-keywords-3 ()
+  (setq greql-fontlock-keywords-3
+        (append greql-fontlock-keywords-2
+                (list (list
+                       (concat "{\\(\\([\s^,!]*"
+                               (regexp-opt
+                                (let (lst)
+                                  (dolist (i greql-schema-alist)
+                                    (when (or (eq (car i) 'EdgeClass)
+                                              (eq (car i) 'VertexClass))
+                                      (setq lst (cons (second i) lst))))
+                                  lst) t)
+                               "\\)+\\)}")
+                       1 font-lock-type-face))))
+  (setq font-lock-keywords greql-fontlock-keywords-3)
+  ;; TODO: Redisplay seems not to suffice
+  (redisplay t))
 
 (defvar greql-tab-width 2
   "Distance between tab stops (for display of tab characters), in
@@ -85,6 +100,9 @@ columns.")
 
 (defvar greql-script-program "~/bin/greqlscript"
   "The program to execute GReQL queries.")
+
+(defvar greql-buffer "*GReQL*"
+  "Name of the GReQL status buffer.")
 
 (define-derived-mode greql-mode text-mode "GReQL"
   "A major mode for GReQL2."
@@ -98,7 +116,7 @@ columns.")
         '((greql-fontlock-keywords-1
            greql-fontlock-keywords-2
            greql-fontlock-keywords-3)))
-  
+
   (setq tab-width greql-tab-width)
   (set (make-local-variable 'indent-line-function) 'greql-indent-line)
 
@@ -108,12 +126,17 @@ columns.")
   (define-key greql-mode-map (kbd "C-c C-e") 'greql-complete-edgeclass)
   (define-key greql-mode-map (kbd "C-c C-d") 'greql-complete-domain)
   (define-key greql-mode-map (kbd "C-c C-s") 'greql-set-graph)
+  (define-key greql-mode-map (kbd "C-c C-p") 'greql-set-extra-classpath)
   (define-key greql-mode-map (kbd "C-c C-c") 'greql-execute))
 
 (defvar greql-graph nil
   "The graph which is used to extract schema information on which
 queries are evaluated.  Set it with `greql-set-graph'.")
 (make-variable-buffer-local 'greql-graph)
+
+(defvar greql-extra-classpath nil
+  "Extra classpath elements as string.")
+(make-variable-buffer-local 'greql-extra-classpath)
 
 (defvar greql-schema-alist nil)
 (make-variable-buffer-local 'greql-schema-alist)
@@ -135,7 +158,13 @@ queries are evaluated.  Set it with `greql-set-graph'.")
                                    greql-schema-alist)))
   (dolist (fun greql-functions)
     (setq greql-schema-alist (cons (list 'funlib fun)
-                                   greql-schema-alist))))
+                                   greql-schema-alist)))
+
+  (greql-set-fontlock-keywords-3))
+
+(defun greql-set-extra-classpath (file-or-dir)
+  (interactive "F")
+  (setq greql-extra-classpath file-or-dir))
 
 (defun greql-parse-schema ()
   "Parse `greql-graph' and extract schema information into
@@ -165,7 +194,7 @@ queries are evaluated.  Set it with `greql-set-graph'.")
                   (and (zero-or-more (syntax whitespace))
                        ":" (zero-or-more (syntax whitespace))
                        (minimal-match (and (group (and (one-or-more anything)
-                                                       (not (any ",;")))) 
+                                                       (not (any ",;"))))
                                            (any " ;")))))
                  ;; Attributes
                  (zero-or-one (and (zero-or-more (not (any "\n")))
@@ -311,18 +340,21 @@ queries are evaluated.  Set it with `greql-set-graph'.")
 
 (defvar greql-result-file nil)
 
-(defun greql-execute (arg)
+(defun greql-execute ()
   "Execute the query in the current buffer on `greql-graph'."
-  (interactive "P")
-  (let ((buffer (get-buffer-create "*GReQL*"))
-        (extra-args (when arg (read-from-minibuffer "Extra arguments: ")))
+  (interactive)
+  (let ((buffer (get-buffer-create greql-buffer))
         (evalstr (buffer-substring-no-properties (point-min) (point-max))))
     (setq greql-result-file (make-temp-file "greql-result" nil ".html"))
-    (with-current-buffer buffer
-      (erase-buffer))
+    (with-current-buffer buffer (erase-buffer))
     (let ((proc (start-process "GReQL process" buffer
                                greql-script-program
-                               (or extra-args "")
+                               (if greql-extra-classpath
+                                    "--extra-cp"
+                                 "")
+                               (if greql-extra-classpath
+                                    greql-extra-classpath
+                                 "")
                                "-e" evalstr
                                "-r" greql-result-file
                                (if greql-graph
@@ -332,19 +364,20 @@ queries are evaluated.  Set it with `greql-set-graph'.")
     (display-buffer buffer)))
 
 (defun greql-display-result (proc change)
+  (select-window (get-buffer-window (get-buffer-create greql-buffer)))
   (w3m-find-file greql-result-file))
 
 (defun greql-vertex-set-expression-p ()
-  (looking-back "V{[[:word:]._, ]*"))
+  (looking-back "V{[[:word:]._,^ ]*"))
 
 (defun greql-start-or-goal-restriction-p ()
-  (looking-back "[^-VE>]{[[:word:]._, ]*"))
+  (looking-back "[^-VE>]{[[:word:]._,^ ]*"))
 
 (defun greql-edge-set-expression-p ()
-  (looking-back "E{[[:word:]._, ]*"))
+  (looking-back "E{[[:word:]._,^ ]*"))
 
 (defun greql-edge-restriction-p ()
-  (looking-back "\\(<--\\|-->\\|<>--\\|--<>\\)[ ]*{[[:word:]._, ]*"))
+  (looking-back "\\(<--\\|-->\\|<>--\\|--<>\\)[ ]*{[[:word:]._,^ ]*"))
 
 (defun greql-variable-p ()
   (looking-back "[^{][[:word:]]+[.][[:word:]]*"))
@@ -360,11 +393,11 @@ queries are evaluated.  Set it with `greql-set-graph'.")
       (re-search-backward (concat var "[[:space:]]*:[[:space:]]*\\([VE]\\){\\(.*\\)}") nil t 1)
       (let* ((mtype-match (buffer-substring-no-properties (match-beginning 1)
                                                           (match-end 1)))
-             (mtype (cond 
+             (mtype (cond
                      ((or (not mtype-match) (string= mtype-match "E")) 'EdgeClass)
                      ((string= mtype-match "V") 'VertexClass)
                      (t (error "Not match!"))))
-             (types (replace-regexp-in-string 
+             (types (replace-regexp-in-string
                      "[[:space:]]+" ""
                      (buffer-substring-no-properties (match-beginning 2)
                                                      (match-end 2)))))
@@ -409,7 +442,7 @@ MTYPEs TYPES."
              greql-keywords))
 
 (defparameter greql-indent-regexp
-  (concat "\\([()]\\|\\_<" 
+  (concat "\\([()]\\|\\_<"
           (regexp-opt (greql-indent-keywords))
           "\\_>\\)"))
 
@@ -419,8 +452,8 @@ MTYPEs TYPES."
     (let* ((col (save-excursion
                   (beginning-of-line)
                   (let ((run t))
-                    (while (and run 
-                                (not (and 
+                    (while (and run
+                                (not (and
                                       (or (re-search-backward
                                            greql-indent-regexp nil t)
                                           (setq run nil))
