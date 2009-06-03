@@ -7,3 +7,11 @@ VertexClass DoubleSubNode : SubNode, SuperNode {nodeMap : Map<Integer, String>};
 EdgeClass Link from AbstractSuperNode (0,*) role source to SuperNode (0,*) role target {aString: String};
 AggregationClass LinkBack from SuperNode (0,*) role sourceb to AbstractSuperNode (0,*) role targetb aggregate from;
 CompositionClass SubLink: Link from DoubleSubNode (0,*) role sourcec to SuperNode (0,*) role targetc aggregate from {anInt: Integer};
+
+VertexClass A;
+VertexClass B;
+VertexClass C: A;
+VertexClass D: B;
+EdgeClass E from A (0,*) to B (0,*) role x;
+EdgeClass F: E from C (0,*) to D (1,3) role y redefines x;
+EdgeClass G: E from C (0,*) to D (1,3) role z;
