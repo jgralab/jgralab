@@ -70,7 +70,7 @@ public class RolenameCodeGenerator {
 
 	private CodeBlock invalidRolenameSnippet(CodeSnippet s) {
 		s.add("public java.util.List<#targetClass#> get#roleCamelName#List() {");
-		s.add("\tthrow new #jgPackage#.GraphException(\"The rolename #roleName# is redefined for the VertexClass #vertexClassName#\");");
+		s.add("\tthrow new #jgPackage#.GraphException(\"The rolename #roleName# is redefined for the VertexClass #vertexClassName# \");");
 		s.add("}");
 		return s;
 	}
@@ -202,7 +202,9 @@ public class RolenameCodeGenerator {
 		for (RolenameEntry entry : rolesToGenerateGetters.values()) {
 			CodeSnippet s = configureRolenameCodesnippet(entry, createClass);
 			if (entry.isRedefined()) {
-				code.addNoIndent(invalidRolenameSnippet(s));
+				if (createClass) {
+					code.addNoIndent(invalidRolenameSnippet(s));
+				}	
 			} else {
 				Set<EdgeClass> paramSet = incommingEdgeClassMap.get(entry
 						.getRoleNameAtFarEnd());
@@ -281,8 +283,7 @@ public class RolenameCodeGenerator {
 	 *            toggles if to create code for the class or for the interface
 	 * @return
 	 */
-	private CodeSnippet configureRolenameCodesnippet(RolenameEntry entry,
-			boolean createClass) {
+	private CodeSnippet configureRolenameCodesnippet(RolenameEntry entry, boolean createClass) {
 		CodeSnippet s = new CodeSnippet(true);
 		VertexClass lcvc = entry.getVertexClassAtFarEnd();
 		if (lcvc.isInternal()) {
