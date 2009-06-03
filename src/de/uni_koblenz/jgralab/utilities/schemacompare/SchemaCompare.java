@@ -29,7 +29,12 @@ public class SchemaCompare {
 		t = s2;
 	}
 
-	public void compareSchemas() {
+	/**
+	 * @return the number of schema differences
+	 */
+	public int compareSchemas() {
+		System.out.println("Comparing Schemas:\nForward run...\n");
+
 		compareGraphClass(s.getGraphClass(), t.getGraphClass());
 
 		for (RecordDomain r : s.getRecordDomains()) {
@@ -58,6 +63,7 @@ public class SchemaCompare {
 		} else {
 			System.out.println("Schemas are equivalent.");
 		}
+		return diffCount;
 	}
 
 	private boolean areMarked(Object d, Object e) {
@@ -152,6 +158,9 @@ public class SchemaCompare {
 		}
 
 		for (GraphElementClass gec : g.getGraphElementClasses()) {
+			if (gec.isInternal()) {
+				continue;
+			}
 			compareGraphElementClass(gec, h.getGraphElementClass(gec
 					.getQualifiedName()));
 		}
