@@ -362,7 +362,7 @@ public class EdgeClassImpl extends GraphElementClassImpl implements EdgeClass {
 				} else {
 					throw new InheritanceException(
 							"Cannot merge ToVertexClasses for EdgeClass "
-									+ getQualifiedName() + " VertexClass "
+									+ getQualifiedName() + ": VertexClass "
 									+ mostSpecialTo.getQualifiedName()
 									+ " and " + ec.getTo().getQualifiedName()
 									+ " cannot be merged");
