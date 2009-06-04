@@ -71,6 +71,8 @@ public class VertexCodeGenerator extends AttributedElementCodeGenerator {
 		code.add(createNextVertexMethods(createClass));
 		code.add(createFirstEdgeMethods(createClass));
 		code.add(rolenameGenerator.createRolenameMethods(createClass));
+		if (rolenameGenerator.isSchemaExceptionNeeded())
+			addImports("#jgImplPackage#.schema.exception.SchemaException");
 		code.add(createIncidenceIteratorMethods(createClass));
 		return code;
 	}
@@ -143,15 +145,12 @@ public class VertexCodeGenerator extends AttributedElementCodeGenerator {
 				code.add(" * @param orientation the orientation of the edge");
 			}
 			if (withTypeFlag) {
-				code
-						.add(" * @param noSubClasses if set to <code>true</code>, no subclasses of #ecName# are accepted");
+				code.add(" * @param noSubClasses if set to <code>true</code>, no subclasses of #ecName# are accepted");
 			}
-			code
-					.add(" */",
+			code.add(" */",
 							"public #ecQualifiedName# getFirst#ecCamelName#(#formalParams#);");
 		} else {
-			code
-					.add(
+			code.add(
 							"public #ecQualifiedName# getFirst#ecCamelName#(#formalParams#) {",
 							"\treturn (#ecQualifiedName#)getFirstEdgeOfClass(#ecQualifiedName#.class#actualParams#);",
 							"}");
