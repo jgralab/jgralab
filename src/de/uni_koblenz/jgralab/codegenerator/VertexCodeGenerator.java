@@ -71,8 +71,6 @@ public class VertexCodeGenerator extends AttributedElementCodeGenerator {
 		code.add(createNextVertexMethods(createClass));
 		code.add(createFirstEdgeMethods(createClass));
 		code.add(rolenameGenerator.createRolenameMethods(createClass));
-		if (rolenameGenerator.isSchemaExceptionNeeded())
-			addImports("#jgImplPackage#.schema.exception.SchemaException");
 		code.add(createIncidenceIteratorMethods(createClass));
 		return code;
 	}
