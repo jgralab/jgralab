@@ -264,7 +264,7 @@ class Graph2OWLInstances {
 		for (Vertex v : g.vertices()) {
 			i++;
 			if (i % 1000 == 0) {
-				System.out.println("Processed " + i + " out of "
+				System.out.println("Pass 1 of 2: Processed " + i + " out of "
 						+ g.getVCount() + " vertices");
 			}
 			vElemId = HelperMethods.firstToLowerCase(v
@@ -280,8 +280,8 @@ class Graph2OWLInstances {
 			for (Edge e : g.edges()) {
 				i++;
 				if (i % 1000 == 0) {
-					System.out.println("Processed " + i + " out of "
-							+ g.getECount() + "  edges");
+					System.out.println("Pass 1 of 2: Processed " + i + " out of "
+							+ g.getECount() + " edges");
 				}
 
 				eElemId = HelperMethods.firstToLowerCase(e
@@ -299,7 +299,7 @@ class Graph2OWLInstances {
 		for (Vertex v : g.vertices()) {
 			i++;
 			if (i % 1000 == 0) {
-				System.out.println("Processed " + i + " out of "
+				System.out.println("Pass 2 of 2: Processed " + i + " out of "
 						+ g.getVCount() + " vertices");
 			}
 
@@ -316,8 +316,8 @@ class Graph2OWLInstances {
 			for (Edge e : g.edges()) {
 				i++;
 				if (i % 1000 == 0) {
-					System.out.println("Processed " + i + " out of "
-							+ g.getVCount() + " edges");
+					System.out.println("Pass 2 of 2: Processed " + i + " out of "
+							+ g.getECount() + " edges");
 				}
 
 				eElemId = HelperMethods.firstToLowerCase(e
