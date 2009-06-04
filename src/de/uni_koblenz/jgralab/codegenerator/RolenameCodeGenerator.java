@@ -21,12 +21,6 @@ import de.uni_koblenz.jgralab.schema.impl.VertexEdgeEntry;
 public class RolenameCodeGenerator {
 
 	private VertexClass vertexClass;
-	
-	private boolean schemaExceptionNeeded = false;
-	
-	public boolean isSchemaExceptionNeeded() {
-		return schemaExceptionNeeded;
-	}
 
 	RolenameCodeGenerator(VertexClass vertexClass) {
 		this.vertexClass = vertexClass;
@@ -78,7 +72,6 @@ public class RolenameCodeGenerator {
 		s.add("public java.util.List<#targetClass#> get#roleCamelName#List() {");
 		s.add("\tthrow new #jgPackage#.GraphException(\"The rolename #roleName# is redefined for the VertexClass #vertexClassName# \");");
 		s.add("}");
-		schemaExceptionNeeded = true;
 		return s;
 	}
 
@@ -102,9 +95,8 @@ public class RolenameCodeGenerator {
 
 	private CodeBlock invalidAddRolenameSnippet(CodeSnippet s) {
 		s.add("public #edgeClassName# add#roleCamelName#(#vertexClassName# vertex) {",
-				"\tthrow new SchemaException(\"No edges of class #edgeClassName# are allowed at this vertex\");",
+				"\tthrow new #jgPackage#.GraphException(\"No edges of class #edgeClassName# are allowed at this vertex\");",
 				"}");
-		schemaExceptionNeeded = true;
 		return s;
 	}
 
@@ -131,9 +123,8 @@ public class RolenameCodeGenerator {
 
 	private CodeBlock invalidRemoveRolenameSnippet(CodeSnippet s) {
 		s.add("public void remove#roleCamelName#(#vertexClassName# vertex) {",
-			  "\tthrow new SchemaException(\"There is no rolename #roleCamelName#  allowed at this vertex\");",
+			  "\tthrow new #jgPackage#.GraphException(\"There is no rolename #roleCamelName#  allowed at this vertex\");",
 			  "}");
-		
 		return s;
 	}
 
