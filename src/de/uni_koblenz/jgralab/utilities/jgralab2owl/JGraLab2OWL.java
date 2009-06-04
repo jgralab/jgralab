@@ -24,6 +24,7 @@
 
 package de.uni_koblenz.jgralab.utilities.jgralab2owl;
 
+import java.io.BufferedOutputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -307,7 +308,7 @@ public class JGraLab2OWL {
 		defaultNS = "http://" + schema.getQualifiedName() + "#";
 
 		try {
-			outputStream = new FileOutputStream(filename);
+			outputStream = new BufferedOutputStream(new FileOutputStream(filename));
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		}
