@@ -126,12 +126,12 @@ public class ConditionalExpressionOptimizer extends OptimizerBase {
 						|| OptimizerUtility.isNot(f)) {
 					// The conditional expression evaluator optimizes till
 					// only expressions with at most one non-complex term stay,
-					// so return only FunApps which has 2 or more non-literals
+					// so return only FunApps which have 2 or more non-literals
 					// as args. Additionally, the non-constant terms have to be
 					// different, so that ((Null | v7) & ~v7) is not recognized.
-					HashSet<Vertex> nonLits = new HashSet<Vertex>();
-					nonComplexTerms(f, nonLits);
-					if (nonLits.size() >= 2) {
+					HashSet<Vertex> nonConsts = new HashSet<Vertex>();
+					collectNonCostantTerms(f, nonConsts);
+					if (nonConsts.size() >= 2) {
 						return f;
 					}
 				}
@@ -143,22 +143,23 @@ public class ConditionalExpressionOptimizer extends OptimizerBase {
 		return null;
 	}
 
-	private void nonComplexTerms(Vertex f, HashSet<Vertex> nonLits) {
+	private void collectNonCostantTerms(Vertex f, HashSet<Vertex> nonConsts) {
 		for (Edge e : f.incidences(EdgeDirection.IN)) {
 			Vertex v = e.getAlpha();
-			if (!(v instanceof Literal)) {
-				if (v instanceof FunctionApplication) {
-					FunctionApplication funApp = (FunctionApplication) v;
-					if (!(OptimizerUtility.isAnd(funApp)
-							&& OptimizerUtility.isOr(funApp) && OptimizerUtility
-							.isNot(funApp))) {
-						nonLits.add(v);
-					}
+			if (v instanceof FunctionApplication) {
+				FunctionApplication funApp = (FunctionApplication) v;
+				if (OptimizerUtility.isAnd(funApp)
+						|| OptimizerUtility.isOr(funApp)
+						|| OptimizerUtility.isNot(funApp)) {
+					collectNonCostantTerms(v, nonConsts);
 				} else {
-					return;
+					nonConsts.add(v);
 				}
+			} else if (v instanceof Literal) {
+				continue;
+			} else {
+				collectNonCostantTerms(v, nonConsts);
 			}
-			nonComplexTerms(v, nonLits);
 		}
 	}
 }
