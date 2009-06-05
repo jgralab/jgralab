@@ -126,9 +126,9 @@ public class DefaultOptimizer extends OptimizerBase {
 				| peo.optimize(eval, syntaxgraph)
 				// Transform complex constraint expressions to conditional
 				// expressions to simulate short circuit evaluation.
-				| ceo.optimize(eval, syntaxgraph) |
+				| ceo.optimize(eval, syntaxgraph)
 				// At last, merge common subgraphs and
-				cso.optimize(eval, syntaxgraph)
+				| cso.optimize(eval, syntaxgraph)
 				// merge simple declarations which have the same type
 				// expression.
 				| msdo.optimize(eval, syntaxgraph)) {
