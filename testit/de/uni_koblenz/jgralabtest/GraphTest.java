@@ -1020,10 +1020,53 @@ public class GraphTest {
 	
 	@Test
 	public void testGetExpandedVertexCount(){
+		//border case
+		assertEquals(2000, graph.getExpandedVertexCount());
+		
+		//normal cases
+		for(int i=0; i<1000; i++){
+			graph.createVertex(SubNode.class);
+		}
+		assertEquals(2000, graph.getExpandedVertexCount());
+		for(int i=0; i<1000; i++){
+			graph.createVertex(SuperNode.class);
+		}
+		assertEquals(4000, graph.getExpandedVertexCount());
+		for(int i=0; i<1000; i++){
+			graph.createVertex(DoubleSubNode.class);
+		}
+		assertEquals(8000, graph.getExpandedVertexCount());
+		System.out.println("Done testing getExpandedVertexCount.");
 	}
 	
 	@Test
 	public void testGetExpandedEdgeCount(){
+		Vertex v1 = graph.createVertex(SubNode.class);
+		Vertex v2 = graph.createVertex(SuperNode.class);
+		Vertex v3 = graph.createVertex(DoubleSubNode.class);
+
+		//border case
+		assertEquals(2000, graph.getExpandedEdgeCount());
+		
+		//normal cases
+		for(int i=0; i<1000; i++){
+			graph.createEdge(SubLink.class, v3, v2);
+		}
+		assertEquals(2000, graph.getExpandedEdgeCount());
+		
+
+		for(int i=0; i<1000; i++){
+			graph.createEdge(Link.class, v1, v2);
+		}
+		assertEquals(4000, graph.getExpandedEdgeCount());
+		
+
+		for(int i=0; i<1000; i++){
+			graph.createEdge(LinkBack.class, v2, v3);
+		}
+		assertEquals(8000, graph.getExpandedEdgeCount());
+		
+		System.out.println("Done testing getExpandedEdgeCount.");
 	}
 	
 	@Test
