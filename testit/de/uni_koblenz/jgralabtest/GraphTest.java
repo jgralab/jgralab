@@ -13,9 +13,10 @@ import org.junit.Test;
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralabtest.schemas.vertextest.*;
+import de.uni_koblenz.jgralabtest.schemas.minimal.MinimalGraph;
+import de.uni_koblenz.jgralabtest.schemas.minimal.MinimalSchema;
 
 //TODO source out duplicat code fragments (f.ex. isEdgeListModified)
-//TODO create identical edges
 
 public class GraphTest {
 	private VertexTestGraph graph;
@@ -47,8 +48,6 @@ public class GraphTest {
 		assertTrue(v6 instanceof DoubleSubNode);	
 
 		//tests whether the graphs contain the right vertices in the right order
-/*		for(Iterator<Vertex> i = graph.vertices().iterator();  i.hasNext(); i.next()){
-		}*/
 		int i = 0;//the position of the vertex corresponding to the one currently returned by the iterator
 		for (Vertex v : graph.vertices()){
 			assertEquals(graphVertices[i], v);
@@ -86,6 +85,7 @@ public class GraphTest {
 		Edge e11 = graph.createEdge(LinkBack.class, v3, v5);
 		Edge e12 = graph.createEdge(LinkBack.class, v4, v6);
 		Edge e13 = graph.createEdge(LinkBack.class, v3, v7);
+		Edge e14 = graph.createEdge(LinkBack.class, v4, v6); //the same as e12
 		
 		//tests whether the edge is an instance of the expected class
 		assertTrue(e1 instanceof SubLink);
@@ -101,11 +101,12 @@ public class GraphTest {
 		assertTrue(e11 instanceof LinkBack);
 		assertTrue(e12 instanceof LinkBack);
 		assertTrue(e13 instanceof LinkBack);
+		assertTrue(e14 instanceof LinkBack);
 			
 		/*tests whether the edges are part of the right graph and have been inserted 
 		 * in the right order
 		 */
-		Edge[] graphEdges = {e1, e2, e3, e4, e5, e6, e7, e8, e9, e10, e11, e12, e13};
+		Edge[] graphEdges = {e1, e2, e3, e4, e5, e6, e7, e8, e9, e10, e11, e12, e13, e14};
 		int i = 0;//refers to the position of the edge which the iterator currently returns
 		for (Edge e : graph.edges()){
 			assertEquals(graphEdges[i], e);
@@ -561,6 +562,13 @@ public class GraphTest {
 		assertFalse(graph2.containsEdge(e5));
 		assertFalse(graph.containsEdge(e6));
 		
+		//TODO test what happens when vertex is deleted with the edges to which it belongs!
+		/*
+		e1 = graph.createLink(v2, v4);
+		graph.deleteVertex(v2);
+		assertFalse(graph.containsEdge(e1));
+		*/
+		
 		System.out.println("Done testing containsEdge.");
 	}
 	
@@ -625,7 +633,7 @@ public class GraphTest {
 	
 	@Test
 	public void testDeleteEdge(){
-		//TODO continue + test: what happens when vertex is deleted with the edges to which it belongs!,
+		//TODO continue
 
 		SubNode v1 = graph.createSubNode();
 		SubNode v2 = graph.createSubNode();
@@ -645,6 +653,8 @@ public class GraphTest {
 		LinkBack e6 = graph.createLinkBack(v4, v7);
 		LinkBack e7 = graph.createLinkBack(v5, v2);
 		LinkBack e8 = graph.createLinkBack(v6, v3);
+		LinkBack e9 = graph.createLinkBack(v5, v8);
+//		SubLink e10 = graph2.createSubLink(v7, v6);
 		
 		graph.deleteEdge(e1);
 		assertFalse(graph.containsEdge(e1));
@@ -652,6 +662,8 @@ public class GraphTest {
 		assertFalse(graph.containsEdge(e2));
 		graph.deleteEdge(e3);
 		assertFalse(graph.containsEdge(e3));
+		graph.deleteEdge(e9);
+		assertFalse(graph.containsEdge(e9));
 		graph.deleteEdge(e4);
 		assertFalse(graph.containsEdge(e4));
 		graph.deleteEdge(e5);
@@ -662,6 +674,12 @@ public class GraphTest {
 		assertFalse(graph.containsEdge(e7));
 		graph.deleteEdge(e8);
 		assertFalse(graph.containsEdge(e8));
+		
+		//border cases
+		
+		//errors
+		//cannot try to delete an edge which has never been created?
+		//graph.deleteEdge(e10);
 		
 		System.out.println("Done testing deleteEdge.");
 	}
@@ -908,8 +926,7 @@ public class GraphTest {
 		//faults
 		//TODO these cases are not caught yet
 //		assertEquals(null, graph.getVertex(-5));
-//		graph.getVertex(Integer.MAX_VALUE);
-//		graph.getVertex(Integer.MIN_VALUE);
+		//values higher than 1000
 		
 		//border cases
 		assertEquals(v1, graph.getVertex(1));
@@ -918,6 +935,8 @@ public class GraphTest {
 		assertEquals(null, graph.getVertex(42));
 		assertEquals(null, graph.getVertex(33));
 		assertEquals(null, graph2.getVertex(4));
+		//1000 is the highest possible value
+		assertEquals(null, graph.getVertex(1000));
 
 		//normal cases
 		assertEquals(v2, graph.getVertex(2));
@@ -942,6 +961,7 @@ public class GraphTest {
 	
 	@Test
 	public void testGetEdge(){
+		//TODO not caught yet: values higher than 1000 and less than 1
 		Vertex v1 = graph.createVertex(SubNode.class);
 		Vertex v2 = graph.createVertex(SubNode.class);
 		Vertex v3 = graph.createVertex(SubNode.class);
@@ -966,15 +986,13 @@ public class GraphTest {
 		Edge e9 = graph.createEdge(Link.class, v3, v7);
 		Edge e10 = graph.createEdge(Link.class, v3, v7);
 		
-		//faults
-//		assertEquals(null, graph.getEdge(Integer.MAX_VALUE));
-//		assertEquals(null, graph.getEdge(Integer.MIN_VALUE));
-		
 		//border cases
 		assertEquals(null, graph.getEdge(0));
 		assertEquals(null, graph.getEdge(42));
 		assertEquals(null, graph.getEdge(-42));
 		assertEquals(e1, graph.getEdge(1));
+		assertEquals(null, graph.getEdge(1000));
+		assertEquals(null, graph.getEdge(-1000));
 		
 		//normal cases
 		assertEquals(e2, graph.getEdge(2));
@@ -991,7 +1009,13 @@ public class GraphTest {
 	}
 	
 	@Test
-	public void testGetMaxVCount(){	
+	public void testGetMaxVCount(){
+		assertEquals(1000, graph.getMaxVCount());
+		assertEquals(1000, graph2.getMaxVCount());
+		MinimalGraph graph3 = MinimalSchema.instance().createMinimalGraph();
+		assertEquals(1000, graph3.getMaxVCount());
+		
+		System.out.println("Done testing getMaxVCount.");
 	}
 	
 	@Test
@@ -1004,6 +1028,12 @@ public class GraphTest {
 	
 	@Test
 	public void testGetMaxECount(){
+		assertEquals(1000, graph.getMaxECount());
+		assertEquals(1000, graph2.getMaxECount());
+		MinimalGraph graph3 = MinimalSchema.instance().createMinimalGraph();
+		assertEquals(1000, graph3.getMaxECount());
+		
+		System.out.println("Done testing getMaxECount.");
 	}
 	
 	@Test
@@ -1095,16 +1125,61 @@ public class GraphTest {
 		Vertex v11 = graph.createVertex(DoubleSubNode.class);
 		Vertex v12 = graph.createVertex(DoubleSubNode.class);
 		
+		//border cases
+		assertEquals(0, graph.getECount());
 		Edge e1 = graph.createEdge(LinkBack.class, v5, v1);
+		assertEquals(1, graph.getECount());
+		
+		//creating a vertex does not change the value
+		graph.createVertex(DoubleSubNode.class);
+		assertEquals(1, graph.getECount());
+		
+		//when an edge is deleted, the count is decreased by 1
+		graph.deleteEdge(e1);
+		assertEquals(0, graph.getECount());
+		
+		//normal cases
+		//creating an edge increases the value by 1
 		Edge e2 = graph.createEdge(Link.class, v2, v7);
+		assertEquals(1, graph.getECount());
 		Edge e3 = graph.createEdge(LinkBack.class, v8, v4);
+		assertEquals(2, graph.getECount());
 		Edge e4 = graph.createEdge(SubLink.class, v11, v6);
+		assertEquals(3, graph.getECount());
 		Edge e5 = graph.createEdge(Link.class, v2, v5);
+		assertEquals(4, graph.getECount());
 		Edge e6 = graph.createEdge(LinkBack.class, v7, v12);
+		assertEquals(5, graph.getECount());
 		Edge e7 = graph.createEdge(SubLink.class, v9, v8);
+		assertEquals(6, graph.getECount());
 		Edge e8 = graph.createEdge(SubLink.class, v10, v6);
+		assertEquals(7, graph.getECount());
 		Edge e9 = graph.createEdge(Link.class, v3, v7);
+		assertEquals(8, graph.getECount());
 		Edge e10 = graph.createEdge(Link.class, v3, v7);
+		assertEquals(9, graph.getECount());
+		
+		//deleting edges...
+		graph.deleteEdge(e2);
+		assertEquals(8, graph.getECount());
+		graph.deleteEdge(e3);
+		assertEquals(7, graph.getECount());
+		graph.deleteEdge(e4);
+		assertEquals(6, graph.getECount());
+		graph.deleteEdge(e5);
+		assertEquals(5, graph.getECount());
+		graph.deleteEdge(e6);
+		assertEquals(4, graph.getECount());
+		graph.deleteEdge(e7);
+		assertEquals(3, graph.getECount());
+		graph.deleteEdge(e8);
+		assertEquals(2, graph.getECount());
+		graph.deleteEdge(e9);
+		assertEquals(1, graph.getECount());
+		graph.deleteEdge(e10);
+		assertEquals(0, graph.getECount());
+		
+		System.out.println("Done testing getECount.");
 	}
 	
 	@Test
