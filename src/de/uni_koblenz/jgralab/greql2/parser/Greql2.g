@@ -1455,17 +1455,17 @@ primaryExpression returns [Expression result = null]
 ;
 
 
-//parenthesedExpression returns [Expression result]
-//:
-//(alternativePathDescription RPAREN) => (alternativePathDescription RPAREN {$result = $alternativePathDescription.result;} ) 
-//|   (expression RPAREN {$result = $expression.result;} )
-//;
-
 parenthesedExpression returns [Expression result]
 :
-(alternativePathDescription RPAREN {$result = $alternativePathDescription.result;}) 
+(alternativePathDescription RPAREN) => (alternativePathDescription RPAREN {$result = $alternativePathDescription.result;} ) 
 |   (expression RPAREN {$result = $expression.result;} )
 ;
+
+// parenthesedExpression returns [Expression result]
+// :
+// (alternativePathDescription RPAREN {$result = $alternativePathDescription.result;}) 
+// |   (expression RPAREN {$result = $expression.result;} )
+// ;
 
 
 /** matches a pathdescription
