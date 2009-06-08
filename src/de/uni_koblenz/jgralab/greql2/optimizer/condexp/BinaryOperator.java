@@ -1,17 +1,17 @@
 /**
- * 
+ *
  */
 package de.uni_koblenz.jgralab.greql2.optimizer.condexp;
 
-import java.util.HashSet;
+import java.util.ArrayList;
 
 import de.uni_koblenz.jgralab.greql2.schema.Expression;
 
 /**
  * TODO: (heimdall) Comment class!
- * 
+ *
  * @author ist@uni-koblenz.de
- * 
+ *
  */
 public abstract class BinaryOperator extends Formula {
 	protected Formula leftHandSide, rightHandSide;
@@ -22,8 +22,9 @@ public abstract class BinaryOperator extends Formula {
 	}
 
 	@Override
-	protected HashSet<Expression> getNonConstantTermExpressions() {
-		HashSet<Expression> exps = leftHandSide.getNonConstantTermExpressions();
+	protected ArrayList<Expression> getNonConstantTermExpressions() {
+		ArrayList<Expression> exps = leftHandSide
+				.getNonConstantTermExpressions();
 		exps.addAll(rightHandSide.getNonConstantTermExpressions());
 		return exps;
 	}

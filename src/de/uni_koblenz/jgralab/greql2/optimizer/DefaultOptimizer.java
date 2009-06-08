@@ -119,7 +119,7 @@ public class DefaultOptimizer extends OptimizerBase {
 				// variable with lower cardinality is declared before the other
 				// one.
 				| vdoo.optimize(eval, syntaxgraph)
-				// Now merge the common subgaphs again.
+				// Now merge the common subgraphs again.
 				| cso.optimize(eval, syntaxgraph)
 				// Transform path existence predicates to function applications
 				// of the "contains" function.
