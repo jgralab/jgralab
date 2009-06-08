@@ -2453,7 +2453,7 @@ literal returns [Expression literal = null]
         literal = (Literal) graph.getFirstVertexOfClass(BoolLiteral.class);
         while ((literal != null) && (((BoolLiteral) literal).getBoolValue() != TrivalentBoolean.FALSE))
         	literal = (BoolLiteral) literal.getNextVertexOfClass(BoolLiteral.class);
-   	    if (literal == null || ( ((BoolLiteral) literal).getBoolValue() == TrivalentBoolean.TRUE )) {
+   	    if (literal == null || ( ((BoolLiteral) literal).getBoolValue() != TrivalentBoolean.FALSE )) {
 		   	literal = graph.createBoolLiteral();
 		   	((BoolLiteral) literal).setBoolValue(TrivalentBoolean.FALSE);
 		}
