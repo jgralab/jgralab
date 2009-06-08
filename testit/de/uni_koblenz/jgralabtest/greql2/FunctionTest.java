@@ -394,7 +394,7 @@ public class FunctionTest extends GenericTests {
 
 	@Test
 	public void testIsCycle() throws Exception {
-		String queryString = "from v : V reportSet isCycle(extractPath(pathSystem(v, -->), v)) end";
+		String queryString = "from v : V reportSet isCycle(extractPath(pathSystem(v, <->*), v)) end";
 		JValue result = evalTestQuery("isCycle", queryString,
 				getCyclicTestGraph());
 		for (JValue v : result.toCollection()) {
