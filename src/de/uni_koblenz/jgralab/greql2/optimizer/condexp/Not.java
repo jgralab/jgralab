@@ -1,9 +1,9 @@
 /**
- * 
+ *
  */
 package de.uni_koblenz.jgralab.greql2.optimizer.condexp;
 
-import java.util.HashSet;
+import java.util.ArrayList;
 
 import de.uni_koblenz.jgralab.greql2.optimizer.OptimizerUtility;
 import de.uni_koblenz.jgralab.greql2.schema.Expression;
@@ -12,9 +12,9 @@ import de.uni_koblenz.jgralab.greql2.schema.FunctionId;
 
 /**
  * TODO: (heimdall) Comment class!
- * 
+ *
  * @author ist@uni-koblenz.de
- * 
+ *
  */
 public class Not extends Formula {
 
@@ -40,7 +40,7 @@ public class Not extends Formula {
 	}
 
 	@Override
-	protected HashSet<Expression> getNonConstantTermExpressions() {
+	protected ArrayList<Expression> getNonConstantTermExpressions() {
 		return formula.getNonConstantTermExpressions();
 	}
 

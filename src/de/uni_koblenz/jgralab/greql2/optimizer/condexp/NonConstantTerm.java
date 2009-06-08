@@ -1,9 +1,9 @@
 /**
- * 
+ *
  */
 package de.uni_koblenz.jgralab.greql2.optimizer.condexp;
 
-import java.util.HashSet;
+import java.util.ArrayList;
 
 import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.GraphSize;
 import de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.VertexEvaluator;
@@ -12,9 +12,9 @@ import de.uni_koblenz.jgralab.greql2.schema.Expression;
 
 /**
  * TODO: (heimdall) Comment class!
- * 
+ *
  * @author ist@uni-koblenz.de
- * 
+ *
  */
 public class NonConstantTerm extends Formula {
 
@@ -35,8 +35,8 @@ public class NonConstantTerm extends Formula {
 	}
 
 	@Override
-	protected HashSet<Expression> getNonConstantTermExpressions() {
-		HashSet<Expression> exps = new HashSet<Expression>();
+	protected ArrayList<Expression> getNonConstantTermExpressions() {
+		ArrayList<Expression> exps = new ArrayList<Expression>();
 		exps.add(expression);
 		return exps;
 	}
@@ -44,8 +44,9 @@ public class NonConstantTerm extends Formula {
 	@Override
 	protected Formula calculateReplacementFormula(Expression exp,
 			Literal literal) {
-		if (expression == exp)
+		if (expression == exp) {
 			return literal;
+		}
 		return this;
 	}
 
@@ -65,12 +66,15 @@ public class NonConstantTerm extends Formula {
 		VertexEvaluator veval = greqlEvaluator.getVertexEvaluatorGraphMarker()
 				.getMark(expression);
 		double selectivity = veval.calculateEstimatedSelectivity(graphSize);
-		if (this.toString().equals("v14"))
+		if (this.toString().equals("v14")) {
 			selectivity = 0.8;
-		if (this.toString().equals("v21"))
+		}
+		if (this.toString().equals("v21")) {
 			selectivity = 0.5;
-		if (this.toString().equals("v29"))
+		}
+		if (this.toString().equals("v29")) {
 			selectivity = 0.3;
+		}
 		logger.finer("selectivity[" + this + "] = " + selectivity);
 		return selectivity;
 	}

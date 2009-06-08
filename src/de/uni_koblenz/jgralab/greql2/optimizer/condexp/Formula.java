@@ -1,26 +1,30 @@
 /**
- * 
+ *
  */
 package de.uni_koblenz.jgralab.greql2.optimizer.condexp;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.logging.Logger;
 
+import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.EdgeDirection;
+import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
 import de.uni_koblenz.jgralab.greql2.optimizer.OptimizerUtility;
 import de.uni_koblenz.jgralab.greql2.schema.BoolLiteral;
 import de.uni_koblenz.jgralab.greql2.schema.Expression;
 import de.uni_koblenz.jgralab.greql2.schema.FunctionApplication;
+import de.uni_koblenz.jgralab.greql2.schema.FunctionId;
 import de.uni_koblenz.jgralab.greql2.schema.Greql2;
 import de.uni_koblenz.jgralab.greql2.schema.IsArgumentOf;
 import de.uni_koblenz.jgralab.greql2.schema.TrivalentBoolean;
 
 /**
  * TODO: (heimdall) Comment class!
- * 
+ *
  * @author ist@uni-koblenz.de
- * 
+ *
  */
 public abstract class Formula {
 	protected static Logger logger = Logger.getLogger(Formula.class
@@ -45,8 +49,9 @@ public abstract class Formula {
 
 		Formula formula = createFormulaFromExpressionInternal(exp);
 
-		OptimizerUtility.deleteOrphanedVerticesBelow(exp, formula
-				.getNonConstantTermExpressions());
+		OptimizerUtility
+				.deleteOrphanedVerticesBelow(exp, new HashSet<Expression>(
+						formula.getNonConstantTermExpressions()));
 		return formula;
 	}
 
@@ -95,7 +100,8 @@ public abstract class Formula {
 	}
 
 	public Formula optimize() {
-		HashSet<Expression> nctExpressions = getNonConstantTermExpressions();
+		ArrayList<Expression> nctExpressions = new ArrayList<Expression>();
+		nctExpressions = getNonConstantTermExpressions();
 		if (nctExpressions.size() < 2) {
 			// This formula is a literal or a formula containing only one
 			// non-constant term, so there's nothing to optimize.
@@ -117,25 +123,68 @@ public abstract class Formula {
 	 *         ratio
 	 */
 	private ConditionalExpressionUnit calculateBestConditionalExpressionUnit(
-			HashSet<Expression> nonConstantTermExpressions) {
+			ArrayList<Expression> nonConstantTermExpressions) {
 		ConditionalExpressionUnit current, best = null;
+		boolean hasTypeFunAppFound = false;
 		for (Expression exp : nonConstantTermExpressions) {
 			current = new ConditionalExpressionUnit(exp, this);
+			if (containsFunApp(exp, "hasType")) {
+				hasTypeFunAppFound = true;
+			}
 			if (best == null
 					|| best.getInfluenceCostRatio() < current
-							.getInfluenceCostRatio())
+							.getInfluenceCostRatio()) {
+				// if there was a hasType() before, attribute accesses may not
+				// be pulled before! Example: hasType(v, "Foo") and v.fooAttr =
+				// 19 must stay in this order.
+				if (hasTypeFunAppFound && containsFunApp(exp, "getValue")) {
+					continue;
+				}
 				best = current;
+			}
 		}
 		return best;
 	}
 
-	protected abstract HashSet<Expression> getNonConstantTermExpressions();
+	/**
+	 * @param exp
+	 * @param functionName
+	 * @return true if exp is a {@link FunctionApplication} of functionName
+	 */
+	private boolean isFunApp(Vertex exp, String functionName) {
+		if (exp instanceof FunctionApplication) {
+			FunctionApplication funApp = (FunctionApplication) exp;
+			return ((FunctionId) funApp.getFirstIsFunctionIdOf().getAlpha())
+					.getName().equals(functionName);
+		}
+		return false;
+	}
+
+	/**
+	 * @param v
+	 * @param name
+	 * @return true if the subgraph below v contains a
+	 *         {@link FunctionApplication} of the function name
+	 */
+	private boolean containsFunApp(Vertex v, String name) {
+		if (isFunApp(v, name)) {
+			return true;
+		}
+		for (Edge e : v.incidences(EdgeDirection.IN)) {
+			if (containsFunApp(e.getAlpha(), name)) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	protected abstract ArrayList<Expression> getNonConstantTermExpressions();
 
 	/**
 	 * Create a new {@link Formula} where each {@link NonConstantTerm} that
 	 * represents the {@link Expression} <code>exp</code> is replaced by
 	 * <code>literal</code>.
-	 * 
+	 *
 	 * @param exp
 	 *            the {@link Expression} whose {@link NonConstantTerm}s should
 	 *            be replaced
@@ -152,7 +201,7 @@ public abstract class Formula {
 	 * <code>a or true = true</code>, <code>a or false = a</code>,
 	 * <code>not true = false</code>, <code>not false = true</code>,
 	 * <code>not not a = a</code>.
-	 * 
+	 *
 	 * @return a simplified {@link Formula}
 	 */
 	public abstract Formula simplify();
