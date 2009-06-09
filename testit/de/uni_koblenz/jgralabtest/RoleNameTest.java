@@ -260,7 +260,7 @@ public class RoleNameTest {
 	 * Random test
 	 */
 	@Test
-	public void AddTargetrolenameRandomTest0() {
+	public void addTargetrolenameRandomTest0() {
 		A v1 = graph.createA();
 		C v2 = graph.createC();
 		B v3 = graph.createB();
@@ -338,7 +338,7 @@ public class RoleNameTest {
 		for (int i = 0; i < 500; i++) {
 			Edge e = null;
 			while (e == null) {
-				int random=rand.nextInt(graph.getECount()) + 1;
+				int random = rand.nextInt(graph.getECount()) + 1;
 				e = graph.getEdge(random);
 			}
 			v1Inci.remove(e);
@@ -374,7 +374,7 @@ public class RoleNameTest {
 			LinkedList<Edge> v5Inci, LinkedList<Edge> v6Inci) {
 		for (int i = 0; i < 1000; i++) {
 			int howToCreate = rand.nextInt(2);
-			int whichEdge = rand.nextInt(3);
+			int whichEdge = rand.nextInt(4);
 			if (whichEdge == 0) {
 				int end = rand.nextInt(4);
 				E e = null;
@@ -415,7 +415,7 @@ public class RoleNameTest {
 					v6Inci.add(e.getReversedEdge());
 					break;
 				}
-			} else {
+			} else if (whichEdge == 2) {
 				int end = rand.nextInt(2);
 				G e = null;
 				switch (end) {
@@ -430,6 +430,36 @@ public class RoleNameTest {
 					v6Inci.add(e.getReversedEdge());
 					break;
 				}
+			} else {
+				int end = rand.nextInt(4);
+				int start = rand.nextInt(2);
+				H e = null;
+				switch (end) {
+				case 0:
+					e = howToCreate == 0 ? graph.createH(start == 0 ? v1 : v2,
+							v3) : (start == 0 ? v1 : v2).addW(v3);
+					(start == 0 ? v1Inci : v2Inci).add(e);
+					v3Inci.add(e.getReversedEdge());
+					break;
+				case 1:
+					e = howToCreate == 0 ? graph.createH(start == 0 ? v1 : v2,
+							v4) : (start == 0 ? v1 : v2).addW(v4);
+					(start == 0 ? v1Inci : v2Inci).add(e);
+					v4Inci.add(e.getReversedEdge());
+					break;
+				case 2:
+					e = howToCreate == 0 ? graph.createH(start == 0 ? v1 : v2,
+							v5) : (start == 0 ? v1 : v2).addW(v5);
+					(start == 0 ? v1Inci : v2Inci).add(e);
+					v5Inci.add(e.getReversedEdge());
+					break;
+				case 3:
+					e = howToCreate == 0 ? graph.createH(start == 0 ? v1 : v2,
+							v6) : (start == 0 ? v1 : v2).addW(v6);
+					(start == 0 ? v1Inci : v2Inci).add(e);
+					v6Inci.add(e.getReversedEdge());
+					break;
+				}
 			}
 		}
 	}
@@ -437,44 +467,115 @@ public class RoleNameTest {
 	/*
 	 * 1.2 Test of removeRoleName
 	 */
-	
+
 	/**
 	 * call removeX when no x exists.
 	 */
 	@Test
-	public void removeTargetRoleNameTest0(){
-		A v1=graph.createA();
-		C v2=graph.createC();
-		D v3=graph.createD();
-		F e1=v2.addY(v3);
+	public void removeTargetRoleNameTest0() {
+		A v1 = graph.createA();
+		C v2 = graph.createC();
+		D v3 = graph.createD();
+		F e1 = v2.addY(v3);
 		v1.removeX(v3);
 		testIncidenceList(v1);
-		testIncidenceList(v2,e1);
-		testIncidenceList(v3,e1.getReversedEdge());
+		testIncidenceList(v2, e1);
+		testIncidenceList(v3, e1.getReversedEdge());
 	}
-	
+
 	/**
 	 * Remove all x of one vertex.
 	 */
 	@Test
-	public void removeTargetRoleNameTest1(){
-		A v1=graph.createA();
-		C v2=graph.createC();
-		D v3=graph.createD();
-		B v4=graph.createB();
+	public void removeTargetRoleNameTest1() {
+		A v1 = graph.createA();
+		C v2 = graph.createC();
+		D v3 = graph.createD();
+		B v4 = graph.createB();
 		v1.addX(v3);
-		H e2=v1.addW(v3);
-		E e3=v1.addX(v4);
-		F e4=v2.addY(v3);
+		v1.addW(v3);
+		E e3 = v1.addX(v4);
+		F e4 = v2.addY(v3);
 		graph.createE(v1, v3);
-		H e6=v1.addW(v4);
+		H e6 = v1.addW(v4);
 		v1.removeX(v3);
-		testIncidenceList(v1, e2, e3, e6);
+		testIncidenceList(v1, e3, e6);
 		testIncidenceList(v2, e4);
-		testIncidenceList(v3, e2.getReversedEdge(),e4.getReversedEdge());
-		testIncidenceList(v4, e3.getReversedEdge(),e6.getReversedEdge());
+		testIncidenceList(v3, e4.getReversedEdge());
+		testIncidenceList(v4, e3.getReversedEdge(), e6.getReversedEdge());
 	}
 
+	/**
+	 * Random test
+	 */
+	@Test
+	public void removeTargetrolenameRandomTest0() {
+		A v1 = graph.createA();
+		C v2 = graph.createC();
+		B v3 = graph.createB();
+		D v4 = graph.createD();
+		B v5 = graph.createB();
+		D v6 = graph.createD();
+		LinkedList<Edge> v1Inci = new LinkedList<Edge>();
+		LinkedList<Edge> v2Inci = new LinkedList<Edge>();
+		LinkedList<Edge> v3Inci = new LinkedList<Edge>();
+		LinkedList<Edge> v4Inci = new LinkedList<Edge>();
+		LinkedList<Edge> v5Inci = new LinkedList<Edge>();
+		LinkedList<Edge> v6Inci = new LinkedList<Edge>();
+		createRandomGraph(v1, v2, v3, v4, v5, v6, v1Inci, v2Inci, v3Inci,
+				v4Inci, v5Inci, v6Inci);
+		deleteAll(v1, v3, v1Inci, v3Inci, "x", "w");
+		v1.removeX(v3);
+		testIncidences(v1, v2, v3, v4, v5, v6, v1Inci, v2Inci, v3Inci, v4Inci,
+				v5Inci, v6Inci);
+		deleteAll(v1, v4, v1Inci, v4Inci, "x", "w");
+		v1.removeX(v4);
+		testIncidences(v1, v2, v3, v4, v5, v6, v1Inci, v2Inci, v3Inci, v4Inci,
+				v5Inci, v6Inci);
+	}
+
+	/**
+	 * Deletes all Edges <code>from</code>--&gt<code>to</code> whith the
+	 * rolename <code>rolename</code>.
+	 * 
+	 * @param from
+	 * @param to
+	 * @param rolename
+	 * @param inciFrom
+	 * @param inciTo
+	 */
+	private void deleteAll(Vertex from, Vertex to, LinkedList<Edge> inciFrom,
+			LinkedList<Edge> inciTo, String... rolenames) {
+		for (int i = 0; i < inciFrom.size(); i++) {
+			Edge e = inciFrom.get(i).getNormalEdge();
+			if (e.getAlpha() == from && e.getOmega() == to
+					&& rolenameToDelete(e.getThatRole(), rolenames)) {
+				inciFrom.remove(i--);
+			}
+		}
+		for (int i = 0; i < inciTo.size(); i++) {
+			Edge e = inciTo.get(i).getNormalEdge();
+			if (e.getAlpha() == from && e.getOmega() == to
+					&& rolenameToDelete(e.getThatRole(), rolenames)) {
+				inciTo.remove(i--);
+			}
+		}
+	}
+
+	/**
+	 * Checks if <code>thatRole</code> is contained in <code>rolenames</code>.
+	 * 
+	 * @param thatRole
+	 * @param rolenames
+	 * @return
+	 */
+	private boolean rolenameToDelete(String thatRole, String[] rolenames) {
+		boolean contains = false;
+		for (String s : rolenames) {
+			contains = contains || s.equals(thatRole);
+		}
+		return contains;
+	}
 
 	// TODO Testen von getFirstX
 
