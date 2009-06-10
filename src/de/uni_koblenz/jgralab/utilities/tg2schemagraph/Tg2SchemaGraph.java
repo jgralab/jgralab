@@ -31,7 +31,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import de.uni_koblenz.jgralab.Attribute;
-import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.GraphIO;
 import de.uni_koblenz.jgralab.GraphIOException;
 import de.uni_koblenz.jgralab.ProgressFunction;
@@ -55,6 +54,7 @@ import de.uni_koblenz.jgralab.schema.GraphClass;
 import de.uni_koblenz.jgralab.schema.IntDomain;
 import de.uni_koblenz.jgralab.schema.ListDomain;
 import de.uni_koblenz.jgralab.schema.LongDomain;
+import de.uni_koblenz.jgralab.schema.MapDomain;
 import de.uni_koblenz.jgralab.schema.Package;
 import de.uni_koblenz.jgralab.schema.RecordDomain;
 import de.uni_koblenz.jgralab.schema.Schema;
@@ -65,7 +65,7 @@ import de.uni_koblenz.jgralab.schema.VertexClass;
 /**
  * This class represents any <code>Schema</code> object as an <code>Graph</code>
  * object.
- * 
+ *
  * @author ist@uni-koblenz.de
  */
 @WorkInProgress(description = "Problems with forward links to domains, constraints missing", responsibleDevelopers = "riediger")
@@ -99,7 +99,7 @@ public class Tg2SchemaGraph {
 	 * This class must be instantiated with a schema. You cannot change the
 	 * <code>Schema</code> afterwards hence for every schemagraph you want to
 	 * create a new instance of this class is needed.
-	 * 
+	 *
 	 * @param schema
 	 *            Any desired <code>Schema</code> object.
 	 */
@@ -118,16 +118,15 @@ public class Tg2SchemaGraph {
 	/**
 	 * creates an instance graph of the grUML language's meta schema. Its result
 	 * is a <code>Graph</code>, that represents any desired <code>Schema</code>.
-	 * 
-	 * @return a <code>Graph</code> object that represents a <code>Schema</code>
-	 *         .
+	 *
+	 * @return a <code>SchemaGraph</code> object that represents a
+	 *         <code>Schema</code> .
 	 */
-	public Graph getSchemaGraph() {
+	public SchemaGraph getSchemaGraph() {
 		if (schema == null) {
 			return null;
 		}
 		if (schemagraph == null) {
-
 			// create the schemagraph
 			schemagraph = GrumlSchema.instance().createSchemaGraph(
 					schema.getQualifiedName());
@@ -186,6 +185,7 @@ public class Tg2SchemaGraph {
 				schemagraph.createContainsDomain(jGraLab2SchemagraphPackageMap
 						.get(entry.getKey().getPackage()), entry.getValue());
 			}
+
 		}
 		return schemagraph;
 	}
@@ -194,7 +194,7 @@ public class Tg2SchemaGraph {
 	 * Sets up a <code>schemagraph</code> <code>Package</code> vertex. For each
 	 * subpackge of <code>jGraLabSuperPackage</code> this method gets called
 	 * recursively.
-	 * 
+	 *
 	 * @param jGraLabSuperPackage
 	 *            a JGraLab package
 	 * @param schemagraphSuperPackage
@@ -232,7 +232,7 @@ public class Tg2SchemaGraph {
 	 * for a given package and the required incident edges of it. For each
 	 * attribute of the <code>VertexClass</code>es
 	 * <code>createSchemagraphAttribute</code> gets called.
-	 * 
+	 *
 	 * @param schemagraphPackage
 	 *            a vertex representing package <code>jGraLabPackage</code>
 	 * @param jGraLabPackage
@@ -276,7 +276,7 @@ public class Tg2SchemaGraph {
 	 * <code>ContainsGraphElementClass</code>). For each attribute of the
 	 * <code>EdgeClass</code>es <code>createSchemagraphAttribute</code> gets
 	 * called.
-	 * 
+	 *
 	 * @param schemagraphPackage
 	 * @param jGraLabPackage
 	 */
@@ -388,7 +388,7 @@ public class Tg2SchemaGraph {
 	/**
 	 * creates a <code>schemagraph</code> <code>Attribute</code> vertex and the
 	 * <code>HasAttribute</code> and <code>HasDomain</code> edges.
-	 * 
+	 *
 	 * @param jGraLabAttribute
 	 *            a JGraLab attribute
 	 * @param schemagraphAttributedElementClass
@@ -417,7 +417,7 @@ public class Tg2SchemaGraph {
 	 * . i.e. <code>domainMap.get(de.uni_koblenz.jgralab.schema.Domain d)</code>
 	 * return the corresponding
 	 * <code>de.uni_koblenz.jgralab.grumlschema.Domain</code> object.
-	 * 
+	 *
 	 * At first only the <code>BasicDomain</code>s get mapped. The
 	 * <code>CompositeDomain</code>s get mapped in the order of the
 	 * "domain-depth" of their base domains or RecordDomainComponents. First,
@@ -447,14 +447,19 @@ public class Tg2SchemaGraph {
 					schemaGraphDomain = schemagraph.createIntDomain();
 				} else if (d instanceof StringDomain) {
 					schemaGraphDomain = schemagraph.createStringDomain();
-
 				} else if (d instanceof CompositeDomain) {
 					schemaGraphDomain = createSchemagraphCompositeDomain(d,
 							schemaGraphDomain);
+				} else {
+					throw new RuntimeException(
+							"Didn't know what to do with domain '" + d + "'.");
 				}
 				if (schemaGraphDomain != null) {
 					schemaGraphDomain.setQualifiedName(d.getQualifiedName());
 					jGraLab2SchemagraphDomainMap.put(d, schemaGraphDomain);
+				} else {
+					throw new RuntimeException(
+							"Didn't know what to do with domain '" + d + "'.");
 				}
 			}
 		}
@@ -477,6 +482,10 @@ public class Tg2SchemaGraph {
 					schemagraphDomain = schemagraph.createListDomain();
 				} else if (jGraLabDomain instanceof SetDomain) {
 					schemagraphDomain = schemagraph.createSetDomain();
+				} else {
+					throw new RuntimeException(
+							"Didn't know what to do with CollectionDomain '"
+									+ jGraLabDomain + "'.");
 				}
 				if (schemagraphDomain != null) {
 					schemagraph
@@ -511,6 +520,24 @@ public class Tg2SchemaGraph {
 				}
 				return schemagraphDomain;
 			}
+		} else if (jGraLabDomain instanceof MapDomain) {
+			MapDomain md = (MapDomain) jGraLabDomain;
+			schemagraphDomain = schemagraph.createMapDomain();
+			Domain keyDomain = md.getKeyDomain();
+			Domain valDomain = md.getValueDomain();
+			schemagraph
+					.createHasKeyDomain(
+							(de.uni_koblenz.jgralab.grumlschema.domains.MapDomain) schemagraphDomain,
+							jGraLab2SchemagraphDomainMap.get(keyDomain));
+			schemagraph
+					.createHasValueDomain(
+							(de.uni_koblenz.jgralab.grumlschema.domains.MapDomain) schemagraphDomain,
+							jGraLab2SchemagraphDomainMap.get(valDomain));
+			return schemagraphDomain;
+		} else {
+			throw new RuntimeException(
+					"Didn't know what to do with CompositeDomain '"
+							+ jGraLabDomain + "'.");
 		}
 		return null;
 	}
