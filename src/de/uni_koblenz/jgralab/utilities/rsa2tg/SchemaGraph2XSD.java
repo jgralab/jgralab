@@ -264,7 +264,7 @@ public class SchemaGraph2XSD {
 		// should be given here...
 		xml.writeNamespace(XSD_NS_PREFIX, XMLConstants.W3C_XML_SCHEMA_NS_URI);
 		xml.writeAttribute("elementFormDefault", "qualified");
-		xml.writeAttribute("AttributeFormDefault", "qualified");
+		xml.writeAttribute("attributeFormDefault", "qualified");
 	}
 
 	/**
