@@ -26,15 +26,30 @@ package de.uni_koblenz.jgralab.utilities.rsa2tg;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 
+import javax.xml.XMLConstants;
 import javax.xml.stream.FactoryConfigurationError;
 import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 
+import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.GraphIO;
 import de.uni_koblenz.jgralab.GraphIOException;
 import de.uni_koblenz.jgralab.grumlschema.SchemaGraph;
-import de.uni_koblenz.jgralab.utilities.tg2schemagraph.Tg2SchemaGraph;
+import de.uni_koblenz.jgralab.grumlschema.domains.BooleanDomain;
+import de.uni_koblenz.jgralab.grumlschema.domains.Domain;
+import de.uni_koblenz.jgralab.grumlschema.domains.DoubleDomain;
+import de.uni_koblenz.jgralab.grumlschema.domains.EnumDomain;
+import de.uni_koblenz.jgralab.grumlschema.domains.IntDomain;
+import de.uni_koblenz.jgralab.grumlschema.domains.LongDomain;
+import de.uni_koblenz.jgralab.grumlschema.domains.StringDomain;
+import de.uni_koblenz.jgralab.grumlschema.structure.Attribute;
+import de.uni_koblenz.jgralab.grumlschema.structure.AttributedElementClass;
+import de.uni_koblenz.jgralab.grumlschema.structure.EdgeClass;
+import de.uni_koblenz.jgralab.grumlschema.structure.GraphClass;
+import de.uni_koblenz.jgralab.grumlschema.structure.HasAttribute;
+import de.uni_koblenz.jgralab.grumlschema.structure.VertexClass;
+import de.uni_koblenz.jgralab.utilities.tg2schemagraph.Schema2SchemaGraph;
 
 /**
  * @author Tassilo Horn &lt;horn@uni-koblenz.de&gt;
@@ -42,6 +57,7 @@ import de.uni_koblenz.jgralab.utilities.tg2schemagraph.Tg2SchemaGraph;
  */
 public class SchemaGraph2XSD {
 
+	private final static String XSD_NS_PREFIX = "xsd";
 	protected XMLStreamWriter xml;
 	protected SchemaGraph schemaGraph;
 
@@ -55,78 +71,200 @@ public class SchemaGraph2XSD {
 
 	public void writeXSD() throws XMLStreamException {
 		xml.writeStartDocument();
-		startSchema();
+		writeStartXSDSchema();
 
 		// write the default complex types
 		writeDefaultComplexTypes();
 
-		startGraphClass();
+		// now vertex and edge classes
+		writeVertexClassComplexTypes();
+		writeEdgeClassComplexTypes();
 
-		xml.writeEndElement(); // ends the graphclass
-		xml.writeEndElement(); // ends the schema
+		// now the graph class
+		writeGraphClass();
+
+		writeEndXSDElement(); // ends the schema
 		xml.writeEndDocument();
+		xml.flush();
 	}
 
-	private void writeStartComplexType(String name) throws XMLStreamException {
-		xml.writeStartElement("complexType");
-		xml.writeAttribute("name", name);
+	private void writeEndXSDElement() throws XMLStreamException {
+		xml.writeEndElement();
+		xml.writeCharacters("\n");
 	}
 
-	private void writeStartElement(String name, String type)
+	private void writeEdgeClassComplexTypes() throws XMLStreamException {
+		for (EdgeClass ec : schemaGraph.getEdgeClassVertices()) {
+			if (ec.isIsAbstract()) {
+				continue;
+			}
+			// first the complex type
+			writeStartXSDComplexType("CT_" + ec.getQualifiedName());
+			writeXSDExtension("CT_Edge");
+			writeAttributes(ec);
+			writeEndXSDElement();
+		}
+	}
+
+	private void writeVertexClassComplexTypes() throws XMLStreamException {
+		for (VertexClass vc : schemaGraph.getVertexClassVertices()) {
+			if (vc.isIsAbstract()) {
+				continue;
+			}
+			// first the complex type
+			writeStartXSDComplexType("CT_" + vc.getQualifiedName());
+			writeXSDExtension("CT_Vertex");
+			writeAttributes(vc);
+			writeEndXSDElement();
+		}
+	}
+
+	private void writeStartXSDComplexType(String name)
 			throws XMLStreamException {
-		xml.writeStartElement("element");
+		xml.writeStartElement(XSD_NS_PREFIX, "complexType",
+				XMLConstants.W3C_XML_SCHEMA_NS_URI);
+		xml.writeAttribute("name", name);
+		xml.writeCharacters("\n");
+	}
+
+	private void writeStartXSDElement(String name, String type)
+			throws XMLStreamException {
+		xml.writeStartElement(XSD_NS_PREFIX, "element",
+				XMLConstants.W3C_XML_SCHEMA_NS_URI);
 		xml.writeAttribute("name", name);
 		xml.writeAttribute("type", type);
+		xml.writeCharacters("\n");
 	}
 
 	private void writeDefaultComplexTypes() throws XMLStreamException {
-		String attElem = "AttributedElement";
-		writeStartComplexType(attElem);
-		writeAttributeElement("id", "ID");
-		xml.writeEndElement();
+		String attElem = "CT_AttributedElement";
+		writeStartXSDComplexType(attElem);
+		writeXSDAttribute("id", XSD_NS_PREFIX + ":ID");
+		writeEndXSDElement();
 
-		writeStartComplexType("Graph");
-		writeExtension(attElem);
-		xml.writeEndElement();
+		writeStartXSDComplexType("CT_Graph");
+		writeXSDExtension(attElem);
+		writeEndXSDElement();
 
-		writeStartComplexType("Vertex");
-		writeExtension(attElem);
-		xml.writeEndElement();
+		writeStartXSDComplexType("CT_Vertex");
+		writeXSDExtension(attElem);
+		writeEndXSDElement();
 
-		writeStartComplexType("Edge");
-		writeExtension(attElem);
-		writeAttributeElement("from", "IDREF");
-		writeAttributeElement("to", "IDREF");
-		xml.writeEndElement();
+		writeStartXSDComplexType("CT_Edge");
+		writeXSDExtension(attElem);
+		writeXSDAttribute("from", XSD_NS_PREFIX + ":IDREF");
+		writeXSDAttribute("to", XSD_NS_PREFIX + ":IDREF");
+		writeEndXSDElement();
+
 	}
 
-	private void writeAttributeElement(String name, String type)
+	private void writeXSDAttribute(String name, String type)
 			throws XMLStreamException {
-		xml.writeStartElement("attribute");
+		xml.writeStartElement(XSD_NS_PREFIX, "attribute",
+				XMLConstants.W3C_XML_SCHEMA_NS_URI);
 		xml.writeAttribute("name", name);
 		xml.writeAttribute("type", type);
-		xml.writeEndElement();
+		writeEndXSDElement();
+
 	}
 
-	private void writeExtension(String extendedType) throws XMLStreamException {
-		xml.writeStartElement("complexContent");
-		xml.writeStartElement("extension");
+	private void writeXSDExtension(String extendedType)
+			throws XMLStreamException {
+		xml.writeStartElement(XSD_NS_PREFIX, "complexContent",
+				XMLConstants.W3C_XML_SCHEMA_NS_URI);
+		xml.writeStartElement(XSD_NS_PREFIX, "extension",
+				XMLConstants.W3C_XML_SCHEMA_NS_URI);
 		xml.writeAttribute("base", extendedType);
-		xml.writeEndElement();
-		xml.writeEndElement();
+		writeEndXSDElement();
+
+		writeEndXSDElement();
+
 	}
 
-	private void startGraphClass() throws XMLStreamException {
-		xml.writeStartElement(schemaGraph.getFirstGraphClass()
-				.getQualifiedName());
+	private void writeGraphClass() throws XMLStreamException {
+		GraphClass gc = schemaGraph.getFirstGraphClass();
+		writeStartXSDComplexType("CT_" + gc.getQualifiedName());
+		writeXSDExtension("CT_Graph");
+		writeAttributes(gc);
+
+		xml.writeStartElement(XSD_NS_PREFIX, "sequence",
+				XMLConstants.W3C_XML_SCHEMA_NS_URI);
+		xml.writeStartElement(XSD_NS_PREFIX, "choice",
+				XMLConstants.W3C_XML_SCHEMA_NS_URI);
+		xml.writeAttribute("minOccurs", "0");
+		xml.writeAttribute("maxOccurs", "unbounded");
+		for (VertexClass vc : schemaGraph.getVertexClassVertices()) {
+			if (vc.isIsAbstract()) {
+				continue;
+			}
+			writeStartXSDElement(vc.getQualifiedName(), "CT_"
+					+ vc.getQualifiedName());
+			writeEndXSDElement();
+
+		}
+		for (EdgeClass ec : schemaGraph.getEdgeClassVertices()) {
+			if (ec.isIsAbstract()) {
+				continue;
+			}
+			writeStartXSDElement(ec.getQualifiedName(), "CT_"
+					+ ec.getQualifiedName());
+			writeEndXSDElement();
+		}
+		writeEndXSDElement(); // end sequence
+		writeEndXSDElement(); // end choice
+		writeEndXSDElement(); // end complexType
+
+		// finally create an element for the graph class
+		writeStartXSDElement(gc.getQualifiedName(), "CT_"
+				+ gc.getQualifiedName());
 	}
 
-	protected void startSchema() throws XMLStreamException {
-		xml.writeStartElement("schema");
+	private void writeAttributes(AttributedElementClass attrElemClass)
+			throws XMLStreamException {
+		for (HasAttribute ha : attrElemClass
+				.getHasAttributeIncidences(EdgeDirection.OUT)) {
+			Attribute attr = (Attribute) ha.getOmega();
+			String name = attr.getName();
+			Domain type = (Domain) attr.getFirstHasDomain(EdgeDirection.OUT)
+					.getOmega();
+			writeXSDAttribute(name, getXSDType(type));
+		}
+	}
+
+	private String getXSDType(Domain domain) {
+		if (domain instanceof IntDomain) {
+			return XSD_NS_PREFIX + ":integer";
+		}
+		if (domain instanceof LongDomain) {
+			return XSD_NS_PREFIX + ":long";
+		}
+		if (domain instanceof BooleanDomain) {
+			return XSD_NS_PREFIX + ":boolean";
+		}
+		if (domain instanceof DoubleDomain) {
+			return XSD_NS_PREFIX + ":decimal";
+		}
+		if (domain instanceof StringDomain) {
+			return XSD_NS_PREFIX + ":string";
+		}
+		if (domain instanceof EnumDomain) {
+			// TODO: Implement this string restriction thing!
+			return XSD_NS_PREFIX
+					+ "TODO: implement enums as string restrictions";
+		}
+
+		return XSD_NS_PREFIX + ":string";
+	}
+
+	private void writeStartXSDSchema() throws XMLStreamException {
+		xml.writeStartElement(XSD_NS_PREFIX, "schema",
+				XMLConstants.W3C_XML_SCHEMA_NS_URI);
 		// TODO: I don't know which attributes the schema element has... At
 		// least something like http://jgralab.uni-koblenz.de/SoamigSchema
 		// should be given here...
-		xml.writeAttribute("xmlns", "http://www.w3.org/2001/XMLSchema");
+		xml.writeNamespace(XSD_NS_PREFIX, XMLConstants.W3C_XML_SCHEMA_NS_URI);
+		xml.writeAttribute("elementFormDefault", "qualified");
+		xml.writeAttribute("AttributeFormDefault", "qualified");
 	}
 
 	/**
@@ -148,8 +286,8 @@ public class SchemaGraph2XSD {
 		de.uni_koblenz.jgralab.schema.Schema s = GraphIO
 				.loadSchemaFromFile(schemaFile);
 
-		Tg2SchemaGraph t2sg = new Tg2SchemaGraph(s);
-		SchemaGraph sg = t2sg.getSchemaGraph();
+		Schema2SchemaGraph s2sg = new Schema2SchemaGraph();
+		SchemaGraph sg = s2sg.convert2SchemaGraph(s);
 		SchemaGraph2XSD t2xsd = new SchemaGraph2XSD(sg, xsdFile);
 		t2xsd.writeXSD();
 	}
