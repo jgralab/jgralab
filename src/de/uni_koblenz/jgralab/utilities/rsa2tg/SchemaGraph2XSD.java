@@ -48,6 +48,8 @@ import de.uni_koblenz.jgralab.grumlschema.structure.AttributedElementClass;
 import de.uni_koblenz.jgralab.grumlschema.structure.EdgeClass;
 import de.uni_koblenz.jgralab.grumlschema.structure.GraphClass;
 import de.uni_koblenz.jgralab.grumlschema.structure.HasAttribute;
+import de.uni_koblenz.jgralab.grumlschema.structure.SpecializesEdgeClass;
+import de.uni_koblenz.jgralab.grumlschema.structure.SpecializesVertexClass;
 import de.uni_koblenz.jgralab.grumlschema.structure.VertexClass;
 import de.uni_koblenz.jgralab.utilities.tg2schemagraph.Schema2SchemaGraph;
 
@@ -228,6 +230,22 @@ public class SchemaGraph2XSD {
 			Domain type = (Domain) attr.getFirstHasDomain(EdgeDirection.OUT)
 					.getOmega();
 			writeXSDAttribute(name, getXSDType(type));
+		}
+		if (attrElemClass instanceof VertexClass) {
+			for (SpecializesVertexClass s : ((VertexClass) attrElemClass)
+					.getSpecializesVertexClassIncidences(EdgeDirection.OUT)) {
+				writeAttributes((VertexClass) s.getOmega());
+			}
+		} else if (attrElemClass instanceof EdgeClass) {
+			for (SpecializesEdgeClass s : ((EdgeClass) attrElemClass)
+					.getSpecializesEdgeClassIncidences(EdgeDirection.OUT)) {
+				writeAttributes((EdgeClass) s.getOmega());
+			}
+		} else if (attrElemClass instanceof GraphClass) {
+			// nothing to do here
+		} else {
+			throw new RuntimeException("Don't know what to do with '"
+					+ attrElemClass.getQualifiedName() + "'.");
 		}
 	}
 
