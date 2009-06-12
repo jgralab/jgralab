@@ -23,7 +23,7 @@
 ;; Major mode for editing GReQL2 files with Emacs and executing queries.
 
 ;;; Version:
-;; <2009-05-29 Fri 19:46>
+;; <2009-06-12 Fri 18:41>
 
 ;;; Code:
 
@@ -140,6 +140,11 @@ queries are evaluated.  Set it with `greql-set-graph'.")
 
 (defvar greql-schema-alist nil)
 (make-variable-buffer-local 'greql-schema-alist)
+
+(defun greql-initialize-schema ()
+  (when (and greql-graph (not greql-schema-alist))
+    (greql-set-graph greql-graph)
+    (greql-set-fontlock-keywords-3)))
 
 (defun greql-set-graph (graph)
   "Set `greql-graph' to GRAPH and parse it with
@@ -304,6 +309,7 @@ queries are evaluated.  Set it with `greql-set-graph'.")
 (defun greql-complete ()
   "Complete word at point somehow intelligently."
   (interactive)
+  (greql-initialize-schema)
   (cond
    ;; Complete vertex classes
    ((or (greql-vertex-set-expression-p)
