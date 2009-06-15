@@ -115,6 +115,7 @@ public class SchemaGraph2XSD {
 			FactoryConfigurationError {
 		xml = XMLOutputFactory.newInstance().createXMLStreamWriter(
 				new FileOutputStream(outFile));
+
 		schemaGraph = sg;
 
 		enumMap = new HashMap<EnumDomain, String>();
@@ -125,16 +126,21 @@ public class SchemaGraph2XSD {
 		xml.writeStartDocument();
 		writeStartXSDSchema();
 
-		// now vertex and edge classes
-		writeVertexClassComplexTypes();
-		writeEdgeClassComplexTypes();
-
 		// now the graph class
+		xml.writeComment("GraphClass");
 		writeGraphClass();
 
+		// now vertex and edge classes
+		xml.writeComment("VertexClasses");
+		writeVertexClassComplexTypes();
+		xml.writeComment("VertexClasses");
+		writeEdgeClassComplexTypes();
+
 		// write the default complex types
+		xml.writeComment("Default ComplexTypes");
 		writeDefaultComplexTypes();
 		// write all enumeration types
+		xml.writeComment("Enumeration types");
 		writeAllEnumDomainTypes();
 
 		// ends the schema
