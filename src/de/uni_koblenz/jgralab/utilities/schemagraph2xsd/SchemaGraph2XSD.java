@@ -138,14 +138,73 @@ public class SchemaGraph2XSD {
 		writeAllEnumDomainTypes();
 
 		// ends the schema
-		writeEndXSDSchema();
+		writeEndXSDElement();
 		xml.writeEndDocument();
 		xml.flush();
 	}
 
-	private void writeEndXSDSchema() throws XMLStreamException {
-		xml.writeEndElement();
-		xml.writeCharacters("\n");
+	private void writeGraphClass() throws XMLStreamException {
+		GraphClass gc = schemaGraph.getFirstGraphClass();
+		writeStartXSDComplexType(XSD_COMPLEXTYPE_PREFIX + gc.getQualifiedName());
+		writeStartXSDExtension(XSD_COMPLEXTYPE_GRAPH);
+
+		xml.writeStartElement(XSD_NS_PREFIX, XSD_CHOICE,
+				XMLConstants.W3C_XML_SCHEMA_NS_URI);
+		xml.writeAttribute(XSD_ATTRIBUTE_MIN_OCCURS, "0");
+		xml.writeAttribute(XSD_ATTRIBUTE_MAX_OCCURS, "unbounded");
+		for (VertexClass vc : schemaGraph.getVertexClassVertices()) {
+			if (vc.isIsAbstract()) {
+				continue;
+			}
+			writeStartXSDElement(vc.getQualifiedName(), XSD_COMPLEXTYPE_PREFIX
+					+ vc.getQualifiedName());
+			writeEndXSDElement();
+
+		}
+		for (EdgeClass ec : schemaGraph.getEdgeClassVertices()) {
+			if (ec.isIsAbstract()) {
+				continue;
+			}
+			writeStartXSDElement(ec.getQualifiedName(), XSD_COMPLEXTYPE_PREFIX
+					+ ec.getQualifiedName());
+			writeEndXSDElement();
+		}
+		writeEndXSDElement(); // end choice
+
+		writeAttributes(gc);
+
+		writeEndXSDElement(); // end extension
+		writeEndXSDElement(); // end extension
+		writeEndXSDElement(); // end complexType
+
+		// finally create an element for the graph class
+		writeStartXSDElement(gc.getQualifiedName(), XSD_COMPLEXTYPE_PREFIX
+				+ gc.getQualifiedName());
+		writeEndXSDElement();
+	}
+
+	private void writeDefaultComplexTypes() throws XMLStreamException {
+		String attElem = XSD_COMPLEXTYPE_ATTRIBUTED_ELEMENT;
+		writeStartXSDComplexType(attElem);
+		writeXSDAttribute(XSD_ATTRIBUTE_ID, XML_ID);
+		writeEndXSDElement();
+
+		writeStartXSDComplexType(XSD_COMPLEXTYPE_GRAPH);
+		writeSimpleXSDExtension(attElem);
+		writeEndXSDElement();
+
+		writeStartXSDComplexType(XSD_COMPLEXTYPE_VERTEX);
+		writeSimpleXSDExtension(attElem);
+		writeEndXSDElement();
+
+		writeStartXSDComplexType(XSD_COMPLEXTYPE_EDGE);
+		writeStartXSDExtension(attElem);
+		writeXSDAttribute(XSD_ATTRIBUTE_FROM, XML_IDREF);
+		writeXSDAttribute(XSD_ATTRIBUTE_TO, XML_IDREF);
+		writeEndXSDElement(); // ends extension
+		writeEndXSDElement(); // ends extension
+		writeEndXSDElement(); // ends complexType
+
 	}
 
 	private void writeEdgeClassComplexTypes() throws XMLStreamException {
@@ -156,9 +215,14 @@ public class SchemaGraph2XSD {
 			// first the complex type
 			writeStartXSDComplexType(XSD_COMPLEXTYPE_PREFIX
 					+ ec.getQualifiedName());
-			writeXSDExtension(XSD_COMPLEXTYPE_EDGE);
+
+			writeStartXSDExtension(XSD_COMPLEXTYPE_EDGE);
+
 			writeAttributes(ec);
-			writeEndXSDSchema();
+
+			writeEndXSDElement(); // ends extension
+			writeEndXSDElement(); // ends extension
+			writeEndXSDElement(); // ends complexType
 		}
 	}
 
@@ -170,110 +234,14 @@ public class SchemaGraph2XSD {
 			// first the complex type
 			writeStartXSDComplexType(XSD_COMPLEXTYPE_PREFIX
 					+ vc.getQualifiedName());
-			writeXSDExtension(XSD_COMPLEXTYPE_VERTEX);
+			writeStartXSDExtension(XSD_COMPLEXTYPE_VERTEX);
+
 			writeAttributes(vc);
-			writeEndXSDSchema();
+
+			writeEndXSDElement(); // ends extension
+			writeEndXSDElement(); // ends extension
+			writeEndXSDElement(); // ends complexType
 		}
-	}
-
-	private void writeStartXSDComplexType(String name)
-			throws XMLStreamException {
-		xml.writeStartElement(XSD_NS_PREFIX, XSD_COMPLEXTYPE,
-				XMLConstants.W3C_XML_SCHEMA_NS_URI);
-		xml.writeAttribute(XSD_ATTRIBUTE_NAME, name);
-		xml.writeCharacters("\n");
-	}
-
-	private void writeStartXSDElement(String name, String type)
-			throws XMLStreamException {
-		xml.writeStartElement(XSD_NS_PREFIX, XSD_ELEMENT,
-				XMLConstants.W3C_XML_SCHEMA_NS_URI);
-		xml.writeAttribute(XSD_ATTRIBUTE_NAME, name);
-		xml.writeAttribute(XSD_ATTRIBUTE_TYPE, type);
-		xml.writeCharacters("\n");
-	}
-
-	private void writeDefaultComplexTypes() throws XMLStreamException {
-		String attElem = XSD_COMPLEXTYPE_ATTRIBUTED_ELEMENT;
-		writeStartXSDComplexType(attElem);
-		writeXSDAttribute(XSD_ATTRIBUTE_ID, XML_ID);
-		writeEndXSDSchema();
-
-		writeStartXSDComplexType(XSD_COMPLEXTYPE_GRAPH);
-		writeXSDExtension(attElem);
-		writeEndXSDSchema();
-
-		writeStartXSDComplexType(XSD_COMPLEXTYPE_VERTEX);
-		writeXSDExtension(attElem);
-		writeEndXSDSchema();
-
-		writeStartXSDComplexType(XSD_COMPLEXTYPE_EDGE);
-		writeXSDExtension(attElem);
-		writeXSDAttribute(XSD_ATTRIBUTE_FROM, XML_IDREF);
-		writeXSDAttribute(XSD_ATTRIBUTE_TO, XML_IDREF);
-		writeEndXSDSchema();
-
-	}
-
-	private void writeXSDAttribute(String name, String type)
-			throws XMLStreamException {
-		xml.writeStartElement(XSD_NS_PREFIX, XSD_ATTRIBUTE,
-				XMLConstants.W3C_XML_SCHEMA_NS_URI);
-		xml.writeAttribute(XSD_ATTRIBUTE_NAME, name);
-		xml.writeAttribute(XSD_ATTRIBUTE_TYPE, type);
-		writeEndXSDSchema();
-
-	}
-
-	private void writeXSDExtension(String extendedType)
-			throws XMLStreamException {
-		// xml.writeStartElement(XSD_NS_PREFIX, "complexContent",
-		// XMLConstants.W3C_XML_SCHEMA_NS_URI);
-		xml.writeStartElement(XSD_NS_PREFIX, XSD_EXTENSION,
-				XMLConstants.W3C_XML_SCHEMA_NS_URI);
-		xml.writeAttribute(XSD_ATTRIBUTE_BASE, extendedType);
-		writeEndXSDSchema();
-
-		// writeEndXSDElement();
-
-	}
-
-	private void writeGraphClass() throws XMLStreamException {
-		GraphClass gc = schemaGraph.getFirstGraphClass();
-		writeStartXSDComplexType(XSD_COMPLEXTYPE_PREFIX + gc.getQualifiedName());
-		writeXSDExtension(XSD_COMPLEXTYPE_GRAPH);
-		writeAttributes(gc);
-
-		xml.writeStartElement(XSD_NS_PREFIX, XSD_SEQUENCE,
-				XMLConstants.W3C_XML_SCHEMA_NS_URI);
-		xml.writeStartElement(XSD_NS_PREFIX, XSD_CHOICE,
-				XMLConstants.W3C_XML_SCHEMA_NS_URI);
-		xml.writeAttribute(XSD_ATTRIBUTE_MIN_OCCURS, "0");
-		xml.writeAttribute(XSD_ATTRIBUTE_MAX_OCCURS, "unbounded");
-		for (VertexClass vc : schemaGraph.getVertexClassVertices()) {
-			if (vc.isIsAbstract()) {
-				continue;
-			}
-			writeStartXSDElement(vc.getQualifiedName(), XSD_COMPLEXTYPE_PREFIX
-					+ vc.getQualifiedName());
-			writeEndXSDSchema();
-
-		}
-		for (EdgeClass ec : schemaGraph.getEdgeClassVertices()) {
-			if (ec.isIsAbstract()) {
-				continue;
-			}
-			writeStartXSDElement(ec.getQualifiedName(), XSD_COMPLEXTYPE_PREFIX
-					+ ec.getQualifiedName());
-			writeEndXSDSchema();
-		}
-		writeEndXSDSchema(); // end sequence
-		writeEndXSDSchema(); // end choice
-		writeEndXSDSchema(); // end complexType
-
-		// finally create an element for the graph class
-		writeStartXSDElement(gc.getQualifiedName(), XSD_COMPLEXTYPE_PREFIX
-				+ gc.getQualifiedName());
 	}
 
 	private void writeAttributes(AttributedElementClass attrElemClass)
@@ -302,6 +270,70 @@ public class SchemaGraph2XSD {
 			throw new RuntimeException("Don't know what to do with '"
 					+ attrElemClass.getQualifiedName() + "'.");
 		}
+	}
+
+	private void writeStartXSDComplexType(String name)
+			throws XMLStreamException {
+
+		xml.writeStartElement(XSD_NS_PREFIX, XSD_COMPLEXTYPE,
+				XMLConstants.W3C_XML_SCHEMA_NS_URI);
+		xml.writeAttribute(XSD_ATTRIBUTE_NAME, name);
+
+		xml.writeCharacters("\n");
+	}
+
+	private void writeStartXSDElement(String name, String type)
+			throws XMLStreamException {
+
+		xml.writeStartElement(XSD_NS_PREFIX, XSD_ELEMENT,
+				XMLConstants.W3C_XML_SCHEMA_NS_URI);
+
+		xml.writeAttribute(XSD_ATTRIBUTE_NAME, name);
+		xml.writeAttribute(XSD_ATTRIBUTE_TYPE, type);
+		xml.writeCharacters("\n");
+	}
+
+	private void writeSimpleXSDExtension(String extendedType)
+			throws XMLStreamException {
+
+		// Is needed for an extension
+		xml.writeStartElement(XSD_NS_PREFIX, "complexContent",
+				XMLConstants.W3C_XML_SCHEMA_NS_URI);
+
+		xml.writeStartElement(XSD_NS_PREFIX, XSD_EXTENSION,
+				XMLConstants.W3C_XML_SCHEMA_NS_URI);
+		xml.writeAttribute(XSD_ATTRIBUTE_BASE, extendedType);
+
+		writeEndXSDElement(); // ends extension
+		writeEndXSDElement(); // ends complexContent
+
+	}
+
+	private void writeStartXSDExtension(String extendedType)
+			throws XMLStreamException {
+
+		// Is needed for an extension
+		xml.writeStartElement(XSD_NS_PREFIX, "complexContent",
+				XMLConstants.W3C_XML_SCHEMA_NS_URI);
+
+		xml.writeStartElement(XSD_NS_PREFIX, XSD_EXTENSION,
+				XMLConstants.W3C_XML_SCHEMA_NS_URI);
+		xml.writeAttribute(XSD_ATTRIBUTE_BASE, extendedType);
+	}
+
+	private void writeEndXSDElement() throws XMLStreamException {
+		xml.writeEndElement();
+		xml.writeCharacters("\n");
+	}
+
+	private void writeXSDAttribute(String name, String type)
+			throws XMLStreamException {
+		xml.writeStartElement(XSD_NS_PREFIX, XSD_ATTRIBUTE,
+				XMLConstants.W3C_XML_SCHEMA_NS_URI);
+		xml.writeAttribute(XSD_ATTRIBUTE_NAME, name);
+		xml.writeAttribute(XSD_ATTRIBUTE_TYPE, type);
+		writeEndXSDElement();
+
 	}
 
 	private String getXSDType(Domain domain) {
@@ -383,14 +415,17 @@ public class SchemaGraph2XSD {
 			throws XMLStreamException {
 
 		// 
-		xml.writeStartElement(XSD_NS_PREFIX, XSD_SIMPLETYPE);
+		xml.writeStartElement(XSD_NS_PREFIX, XSD_SIMPLETYPE,
+				XMLConstants.W3C_XML_SCHEMA_NS_URI);
 		xml.writeAttribute(XSD_ATTRIBUTE_NAME, typeName);
 
-		xml.writeStartElement(XSD_NS_PREFIX, XSD_RESTRICTION);
+		xml.writeStartElement(XSD_NS_PREFIX, XSD_RESTRICTION,
+				XMLConstants.W3C_XML_SCHEMA_NS_URI);
 		xml.writeAttribute(XSD_ATTRIBUTE_BASE, XSD_DOMAIN_STRING);
 
 		for (String enumConst : domain.getEnumConstants()) {
-			xml.writeStartElement(XSD_NS_PREFIX, XSD_ENUMERATION);
+			xml.writeStartElement(XSD_NS_PREFIX, XSD_ENUMERATION,
+					XMLConstants.W3C_XML_SCHEMA_NS_URI);
 			xml.writeAttribute(XSD_ENUMERATION_VALUE, enumConst);
 			xml.writeEndElement();
 		}
@@ -433,6 +468,8 @@ public class SchemaGraph2XSD {
 		SchemaGraph sg = s2sg.convert2SchemaGraph(s);
 		SchemaGraph2XSD t2xsd = new SchemaGraph2XSD(sg, xsdFile);
 		t2xsd.writeXSD();
+
+		System.out.println("Fini.");
 	}
 
 	private static void usage() {
