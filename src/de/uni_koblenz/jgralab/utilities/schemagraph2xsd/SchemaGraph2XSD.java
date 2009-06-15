@@ -21,7 +21,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
-package de.uni_koblenz.jgralab.utilities.rsa2tg;
+package de.uni_koblenz.jgralab.utilities.schemagraph2xsd;
 
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
