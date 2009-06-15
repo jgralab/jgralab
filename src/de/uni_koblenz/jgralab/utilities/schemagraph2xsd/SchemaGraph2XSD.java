@@ -25,7 +25,9 @@ package de.uni_koblenz.jgralab.utilities.schemagraph2xsd;
 
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.StringWriter;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -36,8 +38,8 @@ import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 
 import de.uni_koblenz.jgralab.EdgeDirection;
-import de.uni_koblenz.jgralab.GraphIO;
 import de.uni_koblenz.jgralab.GraphIOException;
+import de.uni_koblenz.jgralab.grumlschema.GrumlSchema;
 import de.uni_koblenz.jgralab.grumlschema.SchemaGraph;
 import de.uni_koblenz.jgralab.grumlschema.domains.BooleanDomain;
 import de.uni_koblenz.jgralab.grumlschema.domains.Domain;
@@ -51,10 +53,12 @@ import de.uni_koblenz.jgralab.grumlschema.structure.AttributedElementClass;
 import de.uni_koblenz.jgralab.grumlschema.structure.EdgeClass;
 import de.uni_koblenz.jgralab.grumlschema.structure.GraphClass;
 import de.uni_koblenz.jgralab.grumlschema.structure.HasAttribute;
+import de.uni_koblenz.jgralab.grumlschema.structure.Schema;
 import de.uni_koblenz.jgralab.grumlschema.structure.SpecializesEdgeClass;
 import de.uni_koblenz.jgralab.grumlschema.structure.SpecializesVertexClass;
 import de.uni_koblenz.jgralab.grumlschema.structure.VertexClass;
-import de.uni_koblenz.jgralab.utilities.tg2schemagraph.Schema2SchemaGraph;
+import de.uni_koblenz.jgralab.impl.ProgressFunctionImpl;
+import de.uni_koblenz.jgralab.utilities.rsa2tg.SchemaGraph2Tg;
 
 /**
  * @author Tassilo Horn &lt;horn@uni-koblenz.de&gt;
@@ -62,6 +66,7 @@ import de.uni_koblenz.jgralab.utilities.tg2schemagraph.Schema2SchemaGraph;
  */
 public class SchemaGraph2XSD {
 
+	private static final String XML_NAMESPACE_PREFIX = "x";
 	private static final String XSD_ENUMERATION_VALUE = "value";
 	private static final String XSD_ENUMERATION = "enumeration";
 	private static final String XSD_RESTRICTION = "restriction";
@@ -84,7 +89,6 @@ public class SchemaGraph2XSD {
 	private static final String XSD_ATTRIBUTE_MAX_OCCURS = "maxOccurs";
 	private static final String XSD_ATTRIBUTE_MIN_OCCURS = "minOccurs";
 	private static final String XSD_CHOICE = "choice";
-	private static final String XSD_SEQUENCE = "sequence";
 	private static final String XSD_ATTRIBUTE_BASE = "base";
 	private static final String XSD_EXTENSION = "extension";
 	private static final String XSD_ATTRIBUTE = "attribute";
@@ -103,6 +107,8 @@ public class SchemaGraph2XSD {
 
 	protected XMLStreamWriter xml;
 	protected SchemaGraph schemaGraph;
+	protected SchemaGraph2Tg sg2tg;
+	protected StringWriter stringWriter;
 
 	/**
 	 * This map links Domain-objects to existing enumeration types discribed by
@@ -117,6 +123,10 @@ public class SchemaGraph2XSD {
 				new FileOutputStream(outFile));
 
 		schemaGraph = sg;
+
+		stringWriter = new StringWriter();
+
+		sg2tg = new SchemaGraph2Tg(sg, null);
 
 		enumMap = new HashMap<EnumDomain, String>();
 
@@ -218,6 +228,9 @@ public class SchemaGraph2XSD {
 			if (ec.isIsAbstract()) {
 				continue;
 			}
+
+			xml.writeComment(commentEdgeClass(ec));
+
 			// first the complex type
 			writeStartXSDComplexType(XSD_COMPLEXTYPE_PREFIX
 					+ ec.getQualifiedName());
@@ -232,11 +245,36 @@ public class SchemaGraph2XSD {
 		}
 	}
 
+	private String commentEdgeClass(EdgeClass edgeClass) {
+		stringWriter = new StringWriter();
+
+		sg2tg.setStream(stringWriter);
+		sg2tg.printEdgeClassDefinition(edgeClass);
+		StringBuffer sb = stringWriter.getBuffer();
+		sb.deleteCharAt(sb.length() - 1);
+
+		return stringWriter.toString();
+	}
+
+	private String commentVertexClass(VertexClass vertexClass) {
+		stringWriter = new StringWriter();
+
+		sg2tg.setStream(stringWriter);
+		sg2tg.printVertexClassDefinition(vertexClass);
+		StringBuffer sb = stringWriter.getBuffer();
+		sb.deleteCharAt(sb.length() - 1);
+
+		return stringWriter.toString();
+	}
+
 	private void writeVertexClassComplexTypes() throws XMLStreamException {
 		for (VertexClass vc : schemaGraph.getVertexClassVertices()) {
 			if (vc.isIsAbstract()) {
 				continue;
 			}
+
+			xml.writeComment(commentVertexClass(vc));
+
 			// first the complex type
 			writeStartXSDComplexType(XSD_COMPLEXTYPE_PREFIX
 					+ vc.getQualifiedName());
@@ -295,7 +333,8 @@ public class SchemaGraph2XSD {
 				XMLConstants.W3C_XML_SCHEMA_NS_URI);
 
 		xml.writeAttribute(XSD_ATTRIBUTE_NAME, name);
-		xml.writeAttribute(XSD_ATTRIBUTE_TYPE, type);
+		xml.writeAttribute(XSD_ATTRIBUTE_TYPE, XML_NAMESPACE_PREFIX + ":"
+				+ type);
 		xml.writeCharacters("\n");
 	}
 
@@ -308,7 +347,8 @@ public class SchemaGraph2XSD {
 
 		xml.writeStartElement(XSD_NS_PREFIX, XSD_EXTENSION,
 				XMLConstants.W3C_XML_SCHEMA_NS_URI);
-		xml.writeAttribute(XSD_ATTRIBUTE_BASE, extendedType);
+		xml.writeAttribute(XSD_ATTRIBUTE_BASE, XML_NAMESPACE_PREFIX + ":"
+				+ extendedType);
 
 		writeEndXSDElement(); // ends extension
 		writeEndXSDElement(); // ends complexContent
@@ -324,7 +364,8 @@ public class SchemaGraph2XSD {
 
 		xml.writeStartElement(XSD_NS_PREFIX, XSD_EXTENSION,
 				XMLConstants.W3C_XML_SCHEMA_NS_URI);
-		xml.writeAttribute(XSD_ATTRIBUTE_BASE, extendedType);
+		xml.writeAttribute(XSD_ATTRIBUTE_BASE, XML_NAMESPACE_PREFIX + ":"
+				+ extendedType);
 	}
 
 	private void writeEndXSDElement() throws XMLStreamException {
@@ -447,6 +488,27 @@ public class SchemaGraph2XSD {
 		// least something like http://jgralab.uni-koblenz.de/SoamigSchema
 		// should be given here...
 		xml.writeNamespace(XSD_NS_PREFIX, XMLConstants.W3C_XML_SCHEMA_NS_URI);
+
+		String ns = "";
+
+		Iterator<Schema> it = schemaGraph.getSchemaVertices().iterator();
+		if (it.hasNext()) {
+			Schema s = it.next();
+			String[] names = s.getPackagePrefix().split("\\.");
+			assert (names.length > 1);
+
+			ns = "http://" + names[1] + "." + names[0];
+
+			for (int i = 2; i < names.length; i++) {
+				ns += "/" + names[i];
+			}
+
+			ns += "/" + s.getName();
+		}
+
+		xml.writeNamespace(XML_NAMESPACE_PREFIX, ns);
+		System.out.println(ns);
+		xml.writeAttribute("targetNamespace", ns);
 		xml.writeAttribute("elementFormDefault", "qualified");
 		xml.writeAttribute("attributeFormDefault", "qualified");
 	}
@@ -464,14 +526,15 @@ public class SchemaGraph2XSD {
 		if (args.length != 2) {
 			usage();
 		}
-		String schemaFile = args[0];
+		String schemaGraphFile = args[0];
 		String xsdFile = args[1];
 
-		de.uni_koblenz.jgralab.schema.Schema s = GraphIO
-				.loadSchemaFromFile(schemaFile);
+		// de.uni_koblenz.jgralab.schema.Schema s = GraphIO
+		// .loadSchemaFromFile(schemaFile);
 
-		Schema2SchemaGraph s2sg = new Schema2SchemaGraph();
-		SchemaGraph sg = s2sg.convert2SchemaGraph(s);
+		// Schema2SchemaGraph s2sg = new Schema2SchemaGraph();
+		SchemaGraph sg = GrumlSchema.instance().loadSchemaGraph(
+				schemaGraphFile, new ProgressFunctionImpl());
 		SchemaGraph2XSD t2xsd = new SchemaGraph2XSD(sg, xsdFile);
 		t2xsd.writeXSD();
 
