@@ -26,6 +26,8 @@ package de.uni_koblenz.jgralab.utilities.rsa2tg;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.io.StringWriter;
+import java.io.Writer;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
@@ -117,7 +119,7 @@ public class SchemaGraph2Tg {
 	/**
 	 * PrintWriter object, which is used to write the TG file.
 	 */
-	private PrintWriter stream;
+	private Writer stream;
 
 	/**
 	 * Flag which indicates which style the TG output should have.
@@ -226,6 +228,10 @@ public class SchemaGraph2Tg {
 
 		System.gc();
 		System.runFinalization();
+	}
+
+	public void setStream(StringWriter stream) {
+		this.stream = stream;
 	}
 
 	/**
@@ -436,7 +442,7 @@ public class SchemaGraph2Tg {
 	 * @param vertexClass
 	 *            {@link VertexClass}, which should be transformed to TG string.
 	 */
-	private void printVertexClassDefinition(VertexClass vertexClass) {
+	public void printVertexClassDefinition(VertexClass vertexClass) {
 		if (vertexClass.isIsAbstract()) {
 			print(ABSTRACT, SPACE);
 		}
@@ -487,7 +493,7 @@ public class SchemaGraph2Tg {
 	 * @param edge
 	 *            {@link EdgeClass}, which will be transformed to a TG string.
 	 */
-	private void printEdgeClassDefinition(EdgeClass edge) {
+	public void printEdgeClassDefinition(EdgeClass edge) {
 
 		assert (edge != null) : "There is no EdgeClass object! \"edge == null\"";
 
@@ -1285,7 +1291,12 @@ public class SchemaGraph2Tg {
 		assert (strings != null) : "Variable parameter list is empty!";
 
 		for (String string : strings) {
-			stream.print(string);
+			try {
+				stream.write(string);
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 	}
 
@@ -1320,9 +1331,14 @@ public class SchemaGraph2Tg {
 	private void println(String... strings) {
 		assert (strings != null) : "Variable parameter list is empty!";
 
-		for (int i = 0; i < strings.length - 1; i++) {
-			stream.print(strings[i]);
+		try {
+			for (int i = 0; i < strings.length - 1; i++) {
+				stream.write(strings[i]);
+			}
+			stream.write(strings[strings.length - 1]);
+			stream.write("\n");
+		} catch (IOException ex) {
+			System.out.println(ex);
 		}
-		stream.println(strings[strings.length - 1]);
 	}
 }
