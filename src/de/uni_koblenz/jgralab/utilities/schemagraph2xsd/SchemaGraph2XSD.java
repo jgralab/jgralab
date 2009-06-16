@@ -66,7 +66,7 @@ import de.uni_koblenz.jgralab.utilities.rsa2tg.SchemaGraph2Tg;
  */
 public class SchemaGraph2XSD {
 
-	private static final String XML_NAMESPACE_PREFIX = "x";
+	private static final String XML_NAMESPACE_PREFIX = "smg";
 	private static final String XSD_ENUMERATION_VALUE = "value";
 	private static final String XSD_ENUMERATION = "enumeration";
 	private static final String XSD_RESTRICTION = "restriction";
@@ -400,8 +400,8 @@ public class SchemaGraph2XSD {
 			return XSD_DOMAIN_STRING;
 		}
 		if (domain instanceof EnumDomain) {
-			// TODO: Implement this string restriction thing!
-			return queryEnumType((EnumDomain) domain);
+			return XML_NAMESPACE_PREFIX + ":"
+					+ queryEnumType((EnumDomain) domain);
 		}
 
 		return XSD_DOMAIN_STRING;
