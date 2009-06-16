@@ -62,7 +62,7 @@ import de.uni_koblenz.jgralab.utilities.rsa2tg.SchemaGraph2Tg;
 
 /**
  * @author Tassilo Horn &lt;horn@uni-koblenz.de&gt;
- * 
+ *
  */
 public class SchemaGraph2XSD {
 
@@ -411,7 +411,7 @@ public class SchemaGraph2XSD {
 	 * Queries for a Domain the corresponding type string. In the case of no
 	 * existing match, a new type string is created and stored in the used map
 	 * <code>enumMap</code>.
-	 * 
+	 *
 	 * @param domain
 	 *            Domain for which the corresponding type string is queried.
 	 * @return Type string.
@@ -437,7 +437,7 @@ public class SchemaGraph2XSD {
 
 	/**
 	 * Creates all EnumDomain types contained in the map <code>enumMap</code>.
-	 * 
+	 *
 	 * @throws XMLStreamException
 	 */
 	private void writeAllEnumDomainTypes() throws XMLStreamException {
@@ -451,7 +451,7 @@ public class SchemaGraph2XSD {
 	/**
 	 * Creates a new EnumDomain in XSD with the name of <code>value</code> and
 	 * constants of the Domain <code>key</code>.
-	 * 
+	 *
 	 * @param domain
 	 *            Domain which is transformed to a XSD representation.
 	 * @param typeName
@@ -461,7 +461,7 @@ public class SchemaGraph2XSD {
 	private void createEnumDomainType(EnumDomain domain, String typeName)
 			throws XMLStreamException {
 
-		// 
+		//
 		xml.writeStartElement(XSD_NS_PREFIX, XSD_SIMPLETYPE,
 				XMLConstants.W3C_XML_SCHEMA_NS_URI);
 		xml.writeAttribute(XSD_ATTRIBUTE_NAME, typeName);
@@ -543,7 +543,7 @@ public class SchemaGraph2XSD {
 
 	private static void usage() {
 		System.err
-				.println("Usage: java SchemaGraph2XSD graphOrSchema.tg my-xml-schema.xsd");
+				.println("Usage: java SchemaGraph2XSD schemaGraphFile.tg my-xml-schema.xsd");
 		System.exit(1);
 	}
 
