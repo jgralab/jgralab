@@ -91,8 +91,9 @@ import de.uni_koblenz.jgralab.utilities.tg2dot.Tg2Dot;
  *
  * @author ist@uni-koblenz.de
  *
- * TODO: Currently Rsa2Tg breaks if multiplicities are given for attributes.
- * But it shouldn't do so if an attribute has the multiplicity (1,1).
+ *         TODO: Currently Rsa2Tg breaks if multiplicities are given for
+ *         attributes. But it shouldn't do so if an attribute has the
+ *         multiplicity (1,1).
  */
 @WorkInProgress(description = "Schema graph to TG missing, comments not recorded, missing command line interface", responsibleDevelopers = "riediger, mmce", expectedFinishingDate = "2009/04/20")
 public class Rsa2Tg extends DefaultHandler {
@@ -540,7 +541,7 @@ public class Rsa2Tg extends DefaultHandler {
 							+ fromRole.substring(1);
 				}
 				assert fromRole != null && fromRole.length() > 0;
-				name = fromRole + ecName;
+				name = fromRole;
 			}
 			assert ecName != null && ecName.length() > 0;
 			ec.setQualifiedName(name + ecName);
