@@ -8,6 +8,7 @@ import java.util.Map.Entry;
 import de.uni_koblenz.jgralab.Attribute;
 import de.uni_koblenz.jgralab.GraphIO;
 import de.uni_koblenz.jgralab.GraphIOException;
+import de.uni_koblenz.jgralab.WorkInProgress;
 import de.uni_koblenz.jgralab.schema.Domain;
 import de.uni_koblenz.jgralab.schema.EnumDomain;
 import de.uni_koblenz.jgralab.schema.GraphClass;
@@ -16,6 +17,7 @@ import de.uni_koblenz.jgralab.schema.NamedElement;
 import de.uni_koblenz.jgralab.schema.RecordDomain;
 import de.uni_koblenz.jgralab.schema.Schema;
 
+@WorkInProgress(responsibleDevelopers = "horn")
 public class SchemaCompare {
 	private Schema s;
 	private Schema t;
