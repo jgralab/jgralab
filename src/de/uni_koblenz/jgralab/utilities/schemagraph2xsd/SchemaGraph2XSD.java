@@ -62,7 +62,7 @@ import de.uni_koblenz.jgralab.utilities.rsa2tg.SchemaGraph2Tg;
 
 /**
  * @author Tassilo Horn &lt;horn@uni-koblenz.de&gt;
- *
+ * 
  */
 public class SchemaGraph2XSD {
 
@@ -108,7 +108,6 @@ public class SchemaGraph2XSD {
 	protected XMLStreamWriter xml;
 	protected SchemaGraph schemaGraph;
 	protected SchemaGraph2Tg sg2tg;
-	protected StringWriter stringWriter;
 
 	/**
 	 * This map links Domain-objects to existing enumeration types discribed by
@@ -123,13 +122,8 @@ public class SchemaGraph2XSD {
 				new FileOutputStream(outFile));
 
 		schemaGraph = sg;
-
-		stringWriter = new StringWriter();
-
 		sg2tg = new SchemaGraph2Tg(sg, null);
-
 		enumMap = new HashMap<EnumDomain, String>();
-
 	}
 
 	public void writeXSD() throws XMLStreamException {
@@ -246,7 +240,7 @@ public class SchemaGraph2XSD {
 	}
 
 	private String commentEdgeClass(EdgeClass edgeClass) {
-		stringWriter = new StringWriter();
+		StringWriter stringWriter = new StringWriter();
 
 		sg2tg.setStream(stringWriter);
 		sg2tg.printEdgeClassDefinition(edgeClass);
@@ -257,7 +251,7 @@ public class SchemaGraph2XSD {
 	}
 
 	private String commentVertexClass(VertexClass vertexClass) {
-		stringWriter = new StringWriter();
+		StringWriter stringWriter = new StringWriter();
 
 		sg2tg.setStream(stringWriter);
 		sg2tg.printVertexClassDefinition(vertexClass);
@@ -411,7 +405,7 @@ public class SchemaGraph2XSD {
 	 * Queries for a Domain the corresponding type string. In the case of no
 	 * existing match, a new type string is created and stored in the used map
 	 * <code>enumMap</code>.
-	 *
+	 * 
 	 * @param domain
 	 *            Domain for which the corresponding type string is queried.
 	 * @return Type string.
@@ -437,7 +431,7 @@ public class SchemaGraph2XSD {
 
 	/**
 	 * Creates all EnumDomain types contained in the map <code>enumMap</code>.
-	 *
+	 * 
 	 * @throws XMLStreamException
 	 */
 	private void writeAllEnumDomainTypes() throws XMLStreamException {
@@ -451,7 +445,7 @@ public class SchemaGraph2XSD {
 	/**
 	 * Creates a new EnumDomain in XSD with the name of <code>value</code> and
 	 * constants of the Domain <code>key</code>.
-	 *
+	 * 
 	 * @param domain
 	 *            Domain which is transformed to a XSD representation.
 	 * @param typeName
