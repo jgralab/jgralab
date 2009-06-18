@@ -177,7 +177,7 @@ public class RecordCodeGenerator extends CodeGenerator {
 		String delim = "[";
 		for (String key : recordDomain.getComponents().keySet()) {
 			CodeSnippet s = new CodeSnippet("sb.append(\"#delim#\");",
-					"sb.append(\"#key#\");", "sb.append(\" = \");",
+					"sb.append(\"#key#\");", "sb.append(\"=\");",
 					"sb.append(#key##toString#);");
 
 			Domain domain = recordDomain.getComponents().get(key);

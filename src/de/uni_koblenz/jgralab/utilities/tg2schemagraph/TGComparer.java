@@ -55,14 +55,6 @@ public class TGComparer {
 		return false;
 	}
 
-	private void printLines(ArrayList<String> lines) {
-
-		System.out.println("#######################################");
-		for (String line : lines) {
-			System.out.println(line);
-		}
-	}
-
 	private void dropEmptyLines(ArrayList<String> lines) {
 
 		ArrayList<String> dropList = new ArrayList<String>();
@@ -195,7 +187,6 @@ public class TGComparer {
 		BufferedReader br = new BufferedReader(new FileReader(filename));
 		ArrayList<String> stringList = new ArrayList<String>();
 
-		FileReader f;
 		while (br.ready()) {
 			stringList.add(br.readLine());
 		}

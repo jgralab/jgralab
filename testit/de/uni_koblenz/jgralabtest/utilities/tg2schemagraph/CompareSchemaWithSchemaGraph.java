@@ -201,7 +201,7 @@ public class CompareSchemaWithSchemaGraph {
 			assertTrue("Omega should be an instance of Domain.", containsDomain
 					.getOmega() instanceof Domain);
 			Domain gDomain = (Domain) containsDomain.getOmega();
-			String gQualifiedName = gDomain.getQualifiedName();
+
 			// Gets the simpleName for querying a the right domain
 			String qualifiedName = schema.getDomain(gDomain.getQualifiedName())
 					.getSimpleName();
@@ -943,17 +943,5 @@ public class CompareSchemaWithSchemaGraph {
 		}
 
 		return map;
-	}
-
-	/**
-	 * Removes all white spaces from the given String.
-	 * 
-	 * @param string
-	 *            String, which should be processed.
-	 * @return String without any white spaces.
-	 */
-	private String removeWhiteSpaces(String string) {
-
-		return string.replace(" ", "");
 	}
 }
