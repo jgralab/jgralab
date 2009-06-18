@@ -99,6 +99,8 @@ public class RecordCodeGenerator extends CodeGenerator {
 
 	private CodeBlock createMapConstructor() {
 		CodeList code = new CodeList();
+		// TODO check if this SuppressWarnings is _really_ needed (results in a
+		// warning if for example only Integer components are used)
 		CodeSnippet suppress = new CodeSnippet(true,
 				"@SuppressWarnings(\"unchecked\")");
 		CodeSnippet header = new CodeSnippet(false,

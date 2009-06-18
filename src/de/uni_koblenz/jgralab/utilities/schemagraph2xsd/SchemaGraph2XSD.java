@@ -39,6 +39,7 @@ import javax.xml.stream.XMLStreamWriter;
 
 import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.GraphIOException;
+import de.uni_koblenz.jgralab.WorkInProgress;
 import de.uni_koblenz.jgralab.grumlschema.GrumlSchema;
 import de.uni_koblenz.jgralab.grumlschema.SchemaGraph;
 import de.uni_koblenz.jgralab.grumlschema.domains.BooleanDomain;
@@ -64,6 +65,7 @@ import de.uni_koblenz.jgralab.utilities.rsa2tg.SchemaGraph2Tg;
  * @author Tassilo Horn &lt;horn@uni-koblenz.de&gt;
  * 
  */
+@WorkInProgress(description = "Converter from SchemaGraph to XML Schema", responsibleDevelopers = "horn, mmce, riediger", expectedFinishingDate = "2009/06/30")
 public class SchemaGraph2XSD {
 
 	private static final String XML_NAMESPACE_PREFIX = "smg";
