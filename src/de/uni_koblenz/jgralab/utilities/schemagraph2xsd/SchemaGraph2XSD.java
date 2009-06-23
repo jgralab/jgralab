@@ -198,18 +198,22 @@ public class SchemaGraph2XSD {
 	private void writeDefaultComplexTypes() throws XMLStreamException {
 		String attElem = XSD_COMPLEXTYPE_ATTRIBUTED_ELEMENT;
 		writeStartXSDComplexType(attElem);
+		xml.writeAttribute("abstract", "true");
 		writeXSDAttribute(XSD_ATTRIBUTE_ID, XML_ID);
 		writeEndXSDElement();
 
 		writeStartXSDComplexType(XSD_COMPLEXTYPE_GRAPH);
+		xml.writeAttribute("abstract", "true");
 		writeSimpleXSDExtension(attElem);
 		writeEndXSDElement();
 
 		writeStartXSDComplexType(XSD_COMPLEXTYPE_VERTEX);
+		xml.writeAttribute("abstract", "true");
 		writeSimpleXSDExtension(attElem);
 		writeEndXSDElement();
 
 		writeStartXSDComplexType(XSD_COMPLEXTYPE_EDGE);
+		xml.writeAttribute("abstract", "true");
 		writeStartXSDExtension(attElem);
 		writeXSDAttribute(XSD_ATTRIBUTE_FROM, XML_IDREF);
 		writeXSDAttribute(XSD_ATTRIBUTE_TO, XML_IDREF);
