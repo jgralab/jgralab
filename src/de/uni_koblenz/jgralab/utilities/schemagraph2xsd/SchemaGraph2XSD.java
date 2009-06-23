@@ -73,6 +73,7 @@ public class SchemaGraph2XSD {
 	private static final String XSD_ENUMERATION = "enumeration";
 	private static final String XSD_RESTRICTION = "restriction";
 	private static final String XSD_SIMPLETYPE = "simpleType";
+	private static final String XSD_REQUIRED = "required";
 	private static final String XSD_SCHEMA = "schema";
 	private final static String XSD_NS_PREFIX = "xsd";
 	private static final String XSD_DOMAIN_STRING = XSD_NS_PREFIX + ":"
@@ -102,6 +103,7 @@ public class SchemaGraph2XSD {
 	private static final String XSD_ELEMENT = "element";
 	private static final String XSD_ATTRIBUTE_TYPE = "type";
 	private static final String XSD_ATTRIBUTE_NAME = "name";
+	private static final String XSD_ATTRIBUTE_USE = "use";
 	private static final String XSD_COMPLEXTYPE = "complexType";
 	private static final String XSD_COMPLEXTYPE_VERTEX = "CT_Vertex";
 	private static final String XSD_COMPLEXTYPE_EDGE = "CT_Edge";
@@ -199,7 +201,7 @@ public class SchemaGraph2XSD {
 		String attElem = XSD_COMPLEXTYPE_ATTRIBUTED_ELEMENT;
 		writeStartXSDComplexType(attElem);
 		xml.writeAttribute("abstract", "true");
-		writeXSDAttribute(XSD_ATTRIBUTE_ID, XML_ID);
+		writeXSDAttribute(XSD_ATTRIBUTE_ID, XML_ID, XSD_REQUIRED);
 		writeEndXSDElement();
 
 		writeStartXSDComplexType(XSD_COMPLEXTYPE_GRAPH);
@@ -215,8 +217,8 @@ public class SchemaGraph2XSD {
 		writeStartXSDComplexType(XSD_COMPLEXTYPE_EDGE);
 		xml.writeAttribute("abstract", "true");
 		writeStartXSDExtension(attElem);
-		writeXSDAttribute(XSD_ATTRIBUTE_FROM, XML_IDREF);
-		writeXSDAttribute(XSD_ATTRIBUTE_TO, XML_IDREF);
+		writeXSDAttribute(XSD_ATTRIBUTE_FROM, XML_IDREF, XSD_REQUIRED);
+		writeXSDAttribute(XSD_ATTRIBUTE_TO, XML_IDREF, XSD_REQUIRED);
 		writeEndXSDElement(); // ends extension
 		writeEndXSDElement(); // ends extension
 		writeEndXSDElement(); // ends complexType
@@ -375,10 +377,18 @@ public class SchemaGraph2XSD {
 
 	private void writeXSDAttribute(String name, String type)
 			throws XMLStreamException {
+		writeXSDAttribute(name, type, null);
+	}
+
+	private void writeXSDAttribute(String name, String type, String use)
+			throws XMLStreamException {
 		xml.writeStartElement(XSD_NS_PREFIX, XSD_ATTRIBUTE,
 				XMLConstants.W3C_XML_SCHEMA_NS_URI);
 		xml.writeAttribute(XSD_ATTRIBUTE_NAME, name);
 		xml.writeAttribute(XSD_ATTRIBUTE_TYPE, type);
+		if (use != null) {
+			xml.writeAttribute(XSD_ATTRIBUTE_USE, use);
+		}
 		writeEndXSDElement();
 
 	}
