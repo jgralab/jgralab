@@ -2082,9 +2082,8 @@ public class RoleNameTest {
 	 * A--&gt{E}B targetE<br>
 	 * A--&gt{F}B targetE<br>
 	 * Target rolename are the same and no source rolenames exist.<br>
-	 * TODO should this be possible?
 	 */
-	@Test
+	@Test(expected = InheritanceException.class)
 	public void illegalRolenamesTest3() {
 		compileSchema("Schema de.uni_koblenz.jgralabtest.TestSchema;"
 				+ "GraphClass TestGraph;" + "VertexClass A;" + "VertexClass B;"
@@ -2454,6 +2453,54 @@ public class RoleNameTest {
 				+ "VertexClass C;"
 				+ "EdgeClass E from A (0,*) role sourceE to B (0,*) role targetE;"
 				+ "EdgeClass F from C (0,*) role sourceF redefines sourceE to B (0,*) role targetF;");
+	}
+
+	/**
+	 * a A--&gt{H}B b<br>
+	 * x redefines y C:D--&gt{F}B v<br>
+	 * y D--&gt{G}E z<br>
+	 */
+	@Test
+	public void illegalRolenamesTest28() {
+		compileSchema("Schema de.uni_koblenz.jgralabtest.TestSchema;"
+				+ "GraphClass TestGraph;"
+				+ "VertexClass A;"
+				+ "VertexClass B;"
+				+ "VertexClass D;"
+				+ "VertexClass C:D;"
+				+ "VertexClass E;"
+				+ "EdgeClass H from A (0,*) role a to B (0,*) role b;"
+				+ "EdgeClass G from D (0,*) role z to E (0,*) role y;"
+				+ "EdgeClass F from C (0,*) role v to B (0,*) role x redefines y;");
+	}
+
+	/**
+	 * d D--&gt{E}A a<br>
+	 * b B:D--&gt{F}C c redefines a<br>
+	 */
+	@Test
+	public void illegalRolenamesTest29() {
+		compileSchema("Schema de.uni_koblenz.jgralabtest.TestSchema;"
+				+ "GraphClass TestGraph;"
+				+ "VertexClass A;"
+				+ "VertexClass B:D;"
+				+ "VertexClass C;"
+				+ "VertexClass D;"
+				+ "EdgeClass E from D (0,*) role d to A (0,*) role a;"
+				+ "EdgeClass F from B (0,*) role b to C (0,*) role c redefines a;");
+	}
+
+	/**
+	 * Creation of Methods with equal name.
+	 * TODO
+	 */
+	@Test
+	public void illegalRolenamesTest30() {
+		compileSchema("Schema de.uni_koblenz.jgralabtest.TestSchema;"
+				+ "GraphClass TestGraph;"
+				+ "VertexClass A {xList: Integer};"
+				+ "VertexClass B;"
+				+ "EdgeClass E from A (0,*) to B (0,*) role x;");
 	}
 
 	// TODO Folgende Fälle müssen Fehler werfen
