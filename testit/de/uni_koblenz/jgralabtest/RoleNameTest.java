@@ -1150,7 +1150,36 @@ public class RoleNameTest {
 				.createVertexTestGraph(100, 100);
 		A v1 = graph.createA();
 		B v2 = graph2.createB();
-		v1.addX(v2);
+		Edge e=v1.addX(v2);
+		assertEquals(graph, e.getGraph());
+		assertEquals(v1, e.getAlpha());
+		assertEquals(graph, e.getAlpha().getGraph());
+		assertEquals(v2, e.getOmega());
+		assertEquals(graph2, e.getOmega().getGraph());
+		assertEquals(e,v1.getFirstE());
+		assertEquals(e.getReversedEdge(),v2.getFirstE());
+	}
+
+	/**
+	 * Test if an error occurs if you try to build an edge with an omega of
+	 * another graph.
+	 */
+	@Test(expected = GraphException.class)
+	public void addTargetrolenameTestException0() {
+		// TODO an exception should be thrown if you build an edge between
+		// vertices of two different graphs.
+		VertexTestGraph graph2 = VertexTestSchema.instance()
+				.createVertexTestGraph(100, 100);
+		A v1 = graph.createA();
+		B v2 = graph2.createB();
+		Edge e=graph.createE(v1, v2);
+		assertEquals(graph, e.getGraph());
+		assertEquals(v1, e.getAlpha());
+		assertEquals(graph, e.getAlpha().getGraph());
+		assertEquals(v2, e.getOmega());
+		assertEquals(graph2, e.getOmega().getGraph());
+		assertEquals(e,v1.getFirstE());
+		assertEquals(e.getReversedEdge(),v2.getFirstE());
 	}
 
 	/**
