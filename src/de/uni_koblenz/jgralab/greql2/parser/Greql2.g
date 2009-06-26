@@ -621,6 +621,7 @@ LARROW  	: '<--';
 ARROW		: '<->';
 ASSIGN		: ':=';
 GASSIGN 	: '::=';
+ENUM_SEPARATOR  : '::';
 EQUAL		: '=';
 MATCH 		: '=~';
 NOT_EQUAL 	: '<>';
@@ -1977,7 +1978,7 @@ mapConstruction returns [MapConstruction valueConstr = null]
 	   $valueConstr = graph.createMapConstruction();
     }
 
-	  (
+	  ((
 	    {offsetKey = getLTOffset();}
 		keyExpr = expression
 		{lengthKey = getLTLength(offsetKey);}
@@ -2007,7 +2008,7 @@ mapConstruction returns [MapConstruction valueConstr = null]
 				valueEdge.setSourcePositions((createSourcePositionList(lengthValue, offsetValue)));	
 			})
 	  	)*	 
-	  )
+	  ) | )
 	RPAREN)
  ; 
  
@@ -2403,14 +2404,15 @@ numericLiteral returns [Expression literal = null]
 
 enumLiteral returns [Expression result = null]
 :
-    enumType = STRING_LITERAL COLON COLON enumField = STRING_LITERAL
+    (enumType=(IDENT | FUNCTIONID)) ENUM_SEPARATOR (enumField=(IDENT | FUNCTIONID))
     {
         Literal typeLiteral = graph.createStringLiteral();
+	System.out.println("TypText: " + enumType.getText());
        	((StringLiteral) typeLiteral).setStringValue(decode(enumType.getText()));
 	Literal fieldLiteral = graph.createStringLiteral();
        	((StringLiteral) fieldLiteral).setStringValue(decode(enumField.getText()));
         FunctionId id = getFunctionId("enumConstant");
-        result = createFunctionIdAndArgumentOf(id, 0, 0, typeLiteral, 0, 0, fieldLiteral, 0, 0, true);
+        $result = createFunctionIdAndArgumentOf(id, 0, 0, typeLiteral, 0, 0, fieldLiteral, 0, 0, true);
     }
 ;
 
