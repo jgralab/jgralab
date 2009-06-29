@@ -80,17 +80,17 @@ public class SchemaGraph2XSD {
 	private static final String XSD_SCHEMA = "schema";
 	private static final String XSD_NS_PREFIX = ""; // No need to use a prefix
 	private static final String XSD_NS_PREFIX_PLUS_COLON = XSD_NS_PREFIX
-			+ (XSD_NS_PREFIX.equals("") ? "" : ":");
+	+ (XSD_NS_PREFIX.equals("") ? "" : ":");
 	private static final String XSD_DOMAIN_STRING = XSD_NS_PREFIX_PLUS_COLON
-			+ "string";
+	+ "string";
 	private static final String XSD_DOMAIN_DECIMAL = XSD_NS_PREFIX_PLUS_COLON
-			+ "decimal";
+	+ "decimal";
 	private static final String XSD_DOMAIN_BOOLEAN = XSD_NS_PREFIX_PLUS_COLON
-			+ "boolean";
+	+ "boolean";
 	private static final String XSD_DOMAIN_LONG = XSD_NS_PREFIX_PLUS_COLON
-			+ "long";
+	+ "long";
 	private static final String XSD_DOMAIN_INTEGER = XSD_NS_PREFIX_PLUS_COLON
-			+ "integer";
+	+ "integer";
 
 	private static final String XML_IDREF = XSD_NS_PREFIX_PLUS_COLON + "IDREF";
 	private static final String XML_ID = XSD_NS_PREFIX_PLUS_COLON + "ID";
@@ -114,9 +114,9 @@ public class SchemaGraph2XSD {
 	private static final String XSD_COMPLEXTYPE_PREFIX = "CT_";
 	private static final String XSD_SIMPLETYPE_PREFIX = "";
 	private static final String XSD_COMPLEXTYPE_VERTEX = XSD_COMPLEXTYPE_PREFIX
-			+ "Vertex";
+	+ "Vertex";
 	private static final String XSD_COMPLEXTYPE_EDGE = XSD_COMPLEXTYPE_PREFIX
-			+ "Edge";
+	+ "Edge";
 
 	protected XMLStreamWriter xml;
 	protected SchemaGraph schemaGraph;
@@ -129,8 +129,8 @@ public class SchemaGraph2XSD {
 	private final Map<Domain, String> domainMap;
 
 	public SchemaGraph2XSD(SchemaGraph sg, String outFile)
-			throws FileNotFoundException, XMLStreamException,
-			FactoryConfigurationError {
+	throws FileNotFoundException, XMLStreamException,
+	FactoryConfigurationError {
 		xml = XMLOutputFactory.newInstance().createXMLStreamWriter(
 				new FileOutputStream(outFile));
 
@@ -260,9 +260,10 @@ public class SchemaGraph2XSD {
 
 		sg2tg.setStream(stringWriter);
 		sg2tg.printEdgeClassDefinition(edgeClass);
+
 		StringBuffer sb = stringWriter.getBuffer();
 		sb.deleteCharAt(sb.length() - 1);
-
+		writeInheritedAttributes(edgeClass, stringWriter);
 		return stringWriter.toString();
 	}
 
@@ -271,10 +272,40 @@ public class SchemaGraph2XSD {
 
 		sg2tg.setStream(stringWriter);
 		sg2tg.printVertexClassDefinition(vertexClass);
+
 		StringBuffer sb = stringWriter.getBuffer();
 		sb.deleteCharAt(sb.length() - 1);
-
+		writeInheritedAttributes(vertexClass, stringWriter);
 		return stringWriter.toString();
+	}
+
+	private void writeInheritedAttributes(EdgeClass edgeClass, StringWriter w) {
+		for (SpecializesEdgeClass specializes : edgeClass
+				.getSpecializesEdgeClassIncidences(EdgeDirection.OUT)) {
+			EdgeClass superClass = (EdgeClass) specializes.getOmega();
+			if (!(superClass.getFirstHasAttribute(EdgeDirection.OUT) == null)) {
+				w.append("\nInherited attributes from "
+						+ superClass.getQualifiedName() + ":");
+			}
+			sg2tg.printAttributes(superClass
+					.getFirstHasAttribute(EdgeDirection.OUT));
+			writeInheritedAttributes(superClass, w);
+		}
+	}
+
+	private void writeInheritedAttributes(VertexClass vertexClass,
+			StringWriter w) {
+		for (SpecializesVertexClass specializes : vertexClass
+				.getSpecializesVertexClassIncidences(EdgeDirection.OUT)) {
+			VertexClass superClass = (VertexClass) specializes.getOmega();
+			if (!(superClass.getFirstHasAttribute(EdgeDirection.OUT) == null)) {
+				w.append("\nInherited attributes from "
+						+ superClass.getQualifiedName() + ":");
+			}
+			sg2tg.printAttributes(superClass
+					.getFirstHasAttribute(EdgeDirection.OUT));
+			writeInheritedAttributes(superClass, w);
+		}
 	}
 
 	private void writeVertexClassComplexTypes() throws XMLStreamException {
@@ -299,13 +330,13 @@ public class SchemaGraph2XSD {
 	}
 
 	private void writeAttributes(AttributedElementClass attrElemClass)
-			throws XMLStreamException {
+	throws XMLStreamException {
 		for (HasAttribute ha : attrElemClass
 				.getHasAttributeIncidences(EdgeDirection.OUT)) {
 			Attribute attr = (Attribute) ha.getOmega();
 			String name = attr.getName();
 			Domain type = (Domain) attr.getFirstHasDomain(EdgeDirection.OUT)
-					.getOmega();
+			.getOmega();
 			writeXSDAttribute(name, getXSDType(type));
 		}
 		if (attrElemClass instanceof VertexClass) {
@@ -320,14 +351,13 @@ public class SchemaGraph2XSD {
 			}
 		} else if (attrElemClass instanceof GraphClass) {
 			// nothing to do here
-		} else {
+		} else
 			throw new RuntimeException("Don't know what to do with '"
 					+ attrElemClass.getQualifiedName() + "'.");
-		}
 	}
 
 	private void writeStartXSDComplexType(String name, boolean isAbstract)
-			throws XMLStreamException {
+	throws XMLStreamException {
 
 		xml.writeStartElement(XSD_NS_PREFIX, XSD_COMPLEXTYPE,
 				XMLConstants.W3C_XML_SCHEMA_NS_URI);
@@ -338,7 +368,7 @@ public class SchemaGraph2XSD {
 	}
 
 	private void writeStartXSDElement(String name, String type)
-			throws XMLStreamException {
+	throws XMLStreamException {
 
 		xml.writeStartElement(XSD_NS_PREFIX, XSD_ELEMENT,
 				XMLConstants.W3C_XML_SCHEMA_NS_URI);
@@ -349,7 +379,7 @@ public class SchemaGraph2XSD {
 	}
 
 	private void writeSimpleXSDExtension(String extendedType)
-			throws XMLStreamException {
+	throws XMLStreamException {
 
 		// Is needed for an extension
 		xml.writeStartElement(XSD_NS_PREFIX, XSD_COMPLEXCONTENT,
@@ -366,7 +396,7 @@ public class SchemaGraph2XSD {
 	}
 
 	private void writeStartXSDExtension(String extendedType)
-			throws XMLStreamException {
+	throws XMLStreamException {
 
 		// Is needed for an extension
 		xml.writeStartElement(XSD_NS_PREFIX, XSD_COMPLEXCONTENT,
@@ -384,12 +414,12 @@ public class SchemaGraph2XSD {
 	}
 
 	private void writeXSDAttribute(String name, String type)
-			throws XMLStreamException {
+	throws XMLStreamException {
 		writeXSDAttribute(name, type, null);
 	}
 
 	private void writeXSDAttribute(String name, String type, String use)
-			throws XMLStreamException {
+	throws XMLStreamException {
 		xml.writeStartElement(XSD_NS_PREFIX, XSD_ATTRIBUTE,
 				XMLConstants.W3C_XML_SCHEMA_NS_URI);
 		xml.writeAttribute(XSD_ATTRIBUTE_NAME, name);
@@ -402,21 +432,16 @@ public class SchemaGraph2XSD {
 	}
 
 	private String getXSDType(Domain domain) {
-		if (domain instanceof IntDomain) {
+		if (domain instanceof IntDomain)
 			return XSD_DOMAIN_INTEGER;
-		}
-		if (domain instanceof LongDomain) {
+		if (domain instanceof LongDomain)
 			return XSD_DOMAIN_LONG;
-		}
-		if (domain instanceof BooleanDomain) {
+		if (domain instanceof BooleanDomain)
 			return XSD_DOMAIN_BOOLEAN;
-		}
-		if (domain instanceof DoubleDomain) {
+		if (domain instanceof DoubleDomain)
 			return XSD_DOMAIN_DECIMAL;
-		}
-		if (domain instanceof StringDomain) {
+		if (domain instanceof StringDomain)
 			return XSD_DOMAIN_STRING;
-		}
 
 		return XML_NAMESPACE_PREFIX + ":" + queryDomainType(domain);
 	}
@@ -433,9 +458,8 @@ public class SchemaGraph2XSD {
 	private String queryDomainType(Domain domain) {
 
 		// Returns an existing mapping.
-		if (domainMap.containsKey(domain)) {
+		if (domainMap.containsKey(domain))
 			return domainMap.get(domain);
-		}
 
 		// Creates a new type string.
 		String typeName = XSD_SIMPLETYPE_PREFIX;
@@ -445,10 +469,10 @@ public class SchemaGraph2XSD {
 				0, index);
 
 		typeName += domain.getQualifiedName().replace(" ", "")
-				.replace(',', '-').replace('<', '_').replace('>', '_');
+		.replace(',', '-').replace('<', '_').replace('>', '_');
 
 		assert (!domainMap.values().contains(typeName)) : "FIXME! \"domainMap\" already contains a string \""
-				+ typeName + "\" of the Domain '" + domain + "'!";
+			+ typeName + "\" of the Domain '" + domain + "'!";
 
 		// Stores the new type string.
 		domainMap.put(domain, typeName);
@@ -476,7 +500,7 @@ public class SchemaGraph2XSD {
 	}
 
 	private void createComplexDomain(Domain domain, String typeName)
-			throws XMLStreamException {
+	throws XMLStreamException {
 		//
 		xml.writeStartElement(XSD_NS_PREFIX, XSD_SIMPLETYPE,
 				XMLConstants.W3C_XML_SCHEMA_NS_URI);
@@ -501,7 +525,7 @@ public class SchemaGraph2XSD {
 	 * @throws XMLStreamException
 	 */
 	private void createEnumDomainType(EnumDomain domain, String typeName)
-			throws XMLStreamException {
+	throws XMLStreamException {
 
 		xml.writeStartElement(XSD_NS_PREFIX, XSD_SIMPLETYPE,
 				XMLConstants.W3C_XML_SCHEMA_NS_URI);
@@ -562,8 +586,8 @@ public class SchemaGraph2XSD {
 	 * @throws FileNotFoundException
 	 */
 	public static void main(String[] args) throws GraphIOException,
-			FileNotFoundException, XMLStreamException,
-			FactoryConfigurationError {
+	FileNotFoundException, XMLStreamException,
+	FactoryConfigurationError {
 		if (args.length != 2) {
 			usage();
 		}
@@ -584,7 +608,7 @@ public class SchemaGraph2XSD {
 
 	private static void usage() {
 		System.err
-				.println("Usage: java SchemaGraph2XSD schemaGraphFile.tg my-xml-schema.xsd");
+		.println("Usage: java SchemaGraph2XSD schemaGraphFile.tg my-xml-schema.xsd");
 		System.exit(1);
 	}
 

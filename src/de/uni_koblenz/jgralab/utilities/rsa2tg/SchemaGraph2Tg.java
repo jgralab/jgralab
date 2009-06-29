@@ -1012,7 +1012,7 @@ public class SchemaGraph2Tg {
 	 *            {@link HasAttribute}, which should be transformed to TG
 	 *            string.
 	 */
-	private void printAttributes(HasAttribute hasAttribute) {
+	public void printAttributes(HasAttribute hasAttribute) {
 
 		Attribute attribute;
 
