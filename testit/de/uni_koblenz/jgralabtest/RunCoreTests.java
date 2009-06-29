@@ -34,7 +34,7 @@ import org.junit.runners.Suite;
 @RunWith(Suite.class)
 @Suite.SuiteClasses( { EdgeListTest.class, IncidenceListTest.class,
 		LoadTest.class, VertexListTest.class, VertexTest.class, EdgeTest.class,
-		RoleNameTest.class })
+		RoleNameTest.class, MultiplicityTest.class })
 public class RunCoreTests {
 
 }

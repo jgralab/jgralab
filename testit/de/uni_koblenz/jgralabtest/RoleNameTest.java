@@ -2531,9 +2531,4 @@ public class RoleNameTest {
 				+ "VertexClass B;"
 				+ "EdgeClass E from A (0,*) to B (0,*) role x;");
 	}
-
-	// TODO Folgende Fälle müssen Fehler werfen
-	// EdgeClass G: E from C (0,) to D (1,3) role x redefines x;
-	// EdgeClass G from C (0,) to D (1,3) role x redefines x;
-	// Überschneidung mit Attributnamen und Rollennamen//reserved Words
 }
