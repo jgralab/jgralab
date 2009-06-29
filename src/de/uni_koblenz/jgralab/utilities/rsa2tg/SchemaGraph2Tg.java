@@ -212,7 +212,7 @@ public class SchemaGraph2Tg {
 	 */
 	public void run() throws IOException {
 
-		assert (outputFilename != null || !outputFilename.equals(EMPTY)) : "No filename specified!";
+		assert ((outputFilename != null) || !outputFilename.equals(EMPTY)) : "No filename specified!";
 		assert (schemaGraph != null) : "No SchemaGraph specified!";
 		stream = new PrintWriter(outputFilename);
 
@@ -287,9 +287,8 @@ public class SchemaGraph2Tg {
 
 		// If the print out should be hierarchical, no more printing beyond this
 		// point
-		if (hierarchical) {
+		if (hierarchical)
 			return;
-		}
 
 		Domain domain = schemaGraph.getFirstDomain();
 		while (domain != null) {
@@ -366,9 +365,8 @@ public class SchemaGraph2Tg {
 	 */
 	private void printPackageDeclaration(Package tgPackage) {
 
-		if (tgPackage == null) {
+		if (tgPackage == null)
 			return;
-		}
 
 		if (hierarchical) {
 			packageName = tgPackage.getQualifiedName();
@@ -387,11 +385,11 @@ public class SchemaGraph2Tg {
 			// First only VertexClass should be printed!
 			GraphElementClass graphElement;
 			Iterator<ContainsGraphElementClass> itGraphElement = tgPackage
-					.getContainsGraphElementClassIncidences(OUTGOING)
-					.iterator();
+			.getContainsGraphElementClassIncidences(OUTGOING)
+			.iterator();
 			while (itGraphElement.hasNext()) {
 				graphElement = (GraphElementClass) itGraphElement.next()
-						.getOmega();
+				.getOmega();
 				if (graphElement instanceof VertexClass) {
 					printVertexClassDefinition((VertexClass) graphElement);
 				}
@@ -402,7 +400,7 @@ public class SchemaGraph2Tg {
 					OUTGOING).iterator();
 			while (itGraphElement.hasNext()) {
 				graphElement = (GraphElementClass) itGraphElement.next()
-						.getOmega();
+				.getOmega();
 				if (graphElement instanceof EdgeClass) {
 					printEdgeClassDefinition((EdgeClass) graphElement);
 				}
@@ -412,7 +410,7 @@ public class SchemaGraph2Tg {
 		// All Domain, VertexClass and EdgeClass objects were printed. Now alle
 		// Sub packages needs to be printed.
 		ContainsSubPackage subPackage = tgPackage
-				.getFirstContainsSubPackage(OUTGOING);
+		.getFirstContainsSubPackage(OUTGOING);
 
 		while (subPackage != null) {
 			printPackageDeclaration((Package) subPackage.getOmega());
@@ -453,9 +451,21 @@ public class SchemaGraph2Tg {
 
 		printAttributes(vertexClass.getFirstHasAttribute(OUTGOING));
 
+		printInheritedAttributes(vertexClass);
+
 		printConstraints(vertexClass.getFirstHasConstraint(OUTGOING));
 
 		println(DELIMITER);
+	}
+
+	private void printInheritedAttributes(VertexClass vertexClass) {
+		for (SpecializesVertexClass specializes : vertexClass
+				.getSpecializesVertexClassIncidences(EdgeDirection.OUT)) {
+			VertexClass superClass = (VertexClass) specializes.getOmega();
+			print("Inherited from " + superClass.getQualifiedName() + ":\n");
+			printAttributes(superClass.getFirstHasAttribute(EdgeDirection.OUT));
+			printInheritedAttributes(superClass);
+		}
 	}
 
 	/**
@@ -509,8 +519,8 @@ public class SchemaGraph2Tg {
 		printFromEdge(edge.getFirstFrom(OUTGOING));
 		printToEdge(edge.getFirstTo(OUTGOING));
 
-		if (edge instanceof AggregationClass
-				|| edge instanceof CompositionClass) {
+		if ((edge instanceof AggregationClass)
+				|| (edge instanceof CompositionClass)) {
 			AggregationClass aggregation = (AggregationClass) edge;
 			print(SUBELEMENT, AGGREGATE, SPACE,
 					aggregation.isAggregateFrom() ? FROM : TO);
@@ -593,7 +603,7 @@ public class SchemaGraph2Tg {
 	private void printToEdge(To to) {
 
 		assert (to != null) : "Object of type Aggregation (To / From) is null!";
-		assert (to instanceof To || to instanceof From) : "Object in variable aggregation have to be of type To or From";
+		assert ((to instanceof To) || (to instanceof From)) : "Object in variable aggregation have to be of type To or From";
 		// Getting referenced VertexClass
 		VertexClass vertex = (VertexClass) to.getOmega();
 		assert (vertex != null) : "There is no VertexClass object! \"vertex == null\"";
@@ -634,7 +644,7 @@ public class SchemaGraph2Tg {
 	private void printFromOrToEdge(boolean from, String vertexName, int min,
 			int max, String roleName, Set<String> redefinedRoles) {
 
-		assert (vertexName != null || roleName != null || redefinedRoles != null) : "Object of type Aggregation (To / From) is null!";
+		assert ((vertexName != null) || (roleName != null) || (redefinedRoles != null)) : "Object of type Aggregation (To / From) is null!";
 
 		print(SUBELEMENT, (from) ? FROM : TO, SPACE, getName(vertexName));
 
@@ -666,15 +676,13 @@ public class SchemaGraph2Tg {
 	 */
 	private void printRole(String role, Set<String> redefinedRoles) {
 
-		if (role == null || role.equals(EMPTY)) {
+		if ((role == null) || role.equals(EMPTY))
 			return;
-		}
 
 		print(SPACE, ROLE, SPACE, role);
 
-		if (redefinedRoles == null) {
+		if (redefinedRoles == null)
 			return;
-		}
 
 		Iterator<String> it = redefinedRoles.iterator();
 		if (it.hasNext()) {
@@ -703,7 +711,7 @@ public class SchemaGraph2Tg {
 	 *            {@link To} edge, which will be transformed to TG string.
 	 */
 	private void printMultiplicity(int from, int till) {
-		assert (from >= 0 && till >= 0) : "from / to must be a positive number plus null";
+		assert ((from >= 0) && (till >= 0)) : "from / to must be a positive number plus null";
 
 		String stringFrom = (from == Integer.MAX_VALUE) ? STAR : Integer
 				.toString(from);
@@ -763,9 +771,9 @@ public class SchemaGraph2Tg {
 			printRecordDomain((RecordDomain) domain);
 		} else
 
-		if (domain instanceof EnumDomain) {
-			printEnumDomain((EnumDomain) domain);
-		}
+			if (domain instanceof EnumDomain) {
+				printEnumDomain((EnumDomain) domain);
+			}
 	}
 
 	/**
@@ -792,12 +800,12 @@ public class SchemaGraph2Tg {
 	private void printRecordDomain(RecordDomain recordDomain) {
 		// Gets the first outgoing HasRecordDomainComponent edge
 		HasRecordDomainComponent hasComponent = recordDomain
-				.getFirstHasRecordDomainComponent(OUTGOING);
+		.getFirstHasRecordDomainComponent(OUTGOING);
 
 		// A RecordDomain object must have at least one HasRecordDomainComponent
 		// edge.
 		assert (hasComponent != null) : "HasRecordDomainComponent is null of Domain "
-				+ recordDomain.getQualifiedName();
+			+ recordDomain.getQualifiedName();
 		// Gets the domain of the first record
 		Domain domain = (Domain) hasComponent.getOmega();
 
@@ -819,7 +827,7 @@ public class SchemaGraph2Tg {
 					getName(domain));
 			// Next outgoing edge
 			hasComponent = hasComponent
-					.getNextHasRecordDomainComponent(OUTGOING);
+			.getNextHasRecordDomainComponent(OUTGOING);
 		}
 		// Closes expression
 		println(ROUND_BRACKET_CLOSED, DELIMITER);
@@ -1032,11 +1040,10 @@ public class SchemaGraph2Tg {
 					.getOmega());
 			// Gets the next edge to look at
 			hasAttribute = hasAttribute.getNextHasAttribute(OUTGOING);
-		} else {
+		} else
 			// This case is important, because at the end of this method is a
 			// print, which shouldn't be executed!
 			return;
-		}
 
 		while (hasAttribute != null) {
 			// Gets the referenced Attribute at the end of this hasAttribute
@@ -1159,13 +1166,11 @@ public class SchemaGraph2Tg {
 	 */
 	private String getEdgeClassIdentifier(EdgeClass edge) {
 
-		if (edge instanceof CompositionClass) {
+		if (edge instanceof CompositionClass)
 			return COMPOSITION_CLASS;
-		}
 
-		if (edge instanceof AggregationClass) {
+		if (edge instanceof AggregationClass)
 			return AGGREGATION_CLASS;
-		}
 
 		return EDGE_CLASS;
 	}
@@ -1198,12 +1203,14 @@ public class SchemaGraph2Tg {
 
 		String qualifiedName = element.getQualifiedName();
 
-		if (element instanceof RecordDomain || element instanceof EnumDomain) {
+		if ((element instanceof RecordDomain)
+				|| (element instanceof EnumDomain))
 			return getName(qualifiedName);
-		} else {
+		else {
 			int index = qualifiedName.lastIndexOf('.');
 
-			assert (index == -1 || qualifiedName.substring(0, index).length() == 0) : "FIXME! A basic domain is not mapped the default package.";
+			assert ((index == -1) || (qualifiedName.substring(0, index)
+					.length() == 0)) : "FIXME! A basic domain is not mapped the default package.";
 			return qualifiedName;
 		}
 	}
@@ -1219,21 +1226,18 @@ public class SchemaGraph2Tg {
 	 */
 	private String getName(String name) {
 		assert (name != null) : "Object of type String is null!";
-		if (!hierarchical) {
+		if (!hierarchical)
 			return name;
-		}
 
 		int index = name.lastIndexOf('.');
 		String pkgName = (index == -1) ? "" : name.substring(0, index);
 		String simpleName = (index == -1) ? name : name.substring(index + 1);
 
-		if (pkgName.equals(packageName)) {
+		if (pkgName.equals(packageName))
 			return simpleName;
-		}
 
-		if (pkgName.length() == 0) {
+		if (pkgName.length() == 0)
 			return POINT + simpleName;
-		}
 
 		return name;
 	}
@@ -1252,11 +1256,10 @@ public class SchemaGraph2Tg {
 		int p = qualifiedName.lastIndexOf(".");
 		if (qualifiedName.startsWith("List<")
 				|| qualifiedName.startsWith("Set<")
-				|| qualifiedName.startsWith("Map<") || p < 0) {
+				|| qualifiedName.startsWith("Map<") || (p < 0))
 			return qualifiedName;
-		} else {
+		else
 			return qualifiedName.substring(p + 1);
-		}
 	}
 
 	/**
