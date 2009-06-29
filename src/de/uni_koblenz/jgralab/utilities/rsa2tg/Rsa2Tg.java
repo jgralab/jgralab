@@ -1498,7 +1498,6 @@ public class Rsa2Tg extends DefaultHandler {
 							"FIXME: You should not get here!");
 				}
 			}
-			// }
 		}
 
 		assert e != null;
