@@ -1479,27 +1479,26 @@ public class Rsa2Tg extends DefaultHandler {
 			ec = correctAggregationAndComposition(ec, aggregation, composition);
 			idMap.put(id, ec);
 
-			if (currentClass instanceof EdgeClass) {
-				// an ownedEnd of an association with a possibly preliminary
-				// vertex class
-				VertexClass vc = (VertexClass) e.getOmega();
-				if (preliminaryVertices.contains(vc)) {
-					String typeId = atts.getValue("type");
-					assert typeId != null;
-					AttributedElement ae = idMap.get(typeId);
-					if (ae != null && !vc.equals(ae)) {
-						assert ae instanceof VertexClass;
-						e.setOmega((VertexClass) ae);
-						vc.delete();
-						preliminaryVertices.remove(vc);
-					} else if (ae == null) {
-						idMap.put(typeId, vc);
-					} else {
-						throw new RuntimeException(
-								"FIXME: You should not get here!");
-					}
+			// an ownedEnd of an association or an ownedAttribute of a class
+			// with a possibly preliminary vertex class
+			VertexClass vc = (VertexClass) e.getOmega();
+			if (preliminaryVertices.contains(vc)) {
+				String typeId = atts.getValue("type");
+				assert typeId != null;
+				AttributedElement ae = idMap.get(typeId);
+				if (ae != null && !vc.equals(ae)) {
+					assert ae instanceof VertexClass;
+					e.setOmega((VertexClass) ae);
+					vc.delete();
+					preliminaryVertices.remove(vc);
+				} else if (ae == null) {
+					idMap.put(typeId, vc);
+				} else {
+					throw new RuntimeException(
+							"FIXME: You should not get here!");
 				}
 			}
+			// }
 		}
 
 		assert e != null;
