@@ -451,21 +451,9 @@ public class SchemaGraph2Tg {
 
 		printAttributes(vertexClass.getFirstHasAttribute(OUTGOING));
 
-		printInheritedAttributes(vertexClass);
-
 		printConstraints(vertexClass.getFirstHasConstraint(OUTGOING));
 
 		println(DELIMITER);
-	}
-
-	private void printInheritedAttributes(VertexClass vertexClass) {
-		for (SpecializesVertexClass specializes : vertexClass
-				.getSpecializesVertexClassIncidences(EdgeDirection.OUT)) {
-			VertexClass superClass = (VertexClass) specializes.getOmega();
-			print("Inherited from " + superClass.getQualifiedName() + ":\n");
-			printAttributes(superClass.getFirstHasAttribute(EdgeDirection.OUT));
-			printInheritedAttributes(superClass);
-		}
 	}
 
 	/**
