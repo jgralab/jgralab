@@ -374,15 +374,43 @@ public class Rsa2Tg extends DefaultHandler {
 			System.err.println("Remaining preliminary vertices ("
 					+ preliminaryVertices.size() + "):");
 			for (Vertex v : preliminaryVertices) {
-				System.err.println(v);
+				try {
+					System.err.println(attributedElement2String(v));
+				} catch (NoSuchFieldException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 			}
 		}
-		assert preliminaryVertices.isEmpty();
+		// assert preliminaryVertices.isEmpty();
+		if (!preliminaryVertices.isEmpty()) {
+			throw new SAXException("There are still vertices left over. ");
+		}
 
 		processed = true;
 		if (!suppressOutput) {
 			writeOutput();
 		}
+	}
+
+	private String attributedElement2String(AttributedElement a)
+			throws NoSuchFieldException {
+		StringBuilder sb = new StringBuilder();
+
+		de.uni_koblenz.jgralab.schema.AttributedElementClass aec = a
+				.getAttributedElementClass();
+		sb.append(a);
+		sb.append(" { ");
+
+		for (de.uni_koblenz.jgralab.Attribute attr : aec.getAttributeList()) {
+			sb.append(attr.getName());
+			sb.append(" = ");
+			sb.append(a.getAttribute(attr.getName()));
+			sb.append("; ");
+		}
+		sb.append("}\n");
+
+		return sb.toString();
 	}
 
 	/**
