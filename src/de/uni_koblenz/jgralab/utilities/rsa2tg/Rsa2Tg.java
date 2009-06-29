@@ -802,11 +802,9 @@ public class Rsa2Tg extends DefaultHandler {
 		for (int i = 0; i < ch.length; ++i) {
 			char c = ch[i];
 			if (inString) {
-				if (escape) {
-					// do nothing
-				} else if (c == '\\') {
+				if (c == '\\') {
 					escape = true;
-				} else if (c == '"') {
+				} else if (!escape && (c == '"')) {
 					++stringCount;
 					switch (stringCount) {
 					case 1:
@@ -822,9 +820,13 @@ public class Rsa2Tg extends DefaultHandler {
 								beginIndex + 1, i).trim());
 						break;
 					default:
-						throw new SAXException("Illegal constraint format.");
+						throw new SAXException(
+								"Illegal constraint format. The constraint text was '"
+										+ text + "'.");
 					}
 					inString = false;
+				} else if (escape && (c == '"')) {
+					escape = false;
 				}
 			} else {
 				if (Character.isWhitespace(c)) {
@@ -834,14 +836,18 @@ public class Rsa2Tg extends DefaultHandler {
 						inString = true;
 						beginIndex = i;
 					} else {
-						throw new SAXException("Illegal constraint format.");
+						throw new SAXException(
+								"Illegal constraint format. The constraint text was '"
+										+ text + "'.  Expected '\"' but got '"
+										+ c + "'.  (position = " + i + ")");
 					}
 				}
 			}
-
 		}
 		if (inString || escape || stringCount < 2 || stringCount > 3) {
-			throw new SAXException("Illegal constraint format.");
+			throw new SAXException(
+					"Illegal constraint format.  The constraint text was '"
+							+ text + "'.");
 		}
 	}
 
