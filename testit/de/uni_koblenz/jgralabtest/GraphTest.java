@@ -5,6 +5,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
+import java.io.IOException;
 import java.util.Iterator;
 import java.util.List;
 
@@ -13,9 +14,15 @@ import java.util.List;
 import org.junit.Before;
 import org.junit.Test;
 
+import de.uni_koblenz.jgralab.AttributedElement;
 import de.uni_koblenz.jgralab.Edge;
+import de.uni_koblenz.jgralab.GraphIO;
+import de.uni_koblenz.jgralab.GraphIOException;
 import de.uni_koblenz.jgralab.Vertex;
+import de.uni_koblenz.jgralab.impl.GraphImpl;
+import de.uni_koblenz.jgralab.schema.AttributedElementClass;
 import de.uni_koblenz.jgralab.schema.EdgeClass;
+import de.uni_koblenz.jgralab.schema.GraphClass;
 import de.uni_koblenz.jgralab.schema.VertexClass;
 import de.uni_koblenz.jgralabtest.schemas.vertextest.*;
 import de.uni_koblenz.jgralabtest.schemas.minimal.MinimalGraph;
@@ -178,11 +185,68 @@ public class GraphTest {
 	
 	@Test
 	public void testLoadingCompleted(){
+		//TODO
+		GraphTestKlasse gTest = new GraphTestKlasse(graph.getGraphClass());
+		assertEquals("nothing", gTest.getDone());
+		
+		System.out.println("Done testing loadingCompleted.");
 	}
 	
 	@Test
 	public void testIsGraphModified(){
+		long l1 = graph.getGraphVersion();
+		long l2 = graph2.getGraphVersion();
 		
+		assertEquals(false, graph.isGraphModified(l1));
+		assertEquals(false, graph2.isGraphModified(l2));
+		
+		graph.createEdge(SubLink.class, v9, v5);
+		graph2.createSubNode();
+		
+		assertEquals(true, graph.isGraphModified(l1));
+		assertEquals(true, graph2.isGraphModified(l2));
+		l1 = graph.getGraphVersion();
+		l2 = graph2.getGraphVersion();
+		
+		Edge e1 = graph.createEdge(Link.class, v1, v6);
+		graph2.createSuperNode();
+		assertEquals(true, graph.isGraphModified(l1));
+		assertEquals(true, graph2.isGraphModified(l2));
+		l1 = graph.getGraphVersion();
+		l2 = graph2.getGraphVersion();
+		
+		graph.createEdge(LinkBack.class, v7, v10);
+		graph2.createDoubleSubNode();
+		assertEquals(true, graph.isGraphModified(l1));
+		assertEquals(true, graph2.isGraphModified(l2));
+		l1 = graph.getGraphVersion();
+		l2 = graph2.getGraphVersion();
+		
+		Edge e2 = graph.createEdge(SubLink.class, v9, v5);
+		assertEquals(true, graph.isGraphModified(l1));
+		assertEquals(false, graph2.isGraphModified(l2));
+		l1 = graph.getGraphVersion();
+		
+		graph.deleteEdge(e1);
+		assertEquals(true, graph.isGraphModified(l1));
+		assertEquals(false, graph2.isGraphModified(l2));
+		l1 = graph.getGraphVersion();
+		
+		graph.deleteVertex(v3);
+		assertEquals(true, graph.isGraphModified(l1));
+		assertEquals(false, graph2.isGraphModified(l2));
+		l1 = graph.getGraphVersion();
+		
+		graph.deleteEdge(e2);
+		assertEquals(true, graph.isGraphModified(l1));
+		assertEquals(false, graph2.isGraphModified(l2));
+		l1 = graph.getGraphVersion();
+		
+		graph.deleteVertex(v9);
+		assertEquals(true, graph.isGraphModified(l1));
+		assertEquals(false, graph2.isGraphModified(l2));
+		
+		System.out.println("Done testing isGraphModified.");
 	}
 	
 	@Test
@@ -727,20 +791,135 @@ public class GraphTest {
 	
 	@Test
 	public void testVertexDeleted(){
+		GraphTestKlasse gTest = new GraphTestKlasse(graph.getGraphClass());
+		String name = "";
+		
+		Vertex v1 = gTest.createVertex(SuperNode.class);
+		name = "vertexDeleted"+v1.toString();
+		gTest.deleteVertex(v1);
+		assertEquals(name, gTest.getDone());
+		
+		Vertex v2 = gTest.createVertex(SubNode.class);
+		Vertex v3 = gTest.createVertex(DoubleSubNode.class);
+		name = "vertexDeleted"+v2.toString();
+		gTest.deleteVertex(v2);
+		assertEquals(name, gTest.getDone());
+		
+		Vertex v4 = gTest.createVertex(SubNode.class);
+		Vertex v5 = gTest.createVertex(SuperNode.class);
+		Vertex v6 = gTest.createVertex(DoubleSubNode.class);
+		Vertex v7 = gTest.createVertex(DoubleSubNode.class);
+		Vertex v8 = gTest.createVertex(SuperNode.class);
+		Vertex v9 = gTest.createVertex(SubNode.class);
+		Vertex v10 = gTest.createVertex(SubNode.class);
+
+		name = "vertexDeleted"+v10.toString();
+		gTest.deleteVertex(v10);
+		assertEquals(name, gTest.getDone());
+
+		name = "vertexDeleted"+v5.toString();
+		gTest.deleteVertex(v5);
+		assertEquals(name, gTest.getDone());
+
+		name = "vertexDeleted"+v7.toString();
+		gTest.deleteVertex(v7);
+		assertEquals(name, gTest.getDone());
+
+		name = "vertexDeleted"+v3.toString();
+		gTest.deleteVertex(v3);
+		assertEquals(name, gTest.getDone());
+
+		name = "vertexDeleted"+v9.toString();
+		gTest.deleteVertex(v9);
+		assertEquals(name, gTest.getDone());
+
+		name = "vertexDeleted"+v6.toString();
+		gTest.deleteVertex(v6);
+		assertEquals(name, gTest.getDone());
+
+		name = "vertexDeleted"+v4.toString();
+		gTest.deleteVertex(v4);
+		assertEquals(name, gTest.getDone());
+
+		name = "vertexDeleted"+v8.toString();
+		gTest.deleteVertex(v8);
+		assertEquals(name, gTest.getDone());
+		
+		gTest = new GraphTestKlasse(graph2.getGraphClass());
+		Vertex v11 = gTest.createVertex(DoubleSubNode.class);
+		name = "vertexDeleted"+v11.toString();
+		gTest.deleteVertex(v11);
+		assertEquals(name, gTest.getDone());
+		
+		Vertex v12 = gTest.createVertex(DoubleSubNode.class);
+		Vertex v13 = gTest.createVertex(SuperNode.class);
+		Vertex v14 = gTest.createVertex(SubNode.class);
+		name ="vertexDeleted"+v14.toString();
+		gTest.deleteVertex(v14);
+		assertEquals(name, gTest.getDone());
+		
+		name="vertexDeleted"+v13.toString();
+		gTest.deleteVertex(v13);
+		assertEquals(name, gTest.getDone());
+		
+		Vertex v15 = gTest.createVertex(SubNode.class);
+		Vertex v16 = gTest.createVertex(SuperNode.class);
+		name = "vertexDeleted" + v15.toString();
+		gTest.deleteVertex(v15);
+		assertEquals(name, gTest.getDone());
+		
+		name = "vertexDeleted" + v12.toString();
+		gTest.deleteVertex(v12);
+		assertEquals(name, gTest.getDone());
+		
+		name = "vertexDeleted" + v16.toString();
+		gTest.deleteVertex(v16);
+		assertEquals(name, gTest.getDone());
+		
+		System.out.println("Done testing vertexDeleted.");
 	}
 	
 	@Test
 	public void testVertexAdded(){
+		GraphTestKlasse gTest = new GraphTestKlasse(graph.getGraphClass());
+		Vertex v= gTest.createVertex(SubNode.class);
+		assertEquals("vertexAdded"+v.toString(), gTest.getDone());
+		
+		v = gTest.createVertex(SuperNode.class);
+		assertEquals("vertexAdded"+v.toString(), gTest.getDone());
+		
+		v = gTest.createVertex(DoubleSubNode.class);
+		assertEquals("vertexAdded"+v.toString(), gTest.getDone());
+		
+		v = gTest.createVertex(SuperNode.class);
+		assertEquals("vertexAdded"+v.toString(), gTest.getDone());
+		
+		v = gTest.createVertex(DoubleSubNode.class);
+		assertEquals("vertexAdded"+v.toString(), gTest.getDone());
+		
+		for(int i=0; i<100; i++){
+			v = gTest.createVertex(SubNode.class);
+			assertEquals("vertexAdded"+v.toString(), gTest.getDone());
+		}
+		
+		v = gTest.createVertex(SuperNode.class);
+		assertEquals("vertexAdded"+v.toString(), gTest.getDone());
+		
+		gTest = new GraphTestKlasse(graph2.getGraphClass());
+		v = gTest.createVertex(SuperNode.class);
+		assertEquals("vertexAdded"+v.toString(), gTest.getDone());
+		
+		v = gTest.createVertex(DoubleSubNode.class);
+		assertEquals("vertexAdded"+v.toString(), gTest.getDone());
+		
+		v = gTest.createVertex(SubNode.class);
+		assertEquals("vertexAdded"+v.toString(), gTest.getDone());
+		
+		System.out.println("Done testing vertexAdded.");
 	}
 	
 	@Test
 	public void testDeleteEdge(){
-		//TODO continue
-		/*
-		 * Preconditions of deleteEdge: e.isValid()
-		 * Postconditions of deleteEdge: !e.isValid() && !containsEdge(e) && 
-		 * getEdge(e.getId()) == null
-		 */
 		SubNode v13 = graph2.createSubNode();
 		SuperNode v14 = graph2.createSuperNode();
 		DoubleSubNode v15 = graph2.createDoubleSubNode();
@@ -754,30 +933,87 @@ public class GraphTest {
 		LinkBack e7 = graph.createEdge(LinkBack.class, v5, v2);
 		LinkBack e8 = graph.createEdge(LinkBack.class, v14, v13);
 		LinkBack e9 = graph.createEdge(LinkBack.class, v5, v10);
-//		SubLink e10 = graph2.createSubLink(v7, v6);
+		Link e10 = graph.createEdge(Link.class, v12, v7);
+		SubLink e11 = graph.createEdge(SubLink.class, v10, v6);
+		SubLink e12 = graph.createEdge(SubLink.class, v9, v7);
+		//SubLink e10 = graph2.createEdge(SubLink.class, v9, v6);
 		
+		int id = e12.getId();
+		graph.deleteEdge(e12);
+		assertFalse(e12.isValid());
+		assertFalse(graph.containsEdge(e12));
+		assertEquals(null, graph.getEdge(id));
+		
+		id = e1.getId();
 		graph.deleteEdge(e1);
+		assertFalse(e1.isValid());
 		assertFalse(graph.containsEdge(e1));
+		assertEquals(null, graph.getEdge(id));
+		
+		id = e2.getId();
 		graph.deleteEdge(e2);
+		assertFalse(e2.isValid());
 		assertFalse(graph.containsEdge(e2));
-		graph.deleteEdge(e3);
-		assertFalse(graph.containsEdge(e3));
-		graph.deleteEdge(e9);
-		assertFalse(graph.containsEdge(e9));
-		graph.deleteEdge(e4);
-		assertFalse(graph.containsEdge(e4));
-		graph.deleteEdge(e5);
-		assertFalse(graph.containsEdge(e5));
-		graph.deleteEdge(e6);
-		assertFalse(graph.containsEdge(e6));
+		assertEquals(null, graph.getEdge(id));
+
+		id = e7.getId();
 		graph.deleteEdge(e7);
+		assertFalse(e7.isValid());
 		assertFalse(graph.containsEdge(e7));
+		assertEquals(null, graph.getEdge(id));
+		
+		id = e3.getId();
+		graph.deleteEdge(e3);
+		assertFalse(e3.isValid());
+		assertFalse(graph.containsEdge(e3));
+		assertEquals(null, graph.getEdge(id));
+		
+		id = e9.getId();
+		graph.deleteEdge(e9);
+		assertFalse(e9.isValid());
+		assertFalse(graph.containsEdge(e9));
+		assertEquals(null, graph.getEdge(id));
+		
+		id = e4.getId();
+		graph.deleteEdge(e4);
+		assertFalse(e4.isValid());
+		assertFalse(graph.containsEdge(e4));
+		assertEquals(null, graph.getEdge(id));
+		
+		id = e10.getId();
+		graph.deleteEdge(e10);
+		assertFalse(e10.isValid());
+		assertFalse(graph.containsEdge(e10));
+		assertEquals(null, graph.getEdge(id));
+		
+		id = e5.getId();
+		graph.deleteEdge(e5);
+		assertFalse(e5.isValid());
+		assertFalse(graph.containsEdge(e5));
+		assertEquals(null, graph.getEdge(id));
+		
+		id = e8.getId();
 		graph.deleteEdge(e8);
+		assertFalse(e8.isValid());
 		assertFalse(graph.containsEdge(e8));
+		assertEquals(null, graph.getEdge(id));
+
+		id = e11.getId();
+		graph.deleteEdge(e11);
+		assertFalse(e11.isValid());
+		assertFalse(graph.containsEdge(e11));
+		assertEquals(null, graph.getEdge(id));
+		
+		id = e6.getId();
+		graph.deleteEdge(e6);
+		assertFalse(e6.isValid());
+		assertFalse(graph.containsEdge(e6));
+		assertEquals(null, graph.getEdge(id));
 		
 		//border cases
 		
-		//errors
+		//faults
+		//TODO
 		//cannot try to delete an edge which has never been created?
 		//graph.deleteEdge(e10);
 		
@@ -786,10 +1022,155 @@ public class GraphTest {
 	
 	@Test
 	public void testEdgeDeleted(){
+		GraphTestKlasse gTest = new GraphTestKlasse(graph.getGraphClass());
+		String name = "";
+		
+		Vertex v1 = gTest.createVertex(SubNode.class);
+		Vertex v2 = gTest.createVertex(SubNode.class);
+		Vertex v3 = gTest.createVertex(SuperNode.class);
+		Vertex v4 = gTest.createVertex(SuperNode.class);
+		Vertex v5 = gTest.createVertex(SuperNode.class);
+		Vertex v6 = gTest.createVertex(SuperNode.class);
+		Vertex v7 = gTest.createVertex(DoubleSubNode.class);
+		Vertex v8 = gTest.createVertex(DoubleSubNode.class);
+		Vertex v9 = gTest.createVertex(DoubleSubNode.class);
+		
+		Edge e1 = gTest.createEdge(SubLink.class, v8, v6);
+		Edge e2 = gTest.createEdge(SubLink.class, v7, v3);
+		Edge e3 = gTest.createEdge(Link.class, v1, v4);
+		Edge e4 = gTest.createEdge(Link.class, v7, v5);
+		Edge e5 = gTest.createEdge(LinkBack.class, v3, v2);
+		Edge e6 = gTest.createEdge(LinkBack.class, v6, v9);
+		
+		name = "edgeDeleted" + e4.toString();
+		gTest.deleteEdge(e4);
+		assertEquals(name, gTest.getDone());
+		
+		name = "edgeDeleted" + e2.toString();
+		gTest.deleteEdge(e2);
+		assertEquals(name, gTest.getDone());
+		
+		name = "edgeDeleted" + e6.toString();
+		gTest.deleteEdge(e6);
+		assertEquals(name, gTest.getDone());
+		
+		name = "edgeDeleted" + e3.toString();
+		gTest.deleteEdge(e3);
+		assertEquals(name, gTest.getDone());
+		
+		name = "edgeDeleted" + e1.toString();
+		gTest.deleteEdge(e1);
+		assertEquals(name, gTest.getDone());
+		
+		name = "edgeDeleted" + e5.toString();
+		gTest.deleteEdge(e5);
+		assertEquals(name, gTest.getDone());
+		
+		Edge e7 = gTest.createEdge(Link.class, v2, v3);
+		name = "edgeDeleted" + e7.toString();
+		gTest.deleteEdge(e7);
+		assertEquals(name, gTest.getDone());
+		
+		Edge e8 = gTest.createEdge(LinkBack.class, v5, v8);
+		name = "edgeDeleted" + e8.toString();
+		gTest.deleteEdge(e8);
+		assertEquals(name, gTest.getDone());
+		
+		Edge e9 = gTest.createEdge(SubLink.class, v9, v4);
+		name = "edgeDeleted" + e9.toString();
+		gTest.deleteEdge(e9);
+		assertEquals(name, gTest.getDone());
+		
+		gTest = new GraphTestKlasse(graph2.getGraphClass());
+		Vertex v10 = gTest.createVertex(SubNode.class);
+		Vertex v11 = gTest.createVertex(SuperNode.class);
+		Vertex v12 = gTest.createVertex(DoubleSubNode.class);
+		Vertex v13 = gTest.createVertex(SuperNode.class);
+		
+		Edge e10 = gTest.createEdge(SubLink.class, v12, v11);
+		Edge e11 = gTest.createEdge(Link.class, v12, v11);		
+		Edge e12 = gTest.createEdge(LinkBack.class, v11, v12);
+		Edge e13 = gTest.createEdge(Link.class, v10, v13);
+		
+		name = "edgeDeleted" + e11.toString();
+		gTest.deleteEdge(e11);
+		assertEquals(name, gTest.getDone());
+		
+		name = "edgeDeleted" + e10.toString();
+		gTest.deleteEdge(e10);
+		assertEquals(name, gTest.getDone());
+		
+		name = "edgeDeleted" + e13.toString();
+		gTest.deleteEdge(e13);
+		assertEquals(name, gTest.getDone());
+		
+		name = "edgeDeleted" + e12.toString();
+		gTest.deleteEdge(e12);
+		assertEquals(name, gTest.getDone());
+		
+		System.out.println("Done testing edgeDeleted.");
 	}
 	
 	@Test
 	public void testEdgeAdded(){
+		GraphTestKlasse gTest = new GraphTestKlasse(graph.getGraphClass());
+		
+		Vertex v1 = gTest.createVertex(SubNode.class);
+		Vertex v2 = gTest.createVertex(SubNode.class);
+		Vertex v3 = gTest.createVertex(SuperNode.class);
+		Vertex v4 = gTest.createVertex(SuperNode.class);
+		Vertex v5 = gTest.createVertex(SuperNode.class);
+		Vertex v6 = gTest.createVertex(SuperNode.class);
+		Vertex v7 = gTest.createVertex(DoubleSubNode.class);
+		Vertex v8 = gTest.createVertex(DoubleSubNode.class);
+		Vertex v9 = gTest.createVertex(DoubleSubNode.class);
+		
+		Edge e = gTest.createEdge(SubLink.class, v8, v6);
+		assertEquals("edgeAdded"+e.toString(), gTest.getDone());
+		
+		e = gTest.createEdge(SubLink.class, v7, v3);
+		assertEquals("edgeAdded"+e.toString(), gTest.getDone());
+		
+		e = gTest.createEdge(Link.class, v1, v4);
+		assertEquals("edgeAdded"+e.toString(), gTest.getDone());
+		
+		e = gTest.createEdge(Link.class, v7, v5);
+		assertEquals("edgeAdded"+e.toString(), gTest.getDone());
+		
+		e = gTest.createEdge(LinkBack.class, v3, v2);
+		assertEquals("edgeAdded"+e.toString(), gTest.getDone());
+		
+		e = gTest.createEdge(LinkBack.class, v6, v9);
+		assertEquals("edgeAdded"+e.toString(), gTest.getDone());
+		
+		e = gTest.createEdge(Link.class, v2, v3);
+		assertEquals("edgeAdded"+e.toString(), gTest.getDone());
+		
+		e = gTest.createEdge(LinkBack.class, v5, v8);
+		assertEquals("edgeAdded"+e.toString(), gTest.getDone());
+		
+		e = gTest.createEdge(SubLink.class, v9, v4);
+		assertEquals("edgeAdded"+e.toString(), gTest.getDone());
+		
+		gTest = new GraphTestKlasse(graph2.getGraphClass());
+		Vertex v10 = gTest.createVertex(SubNode.class);
+		Vertex v11 = gTest.createVertex(SuperNode.class);
+		Vertex v12 = gTest.createVertex(DoubleSubNode.class);
+		Vertex v13 = gTest.createVertex(SuperNode.class);
+		
+		e = gTest.createEdge(SubLink.class, v12, v11);
+		assertEquals("edgeAdded"+e.toString(), gTest.getDone());
+		
+		e = gTest.createEdge(Link.class, v12, v11);
+		assertEquals("edgeAdded"+e.toString(), gTest.getDone());
+		
+		e = gTest.createEdge(LinkBack.class, v11, v12);
+		assertEquals("edgeAdded"+e.toString(), gTest.getDone());
+		
+		e = gTest.createEdge(Link.class, v10, v13);
+		assertEquals("edgeAdded"+e.toString(), gTest.getDone());
+		
+		System.out.println("Done testing edgeAdded.");
 	}
 	
 	@Test
@@ -2800,6 +3181,83 @@ public class GraphTest {
 		* ist); Dafür bedarf es einen Graph, indem gelöscht wurde und dadurch
 		* Lücken entstanden sind, sodass defragment() zum Einsatz kommen kann
 		*/
+	}
+	
+	public class GraphTestKlasse extends GraphImpl{
+		
+		private String done;
+		
+		public GraphTestKlasse(GraphClass gC){
+			super("blubb", gC);
+			done ="nothing";
+		}
+
+		@Override
+		public Object getAttribute(String name) throws NoSuchFieldException {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		@Override
+		public AttributedElementClass getAttributedElementClass() {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		@Override
+		public Class<? extends AttributedElement> getM1Class() {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		@Override
+		public void readAttributeValues(GraphIO io) throws GraphIOException {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void setAttribute(String name, Object data)
+				throws NoSuchFieldException {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void writeAttributeValues(GraphIO io) throws IOException,
+				GraphIOException {
+			// TODO Auto-generated method stub
+			
+		}
+		
+		public String getDone(){
+			return done;
+		}
+		
+		@Override
+		public void loadingCompleted(){
+			done = "loadingCompleted";
+		}
+		
+		@Override
+		public void vertexDeleted(Vertex v){
+			done = "vertexDeleted" + v.toString();
+		}
+		
+		@Override
+		public void vertexAdded(Vertex v){
+			done = "vertexAdded" + v.toString();
+		}
+
+		@Override
+		public void edgeDeleted(Edge e){
+			done ="edgeDeleted" + e.toString();
+		}
+		
+		@Override
+		public void edgeAdded(Edge e){
+			done = "edgeAdded" + e.toString();
+		}
 	}
 	
 }
