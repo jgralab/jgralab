@@ -149,6 +149,11 @@ public class SchemaGraph2XSD {
 	}
 
 	public void writeXSD() throws XMLStreamException {
+
+		for (Domain domain : schemaGraph.getDomainVertices()) {
+			getXSDType(domain);
+		}
+
 		xml.writeStartDocument();
 		writeStartXSDSchema();
 
@@ -170,9 +175,6 @@ public class SchemaGraph2XSD {
 		// write all enumeration types
 		// before creating all enumerations every domain have to be queried
 		// again, to make sure, that all domain objects have been gathered.
-		for (Domain domain : schemaGraph.getDomainVertices()) {
-			getXSDType(domain);
-		}
 		xml.writeComment("Enumeration types");
 		writeAllDomainTypes();
 
