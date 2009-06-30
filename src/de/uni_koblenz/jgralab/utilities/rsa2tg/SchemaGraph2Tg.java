@@ -106,8 +106,6 @@ public class SchemaGraph2Tg {
 	private final static String AGGREGATION_CLASS = "AggregationClass";
 	private final static String COMPOSITION_CLASS = "CompositionClass";
 
-	private final static EdgeDirection OUTGOING = EdgeDirection.OUT;
-
 	/**
 	 * SchemaGraph which should be transformed to a TG file.
 	 */
@@ -284,11 +282,11 @@ public class SchemaGraph2Tg {
 
 		Edge edge;
 
-		edge = schema.getFirstDefinesGraphClass(OUTGOING);
+		edge = schema.getFirstDefinesGraphClass(EdgeDirection.OUT);
 		assert (edge != null) : "No GraphClass defined!";
 		printGraphClassDefinition((GraphClass) edge.getOmega());
 
-		edge = schema.getFirstContainsDefaultPackage(OUTGOING);
+		edge = schema.getFirstContainsDefaultPackage(EdgeDirection.OUT);
 		assert (edge != null) : "No Package defined!";
 		printPackageDeclaration((Package) edge.getOmega());
 
@@ -347,11 +345,12 @@ public class SchemaGraph2Tg {
 		assert (graph != null) : "Object of type GraphClass is null!";
 		print(GRAPH_CLASS, SPACE, graph.getQualifiedName());
 
-		// Prints all outgoing edges of type HasAttribute are interesting
-		printAttributes(graph.getFirstHasAttribute(OUTGOING));
+		// Prints all EdgeDirection.OUT edges of type HasAttribute are
+		// interesting
+		printAttributes(graph.getFirstHasAttribute(EdgeDirection.OUT));
 
-		// Only outgoing edges of type HasConstraint are interesting
-		printConstraints(graph.getFirstHasConstraint(OUTGOING));
+		// Only EdgeDirection.OUT edges of type HasConstraint are interesting
+		printConstraints(graph.getFirstHasConstraint(EdgeDirection.OUT));
 		println(DELIMITER);
 	}
 
@@ -385,7 +384,8 @@ public class SchemaGraph2Tg {
 		println(PACKAGE, SPACE, tgPackage.getQualifiedName(), DELIMITER);
 
 		if (hierarchical) {
-			ContainsDomain domain = tgPackage.getFirstContainsDomain(OUTGOING);
+			ContainsDomain domain = tgPackage
+					.getFirstContainsDomain(EdgeDirection.OUT);
 
 			if (domain != null) {
 				printDomainDefinition(domain);
@@ -394,7 +394,7 @@ public class SchemaGraph2Tg {
 			// First only VertexClass should be printed!
 			GraphElementClass graphElement;
 			Iterator<ContainsGraphElementClass> itGraphElement = tgPackage
-					.getContainsGraphElementClassIncidences(OUTGOING)
+					.getContainsGraphElementClassIncidences(EdgeDirection.OUT)
 					.iterator();
 			while (itGraphElement.hasNext()) {
 				graphElement = (GraphElementClass) itGraphElement.next()
@@ -406,7 +406,7 @@ public class SchemaGraph2Tg {
 
 			// Now all sorts of EdgeClass objects are printed
 			itGraphElement = tgPackage.getContainsGraphElementClassIncidences(
-					OUTGOING).iterator();
+					EdgeDirection.OUT).iterator();
 			while (itGraphElement.hasNext()) {
 				graphElement = (GraphElementClass) itGraphElement.next()
 						.getOmega();
@@ -419,11 +419,12 @@ public class SchemaGraph2Tg {
 		// All Domain, VertexClass and EdgeClass objects were printed. Now alle
 		// Sub packages needs to be printed.
 		ContainsSubPackage subPackage = tgPackage
-				.getFirstContainsSubPackage(OUTGOING);
+				.getFirstContainsSubPackage(EdgeDirection.OUT);
 
 		while (subPackage != null) {
 			printPackageDeclaration((Package) subPackage.getOmega());
-			subPackage = subPackage.getNextContainsSubPackage(OUTGOING);
+			subPackage = subPackage
+					.getNextContainsSubPackage(EdgeDirection.OUT);
 		}
 	}
 
@@ -458,9 +459,9 @@ public class SchemaGraph2Tg {
 
 		printSuperClasses(vertexClass);
 
-		printAttributes(vertexClass.getFirstHasAttribute(OUTGOING));
+		printAttributes(vertexClass.getFirstHasAttribute(EdgeDirection.OUT));
 
-		printConstraints(vertexClass.getFirstHasConstraint(OUTGOING));
+		printConstraints(vertexClass.getFirstHasConstraint(EdgeDirection.OUT));
 
 		println(DELIMITER);
 	}
@@ -513,8 +514,8 @@ public class SchemaGraph2Tg {
 		print(getEdgeClassIdentifier(edge), SPACE, getName(edge));
 		printSuperClasses(edge);
 
-		printFromEdge(edge.getFirstFrom(OUTGOING));
-		printToEdge(edge.getFirstTo(OUTGOING));
+		printFromEdge(edge.getFirstFrom(EdgeDirection.OUT));
+		printToEdge(edge.getFirstTo(EdgeDirection.OUT));
 
 		if ((edge instanceof AggregationClass)
 				|| (edge instanceof CompositionClass)) {
@@ -523,9 +524,9 @@ public class SchemaGraph2Tg {
 					aggregation.isAggregateFrom() ? FROM : TO);
 		}
 
-		printAttributes(edge.getFirstHasAttribute(OUTGOING));
+		printAttributes(edge.getFirstHasAttribute(EdgeDirection.OUT));
 
-		printConstraints(edge.getFirstHasConstraint(OUTGOING));
+		printConstraints(edge.getFirstHasConstraint(EdgeDirection.OUT));
 
 		println(DELIMITER);
 	}
@@ -721,7 +722,7 @@ public class SchemaGraph2Tg {
 	}
 
 	/**
-	 * Prints all {@link Domain} objects incident to all outgoing
+	 * Prints all {@link Domain} objects incident to all EdgeDirection.OUT
 	 * {@link ContainsDomain} edges of a Package. This method iterates over all
 	 * ContainsDomain edges and uses <code>printDomainDefinition(Domain)</Code>
 	 * to get a formated output.
@@ -733,7 +734,8 @@ public class SchemaGraph2Tg {
 	private void printDomainDefinition(ContainsDomain containsDomain) {
 		while (containsDomain != null) {
 			printDomainDefinition((Domain) containsDomain.getOmega());
-			containsDomain = containsDomain.getNextContainsDomain(OUTGOING);
+			containsDomain = containsDomain
+					.getNextContainsDomain(EdgeDirection.OUT);
 		}
 	}
 
@@ -797,9 +799,9 @@ public class SchemaGraph2Tg {
 	 *            string.
 	 */
 	private void printRecordDomain(RecordDomain recordDomain) {
-		// Gets the first outgoing HasRecordDomainComponent edge
+		// Gets the first EdgeDirection.OUT HasRecordDomainComponent edge
 		HasRecordDomainComponent hasComponent = recordDomain
-				.getFirstHasRecordDomainComponent(OUTGOING);
+				.getFirstHasRecordDomainComponent(EdgeDirection.OUT);
 
 		// A RecordDomain object must have at least one HasRecordDomainComponent
 		// edge.
@@ -814,8 +816,9 @@ public class SchemaGraph2Tg {
 				ROUND_BRACKET_OPENED, hasComponent.getName(), COLON, SPACE,
 				getName(domain));
 
-		// Next outgoing edge
-		hasComponent = hasComponent.getNextHasRecordDomainComponent(OUTGOING);
+		// Next EdgeDirection.OUT edge
+		hasComponent = hasComponent
+				.getNextHasRecordDomainComponent(EdgeDirection.OUT);
 
 		// Loop over all remaining Components
 		while (hasComponent != null) {
@@ -824,9 +827,9 @@ public class SchemaGraph2Tg {
 			// possible repetition.
 			print(COMMA, SPACE, hasComponent.getName(), COLON, SPACE,
 					getName(domain));
-			// Next outgoing edge
+			// Next EdgeDirection.OUT edge
 			hasComponent = hasComponent
-					.getNextHasRecordDomainComponent(OUTGOING);
+					.getNextHasRecordDomainComponent(EdgeDirection.OUT);
 		}
 		// Closes expression
 		println(ROUND_BRACKET_CLOSED, DELIMITER);
@@ -904,9 +907,10 @@ public class SchemaGraph2Tg {
 	 *            transformed to TG string.
 	 */
 	private void printSuperClasses(VertexClass vertex) {
-		// Get the first outgoing edge "SpecializesVertexClass"
+		// Get the first EdgeDirection.OUT edge "SpecializesVertexClass"
 		assert (vertex != null) : "Object of type VertexClass is null";
-		printSuperClasses(vertex.getFirstSpecializesVertexClass(OUTGOING));
+		printSuperClasses(vertex
+				.getFirstSpecializesVertexClass(EdgeDirection.OUT));
 	}
 
 	/**
@@ -935,9 +939,9 @@ public class SchemaGraph2Tg {
 	 *            transformed to TG string.
 	 */
 	private void printSuperClasses(EdgeClass edge) {
-		// Get the first outgoing edge "SpecializesVertexClass"
+		// Get the first EdgeDirection.OUT edge "SpecializesVertexClass"
 		assert (edge != null) : "Object of type EdgeClass is null";
-		printSuperClasses(edge.getFirstSpecializesEdgeClass(OUTGOING));
+		printSuperClasses(edge.getFirstSpecializesEdgeClass(EdgeDirection.OUT));
 	}
 
 	/**
@@ -982,9 +986,9 @@ public class SchemaGraph2Tg {
 			// without a possible repetition.
 			print(COLON, SPACE, getName(superClass));
 
-			// Get the next outgoing edge "SpecializesVertexClass"
+			// Get the next EdgeDirection.OUT edge "SpecializesVertexClass"
 			superClassEdge = superClassEdge.getNextEdgeOfClass(edgeClass,
-					OUTGOING);
+					EdgeDirection.OUT);
 		}
 
 		while (superClassEdge != null) {
@@ -995,9 +999,9 @@ public class SchemaGraph2Tg {
 			// (the loop).
 
 			print(COMMA, SPACE, getName(superClass));
-			// Get the next outgoing edge "SpecializesVertexClass"
+			// Get the next EdgeDirection.OUT edge "SpecializesVertexClass"
 			superClassEdge = superClassEdge.getNextEdgeOfClass(edgeClass,
-					OUTGOING);
+					EdgeDirection.OUT);
 		}
 	}
 
@@ -1035,10 +1039,10 @@ public class SchemaGraph2Tg {
 			print(SUBELEMENT, CURLY_BRACKET_OPENED, SPACE, attribute.getName(),
 					COLON, SPACE);
 			// Prints the Domain
-			printDomain((Domain) attribute.getFirstHasDomain(OUTGOING)
+			printDomain((Domain) attribute.getFirstHasDomain(EdgeDirection.OUT)
 					.getOmega());
 			// Gets the next edge to look at
-			hasAttribute = hasAttribute.getNextHasAttribute(OUTGOING);
+			hasAttribute = hasAttribute.getNextHasAttribute(EdgeDirection.OUT);
 		} else {
 			// This case is important, because at the end of this method is a
 			// print, which shouldn't be executed!
@@ -1052,10 +1056,10 @@ public class SchemaGraph2Tg {
 			assert (attribute != null) : "Object of type Attribute is null";
 			print(COMMA, SPACE, attribute.getName(), COLON, SPACE);
 			// Prints the Domain
-			printDomain((Domain) attribute.getFirstHasDomain(OUTGOING)
+			printDomain((Domain) attribute.getFirstHasDomain(EdgeDirection.OUT)
 					.getOmega());
 			// Gets the next edge to look at
-			hasAttribute = hasAttribute.getNextHasAttribute(OUTGOING);
+			hasAttribute = hasAttribute.getNextHasAttribute(EdgeDirection.OUT);
 		}
 		// Closes this expression with a "}" character
 		print(SPACE, CURLY_BRACKET_CLOSED);
@@ -1107,7 +1111,8 @@ public class SchemaGraph2Tg {
 
 		while (hasConstraint != null) {
 			printConstraint((Constraint) hasConstraint.getOmega());
-			hasConstraint = hasConstraint.getNextHasConstraint(OUTGOING);
+			hasConstraint = hasConstraint
+					.getNextHasConstraint(EdgeDirection.OUT);
 		}
 	}
 
@@ -1243,10 +1248,11 @@ public class SchemaGraph2Tg {
 
 		sb.append((element instanceof SetDomain) ? "Set<" : "List<");
 
-		HasBaseDomain hasBaseDomain = element.getFirstHasBaseDomain(OUTGOING);
+		HasBaseDomain hasBaseDomain = element
+				.getFirstHasBaseDomain(EdgeDirection.OUT);
 		assert (hasBaseDomain != null) : "FIXME! There should be a BasicDomain!";
 		sb.append(getName((Domain) hasBaseDomain.getThat()));
-		assert (hasBaseDomain.getNextHasBaseDomain(OUTGOING) == null) : "FIXME!"
+		assert (hasBaseDomain.getNextHasBaseDomain(EdgeDirection.OUT) == null) : "FIXME!"
 				+ " There should be only one BasicDomain!";
 
 		sb.append(">");
@@ -1268,19 +1274,21 @@ public class SchemaGraph2Tg {
 
 		sb.append("Map<");
 
-		HasKeyDomain hasKeyDomain = element.getFirstHasKeyDomain(OUTGOING);
+		HasKeyDomain hasKeyDomain = element
+				.getFirstHasKeyDomain(EdgeDirection.OUT);
 		assert (hasKeyDomain != null) : "FIXME! There should be a key domain!";
 
 		sb.append(getName((Domain) hasKeyDomain.getThat()));
-		assert (hasKeyDomain.getNextHasKeyDomain(OUTGOING) == null) : "FIXME!"
+		assert (hasKeyDomain.getNextHasKeyDomain(EdgeDirection.OUT) == null) : "FIXME!"
 				+ " There should be only one key domain!";
 
 		sb.append(",");
 
-		HasValueDomain hasValueDomain = element.getFirstHasValueDomain(OUTGOING);
+		HasValueDomain hasValueDomain = element
+				.getFirstHasValueDomain(EdgeDirection.OUT);
 		assert (hasValueDomain != null) : "FIXME! There should be a value domain!";
 		sb.append(getName((Domain) hasValueDomain.getThat()));
-		assert (hasValueDomain.getNextHasValueDomain(OUTGOING) == null) : "FIXME!"
+		assert (hasValueDomain.getNextHasValueDomain(EdgeDirection.OUT) == null) : "FIXME!"
 				+ " There should be only one value domain!";
 
 		sb.append(">");
