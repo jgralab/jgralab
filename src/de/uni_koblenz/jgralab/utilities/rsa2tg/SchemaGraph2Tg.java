@@ -38,10 +38,17 @@ import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.GraphIO;
 import de.uni_koblenz.jgralab.WorkInProgress;
 import de.uni_koblenz.jgralab.grumlschema.SchemaGraph;
+import de.uni_koblenz.jgralab.grumlschema.domains.CollectionDomain;
 import de.uni_koblenz.jgralab.grumlschema.domains.Domain;
 import de.uni_koblenz.jgralab.grumlschema.domains.EnumDomain;
+import de.uni_koblenz.jgralab.grumlschema.domains.HasBaseDomain;
+import de.uni_koblenz.jgralab.grumlschema.domains.HasKeyDomain;
 import de.uni_koblenz.jgralab.grumlschema.domains.HasRecordDomainComponent;
+import de.uni_koblenz.jgralab.grumlschema.domains.HasValueDomain;
+import de.uni_koblenz.jgralab.grumlschema.domains.ListDomain;
+import de.uni_koblenz.jgralab.grumlschema.domains.MapDomain;
 import de.uni_koblenz.jgralab.grumlschema.domains.RecordDomain;
+import de.uni_koblenz.jgralab.grumlschema.domains.SetDomain;
 import de.uni_koblenz.jgralab.grumlschema.structure.AggregationClass;
 import de.uni_koblenz.jgralab.grumlschema.structure.Attribute;
 import de.uni_koblenz.jgralab.grumlschema.structure.AttributedElementClass;
@@ -287,8 +294,9 @@ public class SchemaGraph2Tg {
 
 		// If the print out should be hierarchical, no more printing beyond this
 		// point
-		if (hierarchical)
+		if (hierarchical) {
 			return;
+		}
 
 		Domain domain = schemaGraph.getFirstDomain();
 		while (domain != null) {
@@ -365,8 +373,9 @@ public class SchemaGraph2Tg {
 	 */
 	private void printPackageDeclaration(Package tgPackage) {
 
-		if (tgPackage == null)
+		if (tgPackage == null) {
 			return;
+		}
 
 		if (hierarchical) {
 			packageName = tgPackage.getQualifiedName();
@@ -385,11 +394,11 @@ public class SchemaGraph2Tg {
 			// First only VertexClass should be printed!
 			GraphElementClass graphElement;
 			Iterator<ContainsGraphElementClass> itGraphElement = tgPackage
-			.getContainsGraphElementClassIncidences(OUTGOING)
-			.iterator();
+					.getContainsGraphElementClassIncidences(OUTGOING)
+					.iterator();
 			while (itGraphElement.hasNext()) {
 				graphElement = (GraphElementClass) itGraphElement.next()
-				.getOmega();
+						.getOmega();
 				if (graphElement instanceof VertexClass) {
 					printVertexClassDefinition((VertexClass) graphElement);
 				}
@@ -400,7 +409,7 @@ public class SchemaGraph2Tg {
 					OUTGOING).iterator();
 			while (itGraphElement.hasNext()) {
 				graphElement = (GraphElementClass) itGraphElement.next()
-				.getOmega();
+						.getOmega();
 				if (graphElement instanceof EdgeClass) {
 					printEdgeClassDefinition((EdgeClass) graphElement);
 				}
@@ -410,7 +419,7 @@ public class SchemaGraph2Tg {
 		// All Domain, VertexClass and EdgeClass objects were printed. Now alle
 		// Sub packages needs to be printed.
 		ContainsSubPackage subPackage = tgPackage
-		.getFirstContainsSubPackage(OUTGOING);
+				.getFirstContainsSubPackage(OUTGOING);
 
 		while (subPackage != null) {
 			printPackageDeclaration((Package) subPackage.getOmega());
@@ -664,13 +673,15 @@ public class SchemaGraph2Tg {
 	 */
 	private void printRole(String role, Set<String> redefinedRoles) {
 
-		if ((role == null) || role.equals(EMPTY))
+		if ((role == null) || role.equals(EMPTY)) {
 			return;
+		}
 
 		print(SPACE, ROLE, SPACE, role);
 
-		if (redefinedRoles == null)
+		if (redefinedRoles == null) {
 			return;
+		}
 
 		Iterator<String> it = redefinedRoles.iterator();
 		if (it.hasNext()) {
@@ -759,9 +770,9 @@ public class SchemaGraph2Tg {
 			printRecordDomain((RecordDomain) domain);
 		} else
 
-			if (domain instanceof EnumDomain) {
-				printEnumDomain((EnumDomain) domain);
-			}
+		if (domain instanceof EnumDomain) {
+			printEnumDomain((EnumDomain) domain);
+		}
 	}
 
 	/**
@@ -788,12 +799,12 @@ public class SchemaGraph2Tg {
 	private void printRecordDomain(RecordDomain recordDomain) {
 		// Gets the first outgoing HasRecordDomainComponent edge
 		HasRecordDomainComponent hasComponent = recordDomain
-		.getFirstHasRecordDomainComponent(OUTGOING);
+				.getFirstHasRecordDomainComponent(OUTGOING);
 
 		// A RecordDomain object must have at least one HasRecordDomainComponent
 		// edge.
 		assert (hasComponent != null) : "HasRecordDomainComponent is null of Domain "
-			+ recordDomain.getQualifiedName();
+				+ recordDomain.getQualifiedName();
 		// Gets the domain of the first record
 		Domain domain = (Domain) hasComponent.getOmega();
 
@@ -815,7 +826,7 @@ public class SchemaGraph2Tg {
 					getName(domain));
 			// Next outgoing edge
 			hasComponent = hasComponent
-			.getNextHasRecordDomainComponent(OUTGOING);
+					.getNextHasRecordDomainComponent(OUTGOING);
 		}
 		// Closes expression
 		println(ROUND_BRACKET_CLOSED, DELIMITER);
@@ -1028,10 +1039,11 @@ public class SchemaGraph2Tg {
 					.getOmega());
 			// Gets the next edge to look at
 			hasAttribute = hasAttribute.getNextHasAttribute(OUTGOING);
-		} else
+		} else {
 			// This case is important, because at the end of this method is a
 			// print, which shouldn't be executed!
 			return;
+		}
 
 		while (hasAttribute != null) {
 			// Gets the referenced Attribute at the end of this hasAttribute
@@ -1154,11 +1166,13 @@ public class SchemaGraph2Tg {
 	 */
 	private String getEdgeClassIdentifier(EdgeClass edge) {
 
-		if (edge instanceof CompositionClass)
+		if (edge instanceof CompositionClass) {
 			return COMPOSITION_CLASS;
+		}
 
-		if (edge instanceof AggregationClass)
+		if (edge instanceof AggregationClass) {
 			return AGGREGATION_CLASS;
+		}
 
 		return EDGE_CLASS;
 	}
@@ -1178,54 +1192,134 @@ public class SchemaGraph2Tg {
 	}
 
 	/**
-	 * Returns the qualified name of an {@link AttributedElement}, if the member
-	 * variable <code>hierarchical</code> is <code>false</code> and the simple
-	 * name if it's true.
+	 * Returns the qualified name of an {@link Domain}, if the member variable
+	 * <code>hierarchical</code> is <code>false</code> and the simple name if
+	 * it's true.
 	 * 
 	 * @param element
-	 *            {@link AttributedElement} of which the name is retrieved.
-	 * @return The name of the specified {@link AttributedElement} object.
+	 *            {@link Domain} of which the name is retrieved.
+	 * @return The name of the specified {@link Domain} Domain object.
 	 */
 	private String getName(Domain element) {
-		assert (element != null) : "Object of type AttributedElementClass is null!";
+		assert (element != null) : "FIXME!" + " Object of type Domain is null!";
 
 		String qualifiedName = element.getQualifiedName();
 
 		if ((element instanceof RecordDomain)
-				|| (element instanceof EnumDomain))
-			return getName(qualifiedName);
-		else {
+				|| (element instanceof EnumDomain)) {
+			qualifiedName = getName(qualifiedName);
+		} else if (element instanceof CollectionDomain) {
+			qualifiedName = getName((CollectionDomain) element);
+		} else if (element instanceof MapDomain) {
+			qualifiedName = getName((MapDomain) element);
+		} else {
+			// Checks if there is a package name
+			// Because this case only basic domains can reach, there must not be
+			// a package name
 			int index = qualifiedName.lastIndexOf('.');
 
 			assert ((index == -1) || (qualifiedName.substring(0, index)
 					.length() == 0)) : "FIXME! A basic domain is not mapped the default package.";
-			return qualifiedName;
 		}
+		return qualifiedName;
 	}
 
 	/**
-	 * Returns the qualified name of an {@link AttributedElement}, if the member
+	 * Returns the qualified name of an {@link CollectionDomain}, if the member
 	 * variable <code>hierarchical</code> is <code>false</code> and the simple
 	 * name if it's true.
 	 * 
 	 * @param element
-	 *            {@link AttributedElement} of which the name is retrieved.
-	 * @return The name of the specified {@link AttributedElement} object.
+	 *            {@link CollectionDomain} of which the name is retrieved.
+	 * @return The name of the specified {@link CollectionDomain}
+	 *         CollectionDomain object.
+	 */
+	private String getName(CollectionDomain element) {
+
+		assert (element instanceof SetDomain || element instanceof ListDomain) : "FIXME!"
+				+ " There might be a CollectionDomain not included of element is null.";
+
+		StringBuilder sb = new StringBuilder();
+
+		sb.append((element instanceof SetDomain) ? "Set<" : "List<");
+
+		Iterator<HasBaseDomain> it = element.getHasBaseDomainIncidences(
+				OUTGOING).iterator();
+		assert (it.hasNext()) : "FIXME! There should be a BasicDomain!";
+		Domain basicDomain = (Domain) it.next().getThat();
+		sb.append(getName(basicDomain));
+		assert (!it.hasNext()) : "FIXME!"
+				+ " There should be only one BasicDomain!";
+
+		sb.append(">");
+		return sb.toString();
+	}
+
+	/**
+	 * Returns the qualified name of an {@link MapDomain}, if the member
+	 * variable <code>hierarchical</code> is <code>false</code> and the simple
+	 * name if it's true.
+	 * 
+	 * @param element
+	 *            {@link MapDomain} of which the name is retrieved.
+	 * @return The name of the specified {@link MapDomain} MapDomain object.
+	 */
+	private String getName(MapDomain element) {
+
+		StringBuilder sb = new StringBuilder();
+
+		sb.append("Map<");
+
+		Iterator<HasKeyDomain> itKey = element.getHasKeyDomainIncidences(
+				OUTGOING).iterator();
+		assert (itKey.hasNext()) : "FIXME! There should be a BasicDomain!";
+		Domain keyDomain = (Domain) itKey.next().getThat();
+		sb.append(getName(keyDomain));
+		assert (!itKey.hasNext()) : "FIXME!"
+				+ " There should be only one BasicDomain!";
+
+		sb.append(",");
+
+		Iterator<HasValueDomain> it = element.getHasValueDomainIncidences(
+				OUTGOING).iterator();
+		assert (it.hasNext()) : "FIXME! There should be a BasicDomain!";
+		Domain valueDomain = (Domain) it.next().getThat();
+		sb.append(getName(valueDomain));
+		assert (!it.hasNext()) : "FIXME!"
+				+ " There should be only one BasicDomain!";
+
+		sb.append(">");
+		return sb.toString();
+	}
+
+	/**
+	 * Returns the qualified name of an {@link AttributedElement} or a
+	 * {@link Domain}, if the member variable <code>hierarchical</code> is
+	 * <code>false</code> and the simple name if it's true.
+	 * 
+	 * @param element
+	 *            QualifiedName of an {@link AttributedElement} or a
+	 *            {@link Domain} of which the name is retrieved.
+	 * @return The name of the specified QualifiedName of an
+	 *         {@link AttributedElement} or a {@link Domain}.
 	 */
 	private String getName(String name) {
 		assert (name != null) : "Object of type String is null!";
-		if (!hierarchical)
+		if (!hierarchical) {
 			return name;
+		}
 
 		int index = name.lastIndexOf('.');
 		String pkgName = (index == -1) ? "" : name.substring(0, index);
 		String simpleName = (index == -1) ? name : name.substring(index + 1);
 
-		if (pkgName.equals(packageName))
+		if (pkgName.equals(packageName)) {
 			return simpleName;
+		}
 
-		if (pkgName.length() == 0)
+		if (pkgName.length() == 0) {
 			return POINT + simpleName;
+		}
 
 		return name;
 	}
@@ -1244,10 +1338,11 @@ public class SchemaGraph2Tg {
 		int p = qualifiedName.lastIndexOf(".");
 		if (qualifiedName.startsWith("List<")
 				|| qualifiedName.startsWith("Set<")
-				|| qualifiedName.startsWith("Map<") || (p < 0))
+				|| qualifiedName.startsWith("Map<") || (p < 0)) {
 			return qualifiedName;
-		else
+		} else {
 			return qualifiedName.substring(p + 1);
+		}
 	}
 
 	/**
