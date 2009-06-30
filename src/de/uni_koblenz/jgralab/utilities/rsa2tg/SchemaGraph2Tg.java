@@ -1243,12 +1243,10 @@ public class SchemaGraph2Tg {
 
 		sb.append((element instanceof SetDomain) ? "Set<" : "List<");
 
-		Iterator<HasBaseDomain> it = element.getHasBaseDomainIncidences(
-				OUTGOING).iterator();
-		assert (it.hasNext()) : "FIXME! There should be a BasicDomain!";
-		Domain basicDomain = (Domain) it.next().getThat();
-		sb.append(getName(basicDomain));
-		assert (!it.hasNext()) : "FIXME!"
+		HasBaseDomain hasBaseDomain = element.getFirstHasBaseDomain(OUTGOING);
+		assert (hasBaseDomain != null) : "FIXME! There should be a BasicDomain!";
+		sb.append(getName((Domain) hasBaseDomain.getThat()));
+		assert (hasBaseDomain.getNextHasBaseDomain(OUTGOING) == null) : "FIXME!"
 				+ " There should be only one BasicDomain!";
 
 		sb.append(">");
@@ -1270,23 +1268,20 @@ public class SchemaGraph2Tg {
 
 		sb.append("Map<");
 
-		Iterator<HasKeyDomain> itKey = element.getHasKeyDomainIncidences(
-				OUTGOING).iterator();
-		assert (itKey.hasNext()) : "FIXME! There should be a BasicDomain!";
-		Domain keyDomain = (Domain) itKey.next().getThat();
-		sb.append(getName(keyDomain));
-		assert (!itKey.hasNext()) : "FIXME!"
-				+ " There should be only one BasicDomain!";
+		HasKeyDomain hasKeyDomain = element.getFirstHasKeyDomain(OUTGOING);
+		assert (hasKeyDomain != null) : "FIXME! There should be a key domain!";
+
+		sb.append(getName((Domain) hasKeyDomain.getThat()));
+		assert (hasKeyDomain.getNextHasKeyDomain(OUTGOING) == null) : "FIXME!"
+				+ " There should be only one key domain!";
 
 		sb.append(",");
 
-		Iterator<HasValueDomain> it = element.getHasValueDomainIncidences(
-				OUTGOING).iterator();
-		assert (it.hasNext()) : "FIXME! There should be a BasicDomain!";
-		Domain valueDomain = (Domain) it.next().getThat();
-		sb.append(getName(valueDomain));
-		assert (!it.hasNext()) : "FIXME!"
-				+ " There should be only one BasicDomain!";
+		HasValueDomain hasValueDomain = element.getFirstHasValueDomain(OUTGOING);
+		assert (hasValueDomain != null) : "FIXME! There should be a value domain!";
+		sb.append(getName((Domain) hasValueDomain.getThat()));
+		assert (hasValueDomain.getNextHasValueDomain(OUTGOING) == null) : "FIXME!"
+				+ " There should be only one value domain!";
 
 		sb.append(">");
 		return sb.toString();
