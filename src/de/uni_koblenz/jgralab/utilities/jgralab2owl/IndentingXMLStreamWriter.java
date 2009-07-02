@@ -9,17 +9,17 @@ public class IndentingXMLStreamWriter implements XMLStreamWriter {
 	/**
 	 * the current indentation level
 	 */
-	int indentationLevel = 0;
+	private int indentationLevel = 0;
 
 	/**
 	 * the spaces to insert for each indentation level
 	 */
-	String indentation = "";
+	private String indentation = "";
 
 	/**
 	 * the {@link XMLStreamWriter} to be delegated to
 	 */
-	XMLStreamWriter writer;
+	private XMLStreamWriter writer;
 
 	/**
 	 * 
