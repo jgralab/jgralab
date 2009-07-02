@@ -1223,8 +1223,9 @@ public class SchemaGraph2Tg {
 			// a package name
 			int index = qualifiedName.lastIndexOf('.');
 
-			assert ((index == -1) || (qualifiedName.substring(0, index)
-					.length() == 0)) : "FIXME! A basic domain is not mapped the default package.";
+			assert (index == -1 || qualifiedName.substring(0, index).length() == 0) : "FIXME! The basic domain '"
+					+ qualifiedName + "' is not in the default package.";
+			return qualifiedName;
 		}
 		return qualifiedName;
 	}
