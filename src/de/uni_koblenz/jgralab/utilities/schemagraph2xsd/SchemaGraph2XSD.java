@@ -111,7 +111,9 @@ public class SchemaGraph2XSD {
 	private static final String XSD_EXTENSION = "extension";
 	private static final String XSD_ATTRIBUTE = "attribute";
 	private static final String XSD_ATTRIBUTE_TO = "to";
+	private static final String XSD_ATTRIBUTE_TSEQ = "tseq";
 	private static final String XSD_ATTRIBUTE_FROM = "from";
+	private static final String XSD_ATTRIBUTE_FSEQ = "fseq";
 	private static final String XSD_COMPLEXTYPE_GRAPH = "CT_Graph";
 	private static final String XSD_ATTRIBUTE_ID = "id";
 	private static final String XSD_ELEMENT = "element";
@@ -272,6 +274,8 @@ public class SchemaGraph2XSD {
 		writeStartXSDExtension(attElem);
 		writeXSDAttribute(XSD_ATTRIBUTE_FROM, XML_IDREF, XSD_REQUIRED);
 		writeXSDAttribute(XSD_ATTRIBUTE_TO, XML_IDREF, XSD_REQUIRED);
+		writeXSDAttribute(XSD_ATTRIBUTE_FSEQ, XSD_DOMAIN_INTEGER);
+		writeXSDAttribute(XSD_ATTRIBUTE_TSEQ, XSD_DOMAIN_INTEGER);
 		writeEndXSDElement(); // ends extension
 		writeEndXSDElement(); // ends extension
 		writeEndXSDElement(); // ends complexType
