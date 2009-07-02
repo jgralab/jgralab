@@ -68,7 +68,7 @@ import de.uni_koblenz.jgralab.utilities.rsa2tg.SchemaGraph2Tg;
  * @author Tassilo Horn &lt;horn@uni-koblenz.de&gt;
  * 
  */
-@WorkInProgress(description = "Converter from SchemaGraph to XML Schema", responsibleDevelopers = "horn, mmce, riediger", expectedFinishingDate = "2009/06/30")
+@WorkInProgress(description = "Converter from SchemaGraph to XML Schema", responsibleDevelopers = "horn, mmce, riediger", expectedFinishingDate = "2009/07/20")
 public class SchemaGraph2XSD {
 
 	private static final String DOMAIN_RECORD = "ST_RECORD";
