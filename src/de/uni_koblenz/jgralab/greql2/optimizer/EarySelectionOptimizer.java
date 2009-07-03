@@ -43,9 +43,9 @@ import de.uni_koblenz.jgralab.greql2.schema.Variable;
 /**
  * This {@link Optimizer} implements the transformation "Selection as early as
  * possible".
- *
+ * 
  * @author ist@uni-koblenz.de
- *
+ * 
  */
 public class EarySelectionOptimizer extends OptimizerBase {
 
@@ -56,7 +56,7 @@ public class EarySelectionOptimizer extends OptimizerBase {
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see
 	 * de.uni_koblenz.jgralab.greql2.optimizer.Optimizer#isEquivalent(de.uni_koblenz
 	 * .jgralab.greql2.optimizer.Optimizer)
@@ -71,7 +71,7 @@ public class EarySelectionOptimizer extends OptimizerBase {
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see
 	 * de.uni_koblenz.jgralab.greql2.optimizer.Optimizer#optimize(de.uni_koblenz
 	 * .jgralab.greql2.evaluator.GreqlEvaluator,
@@ -113,7 +113,7 @@ public class EarySelectionOptimizer extends OptimizerBase {
 
 	/**
 	 * Do an optimization run.
-	 *
+	 * 
 	 * @throws OptimizerException
 	 */
 	private boolean runOptimization() throws OptimizerException {
@@ -202,7 +202,8 @@ public class EarySelectionOptimizer extends OptimizerBase {
 			// current SimpleDeclaration is the only one of the parent
 			// Declaration.
 			if (foundPredNeedingPartOfVars
-					&& (!foundPredicateNeedingAllVars || sdsOfParentDecl.size() == 1)) {
+					&& (!foundPredicateNeedingAllVars || (sdsOfParentDecl
+							.size() == 1))) {
 				splitSimpleDeclaration(sd, varsMaybeToSplitOut);
 				aTransformationWasDone = true;
 			} else {
@@ -231,7 +232,7 @@ public class EarySelectionOptimizer extends OptimizerBase {
 	 * Split the given {@link SimpleDeclaration} so that there's one
 	 * {@link SimpleDeclaration} that declares the {@link Variable}s in
 	 * <code>varsToBeSplit</code> and one for the rest.
-	 *
+	 * 
 	 * @param sd
 	 *            the {@link SimpleDeclaration} to be split
 	 * @param varsToBeSplit
@@ -451,7 +452,7 @@ public class EarySelectionOptimizer extends OptimizerBase {
 
 		ArrayList<Edge> upEdges = new ArrayList<Edge>();
 		for (Edge e : exp.incidences(EdgeDirection.OUT)) {
-			if (e.getOmega() instanceof FunctionApplication
+			if ((e.getOmega() instanceof FunctionApplication)
 					&& existsForwardPathExcludingOtherTargetClassVertices(e,
 							origDecl)) {
 				FunctionApplication father = (FunctionApplication) e.getOmega();
@@ -463,6 +464,10 @@ public class EarySelectionOptimizer extends OptimizerBase {
 		for (Edge upEdge : upEdges) {
 			FunctionApplication funApp = (FunctionApplication) upEdge
 					.getOmega();
+			if (funApp == null) {
+				throw new OptimizerException(
+						"Something pretty wrong. upEdge.getOmega() returned null!!");
+			}
 			Expression otherArg = null;
 			for (IsArgumentOf inc : funApp
 					.getIsArgumentOfIncidences(EdgeDirection.IN)) {
@@ -485,7 +490,7 @@ public class EarySelectionOptimizer extends OptimizerBase {
 	/**
 	 * Collects the {@link Edge}s that start at <code>startVertex</code> and
 	 * have a forward directed path to <code>targetEdge</code>.
-	 *
+	 * 
 	 * @param startVertex
 	 * @param targetEdge
 	 * @return a {@link List} of {@link Edge}s going out of
@@ -533,7 +538,7 @@ public class EarySelectionOptimizer extends OptimizerBase {
 	 * with exceptions for {@link FunctionId}s (never copied) and
 	 * {@link Variable}s (only those in <code>varsToBeCopied</code> will be
 	 * copied ONCE).
-	 *
+	 * 
 	 * @param predicates
 	 *            a {@link List} of {@link Expression}s
 	 * @param varsToBeCopied
@@ -554,12 +559,12 @@ public class EarySelectionOptimizer extends OptimizerBase {
 	/**
 	 * Find all {@link Expression}s below <code>exp</code> that can be moved and
 	 * return them.
-	 *
+	 * 
 	 * An {@link Expression} is considered movable if it needs only
 	 * {@link Variable}s that are locally declared in one
 	 * {@link SimpleDeclaration} and this {@link SimpleDeclaration} is not the
 	 * only one in the parent {@link Declaration}.
-	 *
+	 * 
 	 * @param exp
 	 *            the {@link Expression} below which to look for movable
 	 *            {@link Expression}s
@@ -568,7 +573,7 @@ public class EarySelectionOptimizer extends OptimizerBase {
 			Expression exp) {
 		HashMap<SimpleDeclaration, Set<Expression>> movableExpressions = new HashMap<SimpleDeclaration, Set<Expression>>();
 
-		if (exp instanceof FunctionApplication
+		if ((exp instanceof FunctionApplication)
 				&& OptimizerUtility.isAnd((FunctionApplication) exp)) {
 			// For AND expressions we dive deeper into the arguments.
 			FunctionApplication funApp = (FunctionApplication) exp;
@@ -598,8 +603,8 @@ public class EarySelectionOptimizer extends OptimizerBase {
 			// one variable.
 			Declaration parent = (Declaration) sd.getFirstIsSimpleDeclOf(
 					EdgeDirection.OUT).getOmega();
-			if (collectSimpleDeclarationsOf(parent).size() > 1
-					|| OptimizerUtility.collectVariablesDeclaredBy(sd).size() > 1) {
+			if ((collectSimpleDeclarationsOf(parent).size() > 1)
+					|| (OptimizerUtility.collectVariablesDeclaredBy(sd).size() > 1)) {
 				if (movableExpressions.containsKey(sd)) {
 					movableExpressions.get(sd).add(exp);
 				} else {
@@ -617,7 +622,7 @@ public class EarySelectionOptimizer extends OptimizerBase {
 	 * {@link Variable}s the {@link Expression} <code>exp</code> needs. If
 	 * <code>exp</code> doesn't need any variables or such an
 	 * {@link SimpleDeclaration} doesn't exist, return <code>null</code>.
-	 *
+	 * 
 	 * @param exp
 	 *            an {@link Expression}
 	 * @return the {@link SimpleDeclaration} that declares all local
@@ -632,7 +637,7 @@ public class EarySelectionOptimizer extends OptimizerBase {
 		SimpleDeclaration sd = null, oldSd = null;
 		for (Variable var : neededVars) {
 			sd = (SimpleDeclaration) var.getFirstIsDeclaredVarOf().getOmega();
-			if (oldSd != null && sd != oldSd) {
+			if ((oldSd != null) && (sd != oldSd)) {
 				// the last variable was declared in another
 				// SimpleDeclaration
 				return null;
@@ -653,7 +658,8 @@ public class EarySelectionOptimizer extends OptimizerBase {
 	 *         {@link Declaration} above <code>exp</code>.
 	 */
 	private Set<Variable> collectNeededLocalVariables(Expression exp) {
-		Set<Variable> neededVars = OptimizerUtility.collectInternallyDeclaredVariablesBelow(exp);
+		Set<Variable> neededVars = OptimizerUtility
+				.collectInternallyDeclaredVariablesBelow(exp);
 		Set<Variable> neededLocalVars = new HashSet<Variable>();
 		Declaration localDecl = findNearestDeclarationAbove(exp);
 		for (SimpleDeclaration sd : collectSimpleDeclarationsOf(localDecl)) {
@@ -672,7 +678,7 @@ public class EarySelectionOptimizer extends OptimizerBase {
 
 	/**
 	 * Find the nearest {@link Declaration} above <code>vertex</code>.
-	 *
+	 * 
 	 * @param vertex
 	 *            a {@link Vertex}
 	 * @return nearest {@link Declaration} above <code>vertex</code>
@@ -727,7 +733,7 @@ public class EarySelectionOptimizer extends OptimizerBase {
 	/**
 	 * Collect all {@link SimpleDeclaration}s of <code>decl</code> in a
 	 * {@link List}.
-	 *
+	 * 
 	 * @param decl
 	 *            a {@link Declaration}
 	 * @return a {@link List} of all {@link SimpleDeclaration}s that are part of
@@ -745,7 +751,7 @@ public class EarySelectionOptimizer extends OptimizerBase {
 	/**
 	 * Collect the {@link Variable}s that have no outgoing
 	 * {@link IsDeclaredVarOf} edges and are located below <code>v</code>.
-	 *
+	 * 
 	 * @param vertex
 	 *            the root {@link Vertex} below which to look for undeclared
 	 *            {@link Variable}s
@@ -755,7 +761,8 @@ public class EarySelectionOptimizer extends OptimizerBase {
 	 */
 	private Set<Variable> collectUndeclaredVariablesBelow(Vertex vertex) {
 		HashSet<Variable> undeclaredVars = new HashSet<Variable>();
-		for (Variable var : OptimizerUtility.collectInternallyDeclaredVariablesBelow(vertex)) {
+		for (Variable var : OptimizerUtility
+				.collectInternallyDeclaredVariablesBelow(vertex)) {
 			if (var.getFirstIsDeclaredVarOf(EdgeDirection.OUT) == null) {
 				undeclaredVars.add(var);
 			}
@@ -773,7 +780,7 @@ public class EarySelectionOptimizer extends OptimizerBase {
 	 * ONCE. After that the one and only copy is used instead of creating a new
 	 * copy. That's what <code>copiedVarMap</code> is for. So normally you'd
 	 * provide an empty {@link HashMap}.
-	 *
+	 * 
 	 * @param origVertex
 	 *            the root {@link Vertex} of the subgraph to be copied
 	 * @param graph
@@ -791,7 +798,7 @@ public class EarySelectionOptimizer extends OptimizerBase {
 			HashMap<Variable, Variable> copiedVarMap) {
 		// GreqlEvaluator.println("copySubgraph(" + origVertex + ", graph, "
 		// + variablesToBeCopied + ", " + copiedVarMap + ")");
-		if (origVertex instanceof Identifier
+		if ((origVertex instanceof Identifier)
 				&& !(origVertex instanceof Variable)) {
 			return origVertex;
 		}
@@ -831,7 +838,7 @@ public class EarySelectionOptimizer extends OptimizerBase {
 	/**
 	 * Copy the attribute values of <code>from</code> to <code>to</code>. The
 	 * types of the given {@link AttributedElement}s have to be equal.
-	 *
+	 * 
 	 * @param from
 	 *            an {@link AttributedElement}
 	 * @param to
