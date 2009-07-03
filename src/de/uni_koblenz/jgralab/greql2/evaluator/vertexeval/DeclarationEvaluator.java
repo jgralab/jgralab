@@ -49,9 +49,9 @@ import de.uni_koblenz.jgralab.greql2.schema.Variable;
 
 /**
  * Evaluates a Declaration vertex in the GReQL-2 Syntaxgraph
- *
+ * 
  * @author ist@uni-koblenz.de
- *
+ * 
  */
 public class DeclarationEvaluator extends VertexEvaluator {
 
@@ -105,22 +105,19 @@ public class DeclarationEvaluator extends VertexEvaluator {
 			newSubgraph = subgraph;
 		}
 		ArrayList<VertexEvaluator> constraintList = new ArrayList<VertexEvaluator>();
-		IsConstraintOf consInc = vertex
-				.getFirstIsConstraintOf(EdgeDirection.IN);
-		while (consInc != null) {
+		for (IsConstraintOf consInc : vertex
+				.getIsConstraintOfIncidences(EdgeDirection.IN)) {
 			VertexEvaluator curEval = greqlEvaluator
 					.getVertexEvaluatorGraphMarker()
 					.getMark(consInc.getAlpha());
 			if (curEval != null) {
 				constraintList.add(curEval);
 			}
-			consInc = consInc.getNextIsConstraintOf(EdgeDirection.IN);
 		}
 		VariableDeclarationLayer declarationLayer = new VariableDeclarationLayer(
 				constraintList, evaluationLogger);
-		IsSimpleDeclOf inc = vertex.getFirstIsSimpleDeclOf(EdgeDirection.IN);
-
-		while (inc != null) {
+		for (IsSimpleDeclOf inc : vertex
+				.getIsSimpleDeclOfIncidences(EdgeDirection.IN)) {
 			SimpleDeclaration simpleDecl = (SimpleDeclaration) inc.getAlpha();
 			SimpleDeclarationEvaluator simpleDeclEval = (SimpleDeclarationEvaluator) greqlEvaluator
 					.getVertexEvaluatorGraphMarker().getMark(simpleDecl);
@@ -142,7 +139,6 @@ public class DeclarationEvaluator extends VertexEvaluator {
 						"Error creating variable declaration layer, one of the simple declarations returned an invalid value",
 						ex);
 			}
-			inc = inc.getNextIsSimpleDeclOf(EdgeDirection.IN);
 		}
 
 		return new JValue(declarationLayer);
