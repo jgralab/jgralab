@@ -396,7 +396,8 @@ queries are evaluated.  Set it with `greql-set-graph'.")
           var)
       (re-search-backward "[[:space:],]" nil t 1)
       (setq var (buffer-substring-no-properties (+ 1 (point)) end))
-      (re-search-backward (concat var "[[:space:]]*:[[:space:]]*\\([VE]\\){\\(.*\\)}") nil t 1)
+      (re-search-backward
+       (concat var "[[:space:],]*[[:alnum:][:space:]]*:[[:space:]]*\\([VE]\\){\\(.*\\)}") nil t 1)
       (let* ((mtype-match (buffer-substring-no-properties (match-beginning 1)
                                                           (match-end 1)))
              (mtype (cond
