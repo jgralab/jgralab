@@ -75,20 +75,20 @@ import de.uni_koblenz.jgralab.schema.impl.SchemaImpl;
 
 /**
  * class for loading and storing schema and graphs in tg format
- *
+ * 
  * @author ist@uni-koblenz.de
  */
 public class GraphIO {
 	/**
 	 * A {@link FilenameFilter} that accepts TG files.
-	 *
+	 * 
 	 * @author ist@uni-koblenz.de
 	 */
 	public static class TGFilenameFilter implements FilenameFilter {
 
 		/*
 		 * (non-Javadoc)
-		 *
+		 * 
 		 * @see java.io.FilenameFilter#accept(java.io.File, java.lang.String)
 		 */
 		@Override
@@ -772,19 +772,10 @@ public class GraphIO {
 	/**
 	 * Reads a Schema together with its Domains, GraphClasses and
 	 * GraphElementClasses from a TG-file. Subsequently, the Schema is created.
-	 *
+	 * 
 	 * @throws GraphIOException
 	 */
 	private void schema() throws GraphIOException, SchemaException {
-		if (schema != null) {
-			// We already have a schema, so we don't want to load the schema
-			// from the file
-			while (!lookAhead.equals("Graph")) {
-				match();
-			}
-			return;
-		}
-
 		currentPackageName = "";
 		match("Schema");
 		String[] qn = matchQualifiedName(true);
@@ -793,6 +784,26 @@ public class GraphIO {
 					+ "', package prefix must not be empty in line " + line);
 		}
 		match(";");
+
+		if (schema != null) {
+			// We already have a schema, so we don't want to load the schema
+			// from the file
+
+			// but wait, check if the names match...
+			if (schema.getQualifiedName().equals(qn[0] + "." + qn[1])) {
+				// yes, everything is fine :-)
+				// skip schema part
+				while (lookAhead.length() > 0 && !lookAhead.equals("Graph")) {
+					match();
+				}
+				return;
+			} else {
+				throw new GraphIOException(
+						"Trying to load a graph with wrong schema. Expected: "
+								+ schema.getQualifiedName() + ", but found "
+								+ qn[0] + "." + qn[1]);
+			}
+		}
 
 		schema = new SchemaImpl(qn[1], qn[0]);
 
@@ -823,7 +834,7 @@ public class GraphIO {
 
 	/**
 	 * Creates the Domains contained in a Schema.
-	 *
+	 * 
 	 * @return A Map of the Domain names to the concrete Domain objects.
 	 * @throws GraphIOException
 	 */
@@ -837,7 +848,7 @@ public class GraphIO {
 
 	/**
 	 * Reads an EnumDomain, i.e. its name along with the enum constants.
-	 *
+	 * 
 	 * @throws GraphIOException
 	 */
 	private void parseEnumDomain() throws GraphIOException {
@@ -863,7 +874,7 @@ public class GraphIO {
 
 	/**
 	 * Read a RecordDomain, i.e. its name along with the components.
-	 *
+	 * 
 	 * @throws GraphIOException
 	 */
 	private void parseRecordDomain() throws GraphIOException {
@@ -894,7 +905,7 @@ public class GraphIO {
 	 * Each list represents a component's domain. This Map is converted to a Map
 	 * of the component names to Domain objects corresponding to the domains
 	 * represented in the lists.
-	 *
+	 * 
 	 * @param componentsData
 	 *            A Map of record component names to lists of Strings. Each list
 	 *            represents a component's domain.
@@ -918,7 +929,7 @@ public class GraphIO {
 	/**
 	 * Reads Schema's Domains and GraphClasses with contained
 	 * GraphElementClasses from TG-file.
-	 *
+	 * 
 	 * @throws GraphIOException
 	 */
 	private void parseSchema() throws GraphIOException, SchemaException {
@@ -963,7 +974,7 @@ public class GraphIO {
 	/**
 	 * Creates the GraphClass contained in the Schema along with its
 	 * GraphElementClasses.
-	 *
+	 * 
 	 * @throws GraphIOException
 	 * @throws SchemaException
 	 */
@@ -981,7 +992,7 @@ public class GraphIO {
 
 	/**
 	 * Reads a GraphClass from a TG-file.
-	 *
+	 * 
 	 * @return The name of the read GraphClass.
 	 * @throws GraphIOException
 	 * @throws SchemaException
@@ -1012,7 +1023,7 @@ public class GraphIO {
 
 	/**
 	 * Creates a GraphClass based on the given GraphClassData.
-	 *
+	 * 
 	 * @param gcData
 	 *            The GraphClassData used to create the GraphClass.
 	 * @return The created GraphClass.
@@ -1039,7 +1050,7 @@ public class GraphIO {
 	/**
 	 * Reads the direct superclasses of a GraphClass or a GraphElementClass from
 	 * the TG-file.
-	 *
+	 * 
 	 * @return A list of the direct super classes.
 	 * @throws GraphIOException
 	 */
@@ -1059,7 +1070,7 @@ public class GraphIO {
 	/**
 	 * Reads the attributes (names and domains) of a GraphClass or a
 	 * GraphElementClass from the TG-file.
-	 *
+	 * 
 	 * @return A Map of attribute names to lists of Strings. Each list
 	 *         represents an attribute's domain.
 	 * @throws GraphIOException
@@ -1095,17 +1106,19 @@ public class GraphIO {
 	 * list represents an attribute's domain. This Map is converted to a Map of
 	 * the attribute names to Domain objects corresponding to the domains
 	 * represented in the lists.
-	 *
+	 * 
 	 * @param componentsData
 	 *            A Map of attribute names to lists of Strings. Each list
 	 *            represents an attribute's domain.
 	 * @param aec
-	 * 			  the {@link AttributedElementClass} owning the {@link Attribute}s to be created
+	 *            the {@link AttributedElementClass} owning the
+	 *            {@link Attribute}s to be created
 	 * @return A Map of attribute names to corresponding Domain objects.
 	 * @throws GraphIOException
 	 */
 	private Map<String, Attribute> attributes(
-			Map<String, List<String>> attributesData, AttributedElementClass aec) throws GraphIOException {
+			Map<String, List<String>> attributesData, AttributedElementClass aec)
+			throws GraphIOException {
 		Map<String, Attribute> attributes = new TreeMap<String, Attribute>();
 		Attribute attribute;
 
@@ -1122,7 +1135,7 @@ public class GraphIO {
 	/**
 	 * Reads an Attribute's domain from the TG-file and stores it in the list
 	 * given as argument.
-	 *
+	 * 
 	 * @param attrDomain
 	 *            The list to which an attribute's domain shall be added.
 	 * @throws GraphIOException
@@ -1170,7 +1183,7 @@ public class GraphIO {
 	/**
 	 * Creates a Domain corresponding to a list of domain names representing a,
 	 * probably composite, domain.
-	 *
+	 * 
 	 * @param domainNames
 	 *            The list containing the names of, probably composite, domains.
 	 * @return The created Domain.
@@ -1245,7 +1258,7 @@ public class GraphIO {
 	/**
 	 * Reads the a GraphElementClass of the GraphClass indicated by the given
 	 * name.
-	 *
+	 * 
 	 * @throws GraphIOException
 	 */
 	private void parseGraphElementClass(String gcName) throws GraphIOException,
@@ -1398,7 +1411,7 @@ public class GraphIO {
 
 	/**
 	 * Reads a multiplicity of an EdgeClass.
-	 *
+	 * 
 	 * @return An array with two elements. The first element represents the
 	 *         multiplicity's lower bound. The second element represents the
 	 *         upper bound.
@@ -1433,7 +1446,7 @@ public class GraphIO {
 
 	/**
 	 * Reads a role name of an EdgeClass.
-	 *
+	 * 
 	 * @return A role name.
 	 * @throws GraphIOException
 	 */
@@ -1448,7 +1461,7 @@ public class GraphIO {
 
 	/**
 	 * Reads the redefinition of a rolename of an EdgeClass
-	 *
+	 * 
 	 * @return A Set<String> of redefined rolenames or <code>null</code> if no
 	 *         rolenames were redefined
 	 * @throw GraphIOException
@@ -1472,7 +1485,7 @@ public class GraphIO {
 	/**
 	 * Reads whether an AggregationClass or a CompositionClass has its aggregate
 	 * at its "from" VertexClass or at its "to" VertexClass.
-	 *
+	 * 
 	 * @return True, if the aggregate is at the "from" end. False, if the
 	 *         aggregate is at the "to" end.
 	 * @throws GraphIOException
@@ -1513,7 +1526,7 @@ public class GraphIO {
 
 	/**
 	 * Reads the components of a RecordDomain from the TG-file.
-	 *
+	 * 
 	 * @return A map of component names to lists of Strings representing the
 	 *         component's domain.
 	 * @throws GraphIOException
@@ -1545,7 +1558,7 @@ public class GraphIO {
 	/**
 	 * Reads the constants of an EnumDomain. Duplicate constant names are
 	 * rejected.
-	 *
+	 * 
 	 * @return A list of String containing the constants.
 	 * @throws GraphIOException
 	 *             if duplicate constant names are read.
@@ -1845,7 +1858,7 @@ public class GraphIO {
 
 	/**
 	 * Parses an identifier, checks it for validity and returns it.
-	 *
+	 * 
 	 * @param isUpperCase
 	 *            If true, the identifier must begin with an uppercase character
 	 * @return the parsed identifier
@@ -1869,7 +1882,7 @@ public class GraphIO {
 
 	/**
 	 * Parses an identifier, checks it for validity and returns it.
-	 *
+	 * 
 	 * @param isUpperCase
 	 *            If true, the identifier must begin with an uppercase character
 	 * @return An array of the form {parentPackage, simpleName}
@@ -2194,7 +2207,7 @@ public class GraphIO {
 	 * Converts a String value with arbitrary characters to a quoted string
 	 * value containing only ASCII characters and escaped unicode sequences as
 	 * required by the TG file format.
-	 *
+	 * 
 	 * @param value
 	 *            a string
 	 * @return a quoted string suitable for storage in TG files.

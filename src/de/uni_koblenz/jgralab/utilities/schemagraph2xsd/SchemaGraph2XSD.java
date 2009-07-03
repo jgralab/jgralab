@@ -659,10 +659,6 @@ public class SchemaGraph2XSD {
 		String namespacePrefix = args[1].trim();
 		String xsdFile = args[2].trim();
 
-		// de.uni_koblenz.jgralab.schema.Schema s = GraphIO
-		// .loadSchemaFromFile(schemaFile);
-
-		// Schema2SchemaGraph s2sg = new Schema2SchemaGraph();
 		SchemaGraph sg = GrumlSchema.instance().loadSchemaGraph(
 				schemaGraphFile, new ProgressFunctionImpl());
 		SchemaGraph2XSD t2xsd = new SchemaGraph2XSD(sg, namespacePrefix,
