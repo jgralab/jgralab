@@ -128,10 +128,10 @@ public class SchemaGraph2XSD {
 	private static final String XSD_COMPLEXTYPE_VERTEX = "BT_Vertex";
 	private static final String XSD_COMPLEXTYPE_EDGE = "BT_Edge";
 
-	private XMLStreamWriter xml;
-	private SchemaGraph schemaGraph;
-	private SchemaGraph2Tg sg2tg;
-	private String namespacePrefix;
+	private final XMLStreamWriter xml;
+	private final SchemaGraph schemaGraph;
+	private final SchemaGraph2Tg sg2tg;
+	private final String namespacePrefix;
 
 	/**
 	 * This map links Domain-objects to existing enumeration types described by
@@ -632,8 +632,14 @@ public class SchemaGraph2XSD {
 		xml.writeNamespace(namespacePrefix, ns);
 		System.out.println(ns);
 		xml.writeAttribute("targetNamespace", ns);
-		xml.writeAttribute("elementFormDefault", "qualified");
-		xml.writeAttribute("attributeFormDefault", "qualified");
+
+		// These two option have an unwanted impact to the XML-Instance
+		// Every element in the XML-Instance document have to have a prefix of
+		// the namespace
+		// xml.writeAttribute("elementFormDefault", "qualified");
+		// Every attribute in the XML-Instance document have to have a prefix of
+		// the namespace
+		// xml.writeAttribute("attributeFormDefault", "qualified");
 	}
 
 	/**
