@@ -68,7 +68,7 @@ import de.uni_koblenz.jgralab.utilities.rsa2tg.SchemaGraph2Tg;
  * @author Tassilo Horn &lt;horn@uni-koblenz.de&gt;
  * 
  */
-@WorkInProgress(description = "Converter from SchemaGraph to XML Schema", responsibleDevelopers = "horn, mmce, riediger", expectedFinishingDate = "2009/07/20")
+@WorkInProgress(description = "Converter from SchemaGraph to XML Schema", responsibleDevelopers = "horn, mmce, riediger", expectedFinishingDate = "2009/06/30")
 public class SchemaGraph2XSD {
 
 	private static final String DOMAIN_RECORD = "ST_RECORD";
@@ -161,7 +161,6 @@ public class SchemaGraph2XSD {
 			getXSDType(domain);
 		}
 
-		xml.writeStartDocument();
 		writeStartXSDSchema();
 
 		// write the default complex types
@@ -186,7 +185,6 @@ public class SchemaGraph2XSD {
 		writeAllDomainTypes();
 
 		// ends the schema
-		writeEndXSDElement();
 		xml.writeEndDocument();
 		xml.flush();
 	}
@@ -201,15 +199,20 @@ public class SchemaGraph2XSD {
 
 	private void writeRestrictedString(String string) throws XMLStreamException {
 		writeStartXSDSimpleType(string);
-		writeStartXSDRestriction(XSD_DOMAIN_STRING);
-		writeEndXSDElement();
+		writeStartXSDRestriction(XSD_DOMAIN_STRING, true);
 		writeEndXSDElement();
 	}
 
-	private void writeStartXSDRestriction(String type)
+	private void writeStartXSDRestriction(String type, boolean empty)
 			throws XMLStreamException {
-		xml.writeStartElement(XSD_NS_PREFIX, XSD_RESTRICTION,
-				XMLConstants.W3C_XML_SCHEMA_NS_URI);
+
+		if (empty) {
+			xml.writeEmptyElement(XSD_NS_PREFIX, XSD_RESTRICTION,
+					XMLConstants.W3C_XML_SCHEMA_NS_URI);
+		} else {
+			xml.writeStartElement(XSD_NS_PREFIX, XSD_RESTRICTION,
+					XMLConstants.W3C_XML_SCHEMA_NS_URI);
+		}
 		xml.writeAttribute(XSD_ATTRIBUTE_BASE, type);
 	}
 
@@ -236,6 +239,7 @@ public class SchemaGraph2XSD {
 				XMLConstants.W3C_XML_SCHEMA_NS_URI);
 		xml.writeAttribute(XSD_ATTRIBUTE_MIN_OCCURS, "0");
 		xml.writeAttribute(XSD_ATTRIBUTE_MAX_OCCURS, "unbounded");
+
 		for (VertexClass vc : schemaGraph.getVertexClassVertices()) {
 			if (vc.isIsAbstract()) {
 				continue;
@@ -251,29 +255,33 @@ public class SchemaGraph2XSD {
 			writeStartXSDElement(ec.getQualifiedName(),
 					XSD_COMPLEX_EDGETYPE_PREFIX + ec.getQualifiedName(), false);
 		}
-		writeEndXSDElement(); // end choice
+
+		writeEndXSDElement();
 
 		writeAttributes(gc);
 
-		writeEndXSDElement(); // end extension
-		writeEndXSDElement(); // end extension
-		writeEndXSDElement(); // end complexType
+		writeEndXSDElement();
+		writeEndXSDElement();
+		writeEndXSDElement();
 	}
 
 	private void writeDefaultComplexTypes() throws XMLStreamException {
 		String attElem = XSD_COMPLEXTYPE_ATTRIBUTED_ELEMENT;
 		writeStartXSDComplexType(attElem, true);
-		writeXSDAttribute(XSD_ATTRIBUTE_ID, XML_ID, XSD_REQUIRED);
 		writeEndXSDElement();
 
 		writeStartXSDComplexType(XSD_COMPLEXTYPE_GRAPH, true);
-		writeSimpleXSDExtension(attElem);
-		writeEndXSDElement(); // ends complexContent
+		writeStartXSDExtension(attElem, true);
+		writeXSDAttribute(XSD_ATTRIBUTE_ID, XML_ID, XSD_REQUIRED);
+		writeEndXSDElement();
+		writeEndXSDElement();
 		writeEndXSDElement();
 
 		writeStartXSDComplexType(XSD_COMPLEXTYPE_VERTEX, true);
-		writeSimpleXSDExtension(attElem);
-		writeEndXSDElement(); // ends complexContent
+		writeStartXSDExtension(attElem, true);
+		writeXSDAttribute(XSD_ATTRIBUTE_ID, XML_ID, XSD_REQUIRED);
+		writeEndXSDElement();
+		writeEndXSDElement();
 		writeEndXSDElement();
 
 		writeStartXSDComplexType(XSD_COMPLEXTYPE_EDGE, true);
@@ -282,9 +290,9 @@ public class SchemaGraph2XSD {
 		writeXSDAttribute(XSD_ATTRIBUTE_TO, XML_IDREF, XSD_REQUIRED);
 		writeXSDAttribute(XSD_ATTRIBUTE_FSEQ, XSD_DOMAIN_INTEGER);
 		writeXSDAttribute(XSD_ATTRIBUTE_TSEQ, XSD_DOMAIN_INTEGER);
-		writeEndXSDElement(); // ends extension
-		writeEndXSDElement(); // ends complexContent
-		writeEndXSDElement(); // ends complexType
+		writeEndXSDElement();
+		writeEndXSDElement();
+		writeEndXSDElement();
 	}
 
 	private void writeEdgeClassComplexTypes() throws XMLStreamException {
@@ -383,6 +391,7 @@ public class SchemaGraph2XSD {
 				writeEndXSDElement(); // ends extension
 			} else {
 				writeStartXSDExtension(XSD_COMPLEXTYPE_VERTEX, false);
+				System.out.println(vc.getQualifiedName());
 			}
 			writeEndXSDElement(); // ends complexContent
 			writeEndXSDElement(); // ends complexType
@@ -422,6 +431,7 @@ public class SchemaGraph2XSD {
 
 		xml.writeStartElement(XSD_NS_PREFIX, XSD_COMPLEXTYPE,
 				XMLConstants.W3C_XML_SCHEMA_NS_URI);
+
 		xml.writeAttribute(XSD_ATTRIBUTE_NAME, name);
 		if (isAbstract) {
 			xml.writeAttribute(XSD_ATTRIBUTE_ABSTRACT, TRUE);
@@ -438,14 +448,9 @@ public class SchemaGraph2XSD {
 			xml.writeEmptyElement(XSD_NS_PREFIX, XSD_ELEMENT,
 					XMLConstants.W3C_XML_SCHEMA_NS_URI);
 		}
+
 		xml.writeAttribute(XSD_ATTRIBUTE_NAME, name);
 		xml.writeAttribute(XSD_ATTRIBUTE_TYPE, namespacePrefix + ":" + type);
-	}
-
-	private void writeSimpleXSDExtension(String extendedType)
-			throws XMLStreamException {
-
-		writeStartXSDExtension(extendedType, false);
 	}
 
 	private void writeStartXSDExtension(String extendedType,
@@ -454,6 +459,7 @@ public class SchemaGraph2XSD {
 		// Is needed for an extension
 		xml.writeStartElement(XSD_NS_PREFIX, XSD_COMPLEXCONTENT,
 				XMLConstants.W3C_XML_SCHEMA_NS_URI);
+
 		if (complexContent) {
 			xml.writeStartElement(XSD_NS_PREFIX, XSD_EXTENSION,
 					XMLConstants.W3C_XML_SCHEMA_NS_URI);
@@ -461,6 +467,7 @@ public class SchemaGraph2XSD {
 			xml.writeEmptyElement(XSD_NS_PREFIX, XSD_EXTENSION,
 					XMLConstants.W3C_XML_SCHEMA_NS_URI);
 		}
+
 		xml.writeAttribute(XSD_ATTRIBUTE_BASE, namespacePrefix + ":"
 				+ extendedType);
 	}
@@ -605,11 +612,12 @@ public class SchemaGraph2XSD {
 	}
 
 	private void writeStartXSDSchema() throws XMLStreamException {
+
+		xml.writeStartDocument();
+
 		xml.writeStartElement(XSD_NS_PREFIX, XSD_SCHEMA,
 				XMLConstants.W3C_XML_SCHEMA_NS_URI);
-		// TODO: I don't know which attributes the schema element has... At
-		// least something like http://jgralab.uni-koblenz.de/SoamigSchema
-		// should be given here...
+
 		xml.writeNamespace(XSD_NS_PREFIX, XMLConstants.W3C_XML_SCHEMA_NS_URI);
 
 		String ns = "";
@@ -632,14 +640,8 @@ public class SchemaGraph2XSD {
 		xml.writeNamespace(namespacePrefix, ns);
 		System.out.println(ns);
 		xml.writeAttribute("targetNamespace", ns);
-
-		// These two option have an unwanted impact to the XML-Instance
-		// Every element in the XML-Instance document have to have a prefix of
-		// the namespace
-		// xml.writeAttribute("elementFormDefault", "qualified");
-		// Every attribute in the XML-Instance document have to have a prefix of
-		// the namespace
-		// xml.writeAttribute("attributeFormDefault", "qualified");
+		xml.writeAttribute("elementFormDefault", "qualified");
+		xml.writeAttribute("attributeFormDefault", "qualified");
 	}
 
 	/**
