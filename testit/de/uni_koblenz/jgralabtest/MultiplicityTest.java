@@ -14,7 +14,7 @@ import de.uni_koblenz.jgralab.graphvalidator.GraphValidator;
 import de.uni_koblenz.jgralab.graphvalidator.MultiplicityConstraintViolation;
 import de.uni_koblenz.jgralab.schema.EdgeClass;
 import de.uni_koblenz.jgralab.schema.Schema;
-import de.uni_koblenz.jgralab.schema.exception.InheritanceException;
+import de.uni_koblenz.jgralab.GraphException;
 import de.uni_koblenz.jgralabtest.schemas.vertextest.A;
 import de.uni_koblenz.jgralabtest.schemas.vertextest.B;
 import de.uni_koblenz.jgralabtest.schemas.vertextest.VertexTestGraph;
@@ -209,6 +209,9 @@ public class MultiplicityTest {
 	 * 2.1. MultiplicityConstraints broken of one EdgeClass.
 	 */
 
+	/**
+	 * No H-edges.
+	 */
 	@Test
 	public void multiplicityTest6() {
 		A v1 = graph.createA();
@@ -225,6 +228,9 @@ public class MultiplicityTest {
 				violations.first().getAttributedElementClass());
 	}
 
+	/**
+	 * Too many H-edges.
+	 */
 	@Test
 	public void multiplicityTest7() {
 		A v1 = graph.createA();
@@ -246,6 +252,9 @@ public class MultiplicityTest {
 				violations.first().getAttributedElementClass());
 	}
 
+	/**
+	 * No K-edges.
+	 */
 	@Test
 	public void multiplicityTest9() {
 		A v1 = graph.createA();
@@ -262,6 +271,9 @@ public class MultiplicityTest {
 				violations.first().getAttributedElementClass());
 	}
 
+	/**
+	 * Too less K-edges.
+	 */
 	@Test
 	public void multiplicityTest10() {
 		A v1 = graph.createA();
@@ -279,6 +291,9 @@ public class MultiplicityTest {
 				violations.first().getAttributedElementClass());
 	}
 
+	/**
+	 * Too many K-edges.
+	 */
 	@Test
 	public void multiplicityTest13() {
 		A v1 = graph.createA();
@@ -306,6 +321,9 @@ public class MultiplicityTest {
 	 * 2.2. MultiplicityConstraints broken of several EdgeClasses.
 	 */
 
+	/**
+	 * The number of K-edges is correct, but there are too many H-edges.
+	 */
 	@Test
 	public void multiplicityTest15() {
 		A v1 = graph.createA();
@@ -333,7 +351,7 @@ public class MultiplicityTest {
 	/*
 	 * 3. Defining MultiplicityConstraints.
 	 */
-	
+
 	/*
 	 * 3.1 Legal MultiplicityConstraints.
 	 */
@@ -341,8 +359,7 @@ public class MultiplicityTest {
 	@Test
 	public void multiplicityTest16() {
 		compileSchema("Schema de.uni_koblenz.jgralabtest.TestSchema;"
-				+ "GraphClass TestGraph;"
-				+ "VertexClass VC1;"
+				+ "GraphClass TestGraph;" + "VertexClass VC1;"
 				+ "VertexClass VC2;"
 				+ "EdgeClass EC1 from VC2 (0,*) to VC1 (2,6);"
 				+ "EdgeClass EC2:EC1 from VC2 (0,*) to VC1 (3,4);");
@@ -351,65 +368,75 @@ public class MultiplicityTest {
 	@Test
 	public void multiplicityTest18() {
 		compileSchema("Schema de.uni_koblenz.jgralabtest.TestSchema;"
-				+ "GraphClass TestGraph;"
-				+ "VertexClass VC1;"
+				+ "GraphClass TestGraph;" + "VertexClass VC1;"
 				+ "VertexClass VC2;"
 				+ "EdgeClass EC1 from VC2 (0,*) to VC1 (2,6);"
 				+ "EdgeClass EC2:EC1 from VC2 (0,*) to VC1 (2,6);");
 	}
-	
+
 	@Test
 	public void multiplicityTest22() {
 		compileSchema("Schema de.uni_koblenz.jgralabtest.TestSchema;"
-				+ "GraphClass TestGraph;"
-				+ "VertexClass VC1;"
-				+ "VertexClass VC2;"
-				+ "VertexClass VC3:V1;"
+				+ "GraphClass TestGraph;" + "VertexClass VC1;"
+				+ "VertexClass VC2;" + "VertexClass VC3:VC1;"
 				+ "EdgeClass EC1 from VC2 (0,*) to VC1 (2,6);"
 				+ "EdgeClass EC2:EC1 from VC2 (0,*) to VC3 (3,4);");
 	}
-	
+
 	/*
 	 * 3.2 Illegal MultiplicityConstraints must be rejected during compilation.
 	 */
-	
-	@Test
+
+	/**
+	 * Multiplicity of the child edge is smaller and greater than the smallest
+	 * and greatest possible multiplicity of the parent edge.
+	 */
+	@Test(expected = GraphException.class)
+	// TODO Replace with the expected exception
 	public void multiplicityTest17() {
 		compileSchema("Schema de.uni_koblenz.jgralabtest.TestSchema;"
-				+ "GraphClass TestGraph;"
-				+ "VertexClass VC1;"
+				+ "GraphClass TestGraph;" + "VertexClass VC1;"
 				+ "VertexClass VC2;"
 				+ "EdgeClass EC1 from VC2 (0,*) to VC1 (2,6);"
 				+ "EdgeClass EC2:EC1 from VC2 (0,*) to VC1 (1,7);");
 	}
-	
-	@Test
+
+	/**
+	 * Multiplicity of the child edge is greater than the greatest possible
+	 * multiplicity of the parent edge.
+	 */
+	@Test(expected = GraphException.class)
+	// TODO Replace with the expected exception
 	public void multiplicityTest19() {
 		compileSchema("Schema de.uni_koblenz.jgralabtest.TestSchema;"
-				+ "GraphClass TestGraph;"
-				+ "VertexClass VC1;"
+				+ "GraphClass TestGraph;" + "VertexClass VC1;"
 				+ "VertexClass VC2;"
 				+ "EdgeClass EC1 from VC2 (0,*) to VC1 (2,6);"
 				+ "EdgeClass EC2:EC1 from VC2 (0,*) to VC1 (3,7);");
 	}
-	
-	@Test
+
+	/**
+	 * Multiplicity of the child edge is smaller than the smallest possible
+	 * multiplicity of the parent edge.
+	 */
+	@Test(expected = GraphException.class)
+	// TODO Replace with the expected exception
 	public void multiplicityTest20() {
 		compileSchema("Schema de.uni_koblenz.jgralabtest.TestSchema;"
-				+ "GraphClass TestGraph;"
-				+ "VertexClass VC1;"
+				+ "GraphClass TestGraph;" + "VertexClass VC1;"
 				+ "VertexClass VC2;"
 				+ "EdgeClass EC1 from VC2 (0,*) to VC1 (2,6);"
 				+ "EdgeClass EC2:EC1 from VC2 (0,*) to VC1 (1,4);");
 	}
-	
-	@Test(expected=InheritanceException.class)
+
+	/**
+	 * EC2 has a different toVertexType than its supertype.
+	 */
+	@Test(expected = GraphIOException.class)
 	public void multiplicityTest21() {
 		compileSchema("Schema de.uni_koblenz.jgralabtest.TestSchema;"
-				+ "GraphClass TestGraph;"
-				+ "VertexClass VC1;"
-				+ "VertexClass VC2;"
-				+ "VertexClass VC3;"
+				+ "GraphClass TestGraph;" + "VertexClass VC1;"
+				+ "VertexClass VC2;" + "VertexClass VC3;"
 				+ "EdgeClass EC1 from VC2 (0,*) to VC1 (2,6);"
 				+ "EdgeClass EC2:EC1 from VC2 (0,*) to VC3 (3,4);");
 	}
