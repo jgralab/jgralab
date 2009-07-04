@@ -5999,12 +5999,30 @@ public class VertexTest {
 
 	// tests of the method boolean isBefore(Vertex v);
 	// (tested in VertexList Test)
+	
+	/**
+	 * A vertex is not before itself.
+	 */
+	@Test
+	public void isBeforeTest0(){
+		Vertex v1=graph.createDoubleSubNode();
+		assertFalse(v1.isBefore(v1));
+	}
 
 	// tests of the method void putBefore(Vertex v);
 	// (tested in VertexList Test)
 
 	// tests of the method boolean isAfter(Vertex v);
 	// (tested in VertexList Test)
+	
+	/**
+	 * A vertex is not after itself.
+	 */
+	@Test
+	public void isAfterTest0(){
+		Vertex v1=graph.createDoubleSubNode();
+		assertFalse(v1.isAfter(v1));
+	}
 
 	// tests of the method void putAfter(Vertex v);
 	// (tested in VertexList Test)
