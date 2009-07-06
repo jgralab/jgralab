@@ -27,7 +27,6 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.StringWriter;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -62,7 +61,9 @@ import de.uni_koblenz.jgralab.grumlschema.structure.SpecializesEdgeClass;
 import de.uni_koblenz.jgralab.grumlschema.structure.SpecializesVertexClass;
 import de.uni_koblenz.jgralab.grumlschema.structure.VertexClass;
 import de.uni_koblenz.jgralab.impl.ProgressFunctionImpl;
+import de.uni_koblenz.jgralab.utilities.jgralab2owl.IndentingXMLStreamWriter;
 import de.uni_koblenz.jgralab.utilities.rsa2tg.SchemaGraph2Tg;
+import de.uni_koblenz.jgralab.utilities.tg2xml.Tg2xml;
 
 /**
  * @author Tassilo Horn &lt;horn@uni-koblenz.de&gt;
@@ -142,8 +143,13 @@ public class SchemaGraph2XSD {
 	public SchemaGraph2XSD(SchemaGraph sg, String namespacePrefix,
 			String outFile) throws FileNotFoundException, XMLStreamException,
 			FactoryConfigurationError {
-		xml = XMLOutputFactory.newInstance().createXMLStreamWriter(
-				new FileOutputStream(outFile));
+		XMLStreamWriter writer = XMLOutputFactory.newInstance()
+				.createXMLStreamWriter(new FileOutputStream(outFile));
+		IndentingXMLStreamWriter xml = new IndentingXMLStreamWriter(writer, 1);
+
+		xml.setIndentationChar('\t');
+
+		this.xml = xml;
 
 		if (namespacePrefix.endsWith(":")) {
 			namespacePrefix = namespacePrefix.substring(0, namespacePrefix
@@ -391,7 +397,6 @@ public class SchemaGraph2XSD {
 				writeEndXSDElement(); // ends extension
 			} else {
 				writeStartXSDExtension(XSD_COMPLEXTYPE_VERTEX, false);
-				System.out.println(vc.getQualifiedName());
 			}
 			writeEndXSDElement(); // ends complexContent
 			writeEndXSDElement(); // ends complexType
@@ -474,7 +479,6 @@ public class SchemaGraph2XSD {
 
 	private void writeEndXSDElement() throws XMLStreamException {
 		xml.writeEndElement();
-		xml.writeCharacters("\n");
 	}
 
 	private void writeXSDAttribute(String name, String type)
@@ -620,28 +624,14 @@ public class SchemaGraph2XSD {
 
 		xml.writeNamespace(XSD_NS_PREFIX, XMLConstants.W3C_XML_SCHEMA_NS_URI);
 
-		String ns = "";
+		Schema schema = schemaGraph.getFirstSchema();
 
-		Iterator<Schema> it = schemaGraph.getSchemaVertices().iterator();
-		if (it.hasNext()) {
-			Schema s = it.next();
-			String[] names = s.getPackagePrefix().split("\\.");
-			assert (names.length > 1);
+		String namespace = schema.getPackagePrefix() + "." + schema.getName();
 
-			ns = "http://" + names[1] + "." + names[0];
+		namespace = Tg2xml.generateURI(namespace);
 
-			for (int i = 2; i < names.length; i++) {
-				ns += "/" + names[i];
-			}
-
-			ns += "/" + s.getName();
-		}
-
-		xml.writeNamespace(namespacePrefix, ns);
-		System.out.println(ns);
-		xml.writeAttribute("targetNamespace", ns);
-		xml.writeAttribute("elementFormDefault", "qualified");
-		xml.writeAttribute("attributeFormDefault", "qualified");
+		xml.writeNamespace(namespacePrefix, namespace);
+		xml.writeAttribute("targetNamespace", namespace);
 	}
 
 	/**
