@@ -148,6 +148,10 @@ public class JniServer {
 		return graph.createVertex(m1Class).getId();
 	}
 
+	public void deleteVertex(int graphId, int vertexId) {
+		graphs.get(graphId).getVertex(vertexId).delete();
+	}
+
 	public void setVertexAttribute(int graphId, int vertexId,
 			String attributeName, boolean value) {
 		setAttribute(graphs.get(graphId).getVertex(vertexId), attributeName,
@@ -183,6 +187,35 @@ public class JniServer {
 		setEnumAttribute(graphs.get(graphId).getVertex(vertexId),
 				attributeName, value);
 	}
+	
+	public String getVertexClassName(int graphId, int vertexId) {
+		return graphs.get(graphId).getVertex(vertexId).getAttributedElementClass().getQualifiedName();
+	}
+
+	public boolean getVertexBooleanAttribute(int graphId, int edgeId, String attributeName) {
+		return (Boolean)getAttribute(graphs.get(graphId).getVertex(edgeId), attributeName);
+	}
+
+	public int getVertexIntegerAttribute(int graphId, int edgeId, String attributeName) {
+		return (Integer)getAttribute(graphs.get(graphId).getVertex(edgeId), attributeName);
+	}
+
+	public long getVertexLongAttribute(int graphId, int edgeId, String attributeName) {
+		return (Long)getAttribute(graphs.get(graphId).getVertex(edgeId), attributeName);
+	}
+
+	public double getVertexDoubleAttribute(int graphId, int edgeId, String attributeName) {
+		return (Double)getAttribute(graphs.get(graphId).getVertex(edgeId), attributeName);
+	}
+
+	public String getVertexStringAttribute(int graphId, int edgeId, String attributeName) {
+		return (String)getAttribute(graphs.get(graphId).getVertex(edgeId), attributeName);
+		
+	}
+
+	public String getVertexEnumAttribute(int graphId, int edgeId, String attributeName) {
+		return getEnumAttribute(graphs.get(graphId).getVertex(edgeId), attributeName);
+	}
 
 	// ----------------------------------------------------------------------------
 	// ----------------------------------------------------------------------------
@@ -195,6 +228,15 @@ public class JniServer {
 		return graph.createEdge(m1Class, graph.getVertex(alphaId),
 				graph.getVertex(omegaId)).getId();
 	}
+
+	public void deleteEdge(int graphId, int edgeId) {
+		graphs.get(graphId).getEdge(edgeId).delete();
+	}
+
+	public String getEdgeClassName(int graphId, int edgeId) {
+		return graphs.get(graphId).getEdge(edgeId).getAttributedElementClass().getQualifiedName();
+	}
+
 
 	public void setEdgeAttribute(int graphId, int edgeId, String attributeName,
 			boolean value) {
@@ -227,6 +269,32 @@ public class JniServer {
 				value);
 	}
 
+	public boolean getEdgeBooleanAttribute(int graphId, int edgeId, String attributeName) {
+		return (Boolean)getAttribute(graphs.get(graphId).getEdge(edgeId), attributeName);
+	}
+
+	public int getEdgeIntegerAttribute(int graphId, int edgeId, String attributeName) {
+		return (Integer)getAttribute(graphs.get(graphId).getEdge(edgeId), attributeName);
+		
+	}
+
+	public long getEdgeLongAttribute(int graphId, int edgeId, String attributeName) {
+		return (Long)getAttribute(graphs.get(graphId).getEdge(edgeId), attributeName);
+	}
+
+	public double getEdgeDoubleAttribute(int graphId, int edgeId, String attributeName) {
+		return (Double)getAttribute(graphs.get(graphId).getEdge(edgeId), attributeName);
+	}
+
+	public String getEdgeStringAttribute(int graphId, int edgeId, String attributeName) {
+		return (String)getAttribute(graphs.get(graphId).getEdge(edgeId), attributeName);
+		
+	}
+
+	public String getEdgeEnumAttribute(int graphId, int edgeId, String attributeName) {
+		return getEnumAttribute(graphs.get(graphId).getEdge(edgeId), attributeName);
+	}
+	
 	// ----------------------------------------------------------------------------
 	// ----------------------------------------------------------------------------
 
@@ -255,8 +323,7 @@ public class JniServer {
 				.getFirstEdgeOfClassInGraph((EdgeClass) g.getSchema()
 						.getAttributedElementClass(edgeClassName)) : g
 				.getFirstEdgeInGraph();
-		return (e == null) ? 0 : e.getId();
-	}
+		return (e == null) ? 0 : e.getId();	}
 
 	public int getNextEdgeInGraph(int graphId, int edgeId, String edgeClassName) {
 		Graph g = graphs.get(graphId);
@@ -338,5 +405,28 @@ public class JniServer {
 			throw new GraphException(ex);
 		}
 	}
+	
+	private String getEnumAttribute(AttributedElement e, String attributeName) {
+		AttributedElementClass aec = e.getAttributedElementClass();
+		Attribute attr = aec.getAttribute(attributeName);
+		if (attr == null) {
+			throw new GraphException("Attribute " + attributeName
+					+ " not defined in class " + aec.getQualifiedName());
+		}
+		Domain domain = attr.getDomain();
+		if (!(domain instanceof EnumDomain)) {
+			throw new GraphException("Domain of attribute " + attributeName
+					+ " is no EnumDomain.");
+		}
+		return (String)getAttribute(e, attributeName);
+		
+	}
 
+	private Object getAttribute(AttributedElement e, String attributeName) {
+		try {
+			return e.getAttribute(attributeName);
+		} catch (NoSuchFieldException ex) {
+			throw new GraphException(ex);
+		}
+	}
 }
