@@ -189,4 +189,16 @@ public final class RecordDomainImpl extends CompositeDomainImpl implements
 		output += ")";
 		return output;
 	}
+
+	@Override
+	public boolean equals(Object o) {
+		if (o instanceof RecordDomain) {
+			RecordDomain other = (RecordDomain) o;
+			if (!qualifiedName.equals(other.getQualifiedName())) {
+				return false;
+			}
+			return components.equals(other.getComponents());
+		}
+		return false;
+	}
 }
