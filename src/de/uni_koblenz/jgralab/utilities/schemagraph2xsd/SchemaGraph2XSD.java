@@ -233,11 +233,10 @@ public class SchemaGraph2XSD {
 
 		// create an element for the graph class
 		writeStartXSDElement(gc.getQualifiedName(),
-				XSD_COMPLEX_GRAPHTYPE_PREFIX + gc.getQualifiedName(), true);
-		writeEndXSDElement();
+				XSD_COMPLEX_GRAPHTYPE_PREFIX + gc.getQualifiedName(), false);
 
 		writeStartXSDComplexType(XSD_COMPLEX_GRAPHTYPE_PREFIX
-				+ gc.getQualifiedName(), false);
+				+ gc.getQualifiedName(), false, true);
 
 		writeStartXSDExtension(XSD_COMPLEXTYPE_GRAPH, true);
 
@@ -273,24 +272,23 @@ public class SchemaGraph2XSD {
 
 	private void writeDefaultComplexTypes() throws XMLStreamException {
 		String attElem = XSD_COMPLEXTYPE_ATTRIBUTED_ELEMENT;
-		writeStartXSDComplexType(attElem, true);
-		writeEndXSDElement();
+		writeStartXSDComplexType(attElem, false, false);
 
-		writeStartXSDComplexType(XSD_COMPLEXTYPE_GRAPH, true);
+		writeStartXSDComplexType(XSD_COMPLEXTYPE_GRAPH, true, true);
 		writeStartXSDExtension(attElem, true);
 		writeXSDAttribute(XSD_ATTRIBUTE_ID, XML_ID, XSD_REQUIRED);
 		writeEndXSDElement();
 		writeEndXSDElement();
 		writeEndXSDElement();
 
-		writeStartXSDComplexType(XSD_COMPLEXTYPE_VERTEX, true);
+		writeStartXSDComplexType(XSD_COMPLEXTYPE_VERTEX, true, true);
 		writeStartXSDExtension(attElem, true);
 		writeXSDAttribute(XSD_ATTRIBUTE_ID, XML_ID, XSD_REQUIRED);
 		writeEndXSDElement();
 		writeEndXSDElement();
 		writeEndXSDElement();
 
-		writeStartXSDComplexType(XSD_COMPLEXTYPE_EDGE, true);
+		writeStartXSDComplexType(XSD_COMPLEXTYPE_EDGE, true, true);
 		writeStartXSDExtension(attElem, true);
 		writeXSDAttribute(XSD_ATTRIBUTE_FROM, XML_IDREF, XSD_REQUIRED);
 		writeXSDAttribute(XSD_ATTRIBUTE_TO, XML_IDREF, XSD_REQUIRED);
@@ -311,7 +309,7 @@ public class SchemaGraph2XSD {
 
 			// first the complex type
 			writeStartXSDComplexType(XSD_COMPLEX_EDGETYPE_PREFIX
-					+ ec.getQualifiedName(), false);
+					+ ec.getQualifiedName(), false, true);
 
 			if (ec.getDegree(HasAttribute.class, EdgeDirection.OUT) > 0) {
 				writeStartXSDExtension(XSD_COMPLEXTYPE_EDGE, true);
@@ -388,7 +386,7 @@ public class SchemaGraph2XSD {
 
 			// first the complex type
 			writeStartXSDComplexType(XSD_COMPLEX_VERTEXTYPE_PREFIX
-					+ vc.getQualifiedName(), false);
+					+ vc.getQualifiedName(), false, true);
 			if (vc.getDegree(HasAttribute.class, EdgeDirection.OUT) > 0) {
 				writeStartXSDExtension(XSD_COMPLEXTYPE_VERTEX, true);
 
@@ -431,11 +429,16 @@ public class SchemaGraph2XSD {
 		}
 	}
 
-	private void writeStartXSDComplexType(String name, boolean isAbstract)
-			throws XMLStreamException {
+	private void writeStartXSDComplexType(String name, boolean isAbstract,
+			boolean hasContent) throws XMLStreamException {
 
-		xml.writeStartElement(XSD_NS_PREFIX, XSD_COMPLEXTYPE,
-				XMLConstants.W3C_XML_SCHEMA_NS_URI);
+		if (hasContent) {
+			xml.writeStartElement(XSD_NS_PREFIX, XSD_COMPLEXTYPE,
+					XMLConstants.W3C_XML_SCHEMA_NS_URI);
+		} else {
+			xml.writeEmptyElement(XSD_NS_PREFIX, XSD_COMPLEXTYPE,
+					XMLConstants.W3C_XML_SCHEMA_NS_URI);
+		}
 
 		xml.writeAttribute(XSD_ATTRIBUTE_NAME, name);
 		if (isAbstract) {
