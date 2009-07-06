@@ -22,9 +22,12 @@ import org.junit.Test;
 
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.EdgeDirection;
+import de.uni_koblenz.jgralab.GraphException;
 import de.uni_koblenz.jgralab.GraphIO;
 import de.uni_koblenz.jgralab.GraphIOException;
 import de.uni_koblenz.jgralab.Vertex;
+import de.uni_koblenz.jgralab.impl.IncidenceImpl;
+import de.uni_koblenz.jgralab.impl.VertexImpl;
 import de.uni_koblenz.jgralab.schema.EdgeClass;
 import de.uni_koblenz.jgralab.schema.GraphClass;
 import de.uni_koblenz.jgralab.schema.Schema;
@@ -6141,6 +6144,56 @@ public class VertexTest {
 	// (tested in VertexList Test except failfast)
 
 	/**
+	 * An exception should occur if you want to remove an edge via the iterator.
+	 */
+	@Test(expected = GraphException.class)
+	public void incidencesTest0() {
+		Vertex v0 = graph.createDoubleSubNode();
+		Vertex v1 = graph.createDoubleSubNode();
+		graph.createLink((AbstractSuperNode) v0, (SuperNode) v1);
+		graph.createLink((AbstractSuperNode) v0, (SuperNode) v1);
+		graph.createLink((AbstractSuperNode) v0, (SuperNode) v1);
+		Iterator<Edge> iter = v0.incidences().iterator();
+		iter.remove();
+	}
+
+	/**
+	 * If you call hasNext several time, the current edge of the iterator must stay the same.
+	 */
+	@Test
+	public void incidencesTest1() {
+		Vertex v0 = graph.createDoubleSubNode();
+		Vertex v1 = graph.createDoubleSubNode();
+		Edge e1=graph.createLink((AbstractSuperNode) v0, (SuperNode) v1);
+		graph.createLink((AbstractSuperNode) v0, (SuperNode) v1);
+		graph.createLink((AbstractSuperNode) v0, (SuperNode) v1);
+		Iterator<Edge> iter = v0.incidences().iterator();
+		assertTrue(iter.hasNext());
+		assertTrue(iter.hasNext());
+		assertEquals(e1,iter.next());
+	}
+
+	/**
+	 * If there exists no further edges, hasNext must return false.
+	 */
+	@Test
+	public void incidencesTes2() {
+		Vertex v0 = graph.createDoubleSubNode();
+		Vertex v1 = graph.createDoubleSubNode();
+		Edge e1=graph.createLink((AbstractSuperNode) v0, (SuperNode) v1);
+		Edge e2=graph.createLink((AbstractSuperNode) v0, (SuperNode) v1);
+		Edge e3=graph.createLink((AbstractSuperNode) v0, (SuperNode) v1);
+		Iterator<Edge> iter = v0.incidences().iterator();
+		assertTrue(iter.hasNext());
+		assertEquals(e1,iter.next());
+		assertTrue(iter.hasNext());
+		assertEquals(e2,iter.next());
+		assertTrue(iter.hasNext());
+		assertEquals(e3,iter.next());
+		assertFalse(iter.hasNext());
+	}
+
+	/**
 	 * An exception should occur if the current edge is deleted.
 	 */
 	@Test(expected = ConcurrentModificationException.class)
@@ -8912,5 +8965,29 @@ public class VertexTest {
 				.getReversedEdge());
 		checkGeneratedIncidences("SubLink", v1, EdgeDirection.IN, e3
 				.getReversedEdge());
+	}
+	
+	/*
+	 * Test of methods which are in no interfaces.
+	 */
+	
+	// tests of the method void putIncidenceAfter(IncidenceImpl, IncidenceImpl)
+	
+	@Test(expected=GraphException.class)
+	public void putIncidenceAfterTest0(){
+		VertexImpl v1=(VertexImpl)graph.createDoubleSubNode();
+		VertexImpl v2=(VertexImpl)graph.createDoubleSubNode();
+		IncidenceImpl e1=(IncidenceImpl)graph.createLink((AbstractSuperNode)v1, (SuperNode)v2);
+		v1.putIncidenceAfter(e1, e1);
+	}
+	
+	// tests of the method void putIncidenceBefore(IncidenceImpl, IncidenceImpl)
+	
+	@Test(expected=GraphException.class)
+	public void putIncidenceBeforeTest0(){
+		VertexImpl v1=(VertexImpl)graph.createDoubleSubNode();
+		VertexImpl v2=(VertexImpl)graph.createDoubleSubNode();
+		IncidenceImpl e1=(IncidenceImpl)graph.createLink((AbstractSuperNode)v1, (SuperNode)v2);
+		v1.putIncidenceBefore(e1, e1);
 	}
 }

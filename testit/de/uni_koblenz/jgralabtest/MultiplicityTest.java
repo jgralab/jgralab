@@ -42,17 +42,18 @@ public class MultiplicityTest {
 	 * 
 	 * @param schemaString
 	 * @return the schema
+	 * @throws GraphIOException
 	 */
-	private Schema compileSchema(String schemaString) {
+	private Schema compileSchema(String schemaString) throws GraphIOException {
 		ByteArrayInputStream input = new ByteArrayInputStream(schemaString
 				.getBytes());
 		Schema s = null;
+		s = GraphIO.loadSchemaFromStream(input);
 		try {
-			s = GraphIO.loadSchemaFromStream(input);
-		} catch (GraphIOException e) {
-			e.printStackTrace();
+			s.compile();
+		} catch (Exception e) {
+			throw new GraphIOException("", e);
 		}
-		s.compile();
 		return s;
 	}
 
@@ -357,30 +358,30 @@ public class MultiplicityTest {
 	 */
 
 	@Test
-	public void multiplicityTest16() {
-		compileSchema("Schema de.uni_koblenz.jgralabtest.TestSchema;"
-				+ "GraphClass TestGraph;" + "VertexClass VC1;"
-				+ "VertexClass VC2;"
-				+ "EdgeClass EC1 from VC2 (0,*) to VC1 (2,6);"
-				+ "EdgeClass EC2:EC1 from VC2 (0,*) to VC1 (3,4);");
+	public void multiplicityTest16() throws GraphIOException {
+			compileSchema("Schema de.uni_koblenz.jgralabtest.TestSchema;"
+					+ "GraphClass TestGraph;" + "VertexClass VC1;"
+					+ "VertexClass VC2;"
+					+ "EdgeClass EC1 from VC2 (0,*) to VC1 (2,6);"
+					+ "EdgeClass EC2:EC1 from VC2 (0,*) to VC1 (3,4);");
 	}
 
 	@Test
-	public void multiplicityTest18() {
-		compileSchema("Schema de.uni_koblenz.jgralabtest.TestSchema;"
-				+ "GraphClass TestGraph;" + "VertexClass VC1;"
-				+ "VertexClass VC2;"
-				+ "EdgeClass EC1 from VC2 (0,*) to VC1 (2,6);"
-				+ "EdgeClass EC2:EC1 from VC2 (0,*) to VC1 (2,6);");
+	public void multiplicityTest18() throws GraphIOException {
+			compileSchema("Schema de.uni_koblenz.jgralabtest.TestSchema;"
+					+ "GraphClass TestGraph;" + "VertexClass VC1;"
+					+ "VertexClass VC2;"
+					+ "EdgeClass EC1 from VC2 (0,*) to VC1 (2,6);"
+					+ "EdgeClass EC2:EC1 from VC2 (0,*) to VC1 (2,6);");
 	}
 
 	@Test
-	public void multiplicityTest22() {
-		compileSchema("Schema de.uni_koblenz.jgralabtest.TestSchema;"
-				+ "GraphClass TestGraph;" + "VertexClass VC1;"
-				+ "VertexClass VC2;" + "VertexClass VC3:VC1;"
-				+ "EdgeClass EC1 from VC2 (0,*) to VC1 (2,6);"
-				+ "EdgeClass EC2:EC1 from VC2 (0,*) to VC3 (3,4);");
+	public void multiplicityTest22() throws GraphIOException {
+			compileSchema("Schema de.uni_koblenz.jgralabtest.TestSchema;"
+					+ "GraphClass TestGraph;" + "VertexClass VC1;"
+					+ "VertexClass VC2;" + "VertexClass VC3:VC1;"
+					+ "EdgeClass EC1 from VC2 (0,*) to VC1 (2,6);"
+					+ "EdgeClass EC2:EC1 from VC2 (0,*) to VC3 (3,4);");
 	}
 
 	/*
@@ -393,7 +394,7 @@ public class MultiplicityTest {
 	 */
 	@Test(expected = GraphException.class)
 	// TODO Replace with the expected exception
-	public void multiplicityTest17() {
+	public void multiplicityTest17() throws GraphIOException {
 		compileSchema("Schema de.uni_koblenz.jgralabtest.TestSchema;"
 				+ "GraphClass TestGraph;" + "VertexClass VC1;"
 				+ "VertexClass VC2;"
@@ -407,7 +408,7 @@ public class MultiplicityTest {
 	 */
 	@Test(expected = GraphException.class)
 	// TODO Replace with the expected exception
-	public void multiplicityTest19() {
+	public void multiplicityTest19() throws GraphIOException {
 		compileSchema("Schema de.uni_koblenz.jgralabtest.TestSchema;"
 				+ "GraphClass TestGraph;" + "VertexClass VC1;"
 				+ "VertexClass VC2;"
@@ -421,7 +422,7 @@ public class MultiplicityTest {
 	 */
 	@Test(expected = GraphException.class)
 	// TODO Replace with the expected exception
-	public void multiplicityTest20() {
+	public void multiplicityTest20() throws GraphIOException {
 		compileSchema("Schema de.uni_koblenz.jgralabtest.TestSchema;"
 				+ "GraphClass TestGraph;" + "VertexClass VC1;"
 				+ "VertexClass VC2;"
@@ -433,7 +434,7 @@ public class MultiplicityTest {
 	 * EC2 has a different toVertexType than its supertype.
 	 */
 	@Test(expected = GraphIOException.class)
-	public void multiplicityTest21() {
+	public void multiplicityTest21() throws GraphIOException {
 		compileSchema("Schema de.uni_koblenz.jgralabtest.TestSchema;"
 				+ "GraphClass TestGraph;" + "VertexClass VC1;"
 				+ "VertexClass VC2;" + "VertexClass VC3;"
