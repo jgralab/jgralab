@@ -773,9 +773,7 @@ public abstract class VertexImpl extends GraphElementImpl implements Vertex {
 		} else if (i == getLastIncidence()) {
 			// delete at tail of incidence list
 			setLastIncidence(i.getPrevIncidence());
-			if (getLastIncidence() != null) {
-				getLastIncidence().setNextIncidence(null);
-			}
+			getLastIncidence().setNextIncidence(null);
 		} else {
 			// delete somewhere in the middle
 			i.getPrevIncidence().setNextIncidence(i.getNextIncidence());
