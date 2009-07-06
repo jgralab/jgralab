@@ -51,21 +51,21 @@ public final class PackageImpl extends NamedElementImpl implements Package {
 
 	/**
 	 * Creates a new <code>DefaultPackage</code> in the given Schema.
-	 *
+	 * 
 	 * <p>
 	 * <b>Pattern:</b>
 	 * <code>p = PackageImpl.createDefaultPackage(schema);</code>
 	 * </p>
-	 *
+	 * 
 	 * <p>
 	 * <b>Preconditions:</b> none<br/>
 	 * </p>
-	 *
+	 * 
 	 * <p>
 	 * <b>Postconditions:</b> p is the newly created <code>DefaultPackage</code>
 	 * for this schema
 	 * </p>
-	 *
+	 * 
 	 * @param schema
 	 *            the schema containing the new <code>DefaultPackage</code>
 	 * @return the newly created <code>DefaultPackage</code> for the given
@@ -81,7 +81,7 @@ public final class PackageImpl extends NamedElementImpl implements Package {
 
 	/**
 	 * Constructor for the default package
-	 *
+	 * 
 	 * @param schema
 	 */
 	private PackageImpl(Schema schema) {
@@ -116,7 +116,7 @@ public final class PackageImpl extends NamedElementImpl implements Package {
 
 	/**
 	 * Adds the EdgeClass <code>ec</code> to this Package.
-	 *
+	 * 
 	 * @param ec
 	 *            an EdgeClass
 	 */
@@ -153,7 +153,7 @@ public final class PackageImpl extends NamedElementImpl implements Package {
 
 	/**
 	 * Adds the subpackage <code>subPkg</code> to this Package.
-	 *
+	 * 
 	 * @param subPkg
 	 *            a subpackage
 	 */
@@ -172,7 +172,7 @@ public final class PackageImpl extends NamedElementImpl implements Package {
 
 	/**
 	 * Adds the VertexClass <code>vc</code> to this Package.
-	 *
+	 * 
 	 * @param vc
 	 *            a VertexClass
 	 */
@@ -199,7 +199,7 @@ public final class PackageImpl extends NamedElementImpl implements Package {
 	public boolean containsNamedElement(String sn) {
 		return domains.containsKey(sn)
 				|| edgeClasses.containsKey(sn)
-				|| (isDefaultPackage() && schema.getDefaultGraphClass() != null)
+				|| (isDefaultPackage() && (schema.getDefaultGraphClass() != null))
 				|| vertexClasses.containsKey(sn) || subPackages.containsKey(sn);
 	}
 
@@ -246,5 +246,14 @@ public final class PackageImpl extends NamedElementImpl implements Package {
 	@Override
 	public String toString() {
 		return "package " + qualifiedName;
+	}
+
+	@Override
+	public boolean equals(Object o) {
+		if (o instanceof Package) {
+			Package other = (Package) o;
+			return qualifiedName.equals(other.getQualifiedName());
+		}
+		return false;
 	}
 }

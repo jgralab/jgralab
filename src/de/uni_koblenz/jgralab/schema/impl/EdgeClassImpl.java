@@ -71,7 +71,7 @@ public class EdgeClassImpl extends GraphElementClassImpl implements EdgeClass {
 
 	/**
 	 * builds a new edge class
-	 *
+	 * 
 	 * @param qn
 	 *            the unique identifier of the edge class in the schema
 	 * @param from
@@ -227,22 +227,22 @@ public class EdgeClassImpl extends GraphElementClassImpl implements EdgeClass {
 				.iterator();
 		while (iter.hasNext()) {
 			EdgeClass ec = (EdgeClass) iter.next();
-			if (to != ec.getTo() && !to.isSubClassOf(ec.getTo())) {
+			if ((to != ec.getTo()) && !to.isSubClassOf(ec.getTo())) {
 				return false;
 			}
-			if (toMin < ec.getToMin() || toMin > ec.getToMax()) {
+			if ((toMin < ec.getToMin()) || (toMin > ec.getToMax())) {
 				return false;
 			}
-			if (toMax > ec.getToMax() || toMax < ec.getToMin()) {
+			if ((toMax > ec.getToMax()) || (toMax < ec.getToMin())) {
 				return false;
 			}
-			if (from != ec.getFrom() && !from.isSubClassOf(ec.getFrom())) {
+			if ((from != ec.getFrom()) && !from.isSubClassOf(ec.getFrom())) {
 				return false;
 			}
-			if (fromMin < ec.getFromMin() || fromMin > ec.getFromMax()) {
+			if ((fromMin < ec.getFromMin()) || (fromMin > ec.getFromMax())) {
 				return false;
 			}
-			if (fromMax > ec.getFromMax() || fromMax < ec.getFromMin()) {
+			if ((fromMax > ec.getFromMax()) || (fromMax < ec.getFromMin())) {
 				return false;
 			}
 		}
@@ -251,10 +251,10 @@ public class EdgeClassImpl extends GraphElementClassImpl implements EdgeClass {
 
 	/**
 	 * Tries to merge the cardinalities of the edges endpoints
-	 *
+	 * 
 	 * @return true if a merge was done successfull, false if no merge was
 	 *         needed or if a merge is not possible
-	 *
+	 * 
 	 */
 	protected boolean mergeConnectionCardinalities() {
 		int newToMin = toMin;
@@ -334,7 +334,7 @@ public class EdgeClassImpl extends GraphElementClassImpl implements EdgeClass {
 
 	/**
 	 * Tries to merge the VertexClasses of the edges endpoints
-	 *
+	 * 
 	 * @return true if a merge was done successfull, false if no merge was
 	 *         needed or if a merge is not possible
 	 */

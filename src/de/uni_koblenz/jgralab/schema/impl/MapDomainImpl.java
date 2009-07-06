@@ -36,12 +36,14 @@ public final class MapDomainImpl extends CompositeDomainImpl implements
 				+ aValueDomain.getTGTypeName(schema.getDefaultPackage()) + ">",
 				schema.getDefaultPackage());
 
-		assert parentPackage.getSchema().getDomain(aKeyDomain.getQualifiedName()) != null : aKeyDomain
+		assert parentPackage.getSchema().getDomain(
+				aKeyDomain.getQualifiedName()) != null : aKeyDomain
 				.getQualifiedName()
 				+ " must be a domain of the schema "
 				+ parentPackage.getSchema().getQualifiedName();
 
-		assert parentPackage.getSchema().getDomain(aValueDomain.getQualifiedName()) != null : aValueDomain
+		assert parentPackage.getSchema().getDomain(
+				aValueDomain.getQualifiedName()) != null : aValueDomain
 				.getQualifiedName()
 				+ " must be a domain of the schema "
 				+ parentPackage.getSchema().getQualifiedName();
@@ -175,6 +177,16 @@ public final class MapDomainImpl extends CompositeDomainImpl implements
 	public String toString() {
 		return "domain " + MAPDOMAIN_NAME + "<" + keyDomain.toString() + ", "
 				+ valueDomain.toString() + ">";
+	}
+
+	@Override
+	public boolean equals(Object o) {
+		if (o instanceof MapDomain) {
+			MapDomain other = (MapDomain) o;
+			return keyDomain.equals(other.getKeyDomain())
+					&& valueDomain.equals(other.getValueDomain());
+		}
+		return false;
 	}
 
 }

@@ -217,8 +217,8 @@ public abstract class NamedElementImpl implements NamedElement {
 			 * DefaultPackage.
 			 */
 			if (simpleName.equals(Package.DEFAULTPACKAGE_NAME)
-					&& this instanceof PackageImpl
-					&& schema.getDefaultPackage() == null) {
+					&& (this instanceof PackageImpl)
+					&& (schema.getDefaultPackage() == null)) {
 				this.qualifiedName = Package.DEFAULTPACKAGE_NAME;
 				this.parentPackage = null;
 				this.simpleName = Package.DEFAULTPACKAGE_NAME;
@@ -244,7 +244,7 @@ public abstract class NamedElementImpl implements NamedElement {
 		 * letter, whereas the simple name for a Package starts with a small
 		 * letter.
 		 */
-		if (this instanceof CollectionDomain || this instanceof MapDomain) {
+		if ((this instanceof CollectionDomain) || (this instanceof MapDomain)) {
 			if (!COLLECTION_OR_MAPDOMAIN_NAME_PATTERN.matcher(simpleName)
 					.matches()) {
 				throw new InvalidNameException(
@@ -278,7 +278,7 @@ public abstract class NamedElementImpl implements NamedElement {
 		 * Words that are reserved by Java itself are not allowed as element
 		 * names.
 		 */
-		if (SchemaImpl.RESERVED_JAVA_WORDS.contains(simpleName)) {
+		if (Schema.RESERVED_JAVA_WORDS.contains(simpleName)) {
 			throw new InvalidNameException("Invalid simpleName '" + simpleName
 					+ "': The simple name must not be a reserved Java word.");
 		}
@@ -290,7 +290,7 @@ public abstract class NamedElementImpl implements NamedElement {
 		 * event that this element is directly contained in the DefaultPackage,
 		 * the qualifiedName equals the simpleName.
 		 */
-		qualifiedName = ((pkg == null || pkg.getQualifiedName().equals(
+		qualifiedName = (((pkg == null) || pkg.getQualifiedName().equals(
 				Package.DEFAULTPACKAGE_NAME)) ? "" : pkg.getQualifiedName()
 				+ ".")
 				+ simpleName;
@@ -299,8 +299,8 @@ public abstract class NamedElementImpl implements NamedElement {
 		 * The package for Basic-/Map-/Collection-Domains (List, Set) and
 		 * GraphClass must be the DefaultPackage.
 		 */
-		if (this instanceof BasicDomain || this instanceof CollectionDomain
-				|| this instanceof MapDomain || this instanceof GraphClass) {
+		if ((this instanceof BasicDomain) || (this instanceof CollectionDomain)
+				|| (this instanceof MapDomain) || (this instanceof GraphClass)) {
 			if (!isInDefaultPackage()) {
 				throw new SchemaException(
 						"Invalid parent package '"
@@ -435,8 +435,11 @@ public abstract class NamedElementImpl implements NamedElement {
 	}
 
 	@Override
+	public abstract boolean equals(Object o);
+
+	@Override
 	public final boolean isInDefaultPackage() {
-		return parentPackage != null && parentPackage.isDefaultPackage();
+		return (parentPackage != null) && parentPackage.isDefaultPackage();
 	}
 
 	/**

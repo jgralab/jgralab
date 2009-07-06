@@ -129,4 +129,14 @@ public final class EnumDomainImpl extends DomainImpl implements EnumDomain {
 		output += ")";
 		return output;
 	}
+
+	@Override
+	public boolean equals(Object o) {
+		if (o instanceof EnumDomain) {
+			EnumDomain other = (EnumDomain) o;
+			return getQualifiedName().equals(other.getQualifiedName())
+					&& getConsts().equals(other.getConsts());
+		}
+		return false;
+	}
 }

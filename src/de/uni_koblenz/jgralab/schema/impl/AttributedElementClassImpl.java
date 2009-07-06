@@ -90,7 +90,7 @@ public abstract class AttributedElementClassImpl extends NamedElementImpl
 
 	/**
 	 * builds a new attributed element class
-	 *
+	 * 
 	 * @param qn
 	 *            the unique identifier of the element in the schema
 	 */
@@ -135,7 +135,7 @@ public abstract class AttributedElementClassImpl extends NamedElementImpl
 
 	/**
 	 * adds a superClass to this class
-	 *
+	 * 
 	 * @param superClass
 	 *            the class to add as superclass
 	 */
@@ -210,15 +210,15 @@ public abstract class AttributedElementClassImpl extends NamedElementImpl
 	 * This is done by comparing the elements´ qualified names
 	 * lexicographically.
 	 * </p>
-	 *
+	 * 
 	 * <p>
 	 * <b>Pattern:</b> <code>comp = attrElement.compareTo(other);</code>
 	 * </p>
-	 *
+	 * 
 	 * <p>
 	 * <b>Preconditions:</b> none
 	 * </p>
-	 *
+	 * 
 	 * <p>
 	 * <b>Postconditions:</b>
 	 * <ul>
@@ -231,9 +231,9 @@ public abstract class AttributedElementClassImpl extends NamedElementImpl
 	 * name</li>
 	 * </ul>
 	 * </p>
-	 *
+	 * 
 	 * @return the result of the lexicographical comparison
-	 *
+	 * 
 	 */
 	@Override
 	public int compareTo(AttributedElementClass other) {
@@ -412,11 +412,11 @@ public abstract class AttributedElementClassImpl extends NamedElementImpl
 	@Override
 	public boolean isInternal() {
 		Schema s = getSchema();
-		return this == s.getDefaultAggregationClass()
-				|| this == s.getDefaultCompositionClass()
-				|| this == s.getDefaultEdgeClass()
-				|| this == s.getDefaultGraphClass()
-				|| this == s.getDefaultVertexClass();
+		return (this == s.getDefaultAggregationClass())
+				|| (this == s.getDefaultCompositionClass())
+				|| (this == s.getDefaultEdgeClass())
+				|| (this == s.getDefaultGraphClass())
+				|| (this == s.getDefaultVertexClass());
 	}
 
 	@Override
@@ -450,6 +450,26 @@ public abstract class AttributedElementClassImpl extends NamedElementImpl
 			if (subclassAttr != null) {
 				return true;
 			}
+		}
+		return false;
+	}
+
+	@Override
+	public boolean equals(Object o) {
+		if (getClass() == o.getClass()) {
+			AttributedElementClass other = (AttributedElementClass) o;
+			if (!qualifiedName.equals(other.getQualifiedName())) {
+				return false;
+			}
+			if (getAttributeCount() != other.getAttributeCount()) {
+				return false;
+			}
+			for (Attribute attr : getAttributeList()) {
+				if (!attr.equals(other.getAttribute(attr.getName()))) {
+					return false;
+				}
+			}
+			return true;
 		}
 		return false;
 	}
