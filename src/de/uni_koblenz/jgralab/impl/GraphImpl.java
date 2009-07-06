@@ -230,6 +230,10 @@ public abstract class GraphImpl implements Graph {
 	 */
 	protected void addEdge(Edge newEdge, Vertex alpha, Vertex omega) {
 		assert (newEdge.isNormal()) : "The edge to be added";
+		if ((alpha == null) || (omega == null)) {
+			throw new GraphException(
+					"Alpha or Omega vertex of an edge may not be null");
+		}
 		assert (alpha.getSchema() == omega.getSchema()
 				&& alpha.getSchema() == this.schema && newEdge.getSchema() == this.schema) : "The schemas of alpha, omega, newEdge and this graph don't match!";
 		assert (alpha.getGraph() == omega.getGraph()
@@ -238,10 +242,6 @@ public abstract class GraphImpl implements Graph {
 		EdgeImpl e = (EdgeImpl) newEdge;
 
 		VertexImpl a = (VertexImpl) alpha;
-		if ((alpha == null) || (omega == null)) {
-			throw new GraphException(
-					"Alpha or Omega vertex of an edge may not be null");
-		}
 		if (!a.isValidAlpha(e)) {
 			throw new GraphException("Edges of class "
 					+ e.getAttributedElementClass().getQualifiedName()
