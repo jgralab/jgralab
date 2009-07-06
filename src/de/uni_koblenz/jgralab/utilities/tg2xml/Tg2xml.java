@@ -31,7 +31,10 @@ public class Tg2xml extends GraphVisitor {
 		fromEdgeMarker = new GraphMarker<Integer>(graph);
 		toEdgeMarker = new GraphMarker<Integer>(graph);
 
-		this.namespaceURI = generateURI(graph);
+		Schema schema = graph.getSchema();
+		String qualifiedName = schema.getQualifiedName();
+		
+		this.namespaceURI = generateURI(qualifiedName);
 		outputStream = new BufferedOutputStream(new FileOutputStream(filename));
 		XMLOutputFactory factory = XMLOutputFactory.newInstance();
 		writer = new IndentingXMLStreamWriter(factory.createXMLStreamWriter(
@@ -40,9 +43,7 @@ public class Tg2xml extends GraphVisitor {
 
 	}
 
-	public static String generateURI(Graph graph) {
-		Schema schema = graph.getSchema();
-		String qualifiedName = schema.getQualifiedName();
+	public static String generateURI(String qualifiedName) {
 		qualifiedName = qualifiedName.replace('_', '-');
 		System.out.println(qualifiedName);
 		String[] uri = qualifiedName.split("\\.");
