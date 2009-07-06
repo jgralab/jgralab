@@ -20,6 +20,26 @@ public class IndentingXMLStreamWriter implements XMLStreamWriter {
 	 * the {@link XMLStreamWriter} to be delegated to
 	 */
 	private XMLStreamWriter writer;
+	
+	/**
+	 * The character used for indentation;
+	 */
+	private String indentationChar;
+	
+	/**
+	 * The number of indentationCharacters to write
+	 */
+	private int numberSpaces;
+
+	public void setIndentationLevel(int indentationLevel) {
+		this.indentationLevel = indentationLevel;
+		setIndentation();
+	}
+
+	public void setIndentationChar(char indentationChar) {
+		this.indentationChar = "" + indentationChar;
+		setIndentation();
+	}
 
 	/**
 	 * 
@@ -30,9 +50,14 @@ public class IndentingXMLStreamWriter implements XMLStreamWriter {
 	 */
 	public IndentingXMLStreamWriter(XMLStreamWriter writer, int numberSpaces) {
 		this.writer = writer;
+		indentationChar = " ";
+		this.numberSpaces = numberSpaces;
+		setIndentation();
+	}
 
-		for (int i = 0; i < numberSpaces; i++) {
-			indentation = indentation.concat(" ");
+	private void setIndentation() {
+		for (int i = 0; i < this.numberSpaces; i++) {
+			indentation = indentation.concat(indentationChar);
 		}
 	}
 
