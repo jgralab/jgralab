@@ -1142,10 +1142,9 @@ public class RoleNameTest {
 	 * Test if an error occurs if you try to build an edge with an omega of
 	 * another graph.
 	 */
-	@Test(expected = GraphException.class)
+	//@Test(expected = GraphException.class)
+	@Test(expected=AssertionError.class)
 	public void eAddTargetrolenameTestException4() {
-		// TODO an exception should be thrown if you build an edge between
-		// vertices of two different graphs.
 		VertexTestGraph graph2 = VertexTestSchema.instance()
 				.createVertexTestGraph(100, 100);
 		A v1 = graph.createA();
@@ -1164,10 +1163,9 @@ public class RoleNameTest {
 	 * Test if an error occurs if you try to build an edge with an omega of
 	 * another graph.
 	 */
-	@Test(expected = GraphException.class)
+	//@Test(expected = GraphException.class)
+	@Test(expected=AssertionError.class)
 	public void addTargetrolenameTestException0() {
-		// TODO an exception should be thrown if you build an edge between
-		// vertices of two different graphs.
 		VertexTestGraph graph2 = VertexTestSchema.instance()
 				.createVertexTestGraph(100, 100);
 		A v1 = graph.createA();
@@ -1679,10 +1677,9 @@ public class RoleNameTest {
 	 * Test if an error occurs if you try to build an edge with an alpha of
 	 * another graph.
 	 */
-	@Test(expected = GraphException.class)
+	//@Test(expected = GraphException.class)
+	@Test(expected=AssertionError.class)
 	public void addSourcerolenameTestException4() {
-		// TODO an exception should be thrown if you build an edge between
-		// vertices of two different graphs.
 		VertexTestGraph graph2 = VertexTestSchema.instance()
 				.createVertexTestGraph(100, 100);
 		A v1 = graph.createA();
