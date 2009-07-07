@@ -1,7 +1,5 @@
 package de.uni_koblenz.jgralab.utilities.tg2xml;
 
-import java.io.BufferedOutputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 
@@ -26,6 +24,8 @@ public class Tg2xml extends GraphVisitor {
 	private IndentingXMLStreamWriter writer;
 	private GraphMarker<Integer> fromEdgeMarker;
 	private GraphMarker<Integer> toEdgeMarker;
+	
+	
 
 	private String namespaceURI;
 
@@ -140,11 +140,6 @@ public class Tg2xml extends GraphVisitor {
 				e.printStackTrace();
 			}
 		}
-
-		// iterieren und
-		// über
-		// element.getAttribute
-		// gehen
 
 	}
 
