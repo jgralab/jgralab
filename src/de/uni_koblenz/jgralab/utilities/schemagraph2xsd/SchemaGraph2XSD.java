@@ -36,6 +36,8 @@ import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 
+import sun.reflect.generics.reflectiveObjects.NotImplementedException;
+
 import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.GraphIOException;
 import de.uni_koblenz.jgralab.WorkInProgress;
@@ -49,6 +51,7 @@ import de.uni_koblenz.jgralab.grumlschema.domains.IntDomain;
 import de.uni_koblenz.jgralab.grumlschema.domains.ListDomain;
 import de.uni_koblenz.jgralab.grumlschema.domains.LongDomain;
 import de.uni_koblenz.jgralab.grumlschema.domains.MapDomain;
+import de.uni_koblenz.jgralab.grumlschema.domains.RecordDomain;
 import de.uni_koblenz.jgralab.grumlschema.domains.SetDomain;
 import de.uni_koblenz.jgralab.grumlschema.domains.StringDomain;
 import de.uni_koblenz.jgralab.grumlschema.structure.Attribute;
@@ -518,11 +521,13 @@ public class SchemaGraph2XSD {
 			return namespacePrefix + ":" + DOMAIN_LIST;
 		} else if (domain instanceof MapDomain) {
 			return namespacePrefix + ":" + DOMAIN_MAP;
-		} else if (domain instanceof SetDomain) {
+		} else if (domain instanceof RecordDomain) {
 			return namespacePrefix + ":" + DOMAIN_RECORD;
+		} else {
+			throw new NotImplementedException();
 		}
 
-		return namespacePrefix + ":" + queryDomainType(domain);
+		//		return namespacePrefix + ":" + queryDomainType(domain);
 	}
 
 	/**
