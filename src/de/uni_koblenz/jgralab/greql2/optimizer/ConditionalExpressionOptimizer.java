@@ -17,6 +17,7 @@ import de.uni_koblenz.jgralab.greql2.exception.OptimizerException;
 import de.uni_koblenz.jgralab.greql2.optimizer.condexp.ConditionalExpressionUnit;
 import de.uni_koblenz.jgralab.greql2.optimizer.condexp.Formula;
 import de.uni_koblenz.jgralab.greql2.schema.FunctionApplication;
+import de.uni_koblenz.jgralab.greql2.schema.FunctionId;
 import de.uni_koblenz.jgralab.greql2.schema.Greql2;
 import de.uni_koblenz.jgralab.greql2.schema.Greql2Expression;
 import de.uni_koblenz.jgralab.greql2.schema.Greql2Vertex;
@@ -24,9 +25,9 @@ import de.uni_koblenz.jgralab.greql2.schema.Literal;
 
 /**
  * TODO: (heimdall) Comment class!
- *
+ * 
  * @author ist@uni-koblenz.de
- *
+ * 
  */
 public class ConditionalExpressionOptimizer extends OptimizerBase {
 
@@ -45,7 +46,7 @@ public class ConditionalExpressionOptimizer extends OptimizerBase {
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see
 	 * de.uni_koblenz.jgralab.greql2.optimizer.Optimizer#isEquivalent(de.uni_koblenz
 	 * .jgralab.greql2.optimizer.Optimizer)
@@ -60,7 +61,7 @@ public class ConditionalExpressionOptimizer extends OptimizerBase {
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see
 	 * de.uni_koblenz.jgralab.greql2.optimizer.Optimizer#optimize(de.uni_koblenz
 	 * .jgralab.greql2.evaluator.GreqlEvaluator,
@@ -131,6 +132,7 @@ public class ConditionalExpressionOptimizer extends OptimizerBase {
 					// different, so that ((Null | v7) & ~v7) is not recognized.
 					HashSet<Vertex> nonConsts = new HashSet<Vertex>();
 					collectNonCostantTerms(f, nonConsts);
+					// System.out.println("nCT(" + f + ") = " + nonConsts);
 					if (nonConsts.size() >= 2) {
 						return f;
 					}
@@ -155,10 +157,11 @@ public class ConditionalExpressionOptimizer extends OptimizerBase {
 				} else {
 					nonConsts.add(v);
 				}
-			} else if (v instanceof Literal) {
+			} else if ((v instanceof Literal) || (v instanceof FunctionId)) {
+				// Those are uninteresting vertices. Skip em!
 				continue;
 			} else {
-				collectNonCostantTerms(v, nonConsts);
+				nonConsts.add(v);
 			}
 		}
 	}
