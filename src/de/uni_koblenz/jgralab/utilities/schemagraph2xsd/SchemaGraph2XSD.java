@@ -523,11 +523,9 @@ public class SchemaGraph2XSD {
 			return namespacePrefix + ":" + DOMAIN_MAP;
 		} else if (domain instanceof RecordDomain) {
 			return namespacePrefix + ":" + DOMAIN_RECORD;
-		} else {
-			throw new NotImplementedException();
 		}
 
-		//		return namespacePrefix + ":" + queryDomainType(domain);
+		return namespacePrefix + ":" + queryDomainType(domain);
 	}
 
 	/**
