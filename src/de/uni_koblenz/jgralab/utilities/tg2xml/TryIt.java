@@ -1,5 +1,9 @@
 package de.uni_koblenz.jgralab.utilities.tg2xml;
 
+import java.io.BufferedOutputStream;
+import java.io.BufferedWriter;
+import java.io.FileOutputStream;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.util.LinkedList;
 import java.util.Random;
@@ -8,6 +12,9 @@ import javax.xml.stream.XMLStreamException;
 
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.Graph;
+import de.uni_koblenz.jgralab.GraphIO;
+import de.uni_koblenz.jgralab.impl.ProgressFunctionImpl;
+import de.uni_koblenz.jgralab.schema.Schema;
 import de.uni_koblenz.jgralabtest.schemas.vertextest.A;
 import de.uni_koblenz.jgralabtest.schemas.vertextest.B;
 import de.uni_koblenz.jgralabtest.schemas.vertextest.C;
@@ -43,8 +50,16 @@ public class TryIt {
 	public void runIt(){	
 		
 		try {
-			Tg2xml converter = new Tg2xml(outName, createRandomGraph(false));
+//			Graph graph = createRandomGraph(false);
+			Schema schema = GraphIO.loadSchemaFromFile("GrumlSchema.gruml.tg");
+			System.out.println("Compiling schema");
+			schema.compile();
+			System.out.println("done");
+			Graph graph = GraphIO.loadGraphFromFile("GrumlSchema.gruml.tg", new ProgressFunctionImpl());
+			Tg2xml converter = new Tg2xml(new BufferedOutputStream(new FileOutputStream(outName)), graph, "gruml", "./gruml.xsd");
+			
 			converter.visitAll();
+			System.out.println("Fini.");
 			
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
