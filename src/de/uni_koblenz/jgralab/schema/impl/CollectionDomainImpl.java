@@ -37,6 +37,11 @@ public abstract class CollectionDomainImpl extends CompositeDomainImpl
 	public boolean equals(Object o) {
 		if (o instanceof ListDomain) {
 			ListDomain other = (ListDomain) o;
+			// This may happen with TGSchema2Java while loading a Schema from a
+			// file...
+			if ((baseDomain == null) || (other.getBaseDomain() == null)) {
+				return false;
+			}
 			return baseDomain.equals(other.getBaseDomain());
 		}
 		return false;
