@@ -1,4 +1,4 @@
-package de.uni_koblenz.jgralab.utilities.tg2xml;
+package de.uni_koblenz.jgralabtest.utilities.tg2xml;
 
 import java.io.BufferedOutputStream;
 import java.io.BufferedWriter;
@@ -15,6 +15,7 @@ import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.GraphIO;
 import de.uni_koblenz.jgralab.impl.ProgressFunctionImpl;
 import de.uni_koblenz.jgralab.schema.Schema;
+import de.uni_koblenz.jgralab.utilities.tg2xml.Tg2xml;
 import de.uni_koblenz.jgralabtest.schemas.vertextest.A;
 import de.uni_koblenz.jgralabtest.schemas.vertextest.B;
 import de.uni_koblenz.jgralabtest.schemas.vertextest.C;
