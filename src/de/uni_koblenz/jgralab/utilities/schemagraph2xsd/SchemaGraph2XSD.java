@@ -26,6 +26,7 @@ package de.uni_koblenz.jgralab.utilities.schemagraph2xsd;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.StringWriter;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -36,6 +37,7 @@ import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 
+import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.GraphIOException;
 import de.uni_koblenz.jgralab.WorkInProgress;
@@ -134,6 +136,7 @@ public class SchemaGraph2XSD {
 	private final SchemaGraph schemaGraph;
 	private final SchemaGraph2Tg sg2tg;
 	private final String namespacePrefix;
+	private final ArrayList<Attribute> attributes;
 
 	/**
 	 * This map links Domain-objects to existing enumeration types described by
@@ -160,6 +163,7 @@ public class SchemaGraph2XSD {
 		schemaGraph = sg;
 		sg2tg = new SchemaGraph2Tg(sg, null);
 		domainMap = new HashMap<Domain, String>();
+		attributes = new ArrayList<Attribute>();
 	}
 
 	public void writeXSD() throws XMLStreamException {
@@ -188,7 +192,7 @@ public class SchemaGraph2XSD {
 		// write all enumeration types
 		// before creating all enumerations every domain have to be queried
 		// again, to make sure, that all domain objects have been gathered.
-		xml.writeComment("Enumeration types");
+		xml.writeComment("Enumeration-types");
 		writeAllDomainTypes();
 
 		// ends the schema
@@ -264,7 +268,12 @@ public class SchemaGraph2XSD {
 
 		writeEndXSDElement();
 
-		writeAttributes(gc);
+		attributes.clear();
+		getAttributes(gc, attributes);
+
+		for (Attribute attribute : attributes) {
+			writeAttribute(attribute);
+		}
 
 		writeEndXSDElement();
 		writeEndXSDElement();
@@ -312,9 +321,16 @@ public class SchemaGraph2XSD {
 			writeStartXSDComplexType(XSD_COMPLEX_EDGETYPE_PREFIX
 					+ ec.getQualifiedName(), false, true);
 
-			if (ec.getDegree(HasAttribute.class, EdgeDirection.OUT) > 0) {
+			attributes.clear();
+			getAttributes(ec, attributes);
+
+			if (attributes.size() > 0) {
 				writeStartXSDExtension(XSD_COMPLEXTYPE_EDGE, true);
-				writeAttributes(ec);
+
+				for (Attribute attribute : attributes) {
+					writeAttribute(attribute);
+				}
+
 				writeEndXSDElement(); // ends extension
 			} else {
 				writeStartXSDExtension(XSD_COMPLEXTYPE_EDGE, false);
@@ -379,6 +395,7 @@ public class SchemaGraph2XSD {
 
 	private void writeVertexClassComplexTypes() throws XMLStreamException {
 		for (VertexClass vc : schemaGraph.getVertexClassVertices()) {
+
 			if (vc.isIsAbstract()) {
 				continue;
 			}
@@ -388,10 +405,16 @@ public class SchemaGraph2XSD {
 			// first the complex type
 			writeStartXSDComplexType(XSD_COMPLEX_VERTEXTYPE_PREFIX
 					+ vc.getQualifiedName(), false, true);
-			if (vc.getDegree(HasAttribute.class, EdgeDirection.OUT) > 0) {
+
+			attributes.clear();
+			getAttributes(vc, attributes);
+
+			if (attributes.size() > 0) {
 				writeStartXSDExtension(XSD_COMPLEXTYPE_VERTEX, true);
 
-				writeAttributes(vc);
+				for (Attribute attribute : attributes) {
+					writeAttribute(attribute);
+				}
 
 				writeEndXSDElement(); // ends extension
 			} else {
@@ -402,25 +425,25 @@ public class SchemaGraph2XSD {
 		}
 	}
 
-	private void writeAttributes(AttributedElementClass attrElemClass)
-			throws XMLStreamException {
+	private void getAttributes(AttributedElementClass attrElemClass,
+			ArrayList<Attribute> attributesList) {
+
 		for (HasAttribute ha : attrElemClass
 				.getHasAttributeIncidences(EdgeDirection.OUT)) {
-			Attribute attr = (Attribute) ha.getOmega();
-			String name = attr.getName();
-			Domain type = (Domain) attr.getFirstHasDomain(EdgeDirection.OUT)
-					.getOmega();
-			writeXSDAttribute(name, getXSDType(type));
+			attributesList.add((Attribute) ha.getOmega());
 		}
+
 		if (attrElemClass instanceof VertexClass) {
 			for (SpecializesVertexClass s : ((VertexClass) attrElemClass)
 					.getSpecializesVertexClassIncidences(EdgeDirection.OUT)) {
-				writeAttributes((VertexClass) s.getOmega());
+				getAttributes((AttributedElementClass) s.getOmega(),
+						attributesList);
 			}
 		} else if (attrElemClass instanceof EdgeClass) {
 			for (SpecializesEdgeClass s : ((EdgeClass) attrElemClass)
 					.getSpecializesEdgeClassIncidences(EdgeDirection.OUT)) {
-				writeAttributes((EdgeClass) s.getOmega());
+				getAttributes((AttributedElementClass) s.getOmega(),
+						attributesList);
 			}
 		} else if (attrElemClass instanceof GraphClass) {
 			// nothing to do here
@@ -428,6 +451,14 @@ public class SchemaGraph2XSD {
 			throw new RuntimeException("Don't know what to do with '"
 					+ attrElemClass.getQualifiedName() + "'.");
 		}
+	}
+
+	private void writeAttribute(Attribute attribute) throws XMLStreamException {
+
+		String name = attribute.getName();
+		Domain type = (Domain) attribute.getFirstHasDomain(EdgeDirection.OUT)
+				.getOmega();
+		writeXSDAttribute(name, getXSDType(type));
 	}
 
 	private void writeStartXSDComplexType(String name, boolean isAbstract,
@@ -503,6 +534,7 @@ public class SchemaGraph2XSD {
 	}
 
 	private String getXSDType(Domain domain) {
+
 		if (domain instanceof IntDomain) {
 			return XSD_DOMAIN_INTEGER;
 		} else if (domain instanceof LongDomain) {
@@ -521,6 +553,8 @@ public class SchemaGraph2XSD {
 			return namespacePrefix + ":" + DOMAIN_MAP;
 		} else if (domain instanceof RecordDomain) {
 			return namespacePrefix + ":" + DOMAIN_RECORD;
+		} else if (!(domain instanceof EnumDomain)) {
+			throw new NotImplementedException();
 		}
 
 		return namespacePrefix + ":" + queryDomainType(domain);
