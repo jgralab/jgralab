@@ -22,10 +22,13 @@ public class Tg2xml extends GraphVisitor {
 	private String schemaLocation;
 	private OutputStream outputStream;
 	private IndentingXMLStreamWriter writer;
-	private GraphMarker<Integer> fromEdgeMarker;
-	private GraphMarker<Integer> toEdgeMarker;
-	
-	
+	// private GraphMarker<Integer> fromEdgeMarker;
+	// private GraphMarker<Integer> toEdgeMarker;
+	private GraphMarker<IncidencePositionMark> incidencePositionMarker;
+
+	private class IncidencePositionMark {
+		public int fseq, tseq;
+	}
 
 	private String namespaceURI;
 
@@ -33,8 +36,7 @@ public class Tg2xml extends GraphVisitor {
 			String nameSpacePrefix, String schemaLocation) throws IOException,
 			XMLStreamException {
 		super(graph);
-		fromEdgeMarker = new GraphMarker<Integer>(graph);
-		toEdgeMarker = new GraphMarker<Integer>(graph);
+		incidencePositionMarker = new GraphMarker<IncidencePositionMark>(graph);
 
 		Schema schema = graph.getSchema();
 		String qualifiedName = schema.getQualifiedName();
@@ -97,22 +99,28 @@ public class Tg2xml extends GraphVisitor {
 		// iterate over incidences and mark these edges
 		int i = 1;
 		for (Edge currentIncidentEdge : v.incidences()) {
+			IncidencePositionMark currentMark = incidencePositionMarker.getMark(currentIncidentEdge);
+			if (currentMark == null){
+				currentMark = new IncidencePositionMark();
+				incidencePositionMarker.mark(currentIncidentEdge, currentMark);
+			}
 			if (currentIncidentEdge.isNormal()) {
-				fromEdgeMarker.mark(currentIncidentEdge, i);
+				currentMark.fseq = i;
 			} else {
-				toEdgeMarker.mark(currentIncidentEdge, i);
+				currentMark.tseq = i;
 			}
 			i++;
 		}
 	}
 
 	protected void visitEdge(Edge e) throws XMLStreamException {
+		IncidencePositionMark currentMark = incidencePositionMarker.getMark(e);
 		writer.writeEmptyElement(e.getAttributedElementClass()
 				.getQualifiedName());
 		writer.writeAttribute("from", "v" + e.getAlpha().getId());
-		writer.writeAttribute("fseq", fromEdgeMarker.getMark(e).toString());
+		writer.writeAttribute("fseq", Integer.toString(currentMark.fseq));
 		writer.writeAttribute("to", "v" + e.getOmega().getId());
-		writer.writeAttribute("tseq", toEdgeMarker.getMark(e).toString());
+		writer.writeAttribute("tseq", Integer.toString(currentMark.tseq));
 		writeAttributes(e);
 	}
 
