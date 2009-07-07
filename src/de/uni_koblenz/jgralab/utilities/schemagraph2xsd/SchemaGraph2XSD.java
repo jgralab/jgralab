@@ -39,27 +39,6 @@ import javax.xml.stream.XMLStreamWriter;
 import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.GraphIOException;
 import de.uni_koblenz.jgralab.WorkInProgress;
-import de.uni_koblenz.jgralab.grumlschema.GrumlSchema;
-import de.uni_koblenz.jgralab.grumlschema.SchemaGraph;
-import de.uni_koblenz.jgralab.grumlschema.domains.BooleanDomain;
-import de.uni_koblenz.jgralab.grumlschema.domains.Domain;
-import de.uni_koblenz.jgralab.grumlschema.domains.DoubleDomain;
-import de.uni_koblenz.jgralab.grumlschema.domains.EnumDomain;
-import de.uni_koblenz.jgralab.grumlschema.domains.IntDomain;
-import de.uni_koblenz.jgralab.grumlschema.domains.ListDomain;
-import de.uni_koblenz.jgralab.grumlschema.domains.LongDomain;
-import de.uni_koblenz.jgralab.grumlschema.domains.MapDomain;
-import de.uni_koblenz.jgralab.grumlschema.domains.SetDomain;
-import de.uni_koblenz.jgralab.grumlschema.domains.StringDomain;
-import de.uni_koblenz.jgralab.grumlschema.structure.Attribute;
-import de.uni_koblenz.jgralab.grumlschema.structure.AttributedElementClass;
-import de.uni_koblenz.jgralab.grumlschema.structure.EdgeClass;
-import de.uni_koblenz.jgralab.grumlschema.structure.GraphClass;
-import de.uni_koblenz.jgralab.grumlschema.structure.HasAttribute;
-import de.uni_koblenz.jgralab.grumlschema.structure.Schema;
-import de.uni_koblenz.jgralab.grumlschema.structure.SpecializesEdgeClass;
-import de.uni_koblenz.jgralab.grumlschema.structure.SpecializesVertexClass;
-import de.uni_koblenz.jgralab.grumlschema.structure.VertexClass;
 import de.uni_koblenz.jgralab.impl.ProgressFunctionImpl;
 import de.uni_koblenz.jgralab.utilities.jgralab2owl.IndentingXMLStreamWriter;
 import de.uni_koblenz.jgralab.utilities.rsa2tg.SchemaGraph2Tg;
@@ -170,18 +149,18 @@ public class SchemaGraph2XSD {
 		writeStartXSDSchema();
 
 		// write the default complex types
-		xml.writeComment("Default complexTypes and simpleTypes");
+		xml.writeComment("Default types");
 		writeDefaultComplexTypes();
 		writeDefaultSimpleTypes();
 
 		// now the graph class
-		xml.writeComment("Graph-class");
+		xml.writeComment("Graph-type");
 		writeGraphClass();
 
 		// now vertex and edge classes
-		xml.writeComment("Vertex-classes");
+		xml.writeComment("Vertex-types");
 		writeVertexClassComplexTypes();
-		xml.writeComment("Edge-classes");
+		xml.writeComment("Edge-types");
 		writeEdgeClassComplexTypes();
 
 		// write all enumeration types
