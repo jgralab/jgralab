@@ -25,6 +25,7 @@ import de.uni_koblenz.jgralab.schema.EdgeClass;
 import de.uni_koblenz.jgralab.schema.GraphClass;
 import de.uni_koblenz.jgralab.schema.VertexClass;
 import de.uni_koblenz.jgralabtest.schemas.vertextest.*;
+import de.uni_koblenz.jgralabtest.schemas.citymap.CityMapSchema;
 import de.uni_koblenz.jgralabtest.schemas.minimal.MinimalGraph;
 import de.uni_koblenz.jgralabtest.schemas.minimal.MinimalSchema;
 
@@ -137,17 +138,17 @@ public class GraphTest {
 		
 		Edge e1 = graph.createEdge(SubLink.class, v9, v5);
 		Edge e2 = graph.createEdge(SubLink.class, v10, v6);
-		Edge e3 = graph.createEdge(SubLink.class, v13, v5);//TODO shouldn´t be possible
+		Edge e3 = graph.createEdge(SubLink.class, v12, v8);
 		Edge e4 = graph.createEdge(Link.class, v1, v5);
 		Edge e5 = graph.createEdge(Link.class, v2, v6);
 		Edge e6 = graph.createEdge(Link.class, v9, v6);
 		Edge e7 = graph.createEdge(Link.class, v10, v5);
-		Edge e8 = graph.createEdge(Link.class, v13, v6);//TODO shouldn´t be possible
+		Edge e8 = graph.createEdge(Link.class, v11, v6);
 		Edge e9 = graph.createEdge(LinkBack.class, v5, v1);
 		Edge e10 = graph.createEdge(LinkBack.class, v6, v2);
 		Edge e11 = graph.createEdge(LinkBack.class, v5, v9);
 		Edge e12 = graph.createEdge(LinkBack.class, v6, v10);
-		Edge e13 = graph.createEdge(LinkBack.class, v5, v13);//TODO should not be possible
+		Edge e13 = graph.createEdge(LinkBack.class, v5, v12);
 		Edge e14 = graph.createEdge(LinkBack.class, v6, v10); //the same as e12
 		
 		//tests whether the edge is an instance of the expected class
@@ -181,6 +182,8 @@ public class GraphTest {
 	
 	@Test
 	public void testIsLoading(){
+		//TODO how do I get isLoading to return true
+		assertEquals(false, graph.isLoading());
 	}
 	
 	@Test
@@ -188,6 +191,14 @@ public class GraphTest {
 		//TODO
 		GraphTestKlasse gTest = new GraphTestKlasse(graph.getGraphClass());
 		assertEquals("nothing", gTest.getDone());
+		
+/*		try {
+			graph = VertexTestSchema.instance().loadVertexTestGraph("../../../testschemas/VertexTestSchema.tg");
+		} catch (GraphIOException e) {
+			e.printStackTrace();
+		}*/
+		
+//		assertEquals("loadingCompleted", gTest.getDone());
 		
 		System.out.println("Done testing loadingCompleted.");
 	}
@@ -383,18 +394,18 @@ public class GraphTest {
 	@Test
 	public void testIsEdgeListModified(){
 		//preparations...
-		Vertex v1 = graph.createVertex(SubNode.class);
-		Vertex v2 = graph.createVertex(SubNode.class);
-		Vertex v3 = graph.createVertex(SubNode.class);
-		Vertex v4 = graph.createVertex(SubNode.class);
-		Vertex v5 = graph.createVertex(SuperNode.class);
-		Vertex v6 = graph.createVertex(SuperNode.class);
-		Vertex v7 = graph.createVertex(SuperNode.class);
-		Vertex v8 = graph.createVertex(SuperNode.class);
-		Vertex v9 = graph.createVertex(DoubleSubNode.class);
-		Vertex v10 = graph.createVertex(DoubleSubNode.class);
-		Vertex v11 = graph.createVertex(DoubleSubNode.class);
-		Vertex v12 = graph.createVertex(DoubleSubNode.class);
+		Vertex v13 = graph2.createVertex(SubNode.class);
+		Vertex v14 = graph2.createVertex(SubNode.class);
+		Vertex v15 = graph2.createVertex(SubNode.class);
+		Vertex v16 = graph2.createVertex(SubNode.class);
+		Vertex v17 = graph2.createVertex(SuperNode.class);
+		Vertex v18 = graph2.createVertex(SuperNode.class);
+		Vertex v19 = graph2.createVertex(SuperNode.class);
+		Vertex v20 = graph2.createVertex(SuperNode.class);
+		Vertex v21 = graph2.createVertex(DoubleSubNode.class);
+		Vertex v22 = graph2.createVertex(DoubleSubNode.class);
+		Vertex v23 = graph2.createVertex(DoubleSubNode.class);
+		Vertex v24 = graph2.createVertex(DoubleSubNode.class);
 		
 		//border cases
 		long elv1 = graph.getEdgeListVersion();
@@ -403,7 +414,7 @@ public class GraphTest {
 		assertFalse(graph2.isEdgeListModified(elv2));
 		
 		graph.createEdge(SubLink.class, v11, v7);
-		Edge e1 = graph2.createEdge(Link.class, v3, v7);
+		Edge e1 = graph2.createEdge(Link.class, v15, v19);
 		assertTrue(graph.isEdgeListModified(elv1));
 		assertTrue(graph2.isEdgeListModified(elv2));
 		elv1 = graph.getEdgeListVersion();
@@ -417,42 +428,42 @@ public class GraphTest {
 		assertFalse(graph2.isEdgeListModified(elv2));
 		
 		//normal cases
-		graph2.createEdge(LinkBack.class, v7, v3);
+		graph2.createEdge(LinkBack.class, v19, v15);
 		assertTrue(graph2.isEdgeListModified(elv2));
 		elv2 = graph2.getEdgeListVersion();
 		assertFalse(graph2.isEdgeListModified(elv2));
 
-		graph2.createEdge(Link.class, v3, v7);
+		graph2.createEdge(Link.class, v15, v19);
 		assertTrue(graph2.isEdgeListModified(elv2));
 		elv2 = graph2.getEdgeListVersion();
 		assertFalse(graph2.isEdgeListModified(elv2));
 
-		Edge e2 = graph2.createEdge(SubLink.class, v11, v7);
+		Edge e2 = graph2.createEdge(SubLink.class, v23, v19);
 		assertTrue(graph2.isEdgeListModified(elv2));
 		elv2 = graph2.getEdgeListVersion();
 		assertFalse(graph2.isEdgeListModified(elv2));
 
-		graph2.createEdge(Link.class, v4, v8);
+		graph2.createEdge(Link.class, v16, v20);
 		assertTrue(graph2.isEdgeListModified(elv2));
 		elv2 = graph2.getEdgeListVersion();
 		assertFalse(graph2.isEdgeListModified(elv2));
 
-		Edge e3 = graph2.createEdge(Link.class, v11, v8);
+		Edge e3 = graph2.createEdge(Link.class, v23, v20);
 		assertTrue(graph2.isEdgeListModified(elv2));
 		elv2 = graph2.getEdgeListVersion();
 		assertFalse(graph2.isEdgeListModified(elv2));
 
-		graph2.createEdge(Link.class, v12, v7);
+		graph2.createEdge(Link.class, v24, v19);
 		assertTrue(graph2.isEdgeListModified(elv2));
 		elv2 = graph2.getEdgeListVersion();
 		assertFalse(graph2.isEdgeListModified(elv2));
 
-		graph2.createEdge(LinkBack.class, v8, v4);
+		graph2.createEdge(LinkBack.class, v20, v16);
 		assertTrue(graph2.isEdgeListModified(elv2));
 		elv2 = graph2.getEdgeListVersion();
 		assertFalse(graph2.isEdgeListModified(elv2));
 
-		Edge e4 = graph2.createEdge(SubLink.class, v12, v8);
+		Edge e4 = graph2.createEdge(SubLink.class, v24, v20);
 		assertTrue(graph2.isEdgeListModified(elv2));
 		elv2 = graph2.getEdgeListVersion();
 		assertFalse(graph2.isEdgeListModified(elv2));
@@ -462,12 +473,12 @@ public class GraphTest {
 		elv2 = graph2.getEdgeListVersion();
 		assertFalse(graph2.isEdgeListModified(elv2));
 
-		graph2.createEdge(LinkBack.class, v7, v11);
+		graph2.createEdge(LinkBack.class, v19, v23);
 		assertTrue(graph2.isEdgeListModified(elv2));
 		elv2 = graph2.getEdgeListVersion();
 		assertFalse(graph2.isEdgeListModified(elv2));
 
-		graph2.createEdge(LinkBack.class, v8, v12);
+		graph2.createEdge(LinkBack.class, v20, v24);
 		assertTrue(graph2.isEdgeListModified(elv2));
 		elv2 = graph2.getEdgeListVersion();
 		assertFalse(graph2.isEdgeListModified(elv2));
@@ -482,22 +493,22 @@ public class GraphTest {
 		elv2 = graph2.getEdgeListVersion();
 		assertFalse(graph2.isEdgeListModified(elv2));
 		
-		graph2.createEdge(SubLink.class, v9, v5);
+		graph2.createEdge(SubLink.class, v21, v17);
 		assertTrue(graph2.isEdgeListModified(elv2));
 		elv2 = graph2.getEdgeListVersion();
 		assertFalse(graph2.isEdgeListModified(elv2));
 		
-		graph2.createEdge(Link.class, v1, v6);
+		graph2.createEdge(Link.class, v13, v18);
 		assertTrue(graph2.isEdgeListModified(elv2));
 		elv2 = graph2.getEdgeListVersion();
 		assertFalse(graph2.isEdgeListModified(elv2));
 		
-		graph2.createEdge(LinkBack.class, v5, v2);
+		graph2.createEdge(LinkBack.class, v17, v14);
 		assertTrue(graph2.isEdgeListModified(elv2));
 		elv2 = graph2.getEdgeListVersion();
 		assertFalse(graph2.isEdgeListModified(elv2));
 		
-		graph2.createEdge(Link.class, v10, v6);
+		graph2.createEdge(Link.class, v22, v18);
 		assertTrue(graph2.isEdgeListModified(elv2));
 		elv2 = graph2.getEdgeListVersion();
 		assertFalse(graph2.isEdgeListModified(elv2));
@@ -725,7 +736,7 @@ public class GraphTest {
 		assertFalse(graph.containsEdge(e13));
 		
 		//tests, what happens when a vertex is deleted with the edges to which it belongs
-		e1 = graph.createEdge(SubLink.class, v10, v14);
+		e1 = graph.createEdge(SubLink.class, v10, v12);
 		graph.deleteVertex(v10);
 		
 		/* because v2 was the parent of the aggregation to v10, v10 has been deleted
@@ -776,11 +787,11 @@ public class GraphTest {
 			graph.deleteVertex(v13);
 		}catch(NullPointerException e){
 		}
-		try{
+/*		try{
 			graph.deleteVertex(v14);
 		}catch(NullPointerException e){
 			
-		}
+		}*/
 		try{
 			graph.deleteVertex(v15);
 		}catch(NullPointerException e){
@@ -919,19 +930,15 @@ public class GraphTest {
 	}
 	
 	@Test
-	public void testDeleteEdge(){
-		SubNode v13 = graph2.createSubNode();
-		SuperNode v14 = graph2.createSuperNode();
-		DoubleSubNode v15 = graph2.createDoubleSubNode();
-		
+	public void testDeleteEdge(){		
 		Link e1 = graph.createEdge(Link.class, v1, v6);
 		Link e2 = graph.createEdge(Link.class, v11, v5);
-		Link e3 = graph.createEdge(Link.class, v2, v14);
+		Link e3 = graph.createEdge(Link.class, v2, v8);
 		SubLink e4 = graph.createEdge(SubLink.class, v11, v6);
-		SubLink e5 = graph.createEdge(SubLink.class, v15, v5);
+		SubLink e5 = graph.createEdge(SubLink.class, v12, v5);
 		LinkBack e6 = graph.createEdge(LinkBack.class, v6, v11);
 		LinkBack e7 = graph.createEdge(LinkBack.class, v5, v2);
-		LinkBack e8 = graph.createEdge(LinkBack.class, v14, v13);
+		LinkBack e8 = graph.createEdge(LinkBack.class, v8, v1);
 		LinkBack e9 = graph.createEdge(LinkBack.class, v5, v10);
 		Link e10 = graph.createEdge(Link.class, v12, v7);
 		SubLink e11 = graph.createEdge(SubLink.class, v10, v6);
@@ -2493,15 +2500,9 @@ public class GraphTest {
 		Vertex v17 = graph2.createVertex(SuperNode.class);
 		Vertex v18 = graph2.createVertex(DoubleSubNode.class);
 		
-		//faults
-		//TODO these cases are not caught yet
-//		assertEquals(null, graph.getVertex(-5));
-		//values higher than 1000
-		
 		//border cases
 		assertEquals(v1, graph.getVertex(1));
 		assertEquals(v16, graph2.getVertex(1));
-		assertEquals(null, graph.getVertex(0));
 		assertEquals(null, graph.getVertex(42));
 		assertEquals(null, graph.getVertex(33));
 		assertEquals(null, graph2.getVertex(4));
@@ -2531,8 +2532,6 @@ public class GraphTest {
 	
 	@Test
 	public void testGetEdge(){
-		//TODO not caught yet: values higher than 1000 and less than 1
-		
 		Edge e1 = graph.createEdge(LinkBack.class, v5, v1);
 		Edge e2 = graph.createEdge(Link.class, v2, v7);
 		Edge e3 = graph.createEdge(LinkBack.class, v8, v4);
@@ -2543,9 +2542,8 @@ public class GraphTest {
 		Edge e8 = graph.createEdge(SubLink.class, v10, v6);
 		Edge e9 = graph.createEdge(Link.class, v3, v7);
 		Edge e10 = graph.createEdge(Link.class, v3, v7);
-		
+
 		//border cases
-		assertEquals(null, graph.getEdge(0));
 		assertEquals(null, graph.getEdge(42));
 		assertEquals(null, graph.getEdge(-42));
 		assertEquals(e1, graph.getEdge(1));
@@ -2554,18 +2552,27 @@ public class GraphTest {
 		
 		//normal cases
 		assertEquals(e2, graph.getEdge(2));
+		assertEquals(e2.getReversedEdge(), graph.getEdge(-2));
 		assertEquals(e3, graph.getEdge(3));
+		assertEquals(e3.getReversedEdge(), graph.getEdge(-3));
 		assertEquals(e4, graph.getEdge(4));
+		assertEquals(e4.getReversedEdge(), graph.getEdge(-4));
 		assertEquals(e5, graph.getEdge(5));
+		assertEquals(e5.getReversedEdge(), graph.getEdge(-5));
 		assertEquals(e6, graph.getEdge(6));
+		assertEquals(e6.getReversedEdge(), graph.getEdge(-6));
 		assertEquals(e7, graph.getEdge(7));
+		assertEquals(e7.getReversedEdge(), graph.getEdge(-7));
 		assertEquals(e8, graph.getEdge(8));
+		assertEquals(e8.getReversedEdge(), graph.getEdge(-8));
 		assertEquals(e9, graph.getEdge(9));
+		assertEquals(e9.getReversedEdge(), graph.getEdge(-9));
 		assertEquals(e10, graph.getEdge(10));
-		
+		assertEquals(e10.getReversedEdge(), graph.getEdge(-10));
+
 		System.out.println("Done testing getEdge.");
 	}
-	
+
 	@Test
 	public void testGetMaxVCount(){
 		assertEquals(1000, graph.getMaxVCount());
@@ -3125,7 +3132,7 @@ public class GraphTest {
 			assertEquals(graphSubN[i], v);
 			i++;
 		}
-		
+
 		Vertex[] graphSuperN = {v5,v6,v7,v8,v9,v10,v11,v12};
 		i = 0;
 		for(Vertex v : graph.vertices(SuperNode.class)){
@@ -3182,7 +3189,7 @@ public class GraphTest {
 		* Lücken entstanden sind, sodass defragment() zum Einsatz kommen kann
 		*/
 	}
-	
+
 	public class GraphTestKlasse extends GraphImpl{
 		
 		private String done;
@@ -3194,40 +3201,31 @@ public class GraphTest {
 
 		@Override
 		public Object getAttribute(String name) throws NoSuchFieldException {
-			// TODO Auto-generated method stub
 			return null;
 		}
 
 		@Override
 		public AttributedElementClass getAttributedElementClass() {
-			// TODO Auto-generated method stub
 			return null;
 		}
 
 		@Override
 		public Class<? extends AttributedElement> getM1Class() {
-			// TODO Auto-generated method stub
 			return null;
 		}
 
 		@Override
 		public void readAttributeValues(GraphIO io) throws GraphIOException {
-			// TODO Auto-generated method stub
-			
 		}
 
 		@Override
 		public void setAttribute(String name, Object data)
 				throws NoSuchFieldException {
-			// TODO Auto-generated method stub
-			
 		}
 
 		@Override
 		public void writeAttributeValues(GraphIO io) throws IOException,
-				GraphIOException {
-			// TODO Auto-generated method stub
-			
+				GraphIOException {			
 		}
 		
 		public String getDone(){
