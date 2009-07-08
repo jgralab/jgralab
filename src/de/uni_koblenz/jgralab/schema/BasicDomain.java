@@ -42,7 +42,7 @@ public interface BasicDomain extends Domain {
 			Arrays
 					.asList(new String[] { BooleanDomain.BOOLEANDOMAIN_NAME,
 							DoubleDomain.DOUBLEDOMAIN_NAME,
-							IntDomain.INTDOMAIN_NAME,
+							IntegerDomain.INTDOMAIN_NAME,
 							LongDomain.LONGDOMAIN_NAME,
 							StringDomain.STRINGDOMAIN_NAME }));
 

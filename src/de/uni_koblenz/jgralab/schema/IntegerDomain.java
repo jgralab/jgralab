@@ -29,7 +29,7 @@ package de.uni_koblenz.jgralab.schema;
  * 
  * @author ist@uni-koblenz.de
  */
-public interface IntDomain extends BasicDomain {
+public interface IntegerDomain extends BasicDomain {
 
 	public static final String INTDOMAIN_NAME = "Integer";
 }
