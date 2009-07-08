@@ -28,10 +28,12 @@ import java.io.FileOutputStream;
 import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.regex.Pattern;
 
+import javax.faces.convert.ConverterException;
 import javax.xml.XMLConstants;
 import javax.xml.stream.FactoryConfigurationError;
 import javax.xml.stream.XMLOutputFactory;
@@ -79,7 +81,7 @@ public class SchemaGraph2XSD {
 	private static final String DOMAIN_SET = "ST_SET";
 	private static final String DOMAIN_LIST = "ST_LIST";
 	private static final String DOMAIN_MAP = "ST_MAP";
-	private static final String XSD_SIMPLETYPE_ENUM_PREFIX = "ST_ENUM_";
+	private static final String XSD_SIMPLETYPE_PREFIX = "ST_";
 
 	private static final String XSD_COMPLEXCONTENT = "complexContent";
 	private static final String TRUE = "true";
@@ -98,8 +100,8 @@ public class SchemaGraph2XSD {
 			+ "string";
 	private static final String XSD_DOMAIN_DOUBLE = XSD_NS_PREFIX_PLUS_COLON
 			+ "double";
-	private static final String XSD_DOMAIN_BOOLEAN = XSD_NS_PREFIX_PLUS_COLON
-			+ "boolean";
+	private static final String DOMAIN_BOOLEAN = XSD_NS_PREFIX_PLUS_COLON
+			+ "ST_BOOLEAN";
 	private static final String XSD_DOMAIN_LONG = XSD_NS_PREFIX_PLUS_COLON
 			+ "long";
 	private static final String XSD_DOMAIN_INTEGER = XSD_NS_PREFIX_PLUS_COLON
@@ -136,6 +138,10 @@ public class SchemaGraph2XSD {
 	private final SchemaGraph schemaGraph;
 	private final SchemaGraph2Tg sg2tg;
 	private final String namespacePrefix;
+
+	/**
+	 * Stores Attributes and is defined once to suppress object creation.
+	 */
 	private final ArrayList<Attribute> attributes;
 	private Pattern excludePattern = null;
 
@@ -148,10 +154,18 @@ public class SchemaGraph2XSD {
 	}
 
 	private boolean isExcluded(VertexClass vc) {
-		return excludePattern.matcher(vc.getQualifiedName()).matches();
+		// Prevents a NullPointerException to occur in the case of no used
+		// exclude pattern.
+		return excludePattern != null
+				&& excludePattern.matcher(vc.getQualifiedName()).matches();
 	}
 
 	private boolean isExcluded(EdgeClass ec) {
+		// Prevents a NullPointerException to occur in the case of no used
+		// exclude pattern.
+		if (excludePattern == null) {
+			return false;
+		}
 		if (excludePattern.matcher(ec.getQualifiedName()).matches()) {
 			return true;
 		}
@@ -161,8 +175,7 @@ public class SchemaGraph2XSD {
 	}
 
 	/**
-	 * This map links Domain-objects to existing enumeration types described by
-	 * a string.
+	 * Links Domain-objects to existing enumeration types described by a string.
 	 */
 	private final Map<Domain, String> domainMap;
 
@@ -217,12 +230,22 @@ public class SchemaGraph2XSD {
 		xml.writeComment("Enumeration-types");
 		writeAllDomainTypes();
 
-		// ends the schema
+		// Ends the schema
 		xml.writeEndDocument();
 		xml.flush();
+
+		// Frees resources
+		attributes.clear();
+		domainMap.clear();
 	}
 
 	private void writeDefaultSimpleTypes() throws XMLStreamException {
+
+		ArrayList<String> constants = new ArrayList<String>(2);
+		constants.add("t");
+		constants.add("f");
+
+		createEnumDomainType(constants, DOMAIN_BOOLEAN, false);
 
 		writeRestrictedString(DOMAIN_MAP);
 		writeRestrictedString(DOMAIN_LIST);
@@ -292,7 +315,6 @@ public class SchemaGraph2XSD {
 
 		attributes.clear();
 		collectAttributes(gc, attributes);
-
 		writeAttributes(attributes);
 
 		writeEndXSDElement();
@@ -563,7 +585,7 @@ public class SchemaGraph2XSD {
 		} else if (domain instanceof LongDomain) {
 			return XSD_DOMAIN_LONG;
 		} else if (domain instanceof BooleanDomain) {
-			return XSD_DOMAIN_BOOLEAN;
+			return DOMAIN_BOOLEAN;
 		} else if (domain instanceof DoubleDomain) {
 			return XSD_DOMAIN_DOUBLE;
 		} else if (domain instanceof StringDomain) {
@@ -575,7 +597,7 @@ public class SchemaGraph2XSD {
 		} else if (domain instanceof MapDomain) {
 			return namespacePrefix + ":" + DOMAIN_MAP;
 		} else if (domain instanceof RecordDomain) {
-			return namespacePrefix + ":" + DOMAIN_RECORD;
+			return namespacePrefix + ":" + queryDomainType(domain);
 		} else if (domain instanceof EnumDomain) {
 			return namespacePrefix + ":" + queryDomainType(domain);
 		}
@@ -600,7 +622,7 @@ public class SchemaGraph2XSD {
 		}
 
 		// Creates a new type string.
-		String qualifiedName = XSD_SIMPLETYPE_ENUM_PREFIX
+		String qualifiedName = XSD_SIMPLETYPE_PREFIX
 				+ domain.getQualifiedName();
 		assert (!domainMap.values().contains(qualifiedName)) : "FIXME! \"domainMap\" already contains a string \""
 				+ qualifiedName + "\" of the Domain '" + domain + "'!";
@@ -657,6 +679,21 @@ public class SchemaGraph2XSD {
 	 */
 	private void createEnumDomainType(EnumDomain domain, String typeName)
 			throws XMLStreamException {
+		createEnumDomainType(domain.getEnumConstants(), typeName, true);
+	}
+
+	/**
+	 * Creates a new EnumDomain in XSD with the name of <code>value</code> and
+	 * constants of the Domain <code>key</code>.
+	 * 
+	 * @param domain
+	 *            Domain which is transformed to a XSD representation.
+	 * @param typeName
+	 *            Name of the new XSD type.
+	 * @throws XMLStreamException
+	 */
+	private void createEnumDomainType(List<String> constants, String typeName,
+			boolean nullable) throws XMLStreamException {
 
 		xml.writeStartElement(XSD_NS_PREFIX, XSD_SIMPLETYPE,
 				XMLConstants.W3C_XML_SCHEMA_NS_URI);
@@ -666,10 +703,20 @@ public class SchemaGraph2XSD {
 				XMLConstants.W3C_XML_SCHEMA_NS_URI);
 		xml.writeAttribute(XSD_ATTRIBUTE_BASE, XSD_DOMAIN_STRING);
 
-		for (String enumConst : domain.getEnumConstants()) {
+		for (String enumConst : constants) {
 			xml.writeEmptyElement(XSD_NS_PREFIX, XSD_ENUMERATION,
 					XMLConstants.W3C_XML_SCHEMA_NS_URI);
+			if (enumConst.equals("n")) {
+				throw new ConverterException("The enumeration as Type '"
+						+ typeName + "' alreay defines the constant \"n\".");
+			}
 			xml.writeAttribute(XSD_ENUMERATION_VALUE, enumConst);
+
+		}
+		if (nullable) {
+			xml.writeEmptyElement(XSD_NS_PREFIX, XSD_ENUMERATION,
+					XMLConstants.W3C_XML_SCHEMA_NS_URI);
+			xml.writeAttribute(XSD_ENUMERATION_VALUE, "n");
 		}
 
 		xml.writeEndElement();
@@ -712,7 +759,7 @@ public class SchemaGraph2XSD {
 		String namespacePrefix = args[1].trim();
 		String xsdFile = args[2].trim();
 		String exclPattern = null;
-		if (args[3] != null) {
+		if (args.length == 4) {
 			exclPattern = args[3];
 		}
 
