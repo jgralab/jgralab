@@ -30,6 +30,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.regex.Pattern;
 
 import javax.xml.XMLConstants;
 import javax.xml.stream.FactoryConfigurationError;
@@ -136,6 +137,28 @@ public class SchemaGraph2XSD {
 	private final SchemaGraph2Tg sg2tg;
 	private final String namespacePrefix;
 	private final ArrayList<Attribute> attributes;
+	private Pattern excludePattern = null;
+
+	public Pattern getExcludePattern() {
+		return excludePattern;
+	}
+
+	public void setExcludePattern(Pattern excludePattern) {
+		this.excludePattern = excludePattern;
+	}
+
+	private boolean isExcluded(VertexClass vc) {
+		return excludePattern.matcher(vc.getQualifiedName()).matches();
+	}
+
+	private boolean isExcluded(EdgeClass ec) {
+		if (excludePattern.matcher(ec.getQualifiedName()).matches()) {
+			return true;
+		}
+		VertexClass to = (VertexClass) ec.getFirstTo().getOmega();
+		VertexClass from = (VertexClass) ec.getFirstFrom().getOmega();
+		return isExcluded(to) || isExcluded(from);
+	}
 
 	/**
 	 * This map links Domain-objects to existing enumeration types described by
@@ -250,7 +273,7 @@ public class SchemaGraph2XSD {
 		xml.writeAttribute(XSD_ATTRIBUTE_MAX_OCCURS, "unbounded");
 
 		for (VertexClass vc : schemaGraph.getVertexClassVertices()) {
-			if (vc.isIsAbstract()) {
+			if (vc.isIsAbstract() || isExcluded(vc)) {
 				continue;
 			}
 			writeStartXSDElement(vc.getQualifiedName(),
@@ -258,7 +281,7 @@ public class SchemaGraph2XSD {
 					false);
 		}
 		for (EdgeClass ec : schemaGraph.getEdgeClassVertices()) {
-			if (ec.isIsAbstract()) {
+			if (ec.isIsAbstract() || isExcluded(ec)) {
 				continue;
 			}
 			writeStartXSDElement(ec.getQualifiedName(),
@@ -308,7 +331,7 @@ public class SchemaGraph2XSD {
 
 	private void writeEdgeClassComplexTypes() throws XMLStreamException {
 		for (EdgeClass ec : schemaGraph.getEdgeClassVertices()) {
-			if (ec.isIsAbstract()) {
+			if (ec.isIsAbstract() || isExcluded(ec)) {
 				continue;
 			}
 
@@ -398,7 +421,7 @@ public class SchemaGraph2XSD {
 	private void writeVertexClassComplexTypes() throws XMLStreamException {
 		for (VertexClass vc : schemaGraph.getVertexClassVertices()) {
 
-			if (vc.isIsAbstract()) {
+			if (vc.isIsAbstract() || isExcluded(vc)) {
 				continue;
 			}
 
@@ -682,17 +705,24 @@ public class SchemaGraph2XSD {
 	public static void main(String[] args) throws GraphIOException,
 			FileNotFoundException, XMLStreamException,
 			FactoryConfigurationError {
-		if (args.length != 3) {
+		if (args.length < 3) {
 			usage();
 		}
 		String schemaGraphFile = args[0].trim();
 		String namespacePrefix = args[1].trim();
 		String xsdFile = args[2].trim();
+		String exclPattern = null;
+		if (args[3] != null) {
+			exclPattern = args[3];
+		}
 
 		SchemaGraph sg = GrumlSchema.instance().loadSchemaGraph(
 				schemaGraphFile, new ProgressFunctionImpl());
 		SchemaGraph2XSD t2xsd = new SchemaGraph2XSD(sg, namespacePrefix,
 				xsdFile);
+		if (exclPattern != null) {
+			t2xsd.setExcludePattern(Pattern.compile(exclPattern));
+		}
 		t2xsd.writeXSD();
 
 		System.out.println("Fini.");
@@ -700,7 +730,7 @@ public class SchemaGraph2XSD {
 
 	private static void usage() {
 		System.err
-				.println("Usage: java SchemaGraph2XSD SchemaGraphFile.tg NamespacePrefix  XsdFile.xsd");
+				.println("Usage: java SchemaGraph2XSD SchemaGraphFile.tg NamespacePrefix XsdFile.xsd [excludePattern]");
 		System.exit(1);
 	}
 
