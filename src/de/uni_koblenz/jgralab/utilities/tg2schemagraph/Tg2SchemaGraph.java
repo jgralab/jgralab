@@ -23,4 +23,23 @@ public class Tg2SchemaGraph {
 		Schema schema = GraphIO.loadSchemaFromStream(in);
 		return s2sg.convert2SchemaGraph(schema);
 	}
+
+	public static void main(String[] args) {
+
+		if (args.length != 2) {
+			System.err
+					.println("There should be two arguments passed over.\n"
+							+ "usage: Tg2SchemaGraph <TG-Location> <TG-Graph-Location>");
+		}
+
+		Tg2SchemaGraph graph = new Tg2SchemaGraph();
+		try {
+			GraphIO.saveGraphToFile(args[1], graph.process(args[0]), null);
+		} catch (GraphIOException e) {
+			e.printStackTrace();
+			System.out
+					.println("\nAn error occured while trying to save the graph.");
+		}
+
+	}
 }
