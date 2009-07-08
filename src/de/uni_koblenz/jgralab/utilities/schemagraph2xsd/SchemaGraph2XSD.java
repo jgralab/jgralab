@@ -269,11 +269,9 @@ public class SchemaGraph2XSD {
 		writeEndXSDElement();
 
 		attributes.clear();
-		getAttributes(gc, attributes);
+		collectAttributes(gc, attributes);
 
-		for (Attribute attribute : attributes) {
-			writeAttribute(attribute);
-		}
+		writeAttributes(attributes);
 
 		writeEndXSDElement();
 		writeEndXSDElement();
@@ -322,14 +320,12 @@ public class SchemaGraph2XSD {
 					+ ec.getQualifiedName(), false, true);
 
 			attributes.clear();
-			getAttributes(ec, attributes);
+			collectAttributes(ec, attributes);
 
 			if (attributes.size() > 0) {
 				writeStartXSDExtension(XSD_COMPLEXTYPE_EDGE, true);
 
-				for (Attribute attribute : attributes) {
-					writeAttribute(attribute);
-				}
+				writeAttributes(attributes);
 
 				writeEndXSDElement(); // ends extension
 			} else {
@@ -337,6 +333,13 @@ public class SchemaGraph2XSD {
 			}
 			writeEndXSDElement(); // ends complexContent
 			writeEndXSDElement(); // ends complexType
+		}
+	}
+
+	private void writeAttributes(ArrayList<Attribute> attributeList)
+			throws XMLStreamException {
+		for (Attribute attribute : attributeList) {
+			writeAttribute(attribute);
 		}
 	}
 
@@ -407,14 +410,12 @@ public class SchemaGraph2XSD {
 					+ vc.getQualifiedName(), false, true);
 
 			attributes.clear();
-			getAttributes(vc, attributes);
+			collectAttributes(vc, attributes);
 
 			if (attributes.size() > 0) {
 				writeStartXSDExtension(XSD_COMPLEXTYPE_VERTEX, true);
 
-				for (Attribute attribute : attributes) {
-					writeAttribute(attribute);
-				}
+				writeAttributes(attributes);
 
 				writeEndXSDElement(); // ends extension
 			} else {
@@ -425,7 +426,7 @@ public class SchemaGraph2XSD {
 		}
 	}
 
-	private void getAttributes(AttributedElementClass attrElemClass,
+	private void collectAttributes(AttributedElementClass attrElemClass,
 			ArrayList<Attribute> attributesList) {
 
 		for (HasAttribute ha : attrElemClass
@@ -436,13 +437,13 @@ public class SchemaGraph2XSD {
 		if (attrElemClass instanceof VertexClass) {
 			for (SpecializesVertexClass s : ((VertexClass) attrElemClass)
 					.getSpecializesVertexClassIncidences(EdgeDirection.OUT)) {
-				getAttributes((AttributedElementClass) s.getOmega(),
+				collectAttributes((AttributedElementClass) s.getOmega(),
 						attributesList);
 			}
 		} else if (attrElemClass instanceof EdgeClass) {
 			for (SpecializesEdgeClass s : ((EdgeClass) attrElemClass)
 					.getSpecializesEdgeClassIncidences(EdgeDirection.OUT)) {
-				getAttributes((AttributedElementClass) s.getOmega(),
+				collectAttributes((AttributedElementClass) s.getOmega(),
 						attributesList);
 			}
 		} else if (attrElemClass instanceof GraphClass) {
@@ -553,11 +554,10 @@ public class SchemaGraph2XSD {
 			return namespacePrefix + ":" + DOMAIN_MAP;
 		} else if (domain instanceof RecordDomain) {
 			return namespacePrefix + ":" + DOMAIN_RECORD;
-		} else if (!(domain instanceof EnumDomain)) {
-			throw new NotImplementedException();
+		} else if (domain instanceof EnumDomain) {
+			return namespacePrefix + ":" + queryDomainType(domain);
 		}
-
-		return namespacePrefix + ":" + queryDomainType(domain);
+		throw new NotImplementedException();
 	}
 
 	/**
