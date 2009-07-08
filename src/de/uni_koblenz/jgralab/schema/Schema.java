@@ -336,7 +336,7 @@ public interface Schema extends Comparable<Schema> {
 	 */
 	public GraphFactory getGraphFactory();
 
-	public IntDomain getIntegerDomain();
+	public IntegerDomain getIntegerDomain();
 
 	public String getName();
 

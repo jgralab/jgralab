@@ -39,7 +39,7 @@ abstract VertexClass Domain {qualifiedName: String};
 abstract VertexClass CompositeDomain: Domain;
 VertexClass EnumDomain: Domain {enumConstants: List<String>};
 VertexClass DoubleDomain: Domain;
-VertexClass IntDomain: Domain;
+VertexClass IntegerDomain: Domain;
 VertexClass ListDomain: CollectionDomain;
 VertexClass LongDomain: Domain;
 VertexClass MapDomain: Domain

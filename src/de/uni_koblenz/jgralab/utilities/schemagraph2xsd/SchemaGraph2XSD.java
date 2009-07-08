@@ -37,7 +37,6 @@ import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.GraphIOException;
 import de.uni_koblenz.jgralab.WorkInProgress;
@@ -47,7 +46,7 @@ import de.uni_koblenz.jgralab.grumlschema.domains.BooleanDomain;
 import de.uni_koblenz.jgralab.grumlschema.domains.Domain;
 import de.uni_koblenz.jgralab.grumlschema.domains.DoubleDomain;
 import de.uni_koblenz.jgralab.grumlschema.domains.EnumDomain;
-import de.uni_koblenz.jgralab.grumlschema.domains.IntDomain;
+import de.uni_koblenz.jgralab.grumlschema.domains.IntegerDomain;
 import de.uni_koblenz.jgralab.grumlschema.domains.ListDomain;
 import de.uni_koblenz.jgralab.grumlschema.domains.LongDomain;
 import de.uni_koblenz.jgralab.grumlschema.domains.MapDomain;
@@ -536,7 +535,7 @@ public class SchemaGraph2XSD {
 
 	private String getXSDType(Domain domain) {
 
-		if (domain instanceof IntDomain) {
+		if (domain instanceof IntegerDomain) {
 			return XSD_DOMAIN_INTEGER;
 		} else if (domain instanceof LongDomain) {
 			return XSD_DOMAIN_LONG;
@@ -557,7 +556,8 @@ public class SchemaGraph2XSD {
 		} else if (domain instanceof EnumDomain) {
 			return namespacePrefix + ":" + queryDomainType(domain);
 		}
-		throw new NotImplementedException();
+		throw new RuntimeException("Unknown domain '"
+				+ domain.getQualifiedName() + "'.");
 	}
 
 	/**

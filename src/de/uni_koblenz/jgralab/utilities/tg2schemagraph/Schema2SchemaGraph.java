@@ -265,7 +265,7 @@ public class Schema2SchemaGraph {
 		de.uni_koblenz.jgralab.schema.GraphClass graphClass = schema
 				.getGraphClass();
 
-		assert (graphClass != null && !graphClass.isInternal()) : "There have to be a GraphClass, which isn't internal!";
+		assert ((graphClass != null) && !graphClass.isInternal()) : "There have to be a GraphClass, which isn't internal!";
 
 		assert (attributedElementClassMap != null);
 		// Is needed to reference to the new AttributedElementClass-objects.
@@ -341,7 +341,7 @@ public class Schema2SchemaGraph {
 		for (de.uni_koblenz.jgralab.schema.Package subPackage : xPackage
 				.getSubPackages().values()) {
 
-			assert (subPackage != null && subPackage.getQualifiedName() != null) : "FIXME! This Package has no QualifiedName defined!";
+			assert ((subPackage != null) && (subPackage.getQualifiedName() != null)) : "FIXME! This Package has no QualifiedName defined!";
 
 			// Creates the subpackage and sets the QualifiedName.
 			gSubPackage = schemaGraph.createPackage();
@@ -403,9 +403,9 @@ public class Schema2SchemaGraph {
 
 				gDomain = schemaGraph.createBooleanDomain();
 
-			} else if (domain instanceof de.uni_koblenz.jgralab.schema.IntDomain) {
+			} else if (domain instanceof de.uni_koblenz.jgralab.schema.IntegerDomain) {
 
-				gDomain = schemaGraph.createIntDomain();
+				gDomain = schemaGraph.createIntegerDomain();
 
 			} else if (domain instanceof de.uni_koblenz.jgralab.schema.LongDomain) {
 
@@ -609,7 +609,7 @@ public class Schema2SchemaGraph {
 		for (de.uni_koblenz.jgralab.schema.VertexClass vertexClass : xPackage
 				.getVertexClasses().values()) {
 
-			assert (vertexClass != null && vertexClass.getQualifiedName() != null) : "FIXME! No QualifiedName for this VertexClass defined!";
+			assert ((vertexClass != null) && (vertexClass.getQualifiedName() != null)) : "FIXME! No QualifiedName for this VertexClass defined!";
 			// Skips object, which already exists internal
 			if (vertexClass.isInternal()) {
 				continue;
@@ -669,7 +669,7 @@ public class Schema2SchemaGraph {
 		for (de.uni_koblenz.jgralab.schema.EdgeClass edgeClass : xPackage
 				.getEdgeClasses().values()) {
 
-			assert (edgeClass != null && edgeClass.getQualifiedName() != null) : "FIXME! NO QualifiedName for this EdgeClass defined!";
+			assert ((edgeClass != null) && (edgeClass.getQualifiedName() != null)) : "FIXME! NO QualifiedName for this EdgeClass defined!";
 
 			// Skips all internal present objects.
 			if (edgeClass.isInternal()) {
@@ -702,7 +702,7 @@ public class Schema2SchemaGraph {
 			de.uni_koblenz.jgralab.schema.EdgeClass edgeClass) {
 
 		assert (checkSchemaAndSchemaGraph());
-		assert (edgeClass != null && edgeClass.getQualifiedName() != null) : "FIXME! No QualifiedName for this EdgeClass defined!";
+		assert ((edgeClass != null) && (edgeClass.getQualifiedName() != null)) : "FIXME! No QualifiedName for this EdgeClass defined!";
 
 		EdgeClass gEdgeClass = null;
 
@@ -827,7 +827,7 @@ public class Schema2SchemaGraph {
 		for (de.uni_koblenz.jgralab.Attribute attribute : element
 				.getOwnAttributeList()) {
 
-			assert (attribute != null && attribute.getName() != null) : "FIXME! No name for this Attribute is defined!";
+			assert ((attribute != null) && (attribute.getName() != null)) : "FIXME! No name for this Attribute is defined!";
 
 			// An new Attribute is created and its name is set.
 			gAttribute = schemaGraph.createAttribute();
@@ -845,7 +845,7 @@ public class Schema2SchemaGraph {
 			HasAttribute link1 = schemaGraph.createHasAttribute(gElement,
 					gAttribute);
 			HasDomain link2 = schemaGraph.createHasDomain(gAttribute, gDomain);
-			assert (link1 != null && link2 != null) : "FIXME! No link HasAttribute or HasDomain have been created!";
+			assert ((link1 != null) && (link2 != null)) : "FIXME! No link HasAttribute or HasDomain have been created!";
 		}
 	}
 
@@ -889,8 +889,8 @@ public class Schema2SchemaGraph {
 		for (de.uni_koblenz.jgralab.schema.Constraint constraint : element
 				.getConstraints()) {
 
-			assert (constraint != null && constraint.getMessage() != null && constraint
-					.getPredicate() != null) : "FIXME! Constraint isn't wellformed.";
+			assert ((constraint != null) && (constraint.getMessage() != null) && (constraint
+					.getPredicate() != null)) : "FIXME! Constraint isn't wellformed.";
 			// A new Constraint is created.
 			gConstraint = schemaGraph.createConstraint();
 
@@ -949,7 +949,7 @@ public class Schema2SchemaGraph {
 		to.setRoleName(edgeClass.getToRolename());
 
 		redefinedRoles = edgeClass.getRedefinedToRoles();
-		if (redefinedRoles != null && redefinedRoles.size() != 0) {
+		if ((redefinedRoles != null) && (redefinedRoles.size() != 0)) {
 			// Clones the existing HashSet
 			to.setRedefinedRoles(new HashSet<String>(redefinedRoles));
 		}
@@ -966,7 +966,7 @@ public class Schema2SchemaGraph {
 		from.setRoleName(edgeClass.getFromRolename());
 
 		redefinedRoles = edgeClass.getRedefinedFromRoles();
-		if (redefinedRoles != null && redefinedRoles.size() != 0) {
+		if ((redefinedRoles != null) && (redefinedRoles.size() != 0)) {
 			// Clones the existing HashSet.
 			from.setRedefinedRoles(new HashSet<String>(redefinedRoles));
 		}

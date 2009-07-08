@@ -75,7 +75,7 @@ import de.uni_koblenz.jgralab.schema.EdgeClass;
 import de.uni_koblenz.jgralab.schema.EnumDomain;
 import de.uni_koblenz.jgralab.schema.GraphClass;
 import de.uni_koblenz.jgralab.schema.GraphElementClass;
-import de.uni_koblenz.jgralab.schema.IntDomain;
+import de.uni_koblenz.jgralab.schema.IntegerDomain;
 import de.uni_koblenz.jgralab.schema.ListDomain;
 import de.uni_koblenz.jgralab.schema.LongDomain;
 import de.uni_koblenz.jgralab.schema.MapDomain;
@@ -204,7 +204,7 @@ public class SchemaImpl implements Schema {
 
 	private DoubleDomain doubleDomain;
 
-	private IntDomain integerDomain;
+	private IntegerDomain integerDomain;
 
 	private LongDomain longDomain;
 
@@ -607,13 +607,13 @@ public class SchemaImpl implements Schema {
 		return doubleDomain;
 	}
 
-	private IntDomain createIntegerDomain() {
+	private IntegerDomain createIntegerDomain() {
 		if (integerDomain != null) {
 			throw new SchemaException(
 					"The IntegerDomain for this Schema was already created!");
 		}
 
-		integerDomain = new IntDomainImpl(this);
+		integerDomain = new IntegerDomainImpl(this);
 		return integerDomain;
 	}
 
@@ -965,7 +965,7 @@ public class SchemaImpl implements Schema {
 	}
 
 	@Override
-	public IntDomain getIntegerDomain() {
+	public IntegerDomain getIntegerDomain() {
 		return integerDomain;
 	}
 

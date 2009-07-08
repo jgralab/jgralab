@@ -452,7 +452,7 @@ public class Rsa2Tg extends DefaultHandler {
 		for (EdgeClass e : sg.getEdgeClassVertices()) {
 			From from = e.getFirstFrom();
 			To to = e.getFirstTo();
-			assert from != null && to != null;
+			assert (from != null) && (to != null);
 			boolean fromIsNavigable = !ownedEnds.contains(from);
 			boolean toIsNavigable = !ownedEnds.contains(to);
 			if (fromIsNavigable == toIsNavigable) {
@@ -502,8 +502,8 @@ public class Rsa2Tg extends DefaultHandler {
 			if (ae == null) {
 				ae = graphClass;
 			}
-			assert ae instanceof AttributedElementClass || ae instanceof From
-					|| ae instanceof To;
+			assert (ae instanceof AttributedElementClass)
+					|| (ae instanceof From) || (ae instanceof To);
 			if (ae instanceof AttributedElementClass) {
 				for (String text : l) {
 					if (ae instanceof AttributedElementClass) {
@@ -527,7 +527,7 @@ public class Rsa2Tg extends DefaultHandler {
 	private void createEdgeClassNames() {
 		for (EdgeClass ec : sg.getEdgeClassVertices()) {
 			String name = ec.getQualifiedName().trim();
-			if (name != null && !name.equals("") && !name.endsWith(".")) {
+			if ((name != null) && !name.equals("") && !name.endsWith(".")) {
 				continue;
 			}
 			if (name == null) {
@@ -536,7 +536,7 @@ public class Rsa2Tg extends DefaultHandler {
 			String ecName = null;
 			// invent edgeclass name
 			String toRole = ec.getFirstTo().getRoleName();
-			if (toRole == null || toRole.equals("")) {
+			if ((toRole == null) || toRole.equals("")) {
 				toRole = ((VertexClass) ec.getFirstTo().getOmega())
 						.getQualifiedName();
 				int p = toRole.lastIndexOf('.');
@@ -547,7 +547,7 @@ public class Rsa2Tg extends DefaultHandler {
 				toRole = Character.toUpperCase(toRole.charAt(0))
 						+ toRole.substring(1);
 			}
-			assert toRole != null && toRole.length() > 0;
+			assert (toRole != null) && (toRole.length() > 0);
 			if (ec instanceof AggregationClass) {
 				if (((AggregationClass) ec).isAggregateFrom()) {
 					ecName = "Contains" + toRole;
@@ -559,7 +559,7 @@ public class Rsa2Tg extends DefaultHandler {
 			}
 			if (isUseFromRole()) {
 				String fromRole = ec.getFirstFrom().getRoleName();
-				if (fromRole == null || fromRole.equals("")) {
+				if ((fromRole == null) || fromRole.equals("")) {
 					fromRole = ((VertexClass) ec.getFirstFrom().getOmega())
 							.getQualifiedName();
 					int p = fromRole.lastIndexOf('.');
@@ -570,10 +570,10 @@ public class Rsa2Tg extends DefaultHandler {
 					fromRole = Character.toUpperCase(fromRole.charAt(0))
 							+ fromRole.substring(1);
 				}
-				assert fromRole != null && fromRole.length() > 0;
+				assert (fromRole != null) && (fromRole.length() > 0);
 				name = fromRole;
 			}
-			assert ecName != null && ecName.length() > 0;
+			assert (ecName != null) && (ecName.length() > 0);
 			ec.setQualifiedName(name + ecName);
 		}
 	}
@@ -608,7 +608,7 @@ public class Rsa2Tg extends DefaultHandler {
 			Domain dom = (Domain) idMap.get(domainId);
 			if (dom != null) {
 				Domain d = (Domain) comp.getOmega();
-				assert d instanceof StringDomain
+				assert (d instanceof StringDomain)
 						&& d.getQualifiedName().equals(domainId)
 						&& preliminaryVertices.contains(d);
 				comp.setOmega(dom);
@@ -716,7 +716,7 @@ public class Rsa2Tg extends DefaultHandler {
 		while (p != null) {
 			de.uni_koblenz.jgralab.grumlschema.structure.Package n = p
 					.getNextPackage();
-			if (p.getDegree() == 1 && p.getQualifiedName().length() > 0) {
+			if ((p.getDegree() == 1) && (p.getQualifiedName().length() > 0)) {
 				// System.out.println("...remove empty package '"
 				// + p.getQualifiedName() + "'");
 				p.delete();
@@ -793,7 +793,8 @@ public class Rsa2Tg extends DefaultHandler {
 
 	private void addRedefinesConstraint(Edge constrainedEnd, String text)
 			throws SAXException {
-		assert constrainedEnd instanceof From || constrainedEnd instanceof To;
+		assert (constrainedEnd instanceof From)
+				|| (constrainedEnd instanceof To);
 
 		text = text.trim().replaceAll("\\s+", " ");
 		if (!text.startsWith("redefines ")) {
@@ -872,7 +873,7 @@ public class Rsa2Tg extends DefaultHandler {
 				}
 			}
 		}
-		if (inString || escape || stringCount < 2 || stringCount > 3) {
+		if (inString || escape || (stringCount < 2) || (stringCount > 3)) {
 			throw new SAXException(
 					"Illegal constraint format.  The constraint text was '"
 							+ text + "'.");
@@ -982,7 +983,7 @@ public class Rsa2Tg extends DefaultHandler {
 
 			} else if (name.equals("ownedEnd")) {
 				if (type.equals("uml:Property")
-						&& currentClass instanceof EdgeClass) {
+						&& (currentClass instanceof EdgeClass)) {
 					handleAssociatioEnd(atts, xmiId);
 				} else {
 					throw new SAXException("unexpected element <" + name
@@ -1026,7 +1027,7 @@ public class Rsa2Tg extends DefaultHandler {
 						+ "> of type " + type);
 			}
 		}
-		if (xmiId != null && idVertex != null) {
+		if ((xmiId != null) && (idVertex != null)) {
 			idMap.put(xmiId, idVertex);
 		}
 	}
@@ -1162,7 +1163,7 @@ public class Rsa2Tg extends DefaultHandler {
 
 	private void handleNestedTypeElement(Attributes atts, String type)
 			throws SAXException {
-		assert currentAttribute != null || currentRecordDomain != null;
+		assert (currentAttribute != null) || (currentRecordDomain != null);
 		String href = atts.getValue("href");
 		assert href != null;
 		Domain dom = null;
@@ -1179,8 +1180,8 @@ public class Rsa2Tg extends DefaultHandler {
 			assert currentRecordDomainComponent != null;
 			if (dom != null) {
 				Domain d = (Domain) currentRecordDomainComponent.getOmega();
-				assert d instanceof StringDomain
-						&& d.getQualifiedName() == null
+				assert (d instanceof StringDomain)
+						&& (d.getQualifiedName() == null)
 						&& preliminaryVertices.contains(d);
 				currentRecordDomainComponent.setOmega(dom);
 				d.delete();
@@ -1208,7 +1209,7 @@ public class Rsa2Tg extends DefaultHandler {
 	}
 
 	private void handleOwnedAttribute(Attributes atts, String xmiId) {
-		assert currentClass != null || currentRecordDomain != null;
+		assert (currentClass != null) || (currentRecordDomain != null);
 		String association = atts.getValue("association");
 		if (association == null) {
 			// this property is not an association end
@@ -1261,7 +1262,7 @@ public class Rsa2Tg extends DefaultHandler {
 				currentRecordDomainComponent.setName(attrName);
 			}
 		} else {
-			assert currentClass != null && currentRecordDomain == null;
+			assert (currentClass != null) && (currentRecordDomain == null);
 			handleAssociatioEnd(atts, xmiId);
 		}
 	}
@@ -1313,7 +1314,7 @@ public class Rsa2Tg extends DefaultHandler {
 		currentClassId = xmiId;
 		currentClass = ec;
 		String abs = atts.getValue("isAbstract");
-		ec.setIsAbstract(abs != null && abs.equals("true"));
+		ec.setIsAbstract((abs != null) && abs.equals("true"));
 		String n = atts.getValue("name");
 		n = (n == null) ? "" : n.trim();
 		if (n.length() > 0) {
@@ -1389,7 +1390,7 @@ public class Rsa2Tg extends DefaultHandler {
 		currentClassId = xmiId;
 		currentClass = vc;
 		String abs = atts.getValue("isAbstract");
-		vc.setIsAbstract(abs != null && abs.equals("true"));
+		vc.setIsAbstract((abs != null) && abs.equals("true"));
 		vc.setQualifiedName(getQualifiedName(atts.getValue("name")));
 		sg.createContainsGraphElementClass(packageStack.peek(), vc);
 
@@ -1410,8 +1411,8 @@ public class Rsa2Tg extends DefaultHandler {
 	private void handleAssociatioEnd(Attributes atts, String xmiId) {
 		String endName = atts.getValue("name");
 		String agg = atts.getValue("aggregation");
-		boolean aggregation = agg != null && agg.equals("shared");
-		boolean composition = agg != null && agg.equals("composite");
+		boolean aggregation = (agg != null) && agg.equals("shared");
+		boolean composition = (agg != null) && agg.equals("composite");
 
 		Edge e = (Edge) idMap.get(xmiId);
 		if (e == null) {
@@ -1464,7 +1465,7 @@ public class Rsa2Tg extends DefaultHandler {
 				idMap.put(association, ec);
 			}
 
-			assert vc != null && ec != null;
+			assert (vc != null) && (ec != null);
 			e = sg.createFrom(ec, vc);
 		} else {
 			EdgeClass ec = (EdgeClass) e.getAlpha();
@@ -1486,7 +1487,7 @@ public class Rsa2Tg extends DefaultHandler {
 				String typeId = atts.getValue("type");
 				assert typeId != null;
 				AttributedElement ae = idMap.get(typeId);
-				if (ae != null && !vc.equals(ae)) {
+				if ((ae != null) && !vc.equals(ae)) {
 					assert ae instanceof VertexClass;
 					e.setOmega((VertexClass) ae);
 					vc.delete();
@@ -1501,7 +1502,7 @@ public class Rsa2Tg extends DefaultHandler {
 		}
 
 		assert e != null;
-		assert e instanceof From || e instanceof To;
+		assert (e instanceof From) || (e instanceof To);
 		currentAssociationEnd = e;
 		if (aggregation || composition) {
 			aggregateEnds.add(e);
@@ -1527,7 +1528,7 @@ public class Rsa2Tg extends DefaultHandler {
 
 	private EdgeClass correctAggregationAndComposition(EdgeClass ec,
 			boolean aggregation, boolean composition) {
-		if (composition && ec.getM1Class() != CompositionClass.class) {
+		if (composition && (ec.getM1Class() != CompositionClass.class)) {
 			EdgeClass cls = sg.createCompositionClass();
 			cls.setQualifiedName(ec.getQualifiedName());
 			cls.setIsAbstract(ec.isIsAbstract());
@@ -1539,7 +1540,7 @@ public class Rsa2Tg extends DefaultHandler {
 			}
 			return cls;
 		}
-		if (aggregation && ec.getM1Class() != AggregationClass.class) {
+		if (aggregation && (ec.getM1Class() != AggregationClass.class)) {
 			EdgeClass cls = sg.createAggregationClass();
 			cls.setQualifiedName(ec.getQualifiedName());
 			cls.setIsAbstract(ec.isIsAbstract());
@@ -1583,7 +1584,7 @@ public class Rsa2Tg extends DefaultHandler {
 		if (typeName.equals("String")) {
 			dom = sg.createStringDomain();
 		} else if (typeName.equals("Integer")) {
-			dom = sg.createIntDomain();
+			dom = sg.createIntegerDomain();
 		} else if (typeName.equals("Double")) {
 			dom = sg.createDoubleDomain();
 		} else if (typeName.equals("Long")) {
@@ -1598,7 +1599,7 @@ public class Rsa2Tg extends DefaultHandler {
 			// find the delimiting ',' and take into account nested domains
 			int p = 0;
 			for (int i = 0; i < c.length; ++i) {
-				if (c[i] == ',' && p == 0) {
+				if ((c[i] == ',') && (p == 0)) {
 					p = i;
 					break;
 				}
@@ -1609,7 +1610,7 @@ public class Rsa2Tg extends DefaultHandler {
 				}
 				assert p >= 0;
 			}
-			assert p > 0 && p < c.length - 1;
+			assert (p > 0) && (p < c.length - 1);
 			String keyDomainName = keyValueDomains.substring(0, p);
 			Domain keyDomain = createDomain(keyDomainName);
 			assert keyDomain != null;
