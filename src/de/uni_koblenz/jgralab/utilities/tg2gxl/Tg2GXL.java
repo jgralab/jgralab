@@ -49,7 +49,7 @@ import de.uni_koblenz.jgralab.schema.ListDomain;
 import de.uni_koblenz.jgralab.schema.LongDomain;
 import de.uni_koblenz.jgralab.schema.RecordDomain;
 import de.uni_koblenz.jgralab.schema.SetDomain;
-import de.uni_koblenz.jgralab.utilities.tg2schemagraph.Tg2SchemaGraph;
+import de.uni_koblenz.jgralab.utilities.tg2schemagraph.Schema2SchemaGraph;
 import de.uni_koblenz.jgralab.utilities.tg2whatever.Tg2Whatever;
 
 /**
@@ -66,9 +66,9 @@ import de.uni_koblenz.jgralab.utilities.tg2whatever.Tg2Whatever;
 public class Tg2GXL extends Tg2Whatever {
 
 	// it might be suggestive to copy << gxl-1.0.dtd >> to a locale destination.
-	private String gxlDtd = "http://www.gupro.de/GXL/gxl-1.0.dtd";
-	private String xlink = "http://www.w3.org/1999/xlink";
-	private String gxlMetaSchema = "http://www.gupro.de/GXL/gxl-1.0.gxl";
+	private final String gxlDtd = "http://www.gupro.de/GXL/gxl-1.0.dtd";
+	private final String xlink = "http://www.w3.org/1999/xlink";
+	private final String gxlMetaSchema = "http://www.gupro.de/GXL/gxl-1.0.gxl";
 
 	private String graphOutputName;
 	private String schemaGraphOutputName;
@@ -474,7 +474,8 @@ public class Tg2GXL extends Tg2Whatever {
 		uniqueGraphClassName = graph.getSchema().getQualifiedName();
 		super.printGraph();
 		setOutputFile(schemaGraphOutputName);
-		setGraph(new Tg2SchemaGraph(graph.getSchema()).getSchemaGraph());
+		setGraph(new Schema2SchemaGraph()
+				.convert2SchemaGraph(graph.getSchema()));
 		printSchema = true;
 		super.printGraph();
 
