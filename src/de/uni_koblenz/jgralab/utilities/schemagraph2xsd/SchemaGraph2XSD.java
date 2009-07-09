@@ -78,11 +78,11 @@ import de.uni_koblenz.jgralab.utilities.tg2xml.Tg2xml;
 public class SchemaGraph2XSD {
 
 	private static final String[] RECORD_DOMAIN_PATTERNS = new String[] {
-					"\\(.*\\)", "n" };
+			"\\(.*\\)", "n" };
 	private static final String[] MAP_DOMAIN_PATTERNS = new String[] {
 			"\\[\\]", "n" };
-	private static final String[] SET_DOMAIN_PATTERNS = new String[] { "{.*}",
-			"n" };
+	private static final String[] SET_DOMAIN_PATTERNS = new String[] {
+			"\\{.*\\}", "n" };
 	private static final String[] LIST_DOMAIN_PATTERNS = new String[] {
 			"\\[.*\\]", "n" };
 	private static final String[] STRING_DOMAIN_PATTERNS = new String[] {
@@ -714,7 +714,8 @@ public class SchemaGraph2XSD {
 
 	private void createRecordDomainType(String typeName)
 			throws XMLStreamException {
-		writeRestrictedSimpleType(typeName, XSD_DOMAIN_STRING, RECORD_DOMAIN_PATTERNS);
+		writeRestrictedSimpleType(typeName, XSD_DOMAIN_STRING,
+				RECORD_DOMAIN_PATTERNS);
 	}
 
 	/**
