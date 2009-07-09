@@ -80,7 +80,7 @@ public class SchemaGraph2XSD {
 	private static final String[] RECORD_DOMAIN_PATTERNS = new String[] {
 			"\\(.*\\)", "n" };
 	private static final String[] MAP_DOMAIN_PATTERNS = new String[] {
-			"\\[\\]", "n" };
+			"\\[.*\\]", "n" };
 	private static final String[] SET_DOMAIN_PATTERNS = new String[] {
 			"\\{.*\\}", "n" };
 	private static final String[] LIST_DOMAIN_PATTERNS = new String[] {
