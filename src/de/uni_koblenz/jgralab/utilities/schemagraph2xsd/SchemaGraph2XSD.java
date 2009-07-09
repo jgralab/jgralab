@@ -77,14 +77,22 @@ import de.uni_koblenz.jgralab.utilities.tg2xml.Tg2xml;
 @WorkInProgress(description = "Converter from SchemaGraph to XML Schema", responsibleDevelopers = "horn, mmce, riediger", expectedFinishingDate = "2009/06/30")
 public class SchemaGraph2XSD {
 
-	private static final String DOMAIN_RECORD = "ST_RECORD";
-	private static final String DOMAIN_SET = "ST_SET";
-	private static final String DOMAIN_LIST = "ST_LIST";
-	private static final String DOMAIN_MAP = "ST_MAP";
-	private static final String XSD_SIMPLETYPE_PREFIX = "ST_";
+	private static final String DOMAIN_PREFIX = "ST_";
+	private static final String DOMAIN_RECORD_PREFIX = DOMAIN_PREFIX
+			+ "RECORD_";
+	private static final String DOMAIN_SET = DOMAIN_PREFIX + "SET";
+	private static final String DOMAIN_LIST = DOMAIN_PREFIX + "LIST";
+	private static final String DOMAIN_MAP = DOMAIN_PREFIX + "MAP";
+	private static final String DOMAIN_BOOLEAN = DOMAIN_PREFIX + "BOOLEAN";
+	private static final String DOMAIN_STRING = DOMAIN_PREFIX + "STRING";
+	private static final String DOMAIN_INTEGER = DOMAIN_PREFIX + "INTEGER";
+	private static final String DOMAIN_LONG = DOMAIN_PREFIX + "LONG";
+	private static final String DOMAIN_DOUBLE = DOMAIN_PREFIX + "DOUBLE";
+	private static final String DOMAIN_ENUM_PREFIX = DOMAIN_PREFIX + "ENUM_";
 
 	private static final String XSD_COMPLEXCONTENT = "complexContent";
 	private static final String TRUE = "true";
+	private static final String FALSE = "false";
 	private static final String XSD_ATTRIBUTE_ABSTRACT = "abstract";
 	private static final String XSD_ENUMERATION_VALUE = "value";
 	private static final String XSD_ENUMERATION = "enumeration";
@@ -100,12 +108,10 @@ public class SchemaGraph2XSD {
 			+ "string";
 	private static final String XSD_DOMAIN_DOUBLE = XSD_NS_PREFIX_PLUS_COLON
 			+ "double";
-	private static final String DOMAIN_BOOLEAN = "ST_BOOLEAN";
 	private static final String XSD_DOMAIN_LONG = XSD_NS_PREFIX_PLUS_COLON
 			+ "long";
 	private static final String XSD_DOMAIN_INTEGER = XSD_NS_PREFIX_PLUS_COLON
 			+ "integer";
-
 	private static final String XML_IDREF = XSD_NS_PREFIX_PLUS_COLON + "IDREF";
 	private static final String XML_ID = XSD_NS_PREFIX_PLUS_COLON + "ID";
 
@@ -240,21 +246,35 @@ public class SchemaGraph2XSD {
 
 	private void writeDefaultSimpleTypes() throws XMLStreamException {
 
+		// BOOLEAN
 		ArrayList<String> constants = new ArrayList<String>(2);
 		constants.add("t");
 		constants.add("f");
 
 		createEnumDomainType(constants, DOMAIN_BOOLEAN, false);
 
-		writeRestrictedString(DOMAIN_MAP);
-		writeRestrictedString(DOMAIN_LIST);
-		writeRestrictedString(DOMAIN_SET);
-		writeRestrictedString(DOMAIN_RECORD);
+		// STRING
+		writeRestrictedSimpleType(DOMAIN_STRING, XSD_DOMAIN_STRING);
+		// INTEGER
+		writeRestrictedSimpleType(DOMAIN_INTEGER, XSD_DOMAIN_INTEGER);
+		// LONG
+		writeRestrictedSimpleType(DOMAIN_LONG, XSD_DOMAIN_LONG);
+		// DOUBLE
+		writeRestrictedSimpleType(DOMAIN_DOUBLE, XSD_DOMAIN_DOUBLE);
+		// RECORD & ENUM are written in method "writeAllDomainTypes"
+
+		// LIST
+		writeRestrictedSimpleType(DOMAIN_LIST, XSD_DOMAIN_STRING);
+		// SET
+		writeRestrictedSimpleType(DOMAIN_SET, XSD_DOMAIN_STRING);
+		// MAP
+		writeRestrictedSimpleType(DOMAIN_MAP, XSD_DOMAIN_STRING);
 	}
 
-	private void writeRestrictedString(String string) throws XMLStreamException {
+	private void writeRestrictedSimpleType(String string, String type)
+			throws XMLStreamException {
 		writeStartXSDSimpleType(string);
-		writeStartXSDRestriction(XSD_DOMAIN_STRING, true);
+		writeStartXSDRestriction(type, true);
 		writeEndXSDElement();
 	}
 
@@ -583,15 +603,15 @@ public class SchemaGraph2XSD {
 	private String getXSDType(Domain domain) {
 
 		if (domain instanceof IntegerDomain) {
-			return XSD_DOMAIN_INTEGER;
+			return namespacePrefix + ":" + DOMAIN_INTEGER;
 		} else if (domain instanceof LongDomain) {
-			return XSD_DOMAIN_LONG;
+			return namespacePrefix + ":" + DOMAIN_LONG;
 		} else if (domain instanceof BooleanDomain) {
-			return DOMAIN_BOOLEAN;
+			return namespacePrefix + ":" + DOMAIN_BOOLEAN;
 		} else if (domain instanceof DoubleDomain) {
-			return XSD_DOMAIN_DOUBLE;
+			return namespacePrefix + ":" + DOMAIN_DOUBLE;
 		} else if (domain instanceof StringDomain) {
-			return XSD_DOMAIN_STRING;
+			return namespacePrefix + ":" + DOMAIN_STRING;
 		} else if (domain instanceof SetDomain) {
 			return namespacePrefix + ":" + DOMAIN_SET;
 		} else if (domain instanceof ListDomain) {
@@ -624,8 +644,19 @@ public class SchemaGraph2XSD {
 		}
 
 		// Creates a new type string.
-		String qualifiedName = XSD_SIMPLETYPE_PREFIX
-				+ domain.getQualifiedName();
+
+		String qualifiedName;
+
+		if (domain instanceof EnumDomain) {
+			qualifiedName = DOMAIN_ENUM_PREFIX;
+		} else if (domain instanceof RecordDomain) {
+			qualifiedName = DOMAIN_RECORD_PREFIX;
+		} else {
+			throw new RuntimeException("Unknown domain '"
+					+ domain.getQualifiedName() + "'.");
+		}
+
+		qualifiedName += domain.getQualifiedName();
 		assert (!domainMap.values().contains(qualifiedName)) : "FIXME! \"domainMap\" already contains a string \""
 				+ qualifiedName + "\" of the Domain '" + domain + "'!";
 
