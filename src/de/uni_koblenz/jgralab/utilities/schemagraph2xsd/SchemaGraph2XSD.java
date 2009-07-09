@@ -77,6 +77,16 @@ import de.uni_koblenz.jgralab.utilities.tg2xml.Tg2xml;
 @WorkInProgress(description = "Converter from SchemaGraph to XML Schema", responsibleDevelopers = "horn, mmce, riediger", expectedFinishingDate = "2009/06/30")
 public class SchemaGraph2XSD {
 
+	private static final String[] RECORD_DOMAIN_PATTERNS = new String[] {
+					"\\(.*\\)", "n" };
+	private static final String[] MAP_DOMAIN_PATTERNS = new String[] {
+			"\\[\\]", "n" };
+	private static final String[] SET_DOMAIN_PATTERNS = new String[] { "{.*}",
+			"n" };
+	private static final String[] LIST_DOMAIN_PATTERNS = new String[] {
+			"\\[.*\\]", "n" };
+	private static final String[] STRING_DOMAIN_PATTERNS = new String[] {
+			"\".*\"", "n" };
 	private static final String DOMAIN_PREFIX = "ST_";
 	private static final String DOMAIN_RECORD_PREFIX = DOMAIN_PREFIX
 			+ "RECORD_";
@@ -120,6 +130,7 @@ public class SchemaGraph2XSD {
 	private static final String XSD_CHOICE = "choice";
 	private static final String XSD_ATTRIBUTE_BASE = "base";
 	private static final String XSD_EXTENSION = "extension";
+	private static final String XSD_PATTERN = "pattern";
 	private static final String XSD_ATTRIBUTE = "attribute";
 	private static final String XSD_ATTRIBUTE_TO = "to";
 	private static final String XSD_ATTRIBUTE_TSEQ = "tseq";
@@ -129,6 +140,7 @@ public class SchemaGraph2XSD {
 	private static final String XSD_ELEMENT = "element";
 	private static final String XSD_ATTRIBUTE_TYPE = "type";
 	private static final String XSD_ATTRIBUTE_NAME = "name";
+	private static final String XSD_ATTRIBUTE_VALUE = "value";
 	private static final String XSD_ATTRIBUTE_USE = "use";
 	private static final String XSD_COMPLEXTYPE = "complexType";
 	private static final String XSD_COMPLEX_GRAPHTYPE_PREFIX = "GT_";
@@ -161,7 +173,7 @@ public class SchemaGraph2XSD {
 	private boolean isExcluded(VertexClass vc) {
 		// Prevents a NullPointerException to occur in the case of no used
 		// exclude pattern.
-		return excludePattern != null
+		return (excludePattern != null)
 				&& excludePattern.matcher(vc.getQualifiedName()).matches();
 	}
 
@@ -254,34 +266,39 @@ public class SchemaGraph2XSD {
 		createEnumDomainType(constants, DOMAIN_BOOLEAN, false);
 
 		// STRING
-		writeRestrictedSimpleType(DOMAIN_STRING, XSD_DOMAIN_STRING);
+		writeRestrictedSimpleType(DOMAIN_STRING, XSD_DOMAIN_STRING,
+				STRING_DOMAIN_PATTERNS);
 		// INTEGER
-		writeRestrictedSimpleType(DOMAIN_INTEGER, XSD_DOMAIN_INTEGER);
+		writeRestrictedSimpleType(DOMAIN_INTEGER, XSD_DOMAIN_INTEGER, null);
 		// LONG
-		writeRestrictedSimpleType(DOMAIN_LONG, XSD_DOMAIN_LONG);
+		writeRestrictedSimpleType(DOMAIN_LONG, XSD_DOMAIN_LONG, null);
 		// DOUBLE
-		writeRestrictedSimpleType(DOMAIN_DOUBLE, XSD_DOMAIN_DOUBLE);
+		writeRestrictedSimpleType(DOMAIN_DOUBLE, XSD_DOMAIN_DOUBLE, null);
+
 		// RECORD & ENUM are written in method "writeAllDomainTypes"
 
 		// LIST
-		writeRestrictedSimpleType(DOMAIN_LIST, XSD_DOMAIN_STRING);
+		writeRestrictedSimpleType(DOMAIN_LIST, XSD_DOMAIN_STRING,
+				LIST_DOMAIN_PATTERNS);
 		// SET
-		writeRestrictedSimpleType(DOMAIN_SET, XSD_DOMAIN_STRING);
+		writeRestrictedSimpleType(DOMAIN_SET, XSD_DOMAIN_STRING,
+				SET_DOMAIN_PATTERNS);
 		// MAP
-		writeRestrictedSimpleType(DOMAIN_MAP, XSD_DOMAIN_STRING);
+		writeRestrictedSimpleType(DOMAIN_MAP, XSD_DOMAIN_STRING,
+				MAP_DOMAIN_PATTERNS);
 	}
 
-	private void writeRestrictedSimpleType(String string, String type)
-			throws XMLStreamException {
-		writeStartXSDSimpleType(string);
-		writeStartXSDRestriction(type, true);
+	private void writeRestrictedSimpleType(String name, String type,
+			String[] patterns) throws XMLStreamException {
+		writeStartXSDSimpleType(name);
+		writeStartXSDRestriction(type, patterns);
 		writeEndXSDElement();
 	}
 
-	private void writeStartXSDRestriction(String type, boolean empty)
+	private void writeStartXSDRestriction(String type, String[] patterns)
 			throws XMLStreamException {
 
-		if (empty) {
+		if (patterns == null) {
 			xml.writeEmptyElement(XSD_NS_PREFIX, XSD_RESTRICTION,
 					XMLConstants.W3C_XML_SCHEMA_NS_URI);
 		} else {
@@ -289,6 +306,14 @@ public class SchemaGraph2XSD {
 					XMLConstants.W3C_XML_SCHEMA_NS_URI);
 		}
 		xml.writeAttribute(XSD_ATTRIBUTE_BASE, type);
+
+		if (patterns != null) {
+			for (String pattern : patterns) {
+				xml.writeEmptyElement(XSD_PATTERN);
+				xml.writeAttribute(XSD_ATTRIBUTE_VALUE, pattern);
+			}
+			xml.writeEndElement();
+		}
 	}
 
 	private void writeStartXSDSimpleType(String name) throws XMLStreamException {
@@ -672,32 +697,24 @@ public class SchemaGraph2XSD {
 	 * @throws XMLStreamException
 	 */
 	private void writeAllDomainTypes() throws XMLStreamException {
-
-		// Loop over all existing EnumDomains.
+		// Loop over all existing EnumDomains and RecordDomains.
 		for (Entry<Domain, String> entry : domainMap.entrySet()) {
 			Domain d = entry.getKey();
 			if (d instanceof EnumDomain) {
 				createEnumDomainType((EnumDomain) entry.getKey(), entry
 						.getValue());
+			} else if (d instanceof RecordDomain) {
+				createRecordDomainType(entry.getValue());
 			} else {
-				createComplexDomain(entry.getKey(), entry.getValue());
+				throw new RuntimeException("Unknown domain " + d + " ("
+						+ d.getQualifiedName() + ")");
 			}
 		}
 	}
 
-	private void createComplexDomain(Domain domain, String typeName)
+	private void createRecordDomainType(String typeName)
 			throws XMLStreamException {
-		//
-		xml.writeStartElement(XSD_NS_PREFIX, XSD_SIMPLETYPE,
-				XMLConstants.W3C_XML_SCHEMA_NS_URI);
-		xml.writeAttribute(XSD_ATTRIBUTE_NAME, typeName);
-
-		xml.writeStartElement(XSD_NS_PREFIX, XSD_RESTRICTION,
-				XMLConstants.W3C_XML_SCHEMA_NS_URI);
-		xml.writeAttribute(XSD_ATTRIBUTE_BASE, XSD_DOMAIN_STRING);
-
-		xml.writeEndElement();
-		xml.writeEndElement();
+		writeRestrictedSimpleType(typeName, XSD_DOMAIN_STRING, RECORD_DOMAIN_PATTERNS);
 	}
 
 	/**
