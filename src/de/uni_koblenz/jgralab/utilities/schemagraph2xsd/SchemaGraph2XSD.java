@@ -323,7 +323,7 @@ public class SchemaGraph2XSD {
 
 	private void writeDefaultComplexTypes() throws XMLStreamException {
 		String attElem = XSD_COMPLEXTYPE_ATTRIBUTED_ELEMENT;
-		writeStartXSDComplexType(attElem, false, false);
+		writeStartXSDComplexType(attElem, true, false);
 
 		writeStartXSDComplexType(XSD_COMPLEXTYPE_GRAPH, true, true);
 		writeStartXSDExtension(attElem, true);
