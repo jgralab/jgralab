@@ -100,8 +100,7 @@ public class SchemaGraph2XSD {
 			+ "string";
 	private static final String XSD_DOMAIN_DOUBLE = XSD_NS_PREFIX_PLUS_COLON
 			+ "double";
-	private static final String DOMAIN_BOOLEAN = XSD_NS_PREFIX_PLUS_COLON
-			+ "ST_BOOLEAN";
+	private static final String DOMAIN_BOOLEAN = "ST_BOOLEAN";
 	private static final String XSD_DOMAIN_LONG = XSD_NS_PREFIX_PLUS_COLON
 			+ "long";
 	private static final String XSD_DOMAIN_INTEGER = XSD_NS_PREFIX_PLUS_COLON
@@ -557,6 +556,9 @@ public class SchemaGraph2XSD {
 				+ extendedType);
 	}
 
+	/**
+	 * @throws XMLStreamException
+	 */
 	private void writeEndXSDElement() throws XMLStreamException {
 		xml.writeEndElement();
 	}
@@ -721,6 +723,10 @@ public class SchemaGraph2XSD {
 
 		xml.writeEndElement();
 		xml.writeEndElement();
+	}
+
+	public boolean add(Attribute e) {
+		return attributes.add(e);
 	}
 
 	private void writeStartXSDSchema() throws XMLStreamException {
