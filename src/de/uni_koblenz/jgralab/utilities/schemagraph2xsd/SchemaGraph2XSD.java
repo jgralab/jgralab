@@ -309,7 +309,8 @@ public class SchemaGraph2XSD {
 
 		if (patterns != null) {
 			for (String pattern : patterns) {
-				xml.writeEmptyElement(XSD_PATTERN);
+				xml.writeEmptyElement(XSD_NS_PREFIX, XSD_PATTERN,
+						XMLConstants.W3C_XML_SCHEMA_NS_URI);
 				xml.writeAttribute(XSD_ATTRIBUTE_VALUE, pattern);
 			}
 			xml.writeEndElement();
