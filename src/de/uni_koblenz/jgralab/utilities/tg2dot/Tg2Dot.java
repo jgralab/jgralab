@@ -77,7 +77,7 @@ public class Tg2Dot extends Tg2Whatever {
 	protected void printVertex(PrintStream out, Vertex v) {
 		AttributedElementClass cls = v.getAttributedElementClass();
 		out.print("v" + v.getId() + " [label=\"{{v" + v.getId() + "|"
-				+ cls.getUniqueName() + "}");
+				+ cls.getUniqueName().replace('$', '.') + "}");
 		if (cls.getAttributeCount() > 0) {
 			out.print("|");
 			printAttributes(out, v);
@@ -121,7 +121,7 @@ public class Tg2Dot extends Tg2Whatever {
 				sb.append("\\\\t");
 				break;
 			default:
-				if (ch < ' ' || ch > '\u007F') {
+				if ((ch < ' ') || (ch > '\u007F')) {
 					sb.append("\\\\u");
 					String code = ("000" + Integer.toHexString(ch));
 					sb.append(code.substring(code.length() - 4, code.length()));
@@ -147,20 +147,21 @@ public class Tg2Dot extends Tg2Whatever {
 
 		if (roleNames) {
 			String toRole = cls.getToRolename();
-			if (toRole != null && toRole.length() > 0) {
+			if ((toRole != null) && (toRole.length() > 0)) {
 				out.print((reversedEdges ? "tail" : "head") + "label=\""
 						+ stringQuote(toRole) + "\" ");
 			}
 			String fromRole = cls.getFromRolename();
-			if (fromRole != null && fromRole.length() > 0) {
+			if ((fromRole != null) && (fromRole.length() > 0)) {
 				out.print((reversedEdges ? "head" : "tail") + "label=\""
 						+ stringQuote(fromRole) + "\" ");
 			}
 		}
 
-		out.print("label=\"e" + e.getId() + ": " + cls.getUniqueName() + "");
+		out.print("label=\"e" + e.getId() + ": "
+				+ cls.getUniqueName().replace('$', '.') + "");
 
-		if (edgeAttributes && cls.getAttributeCount() > 0) {
+		if (edgeAttributes && (cls.getAttributeCount() > 0)) {
 			out.print("\\l");
 			printAttributes(out, e);
 		}
@@ -172,7 +173,7 @@ public class Tg2Dot extends Tg2Whatever {
 		AttributedElementClass cls = elem.getAttributedElementClass();
 		for (Attribute attr : cls.getAttributeList()) {
 			try {
-				if (abbreviateEdgeAttributeNames && elem instanceof Edge) {
+				if (abbreviateEdgeAttributeNames && (elem instanceof Edge)) {
 					// sourcePosition => sP
 					// fooBarBaz => fBB
 					out.print(attr.getName().charAt(0)
@@ -187,7 +188,7 @@ public class Tg2Dot extends Tg2Whatever {
 				Object attribute = elem.getAttribute(attr.getName());
 				String attributeString = (attribute != null) ? attribute
 						.toString() : "null";
-				if (shortenStrings && attributeString.length() > 17) {
+				if (shortenStrings && (attributeString.length() > 17)) {
 					attributeString = attributeString.substring(0, 18) + "...";
 				}
 				if (attribute instanceof String) {
