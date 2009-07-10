@@ -818,7 +818,8 @@ public class SchemaGraph2XSD {
 		// define the options
 		Options options = new Options();
 
-		Option output = new Option("o", "output", true, "generated .xsd-file");
+		Option output = new Option("o", "output", true,
+				"XSD-file to be generated");
 		output.setRequired(true);
 		options.addOption(output);
 
@@ -828,12 +829,12 @@ public class SchemaGraph2XSD {
 		options.addOption(namespace);
 
 		Option schemagraph = new Option("g", "graph", true,
-				".tg-file of the schemaGraph");
+				"TG-file of the schemaGraph");
 		schemagraph.setRequired(true);
 		options.addOption(schemagraph);
 
 		Option exPattern = new Option("ep", "excludePattern", true,
-				"elements which are excluded (optional)");
+				"regular expression matching elements which should be excluded (optional)");
 		options.addOption(exPattern);
 
 		Option version = new Option("v", "version", false, "show version");
@@ -846,7 +847,7 @@ public class SchemaGraph2XSD {
 		options.addOption(help2);
 
 		// parse arguments
-		CommandLine comLine =null;
+		CommandLine comLine = null;
 		try {
 			comLine = new BasicParser().parse(options, args);
 		} catch (ParseException e) {
@@ -855,10 +856,10 @@ public class SchemaGraph2XSD {
 			 * single -h or -v option. It's a known bug, which will be fixed in
 			 * a later version.
 			 */
-			if (args[0].equals("-h") || args[0].equals("-help")
+			if (args[0].equals("-h") || args[0].equals("--help")
 					|| args[0].equals("-?")) {
 				new HelpFormatter().printHelp("SchemaGraph2XSD", options);
-			} else if (args[0].equals("-v") || args[0].equals("-version")) {
+			} else if (args[0].equals("-v") || args[0].equals("--version")) {
 				// TODO check version number
 				System.out.println("SchemaGraph2XSD version 1.0");
 			} else {
@@ -873,17 +874,6 @@ public class SchemaGraph2XSD {
 		String xsdFile = comLine.getOptionValue("o").trim();
 		String exclPattern = comLine.getOptionValue("ep");
 
-		// if (args.length < 3) {
-		// usage();
-		// }
-		// String schemaGraphFile = args[0].trim();
-		// String namespacePrefix = args[1].trim();
-		// String xsdFile = args[2].trim();
-		// String exclPattern = null;
-		// if (args.length == 4) {
-		// exclPattern = args[3];
-		// }
-
 		SchemaGraph sg = GrumlSchema.instance().loadSchemaGraph(
 				schemaGraphFile, new ProgressFunctionImpl());
 		SchemaGraph2XSD t2xsd = new SchemaGraph2XSD(sg, namespacePrefix,
@@ -894,12 +884,6 @@ public class SchemaGraph2XSD {
 		t2xsd.writeXSD();
 
 		System.out.println("Fini.");
-	}
-
-	private static void usage() {
-		System.err
-				.println("Usage: java SchemaGraph2XSD -g SchemaGraphFile.tg -ns NamespacePrefix -o XsdFile.xsd [-ep excludePattern]");
-		System.exit(1);
 	}
 
 }
