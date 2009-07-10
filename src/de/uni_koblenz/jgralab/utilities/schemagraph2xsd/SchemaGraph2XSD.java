@@ -40,6 +40,13 @@ import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 
+import org.apache.commons.cli.BasicParser;
+import org.apache.commons.cli.CommandLine;
+import org.apache.commons.cli.HelpFormatter;
+import org.apache.commons.cli.Option;
+import org.apache.commons.cli.Options;
+import org.apache.commons.cli.ParseException;
+
 import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.GraphIOException;
 import de.uni_koblenz.jgralab.WorkInProgress;
@@ -808,16 +815,74 @@ public class SchemaGraph2XSD {
 	public static void main(String[] args) throws GraphIOException,
 			FileNotFoundException, XMLStreamException,
 			FactoryConfigurationError {
-		if (args.length < 3) {
-			usage();
+		// define the options
+		Options options = new Options();
+
+		Option output = new Option("o", "output", true, "generated .xsd-file");
+		output.setRequired(true);
+		options.addOption(output);
+
+		Option namespace = new Option("ns", "namespace", true,
+				"namespace prefix");
+		namespace.setRequired(true);
+		options.addOption(namespace);
+
+		Option schemagraph = new Option("g", "graph", true,
+				".tg-file of the schemaGraph");
+		schemagraph.setRequired(true);
+		options.addOption(schemagraph);
+
+		Option exPattern = new Option("ep", "excludePattern", true,
+				"elements which are excluded (optional)");
+		options.addOption(exPattern);
+
+		Option version = new Option("v", "version", false, "show version");
+		options.addOption(version);
+
+		Option help = new Option("h", "help", false, "show help");
+		options.addOption(help);
+
+		Option help2 = new Option("?", false, "show help");
+		options.addOption(help2);
+
+		// parse arguments
+		CommandLine comLine =null;
+		try {
+			comLine = new BasicParser().parse(options, args);
+		} catch (ParseException e) {
+			/*
+			 * If there are required options, apache.cli does not accept a
+			 * single -h or -v option. It's a known bug, which will be fixed in
+			 * a later version.
+			 */
+			if (args[0].equals("-h") || args[0].equals("-help")
+					|| args[0].equals("-?")) {
+				new HelpFormatter().printHelp("SchemaGraph2XSD", options);
+			} else if (args[0].equals("-v") || args[0].equals("-version")) {
+				// TODO check version number
+				System.out.println("SchemaGraph2XSD version 1.0");
+			} else {
+				System.err.println(e.getMessage());
+				new HelpFormatter().printHelp("SchemaGraph2XSD", options);
+			}
+			return;
 		}
-		String schemaGraphFile = args[0].trim();
-		String namespacePrefix = args[1].trim();
-		String xsdFile = args[2].trim();
-		String exclPattern = null;
-		if (args.length == 4) {
-			exclPattern = args[3];
-		}
+
+		String schemaGraphFile = comLine.getOptionValue("g").trim();
+		String namespacePrefix = comLine.getOptionValue("ns").trim();
+		String xsdFile = comLine.getOptionValue("o").trim();
+		String exclPattern = comLine.getOptionValue("ep");
+
+		// if (args.length < 3) {
+		// usage();
+		// }
+		// String schemaGraphFile = args[0].trim();
+		// String namespacePrefix = args[1].trim();
+		// String xsdFile = args[2].trim();
+		// String exclPattern = null;
+		// if (args.length == 4) {
+		// exclPattern = args[3];
+		// }
 
 		SchemaGraph sg = GrumlSchema.instance().loadSchemaGraph(
 				schemaGraphFile, new ProgressFunctionImpl());
@@ -833,7 +898,7 @@ public class SchemaGraph2XSD {
 
 	private static void usage() {
 		System.err
-				.println("Usage: java SchemaGraph2XSD SchemaGraphFile.tg NamespacePrefix XsdFile.xsd [excludePattern]");
+				.println("Usage: java SchemaGraph2XSD -g SchemaGraphFile.tg -ns NamespacePrefix -o XsdFile.xsd [-ep excludePattern]");
 		System.exit(1);
 	}
 
