@@ -24,8 +24,8 @@
 
 package de.uni_koblenz.jgralab.utilities.tgschema2java;
 
-import gnu.getopt.Getopt;
-import gnu.getopt.LongOpt;
+//import gnu.getopt.Getopt;
+//import gnu.getopt.LongOpt;
 
 import java.io.File;
 import java.io.FileFilter;
@@ -39,6 +39,13 @@ import javax.tools.JavaCompiler;
 import javax.tools.JavaFileObject;
 import javax.tools.StandardJavaFileManager;
 import javax.tools.ToolProvider;
+
+import org.apache.commons.cli.BasicParser;
+import org.apache.commons.cli.CommandLine;
+import org.apache.commons.cli.HelpFormatter;
+import org.apache.commons.cli.Option;
+import org.apache.commons.cli.Options;
+import org.apache.commons.cli.ParseException;
 
 import de.uni_koblenz.jgralab.GraphIO;
 import de.uni_koblenz.jgralab.GraphIOException;
@@ -92,15 +99,15 @@ public class TgSchema2Java {
 	 */
 	private Schema schema;
 
-	/**
-	 * Holds the long options
-	 */
-	private LongOpt[] longOptions;
+	// /**
+	// * Holds the long options
+	// */
+	// private LongOpt[] longOptions;
 
 	/**
 	 * Constructs an instance of TgSchema2Java with the given command line
 	 * arguments and creates the schema-object after reading the .tg-file
-	 *
+	 * 
 	 * @param args
 	 *            the command line arguments; only the name of the .tg-file is
 	 *            mandatory, for the commit-path and the implementation to be
@@ -112,7 +119,7 @@ public class TgSchema2Java {
 		createJar = false;
 		overwrite = true;
 
-		createLongOptions();
+		// createLongOptions();
 
 		try {
 			// processing command line arguments
@@ -130,24 +137,24 @@ public class TgSchema2Java {
 		}
 	}
 
-	/**
-	 * Stores the long option names in array longOptions
-	 */
-	private void createLongOptions() {
-		longOptions = new LongOpt[7];
-
-		longOptions[0] = new LongOpt("filename", LongOpt.REQUIRED_ARGUMENT,
-				null, 'f');
-		longOptions[1] = new LongOpt("path", LongOpt.REQUIRED_ARGUMENT, null,
-				'p');
-		longOptions[2] = new LongOpt("implementation",
-				LongOpt.REQUIRED_ARGUMENT, null, 'i');
-		longOptions[3] = new LongOpt("help", LongOpt.NO_ARGUMENT, null, 'h');
-		longOptions[4] = new LongOpt("compile", LongOpt.NO_ARGUMENT, null, 'c');
-		longOptions[5] = new LongOpt("cp", LongOpt.REQUIRED_ARGUMENT, null, 's');
-		longOptions[6] = new LongOpt("filename", LongOpt.REQUIRED_ARGUMENT,
-				null, 's');
-	}
+	// /**
+	// * Stores the long option names in array longOptions
+	// */
+	// private void createLongOptions() {
+	// longOptions = new LongOpt[7];
+	//
+	// longOptions[0] = new LongOpt("filename", LongOpt.REQUIRED_ARGUMENT,
+	// null, 'f');
+	// longOptions[1] = new LongOpt("path", LongOpt.REQUIRED_ARGUMENT, null,
+	// 'p');
+	// longOptions[2] = new LongOpt("implementation",
+	// LongOpt.REQUIRED_ARGUMENT, null, 'i');
+	// longOptions[3] = new LongOpt("help", LongOpt.NO_ARGUMENT, null, 'h');
+	// longOptions[4] = new LongOpt("compile", LongOpt.NO_ARGUMENT, null, 'c');
+	// longOptions[5] = new LongOpt("cp", LongOpt.REQUIRED_ARGUMENT, null, 's');
+	// longOptions[6] = new LongOpt("filename", LongOpt.REQUIRED_ARGUMENT,
+	// null, 's');
+	// }
 
 	private boolean deleteFolder(String path) {
 		File folder = new File(path);
@@ -192,7 +199,7 @@ public class TgSchema2Java {
 	/**
 	 * Checks if all .java-files belonging to the specified Schema already exist
 	 * in the commit path. There also must not exist any surplus .java-files.
-	 *
+	 * 
 	 * @param schema
 	 *            the Schema whose files shall be checked for existence
 	 * @return true if all .java-files already exist; false otherwise
@@ -290,84 +297,166 @@ public class TgSchema2Java {
 	/**
 	 * Processes the command line arguments and sets member variables
 	 * accordingly.
-	 *
+	 * 
 	 * @param args
 	 *            the command line arguments
 	 * @throws Exception
 	 *             Throws Exception if mandatory option "-f" is not specified.
 	 */
 	private void processArguments(String[] args) throws Exception {
-		Getopt getopt = new Getopt("TgSchema2Java", args, "f:p:hcj:s:",
-				longOptions);
-		int option;
-		boolean missingFilenameOption = true;
+		// define the options
+		Options options = new Options();
 
-		/*
-		 * if no command line arguments are specified, create an "-h" argument
-		 * inorder to invoke printHelp()
-		 */
-		if (args.length == 0) {
-			getopt.setArgv(new String[] { "-h" });
-		}
-		// processing of arguments and setting member variables accordingly
-		while ((option = getopt.getopt()) != -1) {
-			switch (option) {
-			case 'f':
-				missingFilenameOption = false;
-				tgFilename = getopt.getOptarg();
-				break;
-			case 'p':
-				commitPath = getopt.getOptarg();
-				commitPath = commitPath.replace("/", File.separator);
-				commitPath = commitPath.replace("\\", File.separator);
-				break;
-			case 'c':
-				compile = true;
-				break;
-			case 's':
-				classpath = getopt.getOptarg();
-				break;
-			case 'j': // create jar-file
-				createJar = true;
-				jarFileName = getopt.getOptarg();
-				break;
-			case 'h':
-				printHelp();
-				System.exit(0);
+		Option tgFile = new Option("f", "tgFilename", true,
+				"(required): specifies the .tg-file to be converted");
+		tgFile.setRequired(true);
+		options.addOption(tgFile);
+
+		Option pathToCommit = new Option(
+				"p",
+				"commitPath",
+				true,
+				"(optional): specifies the path to where the created files are stored; default is current folder (\".\")");
+		options.addOption(pathToCommit);
+
+		Option comp = new Option("c", "compile", false,
+				"(optional): if specified, the .java are compiled");
+		options.addOption(comp);
+
+		Option jar = new Option(
+				"j",
+				"jarFileName",
+				true,
+				"(optional): specifies the name of the .jar-file; if omitted, no jar will be created");
+		options.addOption(jar);
+
+		Option exPattern = new Option("s", "classpath", true,
+				"(optional): specifies the path to jgralab");
+		options.addOption(exPattern);
+
+		Option version = new Option("v", "version", false,
+				"(optional): show version");
+		options.addOption(version);
+
+		Option help = new Option("h", "help", false, "(optional): show help");
+		options.addOption(help);
+
+		Option help2 = new Option("?", false, "(optional): show help");
+		options.addOption(help2);
+
+		// parse arguments
+		CommandLine comLine = null;
+		try {
+			comLine = new BasicParser().parse(options, args);
+		} catch (ParseException e) {
+			/*
+			 * If there are required options, apache.cli does not accept a
+			 * single -h or -v option. It's a known bug, which will be fixed in
+			 * a later version.
+			 */
+			if (args.length > 0
+					&& (args[0].equals("-h") || args[0].equals("--help") || args[0]
+							.equals("-?"))) {
+				new HelpFormatter().printHelp("TgSchema2Java", options);
+			} else if (args.length > 0
+					&& (args[0].equals("-v") || args[0].equals("--version"))) {
+				// TODO check version number
+				System.out.println("TgSchema2Java version 1.0");
+			} else {
+				System.err.println(e.getMessage());
+				new HelpFormatter().printHelp("TgSchema2Java", options);
 			}
+			System.exit(0);
 		}
 
-		if (missingFilenameOption) {
-			throw new Exception("Missing option \"-f\"");
+		// processing of arguments and setting member variables accordingly
+		tgFilename = comLine.getOptionValue("f");
+		if (comLine.hasOption("p")) {
+			commitPath = comLine.getOptionValue("p");
+			commitPath = commitPath.replace("/", File.separator);
+			commitPath = commitPath.replace("\\", File.separator);
 		}
+		compile = comLine.hasOption("c");
+		if (comLine.hasOption("s")) {
+			classpath = comLine.getOptionValue("s");
+		}
+		if (comLine.hasOption("j")) {
+			createJar = true;
+			jarFileName = comLine.getOptionValue("j");
+		}
+
+		// Getopt getopt = new Getopt("TgSchema2Java", args, "f:p:hcj:s:",
+		// longOptions);
+		// int option;
+		// boolean missingFilenameOption = true;
+		//
+		// /*
+		// * if no command line arguments are specified, create an "-h" argument
+		// * inorder to invoke printHelp()
+		// */
+		// if (args.length == 0) {
+		// getopt.setArgv(new String[] { "-h" });
+		// }
+		// // processing of arguments and setting member variables accordingly
+		// while ((option = getopt.getopt()) != -1) {
+		// switch (option) {
+		// case 'f':
+		// missingFilenameOption = false;
+		// tgFilename = getopt.getOptarg();
+		// break;
+		// case 'p':
+		// commitPath = getopt.getOptarg();
+		// commitPath = commitPath.replace("/", File.separator);
+		// commitPath = commitPath.replace("\\", File.separator);
+		// break;
+		// case 'c':
+		// compile = true;
+		// break;
+		// case 's':
+		// classpath = getopt.getOptarg();
+		// break;
+		// case 'j': // create jar-file
+		// createJar = true;
+		// jarFileName = getopt.getOptarg();
+		// break;
+		// case 'h':
+		// printHelp();
+		// System.exit(0);
+		// }
+		// }
+		//
+		// if (missingFilenameOption) {
+		// throw new Exception("Missing option \"-f\"");
+		// }
 	}
 
-	/**
-	 * Prints help.
-	 */
-	private void printHelp() {
-		System.out
-				.println("Usage: java "
-						+ TgSchema2Java.class.getSimpleName()
-						+ "\n"
-						+ " (-f | --filename) <filename>[.tg] [(-p | --path) <commit-path>]\n"
-						+ " [(-c | --compile)]\n"
-						+ " [(-s | --cp | --classpath) <classpath>\n");
-		System.out.println("Options:");
-		System.out
-				.println("-f | --filename (required): specifies the .tg-file to be converted");
-		System.out
-				.println("-p | --path (optional): specifies the path to where the created\n"
-						+ "                        files are stored; default is current folder (\".\")");
-		System.out
-				.println("-c | --compile (optional): if specified, the .java are compiled");
-		System.out
-				.println("-s | --cp | --classpath (optional): specifies the path to jgralab");
-		System.out
-				.println("-j | --jar (optional): specifies the name of the .jar-file;\n"
-						+ "                       if omitted, no jar will be created");
-		System.out.println("-h | --help (optional): prints this help");
-	}
+	// /**
+	// * Prints help.
+	// */
+	// private void printHelp() {
+	// System.out
+	// .println("Usage: java "
+	// + TgSchema2Java.class.getSimpleName()
+	// + "\n"
+	// + " (-f | --filename) <filename>[.tg] [(-p | --path) <commit-path>]\n"
+	// + " [(-c | --compile)]\n"
+	// + " [(-s | --cp | --classpath) <classpath>\n");
+	// System.out.println("Options:");
+	// System.out
+	// .println("-f | --filename (required): specifies the .tg-file to be converted");
+	// System.out
+	// .println("-p | --path (optional): specifies the path to where the created\n"
+	// +
+	// "                        files are stored; default is current folder (\".\")");
+	// System.out
+	// .println("-c | --compile (optional): if specified, the .java are compiled");
+	// System.out
+	// .println("-s | --cp | --classpath (optional): specifies the path to jgralab");
+	// System.out
+	// .println("-j | --jar (optional): specifies the name of the .jar-file;\n"
+	// + "                       if omitted, no jar will be created");
+	// System.out.println("-h | --help (optional): prints this help");
+	// }
 
 	public void compile() throws Exception {
 		String packageFolder = schema.getPathName();
