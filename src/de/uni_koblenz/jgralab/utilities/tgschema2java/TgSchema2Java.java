@@ -349,6 +349,14 @@ public class TgSchema2Java {
 		try {
 			comLine = new BasicParser().parse(options, args);
 		} catch (ParseException e) {
+			HelpFormatter helpForm=new HelpFormatter();
+			helpForm.setSyntaxPrefix("Usage: java "
+	 + TgSchema2Java.class.getSimpleName()
+	 + "\n"
+	 + " (-f | --filename) <filename>[.tg] [(-p | --path) <commit-path>]\n"
+	 + " [(-c | --compile)]\n"
+	 + " [(-s | --cp | --classpath) <classpath>\n\n Options:\n");
+			
 			/*
 			 * If there are required options, apache.cli does not accept a
 			 * single -h or -v option. It's a known bug, which will be fixed in
@@ -357,14 +365,15 @@ public class TgSchema2Java {
 			if (args.length > 0
 					&& (args[0].equals("-h") || args[0].equals("--help") || args[0]
 							.equals("-?"))) {
-				new HelpFormatter().printHelp("TgSchema2Java", options);
+				helpForm.printHelp(" ", options);
 			} else if (args.length > 0
 					&& (args[0].equals("-v") || args[0].equals("--version"))) {
 				// TODO check version number
 				System.out.println("TgSchema2Java version 1.0");
 			} else {
 				System.err.println(e.getMessage());
-				new HelpFormatter().printHelp("TgSchema2Java", options);
+				helpForm.printHelp(" ", options);
+				System.exit(1);
 			}
 			System.exit(0);
 		}
@@ -435,13 +444,13 @@ public class TgSchema2Java {
 	// */
 	// private void printHelp() {
 	// System.out
-	// .println("Usage: java "
-	// + TgSchema2Java.class.getSimpleName()
-	// + "\n"
-	// + " (-f | --filename) <filename>[.tg] [(-p | --path) <commit-path>]\n"
-	// + " [(-c | --compile)]\n"
-	// + " [(-s | --cp | --classpath) <classpath>\n");
-	// System.out.println("Options:");
+//	 .println("Usage: java "
+//	 + TgSchema2Java.class.getSimpleName()
+//	 + "\n"
+//	 + " (-f | --filename) <filename>[.tg] [(-p | --path) <commit-path>]\n"
+//	 + " [(-c | --compile)]\n"
+//	 + " [(-s | --cp | --classpath) <classpath>\n");
+//	 System.out.println("Options:");
 	// System.out
 	// .println("-f | --filename (required): specifies the .tg-file to be converted");
 	// System.out
