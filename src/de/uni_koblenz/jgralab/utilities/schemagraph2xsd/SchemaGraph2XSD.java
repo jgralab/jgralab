@@ -819,31 +819,31 @@ public class SchemaGraph2XSD {
 		Options options = new Options();
 
 		Option output = new Option("o", "output", true,
-				"XSD-file to be generated");
+				"(required): XSD-file to be generated");
 		output.setRequired(true);
 		options.addOption(output);
 
 		Option namespace = new Option("ns", "namespace", true,
-				"namespace prefix");
+				"(required): namespace prefix");
 		namespace.setRequired(true);
 		options.addOption(namespace);
 
 		Option schemagraph = new Option("g", "graph", true,
-				"TG-file of the schemaGraph");
+				"(required): TG-file of the schemaGraph");
 		schemagraph.setRequired(true);
 		options.addOption(schemagraph);
 
 		Option exPattern = new Option("ep", "excludePattern", true,
-				"regular expression matching elements which should be excluded (optional)");
+				"(optional): regular expression matching elements which should be excluded");
 		options.addOption(exPattern);
 
-		Option version = new Option("v", "version", false, "show version");
+		Option version = new Option("v", "version", false, "(optional): show version");
 		options.addOption(version);
 
-		Option help = new Option("h", "help", false, "show help");
+		Option help = new Option("h", "help", false, "(optional): show help");
 		options.addOption(help);
 
-		Option help2 = new Option("?", false, "show help");
+		Option help2 = new Option("?", false, "(optional): show help");
 		options.addOption(help2);
 
 		// parse arguments
@@ -856,10 +856,10 @@ public class SchemaGraph2XSD {
 			 * single -h or -v option. It's a known bug, which will be fixed in
 			 * a later version.
 			 */
-			if (args[0].equals("-h") || args[0].equals("--help")
-					|| args[0].equals("-?")) {
+			if (args.length>0&&(args[0].equals("-h") || args[0].equals("--help")
+					|| args[0].equals("-?"))) {
 				new HelpFormatter().printHelp("SchemaGraph2XSD", options);
-			} else if (args[0].equals("-v") || args[0].equals("--version")) {
+			} else if (args.length>0&&(args[0].equals("-v") || args[0].equals("--version"))) {
 				// TODO check version number
 				System.out.println("SchemaGraph2XSD version 1.0");
 			} else {
