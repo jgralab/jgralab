@@ -307,14 +307,14 @@ public class TgSchema2Java {
 		// define the options
 		Options options = new Options();
 
-		Option tgFile = new Option("f", "tgFilename", true,
+		Option tgFile = new Option("f", "filename", true,
 				"(required): specifies the .tg-file to be converted");
 		tgFile.setRequired(true);
 		options.addOption(tgFile);
 
 		Option pathToCommit = new Option(
 				"p",
-				"commitPath",
+				"path",
 				true,
 				"(optional): specifies the path to where the created files are stored; default is current folder (\".\")");
 		options.addOption(pathToCommit);
@@ -325,12 +325,12 @@ public class TgSchema2Java {
 
 		Option jar = new Option(
 				"j",
-				"jarFileName",
+				"jar",
 				true,
 				"(optional): specifies the name of the .jar-file; if omitted, no jar will be created");
 		options.addOption(jar);
 
-		Option exPattern = new Option("s", "classpath", true,
+		Option exPattern = new Option("s", "cp", true,
 				"(optional): specifies the path to jgralab");
 		options.addOption(exPattern);
 
