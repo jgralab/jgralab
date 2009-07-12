@@ -30,6 +30,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.SortedMap;
+import java.util.TreeMap;
 import java.util.Map.Entry;
 import java.util.regex.Pattern;
 
@@ -56,6 +58,7 @@ import de.uni_koblenz.jgralab.grumlschema.domains.BooleanDomain;
 import de.uni_koblenz.jgralab.grumlschema.domains.Domain;
 import de.uni_koblenz.jgralab.grumlschema.domains.DoubleDomain;
 import de.uni_koblenz.jgralab.grumlschema.domains.EnumDomain;
+import de.uni_koblenz.jgralab.grumlschema.domains.HasRecordDomainComponent;
 import de.uni_koblenz.jgralab.grumlschema.domains.IntegerDomain;
 import de.uni_koblenz.jgralab.grumlschema.domains.ListDomain;
 import de.uni_koblenz.jgralab.grumlschema.domains.LongDomain;
@@ -392,12 +395,13 @@ public class SchemaGraph2XSD {
 		writeEndXSDElement();
 		writeEndXSDElement();
 
+		String integer = namespacePrefix + ":" + DOMAIN_INTEGER;
 		writeStartXSDComplexType(XSD_COMPLEXTYPE_EDGE, true, true);
 		writeStartXSDExtension(attElem, true);
 		writeXSDAttribute(XSD_ATTRIBUTE_FROM, XML_IDREF, XSD_REQUIRED);
 		writeXSDAttribute(XSD_ATTRIBUTE_TO, XML_IDREF, XSD_REQUIRED);
-		writeXSDAttribute(XSD_ATTRIBUTE_FSEQ, XSD_DOMAIN_INTEGER);
-		writeXSDAttribute(XSD_ATTRIBUTE_TSEQ, XSD_DOMAIN_INTEGER);
+		writeXSDAttribute(XSD_ATTRIBUTE_FSEQ, integer);
+		writeXSDAttribute(XSD_ATTRIBUTE_TSEQ, integer);
 		writeEndXSDElement();
 		writeEndXSDElement();
 		writeEndXSDElement();
@@ -633,31 +637,35 @@ public class SchemaGraph2XSD {
 
 	}
 
-	private String getXSDType(Domain domain) {
+	private String getXSDTypeWithoutPrefix(Domain domain) {
 
 		if (domain instanceof IntegerDomain) {
-			return namespacePrefix + ":" + DOMAIN_INTEGER;
+			return DOMAIN_INTEGER;
 		} else if (domain instanceof LongDomain) {
-			return namespacePrefix + ":" + DOMAIN_LONG;
+			return DOMAIN_LONG;
 		} else if (domain instanceof BooleanDomain) {
-			return namespacePrefix + ":" + DOMAIN_BOOLEAN;
+			return DOMAIN_BOOLEAN;
 		} else if (domain instanceof DoubleDomain) {
-			return namespacePrefix + ":" + DOMAIN_DOUBLE;
+			return DOMAIN_DOUBLE;
 		} else if (domain instanceof StringDomain) {
-			return namespacePrefix + ":" + DOMAIN_STRING;
+			return DOMAIN_STRING;
 		} else if (domain instanceof SetDomain) {
-			return namespacePrefix + ":" + DOMAIN_SET;
+			return DOMAIN_SET;
 		} else if (domain instanceof ListDomain) {
-			return namespacePrefix + ":" + DOMAIN_LIST;
+			return DOMAIN_LIST;
 		} else if (domain instanceof MapDomain) {
-			return namespacePrefix + ":" + DOMAIN_MAP;
+			return DOMAIN_MAP;
 		} else if (domain instanceof RecordDomain) {
-			return namespacePrefix + ":" + queryDomainType(domain);
+			return queryDomainType(domain);
 		} else if (domain instanceof EnumDomain) {
-			return namespacePrefix + ":" + queryDomainType(domain);
+			return queryDomainType(domain);
 		}
 		throw new RuntimeException("Unknown domain '"
 				+ domain.getQualifiedName() + "'.");
+	}
+
+	private String getXSDType(Domain domain) {
+		return namespacePrefix + ":" + getXSDTypeWithoutPrefix(domain);
 	}
 
 	/**
@@ -712,7 +720,7 @@ public class SchemaGraph2XSD {
 				createEnumDomainType((EnumDomain) entry.getKey(), entry
 						.getValue());
 			} else if (d instanceof RecordDomain) {
-				createRecordDomainType(entry.getValue());
+				createRecordDomainType(entry.getKey(), entry.getValue());
 			} else {
 				throw new RuntimeException("Unknown domain " + d + " ("
 						+ d.getQualifiedName() + ")");
@@ -720,10 +728,46 @@ public class SchemaGraph2XSD {
 		}
 	}
 
-	private void createRecordDomainType(String typeName)
+	private void createRecordDomainType(Domain domain, String typeName)
 			throws XMLStreamException {
-		writeRestrictedSimpleType(typeName, XSD_DOMAIN_STRING,
-				RECORD_DOMAIN_PATTERNS);
+
+		writeStartXSDSimpleType(typeName);
+
+		String[] pattern = null;
+		if (domain instanceof RecordDomain) {
+			xml
+					.writeComment(generateRecordDomainComment((RecordDomain) domain));
+			pattern = RECORD_DOMAIN_PATTERNS;
+		} else {
+			throw new RuntimeException("The type '" + domain.getClass()
+					+ "' of domain '" + domain.getQualifiedName()
+					+ "' is not supported.");
+		}
+		writeStartXSDRestriction(XSD_DOMAIN_STRING, pattern);
+		writeEndXSDElement();
+	}
+
+	private String generateRecordDomainComment(RecordDomain domain) {
+		StringBuilder sb = new StringBuilder();
+
+		sb.append(" alphabetically ordered: ");
+
+		SortedMap<String, String> map = new TreeMap<String, String>();
+
+		for (HasRecordDomainComponent component : domain
+				.getHasRecordDomainComponentIncidences(EdgeDirection.OUT)) {
+			map.put(component.getName(),
+					getXSDTypeWithoutPrefix((Domain) component.getOmega()));
+		}
+
+		for (Entry<String, String> entry : map.entrySet()) {
+			sb.append(entry.getKey());
+			sb.append(':');
+			sb.append(entry.getValue());
+			sb.append(' ');
+		}
+
+		return sb.toString();
 	}
 
 	/**
@@ -815,6 +859,29 @@ public class SchemaGraph2XSD {
 	public static void main(String[] args) throws GraphIOException,
 			FileNotFoundException, XMLStreamException,
 			FactoryConfigurationError {
+		CommandLine comLine = processCommandLineOptions(args);
+		if (comLine == null) {
+			return;
+		}
+
+		String schemaGraphFile = comLine.getOptionValue("g").trim();
+		String namespacePrefix = comLine.getOptionValue("nsp").trim();
+		String xsdFile = comLine.getOptionValue("o").trim();
+		String exclPattern = comLine.getOptionValue("ep");
+
+		SchemaGraph sg = GrumlSchema.instance().loadSchemaGraph(
+				schemaGraphFile, new ProgressFunctionImpl());
+		SchemaGraph2XSD t2xsd = new SchemaGraph2XSD(sg, namespacePrefix,
+				xsdFile);
+		if (exclPattern != null) {
+			t2xsd.setExcludePattern(Pattern.compile(exclPattern));
+		}
+		t2xsd.writeXSD();
+
+		System.out.println("Fini.");
+	}
+
+	private static CommandLine processCommandLineOptions(String[] args) {
 		// define the options
 		Options options = new Options();
 
@@ -823,7 +890,7 @@ public class SchemaGraph2XSD {
 		output.setRequired(true);
 		options.addOption(output);
 
-		Option namespace = new Option("ns", "namespace", true,
+		Option namespace = new Option("nsp", "prefix", true,
 				"(required): namespace prefix");
 		namespace.setRequired(true);
 		options.addOption(namespace);
@@ -837,7 +904,8 @@ public class SchemaGraph2XSD {
 				"(optional): regular expression matching elements which should be excluded");
 		options.addOption(exPattern);
 
-		Option version = new Option("v", "version", false, "(optional): show version");
+		Option version = new Option("v", "version", false,
+				"(optional): show version");
 		options.addOption(version);
 
 		Option help = new Option("h", "help", false, "(optional): show help");
@@ -856,34 +924,21 @@ public class SchemaGraph2XSD {
 			 * single -h or -v option. It's a known bug, which will be fixed in
 			 * a later version.
 			 */
-			if (args.length>0&&(args[0].equals("-h") || args[0].equals("--help")
-					|| args[0].equals("-?"))) {
+			if (args.length > 0
+					&& (args[0].equals("-h") || args[0].equals("--help") || args[0]
+							.equals("-?"))) {
 				new HelpFormatter().printHelp("SchemaGraph2XSD", options);
-			} else if (args.length>0&&(args[0].equals("-v") || args[0].equals("--version"))) {
+			} else if (args.length > 0
+					&& (args[0].equals("-v") || args[0].equals("--version"))) {
 				// TODO check version number
 				System.out.println("SchemaGraph2XSD version 1.0");
 			} else {
 				System.err.println(e.getMessage());
 				new HelpFormatter().printHelp("SchemaGraph2XSD", options);
 			}
-			return;
+			return null;
 		}
-
-		String schemaGraphFile = comLine.getOptionValue("g").trim();
-		String namespacePrefix = comLine.getOptionValue("ns").trim();
-		String xsdFile = comLine.getOptionValue("o").trim();
-		String exclPattern = comLine.getOptionValue("ep");
-
-		SchemaGraph sg = GrumlSchema.instance().loadSchemaGraph(
-				schemaGraphFile, new ProgressFunctionImpl());
-		SchemaGraph2XSD t2xsd = new SchemaGraph2XSD(sg, namespacePrefix,
-				xsdFile);
-		if (exclPattern != null) {
-			t2xsd.setExcludePattern(Pattern.compile(exclPattern));
-		}
-		t2xsd.writeXSD();
-
-		System.out.println("Fini.");
+		return comLine;
 	}
 
 }
