@@ -11,6 +11,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 
+import org.apache.commons.cli.BasicParser;
+import org.apache.commons.cli.CommandLine;
+import org.apache.commons.cli.HelpFormatter;
+import org.apache.commons.cli.Option;
+import org.apache.commons.cli.Options;
+import org.apache.commons.cli.ParseException;
+
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.GraphIO;
 import de.uni_koblenz.jgralab.GraphIOException;
@@ -138,16 +145,76 @@ public class GReQLConsole {
 	 * @param args
 	 */
 	public static void main(String[] args) {
-		String queryFile = null;
-		String inputFile = null;
+		// define the options
+		Options options = new Options();
 
-		if (args.length < 2) {
-			System.out.println("GReQL2 QUERY_FILE INPUT_FILE [HTML_FILE]");
-			System.exit(-1);
+		Option oGraph = new Option("g", "graph", true,
+				"(required): queryfile which should be executed");
+		oGraph.setRequired(true);
+		options.addOption(oGraph);
+
+		Option oInputFile = new Option("i", "inputfile", true,
+				"(required): the inputfile");
+		oInputFile.setRequired(true);
+		options.addOption(oInputFile);
+
+		Option oOutput = new Option("o", "output", true,
+				"(optional): HTML-file to be generated");
+		options.addOption(oOutput);
+
+		Option oVersion = new Option("v", "version", false,
+				"(optional): show version");
+		options.addOption(oVersion);
+
+		Option oHelp = new Option("h", "help", false, "(optional): show help");
+		options.addOption(oHelp);
+
+		Option oHelp2 = new Option("?", false, "(optional): show help");
+		options.addOption(oHelp2);
+
+		// parse arguments
+		CommandLine comLine = null;
+		HelpFormatter helpForm = new HelpFormatter();
+		helpForm
+				.setSyntaxPrefix("Usage: GReQLConsole -g QUERY_FILE -i INPUT_FILE [-o HTML_FILE]"
+						+ "Options are:");
+		try {
+			comLine = new BasicParser().parse(options, args);
+		} catch (ParseException e) {
+
+			/*
+			 * If there are required options, apache.cli does not accept a
+			 * single -h or -v option. It's a known bug, which will be fixed in
+			 * a later version.
+			 */
+			if (args.length > 0
+					&& (args[0].equals("-h") || args[0].equals("--help") || args[0]
+							.equals("-?"))) {
+				helpForm.printHelp(" ", options);
+			} else if (args.length > 0
+					&& (args[0].equals("-v") || args[0].equals("--version"))) {
+				// TODO check version number
+				System.out.println("GReQLConsole version 1.0");
+			} else {
+				System.err.println(e.getMessage());
+				helpForm.printHelp(" ", options);
+				System.exit(1);
+			}
+			System.exit(0);
 		}
 
-		queryFile = args[0];
-		inputFile = args[1];
+		// processing of arguments and setting member variables accordingly
+		
+//		String queryFile = null;
+//		String inputFile = null;
+
+//		if (args.length < 2) {
+//			System.out.println("GReQL2 QUERY_FILE INPUT_FILE [HTML_FILE]");
+//			System.exit(-1);
+//		}
+
+		String queryFile = comLine.getOptionValue("g");//args[0];
+		String inputFile = comLine.getOptionValue("i");//args[1];
 
 		JGraLab.setLogLevel(Level.SEVERE);
 		GReQLConsole example = new GReQLConsole(inputFile);
@@ -155,8 +222,8 @@ public class GReQLConsole {
 
 		System.out.println("Result: " + result);
 
-		if (args.length == 3) {
-			example.resultToHTML(result, args[2]);
+		if (comLine.hasOption("o")){//args.length == 3) {
+			example.resultToHTML(result, comLine.getOptionValue("o"));//args[2]);
 		}
 	}
 

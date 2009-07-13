@@ -260,12 +260,12 @@ public class SchemaCompare {
 		// define the options
 		Options options = new Options();
 
-		Option oSchema1 = new Option("s1", "schema1", true,
+		Option oSchema1 = new Option("s", "schema1", true,
 				"(required): the first schema, which is compared with the second schema");
 		oSchema1.setRequired(true);
 		options.addOption(oSchema1);
 
-		Option oSchema2 = new Option("s2", "schema2", true,
+		Option oSchema2 = new Option("t", "schema2", true,
 				"(required): the second schema, which is compared with the first schema");
 		oSchema2.setRequired(true);
 		options.addOption(oSchema2);
@@ -284,7 +284,7 @@ public class SchemaCompare {
 		CommandLine comLine = null;
 		HelpFormatter helpForm = new HelpFormatter();
 		helpForm
-				.setSyntaxPrefix("Usage: java SchemaCompare -s1 schema1.tg -s2 schema2.tg"
+				.setSyntaxPrefix("Usage: java SchemaCompare -s schema1.tg -t schema2.tg"
 						+ "Options are:");
 		try {
 			comLine = new BasicParser().parse(options, args);
@@ -324,8 +324,8 @@ public class SchemaCompare {
 //				.loadSchemaFromFile(args[1]));
 
 		SchemaCompare sc = new SchemaCompare(GraphIO
-				.loadSchemaFromFile(comLine.getOptionValue("s1")), GraphIO
-				.loadSchemaFromFile(comLine.getOptionValue("s2")));
+				.loadSchemaFromFile(comLine.getOptionValue("s")), GraphIO
+				.loadSchemaFromFile(comLine.getOptionValue("t")));
 		
 		sc.compareSchemas();
 	}
