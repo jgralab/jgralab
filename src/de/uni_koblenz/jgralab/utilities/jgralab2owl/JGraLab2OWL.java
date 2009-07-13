@@ -34,6 +34,12 @@ import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 
+import org.apache.commons.cli.BasicParser;
+import org.apache.commons.cli.CommandLine;
+import org.apache.commons.cli.HelpFormatter;
+import org.apache.commons.cli.Option;
+import org.apache.commons.cli.Options;
+import org.apache.commons.cli.ParseException;
 import org.w3c.dom.Document;
 
 import de.uni_koblenz.jgralab.Graph;
@@ -280,12 +286,64 @@ public class JGraLab2OWL {
 	}
 
 	public static void main(String[] args) {
-		if (args.length == 0)
-			System.out.println("Usage: JGraLab2OWL tgFile");
-		else {
-			String filename = args[0];
+		// define the options
+		Options options = new Options();
+
+		Option oGraph = new Option("g", "graph", true,
+				"(required): TG-file of the graph");
+		oGraph.setRequired(true);
+		options.addOption(oGraph);
+
+		Option oVersion = new Option("v", "version", false,
+				"(optional): show version");
+		options.addOption(oVersion);
+
+		Option oHelp = new Option("h", "help", false, "(optional): show help");
+		options.addOption(oHelp);
+
+		Option oHelp2 = new Option("?", false, "(optional): show help");
+		options.addOption(oHelp2);
+
+		// parse arguments
+		CommandLine comLine = null;
+		HelpFormatter helpForm = new HelpFormatter();
+		helpForm
+				.setSyntaxPrefix("Usage: JGraLab2OWL -g tgFile"
+						+ "Options are:");
+		try {
+			comLine = new BasicParser().parse(options, args);
+		} catch (ParseException e) {
+
+			/*
+			 * If there are required options, apache.cli does not accept a
+			 * single -h or -v option. It's a known bug, which will be fixed in
+			 * a later version.
+			 */
+			if (args.length > 0
+					&& (args[0].equals("-h") || args[0].equals("--help") || args[0]
+							.equals("-?"))) {
+				helpForm.printHelp(" ", options);
+			} else if (args.length > 0
+					&& (args[0].equals("-v") || args[0].equals("--version"))) {
+				// TODO check version number
+				System.out.println("JGraLab2OWL version 1.0");
+			} else {
+				System.err.println(e.getMessage());
+				helpForm.printHelp(" ", options);
+				System.exit(1);
+			}
+			System.exit(0);
+		}
+
+		// processing of arguments and setting member variables accordingly
+		
+//		if (args.length == 0)
+//			System.out.println("Usage: JGraLab2OWL tgFile");
+//		else {
+			//String filename = args[0];
+		String filename =comLine.getOptionValue("g");
 			try {
-				Graph graph = GraphIO.loadGraphFromFile(args[0], null);
+				Graph graph = GraphIO.loadGraphFromFile(comLine.getOptionValue("g")/*args[0]*/, null);
 				
 				saveGraphToOWLInstances(filename + ".owl", graph, false, true,
 						true, new ProgressFunctionImpl());
@@ -293,7 +351,7 @@ public class JGraLab2OWL {
 				System.out.println("Sorry, something went wrong");
 				ex.printStackTrace();
 			}
-		}
+//		}
 	}
 
 	/**

@@ -22,14 +22,21 @@
 
 package de.uni_koblenz.jgralab.utilities.tg2gxl;
 
-import gnu.getopt.Getopt;
-import gnu.getopt.LongOpt;
+//import gnu.getopt.Getopt;
+//import gnu.getopt.LongOpt;
 
 import java.io.PrintStream;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
+import org.apache.commons.cli.BasicParser;
+import org.apache.commons.cli.CommandLine;
+import org.apache.commons.cli.HelpFormatter;
+import org.apache.commons.cli.Option;
+import org.apache.commons.cli.Options;
+import org.apache.commons.cli.ParseException;
 
 import de.uni_koblenz.jgralab.Attribute;
 import de.uni_koblenz.jgralab.AttributedElement;
@@ -489,92 +496,184 @@ public class Tg2GXL extends Tg2Whatever {
 	 */
 	@Override
 	protected void getOptions(String[] args) {
-		LongOpt[] longOptions = new LongOpt[3];
+		// define the options
+		Options options = new Options();
 
-		int c = 0;
-		longOptions[c++] = new LongOpt("graph", LongOpt.REQUIRED_ARGUMENT,
-				null, 'g');
-		longOptions[c++] = new LongOpt("output", LongOpt.REQUIRED_ARGUMENT,
-				null, 'o');
+		Option oGraph = new Option("g", "graph", true,
+				"(required): the graph to be converted");
+		oGraph.setRequired(true);
+		options.addOption(oGraph);
 
-		longOptions[c++] = new LongOpt("help", LongOpt.NO_ARGUMENT, null, 'h');
+		Option oOutput = new Option("o", "output", true,
+				"(required): the output file name, or empty for stdout");
+		oOutput.setRequired(true);
+		options.addOption(oOutput);
 
-		Getopt g = new Getopt("Tg2Dot", args, "g:o:h", longOptions);
-		c = g.getopt();
-		String graphName = null;
-		while (c >= 0) {
-			switch (c) {
-			case 'g':
-				try {
-					graphName = g.getOptarg();
+		Option oDomains = new Option("c", "combine", false,
+				"(optional): if set, only one graphclass will be printed. This graphclass is an unification of all graphclasses in the schema.");
+		options.addOption(oDomains);
 
-					setGraph(graphName);
+		Option oVersion = new Option("v", "version", false,
+				"(optional): show version");
+		options.addOption(oVersion);
 
-				} catch (GraphIOException e) {
-					System.err.println("Couldn't load graph in file '"
-							+ graphName + "': " + e.getMessage());
-					if (e.getCause() != null) {
-						e.getCause().printStackTrace();
-					}
-					System.exit(1);
-				}
-				break;
-			case 'o':
-				graphOutputName = g.getOptarg();
-				schemaGraphOutputName = graphOutputName.substring(0,
-						graphOutputName.length() - 4)
-						+ "Schema.gxl";
-				if (graphOutputName == null) {
-					usage(1);
-				}
-				break;
+		Option oHelp = new Option("h", "help", false, "(optional): show help");
+		options.addOption(oHelp);
 
-			case '?':
-			case 'h':
-				usage(0);
-				break;
-			default:
-				throw new RuntimeException("FixMe (c='" + (char) c + "')");
+		Option oHelp2 = new Option("?", false, "(optional): show help");
+		options.addOption(oHelp2);
+
+		// parse arguments
+		CommandLine comLine = null;
+		HelpFormatter helpForm = new HelpFormatter();
+		helpForm
+				.setSyntaxPrefix("Usage: Tg2GXL -g graphFileName [options]"
+						+ "The schema classes of the graph must be reachable via CLASSPATH."
+						+ "Options are:");
+		try {
+			comLine = new BasicParser().parse(options, args);
+		} catch (ParseException e) {
+
+			/*
+			 * If there are required options, apache.cli does not accept a
+			 * single -h or -v option. It's a known bug, which will be fixed in
+			 * a later version.
+			 */
+			if (args.length > 0
+					&& (args[0].equals("-h") || args[0].equals("--help") || args[0]
+							.equals("-?"))) {
+				helpForm.printHelp(" ", options);
+			} else if (args.length > 0
+					&& (args[0].equals("-v") || args[0].equals("--version"))) {
+				// TODO check version number
+				System.out.println("Tg2GXL version 1.0");
+			} else {
+				System.err.println(e.getMessage());
+				helpForm.printHelp(" ", options);
+				System.exit(1);
 			}
-			c = g.getopt();
+			System.exit(0);
 		}
-		if (g.getOptind() < args.length) {
-			System.err.println("Extra arguments!");
-			usage(1);
+
+		// processing of arguments and setting member variables accordingly
+		String graphName = null;
+		if (comLine.hasOption("g")) {
+			try {
+				graphName = comLine.getOptionValue("g");
+
+				setGraph(graphName);
+
+			} catch (GraphIOException e) {
+				System.err.println("Couldn't load graph in file '"
+						+ graphName + "': " + e.getMessage());
+				if (e.getCause() != null) {
+					e.getCause().printStackTrace();
+				}
+				System.exit(1);
+			}
 		}
-		if (g.getOptarg() == null) {
-			System.out.println("Missing option");
-			// usage(1);
+		if (comLine.hasOption("o")) {
+			graphOutputName = comLine.getOptionValue("o");
+			schemaGraphOutputName = graphOutputName.substring(0,
+					graphOutputName.length() - 4)
+					+ "Schema.gxl";
+			if (graphOutputName == null) {
+				helpForm.printHelp(" ", options);
+				System.exit(1);
+			}
 		}
 		if (outputName == null) {
 			outputName = "";
 		}
+		
+		
+		
+//		LongOpt[] longOptions = new LongOpt[3];
+//
+//		int c = 0;
+//		longOptions[c++] = new LongOpt("graph", LongOpt.REQUIRED_ARGUMENT,
+//				null, 'g');
+//		longOptions[c++] = new LongOpt("output", LongOpt.REQUIRED_ARGUMENT,
+//				null, 'o');
+//
+//		longOptions[c++] = new LongOpt("help", LongOpt.NO_ARGUMENT, null, 'h');
+//
+//		Getopt g = new Getopt("Tg2Dot", args, "g:o:h", longOptions);
+//		c = g.getopt();
+//		String graphName = null;
+//		while (c >= 0) {
+//			switch (c) {
+//			case 'g':
+//				try {
+//					graphName = g.getOptarg();
+//
+//					setGraph(graphName);
+//
+//				} catch (GraphIOException e) {
+//					System.err.println("Couldn't load graph in file '"
+//							+ graphName + "': " + e.getMessage());
+//					if (e.getCause() != null) {
+//						e.getCause().printStackTrace();
+//					}
+//					System.exit(1);
+//				}
+//				break;
+//			case 'o':
+//				graphOutputName = g.getOptarg();
+//				schemaGraphOutputName = graphOutputName.substring(0,
+//						graphOutputName.length() - 4)
+//						+ "Schema.gxl";
+//				if (graphOutputName == null) {
+//					usage(1);
+//				}
+//				break;
+//
+//			case '?':
+//			case 'h':
+//				usage(0);
+//				break;
+//			default:
+//				throw new RuntimeException("FixMe (c='" + (char) c + "')");
+//			}
+//			c = g.getopt();
+//		}
+//		if (g.getOptind() < args.length) {
+//			System.err.println("Extra arguments!");
+//			usage(1);
+//		}
+//		if (g.getOptarg() == null) {
+//			System.out.println("Missing option");
+//			// usage(1);
+//		}
+//		if (outputName == null) {
+//			outputName = "";
+//		}
 	}
 
-	/**
-	 * prints usage information on System.out if requested by command-line
-	 * parameter -h or if the command-line parameter set is malformed.
-	 */
-	@Override
-	protected void usage(int exitCode) {
-		System.err.println("Usage: Tg2GXL -g graphFileName [options]");
-		System.err
-				.println("The schema classes of the graph must be reachable via CLASSPATH.");
-		System.err.println("Options are:");
-		System.err
-				.println("-g graphFileName   (--graph)     the graph to be converted");
-		System.err
-				.println("-o outputFileName  (--output)    the output file name, or empty for stdout");
-		System.err
-				.println("-c                 (--combine)     if set, only one graphclass will be printed.");
-		System.err
-				.println("                                 This graphclass is an unification of all graphclasses in the schema.");
-
-		System.err
-				.println("-h                 (--help)      prints usage information");
-
-		System.exit(exitCode);
-	}
+//	/**
+//	 * prints usage information on System.out if requested by command-line
+//	 * parameter -h or if the command-line parameter set is malformed.
+//	 */
+//	@Override
+//	protected void usage(int exitCode) {
+//		System.err.println("Usage: Tg2GXL -g graphFileName [options]");
+//		System.err
+//				.println("The schema classes of the graph must be reachable via CLASSPATH.");
+//		System.err.println("Options are:");
+//		System.err
+//				.println("-g graphFileName   (--graph)     the graph to be converted");
+//		System.err
+//				.println("-o outputFileName  (--output)    the output file name, or empty for stdout");
+//		System.err
+//				.println("-c                 (--combine)     if set, only one graphclass will be printed.");
+//		System.err
+//				.println("                                 This graphclass is an unification of all graphclasses in the schema.");
+//
+//		System.err
+//				.println("-h                 (--help)      prints usage information");
+//
+//		System.exit(exitCode);
+//	}
 
 	/**
 	 * adds an escape sequence to special characters in a string
