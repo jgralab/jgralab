@@ -1,10 +1,14 @@
 package de.uni_koblenz.jgralab.utilities.tg2xml;
 
 import java.io.BufferedOutputStream;
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.lang.reflect.Method;
+import java.net.URL;
+import java.net.URLClassLoader;
 
 import javax.xml.XMLConstants;
 import javax.xml.stream.XMLOutputFactory;
@@ -41,6 +45,19 @@ public class Tg2xml extends GraphVisitor {
 
 	private class IncidencePositionMark {
 		public int fseq, tseq;
+	}
+
+	private static class ExtendableClassLoader extends URLClassLoader {
+
+		public ExtendableClassLoader(URL[] urls) {
+			super(urls);
+		}
+
+		@Override
+		public void addURL(URL url) {
+			super.addURL(url);
+		}
+
 	}
 
 	private String namespaceURI;
@@ -173,19 +190,64 @@ public class Tg2xml extends GraphVisitor {
 
 		String graphFile = comLine.getOptionValue("g").trim();
 		String namespacePrefix = comLine.getOptionValue("n").trim();
-		String schemaLocation = comLine.getOptionValue("l").trim();
+		String xsdLocation = comLine.getOptionValue("x").trim();
 		String outputFile = comLine.getOptionValue("o").trim();
+		String schemaLocation = comLine.getOptionValue("s");
+		if (schemaLocation != null) {
+			schemaLocation = schemaLocation.trim();
+			// test if it is a jar file, if not, append a file separator if
+			// there is none
+			if (!schemaLocation.toLowerCase().endsWith("jar")
+					&& !schemaLocation.endsWith(System
+							.getProperty("file.separator"))) {
+				schemaLocation = schemaLocation
+						+ System.getProperty("file.separator");
+			}
+			// add the schemaLocation to classpath
+			addPath(schemaLocation);
+			// System.out.println(System.getProperty("java.class.path"));
+			// System.setProperty("java.class.path", System
+			// .getProperty("java.class.path")
+			// + System.getProperty("path.separator") + schemaLocation);
+			// System.out.println(System.getProperty("java.class.path"));
+		}
 
+		Graph theGraph = null;
+		try {
+			theGraph = GraphIO.loadGraphFromFile(graphFile,
+					new ProgressFunctionImpl());
+		} catch (GraphIOException e) {
+			System.out.println("Schema not found.");
+			compileSchema(graphFile);
+			theGraph = GraphIO.loadGraphFromFile(graphFile,
+					new ProgressFunctionImpl());
+		}
+
+		Tg2xml converter = new Tg2xml(new BufferedOutputStream(
+				new FileOutputStream(outputFile)), theGraph, namespacePrefix,
+				xsdLocation);
+		converter.visitAll();
+		System.out.println("Fini.");
+	}
+
+	private static void addPath(String s) throws Exception {
+		File f = new File(s);
+		URL u = f.toURI().toURL();
+		URLClassLoader urlClassLoader = (URLClassLoader) ClassLoader
+				.getSystemClassLoader();
+		Class<URLClassLoader> urlClass = URLClassLoader.class;
+		Method method = urlClass.getDeclaredMethod("addURL",
+				new Class[] { URL.class });
+		// evil
+		method.setAccessible(true);
+		method.invoke(urlClassLoader, new Object[] { u });
+	}
+
+	private static void compileSchema(String graphFile) throws GraphIOException {
 		// compile the schema
 		Schema schema = GraphIO.loadSchemaFromFile(graphFile);
 		System.out.println("Compiling schema");
 		schema.compile();
-
-		Tg2xml converter = new Tg2xml(new BufferedOutputStream(
-				new FileOutputStream(outputFile)), GraphIO.loadGraphFromFile(
-				graphFile, new ProgressFunctionImpl()), namespacePrefix,
-				schemaLocation);
-		converter.visitAll();
 	}
 
 	private static CommandLine processCommandLineOptions(String[] args) {
@@ -206,9 +268,17 @@ public class Tg2xml extends GraphVisitor {
 		graph.setRequired(true);
 		options.addOption(graph);
 
-		Option schemaLocation = new Option("l", "schema-location", true,
+		Option xsdLocation = new Option("x", "xsd-location", true,
 				"(required): the location of the XSD schema");
-		schemaLocation.setRequired(true);
+		xsdLocation.setRequired(true);
+		options.addOption(xsdLocation);
+
+		Option schemaLocation = new Option(
+				"s",
+				"schema-location",
+				true,
+				"(optional): the location of the compiled schema. The schema will be compiled into RAM if this option is ommitted and the compiled schema is not in the current classpath.");
+		schemaLocation.setRequired(false);
 		options.addOption(schemaLocation);
 
 		// parse arguments
