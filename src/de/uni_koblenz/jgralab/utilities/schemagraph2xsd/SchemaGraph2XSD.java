@@ -890,7 +890,7 @@ public class SchemaGraph2XSD {
 		output.setRequired(true);
 		options.addOption(output);
 
-		Option namespace = new Option("nsp", "prefix", true,
+		Option namespace = new Option("n", "namespace-prefix", true,
 				"(required): namespace prefix");
 		namespace.setRequired(true);
 		options.addOption(namespace);
@@ -900,7 +900,7 @@ public class SchemaGraph2XSD {
 		schemagraph.setRequired(true);
 		options.addOption(schemagraph);
 
-		Option exPattern = new Option("ep", "excludePattern", true,
+		Option exPattern = new Option("e", "exclude-pattern", true,
 				"(optional): regular expression matching elements which should be excluded");
 		options.addOption(exPattern);
 
