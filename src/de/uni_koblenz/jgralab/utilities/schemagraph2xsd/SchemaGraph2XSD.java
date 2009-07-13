@@ -890,7 +890,7 @@ public class SchemaGraph2XSD {
 		output.setRequired(true);
 		options.addOption(output);
 
-		Option namespace = new Option("n", "namespace-prefix", true,
+		Option namespace = new Option("p", "namespace-prefix", true,
 				"(required): namespace prefix");
 		namespace.setRequired(true);
 		options.addOption(namespace);
