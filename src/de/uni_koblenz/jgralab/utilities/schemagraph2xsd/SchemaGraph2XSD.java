@@ -865,9 +865,9 @@ public class SchemaGraph2XSD {
 		}
 
 		String schemaGraphFile = comLine.getOptionValue("g").trim();
-		String namespacePrefix = comLine.getOptionValue("nsp").trim();
+		String namespacePrefix = comLine.getOptionValue("n").trim();
 		String xsdFile = comLine.getOptionValue("o").trim();
-		String exclPattern = comLine.getOptionValue("ep");
+		String exclPattern = comLine.getOptionValue("e");
 
 		SchemaGraph sg = GrumlSchema.instance().loadSchemaGraph(
 				schemaGraphFile, new ProgressFunctionImpl());
