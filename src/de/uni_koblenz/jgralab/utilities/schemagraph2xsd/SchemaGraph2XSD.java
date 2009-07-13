@@ -935,8 +935,9 @@ public class SchemaGraph2XSD {
 			} else {
 				System.err.println(e.getMessage());
 				new HelpFormatter().printHelp("SchemaGraph2XSD", options);
+				System.exit(1);
 			}
-			return null;
+			System.exit(0);
 		}
 		return comLine;
 	}
