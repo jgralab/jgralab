@@ -1,5 +1,8 @@
 package de.uni_koblenz.jgralab.utilities.tg2xml;
 
+import java.io.BufferedOutputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 
@@ -7,12 +10,22 @@ import javax.xml.XMLConstants;
 import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
 
+import org.apache.commons.cli.BasicParser;
+import org.apache.commons.cli.CommandLine;
+import org.apache.commons.cli.HelpFormatter;
+import org.apache.commons.cli.Option;
+import org.apache.commons.cli.Options;
+import org.apache.commons.cli.ParseException;
+
 import de.uni_koblenz.jgralab.Attribute;
 import de.uni_koblenz.jgralab.AttributedElement;
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.Graph;
+import de.uni_koblenz.jgralab.GraphIO;
+import de.uni_koblenz.jgralab.GraphIOException;
 import de.uni_koblenz.jgralab.GraphMarker;
 import de.uni_koblenz.jgralab.Vertex;
+import de.uni_koblenz.jgralab.impl.ProgressFunctionImpl;
 import de.uni_koblenz.jgralab.schema.Schema;
 import de.uni_koblenz.jgralab.utilities.jgralab2owl.IndentingXMLStreamWriter;
 
@@ -99,8 +112,9 @@ public class Tg2xml extends GraphVisitor {
 		// iterate over incidences and mark these edges
 		int i = 1;
 		for (Edge currentIncidentEdge : v.incidences()) {
-			IncidencePositionMark currentMark = incidencePositionMarker.getMark(currentIncidentEdge);
-			if (currentMark == null){
+			IncidencePositionMark currentMark = incidencePositionMarker
+					.getMark(currentIncidentEdge);
+			if (currentMark == null) {
 				currentMark = new IncidencePositionMark();
 				incidencePositionMarker.mark(currentIncidentEdge, currentMark);
 			}
@@ -149,6 +163,79 @@ public class Tg2xml extends GraphVisitor {
 			}
 		}
 
+	}
+
+	public static void main(String[] args) throws Exception {
+		CommandLine comLine = processCommandLineOptions(args);
+		if (comLine == null) {
+			return;
+		}
+
+		String graphFile = comLine.getOptionValue("g").trim();
+		String namespacePrefix = comLine.getOptionValue("n").trim();
+		String schemaLocation = comLine.getOptionValue("l").trim();
+		String outputFile = comLine.getOptionValue("o").trim();
+
+		// compile the schema
+		Schema schema = GraphIO.loadSchemaFromFile(graphFile);
+		System.out.println("Compiling schema");
+		schema.compile();
+
+		Tg2xml converter = new Tg2xml(new BufferedOutputStream(
+				new FileOutputStream(outputFile)), GraphIO.loadGraphFromFile(
+				graphFile, new ProgressFunctionImpl()), namespacePrefix,
+				schemaLocation);
+		converter.visitAll();
+	}
+
+	private static CommandLine processCommandLineOptions(String[] args) {
+		Options options = new Options();
+
+		Option output = new Option("o", "output", true,
+				"(required): output XML file");
+		output.setRequired(true);
+		options.addOption(output);
+
+		Option namespacePrefix = new Option("n", "namespace-prefix", true,
+				"(required): namespace prefix");
+		namespacePrefix.setRequired(true);
+		options.addOption(namespacePrefix);
+
+		Option graph = new Option("g", "graph", true,
+				"(required): TG-file of the graph");
+		graph.setRequired(true);
+		options.addOption(graph);
+
+		Option schemaLocation = new Option("l", "schema-location", true,
+				"(required): the location of the XSD schema");
+		schemaLocation.setRequired(true);
+		options.addOption(schemaLocation);
+
+		// parse arguments
+		CommandLine comLine = null;
+		try {
+			comLine = new BasicParser().parse(options, args);
+		} catch (ParseException e) {
+			/*
+			 * If there are required options, apache.cli does not accept a
+			 * single -h or -v option. It's a known bug, which will be fixed in
+			 * a later version.
+			 */
+			if (args.length > 0
+					&& (args[0].equals("-h") || args[0].equals("--help") || args[0]
+							.equals("-?"))) {
+				new HelpFormatter().printHelp("Tg2XML", options);
+			} else if (args.length > 0
+					&& (args[0].equals("-v") || args[0].equals("--version"))) {
+				System.out.println("Tg2XML version 0.5");
+			} else {
+				System.err.println(e.getMessage());
+				new HelpFormatter().printHelp("Tg2XML", options);
+				System.exit(1);
+			}
+			System.exit(0);
+		}
+		return comLine;
 	}
 
 }

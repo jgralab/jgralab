@@ -304,6 +304,9 @@
 			<fileset dir="${comlib.dir}/getopt/" includes="**/*.jar"/>
 		</unjar>
 		<unjar dest="${tmp.dir}">
+					<fileset dir="${comlib.dir}/apache/commons/cli/" includes="**/*.jar"/>
+		</unjar>		
+		<unjar dest="${tmp.dir}">
 			<fileset dir="${comlib.dir}/jdom/" includes="**/*.jar"/>
 		</unjar>
 		<unjar dest="${tmp.dir}">
