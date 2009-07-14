@@ -370,7 +370,9 @@ public class TgSchema2Java {
 					&& (args[0].equals("-v") || args[0].equals("--version"))) {
 				// TODO check version number
 				System.out.println("TgSchema2Java version 1.0");
-			} else {
+			} else if(args.length==0){
+				helpForm.printHelp(" ", options);
+			}else{
 				System.err.println(e.getMessage());
 				helpForm.printHelp(" ", options);
 				System.exit(1);
