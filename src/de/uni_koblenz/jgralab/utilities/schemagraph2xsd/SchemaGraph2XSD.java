@@ -51,6 +51,7 @@ import org.apache.commons.cli.ParseException;
 
 import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.GraphIOException;
+import de.uni_koblenz.jgralab.JGraLab;
 import de.uni_koblenz.jgralab.WorkInProgress;
 import de.uni_koblenz.jgralab.grumlschema.GrumlSchema;
 import de.uni_koblenz.jgralab.grumlschema.SchemaGraph;
@@ -864,6 +865,9 @@ public class SchemaGraph2XSD {
 			return;
 		}
 
+		if(comLine.hasOption("v")){
+			System.out.println(JGraLab.getInfo(false));
+		}
 		String schemaGraphFile = comLine.getOptionValue("g").trim();
 		String namespacePrefix = comLine.getOptionValue("n").trim();
 		String xsdFile = comLine.getOptionValue("o").trim();
@@ -908,33 +912,27 @@ public class SchemaGraph2XSD {
 				"(optional): show version");
 		options.addOption(version);
 
-		Option help = new Option("h", "help", false, "(optional): show help");
-		options.addOption(help);
-
-		Option help2 = new Option("?", false, "(optional): show help");
-		options.addOption(help2);
-
-		// parse arguments
 		CommandLine comLine = null;
 		try {
 			comLine = new BasicParser().parse(options, args);
 		} catch (ParseException e) {
+			HelpFormatter helpForm = new HelpFormatter();
+
 			/*
 			 * If there are required options, apache.cli does not accept a
 			 * single -h or -v option. It's a known bug, which will be fixed in
 			 * a later version.
 			 */
-			if (args.length > 0
-					&& (args[0].equals("-h") || args[0].equals("--help") || args[0]
-							.equals("-?"))) {
-				new HelpFormatter().printHelp("SchemaGraph2XSD", options);
-			} else if (args.length > 0
-					&& (args[0].equals("-v") || args[0].equals("--version"))) {
-				// TODO check version number
-				System.out.println("SchemaGraph2XSD version 1.0");
+			boolean vFlag = false;
+			for (String s : args) {
+				vFlag = vFlag || s.equals("-v") || s.equals("--version");
+			}
+			if (vFlag) {
+				System.out.println(JGraLab.getInfo(false));
 			} else {
 				System.err.println(e.getMessage());
-				new HelpFormatter().printHelp("SchemaGraph2XSD", options);
+				helpForm
+						.printHelp(SchemaGraph2XSD.class.getSimpleName(), options);
 				System.exit(1);
 			}
 			System.exit(0);

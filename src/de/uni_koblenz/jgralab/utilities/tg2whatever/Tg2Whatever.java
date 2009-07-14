@@ -44,6 +44,7 @@ import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.GraphIO;
 import de.uni_koblenz.jgralab.GraphIOException;
+import de.uni_koblenz.jgralab.JGraLab;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.impl.ProgressFunctionImpl;
 import de.uni_koblenz.jgralab.schema.Schema;
@@ -291,10 +292,6 @@ public abstract class Tg2Whatever {
 		Option oOutput = new Option("o", "output", true,
 				"(optional): the output file name, or empty for stdout");
 		options.addOption(oOutput);
-		
-//		Option oOutput2 = new Option("o","output",false,
-//				"(optional): the output file name, or empty for stdout");
-//		options.addOption(oOutput2);
 
 		Option oDomains = new Option("d", "domains", false,
 				"(optional): if set, domain names of attributes will be printed");
@@ -323,45 +320,37 @@ public abstract class Tg2Whatever {
 				"(optional): show version");
 		options.addOption(oVersion);
 
-		Option oHelp = new Option("h", "help", false, "(optional): show help");
-		options.addOption(oHelp);
-
-		Option oHelp2 = new Option("?", false, "(optional): show help");
-		options.addOption(oHelp2);
-
 		// parse arguments
 		CommandLine comLine = null;
 		try {
 			comLine = new BasicParser().parse(options, args);
 		} catch (ParseException e) {
 			HelpFormatter helpForm = new HelpFormatter();
-			helpForm
-					.setSyntaxPrefix("Usage: Tg2Dot -g graphFileName [options]"
-							+ "The schema classes of the graph must be reachable via CLASSPATH."
-							+ "Options are:");
 
 			/*
 			 * If there are required options, apache.cli does not accept a
 			 * single -h or -v option. It's a known bug, which will be fixed in
 			 * a later version.
 			 */
-			if (args.length > 0
-					&& (args[0].equals("-h") || args[0].equals("--help") || args[0]
-							.equals("-?"))) {
-				helpForm.printHelp(" ", options);
-			} else if (args.length > 0
-					&& (args[0].equals("-v") || args[0].equals("--version"))) {
-				// TODO check version number
-				System.out.println("Tg2Dot version 1.0");
+			boolean vFlag = false;
+			for (String s : args) {
+				vFlag = vFlag || s.equals("-v") || s.equals("--version");
+			}
+			if (vFlag) {
+				System.out.println(JGraLab.getInfo(false));
 			} else {
 				System.err.println(e.getMessage());
-				helpForm.printHelp(" ", options);
+				helpForm
+						.printHelp(this.getClass().getSimpleName(), options);
 				System.exit(1);
 			}
 			System.exit(0);
 		}
 
 		// processing of arguments and setting member variables accordingly
+		if(comLine.hasOption("v")){
+			System.out.println(JGraLab.getInfo(false));
+		}
 		String graphName = null;
 		String schemaName = null;
 		if (comLine.hasOption("g")) {

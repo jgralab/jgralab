@@ -28,6 +28,7 @@ import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.GraphIO;
 import de.uni_koblenz.jgralab.GraphIOException;
 import de.uni_koblenz.jgralab.GraphMarker;
+import de.uni_koblenz.jgralab.JGraLab;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.impl.ProgressFunctionImpl;
 import de.uni_koblenz.jgralab.schema.Schema;
@@ -174,7 +175,9 @@ public class Tg2xml extends GraphVisitor {
 		if (comLine == null) {
 			return;
 		}
-
+		if(comLine.hasOption("v")){
+			System.out.println(JGraLab.getInfo(false));
+		}
 		String graphFile = comLine.getOptionValue("g").trim();
 		String namespacePrefix = comLine.getOptionValue("n").trim();
 		String xsdLocation = comLine.getOptionValue("x").trim();
@@ -233,21 +236,23 @@ public class Tg2xml extends GraphVisitor {
 		try {
 			comLine = new BasicParser().parse(options, args);
 		} catch (ParseException e) {
+			HelpFormatter helpForm = new HelpFormatter();
+
 			/*
 			 * If there are required options, apache.cli does not accept a
 			 * single -h or -v option. It's a known bug, which will be fixed in
 			 * a later version.
 			 */
-			if (args.length > 0
-					&& (args[0].equals("-h") || args[0].equals("--help") || args[0]
-							.equals("-?"))) {
-				new HelpFormatter().printHelp("Tg2XML", options);
-			} else if (args.length > 0
-					&& (args[0].equals("-v") || args[0].equals("--version"))) {
-				System.out.println("Tg2XML version 0.5");
+			boolean vFlag = false;
+			for (String s : args) {
+				vFlag = vFlag || s.equals("-v") || s.equals("--version");
+			}
+			if (vFlag) {
+				System.out.println(JGraLab.getInfo(false));
 			} else {
 				System.err.println(e.getMessage());
-				new HelpFormatter().printHelp("Tg2XML", options);
+				helpForm
+						.printHelp(Tg2xml.class.getSimpleName(), options);
 				System.exit(1);
 			}
 			System.exit(0);
