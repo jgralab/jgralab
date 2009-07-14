@@ -47,19 +47,6 @@ public class Tg2xml extends GraphVisitor {
 		public int fseq, tseq;
 	}
 
-	private static class ExtendableClassLoader extends URLClassLoader {
-
-		public ExtendableClassLoader(URL[] urls) {
-			super(urls);
-		}
-
-		@Override
-		public void addURL(URL url) {
-			super.addURL(url);
-		}
-
-	}
-
 	private String namespaceURI;
 
 	public Tg2xml(OutputStream outputStream, Graph graph,
@@ -192,25 +179,6 @@ public class Tg2xml extends GraphVisitor {
 		String namespacePrefix = comLine.getOptionValue("n").trim();
 		String xsdLocation = comLine.getOptionValue("x").trim();
 		String outputFile = comLine.getOptionValue("o").trim();
-		String schemaLocation = comLine.getOptionValue("s");
-		if (schemaLocation != null) {
-			schemaLocation = schemaLocation.trim();
-			// test if it is a jar file, if not, append a file separator if
-			// there is none
-			if (!schemaLocation.toLowerCase().endsWith("jar")
-					&& !schemaLocation.endsWith(System
-							.getProperty("file.separator"))) {
-				schemaLocation = schemaLocation
-						+ System.getProperty("file.separator");
-			}
-			// add the schemaLocation to classpath
-			addPath(schemaLocation);
-			// System.out.println(System.getProperty("java.class.path"));
-			// System.setProperty("java.class.path", System
-			// .getProperty("java.class.path")
-			// + System.getProperty("path.separator") + schemaLocation);
-			// System.out.println(System.getProperty("java.class.path"));
-		}
 
 		Graph theGraph = null;
 		try {
@@ -228,19 +196,6 @@ public class Tg2xml extends GraphVisitor {
 				xsdLocation);
 		converter.visitAll();
 		System.out.println("Fini.");
-	}
-
-	private static void addPath(String s) throws Exception {
-		File f = new File(s);
-		URL u = f.toURI().toURL();
-		URLClassLoader urlClassLoader = (URLClassLoader) ClassLoader
-				.getSystemClassLoader();
-		Class<URLClassLoader> urlClass = URLClassLoader.class;
-		Method method = urlClass.getDeclaredMethod("addURL",
-				new Class[] { URL.class });
-		// evil
-		method.setAccessible(true);
-		method.invoke(urlClassLoader, new Object[] { u });
 	}
 
 	private static void compileSchema(String graphFile) throws GraphIOException {
@@ -272,15 +227,7 @@ public class Tg2xml extends GraphVisitor {
 				"(required): the location of the XSD schema");
 		xsdLocation.setRequired(true);
 		options.addOption(xsdLocation);
-
-		Option schemaLocation = new Option(
-				"s",
-				"schema-location",
-				true,
-				"(optional): the location of the compiled schema. The schema will be compiled into RAM if this option is ommitted and the compiled schema is not in the current classpath.");
-		schemaLocation.setRequired(false);
-		options.addOption(schemaLocation);
-
+		
 		// parse arguments
 		CommandLine comLine = null;
 		try {
