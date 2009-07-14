@@ -49,6 +49,7 @@ import org.apache.commons.cli.ParseException;
 
 import de.uni_koblenz.jgralab.GraphIO;
 import de.uni_koblenz.jgralab.GraphIOException;
+import de.uni_koblenz.jgralab.JGraLab;
 import de.uni_koblenz.jgralab.schema.Domain;
 import de.uni_koblenz.jgralab.schema.EdgeClass;
 import de.uni_koblenz.jgralab.schema.GraphClass;
@@ -330,19 +331,13 @@ public class TgSchema2Java {
 				"(optional): specifies the name of the .jar-file; if omitted, no jar will be created");
 		options.addOption(jar);
 
-		Option exPattern = new Option("s", "cp", true,
-				"(optional): specifies the path to jgralab");
-		options.addOption(exPattern);
+		// Option exPattern = new Option("s", "cp", true,
+		// "(optional): specifies the path to jgralab");
+		// options.addOption(exPattern);
 
 		Option version = new Option("v", "version", false,
 				"(optional): show version");
 		options.addOption(version);
-
-		Option help = new Option("h", "help", false, "(optional): show help");
-		options.addOption(help);
-
-		Option help2 = new Option("?", false, "(optional): show help");
-		options.addOption(help2);
 
 		// parse arguments
 		CommandLine comLine = null;
@@ -350,38 +345,31 @@ public class TgSchema2Java {
 			comLine = new BasicParser().parse(options, args);
 		} catch (ParseException e) {
 			HelpFormatter helpForm = new HelpFormatter();
-			helpForm
-					.setSyntaxPrefix("Usage: java "
-							+ TgSchema2Java.class.getSimpleName()
-							+ "\n"
-							+ " (-f | --filename) <filename>[.tg] [(-p | --path) <commit-path>]\n"
-							+ " [(-c | --compile)]\n"
-							+ " [(-s | --cp | --classpath) <classpath>\n\n Options:\n");
 
 			/*
 			 * If there are required options, apache.cli does not accept a
 			 * single -h or -v option. It's a known bug, which will be fixed in
 			 * a later version.
 			 */
-			if (args.length > 0
-					&& (args[0].equals("-h") || args[0].equals("--help") || args[0]
-							.equals("-?"))) {
-				helpForm.printHelp(" ", options);
-			} else if (args.length > 0
-					&& (args[0].equals("-v") || args[0].equals("--version"))) {
-				// TODO check version number
-				System.out.println("TgSchema2Java version 1.0");
-			} else if (args.length == 0) {
-				helpForm.printHelp(" ", options);
+			boolean vFlag = false;
+			for (String s : args) {
+				vFlag = vFlag || s.equals("-v") || s.equals("--version");
+			}
+			if (vFlag) {
+				System.out.println(JGraLab.getInfo(false));
 			} else {
 				System.err.println(e.getMessage());
-				helpForm.printHelp(" ", options);
+				helpForm
+						.printHelp(TgSchema2Java.class.getSimpleName(), options);
 				System.exit(1);
 			}
 			System.exit(0);
 		}
 
 		// processing of arguments and setting member variables accordingly
+		if(comLine.hasOption("v")){
+			System.out.println(JGraLab.getInfo(false));
+		}
 		tgFilename = comLine.getOptionValue("f");
 		if (comLine.hasOption("p")) {
 			commitPath = comLine.getOptionValue("p");
