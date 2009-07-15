@@ -940,6 +940,9 @@ public class Schema2SchemaGraph {
 		// Queries the VertexClass to which the To edge points.
 		VertexClass vertexClass = vertexClassMap.get(edgeClass.getTo());
 		// Creates the To edge
+		assert (vertexClass != null) : "The to vertex class '"
+				+ edgeClass.getTo().getQualifiedName()
+				+ "' was not in vertexClassMap!";
 		To to = schemaGraph.createTo(gEdgeClass, vertexClass);
 		assert (to != null) : "FIXME! No To edge has been created.";
 
@@ -954,10 +957,13 @@ public class Schema2SchemaGraph {
 			to.setRedefinedRoles(new HashSet<String>(redefinedRoles));
 		}
 
-		// First the To edge
-		// Queries the VertexClass to which the To edge points.
+		// Then the From edge
+		// Queries the VertexClass to which the From edge points.
 		vertexClass = vertexClassMap.get(edgeClass.getFrom());
-		// Creates the To edge
+		assert (vertexClass != null) : "The from vertex class '"
+				+ edgeClass.getFrom().getQualifiedName()
+				+ "' was not in vertexClassMap!";
+		// Creates the From edge
 		From from = schemaGraph.createFrom(gEdgeClass, vertexClass);
 		assert (from != null) : "FIXME! No From edge has been created.";
 		// Sets all general attributes
