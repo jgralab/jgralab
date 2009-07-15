@@ -77,9 +77,9 @@ import de.uni_koblenz.jgralab.grumlschema.structure.SpecializesEdgeClass;
 import de.uni_koblenz.jgralab.grumlschema.structure.SpecializesVertexClass;
 import de.uni_koblenz.jgralab.grumlschema.structure.VertexClass;
 import de.uni_koblenz.jgralab.impl.ProgressFunctionImpl;
+import de.uni_koblenz.jgralab.utilities.common.CommonMethods;
 import de.uni_koblenz.jgralab.utilities.jgralab2owl.IndentingXMLStreamWriter;
 import de.uni_koblenz.jgralab.utilities.rsa2tg.SchemaGraph2Tg;
-import de.uni_koblenz.jgralab.utilities.tg2xml.Tg2xml;
 
 /**
  * @author Tassilo Horn &lt;horn@uni-koblenz.de&gt;
@@ -844,7 +844,7 @@ public class SchemaGraph2XSD {
 
 		String namespace = schema.getPackagePrefix() + "." + schema.getName();
 
-		namespace = Tg2xml.generateURI(namespace);
+		namespace = CommonMethods.generateURI(namespace);
 
 		xml.writeNamespace(namespacePrefix, namespace);
 		xml.writeAttribute("targetNamespace", namespace);

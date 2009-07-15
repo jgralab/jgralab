@@ -1,24 +1,18 @@
 package de.uni_koblenz.jgralab.utilities.tg2xml;
 
 import java.io.BufferedOutputStream;
-import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.lang.reflect.Method;
-import java.net.URL;
-import java.net.URLClassLoader;
 
 import javax.xml.XMLConstants;
 import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
 
-import org.apache.commons.cli.BasicParser;
 import org.apache.commons.cli.CommandLine;
-import org.apache.commons.cli.HelpFormatter;
+import org.apache.commons.cli.CommandLineParser;
+import org.apache.commons.cli.GnuParser;
 import org.apache.commons.cli.Option;
-import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
 import de.uni_koblenz.jgralab.Attribute;
@@ -32,6 +26,8 @@ import de.uni_koblenz.jgralab.JGraLab;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.impl.ProgressFunctionImpl;
 import de.uni_koblenz.jgralab.schema.Schema;
+import de.uni_koblenz.jgralab.utilities.common.CommonMethods;
+import de.uni_koblenz.jgralab.utilities.common.OptionHandler;
 import de.uni_koblenz.jgralab.utilities.jgralab2owl.IndentingXMLStreamWriter;
 
 public class Tg2xml extends GraphVisitor {
@@ -62,30 +58,13 @@ public class Tg2xml extends GraphVisitor {
 		this.prefix = nameSpacePrefix;
 		this.schemaLocation = schemaLocation;
 
-		this.namespaceURI = generateURI(qualifiedName);
+		this.namespaceURI = CommonMethods.generateURI(qualifiedName);
 		this.outputStream = outputStream;
 		XMLOutputFactory factory = XMLOutputFactory.newInstance();
 		writer = new IndentingXMLStreamWriter(factory.createXMLStreamWriter(
 				outputStream, "UTF-8"), 1);
 		writer.setIndentationChar('\t');
 
-	}
-
-	public static String generateURI(String qualifiedName) {
-		qualifiedName = qualifiedName.replace('_', '-');
-		String[] uri = qualifiedName.split("\\.");
-
-		String namespaceURI = "http://";
-		if (uri.length > 1) {
-			namespaceURI += uri[1] + "." + uri[0];
-
-			for (int i = 2; i < uri.length; i++) {
-				namespaceURI += "/" + uri[i];
-			}
-
-		}
-
-		return namespaceURI;
 	}
 
 	protected void preVisitor() {
@@ -103,7 +82,6 @@ public class Tg2xml extends GraphVisitor {
 			writeAttributes(graph);
 
 		} catch (XMLStreamException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
@@ -175,7 +153,7 @@ public class Tg2xml extends GraphVisitor {
 		if (comLine == null) {
 			return;
 		}
-		if(comLine.hasOption("v")){
+		if (comLine.hasOption("v")) {
 			System.out.println(JGraLab.getInfo(false));
 		}
 		String graphFile = comLine.getOptionValue("g").trim();
@@ -209,53 +187,51 @@ public class Tg2xml extends GraphVisitor {
 	}
 
 	private static CommandLine processCommandLineOptions(String[] args) {
-		Options options = new Options();
+		String toolString = Tg2xml.class.getSimpleName();
+		String versionString = JGraLab.getInfo(false);
+		OptionHandler oh = new OptionHandler(toolString, versionString);
 
 		Option output = new Option("o", "output", true,
 				"(required): output XML file");
 		output.setRequired(true);
-		options.addOption(output);
+		output.setArgName("file");
+		oh.addOption(output);
 
 		Option namespacePrefix = new Option("n", "namespace-prefix", true,
 				"(required): namespace prefix");
 		namespacePrefix.setRequired(true);
-		options.addOption(namespacePrefix);
+		namespacePrefix.setArgName("prefix");
+		oh.addOption(namespacePrefix);
 
 		Option graph = new Option("g", "graph", true,
 				"(required): TG-file of the graph");
 		graph.setRequired(true);
-		options.addOption(graph);
+		graph.setArgName("file");
+		oh.addOption(graph);
 
 		Option xsdLocation = new Option("x", "xsd-location", true,
 				"(required): the location of the XSD schema");
 		xsdLocation.setRequired(true);
-		options.addOption(xsdLocation);
-		
+		xsdLocation.setArgName("file_or_url");
+		oh.addOption(xsdLocation);
+
 		// parse arguments
 		CommandLine comLine = null;
 		try {
-			comLine = new BasicParser().parse(options, args);
-		} catch (ParseException e) {
-			HelpFormatter helpForm = new HelpFormatter();
+			CommandLineParser parser = new GnuParser();
+			comLine = parser.parse(oh.getOptions(), args);
+			oh.eventuallyPrintHelpOrVersion(comLine);
 
-			/*
-			 * If there are required options, apache.cli does not accept a
-			 * single -h or -v option. It's a known bug, which will be fixed in
-			 * a later version.
-			 */
-			boolean vFlag = false;
-			for (String s : args) {
-				vFlag = vFlag || s.equals("-v") || s.equals("--version");
+			boolean ok = oh.containsAllRequired(comLine);
+
+			if (!ok) {
+				System.err.println("Does not contain all required options.");
+				oh.printHelpAndExit(1);
 			}
-			if (vFlag) {
-				System.out.println(JGraLab.getInfo(false));
-			} else {
-				System.err.println(e.getMessage());
-				helpForm
-						.printHelp(Tg2xml.class.getSimpleName(), options);
-				System.exit(1);
-			}
-			System.exit(0);
+
+		} catch (ParseException e) {
+			System.err.println(e.getMessage());
+			oh.printHelpAndExit(1);
 		}
 		return comLine;
 	}
