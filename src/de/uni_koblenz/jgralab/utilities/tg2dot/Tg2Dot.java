@@ -42,6 +42,20 @@ public class Tg2Dot extends Tg2Whatever {
 	private String fontname = "Helvetica";
 	private int fontsize = 14;
 	private boolean abbreviateEdgeAttributeNames = false;
+	private boolean printIncidenceNumbers = false;
+
+	public boolean isPrintIncidenceNumbers() {
+		return printIncidenceNumbers;
+	}
+
+	/**
+	 * @param printIncidenceNumbers
+	 *            if true, then the incidence numbers will be printed near the
+	 *            start and end points of edges.
+	 */
+	public void setPrintIncidenceNumbers(boolean printIncidenceNumbers) {
+		this.printIncidenceNumbers = printIncidenceNumbers;
+	}
 
 	/**
 	 * prints the graph to the output file
@@ -165,8 +179,26 @@ public class Tg2Dot extends Tg2Whatever {
 			out.print("\\l");
 			printAttributes(out, e);
 		}
+		out.print("\"");
 
-		out.println("\"];");
+		if (printIncidenceNumbers) {
+			out.print(" taillabel=\"" + getIncidenceNumber(e, alpha) + "\"");
+			out.print(" headlabel=\""
+					+ getIncidenceNumber(e.getReversedEdge(), omega) + "\"");
+		}
+		out.println("];");
+
+	}
+
+	private int getIncidenceNumber(Edge e, Vertex v) {
+		int num = 1;
+		for (Edge inc : v.incidences()) {
+			if (inc == e) {
+				return num;
+			}
+			num++;
+		}
+		return -1;
 	}
 
 	private void printAttributes(PrintStream out, AttributedElement elem) {
