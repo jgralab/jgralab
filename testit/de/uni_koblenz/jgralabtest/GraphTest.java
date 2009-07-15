@@ -54,6 +54,8 @@ public class GraphTest {
 		v12 = graph.createVertex(DoubleSubNode.class);
 	}
 	
+	//TODO catch assertions => test if they are "thrown"
+	
 	public void getVertexClasses(){
 		//get vertex- and edge-classes
 //		VertexClass abstractSuperN;
@@ -175,6 +177,23 @@ public class GraphTest {
 		for (Edge e : graph.edges()){
 			assertEquals(graphEdges[i], e);
 			i++;
+		}
+		
+		//faults
+		try{
+			graph.createEdge(SubLink.class, v13, v5);
+		}catch(AssertionError e){
+			// :)
+		}
+		try{
+			graph.createEdge(Link.class, v13, v6);
+		}catch(AssertionError e){
+			// :)
+		}
+		try{
+			graph.createEdge(LinkBack.class, v5, v13);
+		}catch(AssertionError e){
+			//:)
 		}
 		
 		System.out.println("Done testing createEdge.");
@@ -2500,6 +2519,28 @@ public class GraphTest {
 		Vertex v17 = graph2.createVertex(SuperNode.class);
 		Vertex v18 = graph2.createVertex(DoubleSubNode.class);
 		
+		//faults
+		try{
+			graph.getVertex(0);
+		}catch(AssertionError e){
+			//:)
+		}
+		try{
+			graph.getVertex(-5);
+		}catch(AssertionError e){
+			//:)
+		}
+		try{
+			graph.getVertex(2042);
+		}catch(AssertionError e){
+			// :)
+		}
+		try{
+			graph.getVertex(-99);
+		}catch(AssertionError e){
+			// :)
+		}
+		
 		//border cases
 		assertEquals(v1, graph.getVertex(1));
 		assertEquals(v16, graph2.getVertex(1));
@@ -2543,6 +2584,38 @@ public class GraphTest {
 		Edge e9 = graph.createEdge(Link.class, v3, v7);
 		Edge e10 = graph.createEdge(Link.class, v3, v7);
 
+		//faults
+		try{
+			graph.getEdge(0);
+		}catch(AssertionError e){
+			// :)
+		}
+		try{
+			graph.getEdge(-1);
+		}catch(AssertionError e){
+			// :)
+		}
+		try{
+			graph.getEdge(-10);
+		}catch(AssertionError e){
+			//:)
+		}
+		try{
+			graph.getEdge(-33);
+		}catch(AssertionError e){
+			// :)
+		}
+		try{
+			graph.getEdge(1001);
+		}catch(AssertionError e){
+			// :)
+		}
+		try{
+			graph.getEdge(2015);
+		}catch(AssertionError e){
+			// :)
+		}
+		
 		//border cases
 		assertEquals(null, graph.getEdge(42));
 		assertEquals(null, graph.getEdge(-42));
