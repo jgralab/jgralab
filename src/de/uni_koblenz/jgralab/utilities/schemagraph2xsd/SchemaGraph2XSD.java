@@ -623,7 +623,7 @@ public class SchemaGraph2XSD {
 
 	private void writeXSDAttribute(String name, String type)
 			throws XMLStreamException {
-		writeXSDAttribute(name, type, null);
+		writeXSDAttribute(name, type, XSD_REQUIRED);
 	}
 
 	private void writeXSDAttribute(String name, String type, String use)
@@ -869,7 +869,7 @@ public class SchemaGraph2XSD {
 			System.out.println(JGraLab.getInfo(false));
 		}
 		String schemaGraphFile = comLine.getOptionValue("g").trim();
-		String namespacePrefix = comLine.getOptionValue("n").trim();
+		String namespacePrefix = comLine.getOptionValue("p").trim();
 		String xsdFile = comLine.getOptionValue("o").trim();
 		String exclPattern = comLine.getOptionValue("e");
 
