@@ -65,7 +65,7 @@ import de.uni_koblenz.jgralab.utilities.tg2whatever.Tg2Whatever;
  * code. This GXL-like code is valid GXL, if and only if:
  * 
  * 1. The <code>Graph</code> has at most and at least ONE
- * <code>GraphClass</code>. (command-line option -c / --combine)
+ * <code>GraphClass</code>.
  * 
  * 2. The <code>Schema</code> contains NOT ANY <code>RecordDomain</code>.
  * 
@@ -189,7 +189,8 @@ public class Tg2GXL extends Tg2Whatever {
 			if (printSchema && !(v instanceof Schema)) {
 
 				if (v instanceof de.uni_koblenz.jgralab.grumlschema.structure.AttributedElementClass) {
-					out.println("<node id=\"" + v.getAttribute("name") + "\">");
+					out.println("<node id=\"" + v.getAttribute("qualifiedName")
+							+ "\">");
 				} else {
 					out.println("<node id=\"v:" + v.getId() + "\">");
 				}
@@ -261,15 +262,13 @@ public class Tg2GXL extends Tg2Whatever {
 			String thisVertex = "v:" + e.getThis().getId();
 			String thatVertex = "v:" + e.getThat().getId();
 
-			try {
-				if (e.getThis() instanceof de.uni_koblenz.jgralab.grumlschema.structure.AttributedElementClass) {
-					thisVertex = "" + e.getThis().getAttribute("name");
-				}
-				if (e.getThat() instanceof de.uni_koblenz.jgralab.grumlschema.structure.AttributedElementClass) {
-					thatVertex = "" + e.getThat().getAttribute("name");
-				}
-			} catch (NoSuchFieldException ex) {
-				ex.printStackTrace();
+			if (e.getThis() instanceof de.uni_koblenz.jgralab.grumlschema.structure.AttributedElementClass) {
+				thisVertex = ((de.uni_koblenz.jgralab.grumlschema.structure.AttributedElementClass) e
+						.getThis()).getQualifiedName();
+			}
+			if (e.getThat() instanceof de.uni_koblenz.jgralab.grumlschema.structure.AttributedElementClass) {
+				thatVertex = ((de.uni_koblenz.jgralab.grumlschema.structure.AttributedElementClass) e
+						.getThat()).getQualifiedName();
 			}
 
 			out.println("<edge id=\"e:" + e.getId() + "\" to=\"" + thatVertex
@@ -365,9 +364,11 @@ public class Tg2GXL extends Tg2Whatever {
 		} else {
 			if (dom instanceof SetDomain) {
 				out.println("<Set>");
-
-				for (Object o : (Set<?>) val) {
-					printComposite(out, ((SetDomain) dom).getBaseDomain(), o);
+				if (val != null) {
+					for (Object o : (Set<?>) val) {
+						printComposite(out, ((SetDomain) dom).getBaseDomain(),
+								o);
+					}
 				}
 				out.println("</Set>");
 			}
@@ -422,11 +423,11 @@ public class Tg2GXL extends Tg2Whatever {
 		String attrValue = "null";
 
 		if (val != null) {
-			if (val instanceof Double) {
-				val = Float.parseFloat(val.toString());
+			if ((val instanceof Double) || (val instanceof Float)) {
+				val = Double.parseDouble(val.toString());
 			}
-			if (val instanceof Long) {
-				val = Integer.parseInt(val.toString());
+			if ((val instanceof Long) || (val instanceof Integer)) {
+				val = Long.parseLong(val.toString());
 			}
 			attrValue = stringQuote(val.toString());
 		}
@@ -443,10 +444,10 @@ public class Tg2GXL extends Tg2Whatever {
 		}
 		if (dom instanceof EnumDomain) {
 			out.println("<String>");
-			out.println("" + stringQuote(val.toString()));
+			out.println("" + attrValue);
 			out.println("</String>");
 		}
-		if (dom instanceof IntegerDomain || dom instanceof LongDomain) {
+		if ((dom instanceof IntegerDomain) || (dom instanceof LongDomain)) {
 			out.println("<Int>");
 			out.println("" + attrValue);
 			out.println("</Int>");
@@ -479,7 +480,8 @@ public class Tg2GXL extends Tg2Whatever {
 	public void printGraph() {
 		printSchema = false;
 		setOutputFile(graphOutputName);
-		uniqueGraphClassName = graph.getSchema().getQualifiedName();
+		uniqueGraphClassName = graph.getSchema().getGraphClass()
+				.getQualifiedName();
 		super.printGraph();
 		setOutputFile(schemaGraphOutputName);
 		setGraph(new Schema2SchemaGraph()
@@ -510,10 +512,6 @@ public class Tg2GXL extends Tg2Whatever {
 		oOutput.setRequired(true);
 		options.addOption(oOutput);
 
-		Option oDomains = new Option("c", "combine", false,
-				"(optional): if set, only one graphclass will be printed. This graphclass is an unification of all graphclasses in the schema.");
-		options.addOption(oDomains);
-
 		Option oVersion = new Option("v", "version", false,
 				"(optional): show version");
 		options.addOption(oVersion);
@@ -537,15 +535,14 @@ public class Tg2GXL extends Tg2Whatever {
 				System.out.println(JGraLab.getInfo(false));
 			} else {
 				System.err.println(e.getMessage());
-				helpForm
-						.printHelp(Tg2GXL.class.getSimpleName(), options);
+				helpForm.printHelp(Tg2GXL.class.getSimpleName(), options);
 				System.exit(1);
 			}
 			System.exit(0);
 		}
 
 		// processing of arguments and setting member variables accordingly
-		if(comLine.hasOption("v")){
+		if (comLine.hasOption("v")) {
 			System.out.println(JGraLab.getInfo(false));
 		}
 		String graphName = null;
@@ -556,8 +553,8 @@ public class Tg2GXL extends Tg2Whatever {
 				setGraph(graphName);
 
 			} catch (GraphIOException e) {
-				System.err.println("Couldn't load graph in file '"
-						+ graphName + "': " + e.getMessage());
+				System.err.println("Couldn't load graph in file '" + graphName
+						+ "': " + e.getMessage());
 				if (e.getCause() != null) {
 					e.getCause().printStackTrace();
 				}
@@ -570,102 +567,15 @@ public class Tg2GXL extends Tg2Whatever {
 					graphOutputName.length() - 4)
 					+ "Schema.gxl";
 			if (graphOutputName == null) {
-				new HelpFormatter().printHelp(Tg2GXL.class.getSimpleName(), options);
+				new HelpFormatter().printHelp(Tg2GXL.class.getSimpleName(),
+						options);
 				System.exit(1);
 			}
 		}
 		if (outputName == null) {
 			outputName = "";
 		}
-		
-		
-		
-//		LongOpt[] longOptions = new LongOpt[3];
-//
-//		int c = 0;
-//		longOptions[c++] = new LongOpt("graph", LongOpt.REQUIRED_ARGUMENT,
-//				null, 'g');
-//		longOptions[c++] = new LongOpt("output", LongOpt.REQUIRED_ARGUMENT,
-//				null, 'o');
-//
-//		longOptions[c++] = new LongOpt("help", LongOpt.NO_ARGUMENT, null, 'h');
-//
-//		Getopt g = new Getopt("Tg2Dot", args, "g:o:h", longOptions);
-//		c = g.getopt();
-//		String graphName = null;
-//		while (c >= 0) {
-//			switch (c) {
-//			case 'g':
-//				try {
-//					graphName = g.getOptarg();
-//
-//					setGraph(graphName);
-//
-//				} catch (GraphIOException e) {
-//					System.err.println("Couldn't load graph in file '"
-//							+ graphName + "': " + e.getMessage());
-//					if (e.getCause() != null) {
-//						e.getCause().printStackTrace();
-//					}
-//					System.exit(1);
-//				}
-//				break;
-//			case 'o':
-//				graphOutputName = g.getOptarg();
-//				schemaGraphOutputName = graphOutputName.substring(0,
-//						graphOutputName.length() - 4)
-//						+ "Schema.gxl";
-//				if (graphOutputName == null) {
-//					usage(1);
-//				}
-//				break;
-//
-//			case '?':
-//			case 'h':
-//				usage(0);
-//				break;
-//			default:
-//				throw new RuntimeException("FixMe (c='" + (char) c + "')");
-//			}
-//			c = g.getopt();
-//		}
-//		if (g.getOptind() < args.length) {
-//			System.err.println("Extra arguments!");
-//			usage(1);
-//		}
-//		if (g.getOptarg() == null) {
-//			System.out.println("Missing option");
-//			// usage(1);
-//		}
-//		if (outputName == null) {
-//			outputName = "";
-//		}
 	}
-
-//	/**
-//	 * prints usage information on System.out if requested by command-line
-//	 * parameter -h or if the command-line parameter set is malformed.
-//	 */
-//	@Override
-//	protected void usage(int exitCode) {
-//		System.err.println("Usage: Tg2GXL -g graphFileName [options]");
-//		System.err
-//				.println("The schema classes of the graph must be reachable via CLASSPATH.");
-//		System.err.println("Options are:");
-//		System.err
-//				.println("-g graphFileName   (--graph)     the graph to be converted");
-//		System.err
-//				.println("-o outputFileName  (--output)    the output file name, or empty for stdout");
-//		System.err
-//				.println("-c                 (--combine)     if set, only one graphclass will be printed.");
-//		System.err
-//				.println("                                 This graphclass is an unification of all graphclasses in the schema.");
-//
-//		System.err
-//				.println("-h                 (--help)      prints usage information");
-//
-//		System.exit(exitCode);
-//	}
 
 	/**
 	 * adds an escape sequence to special characters in a string
@@ -707,7 +617,7 @@ public class Tg2GXL extends Tg2Whatever {
 				sb.append("\\\\t");
 				break;
 			default:
-				if (ch < ' ' || ch > '\u007F') {
+				if ((ch < ' ') || (ch > '\u007F')) {
 					sb.append("\\\\u");
 					String code = ("000" + Integer.toHexString(ch));
 					sb.append(code.substring(code.length() - 4, code.length()));

@@ -131,6 +131,8 @@ public abstract class Tg2Whatever {
 	 */
 	public void setGraph(String fileName) throws GraphIOException {
 		graphFileName = fileName;
+		graph = GraphIO.loadSchemaAndGraphFromFile(graphFileName,
+				new ProgressFunctionImpl());
 	}
 
 	/**
@@ -340,15 +342,14 @@ public abstract class Tg2Whatever {
 				System.out.println(JGraLab.getInfo(false));
 			} else {
 				System.err.println(e.getMessage());
-				helpForm
-						.printHelp(this.getClass().getSimpleName(), options);
+				helpForm.printHelp(this.getClass().getSimpleName(), options);
 				System.exit(1);
 			}
 			System.exit(0);
 		}
 
 		// processing of arguments and setting member variables accordingly
-		if(comLine.hasOption("v")){
+		if (comLine.hasOption("v")) {
 			System.out.println(JGraLab.getInfo(false));
 		}
 		String graphName = null;
@@ -480,31 +481,31 @@ public abstract class Tg2Whatever {
 		// }
 	}
 
-//	protected void usage(int exitCode) {
-//		System.err.println("Usage: Tg2Dot -g graphFileName [options]");
-//		System.err
-//				.println("The schema classes of the graph must be reachable via CLASSPATH.");
-//		System.err.println("Options are:");
-//		System.err
-//				.println("-g graphFileName   (--graph)     the graph to be converted");
-//		System.err
-//				.println("-a schemaFileName   (--alternative-schema)    the schema that should be used instead of the one included in the graph file");
-//		System.err
-//				.println("-o outputFileName  (--output)    the output file name, or empty for stdout");
-//		System.err
-//				.println("-d                 (--domains)   if set, domain names of attributes will be printed");
-//		System.err
-//				.println("-e                 (--edgeattr)  if set, edge attributes will be printed");
-//		System.err
-//				.println("-n                 (--rolenames) if set, role names will be printed");
-//		System.err
-//				.println("-r                 (--reversed)  useful if edges run from child nodes to their parents");
-//		System.err
-//				.println("                                 results in a tree with root node at top");
-//		System.err
-//				.println("-h                 (--help)      prints usage information");
-//
-//		System.exit(exitCode);
-//	}
+	// protected void usage(int exitCode) {
+	// System.err.println("Usage: Tg2Dot -g graphFileName [options]");
+	// System.err
+	// .println("The schema classes of the graph must be reachable via CLASSPATH.");
+	// System.err.println("Options are:");
+	// System.err
+	// .println("-g graphFileName   (--graph)     the graph to be converted");
+	// System.err
+	// .println("-a schemaFileName   (--alternative-schema)    the schema that should be used instead of the one included in the graph file");
+	// System.err
+	// .println("-o outputFileName  (--output)    the output file name, or empty for stdout");
+	// System.err
+	// .println("-d                 (--domains)   if set, domain names of attributes will be printed");
+	// System.err
+	// .println("-e                 (--edgeattr)  if set, edge attributes will be printed");
+	// System.err
+	// .println("-n                 (--rolenames) if set, role names will be printed");
+	// System.err
+	// .println("-r                 (--reversed)  useful if edges run from child nodes to their parents");
+	// System.err
+	// .println("                                 results in a tree with root node at top");
+	// System.err
+	// .println("-h                 (--help)      prints usage information");
+	//
+	// System.exit(exitCode);
+	// }
 
 }
