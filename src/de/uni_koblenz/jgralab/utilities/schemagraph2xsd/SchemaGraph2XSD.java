@@ -35,7 +35,6 @@ import java.util.TreeMap;
 import java.util.Map.Entry;
 import java.util.regex.Pattern;
 
-import javax.faces.convert.ConverterException;
 import javax.xml.XMLConstants;
 import javax.xml.stream.FactoryConfigurationError;
 import javax.xml.stream.XMLOutputFactory;
@@ -811,7 +810,7 @@ public class SchemaGraph2XSD {
 			xml.writeEmptyElement(XSD_NS_PREFIX, XSD_ENUMERATION,
 					XMLConstants.W3C_XML_SCHEMA_NS_URI);
 			if (enumConst.equals("n")) {
-				throw new ConverterException("The enumeration as Type '"
+				throw new RuntimeException("The enumeration as Type '"
 						+ typeName + "' alreay defines the constant \"n\".");
 			}
 			xml.writeAttribute(XSD_ENUMERATION_VALUE, enumConst);
@@ -865,7 +864,7 @@ public class SchemaGraph2XSD {
 			return;
 		}
 
-		if(comLine.hasOption("v")){
+		if (comLine.hasOption("v")) {
 			System.out.println(JGraLab.getInfo(false));
 		}
 		String schemaGraphFile = comLine.getOptionValue("g").trim();
@@ -931,8 +930,8 @@ public class SchemaGraph2XSD {
 				System.out.println(JGraLab.getInfo(false));
 			} else {
 				System.err.println(e.getMessage());
-				helpForm
-						.printHelp(SchemaGraph2XSD.class.getSimpleName(), options);
+				helpForm.printHelp(SchemaGraph2XSD.class.getSimpleName(),
+						options);
 				System.exit(1);
 			}
 			System.exit(0);
