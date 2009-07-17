@@ -131,8 +131,10 @@ public class OptionHandler {
 	 */
 	public void addOption(Option o) {
 		// backup required Status and set it to false
-		requiredOptions.add(o);
-		o.setRequired(false);
+		if (o.isRequired()) {
+			requiredOptions.add(o);
+			o.setRequired(false);
+		}
 		optionList.add(o);
 		options.addOption(o);
 	}
