@@ -1,17 +1,42 @@
+/*
+ * JGraLab - The Java graph laboratory
+ * (c) 2006-2009 Institute for Software Technology
+ *               University of Koblenz-Landau, Germany
+ *
+ *               ist@uni-koblenz.de
+ *
+ * Please report bugs to http://serres.uni-koblenz.de/bugzilla
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+ */
+
 package de.uni_koblenz.jgralab.utilities.common;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.cli.CommandLine;
+import org.apache.commons.cli.CommandLineParser;
+import org.apache.commons.cli.GnuParser;
 import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Option;
 import org.apache.commons.cli.OptionGroup;
 import org.apache.commons.cli.Options;
+import org.apache.commons.cli.ParseException;
 
 /**
  * This class is a wrapper for apache commons CLI. It implements a workaround
@@ -20,11 +45,10 @@ import org.apache.commons.cli.Options;
  * 
  * It also provides methods for printing the help and version information.
  * 
- * @author strauss
+ * @author ist@uni-koblenz.de
  * 
  */
 public class OptionHandler {
-
 	/**
 	 * This List stores all options in addition to the field "options". This
 	 * redundancy is neccessary because Options does not implement the Interface
@@ -38,11 +62,10 @@ public class OptionHandler {
 	private Options options;
 
 	/**
-	 * This map stores the information whether the option is required or not. It
-	 * is necessary to do this because the workaround requires setting all
-	 * options to optional.
+	 * This set stores the required options. It is necessary to do this because
+	 * the workaround requires setting all options to not required.
 	 */
-	private Map<Option, Boolean> requiredMap;
+	private Set<Option> requiredOptions;
 
 	/**
 	 * The String representing the usage. It is lazily created.
@@ -62,7 +85,7 @@ public class OptionHandler {
 	/**
 	 * The Helpformatter needed for printing the help information.
 	 */
-	private HelpFormatter helpForm;
+	private HelpFormatter helpFormatter;
 
 	/**
 	 * The only constructor of this class. It sets the toolString and the
@@ -77,8 +100,8 @@ public class OptionHandler {
 	public OptionHandler(String toolString, String versionString) {
 		options = new Options();
 		optionList = new ArrayList<Option>();
-		requiredMap = new HashMap<Option, Boolean>();
-		helpForm = new HelpFormatter();
+		requiredOptions = new HashSet<Option>();
+		helpFormatter = new HelpFormatter();
 		this.toolString = toolString;
 		this.versionString = versionString;
 
@@ -108,7 +131,7 @@ public class OptionHandler {
 	 */
 	public void addOption(Option o) {
 		// backup required Status and set it to false
-		requiredMap.put(o, o.isRequired());
+		requiredOptions.add(o);
 		o.setRequired(false);
 		optionList.add(o);
 		options.addOption(o);
@@ -121,25 +144,6 @@ public class OptionHandler {
 	 */
 	public Options getOptions() {
 		return options;
-	}
-
-	/**
-	 * Checks if the option -h or -v is set. If one of them is set, the matching
-	 * notice will be printed out and the program exits with status 0. If
-	 * neither is set, this Method does nothing.
-	 * 
-	 * @param comLine
-	 */
-	public void eventuallyPrintHelpOrVersion(CommandLine comLine) {
-		// String helpValue = comLine.getOptionValue("h");
-		boolean isHelpSet = comLine.hasOption("h");
-		if (isHelpSet) {
-			printHelpAndExit(0);
-		}
-		boolean isVersionSet = comLine.hasOption("v");
-		if (isVersionSet) {
-			printVersionAndExit(0);
-		}
 	}
 
 	/**
@@ -159,7 +163,7 @@ public class OptionHandler {
 	 * @param exitCode
 	 */
 	public void printHelpAndExit(int exitCode) {
-		helpForm.printHelp(getUsageString(), options);
+		helpFormatter.printHelp(getUsageString(), options);
 		System.exit(exitCode);
 	}
 
@@ -182,8 +186,7 @@ public class OptionHandler {
 					out.append("]");
 				}
 			}
-
-			return out.toString();
+			usageString = out.toString();
 		}
 		return usageString;
 	}
@@ -198,8 +201,7 @@ public class OptionHandler {
 	 *         not in the Map, false is returned.
 	 */
 	public boolean isOptionRequired(Option o) {
-		Boolean required = requiredMap.get(o);
-		return required == null ? false : required.booleanValue();
+		return requiredOptions.contains(o);
 	}
 
 	/**
@@ -210,7 +212,7 @@ public class OptionHandler {
 	 *            the commandLine to check.
 	 * @return true if the given CommandLine contains all required options.
 	 */
-	public boolean containsAllRequired(CommandLine comLine) {
+	public boolean containsAllRequiredOptions(CommandLine comLine) {
 		boolean ok = true;
 		Option[] setOptions = comLine.getOptions();
 		Set<Option> setOptionsSet = new HashSet<Option>();
@@ -265,9 +267,37 @@ public class OptionHandler {
 	 * @param current
 	 *            the Option of which to write the argument name
 	 */
-	private static void appendArgName(StringBuilder out, Option current) {
-		out.append("<");
-		out.append(current.getArgName());
-		out.append(">");
+	private void appendArgName(StringBuilder out, Option current) {
+		out.append("<").append(current.getArgName()).append(">");
+	}
+
+	/**
+	 * Parses command line parameters <code>args</code> and checks wheter -h or
+	 * -v were specified. In case of any error, prints diagnostic message, usage
+	 * information, and exits.
+	 * 
+	 * @param args
+	 *            command line parameters
+	 * @return a CommandLine object containing parsed options
+	 */
+	public CommandLine parse(String[] args) {
+		try {
+			CommandLineParser parser = new GnuParser();
+			CommandLine comLine = parser.parse(getOptions(), args);
+			if (comLine.hasOption("h")) {
+				printHelpAndExit(0);
+			} else if (comLine.hasOption("v")) {
+				printVersionAndExit(0);
+			} else if (!containsAllRequiredOptions(comLine)) {
+				System.err.println("Required options are missing.");
+				printHelpAndExit(1);
+			}
+			return comLine;
+		} catch (ParseException e) {
+			System.err.println(e.getMessage());
+			printHelpAndExit(1);
+		}
+		// never reached
+		return null;
 	}
 }

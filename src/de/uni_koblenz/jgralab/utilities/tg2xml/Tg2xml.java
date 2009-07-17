@@ -1,3 +1,27 @@
+/*
+ * JGraLab - The Java graph laboratory
+ * (c) 2006-2009 Institute for Software Technology
+ *               University of Koblenz-Landau, Germany
+ *
+ *               ist@uni-koblenz.de
+ *
+ * Please report bugs to http://serres.uni-koblenz.de/bugzilla
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+ */
+
 package de.uni_koblenz.jgralab.utilities.tg2xml;
 
 import java.io.BufferedOutputStream;
@@ -10,10 +34,7 @@ import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
 
 import org.apache.commons.cli.CommandLine;
-import org.apache.commons.cli.CommandLineParser;
-import org.apache.commons.cli.GnuParser;
 import org.apache.commons.cli.Option;
-import org.apache.commons.cli.ParseException;
 
 import de.uni_koblenz.jgralab.Attribute;
 import de.uni_koblenz.jgralab.AttributedElement;
@@ -24,20 +45,20 @@ import de.uni_koblenz.jgralab.GraphIOException;
 import de.uni_koblenz.jgralab.GraphMarker;
 import de.uni_koblenz.jgralab.JGraLab;
 import de.uni_koblenz.jgralab.Vertex;
+import de.uni_koblenz.jgralab.WorkInProgress;
 import de.uni_koblenz.jgralab.impl.ProgressFunctionImpl;
 import de.uni_koblenz.jgralab.schema.Schema;
-import de.uni_koblenz.jgralab.utilities.common.CommonMethods;
+import de.uni_koblenz.jgralab.utilities.common.UtilityMethods;
 import de.uni_koblenz.jgralab.utilities.common.OptionHandler;
 import de.uni_koblenz.jgralab.utilities.jgralab2owl.IndentingXMLStreamWriter;
 
+@WorkInProgress(description = "Attribute values missing, testing required, command line parameter checks missing", responsibleDevelopers = "strauss, riediger", expectedFinishingDate = "2009/08")
 public class Tg2xml extends GraphVisitor {
 
 	private String prefix;
 	private String schemaLocation;
 	private OutputStream outputStream;
 	private IndentingXMLStreamWriter writer;
-	// private GraphMarker<Integer> fromEdgeMarker;
-	// private GraphMarker<Integer> toEdgeMarker;
 	private GraphMarker<IncidencePositionMark> incidencePositionMarker;
 
 	private class IncidencePositionMark {
@@ -55,10 +76,11 @@ public class Tg2xml extends GraphVisitor {
 		Schema schema = graph.getSchema();
 		String qualifiedName = schema.getQualifiedName();
 
+		// TODO check that nameSpacePrefix is legal (e.g. "xml" is forbidden...)
 		this.prefix = nameSpacePrefix;
 		this.schemaLocation = schemaLocation;
 
-		this.namespaceURI = CommonMethods.generateURI(qualifiedName);
+		this.namespaceURI = UtilityMethods.generateURI(qualifiedName);
 		this.outputStream = outputStream;
 		XMLOutputFactory factory = XMLOutputFactory.newInstance();
 		writer = new IndentingXMLStreamWriter(factory.createXMLStreamWriter(
@@ -67,6 +89,7 @@ public class Tg2xml extends GraphVisitor {
 
 	}
 
+	@Override
 	protected void preVisitor() {
 		try {
 			writer.writeStartDocument("UTF-8", "1.0");
@@ -86,6 +109,7 @@ public class Tg2xml extends GraphVisitor {
 		}
 	}
 
+	@Override
 	protected void visitVertex(Vertex v) throws XMLStreamException {
 		// write vertex
 		writer.writeEmptyElement(v.getAttributedElementClass()
@@ -110,6 +134,7 @@ public class Tg2xml extends GraphVisitor {
 		}
 	}
 
+	@Override
 	protected void visitEdge(Edge e) throws XMLStreamException {
 		IncidencePositionMark currentMark = incidencePositionMarker.getMark(e);
 		writer.writeEmptyElement(e.getAttributedElementClass()
@@ -121,6 +146,7 @@ public class Tg2xml extends GraphVisitor {
 		writeAttributes(e);
 	}
 
+	@Override
 	protected void postVisitor() throws XMLStreamException, IOException {
 		writer.writeEndDocument();
 		writer.flush();
@@ -150,12 +176,7 @@ public class Tg2xml extends GraphVisitor {
 
 	public static void main(String[] args) throws Exception {
 		CommandLine comLine = processCommandLineOptions(args);
-		if (comLine == null) {
-			return;
-		}
-		if (comLine.hasOption("v")) {
-			System.out.println(JGraLab.getInfo(false));
-		}
+		assert comLine != null;
 		String graphFile = comLine.getOptionValue("g").trim();
 		String namespacePrefix = comLine.getOptionValue("n").trim();
 		String xsdLocation = comLine.getOptionValue("x").trim();
@@ -166,10 +187,7 @@ public class Tg2xml extends GraphVisitor {
 			theGraph = GraphIO.loadGraphFromFile(graphFile,
 					new ProgressFunctionImpl());
 		} catch (GraphIOException e) {
-			System.out.println("Schema not found.");
-			compileSchema(graphFile);
-			theGraph = GraphIO.loadGraphFromFile(graphFile,
-					new ProgressFunctionImpl());
+			e.printStackTrace();
 		}
 
 		Tg2xml converter = new Tg2xml(new BufferedOutputStream(
@@ -179,15 +197,8 @@ public class Tg2xml extends GraphVisitor {
 		System.out.println("Fini.");
 	}
 
-	private static void compileSchema(String graphFile) throws GraphIOException {
-		// compile the schema
-		Schema schema = GraphIO.loadSchemaFromFile(graphFile);
-		System.out.println("Compiling schema");
-		schema.compile();
-	}
-
 	private static CommandLine processCommandLineOptions(String[] args) {
-		String toolString = Tg2xml.class.getSimpleName();
+		String toolString = "java " + Tg2xml.class.getName();
 		String versionString = JGraLab.getInfo(false);
 		OptionHandler oh = new OptionHandler(toolString, versionString);
 
@@ -215,25 +226,7 @@ public class Tg2xml extends GraphVisitor {
 		xsdLocation.setArgName("file_or_url");
 		oh.addOption(xsdLocation);
 
-		// parse arguments
-		CommandLine comLine = null;
-		try {
-			CommandLineParser parser = new GnuParser();
-			comLine = parser.parse(oh.getOptions(), args);
-			oh.eventuallyPrintHelpOrVersion(comLine);
-
-			boolean ok = oh.containsAllRequired(comLine);
-
-			if (!ok) {
-				System.err.println("Does not contain all required options.");
-				oh.printHelpAndExit(1);
-			}
-
-		} catch (ParseException e) {
-			System.err.println(e.getMessage());
-			oh.printHelpAndExit(1);
-		}
-		return comLine;
+		return oh.parse(args);
 	}
 
 }
