@@ -31,12 +31,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.commons.cli.BasicParser;
 import org.apache.commons.cli.CommandLine;
-import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Option;
-import org.apache.commons.cli.Options;
-import org.apache.commons.cli.ParseException;
 
 import de.uni_koblenz.jgralab.Attribute;
 import de.uni_koblenz.jgralab.AttributedElement;
@@ -57,6 +53,7 @@ import de.uni_koblenz.jgralab.schema.ListDomain;
 import de.uni_koblenz.jgralab.schema.LongDomain;
 import de.uni_koblenz.jgralab.schema.RecordDomain;
 import de.uni_koblenz.jgralab.schema.SetDomain;
+import de.uni_koblenz.jgralab.utilities.common.OptionHandler;
 import de.uni_koblenz.jgralab.utilities.tg2schemagraph.Schema2SchemaGraph;
 import de.uni_koblenz.jgralab.utilities.tg2whatever.Tg2Whatever;
 
@@ -499,52 +496,8 @@ public class Tg2GXL extends Tg2Whatever {
 	 */
 	@Override
 	protected void getOptions(String[] args) {
-		// define the options
-		Options options = new Options();
-
-		Option oGraph = new Option("g", "graph", true,
-				"(required): the graph to be converted");
-		oGraph.setRequired(true);
-		options.addOption(oGraph);
-
-		Option oOutput = new Option("o", "output", true,
-				"(required): the output file name, or empty for stdout");
-		oOutput.setRequired(true);
-		options.addOption(oOutput);
-
-		Option oVersion = new Option("v", "version", false,
-				"(optional): show version");
-		options.addOption(oVersion);
-
-		CommandLine comLine = null;
-		try {
-			comLine = new BasicParser().parse(options, args);
-		} catch (ParseException e) {
-			HelpFormatter helpForm = new HelpFormatter();
-
-			/*
-			 * If there are required options, apache.cli does not accept a
-			 * single -h or -v option. It's a known bug, which will be fixed in
-			 * a later version.
-			 */
-			boolean vFlag = false;
-			for (String s : args) {
-				vFlag = vFlag || s.equals("-v") || s.equals("--version");
-			}
-			if (vFlag) {
-				System.out.println(JGraLab.getInfo(false));
-			} else {
-				System.err.println(e.getMessage());
-				helpForm.printHelp(Tg2GXL.class.getSimpleName(), options);
-				System.exit(1);
-			}
-			System.exit(0);
-		}
-
-		// processing of arguments and setting member variables accordingly
-		if (comLine.hasOption("v")) {
-			System.out.println(JGraLab.getInfo(false));
-		}
+		CommandLine comLine = processCommandLineOptions(args);
+		assert comLine != null;
 		String graphName = null;
 		if (comLine.hasOption("g")) {
 			try {
@@ -567,14 +520,32 @@ public class Tg2GXL extends Tg2Whatever {
 					graphOutputName.length() - 4)
 					+ "Schema.gxl";
 			if (graphOutputName == null) {
-				new HelpFormatter().printHelp(Tg2GXL.class.getSimpleName(),
-						options);
 				System.exit(1);
 			}
 		}
 		if (outputName == null) {
 			outputName = "";
 		}
+	}
+
+	private static CommandLine processCommandLineOptions(String[] args) {
+		String toolString = "java " + Tg2GXL.class.getName();
+		String versionString = JGraLab.getInfo(false);
+		OptionHandler oh = new OptionHandler(toolString, versionString);
+
+		Option graph = new Option("g", "graph", true,
+				"(required): the graph to be converted");
+		graph.setRequired(true);
+		graph.setArgName("file");
+		oh.addOption(graph);
+
+		Option output = new Option("o", "output", true,
+				"(required): the output file name, or empty for stdout");
+		output.setRequired(true);
+		output.setArgName("file");
+		oh.addOption(output);
+
+		return oh.parse(args);
 	}
 
 	/**

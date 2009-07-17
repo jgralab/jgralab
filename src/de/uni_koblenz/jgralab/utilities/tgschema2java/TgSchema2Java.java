@@ -40,21 +40,20 @@ import javax.tools.JavaFileObject;
 import javax.tools.StandardJavaFileManager;
 import javax.tools.ToolProvider;
 
-import org.apache.commons.cli.BasicParser;
 import org.apache.commons.cli.CommandLine;
-import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Option;
-import org.apache.commons.cli.Options;
-import org.apache.commons.cli.ParseException;
 
+//import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.GraphIO;
 import de.uni_koblenz.jgralab.GraphIOException;
 import de.uni_koblenz.jgralab.JGraLab;
+//import de.uni_koblenz.jgralab.impl.ProgressFunctionImpl;
 import de.uni_koblenz.jgralab.schema.Domain;
 import de.uni_koblenz.jgralab.schema.EdgeClass;
 import de.uni_koblenz.jgralab.schema.GraphClass;
 import de.uni_koblenz.jgralab.schema.Schema;
 import de.uni_koblenz.jgralab.schema.VertexClass;
+import de.uni_koblenz.jgralab.utilities.common.OptionHandler;
 
 public class TgSchema2Java {
 
@@ -304,72 +303,9 @@ public class TgSchema2Java {
 	 * @throws Exception
 	 *             Throws Exception if mandatory option "-f" is not specified.
 	 */
-	private void processArguments(String[] args) throws Exception {
-		// define the options
-		Options options = new Options();
-
-		Option tgFile = new Option("f", "filename", true,
-				"(required): specifies the .tg-file to be converted");
-		tgFile.setRequired(true);
-		options.addOption(tgFile);
-
-		Option pathToCommit = new Option(
-				"p",
-				"path",
-				true,
-				"(optional): specifies the path to where the created files are stored; default is current folder (\".\")");
-		options.addOption(pathToCommit);
-
-		Option comp = new Option("c", "compile", false,
-				"(optional): if specified, the .java are compiled");
-		options.addOption(comp);
-
-		Option jar = new Option(
-				"j",
-				"jar",
-				true,
-				"(optional): specifies the name of the .jar-file; if omitted, no jar will be created");
-		options.addOption(jar);
-
-		// Option exPattern = new Option("s", "cp", true,
-		// "(optional): specifies the path to jgralab");
-		// options.addOption(exPattern);
-
-		Option version = new Option("v", "version", false,
-				"(optional): show version");
-		options.addOption(version);
-
-		// parse arguments
-		CommandLine comLine = null;
-		try {
-			comLine = new BasicParser().parse(options, args);
-		} catch (ParseException e) {
-			HelpFormatter helpForm = new HelpFormatter();
-
-			/*
-			 * If there are required options, apache.cli does not accept a
-			 * single -h or -v option. It's a known bug, which will be fixed in
-			 * a later version.
-			 */
-			boolean vFlag = false;
-			for (String s : args) {
-				vFlag = vFlag || s.equals("-v") || s.equals("--version");
-			}
-			if (vFlag) {
-				System.out.println(JGraLab.getInfo(false));
-			} else {
-				System.err.println(e.getMessage());
-				helpForm
-						.printHelp(TgSchema2Java.class.getSimpleName(), options);
-				System.exit(1);
-			}
-			System.exit(0);
-		}
-
-		// processing of arguments and setting member variables accordingly
-		if(comLine.hasOption("v")){
-			System.out.println(JGraLab.getInfo(false));
-		}
+	private void processArguments(String[] args) throws Exception {	
+		CommandLine comLine = processCommandLineOptions(args);
+		assert comLine != null;
 		tgFilename = comLine.getOptionValue("f");
 		if (comLine.hasOption("p")) {
 			commitPath = comLine.getOptionValue("p");
@@ -377,9 +313,6 @@ public class TgSchema2Java {
 			commitPath = commitPath.replace("\\", File.separator);
 		}
 		compile = comLine.hasOption("c");
-		if (comLine.hasOption("s")) {
-			classpath = comLine.getOptionValue("s");
-		}
 		if (comLine.hasOption("j")) {
 			createJar = true;
 			jarFileName = comLine.getOptionValue("j");
@@ -555,6 +488,37 @@ public class TgSchema2Java {
 		TgSchema2Java tgSchema2Java = new TgSchema2Java(args);
 
 		tgSchema2Java.execute();
+	}
+	
+	private static CommandLine processCommandLineOptions(String[] args) {
+		String toolString = "java " + TgSchema2Java.class.getName();
+		String versionString = JGraLab.getInfo(false);
+		OptionHandler oh = new OptionHandler(toolString, versionString);
+
+		Option filename = new Option("f", "filename", true,
+				"(required): specifies the .tg-file to be converted");
+		filename.setRequired(true);
+		filename.setArgName("file");
+		oh.addOption(filename);
+
+		Option compile = new Option("c", "compile", false,
+				"(optional): if specified, the .java are compiled");
+		compile.setRequired(false);
+		oh.addOption(compile);
+
+		Option jar = new Option("j", "jar", true,
+				"(optional): specifies the name of the .jar-file; if omitted, no jar will be created");
+		jar.setRequired(false);
+		jar.setArgName("file");
+		oh.addOption(jar);
+
+		Option path = new Option("p", "path", true,
+				"(optional): specifies the path to where the created files are stored; default is current folder (\".\")");
+		path.setRequired(true);
+		path.setArgName("path");
+		oh.addOption(path);
+
+		return oh.parse(args);
 	}
 
 	class JavaFileFilter implements FileFilter {

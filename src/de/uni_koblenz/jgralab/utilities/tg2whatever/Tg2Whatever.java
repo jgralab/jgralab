@@ -32,12 +32,8 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.PrintStream;
 
-import org.apache.commons.cli.BasicParser;
 import org.apache.commons.cli.CommandLine;
-import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Option;
-import org.apache.commons.cli.Options;
-import org.apache.commons.cli.ParseException;
 
 import de.uni_koblenz.jgralab.BooleanGraphMarker;
 import de.uni_koblenz.jgralab.Edge;
@@ -48,6 +44,7 @@ import de.uni_koblenz.jgralab.JGraLab;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.impl.ProgressFunctionImpl;
 import de.uni_koblenz.jgralab.schema.Schema;
+import de.uni_koblenz.jgralab.utilities.common.OptionHandler;
 
 public abstract class Tg2Whatever {
 
@@ -276,82 +273,10 @@ public abstract class Tg2Whatever {
 	protected abstract String stringQuote(String s);
 
 	protected void getOptions(String[] args) {
-		// define the options
-		Options options = new Options();
-
-		Option oGraph = new Option("g", "graph", true,
-				"(required): the graph to be converted");
-		oGraph.setRequired(true);
-		options.addOption(oGraph);
-
-		Option oAlternativeSchema = new Option(
-				"a",
-				"alternative-schema",
-				true,
-				"(optional): the schema that should be used instead of the one included in the graph file");
-		options.addOption(oAlternativeSchema);
-
-		Option oOutput = new Option("o", "output", true,
-				"(optional): the output file name, or empty for stdout");
-		options.addOption(oOutput);
-
-		Option oDomains = new Option("d", "domains", false,
-				"(optional): if set, domain names of attributes will be printed");
-		options.addOption(oDomains);
-
-		Option oEdgeAttr = new Option("e", "edgeattr", false,
-				"(optional): if set, edge attributes will be printed");
-		options.addOption(oEdgeAttr);
-
-		Option oRolenames = new Option("n", "rolenames", false,
-				"(optional): if set, role names will be printed");
-		options.addOption(oRolenames);
-
-		Option oReversed = new Option(
-				"r",
-				"reversed",
-				false,
-				"(optional): useful if edges run from child nodes to their parents results in a tree with root node at top");
-		options.addOption(oReversed);
-
-		Option oShortenStrings = new Option("s", "shorten-strings", false,
-				"(optional): if set, strings are shortened");
-		options.addOption(oShortenStrings);
-
-		Option oVersion = new Option("v", "version", false,
-				"(optional): show version");
-		options.addOption(oVersion);
-
-		// parse arguments
-		CommandLine comLine = null;
-		try {
-			comLine = new BasicParser().parse(options, args);
-		} catch (ParseException e) {
-			HelpFormatter helpForm = new HelpFormatter();
-
-			/*
-			 * If there are required options, apache.cli does not accept a
-			 * single -h or -v option. It's a known bug, which will be fixed in
-			 * a later version.
-			 */
-			boolean vFlag = false;
-			for (String s : args) {
-				vFlag = vFlag || s.equals("-v") || s.equals("--version");
-			}
-			if (vFlag) {
-				System.out.println(JGraLab.getInfo(false));
-			} else {
-				System.err.println(e.getMessage());
-				helpForm.printHelp(this.getClass().getSimpleName(), options);
-				System.exit(1);
-			}
-			System.exit(0);
-		}
+		CommandLine comLine = processCommandLineOptions(args);
+		assert comLine != null;
 
 		// processing of arguments and setting member variables accordingly
-		if (comLine.hasOption("v")) {
-			System.out.println(JGraLab.getInfo(false));
-		}
 		String graphName = null;
 		String schemaName = null;
 		if (comLine.hasOption("g")) {
@@ -372,7 +297,6 @@ public abstract class Tg2Whatever {
 		}
 		if (outputName == null) {
 			outputName = "";
-			// usage(1);
 		}
 		if (comLine.hasOption("a")) {
 			schemaName = comLine.getOptionValue("a");
@@ -479,6 +403,57 @@ public abstract class Tg2Whatever {
 		// if (outputName == null) {
 		// outputName = "";
 		// }
+	}
+	
+	private CommandLine processCommandLineOptions(String[] args) {
+		String toolString = "java " + this.getClass().getName();
+		String versionString = JGraLab.getInfo(false);
+		OptionHandler oh = new OptionHandler(toolString, versionString);
+
+		Option graph = new Option("g", "graph", true,
+				"(required): the graph to be converted");
+		graph.setRequired(true);
+		graph.setArgName("file");
+		oh.addOption(graph);
+
+		Option alternativeSchema = new Option("a", "alternative-schema", true,
+				"(optional): the schema that should be used instead of the one included in the graph file");
+		alternativeSchema.setRequired(false);
+		graph.setArgName("file");
+		oh.addOption(alternativeSchema);
+
+		Option domains = new Option("d", "domains", false,
+				"(optional): if set, domain names of attributes will be printed");
+		domains.setRequired(false);
+		oh.addOption(domains);
+
+		Option edgeAttributes = new Option("e", "edgeattr", false,
+				"(optional): if set, edge attributes will be printed");
+		edgeAttributes.setRequired(false);
+		oh.addOption(edgeAttributes);
+
+		Option rolenames = new Option("n", "rolenames", false,
+				"(optional): if set, role names will be printed");
+		rolenames.setRequired(false);
+		oh.addOption(rolenames);
+
+		Option output = new Option("o", "output", true,
+				"(optional): the output file name, or empty for stdout");
+		output.setRequired(true);
+		output.setArgName("file");
+		oh.addOption(output);
+
+		Option reversed = new Option("r", "reversed", false,
+				"(optional): useful if edges run from child nodes to their parents results in a tree with root node at top");
+		reversed.setRequired(false);
+		oh.addOption(reversed);
+
+		Option shortenStrings = new Option("s", "shorten-strings", false,
+				"(optional): if set, strings are shortened");
+		shortenStrings.setRequired(false);
+		oh.addOption(shortenStrings);
+
+		return oh.parse(args);
 	}
 
 	// protected void usage(int exitCode) {
