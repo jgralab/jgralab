@@ -3,6 +3,7 @@ package de.uni_koblenz.jgralabtest.greql2;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.util.List;
@@ -122,9 +123,7 @@ public class ParserTest {
 
 	@Test
 	public void testGreql2TestGraph() throws Exception {
-		Greql2 graph = parseQuery("from i:c report i end where d:=\"drölfundfünfzig\", c:=b, b:=a, a:=\"Mensaessen\"");
-		// GraphIO.saveGraphToFile("/home/dbildh/greql2testgraphnewparser.tg",
-		// graph, null);
+		parseQuery("from i:c report i end where d:=\"drölfundfünfzig\", c:=b, b:=a, a:=\"Mensaessen\"");
 	}
 
 	@Test
@@ -599,7 +598,7 @@ public class ParserTest {
 
 	@Test
 	public void testDefinitionList() throws Exception {
-		Greql2 graph = parseQuery("let a:=7, b:=5 in a+b");
+		parseQuery("let a:=7, b:=5 in a+b");
 	}
 
 	@Test
@@ -640,7 +639,7 @@ public class ParserTest {
 
 	@Test
 	public void testEdgeSubgraphExpression2() throws Exception {
-		Greql2 graph = parseQuery("from i: V in eSubgraph{^IsDefinitionOf} report i end");
+		parseQuery("from i: V in eSubgraph{^IsDefinitionOf} report i end");
 		// GraphIO.saveGraphToFile("/home/dbildh/greqlgraph.tg", graph, null);
 	}
 
@@ -795,7 +794,7 @@ public class ParserTest {
 
 	@Test
 	public void testReportAsQuery() throws Exception {
-		Greql2 graph = parseQuery("from v:V report v as \"Vertex\" end");
+		parseQuery("from v:V report v as \"Vertex\" end");
 	}
 
 	@Test
@@ -877,10 +876,10 @@ public class ParserTest {
 		IsAlternativePathOf edge = apd
 				.getFirstIsAlternativePathOf(EdgeDirection.IN);
 		assertNotNull(edge);
-		SimplePathDescription spd = (SimplePathDescription) edge.getAlpha();
+		assertTrue(edge.getAlpha() instanceof SimplePathDescription);
 		edge = edge.getNextIsAlternativePathOf();
 		assertNotNull(edge);
-		spd = (SimplePathDescription) edge.getAlpha();
+		assertTrue(edge.getAlpha() instanceof SimplePathDescription);
 	}
 
 	@Test
@@ -921,10 +920,10 @@ public class ParserTest {
 		IsAlternativePathOf edge = apd
 				.getFirstIsAlternativePathOf(EdgeDirection.IN);
 		assertNotNull(edge);
-		SimplePathDescription spd = (SimplePathDescription) edge.getAlpha();
+		assertTrue(edge.getAlpha() instanceof SimplePathDescription);
 		edge = edge.getNextIsAlternativePathOf();
 		assertNotNull(edge);
-		spd = (SimplePathDescription) edge.getAlpha();
+		assertTrue(edge.getAlpha() instanceof SimplePathDescription);
 	}
 
 	@Test
@@ -938,10 +937,10 @@ public class ParserTest {
 		assertNotNull(ipd);
 		IsSubPathOf edge = ipd.getFirstIsSubPathOf(EdgeDirection.IN);
 		assertNotNull(edge);
-		SimplePathDescription spd = (SimplePathDescription) edge.getAlpha();
+		assertTrue(edge.getAlpha() instanceof SimplePathDescription);
 		edge = edge.getNextIsSubPathOf();
 		assertNotNull(edge);
-		spd = (SimplePathDescription) edge.getAlpha();
+		assertTrue(edge.getAlpha() instanceof SimplePathDescription);
 		IsIntermediateVertexOf intEdge = ipd.getFirstIsIntermediateVertexOf();
 		assertNotNull(intEdge);
 		assertEquals(graph.getFirstVariable(), intEdge.getAlpha());
@@ -959,10 +958,10 @@ public class ParserTest {
 		IsSequenceElementOf edge = sepd
 				.getFirstIsSequenceElementOf(EdgeDirection.IN);
 		assertNotNull(edge);
-		SimplePathDescription spd = (SimplePathDescription) edge.getAlpha();
+		assertTrue(edge.getAlpha() instanceof SimplePathDescription);
 		edge = edge.getNextIsSequenceElementOf();
 		assertNotNull(edge);
-		spd = (SimplePathDescription) edge.getAlpha();
+		assertTrue(edge.getAlpha() instanceof SimplePathDescription);
 	}
 
 	@Test
@@ -1042,10 +1041,10 @@ public class ParserTest {
 
 		IsPathOf pathEdge = pathExistence.getFirstIsPathOf();
 		assertNotNull(pathEdge);
-		SimplePathDescription path = (SimplePathDescription) pathEdge
-				.getAlpha();
+		assertTrue(pathEdge.getAlpha() instanceof SimplePathDescription);
 	}
 
+	@SuppressWarnings("unchecked")
 	@Test
 	public void testEdgePathDescription2() throws Exception {
 		Greql2Lexer lexer = new Greql2Lexer(new ANTLRStringStream("--e->"));

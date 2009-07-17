@@ -123,7 +123,8 @@ public class GreqlEvaluatorTest extends GenericTests {
 	public void testReachability() throws Exception {
 		String queryString = "forall e: E{IsDefinitionOf}"
 				+ "  @ startVertex(e) -->{IsDefinitionOf} endVertex(e)";
-		JValue result = evalTestQuery("Reachability", queryString);
+		evalTestQuery("Reachability", queryString);
+		// TODO
 		// assertEquals(1, result.toCollection().size());
 		// for (JValue j : result.toCollection()) {
 		// assertEquals(4, j.toCollection().size());
@@ -1114,9 +1115,8 @@ public class GreqlEvaluatorTest extends GenericTests {
 		String queryString1 = "from var: V, def: V with contains(var {Definition} & -->, def) report var end";
 		String queryString2 = "from var: V, def: V with contains({Definition} & --> def, var) report var end";
 
-		JValue result1 = evalTestQuery("StartRestriction6 1", queryString1);
-		JValue result2 = evalTestQuery("StartRestriction6 2", queryString2);
-
+		evalTestQuery("StartRestriction6 1", queryString1);
+		evalTestQuery("StartRestriction6 2", queryString2);
 	}
 
 	/*
