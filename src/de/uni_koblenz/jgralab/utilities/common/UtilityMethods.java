@@ -22,42 +22,35 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-package de.uni_koblenz.jgralab.utilities.tg2xml;
+package de.uni_koblenz.jgralab.utilities.common;
 
-import de.uni_koblenz.jgralab.Edge;
-import de.uni_koblenz.jgralab.Graph;
-import de.uni_koblenz.jgralab.Vertex;
+public class UtilityMethods {
 
-public abstract class GraphVisitor {
-	protected Graph graph;
+	/**
+	 * Generates a URI from a qualified Name for using in XML-files. It replaces
+	 * all occurrences of "_" with "-", swaps the first and the second element
+	 * of the qualified name and appends the remainder as folder structure.
+	 * Example: de.uni_koblenz.jgralab.greql2 => uni-koblenz.de/jgralab/greql2
+	 * 
+	 * @param qualifiedName
+	 *            the qualified name to convert.
+	 * @return a URI as String according to the given qualified Name.
+	 */
+	public static String generateURI(String qualifiedName) {
+		qualifiedName = qualifiedName.replace('_', '-');
+		String[] uri = qualifiedName.split("\\.");
 
-	public GraphVisitor(Graph graph) {
-		super();
-		this.graph = graph;
-	}
+		StringBuilder namespaceURI = new StringBuilder();
+		namespaceURI.append("http://");
+		if (uri.length > 1) {
+			namespaceURI.append(uri[1]).append(".").append(uri[0]);
 
-	public void visitAll() throws Exception {
-		// visit the graph
-		preVisitor();
+			for (int i = 2; i < uri.length; i++) {
+				namespaceURI.append("/").append(uri[i]);
+			}
 
-		// visit all vertices
-		for (Vertex currentVertex : graph.vertices()) {
-			visitVertex(currentVertex);
 		}
 
-		// visit all edges
-		for (Edge currentEdge : graph.edges()) {
-			visitEdge(currentEdge);
-		}
-
-		postVisitor();
+		return namespaceURI.toString();
 	}
-
-	protected abstract void preVisitor() throws Exception;
-
-	protected abstract void visitVertex(Vertex v) throws Exception;
-
-	protected abstract void visitEdge(Edge e) throws Exception;
-
-	protected abstract void postVisitor() throws Exception;
 }
