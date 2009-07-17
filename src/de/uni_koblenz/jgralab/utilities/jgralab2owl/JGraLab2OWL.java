@@ -34,12 +34,8 @@ import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 
-import org.apache.commons.cli.BasicParser;
 import org.apache.commons.cli.CommandLine;
-import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Option;
-import org.apache.commons.cli.Options;
-import org.apache.commons.cli.ParseException;
 import org.w3c.dom.Document;
 
 import de.uni_koblenz.jgralab.Graph;
@@ -48,6 +44,7 @@ import de.uni_koblenz.jgralab.JGraLab;
 import de.uni_koblenz.jgralab.ProgressFunction;
 import de.uni_koblenz.jgralab.impl.ProgressFunctionImpl;
 import de.uni_koblenz.jgralab.schema.Schema;
+import de.uni_koblenz.jgralab.utilities.common.OptionHandler;
 
 public class JGraLab2OWL {
 
@@ -287,48 +284,8 @@ public class JGraLab2OWL {
 	}
 
 	public static void main(String[] args) {
-		// define the options
-		Options options = new Options();
-
-		Option oGraph = new Option("g", "graph", true,
-				"(required): TG-file of the graph");
-		oGraph.setRequired(true);
-		options.addOption(oGraph);
-
-		Option oVersion = new Option("v", "version", false,
-				"(optional): show version");
-		options.addOption(oVersion);
-
-		CommandLine comLine = null;
-		try {
-			comLine = new BasicParser().parse(options, args);
-		} catch (ParseException e) {
-			HelpFormatter helpForm = new HelpFormatter();
-
-			/*
-			 * If there are required options, apache.cli does not accept a
-			 * single -h or -v option. It's a known bug, which will be fixed in
-			 * a later version.
-			 */
-			boolean vFlag = false;
-			for (String s : args) {
-				vFlag = vFlag || s.equals("-v") || s.equals("--version");
-			}
-			if (vFlag) {
-				System.out.println(JGraLab.getInfo(false));
-			} else {
-				System.err.println(e.getMessage());
-				helpForm
-						.printHelp(JGraLab2OWL.class.getSimpleName(), options);
-				System.exit(1);
-			}
-			System.exit(0);
-		}
-
-		// processing of arguments and setting member variables accordingly
-		if(comLine.hasOption("v")){
-			System.out.println(JGraLab.getInfo(false));
-		}
+		CommandLine comLine = processCommandLineOptions(args);
+		assert comLine != null;
 		
 //		if (args.length == 0)
 //			System.out.println("Usage: JGraLab2OWL tgFile");
@@ -345,6 +302,20 @@ public class JGraLab2OWL {
 				ex.printStackTrace();
 			}
 //		}
+	}
+
+	private static CommandLine processCommandLineOptions(String[] args) {
+		String toolString = "java " + JGraLab2OWL.class.getName();
+		String versionString = JGraLab.getInfo(false);
+		OptionHandler oh = new OptionHandler(toolString, versionString);
+
+		Option graph = new Option("g", "graph", true,
+				"(required): TG-file of the graph");
+		graph.setRequired(true);
+		graph.setArgName("file");
+		oh.addOption(graph);
+
+		return oh.parse(args);
 	}
 
 	/**

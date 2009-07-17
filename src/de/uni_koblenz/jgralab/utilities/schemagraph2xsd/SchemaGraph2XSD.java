@@ -41,12 +41,8 @@ import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 
-import org.apache.commons.cli.BasicParser;
 import org.apache.commons.cli.CommandLine;
-import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Option;
-import org.apache.commons.cli.Options;
-import org.apache.commons.cli.ParseException;
 
 import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.GraphIOException;
@@ -76,6 +72,7 @@ import de.uni_koblenz.jgralab.grumlschema.structure.SpecializesEdgeClass;
 import de.uni_koblenz.jgralab.grumlschema.structure.SpecializesVertexClass;
 import de.uni_koblenz.jgralab.grumlschema.structure.VertexClass;
 import de.uni_koblenz.jgralab.impl.ProgressFunctionImpl;
+import de.uni_koblenz.jgralab.utilities.common.OptionHandler;
 import de.uni_koblenz.jgralab.utilities.common.UtilityMethods;
 import de.uni_koblenz.jgralab.utilities.jgralab2owl.IndentingXMLStreamWriter;
 import de.uni_koblenz.jgralab.utilities.rsa2tg.SchemaGraph2Tg;
@@ -857,15 +854,9 @@ public class SchemaGraph2XSD {
 			FileNotFoundException, XMLStreamException,
 			FactoryConfigurationError {
 		CommandLine comLine = processCommandLineOptions(args);
-		if (comLine == null) {
-			return;
-		}
-
-		if (comLine.hasOption("v")) {
-			System.out.println(JGraLab.getInfo(false));
-		}
+		assert comLine != null;
 		String schemaGraphFile = comLine.getOptionValue("g").trim();
-		String namespacePrefix = comLine.getOptionValue("p").trim();
+		String namespacePrefix = comLine.getOptionValue("n").trim();
 		String xsdFile = comLine.getOptionValue("o").trim();
 		String exclPattern = comLine.getOptionValue("e");
 
@@ -882,58 +873,35 @@ public class SchemaGraph2XSD {
 	}
 
 	private static CommandLine processCommandLineOptions(String[] args) {
-		// define the options
-		Options options = new Options();
+		String toolString = "java " + SchemaGraph2XSD.class.getName();
+		String versionString = JGraLab.getInfo(false);
+		OptionHandler oh = new OptionHandler(toolString, versionString);
 
 		Option output = new Option("o", "output", true,
 				"(required): XSD-file to be generated");
 		output.setRequired(true);
-		options.addOption(output);
+		output.setArgName("file");
+		oh.addOption(output);
 
-		Option namespace = new Option("p", "namespace-prefix", true,
+		Option namespacePrefix = new Option("n", "namespace-prefix", true,
 				"(required): namespace prefix");
-		namespace.setRequired(true);
-		options.addOption(namespace);
+		namespacePrefix.setRequired(true);
+		namespacePrefix.setArgName("prefix");
+		oh.addOption(namespacePrefix);
 
-		Option schemagraph = new Option("g", "graph", true,
+		Option graph = new Option("g", "graph", true,
 				"(required): TG-file of the schemaGraph");
-		schemagraph.setRequired(true);
-		options.addOption(schemagraph);
+		graph.setRequired(true);
+		graph.setArgName("file");
+		oh.addOption(graph);
 
 		Option exPattern = new Option("e", "exclude-pattern", true,
 				"(optional): regular expression matching elements which should be excluded");
-		options.addOption(exPattern);
+		exPattern.setRequired(true);
+		exPattern.setArgName("regular_expression");
+		oh.addOption(exPattern);
 
-		Option version = new Option("v", "version", false,
-				"(optional): show version");
-		options.addOption(version);
-
-		CommandLine comLine = null;
-		try {
-			comLine = new BasicParser().parse(options, args);
-		} catch (ParseException e) {
-			HelpFormatter helpForm = new HelpFormatter();
-
-			/*
-			 * If there are required options, apache.cli does not accept a
-			 * single -h or -v option. It's a known bug, which will be fixed in
-			 * a later version.
-			 */
-			boolean vFlag = false;
-			for (String s : args) {
-				vFlag = vFlag || s.equals("-v") || s.equals("--version");
-			}
-			if (vFlag) {
-				System.out.println(JGraLab.getInfo(false));
-			} else {
-				System.err.println(e.getMessage());
-				helpForm.printHelp(SchemaGraph2XSD.class.getSimpleName(),
-						options);
-				System.exit(1);
-			}
-			System.exit(0);
-		}
-		return comLine;
+		return oh.parse(args);
 	}
 
 }

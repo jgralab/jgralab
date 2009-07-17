@@ -5,12 +5,8 @@ import java.util.Set;
 import java.util.TreeSet;
 import java.util.Map.Entry;
 
-import org.apache.commons.cli.BasicParser;
 import org.apache.commons.cli.CommandLine;
-import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Option;
-import org.apache.commons.cli.Options;
-import org.apache.commons.cli.ParseException;
 
 import de.uni_koblenz.jgralab.Attribute;
 import de.uni_koblenz.jgralab.GraphIO;
@@ -24,6 +20,7 @@ import de.uni_koblenz.jgralab.schema.GraphElementClass;
 import de.uni_koblenz.jgralab.schema.NamedElement;
 import de.uni_koblenz.jgralab.schema.RecordDomain;
 import de.uni_koblenz.jgralab.schema.Schema;
+import de.uni_koblenz.jgralab.utilities.common.OptionHandler;
 
 @WorkInProgress(responsibleDevelopers = "horn")
 public class SchemaCompare {
@@ -258,53 +255,8 @@ public class SchemaCompare {
 	 * @throws GraphIOException
 	 */
 	public static void main(String[] args) throws GraphIOException {
-		// define the options
-		Options options = new Options();
-
-		Option oSchema1 = new Option("s", "schema1", true,
-				"(required): the first schema, which is compared with the second schema");
-		oSchema1.setRequired(true);
-		options.addOption(oSchema1);
-
-		Option oSchema2 = new Option("t", "schema2", true,
-				"(required): the second schema, which is compared with the first schema");
-		oSchema2.setRequired(true);
-		options.addOption(oSchema2);
-
-		Option oVersion = new Option("v", "version", false,
-				"(optional): show version");
-		options.addOption(oVersion);
-
-		CommandLine comLine = null;
-		try {
-			comLine = new BasicParser().parse(options, args);
-		} catch (ParseException e) {
-			HelpFormatter helpForm = new HelpFormatter();
-
-			/*
-			 * If there are required options, apache.cli does not accept a
-			 * single -h or -v option. It's a known bug, which will be fixed in
-			 * a later version.
-			 */
-			boolean vFlag = false;
-			for (String s : args) {
-				vFlag = vFlag || s.equals("-v") || s.equals("--version");
-			}
-			if (vFlag) {
-				System.out.println(JGraLab.getInfo(false));
-			} else {
-				System.err.println(e.getMessage());
-				helpForm
-						.printHelp(SchemaCompare.class.getSimpleName(), options);
-				System.exit(1);
-			}
-			System.exit(0);
-		}
-
-		// processing of arguments and setting member variables accordingly
-		if(comLine.hasOption("v")){
-			System.out.println(JGraLab.getInfo(false));
-		}
+		CommandLine comLine = processCommandLineOptions(args);
+		assert comLine != null;
 			
 //		if (args.length != 2) {
 //			System.out
@@ -317,10 +269,25 @@ public class SchemaCompare {
 //				.loadSchemaFromFile(args[1]));
 
 		SchemaCompare sc = new SchemaCompare(GraphIO
-				.loadSchemaFromFile(comLine.getOptionValue("s")), GraphIO
-				.loadSchemaFromFile(comLine.getOptionValue("t")));
+				.loadSchemaFromFile(comLine.getOptionValues("s")[0]), GraphIO
+				.loadSchemaFromFile(comLine.getOptionValues("s")[1]));
 		
 		sc.compareSchemas();
+	}
+	
+	private static CommandLine processCommandLineOptions(String[] args) {
+		String toolString = "java " + SchemaCompare.class.getName();
+		String versionString = JGraLab.getInfo(false);
+		OptionHandler oh = new OptionHandler(toolString, versionString);
+
+		Option schemas = new Option("s", "schema", true,
+				"(required): the two schemas to be compared");
+		schemas.setRequired(true);
+		schemas.setArgs(2);
+		schemas.setArgName("file");
+		oh.addOption(schemas);
+		
+		return oh.parse(args);
 	}
 
 }
