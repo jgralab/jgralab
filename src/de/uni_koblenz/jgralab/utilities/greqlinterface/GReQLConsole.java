@@ -178,8 +178,8 @@ public class GReQLConsole {
 		queryfile.setArgName("file");
 		oh.addOption(queryfile);
 
-		Option inputFile = new Option("f", "filename", true,
-				"(required): the inputfile");
+		Option inputFile = new Option("g", "graph", true,
+				"(required): the tg-file of the graph");
 		inputFile.setRequired(true);
 		inputFile.setArgName("file");
 		oh.addOption(inputFile);

@@ -495,7 +495,7 @@ public class TgSchema2Java {
 		String versionString = JGraLab.getInfo(false);
 		OptionHandler oh = new OptionHandler(toolString, versionString);
 
-		Option filename = new Option("f", "filename", true,
+		Option filename = new Option("s", "schema", true,
 				"(required): specifies the .tg-file of the schema to be converted");
 		filename.setRequired(true);
 		filename.setArgName("file");
