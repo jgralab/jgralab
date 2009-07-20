@@ -154,7 +154,7 @@ public class GReQLConsole {
 		// }
 
 		String queryFile = comLine.getOptionValue("q");// args[0];
-		String inputFile = comLine.getOptionValue("f");// args[1];
+		String inputFile = comLine.getOptionValue("g");// args[1];
 
 		JGraLab.setLogLevel(Level.SEVERE);
 		GReQLConsole example = new GReQLConsole(inputFile);

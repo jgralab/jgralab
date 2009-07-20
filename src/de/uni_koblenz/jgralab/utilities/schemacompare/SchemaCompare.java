@@ -269,8 +269,8 @@ public class SchemaCompare {
 		// .loadSchemaFromFile(args[1]));
 
 		SchemaCompare sc = new SchemaCompare(GraphIO.loadSchemaFromFile(comLine
-				.getOptionValues("s")[0]), GraphIO.loadSchemaFromFile(comLine
-				.getOptionValues("s")[1]));
+				.getOptionValue("s1")), GraphIO.loadSchemaFromFile(comLine
+				.getOptionValue("s2")));
 
 		sc.compareSchemas();
 	}
