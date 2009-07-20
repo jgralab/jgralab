@@ -30,7 +30,7 @@ import java.util.Map.Entry;
 
 /**
  * @author Tassilo Horn <horn@uni-koblenz.de>
- *
+ * 
  */
 public class JValueMap extends JValue {
 
@@ -96,7 +96,21 @@ public class JValueMap extends JValue {
 	}
 
 	/**
-	 * @return a set of all entries of this map
+	 * @return a set of all entries of this map as key-value tuples
+	 */
+	public JValueSet entrySetAsJValueTupleSet() {
+		JValueSet result = new JValueSet();
+		for (Entry<JValue, JValue> e : map.entrySet()) {
+			JValueTuple tup = new JValueTuple(2);
+			tup.add(e.getKey());
+			tup.add(e.getValue());
+			result.add(tup);
+		}
+		return result;
+	}
+
+	/**
+	 * @return a set of all entries of this map as key-value tuples
 	 */
 	public Set<Entry<JValue, JValue>> entrySet() {
 		return map.entrySet();
@@ -125,7 +139,7 @@ public class JValueMap extends JValue {
 	/**
 	 * Adds the mapping k --&gt; v to the map. If k had a mapping with another
 	 * value before, then the old mapping is replaced.
-	 *
+	 * 
 	 * @param k
 	 *            the key
 	 * @param v

@@ -461,6 +461,10 @@ public abstract class AttributedElementClassImpl extends NamedElementImpl
 			if (!qualifiedName.equals(other.getQualifiedName())) {
 				return false;
 			}
+			if (!getSchema().getQualifiedName().equals(
+					other.getSchema().getQualifiedName())) {
+				return false;
+			}
 			if (getAttributeCount() != other.getAttributeCount()) {
 				return false;
 			}

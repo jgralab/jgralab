@@ -34,8 +34,7 @@ public class JValueTuple extends JValueList {
 	/**
 	 * Acts as a cache for the hash code value of this set out of performance
 	 * considerations. Whenever this set is changed, storedHashCode is set to 0
-	 * and gets updated as soon as the <code>hashCode()</code> method is
-	 * called.
+	 * and gets updated as soon as the <code>hashCode()</code> method is called.
 	 */
 	private int storedHashCode = 0;
 
@@ -46,6 +45,7 @@ public class JValueTuple extends JValueList {
 	 * 
 	 * @return the hash code value for this tuple
 	 */
+	@Override
 	public int hashCode() {
 		if (storedHashCode == 0) {
 			int elementHashCode = 0;
@@ -89,6 +89,7 @@ public class JValueTuple extends JValueList {
 	/**
 	 * returns true
 	 */
+	@Override
 	public boolean isJValueTuple() {
 		return true;
 	}
@@ -96,6 +97,7 @@ public class JValueTuple extends JValueList {
 	/**
 	 * returns a reference to this tuple
 	 */
+	@Override
 	public JValueTuple toJValueTuple() {
 		return this;
 	}
@@ -107,6 +109,7 @@ public class JValueTuple extends JValueList {
 	 *            the JValue to be added
 	 * @return true if successfull, false otherwise
 	 */
+	@Override
 	public boolean add(JValue element) {
 		storedHashCode = 0;
 		return itemList.add(element);
@@ -117,6 +120,7 @@ public class JValueTuple extends JValueList {
 	 * 
 	 * @return false
 	 */
+	@Override
 	public boolean insert(int position, JValue element) {
 		storedHashCode = 0;
 		logger.severe("JValueTupel doesn't support insertion  of elements");
@@ -128,6 +132,7 @@ public class JValueTuple extends JValueList {
 	 * 
 	 * @return false
 	 */
+	@Override
 	public boolean remove(JValue element) {
 		return false;
 	}
@@ -139,6 +144,7 @@ public class JValueTuple extends JValueList {
 	 * @return a JValueList which contains the same elements as this collecton,
 	 *         duplicates won't be eliminated
 	 */
+	@Override
 	public JValueList toJValueList() {
 		return new JValueList(this);
 	}
@@ -146,6 +152,7 @@ public class JValueTuple extends JValueList {
 	/**
 	 * accepts te given visitor to visit this jvalue
 	 */
+	@Override
 	public void accept(JValueVisitor v) {
 		v.visitTuple(this);
 	}
