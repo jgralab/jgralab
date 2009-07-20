@@ -306,7 +306,7 @@ public class TgSchema2Java {
 	private void processArguments(String[] args) throws Exception {	
 		CommandLine comLine = processCommandLineOptions(args);
 		assert comLine != null;
-		tgFilename = comLine.getOptionValue("f");
+		tgFilename = comLine.getOptionValue("s");
 		if (comLine.hasOption("p")) {
 			commitPath = comLine.getOptionValue("p");
 			commitPath = commitPath.replace("/", File.separator);
