@@ -31,6 +31,7 @@ import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.greql2.exception.EvaluateException;
 import de.uni_koblenz.jgralab.greql2.exception.WrongFunctionParameterException;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
+import de.uni_koblenz.jgralab.greql2.jvalue.JValueCollection;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValueMap;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValueSet;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
@@ -39,14 +40,16 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
  * Returns the union of two given sets or maps. That means a set, that contains
  * all elements that are in the first given set or in the second given set.
  * Elements that are in both sets are also included.
- *
+ * 
  * In case of maps be aware of the fact that the keys have to be disjoint.
- *
+ * 
  * <dl>
  * <dt><b>GReQL-signature</b></dt>
  * <dd>
  * <code>SET&lt;OBJECT&gt; union(s1:SET&lt;OBJECT&gt;, s2:SET&lt;OBJECT&gt;)
- * </code>
+ * </code><br/>
+ * <code>SET&lt;OBJECT&gt; union(s:SET&lt;OBJECT&gt;)
+ * </code><br/>
  * <code>MAP&lt;OBJECT,OBJECT&gt; union(s1:MAP&lt;OBJECT,OBJECT&gt;, s2:MAP&lt;OBJECT,OBJECT&gt;)</code>
  * </dd>
  * <dd>&nbsp;</dd>
@@ -58,24 +61,26 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
  * <dt><b>Parameters:</b></dt>
  * <dd><code>s1</code> - first set or map</dd>
  * <dd><code>s2</code> - second set or map</dd>
+ * <dd><code>s</code> - a set of sets</dd>
  * <dt><b>Returns:</b></dt>
- * <dd>the union of the two given sets or maps</dd>
+ * <dd>the union of the two given sets or maps. If only one set is given, it has
+ * to be a set of sets and the union of those nested sets are computed.</dd>
  * <dd><code>Null</code> if one of the parameters is <code>Null</code></dd>
  * </dl>
  * </dd>
  * </dl>
- *
+ * 
  * @see Difference
  * @see SymDifference
  * @see Intersection
  * @see MergeMaps
  * @author ist@uni-koblenz.de
- *
+ * 
  */
 public class Union extends AbstractGreql2Function {
 	{
 		JValueType[][] x = { { JValueType.COLLECTION, JValueType.COLLECTION },
-				{ JValueType.MAP, JValueType.MAP } };
+				{ JValueType.MAP, JValueType.MAP }, { JValueType.COLLECTION } };
 		signatures = x;
 	}
 
@@ -90,6 +95,19 @@ public class Union extends AbstractGreql2Function {
 			JValueMap firstMap = arguments[0].toJValueMap();
 			JValueMap secondMap = arguments[1].toJValueMap();
 			return firstMap.union(secondMap);
+		case 2:
+			JValueSet set = arguments[0].toCollection().toJValueSet();
+			JValueSet result = new JValueSet();
+			for (JValue jv : set) {
+				if (!(jv instanceof JValueCollection)) {
+					throw new WrongFunctionParameterException(this, null,
+							arguments);
+				}
+				for (JValue jv2 : jv.toCollection().toJValueSet()) {
+					result.add(jv2);
+				}
+			}
+			return result;
 		default:
 			throw new WrongFunctionParameterException(this, null, arguments);
 		}
