@@ -257,36 +257,41 @@ public class SchemaCompare {
 	public static void main(String[] args) throws GraphIOException {
 		CommandLine comLine = processCommandLineOptions(args);
 		assert comLine != null;
-			
-//		if (args.length != 2) {
-//			System.out
-//					.println("Usage: java SchemaCompare schema1.tg schema2.tg");
-//			return;
-//		}
-//
-//		SchemaCompare sc = new SchemaCompare(GraphIO
-//				.loadSchemaFromFile(args[0]), GraphIO
-//				.loadSchemaFromFile(args[1]));
 
-		SchemaCompare sc = new SchemaCompare(GraphIO
-				.loadSchemaFromFile(comLine.getOptionValues("s")[0]), GraphIO
-				.loadSchemaFromFile(comLine.getOptionValues("s")[1]));
-		
+		// if (args.length != 2) {
+		// System.out
+		// .println("Usage: java SchemaCompare schema1.tg schema2.tg");
+		// return;
+		// }
+		//
+		// SchemaCompare sc = new SchemaCompare(GraphIO
+		// .loadSchemaFromFile(args[0]), GraphIO
+		// .loadSchemaFromFile(args[1]));
+
+		SchemaCompare sc = new SchemaCompare(GraphIO.loadSchemaFromFile(comLine
+				.getOptionValues("s")[0]), GraphIO.loadSchemaFromFile(comLine
+				.getOptionValues("s")[1]));
+
 		sc.compareSchemas();
 	}
-	
+
 	private static CommandLine processCommandLineOptions(String[] args) {
 		String toolString = "java " + SchemaCompare.class.getName();
 		String versionString = JGraLab.getInfo(false);
 		OptionHandler oh = new OptionHandler(toolString, versionString);
 
-		Option schemas = new Option("s", "schema", true,
-				"(required): the two schemas to be compared");
-		schemas.setRequired(true);
-		schemas.setArgs(2);
-		schemas.setArgName("file");
-		oh.addOption(schemas);
+		Option schema1 = new Option("s1", "schema1", true,
+				"(required): the first schema which is compared with the second");
+		schema1.setRequired(true);
+		schema1.setArgName("file");
+		oh.addOption(schema1);
 		
+		Option schema2 = new Option("s2", "schema2", true,
+				"(required): the second schema which is compared with the first");
+		schema2.setRequired(true);
+		schema2.setArgName("file");
+		oh.addOption(schema2);
+
 		return oh.parse(args);
 	}
 
