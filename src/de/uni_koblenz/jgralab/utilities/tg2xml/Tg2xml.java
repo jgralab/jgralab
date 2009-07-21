@@ -181,13 +181,21 @@ public class Tg2xml extends GraphVisitor {
 		String namespacePrefix = comLine.getOptionValue("n").trim();
 		String xsdLocation = comLine.getOptionValue("x").trim();
 		String outputFile = comLine.getOptionValue("o").trim();
+		boolean compile = comLine.hasOption('c');
 
 		Graph theGraph = null;
 		try {
 			theGraph = GraphIO.loadGraphFromFile(graphFile,
 					new ProgressFunctionImpl());
 		} catch (GraphIOException e) {
-			e.printStackTrace();
+			if (compile) {
+				System.out.println("Schema not found.");
+				compileSchema(graphFile);
+				theGraph = GraphIO.loadGraphFromFile(graphFile,
+						new ProgressFunctionImpl());
+			} else {
+				e.printStackTrace();
+			}
 		}
 
 		Tg2xml converter = new Tg2xml(new BufferedOutputStream(
@@ -195,6 +203,13 @@ public class Tg2xml extends GraphVisitor {
 				xsdLocation);
 		converter.visitAll();
 		System.out.println("Fini.");
+	}
+
+	private static void compileSchema(String graphFile) throws GraphIOException {
+		// compile the schema
+		Schema schema = GraphIO.loadSchemaFromFile(graphFile);
+		System.out.println("Compiling schema to RAM");
+		schema.compile();
 	}
 
 	private static CommandLine processCommandLineOptions(String[] args) {
@@ -225,6 +240,11 @@ public class Tg2xml extends GraphVisitor {
 		xsdLocation.setRequired(true);
 		xsdLocation.setArgName("file_or_url");
 		oh.addOption(xsdLocation);
+
+		Option compile = new Option("c", "compile", false,
+				"(optional): compile the schema to RAM if it is not in the classpath");
+		compile.setRequired(false);
+		oh.addOption(compile);
 
 		return oh.parse(args);
 	}
