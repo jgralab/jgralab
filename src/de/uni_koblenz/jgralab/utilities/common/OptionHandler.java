@@ -245,19 +245,26 @@ public class OptionHandler {
 		out.append("-");
 		out.append(current.getOpt());
 		int numberOfArgs = current.getArgs();
+		out.append(" ");
+		if (current.hasOptionalArg()) {
+			out.append("[");
+		}
 		if (numberOfArgs == Option.UNLIMITED_VALUES) {
-			out.append(" ");
+			appendArgName(out, current);
 			out.append("{");
+			out.append(current.getValueSeparator());
 			appendArgName(out, current);
 			out.append("}");
 		}
 		if (numberOfArgs >= 1) {
-			out.append(" ");
 			appendArgName(out, current);
 			for (int i = 1; i < numberOfArgs; i++) {
 				out.append(current.getValueSeparator());
 				appendArgName(out, current);
 			}
+		}
+		if (current.hasOptionalArg()) {
+			out.append("]");
 		}
 	}
 
