@@ -28,6 +28,7 @@ import java.io.FileOutputStream;
 import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.SortedMap;
@@ -44,13 +45,16 @@ import javax.xml.stream.XMLStreamWriter;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.Option;
 
+import de.uni_koblenz.jgralab.BooleanGraphMarker;
 import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.GraphIOException;
+import de.uni_koblenz.jgralab.GraphMarker;
 import de.uni_koblenz.jgralab.JGraLab;
 import de.uni_koblenz.jgralab.WorkInProgress;
 import de.uni_koblenz.jgralab.grumlschema.GrumlSchema;
 import de.uni_koblenz.jgralab.grumlschema.SchemaGraph;
 import de.uni_koblenz.jgralab.grumlschema.domains.BooleanDomain;
+import de.uni_koblenz.jgralab.grumlschema.domains.CollectionDomain;
 import de.uni_koblenz.jgralab.grumlschema.domains.Domain;
 import de.uni_koblenz.jgralab.grumlschema.domains.DoubleDomain;
 import de.uni_koblenz.jgralab.grumlschema.domains.EnumDomain;
@@ -66,6 +70,7 @@ import de.uni_koblenz.jgralab.grumlschema.structure.Attribute;
 import de.uni_koblenz.jgralab.grumlschema.structure.AttributedElementClass;
 import de.uni_koblenz.jgralab.grumlschema.structure.EdgeClass;
 import de.uni_koblenz.jgralab.grumlschema.structure.GraphClass;
+import de.uni_koblenz.jgralab.grumlschema.structure.GraphElementClass;
 import de.uni_koblenz.jgralab.grumlschema.structure.HasAttribute;
 import de.uni_koblenz.jgralab.grumlschema.structure.Schema;
 import de.uni_koblenz.jgralab.grumlschema.structure.SpecializesEdgeClass;
@@ -166,35 +171,53 @@ public class SchemaGraph2XSD {
 	 * Stores Attributes and is defined once to suppress object creation.
 	 */
 	private final ArrayList<Attribute> attributes;
-	private Pattern excludePattern = null;
+	private String[] patterns;
+	private BooleanGraphMarker includes;
 
-	public Pattern getExcludePattern() {
-		return excludePattern;
+	public void setPatterns(String[] patterns) {
+		this.patterns = patterns;
 	}
 
-	public void setExcludePattern(Pattern excludePattern) {
-		this.excludePattern = excludePattern;
+	// private Pattern excludePattern = null;
+
+	// public Pattern getExcludePattern() {
+	// return excludePattern;
+	// }
+	//
+	// public void setExcludePattern(Pattern excludePattern) {
+	// this.excludePattern = excludePattern;
+	// }
+
+	// private boolean isExcluded(VertexClass vc) {
+	// // Prevents a NullPointerException to occur in the case of no used
+	// // exclude pattern.
+	// return (excludePattern != null)
+	// && excludePattern.matcher(vc.getQualifiedName()).matches();
+	// }
+	//
+	// private boolean isExcluded(EdgeClass ec) {
+	// // Prevents a NullPointerException to occur in the case of no used
+	// // exclude pattern.
+	// if (excludePattern == null) {
+	// return false;
+	// }
+	// if (excludePattern.matcher(ec.getQualifiedName()).matches()) {
+	// return true;
+	// }
+	// VertexClass to = (VertexClass) ec.getFirstTo().getOmega();
+	// VertexClass from = (VertexClass) ec.getFirstFrom().getOmega();
+	// return isExcluded(to) || isExcluded(from);
+	// }
+
+	private boolean isIncluded(AttributedElementClass aec) {
+		return includes.isMarked(aec);
 	}
 
-	private boolean isExcluded(VertexClass vc) {
-		// Prevents a NullPointerException to occur in the case of no used
-		// exclude pattern.
-		return (excludePattern != null)
-				&& excludePattern.matcher(vc.getQualifiedName()).matches();
-	}
-
-	private boolean isExcluded(EdgeClass ec) {
-		// Prevents a NullPointerException to occur in the case of no used
-		// exclude pattern.
-		if (excludePattern == null) {
-			return false;
+	private boolean isIncluded(Domain d) {
+		if (d instanceof RecordDomain || d instanceof EnumDomain) {
+			return includes.isMarked(d);
 		}
-		if (excludePattern.matcher(ec.getQualifiedName()).matches()) {
-			return true;
-		}
-		VertexClass to = (VertexClass) ec.getFirstTo().getOmega();
-		VertexClass from = (VertexClass) ec.getFirstFrom().getOmega();
-		return isExcluded(to) || isExcluded(from);
+		return false;
 	}
 
 	/**
@@ -224,10 +247,224 @@ public class SchemaGraph2XSD {
 		attributes = new ArrayList<Attribute>();
 	}
 
+	@WorkInProgress
+	private void processPatterns() {
+		includes = new BooleanGraphMarker(schemaGraph);
+
+		if (patterns != null) {
+			// always include the GraphClass
+			includes.mark(schemaGraph);
+			// accept everything by default
+			Pattern matchesAll = Pattern.compile(".*");
+
+			if (patterns.length > 0 && patterns[0].trim().startsWith("+")) {
+				System.out.println("Excluding all");
+				// includeOrExcludeAllGraphElements(false, matchesAll);
+			} else {
+				System.out.println("Including all");
+				includeOrExcludeAllGraphElements(true, matchesAll);
+			}
+
+			Pattern validPattern = Pattern.compile("^[+\\-]");
+			for (String currentRawPattern : patterns) {
+				Pattern currentPattern = Pattern.compile(validPattern
+						.split(currentRawPattern)[1]);
+				if (currentRawPattern.trim().startsWith("+")) {
+					includeOrExcludeAllGraphElements(true, currentPattern);
+				} else if (currentRawPattern.trim().startsWith("-")) {
+					includeOrExcludeAllGraphElements(false, currentPattern);
+				}
+			}
+
+			// maybe TODO exclude all specializations of excluded classes
+			// (vertices and edges)
+
+			excludeUnnecessaryAbstractVertices();
+
+			excludeUnecessaryEdges();
+
+			includeAllNecessaryDomains();
+
+		} else {
+			// if no patterns are set include everything
+			for (AttributedElementClass currentAttributedElement : schemaGraph
+					.getAttributedElementClassVertices()) {
+				includes.mark(currentAttributedElement);
+			}
+			for (EnumDomain currentEnumDomain : schemaGraph
+					.getEnumDomainVertices()) {
+				includes.mark(currentEnumDomain);
+			}
+			for (RecordDomain currentRecordDomain : schemaGraph
+					.getRecordDomainVertices()) {
+				includes.mark(currentRecordDomain);
+			}
+		}
+	}
+
+	// private void explicitlyExcludeImplicitlyExcludedClasses(){
+	// BooleanGraphMarker processed = new BooleanGraphMarker(schemaGraph);
+	// for(GraphElementClass currentGraphElementClass :
+	// schemaGraph.getGraphElementClassVertices()){
+	// if(!processed.isMarked(currentGraphElementClass) &&
+	// !includes.isMarked(currentGraphElementClass)){
+	// excludeGraphElementClass(processed, currentGraphElementClass);
+	// }
+	// }
+	// }
+	//	
+	// private void excludeGraphElementClass(
+	// BooleanGraphMarker processed, GraphElementClass currentGraphElementClass)
+	// {
+	// processed.mark(currentGraphElementClass);
+	// includes.unmark(currentGraphElementClass);
+	// for (SpecializesVertexClass current : currentVertexClass
+	// .getSpecializesVertexClassIncidences(EdgeDirection.IN)) {
+	// if (!excludeVertexClass(processed, (VertexClass) current.getThat())) {
+	// // at least one subclass is not excluded
+	// return false;
+	// }
+	// }
+	// }
+
+	@WorkInProgress
+	private void includeAllNecessaryDomains() {
+		for (AttributedElementClass currentAttributedElementClass : schemaGraph
+				.getAttributedElementClassVertices()) {
+			if (includes.isMarked(currentAttributedElementClass)) {
+				for (HasAttribute currentAttributeLink : currentAttributedElementClass
+						.getHasAttributeIncidences()) {
+					Domain currentDomain = (Domain) ((Attribute) currentAttributeLink
+							.getThat()).getFirstHasDomain().getThat();
+					includeDomain(currentDomain);
+				}
+			}
+		}
+	}
+
+	@WorkInProgress
+	private void includeDomain(Domain d) {
+		if (d instanceof EnumDomain) {
+			includeDomain((EnumDomain) d);
+		} else if (d instanceof RecordDomain) {
+			includeDomain((RecordDomain) d);
+		} else if (d instanceof CollectionDomain) {
+			includeDomain((CollectionDomain) d);
+		} else if (d instanceof MapDomain) {
+			includeDomain((MapDomain) d);
+		}
+	}
+
+	@WorkInProgress
+	private void includeDomain(MapDomain md) {
+		includeDomain((Domain) md.getFirstHasKeyDomain().getThat());
+		includeDomain((Domain) md.getFirstHasValueDomain().getThat());
+	}
+
+	@WorkInProgress
+	private void includeDomain(CollectionDomain cd) {
+		includeDomain((Domain) cd.getFirstHasBaseDomain().getThat());
+	}
+
+	@WorkInProgress
+	private void includeDomain(EnumDomain ed) {
+		includes.mark(ed);
+	}
+
+	@WorkInProgress
+	private void includeDomain(RecordDomain rd) {
+		includes.mark(rd);
+		// recursively include all RecordDomainComponentDomains
+		for (HasRecordDomainComponent currentRecordDomainComponentEdgeClass : rd
+				.getHasRecordDomainComponentIncidences()) {
+			includeDomain((Domain) currentRecordDomainComponentEdgeClass
+					.getThat());
+		}
+	}
+
+	@WorkInProgress
+	private void excludeUnecessaryEdges() {
+		for (EdgeClass currentEdgeClass : schemaGraph.getEdgeClassVertices()) {
+			if (includes.isMarked(currentEdgeClass)) {
+				// only look at included EdgeClasses
+				if (!includes.isMarked(currentEdgeClass.getFirstTo().getThat())
+						|| !includes.isMarked(currentEdgeClass.getFirstFrom()
+								.getThat())) {
+					// exclude all EdgeClasses whose to or from VertexClasses
+					// are already excluded
+					includes.unmark(currentEdgeClass);
+				}
+			}
+		}
+	}
+
+	@WorkInProgress
+	private void excludeUnnecessaryAbstractVertices() {
+		BooleanGraphMarker processed = new BooleanGraphMarker(schemaGraph);
+		for (VertexClass currentVertexClass : schemaGraph
+				.getVertexClassVertices()) {
+			if (currentVertexClass.isIsAbstract()) {
+				// only process abstract vertices
+				if (excludeVertexClass(processed, currentVertexClass)) {
+					includes.unmark(currentVertexClass);
+				}
+			}
+		}
+	}
+
+	@WorkInProgress
+	private boolean excludeVertexClass(BooleanGraphMarker processed,
+			VertexClass currentVertexClass) {
+		if (processed.isMarked(currentVertexClass)
+				|| !currentVertexClass.isIsAbstract()) {
+			return !includes.isMarked(currentVertexClass);
+		}
+		processed.mark(currentVertexClass);
+		if (!includes.isMarked(currentVertexClass)) {
+			// abstract and already excluded
+			return false;
+		}
+		for (SpecializesVertexClass current : currentVertexClass
+				.getSpecializesVertexClassIncidences(EdgeDirection.IN)) {
+			if (!excludeVertexClass(processed, (VertexClass) current.getThat())) {
+				// at least one subclass is not excluded
+				return false;
+			}
+		}
+		// all subclasses are excluded or is abstractLeaf (which should not
+		// occur)
+		return true;
+	}
+
+	@WorkInProgress
+	private void includeOrExcludeAllGraphElements(boolean include,
+			Pattern currentPattern) {
+		for (GraphElementClass gec : schemaGraph.getGraphElementClassVertices()) {
+			includeOrExcludeIfMatches(include, gec, currentPattern);
+		}
+	}
+
+	@WorkInProgress
+	private void includeOrExcludeIfMatches(boolean include,
+			GraphElementClass gec, Pattern currentPattern) {
+		if (currentPattern.matcher(gec.getQualifiedName()).matches()) {
+			if (include) {
+				includes.mark(gec);
+			} else {
+				includes.unmark(gec);
+			}
+		}
+	}
+
 	public void writeXSD() throws XMLStreamException {
 
+		// select which classes are exported into the XSD
+		processPatterns();
+
 		for (Domain domain : schemaGraph.getDomainVertices()) {
-			getXSDType(domain);
+			if (isIncluded(domain)) {
+				getXSDType(domain);
+			}
 		}
 
 		writeStartXSDSchema();
@@ -347,7 +584,7 @@ public class SchemaGraph2XSD {
 		xml.writeAttribute(XSD_ATTRIBUTE_MAX_OCCURS, "unbounded");
 
 		for (VertexClass vc : schemaGraph.getVertexClassVertices()) {
-			if (vc.isIsAbstract() || isExcluded(vc)) {
+			if (vc.isIsAbstract() || !isIncluded(vc)) {
 				continue;
 			}
 			writeStartXSDElement(vc.getQualifiedName(),
@@ -355,7 +592,7 @@ public class SchemaGraph2XSD {
 					false);
 		}
 		for (EdgeClass ec : schemaGraph.getEdgeClassVertices()) {
-			if (ec.isIsAbstract() || isExcluded(ec)) {
+			if (ec.isIsAbstract() || !isIncluded(ec)) {
 				continue;
 			}
 			writeStartXSDElement(ec.getQualifiedName(),
@@ -405,7 +642,7 @@ public class SchemaGraph2XSD {
 
 	private void writeEdgeClassComplexTypes() throws XMLStreamException {
 		for (EdgeClass ec : schemaGraph.getEdgeClassVertices()) {
-			if (ec.isIsAbstract() || isExcluded(ec)) {
+			if (ec.isIsAbstract() || !isIncluded(ec)) {
 				continue;
 			}
 
@@ -495,7 +732,7 @@ public class SchemaGraph2XSD {
 	private void writeVertexClassComplexTypes() throws XMLStreamException {
 		for (VertexClass vc : schemaGraph.getVertexClassVertices()) {
 
-			if (vc.isIsAbstract() || isExcluded(vc)) {
+			if (vc.isIsAbstract() || !isIncluded(vc)) {
 				continue;
 			}
 
@@ -710,14 +947,16 @@ public class SchemaGraph2XSD {
 		// Loop over all existing EnumDomains and RecordDomains.
 		for (Entry<Domain, String> entry : domainMap.entrySet()) {
 			Domain d = entry.getKey();
-			if (d instanceof EnumDomain) {
-				createEnumDomainType((EnumDomain) entry.getKey(), entry
-						.getValue());
-			} else if (d instanceof RecordDomain) {
-				createRecordDomainType(entry.getKey(), entry.getValue());
-			} else {
-				throw new RuntimeException("Unknown domain " + d + " ("
-						+ d.getQualifiedName() + ")");
+			if (includes.isMarked(d)) {
+				if (d instanceof EnumDomain) {
+					createEnumDomainType((EnumDomain) entry.getKey(), entry
+							.getValue());
+				} else if (d instanceof RecordDomain) {
+					createRecordDomainType(entry.getKey(), entry.getValue());
+				} else {
+					throw new RuntimeException("Unknown domain " + d + " ("
+							+ d.getQualifiedName() + ")");
+				}
 			}
 		}
 	}
@@ -858,16 +1097,25 @@ public class SchemaGraph2XSD {
 		String schemaGraphFile = comLine.getOptionValue("g").trim();
 		String namespacePrefix = comLine.getOptionValue("n").trim();
 		String xsdFile = comLine.getOptionValue("o").trim();
-		String exclPattern = comLine.getOptionValue("e");
+		String[] rawPatterns = comLine.hasOption('p') ? comLine
+				.getOptionValues('p') : null;
 
 		SchemaGraph sg = GrumlSchema.instance().loadSchemaGraph(
 				schemaGraphFile, new ProgressFunctionImpl());
-		SchemaGraph2XSD t2xsd = new SchemaGraph2XSD(sg, namespacePrefix,
+		SchemaGraph2XSD sg2xsd = new SchemaGraph2XSD(sg, namespacePrefix,
 				xsdFile);
-		if (exclPattern != null) {
-			t2xsd.setExcludePattern(Pattern.compile(exclPattern));
-		}
-		t2xsd.writeXSD();
+
+		sg2xsd.setPatterns(rawPatterns);
+
+		// TODO remove
+		// String exclPattern = comLine.getOptionValue("e");
+		//
+		// if (exclPattern != null) {
+		// sg2xsd.setExcludePattern(Pattern.compile(exclPattern));
+		// }
+		// end remove
+
+		sg2xsd.writeXSD();
 
 		System.out.println("Fini.");
 	}
@@ -895,11 +1143,22 @@ public class SchemaGraph2XSD {
 		graph.setArgName("file");
 		oh.addOption(graph);
 
-		Option exPattern = new Option("e", "exclude-pattern", true,
-				"(optional): regular expression matching elements which should be excluded");
-		exPattern.setRequired(true);
-		exPattern.setArgName("regular_expression");
-		oh.addOption(exPattern);
+		Option patternList = new Option(
+				"p",
+				"pattern-list",
+				true,
+				"(optional) List of patterns. Include patterns start with \"+\", exclude patterns start with \"-\", by default everything is included.");
+		patternList.setRequired(false);
+		patternList.setArgs(Option.UNLIMITED_VALUES);
+		patternList.setArgName("(+|-)pattern");
+		patternList.setValueSeparator(' ');
+		oh.addOption(patternList);
+
+		// Option exPattern = new Option("e", "exclude-pattern", true,
+		// "(optional): regular expression matching elements which should be excluded");
+		// exPattern.setRequired(true);
+		// exPattern.setArgName("regular_expression");
+		// oh.addOption(exPattern);
 
 		return oh.parse(args);
 	}
