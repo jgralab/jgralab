@@ -43,7 +43,28 @@ import org.apache.commons.cli.ParseException;
  * for the missing feature of isolated options for printing the help or the
  * version information. This class is a wrapper for several classes of CLI.
  * 
- * It also provides methods for printing the help and version information.
+ * It also provides methods for printing the help and version information. <br>
+ * Common mean of the parameters:<br>
+ * -a --alternative-schema specifies the alternative schema<br>
+ * -c --compile if specified, the .java are compiled<br>
+ * -d --domains if set, domain names of attributes will be printed<br>
+ * -e --edgeattr if set, edge attributes will be printed<br>
+ * -e --exclude-pattern regular expression matching elements which should be
+ * excluded<br>
+ * -g --graph tg-file of a graph as input<br>
+ * -h --help print help<br>
+ * -j --jar specifies the name of the jar-file<br>
+ * -n --namespace-prefix namespace prefix<br>
+ * -n --rolenames if set, role names will be printed<br>
+ * -o --output output file<br>
+ * -p --path output path for the created files<br>
+ * -q --queryfile queryfile which should be executed -r --reversed if set, edges
+ * will be reversed<br>
+ * -s --schema tg-file of a schema as input<br>
+ * -s --shorten-strings if set, strings are shortened<br>
+ * -s1 -s2 --schema1 --schema2 schemas to be compared<br>
+ * -v --version print version information<br>
+ * -x --xsd-location the location of the xsd-schema<br>
  * 
  * @author ist@uni-koblenz.de
  * 
