@@ -23,12 +23,13 @@
  */
 package de.uni_koblenz.jgralab.utilities.schemagraph2xsd;
 
+import java.io.BufferedOutputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.PrintStream;
 import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.SortedMap;
@@ -45,10 +46,10 @@ import javax.xml.stream.XMLStreamWriter;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.Option;
 
+import de.uni_koblenz.jgralab.AttributedElement;
 import de.uni_koblenz.jgralab.BooleanGraphMarker;
 import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.GraphIOException;
-import de.uni_koblenz.jgralab.GraphMarker;
 import de.uni_koblenz.jgralab.JGraLab;
 import de.uni_koblenz.jgralab.WorkInProgress;
 import de.uni_koblenz.jgralab.grumlschema.GrumlSchema;
@@ -173,41 +174,12 @@ public class SchemaGraph2XSD {
 	private final ArrayList<Attribute> attributes;
 	private String[] patterns;
 	private BooleanGraphMarker includes;
+	private PrintStream debugOutputStream;
+	private boolean autoExclude = false;
 
 	public void setPatterns(String[] patterns) {
 		this.patterns = patterns;
 	}
-
-	// private Pattern excludePattern = null;
-
-	// public Pattern getExcludePattern() {
-	// return excludePattern;
-	// }
-	//
-	// public void setExcludePattern(Pattern excludePattern) {
-	// this.excludePattern = excludePattern;
-	// }
-
-	// private boolean isExcluded(VertexClass vc) {
-	// // Prevents a NullPointerException to occur in the case of no used
-	// // exclude pattern.
-	// return (excludePattern != null)
-	// && excludePattern.matcher(vc.getQualifiedName()).matches();
-	// }
-	//
-	// private boolean isExcluded(EdgeClass ec) {
-	// // Prevents a NullPointerException to occur in the case of no used
-	// // exclude pattern.
-	// if (excludePattern == null) {
-	// return false;
-	// }
-	// if (excludePattern.matcher(ec.getQualifiedName()).matches()) {
-	// return true;
-	// }
-	// VertexClass to = (VertexClass) ec.getFirstTo().getOmega();
-	// VertexClass from = (VertexClass) ec.getFirstFrom().getOmega();
-	// return isExcluded(to) || isExcluded(from);
-	// }
 
 	private boolean isIncluded(AttributedElementClass aec) {
 		return includes.isMarked(aec);
@@ -257,11 +229,7 @@ public class SchemaGraph2XSD {
 			// accept everything by default
 			Pattern matchesAll = Pattern.compile(".*");
 
-			if (patterns.length > 0 && patterns[0].trim().startsWith("+")) {
-				System.out.println("Excluding all");
-				// includeOrExcludeAllGraphElements(false, matchesAll);
-			} else {
-				System.out.println("Including all");
+			if (patterns.length <= 0 || patterns[0].trim().startsWith("-")) {
 				includeOrExcludeAllGraphElements(true, matchesAll);
 			}
 
@@ -276,14 +244,18 @@ public class SchemaGraph2XSD {
 				}
 			}
 
-			// maybe TODO exclude all specializations of excluded classes
-			// (vertices and edges)
-
+			if (autoExclude) {
+				explicitlyExcludeImplicitlyExcludedClasses();
+			}
 			excludeUnnecessaryAbstractVertices();
 
 			excludeUnecessaryEdges();
 
 			includeAllNecessaryDomains();
+
+			if (debugOutputStream != null) {
+				writeDebugInformation();
+			}
 
 		} else {
 			// if no patterns are set include everything
@@ -302,30 +274,91 @@ public class SchemaGraph2XSD {
 		}
 	}
 
-	// private void explicitlyExcludeImplicitlyExcludedClasses(){
-	// BooleanGraphMarker processed = new BooleanGraphMarker(schemaGraph);
-	// for(GraphElementClass currentGraphElementClass :
-	// schemaGraph.getGraphElementClassVertices()){
-	// if(!processed.isMarked(currentGraphElementClass) &&
-	// !includes.isMarked(currentGraphElementClass)){
-	// excludeGraphElementClass(processed, currentGraphElementClass);
-	// }
-	// }
-	// }
-	//	
-	// private void excludeGraphElementClass(
-	// BooleanGraphMarker processed, GraphElementClass currentGraphElementClass)
-	// {
-	// processed.mark(currentGraphElementClass);
-	// includes.unmark(currentGraphElementClass);
-	// for (SpecializesVertexClass current : currentVertexClass
-	// .getSpecializesVertexClassIncidences(EdgeDirection.IN)) {
-	// if (!excludeVertexClass(processed, (VertexClass) current.getThat())) {
-	// // at least one subclass is not excluded
-	// return false;
-	// }
-	// }
-	// }
+	@WorkInProgress
+	private void writeDebugInformation() {
+		debugOutputStream.println("[VertexClasses]");
+		for (VertexClass current : schemaGraph.getVertexClassVertices()) {
+			writeElementDebugInformation(current);
+		}
+		debugOutputStream.println();
+		debugOutputStream.println("[EdgeClasses]");
+		for (EdgeClass current : schemaGraph.getEdgeClassVertices()) {
+			writeElementDebugInformation(current);
+		}
+		debugOutputStream.println();
+		debugOutputStream.println("[Domains]");
+		for (EnumDomain current : schemaGraph.getEnumDomainVertices()) {
+			writeDomainDebugInformation(current);
+		}
+		for (RecordDomain current : schemaGraph.getRecordDomainVertices()) {
+			writeDomainDebugInformation(current);
+		}
+		debugOutputStream.flush();
+		debugOutputStream.close();
+	}
+
+	@WorkInProgress
+	private void writeDomainDebugInformation(Domain current) {
+		writeIncludeOrExcludeInformation(current);
+		debugOutputStream.println(current.getQualifiedName());
+	}
+
+	@WorkInProgress
+	private void writeElementDebugInformation(GraphElementClass current) {
+		writeIncludeOrExcludeInformation(current);
+		debugOutputStream.println(current.getQualifiedName());
+	}
+
+	@WorkInProgress
+	private void writeIncludeOrExcludeInformation(AttributedElement current) {
+		if (includes.isMarked(current)) {
+			debugOutputStream.print("IN: ");
+		} else {
+			debugOutputStream.print("EX: ");
+		}
+	}
+
+	@WorkInProgress
+	private void explicitlyExcludeImplicitlyExcludedClasses() {
+		BooleanGraphMarker processed = new BooleanGraphMarker(schemaGraph);
+		for (VertexClass currentVertexClass : schemaGraph
+				.getVertexClassVertices()) {
+			if (!processed.isMarked(currentVertexClass)
+					&& !includes.isMarked(currentVertexClass)) {
+				excludeGraphElementClass(processed, currentVertexClass);
+			}
+		}
+		for (EdgeClass currentEdgeClass : schemaGraph.getEdgeClassVertices()) {
+			if (!processed.isMarked(currentEdgeClass)
+					&& !includes.isMarked(currentEdgeClass)) {
+				excludeGraphElementClass(processed, currentEdgeClass);
+			}
+		}
+	}
+
+	@WorkInProgress
+	private void excludeGraphElementClass(BooleanGraphMarker processed,
+			VertexClass currentGraphElementClass) {
+		processed.mark(currentGraphElementClass);
+		includes.unmark(currentGraphElementClass);
+		for (SpecializesVertexClass current : currentGraphElementClass
+				.getSpecializesVertexClassIncidences(EdgeDirection.IN)) {
+			VertexClass superclass = (VertexClass) current.getThat();
+			excludeGraphElementClass(processed, superclass);
+		}
+	}
+
+	@WorkInProgress
+	private void excludeGraphElementClass(BooleanGraphMarker processed,
+			EdgeClass currentGraphElementClass) {
+		processed.mark(currentGraphElementClass);
+		includes.unmark(currentGraphElementClass);
+		for (SpecializesEdgeClass current : currentGraphElementClass
+				.getSpecializesEdgeClassIncidences(EdgeDirection.IN)) {
+			EdgeClass superclass = (EdgeClass) current.getThat();
+			excludeGraphElementClass(processed, superclass);
+		}
+	}
 
 	@WorkInProgress
 	private void includeAllNecessaryDomains() {
@@ -431,7 +464,7 @@ public class SchemaGraph2XSD {
 				return false;
 			}
 		}
-		// all subclasses are excluded or is abstractLeaf (which should not
+		// all subclasses are excluded or is abstract leaf (which should not
 		// occur)
 		return true;
 	}
@@ -1107,13 +1140,21 @@ public class SchemaGraph2XSD {
 
 		sg2xsd.setPatterns(rawPatterns);
 
-		// TODO remove
-		// String exclPattern = comLine.getOptionValue("e");
-		//
-		// if (exclPattern != null) {
-		// sg2xsd.setExcludePattern(Pattern.compile(exclPattern));
-		// }
-		// end remove
+		if (comLine.hasOption('d')) {
+			String filename = comLine.getOptionValue('d');
+			if (filename == null) {
+				sg2xsd.setDebugOutputStream(System.out);
+			} else {
+				sg2xsd
+						.setDebugOutputStream(new PrintStream(
+								new BufferedOutputStream(new FileOutputStream(
+										filename))));
+			}
+		}
+		
+		if(comLine.hasOption('x')){
+			sg2xsd.setAutoExclude(true);
+		}
 
 		sg2xsd.writeXSD();
 
@@ -1147,20 +1188,41 @@ public class SchemaGraph2XSD {
 				"p",
 				"pattern-list",
 				true,
-				"(optional) List of patterns. Include patterns start with \"+\", exclude patterns start with \"-\", by default everything is included.");
+				"(optional): List of patterns. Include patterns start with \"+\", exclude patterns start with \"-\", by default everything is included. If the first pattern is positive, everything is excluded first.");
 		patternList.setRequired(false);
 		patternList.setArgs(Option.UNLIMITED_VALUES);
 		patternList.setArgName("(+|-)pattern");
 		patternList.setValueSeparator(' ');
 		oh.addOption(patternList);
 
-		// Option exPattern = new Option("e", "exclude-pattern", true,
-		// "(optional): regular expression matching elements which should be excluded");
-		// exPattern.setRequired(true);
-		// exPattern.setArgName("regular_expression");
-		// oh.addOption(exPattern);
+		Option debug = new Option(
+				"d",
+				"debug",
+				true,
+				"(optional): write debug information for include and exclude patterns into a file (optional parameter) or standard out.");
+		debug.setRequired(false);
+		debug.setArgs(1);
+		debug.setArgName("filename");
+		debug.setOptionalArg(true);
+		oh.addOption(debug);
+
+		Option implicitExclude = new Option(
+				"x",
+				"implicit-exclude",
+				false,
+				"(optional): if this flag is set, all implicitly excluded subclasses will be explicitly excluded and not exported.");
+		implicitExclude.setRequired(false);
+		oh.addOption(implicitExclude);
 
 		return oh.parse(args);
+	}
+
+	public void setDebugOutputStream(PrintStream debugOutputStream) {
+		this.debugOutputStream = debugOutputStream;
+	}
+
+	public void setAutoExclude(boolean autoExclude) {
+		this.autoExclude = autoExclude;
 	}
 
 }
