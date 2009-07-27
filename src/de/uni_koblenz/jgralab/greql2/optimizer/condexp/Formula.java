@@ -22,9 +22,9 @@ import de.uni_koblenz.jgralab.greql2.schema.TrivalentBoolean;
 
 /**
  * TODO: (heimdall) Comment class!
- *
+ * 
  * @author ist@uni-koblenz.de
- *
+ * 
  */
 public abstract class Formula {
 	protected static Logger logger = Logger.getLogger(Formula.class
@@ -128,12 +128,18 @@ public abstract class Formula {
 		boolean hasTypeFunAppFound = false;
 		for (Expression exp : nonConstantTermExpressions) {
 			current = new ConditionalExpressionUnit(exp, this);
+
+			// initialize best with the first one.
+			if (best == null) {
+				best = current;
+			}
+
 			if (containsFunApp(exp, "hasType")) {
 				hasTypeFunAppFound = true;
 			}
-			if (best == null
-					|| best.getInfluenceCostRatio() < current
-							.getInfluenceCostRatio()) {
+			if ((best == null)
+					|| (best.getInfluenceCostRatio() < current
+							.getInfluenceCostRatio())) {
 				// if there was a hasType() before, attribute accesses may not
 				// be pulled before! Example: hasType(v, "Foo") and v.fooAttr =
 				// 19 must stay in this order.
@@ -184,7 +190,7 @@ public abstract class Formula {
 	 * Create a new {@link Formula} where each {@link NonConstantTerm} that
 	 * represents the {@link Expression} <code>exp</code> is replaced by
 	 * <code>literal</code>.
-	 *
+	 * 
 	 * @param exp
 	 *            the {@link Expression} whose {@link NonConstantTerm}s should
 	 *            be replaced
@@ -201,7 +207,7 @@ public abstract class Formula {
 	 * <code>a or true = true</code>, <code>a or false = a</code>,
 	 * <code>not true = false</code>, <code>not false = true</code>,
 	 * <code>not not a = a</code>.
-	 *
+	 * 
 	 * @return a simplified {@link Formula}
 	 */
 	public abstract Formula simplify();
