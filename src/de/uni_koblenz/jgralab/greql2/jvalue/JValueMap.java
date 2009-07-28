@@ -181,7 +181,12 @@ public class JValueMap extends JValue {
 			}
 			sb.append(k);
 			sb.append(" ==> ");
-			sb.append(map.get(k).toString());
+			JValue val = map.get(k);
+			if (val == null) {
+				sb.append("null");
+			} else {
+				sb.append(val.toString());
+			}
 		}
 		sb.append("}");
 		return sb.toString();
