@@ -45,6 +45,7 @@ import javax.xml.stream.XMLStreamWriter;
 
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.Option;
+import org.apache.commons.cli.OptionGroup;
 
 import de.uni_koblenz.jgralab.AttributedElement;
 import de.uni_koblenz.jgralab.BooleanGraphMarker;
@@ -82,6 +83,7 @@ import de.uni_koblenz.jgralab.utilities.common.OptionHandler;
 import de.uni_koblenz.jgralab.utilities.common.UtilityMethods;
 import de.uni_koblenz.jgralab.utilities.jgralab2owl.IndentingXMLStreamWriter;
 import de.uni_koblenz.jgralab.utilities.rsa2tg.SchemaGraph2Tg;
+import de.uni_koblenz.jgralab.utilities.tg2schemagraph.Tg2SchemaGraph;
 
 /**
  * This tool generates an XML schema according to a grUML schema. The details on
@@ -1276,14 +1278,17 @@ public class SchemaGraph2XSD {
 			FactoryConfigurationError {
 		CommandLine comLine = processCommandLineOptions(args);
 		assert comLine != null;
-		String schemaGraphFile = comLine.getOptionValue("g").trim();
-		String namespacePrefix = comLine.getOptionValue("n").trim();
-		String xsdFile = comLine.getOptionValue("o").trim();
+		String inputFile = comLine.hasOption('g') ? comLine.getOptionValue('g')
+				.trim() : comLine.getOptionValue('s');
+		String namespacePrefix = comLine.getOptionValue('n').trim();
+		String xsdFile = comLine.getOptionValue('o').trim();
 		String[] rawPatterns = comLine.hasOption('p') ? comLine
 				.getOptionValues('p') : null;
 
-		SchemaGraph sg = GrumlSchema.instance().loadSchemaGraph(
-				schemaGraphFile, new ProgressFunctionImpl());
+		SchemaGraph sg = comLine.hasOption('g') ? GrumlSchema.instance()
+				.loadSchemaGraph(inputFile, new ProgressFunctionImpl())
+				: new Tg2SchemaGraph().process(inputFile);
+
 		SchemaGraph2XSD sg2xsd = new SchemaGraph2XSD(sg, namespacePrefix,
 				xsdFile);
 
@@ -1328,10 +1333,23 @@ public class SchemaGraph2XSD {
 		oh.addOption(namespacePrefix);
 
 		Option graph = new Option("g", "graph", true,
-				"(required): TG-file of the schemaGraph");
-		graph.setRequired(true);
+				"(required or -s): TG-file of the schemaGraph");
+		graph.setRequired(false);
 		graph.setArgName("file");
 		oh.addOption(graph);
+
+		Option schema = new Option("s", "schema", true,
+				"(required or -g): TG-file of the schema");
+		schema.setRequired(false);
+		schema.setArgName("file");
+		oh.addOption(schema);
+
+		// either graph or schema has to be provided
+		OptionGroup input = new OptionGroup();
+		input.addOption(graph);
+		input.addOption(schema);
+		input.setRequired(true);
+		oh.addOptionGroup(input);
 
 		Option patternList = new Option(
 				"p",

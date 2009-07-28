@@ -159,6 +159,10 @@ public class OptionHandler {
 		optionList.add(o);
 		options.addOption(o);
 	}
+	
+	public void addOptionGroup(OptionGroup og){
+		options.addOptionGroup(og);
+	}
 
 	/**
 	 * Returns the Options structure.
