@@ -109,11 +109,11 @@ public abstract class AttributedElementClassImpl extends NamedElementImpl
 		// that case, it may not be added, too.
 		if (subclassContainsAttribute(anAttribute.getName())) {
 			throw new DuplicateAttributeException(
-					"Duplicate Attribute "
+					"Duplicate Attribute '"
 							+ anAttribute.getName()
-							+ " in AttributedElementClass "
+							+ "' in AttributedElementClass '"
 							+ getQualifiedName()
-							+ ". "
+							+ "'. "
 							+ "A derived AttributedElementClass already contains this Attribute.");
 		}
 		if (Schema.RESERVED_JAVA_WORDS.contains(anAttribute.getName())) {
