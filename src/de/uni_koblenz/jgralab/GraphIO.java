@@ -793,7 +793,7 @@ public class GraphIO {
 			if (schema.getQualifiedName().equals(qn[0] + "." + qn[1])) {
 				// yes, everything is fine :-)
 				// skip schema part
-				while (lookAhead.length() > 0 && !lookAhead.equals("Graph")) {
+				while ((lookAhead.length() > 0) && !lookAhead.equals("Graph")) {
 					match();
 				}
 				return;
@@ -1506,18 +1506,18 @@ public class GraphIO {
 	}
 
 	private static boolean isValidPackageName(String s) {
-		if (s == null || s.length() == 0) {
+		if ((s == null) || (s.length() == 0)) {
 			return false;
 		}
 		char[] chars = s.toCharArray();
 		if (!Character.isLetter(chars[0]) || !Character.isLowerCase(chars[0])
-				|| chars[0] > 127) {
+				|| (chars[0] > 127)) {
 			return false;
 		}
 		for (int i = 1; i < chars.length; i++) {
 			if (!(Character.isLowerCase(chars[i])
-					|| Character.isDigit(chars[i]) || chars[i] == '_')
-					|| chars[i] > 127) {
+					|| Character.isDigit(chars[i]) || (chars[i] == '_'))
+					|| (chars[i] > 127)) {
 				return false;
 			}
 		}
@@ -1701,8 +1701,8 @@ public class GraphIO {
 			GraphIOException {
 		int startLine = line;
 		la = read();
-		LOOP: while (la != -1 && la != '"') {
-			if (la < 32 || la > 127) {
+		LOOP: while ((la != -1) && (la != '"')) {
+			if ((la < 32) || (la > 127)) {
 				throw new GraphIOException("invalid character '" + (char) la
 						+ "' in string in line " + line);
 			}
@@ -1772,13 +1772,13 @@ public class GraphIO {
 	}
 
 	private final static boolean isWs(int c) {
-		return c == ' ' || c == '\n' || c == '\t' || c == '\r';
+		return (c == ' ') || (c == '\n') || (c == '\t') || (c == '\r');
 	}
 
 	private final static boolean isSeparator(int c) {
-		return c == ';' || c == '<' || c == '>' || c == '(' || c == ')'
-				|| c == '{' || c == '}' || c == ':' || c == '[' || c == ']'
-				|| c == ',';
+		return (c == ';') || (c == '<') || (c == '>') || (c == '(')
+				|| (c == ')') || (c == '{') || (c == '}') || (c == ':')
+				|| (c == '[') || (c == ']') || (c == ',');
 	}
 
 	private final void skipWs() throws GraphIOException {
@@ -1794,10 +1794,10 @@ public class GraphIO {
 			// skip single line comments
 			if (la == '/') {
 				la = read();
-				if (la >= 0 && la == '/') {
+				if ((la >= 0) && (la == '/')) {
 					// single line comment, skip to the end of the current line
 					logger.finer("Comment detected in line " + line);
-					while (la >= 0 && la != '\n') {
+					while ((la >= 0) && (la != '\n')) {
 						la = read();
 					}
 				} else {
@@ -1898,14 +1898,14 @@ public class GraphIO {
 		String[] result = SchemaImpl.splitQualifiedName(c);
 
 		boolean ok = true;
-		if (result[0].length() == 0 && result[1].charAt(0) != '.') {
+		if ((result[0].length() == 0) && (result[1].charAt(0) != '.')) {
 			// no need to check, because currentPackageName is already checked
 			// by parsePackage();
 		} else if (result[0].length() > 0) {
 			String[] parts = result[0].split("\\.");
-			ok = (parts.length == 1 && parts[0].length() == 0)
+			ok = ((parts.length == 1) && (parts[0].length() == 0))
 					|| isValidPackageName(parts[0]);
-			for (int i = 1; i < parts.length && ok; i++) {
+			for (int i = 1; (i < parts.length) && ok; i++) {
 				ok = ok && isValidPackageName(parts[i]);
 			}
 		}
@@ -1941,7 +1941,7 @@ public class GraphIO {
 	 *         name and simple name.
 	 */
 	private final String toQNameString(String pn, String sn) {
-		if (pn == null || pn.isEmpty()) {
+		if ((pn == null) || pn.isEmpty()) {
 			return sn;
 		}
 		return pn + "." + sn;
@@ -2128,8 +2128,13 @@ public class GraphIO {
 
 	private void edgeDesc(Graph graph) throws GraphIOException {
 		int eId = eId();
-		String ecName = graph.getGraphClass().getEdgeClass(className())
-				.getQualifiedName();
+		String className = className();
+		EdgeClass ec = graph.getGraphClass().getEdgeClass(className);
+
+		assert ec != null : "Could't find edge class " + className
+				+ " in the schema.";
+
+		String ecName = ec.getQualifiedName();
 		Edge edge;
 		Method createMethod;
 		createMethod = createMethods.get(ecName);
@@ -2238,7 +2243,7 @@ public class GraphIO {
 				out.append("\\t");
 				break;
 			default:
-				if (c >= 32 && c <= 127) {
+				if ((c >= 32) && (c <= 127)) {
 					out.append(c);
 				} else {
 					out.append("\\u");
@@ -2263,16 +2268,16 @@ public class GraphIO {
 	}
 
 	private static boolean isValidIdentifier(String s) {
-		if (s == null || s.length() == 0) {
+		if ((s == null) || (s.length() == 0)) {
 			return false;
 		}
 		char[] chars = s.toCharArray();
-		if (!Character.isLetter(chars[0]) || chars[0] > 127) {
+		if (!Character.isLetter(chars[0]) || (chars[0] > 127)) {
 			return false;
 		}
 		for (int i = 1; i < chars.length; i++) {
-			if (!(Character.isLetter(chars[i]) || Character.isDigit(chars[i]) || chars[i] == '_')
-					|| chars[i] > 127) {
+			if (!(Character.isLetter(chars[i]) || Character.isDigit(chars[i]) || (chars[i] == '_'))
+					|| (chars[i] > 127)) {
 				return false;
 			}
 		}
