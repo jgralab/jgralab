@@ -82,7 +82,7 @@ public class ConditionalExpressionOptimizer extends OptimizerBase {
 			top.delete();
 			Formula optimizedFormula = formula.simplify().optimize();
 			if (!formula.equals(optimizedFormula)) {
-				logger.info(optimizerHeaderString()
+				logger.fine(optimizerHeaderString()
 						+ "Transformed constraint\n    " + formula
 						+ "\nto\n    " + optimizedFormula + ".");
 			}

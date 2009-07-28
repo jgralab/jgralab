@@ -130,7 +130,7 @@ public class MergeSimpleDeclarationsOptimizer extends OptimizerBase {
 						.getFirstIsSimpleDeclOf(EdgeDirection.OUT);
 
 				if (isNextInIncidenceList(decl, isSDOfSurvivor, isSDOfS)) {
-					logger.info(optimizerHeaderString()
+					logger.finer(optimizerHeaderString()
 							+ "Merging all variables of " + s + " into "
 							+ survivor + ".");
 
@@ -176,7 +176,7 @@ public class MergeSimpleDeclarationsOptimizer extends OptimizerBase {
 				continue;
 			}
 			IsSimpleDeclOf nextEdge = edge.getNextIsSimpleDeclOf();
-			if (nextEdge != null && nextEdge.getNormalEdge() == isSDOfS) {
+			if ((nextEdge != null) && (nextEdge.getNormalEdge() == isSDOfS)) {
 				return true;
 			} else {
 				return false;

@@ -29,12 +29,12 @@ import de.uni_koblenz.jgralab.greql2.schema.Variable;
  * {@link Declaration}, so that {@link Variable}s which produce huge costs on
  * value changes are declared before those where the needed re-evaluation of the
  * constraints is cheaper.
- *
+ * 
  * If two {@link Variable} result in the same re-evaluation costs on value
  * changes, the one with a higher cardinality is declared after the other one.
- *
+ * 
  * @author ist@uni-koblenz.de
- *
+ * 
  */
 public class VariableDeclarationOrderOptimizer extends OptimizerBase {
 
@@ -43,7 +43,7 @@ public class VariableDeclarationOrderOptimizer extends OptimizerBase {
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see
 	 * de.uni_koblenz.jgralab.greql2.optimizer.Optimizer#isEquivalent(de.uni_koblenz
 	 * .jgralab.greql2.optimizer.Optimizer)
@@ -58,7 +58,7 @@ public class VariableDeclarationOrderOptimizer extends OptimizerBase {
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see
 	 * de.uni_koblenz.jgralab.greql2.optimizer.Optimizer#optimize(de.uni_koblenz
 	 * .jgralab.greql2.evaluator.GreqlEvaluator,
@@ -81,11 +81,13 @@ public class VariableDeclarationOrderOptimizer extends OptimizerBase {
 		for (Declaration decl : syntaxgraph.getDeclarationVertices()) {
 			List<VariableDeclarationOrderUnit> units = new ArrayList<VariableDeclarationOrderUnit>();
 			Set<Variable> varsOfDecl = collectVariablesDeclaredBy(decl);
-			if (varsOfDecl.size() < 2
-					|| decl.getFirstIsConstraintOf(EdgeDirection.IN) == null
-					|| OptimizerUtility.collectInternallyDeclaredVariablesBelow(
-							decl.getFirstIsConstraintOf(EdgeDirection.IN)
-									.getAlpha()).size() == 0) {
+			if ((varsOfDecl.size() < 2)
+					|| (decl.getFirstIsConstraintOf(EdgeDirection.IN) == null)
+					|| (OptimizerUtility
+							.collectInternallyDeclaredVariablesBelow(
+									decl.getFirstIsConstraintOf(
+											EdgeDirection.IN).getAlpha())
+							.size() == 0)) {
 				continue;
 			}
 
@@ -109,7 +111,7 @@ public class VariableDeclarationOrderOptimizer extends OptimizerBase {
 			if (!varDeclOrderAfter.equals(varDeclOrderBefore)) {
 				varDeclOrderChanged = true;
 
-				logger.info(optimizerHeaderString()
+				logger.finer(optimizerHeaderString()
 						+ "New order of declarations in " + declaringDecl);
 
 				Set<SimpleDeclaration> oldSDs = new HashSet<SimpleDeclaration>();
@@ -119,7 +121,7 @@ public class VariableDeclarationOrderOptimizer extends OptimizerBase {
 					marker.removeMark(unit.getSimpleDeclarationOfVariable());
 					Variable var = unit.getVariable();
 
-					logger.info("  " + varDeclOrderBefore.get(i) + "  -->  v"
+					logger.finer("  " + varDeclOrderBefore.get(i) + "  -->  v"
 							+ var.getId() + " (" + var.getName()
 							+ "), changeCosts = "
 							+ unit.getVariableValueChangeCosts()
@@ -171,7 +173,7 @@ public class VariableDeclarationOrderOptimizer extends OptimizerBase {
 	/**
 	 * Collect all {@link Variable}s declared by the {@link SimpleDeclaration}s
 	 * of <code>decl</code>.
-	 *
+	 * 
 	 * @param decl
 	 *            a {@link Declaration}
 	 * @return a {@link Set} of all {@link Variable}s declared by the

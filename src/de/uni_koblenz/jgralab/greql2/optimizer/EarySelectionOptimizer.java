@@ -84,7 +84,7 @@ public class EarySelectionOptimizer extends OptimizerBase {
 
 		int noOfRuns = 1;
 		while (runOptimization()) {
-			logger.info(optimizerHeaderString() + "Iteration " + noOfRuns
+			logger.finer(optimizerHeaderString() + "Iteration " + noOfRuns
 					+ " finished.  Restarting...");
 
 			// printGraphAsDot(syntaxgraph, "sg-after-" + noOfRuns +
@@ -94,7 +94,7 @@ public class EarySelectionOptimizer extends OptimizerBase {
 
 		if (noOfRuns > 1) {
 			// We want no output if that optimizer didn't do anything.
-			logger.info(optimizerHeaderString() + "finished after " + noOfRuns
+			logger.finer(optimizerHeaderString() + "finished after " + noOfRuns
 					+ " runs.");
 		}
 
@@ -244,7 +244,7 @@ public class EarySelectionOptimizer extends OptimizerBase {
 		Set<Variable> varsDeclaredBySD = OptimizerUtility
 				.collectVariablesDeclaredBy(sd);
 
-		logger.info(optimizerHeaderString() + "(S) Splitting out "
+		logger.finer(optimizerHeaderString() + "(S) Splitting out "
 				+ varsToBeSplit + " of " + sd + " that declares "
 				+ varsDeclaredBySD);
 
@@ -281,7 +281,7 @@ public class EarySelectionOptimizer extends OptimizerBase {
 			SimpleDeclaration origSD, Set<Expression> predicates,
 			Set<Variable> varsDeclaredByOrigSD) throws OptimizerException {
 
-		logger.info(optimizerHeaderString()
+		logger.finer(optimizerHeaderString()
 				+ "(Mn) Performing early selection transformation for "
 				+ origSD + " declaring ");
 
@@ -295,7 +295,7 @@ public class EarySelectionOptimizer extends OptimizerBase {
 			}
 			i++;
 		}
-		logger.info(sb.toString() + " with predicates " + predicates + ".");
+		logger.finer(sb.toString() + " with predicates " + predicates + ".");
 
 		// First we search the edges that are connected to each variable in
 		// the result definition or bound expression of the parent
@@ -401,7 +401,7 @@ public class EarySelectionOptimizer extends OptimizerBase {
 			Set<Variable> varsDeclaredByOrigSD) throws OptimizerException {
 		Variable var = varsDeclaredByOrigSD.iterator().next();
 
-		logger.info(optimizerHeaderString()
+		logger.finer(optimizerHeaderString()
 				+ "(M1) Performing early selection transformation for "
 				+ origSD + " declaring variable " + var + " (" + var.getName()
 				+ ") with predicates " + predicates);
