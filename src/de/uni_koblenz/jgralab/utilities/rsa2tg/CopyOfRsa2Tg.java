@@ -44,9 +44,6 @@ import java.util.logging.Level;
 //new imports for STAX
 import javax.xml.stream.*;
 
-//TODO remove this import
-import org.xml.sax.Attributes;
-
 import de.uni_koblenz.jgralab.AttributedElement;
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.EdgeDirection;
@@ -353,9 +350,9 @@ public class CopyOfRsa2Tg{
 			case XMLStreamConstants.END_ELEMENT:
 				endElement(parser.getNamespaceURI(), parser.getLocalName(), parser.getName().toString());
 				break;
-			case XMLStreamConstants.ATTRIBUTE:
+/*			case XMLStreamConstants.ATTRIBUTE:
 				//TODO attribute stuff
-				break;
+				break;*/
 			case XMLStreamConstants.CHARACTERS:
 				//instead of characters(char[], int, int)
 				parser.getText();
@@ -933,11 +930,10 @@ public class CopyOfRsa2Tg{
 		constraints = new HashMap<String, List<String>>();
 	}
 
-	public void startElement(String uri, String localName, String name,
-			Attributes atts) throws XMLStreamException {
-
-		String xmiId = atts.getValue("xmi:id");
-
+	public void startElement(XMLStreamReader parser) throws XMLStreamException {
+		String name = parser.getName().toString();
+		String xmiId = parser.getAttributeValue("xmi", "id");
+		
 		elementNameStack.push(name + ">" + (xmiId != null ? xmiId : ""));
 		elementContent.push(new StringBuilder());
 
@@ -952,7 +948,8 @@ public class CopyOfRsa2Tg{
 		Vertex idVertex = null;
 		if (elementNameStack.size() == 1) {
 			if (name.equals("uml:Model") || name.equals("uml:Package")) {
-				String nm = atts.getValue("name");
+//				String nm = atts.getValue("name");
+				String nm = parser.getAttributeValue(null, "name");
 
 				int p = nm.lastIndexOf('.');
 				schema = sg.createSchema();
@@ -974,28 +971,30 @@ public class CopyOfRsa2Tg{
 			}
 		} else {
 			// inside toplevel element
-			String type = atts.getValue("xmi:type");
+//			String type = atts.getValue("xmi:type");
+			String type = parser.getAttributeValue("xmi", "type");
 			if (name.equals("packagedElement")) {
 				if (type.equals("uml:Package")) {
-					idVertex = handlePackage(atts);
+					idVertex = handlePackage(parser);
 				} else if (type.equals("uml:Class")) {
-					idVertex = handleClass(atts, xmiId);
+					idVertex = handleClass(parser, xmiId);
 				} else if (type.equals("uml:Association")
 						|| type.equals("uml:AssociationClass")) {
-					idVertex = handleAssociation(atts, xmiId);
+					idVertex = handleAssociation(parser, xmiId);
 				} else if (type.equals("uml:Enumeration")) {
-					idVertex = handleEnumeration(atts);
+					idVertex = handleEnumeration(parser);
 				} else if (type.equals("uml:PrimitiveType")) {
-					idVertex = handlePrimitiveType(atts);
+					idVertex = handlePrimitiveType(parser);
 				} else if (type.equals("uml:Realization")) {
-					handleRealization(atts);
+					handleRealization(parser);
 				} else {
 					throw new XMLStreamException("unexpected element " + name
 							+ " of type " + type);
 				}
 			} else if (name.equals("ownedRule")) {
 				inConstraint = true;
-				constrainedElementId = atts.getValue("constrainedElement");
+//				constrainedElementId = atts.getValue("constrainedElement");
+				constrainedElementId = parser.getAttributeValue(null, "constrainedElement");
 				// If the ID is null, the constraint is attached to the
 				// GraphClass
 
@@ -1017,28 +1016,28 @@ public class CopyOfRsa2Tg{
 			} else if (name.equals("ownedEnd")) {
 				if (type.equals("uml:Property")
 						&& (currentClass instanceof EdgeClass)) {
-					handleAssociatioEnd(atts, xmiId);
+					handleAssociatioEnd(parser, xmiId);
 				} else {
 					throw new XMLStreamException("unexpected element <" + name
 							+ "> of type " + type);
 				}
 			} else if (name.equals("ownedAttribute")) {
 				if (type.equals("uml:Property")) {
-					handleOwnedAttribute(atts, xmiId);
+					handleOwnedAttribute(parser, xmiId);
 				} else {
 					throw new XMLStreamException("unexpected element <" + name
 							+ "> of type " + type);
 				}
 			} else if (name.equals("type")) {
 				if (type.equals("uml:PrimitiveType")) {
-					handleNestedTypeElement(atts, type);
+					handleNestedTypeElement(parser, type);
 				} else {
 					throw new XMLStreamException("unexpected element <" + name
 							+ "> of type " + type);
 				}
 			} else if (name.equals("ownedLiteral")) {
 				if (type.equals("uml:EnumerationLiteral")) {
-					handleEnumerationLiteral(atts);
+					handleEnumerationLiteral(parser);
 				} else {
 					throw new XMLStreamException("unexpected element <" + name
 							+ "> of type " + type);
@@ -1048,13 +1047,13 @@ public class CopyOfRsa2Tg{
 			} else if (name.equals("eAnnotations")) {
 				// ignore
 			} else if (name.equals("generalization")) {
-				handleGeneralization(atts);
+				handleGeneralization(parser);
 			} else if (name.equals("details")) {
-				handleStereotype(atts);
+				handleStereotype(parser);
 			} else if (name.equals("lowerValue")) {
-				handleLowerValue(atts);
+				handleLowerValue(parser);
 			} else if (name.equals("upperValue")) {
-				handleUpperValue(atts);
+				handleUpperValue(parser);
 			} else {
 				throw new XMLStreamException("unexpected element <" + name
 						+ "> of type " + type);
@@ -1065,9 +1064,12 @@ public class CopyOfRsa2Tg{
 		}
 	}
 
-	private void handleRealization(Attributes atts) {
-		String supplier = atts.getValue("supplier");
-		String client = atts.getValue("client");
+	private void handleRealization(XMLStreamReader parser) {
+		//TODO supplier, client do not appear in the xmi-files for testing purposes
+//		String supplier = atts.getValue("supplier");
+//		String client = atts.getValue("client");
+		String supplier = parser.getAttributeValue(null, "supplier");
+		String client = parser.getAttributeValue(null, "client");
 		Set<String> reals = realizations.get(client);
 		if (reals == null) {
 			reals = new TreeSet<String>();
@@ -1076,9 +1078,12 @@ public class CopyOfRsa2Tg{
 		reals.add(supplier);
 	}
 
-	private void handleUpperValue(Attributes atts) {
+	private void handleUpperValue(XMLStreamReader parser) {
 		assert currentAssociationEnd != null;
-		String val = atts.getValue("value");
+//		String val = atts.getValue("value");
+		/*example xmi-file:         
+		* <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_gxFN_VwDEd6Mo65IiSDZ3A" value="*"/>*/
+		String val = parser.getAttributeValue(null, "value");
 		int n = (val == null) ? 0 : val.equals("*") ? Integer.MAX_VALUE
 				: Integer.parseInt(val);
 		if (currentAssociationEnd instanceof From) {
@@ -1088,9 +1093,14 @@ public class CopyOfRsa2Tg{
 		}
 	}
 
-	private void handleLowerValue(Attributes atts) {
+	private void handleLowerValue(XMLStreamReader parser) {
 		assert currentAssociationEnd != null;
-		String val = atts.getValue("value");
+//		String val = atts.getValue("value");
+		/*
+		 * example:  <lowerValue xmi:type="uml:LiteralInteger" 
+		 * xmi:id="_gxFOAVwDEd6Mo65IiSDZ3A" value="1"/>
+		 */
+		String val = parser.getAttributeValue(null, "value");
 		int n = (val == null) ? 0 : val.equals("*") ? Integer.MAX_VALUE
 				: Integer.parseInt(val);
 		if (currentAssociationEnd instanceof From) {
@@ -1100,8 +1110,10 @@ public class CopyOfRsa2Tg{
 		}
 	}
 
-	private void handleStereotype(Attributes atts) throws XMLStreamException {
-		String key = atts.getValue("key");
+	//TODO stereotype is never used in the xmi-files for testing purposes
+	private void handleStereotype(XMLStreamReader parser) throws XMLStreamException {
+//		String key = atts.getValue("key");
+		String key = parser.getAttributeValue(null, "key"); 
 		if (key.equals("graphclass")) {
 			// convert currentClass to graphClass
 			assert currentClass != null;
@@ -1184,8 +1196,13 @@ public class CopyOfRsa2Tg{
 		}
 	}
 
-	private void handleGeneralization(Attributes atts) {
-		String general = atts.getValue("general");
+	private void handleGeneralization(XMLStreamReader parser) {
+		/*
+		 * example: <generalization xmi:type="uml:Generalization" 
+		 * xmi:id="_we93fAyKEd6B4uCv4341gg" general="_we93cwyKEd6B4uCv4341gg"/>
+		 */
+		//String general = atts.getValue("general");
+		String general = parser.getAttributeValue(null, "general");
 		Set<String> gens = generalizations.getMark(currentClass);
 		if (gens == null) {
 			gens = new TreeSet<String>();
@@ -1194,10 +1211,15 @@ public class CopyOfRsa2Tg{
 		gens.add(general);
 	}
 
-	private void handleNestedTypeElement(Attributes atts, String type)
+	private void handleNestedTypeElement(XMLStreamReader parser, String type)
 			throws XMLStreamException {
 		assert (currentAttribute != null) || (currentRecordDomain != null);
-		String href = atts.getValue("href");
+//		String href = atts.getValue("href");
+		/*
+		 * example: <type xmi:type="uml:PrimitiveType" 
+		 * href="http://schema.omg.org/spec/UML/2.1.1/uml.xml#Integer"/>
+		 */
+		String href = parser.getAttributeValue(null, "href");
 		assert href != null;
 		Domain dom = null;
 		if (href.endsWith("#String")) {
@@ -1230,23 +1252,39 @@ public class CopyOfRsa2Tg{
 		}
 	}
 
-	private void handleEnumerationLiteral(Attributes atts) {
-		String classifier = atts.getValue("classifier");
+	private void handleEnumerationLiteral(XMLStreamReader parser) {
+//		String classifier = atts.getValue("classifier");
+		/*
+		 * example:
+		 * <ownedLiteral xmi:type="uml:EnumerationLiteral" 
+		 * xmi:id="_0Hk3NwpbEd6B4uCv4341gg" name="NOWAY" 
+		 * classifier="_0Hk3NgpbEd6B4uCv4341gg"/>
+		 */
+		String classifier = parser.getAttributeValue(null, "classifier");
 		assert classifier != null;
 		EnumDomain ed = (EnumDomain) idMap.get(classifier);
-		String s = atts.getValue("name");
+//		String s = atts.getValue("name");
+		String s = parser.getAttributeValue(null, "name");
 		assert s != null;
 		s = s.trim();
 		assert s.length() > 0;
 		ed.getEnumConstants().add(s);
 	}
 
-	private void handleOwnedAttribute(Attributes atts, String xmiId) {
+	private void handleOwnedAttribute(XMLStreamReader parser, String xmiId) {
 		assert (currentClass != null) || (currentRecordDomain != null);
-		String association = atts.getValue("association");
+		/*
+		 * example:
+		 * <ownedAttribute xmi:type="uml:Property" xmi:id="_0Hk3SQpbEd6B4uCv4341gg" 
+      	 * name="root" visibility="private" type="_0Hk3TApbEd6B4uCv4341gg" 
+      	 * aggregation="shared" association="_0Hk3cQpbEd6B4uCv4341gg">
+		 */
+		//String association = atts.getValue("association");
+		String association = parser.getAttributeValue(null, "association");
 		if (association == null) {
 			// this property is not an association end
-			String attrName = atts.getValue("name");
+			//String attrName = atts.getValue("name");
+			String attrName = parser.getAttributeValue(null, "name");
 			assert attrName != null;
 			attrName = attrName.trim();
 			assert attrName.length() > 0;
@@ -1258,7 +1296,8 @@ public class CopyOfRsa2Tg{
 				att.setName(attrName);
 				sg.createHasAttribute(currentClass, att);
 
-				String typeId = atts.getValue("type");
+//				String typeId = atts.getValue("type");
+				String typeId = parser.getAttributeValue(null, "type");
 				if (typeId != null) {
 					attributeType.mark(att, typeId);
 				}
@@ -1266,7 +1305,8 @@ public class CopyOfRsa2Tg{
 				// property is a record component
 				assert currentRecordDomain != null;
 				currentAttribute = null;
-				String typeId = atts.getValue("type");
+				//String typeId = atts.getValue("type");
+				String typeId = parser.getAttributeValue(null, "type");
 				currentRecordDomainComponent = null;
 				if (typeId != null) {
 					Vertex v = (Vertex) idMap.get(typeId);
@@ -1296,12 +1336,18 @@ public class CopyOfRsa2Tg{
 			}
 		} else {
 			assert (currentClass != null) && (currentRecordDomain == null);
-			handleAssociatioEnd(atts, xmiId);
+			handleAssociatioEnd(parser, xmiId);
 		}
 	}
 
-	private Vertex handlePrimitiveType(Attributes atts) {
-		String typeName = atts.getValue("name");
+	private Vertex handlePrimitiveType(XMLStreamReader parser) {
+		//String typeName = atts.getValue("name");
+		/*
+		 * example:
+		 * <packagedElement xmi:type="uml:PrimitiveType" 
+		 * xmi:id="_0Hk3dQpbEd6B4uCv4341gg" name="Map&lt;String, String>"/>
+		 */
+		String typeName = parser.getAttributeValue(null, "name");
 		assert typeName != null;
 		typeName = typeName.replaceAll("\\s", "");
 		assert typeName.length() > 0;
@@ -1310,11 +1356,13 @@ public class CopyOfRsa2Tg{
 		return dom;
 	}
 
-	private Vertex handleEnumeration(Attributes atts) {
+	//TODO does not appear in one of the xmi-files
+	private Vertex handleEnumeration(XMLStreamReader parser) {
 		EnumDomain ed = sg.createEnumDomain();
 		de.uni_koblenz.jgralab.grumlschema.structure.Package p = packageStack
 				.peek();
-		ed.setQualifiedName(getQualifiedName(atts.getValue("name")));
+		//ed.setQualifiedName(getQualifiedName(atts.getValue("name")));
+		ed.setQualifiedName(getQualifiedName(parser.getAttributeValue(null, "name")));
 		sg.createContainsDomain(p, ed);
 		ed.setEnumConstants(new ArrayList<String>());
 		Domain dom = domainMap.get(ed.getQualifiedName());
@@ -1331,7 +1379,7 @@ public class CopyOfRsa2Tg{
 		return ed;
 	}
 
-	private Vertex handleAssociation(Attributes atts, String xmiId) {
+	private Vertex handleAssociation(XMLStreamReader parser, String xmiId) {
 		// create an EdgeClass at first, probably, this has to
 		// become an Aggregation or Composition later...
 		AttributedElement ae = idMap.get(xmiId);
@@ -1346,9 +1394,12 @@ public class CopyOfRsa2Tg{
 		}
 		currentClassId = xmiId;
 		currentClass = ec;
-		String abs = atts.getValue("isAbstract");
+		//TODO the xmi-files for testing purposes do not contain isAbstract
+		//String abs = atts.getValue("isAbstract");
+		String abs = parser.getAttributeValue(null, "isAbstract");
 		ec.setIsAbstract((abs != null) && abs.equals("true"));
-		String n = atts.getValue("name");
+		//String n = atts.getValue("name");
+		String n = parser.getAttributeValue(null, "name");
 		n = (n == null) ? "" : n.trim();
 		if (n.length() > 0) {
 			n = Character.toUpperCase(n.charAt(0)) + n.substring(1);
@@ -1356,7 +1407,14 @@ public class CopyOfRsa2Tg{
 		ec.setQualifiedName(getQualifiedName(n));
 		sg.createContainsGraphElementClass(packageStack.peek(), ec);
 
-		String memberEnd = atts.getValue("memberEnd");
+		/*
+		 * example:
+		 * <packagedElement xmi:type="uml:Association" 
+		 * xmi:id="_gxFOnVwDEd6Mo65IiSDZ3A" name="hasKeyDomain" 
+		 * memberEnd="_gxFOoVwDEd6Mo65IiSDZ3A _gxFOnlwDEd6Mo65IiSDZ3A">
+		 */
+		//String memberEnd = atts.getValue("memberEnd");
+		String memberEnd = parser.getAttributeValue(null, "memberEnd");
 		assert memberEnd != null;
 		memberEnd = memberEnd.trim().replaceAll("\\s+", " ");
 		int p = memberEnd.indexOf(' ');
@@ -1409,7 +1467,7 @@ public class CopyOfRsa2Tg{
 		return ec;
 	}
 
-	private Vertex handleClass(Attributes atts, String xmiId) {
+	private Vertex handleClass(XMLStreamReader parser, String xmiId) {
 		AttributedElement ae = idMap.get(xmiId);
 		VertexClass vc = null;
 		if (ae != null) {
@@ -1422,9 +1480,12 @@ public class CopyOfRsa2Tg{
 		}
 		currentClassId = xmiId;
 		currentClass = vc;
-		String abs = atts.getValue("isAbstract");
+		//TODO the xmi-files for testing purposes do not contain this
+		//String abs = atts.getValue("isAbstract");
+		String abs = parser.getAttributeValue(null, "isAbstract");
 		vc.setIsAbstract((abs != null) && abs.equals("true"));
-		vc.setQualifiedName(getQualifiedName(atts.getValue("name")));
+//		vc.setQualifiedName(getQualifiedName(atts.getValue("name")));
+		vc.setQualifiedName(getQualifiedName(parser.getAttributeValue(null, "name")));
 		sg.createContainsGraphElementClass(packageStack.peek(), vc);
 
 		// System.out.println("currentClass = " + currentClass + " "
@@ -1432,18 +1493,28 @@ public class CopyOfRsa2Tg{
 		return vc;
 	}
 
-	private Vertex handlePackage(Attributes atts) {
+	private Vertex handlePackage(XMLStreamReader parser) {
 		de.uni_koblenz.jgralab.grumlschema.structure.Package pkg = sg
 				.createPackage();
-		pkg.setQualifiedName(getQualifiedName(atts.getValue("name")));
+//		pkg.setQualifiedName(getQualifiedName(atts.getValue("name")));
+		pkg.setQualifiedName(getQualifiedName(parser.getAttributeValue(null, "name")));
 		sg.createContainsSubPackage(packageStack.peek(), pkg);
 		packageStack.push(pkg);
 		return pkg;
 	}
 
-	private void handleAssociatioEnd(Attributes atts, String xmiId) {
-		String endName = atts.getValue("name");
-		String agg = atts.getValue("aggregation");
+	private void handleAssociatioEnd(XMLStreamReader parser, String xmiId) {
+		/*
+		 * example: 
+		 * <ownedEnd xmi:type="uml:Property" xmi:id="_gxFOplwDEd6Mo65IiSDZ3A" 
+		 * name="componentdomain" visibility="private" 
+		 * type="_gxFOh1wDEd6Mo65IiSDZ3A" aggregation="shared" 
+		 * association="_gxFOpFwDEd6Mo65IiSDZ3A">
+		 */
+//		String endName = atts.getValue("name");
+//		String agg = atts.getValue("aggregation");
+		String endName = parser.getAttributeValue(null, "name");
+		String agg = parser.getAttributeValue(null, "aggregation");
 		boolean aggregation = (agg != null) && agg.equals("shared");
 		boolean composition = (agg != null) && agg.equals("composite");
 
@@ -1453,7 +1524,8 @@ public class CopyOfRsa2Tg{
 			// if not found, create a preliminary VertexClass
 			VertexClass vc = null;
 			// we have an "ownedEnd", vertex class id is in "type" attribute
-			String typeId = atts.getValue("type");
+//			String typeId = atts.getValue("type");
+			String typeId = parser.getAttributeValue(null, "type");
 			assert typeId != null;
 			AttributedElement ae = idMap.get(typeId);
 			if (ae != null) {
@@ -1480,7 +1552,8 @@ public class CopyOfRsa2Tg{
 			} else {
 				// we have an ownedAttribute
 				// edge class id is in "association"
-				String association = atts.getValue("association");
+//				String association = atts.getValue("association");
+				String association = parser.getAttributeValue(null, "association");
 				assert association != null;
 				ae = idMap.get(association);
 				if (ae != null) {
@@ -1517,7 +1590,8 @@ public class CopyOfRsa2Tg{
 			// with a possibly preliminary vertex class
 			VertexClass vc = (VertexClass) e.getOmega();
 			if (preliminaryVertices.contains(vc)) {
-				String typeId = atts.getValue("type");
+//				String typeId = atts.getValue("type");
+				String typeId = parser.getAttributeValue(null, "type");
 				assert typeId != null;
 				AttributedElement ae = idMap.get(typeId);
 				if ((ae != null) && !vc.equals(ae)) {
