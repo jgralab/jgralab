@@ -300,6 +300,7 @@ public class Rsa2Tg extends DefaultHandler {
 		r.setRemoveUnusedDomains(true);
 		r.setUseNavigability(true);
 
+		// TODO modify this file to using CLI
 		for (String xmiFileName : args) {
 			System.out.println("processing: " + xmiFileName);
 			try {
