@@ -21,6 +21,7 @@ import de.uni_koblenz.jgralab.greql2.schema.Greql2Expression;
 import de.uni_koblenz.jgralab.greql2.schema.IsDeclaredVarOf;
 import de.uni_koblenz.jgralab.greql2.schema.SimpleDeclaration;
 import de.uni_koblenz.jgralab.greql2.schema.SourcePosition;
+import de.uni_koblenz.jgralab.greql2.schema.ThisLiteral;
 import de.uni_koblenz.jgralab.greql2.schema.Variable;
 
 /**
@@ -244,7 +245,7 @@ public class OptimizerUtility {
 	private static Set<Variable> collectInternallyDeclaredVariablesBelow(
 			Vertex vertex, Set<Variable> vars) {
 		// GreqlEvaluator.println("collectVariablesBelow(" + vertex + ")");
-		if (vertex instanceof Variable) {
+		if (vertex instanceof Variable && !(vertex instanceof ThisLiteral)) {
 			Variable v = (Variable) vertex;
 			if (v.getFirstIsBoundVarOf(EdgeDirection.OUT) == null) {
 				// it's no externally bound variable, but a variable declared in
