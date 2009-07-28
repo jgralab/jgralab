@@ -84,7 +84,60 @@ import de.uni_koblenz.jgralab.utilities.jgralab2owl.IndentingXMLStreamWriter;
 import de.uni_koblenz.jgralab.utilities.rsa2tg.SchemaGraph2Tg;
 
 /**
- * @author ist@uni-koblenz.de
+ * This tool generates an XML schema according to a grUML schema. The details on
+ * how this mapping is done can be read in the text
+ * "Abbildung von grUML nach XSD" by Eckhardt Grossmann, Volker Riediger and
+ * Tassilo Horn
+ * 
+ * This manual describes the usage of this tool, especially the control of the
+ * include and exclude patterns.
+ * 
+ * The tool has a few required command line options:
+ * 
+ * -g --graph : This option specifies the input file containing the schemaGraph.
+ * It takes one parameter which is the filename.
+ * 
+ * -n --namespace-prefix : These option specifies the namespace prefix. It takes
+ * one parameter.
+ * 
+ * -o --output: This option specifies the output file. It takes one parameter
+ * which is the filename.
+ * 
+ * 
+ * With these standard options, the whole schema will be exported. To limit the
+ * export, some optional arguments can be used:
+ * 
+ * -p --pattern-list : Takes a list of pattern of arbitrary length as
+ * parameters. These patterns operate on EdgeClasses and VertexClasses. The
+ * syntax is the syntax of Java's regular expressions. Each pattern has to start
+ * with a "+" or a "-". Patterns with a "+" are positive patterns which specify
+ * included Vertex- or EdgeClasses. Patterns with a "-" are negative patterns
+ * which specify excluded Vertex- or EdgeClasses. The patters are processed in
+ * the order they are given. If the first pattern is a positive pattern, the
+ * whole schema is excluded by default. If the first pattern is a negative
+ * pattern, the whole schema is included by default.
+ * 
+ * In case of included but abstract VertexClasses, additional excludes can
+ * occur. If an included abstract VertexClass has no included non-abstract
+ * VertexClass, it is excluded. The XSD will not contain any abstract Vertex- or
+ * EdgeClass, but for for performing this pattern including or excluding
+ * correctly, they have to be included or excluded.
+ * 
+ * In case of EdgeClasses, additional excludes can occur. If an included
+ * EdgeClass has an excluded VertexClass at the from- or to end, the EdgeClass
+ * will be excluded.
+ * 
+ * -x --implicit-exclude : If this option is given, all subclasses of excluded
+ * superclasses are excluded as well. This works for both, EdgeClasses and
+ * VertexClasses.
+ * 
+ * -d --debug : Writes debug information about included and excluded
+ * VertexClasses and EdgeClasses into a file or to stdout. If a filename is
+ * given, the information will be written into a file, if not, it will be
+ * written to stdout.
+ * 
+ * @author mmce@uni-koblenz.de
+ * @author strauss@uni-koblenz.de
  */
 @WorkInProgress(description = "Converter from SchemaGraph to XML Schema", responsibleDevelopers = "horn, mmce, riediger", expectedFinishingDate = "2009/06/30")
 public class SchemaGraph2XSD {
@@ -219,7 +272,9 @@ public class SchemaGraph2XSD {
 		attributes = new ArrayList<Attribute>();
 	}
 
-	@WorkInProgress
+	/**
+	 * Handles the processing of all given include and exclude patterns
+	 */
 	private void processPatterns() {
 		includes = new BooleanGraphMarker(schemaGraph);
 
@@ -247,9 +302,9 @@ public class SchemaGraph2XSD {
 			if (autoExclude) {
 				explicitlyExcludeImplicitlyExcludedClasses();
 			}
-			excludeUnnecessaryAbstractVertices();
+			excludeUnnecessaryAbstractVertexClasses();
 
-			excludeUnecessaryEdges();
+			excludeUnecessaryEdgeClasses();
 
 			includeAllNecessaryDomains();
 
@@ -274,7 +329,9 @@ public class SchemaGraph2XSD {
 		}
 	}
 
-	@WorkInProgress
+	/**
+	 * Handles the writing of the debug information.
+	 */
 	private void writeDebugInformation() {
 		debugOutputStream.println("[VertexClasses]");
 		for (VertexClass current : schemaGraph.getVertexClassVertices()) {
@@ -297,28 +354,46 @@ public class SchemaGraph2XSD {
 		debugOutputStream.close();
 	}
 
-	@WorkInProgress
-	private void writeDomainDebugInformation(Domain current) {
-		writeIncludeOrExcludeInformation(current);
-		debugOutputStream.println(current.getQualifiedName());
+	/**
+	 * Writes the debug information of the given domain.
+	 * 
+	 * @param d
+	 *            the domain to write the information of.
+	 */
+	private void writeDomainDebugInformation(Domain d) {
+		writeIncludeOrExcludeInformation(d);
+		debugOutputStream.println(d.getQualifiedName());
 	}
 
-	@WorkInProgress
-	private void writeElementDebugInformation(GraphElementClass current) {
-		writeIncludeOrExcludeInformation(current);
-		debugOutputStream.println(current.getQualifiedName());
+	/**
+	 * Writes debug information of the given GraphElementClass.
+	 * 
+	 * @param gec
+	 *            the GraphElementClass to write the information of.
+	 */
+	private void writeElementDebugInformation(GraphElementClass gec) {
+		writeIncludeOrExcludeInformation(gec);
+		debugOutputStream.println(gec.getQualifiedName());
 	}
 
-	@WorkInProgress
-	private void writeIncludeOrExcludeInformation(AttributedElement current) {
-		if (includes.isMarked(current)) {
+	/**
+	 * Writes "IN: " or "OUT :" at the beginning of each line in the debug file.
+	 * 
+	 * @param ae
+	 *            the element to decide whether to write "IN: " or "OUT: "
+	 */
+	private void writeIncludeOrExcludeInformation(AttributedElement ae) {
+		if (includes.isMarked(ae)) {
 			debugOutputStream.print("IN: ");
 		} else {
 			debugOutputStream.print("EX: ");
 		}
 	}
 
-	@WorkInProgress
+	/**
+	 * Excludes all subclasses of excluded superclasses for EdgeClasses and
+	 * VertexClasses.
+	 */
 	private void explicitlyExcludeImplicitlyExcludedClasses() {
 		BooleanGraphMarker processed = new BooleanGraphMarker(schemaGraph);
 		for (VertexClass currentVertexClass : schemaGraph
@@ -336,7 +411,14 @@ public class SchemaGraph2XSD {
 		}
 	}
 
-	@WorkInProgress
+	/**
+	 * Excludes the given GraphElementClass and all its subclasses.
+	 * 
+	 * @param processed
+	 *            marks already processed Elements.
+	 * @param currentGraphElementClass
+	 *            the GraphElementClass to exclude.
+	 */
 	private void excludeGraphElementClass(BooleanGraphMarker processed,
 			VertexClass currentGraphElementClass) {
 		processed.mark(currentGraphElementClass);
@@ -348,7 +430,14 @@ public class SchemaGraph2XSD {
 		}
 	}
 
-	@WorkInProgress
+	/**
+	 * Excludes the given GraphElementClass and all its subclasses.
+	 * 
+	 * @param processed
+	 *            marks already processed Elements.
+	 * @param currentGraphElementClass
+	 *            the GraphElementClass to exclude.
+	 */
 	private void excludeGraphElementClass(BooleanGraphMarker processed,
 			EdgeClass currentGraphElementClass) {
 		processed.mark(currentGraphElementClass);
@@ -360,7 +449,10 @@ public class SchemaGraph2XSD {
 		}
 	}
 
-	@WorkInProgress
+	/**
+	 * Includes all necessary domains according to the included
+	 * GraphElementClasses.
+	 */
 	private void includeAllNecessaryDomains() {
 		for (AttributedElementClass currentAttributedElementClass : schemaGraph
 				.getAttributedElementClassVertices()) {
@@ -375,7 +467,12 @@ public class SchemaGraph2XSD {
 		}
 	}
 
-	@WorkInProgress
+	/**
+	 * Includes the given domain.
+	 * 
+	 * @param d
+	 *            the domain to include.
+	 */
 	private void includeDomain(Domain d) {
 		if (d instanceof EnumDomain) {
 			includeDomain((EnumDomain) d);
@@ -388,23 +485,43 @@ public class SchemaGraph2XSD {
 		}
 	}
 
-	@WorkInProgress
+	/**
+	 * Includes the given MapDomain.
+	 * 
+	 * @param md
+	 *            the MapDomain to include.
+	 */
 	private void includeDomain(MapDomain md) {
 		includeDomain((Domain) md.getFirstHasKeyDomain().getThat());
 		includeDomain((Domain) md.getFirstHasValueDomain().getThat());
 	}
 
-	@WorkInProgress
+	/**
+	 * Includes the given CollectionDomain (Set or List).
+	 * 
+	 * @param cd
+	 *            the CollectionDomain to include.
+	 */
 	private void includeDomain(CollectionDomain cd) {
 		includeDomain((Domain) cd.getFirstHasBaseDomain().getThat());
 	}
 
-	@WorkInProgress
+	/**
+	 * Includes the given EnumDomain.
+	 * 
+	 * @param ed
+	 *            the EnumDomain to include.
+	 */
 	private void includeDomain(EnumDomain ed) {
 		includes.mark(ed);
 	}
 
-	@WorkInProgress
+	/**
+	 * Includes the given RecordDomain.
+	 * 
+	 * @param rd
+	 *            the RecordDomain to exclude.
+	 */
 	private void includeDomain(RecordDomain rd) {
 		includes.mark(rd);
 		// recursively include all RecordDomainComponentDomains
@@ -415,8 +532,10 @@ public class SchemaGraph2XSD {
 		}
 	}
 
-	@WorkInProgress
-	private void excludeUnecessaryEdges() {
+	/**
+	 * Excludes all EdgeClasses that have an excluded to or from VertexClass.
+	 */
+	private void excludeUnecessaryEdgeClasses() {
 		for (EdgeClass currentEdgeClass : schemaGraph.getEdgeClassVertices()) {
 			if (includes.isMarked(currentEdgeClass)) {
 				// only look at included EdgeClasses
@@ -431,22 +550,32 @@ public class SchemaGraph2XSD {
 		}
 	}
 
-	@WorkInProgress
-	private void excludeUnnecessaryAbstractVertices() {
+	/**
+	 * Excludes all VertexClasses that have only excluded subclasses.
+	 */
+	private void excludeUnnecessaryAbstractVertexClasses() {
 		BooleanGraphMarker processed = new BooleanGraphMarker(schemaGraph);
 		for (VertexClass currentVertexClass : schemaGraph
 				.getVertexClassVertices()) {
 			if (currentVertexClass.isIsAbstract()) {
-				// only process abstract vertices
-				if (excludeVertexClass(processed, currentVertexClass)) {
+				// only process abstract VertexClasses
+				if (isVertexClassExcluded(processed, currentVertexClass)) {
 					includes.unmark(currentVertexClass);
 				}
 			}
 		}
 	}
 
-	@WorkInProgress
-	private boolean excludeVertexClass(BooleanGraphMarker processed,
+	/**
+	 * Checks if a VertexClass should be excluded.
+	 * 
+	 * @param processed
+	 *            marks already processed elements.
+	 * @param currentVertexClass
+	 *            the VertexClass to check.
+	 * @return true if the given VertexClass should be excluded
+	 */
+	private boolean isVertexClassExcluded(BooleanGraphMarker processed,
 			VertexClass currentVertexClass) {
 		if (processed.isMarked(currentVertexClass)
 				|| !currentVertexClass.isIsAbstract()) {
@@ -459,7 +588,8 @@ public class SchemaGraph2XSD {
 		}
 		for (SpecializesVertexClass current : currentVertexClass
 				.getSpecializesVertexClassIncidences(EdgeDirection.IN)) {
-			if (!excludeVertexClass(processed, (VertexClass) current.getThat())) {
+			if (!isVertexClassExcluded(processed, (VertexClass) current
+					.getThat())) {
 				// at least one subclass is not excluded
 				return false;
 			}
@@ -469,7 +599,15 @@ public class SchemaGraph2XSD {
 		return true;
 	}
 
-	@WorkInProgress
+	/**
+	 * Matches the given pattern and either includes or excludes all matching
+	 * GraphElements.
+	 * 
+	 * @param include
+	 *            if true, this method includes, if false, it excludes.
+	 * @param currentPattern
+	 *            the pattern to match.
+	 */
 	private void includeOrExcludeAllGraphElements(boolean include,
 			Pattern currentPattern) {
 		for (GraphElementClass gec : schemaGraph.getGraphElementClassVertices()) {
@@ -477,7 +615,18 @@ public class SchemaGraph2XSD {
 		}
 	}
 
-	@WorkInProgress
+	/**
+	 * Includes or excludes the given GraphElementClass according to the given
+	 * pattern.
+	 * 
+	 * @param include
+	 *            flag to decide whether to include or exclude the given
+	 *            GraphElementClass if it matches the given pattern.
+	 * @param gec
+	 *            the GraphElementClass to include or exclude.
+	 * @param currentPattern
+	 *            the pattern to match.
+	 */
 	private void includeOrExcludeIfMatches(boolean include,
 			GraphElementClass gec, Pattern currentPattern) {
 		if (currentPattern.matcher(gec.getQualifiedName()).matches()) {
@@ -1151,8 +1300,8 @@ public class SchemaGraph2XSD {
 										filename))));
 			}
 		}
-		
-		if(comLine.hasOption('x')){
+
+		if (comLine.hasOption('x')) {
 			sg2xsd.setAutoExclude(true);
 		}
 
@@ -1224,5 +1373,4 @@ public class SchemaGraph2XSD {
 	public void setAutoExclude(boolean autoExclude) {
 		this.autoExclude = autoExclude;
 	}
-
 }
