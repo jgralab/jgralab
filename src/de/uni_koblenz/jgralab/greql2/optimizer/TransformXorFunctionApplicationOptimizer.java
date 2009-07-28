@@ -123,7 +123,7 @@ public class TransformXorFunctionApplicationOptimizer extends OptimizerBase {
 				edge.setAlpha(or);
 			}
 
-			logger.info(optimizerHeaderString() + "Transformed " + xor
+			logger.finer(optimizerHeaderString() + "Transformed " + xor
 					+ " to (" + arg1 + " & ~" + arg2 + ") | (~" + arg1 + " & "
 					+ arg2 + ").");
 

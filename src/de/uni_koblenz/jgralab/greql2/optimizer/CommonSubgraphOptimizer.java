@@ -226,7 +226,7 @@ public class CommonSubgraphOptimizer extends OptimizerBase {
 		if (!(lowerVertex instanceof PathDescription)) {
 			anOptimizationWasDone = true;
 
-			logger.info(optimizerHeaderString() + "Merging " + lowerVertex
+			logger.finer(optimizerHeaderString() + "Merging " + lowerVertex
 					+ " and " + higherVertex + ".");
 
 			// Merge the sourcePositions of the incoming edges
@@ -257,7 +257,7 @@ public class CommonSubgraphOptimizer extends OptimizerBase {
 				.getFirstGreql2Aggregation(EdgeDirection.IN);
 		Greql2Aggregation gah = higherVertex
 				.getFirstGreql2Aggregation(EdgeDirection.IN);
-		while (gal != null && gah != null) {
+		while ((gal != null) && (gah != null)) {
 			OptimizerUtility.mergeSourcePositions(gah, gal);
 			mergeSourcePositionsBelow((Greql2Vertex) gal.getAlpha(),
 					(Greql2Vertex) gah.getAlpha());

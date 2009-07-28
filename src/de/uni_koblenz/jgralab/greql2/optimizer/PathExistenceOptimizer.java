@@ -34,9 +34,9 @@ import de.uni_koblenz.jgralab.greql2.schema.Variable;
  * This {@link Optimizer} transforms {@link PathExistence} vertices to
  * {@link FunctionApplication}s of the {@link Contains} function applied to a
  * {@link PathExpression}.
- *
+ * 
  * @author ist@uni-koblenz.de
- *
+ * 
  */
 public class PathExistenceOptimizer extends OptimizerBase {
 
@@ -49,7 +49,7 @@ public class PathExistenceOptimizer extends OptimizerBase {
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see
 	 * de.uni_koblenz.jgralab.greql2.optimizer.Optimizer#isEquivalent(de.uni_koblenz
 	 * .jgralab.greql2.optimizer.Optimizer)
@@ -64,7 +64,7 @@ public class PathExistenceOptimizer extends OptimizerBase {
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see
 	 * de.uni_koblenz.jgralab.greql2.optimizer.Optimizer#optimize(de.uni_koblenz
 	 * .jgralab.greql2.evaluator.GreqlEvaluator,
@@ -104,10 +104,10 @@ public class PathExistenceOptimizer extends OptimizerBase {
 	 * Check if it's worth to replace the given {@link PathExistence}
 	 * <code>pe</code> with a {@link FunctionApplication} of the
 	 * {@link Contains} function combined with a {@link PathExpression}.
-	 *
+	 * 
 	 * Such a transformation remunerates if the {@link PathExpression} isn't
 	 * evaluated as often as the {@link PathExistence} is. Here's an example:
-	 *
+	 * 
 	 * The {@link PathExistence} <code>a --&gt; b</code> has to be evaluated
 	 * whenever <code>a</code> or <code>b</code> change their value. If
 	 * <code>a</code> is declared before <code>b</code>, then
@@ -115,13 +115,13 @@ public class PathExistenceOptimizer extends OptimizerBase {
 	 * {@link ForwardVertexSet} <code>a --&gt;</code> has only to be evaluated
 	 * when <code>a</code> changes its value. In that case that happens only all
 	 * <code>|b|</code> steps.
-	 *
+	 * 
 	 * If <code>b</code> is declared before <code>a</code>, then
 	 * <code>contains(--&gt; b, a)</code> is faster, because the costly
 	 * {@link BackwardVertexSet} <code>--&gt; b</code> has only to be evaluated
 	 * when <code>b</code> changes its value. In that case that happens only all
 	 * <code>|a|</code> steps.
-	 *
+	 * 
 	 * @param pe
 	 *            a {@link PathExistence} vertex
 	 */
@@ -144,9 +144,11 @@ public class PathExistenceOptimizer extends OptimizerBase {
 			}
 		};
 		TreeSet<Variable> startExpVars = new TreeSet<Variable>(comparator);
-		startExpVars.addAll(OptimizerUtility.collectInternallyDeclaredVariablesBelow(startExp));
+		startExpVars.addAll(OptimizerUtility
+				.collectInternallyDeclaredVariablesBelow(startExp));
 		TreeSet<Variable> targetExpVars = new TreeSet<Variable>(comparator);
-		targetExpVars.addAll(OptimizerUtility.collectInternallyDeclaredVariablesBelow(targetExp));
+		targetExpVars.addAll(OptimizerUtility
+				.collectInternallyDeclaredVariablesBelow(targetExp));
 
 		if (startExpVars.isEmpty() && targetExpVars.isEmpty()) {
 			return;
@@ -168,7 +170,7 @@ public class PathExistenceOptimizer extends OptimizerBase {
 	/**
 	 * Replace the given {@link PathExistence} vertex <code>pe</code> with a
 	 * {@link FunctionApplication} of the {@link Contains} function.
-	 *
+	 * 
 	 * @param pe
 	 *            the {@link PathExistence} to replace
 	 * @param startOrTargetExp
@@ -193,7 +195,7 @@ public class PathExistenceOptimizer extends OptimizerBase {
 	 */
 	private void replacePathExistenceWithContainsFunApp(PathExistence pe,
 			Expression startOrTargetExp, Expression otherExp, boolean forward) {
-		logger.info(optimizerHeaderString() + "Replacing " + pe
+		logger.finer(optimizerHeaderString() + "Replacing " + pe
 				+ " with a contains FunctionApplication using a "
 				+ ((forward) ? "Forward" : "Backward") + "VertexSet.");
 
@@ -231,7 +233,7 @@ public class PathExistenceOptimizer extends OptimizerBase {
 	/**
 	 * Collect all {@link PathExistence} vertices in the current {@link Greql2}
 	 * graph.
-	 *
+	 * 
 	 * @return a {@link Set} of all {@link PathExistence} vertices of the
 	 *         current {@link Greql2} graph.
 	 */
@@ -252,9 +254,9 @@ public class PathExistenceOptimizer extends OptimizerBase {
 	 * declared in the same {@link SimpleDeclaration} but is connected to that
 	 * earlier (meaning its {@link IsDeclaredVarOf} edge comes before the
 	 * other's).
-	 *
+	 * 
 	 * Note that a {@link Variable} is never declared before itself.
-	 *
+	 * 
 	 * @param var1
 	 *            a {@link Variable}
 	 * @param var2

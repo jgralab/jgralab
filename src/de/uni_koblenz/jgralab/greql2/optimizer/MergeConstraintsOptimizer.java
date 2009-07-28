@@ -21,9 +21,9 @@ import de.uni_koblenz.jgralab.greql2.schema.IsConstraintOf;
  * Merges all constraint {@link Expression}s that are connected to a
  * {@link Declaration} with {@link IsConstraintOf} edges by creating a
  * conjunction of all of them.
- *
+ * 
  * @author ist@uni-koblenz.de
- *
+ * 
  */
 public class MergeConstraintsOptimizer extends OptimizerBase {
 
@@ -32,7 +32,7 @@ public class MergeConstraintsOptimizer extends OptimizerBase {
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see
 	 * de.uni_koblenz.jgralab.greql2.optimizer.Optimizer#isEquivalent(de.uni_koblenz
 	 * .jgralab.greql2.optimizer.Optimizer)
@@ -47,7 +47,7 @@ public class MergeConstraintsOptimizer extends OptimizerBase {
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see
 	 * de.uni_koblenz.jgralab.greql2.optimizer.Optimizer#optimize(de.uni_koblenz
 	 * .jgralab.greql2.evaluator.GreqlEvaluator,
@@ -74,7 +74,7 @@ public class MergeConstraintsOptimizer extends OptimizerBase {
 				Expression singleConstraint = createConjunction(
 						constraintEdges, syntaxgraph);
 
-				logger.info(optimizerHeaderString()
+				logger.finer(optimizerHeaderString()
 						+ "Merging constraints on edges " + constraintEdges
 						+ " into conjunction " + singleConstraint + ".");
 
@@ -93,7 +93,7 @@ public class MergeConstraintsOptimizer extends OptimizerBase {
 	 * list contains exactly one {@link IsConstraintOf} edge, return its alpha
 	 * expression. Else create AND {@link FunctionApplication}s combining all
 	 * constraints.
-	 *
+	 * 
 	 * @param constraintEdges
 	 * @param syntaxgraph
 	 * @return a conjunction of all constraints
