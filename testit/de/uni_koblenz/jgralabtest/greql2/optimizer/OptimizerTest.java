@@ -13,7 +13,6 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
 import de.uni_koblenz.jgralab.greql2.optimizer.CommonSubgraphOptimizer;
 import de.uni_koblenz.jgralab.greql2.optimizer.ConditionalExpressionOptimizer;
 import de.uni_koblenz.jgralab.greql2.optimizer.DefaultOptimizer;
-import de.uni_koblenz.jgralab.greql2.optimizer.DissolutionOptimizer;
 import de.uni_koblenz.jgralab.greql2.optimizer.EarySelectionOptimizer;
 import de.uni_koblenz.jgralab.greql2.optimizer.MergeSimpleDeclarationsOptimizer;
 import de.uni_koblenz.jgralab.greql2.optimizer.Optimizer;
@@ -32,7 +31,6 @@ public class OptimizerTest extends GenericTests {
 	private Optimizer peo = new PathExistenceOptimizer();
 	private Optimizer defo = new DefaultOptimizer();
 	private Optimizer vdoo = new VariableDeclarationOrderOptimizer();
-	private Optimizer disso = new DissolutionOptimizer();
 	private Optimizer csoAndMsdo = new CommonSubgraphAndMergeSDOptimizer();
 	private Optimizer ceoAndCso = new CommonSubgraphAndConditionalExpressionOptimizer();
 
@@ -383,69 +381,6 @@ public class OptimizerTest extends GenericTests {
 				+ "         reportSet a, b, c end";
 		execTimedTest(query, "VariableDeclarationOrderOptimizer4()", vdoo);
 	}
-
-	private String[] dissolutionTestConstraints = {
-			"false",
-			"true",
-			"a and not a",
-			"(((a and (b or c)) or d) and ((not a and e) or (not c and not d)))",
-			"(((((a and (b or c)) or d) and ((not a and e) or (not c and not d))) and not b) and (not d or not e))",
-			"(((((a and (b and c)) or d) or ((a and e) or (not c and d))) and not b) or (d or not e))",
-			"(a or not a) and (b or not b) and (c or not c) and (d or not d) and (e or not e)",
-			"(a or not b) and (b or not c) and (c or not d) and (d or not e) and (e or not a)",
-			"(a or not b or c) and (b or not c or a or e) or (c or not d and not e) or (a and d or not e) and (e or not a or d or not a) or (a xor b) or (b xor c) or (c xor d) or (d xor e)" };
-
-	private void genericDissolutionOptimizerTest(int no) throws Exception {
-		String query = "from a, b, c, d, e : set(true, false, null) with "
-				+ dissolutionTestConstraints[no]
-				+ " reportSet a, b, c, d, e end";
-		execTimedTest(query, "DissolutionOptimizer" + no + "()", disso);
-	}
-
-	@Test
-	public void testDissolutionOptimizer0() throws Exception {
-		genericDissolutionOptimizerTest(0);
-	}
-
-	@Test
-	public void testDissolutionOptimizer1() throws Exception {
-		genericDissolutionOptimizerTest(1);
-	}
-
-	@Test
-	public void testDissolutionOptimizer2() throws Exception {
-		genericDissolutionOptimizerTest(2);
-	}
-
-	@Test
-	public void testDissolutionOptimizer3() throws Exception {
-		genericDissolutionOptimizerTest(3);
-	}
-
-	@Test
-	public void testDissolutionOptimizer4() throws Exception {
-		genericDissolutionOptimizerTest(4);
-	}
-
-	@Test
-	public void testDissolutionOptimizer5() throws Exception {
-		genericDissolutionOptimizerTest(5);
-	}
-
-	@Test
-	public void testDissolutionOptimizer6() throws Exception {
-		genericDissolutionOptimizerTest(6);
-	}
-
-	@Test
-	public void testDissolutionOptimizer7() throws Exception {
-		genericDissolutionOptimizerTest(7);
-	}
-
-	/*
-	 * public void testDissolutionOptimizer8() throws Exception {
-	 * genericDissolutionOptimizerTest(8); }
-	 */
 
 	@Test
 	public void testConditionalExpressionOptimizer0() throws Exception {
