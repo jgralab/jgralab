@@ -37,7 +37,7 @@ import org.apache.commons.cli.Option;
 import org.apache.commons.cli.OptionGroup;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
-
+// TODO handle OptionGroups properly
 /**
  * This class is a wrapper for apache commons CLI. It implements a workaround
  * for the missing feature of isolated options for printing the help or the

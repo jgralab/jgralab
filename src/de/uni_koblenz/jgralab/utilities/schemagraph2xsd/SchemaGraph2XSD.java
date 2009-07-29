@@ -1348,7 +1348,8 @@ public class SchemaGraph2XSD {
 		OptionGroup input = new OptionGroup();
 		input.addOption(graph);
 		input.addOption(schema);
-		input.setRequired(true);
+		// TODO when OptionHandler has been fixed, set back to true
+		input.setRequired(false);
 		oh.addOptionGroup(input);
 
 		Option patternList = new Option(
