@@ -32,7 +32,9 @@ import java.io.OutputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.Map;
+import java.util.Queue;
 import java.util.Set;
 import java.util.Stack;
 
@@ -79,7 +81,9 @@ public class Xml2tg {
 
 	private Map<String, Vertex> xmlIdToVertexMap;
 	// private BooleanGraphMarker dummyVertexMarker;
-	private Map<String, Vertex> dummyVertexMap;
+	// private Map<String, Vertex> dummyVertexMap;
+
+	private Queue<AttributedElementInfo> edgesToCreate;
 
 	private GraphMarker<IncidencePositionMark> incidencePositionMarker;
 
@@ -143,7 +147,8 @@ public class Xml2tg {
 		XMLInputFactory factory = XMLInputFactory.newInstance();
 		reader = factory.createXMLStreamReader(xmlInput);
 		stack = new Stack<AttributedElementInfo>();
-		dummyVertexMap = new HashMap<String, Vertex>();
+		// dummyVertexMap = new HashMap<String, Vertex>();
+		edgesToCreate = new LinkedList<AttributedElementInfo>();
 	}
 
 	public void importXml() throws XMLStreamException, ClassNotFoundException,
@@ -166,7 +171,7 @@ public class Xml2tg {
 					// graph element
 					String attributedElementClassName = reader.getName()
 							.getLocalPart();
-					System.out.println(attributedElementClassName);
+					// System.out.println(attributedElementClassName);
 					AttributedElementClass aec = schema
 							.getAttributedElementClass(attributedElementClassName);
 					stack.push(new AttributedElementInfo(aec));
@@ -213,7 +218,8 @@ public class Xml2tg {
 				if (current.getAttributedElementClass() instanceof VertexClass) {
 					createVertex(current);
 				} else if (current.getAttributedElementClass() instanceof EdgeClass) {
-					createEdge(current);
+					edgesToCreate.add(current);
+					// createEdge(current);
 				} else if (current.getAttributedElementClass() instanceof GraphClass) {
 					setGraphAttributes(current);
 				}
@@ -223,6 +229,10 @@ public class Xml2tg {
 		}
 		assert (level == 0);
 		reader.close();
+		// create all edges
+		for (AttributedElementInfo current : edgesToCreate) {
+			createEdge(current);
+		}
 		sortIncidenceLists();
 		saveGraph();
 	}
@@ -251,15 +261,15 @@ public class Xml2tg {
 		// create dummy vertices
 		Vertex fromVertex, toVertex;
 		fromVertex = xmlIdToVertexMap.get(fromId);
-		if (fromVertex == null) {
-			System.out.println("creating dummy vertex \"from\"");
-			fromVertex = createDummyVertex(fromId);
-		}
+		// if (fromVertex == null) {
+		// System.out.println("creating dummy vertex \"from\"");
+		// fromVertex = createDummyVertex(fromId);
+		// }
 		toVertex = xmlIdToVertexMap.get(toId);
-		if (toVertex == null) {
-			System.out.println("creating dummy vertex \"to\"");
-			toVertex = createDummyVertex(toId);
-		}
+		// if (toVertex == null) {
+		// System.out.println("creating dummy vertex \"to\"");
+		// toVertex = createDummyVertex(toId);
+		// }
 
 		// create edge
 		Edge currentEdge = graph.createEdge(((EdgeClass) current
@@ -286,12 +296,12 @@ public class Xml2tg {
 		setAttributes(currentEdge, attributes);
 	}
 
-	private Vertex createDummyVertex(String xmlId) {
-		Vertex dummyVertex;
-		dummyVertex = graph.createVertex(Vertex.class);
-		dummyVertexMap.put(xmlId, dummyVertex);
-		return dummyVertex;
-	}
+	// private Vertex createDummyVertex(String xmlId) {
+	// Vertex dummyVertex;
+	// dummyVertex = graph.createVertex(Vertex.class);
+	// dummyVertexMap.put(xmlId, dummyVertex);
+	// return dummyVertex;
+	// }
 
 	private void createVertex(AttributedElementInfo current) {
 		System.out.println("Creating vertex of type " + current.getqName());
@@ -302,15 +312,15 @@ public class Xml2tg {
 
 		// check if dummy vertex of this id exists if so, add the edges to the
 		// new vertex and delet ethe dummy vertex
-		Vertex currentDummyVertex = dummyVertexMap.get(currentId);
-		if (currentDummyVertex != null) {
-			for (Edge currentIncidence : currentDummyVertex.incidences()) {
-				currentIncidence.setThis(currentVertex);
-			}
-			dummyVertexMap.remove(currentId);
-			graph.deleteVertex(currentDummyVertex);
-			System.out.println("Replaced dummy vertex.");
-		}
+		// Vertex currentDummyVertex = dummyVertexMap.get(currentId);
+		// if (currentDummyVertex != null) {
+		// for (Edge currentIncidence : currentDummyVertex.incidences()) {
+		// currentIncidence.setThis(currentVertex);
+		// }
+		// dummyVertexMap.remove(currentId);
+		// graph.deleteVertex(currentDummyVertex);
+		// System.out.println("Replaced dummy vertex.");
+		// }
 
 		// add currentVertex to Map
 		xmlIdToVertexMap.put(currentId, currentVertex);
