@@ -123,14 +123,16 @@ public final class RecordDomainImpl extends CompositeDomainImpl implements
 			String graphIoVariableName) {
 		CodeSnippet code = new CodeSnippet();
 
-		code.add("if (!" + graphIoVariableName
-				+ ".isNextToken(\"\\\\null\")) {");
-		code.add("    " + variableName + " = new "
+		code.add("if (" + graphIoVariableName + ".isNextToken(\"(\")) {");
+		code.add("\t" + variableName + " = new "
 				+ getJavaAttributeImplementationTypeName(schemaPrefix) + "("
 				+ graphIoVariableName + ");");
-		code.add("} else {");
-		code.add("    io.match(\"\\\\null\");");
-		code.add("    " + variableName + " = null;");
+		code.add("} else if (" + graphIoVariableName
+				+ ".isNextToken(GraphIO.NULL_LITERAL) || "
+				+ graphIoVariableName
+				+ ".isNextToken(GraphIO.OLD_NULL_LITERAL)) {");
+		code.add("\t" + graphIoVariableName + ".match();");
+		code.add("\t" + variableName + " = null;");
 		code.add("}");
 
 		return code;
@@ -147,11 +149,11 @@ public final class RecordDomainImpl extends CompositeDomainImpl implements
 		CodeSnippet code = new CodeSnippet();
 
 		code.add("if (" + variableName + " != null) {");
-		code.add("    " + variableName + ".writeComponentValues("
+		code.add("\t" + variableName + ".writeComponentValues("
 				+ graphIoVariableName + ");");
 		code.add("} else {");
-		code.add("    " + graphIoVariableName
-				+ ".writeIdentifier(\"\\\\null\");");
+		code.add("\t" + graphIoVariableName
+				+ ".writeIdentifier(GraphIO.NULL_LITERAL);");
 		code.add("}");
 
 		return code;

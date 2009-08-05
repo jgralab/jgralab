@@ -99,8 +99,7 @@ public final class MapDomainImpl extends CompositeDomainImpl implements
 
 		code.setVariable("io", graphIoVariableName);
 
-		code.addNoIndent(new CodeSnippet(
-				"if (!#io#.isNextToken(\"\\\\null\")) {"));
+		code.addNoIndent(new CodeSnippet("if (#io#.isNextToken(\"{\")) {"));
 		code.add(new CodeSnippet(
 				"#name# = new java.util.HashMap<#keydom#, #valuedom#>();",
 				"#io#.match(\"{\");", "while (!#io#.isNextToken(\"}\")) {",
@@ -112,8 +111,10 @@ public final class MapDomainImpl extends CompositeDomainImpl implements
 				variableName + "Value", graphIoVariableName), 1);
 		code.add(new CodeSnippet("\t#name#.put(#name#Key, #name#Value);", "}",
 				"#io#.match(\"}\");"));
-		code.addNoIndent(new CodeSnippet("} else {"));
-		code.add(new CodeSnippet("io.match(\"\\\\null\");", "#name# = null;"));
+		code
+				.addNoIndent(new CodeSnippet(
+						"} else if (#io#.isNextToken(GraphIO.NULL_LITERAL) || #io#.isNextToken(GraphIO.OLD_NULL_LITERAL)) {"));
+		code.add(new CodeSnippet("#io#.match();", "#name# = null;"));
 		code.addNoIndent(new CodeSnippet("}"));
 		return code;
 	}
@@ -167,7 +168,7 @@ public final class MapDomainImpl extends CompositeDomainImpl implements
 		code.add(new CodeSnippet("}", "#io#.write(\"}\");", "#io#.space();"));
 		code.addNoIndent(new CodeSnippet("} else {"));
 		code.add(new CodeSnippet(graphIoVariableName
-				+ ".writeIdentifier(\"\\\\null\");"));
+				+ ".writeIdentifier(GraphIO.NULL_LITERAL);"));
 		code.addNoIndent(new CodeSnippet("}"));
 		return code;
 

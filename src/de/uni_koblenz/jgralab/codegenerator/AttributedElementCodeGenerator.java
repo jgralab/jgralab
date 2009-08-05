@@ -34,9 +34,9 @@ import de.uni_koblenz.jgralab.schema.EnumDomain;
 
 /**
  * TODO add comment
- *
+ * 
  * @author ist@uni-koblenz.de
- *
+ * 
  */
 public class AttributedElementCodeGenerator extends CodeGenerator {
 
@@ -97,7 +97,12 @@ public class AttributedElementCodeGenerator extends CodeGenerator {
 			code.add(createGettersAndSetters(aec.getAttributeList(),
 					createClass));
 			code.add(createReadAttributesMethod(aec.getAttributeList()));
+			code.add(createReadAttributesFromStringMethod(aec
+					.getAttributeList()));
 			code.add(createWriteAttributesMethod(aec.getAttributeList()));
+			code
+					.add(createWriteAttributeToStringMethod(aec
+							.getAttributeList()));
 		} else {
 			code.add(createGettersAndSetters(aec.getOwnAttributeList(),
 					createClass));
@@ -241,7 +246,8 @@ public class AttributedElementCodeGenerator extends CodeGenerator {
 			if (isEnumDomain) {
 				s.add("if (attributeName.equals(\"#name#\")) {");
 				s.add("\tif (data instanceof String) {");
-				s.add("\t\tset#cName#(#attributeClassName#.fromString((String) data));");
+				s
+						.add("\t\tset#cName#(#attributeClassName#.fromString((String) data));");
 				s.add("\t} else {");
 				s.add("\t\tset#cName#((#attributeClassName#) data);");
 				s.add("\t}");
@@ -325,6 +331,76 @@ public class AttributedElementCodeGenerator extends CodeGenerator {
 		return code;
 	}
 
+	protected CodeBlock createReadAttributesFromStringMethod(
+			Set<Attribute> attrSet) {
+		CodeList code = new CodeList();
+
+		addImports("#jgPackage#.GraphIO", "#jgPackage#.GraphIOException");
+		code
+				.addNoIndent(new CodeSnippet(
+						true,
+						"public void readAttributeValueFromString(String _attributeName, String _value) throws GraphIOException, NoSuchFieldException {"));
+
+		if (attrSet != null) {
+			for (Attribute attribute : attrSet) {
+				CodeList a = new CodeList();
+				a.setVariable("variableName", attribute.getName());
+				a.setVariable("setterName", "set"
+						+ camelCase(attribute.getName()));
+				a
+						.addNoIndent(new CodeSnippet(
+								"if (_attributeName.equals(\"#variableName#\")) {",
+								"\tGraphIO _io = GraphIO.createStringReader(_value, getSchema());"));
+				a.add(attribute.getDomain().getReadMethod(
+						schemaRootPackageName, attribute.getName(), "_io"));
+
+				a.addNoIndent(new CodeSnippet(
+						"\t#setterName#(#variableName#);", "\treturn;", "}"));
+				code.add(a);
+			}
+		}
+		code
+				.add(new CodeSnippet(
+						"throw new NoSuchFieldException(\"#qualifiedClassName# doesn't contain an attribute \" + _attributeName);"));
+		code.addNoIndent(new CodeSnippet("}"));
+
+		return code;
+	}
+
+	protected CodeBlock createWriteAttributeToStringMethod(
+			Set<Attribute> attrSet) {
+		CodeList code = new CodeList();
+		addImports("#jgPackage#.GraphIO", "#jgPackage#.GraphIOException");
+		code
+				.addNoIndent(new CodeSnippet(
+						true,
+						"public String writeAttributeValueToString(String _attributeName) throws IOException, GraphIOException, NoSuchFieldException {"));
+		if (attrSet != null) {
+			for (Attribute attribute : attrSet) {
+				CodeList a = new CodeList();
+				a.setVariable("variableName", attribute.getName());
+				a.setVariable("setterName", "set"
+						+ camelCase(attribute.getName()));
+				a
+						.addNoIndent(new CodeSnippet(
+								"if (_attributeName.equals(\"#variableName#\")) {",
+								"\tGraphIO _io = GraphIO.createStringWriter(getSchema());"));
+				a.add(attribute.getDomain().getWriteMethod(
+						schemaRootPackageName, attribute.getName(), "_io"));
+
+				a.addNoIndent(new CodeSnippet(
+						"\t#setterName#(#variableName#);",
+						"\treturn _io.getStringWriterResult();", "}"));
+				code.add(a);
+			}
+		}
+		code
+				.add(new CodeSnippet(
+						"throw new NoSuchFieldException(\"#qualifiedClassName# doesn't contain an attribute \" + _attributeName);"));
+		code.addNoIndent(new CodeSnippet("}"));
+		return code;
+	}
+
 	protected CodeBlock createReadAttributesMethod(Set<Attribute> attrSet) {
 		CodeList code = new CodeList();
 
@@ -369,4 +445,5 @@ public class AttributedElementCodeGenerator extends CodeGenerator {
 		code.addNoIndent(new CodeSnippet("}"));
 		return code;
 	}
+
 }

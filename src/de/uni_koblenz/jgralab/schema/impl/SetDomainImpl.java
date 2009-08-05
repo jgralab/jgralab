@@ -87,18 +87,19 @@ public final class SetDomainImpl extends CollectionDomainImpl implements
 						schemaRootPackagePrefix));
 		code.setVariable("io", graphIoVariableName);
 
-		code.addNoIndent(new CodeSnippet(
-				"if (!#io#.isNextToken(\"\\\\null\")) {"));
+		code.addNoIndent(new CodeSnippet("if (#io#.isNextToken(\"{\")) {"));
 		code.add(new CodeSnippet(
 				"#name# = new java.util.HashSet<#basedom#>();",
 				"#io#.match(\"{\");", "while (!#io#.isNextToken(\"}\")) {",
-				"\t#basetype# #name#Element;"));
+				"\t#basetype# #name#Element = null;"));
 		code.add(getBaseDomain().getReadMethod(schemaRootPackagePrefix,
 				variableName + "Element", graphIoVariableName), 1);
 		code.add(new CodeSnippet("\t#name#.add(#name#Element);", "}",
 				"#io#.match(\"}\");", "#io#.space();"));
-		code.addNoIndent(new CodeSnippet("} else {"));
-		code.add(new CodeSnippet("io.match(\"\\\\null\");", "#name# = null;"));
+		code
+				.addNoIndent(new CodeSnippet(
+						"} else if (#io#.isNextToken(GraphIO.NULL_LITERAL) || #io#.isNextToken(GraphIO.OLD_NULL_LITERAL)) {"));
+		code.add(new CodeSnippet("#io#.match();"));
 		code.addNoIndent(new CodeSnippet("}"));
 		return code;
 	}
@@ -128,7 +129,7 @@ public final class SetDomainImpl extends CollectionDomainImpl implements
 		code.add(new CodeSnippet("}", "#io#.write(\"}\");"));
 		code.addNoIndent(new CodeSnippet("} else {"));
 		code.add(new CodeSnippet(graphIoVariableName
-				+ ".writeIdentifier(\"\\\\null\");"));
+				+ ".writeIdentifier(GraphIO.NULL_LITERAL);"));
 		code.addNoIndent(new CodeSnippet("}"));
 		return code;
 	}

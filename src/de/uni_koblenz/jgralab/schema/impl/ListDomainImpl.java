@@ -85,14 +85,13 @@ public final class ListDomainImpl extends CollectionDomainImpl implements
 				.getJavaAttributeImplementationTypeName(schemaPrefix));
 		code.setVariable("io", graphIoVariableName);
 
-		code.addNoIndent(new CodeSnippet(
-				"if (!#io#.isNextToken(\"\\\\null\")) {"));
+		code.addNoIndent(new CodeSnippet("if (#io#.isNextToken(\"[\")) {"));
 		code
 				.add(new CodeSnippet(
 						"java.util.LinkedList<#basedom#> #tmpname# = new java.util.LinkedList<#basedom#>();",
 						"#io#.match(\"[\");",
 						"while (!#io#.isNextToken(\"]\")) {",
-						"\t#basetype# #name#Element;"));
+						"\t#basetype# #name#Element = null;"));
 		code.add(getBaseDomain().getReadMethod(schemaPrefix,
 				variableName + "Element", graphIoVariableName), 1);
 		code
@@ -102,8 +101,11 @@ public final class ListDomainImpl extends CollectionDomainImpl implements
 						"#io#.match(\"]\");",
 						"#name# = new java.util.ArrayList<#basedom#>(#tmpname#.size());",
 						"#name#.addAll(#tmpname#);"));
-		code.addNoIndent(new CodeSnippet("} else {"));
-		code.add(new CodeSnippet("io.match(\"\\\\null\");", "#name# = null;"));
+		code
+				.addNoIndent(new CodeSnippet(
+						"} else if (#io#.isNextToken(GraphIO.NULL_LITERAL) || #io#.isNextToken(GraphIO.OLD_NULL_LITERAL)) {"));
+
+		code.add(new CodeSnippet("#io#.match();"));
 		code.addNoIndent(new CodeSnippet("}"));
 		return code;
 	}
@@ -133,7 +135,7 @@ public final class ListDomainImpl extends CollectionDomainImpl implements
 		code.add(new CodeSnippet("}", "#io#.write(\"]\");", "#io#.space();"));
 		code.addNoIndent(new CodeSnippet("} else {"));
 		code.add(new CodeSnippet(graphIoVariableName
-				+ ".writeIdentifier(\"\\\\null\");"));
+				+ ".writeIdentifier(GraphIO.NULL_LITERAL);"));
 		code.addNoIndent(new CodeSnippet("}"));
 		return code;
 	}

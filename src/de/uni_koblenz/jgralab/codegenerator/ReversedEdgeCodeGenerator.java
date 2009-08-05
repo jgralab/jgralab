@@ -228,13 +228,65 @@ public class ReversedEdgeCodeGenerator extends AttributedElementCodeGenerator {
 	}
 
 	@Override
+	protected CodeBlock createReadAttributesFromStringMethod(
+			Set<Attribute> attrSet) {
+		CodeList code = new CodeList();
+		addImports("#jgPackage#.GraphIO", "#jgPackage#.GraphIOException");
+		code
+				.addNoIndent(new CodeSnippet(
+						true,
+						"public void readAttributeValueFromString(String attributeName, String value) throws GraphIOException, NoSuchFieldException {"));
+		code
+				.add(new CodeSnippet(
+						"throw new GraphIOException(\"Can not call readAttributeValuesFromString for reversed Edges.\");"));
+		code.addNoIndent(new CodeSnippet("}"));
+		return code;
+	}
+
+	@Override
+	protected CodeBlock createWriteAttributeToStringMethod(
+			Set<Attribute> attrSet) {
+		CodeList code = new CodeList();
+		addImports("#jgPackage#.GraphIO", "#jgPackage#.GraphIOException");
+		code
+				.addNoIndent(new CodeSnippet(
+						true,
+						"public String writeAttributeValueToString(String _attributeName) throws IOException, GraphIOException, NoSuchFieldException {"));
+		code
+				.add(new CodeSnippet(
+						"throw new GraphIOException(\"Can not call writeAttributeValueToString for reversed Edges.\");"));
+		code.addNoIndent(new CodeSnippet("}"));
+		return code;
+	}
+
+	@Override
 	protected CodeBlock createReadAttributesMethod(Set<Attribute> attrSet) {
-		return super.createReadAttributesMethod(null);
+		CodeList code = new CodeList();
+		addImports("#jgPackage#.GraphIO", "#jgPackage#.GraphIOException");
+		code
+				.addNoIndent(new CodeSnippet(true,
+						"public void readAttributeValues(GraphIO io) throws GraphIOException {"));
+		code
+				.add(new CodeSnippet(
+						"throw new GraphIOException(\"Can not call readAttributeValues for reversed Edges.\");"));
+		code.addNoIndent(new CodeSnippet("}"));
+		return code;
 	}
 
 	@Override
 	protected CodeBlock createWriteAttributesMethod(Set<Attribute> attrSet) {
-		return super.createWriteAttributesMethod(null);
+		CodeList code = new CodeList();
+		addImports("#jgPackage#.GraphIO", "#jgPackage#.GraphIOException",
+				"java.io.IOException");
+		code
+				.addNoIndent(new CodeSnippet(
+						true,
+						"public void writeAttributeValues(GraphIO io) throws GraphIOException, IOException {"));
+		code
+				.add(new CodeSnippet(
+						"throw new GraphIOException(\"Can not call writeAttributeValues for reversed Edges.\");"));
+		code.addNoIndent(new CodeSnippet("}"));
+		return code;
 	}
 
 }
