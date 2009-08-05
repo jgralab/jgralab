@@ -51,7 +51,6 @@ import de.uni_koblenz.jgralab.schema.Schema;
 import de.uni_koblenz.jgralab.utilities.common.GraphVisitor;
 import de.uni_koblenz.jgralab.utilities.common.UtilityMethods;
 import de.uni_koblenz.jgralab.utilities.common.OptionHandler;
-import de.uni_koblenz.jgralab.utilities.jgralab2owl.IndentingXMLStreamWriter;
 
 @WorkInProgress(description = "Attribute values missing, testing required, command line parameter checks missing", responsibleDevelopers = "strauss, riediger", expectedFinishingDate = "2009/08")
 public class Tg2xml extends GraphVisitor {

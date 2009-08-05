@@ -45,6 +45,7 @@ import de.uni_koblenz.jgralab.ProgressFunction;
 import de.uni_koblenz.jgralab.impl.ProgressFunctionImpl;
 import de.uni_koblenz.jgralab.schema.Schema;
 import de.uni_koblenz.jgralab.utilities.common.OptionHandler;
+import de.uni_koblenz.jgralab.utilities.xml.IndentingXMLStreamWriter;
 
 public class JGraLab2OWL {
 
