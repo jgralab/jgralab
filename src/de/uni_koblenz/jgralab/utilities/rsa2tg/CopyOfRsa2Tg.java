@@ -251,6 +251,11 @@ public class CopyOfRsa2Tg{
 	 * elements.
 	 */
 	private Map<String, List<String>> constraints;
+	
+	/**
+	 * Maps the XMI Id of constrained elements to their position in the XMI-file.
+	 */
+	private Map<String, Location> constraintsLines;
 
 	/**
 	 * When creating EdgeClass names, also use the rolename of the "from" end.
@@ -341,7 +346,7 @@ public class CopyOfRsa2Tg{
 					name = parser.getLocalName();
 				else
 					name = parser.getPrefix() + ":" + parser.getLocalName();
-				endElement(name);
+				endElement(name, parser.getLocation().getLineNumber());
 				break;
 			case XMLStreamConstants.CHARACTERS:
 				elementContent.peek().append(parser.getText());
@@ -741,7 +746,13 @@ public class CopyOfRsa2Tg{
 		}
 	}
 
-	public void endElement(String name)	throws XMLStreamException {
+	/**
+	 * 
+	 * @param name the name of the end element
+	 * @param line the line at which the end element is in the xmi-file
+	 * @throws XMLStreamException
+	 */
+	public void endElement(String name, int line) throws XMLStreamException {
 		assert elementNameStack.size() > 0;
 		String s = elementNameStack.peek();
 		int p = s.indexOf('>');
@@ -755,7 +766,7 @@ public class CopyOfRsa2Tg{
 		} else if (ignore == 0) {
 			if (inConstraint && name.equals("body")) {
 				s = elementContent.peek().toString().trim().replace("\\s", " ");
-				handleConstraint(s);
+				handleConstraint(s, line);
 			}
 			AttributedElement elem = idMap.get(xmiId);
 			if (elem != null) {
@@ -788,7 +799,7 @@ public class CopyOfRsa2Tg{
 		elementContent.pop();
 	}
 
-	private void handleConstraint(String text) throws XMLStreamException {
+	private void handleConstraint(String text, int line) throws XMLStreamException {
 		if (text.startsWith("redefines") || text.startsWith("\"")) {
 			List<String> l = constraints.get(constrainedElementId);
 			if (l == null) {
@@ -797,7 +808,8 @@ public class CopyOfRsa2Tg{
 			}
 			l.add(text);
 		} else {
-			throw new XMLStreamException("Illegal constraint format: " + text);
+			throw new XMLStreamException("Illegal constraint format: " + text +
+					" at line " + line);
 		}
 	}
 
@@ -878,7 +890,7 @@ public class CopyOfRsa2Tg{
 						throw new XMLStreamException(
 								"Illegal constraint format. The constraint text was '"
 										+ text + "'.  Expected '\"' but got '"
-										+ c + "'.  (position = " + i + ")");
+										+ c + "'.  (position = " + i + ").");
 					}
 				}
 			}
@@ -906,6 +918,7 @@ public class CopyOfRsa2Tg{
 		ownedEnds = new HashSet<Edge>();
 		ignore = 0;
 		constraints = new HashMap<String, List<String>>();
+		constraintsLines = new HashMap<String, Location>();
 	}
 
 	public void startElement(XMLStreamReader parser) throws XMLStreamException {
@@ -948,7 +961,8 @@ public class CopyOfRsa2Tg{
 				packageStack.push(defaultPackage);
 			} else {
 				throw new XMLStreamException(
-						"root element must be uml:Model or uml:Package");
+						"root element at line " + parser.getLocation().getLineNumber() 
+						+ " must be uml:Model or uml:Package");
 			}
 		} else {
 			// inside toplevel element
@@ -969,7 +983,8 @@ public class CopyOfRsa2Tg{
 					handleRealization(parser);
 				} else {
 					throw new XMLStreamException("unexpected element " + name
-							+ " of type " + type);
+							+ " of type " + type + " at line " + 
+							parser.getLocation().getLineNumber());
 				}
 			} else if (name.equals("ownedRule")) {
 				inConstraint = true;
@@ -989,7 +1004,8 @@ public class CopyOfRsa2Tg{
 			} else if (name.equals("specification") || name.equals("language")
 					|| name.equals("body")) {
 				if (!inConstraint) {
-					throw new XMLStreamException("unecpected element <" + name + ">");
+					throw new XMLStreamException("unecpected element <" + name 
+							+ "> at line: "+ parser.getLocation().getLineNumber());
 				}
 
 			} else if (name.equals("ownedEnd")) {
@@ -998,28 +1014,32 @@ public class CopyOfRsa2Tg{
 					handleAssociatioEnd(parser, xmiId);
 				} else {
 					throw new XMLStreamException("unexpected element <" + name
-							+ "> of type " + type);
+							+ "> of type " + type + " at line" 
+							+ parser.getLocation().getLineNumber());
 				}
 			} else if (name.equals("ownedAttribute")) {
 				if (type.equals("uml:Property")) {
 					handleOwnedAttribute(parser, xmiId);
 				} else {
 					throw new XMLStreamException("unexpected element <" + name
-							+ "> of type " + type);
+							+ "> of type " + type + " at line" + 
+							parser.getLocation().getLineNumber());
 				}
 			} else if (name.equals("type")) {
 				if (type.equals("uml:PrimitiveType")) {
 					handleNestedTypeElement(parser, type);
 				} else {
 					throw new XMLStreamException("unexpected element <" + name
-							+ "> of type " + type);
+							+ "> of type " + type + " at line " + 
+							parser.getLocation().getLineNumber());
 				}
 			} else if (name.equals("ownedLiteral")) {
 				if (type.equals("uml:EnumerationLiteral")) {
 					handleEnumerationLiteral(parser);
 				} else {
 					throw new XMLStreamException("unexpected element <" + name
-							+ "> of type " + type);
+							+ "> of type " + type + " at line " +
+							parser.getLocation().getLineNumber());
 				}
 			} else if (name.equals("xmi:Extension")) {
 				// ignore
@@ -1035,7 +1055,8 @@ public class CopyOfRsa2Tg{
 				handleUpperValue(parser);
 			} else {
 				throw new XMLStreamException("unexpected element <" + name
-						+ "> of type " + type);
+						+ "> of type " + type + " at line " + 
+						parser.getLocation().getLineNumber());
 			}
 		}
 		if ((xmiId != null) && (idVertex != null)) {
@@ -1160,7 +1181,8 @@ public class CopyOfRsa2Tg{
 			assert currentClass != null;
 			currentClass.setIsAbstract(true);
 		} else {
-			throw new XMLStreamException("unexpected stereotype " + key);
+			throw new XMLStreamException("unexpected stereotype " + key + " at line " 
+					+ parser.getLocation().getLineNumber());
 		}
 	}
 
@@ -1187,7 +1209,8 @@ public class CopyOfRsa2Tg{
 		} else if (href.endsWith("#Boolean")) {
 			dom = createDomain("Boolean");
 		} else {
-			throw new XMLStreamException("unexpected " + type + " with href " + href);
+			throw new XMLStreamException("unexpected " + type + " with href " 
+					+ href + " at line " + parser.getLocation().getLineNumber());
 		}
 		if (currentRecordDomain != null) {
 			assert currentRecordDomainComponent != null;
