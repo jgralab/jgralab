@@ -24,6 +24,13 @@
 
 package de.uni_koblenz.jgralab.utilities.common;
 
+import java.util.Comparator;
+import java.util.LinkedList;
+import java.util.List;
+
+import de.uni_koblenz.jgralab.Edge;
+import de.uni_koblenz.jgralab.Vertex;
+
 public class UtilityMethods {
 
 	/**
@@ -52,5 +59,45 @@ public class UtilityMethods {
 		}
 
 		return namespaceURI.toString();
+	}
+
+	public static void sortIncidenceList(Vertex v, Comparator<Edge> cmp) {
+		if (v.getDegree() > 0) {
+
+			Edge currentSorted = null;
+
+			// create copy of incidenceList
+			List<Edge> incidenceList = new LinkedList<Edge>();
+			for (Edge currentEdge : v.incidences()) {
+				incidenceList.add(currentEdge);
+			}
+
+			// selection sort
+			// maybe TODO change it to mergesort
+			while (!incidenceList.isEmpty()) {
+				// select minimum
+				Edge currentMinimum = incidenceList.get(0);
+				for (Edge currentEdge : incidenceList) {
+					if (cmp.compare(currentEdge, currentMinimum) < 0) {
+						currentMinimum = currentEdge;
+					}
+				}
+
+				// place edge where it belongs
+				if (currentSorted == null) {
+					if (currentMinimum != v.getFirstEdge()) {
+						// only put it there if the first edge is not already in
+						// place
+						currentMinimum.putEdgeBefore(v.getFirstEdge());
+					}
+				} else {
+					currentMinimum.putEdgeAfter(currentSorted);
+				}
+				currentSorted = currentMinimum;
+
+				incidenceList.remove(currentMinimum);
+			}
+
+		}
 	}
 }

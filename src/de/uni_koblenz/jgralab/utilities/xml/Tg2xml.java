@@ -22,7 +22,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-package de.uni_koblenz.jgralab.utilities.tg2xml;
+package de.uni_koblenz.jgralab.utilities.xml;
 
 import java.io.BufferedOutputStream;
 import java.io.FileOutputStream;
@@ -48,6 +48,7 @@ import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.WorkInProgress;
 import de.uni_koblenz.jgralab.impl.ProgressFunctionImpl;
 import de.uni_koblenz.jgralab.schema.Schema;
+import de.uni_koblenz.jgralab.utilities.common.GraphVisitor;
 import de.uni_koblenz.jgralab.utilities.common.UtilityMethods;
 import de.uni_koblenz.jgralab.utilities.common.OptionHandler;
 import de.uni_koblenz.jgralab.utilities.jgralab2owl.IndentingXMLStreamWriter;

@@ -22,41 +22,36 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-package de.uni_koblenz.jgralab.utilities.tg2xml;
+package de.uni_koblenz.jgralab.utilities.xml;
+
+import static javax.xml.stream.XMLStreamConstants.END_ELEMENT;
+import static javax.xml.stream.XMLStreamConstants.START_DOCUMENT;
+import static javax.xml.stream.XMLStreamConstants.START_ELEMENT;
 
 import java.io.BufferedInputStream;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
-import java.io.OutputStream;
-import java.lang.reflect.InvocationTargetException;
+import java.util.Comparator;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.Map;
 import java.util.Queue;
-import java.util.Set;
 import java.util.Stack;
 
-import javax.xml.XMLConstants;
-import javax.xml.namespace.QName;
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
-import javax.xml.validation.SchemaFactory;
 
 import de.uni_koblenz.jgralab.AttributedElement;
-import de.uni_koblenz.jgralab.BooleanGraphMarker;
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.GraphElement;
 import de.uni_koblenz.jgralab.GraphIO;
 import de.uni_koblenz.jgralab.GraphIOException;
 import de.uni_koblenz.jgralab.GraphMarker;
-import de.uni_koblenz.jgralab.M1ClassManager;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.WorkInProgress;
-import de.uni_koblenz.jgralab.grumlschema.structure.GraphElementClass;
 import de.uni_koblenz.jgralab.impl.ProgressFunctionImpl;
 import de.uni_koblenz.jgralab.schema.AttributedElementClass;
 import de.uni_koblenz.jgralab.schema.EdgeClass;
@@ -64,15 +59,18 @@ import de.uni_koblenz.jgralab.schema.GraphClass;
 import de.uni_koblenz.jgralab.schema.Schema;
 import de.uni_koblenz.jgralab.schema.VertexClass;
 import de.uni_koblenz.jgralab.schema.exception.SchemaException;
-import static javax.xml.stream.XMLStreamConstants.*;
+import de.uni_koblenz.jgralab.utilities.common.UtilityMethods;
+
 
 @WorkInProgress
 public class Xml2tg {
 
-	public static final int MAX_VERTEX_COUNT = 100;
-	public static final int MAX_EDGE_COUNT = 100;
+
+	public static final int MAX_VERTEX_COUNT = 1024;
+	public static final int MAX_EDGE_COUNT = 1024;
 
 	private String tgOutput;
+
 	private Schema schema;
 	private Graph graph;
 
@@ -227,22 +225,41 @@ public class Xml2tg {
 			default:
 			}
 		}
+
 		assert (level == 0);
 		reader.close();
 		// create all edges
-		for (AttributedElementInfo current : edgesToCreate) {
-			createEdge(current);
+		while (!edgesToCreate.isEmpty()) {
+			createEdge(edgesToCreate.poll());
 		}
 		sortIncidenceLists();
 		saveGraph();
 	}
 
+
 	private void saveGraph() throws GraphIOException {
 		GraphIO.saveGraphToFile(tgOutput, graph, new ProgressFunctionImpl());
 	}
 
+
 	private void sortIncidenceLists() {
-		System.out.println("Would sort incidence lists now.");
+		System.out.println("Sorting incidence lists.");
+		for (Vertex currentVertex : graph.vertices()) {
+			UtilityMethods.sortIncidenceList(currentVertex,
+					new Comparator<Edge>() {
+
+						@Override
+						public int compare(Edge e1, Edge e2) {
+							IncidencePositionMark mark1 = incidencePositionMarker
+									.getMark(e1);
+							IncidencePositionMark mark2 = incidencePositionMarker
+									.getMark(e2);
+							int seq1 = e1.isNormal() ? mark1.fseq : mark1.tseq;
+							int seq2 = e2.isNormal() ? mark2.fseq : mark2.tseq;
+							return Double.compare(seq1, seq2);
+						}
+					});
+		}
 	}
 
 	private void setGraphAttributes(AttributedElementInfo current) {
@@ -339,4 +356,11 @@ public class Xml2tg {
 			System.out.println("Id: " + ((GraphElement) element).getId());
 		}
 	}
+
+	// private Vertex createDummyVertex(String xmlId) {
+	// Vertex dummyVertex;
+	// dummyVertex = graph.createVertex(Vertex.class);
+	// dummyVertexMap.put(xmlId, dummyVertex);
+	// return dummyVertex;
+	// }
 }
