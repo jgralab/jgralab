@@ -102,11 +102,11 @@ public final class EnumDomainImpl extends DomainImpl implements EnumDomain {
 		CodeSnippet code = new CodeSnippet();
 
 		code.add("if (" + variableName + " != null) {");
-		code.add("    " + graphIoVariableName + ".writeIdentifier("
+		code.add("\t" + graphIoVariableName + ".writeIdentifier("
 				+ variableName + ".toString());");
 		code.add("} else {");
-		code.add("    " + graphIoVariableName
-				+ ".writeIdentifier(\"\\\\null\");");
+		code.add("\t" + graphIoVariableName
+				+ ".writeIdentifier(GraphIO.NULL_LITERAL);");
 		code.add("}");
 
 		return code;

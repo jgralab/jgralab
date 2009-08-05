@@ -32,9 +32,9 @@ import de.uni_koblenz.jgralab.schema.Schema;
 
 /**
  * aggregates graphs, edges and vertices
- *
+ * 
  * @author ist@uni-koblenz.de
- *
+ * 
  */
 public interface AttributedElement extends Comparable<AttributedElement> {
 	/**
@@ -43,12 +43,18 @@ public interface AttributedElement extends Comparable<AttributedElement> {
 	public AttributedElementClass getAttributedElementClass();
 
 	/**
-	 *
+	 * 
 	 * @return the m1-class of this attributedelement
 	 */
 	public Class<? extends AttributedElement> getM1Class();
 
 	public GraphClass getGraphClass();
+
+	public void readAttributeValueFromString(String attributeName, String value)
+			throws GraphIOException, NoSuchFieldException;
+
+	public String writeAttributeValueToString(String attributeName)
+			throws IOException, GraphIOException, NoSuchFieldException;
 
 	public void writeAttributeValues(GraphIO io) throws IOException,
 			GraphIOException;

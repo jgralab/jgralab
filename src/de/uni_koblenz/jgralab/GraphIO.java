@@ -26,6 +26,8 @@ package de.uni_koblenz.jgralab;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -37,6 +39,7 @@ import java.io.InputStream;
 import java.lang.reflect.Method;
 import java.net.URL;
 import java.nio.CharBuffer;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -79,6 +82,11 @@ import de.uni_koblenz.jgralab.schema.impl.SchemaImpl;
  * @author ist@uni-koblenz.de
  */
 public class GraphIO {
+	public static String NULL_LITERAL = "n";
+	public static String OLD_NULL_LITERAL = "\\null";
+	public static String TRUE_LITERAL = "t";
+	public static String FALSE_LITERAL = "f";
+
 	/**
 	 * A {@link FilenameFilter} that accepts TG files.
 	 * 
@@ -182,6 +190,7 @@ public class GraphIO {
 	private Object[] vertexDescTempObject = { 0 };
 
 	private Object[] edgeDescTempObject = { 0, 0, 0 };
+	private ByteArrayOutputStream BAOut;
 
 	private GraphIO() {
 		domains = new TreeMap<String, Domain>();
@@ -603,7 +612,7 @@ public class GraphIO {
 
 	public final void writeBoolean(boolean b) throws IOException {
 		writeSpace();
-		TGOut.writeBytes(b ? "t" : "f");
+		TGOut.writeBytes(b ? TRUE_LITERAL : FALSE_LITERAL);
 	}
 
 	public final void writeInteger(int i) throws IOException {
@@ -623,22 +632,49 @@ public class GraphIO {
 
 	public final void writeUtfString(String s) throws IOException {
 		writeSpace();
-		if (s == null) {
-			TGOut.writeBytes("\\null");
-		} else {
-			TGOut.writeBytes(toUtfString(s));
-		}
+		TGOut.writeBytes(s == null ? NULL_LITERAL : toUtfString(s));
 	}
 
 	public final void writeIdentifier(String s) throws IOException {
 		writeSpace();
-
-		// TODO: Is that really not needed anymore?
-		// if (Schema.reservedTGWords.contains(s)) {
-		// TGOut.writeBytes("'");
-		// }
-
 		TGOut.writeBytes(s);
+	}
+
+	public static GraphIO createStringReader(String input, Schema schema) {
+		GraphIO io = new GraphIO();
+		io.TGIn = new ByteArrayInputStream(input.getBytes(Charset
+				.forName("US-ASCII")));
+		io.line = 1;
+		io.schema = schema;
+		try {
+			io.la = io.read();
+			io.match();
+		} catch (GraphIOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		return io;
+	}
+
+	public static GraphIO createStringWriter(Schema schema) {
+		GraphIO io = new GraphIO();
+		io.BAOut = new ByteArrayOutputStream();
+		io.TGOut = new DataOutputStream(io.BAOut);
+		io.schema = schema;
+		return io;
+	}
+
+	public String getStringWriterResult() throws GraphIOException, IOException {
+		if (BAOut == null) {
+			throw new GraphIOException("GraphIO did not write to a String");
+		}
+		TGOut.flush();
+		BAOut.flush();
+		String result = BAOut.toString("US-ASCII");
+		TGOut.close();
+		BAOut.close();
+		return result;
 	}
 
 	public static Schema loadSchemaFromFile(String filename)
@@ -698,7 +734,7 @@ public class GraphIO {
 		try {
 			logger.finer("Loading graph " + filename);
 			return loadGraphFromStream(new BufferedInputStream(
-					new FileInputStream(filename), 10000), schema, pf);
+					new FileInputStream(filename), 65536), schema, pf);
 		} catch (IOException ex) {
 			throw new GraphIOException("Unable to load graph from file "
 					+ filename + ", the file cannot be found", ex);
@@ -1248,7 +1284,9 @@ public class GraphIO {
 	}
 
 	public final String matchEnumConstant() throws GraphIOException {
-		if (schema.isValidEnumConstant(lookAhead) || lookAhead.equals("\\null")) {
+		if (schema.isValidEnumConstant(lookAhead)
+				|| lookAhead.equals(NULL_LITERAL)
+				|| lookAhead.equals(OLD_NULL_LITERAL)) {
 			return matchAndNext();
 		}
 		throw new GraphIOException("invalid enumeration constant '" + lookAhead
@@ -1821,7 +1859,7 @@ public class GraphIO {
 		return lookAhead.equals(token);
 	}
 
-	private final void match() throws GraphIOException {
+	public final void match() throws GraphIOException {
 		lookAhead = nextToken();
 	}
 
@@ -1948,7 +1986,8 @@ public class GraphIO {
 	}
 
 	public final String matchUtfString() throws GraphIOException {
-		if (lookAhead.equals("\\null")) {
+		if (lookAhead.equals(NULL_LITERAL)
+				|| lookAhead.equals(OLD_NULL_LITERAL)) {
 			match();
 			return null;
 		}
@@ -1964,8 +2003,8 @@ public class GraphIO {
 	public final boolean matchBoolean() throws GraphIOException {
 		if (!lookAhead.equals("t") && !lookAhead.equals("f")) {
 			throw new GraphIOException(
-					"expected a boolean constant but found '" + lookAhead
-							+ "' in line " + line);
+					"expected a boolean constant ('f' or 't') but found '"
+							+ lookAhead + "' in line " + line);
 		}
 		boolean result = lookAhead.equals("t");
 		match();
