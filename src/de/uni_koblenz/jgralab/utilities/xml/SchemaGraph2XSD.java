@@ -81,7 +81,6 @@ import de.uni_koblenz.jgralab.grumlschema.structure.VertexClass;
 import de.uni_koblenz.jgralab.impl.ProgressFunctionImpl;
 import de.uni_koblenz.jgralab.utilities.common.OptionHandler;
 import de.uni_koblenz.jgralab.utilities.common.UtilityMethods;
-import de.uni_koblenz.jgralab.utilities.jgralab2owl.IndentingXMLStreamWriter;
 import de.uni_koblenz.jgralab.utilities.rsa2tg.SchemaGraph2Tg;
 import de.uni_koblenz.jgralab.utilities.tg2schemagraph.Tg2SchemaGraph;
 
