@@ -255,7 +255,7 @@ public class CopyOfRsa2Tg{
 	/**
 	 * Maps the XMI Id of constrained elements to their position in the XMI-file.
 	 */
-	private Map<String, Location> constraintsLines;
+//	private Map<String, Location> constraintsLines;
 
 	/**
 	 * When creating EdgeClass names, also use the rolename of the "from" end.
@@ -918,7 +918,7 @@ public class CopyOfRsa2Tg{
 		ownedEnds = new HashSet<Edge>();
 		ignore = 0;
 		constraints = new HashMap<String, List<String>>();
-		constraintsLines = new HashMap<String, Location>();
+//		constraintsLines = new HashMap<String, Location>();
 	}
 
 	public void startElement(XMLStreamReader parser) throws XMLStreamException {
