@@ -170,17 +170,18 @@ public class LoadTest {
 	public void allocateIndexTest2(){
 		VertexTestGraph graph1 = VertexTestSchema.instance().createVertexTestGraph(1,1);
 //		VertexTestGraph graph2 = VertexTestSchema.instance().createVertexTestGraph(1,1);
-		for(int i=0;i<16;i++){
+		for(int i=0;i<18;i++){
 			graph1.createA();
 //			graph2.createA();
 		}
 //		checkEqualVertexList(graph1,graph2);
 //		delete every second vertex
-		for(int i=1;i<16;i=i+2){
+		for(int i=1;i<15;i=i+2){
 			graph1.getVertex(i).delete();
 //			graph2.getVertex(i).delete();
 		}
 		graph1.getVertex(2).delete();
+		graph1.getVertex(15).delete();
 		graph1.createA();
 //		checkEqualVertexList(graph1,graph2);
 	}
