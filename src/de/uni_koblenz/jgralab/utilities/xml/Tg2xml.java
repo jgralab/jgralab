@@ -51,10 +51,11 @@ import de.uni_koblenz.jgralab.schema.Schema;
 import de.uni_koblenz.jgralab.utilities.common.GraphVisitor;
 import de.uni_koblenz.jgralab.utilities.common.UtilityMethods;
 import de.uni_koblenz.jgralab.utilities.common.OptionHandler;
+import static de.uni_koblenz.jgralab.utilities.xml.XMLexchangeConstants.*;
 
 @WorkInProgress(description = "Attribute values missing, testing required, command line parameter checks missing", responsibleDevelopers = "strauss, riediger", expectedFinishingDate = "2009/08")
 public class Tg2xml extends GraphVisitor {
-
+	
 	private String prefix;
 	private String schemaLocation;
 	private OutputStream outputStream;
@@ -101,7 +102,7 @@ public class Tg2xml extends GraphVisitor {
 					XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI);
 			writer.writeAttribute("xsi:schemaLocation", namespaceURI + " "
 					+ schemaLocation);
-			writer.writeAttribute("id", "g" + graph.getId());
+			writer.writeAttribute(ID, "g" + graph.getId());
 			writeAttributes(graph);
 
 		} catch (XMLStreamException e) {
@@ -114,7 +115,7 @@ public class Tg2xml extends GraphVisitor {
 		// write vertex
 		writer.writeEmptyElement(v.getAttributedElementClass()
 				.getQualifiedName());
-		writer.writeAttribute("id", "v" + v.getId());
+		writer.writeAttribute(ID, "v" + v.getId());
 		writeAttributes(v);
 		// iterate over incidences and mark these edges
 		int i = 1;
@@ -139,10 +140,10 @@ public class Tg2xml extends GraphVisitor {
 		IncidencePositionMark currentMark = incidencePositionMarker.getMark(e);
 		writer.writeEmptyElement(e.getAttributedElementClass()
 				.getQualifiedName());
-		writer.writeAttribute("from", "v" + e.getAlpha().getId());
-		writer.writeAttribute("fseq", Integer.toString(currentMark.fseq));
-		writer.writeAttribute("to", "v" + e.getOmega().getId());
-		writer.writeAttribute("tseq", Integer.toString(currentMark.tseq));
+		writer.writeAttribute(FROM, "v" + e.getAlpha().getId());
+		writer.writeAttribute(FSEQ, Integer.toString(currentMark.fseq));
+		writer.writeAttribute(TO, "v" + e.getOmega().getId());
+		writer.writeAttribute(TSEQ, Integer.toString(currentMark.tseq));
 		writeAttributes(e);
 	}
 
@@ -157,17 +158,20 @@ public class Tg2xml extends GraphVisitor {
 
 	private void writeAttributes(AttributedElement element)
 			throws XMLStreamException {
+		
 		for (Attribute currentAttribute : element.getAttributedElementClass()
 				.getAttributeList()) {
 			String currentName = currentAttribute.getName();
 			try {
-				Object currentValue = element.getAttribute(currentName);
-				// TODO make it better
-				writer.writeAttribute(currentName,
-						currentValue == null ? "\\null" : currentValue
-								.toString());
+				writer.writeAttribute(currentName,element.writeAttributeValueToString(currentName));
 
 			} catch (NoSuchFieldException e) {
+				e.printStackTrace();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (GraphIOException e) {
+				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}
