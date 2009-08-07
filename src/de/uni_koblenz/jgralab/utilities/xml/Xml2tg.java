@@ -27,7 +27,7 @@ package de.uni_koblenz.jgralab.utilities.xml;
 import static javax.xml.stream.XMLStreamConstants.END_ELEMENT;
 import static javax.xml.stream.XMLStreamConstants.START_DOCUMENT;
 import static javax.xml.stream.XMLStreamConstants.START_ELEMENT;
-import static de.uni_koblenz.jgralab.utilities.xml.XMLexchangeConstants.*;
+import static de.uni_koblenz.jgralab.utilities.xml.XMLConstants.*;
 
 import java.io.BufferedInputStream;
 import java.io.FileInputStream;
@@ -243,7 +243,7 @@ public class Xml2tg {
 					}
 					stack.push(new AttributedElementInfo(schema
 							.getAttributedElementClass(graphClassName)));
-					String graphID = stack.peek().getAttributes().get(ID);
+					String graphID = stack.peek().getAttributes().get(GRUML_ATTRIBUTE_ID);
 
 					try {
 						System.out.println("Creating instance of "
@@ -332,7 +332,7 @@ public class Xml2tg {
 
 	private void setGraphAttributes(AttributedElementInfo current) {
 		Map<String, String> attributes = current.getAttributes();
-		attributes.remove(ID);
+		attributes.remove(GRUML_ATTRIBUTE_ID);
 		// remove XML attribute "schemaLocation"
 		attributes.remove("schemaLocation");
 		setAttributes(graph, attributes);
@@ -341,8 +341,8 @@ public class Xml2tg {
 	private void createEdge(AttributedElementInfo current) {
 		System.out.println("Creating edge of type " + current.getqName());
 		Map<String, String> attributes = current.getAttributes();
-		String toId = attributes.get(TO);
-		String fromId = attributes.get(FROM);
+		String toId = attributes.get(GRUML_ATTRIBUTE_TO);
+		String fromId = attributes.get(GRUML_ATTRIBUTE_FROM);
 
 		// ensure existence of to and from vertex, if they do not exist yet,
 		// create dummy vertices
@@ -365,8 +365,8 @@ public class Xml2tg {
 
 		// mark new edge with incidence position information
 		IncidencePositionMark incidences = new IncidencePositionMark();
-		String fseq = attributes.get(FSEQ);
-		String tseq = attributes.get(TSEQ);
+		String fseq = attributes.get(GRUML_ATTRIBUTE_FSEQ);
+		String tseq = attributes.get(GRUML_ATTRIBUTE_TSEQ);
 		incidences.fseq = fseq == null ? Integer.MAX_VALUE : Integer
 				.parseInt(fseq);
 		incidences.tseq = tseq == null ? Integer.MAX_VALUE : Integer
@@ -374,10 +374,10 @@ public class Xml2tg {
 		incidencePositionMarker.mark(currentEdge, incidences);
 
 		// delete some attributes from HashMap
-		attributes.remove(TO);
-		attributes.remove(FROM);
-		attributes.remove(FSEQ);
-		attributes.remove(TSEQ);
+		attributes.remove(GRUML_ATTRIBUTE_TO);
+		attributes.remove(GRUML_ATTRIBUTE_FROM);
+		attributes.remove(GRUML_ATTRIBUTE_FSEQ);
+		attributes.remove(GRUML_ATTRIBUTE_TSEQ);
 
 		// set attributes for Edge
 		setAttributes(currentEdge, attributes);
@@ -395,7 +395,7 @@ public class Xml2tg {
 		Map<String, String> attributes = current.getAttributes();
 		Vertex currentVertex = graph.createVertex(((VertexClass) current
 				.getAttributedElementClass()).getM1Class());
-		String currentId = attributes.get(ID);
+		String currentId = attributes.get(GRUML_ATTRIBUTE_ID);
 
 		// check if dummy vertex of this id exists if so, add the edges to the
 		// new vertex and delet ethe dummy vertex
@@ -413,7 +413,7 @@ public class Xml2tg {
 		xmlIdToVertexMap.put(currentId, currentVertex);
 
 		// set attributes
-		attributes.remove(ID);
+		attributes.remove(GRUML_ATTRIBUTE_ID);
 		setAttributes(currentVertex, attributes);
 
 	}
