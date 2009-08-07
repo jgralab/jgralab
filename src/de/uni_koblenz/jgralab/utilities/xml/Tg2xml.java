@@ -24,6 +24,14 @@
 
 package de.uni_koblenz.jgralab.utilities.xml;
 
+import static de.uni_koblenz.jgralab.utilities.xml.XMLConstants.GRUML_ATTRIBUTE_FROM;
+import static de.uni_koblenz.jgralab.utilities.xml.XMLConstants.GRUML_ATTRIBUTE_FSEQ;
+import static de.uni_koblenz.jgralab.utilities.xml.XMLConstants.GRUML_ATTRIBUTE_ID;
+import static de.uni_koblenz.jgralab.utilities.xml.XMLConstants.GRUML_ATTRIBUTE_TO;
+import static de.uni_koblenz.jgralab.utilities.xml.XMLConstants.GRUML_ATTRIBUTE_TSEQ;
+import static de.uni_koblenz.jgralab.utilities.xml.XMLConstants.GRUML_ID_PREFIX_GRAPH;
+import static de.uni_koblenz.jgralab.utilities.xml.XMLConstants.GRUML_ID_PREFIX_VERTEX;
+
 import java.io.BufferedOutputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -49,24 +57,23 @@ import de.uni_koblenz.jgralab.WorkInProgress;
 import de.uni_koblenz.jgralab.impl.ProgressFunctionImpl;
 import de.uni_koblenz.jgralab.schema.Schema;
 import de.uni_koblenz.jgralab.utilities.common.GraphVisitor;
-import de.uni_koblenz.jgralab.utilities.common.UtilityMethods;
 import de.uni_koblenz.jgralab.utilities.common.OptionHandler;
-import static de.uni_koblenz.jgralab.utilities.xml.XMLexchangeConstants.*;
+import de.uni_koblenz.jgralab.utilities.common.UtilityMethods;
 
 @WorkInProgress(description = "Attribute values missing, testing required, command line parameter checks missing", responsibleDevelopers = "strauss, riediger", expectedFinishingDate = "2009/08")
 public class Tg2xml extends GraphVisitor {
-	
-	private String prefix;
-	private String schemaLocation;
-	private OutputStream outputStream;
-	private IndentingXMLStreamWriter writer;
-	private GraphMarker<IncidencePositionMark> incidencePositionMarker;
+
+	private final String prefix;
+	private final String schemaLocation;
+	private final OutputStream outputStream;
+	private final IndentingXMLStreamWriter writer;
+	private final GraphMarker<IncidencePositionMark> incidencePositionMarker;
 
 	private class IncidencePositionMark {
 		public int fseq, tseq;
 	}
 
-	private String namespaceURI;
+	private final String namespaceURI;
 
 	public Tg2xml(OutputStream outputStream, Graph graph,
 			String nameSpacePrefix, String schemaLocation) throws IOException,
@@ -98,11 +105,12 @@ public class Tg2xml extends GraphVisitor {
 			writer.writeStartElement(prefix, graph.getAttributedElementClass()
 					.getQualifiedName(), namespaceURI);
 			writer.writeNamespace(prefix, namespaceURI);
-			writer.writeNamespace("xsi",
+			writer.writeNamespace(XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI,
 					XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI);
-			writer.writeAttribute("xsi:schemaLocation", namespaceURI + " "
-					+ schemaLocation);
-			writer.writeAttribute(ID, "g" + graph.getId());
+			writer.writeAttribute(XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI
+					+ ":schemaLocation", namespaceURI + " " + schemaLocation);
+			writer.writeAttribute(GRUML_ATTRIBUTE_ID, GRUML_ID_PREFIX_GRAPH
+					+ graph.getId());
 			writeAttributes(graph);
 
 		} catch (XMLStreamException e) {
@@ -115,7 +123,8 @@ public class Tg2xml extends GraphVisitor {
 		// write vertex
 		writer.writeEmptyElement(v.getAttributedElementClass()
 				.getQualifiedName());
-		writer.writeAttribute(ID, "v" + v.getId());
+		writer.writeAttribute(GRUML_ATTRIBUTE_ID, GRUML_ID_PREFIX_VERTEX
+				+ v.getId());
 		writeAttributes(v);
 		// iterate over incidences and mark these edges
 		int i = 1;
@@ -140,10 +149,14 @@ public class Tg2xml extends GraphVisitor {
 		IncidencePositionMark currentMark = incidencePositionMarker.getMark(e);
 		writer.writeEmptyElement(e.getAttributedElementClass()
 				.getQualifiedName());
-		writer.writeAttribute(FROM, "v" + e.getAlpha().getId());
-		writer.writeAttribute(FSEQ, Integer.toString(currentMark.fseq));
-		writer.writeAttribute(TO, "v" + e.getOmega().getId());
-		writer.writeAttribute(TSEQ, Integer.toString(currentMark.tseq));
+		writer.writeAttribute(GRUML_ATTRIBUTE_FROM, GRUML_ID_PREFIX_VERTEX
+				+ e.getAlpha().getId());
+		writer.writeAttribute(GRUML_ATTRIBUTE_FSEQ, Integer
+				.toString(currentMark.fseq));
+		writer.writeAttribute(GRUML_ATTRIBUTE_TO, GRUML_ID_PREFIX_VERTEX
+				+ e.getOmega().getId());
+		writer.writeAttribute(GRUML_ATTRIBUTE_TSEQ, Integer
+				.toString(currentMark.tseq));
 		writeAttributes(e);
 	}
 
@@ -158,12 +171,13 @@ public class Tg2xml extends GraphVisitor {
 
 	private void writeAttributes(AttributedElement element)
 			throws XMLStreamException {
-		
+
 		for (Attribute currentAttribute : element.getAttributedElementClass()
 				.getAttributeList()) {
 			String currentName = currentAttribute.getName();
 			try {
-				writer.writeAttribute(currentName,element.writeAttributeValueToString(currentName));
+				writer.writeAttribute(currentName, element
+						.writeAttributeValueToString(currentName));
 
 			} catch (NoSuchFieldException e) {
 				e.printStackTrace();

@@ -23,6 +23,61 @@
  */
 package de.uni_koblenz.jgralab.utilities.xml;
 
+import static de.uni_koblenz.jgralab.utilities.xml.XMLConstants.GRUML_ATTRIBUTEDELEMENTTYPE;
+import static de.uni_koblenz.jgralab.utilities.xml.XMLConstants.GRUML_ATTRIBUTE_FROM;
+import static de.uni_koblenz.jgralab.utilities.xml.XMLConstants.GRUML_ATTRIBUTE_FSEQ;
+import static de.uni_koblenz.jgralab.utilities.xml.XMLConstants.GRUML_ATTRIBUTE_ID;
+import static de.uni_koblenz.jgralab.utilities.xml.XMLConstants.GRUML_ATTRIBUTE_TO;
+import static de.uni_koblenz.jgralab.utilities.xml.XMLConstants.GRUML_ATTRIBUTE_TSEQ;
+import static de.uni_koblenz.jgralab.utilities.xml.XMLConstants.GRUML_COMPLEXTYPE;
+import static de.uni_koblenz.jgralab.utilities.xml.XMLConstants.GRUML_DOMAIN_BOOLEAN;
+import static de.uni_koblenz.jgralab.utilities.xml.XMLConstants.GRUML_DOMAIN_DOUBLE;
+import static de.uni_koblenz.jgralab.utilities.xml.XMLConstants.GRUML_DOMAIN_ENUM_PREFIX;
+import static de.uni_koblenz.jgralab.utilities.xml.XMLConstants.GRUML_DOMAIN_INTEGER;
+import static de.uni_koblenz.jgralab.utilities.xml.XMLConstants.GRUML_DOMAIN_LIST;
+import static de.uni_koblenz.jgralab.utilities.xml.XMLConstants.GRUML_DOMAIN_LONG;
+import static de.uni_koblenz.jgralab.utilities.xml.XMLConstants.GRUML_DOMAIN_MAP;
+import static de.uni_koblenz.jgralab.utilities.xml.XMLConstants.GRUML_DOMAIN_RECORD_PREFIX;
+import static de.uni_koblenz.jgralab.utilities.xml.XMLConstants.GRUML_DOMAIN_SET;
+import static de.uni_koblenz.jgralab.utilities.xml.XMLConstants.GRUML_DOMAIN_STRING;
+import static de.uni_koblenz.jgralab.utilities.xml.XMLConstants.GRUML_GRAPHTYPE;
+import static de.uni_koblenz.jgralab.utilities.xml.XMLConstants.GRUML_PREFIX_EDGETYPE;
+import static de.uni_koblenz.jgralab.utilities.xml.XMLConstants.GRUML_PREFIX_GRAPHTYPE;
+import static de.uni_koblenz.jgralab.utilities.xml.XMLConstants.GRUML_PREFIX_VERTEXTYPE;
+import static de.uni_koblenz.jgralab.utilities.xml.XMLConstants.GRUML_VALUE_FALSE;
+import static de.uni_koblenz.jgralab.utilities.xml.XMLConstants.GRUML_VALUE_NULL;
+import static de.uni_koblenz.jgralab.utilities.xml.XMLConstants.GRUML_VALUE_TRUE;
+import static de.uni_koblenz.jgralab.utilities.xml.XMLConstants.GRUML_VERTEXTYPE;
+import static de.uni_koblenz.jgralab.utilities.xml.XMLConstants.XML_DOMAIN_ID;
+import static de.uni_koblenz.jgralab.utilities.xml.XMLConstants.XML_DOMAIN_IDREF;
+import static de.uni_koblenz.jgralab.utilities.xml.XMLConstants.XML_VALUE_FALSE;
+import static de.uni_koblenz.jgralab.utilities.xml.XMLConstants.XML_VALUE_TRUE;
+import static de.uni_koblenz.jgralab.utilities.xml.XMLConstants.XSD_ATTRIBUTE;
+import static de.uni_koblenz.jgralab.utilities.xml.XMLConstants.XSD_ATTRIBUTE_ABSTRACT;
+import static de.uni_koblenz.jgralab.utilities.xml.XMLConstants.XSD_ATTRIBUTE_BASE;
+import static de.uni_koblenz.jgralab.utilities.xml.XMLConstants.XSD_ATTRIBUTE_NAME;
+import static de.uni_koblenz.jgralab.utilities.xml.XMLConstants.XSD_ATTRIBUTE_TYPE;
+import static de.uni_koblenz.jgralab.utilities.xml.XMLConstants.XSD_ATTRIBUTE_USE;
+import static de.uni_koblenz.jgralab.utilities.xml.XMLConstants.XSD_ATTRIBUTE_VALUE;
+import static de.uni_koblenz.jgralab.utilities.xml.XMLConstants.XSD_CHOICE;
+import static de.uni_koblenz.jgralab.utilities.xml.XMLConstants.XSD_COMPLEXCONTENT;
+import static de.uni_koblenz.jgralab.utilities.xml.XMLConstants.XSD_COMPLEXTYPE;
+import static de.uni_koblenz.jgralab.utilities.xml.XMLConstants.XSD_DOMAIN_DOUBLE;
+import static de.uni_koblenz.jgralab.utilities.xml.XMLConstants.XSD_DOMAIN_INTEGER;
+import static de.uni_koblenz.jgralab.utilities.xml.XMLConstants.XSD_DOMAIN_LONG;
+import static de.uni_koblenz.jgralab.utilities.xml.XMLConstants.XSD_DOMAIN_STRING;
+import static de.uni_koblenz.jgralab.utilities.xml.XMLConstants.XSD_ELEMENT;
+import static de.uni_koblenz.jgralab.utilities.xml.XMLConstants.XSD_ENUMERATION;
+import static de.uni_koblenz.jgralab.utilities.xml.XMLConstants.XSD_EXTENSION;
+import static de.uni_koblenz.jgralab.utilities.xml.XMLConstants.XSD_NAMESPACE_PREFIX;
+import static de.uni_koblenz.jgralab.utilities.xml.XMLConstants.XSD_PATTERN;
+import static de.uni_koblenz.jgralab.utilities.xml.XMLConstants.XSD_REQUIRED;
+import static de.uni_koblenz.jgralab.utilities.xml.XMLConstants.XSD_RESTRICTION;
+import static de.uni_koblenz.jgralab.utilities.xml.XMLConstants.XSD_SCHEMA;
+import static de.uni_koblenz.jgralab.utilities.xml.XMLConstants.XSD_SIMPLETYPE;
+import static de.uni_koblenz.jgralab.utilities.xml.XMLConstants.XSD_VALUE_MAX_OCCURS;
+import static de.uni_koblenz.jgralab.utilities.xml.XMLConstants.XSD_VALUE_MIN_OCCURS;
+
 import java.io.BufferedOutputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -144,78 +199,18 @@ import de.uni_koblenz.jgralab.utilities.tg2schemagraph.Tg2SchemaGraph;
 public class SchemaGraph2XSD {
 
 	private static final String[] RECORD_DOMAIN_PATTERNS = new String[] {
-			"\\(.*\\)", "n" };
+			"\\(.*\\)", GRUML_VALUE_NULL };
 	private static final String[] MAP_DOMAIN_PATTERNS = new String[] {
-			"\\{.*\\}", "n" };
+			"\\{.*\\}", GRUML_VALUE_NULL };
 	private static final String[] SET_DOMAIN_PATTERNS = new String[] {
-			"\\{.*\\}", "n" };
+			"\\{.*\\}", GRUML_VALUE_NULL };
 	private static final String[] LIST_DOMAIN_PATTERNS = new String[] {
-			"\\[.*\\]", "n" };
+			"\\[.*\\]", GRUML_VALUE_NULL };
 	private static final String[] STRING_DOMAIN_PATTERNS = new String[] {
-			"\".*\"", "n" };
-	private static final String DOMAIN_PREFIX = "ST_";
-	private static final String DOMAIN_RECORD_PREFIX = DOMAIN_PREFIX
-			+ "RECORD_";
-	private static final String DOMAIN_SET = DOMAIN_PREFIX + "SET";
-	private static final String DOMAIN_LIST = DOMAIN_PREFIX + "LIST";
-	private static final String DOMAIN_MAP = DOMAIN_PREFIX + "MAP";
-	private static final String DOMAIN_BOOLEAN = DOMAIN_PREFIX + "BOOLEAN";
-	private static final String DOMAIN_STRING = DOMAIN_PREFIX + "STRING";
-	private static final String DOMAIN_INTEGER = DOMAIN_PREFIX + "INTEGER";
-	private static final String DOMAIN_LONG = DOMAIN_PREFIX + "LONG";
-	private static final String DOMAIN_DOUBLE = DOMAIN_PREFIX + "DOUBLE";
-	private static final String DOMAIN_ENUM_PREFIX = DOMAIN_PREFIX + "ENUM_";
+			"\".*\"", GRUML_VALUE_NULL };
 
-	private static final String XSD_COMPLEXCONTENT = "complexContent";
-	private static final String TRUE = "true";
-	private static final String FALSE = "false";
-	private static final String XSD_ATTRIBUTE_ABSTRACT = "abstract";
-	private static final String XSD_ENUMERATION_VALUE = "value";
-	private static final String XSD_ENUMERATION = "enumeration";
-	private static final String XSD_RESTRICTION = "restriction";
-	private static final String XSD_SIMPLETYPE = "simpleType";
-	private static final String XSD_REQUIRED = "required";
-	private static final String XSD_SCHEMA = "schema";
-	private static final String XSD_NS_PREFIX = "xsd"; // No need to use a
-	// prefix
-	private static final String XSD_NS_PREFIX_PLUS_COLON = XSD_NS_PREFIX
-			+ (XSD_NS_PREFIX.equals("") ? "" : ":");
-	private static final String XSD_DOMAIN_STRING = XSD_NS_PREFIX_PLUS_COLON
-			+ "string";
-	private static final String XSD_DOMAIN_DOUBLE = XSD_NS_PREFIX_PLUS_COLON
-			+ "double";
-	private static final String XSD_DOMAIN_LONG = XSD_NS_PREFIX_PLUS_COLON
-			+ "long";
-	private static final String XSD_DOMAIN_INTEGER = XSD_NS_PREFIX_PLUS_COLON
-			+ "integer";
-	private static final String XML_IDREF = XSD_NS_PREFIX_PLUS_COLON + "IDREF";
-	private static final String XML_ID = XSD_NS_PREFIX_PLUS_COLON + "ID";
-
-	private static final String XSD_ATTRIBUTE_MAX_OCCURS = "maxOccurs";
-	private static final String XSD_ATTRIBUTE_MIN_OCCURS = "minOccurs";
-	private static final String XSD_CHOICE = "choice";
-	private static final String XSD_ATTRIBUTE_BASE = "base";
-	private static final String XSD_EXTENSION = "extension";
-	private static final String XSD_PATTERN = "pattern";
-	private static final String XSD_ATTRIBUTE = "attribute";
-	private static final String XSD_ATTRIBUTE_TO = "to";
-	private static final String XSD_ATTRIBUTE_TSEQ = "tseq";
-	private static final String XSD_ATTRIBUTE_FROM = "from";
-	private static final String XSD_ATTRIBUTE_FSEQ = "fseq";
-	private static final String XSD_ATTRIBUTE_ID = "id";
-	private static final String XSD_ELEMENT = "element";
-	private static final String XSD_ATTRIBUTE_TYPE = "type";
-	private static final String XSD_ATTRIBUTE_NAME = "name";
-	private static final String XSD_ATTRIBUTE_VALUE = "value";
-	private static final String XSD_ATTRIBUTE_USE = "use";
-	private static final String XSD_COMPLEXTYPE = "complexType";
-	private static final String XSD_COMPLEX_GRAPHTYPE_PREFIX = "GT_";
-	private static final String XSD_COMPLEX_VERTEXTYPE_PREFIX = "VT_";
-	private static final String XSD_COMPLEX_EDGETYPE_PREFIX = "ET_";
-	private static final String XSD_COMPLEXTYPE_ATTRIBUTED_ELEMENT = "BT_AttributedElement";
-	private static final String XSD_COMPLEXTYPE_GRAPH = "BT_Graph";
-	private static final String XSD_COMPLEXTYPE_VERTEX = "BT_Vertex";
-	private static final String XSD_COMPLEXTYPE_EDGE = "BT_Edge";
+	public static final String XSD_NS_PREFIX_PLUS_COLON = XSD_NAMESPACE_PREFIX
+			+ (XSD_NAMESPACE_PREFIX.equals("") ? "" : ":");
 
 	private final XMLStreamWriter xml;
 	private final SchemaGraph schemaGraph;
@@ -231,6 +226,11 @@ public class SchemaGraph2XSD {
 	private PrintStream debugOutputStream;
 	private boolean autoExclude = false;
 
+	/**
+	 * Links Domain-objects to existing enumeration types described by a string.
+	 */
+	private final Map<Domain, String> domainMap;
+
 	public void setPatterns(String[] patterns) {
 		this.patterns = patterns;
 	}
@@ -245,11 +245,6 @@ public class SchemaGraph2XSD {
 		}
 		return false;
 	}
-
-	/**
-	 * Links Domain-objects to existing enumeration types described by a string.
-	 */
-	private final Map<Domain, String> domainMap;
 
 	public SchemaGraph2XSD(SchemaGraph sg, String namespacePrefix,
 			String outFile) throws FileNotFoundException, XMLStreamException,
@@ -686,32 +681,35 @@ public class SchemaGraph2XSD {
 
 		// BOOLEAN
 		ArrayList<String> constants = new ArrayList<String>(2);
-		constants.add("t");
-		constants.add("f");
+		constants.add(GRUML_VALUE_TRUE);
+		constants.add(GRUML_VALUE_FALSE);
 
-		createEnumDomainType(constants, DOMAIN_BOOLEAN, false);
+		createEnumDomainType(constants, GRUML_DOMAIN_BOOLEAN, false);
 
 		// STRING
-		writeRestrictedSimpleType(DOMAIN_STRING, XSD_DOMAIN_STRING,
-				STRING_DOMAIN_PATTERNS);
+		writeRestrictedSimpleType(GRUML_DOMAIN_STRING, XSD_NS_PREFIX_PLUS_COLON
+				+ XSD_DOMAIN_STRING, STRING_DOMAIN_PATTERNS);
 		// INTEGER
-		writeRestrictedSimpleType(DOMAIN_INTEGER, XSD_DOMAIN_INTEGER, null);
+		writeRestrictedSimpleType(GRUML_DOMAIN_INTEGER,
+				XSD_NS_PREFIX_PLUS_COLON + XSD_DOMAIN_INTEGER, null);
 		// LONG
-		writeRestrictedSimpleType(DOMAIN_LONG, XSD_DOMAIN_LONG, null);
+		writeRestrictedSimpleType(GRUML_DOMAIN_LONG, XSD_NS_PREFIX_PLUS_COLON
+				+ XSD_DOMAIN_LONG, null);
 		// DOUBLE
-		writeRestrictedSimpleType(DOMAIN_DOUBLE, XSD_DOMAIN_DOUBLE, null);
+		writeRestrictedSimpleType(GRUML_DOMAIN_DOUBLE, XSD_NS_PREFIX_PLUS_COLON
+				+ XSD_DOMAIN_DOUBLE, null);
 
 		// RECORD & ENUM are written in method "writeAllDomainTypes"
 
 		// LIST
-		writeRestrictedSimpleType(DOMAIN_LIST, XSD_DOMAIN_STRING,
-				LIST_DOMAIN_PATTERNS);
+		writeRestrictedSimpleType(GRUML_DOMAIN_LIST, XSD_NS_PREFIX_PLUS_COLON
+				+ XSD_DOMAIN_STRING, LIST_DOMAIN_PATTERNS);
 		// SET
-		writeRestrictedSimpleType(DOMAIN_SET, XSD_DOMAIN_STRING,
-				SET_DOMAIN_PATTERNS);
+		writeRestrictedSimpleType(GRUML_DOMAIN_SET, XSD_NS_PREFIX_PLUS_COLON
+				+ XSD_DOMAIN_STRING, SET_DOMAIN_PATTERNS);
 		// MAP
-		writeRestrictedSimpleType(DOMAIN_MAP, XSD_DOMAIN_STRING,
-				MAP_DOMAIN_PATTERNS);
+		writeRestrictedSimpleType(GRUML_DOMAIN_MAP, XSD_NS_PREFIX_PLUS_COLON
+				+ XSD_DOMAIN_STRING, MAP_DOMAIN_PATTERNS);
 	}
 
 	private void writeRestrictedSimpleType(String name, String type,
@@ -725,17 +723,17 @@ public class SchemaGraph2XSD {
 			throws XMLStreamException {
 
 		if (patterns == null) {
-			xml.writeEmptyElement(XSD_NS_PREFIX, XSD_RESTRICTION,
+			xml.writeEmptyElement(XSD_NAMESPACE_PREFIX, XSD_RESTRICTION,
 					XMLConstants.W3C_XML_SCHEMA_NS_URI);
 		} else {
-			xml.writeStartElement(XSD_NS_PREFIX, XSD_RESTRICTION,
+			xml.writeStartElement(XSD_NAMESPACE_PREFIX, XSD_RESTRICTION,
 					XMLConstants.W3C_XML_SCHEMA_NS_URI);
 		}
 		xml.writeAttribute(XSD_ATTRIBUTE_BASE, type);
 
 		if (patterns != null) {
 			for (String pattern : patterns) {
-				xml.writeEmptyElement(XSD_NS_PREFIX, XSD_PATTERN,
+				xml.writeEmptyElement(XSD_NAMESPACE_PREFIX, XSD_PATTERN,
 						XMLConstants.W3C_XML_SCHEMA_NS_URI);
 				xml.writeAttribute(XSD_ATTRIBUTE_VALUE, pattern);
 			}
@@ -744,7 +742,7 @@ public class SchemaGraph2XSD {
 	}
 
 	private void writeStartXSDSimpleType(String name) throws XMLStreamException {
-		xml.writeStartElement(XSD_NS_PREFIX, XSD_SIMPLETYPE,
+		xml.writeStartElement(XSD_NAMESPACE_PREFIX, XSD_SIMPLETYPE,
 				XMLConstants.W3C_XML_SCHEMA_NS_URI);
 		xml.writeAttribute(XSD_ATTRIBUTE_NAME, name);
 	}
@@ -753,33 +751,32 @@ public class SchemaGraph2XSD {
 		GraphClass gc = schemaGraph.getFirstGraphClass();
 
 		// create an element for the graph class
-		writeStartXSDElement(gc.getQualifiedName(),
-				XSD_COMPLEX_GRAPHTYPE_PREFIX + gc.getQualifiedName(), false);
+		writeStartXSDElement(gc.getQualifiedName(), GRUML_PREFIX_GRAPHTYPE
+				+ gc.getQualifiedName(), false);
 
-		writeStartXSDComplexType(XSD_COMPLEX_GRAPHTYPE_PREFIX
-				+ gc.getQualifiedName(), false, true);
+		writeStartXSDComplexType(
+				GRUML_PREFIX_GRAPHTYPE + gc.getQualifiedName(), false, true);
 
-		writeStartXSDExtension(XSD_COMPLEXTYPE_GRAPH, true);
+		writeStartXSDExtension(GRUML_GRAPHTYPE, true);
 
-		xml.writeStartElement(XSD_NS_PREFIX, XSD_CHOICE,
+		xml.writeStartElement(XSD_NAMESPACE_PREFIX, XSD_CHOICE,
 				XMLConstants.W3C_XML_SCHEMA_NS_URI);
-		xml.writeAttribute(XSD_ATTRIBUTE_MIN_OCCURS, "0");
-		xml.writeAttribute(XSD_ATTRIBUTE_MAX_OCCURS, "unbounded");
+		xml.writeAttribute(XSD_VALUE_MIN_OCCURS, "0");
+		xml.writeAttribute(XSD_VALUE_MAX_OCCURS, "unbounded");
 
 		for (VertexClass vc : schemaGraph.getVertexClassVertices()) {
 			if (vc.isIsAbstract() || !isIncluded(vc)) {
 				continue;
 			}
-			writeStartXSDElement(vc.getQualifiedName(),
-					XSD_COMPLEX_VERTEXTYPE_PREFIX + vc.getQualifiedName(),
-					false);
+			writeStartXSDElement(vc.getQualifiedName(), GRUML_PREFIX_VERTEXTYPE
+					+ vc.getQualifiedName(), false);
 		}
 		for (EdgeClass ec : schemaGraph.getEdgeClassVertices()) {
 			if (ec.isIsAbstract() || !isIncluded(ec)) {
 				continue;
 			}
-			writeStartXSDElement(ec.getQualifiedName(),
-					XSD_COMPLEX_EDGETYPE_PREFIX + ec.getQualifiedName(), false);
+			writeStartXSDElement(ec.getQualifiedName(), GRUML_PREFIX_EDGETYPE
+					+ ec.getQualifiedName(), false);
 		}
 
 		writeEndXSDElement();
@@ -794,30 +791,30 @@ public class SchemaGraph2XSD {
 	}
 
 	private void writeDefaultComplexTypes() throws XMLStreamException {
-		String attElem = XSD_COMPLEXTYPE_ATTRIBUTED_ELEMENT;
+		String attElem = GRUML_ATTRIBUTEDELEMENTTYPE;
 		writeStartXSDComplexType(attElem, true, false);
 
-		writeStartXSDComplexType(XSD_COMPLEXTYPE_GRAPH, true, true);
+		writeStartXSDComplexType(GRUML_GRAPHTYPE, true, true);
 		writeStartXSDExtension(attElem, true);
-		writeXSDAttribute(XSD_ATTRIBUTE_ID, XML_ID, XSD_REQUIRED);
+		writeXSDAttribute(GRUML_ATTRIBUTE_ID, XML_DOMAIN_ID, XSD_REQUIRED);
 		writeEndXSDElement();
 		writeEndXSDElement();
 		writeEndXSDElement();
 
-		writeStartXSDComplexType(XSD_COMPLEXTYPE_VERTEX, true, true);
+		writeStartXSDComplexType(GRUML_VERTEXTYPE, true, true);
 		writeStartXSDExtension(attElem, true);
-		writeXSDAttribute(XSD_ATTRIBUTE_ID, XML_ID, XSD_REQUIRED);
+		writeXSDAttribute(GRUML_ATTRIBUTE_ID, XML_DOMAIN_ID, XSD_REQUIRED);
 		writeEndXSDElement();
 		writeEndXSDElement();
 		writeEndXSDElement();
 
-		String integer = namespacePrefix + ":" + DOMAIN_INTEGER;
-		writeStartXSDComplexType(XSD_COMPLEXTYPE_EDGE, true, true);
+		String integer = namespacePrefix + ":" + GRUML_DOMAIN_INTEGER;
+		writeStartXSDComplexType(GRUML_COMPLEXTYPE, true, true);
 		writeStartXSDExtension(attElem, true);
-		writeXSDAttribute(XSD_ATTRIBUTE_FROM, XML_IDREF, XSD_REQUIRED);
-		writeXSDAttribute(XSD_ATTRIBUTE_TO, XML_IDREF, XSD_REQUIRED);
-		writeXSDAttribute(XSD_ATTRIBUTE_FSEQ, integer);
-		writeXSDAttribute(XSD_ATTRIBUTE_TSEQ, integer);
+		writeXSDAttribute(GRUML_ATTRIBUTE_FROM, XML_DOMAIN_IDREF, XSD_REQUIRED);
+		writeXSDAttribute(GRUML_ATTRIBUTE_TO, XML_DOMAIN_IDREF, XSD_REQUIRED);
+		writeXSDAttribute(GRUML_ATTRIBUTE_FSEQ, integer);
+		writeXSDAttribute(GRUML_ATTRIBUTE_TSEQ, integer);
 		writeEndXSDElement();
 		writeEndXSDElement();
 		writeEndXSDElement();
@@ -832,20 +829,20 @@ public class SchemaGraph2XSD {
 			xml.writeComment(commentEdgeClass(ec));
 
 			// first the complex type
-			writeStartXSDComplexType(XSD_COMPLEX_EDGETYPE_PREFIX
+			writeStartXSDComplexType(GRUML_PREFIX_EDGETYPE
 					+ ec.getQualifiedName(), false, true);
 
 			attributes.clear();
 			collectAttributes(ec, attributes);
 
 			if (attributes.size() > 0) {
-				writeStartXSDExtension(XSD_COMPLEXTYPE_EDGE, true);
+				writeStartXSDExtension(GRUML_COMPLEXTYPE, true);
 
 				writeAttributes(attributes);
 
 				writeEndXSDElement(); // ends extension
 			} else {
-				writeStartXSDExtension(XSD_COMPLEXTYPE_EDGE, false);
+				writeStartXSDExtension(GRUML_COMPLEXTYPE, false);
 			}
 			writeEndXSDElement(); // ends complexContent
 			writeEndXSDElement(); // ends complexType
@@ -922,20 +919,20 @@ public class SchemaGraph2XSD {
 			xml.writeComment(commentVertexClass(vc));
 
 			// first the complex type
-			writeStartXSDComplexType(XSD_COMPLEX_VERTEXTYPE_PREFIX
+			writeStartXSDComplexType(GRUML_PREFIX_VERTEXTYPE
 					+ vc.getQualifiedName(), false, true);
 
 			attributes.clear();
 			collectAttributes(vc, attributes);
 
 			if (attributes.size() > 0) {
-				writeStartXSDExtension(XSD_COMPLEXTYPE_VERTEX, true);
+				writeStartXSDExtension(GRUML_VERTEXTYPE, true);
 
 				writeAttributes(attributes);
 
 				writeEndXSDElement(); // ends extension
 			} else {
-				writeStartXSDExtension(XSD_COMPLEXTYPE_VERTEX, false);
+				writeStartXSDExtension(GRUML_VERTEXTYPE, false);
 			}
 			writeEndXSDElement(); // ends complexContent
 			writeEndXSDElement(); // ends complexType
@@ -982,25 +979,26 @@ public class SchemaGraph2XSD {
 			boolean hasContent) throws XMLStreamException {
 
 		if (hasContent) {
-			xml.writeStartElement(XSD_NS_PREFIX, XSD_COMPLEXTYPE,
+			xml.writeStartElement(XSD_NAMESPACE_PREFIX, XSD_COMPLEXTYPE,
 					XMLConstants.W3C_XML_SCHEMA_NS_URI);
 		} else {
-			xml.writeEmptyElement(XSD_NS_PREFIX, XSD_COMPLEXTYPE,
+			xml.writeEmptyElement(XSD_NAMESPACE_PREFIX, XSD_COMPLEXTYPE,
 					XMLConstants.W3C_XML_SCHEMA_NS_URI);
 		}
 
 		xml.writeAttribute(XSD_ATTRIBUTE_NAME, name);
-		xml.writeAttribute(XSD_ATTRIBUTE_ABSTRACT, isAbstract ? TRUE : FALSE);
+		xml.writeAttribute(XSD_ATTRIBUTE_ABSTRACT, isAbstract ? XML_VALUE_TRUE
+				: XML_VALUE_FALSE);
 	}
 
 	private void writeStartXSDElement(String name, String type,
 			boolean withContent) throws XMLStreamException {
 
 		if (withContent) {
-			xml.writeStartElement(XSD_NS_PREFIX, XSD_ELEMENT,
+			xml.writeStartElement(XSD_NAMESPACE_PREFIX, XSD_ELEMENT,
 					XMLConstants.W3C_XML_SCHEMA_NS_URI);
 		} else {
-			xml.writeEmptyElement(XSD_NS_PREFIX, XSD_ELEMENT,
+			xml.writeEmptyElement(XSD_NAMESPACE_PREFIX, XSD_ELEMENT,
 					XMLConstants.W3C_XML_SCHEMA_NS_URI);
 		}
 
@@ -1012,14 +1010,14 @@ public class SchemaGraph2XSD {
 			boolean complexContent) throws XMLStreamException {
 
 		// Is needed for an extension
-		xml.writeStartElement(XSD_NS_PREFIX, XSD_COMPLEXCONTENT,
+		xml.writeStartElement(XSD_NAMESPACE_PREFIX, XSD_COMPLEXCONTENT,
 				XMLConstants.W3C_XML_SCHEMA_NS_URI);
 
 		if (complexContent) {
-			xml.writeStartElement(XSD_NS_PREFIX, XSD_EXTENSION,
+			xml.writeStartElement(XSD_NAMESPACE_PREFIX, XSD_EXTENSION,
 					XMLConstants.W3C_XML_SCHEMA_NS_URI);
 		} else {
-			xml.writeEmptyElement(XSD_NS_PREFIX, XSD_EXTENSION,
+			xml.writeEmptyElement(XSD_NAMESPACE_PREFIX, XSD_EXTENSION,
 					XMLConstants.W3C_XML_SCHEMA_NS_URI);
 		}
 
@@ -1041,7 +1039,7 @@ public class SchemaGraph2XSD {
 
 	private void writeXSDAttribute(String name, String type, String use)
 			throws XMLStreamException {
-		xml.writeEmptyElement(XSD_NS_PREFIX, XSD_ATTRIBUTE,
+		xml.writeEmptyElement(XSD_NAMESPACE_PREFIX, XSD_ATTRIBUTE,
 				XMLConstants.W3C_XML_SCHEMA_NS_URI);
 		xml.writeAttribute(XSD_ATTRIBUTE_NAME, name);
 		xml.writeAttribute(XSD_ATTRIBUTE_TYPE, type);
@@ -1054,21 +1052,21 @@ public class SchemaGraph2XSD {
 	private String getXSDTypeWithoutPrefix(Domain domain) {
 
 		if (domain instanceof IntegerDomain) {
-			return DOMAIN_INTEGER;
+			return GRUML_DOMAIN_INTEGER;
 		} else if (domain instanceof LongDomain) {
-			return DOMAIN_LONG;
+			return GRUML_DOMAIN_LONG;
 		} else if (domain instanceof BooleanDomain) {
-			return DOMAIN_BOOLEAN;
+			return GRUML_DOMAIN_BOOLEAN;
 		} else if (domain instanceof DoubleDomain) {
-			return DOMAIN_DOUBLE;
+			return GRUML_DOMAIN_DOUBLE;
 		} else if (domain instanceof StringDomain) {
-			return DOMAIN_STRING;
+			return GRUML_DOMAIN_STRING;
 		} else if (domain instanceof SetDomain) {
-			return DOMAIN_SET;
+			return GRUML_DOMAIN_SET;
 		} else if (domain instanceof ListDomain) {
-			return DOMAIN_LIST;
+			return GRUML_DOMAIN_LIST;
 		} else if (domain instanceof MapDomain) {
-			return DOMAIN_MAP;
+			return GRUML_DOMAIN_MAP;
 		} else if (domain instanceof RecordDomain) {
 			return queryDomainType(domain);
 		} else if (domain instanceof EnumDomain) {
@@ -1103,9 +1101,9 @@ public class SchemaGraph2XSD {
 		String qualifiedName;
 
 		if (domain instanceof EnumDomain) {
-			qualifiedName = DOMAIN_ENUM_PREFIX;
+			qualifiedName = GRUML_DOMAIN_ENUM_PREFIX;
 		} else if (domain instanceof RecordDomain) {
-			qualifiedName = DOMAIN_RECORD_PREFIX;
+			qualifiedName = GRUML_DOMAIN_RECORD_PREFIX;
 		} else {
 			throw new RuntimeException("Unknown domain '"
 					+ domain.getQualifiedName() + "'.");
@@ -1159,7 +1157,8 @@ public class SchemaGraph2XSD {
 					+ "' of domain '" + domain.getQualifiedName()
 					+ "' is not supported.");
 		}
-		writeStartXSDRestriction(XSD_DOMAIN_STRING, pattern);
+		writeStartXSDRestriction(XSD_NS_PREFIX_PLUS_COLON + XSD_DOMAIN_STRING,
+				pattern);
 		writeEndXSDElement();
 	}
 
@@ -1214,28 +1213,29 @@ public class SchemaGraph2XSD {
 	private void createEnumDomainType(List<String> constants, String typeName,
 			boolean nullable) throws XMLStreamException {
 
-		xml.writeStartElement(XSD_NS_PREFIX, XSD_SIMPLETYPE,
+		xml.writeStartElement(XSD_NAMESPACE_PREFIX, XSD_SIMPLETYPE,
 				XMLConstants.W3C_XML_SCHEMA_NS_URI);
 		xml.writeAttribute(XSD_ATTRIBUTE_NAME, typeName);
 
-		xml.writeStartElement(XSD_NS_PREFIX, XSD_RESTRICTION,
+		xml.writeStartElement(XSD_NAMESPACE_PREFIX, XSD_RESTRICTION,
 				XMLConstants.W3C_XML_SCHEMA_NS_URI);
-		xml.writeAttribute(XSD_ATTRIBUTE_BASE, XSD_DOMAIN_STRING);
+		xml.writeAttribute(XSD_ATTRIBUTE_BASE, XSD_NS_PREFIX_PLUS_COLON
+				+ XSD_DOMAIN_STRING);
 
 		for (String enumConst : constants) {
-			xml.writeEmptyElement(XSD_NS_PREFIX, XSD_ENUMERATION,
+			xml.writeEmptyElement(XSD_NAMESPACE_PREFIX, XSD_ENUMERATION,
 					XMLConstants.W3C_XML_SCHEMA_NS_URI);
 			if (enumConst.equals("n")) {
 				throw new RuntimeException("The enumeration as Type '"
 						+ typeName + "' alreay defines the constant \"n\".");
 			}
-			xml.writeAttribute(XSD_ENUMERATION_VALUE, enumConst);
+			xml.writeAttribute(XSD_ATTRIBUTE_VALUE, enumConst);
 
 		}
 		if (nullable) {
-			xml.writeEmptyElement(XSD_NS_PREFIX, XSD_ENUMERATION,
+			xml.writeEmptyElement(XSD_NAMESPACE_PREFIX, XSD_ENUMERATION,
 					XMLConstants.W3C_XML_SCHEMA_NS_URI);
-			xml.writeAttribute(XSD_ENUMERATION_VALUE, "n");
+			xml.writeAttribute(XSD_ATTRIBUTE_VALUE, "n");
 		}
 
 		xml.writeEndElement();
@@ -1250,10 +1250,11 @@ public class SchemaGraph2XSD {
 
 		xml.writeStartDocument();
 
-		xml.writeStartElement(XSD_NS_PREFIX, XSD_SCHEMA,
+		xml.writeStartElement(XSD_NAMESPACE_PREFIX, XSD_SCHEMA,
 				XMLConstants.W3C_XML_SCHEMA_NS_URI);
 
-		xml.writeNamespace(XSD_NS_PREFIX, XMLConstants.W3C_XML_SCHEMA_NS_URI);
+		xml.writeNamespace(XSD_NAMESPACE_PREFIX,
+				XMLConstants.W3C_XML_SCHEMA_NS_URI);
 
 		Schema schema = schemaGraph.getFirstSchema();
 
