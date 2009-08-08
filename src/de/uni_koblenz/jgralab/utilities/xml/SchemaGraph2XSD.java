@@ -240,7 +240,7 @@ public class SchemaGraph2XSD {
 	}
 
 	private boolean isIncluded(Domain d) {
-		if (d instanceof RecordDomain || d instanceof EnumDomain) {
+		if ((d instanceof RecordDomain) || (d instanceof EnumDomain)) {
 			return includes.isMarked(d);
 		}
 		return false;
@@ -611,11 +611,10 @@ public class SchemaGraph2XSD {
 	}
 
 	private void writeAttribute(Attribute attribute) throws XMLStreamException {
-
 		String name = attribute.getName();
 		Domain type = (Domain) attribute.getFirstHasDomain(EdgeDirection.OUT)
 				.getOmega();
-		writeXSDAttribute(name, getXSDType(type));
+		writeXSDAttribute(name, getXSDType(type), XSD_REQUIRED);
 	}
 
 	private void writeStartXSDComplexType(String name, boolean isAbstract,
@@ -675,9 +674,16 @@ public class SchemaGraph2XSD {
 		xml.writeEndElement();
 	}
 
+	/**
+	 * write definition of an optional attribute
+	 * 
+	 * @param name
+	 * @param type
+	 * @throws XMLStreamException
+	 */
 	private void writeXSDAttribute(String name, String type)
 			throws XMLStreamException {
-		writeXSDAttribute(name, type, XSD_REQUIRED);
+		writeXSDAttribute(name, type, null);
 	}
 
 	private void writeXSDAttribute(String name, String type, String use)
