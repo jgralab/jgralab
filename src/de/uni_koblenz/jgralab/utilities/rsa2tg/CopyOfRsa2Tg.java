@@ -251,11 +251,6 @@ public class CopyOfRsa2Tg{
 	 * elements.
 	 */
 	private Map<String, List<String>> constraints;
-	
-	/**
-	 * Maps the XMI Id of constrained elements to their position in the XMI-file.
-	 */
-//	private Map<String, Location> constraintsLines;
 
 	/**
 	 * When creating EdgeClass names, also use the rolename of the "from" end.
@@ -446,10 +441,9 @@ public class CopyOfRsa2Tg{
 
 	private void saveSchemagraphAsTg(String schemaName, boolean formatTg) {
 		try {
-			//TODO change back
 			SchemaGraph2Tg sg2tg = new SchemaGraph2Tg(sg, currentXmiFile
 					.getParent()
-					+ File.separator + schemaName + "STAX.rsa.tg");
+					+ File.separator + schemaName + ".rsa.tg");
 			sg2tg.setIsFormatted(formatTg);
 			sg2tg.run();
 		} catch (IOException e) {
@@ -639,9 +633,8 @@ public class CopyOfRsa2Tg{
 	private void validateGraph(String schemaName) {
 		GraphValidator validator = new GraphValidator(sg);
 		try {
-			//TODO change back
 			String validationReportFile = currentXmiFile.getParent()
-					+ File.separator + schemaName + "STAX.validationreport.html";
+					+ File.separator + schemaName + ".validationreport.html";
 			Set<ConstraintViolation> s = validator
 					.createValidationReport(validationReportFile);
 			if (!s.isEmpty()) {
@@ -676,17 +669,15 @@ public class CopyOfRsa2Tg{
 		Tg2Dot tg2Dot = new Tg2Dot();
 		tg2Dot.setGraph(sg);
 		tg2Dot.setPrintEdgeAttributes(true);
-		//TODO change back
 		tg2Dot.setOutputFile(currentXmiFile.getParent() + File.separator
-				+ schemaName + "STAX.gruml.dot");
+				+ schemaName + ".gruml.dot");
 		tg2Dot.printGraph();
 	}
 
 	private void saveGraph(String schemaName) throws XMLStreamException {
 		try {
-			//TODO change back
 			GraphIO.saveGraphToFile(currentXmiFile.getParent() + File.separator
-					+ schemaName + "STAX.gruml.tg", sg, null);
+					+ schemaName + ".gruml.tg", sg, null);
 		} catch (GraphIOException e) {
 			throw new XMLStreamException(e);
 		}
@@ -1065,7 +1056,6 @@ public class CopyOfRsa2Tg{
 	}
 
 	private void handleRealization(XMLStreamReader parser) {
-		//TODO supplier, client do not appear in the xmi-files for testing purposes
 		String supplier = parser.getAttributeValue(null, "supplier");
 		String client = parser.getAttributeValue(null, "client");
 		Set<String> reals = realizations.get(client);
@@ -1100,7 +1090,6 @@ public class CopyOfRsa2Tg{
 		}
 	}
 
-	//TODO stereotype is never used in the xmi-files for testing purposes
 	private void handleStereotype(XMLStreamReader parser) throws XMLStreamException {
 		String key = parser.getAttributeValue(null, "key"); 
 		if (key.equals("graphclass")) {
@@ -1312,7 +1301,6 @@ public class CopyOfRsa2Tg{
 		return dom;
 	}
 
-	//TODO does not appear in one of the xmi-files
 	private Vertex handleEnumeration(XMLStreamReader parser) {
 		EnumDomain ed = sg.createEnumDomain();
 		de.uni_koblenz.jgralab.grumlschema.structure.Package p = packageStack
@@ -1349,7 +1337,6 @@ public class CopyOfRsa2Tg{
 		}
 		currentClassId = xmiId;
 		currentClass = ec;
-		//TODO the xmi-files for testing purposes do not contain isAbstract
 		String abs = parser.getAttributeValue(null, "isAbstract");
 		ec.setIsAbstract((abs != null) && abs.equals("true"));
 		String n = parser.getAttributeValue(null, "name");
