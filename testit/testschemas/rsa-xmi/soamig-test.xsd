@@ -1,0 +1,403 @@
+<?xml version="1.0" ?>
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:smg="http://uni-koblenz.de/jgralab/grumlschema/GrumlSchema" targetNamespace="http://uni-koblenz.de/jgralab/grumlschema/GrumlSchema">
+ 	<!--Default types-->
+ 	<xsd:complexType name="BT_AttributedElement" abstract="true"/>
+ 	<xsd:complexType name="BT_Graph" abstract="true">
+ 	 	<xsd:complexContent>
+ 	 	 	<xsd:extension base="smg:BT_AttributedElement">
+ 	 	 	 	<xsd:attribute name="ID" type="xsd:ID" use="required"/>
+ 	 	 	</xsd:extension>
+ 	 	</xsd:complexContent>
+ 	</xsd:complexType>
+ 	<xsd:complexType name="BT_Vertex" abstract="true">
+ 	 	<xsd:complexContent>
+ 	 	 	<xsd:extension base="smg:BT_AttributedElement">
+ 	 	 	 	<xsd:attribute name="ID" type="xsd:ID" use="required"/>
+ 	 	 	</xsd:extension>
+ 	 	</xsd:complexContent>
+ 	</xsd:complexType>
+ 	<xsd:complexType name="BT_Edge" abstract="true">
+ 	 	<xsd:complexContent>
+ 	 	 	<xsd:extension base="smg:BT_AttributedElement">
+ 	 	 	 	<xsd:attribute name="FROM" type="xsd:IDREF" use="required"/>
+ 	 	 	 	<xsd:attribute name="TO" type="xsd:IDREF" use="required"/>
+ 	 	 	 	<xsd:attribute name="FSEQ" type="smg:ST_INTEGER"/>
+ 	 	 	 	<xsd:attribute name="TSEQ" type="smg:ST_INTEGER"/>
+ 	 	 	</xsd:extension>
+ 	 	</xsd:complexContent>
+ 	</xsd:complexType>
+ 	<xsd:simpleType name="ST_BOOLEAN">
+ 	 	<xsd:restriction base="xsd:string">
+ 	 	 	<xsd:enumeration value="t"/>
+ 	 	 	<xsd:enumeration value="f"/>
+ 	 	</xsd:restriction>
+ 	</xsd:simpleType>
+ 	<xsd:simpleType name="ST_STRING">
+ 	 	<xsd:restriction base="xsd:string">
+ 	 	 	<xsd:pattern value="&quot;.*&quot;"/>
+ 	 	 	<xsd:pattern value="n"/>
+ 	 	</xsd:restriction>
+ 	</xsd:simpleType>
+ 	<xsd:simpleType name="ST_INTEGER">
+ 	 	<xsd:restriction base="xsd:integer"/>
+ 	</xsd:simpleType>
+ 	<xsd:simpleType name="ST_LONG">
+ 	 	<xsd:restriction base="xsd:long"/>
+ 	</xsd:simpleType>
+ 	<xsd:simpleType name="ST_DOUBLE">
+ 	 	<xsd:restriction base="xsd:double"/>
+ 	</xsd:simpleType>
+ 	<xsd:simpleType name="ST_LIST">
+ 	 	<xsd:restriction base="xsd:string">
+ 	 	 	<xsd:pattern value="\[.*\]"/>
+ 	 	 	<xsd:pattern value="n"/>
+ 	 	</xsd:restriction>
+ 	</xsd:simpleType>
+ 	<xsd:simpleType name="ST_SET">
+ 	 	<xsd:restriction base="xsd:string">
+ 	 	 	<xsd:pattern value="\{.*\}"/>
+ 	 	 	<xsd:pattern value="n"/>
+ 	 	</xsd:restriction>
+ 	</xsd:simpleType>
+ 	<xsd:simpleType name="ST_MAP">
+ 	 	<xsd:restriction base="xsd:string">
+ 	 	 	<xsd:pattern value="\{.*\}"/>
+ 	 	 	<xsd:pattern value="n"/>
+ 	 	</xsd:restriction>
+ 	</xsd:simpleType>
+ 	<!--Graph-type-->
+ 	<xsd:element name="SchemaGraph" type="smg:GT_SchemaGraph"/>
+ 	<xsd:complexType name="GT_SchemaGraph" abstract="false">
+ 	 	<xsd:complexContent>
+ 	 	 	<xsd:extension base="smg:BT_Graph">
+ 	 	 	 	<xsd:choice minOccurs="0" maxOccurs="unbounded">
+ 	 	 	 	 	<xsd:element name="structure.AggregationClass" type="smg:VT_structure.AggregationClass"/>
+ 	 	 	 	 	<xsd:element name="structure.Attribute" type="smg:VT_structure.Attribute"/>
+ 	 	 	 	 	<xsd:element name="structure.CompositionClass" type="smg:VT_structure.CompositionClass"/>
+ 	 	 	 	 	<xsd:element name="structure.Constraint" type="smg:VT_structure.Constraint"/>
+ 	 	 	 	 	<xsd:element name="structure.EdgeClass" type="smg:VT_structure.EdgeClass"/>
+ 	 	 	 	 	<xsd:element name="structure.GraphClass" type="smg:VT_structure.GraphClass"/>
+ 	 	 	 	 	<xsd:element name="structure.Package" type="smg:VT_structure.Package"/>
+ 	 	 	 	 	<xsd:element name="structure.Schema" type="smg:VT_structure.Schema"/>
+ 	 	 	 	 	<xsd:element name="structure.VertexClass" type="smg:VT_structure.VertexClass"/>
+ 	 	 	 	 	<xsd:element name="domains.BooleanDomain" type="smg:VT_domains.BooleanDomain"/>
+ 	 	 	 	 	<xsd:element name="domains.DoubleDomain" type="smg:VT_domains.DoubleDomain"/>
+ 	 	 	 	 	<xsd:element name="domains.EnumDomain" type="smg:VT_domains.EnumDomain"/>
+ 	 	 	 	 	<xsd:element name="domains.IntegerDomain" type="smg:VT_domains.IntegerDomain"/>
+ 	 	 	 	 	<xsd:element name="domains.ListDomain" type="smg:VT_domains.ListDomain"/>
+ 	 	 	 	 	<xsd:element name="domains.LongDomain" type="smg:VT_domains.LongDomain"/>
+ 	 	 	 	 	<xsd:element name="domains.MapDomain" type="smg:VT_domains.MapDomain"/>
+ 	 	 	 	 	<xsd:element name="domains.RecordDomain" type="smg:VT_domains.RecordDomain"/>
+ 	 	 	 	 	<xsd:element name="domains.SetDomain" type="smg:VT_domains.SetDomain"/>
+ 	 	 	 	 	<xsd:element name="domains.StringDomain" type="smg:VT_domains.StringDomain"/>
+ 	 	 	 	 	<xsd:element name="structure.ContainsDefaultPackage" type="smg:ET_structure.ContainsDefaultPackage"/>
+ 	 	 	 	 	<xsd:element name="structure.ContainsDomain" type="smg:ET_structure.ContainsDomain"/>
+ 	 	 	 	 	<xsd:element name="structure.ContainsGraphElementClass" type="smg:ET_structure.ContainsGraphElementClass"/>
+ 	 	 	 	 	<xsd:element name="structure.ContainsSubPackage" type="smg:ET_structure.ContainsSubPackage"/>
+ 	 	 	 	 	<xsd:element name="structure.DefinesGraphClass" type="smg:ET_structure.DefinesGraphClass"/>
+ 	 	 	 	 	<xsd:element name="structure.From" type="smg:ET_structure.From"/>
+ 	 	 	 	 	<xsd:element name="structure.HasAttribute" type="smg:ET_structure.HasAttribute"/>
+ 	 	 	 	 	<xsd:element name="structure.HasConstraint" type="smg:ET_structure.HasConstraint"/>
+ 	 	 	 	 	<xsd:element name="structure.HasDomain" type="smg:ET_structure.HasDomain"/>
+ 	 	 	 	 	<xsd:element name="structure.SpecializesEdgeClass" type="smg:ET_structure.SpecializesEdgeClass"/>
+ 	 	 	 	 	<xsd:element name="structure.SpecializesVertexClass" type="smg:ET_structure.SpecializesVertexClass"/>
+ 	 	 	 	 	<xsd:element name="structure.To" type="smg:ET_structure.To"/>
+ 	 	 	 	 	<xsd:element name="domains.HasBaseDomain" type="smg:ET_domains.HasBaseDomain"/>
+ 	 	 	 	 	<xsd:element name="domains.HasKeyDomain" type="smg:ET_domains.HasKeyDomain"/>
+ 	 	 	 	 	<xsd:element name="domains.HasRecordDomainComponent" type="smg:ET_domains.HasRecordDomainComponent"/>
+ 	 	 	 	 	<xsd:element name="domains.HasValueDomain" type="smg:ET_domains.HasValueDomain"/>
+ 	 	 	 	</xsd:choice>
+ 	 	 	</xsd:extension>
+ 	 	</xsd:complexContent>
+ 	</xsd:complexType>
+ 	<!--Vertex-types-->
+ 	<!--VertexClass structure.AggregationClass: structure.EdgeClass { aggregateFrom: Boolean };
+Inherited attributes from structure.AttributedElementClass: { isAbstract: Boolean, qualifiedName: String }-->
+ 	<xsd:complexType name="VT_structure.AggregationClass" abstract="false">
+ 	 	<xsd:complexContent>
+ 	 	 	<xsd:extension base="smg:BT_Vertex">
+ 	 	 	 	<xsd:attribute name="aggregateFrom" type="smg:ST_BOOLEAN" use="required"/>
+ 	 	 	 	<xsd:attribute name="isAbstract" type="smg:ST_BOOLEAN" use="required"/>
+ 	 	 	 	<xsd:attribute name="qualifiedName" type="smg:ST_STRING" use="required"/>
+ 	 	 	</xsd:extension>
+ 	 	</xsd:complexContent>
+ 	</xsd:complexType>
+ 	<!--VertexClass structure.Attribute { name: String };-->
+ 	<xsd:complexType name="VT_structure.Attribute" abstract="false">
+ 	 	<xsd:complexContent>
+ 	 	 	<xsd:extension base="smg:BT_Vertex">
+ 	 	 	 	<xsd:attribute name="name" type="smg:ST_STRING" use="required"/>
+ 	 	 	</xsd:extension>
+ 	 	</xsd:complexContent>
+ 	</xsd:complexType>
+ 	<!--VertexClass structure.CompositionClass: structure.AggregationClass;
+Inherited attributes from structure.AggregationClass: { aggregateFrom: Boolean }
+Inherited attributes from structure.AttributedElementClass: { isAbstract: Boolean, qualifiedName: String }-->
+ 	<xsd:complexType name="VT_structure.CompositionClass" abstract="false">
+ 	 	<xsd:complexContent>
+ 	 	 	<xsd:extension base="smg:BT_Vertex">
+ 	 	 	 	<xsd:attribute name="aggregateFrom" type="smg:ST_BOOLEAN" use="required"/>
+ 	 	 	 	<xsd:attribute name="isAbstract" type="smg:ST_BOOLEAN" use="required"/>
+ 	 	 	 	<xsd:attribute name="qualifiedName" type="smg:ST_STRING" use="required"/>
+ 	 	 	</xsd:extension>
+ 	 	</xsd:complexContent>
+ 	</xsd:complexType>
+ 	<!--VertexClass structure.Constraint { message: String, offendingElementsQuery: String, predicateQuery: String };-->
+ 	<xsd:complexType name="VT_structure.Constraint" abstract="false">
+ 	 	<xsd:complexContent>
+ 	 	 	<xsd:extension base="smg:BT_Vertex">
+ 	 	 	 	<xsd:attribute name="message" type="smg:ST_STRING" use="required"/>
+ 	 	 	 	<xsd:attribute name="offendingElementsQuery" type="smg:ST_STRING" use="required"/>
+ 	 	 	 	<xsd:attribute name="predicateQuery" type="smg:ST_STRING" use="required"/>
+ 	 	 	</xsd:extension>
+ 	 	</xsd:complexContent>
+ 	</xsd:complexType>
+ 	<!--VertexClass structure.EdgeClass: structure.GraphElementClass;
+Inherited attributes from structure.AttributedElementClass: { isAbstract: Boolean, qualifiedName: String }-->
+ 	<xsd:complexType name="VT_structure.EdgeClass" abstract="false">
+ 	 	<xsd:complexContent>
+ 	 	 	<xsd:extension base="smg:BT_Vertex">
+ 	 	 	 	<xsd:attribute name="isAbstract" type="smg:ST_BOOLEAN" use="required"/>
+ 	 	 	 	<xsd:attribute name="qualifiedName" type="smg:ST_STRING" use="required"/>
+ 	 	 	</xsd:extension>
+ 	 	</xsd:complexContent>
+ 	</xsd:complexType>
+ 	<!--VertexClass structure.GraphClass: structure.AttributedElementClass;
+Inherited attributes from structure.AttributedElementClass: { isAbstract: Boolean, qualifiedName: String }-->
+ 	<xsd:complexType name="VT_structure.GraphClass" abstract="false">
+ 	 	<xsd:complexContent>
+ 	 	 	<xsd:extension base="smg:BT_Vertex">
+ 	 	 	 	<xsd:attribute name="isAbstract" type="smg:ST_BOOLEAN" use="required"/>
+ 	 	 	 	<xsd:attribute name="qualifiedName" type="smg:ST_STRING" use="required"/>
+ 	 	 	</xsd:extension>
+ 	 	</xsd:complexContent>
+ 	</xsd:complexType>
+ 	<!--VertexClass structure.Package { qualifiedName: String };-->
+ 	<xsd:complexType name="VT_structure.Package" abstract="false">
+ 	 	<xsd:complexContent>
+ 	 	 	<xsd:extension base="smg:BT_Vertex">
+ 	 	 	 	<xsd:attribute name="qualifiedName" type="smg:ST_STRING" use="required"/>
+ 	 	 	</xsd:extension>
+ 	 	</xsd:complexContent>
+ 	</xsd:complexType>
+ 	<!--VertexClass structure.Schema { name: String, packagePrefix: String };-->
+ 	<xsd:complexType name="VT_structure.Schema" abstract="false">
+ 	 	<xsd:complexContent>
+ 	 	 	<xsd:extension base="smg:BT_Vertex">
+ 	 	 	 	<xsd:attribute name="name" type="smg:ST_STRING" use="required"/>
+ 	 	 	 	<xsd:attribute name="packagePrefix" type="smg:ST_STRING" use="required"/>
+ 	 	 	</xsd:extension>
+ 	 	</xsd:complexContent>
+ 	</xsd:complexType>
+ 	<!--VertexClass structure.VertexClass: structure.GraphElementClass;
+Inherited attributes from structure.AttributedElementClass: { isAbstract: Boolean, qualifiedName: String }-->
+ 	<xsd:complexType name="VT_structure.VertexClass" abstract="false">
+ 	 	<xsd:complexContent>
+ 	 	 	<xsd:extension base="smg:BT_Vertex">
+ 	 	 	 	<xsd:attribute name="isAbstract" type="smg:ST_BOOLEAN" use="required"/>
+ 	 	 	 	<xsd:attribute name="qualifiedName" type="smg:ST_STRING" use="required"/>
+ 	 	 	</xsd:extension>
+ 	 	</xsd:complexContent>
+ 	</xsd:complexType>
+ 	<!--VertexClass domains.BooleanDomain: domains.Domain;
+Inherited attributes from domains.Domain: { qualifiedName: String }-->
+ 	<xsd:complexType name="VT_domains.BooleanDomain" abstract="false">
+ 	 	<xsd:complexContent>
+ 	 	 	<xsd:extension base="smg:BT_Vertex">
+ 	 	 	 	<xsd:attribute name="qualifiedName" type="smg:ST_STRING" use="required"/>
+ 	 	 	</xsd:extension>
+ 	 	</xsd:complexContent>
+ 	</xsd:complexType>
+ 	<!--VertexClass domains.DoubleDomain: domains.Domain;
+Inherited attributes from domains.Domain: { qualifiedName: String }-->
+ 	<xsd:complexType name="VT_domains.DoubleDomain" abstract="false">
+ 	 	<xsd:complexContent>
+ 	 	 	<xsd:extension base="smg:BT_Vertex">
+ 	 	 	 	<xsd:attribute name="qualifiedName" type="smg:ST_STRING" use="required"/>
+ 	 	 	</xsd:extension>
+ 	 	</xsd:complexContent>
+ 	</xsd:complexType>
+ 	<!--VertexClass domains.EnumDomain: domains.Domain { enumConstants: List<String> };
+Inherited attributes from domains.Domain: { qualifiedName: String }-->
+ 	<xsd:complexType name="VT_domains.EnumDomain" abstract="false">
+ 	 	<xsd:complexContent>
+ 	 	 	<xsd:extension base="smg:BT_Vertex">
+ 	 	 	 	<xsd:attribute name="enumConstants" type="smg:ST_LIST" use="required"/>
+ 	 	 	 	<xsd:attribute name="qualifiedName" type="smg:ST_STRING" use="required"/>
+ 	 	 	</xsd:extension>
+ 	 	</xsd:complexContent>
+ 	</xsd:complexType>
+ 	<!--VertexClass domains.IntegerDomain: domains.Domain;
+Inherited attributes from domains.Domain: { qualifiedName: String }-->
+ 	<xsd:complexType name="VT_domains.IntegerDomain" abstract="false">
+ 	 	<xsd:complexContent>
+ 	 	 	<xsd:extension base="smg:BT_Vertex">
+ 	 	 	 	<xsd:attribute name="qualifiedName" type="smg:ST_STRING" use="required"/>
+ 	 	 	</xsd:extension>
+ 	 	</xsd:complexContent>
+ 	</xsd:complexType>
+ 	<!--VertexClass domains.ListDomain: domains.CollectionDomain;
+Inherited attributes from domains.Domain: { qualifiedName: String }-->
+ 	<xsd:complexType name="VT_domains.ListDomain" abstract="false">
+ 	 	<xsd:complexContent>
+ 	 	 	<xsd:extension base="smg:BT_Vertex">
+ 	 	 	 	<xsd:attribute name="qualifiedName" type="smg:ST_STRING" use="required"/>
+ 	 	 	</xsd:extension>
+ 	 	</xsd:complexContent>
+ 	</xsd:complexType>
+ 	<!--VertexClass domains.LongDomain: domains.Domain;
+Inherited attributes from domains.Domain: { qualifiedName: String }-->
+ 	<xsd:complexType name="VT_domains.LongDomain" abstract="false">
+ 	 	<xsd:complexContent>
+ 	 	 	<xsd:extension base="smg:BT_Vertex">
+ 	 	 	 	<xsd:attribute name="qualifiedName" type="smg:ST_STRING" use="required"/>
+ 	 	 	</xsd:extension>
+ 	 	</xsd:complexContent>
+ 	</xsd:complexType>
+ 	<!--VertexClass domains.MapDomain: domains.Domain;
+Inherited attributes from domains.Domain: { qualifiedName: String }-->
+ 	<xsd:complexType name="VT_domains.MapDomain" abstract="false">
+ 	 	<xsd:complexContent>
+ 	 	 	<xsd:extension base="smg:BT_Vertex">
+ 	 	 	 	<xsd:attribute name="qualifiedName" type="smg:ST_STRING" use="required"/>
+ 	 	 	</xsd:extension>
+ 	 	</xsd:complexContent>
+ 	</xsd:complexType>
+ 	<!--VertexClass domains.RecordDomain: domains.Domain;
+Inherited attributes from domains.Domain: { qualifiedName: String }-->
+ 	<xsd:complexType name="VT_domains.RecordDomain" abstract="false">
+ 	 	<xsd:complexContent>
+ 	 	 	<xsd:extension base="smg:BT_Vertex">
+ 	 	 	 	<xsd:attribute name="qualifiedName" type="smg:ST_STRING" use="required"/>
+ 	 	 	</xsd:extension>
+ 	 	</xsd:complexContent>
+ 	</xsd:complexType>
+ 	<!--VertexClass domains.SetDomain: domains.CollectionDomain;
+Inherited attributes from domains.Domain: { qualifiedName: String }-->
+ 	<xsd:complexType name="VT_domains.SetDomain" abstract="false">
+ 	 	<xsd:complexContent>
+ 	 	 	<xsd:extension base="smg:BT_Vertex">
+ 	 	 	 	<xsd:attribute name="qualifiedName" type="smg:ST_STRING" use="required"/>
+ 	 	 	</xsd:extension>
+ 	 	</xsd:complexContent>
+ 	</xsd:complexType>
+ 	<!--VertexClass domains.StringDomain: domains.Domain;
+Inherited attributes from domains.Domain: { qualifiedName: String }-->
+ 	<xsd:complexType name="VT_domains.StringDomain" abstract="false">
+ 	 	<xsd:complexContent>
+ 	 	 	<xsd:extension base="smg:BT_Vertex">
+ 	 	 	 	<xsd:attribute name="qualifiedName" type="smg:ST_STRING" use="required"/>
+ 	 	 	</xsd:extension>
+ 	 	</xsd:complexContent>
+ 	</xsd:complexType>
+ 	<!--Edge-types-->
+ 	<!--CompositionClass structure.ContainsDefaultPackage from structure.Schema (0, 1) to structure.Package (1, 1) aggregate from;-->
+ 	<xsd:complexType name="ET_structure.ContainsDefaultPackage" abstract="false">
+ 	 	<xsd:complexContent>
+ 	 	 	<xsd:extension base="smg:BT_Edge"/>
+ 	 	</xsd:complexContent>
+ 	</xsd:complexType>
+ 	<!--CompositionClass structure.ContainsDomain from structure.Package (1, 1) to domains.Domain (0, *) aggregate from;-->
+ 	<xsd:complexType name="ET_structure.ContainsDomain" abstract="false">
+ 	 	<xsd:complexContent>
+ 	 	 	<xsd:extension base="smg:BT_Edge"/>
+ 	 	</xsd:complexContent>
+ 	</xsd:complexType>
+ 	<!--CompositionClass structure.ContainsGraphElementClass from structure.Package (1, 1) to structure.GraphElementClass (0, *) aggregate from;-->
+ 	<xsd:complexType name="ET_structure.ContainsGraphElementClass" abstract="false">
+ 	 	<xsd:complexContent>
+ 	 	 	<xsd:extension base="smg:BT_Edge"/>
+ 	 	</xsd:complexContent>
+ 	</xsd:complexType>
+ 	<!--CompositionClass structure.ContainsSubPackage from structure.Package (0, 1) to structure.Package (0, *) aggregate from;-->
+ 	<xsd:complexType name="ET_structure.ContainsSubPackage" abstract="false">
+ 	 	<xsd:complexContent>
+ 	 	 	<xsd:extension base="smg:BT_Edge"/>
+ 	 	</xsd:complexContent>
+ 	</xsd:complexType>
+ 	<!--CompositionClass structure.DefinesGraphClass from structure.Schema (1, 1) to structure.GraphClass (1, 1) aggregate from;-->
+ 	<xsd:complexType name="ET_structure.DefinesGraphClass" abstract="false">
+ 	 	<xsd:complexContent>
+ 	 	 	<xsd:extension base="smg:BT_Edge"/>
+ 	 	</xsd:complexContent>
+ 	</xsd:complexType>
+ 	<!--AggregationClass structure.From from structure.EdgeClass (0, *) to structure.VertexClass (1, 1) aggregate from { max: Integer, min: Integer, redefinedRoles: Set<String>, roleName: String };-->
+ 	<xsd:complexType name="ET_structure.From" abstract="false">
+ 	 	<xsd:complexContent>
+ 	 	 	<xsd:extension base="smg:BT_Edge">
+ 	 	 	 	<xsd:attribute name="max" type="smg:ST_INTEGER" use="required"/>
+ 	 	 	 	<xsd:attribute name="min" type="smg:ST_INTEGER" use="required"/>
+ 	 	 	 	<xsd:attribute name="redefinedRoles" type="smg:ST_SET" use="required"/>
+ 	 	 	 	<xsd:attribute name="roleName" type="smg:ST_STRING" use="required"/>
+ 	 	 	</xsd:extension>
+ 	 	</xsd:complexContent>
+ 	</xsd:complexType>
+ 	<!--CompositionClass structure.HasAttribute from structure.AttributedElementClass (1, 1) to structure.Attribute (0, *) aggregate from;-->
+ 	<xsd:complexType name="ET_structure.HasAttribute" abstract="false">
+ 	 	<xsd:complexContent>
+ 	 	 	<xsd:extension base="smg:BT_Edge"/>
+ 	 	</xsd:complexContent>
+ 	</xsd:complexType>
+ 	<!--CompositionClass structure.HasConstraint from structure.AttributedElementClass (1, 1) to structure.Constraint (0, *) aggregate from;-->
+ 	<xsd:complexType name="ET_structure.HasConstraint" abstract="false">
+ 	 	<xsd:complexContent>
+ 	 	 	<xsd:extension base="smg:BT_Edge"/>
+ 	 	</xsd:complexContent>
+ 	</xsd:complexType>
+ 	<!--EdgeClass structure.HasDomain from structure.Attribute (0, *) to domains.Domain (1, 1);-->
+ 	<xsd:complexType name="ET_structure.HasDomain" abstract="false">
+ 	 	<xsd:complexContent>
+ 	 	 	<xsd:extension base="smg:BT_Edge"/>
+ 	 	</xsd:complexContent>
+ 	</xsd:complexType>
+ 	<!--EdgeClass structure.SpecializesEdgeClass from structure.EdgeClass (0, *) to structure.EdgeClass (0, *);-->
+ 	<xsd:complexType name="ET_structure.SpecializesEdgeClass" abstract="false">
+ 	 	<xsd:complexContent>
+ 	 	 	<xsd:extension base="smg:BT_Edge"/>
+ 	 	</xsd:complexContent>
+ 	</xsd:complexType>
+ 	<!--EdgeClass structure.SpecializesVertexClass from structure.VertexClass (0, *) to structure.VertexClass (0, *);-->
+ 	<xsd:complexType name="ET_structure.SpecializesVertexClass" abstract="false">
+ 	 	<xsd:complexContent>
+ 	 	 	<xsd:extension base="smg:BT_Edge"/>
+ 	 	</xsd:complexContent>
+ 	</xsd:complexType>
+ 	<!--AggregationClass structure.To from structure.EdgeClass (0, *) to structure.VertexClass (1, 1) aggregate from { max: Integer, min: Integer, redefinedRoles: Set<String>, roleName: String };-->
+ 	<xsd:complexType name="ET_structure.To" abstract="false">
+ 	 	<xsd:complexContent>
+ 	 	 	<xsd:extension base="smg:BT_Edge">
+ 	 	 	 	<xsd:attribute name="max" type="smg:ST_INTEGER" use="required"/>
+ 	 	 	 	<xsd:attribute name="min" type="smg:ST_INTEGER" use="required"/>
+ 	 	 	 	<xsd:attribute name="redefinedRoles" type="smg:ST_SET" use="required"/>
+ 	 	 	 	<xsd:attribute name="roleName" type="smg:ST_STRING" use="required"/>
+ 	 	 	</xsd:extension>
+ 	 	</xsd:complexContent>
+ 	</xsd:complexType>
+ 	<!--EdgeClass domains.HasBaseDomain from domains.CollectionDomain (0, *) to domains.Domain (1, 1);-->
+ 	<xsd:complexType name="ET_domains.HasBaseDomain" abstract="false">
+ 	 	<xsd:complexContent>
+ 	 	 	<xsd:extension base="smg:BT_Edge"/>
+ 	 	</xsd:complexContent>
+ 	</xsd:complexType>
+ 	<!--EdgeClass domains.HasKeyDomain from domains.MapDomain (0, *) to domains.Domain (1, 1);-->
+ 	<xsd:complexType name="ET_domains.HasKeyDomain" abstract="false">
+ 	 	<xsd:complexContent>
+ 	 	 	<xsd:extension base="smg:BT_Edge"/>
+ 	 	</xsd:complexContent>
+ 	</xsd:complexType>
+ 	<!--AggregationClass domains.HasRecordDomainComponent from domains.RecordDomain (0, *) to domains.Domain (1, *) aggregate from { name: String };-->
+ 	<xsd:complexType name="ET_domains.HasRecordDomainComponent" abstract="false">
+ 	 	<xsd:complexContent>
+ 	 	 	<xsd:extension base="smg:BT_Edge">
+ 	 	 	 	<xsd:attribute name="name" type="smg:ST_STRING" use="required"/>
+ 	 	 	</xsd:extension>
+ 	 	</xsd:complexContent>
+ 	</xsd:complexType>
+ 	<!--EdgeClass domains.HasValueDomain from domains.MapDomain (0, *) to domains.Domain (1, 1);-->
+ 	<xsd:complexType name="ET_domains.HasValueDomain" abstract="false">
+ 	 	<xsd:complexContent>
+ 	 	 	<xsd:extension base="smg:BT_Edge"/>
+ 	 	</xsd:complexContent>
+ 	</xsd:complexType>
+ 	<!--Enumeration-types-->
+</xsd:schema>
