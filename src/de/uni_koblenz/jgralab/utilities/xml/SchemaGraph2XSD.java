@@ -280,36 +280,51 @@ public class SchemaGraph2XSD {
 	public void writeXSD() throws XMLStreamException {
 
 		// select which classes are exported into the XSD
+		System.out.print("Processing patterns ...");
 		processPatterns();
+		System.out.println("\t\tdone.");
 
+		System.out.print("Processing domains ...");
 		for (Domain domain : schemaGraph.getDomainVertices()) {
 			if (isIncluded(domain)) {
 				getXSDType(domain);
 			}
 		}
+		System.out.println("\t\tdone.");
 
 		writeStartXSDSchema();
 
 		// write the default complex types
+		System.out.print("Writing default types ...");
 		xml.writeComment("Default types");
 		writeDefaultComplexTypes();
 		writeDefaultSimpleTypes();
+		System.out.println("\tdone.");
 
 		// now the graph class
+		System.out.print("Writing graph type ...");
 		xml.writeComment("Graph-type");
 		writeGraphClass();
+		System.out.println("\t\tdone.");
 
 		// now vertex and edge classes
+		System.out.print("Writing vertex types ...");
 		xml.writeComment("Vertex-types");
 		writeVertexClassComplexTypes();
+		System.out.println("\tdone.");
+
+		System.out.print("Writing edge types ...");
 		xml.writeComment("Edge-types");
 		writeEdgeClassComplexTypes();
+		System.out.println("\t\tdone.");
 
 		// write all enumeration types
 		// before creating all enumerations every domain have to be queried
 		// again, to make sure, that all domain objects have been gathered.
+		System.out.print("Writing enumeration types ...");
 		xml.writeComment("Enumeration-types");
 		writeAllDomainTypes();
+		System.out.println("\tdone.");
 
 		// Ends the schema
 		xml.writeEndDocument();
@@ -435,27 +450,30 @@ public class SchemaGraph2XSD {
 
 	private void writeDefaultComplexTypes() throws XMLStreamException {
 		String attElem = GRUML_ATTRIBUTEDELEMENTTYPE;
+		String integer = namespacePrefix + ":" + GRUML_DOMAIN_INTEGER;
+		String id = XSD_NAMESPACE_PREFIX + ":" + XML_DOMAIN_ID;
+		String idRef = XSD_NAMESPACE_PREFIX + ":" + XML_DOMAIN_IDREF;
+
 		writeStartXSDComplexType(attElem, true, false);
 
 		writeStartXSDComplexType(GRUML_GRAPHTYPE, true, true);
 		writeStartXSDExtension(attElem, true);
-		writeXSDAttribute(GRUML_ATTRIBUTE_ID, XML_DOMAIN_ID, XSD_REQUIRED);
+		writeXSDAttribute(GRUML_ATTRIBUTE_ID, id, XSD_REQUIRED);
 		writeEndXSDElement();
 		writeEndXSDElement();
 		writeEndXSDElement();
 
 		writeStartXSDComplexType(GRUML_VERTEXTYPE, true, true);
 		writeStartXSDExtension(attElem, true);
-		writeXSDAttribute(GRUML_ATTRIBUTE_ID, XML_DOMAIN_ID, XSD_REQUIRED);
+		writeXSDAttribute(GRUML_ATTRIBUTE_ID, id, XSD_REQUIRED);
 		writeEndXSDElement();
 		writeEndXSDElement();
 		writeEndXSDElement();
 
-		String integer = namespacePrefix + ":" + GRUML_DOMAIN_INTEGER;
 		writeStartXSDComplexType(GRUML_COMPLEXTYPE, true, true);
 		writeStartXSDExtension(attElem, true);
-		writeXSDAttribute(GRUML_ATTRIBUTE_FROM, XML_DOMAIN_IDREF, XSD_REQUIRED);
-		writeXSDAttribute(GRUML_ATTRIBUTE_TO, XML_DOMAIN_IDREF, XSD_REQUIRED);
+		writeXSDAttribute(GRUML_ATTRIBUTE_FROM, idRef, XSD_REQUIRED);
+		writeXSDAttribute(GRUML_ATTRIBUTE_TO, idRef, XSD_REQUIRED);
 		writeXSDAttribute(GRUML_ATTRIBUTE_FSEQ, integer);
 		writeXSDAttribute(GRUML_ATTRIBUTE_TSEQ, integer);
 		writeEndXSDElement();
@@ -503,11 +521,12 @@ public class SchemaGraph2XSD {
 		StringWriter stringWriter = new StringWriter();
 
 		sg2tg.setStream(stringWriter);
-		sg2tg.printEdgeClassDefinition(edgeClass);
+		sg2tg.printEdgeClassDefinition(edgeClass, false);
 
 		StringBuffer sb = stringWriter.getBuffer();
 		sb.deleteCharAt(sb.length() - 1);
 		writeInheritedAttributes(edgeClass, stringWriter);
+
 		return stringWriter.toString();
 	}
 
@@ -515,11 +534,12 @@ public class SchemaGraph2XSD {
 		StringWriter stringWriter = new StringWriter();
 
 		sg2tg.setStream(stringWriter);
-		sg2tg.printVertexClassDefinition(vertexClass);
+		sg2tg.printVertexClassDefinition(vertexClass, true);
 
 		StringBuffer sb = stringWriter.getBuffer();
 		sb.deleteCharAt(sb.length() - 1);
 		writeInheritedAttributes(vertexClass, stringWriter);
+
 		return stringWriter.toString();
 	}
 
