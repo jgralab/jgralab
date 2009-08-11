@@ -264,6 +264,7 @@ public class SchemaGraph2XSD {
 		this.namespacePrefix = namespacePrefix;
 		schemaGraph = sg;
 		sg2tg = new SchemaGraph2Tg(sg, null);
+		sg2tg.setIsFormatted(false);
 		domainMap = new HashMap<Domain, String>();
 		attributes = new ArrayList<Attribute>();
 	}
@@ -534,7 +535,7 @@ public class SchemaGraph2XSD {
 		StringWriter stringWriter = new StringWriter();
 
 		sg2tg.setStream(stringWriter);
-		sg2tg.printVertexClassDefinition(vertexClass, true);
+		sg2tg.printVertexClassDefinition(vertexClass, false);
 
 		StringBuffer sb = stringWriter.getBuffer();
 		sb.deleteCharAt(sb.length() - 1);
