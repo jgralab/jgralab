@@ -306,10 +306,13 @@ public class SchemaGraph2XSD {
 		String[] rawPatterns = comLine.hasOption('p') ? comLine
 				.getOptionValues('p') : null;
 
+		System.out
+				.println("Loading SchemaGraph from file '" + inputFile + "'.");
 		SchemaGraph sg = comLine.hasOption('g') ? GrumlSchema.instance()
 				.loadSchemaGraph(inputFile, new ProgressFunctionImpl())
 				: new Tg2SchemaGraph().process(inputFile);
 
+		System.out.println("\nBeginning convertion:");
 		SchemaGraph2XSD sg2xsd = new SchemaGraph2XSD(sg, namespacePrefix,
 				xsdFile);
 
@@ -333,38 +336,38 @@ public class SchemaGraph2XSD {
 
 		sg2xsd.writeXSD();
 
-		System.out.println("Fini.");
+		System.out.println("\nFini.");
 	}
 
 	private static CommandLine processCommandLineOptions(String[] args) {
 		String toolString = "java " + SchemaGraph2XSD.class.getName();
 		String versionString = JGraLab.getInfo(false);
 		OptionHandler oh = new OptionHandler(toolString, versionString);
-	
+
 		Option output = new Option("o", "output", true,
 				"(required): XSD-file to be generated");
 		output.setRequired(true);
 		output.setArgName("file");
 		oh.addOption(output);
-	
+
 		Option namespacePrefix = new Option("n", "namespace-prefix", true,
 				"(required): namespace prefix");
 		namespacePrefix.setRequired(true);
 		namespacePrefix.setArgName("prefix");
 		oh.addOption(namespacePrefix);
-	
+
 		Option graph = new Option("g", "graph", true,
 				"(required or -s): TG-file of the schemaGraph");
 		graph.setRequired(false);
 		graph.setArgName("file");
 		oh.addOption(graph);
-	
+
 		Option schema = new Option("s", "schema", true,
 				"(required or -g): TG-file of the schema");
 		schema.setRequired(false);
 		schema.setArgName("file");
 		oh.addOption(schema);
-	
+
 		// either graph or schema has to be provided
 		OptionGroup input = new OptionGroup();
 		input.addOption(graph);
@@ -372,7 +375,7 @@ public class SchemaGraph2XSD {
 		// TODO when OptionHandler has been fixed, set back to true
 		input.setRequired(true);
 		oh.addOptionGroup(input);
-	
+
 		Option patternList = new Option(
 				"p",
 				"pattern-list",
@@ -383,7 +386,7 @@ public class SchemaGraph2XSD {
 		patternList.setArgName("(+|-)pattern");
 		patternList.setValueSeparator(' ');
 		oh.addOption(patternList);
-	
+
 		Option debug = new Option(
 				"d",
 				"debug",
@@ -394,7 +397,7 @@ public class SchemaGraph2XSD {
 		debug.setArgName("filename");
 		debug.setOptionalArg(true);
 		oh.addOption(debug);
-	
+
 		Option implicitExclude = new Option(
 				"x",
 				"implicit-exclude",
@@ -402,7 +405,7 @@ public class SchemaGraph2XSD {
 				"(optional): if this flag is set, all implicitly excluded subclasses will be explicitly excluded and not exported.");
 		implicitExclude.setRequired(false);
 		oh.addOption(implicitExclude);
-	
+
 		return oh.parse(args);
 	}
 
