@@ -198,32 +198,88 @@ import de.uni_koblenz.jgralab.utilities.tg2schemagraph.Tg2SchemaGraph;
 @WorkInProgress(description = "Converter from SchemaGraph to XML Schema", responsibleDevelopers = "horn, mmce, riediger", expectedFinishingDate = "2009/06/30")
 public class SchemaGraph2XSD {
 
+	/**
+	 * Stores String patterns for a RecordDomain in general.
+	 */
 	private static final String[] RECORD_DOMAIN_PATTERNS = new String[] {
 			"\\(.*\\)", GRUML_VALUE_NULL };
+
+	/**
+	 * Stores String patterns for a MapDomain in general.
+	 */
 	private static final String[] MAP_DOMAIN_PATTERNS = new String[] {
 			"\\{.*\\}", GRUML_VALUE_NULL };
+
+	/**
+	 * Stores String patterns for a SetDomain in general.
+	 */
 	private static final String[] SET_DOMAIN_PATTERNS = new String[] {
 			"\\{.*\\}", GRUML_VALUE_NULL };
+
+	/**
+	 * Stores String patterns for a ListDomain in general.
+	 */
 	private static final String[] LIST_DOMAIN_PATTERNS = new String[] {
 			"\\[.*\\]", GRUML_VALUE_NULL };
+
+	/**
+	 * Stores String patterns for a StringDomain in general.
+	 */
 	private static final String[] STRING_DOMAIN_PATTERNS = new String[] {
 			"\".*\"", GRUML_VALUE_NULL };
 
-	public static final String XSD_NS_PREFIX_PLUS_COLON = XSD_NAMESPACE_PREFIX
-			+ (XSD_NAMESPACE_PREFIX.equals("") ? "" : ":");
+	/**
+	 * Defines the prefix for the XSD namespace.
+	 */
+	private static final String XSD_NS_PREFIX_PLUS_COLON = XSD_NAMESPACE_PREFIX
+			.equals("") ? "" : XSD_NAMESPACE_PREFIX + ":";
 
+	/**
+	 * Defines a XMLStreamWriter, which writes all XML-data to a file.
+	 */
 	private final XMLStreamWriter xml;
+
+	/**
+	 * Holds the specific Schema, which should be converted, in a SchemaGraph.
+	 */
 	private final SchemaGraph schemaGraph;
+
+	/**
+	 * SchemaGraph2Tg is needed to provide tg-code for specific vertex- or
+	 * edge-types.
+	 */
 	private final SchemaGraph2Tg sg2tg;
+
+	/**
+	 * Defines the a namespace prefix for all newly defined types of the given
+	 * SchemaGraph.
+	 */
 	private final String namespacePrefix;
 
 	/**
 	 * Stores Attributes and is defined once to suppress object creation.
 	 */
 	private final ArrayList<Attribute> attributes;
+
+	/**
+	 * Holds all patterns for including or excluding specific vertex- oder
+	 * edge-types.
+	 */
 	private String[] patterns;
+
+	/**
+	 * Marks all included vertex-, edge- and domain-types.
+	 */
 	private BooleanGraphMarker includes;
+
+	/**
+	 * Stream output for debug information about include oder excludes types.
+	 */
 	private PrintStream debugOutputStream;
+
+	/**
+	 * Boolean flag for automatic exclusions.
+	 */
 	private boolean autoExclude = false;
 
 	/**
@@ -231,19 +287,123 @@ public class SchemaGraph2XSD {
 	 */
 	private final Map<Domain, String> domainMap;
 
-	public void setPatterns(String[] patterns) {
-		this.patterns = patterns;
-	}
+	/**
+	 * @param args
+	 * @throws GraphIOException
+	 * @throws FactoryConfigurationError
+	 * @throws XMLStreamException
+	 * @throws FileNotFoundException
+	 */
+	public static void main(String[] args) throws GraphIOException,
+			FileNotFoundException, XMLStreamException,
+			FactoryConfigurationError {
+		CommandLine comLine = processCommandLineOptions(args);
+		assert comLine != null;
+		String inputFile = comLine.hasOption('g') ? comLine.getOptionValue('g')
+				.trim() : comLine.getOptionValue('s');
+		String namespacePrefix = comLine.getOptionValue('n').trim();
+		String xsdFile = comLine.getOptionValue('o').trim();
+		String[] rawPatterns = comLine.hasOption('p') ? comLine
+				.getOptionValues('p') : null;
 
-	private boolean isIncluded(AttributedElementClass aec) {
-		return includes.isMarked(aec);
-	}
+		SchemaGraph sg = comLine.hasOption('g') ? GrumlSchema.instance()
+				.loadSchemaGraph(inputFile, new ProgressFunctionImpl())
+				: new Tg2SchemaGraph().process(inputFile);
 
-	private boolean isIncluded(Domain d) {
-		if ((d instanceof RecordDomain) || (d instanceof EnumDomain)) {
-			return includes.isMarked(d);
+		SchemaGraph2XSD sg2xsd = new SchemaGraph2XSD(sg, namespacePrefix,
+				xsdFile);
+
+		sg2xsd.setPatterns(rawPatterns);
+
+		if (comLine.hasOption('d')) {
+			String filename = comLine.getOptionValue('d');
+			if (filename == null) {
+				sg2xsd.setDebugOutputStream(System.out);
+			} else {
+				sg2xsd
+						.setDebugOutputStream(new PrintStream(
+								new BufferedOutputStream(new FileOutputStream(
+										filename))));
+			}
 		}
-		return false;
+
+		if (comLine.hasOption('x')) {
+			sg2xsd.setAutoExclude(true);
+		}
+
+		sg2xsd.writeXSD();
+
+		System.out.println("Fini.");
+	}
+
+	private static CommandLine processCommandLineOptions(String[] args) {
+		String toolString = "java " + SchemaGraph2XSD.class.getName();
+		String versionString = JGraLab.getInfo(false);
+		OptionHandler oh = new OptionHandler(toolString, versionString);
+	
+		Option output = new Option("o", "output", true,
+				"(required): XSD-file to be generated");
+		output.setRequired(true);
+		output.setArgName("file");
+		oh.addOption(output);
+	
+		Option namespacePrefix = new Option("n", "namespace-prefix", true,
+				"(required): namespace prefix");
+		namespacePrefix.setRequired(true);
+		namespacePrefix.setArgName("prefix");
+		oh.addOption(namespacePrefix);
+	
+		Option graph = new Option("g", "graph", true,
+				"(required or -s): TG-file of the schemaGraph");
+		graph.setRequired(false);
+		graph.setArgName("file");
+		oh.addOption(graph);
+	
+		Option schema = new Option("s", "schema", true,
+				"(required or -g): TG-file of the schema");
+		schema.setRequired(false);
+		schema.setArgName("file");
+		oh.addOption(schema);
+	
+		// either graph or schema has to be provided
+		OptionGroup input = new OptionGroup();
+		input.addOption(graph);
+		input.addOption(schema);
+		// TODO when OptionHandler has been fixed, set back to true
+		input.setRequired(true);
+		oh.addOptionGroup(input);
+	
+		Option patternList = new Option(
+				"p",
+				"pattern-list",
+				true,
+				"(optional): List of patterns. Include patterns start with \"+\", exclude patterns start with \"-\", by default everything is included. If the first pattern is positive, everything is excluded first.");
+		patternList.setRequired(false);
+		patternList.setArgs(Option.UNLIMITED_VALUES);
+		patternList.setArgName("(+|-)pattern");
+		patternList.setValueSeparator(' ');
+		oh.addOption(patternList);
+	
+		Option debug = new Option(
+				"d",
+				"debug",
+				true,
+				"(optional): write debug information for include and exclude patterns into a file (optional parameter) or standard out.");
+		debug.setRequired(false);
+		debug.setArgs(1);
+		debug.setArgName("filename");
+		debug.setOptionalArg(true);
+		oh.addOption(debug);
+	
+		Option implicitExclude = new Option(
+				"x",
+				"implicit-exclude",
+				false,
+				"(optional): if this flag is set, all implicitly excluded subclasses will be explicitly excluded and not exported.");
+		implicitExclude.setRequired(false);
+		oh.addOption(implicitExclude);
+	
+		return oh.parse(args);
 	}
 
 	public SchemaGraph2XSD(SchemaGraph sg, String namespacePrefix,
@@ -269,13 +429,20 @@ public class SchemaGraph2XSD {
 		attributes = new ArrayList<Attribute>();
 	}
 
-	/**
-	 * Handles the processing of all given include and exclude patterns
-	 */
-	private void processPatterns() {
-		SchemaFilter filter = new SchemaFilter(schemaGraph, patterns,
-				debugOutputStream, autoExclude);
-		includes = filter.processPatterns();
+	public void setPatterns(String[] patterns) {
+		this.patterns = patterns;
+	}
+
+	public void setDebugOutputStream(PrintStream debugOutputStream) {
+		this.debugOutputStream = debugOutputStream;
+	}
+
+	public void setAutoExclude(boolean autoExclude) {
+		this.autoExclude = autoExclude;
+	}
+
+	public boolean add(Attribute e) {
+		return attributes.add(e);
 	}
 
 	public void writeXSD() throws XMLStreamException {
@@ -298,8 +465,8 @@ public class SchemaGraph2XSD {
 		// write the default complex types
 		System.out.print("Writing default types ...");
 		xml.writeComment("Default types");
-		writeDefaultComplexTypes();
 		writeDefaultSimpleTypes();
+		writeDefaultComplexTypes();
 		System.out.println("\tdone.");
 
 		// now the graph class
@@ -334,6 +501,42 @@ public class SchemaGraph2XSD {
 		// Frees resources
 		attributes.clear();
 		domainMap.clear();
+	}
+
+	/**
+	 * Handles the processing of all given include and exclude patterns
+	 */
+	private void processPatterns() {
+		SchemaFilter filter = new SchemaFilter(schemaGraph, patterns,
+				debugOutputStream, autoExclude);
+		includes = filter.processPatterns();
+	}
+
+	private void writeStartXSDSchema() throws XMLStreamException {
+
+		xml.writeStartDocument();
+
+		xml.writeStartElement(XSD_NAMESPACE_PREFIX, XSD_SCHEMA,
+				XMLConstants.W3C_XML_SCHEMA_NS_URI);
+
+		xml.writeNamespace(XSD_NAMESPACE_PREFIX,
+				XMLConstants.W3C_XML_SCHEMA_NS_URI);
+
+		Schema schema = schemaGraph.getFirstSchema();
+
+		String namespace = schema.getPackagePrefix() + "." + schema.getName();
+
+		namespace = UtilityMethods.generateURI(namespace);
+
+		xml.writeNamespace(namespacePrefix, namespace);
+		xml.writeAttribute("targetNamespace", namespace);
+	}
+
+	/**
+	 * @throws XMLStreamException
+	 */
+	private void writeEndXSDElement() throws XMLStreamException {
+		xml.writeEndElement();
 	}
 
 	private void writeDefaultSimpleTypes() throws XMLStreamException {
@@ -371,39 +574,37 @@ public class SchemaGraph2XSD {
 				+ XSD_DOMAIN_STRING, MAP_DOMAIN_PATTERNS);
 	}
 
-	private void writeRestrictedSimpleType(String name, String type,
-			String[] patterns) throws XMLStreamException {
-		writeStartXSDSimpleType(name);
-		writeStartXSDRestriction(type, patterns);
+	private void writeDefaultComplexTypes() throws XMLStreamException {
+		String attElem = GRUML_ATTRIBUTEDELEMENTTYPE;
+		String integer = namespacePrefix + ":" + GRUML_DOMAIN_INTEGER;
+		String id = XSD_NAMESPACE_PREFIX + ":" + XML_DOMAIN_ID;
+		String idRef = XSD_NAMESPACE_PREFIX + ":" + XML_DOMAIN_IDREF;
+
+		writeStartXSDComplexType(attElem, true, false);
+
+		writeStartXSDComplexType(GRUML_GRAPHTYPE, true, true);
+		writeStartXSDExtension(attElem, true);
+		writeXSDAttribute(GRUML_ATTRIBUTE_ID, id, XSD_REQUIRED);
 		writeEndXSDElement();
-	}
+		writeEndXSDElement();
+		writeEndXSDElement();
 
-	private void writeStartXSDRestriction(String type, String[] patterns)
-			throws XMLStreamException {
+		writeStartXSDComplexType(GRUML_VERTEXTYPE, true, true);
+		writeStartXSDExtension(attElem, true);
+		writeXSDAttribute(GRUML_ATTRIBUTE_ID, id, XSD_REQUIRED);
+		writeEndXSDElement();
+		writeEndXSDElement();
+		writeEndXSDElement();
 
-		if (patterns == null) {
-			xml.writeEmptyElement(XSD_NAMESPACE_PREFIX, XSD_RESTRICTION,
-					XMLConstants.W3C_XML_SCHEMA_NS_URI);
-		} else {
-			xml.writeStartElement(XSD_NAMESPACE_PREFIX, XSD_RESTRICTION,
-					XMLConstants.W3C_XML_SCHEMA_NS_URI);
-		}
-		xml.writeAttribute(XSD_ATTRIBUTE_BASE, type);
-
-		if (patterns != null) {
-			for (String pattern : patterns) {
-				xml.writeEmptyElement(XSD_NAMESPACE_PREFIX, XSD_PATTERN,
-						XMLConstants.W3C_XML_SCHEMA_NS_URI);
-				xml.writeAttribute(XSD_ATTRIBUTE_VALUE, pattern);
-			}
-			xml.writeEndElement();
-		}
-	}
-
-	private void writeStartXSDSimpleType(String name) throws XMLStreamException {
-		xml.writeStartElement(XSD_NAMESPACE_PREFIX, XSD_SIMPLETYPE,
-				XMLConstants.W3C_XML_SCHEMA_NS_URI);
-		xml.writeAttribute(XSD_ATTRIBUTE_NAME, name);
+		writeStartXSDComplexType(GRUML_COMPLEXTYPE, true, true);
+		writeStartXSDExtension(attElem, true);
+		writeXSDAttribute(GRUML_ATTRIBUTE_FROM, idRef, XSD_REQUIRED);
+		writeXSDAttribute(GRUML_ATTRIBUTE_TO, idRef, XSD_REQUIRED);
+		writeXSDAttribute(GRUML_ATTRIBUTE_FSEQ, integer);
+		writeXSDAttribute(GRUML_ATTRIBUTE_TSEQ, integer);
+		writeEndXSDElement();
+		writeEndXSDElement();
+		writeEndXSDElement();
 	}
 
 	private void writeGraphClass() throws XMLStreamException {
@@ -449,130 +650,6 @@ public class SchemaGraph2XSD {
 		writeEndXSDElement();
 	}
 
-	private void writeDefaultComplexTypes() throws XMLStreamException {
-		String attElem = GRUML_ATTRIBUTEDELEMENTTYPE;
-		String integer = namespacePrefix + ":" + GRUML_DOMAIN_INTEGER;
-		String id = XSD_NAMESPACE_PREFIX + ":" + XML_DOMAIN_ID;
-		String idRef = XSD_NAMESPACE_PREFIX + ":" + XML_DOMAIN_IDREF;
-
-		writeStartXSDComplexType(attElem, true, false);
-
-		writeStartXSDComplexType(GRUML_GRAPHTYPE, true, true);
-		writeStartXSDExtension(attElem, true);
-		writeXSDAttribute(GRUML_ATTRIBUTE_ID, id, XSD_REQUIRED);
-		writeEndXSDElement();
-		writeEndXSDElement();
-		writeEndXSDElement();
-
-		writeStartXSDComplexType(GRUML_VERTEXTYPE, true, true);
-		writeStartXSDExtension(attElem, true);
-		writeXSDAttribute(GRUML_ATTRIBUTE_ID, id, XSD_REQUIRED);
-		writeEndXSDElement();
-		writeEndXSDElement();
-		writeEndXSDElement();
-
-		writeStartXSDComplexType(GRUML_COMPLEXTYPE, true, true);
-		writeStartXSDExtension(attElem, true);
-		writeXSDAttribute(GRUML_ATTRIBUTE_FROM, idRef, XSD_REQUIRED);
-		writeXSDAttribute(GRUML_ATTRIBUTE_TO, idRef, XSD_REQUIRED);
-		writeXSDAttribute(GRUML_ATTRIBUTE_FSEQ, integer);
-		writeXSDAttribute(GRUML_ATTRIBUTE_TSEQ, integer);
-		writeEndXSDElement();
-		writeEndXSDElement();
-		writeEndXSDElement();
-	}
-
-	private void writeEdgeClassComplexTypes() throws XMLStreamException {
-		for (EdgeClass ec : schemaGraph.getEdgeClassVertices()) {
-			if (ec.isIsAbstract() || !isIncluded(ec)) {
-				continue;
-			}
-
-			xml.writeComment(commentEdgeClass(ec));
-
-			// first the complex type
-			writeStartXSDComplexType(GRUML_PREFIX_EDGETYPE
-					+ ec.getQualifiedName(), false, true);
-
-			attributes.clear();
-			collectAttributes(ec, attributes);
-
-			if (attributes.size() > 0) {
-				writeStartXSDExtension(GRUML_COMPLEXTYPE, true);
-
-				writeAttributes(attributes);
-
-				writeEndXSDElement(); // ends extension
-			} else {
-				writeStartXSDExtension(GRUML_COMPLEXTYPE, false);
-			}
-			writeEndXSDElement(); // ends complexContent
-			writeEndXSDElement(); // ends complexType
-		}
-	}
-
-	private void writeAttributes(ArrayList<Attribute> attributeList)
-			throws XMLStreamException {
-		for (Attribute attribute : attributeList) {
-			writeAttribute(attribute);
-		}
-	}
-
-	private String commentEdgeClass(EdgeClass edgeClass) {
-		StringWriter stringWriter = new StringWriter();
-
-		sg2tg.setStream(stringWriter);
-		sg2tg.printEdgeClassDefinition(edgeClass, false);
-
-		StringBuffer sb = stringWriter.getBuffer();
-		sb.deleteCharAt(sb.length() - 1);
-		writeInheritedAttributes(edgeClass, stringWriter);
-
-		return stringWriter.toString();
-	}
-
-	private String commentVertexClass(VertexClass vertexClass) {
-		StringWriter stringWriter = new StringWriter();
-
-		sg2tg.setStream(stringWriter);
-		sg2tg.printVertexClassDefinition(vertexClass, false);
-
-		StringBuffer sb = stringWriter.getBuffer();
-		sb.deleteCharAt(sb.length() - 1);
-		writeInheritedAttributes(vertexClass, stringWriter);
-
-		return stringWriter.toString();
-	}
-
-	private void writeInheritedAttributes(EdgeClass edgeClass, StringWriter w) {
-		for (SpecializesEdgeClass specializes : edgeClass
-				.getSpecializesEdgeClassIncidences(EdgeDirection.OUT)) {
-			EdgeClass superClass = (EdgeClass) specializes.getOmega();
-			if (!(superClass.getFirstHasAttribute(EdgeDirection.OUT) == null)) {
-				w.append("\nInherited attributes from "
-						+ superClass.getQualifiedName() + ":");
-			}
-			sg2tg.printAttributes(superClass
-					.getFirstHasAttribute(EdgeDirection.OUT));
-			writeInheritedAttributes(superClass, w);
-		}
-	}
-
-	private void writeInheritedAttributes(VertexClass vertexClass,
-			StringWriter w) {
-		for (SpecializesVertexClass specializes : vertexClass
-				.getSpecializesVertexClassIncidences(EdgeDirection.OUT)) {
-			VertexClass superClass = (VertexClass) specializes.getOmega();
-			if (!(superClass.getFirstHasAttribute(EdgeDirection.OUT) == null)) {
-				w.append("\nInherited attributes from "
-						+ superClass.getQualifiedName() + ":");
-			}
-			sg2tg.printAttributes(superClass
-					.getFirstHasAttribute(EdgeDirection.OUT));
-			writeInheritedAttributes(superClass, w);
-		}
-	}
-
 	private void writeVertexClassComplexTypes() throws XMLStreamException {
 		for (VertexClass vc : schemaGraph.getVertexClassVertices()) {
 
@@ -580,7 +657,7 @@ public class SchemaGraph2XSD {
 				continue;
 			}
 
-			xml.writeComment(commentVertexClass(vc));
+			xml.writeComment(createVertexClassComment(vc));
 
 			// first the complex type
 			writeStartXSDComplexType(GRUML_PREFIX_VERTEXTYPE
@@ -603,39 +680,88 @@ public class SchemaGraph2XSD {
 		}
 	}
 
-	private void collectAttributes(AttributedElementClass attrElemClass,
-			ArrayList<Attribute> attributesList) {
-
-		for (HasAttribute ha : attrElemClass
-				.getHasAttributeIncidences(EdgeDirection.OUT)) {
-			attributesList.add((Attribute) ha.getOmega());
-		}
-
-		if (attrElemClass instanceof VertexClass) {
-			for (SpecializesVertexClass s : ((VertexClass) attrElemClass)
-					.getSpecializesVertexClassIncidences(EdgeDirection.OUT)) {
-				collectAttributes((AttributedElementClass) s.getOmega(),
-						attributesList);
+	private void writeEdgeClassComplexTypes() throws XMLStreamException {
+		for (EdgeClass ec : schemaGraph.getEdgeClassVertices()) {
+			if (ec.isIsAbstract() || !isIncluded(ec)) {
+				continue;
 			}
-		} else if (attrElemClass instanceof EdgeClass) {
-			for (SpecializesEdgeClass s : ((EdgeClass) attrElemClass)
-					.getSpecializesEdgeClassIncidences(EdgeDirection.OUT)) {
-				collectAttributes((AttributedElementClass) s.getOmega(),
-						attributesList);
+
+			xml.writeComment(createEdgeClassComment(ec));
+
+			// first the complex type
+			writeStartXSDComplexType(GRUML_PREFIX_EDGETYPE
+					+ ec.getQualifiedName(), false, true);
+
+			attributes.clear();
+			collectAttributes(ec, attributes);
+
+			if (attributes.size() > 0) {
+				writeStartXSDExtension(GRUML_COMPLEXTYPE, true);
+
+				writeAttributes(attributes);
+
+				writeEndXSDElement(); // ends extension
+			} else {
+				writeStartXSDExtension(GRUML_COMPLEXTYPE, false);
 			}
-		} else if (attrElemClass instanceof GraphClass) {
-			// nothing to do here
-		} else {
-			throw new RuntimeException("Don't know what to do with '"
-					+ attrElemClass.getQualifiedName() + "'.");
+			writeEndXSDElement(); // ends complexContent
+			writeEndXSDElement(); // ends complexType
 		}
 	}
 
-	private void writeAttribute(Attribute attribute) throws XMLStreamException {
-		String name = attribute.getName();
-		Domain type = (Domain) attribute.getFirstHasDomain(EdgeDirection.OUT)
-				.getOmega();
-		writeXSDAttribute(name, getXSDType(type), XSD_REQUIRED);
+	/**
+	 * Creates all Domain types contained in the map <code>enumMap</code>.
+	 * 
+	 * @throws XMLStreamException
+	 */
+	private void writeAllDomainTypes() throws XMLStreamException {
+		// Loop over all existing EnumDomains and RecordDomains.
+		for (Entry<Domain, String> entry : domainMap.entrySet()) {
+			Domain d = entry.getKey();
+			if (includes.isMarked(d)) {
+				if (d instanceof EnumDomain) {
+					createEnumDomainType((EnumDomain) entry.getKey(), entry
+							.getValue());
+				} else if (d instanceof RecordDomain) {
+					writeRecordDomainType(entry.getKey(), entry.getValue());
+				} else {
+					throw new RuntimeException("Unknown domain " + d + " ("
+							+ d.getQualifiedName() + ")");
+				}
+			}
+		}
+	}
+
+	private void writeRecordDomainType(Domain domain, String typeName)
+			throws XMLStreamException {
+
+		writeStartXSDSimpleType(typeName);
+
+		String[] pattern = null;
+		if (domain instanceof RecordDomain) {
+			xml.writeComment(createRecordDomainComment((RecordDomain) domain));
+			pattern = RECORD_DOMAIN_PATTERNS;
+		} else {
+			throw new RuntimeException("The type '" + domain.getClass()
+					+ "' of domain '" + domain.getQualifiedName()
+					+ "' is not supported.");
+		}
+		writeStartXSDRestriction(XSD_NS_PREFIX_PLUS_COLON + XSD_DOMAIN_STRING,
+				pattern);
+		writeEndXSDElement();
+	}
+
+	private void writeRestrictedSimpleType(String name, String type,
+			String[] patterns) throws XMLStreamException {
+		writeStartXSDSimpleType(name);
+		writeStartXSDRestriction(type, patterns);
+		writeEndXSDElement();
+	}
+
+	private void writeStartXSDSimpleType(String name) throws XMLStreamException {
+		xml.writeStartElement(XSD_NAMESPACE_PREFIX, XSD_SIMPLETYPE,
+				XMLConstants.W3C_XML_SCHEMA_NS_URI);
+		xml.writeAttribute(XSD_ATTRIBUTE_NAME, name);
 	}
 
 	private void writeStartXSDComplexType(String name, boolean isAbstract,
@@ -669,6 +795,28 @@ public class SchemaGraph2XSD {
 		xml.writeAttribute(XSD_ATTRIBUTE_TYPE, namespacePrefix + ":" + type);
 	}
 
+	private void writeStartXSDRestriction(String type, String[] patterns)
+			throws XMLStreamException {
+
+		if (patterns == null) {
+			xml.writeEmptyElement(XSD_NAMESPACE_PREFIX, XSD_RESTRICTION,
+					XMLConstants.W3C_XML_SCHEMA_NS_URI);
+		} else {
+			xml.writeStartElement(XSD_NAMESPACE_PREFIX, XSD_RESTRICTION,
+					XMLConstants.W3C_XML_SCHEMA_NS_URI);
+		}
+		xml.writeAttribute(XSD_ATTRIBUTE_BASE, type);
+
+		if (patterns != null) {
+			for (String pattern : patterns) {
+				xml.writeEmptyElement(XSD_NAMESPACE_PREFIX, XSD_PATTERN,
+						XMLConstants.W3C_XML_SCHEMA_NS_URI);
+				xml.writeAttribute(XSD_ATTRIBUTE_VALUE, pattern);
+			}
+			xml.writeEndElement();
+		}
+	}
+
 	private void writeStartXSDExtension(String extendedType,
 			boolean complexContent) throws XMLStreamException {
 
@@ -686,173 +834,6 @@ public class SchemaGraph2XSD {
 
 		xml.writeAttribute(XSD_ATTRIBUTE_BASE, namespacePrefix + ":"
 				+ extendedType);
-	}
-
-	/**
-	 * @throws XMLStreamException
-	 */
-	private void writeEndXSDElement() throws XMLStreamException {
-		xml.writeEndElement();
-	}
-
-	/**
-	 * write definition of an optional attribute
-	 * 
-	 * @param name
-	 * @param type
-	 * @throws XMLStreamException
-	 */
-	private void writeXSDAttribute(String name, String type)
-			throws XMLStreamException {
-		writeXSDAttribute(name, type, null);
-	}
-
-	private void writeXSDAttribute(String name, String type, String use)
-			throws XMLStreamException {
-		xml.writeEmptyElement(XSD_NAMESPACE_PREFIX, XSD_ATTRIBUTE,
-				XMLConstants.W3C_XML_SCHEMA_NS_URI);
-		xml.writeAttribute(XSD_ATTRIBUTE_NAME, name);
-		xml.writeAttribute(XSD_ATTRIBUTE_TYPE, type);
-		if (use != null) {
-			xml.writeAttribute(XSD_ATTRIBUTE_USE, use);
-		}
-
-	}
-
-	private String getXSDTypeWithoutPrefix(Domain domain) {
-
-		if (domain instanceof IntegerDomain) {
-			return GRUML_DOMAIN_INTEGER;
-		} else if (domain instanceof LongDomain) {
-			return GRUML_DOMAIN_LONG;
-		} else if (domain instanceof BooleanDomain) {
-			return GRUML_DOMAIN_BOOLEAN;
-		} else if (domain instanceof DoubleDomain) {
-			return GRUML_DOMAIN_DOUBLE;
-		} else if (domain instanceof StringDomain) {
-			return GRUML_DOMAIN_STRING;
-		} else if (domain instanceof SetDomain) {
-			return GRUML_DOMAIN_SET;
-		} else if (domain instanceof ListDomain) {
-			return GRUML_DOMAIN_LIST;
-		} else if (domain instanceof MapDomain) {
-			return GRUML_DOMAIN_MAP;
-		} else if (domain instanceof RecordDomain) {
-			return queryDomainType(domain);
-		} else if (domain instanceof EnumDomain) {
-			return queryDomainType(domain);
-		}
-		throw new RuntimeException("Unknown domain '"
-				+ domain.getQualifiedName() + "'.");
-	}
-
-	private String getXSDType(Domain domain) {
-		return namespacePrefix + ":" + getXSDTypeWithoutPrefix(domain);
-	}
-
-	/**
-	 * Queries for a Domain the corresponding type string. In the case of no
-	 * existing match, a new type string is created and stored in the used map
-	 * <code>enumMap</code>.
-	 * 
-	 * @param domain
-	 *            Domain for which the corresponding type string is queried.
-	 * @return Type string.
-	 */
-	private String queryDomainType(Domain domain) {
-
-		// Returns an existing mapping.
-		if (domainMap.containsKey(domain)) {
-			return domainMap.get(domain);
-		}
-
-		// Creates a new type string.
-
-		String qualifiedName;
-
-		if (domain instanceof EnumDomain) {
-			qualifiedName = GRUML_DOMAIN_ENUM_PREFIX;
-		} else if (domain instanceof RecordDomain) {
-			qualifiedName = GRUML_DOMAIN_RECORD_PREFIX;
-		} else {
-			throw new RuntimeException("Unknown domain '"
-					+ domain.getQualifiedName() + "'.");
-		}
-
-		qualifiedName += domain.getQualifiedName();
-		assert (!domainMap.values().contains(qualifiedName)) : "FIXME! \"domainMap\" already contains a string \""
-				+ qualifiedName + "\" of the Domain '" + domain + "'!";
-
-		// Stores the new type string.
-		domainMap.put(domain, qualifiedName);
-
-		return qualifiedName;
-	}
-
-	/**
-	 * Creates all Domain types contained in the map <code>enumMap</code>.
-	 * 
-	 * @throws XMLStreamException
-	 */
-	private void writeAllDomainTypes() throws XMLStreamException {
-		// Loop over all existing EnumDomains and RecordDomains.
-		for (Entry<Domain, String> entry : domainMap.entrySet()) {
-			Domain d = entry.getKey();
-			if (includes.isMarked(d)) {
-				if (d instanceof EnumDomain) {
-					createEnumDomainType((EnumDomain) entry.getKey(), entry
-							.getValue());
-				} else if (d instanceof RecordDomain) {
-					createRecordDomainType(entry.getKey(), entry.getValue());
-				} else {
-					throw new RuntimeException("Unknown domain " + d + " ("
-							+ d.getQualifiedName() + ")");
-				}
-			}
-		}
-	}
-
-	private void createRecordDomainType(Domain domain, String typeName)
-			throws XMLStreamException {
-
-		writeStartXSDSimpleType(typeName);
-
-		String[] pattern = null;
-		if (domain instanceof RecordDomain) {
-			xml
-					.writeComment(generateRecordDomainComment((RecordDomain) domain));
-			pattern = RECORD_DOMAIN_PATTERNS;
-		} else {
-			throw new RuntimeException("The type '" + domain.getClass()
-					+ "' of domain '" + domain.getQualifiedName()
-					+ "' is not supported.");
-		}
-		writeStartXSDRestriction(XSD_NS_PREFIX_PLUS_COLON + XSD_DOMAIN_STRING,
-				pattern);
-		writeEndXSDElement();
-	}
-
-	private String generateRecordDomainComment(RecordDomain domain) {
-		StringBuilder sb = new StringBuilder();
-
-		sb.append(" alphabetically ordered: ");
-
-		SortedMap<String, String> map = new TreeMap<String, String>();
-
-		for (HasRecordDomainComponent component : domain
-				.getHasRecordDomainComponentIncidences(EdgeDirection.OUT)) {
-			map.put(component.getName(),
-					getXSDTypeWithoutPrefix((Domain) component.getOmega()));
-		}
-
-		for (Entry<String, String> entry : map.entrySet()) {
-			sb.append(entry.getKey());
-			sb.append(':');
-			sb.append(entry.getValue());
-			sb.append(' ');
-		}
-
-		return sb.toString();
 	}
 
 	/**
@@ -912,154 +893,228 @@ public class SchemaGraph2XSD {
 		xml.writeEndElement();
 	}
 
-	public boolean add(Attribute e) {
-		return attributes.add(e);
+	/**
+	 * write definition of an optional attribute
+	 * 
+	 * @param name
+	 * @param type
+	 * @throws XMLStreamException
+	 */
+	private void writeXSDAttribute(String name, String type)
+			throws XMLStreamException {
+		writeXSDAttribute(name, type, null);
 	}
 
-	private void writeStartXSDSchema() throws XMLStreamException {
-
-		xml.writeStartDocument();
-
-		xml.writeStartElement(XSD_NAMESPACE_PREFIX, XSD_SCHEMA,
+	private void writeXSDAttribute(String name, String type, String use)
+			throws XMLStreamException {
+		xml.writeEmptyElement(XSD_NAMESPACE_PREFIX, XSD_ATTRIBUTE,
 				XMLConstants.W3C_XML_SCHEMA_NS_URI);
+		xml.writeAttribute(XSD_ATTRIBUTE_NAME, name);
+		xml.writeAttribute(XSD_ATTRIBUTE_TYPE, type);
+		if (use != null) {
+			xml.writeAttribute(XSD_ATTRIBUTE_USE, use);
+		}
 
-		xml.writeNamespace(XSD_NAMESPACE_PREFIX,
-				XMLConstants.W3C_XML_SCHEMA_NS_URI);
+	}
 
-		Schema schema = schemaGraph.getFirstSchema();
+	private void writeAttribute(Attribute attribute) throws XMLStreamException {
+		String name = attribute.getName();
+		Domain type = (Domain) attribute.getFirstHasDomain(EdgeDirection.OUT)
+				.getOmega();
+		writeXSDAttribute(name, getXSDType(type), XSD_REQUIRED);
+	}
 
-		String namespace = schema.getPackagePrefix() + "." + schema.getName();
+	private void writeAttributes(ArrayList<Attribute> attributeList)
+			throws XMLStreamException {
+		for (Attribute attribute : attributeList) {
+			writeAttribute(attribute);
+		}
+	}
 
-		namespace = UtilityMethods.generateURI(namespace);
+	private void collectAttributes(AttributedElementClass attrElemClass,
+			ArrayList<Attribute> attributesList) {
 
-		xml.writeNamespace(namespacePrefix, namespace);
-		xml.writeAttribute("targetNamespace", namespace);
+		for (HasAttribute ha : attrElemClass
+				.getHasAttributeIncidences(EdgeDirection.OUT)) {
+			attributesList.add((Attribute) ha.getOmega());
+		}
+
+		if (attrElemClass instanceof VertexClass) {
+			for (SpecializesVertexClass s : ((VertexClass) attrElemClass)
+					.getSpecializesVertexClassIncidences(EdgeDirection.OUT)) {
+				collectAttributes((AttributedElementClass) s.getOmega(),
+						attributesList);
+			}
+		} else if (attrElemClass instanceof EdgeClass) {
+			for (SpecializesEdgeClass s : ((EdgeClass) attrElemClass)
+					.getSpecializesEdgeClassIncidences(EdgeDirection.OUT)) {
+				collectAttributes((AttributedElementClass) s.getOmega(),
+						attributesList);
+			}
+		} else if (attrElemClass instanceof GraphClass) {
+			// nothing to do here
+		} else {
+			throw new RuntimeException("Don't know what to do with '"
+					+ attrElemClass.getQualifiedName() + "'.");
+		}
+	}
+
+	private String createEdgeClassComment(EdgeClass edgeClass) {
+		StringWriter stringWriter = new StringWriter();
+
+		sg2tg.setStream(stringWriter);
+		sg2tg.printEdgeClassDefinition(edgeClass, false);
+
+		StringBuffer sb = stringWriter.getBuffer();
+		sb.deleteCharAt(sb.length() - 1);
+		writeInheritedAttributes(edgeClass, stringWriter);
+
+		return stringWriter.toString();
+	}
+
+	private String createVertexClassComment(VertexClass vertexClass) {
+		StringWriter stringWriter = new StringWriter();
+
+		sg2tg.setStream(stringWriter);
+		sg2tg.printVertexClassDefinition(vertexClass, false);
+
+		StringBuffer sb = stringWriter.getBuffer();
+		sb.deleteCharAt(sb.length() - 1);
+		writeInheritedAttributes(vertexClass, stringWriter);
+
+		return stringWriter.toString();
+	}
+
+	private String createRecordDomainComment(RecordDomain domain) {
+		StringBuilder sb = new StringBuilder();
+
+		sb.append(" alphabetically ordered: ");
+
+		SortedMap<String, String> map = new TreeMap<String, String>();
+
+		for (HasRecordDomainComponent component : domain
+				.getHasRecordDomainComponentIncidences(EdgeDirection.OUT)) {
+			map.put(component.getName(),
+					getXSDTypeWithoutPrefix((Domain) component.getOmega()));
+		}
+
+		for (Entry<String, String> entry : map.entrySet()) {
+			sb.append(entry.getKey());
+			sb.append(':');
+			sb.append(entry.getValue());
+			sb.append(' ');
+		}
+
+		return sb.toString();
+	}
+
+	private String getXSDType(Domain domain) {
+		return namespacePrefix + ":" + getXSDTypeWithoutPrefix(domain);
+	}
+
+	private String getXSDTypeWithoutPrefix(Domain domain) {
+
+		if (domain instanceof IntegerDomain) {
+			return GRUML_DOMAIN_INTEGER;
+		} else if (domain instanceof LongDomain) {
+			return GRUML_DOMAIN_LONG;
+		} else if (domain instanceof BooleanDomain) {
+			return GRUML_DOMAIN_BOOLEAN;
+		} else if (domain instanceof DoubleDomain) {
+			return GRUML_DOMAIN_DOUBLE;
+		} else if (domain instanceof StringDomain) {
+			return GRUML_DOMAIN_STRING;
+		} else if (domain instanceof SetDomain) {
+			return GRUML_DOMAIN_SET;
+		} else if (domain instanceof ListDomain) {
+			return GRUML_DOMAIN_LIST;
+		} else if (domain instanceof MapDomain) {
+			return GRUML_DOMAIN_MAP;
+		} else if (domain instanceof RecordDomain) {
+			return queryDomainType(domain);
+		} else if (domain instanceof EnumDomain) {
+			return queryDomainType(domain);
+		}
+		throw new RuntimeException("Unknown domain '"
+				+ domain.getQualifiedName() + "'.");
 	}
 
 	/**
-	 * @param args
-	 * @throws GraphIOException
-	 * @throws FactoryConfigurationError
-	 * @throws XMLStreamException
-	 * @throws FileNotFoundException
+	 * Queries for a Domain the corresponding type string. In the case of no
+	 * existing match, a new type string is created and stored in the used map
+	 * <code>enumMap</code>.
+	 * 
+	 * @param domain
+	 *            Domain for which the corresponding type string is queried.
+	 * @return Type string.
 	 */
-	public static void main(String[] args) throws GraphIOException,
-			FileNotFoundException, XMLStreamException,
-			FactoryConfigurationError {
-		CommandLine comLine = processCommandLineOptions(args);
-		assert comLine != null;
-		String inputFile = comLine.hasOption('g') ? comLine.getOptionValue('g')
-				.trim() : comLine.getOptionValue('s');
-		String namespacePrefix = comLine.getOptionValue('n').trim();
-		String xsdFile = comLine.getOptionValue('o').trim();
-		String[] rawPatterns = comLine.hasOption('p') ? comLine
-				.getOptionValues('p') : null;
+	private String queryDomainType(Domain domain) {
 
-		SchemaGraph sg = comLine.hasOption('g') ? GrumlSchema.instance()
-				.loadSchemaGraph(inputFile, new ProgressFunctionImpl())
-				: new Tg2SchemaGraph().process(inputFile);
+		// Returns an existing mapping.
+		if (domainMap.containsKey(domain)) {
+			return domainMap.get(domain);
+		}
 
-		SchemaGraph2XSD sg2xsd = new SchemaGraph2XSD(sg, namespacePrefix,
-				xsdFile);
+		// Creates a new type string.
 
-		sg2xsd.setPatterns(rawPatterns);
+		String qualifiedName;
 
-		if (comLine.hasOption('d')) {
-			String filename = comLine.getOptionValue('d');
-			if (filename == null) {
-				sg2xsd.setDebugOutputStream(System.out);
-			} else {
-				sg2xsd
-						.setDebugOutputStream(new PrintStream(
-								new BufferedOutputStream(new FileOutputStream(
-										filename))));
+		if (domain instanceof EnumDomain) {
+			qualifiedName = GRUML_DOMAIN_ENUM_PREFIX;
+		} else if (domain instanceof RecordDomain) {
+			qualifiedName = GRUML_DOMAIN_RECORD_PREFIX;
+		} else {
+			throw new RuntimeException("Unknown domain '"
+					+ domain.getQualifiedName() + "'.");
+		}
+
+		qualifiedName += domain.getQualifiedName();
+		assert (!domainMap.values().contains(qualifiedName)) : "FIXME! \"domainMap\" already contains a string \""
+				+ qualifiedName + "\" of the Domain '" + domain + "'!";
+
+		// Stores the new type string.
+		domainMap.put(domain, qualifiedName);
+
+		return qualifiedName;
+	}
+
+	private void writeInheritedAttributes(EdgeClass edgeClass, StringWriter w) {
+		for (SpecializesEdgeClass specializes : edgeClass
+				.getSpecializesEdgeClassIncidences(EdgeDirection.OUT)) {
+			EdgeClass superClass = (EdgeClass) specializes.getOmega();
+			if (!(superClass.getFirstHasAttribute(EdgeDirection.OUT) == null)) {
+				w.append("\nInherited attributes from "
+						+ superClass.getQualifiedName() + ":");
 			}
+			sg2tg.printAttributes(superClass
+					.getFirstHasAttribute(EdgeDirection.OUT));
+			writeInheritedAttributes(superClass, w);
 		}
+	}
 
-		if (comLine.hasOption('x')) {
-			sg2xsd.setAutoExclude(true);
+	private void writeInheritedAttributes(VertexClass vertexClass,
+			StringWriter w) {
+		for (SpecializesVertexClass specializes : vertexClass
+				.getSpecializesVertexClassIncidences(EdgeDirection.OUT)) {
+			VertexClass superClass = (VertexClass) specializes.getOmega();
+			if (!(superClass.getFirstHasAttribute(EdgeDirection.OUT) == null)) {
+				w.append("\nInherited attributes from "
+						+ superClass.getQualifiedName() + ":");
+			}
+			sg2tg.printAttributes(superClass
+					.getFirstHasAttribute(EdgeDirection.OUT));
+			writeInheritedAttributes(superClass, w);
 		}
-
-		sg2xsd.writeXSD();
-
-		System.out.println("Fini.");
 	}
 
-	private static CommandLine processCommandLineOptions(String[] args) {
-		String toolString = "java " + SchemaGraph2XSD.class.getName();
-		String versionString = JGraLab.getInfo(false);
-		OptionHandler oh = new OptionHandler(toolString, versionString);
-
-		Option output = new Option("o", "output", true,
-				"(required): XSD-file to be generated");
-		output.setRequired(true);
-		output.setArgName("file");
-		oh.addOption(output);
-
-		Option namespacePrefix = new Option("n", "namespace-prefix", true,
-				"(required): namespace prefix");
-		namespacePrefix.setRequired(true);
-		namespacePrefix.setArgName("prefix");
-		oh.addOption(namespacePrefix);
-
-		Option graph = new Option("g", "graph", true,
-				"(required or -s): TG-file of the schemaGraph");
-		graph.setRequired(false);
-		graph.setArgName("file");
-		oh.addOption(graph);
-
-		Option schema = new Option("s", "schema", true,
-				"(required or -g): TG-file of the schema");
-		schema.setRequired(false);
-		schema.setArgName("file");
-		oh.addOption(schema);
-
-		// either graph or schema has to be provided
-		OptionGroup input = new OptionGroup();
-		input.addOption(graph);
-		input.addOption(schema);
-		// TODO when OptionHandler has been fixed, set back to true
-		input.setRequired(true);
-		oh.addOptionGroup(input);
-
-		Option patternList = new Option(
-				"p",
-				"pattern-list",
-				true,
-				"(optional): List of patterns. Include patterns start with \"+\", exclude patterns start with \"-\", by default everything is included. If the first pattern is positive, everything is excluded first.");
-		patternList.setRequired(false);
-		patternList.setArgs(Option.UNLIMITED_VALUES);
-		patternList.setArgName("(+|-)pattern");
-		patternList.setValueSeparator(' ');
-		oh.addOption(patternList);
-
-		Option debug = new Option(
-				"d",
-				"debug",
-				true,
-				"(optional): write debug information for include and exclude patterns into a file (optional parameter) or standard out.");
-		debug.setRequired(false);
-		debug.setArgs(1);
-		debug.setArgName("filename");
-		debug.setOptionalArg(true);
-		oh.addOption(debug);
-
-		Option implicitExclude = new Option(
-				"x",
-				"implicit-exclude",
-				false,
-				"(optional): if this flag is set, all implicitly excluded subclasses will be explicitly excluded and not exported.");
-		implicitExclude.setRequired(false);
-		oh.addOption(implicitExclude);
-
-		return oh.parse(args);
+	private boolean isIncluded(AttributedElementClass aec) {
+		return includes.isMarked(aec);
 	}
 
-	public void setDebugOutputStream(PrintStream debugOutputStream) {
-		this.debugOutputStream = debugOutputStream;
-	}
-
-	public void setAutoExclude(boolean autoExclude) {
-		this.autoExclude = autoExclude;
+	private boolean isIncluded(Domain d) {
+		if ((d instanceof RecordDomain) || (d instanceof EnumDomain)) {
+			return includes.isMarked(d);
+		}
+		return false;
 	}
 }
