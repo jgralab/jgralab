@@ -305,7 +305,7 @@ public class SchemaGraph2Tg {
 		VertexClass vertex = schemaGraph.getFirstVertexClass();
 
 		while (vertex != null) {
-			printVertexClassDefinition(vertex);
+			printVertexClassDefinition(vertex, true);
 			vertex = vertex.getNextVertexClass();
 		}
 
@@ -316,7 +316,7 @@ public class SchemaGraph2Tg {
 		EdgeClass edgeClass = schemaGraph.getFirstEdgeClass();
 
 		while (edgeClass != null) {
-			printEdgeClassDefinition(edgeClass);
+			printEdgeClassDefinition(edgeClass, true);
 			edgeClass = edgeClass.getNextEdgeClass();
 		}
 	}
@@ -400,7 +400,7 @@ public class SchemaGraph2Tg {
 				graphElement = (GraphElementClass) itGraphElement.next()
 						.getOmega();
 				if (graphElement instanceof VertexClass) {
-					printVertexClassDefinition((VertexClass) graphElement);
+					printVertexClassDefinition((VertexClass) graphElement, true);
 				}
 			}
 
@@ -411,7 +411,7 @@ public class SchemaGraph2Tg {
 				graphElement = (GraphElementClass) itGraphElement.next()
 						.getOmega();
 				if (graphElement instanceof EdgeClass) {
-					printEdgeClassDefinition((EdgeClass) graphElement);
+					printEdgeClassDefinition((EdgeClass) graphElement, true);
 				}
 			}
 		}
@@ -449,8 +449,11 @@ public class SchemaGraph2Tg {
 	 * 
 	 * @param vertexClass
 	 *            {@link VertexClass}, which should be transformed to TG string.
+	 * @param printConstraints
+	 *            Flag for printing the contained Constaints.
 	 */
-	public void printVertexClassDefinition(VertexClass vertexClass) {
+	public void printVertexClassDefinition(VertexClass vertexClass,
+			boolean printConstraints) {
 		if (vertexClass.isIsAbstract()) {
 			print(ABSTRACT, SPACE);
 		}
@@ -461,7 +464,10 @@ public class SchemaGraph2Tg {
 
 		printAttributes(vertexClass.getFirstHasAttribute(EdgeDirection.OUT));
 
-		printConstraints(vertexClass.getFirstHasConstraint(EdgeDirection.OUT));
+		if (printConstraints) {
+			printConstraints(vertexClass
+					.getFirstHasConstraint(EdgeDirection.OUT));
+		}
 
 		println(DELIMITER);
 	}
@@ -500,8 +506,11 @@ public class SchemaGraph2Tg {
 	 * 
 	 * @param edge
 	 *            {@link EdgeClass}, which will be transformed to a TG string.
+	 * @param printConstraints
+	 *            Flag for printing the contained Constraints.
 	 */
-	public void printEdgeClassDefinition(EdgeClass edge) {
+	public void printEdgeClassDefinition(EdgeClass edge,
+			boolean printConstraints) {
 
 		assert (edge != null) : "There is no EdgeClass object! \"edge == null\"";
 
@@ -526,7 +535,9 @@ public class SchemaGraph2Tg {
 
 		printAttributes(edge.getFirstHasAttribute(EdgeDirection.OUT));
 
-		printConstraints(edge.getFirstHasConstraint(EdgeDirection.OUT));
+		if (printConstraints) {
+			printConstraints(edge.getFirstHasConstraint(EdgeDirection.OUT));
+		}
 
 		println(DELIMITER);
 	}
