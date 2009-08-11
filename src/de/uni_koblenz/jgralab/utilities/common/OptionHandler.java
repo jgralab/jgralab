@@ -37,6 +37,7 @@ import org.apache.commons.cli.Option;
 import org.apache.commons.cli.OptionGroup;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
+
 // TODO handle OptionGroups properly
 /**
  * This class is a wrapper for apache commons CLI. It implements a workaround
@@ -78,6 +79,11 @@ public class OptionHandler {
 	private List<Option> optionList;
 
 	/**
+	 * Same thing for OptionGroups
+	 */
+	private List<OptionGroup> optionGroupList;
+
+	/**
 	 * This is the Options structure needed for CLI
 	 */
 	private Options options;
@@ -87,6 +93,11 @@ public class OptionHandler {
 	 * the workaround requires setting all options to not required.
 	 */
 	private Set<Option> requiredOptions;
+
+	/**
+	 * Same thing for OptionGroups
+	 */
+	private Set<OptionGroup> requiredOptionGroups;
 
 	/**
 	 * The String representing the usage. It is lazily created.
@@ -121,7 +132,9 @@ public class OptionHandler {
 	public OptionHandler(String toolString, String versionString) {
 		options = new Options();
 		optionList = new ArrayList<Option>();
+		optionGroupList = new ArrayList<OptionGroup>();
 		requiredOptions = new HashSet<Option>();
+		requiredOptionGroups = new HashSet<OptionGroup>();
 		helpFormatter = new HelpFormatter();
 		this.toolString = toolString;
 		this.versionString = versionString;
@@ -137,6 +150,7 @@ public class OptionHandler {
 		addOption(version);
 
 		OptionGroup mainOptions = new OptionGroup();
+		mainOptions.setRequired(false);
 		mainOptions.addOption(help);
 		mainOptions.addOption(version);
 
@@ -159,8 +173,13 @@ public class OptionHandler {
 		optionList.add(o);
 		options.addOption(o);
 	}
-	
-	public void addOptionGroup(OptionGroup og){
+
+	public void addOptionGroup(OptionGroup og) {
+		if (og.isRequired()) {
+			requiredOptionGroups.add(og);
+			og.setRequired(false);
+		}
+		optionGroupList.add(og);
 		options.addOptionGroup(og);
 	}
 
@@ -242,6 +261,7 @@ public class OptionHandler {
 	public boolean containsAllRequiredOptions(CommandLine comLine) {
 		boolean ok = true;
 		Option[] setOptions = comLine.getOptions();
+
 		Set<Option> setOptionsSet = new HashSet<Option>();
 		for (Option current : setOptions) {
 			setOptionsSet.add(current);
@@ -255,7 +275,28 @@ public class OptionHandler {
 				}
 			}
 		}
-		return ok;
+		// if all required options are set and there are required OptionGroups, check them
+		return ok && !requiredOptionGroups.isEmpty() ? ok
+				&& containsAllRequiredOptionGroups(setOptions) : ok;
+	}
+
+	private boolean containsAllRequiredOptionGroups(Option[] setOptions) {
+		boolean allContained = true;
+		for (OptionGroup currentRequiredOptionGroup : requiredOptionGroups) {
+			boolean currentContained = false;
+			for (Option currentOption : setOptions) {
+				currentContained |= currentRequiredOptionGroup.getOptions()
+						.contains(currentOption);
+				if (currentContained) {
+					break;
+				}
+			}
+			allContained &= currentContained;
+			if (!allContained) {
+				break;
+			}
+		}
+		return allContained;
 	}
 
 	/**
