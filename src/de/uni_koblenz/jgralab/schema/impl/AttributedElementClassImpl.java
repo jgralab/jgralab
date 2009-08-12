@@ -322,7 +322,8 @@ public abstract class AttributedElementClassImpl extends NamedElementImpl
 					+ getQualifiedName();
 			try {
 				m1Class = (Class<? extends AttributedElement>) Class.forName(
-						m1ClassName, true, M1ClassManager.instance());
+						m1ClassName, true, M1ClassManager.instance(getSchema()
+								.getQualifiedName()));
 			} catch (ClassNotFoundException e) {
 				throw new M1ClassAccessException(
 						"Can't load M1 class for AttributedElementClass '"
