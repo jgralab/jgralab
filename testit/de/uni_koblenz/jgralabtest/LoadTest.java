@@ -277,6 +277,7 @@ public class LoadTest {
 		}
 		graph.getVertex(2).delete();
 		graph.getVertex(15).delete();
+		printArray(vList);
 		graph.createA();
 		// TODO runs schon erweitern, wenn runCount==runs.length?
 		printArray(vList);
@@ -342,6 +343,80 @@ public class LoadTest {
 		graph.getVertex(1).delete();
 		checkFreeIndexList(vList, 8, 9, 32, 1, -1, 1, -1, 1, -1, 1, -1, 1, -1,
 				1, -1, 1, -1, 1, -1, 1);
+	}
+
+	/**
+	 * FreeIndexList.runs= [1, -1, 1, -1, 1, -1, 1, -1, 1, -1, 1, -1, 1, -3, 0,
+	 * 0] Delete the middle vertex of -3.
+	 */
+	@Test
+	public void freeRangeTest3() {
+		VertexTestGraph graph = VertexTestSchema.instance()
+				.createVertexTestGraph(16, 1);
+		FreeIndexList vList = getFreeIndexListOfVertices(graph, true);
+		// create vertices
+		for (int i = 0; i < 16; i++) {
+			graph.createA();
+		}
+		checkFreeIndexList(vList, 16, 0, 16, -16);
+		// delete odd vertices to fill runs
+		for (int i = 0; i < 14; i = i + 2) {
+			graph.getVertex(i + 1).delete();
+		}
+		checkFreeIndexList(vList, 9, 7, 16, 1, -1, 1, -1, 1, -1, 1, -1, 1, -1,
+				1, -1, 1, -3);
+		// delete the last vertex. runs[runs.length-1]==0
+		graph.getVertex(15).delete();
+		checkFreeIndexList(vList, 8, 8, 16, 1, -1, 1, -1, 1, -1, 1, -1, 1, -1,
+				1, -1, 1, -1, 1, -1);
+		// TODO is this correct?
+	}
+
+	/**
+	 * FreeIndexList.runs= [1, -1, 1, -3, 1, -1, 1, -1, 1, -1, 1, -1, 1, -1, 0,
+	 * 0] Delete the middle vertex of -3.
+	 */
+	@Test
+	public void freeRangeTest4() {
+		VertexTestGraph graph = VertexTestSchema.instance()
+				.createVertexTestGraph(16, 1);
+		FreeIndexList vList = getFreeIndexListOfVertices(graph, true);
+		// create vertices
+		for (int i = 0; i < 16; i++) {
+			graph.createA();
+		}
+		checkFreeIndexList(vList, 16, 0, 16, -16);
+		// delete odd vertices to fill runs
+		for (int i = 0; i < 16; i = i + 2) {
+			if (i != 4) {
+				graph.getVertex(i + 1).delete();
+			}
+		}
+		checkFreeIndexList(vList, 9, 7, 16, 1, -1, 1, -3, 1, -1, 1, -1, 1, -1,
+				1, -1, 1, -1);
+		// delete the last vertex. runs[runs.length-1]==0
+		graph.getVertex(5).delete();
+		checkFreeIndexList(vList, 8, 8, 16, 1, -1, 1, -1, 1, -1, 1, -1, 1, -1,
+				1, -1, 1, -1, 1, -1);
+		// TODO is this correct?
+	}
+
+	/**
+	 * FreeIndexList.runs= [1, -1, -2, 0,...] Delete the first vertex of -2.
+	 */
+	@Test
+	public void freeRangeTest5() {
+		VertexTestGraph graph = VertexTestSchema.instance()
+				.createVertexTestGraph(4, 1);
+		FreeIndexList vList = getFreeIndexListOfVertices(graph, true);
+		graph.createA();
+		graph.createA();
+		graph.createA();
+		graph.createA();
+		graph.getVertex(2).delete();
+		checkFreeIndexList(vList, 3, 1, 16, -1, 1, -2);
+		graph.getVertex(3).delete();
+		checkFreeIndexList(vList, 2, 2, 16, -1, 2, -1);
 	}
 
 	/**
