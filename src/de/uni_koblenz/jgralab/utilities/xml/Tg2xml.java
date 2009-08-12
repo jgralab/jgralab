@@ -163,6 +163,7 @@ public class Tg2xml extends GraphVisitor {
 	@Override
 	protected void postVisitor() throws XMLStreamException, IOException {
 		writer.writeEndDocument();
+		writer.writeCharacters("\n");
 		writer.flush();
 		writer.close();
 		outputStream.flush();
