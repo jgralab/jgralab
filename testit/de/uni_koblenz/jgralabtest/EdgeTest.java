@@ -4090,7 +4090,7 @@ public class EdgeTest {
 				break;
 			}
 		}
-		assertEquals("\\null", parts[2]);
+		assertEquals("n", parts[2]);
 		assertEquals("0", parts[3]);
 		// test of readAttributeValues
 		VertexTestGraph loadedgraph = (VertexTestGraph) GraphIO
