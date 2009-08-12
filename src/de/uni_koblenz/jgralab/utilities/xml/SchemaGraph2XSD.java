@@ -85,9 +85,9 @@ import java.io.PrintStream;
 import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.SortedMap;
 import java.util.TreeMap;
 import java.util.Map.Entry;
@@ -125,6 +125,7 @@ import de.uni_koblenz.jgralab.grumlschema.structure.Attribute;
 import de.uni_koblenz.jgralab.grumlschema.structure.AttributedElementClass;
 import de.uni_koblenz.jgralab.grumlschema.structure.EdgeClass;
 import de.uni_koblenz.jgralab.grumlschema.structure.GraphClass;
+import de.uni_koblenz.jgralab.grumlschema.structure.GraphElementClass;
 import de.uni_koblenz.jgralab.grumlschema.structure.HasAttribute;
 import de.uni_koblenz.jgralab.grumlschema.structure.Schema;
 import de.uni_koblenz.jgralab.grumlschema.structure.SpecializesEdgeClass;
@@ -256,11 +257,6 @@ public class SchemaGraph2XSD {
 	 * SchemaGraph.
 	 */
 	private final String namespacePrefix;
-
-	/**
-	 * Stores Attributes and is defined once to suppress object creation.
-	 */
-	private final HashSet<Attribute> attributes;
 
 	/**
 	 * Holds all patterns for including or excluding specific vertex- oder
@@ -430,7 +426,6 @@ public class SchemaGraph2XSD {
 		sg2tg = new SchemaGraph2Tg(sg, null);
 		sg2tg.setIsFormatted(false);
 		domainMap = new HashMap<Domain, String>();
-		attributes = new HashSet<Attribute>();
 	}
 
 	public void setPatterns(String[] patterns) {
@@ -443,10 +438,6 @@ public class SchemaGraph2XSD {
 
 	public void setAutoExclude(boolean autoExclude) {
 		this.autoExclude = autoExclude;
-	}
-
-	public boolean add(Attribute e) {
-		return attributes.add(e);
 	}
 
 	public void writeXSD() throws XMLStreamException {
@@ -503,7 +494,6 @@ public class SchemaGraph2XSD {
 		xml.flush();
 
 		// Frees resources
-		attributes.clear();
 		domainMap.clear();
 	}
 
@@ -645,9 +635,9 @@ public class SchemaGraph2XSD {
 
 		writeEndXSDElement();
 
-		attributes.clear();
+		HashMap<Attribute, AttributedElementClass> attributes = new HashMap<Attribute, AttributedElementClass>();
 		collectAttributes(gc, attributes);
-		writeAttributes(attributes);
+		writeAttributes(attributes.keySet());
 
 		writeEndXSDElement();
 		writeEndXSDElement();
@@ -661,19 +651,19 @@ public class SchemaGraph2XSD {
 				continue;
 			}
 
-			xml.writeComment(createVertexClassComment(vc));
+			HashMap<Attribute, AttributedElementClass> attributes = new HashMap<Attribute, AttributedElementClass>();
+			collectAttributes(vc, attributes);
+
+			xml.writeComment(createGraphElementClassComment(vc, attributes));
 
 			// first the complex type
 			writeStartXSDComplexType(GRUML_PREFIX_VERTEXTYPE
 					+ vc.getQualifiedName(), false, true);
 
-			attributes.clear();
-			collectAttributes(vc, attributes);
-
 			if (attributes.size() > 0) {
 				writeStartXSDExtension(GRUML_VERTEXTYPE, true);
 
-				writeAttributes(attributes);
+				writeAttributes(attributes.keySet());
 
 				writeEndXSDElement(); // ends extension
 			} else {
@@ -690,20 +680,18 @@ public class SchemaGraph2XSD {
 				continue;
 			}
 
-			xml.writeComment(createEdgeClassComment(ec));
+			HashMap<Attribute, AttributedElementClass> attributes = new HashMap<Attribute, AttributedElementClass>();
+			collectAttributes(ec, attributes);
+
+			xml.writeComment(createGraphElementClassComment(ec, attributes));
 
 			// first the complex type
 			writeStartXSDComplexType(GRUML_PREFIX_EDGETYPE
 					+ ec.getQualifiedName(), false, true);
 
-			attributes.clear();
-			collectAttributes(ec, attributes);
-
 			if (attributes.size() > 0) {
 				writeStartXSDExtension(GRUML_COMPLEXTYPE, true);
-
-				writeAttributes(attributes);
-
+				writeAttributes(attributes.keySet());
 				writeEndXSDElement(); // ends extension
 			} else {
 				writeStartXSDExtension(GRUML_COMPLEXTYPE, false);
@@ -928,19 +916,19 @@ public class SchemaGraph2XSD {
 		writeXSDAttribute(name, getXSDType(type), XSD_REQUIRED);
 	}
 
-	private void writeAttributes(HashSet<Attribute> attributes)
+	private void writeAttributes(Set<Attribute> attrs)
 			throws XMLStreamException {
-		for (Attribute attribute : attributes) {
+		for (Attribute attribute : attrs) {
 			writeAttribute(attribute);
 		}
 	}
 
 	private void collectAttributes(AttributedElementClass attrElemClass,
-			HashSet<Attribute> attributes) {
+			HashMap<Attribute, AttributedElementClass> attributes) {
 
 		for (HasAttribute ha : attrElemClass
 				.getHasAttributeIncidences(EdgeDirection.OUT)) {
-			attributes.add((Attribute) ha.getOmega());
+			attributes.put((Attribute) ha.getOmega(), attrElemClass);
 		}
 
 		if (attrElemClass instanceof VertexClass) {
@@ -963,28 +951,39 @@ public class SchemaGraph2XSD {
 		}
 	}
 
-	private String createEdgeClassComment(EdgeClass edgeClass) {
+	private String createGraphElementClassComment(GraphElementClass geClass,
+			HashMap<Attribute, AttributedElementClass> attributes) {
 		StringWriter stringWriter = new StringWriter();
-
 		sg2tg.setStream(stringWriter);
-		sg2tg.printEdgeClassDefinition(edgeClass, false);
+
+		if (geClass instanceof VertexClass) {
+			sg2tg.printVertexClassDefinition((VertexClass) geClass, false);
+		} else if (geClass instanceof EdgeClass) {
+			sg2tg.printEdgeClassDefinition((EdgeClass) geClass, false);
+		}
 
 		StringBuffer sb = stringWriter.getBuffer();
 		sb.deleteCharAt(sb.length() - 1);
-		writeInheritedAttributes(edgeClass, stringWriter);
 
-		return stringWriter.toString();
-	}
+		boolean writeHeading = true;
+		for (Entry<Attribute, AttributedElementClass> e : attributes.entrySet()) {
+			Attribute a = e.getKey();
+			if (geClass != e.getValue()) {
+				if (writeHeading) {
+					stringWriter.append("\n    Inherited Attributes:");
+					writeHeading = false;
+				}
+				stringWriter.append("\n        ");
 
-	private String createVertexClassComment(VertexClass vertexClass) {
-		StringWriter stringWriter = new StringWriter();
-
-		sg2tg.setStream(stringWriter);
-		sg2tg.printVertexClassDefinition(vertexClass, false);
-
-		StringBuffer sb = stringWriter.getBuffer();
-		sb.deleteCharAt(sb.length() - 1);
-		writeInheritedAttributes(vertexClass, stringWriter);
+				stringWriter.append(a.getName());
+				stringWriter.append(" : ");
+				stringWriter.append(((Domain) a.getFirstHasDomain().getOmega())
+						.getQualifiedName());
+				stringWriter.append(" (from ");
+				stringWriter.append(e.getValue().getQualifiedName());
+				stringWriter.append(")");
+			}
+		}
 
 		return stringWriter.toString();
 	}
@@ -1080,35 +1079,6 @@ public class SchemaGraph2XSD {
 		domainMap.put(domain, qualifiedName);
 
 		return qualifiedName;
-	}
-
-	private void writeInheritedAttributes(EdgeClass edgeClass, StringWriter w) {
-		for (SpecializesEdgeClass specializes : edgeClass
-				.getSpecializesEdgeClassIncidences(EdgeDirection.OUT)) {
-			EdgeClass superClass = (EdgeClass) specializes.getOmega();
-			if (!(superClass.getFirstHasAttribute(EdgeDirection.OUT) == null)) {
-				w.append("\nInherited attributes from "
-						+ superClass.getQualifiedName() + ":");
-			}
-			sg2tg.printAttributes(superClass
-					.getFirstHasAttribute(EdgeDirection.OUT));
-			writeInheritedAttributes(superClass, w);
-		}
-	}
-
-	private void writeInheritedAttributes(VertexClass vertexClass,
-			StringWriter w) {
-		for (SpecializesVertexClass specializes : vertexClass
-				.getSpecializesVertexClassIncidences(EdgeDirection.OUT)) {
-			VertexClass superClass = (VertexClass) specializes.getOmega();
-			if (!(superClass.getFirstHasAttribute(EdgeDirection.OUT) == null)) {
-				w.append("\nInherited attributes from "
-						+ superClass.getQualifiedName() + ":");
-			}
-			sg2tg.printAttributes(superClass
-					.getFirstHasAttribute(EdgeDirection.OUT));
-			writeInheritedAttributes(superClass, w);
-		}
 	}
 
 	private boolean isIncluded(AttributedElementClass aec) {
