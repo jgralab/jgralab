@@ -1,7 +1,14 @@
 package de.uni_koblenz.jgralabtest;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
+
+import java.io.PrintStream;
+import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 
 import org.antlr.runtime.ANTLRStringStream;
 import org.antlr.runtime.CommonTokenStream;
@@ -15,6 +22,8 @@ import de.uni_koblenz.jgralab.greql2.parser.Greql2Lexer;
 import de.uni_koblenz.jgralab.greql2.parser.Greql2Parser;
 import de.uni_koblenz.jgralab.greql2.schema.Greql2;
 import de.uni_koblenz.jgralab.greql2.schema.Greql2Schema;
+import de.uni_koblenz.jgralab.impl.FreeIndexList;
+import de.uni_koblenz.jgralab.impl.GraphImpl;
 import de.uni_koblenz.jgralab.schema.GraphClass;
 import de.uni_koblenz.jgralab.schema.VertexClass;
 import de.uni_koblenz.jgralabtest.schemas.vertextest.A;
@@ -132,78 +141,232 @@ public class LoadTest {
 			v2.delete();
 		}
 	}
-	
+
+	/**
+	 * Returns the freeVertexList of <code>graph</code> if
+	 * <code>getVertexList</code> is set to true else the freeEdgeList is
+	 * returned.
+	 * 
+	 * @param graph
+	 *            the graph
+	 * @param getVertexList
+	 * @return freeVertexList of g
+	 */
+	private FreeIndexList getFreeIndexListOfVertices(Graph graph,
+			boolean getVertexList) {
+		try {
+			Field f = GraphImpl.class
+					.getDeclaredField(getVertexList ? "freeVertexList"
+							: "freeEdgeList");
+			f.setAccessible(true);
+			return (FreeIndexList) f.get(graph);
+		} catch (SecurityException e) {
+			e.printStackTrace();
+		} catch (NoSuchFieldException e) {
+			e.printStackTrace();
+		} catch (IllegalArgumentException e) {
+			e.printStackTrace();
+		} catch (IllegalAccessException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+
+	/**
+	 * Returns the runs-Array of <code>fil</code>.
+	 * 
+	 * @param fil
+	 *            a FreeIndexList
+	 * @return runs
+	 */
+	private int[] getRunsOfFreeIndexList(FreeIndexList fil) {
+		try {
+			Field f = fil.getClass().getDeclaredField("runs");
+			f.setAccessible(true);
+			return (int[]) f.get(fil);
+		} catch (SecurityException e) {
+			e.printStackTrace();
+		} catch (NoSuchFieldException e) {
+			e.printStackTrace();
+		} catch (IllegalArgumentException e) {
+			e.printStackTrace();
+		} catch (IllegalAccessException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+
+	/**
+	 * Checks if the FreeIndexList fullfills:<br>
+	 * vList.getUsed()==<code>used</code><br>
+	 * vList.getFree()==<code>free</code><br>
+	 * vList.runs.length==<code>runsLength</code><br>
+	 * vList.runs starts with the elements of <code>runsValues</code>. The other
+	 * elements of runs must be 0.
+	 * 
+	 * @param vList
+	 * @param used
+	 * @param free
+	 * @param runsLength
+	 * @param runsValues
+	 */
+	private void checkFreeIndexList(FreeIndexList vList, int used, int free,
+			int runsLength, int... runsValues) {
+		assertNotNull("vList is null", vList);
+		assertEquals("used isn't equal", used, vList.getUsed());
+		assertEquals("free isn't equal", free, vList.getFree());
+		assertEquals("size isn't equal", used + free, vList.getSize());
+		int[] runs = getRunsOfFreeIndexList(vList);
+		assertNotNull("runs is null", runs);
+		assertEquals("runs has an unexpected length", runsLength, runs.length);
+		assertTrue("runsValues.length<=runs.length",
+				runsValues.length <= runs.length);
+		for (int i = 0; i < runs.length; i++) {
+			if (i < runsValues.length) {
+				assertEquals("runs[" + i + "] isn't equal", runsValues[i],
+						runs[i]);
+			} else {
+				assertEquals("runs[" + i + "] isn't equal", 0, runs[i]);
+			}
+		}
+	}
+
 	/**
 	 * Test if graph has only one vertex.
 	 */
 	@Test
-	public void allocateIndexTest0(){
-		VertexTestGraph graph1 = VertexTestSchema.instance().createVertexTestGraph(1,1);
-		VertexTestGraph graph2 = VertexTestSchema.instance().createVertexTestGraph(1,1);
-		A g1v1=graph1.createA();
-		A g2v1=graph2.createA();
-		checkEqualVertexList(graph1,graph2);
-		g1v1.delete();
-		g2v1.delete();
-		checkEqualVertexList(graph1,graph2);
-	}
-	
-	/**
-	 * Test if graph has a limit of one vertex and you want to create another one.
-	 */
-	@Test
-	public void allocateIndexTest1(){
-		VertexTestGraph graph1 = VertexTestSchema.instance().createVertexTestGraph(1,1);
-		VertexTestGraph graph2 = VertexTestSchema.instance().createVertexTestGraph(1,1);
-		graph1.createA();
-		graph2.createA();
-		checkEqualVertexList(graph1,graph2);
-		graph1.createA();
-		graph2.createA();
-		checkEqualVertexList(graph1,graph2);
-	}
-	
-	/**
-	 * Test if you create 17 vertices and you delete every second(FreeIndexList must be increased).
-	 */
-	@Test
-	public void allocateIndexTest2(){
-		VertexTestGraph graph1 = VertexTestSchema.instance().createVertexTestGraph(1,1);
-//		VertexTestGraph graph2 = VertexTestSchema.instance().createVertexTestGraph(1,1);
-		for(int i=0;i<18;i++){
-			graph1.createA();
-//			graph2.createA();
-		}
-//		checkEqualVertexList(graph1,graph2);
-//		delete every second vertex
-		for(int i=1;i<15;i=i+2){
-			graph1.getVertex(i).delete();
-//			graph2.getVertex(i).delete();
-		}
-		graph1.getVertex(2).delete();
-		graph1.getVertex(15).delete();
-		graph1.createA();
-//		checkEqualVertexList(graph1,graph2);
-	}
-	
-	/**
-	 * Test if you create 17 vertices and you delete every second(FreeIndexList must be increased).
-	 */
-	@Test
-	public void freeRangeTest0(){
-		VertexTestGraph graph1 = VertexTestSchema.instance().createVertexTestGraph(1,1);
-		VertexTestGraph graph2 = VertexTestSchema.instance().createVertexTestGraph(1,1);
-		for(int i=0;i<17;i++){
-			graph1.createA();
-			graph2.createA();
-		}
-		checkEqualVertexList(graph1,graph2);
-//		delete every second vertex
-		for(int i=2;i<17;i=i+2){
-			graph1.getVertex(i).delete();
-			graph2.getVertex(i).delete();
-		}
-		checkEqualVertexList(graph1,graph2);
+	public void allocateIndexTest0() {
+		VertexTestGraph graph = VertexTestSchema.instance()
+				.createVertexTestGraph(1, 1);
+		A v1 = graph.createA();
+		FreeIndexList vList = getFreeIndexListOfVertices(graph, true);
+		checkFreeIndexList(vList, 1, 0, 16, -1);
+		v1.delete();
+		checkFreeIndexList(vList, 0, 1, 16, 1);
 	}
 
+	/**
+	 * Test if graph has a limit of one vertex and you want to create another
+	 * one.
+	 */
+	@Test
+	public void allocateIndexTest1() {
+		VertexTestGraph graph = VertexTestSchema.instance()
+				.createVertexTestGraph(1, 1);
+		FreeIndexList vList = getFreeIndexListOfVertices(graph, true);
+		graph.createA();
+		checkFreeIndexList(vList, 1, 0, 16, -1);
+		graph.createA();
+		checkFreeIndexList(vList, 2, 0, 16, -2);
+	}
+
+	/**
+	 * Test if you reach an increas of runs by the allocate method.
+	 */
+	@Test
+	public void allocateIndexTest2() {
+		VertexTestGraph graph = VertexTestSchema.instance()
+				.createVertexTestGraph(1, 1);
+		FreeIndexList vList = getFreeIndexListOfVertices(graph, true);
+		for (int i = 0; i < 18; i++) {
+			graph.createA();
+		}
+		// delete every second vertex
+		for (int i = 1; i < 15; i = i + 2) {
+			graph.getVertex(i).delete();
+		}
+		graph.getVertex(2).delete();
+		graph.getVertex(15).delete();
+		graph.createA();
+		// TODO runs schon erweitern, wenn runCount==runs.length?
+		printArray(vList);
+	}
+
+	/**
+	 * Test if you create 17 vertices and you delete every second(FreeIndexList
+	 * must be increased).
+	 */
+	@Test
+	public void freeRangeTest0() {
+		VertexTestGraph graph = VertexTestSchema.instance()
+				.createVertexTestGraph(1, 1);
+		FreeIndexList vList = getFreeIndexListOfVertices(graph, true);
+		for (int i = 0; i < 17; i++) {
+			graph.createA();
+		}
+		checkFreeIndexList(vList, 17, 15, 16, -17, 15);
+		// delete every second vertex
+		for (int i = 2; i < 17; i = i + 2) {
+			graph.getVertex(i).delete();
+		}
+		checkFreeIndexList(vList, 9, 23, 32, -1, 1, -1, 1, -1, 1, -1, 1, -1, 1,
+				-1, 1, -1, 1, -1, 1, -1, 15);
+	}
+
+	/**
+	 * A graph which has at most 2 vertices. One vertex is created and deleted.
+	 */
+	@Test
+	public void freeRangeTest1() {
+		VertexTestGraph graph = VertexTestSchema.instance()
+				.createVertexTestGraph(2, 1);
+		FreeIndexList vList = getFreeIndexListOfVertices(graph, true);
+		A v1 = graph.createA();
+		checkFreeIndexList(vList, 1, 1, 16, -1, 1);
+		v1.delete();
+		checkFreeIndexList(vList, 0, 2, 16, 2);
+	}
+
+	/**
+	 * Delete first node at a FreeIndexList.runs= [-2, 1, -1, 1, -1, 1, -1, 1,
+	 * -1, 1, -1, 1, -1, 1, -1, 1]
+	 */
+	@Test
+	public void freeRangeTest2() {
+		VertexTestGraph graph = VertexTestSchema.instance()
+				.createVertexTestGraph(17, 1);
+		FreeIndexList vList = getFreeIndexListOfVertices(graph, true);
+		// create vertices
+		for (int i = 0; i < 17; i++) {
+			graph.createA();
+		}
+		checkFreeIndexList(vList, 17, 0, 16, -17);
+		// delete vertices to fill runs
+		// runs[0]==-2
+		for (int i = 2; i < 17; i = i + 2) {
+			graph.getVertex(i + 1).delete();
+		}
+		checkFreeIndexList(vList, 9, 8, 16, -2, 1, -1, 1, -1, 1, -1, 1, -1, 1,
+				-1, 1, -1, 1, -1, 1);
+		// delete the first vertex. Runs must be enlarged.
+		graph.getVertex(1).delete();
+		checkFreeIndexList(vList, 8, 9, 32, 1, -1, 1, -1, 1, -1, 1, -1, 1, -1,
+				1, -1, 1, -1, 1, -1, 1);
+	}
+
+	/**
+	 * Executes: vList.printArray(System.out);
+	 * 
+	 * Only for debug info during creation of tests.
+	 * 
+	 * @param vList
+	 */
+	private void printArray(FreeIndexList vList) {
+		try {
+			Method f = FreeIndexList.class.getDeclaredMethod("printArray",
+					PrintStream.class);
+			f.setAccessible(true);
+			f.invoke(vList, System.out);
+		} catch (SecurityException e) {
+			e.printStackTrace();
+		} catch (NoSuchMethodException e) {
+			e.printStackTrace();
+		} catch (IllegalArgumentException e) {
+			e.printStackTrace();
+		} catch (IllegalAccessException e) {
+			e.printStackTrace();
+		} catch (InvocationTargetException e) {
+			e.printStackTrace();
+		}
+	}
 }

@@ -7741,8 +7741,8 @@ public class VertexTest {
 				break;
 			}
 		}
-		assertEquals("\\null", parts[3]);
-		assertEquals("\\null", parts[4]);
+		assertEquals("n", parts[3]);
+		assertEquals("n", parts[4]);
 		assertEquals("0", parts[5]);
 		// test of readAttributeValues
 		VertexTestGraph loadedgraph = (VertexTestGraph) GraphIO
