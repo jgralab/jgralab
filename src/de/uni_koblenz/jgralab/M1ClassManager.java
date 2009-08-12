@@ -39,18 +39,37 @@ import de.uni_koblenz.jgralab.codegenerator.ClassFileAbstraction;
  */
 public class M1ClassManager extends ClassLoader {
 	private Map<String, ClassFileAbstraction> m1Classes;
+	private static int instanceCount = 0;
+	private static Map<String, M1ClassManager> instances = new HashMap<String, M1ClassManager>();
 
-	private static M1ClassManager instance;
-
-	public static M1ClassManager instance() {
-		if (instance == null) {
-			instance = new M1ClassManager();
+	public static M1ClassManager instance(String schemaName) {
+		if (!instances.containsKey(schemaName)) {
+			instances.put(schemaName, new M1ClassManager());
 		}
-		return instance;
+		return instances.get(schemaName);
+	}
+
+	public static void release(String schemaName) {
+		System.out.println("Releasing M1CM for " + schemaName);
+		instances.remove(schemaName);
+		System.out.println("Now, there are " + instances.size()
+				+ " M1CMs in the map, and " + instanceCount
+				+ " are referenced.");
 	}
 
 	private M1ClassManager() {
 		m1Classes = new HashMap<String, ClassFileAbstraction>();
+		synchronized (this) {
+			instanceCount++;
+		}
+	}
+
+	@Override
+	protected void finalize() throws Throwable {
+		System.out.println("Finalizing " + this);
+		synchronized (this) {
+			instanceCount--;
+		}
 	}
 
 	public void putM1Class(String className, ClassFileAbstraction cfa) {

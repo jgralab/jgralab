@@ -61,7 +61,7 @@ import de.uni_koblenz.jgralab.schema.VertexClass;
 /**
  * The public methods of this class which have return type (no {@code void}) can
  * be accessed by an XML-RPC client.
- *
+ * 
  * @author ist@uni-koblenz.de
  */
 public class JGraLabFacade {
@@ -87,13 +87,13 @@ public class JGraLabFacade {
 	 * the created graph is an instance of<br>
 	 * "attributes" -> {@code Map<String, Object>} representing the graph's
 	 * attributes (attribute name -> attribute value)
-	 *
+	 * 
 	 * @param schemaName
 	 *            the name of the Java class of the graph schema. This class
 	 *            must be on the classpath of the XMLRPC server.
 	 * @return a {@code Map<String, Object>} with four entries (see method
 	 *         description)
-	 *
+	 * 
 	 * @throws XmlRpcException
 	 */
 	public Map<String, Object> createGraph(String schemaName)
@@ -113,7 +113,7 @@ public class JGraLabFacade {
 	 * the created graph is an instance of<br>
 	 * "attributes" -> {@code Map<String, Object>} representing the graph's
 	 * attributes (attribute name -> attribute value)
-	 *
+	 * 
 	 * @param schemaName
 	 *            the name of the Java class of the graph schema. This class
 	 *            must be on the classpath of the XMLRPC server.
@@ -124,7 +124,7 @@ public class JGraLabFacade {
 	 *            the id of the created graph
 	 * @return a {@code Map<String, Object>} with four entries (see method
 	 *         description)
-	 *
+	 * 
 	 * @throws XmlRpcException
 	 */
 	public Map<String, Object> createGraph(String schemaName, String graphId)
@@ -145,7 +145,7 @@ public class JGraLabFacade {
 	 * the created graph is an instance of<br>
 	 * "attributes" -> {@code Map<String, Object>} representing the graph's
 	 * attributes (attribute name -> attribute value)
-	 *
+	 * 
 	 * @param schemaName
 	 *            the name of the Java class of the graph schema. This class
 	 *            must be on the classpath of the XMLRPC server.
@@ -157,14 +157,14 @@ public class JGraLabFacade {
 	 *            the maximum number of edges
 	 * @return a {@code Map<String, Object>} with four entries (see method
 	 *         description)
-	 *
+	 * 
 	 * @throws XmlRpcException
 	 */
 	public Map<String, Object> createGraph(String schemaName, String graphId,
 			int vMax, int eMax) throws XmlRpcException {
 		try {
 			Class<?> schemaClass = Class.forName(schemaName, true,
-					M1ClassManager.instance());
+					M1ClassManager.instance(schemaName));
 			Schema schema = (Schema) (schemaClass.getMethod("instance",
 					(Class[]) null).invoke(null));
 
@@ -193,19 +193,19 @@ public class JGraLabFacade {
 	 * the created graph is an instance of<br>
 	 * "attributes" -> {@code Map<String, Object>} representing the graph's
 	 * attributes (attribute name -> attribute value)
-	 *
+	 * 
 	 * If the M1-Classes are not present in the classpath, the "tempSchema"
 	 * folder must be on the classpath of the XML-RPC server. The path to the
 	 * {@code javac} compiler must be in the {@code PATH} system environment
 	 * variable.
-	 *
+	 * 
 	 * @param schemaUrl
 	 *            the URL of the TG-file holding the schema.
 	 * @param graphClassName
 	 *            the name of the graph class of the new graph
 	 * @return a {@code Map<String, Object>} with four entries (see method
 	 *         description)
-	 *
+	 * 
 	 * @throws XmlRpcException
 	 */
 	public Map<String, Object> createGraphWithRemoteSchema(String schemaUrl,
@@ -226,12 +226,12 @@ public class JGraLabFacade {
 	 * the created graph is an instance of<br>
 	 * "attributes" -> {@code Map<String, Object>} representing the graph's
 	 * attributes (attribute name -> attribute value)
-	 *
+	 * 
 	 * If the M1-Classes are not present in the classpath, the "tempSchema"
 	 * folder must be on the classpath of the XML-RPC server. The path to the
 	 * {@code javac} compiler must be in the {@code PATH} system environment
 	 * variable.
-	 *
+	 * 
 	 * @param schemaUrl
 	 *            the URL of the TG-file holding the schema.
 	 * @param graphClassName
@@ -240,7 +240,7 @@ public class JGraLabFacade {
 	 *            the id of the created graph
 	 * @return a {@code Map<String, Object>} with four entries (see method
 	 *         description)
-	 *
+	 * 
 	 * @throws XmlRpcException
 	 */
 	public Map<String, Object> createGraphWithRemoteSchema(String schemaUrl,
@@ -262,12 +262,12 @@ public class JGraLabFacade {
 	 * the created graph is an instance of<br>
 	 * "attributes" -> {@code Map<String, Object>} representing the graph's
 	 * attributes (attribute name -> attribute value)
-	 *
+	 * 
 	 * If the M1-Classes are not present in the classpath, the "tempSchema"
 	 * folder must be on the classpath of the XML-RPC server as well as the path
 	 * to the {@code javac} compiler must be in the {@code PATH} system
 	 * environment variable.
-	 *
+	 * 
 	 * @param schemaUrl
 	 *            the URL of the TG-file holding the schema.
 	 * @param graphClassName
@@ -280,7 +280,7 @@ public class JGraLabFacade {
 	 *            the maximum number of edges
 	 * @return a {@code Map<String, Object>} with four entries (see method
 	 *         description)
-	 *
+	 * 
 	 * @throws XmlRpcException
 	 */
 	public Map<String, Object> createGraphWithRemoteSchema(String schemaUrl,
@@ -295,7 +295,7 @@ public class JGraLabFacade {
 
 			try {
 				Class.forName(schema.getQualifiedName(), true, M1ClassManager
-						.instance());
+						.instance(schema.getQualifiedName()));
 			} catch (ClassNotFoundException e) {
 				schema.compile();
 			}
@@ -324,7 +324,7 @@ public class JGraLabFacade {
 	 * the created graph is an instance of<br>
 	 * "attributes" -> {@code Map<String, Object>} representing the graph's
 	 * attributes (attribute name -> attribute value)
-	 *
+	 * 
 	 * @param url
 	 *            the URL pointing to the TG-file containing the graph to be
 	 *            loaded
@@ -341,7 +341,7 @@ public class JGraLabFacade {
 
 			try {
 				Class.forName(schema.getQualifiedName(), true, M1ClassManager
-						.instance());
+						.instance(schema.getQualifiedName()));
 			} catch (ClassNotFoundException e) {
 				schema.compile();
 			}
@@ -362,7 +362,7 @@ public class JGraLabFacade {
 	 * Saves the graph indicated by {@code graphNo} to the file {@code
 	 * tgFilename}. Returns <code>true</code> on success, throws an exception on
 	 * failure.
-	 *
+	 * 
 	 * @param graphNo
 	 *            handle of the graph to be saved
 	 * @param tgFilename
@@ -386,7 +386,7 @@ public class JGraLabFacade {
 	/**
 	 * Removes the graph indicated by {@code graphNo}. Returns {@code true} if
 	 * the removal was successful, {@code false} otherwise.
-	 *
+	 * 
 	 * @param graphNo
 	 *            handle of the graph which shall be removed
 	 * @return {@code true} if the removal was successful, {@code false}
@@ -403,7 +403,7 @@ public class JGraLabFacade {
 
 	/**
 	 * Checks whether a graph with the handle {@code graphNo} exists.
-	 *
+	 * 
 	 * @param graphNo
 	 *            the handle for which the existence of a graph shall be checked
 	 * @return {@code true} if a graph with handle {@code graphNo} exists,
@@ -416,7 +416,7 @@ public class JGraLabFacade {
 
 	/**
 	 * Returns the number of vertices in the graph indicated by {@code graphNo}.
-	 *
+	 * 
 	 * @param graphNo
 	 *            the handle of the graph
 	 * @return the number of vertices
@@ -427,7 +427,7 @@ public class JGraLabFacade {
 
 	/**
 	 * Returns the number of edges in the graph indicated by {@code graphNo}.
-	 *
+	 * 
 	 * @param graphNo
 	 *            the handle of the graph
 	 * @return the number of edges
@@ -446,7 +446,7 @@ public class JGraLabFacade {
 	 * the created vertex is an instance of<br>
 	 * "attributes" -> {@code Map<String, Object>} representing the vertex'
 	 * attributes (attribute name -> attribute value)
-	 *
+	 * 
 	 * @param graphNo
 	 *            the handle of the graph for which the vertex shall be created
 	 * @param vertexClassName
@@ -479,7 +479,7 @@ public class JGraLabFacade {
 	 * the created edge is an instance of<br>
 	 * "attributes" -> {@code Map<String, Object>} representing the edge's
 	 * attributes (attribute name -> attribute value)
-	 *
+	 * 
 	 * @param graphNo
 	 *            the handle of the graph for which the edge shall be created
 	 * @param edgeClassName
@@ -520,7 +520,7 @@ public class JGraLabFacade {
 	 * the deleted vertex is an instance of<br>
 	 * "attributes" -> {@code Map<String, Object>} representing the vertex'
 	 * attributes (attribute name -> attribute value)
-	 *
+	 * 
 	 * @param graphNo
 	 *            the handle of graph containing the vertex to be deleted
 	 * @param vId
@@ -550,7 +550,7 @@ public class JGraLabFacade {
 	 * the deleted edge is an instance of<br>
 	 * "attributes" -> {@code Map<String, Object>} representing the edge's
 	 * attributes (attribute name -> attribute value)
-	 *
+	 * 
 	 * @param graphNo
 	 *            the handle of graph containing the edge to be deleted
 	 * @param eId
@@ -573,7 +573,7 @@ public class JGraLabFacade {
 
 	/**
 	 * Checks whether a vertex {@code vId} exists in the graph {@code graphNo}.
-	 *
+	 * 
 	 * @param graphNo
 	 *            the handle of the graph for which the existence of the vertex
 	 *            shall be checked
@@ -593,7 +593,7 @@ public class JGraLabFacade {
 
 	/**
 	 * Checks whether an edge {@code eId} exists in the graph {@code graphNo}.
-	 *
+	 * 
 	 * @param graphNo
 	 *            the handle of the graph for which the existence of the edge
 	 *            shall be checked
@@ -613,7 +613,7 @@ public class JGraLabFacade {
 
 	/**
 	 * Returns the name of the type of the graph pointed to by {@code graphNo}.
-	 *
+	 * 
 	 * @param graphNo
 	 *            the handle of the graph for which the name of its type shall
 	 *            be returned
@@ -627,7 +627,7 @@ public class JGraLabFacade {
 	/**
 	 * Returns the name of the type of the vertex {@code vId} contained in the
 	 * graph {@code graphNo}.
-	 *
+	 * 
 	 * @param graphNo
 	 *            the handle of the graph which contains the vertex
 	 * @param vId
@@ -644,7 +644,7 @@ public class JGraLabFacade {
 	/**
 	 * Returns the name of the type of the edge {@code eId} contained in the
 	 * graph {@code graphNo}.
-	 *
+	 * 
 	 * @param graphNo
 	 *            the handle of the graph which contains the edge
 	 * @param eId
@@ -668,7 +668,7 @@ public class JGraLabFacade {
 	 * the vertex is an instance of<br>
 	 * "attributes" -> {@code Map<String, Object>} representing the vertex'
 	 * attributes (attribute name -> attribute value)
-	 *
+	 * 
 	 * @param graphNo
 	 *            the handle of the graph for which the first vertex in
 	 *            <i>Vseq</i> shall be returned
@@ -692,7 +692,7 @@ public class JGraLabFacade {
 	 * the vertex is an instance of<br>
 	 * "attributes" -> {@code Map<String, Object>} representing the vertex'
 	 * attributes (attribute name -> attribute value)
-	 *
+	 * 
 	 * @param graphNo
 	 *            the handle of the graph for which the first vertex of type
 	 *            {@code vcName} in <i>Vseq</i> shall be returned
@@ -721,7 +721,7 @@ public class JGraLabFacade {
 	 * the vertex is an instance of<br>
 	 * "attributes" -> {@code Map<String, Object>} representing the vertex'
 	 * attributes (attribute name -> attribute value)
-	 *
+	 * 
 	 * @param graphNo
 	 *            the handle of the graph for which the next vertex in
 	 *            <i>Vseq</i> after the vertex with {@code vId} shall be
@@ -751,7 +751,7 @@ public class JGraLabFacade {
 	 * the vertex is an instance of<br>
 	 * "attributes" -> {@code Map<String, Object>} representing the vertex'
 	 * attributes (attribute name -> attribute value)
-	 *
+	 * 
 	 * @param graphNo
 	 *            the handle of the graph for which the next vertex of type
 	 *            {@code vcName} in <i>Vseq</i> after the vertex with {@code
@@ -785,7 +785,7 @@ public class JGraLabFacade {
 	 * the edge is an instance of<br>
 	 * "attributes" -> {@code Map<String, Object>} representing the edge's
 	 * attributes (attribute name -> attribute value)
-	 *
+	 * 
 	 * @param graphNo
 	 *            the handle of the graph for which the first edge in
 	 *            <i>Eseq</i> shall be returned
@@ -814,7 +814,7 @@ public class JGraLabFacade {
 	 * the edge is an instance of<br>
 	 * "attributes" -> {@code Map<String, Object>} representing the edge's
 	 * attributes (attribute name -> attribute value)
-	 *
+	 * 
 	 * @param graphNo
 	 *            the handle of the graph for which the first edge of type
 	 *            {@code ecName} in <i>Iseq(vId)</i> shall be returned
@@ -849,7 +849,7 @@ public class JGraLabFacade {
 	 * the edge is an instance of<br>
 	 * "attributes" -> {@code Map<String, Object>} representing the edge's
 	 * attributes (attribute name -> attribute value)
-	 *
+	 * 
 	 * @param graphNo
 	 *            the handle of the graph which contains the edge with {@code
 	 *            eId}
@@ -878,7 +878,7 @@ public class JGraLabFacade {
 	 * the edge is an instance of<br>
 	 * "attributes" -> {@code Map<String, Object>} representing the edge's
 	 * attributes (attribute name -> attribute value)
-	 *
+	 * 
 	 * @param graphNo
 	 *            the handle of the graph which contains the edge with {@code
 	 *            eId}
@@ -912,7 +912,7 @@ public class JGraLabFacade {
 	 * the edge is an instance of<br>
 	 * "attributes" -> {@code Map<String, Object>} representing the edge's
 	 * attributes (attribute name -> attribute value)
-	 *
+	 * 
 	 * @param graphNo
 	 *            the handle of the graph for which the first edge in
 	 *            <i>Eseq</i> shall be returned
@@ -936,7 +936,7 @@ public class JGraLabFacade {
 	 * the edge is an instance of<br>
 	 * "attributes" -> {@code Map<String, Object>} representing the edge's
 	 * attributes (attribute name -> attribute value)
-	 *
+	 * 
 	 * @param graphNo
 	 *            the handle of the graph for which the first edge of type
 	 *            {@code ecName} in <i>Eseq</i> shall be returned
@@ -966,7 +966,7 @@ public class JGraLabFacade {
 	 * the edge is an instance of<br>
 	 * "attributes" -> {@code Map<String, Object>} representing the edge's
 	 * attributes (attribute name -> attribute value)
-	 *
+	 * 
 	 * @param graphNo
 	 *            the handle of the graph for which the next edge in <i>Eseq</i>
 	 *            after the edge with {@code eId} shall be returned
@@ -995,7 +995,7 @@ public class JGraLabFacade {
 	 * the edge is an instance of<br>
 	 * "attributes" -> {@code Map<String, Object>} representing the edge's
 	 * attributes (attribute name -> attribute value)
-	 *
+	 * 
 	 * @param graphNo
 	 *            the handle of the graph for which the next edge of type
 	 *            {@code ecName} in <i>Eseq</i> after the edge with {@code eId}
@@ -1023,7 +1023,7 @@ public class JGraLabFacade {
 	/**
 	 * Returns the degree, i.e. the number of incident edges of vertex {@code
 	 * vId} in graph {@code graphNo}.
-	 *
+	 * 
 	 * @param graphNo
 	 *            the handle of the graph which contains the vertex with the id
 	 *            {@code vId}
@@ -1047,7 +1047,7 @@ public class JGraLabFacade {
 	 * the edge is an instance of<br>
 	 * "attributes" -> {@code Map<String, Object>} representing the edge's
 	 * attributes (attribute name -> attribute value)
-	 *
+	 * 
 	 * @param graphNo
 	 *            the handle of the graph which contains the edge with the id
 	 *            {@code eId}
@@ -1075,7 +1075,7 @@ public class JGraLabFacade {
 	 * the edge is an instance of<br>
 	 * "attributes" -> {@code Map<String, Object>} representing the edge's
 	 * attributes (attribute name -> attribute value)
-	 *
+	 * 
 	 * @param graphNo
 	 *            the handle of the graph which contains the edge with the id
 	 *            {@code eId}
@@ -1103,7 +1103,7 @@ public class JGraLabFacade {
 	 * the vertex is an instance of<br>
 	 * "attributes" -> {@code Map<String, Object>} representing the vertex'
 	 * attributes (attribute name -> attribute value)
-	 *
+	 * 
 	 * @param graphNo
 	 *            the handle of the graph which contains the edge with the id
 	 *            {@code eId}
@@ -1136,7 +1136,7 @@ public class JGraLabFacade {
 	 * the vertex is an instance of<br>
 	 * "attributes" -> {@code Map<String, Object>} representing the vertex'
 	 * attributes (attribute name -> attribute value)
-	 *
+	 * 
 	 * @param graphNo
 	 *            the handle of the graph which contains the edge with the id
 	 *            {@code eId}
@@ -1170,7 +1170,7 @@ public class JGraLabFacade {
 	 * the vertex {@code source} is an instance of<br>
 	 * "attributes" -> {@code Map<String, Object>} representing the attributes
 	 * of the vertex {@code source} (attribute name -> attribute value)
-	 *
+	 * 
 	 * @param graphNo
 	 *            the handle of the graph in which the vertex {@code source}
 	 *            shall be inserted
@@ -1205,7 +1205,7 @@ public class JGraLabFacade {
 	 * the vertex {@code source} is an instance of<br>
 	 * "attributes" -> {@code Map<String, Object>} representing the attributes
 	 * of the vertex {@code source} (attribute name -> attribute value)
-	 *
+	 * 
 	 * @param graphNo
 	 *            the handle of the graph in which the vertex {@code source}
 	 *            shall be inserted
@@ -1240,7 +1240,7 @@ public class JGraLabFacade {
 	 * the edge {@code source} is an instance of<br>
 	 * "attributes" -> {@code Map<String, Object>} representing the attributes
 	 * of the edge {@code source} (attribute name -> attribute value)
-	 *
+	 * 
 	 * @param graphNo
 	 *            the handle of the graph in which the edge {@code source} shall
 	 *            be inserted
@@ -1275,7 +1275,7 @@ public class JGraLabFacade {
 	 * the edge {@code source} is an instance of<br>
 	 * "attributes" -> {@code Map<String, Object>} representing the attributes
 	 * of the edge {@code source} (attribute name -> attribute value)
-	 *
+	 * 
 	 * @param graphNo
 	 *            the handle of the graph in which the edge {@code source} shall
 	 *            be inserted
@@ -1310,7 +1310,7 @@ public class JGraLabFacade {
 	 * the edge {@code edgeId} is an instance of<br>
 	 * "attributes" -> {@code Map<String, Object>} representing the attributes
 	 * of the edge {@code edgeId} (attribute name -> attribute value)
-	 *
+	 * 
 	 * @param graphNo
 	 *            the handle of the graph in which the edge {@code edgeId} shall
 	 *            be inserted
@@ -1345,7 +1345,7 @@ public class JGraLabFacade {
 	 * the edge {@code edgeId} is an instance of<br>
 	 * "attributes" -> {@code Map<String, Object>} representing the attributes
 	 * of the edge {@code edgeId} (attribute name -> attribute value)
-	 *
+	 * 
 	 * @param graphNo
 	 *            the handle of the graph in which the edge {@code edgeId} shall
 	 *            be inserted
@@ -1371,7 +1371,7 @@ public class JGraLabFacade {
 	/**
 	 * Returns the value of the attribute {@code attrName} of the graph pointed
 	 * to by {@code graphNo}.
-	 *
+	 * 
 	 * @param graphNo
 	 *            the handle of the graph whose attribute value shall be
 	 *            returned
@@ -1403,7 +1403,7 @@ public class JGraLabFacade {
 	 * Returns the types of the attributes of the graph pointed to by {@code
 	 * graphNo}. The returned attribute types are contained in a {@code
 	 * Map<String, String} with mappings (attribute name -> attribute type name)
-	 *
+	 * 
 	 * @param graphNo
 	 *            the handle of the graph whose attribute types shall be
 	 *            returned
@@ -1431,7 +1431,7 @@ public class JGraLabFacade {
 	 * graphNo}. The returned attribute values are contained in a {@code
 	 * Map<String, Object} with mappings (attribute name -> attribute type
 	 * value)
-	 *
+	 * 
 	 * @param graphNo
 	 *            the handle of the graph whose attribute values shall be
 	 *            returned
@@ -1464,7 +1464,7 @@ public class JGraLabFacade {
 	/**
 	 * Sets the value of the attribute {@code attrName} of the graph pointed to
 	 * by {@code graphNo} to {@code value}.
-	 *
+	 * 
 	 * @param graphNo
 	 *            the handle of the graph whose attribute value shall be set
 	 * @param attrName
@@ -1490,7 +1490,7 @@ public class JGraLabFacade {
 	/**
 	 * Sets the value of the attribute {@code attrName} of type Integer of the
 	 * graph pointed to by {@code graphNo} to {@code value}.
-	 *
+	 * 
 	 * @param graphNo
 	 *            the handle of the graph whose attribute value shall be set
 	 * @param attrName
@@ -1509,7 +1509,7 @@ public class JGraLabFacade {
 	/**
 	 * Sets the value of the attribute {@code attrName} of type Double of the
 	 * graph pointed to by {@code graphNo} to {@code value}.
-	 *
+	 * 
 	 * @param graphNo
 	 *            the handle of the graph whose attribute value shall be set
 	 * @param attrName
@@ -1528,7 +1528,7 @@ public class JGraLabFacade {
 	/**
 	 * Sets the value of the attribute {@code attrName} of type Boolean of the
 	 * graph pointed to by {@code graphNo} to {@code value}.
-	 *
+	 * 
 	 * @param graphNo
 	 *            the handle of the graph whose attribute value shall be set
 	 * @param attrName
@@ -1547,7 +1547,7 @@ public class JGraLabFacade {
 	/**
 	 * Sets the value of the attribute {@code attrName} of types List or Set of
 	 * the graph pointed to by {@code graphNo} to {@code value}.
-	 *
+	 * 
 	 * @param graphNo
 	 *            the handle of the graph whose attribute value shall be set
 	 * @param attrName
@@ -1566,7 +1566,7 @@ public class JGraLabFacade {
 	/**
 	 * Sets the value of the attribute {@code attrName} of type Record of the
 	 * graph pointed to by {@code graphNo} to {@code value}.
-	 *
+	 * 
 	 * @param graphNo
 	 *            the handle of the graph whose attribute value shall be set
 	 * @param attrName
@@ -1585,7 +1585,7 @@ public class JGraLabFacade {
 	/**
 	 * Sets the value of the attribute {@code attrName} of type Object of the
 	 * graph pointed to by {@code graphNo} to {@code value}.
-	 *
+	 * 
 	 * @param graphNo
 	 *            the handle of the graph whose attribute value shall be set
 	 * @param attrName
@@ -1604,7 +1604,7 @@ public class JGraLabFacade {
 	/**
 	 * Returns the value of the attribute {@code attrName} of the vertex with
 	 * the id {@code vId} contained in the graph pointed to by {@code graphNo}.
-	 *
+	 * 
 	 * @param graphNo
 	 *            the handle of the graph whose attribute value shall be
 	 *            returned
@@ -1639,7 +1639,7 @@ public class JGraLabFacade {
 	 * contained in the graph pointed to by {@code graphNo}. The returned
 	 * attribute types are contained in a {@code Map<String, String} with
 	 * mappings (attribute name -> attribute type name)
-	 *
+	 * 
 	 * @param graphNo
 	 *            the handle of the graph containing the vertex {@code vId}
 	 * @param vId
@@ -1668,7 +1668,7 @@ public class JGraLabFacade {
 	 * vId} contained in the graph pointed to by {@code graphNo}. The returned
 	 * attribute values are contained in a {@code Map<String, Object} with
 	 * mappings (attribute name -> attribute type value)
-	 *
+	 * 
 	 * @param graphNo
 	 *            the handle of the graph containing the vertex with the id
 	 *            {@code vId}
@@ -1704,7 +1704,7 @@ public class JGraLabFacade {
 	 * Sets the value of the attribute {@code attrName} of the vertex with the
 	 * id {@code vId} contained in the graph pointed to by {@code graphNo} to
 	 * {@code value}.
-	 *
+	 * 
 	 * @param graphNo
 	 *            the handle of the graph containing the vertex {@code vId}
 	 * @param vId
@@ -1738,7 +1738,7 @@ public class JGraLabFacade {
 	 * Sets the value of the attribute {@code attrName} of type Integer of the
 	 * vertex with the id {@code vId} contained in the graph pointed to by
 	 * {@code graphNo} to {@code value}.
-	 *
+	 * 
 	 * @param graphNo
 	 *            the handle of the graph containing the vertex {@code vId}
 	 * @param vId
@@ -1760,7 +1760,7 @@ public class JGraLabFacade {
 	 * Sets the value of the attribute {@code attrName} of type Double of the
 	 * vertex with the id {@code vId} contained in the graph pointed to by
 	 * {@code graphNo} to {@code value}.
-	 *
+	 * 
 	 * @param graphNo
 	 *            the handle of the graph containing the vertex {@code vId}
 	 * @param vId
@@ -1782,7 +1782,7 @@ public class JGraLabFacade {
 	 * Sets the value of the attribute {@code attrName} of type Boolean of the
 	 * vertex with the id {@code vId} contained in the graph pointed to by
 	 * {@code graphNo} to {@code value}.
-	 *
+	 * 
 	 * @param graphNo
 	 *            the handle of the graph containing the vertex {@code vId}
 	 * @param vId
@@ -1804,7 +1804,7 @@ public class JGraLabFacade {
 	 * Sets the value of the attribute {@code attrName} of types List or Set of
 	 * the vertex with the id {@code vId} contained in the graph pointed to by
 	 * {@code graphNo} to {@code value}.
-	 *
+	 * 
 	 * @param graphNo
 	 *            the handle of the graph containing the vertex {@code vId}
 	 * @param vId
@@ -1826,7 +1826,7 @@ public class JGraLabFacade {
 	 * Sets the value of the attribute {@code attrName} of type Record of the
 	 * vertex with the id {@code vId} contained in the graph pointed to by
 	 * {@code graphNo} to {@code value}.
-	 *
+	 * 
 	 * @param graphNo
 	 *            the handle of the graph containing the vertex {@code vId}
 	 * @param vId
@@ -1848,7 +1848,7 @@ public class JGraLabFacade {
 	 * Sets the value of the attribute {@code attrName} of type Object of the
 	 * vertex with the id {@code vId} contained in the graph pointed to by
 	 * {@code graphNo} to {@code value}.
-	 *
+	 * 
 	 * @param graphNo
 	 *            the handle of the graph containing the vertex {@code vId}
 	 * @param vId
@@ -1869,7 +1869,7 @@ public class JGraLabFacade {
 	/**
 	 * Returns the value of the attribute {@code attrName} of the edge with the
 	 * id {@code eId} contained in the graph pointed to by {@code graphNo}.
-	 *
+	 * 
 	 * @param graphNo
 	 *            the handle of the graph whose attribute value shall be
 	 *            returned
@@ -1904,7 +1904,7 @@ public class JGraLabFacade {
 	 * contained in the graph pointed to by {@code graphNo}. The returned
 	 * attribute types are contained in a {@code Map<String, String} with
 	 * mappings (attribute name -> attribute type name)
-	 *
+	 * 
 	 * @param graphNo
 	 *            the handle of the graph containing the edge {@code eId}
 	 * @param eId
@@ -1933,7 +1933,7 @@ public class JGraLabFacade {
 	 * contained in the graph pointed to by {@code graphNo}. The returned
 	 * attribute values are contained in a {@code Map<String, Object} with
 	 * mappings (attribute name -> attribute type value)
-	 *
+	 * 
 	 * @param graphNo
 	 *            the handle of the graph containing the edge with the id
 	 *            {@code eId}
@@ -1969,7 +1969,7 @@ public class JGraLabFacade {
 	 * Sets the value of the attribute {@code attrName} of the edge with the id
 	 * {@code vId} contained in the graph pointed to by {@code graphNo} to
 	 * {@code value}.
-	 *
+	 * 
 	 * @param graphNo
 	 *            the handle of the graph containing the edge {@code eId}
 	 * @param eId
@@ -1999,7 +1999,7 @@ public class JGraLabFacade {
 	 * Sets the value of the attribute {@code attrName} of type Integer of the
 	 * edge with the id {@code vId} contained in the graph pointed to by {@code
 	 * graphNo} to {@code value}.
-	 *
+	 * 
 	 * @param graphNo
 	 *            the handle of the graph containing the edge {@code eId}
 	 * @param eId
@@ -2021,7 +2021,7 @@ public class JGraLabFacade {
 	 * Sets the value of the attribute {@code attrName} of type Double of the
 	 * edge with the id {@code vId} contained in the graph pointed to by {@code
 	 * graphNo} to {@code value}.
-	 *
+	 * 
 	 * @param graphNo
 	 *            the handle of the graph containing the edge {@code eId}
 	 * @param eId
@@ -2043,7 +2043,7 @@ public class JGraLabFacade {
 	 * Sets the value of the attribute {@code attrName} of type Boolean of the
 	 * edge with the id {@code vId} contained in the graph pointed to by {@code
 	 * graphNo} to {@code value}.
-	 *
+	 * 
 	 * @param graphNo
 	 *            the handle of the graph containing the edge {@code eId}
 	 * @param eId
@@ -2065,7 +2065,7 @@ public class JGraLabFacade {
 	 * Sets the value of the attribute {@code attrName} of types List or Set of
 	 * the edge with the id {@code vId} contained in the graph pointed to by
 	 * {@code graphNo} to {@code value}.
-	 *
+	 * 
 	 * @param graphNo
 	 *            the handle of the graph containing the edge {@code eId}
 	 * @param eId
@@ -2087,7 +2087,7 @@ public class JGraLabFacade {
 	 * Sets the value of the attribute {@code attrName} of type Record of the
 	 * edge with the id {@code vId} contained in the graph pointed to by {@code
 	 * graphNo} to {@code value}.
-	 *
+	 * 
 	 * @param graphNo
 	 *            the handle of the graph containing the edge {@code eId}
 	 * @param eId
@@ -2109,7 +2109,7 @@ public class JGraLabFacade {
 	 * Sets the value of the attribute {@code attrName} of type Object of the
 	 * edge with the id {@code vId} contained in the graph pointed to by {@code
 	 * graphNo} to {@code value}.
-	 *
+	 * 
 	 * @param graphNo
 	 *            the handle of the graph containing the edge {@code eId}
 	 * @param eId
@@ -2138,7 +2138,7 @@ public class JGraLabFacade {
 	 * the created graph is an instance of<br>
 	 * "attributes" -> {@code Map<String, Object>} representing the graph's
 	 * attributes (attribute name -> attribute value)
-	 *
+	 * 
 	 * @param graphNo
 	 *            the handle of the graph
 	 * @return a {@code Map<String, Object>} with four entries (see method
@@ -2168,7 +2168,7 @@ public class JGraLabFacade {
 	 * the vertex is an instance of<br>
 	 * "attributes" -> {@code Map<String, Object>} representing the vertex'
 	 * attributes (attribute name -> attribute value)
-	 *
+	 * 
 	 * @param graphElement
 	 *            an instance of {@code GraphElement}
 	 * @return a {@code Map<String, Object>} with three entries (see method
@@ -2192,7 +2192,7 @@ public class JGraLabFacade {
 	 * {@code ae}. The returned attribute values are contained in a {@code
 	 * Map<String, Object} with mappings (attribute name -> attribute type
 	 * value)
-	 *
+	 * 
 	 * @param ae
 	 *            the graph element whose attribute values shall be returned
 	 * @return a {@code Map} containing (attribute name -> attribute value)
@@ -2223,35 +2223,35 @@ public class JGraLabFacade {
 	 * Converts the type of an attribute value {@code attrValue} so that it is
 	 * useful for the XML-RPC interface. An attribute value of type...<br>
 	 * <br>
-	 *
+	 * 
 	 * - {@code Integer}, {@code Boolean}, {@code Double} is not modified.<br>
-	 *
+	 * 
 	 * - {@code Long} is set to {@code Integer.MAX_VALUE} if it is greater than
 	 * {@code Integer.MAX_VALUE}.<br>
-	 *
+	 * 
 	 * - {@code String} is set to {@code ""} if it has a {@code null} value.<br>
-	 *
+	 * 
 	 * - {@code Object} is converted to a {@code byte} array representing a
 	 * Base64 representation.<br>
-	 *
+	 * 
 	 * - {@code Enum} is converted to a {@code String} value representing the
 	 * Enum constant. For a {@code null} value, it is converted to the empty
 	 * {@code String ""}.<br>
-	 *
+	 * 
 	 * - {@code List<baseDomain>} is converted to a {@code List<Object>}. The
 	 * list elements are converted according to their type.<br>
-	 *
+	 * 
 	 * - {@code Set<baseDomain>} is converted to a {@code List<Object>}. The set
 	 * elements are converted according to their type.<br>
-	 *
+	 * 
 	 *- {@code Map<keyDomain, valueDomain>} is converted to a {@code
 	 * Map<Object, Object>}. The set elements are converted according to their
 	 * type.<br>
-	 *
+	 * 
 	 * - {@code Record} is converted to a {@code Map<String, Object>}, mapping
 	 * the names of the record components to their value. The values are
 	 * converted according to their type.<br>
-	 *
+	 * 
 	 * @param domain
 	 *            the domain of the attribute value to be converted
 	 * @param attrValue
@@ -2320,7 +2320,7 @@ public class JGraLabFacade {
 	 * Converts an attribute value {@code attrValue} of type {@code MapDomain}
 	 * to a {@code Map<Object, Object>}, mapping the keys of the map to their
 	 * value. The values are converted according to their type.
-	 *
+	 * 
 	 * @param domain
 	 *            the {@code MapDomain} of the attribute value to be converted
 	 * @param attrValue
@@ -2345,7 +2345,7 @@ public class JGraLabFacade {
 	 * Converts an attribute value {@code attrValue} of type {@code Record} to a
 	 * {@code Map<String, Object>}, mapping the names of the record components
 	 * to their value. The values are converted according to their type.
-	 *
+	 * 
 	 * @param domain
 	 *            the {@code RecordDomain} of the attribute value to be
 	 *            converted
@@ -2377,7 +2377,7 @@ public class JGraLabFacade {
 	/**
 	 * Converts the elements of an attribute value of type {@code List} so that
 	 * it is useful for the XML-RPC interface.
-	 *
+	 * 
 	 * @param domain
 	 *            the {@code ListDomain} of the attribute value to be converted
 	 * @param attrValue
@@ -2407,7 +2407,7 @@ public class JGraLabFacade {
 	 * - {@code String} is converted to an Enum, if {@code domain} is String -
 	 * {@code Object[]} is converted to a List or Set - {@code Map<String,
 	 * Object>} is converted to a Record
-	 *
+	 * 
 	 * @param value
 	 *            the attribute value received by the client
 	 * @param domain
@@ -2430,7 +2430,7 @@ public class JGraLabFacade {
 			try {
 				Class<?> attrType = Class.forName(prefix + "."
 						+ domain.getQualifiedName(), true, M1ClassManager
-						.instance());
+						.instance(graph.getSchema().getQualifiedName()));
 				value = attrType.getMethod("fromString",
 						new Class[] { String.class }).invoke(null, value);
 			} catch (Exception e) {
@@ -2475,7 +2475,7 @@ public class JGraLabFacade {
 			try {
 				Class<?> attrType = Class.forName(prefix + "."
 						+ domain.getQualifiedName(), true, M1ClassManager
-						.instance());
+						.instance(graph.getSchema().getQualifiedName()));
 				value = attrType.getConstructor(new Class<?>[] { Map.class })
 						.newInstance(value);
 			} catch (Exception e) {
@@ -2497,7 +2497,7 @@ public class JGraLabFacade {
 
 	/**
 	 * Creates a byte array representation of the given {@code Object o}.
-	 *
+	 * 
 	 * @param o
 	 *            the {@code Object} whose Base64 representation shall be
 	 *            created
@@ -2516,7 +2516,7 @@ public class JGraLabFacade {
 
 	/**
 	 * Creates an Object from the given byte array {@code ba}.
-	 *
+	 * 
 	 * @param ba
 	 *            a byte array from which to create the returned {@code Object}
 	 * @return an {@code Object}

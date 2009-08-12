@@ -57,9 +57,9 @@ import de.uni_koblenz.jgralab.schema.EnumDomain;
  * </dl>
  * </dd>
  * </dl>
- *
+ * 
  * @author ist@uni-koblenz.de
- *
+ * 
  */
 public class EnumConstant extends AbstractGreql2Function {
 
@@ -70,7 +70,7 @@ public class EnumConstant extends AbstractGreql2Function {
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see
 	 * de.uni_koblenz.jgralab.greql2.funlib.Greql2Function#evaluate(de.uni_koblenz
 	 * .jgralab.Graph, de.uni_koblenz.jgralab.BooleanGraphMarker,
@@ -93,9 +93,10 @@ public class EnumConstant extends AbstractGreql2Function {
 				.getPackagePrefix());
 		try {
 			Class<?> myEnum = Class.forName(enumClassName, false,
-					M1ClassManager.instance());
+					M1ClassManager.instance(graph.getSchema()
+							.getQualifiedName()));
 			Method fromString = myEnum.getMethod("fromString",
-					new Class<?>[] {String.class} );
+					new Class<?>[] { String.class });
 			Object constant = fromString.invoke(null,
 					new Object[] { enumConstantName });
 			result = new JValue(constant);
@@ -123,7 +124,7 @@ public class EnumConstant extends AbstractGreql2Function {
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see
 	 * de.uni_koblenz.jgralab.greql2.funlib.Greql2Function#getEstimatedCardinality
 	 * (int)
@@ -135,7 +136,7 @@ public class EnumConstant extends AbstractGreql2Function {
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see
 	 * de.uni_koblenz.jgralab.greql2.funlib.Greql2Function#getEstimatedCosts
 	 * (java.util.ArrayList)
@@ -147,7 +148,7 @@ public class EnumConstant extends AbstractGreql2Function {
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see de.uni_koblenz.jgralab.greql2.funlib.Greql2Function#getSelectivity()
 	 */
 	@Override

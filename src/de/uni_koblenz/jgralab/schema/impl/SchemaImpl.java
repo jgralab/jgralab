@@ -112,7 +112,8 @@ public class SchemaImpl implements Schema {
 				String className, Kind kind, FileObject sibling) {
 			ClassFileAbstraction cfa = new ClassFileAbstraction(className);
 
-			M1ClassManager.instance().putM1Class(className, cfa);
+			M1ClassManager.instance(getQualifiedName()).putM1Class(className,
+					cfa);
 			return cfa;
 		}
 
@@ -304,7 +305,7 @@ public class SchemaImpl implements Schema {
 		Set<NamedElement> elementsWithSameSimpleName = namedElements
 				.get(namedElement.getSimpleName());
 		// add the element to the map
-		if (elementsWithSameSimpleName != null
+		if ((elementsWithSameSimpleName != null)
 				&& !elementsWithSameSimpleName.isEmpty()) {
 			elementsWithSameSimpleName.add(namedElement);
 		} else {
@@ -763,7 +764,7 @@ public class SchemaImpl implements Schema {
 
 	@Override
 	public boolean equals(Object other) {
-		return this == other
+		return (this == other)
 				|| ((other instanceof Schema) && this.qualifiedName
 						.equals(((Schema) other).getQualifiedName()));
 	}
@@ -921,7 +922,7 @@ public class SchemaImpl implements Schema {
 		// we look for a method with correct name and 3 parameters
 		// (int, vertex, Vertex).
 		AttributedElementClass aec = getAttributedElementClass(edgeClassName);
-		if (aec == null || !(aec instanceof EdgeClass)) {
+		if ((aec == null) || !(aec instanceof EdgeClass)) {
 			throw new SchemaException(
 					"There's no EdgeClass with qualified name " + edgeClassName
 							+ "!");
@@ -932,7 +933,7 @@ public class SchemaImpl implements Schema {
 		Class<?> m1Class = getGraphClassImpl();
 		for (Method m : m1Class.getMethods()) {
 			if (m.getName().equals(methodName)
-					&& m.getParameterTypes().length == 3) {
+					&& (m.getParameterTypes().length == 3)) {
 				return m;
 			}
 		}
@@ -991,7 +992,7 @@ public class SchemaImpl implements Schema {
 		Class<? extends Graph> m1Class;
 		try {
 			m1Class = (Class<? extends Graph>) Class.forName(implClassName,
-					true, M1ClassManager.instance());
+					true, M1ClassManager.instance(getQualifiedName()));
 		} catch (ClassNotFoundException e) {
 			throw new M1ClassAccessException(
 					"can't load implementation class '" + implClassName + "'",
