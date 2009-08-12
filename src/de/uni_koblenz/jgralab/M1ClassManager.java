@@ -31,10 +31,9 @@ import de.uni_koblenz.jgralab.codegenerator.ClassFileAbstraction;
 
 /**
  * The {@code M1ClassManager} holds the bytecode of M1 classes in a {@code Map}.
- * As a specialization of {@code ClassLoader}, it overwrites the method
- * {@code findClass} so that the {@code Map} is first searched for classes'
- * bytecode before invoking {@code findClass} of the superclass
- * {@code ClassLoader}.
+ * As a specialization of {@code ClassLoader}, it overwrites the method {@code
+ * findClass} so that the {@code Map} is first searched for classes' bytecode
+ * before invoking {@code findClass} of the superclass {@code ClassLoader}.
  * 
  * @author ist@uni-koblenz.de
  */
@@ -58,6 +57,10 @@ public class M1ClassManager extends ClassLoader {
 		m1Classes.put(className, cfa);
 	}
 
+	public int getNoOfM1Classes() {
+		return m1Classes.size();
+	}
+
 	/**
 	 * Tries to find a class in the internal {@code Map}, If this fails, {@code
 	 * findClass} of {@code ClassLoader} is invoked.
@@ -70,7 +73,10 @@ public class M1ClassManager extends ClassLoader {
 		ClassFileAbstraction cfa = m1Classes.get(name);
 		if (cfa != null) {
 			byte[] bytes = cfa.getBytecode();
-			return defineClass(name, bytes, 0, bytes.length);
+			Class<?> clazz = defineClass(name, bytes, 0, bytes.length);
+			// once the class is defined, we can forget it!
+			m1Classes.remove(name);
+			return clazz;
 		}
 		// return super.findClass(name);
 		return Class.forName(name);
