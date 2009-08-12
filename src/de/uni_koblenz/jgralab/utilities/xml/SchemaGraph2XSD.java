@@ -85,6 +85,7 @@ import java.io.PrintStream;
 import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.SortedMap;
@@ -259,7 +260,7 @@ public class SchemaGraph2XSD {
 	/**
 	 * Stores Attributes and is defined once to suppress object creation.
 	 */
-	private final ArrayList<Attribute> attributes;
+	private final HashSet<Attribute> attributes;
 
 	/**
 	 * Holds all patterns for including or excluding specific vertex- oder
@@ -429,7 +430,7 @@ public class SchemaGraph2XSD {
 		sg2tg = new SchemaGraph2Tg(sg, null);
 		sg2tg.setIsFormatted(false);
 		domainMap = new HashMap<Domain, String>();
-		attributes = new ArrayList<Attribute>();
+		attributes = new HashSet<Attribute>();
 	}
 
 	public void setPatterns(String[] patterns) {
@@ -927,32 +928,32 @@ public class SchemaGraph2XSD {
 		writeXSDAttribute(name, getXSDType(type), XSD_REQUIRED);
 	}
 
-	private void writeAttributes(ArrayList<Attribute> attributeList)
+	private void writeAttributes(HashSet<Attribute> attributes)
 			throws XMLStreamException {
-		for (Attribute attribute : attributeList) {
+		for (Attribute attribute : attributes) {
 			writeAttribute(attribute);
 		}
 	}
 
 	private void collectAttributes(AttributedElementClass attrElemClass,
-			ArrayList<Attribute> attributesList) {
+			HashSet<Attribute> attributes) {
 
 		for (HasAttribute ha : attrElemClass
 				.getHasAttributeIncidences(EdgeDirection.OUT)) {
-			attributesList.add((Attribute) ha.getOmega());
+			attributes.add((Attribute) ha.getOmega());
 		}
 
 		if (attrElemClass instanceof VertexClass) {
 			for (SpecializesVertexClass s : ((VertexClass) attrElemClass)
 					.getSpecializesVertexClassIncidences(EdgeDirection.OUT)) {
 				collectAttributes((AttributedElementClass) s.getOmega(),
-						attributesList);
+						attributes);
 			}
 		} else if (attrElemClass instanceof EdgeClass) {
 			for (SpecializesEdgeClass s : ((EdgeClass) attrElemClass)
 					.getSpecializesEdgeClassIncidences(EdgeDirection.OUT)) {
 				collectAttributes((AttributedElementClass) s.getOmega(),
-						attributesList);
+						attributes);
 			}
 		} else if (attrElemClass instanceof GraphClass) {
 			// nothing to do here
