@@ -70,6 +70,7 @@ public class M1ClassManager extends ClassLoader {
 		synchronized (this) {
 			instanceCount--;
 		}
+		super.finalize();
 	}
 
 	public void putM1Class(String className, ClassFileAbstraction cfa) {
