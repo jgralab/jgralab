@@ -51,9 +51,9 @@ import de.uni_koblenz.jgralabtest.schemas.minimal.Node;
 
 /**
  * Tests all functions that are provided by the Greql2FunctionLibrary
- *
+ * 
  * @author Daniel Bildhauer <dbildh@uni-koblenz.de> Summer 2006, Diploma Thesis
- *
+ * 
  */
 public class FunctionTest extends GenericTests {
 
@@ -94,7 +94,7 @@ public class FunctionTest extends GenericTests {
 	public void testAvg() throws Exception {
 		String queryString = "let x:= list (5..13) in avg(x)";
 		JValue result = evalTestQuery("Avg", queryString);
-		assertEquals(9.0, (double) result.toDouble());
+		assertEquals(9.0, result.toDouble(), 0.001);
 	}
 
 	@Test

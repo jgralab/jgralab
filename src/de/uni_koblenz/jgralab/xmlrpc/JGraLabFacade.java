@@ -164,7 +164,7 @@ public class JGraLabFacade {
 			int vMax, int eMax) throws XmlRpcException {
 		try {
 			Class<?> schemaClass = Class.forName(schemaName, true,
-					M1ClassManager.instance(schemaName));
+					M1ClassManager.instance());
 			Schema schema = (Schema) (schemaClass.getMethod("instance",
 					(Class[]) null).invoke(null));
 
@@ -295,7 +295,7 @@ public class JGraLabFacade {
 
 			try {
 				Class.forName(schema.getQualifiedName(), true, M1ClassManager
-						.instance(schema.getQualifiedName()));
+						.instance());
 			} catch (ClassNotFoundException e) {
 				schema.compile();
 			}
@@ -341,7 +341,7 @@ public class JGraLabFacade {
 
 			try {
 				Class.forName(schema.getQualifiedName(), true, M1ClassManager
-						.instance(schema.getQualifiedName()));
+						.instance());
 			} catch (ClassNotFoundException e) {
 				schema.compile();
 			}
@@ -2430,7 +2430,7 @@ public class JGraLabFacade {
 			try {
 				Class<?> attrType = Class.forName(prefix + "."
 						+ domain.getQualifiedName(), true, M1ClassManager
-						.instance(graph.getSchema().getQualifiedName()));
+						.instance());
 				value = attrType.getMethod("fromString",
 						new Class[] { String.class }).invoke(null, value);
 			} catch (Exception e) {
@@ -2475,7 +2475,7 @@ public class JGraLabFacade {
 			try {
 				Class<?> attrType = Class.forName(prefix + "."
 						+ domain.getQualifiedName(), true, M1ClassManager
-						.instance(graph.getSchema().getQualifiedName()));
+						.instance());
 				value = attrType.getConstructor(new Class<?>[] { Map.class })
 						.newInstance(value);
 			} catch (Exception e) {

@@ -60,9 +60,9 @@ import de.uni_koblenz.jgralab.schema.VertexClass;
 /**
  * This is the base class for all VertexEvaluators which evaluate the vertices
  * in the GReQL Syntaxgraph
- *
+ * 
  * @author ist@uni-koblenz.de
- *
+ * 
  */
 public abstract class VertexEvaluator {
 	/**
@@ -200,7 +200,7 @@ public abstract class VertexEvaluator {
 
 	/**
 	 * Gets the result of the evaluation of this vertex on the given subgraph
-	 *
+	 * 
 	 * @param subgraphMarker
 	 *            the subgraph to evaluate the vertex on or null if it should be
 	 *            evaluated on the whole datagraph
@@ -208,7 +208,7 @@ public abstract class VertexEvaluator {
 	 */
 	public JValue getResult(BooleanGraphMarker subgraphMarker)
 			throws EvaluateException {
-		if (result != null && this.subgraph == subgraphMarker) {
+		if ((result != null) && (this.subgraph == subgraphMarker)) {
 			// greqlEvaluator.progress(1);
 			return result;
 		}
@@ -226,7 +226,7 @@ public abstract class VertexEvaluator {
 		}
 
 		// Logging...
-		if (evaluationLogger != null && result != null) {
+		if ((evaluationLogger != null) && (result != null)) {
 			if (result.isBoolean()) {
 				// Log the selectivity for vertices that return a boolean
 				Boolean bool = result.toBoolean();
@@ -350,7 +350,7 @@ public abstract class VertexEvaluator {
 	/**
 	 * This method must be overwritten by every subclass. It should call the
 	 * right method of the GreqlEvaluators costmodel.
-	 *
+	 * 
 	 * @return a 3-Tupel (ownCosts, iteratedCosts, subtreeCosts) of costs the
 	 *         evaluation of the subtree with this vertex as root causes
 	 */
@@ -362,7 +362,7 @@ public abstract class VertexEvaluator {
 	 * cost differ from the initialEvaluationCosts, because only for the first
 	 * evaluation, the result really gets evaluated, for all other evaluations,
 	 * the evaluated result only gets copied, these costs are 1
-	 *
+	 * 
 	 * @return the costs of this evaluation of the subtree the vertex this
 	 *         evaluator evaluates is root of
 	 */
@@ -378,12 +378,13 @@ public abstract class VertexEvaluator {
 	 * Calculates the costs the first evaluation of the subtree causes. These
 	 * cost differ from the second "evaluation", because for the second one, the
 	 * already evaluated result only gets copied, these costs are 1
-	 *
+	 * 
 	 * @return the costs of the first evaluation of the subgraph the vertex this
 	 *         evaluator evaluates is root of
 	 */
 	public long getInitialSubtreeEvaluationCosts(GraphSize graphSize) {
-		if (costsGraphSize == graphSize && initialSubtreeEvaluationCosts > 0) {
+		if ((costsGraphSize == graphSize)
+				&& (initialSubtreeEvaluationCosts > 0)) {
 			return initialSubtreeEvaluationCosts;
 		} else {
 			costsGraphSize = graphSize;
@@ -399,7 +400,7 @@ public abstract class VertexEvaluator {
 	/**
 	 * Get the costs for evaluating the associated vertex one time. No subtree
 	 * or iteration costs are taken into account.
-	 *
+	 * 
 	 * @param graphSize
 	 *            a {@link GraphSize} object indicating the size of the data-
 	 *            {@link Graph}
@@ -438,7 +439,7 @@ public abstract class VertexEvaluator {
 
 	/**
 	 * Calculates the set of variables this vertex depends on
-	 *
+	 * 
 	 * @return the set of variables this vertex depends on
 	 */
 	public Set<Variable> getNeededVariables() {
@@ -452,7 +453,7 @@ public abstract class VertexEvaluator {
 	 * Calculates the set of variables this vertex (or even a vertex in a
 	 * subgraph) defines and that is valid in the whole subtree with this vertex
 	 * as head.
-	 *
+	 * 
 	 * @return the set of variables this vertex defines and that are valid
 	 */
 	public Set<Variable> getDefinedVariables() {
