@@ -50,9 +50,9 @@ import de.uni_koblenz.jgralab.greql2.schema.TypeId;
 
 /**
  * Evaluates a FunctionApplication vertex in the GReQL-2 Syntaxgraph
- *
+ * 
  * @author ist@uni-koblenz.de
- *
+ * 
  */
 public class FunctionApplicationEvaluator extends VertexEvaluator {
 
@@ -68,11 +68,7 @@ public class FunctionApplicationEvaluator extends VertexEvaluator {
 
 	private ArrayList<VertexEvaluator> parameterEvaluators = null;
 
-	private boolean firstEvaluation = true;
-
 	private JValueTypeCollection typeArgument;
-
-	private JValue[] parameters;
 
 	/**
 	 * The name of this function
@@ -88,7 +84,7 @@ public class FunctionApplicationEvaluator extends VertexEvaluator {
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @seede.uni_koblenz.jgralab.greql2.evaluator.vertexeval.VertexEvaluator#
 	 * getLoggingName()
 	 */
@@ -182,23 +178,20 @@ public class FunctionApplicationEvaluator extends VertexEvaluator {
 	 */
 	@Override
 	public JValue evaluate() throws EvaluateException {
-		if (firstEvaluation) {
-			firstEvaluation = false;
-			typeArgument = createTypeArgument();
-			parameterEvaluators = createVertexEvaluatorList();
-			int parameterCount = parameterEvaluators.size();
-			if (typeArgument != null) {
-				parameterCount++;
-			}
-			parameters = new JValue[parameterCount];
-			if (typeArgument != null) {
-				parameters[parameterCount - 1] = typeArgument;
-			}
-			Greql2Function func = getGreql2Function();
-			if (func == null) {
-				throw new UndefinedFunctionException(functionName,
-						createPossibleSourcePositions());
-			}
+		typeArgument = createTypeArgument();
+		parameterEvaluators = createVertexEvaluatorList();
+		int parameterCount = parameterEvaluators.size();
+		if (typeArgument != null) {
+			parameterCount++;
+		}
+		JValue[] parameters = new JValue[parameterCount];
+		if (typeArgument != null) {
+			parameters[parameterCount - 1] = typeArgument;
+		}
+		getGreql2Function();
+		if (greql2Function == null) {
+			throw new UndefinedFunctionException(functionName,
+					createPossibleSourcePositions());
 		}
 
 		for (int i = 0; i < parameterEvaluators.size(); i++) {

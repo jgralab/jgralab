@@ -93,8 +93,7 @@ public class EnumConstant extends AbstractGreql2Function {
 				.getPackagePrefix());
 		try {
 			Class<?> myEnum = Class.forName(enumClassName, false,
-					M1ClassManager.instance(graph.getSchema()
-							.getQualifiedName()));
+					M1ClassManager.instance());
 			Method fromString = myEnum.getMethod("fromString",
 					new Class<?>[] { String.class });
 			Object constant = fromString.invoke(null,

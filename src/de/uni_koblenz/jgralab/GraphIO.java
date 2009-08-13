@@ -770,7 +770,7 @@ public class GraphIO {
 			io.tgfile();
 			String schemaName = io.schema.getQualifiedName();
 			Class<?> schemaClass = Class.forName(schemaName, true,
-					M1ClassManager.instance(schemaName));
+					M1ClassManager.instance());
 			Method instanceMethod = schemaClass.getMethod("instance",
 					(Class<?>[]) null);
 			io.schema = (Schema) instanceMethod.invoke(null, new Object[0]);

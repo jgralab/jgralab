@@ -269,15 +269,15 @@ public class ParserTest {
 		graph = parseQuery("5.0");
 		lit = graph.getFirstRealLiteral();
 		assertNotNull(lit);
-		assertEquals(5, lit.getRealValue());
+		assertEquals(5, lit.getRealValue(), 0.0001);
 		graph = parseQuery("5.0f");
 		lit = graph.getFirstRealLiteral();
 		assertNotNull(lit);
-		assertEquals(5.0, lit.getRealValue());
+		assertEquals(5.0, lit.getRealValue(), 0.0001);
 		graph = parseQuery("0.5");
 		lit = graph.getFirstRealLiteral();
 		assertNotNull(lit);
-		assertEquals(0.5, lit.getRealValue());
+		assertEquals(0.5, lit.getRealValue(), 0.0001);
 	}
 
 	@Test
