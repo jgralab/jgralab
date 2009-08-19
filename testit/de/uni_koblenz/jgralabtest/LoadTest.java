@@ -417,7 +417,7 @@ public class LoadTest {
 		checkFreeIndexList(vList, 3, 1, 16, -1, 1, -2);
 		graph.getVertex(3).delete();
 		checkFreeIndexList(vList, 2, 2, 16, -1, 2, -1);
-	}
+	} 
 
 	/**
 	 * Executes: vList.printArray(System.out);
