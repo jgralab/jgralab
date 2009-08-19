@@ -304,6 +304,11 @@ public class FreeIndexList {
 			// freeing begins somewhere in the middle of the "used" run
 			assert index - begin + length <= -runs[runIndex];
 			if (index + length == end + 1) {
+				/*
+				 * TODO DeadCode
+				 * Im Graphen kann man nur eine Id freigeben. Dieser
+				 * Fall beschäftigt sich mit dem Freigeben mehrer Ids.
+				 */
 				// complete "tail" of the current run cleared
 				if (runIndex == runCount - 1) {
 					// tail of last run cleared, add a new "free" run
@@ -389,6 +394,10 @@ public class FreeIndexList {
 			}
 			if (cnt > 0) {
 				if (runCount == runs.length) {
+					/*
+					 * TODO DeadCode: runs.length>=16 und runCount==0 =>
+					 * runs.length==runCount immer false
+					 */
 					int[] newRuns = new int[runs.length * 2];
 					System.arraycopy(runs, 0, newRuns, 0, runCount);
 					runs = newRuns;
@@ -404,6 +413,10 @@ public class FreeIndexList {
 			}
 			if (cnt > 0) {
 				if (runCount == runs.length) {
+					/*
+					 * TODO Dead Code: runs.length>=16 und runCount==0 =>
+					 * runs.length==runCount immer false
+					 */
 					int[] newRuns = new int[runs.length * 2];
 					System.arraycopy(runs, 0, newRuns, 0, runCount);
 					runs = newRuns;
@@ -481,11 +494,20 @@ public class FreeIndexList {
 
 		// free a range immediately after current maximum index
 		if (runs[runCount - 1] > 0) {
+			/*
+			 * TODO Dead Code:runs[runCount - 1] > 0 ist niemals gegeben, da
+			 * dies bedeutet, dass letzter Eintrag free sein muss => free>0 in
+			 * diesem Fall wird die Methode nie aufgerufen
+			 */
 			// last run was a "free" run, simply add
 			runs[runCount - 1] += n;
 		} else {
 			// append a new free run
 			if (runCount == runs.length) {
+				/*
+				 * TODO Dead Code: wird nur aufgerufen wenn free==0. Aber dann
+				 * ist runCount=1<runs.length! also nie runCount == runs.length
+				 */
 				// allocate more memory
 				int[] newRuns = new int[runs.length * 2];
 				System.arraycopy(runs, 0, newRuns, 0, runCount);
