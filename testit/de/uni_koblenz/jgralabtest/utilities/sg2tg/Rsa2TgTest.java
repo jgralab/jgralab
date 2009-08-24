@@ -1,4 +1,4 @@
-package de.uni_koblenz.jgralabtest.utilities.schemagraph2tg;
+package de.uni_koblenz.jgralabtest.utilities.sg2tg;
 
 import java.io.IOException;
 import java.util.logging.Level;
