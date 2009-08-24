@@ -275,7 +275,8 @@ public class OptionHandler {
 				}
 			}
 		}
-		// if all required options are set and there are required OptionGroups, check them
+		// if all required options are set and there are required OptionGroups,
+		// check them
 		return ok && !requiredOptionGroups.isEmpty() ? ok
 				&& containsAllRequiredOptionGroups(setOptions) : ok;
 	}
@@ -369,10 +370,31 @@ public class OptionHandler {
 			}
 			return comLine;
 		} catch (ParseException e) {
-			System.err.println(e.getMessage());
+			System.err.println(parseErrorMessage(e.getMessage()));
+
 			printHelpAndExit(1);
 		}
 		// never reached
 		return null;
+	}
+
+	private static String parseErrorMessage(String error) {
+		StringBuilder sb = new StringBuilder(error.length());
+
+		int begin = 0;
+		int end = error.indexOf('[');
+		sb.append(error.substring(begin, end));
+		sb.append("\n\t");
+		begin = end + 1;
+
+		while ((end = error.indexOf(',', begin)) != -1) {
+			sb.append(error.substring(begin, end + 1).trim());
+			sb.append("\n\t");
+			begin = end + 1;
+		}
+
+		sb.append(error.substring(begin, error.length() - 1).trim());
+
+		return sb.toString();
 	}
 }

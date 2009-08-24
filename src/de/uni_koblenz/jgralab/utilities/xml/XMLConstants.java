@@ -74,6 +74,8 @@ public class XMLConstants {
 	public static final String GRUML_VALUE_TRUE = "t";
 	public static final String GRUML_VALUE_FALSE = "f";
 	public static final String GRUML_VALUE_NULL = "n";
+	public static final String[] GRUML_VALUES_OF_DOMAIN_BOOLEAN = {
+			GRUML_VALUE_FALSE, GRUML_VALUE_TRUE };
 
 	public static final String GRUML_PREFIX_DOMAINTYPE = "ST_";
 	public static final String GRUML_PREFIX_GRAPHTYPE = "GT_";
@@ -87,8 +89,7 @@ public class XMLConstants {
 			+ "Graph";
 	public static final String GRUML_VERTEXTYPE = GRUML_PREFIX_BASETYPE
 			+ "Vertex";
-	public static final String GRUML_COMPLEXTYPE = GRUML_PREFIX_BASETYPE
-			+ "Edge";
+	public static final String GRUML_EDGETYPE = GRUML_PREFIX_BASETYPE + "Edge";
 
 	public static final String GRUML_DOMAIN_RECORD_PREFIX = GRUML_PREFIX_DOMAINTYPE
 			+ "RECORD_";
