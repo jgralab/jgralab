@@ -543,12 +543,11 @@ public class Rsa2Tg {
 	private void createEdgeClassNames() {
 		for (EdgeClass ec : sg.getEdgeClassVertices()) {
 			String name = ec.getQualifiedName().trim();
-			if ((name != null) && !name.equals("") && !name.endsWith(".")) {
+			if (!name.equals("") && !name.endsWith(".")) {
 				continue;
 			}
-			if (name == null) {
-				name = "";
-			}
+
+			// System.err.print("createEdgeClassName for '" + name + "'");
 			String ecName = null;
 			// invent edgeclass name
 			String toRole = ec.getFirstTo().getRoleName();
@@ -587,8 +586,9 @@ public class Rsa2Tg {
 							+ fromRole.substring(1);
 				}
 				assert (fromRole != null) && (fromRole.length() > 0);
-				name = fromRole;
+				name += fromRole;
 			}
+			// System.err.println(" ==> '" + name + "' + '" + ecName + "'");
 			assert (ecName != null) && (ecName.length() > 0);
 			ec.setQualifiedName(name + ecName);
 		}
