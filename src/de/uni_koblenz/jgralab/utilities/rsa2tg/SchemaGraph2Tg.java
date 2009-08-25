@@ -1324,19 +1324,28 @@ public class SchemaGraph2Tg {
 			return name;
 		}
 
-		int index = name.lastIndexOf('.');
-		String pkgName = (index == -1) ? "" : name.substring(0, index);
-		String simpleName = (index == -1) ? name : name.substring(index + 1);
+		String[] splittedName = getSplittedQualifiedName(name);
 
-		if (pkgName.equals(packageName)) {
-			return simpleName;
+		if (splittedName[0].equals(packageName)) {
+			return splittedName[1];
 		}
 
-		if (pkgName.length() == 0) {
-			return POINT + simpleName;
+		if (splittedName[0].length() == 0) {
+			return POINT + splittedName[1];
 		}
 
 		return name;
+	}
+
+	private String[] getSplittedQualifiedName(String qualifiedName) {
+		int index = qualifiedName.lastIndexOf('.');
+		String splittedName[] = new String[2];
+		splittedName[0] = (index == -1) ? "" : qualifiedName
+				.substring(0, index);
+		splittedName[1] = (index == -1) ? qualifiedName : qualifiedName
+				.substring(index + 1);
+
+		return splittedName;
 	}
 
 	/**
