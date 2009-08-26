@@ -329,7 +329,7 @@ public class FreeIndexList {
 			} else {
 				// current run has to be split, i.e. 2 new runs are created
 				int n = runs[runIndex];
-				if (runCount + 2 >= runs.length) {
+				if (runCount + 2 > runs.length) {
 					// allocate more memory
 					int[] newRuns = new int[runs.length * 2];
 					System.arraycopy(runs, 0, newRuns, 0, runIndex);
