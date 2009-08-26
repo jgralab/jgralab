@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.logging.Level;
 
 import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.stream.XMLStreamException;
 
 import org.junit.Test;
 import org.xml.sax.SAXException;
@@ -19,7 +20,7 @@ public class Rsa2TgTest {
 
 	@Test
 	public void t() throws GraphIOException, IOException, SAXException,
-			ParserConfigurationException {
+			ParserConfigurationException, XMLStreamException {
 		String folder = "testit/testschemas/rsa-xmi/";
 		String[] xmiFiles = { "grUML-M3.xmi", "OsmSchema.xmi", "test.xmi",
 				"java-schema.xmi" };
@@ -32,13 +33,13 @@ public class Rsa2TgTest {
 		r.setRemoveUnusedDomains(true);
 		r.setUseNavigability(true);
 
-		for (int i = 0; i < xmiFiles.length; i++) {
+		for (String xmiFile : xmiFiles) {
 
 			// Loads the SchemaGraph
-			System.out.println("Testing with: " + folder + xmiFiles[i]);
+			System.out.println("Testing with: " + folder + xmiFile);
 			System.out
 					.print("Loading XMI, creating SchemaGraph and creating TG-file... ");
-			r.process(folder + xmiFiles[i]);
+			r.process(folder + xmiFile);
 			System.out.println("\tdone");
 
 			de.uni_koblenz.jgralab.grumlschema.structure.Schema gSchema = r

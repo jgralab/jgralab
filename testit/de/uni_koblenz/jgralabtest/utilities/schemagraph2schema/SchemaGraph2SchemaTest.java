@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.logging.Level;
 
 import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.stream.XMLStreamException;
 
 import org.junit.Test;
 import org.xml.sax.SAXException;
@@ -19,7 +20,7 @@ public class SchemaGraph2SchemaTest {
 
 	@Test
 	public void t() throws GraphIOException, IOException, SAXException,
-			ParserConfigurationException {
+			ParserConfigurationException, XMLStreamException {
 		String folder = "testit/testschemas/rsa-xmi/";
 		String[] xmiFiles = { "grUML-M3.xmi", "OsmSchema.xmi", "test.xmi" };
 
