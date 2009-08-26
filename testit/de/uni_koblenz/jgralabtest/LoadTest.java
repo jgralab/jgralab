@@ -261,7 +261,7 @@ public class LoadTest {
 	}
 
 	/**
-	 * Test if you reach an increas of runs by the allocate method.
+	 * Test if you fill runs completely by the allocate method.
 	 */
 	@Test
 	public void allocateIndexTest2() {
@@ -277,10 +277,37 @@ public class LoadTest {
 		}
 		graph.getVertex(2).delete();
 		graph.getVertex(15).delete();
-		printArray(vList);
+		checkFreeIndexList(vList, 9, 23, 16, 3, -1, 1, -1, 1, -1, 1, -1, 1, -1,
+				1, -1, 1, -3, 14);
 		graph.createA();
-		// TODO runs schon erweitern, wenn runCount==runs.length?
-		printArray(vList);
+		checkFreeIndexList(vList, 10, 22, 16, -1, 2, -1, 1, -1, 1, -1, 1, -1,
+				1, -1, 1, -1, 1, -3, 14);
+	}
+
+	/**
+	 * Test if you reach an increase of runs by the allocate method.
+	 * runs=[2,-1,1,-1,1,-1,1,-1,1,-1,1,-1,1,-1,1,-1] and then create a new
+	 * vertex.
+	 */
+	@Test
+	public void allocateIndexTest3() {
+		VertexTestGraph graph = VertexTestSchema.instance()
+				.createVertexTestGraph(17, 1);
+		FreeIndexList vList = getFreeIndexListOfVertices(graph, true);
+		for (int i = 1; i <= 17; i++) {
+			graph.createA();
+		}
+		// delete the vertices
+		graph.getVertex(1).delete();
+		graph.getVertex(2).delete();
+		for (int i = 4; i <= 17; i = i + 2) {
+			graph.getVertex(i).delete();
+		}
+		checkFreeIndexList(vList, 8, 9, 16, 2, -1, 1, -1, 1, -1, 1, -1, 1, -1,
+				1, -1, 1, -1, 1, -1);
+		graph.createA();
+		checkFreeIndexList(vList, 9, 8, 32, -1, 1, -1, 1, -1, 1, -1, 1, -1, 1,
+				-1, 1, -1, 1, -1, 1, -1);
 	}
 
 	/**
@@ -369,7 +396,6 @@ public class LoadTest {
 		graph.getVertex(15).delete();
 		checkFreeIndexList(vList, 8, 8, 16, 1, -1, 1, -1, 1, -1, 1, -1, 1, -1,
 				1, -1, 1, -1, 1, -1);
-		// TODO is this correct?
 	}
 
 	/**
@@ -398,11 +424,10 @@ public class LoadTest {
 		graph.getVertex(5).delete();
 		checkFreeIndexList(vList, 8, 8, 16, 1, -1, 1, -1, 1, -1, 1, -1, 1, -1,
 				1, -1, 1, -1, 1, -1);
-		// TODO is this correct?
 	}
 
 	/**
-	 * FreeIndexList.runs= [1, -1, -2, 0,...] Delete the first vertex of -2.
+	 * FreeIndexList.runs= [-1, 1, -2, 0,...] Delete the first vertex of -2.
 	 */
 	@Test
 	public void freeRangeTest5() {
@@ -417,31 +442,44 @@ public class LoadTest {
 		checkFreeIndexList(vList, 3, 1, 16, -1, 1, -2);
 		graph.getVertex(3).delete();
 		checkFreeIndexList(vList, 2, 2, 16, -1, 2, -1);
-	} 
+	}
 
 	/**
-	 * Executes: vList.printArray(System.out);
-	 * 
-	 * Only for debug info during creation of tests.
-	 * 
-	 * @param vList
+	 * FreeIndexList.runs= [-1, 1, -1, 0,...] Delete the last used index.
 	 */
-	private void printArray(FreeIndexList vList) {
-		try {
-			Method f = FreeIndexList.class.getDeclaredMethod("printArray",
-					PrintStream.class);
-			f.setAccessible(true);
-			f.invoke(vList, System.out);
-		} catch (SecurityException e) {
-			e.printStackTrace();
-		} catch (NoSuchMethodException e) {
-			e.printStackTrace();
-		} catch (IllegalArgumentException e) {
-			e.printStackTrace();
-		} catch (IllegalAccessException e) {
-			e.printStackTrace();
-		} catch (InvocationTargetException e) {
-			e.printStackTrace();
+	@Test
+	public void freeRangeTest6() {
+		VertexTestGraph graph = VertexTestSchema.instance()
+				.createVertexTestGraph(3, 1);
+		FreeIndexList vList = getFreeIndexListOfVertices(graph, true);
+		graph.createA();
+		graph.createA();
+		graph.createA();
+		graph.getVertex(2).delete();
+		checkFreeIndexList(vList, 2, 1, 16, -1, 1, -1);
+		graph.getVertex(3).delete();
+		checkFreeIndexList(vList, 1, 2, 16, -1, 2);
+	}
+
+	/**
+	 * FreeIndexList.runs= [1,-1,1,-1,1,-1,1,-1,1,-1,1,-1,1,-1,1,-2] Delete the
+	 * last used index.
+	 */
+	@Test
+	public void freeRangeTest7() {
+		VertexTestGraph graph = VertexTestSchema.instance()
+				.createVertexTestGraph(17, 1);
+		FreeIndexList vList = getFreeIndexListOfVertices(graph, true);
+		for (int i = 1; i <= 17; i++) {
+			graph.createA();
 		}
+		for (int i = 15; i > 0; i = i - 2) {
+			graph.getVertex(i).delete();
+		}
+		checkFreeIndexList(vList, 9, 8, 16, 1, -1, 1, -1, 1, -1, 1, -1, 1, -1,
+				1, -1, 1, -1, 1, -2);
+		graph.getVertex(17).delete();
+		checkFreeIndexList(vList, 8, 9, 32, 1, -1, 1, -1, 1, -1, 1, -1, 1, -1,
+				1, -1, 1, -1, 1, -1, 1);
 	}
 }
