@@ -197,6 +197,10 @@ public final class RecordDomainImpl extends CompositeDomainImpl implements
 	public boolean equals(Object o) {
 		if (o instanceof RecordDomain) {
 			RecordDomain other = (RecordDomain) o;
+			if (!getSchema().getQualifiedName().equals(
+					other.getSchema().getQualifiedName())) {
+				return false;
+			}
 			if (!qualifiedName.equals(other.getQualifiedName())) {
 				return false;
 			}
