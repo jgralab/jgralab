@@ -2,7 +2,6 @@ package de.uni_koblenz.jgralab.schema.impl;
 
 import de.uni_koblenz.jgralab.schema.CollectionDomain;
 import de.uni_koblenz.jgralab.schema.Domain;
-import de.uni_koblenz.jgralab.schema.ListDomain;
 import de.uni_koblenz.jgralab.schema.Package;
 import de.uni_koblenz.jgralab.schema.exception.WrongSchemaException;
 
@@ -35,14 +34,15 @@ public abstract class CollectionDomainImpl extends CompositeDomainImpl
 
 	@Override
 	public boolean equals(Object o) {
-		if (o instanceof ListDomain) {
-			ListDomain other = (ListDomain) o;
-			// This may happen with TGSchema2Java while loading a Schema from a
-			// file...
+		if (o instanceof CollectionDomain) {
+			CollectionDomain other = (CollectionDomain) o;
+			// This may happen with TGSchema2Java while loading a Schema
+			// from a file...
 			if ((baseDomain == null) || (other.getBaseDomain() == null)) {
 				return false;
 			}
-			return baseDomain.equals(other.getBaseDomain());
+			return (getClass() == other.getClass())
+					&& baseDomain.equals(other.getBaseDomain());
 		}
 		return false;
 	}

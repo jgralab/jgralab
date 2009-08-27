@@ -184,6 +184,9 @@ public final class MapDomainImpl extends CompositeDomainImpl implements
 	public boolean equals(Object o) {
 		if (o instanceof MapDomain) {
 			MapDomain other = (MapDomain) o;
+			if ((keyDomain == null) || (valueDomain == null)) {
+				return false;
+			}
 			return keyDomain.equals(other.getKeyDomain())
 					&& valueDomain.equals(other.getValueDomain());
 		}
