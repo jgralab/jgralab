@@ -779,6 +779,7 @@ public class GraphIO {
 			io.firstIncidence = null;
 			io.nextIncidence = null;
 			g.loadingCompleted();
+			System.out.println("After loadingCompleted");
 			return g;
 		} catch (GraphIOException e) {
 			throw e;
@@ -1986,8 +1987,9 @@ public class GraphIO {
 	}
 
 	public final String matchUtfString() throws GraphIOException {
-		if (lookAhead.equals(NULL_LITERAL)
-				|| lookAhead.equals(OLD_NULL_LITERAL)) {
+		if (!isUtfString
+				&& (lookAhead.equals(NULL_LITERAL) || lookAhead
+						.equals(OLD_NULL_LITERAL))) {
 			match();
 			return null;
 		}
