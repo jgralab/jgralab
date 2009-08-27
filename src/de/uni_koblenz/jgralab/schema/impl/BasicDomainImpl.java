@@ -46,6 +46,10 @@ public abstract class BasicDomainImpl extends DomainImpl implements BasicDomain 
 	public boolean equals(Object o) {
 		if (o instanceof BasicDomain) {
 			BasicDomain other = (BasicDomain) o;
+			if (!getSchema().getQualifiedName().equals(
+					other.getSchema().getQualifiedName())) {
+				return false;
+			}
 			return other.getQualifiedName().equals(getQualifiedName());
 		}
 		return false;

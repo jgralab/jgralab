@@ -36,6 +36,10 @@ public abstract class CollectionDomainImpl extends CompositeDomainImpl
 	public boolean equals(Object o) {
 		if (o instanceof CollectionDomain) {
 			CollectionDomain other = (CollectionDomain) o;
+			if (!getSchema().getQualifiedName().equals(
+					other.getSchema().getQualifiedName())) {
+				return false;
+			}
 			// This may happen with TGSchema2Java while loading a Schema
 			// from a file...
 			if ((baseDomain == null) || (other.getBaseDomain() == null)) {
