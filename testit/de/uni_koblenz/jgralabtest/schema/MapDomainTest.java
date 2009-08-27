@@ -16,13 +16,12 @@ import de.uni_koblenz.jgralab.schema.Domain;
 import de.uni_koblenz.jgralab.schema.MapDomain;
 import de.uni_koblenz.jgralab.schema.RecordDomain;
 import de.uni_koblenz.jgralab.schema.exception.RecordCycleException;
-import de.uni_koblenz.jgralab.schema.exception.WrongSchemaException;
 
 /**
  * TODO: More testing!
- *
+ * 
  * @author Tassilo Horn <horn@uni-koblenz.de>
- *
+ * 
  */
 public class MapDomainTest extends CompositeDomainTest {
 
@@ -41,13 +40,13 @@ public class MapDomainTest extends CompositeDomainTest {
 		schema1Name = "schema1";
 		schema2Package = "package2";
 		schema2Name = "schema2";
-		keyDomain1 = schema1.getDomain("Integer");
-		valueDomain1 = schema1.getDomain("Boolean");
+		keyDomain1 = schema1.getIntegerDomain();
+		valueDomain1 = schema1.getBooleanDomain();
 		domain1 = schema1.createMapDomain(keyDomain1, valueDomain1);
 		keyDomain2 = schema2.getDomain("Integer");
 		valueDomain2 = schema2.getDomain("Boolean");
 		domain2 = schema2.createMapDomain(keyDomain2, valueDomain2);
-		Domain otherValueDomain = schema1.getDomain("Double");
+		Domain otherValueDomain = schema1.getDoubleDomain();
 		otherDomain1 = schema1.createMapDomain(keyDomain1, otherValueDomain);
 		Domain otherKeyDomain = schema1.getDomain("String");
 		otherDomain2 = schema1.createMapDomain(otherKeyDomain, valueDomain1);
@@ -59,10 +58,10 @@ public class MapDomainTest extends CompositeDomainTest {
 		expectedPathName2 = "";
 		expectedTgTypeName = "Map<Integer, Boolean>";
 		expectedStringRepresentation = "domain Map<domain Integer, domain Boolean>";
-		expectedDirectoryName1 = "Map<Integer,Boolean>";
-		expectedDirectoryName2 = "Map<Integer,Boolean>";
-		expectedQualifiedName1 = "Map<Integer,Boolean>";
-		expectedQualifiedName2 = "Map<Integer,Boolean>";
+		expectedDirectoryName1 = "Map<Integer, Boolean>";
+		expectedDirectoryName2 = "Map<Integer, Boolean>";
+		expectedQualifiedName1 = "Map<Integer, Boolean>";
+		expectedQualifiedName2 = "Map<Integer, Boolean>";
 		expectedSimpleName = expectedUniqueName1 = expectedQualifiedName1;
 		expectedUniqueName2 = expectedQualifiedName2;
 		// Initializing for the CompositeDomainTest
@@ -103,10 +102,9 @@ public class MapDomainTest extends CompositeDomainTest {
 		Domain map2 = schema1.getDomain("Map<Boolean, Record2>");
 		rec3.addComponent("map2", map2);
 		rec2.addComponent("map1", map1);
-		System.out.println(schema1.getDomains());
 	}
 
-	@Test(expected = WrongSchemaException.class)
+	@Test(expected = AssertionError.class)
 	public void testRejectionOfForeignKeyDomain() {
 		/*
 		 * Tests the rejection of the following case: A MapDomain has a
@@ -117,7 +115,7 @@ public class MapDomainTest extends CompositeDomainTest {
 				.getDomain("Integer"));
 	}
 
-	@Test(expected = WrongSchemaException.class)
+	@Test(expected = AssertionError.class)
 	public void testRejectionOfForeignValueDomain() {
 		/*
 		 * Tests the rejection of the following case: A MapDomain has a
@@ -128,7 +126,7 @@ public class MapDomainTest extends CompositeDomainTest {
 				.getDomain("Enum1"));
 	}
 
-	@Test(expected = WrongSchemaException.class)
+	@Test(expected = AssertionError.class)
 	public void testRejectionOfForeignKeyDomainAndValueDomain() {
 		/*
 		 * Tests the rejection of the following case: A MapDomain has a
@@ -148,11 +146,11 @@ public class MapDomainTest extends CompositeDomainTest {
 		schema1.createMapDomain(schema1.getDomain("String"), schema1
 				.getDomain("Double"));
 		// A MapDomains with a different KeyDomain must not be equal
-		assertFalse(schema1.getDomain("Map<String, Double>")
-				.equals(otherDomain1));
+		assertFalse(schema1.getDomain("Map<String, Double>").equals(
+				otherDomain1));
 		// A MapDomains with a different ValueDomain must not be equal
-		assertFalse(schema1.getDomain("Map<String, Double>")
-				.equals(otherDomain2));
+		assertFalse(schema1.getDomain("Map<String, Double>").equals(
+				otherDomain2));
 	}
 
 	@Test

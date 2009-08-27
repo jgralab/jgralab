@@ -8,6 +8,7 @@ import org.junit.Test;
 import de.uni_koblenz.jgralab.schema.AttributedElementClass;
 import de.uni_koblenz.jgralab.schema.GraphClass;
 import de.uni_koblenz.jgralab.schema.Schema;
+import de.uni_koblenz.jgralab.schema.exception.SchemaException;
 import de.uni_koblenz.jgralab.schema.impl.SchemaImpl;
 
 public final class GraphClassImplTest extends AttributedElementClassImplTest {
@@ -22,27 +23,12 @@ public final class GraphClassImplTest extends AttributedElementClassImplTest {
 	/**
 	 * compareTo(AttributedElementClass)
 	 * 
-	 * TEST CASE: Comparing this element to another, where this element´s
-	 * qualified name is lexicographically less than the other´s
+	 * TEST CASE: An Exception must be thrown if you try to create a second
+	 * GraphClass.
 	 */
-	@Test
+	@Test(expected = SchemaException.class)
 	public void testCompareTo() {
-		GraphClass other = schema.createGraphClass("Z");
-
-		testCompareTo(other);
-	}
-
-	/**
-	 * compareTo(AttributedElementClass)
-	 * 
-	 * TEST CASE: Comparing this element to another, where this element´s
-	 * qualified name is lexicographically greater than the other´s
-	 */
-	@Test
-	public void testCompareTo2() {
-		GraphClass other = schema.createGraphClass("A");
-
-		testCompareTo2(other);
+		schema.createGraphClass("Z");
 	}
 
 	/**
@@ -52,7 +38,7 @@ public final class GraphClassImplTest extends AttributedElementClassImplTest {
 	 * qualified names are equal
 	 */
 	@Test
-	public void testCompareTo3() {
+	public void testCompareTo2() {
 		Schema schema2 = new SchemaImpl("TestSchema2",
 				"de.uni_koblenz.jgralabtest.schematest");
 		GraphClass other = schema2.createGraphClass(graphClass.getSimpleName());
@@ -66,7 +52,7 @@ public final class GraphClassImplTest extends AttributedElementClassImplTest {
 	 * TEST CASE: Comparing an element to itself
 	 */
 	@Test
-	public void testCompareTo4() {
+	public void testCompareTo3() {
 		testCompareTo3(graphClass);
 	}
 
