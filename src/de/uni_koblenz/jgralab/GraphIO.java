@@ -779,7 +779,6 @@ public class GraphIO {
 			io.firstIncidence = null;
 			io.nextIncidence = null;
 			g.loadingCompleted();
-			System.out.println("After loadingCompleted");
 			return g;
 		} catch (GraphIOException e) {
 			throw e;
