@@ -215,13 +215,13 @@ public class RecordDomainTest extends CompositeDomainTest {
 		schema1.createRecordDomain("package2.Rec1");
 		Domain domain1 = schema1.getDomain("package1.Rec1");
 		Domain domain2 = schema1.getDomain("package2.Rec1");
-		assertEquals("package1_rec1", domain1.getUniqueName());
-		assertEquals("package2_rec1", domain2.getUniqueName());
+		assertEquals("package1$Rec1", domain1.getUniqueName());
+		assertEquals("package2$Rec1", domain2.getUniqueName());
 		// Test if uniqueName of a third element with the same simpleName is
 		// changed
 		schema1.createRecordDomain("package3.Rec1");
 		Domain domain3 = schema1.getDomain("package3.Rec1");
-		assertEquals("package3_rec1", domain3.getUniqueName());
+		assertEquals("package3$Rec1", domain3.getUniqueName());
 	}
 
 	@Test
@@ -262,16 +262,16 @@ public class RecordDomainTest extends CompositeDomainTest {
 	public void testToString() {
 		// tests if the correct string representation is returned
 		assertEquals(
-				"Record package1.Record1 (string1=domain String, double1=domain Double, bool1=domain Boolean, int1=domain Integer)",
+				"Record package1.Record1 (bool1=domain Boolean, double1=domain Double, int1=domain Integer, string1=domain String)",
 				domain1.toString());
 		assertEquals(
-				"Record package1.Record1 (string1=domain String, double1=domain Double, bool1=domain Boolean, int1=domain Integer)",
+				"Record package1.Record1 (bool1=domain Boolean, double1=domain Double, int1=domain Integer, string1=domain String)",
 				domain2.toString());
 		assertEquals(
-				"Record package1.Record1 (string1=domain String, double1=domain Double, bool1=domain Boolean, int1=domain Integer)",
+				"Record package1.Record1 (bool1=domain Boolean, double1=domain Double, int1=domain Integer, string1=domain String)",
 				domain3.toString());
 		assertEquals(
-				"Record Record4 (aList=domain List<domain Boolean>, aRecord=Record package1.Record1 (string1=domain String, double1=domain Double, bool1=domain Boolean, int1=domain Integer))",
+				"Record Record4 (aList=domain List<domain Boolean>, aRecord=Record package1.Record1 (bool1=domain Boolean, double1=domain Double, int1=domain Integer, string1=domain String))",
 				domain4.toString());
 	}
 

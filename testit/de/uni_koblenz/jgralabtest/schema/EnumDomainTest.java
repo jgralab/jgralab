@@ -41,7 +41,7 @@ public class EnumDomainTest extends BasicDomainTest {
 		expectedPathName1 = "package1" + sep + "subpackage1";
 		expectedPathName2 = "package1" + sep + "subpackage1";
 		expectedSimpleName = "Enum1";
-		expectedUniqueName1 = "package1_subpackage1_Enum1";
+		expectedUniqueName1 = "package1$subpackage1$Enum1";
 		expectedUniqueName2 = "Enum1";
 
 		// same domainname as Domain1 but in other package (for testing
@@ -88,7 +88,7 @@ public class EnumDomainTest extends BasicDomainTest {
 	@Override
 	public void testGetUniqueName() {
 		// tests if the correct uniqueName is returned
-		assertEquals("package1_Enum1", domain3.getUniqueName());
+		assertEquals("package1$Enum1", domain3.getUniqueName());
 		super.testGetUniqueName();
 	}
 
