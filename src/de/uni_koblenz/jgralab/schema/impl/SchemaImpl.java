@@ -101,8 +101,6 @@ public class SchemaImpl implements Schema {
 	 */
 	private class ClassFileManager extends
 			ForwardingJavaFileManager<JavaFileManager> {
-		Vector<JavaSourceFromString> sources;
-
 		public ClassFileManager(JavaFileManager fm) {
 			super(fm);
 		}
@@ -114,10 +112,6 @@ public class SchemaImpl implements Schema {
 
 			M1ClassManager.instance().putM1Class(className, cfa);
 			return cfa;
-		}
-
-		public void setSources(Vector<JavaSourceFromString> sources) {
-			this.sources = sources;
 		}
 	}
 
@@ -531,8 +525,6 @@ public class SchemaImpl implements Schema {
 		}
 
 		ClassFileManager manager = new ClassFileManager(jfm);
-
-		manager.setSources(javaSources);
 
 		Vector<String> options = new Vector<String>();
 		if (jgralabClassPath != null) {
