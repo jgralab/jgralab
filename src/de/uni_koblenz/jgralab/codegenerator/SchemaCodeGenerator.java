@@ -42,9 +42,9 @@ import de.uni_koblenz.jgralab.schema.VertexClass;
 
 /**
  * TODO add comment
- *
+ * 
  * @author ist@uni-koblenz.de
- *
+ * 
  */
 public class SchemaCodeGenerator extends CodeGenerator {
 
@@ -52,7 +52,7 @@ public class SchemaCodeGenerator extends CodeGenerator {
 
 	/**
 	 * Creates a new SchemaCodeGenerator which creates code for the given schema
-	 *
+	 * 
 	 * @param schema
 	 *            the schema to create the code for
 	 * @param schemaPackageName
@@ -77,6 +77,7 @@ public class SchemaCodeGenerator extends CodeGenerator {
 	protected CodeBlock createHeader(boolean createClass) {
 		addImports("#jgSchemaImplPackage#.#baseClassName#");
 		addImports("#jgSchemaPackage#.VertexClass");
+		addImports("java.lang.ref.WeakReference");
 		CodeSnippet code = new CodeSnippet(
 				true,
 				"/**",
@@ -181,18 +182,27 @@ public class SchemaCodeGenerator extends CodeGenerator {
 				.addNoIndent(new CodeSnippet(
 						true,
 						"/**",
-						" * the singleton instance",
+						" * the weak reference to the singleton instance",
 						" */",
-						"static #simpleClassName# theInstance = null;",
+						"static WeakReference<#simpleClassName#> theInstance = new WeakReference<#simpleClassName#>(null);",
 						"",
 						"/**",
 						" * @return the singleton instance of #simpleClassName#",
 						" */",
 						"public static #simpleClassName# instance() {",
-						"\tif (theInstance == null) {",
-						"\t\ttheInstance = new #simpleClassName#();",
+						"\t#simpleClassName# s = theInstance.get();",
+						"\tif (s != null) {",
+						"\t\treturn s;",
 						"\t}",
-						"\treturn theInstance;",
+						"\tsynchronized (#simpleClassName#.class) {",
+						"\t\ts = theInstance.get();",
+						"\t\tif (s != null) {",
+						"\t\t\treturn s;",
+						"\t\t}",
+						"\t\ts = new #simpleClassName#();",
+						"\t\ttheInstance = new WeakReference<#simpleClassName#>(s);",
+						"\t}",
+						"\treturn s;",
 						"}",
 						"",
 						"/**",
@@ -278,7 +288,7 @@ public class SchemaCodeGenerator extends CodeGenerator {
 	private CodeBlock createEdgeClasses(GraphClass gc) {
 		CodeList code = new CodeList();
 		for (EdgeClass ec : schema.getEdgeClassesInTopologicalOrder()) {
-			if (!ec.isInternal() && ec.getGraphClass() == gc) {
+			if (!ec.isInternal() && (ec.getGraphClass() == gc)) {
 				code.addNoIndent(createEdgeClass(ec));
 			}
 		}
@@ -356,7 +366,7 @@ public class SchemaCodeGenerator extends CodeGenerator {
 	private CodeBlock createVertexClasses(GraphClass gc) {
 		CodeList code = new CodeList();
 		for (VertexClass vc : schema.getVertexClassesInTopologicalOrder()) {
-			if (!vc.isInternal() && vc.getGraphClass() == gc) {
+			if (!vc.isInternal() && (vc.getGraphClass() == gc)) {
 				code.addNoIndent(createVertexClass(vc));
 			}
 		}
