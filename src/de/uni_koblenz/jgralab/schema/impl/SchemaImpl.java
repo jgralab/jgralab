@@ -114,6 +114,15 @@ public class SchemaImpl implements Schema {
 		}
 	}
 
+	// we need a hard reference here, cause the M1ClassManager uses only weak
+	// references. This way, when the schema gets collected, the class manager
+	// is free for collection, too.
+	private M1ClassManager m1ClassManager = null;
+
+	public M1ClassManager getM1ClassManager() {
+		return m1ClassManager;
+	}
+
 	private static final String GRAPH_IMPLEMENTATION_PACKAGE = "array";
 
 	static final Class<?>[] GRAPHCLASS_CREATE_SIGNATURE = { String.class,
@@ -244,6 +253,8 @@ public class SchemaImpl implements Schema {
 		this.name = name;
 		this.packagePrefix = packagePrefix;
 		qualifiedName = packagePrefix + "." + name;
+
+		m1ClassManager = M1ClassManager.instance(qualifiedName);
 
 		// Needs to be created before any NamedElement can be created
 		defaultPackage = PackageImpl.createDefaultPackage(this);
