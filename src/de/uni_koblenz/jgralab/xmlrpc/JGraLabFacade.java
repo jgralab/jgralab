@@ -164,7 +164,7 @@ public class JGraLabFacade {
 			int vMax, int eMax) throws XmlRpcException {
 		try {
 			Class<?> schemaClass = Class.forName(schemaName, true,
-					M1ClassManager.instance());
+					M1ClassManager.instance(schemaName));
 			Schema schema = (Schema) (schemaClass.getMethod("instance",
 					(Class[]) null).invoke(null));
 
@@ -295,7 +295,7 @@ public class JGraLabFacade {
 
 			try {
 				Class.forName(schema.getQualifiedName(), true, M1ClassManager
-						.instance());
+						.instance(schema.getQualifiedName()));
 			} catch (ClassNotFoundException e) {
 				schema.compile();
 			}
@@ -341,7 +341,7 @@ public class JGraLabFacade {
 
 			try {
 				Class.forName(schema.getQualifiedName(), true, M1ClassManager
-						.instance());
+						.instance(schema.getQualifiedName()));
 			} catch (ClassNotFoundException e) {
 				schema.compile();
 			}
@@ -2428,9 +2428,11 @@ public class JGraLabFacade {
 			// value if of type String
 			// get M1-Class for Enum and invoke fromString() method
 			try {
+				assert graph.getClass().getClassLoader() == M1ClassManager
+						.instance(graph.getSchema().getQualifiedName());
 				Class<?> attrType = Class.forName(prefix + "."
-						+ domain.getQualifiedName(), true, M1ClassManager
-						.instance());
+						+ domain.getQualifiedName(), true, graph.getClass()
+						.getClassLoader());
 				value = attrType.getMethod("fromString",
 						new Class[] { String.class }).invoke(null, value);
 			} catch (Exception e) {
@@ -2475,7 +2477,7 @@ public class JGraLabFacade {
 			try {
 				Class<?> attrType = Class.forName(prefix + "."
 						+ domain.getQualifiedName(), true, M1ClassManager
-						.instance());
+						.instance(graph.getSchema().getQualifiedName()));
 				value = attrType.getConstructor(new Class<?>[] { Map.class })
 						.newInstance(value);
 			} catch (Exception e) {

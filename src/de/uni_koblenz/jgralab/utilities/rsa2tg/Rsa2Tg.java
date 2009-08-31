@@ -86,7 +86,6 @@ import de.uni_koblenz.jgralab.grumlschema.structure.To;
 import de.uni_koblenz.jgralab.grumlschema.structure.VertexClass;
 import de.uni_koblenz.jgralab.utilities.common.OptionHandler;
 import de.uni_koblenz.jgralab.utilities.tg2dot.Tg2Dot;
-import de.uni_koblenz.jgralab.utilities.xml.SchemaGraph2XSD;
 
 /**
  * Rsa2Tg is a utility that converts XMI files exported from IBM (tm) Rational
@@ -352,8 +351,8 @@ public class Rsa2Tg {
 			schemaGraph = nulls;
 		}
 
-		if (debug.length != numFiles || output.length != numFiles
-				|| schemaGraph.length != numFiles) {
+		if ((debug.length != numFiles) || (output.length != numFiles)
+				|| (schemaGraph.length != numFiles)) {
 			throw new IllegalArgumentException(
 					"There should be the same amount filenames for debug information, "
 							+ "output as Schema or as SchemaGraph given as for input filenames.");
@@ -411,7 +410,7 @@ public class Rsa2Tg {
 	private static CommandLine processCommandLineOptions(String[] args) {
 
 		// Creates a OptionHandler.
-		String toolString = "java " + SchemaGraph2XSD.class.getName();
+		String toolString = "java " + Rsa2Tg.class.getName();
 		String versionString = JGraLab.getInfo(false);
 		OptionHandler oh = new OptionHandler(toolString, versionString);
 

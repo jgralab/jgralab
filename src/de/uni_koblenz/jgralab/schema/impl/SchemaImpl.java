@@ -109,8 +109,7 @@ public class SchemaImpl implements Schema {
 		public JavaFileObject getJavaFileForOutput(Location location,
 				String className, Kind kind, FileObject sibling) {
 			ClassFileAbstraction cfa = new ClassFileAbstraction(className);
-
-			M1ClassManager.instance().putM1Class(className, cfa);
+			M1ClassManager.instance(qualifiedName).putM1Class(className, cfa);
 			return cfa;
 		}
 	}
@@ -983,7 +982,7 @@ public class SchemaImpl implements Schema {
 		Class<? extends Graph> m1Class;
 		try {
 			m1Class = (Class<? extends Graph>) Class.forName(implClassName,
-					true, M1ClassManager.instance());
+					true, M1ClassManager.instance(qualifiedName));
 		} catch (ClassNotFoundException e) {
 			throw new M1ClassAccessException(
 					"can't load implementation class '" + implClassName + "'",
