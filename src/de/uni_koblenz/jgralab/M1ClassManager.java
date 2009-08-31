@@ -72,12 +72,6 @@ public class M1ClassManager extends ClassLoader {
 		m1Classes.put(className, cfa);
 	}
 
-	@Override
-	protected void finalize() throws Throwable {
-		System.out.println("M1ClassManager for " + mySchemaQName
-				+ " says goodbye...");
-	}
-
 	/**
 	 * Tries to find a class in the internal {@code Map}, If this fails, {@code
 	 * findClass} of {@code ClassLoader} is invoked.
