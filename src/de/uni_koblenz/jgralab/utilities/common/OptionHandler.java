@@ -383,6 +383,9 @@ public class OptionHandler {
 
 		int begin = 0;
 		int end = error.indexOf('[');
+		if (end == -1) {
+			return error;
+		}
 		sb.append(error.substring(begin, end));
 		sb.append("\n\t");
 		begin = end + 1;

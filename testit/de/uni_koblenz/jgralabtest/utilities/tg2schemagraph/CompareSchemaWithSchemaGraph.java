@@ -278,10 +278,12 @@ public class CompareSchemaWithSchemaGraph {
 					"Omega should be an instance of GraphElementClass.",
 					containsGraphElementClass.getOmega() instanceof GraphElementClass);
 
+			Vertex omega = containsGraphElementClass.getOmega();
+			assert (omega != null);
+
 			// Distinguishing between VertexClass and EdgeClass
-			if (containsGraphElementClass.getOmega() instanceof VertexClass) {
-				VertexClass gVertexClass = (VertexClass) containsGraphElementClass
-						.getOmega();
+			if (omega instanceof VertexClass) {
+				VertexClass gVertexClass = (VertexClass) omega;
 				// Retrieving the simple name of the corresponding VertexClass
 				String simpleName = schema.getAttributedElementClass(
 						gVertexClass.getQualifiedName()).getSimpleName();
@@ -289,23 +291,28 @@ public class CompareSchemaWithSchemaGraph {
 				// VertexClass objects
 				compareVertexClass(vertexClasses.remove(simpleName),
 						gVertexClass);
-			} else {
+			} else if (omega instanceof EdgeClass) {
 				// The Same for the EdgeClass comparison
-				EdgeClass gEdgeClass = (EdgeClass) containsGraphElementClass
-						.getOmega();
+				EdgeClass gEdgeClass = (EdgeClass) omega;
 				// Retrieving the simple name of the corresponding VertexClass
 				String simpleName = schema.getAttributedElementClass(
 						gEdgeClass.getQualifiedName()).getSimpleName();
 				// Queries, removes and compares at the same time two EdgeClass
 				// objects
 				compareEdgeClass(edgeClasses.remove(simpleName), gEdgeClass);
+			} else {
+				throw new RuntimeException("Unexpected type " + omega);
 			}
 		}
 
 		// Both maps should be empty.
+
 		assertTrue(
 				"There are more VertexClasses in Schema then in the SchemaGraph.",
 				vertexClasses.isEmpty());
+		for (de.uni_koblenz.jgralab.schema.EdgeClass e : edgeClasses.values()) {
+			System.out.println(e.getQualifiedName());
+		}
 		assertTrue(
 				"There are more EdgeClasses in Schema then in the SchemaGraph.",
 				edgeClasses.isEmpty());
@@ -701,15 +708,19 @@ public class CompareSchemaWithSchemaGraph {
 				.getThat() instanceof VertexClass);
 		vertexClass = (VertexClass) to.getThat();
 
-		// QualifiedName, min, max and rolename are compared.
-		assertEquals("Both \"To\" edges should have the same QualifiedName.",
+		// Qualified Name, min, max and rolename are compared.
+		assertEquals(edgeClass.getQualifiedName()
+				+ ": Both \"To\" edges should have the same QualifiedName.",
 				edgeClass.getTo().getQualifiedName(), vertexClass
 						.getQualifiedName());
-		assertEquals("Both \"To\" edges should have the same min value.",
+		assertEquals(edgeClass.getQualifiedName()
+				+ ": Both \"To\" edges should have the same min value.",
 				edgeClass.getToMin(), to.getMin());
-		assertEquals("Both \"To\" edges should have the same max value.",
+		assertEquals(edgeClass.getQualifiedName()
+				+ ": Both \"To\" edges should have the same max value.",
 				edgeClass.getToMax(), to.getMax());
-		assertEquals("Both \"To\" edges should have the same RoleName.",
+		assertEquals(edgeClass.getQualifiedName()
+				+ ": Both \"To\" edges should have the same RoleName.",
 				edgeClass.getToRolename(), to.getRoleName());
 
 		// Comparing the redefined Roles

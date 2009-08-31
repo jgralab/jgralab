@@ -46,6 +46,9 @@ import javax.xml.stream.XMLStreamConstants;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 
+import org.apache.commons.cli.CommandLine;
+import org.apache.commons.cli.Option;
+
 import de.uni_koblenz.jgralab.AttributedElement;
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.EdgeDirection;
@@ -81,7 +84,9 @@ import de.uni_koblenz.jgralab.grumlschema.structure.Package;
 import de.uni_koblenz.jgralab.grumlschema.structure.Schema;
 import de.uni_koblenz.jgralab.grumlschema.structure.To;
 import de.uni_koblenz.jgralab.grumlschema.structure.VertexClass;
+import de.uni_koblenz.jgralab.utilities.common.OptionHandler;
 import de.uni_koblenz.jgralab.utilities.tg2dot.Tg2Dot;
+import de.uni_koblenz.jgralab.utilities.xml.SchemaGraph2XSD;
 
 /**
  * Rsa2Tg is a utility that converts XMI files exported from IBM (tm) Rational
@@ -282,6 +287,31 @@ public class Rsa2Tg {
 	private boolean processed;
 
 	/**
+	 * Flag for writing the output as SchemaGraph.
+	 */
+	private boolean writeSchemaGraph;
+
+	/**
+	 * Flag for writing debug information of the conversion process.
+	 */
+	private boolean writeDebug;
+
+	/**
+	 * Filename for the Schema.
+	 */
+	private String filenameSchema;
+
+	/**
+	 * Filename for the SchemaGraph;
+	 */
+	private String filenameSchemaGraph;
+
+	/**
+	 * Filename for debug informations.
+	 */
+	private String filenameDebug;
+
+	/**
 	 * Creates a Rsa2Tg converter.
 	 */
 	public Rsa2Tg() {
@@ -300,19 +330,130 @@ public class Rsa2Tg {
 		r.setRemoveUnusedDomains(true);
 		r.setUseNavigability(true);
 
-		// TODO CLI should be implemented
+		// Retrieving all command line options
+		CommandLine cli = processCommandLineOptions(args);
+		String[] input = cli.getOptionValues('i');
 
-		for (String xmiFileName : args) {
-			System.out.println("processing: " + xmiFileName);
+		int numFiles = input.length;
+
+		String[] nulls = new String[input.length];
+		String[] debug = cli.hasOption('d') ? cli.getOptionValues('d') : nulls;
+		String[] output = cli.hasOption('o') ? cli.getOptionValues('o') : nulls;
+		String[] schemaGraph = cli.hasOption('s') ? cli.getOptionValues('s')
+				: nulls;
+
+		if (debug == null) {
+			debug = nulls;
+		}
+		if (output == null) {
+			output = nulls;
+		}
+		if (schemaGraph == null) {
+			schemaGraph = nulls;
+		}
+
+		if (debug.length != numFiles || output.length != numFiles
+				|| schemaGraph.length != numFiles) {
+			throw new IllegalArgumentException(
+					"There should be the same amount filenames for debug information, "
+							+ "output as Schema or as SchemaGraph given as for input filenames.");
+		}
+
+		for (int i = 0; i < input.length; i++) {
+			System.out.println("processing: " + input[i]);
 			try {
-				r.process(xmiFileName);
+				r.setWriteDebug(cli.hasOption('d'));
+				r.setWriteSchemaGraph(cli.hasOption('s'));
+				r.process(input[i], output[i], schemaGraph[i], debug[i]);
 			} catch (Exception e) {
 				System.err.println("An Exception occured while processing "
-						+ xmiFileName + ".");
+						+ input[i] + ".");
+				System.err.println(e.getMessage());
 				e.printStackTrace();
 			}
 		}
 		System.out.println("Fini.");
+	}
+
+	/**
+	 * Processes all command line parameters and returns a {@link CommandLine}
+	 * object, which holds all values included in the given String array.
+	 * 
+	 * <pre>
+	 * RSA to TG
+	 * =========
+	 * usage: java de.uni_koblenz.jgralab.utilities.xml.SchemaGraph2XSD [-h ] [-v
+	 *             ] [-d [&lt;filename&gt;]] [-s [&lt;filename&gt;]] -i &lt;filename&gt; [-o
+	 *             &lt;filename&gt;]
+	 *  -d,--debug &lt;filename&gt;         (optional): write a validation report
+	 *                                '&lt;filename&gt;.gruml.validationreport.html'
+	 *                                and a dotty-graph '&lt;filename&gt;.gruml.dot'.
+	 *                                The &lt;filename&gt; is optional. In case of no
+	 *                                given filename, &lt;filename&gt; :=
+	 *                                '&lt;NAME_OF_SCHEMA&gt;'.
+	 *  -h,--help                     (optional): print this help message.
+	 *  -i,--input &lt;filename&gt;         (required): UML 2.1-XMI exchange modell
+	 *                                file of the Schema.
+	 *  -o,--output &lt;filename&gt;        (optional): write a TG-file of the Schema
+	 *                                in '&lt;filename&gt;.rsa.tg.'
+	 *  -s,--schemaGraph &lt;filename&gt;   (optional): write a TG-file of the Schema
+	 *                                as graph instance in '&lt;filename&gt;.tg'.
+	 *                                &lt;filename&gt; is optional. In case of no given
+	 *                                filename, &lt;filename&gt; :=
+	 *                                '&lt;NAME_OF_SCHEMA&gt;.gruml'.
+	 *  -v,--version                  (optional): print version information
+	 * </pre>
+	 * 
+	 * @param args
+	 *            {@link CommandLine} parameters.
+	 * @return {@link CommandLine} object, which holds all necessary values.
+	 */
+	private static CommandLine processCommandLineOptions(String[] args) {
+
+		// Creates a OptionHandler.
+		String toolString = "java " + SchemaGraph2XSD.class.getName();
+		String versionString = JGraLab.getInfo(false);
+		OptionHandler oh = new OptionHandler(toolString, versionString);
+
+		// Several Options are declared.
+		Option debug = new Option(
+				"d",
+				"debug",
+				true,
+				"(optional): write a validation report '<filename>.gruml.validationreport.html' and a dotty-graph "
+						+ "'<filename>.gruml.dot'. The <filename> is optional. In case of no given filename, <filename> := "
+						+ "'<NAME_OF_SCHEMA>'.");
+		debug.setRequired(false);
+		debug.setArgName("filename");
+		debug.setOptionalArg(true);
+		oh.addOption(debug);
+
+		Option schemaGraph = new Option(
+				"s",
+				"schemaGraph",
+				true,
+				"(optional): write a TG-file of the Schema as graph instance in '<filename>.tg'"
+						+ ". <filename> is optional. In case of no given filename, <filename> := '<NAME_OF_"
+						+ "SCHEMA>.gruml'.");
+		schemaGraph.setRequired(false);
+		schemaGraph.setArgName("filename");
+		schemaGraph.setOptionalArg(true);
+		oh.addOption(schemaGraph);
+
+		Option input = new Option("i", "input", true,
+				"(required): UML 2.1-XMI exchange modell file of the Schema.");
+		input.setRequired(true);
+		input.setArgName("filename");
+		oh.addOption(input);
+
+		Option output = new Option("o", "output", true,
+				"(optional): write a TG-file of the Schema in '<filename>.rsa.tg.'");
+		output.setRequired(false);
+		output.setArgName("filename");
+		oh.addOption(output);
+
+		// Parses the given command line parameters with all created Option.
+		return oh.parse(args);
 	}
 
 	/**
@@ -323,8 +464,14 @@ public class Rsa2Tg {
 	 * @param xmiFileName
 	 *            the name of the XMI file to convert
 	 */
-	public void process(String xmiFileName) throws FileNotFoundException,
-			XMLStreamException {
+	public void process(String xmiFileName, String schemaFileName,
+			String schemaGraphFileName, String debugFileName)
+			throws FileNotFoundException, XMLStreamException {
+
+		filenameSchema = schemaFileName;
+		filenameSchemaGraph = schemaGraphFileName;
+		filenameDebug = debugFileName;
+
 		InputStream in = new FileInputStream(xmiFileName);
 		currentXmiFile = new File(xmiFileName);
 		XMLInputFactory factory = XMLInputFactory.newInstance();
@@ -440,10 +587,25 @@ public class Rsa2Tg {
 			String schemaName = schema.getName();
 			assert schemaName != null;
 
-			createDotFile(schemaName);
-			saveGraph(schemaName);
-			validateGraph(schemaName);
-			saveSchemagraphAsTg(schemaName, false);
+			String debug, schema, schemaGraph;
+			debug = (filenameDebug != null) ? filenameDebug : schemaName;
+			schema = (filenameSchema != null) ? filenameSchema : schemaName;
+			schemaGraph = (filenameSchemaGraph != null) ? filenameSchemaGraph
+					: schemaName;
+
+			if (writeDebug) {
+
+				createDotFile(debug);
+			}
+
+			if (writeSchemaGraph) {
+				saveGraph(schemaGraph);
+
+				if (writeDebug) {
+					validateGraph(debug);
+				}
+			}
+			saveSchemagraphAsTg(schema, false);
 		}
 	}
 
@@ -1752,5 +1914,45 @@ public class Rsa2Tg {
 
 	public void setSuppressOutput(boolean suppressOutput) {
 		this.suppressOutput = suppressOutput;
+	}
+
+	public boolean isWriteSchemaGraph() {
+		return writeSchemaGraph;
+	}
+
+	public void setWriteSchemaGraph(boolean writeSchemaGraph) {
+		this.writeSchemaGraph = writeSchemaGraph;
+	}
+
+	public boolean isWriteDebug() {
+		return writeDebug;
+	}
+
+	public void setWriteDebug(boolean writeDebug) {
+		this.writeDebug = writeDebug;
+	}
+
+	public String getFilenameSchema() {
+		return filenameSchema;
+	}
+
+	public void setFilenameSchema(String filenameSchema) {
+		this.filenameSchema = filenameSchema;
+	}
+
+	public String getFilenameSchemaGraph() {
+		return filenameSchemaGraph;
+	}
+
+	public void setFilenameSchemaGraph(String filenameSchemaGraph) {
+		this.filenameSchemaGraph = filenameSchemaGraph;
+	}
+
+	public String getFilenameDebug() {
+		return filenameDebug;
+	}
+
+	public void setFilenameDebug(String filenameDebug) {
+		this.filenameDebug = filenameDebug;
 	}
 }
