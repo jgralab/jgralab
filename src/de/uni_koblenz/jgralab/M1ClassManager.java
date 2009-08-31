@@ -42,31 +42,40 @@ import de.uni_koblenz.jgralab.schema.Schema;
  */
 public class M1ClassManager extends ClassLoader {
 	private Map<String, ClassFileAbstraction> m1Classes;
+	private String mySchemaQName;
 
 	private static HashMap<String, WeakReference<M1ClassManager>> instances = new HashMap<String, WeakReference<M1ClassManager>>();
 
 	public static M1ClassManager instance(String qualifiedName) {
-		M1ClassManager m = instances.get(qualifiedName).get();
-		if (m != null) {
-			return m;
+		WeakReference<M1ClassManager> ref = instances.get(qualifiedName);
+		if ((ref != null) && (ref.get() != null)) {
+			return ref.get();
 		}
 		synchronized (M1ClassManager.class) {
-			m = instances.get(qualifiedName).get();
-			if (m != null) {
-				return m;
+			ref = instances.get(qualifiedName);
+			if ((ref != null) && (ref.get() != null)) {
+				return ref.get();
 			}
-			m = new M1ClassManager();
-			instances.put(qualifiedName, new WeakReference<M1ClassManager>(m));
+			ref = new WeakReference<M1ClassManager>(new M1ClassManager(
+					qualifiedName));
+			instances.put(qualifiedName, ref);
 		}
-		return m;
+		return ref.get();
 	}
 
-	private M1ClassManager() {
+	private M1ClassManager(String schemaQName) {
+		mySchemaQName = schemaQName;
 		m1Classes = new HashMap<String, ClassFileAbstraction>();
 	}
 
 	public void putM1Class(String className, ClassFileAbstraction cfa) {
 		m1Classes.put(className, cfa);
+	}
+
+	@Override
+	protected void finalize() throws Throwable {
+		System.out.println("M1ClassManager for " + mySchemaQName
+				+ " says goodbye...");
 	}
 
 	/**
@@ -86,7 +95,6 @@ public class M1ClassManager extends ClassLoader {
 			m1Classes.remove(name);
 			return clazz;
 		}
-		// return super.findClass(name);
 		return Class.forName(name);
 	}
 }
