@@ -742,7 +742,7 @@ public class SchemaGraph2Schema {
 
 		// Loop over all SpecializesEdgeClass edges
 		for (SpecializesEdgeClass specializesEdgeClass : gEdgeClass
-				.getSpecializesEdgeClassIncidences()) {
+				.getSpecializesEdgeClassIncidences(OUTGOING)) {
 
 			// Gets the superclass
 			assert (specializesEdgeClass != null && specializesEdgeClass
@@ -783,7 +783,7 @@ public class SchemaGraph2Schema {
 
 		// Loop over all SpecializesEdgeClass edges
 		for (SpecializesVertexClass specializesVertexClass : gVertexClass
-				.getSpecializesVertexClassIncidences()) {
+				.getSpecializesVertexClassIncidences(OUTGOING)) {
 
 			// Gets the superclass
 			assert (specializesVertexClass.getOmega() instanceof VertexClass) : "That should be an instance of VertexClass.";

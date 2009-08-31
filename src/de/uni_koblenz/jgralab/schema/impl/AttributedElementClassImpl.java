@@ -175,6 +175,10 @@ public abstract class AttributedElementClassImpl extends NamedElementImpl
 			}
 		}
 		if (superClass.isSubClassOf(this)) {
+			for (AttributedElementClass attr : superClass.getAllSuperClasses()) {
+				System.out.println(attr.getQualifiedName());
+			}
+			System.out.println();
 			throw new InheritanceException(
 					"Cycle in class hierarchie for classes: "
 							+ getQualifiedName() + " and "
