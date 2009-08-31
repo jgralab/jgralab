@@ -24,28 +24,41 @@
 
 package de.uni_koblenz.jgralab;
 
+import java.lang.ref.WeakReference;
 import java.util.HashMap;
 import java.util.Map;
 
 import de.uni_koblenz.jgralab.codegenerator.ClassFileAbstraction;
+import de.uni_koblenz.jgralab.schema.Schema;
 
 /**
- * The {@code M1ClassManager} holds the bytecode of M1 classes in a {@code Map}.
- * As a specialization of {@code ClassLoader}, it overwrites the method {@code
- * findClass} so that the {@code Map} is first searched for classes' bytecode
- * before invoking {@code findClass} of the superclass {@code ClassLoader}.
+ * A {@code M1ClassManager} holds the bytecode of the M1 classes of one
+ * {@link Schema} in a {@code Map}. As a specialization of {@code ClassLoader},
+ * it overwrites the method {@code findClass} so that the {@code Map} is first
+ * searched for classes' bytecode before invoking {@code findClass} of the
+ * superclass {@code ClassLoader}.
  * 
  * @author ist@uni-koblenz.de
  */
 public class M1ClassManager extends ClassLoader {
 	private Map<String, ClassFileAbstraction> m1Classes;
-	private static M1ClassManager instance = null;
 
-	public static M1ClassManager instance() {
-		if (instance == null) {
-			instance = new M1ClassManager();
+	private static HashMap<String, WeakReference<M1ClassManager>> instances = new HashMap<String, WeakReference<M1ClassManager>>();
+
+	public static M1ClassManager instance(String qualifiedName) {
+		M1ClassManager m = instances.get(qualifiedName).get();
+		if (m != null) {
+			return m;
 		}
-		return instance;
+		synchronized (M1ClassManager.class) {
+			m = instances.get(qualifiedName).get();
+			if (m != null) {
+				return m;
+			}
+			m = new M1ClassManager();
+			instances.put(qualifiedName, new WeakReference<M1ClassManager>(m));
+		}
+		return m;
 	}
 
 	private M1ClassManager() {

@@ -325,8 +325,9 @@ public abstract class AttributedElementClassImpl extends NamedElementImpl
 			String m1ClassName = getSchema().getPackagePrefix() + "."
 					+ getQualifiedName();
 			try {
+				assert getClass().getClassLoader() instanceof M1ClassManager;
 				m1Class = (Class<? extends AttributedElement>) Class.forName(
-						m1ClassName, true, M1ClassManager.instance());
+						m1ClassName, true, getClass().getClassLoader());
 			} catch (ClassNotFoundException e) {
 				throw new M1ClassAccessException(
 						"Can't load M1 class for AttributedElementClass '"

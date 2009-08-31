@@ -35,6 +35,7 @@ import de.uni_koblenz.jgralab.greql2.exception.WrongFunctionParameterException;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
 import de.uni_koblenz.jgralab.schema.EnumDomain;
+import de.uni_koblenz.jgralab.schema.Schema;
 
 /**
  * *
@@ -85,15 +86,18 @@ public class EnumConstant extends AbstractGreql2Function {
 		String enumDomainName = arguments[0].toString();
 		String enumConstantName = arguments[1].toString();
 
-		EnumDomain enumDomain = (EnumDomain) graph.getSchema().getDomain(
-				enumDomainName);
+		Schema schema = graph.getSchema();
+
+		EnumDomain enumDomain = (EnumDomain) schema.getDomain(enumDomainName);
 		JValue result = null;
 
-		String enumClassName = enumDomain.getJavaClassName(graph.getSchema()
+		String enumClassName = enumDomain.getJavaClassName(schema
 				.getPackagePrefix());
 		try {
-			Class<?> myEnum = Class.forName(enumClassName, false,
-					M1ClassManager.instance());
+			assert M1ClassManager.instance(schema.getQualifiedName()) == schema
+					.getClass().getClassLoader();
+			Class<?> myEnum = Class.forName(enumClassName, false, schema
+					.getClass().getClassLoader());
 			Method fromString = myEnum.getMethod("fromString",
 					new Class<?>[] { String.class });
 			Object constant = fromString.invoke(null,
