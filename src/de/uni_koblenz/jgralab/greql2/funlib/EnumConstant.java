@@ -98,7 +98,7 @@ public class EnumConstant extends AbstractGreql2Function {
 					.getClass().getClassLoader();
 			Class<?> myEnum = Class.forName(enumClassName, false, schema
 					.getClass().getClassLoader());
-			Method fromString = myEnum.getMethod("fromString",
+			Method fromString = myEnum.getMethod("valueOf",
 					new Class<?>[] { String.class });
 			Object constant = fromString.invoke(null,
 					new Object[] { enumConstantName });

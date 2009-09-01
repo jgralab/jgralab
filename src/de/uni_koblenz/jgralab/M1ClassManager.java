@@ -41,12 +41,23 @@ import de.uni_koblenz.jgralab.schema.Schema;
  * @author ist@uni-koblenz.de
  */
 public class M1ClassManager extends ClassLoader {
+	private static final String ENUM_CLASS_MANAGER_NAME = "###EnumClassManager###";
+	public static M1ClassManager ENUM_M1_CLASS_MANAGER = null;
 	private Map<String, ClassFileAbstraction> m1Classes;
-	private String mySchemaQName;
 
 	private static HashMap<String, WeakReference<M1ClassManager>> instances = new HashMap<String, WeakReference<M1ClassManager>>();
 
 	public static M1ClassManager instance(String qualifiedName) {
+		synchronized (M1ClassManager.class) {
+			if (ENUM_M1_CLASS_MANAGER == null) {
+				ENUM_M1_CLASS_MANAGER = new M1ClassManager(
+						ENUM_CLASS_MANAGER_NAME);
+			}
+			if (qualifiedName.equals(ENUM_CLASS_MANAGER_NAME)) {
+				return ENUM_M1_CLASS_MANAGER;
+			}
+		}
+
 		WeakReference<M1ClassManager> ref = instances.get(qualifiedName);
 		if ((ref != null) && (ref.get() != null)) {
 			return ref.get();
@@ -64,7 +75,6 @@ public class M1ClassManager extends ClassLoader {
 	}
 
 	private M1ClassManager(String schemaQName) {
-		mySchemaQName = schemaQName;
 		m1Classes = new HashMap<String, ClassFileAbstraction>();
 	}
 
@@ -89,6 +99,14 @@ public class M1ClassManager extends ClassLoader {
 			m1Classes.remove(name);
 			return clazz;
 		}
+
+		if (this != ENUM_M1_CLASS_MANAGER) {
+			Class<?> clazz = ENUM_M1_CLASS_MANAGER.findClass(name);
+			if (clazz != null) {
+				return clazz;
+			}
+		}
+
 		return Class.forName(name);
 	}
 }

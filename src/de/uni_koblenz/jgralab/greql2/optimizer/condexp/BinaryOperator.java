@@ -5,18 +5,20 @@ package de.uni_koblenz.jgralab.greql2.optimizer.condexp;
 
 import java.util.ArrayList;
 
+import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
 import de.uni_koblenz.jgralab.greql2.schema.Expression;
 
 /**
  * TODO: (heimdall) Comment class!
- *
+ * 
  * @author ist@uni-koblenz.de
- *
+ * 
  */
 public abstract class BinaryOperator extends Formula {
 	protected Formula leftHandSide, rightHandSide;
 
-	public BinaryOperator(Formula lhs, Formula rhs) {
+	public BinaryOperator(GreqlEvaluator eval, Formula lhs, Formula rhs) {
+		super(eval);
 		leftHandSide = lhs;
 		rightHandSide = rhs;
 	}
@@ -39,7 +41,7 @@ public abstract class BinaryOperator extends Formula {
 	protected boolean isAndWithNullLeaf(Formula other) {
 		if (other instanceof And) {
 			BinaryOperator otherBO = (BinaryOperator) other;
-			return (otherBO.leftHandSide instanceof Null || otherBO.rightHandSide instanceof Null);
+			return ((otherBO.leftHandSide instanceof Null) || (otherBO.rightHandSide instanceof Null));
 		}
 		return false;
 	}
@@ -47,7 +49,7 @@ public abstract class BinaryOperator extends Formula {
 	protected boolean isOrWithNullLeaf(Formula other) {
 		if (other instanceof Or) {
 			BinaryOperator otherBO = (BinaryOperator) other;
-			return (otherBO.leftHandSide instanceof Null || otherBO.rightHandSide instanceof Null);
+			return ((otherBO.leftHandSide instanceof Null) || (otherBO.rightHandSide instanceof Null));
 		}
 		return false;
 	}

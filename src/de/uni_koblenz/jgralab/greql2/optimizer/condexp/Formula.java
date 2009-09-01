@@ -16,7 +16,6 @@ import de.uni_koblenz.jgralab.greql2.schema.BoolLiteral;
 import de.uni_koblenz.jgralab.greql2.schema.Expression;
 import de.uni_koblenz.jgralab.greql2.schema.FunctionApplication;
 import de.uni_koblenz.jgralab.greql2.schema.FunctionId;
-import de.uni_koblenz.jgralab.greql2.schema.Greql2;
 import de.uni_koblenz.jgralab.greql2.schema.IsArgumentOf;
 import de.uni_koblenz.jgralab.greql2.schema.TrivalentBoolean;
 
@@ -36,18 +35,16 @@ public abstract class Formula {
 	 */
 	protected static boolean simplifiedOrOptimized = false;
 
-	protected static Greql2 syntaxgraph;
-	protected static GreqlEvaluator greqlEvaluator;
+	protected GreqlEvaluator greqlEvaluator;
 
 	@Override
 	public abstract String toString();
 
 	public abstract Expression toExpression();
 
-	public static Formula createFormulaFromExpression(Expression exp) {
-		syntaxgraph = (Greql2) exp.getGraph();
-
-		Formula formula = createFormulaFromExpressionInternal(exp);
+	public static Formula createFormulaFromExpression(Expression exp,
+			GreqlEvaluator eval) {
+		Formula formula = createFormulaFromExpressionInternal(eval, exp);
 
 		OptimizerUtility
 				.deleteOrphanedVerticesBelow(exp, new HashSet<Expression>(
@@ -55,17 +52,22 @@ public abstract class Formula {
 		return formula;
 	}
 
-	private static Formula createFormulaFromExpressionInternal(Expression exp) {
+	public Formula(GreqlEvaluator eval) {
+		this.greqlEvaluator = eval;
+	}
+
+	private static Formula createFormulaFromExpressionInternal(
+			GreqlEvaluator eval, Expression exp) {
 		if (exp instanceof BoolLiteral) {
 			BoolLiteral bool = (BoolLiteral) exp;
 			TrivalentBoolean value = bool.getBoolValue();
 			if (value == TrivalentBoolean.TRUE) {
-				return new True();
+				return new True(eval);
 			}
 			if (value == TrivalentBoolean.FALSE) {
-				return new False();
+				return new False(eval);
 			}
-			return new Null();
+			return new Null(eval);
 		}
 
 		if (exp instanceof FunctionApplication) {
@@ -76,8 +78,9 @@ public abstract class Formula {
 				Expression leftArg = (Expression) inc.getAlpha();
 				Expression rightArg = (Expression) inc.getNextIsArgumentOf(
 						EdgeDirection.IN).getAlpha();
-				return new And(createFormulaFromExpressionInternal(leftArg),
-						createFormulaFromExpressionInternal(rightArg));
+				return new And(eval, createFormulaFromExpressionInternal(eval,
+						leftArg), createFormulaFromExpressionInternal(eval,
+						rightArg));
 			}
 			if (OptimizerUtility.isOr(funApp)) {
 				IsArgumentOf inc = funApp
@@ -85,18 +88,20 @@ public abstract class Formula {
 				Expression leftArg = (Expression) inc.getAlpha();
 				Expression rightArg = (Expression) inc.getNextIsArgumentOf(
 						EdgeDirection.IN).getAlpha();
-				return new Or(createFormulaFromExpressionInternal(leftArg),
-						createFormulaFromExpressionInternal(rightArg));
+				return new Or(eval, createFormulaFromExpressionInternal(eval,
+						leftArg), createFormulaFromExpressionInternal(eval,
+						rightArg));
 			}
 			if (OptimizerUtility.isNot(funApp)) {
 				IsArgumentOf inc = funApp
 						.getFirstIsArgumentOf(EdgeDirection.IN);
 				Expression arg = (Expression) inc.getAlpha();
-				return new Not(createFormulaFromExpressionInternal(arg));
+				return new Not(eval, createFormulaFromExpressionInternal(eval,
+						arg));
 			}
 		}
 
-		return new NonConstantTerm(exp);
+		return new NonConstantTerm(eval, exp);
 	}
 
 	public Formula optimize() {
@@ -213,10 +218,6 @@ public abstract class Formula {
 	public abstract Formula simplify();
 
 	public abstract double getSelectivity();
-
-	public static void setGreqlEvaluator(GreqlEvaluator greqlEvaluator) {
-		Formula.greqlEvaluator = greqlEvaluator;
-	}
 
 	@Override
 	public abstract boolean equals(Object o);
