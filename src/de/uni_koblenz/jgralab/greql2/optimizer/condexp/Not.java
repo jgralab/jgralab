@@ -5,22 +5,25 @@ package de.uni_koblenz.jgralab.greql2.optimizer.condexp;
 
 import java.util.ArrayList;
 
+import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
 import de.uni_koblenz.jgralab.greql2.optimizer.OptimizerUtility;
 import de.uni_koblenz.jgralab.greql2.schema.Expression;
 import de.uni_koblenz.jgralab.greql2.schema.FunctionApplication;
 import de.uni_koblenz.jgralab.greql2.schema.FunctionId;
+import de.uni_koblenz.jgralab.greql2.schema.Greql2;
 
 /**
  * TODO: (heimdall) Comment class!
- *
+ * 
  * @author ist@uni-koblenz.de
- *
+ * 
  */
 public class Not extends Formula {
 
 	protected Formula formula;
 
-	public Not(Formula formula) {
+	public Not(GreqlEvaluator eval, Formula formula) {
+		super(eval);
 		this.formula = formula;
 	}
 
@@ -31,6 +34,7 @@ public class Not extends Formula {
 
 	@Override
 	public Expression toExpression() {
+		Greql2 syntaxgraph = greqlEvaluator.getSyntaxGraph();
 		FunctionApplication funApp = syntaxgraph.createFunctionApplication();
 		FunctionId funId = OptimizerUtility.findOrCreateFunctionId("not",
 				syntaxgraph);
@@ -47,7 +51,8 @@ public class Not extends Formula {
 	@Override
 	protected Formula calculateReplacementFormula(Expression exp,
 			Literal literal) {
-		return new Not(formula.calculateReplacementFormula(exp, literal));
+		return new Not(greqlEvaluator, formula.calculateReplacementFormula(exp,
+				literal));
 	}
 
 	@Override
@@ -56,12 +61,12 @@ public class Not extends Formula {
 
 		if (f instanceof True) {
 			simplifiedOrOptimized = true;
-			return new False();
+			return new False(greqlEvaluator);
 		}
 
 		if (f instanceof False) {
 			simplifiedOrOptimized = true;
-			return new True();
+			return new True(greqlEvaluator);
 		}
 
 		if (f instanceof Null) {
@@ -80,7 +85,8 @@ public class Not extends Formula {
 			And and = (And) f;
 			Formula left = and.leftHandSide;
 			Formula right = and.rightHandSide;
-			return new Or(new Not(left), new Not(right)).simplify();
+			return new Or(greqlEvaluator, new Not(greqlEvaluator, left),
+					new Not(greqlEvaluator, right)).simplify();
 		}
 
 		if (f instanceof Or) {
@@ -88,10 +94,11 @@ public class Not extends Formula {
 			Or or = (Or) f;
 			Formula left = or.leftHandSide;
 			Formula right = or.rightHandSide;
-			return new And(new Not(left), new Not(right)).simplify();
+			return new And(greqlEvaluator, new Not(greqlEvaluator, left),
+					new Not(greqlEvaluator, right)).simplify();
 		}
 
-		return new Not(f);
+		return new Not(greqlEvaluator, f);
 	}
 
 	@Override

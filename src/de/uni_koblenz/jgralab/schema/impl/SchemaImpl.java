@@ -109,8 +109,23 @@ public class SchemaImpl implements Schema {
 		public JavaFileObject getJavaFileForOutput(Location location,
 				String className, Kind kind, FileObject sibling) {
 			ClassFileAbstraction cfa = new ClassFileAbstraction(className);
-			M1ClassManager.instance(qualifiedName).putM1Class(className, cfa);
+			if (isEnum(className.substring(packagePrefix.length() + 1))) {
+				M1ClassManager.ENUM_M1_CLASS_MANAGER.putM1Class(className, cfa);
+			} else {
+				M1ClassManager.instance(qualifiedName).putM1Class(className,
+						cfa);
+			}
 			return cfa;
+		}
+
+		private boolean isEnum(String qName) {
+			Domain d = getDomain(qName);
+			if (d != null) {
+				if (d instanceof EnumDomain) {
+					return true;
+				}
+			}
+			return false;
 		}
 	}
 
@@ -253,7 +268,6 @@ public class SchemaImpl implements Schema {
 		this.name = name;
 		this.packagePrefix = packagePrefix;
 		qualifiedName = packagePrefix + "." + name;
-
 		m1ClassManager = M1ClassManager.instance(qualifiedName);
 
 		// Needs to be created before any NamedElement can be created

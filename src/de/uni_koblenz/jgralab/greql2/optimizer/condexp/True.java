@@ -3,6 +3,7 @@
  */
 package de.uni_koblenz.jgralab.greql2.optimizer.condexp;
 
+import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
 import de.uni_koblenz.jgralab.greql2.schema.BoolLiteral;
 import de.uni_koblenz.jgralab.greql2.schema.Expression;
 import de.uni_koblenz.jgralab.greql2.schema.TrivalentBoolean;
@@ -15,6 +16,10 @@ import de.uni_koblenz.jgralab.greql2.schema.TrivalentBoolean;
  */
 public class True extends Literal {
 
+	public True(GreqlEvaluator eval) {
+		super(eval);
+	}
+
 	@Override
 	public String toString() {
 		return "true";
@@ -22,7 +27,7 @@ public class True extends Literal {
 
 	@Override
 	public Expression toExpression() {
-		BoolLiteral bool = syntaxgraph.createBoolLiteral();
+		BoolLiteral bool = greqlEvaluator.getSyntaxGraph().createBoolLiteral();
 		bool.setBoolValue(TrivalentBoolean.TRUE);
 		return bool;
 	}

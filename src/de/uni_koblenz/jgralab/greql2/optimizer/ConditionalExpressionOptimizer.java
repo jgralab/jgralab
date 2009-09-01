@@ -14,7 +14,6 @@ import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
 import de.uni_koblenz.jgralab.greql2.exception.EvaluateException;
 import de.uni_koblenz.jgralab.greql2.exception.OptimizerException;
-import de.uni_koblenz.jgralab.greql2.optimizer.condexp.ConditionalExpressionUnit;
 import de.uni_koblenz.jgralab.greql2.optimizer.condexp.Formula;
 import de.uni_koblenz.jgralab.greql2.schema.FunctionApplication;
 import de.uni_koblenz.jgralab.greql2.schema.FunctionId;
@@ -71,14 +70,12 @@ public class ConditionalExpressionOptimizer extends OptimizerBase {
 	public boolean optimize(GreqlEvaluator eval, Greql2 syntaxgraph)
 			throws OptimizerException {
 		Formula.setSimplifiedOrOptimized(false);
-		Formula.setGreqlEvaluator(eval);
-		ConditionalExpressionUnit.setGreqlEvaluator(eval);
 
 		FunctionApplication top = findAndOrNotFunApp(syntaxgraph
 				.getFirstGreql2Expression());
 		while (top != null) {
 			LinkedList<VertexEdgeClassTuple> relinkables = rememberConnections(top);
-			Formula formula = Formula.createFormulaFromExpression(top);
+			Formula formula = Formula.createFormulaFromExpression(top, eval);
 			top.delete();
 			Formula optimizedFormula = formula.simplify().optimize();
 			if (!formula.equals(optimizedFormula)) {

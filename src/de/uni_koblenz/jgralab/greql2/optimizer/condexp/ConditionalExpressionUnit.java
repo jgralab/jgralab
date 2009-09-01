@@ -17,25 +17,27 @@ import de.uni_koblenz.jgralab.greql2.schema.Expression;
  */
 public class ConditionalExpressionUnit {
 
-	private static GreqlEvaluator greqlEvaluator;
+	private GreqlEvaluator greqlEvaluator;
 
 	private Expression condition;
 	private Formula trueFormula, falseFormula, nullFormula;
 	private double influenceCostRatio = -1;
 
 	public ConditionalExpressionUnit(Expression exp, Formula origFormula) {
+		greqlEvaluator = origFormula.greqlEvaluator;
 		condition = exp;
 		trueFormula = origFormula.calculateReplacementFormula(condition,
-				new True()).simplify();
+				new True(greqlEvaluator)).simplify();
 		falseFormula = origFormula.calculateReplacementFormula(condition,
-				new False()).simplify();
+				new False(greqlEvaluator)).simplify();
 		nullFormula = origFormula.calculateReplacementFormula(condition,
-				new Null()).simplify();
+				new Null(greqlEvaluator)).simplify();
 	}
 
 	private double calculateInfluenceCostRatio() {
-		Formula boolDiff = new Not(new Equiv(trueFormula, new Not(new Equiv(
-				falseFormula, nullFormula))));
+		Formula boolDiff = new Not(greqlEvaluator, new Equiv(greqlEvaluator,
+				trueFormula, new Not(greqlEvaluator, new Equiv(greqlEvaluator,
+						falseFormula, nullFormula))));
 		boolDiff = boolDiff.simplify();
 
 		// selectivity of the boolean difference
@@ -55,17 +57,14 @@ public class ConditionalExpressionUnit {
 	}
 
 	ConditionalExpression toConditionalExpression() {
-		return new ConditionalExpression(condition, trueFormula.optimize(),
-				falseFormula.optimize(), nullFormula.optimize());
-	}
-
-	public static void setGreqlEvaluator(GreqlEvaluator greqlEvaluator) {
-		ConditionalExpressionUnit.greqlEvaluator = greqlEvaluator;
+		return new ConditionalExpression(greqlEvaluator, condition, trueFormula
+				.optimize(), falseFormula.optimize(), nullFormula.optimize());
 	}
 
 	public double getInfluenceCostRatio() {
-		if (influenceCostRatio == -1)
+		if (influenceCostRatio == -1) {
 			influenceCostRatio = calculateInfluenceCostRatio();
+		}
 		return influenceCostRatio;
 	}
 
