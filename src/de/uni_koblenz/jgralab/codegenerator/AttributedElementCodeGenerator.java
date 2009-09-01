@@ -247,7 +247,7 @@ public class AttributedElementCodeGenerator extends CodeGenerator {
 				s.add("if (attributeName.equals(\"#name#\")) {");
 				s.add("\tif (data instanceof String) {");
 				s
-						.add("\t\tset#cName#(#attributeClassName#.fromString((String) data));");
+						.add("\t\tset#cName#(#attributeClassName#.valueOf((String) data));");
 				s.add("\t} else {");
 				s.add("\t\tset#cName#((#attributeClassName#) data);");
 				s.add("\t}");
@@ -435,7 +435,7 @@ public class AttributedElementCodeGenerator extends CodeGenerator {
 				.addNoIndent(new CodeSnippet(
 						true,
 						"public void writeAttributeValues(GraphIO io) throws GraphIOException, IOException {"));
-		if (attrSet != null && !attrSet.isEmpty()) {
+		if ((attrSet != null) && !attrSet.isEmpty()) {
 			code.add(new CodeSnippet("io.space();"));
 			for (Attribute attribute : attrSet) {
 				code.add(attribute.getDomain().getWriteMethod(
