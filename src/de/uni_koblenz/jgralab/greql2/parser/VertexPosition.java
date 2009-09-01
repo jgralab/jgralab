@@ -24,13 +24,19 @@
 
 package de.uni_koblenz.jgralab.greql2.parser;
 
-import de.uni_koblenz.jgralab.Vertex;
 
-public class VertexPosition {
 
-	public Vertex node;
+public class VertexPosition<T> {
+
+	public T node;
 
 	public int offset;
 
 	public int length;
+	
+	public VertexPosition(T vertex, int offset, int length) {
+		this.node = vertex;
+		this.offset = offset;
+		this.length = length;
+	}
 }
