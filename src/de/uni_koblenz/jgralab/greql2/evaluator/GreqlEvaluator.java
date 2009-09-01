@@ -106,6 +106,14 @@ public class GreqlEvaluator {
 	 */
 	protected static Map<String, List<SyntaxGraphEntry>> optimizedGraphs;
 
+	public static void resetOptimizedSyntaxGraphs() {
+		if (optimizedGraphs == null) {
+			optimizedGraphs = new HashMap<String, List<SyntaxGraphEntry>>();
+		} else {
+			optimizedGraphs.clear();
+		}
+	}
+
 	/**
 	 * The directory where the GreqlEvaluator stores the optimized syntax graphs
 	 */
@@ -123,7 +131,11 @@ public class GreqlEvaluator {
 	protected static Map<String, GraphIndex> graphIndizes;
 
 	public static void resetGraphIndizes() {
-		graphIndizes = new HashMap<String, GraphIndex>();
+		if (graphIndizes == null) {
+			graphIndizes = new HashMap<String, GraphIndex>();
+		} else {
+			graphIndizes.clear();
+		}
 	}
 
 	/**
@@ -149,7 +161,7 @@ public class GreqlEvaluator {
 	 * gets loaded
 	 */
 	static {
-		optimizedGraphs = new HashMap<String, List<SyntaxGraphEntry>>();
+		resetOptimizedSyntaxGraphs();
 		resetGraphIndizes();
 	}
 
