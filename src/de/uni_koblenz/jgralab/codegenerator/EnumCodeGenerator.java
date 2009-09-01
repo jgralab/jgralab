@@ -57,21 +57,8 @@ public class EnumCodeGenerator extends CodeGenerator {
 			constants.append(s);
 			delim = ", ";
 		}
-		code
-				.add(
-						constants + ";",
-						"",
-						"private static java.util.HashMap<String, #simpleClassName#> entries;",
-						"",
-						"static {",
-						"\tentries = new java.util.HashMap<String, #simpleClassName#>();",
-						"\tfor(#simpleClassName# e: values()) {",
-						"\t\tentries.put(e.toString(), e);",
-						"\t}",
-						"}",
-						"",
-						"public static #simpleClassName# fromString(String s) {",
-						"\treturn entries.get(s);", "}");
+		constants.append(";");
+		code.add(constants.toString());
 
 		CodeList result = new CodeList();
 		result.add(code);
