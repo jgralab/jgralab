@@ -99,8 +99,8 @@ import de.uni_koblenz.jgralab.utilities.tg2dot.Tg2Dot;
  *         attributes. But it shouldn't do so if an attribute has the
  *         multiplicity (1,1).
  */
-@WorkInProgress(description = "TODOs: switch from SAX to STAX,"
-		+ "record comments," + "implement command line interface,"
+@WorkInProgress(description = "record comments,"
+		+ "add relativ / absolut path check for options '-o', '-s' and 'd',"
 		+ "error checking and reporting", responsibleDevelopers = "riediger, mmce")
 public class Rsa2Tg {
 	/**
@@ -310,17 +310,8 @@ public class Rsa2Tg {
 	 */
 	private String filenameDebug;
 
-	/**
-	 * Creates a Rsa2Tg converter.
-	 */
-	public Rsa2Tg() {
-		ignoredElements = new TreeSet<String>();
-		ignoredElements.add("profileApplication");
-		ignoredElements.add("packageImport");
-		ignoredElements.add("ownedComment");
-	}
-
 	public static void main(String[] args) {
+
 		System.out.println("RSA to TG");
 		System.out.println("=========");
 		JGraLab.setLogLevel(Level.OFF);
@@ -331,16 +322,24 @@ public class Rsa2Tg {
 
 		// Retrieving all command line options
 		CommandLine cli = processCommandLineOptions(args);
+		assert cli != null : "No CommandLine object has been generated!";
+		// All XMI input files
 		String[] input = cli.getOptionValues('i');
 
+		// Retrieve the number of file to process
 		int numFiles = input.length;
 
 		String[] nulls = new String[input.length];
+		// Debug output filenames
 		String[] debug = cli.hasOption('d') ? cli.getOptionValues('d') : nulls;
+		// Schema output filename ("<filename>.rsa.tg")
 		String[] output = cli.hasOption('o') ? cli.getOptionValues('o') : nulls;
+		// SchemaGraph output filename ("<filename>.gruml.tg")
 		String[] schemaGraph = cli.hasOption('s') ? cli.getOptionValues('s')
 				: nulls;
 
+		// if a used array is null, it should be at least an array of null
+		// references.
 		if (debug == null) {
 			debug = nulls;
 		}
@@ -351,6 +350,7 @@ public class Rsa2Tg {
 			schemaGraph = nulls;
 		}
 
+		// In case of incoherent number of filenames, throw an error
 		if ((debug.length != numFiles) || (output.length != numFiles)
 				|| (schemaGraph.length != numFiles)) {
 			throw new IllegalArgumentException(
@@ -371,6 +371,7 @@ public class Rsa2Tg {
 				e.printStackTrace();
 			}
 		}
+
 		System.out.println("Fini.");
 	}
 
@@ -456,12 +457,28 @@ public class Rsa2Tg {
 	}
 
 	/**
-	 * Processes one RSA XMI file by creating a SAX parser and submitting this
-	 * file to the parse() method. All actions take place in overridden methods
-	 * of the SAX DefaultHandler.
+	 * Creates a Rsa2Tg converter.
+	 */
+	public Rsa2Tg() {
+		// Sets all names of XML-elements, which should be ignored.
+		ignoredElements = new TreeSet<String>();
+		ignoredElements.add("profileApplication");
+		ignoredElements.add("packageImport");
+		ignoredElements.add("ownedComment");
+	}
+
+	/**
+	 * /** Processes one RSA XMI file by creating a STAX parser and submitting
+	 * this file to the parse() method. All actions take place in overridden
+	 * methods of the STAX DefaultHandler.
 	 * 
 	 * @param xmiFileName
 	 *            the name of the XMI file to convert
+	 * @param schemaFileName
+	 * @param schemaGraphFileName
+	 * @param debugFileName
+	 * @throws FileNotFoundException
+	 * @throws XMLStreamException
 	 */
 	public void process(String xmiFileName, String schemaFileName,
 			String schemaGraphFileName, String debugFileName)
@@ -476,7 +493,6 @@ public class Rsa2Tg {
 		XMLInputFactory factory = XMLInputFactory.newInstance();
 		XMLStreamReader parser = factory.createXMLStreamReader(in);
 
-		System.out.println("start processing...");
 		for (int event = parser.getEventType(); event != XMLStreamConstants.END_DOCUMENT; event = parser
 				.next()) {
 			switch (event) {
