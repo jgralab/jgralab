@@ -73,8 +73,7 @@ public class M1ClassManager extends ClassLoader {
 	}
 
 	/**
-	 * Tries to find a class in the internal {@code Map}, If this fails, {@code
-	 * findClass} of {@code ClassLoader} is invoked.
+	 * Tries to find a class in the internal {@code Map}
 	 * 
 	 * @param name
 	 *            the name of the class to be found
@@ -90,7 +89,7 @@ public class M1ClassManager extends ClassLoader {
 			return clazz;
 		}
 
-		return Class.forName(name);
+		throw new ClassNotFoundException("Couldn't find class " + name);
 	}
 
 	@Override
