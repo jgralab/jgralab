@@ -101,7 +101,7 @@ public abstract class DomainTest {
 	public void testEquals() {
 		// test if same types of Domains based on different schemas are equal
 		// They shouldn't. A domain belongs to one schema.
-		assertTrue(domain1.equals(domain2));
+		assertFalse(domain1.equals(domain2));
 
 		// test if a domain is equal to itself
 		assertEquals(domain1, domain1);

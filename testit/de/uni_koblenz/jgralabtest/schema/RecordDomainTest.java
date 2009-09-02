@@ -74,10 +74,11 @@ public class RecordDomainTest extends CompositeDomainTest {
 				.getDomain("List<Boolean>"));
 		expectedCompositeDomains4.add((RecordDomain) domain1);
 		expectedDomains1 = new HashSet<Domain>();
-		for (Domain d : elements.values()) {
-			expectedDomains1.add(d);
-		}
-		expectedDomains2 = expectedDomains1;
+		expectedDomains1.add(schema1.getDomain("Integer"));
+		expectedDomains1.add(schema1.getDomain("Double"));
+		expectedDomains1.add(schema1.getDomain("Boolean"));
+		expectedDomains1.add(schema1.getDomain("String"));
+		expectedDomains2.addAll(elements.values());
 		expectedDomains3 = expectedDomains1;
 		expectedDomains4 = new HashSet<Domain>();
 		expectedDomains4.add(schema1.getDomain("List<Boolean>"));
