@@ -26,10 +26,7 @@ public class CollectionDomainTest extends CompositeDomainTest {
 		// tests if the correct baseDomain is returned
 		assertEquals(expectedBaseDomain, ((CollectionDomain) domain1)
 				.getBaseDomain());
-		assertEquals(expectedBaseDomain, ((CollectionDomain) domain2)
-				.getBaseDomain());
 	}
-
 
 	@Test(expected = WrongSchemaException.class)
 	public void testRejectionOfForeignSchemas() {
