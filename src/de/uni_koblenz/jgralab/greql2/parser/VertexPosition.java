@@ -39,4 +39,7 @@ public class VertexPosition<T> {
 		this.offset = offset;
 		this.length = length;
 	}
+	
+	
+	public VertexPosition() {	}
 }
