@@ -57,7 +57,7 @@
 	<property name="test.dir"				
 		      value="${project.dir}/testit"/>
 
-    <property name="testschemas.dir"
+        <property name="testschemas.dir"
 	          value="${test.dir}/testschemas"/>
 
 
@@ -128,7 +128,7 @@
 	   	<ant dir="${common.dir}" antfile="build.xml" target="compile">
 	   		<property name="src.dir" value="${src.dir}/de/uni_koblenz/${projectname}"/>
 	   		<property name="compileincludes" value="*.java schema/** codegenerator/** impl/** jniserver/**"/>
-			<property name="compileexcludes" value="impl/list/** xmlrpc/**"/>
+			<property name="compileexcludes" value="xmlrpc/**"/>
 	   	</ant>
 	</target>
 
@@ -184,6 +184,17 @@
                   value="de.uni_koblenz.jgralabtest.RunTests"/>
       </ant>
     </target>
+    
+    <target name="jdepend">
+      <jdepend outputfile="jdepend-report.txt">
+      <exclude name="java.*"/>
+      <exclude name="javax.*"/>
+      <classespath>  <pathelement location="build/classes" />
+      </classespath>
+      <classpath location="build/classes" />
+      </jdepend>
+    </target>
+
 
 	<!-- Check XML-RPC -->
 	<target name="checkxmlrpc">
@@ -241,16 +252,6 @@
 			<property name="subprojectname" value = "greql2"/>			
 			<property name="schemafile" value = "greql2Schema.tg"/>			
 	   	</ant>
-		<!-- calls target generateparser in general ant file ${ant}/build.xml -->
-		<ant dir="${common.dir}" antfile="build.xml" target="generateparser-antlr3">
-			<property name="subprojectname" value = "greql2"/>			
-			<property name="grammarfile" value = "Greql2.g"/>			
-		</ant>
-		<!-- calls target generateparser in general ant file ${ant}/build.xml -->
-<!--		<ant dir="${common.dir}" antfile="build.xml" target="generateparser">
-			<property name="subprojectname" value = "greql2"/>			
-			<property name="grammarfile" value = "greql2parser.g"/>			
-		</ant>-->
 	</target>
 
 	<!-- compiles greql2 sources -->
