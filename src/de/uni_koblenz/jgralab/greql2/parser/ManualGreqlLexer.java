@@ -139,20 +139,27 @@ public class ManualGreqlLexer {
 				}
 			}
 		}
-		//recognize numeric literals 
-		
-		//recognize strings andidentifiers
+		//recognize strings and identifiers
 		if (recognizedTokenType == null) {
 			if (query.charAt(position) == '\"') { //String
 				position++;
 				int start = position;
+				StringBuilder sb = new StringBuilder();
 				while (position < query.length() && query.charAt(position) != '\"') {
+					if (query.charAt(position) == '\\') {
+						if (position == query.length())
+							throw new ParsingException("String started at position " + start + " but is not closed in query", query.substring(start, position), start, position-start);
+						if ((query.charAt(position+1) == '"') || (query.charAt(position+1) == '\\')) {
+							position++;
+						}	
+					} 
+					sb.append(query.charAt(position));
 					position++;
 				}
 				if (query.charAt(position) != '\"')
-					throw new ParsingException("String started at position " + start + " but is not closed in query", query.substring(start, position), start, position-start);
+					throw new ParsingException("String started at position " + start + " but is not closed in query", sb.toString(), start, position-start);
 				recognizedTokenType = TokenTypes.STRING;
-				recognizedToken = new ComplexToken(TokenTypes.STRING, start, position, query.substring(start, position));
+				recognizedToken = new ComplexToken(TokenTypes.STRING, start, position, sb.toString());
 				position++;
 			} else {
 			//identifier and literals
