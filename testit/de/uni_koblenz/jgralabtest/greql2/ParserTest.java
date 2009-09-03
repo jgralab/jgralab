@@ -367,6 +367,14 @@ public class ParserTest {
 		assertEquals(4, constr.getDegree(IsPartOf.class));
 	}
 
+	
+	@Test
+	public void testGreTLQuery() throws Exception {
+		String query = "from t : V report t [ --> ] --> end";
+		Greql2 graph = parseQuery(query);
+		assertNotNull(graph);
+	}
+	
 	@Test
 	public void testListRangeConstruction() throws Exception {
 		Greql2 graph = parseQuery("list(10..13)");
