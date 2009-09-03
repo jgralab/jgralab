@@ -4,13 +4,16 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import org.junit.Test;
 
 import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.GraphIO;
 import de.uni_koblenz.jgralab.Vertex;
+import de.uni_koblenz.jgralab.greql2.exception.UndefinedVariableException;
 import de.uni_koblenz.jgralab.greql2.parser.ManualGreqlParser;
+import de.uni_koblenz.jgralab.greql2.parser.ParsingException;
 import de.uni_koblenz.jgralab.greql2.schema.AlternativePathDescription;
 import de.uni_koblenz.jgralab.greql2.schema.BagComprehension;
 import de.uni_koblenz.jgralab.greql2.schema.BoolLiteral;
@@ -88,19 +91,25 @@ import de.uni_koblenz.jgralab.greql2.schema.VertexSubgraphExpression;
 public class ParserTest {
 
 
-	private Greql2 parseQuery(String query) throws Exception {
+	private Greql2 parseQuery(String query) throws ParsingException {
 		return parseQuery(query, null);
 	}
 
-	private Greql2 parseQuery(String query, String file) throws Exception {
+	private Greql2 parseQuery(String query, String file) throws ParsingException {
 		Greql2 graph = ManualGreqlParser.parse(query);
-		if (file != null)
-			GraphIO.saveGraphToFile(file, graph,null);
+		if (file != null) {
+			try {
+				GraphIO.saveGraphToFile(file, graph,null);
+			} catch (Exception ex) {
+				throw new RuntimeException("Error saving graph to file " + file, ex);
+			}
+		}
+			
 		return graph;
 	}
 	
 	@Test
-	public void testGreql2TestGraph() throws Exception {
+	public void testGreql2TestGraph() throws ParsingException {
 		parseQuery("from i:c report i end where d:=\"drölfundfünfzig\", c:=b, b:=a, a:=\"Mensaessen\"");
 	}
 
@@ -1056,5 +1065,26 @@ public class ParserTest {
 	@Test(timeout = 5000)
 	public void testParsingSpeed4() throws Exception {
 		parseQuery("(((((((((((((((((((((((((((((((((((((((9))))))))))))))))))))))))))))))))))))))))");
+	}
+	
+	@Test
+	public void testParsingError() {
+		try {
+			parseQuery("from v:V report v --> --< end");
+			fail("Expected ParsingException at offset 24");
+		} catch (ParsingException ex) {
+			assertEquals(24, ex.getOffset());
+		}
+	}
+	
+	@Test
+	public void testParsingError2() {
+		try {
+			parseQuery("from v:X report v --> --> end");
+			fail("Expected ParsingException at offset 7");
+		} catch (UndefinedVariableException ex) {
+			System.out.println("Exception offset: " + ex.getOffset());
+			assertEquals(7, ex.getOffset());
+		}
 	}
 }
