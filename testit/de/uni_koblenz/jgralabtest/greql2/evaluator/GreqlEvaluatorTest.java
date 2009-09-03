@@ -123,16 +123,16 @@ public class GreqlEvaluatorTest extends GenericTests {
 	public void testReachability() throws Exception {
 		String queryString = "forall e: E{IsDefinitionOf}"
 				+ "  @ startVertex(e) -->{IsDefinitionOf} endVertex(e)";
-		evalTestQuery("Reachability", queryString);
+		JValue result = evalTestQuery("Reachability", queryString);
 		// TODO
-		// assertEquals(1, result.toCollection().size());
-		// for (JValue j : result.toCollection()) {
-		// assertEquals(4, j.toCollection().size());
-		// }
-		// JValue resultWO = evalTestQuery("BackwardVertexSet1 (wo)",
-		// queryString,
-		// new DefaultOptimizer());
-		// assertEquals(result, resultWO);
+		 assertEquals(1, result.toCollection().size());
+		 for (JValue j : result.toCollection()) {
+		 assertEquals(4, j.toCollection().size());
+		 }
+		 JValue resultWO = evalTestQuery("BackwardVertexSet1 (wo)",
+		 queryString,
+		 new DefaultOptimizer());
+		 assertEquals(result, resultWO);
 	}
 
 	/*
@@ -1108,15 +1108,6 @@ public class GreqlEvaluatorTest extends GenericTests {
 		JValue result9 = evalTestQuery("StartRestriction6 6", queryString9);
 		assertEquals(result7, result8);
 		assertEquals(result7, result9);
-	}
-
-	@Test
-	public void testEvaluateStartGoalRestriction2() throws Exception {
-		String queryString1 = "from var: V, def: V with contains(var {Definition} & -->, def) report var end";
-		String queryString2 = "from var: V, def: V with contains({Definition} & --> def, var) report var end";
-
-		evalTestQuery("StartRestriction6 1", queryString1);
-		evalTestQuery("StartRestriction6 2", queryString2);
 	}
 
 	/*

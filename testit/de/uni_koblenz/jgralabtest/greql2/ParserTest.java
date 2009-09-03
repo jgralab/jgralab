@@ -4,21 +4,13 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 
-import java.util.List;
-
-import org.antlr.runtime.ANTLRStringStream;
-import org.antlr.runtime.CommonTokenStream;
-import org.antlr.runtime.RecognitionException;
-import org.antlr.runtime.Token;
 import org.junit.Test;
 
 import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.GraphIO;
 import de.uni_koblenz.jgralab.Vertex;
-import de.uni_koblenz.jgralab.greql2.parser.Greql2Lexer;
-import de.uni_koblenz.jgralab.greql2.parser.Greql2Parser;
+import de.uni_koblenz.jgralab.greql2.parser.ManualGreqlParser;
 import de.uni_koblenz.jgralab.greql2.schema.AlternativePathDescription;
 import de.uni_koblenz.jgralab.greql2.schema.BagComprehension;
 import de.uni_koblenz.jgralab.greql2.schema.BoolLiteral;
@@ -63,7 +55,6 @@ import de.uni_koblenz.jgralab.greql2.schema.IteratedPathDescription;
 import de.uni_koblenz.jgralab.greql2.schema.ListConstruction;
 import de.uni_koblenz.jgralab.greql2.schema.ListRangeConstruction;
 import de.uni_koblenz.jgralab.greql2.schema.PathExistence;
-import de.uni_koblenz.jgralab.greql2.schema.PrimaryPathDescription;
 import de.uni_koblenz.jgralab.greql2.schema.QuantifiedExpression;
 import de.uni_koblenz.jgralab.greql2.schema.Quantifier;
 import de.uni_koblenz.jgralab.greql2.schema.RealLiteral;
@@ -96,31 +87,18 @@ import de.uni_koblenz.jgralab.greql2.schema.VertexSubgraphExpression;
 
 public class ParserTest {
 
-	private Greql2Parser getParser(String query) {
-		Greql2Lexer lexer = new Greql2Lexer(new ANTLRStringStream(query));
-		CommonTokenStream tokens = new CommonTokenStream();
-		tokens.setTokenSource(lexer);
-		Greql2Parser parser = new Greql2Parser(tokens);
-		return parser;
-	}
 
 	private Greql2 parseQuery(String query) throws Exception {
 		return parseQuery(query, null);
 	}
 
 	private Greql2 parseQuery(String query, String file) throws Exception {
-		Greql2Lexer lexer = new Greql2Lexer(new ANTLRStringStream(query));
-		CommonTokenStream tokens = new CommonTokenStream();
-		tokens.setTokenSource(lexer);
-		Greql2Parser parser = new Greql2Parser(tokens);
-		parser.greqlExpression();
-		Greql2 graph = parser.getGraph();
-		if (file != null) {
-			GraphIO.saveGraphToFile(file, graph, null);
-		}
+		Greql2 graph = ManualGreqlParser.parse(query);
+		if (file != null)
+			GraphIO.saveGraphToFile(file, graph,null);
 		return graph;
 	}
-
+	
 	@Test
 	public void testGreql2TestGraph() throws Exception {
 		parseQuery("from i:c report i end where d:=\"drölfundfünfzig\", c:=b, b:=a, a:=\"Mensaessen\"");
@@ -390,18 +368,18 @@ public class ParserTest {
 		assertEquals("exists!", quantifier.getName());
 	}
 
-	@Test
-	public void testExistsOneQuantifier() throws Exception {
-		Greql2Parser parser = getParser("exists!");
-		parser.initialize();
-		try {
-			Quantifier q = parser.quantifier();
-			assertNotNull(q);
-		} catch (RecognitionException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
+//	@Test
+//	public void testExistsOneQuantifier() throws Exception {
+//		ManualGreql2Parser parser = getParser("exists!");
+//		parser.initialize();
+//		try {
+//			Quantifier q = parser.quantifier();
+//			assertNotNull(q);
+//		} catch (RecognitionException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
+//	}
 
 	@Test
 	public void testVariableList() throws Exception {
@@ -419,6 +397,7 @@ public class ParserTest {
 		assertNotNull(var);
 		assertEquals("d", var.getName());
 	}
+	
 
 	@Test
 	public void testSimpleQueryWithConstraint() throws Exception {
@@ -483,7 +462,7 @@ public class ParserTest {
 
 	@Test
 	public void testSimpleQuery1() throws Exception {
-		Greql2 graph = parseQuery("from var: V{Definition}, def: V{WhereExpression} with var  -->{IsDefinitionOf} | -->{IsVarOf}  def report var end");
+		Greql2 graph = parseQuery("from var: V{Definition}, def: V{WhereExpression} with var -->{IsDefinitionOf} | -->{IsVarOf}  def report var end");
 		BagComprehension comp = graph.getFirstBagComprehension();
 		assertNotNull(comp);
 		IsCompDeclOf declEdge = comp.getFirstIsCompDeclOf();
@@ -599,6 +578,20 @@ public class ParserTest {
 	@Test
 	public void testDefinitionList() throws Exception {
 		parseQuery("let a:=7, b:=5 in a+b");
+	}
+	
+
+	@Test
+	public void testEvaluateListAccess() throws Exception {
+		String queryString = "let x := list ( \"bratwurst\", \"currywurst\") in from i:V{Identifier} report x[3] end";
+		parseQuery(queryString);
+		
+	}
+	
+	@Test
+	public void testIsCycle() throws Exception {
+		String queryString = "from v : V reportSet isCycle(extractPath(pathSystem(v, -->), v)) end";
+		parseQuery(queryString);
 	}
 
 	@Test
@@ -797,22 +790,6 @@ public class ParserTest {
 		parseQuery("from v:V report v as \"Vertex\" end");
 	}
 
-	@Test
-	public void testSimplePathDescription2() throws Exception {
-		Greql2Parser parser = getParser("-->");
-		parser.initialize();
-		PrimaryPathDescription pd = parser.simplePathDescription();
-		assertNotNull(pd);
-	}
-
-	@Test
-	public void testSimplePathDescription3() throws Exception {
-		Greql2Parser parser = getParser("using v: v -->");
-		parser.initialize();
-		parser.greqlExpression();
-		// PrimaryPathDescription pd = parser.simplePathDescription();
-		// assertNotNull(pd);
-	}
 
 	@Test
 	public void testSimplePathDescription() throws Exception {
@@ -868,10 +845,8 @@ public class ParserTest {
 
 	@Test
 	public void testPathDescriptionWithParantheses1() throws Exception {
-		Greql2Parser parser = getParser("(--> | <--)");
-		parser.initialize();
-		AlternativePathDescription apd = (AlternativePathDescription) parser
-				.primaryPathDescription();
+		Greql2 graph = parseQuery("(--> | <--)");
+		AlternativePathDescription apd = (AlternativePathDescription) graph.getFirstAlternativePathDescription();
 		assertNotNull(apd);
 		IsAlternativePathOf edge = apd
 				.getFirstIsAlternativePathOf(EdgeDirection.IN);
@@ -879,6 +854,7 @@ public class ParserTest {
 		assertTrue(edge.getAlpha() instanceof SimplePathDescription);
 		edge = edge.getNextIsAlternativePathOf();
 		assertNotNull(edge);
+		edge.getAlpha();
 		assertTrue(edge.getAlpha() instanceof SimplePathDescription);
 	}
 
@@ -964,10 +940,11 @@ public class ParserTest {
 		assertTrue(edge.getAlpha() instanceof SimplePathDescription);
 	}
 
+	
 	@Test
 	public void testStartRestrictedPathDescriptionWithExpression()
 			throws Exception {
-		Greql2 graph = parseQuery("using v: v {(v.a=3)} & --> ");
+		Greql2 graph = parseQuery("using v: v {v.a=3} & --> ");
 
 		SimplePathDescription srpd = graph.getFirstSimplePathDescription();
 		assertNotNull(srpd);
@@ -1044,32 +1021,10 @@ public class ParserTest {
 		assertTrue(pathEdge.getAlpha() instanceof SimplePathDescription);
 	}
 
-	@SuppressWarnings("unchecked")
-	@Test
-	public void testEdgePathDescription2() throws Exception {
-		Greql2Lexer lexer = new Greql2Lexer(new ANTLRStringStream("--e->"));
-		CommonTokenStream tokenStream = new CommonTokenStream();
-		tokenStream.setTokenSource(lexer);
-		List<Token> tokens = tokenStream.getTokens();
-		System.out.println("Size of tokens: " + tokens.size());
-		int i = 0;
-		for (Token t : tokens) {
-			System.out.println("Token " + i++ + ": " + t.getText());
-		}
-	}
-
-	@Test
-	public void testEdgePathDescription1() throws Exception {
-		Greql2Parser parser = getParser("--e->");
-		parser.initialize();
-		EdgePathDescription pd = parser.edgePathDescription();
-		assertNotNull(pd);
-	}
 
 	@Test
 	public void testEdgePathDescription() throws Exception {
 		Greql2 graph = parseQuery("using e,v : v --e-> ");
-		// GraphIO.saveGraphToFile("/home/dbildh/greqlgraph.tg", graph, null);
 		ForwardVertexSet vset = graph.getFirstForwardVertexSet();
 		assertNotNull(vset);
 
@@ -1079,33 +1034,27 @@ public class ParserTest {
 		assertNotNull(edge);
 	}
 
-	@Test
-	public void testPathConstruction() throws Exception {
-		fail("NYI");
-	}
-
-	@Test
-	public void testPathSystemConstruction() throws Exception {
-		fail("NYI");
-	}
-
+	
 	@Test
 	public void testErrorInTypeExpression() throws Exception {
 		String query = "from v:V{Greql2Expression, ^TypeExpression, ^Quantifier} report v end";
 		parseQuery(query);
 	}
 
-	// TODO: The parser has huge problems with parens. This simple query doesn't
-	// finish in 5 seconds!!!
-	@Test(timeout = 5000)
-	public void testParsingSpeed1() throws Exception {
-		parseQuery("((((((((((((((((((((((((((((((9))))))))))))))))))))))))))))))");
-	}
 
-	// TODO: The parser has huge problems with parens. This simple query doesn't
-	// finish in 5 seconds!!!
 	@Test(timeout = 5000)
 	public void testParsingSpeed2() throws Exception {
 		parseQuery("3 + (((3) + (((3)) - 3) * (((((((((9 - 6))) + 3 - 6)) + 3))))) - 3)");
+	}
+	
+	
+	@Test(timeout = 5000)
+	public void testParsingSpeed3() throws Exception {
+		parseQuery("((((((((((((9))))))))))))");
+	}
+	
+	@Test(timeout = 5000)
+	public void testParsingSpeed4() throws Exception {
+		parseQuery("(((((((((((((((((((((((((((((((((((((((9))))))))))))))))))))))))))))))))))))))))");
 	}
 }

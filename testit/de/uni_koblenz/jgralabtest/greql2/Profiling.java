@@ -27,17 +27,13 @@ package de.uni_koblenz.jgralabtest.greql2;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.antlr.runtime.ANTLRStringStream;
-import org.antlr.runtime.CommonTokenStream;
-
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.GraphIO;
 import de.uni_koblenz.jgralab.GraphIOException;
 import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
 import de.uni_koblenz.jgralab.greql2.exception.Greql2Exception;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
-import de.uni_koblenz.jgralab.greql2.parser.Greql2Lexer;
-import de.uni_koblenz.jgralab.greql2.parser.Greql2Parser;
+import de.uni_koblenz.jgralab.greql2.parser.ManualGreqlParser;
 
 public class Profiling {
 
@@ -58,13 +54,7 @@ public class Profiling {
 				queryString += part2;
 			}
 			// queryString = part1 + " i " + part2;
-			System.out.println("QueryString: " + queryString);
-			Greql2Lexer lexer = new Greql2Lexer(new ANTLRStringStream(queryString));
-			CommonTokenStream tokens = new CommonTokenStream();
-			tokens.setTokenSource(lexer);
-			Greql2Parser parser = new Greql2Parser(tokens);
-			parser.greqlExpression();
-			graph = parser.getGraph();
+			graph = ManualGreqlParser.parse(queryString);
 		} catch (Exception e) {
 			System.out.println("Exception caught: " + e.toString());
 			return null;

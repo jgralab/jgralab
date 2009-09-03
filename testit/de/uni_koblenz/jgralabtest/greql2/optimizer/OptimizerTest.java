@@ -2,8 +2,6 @@ package de.uni_koblenz.jgralabtest.greql2.optimizer;
 
 import static org.junit.Assert.assertEquals;
 
-import org.antlr.runtime.ANTLRStringStream;
-import org.antlr.runtime.CommonTokenStream;
 import org.junit.Test;
 
 import de.uni_koblenz.jgralab.Graph;
@@ -19,8 +17,7 @@ import de.uni_koblenz.jgralab.greql2.optimizer.Optimizer;
 import de.uni_koblenz.jgralab.greql2.optimizer.OptimizerBase;
 import de.uni_koblenz.jgralab.greql2.optimizer.PathExistenceOptimizer;
 import de.uni_koblenz.jgralab.greql2.optimizer.VariableDeclarationOrderOptimizer;
-import de.uni_koblenz.jgralab.greql2.parser.Greql2Lexer;
-import de.uni_koblenz.jgralab.greql2.parser.Greql2Parser;
+import de.uni_koblenz.jgralab.greql2.parser.ManualGreqlParser;
 import de.uni_koblenz.jgralab.greql2.schema.Greql2;
 import de.uni_koblenz.jgralabtest.greql2.GenericTests;
 
@@ -303,12 +300,7 @@ public class OptimizerTest extends GenericTests {
 				+ "                   with isPrime(x * x + y - 1)              "
 				+ "                   reportSet x * x + y - 1, x, y, a, b end, "
 				+ "                   a, b end";
-		Greql2Lexer lexer = new Greql2Lexer(new ANTLRStringStream(query));
-		CommonTokenStream tokens = new CommonTokenStream();
-		tokens.setTokenSource(lexer);
-		Greql2Parser parser = new Greql2Parser(tokens);
-		parser.greqlExpression();
-		Graph g = parser.getGraph();
+		Graph g = ManualGreqlParser.parse(query);
 		// parser.saveGraph("createdTestGraph.tg");
 		return g;
 	}
