@@ -385,12 +385,11 @@ public class ManualGreqlParser extends ManualParserHelper {
 			return false;
 		}
 		char[] chars = s.toCharArray();
-		if (!Character.isLetter(chars[0]) || chars[0] > 127) {
+		if (!Character.isJavaIdentifierStart(chars[0])) {
 			return false;
 		}
 		for (int i = 1; i < chars.length; i++) {
-			if (!(Character.isLetter(chars[i]) || Character.isDigit(chars[i]) || chars[i] == '_')
-					|| chars[i] > 127) {
+			if (!Character.isJavaIdentifierPart(chars[i])) {
 				return false;
 			}
 		}
@@ -1927,7 +1926,7 @@ public class ManualGreqlParser extends ManualParserHelper {
 				break;
 			case REPORTTABLE:
 				if (!inPredicateMode())
-					comprehension = graph.createBagComprehension();
+					comprehension = graph.createTableComprehension();
 				vartable = true;
 				match();
 				break;

@@ -70,7 +70,6 @@ public class ManualGreqlLexer {
 		fixedTokens.put(TokenTypes.LARROW, "<--");
 		fixedTokens.put(TokenTypes.ARROW, "<->");
 		fixedTokens.put(TokenTypes.ASSIGN, ":=");
-		fixedTokens.put(TokenTypes.GASSIGN, "===");
 		fixedTokens.put(TokenTypes.EQUAL, "=");
 		fixedTokens.put(TokenTypes.MATCH, "=~");
 		fixedTokens.put(TokenTypes.NOT_EQUAL, "<>");
@@ -83,11 +82,11 @@ public class ManualGreqlLexer {
 		fixedTokens.put(TokenTypes.MINUS, "-");
 		fixedTokens.put(TokenTypes.STAR, "*");
 		fixedTokens.put(TokenTypes.MOD, "%");
-		fixedTokens.put(TokenTypes.SEMI, ");");
+		fixedTokens.put(TokenTypes.SEMI, ";");
 		fixedTokens.put(TokenTypes.CARET, "^");
 		fixedTokens.put(TokenTypes.BOR, "|");
 		fixedTokens.put(TokenTypes.AMP, "&");
-		fixedTokens.put(TokenTypes.SMILEY, "=-)");
+		fixedTokens.put(TokenTypes.SMILEY, ":-)");
 		fixedTokens.put(TokenTypes.HASH, "#");
 		fixedTokens.put(TokenTypes.OUTAGGREGATION, "<>--");
 		fixedTokens.put(TokenTypes.INAGGREGATION, "--<>");

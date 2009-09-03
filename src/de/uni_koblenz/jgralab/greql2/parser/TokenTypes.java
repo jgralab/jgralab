@@ -59,7 +59,6 @@ public enum TokenTypes {
 	 LARROW  ,
 	 ARROW	,
 	 ASSIGN	,
-	 GASSIGN ,
 	 EQUAL	,
 	 MATCH ,
 	 NOT_EQUAL ,
