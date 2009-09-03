@@ -44,7 +44,6 @@ import static de.uni_koblenz.jgralab.utilities.xml.XMLConstants.GRUML_GRAPHTYPE;
 import static de.uni_koblenz.jgralab.utilities.xml.XMLConstants.GRUML_PREFIX_EDGETYPE;
 import static de.uni_koblenz.jgralab.utilities.xml.XMLConstants.GRUML_PREFIX_GRAPHTYPE;
 import static de.uni_koblenz.jgralab.utilities.xml.XMLConstants.GRUML_PREFIX_VERTEXTYPE;
-import static de.uni_koblenz.jgralab.utilities.xml.XMLConstants.GRUML_VALUES_OF_DOMAIN_BOOLEAN;
 import static de.uni_koblenz.jgralab.utilities.xml.XMLConstants.GRUML_VALUE_NULL;
 import static de.uni_koblenz.jgralab.utilities.xml.XMLConstants.GRUML_VERTEXTYPE;
 import static de.uni_koblenz.jgralab.utilities.xml.XMLConstants.XML_DOMAIN_ID;
@@ -81,9 +80,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.PrintStream;
 import java.io.StringWriter;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.SortedMap;
@@ -635,34 +632,41 @@ public class SchemaGraph2XSD {
 	private void writeDefaultSimpleTypes() throws XMLStreamException {
 
 		// BOOLEAN
-
-		writeEnumDomainType(GRUML_VALUES_OF_DOMAIN_BOOLEAN,
-				GRUML_DOMAIN_BOOLEAN, false);
+		writeStartXSDSimpleType(GRUML_DOMAIN_BOOLEAN);
+		writeStartXSDRestriction(XSD_NS_PREFIX_PLUS_COLON + XSD_DOMAIN_STRING,
+				true);
+		// Loop over all enumeration constant strings
+		for (String enumConst : new String[] { "t", "f" }) {
+			xml.writeEmptyElement(XSD_NAMESPACE_PREFIX, XSD_ENUMERATION,
+					XMLConstants.W3C_XML_SCHEMA_NS_URI);
+			xml.writeAttribute(XSD_ATTRIBUTE_VALUE, enumConst);
+		}
+		writeEndXSDElement(2);
 
 		// STRING
 		writeXSDRestrictedSimpleType(GRUML_DOMAIN_STRING,
 				XSD_NS_PREFIX_PLUS_COLON + XSD_DOMAIN_STRING,
-				STRING_DOMAIN_PATTERNS);
+				STRING_DOMAIN_PATTERNS, null);
 		// INTEGER
 		writeXSDRestrictedSimpleType(GRUML_DOMAIN_INTEGER,
-				XSD_NS_PREFIX_PLUS_COLON + XSD_DOMAIN_INTEGER, null);
+				XSD_NS_PREFIX_PLUS_COLON + XSD_DOMAIN_INTEGER, null, null);
 		// LONG
 		writeXSDRestrictedSimpleType(GRUML_DOMAIN_LONG,
-				XSD_NS_PREFIX_PLUS_COLON + XSD_DOMAIN_LONG, null);
+				XSD_NS_PREFIX_PLUS_COLON + XSD_DOMAIN_LONG, null, null);
 		// DOUBLE
 		writeXSDRestrictedSimpleType(GRUML_DOMAIN_DOUBLE,
-				XSD_NS_PREFIX_PLUS_COLON + XSD_DOMAIN_DOUBLE, null);
+				XSD_NS_PREFIX_PLUS_COLON + XSD_DOMAIN_DOUBLE, null, null);
 
 		// LIST
 		writeXSDRestrictedSimpleType(GRUML_DOMAIN_LIST,
 				XSD_NS_PREFIX_PLUS_COLON + XSD_DOMAIN_STRING,
-				LIST_DOMAIN_PATTERNS);
+				LIST_DOMAIN_PATTERNS, null);
 		// SET
 		writeXSDRestrictedSimpleType(GRUML_DOMAIN_SET, XSD_NS_PREFIX_PLUS_COLON
-				+ XSD_DOMAIN_STRING, SET_DOMAIN_PATTERNS);
+				+ XSD_DOMAIN_STRING, SET_DOMAIN_PATTERNS, null);
 		// MAP
 		writeXSDRestrictedSimpleType(GRUML_DOMAIN_MAP, XSD_NS_PREFIX_PLUS_COLON
-				+ XSD_DOMAIN_STRING, MAP_DOMAIN_PATTERNS);
+				+ XSD_DOMAIN_STRING, MAP_DOMAIN_PATTERNS, null);
 
 		// RECORD & ENUM are written in method "writeAllDomainTypes"
 	}
@@ -850,39 +854,36 @@ public class SchemaGraph2XSD {
 	 */
 	private void writeDomainType(Domain domain, String typeName)
 			throws XMLStreamException {
-
-		// Starts a simpleType definition with the given typeName.
-		writeStartXSDSimpleType(typeName);
-
-		String baseType = XSD_NS_PREFIX_PLUS_COLON + XSD_DOMAIN_STRING;
-		String[] pattern = null;
-		List<String> constants = null;
-		boolean hasContent = false;
-
 		// A comment should be written and patterns should be defined.
 		// Only EnumDomain and RecordDomain are handled at the moment.
 		if (domain instanceof EnumDomain) {
-			constants = ((EnumDomain) domain).getEnumConstants();
-
-			hasContent = true;
+			writeEnumerationDomain((EnumDomain) domain, typeName);
 		} else if (domain instanceof RecordDomain) {
-			xml.writeComment(createRecordDomainComment((RecordDomain) domain));
-			pattern = RECORD_DOMAIN_PATTERNS;
-			hasContent = patterns == null;
+			writeXSDRestrictedSimpleType(typeName, XSD_NS_PREFIX_PLUS_COLON
+					+ XSD_DOMAIN_STRING, RECORD_DOMAIN_PATTERNS,
+					getRecordDomainComment((RecordDomain) domain));
 		} else {
 			// Handles unforeseen left out Domain types.
 			throw new RuntimeException("The type '" + domain.getClass()
 					+ "' of domain '" + domain.getQualifiedName()
 					+ "' is not supported.");
 		}
+	}
 
-		// A restriction of base type is written.
-		writeStartXSDRestriction(baseType, hasContent);
-		// Patterns are written. (pattern == null) --> no output
-		writeXSDPatterns(pattern);
-
-		// Enumeration constants are written. (constants == null) --> no output
-		writeEnumeration(constants, typeName, true);
+	private void writeEnumerationDomain(EnumDomain domain, String typeName)
+			throws XMLStreamException {
+		writeStartXSDSimpleType(typeName);
+		writeStartXSDRestriction(XSD_NS_PREFIX_PLUS_COLON + XSD_DOMAIN_STRING,
+				true);
+		// Loop over all enumeration constant strings
+		for (String enumConst : domain.getEnumConstants()) {
+			// Writes a enumeration element, which contains the current
+			// enumeration
+			// constant string as value of the attribute "value".
+			xml.writeEmptyElement(XSD_NAMESPACE_PREFIX, XSD_ENUMERATION,
+					XMLConstants.W3C_XML_SCHEMA_NS_URI);
+			xml.writeAttribute(XSD_ATTRIBUTE_VALUE, enumConst);
+		}
 		writeEndXSDElement(2);
 	}
 
@@ -895,14 +896,21 @@ public class SchemaGraph2XSD {
 	 *            Name of the base type.
 	 * @param patterns
 	 *            Pattern, which should be included.
+	 * @param comment
+	 *            an optional comment
 	 * @throws XMLStreamException
 	 */
 	private void writeXSDRestrictedSimpleType(String name, String type,
-			String[] patterns) throws XMLStreamException {
+			String[] patterns, String comment) throws XMLStreamException {
 
 		boolean hasContent = patterns != null;
 		// Starts simpleType with the Name of the String 'name'.
 		writeStartXSDSimpleType(name);
+
+		if (comment != null) {
+			xml.writeComment(comment);
+		}
+
 		// Adds a restriction of the base type in 'type'.
 		writeStartXSDRestriction(type, hasContent);
 		// Adds patterns.
@@ -1137,111 +1145,6 @@ public class SchemaGraph2XSD {
 	}
 
 	/**
-	 * Creates a new EnumDomain in XSD with the name of <code>value</code> and
-	 * constants of the Domain <code>key</code>.
-	 * 
-	 * @param constants
-	 *            List of constant Strings, which should be transformed into
-	 *            their XSD representation.
-	 * @param typeName
-	 *            Name of the new XSD type.
-	 * @param nullable
-	 *            Indicated if the constant 'n' (symbolizing a nullable
-	 *            enumeration) should be present.
-	 * @throws XMLStreamException
-	 */
-	private void writeEnumDomainType(List<String> constants, String typeName,
-			boolean nullable) throws XMLStreamException {
-
-		boolean hasContent = constants != null;
-		// Starts a simpleType definition.
-		writeStartXSDSimpleType(typeName);
-		// Restricts the type 'string'
-		writeStartXSDRestriction(XSD_NS_PREFIX_PLUS_COLON + XSD_DOMAIN_STRING,
-				hasContent);
-		// Writes all enumeration constants.
-		writeEnumeration(constants, typeName, nullable);
-		// Ends all left open definitions.
-		writeEndXSDElement(hasContent ? 2 : 1);
-	}
-
-	/**
-	 * Creates a new EnumDomain in XSD with the name of <code>value</code> and
-	 * constants of the Domain <code>key</code>. It converts the given Array to
-	 * a list of Strings and call the method
-	 * {@link SchemaGraph2XSD#writeEnumDomainType(List, String, boolean)}.
-	 * 
-	 * @param constants
-	 *            Array of constant Strings, which should be transformed into
-	 *            their XSD representation.
-	 * @param typeName
-	 *            Name of the new XSD type.
-	 * @param nullable
-	 *            Indicated if the constant 'n' (symbolizing a nullable
-	 *            enumeration) should be present.
-	 * @throws XMLStreamException
-	 */
-	private void writeEnumDomainType(String[] constants, String typeName,
-			boolean nullable) throws XMLStreamException {
-
-		// Creates a List to pass it on to
-		// WriteEnumDomainType(List<String>,String).
-		ArrayList<String> list = new ArrayList<String>(constants.length);
-		for (String constant : constants) {
-			list.add(constant);
-		}
-		writeEnumDomainType(list, typeName, nullable);
-	}
-
-	/**
-	 * Writes enumeration definitions corresponding to the given list.
-	 * 
-	 * @param constants
-	 *            List of Strings, which should be converted into XSD
-	 *            enumeration constants.
-	 * @param typeName
-	 *            TypeName is not needed for normal use, but for debug purposes.
-	 * @param nullable
-	 *            If true, the value 'n' should be added.
-	 * @throws XMLStreamException
-	 */
-	private void writeEnumeration(List<String> constants, String typeName,
-			boolean nullable) throws XMLStreamException {
-
-		// An empty List will not be written.
-		if (constants == null) {
-			return;
-		}
-
-		// Loop over all enumeration constant strings
-		for (String enumConst : constants) {
-
-			// Writes a enumeration element, which contains the current
-			// enumeration
-			// constant string as value of the attribute "value".
-			xml.writeEmptyElement(XSD_NAMESPACE_PREFIX, XSD_ENUMERATION,
-					XMLConstants.W3C_XML_SCHEMA_NS_URI);
-			xml.writeAttribute(XSD_ATTRIBUTE_VALUE, enumConst);
-
-			// Restriction for enumeration constant strings. No "n" should be
-			// contained.
-			if (enumConst.equals(GRUML_VALUE_NULL)) {
-				throw new RuntimeException("The enumeration as Type '"
-						+ typeName + "' alreay defines the constant \""
-						+ GRUML_VALUE_NULL + "\".");
-			}
-		}
-
-		// If it is a nullable enumeration, it is going to add the constant
-		// string "n".
-		if (nullable) {
-			xml.writeEmptyElement(XSD_NAMESPACE_PREFIX, XSD_ENUMERATION,
-					XMLConstants.W3C_XML_SCHEMA_NS_URI);
-			xml.writeAttribute(XSD_ATTRIBUTE_VALUE, GRUML_VALUE_NULL);
-		}
-	}
-
-	/**
 	 * Writes a grUML attribute as XSD attribute.
 	 * 
 	 * @param attribute
@@ -1400,7 +1303,7 @@ public class SchemaGraph2XSD {
 	 *            RecordDomain, for which a comment string should be created.
 	 * @return A comment String of the given RecordDomain.
 	 */
-	private String createRecordDomainComment(RecordDomain domain) {
+	private String getRecordDomainComment(RecordDomain domain) {
 
 		StringBuilder sb = new StringBuilder();
 		// Begins the comment with ' alphabetically ordered:\n\n'.
