@@ -99,25 +99,21 @@ public class IsReachable extends AbstractGreql2Function {
 		PathSearchQueueEntry currentEntry = new PathSearchQueueEntry(
 				startVertex, dfa.initialState);
 		markers[currentEntry.state.number].mark(currentEntry.vertex);
-		boolean found = false;
 		queue.add(currentEntry);
 		while (!queue.isEmpty()) {
 			currentEntry = queue.poll();
-			if ((currentEntry.vertex == endVertex)
-					&& (currentEntry.state.isFinal)) {
-				found = true;
-				break;
+			if ((currentEntry.vertex == endVertex) && (currentEntry.state.isFinal)) {
+				return new JValue(true, startVertex);
 			}
   		    Edge inc = currentEntry.vertex.getFirstEdge();
 			while (inc != null) {
 				for (Transition currentTransition : currentEntry.state.outTransitions) {
-					Vertex nextVertex = currentTransition.getNextVertex(
-							currentEntry.vertex, inc);
+					Vertex nextVertex = currentTransition.getNextVertex(currentEntry.vertex, inc);
 					if (!markers[currentTransition.getEndState().number].isMarked(nextVertex)) {
 						if (currentTransition.accepts(currentEntry.vertex, inc, subgraph)) {
 							PathSearchQueueEntry nextEntry = new PathSearchQueueEntry(
 									nextVertex, currentTransition.getEndState());
-							markers[nextEntry.state.number].mark(nextEntry.vertex);
+							markers[nextEntry.state.number].mark(nextVertex);
 							queue.add(nextEntry);
 						}
 					}
@@ -125,7 +121,7 @@ public class IsReachable extends AbstractGreql2Function {
 				inc = inc.getNextEdge();
 			}
 		}
-		return new JValue(found, startVertex);
+		return new JValue(false, startVertex);
 	}
 
 	public long getEstimatedCosts(ArrayList<Long> inElements) {

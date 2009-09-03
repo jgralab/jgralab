@@ -36,9 +36,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
 
-import org.antlr.runtime.ANTLRStringStream;
-import org.antlr.runtime.CommonTokenStream;
-
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.GraphIOException;
 import de.uni_koblenz.jgralab.GraphMarker;
@@ -58,10 +55,9 @@ import de.uni_koblenz.jgralab.greql2.exception.EvaluateException;
 import de.uni_koblenz.jgralab.greql2.exception.OptimizerException;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValueSet;
+import de.uni_koblenz.jgralab.greql2.parser.ManualGreqlParser;
 import de.uni_koblenz.jgralab.greql2.optimizer.DefaultOptimizer;
 import de.uni_koblenz.jgralab.greql2.optimizer.Optimizer;
-import de.uni_koblenz.jgralab.greql2.parser.Greql2Lexer;
-import de.uni_koblenz.jgralab.greql2.parser.Greql2Parser;
 import de.uni_koblenz.jgralab.greql2.schema.Greql2;
 import de.uni_koblenz.jgralab.schema.AttributedElementClass;
 import de.uni_koblenz.jgralab.schema.GraphClass;
@@ -703,20 +699,9 @@ public class GreqlEvaluator {
 	 * Parses the given query-string and creates the query-graph out of it
 	 */
 	protected boolean parseQuery(String query) throws EvaluateException {
-		Greql2Lexer lexer = new Greql2Lexer(new ANTLRStringStream(query));
-		return parseQuery(lexer);
-	}
-
-	/**
-	 * Parses the output of the given lexer and creates the query-graph out of
-	 * it
-	 */
-	protected boolean parseQuery(Greql2Lexer lexer) throws EvaluateException {
-		CommonTokenStream tokens = new CommonTokenStream();
-		tokens.setTokenSource(lexer);
-		Greql2Parser parser = new Greql2Parser(tokens);
+		ManualGreqlParser parser = new ManualGreqlParser(query);
 		try {
-			parser.greqlExpression();
+			parser.parse();
 		} catch (Exception e) {
 			// e.printStackTrace();
 			throw new EvaluateException("Error parsing query \"" + queryString
@@ -865,7 +850,6 @@ public class GreqlEvaluator {
 				e.printStackTrace();
 			}
 		}
-
 		long optimizerStartTime = System.currentTimeMillis();
 
 		if (optimize) {
@@ -893,7 +877,6 @@ public class GreqlEvaluator {
 		}
 
 		long plainEvaluationStartTime = System.currentTimeMillis();
-
 		result = vertexEvalGraphMarker.getMark(
 				queryGraph.getFirstGreql2Expression()).getResult(null);
 
