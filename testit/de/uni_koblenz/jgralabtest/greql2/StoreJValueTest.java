@@ -24,37 +24,38 @@
 
 package de.uni_koblenz.jgralabtest.greql2;
 
+import static org.junit.Assert.*;
 import static org.junit.Assert.fail;
 
 import org.junit.Test;
+
+import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
+import de.uni_koblenz.jgralab.greql2.jvalue.JValueXMLOutputVisitor;
+import de.uni_koblenz.jgralab.greql2.jvalue.ValueXMLLoader;
 
 public class StoreJValueTest extends GenericTests {
 
 	@Test
 	public void testStoreJValue1() throws Exception {
-		fail("NYI");
-		// String queryString = "bag(tup(\"Nodes:\", count(from v:V{} report v
-		// end)), tup(\"Edges:\", count(from e:E{} report e end)))";
-		// JValue result = evalTestQuery("StoreJValue1", queryString);
-		// JValueXMLOutputVisitor outputVisitor = new JValueXMLOutputVisitor(
-		// result, "storejvaluetest1.xml", getTestGraph());
-		// outputVisitor.toString();
-		// ValueXMLLoader loader = new ValueXMLLoader(getTestGraph());
-		// JValue loadedValue = loader.load("storejvaluetest1.xml");
-		// assertNotNull(loadedValue);
+		 String queryString = "bag(tup(\"Nodes:\", count(from v:V{} report v end)), tup(\"Edges:\", count(from e:E{} report e end)))";
+		 JValue result = evalTestQuery("StoreJValue1", queryString);
+		 JValueXMLOutputVisitor outputVisitor = new JValueXMLOutputVisitor(result, "storejvaluetest1.xml", getTestGraph());
+		 outputVisitor.toString();
+		 ValueXMLLoader loader = new ValueXMLLoader(getTestGraph());
+		 JValue loadedValue = loader.load("storejvaluetest1.xml");
+		 assertNotNull(loadedValue);
 	}
 
 	@Test
 	public void testStoreJValue2() throws Exception {
-		fail("NYI");
-		// String queryString = "from v:V{} report v as \"Nodes\" end";
-		// JValue result = evalTestQuery("StoreJValue2", queryString);
-		// JValueXMLOutputVisitor outputVisitor = new JValueXMLOutputVisitor(
-		// result, "storejvaluetest2.xml", getTestGraph());
-		// outputVisitor.toString();
-		// ValueXMLLoader loader = new ValueXMLLoader(getTestGraph());
-		// JValue loadedValue = loader.load("storejvaluetest2.xml");
-		// assertNotNull(loadedValue);
+		 String queryString = "from v:V{} report v as \"Nodes\" end";
+		 JValue result = evalTestQuery("StoreJValue2", queryString);
+		 JValueXMLOutputVisitor outputVisitor = new JValueXMLOutputVisitor(
+		 result, "storejvaluetest2.xml", getTestGraph());
+		 outputVisitor.toString();
+		 ValueXMLLoader loader = new ValueXMLLoader(getTestGraph());
+		 JValue loadedValue = loader.load("storejvaluetest2.xml");
+		 assertNotNull(loadedValue);
 	}
 
 	@Test
