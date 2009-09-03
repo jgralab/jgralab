@@ -954,6 +954,15 @@ public class FunctionTest extends GenericTests {
 	}	
 	
 	@Test
+	public void testIsEmpty3() throws Exception {
+		JValueMap map1 = new JValueMap();
+		boundVariables.put("cset", map1);
+		String queryString = "using cset: isEmpty(cset)";
+		JValue result = evalTestQuery("IsEmpty3", queryString);
+		assertEquals(true, result.toBoolean());
+	}	
+	
+	@Test
 	public void testTopologicalSort() throws Exception {
 		String q = "topologicalSort()";
 		JValue result = evalTestQuery("TopologicalSort", q);
