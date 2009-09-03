@@ -68,6 +68,7 @@ import de.uni_koblenz.jgralab.greql2.schema.SequentialPathDescription;
 import de.uni_koblenz.jgralab.greql2.schema.SetConstruction;
 import de.uni_koblenz.jgralab.greql2.schema.SimpleDeclaration;
 import de.uni_koblenz.jgralab.greql2.schema.SimplePathDescription;
+import de.uni_koblenz.jgralab.greql2.schema.StringLiteral;
 import de.uni_koblenz.jgralab.greql2.schema.TrivalentBoolean;
 import de.uni_koblenz.jgralab.greql2.schema.TypeId;
 import de.uni_koblenz.jgralab.greql2.schema.Variable;
@@ -1065,6 +1066,38 @@ public class ParserTest {
 	@Test(timeout = 5000)
 	public void testParsingSpeed4() throws Exception {
 		parseQuery("(((((((((((((((((((((((((((((((((((((((9))))))))))))))))))))))))))))))))))))))))");
+	}
+	
+	
+	@Test
+	public void testStringWithoutEscapes() {
+		Greql2 graph = parseQuery("\"my simple string\"");
+		assertNotNull(graph);
+		StringLiteral lit = graph.getFirstStringLiteral();
+		assertNotNull(lit);
+		assertEquals("my simple string", lit.getStringValue());
+	}
+	
+	@Test
+	public void testStringWithEscape1() {
+		String queryString = "\"my simple \\\"string\"";
+		System.out.println("QueryString: " + queryString);
+		Greql2 graph = parseQuery(queryString);
+		assertNotNull(graph);
+		StringLiteral lit = graph.getFirstStringLiteral();
+		assertNotNull(lit);
+		assertEquals("my simple \"string", lit.getStringValue());
+	}
+	
+	@Test
+	public void testStringWithEscape2() {
+		String queryString = "\"my simple \nstring\"";
+		System.out.println("QueryString: " + queryString);
+		Greql2 graph = parseQuery(queryString);
+		assertNotNull(graph);
+		StringLiteral lit = graph.getFirstStringLiteral();
+		assertNotNull(lit);
+		assertEquals("my simple \nstring", lit.getStringValue());
 	}
 	
 	@Test
