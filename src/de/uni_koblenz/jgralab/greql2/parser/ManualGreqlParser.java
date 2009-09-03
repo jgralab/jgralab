@@ -1239,17 +1239,19 @@ public class ManualGreqlParser extends ManualParserHelper {
 		if ((lookAhead(0) == TokenTypes.EDGESTART) || (lookAhead(0) == TokenTypes.EDGEEND) || (lookAhead(0) == TokenTypes.EDGE)) {
 			return parseEdgePathDescription();
 		}	
-		match(TokenTypes.LBRACK); 
-		int offset = getCurrentOffset();
-		PathDescription pathDescr = parseAltPathDescription();
-		int length = getLength(offset);
-		match(TokenTypes.RBRACK);
-		if (!inPredicateMode()) {
-			OptionalPathDescription optPathDescr = graph.createOptionalPathDescription();
-			IsOptionalPathOf optionalPathOf = graph.createIsOptionalPathOf(pathDescr, optPathDescr);
-			optionalPathOf.setSourcePositions((createSourcePositionList(length, offset)));
-			return optPathDescr;
-		} 
+		if (tryMatch(TokenTypes.LBRACK)) {
+			int offset = getCurrentOffset();
+			PathDescription pathDescr = parseAltPathDescription();
+			int length = getLength(offset);
+			match(TokenTypes.RBRACK);
+			if (!inPredicateMode()) {
+				OptionalPathDescription optPathDescr = graph.createOptionalPathDescription();
+				IsOptionalPathOf optionalPathOf = graph.createIsOptionalPathOf(pathDescr, optPathDescr);
+				optionalPathOf.setSourcePositions((createSourcePositionList(length, offset)));
+				return optPathDescr;
+			}
+		}
+		fail("Unrecognized token");
 		return null;		
 	}
 
