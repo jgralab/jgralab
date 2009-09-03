@@ -150,7 +150,7 @@ public class ManualGreqlLexer {
 					position++;
 				}
 				if (query.charAt(position) != '\"')
-					throw new ParsingException("String started at position " + start + " but is not closed in query", query.substring(start, position), start, position);
+					throw new ParsingException("String started at position " + start + " but is not closed in query", query.substring(start, position), start, position-start);
 				recognizedTokenType = TokenTypes.STRING;
 				recognizedToken = new ComplexToken(TokenTypes.STRING, start, position, query.substring(start, position));
 				position++;
@@ -163,19 +163,18 @@ public class ManualGreqlLexer {
 					nextPossibleToken.append(query.charAt(position++));
 				String tokenText = nextPossibleToken.toString(); 
 				if (tokenText.equals("thisVertex")) {
-					recognizedToken = new ComplexToken(TokenTypes.THISVERTEX, start, position, tokenText);
+					recognizedToken = new ComplexToken(TokenTypes.THISVERTEX, start, position-start, tokenText);
 				} else if (tokenText.equals("thisEdge")) {
-					recognizedToken = new ComplexToken(TokenTypes.THISEDGE, start, position, tokenText);
+					recognizedToken = new ComplexToken(TokenTypes.THISEDGE, start, position-start, tokenText);
 				} else if (startsWithNumber(tokenText)) {
-					recognizedToken = matchNumericToken(start, position, tokenText);
+					recognizedToken = matchNumericToken(start, position-start, tokenText);
 				} else {	
-					//isValidIdentifier?
-					recognizedToken = new ComplexToken(TokenTypes.IDENTIFIER, start, position, tokenText);
+					recognizedToken = new ComplexToken(TokenTypes.IDENTIFIER, start, position-start, tokenText);
 				}	
 		
 			}	
 		} else {
-			recognizedToken = new SimpleToken(recognizedTokenType, position, position+bml);
+			recognizedToken = new SimpleToken(recognizedTokenType, position, bml);
 			position += bml;
 		}
 		if (recognizedToken == null)

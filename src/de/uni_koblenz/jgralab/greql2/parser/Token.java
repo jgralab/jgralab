@@ -11,7 +11,7 @@ public abstract class Token {
 	public Token(TokenTypes type, int offset, int length) {
 		this.type = type;
 		this.offset = offset;
-		this.length = offset;
+		this.length = length;
 	}
 	
 	public boolean isComplex() {
