@@ -370,7 +370,11 @@ public class ParserTest {
 	
 	@Test
 	public void testGreTLQuery() throws Exception {
-		String query = "from t : V report t [ --> ] --> end";
+		String query = "from t : V{Type}    "
+						+ "report t --> "
+						+ "     & {hasType(thisVertex)} "
+	//					+ "        and thisVertex.name =~ \".*[Rr]esource.*\"}) "
+						+ "end";
 		Greql2 graph = parseQuery(query);
 		assertNotNull(graph);
 	}

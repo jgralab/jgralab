@@ -336,6 +336,7 @@ public class ManualGreqlParser extends ManualParserHelper {
 		} catch (ParsingException ex) {}
 		if (predicateEnd()) {
 			name.append(matchPackageName());
+			name.append(".");
 			match(TokenTypes.DOT);
 		}
 		name.append(matchSimpleName());
@@ -2258,7 +2259,7 @@ public class ManualGreqlParser extends ManualParserHelper {
 				ThisEdge te = null;
 				if (!inPredicateMode()) {
 					te = graph.getFirstThisEdge();
-					if (te != null)
+					if (te == null)
 						te = graph.createThisEdge();
 				}
 				return te;
@@ -2267,7 +2268,7 @@ public class ManualGreqlParser extends ManualParserHelper {
 				ThisVertex tv = null;
 				if (!inPredicateMode()) {
 					tv = graph.getFirstThisVertex();
-					if (tv != null)
+					if (tv == null)
 						tv = graph.createThisVertex();
 				}
 				return tv;	
