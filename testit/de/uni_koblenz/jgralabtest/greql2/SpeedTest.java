@@ -24,14 +24,11 @@
 
 package de.uni_koblenz.jgralabtest.greql2;
 
-import org.antlr.runtime.ANTLRStringStream;
-import org.antlr.runtime.CommonTokenStream;
 import org.junit.Test;
 
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
-import de.uni_koblenz.jgralab.greql2.parser.Greql2Lexer;
-import de.uni_koblenz.jgralab.greql2.parser.Greql2Parser;
+import de.uni_koblenz.jgralab.greql2.parser.ManualGreqlParser;
 
 public class SpeedTest extends GenericTests {
 
@@ -51,13 +48,9 @@ public class SpeedTest extends GenericTests {
 			queryString += part2;
 		}
 		System.out.println("QueryString is : " + queryString);
-		Greql2Lexer lexer = new Greql2Lexer(new ANTLRStringStream(queryString));
-		CommonTokenStream tokens = new CommonTokenStream();
-		tokens.setTokenSource(lexer);
-		Greql2Parser parser = new Greql2Parser(tokens);
-		parser.greqlExpression();
+		Graph g = ManualGreqlParser.parse(queryString);
 		printTestFunctionFooter("GenerateTestGraph");
-		return parser.getGraph();
+		return g;
 	}
 
 	// TODO: Although this is a quite complicated query, the parser shouldn't

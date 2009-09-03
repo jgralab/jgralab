@@ -26,14 +26,11 @@ package de.uni_koblenz.jgralabtest.greql2;
 
 import static org.junit.Assert.assertEquals;
 
-import org.antlr.runtime.ANTLRStringStream;
-import org.antlr.runtime.CommonTokenStream;
 import org.junit.Test;
 
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
-import de.uni_koblenz.jgralab.greql2.parser.Greql2Lexer;
-import de.uni_koblenz.jgralab.greql2.parser.Greql2Parser;
+import de.uni_koblenz.jgralab.greql2.parser.ManualGreqlParser;
 
 public class SystemTest extends GenericTests {
 
@@ -50,12 +47,7 @@ public class SystemTest extends GenericTests {
 		for (int i = 0; i < count; i++) {
 			queryString += part2;
 		}
-		Greql2Lexer lexer = new Greql2Lexer(new ANTLRStringStream(queryString));
-		CommonTokenStream tokens = new CommonTokenStream();
-		tokens.setTokenSource(lexer);
-		Greql2Parser parser = new Greql2Parser(tokens);
-		parser.greqlExpression();
-		return parser.getGraph();
+		return ManualGreqlParser.parse(queryString);
 	}
 
 	@Test
