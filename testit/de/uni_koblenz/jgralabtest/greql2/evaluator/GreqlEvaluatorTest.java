@@ -1142,6 +1142,37 @@ public class GreqlEvaluatorTest extends GenericTests {
 		assertEquals(result, resultWO);
 	}
 
+	
+	@Test
+	public void testEvaluateAggregationPathDescription1() throws Exception {
+		String queryString = "from var: V{Variable}, def: V{Definition} with var --<> def report var end";
+		JValue result = evalTestQuery("SimplePathDescription2", queryString);
+		assertEquals(6, result.toCollection().size());
+		JValue resultWO = evalTestQuery("SimplePathDescription2 (wo)",
+				queryString, new DefaultOptimizer());
+		assertEquals(result, resultWO);
+	}
+	
+	@Test
+	public void testEvaluateAggregationPathDescription2() throws Exception {
+		String queryString = "from var: V{Variable}, def: V{Definition} with def <>-- var report var end";
+		JValue result = evalTestQuery("SimplePathDescription2", queryString);
+		assertEquals(6, result.toCollection().size());
+		JValue resultWO = evalTestQuery("SimplePathDescription2 (wo)",
+				queryString, new DefaultOptimizer());
+		assertEquals(result, resultWO);
+	}
+	
+	
+	@Test
+	public void testEvaluateAggregationPathDescriptionWithRole() throws Exception {
+		String queryString = "from var: V{Variable}, def: V{Definition} with def <>--{@undefinedRole} var report var end";
+		JValue result = evalTestQuery("SimplePathDescription2", queryString);
+		assertEquals(0, result.toCollection().size());
+		JValue resultWO = evalTestQuery("SimplePathDescription2 (wo)",
+				queryString, new DefaultOptimizer());
+		assertEquals(result, resultWO);
+	}
 	@Test
 	public void testEvaluateStartRestriction1() throws Exception {
 		String queryString = "from var: V{Variable}, def: V{WhereExpression} with var -->{IsVarOf} {Definition} & -->{IsDefinitionOf} def report var end";
@@ -1152,6 +1183,8 @@ public class GreqlEvaluatorTest extends GenericTests {
 		assertEquals(result, resultWO);
 	}
 
+
+	
 	@Test
 	public void testEvaluateStartRestriction5() throws Exception {
 		String queryString = "from var: V{Variable}, def: V{WhereExpression} with var -->{IsVarOf} {Definition} & -->{IsDefinitionOf} def report var end";
