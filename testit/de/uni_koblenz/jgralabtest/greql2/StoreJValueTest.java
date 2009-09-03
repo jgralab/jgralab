@@ -24,6 +24,7 @@
 
 package de.uni_koblenz.jgralabtest.greql2;
 
+import static org.junit.Assert.*;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.fail;
 
@@ -44,6 +45,7 @@ public class StoreJValueTest extends GenericTests {
 		 ValueXMLLoader loader = new ValueXMLLoader(getTestGraph());
 		 JValue loadedValue = loader.load("storejvaluetest1.xml");
 		 assertNotNull(loadedValue);
+		 assertEquals(result, loadedValue);
 	}
 
 	@Test
@@ -56,6 +58,19 @@ public class StoreJValueTest extends GenericTests {
 		 ValueXMLLoader loader = new ValueXMLLoader(getTestGraph());
 		 JValue loadedValue = loader.load("storejvaluetest2.xml");
 		 assertNotNull(loadedValue);
+		 assertEquals(result, loadedValue);
+	}
+	
+	@Test
+	public void testStoreJValue3() throws Exception {
+		 String queryString = "from x,y:list(1..100) reportTable \"X\", \"Y\", x*y end";
+		 JValue result = evalTestQuery("StoreJValue2", queryString);
+		 JValueXMLOutputVisitor outputVisitor = new JValueXMLOutputVisitor( result, "storejvaluetest3.xml", getTestGraph());
+		 outputVisitor.toString();
+		 ValueXMLLoader loader = new ValueXMLLoader(getTestGraph());
+		 JValue loadedValue = loader.load("storejvaluetest3.xml");
+		 assertNotNull(loadedValue);
+	//	 assertEquals(result, loadedValue);
 	}
 
 	@Test
