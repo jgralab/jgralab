@@ -436,15 +436,17 @@ public class ManualGreqlParser extends ManualParserHelper {
 		Set<String> importedTypes = new HashSet<String>();
 		while (lookAhead(0) == TokenTypes.IMPORT) {
 			match(TokenTypes.IMPORT);
-			String importedType = matchPackageName();
+			StringBuilder importedType = new StringBuilder();
+			importedType.append(matchPackageName());
 			match(TokenTypes.DOT);
 			if (lookAhead.type == TokenTypes.STAR) {
 				match(TokenTypes.STAR);
-				importedType += ".*";
+				importedType.append(".*");
 			} else {
-				importedType += matchSimpleName();
+				importedType.append(".");
+				importedType.append(matchSimpleName());
 			}
-			importedTypes.add(importedType);
+			importedTypes.add(importedType.toString());
 			match(TokenTypes.SEMI);
 		}
 		return importedTypes;
