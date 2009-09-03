@@ -167,6 +167,26 @@ public class ParserTest {
 		FunctionId funId = (FunctionId) isIdOf.getAlpha();
 		assertEquals("equals", funId.getName());
 	}
+	
+
+	@Test
+	public void testMatchExpression() throws Exception {
+		Greql2 graph = parseQuery("true =~ false");
+		FunctionApplication funAp = graph.getFirstFunctionApplication();
+		assertNotNull(funAp);
+		IsFunctionIdOf isIdOf = funAp.getFirstIsFunctionIdOf();
+		assertNotNull(isIdOf);
+		FunctionId funId = (FunctionId) isIdOf.getAlpha();
+		assertEquals("reMatch", funId.getName());
+	}
+	
+	@Test
+	public void testIdentifierWithDollar() throws Exception {
+		Greql2 graph = parseQuery("from $i : V{} report $i end");
+		Variable v = graph.getFirstVariable();
+		assertNotNull(v);
+		assertEquals("$i", v.getName());
+	}
 
 	@Test
 	public void testNotEqualExpression() throws Exception {
