@@ -26,6 +26,7 @@ package de.uni_koblenz.jgralabtest.greql2.evaluator;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
@@ -37,6 +38,7 @@ import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValueBag;
+import de.uni_koblenz.jgralab.greql2.jvalue.JValueBoolean;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValueList;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValueMap;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValueRecord;
@@ -44,6 +46,7 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueSet;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValueTable;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValueTuple;
 import de.uni_koblenz.jgralab.greql2.optimizer.DefaultOptimizer;
+import de.uni_koblenz.jgralab.greql2.schema.TrivalentBoolean;
 import de.uni_koblenz.jgralabtest.greql2.GenericTests;
 
 public class GreqlEvaluatorTest extends GenericTests {
@@ -908,6 +911,83 @@ public class GreqlEvaluatorTest extends GenericTests {
 				queryString, new DefaultOptimizer());
 		assertEquals(result, resultWO);
 	}
+	
+	/*
+	 * Test method for
+	 * 'greql2.evaluator.GreqlEvaluator.evaluateQuantifiedExpression(QuantifiedExpression,
+	 * Graph)'
+	 */
+	@Test
+	public void testEvaluateQuantifiedExpression5() throws Exception {
+		JValueMap map = new JValueMap();
+		map.put(new JValue(1), new JValue(JValueBoolean.getNullValue()));
+		map.put(new JValue(2), new JValue(true));
+		boundVariables.put("FOO", map);
+		String queryString = "using FOO: exists! s:list(1,2) @ get(FOO, s)";
+		JValue result = evalTestQuery("QuantifiedExpression5", queryString);
+		System.out.println("Result is: " + result);
+		assertNull(result.toBoolean());
+		JValue resultWO = evalTestQuery("QuantifiedExpression5 (wo)",
+				queryString, new DefaultOptimizer());
+		assertEquals(result, resultWO);
+	}
+	
+	@Test
+	public void testEvaluateQuantifiedExpression6() throws Exception {
+		JValueMap map = new JValueMap();
+		map.put(new JValue(1), new JValue(JValueBoolean.getNullValue()));
+		map.put(new JValue(2), new JValue(JValueBoolean.getNullValue()));
+		boundVariables.put("FOO", map);
+		String queryString = "using FOO: exists! s:list(1,2) @ get(FOO, s)";
+		JValue result = evalTestQuery("QuantifiedExpression6", queryString);
+		assertNull(result.toBoolean());
+		JValue resultWO = evalTestQuery("QuantifiedExpression6 (wo)",
+				queryString, new DefaultOptimizer());
+		assertEquals(result, resultWO);
+	}
+
+	
+	@Test
+	public void testEvaluateQuantifiedExpression7() throws Exception {
+		JValueMap map = new JValueMap();
+		map.put(new JValue(1), new JValue(JValueBoolean.getNullValue()));
+		map.put(new JValue(2), new JValue(JValueBoolean.getNullValue()));
+		boundVariables.put("FOO", map);
+		String queryString = "using FOO: exists s:list(1,2) @ get(FOO, s)";
+		JValue result = evalTestQuery("QuantifiedExpression7", queryString);
+		assertNull(result.toBoolean());
+		JValue resultWO = evalTestQuery("QuantifiedExpression7 (wo)",
+				queryString, new DefaultOptimizer());
+		assertEquals(result, resultWO);
+	}
+	
+	@Test
+	public void testEvaluateQuantifiedExpression8() throws Exception {
+		JValueMap map = new JValueMap();
+		map.put(new JValue(1), new JValue(JValueBoolean.getNullValue()));
+		map.put(new JValue(2), new JValue(JValueBoolean.getNullValue()));
+		boundVariables.put("FOO", map);
+		String queryString = "using FOO: forall s:list(1,2) @ get(FOO, s)";
+		JValue result = evalTestQuery("QuantifiedExpression8", queryString);
+		assertNull(result.toBoolean());
+		JValue resultWO = evalTestQuery("QuantifiedExpression8 (wo)",
+				queryString, new DefaultOptimizer());
+		assertEquals(result, resultWO);
+	}
+	
+	@Test
+	public void testEvaluateQuantifiedExpression9() throws Exception {
+		JValueMap map = new JValueMap();
+		map.put(new JValue(1), new JValue(JValueBoolean.getNullValue()));
+		map.put(new JValue(2), new JValue(JValueBoolean.getNullValue()));
+		boundVariables.put("FOO", map);
+		String queryString = "using FOO: forall s:list(1,2) @ get(FOO, s)";
+		JValue result = evalTestQuery("QuantifiedExpression9", queryString);
+		assertNull(result.toBoolean());
+		JValue resultWO = evalTestQuery("QuantifiedExpression9 (wo)",
+				queryString, new DefaultOptimizer());
+		assertEquals(result, resultWO);
+	}
 
 	/*
 	 * Test method for
@@ -1449,15 +1529,12 @@ public class GreqlEvaluatorTest extends GenericTests {
 	}
 
 	@Test
-	public void testMapConstruction() throws Exception {
-		String queryString = "map(1 -> \"One\", 2 -> \"Two\", 3 -> \"Three\")";
-		JValue result = evalTestQuery("MapConstruction", queryString);
-		assertTrue(result.isMap());
-		JValueMap map = result.toJValueMap();
-		assertEquals(3, map.size());
-		assertEquals(new JValue("One"), map.get(new JValue(1)));
-		assertEquals(new JValue("Two"), map.get(new JValue(2)));
-		assertEquals(new JValue("Three"), map.get(new JValue(3)));
+	public void testTableComprehension() throws Exception {
+		String queryString = "from x,y:list(1..10) reportTable \"X\", \"Y\", x*y end";
+		JValue result = evalTestQuery("TableComprehension", queryString);
+		assertTrue(result.toCollection().isJValueTable());
+		
+		
 	}
 
 	@Test
@@ -1476,6 +1553,19 @@ public class GreqlEvaluatorTest extends GenericTests {
 
 	@Test
 	public void testMapComprehension2() throws Exception {
+		String queryString = "from x : V{Variable} reportMap x.name, x end";
+		JValue result = evalTestQuery("MapComprehension2", queryString);
+		JValueMap map = result.toJValueMap();
+		assertEquals(5, map.size());
+		assertTrue(map.containsKey(new JValue("a")));
+		assertTrue(map.containsKey(new JValue("b")));
+		assertTrue(map.containsKey(new JValue("c")));
+		assertTrue(map.containsKey(new JValue("d")));
+		assertTrue(map.containsKey(new JValue("i")));
+	}
+	
+	@Test
+	public void testTableComprehension2() throws Exception {
 		String queryString = "from x : V{Variable} reportMap x.name, x end";
 		JValue result = evalTestQuery("MapComprehension2", queryString);
 		JValueMap map = result.toJValueMap();
