@@ -3,6 +3,7 @@ package de.uni_koblenz.jgralabtest.greql2;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
@@ -112,6 +113,15 @@ public class ParserTest {
 	@Test
 	public void testGreql2TestGraph() throws ParsingException {
 		parseQuery("from i:c report i end where d:=\"drölfundfünfzig\", c:=b, b:=a, a:=\"Mensaessen\"");
+	}
+	
+	@Test
+	public void testExistsOne() throws Exception {
+		Greql2 graph = parseQuery("exists! x:list(1..5) @ x = 5");
+		Quantifier quantifier = graph.getFirstQuantifier();
+		assertEquals("exists!", quantifier.getName());
+		quantifier = quantifier.getNextQuantifier();
+		assertNull(quantifier);
 	}
 
 	@Test
