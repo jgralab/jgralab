@@ -445,7 +445,7 @@ public class ManualGreqlParser extends ManualParserHelper {
 				importedType += matchSimpleName();
 			}
 			importedTypes.add(importedType);
-			match(TokenTypes.COLON);
+			match(TokenTypes.SEMI);
 		}
 		return importedTypes;
 	}
