@@ -7,6 +7,6 @@ import org.junit.runners.Suite;
 @RunWith(Suite.class)
 @Suite.SuiteClasses( { CodeListTest.class, CodeSnippetTest.class,
 		ImportCodeSnippetTest.class })
-public class RunCodeGeneratorTests {
+public class RunCodeGeneratorTests { 
 
 }

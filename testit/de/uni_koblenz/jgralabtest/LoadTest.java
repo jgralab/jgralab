@@ -7,16 +7,13 @@ import static org.junit.Assert.fail;
 
 import java.lang.reflect.Field;
 
-import org.antlr.runtime.ANTLRStringStream;
-import org.antlr.runtime.CommonTokenStream;
 import org.junit.Test;
 
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.GraphIO;
 import de.uni_koblenz.jgralab.Vertex;
-import de.uni_koblenz.jgralab.greql2.parser.Greql2Lexer;
-import de.uni_koblenz.jgralab.greql2.parser.Greql2Parser;
+import de.uni_koblenz.jgralab.greql2.parser.ManualGreqlParser;
 import de.uni_koblenz.jgralab.greql2.schema.Greql2;
 import de.uni_koblenz.jgralab.greql2.schema.Greql2Schema;
 import de.uni_koblenz.jgralab.impl.FreeIndexList;
@@ -36,13 +33,7 @@ public class LoadTest {
 
 	protected Graph createTestGraph() throws Exception {
 		String query = "from i:c report i end where d:=\"drölfundfünfzig\", c:=b, b:=a, a:=\"Mensaessen\"";
-		Greql2Lexer lexer = new Greql2Lexer(new ANTLRStringStream(query));
-		CommonTokenStream tokens = new CommonTokenStream();
-		tokens.setTokenSource(lexer);
-		Greql2Parser parser = new Greql2Parser(tokens);
-		parser.greqlExpression();
-		// parser.saveGraph("createdTestGraph.tg");
-		return parser.getGraph();
+		return ManualGreqlParser.parse(query);
 	}
 
 	@Test

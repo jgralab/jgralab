@@ -10,7 +10,7 @@ import de.uni_koblenz.jgralabtest.schema.RunSchemaTests;
 
 /**
  * @author ist@uni-koblenz.de
- *
+ * 
  */
 @RunWith(Suite.class)
 @Suite.SuiteClasses( { RunCoreTests.class, RunSchemaTests.class,
