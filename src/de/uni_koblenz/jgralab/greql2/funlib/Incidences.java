@@ -16,6 +16,7 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValuePath;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValuePathSystem;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValueSet;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
+import de.uni_koblenz.jgralab.greql2.jvalue.JValueTypeCollection;
 
 /**
  * @author Tassilo Horn <horn@uni-koblenz.de>
@@ -26,7 +27,9 @@ public abstract class Incidences extends AbstractGreql2Function {
 	{
 		JValueType[][] x = { { JValueType.VERTEX },
 				{ JValueType.VERTEX, JValueType.PATH },
-				{ JValueType.VERTEX, JValueType.PATHSYSTEM } };
+				{ JValueType.VERTEX, JValueType.PATHSYSTEM },
+				{ JValueType.VERTEX, JValueType.TYPECOLLECTION },
+			};
 		signatures = x;
 	}
 
@@ -68,6 +71,7 @@ public abstract class Incidences extends AbstractGreql2Function {
 			EdgeDirection direction) throws EvaluateException {
 		JValuePath path = null;
 		JValuePathSystem pathSystem = null;
+		JValueTypeCollection typeCol = null;
 		switch (checkArguments(arguments)) {
 		case 0:
 			break;
@@ -77,6 +81,9 @@ public abstract class Incidences extends AbstractGreql2Function {
 		case 2:
 			pathSystem = arguments[1].toPathSystem();
 			break;
+		case 3:
+			typeCol = arguments[1].toJValueTypeCollection();
+			break;
 		default:
 			throw new WrongFunctionParameterException(this, null, arguments);
 		}
@@ -84,7 +91,9 @@ public abstract class Incidences extends AbstractGreql2Function {
 
 		if (path != null) {
 			if (direction == EdgeDirection.INOUT) {
-				return path.edgesConnected(vertex);
+				if (typeCol == null) {
+					return path.edgesConnected(vertex);
+				} 
 			} else {
 				return path.edgesConnected(vertex,
 						direction == EdgeDirection.IN);
@@ -98,14 +107,24 @@ public abstract class Incidences extends AbstractGreql2Function {
 						direction == EdgeDirection.IN);
 			}
 		}
-
 		JValueSet resultSet = new JValueSet();
 		Edge inc = vertex.getFirstEdge(direction);
-		while (inc != null) {
-			if ((subgraph == null) || (subgraph.isMarked(inc))) {
-				resultSet.add(new JValue(inc));
+		if (typeCol == null) {
+			while (inc != null) {
+				if ((subgraph == null) || (subgraph.isMarked(inc))) {
+					resultSet.add(new JValue(inc));
+				}
+				inc = inc.getNextEdge(direction);
 			}
-			inc = inc.getNextEdge(direction);
+		} else {
+			while (inc != null) {
+				if ((subgraph == null) || (subgraph.isMarked(inc))) {
+					if (typeCol.acceptsType(inc.getAttributedElementClass())) {
+						resultSet.add(new JValue(inc));
+					}			
+				}
+				inc = inc.getNextEdge(direction);
+			}
 		}
 		return resultSet;
 	}

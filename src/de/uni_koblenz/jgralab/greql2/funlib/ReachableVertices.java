@@ -119,8 +119,7 @@ public class ReachableVertices extends AbstractGreql2Function {
 								subgraph)) {
 							PathSearchQueueEntry nextEntry = new PathSearchQueueEntry(
 									nextVertex, currentTransition.getEndState());
-							markers[nextEntry.state.number]
-									.mark(nextEntry.vertex);
+							markers[nextEntry.state.number].mark(nextVertex);
 							queue.add(nextEntry);
 						}
 					}
