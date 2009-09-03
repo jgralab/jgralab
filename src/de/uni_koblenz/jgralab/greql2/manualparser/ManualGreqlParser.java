@@ -1,8 +1,10 @@
 package de.uni_koblenz.jgralab.greql2.manualparser;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.Stack;
 
@@ -16,6 +18,8 @@ import de.uni_koblenz.jgralab.greql2.schema.*;
 
 
 public class ManualGreqlParser extends ManualParserHelper {
+	
+	private Map<RuleEnum, int[]> testedRules = new HashMap<RuleEnum, int[]>();
 	
 	private List<Token> tokens = null;  
 	
@@ -32,6 +36,60 @@ public class ManualGreqlParser extends ManualParserHelper {
 	private boolean predicateFulfilled = true;
 	
 	private Greql2Schema schema = null;
+	
+	
+	public void ruleSucceeds(RuleEnum rule, int pos) {
+		int[] maySucceedArray = testedRules.get(rule);
+		maySucceedArray[pos] = current;
+		debug("Rule " + rule.toString() + " succeeded at position " + pos);
+	}
+	
+	/**
+	 * Checks if the rule specified by <code>rule</code> was already tested at the current token position.
+	 * If it was already tested, this method skips the number of tokens which were consumed by the 
+	 * rule in its last application at the current token 
+	 * @param rule the rule to test
+	 * @return the current token position 
+	 * @throws ParsingException if the rule has already failed at this position
+	 */
+	public int alreadySucceeded(RuleEnum rule) {
+		int[] maySucceedArray = testedRules.get(rule);
+		if (maySucceedArray == null) {
+			maySucceedArray = new int[tokens.size()+1];
+			for (int i=0; i<maySucceedArray.length; i++)
+				maySucceedArray[i] = -1;
+			testedRules.put(rule, maySucceedArray);
+		} 
+		int positionOfTokenAfterRule = maySucceedArray[current];
+		if (positionOfTokenAfterRule == -1) //not yet tested
+			if (inPredicateMode())
+				maySucceedArray[current] = -2;
+		if (positionOfTokenAfterRule == -2) //rule has not succeeded, fail
+			fail("Rule " + rule.toString() + " already tested at position " + current + " Current Token " + lookAhead(0));
+		int currentTokenPos = current;
+		if (positionOfTokenAfterRule >= 0)
+			current = positionOfTokenAfterRule; //skip tokens consumed by rule in last application
+		return currentTokenPos; //return current token position for rule application
+	}
+	
+	/**
+	 * Tests, if the application of the current rule can be skipped, should be used _only_
+	 * and _exclusively_ with the result of alreadySucceeded as parameter, example:
+	 * int pos = alreadySucceeded(RuleEnum.EXPRESSION);
+	 * if (skipRule(pos))
+	 *  	return null;
+	 * Expression expr = parseQuantifiedExpression();
+	 * ruleSucceeded(RuleEnum.EXPRESSION, pos);
+	 * return expr;
+	 * 
+	 * @return true if the rule application has already been tested and the parser is still in
+	 *         predicate mode, so the rule and the tokens it matched last time can be skipped,
+	 *         false otherwise
+	 */
+	public boolean skipRule(int pos) {
+		return (pos >= 0) && inPredicateMode();
+	}
+	
 	
 	public ManualGreqlParser(String source) {
 		query = source;
@@ -413,7 +471,12 @@ public class ManualGreqlParser extends ManualParserHelper {
 	}
 		
 	private Expression parseExpression() {
-		return parseQuantifiedExpression();
+//		int pos = alreadySucceeded(RuleEnum.EXPRESSION);
+//		if (skipRule(pos))
+//			return null;
+		Expression expr = parseQuantifiedExpression();
+//		ruleSucceeds(RuleEnum.EXPRESSION, pos);
+		return expr;
 	}
 
 
@@ -453,13 +516,16 @@ public class ManualGreqlParser extends ManualParserHelper {
 	
 
 	private Expression parseQuantifiedExpression() {
-		int offsetQuantifier = getCurrentOffset();
-		int offsetQuantifiedDecl = 0;
-		int offsetQuantifiedExpr = 0;
-		int lengthQuantifier = 0;
-		int lengthQuantifiedDecl = 0;
-		int lengthQuantifiedExpr = 0;
 		if ((lookAhead(0) == TokenTypes.EXISTS) || (lookAhead(0) == TokenTypes.EXISTS_ONE) || (lookAhead(0) == TokenTypes.FORALL)) {
+//			int pos = alreadySucceeded(RuleEnum.QUANTIFIED_EXPRESSION);
+//			if (pos >= 0)
+//				return null;
+			int offsetQuantifier = getCurrentOffset();
+			int offsetQuantifiedDecl = 0;
+			int offsetQuantifiedExpr = 0;
+			int lengthQuantifier = 0;
+			int lengthQuantifiedDecl = 0;
+			int lengthQuantifiedExpr = 0;
 			Quantifier quantifier = parseQuantifier();
 			lengthQuantifier = getLength(offsetQuantifier);
 			offsetQuantifiedDecl = getCurrentOffset();
@@ -469,19 +535,20 @@ public class ManualGreqlParser extends ManualParserHelper {
 			offsetQuantifiedExpr = getCurrentOffset();
 			Expression boundExpr = parseQuantifiedExpression();
 			lengthQuantifiedExpr = getLength(offsetQuantifiedExpr);
+			QuantifiedExpression quantifiedExpr = null;
 			if (!inPredicateMode()) {
-			QuantifiedExpression quantifiedExpr = graph.createQuantifiedExpression();
-			IsQuantifierOf quantifierOf = graph.createIsQuantifierOf(quantifier, quantifiedExpr);
-			quantifierOf.setSourcePositions((createSourcePositionList(lengthQuantifier, offsetQuantifier)));
-			// add declaration
-			IsQuantifiedDeclOf quantifiedDeclOf = graph.createIsQuantifiedDeclOf(decl, quantifiedExpr);
-			quantifiedDeclOf.setSourcePositions((createSourcePositionList(lengthQuantifiedDecl, offsetQuantifiedDecl)));
-			// add predicate
-			IsBoundExprOf boundExprOf = graph.createIsBoundExprOfQuantifier(boundExpr, quantifiedExpr);
-			boundExprOf.setSourcePositions((createSourcePositionList(lengthQuantifiedExpr, offsetQuantifiedExpr)));
-			return quantifiedExpr;
+				quantifiedExpr = graph.createQuantifiedExpression();
+				IsQuantifierOf quantifierOf = graph.createIsQuantifierOf(quantifier, quantifiedExpr);
+				quantifierOf.setSourcePositions((createSourcePositionList(lengthQuantifier, offsetQuantifier)));
+				// add declaration
+				IsQuantifiedDeclOf quantifiedDeclOf = graph.createIsQuantifiedDeclOf(decl, quantifiedExpr);
+				quantifiedDeclOf.setSourcePositions((createSourcePositionList(lengthQuantifiedDecl, offsetQuantifiedDecl)));
+				// add predicate
+				IsBoundExprOf boundExprOf = graph.createIsBoundExprOfQuantifier(boundExpr, quantifiedExpr);
+				boundExprOf.setSourcePositions((createSourcePositionList(lengthQuantifiedExpr, offsetQuantifiedExpr)));
 			} 
-			return null;
+		//	ruleSucceeds(RuleEnum.QUANTIFIED_EXPRESSION, pos);
+			return quantifiedExpr;
 		} else {
 			return parseLetExpression();
 		}
@@ -489,22 +556,24 @@ public class ManualGreqlParser extends ManualParserHelper {
 	
 	private Expression parseLetExpression() {
 		if (lookAhead.type == TokenTypes.LET) {
+		//	int pos = maySucceed(RuleEnum.LET_EXPRESSION);
 			match();
 			List<VertexPosition<Definition>> defList = parseDefinitionList();
 			match(TokenTypes.IN);
 			int offset = getCurrentOffset();
 			Expression boundExpr = parseLetExpression();
-			int length = getLength(offset);
 			if (!inPredicateMode() && !defList.isEmpty()) {
-			  LetExpression result = graph.createLetExpression();
-			  IsBoundExprOf exprOf = graph.createIsBoundExprOfDefinition(boundExpr, result);
-			  exprOf.setSourcePositions((createSourcePositionList(length, offset)));
-			  for (VertexPosition<Definition> def : defList) {
-				  IsDefinitionOf definitionOf = graph.createIsDefinitionOf(def.node, result);
-				  definitionOf.setSourcePositions((createSourcePositionList(def.length, def.offset)));
-			  }
-			  return result;
-			} 
+				int length = getLength(offset);
+				LetExpression result = graph.createLetExpression();
+				IsBoundExprOf exprOf = graph.createIsBoundExprOfDefinition(boundExpr, result);
+				exprOf.setSourcePositions((createSourcePositionList(length, offset)));
+				for (VertexPosition<Definition> def : defList) {
+					IsDefinitionOf definitionOf = graph.createIsDefinitionOf(def.node, result);
+					definitionOf.setSourcePositions((createSourcePositionList(def.length, def.offset)));
+				}
+				return result;
+			}
+			//ruleSucceeds(RuleEnum.LET_EXPRESSION, pos);
 			return null;
 		} else {
 			return parseWhereExpression();
@@ -513,10 +582,11 @@ public class ManualGreqlParser extends ManualParserHelper {
 	
 
 	private Expression parseWhereExpression() {
+		//int pos = maySucceed(RuleEnum.WHERE_EXPRESSION);
 		int offset = getCurrentOffset();
 		Expression expr = parseConditionalExpression();
-		int length = getLength(offset);
 		if (tryMatch(TokenTypes.WHERE)) {
+			int length = getLength(offset);
 			List<VertexPosition<Definition>> defList = parseDefinitionList();
 			if (!inPredicateMode()) {
 				WhereExpression result = graph.createWhereExpression();
@@ -528,8 +598,10 @@ public class ManualGreqlParser extends ManualParserHelper {
 				}	
 				return result;
 			}
+			//ruleSucceeds(RuleEnum.WHERE_EXPRESSION, pos);
 			return null;
 		} else {
+			//ruleSucceeds(RuleEnum.WHERE_EXPRESSION, pos);
 			return expr;
 		}
 	}	
@@ -767,6 +839,9 @@ public class ManualGreqlParser extends ManualParserHelper {
 	    @return
 	*/
 	private Expression parseRestrictedExpression() {
+//		int pos = alreadySucceeded(RuleEnum.RESTRICTED_EXPRESSION);
+//		if (pos >= 0)
+//			return null;
 	    int offsetExpr = getCurrentOffset();
 	    Expression valAccess = parseValueAccess();
 	    int lengthExpr = getLength(offsetExpr);
@@ -784,9 +859,11 @@ public class ManualGreqlParser extends ManualParserHelper {
 		 		// add restriction
 		 		IsRestrictionOf restrOf = graph.createIsRestrictionOf(restriction, restrExpr);
 		 		restrOf.setSourcePositions((createSourcePositionList(lengthRestr, offsetRestr)));
+		 		//ruleSucceeds(RuleEnum.RESTRICTED_EXPRESSION, pos);
 		 		return restrExpr;
 		    }
 	    }
+	   // ruleSucceeds(RuleEnum.RESTRICTED_EXPRESSION, pos);
 	    return valAccess;
 	}  
 
@@ -929,59 +1006,22 @@ public class ManualGreqlParser extends ManualParserHelper {
 		return null;
 	}
 	
-	//IDee: Mit Stack von mayOccur alle die dinger rausfiltern, die in pathSystem o.ä. vorkommen
-	private boolean followsPath() {
-		int parenFound = 1;
-		int i =0;
-		while ((parenFound > 0) && (current+i < tokens.size())) {
-			switch (lookAhead(i)) {
-				case LPAREN:
-					parenFound++;
-					break;
-				case RPAREN:
-					parenFound--;
-					break;
-				case EDGESTART:
-				case EDGEEND:
-				case INAGGREGATION:
-				case OUTAGGREGATION:
-				case RARROW:
-				case LARROW:
-				case ARROW:
-					return true;
-			}
-		}
-		return false;
-	}
 
-//TODO :Parantheses
 	private Expression parseParenthesedExpression() {
-//		if (followsPath()) {
-			System.out.println("Follows path");
-			predicateStart();
-			try {
-				parseAltPathDescription();
-				match(TokenTypes.RPAREN);
-			} catch (ParsingException ex) {}	
-			if (predicateEnd()) {
-				Expression expr = parseAltPathDescription();
-				match(TokenTypes.RPAREN);
-				return expr;
-			}	
-	//	}	
-		
 		predicateStart();
 		try {
-			parseExpression();
+			parseAltPathDescription();
 			match(TokenTypes.RPAREN);
-		} catch (ParsingException ex) {}
+		} catch (ParsingException ex) {}	
 		if (predicateEnd()) {
-			Expression expr = parseExpression();
+			Expression expr = parseAltPathDescription();
 			match(TokenTypes.RPAREN);
 			return expr;
 		}	
-		fail( "Unrecognized token ");
-		return null;
+
+		Expression expr = parseExpression();
+		match(TokenTypes.RPAREN);
+		return expr;
 	}
 	
 
@@ -992,6 +1032,10 @@ public class ManualGreqlParser extends ManualParserHelper {
 	
 
 	private PathDescription parseAltPathDescription() {
+		int pos = alreadySucceeded(RuleEnum.ALTERNATIVE_PATH_DESCRIPTION);
+		if (skipRule(pos))
+			return null;
+		//debug("Parsing AltPathDescription from Token: " + current);
 		int offsetPart1 = getCurrentOffset();
 		PathDescription part1 = parseIntermediateVertexPathDescription();
 		int lengthPart1 = getLength(offsetPart1);
@@ -1000,10 +1044,9 @@ public class ManualGreqlParser extends ManualParserHelper {
 			PathDescription part2 = parseAltPathDescription();
 			int lengthPart2 = getLength(offsetPart2);
 			if (!inPredicateMode())
-				return addPathElement(AlternativePathDescription.class, IsAlternativePathOf.class, null, part1, offsetPart1, lengthPart1, part2, offsetPart2, lengthPart2);
-			else
-				return null;
+				part1 = addPathElement(AlternativePathDescription.class, IsAlternativePathOf.class, null, part1, offsetPart1, lengthPart1, part2, offsetPart2, lengthPart2);
 		}
+		ruleSucceeds(RuleEnum.ALTERNATIVE_PATH_DESCRIPTION, pos);
 		return part1;
 	}
 	

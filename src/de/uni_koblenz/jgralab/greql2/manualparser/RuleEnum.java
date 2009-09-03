@@ -1,0 +1,10 @@
+package de.uni_koblenz.jgralab.greql2.manualparser;
+
+public enum RuleEnum {
+	ALTERNATIVE_PATH_DESCRIPTION,
+	RESTRICTED_EXPRESSION,
+	QUANTIFIED_EXPRESSION,
+	LET_EXPRESSION,
+	WHERE_EXPRESSION,
+	EXPRESSION
+}
