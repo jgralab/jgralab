@@ -825,7 +825,8 @@ public class GreqlEvaluator {
 		}
 
 		long parseStartTime = System.currentTimeMillis();
-		parseQuery(queryString);
+		if (queryString != null)
+			parseQuery(queryString);
 		parseTime = System.currentTimeMillis() - parseStartTime;
 		if (queryGraph == null) {
 			throw new RuntimeException(

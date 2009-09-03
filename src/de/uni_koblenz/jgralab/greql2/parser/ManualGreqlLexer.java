@@ -104,6 +104,8 @@ public class ManualGreqlLexer {
 
 	public ManualGreqlLexer(String source) {
 		this.query = source;
+		if (query == null)
+			throw new NullPointerException("Cannot parse nullpointer as GReQL query");
 	}
 
 	public static String getTokenString(TokenTypes token) {

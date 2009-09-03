@@ -30,6 +30,7 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import org.junit.Test;
@@ -46,6 +47,8 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueSet;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValueTable;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValueTuple;
 import de.uni_koblenz.jgralab.greql2.optimizer.DefaultOptimizer;
+import de.uni_koblenz.jgralab.greql2.parser.ManualGreqlParser;
+import de.uni_koblenz.jgralab.greql2.schema.Greql2;
 import de.uni_koblenz.jgralabtest.greql2.GenericTests;
 
 public class GreqlEvaluatorTest extends GenericTests {
@@ -1589,5 +1592,23 @@ public class GreqlEvaluatorTest extends GenericTests {
 		assertTrue(map.containsKey(new JValue("c")));
 		assertTrue(map.containsKey(new JValue("d")));
 		assertTrue(map.containsKey(new JValue("i")));
+	}
+	
+	@Test
+	public void testQueryWithoutDatagraph() throws Exception {
+		String queryString = "(3 + 4) * 7";
+		JValue result = evalTestQuery("QueryWithoutDatagraph", queryString, (Graph)null);
+		assertEquals(49, result.toInteger());
+	}
+	
+	@Test
+	public void testGraphExecution() throws Exception {
+		String queryString = "(3 + 4) * 7";
+		Greql2 graph = ManualGreqlParser.parse(queryString);
+		System.out.println("Parsed query ");
+		GreqlEvaluator eval = new GreqlEvaluator(graph, null, new HashMap<String, JValue>());
+		eval.startEvaluation();
+		JValue result = eval.getEvaluationResult();
+		assertEquals(49, result.toInteger());
 	}
 }
