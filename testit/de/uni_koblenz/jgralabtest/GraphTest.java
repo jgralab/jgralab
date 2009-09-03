@@ -31,6 +31,7 @@ import de.uni_koblenz.jgralabtest.schemas.vertextest.SuperNode;
 import de.uni_koblenz.jgralabtest.schemas.vertextest.VertexTestGraph;
 import de.uni_koblenz.jgralabtest.schemas.vertextest.VertexTestSchema;
 
+
 public class GraphTest {
 	private VertexTestGraph graph;
 	private VertexTestGraph graph2;

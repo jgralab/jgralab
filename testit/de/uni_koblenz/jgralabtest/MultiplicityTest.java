@@ -1,5 +1,9 @@
 package de.uni_koblenz.jgralabtest;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+
 import java.io.ByteArrayInputStream;
 import java.util.Set;
 import java.util.SortedSet;
@@ -8,21 +12,17 @@ import org.junit.Before;
 import org.junit.Test;
 
 import de.uni_koblenz.jgralab.AttributedElement;
+import de.uni_koblenz.jgralab.GraphException;
 import de.uni_koblenz.jgralab.GraphIO;
 import de.uni_koblenz.jgralab.GraphIOException;
 import de.uni_koblenz.jgralab.graphvalidator.GraphValidator;
 import de.uni_koblenz.jgralab.graphvalidator.MultiplicityConstraintViolation;
 import de.uni_koblenz.jgralab.schema.EdgeClass;
 import de.uni_koblenz.jgralab.schema.Schema;
-import de.uni_koblenz.jgralab.GraphException;
 import de.uni_koblenz.jgralabtest.schemas.vertextest.A;
 import de.uni_koblenz.jgralabtest.schemas.vertextest.B;
 import de.uni_koblenz.jgralabtest.schemas.vertextest.VertexTestGraph;
 import de.uni_koblenz.jgralabtest.schemas.vertextest.VertexTestSchema;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
 
 public class MultiplicityTest {
 	private VertexTestGraph graph;

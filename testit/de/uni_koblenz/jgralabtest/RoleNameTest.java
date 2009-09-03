@@ -1,5 +1,7 @@
 package de.uni_koblenz.jgralabtest;
 
+import static org.junit.Assert.assertEquals;
+
 import java.io.ByteArrayInputStream;
 import java.util.LinkedList;
 import java.util.List;
@@ -8,8 +10,6 @@ import java.util.Random;
 
 import org.junit.Before;
 import org.junit.Test;
-
-import static org.junit.Assert.assertEquals;
 
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.GraphException;

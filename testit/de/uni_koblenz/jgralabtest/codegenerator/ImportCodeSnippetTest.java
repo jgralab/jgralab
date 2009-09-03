@@ -1,14 +1,15 @@
 package de.uni_koblenz.jgralabtest.codegenerator;
 
+import static org.junit.Assert.assertEquals;
+
 import java.util.HashMap;
 import java.util.Map;
 
 import org.junit.Test;
-import static org.junit.Assert.assertEquals;
 
-import de.uni_koblenz.jgralab.codegenerator.ImportCodeSnippet;
 import de.uni_koblenz.jgralab.codegenerator.CodeList;
 import de.uni_koblenz.jgralab.codegenerator.CodeSnippet;
+import de.uni_koblenz.jgralab.codegenerator.ImportCodeSnippet;
 
 public class ImportCodeSnippetTest extends CodeSnippetTest{
 	
