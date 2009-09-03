@@ -16,11 +16,44 @@
 
 package de.uni_koblenz.jgralabtest;
 
+import static junit.framework.Assert.assertEquals;
+import junit.framework.Assert;
+
+import org.junit.Test;
+
 import de.uni_koblenz.jgralab.GraphIO;
 import de.uni_koblenz.jgralab.GraphIOException;
+import de.uni_koblenz.jgralab.grumlschema.GrumlSchema;
 import de.uni_koblenz.jgralab.schema.Schema;
 
 public class GraphIOTest {
+
+	@Test
+	public void testStringRead() throws Exception {
+		GraphIO io = GraphIO.createStringReader(
+				"this \"utf string\\nwith newline\" is f \\null a string",
+				GrumlSchema.instance());
+		io.match("this");
+		String s = io.matchUtfString();
+		assertEquals("utf string\nwith newline", s);
+		io.match("is");
+		Assert.assertFalse(io.matchBoolean());
+		s = io.matchEnumConstant();
+		assertEquals("\\null", s);
+		io.match("a");
+		io.match("string");
+	}
+
+	@Test
+	public void testStringWrite() throws Exception {
+		GraphIO io = GraphIO.createStringWriter(GrumlSchema.instance());
+
+		io.writeUtfString("Umlaute: äöüÄÖÜß");
+		assertEquals(
+				"\"Umlaute: \\u00e4\\u00f6\\u00fc\\u00c4\\u00d6\\u00dc\\u00df\"",
+				io.getStringWriterResult());
+
+	}
 
 	public static void main(String[] args) throws GraphIOException {
 		Schema ioTest = GraphIO.loadSchemaFromFile("GraphIOTestInput.tg");
