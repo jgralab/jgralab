@@ -99,14 +99,18 @@ public class RecordCodeGenerator extends CodeGenerator {
 
 	private CodeBlock createMapConstructor() {
 		CodeList code = new CodeList();
-		// TODO check if this SuppressWarnings is _really_ needed (results in a
-		// warning if for example only Integer components are used)
-		CodeSnippet suppress = new CodeSnippet(true,
-				"@SuppressWarnings(\"unchecked\")");
-		CodeSnippet header = new CodeSnippet(false,
-				"public #simpleClassName#(java.util.Map<String, Object> fields) {");
-		code.addNoIndent(suppress);
-		code.addNoIndent(header);
+		// suppress "unchecked" warnings if this record domain contains a
+		// Collection domain (Set<E>, List<E>, Map<K, V>)
+		for (Domain d : recordDomain.getComponents().values()) {
+			if (d.isComposite() && !(d instanceof RecordDomain)) {
+				code.addNoIndent(new CodeSnippet(true,
+						"@SuppressWarnings(\"unchecked\")"));
+				break;
+			}
+		}
+		code
+				.addNoIndent(new CodeSnippet(false,
+						"public #simpleClassName#(java.util.Map<String, Object> fields) {"));
 		for (Entry<String, Domain> rdc : recordDomain.getComponents()
 				.entrySet()) {
 			CodeBlock assign = new CodeSnippet("this.#name# = ("
