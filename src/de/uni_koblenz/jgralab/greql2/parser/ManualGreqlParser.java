@@ -315,6 +315,7 @@ public class ManualGreqlParser extends ManualParserHelper {
 				if (predicateEnd()) {
 					ph = true;
 					match(TokenTypes.DOT);
+					name.append(".");
 					name.append(matchPackageNameComponent());	
 				} else {
 					ph = false;

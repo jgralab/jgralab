@@ -24,7 +24,7 @@
 
 package de.uni_koblenz.jgralabtest.greql2;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.fail;
 
 import org.junit.Test;
