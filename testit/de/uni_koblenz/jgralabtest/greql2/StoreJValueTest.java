@@ -70,7 +70,6 @@ public class StoreJValueTest extends GenericTests {
 		 ValueXMLLoader loader = new ValueXMLLoader(getTestGraph());
 		 JValue loadedValue = loader.load("storejvaluetest3.xml");
 		 assertNotNull(loadedValue);
-	//	 assertEquals(result, loadedValue);
 	}
 
 	@Test
