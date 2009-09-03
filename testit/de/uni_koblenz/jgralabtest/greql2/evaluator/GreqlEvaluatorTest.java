@@ -46,7 +46,6 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueSet;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValueTable;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValueTuple;
 import de.uni_koblenz.jgralab.greql2.optimizer.DefaultOptimizer;
-import de.uni_koblenz.jgralab.greql2.schema.TrivalentBoolean;
 import de.uni_koblenz.jgralabtest.greql2.GenericTests;
 
 public class GreqlEvaluatorTest extends GenericTests {
@@ -1464,6 +1463,21 @@ public class GreqlEvaluatorTest extends GenericTests {
 		assertEquals(result, resultWO);
 	}
 
+	
+	@Test
+	public void testMultipleEvaluation() throws Exception {
+		String queryString = "from i:c report i end where c:=b, b:=a, a:=\"Mensaessen\"";
+		String queryString2 = "from i:c report i end where c:=b, b:=a, a:=\"Mensaessen\"";
+		JValue result = evalTestQuery("WhereExpression", queryString);
+		assertEquals(1, result.toCollection().size());
+		JValueList list = result.toCollection().toJValueList();
+		assertEquals("Mensaessen", list.get(0).toString());
+		JValue resultWO = evalTestQuery("MultipleEvaluation (wo)", queryString,
+				new DefaultOptimizer());
+		assertEquals(result, resultWO);
+		result = evalTestQuery("MultipleEvaluation", queryString2);
+	}
+	
 	/*
 	 * Test method for
 	 * 'greql2.evaluator.GreqlEvaluator.evaluateFunctionApplication(FunctionApplication,

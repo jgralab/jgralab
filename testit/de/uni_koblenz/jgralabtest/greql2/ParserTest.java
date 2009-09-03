@@ -197,6 +197,37 @@ public class ParserTest {
 	}
 
 	@Test
+	public void testTypeId() throws Exception {
+		Greql2 graph = parseQuery("V{Part!}");
+		TypeId t = graph.getFirstTypeId();
+		assertNotNull(t);
+		assertEquals("Part", t.getName());
+		assertTrue(t.isType());
+		assertFalse(t.isExcluded());
+	}
+	
+	@Test
+	public void testTypeId2() throws Exception {
+		Greql2 graph = parseQuery("V{^Part!}");
+		TypeId t = graph.getFirstTypeId();
+		assertNotNull(t);
+		assertEquals("Part", t.getName());
+		assertTrue(t.isType());
+		assertTrue(t.isExcluded());
+	}
+	
+	@Test
+	public void testTypeId3() throws Exception {
+		Greql2 graph = parseQuery("V{^Part}");
+		TypeId t = graph.getFirstTypeId();
+		assertNotNull(t);
+		assertEquals("Part", t.getName());
+		assertFalse(t.isType());
+		assertTrue(t.isExcluded());
+	}
+
+	
+	@Test
 	public void testNotEqualExpression() throws Exception {
 		Greql2 graph = parseQuery("true <> false");
 		FunctionApplication funAp = graph.getFirstFunctionApplication();
