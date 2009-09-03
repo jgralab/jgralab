@@ -1249,6 +1249,7 @@ public class ManualGreqlParser extends ManualParserHelper {
 				optionalPathOf.setSourcePositions((createSourcePositionList(length, offset)));
 				return optPathDescr;
 			}
+			return null;
 		}
 		fail("Unrecognized token");
 		return null;		
