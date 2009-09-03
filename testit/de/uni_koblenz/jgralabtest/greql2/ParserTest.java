@@ -187,6 +187,14 @@ public class ParserTest {
 		assertNotNull(v);
 		assertEquals("$i", v.getName());
 	}
+	
+	@Test
+	public void testIdentifierWithDollar2() throws Exception {
+		Greql2 graph = parseQuery("using $: from i:$ report i end");
+		Variable v = graph.getFirstVariable();
+		assertNotNull(v);
+		assertEquals("$", v.getName());
+	}
 
 	@Test
 	public void testNotEqualExpression() throws Exception {
