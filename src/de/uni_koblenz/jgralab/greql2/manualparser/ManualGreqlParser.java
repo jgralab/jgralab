@@ -41,7 +41,7 @@ public class ManualGreqlParser extends ManualParserHelper {
 	public void ruleSucceeds(RuleEnum rule, int pos) {
 		int[] maySucceedArray = testedRules.get(rule);
 		maySucceedArray[pos] = current;
-		debug("Rule " + rule.toString() + " succeeded at position " + pos);
+		debug("Rule " + rule.toString() + " succeeded at position " + pos + " token after rule " + current);
 	}
 	
 	/**
@@ -49,7 +49,10 @@ public class ManualGreqlParser extends ManualParserHelper {
 	 * If it was already tested, this method skips the number of tokens which were consumed by the 
 	 * rule in its last application at the current token 
 	 * @param rule the rule to test
-	 * @return the current token position 
+	 * @return the current token position if the rule was not applied before or 
+	 *         -1, if the rule has already been applied successfully at this 
+	 *         current position in the token stream and thus no second
+	 *         test of that rule is needed 
 	 * @throws ParsingException if the rule has already failed at this position
 	 */
 	public int alreadySucceeded(RuleEnum rule) {
@@ -61,15 +64,20 @@ public class ManualGreqlParser extends ManualParserHelper {
 			testedRules.put(rule, maySucceedArray);
 		} 
 		int positionOfTokenAfterRule = maySucceedArray[current];
-		if (positionOfTokenAfterRule == -1) //not yet tested
-			if (inPredicateMode())
+		if (positionOfTokenAfterRule == -1) { //not yet tested
+			if (inPredicateMode()) {
+				debug("Testing rule " + rule.toString() + " at position " + current);
 				maySucceedArray[current] = -2;
-		if (positionOfTokenAfterRule == -2) //rule has not succeeded, fail
+			}
+			return current; //return current token position for rule application
+		} else if (positionOfTokenAfterRule == -2) {//rule has not succeeded, fail
 			fail("Rule " + rule.toString() + " already tested at position " + current + " Current Token " + lookAhead(0));
-		int currentTokenPos = current;
-		if (positionOfTokenAfterRule >= 0)
+			return -2;
+		} else {
+			debug("Rule " + rule.toString() + " already tested successfully at position " + current + " skipping tokens until " + positionOfTokenAfterRule);
 			current = positionOfTokenAfterRule; //skip tokens consumed by rule in last application
-		return currentTokenPos; //return current token position for rule application
+			return -1;
+		}	
 	}
 	
 	/**
@@ -87,7 +95,7 @@ public class ManualGreqlParser extends ManualParserHelper {
 	 *         false otherwise
 	 */
 	public boolean skipRule(int pos) {
-		return (pos >= 0) && inPredicateMode();
+		return (pos < 0) && inPredicateMode();
 	}
 	
 	
@@ -1033,9 +1041,11 @@ public class ManualGreqlParser extends ManualParserHelper {
 
 	private PathDescription parseAltPathDescription() {
 		int pos = alreadySucceeded(RuleEnum.ALTERNATIVE_PATH_DESCRIPTION);
-		if (skipRule(pos))
+		if (skipRule(pos)) {
+			debug("Skipping rule at position " + pos + " until token " + current + " la: " + lookAhead(0));
 			return null;
-		//debug("Parsing AltPathDescription from Token: " + current);
+		}	
+		debug("Parsing AltPathDescription from Token: " + current);
 		int offsetPart1 = getCurrentOffset();
 		PathDescription part1 = parseIntermediateVertexPathDescription();
 		int lengthPart1 = getLength(offsetPart1);
@@ -1046,6 +1056,7 @@ public class ManualGreqlParser extends ManualParserHelper {
 			if (!inPredicateMode())
 				part1 = addPathElement(AlternativePathDescription.class, IsAlternativePathOf.class, null, part1, offsetPart1, lengthPart1, part2, offsetPart2, lengthPart2);
 		}
+		debug("AlternativePath succeeded at position " + pos + " current token " + current + " lookahead: " + lookAhead(0));
 		ruleSucceeds(RuleEnum.ALTERNATIVE_PATH_DESCRIPTION, pos);
 		return part1;
 	}
