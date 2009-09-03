@@ -100,7 +100,6 @@ import de.uni_koblenz.jgralab.utilities.tg2dot.Tg2Dot;
  *         multiplicity (1,1).
  */
 @WorkInProgress(description = "record comments,"
-		+ "add relativ / absolut path check for options '-o', '-s' and 'd',"
 		+ "error checking and reporting", responsibleDevelopers = "riediger, mmce")
 public class Rsa2Tg {
 	/**
