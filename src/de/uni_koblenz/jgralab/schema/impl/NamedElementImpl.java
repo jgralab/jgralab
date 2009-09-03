@@ -88,7 +88,7 @@ public abstract class NamedElementImpl implements NamedElement {
 	 * <ul>
 	 * <li>The simple name is not empty, except if this named element is the
 	 * <code>DefaultPackage</code> and the
-	 * {@link de.uni_koblenz.jgralab.schema.Package.DEFAULTPACKAGE_NAME
+	 * {@link de.uni_koblenz.jgralab3.schema.Package.DEFAULTPACKAGE_NAME
 	 * DEFAULTPACKAGE_NAME} is the empty string. In that case, the parent
 	 * package must be <code>null</code>.</li>
 	 * <li>The simple name starts with a letter.</li>
@@ -147,7 +147,7 @@ public abstract class NamedElementImpl implements NamedElement {
 	 * <li><code>namedElement.simpleName</code> has one of the following values:
 	 * <ul>
 	 * <li>it equals
-	 * {@link de.uni_koblenz.jgralab.schema.Package.DEFAULTPACKAGE_NAME
+	 * {@link de.uni_koblenz.jgralab3.schema.Package.DEFAULTPACKAGE_NAME
 	 * DEFAULTPACKAGE_NAME} if <code>namedElement</code> represents the
 	 * <code>DefaultPackage</code></li>
 	 * <li>any other valid value</li>

@@ -34,7 +34,7 @@ public class AggregationClassImpl extends EdgeClassImpl implements
 		AggregationClass {
 
 	/**
-	 * toggles wether the aggregation end is at the "from" or "to" vertex
+	 * toggles whether the aggregation end is at the "from" or "to" vertex
 	 */
 	private boolean aggregateFrom;
 
