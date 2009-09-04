@@ -131,9 +131,11 @@ public class JValueTuple extends JValueList {
 	 * its not allowed to remove an element from a tupel
 	 * 
 	 * @return false
+	 * @throw UnsupportedOperationException
 	 */
 	@Override
 	public boolean remove(JValue element) {
+		//TODO: Should it be possible to remove elements from a tuple 
 		return false;
 	}
 
