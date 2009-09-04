@@ -537,9 +537,9 @@ public class JValueBag extends JValueCollection {
 		for (JValue currentElement : this.toJValueSet()) {
 			int foreignQuantity = foreignBag.getQuantity(currentElement);
 			int ownQuantity = this.getQuantity(currentElement);
-			int difference = foreignQuantity - ownQuantity;
-			if (difference != 0) {
-					resultingBag.add(currentElement, Math.abs(difference));
+			int difference = ownQuantity - foreignQuantity;
+			if (difference > 0) {
+					resultingBag.add(currentElement, difference);
 			}
 		}
 		return resultingBag;
