@@ -26,14 +26,22 @@ package de.uni_koblenz.jgralabtest.greql2.jvalue;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertEquals;
+
+import java.util.ConcurrentModificationException;
+import java.util.Iterator;
+import java.util.NoSuchElementException;
 
 import org.junit.BeforeClass;
 import org.junit.Test;
 
 import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValueBag;
+import de.uni_koblenz.jgralab.greql2.jvalue.JValueCollection;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValueList;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValueMap;
+import de.uni_koblenz.jgralab.greql2.jvalue.JValueSet;
+import de.uni_koblenz.jgralab.greql2.jvalue.JValueTuple;
 import de.uni_koblenz.jgralabtest.schemas.minimal.Link;
 import de.uni_koblenz.jgralabtest.schemas.minimal.MinimalGraph;
 import de.uni_koblenz.jgralabtest.schemas.minimal.MinimalSchema;
@@ -162,6 +170,96 @@ public class JValueTest {
 		assertTrue(b1.hashCode() == b2.hashCode());
 	}
 
+	@Test(expected = NoSuchElementException.class)
+	public void testIterNextForBag() {
+		tryIterNextException(new JValueBag());
+	}
+	
+	@Test(expected = NoSuchElementException.class)
+	public void testIterNextForSet() {
+		tryIterNextException(new JValueSet());
+	}
+	
+	@Test(expected = NoSuchElementException.class)
+	public void testIterNextForTuple() {
+		tryIterNextException(new JValueTuple());
+	}
+	
+	@Test(expected = NoSuchElementException.class)
+	public void testIterNextForList() {
+		tryIterNextException(new JValueList());
+	}
+	
+	private void tryIterNextException(JValueCollection col) {
+		Iterator<JValue> iter = col.iterator();
+		iter.next();
+	}
+	
+	private void tryConcurrentModification(JValueCollection col) {
+		col.add(new JValue("one"));
+		col.add(new JValue("two"));
+		Iterator<JValue> iter = col.iterator();
+		if (iter.hasNext())
+			iter.next();
+		col.add(new JValue("three"));
+		if (iter.hasNext())
+			iter.next();
+	}
+	
+	@Test(expected = ConcurrentModificationException.class)
+	public void testConcurrentModificationOnBag() {
+		tryConcurrentModification(new JValueBag());
+	}
+	
+	@Test(expected = ConcurrentModificationException.class)
+	public void testConcurrentModificationOnSet() {
+		tryConcurrentModification(new JValueSet());
+	}
+	
+	@Test(expected = ConcurrentModificationException.class)
+	public void testConcurrentModificationOnTuple() {
+		tryConcurrentModification(new JValueTuple());
+	}
+	
+	@Test(expected = ConcurrentModificationException.class)
+	public void testConcurrentModificationOnList() {
+		tryConcurrentModification(new JValueList());
+	}
+	
+	
+	private void tryRemove(JValueCollection col) {
+		col.add(new JValue("one"));
+		col.add(new JValue("two"));
+		Iterator<JValue> iter = col.iterator();
+		if (iter.hasNext())
+			iter.next();
+		if (iter.hasNext())
+			iter.next();
+		iter.remove();
+		assertEquals(1, col.size());
+	}
+	
+	@Test
+	public void testRemoveOnTuple() {
+		tryRemove(new JValueTuple());
+	}
+	
+	@Test
+	public void testRemoveOnBag() {
+		tryRemove(new JValueBag());
+	}
+	
+	@Test
+	public void testRemoveOnSet() {
+		tryRemove(new JValueSet());
+	}
+	
+	@Test
+	public void testRemoveOnList() {
+		tryRemove(new JValueList());
+	}
+	
+	
 	@Test
 	public void notEqualsBag() {
 		JValueBag b1 = new JValueBag();
