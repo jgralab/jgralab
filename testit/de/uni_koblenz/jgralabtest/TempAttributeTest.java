@@ -19,6 +19,8 @@ package de.uni_koblenz.jgralabtest;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.junit.Test;
+
 import junit.framework.TestCase;
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.EdgeDirection;
@@ -49,6 +51,7 @@ public class TempAttributeTest extends TestCase {
 
 	}
 
+	@Test
 	public void testTempAttribute() {
 		GraphMarker<String> marker = new GraphMarker<String>(graph);
 		System.out
