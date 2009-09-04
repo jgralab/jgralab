@@ -199,15 +199,12 @@ public class ManualGreqlParser extends ManualParserHelper {
 	}
 	
 	private final void match() {
-		//debug("Matching: " + lookAhead.type + " current token number: " + current);
 		current++;
 		if (current < tokens.size()) {
 			lookAhead = tokens.get(current);
-			//debug("Next token: " + lookAhead.type);
 		}	
 		else {
 			lookAhead = null;
-			//debug("No next token");
 		}	
 	}
 	
@@ -1195,11 +1192,11 @@ public class ManualGreqlParser extends ManualParserHelper {
 	    	} else {
 	    	    int offsetExpr = getCurrentOffset();
 	    	    Expression ie = parseNumericLiteral();
-	    	    if (!(ie instanceof IntLiteral)) {
-	    	    	fail("Expected integer");
-	    	    }
-	    	    int lengthExpr = getLength(offsetExpr);
 	    	    if (!inPredicateMode()) {
+		    	    if (!(ie instanceof IntLiteral)) {
+		    	    	fail("Expected integer constant as iteration quantifier or T");
+		    	    }
+		    	    int lengthExpr = getLength(offsetExpr);
 	    	    	ExponentiatedPathDescription epd = graph.createExponentiatedPathDescription();
 	    	    	IsExponentiatedPathOf exponentiatedPathOf = graph.createIsExponentiatedPathOf(iteratedPath, epd);
 	    	    	exponentiatedPathOf.setSourcePositions((createSourcePositionList(lengthPath, offsetPath)));

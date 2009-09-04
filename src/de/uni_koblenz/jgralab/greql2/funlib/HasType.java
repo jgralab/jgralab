@@ -84,6 +84,8 @@ public class HasType extends AbstractGreql2Function {
 		String typeName = null;
 		AttributedElementClass aeClass = null;
 		JValueTypeCollection typeCollection = null;
+//		for (int j=0; j<arguments.length; j++)
+//			System.out.println("Argument " + j + " : " + arguments[j]);
 		switch (checkArguments(arguments)) {
 		case 0:
 			typeName = arguments[1].toString();
