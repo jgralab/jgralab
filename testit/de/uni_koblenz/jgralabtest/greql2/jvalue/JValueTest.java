@@ -407,6 +407,26 @@ public class JValueTest {
 		assertEquals(diff.getQuantity(new JValue("four")), 1);
 		assertEquals(diff.getQuantity(new JValue("three")), 2);
 	}
+	
+	@Test
+	public void testDifferenceBag() {
+		JValueBag first = new JValueBag();
+		JValueBag second = new JValueBag();
+		first.add(new JValue("one"), 3);
+		first.add(new JValue("two"), 2);
+		first.add(new JValue("three"), 4);
+		first.add(new JValue("four"), 3);
+		second.add(new JValue("three"), 2);
+		second.add(new JValue("four"), 4);
+		second.add(new JValue("five"), 2);
+		second.add(new JValue("six"), 7);
+		JValueBag diff = first.difference(second);
+		assertEquals(17, diff.size());
+		assertEquals(diff.getQuantity(new JValue("one")), 3);
+		assertEquals(diff.getQuantity(new JValue("two")), 2);
+		assertEquals(diff.getQuantity(new JValue("five")), 2);
+		assertEquals(diff.getQuantity(new JValue("six")), 7);
+	}
  	
 	
 	@Test
