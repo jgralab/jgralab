@@ -42,8 +42,9 @@ public class LoadTest {
 		Greql2 g2 = null;
 		try {
 			g1 = (Greql2) createTestGraph();
-			GraphIO.saveGraphToFile("testgraph.tg", g1, null);
-			g2 = Greql2Schema.instance().loadGreql2("testgraph.tg");
+			GraphIO.saveGraphToFile("testit/testgraphs/testgraph.tg", g1, null);
+			g2 = Greql2Schema.instance().loadGreql2(
+					"testit/testgraphs/testgraph.tg");
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		}
