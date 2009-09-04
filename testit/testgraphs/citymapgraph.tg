@@ -1,0 +1,36 @@
+// JGraLab - The Java graph laboratory
+//   Version : Carnotaurus
+//   Revision: 1506
+//   Build ID: 65
+
+Schema de.uni_koblenz.jgralabtest.schemas.citymap.CityMapSchema;
+GraphClass CityMap;
+VertexClass CarPark: Junction { capacity: Integer };
+VertexClass Intersection: Junction { roundabout: Boolean };
+abstract VertexClass Junction { name: String };
+VertexClass ParkingGarage: CarPark;
+EdgeClass Bridge: Street from Junction (1,6) to Junction (1,6) { height: Integer };
+EdgeClass Street: Way from Junction (1,6) to Junction (1,6) { oneway: Boolean };
+abstract EdgeClass Way from Junction (1,6) role from to Junction (1,6) role to { length: Integer,  name: String };
+
+Graph "CityMapSample_33" CityMap (1000 1000 8 11);
+Package ;
+1 Intersection <1 3> n f;
+2 Intersection <-1 2 -4> n f;
+3 CarPark <-2 5> 2500 n;
+4 Intersection <-3 6 8> n f;
+5 Intersection <4 -6 7 9> n f;
+6 Intersection <-5 -7 10> n f;
+7 CarPark <-8 11> 500 n;
+8 CarPark <-9 -10 -11> 500 n;
+1 Street 0 "e1" f;
+2 Street 0 "e2" f;
+3 Street 0 "e3" f;
+4 Street 0 "e4" f;
+5 Bridge 0 0 "e5" f;
+6 Street 0 "e6" f;
+7 Street 0 "e7" f;
+8 Street 0 "e8" f;
+9 Bridge 0 0 "e9" f;
+10 Bridge 0 0 "e10" f;
+11 Street 0 "e11" f;

@@ -19,12 +19,12 @@ package de.uni_koblenz.jgralabtest;
 import java.util.ArrayList;
 import java.util.List;
 
+import junit.framework.TestCase;
+
 import org.junit.Test;
 
-import junit.framework.TestCase;
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.EdgeDirection;
-import de.uni_koblenz.jgralab.GraphIOException;
 import de.uni_koblenz.jgralab.GraphMarker;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralabtest.schemas.citymap.CityMap;
@@ -37,18 +37,9 @@ public class TempAttributeTest extends TestCase {
 	CityMap graph = null;
 
 	@Override
-	public void setUp() {
-		try {
-			graph = CityMapSchema.instance().loadCityMap("citymapgraph.tg");
-		} catch (GraphIOException ex) {
-			ex.printStackTrace();
-			fail();
-		}
-	}
-
-	@Override
-	public void tearDown() {
-
+	public void setUp() throws Exception {
+		graph = CityMapSchema.instance().loadCityMap(
+				"testit/testgraphs/citymapgraph.tg");
 	}
 
 	@Test
