@@ -253,18 +253,7 @@ public class ManualGreqlParser extends ManualParserHelper {
 		throw ex;			
 	}
 	
-	private final String matchPackageNameComponent() {
-		if (lookAhead.type == TokenTypes.IDENTIFIER) {
-			String name = lookAhead.getValue(); 
-			if (isValidPackageName(name)) {
-				match();
-				return name;
-			}	
-		}
-		fail("expected name of one package");
-		return null;
-	}	
-	
+
 	private final String matchIdentifier() {
 		if (lookAhead(0) == TokenTypes.IDENTIFIER) {
 			String name = lookAhead.getValue(); 
@@ -297,34 +286,44 @@ public class ManualGreqlParser extends ManualParserHelper {
 			fail( "Expected " + type);
 	}
 	
+
 	
 	private final String matchPackageName() {
-		StringBuilder name = new StringBuilder();
-		name.append(matchPackageNameComponent());
-		boolean ph = true;
-		do {
-			if (lookAhead(0) == TokenTypes.DOT) {
-				predicateStart();
-				try {
-					match(TokenTypes.DOT);
-					matchPackageNameComponent();
-				} catch (ParsingException ex) {}
-				if (predicateEnd()) {
-					ph = true;
-					match(TokenTypes.DOT);
-					name.append(".");
-					name.append(matchPackageNameComponent());	
+		if ((lookAhead(0) == TokenTypes.IDENTIFIER) && (isValidPackageName(getLookAheadValue(0)))) {
+			StringBuilder name = new StringBuilder();
+			name.append(lookAhead.getValue());
+			match();
+			boolean ph = true;
+			do {
+				if (lookAhead(0) == TokenTypes.DOT) {
+					if ((lookAhead(1) == TokenTypes.IDENTIFIER) && (isValidPackageName(getLookAheadValue(1)))) {
+						ph = true;
+						match(TokenTypes.DOT);
+						name.append(".");
+						name.append(lookAhead.getValue());
+						match();
+					} else {
+						ph = false;
+					}	
 				} else {
 					ph = false;
-				}	
-			} else {
-				ph = false;
-			}
-		} while (ph);
-		return name.toString();
+				}
+			} while (ph);
+			return name.toString();
+		}
+		fail("Unrecognized package name or TypeName expected");
+		return null;
 	}
 	
 	
+	private String getLookAheadValue(int i) {
+		if (current+i < tokens.size()) {
+			Token t = tokens.get(current+i);
+			return t.getValue();
+		} else
+			return null;
+	}
+
 	private final String matchQualifiedName() {
 		StringBuilder name = new StringBuilder();
 		predicateStart();

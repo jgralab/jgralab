@@ -74,17 +74,5 @@ public class StoreJValueTest extends GenericTests {
 		assertNotNull(loadedValue);
 	}
 
-	@Test
-	public void testQTAPCQuery() throws Exception {
-		fail("NYI");
-		// String queryString = "from e:E{IsSuperClassOfClass} report e as
-		// \"Generalization\"," +
-		// " startVertex(e) as \"Superclass\"," +
-		// "endVertex(e) as \"Subclass\" end";
-		// JValue result = evalTestQuery("StoreJValue2", queryString);
-		// JValueHTMLOutputVisitor outputVisitor = new JValueHTMLOutputVisitor(
-		// result, "/home/dbildh/Desktop/storejvaluetest.html", getTestGraph());
-		// outputVisitor.toString();
-	}
 
 }

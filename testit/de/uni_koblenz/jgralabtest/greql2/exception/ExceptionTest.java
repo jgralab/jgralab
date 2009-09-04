@@ -26,7 +26,7 @@ package de.uni_koblenz.jgralabtest.greql2.exception;
 
 import org.junit.Test;
 
-import de.uni_koblenz.jgralab.greql2.exception.UnknownTypeException;
+import de.uni_koblenz.jgralab.greql2.exception.EvaluateException;
 import de.uni_koblenz.jgralab.greql2.exception.WrongFunctionParameterException;
 import de.uni_koblenz.jgralabtest.greql2.GenericTests;
 
@@ -38,7 +38,7 @@ public class ExceptionTest extends GenericTests {
 		evalTestQuery("FunctionException", queryString);
 	}
 
-	@Test(expected = UnknownTypeException.class)
+	@Test(expected = EvaluateException.class)
 	public void testUnknownTypeException() throws Exception {
 		String queryString = "from e:E{isEdgeOf} report e end";
 		evalTestQuery("UnknownTypeException", queryString);
