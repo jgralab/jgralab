@@ -24,7 +24,7 @@
 
 package de.uni_koblenz.jgralabtest.greql2;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.fail;
 
@@ -38,38 +38,40 @@ public class StoreJValueTest extends GenericTests {
 
 	@Test
 	public void testStoreJValue1() throws Exception {
-		 String queryString = "bag(tup(\"Nodes:\", count(from v:V{} report v end)), tup(\"Edges:\", count(from e:E{} report e end)))";
-		 JValue result = evalTestQuery("StoreJValue1", queryString);
-		 JValueXMLOutputVisitor outputVisitor = new JValueXMLOutputVisitor(result, "storejvaluetest1.xml", getTestGraph());
-		 outputVisitor.toString();
-		 ValueXMLLoader loader = new ValueXMLLoader(getTestGraph());
-		 JValue loadedValue = loader.load("storejvaluetest1.xml");
-		 assertNotNull(loadedValue);
-		 assertEquals(result, loadedValue);
+		String queryString = "bag(tup(\"Nodes:\", count(from v:V{} report v end)), tup(\"Edges:\", count(from e:E{} report e end)))";
+		JValue result = evalTestQuery("StoreJValue1", queryString);
+		JValueXMLOutputVisitor outputVisitor = new JValueXMLOutputVisitor(
+				result, "storejvaluetest1.xml", getTestGraph());
+		outputVisitor.toString();
+		ValueXMLLoader loader = new ValueXMLLoader(getTestGraph());
+		JValue loadedValue = loader.load("storejvaluetest1.xml");
+		assertNotNull(loadedValue);
+		assertEquals(result, loadedValue);
 	}
 
 	@Test
 	public void testStoreJValue2() throws Exception {
-		 String queryString = "from v:V{} report v as \"Nodes\" end";
-		 JValue result = evalTestQuery("StoreJValue2", queryString);
-		 JValueXMLOutputVisitor outputVisitor = new JValueXMLOutputVisitor(
-		 result, "storejvaluetest2.xml", getTestGraph());
-		 outputVisitor.toString();
-		 ValueXMLLoader loader = new ValueXMLLoader(getTestGraph());
-		 JValue loadedValue = loader.load("storejvaluetest2.xml");
-		 assertNotNull(loadedValue);
-		 assertEquals(result, loadedValue);
+		String queryString = "from v:V{} report v as \"Nodes\" end";
+		JValue result = evalTestQuery("StoreJValue2", queryString);
+		JValueXMLOutputVisitor outputVisitor = new JValueXMLOutputVisitor(
+				result, "storejvaluetest2.xml", getTestGraph());
+		outputVisitor.toString();
+		ValueXMLLoader loader = new ValueXMLLoader(getTestGraph());
+		JValue loadedValue = loader.load("storejvaluetest2.xml");
+		assertNotNull(loadedValue);
+		assertEquals(result, loadedValue);
 	}
-	
+
 	@Test
 	public void testStoreJValue3() throws Exception {
-		 String queryString = "from x,y:list(1..100) reportTable \"X\", \"Y\", x*y end";
-		 JValue result = evalTestQuery("StoreJValue2", queryString);
-		 JValueXMLOutputVisitor outputVisitor = new JValueXMLOutputVisitor( result, "storejvaluetest3.xml", getTestGraph());
-		 outputVisitor.toString();
-		 ValueXMLLoader loader = new ValueXMLLoader(getTestGraph());
-		 JValue loadedValue = loader.load("storejvaluetest3.xml");
-		 assertNotNull(loadedValue);
+		String queryString = "from x,y:list(1..100) reportTable \"X\", \"Y\", x*y end";
+		JValue result = evalTestQuery("StoreJValue2", queryString);
+		JValueXMLOutputVisitor outputVisitor = new JValueXMLOutputVisitor(
+				result, "storejvaluetest3.xml", getTestGraph());
+		outputVisitor.toString();
+		ValueXMLLoader loader = new ValueXMLLoader(getTestGraph());
+		JValue loadedValue = loader.load("storejvaluetest3.xml");
+		assertNotNull(loadedValue);
 	}
 
 	@Test

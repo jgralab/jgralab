@@ -26,7 +26,6 @@ package de.uni_koblenz.jgralabtest.greql2.evaluator;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
@@ -36,7 +35,6 @@ import java.util.List;
 
 import org.junit.Test;
 
-import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
@@ -51,9 +49,6 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueTuple;
 import de.uni_koblenz.jgralab.greql2.optimizer.DefaultOptimizer;
 import de.uni_koblenz.jgralab.greql2.parser.ManualGreqlParser;
 import de.uni_koblenz.jgralab.greql2.schema.Greql2;
-import de.uni_koblenz.jgralab.greql2.schema.IsArgumentOf;
-import de.uni_koblenz.jgralab.greql2.schema.StringLiteral;
-import de.uni_koblenz.jgralab.greql2.schema.ThisVertex;
 import de.uni_koblenz.jgralabtest.greql2.GenericTests;
 
 public class GreqlEvaluatorTest extends GenericTests {
@@ -135,10 +130,9 @@ public class GreqlEvaluatorTest extends GenericTests {
 				+ "  @ startVertex(e) -->{IsDefinitionOf} endVertex(e)";
 		JValue result = evalTestQuery("Reachability", queryString);
 		assertEquals(true, result.toBoolean());
-		 JValue resultWO = evalTestQuery("BackwardVertexSet1 (wo)",
-		 queryString,
-		 new DefaultOptimizer());
-		 assertEquals(result, resultWO);
+		JValue resultWO = evalTestQuery("BackwardVertexSet1 (wo)", queryString,
+				new DefaultOptimizer());
+		assertEquals(result, resultWO);
 	}
 
 	/*
@@ -548,16 +542,13 @@ public class GreqlEvaluatorTest extends GenericTests {
 		assertEquals(result, resultWO);
 	}
 
-	
 	@Test
 	public void testGreTLQuery() throws Exception {
-		String query = "from t : V{Vertex}    "
-						+ "report t --> "
-						+ "     & {hasType(thisVertex, \"MyType\")} "
-						+ "end";
-		JValue result = evalTestQuery("RestrictedExpression", query);
+		String query = "from t : V{Vertex}    " + "report t --> "
+				+ "     & {hasType(thisVertex, \"MyType\")} " + "end";
+		evalTestQuery("RestrictedExpression", query);
 	}
-	
+
 	/*
 	 * Test method for
 	 * 'greql2.evaluator.GreqlEvaluator.evaluateSequentialPathDescription(SequentialPathDescription,
@@ -870,9 +861,6 @@ public class GreqlEvaluatorTest extends GenericTests {
 		assertEquals(result, resultWO);
 	}
 
-	
-
-	
 	@Test
 	public void testEvaluateQuantifiedExpression1() throws Exception {
 		JValueSet set = new JValueSet();
@@ -927,7 +915,7 @@ public class GreqlEvaluatorTest extends GenericTests {
 				queryString, new DefaultOptimizer());
 		assertEquals(result, resultWO);
 	}
-	
+
 	/*
 	 * Test method for
 	 * 'greql2.evaluator.GreqlEvaluator.evaluateQuantifiedExpression(QuantifiedExpression,
@@ -947,7 +935,7 @@ public class GreqlEvaluatorTest extends GenericTests {
 				queryString, new DefaultOptimizer());
 		assertEquals(result, resultWO);
 	}
-	
+
 	@Test
 	public void testEvaluateQuantifiedExpression6() throws Exception {
 		JValueMap map = new JValueMap();
@@ -962,7 +950,6 @@ public class GreqlEvaluatorTest extends GenericTests {
 		assertEquals(result, resultWO);
 	}
 
-	
 	@Test
 	public void testEvaluateQuantifiedExpression7() throws Exception {
 		JValueMap map = new JValueMap();
@@ -976,7 +963,7 @@ public class GreqlEvaluatorTest extends GenericTests {
 				queryString, new DefaultOptimizer());
 		assertEquals(result, resultWO);
 	}
-	
+
 	@Test
 	public void testEvaluateQuantifiedExpression8() throws Exception {
 		JValueMap map = new JValueMap();
@@ -990,7 +977,7 @@ public class GreqlEvaluatorTest extends GenericTests {
 				queryString, new DefaultOptimizer());
 		assertEquals(result, resultWO);
 	}
-	
+
 	@Test
 	public void testEvaluateQuantifiedExpression9() throws Exception {
 		JValueMap map = new JValueMap();
@@ -1156,7 +1143,6 @@ public class GreqlEvaluatorTest extends GenericTests {
 		assertEquals(result, resultWO);
 	}
 
-	
 	@Test
 	public void testEvaluateAggregationPathDescription1() throws Exception {
 		String queryString = "from var: V{Variable}, def: V{Definition} with var --<> def report var end";
@@ -1166,7 +1152,7 @@ public class GreqlEvaluatorTest extends GenericTests {
 				queryString, new DefaultOptimizer());
 		assertEquals(result, resultWO);
 	}
-	
+
 	@Test
 	public void testEvaluateAggregationPathDescription2() throws Exception {
 		String queryString = "from var: V{Variable}, def: V{Definition} with def <>-- var report var end";
@@ -1176,10 +1162,10 @@ public class GreqlEvaluatorTest extends GenericTests {
 				queryString, new DefaultOptimizer());
 		assertEquals(result, resultWO);
 	}
-	
-	
+
 	@Test
-	public void testEvaluateAggregationPathDescriptionWithRole() throws Exception {
+	public void testEvaluateAggregationPathDescriptionWithRole()
+			throws Exception {
 		String queryString = "from var: V{Variable}, def: V{Definition} with def <>--{@undefinedRole} var report var end";
 		JValue result = evalTestQuery("SimplePathDescription2", queryString);
 		assertEquals(0, result.toCollection().size());
@@ -1187,6 +1173,7 @@ public class GreqlEvaluatorTest extends GenericTests {
 				queryString, new DefaultOptimizer());
 		assertEquals(result, resultWO);
 	}
+
 	@Test
 	public void testEvaluateStartRestriction1() throws Exception {
 		String queryString = "from var: V{Variable}, def: V{WhereExpression} with var -->{IsVarOf} {Definition} & -->{IsDefinitionOf} def report var end";
@@ -1197,8 +1184,6 @@ public class GreqlEvaluatorTest extends GenericTests {
 		assertEquals(result, resultWO);
 	}
 
-
-	
 	@Test
 	public void testEvaluateStartRestriction5() throws Exception {
 		String queryString = "from var: V{Variable}, def: V{WhereExpression} with var -->{IsVarOf} {Definition} & -->{IsDefinitionOf} def report var end";
@@ -1513,7 +1498,6 @@ public class GreqlEvaluatorTest extends GenericTests {
 		assertEquals(result, resultWO);
 	}
 
-	
 	@Test
 	public void testMultipleEvaluation() throws Exception {
 		String queryString = "from i:c report i end where c:=b, b:=a, a:=\"Mensaessen\"";
@@ -1527,7 +1511,7 @@ public class GreqlEvaluatorTest extends GenericTests {
 		assertEquals(result, resultWO);
 		result = evalTestQuery("MultipleEvaluation", queryString2);
 	}
-	
+
 	/*
 	 * Test method for
 	 * 'greql2.evaluator.GreqlEvaluator.evaluateFunctionApplication(FunctionApplication,
@@ -1597,8 +1581,7 @@ public class GreqlEvaluatorTest extends GenericTests {
 		String queryString = "from x,y:list(1..10) reportTable \"X\", \"Y\", x*y end";
 		JValue result = evalTestQuery("TableComprehension", queryString);
 		assertTrue(result.toCollection().isJValueTable());
-		
-		
+
 	}
 
 	@Test
@@ -1627,7 +1610,7 @@ public class GreqlEvaluatorTest extends GenericTests {
 		assertTrue(map.containsKey(new JValue("d")));
 		assertTrue(map.containsKey(new JValue("i")));
 	}
-	
+
 	@Test
 	public void testTableComprehension2() throws Exception {
 		String queryString = "from x : V{Variable} reportMap x.name, x end";
@@ -1640,24 +1623,26 @@ public class GreqlEvaluatorTest extends GenericTests {
 		assertTrue(map.containsKey(new JValue("d")));
 		assertTrue(map.containsKey(new JValue("i")));
 	}
-	
+
 	@Test
 	public void testQueryWithoutDatagraph() throws Exception {
 		String queryString = "(3 + 4) * 7";
-		JValue result = evalTestQuery("QueryWithoutDatagraph", queryString, (Graph)null);
+		JValue result = evalTestQuery("QueryWithoutDatagraph", queryString,
+				(Graph) null);
 		assertEquals(49, result.toInteger().intValue());
 	}
-	
+
 	@Test
 	public void testGraphExecution() throws Exception {
 		String queryString = "(3 + 4) * 7";
 		Greql2 graph = ManualGreqlParser.parse(queryString);
-		GreqlEvaluator eval = new GreqlEvaluator(graph, null, new HashMap<String, JValue>());
+		GreqlEvaluator eval = new GreqlEvaluator(graph, null,
+				new HashMap<String, JValue>());
 		eval.startEvaluation();
 		JValue result = eval.getEvaluationResult();
 		assertEquals(49, result.toInteger().intValue());
 	}
-	
+
 	@Test
 	public void testNullLiteral() throws Exception {
 		JValue result = evalTestQuery("NullLiteral1", "true and null");
@@ -1679,6 +1664,5 @@ public class GreqlEvaluatorTest extends GenericTests {
 		result = evalTestQuery("NullLiteral1", "null xor null");
 		assertEquals(null, result.toBoolean());
 	}
-	
-	
+
 }

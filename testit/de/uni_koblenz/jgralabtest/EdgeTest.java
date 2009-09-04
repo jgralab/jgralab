@@ -4296,16 +4296,6 @@ public class EdgeTest {
 
 	// tests of the method int compareTo(AttributedElement a);
 	/**
-	 * Test if you try to compare an edge with a vertex.
-	 */
-	@Test(expected = AssertionError.class)
-	public void compareToExceptionTest0() {
-		DoubleSubNode v1 = graph.createDoubleSubNode();
-		Edge e1 = graph.createLink(v1, v1);
-		e1.compareTo(v1);
-	}
-
-	/**
 	 * Test if a vertex is equal to itself.
 	 */
 	@Test
@@ -4338,16 +4328,7 @@ public class EdgeTest {
 	}
 
 	// tests of the method int compareTo(AttributedElement a); reversedEdge
-	/**
-	 * Test if you try to compare an reversed edge with a vertex.
-	 */
-	@Test(expected = AssertionError.class)
-	public void compareToExceptionTestR0() {
-		DoubleSubNode v1 = graph.createDoubleSubNode();
-		Edge e1 = graph.createLink(v1, v1);
-		e1.getReversedEdge().compareTo(v1);
-	}
-	
+
 	/**
 	 * Test if a vertex is equal to itself.
 	 */

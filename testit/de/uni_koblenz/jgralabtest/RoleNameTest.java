@@ -1022,16 +1022,13 @@ public class RoleNameTest {
 	 * 
 	 * @param schemaString
 	 * @return the schema
+	 * @throws GraphIOException
 	 */
-	private Schema compileSchema(String schemaString) {
+	private Schema compileSchema(String schemaString) throws GraphIOException {
 		ByteArrayInputStream input = new ByteArrayInputStream(schemaString
 				.getBytes());
 		Schema s = null;
-		try {
-			s = GraphIO.loadSchemaFromStream(input);
-		} catch (GraphIOException e) {
-			e.printStackTrace();
-		}
+		s = GraphIO.loadSchemaFromStream(input);
 		s.compile();
 		return s;
 	}
@@ -1136,48 +1133,6 @@ public class RoleNameTest {
 	public void eAddTargetrolenameTestException3() {
 		A v1 = graph.createA();
 		v1.addX(null);
-	}
-
-	/**
-	 * Test if an error occurs if you try to build an edge with an omega of
-	 * another graph.
-	 */
-	//@Test(expected = GraphException.class)
-	@Test(expected=AssertionError.class)
-	public void eAddTargetrolenameTestException4() {
-		VertexTestGraph graph2 = VertexTestSchema.instance()
-				.createVertexTestGraph(100, 100);
-		A v1 = graph.createA();
-		B v2 = graph2.createB();
-		Edge e=v1.addX(v2);
-		assertEquals(graph, e.getGraph());
-		assertEquals(v1, e.getAlpha());
-		assertEquals(graph, e.getAlpha().getGraph());
-		assertEquals(v2, e.getOmega());
-		assertEquals(graph2, e.getOmega().getGraph());
-		assertEquals(e,v1.getFirstE());
-		assertEquals(e.getReversedEdge(),v2.getFirstE());
-	}
-
-	/**
-	 * Test if an error occurs if you try to build an edge with an omega of
-	 * another graph.
-	 */
-	//@Test(expected = GraphException.class)
-	@Test(expected=AssertionError.class)
-	public void addTargetrolenameTestException0() {
-		VertexTestGraph graph2 = VertexTestSchema.instance()
-				.createVertexTestGraph(100, 100);
-		A v1 = graph.createA();
-		B v2 = graph2.createB();
-		Edge e=graph.createE(v1, v2);
-		assertEquals(graph, e.getGraph());
-		assertEquals(v1, e.getAlpha());
-		assertEquals(graph, e.getAlpha().getGraph());
-		assertEquals(v2, e.getOmega());
-		assertEquals(graph2, e.getOmega().getGraph());
-		assertEquals(e,v1.getFirstE());
-		assertEquals(e.getReversedEdge(),v2.getFirstE());
 	}
 
 	/**
@@ -1674,20 +1629,6 @@ public class RoleNameTest {
 	}
 
 	/**
-	 * Test if an error occurs if you try to build an edge with an alpha of
-	 * another graph.
-	 */
-	//@Test(expected = GraphException.class)
-	@Test(expected=AssertionError.class)
-	public void addSourcerolenameTestException4() {
-		VertexTestGraph graph2 = VertexTestSchema.instance()
-				.createVertexTestGraph(100, 100);
-		A v1 = graph.createA();
-		B v2 = graph2.createB();
-		v2.addSourceE(v1);
-	}
-
-	/**
 	 * Test if edges of different types are created via addSourceE and manually.
 	 */
 	@Test
@@ -2063,7 +2004,7 @@ public class RoleNameTest {
 	 * All rolenames are unique.
 	 */
 	@Test
-	public void illegalRolenamesTest0() {
+	public void illegalRolenamesTest0() throws Exception {
 		compileSchema("Schema de.uni_koblenz.jgralabtest.TestSchema;"
 				+ "GraphClass TestGraph;"
 				+ "VertexClass A;"
@@ -2078,7 +2019,7 @@ public class RoleNameTest {
 	 * All rolenames are unique with inheritance.
 	 */
 	@Test
-	public void illegalRolenamesTest1() {
+	public void illegalRolenamesTest1() throws Exception {
 		compileSchema("Schema de.uni_koblenz.jgralabtest.TestSchema;"
 				+ "GraphClass TestGraph;"
 				+ "VertexClass A;"
@@ -2093,7 +2034,7 @@ public class RoleNameTest {
 	 * Same rolenames at different vertices.
 	 */
 	@Test
-	public void illegalRolenamesTest2() {
+	public void illegalRolenamesTest2() throws Exception {
 		compileSchema("Schema de.uni_koblenz.jgralabtest.TestSchema;"
 				+ "GraphClass TestGraph;"
 				+ "VertexClass A;"
@@ -2110,7 +2051,7 @@ public class RoleNameTest {
 	 * Target rolename are the same and no source rolenames exist.<br>
 	 */
 	@Test(expected = InheritanceException.class)
-	public void illegalRolenamesTest3() {
+	public void illegalRolenamesTest3() throws Exception {
 		compileSchema("Schema de.uni_koblenz.jgralabtest.TestSchema;"
 				+ "GraphClass TestGraph;" + "VertexClass A;" + "VertexClass B;"
 				+ "EdgeClass E from A (0,*) to B (0,*) role targetE;"
@@ -2123,7 +2064,7 @@ public class RoleNameTest {
 	 * Target and source rolenames are the same.
 	 */
 	@Test(expected = InheritanceException.class)
-	public void illegalRolenamesTest4() {
+	public void illegalRolenamesTest4() throws Exception {
 		compileSchema("Schema de.uni_koblenz.jgralabtest.TestSchema;"
 				+ "GraphClass TestGraph;"
 				+ "VertexClass A;"
@@ -2138,7 +2079,7 @@ public class RoleNameTest {
 	 * Target rolename are the same, but source rolenames are different.
 	 */
 	@Test(expected = InheritanceException.class)
-	public void illegalRolenamesTest5() {
+	public void illegalRolenamesTest5() throws Exception {
 		compileSchema("Schema de.uni_koblenz.jgralabtest.TestSchema;"
 				+ "GraphClass TestGraph;"
 				+ "VertexClass A;"
@@ -2152,7 +2093,7 @@ public class RoleNameTest {
 	 * Source and target rolename are the same.
 	 */
 	@Test
-	public void illegalRolenamesTest6() {
+	public void illegalRolenamesTest6() throws Exception {
 		compileSchema("Schema de.uni_koblenz.jgralabtest.TestSchema;"
 				+ "GraphClass TestGraph;"
 				+ "VertexClass A;"
@@ -2165,7 +2106,7 @@ public class RoleNameTest {
 	 * A cyclic edge with different rolenames.
 	 */
 	@Test
-	public void illegalRolenamesTest7() {
+	public void illegalRolenamesTest7() throws Exception {
 		compileSchema("Schema de.uni_koblenz.jgralabtest.TestSchema;"
 				+ "GraphClass TestGraph;"
 				+ "VertexClass A;"
@@ -2178,7 +2119,7 @@ public class RoleNameTest {
 	 * A cyclic edge with the same source and target rolename.
 	 */
 	@Test(expected = InheritanceException.class)
-	public void illegalRolenamesTest8() {
+	public void illegalRolenamesTest8() throws Exception {
 		compileSchema("Schema de.uni_koblenz.jgralabtest.TestSchema;"
 				+ "GraphClass TestGraph;"
 				+ "VertexClass A;"
@@ -2191,7 +2132,7 @@ public class RoleNameTest {
 	 * of its alpha vertex.
 	 */
 	@Test(expected = InheritanceException.class)
-	public void illegalRolenamesTest9() {
+	public void illegalRolenamesTest9() throws Exception {
 		compileSchema("Schema de.uni_koblenz.jgralabtest.TestSchema;"
 				+ "GraphClass TestGraph;"
 				+ "VertexClass A;"
@@ -2205,7 +2146,7 @@ public class RoleNameTest {
 	 * of the same vertexclass.
 	 */
 	@Test
-	public void illegalRolenamesTest10() {
+	public void illegalRolenamesTest10() throws Exception {
 		compileSchema("Schema de.uni_koblenz.jgralabtest.TestSchema;"
 				+ "GraphClass TestGraph;"
 				+ "VertexClass A;"
@@ -2219,7 +2160,7 @@ public class RoleNameTest {
 	 * sourceE B:A--&gt{F}B:A targetE
 	 */
 	@Test(expected = InheritanceException.class)
-	public void illegalRolenamesTest11() {
+	public void illegalRolenamesTest11() throws Exception {
 		compileSchema("Schema de.uni_koblenz.jgralabtest.TestSchema;"
 				+ "GraphClass TestGraph;"
 				+ "VertexClass A;"
@@ -2233,7 +2174,7 @@ public class RoleNameTest {
 	 * sourceF B:A--&gt{F}B:A targetE
 	 */
 	@Test
-	public void illegalRolenamesTest12() {
+	public void illegalRolenamesTest12() throws Exception {
 		compileSchema("Schema de.uni_koblenz.jgralabtest.TestSchema;"
 				+ "GraphClass TestGraph;"
 				+ "VertexClass A;"
@@ -2247,7 +2188,7 @@ public class RoleNameTest {
 	 * sourceF C:A--&gt{F:E}D:B targetF<br>
 	 */
 	@Test
-	public void illegalRolenamesTest13() {
+	public void illegalRolenamesTest13() throws Exception {
 		compileSchema("Schema de.uni_koblenz.jgralabtest.TestSchema;"
 				+ "GraphClass TestGraph;"
 				+ "VertexClass A;"
@@ -2263,7 +2204,7 @@ public class RoleNameTest {
 	 * sourceE C:A--&gt{F:E}D:B targetF<br>
 	 */
 	@Test
-	public void illegalRolenamesTest14() {
+	public void illegalRolenamesTest14() throws Exception {
 		compileSchema("Schema de.uni_koblenz.jgralabtest.TestSchema;"
 				+ "GraphClass TestGraph;"
 				+ "VertexClass A;"
@@ -2280,7 +2221,7 @@ public class RoleNameTest {
 	 *TODO is this wanted??
 	 */
 	@Test
-	public void illegalRolenamesTest15() {
+	public void illegalRolenamesTest15() throws Exception {
 		compileSchema("Schema de.uni_koblenz.jgralabtest.TestSchema;"
 				+ "GraphClass TestGraph;"
 				+ "VertexClass A;"
@@ -2296,7 +2237,7 @@ public class RoleNameTest {
 	 * sourceE C:A--&gt{F}D:B targetE<br>
 	 */
 	@Test(expected = InheritanceException.class)
-	public void illegalRolenamesTest16() {
+	public void illegalRolenamesTest16() throws Exception {
 		compileSchema("Schema de.uni_koblenz.jgralabtest.TestSchema;"
 				+ "GraphClass TestGraph;"
 				+ "VertexClass A;"
@@ -2312,7 +2253,7 @@ public class RoleNameTest {
 	 * sourceF C--&gt{F}B targetE<br>
 	 */
 	@Test
-	public void illegalRolenamesTest17() {
+	public void illegalRolenamesTest17() throws Exception {
 		compileSchema("Schema de.uni_koblenz.jgralabtest.TestSchema;"
 				+ "GraphClass TestGraph;"
 				+ "VertexClass A;"
@@ -2327,7 +2268,7 @@ public class RoleNameTest {
 	 * sourceE C--&gt{F}B targetE<br>
 	 */
 	@Test(expected = InheritanceException.class)
-	public void illegalRolenamesTest18() {
+	public void illegalRolenamesTest18() throws Exception {
 		compileSchema("Schema de.uni_koblenz.jgralabtest.TestSchema;"
 				+ "GraphClass TestGraph;"
 				+ "VertexClass A;"
@@ -2336,7 +2277,7 @@ public class RoleNameTest {
 				+ "EdgeClass E from A (0,*) role sourceE to B (0,*) role targetE;"
 				+ "EdgeClass F from C (0,*) role sourceE to B (0,*) role targetE;");
 	}
-	
+
 	/*
 	 * 3.2 redefines
 	 */
@@ -2346,7 +2287,7 @@ public class RoleNameTest {
 	 * sourceF C--&gt{F}D targetF redefines targetE<br>
 	 */
 	@Test(expected = InheritanceException.class)
-	public void illegalRolenamesTest19() {
+	public void illegalRolenamesTest19() throws Exception {
 		compileSchema("Schema de.uni_koblenz.jgralabtest.TestSchema;"
 				+ "GraphClass TestGraph;"
 				+ "VertexClass A;"
@@ -2355,14 +2296,14 @@ public class RoleNameTest {
 				+ "VertexClass D;"
 				+ "EdgeClass E from A (0,*) role sourceE to B (0,*) role targetE;"
 				+ "EdgeClass F from C (0,*) role sourceF to D (0,*) role targetF redefines targetE;");
-	}	
-	
+	}
+
 	/**
 	 * sourceE A--&gt{E}B targetE<br>
 	 * sourceF A--&gt{F}B targetF redefines targetE<br>
 	 */
 	@Test(expected = InheritanceException.class)
-	public void illegalRolenamesTest23() {
+	public void illegalRolenamesTest23() throws Exception {
 		compileSchema("Schema de.uni_koblenz.jgralabtest.TestSchema;"
 				+ "GraphClass TestGraph;"
 				+ "VertexClass A;"
@@ -2376,7 +2317,7 @@ public class RoleNameTest {
 	 * sourceF C:A--&gt{F}D:B targetF redefines targetE<br>
 	 */
 	@Test
-	public void illegalRolenamesTest20() {
+	public void illegalRolenamesTest20() throws Exception {
 		compileSchema("Schema de.uni_koblenz.jgralabtest.TestSchema;"
 				+ "GraphClass TestGraph;"
 				+ "VertexClass A;"
@@ -2392,7 +2333,7 @@ public class RoleNameTest {
 	 * sourceF C:A--&gt{F}D:B targetE redefines targetE<br>
 	 */
 	@Test(expected = InheritanceException.class)
-	public void illegalRolenamesTest21() {
+	public void illegalRolenamesTest21() throws Exception {
 		compileSchema("Schema de.uni_koblenz.jgralabtest.TestSchema;"
 				+ "GraphClass TestGraph;"
 				+ "VertexClass A;"
@@ -2408,7 +2349,7 @@ public class RoleNameTest {
 	 * sourceF C--&gt{F}D targetF redefines targetE<br>
 	 */
 	@Test(expected = InheritanceException.class)
-	public void illegalRolenamesTest22() {
+	public void illegalRolenamesTest22() throws Exception {
 		compileSchema("Schema de.uni_koblenz.jgralabtest.TestSchema;"
 				+ "GraphClass TestGraph;"
 				+ "VertexClass A;"
@@ -2418,13 +2359,13 @@ public class RoleNameTest {
 				+ "EdgeClass E from A (0,*) role sourceE to B (0,*) role targetE;"
 				+ "EdgeClass F from C (0,*) role sourceF to D (0,*) role targetF redefines targetE;");
 	}
-	
+
 	/**
 	 * sourceE A--&gt{E}B targetE<br>
 	 * sourceF A--&gt{F:E}B targetF redefines targetE<br>
 	 */
 	@Test(expected = InheritanceException.class)
-	public void illegalRolenamesTest24() {
+	public void illegalRolenamesTest24() throws Exception {
 		compileSchema("Schema de.uni_koblenz.jgralabtest.TestSchema;"
 				+ "GraphClass TestGraph;"
 				+ "VertexClass A;"
@@ -2438,7 +2379,7 @@ public class RoleNameTest {
 	 * sourceF C:A--&gt{F:E}D:B targetF redefines targetE<br>
 	 */
 	@Test
-	public void illegalRolenamesTest25() {
+	public void illegalRolenamesTest25() throws Exception {
 		compileSchema("Schema de.uni_koblenz.jgralabtest.TestSchema;"
 				+ "GraphClass TestGraph;"
 				+ "VertexClass A;"
@@ -2455,7 +2396,7 @@ public class RoleNameTest {
 	 * TODO is this correct?
 	 */
 	@Test(expected = InheritanceException.class)
-	public void illegalRolenamesTest26() {
+	public void illegalRolenamesTest26() throws Exception {
 		compileSchema("Schema de.uni_koblenz.jgralabtest.TestSchema;"
 				+ "GraphClass TestGraph;"
 				+ "VertexClass A;"
@@ -2471,7 +2412,7 @@ public class RoleNameTest {
 	 * sourceF redefines sourceE C--&gt{F}B targetE<br>
 	 */
 	@Test(expected = InheritanceException.class)
-	public void illegalRolenamesTest27() {
+	public void illegalRolenamesTest27() throws Exception {
 		compileSchema("Schema de.uni_koblenz.jgralabtest.TestSchema;"
 				+ "GraphClass TestGraph;"
 				+ "VertexClass A;"
@@ -2487,7 +2428,7 @@ public class RoleNameTest {
 	 * y D--&gt{G}E z<br>
 	 */
 	@Test
-	public void illegalRolenamesTest28() {
+	public void illegalRolenamesTest28() throws Exception {
 		compileSchema("Schema de.uni_koblenz.jgralabtest.TestSchema;"
 				+ "GraphClass TestGraph;"
 				+ "VertexClass A;"
@@ -2505,7 +2446,7 @@ public class RoleNameTest {
 	 * b B:D--&gt{F}C c redefines a<br>
 	 */
 	@Test
-	public void illegalRolenamesTest29() {
+	public void illegalRolenamesTest29() throws Exception {
 		compileSchema("Schema de.uni_koblenz.jgralabtest.TestSchema;"
 				+ "GraphClass TestGraph;"
 				+ "VertexClass A;"
@@ -2517,14 +2458,12 @@ public class RoleNameTest {
 	}
 
 	/**
-	 * Creation of Methods with equal name.
-	 * TODO
+	 * Creation of Methods with equal name. TODO
 	 */
 	@Test
-	public void illegalRolenamesTest30() {
+	public void illegalRolenamesTest30() throws Exception {
 		compileSchema("Schema de.uni_koblenz.jgralabtest.TestSchema;"
-				+ "GraphClass TestGraph;"
-				+ "VertexClass A {xList: Integer};"
+				+ "GraphClass TestGraph;" + "VertexClass A {xList: Integer};"
 				+ "VertexClass B;"
 				+ "EdgeClass E from A (0,*) to B (0,*) role x;");
 	}

@@ -31,7 +31,6 @@ import de.uni_koblenz.jgralabtest.schemas.vertextest.SuperNode;
 import de.uni_koblenz.jgralabtest.schemas.vertextest.VertexTestGraph;
 import de.uni_koblenz.jgralabtest.schemas.vertextest.VertexTestSchema;
 
-
 public class GraphTest {
 	private VertexTestGraph graph;
 	private VertexTestGraph graph2;
@@ -136,14 +135,10 @@ public class GraphTest {
 			assertEquals(graph2Vertices[i], v);
 			i++;
 		}
-
-		System.out.println("Done testing createVertex.");
 	}
 
 	@Test
 	public void testCreateEdge() {
-		DoubleSubNode v13 = graph2.createDoubleSubNode();
-
 		Edge e1 = graph.createEdge(SubLink.class, v9, v5);
 		Edge e2 = graph.createEdge(SubLink.class, v10, v6);
 		Edge e3 = graph.createEdge(SubLink.class, v12, v8);
@@ -218,25 +213,6 @@ public class GraphTest {
 		assertEquals(v12, e13.getOmega());
 		assertEquals(v6, e14.getAlpha());
 		assertEquals(v10, e14.getOmega());
-
-		// faults
-		try {
-			graph.createEdge(SubLink.class, v13, v5);
-		} catch (AssertionError e) {
-			// :)
-		}
-		try {
-			graph.createEdge(Link.class, v13, v6);
-		} catch (AssertionError e) {
-			// :)
-		}
-		try {
-			graph.createEdge(LinkBack.class, v5, v13);
-		} catch (AssertionError e) {
-			// :)
-		}
-
-		System.out.println("Done testing createEdge.");
 	}
 
 	@Test
@@ -1099,8 +1075,6 @@ public class GraphTest {
 		// null
 
 		graph2.createSubNode();
-		SubNode v13 = graph2.createSubNode();
-		SuperNode v14 = graph2.createSuperNode();
 		DoubleSubNode v15 = graph2.createDoubleSubNode();
 
 		graph.deleteVertex(v1);
@@ -1130,20 +1104,10 @@ public class GraphTest {
 		// well otherwise it returns an AssertionError
 		// TODO what is going on and why?
 		try {
-			graph.deleteVertex(v13);
-		} catch (AssertionError e) {
-		}
-		try {
-			graph.deleteVertex(v14);
-		} catch (AssertionError e) {
-
-		}
-		try {
 			graph.deleteVertex(v15);
 		} catch (NullPointerException e) {
-
+			// Exception ok
 		}
-		System.out.println("Done testing deleteVertex.");
 	}
 
 	@Test
@@ -2929,28 +2893,6 @@ public class GraphTest {
 		Vertex v17 = graph2.createVertex(SuperNode.class);
 		Vertex v18 = graph2.createVertex(DoubleSubNode.class);
 
-		// faults
-		try {
-			graph.getVertex(0);
-		} catch (AssertionError e) {
-			// :)
-		}
-		try {
-			graph.getVertex(-5);
-		} catch (AssertionError e) {
-			// :)
-		}
-		try {
-			graph.getVertex(2042);
-		} catch (AssertionError e) {
-			// :)
-		}
-		try {
-			graph.getVertex(-99);
-		} catch (AssertionError e) {
-			// :)
-		}
-
 		// border cases
 		assertEquals(v1, graph.getVertex(1));
 		assertEquals(v16, graph2.getVertex(1));
@@ -2994,38 +2936,6 @@ public class GraphTest {
 		Edge e9 = graph.createEdge(Link.class, v3, v7);
 		Edge e10 = graph.createEdge(Link.class, v3, v7);
 
-		// faults
-		try {
-			graph.getEdge(0);
-		} catch (AssertionError e) {
-			// :)
-		}
-		try {
-			graph.getEdge(-1);
-		} catch (AssertionError e) {
-			// :)
-		}
-		try {
-			graph.getEdge(-10);
-		} catch (AssertionError e) {
-			// :)
-		}
-		try {
-			graph.getEdge(-33);
-		} catch (AssertionError e) {
-			// :)
-		}
-		try {
-			graph.getEdge(1001);
-		} catch (AssertionError e) {
-			// :)
-		}
-		try {
-			graph.getEdge(2015);
-		} catch (AssertionError e) {
-			// :)
-		}
-
 		// border cases
 		assertEquals(null, graph.getEdge(42));
 		assertEquals(null, graph.getEdge(-42));
@@ -3052,8 +2962,6 @@ public class GraphTest {
 		assertEquals(e9.getReversedEdge(), graph.getEdge(-9));
 		assertEquals(e10, graph.getEdge(10));
 		assertEquals(e10.getReversedEdge(), graph.getEdge(-10));
-
-		System.out.println("Done testing getEdge.");
 	}
 
 	@Test

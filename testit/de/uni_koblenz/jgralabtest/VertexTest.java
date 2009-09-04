@@ -2007,16 +2007,6 @@ public class VertexTest {
 	}
 
 	/**
-	 * Tests if there is only one vertex in the graph and it is not valid.
-	 */
-	@Test(expected=AssertionError.class)
-	public void getNextVertexTest01() {
-		Vertex v = graph.createSubNode();
-		v.delete();
-		v.getNextVertex();
-	}
-
-	/**
 	 * Tests the correctness in a manually build graph.
 	 */
 	@Test
@@ -2778,16 +2768,6 @@ public class VertexTest {
 		assertNull(v.getNextVertexOfClass(SuperNode.class, true));
 		assertNull(v.getNextVertexOfClass(DoubleSubNode.class, false));
 		assertNull(v.getNextVertexOfClass(DoubleSubNode.class, true));
-	}
-	
-	/**
-	 * Tests if there is only one vertex in the graph ant it is not valid.
-	 */
-	@Test(expected=AssertionError.class)
-	public void getNextVertexTestClassBoolean01() {
-		Vertex v = graph.createSubNode();
-		v.delete();
-		v.getNextVertexOfClass(DoubleSubNode.class, false);
 	}
 
 	/**
@@ -5851,38 +5831,6 @@ public class VertexTest {
 		assertFalse(v1.isBefore(v1));
 	}
 
-	/**
-	 * A vertex is not valid.
-	 */
-	@Test(expected=AssertionError.class)
-	public void isBeforeTest1() {
-		Vertex v1 = graph.createDoubleSubNode();
-		Vertex v2 = graph.createDoubleSubNode();
-		v1.delete();
-		assertFalse(v1.isBefore(v2));
-	}
-
-	/**
-	 * A vertex is not valid.
-	 */
-	@Test(expected=AssertionError.class)
-	public void isBeforeTest2() {
-		Vertex v1 = graph.createDoubleSubNode();
-		Vertex v2 = graph.createDoubleSubNode();
-		v2.delete();
-		assertFalse(v1.isBefore(v2));
-	}
-
-	/**
-	 * Both vertices is not valid.
-	 */
-	@Test(expected=AssertionError.class)
-	public void isBeforeTest3() {
-		Vertex v1 = graph.createDoubleSubNode();
-		v1.delete();
-		assertFalse(v1.isBefore(v1));
-	}
-
 	// tests of the method void putBefore(Vertex v);
 	// (tested in VertexList Test)
 
@@ -5895,38 +5843,6 @@ public class VertexTest {
 	@Test
 	public void isAfterTest0() {
 		Vertex v1 = graph.createDoubleSubNode();
-		assertFalse(v1.isAfter(v1));
-	}
-
-	/**
-	 * A vertex is not valid.
-	 */
-	@Test(expected=AssertionError.class)
-	public void isAfterTest1() {
-		Vertex v1 = graph.createDoubleSubNode();
-		Vertex v2 = graph.createDoubleSubNode();
-		v1.delete();
-		assertFalse(v1.isAfter(v2));
-	}
-
-	/**
-	 * A vertex is not valid.
-	 */
-	@Test(expected=AssertionError.class)
-	public void isAfterTest2() {
-		Vertex v1 = graph.createDoubleSubNode();
-		Vertex v2 = graph.createDoubleSubNode();
-		v2.delete();
-		assertFalse(v1.isAfter(v2));
-	}
-
-	/**
-	 * Both vertices is not valid.
-	 */
-	@Test(expected=AssertionError.class)
-	public void isAfterTest3() {
-		Vertex v1 = graph.createDoubleSubNode();
-		v1.delete();
 		assertFalse(v1.isAfter(v1));
 	}
 
@@ -5947,6 +5863,7 @@ public class VertexTest {
 		SubLink e1 = graph.createSubLink(v1, v2);
 		graph.createSubLink(v2, v3);
 		v3.delete();
+		assertFalse(v3.isValid());
 		checkEdgeList(e1);
 		assertEquals(2, graph.getVCount());
 		boolean first = true;
@@ -5971,6 +5888,7 @@ public class VertexTest {
 		graph.createSubLink(v1, v2);
 		graph.createSubLink(v2, v3);
 		v2.delete();
+		assertFalse(v2.isValid());
 		assertEquals(0, graph.getECount());
 		assertEquals(1, graph.getVCount());
 		boolean first = true;
@@ -5995,6 +5913,7 @@ public class VertexTest {
 		graph.createSubLink(v1, v2);
 		graph.createSubLink(v2, v3);
 		v1.delete();
+		assertFalse(v1.isValid());
 		assertEquals(0, graph.getECount());
 		assertEquals(0, graph.getVCount());
 	}
@@ -6010,6 +5929,7 @@ public class VertexTest {
 		graph.createSubLink(v1, v2);
 		graph.createSubLink(v1, v3);
 		v1.delete();
+		assertFalse(v1.isValid());
 		assertEquals(0, graph.getECount());
 		assertEquals(0, graph.getVCount());
 	}
@@ -6024,6 +5944,7 @@ public class VertexTest {
 		graph.createSubLink(v1, v2);
 		graph.createSubLink(v1, v2);
 		v1.delete();
+		assertFalse(v1.isValid());
 		assertEquals(0, graph.getECount());
 		assertEquals(0, graph.getVCount());
 	}
@@ -6039,6 +5960,7 @@ public class VertexTest {
 		graph.createSubLink(v1, v2);
 		graph.createLink(v2, v3);
 		v1.delete();
+		assertFalse(v1.isValid());
 		assertEquals(0, graph.getECount());
 		assertEquals(1, graph.getVCount());
 	}
@@ -7950,17 +7872,6 @@ public class VertexTest {
 		assertTrue(v1.compareTo(v0) > 0);
 	}
 
-	/**
-	 * An assertionError must occure if you try to compare an vertex with an edge.
-	 */
-	@Test(expected=AssertionError.class)
-	public void compareToTest3() {
-		Vertex v0 = graph.createDoubleSubNode();
-		Vertex v1 = graph.createDoubleSubNode();
-		Edge e1=graph.createLink((DoubleSubNode)v0, (DoubleSubNode)v1);
-		assertTrue(v1.compareTo(e1) > 0);
-	}
-
 	/*
 	 * Test of the generated methods
 	 */
@@ -8893,55 +8804,6 @@ public class VertexTest {
 		v1.putIncidenceAfter(e1, e1);
 	}
 
-	@Test(expected = AssertionError.class)
-	public void putIncidenceAfterTest1() {
-		VertexImpl v1 = (VertexImpl) graph.createDoubleSubNode();
-		VertexImpl v2 = (VertexImpl) graph.createDoubleSubNode();
-		IncidenceImpl e1 = (IncidenceImpl) graph.createLink(
-				(AbstractSuperNode) v1, (SuperNode) v2);
-		IncidenceImpl e2 = (IncidenceImpl) graph.createLink(
-				(AbstractSuperNode) v1, (SuperNode) v2);
-		e1.delete();
-		v1.putIncidenceAfter(e1, e2);
-	}
-
-	@Test(expected = AssertionError.class)
-	public void putIncidenceAfterTest2() {
-		VertexImpl v1 = (VertexImpl) graph.createDoubleSubNode();
-		VertexImpl v2 = (VertexImpl) graph.createDoubleSubNode();
-		IncidenceImpl e1 = (IncidenceImpl) graph.createLink(
-				(AbstractSuperNode) v1, (SuperNode) v2);
-		IncidenceImpl e2 = (IncidenceImpl) graph.createLink(
-				(AbstractSuperNode) v1, (SuperNode) v2);
-		e2.delete();
-		v1.putIncidenceAfter(e1, e2);
-	}
-
-	@Test(expected = AssertionError.class)
-	public void putIncidenceAfterTest3() {
-		VertexImpl v1 = (VertexImpl) graph.createDoubleSubNode();
-		VertexImpl v2 = (VertexImpl) graph.createDoubleSubNode();
-		IncidenceImpl e1 = (IncidenceImpl) graph.createLink(
-				(AbstractSuperNode) v1, (SuperNode) v2);
-		IncidenceImpl e2 = (IncidenceImpl) graph.createLink(
-				(AbstractSuperNode) v1, (SuperNode) v2);
-		e1.delete();
-		e2.delete();
-		v1.putIncidenceAfter(e1, e2);
-	}
-
-	@Test(expected = AssertionError.class)
-	public void putIncidenceAfterTest4() {
-		VertexImpl v1 = (VertexImpl) graph.createDoubleSubNode();
-		VertexImpl v2 = (VertexImpl) graph.createDoubleSubNode();
-		VertexImpl v3 = (VertexImpl) graph.createDoubleSubNode();
-		IncidenceImpl e1 = (IncidenceImpl) graph.createLink(
-				(AbstractSuperNode) v1, (SuperNode) v2);
-		IncidenceImpl e2 = (IncidenceImpl) graph.createLink(
-				(AbstractSuperNode) v2, (SuperNode) v3);
-		v1.putIncidenceAfter(e1, e2);
-	}
-
 	// tests of the method void putIncidenceBefore(IncidenceImpl, IncidenceImpl)
 
 	@Test(expected = GraphException.class)
@@ -8953,74 +8815,4 @@ public class VertexTest {
 		v1.putIncidenceBefore(e1, e1);
 	}
 
-	@Test(expected = AssertionError.class)
-	public void putIncidenceBeforeTest1() {
-		VertexImpl v1 = (VertexImpl) graph.createDoubleSubNode();
-		VertexImpl v2 = (VertexImpl) graph.createDoubleSubNode();
-		IncidenceImpl e1 = (IncidenceImpl) graph.createLink(
-				(AbstractSuperNode) v1, (SuperNode) v2);
-		IncidenceImpl e2 = (IncidenceImpl) graph.createLink(
-				(AbstractSuperNode) v1, (SuperNode) v2);
-		e1.delete();
-		v1.putIncidenceBefore(e1, e2);
-	}
-
-	@Test(expected = AssertionError.class)
-	public void putIncidenceBeforeTest2() {
-		VertexImpl v1 = (VertexImpl) graph.createDoubleSubNode();
-		VertexImpl v2 = (VertexImpl) graph.createDoubleSubNode();
-		IncidenceImpl e1 = (IncidenceImpl) graph.createLink(
-				(AbstractSuperNode) v1, (SuperNode) v2);
-		IncidenceImpl e2 = (IncidenceImpl) graph.createLink(
-				(AbstractSuperNode) v1, (SuperNode) v2);
-		e2.delete();
-		v1.putIncidenceBefore(e1, e2);
-	}
-
-	@Test(expected = AssertionError.class)
-	public void putIncidenceBeforeTest3() {
-		VertexImpl v1 = (VertexImpl) graph.createDoubleSubNode();
-		VertexImpl v2 = (VertexImpl) graph.createDoubleSubNode();
-		IncidenceImpl e1 = (IncidenceImpl) graph.createLink(
-				(AbstractSuperNode) v1, (SuperNode) v2);
-		IncidenceImpl e2 = (IncidenceImpl) graph.createLink(
-				(AbstractSuperNode) v1, (SuperNode) v2);
-		e1.delete();
-		e2.delete();
-		v1.putIncidenceBefore(e1, e2);
-	}
-
-	@Test(expected = AssertionError.class)
-	public void putIncidenceBeforeTest4() {
-		VertexImpl v1 = (VertexImpl) graph.createDoubleSubNode();
-		VertexImpl v2 = (VertexImpl) graph.createDoubleSubNode();
-		VertexImpl v3 = (VertexImpl) graph.createDoubleSubNode();
-		IncidenceImpl e1 = (IncidenceImpl) graph.createLink(
-				(AbstractSuperNode) v1, (SuperNode) v2);
-		IncidenceImpl e2 = (IncidenceImpl) graph.createLink(
-				(AbstractSuperNode) v2, (SuperNode) v3);
-		v1.putIncidenceBefore(e1, e2);
-	}
-
-	// tests of the method void removeIncidenceFromLambaSeq(IncidenceImpl)
-
-	@Test(expected = AssertionError.class)
-	public void removeIncidenceFromLambaSeqTest0() {
-		VertexImpl v1 = (VertexImpl) graph.createDoubleSubNode();
-		VertexImpl v2 = (VertexImpl) graph.createDoubleSubNode();
-		IncidenceImpl e1 = (IncidenceImpl) graph.createLink(
-				(AbstractSuperNode) v2, (SuperNode) v2);
-		v1.removeIncidenceFromLambaSeq(e1);
-	}
-	
-	// tests of the method void appendIncidenceToLambaSeq(IncidenceImpl)
-	
-	@Test(expected=AssertionError.class)
-	public void appendIncidenceToLambdaSecTest0(){
-		graph.createDoubleSubNode();
-		VertexImpl v2 = (VertexImpl) graph.createDoubleSubNode();
-		IncidenceImpl e1 = (IncidenceImpl) graph.createLink(
-				(AbstractSuperNode) v2, (SuperNode) v2);
-		v2.appendIncidenceToLambaSeq(e1);
-	}
 }

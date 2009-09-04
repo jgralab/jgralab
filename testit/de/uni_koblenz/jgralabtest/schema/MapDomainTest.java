@@ -104,41 +104,6 @@ public class MapDomainTest extends CompositeDomainTest {
 		rec2.addComponent("map1", map1);
 	}
 
-	@Test(expected = AssertionError.class)
-	public void testRejectionOfForeignKeyDomain() {
-		/*
-		 * Tests the rejection of the following case: A MapDomain has a
-		 * KeyDomain which is not part of the same schema.
-		 */
-		schema2.createEnumDomain("Enum1");
-		schema1.createMapDomain(schema2.getDomain("Enum1"), schema1
-				.getDomain("Integer"));
-	}
-
-	@Test(expected = AssertionError.class)
-	public void testRejectionOfForeignValueDomain() {
-		/*
-		 * Tests the rejection of the following case: A MapDomain has a
-		 * ValueDomain which is not part of the same schema.
-		 */
-		schema2.createEnumDomain("Enum1");
-		schema1.createMapDomain(schema1.getDomain("Integer"), schema2
-				.getDomain("Enum1"));
-	}
-
-	@Test(expected = AssertionError.class)
-	public void testRejectionOfForeignKeyDomainAndValueDomain() {
-		/*
-		 * Tests the rejection of the following case: A MapDomain has a
-		 * KeyDomain and ValueDomain which are not part of the same schema like
-		 * the Map Domain.
-		 */
-		schema2.createEnumDomain("Enum1");
-		schema2.createEnumDomain("Enum2");
-		schema1.createMapDomain(schema2.getDomain("Enum1"), schema2
-				.getDomain("Enum2"));
-	}
-
 	@Override
 	@Test
 	public void testEquals() {
