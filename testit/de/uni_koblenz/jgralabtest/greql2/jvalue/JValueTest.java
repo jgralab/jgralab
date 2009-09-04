@@ -227,7 +227,7 @@ public class JValueTest {
 	}
 	
 	
-	private void tryRemove(JValueCollection col) {
+	private void tryRemoveIter(JValueCollection col) {
 		col.add(new JValue("one"));
 		col.add(new JValue("two"));
 		Iterator<JValue> iter = col.iterator();
@@ -239,23 +239,23 @@ public class JValueTest {
 		assertEquals(1, col.size());
 	}
 	
-	@Test
-	public void testRemoveOnTuple() {
-		tryRemove(new JValueTuple());
-	}
+//	@Test
+//	public void testRemoveOnTuple() {
+//		tryRemove(new JValueTuple());
+//	}
 	
 	@Test
-	public void testRemoveOnBag() {
+	public void testRemoveIterOnBag() {
 		tryRemove(new JValueBag());
 	}
 	
 	@Test
-	public void testRemoveOnSet() {
+	public void testRemoveIterOnSet() {
 		tryRemove(new JValueSet());
 	}
 	
 	@Test
-	public void testRemoveOnList() {
+	public void testRemoveIterOnList() {
 		tryRemove(new JValueList());
 	}
 	
@@ -288,6 +288,57 @@ public class JValueTest {
 	@Test 
 	public void testRemoveAllOnSet() {
 		tryRemoveAll(new JValueSet(), new JValueSet());
+	}
+	
+	
+	private void tryRemove(JValueCollection col) {
+		col.add(new JValue("one"));
+		col.add(new JValue("two"));
+		col.add(new JValue("three"));
+		col.add(new JValue("four"));
+		
+		col.remove(new JValue("one"));
+		col.remove(new JValue("three"));
+
+		assertEquals(2, col.size());
+		assertEquals(true, col.contains(new JValue("two")));
+		assertEquals(true, col.contains(new JValue("four")));
+	}
+	
+	
+//	@Test
+//	public void testRemoveOnTuple() {
+//		tryRemove(new JValueTuple());
+//	}
+	
+	@Test
+	public void testRemoveOnBag() {
+		tryRemove(new JValueBag());
+		JValueBag bag = new JValueBag();
+		bag.add(new JValue("one"));
+		bag.add(new JValue("one"));
+		bag.add(new JValue("one"));
+		bag.add(new JValue("one"));
+		bag.add(new JValue("two"));
+		bag.add(new JValue("two"));
+		bag.remove(new JValue("one"), 3);
+		assertEquals(3, bag.size());
+		assertEquals(2, bag.getQuantity(new JValue("two")));
+		assertEquals(1, bag.getQuantity(new JValue("one")));
+		bag.remove(new JValue("two"), 2);
+		assertEquals(1, bag.size());
+		assertEquals(0, bag.getQuantity(new JValue("two")));
+		assertEquals(1, bag.getQuantity(new JValue("one")));
+	}
+	
+	@Test
+	public void testRemoveOnSet() {
+		tryRemove(new JValueSet());
+	}
+	
+	@Test
+	public void testRemoveOnList() {
+		tryRemove(new JValueList());
 	}
 	
 //	@Test 
