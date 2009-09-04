@@ -260,6 +260,43 @@ public class JValueTest {
 	}
 	
 	
+	private void tryRemoveAll(JValueCollection col, JValueCollection other) {
+		col.add(new JValue("one"));
+		col.add(new JValue("two"));
+		col.add(new JValue("three"));
+		col.add(new JValue("four"));
+		
+		other.add(new JValue("one"));
+		other.add(new JValue("three"));
+		
+		col.removeAll(other);
+		assertEquals(2, col.size());
+		assertEquals(true, col.contains(new JValue("two")));
+		assertEquals(true, col.contains(new JValue("four")));
+	}
+	
+	@Test 
+	public void testRemoveAllOnList() {
+		tryRemoveAll(new JValueList(), new JValueList());
+	}
+	
+	@Test 
+	public void testRemoveAllOnBag() {
+		tryRemoveAll(new JValueBag(), new JValueBag());
+	}
+	
+	@Test 
+	public void testRemoveAllOnSet() {
+		tryRemoveAll(new JValueSet(), new JValueSet());
+	}
+	
+//	@Test 
+//	public void testRemoveAllTuple() {
+//		JValueTuple tup = new JValueTuple();
+//
+//	}
+	
+	
 	@Test
 	public void notEqualsBag() {
 		JValueBag b1 = new JValueBag();
