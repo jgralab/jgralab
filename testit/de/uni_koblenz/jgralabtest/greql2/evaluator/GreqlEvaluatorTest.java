@@ -26,6 +26,7 @@ package de.uni_koblenz.jgralabtest.greql2.evaluator;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
@@ -35,6 +36,7 @@ import java.util.List;
 
 import org.junit.Test;
 
+import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
@@ -49,6 +51,9 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueTuple;
 import de.uni_koblenz.jgralab.greql2.optimizer.DefaultOptimizer;
 import de.uni_koblenz.jgralab.greql2.parser.ManualGreqlParser;
 import de.uni_koblenz.jgralab.greql2.schema.Greql2;
+import de.uni_koblenz.jgralab.greql2.schema.IsArgumentOf;
+import de.uni_koblenz.jgralab.greql2.schema.StringLiteral;
+import de.uni_koblenz.jgralab.greql2.schema.ThisVertex;
 import de.uni_koblenz.jgralabtest.greql2.GenericTests;
 
 public class GreqlEvaluatorTest extends GenericTests {
@@ -129,11 +134,7 @@ public class GreqlEvaluatorTest extends GenericTests {
 		String queryString = "forall e: E{IsDefinitionOf}"
 				+ "  @ startVertex(e) -->{IsDefinitionOf} endVertex(e)";
 		JValue result = evalTestQuery("Reachability", queryString);
-		// TODO
-		 assertEquals(1, result.toCollection().size());
-		 for (JValue j : result.toCollection()) {
-		 assertEquals(4, j.toCollection().size());
-		 }
+		assertEquals(true, result.toBoolean());
 		 JValue resultWO = evalTestQuery("BackwardVertexSet1 (wo)",
 		 queryString,
 		 new DefaultOptimizer());
@@ -547,6 +548,16 @@ public class GreqlEvaluatorTest extends GenericTests {
 		assertEquals(result, resultWO);
 	}
 
+	
+	@Test
+	public void testGreTLQuery() throws Exception {
+		String query = "from t : V{Vertex}    "
+						+ "report t --> "
+						+ "     & {hasType(thisVertex, \"MyType\")} "
+						+ "end";
+		JValue result = evalTestQuery("RestrictedExpression", query);
+	}
+	
 	/*
 	 * Test method for
 	 * 'greql2.evaluator.GreqlEvaluator.evaluateSequentialPathDescription(SequentialPathDescription,
@@ -859,6 +870,9 @@ public class GreqlEvaluatorTest extends GenericTests {
 		assertEquals(result, resultWO);
 	}
 
+	
+
+	
 	@Test
 	public void testEvaluateQuantifiedExpression1() throws Exception {
 		JValueSet set = new JValueSet();
@@ -1631,17 +1645,40 @@ public class GreqlEvaluatorTest extends GenericTests {
 	public void testQueryWithoutDatagraph() throws Exception {
 		String queryString = "(3 + 4) * 7";
 		JValue result = evalTestQuery("QueryWithoutDatagraph", queryString, (Graph)null);
-		assertEquals(49, result.toInteger());
+		assertEquals(49, result.toInteger().intValue());
 	}
 	
 	@Test
 	public void testGraphExecution() throws Exception {
 		String queryString = "(3 + 4) * 7";
 		Greql2 graph = ManualGreqlParser.parse(queryString);
-		System.out.println("Parsed query ");
 		GreqlEvaluator eval = new GreqlEvaluator(graph, null, new HashMap<String, JValue>());
 		eval.startEvaluation();
 		JValue result = eval.getEvaluationResult();
-		assertEquals(49, result.toInteger());
+		assertEquals(49, result.toInteger().intValue());
 	}
+	
+	@Test
+	public void testNullLiteral() throws Exception {
+		JValue result = evalTestQuery("NullLiteral1", "true and null");
+		assertEquals(null, result.toBoolean());
+		result = evalTestQuery("NullLiteral1", "true or null");
+		assertEquals(true, result.toBoolean());
+		result = evalTestQuery("NullLiteral1", "true xor null");
+		assertEquals(null, result.toBoolean());
+		result = evalTestQuery("NullLiteral1", "false and null");
+		assertEquals(false, result.toBoolean());
+		result = evalTestQuery("NullLiteral1", "false or null");
+		assertEquals(null, result.toBoolean());
+		result = evalTestQuery("NullLiteral1", "false xor null");
+		assertEquals(null, result.toBoolean());
+		result = evalTestQuery("NullLiteral1", "null and null");
+		assertEquals(null, result.toBoolean());
+		result = evalTestQuery("NullLiteral1", "null or null");
+		assertEquals(null, result.toBoolean());
+		result = evalTestQuery("NullLiteral1", "null xor null");
+		assertEquals(null, result.toBoolean());
+	}
+	
+	
 }

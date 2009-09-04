@@ -32,6 +32,7 @@ import de.uni_koblenz.jgralab.greql2.schema.Greql2Expression;
 import de.uni_koblenz.jgralab.greql2.schema.IntLiteral;
 import de.uni_koblenz.jgralab.greql2.schema.IntermediateVertexPathDescription;
 import de.uni_koblenz.jgralab.greql2.schema.IsAlternativePathOf;
+import de.uni_koblenz.jgralab.greql2.schema.IsArgumentOf;
 import de.uni_koblenz.jgralab.greql2.schema.IsBoundVarOf;
 import de.uni_koblenz.jgralab.greql2.schema.IsCompDeclOf;
 import de.uni_koblenz.jgralab.greql2.schema.IsCompResultDefOf;
@@ -70,6 +71,7 @@ import de.uni_koblenz.jgralab.greql2.schema.SetConstruction;
 import de.uni_koblenz.jgralab.greql2.schema.SimpleDeclaration;
 import de.uni_koblenz.jgralab.greql2.schema.SimplePathDescription;
 import de.uni_koblenz.jgralab.greql2.schema.StringLiteral;
+import de.uni_koblenz.jgralab.greql2.schema.ThisVertex;
 import de.uni_koblenz.jgralab.greql2.schema.TrivalentBoolean;
 import de.uni_koblenz.jgralab.greql2.schema.TypeId;
 import de.uni_koblenz.jgralab.greql2.schema.Variable;
@@ -370,13 +372,25 @@ public class ParserTest {
 	
 	@Test
 	public void testGreTLQuery() throws Exception {
-		String query = "from t : V{Type}    "
+		String query = "from t : V{Vertex}    "
 						+ "report t --> "
-						+ "     & {hasType(thisVertex)} "
-	//					+ "        and thisVertex.name =~ \".*[Rr]esource.*\"}) "
+						+ "     & {hasType(thisVertex, \"MyType\")} "
 						+ "end";
 		Greql2 graph = parseQuery(query);
 		assertNotNull(graph);
+		ThisVertex tv = graph.getFirstThisVertex();
+		assertNotNull(tv);
+		IsArgumentOf argOf = tv.getFirstIsArgumentOf(EdgeDirection.OUT);
+		assertNotNull(argOf);
+		assertEquals(graph.getFirstFunctionApplication(), argOf.getOmega());
+		StringLiteral sl = graph.getFirstStringLiteral();
+		assertNotNull(sl);
+		assertEquals("MyType", sl.getStringValue());
+		argOf = sl.getFirstIsArgumentOf(EdgeDirection.OUT);
+		assertNotNull(argOf);
+		assertEquals(graph.getFirstFunctionApplication(), argOf.getOmega());
+		tv = tv.getNextThisVertex();
+		assertNull(tv);
 	}
 	
 	@Test

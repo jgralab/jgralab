@@ -71,6 +71,8 @@ public class FunctionTest extends GenericTests {
 		JValue result = evalTestQuery("And", queryString);
 		assertEquals(4, result.toCollection().size());
 	}
+	
+
 
 	@Test
 	public void testAnd2() throws Exception {
