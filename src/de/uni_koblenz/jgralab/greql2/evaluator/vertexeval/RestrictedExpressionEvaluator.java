@@ -25,6 +25,7 @@
 package de.uni_koblenz.jgralab.greql2.evaluator.vertexeval;
 
 import de.uni_koblenz.jgralab.EdgeDirection;
+import de.uni_koblenz.jgralab.GraphMarker;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
 import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.GraphSize;
@@ -34,6 +35,8 @@ import de.uni_koblenz.jgralab.greql2.exception.JValueInvalidTypeException;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
 import de.uni_koblenz.jgralab.greql2.schema.Expression;
 import de.uni_koblenz.jgralab.greql2.schema.RestrictedExpression;
+import de.uni_koblenz.jgralab.greql2.schema.ThisEdge;
+import de.uni_koblenz.jgralab.greql2.schema.ThisVertex;
 
 /**
  * Evaluates the given RestrictedExpression. A RestrictedExpression contains a
@@ -46,6 +49,8 @@ public class RestrictedExpressionEvaluator extends VertexEvaluator {
 
 	private RestrictedExpression vertex;
 
+	private ThisVertexEvaluator thisVertexEvaluator;
+	
 	/**
 	 * returns the vertex this VertexEvaluator evaluates
 	 */
@@ -58,6 +63,11 @@ public class RestrictedExpressionEvaluator extends VertexEvaluator {
 			GreqlEvaluator eval) {
 		super(eval);
 		this.vertex = vertex;
+		GraphMarker<VertexEvaluator> graphMarker = eval.getVertexEvaluatorGraphMarker();
+		Vertex v = graphMarker.getGraph().getFirstVertexOfClass(
+				ThisVertex.class);
+		if (v != null)
+			thisVertexEvaluator = (ThisVertexEvaluator) graphMarker.getMark(v);
 	}
 
 	@Override
@@ -69,6 +79,13 @@ public class RestrictedExpressionEvaluator extends VertexEvaluator {
 				.getFirstIsRestrictionOf(EdgeDirection.IN).getAlpha();
 		VertexEvaluator restrictionEval = greqlEvaluator.getVertexEvaluatorGraphMarker().getMark(restriction);
 
+		if (restExprEval instanceof VariableEvaluator) {
+			if (((VariableEvaluator) restExprEval).getValue().isVertex()) {
+				thisVertexEvaluator.setValue(((VariableEvaluator)restExprEval).getValue());
+			}
+		}
+		
+		
 		JValue condition = (JValue) restrictionEval.getResult(subgraph);
 		if (condition.isBoolean()) {
 			try {
