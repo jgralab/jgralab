@@ -9,12 +9,14 @@ import static org.junit.Assert.fail;
 
 import org.junit.Test;
 
+import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.GraphIO;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.greql2.exception.UndefinedVariableException;
 import de.uni_koblenz.jgralab.greql2.parser.ManualGreqlParser;
 import de.uni_koblenz.jgralab.greql2.parser.ParsingException;
+import de.uni_koblenz.jgralab.greql2.schema.AggregationPathDescription;
 import de.uni_koblenz.jgralab.greql2.schema.AlternativePathDescription;
 import de.uni_koblenz.jgralab.greql2.schema.BagComprehension;
 import de.uni_koblenz.jgralab.greql2.schema.BoolLiteral;
@@ -66,6 +68,7 @@ import de.uni_koblenz.jgralab.greql2.schema.RealLiteral;
 import de.uni_koblenz.jgralab.greql2.schema.RecordConstruction;
 import de.uni_koblenz.jgralab.greql2.schema.RecordElement;
 import de.uni_koblenz.jgralab.greql2.schema.RecordId;
+import de.uni_koblenz.jgralab.greql2.schema.RoleId;
 import de.uni_koblenz.jgralab.greql2.schema.SequentialPathDescription;
 import de.uni_koblenz.jgralab.greql2.schema.SetConstruction;
 import de.uni_koblenz.jgralab.greql2.schema.SimpleDeclaration;
@@ -391,6 +394,25 @@ public class ParserTest {
 		assertEquals(graph.getFirstFunctionApplication(), argOf.getOmega());
 		tv = tv.getNextThisVertex();
 		assertNull(tv);
+	}
+	
+	
+	@Test
+	public void testRole() throws Exception {
+		String queryString = "from var: V{Variable} report <>--{@undefinedRole} end";
+		Greql2 graph = parseQuery(queryString);
+		assertNotNull(graph);
+		RoleId id = graph.getFirstRoleId();
+		assertNotNull(id);
+		assertEquals("undefinedRole", id.getName());
+		AggregationPathDescription agg = graph.getFirstAggregationPathDescription();
+		assertNotNull(agg);
+		Edge e = id.getFirstIsRoleIdOf();
+		assertNotNull(e);
+		EdgeRestriction er = (EdgeRestriction) e.getOmega();
+		IsEdgeRestrOf erof = er.getFirstIsEdgeRestrOf();
+		assertNotNull(erof);
+		assertEquals(agg, erof.getOmega());
 	}
 	
 	@Test
