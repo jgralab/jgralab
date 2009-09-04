@@ -2393,9 +2393,10 @@ public class RoleNameTest {
 	/**
 	 * sourceE A--&gt{E}B targetE<br>
 	 * sourceF C:A--&gt{F:E}D:B targetE redefines targetE<br>
-	 * TODO is this correct?
+	 * <br>
+	 * "x redefines x": this is currently OK in JGraLab, may change in future
+	 * versions
 	 */
-	@Test(expected = InheritanceException.class)
 	public void illegalRolenamesTest26() throws Exception {
 		compileSchema("Schema de.uni_koblenz.jgralabtest.TestSchema;"
 				+ "GraphClass TestGraph;"
