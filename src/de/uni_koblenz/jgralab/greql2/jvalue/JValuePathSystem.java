@@ -192,6 +192,7 @@ public class JValuePathSystem extends JValue {
 	public void addVertex(Vertex vertex, int stateNumber, Edge parentEdge,
 			Vertex parentVertex, int parentStateNumber, int distance,
 			boolean finalState) {
+		System.out.println("Adding vertex: " + vertex);
 		PathSystemKey key = new PathSystemKey(vertex, stateNumber);
 		if (!keyToEntryMap.containsKey(key)) {
 			PathSystemEntry entry = new PathSystemEntry(parentVertex,
@@ -199,9 +200,9 @@ public class JValuePathSystem extends JValue {
 			keyToEntryMap.put(key, entry);
 			if (finalState && !leafVertexToLeafKeyMap.containsKey(vertex)) {
 				leafVertexToLeafKeyMap.put(vertex, key);
-				vertexToFirstKeyMap.put(vertex, key);
+				leafKeys = null;
 			}
-			leafKeys = null;
+			vertexToFirstKeyMap.put(vertex, key);
 		}
 	}
 
@@ -241,6 +242,9 @@ public class JValuePathSystem extends JValue {
 	 * occurence if used.
 	 */
 	public JValueSet siblings(Vertex vertex) {
+		System.out.println("Getting siblings for vertex " + vertex );
+		for (Vertex v : vertexToFirstKeyMap.keySet())
+			System.out.println("Vertex in Map: " + v);
 		PathSystemKey key = vertexToFirstKeyMap.get(vertex);
 		return siblings(key);
 	}
@@ -249,6 +253,7 @@ public class JValuePathSystem extends JValue {
 	 * Calculates the set of children the given key has in this PathSystem
 	 */
 	public JValueSet siblings(PathSystemKey key) {
+		System.out.println("Key is: " + key);
 		PathSystemEntry entry = keyToEntryMap.get(key);
 		JValueSet returnSet = new JValueSet();
 		Iterator<Map.Entry<PathSystemKey, PathSystemEntry>> iter = keyToEntryMap
@@ -256,6 +261,8 @@ public class JValuePathSystem extends JValue {
 		while (iter.hasNext()) {
 			Map.Entry<PathSystemKey, PathSystemEntry> mapEntry = iter.next();
 			PathSystemEntry thisEntry = mapEntry.getValue();
+			System.out.println("ThisEntry: " + thisEntry);
+			System.out.println("Entry: " + entry);
 			if ((thisEntry.getParentVertex() == entry.getParentVertex())
 					&& (thisEntry.getParentStateNumber() == entry
 							.getParentStateNumber())
