@@ -567,29 +567,21 @@ public class JValueBag extends JValueCollection {
 
 		resultingBag = new JValueBag(size());
 		JValueBag foreignBag = c.toJValueBag();
-		Iterator<JValue> iter = this.iterator();
 		// add all elements which are in this bag but not the foreign bag
-		while (iter.hasNext()) {
-			JValue currentElement = iter.next();
+		for (JValue currentElement : this.toJValueSet()) {
 			int foreignQuantity = foreignBag.getQuantity(currentElement);
 			int ownQuantity = this.getQuantity(currentElement);
 			int difference = foreignQuantity - ownQuantity;
 			if (difference != 0) {
-				if (difference > 0) {
-					resultingBag.add(currentElement, difference);
-				} else {
-					resultingBag.add(currentElement, -difference);
-				}
+				resultingBag.add(currentElement, Math.abs(difference));
 			}
 		}
 		// add all elements which are in foreign bag but not in this bag
-		iter = foreignBag.iterator();
-		while (iter.hasNext()) {
-			JValue currentElement = iter.next();
+		for (JValue currentElement : foreignBag) {
 			int ownQuantity = this.getQuantity(currentElement);
 			if (ownQuantity == 0) {
-				int foreignQuantity = foreignBag.getQuantity(currentElement);
-				resultingBag.add(currentElement, foreignQuantity);
+				//int foreignQuantity = foreignBag.getQuantity(currentElement);
+				resultingBag.add(currentElement);
 			}
 		}
 

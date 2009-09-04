@@ -329,6 +329,23 @@ public class JValueTest {
 		assertEquals(1, bag.size());
 		assertEquals(0, bag.getQuantity(new JValue("two")));
 		assertEquals(1, bag.getQuantity(new JValue("one")));
+		bag.remove(new JValue("two"), 2);
+		assertEquals(1, bag.size());
+		assertEquals(0, bag.getQuantity(new JValue("two")));
+		assertEquals(1, bag.getQuantity(new JValue("one")));
+	}
+	
+	@Test
+	public void testAddOnBag() {
+		JValueBag bag = new JValueBag();
+		bag.add(new JValue("one"), -1);
+		assertEquals(0, bag.size());
+		bag.add(new JValue("one"), 0);
+		assertEquals(0, bag.size());
+		bag.add(new JValue("one"), 4);
+		assertEquals(4, bag.size());
+		bag.add(new JValue("one"), -1);
+		assertEquals(4, bag.size());
 	}
 	
 	@Test
@@ -347,6 +364,50 @@ public class JValueTest {
 //
 //	}
 	
+	@Test
+	public void testSymDifferenceSet() {
+		JValueSet first = new JValueSet();
+		JValueSet second = new JValueSet();
+		first.add(new JValue("one"));
+		first.add(new JValue("two"));
+		first.add(new JValue("three"));
+		first.add(new JValue("four"));
+		second.add(new JValue("three"));
+		second.add(new JValue("four"));
+		second.add(new JValue("five"));
+		second.add(new JValue("six"));
+		JValueSet diff = first.symmetricDifference(second);
+		assertEquals(4, diff.size());
+		assertTrue(diff.contains(new JValue("one")));
+		assertTrue(diff.contains(new JValue("two")));
+		assertTrue(diff.contains(new JValue("five")));
+		assertTrue(diff.contains(new JValue("six")));
+		assertFalse(diff.contains(new JValue("four")));
+		assertFalse(diff.contains(new JValue("three")));
+	}
+	
+	@Test
+	public void testSymDifferenceBag() {
+		JValueBag first = new JValueBag();
+		JValueBag second = new JValueBag();
+		first.add(new JValue("one"), 3);
+		first.add(new JValue("two"), 2);
+		first.add(new JValue("three"), 4);
+		first.add(new JValue("four"), 3);
+		second.add(new JValue("three"), 2);
+		second.add(new JValue("four"), 4);
+		second.add(new JValue("five"), 2);
+		second.add(new JValue("six"), 7);
+		JValueBag diff = first.symmetricDifference(second);
+		assertEquals(17, diff.size());
+		assertEquals(diff.getQuantity(new JValue("one")), 3);
+		assertEquals(diff.getQuantity(new JValue("two")), 2);
+		assertEquals(diff.getQuantity(new JValue("five")), 2);
+		assertEquals(diff.getQuantity(new JValue("six")), 7);
+		assertEquals(diff.getQuantity(new JValue("four")), 1);
+		assertEquals(diff.getQuantity(new JValue("three")), 2);
+	}
+ 	
 	
 	@Test
 	public void notEqualsBag() {
