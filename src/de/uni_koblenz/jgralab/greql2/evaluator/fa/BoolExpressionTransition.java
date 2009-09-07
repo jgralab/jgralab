@@ -55,6 +55,7 @@ public class BoolExpressionTransition extends Transition {
 	/**
 	 * returns a string which describes the edge
 	 */
+	@Override
 	public String edgeString() {
 		String desc = "BoolExpressionTransition";
 		return desc;
@@ -63,14 +64,19 @@ public class BoolExpressionTransition extends Transition {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see greql2.evaluator.fa.Transition#equalSymbol(greql2.evaluator.fa.EdgeTransition)
+	 * @see
+	 * greql2.evaluator.fa.Transition#equalSymbol(greql2.evaluator.fa.EdgeTransition
+	 * )
 	 */
+	@Override
 	public boolean equalSymbol(Transition t) {
-		if (!(t instanceof BoolExpressionTransition))
+		if (!(t instanceof BoolExpressionTransition)) {
 			return false;
+		}
 		BoolExpressionTransition bt = (BoolExpressionTransition) t;
-		if (bt.boolExpressionEvaluator == this.boolExpressionEvaluator)
+		if (bt.boolExpressionEvaluator == this.boolExpressionEvaluator) {
 			return true;
+		}
 		return false;
 	}
 
@@ -89,6 +95,7 @@ public class BoolExpressionTransition extends Transition {
 	/**
 	 * returns a copy of this transition
 	 */
+	@Override
 	public Transition copy(boolean addToStates) {
 		return new BoolExpressionTransition(this, addToStates);
 	}
@@ -113,11 +120,13 @@ public class BoolExpressionTransition extends Transition {
 		boolExpressionEvaluator = boolEval;
 		Vertex v = graphMarker.getGraph().getFirstVertexOfClass(
 				ThisVertex.class);
-		if (v != null)
+		if (v != null) {
 			thisVertexEvaluator = (ThisVertexEvaluator) graphMarker.getMark(v);
+		}
 		v = graphMarker.getGraph().getFirstVertexOfClass(ThisEdge.class);
-		if (v != null)
+		if (v != null) {
 			thisEdgeEvaluator = (ThisEdgeEvaluator) graphMarker.getMark(v);
+		}
 	}
 
 	/*
@@ -125,6 +134,7 @@ public class BoolExpressionTransition extends Transition {
 	 * 
 	 * @see greql2.evaluator.fa.Transition#isEpsilon()
 	 */
+	@Override
 	public boolean isEpsilon() {
 		return false;
 	}
@@ -133,11 +143,11 @@ public class BoolExpressionTransition extends Transition {
 	 * (non-Javadoc)
 	 * 
 	 * @see greql2.evaluator.fa.Transition#accepts(jgralab.Vertex, jgralab.Edge,
-	 *      greql2.evaluator.SubgraphTempAttribute)
+	 * greql2.evaluator.SubgraphTempAttribute)
 	 */
+	@Override
 	public boolean accepts(Vertex v, Edge e, BooleanGraphMarker subgraph)
 			throws EvaluateException {
-		System.out.println("Testing BoolExpressionTransition");
 		if (thisEdgeEvaluator != null) {
 			thisEdgeEvaluator.setValue(new JValue(e));
 		}
@@ -157,6 +167,7 @@ public class BoolExpressionTransition extends Transition {
 		return false;
 	}
 
+	@Override
 	public Vertex getNextVertex(Vertex v, Edge e) {
 		return v;
 	}
