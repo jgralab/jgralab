@@ -603,43 +603,61 @@ public class Rsa2Tg {
 			String schemaName = schema.getName();
 			assert schemaName != null;
 
-			String dotName, tgSchemaName, schemaGraphName, validateName, relativePathPrefix;
-			relativePathPrefix = currentXmiFile.getParent();
+			String relativePathPrefix = currentXmiFile.getParent();
 			// if in current working directory parent is null
 			relativePathPrefix = relativePathPrefix == null ? ""
 					: relativePathPrefix + File.separator;
 
-			dotName = (filenameDot != null) ? filenameDot : schemaName;
-			dotName = createFilename(relativePathPrefix, dotName, ".dot");
-
-			schemaGraphName = (filenameSchemaGraph != null) ? filenameSchemaGraph
-					: schemaName;
-			schemaGraphName = createFilename(relativePathPrefix,
-					schemaGraphName, ".gruml.tg");
-
-			tgSchemaName = (filenameSchema != null) ? filenameSchema
-					: schemaName;
-			tgSchemaName = createFilename(relativePathPrefix, tgSchemaName,
-					".rsa.tg");
-
-			validateName = (filenameValidation != null) ? filenameValidation
-					: schemaName;
-			validateName = createFilename(relativePathPrefix, validateName,
-					".html");
-
 			if (writeDot) {
-
+				String dotName = (filenameDot != null) ? filenameDot
+						: schemaName;
+				dotName = createFilename(relativePathPrefix, dotName, ".dot");
 				writeDotFile(dotName);
 			}
 
 			if (writeSchemaGraph) {
+				String schemaGraphName = (filenameSchemaGraph != null) ? filenameSchemaGraph
+						: schemaName;
+				schemaGraphName = createFilename(relativePathPrefix,
+						schemaGraphName, ".gruml.tg");
 				writeSchemaGraph(schemaGraphName);
+			}
 
-				if (validate) {
-					validateGraph(validateName);
+			validateGraph(schemaName, relativePathPrefix);
+
+			String tgSchemaName = (filenameSchema != null) ? filenameSchema
+					: schemaName;
+			tgSchemaName = createFilename(relativePathPrefix, tgSchemaName,
+					".rsa.tg");
+			writeSchema(tgSchemaName, false);
+		}
+	}
+
+	private void validateGraph(String schemaName, String relativePathPrefix) {
+		try {
+			GraphValidator validator = new GraphValidator(sg);
+			Set<ConstraintViolation> s;
+			String validateName = null;
+			if (validate) {
+				validateName = (filenameValidation != null) ? filenameValidation
+						: schemaName;
+				validateName = createFilename(relativePathPrefix,
+						validateName, ".html");
+
+				s = validator.createValidationReport(validateName);
+
+			} else {
+				s = validator.validate();
+			}
+			if (!s.isEmpty()) {
+				System.err.println("The schema graph is not valid:");
+				for (ConstraintViolation currentViolation : s) {
+					// print out violations
+					System.err.println(currentViolation.getMessage());
 				}
 			}
-			writeSchema(tgSchemaName, false);
+		} catch (IOException e) {
+			e.printStackTrace();
 		}
 	}
 
@@ -841,20 +859,6 @@ public class Rsa2Tg {
 			}
 		}
 		assert recordComponentType.isEmpty();
-	}
-
-	private void validateGraph(String validationReportFile) {
-		GraphValidator validator = new GraphValidator(sg);
-		try {
-			Set<ConstraintViolation> s = validator
-					.createValidationReport(validationReportFile);
-			if (!s.isEmpty()) {
-				System.err.println("The schema graph is not valid :-(\nSee "
-						+ validationReportFile + " for details.");
-			}
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
 	}
 
 	private void linkAttributeDomains() {
