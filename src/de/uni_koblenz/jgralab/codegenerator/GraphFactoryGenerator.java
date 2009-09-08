@@ -31,9 +31,9 @@ import de.uni_koblenz.jgralab.schema.VertexClass;
 
 /**
  * This class generates the code of the GraphElement Factory.
- *
+ * 
  * @author ist@uni-koblenz.de
- *
+ * 
  */
 public class GraphFactoryGenerator extends CodeGenerator {
 

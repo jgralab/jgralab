@@ -35,9 +35,9 @@ import de.uni_koblenz.jgralab.impl.ReversedEdgeImpl;
  * kind of marking is used, it may be reasonalbe to extends this GraphMarker. A
  * example how that could be done is located in the tutorial in the class
  * <code>DijkstraVertexMarker</code>.
- *
+ * 
  * @author ist@uni-koblenz.de
- *
+ * 
  */
 public class GraphMarker<T> {
 
@@ -62,7 +62,7 @@ public class GraphMarker<T> {
 	/**
 	 * returns the object that marks the given Graph, Edge or Vertex in this
 	 * marking.
-	 *
+	 * 
 	 * @param elem
 	 *            the element to get the marking for
 	 * @return the object that marks the given element or <code>null</code> if
@@ -80,7 +80,7 @@ public class GraphMarker<T> {
 
 	/**
 	 * marks the given element with the given value
-	 *
+	 * 
 	 * @param elem
 	 *            the element (Graph, Vertex or Edge) to mark
 	 * @param value
@@ -105,17 +105,18 @@ public class GraphMarker<T> {
 
 	/**
 	 * Returns the number of marked elements in this GraphMarker.
-	 *
+	 * 
 	 * @return The number of marked elements.
 	 */
 	public int size() {
 		return tempAttributeMap.size();
 	}
-	
+
 	/**
 	 * Returns <code>true</code> if nothing is marked by this GraphMarker.
 	 * 
-	 * @return <code>true</code> if no graph element is marked by this GraphMarker.
+	 * @return <code>true</code> if no graph element is marked by this
+	 *         GraphMarker.
 	 */
 	public boolean isEmpty() {
 		return tempAttributeMap.isEmpty();
@@ -130,7 +131,7 @@ public class GraphMarker<T> {
 
 	/**
 	 * Returns the Graph of this GraphMarker.
-	 *
+	 * 
 	 * @return the Graph of this GraphMarker.
 	 */
 	public Graph getGraph() {
@@ -139,7 +140,7 @@ public class GraphMarker<T> {
 
 	/**
 	 * Remove the mark from <code>elem</code>.
-	 *
+	 * 
 	 * @param elem
 	 *            a marked {@link AttributedElement}
 	 */

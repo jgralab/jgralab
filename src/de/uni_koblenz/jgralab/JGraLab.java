@@ -29,7 +29,7 @@ import java.util.logging.Logger;
 
 /**
  * This class gives information, which software was used creating JGraLab.
- *
+ * 
  * @author ist@uni-koblenz.de
  */
 public class JGraLab {
@@ -82,15 +82,13 @@ public class JGraLab {
 			"Apache XML-RPC 3.0",
 			"Copyright (C) 2001-2008 The Apache Software Foundation",
 			"Please note, you need the Java Enterprise Edition to make full use",
-			"of this part of the software.",
-			"",
-			"Apache Commons CLI 1.2",
-			"Copyright 2001-2009 The Apache Software Foundation"};
+			"of this part of the software.", "", "Apache Commons CLI 1.2",
+			"Copyright 2001-2009 The Apache Software Foundation" };
 
 	/**
 	 * Sets the log level for package de.uni_koblenz.jgralab and all its
 	 * children to <code>level</code>.
-	 *
+	 * 
 	 * @param level
 	 *            new log level
 	 */
@@ -100,7 +98,7 @@ public class JGraLab {
 
 	/**
 	 * Prints version and license info.
-	 *
+	 * 
 	 * @param args
 	 *            (ignored)
 	 */

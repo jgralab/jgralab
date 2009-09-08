@@ -84,7 +84,7 @@ public class PathExistenceEvaluator extends PathSearchEvaluator {
 		 */
 		if (!res.isValid()) {
 			return new JValue();
-		}	
+		}
 		Vertex startVertex = null;
 		try {
 			startVertex = res.toVertex();

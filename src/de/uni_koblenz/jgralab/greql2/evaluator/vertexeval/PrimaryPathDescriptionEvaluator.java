@@ -21,7 +21,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
- 
+
 package de.uni_koblenz.jgralab.greql2.evaluator.vertexeval;
 
 import de.uni_koblenz.jgralab.Edge;
@@ -34,9 +34,9 @@ import de.uni_koblenz.jgralab.greql2.schema.PrimaryPathDescription;
 
 /**
  * abstract baseclass for SimplePathDescription and EdgePathDescription
- * @author ist@uni-koblenz.de
- * Summer 2006, Diploma Thesis
- *
+ * 
+ * @author ist@uni-koblenz.de Summer 2006, Diploma Thesis
+ * 
  */
 public abstract class PrimaryPathDescriptionEvaluator extends
 		PathDescriptionEvaluator {
@@ -60,7 +60,8 @@ public abstract class PrimaryPathDescriptionEvaluator extends
 	/**
 	 * Returns the edge direction this pathDescription accepts
 	 */
-	protected Transition.AllowedEdgeDirection getEdgeDirection(PrimaryPathDescription vertex) {
+	protected Transition.AllowedEdgeDirection getEdgeDirection(
+			PrimaryPathDescription vertex) {
 		Transition.AllowedEdgeDirection validDirection = Transition.AllowedEdgeDirection.ANY;
 		Edge dirEdge = vertex.getFirstIsDirectionOf(EdgeDirection.IN);
 		if (dirEdge != null) {
@@ -81,8 +82,5 @@ public abstract class PrimaryPathDescriptionEvaluator extends
 			return null;
 		return edgeRestEval.getEdgeRole();
 	}
-
-
-
 
 }

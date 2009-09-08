@@ -21,7 +21,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
- 
+
 /**
  * GReQL2 is a query language that can be used on graphs created with JGraLab.
  * All needed subpackages are included in this package.

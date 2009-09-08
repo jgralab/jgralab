@@ -21,10 +21,10 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
- 
+
 /**
  * This package contains all classes that implement GReQL2-functions.
  * Each function is implemented in one class. All these classes implement the interface {@link de.uni_koblenz.jgralab.greql2.funlib.Greql2Function}
  */
- 
- package de.uni_koblenz.jgralab.greql2.funlib;
+
+package de.uni_koblenz.jgralab.greql2.funlib;

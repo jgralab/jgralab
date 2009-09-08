@@ -34,7 +34,7 @@ public class TestGraphGenerator {
 	public static void main(String[] args) throws GraphIOException {
 		/*
 		 * try to build up the following graph
-		 *
+		 * 
 		 * v1 -e1-> v2 -e2-> v3 // v1 and v2 are Intersections | ^ | // v3 is a
 		 * CarPark, capacity 2500 | | | e5 is a footway, e3 e4 e5 other edges
 		 * are streets | | | v | v v4 -e6-> v5 -e7-> v6 // all Intersections | |

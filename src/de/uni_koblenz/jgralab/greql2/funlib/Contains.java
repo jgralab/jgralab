@@ -40,7 +40,7 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
 /**
  * Checks if a given object is included in a given collection. The object can be
  * anything (for example an integer or a string).
- *
+ * 
  * <dl>
  * <dt><b>GReQL-signature</b></dt>
  * <dd><code>BOOLEAN contains(c:COLLECTION, obj:OBJECT)</code></dd>
@@ -63,9 +63,9 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
  * </dl>
  * </dd>
  * </dl>
- *
+ * 
  * @author ist@uni-koblenz.de
- *
+ * 
  */
 
 public class Contains extends AbstractGreql2Function {

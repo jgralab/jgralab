@@ -40,9 +40,9 @@ import de.uni_koblenz.jgralab.greql2.schema.PathDescription;
 
 /**
  * Evaluates a ForwardVertexSet
- *
+ * 
  * @author ist@uni-koblenz.de
- *
+ * 
  */
 public class ForwardVertexSetEvaluator extends PathSearchEvaluator {
 

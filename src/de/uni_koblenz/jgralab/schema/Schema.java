@@ -132,7 +132,8 @@ public interface Schema extends Comparable<Schema> {
 	 *            {@link Attribute}
 	 * @return the new Attribute
 	 */
-	public Attribute createAttribute(String name, Domain dom, AttributedElementClass aec);
+	public Attribute createAttribute(String name, Domain dom,
+			AttributedElementClass aec);
 
 	/**
 	 * Builds a new enumeration domain, multiple domains may exist in a schema.

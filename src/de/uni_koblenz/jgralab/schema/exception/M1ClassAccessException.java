@@ -28,9 +28,9 @@ import de.uni_koblenz.jgralab.schema.AttributedElementClass;
 /**
  * Thrown when accessing the M1 interface or implementation class of an
  * {@link AttributedElementClass} failed.
- *
+ * 
  * @author ist@uni-koblenz.de
- *
+ * 
  */
 public class M1ClassAccessException extends SchemaException {
 

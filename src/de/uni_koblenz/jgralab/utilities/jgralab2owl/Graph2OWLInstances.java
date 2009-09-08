@@ -112,7 +112,7 @@ class Graph2OWLInstances {
 	 * 
 	 * @param writer
 	 *            The {@link XMLStreamWriter} to be used
-	* @param edgeClasses2Properties
+	 * @param edgeClasses2Properties
 	 *            If {@code true}, an EdgeClass is converted to exactly one
 	 *            property, discarding possible attributes and rolenames. If
 	 *            {@code false}, an EdgeClass is converted to an OWL class and
@@ -280,8 +280,8 @@ class Graph2OWLInstances {
 			for (Edge e : g.edges()) {
 				i++;
 				if (i % 1000 == 0) {
-					System.out.println("Pass 1 of 2: Processed " + i + " out of "
-							+ g.getECount() + " edges");
+					System.out.println("Pass 1 of 2: Processed " + i
+							+ " out of " + g.getECount() + " edges");
 				}
 
 				eElemId = HelperMethods.firstToLowerCase(e
@@ -316,8 +316,8 @@ class Graph2OWLInstances {
 			for (Edge e : g.edges()) {
 				i++;
 				if (i % 1000 == 0) {
-					System.out.println("Pass 2 of 2: Processed " + i + " out of "
-							+ g.getECount() + " edges");
+					System.out.println("Pass 2 of 2: Processed " + i
+							+ " out of " + g.getECount() + " edges");
 				}
 
 				eElemId = HelperMethods.firstToLowerCase(e

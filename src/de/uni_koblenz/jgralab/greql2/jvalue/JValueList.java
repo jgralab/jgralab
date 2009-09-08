@@ -81,7 +81,7 @@ public class JValueList extends JValueOrderedCollection {
 	 * <code>s1.hashCode()==s2.hashCode()</code> for any two lists
 	 * <code>s1</code> and <code>s2</code>, as required by the general contract
 	 * of <code>Object.hashCode()</code>.
-	 *
+	 * 
 	 * @return the hash code value for this list.
 	 */
 	@Override
@@ -113,7 +113,7 @@ public class JValueList extends JValueOrderedCollection {
 
 	/**
 	 * adds a JValue to the collection
-	 *
+	 * 
 	 * @param element
 	 *            the JValue to be added
 	 * @return true if successfull, false otherwise
@@ -126,7 +126,7 @@ public class JValueList extends JValueOrderedCollection {
 
 	/**
 	 * inserts a JValue at the given position into the collection
-	 *
+	 * 
 	 * @param element
 	 *            the JValue to be inserted
 	 * @return true if successfull, false otherwise
@@ -170,7 +170,7 @@ public class JValueList extends JValueOrderedCollection {
 
 	/**
 	 * removes a JValue from the collection
-	 *
+	 * 
 	 * @param element
 	 *            the element to be removed
 	 * @return true if successfull, false otherwise
@@ -183,7 +183,7 @@ public class JValueList extends JValueOrderedCollection {
 
 	/**
 	 * replaces the element at position index with the given newElement
-	 *
+	 * 
 	 * @param index
 	 *            the position of the element which should be replaced
 	 * @param newElement
@@ -201,7 +201,7 @@ public class JValueList extends JValueOrderedCollection {
 	}
 
 	/**
-	 *
+	 * 
 	 * @return the number of elements in this collection
 	 */
 	@Override
@@ -211,7 +211,7 @@ public class JValueList extends JValueOrderedCollection {
 
 	/**
 	 * removes all elements from this collection
-	 *
+	 * 
 	 */
 	@Override
 	public void clear() {
@@ -229,7 +229,7 @@ public class JValueList extends JValueOrderedCollection {
 
 	/**
 	 * @return an Iterator to navigate through the collection
-	 *
+	 * 
 	 */
 	@Override
 	public Iterator<JValue> iterator() {

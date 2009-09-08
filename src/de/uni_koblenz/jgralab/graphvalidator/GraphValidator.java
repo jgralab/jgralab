@@ -50,7 +50,7 @@ import de.uni_koblenz.jgralab.schema.Schema;
 /**
  * A <code>GraphValidator</code> can be used to check if all {@link Constraint}s
  * specified in the {@link Schema} of a given {@link Graph} are fulfilled.
- *
+ * 
  * @author Tassilo Horn <horn@uni-koblenz.de>
  */
 public class GraphValidator {
@@ -68,8 +68,8 @@ public class GraphValidator {
 	/**
 	 * Checks if all multiplicities specified for the {@link EdgeClass}
 	 * <code>ec</code> are fulfilled.
-	 *
-	 *
+	 * 
+	 * 
 	 * @param ec
 	 *            an {@link EdgeClass}
 	 * @return a set of {@link MultiplicityConstraintViolation} describing which
@@ -120,7 +120,7 @@ public class GraphValidator {
 
 	/**
 	 * Validates all constraints of the graph.
-	 *
+	 * 
 	 * @see GraphValidator#validateMultiplicities(EdgeClass)
 	 * @see GraphValidator#validateConstraints(AttributedElementClass)
 	 * @return a set of {@link ConstraintViolation} objects, one for each
@@ -155,7 +155,7 @@ public class GraphValidator {
 	/**
 	 * Checks if all {@link Constraint}s attached to the
 	 * {@link AttributedElementClass} <code>aec</code> are fulfilled.
-	 *
+	 * 
 	 * @param aec
 	 *            an {@link AttributedElementClass}
 	 * @return a set of {@link ConstraintViolation} objects
@@ -202,7 +202,7 @@ public class GraphValidator {
 	/**
 	 * Do just like {@link GraphValidator#validate()}, but generate a HTML
 	 * report saved to <code>fileName</code>, too.
-	 *
+	 * 
 	 * @param fileName
 	 *            the name of the HTML report file
 	 * @return a set of {@link ConstraintViolation} objects, one for each

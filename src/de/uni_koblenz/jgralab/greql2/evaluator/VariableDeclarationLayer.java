@@ -42,9 +42,9 @@ import de.uni_koblenz.jgralab.greql2.schema.Declaration;
  * iterate(). The value of each variable is stored as temporary attribute at the
  * variable-vertex, so the evaluate()-methods don't need to know if the
  * expression is a variable or some other already evaluated expression.
- *
+ * 
  * @author ist@uni-koblenz.de
- *
+ * 
  */
 public class VariableDeclarationLayer implements
 		Comparable<VariableDeclarationLayer> {
@@ -77,7 +77,7 @@ public class VariableDeclarationLayer implements
 	/**
 	 * Creates a new {@link VariableDeclarationLayer} for iterating over all
 	 * variable combinations that fulfil the constraints in constraintList.
-	 *
+	 * 
 	 * @param constraintList
 	 *            a list of constraints
 	 * @param logger
@@ -97,7 +97,7 @@ public class VariableDeclarationLayer implements
 
 	/**
 	 * Adds the given VariableDeclaration to the DeclarationLayer
-	 *
+	 * 
 	 * @return true if the VariableDeclaration was added successfull, false
 	 *         otherwise
 	 */
@@ -114,7 +114,7 @@ public class VariableDeclarationLayer implements
 	 * sets the next possible combination of values to the variable-vertices. If
 	 * it is called the first time, it returns true if the first possible
 	 * combination is valid
-	 *
+	 * 
 	 * @return true if another possible combination was found, false otherwise
 	 */
 	public boolean iterate(BooleanGraphMarker subgraph)
@@ -145,7 +145,7 @@ public class VariableDeclarationLayer implements
 
 	/**
 	 * Gets the first possible Variable Combination
-	 *
+	 * 
 	 * @param subgraph
 	 * @return true if a first combination exists, false otherwise
 	 * @throws EvaluateException
@@ -163,7 +163,7 @@ public class VariableDeclarationLayer implements
 
 	/**
 	 * Gets the next possible variable combination
-	 *
+	 * 
 	 * @param subgraphMarker
 	 * @return true if a next combination exists, false otherwise
 	 * @throws EvaluateException
@@ -185,7 +185,7 @@ public class VariableDeclarationLayer implements
 
 	/**
 	 * Checks if the current variable combination fullfills the constraints.
-	 *
+	 * 
 	 * @param subgraphMarker
 	 * @return true if the combination fullfills the constraint, false otherwise
 	 * @throws EvaluateException

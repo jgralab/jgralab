@@ -26,9 +26,9 @@ package de.uni_koblenz.jgralab.schema.exception;
 /**
  * Thrown when a schema tries to use a reserved word as attribute name or at
  * other places.
- *
+ * 
  * @author ist@uni-koblenz.de
- *
+ * 
  */
 public class ReservedWordException extends SchemaException {
 

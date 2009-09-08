@@ -38,9 +38,9 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
  * Returns the set difference of two given COLLECTIONS. The returned set
  * contains all elements from the first given set that are not element of the
  * second one.
- *
+ * 
  * The arguments will be converted to SET before calculating the set difference.
- *
+ * 
  * <dl>
  * <dt><b>GReQL-signature</b></dt>
  * <dd>
@@ -60,12 +60,12 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
  * </dl>
  * </dd>
  * </dl>
- *
+ * 
  * @see SymDifference
  * @see Union
  * @see Intersection
  * @author ist@uni-koblenz.de
- *
+ * 
  */
 
 public class Difference extends AbstractGreql2Function {

@@ -35,7 +35,7 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
 
 /**
  * Returns the end-vertex of a given path.
- *
+ * 
  * <dl>
  * <dt><b>GReQL-signature</b></dt>
  * <dd><code>VERTEX endVertex(p:PATH)</code></dd>
@@ -54,10 +54,10 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
  * </dl>
  * </dd>
  * </dl>
- *
+ * 
  * @see StartVertex
  * @author ist@uni-koblenz.de
- *
+ * 
  */
 
 public class EndVertex extends AbstractGreql2Function {

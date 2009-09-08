@@ -97,7 +97,8 @@ public abstract class ReversedEdgeImpl extends IncidenceImpl implements Edge {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see de.uni_koblenz.jgralab.AttributedElement#getAttribute(java.lang.String)
+	 * @see
+	 * de.uni_koblenz.jgralab.AttributedElement#getAttribute(java.lang.String)
 	 */
 	@Override
 	public Object getAttribute(String name) throws NoSuchFieldException {
@@ -107,8 +108,9 @@ public abstract class ReversedEdgeImpl extends IncidenceImpl implements Edge {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see de.uni_koblenz.jgralab.AttributedElement#setAttribute(java.lang.String,
-	 *      java.lang.Object)
+	 * @see
+	 * de.uni_koblenz.jgralab.AttributedElement#setAttribute(java.lang.String,
+	 * java.lang.Object)
 	 */
 	@Override
 	public void setAttribute(String name, Object data)
@@ -149,7 +151,9 @@ public abstract class ReversedEdgeImpl extends IncidenceImpl implements Edge {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see de.uni_koblenz.jgralab.Edge#getNextEdgeOfClassInGraph(de.uni_koblenz.jgralab.schema.EdgeClass)
+	 * @see
+	 * de.uni_koblenz.jgralab.Edge#getNextEdgeOfClassInGraph(de.uni_koblenz.
+	 * jgralab.schema.EdgeClass)
 	 */
 	@Override
 	public Edge getNextEdgeOfClassInGraph(EdgeClass anEdgeClass) {
@@ -159,7 +163,8 @@ public abstract class ReversedEdgeImpl extends IncidenceImpl implements Edge {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see de.uni_koblenz.jgralab.Edge#getNextEdgeOfClassInGraph(java.lang.Class)
+	 * @see
+	 * de.uni_koblenz.jgralab.Edge#getNextEdgeOfClassInGraph(java.lang.Class)
 	 */
 	@Override
 	public Edge getNextEdgeOfClassInGraph(Class<? extends Edge> anEdgeClass) {
@@ -169,8 +174,9 @@ public abstract class ReversedEdgeImpl extends IncidenceImpl implements Edge {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see de.uni_koblenz.jgralab.Edge#getNextEdgeOfClassInGraph(java.lang.Class,
-	 *      boolean)
+	 * @see
+	 * de.uni_koblenz.jgralab.Edge#getNextEdgeOfClassInGraph(java.lang.Class,
+	 * boolean)
 	 */
 	@Override
 	public Edge getNextEdgeOfClassInGraph(Class<? extends Edge> anEdgeClass,
@@ -181,8 +187,9 @@ public abstract class ReversedEdgeImpl extends IncidenceImpl implements Edge {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see de.uni_koblenz.jgralab.Edge#getNextEdgeOfClassInGraph(de.uni_koblenz.jgralab.schema.EdgeClass,
-	 *      boolean)
+	 * @see
+	 * de.uni_koblenz.jgralab.Edge#getNextEdgeOfClassInGraph(de.uni_koblenz.
+	 * jgralab.schema.EdgeClass, boolean)
 	 */
 	@Override
 	public Edge getNextEdgeOfClassInGraph(EdgeClass anEdgeClass,
@@ -273,7 +280,8 @@ public abstract class ReversedEdgeImpl extends IncidenceImpl implements Edge {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see de.uni_koblenz.jgralab.Edge#isAfterInGraph(de.uni_koblenz.jgralab.Edge)
+	 * @see
+	 * de.uni_koblenz.jgralab.Edge#isAfterInGraph(de.uni_koblenz.jgralab.Edge)
 	 */
 	@Override
 	public boolean isAfterInGraph(Edge e) {
@@ -283,7 +291,8 @@ public abstract class ReversedEdgeImpl extends IncidenceImpl implements Edge {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see de.uni_koblenz.jgralab.Edge#isBeforeInGraph(de.uni_koblenz.jgralab.Edge)
+	 * @see
+	 * de.uni_koblenz.jgralab.Edge#isBeforeInGraph(de.uni_koblenz.jgralab.Edge)
 	 */
 	@Override
 	public boolean isBeforeInGraph(Edge e) {
@@ -303,7 +312,8 @@ public abstract class ReversedEdgeImpl extends IncidenceImpl implements Edge {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see de.uni_koblenz.jgralab.Edge#putAfterInGraph(de.uni_koblenz.jgralab.Edge)
+	 * @see
+	 * de.uni_koblenz.jgralab.Edge#putAfterInGraph(de.uni_koblenz.jgralab.Edge)
 	 */
 	@Override
 	public void putAfterInGraph(Edge e) {
@@ -313,7 +323,8 @@ public abstract class ReversedEdgeImpl extends IncidenceImpl implements Edge {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see de.uni_koblenz.jgralab.Edge#putBeforeInGraph(de.uni_koblenz.jgralab.Edge)
+	 * @see
+	 * de.uni_koblenz.jgralab.Edge#putBeforeInGraph(de.uni_koblenz.jgralab.Edge)
 	 */
 	@Override
 	public void putBeforeInGraph(Edge e) {

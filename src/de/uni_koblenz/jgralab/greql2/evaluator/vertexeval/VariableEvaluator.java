@@ -70,7 +70,7 @@ public class VariableEvaluator extends VertexEvaluator {
 	}
 
 	private List<VertexEvaluator> dependingExpressions;
-	 
+
 	/**
 	 * This is the value that has been set from outside
 	 */
@@ -148,28 +148,32 @@ public class VariableEvaluator extends VertexEvaluator {
 		}
 		return definedVariables;
 	}
-	
+
 	protected List<VertexEvaluator> calculateDependingExpressions() {
 		Queue<Greql2Vertex> queue = new LinkedList<Greql2Vertex>();
 		List<VertexEvaluator> dependingEvaluators = new ArrayList<VertexEvaluator>();
 		queue.add(vertex);
 		while (!queue.isEmpty()) {
 			Greql2Vertex currentVertex = queue.poll();
-			VertexEvaluator eval = greqlEvaluator.getVertexEvaluatorGraphMarker().getMark(currentVertex);
-			if ((eval != null) && (!dependingEvaluators.contains(eval))) 
+			VertexEvaluator eval = greqlEvaluator
+					.getVertexEvaluatorGraphMarker().getMark(currentVertex);
+			if ((eval != null) && (!dependingEvaluators.contains(eval)))
 				dependingEvaluators.add(eval);
-			Greql2Aggregation currentEdge = currentVertex.getFirstGreql2Aggregation(EdgeDirection.OUT);
+			Greql2Aggregation currentEdge = currentVertex
+					.getFirstGreql2Aggregation(EdgeDirection.OUT);
 			while (currentEdge != null) {
-				if ((!(currentEdge instanceof IsVarOf) && !(currentEdge instanceof IsDeclaredVarOf)) || !(currentEdge.getThis() == vertex)) {
-					Greql2Vertex nextVertex = (Greql2Vertex) currentEdge.getThat();
+				if ((!(currentEdge instanceof IsVarOf) && !(currentEdge instanceof IsDeclaredVarOf))
+						|| !(currentEdge.getThis() == vertex)) {
+					Greql2Vertex nextVertex = (Greql2Vertex) currentEdge
+							.getThat();
 					queue.add(nextVertex);
-				}	
-				currentEdge = currentEdge.getNextGreql2Aggregation(EdgeDirection.OUT);
+				}
+				currentEdge = currentEdge
+						.getNextGreql2Aggregation(EdgeDirection.OUT);
 			}
 		}
 		return dependingEvaluators;
-	}	
-
+	}
 
 	@Override
 	public void calculateNeededAndDefinedVariables() {

@@ -21,7 +21,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
- 
+
 package de.uni_koblenz.jgralab.greql2.evaluator.vertexeval;
 
 import de.uni_koblenz.jgralab.EdgeDirection;
@@ -34,12 +34,13 @@ import de.uni_koblenz.jgralab.greql2.schema.IsTypeRestrOf;
 import de.uni_koblenz.jgralab.greql2.schema.TypeId;
 
 /**
- * This class is the base class for all VertexEvaluators, that construct an element
- * collection, for instance EdgeSetExpressionEvaluator. But it is not the base for 
- * Forward- or BackwardVertexSetEvaluator, because these are PathSearchEvaluators. 
- * @author ist@uni-koblenz.de
- * Summer 2006, Diploma Thesis
- *
+ * This class is the base class for all VertexEvaluators, that construct an
+ * element collection, for instance EdgeSetExpressionEvaluator. But it is not
+ * the base for Forward- or BackwardVertexSetEvaluator, because these are
+ * PathSearchEvaluators.
+ * 
+ * @author ist@uni-koblenz.de Summer 2006, Diploma Thesis
+ * 
  */
 public abstract class AbstractGraphElementCollectionEvaluator extends
 		VertexEvaluator {
@@ -47,20 +48,26 @@ public abstract class AbstractGraphElementCollectionEvaluator extends
 	public AbstractGraphElementCollectionEvaluator(GreqlEvaluator eval) {
 		super(eval);
 	}
-	
+
 	private JValueTypeCollection typeCollection = null;
-	
+
 	protected JValueTypeCollection getTypeCollection() throws EvaluateException {
 		if (typeCollection == null) {
 			typeCollection = new JValueTypeCollection();
-			IsTypeRestrOf inc = ((Expression) getVertex()).getFirstIsTypeRestrOf(EdgeDirection.IN);
+			IsTypeRestrOf inc = ((Expression) getVertex())
+					.getFirstIsTypeRestrOf(EdgeDirection.IN);
 			while (inc != null) {
 				if (inc.getAlpha() instanceof TypeId) {
-					TypeIdEvaluator typeEval = (TypeIdEvaluator) greqlEvaluator.getVertexEvaluatorGraphMarker().getMark(inc.getAlpha());
+					TypeIdEvaluator typeEval = (TypeIdEvaluator) greqlEvaluator
+							.getVertexEvaluatorGraphMarker().getMark(
+									inc.getAlpha());
 					try {
-						typeCollection.addTypes(typeEval.getResult(subgraph).toJValueTypeCollection());
+						typeCollection.addTypes(typeEval.getResult(subgraph)
+								.toJValueTypeCollection());
 					} catch (JValueInvalidTypeException ex) {
-						throw new EvaluateException("Result of TypeId was not a JValueTypeCollection", ex);
+						throw new EvaluateException(
+								"Result of TypeId was not a JValueTypeCollection",
+								ex);
 					}
 				}
 				inc = inc.getNextIsTypeRestrOf(EdgeDirection.IN);
@@ -68,7 +75,5 @@ public abstract class AbstractGraphElementCollectionEvaluator extends
 		}
 		return typeCollection;
 	}
-
-	
 
 }

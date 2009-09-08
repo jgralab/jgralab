@@ -20,7 +20,7 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueTypeCollection;
 
 /**
  * @author Tassilo Horn <horn@uni-koblenz.de>
- *
+ * 
  */
 public abstract class Incidences extends AbstractGreql2Function {
 
@@ -28,14 +28,13 @@ public abstract class Incidences extends AbstractGreql2Function {
 		JValueType[][] x = { { JValueType.VERTEX },
 				{ JValueType.VERTEX, JValueType.PATH },
 				{ JValueType.VERTEX, JValueType.PATHSYSTEM },
-				{ JValueType.VERTEX, JValueType.TYPECOLLECTION },
-			};
+				{ JValueType.VERTEX, JValueType.TYPECOLLECTION }, };
 		signatures = x;
 	}
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see
 	 * de.uni_koblenz.jgralab.greql2.funlib.Greql2Function#getEstimatedCardinality
 	 * (int)
@@ -47,7 +46,7 @@ public abstract class Incidences extends AbstractGreql2Function {
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see
 	 * de.uni_koblenz.jgralab.greql2.funlib.Greql2Function#getEstimatedCosts
 	 * (java.util.ArrayList)
@@ -59,7 +58,7 @@ public abstract class Incidences extends AbstractGreql2Function {
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see de.uni_koblenz.jgralab.greql2.funlib.Greql2Function#getSelectivity()
 	 */
 	@Override
@@ -93,7 +92,7 @@ public abstract class Incidences extends AbstractGreql2Function {
 			if (direction == EdgeDirection.INOUT) {
 				if (typeCol == null) {
 					return path.edgesConnected(vertex);
-				} 
+				}
 			} else {
 				return path.edgesConnected(vertex,
 						direction == EdgeDirection.IN);
@@ -121,7 +120,7 @@ public abstract class Incidences extends AbstractGreql2Function {
 				if ((subgraph == null) || (subgraph.isMarked(inc))) {
 					if (typeCol.acceptsType(inc.getAttributedElementClass())) {
 						resultSet.add(new JValue(inc));
-					}			
+					}
 				}
 				inc = inc.getNextEdge(direction);
 			}

@@ -21,7 +21,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
- 
+
 package de.uni_koblenz.jgralab.greql2.evaluator.vertexeval;
 
 import de.uni_koblenz.jgralab.EdgeDirection;
@@ -49,7 +49,7 @@ public class RestrictedExpressionEvaluator extends VertexEvaluator {
 	private RestrictedExpression vertex;
 
 	private ThisVertexEvaluator thisVertexEvaluator;
-	
+
 	/**
 	 * returns the vertex this VertexEvaluator evaluates
 	 */
@@ -62,7 +62,8 @@ public class RestrictedExpressionEvaluator extends VertexEvaluator {
 			GreqlEvaluator eval) {
 		super(eval);
 		this.vertex = vertex;
-		GraphMarker<VertexEvaluator> graphMarker = eval.getVertexEvaluatorGraphMarker();
+		GraphMarker<VertexEvaluator> graphMarker = eval
+				.getVertexEvaluatorGraphMarker();
 		Vertex v = graphMarker.getGraph().getFirstVertexOfClass(
 				ThisVertex.class);
 		if (v != null)
@@ -73,18 +74,20 @@ public class RestrictedExpressionEvaluator extends VertexEvaluator {
 	public JValue evaluate() throws EvaluateException {
 		Expression restrictedExp = (Expression) vertex
 				.getFirstIsRestrictedExprOf(EdgeDirection.IN).getAlpha();
-		VertexEvaluator restExprEval = greqlEvaluator.getVertexEvaluatorGraphMarker().getMark(restrictedExp);
-		Expression restriction = (Expression) vertex
-				.getFirstIsRestrictionOf(EdgeDirection.IN).getAlpha();
-		VertexEvaluator restrictionEval = greqlEvaluator.getVertexEvaluatorGraphMarker().getMark(restriction);
+		VertexEvaluator restExprEval = greqlEvaluator
+				.getVertexEvaluatorGraphMarker().getMark(restrictedExp);
+		Expression restriction = (Expression) vertex.getFirstIsRestrictionOf(
+				EdgeDirection.IN).getAlpha();
+		VertexEvaluator restrictionEval = greqlEvaluator
+				.getVertexEvaluatorGraphMarker().getMark(restriction);
 
 		if (restExprEval instanceof VariableEvaluator) {
 			if (((VariableEvaluator) restExprEval).getValue().isVertex()) {
-				thisVertexEvaluator.setValue(((VariableEvaluator)restExprEval).getValue());
+				thisVertexEvaluator.setValue(((VariableEvaluator) restExprEval)
+						.getValue());
 			}
 		}
-		
-		
+
 		JValue condition = (JValue) restrictionEval.getResult(subgraph);
 		if (condition.isBoolean()) {
 			try {

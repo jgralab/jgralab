@@ -98,8 +98,8 @@ public abstract class Level2LoggingBase {
 		}
 
 		/*
-		 * the use of generic List<Element> and Iterator<Element> will result
-		 * in compiler warning because JDom doesn't support Java generics
+		 * the use of generic List<Element> and Iterator<Element> will result in
+		 * compiler warning because JDom doesn't support Java generics
 		 */
 		List<Element> childList = resultElem.getChildren();
 		Iterator<Element> iter = childList.iterator();

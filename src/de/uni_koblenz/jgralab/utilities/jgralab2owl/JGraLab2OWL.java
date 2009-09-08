@@ -287,22 +287,23 @@ public class JGraLab2OWL {
 	public static void main(String[] args) {
 		CommandLine comLine = processCommandLineOptions(args);
 		assert comLine != null;
-		
-//		if (args.length == 0)
-//			System.out.println("Usage: JGraLab2OWL tgFile");
-//		else {
-			//String filename = args[0];
-		String filename =comLine.getOptionValue("g");
-			try {
-				Graph graph = GraphIO.loadGraphFromFile(comLine.getOptionValue("g")/*args[0]*/, null);
-				
-				saveGraphToOWLInstances(filename + ".owl", graph, false, true,
-						true, new ProgressFunctionImpl());
-			} catch (Exception ex) {
-				System.out.println("Sorry, something went wrong");
-				ex.printStackTrace();
-			}
-//		}
+
+		// if (args.length == 0)
+		// System.out.println("Usage: JGraLab2OWL tgFile");
+		// else {
+		// String filename = args[0];
+		String filename = comLine.getOptionValue("g");
+		try {
+			Graph graph = GraphIO.loadGraphFromFile(
+					comLine.getOptionValue("g")/* args[0] */, null);
+
+			saveGraphToOWLInstances(filename + ".owl", graph, false, true,
+					true, new ProgressFunctionImpl());
+		} catch (Exception ex) {
+			System.out.println("Sorry, something went wrong");
+			ex.printStackTrace();
+		}
+		// }
 	}
 
 	private static CommandLine processCommandLineOptions(String[] args) {
@@ -331,7 +332,8 @@ public class JGraLab2OWL {
 		defaultNS = "http://" + schema.getQualifiedName() + "#";
 
 		try {
-			outputStream = new BufferedOutputStream(new FileOutputStream(filename));
+			outputStream = new BufferedOutputStream(new FileOutputStream(
+					filename));
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		}
@@ -390,7 +392,7 @@ public class JGraLab2OWL {
 		writer.writeAttribute(rdfNS, "about", "");
 		writer.writeStartElement(rdfsNS, "label");
 		writer.writeCharacters(schema.getQualifiedName());
-		
+
 		writer.writeEndElement();
 		writer.writeEndElement();
 	}

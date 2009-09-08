@@ -404,7 +404,7 @@ public abstract class Tg2Whatever {
 		// outputName = "";
 		// }
 	}
-	
+
 	private CommandLine processCommandLineOptions(String[] args) {
 		String toolString = "java " + this.getClass().getName();
 		String versionString = JGraLab.getInfo(false);
@@ -416,7 +416,10 @@ public abstract class Tg2Whatever {
 		graph.setArgName("file");
 		oh.addOption(graph);
 
-		Option alternativeSchema = new Option("a", "alternative-schema", true,
+		Option alternativeSchema = new Option(
+				"a",
+				"alternative-schema",
+				true,
 				"(optional): the schema that should be used instead of the one included in the graph file");
 		alternativeSchema.setRequired(false);
 		graph.setArgName("file");
@@ -443,7 +446,10 @@ public abstract class Tg2Whatever {
 		output.setArgName("file");
 		oh.addOption(output);
 
-		Option reversed = new Option("r", "reversed", false,
+		Option reversed = new Option(
+				"r",
+				"reversed",
+				false,
 				"(optional): useful if edges run from child nodes to their parents results in a tree with root node at top");
 		reversed.setRequired(false);
 		oh.addOption(reversed);

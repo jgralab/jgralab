@@ -51,8 +51,9 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
  * <table border = "1">
  * <tr>
  * <th>a\b</th>
- * <th bgcolor="#cc996f">false</th> <th bgcolor="#bababa">Null</th> <th
- * bgcolor="#92cc90">true</th>
+ * <th bgcolor="#cc996f">false</th>
+ * <th bgcolor="#bababa">Null</th>
+ * <th * bgcolor="#92cc90">true</th>
  * </tr>
  * <tr>
  * <th bgcolor="#cc996f">false</th>
@@ -77,9 +78,9 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
  * </dl>
  * </dd>
  * </dl>
- *
+ * 
  * @author ist@uni-koblenz.de
- *
+ * 
  */
 
 public class Or extends BooleanFunction {

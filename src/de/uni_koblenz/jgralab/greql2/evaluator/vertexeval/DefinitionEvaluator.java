@@ -21,7 +21,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
- 
+
 package de.uni_koblenz.jgralab.greql2.evaluator.vertexeval;
 
 import java.util.HashSet;
@@ -41,9 +41,9 @@ import de.uni_koblenz.jgralab.greql2.schema.Variable;
 
 /**
  * Evaluates a definition in a Where- or LetExpression.
- * @author ist@uni-koblenz.de
- * Summer 2006, Diploma Thesis
- *
+ * 
+ * @author ist@uni-koblenz.de Summer 2006, Diploma Thesis
+ * 
  */
 public class DefinitionEvaluator extends VertexEvaluator {
 
@@ -75,11 +75,12 @@ public class DefinitionEvaluator extends VertexEvaluator {
 	 */
 	@Override
 	public JValue evaluate() throws EvaluateException {
-		Expression definExp = (Expression) vertex.getFirstIsExprOf()
-				.getAlpha();
+		Expression definExp = (Expression) vertex.getFirstIsExprOf().getAlpha();
 		Variable v = (Variable) vertex.getFirstIsVarOf().getAlpha();
-		VertexEvaluator vertexEval = greqlEvaluator.getVertexEvaluatorGraphMarker().getMark(definExp);
-		VariableEvaluator variableEval = (VariableEvaluator) greqlEvaluator.getVertexEvaluatorGraphMarker().getMark(v);
+		VertexEvaluator vertexEval = greqlEvaluator
+				.getVertexEvaluatorGraphMarker().getMark(definExp);
+		VariableEvaluator variableEval = (VariableEvaluator) greqlEvaluator
+				.getVertexEvaluatorGraphMarker().getMark(v);
 		variableEval.setValue(vertexEval.getResult(subgraph));
 		return new JValue(true);
 	}
@@ -89,22 +90,24 @@ public class DefinitionEvaluator extends VertexEvaluator {
 		return this.greqlEvaluator.getCostModel().calculateCostsDefinition(
 				this, graphSize);
 	}
-	
+
 	@Override
 	public void calculateNeededAndDefinedVariables() {
 		neededVariables = new HashSet<Variable>();
 		definedVariables = new HashSet<Variable>();
 		IsVarOf varInc = vertex.getFirstIsVarOf(EdgeDirection.IN);
 		if (varInc != null) {
-			definedVariables.add( (Variable) varInc.getAlpha());
+			definedVariables.add((Variable) varInc.getAlpha());
 			varInc = varInc.getNextIsVarOf(EdgeDirection.IN);
 		}
 		IsExprOf valueInc = vertex.getFirstIsExprOf(EdgeDirection.IN);
 		if (valueInc != null) {
-			VertexEvaluator veval = greqlEvaluator.getVertexEvaluatorGraphMarker().getMark(valueInc.getAlpha());
+			VertexEvaluator veval = greqlEvaluator
+					.getVertexEvaluatorGraphMarker().getMark(
+							valueInc.getAlpha());
 			if (veval != null) {
 				neededVariables.addAll(veval.getNeededVariables());
-			}	
+			}
 			neededVariables.removeAll(definedVariables);
 		}
 	}

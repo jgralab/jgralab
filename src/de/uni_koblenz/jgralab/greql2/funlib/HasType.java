@@ -39,7 +39,7 @@ import de.uni_koblenz.jgralab.schema.AttributedElementClass;
 /**
  * Checks if the given edge or vertex has the given type. The type can be given
  * as AttributedElementClass or as String which holds the typename.
- *
+ * 
  * <dl>
  * <dt><b>GReQL-signature</b></dt>
  * <dd><code>BOOLEAN hasType(ae:ATTRIBUTEDELEMENT, type:STRING)</code></dd>
@@ -64,9 +64,9 @@ import de.uni_koblenz.jgralab.schema.AttributedElementClass;
  * </dl>
  * </dd>
  * </dl>
- *
+ * 
  * @author ist@uni-koblenz.de
- *
+ * 
  */
 
 public class HasType extends AbstractGreql2Function {

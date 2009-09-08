@@ -46,7 +46,7 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
 /**
  * Checks if the given dfa matches the given path. A dfa is defined as regular
  * path expression.
- *
+ * 
  * <dl>
  * <dt><b>GReQL-signature</b></dt>
  * <dd><code>BOOLEAN matches(p1:PATH, dfa:DFA)</code></dd>
@@ -67,9 +67,9 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
  * </dl>
  * </dd>
  * </dl>
- *
+ * 
  * @author ist@uni-koblenz.de
- *
+ * 
  */
 
 public class Matches extends AbstractGreql2Function {

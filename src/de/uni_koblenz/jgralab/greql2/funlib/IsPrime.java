@@ -59,7 +59,7 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
  * </dl>
  * </dd>
  * </dl>
- *
+ * 
  * @author ist@uni-koblenz.de
  */
 public class IsPrime extends AbstractGreql2Function {
@@ -71,7 +71,7 @@ public class IsPrime extends AbstractGreql2Function {
 
 	/**
 	 * The costs for an isPrime function application.
-	 *
+	 * 
 	 * Since those depend heavily on the parameter(s) of isPrime, but those
 	 * aren't available before evaluation, it's hard to set it to a "good"
 	 * value...
@@ -81,7 +81,7 @@ public class IsPrime extends AbstractGreql2Function {
 	/**
 	 * The selectivity for isPrime. The number of prime numbers < x can be
 	 * estimated with x / ln(x). So the selectivity is (x / ln(x))/x = 1/ln(x).
-	 *
+	 * 
 	 * Since we assume that isPrime is most often called with smaller values, we
 	 * use 500 for x.
 	 */
@@ -186,7 +186,7 @@ public class IsPrime extends AbstractGreql2Function {
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see de.uni_koblenz.jgralab.greql2.funlib.Greql2Function#getSelectivity()
 	 */
 	@Override

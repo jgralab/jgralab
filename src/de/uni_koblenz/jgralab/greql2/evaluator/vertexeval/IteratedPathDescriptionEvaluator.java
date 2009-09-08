@@ -21,7 +21,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
- 
+
 package de.uni_koblenz.jgralab.greql2.evaluator.vertexeval;
 
 import de.uni_koblenz.jgralab.EdgeDirection;
@@ -39,9 +39,8 @@ import de.uni_koblenz.jgralab.greql2.schema.PathDescription;
  * Evaluates an iterated path description. Creates a NFA that accepts the
  * iterated path description.
  * 
- * @author ist@uni-koblenz.de
- * Summer 2006, Diploma Thesis
- *
+ * @author ist@uni-koblenz.de Summer 2006, Diploma Thesis
+ * 
  */
 public class IteratedPathDescriptionEvaluator extends PathDescriptionEvaluator {
 
@@ -74,9 +73,10 @@ public class IteratedPathDescriptionEvaluator extends PathDescriptionEvaluator {
 
 	@Override
 	public JValue evaluate() throws EvaluateException {
-		PathDescription p = (PathDescription) vertex
-				.getFirstIsIteratedPathOf(EdgeDirection.IN).getAlpha();
-		PathDescriptionEvaluator pathEval = (PathDescriptionEvaluator) greqlEvaluator.getVertexEvaluatorGraphMarker().getMark(p);
+		PathDescription p = (PathDescription) vertex.getFirstIsIteratedPathOf(
+				EdgeDirection.IN).getAlpha();
+		PathDescriptionEvaluator pathEval = (PathDescriptionEvaluator) greqlEvaluator
+				.getVertexEvaluatorGraphMarker().getMark(p);
 		NFA createdNFA = NFA.createIteratedPathDescriptionNFA(
 				pathEval.getNFA(), vertex.getTimes() == "star");
 		return new JValue(createdNFA);

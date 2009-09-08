@@ -27,15 +27,13 @@ package de.uni_koblenz.jgralab.greql2.evaluator.vertexeval;
 import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
 import de.uni_koblenz.jgralab.greql2.schema.ThisEdge;
 
-
 /**
- * Evaluates a ThisEdge vertex in the GReQL-2 Syntaxgraph. 
+ * Evaluates a ThisEdge vertex in the GReQL-2 Syntaxgraph.
+ * 
  * @author ist@uni-koblenz.de
  * 
  */
 public class ThisEdgeEvaluator extends VariableEvaluator {
-	
-
 
 	/**
 	 * @param eval
@@ -47,6 +45,5 @@ public class ThisEdgeEvaluator extends VariableEvaluator {
 		super(vertex, eval);
 		this.vertex = vertex;
 	}
-
 
 }

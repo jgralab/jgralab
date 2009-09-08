@@ -21,7 +21,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
- 
+
 package de.uni_koblenz.jgralab.greql2.evaluator.fa;
 
 import de.uni_koblenz.jgralab.BooleanGraphMarker;
@@ -32,16 +32,16 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueTypeCollection;
 import de.uni_koblenz.jgralab.schema.AttributedElementClass;
 
 /**
- * This transition accepts a SimplePathDescription. A SimplePathDescription is for instance
- * something like v -->{isExprOf} w.
- * @author ist@uni-koblenz.de
- * Summer 2006, Diploma Thesis
- *
+ * This transition accepts a SimplePathDescription. A SimplePathDescription is
+ * for instance something like v -->{isExprOf} w.
+ * 
+ * @author ist@uni-koblenz.de Summer 2006, Diploma Thesis
+ * 
  */
 public class SimpleTransition extends Transition {
 
 	/**
-	 * The collection of types that are accepted by this transition 
+	 * The collection of types that are accepted by this transition
 	 */
 	protected JValueTypeCollection typeCollection;
 
@@ -56,13 +56,12 @@ public class SimpleTransition extends Transition {
 	 */
 	protected AllowedEdgeDirection validDirection;
 
-
 	/**
 	 * returns a string which describes the edge
 	 */
 	@Override
 	public String edgeString() {
-		//String desc = "SimpleTransition";
+		// String desc = "SimpleTransition";
 		String desc = "SimpleTransition (Dir:" + validDirection.toString();
 		if (typeCollection != null) {
 			desc = desc + "\n " + typeCollection.toString() + "\n ";
@@ -71,9 +70,12 @@ public class SimpleTransition extends Transition {
 		return desc;
 	}
 
-
-	/* (non-Javadoc)
-	 * @see greql2.evaluator.fa.Transition#equalSymbol(greql2.evaluator.fa.EdgeTransition)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * greql2.evaluator.fa.Transition#equalSymbol(greql2.evaluator.fa.EdgeTransition
+	 * )
 	 */
 	public boolean equalSymbol(Transition t) {
 		if (!(t instanceof SimpleTransition))
@@ -96,8 +98,7 @@ public class SimpleTransition extends Transition {
 		validDirection = t.validDirection;
 		typeCollection = new JValueTypeCollection(t.typeCollection);
 	}
-	
-	
+
 	/**
 	 * returns a copy of this transition
 	 */
@@ -150,9 +151,9 @@ public class SimpleTransition extends Transition {
 		this.typeCollection = typeCollection;
 	}
 
-
-
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see greql2.evaluator.fa.Transition#reverse()
 	 */
 	public void reverse() {
@@ -163,16 +164,20 @@ public class SimpleTransition extends Transition {
 			validDirection = AllowedEdgeDirection.IN;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see greql2.evaluator.fa.Transition#isEpsilon()
 	 */
 	public boolean isEpsilon() {
 		return false;
 	}
 
-
-	/* (non-Javadoc)
-	 * @see greql2.evaluator.fa.Transition#accepts(jgralab.Vertex, jgralab.Edge, greql2.evaluator.SubgraphTempAttribute)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see greql2.evaluator.fa.Transition#accepts(jgralab.Vertex, jgralab.Edge,
+	 * greql2.evaluator.SubgraphTempAttribute)
 	 */
 	public boolean accepts(Vertex v, Edge e, BooleanGraphMarker subgraph)
 			throws EvaluateException {
@@ -184,15 +189,15 @@ public class SimpleTransition extends Transition {
 		} else if (validDirection == AllowedEdgeDirection.IN) {
 			if (e.isNormal())
 				return false;
-		} 
-	
+		}
+
 		// checks if the subgraphattribute is set and if the edge belongs to
 		// this subgraph (if the edge belongs to it, also the endvertex must
 		// belong to it)
 		if (subgraph != null) {
 			if (!subgraph.isMarked(e)) {
 				return false;
-			}	
+			}
 		}
 		// checks if a role restriction is set and if e has the right role
 		if (validEdgeRole != null) {
@@ -205,14 +210,13 @@ public class SimpleTransition extends Transition {
 			return false;
 		return true;
 	}
-	
+
 	/**
-	 * returns the vertex of the datagraph which can be visited after this transition has fired.
-	 * This is the vertex at the end of the edge
+	 * returns the vertex of the datagraph which can be visited after this
+	 * transition has fired. This is the vertex at the end of the edge
 	 */
-	public  Vertex getNextVertex(Vertex v, Edge e) {
+	public Vertex getNextVertex(Vertex v, Edge e) {
 		return e.getThat();
 	}
-	
 
 }

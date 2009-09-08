@@ -229,7 +229,7 @@ public class JValue implements Comparable<JValue> {
 
 	/**
 	 * returns the encapsulated declarationlayer
-	 *
+	 * 
 	 * @throws JValueInvalidTypeException
 	 *             if this JValue does not encapsulate a DeclarationLayer value
 	 */
@@ -267,7 +267,7 @@ public class JValue implements Comparable<JValue> {
 
 	/**
 	 * returns the encapsulated variableDeclaration
-	 *
+	 * 
 	 * @throws JValueInvalidTypeException
 	 *             if this JValue does not encapsulate a DeclarationLayer value
 	 */
@@ -307,7 +307,7 @@ public class JValue implements Comparable<JValue> {
 	/**
 	 * returns a JValuePath-Reference to this JValue object if it is a
 	 * JValuePath
-	 *
+	 * 
 	 * @throws JValueInvalidTypeException
 	 *             if this JValue object is not a JValuePath
 	 */
@@ -325,7 +325,7 @@ public class JValue implements Comparable<JValue> {
 	/**
 	 * returns a JValuePathSystem-Reference to this JValue object if it is a
 	 * JValuePathSystem
-	 *
+	 * 
 	 * @throws JValueInvalidTypeException
 	 *             if this JValue object is not a JValuePathSystem
 	 */
@@ -656,10 +656,10 @@ public class JValue implements Comparable<JValue> {
 	/**
 	 * Returns the encapsulated Stringvalue or transforms the encapsulted value
 	 * to its string representation usinng object.toString
-	 *
+	 * 
 	 * @return the encapsulated String value or a String representation of the
 	 *         encapsulated vale if it's not a string
-	 *
+	 * 
 	 */
 	@Override
 	public String toString() {
@@ -701,10 +701,10 @@ public class JValue implements Comparable<JValue> {
 	/**
 	 * Returns the encapsulated Stringvalue or transforms the encapsulted value
 	 * to its string representation usinng object.toString
-	 *
+	 * 
 	 * @return the encapsulated String value or a String representation of the
 	 *         encapsulated vale if it's not a string
-	 *
+	 * 
 	 */
 	public String toEnum() {
 		return value.toString();
@@ -927,7 +927,7 @@ public class JValue implements Comparable<JValue> {
 	}
 
 	/**
-	 *
+	 * 
 	 * @return true if this JValue is a Collection, false otherwise
 	 */
 	public boolean isCollection() {
@@ -935,7 +935,7 @@ public class JValue implements Comparable<JValue> {
 	}
 
 	/**
-	 *
+	 * 
 	 * @return true if this JValue is a Map, false otherwise
 	 */
 	public boolean isMap() {
@@ -944,7 +944,7 @@ public class JValue implements Comparable<JValue> {
 
 	/**
 	 * returns a JValueCollection-Reference of this JValue
-	 *
+	 * 
 	 * @throws JValueInvalidTypeException
 	 *             if the JValue cannot be converted to a collection
 	 */
@@ -954,7 +954,7 @@ public class JValue implements Comparable<JValue> {
 
 	/**
 	 * returns a JValueSet-Reference of this JValue
-	 *
+	 * 
 	 * @throws ValueInvalidTypeException
 	 *             if the JValue cannot be converted to a set
 	 */
@@ -964,7 +964,7 @@ public class JValue implements Comparable<JValue> {
 
 	/**
 	 * returns a JValueBag-Reference of this JValue
-	 *
+	 * 
 	 * @throws ValueInvalidTypeException
 	 *             if the JValue cannot be converted to a bag
 	 */
@@ -974,7 +974,7 @@ public class JValue implements Comparable<JValue> {
 
 	/**
 	 * returns a JValueTable-Reference of this JValue
-	 *
+	 * 
 	 * @throws ValueInvalidTypeException
 	 *             if the JValue cannot be converted to a table
 	 */
@@ -984,7 +984,7 @@ public class JValue implements Comparable<JValue> {
 
 	/**
 	 * returns a JValueList-Reference of this JValue
-	 *
+	 * 
 	 * @throws ValueInvalidTypeException
 	 *             if the JValue cannot be converted to a list
 	 */
@@ -994,7 +994,7 @@ public class JValue implements Comparable<JValue> {
 
 	/**
 	 * returns a JValueMap-Reference of this JValue
-	 *
+	 * 
 	 * @throws ValueInvalidTypeException
 	 *             if the JValue cannot be converted to a map
 	 */
@@ -1004,7 +1004,7 @@ public class JValue implements Comparable<JValue> {
 
 	/**
 	 * returns a JValueTuple-Reference of this JValue
-	 *
+	 * 
 	 * @throws ValueInvalidTypeException
 	 *             if the JValue cannot be converted to a tuple
 	 */
@@ -1014,7 +1014,7 @@ public class JValue implements Comparable<JValue> {
 
 	/**
 	 * returns a JValueRecord-Reference of this JValue
-	 *
+	 * 
 	 * @throws ValueInvalidTypeException
 	 *             if the JValue cannot be converted to a record
 	 */
@@ -1074,7 +1074,7 @@ public class JValue implements Comparable<JValue> {
 	 * @return -1 it the encapsulated value cannot be converted to
 	 *         <code>atype</code>, 0 if the value is-a <code>atype</code> and
 	 *         the conversion costs in all other cases.
-	 *
+	 * 
 	 *         Conversion to string and object are expensive, so that in GReQL
 	 *         functions the most special is used independently of the
 	 *         declaration order.
@@ -1158,7 +1158,7 @@ public class JValue implements Comparable<JValue> {
 	 * encapsulates the given object in a jvalue. Doesn't create an
 	 * object-jvalue per default but tries to determine the class of the object.
 	 * Use it with care, because it's slow....
-	 *
+	 * 
 	 * @param o
 	 *            the object to encapsulte
 	 * @return the encapsulated object
@@ -1209,7 +1209,7 @@ public class JValue implements Comparable<JValue> {
 	 * encapsulates the given object in a jvalue. Doesn't create a object-jvalue
 	 * per default but tries to determine the class of the object. Use it with
 	 * care, because it's slow....
-	 *
+	 * 
 	 * @param o
 	 *            the object to encapsulte
 	 * @param browsingInfo

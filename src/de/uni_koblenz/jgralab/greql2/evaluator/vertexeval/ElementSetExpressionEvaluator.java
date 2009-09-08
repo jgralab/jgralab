@@ -21,25 +21,28 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
- 
+
 package de.uni_koblenz.jgralab.greql2.evaluator.vertexeval;
 
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
 import de.uni_koblenz.jgralab.greql2.schema.ElementSetExpression;
+
 /**
- * This is the base class for VertexSetExpressionEvaluator and EdgeSetExpressionEvaluator
- * @author ist@uni-koblenz.de
- * Summer 2006, Diploma Thesis
- *
+ * This is the base class for VertexSetExpressionEvaluator and
+ * EdgeSetExpressionEvaluator
+ * 
+ * @author ist@uni-koblenz.de Summer 2006, Diploma Thesis
+ * 
  */
-public abstract class ElementSetExpressionEvaluator extends AbstractGraphElementCollectionEvaluator {
+public abstract class ElementSetExpressionEvaluator extends
+		AbstractGraphElementCollectionEvaluator {
 
 	/**
 	 * The ElementSetExpression-Vertex this evaluator evaluates
 	 */
 	protected ElementSetExpression vertex;
-	
+
 	/**
 	 * returns the vertex this VertexEvaluator evaluates
 	 */
@@ -61,5 +64,4 @@ public abstract class ElementSetExpressionEvaluator extends AbstractGraphElement
 		this.vertex = vertex;
 	}
 
-	
 }

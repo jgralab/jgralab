@@ -21,7 +21,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
- 
+
 package de.uni_koblenz.jgralab.greql2.jvalue;
 
 import de.uni_koblenz.jgralab.Vertex;
@@ -35,19 +35,20 @@ public class PathSystemKey {
 	private Vertex vertex;
 
 	private int stateNumber;
-	
+
 	private int hashValue = 0;
 
 	public int hashCode() {
 		if (hashValue == 0)
-			hashValue =vertex.getId() * 200 + stateNumber;
+			hashValue = vertex.getId() * 200 + stateNumber;
 		return hashValue;
 	}
-	
+
 	public boolean equals(Object o) {
 		if (o instanceof PathSystemKey) {
 			PathSystemKey foreignKey = (PathSystemKey) o;
-			if ((foreignKey.vertex == vertex ) && (foreignKey.stateNumber == stateNumber))
+			if ((foreignKey.vertex == vertex)
+					&& (foreignKey.stateNumber == stateNumber))
 				return true;
 		}
 		return false;

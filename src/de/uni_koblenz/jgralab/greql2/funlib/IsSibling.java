@@ -41,7 +41,7 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
  * Checks if two given vertices are siblings. That means, they have at least one
  * same parent. If a pathsystem is given, this check is performed on two
  * vertices in this pathsystem.
- *
+ * 
  * <dl>
  * <dt><b>GReQL-signature</b></dt>
  * <dd><code>BOOLEAN isSibling(v1:VERTEX, v2:VERTEX)</code></dd>
@@ -66,9 +66,9 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
  * </dl>
  * </dd>
  * </dl>
- *
+ * 
  * @author ist@uni-koblenz.de
- *
+ * 
  */
 
 public class IsSibling extends AbstractGreql2Function {

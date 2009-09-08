@@ -21,7 +21,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
- 
+
 package de.uni_koblenz.jgralab.greql2.evaluator.vertexeval;
 
 import de.uni_koblenz.jgralab.EdgeDirection;
@@ -36,19 +36,20 @@ import de.uni_koblenz.jgralab.greql2.schema.RecordElement;
 import de.uni_koblenz.jgralab.greql2.schema.RecordId;
 
 /**
- * Evaluates a record element, this is for instance  name:"element" in the record-construction rec( name:"element")
- * @author ist@uni-koblenz.de
- * November 2006
- *
+ * Evaluates a record element, this is for instance name:"element" in the
+ * record-construction rec( name:"element")
+ * 
+ * @author ist@uni-koblenz.de November 2006
+ * 
  */
 public class RecordElementEvaluator extends VertexEvaluator {
 
 	private RecordElement vertex;
 
 	private String id = null;
-	
+
 	private VertexEvaluator expEval = null;
-	
+
 	/**
 	 * returns the vertex this VertexEvaluator evaluates
 	 */
@@ -56,16 +57,16 @@ public class RecordElementEvaluator extends VertexEvaluator {
 	public Vertex getVertex() {
 		return vertex;
 	}
-	
+
 	public String getId() {
 		if (id == null) {
-			RecordId idVertex = (RecordId)  vertex.getFirstIsRecordIdOf(EdgeDirection.IN)
-					.getAlpha();
+			RecordId idVertex = (RecordId) vertex.getFirstIsRecordIdOf(
+					EdgeDirection.IN).getAlpha();
 			id = idVertex.getName();
-		}	
+		}
 		return id;
 	}
-	
+
 	/**
 	 * Creates a new RecordConstructionEvaluator for the given vertex
 	 * 
@@ -74,8 +75,7 @@ public class RecordElementEvaluator extends VertexEvaluator {
 	 * @param vertex
 	 *            the vertex this VertexEvaluator evaluates
 	 */
-	public RecordElementEvaluator(RecordElement vertex,
-			GreqlEvaluator eval) {
+	public RecordElementEvaluator(RecordElement vertex, GreqlEvaluator eval) {
 		super(eval);
 		this.vertex = vertex;
 	}
@@ -83,17 +83,18 @@ public class RecordElementEvaluator extends VertexEvaluator {
 	@Override
 	public JValue evaluate() throws EvaluateException {
 		if (expEval == null) {
-			Expression recordElementExp = (Expression) vertex.getFirstIsRecordExprOf(EdgeDirection.IN).getAlpha();
-			expEval = greqlEvaluator.getVertexEvaluatorGraphMarker().getMark(recordElementExp);
-		}	
+			Expression recordElementExp = (Expression) vertex
+					.getFirstIsRecordExprOf(EdgeDirection.IN).getAlpha();
+			expEval = greqlEvaluator.getVertexEvaluatorGraphMarker().getMark(
+					recordElementExp);
+		}
 		return expEval.getResult(subgraph);
 	}
 
 	@Override
 	public VertexCosts calculateSubtreeEvaluationCosts(GraphSize graphSize) {
-		return this.greqlEvaluator.getCostModel()
-				.calculateCostsRecordElement(this, graphSize);
+		return this.greqlEvaluator.getCostModel().calculateCostsRecordElement(
+				this, graphSize);
 	}
-
 
 }

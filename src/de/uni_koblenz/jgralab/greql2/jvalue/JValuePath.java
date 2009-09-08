@@ -37,9 +37,9 @@ import de.uni_koblenz.jgralab.greql2.exception.JValueInvalidTypeException;
  * Represents a path in the Datagraph. A path is a alternating list of vertices
  * and egdes with |vertex] = |edge] + 1, it can be written as v1 e1 v2 e2 v3 e3
  * ..... vn en vn+1
- *
+ * 
  * @author ist@uni-koblenz.de
- *
+ * 
  */
 public class JValuePath extends JValue {
 
@@ -68,7 +68,7 @@ public class JValuePath extends JValue {
 
 	/**
 	 * creates a new JValuePath,
-	 *
+	 * 
 	 * @param firstVertex
 	 *            the first vertex in the path
 	 */
@@ -151,7 +151,7 @@ public class JValuePath extends JValue {
 	 * vertex will be added after this edge, so it will be the last vertex in
 	 * the path. The edge to be added must start at the last vertex in the path.
 	 * costs are O(1)
-	 *
+	 * 
 	 * @param e
 	 *            the Edge to add
 	 * @throws JValuePathException
@@ -175,7 +175,7 @@ public class JValuePath extends JValue {
 	/**
 	 * returns true if this path is a trail, that means, it doesn't contain any
 	 * duplicated vertex,
-	 *
+	 * 
 	 * costs worst-case costs, if the path is a trail, are O(n * n/2)
 	 */
 	public boolean isTrail() {
@@ -310,7 +310,7 @@ public class JValuePath extends JValue {
 
 	/**
 	 * calculates the degree of the given vertex in this path
-	 *
+	 * 
 	 * @param vertex
 	 *            the vertex to calculate the degree for
 	 * @return -1 (vertex is not part of this path) 0 (vertex is the only vertex
@@ -336,7 +336,7 @@ public class JValuePath extends JValue {
 
 	/**
 	 * calculates the in or out degree of the given vertex in this path
-	 *
+	 * 
 	 * @param vertex
 	 *            the vertex to calculate the degree for
 	 * @param orientation
@@ -369,7 +369,7 @@ public class JValuePath extends JValue {
 	/**
 	 * returns the edges which are incomming or outgoing to the given vertex in
 	 * this path
-	 *
+	 * 
 	 * @param vertex
 	 *            the vertex for which the connected edge will be returned
 	 * @param orientation
@@ -403,7 +403,7 @@ public class JValuePath extends JValue {
 
 	/**
 	 * returns the edges which are connected to the given vertex in this path
-	 *
+	 * 
 	 * @param vertex
 	 *            the vertex for which the connected edge will be returned
 	 * @return the edges connected to the given vertex in the given orientation

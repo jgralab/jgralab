@@ -21,9 +21,8 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
- 
-package de.uni_koblenz.jgralab.greql2.evaluator.vertexeval;
 
+package de.uni_koblenz.jgralab.greql2.evaluator.vertexeval;
 
 import java.util.ArrayList;
 
@@ -36,6 +35,7 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueCollection;
 import de.uni_koblenz.jgralab.greql2.schema.Expression;
 import de.uni_koblenz.jgralab.greql2.schema.IsPartOf;
 import de.uni_koblenz.jgralab.greql2.schema.ValueConstruction;
+
 /**
  * This is the abstract base class for all ValueConstructions
  * 
@@ -45,10 +45,9 @@ import de.uni_koblenz.jgralab.greql2.schema.ValueConstruction;
 abstract public class ValueConstructionEvaluator extends VertexEvaluator {
 
 	protected ValueConstruction vertex;
-	
+
 	private ArrayList<VertexEvaluator> partEvaluators = null;
-	
-	
+
 	/**
 	 * returns the vertex this VertexEvaluator evaluates
 	 */
@@ -57,7 +56,8 @@ abstract public class ValueConstructionEvaluator extends VertexEvaluator {
 		return vertex;
 	}
 
-	public ValueConstructionEvaluator(ValueConstruction vertex, GreqlEvaluator eval) {
+	public ValueConstructionEvaluator(ValueConstruction vertex,
+			GreqlEvaluator eval) {
 		super(eval);
 		this.vertex = vertex;
 	}
@@ -75,12 +75,14 @@ abstract public class ValueConstructionEvaluator extends VertexEvaluator {
 			partEvaluators = new ArrayList<VertexEvaluator>(partCount);
 			while (inc != null) {
 				Expression currentExpression = (Expression) inc.getAlpha();
-				VertexEvaluator vertexEval = greqlEvaluator.getVertexEvaluatorGraphMarker().getMark(currentExpression);
+				VertexEvaluator vertexEval = greqlEvaluator
+						.getVertexEvaluatorGraphMarker().getMark(
+								currentExpression);
 				partEvaluators.add(vertexEval);
 				inc = inc.getNextIsPartOf(EdgeDirection.IN);
 			}
 		}
-		for (int i=0; i<partEvaluators.size(); i++) {
+		for (int i = 0; i < partEvaluators.size(); i++) {
 			collection.add(partEvaluators.get(i).getResult(subgraph));
 		}
 		return collection;

@@ -42,6 +42,7 @@ import de.uni_koblenz.jgralab.greql2.schema.Quantifier;
 /**
  * Evaluates a QuantifiedExpression, a QuantifiedExpression is something like
  * "using FOO: exists s: FOO @ s = true".
+ * 
  * @author ist@uni-koblenz.de
  * 
  */
@@ -126,14 +127,16 @@ public class QuantifiedExpressionEvaluator extends VertexEvaluator {
 				JValue tempResult = vertexEval.getResult(subgraph);
 				if (tempResult.isBoolean()) {
 					try {
-						if (tempResult.toBoolean() == JValueBoolean.getTrueValue()) {
+						if (tempResult.toBoolean() == JValueBoolean
+								.getTrueValue()) {
 							if (foundTrue == true) {
 								return new JValue(JValueBoolean.getFalseValue());
 							} else
 								foundTrue = true;
-						} else if (tempResult.toBoolean() == JValueBoolean.getNullValue()) {
+						} else if (tempResult.toBoolean() == JValueBoolean
+								.getNullValue()) {
 							foundNull = true;
-						}	
+						}
 					} catch (JValueInvalidTypeException exception) {
 						throw new EvaluateException(
 								"Error evaluation Exists! clause", exception);

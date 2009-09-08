@@ -36,7 +36,7 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
 /**
  * Returns the depth of the given pathsystem. The depth of a pathsystem is the
  * length of its longest path.
- *
+ * 
  * <dl>
  * <dt><b>GReQL-signature</b></dt>
  * <dd><code>INTEGER depth(ps:PATHSYSTEM)</code></dd>
@@ -54,9 +54,9 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
  * </dl>
  * </dd>
  * </dl>
- *
+ * 
  * @author ist@uni-koblenz.de
- *
+ * 
  */
 
 public class Depth extends AbstractGreql2Function {

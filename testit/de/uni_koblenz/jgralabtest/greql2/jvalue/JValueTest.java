@@ -49,7 +49,7 @@ import de.uni_koblenz.jgralabtest.schemas.minimal.Node;
 
 /**
  * @author Tassilo Horn <horn@uni-koblenz.de>
- *
+ * 
  */
 public class JValueTest {
 
@@ -174,27 +174,27 @@ public class JValueTest {
 	public void testIterNextForBag() {
 		tryIterNextException(new JValueBag());
 	}
-	
+
 	@Test(expected = NoSuchElementException.class)
 	public void testIterNextForSet() {
 		tryIterNextException(new JValueSet());
 	}
-	
+
 	@Test(expected = NoSuchElementException.class)
 	public void testIterNextForTuple() {
 		tryIterNextException(new JValueTuple());
 	}
-	
+
 	@Test(expected = NoSuchElementException.class)
 	public void testIterNextForList() {
 		tryIterNextException(new JValueList());
 	}
-	
+
 	private void tryIterNextException(JValueCollection col) {
 		Iterator<JValue> iter = col.iterator();
 		iter.next();
 	}
-	
+
 	private void tryConcurrentModification(JValueCollection col) {
 		col.add(new JValue("one"));
 		col.add(new JValue("two"));
@@ -205,28 +205,27 @@ public class JValueTest {
 		if (iter.hasNext())
 			iter.next();
 	}
-	
+
 	@Test(expected = ConcurrentModificationException.class)
 	public void testConcurrentModificationOnBag() {
 		tryConcurrentModification(new JValueBag());
 	}
-	
+
 	@Test(expected = ConcurrentModificationException.class)
 	public void testConcurrentModificationOnSet() {
 		tryConcurrentModification(new JValueSet());
 	}
-	
+
 	@Test(expected = ConcurrentModificationException.class)
 	public void testConcurrentModificationOnTuple() {
 		tryConcurrentModification(new JValueTuple());
 	}
-	
+
 	@Test(expected = ConcurrentModificationException.class)
 	public void testConcurrentModificationOnList() {
 		tryConcurrentModification(new JValueList());
 	}
-	
-	
+
 	private void tryRemoveIter(JValueCollection col) {
 		col.add(new JValue("one"));
 		col.add(new JValue("two"));
@@ -238,65 +237,63 @@ public class JValueTest {
 		iter.remove();
 		assertEquals(1, col.size());
 	}
-	
-//	@Test
-//	public void testRemoveOnTuple() {
-//		tryRemove(new JValueTuple());
-//	}
-	
+
+	// @Test
+	// public void testRemoveOnTuple() {
+	// tryRemove(new JValueTuple());
+	// }
+
 	@Test
 	public void testRemoveIterOnBag() {
 		tryRemove(new JValueBag());
 	}
-	
+
 	@Test
 	public void testRemoveIterOnSet() {
 		tryRemove(new JValueSet());
 	}
-	
+
 	@Test
 	public void testRemoveIterOnList() {
 		tryRemove(new JValueList());
 	}
-	
-	
+
 	private void tryRemoveAll(JValueCollection col, JValueCollection other) {
 		col.add(new JValue("one"));
 		col.add(new JValue("two"));
 		col.add(new JValue("three"));
 		col.add(new JValue("four"));
-		
+
 		other.add(new JValue("one"));
 		other.add(new JValue("three"));
-		
+
 		col.removeAll(other);
 		assertEquals(2, col.size());
 		assertEquals(true, col.contains(new JValue("two")));
 		assertEquals(true, col.contains(new JValue("four")));
 	}
-	
-	@Test 
+
+	@Test
 	public void testRemoveAllOnList() {
 		tryRemoveAll(new JValueList(), new JValueList());
 	}
-	
-	@Test 
+
+	@Test
 	public void testRemoveAllOnBag() {
 		tryRemoveAll(new JValueBag(), new JValueBag());
 	}
-	
-	@Test 
+
+	@Test
 	public void testRemoveAllOnSet() {
 		tryRemoveAll(new JValueSet(), new JValueSet());
 	}
-	
-	
+
 	private void tryRemove(JValueCollection col) {
 		col.add(new JValue("one"));
 		col.add(new JValue("two"));
 		col.add(new JValue("three"));
 		col.add(new JValue("four"));
-		
+
 		col.remove(new JValue("one"));
 		col.remove(new JValue("three"));
 
@@ -304,13 +301,12 @@ public class JValueTest {
 		assertEquals(true, col.contains(new JValue("two")));
 		assertEquals(true, col.contains(new JValue("four")));
 	}
-	
-	
-//	@Test
-//	public void testRemoveOnTuple() {
-//		tryRemove(new JValueTuple());
-//	}
-	
+
+	// @Test
+	// public void testRemoveOnTuple() {
+	// tryRemove(new JValueTuple());
+	// }
+
 	@Test
 	public void testRemoveOnBag() {
 		tryRemove(new JValueBag());
@@ -334,7 +330,7 @@ public class JValueTest {
 		assertEquals(0, bag.getQuantity(new JValue("two")));
 		assertEquals(1, bag.getQuantity(new JValue("one")));
 	}
-	
+
 	@Test
 	public void testAddOnBag() {
 		JValueBag bag = new JValueBag();
@@ -347,23 +343,23 @@ public class JValueTest {
 		bag.add(new JValue("one"), -1);
 		assertEquals(4, bag.size());
 	}
-	
+
 	@Test
 	public void testRemoveOnSet() {
 		tryRemove(new JValueSet());
 	}
-	
+
 	@Test
 	public void testRemoveOnList() {
 		tryRemove(new JValueList());
 	}
-	
-//	@Test 
-//	public void testRemoveAllTuple() {
-//		JValueTuple tup = new JValueTuple();
-//
-//	}
-	
+
+	// @Test
+	// public void testRemoveAllTuple() {
+	// JValueTuple tup = new JValueTuple();
+	//
+	// }
+
 	@Test
 	public void testSymDifferenceSet() {
 		JValueSet first = new JValueSet();
@@ -385,7 +381,7 @@ public class JValueTest {
 		assertFalse(diff.contains(new JValue("four")));
 		assertFalse(diff.contains(new JValue("three")));
 	}
-	
+
 	@Test
 	public void testSymDifferenceBag() {
 		JValueBag first = new JValueBag();
@@ -407,7 +403,7 @@ public class JValueTest {
 		assertEquals(diff.getQuantity(new JValue("four")), 1);
 		assertEquals(diff.getQuantity(new JValue("three")), 2);
 	}
-	
+
 	@Test
 	public void testDifferenceBag() {
 		JValueBag first = new JValueBag();
@@ -429,8 +425,7 @@ public class JValueTest {
 		assertEquals(0, diff.getQuantity(new JValue("five")));
 		assertEquals(0, diff.getQuantity(new JValue("six")));
 	}
- 	
-	
+
 	@Test
 	public void notEqualsBag() {
 		JValueBag b1 = new JValueBag();

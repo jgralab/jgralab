@@ -21,9 +21,9 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
- 
+
 /**
  * This package contains all exception-classes needed by GReQL2.
  */
- 
- package de.uni_koblenz.jgralab.greql2.exception;
+
+package de.uni_koblenz.jgralab.greql2.exception;

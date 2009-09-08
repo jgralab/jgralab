@@ -77,18 +77,18 @@ public class LogCostModel extends DefaultCostModel {
 	protected float logScalingFactor;
 
 	/**
-	 * Creates a new {@link LogCostModel}. The given
-	 * {@link EvaluationLogReader} provides the average sizes of input and
-	 * output and selectivity of the {@link Greql2Vertex}s.
+	 * Creates a new {@link LogCostModel}. The given {@link EvaluationLogReader}
+	 * provides the average sizes of input and output and selectivity of the
+	 * {@link Greql2Vertex}s.
 	 * 
 	 * @param logReader
 	 *            the {@link EvaluationLogReader} to be used
 	 * @param logScalingFactor
 	 *            a value between 0 and 1. It determines how much to trust the
-	 *            values given by the <code>logReader</code>. 0 means, don't
-	 *            use the value at all, 1 means, use the logged values as if
-	 *            they were provided by the Oracle of Delphi. This has one
-	 *            exception: If the <code>logReader</code> returns 0 for some
+	 *            values given by the <code>logReader</code>. 0 means, don't use
+	 *            the value at all, 1 means, use the logged values as if they
+	 *            were provided by the Oracle of Delphi. This has one exception:
+	 *            If the <code>logReader</code> returns 0 for some
 	 *            {@link Greql2Vertex}, it most probably means that till now no
 	 *            values have been logged. In that case
 	 *            <code>logScalingFactor</code> has no effect and this
@@ -119,10 +119,10 @@ public class LogCostModel extends DefaultCostModel {
 	 *            the cardinality based on the logger
 	 * @param defaultCard
 	 *            the cardinality based on {@link DefaultCostModel}
-	 * @return <code>defaultCard</code>, if <code>logCard</code> is zero
-	 *         (which most probably means no cardinality for this
-	 *         {@link Greql2Vertex} has been logged so far). Else return a mean
-	 *         of both values scaled by <code>logScalingFactor</code>.
+	 * @return <code>defaultCard</code>, if <code>logCard</code> is zero (which
+	 *         most probably means no cardinality for this {@link Greql2Vertex}
+	 *         has been logged so far). Else return a mean of both values scaled
+	 *         by <code>logScalingFactor</code>.
 	 */
 	private long getMeanCardinality(double logCard, long defaultCard) {
 		if (logCard == 0) {
@@ -135,8 +135,11 @@ public class LogCostModel extends DefaultCostModel {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see de.uni_koblenz.jgralab.greql2.evaluator.costmodel.CostModel#calculateCardinalityBackwardVertexSet(de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.BackwardVertexSetEvaluator,
-	 *      de.uni_koblenz.jgralab.greql2.evaluator.costmodel.GraphSize)
+	 * @seede.uni_koblenz.jgralab.greql2.evaluator.costmodel.CostModel#
+	 * calculateCardinalityBackwardVertexSet
+	 * (de.uni_koblenz.jgralab.greql2.evaluator
+	 * .vertexeval.BackwardVertexSetEvaluator,
+	 * de.uni_koblenz.jgralab.greql2.evaluator.costmodel.GraphSize)
 	 */
 	@Override
 	public long calculateCardinalityBackwardVertexSet(
@@ -149,8 +152,11 @@ public class LogCostModel extends DefaultCostModel {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see de.uni_koblenz.jgralab.greql2.evaluator.costmodel.CostModel#calculateCardinalityBagComprehension(de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.BagComprehensionEvaluator,
-	 *      de.uni_koblenz.jgralab.greql2.evaluator.costmodel.GraphSize)
+	 * @seede.uni_koblenz.jgralab.greql2.evaluator.costmodel.CostModel#
+	 * calculateCardinalityBagComprehension
+	 * (de.uni_koblenz.jgralab.greql2.evaluator
+	 * .vertexeval.BagComprehensionEvaluator,
+	 * de.uni_koblenz.jgralab.greql2.evaluator.costmodel.GraphSize)
 	 */
 	@Override
 	public long calculateCardinalityBagComprehension(
@@ -163,8 +169,11 @@ public class LogCostModel extends DefaultCostModel {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see de.uni_koblenz.jgralab.greql2.evaluator.costmodel.CostModel#calculateCardinalityBagConstruction(de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.BagConstructionEvaluator,
-	 *      de.uni_koblenz.jgralab.greql2.evaluator.costmodel.GraphSize)
+	 * @seede.uni_koblenz.jgralab.greql2.evaluator.costmodel.CostModel#
+	 * calculateCardinalityBagConstruction
+	 * (de.uni_koblenz.jgralab.greql2.evaluator
+	 * .vertexeval.BagConstructionEvaluator,
+	 * de.uni_koblenz.jgralab.greql2.evaluator.costmodel.GraphSize)
 	 */
 	@Override
 	public long calculateCardinalityBagConstruction(BagConstructionEvaluator e,
@@ -177,8 +186,11 @@ public class LogCostModel extends DefaultCostModel {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see de.uni_koblenz.jgralab.greql2.evaluator.costmodel.CostModel#calculateCardinalityConditionalExpression(de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.ConditionalExpressionEvaluator,
-	 *      de.uni_koblenz.jgralab.greql2.evaluator.costmodel.GraphSize)
+	 * @seede.uni_koblenz.jgralab.greql2.evaluator.costmodel.CostModel#
+	 * calculateCardinalityConditionalExpression
+	 * (de.uni_koblenz.jgralab.greql2.evaluator
+	 * .vertexeval.ConditionalExpressionEvaluator,
+	 * de.uni_koblenz.jgralab.greql2.evaluator.costmodel.GraphSize)
 	 */
 	@Override
 	public long calculateCardinalityConditionalExpression(
@@ -191,8 +203,10 @@ public class LogCostModel extends DefaultCostModel {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see de.uni_koblenz.jgralab.greql2.evaluator.costmodel.CostModel#calculateCardinalityDeclaration(de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.DeclarationEvaluator,
-	 *      de.uni_koblenz.jgralab.greql2.evaluator.costmodel.GraphSize)
+	 * @seede.uni_koblenz.jgralab.greql2.evaluator.costmodel.CostModel#
+	 * calculateCardinalityDeclaration
+	 * (de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.DeclarationEvaluator,
+	 * de.uni_koblenz.jgralab.greql2.evaluator.costmodel.GraphSize)
 	 */
 	@Override
 	public long calculateCardinalityDeclaration(DeclarationEvaluator e,
@@ -209,8 +223,11 @@ public class LogCostModel extends DefaultCostModel {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see de.uni_koblenz.jgralab.greql2.evaluator.costmodel.CostModel#calculateCardinalityEdgeSetExpression(de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.EdgeSetExpressionEvaluator,
-	 *      de.uni_koblenz.jgralab.greql2.evaluator.costmodel.GraphSize)
+	 * @seede.uni_koblenz.jgralab.greql2.evaluator.costmodel.CostModel#
+	 * calculateCardinalityEdgeSetExpression
+	 * (de.uni_koblenz.jgralab.greql2.evaluator
+	 * .vertexeval.EdgeSetExpressionEvaluator,
+	 * de.uni_koblenz.jgralab.greql2.evaluator.costmodel.GraphSize)
 	 */
 	@Override
 	public long calculateCardinalityEdgeSetExpression(
@@ -223,8 +240,11 @@ public class LogCostModel extends DefaultCostModel {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see de.uni_koblenz.jgralab.greql2.evaluator.costmodel.CostModel#calculateCardinalityEdgeSubgraphExpression(de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.EdgeSubgraphExpressionEvaluator,
-	 *      de.uni_koblenz.jgralab.greql2.evaluator.costmodel.GraphSize)
+	 * @seede.uni_koblenz.jgralab.greql2.evaluator.costmodel.CostModel#
+	 * calculateCardinalityEdgeSubgraphExpression
+	 * (de.uni_koblenz.jgralab.greql2.evaluator
+	 * .vertexeval.EdgeSubgraphExpressionEvaluator,
+	 * de.uni_koblenz.jgralab.greql2.evaluator.costmodel.GraphSize)
 	 */
 	@Override
 	public long calculateCardinalityEdgeSubgraphExpression(
@@ -237,8 +257,11 @@ public class LogCostModel extends DefaultCostModel {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see de.uni_koblenz.jgralab.greql2.evaluator.costmodel.CostModel#calculateCardinalityForwardVertexSet(de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.ForwardVertexSetEvaluator,
-	 *      de.uni_koblenz.jgralab.greql2.evaluator.costmodel.GraphSize)
+	 * @seede.uni_koblenz.jgralab.greql2.evaluator.costmodel.CostModel#
+	 * calculateCardinalityForwardVertexSet
+	 * (de.uni_koblenz.jgralab.greql2.evaluator
+	 * .vertexeval.ForwardVertexSetEvaluator,
+	 * de.uni_koblenz.jgralab.greql2.evaluator.costmodel.GraphSize)
 	 */
 	@Override
 	public long calculateCardinalityForwardVertexSet(
@@ -251,8 +274,11 @@ public class LogCostModel extends DefaultCostModel {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see de.uni_koblenz.jgralab.greql2.evaluator.costmodel.CostModel#calculateCardinalityFunctionApplication(de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.FunctionApplicationEvaluator,
-	 *      de.uni_koblenz.jgralab.greql2.evaluator.costmodel.GraphSize)
+	 * @seede.uni_koblenz.jgralab.greql2.evaluator.costmodel.CostModel#
+	 * calculateCardinalityFunctionApplication
+	 * (de.uni_koblenz.jgralab.greql2.evaluator
+	 * .vertexeval.FunctionApplicationEvaluator,
+	 * de.uni_koblenz.jgralab.greql2.evaluator.costmodel.GraphSize)
 	 */
 	@Override
 	public long calculateCardinalityFunctionApplication(
@@ -265,8 +291,11 @@ public class LogCostModel extends DefaultCostModel {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see de.uni_koblenz.jgralab.greql2.evaluator.costmodel.CostModel#calculateCardinalityListConstruction(de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.ListConstructionEvaluator,
-	 *      de.uni_koblenz.jgralab.greql2.evaluator.costmodel.GraphSize)
+	 * @seede.uni_koblenz.jgralab.greql2.evaluator.costmodel.CostModel#
+	 * calculateCardinalityListConstruction
+	 * (de.uni_koblenz.jgralab.greql2.evaluator
+	 * .vertexeval.ListConstructionEvaluator,
+	 * de.uni_koblenz.jgralab.greql2.evaluator.costmodel.GraphSize)
 	 */
 	@Override
 	public long calculateCardinalityListConstruction(
@@ -279,8 +308,11 @@ public class LogCostModel extends DefaultCostModel {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see de.uni_koblenz.jgralab.greql2.evaluator.costmodel.CostModel#calculateCardinalityListRangeConstruction(de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.ListRangeConstructionEvaluator,
-	 *      de.uni_koblenz.jgralab.greql2.evaluator.costmodel.GraphSize)
+	 * @seede.uni_koblenz.jgralab.greql2.evaluator.costmodel.CostModel#
+	 * calculateCardinalityListRangeConstruction
+	 * (de.uni_koblenz.jgralab.greql2.evaluator
+	 * .vertexeval.ListRangeConstructionEvaluator,
+	 * de.uni_koblenz.jgralab.greql2.evaluator.costmodel.GraphSize)
 	 */
 	@Override
 	public long calculateCardinalityListRangeConstruction(
@@ -293,8 +325,11 @@ public class LogCostModel extends DefaultCostModel {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see de.uni_koblenz.jgralab.greql2.evaluator.costmodel.CostModel#calculateCardinalityRecordConstruction(de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.RecordConstructionEvaluator,
-	 *      de.uni_koblenz.jgralab.greql2.evaluator.costmodel.GraphSize)
+	 * @seede.uni_koblenz.jgralab.greql2.evaluator.costmodel.CostModel#
+	 * calculateCardinalityRecordConstruction
+	 * (de.uni_koblenz.jgralab.greql2.evaluator
+	 * .vertexeval.RecordConstructionEvaluator,
+	 * de.uni_koblenz.jgralab.greql2.evaluator.costmodel.GraphSize)
 	 */
 	@Override
 	public long calculateCardinalityRecordConstruction(
@@ -307,8 +342,11 @@ public class LogCostModel extends DefaultCostModel {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see de.uni_koblenz.jgralab.greql2.evaluator.costmodel.CostModel#calculateCardinalitySetComprehension(de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.SetComprehensionEvaluator,
-	 *      de.uni_koblenz.jgralab.greql2.evaluator.costmodel.GraphSize)
+	 * @seede.uni_koblenz.jgralab.greql2.evaluator.costmodel.CostModel#
+	 * calculateCardinalitySetComprehension
+	 * (de.uni_koblenz.jgralab.greql2.evaluator
+	 * .vertexeval.SetComprehensionEvaluator,
+	 * de.uni_koblenz.jgralab.greql2.evaluator.costmodel.GraphSize)
 	 */
 	@Override
 	public long calculateCardinalitySetComprehension(
@@ -321,8 +359,11 @@ public class LogCostModel extends DefaultCostModel {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see de.uni_koblenz.jgralab.greql2.evaluator.costmodel.CostModel#calculateCardinalitySetConstruction(de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.SetConstructionEvaluator,
-	 *      de.uni_koblenz.jgralab.greql2.evaluator.costmodel.GraphSize)
+	 * @seede.uni_koblenz.jgralab.greql2.evaluator.costmodel.CostModel#
+	 * calculateCardinalitySetConstruction
+	 * (de.uni_koblenz.jgralab.greql2.evaluator
+	 * .vertexeval.SetConstructionEvaluator,
+	 * de.uni_koblenz.jgralab.greql2.evaluator.costmodel.GraphSize)
 	 */
 	@Override
 	public long calculateCardinalitySetConstruction(SetConstructionEvaluator e,
@@ -335,8 +376,11 @@ public class LogCostModel extends DefaultCostModel {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see de.uni_koblenz.jgralab.greql2.evaluator.costmodel.CostModel#calculateCardinalitySimpleDeclaration(de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.SimpleDeclarationEvaluator,
-	 *      de.uni_koblenz.jgralab.greql2.evaluator.costmodel.GraphSize)
+	 * @seede.uni_koblenz.jgralab.greql2.evaluator.costmodel.CostModel#
+	 * calculateCardinalitySimpleDeclaration
+	 * (de.uni_koblenz.jgralab.greql2.evaluator
+	 * .vertexeval.SimpleDeclarationEvaluator,
+	 * de.uni_koblenz.jgralab.greql2.evaluator.costmodel.GraphSize)
 	 */
 	@Override
 	public long calculateCardinalitySimpleDeclaration(
@@ -352,8 +396,11 @@ public class LogCostModel extends DefaultCostModel {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see de.uni_koblenz.jgralab.greql2.evaluator.costmodel.CostModel#calculateCardinalityTableComprehension(de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.TableComprehensionEvaluator,
-	 *      de.uni_koblenz.jgralab.greql2.evaluator.costmodel.GraphSize)
+	 * @seede.uni_koblenz.jgralab.greql2.evaluator.costmodel.CostModel#
+	 * calculateCardinalityTableComprehension
+	 * (de.uni_koblenz.jgralab.greql2.evaluator
+	 * .vertexeval.TableComprehensionEvaluator,
+	 * de.uni_koblenz.jgralab.greql2.evaluator.costmodel.GraphSize)
 	 */
 	@Override
 	public long calculateCardinalityTableComprehension(
@@ -366,8 +413,11 @@ public class LogCostModel extends DefaultCostModel {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see de.uni_koblenz.jgralab.greql2.evaluator.costmodel.CostModel#calculateCardinalityTupleConstruction(de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.TupleConstructionEvaluator,
-	 *      de.uni_koblenz.jgralab.greql2.evaluator.costmodel.GraphSize)
+	 * @seede.uni_koblenz.jgralab.greql2.evaluator.costmodel.CostModel#
+	 * calculateCardinalityTupleConstruction
+	 * (de.uni_koblenz.jgralab.greql2.evaluator
+	 * .vertexeval.TupleConstructionEvaluator,
+	 * de.uni_koblenz.jgralab.greql2.evaluator.costmodel.GraphSize)
 	 */
 	@Override
 	public long calculateCardinalityTupleConstruction(
@@ -380,8 +430,11 @@ public class LogCostModel extends DefaultCostModel {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see de.uni_koblenz.jgralab.greql2.evaluator.costmodel.CostModel#calculateCardinalityVertexSetExpression(de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.VertexSetExpressionEvaluator,
-	 *      de.uni_koblenz.jgralab.greql2.evaluator.costmodel.GraphSize)
+	 * @seede.uni_koblenz.jgralab.greql2.evaluator.costmodel.CostModel#
+	 * calculateCardinalityVertexSetExpression
+	 * (de.uni_koblenz.jgralab.greql2.evaluator
+	 * .vertexeval.VertexSetExpressionEvaluator,
+	 * de.uni_koblenz.jgralab.greql2.evaluator.costmodel.GraphSize)
 	 */
 	@Override
 	public long calculateCardinalityVertexSetExpression(
@@ -394,8 +447,11 @@ public class LogCostModel extends DefaultCostModel {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see de.uni_koblenz.jgralab.greql2.evaluator.costmodel.CostModel#calculateCardinalityVertexSubgraphExpression(de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.VertexSubgraphExpressionEvaluator,
-	 *      de.uni_koblenz.jgralab.greql2.evaluator.costmodel.GraphSize)
+	 * @seede.uni_koblenz.jgralab.greql2.evaluator.costmodel.CostModel#
+	 * calculateCardinalityVertexSubgraphExpression
+	 * (de.uni_koblenz.jgralab.greql2
+	 * .evaluator.vertexeval.VertexSubgraphExpressionEvaluator,
+	 * de.uni_koblenz.jgralab.greql2.evaluator.costmodel.GraphSize)
 	 */
 	@Override
 	public long calculateCardinalityVertexSubgraphExpression(
@@ -447,8 +503,11 @@ public class LogCostModel extends DefaultCostModel {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see de.uni_koblenz.jgralab.greql2.evaluator.costmodel.CostModel#calculateCostsAlternativePathDescription(de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.AlternativePathDescriptionEvaluator,
-	 *      de.uni_koblenz.jgralab.greql2.evaluator.costmodel.GraphSize)
+	 * @seede.uni_koblenz.jgralab.greql2.evaluator.costmodel.CostModel#
+	 * calculateCostsAlternativePathDescription
+	 * (de.uni_koblenz.jgralab.greql2.evaluator
+	 * .vertexeval.AlternativePathDescriptionEvaluator,
+	 * de.uni_koblenz.jgralab.greql2.evaluator.costmodel.GraphSize)
 	 */
 	@Override
 	public VertexCosts calculateCostsAlternativePathDescription(
@@ -459,8 +518,11 @@ public class LogCostModel extends DefaultCostModel {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see de.uni_koblenz.jgralab.greql2.evaluator.costmodel.CostModel#calculateCostsBackwardVertexSet(de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.BackwardVertexSetEvaluator,
-	 *      de.uni_koblenz.jgralab.greql2.evaluator.costmodel.GraphSize)
+	 * @seede.uni_koblenz.jgralab.greql2.evaluator.costmodel.CostModel#
+	 * calculateCostsBackwardVertexSet
+	 * (de.uni_koblenz.jgralab.greql2.evaluator.vertexeval
+	 * .BackwardVertexSetEvaluator,
+	 * de.uni_koblenz.jgralab.greql2.evaluator.costmodel.GraphSize)
 	 */
 	@Override
 	public VertexCosts calculateCostsBackwardVertexSet(
@@ -496,8 +558,11 @@ public class LogCostModel extends DefaultCostModel {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see de.uni_koblenz.jgralab.greql2.evaluator.costmodel.CostModel#calculateCostsConditionalExpression(de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.ConditionalExpressionEvaluator,
-	 *      de.uni_koblenz.jgralab.greql2.evaluator.costmodel.GraphSize)
+	 * @seede.uni_koblenz.jgralab.greql2.evaluator.costmodel.CostModel#
+	 * calculateCostsConditionalExpression
+	 * (de.uni_koblenz.jgralab.greql2.evaluator
+	 * .vertexeval.ConditionalExpressionEvaluator,
+	 * de.uni_koblenz.jgralab.greql2.evaluator.costmodel.GraphSize)
 	 */
 	@Override
 	public VertexCosts calculateCostsConditionalExpression(
@@ -553,8 +618,11 @@ public class LogCostModel extends DefaultCostModel {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see de.uni_koblenz.jgralab.greql2.evaluator.costmodel.CostModel#calculateCostsEdgePathDescription(de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.EdgePathDescriptionEvaluator,
-	 *      de.uni_koblenz.jgralab.greql2.evaluator.costmodel.GraphSize)
+	 * @seede.uni_koblenz.jgralab.greql2.evaluator.costmodel.CostModel#
+	 * calculateCostsEdgePathDescription
+	 * (de.uni_koblenz.jgralab.greql2.evaluator.
+	 * vertexeval.EdgePathDescriptionEvaluator,
+	 * de.uni_koblenz.jgralab.greql2.evaluator.costmodel.GraphSize)
 	 */
 	@Override
 	public VertexCosts calculateCostsEdgePathDescription(
@@ -565,8 +633,11 @@ public class LogCostModel extends DefaultCostModel {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see de.uni_koblenz.jgralab.greql2.evaluator.costmodel.CostModel#calculateCostsExponentiatedPathDescription(de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.ExponentiatedPathDescriptionEvaluator,
-	 *      de.uni_koblenz.jgralab.greql2.evaluator.costmodel.GraphSize)
+	 * @seede.uni_koblenz.jgralab.greql2.evaluator.costmodel.CostModel#
+	 * calculateCostsExponentiatedPathDescription
+	 * (de.uni_koblenz.jgralab.greql2.evaluator
+	 * .vertexeval.ExponentiatedPathDescriptionEvaluator,
+	 * de.uni_koblenz.jgralab.greql2.evaluator.costmodel.GraphSize)
 	 */
 	@Override
 	public VertexCosts calculateCostsExponentiatedPathDescription(
@@ -577,8 +648,11 @@ public class LogCostModel extends DefaultCostModel {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see de.uni_koblenz.jgralab.greql2.evaluator.costmodel.CostModel#calculateCostsForwardVertexSet(de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.ForwardVertexSetEvaluator,
-	 *      de.uni_koblenz.jgralab.greql2.evaluator.costmodel.GraphSize)
+	 * @seede.uni_koblenz.jgralab.greql2.evaluator.costmodel.CostModel#
+	 * calculateCostsForwardVertexSet
+	 * (de.uni_koblenz.jgralab.greql2.evaluator.vertexeval
+	 * .ForwardVertexSetEvaluator,
+	 * de.uni_koblenz.jgralab.greql2.evaluator.costmodel.GraphSize)
 	 */
 	@Override
 	public VertexCosts calculateCostsForwardVertexSet(
@@ -614,8 +688,11 @@ public class LogCostModel extends DefaultCostModel {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see de.uni_koblenz.jgralab.greql2.evaluator.costmodel.CostModel#calculateCostsIntermediateVertexPathDescription(de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.IntermediateVertexPathDescriptionEvaluator,
-	 *      de.uni_koblenz.jgralab.greql2.evaluator.costmodel.GraphSize)
+	 * @seede.uni_koblenz.jgralab.greql2.evaluator.costmodel.CostModel#
+	 * calculateCostsIntermediateVertexPathDescription
+	 * (de.uni_koblenz.jgralab.greql2
+	 * .evaluator.vertexeval.IntermediateVertexPathDescriptionEvaluator,
+	 * de.uni_koblenz.jgralab.greql2.evaluator.costmodel.GraphSize)
 	 */
 	@Override
 	public VertexCosts calculateCostsIntermediateVertexPathDescription(
@@ -626,8 +703,11 @@ public class LogCostModel extends DefaultCostModel {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see de.uni_koblenz.jgralab.greql2.evaluator.costmodel.CostModel#calculateCostsIteratedPathDescription(de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.IteratedPathDescriptionEvaluator,
-	 *      de.uni_koblenz.jgralab.greql2.evaluator.costmodel.GraphSize)
+	 * @seede.uni_koblenz.jgralab.greql2.evaluator.costmodel.CostModel#
+	 * calculateCostsIteratedPathDescription
+	 * (de.uni_koblenz.jgralab.greql2.evaluator
+	 * .vertexeval.IteratedPathDescriptionEvaluator,
+	 * de.uni_koblenz.jgralab.greql2.evaluator.costmodel.GraphSize)
 	 */
 	@Override
 	public VertexCosts calculateCostsIteratedPathDescription(
@@ -638,8 +718,11 @@ public class LogCostModel extends DefaultCostModel {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see de.uni_koblenz.jgralab.greql2.evaluator.costmodel.CostModel#calculateCostsListRangeConstruction(de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.ListRangeConstructionEvaluator,
-	 *      de.uni_koblenz.jgralab.greql2.evaluator.costmodel.GraphSize)
+	 * @seede.uni_koblenz.jgralab.greql2.evaluator.costmodel.CostModel#
+	 * calculateCostsListRangeConstruction
+	 * (de.uni_koblenz.jgralab.greql2.evaluator
+	 * .vertexeval.ListRangeConstructionEvaluator,
+	 * de.uni_koblenz.jgralab.greql2.evaluator.costmodel.GraphSize)
 	 */
 	@Override
 	public VertexCosts calculateCostsListRangeConstruction(
@@ -687,8 +770,11 @@ public class LogCostModel extends DefaultCostModel {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see de.uni_koblenz.jgralab.greql2.evaluator.costmodel.CostModel#calculateCostsOptionalPathDescription(de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.OptionalPathDescriptionEvaluator,
-	 *      de.uni_koblenz.jgralab.greql2.evaluator.costmodel.GraphSize)
+	 * @seede.uni_koblenz.jgralab.greql2.evaluator.costmodel.CostModel#
+	 * calculateCostsOptionalPathDescription
+	 * (de.uni_koblenz.jgralab.greql2.evaluator
+	 * .vertexeval.OptionalPathDescriptionEvaluator,
+	 * de.uni_koblenz.jgralab.greql2.evaluator.costmodel.GraphSize)
 	 */
 	@Override
 	public VertexCosts calculateCostsOptionalPathDescription(
@@ -699,8 +785,11 @@ public class LogCostModel extends DefaultCostModel {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see de.uni_koblenz.jgralab.greql2.evaluator.costmodel.CostModel#calculateCostsPathExistence(de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.PathExistenceEvaluator,
-	 *      de.uni_koblenz.jgralab.greql2.evaluator.costmodel.GraphSize)
+	 * @seede.uni_koblenz.jgralab.greql2.evaluator.costmodel.CostModel#
+	 * calculateCostsPathExistence
+	 * (de.uni_koblenz.jgralab.greql2.evaluator.vertexeval
+	 * .PathExistenceEvaluator,
+	 * de.uni_koblenz.jgralab.greql2.evaluator.costmodel.GraphSize)
 	 */
 	@Override
 	public VertexCosts calculateCostsPathExistence(PathExistenceEvaluator e,
@@ -745,8 +834,11 @@ public class LogCostModel extends DefaultCostModel {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see de.uni_koblenz.jgralab.greql2.evaluator.costmodel.CostModel#calculateCostsSequentialPathDescription(de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.SequentialPathDescriptionEvaluator,
-	 *      de.uni_koblenz.jgralab.greql2.evaluator.costmodel.GraphSize)
+	 * @seede.uni_koblenz.jgralab.greql2.evaluator.costmodel.CostModel#
+	 * calculateCostsSequentialPathDescription
+	 * (de.uni_koblenz.jgralab.greql2.evaluator
+	 * .vertexeval.SequentialPathDescriptionEvaluator,
+	 * de.uni_koblenz.jgralab.greql2.evaluator.costmodel.GraphSize)
 	 */
 	@Override
 	public VertexCosts calculateCostsSequentialPathDescription(
@@ -757,8 +849,11 @@ public class LogCostModel extends DefaultCostModel {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see de.uni_koblenz.jgralab.greql2.evaluator.costmodel.CostModel#calculateCostsSimplePathDescription(de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.SimplePathDescriptionEvaluator,
-	 *      de.uni_koblenz.jgralab.greql2.evaluator.costmodel.GraphSize)
+	 * @seede.uni_koblenz.jgralab.greql2.evaluator.costmodel.CostModel#
+	 * calculateCostsSimplePathDescription
+	 * (de.uni_koblenz.jgralab.greql2.evaluator
+	 * .vertexeval.SimplePathDescriptionEvaluator,
+	 * de.uni_koblenz.jgralab.greql2.evaluator.costmodel.GraphSize)
 	 */
 	@Override
 	public VertexCosts calculateCostsSimplePathDescription(
@@ -769,8 +864,11 @@ public class LogCostModel extends DefaultCostModel {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see de.uni_koblenz.jgralab.greql2.evaluator.costmodel.CostModel#calculateCostsTransposedPathDescription(de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.TransposedPathDescriptionEvaluator,
-	 *      de.uni_koblenz.jgralab.greql2.evaluator.costmodel.GraphSize)
+	 * @seede.uni_koblenz.jgralab.greql2.evaluator.costmodel.CostModel#
+	 * calculateCostsTransposedPathDescription
+	 * (de.uni_koblenz.jgralab.greql2.evaluator
+	 * .vertexeval.TransposedPathDescriptionEvaluator,
+	 * de.uni_koblenz.jgralab.greql2.evaluator.costmodel.GraphSize)
 	 */
 	@Override
 	public VertexCosts calculateCostsTransposedPathDescription(
@@ -781,8 +879,11 @@ public class LogCostModel extends DefaultCostModel {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see de.uni_koblenz.jgralab.greql2.evaluator.costmodel.CostModel#calculateSelectivityFunctionApplication(de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.FunctionApplicationEvaluator,
-	 *      de.uni_koblenz.jgralab.greql2.evaluator.costmodel.GraphSize)
+	 * @seede.uni_koblenz.jgralab.greql2.evaluator.costmodel.CostModel#
+	 * calculateSelectivityFunctionApplication
+	 * (de.uni_koblenz.jgralab.greql2.evaluator
+	 * .vertexeval.FunctionApplicationEvaluator,
+	 * de.uni_koblenz.jgralab.greql2.evaluator.costmodel.GraphSize)
 	 */
 	@Override
 	public double calculateSelectivityFunctionApplication(
@@ -801,8 +902,11 @@ public class LogCostModel extends DefaultCostModel {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see de.uni_koblenz.jgralab.greql2.evaluator.costmodel.CostModel#calculateSelectivityPathExistence(de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.PathExistenceEvaluator,
-	 *      de.uni_koblenz.jgralab.greql2.evaluator.costmodel.GraphSize)
+	 * @seede.uni_koblenz.jgralab.greql2.evaluator.costmodel.CostModel#
+	 * calculateSelectivityPathExistence
+	 * (de.uni_koblenz.jgralab.greql2.evaluator.
+	 * vertexeval.PathExistenceEvaluator,
+	 * de.uni_koblenz.jgralab.greql2.evaluator.costmodel.GraphSize)
 	 */
 	@Override
 	public double calculateSelectivityPathExistence(PathExistenceEvaluator e,
@@ -820,8 +924,10 @@ public class LogCostModel extends DefaultCostModel {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see de.uni_koblenz.jgralab.greql2.evaluator.costmodel.CostModel#calculateSelectivityTypeId(de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.TypeIdEvaluator,
-	 *      de.uni_koblenz.jgralab.greql2.evaluator.costmodel.GraphSize)
+	 * @seede.uni_koblenz.jgralab.greql2.evaluator.costmodel.CostModel#
+	 * calculateSelectivityTypeId
+	 * (de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.TypeIdEvaluator,
+	 * de.uni_koblenz.jgralab.greql2.evaluator.costmodel.GraphSize)
 	 */
 	@Override
 	public double calculateSelectivityTypeId(TypeIdEvaluator e,
@@ -839,7 +945,9 @@ public class LogCostModel extends DefaultCostModel {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see de.uni_koblenz.jgralab.greql2.evaluator.costmodel.CostModel#isEquivalent(de.uni_koblenz.jgralab.greql2.evaluator.costmodel.CostModel)
+	 * @see
+	 * de.uni_koblenz.jgralab.greql2.evaluator.costmodel.CostModel#isEquivalent
+	 * (de.uni_koblenz.jgralab.greql2.evaluator.costmodel.CostModel)
 	 */
 	@Override
 	public boolean isEquivalent(CostModel costModel) {

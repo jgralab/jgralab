@@ -21,15 +21,15 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
- 
+
 package de.uni_koblenz.jgralab.greql2.jvalue;
 
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.Vertex;
 
 /**
- * This is the entry of the hashmap which stores the references to the
- * parent vertices. It is _not_ a JValue
+ * This is the entry of the hashmap which stores the references to the parent
+ * vertices. It is _not_ a JValue
  */
 public class PathSystemEntry {
 
@@ -54,8 +54,8 @@ public class PathSystemEntry {
 	private int distanceToRoot;
 
 	/**
-	 * this attribute is true if the state with the given statenumber above
-	 * was final in the dfa
+	 * this attribute is true if the state with the given statenumber above was
+	 * final in the dfa
 	 */
 	private boolean stateIsFinal;
 
@@ -65,8 +65,9 @@ public class PathSystemEntry {
 	public String toString() {
 		if (getParentVertex() != null)
 			return "(V: " + getParentVertex().getId() + ", S: "
-					+ getParentStateNumber() + ", E: " + getParentEdge().getId()
-					+ " ,D: " + getDistanceToRoot() + ")";
+					+ getParentStateNumber() + ", E: "
+					+ getParentEdge().getId() + " ,D: " + getDistanceToRoot()
+					+ ")";
 		else
 			return "(RootVertex Distance: " + getDistanceToRoot() + ")";
 

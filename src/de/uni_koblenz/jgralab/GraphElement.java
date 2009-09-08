@@ -26,22 +26,22 @@ package de.uni_koblenz.jgralab;
 
 /**
  * aggregates vertices and edges
- *
+ * 
  * @author ist@uni-koblenz.de
- *
+ * 
  */
 public interface GraphElement extends AttributedElement {
 
 	/**
 	 * returns the id of this graph element
-	 *
+	 * 
 	 * @return the id of this graph element
 	 */
 	public int getId();
 
 	/**
 	 * returns the graph containing this graph element
-	 *
+	 * 
 	 * @return the graph containing this graph element
 	 */
 	public Graph getGraph();

@@ -53,7 +53,7 @@ public class AggregationClassImpl extends EdgeClassImpl implements
 
 	/**
 	 * builds a new aggregation class
-	 *
+	 * 
 	 * @param qn
 	 *            the unique identifier of the aggregation class in the schema
 	 * @param from

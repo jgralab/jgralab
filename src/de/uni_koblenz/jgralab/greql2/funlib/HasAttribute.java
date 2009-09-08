@@ -36,7 +36,7 @@ import de.uni_koblenz.jgralab.schema.AttributedElementClass;
 
 /**
  * Checks if the given attributed element has an attribute with the given name.
- *
+ * 
  * <dl>
  * <dt><b>GReQL-signature</b></dt>
  * <dd><code>BOOLEAN hasAttribute(ae:ATTRIBUTEDELEMENT, name:STRING)</code></dd>
@@ -60,9 +60,9 @@ import de.uni_koblenz.jgralab.schema.AttributedElementClass;
  * </dl>
  * </dd>
  * </dl>
- *
+ * 
  * @author ist@uni-koblenz.de
- *
+ * 
  */
 
 public class HasAttribute extends AbstractGreql2Function {

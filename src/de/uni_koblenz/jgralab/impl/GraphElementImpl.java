@@ -31,9 +31,9 @@ import de.uni_koblenz.jgralab.schema.Schema;
 
 /**
  * TODO add comment
- *
+ * 
  * @author ist@uni-koblenz.de
- *
+ * 
  */
 public abstract class GraphElementImpl implements GraphElement {
 	protected int id;
@@ -51,7 +51,7 @@ public abstract class GraphElementImpl implements GraphElement {
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see de.uni_koblenz.jgralab.AttributedElement#getGraphClass()
 	 */
 	public GraphClass getGraphClass() {
@@ -60,14 +60,16 @@ public abstract class GraphElementImpl implements GraphElement {
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see jgralab.AttributedElement#getSchema()
 	 */
 	public Schema getSchema() {
 		return graph.getSchema();
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see de.uni_koblenz.jgralab.GraphElement#graphModified()
 	 */
 	@Override
@@ -75,7 +77,9 @@ public abstract class GraphElementImpl implements GraphElement {
 		graph.graphModified();
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see de.uni_koblenz.jgralab.GraphElement#getId()
 	 */
 	@Override

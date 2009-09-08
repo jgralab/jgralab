@@ -18,7 +18,7 @@ import de.uni_koblenz.jgralab.greql2.schema.MapComprehension;
 
 /**
  * @author Tassilo Horn <horn@uni-koblenz.de>
- *
+ * 
  */
 public class MapComprehensionEvaluator extends VertexEvaluator {
 	private MapComprehension vertex;
@@ -31,7 +31,7 @@ public class MapComprehensionEvaluator extends VertexEvaluator {
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @seede.uni_koblenz.jgralab.greql2.evaluator.vertexeval.VertexEvaluator#
 	 * calculateSubtreeEvaluationCosts
 	 * (de.uni_koblenz.jgralab.greql2.evaluator.costmodel.GraphSize)
@@ -44,7 +44,7 @@ public class MapComprehensionEvaluator extends VertexEvaluator {
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see
 	 * de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.VertexEvaluator#evaluate
 	 * ()
@@ -84,7 +84,7 @@ public class MapComprehensionEvaluator extends VertexEvaluator {
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see
 	 * de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.VertexEvaluator#getVertex
 	 * ()

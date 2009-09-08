@@ -26,9 +26,9 @@ package de.uni_koblenz.jgralab.greql2.jvalue;
 
 /**
  * specifies the types that can be encapsulated in a JValue
- *
+ * 
  * @author ist@uni-koblenz.de November 2006
- *
+ * 
  */
 
 public enum JValueType {

@@ -41,9 +41,9 @@ import de.uni_koblenz.jgralab.greql2.schema.PathDescription;
 
 /**
  * evaluates a BackwardVertexSet
- *
+ * 
  * @author ist@uni-koblenz.de
- *
+ * 
  */
 public class BackwardVertexSetEvaluator extends PathSearchEvaluator {
 

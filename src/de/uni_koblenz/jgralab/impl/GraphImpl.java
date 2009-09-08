@@ -45,7 +45,7 @@ import de.uni_koblenz.jgralab.schema.VertexClass;
  * Implementation of interface Graph with doubly linked lists realizing eSeq,
  * vSeq and lambdaSeq, while ensuring efficient direct access to vertices and
  * edges by id via vertex and edge arrays.
- *
+ * 
  * @author ist@uni-koblenz.de
  */
 public abstract class GraphImpl implements Graph {
@@ -167,7 +167,7 @@ public abstract class GraphImpl implements Graph {
 
 	/**
 	 * Creates a graph of the given GraphClass with the given id
-	 *
+	 * 
 	 * @param id
 	 *            this Graph's id
 	 * @param cls
@@ -218,7 +218,7 @@ public abstract class GraphImpl implements Graph {
 	 * only be used by m1-Graphs derived from Graph. To create a new Edge as
 	 * user, use the appropriate methods from the derived Graphs like
 	 * <code>createStreet(...)</code>
-	 *
+	 * 
 	 * @param newEdge
 	 *            the edge to add
 	 * @param alpha
@@ -304,7 +304,7 @@ public abstract class GraphImpl implements Graph {
 	 * Should only be used by m1-Graphs derived from Graph. To create a new
 	 * Vertex as user, use the appropriate methods from the derived Graphs like
 	 * <code>createStreet(...)</code>
-	 *
+	 * 
 	 * @param newVertex
 	 *            the Vertex to add
 	 * @throws GraphException
@@ -353,7 +353,7 @@ public abstract class GraphImpl implements Graph {
 
 	/**
 	 * Appends the edge e to the global edge sequence of this graph.
-	 *
+	 * 
 	 * @param e
 	 *            an edge
 	 */
@@ -373,7 +373,7 @@ public abstract class GraphImpl implements Graph {
 
 	/**
 	 * Appends the vertex v to the global vertex sequence of this graph.
-	 *
+	 * 
 	 * @param v
 	 *            a vertex
 	 */
@@ -392,7 +392,7 @@ public abstract class GraphImpl implements Graph {
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see de.uni_koblenz.jgralab.Graph#getExpandedVertexCount()
 	 */
 	@Override
@@ -404,7 +404,7 @@ public abstract class GraphImpl implements Graph {
 	 * Computes new size of vertex and edge array depending on the current size.
 	 * Up to 256k elements, the size is doubled. Between 256k and 1M elements,
 	 * 256k elements are added. Beyond 1M, increase is 128k elements.
-	 *
+	 * 
 	 * @param n
 	 *            current size
 	 * @return new size
@@ -415,7 +415,7 @@ public abstract class GraphImpl implements Graph {
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see de.uni_koblenz.jgralab.Graph#getExpandedEdgeCount()
 	 */
 	@Override
@@ -425,7 +425,7 @@ public abstract class GraphImpl implements Graph {
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see java.lang.Comparable#compareTo(java.lang.Object)
 	 */
 	@Override
@@ -439,7 +439,7 @@ public abstract class GraphImpl implements Graph {
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see
 	 * de.uni_koblenz.jgralab.Graph#containsEdge(de.uni_koblenz.jgralab.Edge)
 	 */
@@ -452,7 +452,7 @@ public abstract class GraphImpl implements Graph {
 	/**
 	 * Checks if the edge id eId is valid and if there is an such an edge in
 	 * this graph.
-	 *
+	 * 
 	 * @param eId
 	 *            an edge id
 	 * @return true if this graph contains an edge with id eId
@@ -467,7 +467,7 @@ public abstract class GraphImpl implements Graph {
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see
 	 * de.uni_koblenz.jgralab.Graph#containsVertex(de.uni_koblenz.jgralab.Vertex
 	 * )
@@ -481,7 +481,7 @@ public abstract class GraphImpl implements Graph {
 	/**
 	 * Checks if the vertex id evd is valid and if there is an such a vertex in
 	 * this graph.
-	 *
+	 * 
 	 * @param vId
 	 *            a vertex id
 	 * @return true if this graph contains a vertex with id vId
@@ -527,7 +527,7 @@ public abstract class GraphImpl implements Graph {
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see de.uni_koblenz.jgralab.Graph#deleteEdge(de.uni_koblenz.jgralab.Edge)
 	 */
 	@Override
@@ -539,7 +539,7 @@ public abstract class GraphImpl implements Graph {
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see
 	 * de.uni_koblenz.jgralab.Graph#deleteVertex(de.uni_koblenz.jgralab.Vertex)
 	 */
@@ -553,7 +553,7 @@ public abstract class GraphImpl implements Graph {
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see
 	 * de.uni_koblenz.jgralab.Graph#edgeDeleted(de.uni_koblenz.jgralab.Edge)
 	 */
@@ -563,7 +563,7 @@ public abstract class GraphImpl implements Graph {
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see de.uni_koblenz.jgralab.Graph#edgeAdded(de.uni_koblenz.jgralab.Edge)
 	 */
 	@Override
@@ -582,7 +582,7 @@ public abstract class GraphImpl implements Graph {
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see de.uni_koblenz.jgralab.Graph#edges()
 	 */
 	@Override
@@ -592,7 +592,7 @@ public abstract class GraphImpl implements Graph {
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see de.uni_koblenz.jgralab.Graph#edges(java.lang.Class)
 	 */
 	@Override
@@ -602,7 +602,7 @@ public abstract class GraphImpl implements Graph {
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see
 	 * de.uni_koblenz.jgralab.Graph#edges(de.uni_koblenz.jgralab.schema.EdgeClass
 	 * )
@@ -614,7 +614,7 @@ public abstract class GraphImpl implements Graph {
 
 	/**
 	 * Changes the size of the edge array of this graph to newSize.
-	 *
+	 * 
 	 * @param newSize
 	 *            the new size of the edge array
 	 */
@@ -646,7 +646,7 @@ public abstract class GraphImpl implements Graph {
 
 	/**
 	 * Changes the size of the vertex array of this graph to newSize.
-	 *
+	 * 
 	 * @param newSize
 	 *            the new size of the vertex array
 	 */
@@ -671,7 +671,7 @@ public abstract class GraphImpl implements Graph {
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see de.uni_koblenz.jgralab.Graph#getECount()
 	 */
 	@Override
@@ -681,7 +681,7 @@ public abstract class GraphImpl implements Graph {
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see de.uni_koblenz.jgralab.Graph#getEdge(int)
 	 */
 	@Override
@@ -692,7 +692,7 @@ public abstract class GraphImpl implements Graph {
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see de.uni_koblenz.jgralab.Graph#getEdgeListVersion()
 	 */
 	@Override
@@ -702,7 +702,7 @@ public abstract class GraphImpl implements Graph {
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see de.uni_koblenz.jgralab.Graph#getFirstEdgeInGraph()
 	 */
 	@Override
@@ -712,7 +712,7 @@ public abstract class GraphImpl implements Graph {
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see de.uni_koblenz.jgralab.Graph#getLastEdgeInGraph()
 	 */
 	@Override
@@ -722,7 +722,7 @@ public abstract class GraphImpl implements Graph {
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see
 	 * de.uni_koblenz.jgralab.Graph#getFirstEdgeOfClassInGraph(java.lang.Class)
 	 */
@@ -733,7 +733,7 @@ public abstract class GraphImpl implements Graph {
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see
 	 * de.uni_koblenz.jgralab.Graph#getFirstEdgeOfClassInGraph(java.lang.Class,
 	 * boolean)
@@ -759,7 +759,7 @@ public abstract class GraphImpl implements Graph {
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see
 	 * de.uni_koblenz.jgralab.Graph#getFirstEdgeOfClassInGraph(de.uni_koblenz
 	 * .jgralab.schema.EdgeClass)
@@ -771,7 +771,7 @@ public abstract class GraphImpl implements Graph {
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see
 	 * de.uni_koblenz.jgralab.Graph#getFirstEdgeOfClassInGraph(de.uni_koblenz
 	 * .jgralab.schema.EdgeClass, boolean)
@@ -784,7 +784,7 @@ public abstract class GraphImpl implements Graph {
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see de.uni_koblenz.jgralab.Graph#getFirstVertex()
 	 */
 	@Override
@@ -794,7 +794,7 @@ public abstract class GraphImpl implements Graph {
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see de.uni_koblenz.jgralab.Graph#getLastVertex()
 	 */
 	@Override
@@ -804,7 +804,7 @@ public abstract class GraphImpl implements Graph {
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see de.uni_koblenz.jgralab.Graph#getFirstVertexOfClass(java.lang.Class)
 	 */
 	@Override
@@ -814,7 +814,7 @@ public abstract class GraphImpl implements Graph {
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see de.uni_koblenz.jgralab.Graph#getFirstVertexOfClass(java.lang.Class,
 	 * boolean)
 	 */
@@ -839,7 +839,7 @@ public abstract class GraphImpl implements Graph {
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see
 	 * de.uni_koblenz.jgralab.Graph#getFirstVertexOfClass(de.uni_koblenz.jgralab
 	 * .schema.VertexClass)
@@ -851,7 +851,7 @@ public abstract class GraphImpl implements Graph {
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see
 	 * de.uni_koblenz.jgralab.Graph#getFirstVertexOfClass(de.uni_koblenz.jgralab
 	 * .schema.VertexClass, boolean)
@@ -864,7 +864,7 @@ public abstract class GraphImpl implements Graph {
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see de.uni_koblenz.jgralab.AttributedElement#getGraphClass()
 	 */
 	@Override
@@ -874,7 +874,7 @@ public abstract class GraphImpl implements Graph {
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see de.uni_koblenz.jgralab.Graph#getGraphVersion()
 	 */
 	@Override
@@ -884,7 +884,7 @@ public abstract class GraphImpl implements Graph {
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see de.uni_koblenz.jgralab.Graph#getId()
 	 */
 	@Override
@@ -894,7 +894,7 @@ public abstract class GraphImpl implements Graph {
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see de.uni_koblenz.jgralab.Graph#getMaxECount()
 	 */
 	@Override
@@ -904,7 +904,7 @@ public abstract class GraphImpl implements Graph {
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see de.uni_koblenz.jgralab.Graph#getMaxVCount()
 	 */
 	@Override
@@ -914,7 +914,7 @@ public abstract class GraphImpl implements Graph {
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see de.uni_koblenz.jgralab.AttributedElement#getSchema()
 	 */
 	@Override
@@ -924,7 +924,7 @@ public abstract class GraphImpl implements Graph {
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see de.uni_koblenz.jgralab.Graph#getVCount()
 	 */
 	@Override
@@ -934,7 +934,7 @@ public abstract class GraphImpl implements Graph {
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see de.uni_koblenz.jgralab.Graph#getVertex(int)
 	 */
 	@Override
@@ -948,7 +948,7 @@ public abstract class GraphImpl implements Graph {
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see de.uni_koblenz.jgralab.Graph#getVertexListVersion()
 	 */
 	@Override
@@ -968,7 +968,7 @@ public abstract class GraphImpl implements Graph {
 
 	/**
 	 * Deletes the edge from the internal structures of this graph.
-	 *
+	 * 
 	 * @param edge
 	 *            an edge
 	 */
@@ -1036,7 +1036,7 @@ public abstract class GraphImpl implements Graph {
 
 	/**
 	 * Removes the vertex v from the global vertex sequence of this graph.
-	 *
+	 * 
 	 * @param v
 	 *            a vertex
 	 */
@@ -1072,7 +1072,7 @@ public abstract class GraphImpl implements Graph {
 
 	/**
 	 * Removes the edge e from the global edge sequence of this graph.
-	 *
+	 * 
 	 * @param e
 	 *            an edge
 	 */
@@ -1112,7 +1112,7 @@ public abstract class GraphImpl implements Graph {
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see de.uni_koblenz.jgralab.Graph#isEdgeListModified(long)
 	 */
 	@Override
@@ -1122,7 +1122,7 @@ public abstract class GraphImpl implements Graph {
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see de.uni_koblenz.jgralab.Graph#isGraphModified(long)
 	 */
 	@Override
@@ -1132,7 +1132,7 @@ public abstract class GraphImpl implements Graph {
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see de.uni_koblenz.jgralab.Graph#isLoading()
 	 */
 	@Override
@@ -1142,7 +1142,7 @@ public abstract class GraphImpl implements Graph {
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see de.uni_koblenz.jgralab.Graph#isVertexListModified(long)
 	 */
 	@Override
@@ -1152,7 +1152,7 @@ public abstract class GraphImpl implements Graph {
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see de.uni_koblenz.jgralab.Graph#loadingCompleted()
 	 */
 	@Override
@@ -1161,7 +1161,7 @@ public abstract class GraphImpl implements Graph {
 
 	/**
 	 * Constructs incidence lists for all vertices after loading this graph.
-	 *
+	 * 
 	 * @param firstIncidence
 	 *            array of edge ids of the first incidence
 	 * @param nextIncidence
@@ -1187,7 +1187,7 @@ public abstract class GraphImpl implements Graph {
 	/**
 	 * Modifies eSeq such that the movedEdge is immediately after the
 	 * targetEdge.
-	 *
+	 * 
 	 * @param targetEdge
 	 *            an edge
 	 * @param movedEdge
@@ -1239,7 +1239,7 @@ public abstract class GraphImpl implements Graph {
 	/**
 	 * Modifies vSeq such that the movedVertex is immediately after the
 	 * targetVertex.
-	 *
+	 * 
 	 * @param targetVertex
 	 *            a vertex
 	 * @param movedVertex
@@ -1289,7 +1289,7 @@ public abstract class GraphImpl implements Graph {
 	/**
 	 * Modifies eSeq such that the movedEdge is immediately before the
 	 * targetEdge.
-	 *
+	 * 
 	 * @param targetEdge
 	 *            an edge
 	 * @param movedEdge
@@ -1341,7 +1341,7 @@ public abstract class GraphImpl implements Graph {
 	/**
 	 * Modifies vSeq such that the movedVertex is immediately before the
 	 * targetVertex.
-	 *
+	 * 
 	 * @param targetVertex
 	 *            a vertex
 	 * @param movedVertex
@@ -1391,7 +1391,7 @@ public abstract class GraphImpl implements Graph {
 	/**
 	 * Sets the version counter of this graph. Should only be called by GraphIO
 	 * immediately after loading.
-	 *
+	 * 
 	 * @param graphVersion
 	 *            new version value
 	 */
@@ -1401,7 +1401,7 @@ public abstract class GraphImpl implements Graph {
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see de.uni_koblenz.jgralab.Graph#setId(java.lang.String)
 	 */
 	@Override
@@ -1411,7 +1411,7 @@ public abstract class GraphImpl implements Graph {
 
 	/**
 	 * Sets the loading flag.
-	 *
+	 * 
 	 * @param isLoading
 	 */
 	public void setLoading(boolean isLoading) {
@@ -1420,7 +1420,7 @@ public abstract class GraphImpl implements Graph {
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see
 	 * de.uni_koblenz.jgralab.Graph#vertexDeleted(de.uni_koblenz.jgralab.Vertex)
 	 */
@@ -1430,7 +1430,7 @@ public abstract class GraphImpl implements Graph {
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see
 	 * de.uni_koblenz.jgralab.Graph#vertexAdded(de.uni_koblenz.jgralab.Vertex)
 	 */
@@ -1450,7 +1450,7 @@ public abstract class GraphImpl implements Graph {
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see de.uni_koblenz.jgralab.Graph#vertices()
 	 */
 	@Override
@@ -1460,7 +1460,7 @@ public abstract class GraphImpl implements Graph {
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see de.uni_koblenz.jgralab.Graph#vertices(java.lang.Class)
 	 */
 	@Override
@@ -1470,7 +1470,7 @@ public abstract class GraphImpl implements Graph {
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @seede.uni_koblenz.jgralab.Graph#vertices(de.uni_koblenz.jgralab.schema.
 	 * VertexClass)
 	 */
@@ -1481,7 +1481,7 @@ public abstract class GraphImpl implements Graph {
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see de.uni_koblenz.jgralab.Graph#defragment()
 	 */
 	@Override

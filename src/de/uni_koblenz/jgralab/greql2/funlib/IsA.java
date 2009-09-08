@@ -37,7 +37,7 @@ import de.uni_koblenz.jgralab.schema.Schema;
 
 /**
  * Checks if the first given type is a subtype of the second given type.
- *
+ * 
  * <dl>
  * <dt><b>GReQL-signature</b></dt>
  * <dd><code>BOOLEAN isA(type:STRING, supertype:STRING)</code></dd>
@@ -66,9 +66,9 @@ import de.uni_koblenz.jgralab.schema.Schema;
  * </dl>
  * </dd>
  * </dl>
- *
+ * 
  * @author ist@uni-koblenz.de
- *
+ * 
  */
 
 public class IsA extends AbstractGreql2Function {

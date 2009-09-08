@@ -305,9 +305,8 @@ public class FreeIndexList {
 			assert index - begin + length <= -runs[runIndex];
 			if (index + length == end + 1) {
 				/*
-				 * TODO DeadCode
-				 * Im Graphen kann man nur eine Id freigeben. Dieser
-				 * Fall beschäftigt sich mit dem Freigeben mehrer Ids.
+				 * TODO DeadCode Im Graphen kann man nur eine Id freigeben.
+				 * Dieser Fall beschäftigt sich mit dem Freigeben mehrer Ids.
 				 */
 				// complete "tail" of the current run cleared
 				if (runIndex == runCount - 1) {

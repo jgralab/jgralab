@@ -38,7 +38,7 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
 /**
  * Returns the given attribute or element value for a vertex, an edge or a
  * record. The attribute is called by its name.
- *
+ * 
  * <dl>
  * <dt><b>GReQL-signature</b></dt>
  * <dd><code>OBJECT getValue(elem:ATTRIBUTEDELEMENT, name:String)</code></dd>
@@ -60,9 +60,9 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
  * </dl>
  * </dd>
  * </dl>
- *
+ * 
  * @author ist@uni-koblenz.de
- *
+ * 
  */
 public class GetValue extends AbstractGreql2Function {
 	{

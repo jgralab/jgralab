@@ -37,7 +37,7 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
 
 /**
  * Returns the n-th element of the given list or tuple.
- *
+ * 
  * <dl>
  * <dt><b>GReQL-signature</b></dt>
  * <dd><code>OBJECT nthElement(list:LIST&lt;OBJECT&gt;, n:INTEGER)</code></dd>
@@ -58,9 +58,9 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
  * </dl>
  * </dd>
  * </dl>
- *
+ * 
  * @author ist@uni-koblenz.de
- *
+ * 
  */
 public class NthElement extends AbstractGreql2Function {
 	{

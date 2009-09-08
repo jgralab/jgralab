@@ -301,7 +301,7 @@ public class TgSchema2Java {
 	 * @throws Exception
 	 *             Throws Exception if mandatory option "-f" is not specified.
 	 */
-	private void processArguments(String[] args) throws Exception {	
+	private void processArguments(String[] args) throws Exception {
 		CommandLine comLine = processCommandLineOptions(args);
 		assert comLine != null;
 		tgFilename = comLine.getOptionValue("s");
@@ -487,7 +487,7 @@ public class TgSchema2Java {
 
 		tgSchema2Java.execute();
 	}
-	
+
 	private static CommandLine processCommandLineOptions(String[] args) {
 		String toolString = "java " + TgSchema2Java.class.getName();
 		String versionString = JGraLab.getInfo(false);
@@ -504,13 +504,19 @@ public class TgSchema2Java {
 		compile.setRequired(false);
 		oh.addOption(compile);
 
-		Option jar = new Option("j", "jar", true,
+		Option jar = new Option(
+				"j",
+				"jar",
+				true,
 				"(optional): specifies the name of the .jar-file; if omitted, no jar will be created");
 		jar.setRequired(false);
 		jar.setArgName("file");
 		oh.addOption(jar);
 
-		Option path = new Option("p", "path", true,
+		Option path = new Option(
+				"p",
+				"path",
+				true,
 				"(optional): specifies the path to where the created files are stored; default is current folder (\".\")");
 		path.setRequired(true);
 		path.setArgName("path");

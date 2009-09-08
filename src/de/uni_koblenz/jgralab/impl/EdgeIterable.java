@@ -34,10 +34,10 @@ import de.uni_koblenz.jgralab.schema.EdgeClass;
 /**
  * This class provides an Iterable to iterate over edges in a graph. One may use
  * this class to use the advanced for-loop of Java 5. Instances of this class
- * should never, and this means <b>never</b> created manually but only using
- * the methods <code>edges(params)</code> of th graph. Every special
- * graphclass contains generated methods similar to <code>edges(params)</code>
- * for every EdgeClass that is part of the GraphClass.
+ * should never, and this means <b>never</b> created manually but only using the
+ * methods <code>edges(params)</code> of th graph. Every special graphclass
+ * contains generated methods similar to <code>edges(params)</code> for every
+ * EdgeClass that is part of the GraphClass.
  * 
  * @author ist@uni-koblenz.de
  * 

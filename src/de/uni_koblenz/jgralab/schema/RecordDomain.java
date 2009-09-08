@@ -28,7 +28,7 @@ import java.util.Map;
 
 /**
  * Represents a RecordDomain, instances may exist multiple times per schema.
- *
+ * 
  * @author ist@uni-koblenz.de
  */
 public interface RecordDomain extends CompositeDomain {
@@ -47,7 +47,7 @@ public interface RecordDomain extends CompositeDomain {
 
 	/**
 	 * Adds a record domain component to the internal list
-	 *
+	 * 
 	 * @param name
 	 *            the unique name of the record domain component in the record
 	 *            domain

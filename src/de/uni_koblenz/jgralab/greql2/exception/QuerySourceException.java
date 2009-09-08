@@ -32,9 +32,9 @@ import de.uni_koblenz.jgralab.greql2.schema.SourcePosition;
 /**
  * This is the base class for all exceptions that refeer to the querysource with
  * offset/length pairs
- *
+ * 
  * @author ist@uni-koblenz.de
- *
+ * 
  */
 public class QuerySourceException extends EvaluateException {
 
@@ -56,7 +56,7 @@ public class QuerySourceException extends EvaluateException {
 	private String errorMessage;
 
 	/**
-	 *
+	 * 
 	 * @param elementName
 	 *            the name of the element that caused the error
 	 * @param sourcePositions
@@ -75,7 +75,7 @@ public class QuerySourceException extends EvaluateException {
 	}
 
 	/**
-	 *
+	 * 
 	 * @param elementName
 	 *            the name of the element that caused the error
 	 * @param sourcePosition
@@ -91,7 +91,7 @@ public class QuerySourceException extends EvaluateException {
 	}
 
 	/**
-	 *
+	 * 
 	 * @param elementName
 	 *            the name of the element that caused the error
 	 * @param sourcePositions
@@ -103,7 +103,7 @@ public class QuerySourceException extends EvaluateException {
 	}
 
 	/**
-	 *
+	 * 
 	 * @param elementName
 	 *            the name of the element that caused the error
 	 * @param sourcePosition

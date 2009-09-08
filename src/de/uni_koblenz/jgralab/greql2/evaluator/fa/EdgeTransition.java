@@ -68,7 +68,9 @@ public class EdgeTransition extends SimpleTransition {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see greql2.evaluator.fa.Transition#equalSymbol(greql2.evaluator.fa.EdgeTransition)
+	 * @see
+	 * greql2.evaluator.fa.Transition#equalSymbol(greql2.evaluator.fa.EdgeTransition
+	 * )
 	 */
 	public boolean equalSymbol(Transition t) {
 		if (!(t instanceof EdgeTransition))
@@ -132,14 +134,15 @@ public class EdgeTransition extends SimpleTransition {
 	 * (non-Javadoc)
 	 * 
 	 * @see greql2.evaluator.fa.Transition#accepts(jgralab.Vertex, jgralab.Edge,
-	 *      greql2.evaluator.SubgraphTempAttribute)
+	 * greql2.evaluator.SubgraphTempAttribute)
 	 */
 	public boolean accepts(Vertex v, Edge e, BooleanGraphMarker subgraph)
 			throws EvaluateException {
 		if (!super.accepts(v, e, subgraph)) {
 			return false;
 		}
-		// GreqlEvaluator.println("Checking edge path for Edge: " + e.toString());
+		// GreqlEvaluator.println("Checking edge path for Edge: " +
+		// e.toString());
 		// checks if only one edge is allowed an if e is this allowed edge
 		if (allowedEdgeEvaluator != null) {
 			try {

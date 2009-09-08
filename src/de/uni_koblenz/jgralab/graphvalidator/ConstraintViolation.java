@@ -32,11 +32,11 @@ import de.uni_koblenz.jgralab.schema.Constraint;
 /**
  * Describes a violation of some constraint, either an explicit
  * {@link Constraint} or a multiplicity constraint.
- *
+ * 
  * @see MultiplicityConstraintViolation
  * @see GReQLConstraintViolation
  * @see BrokenGReQLConstraintViolation
- *
+ * 
  * @author Tassilo Horn <horn@uni-koblenz.de>
  */
 public abstract class ConstraintViolation implements

@@ -21,7 +21,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
- 
+
 package de.uni_koblenz.jgralab.greql2.evaluator.fa;
 
 import de.uni_koblenz.jgralab.BooleanGraphMarker;
@@ -33,18 +33,18 @@ import de.uni_koblenz.jgralab.schema.AttributedElementClass;
 
 /**
  * This transition accepts a vertex type restriction. It is used to accept
- * start- and goalrestrictions. 
- * @author ist@uni-koblenz.de
- * Summer 2006, Diploma Thesis
- *
+ * start- and goalrestrictions.
+ * 
+ * @author ist@uni-koblenz.de Summer 2006, Diploma Thesis
+ * 
  */
 public class VertexTypeRestrictionTransition extends Transition {
 
 	/**
-	 * The type collection that toggles which types are accepted and which are not
+	 * The type collection that toggles which types are accepted and which are
+	 * not
 	 */
 	private JValueTypeCollection typeCollection;
-
 
 	/**
 	 * returns true if this transition and the given transition t accept the
@@ -58,8 +58,7 @@ public class VertexTypeRestrictionTransition extends Transition {
 			return false;
 		return true;
 	}
-	
-	
+
 	/**
 	 * Creates a new transition from start state to end state. The Transition
 	 * may fire if the start vertex has the right type
@@ -71,28 +70,27 @@ public class VertexTypeRestrictionTransition extends Transition {
 	 * @param typeCollection
 	 *            The typeIds which restricts the possible start vertices
 	 */
-	public VertexTypeRestrictionTransition(State start, State end, JValueTypeCollection typeCollection) {
+	public VertexTypeRestrictionTransition(State start, State end,
+			JValueTypeCollection typeCollection) {
 		super(start, end);
 		this.typeCollection = typeCollection;
 	}
 
-	
-
 	/**
 	 * Copy-constructor, creates a copy of the given transition
 	 */
-	protected VertexTypeRestrictionTransition(VertexTypeRestrictionTransition t, boolean addToStates) {
+	protected VertexTypeRestrictionTransition(
+			VertexTypeRestrictionTransition t, boolean addToStates) {
 		super(t, addToStates);
 		typeCollection = new JValueTypeCollection(t.typeCollection);
 	}
-	
+
 	/**
 	 * returns a copy of this transition
 	 */
 	public Transition copy(boolean addToStates) {
 		return new VertexTypeRestrictionTransition(this, addToStates);
 	}
-
 
 	/**
 	 * Checks if the transition is an epsilon-transition
@@ -102,7 +100,7 @@ public class VertexTypeRestrictionTransition extends Transition {
 	public boolean isEpsilon() {
 		return false;
 	}
-	
+
 	/**
 	 * returns a string which describes the edge
 	 */
@@ -110,7 +108,6 @@ public class VertexTypeRestrictionTransition extends Transition {
 		String desc = "VertexRestrictinTransition";
 		return desc;
 	}
-
 
 	/**
 	 * Checks if the transition can fire with the vertex as input, this means,
@@ -124,7 +121,8 @@ public class VertexTypeRestrictionTransition extends Transition {
 	 *            the SubgraphTempAttribute which should be accepted
 	 * @return true if the transition can fire with e, false otherwise
 	 */
-	public boolean accepts(Vertex v, Edge e, BooleanGraphMarker subgraph) throws EvaluateException {
+	public boolean accepts(Vertex v, Edge e, BooleanGraphMarker subgraph)
+			throws EvaluateException {
 		// it is not neccessary to check if the vertex belongs to a special
 		// subgraph, because if it does not, this method will not be called and
 		// there is no edge connected to this vertex wich belongs to the
@@ -132,16 +130,16 @@ public class VertexTypeRestrictionTransition extends Transition {
 		// checks if a startVertexTypeRestriction is set and if v has the right
 		// type
 		AttributedElementClass vertexClass = v.getAttributedElementClass();
-		if (!typeCollection.acceptsType(vertexClass)) 
+		if (!typeCollection.acceptsType(vertexClass))
 			return false;
 		return true;
 	}
-	
+
 	/**
-	 * returns the vertex of the datagraph which can be visited after this transition has fired.
-	 * This is the vertex itself
+	 * returns the vertex of the datagraph which can be visited after this
+	 * transition has fired. This is the vertex itself
 	 */
-	public  Vertex getNextVertex(Vertex v, Edge e) {
+	public Vertex getNextVertex(Vertex v, Edge e) {
 		return v;
 	}
 

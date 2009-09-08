@@ -247,7 +247,8 @@ public class Xml2tg {
 					}
 					stack.push(new AttributedElementInfo(schema
 							.getAttributedElementClass(graphClassName)));
-					String graphID = stack.peek().getAttributes().get(GRUML_ATTRIBUTE_ID);
+					String graphID = stack.peek().getAttributes().get(
+							GRUML_ATTRIBUTE_ID);
 
 					try {
 						System.out.println("Creating instance of "

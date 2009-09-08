@@ -35,7 +35,7 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
 
 /**
  * Returns the start-vertex of a given path or edge.
- *
+ * 
  * <dl>
  * <dt><b>GReQL-signature</b></dt>
  * <dd><code>VERTEX startVertex(p:PATH)</code></dd>
@@ -54,10 +54,10 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
  * </dl>
  * </dd>
  * </dl>
- *
+ * 
  * @see EndVertex
  * @author ist@uni-koblenz.de
- *
+ * 
  */
 
 public class StartVertex extends AbstractGreql2Function {

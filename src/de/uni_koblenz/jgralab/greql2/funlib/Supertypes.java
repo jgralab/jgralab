@@ -38,7 +38,7 @@ import de.uni_koblenz.jgralab.schema.AttributedElementClass;
 /**
  * Returns all supertypes of the given type. The type can be given as
  * AttributedElementClass or as String which holds the typename.
- *
+ * 
  * <dl>
  * <dt><b>GReQL-signature</b></dt>
  * <dd><code>SET&lt;ATTRIBUTEDELEMENTCLASS&gt; superTypes(type:STRING)</code></dd>
@@ -61,14 +61,14 @@ import de.uni_koblenz.jgralab.schema.AttributedElementClass;
  * </dl>
  * </dd>
  * </dl>
- *
+ * 
  * @author ist@uni-koblenz.de
- *
+ * 
  */
 
 /*
  * returns a set which contains all supertypes of the given type
- *
+ * 
  * @param type a type (AttributedElementClass or String) @author
  * ist@uni-koblenz.de Bildhauer <dbildh@uni-koblenz.de> Summer 2006, Diploma
  * Thesis

@@ -26,9 +26,9 @@ import de.uni_koblenz.jgralab.greql2.schema.Variable;
 
 /**
  * Holds various static methods used by {@link Optimizer}s.
- *
+ * 
  * @author ist@uni-koblenz.de
- *
+ * 
  */
 public class OptimizerUtility {
 
@@ -37,10 +37,10 @@ public class OptimizerUtility {
 	 * syntaxgraph. The {@link Greql2Expression} is considered to be above all
 	 * other vertices, meaning the root is the top, too. The
 	 * {@link Greql2Aggregation}s in the syntaxgraph point in up-direction.
-	 *
+	 * 
 	 * The <code>isAbove</code> relation is reflexive, e.g.
 	 * <code>isAbove(v1, v1)</code> returns <code>true</code>.
-	 *
+	 * 
 	 * @param v1
 	 *            a {@link Vertex}
 	 * @param v2
@@ -63,7 +63,7 @@ public class OptimizerUtility {
 
 	/**
 	 * Check if <code>funApp</code> is an AND {@link FunctionApplication}.
-	 *
+	 * 
 	 * @param funApp
 	 *            a {@link FunctionApplication}
 	 * @return <code>true</code> if <code>funApp</code> is a
@@ -81,7 +81,7 @@ public class OptimizerUtility {
 
 	/**
 	 * Check if <code>funApp</code> is an OR {@link FunctionApplication}.
-	 *
+	 * 
 	 * @param funApp
 	 *            a {@link FunctionApplication}
 	 * @return <code>true</code> if <code>funApp</code> is a
@@ -99,7 +99,7 @@ public class OptimizerUtility {
 
 	/**
 	 * Check if <code>funApp</code> is an XOR {@link FunctionApplication}.
-	 *
+	 * 
 	 * @param funApp
 	 *            a {@link FunctionApplication}
 	 * @return <code>true</code> if <code>funApp</code> is a
@@ -117,7 +117,7 @@ public class OptimizerUtility {
 
 	/**
 	 * Check if <code>funApp</code> is an NOT {@link FunctionApplication}.
-	 *
+	 * 
 	 * @param funApp
 	 *            a {@link FunctionApplication}
 	 * @return <code>true</code> if <code>funApp</code> is a
@@ -138,7 +138,7 @@ public class OptimizerUtility {
 	 * to the contents of the sourcePosition attribute of <code>to</code>. If a
 	 * {@link SourcePosition} already exists in <code>to</code> it won't be
 	 * added again.
-	 *
+	 * 
 	 * @param from
 	 *            a {@link Greql2Aggregation}
 	 * @param to
@@ -162,9 +162,9 @@ public class OptimizerUtility {
 	 * Find the {@link FunctionId} in the {@link Greql2} graph that has
 	 * <code>name</code> as its name attribute. If no such {@link FunctionId}
 	 * exists it will be created.
-	 *
+	 * 
 	 * @param name
-	 *            the value of the name attribute of the {@link FunctionId}
+	 *            the value of the name attribute of the {@link FunctionId} 
 	 *            we're looking for
 	 * @param graph
 	 *            the {@link Greql2} graph where we look for the
@@ -188,7 +188,7 @@ public class OptimizerUtility {
 	/**
 	 * Initialize all sourcePosition attributes of <code>graph</code> that are
 	 * <code>null</code> with an empty {@link ArrayList}.
-	 *
+	 * 
 	 * @param graph
 	 *            the {@link Greql2} syntaxgraph
 	 */
@@ -219,7 +219,7 @@ public class OptimizerUtility {
 	 * Collect all of {@link Variable}s that are located below <code>v</code>,
 	 * and that are declared in the current query (not bound variables of the
 	 * expression).
-	 *
+	 * 
 	 * @param vertex
 	 *            the root {@link Vertex} below which to look for
 	 *            {@link Variable}s
@@ -236,7 +236,7 @@ public class OptimizerUtility {
 	 * Add all {@link Variable} vertices to <code>vars</code> that are in the
 	 * subgraph below <code>vertex</code>, and that are declared in the current
 	 * query (not bound variables of the expression). Return <code>vars</code>.
-	 *
+	 * 
 	 * @param vertex
 	 * @param vars
 	 * @return the set of {@link Variable} vertices that are located in the
@@ -265,7 +265,7 @@ public class OptimizerUtility {
 	 * Recursively delete all orphaned vertices below <code>vertex</code> except
 	 * vertices in <code>verticesToOmit</code> and their subgraphs. A
 	 * {@link Vertex} is considered orphaned if no {@link Edge} starts at it.
-	 *
+	 * 
 	 * @param vertex
 	 *            a {@link Vertex}
 	 * @param verticesToOmit
@@ -306,7 +306,7 @@ public class OptimizerUtility {
 	/**
 	 * Creates a new {@link GraphSize} object with default values for vertex,
 	 * edge, vertex type and edge type count.
-	 *
+	 * 
 	 * @return the created {@link GraphSize} object
 	 */
 	public static GraphSize getDefaultGraphSize() {

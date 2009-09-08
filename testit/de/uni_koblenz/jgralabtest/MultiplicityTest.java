@@ -359,29 +359,29 @@ public class MultiplicityTest {
 
 	@Test
 	public void multiplicityTest16() throws GraphIOException {
-			compileSchema("Schema de.uni_koblenz.jgralabtest.TestSchema;"
-					+ "GraphClass TestGraph;" + "VertexClass VC1;"
-					+ "VertexClass VC2;"
-					+ "EdgeClass EC1 from VC2 (0,*) to VC1 (2,6);"
-					+ "EdgeClass EC2:EC1 from VC2 (0,*) to VC1 (3,4);");
+		compileSchema("Schema de.uni_koblenz.jgralabtest.TestSchema;"
+				+ "GraphClass TestGraph;" + "VertexClass VC1;"
+				+ "VertexClass VC2;"
+				+ "EdgeClass EC1 from VC2 (0,*) to VC1 (2,6);"
+				+ "EdgeClass EC2:EC1 from VC2 (0,*) to VC1 (3,4);");
 	}
 
 	@Test
 	public void multiplicityTest18() throws GraphIOException {
-			compileSchema("Schema de.uni_koblenz.jgralabtest.TestSchema;"
-					+ "GraphClass TestGraph;" + "VertexClass VC1;"
-					+ "VertexClass VC2;"
-					+ "EdgeClass EC1 from VC2 (0,*) to VC1 (2,6);"
-					+ "EdgeClass EC2:EC1 from VC2 (0,*) to VC1 (2,6);");
+		compileSchema("Schema de.uni_koblenz.jgralabtest.TestSchema;"
+				+ "GraphClass TestGraph;" + "VertexClass VC1;"
+				+ "VertexClass VC2;"
+				+ "EdgeClass EC1 from VC2 (0,*) to VC1 (2,6);"
+				+ "EdgeClass EC2:EC1 from VC2 (0,*) to VC1 (2,6);");
 	}
 
 	@Test
 	public void multiplicityTest22() throws GraphIOException {
-			compileSchema("Schema de.uni_koblenz.jgralabtest.TestSchema;"
-					+ "GraphClass TestGraph;" + "VertexClass VC1;"
-					+ "VertexClass VC2;" + "VertexClass VC3:VC1;"
-					+ "EdgeClass EC1 from VC2 (0,*) to VC1 (2,6);"
-					+ "EdgeClass EC2:EC1 from VC2 (0,*) to VC3 (3,4);");
+		compileSchema("Schema de.uni_koblenz.jgralabtest.TestSchema;"
+				+ "GraphClass TestGraph;" + "VertexClass VC1;"
+				+ "VertexClass VC2;" + "VertexClass VC3:VC1;"
+				+ "EdgeClass EC1 from VC2 (0,*) to VC1 (2,6);"
+				+ "EdgeClass EC2:EC1 from VC2 (0,*) to VC3 (3,4);");
 	}
 
 	/*

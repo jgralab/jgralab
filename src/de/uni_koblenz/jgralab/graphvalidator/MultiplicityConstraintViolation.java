@@ -30,7 +30,7 @@ import de.uni_koblenz.jgralab.schema.EdgeClass;
 
 /**
  * @author Tassilo Horn <horn@uni-koblenz.de>
- *
+ * 
  */
 public class MultiplicityConstraintViolation extends ConstraintViolation {
 	private String message;

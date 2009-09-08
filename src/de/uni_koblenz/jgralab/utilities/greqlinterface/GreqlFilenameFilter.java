@@ -28,7 +28,7 @@ import java.io.FilenameFilter;
 
 /**
  * @author Tassilo Horn <horn@uni-koblenz.de>
- *
+ * 
  */
 public class GreqlFilenameFilter implements FilenameFilter {
 	@Override

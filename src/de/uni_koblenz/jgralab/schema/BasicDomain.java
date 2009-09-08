@@ -38,12 +38,10 @@ public interface BasicDomain extends Domain {
 	/**
 	 * List of names of the basic domains.
 	 */
-	public static final Set<String> BASIC_DOMAINS = new TreeSet<String>(
-			Arrays
-					.asList(new String[] { BooleanDomain.BOOLEANDOMAIN_NAME,
-							DoubleDomain.DOUBLEDOMAIN_NAME,
-							IntegerDomain.INTDOMAIN_NAME,
-							LongDomain.LONGDOMAIN_NAME,
-							StringDomain.STRINGDOMAIN_NAME }));
+	public static final Set<String> BASIC_DOMAINS = new TreeSet<String>(Arrays
+			.asList(new String[] { BooleanDomain.BOOLEANDOMAIN_NAME,
+					DoubleDomain.DOUBLEDOMAIN_NAME,
+					IntegerDomain.INTDOMAIN_NAME, LongDomain.LONGDOMAIN_NAME,
+					StringDomain.STRINGDOMAIN_NAME }));
 
 }

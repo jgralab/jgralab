@@ -46,7 +46,7 @@ import de.uni_koblenz.jgralabtest.schemas.constrained.OtherConstrainedNode;
 
 /**
  * @author Tassilo Horn <horn@uni-koblenz.de>
- *
+ * 
  */
 public class GraphValidatorTest {
 	private ConstrainedGraph g = null;

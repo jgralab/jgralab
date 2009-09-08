@@ -24,8 +24,6 @@
 
 package de.uni_koblenz.jgralab.greql2.parser;
 
-
-
 public class VertexPosition<T> {
 
 	public T node;
@@ -33,13 +31,13 @@ public class VertexPosition<T> {
 	public int offset;
 
 	public int length;
-	
+
 	public VertexPosition(T vertex, int offset, int length) {
 		this.node = vertex;
 		this.offset = offset;
 		this.length = length;
 	}
-	
-	
-	public VertexPosition() {	}
+
+	public VertexPosition() {
+	}
 }

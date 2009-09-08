@@ -21,7 +21,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
- 
+
 package de.uni_koblenz.jgralab.greql2.evaluator.vertexeval;
 
 import de.uni_koblenz.jgralab.EdgeDirection;
@@ -62,13 +62,15 @@ public class LetExpressionEvaluator extends DefinitionExpressionEvaluator {
 		IsDefinitionOf inc = vertex.getFirstIsDefinitionOf(EdgeDirection.IN);
 		while (inc != null) {
 			Definition currentDefinition = (Definition) inc.getAlpha();
-			DefinitionEvaluator definEval = (DefinitionEvaluator) greqlEvaluator.getVertexEvaluatorGraphMarker().getMark(currentDefinition);
+			DefinitionEvaluator definEval = (DefinitionEvaluator) greqlEvaluator
+					.getVertexEvaluatorGraphMarker().getMark(currentDefinition);
 			definEval.getResult(subgraph);
 			inc = inc.getNextIsDefinitionOf(EdgeDirection.IN);
 		}
-		Expression boundExp = (Expression) vertex
-				.getFirstIsBoundExprOf(EdgeDirection.IN).getAlpha();
-		VertexEvaluator boundExpEval = greqlEvaluator.getVertexEvaluatorGraphMarker().getMark(boundExp);
+		Expression boundExp = (Expression) vertex.getFirstIsBoundExprOf(
+				EdgeDirection.IN).getAlpha();
+		VertexEvaluator boundExpEval = greqlEvaluator
+				.getVertexEvaluatorGraphMarker().getMark(boundExp);
 		return boundExpEval.getResult(subgraph);
 	}
 

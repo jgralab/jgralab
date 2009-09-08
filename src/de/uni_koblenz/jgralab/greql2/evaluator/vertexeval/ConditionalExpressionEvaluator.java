@@ -36,9 +36,9 @@ import de.uni_koblenz.jgralab.greql2.schema.Expression;
 
 /**
  * Evaluates a ConditionalExpression vertex in the GReQL-2 Syntaxgraph
- *
+ * 
  * @author ist@uni-koblenz.de
- *
+ * 
  */
 public class ConditionalExpressionEvaluator extends VertexEvaluator {
 
@@ -57,7 +57,7 @@ public class ConditionalExpressionEvaluator extends VertexEvaluator {
 
 	/**
 	 * Creates a new ConditionExpressionEvaluator for the given vertex
-	 *
+	 * 
 	 * @param eval
 	 *            the GreqlEvaluator instance this VertexEvaluator belong to
 	 * @param vertex

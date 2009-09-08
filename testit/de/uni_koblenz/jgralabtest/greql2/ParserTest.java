@@ -97,29 +97,30 @@ import de.uni_koblenz.jgralab.greql2.schema.VertexSubgraphExpression;
 
 public class ParserTest {
 
-
 	private Greql2 parseQuery(String query) throws ParsingException {
 		return parseQuery(query, null);
 	}
 
-	private Greql2 parseQuery(String query, String file) throws ParsingException {
+	private Greql2 parseQuery(String query, String file)
+			throws ParsingException {
 		Greql2 graph = ManualGreqlParser.parse(query);
 		if (file != null) {
 			try {
-				GraphIO.saveGraphToFile(file, graph,null);
+				GraphIO.saveGraphToFile(file, graph, null);
 			} catch (Exception ex) {
-				throw new RuntimeException("Error saving graph to file " + file, ex);
+				throw new RuntimeException(
+						"Error saving graph to file " + file, ex);
 			}
 		}
-			
+
 		return graph;
 	}
-	
+
 	@Test
 	public void testGreql2TestGraph() throws ParsingException {
 		parseQuery("from i:c report i end where d:=\"drölfundfünfzig\", c:=b, b:=a, a:=\"Mensaessen\"");
 	}
-	
+
 	@Test
 	public void testExistsOne() throws Exception {
 		Greql2 graph = parseQuery("exists! x:list(1..5) @ x = 5");
@@ -172,7 +173,6 @@ public class ParserTest {
 		FunctionId funId = (FunctionId) isIdOf.getAlpha();
 		assertEquals("equals", funId.getName());
 	}
-	
 
 	@Test
 	public void testMatchExpression() throws Exception {
@@ -184,7 +184,7 @@ public class ParserTest {
 		FunctionId funId = (FunctionId) isIdOf.getAlpha();
 		assertEquals("reMatch", funId.getName());
 	}
-	
+
 	@Test
 	public void testIdentifierWithDollar() throws Exception {
 		Greql2 graph = parseQuery("from $i : V{} report $i end");
@@ -192,7 +192,7 @@ public class ParserTest {
 		assertNotNull(v);
 		assertEquals("$i", v.getName());
 	}
-	
+
 	@Test
 	public void testIdentifierWithDollar2() throws Exception {
 		Greql2 graph = parseQuery("using $: from i:$ report i end");
@@ -210,7 +210,7 @@ public class ParserTest {
 		assertTrue(t.isType());
 		assertFalse(t.isExcluded());
 	}
-	
+
 	@Test
 	public void testTypeId2() throws Exception {
 		Greql2 graph = parseQuery("V{^Part!}");
@@ -220,7 +220,7 @@ public class ParserTest {
 		assertTrue(t.isType());
 		assertTrue(t.isExcluded());
 	}
-	
+
 	@Test
 	public void testTypeId3() throws Exception {
 		Greql2 graph = parseQuery("V{^Part}");
@@ -231,7 +231,6 @@ public class ParserTest {
 		assertTrue(t.isExcluded());
 	}
 
-	
 	@Test
 	public void testNotEqualExpression() throws Exception {
 		Greql2 graph = parseQuery("true <> false");
@@ -372,13 +371,10 @@ public class ParserTest {
 		assertEquals(4, constr.getDegree(IsPartOf.class));
 	}
 
-	
 	@Test
 	public void testGreTLQuery() throws Exception {
-		String query = "from t : V{Vertex}    "
-						+ "report t --> "
-						+ "     & {hasType(thisVertex, \"MyType\")} "
-						+ "end";
+		String query = "from t : V{Vertex}    " + "report t --> "
+				+ "     & {hasType(thisVertex, \"MyType\")} " + "end";
 		Greql2 graph = parseQuery(query);
 		assertNotNull(graph);
 		ThisVertex tv = graph.getFirstThisVertex();
@@ -395,8 +391,7 @@ public class ParserTest {
 		tv = tv.getNextThisVertex();
 		assertNull(tv);
 	}
-	
-	
+
 	@Test
 	public void testRole() throws Exception {
 		String queryString = "from var: V{Variable} report <>--{@undefinedRole} end";
@@ -405,7 +400,8 @@ public class ParserTest {
 		RoleId id = graph.getFirstRoleId();
 		assertNotNull(id);
 		assertEquals("undefinedRole", id.getName());
-		AggregationPathDescription agg = graph.getFirstAggregationPathDescription();
+		AggregationPathDescription agg = graph
+				.getFirstAggregationPathDescription();
 		assertNotNull(agg);
 		Edge e = id.getFirstIsRoleIdOf();
 		assertNotNull(e);
@@ -414,7 +410,7 @@ public class ParserTest {
 		assertNotNull(erof);
 		assertEquals(agg, erof.getOmega());
 	}
-	
+
 	@Test
 	public void testListRangeConstruction() throws Exception {
 		Greql2 graph = parseQuery("list(10..13)");
@@ -495,18 +491,18 @@ public class ParserTest {
 		assertEquals("exists!", quantifier.getName());
 	}
 
-//	@Test
-//	public void testExistsOneQuantifier() throws Exception {
-//		ManualGreql2Parser parser = getParser("exists!");
-//		parser.initialize();
-//		try {
-//			Quantifier q = parser.quantifier();
-//			assertNotNull(q);
-//		} catch (RecognitionException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		}
-//	}
+	// @Test
+	// public void testExistsOneQuantifier() throws Exception {
+	// ManualGreql2Parser parser = getParser("exists!");
+	// parser.initialize();
+	// try {
+	// Quantifier q = parser.quantifier();
+	// assertNotNull(q);
+	// } catch (RecognitionException e) {
+	// // TODO Auto-generated catch block
+	// e.printStackTrace();
+	// }
+	// }
 
 	@Test
 	public void testVariableList() throws Exception {
@@ -524,7 +520,6 @@ public class ParserTest {
 		assertNotNull(var);
 		assertEquals("d", var.getName());
 	}
-	
 
 	@Test
 	public void testSimpleQueryWithConstraint() throws Exception {
@@ -706,15 +701,14 @@ public class ParserTest {
 	public void testDefinitionList() throws Exception {
 		parseQuery("let a:=7, b:=5 in a+b");
 	}
-	
 
 	@Test
 	public void testEvaluateListAccess() throws Exception {
 		String queryString = "let x := list ( \"bratwurst\", \"currywurst\") in from i:V{Identifier} report x[3] end";
 		parseQuery(queryString);
-		
+
 	}
-	
+
 	@Test
 	public void testIsCycle() throws Exception {
 		String queryString = "from v : V reportSet isCycle(extractPath(pathSystem(v, -->), v)) end";
@@ -917,7 +911,6 @@ public class ParserTest {
 		parseQuery("from v:V report v as \"Vertex\" end");
 	}
 
-
 	@Test
 	public void testSimplePathDescription() throws Exception {
 		Greql2 graph = parseQuery("using v: v --> ");
@@ -973,7 +966,8 @@ public class ParserTest {
 	@Test
 	public void testPathDescriptionWithParantheses1() throws Exception {
 		Greql2 graph = parseQuery("(--> | <--)");
-		AlternativePathDescription apd = (AlternativePathDescription) graph.getFirstAlternativePathDescription();
+		AlternativePathDescription apd = (AlternativePathDescription) graph
+				.getFirstAlternativePathDescription();
 		assertNotNull(apd);
 		IsAlternativePathOf edge = apd
 				.getFirstIsAlternativePathOf(EdgeDirection.IN);
@@ -1067,7 +1061,6 @@ public class ParserTest {
 		assertTrue(edge.getAlpha() instanceof SimplePathDescription);
 	}
 
-	
 	@Test
 	public void testStartRestrictedPathDescriptionWithExpression()
 			throws Exception {
@@ -1148,7 +1141,6 @@ public class ParserTest {
 		assertTrue(pathEdge.getAlpha() instanceof SimplePathDescription);
 	}
 
-
 	@Test
 	public void testEdgePathDescription() throws Exception {
 		Greql2 graph = parseQuery("using e,v : v --e-> ");
@@ -1161,31 +1153,27 @@ public class ParserTest {
 		assertNotNull(edge);
 	}
 
-	
 	@Test
 	public void testErrorInTypeExpression() throws Exception {
 		String query = "from v:V{Greql2Expression, ^TypeExpression, ^Quantifier} report v end";
 		parseQuery(query);
 	}
 
-
 	@Test(timeout = 5000)
 	public void testParsingSpeed2() throws Exception {
 		parseQuery("3 + (((3) + (((3)) - 3) * (((((((((9 - 6))) + 3 - 6)) + 3))))) - 3)");
 	}
-	
-	
+
 	@Test(timeout = 5000)
 	public void testParsingSpeed3() throws Exception {
 		parseQuery("((((((((((((9))))))))))))");
 	}
-	
+
 	@Test(timeout = 5000)
 	public void testParsingSpeed4() throws Exception {
 		parseQuery("(((((((((((((((((((((((((((((((((((((((9))))))))))))))))))))))))))))))))))))))))");
 	}
-	
-	
+
 	@Test
 	public void testStringWithoutEscapes() {
 		Greql2 graph = parseQuery("\"my simple string\"");
@@ -1194,7 +1182,7 @@ public class ParserTest {
 		assertNotNull(lit);
 		assertEquals("my simple string", lit.getStringValue());
 	}
-	
+
 	@Test
 	public void testStringWithEscape1() {
 		String queryString = "\"my simple \\\"string\"";
@@ -1205,7 +1193,7 @@ public class ParserTest {
 		assertNotNull(lit);
 		assertEquals("my simple \"string", lit.getStringValue());
 	}
-	
+
 	@Test
 	public void testStringWithEscape2() {
 		String queryString = "\"my simple \nstring\"";
@@ -1216,7 +1204,7 @@ public class ParserTest {
 		assertNotNull(lit);
 		assertEquals("my simple \nstring", lit.getStringValue());
 	}
-	
+
 	@Test
 	public void testParsingError() {
 		try {
@@ -1226,7 +1214,7 @@ public class ParserTest {
 			assertEquals(24, ex.getOffset());
 		}
 	}
-	
+
 	@Test
 	public void testParsingError2() {
 		try {

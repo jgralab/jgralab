@@ -21,16 +21,17 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
- 
+
 package de.uni_koblenz.jgralab;
 
 import de.uni_koblenz.jgralab.schema.AttributedElementClass;
 import de.uni_koblenz.jgralab.schema.Domain;
 
 /**
- * represents an attribute in the m2 layer, consists of a name and a domain 
+ * represents an attribute in the m2 layer, consists of a name and a domain
+ * 
  * @author ist@uni-koblenz.de
- *
+ * 
  */
 public interface Attribute {
 
@@ -48,11 +49,11 @@ public interface Attribute {
 	 * @return the name of the attribute
 	 */
 	public String getName();
-	
+
 	/**
 	 * @return the owning AttributedElementClass
 	 */
 	public AttributedElementClass getAttributedElementClass();
-	
+
 	public String getSortKey();
 }

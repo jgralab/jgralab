@@ -34,9 +34,9 @@ import de.uni_koblenz.jgralab.greql2.schema.SourcePosition;
 /**
  * Should be thrown if a function is called with the wrong parameter count or
  * type
- *
+ * 
  * @author ist@uni-koblenz.de
- *
+ * 
  */
 public class WrongFunctionParameterException extends QuerySourceException {
 

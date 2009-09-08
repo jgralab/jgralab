@@ -22,12 +22,12 @@ import de.uni_koblenz.jgralab.grumlschema.structure.SpecializesEdgeClass;
 import de.uni_koblenz.jgralab.grumlschema.structure.SpecializesVertexClass;
 import de.uni_koblenz.jgralab.grumlschema.structure.VertexClass;
 
-
 /**
- * This class handles the filtering of schemas. It is used for example in SchemaGraph2XSD.
+ * This class handles the filtering of schemas. It is used for example in
+ * SchemaGraph2XSD.
  * 
  * @author strauss@uni-koblenz.de
- *
+ * 
  */
 public class SchemaFilter {
 

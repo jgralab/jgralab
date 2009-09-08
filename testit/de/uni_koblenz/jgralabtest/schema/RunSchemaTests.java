@@ -26,10 +26,9 @@ package de.uni_koblenz.jgralabtest.schema;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 
-
 /**
  * @author ist@uni-koblenz.de
- *
+ * 
  */
 @RunWith(Suite.class)
 @Suite.SuiteClasses( { RunDomainTests.class, RunAttributedElementTests.class })

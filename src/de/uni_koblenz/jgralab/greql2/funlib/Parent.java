@@ -39,7 +39,7 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
  * Returns the parent-vertex of the given vertex in the given pathsystem. The
  * parent-vertex of a vertex, is the vertex that connects the vertex with an
  * incoming edge.
- *
+ * 
  * <dl>
  * <dt><b>GReQL-signature</b></dt>
  * <dd><code>VERTEX parent(ps:PATHSYSTEM, v:VERTEX)</code></dd>
@@ -59,9 +59,9 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
  * </dl>
  * </dd>
  * </dl>
- *
+ * 
  * @author ist@uni-koblenz.de
- *
+ * 
  */
 
 public class Parent extends AbstractGreql2Function {

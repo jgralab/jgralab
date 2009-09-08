@@ -30,9 +30,9 @@ import de.uni_koblenz.jgralab.greql2.exception.JValueInvalidTypeException;
 
 /**
  * This class is base for all collections of JValue-Objects.
- *
+ * 
  * @author ist@uni-koblenz.de
- *
+ * 
  */
 abstract public class JValueCollection extends JValue implements
 		Iterable<JValue> {
@@ -95,7 +95,7 @@ abstract public class JValueCollection extends JValue implements
 
 	/**
 	 * adds a JValue to the collection
-	 *
+	 * 
 	 * @param element
 	 *            the JValue to be added
 	 * @return true if successfull, false otherwise
@@ -104,7 +104,7 @@ abstract public class JValueCollection extends JValue implements
 
 	/**
 	 * adds all elements of given collection to this collection
-	 *
+	 * 
 	 * @param collection
 	 *            the collection whose elements should be added
 	 * @return true if successfull, false otherwise
@@ -139,7 +139,7 @@ abstract public class JValueCollection extends JValue implements
 
 	/**
 	 * removes a JValue from the collection
-	 *
+	 * 
 	 * @param element
 	 *            the element to be removed
 	 * @return true if successfull, false otherwise
@@ -148,7 +148,7 @@ abstract public class JValueCollection extends JValue implements
 
 	/**
 	 * removes a collection from this collection
-	 *
+	 * 
 	 * @param collection
 	 *            the collection whose elements should be removed
 	 * @return true if have been removed, false otherwise
@@ -162,7 +162,7 @@ abstract public class JValueCollection extends JValue implements
 
 	/**
 	 * replaces the old element the given newElement
-	 *
+	 * 
 	 * @param oldElement
 	 *            the element which should be replaced
 	 * @param newElement
@@ -172,7 +172,7 @@ abstract public class JValueCollection extends JValue implements
 	abstract public boolean replace(JValue oldElement, JValue newElement);
 
 	/**
-	 *
+	 * 
 	 * @return the number of elements in this collection
 	 */
 	abstract public int size();
@@ -217,7 +217,7 @@ abstract public class JValueCollection extends JValue implements
 
 	/**
 	 * transforms this collection into a JValueSet
-	 *
+	 * 
 	 * @return a JValueSet which contains the same elements as this collection,
 	 *         duplicates will be eliminated
 	 */
@@ -235,7 +235,7 @@ abstract public class JValueCollection extends JValue implements
 
 	/**
 	 * transforms this collection into a JValueBag
-	 *
+	 * 
 	 * @return a JValueBag which contains the same elements as this collection,
 	 *         duplicates won't be eliminated
 	 */
@@ -254,7 +254,7 @@ abstract public class JValueCollection extends JValue implements
 	/**
 	 * transforms this collection into a JValueList. Beware, the order of the
 	 * elements is random, the are _not_ sorted
-	 *
+	 * 
 	 * @return a JValueList which contains the same elements as this collecton,
 	 *         duplicates won't be eliminated
 	 */
@@ -274,7 +274,7 @@ abstract public class JValueCollection extends JValue implements
 	 * transforms this collection into a JValueTupel. Beware, the order of the
 	 * elements is random, the are _not_ sorted and the sequence of the resultig
 	 * tupel will be random. Use this with care
-	 *
+	 * 
 	 * @return a JValueTupel which contains the same elements as this collecton,
 	 *         duplicates won't be eliminated
 	 */
@@ -293,7 +293,7 @@ abstract public class JValueCollection extends JValue implements
 	/**
 	 * transforms this collection into a JValueRecord. If the collection is not
 	 * already a record, the attribute names are 1, 2 ...
-	 *
+	 * 
 	 * @return a JValueRecord which contains the same elements as this
 	 *         collecton, duplicates won't be eliminated
 	 */

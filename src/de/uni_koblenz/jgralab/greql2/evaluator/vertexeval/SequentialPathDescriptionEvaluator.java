@@ -21,7 +21,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
- 
+
 package de.uni_koblenz.jgralab.greql2.evaluator.vertexeval;
 
 import java.util.ArrayList;
@@ -72,8 +72,8 @@ public class SequentialPathDescriptionEvaluator extends
 				.getFirstIsSequenceElementOf(EdgeDirection.IN);
 		ArrayList<NFA> nfaList = new ArrayList<NFA>();
 		while (inc != null) {
-			PathDescriptionEvaluator pathEval = (PathDescriptionEvaluator) greqlEvaluator.getVertexEvaluatorGraphMarker().getMark(inc
-					.getAlpha());
+			PathDescriptionEvaluator pathEval = (PathDescriptionEvaluator) greqlEvaluator
+					.getVertexEvaluatorGraphMarker().getMark(inc.getAlpha());
 			nfaList.add(pathEval.getNFA());
 			inc = inc.getNextIsSequenceElementOf(EdgeDirection.IN);
 		}

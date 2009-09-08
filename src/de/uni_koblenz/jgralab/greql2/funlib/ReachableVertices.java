@@ -47,7 +47,7 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
  * Returns all vertices that are reachable from the given vertex with a path
  * that is accepted by the given dfa. A dfa is defined as regular path
  * expression.
- *
+ * 
  * <dl>
  * <dt><b>GReQL-signature</b></dt>
  * <dd><code>SET&lt;VERTEX&gt; reachableVertices(v:VERTEX, dfa: DFA)</code></dd>
@@ -67,9 +67,9 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
  * </dl>
  * </dd>
  * </dl>
- *
+ * 
  * @author ist@uni-koblenz.de
- *
+ * 
  */
 public class ReachableVertices extends AbstractGreql2Function {
 
@@ -95,7 +95,8 @@ public class ReachableVertices extends AbstractGreql2Function {
 			markers[s.number] = new BooleanGraphMarker(graph);
 		}
 		Queue<PathSearchQueueEntry> queue = new LinkedList<PathSearchQueueEntry>();
-		PathSearchQueueEntry currentEntry = new PathSearchQueueEntry(startVertex, dfa.initialState);
+		PathSearchQueueEntry currentEntry = new PathSearchQueueEntry(
+				startVertex, dfa.initialState);
 		markers[currentEntry.state.number].mark(currentEntry.vertex);
 		queue.add(currentEntry);
 		while (!queue.isEmpty()) {

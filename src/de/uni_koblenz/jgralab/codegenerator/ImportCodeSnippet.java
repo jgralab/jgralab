@@ -41,17 +41,20 @@ public class ImportCodeSnippet extends CodeSnippet {
 	private SortedSet<String> imports;
 
 	/**
-	 * creates an empty <code>ImportCodeSnippet</code> by initializing its SortedSet
-	 * and by creating a <code>CodeSnippet</code> with a new line as its only content 
+	 * creates an empty <code>ImportCodeSnippet</code> by initializing its
+	 * SortedSet and by creating a <code>CodeSnippet</code> with a new line as
+	 * its only content
 	 */
 	public ImportCodeSnippet() {
 		this(null);
 	}
 
 	/**
-	 * creates an empty <code>ImportCodeSnippet</code> and a new <code>CodeSnippet</code> 
-	 * with a new line at its start 
-	 * @param parent is passed to the <code>CodeSnippet</code>
+	 * creates an empty <code>ImportCodeSnippet</code> and a new
+	 * <code>CodeSnippet</code> with a new line at its start
+	 * 
+	 * @param parent
+	 *            is passed to the <code>CodeSnippet</code>
 	 */
 	public ImportCodeSnippet(CodeList parent) {
 		super(parent, true);
@@ -59,10 +62,12 @@ public class ImportCodeSnippet extends CodeSnippet {
 	}
 
 	/**
-	 * adds <code>addedLines</code> to <code>this</code>
-	 * if one of the Strings of <code>addedLines</code> has already been put into
-	 * <code>this</code>, it will not be added again 
-	 * @param addedLines will be added to <code>this</code>
+	 * adds <code>addedLines</code> to <code>this</code> if one of the Strings
+	 * of <code>addedLines</code> has already been put into <code>this</code>,
+	 * it will not be added again
+	 * 
+	 * @param addedLines
+	 *            will be added to <code>this</code>
 	 */
 	@Override
 	public void add(String... addedLines) {
@@ -74,17 +79,20 @@ public class ImportCodeSnippet extends CodeSnippet {
 	}
 
 	/**
-	 * <code>this</code> is only called from within the codegenerator, exceptions
-	 * are therefore handled optimistically 
-	 * <code>this</code> expects its Strings to contain a "."
-	 * @param indent defines how much each import-statement is to be interposed
-	 * @return the content of <code>this</code> as import-statements, the import-
-	 * statements are sorted, meaning that imports from the same package form an
-	 * import-statement-block with one statement per line, import-statements from
-	 * different packages are divided by an empty line between the statements 
-	 * every line is interposed according to <code>indent</code>
-	 * additionally the import-statements are sorted alphabetically
-	 * if <code>this</code> is empty, an empty String will be returned
+	 * <code>this</code> is only called from within the codegenerator,
+	 * exceptions are therefore handled optimistically <code>this</code> expects
+	 * its Strings to contain a "."
+	 * 
+	 * @param indent
+	 *            defines how much each import-statement is to be interposed
+	 * @return the content of <code>this</code> as import-statements, the
+	 *         import- statements are sorted, meaning that imports from the same
+	 *         package form an import-statement-block with one statement per
+	 *         line, import-statements from different packages are divided by an
+	 *         empty line between the statements every line is interposed
+	 *         according to <code>indent</code> additionally the
+	 *         import-statements are sorted alphabetically if <code>this</code>
+	 *         is empty, an empty String will be returned
 	 */
 	@Override
 	public String getCode(int indent) {
@@ -102,9 +110,9 @@ public class ImportCodeSnippet extends CodeSnippet {
 	}
 
 	/**
-	 * clears the CodeSnippet by discarding all saved Strings
-	 * clears the parent, <code>this</code>.getParent() will afterwards throw
-	 * a NullPointerException if called
+	 * clears the CodeSnippet by discarding all saved Strings clears the parent,
+	 * <code>this</code>.getParent() will afterwards throw a
+	 * NullPointerException if called
 	 */
 	@Override
 	public void clear() {

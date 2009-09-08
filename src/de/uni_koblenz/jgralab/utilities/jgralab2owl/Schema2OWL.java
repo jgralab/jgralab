@@ -143,13 +143,14 @@ class Schema2OWL {
 			writeOwlClassStartElement(enumDomain.getQualifiedName());
 			writer.writeStartElement(JGraLab2OWL.owlNS, "oneOf");
 			writer.writeAttribute(JGraLab2OWL.rdfNS, "parseType", "Collection");
-			
+
 			// convert Enum constants
 			for (String enumConst : enumDomain.getConsts()) {
 				writer.writeEmptyElement(JGraLab2OWL.owlNS, "Thing");
-				writer.writeAttribute(JGraLab2OWL.rdfNS, "about", "#" + enumConst);
+				writer.writeAttribute(JGraLab2OWL.rdfNS, "about", "#"
+						+ enumConst);
 			}
-			
+
 			writer.writeEndElement();
 			writer.writeEndElement();
 		}
@@ -170,7 +171,8 @@ class Schema2OWL {
 	 * @see #convertListDomain()
 	 * @see #convertRecordDomain(RecordDomain rd)
 	 */
-	private void convertCompositeDomains(Schema schema) throws XMLStreamException {
+	private void convertCompositeDomains(Schema schema)
+			throws XMLStreamException {
 		boolean setCreated = false;
 		boolean listCreated = false;
 
@@ -219,17 +221,17 @@ class Schema2OWL {
 	 */
 	private void convertSetDomain() throws XMLStreamException {
 		writeOwlClassStartElement("Set");
-		
+
 		writeOwlDatatypePropertyStartElement("setHasDatatype");
 		writeRdfsDomainEmptyElement("#Set");
 		writeRdfsRangeEmptyElement(JGraLab2OWL.rdfsNS + "Datatype");
 		writer.writeEndElement();
-		
+
 		writeOwlObjectPropertyStartElement("setHasObject");
 		writeRdfsDomainEmptyElement("#Set");
 		writeRdfsRangeEmptyElement(JGraLab2OWL.owlNS + "Class");
 		writer.writeEndElement();
-		
+
 		writer.writeEndElement();
 	}
 
@@ -283,7 +285,7 @@ class Schema2OWL {
 	private void convertListDomain() throws XMLStreamException {
 		// write ListElement element
 		writeOwlClassStartElement("ListElement");
-		
+
 		writeRdfsSubClassOfStartElement();
 		writeOwlRestrictionStartElement();
 		writeOwlOnPropertyEmptyElement("#listElementHasDatatype");
@@ -292,7 +294,7 @@ class Schema2OWL {
 		writer.writeEndElement();
 		writer.writeEndElement();
 		writer.writeEndElement();
-		
+
 		writeRdfsSubClassOfStartElement();
 		writeOwlRestrictionStartElement();
 		writeOwlOnPropertyEmptyElement("#listElementHasObject");
@@ -301,20 +303,20 @@ class Schema2OWL {
 		writer.writeEndElement();
 		writer.writeEndElement();
 		writer.writeEndElement();
-		
+
 		writer.writeEndElement();
-		
+
 		// write property elements
 		writeOwlDatatypePropertyStartElement("listElementHasDatatype");
 		writeRdfsDomainEmptyElement("#ListElement");
 		writeRdfsRangeEmptyElement(JGraLab2OWL.rdfsNS + "Datatype");
 		writer.writeEndElement();
-		
+
 		writeOwlDatatypePropertyStartElement("listElementHasObject");
 		writeRdfsDomainEmptyElement("#ListElement");
 		writeRdfsRangeEmptyElement(JGraLab2OWL.owlNS + "Class");
 		writer.writeEndElement();
-		
+
 		writeOwlDatatypePropertyStartElement("hasNextListElement");
 		writeRdfTypeEmptyElement(JGraLab2OWL.owlNS + "FunctionalProperty");
 		writeRdfsDomainEmptyElement("#ListElement");
@@ -365,40 +367,52 @@ class Schema2OWL {
 					|| component.getValue().toString().contains("Enum")) {
 				writeOwlObjectPropertyStartElement();
 
-				writeRdfTypeEmptyElement(JGraLab2OWL.owlNS + "FunctionalProperty");
+				writeRdfTypeEmptyElement(JGraLab2OWL.owlNS
+						+ "FunctionalProperty");
 				writeRdfsDomainEmptyElement("#" + rd.getQualifiedName());
 
 				writeRdfsRangeEmptyElement();
 				if (component.getValue().getTGTypeName(null)
 						.startsWith("List<")) {
-					writer.writeAttribute(JGraLab2OWL.rdfNS, "resource", "#ListElement");
+					writer.writeAttribute(JGraLab2OWL.rdfNS, "resource",
+							"#ListElement");
 				} else if (component.getValue().getTGTypeName(null).startsWith(
 						"Set<")) {
-					writer.writeAttribute(JGraLab2OWL.rdfNS, "resource", "#Set");
+					writer
+							.writeAttribute(JGraLab2OWL.rdfNS, "resource",
+									"#Set");
 				} else {
-					writer.writeAttribute(JGraLab2OWL.rdfNS, "resource", "#" + component.getValue().getQualifiedName());
+					writer.writeAttribute(JGraLab2OWL.rdfNS, "resource", "#"
+							+ component.getValue().getQualifiedName());
 				}
-			// if "component" has a BasicDomain
+				// if "component" has a BasicDomain
 			} else {
 				writeOwlDatatypePropertyStartElement(HelperMethods
 						.firstToLowerCase(rd.getQualifiedName())
 						+ "Has"
 						+ HelperMethods.firstToUpperCase(component.getKey()));
-								
-				writeRdfTypeEmptyElement(JGraLab2OWL.owlNS + "FunctionalProperty");
+
+				writeRdfTypeEmptyElement(JGraLab2OWL.owlNS
+						+ "FunctionalProperty");
 				writeRdfsDomainEmptyElement("#" + rd.getQualifiedName());
 
 				writeRdfsRangeEmptyElement();
 				if (component.getValue().getTGTypeName(null).equals("String")) {
-					writer.writeAttribute(JGraLab2OWL.rdfNS, "resource", JGraLab2OWL.xsdNS + "string");
+					writer.writeAttribute(JGraLab2OWL.rdfNS, "resource",
+							JGraLab2OWL.xsdNS + "string");
 				} else {
-					writer.writeAttribute(JGraLab2OWL.rdfNS, "resource", JGraLab2OWL.xsdNS + component
-							.getValue()
-							.getJavaAttributeImplementationTypeName(
-									""));
+					writer
+							.writeAttribute(
+									JGraLab2OWL.rdfNS,
+									"resource",
+									JGraLab2OWL.xsdNS
+											+ component
+													.getValue()
+													.getJavaAttributeImplementationTypeName(
+															""));
 				}
 			}
-			
+
 			writer.writeEndElement();
 		}
 
@@ -506,16 +520,16 @@ class Schema2OWL {
 	 * @see #writeDefaultGECProperties()
 	 * @see #writeRoleElement(boolean from, String gecStringRep)
 	 */
-	private void convertGraphClasses(Schema schema) throws XMLStreamException {		
+	private void convertGraphClasses(Schema schema) throws XMLStreamException {
 		// create OWL class for Default GraphClass
 		GraphClass gc = schema.getDefaultGraphClass();
 		writeOwlClassStartElement(gc.getQualifiedName());
-		
+
 		// if gc is abstract and has subclasses, create union of subclasses
 		if (gc.isAbstract() && !gc.getDirectSubClasses().isEmpty()) {
 			writeUnionOfSubclasses(gc);
 		}
-		
+
 		writer.writeEndElement();
 
 		// create OWL class for "other" GraphClass
@@ -524,14 +538,14 @@ class Schema2OWL {
 
 		// create references to superclasses
 		for (AttributedElementClass superGC : gc.getDirectSuperClasses()) {
-			writeRdfsSubClassOfEmptyElement("#"	+ superGC.getQualifiedName());
+			writeRdfsSubClassOfEmptyElement("#" + superGC.getQualifiedName());
 		}
 
 		// if gc is abstract and has subclasses, create union of subclasses
 		if (gc.isAbstract() && !gc.getDirectSubClasses().isEmpty()) {
 			writeUnionOfSubclasses(gc);
 		}
-		
+
 		writer.writeEndElement();
 
 		convertAttributes(gc);
@@ -617,7 +631,8 @@ class Schema2OWL {
 
 			// create references to superclasses
 			for (AttributedElementClass superVC : vc.getDirectSuperClasses()) {
-				writeRdfsSubClassOfEmptyElement("#" + superVC.getQualifiedName());
+				writeRdfsSubClassOfEmptyElement("#"
+						+ superVC.getQualifiedName());
 			}
 
 			// if vc is abstract and has subclasses, create union of subclasses
@@ -629,7 +644,7 @@ class Schema2OWL {
 			if (vc.getQualifiedName().equals("Vertex")) {
 				writeDefaultGECCardinality("Vertex");
 			}
-			
+
 			// create subclass restrictions for multiplicities
 			for (EdgeClass ec : vc.getOwnEdgeClasses()) {
 				if (ec.getFrom() == vc) {
@@ -639,7 +654,7 @@ class Schema2OWL {
 					writeMultiplicityElement(false, ec);
 				}
 			}
-			
+
 			writer.writeEndElement();
 			convertAttributes(vc);
 		}
@@ -732,50 +747,47 @@ class Schema2OWL {
 	 * 
 	 * @param ec
 	 *            The {@code EdgeClass} which shall be converted.
-	 * @throws XMLStreamException            
+	 * @throws XMLStreamException
 	 * 
 	 * @see #writeMultiplicityElement(boolean from, EdgeClass ec)
 	 */
-	private void convertEdgeClass2OWLProperty(EdgeClass ec) throws XMLStreamException {
+	private void convertEdgeClass2OWLProperty(EdgeClass ec)
+			throws XMLStreamException {
 		// write normal property
-		writeOwlObjectPropertyStartElement(HelperMethods
-				.firstToLowerCase(ec.getQualifiedName())
+		writeOwlObjectPropertyStartElement(HelperMethods.firstToLowerCase(ec
+				.getQualifiedName())
 				+ edgeClassNameSuffix);
-		
+
 		for (AttributedElementClass superEC : ec.getDirectSuperClasses()) {
 			writeRdfsSubPropertyOfEmptyElement("#"
 					+ HelperMethods
 							.firstToLowerCase(superEC.getQualifiedName())
 					+ edgeClassNameSuffix);
 		}
-		writeRdfsDomainEmptyElement("#"
-				+ (ec).getFrom().getQualifiedName());
-		writeRdfsRangeEmptyElement("#"
-				+ (ec).getTo().getQualifiedName());
-		
+		writeRdfsDomainEmptyElement("#" + (ec).getFrom().getQualifiedName());
+		writeRdfsRangeEmptyElement("#" + (ec).getTo().getQualifiedName());
+
 		writer.writeEndElement();
-		
+
 		// write "-of" property
-		writeOwlObjectPropertyStartElement(HelperMethods
-				.firstToLowerCase(ec.getQualifiedName())
+		writeOwlObjectPropertyStartElement(HelperMethods.firstToLowerCase(ec
+				.getQualifiedName())
 				+ edgeClassNameSuffix + "-of");
-		
+
 		for (AttributedElementClass superEC : ec.getDirectSuperClasses()) {
 			writeRdfsSubPropertyOfEmptyElement("#"
 					+ HelperMethods
 							.firstToLowerCase(superEC.getQualifiedName())
 					+ edgeClassNameSuffix + "-of");
 		}
-		
+
 		writeOwlInverseOfEmptyElement("#"
 				+ HelperMethods.firstToLowerCase(ec.getQualifiedName())
 				+ edgeClassNameSuffix);
-		
-		writeRdfsDomainEmptyElement("#"
-				+ (ec).getTo().getQualifiedName());
-		writeRdfsRangeEmptyElement("#"
-				+ (ec).getFrom().getQualifiedName());
-		
+
+		writeRdfsDomainEmptyElement("#" + (ec).getTo().getQualifiedName());
+		writeRdfsRangeEmptyElement("#" + (ec).getFrom().getQualifiedName());
+
 		writer.writeEndElement();
 	}
 
@@ -914,14 +926,14 @@ class Schema2OWL {
 	 * @see #writeAggregateElement()
 	 * @see #writeAggregateSubClassElement(Element elem)
 	 */
-	private void convertEdgeClass2OWLClass(EdgeClass ec) throws XMLStreamException {
-		writeOwlClassStartElement(ec.getQualifiedName()
-				+ edgeClassNameSuffix);
+	private void convertEdgeClass2OWLClass(EdgeClass ec)
+			throws XMLStreamException {
+		writeOwlClassStartElement(ec.getQualifiedName() + edgeClassNameSuffix);
 
 		// create superclass references
 		for (AttributedElementClass superEC : ec.getDirectSuperClasses()) {
-			writeRdfsSubClassOfEmptyElement("#"
-					+ superEC.getQualifiedName() + edgeClassNameSuffix);
+			writeRdfsSubClassOfEmptyElement("#" + superEC.getQualifiedName()
+					+ edgeClassNameSuffix);
 		}
 
 		// if gec is abstract and has subclasses, create union of subclasses
@@ -939,26 +951,26 @@ class Schema2OWL {
 		if (ec.getQualifiedName().equals("Edge")) {
 			writeDefaultGECCardinality("Edge");
 		}
-		
+
 		writer.writeEndElement();
-		
+
 		if (ec.getQualifiedName().equals("Aggregation")) {
 			writeAggregateElement();
 		}
 
 		// build subtrees
-		
+
 		// create ObjectProperties for incident VertexClasses
 		writeIncidentVertexClassElement(true, ec);
 		writeIncidentVertexClassElement(false, ec);
-		
+
 		// convert attributes
 		convertAttributes(ec);
 	}
 
 	/**
-	 * Writes an {@code ObjectProperty} representing the relation from a
-	 * {@code VertexClass} to the incident {@code EdgeClass ec} (if {@code
+	 * Writes an {@code ObjectProperty} representing the relation from a {@code
+	 * VertexClass} to the incident {@code EdgeClass ec} (if {@code
 	 * edgeClasses2Properties = false}). Whether the "from" or "to" relation is
 	 * created depends on the value of the {@code from} parameter.<br>
 	 * <br>
@@ -980,7 +992,8 @@ class Schema2OWL {
 	 *            The {@code EdgeClass} for which the Property shall be created.
 	 * @throws XMLStreamException
 	 */
-	private void writeIncidentVertexClassElement(boolean from, EdgeClass ec) throws XMLStreamException {
+	private void writeIncidentVertexClassElement(boolean from, EdgeClass ec)
+			throws XMLStreamException {
 		String direction;
 		String vcName;
 
@@ -994,15 +1007,15 @@ class Schema2OWL {
 		}
 
 		// create ObjectProperty for incident EdgeClass
-		writeOwlObjectPropertyStartElement(HelperMethods
-				.firstToLowerCase(ec.getQualifiedName())
+		writeOwlObjectPropertyStartElement(HelperMethods.firstToLowerCase(ec
+				.getQualifiedName())
 				+ edgeClassNameSuffix + direction);
-		
+
 		writeRdfTypeEmptyElement(JGraLab2OWL.owlNS + "SymmetricProperty");
 		writeRdfsDomainEmptyElement("#" + vcName);
 		writeRdfsRangeEmptyElement("#" + ec.getQualifiedName()
 				+ edgeClassNameSuffix);
-		
+
 		writer.writeEndElement();
 	}
 
@@ -1033,7 +1046,8 @@ class Schema2OWL {
 	 *            be created.
 	 * @throws XMLStreamException
 	 */
-	private void writeMultiplicityElement(boolean from, EdgeClass ec) throws XMLStreamException {
+	private void writeMultiplicityElement(boolean from, EdgeClass ec)
+			throws XMLStreamException {
 		int lowerBound;
 		int upperBound;
 		String direction;
@@ -1048,7 +1062,7 @@ class Schema2OWL {
 			lowerBound = ec.getFromMin();
 			upperBound = ec.getFromMax();
 		}
-		
+
 		writeRdfsSubClassOfStartElement();
 		writeOwlRestrictionStartElement();
 
@@ -1071,11 +1085,11 @@ class Schema2OWL {
 		writeOwlMinCardinalityStartElement();
 		writer.writeCharacters(String.valueOf(lowerBound));
 		writer.writeEndElement();
-		
+
 		writeOwlMaxCardinalityStartElement();
 		writer.writeCharacters(String.valueOf(upperBound));
 		writer.writeEndElement();
-		
+
 		writer.writeEndElement();
 		writer.writeEndElement();
 	}
@@ -1099,11 +1113,11 @@ class Schema2OWL {
 	 */
 	private void writeAggregateElement() throws XMLStreamException {
 		writeOwlObjectPropertyStartElement("aggregate");
-		
+
 		writeRdfTypeEmptyElement(JGraLab2OWL.owlNS + "FunctionalProperty");
 		writeRdfsDomainEmptyElement("#Aggregation" + edgeClassNameSuffix);
 		writeRdfsRangeEmptyElement("#Vertex");
-		
+
 		writer.writeEndElement();
 	}
 
@@ -1130,12 +1144,12 @@ class Schema2OWL {
 	private void writeAggregateSubClassElement() throws XMLStreamException {
 		writeRdfsSubClassOfStartElement();
 		writeOwlRestrictionStartElement();
-		
+
 		writeOwlOnPropertyEmptyElement("#aggregate");
 		writeOwlCardinalityStartElement();
 		writer.writeCharacters(String.valueOf(1));
 		writer.writeEndElement();
-		
+
 		writer.writeEndElement();
 		writer.writeEndElement();
 	}
@@ -1169,9 +1183,10 @@ class Schema2OWL {
 	 *            converted.
 	 * @throws XMLStreamException
 	 */
-	private void convertAttributes(AttributedElementClass aec) throws XMLStreamException {
+	private void convertAttributes(AttributedElementClass aec)
+			throws XMLStreamException {
 		String aecElemName;
-		
+
 		if (aec instanceof EdgeClass) {
 			aecElemName = aec.getQualifiedName() + edgeClassNameSuffix;
 		} else {
@@ -1187,16 +1202,20 @@ class Schema2OWL {
 						.firstToLowerCase(aecElemName)
 						+ "Has"
 						+ HelperMethods.firstToUpperCase(attr.getName()));
-				
-				writeRdfTypeEmptyElement(JGraLab2OWL.owlNS + "FunctionalProperty");
+
+				writeRdfTypeEmptyElement(JGraLab2OWL.owlNS
+						+ "FunctionalProperty");
 				writeRdfsDomainEmptyElement("#" + aecElemName);
 
 				writeRdfsRangeEmptyElement();
 				if (attr.getDomain().getTGTypeName(null).contains("List<")) {
-					writer.writeAttribute(JGraLab2OWL.rdfNS, "resource", "#ListElement");
+					writer.writeAttribute(JGraLab2OWL.rdfNS, "resource",
+							"#ListElement");
 				} else if (attr.getDomain().getTGTypeName(null)
 						.contains("Set<")) {
-					writer.writeAttribute(JGraLab2OWL.rdfNS, "resource", "#Set");
+					writer
+							.writeAttribute(JGraLab2OWL.rdfNS, "resource",
+									"#Set");
 				} else {
 					writer.writeAttribute(JGraLab2OWL.rdfNS, "resource", "#"
 							+ attr.getDomain().getQualifiedName());
@@ -1207,21 +1226,28 @@ class Schema2OWL {
 						.firstToLowerCase(aecElemName)
 						+ "Has"
 						+ HelperMethods.firstToUpperCase(attr.getName()));
-				
-				writeRdfTypeEmptyElement(JGraLab2OWL.owlNS + "FunctionalProperty");
+
+				writeRdfTypeEmptyElement(JGraLab2OWL.owlNS
+						+ "FunctionalProperty");
 				writeRdfsDomainEmptyElement("#" + aecElemName);
 
 				writeRdfsRangeEmptyElement();
 				if (attr.getDomain().getTGTypeName(null).equals("String")) {
-					writer.writeAttribute(JGraLab2OWL.rdfNS, "resource", JGraLab2OWL.xsdNS + "string");
+					writer.writeAttribute(JGraLab2OWL.rdfNS, "resource",
+							JGraLab2OWL.xsdNS + "string");
 				} else {
-					writer.writeAttribute(JGraLab2OWL.rdfNS, "resource", JGraLab2OWL.xsdNS + attr
-							.getDomain()
-							.getJavaAttributeImplementationTypeName(
-									""));
+					writer
+							.writeAttribute(
+									JGraLab2OWL.rdfNS,
+									"resource",
+									JGraLab2OWL.xsdNS
+											+ attr
+													.getDomain()
+													.getJavaAttributeImplementationTypeName(
+															""));
 				}
 			}
-			
+
 			writer.writeEndElement();
 		}
 	}
@@ -1254,23 +1280,22 @@ class Schema2OWL {
 		} else {
 			direction = "In";
 		}
-		
+
 		// create DatatypeProperty
 		writeOwlDatatypePropertyStartElement(HelperMethods
 				.firstToLowerCase("Edge" + edgeClassNameSuffix)
 				+ direction + "Role");
-		
+
 		writeRdfTypeEmptyElement(JGraLab2OWL.owlNS + "FunctionalProperty");
 		writeRdfsDomainEmptyElement("#Edge" + edgeClassNameSuffix);
 		writeRdfsRangeEmptyElement(JGraLab2OWL.xsdNS + "string");
-		
+
 		writer.writeEndElement();
 	}
 
 	/**
-	 * Writes two Properties for each element of array {@code defaultGECs}
-	 * which relate them to their containing {@code GraphClass gc} and vice
-	 * versa.<br>
+	 * Writes two Properties for each element of array {@code defaultGECs} which
+	 * relate them to their containing {@code GraphClass gc} and vice versa.<br>
 	 * <br>
 	 * XML-code written:<br>
 	 * 
@@ -1313,19 +1338,21 @@ class Schema2OWL {
 					writeOwlObjectPropertyStartElement(HelperMethods
 							.firstToLowerCase(gecName)
 							+ edgeClassNameSuffix + "IsInGraph");
-					writeRdfTypeEmptyElement(JGraLab2OWL.owlNS + "FunctionalProperty");
+					writeRdfTypeEmptyElement(JGraLab2OWL.owlNS
+							+ "FunctionalProperty");
 					writeRdfsDomainEmptyElement("#" + gecName
 							+ edgeClassNameSuffix);
 				} else {
 					writeOwlObjectPropertyStartElement(HelperMethods
 							.firstToLowerCase(gecName)
 							+ "IsInGraph");
-					writeRdfTypeEmptyElement(JGraLab2OWL.owlNS + "FunctionalProperty");
+					writeRdfTypeEmptyElement(JGraLab2OWL.owlNS
+							+ "FunctionalProperty");
 					writeRdfsDomainEmptyElement("#" + gecName);
 				}
-			
+
 				writeRdfsRangeEmptyElement("#Graph");
-				
+
 				writer.writeEndElement();
 
 				// create ObjectProperty relating GraphClass to
@@ -1333,7 +1360,7 @@ class Schema2OWL {
 				if (gecName.equals("Edge")) {
 					writeOwlObjectPropertyStartElement("graphContains"
 							+ gecName + edgeClassNameSuffix);
-					
+
 					writeOwlInverseOfEmptyElement("#"
 							+ HelperMethods.firstToLowerCase(gecName)
 							+ edgeClassNameSuffix + "IsInGraph");
@@ -1343,24 +1370,24 @@ class Schema2OWL {
 				} else {
 					writeOwlObjectPropertyStartElement("graphContains"
 							+ gecName);
-					
+
 					writeOwlInverseOfEmptyElement("#"
 							+ HelperMethods.firstToLowerCase(gecName)
 							+ "IsInGraph");
 					writeRdfsDomainEmptyElement("#Graph");
 					writeRdfsRangeEmptyElement("#" + gecName);
 				}
-				
+
 				writer.writeEndElement();
 			}
 		}
 	}
 
 	/**
-	 * Writes a subclass restriction restricting the cardinality of the
-	 * Property <i>gecName</i>{@code ClassIsIn}<i>gcName</i> to 1. This means
-	 * that every {@code GraphElementClass} individual and individuals of its
-	 * subclasses only belong to one graph.<br>
+	 * Writes a subclass restriction restricting the cardinality of the Property
+	 * <i>gecName</i>{@code ClassIsIn}<i>gcName</i> to 1. This means that every
+	 * {@code GraphElementClass} individual and individuals of its subclasses
+	 * only belong to one graph.<br>
 	 * <br>
 	 * XML-code written:<br>
 	 * 
@@ -1377,23 +1404,23 @@ class Schema2OWL {
 	 *            The name of the {@code GraphElementClass}.
 	 * @throws XMLStreamException
 	 */
-	private void writeDefaultGECCardinality(String gecName) throws XMLStreamException {
+	private void writeDefaultGECCardinality(String gecName)
+			throws XMLStreamException {
 		writeRdfsSubClassOfStartElement();
 		writeOwlRestrictionStartElement();
-	
+
 		if (gecName.equals("Edge")) {
 			writeOwlOnPropertyEmptyElement("#"
 					+ HelperMethods.firstToLowerCase(gecName)
 					+ edgeClassNameSuffix + "IsInGraph");
 		} else {
 			writeOwlOnPropertyEmptyElement("#"
-					+ HelperMethods.firstToLowerCase(gecName)
-					+ "IsInGraph");
+					+ HelperMethods.firstToLowerCase(gecName) + "IsInGraph");
 		}
 		writeOwlCardinalityStartElement();
 		writer.writeCharacters(String.valueOf(1));
 		writer.writeEndElement();
-		
+
 		writer.writeEndElement();
 		writer.writeEndElement();
 	}
@@ -1408,27 +1435,30 @@ class Schema2OWL {
 	 *            element shall be created.
 	 * @throws XMLStreamException
 	 */
-	private void writeUnionOfSubclasses(AttributedElementClass aec) throws XMLStreamException {
+	private void writeUnionOfSubclasses(AttributedElementClass aec)
+			throws XMLStreamException {
 		// create unionOf element
 		writer.writeStartElement(JGraLab2OWL.owlNS, "unionOf");
 		writer.writeAttribute(JGraLab2OWL.rdfNS, "parseType", "Collection");
-		
+
 		// create owl:Class element for every direct subclass of aec and build
 		// the subtree
-		for (AttributedElementClass subclass : aec.getDirectSubClasses()) {	
+		for (AttributedElementClass subclass : aec.getDirectSubClasses()) {
 			writeOwlClassEmptyElement();
 
 			if (subclass instanceof EdgeClass) {
-				writer.writeAttribute(JGraLab2OWL.rdfNS, "about", subclass.getQualifiedName()
+				writer.writeAttribute(JGraLab2OWL.rdfNS, "about", subclass
+						.getQualifiedName()
 						+ edgeClassNameSuffix);
 			} else {
-				writer.writeAttribute(JGraLab2OWL.rdfNS, "about", subclass.getQualifiedName());
+				writer.writeAttribute(JGraLab2OWL.rdfNS, "about", subclass
+						.getQualifiedName());
 			}
 		}
-		
+
 		writer.writeEndElement();
 	}
-	
+
 	/**
 	 * Writes an element {@code <owl:Class/>}.
 	 * 
@@ -1437,7 +1467,7 @@ class Schema2OWL {
 	private void writeOwlClassEmptyElement() throws XMLStreamException {
 		writer.writeEmptyElement(JGraLab2OWL.owlNS, "Class");
 	}
-	
+
 	/**
 	 * Writes an element {@code <owl:Class rdf:ID = }<i>id</i> {@code />}
 	 * 
@@ -1455,13 +1485,13 @@ class Schema2OWL {
 	 * 
 	 * @param id
 	 *            The value for the {@code rdf:ID"} attribute.
-	 * @throws XMLStreamException      
+	 * @throws XMLStreamException
 	 */
 	private void writeOwlClassStartElement(String id) throws XMLStreamException {
 		writer.writeStartElement(JGraLab2OWL.owlNS, "Class");
 		writer.writeAttribute(JGraLab2OWL.rdfNS, "ID", id);
 	}
-	
+
 	/**
 	 * Writes an element {@code <owl:ObjectProperty>}.
 	 * 
@@ -1498,7 +1528,7 @@ class Schema2OWL {
 		writer.writeStartElement(JGraLab2OWL.owlNS, "DatatypeProperty");
 		writer.writeAttribute(JGraLab2OWL.rdfNS, "ID", id);
 	}
-	
+
 	/**
 	 * Writes an element {@code <rdfs:domain rdf:resource = } <i>resource</i>
 	 * {@code />}
@@ -1521,7 +1551,7 @@ class Schema2OWL {
 	private void writeRdfsRangeEmptyElement() throws XMLStreamException {
 		writer.writeEmptyElement(JGraLab2OWL.rdfsNS, "range");
 	}
-	
+
 	/**
 	 * Writes an element {@code <rdfs:range rdf:resource = } <i>resource</i>
 	 * {@code />}
@@ -1535,7 +1565,7 @@ class Schema2OWL {
 		writer.writeEmptyElement(JGraLab2OWL.rdfsNS, "range");
 		writer.writeAttribute(JGraLab2OWL.rdfNS, "resource", resource);
 	}
-	
+
 	/**
 	 * Writes an element {@code <rdf:type rdf:resource = } <i>resource</i>
 	 * {@code />}
@@ -1558,7 +1588,7 @@ class Schema2OWL {
 	private void writeRdfsSubClassOfStartElement() throws XMLStreamException {
 		writer.writeStartElement(JGraLab2OWL.rdfsNS, "subClassOf");
 	}
-	
+
 	/**
 	 * Writes an Element {@code <rdfs:subClassOf rdf:resource = }
 	 * <i>resource</i>{@code />}
@@ -1595,7 +1625,7 @@ class Schema2OWL {
 	private void writeOwlRestrictionStartElement() throws XMLStreamException {
 		writer.writeStartElement(JGraLab2OWL.owlNS, "Restriction");
 	}
-	
+
 	/**
 	 * Writes an Element {@code <owl:onProperty rdf:resource = } <i>resource</i>
 	 * {@code />}
@@ -1609,7 +1639,7 @@ class Schema2OWL {
 		writer.writeEmptyElement(JGraLab2OWL.owlNS, "onProperty");
 		writer.writeAttribute(JGraLab2OWL.rdfNS, "resource", resource);
 	}
-	
+
 	/**
 	 * Writes an Element {@code <owl:inverseOf rdf:resource = } <i>resource</i>
 	 * {@code />}
@@ -1632,8 +1662,8 @@ class Schema2OWL {
 	 */
 	private void writeOwlCardinalityStartElement() throws XMLStreamException {
 		writer.writeStartElement(JGraLab2OWL.owlNS, "cardinality");
-		writer.writeAttribute(JGraLab2OWL.rdfNS, "datatype",
-				JGraLab2OWL.xsdNS + "nonNegativeInteger");
+		writer.writeAttribute(JGraLab2OWL.rdfNS, "datatype", JGraLab2OWL.xsdNS
+				+ "nonNegativeInteger");
 	}
 
 	/**
@@ -1644,8 +1674,8 @@ class Schema2OWL {
 	 */
 	private void writeOwlMaxCardinalityStartElement() throws XMLStreamException {
 		writer.writeStartElement(JGraLab2OWL.owlNS, "maxCardinality");
-		writer.writeAttribute(JGraLab2OWL.rdfNS, "datatype",
-				JGraLab2OWL.xsdNS + "nonNegativeInteger");
+		writer.writeAttribute(JGraLab2OWL.rdfNS, "datatype", JGraLab2OWL.xsdNS
+				+ "nonNegativeInteger");
 	}
 
 	/**
@@ -1656,7 +1686,7 @@ class Schema2OWL {
 	 */
 	private void writeOwlMinCardinalityStartElement() throws XMLStreamException {
 		writer.writeStartElement(JGraLab2OWL.owlNS, "minCardinality");
-		writer.writeAttribute(JGraLab2OWL.rdfNS, "datatype",
-				JGraLab2OWL.xsdNS + "nonNegativeInteger");
+		writer.writeAttribute(JGraLab2OWL.rdfNS, "datatype", JGraLab2OWL.xsdNS
+				+ "nonNegativeInteger");
 	}
 }

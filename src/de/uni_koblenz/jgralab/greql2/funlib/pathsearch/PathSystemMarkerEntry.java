@@ -21,7 +21,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
- 
+
 package de.uni_koblenz.jgralab.greql2.funlib.pathsearch;
 
 import de.uni_koblenz.jgralab.Edge;
@@ -29,39 +29,46 @@ import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.greql2.evaluator.fa.State;
 
 public class PathSystemMarkerEntry {
-	
+
 	/**
 	 * The state this vertex gets marked with
 	 */
 	public State state;
-	
+
 	/**
 	 * The state in which the parent vertex in the pathsystem was visited
 	 */
 	public State parentState;
-	
+
 	/**
 	 * The edge which leads to the parent vertex
 	 */
 	public Edge edgeToParentVertex;
-	
+
 	/**
-	 * The parent vertex itself, needed, because there can be transitions which takes no edges
+	 * The parent vertex itself, needed, because there can be transitions which
+	 * takes no edges
 	 */
 	public Vertex parentVertex;
-	
+
 	/**
 	 * the distance to the root vertex of the pathsystem
 	 */
 	public int distanceToRoot;
-	
+
 	/**
 	 * creates a new pathsystem marked
-	 * @param s The state in which the dfa is when visiting the vertex which gets marked
-	 * @param parentState The state in which the dfa was when visiting the parent vertex
-	 * @param distance the distance to the root vertex of the pathsystem
+	 * 
+	 * @param s
+	 *            The state in which the dfa is when visiting the vertex which
+	 *            gets marked
+	 * @param parentState
+	 *            The state in which the dfa was when visiting the parent vertex
+	 * @param distance
+	 *            the distance to the root vertex of the pathsystem
 	 */
-	public PathSystemMarkerEntry(Vertex parentVertex, Edge parentEdge, State s, State parentState, int distance) {
+	public PathSystemMarkerEntry(Vertex parentVertex, Edge parentEdge, State s,
+			State parentState, int distance) {
 		this.distanceToRoot = distance;
 		this.state = s;
 		this.edgeToParentVertex = parentEdge;

@@ -21,7 +21,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
- 
+
 package de.uni_koblenz.jgralab.greql2.evaluator.vertexeval;
 
 import de.uni_koblenz.jgralab.BooleanGraphMarker;
@@ -55,14 +55,14 @@ public class VertexSubgraphExpressionEvaluator extends
 		Vertex currentVertex = getDatagraph().getFirstVertex();
 		while (currentVertex != null) {
 			JValueTypeCollection typeCollection = getTypeCollection();
-			if ((subgraph==null) || (subgraph.isMarked(currentVertex))) {
+			if ((subgraph == null) || (subgraph.isMarked(currentVertex))) {
 				AttributedElementClass vertexClass = currentVertex
 						.getAttributedElementClass();
 				if (typeCollection.acceptsType(vertexClass))
 					subgraphAttr.mark(currentVertex);
 			}
 			currentVertex = currentVertex.getNextVertex();
-		}	
+		}
 		// add all edges
 		Edge currentEdge = getDatagraph().getFirstEdgeInGraph();
 		while (currentEdge != null) {
@@ -79,9 +79,10 @@ public class VertexSubgraphExpressionEvaluator extends
 		return this.greqlEvaluator.getCostModel()
 				.calculateCostsVertexSubgraphExpression(this, graphSize);
 	}
-	
+
 	public GraphSize calculateSubgraphSize(GraphSize graphSize) {
-		return this.greqlEvaluator.getCostModel().calculateVertexSubgraphSize(this, graphSize);
+		return this.greqlEvaluator.getCostModel().calculateVertexSubgraphSize(
+				this, graphSize);
 	}
 
 }
