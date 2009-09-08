@@ -88,10 +88,10 @@ public class SymbolTable {
 		}
 		return null;
 	}
-	
-	
+
 	/**
 	 * returns a set of known identifiers
+	 * 
 	 * @return
 	 */
 	public Set<String> getKnownIdentifierSet() {

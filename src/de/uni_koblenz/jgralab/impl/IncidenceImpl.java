@@ -117,7 +117,9 @@ public abstract class IncidenceImpl extends GraphElementImpl implements Edge {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see de.uni_koblenz.jgralab.Edge#getNextEdge(de.uni_koblenz.jgralab.EdgeDirection)
+	 * @see
+	 * de.uni_koblenz.jgralab.Edge#getNextEdge(de.uni_koblenz.jgralab.EdgeDirection
+	 * )
 	 */
 	@Override
 	public Edge getNextEdge(EdgeDirection orientation) {
@@ -154,7 +156,7 @@ public abstract class IncidenceImpl extends GraphElementImpl implements Edge {
 	 * (non-Javadoc)
 	 * 
 	 * @see de.uni_koblenz.jgralab.Edge#getNextEdgeOfClass(java.lang.Class,
-	 *      boolean)
+	 * boolean)
 	 */
 	@Override
 	public Edge getNextEdgeOfClass(Class<? extends Edge> anEdgeClass,
@@ -167,7 +169,7 @@ public abstract class IncidenceImpl extends GraphElementImpl implements Edge {
 	 * (non-Javadoc)
 	 * 
 	 * @see de.uni_koblenz.jgralab.Edge#getNextEdgeOfClass(java.lang.Class,
-	 *      de.uni_koblenz.jgralab.EdgeDirection)
+	 * de.uni_koblenz.jgralab.EdgeDirection)
 	 */
 	@Override
 	public Edge getNextEdgeOfClass(Class<? extends Edge> anEdgeClass,
@@ -179,7 +181,7 @@ public abstract class IncidenceImpl extends GraphElementImpl implements Edge {
 	 * (non-Javadoc)
 	 * 
 	 * @see de.uni_koblenz.jgralab.Edge#getNextEdgeOfClass(java.lang.Class,
-	 *      de.uni_koblenz.jgralab.EdgeDirection, boolean)
+	 * de.uni_koblenz.jgralab.EdgeDirection, boolean)
 	 */
 	@Override
 	public Edge getNextEdgeOfClass(Class<? extends Edge> anEdgeClass,
@@ -203,7 +205,9 @@ public abstract class IncidenceImpl extends GraphElementImpl implements Edge {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see de.uni_koblenz.jgralab.Edge#getNextEdgeOfClass(de.uni_koblenz.jgralab.schema.EdgeClass)
+	 * @see
+	 * de.uni_koblenz.jgralab.Edge#getNextEdgeOfClass(de.uni_koblenz.jgralab
+	 * .schema.EdgeClass)
 	 */
 	@Override
 	public Edge getNextEdgeOfClass(EdgeClass anEdgeClass) {
@@ -214,8 +218,9 @@ public abstract class IncidenceImpl extends GraphElementImpl implements Edge {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see de.uni_koblenz.jgralab.Edge#getNextEdgeOfClass(de.uni_koblenz.jgralab.schema.EdgeClass,
-	 *      boolean)
+	 * @see
+	 * de.uni_koblenz.jgralab.Edge#getNextEdgeOfClass(de.uni_koblenz.jgralab
+	 * .schema.EdgeClass, boolean)
 	 */
 	@Override
 	public Edge getNextEdgeOfClass(EdgeClass anEdgeClass, boolean noSubclasses) {
@@ -226,8 +231,9 @@ public abstract class IncidenceImpl extends GraphElementImpl implements Edge {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see de.uni_koblenz.jgralab.Edge#getNextEdgeOfClass(de.uni_koblenz.jgralab.schema.EdgeClass,
-	 *      de.uni_koblenz.jgralab.EdgeDirection)
+	 * @see
+	 * de.uni_koblenz.jgralab.Edge#getNextEdgeOfClass(de.uni_koblenz.jgralab
+	 * .schema.EdgeClass, de.uni_koblenz.jgralab.EdgeDirection)
 	 */
 	@Override
 	public Edge getNextEdgeOfClass(EdgeClass anEdgeClass,
@@ -238,8 +244,9 @@ public abstract class IncidenceImpl extends GraphElementImpl implements Edge {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see de.uni_koblenz.jgralab.Edge#getNextEdgeOfClass(de.uni_koblenz.jgralab.schema.EdgeClass,
-	 *      de.uni_koblenz.jgralab.EdgeDirection, boolean)
+	 * @see
+	 * de.uni_koblenz.jgralab.Edge#getNextEdgeOfClass(de.uni_koblenz.jgralab
+	 * .schema.EdgeClass, de.uni_koblenz.jgralab.EdgeDirection, boolean)
 	 */
 	@Override
 	public Edge getNextEdgeOfClass(EdgeClass anEdgeClass,
@@ -291,7 +298,8 @@ public abstract class IncidenceImpl extends GraphElementImpl implements Edge {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see de.uni_koblenz.jgralab.Edge#putEdgeBefore(de.uni_koblenz.jgralab.Edge)
+	 * @see
+	 * de.uni_koblenz.jgralab.Edge#putEdgeBefore(de.uni_koblenz.jgralab.Edge)
 	 */
 	@Override
 	public void putEdgeBefore(Edge e) {
@@ -308,7 +316,8 @@ public abstract class IncidenceImpl extends GraphElementImpl implements Edge {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see de.uni_koblenz.jgralab.Edge#putEdgeAfter(de.uni_koblenz.jgralab.Edge)
+	 * @see
+	 * de.uni_koblenz.jgralab.Edge#putEdgeAfter(de.uni_koblenz.jgralab.Edge)
 	 */
 	@Override
 	public void putEdgeAfter(Edge e) {

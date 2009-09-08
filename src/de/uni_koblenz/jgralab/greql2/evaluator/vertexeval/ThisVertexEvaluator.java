@@ -27,7 +27,6 @@ package de.uni_koblenz.jgralab.greql2.evaluator.vertexeval;
 import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
 import de.uni_koblenz.jgralab.greql2.schema.ThisVertex;
 
-
 /**
  * Evaluates a Variable vertex in the GReQL-2 Syntaxgraph. Provides access to
  * the variable value using the method getResult(..), because it should make no
@@ -38,7 +37,7 @@ import de.uni_koblenz.jgralab.greql2.schema.ThisVertex;
  * 
  */
 public class ThisVertexEvaluator extends VariableEvaluator {
-	
+
 	/**
 	 * @param eval
 	 *            the GreqlEvaluator this VertexEvaluator belongs to
@@ -48,6 +47,5 @@ public class ThisVertexEvaluator extends VariableEvaluator {
 	public ThisVertexEvaluator(ThisVertex vertex, GreqlEvaluator eval) {
 		super(vertex, eval);
 	}
-
 
 }

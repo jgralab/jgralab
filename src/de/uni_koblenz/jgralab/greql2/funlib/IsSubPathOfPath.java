@@ -38,7 +38,7 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
  * Checks if the first given path is a subpath of the second given path. That
  * means, the second given path contains all vertices and edges of the first
  * given path in the same order.
- *
+ * 
  * <dl>
  * <dt><b>GReQL-signature</b></dt>
  * <dd><code>BOOLEAN isSubPathOf(p1:PATH, p2:PATH)</code></dd>
@@ -59,9 +59,9 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
  * </dl>
  * </dd>
  * </dl>
- *
+ * 
  * @author ist@uni-koblenz.de
- *
+ * 
  */
 
 public class IsSubPathOfPath extends AbstractGreql2Function {

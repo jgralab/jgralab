@@ -21,10 +21,10 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
- 
+
 /**
  * This package contains a tool, that converts a schema written in TG directly into Java-classes.
  * These classes can directly be used to create graphs of this schema.
  */
- 
- package de.uni_koblenz.jgralab.utilities.tgschema2java;
+
+package de.uni_koblenz.jgralab.utilities.tgschema2java;

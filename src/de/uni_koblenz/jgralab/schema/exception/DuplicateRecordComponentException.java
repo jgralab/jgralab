@@ -25,7 +25,7 @@ package de.uni_koblenz.jgralab.schema.exception;
 
 /**
  * @author Tassilo Horn <horn@uni-koblenz.de>
- *
+ * 
  */
 public class DuplicateRecordComponentException extends SchemaException {
 

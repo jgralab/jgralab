@@ -21,7 +21,7 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
 
 /**
  * Returns a list of vertices in topological ordering.
- *
+ * 
  * <dl>
  * <dt><b>GReQL-signature</b></dt>
  * <dd><code>LIST topologicalSort()</code></dd>
@@ -40,9 +40,9 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
  * </dl>
  * </dd>
  * </dl>
- *
+ * 
  * @author ist@uni-koblenz.de
- *
+ * 
  */
 public class TopologicalSort extends AbstractGreql2Function {
 
@@ -53,7 +53,7 @@ public class TopologicalSort extends AbstractGreql2Function {
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see
 	 * de.uni_koblenz.jgralab.greql2.funlib.Greql2Function#evaluate(de.uni_koblenz
 	 * .jgralab.Graph, de.uni_koblenz.jgralab.BooleanGraphMarker,
@@ -119,7 +119,7 @@ public class TopologicalSort extends AbstractGreql2Function {
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see
 	 * de.uni_koblenz.jgralab.greql2.funlib.Greql2Function#getEstimatedCardinality
 	 * (int)
@@ -131,7 +131,7 @@ public class TopologicalSort extends AbstractGreql2Function {
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see
 	 * de.uni_koblenz.jgralab.greql2.funlib.Greql2Function#getEstimatedCosts
 	 * (java.util.ArrayList)
@@ -143,7 +143,7 @@ public class TopologicalSort extends AbstractGreql2Function {
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see de.uni_koblenz.jgralab.greql2.funlib.Greql2Function#getSelectivity()
 	 */
 	@Override

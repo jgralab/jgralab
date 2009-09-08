@@ -39,7 +39,7 @@ import de.uni_koblenz.jgralab.schema.exception.M1ClassAccessException;
  * class. To change this, the <code>setImplementationClass</code>-methods can be
  * used. The class is abstract because only the factories which are specific for
  * a schema should be used.
- *
+ * 
  * @author ist@uni-koblenz.de
  */
 public abstract class GraphFactoryImpl implements GraphFactory {
@@ -74,7 +74,7 @@ public abstract class GraphFactoryImpl implements GraphFactory {
 					+ graphClass.getCanonicalName(), ex);
 		}
 	}
-	
+
 	public Graph createGraph(Class<? extends Graph> graphClass, String id) {
 		try {
 			return graphMap.get(graphClass).newInstance(id, 1000, 1000);
@@ -146,7 +146,7 @@ public abstract class GraphFactoryImpl implements GraphFactory {
 
 	/**
 	 * tests if a is a superclass of b or the same class than b
-	 *
+	 * 
 	 * @param a
 	 * @param b
 	 * @return
@@ -173,7 +173,7 @@ public abstract class GraphFactoryImpl implements GraphFactory {
 
 	/**
 	 * tests if class a implements the interface b
-	 *
+	 * 
 	 * @param a
 	 * @param b
 	 * @return

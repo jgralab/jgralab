@@ -41,7 +41,7 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
 /**
  * Calculates the edgetrace of the given path. An edgetrace is a List of all
  * edges of this path in correct order.
- *
+ * 
  * <dl>
  * <dt><b>GReQL-signature</b></dt>
  * <dd><code>LIST&lt;EDGE&gt; edgeTrace(p:PATH)</code></dd>
@@ -59,10 +59,10 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
  * </dl>
  * </dd>
  * </dl>
- *
+ * 
  * @see NodeTrace
  * @author ist@uni-koblenz.de
- *
+ * 
  */
 
 public class EdgeTrace extends AbstractGreql2Function {

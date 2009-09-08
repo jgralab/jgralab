@@ -34,7 +34,7 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
  * Returns the number of outgoing edges, which are connected to the given vertex
  * and which are part of the given structure. If no structure is given, the
  * graph to which the vertex belongs to is used as structure.
- *
+ * 
  * <dl>
  * <dt><b>GReQL-signature</b></dt>
  * <dd><code>INTEGER outDegree(v:Vertex)</code></dd>
@@ -61,11 +61,11 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
  * </dl>
  * </dd>
  * </dl>
- *
+ * 
  * @see Degree
  * @see InDegree
  * @author ist@uni-koblenz.de
- *
+ * 
  */
 
 public class OutDegree extends DegreeFunction {

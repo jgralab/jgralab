@@ -35,7 +35,7 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
 
 /**
  * Returns the length of the longest path in the given pathsystem.
- *
+ * 
  * <dl>
  * <dt><b>GReQL-signature</b></dt>
  * <dd><code>INTEGER maxPathLenght(ps:PATHSYSTEM)</code></dd>
@@ -54,9 +54,9 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
  * </dl>
  * </dd>
  * </dl>
- *
+ * 
  * @author ist@uni-koblenz.de
- *
+ * 
  */
 
 public class MaxPathLength extends AbstractGreql2Function {

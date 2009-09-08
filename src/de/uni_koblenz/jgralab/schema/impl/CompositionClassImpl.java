@@ -49,7 +49,7 @@ public final class CompositionClassImpl extends AggregationClassImpl implements
 
 	/**
 	 * builds a new composition class
-	 *
+	 * 
 	 * @param qn
 	 *            the unique identifier of the composition class in the schema
 	 * @param from

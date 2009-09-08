@@ -34,7 +34,7 @@ import de.uni_koblenz.jgralabtest.greql2.optimizer.OptimizerTest;
 
 /**
  * @author ist@uni-koblenz.de
- *
+ * 
  */
 @RunWith(Suite.class)
 @Suite.SuiteClasses( { ExceptionTest.class, FunctionTest.class,

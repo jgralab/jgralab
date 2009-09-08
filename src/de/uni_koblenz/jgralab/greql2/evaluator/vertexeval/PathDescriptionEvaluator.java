@@ -21,7 +21,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
- 
+
 package de.uni_koblenz.jgralab.greql2.evaluator.vertexeval;
 
 import de.uni_koblenz.jgralab.BooleanGraphMarker;
@@ -56,6 +56,7 @@ public abstract class PathDescriptionEvaluator extends VertexEvaluator {
 
 	/**
 	 * Creates a new PathDescriptionEvaluator
+	 * 
 	 * @param eval
 	 */
 	public PathDescriptionEvaluator(GreqlEvaluator eval) {
@@ -82,13 +83,14 @@ public abstract class PathDescriptionEvaluator extends VertexEvaluator {
 	public JValue getResult(BooleanGraphMarker subgraph)
 			throws EvaluateException {
 		if (createdNFA == null) {
-		//	long ms = System.currentTimeMillis();
+			// long ms = System.currentTimeMillis();
 			result = evaluate();
 			try {
 				createdNFA = result.toNFA();
 				addGoalRestrictions();
 				addStartRestrictions();
-		//		GreqlEvaluator.println("    Time for creating NFA: " + (System.currentTimeMillis() - ms));
+				// GreqlEvaluator.println("    Time for creating NFA: " +
+				// (System.currentTimeMillis() - ms));
 			} catch (JValueInvalidTypeException ex) {
 				throw new EvaluateException("Error creating a Path NFA", ex);
 			}
@@ -109,22 +111,26 @@ public abstract class PathDescriptionEvaluator extends VertexEvaluator {
 			return;
 		JValueTypeCollection typeCollection = new JValueTypeCollection();
 		while (inc != null) {
-			VertexEvaluator vertexEval = greqlEvaluator.getVertexEvaluatorGraphMarker().getMark(inc.getAlpha());
+			VertexEvaluator vertexEval = greqlEvaluator
+					.getVertexEvaluatorGraphMarker().getMark(inc.getAlpha());
 			if (vertexEval instanceof TypeIdEvaluator) {
 				TypeIdEvaluator typeEval = (TypeIdEvaluator) vertexEval;
-				try { 
-					typeCollection.addTypes(typeEval.getResult(null).toJValueTypeCollection());
+				try {
+					typeCollection.addTypes(typeEval.getResult(null)
+							.toJValueTypeCollection());
 				} catch (JValueInvalidTypeException ex) {
-					throw new EvaluateException("Result of TypeId is not JValueTypeCollection", ex);
+					throw new EvaluateException(
+							"Result of TypeId is not JValueTypeCollection", ex);
 				}
 			} else {
 				goalRestEval = vertexEval;
 			}
 			inc = inc.getNextIsGoalRestrOf(EdgeDirection.IN);
-		}		
+		}
 		NFA.addGoalTypeRestriction(getNFA(), typeCollection);
 		if (goalRestEval != null)
-			NFA.addGoalBooleanRestriction(getNFA(), goalRestEval, greqlEvaluator.getVertexEvaluatorGraphMarker());
+			NFA.addGoalBooleanRestriction(getNFA(), goalRestEval,
+					greqlEvaluator.getVertexEvaluatorGraphMarker());
 	}
 
 	/**
@@ -141,22 +147,26 @@ public abstract class PathDescriptionEvaluator extends VertexEvaluator {
 			return;
 		JValueTypeCollection typeCollection = new JValueTypeCollection();
 		while (inc != null) {
-			VertexEvaluator vertexEval = greqlEvaluator.getVertexEvaluatorGraphMarker().getMark(inc.getAlpha());
+			VertexEvaluator vertexEval = greqlEvaluator
+					.getVertexEvaluatorGraphMarker().getMark(inc.getAlpha());
 			if (vertexEval instanceof TypeIdEvaluator) {
 				TypeIdEvaluator typeEval = (TypeIdEvaluator) vertexEval;
-				try { 
-					typeCollection.addTypes(typeEval.getResult(null).toJValueTypeCollection());
+				try {
+					typeCollection.addTypes(typeEval.getResult(null)
+							.toJValueTypeCollection());
 				} catch (JValueInvalidTypeException ex) {
-					throw new EvaluateException("Result of TypeId is not JValueTypeCollection", ex);
+					throw new EvaluateException(
+							"Result of TypeId is not JValueTypeCollection", ex);
 				}
 			} else {
 				startRestEval = vertexEval;
 			}
 			inc = inc.getNextIsStartRestrOf(EdgeDirection.IN);
-		}		
+		}
 		NFA.addStartTypeRestriction(getNFA(), typeCollection);
 		if (startRestEval != null)
-			NFA.addStartBooleanRestriction(getNFA(), startRestEval, greqlEvaluator.getVertexEvaluatorGraphMarker());
+			NFA.addStartBooleanRestriction(getNFA(), startRestEval,
+					greqlEvaluator.getVertexEvaluatorGraphMarker());
 	}
 
 }

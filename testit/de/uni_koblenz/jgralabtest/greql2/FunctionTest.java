@@ -71,8 +71,6 @@ public class FunctionTest extends GenericTests {
 		JValue result = evalTestQuery("And", queryString);
 		assertEquals(4, result.toCollection().size());
 	}
-	
-
 
 	@Test
 	public void testAnd2() throws Exception {
@@ -94,15 +92,15 @@ public class FunctionTest extends GenericTests {
 		assertEquals(3, n);
 		assertEquals(1, t);
 	}
-	
+
 	@Test
 	public void testGetEdge() throws Exception {
-		String dataGraphQuery = "true"; //should contains only one edge
-		Greql2 dataGraph = ManualGreqlParser.parse(dataGraphQuery); 
+		String dataGraphQuery = "true"; // should contains only one edge
+		Greql2 dataGraph = ManualGreqlParser.parse(dataGraphQuery);
 		JValue result = evalTestQuery("getEdge", "getEdge(1)", dataGraph);
 		assertEquals(dataGraph.getFirstEdgeInGraph(), result.toEdge());
 	}
-	
+
 	@Test
 	public void testContainsKey1() throws Exception {
 		JValueMap map = new JValueMap();
@@ -112,7 +110,7 @@ public class FunctionTest extends GenericTests {
 		JValue result = evalTestQuery("ContainsKey1", queryString);
 		assertTrue(result.toBoolean());
 	}
-	
+
 	@Test
 	public void testContainsKey2() throws Exception {
 		JValueMap map = new JValueMap();
@@ -122,7 +120,7 @@ public class FunctionTest extends GenericTests {
 		JValue result = evalTestQuery("ContainsKey2", queryString);
 		assertFalse(result.toBoolean());
 	}
-	
+
 	@Test
 	public void testContainsValue1() throws Exception {
 		JValueMap map = new JValueMap();
@@ -132,7 +130,7 @@ public class FunctionTest extends GenericTests {
 		JValue result = evalTestQuery("ContainsValue1", queryString);
 		assertTrue(result.toBoolean());
 	}
-	
+
 	@Test
 	public void testContainsValue2() throws Exception {
 		JValueMap map = new JValueMap();
@@ -142,7 +140,7 @@ public class FunctionTest extends GenericTests {
 		JValue result = evalTestQuery("ContainsValue2", queryString);
 		assertFalse(result.toBoolean());
 	}
-	
+
 	@Test
 	public void testContainsValue3() throws Exception {
 		JValueMap map = new JValueMap();
@@ -152,9 +150,7 @@ public class FunctionTest extends GenericTests {
 		JValue result = evalTestQuery("ContainsValue3", queryString);
 		assertFalse(result.toBoolean());
 	}
-	
-	
-	
+
 	@Test
 	public void testAvg() throws Exception {
 		String queryString = "let x:= list (5..13) in avg(x)";
@@ -456,7 +452,6 @@ public class FunctionTest extends GenericTests {
 				getCyclicTestGraph());
 		assertEquals(JValueBoolean.getFalseValue(), result.toBoolean());
 	}
-
 
 	@Test
 	public void testIsCycle() throws Exception {
@@ -837,7 +832,7 @@ public class FunctionTest extends GenericTests {
 		JValue result = evalTestQuery("Union1", queryString);
 		assertEquals(6, result.toCollection().size());
 	}
-	
+
 	@Test
 	public void testUnion2() throws Exception {
 		JValueMap map1 = new JValueMap();
@@ -848,10 +843,10 @@ public class FunctionTest extends GenericTests {
 		map2.put(new JValue(4), new JValue("A"));
 		map2.put(new JValue(5), new JValue("C"));
 		map2.put(new JValue(6), new JValue("D"));
-		
+
 		boundVariables.put("map1", map1);
 		boundVariables.put("map2", map2);
-		
+
 		String queryString = "using map1, map2: union(map1, map2)";
 		JValue result = evalTestQuery("Union2", queryString);
 		assertEquals(6, result.toJValueMap().size());
@@ -863,7 +858,7 @@ public class FunctionTest extends GenericTests {
 		assertEquals(new JValue("C"), rmap.get(new JValue(5)));
 		assertEquals(new JValue("D"), rmap.get(new JValue(6)));
 	}
-	
+
 	@Test
 	public void testUnion3() throws Exception {
 		JValueMap map1 = new JValueMap();
@@ -874,50 +869,49 @@ public class FunctionTest extends GenericTests {
 		map2.put(new JValue(1), new JValue("A"));
 		map2.put(new JValue(3), new JValue("C"));
 		map2.put(new JValue(4), new JValue("D"));
-		
+
 		boundVariables.put("map1", map1);
 		boundVariables.put("map2", map2);
-		
+
 		String queryString = "using map1, map2: union(map1, map2)";
 		try {
 			evalTestQuery("Union3", queryString);
 			fail("Expected Exception on using union with two non-disjoint maps");
 		} catch (Exception ex) {
-			//:)
+			// :)
 		}
 	}
-	
-	
+
 	@Test
 	public void testUnion4() throws Exception {
 		JValueSet set1 = new JValueSet();
 		set1.add(new JValue(1));
 		set1.add(new JValue(2));
 		set1.add(new JValue(3));
-		
+
 		JValueSet set2 = new JValueSet();
 		set2.add(new JValue(1));
 		set2.add(new JValue(2));
 		set2.add(new JValue(3));
-		
+
 		JValueSet set3 = new JValueSet();
 		set3.add(new JValue(3));
 		set3.add(new JValue(4));
 		set3.add(new JValue(5));
-		
+
 		JValueSet set4 = new JValueSet();
 		set4.add(new JValue(7));
 		set4.add(new JValue(8));
 		set4.add(new JValue(9));
-		
+
 		JValueSet cset = new JValueSet();
 		cset.add(set1);
 		cset.add(set2);
 		cset.add(set3);
 		cset.add(set4);
-		
+
 		boundVariables.put("cset", cset);
-		
+
 		String queryString = "using cset: union(cset)";
 		JValue result = evalTestQuery("Union4", queryString);
 		assertEquals(8, result.toJValueSet().size());
@@ -931,8 +925,7 @@ public class FunctionTest extends GenericTests {
 		assertTrue(rset.contains(new JValue(8)));
 		assertTrue(rset.contains(new JValue(9)));
 	}
-	
-	
+
 	@Test
 	public void testIsEmpty1() throws Exception {
 		JValueSet set1 = new JValueSet();
@@ -943,9 +936,8 @@ public class FunctionTest extends GenericTests {
 		String queryString = "using cset: isEmpty(cset)";
 		JValue result = evalTestQuery("IsEmpty1", queryString);
 		assertEquals(false, result.toBoolean());
-	}	
+	}
 
-	
 	@Test
 	public void testIsEmpty2() throws Exception {
 		JValueSet set1 = new JValueSet();
@@ -953,8 +945,8 @@ public class FunctionTest extends GenericTests {
 		String queryString = "using cset: isEmpty(cset)";
 		JValue result = evalTestQuery("IsEmpty2", queryString);
 		assertEquals(true, result.toBoolean());
-	}	
-	
+	}
+
 	@Test
 	public void testIsEmpty3() throws Exception {
 		JValueMap map1 = new JValueMap();
@@ -962,8 +954,8 @@ public class FunctionTest extends GenericTests {
 		String queryString = "using cset: isEmpty(cset)";
 		JValue result = evalTestQuery("IsEmpty3", queryString);
 		assertEquals(true, result.toBoolean());
-	}	
-	
+	}
+
 	@Test
 	public void testTopologicalSort() throws Exception {
 		String q = "topologicalSort()";

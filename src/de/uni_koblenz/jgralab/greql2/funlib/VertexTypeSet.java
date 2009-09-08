@@ -37,7 +37,7 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
 
 /**
  * Returns a set of all vertex-types that occure in the given structure.
- *
+ * 
  * <dl>
  * <dt><b>GReQL-signature</b></dt>
  * <dd>
@@ -60,9 +60,9 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
  * </dl>
  * </dd>
  * </dl>
- *
+ * 
  * @author ist@uni-koblenz.de
- *
+ * 
  */
 
 public class VertexTypeSet extends AbstractGreql2Function {

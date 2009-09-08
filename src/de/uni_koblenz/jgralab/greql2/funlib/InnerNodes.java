@@ -38,7 +38,7 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
  * Returns all inner nodes of the given pathsystem as set. Inner nodes are all
  * vertices besides leaves of the pathsystem. That means, all vertices, that are
  * not an end of a path.
- *
+ * 
  * <dl>
  * <dt><b>GReQL-signature</b></dt>
  * <dd><code>SET&lt;VERTEX&gt; innerNodes(ps:PATHSYSTEM)</code></dd>
@@ -56,10 +56,10 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
  * </dl>
  * </dd>
  * </dl>
- *
+ * 
  * @see Leaves
  * @author ist@uni-koblenz.de
- *
+ * 
  */
 
 public class InnerNodes extends AbstractGreql2Function {

@@ -25,11 +25,11 @@
 package de.uni_koblenz.jgralab.utilities.jgralab2owl;
 
 public final class HelperMethods {
-	
+
 	/**
 	 * Changes the first character of {@code string} to lower case and returns
 	 * the resulting String.
-	 *
+	 * 
 	 * @param string
 	 *            String whose first character shall be changed to lower case.
 	 * @return The given String with its first character changed to lower case.
@@ -42,7 +42,7 @@ public final class HelperMethods {
 	/**
 	 * Changes the first character of {@code string} to upper case and returns
 	 * the resulting String.
-	 *
+	 * 
 	 * @param string
 	 *            String whose first character shall be changed to upper case.
 	 * @return The given String with its first character changed to upper case.

@@ -21,7 +21,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
- 
+
 package de.uni_koblenz.jgralab.greql2.evaluator.vertexeval;
 
 import de.uni_koblenz.jgralab.EdgeDirection;
@@ -77,9 +77,12 @@ public class ExponentiatedPathDescriptionEvaluator extends
 	public JValue evaluate() throws EvaluateException {
 		PathDescription p = (PathDescription) vertex
 				.getFirstIsExponentiatedPathOf().getAlpha();
-		PathDescriptionEvaluator pathEval = (PathDescriptionEvaluator) greqlEvaluator.getVertexEvaluatorGraphMarker().getMark(p);
-		VertexEvaluator exponentEvaluator = greqlEvaluator.getVertexEvaluatorGraphMarker().getMark(vertex
-				.getFirstIsExponentOf(EdgeDirection.IN).getAlpha());
+		PathDescriptionEvaluator pathEval = (PathDescriptionEvaluator) greqlEvaluator
+				.getVertexEvaluatorGraphMarker().getMark(p);
+		VertexEvaluator exponentEvaluator = greqlEvaluator
+				.getVertexEvaluatorGraphMarker().getMark(
+						vertex.getFirstIsExponentOf(EdgeDirection.IN)
+								.getAlpha());
 		JValue exponentValue = exponentEvaluator.getResult(subgraph);
 		int exponent = 0;
 		if (exponentValue.isInteger()) {

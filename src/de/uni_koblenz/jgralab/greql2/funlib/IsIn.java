@@ -39,7 +39,7 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
  * Checks if a given object is included in a given structure. The object can be
  * anything (for example a vertex or an edge). The structure can be something
  * like a graph, a subgraph or a pathsystem.
- *
+ * 
  * <dl>
  * <dt><b>GReQL-signature</b></dt>
  * <dd><code>BOOLEAN isIn(obj:OBJECT, struct:STRUCTURE)</code></dd>
@@ -59,9 +59,9 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
  * </dl>
  * </dd>
  * </dl>
- *
+ * 
  * @author ist@uni-koblenz.de
- *
+ * 
  */
 
 public class IsIn extends AbstractGreql2Function {

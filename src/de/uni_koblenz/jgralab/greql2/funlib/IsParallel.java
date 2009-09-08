@@ -36,7 +36,7 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
 /**
  * Checks if two given paths are parallel. That means, they have the same
  * start-vertex and end-vertex and no other shared vertices.
- *
+ * 
  * <dl>
  * <dt><b>GReQL-signature</b></dt>
  * <dd><code>BOOLEAN isParallel(p1:PATH, p2:PATH)</code></dd>
@@ -57,9 +57,9 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
  * </dl>
  * </dd>
  * </dl>
- *
+ * 
  * @author ist@uni-koblenz.de
- *
+ * 
  */
 
 public class IsParallel extends AbstractGreql2Function {

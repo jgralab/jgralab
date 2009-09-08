@@ -21,7 +21,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
- 
+
 package de.uni_koblenz.jgralab.greql2.evaluator.vertexeval;
 
 import de.uni_koblenz.jgralab.EdgeDirection;
@@ -36,11 +36,11 @@ import de.uni_koblenz.jgralab.greql2.schema.PathDescription;
 import de.uni_koblenz.jgralab.greql2.schema.TransposedPathDescription;
 
 /**
- * Evaluates a TransposedPathDescription vertex. Creates a NFA, which accepts the
- * PathDescription the vertex describes.
- * @author ist@uni-koblenz.de
- * Summer 2006, Diploma Thesis
- *
+ * Evaluates a TransposedPathDescription vertex. Creates a NFA, which accepts
+ * the PathDescription the vertex describes.
+ * 
+ * @author ist@uni-koblenz.de Summer 2006, Diploma Thesis
+ * 
  */
 public class TransposedPathDescriptionEvaluator extends
 		PathDescriptionEvaluator {
@@ -76,7 +76,8 @@ public class TransposedPathDescriptionEvaluator extends
 	public JValue evaluate() throws EvaluateException {
 		PathDescription p = (PathDescription) vertex
 				.getFirstIsTransposedPathOf(EdgeDirection.IN).getAlpha();
-		PathDescriptionEvaluator pathEval = (PathDescriptionEvaluator) greqlEvaluator.getVertexEvaluatorGraphMarker().getMark(p);
+		PathDescriptionEvaluator pathEval = (PathDescriptionEvaluator) greqlEvaluator
+				.getVertexEvaluatorGraphMarker().getMark(p);
 		return new JValue(NFA.createTransposedPathDescriptionNFA(pathEval
 				.getNFA()));
 	}

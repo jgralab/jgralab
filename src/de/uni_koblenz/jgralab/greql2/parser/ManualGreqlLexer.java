@@ -8,7 +8,6 @@ import java.util.Map.Entry;
 
 public class ManualGreqlLexer {
 
-
 	protected static Map<TokenTypes, String> fixedTokens;
 
 	{
@@ -93,10 +92,6 @@ public class ManualGreqlLexer {
 		fixedTokens.put(TokenTypes.PATHSYSTEMSTART, "-<");
 		fixedTokens.put(TokenTypes.IMPORT, "import");
 	}
-	
-
-
-	
 
 	protected String query = null;
 
@@ -105,102 +100,122 @@ public class ManualGreqlLexer {
 	public ManualGreqlLexer(String source) {
 		this.query = source;
 		if (query == null)
-			throw new NullPointerException("Cannot parse nullpointer as GReQL query");
+			throw new NullPointerException(
+					"Cannot parse nullpointer as GReQL query");
 	}
 
 	public static String getTokenString(TokenTypes token) {
 		return fixedTokens.get(token);
 	}
-	
+
 	private final static boolean isSeparator(int c) {
-		return     c == ';' || c == '<' || c == '>' || c == '(' || c == ')'
+		return c == ';' || c == '<' || c == '>' || c == '(' || c == ')'
 				|| c == '{' || c == '}' || c == ':' || c == '[' || c == ']'
-				|| c == ',' || c == ' ' || c == '.' || c == '-' || c == '+' 
+				|| c == ',' || c == ' ' || c == '.' || c == '-' || c == '+'
 				|| c == '*' || c == '/' || c == '%' || c == '~' || c == '='
-				|| c == '?'	|| c == '^' || c == '|' || c == '!' || c == '@';
+				|| c == '?' || c == '^' || c == '|' || c == '!' || c == '@';
 	}
-	
-	
+
 	public Token getNextToken() {
 		TokenTypes recognizedTokenType = null;
 		Token recognizedToken = null;
 		int bml = 0; // best match length
 		skipWs();
-		//recognize fixed tokens
+		// recognize fixed tokens
 		for (Entry<TokenTypes, String> currentEntry : fixedTokens.entrySet()) {
 			String currentString = currentEntry.getValue();
 			int currLen = currentString.length();
 			if (bml > currLen)
 				continue;
 			if (query.regionMatches(position, currentString, 0, currLen)) {
-				if (((position+currLen) == query.length()) || isSeparator(query.charAt(position + currLen - 1))
+				if (((position + currLen) == query.length())
+						|| isSeparator(query.charAt(position + currLen - 1))
 						|| isSeparator(query.charAt(position + currLen))) {
 					bml = currLen;
 					recognizedTokenType = currentEntry.getKey();
 				}
 			}
 		}
-		//recognize strings and identifiers
+		// recognize strings and identifiers
 		if (recognizedTokenType == null) {
-			if (query.charAt(position) == '\"') { //String
+			if (query.charAt(position) == '\"') { // String
 				position++;
 				int start = position;
 				StringBuilder sb = new StringBuilder();
-				while (position < query.length() && query.charAt(position) != '\"') {
+				while (position < query.length()
+						&& query.charAt(position) != '\"') {
 					if (query.charAt(position) == '\\') {
 						if (position == query.length())
-							throw new ParsingException("String started at position " + start + " but is not closed in query", query.substring(start, position), start, position-start);
-						if ((query.charAt(position+1) == '"') || (query.charAt(position+1) == '\\')) {
+							throw new ParsingException(
+									"String started at position " + start
+											+ " but is not closed in query",
+									query.substring(start, position), start,
+									position - start);
+						if ((query.charAt(position + 1) == '"')
+								|| (query.charAt(position + 1) == '\\')) {
 							position++;
-						}	
-					} 
+						}
+					}
 					sb.append(query.charAt(position));
 					position++;
 				}
 				if (query.charAt(position) != '\"')
-					throw new ParsingException("String started at position " + start + " but is not closed in query", sb.toString(), start, position-start);
+					throw new ParsingException("String started at position "
+							+ start + " but is not closed in query", sb
+							.toString(), start, position - start);
 				recognizedTokenType = TokenTypes.STRING;
-				recognizedToken = new ComplexToken(TokenTypes.STRING, start, position, sb.toString());
+				recognizedToken = new ComplexToken(TokenTypes.STRING, start,
+						position, sb.toString());
 				position++;
 			} else {
-			//identifier and literals
+				// identifier and literals
 				StringBuffer nextPossibleToken = new StringBuffer();
 				int start = position;
 				while ((query.length() > position)
 						&& (!isSeparator(query.charAt(position))))
 					nextPossibleToken.append(query.charAt(position++));
-				String tokenText = nextPossibleToken.toString(); 
+				String tokenText = nextPossibleToken.toString();
 				if (tokenText.equals("thisVertex")) {
-					recognizedToken = new ComplexToken(TokenTypes.THISVERTEX, start, position-start, tokenText);
+					recognizedToken = new ComplexToken(TokenTypes.THISVERTEX,
+							start, position - start, tokenText);
 				} else if (tokenText.equals("thisEdge")) {
-					recognizedToken = new ComplexToken(TokenTypes.THISEDGE, start, position-start, tokenText);
+					recognizedToken = new ComplexToken(TokenTypes.THISEDGE,
+							start, position - start, tokenText);
 				} else if (startsWithNumber(tokenText)) {
-					recognizedToken = matchNumericToken(start, position-start, tokenText);
-				} else {	
-					recognizedToken = new ComplexToken(TokenTypes.IDENTIFIER, start, position-start, tokenText);
-				}	
-		
-			}	
+					recognizedToken = matchNumericToken(start,
+							position - start, tokenText);
+				} else {
+					recognizedToken = new ComplexToken(TokenTypes.IDENTIFIER,
+							start, position - start, tokenText);
+				}
+
+			}
 		} else {
-			recognizedToken = new SimpleToken(recognizedTokenType, position, bml);
+			recognizedToken = new SimpleToken(recognizedTokenType, position,
+					bml);
 			position += bml;
 		}
 		if (recognizedToken == null)
-			throw new ParsingException("Error while scanning query at position", null, position, position);
+			throw new ParsingException(
+					"Error while scanning query at position", null, position,
+					position);
 		return recognizedToken;
-	} 
+	}
 
 	private final boolean startsWithNumber(String text) {
 		char c = text.charAt(0);
-		return (c >= Character.valueOf('0')) && (c <=Character.valueOf('9'));
+		return (c >= Character.valueOf('0')) && (c <= Character.valueOf('9'));
 	}
 
-	//TODO: Exponenten
+	// TODO: Exponenten
 	private final Token matchNumericToken(int start, int end, String text) {
 		int value = 0;
 		int decValue = 0;
 		TokenTypes type = null;
-		if ( (text.charAt(0) == '0') && (text.charAt(text.length()-1) != 'f') && (text.charAt(text.length()-1) != 'F') && (text.charAt(text.length()-1) != 'd') && (text.charAt(text.length()-1) != 'D'))  {
+		if ((text.charAt(0) == '0') && (text.charAt(text.length() - 1) != 'f')
+				&& (text.charAt(text.length() - 1) != 'F')
+				&& (text.charAt(text.length() - 1) != 'd')
+				&& (text.charAt(text.length() - 1) != 'D')) {
 			if (text.length() == 1) {
 				type = TokenTypes.INTLITERAL;
 				value = 0;
@@ -209,52 +224,59 @@ public class ManualGreqlLexer {
 				try {
 					value = Integer.parseInt(text.substring(2), 16);
 				} catch (NumberFormatException ex) {
-					throw new ParsingException("Not a valid hex number", text, start, end-start);
-				}	
+					throw new ParsingException("Not a valid hex number", text,
+							start, end - start);
+				}
 			} else {
 				type = TokenTypes.OCTLITERAL;
 				try {
 					value = Integer.parseInt(text.substring(1), 8);
 					decValue = Integer.parseInt(text);
 				} catch (NumberFormatException ex) {
-					throw new ParsingException("Not a valid octal number", text, start, end-start);
-				}		
+					throw new ParsingException("Not a valid octal number",
+							text, start, end - start);
+				}
 			}
 		} else {
-			switch (text.charAt(text.length()-1)) {
-				case 'h':
-					type = TokenTypes.HEXLITERAL;
-					try {
-						value = Integer.parseInt(text.substring(0, text.length()-1), 16);
-					} catch (NumberFormatException ex) {
-						throw new ParsingException("Not a valid hex number", text, start, end-start);
-					}	
-					break;
-				case 'd':
-				case 'D':
-				case 'f':
-				case 'F':	
-					type = TokenTypes.REALLITERAL;
-					try {
-						String tokenString = text.substring(0, text.length()-1);
-						System.out.println("TokenString: " + tokenString);
-						return new RealToken(type, start, end-start,  Double.parseDouble(tokenString));
-					} catch (NumberFormatException ex) {
-						throw new ParsingException("Not a valid float number", text, start, end-start);
-					}
-				default:
-					type = TokenTypes.INTLITERAL;
-					try {
-						value = Integer.parseInt(text);
-					} catch (NumberFormatException ex) {
-						throw new ParsingException("Not a valid integer number", text, start, end-start);
-					}	
+			switch (text.charAt(text.length() - 1)) {
+			case 'h':
+				type = TokenTypes.HEXLITERAL;
+				try {
+					value = Integer.parseInt(text.substring(0,
+							text.length() - 1), 16);
+				} catch (NumberFormatException ex) {
+					throw new ParsingException("Not a valid hex number", text,
+							start, end - start);
+				}
+				break;
+			case 'd':
+			case 'D':
+			case 'f':
+			case 'F':
+				type = TokenTypes.REALLITERAL;
+				try {
+					String tokenString = text.substring(0, text.length() - 1);
+					System.out.println("TokenString: " + tokenString);
+					return new RealToken(type, start, end - start, Double
+							.parseDouble(tokenString));
+				} catch (NumberFormatException ex) {
+					throw new ParsingException("Not a valid float number",
+							text, start, end - start);
+				}
+			default:
+				type = TokenTypes.INTLITERAL;
+				try {
+					value = Integer.parseInt(text);
+				} catch (NumberFormatException ex) {
+					throw new ParsingException("Not a valid integer number",
+							text, start, end - start);
+				}
 			}
 		}
 		if (type != TokenTypes.OCTLITERAL)
 			decValue = value;
-		return new IntegerToken(type, start, end-start, value, decValue);
-		
+		return new IntegerToken(type, start, end - start, value, decValue);
+
 	}
 
 	public boolean hasNextToken() {
@@ -280,18 +302,15 @@ public class ManualGreqlLexer {
 			}
 		} while ((position < query.length()) && isWs(query.charAt(position)));
 	}
-	
-	
+
 	public static List<Token> scan(String query) {
 		List<Token> list = new ArrayList<Token>();
 		ManualGreqlLexer lexer = new ManualGreqlLexer(query);
-		while(lexer.hasNextToken()) {
+		while (lexer.hasNextToken()) {
 			Token nextToken = lexer.getNextToken();
 			list.add(nextToken);
 		}
 		return list;
 	}
-	
-	
 
 }

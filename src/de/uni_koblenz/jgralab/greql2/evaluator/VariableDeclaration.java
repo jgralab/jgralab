@@ -116,7 +116,6 @@ public class VariableDeclaration implements Comparable<VariableDeclaration> {
 		iter = definitionSet.iterator();
 	}
 
-
 	/**
 	 * deletes all intermediate results that depend on this variable
 	 */

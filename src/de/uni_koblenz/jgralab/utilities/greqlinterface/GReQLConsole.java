@@ -185,7 +185,7 @@ public class GReQLConsole {
 		oh.addOption(inputFile);
 
 		Option output = new Option("o", "output", true,
-		"(optional): HTML-file to be generated");
+				"(optional): HTML-file to be generated");
 		output.setArgName("file");
 		oh.addOption(output);
 

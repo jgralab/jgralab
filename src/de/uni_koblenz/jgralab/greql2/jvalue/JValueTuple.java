@@ -135,7 +135,7 @@ public class JValueTuple extends JValueList {
 	 */
 	@Override
 	public boolean remove(JValue element) {
-		//TODO: Should it be possible to remove elements from a tuple 
+		// TODO: Should it be possible to remove elements from a tuple
 		return false;
 	}
 

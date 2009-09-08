@@ -53,7 +53,7 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
 /**
  * Returns a pathsystem, based on the current graph and the given dfa, whose
  * root is the given vertex.
- *
+ * 
  * <dl>
  * <dt><b>GReQL-signature</b></dt>
  * <dd><code>PATHSYSTEM pathSystem(v:VERTEX, dfa:DFA)</code></dd>
@@ -77,9 +77,9 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
  * </dl>
  * </dd>
  * </dl>
- *
+ * 
  * @author ist@uni-koblenz.de
- *
+ * 
  */
 public class PathSystem extends AbstractGreql2Function {
 
@@ -106,7 +106,7 @@ public class PathSystem extends AbstractGreql2Function {
 
 	/**
 	 * marks the given vertex with the given PathSystemMarker
-	 *
+	 * 
 	 * @return true if the vertex was marked successfull, false if it is already
 	 *         marked with this state
 	 */
@@ -130,7 +130,7 @@ public class PathSystem extends AbstractGreql2Function {
 
 	/**
 	 * Checks if the given vertex is marked with the given state
-	 *
+	 * 
 	 * @return true if the vertex is marked, false otherwise
 	 */
 	protected boolean isMarked(Vertex v, State s) {
@@ -146,7 +146,7 @@ public class PathSystem extends AbstractGreql2Function {
 	 * Marks all vertices that are part of the PathSystem described by the given
 	 * rootVertex and the regular path expression which is acceptes by the given
 	 * dfa
-	 *
+	 * 
 	 * @param startVertex
 	 *            the rootVertex of the PathSystem
 	 * @param dfa
@@ -252,7 +252,7 @@ public class PathSystem extends AbstractGreql2Function {
 	/**
 	 * Creates a JValuePathSystem-object which contains all path which start at
 	 * the given root vertex andend with the given leaves
-	 *
+	 * 
 	 * @param leaves
 	 * @return
 	 */
@@ -319,7 +319,7 @@ public class PathSystem extends AbstractGreql2Function {
 	/**
 	 * Adds the given state to the set of states maintained for the given
 	 * vertex.
-	 *
+	 * 
 	 * @param v
 	 *            the vertex to be marked
 	 * @param s
@@ -334,7 +334,7 @@ public class PathSystem extends AbstractGreql2Function {
 
 	/**
 	 * Checks if the given vertex' state set contains the given state.
-	 *
+	 * 
 	 * @param v
 	 *            the vertex to be checked
 	 * @param s
@@ -350,7 +350,7 @@ public class PathSystem extends AbstractGreql2Function {
 
 	/**
 	 * Returns the {@code PathSystemMarkerEntry} for a given vertex and state.
-	 *
+	 * 
 	 * @param v
 	 *            the vertex for which to return the {@code
 	 *            PathSystemMarkerEntry}

@@ -64,8 +64,8 @@ public class VertexCosts {
 	 *            the costs for <b>one</b> evaluation of the vertex this object
 	 *            represents
 	 * @param iterated
-	 *            the costs for <b>all</b> evaluations of the vertex this
-	 *            object represents
+	 *            the costs for <b>all</b> evaluations of the vertex this object
+	 *            represents
 	 * @param subtree
 	 *            the costs for the evaluation of the subtree with the vertex as
 	 *            root

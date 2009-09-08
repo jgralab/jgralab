@@ -64,7 +64,7 @@ public class PathSystemTest extends GenericTests {
 			assertEquals(9, sys.weight());
 		}
 	}
-	
+
 	/*
 	 * Test method for
 	 * 'greql2.evaluator.GreqlEvaluator.evaluateForwardVertexSet(ForwardVertexSet,

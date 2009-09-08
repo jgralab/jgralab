@@ -51,15 +51,15 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
  * </ul>
  * <strong>Returns</strong> a JValue, if the result is a boolean value,
  * jvalue.JValueBoolean is used, because the function may return "unknown"
- *
+ * 
  * @author ist@uni-koblenz.de
- *
+ * 
  */
 public interface Greql2Function {
 
 	/**
 	 * evaluates this GReQL-Function
-	 *
+	 * 
 	 * @param arguments
 	 *            the arguments this function expects
 	 * @return the result of this function as JValue
@@ -71,7 +71,7 @@ public interface Greql2Function {
 
 	/**
 	 * Calculates the estimated cost for the evaluation of this greql function
-	 *
+	 * 
 	 * @param inElements
 	 *            the number of input elements
 	 * @return The estimated costs in the abstract measure-unit "interpretation
@@ -82,7 +82,7 @@ public interface Greql2Function {
 	/**
 	 * Calculates the estimated selectivity of this boolean function. If this
 	 * function does not return a boolean value, this method should return 1
-	 *
+	 * 
 	 * @return the selectivity of this function, 0 < selectivity <= 1
 	 */
 	public double getSelectivity();
@@ -90,7 +90,7 @@ public interface Greql2Function {
 	/**
 	 * Calculates the estimated result size for the given number of input
 	 * elements
-	 *
+	 * 
 	 * @param inElements
 	 *            the number of input elements to calculate the result size for
 	 * @return the estimated number of elements in the result

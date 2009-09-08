@@ -37,7 +37,7 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
 /**
  * Checks if the first given set is a subset of the second given set. That
  * means, all elements from the first set are also elements in the second set.
- *
+ * 
  * <dl>
  * <dt><b>GReQL-signature</b></dt>
  * <dd>
@@ -60,9 +60,9 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
  * </dl>
  * </dd>
  * </dl>
- *
+ * 
  * @author ist@uni-koblenz.de
- *
+ * 
  */
 public class IsSubSet extends AbstractGreql2Function {
 

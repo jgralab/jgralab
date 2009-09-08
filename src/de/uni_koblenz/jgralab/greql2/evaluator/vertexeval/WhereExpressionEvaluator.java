@@ -21,7 +21,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
- 
+
 package de.uni_koblenz.jgralab.greql2.evaluator.vertexeval;
 
 import java.util.ArrayList;
@@ -70,12 +70,14 @@ public class WhereExpressionEvaluator extends DefinitionExpressionEvaluator {
 		// valid also left of its defintion but not right
 		for (int i = defList.size() - 1; i >= 0; i--) {
 			Definition currentDefinition = defList.get(i);
-			DefinitionEvaluator definEval = (DefinitionEvaluator) greqlEvaluator.getVertexEvaluatorGraphMarker().getMark(currentDefinition);
+			DefinitionEvaluator definEval = (DefinitionEvaluator) greqlEvaluator
+					.getVertexEvaluatorGraphMarker().getMark(currentDefinition);
 			definEval.getResult(subgraph);
 		}
-		Expression boundExp = (Expression) vertex
-				.getFirstIsBoundExprOf(EdgeDirection.IN).getAlpha();
-		VertexEvaluator boundExpEval = greqlEvaluator.getVertexEvaluatorGraphMarker().getMark(boundExp);
+		Expression boundExp = (Expression) vertex.getFirstIsBoundExprOf(
+				EdgeDirection.IN).getAlpha();
+		VertexEvaluator boundExpEval = greqlEvaluator
+				.getVertexEvaluatorGraphMarker().getMark(boundExp);
 		return boundExpEval.getResult(subgraph);
 	}
 

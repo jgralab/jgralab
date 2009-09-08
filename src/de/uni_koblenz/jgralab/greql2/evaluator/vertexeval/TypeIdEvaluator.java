@@ -41,9 +41,9 @@ import de.uni_koblenz.jgralab.schema.Schema;
 
 /**
  * Creates a List of types out of the TypeId-Vertex.
- *
+ * 
  * @author ist@uni-koblenz.de
- *
+ * 
  */
 public class TypeIdEvaluator extends VertexEvaluator {
 
@@ -64,7 +64,7 @@ public class TypeIdEvaluator extends VertexEvaluator {
 
 	/**
 	 * Creates a list of types from this TypeId-Vertex
-	 *
+	 * 
 	 * @param schema
 	 *            the schema of the datagraph
 	 * @return the generated list of types
@@ -111,7 +111,7 @@ public class TypeIdEvaluator extends VertexEvaluator {
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @seede.uni_koblenz.jgralab.greql2.evaluator.vertexeval.VertexEvaluator#
 	 * getLoggingName()
 	 */

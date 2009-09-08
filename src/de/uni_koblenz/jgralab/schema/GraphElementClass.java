@@ -26,14 +26,14 @@ package de.uni_koblenz.jgralab.schema;
 
 /**
  * Base class for Vertex/Edge/Aggregation/Composition classes.
- *
+ * 
  * @author ist@uni-koblenz.de
  */
 public interface GraphElementClass extends AttributedElementClass {
 
 	/**
 	 * Returns the GraphClass of this AttributedElementClass.
-	 *
+	 * 
 	 * @return the GraphClass in which this graph element class resides
 	 */
 	public GraphClass getGraphClass();

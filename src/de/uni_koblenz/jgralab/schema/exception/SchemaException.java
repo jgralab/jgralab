@@ -27,7 +27,7 @@ package de.uni_koblenz.jgralab.schema.exception;
 /**
  * Exceptions of this class are thrown when an error occurs while creating or
  * manipulating a Schema.
- *
+ * 
  * @author ist@uni-koblenz.de
  */
 public class SchemaException extends RuntimeException {

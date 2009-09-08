@@ -38,7 +38,7 @@ import de.uni_koblenz.jgralab.schema.AttributedElementClass;
 /**
  * Returns all direct subtypes of the given type. The type can be given as
  * AttributedElementClass or as String which holds the typename.
- *
+ * 
  * <dl>
  * <dt><b>GReQL-signature</b></dt>
  * <dd><code>SET&lt;ATTRIBUTEDELEMENTCLASS&gt; subTypes(type:STRING)</code></dd>
@@ -61,9 +61,9 @@ import de.uni_koblenz.jgralab.schema.AttributedElementClass;
  * </dl>
  * </dd>
  * </dl>
- *
+ * 
  * @author ist@uni-koblenz.de
- *
+ * 
  */
 public class Subtypes extends AbstractGreql2Function {
 

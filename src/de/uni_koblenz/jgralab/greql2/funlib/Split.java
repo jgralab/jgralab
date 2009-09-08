@@ -34,10 +34,10 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueList;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
 
 /**
- *
+ * 
  * Splits the given string {@code str} at the positions where {@code regex}
  * matches and returns a list of the splits.
- *
+ * 
  * <dl>
  * <dt><b>GReQL-signature</b></dt>
  * <dd><code>LIST keySet(str:STRING, regex:STRING)</code></dd>
@@ -55,9 +55,9 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
  * </dl>
  * </dd>
  * </dl>
- *
+ * 
  * @author Tassilo Horn &lt;horn@uni-koblenz.de&gt;
- *
+ * 
  */
 public class Split extends AbstractGreql2Function {
 	{
@@ -67,7 +67,7 @@ public class Split extends AbstractGreql2Function {
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see
 	 * de.uni_koblenz.jgralab.greql2.funlib.Greql2Function#evaluate(de.uni_koblenz
 	 * .jgralab.Graph, de.uni_koblenz.jgralab.BooleanGraphMarker,
@@ -91,7 +91,7 @@ public class Split extends AbstractGreql2Function {
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see
 	 * de.uni_koblenz.jgralab.greql2.funlib.Greql2Function#getEstimatedCardinality
 	 * (int)
@@ -103,7 +103,7 @@ public class Split extends AbstractGreql2Function {
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see
 	 * de.uni_koblenz.jgralab.greql2.funlib.Greql2Function#getEstimatedCosts
 	 * (java.util.ArrayList)
@@ -115,7 +115,7 @@ public class Split extends AbstractGreql2Function {
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see de.uni_koblenz.jgralab.greql2.funlib.Greql2Function#getSelectivity()
 	 */
 	@Override

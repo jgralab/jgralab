@@ -31,7 +31,7 @@ import de.uni_koblenz.jgralab.schema.Constraint;
 
 /**
  * @author Tassilo Horn <horn@uni-koblenz.de>
- *
+ * 
  */
 public class BrokenGReQLConstraintViolation extends ConstraintViolation {
 

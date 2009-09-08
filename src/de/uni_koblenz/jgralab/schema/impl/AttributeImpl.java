@@ -44,7 +44,7 @@ public class AttributeImpl implements Attribute, Comparable<Attribute> {
 	 * the domain of the attribute
 	 */
 	private Domain domain;
-	
+
 	/**
 	 * the owning AttributedElementClass of the atribute
 	 */
@@ -63,7 +63,8 @@ public class AttributeImpl implements Attribute, Comparable<Attribute> {
 	 * @param domain
 	 *            the domain of the attribute
 	 * @param aec
-	 * 			  the {@link AttributedElementClass} owning the {@link Attribute}
+	 *            the {@link AttributedElementClass} owning the
+	 *            {@link Attribute}
 	 */
 	public AttributeImpl(String name, Domain domain, AttributedElementClass aec) {
 		this.name = name;
@@ -99,7 +100,7 @@ public class AttributeImpl implements Attribute, Comparable<Attribute> {
 	public String getName() {
 		return name;
 	}
-	
+
 	public AttributedElementClass getAttributedElementClass() {
 		return aec;
 	}

@@ -21,7 +21,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
- 
+
 package de.uni_koblenz.jgralab.greql2.evaluator.vertexeval;
 
 import de.uni_koblenz.jgralab.Edge;
@@ -55,18 +55,19 @@ public class EdgePathDescriptionEvaluator extends
 		Edge evalEdge = vertex.getFirstIsEdgeExprOf();
 		VertexEvaluator edgeEval = null;
 		if (evalEdge != null) {
-			edgeEval = greqlEvaluator.getVertexEvaluatorGraphMarker().getMark(evalEdge.getAlpha());
+			edgeEval = greqlEvaluator.getVertexEvaluatorGraphMarker().getMark(
+					evalEdge.getAlpha());
 		}
 		JValueTypeCollection typeCollection = new JValueTypeCollection();
 		IsTypeRestrOf inc = vertex.getFirstIsTypeRestrOf(EdgeDirection.IN);
 		EdgeRestrictionEvaluator edgeRestEval = null;
 		if (inc != null) {
-			edgeRestEval = (EdgeRestrictionEvaluator) greqlEvaluator.getVertexEvaluatorGraphMarker().getMark(inc.getAlpha());
+			edgeRestEval = (EdgeRestrictionEvaluator) greqlEvaluator
+					.getVertexEvaluatorGraphMarker().getMark(inc.getAlpha());
 			typeCollection.addTypes(edgeRestEval.getTypeCollection());
 		}
 		createdNFA = NFA.createEdgePathDescriptionNFA(getEdgeDirection(vertex),
-				typeCollection,
-				getEdgeRole(edgeRestEval), edgeEval);
+				typeCollection, getEdgeRole(edgeRestEval), edgeEval);
 		return new JValue(createdNFA);
 	}
 

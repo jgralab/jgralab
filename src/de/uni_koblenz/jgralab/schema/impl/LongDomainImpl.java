@@ -31,8 +31,8 @@ import de.uni_koblenz.jgralab.schema.LongDomain;
 import de.uni_koblenz.jgralab.schema.Package;
 import de.uni_koblenz.jgralab.schema.Schema;
 
-public final class LongDomainImpl extends BasicDomainImpl implements IntegerDomain,
-		LongDomain {
+public final class LongDomainImpl extends BasicDomainImpl implements
+		IntegerDomain, LongDomain {
 
 	LongDomainImpl(Schema schema) {
 		super(LONGDOMAIN_NAME, schema.getDefaultPackage());

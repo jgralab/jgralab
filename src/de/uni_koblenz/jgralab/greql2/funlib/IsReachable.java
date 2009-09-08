@@ -45,7 +45,7 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
  * Checks if there exists a path from the first given vertex to the second given
  * vertex in the graph, that is accepted by the given dfa. A dfa is defined as
  * regular path expression.
- *
+ * 
  * <dl>
  * <dt><b>GReQL-signature</b></dt>
  * <dd>
@@ -69,9 +69,9 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
  * </dl>
  * </dd>
  * </dl>
- *
+ * 
  * @author ist@uni-koblenz.de
- *
+ * 
  */
 public class IsReachable extends AbstractGreql2Function {
 
@@ -102,15 +102,19 @@ public class IsReachable extends AbstractGreql2Function {
 		queue.add(currentEntry);
 		while (!queue.isEmpty()) {
 			currentEntry = queue.poll();
-			if ((currentEntry.vertex == endVertex) && (currentEntry.state.isFinal)) {
+			if ((currentEntry.vertex == endVertex)
+					&& (currentEntry.state.isFinal)) {
 				return new JValue(true, startVertex);
 			}
-  		    Edge inc = currentEntry.vertex.getFirstEdge();
+			Edge inc = currentEntry.vertex.getFirstEdge();
 			while (inc != null) {
 				for (Transition currentTransition : currentEntry.state.outTransitions) {
-					Vertex nextVertex = currentTransition.getNextVertex(currentEntry.vertex, inc);
-					if (!markers[currentTransition.getEndState().number].isMarked(nextVertex)) {
-						if (currentTransition.accepts(currentEntry.vertex, inc, subgraph)) {
+					Vertex nextVertex = currentTransition.getNextVertex(
+							currentEntry.vertex, inc);
+					if (!markers[currentTransition.getEndState().number]
+							.isMarked(nextVertex)) {
+						if (currentTransition.accepts(currentEntry.vertex, inc,
+								subgraph)) {
 							PathSearchQueueEntry nextEntry = new PathSearchQueueEntry(
 									nextVertex, currentTransition.getEndState());
 							markers[nextEntry.state.number].mark(nextVertex);

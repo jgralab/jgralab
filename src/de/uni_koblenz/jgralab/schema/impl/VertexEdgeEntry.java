@@ -5,13 +5,13 @@ import de.uni_koblenz.jgralab.schema.EdgeClass;
 import de.uni_koblenz.jgralab.schema.VertexClass;
 
 public class VertexEdgeEntry {
-	
+
 	VertexClass vertex;
-	
+
 	EdgeClass edge;
-	
+
 	boolean redefined;
-	
+
 	EdgeDirection direction;
 
 	public VertexEdgeEntry(VertexClass vertex, DirectedEdgeClass edge,
@@ -34,13 +34,13 @@ public class VertexEdgeEntry {
 	public boolean isRedefined() {
 		return redefined;
 	}
-	
+
 	public EdgeDirection getDirection() {
 		return direction;
 	}
-	
+
 	public void setRedefined(boolean redefined) {
 		this.redefined = redefined;
 	}
-	
+
 }

@@ -35,7 +35,7 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
 
 /**
  * Checks if two different objects are equal.
- *
+ * 
  * <dl>
  * <dt><b>GReQL-signature</b></dt>
  * <dd><code>BOOLEAN equals(obj1:OBJECT, obj2:OBJECT)</code></dd>
@@ -58,9 +58,9 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
  * </dl>
  * </dd>
  * </dl>
- *
+ * 
  * @author ist@uni-koblenz.de
- *
+ * 
  */
 
 public class Equals extends AbstractGreql2Function {

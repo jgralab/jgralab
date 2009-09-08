@@ -34,7 +34,7 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
 
 /**
  * Retrieves the value associated with a given key in the given map.
- *
+ * 
  * <dl>
  * <dt><b>GReQL-signature</b></dt>
  * <dd><code>OBJECT get(m:MAP, key:OBJECT)</code></dd>
@@ -54,9 +54,9 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
  * </dl>
  * </dd>
  * </dl>
- *
+ * 
  * @author ist@uni-koblenz.de
- *
+ * 
  */
 public class Get extends AbstractGreql2Function {
 	{
@@ -66,7 +66,7 @@ public class Get extends AbstractGreql2Function {
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see
 	 * de.uni_koblenz.jgralab.greql2.funlib.Greql2Function#evaluate(de.uni_koblenz
 	 * .jgralab.Graph, de.uni_koblenz.jgralab.BooleanGraphMarker,
@@ -83,7 +83,7 @@ public class Get extends AbstractGreql2Function {
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see
 	 * de.uni_koblenz.jgralab.greql2.funlib.Greql2Function#getEstimatedCardinality
 	 * (int)
@@ -95,7 +95,7 @@ public class Get extends AbstractGreql2Function {
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see
 	 * de.uni_koblenz.jgralab.greql2.funlib.Greql2Function#getEstimatedCosts
 	 * (java.util.ArrayList)
@@ -107,7 +107,7 @@ public class Get extends AbstractGreql2Function {
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see de.uni_koblenz.jgralab.greql2.funlib.Greql2Function#getSelectivity()
 	 */
 	@Override

@@ -57,88 +57,96 @@ import de.uni_koblenz.jgralab.greql2.schema.ThisVertex;
 import de.uni_koblenz.jgralab.greql2.schema.Variable;
 
 public abstract class ManualParserHelper {
-	
-    protected String query = null;
-	
+
+	protected String query = null;
+
 	protected Greql2 graph;
-		
+
 	protected Greql2Schema schema = null;
-	
-    protected SymbolTable variableSymbolTable = null;
-    
-    protected SymbolTable functionSymbolTable = null;
-    
-    protected  boolean graphCleaned = false;
-    	
+
+	protected SymbolTable variableSymbolTable = null;
+
+	protected SymbolTable functionSymbolTable = null;
+
+	protected boolean graphCleaned = false;
+
 	protected Greql2FunctionLibrary funlib = null;
-	
+
 	protected Token lookAhead = null;
-	
+
 	protected abstract boolean inPredicateMode();
-	
+
 	protected final int getCurrentOffset() {
 		if (lookAhead != null) {
 			return lookAhead.getOffset();
 		}
 		return query.length();
 	}
-	
+
 	protected final int getLength(int offset) {
 		return getCurrentOffset() - offset;
 	}
-	
-	public PathDescription addPathElement(Class<? extends PathDescription> vc, Class<? extends Edge> ec, PathDescription pathDescr, PathDescription part1, int offsetPart1, int lengthPart1, PathDescription part2, int offsetPart2, int lengthPart2) {
-	 	Greql2Aggregation edge = null;
-	 	if (pathDescr == null) {
-	 		pathDescr = graph.createVertex(vc);
-	 		edge =  (Greql2Aggregation) graph.createEdge(ec, part1, pathDescr);
-	 		edge.setSourcePositions((createSourcePositionList(lengthPart1, offsetPart1)));
-	 	}
+
+	public PathDescription addPathElement(Class<? extends PathDescription> vc,
+			Class<? extends Edge> ec, PathDescription pathDescr,
+			PathDescription part1, int offsetPart1, int lengthPart1,
+			PathDescription part2, int offsetPart2, int lengthPart2) {
+		Greql2Aggregation edge = null;
+		if (pathDescr == null) {
+			pathDescr = graph.createVertex(vc);
+			edge = (Greql2Aggregation) graph.createEdge(ec, part1, pathDescr);
+			edge.setSourcePositions((createSourcePositionList(lengthPart1,
+					offsetPart1)));
+		}
 		edge = (Greql2Aggregation) graph.createEdge(ec, part2, pathDescr);
-		edge.setSourcePositions((createSourcePositionList(lengthPart2, offsetPart2 )));
+		edge.setSourcePositions((createSourcePositionList(lengthPart2,
+				offsetPart2)));
 		return pathDescr;
 	}
 
-	/** Returns the abstract syntax graph for the input
-     *  @return the abstract syntax graph representing a GReQL 2 query
-     */
-    public Greql2 getGraph()  {
-    	if (graph == null)
-    		return null;
-    	if (!graphCleaned) {
-    	    Set<Vertex> reachableVertices = new HashSet<Vertex>();
-    	    Queue<Vertex> queue = new LinkedList<Vertex>();
-    		Greql2Expression root = graph.getFirstGreql2Expression();
-    		if (root == null)
-    			return null;
-    		queue.add(root);
-    		while (!queue.isEmpty()) {
-    			Vertex current = queue.poll();
-    			for (Edge e : current.incidences()) {
-    				if (!reachableVertices.contains(e.getThat())) {
-    					queue.add(e.getThat());
-    					reachableVertices.add(e.getThat());
-    				}	
-    			}
-    		}
-    		Vertex deleteCandidate = graph.getFirstVertex();
-    		while ((deleteCandidate != null) && (!reachableVertices.contains(deleteCandidate))) {
-    			deleteCandidate.delete();
-    			deleteCandidate = graph.getFirstVertex();
-    		}
-    		while (deleteCandidate != null)  {
-    			if (!reachableVertices.contains(deleteCandidate)) {
-    				Vertex v = deleteCandidate.getNextVertex();
-    				deleteCandidate.delete();
-    				deleteCandidate = v;
-    			} else {
-    				deleteCandidate = deleteCandidate.getNextVertex();
-    			}	
-    		}
-    	}
-    	return graph;
-    }
-	
+	/**
+	 * Returns the abstract syntax graph for the input
+	 * 
+	 * @return the abstract syntax graph representing a GReQL 2 query
+	 */
+	public Greql2 getGraph() {
+		if (graph == null)
+			return null;
+		if (!graphCleaned) {
+			Set<Vertex> reachableVertices = new HashSet<Vertex>();
+			Queue<Vertex> queue = new LinkedList<Vertex>();
+			Greql2Expression root = graph.getFirstGreql2Expression();
+			if (root == null)
+				return null;
+			queue.add(root);
+			while (!queue.isEmpty()) {
+				Vertex current = queue.poll();
+				for (Edge e : current.incidences()) {
+					if (!reachableVertices.contains(e.getThat())) {
+						queue.add(e.getThat());
+						reachableVertices.add(e.getThat());
+					}
+				}
+			}
+			Vertex deleteCandidate = graph.getFirstVertex();
+			while ((deleteCandidate != null)
+					&& (!reachableVertices.contains(deleteCandidate))) {
+				deleteCandidate.delete();
+				deleteCandidate = graph.getFirstVertex();
+			}
+			while (deleteCandidate != null) {
+				if (!reachableVertices.contains(deleteCandidate)) {
+					Vertex v = deleteCandidate.getNextVertex();
+					deleteCandidate.delete();
+					deleteCandidate = v;
+				} else {
+					deleteCandidate = deleteCandidate.getNextVertex();
+				}
+			}
+		}
+		return graph;
+	}
+
 	/**
 	 * merges variable-vertices in the subgraph with the root-vertex
 	 * <code>v</code>
@@ -413,23 +421,22 @@ public abstract class ManualParserHelper {
 					offsetArg2, lengthArg2, binary);
 		}
 	}
-	
+
 	protected abstract void debug(String s);
-	
-    protected final FunctionId getFunctionId(String name) {
-        FunctionId functionId = (FunctionId) functionSymbolTable.lookup(name);
+
+	protected final FunctionId getFunctionId(String name) {
+		FunctionId functionId = (FunctionId) functionSymbolTable.lookup(name);
 		if (functionId == null) {
 			functionId = graph.createFunctionId();
 			functionId.setName(name);
 			functionSymbolTable.insert(name, functionId);
 		}
 		return functionId;
-    }
-    
-	
+	}
+
 	protected final boolean isFunctionName(String ident) {
-	    return funlib.isGreqlFunction(ident);		
-	}	
+		return funlib.isGreqlFunction(ident);
+	}
 
 	protected FunctionApplication createFunctionIdAndArgumentOf(
 			FunctionId functionId, int offsetOperator, int lengthOperator,
@@ -452,7 +459,8 @@ public abstract class ManualParserHelper {
 		return fa;
 	}
 
-	protected final List<SourcePosition> createSourcePositionList(int length, int offset) {
+	protected final List<SourcePosition> createSourcePositionList(int length,
+			int offset) {
 		List<SourcePosition> list = new ArrayList<SourcePosition>();
 		list.add(new SourcePosition(length, offset));
 		return list;
@@ -495,8 +503,9 @@ public abstract class ManualParserHelper {
 									"This literals must not be used outside pathdescriptions",
 									vertex.getName(),
 									((Greql2Aggregation) sourcePositionEdge)
-											.getSourcePositions().get(0).offset,((Greql2Aggregation) sourcePositionEdge)
-											.getSourcePositions().get(0).length );
+											.getSourcePositions().get(0).offset,
+									((Greql2Aggregation) sourcePositionEdge)
+											.getSourcePositions().get(0).length);
 						queue.add(omega);
 					}
 				}

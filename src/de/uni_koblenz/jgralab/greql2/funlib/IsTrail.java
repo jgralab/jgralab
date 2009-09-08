@@ -37,7 +37,7 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
 /**
  * Checks if the given path is a trail. That means, no vertex occurs more than
  * once.
- *
+ * 
  * <dl>
  * <dt><b>GReQL-signature</b></dt>
  * <dd><code>BOOLEAN isTrail(p:PATH)</code></dd>
@@ -56,10 +56,10 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
  * </dl>
  * </dd>
  * </dl>
- *
+ * 
  * @see StartVertex
  * @author ist@uni-koblenz.de
- *
+ * 
  */
 
 public class IsTrail extends AbstractGreql2Function {

@@ -20,12 +20,12 @@ public class IndentingXMLStreamWriter implements XMLStreamWriter {
 	 * the {@link XMLStreamWriter} to be delegated to
 	 */
 	private XMLStreamWriter writer;
-	
+
 	/**
 	 * The character used for indentation;
 	 */
 	private String indentationChar;
-	
+
 	/**
 	 * The number of indentationCharacters to write
 	 */
@@ -182,7 +182,7 @@ public class IndentingXMLStreamWriter implements XMLStreamWriter {
 		do {
 			writeEndElement();
 		} while (indentationLevel > 0);
-		
+
 		writer.writeEndDocument();
 	}
 
@@ -190,7 +190,7 @@ public class IndentingXMLStreamWriter implements XMLStreamWriter {
 	public void writeEndElement() throws XMLStreamException {
 		indentationLevel--;
 		writeIndentation();
-		
+
 		writer.writeEndElement();
 	}
 
@@ -266,7 +266,7 @@ public class IndentingXMLStreamWriter implements XMLStreamWriter {
 	 */
 	private void writeIndentation() throws XMLStreamException {
 		writer.writeCharacters("\n");
-		
+
 		for (int i = 0; i < indentationLevel; i++) {
 			writer.writeCharacters(indentation);
 		}

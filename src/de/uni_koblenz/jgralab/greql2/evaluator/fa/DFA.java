@@ -138,7 +138,8 @@ public class DFA extends FiniteAutomaton {
 								.getEndState()) {
 							// this two transitions accept the same symbol, but
 							// have different end states,
-							// so add the end state of the second one to the list
+							// so add the end state of the second one to the
+							// list
 							// of represented states of the first's end state
 							transitionList.addAll(newDFAState
 									.addRepresentedState(secondTransition

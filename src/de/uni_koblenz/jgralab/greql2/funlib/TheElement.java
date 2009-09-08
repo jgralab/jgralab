@@ -18,7 +18,7 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
  * Returns the one and only element of the given set, bag or list. If it
  * contains more than one value an {@link WrongFunctionParameterException} is
  * thrown at you.
- *
+ * 
  * <dl>
  * <dt><b>GReQL-signature</b></dt>
  * <dd><code>OBJECT theElement(list:LIST&lt;OBJECT&gt;)</code></dd>
@@ -39,7 +39,7 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
  * </dl>
  * </dd>
  * </dl>
- *
+ * 
  * @author ist@uni-koblenz.de
  */
 public class TheElement extends AbstractGreql2Function {
@@ -68,7 +68,7 @@ public class TheElement extends AbstractGreql2Function {
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see
 	 * de.uni_koblenz.jgralab.greql2.funlib.Greql2Function#getEstimatedCardinality
 	 * (int)
@@ -80,7 +80,7 @@ public class TheElement extends AbstractGreql2Function {
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see
 	 * de.uni_koblenz.jgralab.greql2.funlib.Greql2Function#getEstimatedCosts
 	 * (int)
@@ -92,7 +92,7 @@ public class TheElement extends AbstractGreql2Function {
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see de.uni_koblenz.jgralab.greql2.funlib.Greql2Function#getSelectivity()
 	 */
 	@Override

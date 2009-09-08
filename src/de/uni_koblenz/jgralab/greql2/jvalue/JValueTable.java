@@ -35,9 +35,9 @@ import de.uni_koblenz.jgralab.greql2.exception.JValueInvalidTypeException;
  * tuple. Theoretical, it's possible to store any kind of objects in the bag,
  * but to hold the implementation and usage clean and fast, ony tuple are
  * allowed
- *
+ * 
  * @author ist@uni-koblenz.de
- *
+ * 
  */
 public class JValueTable extends JValueCollection {
 
@@ -46,7 +46,7 @@ public class JValueTable extends JValueCollection {
 
 	/**
 	 * Returns the hash code value for this table.
-	 *
+	 * 
 	 * @return the hash code value for this table.
 	 */
 	@Override
@@ -153,7 +153,7 @@ public class JValueTable extends JValueCollection {
 
 	/**
 	 * creates a new JValueTable with an empty header
-	 *
+	 * 
 	 * @param useSet
 	 *            if it is true, the table will be based on a <b>set</b> instead
 	 *            of a bag, so every element can exists only one in the table
@@ -173,7 +173,7 @@ public class JValueTable extends JValueCollection {
 	/**
 	 * creates a new JValueTable and sets the given tuple as header of that
 	 * table
-	 *
+	 * 
 	 * @param useSet
 	 *            if it is true, the table will be based on a <b>set</b> instead
 	 *            of a bag, so every element can exists only one in the table
@@ -379,7 +379,7 @@ public class JValueTable extends JValueCollection {
 	 * Returns <code>true</code> if at least one value of the specified column
 	 * appears twice. Otherwise, if every value of the column appears only once
 	 * or if the specified column don't exist, <code>false</code> is returned.
-	 *
+	 * 
 	 * @param colNumber
 	 *            The column to check for duplicated entries. Index of first
 	 *            column is 1.

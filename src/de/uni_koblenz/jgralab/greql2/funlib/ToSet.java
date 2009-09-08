@@ -36,7 +36,7 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
 
 /**
  * Converts a collection or even a single element into a JValueSet
- *
+ * 
  * <dl>
  * <dt><b>GReQL-signature</b></dt>
  * <dd><code>SET toSet(c:COLLECTION or ELEMENT)</code></dd>
@@ -53,9 +53,9 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
  * </dl>
  * </dd>
  * </dl>
- *
+ * 
  * @author ist@uni-koblenz.de
- *
+ * 
  */
 
 public class ToSet extends AbstractGreql2Function {

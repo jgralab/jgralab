@@ -33,7 +33,7 @@ import de.uni_koblenz.jgralab.utilities.tg2whatever.Tg2Whatever;
 
 /**
  * @author Tassilo Horn <horn@uni-koblenz.de>
- *
+ * 
  */
 public class Tg2Gdl extends Tg2Whatever {
 
@@ -47,7 +47,7 @@ public class Tg2Gdl extends Tg2Whatever {
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see
 	 * de.uni_koblenz.jgralab.utilities.tg2whatever.Tg2Whatever#graphEnd(java
 	 * .io.PrintStream)
@@ -61,7 +61,7 @@ public class Tg2Gdl extends Tg2Whatever {
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see
 	 * de.uni_koblenz.jgralab.utilities.tg2whatever.Tg2Whatever#graphStart(java
 	 * .io.PrintStream)
@@ -106,7 +106,7 @@ public class Tg2Gdl extends Tg2Whatever {
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see
 	 * de.uni_koblenz.jgralab.utilities.tg2whatever.Tg2Whatever#printEdge(java
 	 * .io.PrintStream, de.uni_koblenz.jgralab.Edge)
@@ -122,7 +122,7 @@ public class Tg2Gdl extends Tg2Whatever {
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see
 	 * de.uni_koblenz.jgralab.utilities.tg2whatever.Tg2Whatever#printVertex(
 	 * java.io.PrintStream, de.uni_koblenz.jgralab.Vertex)
@@ -141,7 +141,7 @@ public class Tg2Gdl extends Tg2Whatever {
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see
 	 * de.uni_koblenz.jgralab.utilities.tg2whatever.Tg2Whatever#stringQuote(
 	 * java.lang.String)

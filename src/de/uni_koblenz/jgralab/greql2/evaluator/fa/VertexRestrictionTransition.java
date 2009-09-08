@@ -21,7 +21,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
- 
+
 package de.uni_koblenz.jgralab.greql2.evaluator.fa;
 
 import de.uni_koblenz.jgralab.BooleanGraphMarker;
@@ -29,7 +29,6 @@ import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValueTypeCollection;
 import de.uni_koblenz.jgralab.schema.AttributedElementClass;
-
 
 public class VertexRestrictionTransition extends Transition {
 
@@ -50,8 +49,7 @@ public class VertexRestrictionTransition extends Transition {
 			return false;
 		return true;
 	}
-	
-	
+
 	/**
 	 * Creates a new transition from start state to end state. The Transition
 	 * may fire if the start vertex has the right type
@@ -63,17 +61,17 @@ public class VertexRestrictionTransition extends Transition {
 	 * @param typeCollection
 	 *            The typeIDs which restrict the possible start vertices
 	 */
-	public VertexRestrictionTransition(State start, State end, JValueTypeCollection typeCollection) {
+	public VertexRestrictionTransition(State start, State end,
+			JValueTypeCollection typeCollection) {
 		super(start, end);
 		this.typeCollection = typeCollection;
 	}
 
-	
-
 	/**
 	 * Copy-constructor, creates a copy of the given transition
 	 */
-	protected VertexRestrictionTransition(VertexRestrictionTransition t, boolean addToStates) {
+	protected VertexRestrictionTransition(VertexRestrictionTransition t,
+			boolean addToStates) {
 		super(t, addToStates);
 		startState = t.startState;
 		startState.addOutTransition(this);
@@ -81,14 +79,13 @@ public class VertexRestrictionTransition extends Transition {
 		endState.addInTransition(this);
 		typeCollection = new JValueTypeCollection(t.typeCollection);
 	}
-	
+
 	/**
 	 * returns a copy of this transition
 	 */
 	public Transition copy(boolean addToStates) {
 		return new VertexRestrictionTransition(this, addToStates);
 	}
-
 
 	/**
 	 * reverses this transition, that means, the former end state gets the new
@@ -108,7 +105,7 @@ public class VertexRestrictionTransition extends Transition {
 	public boolean isEpsilon() {
 		return false;
 	}
-	
+
 	/**
 	 * returns a string which describes the edge
 	 */
@@ -116,7 +113,6 @@ public class VertexRestrictionTransition extends Transition {
 		String desc = "VertexRestrictinTransition";
 		return desc;
 	}
-
 
 	/**
 	 * Checks if the transition can fire with the vertex as input, this means,
@@ -142,13 +138,13 @@ public class VertexRestrictionTransition extends Transition {
 			return false;
 		return true;
 	}
-	
+
 	/**
-	 * returns the vertex of the datagraph which can be visited after this transition has fired.
-	 * This is the vertex itself
+	 * returns the vertex of the datagraph which can be visited after this
+	 * transition has fired. This is the vertex itself
 	 */
 	@Override
-	public  Vertex getNextVertex(Vertex v, Edge e) {
+	public Vertex getNextVertex(Vertex v, Edge e) {
 		return v;
 	}
 

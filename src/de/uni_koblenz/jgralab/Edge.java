@@ -28,9 +28,9 @@ import de.uni_koblenz.jgralab.schema.EdgeClass;
 
 /**
  * represents a signed edge, has an orientation
- *
+ * 
  * @author ist@uni-koblenz.de
- *
+ * 
  */
 public interface Edge extends GraphElement {
 
@@ -138,13 +138,13 @@ public interface Edge extends GraphElement {
 
 	/**
 	 * @return the "this" vertex object, that is the object this directed edge
-	 * 		   starts at
+	 *         starts at
 	 */
 	public Vertex getThis();
 
 	/**
 	 * @return the "that" vertex object, that is the object this directed edge
-	 * 		   ends at
+	 *         ends at
 	 */
 	public Vertex getThat();
 
@@ -230,7 +230,7 @@ public interface Edge extends GraphElement {
 
 	/**
 	 * puts this edge immediately before e in eSeq
-	 *
+	 * 
 	 * @param e
 	 */
 	public void putBeforeInGraph(Edge e);
@@ -243,7 +243,7 @@ public interface Edge extends GraphElement {
 
 	/**
 	 * puts this edge immediately after anEdge in eSeq
-	 *
+	 * 
 	 * @param e
 	 */
 	public void putAfterInGraph(Edge e);
@@ -256,7 +256,7 @@ public interface Edge extends GraphElement {
 
 	/**
 	 * sets the alpha vertex to v
-	 *
+	 * 
 	 * @param v
 	 *            a vertex
 	 */
@@ -264,7 +264,7 @@ public interface Edge extends GraphElement {
 
 	/**
 	 * sets the omega vertex to v
-	 *
+	 * 
 	 * @param v
 	 *            a vertex
 	 */
@@ -272,7 +272,7 @@ public interface Edge extends GraphElement {
 
 	/**
 	 * sets the this vertex to v
-	 *
+	 * 
 	 * @param v
 	 *            a vertex
 	 */
@@ -280,7 +280,7 @@ public interface Edge extends GraphElement {
 
 	/**
 	 * sets the that vertex to v
-	 *
+	 * 
 	 * @param v
 	 *            a vertex
 	 */
@@ -290,8 +290,8 @@ public interface Edge extends GraphElement {
 	 * puts this edge immediately before the given edge <code>e</code> in the
 	 * incidence list of the <code>this-vertex</code> of this edge. This does
 	 * neither affect the global edge sequence eSeq nor the alpha or omega
-	 * vertices, only the order of the edges at the <code>this-vertex</code>
-	 * of this edge is changed.
+	 * vertices, only the order of the edges at the <code>this-vertex</code> of
+	 * this edge is changed.
 	 */
 	public void putEdgeBefore(Edge e);
 
@@ -299,8 +299,8 @@ public interface Edge extends GraphElement {
 	 * puts this edge after the after given edge <code>previousEdge</code> in
 	 * the incidence list of the <code>this-vertex</code> of this edge. This
 	 * does neither affect the global edge sequence eSeq nor the alpha or omega
-	 * vertices, only the order of the edges at the <code>this-vertex</code>
-	 * of this edge is changed.
+	 * vertices, only the order of the edges at the <code>this-vertex</code> of
+	 * this edge is changed.
 	 */
 	public void putEdgeAfter(Edge e);
 

@@ -45,8 +45,7 @@ public class VariableDeclarationOrderUnit implements
 	 * @param var
 	 *            a {@link Variable}
 	 * @param declaringDecl
-	 *            the {@link Declaration} in which <code>var</code> is
-	 *            declared
+	 *            the {@link Declaration} in which <code>var</code> is declared
 	 * @param marker
 	 *            a {@link GraphMarker} of {@link VertexEvaluator}s
 	 * @param graphSize
@@ -222,7 +221,8 @@ public class VariableDeclarationOrderUnit implements
 	/**
 	 * Gets the {@link Variable} of this {@link VariableDeclarationOrderUnit}.
 	 * 
-	 * @return the {@link Variable} of this {@link VariableDeclarationOrderUnit}.
+	 * @return the {@link Variable} of this {@link VariableDeclarationOrderUnit}
+	 *         .
 	 */
 	Variable getVariable() {
 		return variable;

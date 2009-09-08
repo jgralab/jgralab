@@ -58,12 +58,12 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
  * </dl>
  * </dd>
  * </dl>
- *
+ * 
  * @see Difference
  * @see Intersection
  * @see Union
  * @author ist@uni-koblenz.de
- *
+ * 
  */
 public class SymDifference extends AbstractGreql2Function {
 	{

@@ -48,7 +48,7 @@ import de.uni_koblenz.jgralab.greql2.exception.DuplicateGreqlFunctionException;
  * string is a greql-function
  * <code>JValue evaluateGreqlFunction(String name, JValue[] arguments)</code> to
  * evaluate the greql-function with the given name
- *
+ * 
  */
 public class Greql2FunctionLibrary {
 
@@ -132,7 +132,7 @@ public class Greql2FunctionLibrary {
 
 	/**
 	 * Tests if the given name is a valid GReQL-function
-	 *
+	 * 
 	 * @param name
 	 *            the name to test
 	 * @return true if <code>name</code> is a available GReQL-Function in this
@@ -141,8 +141,7 @@ public class Greql2FunctionLibrary {
 	public boolean isGreqlFunction(String name) {
 		return availableFunctions.containsKey(name);
 	}
-	
-	
+
 	/**
 	 * @return a list of all available function names as strings
 	 */
@@ -172,7 +171,7 @@ public class Greql2FunctionLibrary {
 
 	/**
 	 * registeres the given class as a GReQL-function in this Library
-	 *
+	 * 
 	 * @param functionClass
 	 *            the class that implements the GReQL function
 	 */
@@ -209,7 +208,7 @@ public class Greql2FunctionLibrary {
 
 	/**
 	 * registeres the given class as a GReQL-function in this Library
-	 *
+	 * 
 	 * @param className
 	 *            the class which implements the greqlFunction
 	 */
@@ -236,7 +235,7 @@ public class Greql2FunctionLibrary {
 
 	/**
 	 * registers all GReQL-functions in the jar-package
-	 *
+	 * 
 	 * @return true if a jar-package was found, false otherwise
 	 * @param packagePath
 	 *            the path to the package this .class-file is located in
@@ -281,7 +280,7 @@ public class Greql2FunctionLibrary {
 
 	/**
 	 * register all GReQL-functions in the directory
-	 *
+	 * 
 	 * @return true if the directory contains at least one .class-file, false
 	 *         otherwise
 	 * @param packagePath

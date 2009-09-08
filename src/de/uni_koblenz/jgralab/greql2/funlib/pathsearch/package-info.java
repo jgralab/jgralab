@@ -21,9 +21,9 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
- 
+
 /**
  * This package is as subpackage of the GReQL2-function-library.
  */
- 
- package de.uni_koblenz.jgralab.greql2.funlib.pathsearch;
+
+package de.uni_koblenz.jgralab.greql2.funlib.pathsearch;

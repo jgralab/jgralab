@@ -42,7 +42,7 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
  * used. If no vertex is given, the paths from the root to all leaves are
  * returned as set. If an integer is given instead of a vertex, all paths are
  * returned that have the length of this integer.
- *
+ * 
  * <dl>
  * <dt><b>GReQL-signature</b></dt>
  * <dd><code>PATH extractPath(ps:PATHSYSTEM, v:VERTEX)</code></dd>
@@ -66,10 +66,10 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
  * </dl>
  * </dd>
  * </dl>
- *
+ * 
  * @see Leaves
  * @author ist@uni-koblenz.de
- *
+ * 
  */
 
 public class ExtractPath extends AbstractGreql2Function {

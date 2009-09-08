@@ -51,8 +51,8 @@ public class NFA extends FiniteAutomaton {
 	 * every transitions and every state gets copied) or flat (even the
 	 * transition and stateList are the same object)
 	 * 
-	 * @param realcopy :
-	 *            if true, a deepcopy will be created
+	 * @param realcopy
+	 *            : if true, a deepcopy will be created
 	 * 
 	 */
 	protected NFA(NFA nfaToCopy, boolean realCopy) {
@@ -319,14 +319,14 @@ public class NFA extends FiniteAutomaton {
 		nfa.updateStateAttributes();
 		return nfa;
 	}
-	
+
 	/**
 	 * Constructs a NFA which accepts the given AggregationPathDescription. The
 	 * EdgeRestrictions (RoleId, TypeId) are modelled in the Transition.
 	 */
 	public static NFA createAggregationPathDescriptionNFA(
-			boolean aggregateFrom,
-			JValueTypeCollection typeCollection, String role) {
+			boolean aggregateFrom, JValueTypeCollection typeCollection,
+			String role) {
 		NFA nfa = new NFA();
 		nfa.transitionList.clear();
 		nfa.initialState.outTransitions.clear();

@@ -29,9 +29,9 @@ import de.uni_koblenz.jgralab.schema.AttributedElementClass;
  * Thrown when trying to add an attribute xxx to an
  * {@link AttributedElementClass} which already contains an attribute with name
  * xxx.
- *
+ * 
  * @author ist@uni-koblenz.de
- *
+ * 
  */
 public class DuplicateAttributeException extends SchemaException {
 

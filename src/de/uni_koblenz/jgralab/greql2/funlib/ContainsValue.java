@@ -35,7 +35,7 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
 /**
  * Checks if a given object is included as value in a given map. The object can
  * be anything (for example an integer or a string).
- *
+ * 
  * <dl>
  * <dt><b>GReQL-signature</b></dt>
  * <dd><code>BOOLEAN containsValue(m:MAP, obj:OBJECT)</code></dd>
@@ -56,9 +56,9 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
  * </dl>
  * </dd>
  * </dl>
- *
+ * 
  * @author ist@uni-koblenz.de
- *
+ * 
  */
 public class ContainsValue extends AbstractGreql2Function {
 	{
@@ -68,7 +68,7 @@ public class ContainsValue extends AbstractGreql2Function {
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see
 	 * de.uni_koblenz.jgralab.greql2.funlib.Greql2Function#evaluate(de.uni_koblenz
 	 * .jgralab.Graph, de.uni_koblenz.jgralab.BooleanGraphMarker,
@@ -86,7 +86,7 @@ public class ContainsValue extends AbstractGreql2Function {
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see
 	 * de.uni_koblenz.jgralab.greql2.funlib.Greql2Function#getEstimatedCardinality
 	 * (int)
@@ -98,7 +98,7 @@ public class ContainsValue extends AbstractGreql2Function {
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see
 	 * de.uni_koblenz.jgralab.greql2.funlib.Greql2Function#getEstimatedCosts
 	 * (java.util.ArrayList)
@@ -110,7 +110,7 @@ public class ContainsValue extends AbstractGreql2Function {
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see de.uni_koblenz.jgralab.greql2.funlib.Greql2Function#getSelectivity()
 	 */
 	@Override

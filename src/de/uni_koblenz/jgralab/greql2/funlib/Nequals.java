@@ -31,7 +31,7 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
 
 /**
  * Checks if two different objects are not equal.
- *
+ * 
  * <dl>
  * <dt><b>GReQL-signature</b></dt>
  * <dd><code>BOOLEAN nequals(obj1:OBJECT, obj2:OBJECT)</code></dd>
@@ -53,9 +53,9 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
  * </dl>
  * </dd>
  * </dl>
- *
+ * 
  * @author ist@uni-koblenz.de
- *
+ * 
  */
 
 public class Nequals extends CompareFunction {

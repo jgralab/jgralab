@@ -49,18 +49,16 @@ public class JValuePathSystem extends JValue {
 	private HashMap<PathSystemKey, PathSystemEntry> keyToEntryMap;
 
 	/**
-	 * This HashMap stores references from a vertex which is a leaf
-	 * is the path system to the first occurence of
-	 * this vertex as a leaf in the above HashMap<PathSystemKey, PathSystemEntry>
-	 * keyToEntryMap
+	 * This HashMap stores references from a vertex which is a leaf is the path
+	 * system to the first occurence of this vertex as a leaf in the above
+	 * HashMap<PathSystemKey, PathSystemEntry> keyToEntryMap
 	 */
 	private HashMap<Vertex, PathSystemKey> leafVertexToLeafKeyMap;
-	
+
 	/**
-	 * This HashMap stores references from a vertex 
-	 * in the path system to the first occurence of
-	 * this vertex in the above HashMap<PathSystemKey, PathSystemEntry>
-	 * keyToEntryMap
+	 * This HashMap stores references from a vertex in the path system to the
+	 * first occurence of this vertex in the above HashMap<PathSystemKey,
+	 * PathSystemEntry> keyToEntryMap
 	 */
 	private HashMap<Vertex, PathSystemKey> vertexToFirstKeyMap;
 
@@ -147,7 +145,7 @@ public class JValuePathSystem extends JValue {
 	/**
 	 * adds a vertex of the PathSystem which is described by the parameters to
 	 * the PathSystem
-	 *
+	 * 
 	 * @param vertex
 	 *            the vertex to add
 	 * @param stateNumber
@@ -173,7 +171,7 @@ public class JValuePathSystem extends JValue {
 	/**
 	 * adds a vertex of the PathSystem which is described by the parameters to
 	 * the PathSystem
-	 *
+	 * 
 	 * @param vertex
 	 *            the vertex to add
 	 * @param stateNumber
@@ -242,7 +240,7 @@ public class JValuePathSystem extends JValue {
 	 * occurence if used.
 	 */
 	public JValueSet siblings(Vertex vertex) {
-		System.out.println("Getting siblings for vertex " + vertex );
+		System.out.println("Getting siblings for vertex " + vertex);
 		for (Vertex v : vertexToFirstKeyMap.keySet())
 			System.out.println("Vertex in Map: " + v);
 		PathSystemKey key = vertexToFirstKeyMap.get(vertex);
@@ -350,7 +348,7 @@ public class JValuePathSystem extends JValue {
 	/**
 	 * Checks, wether the given element (vertex or edge) is part of this
 	 * pathsystem
-	 *
+	 * 
 	 * @return true, if the element is part of this system, false otherwise
 	 */
 	public boolean contains(GraphElement elem) {
@@ -371,7 +369,7 @@ public class JValuePathSystem extends JValue {
 	/**
 	 * Checks, wether the pathsystem contains an element which has the given
 	 * type
-	 *
+	 * 
 	 * @return true, if the element is part of this system, false otherwise
 	 */
 	public boolean contains(AttributedElementClass type) {
@@ -392,7 +390,7 @@ public class JValuePathSystem extends JValue {
 	/**
 	 * Calculates the number of incomming or outgoing edges of the given vertex
 	 * which are part of this PathSystem
-	 *
+	 * 
 	 * @param vertex
 	 *            the vertex for which the number of edges gets counted
 	 * @param orientation
@@ -435,7 +433,7 @@ public class JValuePathSystem extends JValue {
 	/**
 	 * Calculates the number of incomming and outgoing edges of the given vertex
 	 * which are part of this PathSystem
-	 *
+	 * 
 	 * @param vertex
 	 *            the vertex for which the number of edges gets counted
 	 * @param typeCol
@@ -466,7 +464,7 @@ public class JValuePathSystem extends JValue {
 	/**
 	 * Calculates the set of incomming or outgoing edges of the given vertex,
 	 * which are also part of this pathsystem
-	 *
+	 * 
 	 * @param vertex
 	 *            the vertex for which the edgeset will be created
 	 * @param orientation
@@ -501,7 +499,7 @@ public class JValuePathSystem extends JValue {
 	/**
 	 * Calculates the set of edges which are connected to the given vertex, and
 	 * which are also part of this pathsystem
-	 *
+	 * 
 	 * @param vertex
 	 *            the vertex for which the edgeset will be created
 	 * @return a set of edges connected to the given vertex or an empty set, if
@@ -625,7 +623,7 @@ public class JValuePathSystem extends JValue {
 	 * given vertex from the PathSystem. If the given vertex exists more than
 	 * one times in this pathsystem, the first occurence if used. If the given
 	 * vertex is not part of this pathsystem, null will be returned
-	 *
+	 * 
 	 * @param vertex
 	 * @return a Path from rootVertex to given vertex
 	 */
@@ -640,7 +638,7 @@ public class JValuePathSystem extends JValue {
 	/**
 	 * Extract the path which starts with the root vertex and ends with the
 	 * given vertex from the PathSystem.
-	 *
+	 * 
 	 * @param key
 	 *            the pair (Vertex, Statenumber) which is the target of the path
 	 * @return a Path from rootVertex to given vertex
@@ -663,7 +661,7 @@ public class JValuePathSystem extends JValue {
 	/**
 	 * Extract the set of paths which are part of this path system. These paths
 	 * start with the root vertex and ends with a leave.
-	 *
+	 * 
 	 * @return a set of Paths from rootVertex to leaves
 	 */
 	public JValueSet extractPaths() throws JValuePathException {
@@ -681,7 +679,7 @@ public class JValuePathSystem extends JValue {
 
 	/**
 	 * Extracts all paths which length equal to <code>len</code>
-	 *
+	 * 
 	 * @return a set of Paths from rootVertex to leaves
 	 */
 	public JValueSet extractPaths(int len) throws JValuePathException {
@@ -727,7 +725,7 @@ public class JValuePathSystem extends JValue {
 	 * Calculates the distance between the root vertex of this path system and
 	 * the given vertex If the given vertices is part of the pathsystem more
 	 * than one times, the first occurence is used
-	 *
+	 * 
 	 * @return the distance or -1 if the given vertex is not part of this path
 	 *         system
 	 */
@@ -739,7 +737,7 @@ public class JValuePathSystem extends JValue {
 	/**
 	 * Calculates the distance between the root vertex of this path system and
 	 * the given key
-	 *
+	 * 
 	 * @return the distance or -1 if the given vertex is not part of this path
 	 *         system.
 	 */

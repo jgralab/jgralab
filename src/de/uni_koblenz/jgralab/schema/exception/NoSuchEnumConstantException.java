@@ -25,7 +25,7 @@ package de.uni_koblenz.jgralab.schema.exception;
 
 /**
  * @author ist@uni-koblenz.de
- *
+ * 
  */
 public class NoSuchEnumConstantException extends SchemaException {
 

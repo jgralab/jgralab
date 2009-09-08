@@ -285,7 +285,7 @@ public class SchemaCompare {
 		schema1.setRequired(true);
 		schema1.setArgName("file");
 		oh.addOption(schema1);
-		
+
 		Option schema2 = new Option("s2", "schema2", true,
 				"(required): the second schema which is compared with the first");
 		schema2.setRequired(true);

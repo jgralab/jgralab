@@ -21,7 +21,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
- 
+
 package de.uni_koblenz.jgralab.greql2.evaluator.vertexeval;
 
 import de.uni_koblenz.jgralab.EdgeDirection;
@@ -73,9 +73,10 @@ public class OptionalPathDescriptionEvaluator extends PathDescriptionEvaluator {
 
 	@Override
 	public JValue evaluate() throws EvaluateException {
-		PathDescription p = (PathDescription) vertex
-				.getFirstIsOptionalPathOf(EdgeDirection.IN).getAlpha();
-		PathDescriptionEvaluator pathEval = (PathDescriptionEvaluator) greqlEvaluator.getVertexEvaluatorGraphMarker().getMark(p);
+		PathDescription p = (PathDescription) vertex.getFirstIsOptionalPathOf(
+				EdgeDirection.IN).getAlpha();
+		PathDescriptionEvaluator pathEval = (PathDescriptionEvaluator) greqlEvaluator
+				.getVertexEvaluatorGraphMarker().getMark(p);
 		return new JValue(NFA.createOptionalPathDescriptionNFA(pathEval
 				.getNFA()));
 	}

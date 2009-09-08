@@ -8,7 +8,7 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
 
 /**
  * @author Tassilo Horn <horn@uni-koblenz.de>
- *
+ * 
  */
 public abstract class AbstractGreql2Function implements Greql2Function {
 

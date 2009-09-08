@@ -1,6 +1,5 @@
 package de.uni_koblenz.jgralabtest.schema;
 
-
 public abstract class NativeDomainTest extends BasicDomainTest {
 
 	@Override

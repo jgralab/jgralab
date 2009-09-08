@@ -111,7 +111,8 @@ public abstract class CostModelBase {
 
 	/**
 	 * A factor that will be multiplied with the number of vertices of the
-	 * datagraph to estimate the own costs of a {@link VertexSubgraphExpression}.
+	 * datagraph to estimate the own costs of a {@link VertexSubgraphExpression}
+	 * .
 	 */
 	protected static final int vertexSubgraphExpressionCostsFactor = 3;
 

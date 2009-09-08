@@ -29,7 +29,7 @@ import java.util.List;
 /**
  * Represents an enumeration domain, instances may exist multiple times per
  * schema.
- *
+ * 
  * @author ist@uni-koblenz.de
  */
 public interface EnumDomain extends Domain {
@@ -41,7 +41,7 @@ public interface EnumDomain extends Domain {
 
 	/**
 	 * add an enum constant
-	 *
+	 * 
 	 * @param constName
 	 */
 	void addConst(String constName);

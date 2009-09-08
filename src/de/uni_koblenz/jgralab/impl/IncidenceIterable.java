@@ -36,8 +36,8 @@ import de.uni_koblenz.jgralab.Vertex;
  * This class provides an Iterable for the Edges incident to a vertex. Using the
  * vertex' different methods which return an instance of IncidenceIterable, one
  * may use an iterator or the advanced for loop of Java 5 to iterate over all
- * classes. If the list of incidence edges is changed during iteration, an exception
- * if thrown
+ * classes. If the list of incidence edges is changed during iteration, an
+ * exception if thrown
  * 
  * @author ist@uni-koblenz.de
  */
@@ -52,12 +52,11 @@ public class IncidenceIterable<E extends Edge> implements Iterable<E> {
 		protected E current = null;
 
 		protected Vertex vertex = null;
-		
+
 		/**
-		 * the version of the incidence list of the vertex
-		 * at the beginning of the iteration. This information
-		 * is used to check if the incidence list has changed,
-		 * the failfast-iterator will then throw an exception
+		 * the version of the incidence list of the vertex at the beginning of
+		 * the iteration. This information is used to check if the incidence
+		 * list has changed, the failfast-iterator will then throw an exception
 		 * the next time "next()" is called
 		 */
 		protected long incidenceListVersion;
@@ -69,7 +68,8 @@ public class IncidenceIterable<E extends Edge> implements Iterable<E> {
 
 		public E next() {
 			if (vertex.isIncidenceListModified(incidenceListVersion))
-				throw new ConcurrentModificationException("The incidence list of the vertex has been modified - the iterator is not longer valid");
+				throw new ConcurrentModificationException(
+						"The incidence list of the vertex has been modified - the iterator is not longer valid");
 			gotNext = true;
 			return current;
 		}
@@ -115,12 +115,12 @@ public class IncidenceIterable<E extends Edge> implements Iterable<E> {
 
 		@SuppressWarnings("unchecked")
 		protected E getNext() {
-			return (E)current.getNextEdge(direction);
+			return (E) current.getNextEdge(direction);
 		}
 
 		@SuppressWarnings("unchecked")
 		protected E getFirst() {
-			return (E)vertex.getFirstEdge(direction);
+			return (E) vertex.getFirstEdge(direction);
 		}
 
 	}
@@ -129,8 +129,7 @@ public class IncidenceIterable<E extends Edge> implements Iterable<E> {
 
 		Class<? extends Edge> ec;
 
-		public IncidenceIteratorClassExplicit(Vertex v,
-				Class<? extends Edge> c) {
+		public IncidenceIteratorClassExplicit(Vertex v, Class<? extends Edge> c) {
 			super(v);
 			ec = c;
 		}
@@ -146,7 +145,6 @@ public class IncidenceIterable<E extends Edge> implements Iterable<E> {
 		}
 
 	}
-
 
 	class IncidenceIteratorClassDirection extends
 			IncidenceIteratorClassExplicit {
@@ -184,7 +182,7 @@ public class IncidenceIterable<E extends Edge> implements Iterable<E> {
 	public IncidenceIterable(Vertex v, Class<? extends Edge> ec) {
 		iter = new IncidenceIteratorClassExplicit(v, ec);
 	}
-	
+
 	public IncidenceIterable(Vertex v, Class<? extends Edge> ec,
 			EdgeDirection orientation) {
 		iter = new IncidenceIteratorClassDirection(v, ec, orientation);

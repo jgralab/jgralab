@@ -38,7 +38,7 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
  * Returns the concatenation of two given paths. This function only works, if
  * the last vertex of the first path and the first vertex of the second path are
  * the same. If this is not the case, <code>null</code> is returned.
- *
+ * 
  * <dl>
  * <dt><b>GReQL-signature</b></dt>
  * <dd><code>PATH pathConcat(p1:PATH, p2:PATH)</code></dd>
@@ -57,9 +57,9 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
  * </dl>
  * </dd>
  * </dl>
- *
+ * 
  * @author ist@uni-koblenz.de
- *
+ * 
  */
 
 public class PathConcat extends AbstractGreql2Function {

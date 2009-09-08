@@ -35,7 +35,7 @@ import java.util.Iterator;
  * Intelligent Systems at the University of Stuttgart
  * (http://www.iis.uni-stuttgart.de) under guidance of Dietmar Lippold
  * (dietmar.lippold@informatik.uni-stuttgart.de).
- *
+ * 
  * @author ist@uni-koblenz.de
  */
 public class JValueSet extends JValueCollection {
@@ -86,7 +86,7 @@ public class JValueSet extends JValueCollection {
 	 * specified collection. The <code>HashSet</code> is created with default
 	 * load factor (0.75) and an initial capacity sufficient to contain the
 	 * elements in the specified collection.
-	 *
+	 * 
 	 * @param collection
 	 *            the collection whose elements are to be placed into this set.
 	 * @throws NullPointerException
@@ -101,7 +101,7 @@ public class JValueSet extends JValueCollection {
 	 * Constructs a new, empty mathematical set; the backing
 	 * <code>HashSet</code> instance has the specified initial capacity and
 	 * default load factor, which is 0.75.
-	 *
+	 * 
 	 * @param initialCapacity
 	 *            the initial capacity of the hash set.
 	 * @throws IllegalArgumentException
@@ -115,7 +115,7 @@ public class JValueSet extends JValueCollection {
 	 * Constructs a new, empty mathematical set; the backing
 	 * <code>HashSet</code> instance has the specified initial capacity and the
 	 * specified load factor.
-	 *
+	 * 
 	 * @param initialCapacity
 	 *            the initial capacity of the hash set.
 	 * @param loadFactor
@@ -132,7 +132,7 @@ public class JValueSet extends JValueCollection {
 	 * Returns an iterator over the elements in this mathematical set. The
 	 * elements are returned in no particular order, this in includes that two
 	 * calls of iterator() won't neccessary return the same order of elements.
-	 *
+	 * 
 	 * @return an Iterator over the elements in this set.
 	 * @see java.util.ConcurrentModificationException
 	 */
@@ -155,11 +155,11 @@ public class JValueSet extends JValueCollection {
 	 * <code>s1</code> and <code>s2</code>, as required by the general contract
 	 * of <code>Object.hashCode()</code>.
 	 * <p>
-	 *
+	 * 
 	 * This implementation first checks whether a cached hash code value is
 	 * available. If not (i.e. <code>storedHashCode</code> is zero), the hash
 	 * code gets calculated using the algorithm described above.
-	 *
+	 * 
 	 * @return the hash code value for this set.
 	 */
 	@Override
@@ -181,7 +181,7 @@ public class JValueSet extends JValueCollection {
 	/**
 	 * Returns a shallow copy of this <code>HashMathSet</code> instance: the
 	 * elements themselves are not cloned.
-	 *
+	 * 
 	 * @return a shallow copy of this set.
 	 */
 	@Override
@@ -193,7 +193,7 @@ public class JValueSet extends JValueCollection {
 
 	/**
 	 * Returns <code>true</code> if this set contains no elements.
-	 *
+	 * 
 	 * @return <code>true</code> if this set contains no elements,
 	 *         <code>false</code> otherwise.
 	 */
@@ -204,7 +204,7 @@ public class JValueSet extends JValueCollection {
 
 	/**
 	 * Returns the number of elements in this set (its cardinality).
-	 *
+	 * 
 	 * @return the number of elements in this set (its cardinality).
 	 */
 	@Override
@@ -223,7 +223,7 @@ public class JValueSet extends JValueCollection {
 
 	/**
 	 * Returns <code>true</code> if this set contains the specified element.
-	 *
+	 * 
 	 * @param element
 	 *            element whose presence in this set is to be tested.
 	 * @return <code>true</code> if this set contains the specified element,
@@ -237,12 +237,12 @@ public class JValueSet extends JValueCollection {
 	/**
 	 * Adds the specified element to this set if it is not already present.
 	 * <p>
-	 *
+	 * 
 	 * If the set gets altered, this implementation sets
 	 * <code>storedHashCode</code> to 0 (representing an unavailable hash code
 	 * value), which forces <code>hashCode()</code> to recalculate the actual
 	 * hash code value.
-	 *
+	 * 
 	 * @param element
 	 *            element to be added to this set.
 	 * @return <code>true</code> if the set did not already contain the
@@ -261,12 +261,12 @@ public class JValueSet extends JValueCollection {
 	/**
 	 * Removes the specified element from this set if it is present.
 	 * <p>
-	 *
+	 * 
 	 * If the set gets altered, this implementation sets
 	 * <code>storedHashCode</code> to 0 (representing an unavailable hash code
 	 * value), which forces <code>hashCode()</code> to recalculate the actual
 	 * hash code value.
-	 *
+	 * 
 	 * @param element
 	 *            object to be removed from this set, if present.
 	 * @return <code>true</code> if the set contained the specified element,
@@ -288,7 +288,7 @@ public class JValueSet extends JValueCollection {
 	 * have the same size, and every element of the specified set is contained
 	 * in this set.
 	 * <p>
-	 *
+	 * 
 	 * This implementation first checks if the given object is a
 	 * <code>HashMathSet</code>. If so, the hash code values of this
 	 * mathematical set and the specified <code>HashMathSet</code> are compared.
@@ -297,7 +297,7 @@ public class JValueSet extends JValueCollection {
 	 * equal, it cannot be assumed that the sets themselves are equal, since
 	 * different sets can have the same hash code value. In this case, the
 	 * result of the super method <code>equals()</code> is returned.
-	 *
+	 * 
 	 * @param o
 	 *            object to be compared for equality with this set.
 	 * @return <code>true</code> if the specified object is equal to this set,
@@ -316,7 +316,7 @@ public class JValueSet extends JValueCollection {
 	 * Returns <code>true</code> if this mathematical set is a subset of the
 	 * specified set. That is, if all elements of this mathematical set are also
 	 * present in the specified set.
-	 *
+	 * 
 	 * @param s
 	 *            set to be checked for being a superset.
 	 * @return <code>true</code> if this mathematical set is a subset of the
@@ -335,7 +335,7 @@ public class JValueSet extends JValueCollection {
 	 * <code>HashMathSet</code> containing all elements that are present in this
 	 * mathematical set or in the specified set. This set and the given one are
 	 * unchanged
-	 *
+	 * 
 	 * @param s
 	 *            set that is to be united with.
 	 * @return the union with the specified set.
@@ -350,7 +350,7 @@ public class JValueSet extends JValueCollection {
 	 * Returns the intersection with the specified set. This is a new
 	 * <code>HashMathSet</code> containing all elements that are present in this
 	 * mathematical set as well as in the specified set.
-	 *
+	 * 
 	 * @param s
 	 *            set that is to be intersected with.
 	 * @return the intersection with the specified set.
@@ -389,7 +389,7 @@ public class JValueSet extends JValueCollection {
 	 * specified set. This is a new <code>HashMathSet</code> containing all
 	 * elements that are present in this mathematical set but not in the
 	 * specified set.
-	 *
+	 * 
 	 * @param s
 	 *            set from what the difference is calculated.
 	 * @return the difference with the specified set.
@@ -424,7 +424,7 @@ public class JValueSet extends JValueCollection {
 	 * specified set. This is a new <code>HashMathSet</code> containing all
 	 * elements that are present either in this mathematical set or in the
 	 * specified set but not in both.
-	 *
+	 * 
 	 * @param s
 	 *            set from what the symmetric difference is calculated
 	 * @return the symmetric difference with the specified set.
@@ -469,13 +469,13 @@ public class JValueSet extends JValueCollection {
 	 * specified set. That is, if all elements of the specified set are also
 	 * present in this mathematical set.
 	 * <p>
-	 *
+	 * 
 	 * This implementation first compares the sizes of this mathematical set and
 	 * the specified set by invoking the <code>size</code> method on each. If
 	 * this mathematical set is bigger than the specified set then each element
 	 * of the specified set is checked for presence in this mathematical set.
 	 * Otherwise, <code>false</code> is returned.
-	 *
+	 * 
 	 * @param s
 	 *            set to be checked for being a subset.
 	 * @return <code>true</code> if this mathematical set is a superset of the
@@ -494,7 +494,7 @@ public class JValueSet extends JValueCollection {
 	 * Returns <code>true</code> if this mathematical set has no common elements
 	 * with the specified set.
 	 * <p>
-	 *
+	 * 
 	 * This implementation determines which is the smaller of this set and the
 	 * specified set by invoking the <code>size()</code> method on each. If this
 	 * set has fewer elements, then the implementation iterates over this set,
@@ -503,7 +503,7 @@ public class JValueSet extends JValueCollection {
 	 * is returned. If the specified set has fewer elements, then the
 	 * implementation iterates over the specified set, returning
 	 * <code>false</code> if it finds a common element.
-	 *
+	 * 
 	 * @param s
 	 *            set to be checked for common elements.
 	 * @return <code>true</code> if this mathematical set has no common elements
@@ -530,7 +530,7 @@ public class JValueSet extends JValueCollection {
 
 	/**
 	 * replaces the old element the given newElement
-	 *
+	 * 
 	 * @param oldElement
 	 *            the element which should be replaced
 	 * @param newElement

@@ -39,7 +39,7 @@ import de.uni_koblenz.jgralab.schema.AttributedElementClass;
  * Returns a set of all types known by the schema of the current graph. The list
  * is sortet in topological order. First come the vertex classes, then the edge
  * classes.
- *
+ * 
  * <dl>
  * <dt><b>GReQL-signature</b></dt>
  * <dd><code>LIST&lt;ATTRIBUTEDELEMENTCLASS&gt; types()</code></dd>
@@ -55,9 +55,9 @@ import de.uni_koblenz.jgralab.schema.AttributedElementClass;
  * </dl>
  * </dd>
  * </dl>
- *
+ * 
  * @author ist@uni-koblenz.de
- *
+ * 
  */
 public class Types extends AbstractGreql2Function {
 

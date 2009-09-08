@@ -72,7 +72,7 @@ class Graph2OWLConcepts {
 	 *      edgeClasses2Properties, boolean appendSuffix2EdgeClassName)
 	 */
 	private String edgeClassNameSuffix;
-	
+
 	/**
 	 * The name of the property linking the Graph Individual to the Vertex
 	 * Individuals
@@ -157,7 +157,8 @@ class Graph2OWLConcepts {
 	 * 
 	 * @see #convertGraph(Graph g, ProgressFunction pf)
 	 */
-	protected void saveGraph(Graph g, ProgressFunction pf) throws XMLStreamException {
+	protected void saveGraph(Graph g, ProgressFunction pf)
+			throws XMLStreamException {
 		// initialize progress bar for graph
 		int graphElements = 0, currentCount = 0, interval = 1;
 		if (pf != null) {
@@ -230,7 +231,8 @@ class Graph2OWLConcepts {
 	 * 
 	 * @see #convertAttributeValue(AttributedElement ownerAe, Attribute attr)
 	 */
-	private void convertGraph(Graph g, ProgressFunction pf) throws XMLStreamException {
+	private void convertGraph(Graph g, ProgressFunction pf)
+			throws XMLStreamException {
 		String eElemId;
 		String vElemId;
 		String gId = g.getId();
@@ -238,8 +240,8 @@ class Graph2OWLConcepts {
 		String attrName;
 
 		// create Individual for Graph g
-		writeClassStartElement(g.getAttributedElementClass()
-				.getQualifiedName(), hashedGId);
+		writeClassStartElement(
+				g.getAttributedElementClass().getQualifiedName(), hashedGId);
 
 		// convert attributes of g
 		try {
@@ -261,8 +263,8 @@ class Graph2OWLConcepts {
 		// write "graphContains..." properties
 		for (Vertex v : g.vertices()) {
 			vElemId = HelperMethods.firstToLowerCase(v
-					.getAttributedElementClass().getQualifiedName()) + "_" + gId + "_"
-					+ v.getId();
+					.getAttributedElementClass().getQualifiedName())
+					+ "_" + gId + "_" + v.getId();
 			writeIndividualObjectPropEmptyElement(graphContainsVertexPropName,
 					"#" + vElemId);
 		}
@@ -271,7 +273,7 @@ class Graph2OWLConcepts {
 			for (Edge e : g.edges()) {
 				eElemId = HelperMethods.firstToLowerCase(e
 						.getAttributedElementClass().getQualifiedName())
-						+ edgeClassNameSuffix  + "_" + gId + "_" + e.getId();
+						+ edgeClassNameSuffix + "_" + gId + "_" + e.getId();
 				writeIndividualObjectPropEmptyElement(
 						graphContainsEdgePropName, "#" + eElemId);
 			}
@@ -282,8 +284,8 @@ class Graph2OWLConcepts {
 		// convert vertices
 		for (Vertex v : g.vertices()) {
 			vElemId = HelperMethods.firstToLowerCase(v
-					.getAttributedElementClass().getQualifiedName()) + "_" + gId + "_"
-					+ v.getId();
+					.getAttributedElementClass().getQualifiedName())
+					+ "_" + gId + "_" + v.getId();
 
 			convertVertex(hashedGId, v, vElemId, pf);
 		}
@@ -386,7 +388,7 @@ class Graph2OWLConcepts {
 
 		writeIndividualObjectPropEmptyElement(vertexIsInGraphPropName,
 				hashedGId);
-		
+
 		// create individual properties referring to individuals representing
 		// incident edges
 		for (Edge e : v.incidences()) {

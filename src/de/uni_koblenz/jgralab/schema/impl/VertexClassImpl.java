@@ -55,7 +55,7 @@ public final class VertexClassImpl extends GraphElementClassImpl implements
 
 	/**
 	 * builds a new vertex class object
-	 *
+	 * 
 	 * @param qn
 	 *            the unique identifier of the vertex class in the schema
 	 */

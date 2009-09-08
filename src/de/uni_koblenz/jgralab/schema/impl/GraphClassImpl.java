@@ -78,7 +78,7 @@ public final class GraphClassImpl extends AttributedElementClassImpl implements
 	 * visibility of this constructor cannot be changed without causing serious
 	 * issues in the program.
 	 * </p>
-	 *
+	 * 
 	 * @param qn
 	 *            a unique name in the <code>Schema</code>
 	 * @param aSchema

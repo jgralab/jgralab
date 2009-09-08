@@ -29,9 +29,9 @@ import de.uni_koblenz.jgralab.schema.VertexClass;
 
 /**
  * represents a vertex, m1 classes inherit from this class
- *
+ * 
  * @author ist@uni-koblenz.de
- *
+ * 
  */
 public interface Vertex extends GraphElement {
 
@@ -294,7 +294,7 @@ public interface Vertex extends GraphElement {
 
 	/**
 	 * puts this vertex immediately before v in vSeq
-	 *
+	 * 
 	 * @param v
 	 */
 	public void putBefore(Vertex v);
@@ -307,7 +307,7 @@ public interface Vertex extends GraphElement {
 
 	/**
 	 * puts this vertex immediately after v in vSeq
-	 *
+	 * 
 	 * @param v
 	 */
 	public void putAfter(Vertex v);
@@ -320,7 +320,7 @@ public interface Vertex extends GraphElement {
 	/**
 	 * Using this method, one can simply iterate over all incident edges of this
 	 * vertex using the advanced for-loop
-	 *
+	 * 
 	 * @return a iterable object which can be iterated through using the
 	 *         advanced for-loop
 	 */
@@ -329,7 +329,7 @@ public interface Vertex extends GraphElement {
 	/**
 	 * Using this method, one can simply iterate over all incident edges of this
 	 * vertex using the advanced for-loop
-	 *
+	 * 
 	 * @param dir
 	 *            the direction of the edges which should be iterated, either
 	 *            EdgeDirection.IN or EdgeDirection.OUT
@@ -341,7 +341,7 @@ public interface Vertex extends GraphElement {
 	/**
 	 * Using this method, one can simply iterate over all incident edges of this
 	 * vertex using the advanced for-loop
-	 *
+	 * 
 	 * @param eclass
 	 *            the EdgeClass of the edges which should be iterated
 	 * @param dir
@@ -355,7 +355,7 @@ public interface Vertex extends GraphElement {
 	/**
 	 * Using this method, one can simply iterate over all incident edges of this
 	 * vertex using the advanced for-loop
-	 *
+	 * 
 	 * @param eclass
 	 *            the M1-Class of the edges which should be iterated
 	 * @param dir
@@ -370,7 +370,7 @@ public interface Vertex extends GraphElement {
 	/**
 	 * Using this method, one can simply iterate over all incident edges of this
 	 * vertex using the advanced for-loop
-	 *
+	 * 
 	 * @param eclass
 	 *            the EdgeClass of the edges which should be iterated
 	 * @return a iterable object which can be iterated through using the
@@ -381,7 +381,7 @@ public interface Vertex extends GraphElement {
 	/**
 	 * Using this method, one can simply iterate over all incident edges of this
 	 * vertex using the advanced for-loop
-	 *
+	 * 
 	 * @param eclass
 	 *            the M1-Class of the edges which should be iterated
 	 * @return a iterable object which can be iterated through using the
@@ -391,14 +391,14 @@ public interface Vertex extends GraphElement {
 
 	/**
 	 * tests if the Edge <code>edge</code> may start at this vertex
-	 *
+	 * 
 	 * @return <code>true</code> iff <code>edge</code> may start at this vertex
 	 */
 	public boolean isValidAlpha(Edge edge);
 
 	/**
 	 * tests if the Edge <code>edge</code> may end at this vertex
-	 *
+	 * 
 	 * @return <code>true</code> iff <code>edge</code> may end at this vertex
 	 */
 	public boolean isValidOmega(Edge edge);

@@ -41,7 +41,7 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
 
 /**
  * Extracts the set of elements that are part of the given structure
- *
+ * 
  * <dl>
  * <dt><b>GReQL-signature</b></dt>
  * <dd><code>SET elementsIn(structure:COLLECTION)</code></dd>
@@ -60,9 +60,9 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
  * </dl>
  * </dd>
  * </dl>
- *
+ * 
  * @author ist@uni-koblenz.de
- *
+ * 
  */
 
 public class ElementsIn extends AbstractGreql2Function {

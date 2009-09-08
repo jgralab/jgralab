@@ -21,7 +21,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
- 
+
 package de.uni_koblenz.jgralab.greql2.evaluator.vertexeval;
 
 import de.uni_koblenz.jgralab.EdgeDirection;
@@ -58,12 +58,12 @@ public class EdgeRestrictionEvaluator extends VertexEvaluator {
 	public Vertex getVertex() {
 		return vertex;
 	}
-	
+
 	/**
 	 * The JValueTypeCollection which holds all the allowed and forbidden types
 	 */
 	private JValueTypeCollection typeCollection = null;
-	
+
 	/**
 	 * Returns the typeCollection
 	 */
@@ -85,7 +85,6 @@ public class EdgeRestrictionEvaluator extends VertexEvaluator {
 		return validRole;
 	}
 
-
 	/**
 	 * creates a new EdgeRestriction evaluator
 	 * 
@@ -106,16 +105,22 @@ public class EdgeRestrictionEvaluator extends VertexEvaluator {
 			typeCollection = new JValueTypeCollection();
 			IsTypeIdOf typeInc = vertex.getFirstIsTypeIdOf(EdgeDirection.IN);
 			while (typeInc != null) {
-				TypeIdEvaluator typeEval = (TypeIdEvaluator) greqlEvaluator.getVertexEvaluatorGraphMarker().getMark(typeInc.getAlpha());
+				TypeIdEvaluator typeEval = (TypeIdEvaluator) greqlEvaluator
+						.getVertexEvaluatorGraphMarker().getMark(
+								typeInc.getAlpha());
 				try {
-				//	GreqlEvaluator.println("Adding types: " + typeEval.getResult(subgraph).toJValueTypeCollection());
-					typeCollection.addTypes(typeEval.getResult(subgraph).toJValueTypeCollection());
+					// GreqlEvaluator.println("Adding types: " +
+					// typeEval.getResult(subgraph).toJValueTypeCollection());
+					typeCollection.addTypes(typeEval.getResult(subgraph)
+							.toJValueTypeCollection());
 				} catch (JValueInvalidTypeException ex) {
-					throw new EvaluateException("Result of TypeId was not a JValueTypeCollection", ex);
+					throw new EvaluateException(
+							"Result of TypeId was not a JValueTypeCollection",
+							ex);
 				}
 				typeInc = typeInc.getNextIsTypeIdOf(EdgeDirection.IN);
 			}
-		}	
+		}
 		IsRoleIdOf roleInc = vertex.getFirstIsRoleIdOf();
 		if (roleInc != null) {
 			RoleId role = (RoleId) roleInc.getAlpha();

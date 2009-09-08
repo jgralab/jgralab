@@ -37,7 +37,7 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
 /**
  * Returns the intersection of two given sets. That means, a set, whose elements
  * are elements in the first given set and in the second given set.
- *
+ * 
  * <dl>
  * <dt><b>GReQL-signature</b></dt>
  * <dd>
@@ -59,12 +59,12 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
  * </dl>
  * </dd>
  * </dl>
- *
+ * 
  * @see Difference
  * @see SymDifference
  * @see Union
  * @author ist@uni-koblenz.de
- *
+ * 
  */
 
 public class Intersection extends AbstractGreql2Function {

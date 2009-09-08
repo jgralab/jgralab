@@ -37,7 +37,7 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
 
 /**
  * Returns a set of all edge-types that occure in the given structure.
- *
+ * 
  * <dl>
  * <dt><b>GReQL-signature</b></dt>
  * <dd><code>SET&lt;ATTRIBUTEDELEMENTCLASS&gt; edgeTypeSet(c:COLLECTION)</code></dd>
@@ -59,9 +59,9 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
  * </dl>
  * </dd>
  * </dl>
- *
+ * 
  * @author ist@uni-koblenz.de
- *
+ * 
  */
 
 public class EdgeTypeSet extends AbstractGreql2Function {

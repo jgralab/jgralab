@@ -36,7 +36,7 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
 /**
  * Checks if the first given string matches the regular expression represented
  * by the second given string.
- *
+ * 
  * <dl>
  * <dt><b>GReQL-signature</b></dt>
  * <dd><code>BOOLEAN reMatch(s:STRING, rexp:STRING)</code></dd>
@@ -59,9 +59,9 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
  * </dl>
  * </dd>
  * </dl>
- *
+ * 
  * @author ist@uni-koblenz.de
- *
+ * 
  */
 
 public class ReMatch extends AbstractGreql2Function {

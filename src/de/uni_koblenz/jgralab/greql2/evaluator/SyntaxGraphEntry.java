@@ -69,7 +69,7 @@ public class SyntaxGraphEntry {
 
 	/**
 	 * Locks this graph,
-	 *
+	 * 
 	 * @return true on success, false otherwise
 	 */
 	public boolean lock() {
@@ -109,7 +109,7 @@ public class SyntaxGraphEntry {
 
 	/**
 	 * Locks the given SyntaxGraphEntry
-	 *
+	 * 
 	 * @param entry
 	 * @return
 	 */
@@ -123,7 +123,7 @@ public class SyntaxGraphEntry {
 
 	/**
 	 * Releases the lock of this syntaxGraph
-	 *
+	 * 
 	 * @return true on success, false otherwise
 	 */
 	public boolean release() {
@@ -132,7 +132,7 @@ public class SyntaxGraphEntry {
 
 	/**
 	 * Releases the given SyntaxGraphEntry
-	 *
+	 * 
 	 * @param entry
 	 * @return
 	 */
@@ -146,7 +146,7 @@ public class SyntaxGraphEntry {
 
 	/**
 	 * Creates a new SyntaxGraphEntry
-	 *
+	 * 
 	 * @param graph
 	 *            the Greql2 Syntaxgraph to store in this entry
 	 * @param optimizer
@@ -167,7 +167,7 @@ public class SyntaxGraphEntry {
 
 	/**
 	 * Load a {@link SyntaxGraphEntry} from the given file.
-	 *
+	 * 
 	 * @param fileName
 	 *            the tg file where the {@link SyntaxGraphEntry} should be
 	 *            loaded from
@@ -215,7 +215,7 @@ public class SyntaxGraphEntry {
 	/**
 	 * Save this {@link SyntaxGraphEntry} to the given directory in the form
 	 * '"queryText.hashCode()" + ".tg"'.
-	 *
+	 * 
 	 * @param directory
 	 *            the directory where this {@link SyntaxGraphEntry} should be
 	 *            stored
@@ -255,7 +255,7 @@ public class SyntaxGraphEntry {
 	 * object's type is {@link SyntaxGraphEntry}, it has the same queryText, and
 	 * its optimizer and costModel have the same type this
 	 * {@link SyntaxGraphEntry}'s have.
-	 *
+	 * 
 	 * (@see java.lang.Object#equals(java.lang.Object))
 	 */
 	@Override

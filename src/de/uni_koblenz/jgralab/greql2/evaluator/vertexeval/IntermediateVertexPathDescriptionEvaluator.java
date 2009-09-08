@@ -21,7 +21,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
- 
+
 package de.uni_koblenz.jgralab.greql2.evaluator.vertexeval;
 
 import de.uni_koblenz.jgralab.EdgeDirection;
@@ -36,10 +36,10 @@ import de.uni_koblenz.jgralab.greql2.schema.IntermediateVertexPathDescription;
 import de.uni_koblenz.jgralab.greql2.schema.IsSubPathOf;
 
 /**
- * Evaluates an IntermediateVertexPathDescription. 
- * @author ist@uni-koblenz.de
- * Summer 2006, Diploma Thesis
- *
+ * Evaluates an IntermediateVertexPathDescription.
+ * 
+ * @author ist@uni-koblenz.de Summer 2006, Diploma Thesis
+ * 
  */
 public class IntermediateVertexPathDescriptionEvaluator extends
 		PathDescriptionEvaluator {
@@ -75,15 +75,17 @@ public class IntermediateVertexPathDescriptionEvaluator extends
 	@Override
 	public JValue evaluate() throws EvaluateException {
 		IsSubPathOf inc = vertex.getFirstIsSubPathOf(EdgeDirection.IN);
-		PathDescriptionEvaluator firstEval = (PathDescriptionEvaluator) greqlEvaluator.getVertexEvaluatorGraphMarker().getMark(inc
-				.getAlpha());
+		PathDescriptionEvaluator firstEval = (PathDescriptionEvaluator) greqlEvaluator
+				.getVertexEvaluatorGraphMarker().getMark(inc.getAlpha());
 		NFA firstNFA = firstEval.getNFA();
 		inc = inc.getNextIsSubPathOf(EdgeDirection.IN);
-		PathDescriptionEvaluator secondEval = (PathDescriptionEvaluator) greqlEvaluator.getVertexEvaluatorGraphMarker().getMark(inc
-				.getAlpha());
+		PathDescriptionEvaluator secondEval = (PathDescriptionEvaluator) greqlEvaluator
+				.getVertexEvaluatorGraphMarker().getMark(inc.getAlpha());
 		NFA secondNFA = secondEval.getNFA();
-		VertexEvaluator vertexEval = greqlEvaluator.getVertexEvaluatorGraphMarker().getMark(vertex
-				.getFirstIsIntermediateVertexOf(EdgeDirection.IN).getAlpha());
+		VertexEvaluator vertexEval = greqlEvaluator
+				.getVertexEvaluatorGraphMarker().getMark(
+						vertex.getFirstIsIntermediateVertexOf(EdgeDirection.IN)
+								.getAlpha());
 		return new JValue(NFA.createIntermediateVertexPathDescriptionNFA(
 				firstNFA, vertexEval, secondNFA));
 	}

@@ -38,7 +38,7 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
 /**
  * Calculates the distance from the root to the given vertex. If the given
  * vertex is not in the given pathsystem, -1 is returned.
- *
+ * 
  * <dl>
  * <dt><b>GReQL-signature</b></dt>
  * <dd><code>INTEGER distance(ps:PATHSYSTEM, v:VERTEX)</code></dd>
@@ -58,9 +58,9 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
  * </dl>
  * </dd>
  * </dl>
- *
+ * 
  * @author ist@uni-koblenz.de
- *
+ * 
  */
 
 public class Distance extends AbstractGreql2Function {

@@ -34,7 +34,7 @@ import de.uni_koblenz.jgralab.schema.VertexClass;
 /**
  * This class is used by the method Schema.commit() to generate the Java-classes
  * that implement the VertexClasses of a graph schema.
- *
+ * 
  * @author ist@uni-koblenz.de
  */
 public class VertexCodeGenerator extends AttributedElementCodeGenerator {
@@ -77,7 +77,7 @@ public class VertexCodeGenerator extends AttributedElementCodeGenerator {
 
 	/**
 	 * creates the methods <code>getFirstEdgeName()</code>
-	 *
+	 * 
 	 * @param createClass
 	 *            iff set to true, the method bodies will also be created
 	 * @return the CodeBlock that contains the methods
@@ -110,7 +110,7 @@ public class VertexCodeGenerator extends AttributedElementCodeGenerator {
 	/**
 	 * creates the method <code>getFirstEdgeName()</code> for the given
 	 * EdgeClass
-	 *
+	 * 
 	 * @param createClass
 	 *            iff set to true, the method bodies will also be created
 	 * @param withOrientation
@@ -143,12 +143,15 @@ public class VertexCodeGenerator extends AttributedElementCodeGenerator {
 				code.add(" * @param orientation the orientation of the edge");
 			}
 			if (withTypeFlag) {
-				code.add(" * @param noSubClasses if set to <code>true</code>, no subclasses of #ecName# are accepted");
+				code
+						.add(" * @param noSubClasses if set to <code>true</code>, no subclasses of #ecName# are accepted");
 			}
-			code.add(" */",
+			code
+					.add(" */",
 							"public #ecQualifiedName# getFirst#ecCamelName#(#formalParams#);");
 		} else {
-			code.add(
+			code
+					.add(
 							"public #ecQualifiedName# getFirst#ecCamelName#(#formalParams#) {",
 							"\treturn (#ecQualifiedName#)getFirstEdgeOfClass(#ecQualifiedName#.class#actualParams#);",
 							"}");
@@ -159,7 +162,7 @@ public class VertexCodeGenerator extends AttributedElementCodeGenerator {
 
 	/**
 	 * creates the <code>getNextVertexClassName()</code> methods
-	 *
+	 * 
 	 * @param createClass
 	 *            iff set to true, also the method bodies will be created
 	 * @return the CodeBlock that contains the methods
@@ -190,7 +193,7 @@ public class VertexCodeGenerator extends AttributedElementCodeGenerator {
 	/**
 	 * creates the <code>getNextVertexClassName()</code> method for the given
 	 * VertexClass
-	 *
+	 * 
 	 * @param createClass
 	 *            iff set to true, the method bodies will also be created
 	 * @param withTypeFlag
@@ -232,7 +235,7 @@ public class VertexCodeGenerator extends AttributedElementCodeGenerator {
 
 	/**
 	 * creates the <code>getEdgeNameIncidences</code> methods
-	 *
+	 * 
 	 * @param createClass
 	 *            if set to true, also the method bodies will be created
 	 * @return the CodeBlock that contains the code for the

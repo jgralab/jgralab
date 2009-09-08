@@ -33,9 +33,9 @@ import de.uni_koblenz.jgralab.greql2.exception.JValueVisitorException;
  * structure given recursivly, but it does nothing with them. To implement a own
  * visitor, which for example prints alls vertices to a list, extend this class
  * an overwrite the method visitVertex(Vertex v)
- *
+ * 
  * @author ist@uni-koblenz.de
- *
+ * 
  */
 
 public class JValueDefaultVisitor implements JValueVisitor {

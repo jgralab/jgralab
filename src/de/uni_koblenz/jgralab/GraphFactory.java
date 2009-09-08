@@ -41,7 +41,7 @@ public interface GraphFactory {
 	 */
 	public Graph createGraph(Class<? extends Graph> graphClass, String id,
 			int vMax, int eMax);
-	
+
 	/**
 	 * creates a Graph-object for the specified class. The returned object may
 	 * be an instance of a subclass of the specified graphClass.
@@ -61,8 +61,15 @@ public interface GraphFactory {
 	 */
 	public Edge createEdge(Class<? extends Edge> edgeClass, int id, Graph g);
 
-	public void setGraphImplementationClass(Class<? extends Graph> graphM1Class, Class <? extends Graph> implementationClass);
-	public void setVertexImplementationClass(Class<? extends Vertex> vertexM1Class, Class <? extends Vertex> implementationClass);
-	public void setEdgeImplementationClass(Class<? extends Edge> edgeM1Class, Class <? extends Edge> implementationClass);
+	public void setGraphImplementationClass(
+			Class<? extends Graph> graphM1Class,
+			Class<? extends Graph> implementationClass);
+
+	public void setVertexImplementationClass(
+			Class<? extends Vertex> vertexM1Class,
+			Class<? extends Vertex> implementationClass);
+
+	public void setEdgeImplementationClass(Class<? extends Edge> edgeM1Class,
+			Class<? extends Edge> implementationClass);
 
 }

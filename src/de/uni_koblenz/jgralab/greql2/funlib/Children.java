@@ -41,7 +41,7 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
 /**
  * Returns all child-vertices of the given vertex as set. If a pathsystem is
  * given, only the child-vertices that are in the pathsystem are returned.
- *
+ * 
  * <dl>
  * <dt><b>GReQL-signature</b></dt>
  * <dd><code>SET&lt;VERTEX&gt; children(v:VERTEX)</code></dd>
@@ -63,9 +63,9 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
  * </dl>
  * </dd>
  * </dl>
- *
+ * 
  * @author ist@uni-koblenz.de
- *
+ * 
  */
 
 public class Children extends AbstractGreql2Function {

@@ -21,7 +21,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
- 
+
 package de.uni_koblenz.jgralab.greql2.funlib.pathsearch;
 
 import java.util.HashSet;
@@ -33,18 +33,19 @@ import de.uni_koblenz.jgralab.greql2.evaluator.fa.State;
 public class PathSystemMarkerList extends HashSet<PathSystemMarkerEntry> {
 
 	public static final long serialVersionUID = 1;
-	
+
 	protected State state;
-	
+
 	protected Vertex vertex;
-	
+
 	public PathSystemMarkerList(State state, Vertex vertex) {
 		super(6);
 		this.vertex = vertex;
 		this.state = state;
 	}
-	
-	public PathSystemMarkerEntry getPathSystemMarkerEntryWithParentVertex(Vertex parentVertex) {
+
+	public PathSystemMarkerEntry getPathSystemMarkerEntryWithParentVertex(
+			Vertex parentVertex) {
 		Iterator<PathSystemMarkerEntry> iter = iterator();
 		while (iter.hasNext()) {
 			PathSystemMarkerEntry entry = iter.next();
@@ -53,6 +54,5 @@ public class PathSystemMarkerList extends HashSet<PathSystemMarkerEntry> {
 		}
 		return null;
 	}
-	
-	
+
 }

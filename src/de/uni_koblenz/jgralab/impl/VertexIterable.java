@@ -127,8 +127,7 @@ public class VertexIterable<V extends Vertex> implements Iterable<V> {
 		/**
 		 * only for internal use, returns the next vertex according to the
 		 * conditions of this iterator, should be overwritten by superclasses so
-		 * the basic algorithm of <code>next()</code> must not be
-		 * re-implemented
+		 * the basic algorithm of <code>next()</code> must not be re-implemented
 		 */
 		@SuppressWarnings("unchecked")
 		protected V getNext() {
@@ -138,8 +137,7 @@ public class VertexIterable<V extends Vertex> implements Iterable<V> {
 		/**
 		 * only for internal use, returns the first vertex according to the
 		 * conditions of this iterator, should be overwritten by superclasses so
-		 * the basic algorithm of <code>next()</code> must not be
-		 * re-implemented
+		 * the basic algorithm of <code>next()</code> must not be re-implemented
 		 */
 		@SuppressWarnings("unchecked")
 		protected V getFirst() {

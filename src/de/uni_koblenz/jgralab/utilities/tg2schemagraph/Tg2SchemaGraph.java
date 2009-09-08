@@ -34,28 +34,29 @@ public class Tg2SchemaGraph {
 		assert comLine != null;
 		Tg2SchemaGraph graph = new Tg2SchemaGraph();
 		try {
-			GraphIO.saveGraphToFile(comLine.getOptionValue("o"), graph.process(comLine.getOptionValue("s")), null);
+			GraphIO.saveGraphToFile(comLine.getOptionValue("o"), graph
+					.process(comLine.getOptionValue("s")), null);
 		} catch (GraphIOException e) {
 			e.printStackTrace();
 			System.out
 					.println("\nAn error occured while trying to save the graph.");
-		}		
-//		if (args.length != 2) {
-//			System.err
-//					.println("There should be two arguments passed over.\n"
-//							+ "usage: Tg2SchemaGraph <TG-Location> <TG-Graph-Location>");
-//		}
-//
-//		Tg2SchemaGraph graph = new Tg2SchemaGraph();
-//		try {
-//			GraphIO.saveGraphToFile(args[1], graph.process(args[0]), null);
-//		} catch (GraphIOException e) {
-//			e.printStackTrace();
-//			System.out
-//					.println("\nAn error occured while trying to save the graph.");
-//		}
+		}
+		// if (args.length != 2) {
+		// System.err
+		// .println("There should be two arguments passed over.\n"
+		// + "usage: Tg2SchemaGraph <TG-Location> <TG-Graph-Location>");
+		// }
+		//
+		// Tg2SchemaGraph graph = new Tg2SchemaGraph();
+		// try {
+		// GraphIO.saveGraphToFile(args[1], graph.process(args[0]), null);
+		// } catch (GraphIOException e) {
+		// e.printStackTrace();
+		// System.out
+		// .println("\nAn error occured while trying to save the graph.");
+		// }
 	}
-	
+
 	private static CommandLine processCommandLineOptions(String[] args) {
 		String toolString = "java " + Tg2SchemaGraph.class.getName();
 		String versionString = JGraLab.getInfo(false);

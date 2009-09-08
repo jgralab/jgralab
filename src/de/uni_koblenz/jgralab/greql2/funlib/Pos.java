@@ -38,7 +38,7 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
 
 /**
  * Returns the index of the given object in the given List or Tuple.
- *
+ * 
  * <dl>
  * <dt><b>GReQL-signature</b></dt>
  * <dd><code>INTEGER pos(list:LIST&lt;OBJECT&gt;, element:OBJECT)</code></dd>
@@ -61,9 +61,9 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
  * </dl>
  * </dd>
  * </dl>
- *
+ * 
  * @author ist@uni-koblenz.de
- *
+ * 
  */
 
 public class Pos extends AbstractGreql2Function {

@@ -11,71 +11,79 @@ import de.uni_koblenz.jgralab.codegenerator.CodeList;
 import de.uni_koblenz.jgralab.codegenerator.CodeSnippet;
 import de.uni_koblenz.jgralab.codegenerator.ImportCodeSnippet;
 
-public class ImportCodeSnippetTest extends CodeSnippetTest{
-	
+public class ImportCodeSnippetTest extends CodeSnippetTest {
+
 	@Test
-	public void testImportCodeSnippet(){
-		//only case in which this constructor may be used
-		ImportCodeSnippet ics=new ImportCodeSnippet();
-		assertEquals(0,ics.size());
+	public void testImportCodeSnippet() {
+		// only case in which this constructor may be used
+		ImportCodeSnippet ics = new ImportCodeSnippet();
+		assertEquals(0, ics.size());
 		assertEquals("", ics.getCode());
 	}
-	
+
 	@Test
-	public void testImportCodeSnippet2(){
-		CodeSnippet cs=new CodeSnippet("Cabot", "Gaarder", "Sage", "Rowling");
-		CodeList cl=new CodeList();
+	public void testImportCodeSnippet2() {
+		CodeSnippet cs = new CodeSnippet("Cabot", "Gaarder", "Sage", "Rowling");
+		CodeList cl = new CodeList();
 		cl.add(cs);
-		ImportCodeSnippet ics=new ImportCodeSnippet(cl);
+		ImportCodeSnippet ics = new ImportCodeSnippet(cl);
 		assertEquals(0, ics.size());
-		//no matter what CodeList is passed to the constructor, the ImportCodeSnippet
-		//itself must always be empty
-		assertEquals("", ics.getCode());		
-		//to make sure the parent was set correctly
-		assertEquals("\tCabot\n\tGaarder\n\tSage\n\tRowling\n", ics.getParent().getCode());
+		// no matter what CodeList is passed to the constructor, the
+		// ImportCodeSnippet
+		// itself must always be empty
+		assertEquals("", ics.getCode());
+		// to make sure the parent was set correctly
+		assertEquals("\tCabot\n\tGaarder\n\tSage\n\tRowling\n", ics.getParent()
+				.getCode());
 		cs.add("Pratchett", "", "Pullman");
 		cl.add(cs);
-		ics=new ImportCodeSnippet(cl);
+		ics = new ImportCodeSnippet(cl);
 		assertEquals("", ics.getCode());
-		assertEquals("\tCabot\n\tGaarder\n\tSage\n\tRowling\n\tPratchett\n\t\n\tPullman\n", ics.getParent().getCode());
-		
-		//border cases
+		assertEquals(
+				"\tCabot\n\tGaarder\n\tSage\n\tRowling\n\tPratchett\n\t\n\tPullman\n",
+				ics.getParent().getCode());
+
+		// border cases
 		cl.clear();
 		ics.clear();
-		assertEquals(0,ics.size());
+		assertEquals(0, ics.size());
 		assertEquals("", ics.getParent().getCode());
 		assertEquals("", ics.getCode());
 		cs.clear();
 		cs.add("");
 		cl.add(cs);
-		ics=new ImportCodeSnippet(cl);
+		ics = new ImportCodeSnippet(cl);
 		assertEquals("", ics.getCode());
 		assertEquals("\t\n", ics.getParent().getCode());
 		cs.add("");
 		cl.add(cs);
-		ics=new ImportCodeSnippet(cl);
+		ics = new ImportCodeSnippet(cl);
 		assertEquals("", ics.getCode());
 		assertEquals("\t\n\t\n", ics.getParent().getCode());
 		cs.clear();
 		cs.add("Canavan");
 		cl.add(cs);
-		ics=new ImportCodeSnippet(cl);
+		ics = new ImportCodeSnippet(cl);
 		assertEquals("", ics.getCode());
 		assertEquals("\tCanavan\n", ics.getParent().getCode());
 	}
-	
+
 	@Test
-	public void testAdd(){
-		//normal cases
-		ImportCodeSnippet ics=new ImportCodeSnippet();
+	public void testAdd() {
+		// normal cases
+		ImportCodeSnippet ics = new ImportCodeSnippet();
 		ics.add("Der.", "Herr.", "der.", "Ringe.");
-		assertEquals(4,ics.size());
-		assertEquals("\nimport Der.;\n\nimport Herr.;\n\nimport Ringe.;\n\nimport der.;\n", ics.getCode(0));
+		assertEquals(4, ics.size());
+		assertEquals(
+				"\nimport Der.;\n\nimport Herr.;\n\nimport Ringe.;\n\nimport der.;\n",
+				ics.getCode(0));
 		ics.add("Sofies.", "Welt.");
 		assertEquals(6, ics.size());
-		assertEquals("\nimport Der.;\n\nimport Herr.;\n\nimport Ringe.;\n\nimport Sofies.;\n\nimport Welt.;\n\nimport der.;\n", ics.getCode());
-		
-		//border cases
+		assertEquals(
+				"\nimport Der.;\n\nimport Herr.;\n\nimport Ringe.;\n\nimport Sofies.;\n\nimport Welt.;\n\nimport der.;\n",
+				ics.getCode());
+
+		// border cases
 		ics.clear();
 		ics.add("Queste.");
 		assertEquals(1, ics.size());
@@ -92,32 +100,39 @@ public class ImportCodeSnippetTest extends CodeSnippetTest{
 		assertEquals(1, ics.size());
 		assertEquals("\nimport .;\n", ics.getCode());
 	}
-	
+
 	@Test
-	public void testGetCode(){
-		ImportCodeSnippet ics=new ImportCodeSnippet();
-		ics.add("Harry.", "Potter.", "und.", "der.", "Stein.", "der.", "Weisen.");
-		assertEquals("\n\t\timport Harry.;\n\t\t\n\t\timport Potter.;\n\t\t\n\t\t" +
-				"import Stein.;\n\t\t\n\t\timport Weisen.;\n\t\t\n\t\timport der.;\n\t\t\n\t\t" +
-				"import und.;\n", ics.getCode(2));
+	public void testGetCode() {
+		ImportCodeSnippet ics = new ImportCodeSnippet();
+		ics.add("Harry.", "Potter.", "und.", "der.", "Stein.", "der.",
+				"Weisen.");
+		assertEquals(
+				"\n\t\timport Harry.;\n\t\t\n\t\timport Potter.;\n\t\t\n\t\t"
+						+ "import Stein.;\n\t\t\n\t\timport Weisen.;\n\t\t\n\t\timport der.;\n\t\t\n\t\t"
+						+ "import und.;\n", ics.getCode(2));
 		ics.clear();
 		ics.add("Kammer.des.Schreckens", "Gefangene.von.Askaban");
-		assertEquals("\n\t\t\t\t\t\t\t\t\timport Gefangene.von.Askaban;\n\t\t\t\t\t\t\t\t\t" +
-				"\n\t\t\t\t\t\t\t\t\timport Kammer.des.Schreckens;\n", ics.getCode(9));
+		assertEquals(
+				"\n\t\t\t\t\t\t\t\t\timport Gefangene.von.Askaban;\n\t\t\t\t\t\t\t\t\t"
+						+ "\n\t\t\t\t\t\t\t\t\timport Kammer.des.Schreckens;\n",
+				ics.getCode(9));
 		ics.add("Feuerkelch.", "Orden.des.Phoenix");
-		assertEquals("\n\timport Feuerkelch.;\n\t\n\timport " +
-				"Gefangene.von.Askaban;\n\t\n\timport Kammer.des.Schreckens;\n\t\n\timport " +
-				"Orden.des.Phoenix;\n", ics.getCode(1));
+		assertEquals(
+				"\n\timport Feuerkelch.;\n\t\n\timport "
+						+ "Gefangene.von.Askaban;\n\t\n\timport Kammer.des.Schreckens;\n\t\n\timport "
+						+ "Orden.des.Phoenix;\n", ics.getCode(1));
 		ics.clear();
 		ics.add(".", "Halbblutprinz.", ".", "Heiligtuemer.des.Todes", ".", ".");
-		assertEquals("\n\t\t\timport .;\n\t\t\t\n\t\t\timport Halbblutprinz.;\n\t\t\t" +
-				"\n\t\t\timport Heiligtuemer.des.Todes;\n", ics.getCode(3));
+		assertEquals(
+				"\n\t\t\timport .;\n\t\t\t\n\t\t\timport Halbblutprinz.;\n\t\t\t"
+						+ "\n\t\t\timport Heiligtuemer.des.Todes;\n", ics
+						.getCode(3));
 		ics.clear();
 		ics.add("Heiligtuemer.Harrys", "Heiligtuemer.des.Todes");
-		assertEquals("\n\t\t\timport Heiligtuemer.Harrys;\n\t\t\timport " +
-				"Heiligtuemer.des.Todes;\n", ics.getCode(3));
-		
-		//border cases
+		assertEquals("\n\t\t\timport Heiligtuemer.Harrys;\n\t\t\timport "
+				+ "Heiligtuemer.des.Todes;\n", ics.getCode(3));
+
+		// border cases
 		ics.clear();
 		ics.add("Der.Clan.der.Otori");
 		assertEquals("\n\timport Der.Clan.der.Otori;\n", ics.getCode(1));
@@ -132,23 +147,25 @@ public class ImportCodeSnippetTest extends CodeSnippetTest{
 		assertEquals("", ics.getCode(3));
 		assertEquals("", ics.getCode(-45));
 	}
-	
+
 	@Test
-	//tests the inherited getCode()-method
-	public void testGetCode2(){
-		//normal cases
-		ImportCodeSnippet ics=new ImportCodeSnippet();
+	// tests the inherited getCode()-method
+	public void testGetCode2() {
+		// normal cases
+		ImportCodeSnippet ics = new ImportCodeSnippet();
 		ics.add("rho.", "ny.", "iota.");
-		assertEquals("\nimport iota.;\n\nimport ny.;\n\nimport rho.;\n", ics.getCode());
+		assertEquals("\nimport iota.;\n\nimport ny.;\n\nimport rho.;\n", ics
+				.getCode());
 		ics.clear();
 		ics.add("sigma.tau", "tau.ypsilon", "sigma.ypsilon");
-		assertEquals("\nimport sigma.tau;\nimport sigma.ypsilon;\n\nimport " +
-				"tau.ypsilon;\n", ics.getCode());
+		assertEquals("\nimport sigma.tau;\nimport sigma.ypsilon;\n\nimport "
+				+ "tau.ypsilon;\n", ics.getCode());
 		ics.clear();
 		ics.add(".", "chi.psi", "xi.omega");
-		assertEquals("\nimport .;\n\nimport chi.psi;\n\nimport xi.omega;\n", ics.getCode());
-		
-		//border cases
+		assertEquals("\nimport .;\n\nimport chi.psi;\n\nimport xi.omega;\n",
+				ics.getCode());
+
+		// border cases
 		ics.clear();
 		assertEquals("", ics.getCode());
 		ics.add(".");
@@ -159,56 +176,58 @@ public class ImportCodeSnippetTest extends CodeSnippetTest{
 		ics.add("Omikron.o");
 		assertEquals("\nimport Omikron.o;\n", ics.getCode());
 		ics.add("Omikron.a", "omikron.b", "Omikron.p");
-		assertEquals("\nimport Omikron.a;\nimport Omikron.o;\nimport Omikron.p;\n\n" +
-				"import omikron.b;\n", ics.getCode());
+		assertEquals(
+				"\nimport Omikron.a;\nimport Omikron.o;\nimport Omikron.p;\n\n"
+						+ "import omikron.b;\n", ics.getCode());
 		ics.clear();
 		ics.add("zeta.s", "Zeta.z", "zeta.a");
-		assertEquals("\nimport Zeta.z;\n\nimport zeta.a;\nimport zeta.s;\n", ics.getCode());
+		assertEquals("\nimport Zeta.z;\n\nimport zeta.a;\nimport zeta.s;\n",
+				ics.getCode());
 	}
-	
+
 	@Test
-	public void testClear(){
-		//normal cases
-		ImportCodeSnippet ics=new ImportCodeSnippet();
+	public void testClear() {
+		// normal cases
+		ImportCodeSnippet ics = new ImportCodeSnippet();
 		ics.add("Alpha", "Beta", "Gamma", "Delta");
 		ics.clear();
 		assertEquals(0, ics.size());
-		try{
+		try {
 			ics.getParent();
-		}catch(NullPointerException e){
+		} catch (NullPointerException e) {
 			// :)
 		}
 		ics.add("Epsilon", "Phi", "Xsi");
 		ics.clear();
 		assertEquals(0, ics.size());
-		try{
+		try {
 			ics.getParent();
-		}catch(NullPointerException e){
+		} catch (NullPointerException e) {
 			// :)
 		}
-		
-		//border cases
-		ics=new ImportCodeSnippet();
+
+		// border cases
+		ics = new ImportCodeSnippet();
 		ics.clear();
 		assertEquals(0, ics.size());
-		try{
+		try {
 			ics.getParent();
-		}catch(NullPointerException e){
+		} catch (NullPointerException e) {
 			// :)
 		}
 		ics.clear();
-		assertEquals(0, ics.size());		
-		try{
+		assertEquals(0, ics.size());
+		try {
 			ics.getParent();
-		}catch(NullPointerException e){
+		} catch (NullPointerException e) {
 			// :)
 		}
 	}
-	
-	@Test 
-	public void testSize(){
-		//normal cases
-		ImportCodeSnippet ics1=new ImportCodeSnippet();
+
+	@Test
+	public void testSize() {
+		// normal cases
+		ImportCodeSnippet ics1 = new ImportCodeSnippet();
 		ics1.add("Bla", "Blubb", "Blara");
 		assertEquals(3, ics1.size());
 		ics1.add("Blubbel");
@@ -218,18 +237,18 @@ public class ImportCodeSnippetTest extends CodeSnippetTest{
 		assertEquals(2, ics1.size());
 		ics1.add("Blamuh", "Blubb", "Babubbel");
 		assertEquals(5, ics1.size());
-		
-		//border cases
-		ImportCodeSnippet ics2=new ImportCodeSnippet();
+
+		// border cases
+		ImportCodeSnippet ics2 = new ImportCodeSnippet();
 		ics1.add("Blamuh");
-		assertEquals(5,ics1.size());
+		assertEquals(5, ics1.size());
 		assertEquals(0, ics2.size());
 		ics2.add("Bla");
 		assertEquals(1, ics2.size());
 		ics2.add("Bla");
-		assertEquals(1,ics2.size());
+		assertEquals(1, ics2.size());
 		ics2.add("");
-		assertEquals(2,ics2.size());
+		assertEquals(2, ics2.size());
 		ics2.clear();
 		ics2.add("");
 		assertEquals(1, ics2.size());
@@ -239,26 +258,26 @@ public class ImportCodeSnippetTest extends CodeSnippetTest{
 		ics2.add(".");
 		assertEquals(1, ics2.size());
 	}
-	
+
 	@Test
-	public void testAddVariablesAndGetVariable(){
-		//border cases
-		ImportCodeSnippet ics=new ImportCodeSnippet();
-		Map<String, String> testMap=new HashMap<String, String>();
+	public void testAddVariablesAndGetVariable() {
+		// border cases
+		ImportCodeSnippet ics = new ImportCodeSnippet();
+		Map<String, String> testMap = new HashMap<String, String>();
 		assertEquals("*UNDEFINED:Beta*", ics.getVariable("Beta"));
 		assertEquals("*UNDEFINED:*", ics.getVariable(""));
-		
+
 		testMap.put("1", "a");
 		ics.addVariables(testMap);
 		assertEquals("a", ics.getVariable("1"));
 		assertEquals("*UNDEFINED:a*", ics.getVariable("a"));
 		assertEquals("*UNDEFINED:Test*", ics.getVariable("Test"));
-		
+
 		testMap.clear();
 		testMap.put("", "");
 		ics.addVariables(testMap);
 		assertEquals("", ics.getVariable(""));
-		
+
 		testMap.put("", "b");
 		ics.addVariables(testMap);
 		assertEquals("b", ics.getVariable(""));
@@ -266,45 +285,45 @@ public class ImportCodeSnippetTest extends CodeSnippetTest{
 		testMap.clear();
 		testMap.put("a", "");
 		ics.addVariables(testMap);
-		assertEquals("", ics.getVariable("a"));	
-		
+		assertEquals("", ics.getVariable("a"));
+
 		testMap.clear();
 		testMap.put(null, null);
 		ics.addVariables(testMap);
 		assertEquals(null, ics.getVariable(null));
-		
+
 		testMap.clear();
 		testMap.put("7", null);
 		ics.addVariables(testMap);
 		assertEquals(null, ics.getVariable("7"));
-		
+
 		testMap.clear();
 		testMap.put(null, "k");
 		ics.addVariables(testMap);
 		assertEquals("k", ics.getVariable(null));
-		
-		//normal cases
+
+		// normal cases
 		testMap.put("5", "e");
 		ics.addVariables(testMap);
 		assertEquals("e", ics.getVariable("5"));
 		assertEquals("e", ics.getVariable("5"));
-		
+
 		ics.clear();
 		testMap.put("8", "h");
 		testMap.put("3", "c");
 		ics.addVariables(testMap);
 		assertEquals("h", ics.getVariable("8"));
 		assertEquals("c", ics.getVariable("3"));
-		
+
 		testMap.put("6", "f");
 		ics.addVariables(testMap);
 		assertEquals("f", ics.getVariable("6"));
 	}
-	
+
 	@Test
-	public void testSetVariable(){
-		//border cases
-		ImportCodeSnippet ics=new ImportCodeSnippet();
+	public void testSetVariable() {
+		// border cases
+		ImportCodeSnippet ics = new ImportCodeSnippet();
 		ics.setVariable(null, null);
 		assertEquals(null, ics.getVariable(null));
 		ics.setVariable(null, "sylvester");
@@ -319,8 +338,8 @@ public class ImportCodeSnippetTest extends CodeSnippetTest{
 		assertEquals("", ics.getVariable("5"));
 		ics.setVariable(null, "");
 		assertEquals("", ics.getVariable(null));
-		
-		//normal cases
+
+		// normal cases
 		ics.setVariable("1", "montag");
 		assertEquals("montag", ics.getVariable("1"));
 		ics.setVariable("1", "neujahr");
@@ -336,38 +355,40 @@ public class ImportCodeSnippetTest extends CodeSnippetTest{
 		ics.setVariable("6", "wochenende");
 		assertEquals("wochenende", ics.getVariable("6"));
 	}
-	
+
 	@Test
-	public void testGetParent(){
-		ImportCodeSnippet ics=new ImportCodeSnippet();
-		assertEquals(null,ics.getParent());
-		
-		CodeList cl1=new CodeList();
+	public void testGetParent() {
+		ImportCodeSnippet ics = new ImportCodeSnippet();
+		assertEquals(null, ics.getParent());
+
+		CodeList cl1 = new CodeList();
 		cl1.setVariable("parent1", "0");
-		CodeList cl2=new CodeList(cl1);
+		CodeList cl2 = new CodeList(cl1);
 		cl2.setVariable("parent2", "1");
-		CodeList cl3=new CodeList(cl2);
+		CodeList cl3 = new CodeList(cl2);
 		cl3.setVariable("parent3", "2");
-		
-		ics=new ImportCodeSnippet(cl1);
+
+		ics = new ImportCodeSnippet(cl1);
 		assertEquals(cl1, ics.getParent());
-		ics=new ImportCodeSnippet(cl2);
+		ics = new ImportCodeSnippet(cl2);
 		assertEquals(cl2, ics.getParent());
 		assertEquals(cl1, ics.getParent().getParent());
-		ics=new ImportCodeSnippet(cl3);
+		ics = new ImportCodeSnippet(cl3);
 		assertEquals(cl3, ics.getParent());
 		assertEquals(cl2, ics.getParent().getParent());
 		assertEquals(cl1, ics.getParent().getParent().getParent());
-		
-		//tests what happens if a circle is constructed
-		cl1=new CodeList(cl2);
+
+		// tests what happens if a circle is constructed
+		cl1 = new CodeList(cl2);
 		cl1.setVariable("parent4", "2");
-		ics=new ImportCodeSnippet(cl1);
+		ics = new ImportCodeSnippet(cl1);
 		assertEquals(cl1, ics.getParent());
 		assertEquals("2", ics.getParent().getVariable("parent4"));
 		assertEquals("0", ics.getParent().getVariable("parent1"));
 		assertEquals(cl2, ics.getParent().getParent());
-		assertEquals("*UNDEFINED:parent4*", ics.getParent().getParent().getParent().getVariable("parent4"));
-		assertEquals("0", ics.getParent().getParent().getParent().getVariable("parent1"));
+		assertEquals("*UNDEFINED:parent4*", ics.getParent().getParent()
+				.getParent().getVariable("parent4"));
+		assertEquals("0", ics.getParent().getParent().getParent().getVariable(
+				"parent1"));
 	}
 }

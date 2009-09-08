@@ -21,14 +21,16 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
- 
+
 package de.uni_koblenz.jgralab.greql2.evaluator.vertexeval;
 
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
 import de.uni_koblenz.jgralab.greql2.schema.DefinitionExpression;
+
 /**
- * This is the baseclass for LetExpressionEvaluator and WhereExpressionEvaluator.
+ * This is the baseclass for LetExpressionEvaluator and
+ * WhereExpressionEvaluator.
  * 
  * @author ist@uni-koblenz.de
  * 
@@ -39,7 +41,7 @@ public abstract class DefinitionExpressionEvaluator extends VertexEvaluator {
 	 * The DefinitionExpression-Vertex this evaluator evaluates
 	 */
 	protected DefinitionExpression vertex;
-	
+
 	/**
 	 * returns the vertex this VertexEvaluator evaluates
 	 */
@@ -61,7 +63,5 @@ public abstract class DefinitionExpressionEvaluator extends VertexEvaluator {
 		super(eval);
 		this.vertex = vertex;
 	}
-	
-	
-	
+
 }

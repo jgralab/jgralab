@@ -21,7 +21,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
- 
+
 package de.uni_koblenz.jgralab.greql2.evaluator.vertexeval;
 
 import de.uni_koblenz.jgralab.EdgeDirection;
@@ -36,16 +36,18 @@ import de.uni_koblenz.jgralab.greql2.schema.AggregationPathDescription;
 import de.uni_koblenz.jgralab.greql2.schema.IsEdgeRestrOf;
 
 /**
- * Evaluates an AggregationPathDescription, that is something link v --<>{isExprOf} w.
- * Creates a NFA which accepts the simplePath the vertex to evaluate describes.
+ * Evaluates an AggregationPathDescription, that is something link v
+ * --<>{isExprOf} w. Creates a NFA which accepts the simplePath the vertex to
+ * evaluate describes.
+ * 
  * @author ist@uni-koblenz.de
- *
+ * 
  */
 public class AggregationPathDescriptionEvaluator extends
 		PrimaryPathDescriptionEvaluator {
 
-	public AggregationPathDescriptionEvaluator(AggregationPathDescription vertex,
-			GreqlEvaluator eval) {
+	public AggregationPathDescriptionEvaluator(
+			AggregationPathDescription vertex, GreqlEvaluator eval) {
 		super(vertex, eval);
 	}
 
@@ -55,10 +57,13 @@ public class AggregationPathDescriptionEvaluator extends
 		IsEdgeRestrOf inc = vertex.getFirstIsEdgeRestrOf(EdgeDirection.IN);
 		EdgeRestrictionEvaluator edgeRestEval = null;
 		if (inc != null) {
-			edgeRestEval = (EdgeRestrictionEvaluator) greqlEvaluator.getVertexEvaluatorGraphMarker().getMark(inc.getAlpha());
+			edgeRestEval = (EdgeRestrictionEvaluator) greqlEvaluator
+					.getVertexEvaluatorGraphMarker().getMark(inc.getAlpha());
 			typeCollection.addTypes(edgeRestEval.getTypeCollection());
 		}
-		createdNFA = NFA.createAggregationPathDescriptionNFA(((AggregationPathDescription) vertex).isOutAggregation(), typeCollection,getEdgeRole(edgeRestEval));
+		createdNFA = NFA.createAggregationPathDescriptionNFA(
+				((AggregationPathDescription) vertex).isOutAggregation(),
+				typeCollection, getEdgeRole(edgeRestEval));
 		return new JValue(createdNFA);
 	}
 

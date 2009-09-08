@@ -40,9 +40,9 @@ import de.uni_koblenz.jgralab.greql2.schema.SetComprehension;
 
 /**
  * Evaluates a SetComprehension vertex in the GReQL-2 Syntaxgraph
- *
+ * 
  * @author ist@uni-koblenz.de
- *
+ * 
  */
 public class SetComprehensionEvaluator extends VertexEvaluator {
 
@@ -61,7 +61,7 @@ public class SetComprehensionEvaluator extends VertexEvaluator {
 
 	/**
 	 * Creates a new SetComprehensionEvaluator for the given vertex
-	 *
+	 * 
 	 * @param eval
 	 *            the GreqlEvaluator instance this VertexEvaluator belong to
 	 * @param vertex

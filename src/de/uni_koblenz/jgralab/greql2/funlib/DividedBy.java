@@ -63,9 +63,9 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
  * </dl>
  * </dd>
  * </dl>
- *
+ * 
  * @author ist@uni-koblenz.de
- *
+ * 
  */
 
 public class DividedBy extends ArithmeticFunction {

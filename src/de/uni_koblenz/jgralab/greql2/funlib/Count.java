@@ -36,7 +36,7 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
 /**
  * Returns the number of elements in a given Object. If the object is not a
  * collection or map, 1 is returned. For a map the number of keys is returned.
- *
+ * 
  * <dl>
  * <dt><b>GReQL-signature</b></dt>
  * <dd><code>INT count(obj:OBJECT)</code></dd>
@@ -55,9 +55,9 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
  * </dl>
  * </dd>
  * </dl>
- *
+ * 
  * @author ist@uni-koblenz.de
- *
+ * 
  */
 public class Count extends AbstractGreql2Function {
 
