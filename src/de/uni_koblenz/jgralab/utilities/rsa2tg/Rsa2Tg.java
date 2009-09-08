@@ -290,9 +290,14 @@ public class Rsa2Tg {
 	private boolean writeSchemaGraph;
 
 	/**
-	 * Flag for writing debug information of the conversion process.
+	 * Flag for exporting to dot
 	 */
-	private boolean writeDebug;
+	private boolean writeDot;
+
+	/**
+	 * Flag for validation
+	 */
+	private boolean validate;
 
 	/**
 	 * Filename for the Schema.
@@ -305,70 +310,63 @@ public class Rsa2Tg {
 	private String filenameSchemaGraph;
 
 	/**
-	 * Filename for debug informations.
+	 * Filename for dot.
 	 */
-	private String filenameDebug;
+	private String filenameDot;
+
+	/**
+	 * Filaname for validation
+	 */
+	private String filenameValidation;
+
+	/**
+	 * Filename for the xmi file
+	 */
+	private String filenameXmi;
 
 	public static void main(String[] args) {
 
 		System.out.println("RSA to TG");
 		System.out.println("=========");
 		JGraLab.setLogLevel(Level.OFF);
-		Rsa2Tg r = new Rsa2Tg();
-		r.setUseFromRole(true);
-		r.setRemoveUnusedDomains(true);
-		r.setUseNavigability(true);
 
 		// Retrieving all command line options
 		CommandLine cli = processCommandLineOptions(args);
 		assert cli != null : "No CommandLine object has been generated!";
 		// All XMI input files
-		String[] input = cli.getOptionValues('i');
+		String input = cli.getOptionValue('i');
 
-		// Retrieve the number of file to process
-		int numFiles = input.length;
-
-		String[] nulls = new String[input.length];
 		// Debug output filenames
-		String[] debug = cli.hasOption('d') ? cli.getOptionValues('d') : nulls;
-		// Schema output filename ("<filename>.rsa.tg")
-		String[] output = cli.hasOption('o') ? cli.getOptionValues('o') : nulls;
-		// SchemaGraph output filename ("<filename>.gruml.tg")
-		String[] schemaGraph = cli.hasOption('s') ? cli.getOptionValues('s')
-				: nulls;
+		String export = cli.getOptionValue('e');
+		String validation = cli.getOptionValue('V');
 
-		// if a used array is null, it should be at least an array of null
-		// references.
-		if (debug == null) {
-			debug = nulls;
-		}
-		if (output == null) {
-			output = nulls;
-		}
-		if (schemaGraph == null) {
-			schemaGraph = nulls;
-		}
+		String output = cli.getOptionValue('o');
+		String schemaGraph = cli.getOptionValue('s');
 
-		// In case of incoherent number of filenames, throw an error
-		if ((debug.length != numFiles) || (output.length != numFiles)
-				|| (schemaGraph.length != numFiles)) {
-			throw new IllegalArgumentException(
-					"There should be the same amount filenames for debug information, "
-							+ "output as Schema or as SchemaGraph given as for input filenames.");
-		}
+		Rsa2Tg r = new Rsa2Tg();
 
-		for (int i = 0; i < input.length; i++) {
-			System.out.println("processing: " + input[i]);
-			try {
-				r.setWriteDebug(cli.hasOption('d'));
-				r.setWriteSchemaGraph(cli.hasOption('s'));
-				r.process(input[i], output[i], schemaGraph[i], debug[i]);
-			} catch (Exception e) {
-				System.err.println("An Exception occured while processing "
-						+ input[i] + ".");
-				System.err.println(e.getMessage());
-				e.printStackTrace();
-			}
+		r.setUseFromRole(cli.hasOption('f'));
+		r.setRemoveUnusedDomains(cli.hasOption('u'));
+		r.setUseNavigability(cli.hasOption('n'));
+
+		// apply options
+		r.setWriteDot(cli.hasOption('e'));
+		r.setValidate(cli.hasOption('V'));
+		r.setWriteSchemaGraph(cli.hasOption('s'));
+		r.setFilenameXmi(input);
+		r.setFilenameSchema(output);
+		r.setFilenameSchemaGraph(schemaGraph);
+		r.setFilenameDot(export);
+		r.setFilenameValidation(validation);
+
+		System.out.println("processing: " + input);
+		try {
+			r.process();
+		} catch (Exception e) {
+			System.err.println("An Exception occured while processing " + input
+					+ ".");
+			System.err.println(e.getMessage());
+			e.printStackTrace();
 		}
 
 		System.out.println("Fini.");
@@ -377,31 +375,6 @@ public class Rsa2Tg {
 	/**
 	 * Processes all command line parameters and returns a {@link CommandLine}
 	 * object, which holds all values included in the given String array.
-	 * 
-	 * <pre>
-	 * RSA to TG
-	 * =========
-	 * usage: java de.uni_koblenz.jgralab.utilities.xml.SchemaGraph2XSD [-h ] [-v
-	 *             ] [-d [&lt;filename&gt;]] [-s [&lt;filename&gt;]] -i &lt;filename&gt; [-o
-	 *             &lt;filename&gt;]
-	 *  -d,--debug &lt;filename&gt;         (optional): write a validation report
-	 *                                '&lt;filename&gt;.gruml.validationreport.html'
-	 *                                and a dotty-graph '&lt;filename&gt;.gruml.dot'.
-	 *                                The &lt;filename&gt; is optional. In case of no
-	 *                                given filename, &lt;filename&gt; :=
-	 *                                '&lt;NAME_OF_SCHEMA&gt;'.
-	 *  -h,--help                     (optional): print this help message.
-	 *  -i,--input &lt;filename&gt;         (required): UML 2.1-XMI exchange modell
-	 *                                file of the Schema.
-	 *  -o,--output &lt;filename&gt;        (optional): write a TG-file of the Schema
-	 *                                in '&lt;filename&gt;.rsa.tg.'
-	 *  -s,--schemaGraph &lt;filename&gt;   (optional): write a TG-file of the Schema
-	 *                                as graph instance in '&lt;filename&gt;.tg'.
-	 *                                &lt;filename&gt; is optional. In case of no given
-	 *                                filename, &lt;filename&gt; :=
-	 *                                '&lt;NAME_OF_SCHEMA&gt;.gruml'.
-	 *  -v,--version                  (optional): print version information
-	 * </pre>
 	 * 
 	 * @param args
 	 *            {@link CommandLine} parameters.
@@ -415,17 +388,28 @@ public class Rsa2Tg {
 		OptionHandler oh = new OptionHandler(toolString, versionString);
 
 		// Several Options are declared.
-		Option debug = new Option(
-				"d",
-				"debug",
+		Option validate = new Option(
+				"V",
+				"validate",
 				true,
-				"(optional): write a validation report '<filename>.gruml.validationreport.html' and a dotty-graph "
-						+ "'<filename>.gruml.dot'. The <filename> is optional. In case of no given filename, <filename> := "
+				"(optional): write a validation report '<filename>.html' In case of no given filename, <filename> := "
 						+ "'<NAME_OF_SCHEMA>'.");
-		debug.setRequired(false);
-		debug.setArgName("filename");
-		debug.setOptionalArg(true);
-		oh.addOption(debug);
+		validate.setRequired(false);
+		validate.setArgName("filename");
+		validate.setOptionalArg(true);
+		oh.addOption(validate);
+
+		Option export = new Option(
+				"e",
+				"export",
+				true,
+				"(optional): write a dotty-graph "
+						+ "'<filename>.dot'. The <filename> is optional.  In case of no given filename, <filename> := '<NAME_OF_"
+						+ "SCHEMA>.dot'.");
+		export.setRequired(false);
+		export.setArgName("filename");
+		export.setOptionalArg(true);
+		oh.addOption(export);
 
 		Option schemaGraph = new Option(
 				"s",
@@ -433,14 +417,14 @@ public class Rsa2Tg {
 				true,
 				"(optional): write a TG-file of the Schema as graph instance in '<filename>.tg'"
 						+ ". <filename> is optional. In case of no given filename, <filename> := '<NAME_OF_"
-						+ "SCHEMA>.gruml'.");
+						+ "SCHEMA>.gruml.tg'.");
 		schemaGraph.setRequired(false);
 		schemaGraph.setArgName("filename");
 		schemaGraph.setOptionalArg(true);
 		oh.addOption(schemaGraph);
 
 		Option input = new Option("i", "input", true,
-				"(required): UML 2.1-XMI exchange modell file of the Schema.");
+				"(required): UML 2.1-XMI exchange model file of the Schema.");
 		input.setRequired(true);
 		input.setArgName("filename");
 		oh.addOption(input);
@@ -450,6 +434,30 @@ public class Rsa2Tg {
 		output.setRequired(false);
 		output.setArgName("filename");
 		oh.addOption(output);
+
+		Option fromRole = new Option(
+				"f",
+				"useFromRole",
+				false,
+				"(optional): if this flag is set, the name of from roles will be used for creating undefined EdgeClass names.");
+		fromRole.setRequired(false);
+		oh.addOption(fromRole);
+
+		Option unusedDomains = new Option(
+				"u",
+				"ommitUnusedDomains",
+				false,
+				"(optional): if this flag is set, all unused domains will not be defined in the schema.");
+		unusedDomains.setRequired(false);
+		oh.addOption(unusedDomains);
+
+		Option navigability = new Option(
+				"n",
+				"useNavigability",
+				false,
+				"(optional): if this flag is set, navigability information will be interpreted as reading direction.");
+		navigability.setRequired(false);
+		oh.addOption(navigability);
 
 		// Parses the given command line parameters with all created Option.
 		return oh.parse(args);
@@ -479,16 +487,10 @@ public class Rsa2Tg {
 	 * @throws FileNotFoundException
 	 * @throws XMLStreamException
 	 */
-	public void process(String xmiFileName, String schemaFileName,
-			String schemaGraphFileName, String debugFileName)
-			throws FileNotFoundException, XMLStreamException {
+	public void process() throws FileNotFoundException, XMLStreamException {
 
-		filenameSchema = schemaFileName;
-		filenameSchemaGraph = schemaGraphFileName;
-		filenameDebug = debugFileName;
-
-		InputStream in = new FileInputStream(xmiFileName);
-		currentXmiFile = new File(xmiFileName);
+		InputStream in = new FileInputStream(filenameXmi);
+		currentXmiFile = new File(filenameXmi);
 		XMLInputFactory factory = XMLInputFactory.newInstance();
 		XMLStreamReader parser = factory.createXMLStreamReader(in);
 
@@ -601,33 +603,60 @@ public class Rsa2Tg {
 			String schemaName = schema.getName();
 			assert schemaName != null;
 
-			String debug, schema, schemaGraph;
-			debug = (filenameDebug != null) ? filenameDebug : schemaName;
-			schema = (filenameSchema != null) ? filenameSchema : schemaName;
-			schemaGraph = (filenameSchemaGraph != null) ? filenameSchemaGraph
+			String dotName, tgSchemaName, schemaGraphName, validateName, relativePathPrefix;
+			relativePathPrefix = currentXmiFile.getParent();
+			// if in current working directory parent is null
+			relativePathPrefix = relativePathPrefix == null ? ""
+					: relativePathPrefix + File.separator;
+
+			dotName = (filenameDot != null) ? filenameDot : schemaName;
+			dotName = createFilename(relativePathPrefix, dotName, ".dot");
+
+			schemaGraphName = (filenameSchemaGraph != null) ? filenameSchemaGraph
 					: schemaName;
+			schemaGraphName = createFilename(relativePathPrefix,
+					schemaGraphName, ".gruml.tg");
 
-			if (writeDebug) {
+			tgSchemaName = (filenameSchema != null) ? filenameSchema
+					: schemaName;
+			tgSchemaName = createFilename(relativePathPrefix, tgSchemaName,
+					".rsa.tg");
 
-				createDotFile(debug);
+			validateName = (filenameValidation != null) ? filenameValidation
+					: schemaName;
+			validateName = createFilename(relativePathPrefix, validateName,
+					".html");
+
+			if (writeDot) {
+
+				writeDotFile(dotName);
 			}
 
 			if (writeSchemaGraph) {
-				saveGraph(schemaGraph);
+				writeSchemaGraph(schemaGraphName);
 
-				if (writeDebug) {
-					validateGraph(debug);
+				if (validate) {
+					validateGraph(validateName);
 				}
 			}
-			saveSchemagraphAsTg(schema, false);
+			writeSchema(tgSchemaName, false);
 		}
 	}
 
-	private void saveSchemagraphAsTg(String schemaName, boolean formatTg) {
+	private String createFilename(String pathPrefix, String name,
+			String extension) {
+		StringBuilder out = new StringBuilder();
+		out.append(pathPrefix);
+		out.append(name);
+		if (!name.endsWith(extension)) {
+			out.append(extension);
+		}
+		return out.toString();
+	}
+
+	private void writeSchema(String schemaName, boolean formatTg) {
 		try {
-			SchemaGraph2Tg sg2tg = new SchemaGraph2Tg(sg, currentXmiFile
-					.getParent()
-					+ File.separator + schemaName + ".rsa.tg");
+			SchemaGraph2Tg sg2tg = new SchemaGraph2Tg(sg, schemaName);
 			sg2tg.setIsFormatted(formatTg);
 			sg2tg.run();
 		} catch (IOException e) {
@@ -814,11 +843,9 @@ public class Rsa2Tg {
 		assert recordComponentType.isEmpty();
 	}
 
-	private void validateGraph(String schemaName) {
+	private void validateGraph(String validationReportFile) {
 		GraphValidator validator = new GraphValidator(sg);
 		try {
-			String validationReportFile = currentXmiFile.getParent()
-					+ File.separator + schemaName + ".validationreport.html";
 			Set<ConstraintViolation> s = validator
 					.createValidationReport(validationReportFile);
 			if (!s.isEmpty()) {
@@ -849,19 +876,18 @@ public class Rsa2Tg {
 		assert attributeType.isEmpty();
 	}
 
-	private void createDotFile(String schemaName) {
+	private void writeDotFile(String dotName) {
 		Tg2Dot tg2Dot = new Tg2Dot();
 		tg2Dot.setGraph(sg);
 		tg2Dot.setPrintEdgeAttributes(true);
-		tg2Dot.setOutputFile(currentXmiFile.getParent() + File.separator
-				+ schemaName + ".gruml.dot");
+		tg2Dot.setOutputFile(dotName);
 		tg2Dot.printGraph();
 	}
 
-	private void saveGraph(String schemaName) throws XMLStreamException {
+	private void writeSchemaGraph(String schemaGraphName)
+			throws XMLStreamException {
 		try {
-			GraphIO.saveGraphToFile(currentXmiFile.getParent() + File.separator
-					+ schemaName + ".gruml.tg", sg, null);
+			GraphIO.saveGraphToFile(schemaGraphName, sg, null);
 		} catch (GraphIOException e) {
 			throw new XMLStreamException(e);
 		}
@@ -1938,12 +1964,12 @@ public class Rsa2Tg {
 		this.writeSchemaGraph = writeSchemaGraph;
 	}
 
-	public boolean isWriteDebug() {
-		return writeDebug;
+	public boolean isWriteDot() {
+		return writeDot;
 	}
 
-	public void setWriteDebug(boolean writeDebug) {
-		this.writeDebug = writeDebug;
+	public void setWriteDot(boolean writeDebug) {
+		this.writeDot = writeDebug;
 	}
 
 	public String getFilenameSchema() {
@@ -1962,11 +1988,36 @@ public class Rsa2Tg {
 		this.filenameSchemaGraph = filenameSchemaGraph;
 	}
 
-	public String getFilenameDebug() {
-		return filenameDebug;
+	public String getFilenameXmi() {
+		return filenameXmi;
 	}
 
-	public void setFilenameDebug(String filenameDebug) {
-		this.filenameDebug = filenameDebug;
+	public void setFilenameXmi(String filenameXmi) {
+		this.filenameXmi = filenameXmi;
 	}
+
+	public String getFilenameDot() {
+		return filenameDot;
+	}
+
+	public void setFilenameDot(String filenameDot) {
+		this.filenameDot = filenameDot;
+	}
+
+	public String getFilenameValidation() {
+		return filenameValidation;
+	}
+
+	public void setFilenameValidation(String filenameValidation) {
+		this.filenameValidation = filenameValidation;
+	}
+
+	public boolean isValidate() {
+		return validate;
+	}
+
+	public void setValidate(boolean validate) {
+		this.validate = validate;
+	}
+
 }
