@@ -43,13 +43,18 @@ public class SchemaGraph2SchemaTest {
 		System.out.println("fini.");
 	}
 
-	public void test(String name) throws GraphIOException, IOException,
+	public void test(String filename) throws GraphIOException, IOException,
 			SAXException, ParserConfigurationException, XMLStreamException {
 
 		// Loads the SchemaGraph
-		System.out.println("Testing with: " + folder + name);
+		System.out.println("Testing with: " + folder + filename);
 		System.out.print("Loading XMI and creating SchemaGraph ... ");
-		r.process(folder + name, null, null, null);
+		r.setFilenameXmi(folder + filename);
+		r.setFilenameDot(null);
+		r.setFilenameValidation(null);
+		r.setFilenameSchema(null);
+		r.setFilenameSchemaGraph(null);
+		r.process();
 		System.out.println("\tdone");
 
 		// Converts the SchemaGraph to a Schema
