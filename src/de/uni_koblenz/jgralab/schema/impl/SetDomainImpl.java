@@ -147,9 +147,9 @@ public final class SetDomainImpl extends CollectionDomainImpl implements
 
 		code.addNoIndent(new CodeSnippet("if (#name# != null) {"));
 		code.add(new CodeSnippet("#io#.writeSpace();", "#io#.write(\"{\");",
-				"#io#.noSpace();", "for (#basetype# #name#Element: #name#) {"));
+				"#io#.noSpace();", "for (#basetype# element: #name#) {"));
 		code.add(getBaseDomain().getWriteMethod(schemaRootPackagePrefix,
-				variableName + "Element", graphIoVariableName), 1);
+				"element", graphIoVariableName), 1);
 		code.add(new CodeSnippet("}", "#io#.write(\"}\");"));
 		code.addNoIndent(new CodeSnippet("} else {"));
 		code.add(new CodeSnippet(graphIoVariableName
