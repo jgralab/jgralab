@@ -127,7 +127,7 @@
 		<!-- calls target compile in general ant file ${ant}/build.xml -->
 	   	<ant dir="${common.dir}" antfile="build.xml" target="compile">
 	   		<property name="src.dir" value="${src.dir}/de/uni_koblenz/${projectname}"/>
-	   		<property name="compileincludes" value="*.java schema/** codegenerator/** impl/** jniserver/**"/>
+	   		<property name="compileincludes" value="*.java schema/** codegenerator/** impl/** jniserver/** trans/**"/>
 			<property name="compileexcludes" value="xmlrpc/**"/>
 	   	</ant>
 	</target>
