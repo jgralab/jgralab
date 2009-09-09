@@ -41,7 +41,7 @@ public class GraphFactoryGenerator extends CodeGenerator {
 
 	public GraphFactoryGenerator(Schema schema, String schemaPackageName,
 			String implementationName) {
-		super(schemaPackageName, "");
+		super(schemaPackageName, "", false);
 		this.schema = schema;
 		rootBlock.setVariable("className", schema.getName() + "Factory");
 		rootBlock.setVariable("simpleImplClassName", schema.getName()
@@ -110,13 +110,15 @@ public class GraphFactoryGenerator extends CodeGenerator {
 		CodeSnippet code = new CodeSnippet(true);
 		code.setVariable("graphName", schemaRootPackageName + "."
 				+ graphClass.getQualifiedName());
-		code.setVariable("graphImplName", schemaRootPackageName + ".impl."
+		code.setVariable("graphImplName", schemaRootPackageName + ".impl.std."
 				+ graphClass.getQualifiedName());
+		code.setVariable("graphTransactionImplName", schemaRootPackageName
+				+ ".impl.trans." + graphClass.getQualifiedName());
 
 		if (!graphClass.isAbstract()) {
 			code.add("/* code for graph #graphName# */");
-			code
-					.add("setGraphImplementationClass(#graphName#.class, #graphImplName#Impl.class);");
+			code.add("setGraphImplementationClass(#graphName#.class, #graphImplName#Impl.class);");
+			code.add("setGraphTransactionImplementationClass(#graphName#.class, #graphTransactionImplName#Impl.class);");
 		}
 		return code;
 	}
@@ -128,11 +130,13 @@ public class GraphFactoryGenerator extends CodeGenerator {
 		CodeSnippet code = new CodeSnippet(true);
 		code.setVariable("vertexName", schemaRootPackageName + "."
 				+ vertexClass.getQualifiedName());
-		code.setVariable("vertexImplName", schemaRootPackageName + ".impl."
+		code.setVariable("vertexImplName", schemaRootPackageName + ".impl.std."
 				+ vertexClass.getQualifiedName());
+		code.setVariable("vertexTransactionImplName", schemaRootPackageName
+				+ ".impl.trans." + vertexClass.getQualifiedName());
 		if (!vertexClass.isAbstract()) {
-			code
-					.add("setVertexImplementationClass(#vertexName#.class, #vertexImplName#Impl.class);");
+			code.add("setVertexImplementationClass(#vertexName#.class, #vertexImplName#Impl.class);");
+			code.add("setVertexTransactionImplementationClass(#vertexName#.class, #vertexTransactionImplName#Impl.class);");
 		}
 		return code;
 	}
@@ -141,12 +145,14 @@ public class GraphFactoryGenerator extends CodeGenerator {
 		CodeSnippet code = new CodeSnippet(true);
 		code.setVariable("edgeName", schemaRootPackageName + "."
 				+ edgeClass.getQualifiedName());
-		code.setVariable("edgeImplName", schemaRootPackageName + ".impl."
+		code.setVariable("edgeImplName", schemaRootPackageName + ".impl.std."
 				+ edgeClass.getQualifiedName());
+		code.setVariable("edgeTransactionImplName", schemaRootPackageName
+				+ ".impl.trans." + edgeClass.getQualifiedName());
 
 		if (!edgeClass.isAbstract()) {
-			code
-					.add("setEdgeImplementationClass(#edgeName#.class, #edgeImplName#Impl.class);");
+			code.add("setEdgeImplementationClass(#edgeName#.class, #edgeImplName#Impl.class);");
+			code.add("setEdgeTransactionImplementationClass(#edgeName#.class, #edgeTransactionImplName#Impl.class);");
 		}
 		return code;
 	}

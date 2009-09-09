@@ -56,6 +56,11 @@ public abstract class CodeGenerator {
 	private ImportCodeSnippet imports;
 
 	protected String schemaRootPackageName;
+	
+	/**
+	 * Toggles, if the generated code supports transactions or not
+	 */
+	protected boolean transactionSupport;
 
 	/**
 	 * Creates a CodeGenerator for a single class
@@ -75,25 +80,33 @@ public abstract class CodeGenerator {
 	 *            the example
 	 *            "de.uni_koblenz.jgralab.greql2.impl.comprehension.Bagcomprehension"
 	 *            for the default implementation class
+	 * @param transactionSupport
+	 *            toggles, if code with transaction support should be generated           
 	 */
-	public CodeGenerator(String schemaRootPackageName, String packageName) {
+	public CodeGenerator(String schemaRootPackageName, String packageName, boolean transactionSupport) {
 		this.schemaRootPackageName = schemaRootPackageName;
+		this.transactionSupport = transactionSupport;
 		rootBlock = new CodeList(null);
-		rootBlock.setVariable("jgPackage", "de.uni_koblenz.jgralab");
-		rootBlock.setVariable("jgImplPackage", "de.uni_koblenz.jgralab.impl");
-		rootBlock.setVariable("jgSchemaPackage",
-				"de.uni_koblenz.jgralab.schema");
-		rootBlock.setVariable("jgSchemaImplPackage",
-				"de.uni_koblenz.jgralab.schema.impl");
+		rootBlock.setVariable("jgPackage",           "de.uni_koblenz.jgralab");
+		rootBlock.setVariable("jgImplPackage",       "de.uni_koblenz.jgralab.impl");
+		rootBlock.setVariable("jgImplStdPackage",    "de.uni_koblenz.jgralab.impl.std");
+		rootBlock.setVariable("jgImplTransPackage",	 "de.uni_koblenz.jgralab.impl.trans");
+		rootBlock.setVariable("jgSchemaPackage",     "de.uni_koblenz.jgralab.schema");
+		rootBlock.setVariable("jgSchemaImplPackage", "de.uni_koblenz.jgralab.schema.impl");
 		if (packageName != null && !packageName.equals("")) {
 			rootBlock.setVariable("schemaPackage", schemaRootPackageName + "."
 					+ packageName);
-			rootBlock.setVariable("schemaImplPackage", schemaRootPackageName
-					+ ".impl." + packageName);
+			// schema implementation packages (standard and for transaction)
+			rootBlock.setVariable("schemaImplStdPackage", schemaRootPackageName
+					+ ".impl.std." + packageName);
+			rootBlock.setVariable("schemaImplTransPackage",
+					schemaRootPackageName + ".impl.trans." + packageName);
 		} else {
 			rootBlock.setVariable("schemaPackage", schemaRootPackageName);
-			rootBlock.setVariable("schemaImplPackage", schemaRootPackageName
-					+ ".impl");
+			rootBlock.setVariable("schemaImplStdPackage", schemaRootPackageName
+					+ ".impl.std");
+			rootBlock.setVariable("schemaImplTransPackage",
+					schemaRootPackageName + ".impl.trans");
 		}
 		rootBlock.setVariable("isClassOnly", "false");
 		rootBlock.setVariable("isImplementationClassOnly", "false");
@@ -159,12 +172,20 @@ public abstract class CodeGenerator {
 		String schemaPackage = rootBlock.getVariable("schemaPackage");
 		String simpleImplClassName = rootBlock
 				.getVariable("simpleImplClassName");
-		String schemaImplPackage = rootBlock.getVariable("schemaImplPackage");
+		String schemaImplPackage = "";
+		if (!transactionSupport)
+			schemaImplPackage = rootBlock.getVariable("schemaImplStdPackage");
+		else
+			schemaImplPackage = rootBlock.getVariable("schemaImplTransPackage");
 		logger.finer("createFiles(\"" + pathPrefix + "\")");
 		logger.finer(" - simpleClassName=" + simpleClassName);
 		logger.finer(" - schemaPackage=" + schemaPackage);
 		logger.finer(" - simpleImplClassName=" + simpleImplClassName);
-		logger.finer(" - schemaImplPackage=" + schemaImplPackage);
+		if (!transactionSupport)
+			logger.finer(" - schemaImplStdPackage=" + schemaImplPackage);
+		else
+			logger.finer(" - schemaImplTransPackage=" + schemaImplPackage);
+		
 		if (rootBlock.getVariable("isClassOnly").equals("true")) {
 			// no separate implementaion
 			// create class only
@@ -219,8 +240,13 @@ public abstract class CodeGenerator {
 		if (rootBlock.getVariable("isClassOnly").equals("true")) {
 			code.add("package #schemaPackage#;");
 		} else {
-			code.add(createClass ? "package #schemaImplPackage#;"
-					: "package #schemaPackage#;");
+			// package declaration standard vs. transaction
+			if (!transactionSupport)
+				code.add(createClass ? "package #schemaImplStdPackage#;"
+						: "package #schemaPackage#;");
+			else
+				code.add(createClass ? "package #schemaImplTransPackage#;"
+						: "package #schemaPackage#;");
 		}
 		return code;
 	}

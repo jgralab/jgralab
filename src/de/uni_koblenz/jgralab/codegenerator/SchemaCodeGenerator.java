@@ -62,7 +62,7 @@ public class SchemaCodeGenerator extends CodeGenerator {
 	 */
 	public SchemaCodeGenerator(Schema schema, String schemaPackageName,
 			String implementationName) {
-		super(schemaPackageName, "");
+		super(schemaPackageName, "", false);
 		this.schema = schema;
 
 		rootBlock.setVariable("simpleClassName", schema.getName());
@@ -145,6 +145,45 @@ public class SchemaCodeGenerator extends CodeGenerator {
 				"\treturn (#gcCamelName#) graphFactory.createGraph(#gcCamelName#.class, id);",
 				"}",
 				"",
+				// ---- transaction support ----
+				"/**",
+				" * Creates a new #gcName# graph with transaction support with initial vertex and edge counts <code>vMax</code>, <code>eMax</code>.",
+				" *",
+				" * @param vMax initial vertex count",
+				" * @param eMax initial edge count",
+				"*/",
+				"public #gcName# create#gcCamelName#WithTransactionSupport(int vMax, int eMax) {",
+				"\treturn (#gcCamelName#) graphFactory.createGraphWithTransactionSupport(#gcCamelName#.class, null, vMax, eMax);",
+				"}",
+				"",
+				"/**",
+				" * Creates a new #gcName# graph with transaction support with the ID <code>id</code> initial vertex and edge counts <code>vMax</code>, <code>eMax</code>.",
+				" *",
+				" * @param id the id name of the new graph",
+				" * @param vMax initial vertex count",
+				" * @param eMax initial edge count",
+				" */",
+				"public #gcName# create#gcCamelName#WithTransactionSupport(String id, int vMax, int eMax) {",
+				"\treturn (#gcCamelName#) graphFactory.createGraphWithTransactionSupport(#gcCamelName#.class, id, vMax, eMax);",
+				"}",
+				"",
+				"/**",
+				" * Creates a new #gcName# graph.",
+				"*/",
+				"public #gcName# create#gcCamelName#WithTransactionSupport() {",
+				"\treturn (#gcCamelName#) graphFactory.createGraphWithTransactionSupport(#gcCamelName#.class, null);",
+				"}",
+				"",
+				"/**",
+				" * Creates a new #gcName# graph with the ID <code>id</code>.",
+				" *",
+				" * @param id the id name of the new graph",
+				" */",
+				"public #gcName# create#gcCamelName#WithTransactionSupport(String id) {",
+				"\treturn (#gcCamelName#) graphFactory.createGraphWithTransactionSupport(#gcCamelName#.class, id);",
+				"}",
+				"",
+				// ---- end transaction support ----
 				"/**",
 				" * Loads a #gcName# graph from the file <code>filename</code>.",
 				" *",
@@ -168,6 +207,31 @@ public class SchemaCodeGenerator extends CodeGenerator {
 				"\tGraph graph = GraphIO.loadGraphFromFile(filename, this, pf);",
 				"\tif (!(graph instanceof #gcName#)) {",
 				"\t\tthrow new GraphIOException(\"Graph in file '\" + filename + \"' is not an instance of GraphClass #gcName#\");",
+				"\t}", "\treturn (#gcName#) graph;", "}", 
+				// ---- transaction support ----
+				"/**",
+				" * Loads a #gcName# graph with transaction support from the file <code>filename</code>.",
+				" *",
+				" * @param filename the name of the file",
+				" * @return the loaded #gcName#",
+				" * @throws GraphIOException if the graph cannot be loaded",
+				" */",
+				"public #gcName# load#gcCamelName#WithTransactionSupport(String filename) throws GraphIOException {",
+				"\treturn load#gcCamelName#WithTransactionSupport(filename, null);",
+				"}",
+				"",
+				"/**",
+				" * Loads a #gcName# graph with transaction support from the file <code>filename</code>.",
+				" *",
+				" * @param filename the name of the file",
+				" * @param pf a progress function to monitor graph loading",
+				" * @return the loaded #gcName#",
+				" * @throws GraphIOException if the graph cannot be loaded",
+				" */",
+				"public #gcName# load#gcCamelName#WithTransactionSupport(String filename, ProgressFunction pf) throws GraphIOException {",
+				"\tGraph graph = GraphIO.loadGraphFromFileWithTransactionSupport(filename, pf);",
+				"\tif (!(graph instanceof #gcName#)) {",
+				"\t\tthrow new GraphIOException(\"Graph in file '\" + filename + \"' is not an instance of GraphClass #gcName#\");",
 				"\t}", "\treturn (#gcName#) graph;", "}");
 
 		code.setVariable("gcName", gc.getQualifiedName());
@@ -178,8 +242,7 @@ public class SchemaCodeGenerator extends CodeGenerator {
 
 	private CodeBlock createConstructor() {
 		CodeList code = new CodeList();
-		code
-				.addNoIndent(new CodeSnippet(
+		code.addNoIndent(new CodeSnippet(
 						true,
 						"/**",
 						" * the weak reference to the singleton instance",
@@ -238,8 +301,7 @@ public class SchemaCodeGenerator extends CodeGenerator {
 		code.setVariable("aecVariable", "gc");
 		code.setVariable("schemaVariable", gc.getVariableName());
 		code.setVariable("gcAbstract", gc.isAbstract() ? "true" : "false");
-		code
-				.addNoIndent(new CodeSnippet(
+		code.addNoIndent(new CodeSnippet(
 						true,
 						"{",
 						"\tGraphClass #gcVariable# = #schemaVariable# = createGraphClass(\"#gcName#\");",
@@ -273,13 +335,11 @@ public class SchemaCodeGenerator extends CodeGenerator {
 		}
 		for (EdgeClass ec : schema.getEdgeClassesInTopologicalOrder()) {
 			if (!ec.isInternal()) {
-				code
-						.addNoIndent(new CodeSnippet(
-								"public final "
-										+ (ec instanceof CompositionClass ? "Composition"
-												: ec instanceof AggregationClass ? "Aggregation"
-														: "Edge") + "Class "
-										+ ec.getVariableName() + ";"));
+				String ecName = (ec instanceof CompositionClass) ? "Composition"
+						         : (ec instanceof AggregationClass) ? "Aggregation"
+								   : "Edge";
+				code.addNoIndent(new CodeSnippet(
+								"public final "	+ ecName + "Class "	+ ec.getVariableName() + ";"));
 			}
 		}
 		return code;
@@ -380,8 +440,7 @@ public class SchemaCodeGenerator extends CodeGenerator {
 		code.setVariable("aecVariable", "vc");
 		code.setVariable("schemaVariable", vc.getVariableName());
 		code.setVariable("vcAbstract", vc.isAbstract() ? "true" : "false");
-		code
-				.addNoIndent(new CodeSnippet(
+		code.addNoIndent(new CodeSnippet(
 						true,
 						"{",
 						"\tVertexClass #vcVariable# = #schemaVariable# = #gcVariable#.createVertexClass(\"#vcName#\");",
@@ -419,8 +478,7 @@ public class SchemaCodeGenerator extends CodeGenerator {
 		CodeList code = new CodeList();
 		for (Constraint constraint : aec.getConstraints()) {
 			addImports("#jgSchemaImplPackage#.ConstraintImpl");
-			code
-					.addNoIndent(new CodeSnippet(
+			code.addNoIndent(new CodeSnippet(
 							false,
 							"#aecVariable#.addConstraint(new ConstraintImpl(\""
 									+ CodeGenerator.stringQuote(constraint
@@ -465,8 +523,7 @@ public class SchemaCodeGenerator extends CodeGenerator {
 			if (dom instanceof ListDomain) {
 				s.setVariable("componentDomainName", ((ListDomain) dom)
 						.getBaseDomain().getQualifiedName());
-				s
-						.add("createListDomain(getDomain(\"#componentDomainName#\"));");
+				s.add("createListDomain(getDomain(\"#componentDomainName#\"));");
 			} else if (dom instanceof SetDomain) {
 				s.setVariable("componentDomainName", ((SetDomain) dom)
 						.getBaseDomain().getQualifiedName());
@@ -477,13 +534,10 @@ public class SchemaCodeGenerator extends CodeGenerator {
 						.getQualifiedName());
 				s.setVariable("valueDomainName", mapDom.getValueDomain()
 						.getQualifiedName());
-				s
-						.add("createMapDomain(getDomain(\"#keyDomainName#\"), getDomain(\"#valueDomainName#\"));");
+				s.add("createMapDomain(getDomain(\"#keyDomainName#\"), getDomain(\"#valueDomainName#\"));");
 			} else if (dom instanceof RecordDomain) {
 				addImports("#jgSchemaPackage#.RecordDomain");
-				s
-						.add("{",
-								"\tRecordDomain dom = createRecordDomain(\"#domName#\");");
+				s.add("{", "\tRecordDomain dom = createRecordDomain(\"#domName#\");");
 				RecordDomain rd = (RecordDomain) dom;
 				for (String cName : rd.getComponents().keySet()) {
 					s.add("\tdom.addComponent(\"" + cName + "\", getDomain(\""
