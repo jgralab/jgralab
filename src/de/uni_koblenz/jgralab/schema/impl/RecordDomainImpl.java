@@ -31,6 +31,7 @@ import java.util.TreeMap;
 import java.util.Map.Entry;
 
 import de.uni_koblenz.jgralab.codegenerator.CodeBlock;
+import de.uni_koblenz.jgralab.codegenerator.CodeGenerator;
 import de.uni_koblenz.jgralab.codegenerator.CodeSnippet;
 import de.uni_koblenz.jgralab.schema.CompositeDomain;
 import de.uni_koblenz.jgralab.schema.Domain;
@@ -122,18 +123,10 @@ public final class RecordDomainImpl extends CompositeDomainImpl implements
 	public CodeBlock getReadMethod(String schemaPrefix, String variableName,
 			String graphIoVariableName) {
 		CodeSnippet code = new CodeSnippet();
-
-		code.add("if (" + graphIoVariableName + ".isNextToken(\"(\")) {");
-		code.add("\t" + variableName + " = new "
-				+ getJavaAttributeImplementationTypeName(schemaPrefix) + "("
-				+ graphIoVariableName + ");");
-		code.add("} else if (" + graphIoVariableName
-				+ ".isNextToken(GraphIO.NULL_LITERAL) || "
-				+ graphIoVariableName
-				+ ".isNextToken(GraphIO.OLD_NULL_LITERAL)) {");
-		code.add("\t" + graphIoVariableName + ".match();");
-		code.add("\t" + variableName + " = null;");
-		code.add("}");
+		code.setVariable("name", variableName);
+		code.setVariable("init", "");
+		internalGetReadMethod(code, schemaPrefix, variableName,
+				graphIoVariableName);
 
 		return code;
 	}
@@ -147,14 +140,9 @@ public final class RecordDomainImpl extends CompositeDomainImpl implements
 	public CodeBlock getWriteMethod(String schemaRootPackagePrefix,
 			String variableName, String graphIoVariableName) {
 		CodeSnippet code = new CodeSnippet();
-
-		code.add("if (" + variableName + " != null) {");
-		code.add("\t" + variableName + ".writeComponentValues("
-				+ graphIoVariableName + ");");
-		code.add("} else {");
-		code.add("\t" + graphIoVariableName
-				+ ".writeIdentifier(GraphIO.NULL_LITERAL);");
-		code.add("}");
+		code.setVariable("name", variableName);
+		internalGetWriteMethod(code, schemaRootPackagePrefix, variableName,
+				graphIoVariableName);
 
 		return code;
 	}
@@ -207,5 +195,80 @@ public final class RecordDomainImpl extends CompositeDomainImpl implements
 			return components.equals(other.getComponents());
 		}
 		return false;
+	}
+	
+	private void internalGetReadMethod(CodeSnippet code, String schemaPrefix,
+			String variableName, String graphIoVariableName) {
+		code.add("#init#");
+		code.add("if (" + graphIoVariableName + ".isNextToken(\"(\")) {");
+		code.add("\t" + "#name# = new "
+				+ getJavaAttributeImplementationTypeName(schemaPrefix) + "("
+				+ graphIoVariableName + ");");
+		code.add("} else if (" + graphIoVariableName
+				+ ".isNextToken(GraphIO.NULL_LITERAL) || "
+				+ graphIoVariableName
+				+ ".isNextToken(GraphIO.OLD_NULL_LITERAL)) {");
+		code.add("\t" + graphIoVariableName + ".match();");
+		code.add("\t" + variableName + " = null;");
+		code.add("}");
+	}
+	
+	private void internalGetWriteMethod(CodeSnippet code,
+			String schemaRootPackagePrefix, String variableName,
+			String graphIoVariableName) {
+		code.add("if (#name# != null) {");
+		code.add("\t" + "#name#.writeComponentValues("
+				+ graphIoVariableName + ");");
+		code.add("} else {");
+		code.add("\t" + graphIoVariableName
+				+ ".writeIdentifier(GraphIO.NULL_LITERAL);");
+		code.add("}");
+	}
+	
+	@Override
+	public CodeBlock getTransactionReadMethod(String schemaPrefix,
+			String variableName, String graphIoVariableName) {
+		CodeSnippet code = new CodeSnippet();
+		code.setVariable("name", "tmp" + variableName);
+		code.setVariable("init",
+				getJavaAttributeImplementationTypeName(schemaPrefix)
+						+ " #name#;");
+		internalGetReadMethod(code, schemaPrefix, "tmp" + variableName,
+				graphIoVariableName);
+		return code;
+	}
+
+	@Override
+	public CodeBlock getTransactionWriteMethod(String schemaRootPackagePrefix,
+			String variableName, String graphIoVariableName) {
+		CodeSnippet code = new CodeSnippet();
+		code.setVariable("name", "get" + CodeGenerator.camelCase(variableName)
+				+ "()");
+		internalGetWriteMethod(code, schemaRootPackagePrefix, variableName,
+				graphIoVariableName);
+		return code;
+	}
+
+	@Override
+	public String getTransactionJavaAttributeImplementationTypeName(
+			String schemaRootPackagePrefix) {
+		return getJavaAttributeImplementationTypeName(schemaRootPackagePrefix);
+	}
+
+	@Override
+	public String getTransactionJavaClassName(String schemaRootPackagePrefix) {
+		return getJavaAttributeImplementationTypeName(schemaRootPackagePrefix);
+	}
+
+	@Override
+	public String getVersionedClass(String schemaRootPackagePrefix) {
+		return "de.uni_koblenz.jgralab.impl.trans.VersionedJGraLabCloneableImpl<"
+				+ getTransactionJavaAttributeImplementationTypeName(schemaRootPackagePrefix)
+				+ ">";
+	}
+
+	@Override
+	public String getInitialValue() {
+		return "null";
 	}
 }

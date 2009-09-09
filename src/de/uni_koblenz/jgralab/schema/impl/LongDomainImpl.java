@@ -25,6 +25,7 @@
 package de.uni_koblenz.jgralab.schema.impl;
 
 import de.uni_koblenz.jgralab.codegenerator.CodeBlock;
+import de.uni_koblenz.jgralab.codegenerator.CodeGenerator;
 import de.uni_koblenz.jgralab.codegenerator.CodeSnippet;
 import de.uni_koblenz.jgralab.schema.IntegerDomain;
 import de.uni_koblenz.jgralab.schema.LongDomain;
@@ -68,4 +69,42 @@ public final class LongDomainImpl extends BasicDomainImpl implements
 				+ variableName + ");");
 	}
 
+	@Override
+	public CodeBlock getTransactionReadMethod(String schemaPrefix,
+			String variableName, String graphIoVariableName) {
+		return new CodeSnippet(
+				getJavaAttributeImplementationTypeName(schemaPrefix) + " tmp"
+						+ variableName + " = " + graphIoVariableName
+						+ ".matchLong();");
+	}
+
+	@Override
+	public CodeBlock getTransactionWriteMethod(String schemaRootPackagePrefix,
+			String variableName, String graphIoVariableName) {
+		return getWriteMethod(schemaRootPackagePrefix, "get"
+				+ CodeGenerator.camelCase(variableName) + "()",
+				graphIoVariableName);
+	}
+
+	@Override
+	public String getTransactionJavaAttributeImplementationTypeName(
+			String schemaRootPackagePrefix) {
+		return "Long";
+	}
+
+	@Override
+	public String getTransactionJavaClassName(String schemaRootPackagePrefix) {
+		return getJavaClassName(schemaRootPackagePrefix);
+	}
+
+	@Override
+	public String getVersionedClass(String schemaRootPackagePrefix) {
+		return "de.uni_koblenz.jgralab.impl.trans.VersionedReferenceImpl<"
+				+ getTransactionJavaClassName(schemaRootPackagePrefix) + ">";
+	}
+
+	@Override
+	public String getInitialValue() {
+		return "0L";
+	}
 }

@@ -74,4 +74,51 @@ public interface Domain extends NamedElement, Comparable<Domain> {
 	 * @return true if this domain is a composite domain
 	 */
 	public boolean isComposite();
+	
+	/**
+	 * example: Integer for integer List<Boolean> for a list with basedomain
+	 * boolean
+	 * 
+	 * @return java representation of this attribute
+	 */
+	public String getTransactionJavaAttributeImplementationTypeName(
+			String schemaRootPackagePrefix);
+	
+	/**
+	 * example: Integer for integer
+	 * 
+	 * @return the non primitive representation of this attribute, only affects
+	 *         int, boolean, double
+	 */
+	public String getTransactionJavaClassName(String schemaRootPackagePrefix);
+	
+	/**
+	 * @return a code fragment to read a value of this domain from the GraphIO
+	 *         object named graphIoVariablename into the variableName for
+	 *         transaction support
+	 */
+	public CodeBlock getTransactionReadMethod(String schemaPrefix,
+			String variableName, String graphIoVariableName);
+
+	/**
+	 * @return a code fragment to write a value of this domain to the GraphIO
+	 *         object named graphIoVariablename into the variableName for
+	 *         transaction support
+	 */
+	public CodeBlock getTransactionWriteMethod(String schemaRootPackagePrefix,
+			String variableName, String graphIoVariableName);
+
+	/**
+	 * 
+	 * @param schemaRootPackagePrefix
+	 * @return
+	 */
+	public String getVersionedClass(String schemaRootPackagePrefix);
+
+	/**
+	 * Initial value.
+	 * 
+	 * @return
+	 */
+	public String getInitialValue();
 }

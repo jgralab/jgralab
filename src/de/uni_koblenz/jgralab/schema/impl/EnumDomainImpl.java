@@ -28,6 +28,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import de.uni_koblenz.jgralab.codegenerator.CodeBlock;
+import de.uni_koblenz.jgralab.codegenerator.CodeGenerator;
 import de.uni_koblenz.jgralab.codegenerator.CodeSnippet;
 import de.uni_koblenz.jgralab.schema.EnumDomain;
 import de.uni_koblenz.jgralab.schema.Package;
@@ -141,5 +142,47 @@ public final class EnumDomainImpl extends DomainImpl implements EnumDomain {
 					&& getConsts().equals(other.getConsts());
 		}
 		return false;
+	}
+	
+	@Override
+	public CodeBlock getTransactionReadMethod(String schemaPrefix,
+			String variableName, String graphIoVariableName) {
+		return new CodeSnippet(
+				getJavaAttributeImplementationTypeName(schemaPrefix) + " tmp"
+						+ variableName + " = "
+						+ getJavaAttributeImplementationTypeName(schemaPrefix)
+						+ ".fromString(" + graphIoVariableName
+						+ ".matchEnumConstant());");
+	}
+
+	@Override
+	public CodeBlock getTransactionWriteMethod(String schemaRootPackagePrefix,
+			String variableName, String graphIoVariableName) {
+		return getWriteMethod(schemaRootPackagePrefix, "get"
+				+ CodeGenerator.camelCase(variableName) + "()",
+				graphIoVariableName);
+	}
+
+	@Override
+	public String getTransactionJavaAttributeImplementationTypeName(
+			String schemaRootPackagePrefix) {
+		return getJavaAttributeImplementationTypeName(schemaRootPackagePrefix);
+	}
+
+	@Override
+	public String getTransactionJavaClassName(String schemaRootPackagePrefix) {
+		return getJavaClassName(schemaRootPackagePrefix);
+	}
+
+	@Override
+	public String getVersionedClass(String schemaRootPackagePrefix) {
+		return "de.uni_koblenz.jgralab.impl.trans.VersionedReferenceImpl<"
+				+ getTransactionJavaAttributeImplementationTypeName(schemaRootPackagePrefix)
+				+ ">";
+	}
+
+	@Override
+	public String getInitialValue() {
+		return "null";
 	}
 }
