@@ -72,4 +72,68 @@ public interface GraphFactory {
 	public void setEdgeImplementationClass(Class<? extends Edge> edgeM1Class,
 			Class<? extends Edge> implementationClass);
 
+	/**
+	 * creates a Graph-object for the specified class with transaction support.
+	 * The returned object may be an instance of a subclass of the specified
+	 * graphClass.
+	 */
+	public Graph createGraphWithTransactionSupport(
+			Class<? extends Graph> graphClass, String id, int vMax, int eMax);
+
+	/**
+	 * creates a Graph-object for the specified class with transaction support.
+	 * The returned object may be an instance of a subclass of the specified
+	 * graphClass.
+	 */
+	public Graph createGraphWithTransactionSupport(
+			Class<? extends Graph> graphClass, String id);
+
+	/**
+	 * creates a Vertex-object for the specified class with transaction support.
+	 * The returned object may be an instance of a subclass of the specified
+	 * vertexClass.
+	 */
+	public Vertex createVertexWithTransactionSupport(
+			Class<? extends Vertex> vertexClass, int id, Graph g);
+
+	/**
+	 * creates a Edge-object for the specified class with transaction support.
+	 * The returned object may be an instance of a subclass of the specified
+	 * edgeClass.
+	 */
+	public Edge createEdgeWithTransactionSupport(
+			Class<? extends Edge> edgeClass, int id, Graph g);
+
+	/**
+	 * Assigns an implementation class with transaction support for a
+	 * <code>Graph</code>.
+	 * 
+	 * @param graphM1Class
+	 * @param implementationClass
+	 */
+	public void setGraphTransactionImplementationClass(
+			Class<? extends Graph> graphM1Class,
+			Class<? extends Graph> implementationClass);
+
+	/**
+	 * Assigns an implementation class with transaction support for a
+	 * <code>Vertex</code>.
+	 * 
+	 * @param vertexM1Class
+	 * @param implementationClass
+	 */
+	public void setVertexTransactionImplementationClass(
+			Class<? extends Vertex> vertexM1Class,
+			Class<? extends Vertex> implementationClass);
+
+	/**
+	 * Assigns an implementation class with transaction support for an
+	 * <code>Edge</code>.
+	 * 
+	 * @param edgeM1Class
+	 * @param implementationClass
+	 */
+	public void setEdgeTransactionImplementationClass(
+			Class<? extends Edge> edgeM1Class,
+			Class<? extends Edge> implementationClass);
 }

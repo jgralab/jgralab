@@ -37,62 +37,42 @@ import de.uni_koblenz.jgralab.schema.EdgeClass;
  * @author ist@uni-koblenz.de
  */
 public abstract class IncidenceImpl extends GraphElementImpl implements Edge {
-
-	// the this-vertex
-	private VertexImpl incidentVertex;
-
-	// incidence list
-	private IncidenceImpl nextIncidence;
-	private IncidenceImpl prevIncidence;
-
 	/**
 	 * @param graph
 	 */
-	public IncidenceImpl(Graph graph) {
+	protected IncidenceImpl(Graph graph) {
 		super(graph);
 	}
 
 	/**
 	 * @param v
 	 */
-	public void setIncidentVertex(VertexImpl v) {
-		this.incidentVertex = v;
-	}
+	abstract protected void setIncidentVertex(VertexImpl v);
 
 	/**
 	 * @return
 	 */
-	public VertexImpl getIncidentVertex() {
-		return incidentVertex;
-	}
+	abstract protected VertexImpl getIncidentVertex();
 
 	/**
 	 * @param nextIncidence
 	 */
-	public void setNextIncidence(IncidenceImpl nextIncidence) {
-		this.nextIncidence = nextIncidence;
-	}
+	abstract protected void setNextIncidence(IncidenceImpl nextIncidence);
 
 	/**
 	 * @return
 	 */
-	public IncidenceImpl getNextIncidence() {
-		return nextIncidence;
-	}
+	abstract protected IncidenceImpl getNextIncidence();
 
 	/**
 	 * @param prevIncidence
 	 */
-	public void setPrevIncidence(IncidenceImpl prevIncidence) {
-		this.prevIncidence = prevIncidence;
-	}
+	abstract protected void setPrevIncidence(IncidenceImpl prevIncidence);
 
 	/**
 	 * @return
 	 */
-	public IncidenceImpl getPrevIncidence() {
-		return prevIncidence;
-	}
+	abstract protected IncidenceImpl getPrevIncidence();
 
 	/*
 	 * (non-Javadoc)
