@@ -31,8 +31,7 @@ import java.net.URI;
 import javax.tools.SimpleJavaFileObject;
 
 /**
- * A ClassFileAbstraction holds Java bytecode for M1 classes compiled in-memory
- * .
+ * A ClassFileAbstraction holds Java bytecode for M1 classes compiled in-memory.
  * 
  * @author ist@uni-koblenz.de
  * 

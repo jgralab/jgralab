@@ -41,7 +41,7 @@ public class EnumCodeGenerator extends CodeGenerator {
 	 */
 	public EnumCodeGenerator(EnumDomain enumDomain, String schemaPackageName,
 			String implementationName) {
-		super(schemaPackageName, enumDomain.getPackageName());
+		super(schemaPackageName, enumDomain.getPackageName(), false);
 		rootBlock.setVariable("simpleClassName", enumDomain.getSimpleName());
 		rootBlock.setVariable("isClassOnly", "true");
 		this.enumDomain = enumDomain;
