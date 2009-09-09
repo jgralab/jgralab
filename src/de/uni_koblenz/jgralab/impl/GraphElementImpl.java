@@ -86,4 +86,12 @@ public abstract class GraphElementImpl implements GraphElement {
 	public int getId() {
 		return id;
 	}
+
+	/**
+	 * sets the id field of this graph element
+	 * 
+	 * @param id
+	 *            an id
+	 */
+	protected abstract void setId(int id);
 }

@@ -26,6 +26,10 @@ package de.uni_koblenz.jgralab;
 
 import de.uni_koblenz.jgralab.schema.EdgeClass;
 import de.uni_koblenz.jgralab.schema.VertexClass;
+import de.uni_koblenz.jgralab.trans.CommitFailedException;
+import de.uni_koblenz.jgralab.trans.InvalidSavepointException;
+import de.uni_koblenz.jgralab.trans.Savepoint;
+import de.uni_koblenz.jgralab.trans.Transaction;
 
 /**
  * The interface Graph is the base of all JGraLab graphs. It provides access to
@@ -523,7 +527,79 @@ public interface Graph extends AttributedElement {
 	 * that the internal arrays are shortened such that they hold exactly the
 	 * required number of vertices/edges.
 	 * 
-	 * <b>Attention:</b> defragment() possibly changes vertex and edge IDs!
+	 * <b>Attention:</b> defragment() possibly changes vertex and edge IDs! *
+	 * <b>Attention:</b> Not supported within when using transactions!
 	 */
 	public void defragment();
+
+	// ---- transaction support ----
+	/**
+	 * @return a read-write-<code>Transaction</code>
+	 */
+	public Transaction createTransaction();
+
+	/**
+	 * @return a read-only-<code>Transaction</code>
+	 */
+	public Transaction createReadOnlyTransaction();
+
+	/**
+	 * Sets the given <code>transaction</code> as the active
+	 * <code>Transaction</code> for the current thread.
+	 * 
+	 * @param transaction
+	 */
+	public void setCurrentTransaction(Transaction transaction);
+
+	/**
+	 * @return the currently active <code>Transaction</code> in the current
+	 *         thread
+	 */
+	public Transaction getCurrentTransaction();
+
+	/**
+	 * Delegates to {@link Graph#getCurrentTransaction()
+	 * getCurrentTransaction()}.
+	 * 
+	 * @throws CommitFailedException
+	 *             if commit fails
+	 */
+	public void commit() throws CommitFailedException;
+
+	/**
+	 * Delegates to {@link Graph#getCurrentTransaction()
+	 * getCurrentTransaction()}.
+	 */
+	public void abort();
+
+	/**
+	 * Delegates to {@link Graph#getCurrentTransaction()
+	 * getCurrentTransaction()}.
+	 * 
+	 * @return if there have been conflicts
+	 */
+	public boolean isInConflict();
+
+	/**
+	 * Delegates to {@link Graph#getCurrentTransaction()
+	 * getCurrentTransaction()}.
+	 * 
+	 * @return the defined <code>Savepoint</code>
+	 */
+	public Savepoint defineSavepoint();
+
+	/**
+	 * Delegates to {@link Graph#getCurrentTransaction()
+	 * getCurrentTransaction()}.
+	 * 
+	 * @param savepoint
+	 *            the <code>Savepoint</code> to be restored.
+	 * 
+	 * @throws InvalidSavepointException
+	 *             if {@link Savepoint#getGraph() <code>savepoint</code>
+	 *             .getGraph()} != {@link Graph#getCurrentTransaction()
+
+	 */
+	public void restoreSavepoint(Savepoint savepoint)
+			throws InvalidSavepointException;
 }

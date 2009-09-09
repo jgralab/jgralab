@@ -39,22 +39,9 @@ import de.uni_koblenz.jgralab.schema.VertexClass;
  * @author ist@uni-koblenz.de
  */
 public abstract class VertexImpl extends GraphElementImpl implements Vertex {
+	protected int id;
 
-	// global vertex sequence
-	private VertexImpl nextVertex;
-	private VertexImpl prevVertex;
-
-	// lambda sequence
-	private IncidenceImpl firstIncidence;
-	private IncidenceImpl lastIncidence;
-
-	/**
-	 * holds the version of the vertex strcutre, for every modification of the
-	 * structure (e.g. adding or deleting an incident edge or changing the
-	 * incidence sequence) this version number is increased by one. It is set to
-	 * 0 when the vertex is created or the graph is loaded.
-	 */
-	protected long incidenceListVersion = 0;
+	abstract protected void setIncidenceListVersion(long incidenceListVersion);
 
 	/**
 	 * @param id
@@ -64,7 +51,7 @@ public abstract class VertexImpl extends GraphElementImpl implements Vertex {
 	 */
 	protected VertexImpl(int id, Graph graph) {
 		super(graph);
-		setId(id);
+		this.id = id;
 	}
 
 	/*
@@ -122,10 +109,7 @@ public abstract class VertexImpl extends GraphElementImpl implements Vertex {
 	 * @see de.uni_koblenz.jgralab.Vertex#getNextVertex()
 	 */
 	@Override
-	public Vertex getNextVertex() {
-		assert isValid();
-		return nextVertex;
-	}
+	abstract public Vertex getNextVertex();
 
 	/*
 	 * (non-Javadoc)
@@ -207,6 +191,11 @@ public abstract class VertexImpl extends GraphElementImpl implements Vertex {
 		return prev != null;
 	}
 
+	@Override
+	public boolean isValid() {
+		return graph.containsVertex(this);
+	}
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -267,13 +256,9 @@ public abstract class VertexImpl extends GraphElementImpl implements Vertex {
 		return getLastIncidence();
 	}
 
-	public IncidenceImpl getFirstIncidence() {
-		return firstIncidence;
-	}
+	abstract protected IncidenceImpl getFirstIncidence();
 
-	public IncidenceImpl getLastIncidence() {
-		return lastIncidence;
-	}
+	abstract protected IncidenceImpl getLastIncidence();
 
 	/*
 	 * (non-Javadoc)
@@ -286,12 +271,12 @@ public abstract class VertexImpl extends GraphElementImpl implements Vertex {
 		IncidenceImpl i = getFirstIncidence();
 		switch (orientation) {
 		case IN:
-			while (i != null && i.isNormal()) {
+			while ((i != null) && i.isNormal()) {
 				i = i.getNextIncidence();
 			}
 			return i;
 		case OUT:
-			while (i != null && !i.isNormal()) {
+			while ((i != null) && !i.isNormal()) {
 				i = i.getNextIncidence();
 			}
 			return i;
@@ -425,7 +410,7 @@ public abstract class VertexImpl extends GraphElementImpl implements Vertex {
 		graph.deleteVertex(this);
 	}
 
-	public void putIncidenceAfter(IncidenceImpl target, IncidenceImpl moved) {
+	protected void putIncidenceAfter(IncidenceImpl target, IncidenceImpl moved) {
 		assert (target.isValid() && moved.isValid());
 
 		if (target == moved) {
@@ -465,7 +450,7 @@ public abstract class VertexImpl extends GraphElementImpl implements Vertex {
 		incidenceListModified();
 	}
 
-	public void putIncidenceBefore(IncidenceImpl target, IncidenceImpl moved) {
+	protected void putIncidenceBefore(IncidenceImpl target, IncidenceImpl moved) {
 		assert (target.isValid() && moved.isValid());
 
 		if (target == moved) {
@@ -511,9 +496,7 @@ public abstract class VertexImpl extends GraphElementImpl implements Vertex {
 	 * @see de.uni_koblenz.jgralab.Vertex#getVertexVersion()
 	 */
 	@Override
-	public long getIncidenceListVersion() {
-		return incidenceListVersion;
-	}
+	abstract public long getIncidenceListVersion();
 
 	/*
 	 * (non-Javadoc)
@@ -522,7 +505,7 @@ public abstract class VertexImpl extends GraphElementImpl implements Vertex {
 	 */
 	@Override
 	public boolean isIncidenceListModified(long vertexStructureVersion) {
-		return (this.incidenceListVersion != vertexStructureVersion);
+		return (this.getIncidenceListVersion() != vertexStructureVersion);
 	}
 
 	/**
@@ -530,7 +513,7 @@ public abstract class VertexImpl extends GraphElementImpl implements Vertex {
 	 * Vertex.
 	 */
 	public void incidenceListModified() {
-		++incidenceListVersion;
+		setIncidenceListVersion(getIncidenceListVersion() + 1);
 	}
 
 	/*
@@ -640,17 +623,6 @@ public abstract class VertexImpl extends GraphElementImpl implements Vertex {
 		return degree;
 	}
 
-	/**
-	 * sets the id field of this vertex
-	 * 
-	 * @param id
-	 *            an id
-	 */
-	void setId(int id) {
-		assert id >= 0;
-		this.id = id;
-	}
-
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -658,8 +630,7 @@ public abstract class VertexImpl extends GraphElementImpl implements Vertex {
 	 */
 	@Override
 	public String toString() {
-		return "v" + getId() + ": "
-				+ getAttributedElementClass().getQualifiedName();
+		return "v" + id + ": " + getAttributedElementClass().getQualifiedName();
 	}
 
 	/*
@@ -742,29 +713,13 @@ public abstract class VertexImpl extends GraphElementImpl implements Vertex {
 		return new IncidenceIterable<Edge>(this, eclass);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see de.uni_koblenz.jgralab.Vertex#isValid()
-	 */
-	@Override
-	public boolean isValid() {
-		return graph.containsVertex(this);
-	}
+	abstract protected void setNextVertex(Vertex nextVertex);
 
-	protected void setNextVertex(Vertex nextVertex) {
-		this.nextVertex = (VertexImpl) nextVertex;
-	}
+	abstract protected void setPrevVertex(Vertex prevVertex);
 
-	public void setPrevVertex(Vertex prevVertex) {
-		this.prevVertex = (VertexImpl) prevVertex;
-	}
+	abstract public Vertex getPrevVertex();
 
-	public Vertex getPrevVertex() {
-		return prevVertex;
-	}
-
-	public void appendIncidenceToLambaSeq(IncidenceImpl i) {
+	protected void appendIncidenceToLambaSeq(IncidenceImpl i) {
 		assert i.getIncidentVertex() != this;
 		i.setIncidentVertex(this);
 		if (getFirstIncidence() == null) {
@@ -777,7 +732,7 @@ public abstract class VertexImpl extends GraphElementImpl implements Vertex {
 		setLastIncidence(i);
 	}
 
-	public void removeIncidenceFromLambaSeq(IncidenceImpl i) {
+	protected void removeIncidenceFromLambaSeq(IncidenceImpl i) {
 		assert i.getIncidentVertex() == this;
 		if (i == getFirstIncidence()) {
 			// delete at head of incidence list
@@ -792,7 +747,9 @@ public abstract class VertexImpl extends GraphElementImpl implements Vertex {
 		} else if (i == getLastIncidence()) {
 			// delete at tail of incidence list
 			setLastIncidence(i.getPrevIncidence());
-			getLastIncidence().setNextIncidence(null);
+			if (getLastIncidence() != null) {
+				getLastIncidence().setNextIncidence(null);
+			}
 		} else {
 			// delete somewhere in the middle
 			i.getPrevIncidence().setNextIncidence(i.getNextIncidence());
@@ -804,11 +761,7 @@ public abstract class VertexImpl extends GraphElementImpl implements Vertex {
 		i.setPrevIncidence(null);
 	}
 
-	protected void setFirstIncidence(IncidenceImpl firstIncidence) {
-		this.firstIncidence = firstIncidence;
-	}
+	abstract protected void setFirstIncidence(IncidenceImpl firstIncidence);
 
-	protected void setLastIncidence(IncidenceImpl lastIncidence) {
-		this.lastIncidence = lastIncidence;
-	}
+	abstract protected void setLastIncidence(IncidenceImpl lastIncidence);
 }

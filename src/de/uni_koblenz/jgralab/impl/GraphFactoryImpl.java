@@ -50,10 +50,19 @@ public abstract class GraphFactoryImpl implements GraphFactory {
 
 	protected HashMap<Class<? extends Vertex>, Constructor<? extends Vertex>> vertexMap;
 
+	// maps for transaction support
+	protected HashMap<Class<? extends Graph>, Constructor<? extends Graph>> graphTransactionMap;
+	protected HashMap<Class<? extends Edge>, Constructor<? extends Edge>> edgeTransactionMap;
+	protected HashMap<Class<? extends Vertex>, Constructor<? extends Vertex>> vertexTransactionMap;
+
 	public GraphFactoryImpl() {
 		graphMap = new HashMap<Class<? extends Graph>, Constructor<? extends Graph>>();
 		vertexMap = new HashMap<Class<? extends Vertex>, Constructor<? extends Vertex>>();
 		edgeMap = new HashMap<Class<? extends Edge>, Constructor<? extends Edge>>();
+		graphTransactionMap = new HashMap<Class<? extends Graph>, Constructor<? extends Graph>>();
+		vertexTransactionMap = new HashMap<Class<? extends Vertex>, Constructor<? extends Vertex>>();
+		edgeTransactionMap = new HashMap<Class<? extends Edge>, Constructor<? extends Edge>>();
+
 	}
 
 	public Edge createEdge(Class<? extends Edge> edgeClass, int id, Graph g) {
@@ -123,6 +132,99 @@ public abstract class GraphFactoryImpl implements GraphFactory {
 			} catch (NoSuchMethodException ex) {
 				throw new M1ClassAccessException(
 						"Unable to locate default constructor for vertexclass"
+								+ implementationClass, ex);
+			}
+		}
+	}
+
+	public Edge createEdgeWithTransactionSupport(
+			Class<? extends Edge> edgeClass, int id, Graph g) {
+		try {
+			return edgeTransactionMap.get(edgeClass).newInstance(id, g);
+		} catch (Exception ex) {
+			throw new M1ClassAccessException("Cannot create edge of class "
+					+ edgeClass.getCanonicalName(), ex);
+		}
+	}
+
+	public Graph createGraphWithTransactionSupport(
+			Class<? extends Graph> graphClass, String id, int vMax, int eMax) {
+		try {
+			return graphTransactionMap.get(graphClass).newInstance(id, vMax,
+					eMax);
+		} catch (Exception ex) {
+			throw new M1ClassAccessException("Cannot create graph of class "
+					+ graphClass.getCanonicalName(), ex);
+		}
+	}
+
+	public Graph createGraphWithTransactionSupport(
+			Class<? extends Graph> graphClass, String id) {
+		try {
+			return graphTransactionMap.get(graphClass).newInstance(id, 1000,
+					1000);
+		} catch (Exception ex) {
+			throw new M1ClassAccessException("Cannot create graph of class "
+					+ graphClass.getCanonicalName(), ex);
+		}
+	}
+
+	public Vertex createVertexWithTransactionSupport(
+			Class<? extends Vertex> vertexClass, int id, Graph g) {
+		try {
+			return vertexTransactionMap.get(vertexClass).newInstance(id, g);
+		} catch (Exception ex) {
+			throw new M1ClassAccessException("Cannot create vertex of class "
+					+ vertexClass.getCanonicalName(), ex);
+		}
+	}
+
+	@SuppressWarnings("unchecked")
+	public void setGraphTransactionImplementationClass(
+			Class<? extends Graph> originalClass,
+			Class<? extends Graph> implementationClass) {
+		if (isSuperclassOrEqual(originalClass, implementationClass)) {
+			try {
+				Class[] params = { String.class, int.class, int.class };
+				graphTransactionMap.put(originalClass, implementationClass
+						.getConstructor(params));
+			} catch (NoSuchMethodException ex) {
+				throw new M1ClassAccessException(
+						"Unable to locate transaction constructor for graphclass "
+								+ implementationClass.getName(), ex);
+			}
+		}
+	}
+
+	@SuppressWarnings("unchecked")
+	public void setVertexTransactionImplementationClass(
+			Class<? extends Vertex> originalClass,
+			Class<? extends Vertex> implementationClass) {
+		if (isSuperclassOrEqual(originalClass, implementationClass)) {
+			try {
+				Class[] params = { int.class, Graph.class };
+				vertexTransactionMap.put(originalClass, implementationClass
+						.getConstructor(params));
+			} catch (NoSuchMethodException ex) {
+				throw new M1ClassAccessException(
+						"Unable to locate transaction constructor for vertexclass"
+								+ implementationClass, ex);
+			}
+		}
+	}
+
+	@SuppressWarnings("unchecked")
+	public void setEdgeTransactionImplementationClass(
+			Class<? extends Edge> originalClass,
+			Class<? extends Edge> implementationClass) {
+		if (isSuperclassOrEqual(originalClass, implementationClass)) {
+			try {
+				Class[] params = { int.class, Graph.class };
+				edgeTransactionMap.put(originalClass, implementationClass
+						.getConstructor(params));
+			} catch (NoSuchMethodException ex) {
+				throw new M1ClassAccessException(
+						"Unable to locate transaction constructor for edgeclass"
 								+ implementationClass, ex);
 			}
 		}

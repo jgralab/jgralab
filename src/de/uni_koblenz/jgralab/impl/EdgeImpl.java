@@ -38,10 +38,6 @@ import de.uni_koblenz.jgralab.schema.EdgeClass;
  */
 public abstract class EdgeImpl extends IncidenceImpl implements Edge {
 
-	// global egde sequence
-	private Edge nextEdge;
-	private Edge prevEdge;
-
 	protected ReversedEdgeImpl reversedEdge;
 
 	/**
@@ -62,10 +58,11 @@ public abstract class EdgeImpl extends IncidenceImpl implements Edge {
 	public int compareTo(AttributedElement a) {
 		assert a instanceof Edge;
 		Edge e = (Edge) a;
-		if (e == this.getReversedEdge())
+		if (e == this.getReversedEdge()) {
 			return -1;
-		else
+		} else {
 			return Math.abs(getId()) - Math.abs(e.getId());
+		}
 	}
 
 	/*
@@ -88,15 +85,18 @@ public abstract class EdgeImpl extends IncidenceImpl implements Edge {
 		return getIncidentVertex();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see de.uni_koblenz.jgralab.Edge#getNextEdgeInGraph()
-	 */
 	@Override
-	public Edge getNextEdgeInGraph() {
-		return nextEdge;
-	}
+	public abstract Edge getNextEdgeInGraph();
+
+	/**
+	 * @param nextEdge
+	 */
+	abstract protected void setNextEdgeInGraph(Edge nextEdge);
+
+	/**
+	 * @param prevEdge
+	 */
+	abstract protected void setPrevEdgeInGraph(Edge prevEdge);
 
 	/*
 	 * (non-Javadoc)
@@ -243,7 +243,7 @@ public abstract class EdgeImpl extends IncidenceImpl implements Edge {
 			return false;
 		}
 		Edge p = getPrevEdgeInGraph();
-		while (p != null && p != e) {
+		while ((p != null) && (p != e)) {
 			p = p.getPrevEdgeInGraph();
 		}
 		return p != null;
@@ -262,7 +262,7 @@ public abstract class EdgeImpl extends IncidenceImpl implements Edge {
 			return false;
 		}
 		Edge n = getNextEdgeInGraph();
-		while (n != null && n != e) {
+		while ((n != null) && (n != e)) {
 			n = n.getNextEdgeInGraph();
 		}
 		return n != null;
@@ -329,16 +329,6 @@ public abstract class EdgeImpl extends IncidenceImpl implements Edge {
 		setIncidentVertex(newAlpha);
 	}
 
-	/**
-	 * sets the id field of this edge
-	 * 
-	 * @param id
-	 */
-	void setId(int id) {
-		assert id >= 0;
-		this.id = id;
-	}
-
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -395,7 +385,7 @@ public abstract class EdgeImpl extends IncidenceImpl implements Edge {
 	 */
 	@Override
 	public String toString() {
-		return "+e" + getId() + ": "
+		return "+e" + id + ": "
 				+ getAttributedElementClass().getQualifiedName();
 	}
 
@@ -409,27 +399,7 @@ public abstract class EdgeImpl extends IncidenceImpl implements Edge {
 		return graph.containsEdge(this);
 	}
 
-	/**
-	 * @param nextEdge
-	 */
-	public void setNextEdgeInGraph(Edge nextEdge) {
-		this.nextEdge = nextEdge;
-	}
-
-	/**
-	 * @param prevEdge
-	 */
-	public void setPrevEdgeInGraph(Edge prevEdge) {
-		this.prevEdge = prevEdge;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see de.uni_koblenz.jgralab.Edge#getPrevEdgeInGraph()
-	 */
-	public Edge getPrevEdgeInGraph() {
-		return prevEdge;
-	}
+	@Override
+	public abstract Edge getPrevEdgeInGraph();
 
 }
