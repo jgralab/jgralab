@@ -29,6 +29,7 @@ import java.util.List;
 import java.util.Set;
 
 import de.uni_koblenz.jgralab.codegenerator.CodeBlock;
+import de.uni_koblenz.jgralab.codegenerator.CodeGenerator;
 import de.uni_koblenz.jgralab.codegenerator.CodeList;
 import de.uni_koblenz.jgralab.codegenerator.CodeSnippet;
 import de.uni_koblenz.jgralab.schema.Domain;
@@ -77,6 +78,36 @@ public final class ListDomainImpl extends CollectionDomainImpl implements
 	public CodeBlock getReadMethod(String schemaPrefix, String variableName,
 			String graphIoVariableName) {
 		CodeList code = new CodeList();
+		code.setVariable("init", "");
+		internalGetReadMethod(code, schemaPrefix, variableName,
+				graphIoVariableName);
+		
+		return code;
+	}
+
+	@Override
+	public String getTGTypeName(Package pkg) {
+		return LISTDOMAIN_NAME + "<" + baseDomain.getTGTypeName(pkg) + ">";
+	}
+
+	@Override
+	public CodeBlock getWriteMethod(String schemaRootPackagePrefix,
+			String variableName, String graphIoVariableName) {
+		CodeList code = new CodeList();
+		code.setVariable("name", variableName);
+		internalGetWriteMethod(code, schemaRootPackagePrefix, variableName,
+				graphIoVariableName);
+		
+		return code;
+	}
+
+	@Override
+	public String toString() {
+		return "domain " + LISTDOMAIN_NAME + "<" + baseDomain.toString() + ">";
+	}
+	
+	private void internalGetReadMethod(CodeList code, String schemaPrefix,
+			String variableName, String graphIoVariableName) {
 		code.setVariable("name", variableName);
 		code.setVariable("tmpname", variableName + "Tmp");
 		code.setVariable("basedom", getBaseDomain().getJavaClassName(
@@ -85,6 +116,7 @@ public final class ListDomainImpl extends CollectionDomainImpl implements
 				.getJavaAttributeImplementationTypeName(schemaPrefix));
 		code.setVariable("io", graphIoVariableName);
 
+		code.addNoIndent(new CodeSnippet("#init#"));
 		code.addNoIndent(new CodeSnippet("if (#io#.isNextToken(\"[\")) {"));
 		code
 				.add(new CodeSnippet(
@@ -107,19 +139,11 @@ public final class ListDomainImpl extends CollectionDomainImpl implements
 
 		code.add(new CodeSnippet("#io#.match();"));
 		code.addNoIndent(new CodeSnippet("}"));
-		return code;
 	}
-
-	@Override
-	public String getTGTypeName(Package pkg) {
-		return LISTDOMAIN_NAME + "<" + baseDomain.getTGTypeName(pkg) + ">";
-	}
-
-	@Override
-	public CodeBlock getWriteMethod(String schemaRootPackagePrefix,
-			String variableName, String graphIoVariableName) {
-		CodeList code = new CodeList();
-		code.setVariable("name", variableName);
+	
+	private void internalGetWriteMethod(CodeList code,
+			String schemaRootPackagePrefix, String variableName,
+			String graphIoVariableName) {
 		code.setVariable("basedom", getBaseDomain().getJavaClassName(
 				schemaRootPackagePrefix));
 		code.setVariable("basetype",
@@ -137,12 +161,52 @@ public final class ListDomainImpl extends CollectionDomainImpl implements
 		code.add(new CodeSnippet(graphIoVariableName
 				+ ".writeIdentifier(GraphIO.NULL_LITERAL);"));
 		code.addNoIndent(new CodeSnippet("}"));
+	}
+
+	@Override
+	public CodeBlock getTransactionReadMethod(String schemaPrefix,
+			String variableName, String graphIoVariableName) {
+		CodeList code = new CodeList();
+		code.setVariable("init", "java.util.List<#basedom#> #name#;");
+		internalGetReadMethod(code, schemaPrefix, "tmp" + variableName,
+				graphIoVariableName);
 		return code;
 	}
 
 	@Override
-	public String toString() {
-		return "domain " + LISTDOMAIN_NAME + "<" + baseDomain.toString() + ">";
+	public CodeBlock getTransactionWriteMethod(String schemaRootPackagePrefix,
+			String variableName, String graphIoVariableName) {
+		CodeList code = new CodeList();
+		code.setVariable("name", "get" + CodeGenerator.camelCase(variableName)
+				+ "()");
+		internalGetWriteMethod(code, schemaRootPackagePrefix, variableName,
+				graphIoVariableName);
+		return code;
 	}
 
+	@Override
+	public String getTransactionJavaAttributeImplementationTypeName(
+			String schemaRootPackagePrefix) {
+		return "de.uni_koblenz.jgralab.impl.trans.JGraLabList<"
+				+ baseDomain
+						.getTransactionJavaClassName(schemaRootPackagePrefix)
+				+ ">";
+	}
+
+	@Override
+	public String getTransactionJavaClassName(String schemaRootPackagePrefix) {
+		return "de.uni_koblenz.jgralab.impl.trans.JGraLabList";
+	}
+
+	@Override
+	public String getVersionedClass(String schemaRootPackagePrefix) {
+		return "de.uni_koblenz.jgralab.impl.trans.VersionedJGraLabCloneableImpl<"
+				+ getTransactionJavaAttributeImplementationTypeName(schemaRootPackagePrefix)
+				+ ">";
+	}
+
+	@Override
+	public String getInitialValue() {
+		return "null";
+	}
 }

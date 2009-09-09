@@ -134,6 +134,16 @@ public class SchemaImpl implements Schema {
 	 * the Schema.
 	 */
 	public static final String IMPL_PACKAGE_NAME = "impl";
+	
+	/**
+	 * This is the name of the package into which the implementation classes for
+	 * this schema are generated. The impl package is child of the package for
+	 * the Schema.
+	 * 
+	 * std => standard trans => transaction support
+	 */
+	public static final String IMPLSTDPACKAGENAME = "impl.std";
+	public static final String IMPLTRANSPACKAGENAME = "impl.trans";
 
 	static final Class<?>[] VERTEX_CLASS_CREATE_SIGNATURE = { int.class };
 
@@ -170,6 +180,11 @@ public class SchemaImpl implements Schema {
 	 * {@link #graphClass}.
 	 */
 	protected GraphFactory graphFactory;
+	
+	/**
+ 	 * flag standard vs. transaction support
+	 */
+	protected boolean transactionSupport;
 
 	/**
 	 * The name of this schema without the package prefix.
@@ -353,7 +368,10 @@ public class SchemaImpl implements Schema {
 		}
 
 		GraphCodeGenerator graphCodeGenerator = new GraphCodeGenerator(
-				graphClass, packagePrefix, GRAPH_IMPLEMENTATION_PACKAGE, name);
+				graphClass, packagePrefix, GRAPH_IMPLEMENTATION_PACKAGE, name, false);
+		javaSources.addAll(graphCodeGenerator.createJavaSources());
+		graphCodeGenerator = new GraphCodeGenerator(
+				graphClass, packagePrefix, GRAPH_IMPLEMENTATION_PACKAGE, name, true);
 		javaSources.addAll(graphCodeGenerator.createJavaSources());
 
 		// build graphelementclasses
@@ -363,19 +381,31 @@ public class SchemaImpl implements Schema {
 			if (graphElementClass instanceof VertexClass) {
 				codeGenerator = new VertexCodeGenerator(
 						(VertexClass) graphElementClass, packagePrefix,
-						GRAPH_IMPLEMENTATION_PACKAGE);
+						GRAPH_IMPLEMENTATION_PACKAGE, false);
+				javaSources.addAll(codeGenerator.createJavaSources());
+				codeGenerator = new VertexCodeGenerator(
+						(VertexClass) graphElementClass, packagePrefix,
+						GRAPH_IMPLEMENTATION_PACKAGE, true);
 				javaSources.addAll(codeGenerator.createJavaSources());
 			}
 			if (graphElementClass instanceof EdgeClass) {
 				codeGenerator = new EdgeCodeGenerator(
 						(EdgeClass) graphElementClass, packagePrefix,
-						GRAPH_IMPLEMENTATION_PACKAGE);
+						GRAPH_IMPLEMENTATION_PACKAGE, false);
+				javaSources.addAll(codeGenerator.createJavaSources());
+				codeGenerator = new EdgeCodeGenerator(
+						(EdgeClass) graphElementClass, packagePrefix,
+						GRAPH_IMPLEMENTATION_PACKAGE, true);
 				javaSources.addAll(codeGenerator.createJavaSources());
 
 				if (!graphElementClass.isAbstract()) {
 					codeGenerator = new ReversedEdgeCodeGenerator(
 							(EdgeClass) graphElementClass, packagePrefix,
-							GRAPH_IMPLEMENTATION_PACKAGE);
+							GRAPH_IMPLEMENTATION_PACKAGE, true);
+					javaSources.addAll(codeGenerator.createJavaSources());
+					codeGenerator = new ReversedEdgeCodeGenerator(
+							(EdgeClass) graphElementClass, packagePrefix,
+							GRAPH_IMPLEMENTATION_PACKAGE, false);
 					javaSources.addAll(codeGenerator.createJavaSources());
 				}
 			}
@@ -438,7 +468,10 @@ public class SchemaImpl implements Schema {
 		}
 
 		GraphCodeGenerator graphCodeGenerator = new GraphCodeGenerator(
-				graphClass, packagePrefix, GRAPH_IMPLEMENTATION_PACKAGE, name);
+				graphClass, packagePrefix, GRAPH_IMPLEMENTATION_PACKAGE, name, true);
+		graphCodeGenerator.createFiles(pathPrefix);
+		graphCodeGenerator = new GraphCodeGenerator(
+				graphClass, packagePrefix, GRAPH_IMPLEMENTATION_PACKAGE, name, false);
 		graphCodeGenerator.createFiles(pathPrefix);
 
 		// build graphelementclasses
@@ -448,19 +481,31 @@ public class SchemaImpl implements Schema {
 			if (graphElementClass instanceof VertexClass) {
 				codeGenerator = new VertexCodeGenerator(
 						(VertexClass) graphElementClass, packagePrefix,
-						GRAPH_IMPLEMENTATION_PACKAGE);
+						GRAPH_IMPLEMENTATION_PACKAGE, true);
+				codeGenerator.createFiles(pathPrefix);
+				codeGenerator = new VertexCodeGenerator(
+						(VertexClass) graphElementClass, packagePrefix,
+						GRAPH_IMPLEMENTATION_PACKAGE, false);
 				codeGenerator.createFiles(pathPrefix);
 			}
 			if (graphElementClass instanceof EdgeClass) {
 				codeGenerator = new EdgeCodeGenerator(
 						(EdgeClass) graphElementClass, packagePrefix,
-						GRAPH_IMPLEMENTATION_PACKAGE);
+						GRAPH_IMPLEMENTATION_PACKAGE, true);
+				codeGenerator.createFiles(pathPrefix);
+				codeGenerator = new EdgeCodeGenerator(
+						(EdgeClass) graphElementClass, packagePrefix,
+						GRAPH_IMPLEMENTATION_PACKAGE, false);
 				codeGenerator.createFiles(pathPrefix);
 
 				if (!graphElementClass.isAbstract()) {
 					codeGenerator = new ReversedEdgeCodeGenerator(
 							(EdgeClass) graphElementClass, packagePrefix,
-							GRAPH_IMPLEMENTATION_PACKAGE);
+							GRAPH_IMPLEMENTATION_PACKAGE, true);
+					codeGenerator.createFiles(pathPrefix);
+					codeGenerator = new ReversedEdgeCodeGenerator(
+							(EdgeClass) graphElementClass, packagePrefix,
+							GRAPH_IMPLEMENTATION_PACKAGE, false);
 					codeGenerator.createFiles(pathPrefix);
 				}
 			}
@@ -987,8 +1032,15 @@ public class SchemaImpl implements Schema {
 
 	@SuppressWarnings("unchecked")
 	private Class<? extends Graph> getGraphClassImpl() {
-		String implClassName = packagePrefix + "." + IMPL_PACKAGE_NAME + "."
-				+ graphClass.getSimpleName() + "Impl";
+		String implClassName = packagePrefix + ".";
+		// determine package
+		if (!transactionSupport)
+			implClassName += IMPLSTDPACKAGENAME;
+		else
+			implClassName += IMPLTRANSPACKAGENAME;
+		implClassName = implClassName + "." + graphClass.getSimpleName()
+				+ "Impl";
+		
 		Class<? extends Graph> m1Class;
 		try {
 			m1Class = (Class<? extends Graph>) Class.forName(implClassName,
@@ -1153,6 +1205,15 @@ public class SchemaImpl implements Schema {
 	@Override
 	public String getPathName() {
 		return packagePrefix.replace('.', File.separatorChar);
+	}
+	
+	/**
+	 * Set flag that transaction support should be used or not.
+	 * 
+	 * @param transactionSupport
+	 */
+	public void setTransactionSupport(boolean transactionSupport) {
+		this.transactionSupport = transactionSupport;
 	}
 
 }
