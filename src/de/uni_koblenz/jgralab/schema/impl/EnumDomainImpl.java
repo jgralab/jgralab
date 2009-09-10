@@ -151,7 +151,7 @@ public final class EnumDomainImpl extends DomainImpl implements EnumDomain {
 				getJavaAttributeImplementationTypeName(schemaPrefix) + " tmp"
 						+ variableName + " = "
 						+ getJavaAttributeImplementationTypeName(schemaPrefix)
-						+ ".fromString(" + graphIoVariableName
+						+ ".valueOf(" + graphIoVariableName
 						+ ".matchEnumConstant());");
 	}
 

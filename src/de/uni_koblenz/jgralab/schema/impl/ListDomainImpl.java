@@ -118,23 +118,20 @@ public final class ListDomainImpl extends CollectionDomainImpl implements
 
 		code.addNoIndent(new CodeSnippet("#init#"));
 		code.addNoIndent(new CodeSnippet("if (#io#.isNextToken(\"[\")) {"));
-		code
-				.add(new CodeSnippet(
+		code.add(new CodeSnippet(
 						"java.util.LinkedList<#basedom#> #tmpname# = new java.util.LinkedList<#basedom#>();",
 						"#io#.match(\"[\");",
 						"while (!#io#.isNextToken(\"]\")) {",
 						"\t#basetype# #name#Element = null;"));
 		code.add(getBaseDomain().getReadMethod(schemaPrefix,
 				variableName + "Element", graphIoVariableName), 1);
-		code
-				.add(new CodeSnippet(
+		code.add(new CodeSnippet(
 						"\t#tmpname#.add(#name#Element);",
 						"}",
 						"#io#.match(\"]\");",
 						"#name# = new java.util.ArrayList<#basedom#>(#tmpname#.size());",
 						"#name#.addAll(#tmpname#);"));
-		code
-				.addNoIndent(new CodeSnippet(
+		code.addNoIndent(new CodeSnippet(
 						"} else if (#io#.isNextToken(GraphIO.NULL_LITERAL) || #io#.isNextToken(GraphIO.OLD_NULL_LITERAL)) {"));
 
 		code.add(new CodeSnippet("#io#.match();"));
@@ -167,7 +164,7 @@ public final class ListDomainImpl extends CollectionDomainImpl implements
 	public CodeBlock getTransactionReadMethod(String schemaPrefix,
 			String variableName, String graphIoVariableName) {
 		CodeList code = new CodeList();
-		code.setVariable("init", "java.util.List<#basedom#> #name#;");
+		code.setVariable("init", "java.util.List<#basedom#> #name# = null;");
 		internalGetReadMethod(code, schemaPrefix, "tmp" + variableName,
 				graphIoVariableName);
 		return code;

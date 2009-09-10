@@ -125,7 +125,7 @@ public final class SetDomainImpl extends CollectionDomainImpl implements
 				"#io#.match(\"{\");", "while (!#io#.isNextToken(\"}\")) {",
 				"\t#basetype# element = null;"));
 		code.add(getBaseDomain().getReadMethod(schemaRootPackagePrefix,
-				variableName + "Element", graphIoVariableName), 1);
+				 "element", graphIoVariableName), 1);
 		code.add(new CodeSnippet("\t#name#.add(element);", "}",
 				"#io#.match(\"}\");", "#io#.space();"));
 		code.addNoIndent(new CodeSnippet(
@@ -160,7 +160,7 @@ public final class SetDomainImpl extends CollectionDomainImpl implements
 	public CodeBlock getTransactionReadMethod(String schemaPrefix,
 			String variableName, String graphIoVariableName) {
 		CodeList code = new CodeList();
-		code.setVariable("init", "java.util.Set<#basedom#> #name#;");
+		code.setVariable("init", "java.util.Set<#basedom#> #name# = null;");
 		internalGetReadMethod(code, schemaPrefix, "tmp" + variableName,
 				graphIoVariableName);
 		return code;
