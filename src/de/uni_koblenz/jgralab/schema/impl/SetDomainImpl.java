@@ -121,7 +121,7 @@ public final class SetDomainImpl extends CollectionDomainImpl implements
 		code.addNoIndent(new CodeSnippet("#init#"));
 		code.addNoIndent(new CodeSnippet("if (#io#.isNextToken(\"{\")) {"));
 		code.add(new CodeSnippet(
-				"set = new java.util.HashSet<#basedom#>();",
+				"#name# = new java.util.HashSet<#basedom#>();",
 				"#io#.match(\"{\");", "while (!#io#.isNextToken(\"}\")) {",
 				"\t#basetype# element = null;"));
 		code.add(getBaseDomain().getReadMethod(schemaRootPackagePrefix,
