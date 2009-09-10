@@ -210,6 +210,7 @@ public class GraphCodeGenerator extends AttributedElementCodeGenerator {
 	private CodeBlock createFactoryMethod(GraphElementClass gec,
 			boolean withId, boolean createClass) {
 		CodeSnippet code = new CodeSnippet(true);
+		code.setVariable("transactionSupport", transactionSupport ?  "WithTransactionSupport" : "");
 		if (!createClass) {
 			code.add("/**",
 					 " * Creates a new #ecUniqueName# #ecTypeInComment# in this graph.",
@@ -225,7 +226,7 @@ public class GraphCodeGenerator extends AttributedElementCodeGenerator {
 				 	 "public #ecJavaClassName# create#ecCamelName#(#formalParams#);");
 		} else {
 			code.add("public #ecJavaClassName# create#ecCamelName#(#formalParams#) {",
-					 "\t#ecJavaClassName# new#ecType# = (#ecJavaClassName#) graphFactory.create#ecType#(#ecJavaClassName#.class, #newActualParams#, this);",
+					 "\t#ecJavaClassName# new#ecType# = (#ecJavaClassName#) graphFactory.create#ecType##transactionSupport#(#ecJavaClassName#.class, #newActualParams#, this);",
 					 "\tadd#ecType#(new#ecType##addActualParams#);",
 					 "\treturn new#ecType#;", "}");
 		}
