@@ -443,9 +443,13 @@ public class AttributedElementCodeGenerator extends CodeGenerator {
 								"\tGraphIO _io = GraphIO.createStringReader(_value, getSchema());"));
 				a.add(attribute.getDomain().getReadMethod(
 						schemaRootPackageName, attribute.getName(), "_io"));
-
-				a.addNoIndent(new CodeSnippet(
-						"\t#setterName#(#variableName#);", "\treturn;", "}"));
+				if (transactionSupport) {
+					a.addNoIndent(new CodeSnippet(
+							"\t#setterName#(#variableName#.getLatestPersistentValue());", "\treturn;", "}"));	
+				} else {
+					a.addNoIndent(new CodeSnippet(
+						"\t#setterName#(#variableName#);", "\treturn;", "}"));	
+				}	
 				code.add(a);
 			}
 		}
@@ -456,6 +460,11 @@ public class AttributedElementCodeGenerator extends CodeGenerator {
 		return code;
 	}
 
+	/**
+	 * TODO: Check if the really the persistent values should be written when transaction support is enabled  
+	 * @param attrSet
+	 * @return
+	 */
 	protected CodeBlock createWriteAttributeToStringMethod(
 			Set<Attribute> attrSet) {
 		CodeList code = new CodeList();
@@ -473,17 +482,21 @@ public class AttributedElementCodeGenerator extends CodeGenerator {
 				a.addNoIndent(new CodeSnippet(
 								"if (_attributeName.equals(\"#variableName#\")) {",
 								"\tGraphIO _io = GraphIO.createStringWriter(getSchema());"));
-				a.add(attribute.getDomain().getWriteMethod(
+				if (transactionSupport) {
+					a.add(attribute.getDomain().getWriteMethod(
+							schemaRootPackageName, attribute.getName()+ ".getLatestPersistentValue()", "_io"));
+				} else {
+					a.add(attribute.getDomain().getWriteMethod(
 						schemaRootPackageName, attribute.getName(), "_io"));
+				}	
 
 				a.addNoIndent(new CodeSnippet(
-						"\t#setterName#(#variableName#);",
+					/*	"\t#setterName#(#variableName#);",*/
 						"\treturn _io.getStringWriterResult();", "}"));
 				code.add(a);
 			}
 		}
-		code
-				.add(new CodeSnippet(
+		code.add(new CodeSnippet(
 						"throw new NoSuchFieldException(\"#qualifiedClassName# doesn't contain an attribute \" + _attributeName);"));
 		code.addNoIndent(new CodeSnippet("}"));
 		return code;
