@@ -279,7 +279,7 @@ public class SchemaCodeGenerator extends CodeGenerator {
 		code.add(createEnumDomains());
 		code.add(createCompositeDomains());
 		code.add(createGraphClasses());
-		addImports("#schemaPackage#.impl.#simpleClassName#Factory");
+		addImports("#schemaPackage#.#simpleClassName#Factory");
 		code.add(new CodeSnippet(true,
 				"graphFactory = new #simpleClassName#Factory();"));
 		code.addNoIndent(new CodeSnippet(true, "}"));

@@ -392,5 +392,10 @@ public abstract class ReversedEdgeImpl extends IncidenceImpl implements Edge {
 	public boolean isValid() {
 		return graph.containsEdge(this);
 	}
+	
+	@Override
+	public void setId(int id) {
+		normalEdge.setId(id);
+	}
 
 }

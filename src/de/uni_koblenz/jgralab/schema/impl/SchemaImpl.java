@@ -123,6 +123,7 @@ public class SchemaImpl implements Schema {
 		return m1ClassManager;
 	}
 
+	//TODO Remove
 	private static final String GRAPH_IMPLEMENTATION_PACKAGE = "array";
 
 	static final Class<?>[] GRAPHCLASS_CREATE_SIGNATURE = { String.class,
