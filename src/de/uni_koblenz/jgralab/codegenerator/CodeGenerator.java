@@ -197,12 +197,13 @@ public abstract class CodeGenerator {
 			logger.finer("Writing file to: " + pathPrefix + "/"
 							+ schemaPackage);
 			// create interface only
-			createCode(false);
-			writeCodeToFile(pathPrefix, simpleClassName + ".java",
-					schemaPackage);
+			if (!transactionSupport) {
+				createCode(false);
+				writeCodeToFile(pathPrefix, simpleClassName + ".java",
+						schemaPackage);
+			}	
 		} else {
-			if (!rootBlock.getVariable("isImplementationClassOnly").equals(
-					"true")) {
+			if ((!rootBlock.getVariable("isImplementationClassOnly").equals("true")) && (!transactionSupport)) {
 				// create interface
 				createCode(false);
 				writeCodeToFile(pathPrefix, simpleClassName + ".java",
@@ -215,6 +216,7 @@ public abstract class CodeGenerator {
 					schemaImplPackage);
 		}
 	}
+
 
 	/**
 	 * creates the generated code string for a class
@@ -295,16 +297,20 @@ public abstract class CodeGenerator {
 					.getCode()));
 		} else if (rootBlock.getVariable("isAbstractClass").equals("true")) {
 			// create interface only
-			createCode(false);
-			javaSources.add(new JavaSourceFromString(className, rootBlock
+			if (!transactionSupport) {
+				createCode(false);
+				javaSources.add(new JavaSourceFromString(className, rootBlock
 					.getCode()));
+			}	
 		} else {
 			if (!rootBlock.getVariable("isImplementationClassOnly").equals(
 					"true")) {
 				// create interface
-				createCode(false);
-				javaSources.add(new JavaSourceFromString(className, rootBlock
+				if (!transactionSupport) {
+					createCode(false);
+					javaSources.add(new JavaSourceFromString(className, rootBlock
 						.getCode()));
+				}	
 			}
 			// create implementation
 			rootBlock.clear();
