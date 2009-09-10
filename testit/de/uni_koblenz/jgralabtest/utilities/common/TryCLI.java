@@ -1,7 +1,5 @@
 package de.uni_koblenz.jgralabtest.utilities.common;
 
-import java.util.Arrays;
-
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.Option;
 import org.apache.commons.cli.OptionGroup;

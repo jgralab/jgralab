@@ -168,8 +168,7 @@ public final class MapDomainImpl extends CompositeDomainImpl implements
 				variableName + "Value", graphIoVariableName), 1);
 		code.add(new CodeSnippet("\t#name#.put(#name#Key, #name#Value);", "}",
 				"#io#.match(\"}\");"));
-		code
-				.addNoIndent(new CodeSnippet(
+		code.addNoIndent(new CodeSnippet(
 						"} else if (#io#.isNextToken(GraphIO.NULL_LITERAL) || #io#.isNextToken(GraphIO.OLD_NULL_LITERAL)) {"));
 		code.add(new CodeSnippet("#io#.match();", "#name# = null;"));
 		code.addNoIndent(new CodeSnippet("}"));
@@ -178,8 +177,8 @@ public final class MapDomainImpl extends CompositeDomainImpl implements
 	public void internalGetWriteMethod(CodeList code,
 			String schemaRootPackagePrefix, String variableName,
 			String graphIoVariableName) {
-		code.setVariable("nameKey", variableName + "Key");
-		code.setVariable("nameValue", variableName + "Value");
+		code.setVariable("nameKey", "key");
+		code.setVariable("nameValue", "value");
 
 		code.setVariable("keytype",
 				getKeyDomain().getJavaAttributeImplementationTypeName(
@@ -194,8 +193,7 @@ public final class MapDomainImpl extends CompositeDomainImpl implements
 		code.addNoIndent(new CodeSnippet("if (#name# != null) {"));
 		code.add(new CodeSnippet("#io#.writeSpace();", "#io#.write(\"{\");",
 				"#io#.noSpace();"));
-		code
-				.add(new CodeSnippet(
+		code.add(new CodeSnippet(
 						"for (#keytype# #nameKey#: #name#.keySet()) {"));
 
 		code.add(new CodeSnippet(
@@ -221,7 +219,7 @@ public final class MapDomainImpl extends CompositeDomainImpl implements
 		CodeList code = new CodeList();
 		code.setVariable("name", "get" + CodeGenerator.camelCase(variableName)
 				+ "()");
-		code.setVariable("init", "java.util.Map<#keydom#, #valuedom#> #name#;");
+		code.setVariable("init", "java.util.Map<#keydom#, #valuedom#> #name# = null;");
 		internalGetReadMethod(code, schemaPrefix, "tmp" + variableName,
 				graphIoVariableName);
 		return code;
