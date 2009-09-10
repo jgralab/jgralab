@@ -16,7 +16,7 @@ import de.uni_koblenz.jgralab.grumlschema.domains.HasBaseDomain;
 import de.uni_koblenz.jgralab.grumlschema.domains.HasRecordDomainComponent;
 import de.uni_koblenz.jgralab.grumlschema.domains.MapDomain;
 import de.uni_koblenz.jgralab.grumlschema.domains.RecordDomain;
-import de.uni_koblenz.jgralab.grumlschema.impl.SchemaGraphImpl;
+import de.uni_koblenz.jgralab.grumlschema.impl.std.SchemaGraphImpl;
 import de.uni_koblenz.jgralab.grumlschema.structure.AggregationClass;
 import de.uni_koblenz.jgralab.grumlschema.structure.Attribute;
 import de.uni_koblenz.jgralab.grumlschema.structure.AttributedElementClass;

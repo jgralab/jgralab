@@ -44,9 +44,9 @@ public class GraphFactoryGenerator extends CodeGenerator {
 		super(schemaPackageName, "", false);
 		this.schema = schema;
 		rootBlock.setVariable("className", schema.getName() + "Factory");
-		rootBlock.setVariable("simpleImplClassName", schema.getName()
+		rootBlock.setVariable("simpleClassName", schema.getName()
 				+ "Factory");
-		rootBlock.setVariable("isImplementationClassOnly", "true");
+		rootBlock.setVariable("isClassOnly", "true");
 	}
 
 	@Override

@@ -194,8 +194,7 @@ public abstract class CodeGenerator {
 					schemaPackage);
 		} else if (rootBlock.getVariable("isAbstractClass").equals("true")) {
 			logger.finer("Creating interface for class: " + simpleClassName);
-			logger
-					.finer("Writing file to: " + pathPrefix + "/"
+			logger.finer("Writing file to: " + pathPrefix + "/"
 							+ schemaPackage);
 			// create interface only
 			createCode(false);
