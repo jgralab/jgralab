@@ -8801,7 +8801,7 @@ public class VertexTest {
 		VertexImpl v2 = (VertexImpl) graph.createDoubleSubNode();
 		IncidenceImpl e1 = (IncidenceImpl) graph.createLink(
 				(AbstractSuperNode) v1, (SuperNode) v2);
-		v1.putIncidenceAfter(e1, e1);
+		e1.putEdgeAfter( e1);
 	}
 
 	// tests of the method void putIncidenceBefore(IncidenceImpl, IncidenceImpl)
@@ -8812,7 +8812,7 @@ public class VertexTest {
 		VertexImpl v2 = (VertexImpl) graph.createDoubleSubNode();
 		IncidenceImpl e1 = (IncidenceImpl) graph.createLink(
 				(AbstractSuperNode) v1, (SuperNode) v2);
-		v1.putIncidenceBefore(e1, e1);
+		e1.putEdgeBefore(e1);
 	}
 
 }

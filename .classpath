@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
 	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="src" path="testit"/>
 	<classpathentry kind="var" path="UKOISTHOME/jgralab/lib/plist/org.riediger.plist.jar"/>
 	<classpathentry kind="var" path="UKOISTHOME/jgralab/lib/xmlrpc/commons-logging-1.1.jar"/>
 	<classpathentry kind="var" path="UKOISTHOME/jgralab/lib/xmlrpc/ws-commons-util-1.0.1.jar"/>
