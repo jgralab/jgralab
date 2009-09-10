@@ -555,8 +555,10 @@ public class GraphTest {
 		assertFalse(graph2.isEdgeListModified(l2));
 
 		// normal cases
+		int ecount = graph2.getECount();
 		graph2.createEdge(LinkBack.class, v19, v15);
 		assertTrue(graph2.isEdgeListModified(l2));
+		assertEquals(ecount+1, graph2.getECount());
 		l2 = graph2.getEdgeListVersion();
 		assertFalse(graph2.isEdgeListModified(l2));
 
@@ -647,11 +649,8 @@ public class GraphTest {
 		Vertex v26 = graph2.createVertex(SuperNode.class);
 		assertFalse(graph2.isEdgeListModified(l2));
 		
-		System.out.println("Edges in graph: " + graph.getECount());
-		System.out.println("Edges at vertex: " + v20.getDegree());
 		graph2.deleteVertex(v20);
-		System.out.println("Edges in graph: " + graph.getECount());
-		assertFalse(graph2.isEdgeListModified(l2));
+		assertTrue(graph2.isEdgeListModified(l2));
 
 		// reordering edges does change the edgeList
 		e6.putBeforeInGraph(e5);
@@ -770,6 +769,8 @@ public class GraphTest {
 
 		// making sure that changing a vertex does not affect the edges
 		graph.deleteVertex(v9);
+		//TODO: Update this, the vertex has edges and thus the edge list  version
+		//      changes if the vertex is deleted
 		assertEquals(18, graph.getEdgeListVersion());
 
 		graph.createEdge(Link.class, v1, v5);

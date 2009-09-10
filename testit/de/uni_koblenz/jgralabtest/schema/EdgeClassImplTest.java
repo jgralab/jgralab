@@ -60,7 +60,8 @@ public class EdgeClassImplTest extends GraphElementClassImplTest {
 	@Test
 	public void testAddAttribute5() {
 		EdgeClass subClass = graphClass.createEdgeClass("EdgeClassSubClass",
-				edgeClassFromVertexClass, edgeClassToVertexClass);
+				edgeClassFromVertexClass, edgeClass.getFromMin(), edgeClass.getFromMax(), edgeClassToVertexClass, edgeClass.getToMin(), edgeClass.getToMax());
+
 
 		subClass.addSuperClass(edgeClass);
 
@@ -93,7 +94,8 @@ public class EdgeClassImplTest extends GraphElementClassImplTest {
 	@Test
 	public void testAddConstraint5() {
 		EdgeClass subClass = graphClass.createEdgeClass("EdgeClassSubClass",
-				edgeClassFromVertexClass, edgeClassToVertexClass);
+				edgeClassFromVertexClass, edgeClass.getFromMin(), edgeClass.getFromMax(), edgeClassToVertexClass, edgeClass.getToMin(), edgeClass.getToMax());
+
 
 		subClass.addSuperClass(edgeClass);
 
@@ -186,9 +188,9 @@ public class EdgeClassImplTest extends GraphElementClassImplTest {
 	@Test
 	public void testGetAllSubClasses() {
 		Vector<AttributedElementClass> expectedSubClasses = new Vector<AttributedElementClass>();
-
+		//TODO: This kind of creation of an edge class is not allowed
 		EdgeClass subClass = graphClass.createEdgeClass("EdgeClassSubClass",
-				edgeClassFromVertexClass, edgeClassToVertexClass);
+				edgeClassFromVertexClass, edgeClass.getFromMin(), edgeClass.getFromMax(), edgeClassToVertexClass, edgeClass.getToMin(), edgeClass.getToMax());
 
 		subClass.addSuperClass(edgeClass);
 
@@ -208,9 +210,11 @@ public class EdgeClassImplTest extends GraphElementClassImplTest {
 		Vector<AttributedElementClass> expectedSubClasses = new Vector<AttributedElementClass>();
 
 		EdgeClass subClass = graphClass.createEdgeClass("EdgeClassSubClass",
-				edgeClassFromVertexClass, edgeClassToVertexClass);
+				edgeClassFromVertexClass, edgeClass.getFromMin(), edgeClass.getFromMax(), edgeClassToVertexClass, edgeClass.getToMin(), edgeClass.getToMax());
+
 		EdgeClass subClass2 = graphClass.createEdgeClass("EdgeClassSubClass2",
-				edgeClassFromVertexClass, edgeClassToVertexClass);
+				edgeClassFromVertexClass, edgeClass.getFromMin(), edgeClass.getFromMax(), edgeClassToVertexClass, edgeClass.getToMin(), edgeClass.getToMax());
+
 
 		subClass.addSuperClass(edgeClass);
 		subClass2.addSuperClass(edgeClass);
@@ -232,9 +236,11 @@ public class EdgeClassImplTest extends GraphElementClassImplTest {
 		Vector<AttributedElementClass> expectedSubClasses = new Vector<AttributedElementClass>();
 
 		EdgeClass subClass = graphClass.createEdgeClass("EdgeClassSubClass",
-				edgeClassFromVertexClass, edgeClassToVertexClass);
+				edgeClassFromVertexClass, edgeClass.getFromMin(), edgeClass.getFromMax(), edgeClassToVertexClass, edgeClass.getToMin(), edgeClass.getToMax());
+
 		EdgeClass subClass2 = graphClass.createEdgeClass("EdgeClassSubClass2",
-				edgeClassFromVertexClass, edgeClassToVertexClass);
+				edgeClassFromVertexClass, edgeClass.getFromMin(), edgeClass.getFromMax(), edgeClassToVertexClass, edgeClass.getToMin(), edgeClass.getToMax());
+
 
 		subClass.addSuperClass(edgeClass);
 		subClass2.addSuperClass(subClass);
@@ -372,7 +378,8 @@ public class EdgeClassImplTest extends GraphElementClassImplTest {
 	@Test
 	public void testGetAttribute5() {
 		EdgeClass subClass = graphClass.createEdgeClass("EdgeClassSubClass",
-				edgeClassFromVertexClass, edgeClassToVertexClass);
+				edgeClassFromVertexClass, edgeClass.getFromMin(), edgeClass.getFromMax(), edgeClassToVertexClass, edgeClass.getToMin(), edgeClass.getToMax());
+
 
 		subClass.addSuperClass(edgeClass);
 
@@ -422,7 +429,8 @@ public class EdgeClassImplTest extends GraphElementClassImplTest {
 	@Test
 	public void testGetAttributeCount5() {
 		EdgeClass subClass = graphClass.createEdgeClass("EdgeClassSubClass",
-				edgeClassFromVertexClass, edgeClassToVertexClass);
+				edgeClassFromVertexClass, edgeClass.getFromMin(), edgeClass.getFromMax(), edgeClassToVertexClass, edgeClass.getToMin(), edgeClass.getToMax());
+
 
 		subClass.addSuperClass(edgeClass);
 
@@ -472,7 +480,8 @@ public class EdgeClassImplTest extends GraphElementClassImplTest {
 	@Test
 	public void testGetAttributeList5() {
 		EdgeClass subClass = graphClass.createEdgeClass("EdgeClassSubClass",
-				edgeClassFromVertexClass, edgeClassToVertexClass);
+				edgeClassFromVertexClass, edgeClass.getFromMin(), edgeClass.getFromMax(), edgeClassToVertexClass, edgeClass.getToMin(), edgeClass.getToMax());
+
 
 		subClass.addSuperClass(edgeClass);
 
@@ -507,7 +516,8 @@ public class EdgeClassImplTest extends GraphElementClassImplTest {
 		Vector<AttributedElementClass> expectedSubClasses = new Vector<AttributedElementClass>();
 
 		EdgeClass subClass = graphClass.createEdgeClass("EdgeClassSubClass",
-				edgeClassFromVertexClass, edgeClassToVertexClass);
+				edgeClassFromVertexClass, edgeClass.getFromMin(), edgeClass.getFromMax(), edgeClassToVertexClass, edgeClass.getToMin(), edgeClass.getToMax());
+
 
 		subClass.addSuperClass(edgeClass);
 
@@ -526,10 +536,12 @@ public class EdgeClassImplTest extends GraphElementClassImplTest {
 	public void testGetDirectSubClasses2() {
 		Vector<AttributedElementClass> expectedSubClasses = new Vector<AttributedElementClass>();
 
-		EdgeClass subClass = graphClass.createEdgeClass("EdgeClassSubClass",
-				edgeClassFromVertexClass, edgeClassToVertexClass);
 		EdgeClass subClass2 = graphClass.createEdgeClass("EdgeClassSubClass2",
-				edgeClassFromVertexClass, edgeClassToVertexClass);
+				edgeClassFromVertexClass, edgeClass.getFromMin(), edgeClass.getFromMax(), edgeClassToVertexClass, edgeClass.getToMin(), edgeClass.getToMax());
+
+		EdgeClass subClass = graphClass.createEdgeClass("EdgeClassSubClass",
+				edgeClassFromVertexClass, edgeClass.getFromMin(), edgeClass.getFromMax(), edgeClassToVertexClass, edgeClass.getToMin(), edgeClass.getToMax());
+
 
 		subClass.addSuperClass(edgeClass);
 		subClass2.addSuperClass(edgeClass);
@@ -551,10 +563,12 @@ public class EdgeClassImplTest extends GraphElementClassImplTest {
 		Vector<AttributedElementClass> expectedSubClasses = new Vector<AttributedElementClass>();
 
 		EdgeClass subClass = graphClass.createEdgeClass("EdgeClassSubClass",
-				edgeClassFromVertexClass, edgeClassToVertexClass); // Direct
+				edgeClassFromVertexClass, edgeClass.getFromMin(), edgeClass.getFromMax(), edgeClassToVertexClass, edgeClass.getToMin(), edgeClass.getToMax());
+
 		// subclass
 		EdgeClass subClass2 = graphClass.createEdgeClass("EdgeClassSubClass2",
-				edgeClassFromVertexClass, edgeClassToVertexClass); // Indirect
+				edgeClassFromVertexClass, edgeClass.getFromMin(), edgeClass.getFromMax(), edgeClassToVertexClass, edgeClass.getToMin(), edgeClass.getToMax());
+
 		// subclass
 
 		subClass.addSuperClass(edgeClass);
@@ -734,7 +748,8 @@ public class EdgeClassImplTest extends GraphElementClassImplTest {
 	@Test
 	public void testGetOwnAttribute5() {
 		EdgeClass subClass = graphClass.createEdgeClass("EdgeClassSubClass",
-				edgeClassFromVertexClass, edgeClassToVertexClass);
+				edgeClassFromVertexClass, edgeClass.getFromMin(), edgeClass.getFromMax(), edgeClassToVertexClass, edgeClass.getToMin(), edgeClass.getToMax());
+
 		subClass.addSuperClass(edgeClass);
 
 		testGetOwnAttribute4(subClass);
@@ -924,7 +939,8 @@ public class EdgeClassImplTest extends GraphElementClassImplTest {
 	@Test
 	public void testIsDirectSubClassOf3() {
 		EdgeClass subClass = graphClass.createEdgeClass("EdgeClassSubClass",
-				edgeClassFromVertexClass, edgeClassToVertexClass);
+				edgeClassFromVertexClass, edgeClass.getFromMin(), edgeClass.getFromMax(), edgeClassToVertexClass, edgeClass.getToMin(), edgeClass.getToMax());
+
 		subClass.addSuperClass(edgeClass);
 
 		testIsDirectSubClassOf2(subClass);
@@ -961,7 +977,8 @@ public class EdgeClassImplTest extends GraphElementClassImplTest {
 	@Test
 	public void testIsDirectSuperClassOf() {
 		EdgeClass subClass = graphClass.createEdgeClass("EdgeClassSubClass",
-				edgeClassFromVertexClass, edgeClassToVertexClass);
+				edgeClassFromVertexClass, edgeClass.getFromMin(), edgeClass.getFromMax(), edgeClassToVertexClass, edgeClass.getToMin(), edgeClass.getToMax());
+
 		subClass.addSuperClass(edgeClass);
 
 		testIsDirectSuperClassOf(subClass);
@@ -975,9 +992,11 @@ public class EdgeClassImplTest extends GraphElementClassImplTest {
 	@Test
 	public void testIsDirectSuperClassOf2() {
 		EdgeClass subClass = graphClass.createEdgeClass("EdgeClassSubClass",
-				edgeClassFromVertexClass, edgeClassToVertexClass);
+				edgeClassFromVertexClass, edgeClass.getFromMin(), edgeClass.getFromMax(), edgeClassToVertexClass, edgeClass.getToMin(), edgeClass.getToMax());
+
 		EdgeClass subClass2 = graphClass.createEdgeClass("EdgeClassSubClass2",
-				edgeClassFromVertexClass, edgeClassToVertexClass);
+				edgeClassFromVertexClass, edgeClass.getFromMin(), edgeClass.getFromMax(), edgeClassToVertexClass, edgeClass.getToMin(), edgeClass.getToMax());
+
 		subClass.addSuperClass(edgeClass);
 		subClass2.addSuperClass(subClass);
 
@@ -1064,7 +1083,8 @@ public class EdgeClassImplTest extends GraphElementClassImplTest {
 	@Test
 	public void testIsSubClassOf3() {
 		EdgeClass subClass = graphClass.createEdgeClass("EdgeClassSubClass",
-				edgeClassFromVertexClass, edgeClassToVertexClass);
+				edgeClassFromVertexClass, edgeClass.getFromMin(), edgeClass.getFromMax(), edgeClassToVertexClass, edgeClass.getToMin(), edgeClass.getToMax());
+
 		subClass.addSuperClass(edgeClass);
 
 		testIsSubClassOf2(subClass);
@@ -1101,7 +1121,8 @@ public class EdgeClassImplTest extends GraphElementClassImplTest {
 	@Test
 	public void testIsSuperClassOf() {
 		EdgeClass subClass = graphClass.createEdgeClass("EdgeClassSubClass",
-				edgeClassFromVertexClass, edgeClassToVertexClass);
+				edgeClassFromVertexClass, edgeClass.getFromMin(), edgeClass.getFromMax(), edgeClassToVertexClass, edgeClass.getToMin(), edgeClass.getToMax());
+
 		subClass.addSuperClass(edgeClass);
 
 		testIsSuperClassOf(subClass);
@@ -1115,9 +1136,11 @@ public class EdgeClassImplTest extends GraphElementClassImplTest {
 	@Test
 	public void testIsSuperClassOf2() {
 		EdgeClass subClass = graphClass.createEdgeClass("EdgeClassSubClass",
-				edgeClassFromVertexClass, edgeClassToVertexClass);
+				edgeClassFromVertexClass, edgeClass.getFromMin(), edgeClass.getFromMax(), edgeClassToVertexClass, edgeClass.getToMin(), edgeClass.getToMax());
+
 		EdgeClass subClass2 = graphClass.createEdgeClass("EdgeClassSubClass2",
-				edgeClassFromVertexClass, edgeClassToVertexClass);
+				edgeClassFromVertexClass, edgeClass.getFromMin(), edgeClass.getFromMax(), edgeClassToVertexClass, edgeClass.getToMin(), edgeClass.getToMax());
+
 		subClass.addSuperClass(edgeClass);
 		subClass2.addSuperClass(subClass);
 
@@ -1170,7 +1193,8 @@ public class EdgeClassImplTest extends GraphElementClassImplTest {
 	@Test
 	public void testIsSuperClassOfOrEquals() {
 		EdgeClass subClass = graphClass.createEdgeClass("EdgeClassSubClass",
-				edgeClassFromVertexClass, edgeClassToVertexClass);
+				edgeClassFromVertexClass, edgeClass.getFromMin(), edgeClass.getFromMax(), edgeClassToVertexClass, edgeClass.getToMin(), edgeClass.getToMax());
+
 		subClass.addSuperClass(edgeClass);
 
 		testIsSuperClassOfOrEquals(subClass);
@@ -1184,9 +1208,11 @@ public class EdgeClassImplTest extends GraphElementClassImplTest {
 	@Test
 	public void testIsSuperClassOfOrEquals2() {
 		EdgeClass subClass = graphClass.createEdgeClass("EdgeClassSubClass",
-				edgeClassFromVertexClass, edgeClassToVertexClass);
+				edgeClassFromVertexClass, edgeClass.getFromMin(), edgeClass.getFromMax(), edgeClassToVertexClass, edgeClass.getToMin(), edgeClass.getToMax());
+
 		EdgeClass subClass2 = graphClass.createEdgeClass("EdgeClassSubClass2",
-				edgeClassFromVertexClass, edgeClassToVertexClass);
+				edgeClassFromVertexClass, edgeClass.getFromMin(), edgeClass.getFromMax(), edgeClassToVertexClass, edgeClass.getToMin(), edgeClass.getToMax());
+
 		subClass.addSuperClass(edgeClass);
 		subClass2.addSuperClass(subClass);
 
