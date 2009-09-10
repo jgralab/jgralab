@@ -3,6 +3,7 @@ package de.uni_koblenz.jgralabtest;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import java.io.ByteArrayInputStream;
 import java.util.Set;
@@ -12,7 +13,6 @@ import org.junit.Before;
 import org.junit.Test;
 
 import de.uni_koblenz.jgralab.AttributedElement;
-import de.uni_koblenz.jgralab.GraphException;
 import de.uni_koblenz.jgralab.GraphIO;
 import de.uni_koblenz.jgralab.GraphIOException;
 import de.uni_koblenz.jgralab.graphvalidator.GraphValidator;
@@ -392,7 +392,7 @@ public class MultiplicityTest {
 	 * Multiplicity of the child edge is smaller and greater than the smallest
 	 * and greatest possible multiplicity of the parent edge.
 	 */
-	@Test(expected = GraphException.class)
+	@Test(expected = GraphIOException.class)
 	// TODO Replace with the expected exception
 	public void multiplicityTest17() throws GraphIOException {
 		compileSchema("Schema de.uni_koblenz.jgralabtest.TestSchema;"
@@ -406,7 +406,7 @@ public class MultiplicityTest {
 	 * Multiplicity of the child edge is greater than the greatest possible
 	 * multiplicity of the parent edge.
 	 */
-	@Test(expected = GraphException.class)
+	@Test(expected = GraphIOException.class)
 	// TODO Replace with the expected exception
 	public void multiplicityTest19() throws GraphIOException {
 		compileSchema("Schema de.uni_koblenz.jgralabtest.TestSchema;"
@@ -418,10 +418,8 @@ public class MultiplicityTest {
 
 	/**
 	 * Multiplicity of the child edge is smaller than the smallest possible
-	 * multiplicity of the parent edge.
+	 * multiplicity of the parent edge, this is allowed
 	 */
-	@Test(expected = GraphException.class)
-	// TODO Replace with the expected exception
 	public void multiplicityTest20() throws GraphIOException {
 		compileSchema("Schema de.uni_koblenz.jgralabtest.TestSchema;"
 				+ "GraphClass TestGraph;" + "VertexClass VC1;"
@@ -436,8 +434,10 @@ public class MultiplicityTest {
 	@Test(expected = GraphIOException.class)
 	public void multiplicityTest21() throws GraphIOException {
 		compileSchema("Schema de.uni_koblenz.jgralabtest.TestSchema;"
-				+ "GraphClass TestGraph;" + "VertexClass VC1;"
-				+ "VertexClass VC2;" + "VertexClass VC3;"
+				+ "GraphClass TestGraph;" 
+				+ "VertexClass VC1;"
+				+ "VertexClass VC2;"
+				+ "VertexClass VC3;"
 				+ "EdgeClass EC1 from VC2 (0,*) to VC1 (2,6);"
 				+ "EdgeClass EC2:EC1 from VC2 (0,*) to VC3 (3,4);");
 	}

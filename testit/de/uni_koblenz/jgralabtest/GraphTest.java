@@ -646,8 +646,11 @@ public class GraphTest {
 
 		Vertex v26 = graph2.createVertex(SuperNode.class);
 		assertFalse(graph2.isEdgeListModified(l2));
-
+		
+		System.out.println("Edges in graph: " + graph.getECount());
+		System.out.println("Edges at vertex: " + v20.getDegree());
 		graph2.deleteVertex(v20);
+		System.out.println("Edges in graph: " + graph.getECount());
 		assertFalse(graph2.isEdgeListModified(l2));
 
 		// reordering edges does change the edgeList
