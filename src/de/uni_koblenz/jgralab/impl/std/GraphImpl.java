@@ -300,4 +300,15 @@ public abstract class GraphImpl extends de.uni_koblenz.jgralab.impl.GraphImpl {
 	protected void freeVertexIndex(int index) {
 		freeVertexList.freeIndex(index);
 	}
+	
+	
+	@Override
+	protected void vertexAfterDeleted(Vertex vertexToBeDeleted) {
+		
+	}
+	
+	@Override
+	protected void edgeAfterDeleted(Edge edgeToBeDeleted, Vertex oldAlpha, Vertex oldOmega) {
+		
+	}
 }
