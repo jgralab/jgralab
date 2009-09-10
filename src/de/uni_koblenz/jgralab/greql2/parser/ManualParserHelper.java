@@ -503,9 +503,9 @@ public abstract class ManualParserHelper {
 									"This literals must not be used outside pathdescriptions",
 									vertex.getName(),
 									((Greql2Aggregation) sourcePositionEdge)
-											.getSourcePositions().get(0).offset,
+											.getSourcePositions().get(0).getOffset(),
 									((Greql2Aggregation) sourcePositionEdge)
-											.getSourcePositions().get(0).length);
+											.getSourcePositions().get(0).getLength());
 						queue.add(omega);
 					}
 				}

@@ -567,9 +567,9 @@ public abstract class VertexEvaluator {
 					.iterator();
 			while (availableIter.hasNext()) {
 				SourcePosition availablePosition = availableIter.next();
-				if ((availablePosition.offset <= currentPosition.offset)
-						&& (availablePosition.offset + availablePosition.length >= currentPosition.offset
-								+ currentPosition.length)) {
+				if ((availablePosition.getOffset() <= currentPosition.getOffset())
+						&& (availablePosition.getOffset() + availablePosition.getLength() >= currentPosition.getOffset()
+								+ currentPosition.getLength())) {
 					accepted = true;
 					break;
 				}
