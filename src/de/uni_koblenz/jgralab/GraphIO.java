@@ -723,23 +723,78 @@ public class GraphIO {
 			return loadGraphFromFile(filename, s, pf);
 		}
 	}
+	
+	/**
+	 * Loads a <code>Graph</code> from the given file with transaction support.
+	 * 
+	 * @param filename
+	 * @param pf
+	 * @return
+	 * @throws GraphIOException
+	 */
+	public static Graph loadGraphFromFileWithTransactionSupport(
+			String filename, ProgressFunction pf) throws GraphIOException {
+		return loadGraphFromFile(filename, null, pf, true);
+	}
 
+	/**
+	 * Loads a <code>Graph</code> from the given file with transaction support.
+	 * The corresponding schema is given as a parameter.
+	 * 
+	 * @param filename
+	 * @param schema
+	 * @param pf
+	 * @return
+	 * @throws GraphIOException
+	 */
+	public static Graph loadGraphFromFileWithTransactionSupport(
+			String filename, Schema schema, ProgressFunction pf)
+			throws GraphIOException {
+		return loadGraphFromFile(filename, schema, pf, true);
+	}
+
+	/**
+	 * New "intermediate"-method needed for transaction support.
+	 * 
+	 * @param filename
+	 * @param pf
+	 * @return
+	 * @throws GraphIOException
+	 */
 	public static Graph loadGraphFromFile(String filename, ProgressFunction pf)
 			throws GraphIOException {
-		return loadGraphFromFile(filename, null, pf);
+		return loadGraphFromFile(filename, null, pf, false);
 	}
 
 	public static Graph loadGraphFromFile(String filename, Schema schema,
 			ProgressFunction pf) throws GraphIOException {
+		return loadGraphFromFile(filename, schema, pf, false);
+	}
+
+	/**
+	 * 
+	 * @param filename
+	 * @param schema
+	 * @param pf
+	 * @param transactionSupport
+	 * @return
+	 * @throws GraphIOException
+	 */
+	private static Graph loadGraphFromFile(String filename, Schema schema,
+			ProgressFunction pf, boolean transactionSupport)
+			throws GraphIOException {
 		try {
 			logger.finer("Loading graph " + filename);
 			return loadGraphFromStream(new BufferedInputStream(
-					new FileInputStream(filename), 65536), schema, pf);
+					new FileInputStream(filename), 65536), schema, pf,
+					transactionSupport);
+
 		} catch (IOException ex) {
 			throw new GraphIOException("Unable to load graph from file "
 					+ filename + ", the file cannot be found", ex);
 		}
 	}
+
 
 	public static Graph loadGraphFromURL(String url, ProgressFunction pf)
 			throws GraphIOException {
@@ -749,20 +804,23 @@ public class GraphIO {
 	public static Graph loadGraphFromURL(String url, Schema schema,
 			ProgressFunction pf) throws GraphIOException {
 		try {
-			return loadGraphFromStream(new URL(url).openStream(), schema, pf);
+			return loadGraphFromStream(new URL(url).openStream(), schema, pf,
+					false);
 		} catch (IOException ex) {
 			throw new GraphIOException("Unable to load graph from url " + url
 					+ ", the resource cannot be found", ex);
 		}
 	}
 
-	public static Graph loadGraphFromStream(InputStream in, ProgressFunction pf)
+	public static Graph loadGraphFromStream(InputStream in,
+			ProgressFunction pf, boolean transactionSupport)
 			throws GraphIOException {
-		return loadGraphFromStream(in, null, pf);
+		return loadGraphFromStream(in, null, pf, transactionSupport);
 	}
 
 	public static Graph loadGraphFromStream(InputStream in, Schema schema,
-			ProgressFunction pf) throws GraphIOException {
+			ProgressFunction pf, boolean transactionSupport)
+			throws GraphIOException {
 		try {
 			GraphIO io = new GraphIO();
 			io.schema = schema;
@@ -774,6 +832,7 @@ public class GraphIO {
 			Method instanceMethod = schemaClass.getMethod("instance",
 					(Class<?>[]) null);
 			io.schema = (Schema) instanceMethod.invoke(null, new Object[0]);
+			((SchemaImpl) io.schema).setTransactionSupport(transactionSupport);
 			GraphImpl g = io.graph(pf);
 			g.internalLoadingCompleted(io.firstIncidence, io.nextIncidence);
 			io.firstIncidence = null;
