@@ -111,12 +111,15 @@ public class AttributedElementCodeGenerator extends CodeGenerator {
 			code.add(createReadAttributesFromStringMethod(aec.getAttributeList()));
 			code.add(createWriteAttributesMethod(aec.getAttributeList()));
 			code.add(createWriteAttributeToStringMethod(aec.getAttributeList()));
+			if (transactionSupport)
+				code.add(createGetVersionedAttributesMethod(aec
+						.getAttributeList()));
 		} else {
 			code.add(createGettersAndSetters(aec.getOwnAttributeList(),
 					createClass));
 		}
 		return code;
-	}
+	}			
 
 	@Override
 	protected CodeBlock createHeader(boolean createClass) {
@@ -427,8 +430,7 @@ public class AttributedElementCodeGenerator extends CodeGenerator {
 		CodeList code = new CodeList();
 
 		addImports("#jgPackage#.GraphIO", "#jgPackage#.GraphIOException");
-		code
-				.addNoIndent(new CodeSnippet(
+		code.addNoIndent(new CodeSnippet(
 						true,
 						"public void readAttributeValueFromString(String _attributeName, String _value) throws GraphIOException, NoSuchFieldException {"));
 
@@ -441,12 +443,18 @@ public class AttributedElementCodeGenerator extends CodeGenerator {
 				a.addNoIndent(new CodeSnippet(
 								"if (_attributeName.equals(\"#variableName#\")) {",
 								"\tGraphIO _io = GraphIO.createStringReader(_value, getSchema());"));
-				a.add(attribute.getDomain().getReadMethod(
-						schemaRootPackageName, attribute.getName(), "_io"));
 				if (transactionSupport) {
+					CodeSnippet readBlock = new CodeSnippet();
+					readBlock.setVariable("variableType", attribute.getDomain().getJavaClassName(schemaRootPackageName));
+					readBlock.add("#variableType# tmpVar;");
+					a.add(readBlock);
+					a.add(attribute.getDomain().getReadMethod(
+							schemaRootPackageName, "tmpVar", "_io"));
 					a.addNoIndent(new CodeSnippet(
-							"\t#setterName#(#variableName#.getLatestPersistentValue());", "\treturn;", "}"));	
+							"\t#setterName#(tmpVar);", "\treturn;", "}"));	
 				} else {
+					a.add(attribute.getDomain().getReadMethod(
+							schemaRootPackageName, attribute.getName(), "_io"));
 					a.addNoIndent(new CodeSnippet(
 						"\t#setterName#(#variableName#);", "\treturn;", "}"));	
 				}	
@@ -469,8 +477,7 @@ public class AttributedElementCodeGenerator extends CodeGenerator {
 			Set<Attribute> attrSet) {
 		CodeList code = new CodeList();
 		addImports("#jgPackage#.GraphIO", "#jgPackage#.GraphIOException");
-		code
-				.addNoIndent(new CodeSnippet(
+		code.addNoIndent(new CodeSnippet(
 						true,
 						"public String writeAttributeValueToString(String _attributeName) throws IOException, GraphIOException, NoSuchFieldException {"));
 		if (attrSet != null) {
