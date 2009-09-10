@@ -121,15 +121,14 @@ public final class SetDomainImpl extends CollectionDomainImpl implements
 		code.addNoIndent(new CodeSnippet("#init#"));
 		code.addNoIndent(new CodeSnippet("if (#io#.isNextToken(\"{\")) {"));
 		code.add(new CodeSnippet(
-				"#name# = new java.util.HashSet<#basedom#>();",
+				"set = new java.util.HashSet<#basedom#>();",
 				"#io#.match(\"{\");", "while (!#io#.isNextToken(\"}\")) {",
-				"\t#basetype# #name#Element = null;"));
+				"\t#basetype# element = null;"));
 		code.add(getBaseDomain().getReadMethod(schemaRootPackagePrefix,
 				variableName + "Element", graphIoVariableName), 1);
-		code.add(new CodeSnippet("\t#name#.add(#name#Element);", "}",
+		code.add(new CodeSnippet("\t#name#.add(element);", "}",
 				"#io#.match(\"}\");", "#io#.space();"));
-		code
-				.addNoIndent(new CodeSnippet(
+		code.addNoIndent(new CodeSnippet(
 						"} else if (#io#.isNextToken(GraphIO.NULL_LITERAL) || #io#.isNextToken(GraphIO.OLD_NULL_LITERAL)) {"));
 		code.add(new CodeSnippet("#io#.match();"));
 		code.addNoIndent(new CodeSnippet("}"));

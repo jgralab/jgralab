@@ -330,7 +330,7 @@ public class AttributedElementCodeGenerator extends CodeGenerator {
 	}
 
 	protected void setGraphReferenceVariable(CodeSnippet code) {
-		code.setVariable("graphreference", "myGraph.");
+		code.setVariable("graphreference", "graph.");
 	}
 
 	protected CodeBlock createSetter(Attribute attr, boolean createClass) {

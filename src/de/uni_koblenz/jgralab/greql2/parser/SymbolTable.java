@@ -67,13 +67,13 @@ public class SymbolTable {
 			int offset = -1;
 			if (var.getFirstEdge(EdgeDirection.OUT) instanceof IsDeclaredVarOf) {
 				offset = ((IsDeclaredVarOf) var.getFirstEdge(EdgeDirection.OUT))
-						.getSourcePositions().get(0).offset;
+						.getSourcePositions().get(0).getOffset();
 			} else if (var.getFirstEdge(EdgeDirection.OUT) instanceof IsBoundVarOf) {
 				offset = ((IsBoundVarOf) var.getFirstEdge(EdgeDirection.OUT))
-						.getSourcePositions().get(0).offset;
+						.getSourcePositions().get(0).getOffset();
 			} else if (var.getFirstEdge(EdgeDirection.OUT) instanceof IsVarOf) {
 				offset = ((IsVarOf) var.getFirstEdge(EdgeDirection.OUT))
-						.getSourcePositions().get(0).offset;
+						.getSourcePositions().get(0).getOffset();
 			}
 			throw new DuplicateVariableException(ident, ((Greql2Aggregation) v
 					.getFirstEdge(EdgeDirection.IN)).getSourcePositions(),

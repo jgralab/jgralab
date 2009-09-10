@@ -121,7 +121,7 @@ public class QuerySourceException extends EvaluateException {
 	public String getMessage() {
 		if (positions.size() > 0) {
 			return errorMessage + " " + elementName + " at position ("
-					+ positions.get(0).offset + ", " + positions.get(0).length
+					+ positions.get(0).getOffset() + ", " + positions.get(0).getLength()
 					+ ")";
 		} else {
 			return errorMessage + elementName + " at unknown position in query";
@@ -142,7 +142,7 @@ public class QuerySourceException extends EvaluateException {
 		if (positions.size() < 0) {
 			return 0;
 		}
-		return positions.get(0).offset;
+		return positions.get(0).getOffset();
 	}
 
 	/**
@@ -152,7 +152,7 @@ public class QuerySourceException extends EvaluateException {
 		if (positions.size() < 0) {
 			return 0;
 		}
-		return positions.get(0).length;
+		return positions.get(0).getLength();
 	}
 
 	/**

@@ -349,9 +349,8 @@ public class VertexCodeGenerator extends AttributedElementCodeGenerator {
 		for (EdgeClass ec : vc.getValidFromEdgeClasses()) {
 			CodeSnippet line = new CodeSnippet(true);
 			line.setVariable("edgeClassQualifiedName", schemaRootPackageName
-					+ ".impl." + ec.getQualifiedName());
-			line
-					.add("\tvalidFromEdges.add(#edgeClassQualifiedName#Impl.class);");
+					+ ".impl." + (transactionSupport ?  "trans." : "std.") +  ec.getQualifiedName());
+			line.add("\tvalidFromEdges.add(#edgeClassQualifiedName#Impl.class);");
 			code.addNoIndent(line);
 		}
 		s = new CodeSnippet(true);
@@ -372,8 +371,7 @@ public class VertexCodeGenerator extends AttributedElementCodeGenerator {
 		code.addNoIndent(s);
 		for (EdgeClass ec : vc.getValidToEdgeClasses()) {
 			CodeSnippet line = new CodeSnippet(true);
-			line.setVariable("edgeClassQualifiedName", schemaRootPackageName
-					+ ".impl." + ec.getQualifiedName());
+			line.setVariable("edgeClassQualifiedName", schemaRootPackageName + ".impl." + (transactionSupport ?  "trans." : "std.") + ec.getQualifiedName());
 			line.add("\tvalidToEdges.add(#edgeClassQualifiedName#Impl.class);");
 			code.addNoIndent(line);
 		}

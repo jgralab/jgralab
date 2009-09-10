@@ -25,7 +25,6 @@
 package de.uni_koblenz.jgralab.schema.impl;
 
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.Set;
 
 import de.uni_koblenz.jgralab.Edge;
@@ -223,26 +222,24 @@ public class EdgeClassImpl extends GraphElementClassImpl implements EdgeClass {
 	 *         EdgeClass satisfy the restrictions of its superclasses
 	 */
 	protected boolean checkConnectionRestrictions() {
-		Iterator<? extends AttributedElementClass> iter = directSuperClasses
-				.iterator();
-		while (iter.hasNext()) {
-			EdgeClass ec = (EdgeClass) iter.next();
+		for (AttributedElementClass ac : directSuperClasses) {
+			EdgeClass ec = (EdgeClass) ac;
 			if ((to != ec.getTo()) && !to.isSubClassOf(ec.getTo())) {
 				return false;
 			}
-			if ((toMin < ec.getToMin()) || (toMin > ec.getToMax())) {
+			if (toMin > ec.getToMax()) {
 				return false;
 			}
-			if ((toMax > ec.getToMax()) || (toMax < ec.getToMin())) {
+			if (toMax > ec.getToMax()) {
 				return false;
 			}
 			if ((from != ec.getFrom()) && !from.isSubClassOf(ec.getFrom())) {
 				return false;
 			}
-			if ((fromMin < ec.getFromMin()) || (fromMin > ec.getFromMax())) {
+			if (fromMin > ec.getFromMax()) {
 				return false;
 			}
-			if ((fromMax > ec.getFromMax()) || (fromMax < ec.getFromMin())) {
+			if (fromMax > ec.getFromMax()) {
 				return false;
 			}
 		}
@@ -262,10 +259,8 @@ public class EdgeClassImpl extends GraphElementClassImpl implements EdgeClass {
 		int newFromMin = fromMin;
 		int newFromMax = fromMax;
 
-		Iterator<? extends AttributedElementClass> iter = directSuperClasses
-				.iterator();
-		while (iter.hasNext()) {
-			EdgeClass ec = (EdgeClass) iter.next();
+		for (AttributedElementClass ac : directSuperClasses) {
+			EdgeClass ec = (EdgeClass) ac;
 			if (newToMin > ec.getToMax()) {
 				throw new InheritanceException(
 						"Cardinalities for To-connection of edge class "
@@ -276,8 +271,15 @@ public class EdgeClassImpl extends GraphElementClassImpl implements EdgeClass {
 								+ ec.getToMax() + " of inherited edge class "
 								+ ec.getQualifiedName());
 			}
-			if (newToMin < ec.getToMin()) {
-				newToMin = ec.getToMin();
+			if (newToMax > ec.getToMax()) {
+				throw new InheritanceException(
+						"Cardinalities for To-connection of edge class "
+								+ getQualifiedName()
+								+ " cannot be merged, maximal cardinality "
+								+ newToMax
+								+ " is bigger than maximal cardinality "
+								+ ec.getToMin() + " of inherited edge class "
+								+ ec.getQualifiedName());
 			}
 			if (newFromMin > ec.getFromMax()) {
 				throw new InheritanceException(
@@ -289,35 +291,15 @@ public class EdgeClassImpl extends GraphElementClassImpl implements EdgeClass {
 								+ ec.getFromMax() + " of inherited edge class "
 								+ ec.getQualifiedName());
 			}
-			if (newFromMin < ec.getFromMin()) {
-				newFromMin = ec.getFromMin();
-			}
-
-			if (newToMax < ec.getToMin()) {
-				throw new InheritanceException(
-						"Cardinalities for To-connection of edge class "
-								+ getQualifiedName()
-								+ " cannot be merged, maximal cardinality "
-								+ newToMax
-								+ " is lesser than minimal cardinality "
-								+ ec.getToMin() + " of inherited edge class "
-								+ ec.getQualifiedName());
-			}
-			if (newToMax > ec.getToMax()) {
-				newToMax = ec.getToMax();
-			}
-			if (newFromMax < ec.getFromMin()) {
+			if (newFromMax > ec.getFromMax()) {
 				throw new InheritanceException(
 						"Cardinalities for From-connection of edge class "
 								+ getQualifiedName()
 								+ " cannot be merged, maximal cardinality "
-								+ newFromMax
-								+ " is lesser than minimal cardinality "
-								+ ec.getFromMin() + " of inherited edge class "
+								+ newFromMin
+								+ " is bigger than maximal cardinality "
+								+ ec.getFromMax() + " of inherited edge class "
 								+ ec.getQualifiedName());
-			}
-			if (newFromMax > ec.getFromMax()) {
-				newFromMax = ec.getFromMax();
 			}
 		}
 		if ((fromMin != newFromMin) || (fromMax != newFromMax)
@@ -339,24 +321,12 @@ public class EdgeClassImpl extends GraphElementClassImpl implements EdgeClass {
 	 *         needed or if a merge is not possible
 	 */
 	protected boolean mergeConnectionVertexClasses() {
-		Iterator<? extends AttributedElementClass> iter = directSuperClasses
-				.iterator();
 		VertexClass mostSpecialTo = getTo();
-		// System.out.println("To vertex class is: " + mostSpecialTo.getName());
-		// System.out.println("Superclasses are");
-		// for (jgralab.AttributedElementClass ac :
-		// mostSpecialTo.getAllSuperClasses())
-		// System.out.println(" " + ac.getName());
 		VertexClass mostSpecialFrom = getFrom();
-		while (iter.hasNext()) {
-			EdgeClass ec = (EdgeClass) iter.next();
+		for (AttributedElementClass ac : getDirectSubClasses()) {
+			EdgeClass ec = (EdgeClass) ac;
 			if ((ec.getTo() != mostSpecialTo)
 					&& (!mostSpecialTo.isSubClassOf(ec.getTo()))) {
-				// System.out.println("MostSpecialTo: " +
-				// mostSpecialTo.getName() + " is subclass of: " +
-				// ec.getTo().getName() + " : " +
-				// mostSpecialTo.isSubClassOf(ec.getTo()) );
-
 				if (ec.getTo().isSubClassOf(mostSpecialTo)) {
 					mostSpecialTo = ec.getTo();
 				} else {
