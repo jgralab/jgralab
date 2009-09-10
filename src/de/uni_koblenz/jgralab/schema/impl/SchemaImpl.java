@@ -587,6 +587,8 @@ public class SchemaImpl implements Schema {
 			options.add(jgralabClassPath);
 		}
 
+		for (JavaSourceFromString st : javaSources)
+			System.out.println("SourceFromString: " + st);
 		compiler.getTask(null, manager, null, options, null, javaSources)
 				.call();
 	}

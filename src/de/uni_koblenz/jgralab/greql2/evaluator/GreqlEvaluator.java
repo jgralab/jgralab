@@ -566,25 +566,36 @@ public class GreqlEvaluator {
 	public AttributedElementClass getKnownType(String typeSimpleName) {
 		return knownTypes.get(typeSimpleName);
 	}
+	
+	private Graph minimalGraph = null;
 
 	/**
 	 * @return a minimal graph (no vertices and no edges) of a minimal schema.
 	 */
 	private Graph createMinimalGraph() {
-		Schema minS = new SchemaImpl("MinimalSchema", "de.uni_koblenz.jgralab");
-		GraphClass gc = minS.createGraphClass("MinimalGraph");
-		VertexClass n = gc.createVertexClass("Node");
-		gc.createEdgeClass("Link", n, n);
-		minS.compile();
-		Method graphCreateMethod = minS.getGraphCreateMethod();
+		 if (minimalGraph== null) {
+			Schema minimalSchema = new SchemaImpl("MinimalSchema", "de.uni_koblenz.jgralab.greqlminschema");
+			GraphClass gc =  minimalSchema.createGraphClass("MinimalGraph");
+			VertexClass n = gc.createVertexClass("Node");
+			gc.createEdgeClass("Link", n, n);
+			System.out.println("Trying to commit schema");
+			minimalSchema.compile();
+//			try {
+//				minimalSchema.commit("/home/dbildh/tmp");
+//			} catch (GraphIOException e1) {
+//				// TODO Auto-generated catch block
+//				e1.printStackTrace();
+//			}
+			System.out.println("Heureka");
+			Method graphCreateMethod = minimalSchema.getGraphCreateMethod();
 
-		try {
-			return (Graph) (graphCreateMethod.invoke(null, new Object[] {
-					"test", 1, 1 }));
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		return null;
+			try {
+				minimalGraph = (Graph) (graphCreateMethod.invoke(null, new Object[] {"test", 1, 1 }));
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		 }	
+		return minimalGraph;
 	}
 
 	/**
