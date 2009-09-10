@@ -139,8 +139,9 @@ public class EdgeClassImpl extends GraphElementClassImpl implements EdgeClass {
 					+ ", because that is more special.");
 		}
 		super.addSuperClass(superClass);
-		mergeConnectionCardinalities();
-		mergeConnectionVertexClasses();
+		//mergeConnectionCardinalities();
+		//mergeConnectionVertexClasses();
+		checkConnectionRestrictions();
 	}
 
 	@Override
@@ -225,140 +226,184 @@ public class EdgeClassImpl extends GraphElementClassImpl implements EdgeClass {
 		for (AttributedElementClass ac : directSuperClasses) {
 			EdgeClass ec = (EdgeClass) ac;
 			if ((to != ec.getTo()) && !to.isSubClassOf(ec.getTo())) {
-				return false;
+				throw new InheritanceException(
+						"VertexClass " + to + " of To-connection of edge class "
+								+ getQualifiedName()
+								+ " is not equal to or a subclass of "
+								+ " VertexClass " + ec.getTo()
+								+ " of inherited edge class "
+								+ ec.getQualifiedName());
 			}
 			if (toMin > ec.getToMax()) {
-				return false;
+				throw new InheritanceException(
+				"Cardinalities for To-connection of edge class "
+						+ getQualifiedName()
+						+ " doesn't fit to inherited cardinalities, minimal cardinality "
+						+ toMin
+						+ " is bigger than maximal cardinality "
+						+ ec.getToMax() + " of inherited edge class "
+						+ ec.getQualifiedName());
 			}
 			if (toMax > ec.getToMax()) {
-				return false;
+				throw new InheritanceException(
+						"Cardinalities for To-connection of edge class "
+								+ getQualifiedName()
+								+ " doesn't fit to inherited cardinalities, maximal cardinality "
+								+ toMin
+								+ " is bigger than maximal cardinality "
+								+ ec.getToMax() + " of inherited edge class "
+								+ ec.getQualifiedName());
 			}
 			if ((from != ec.getFrom()) && !from.isSubClassOf(ec.getFrom())) {
-				return false;
+				throw new InheritanceException(
+						"VertexClass " + from + " of From-connection of edge class "
+								+ getQualifiedName()
+								+ " is not equal to or a subclass of "
+								+ " VertexClass " + ec.getFrom()
+								+ " of inherited edge class "
+								+ ec.getQualifiedName());
 			}
 			if (fromMin > ec.getFromMax()) {
-				return false;
+				throw new InheritanceException(
+						"Cardinalities for From-connection of edge class "
+								+ getQualifiedName()
+								+ " doesn't fit to inherited cardinalities, minimal cardinality "
+								+ fromMin
+								+ " is bigger than maximal cardinality "
+								+ ec.getFromMax() + " of inherited edge class "
+								+ ec.getQualifiedName());
 			}
 			if (fromMax > ec.getFromMax()) {
-				return false;
+				throw new InheritanceException(
+						"Cardinalities for From-connection of edge class "
+								+ getQualifiedName()
+								+ " doesn't fit to inherited cardinalities, maximal cardinality "
+								+ fromMax
+								+ " is bigger than maximal cardinality "
+								+ ec.getFromMax() + " of inherited edge class "
+								+ ec.getQualifiedName());
 			}
 		}
 		return true;
 	}
 
-	/**
-	 * Tries to merge the cardinalities of the edges endpoints
-	 * 
-	 * @return true if a merge was done successfull, false if no merge was
-	 *         needed or if a merge is not possible
-	 * 
-	 */
-	protected boolean mergeConnectionCardinalities() {
-		int newToMin = toMin;
-		int newToMax = toMax;
-		int newFromMin = fromMin;
-		int newFromMax = fromMax;
+//	/**
+//	 * Tries to merge the cardinalities of the edges endpoints
+//	 * 
+//	 * @return true if a merge was done successfull, false if no merge was
+//	 *         needed or if a merge is not possible
+//	 * 
+//	 */
+//	protected boolean mergeConnectionCardinalities() {
+//		int newToMin = toMin;
+//		int newToMax = toMax;
+//		int newFromMin = fromMin;
+//		int newFromMax = fromMax;
+//
+//		for (AttributedElementClass ac : directSuperClasses) {
+//			EdgeClass ec = (EdgeClass) ac;
+//			if (newToMin > ec.getToMax()) {
+//				throw new InheritanceException(
+//						"Cardinalities for To-connection of edge class "
+//								+ getQualifiedName()
+//								+ " cannot be merged, minimal cardinality "
+//								+ newToMin
+//								+ " is bigger than maximal cardinality "
+//								+ ec.getToMax() + " of inherited edge class "
+//								+ ec.getQualifiedName());
+//			}
+//			if (newToMax > ec.getToMax()) {
+//				throw new InheritanceException(
+//						"Cardinalities for To-connection of edge class "
+//								+ getQualifiedName()
+//								+ " cannot be merged, maximal cardinality "
+//								+ newToMax
+//								+ " is bigger than maximal cardinality "
+//								+ ec.getToMin() + " of inherited edge class "
+//								+ ec.getQualifiedName());
+//			}
+//			if (newFromMin > ec.getFromMax()) {
+//				throw new InheritanceException(
+//						"Cardinalities for From-connection of edge class "
+//								+ getQualifiedName()
+//								+ " cannot be merged, minimal cardinality "
+//								+ newFromMin
+//								+ " is bigger than maximal cardinality "
+//								+ ec.getFromMax() + " of inherited edge class "
+//								+ ec.getQualifiedName());
+//			}
+//			if (newFromMax > ec.getFromMax()) {
+//				throw new InheritanceException(
+//						"Cardinalities for From-connection of edge class "
+//								+ getQualifiedName()
+//								+ " cannot be merged, maximal cardinality "
+//								+ newFromMin
+//								+ " is bigger than maximal cardinality "
+//								+ ec.getFromMax() + " of inherited edge class "
+//								+ ec.getQualifiedName());
+//			}
+//		}
+//		if ((fromMin != newFromMin) || (fromMax != newFromMax)
+//				|| (toMin != newToMin) || (toMax != newToMax)) {
+//			fromMin = newFromMin;
+//			fromMax = newFromMax;
+//			toMin = newToMin;
+//			toMax = newToMax;
+//			return true;
+//		} else {
+//			return false;
+//		}
+//	}
+	
+	
+	
+	
 
-		for (AttributedElementClass ac : directSuperClasses) {
-			EdgeClass ec = (EdgeClass) ac;
-			if (newToMin > ec.getToMax()) {
-				throw new InheritanceException(
-						"Cardinalities for To-connection of edge class "
-								+ getQualifiedName()
-								+ " cannot be merged, minimal cardinality "
-								+ newToMin
-								+ " is bigger than maximal cardinality "
-								+ ec.getToMax() + " of inherited edge class "
-								+ ec.getQualifiedName());
-			}
-			if (newToMax > ec.getToMax()) {
-				throw new InheritanceException(
-						"Cardinalities for To-connection of edge class "
-								+ getQualifiedName()
-								+ " cannot be merged, maximal cardinality "
-								+ newToMax
-								+ " is bigger than maximal cardinality "
-								+ ec.getToMin() + " of inherited edge class "
-								+ ec.getQualifiedName());
-			}
-			if (newFromMin > ec.getFromMax()) {
-				throw new InheritanceException(
-						"Cardinalities for From-connection of edge class "
-								+ getQualifiedName()
-								+ " cannot be merged, minimal cardinality "
-								+ newFromMin
-								+ " is bigger than maximal cardinality "
-								+ ec.getFromMax() + " of inherited edge class "
-								+ ec.getQualifiedName());
-			}
-			if (newFromMax > ec.getFromMax()) {
-				throw new InheritanceException(
-						"Cardinalities for From-connection of edge class "
-								+ getQualifiedName()
-								+ " cannot be merged, maximal cardinality "
-								+ newFromMin
-								+ " is bigger than maximal cardinality "
-								+ ec.getFromMax() + " of inherited edge class "
-								+ ec.getQualifiedName());
-			}
-		}
-		if ((fromMin != newFromMin) || (fromMax != newFromMax)
-				|| (toMin != newToMin) || (toMax != newToMax)) {
-			fromMin = newFromMin;
-			fromMax = newFromMax;
-			toMin = newToMin;
-			toMax = newToMax;
-			return true;
-		} else {
-			return false;
-		}
-	}
-
-	/**
-	 * Tries to merge the VertexClasses of the edges endpoints
-	 * 
-	 * @return true if a merge was done successfull, false if no merge was
-	 *         needed or if a merge is not possible
-	 */
-	protected boolean mergeConnectionVertexClasses() {
-		VertexClass mostSpecialTo = getTo();
-		VertexClass mostSpecialFrom = getFrom();
-		for (AttributedElementClass ac : getDirectSubClasses()) {
-			EdgeClass ec = (EdgeClass) ac;
-			if ((ec.getTo() != mostSpecialTo)
-					&& (!mostSpecialTo.isSubClassOf(ec.getTo()))) {
-				if (ec.getTo().isSubClassOf(mostSpecialTo)) {
-					mostSpecialTo = ec.getTo();
-				} else {
-					throw new InheritanceException(
-							"Cannot merge ToVertexClasses for EdgeClass "
-									+ getQualifiedName() + ": VertexClass "
-									+ mostSpecialTo.getQualifiedName()
-									+ " and " + ec.getTo().getQualifiedName()
-									+ " cannot be merged");
-				}
-			}
-			if ((ec.getFrom() != mostSpecialFrom)
-					&& (!mostSpecialFrom.isSubClassOf(ec.getFrom()))) {
-				if (ec.getFrom().isSubClassOf(mostSpecialFrom)) {
-					mostSpecialFrom = ec.getFrom();
-				} else {
-					throw new InheritanceException(
-							"Cannot merge FromVertexClasses for EdgeClass "
-									+ getQualifiedName() + " VertexClass "
-									+ mostSpecialFrom.getQualifiedName()
-									+ " and " + ec.getFrom().getQualifiedName()
-									+ " cannot be merged");
-				}
-			}
-		}
-		if ((mostSpecialTo != getTo()) || (mostSpecialFrom != getFrom())) {
-			to = mostSpecialTo;
-			from = mostSpecialFrom;
-			return true;
-		}
-		return false;
-	}
+//	/**
+//	 * Tries to merge the VertexClasses of the edges endpoints
+//	 * 
+//	 * @return true if a merge was done successfull, false if no merge was
+//	 *         needed or if a merge is not possible
+//	 */
+//	protected boolean mergeConnectionVertexClasses() {
+//		VertexClass mostSpecialTo = getTo();
+//		VertexClass mostSpecialFrom = getFrom();
+//		for (AttributedElementClass ac : getDirectSubClasses()) {
+//			EdgeClass ec = (EdgeClass) ac;
+//			if ((ec.getTo() != mostSpecialTo)
+//					&& (!mostSpecialTo.isSubClassOf(ec.getTo()))) {
+//				if (ec.getTo().isSubClassOf(mostSpecialTo)) {
+//					mostSpecialTo = ec.getTo();
+//				} else {
+//					throw new InheritanceException(
+//							"Cannot merge ToVertexClasses for EdgeClass "
+//									+ getQualifiedName() + ": VertexClass "
+//									+ mostSpecialTo.getQualifiedName()
+//									+ " and " + ec.getTo().getQualifiedName()
+//									+ " cannot be merged");
+//				}
+//			}
+//			if ((ec.getFrom() != mostSpecialFrom)
+//					&& (!mostSpecialFrom.isSubClassOf(ec.getFrom()))) {
+//				if (ec.getFrom().isSubClassOf(mostSpecialFrom)) {
+//					mostSpecialFrom = ec.getFrom();
+//				} else {
+//					throw new InheritanceException(
+//							"Cannot merge FromVertexClasses for EdgeClass "
+//									+ getQualifiedName() + " VertexClass "
+//									+ mostSpecialFrom.getQualifiedName()
+//									+ " and " + ec.getFrom().getQualifiedName()
+//									+ " cannot be merged");
+//				}
+//			}
+//		}
+//		if ((mostSpecialTo != getTo()) || (mostSpecialFrom != getFrom())) {
+//			to = mostSpecialTo;
+//			from = mostSpecialFrom;
+//			return true;
+//		}
+//		return false;
+//	}
 
 	@Override
 	public DirectedEdgeClass getInEdgeClass() {

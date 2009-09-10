@@ -39,7 +39,7 @@ import de.uni_koblenz.jgralab.schema.VertexClass;
  * @author ist@uni-koblenz.de
  */
 public abstract class VertexImpl extends GraphElementImpl implements Vertex {
-	protected int id;
+	//protected int id;
 
 	abstract protected void setIncidenceListVersion(long incidenceListVersion);
 
