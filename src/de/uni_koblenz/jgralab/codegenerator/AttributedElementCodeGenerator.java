@@ -446,7 +446,7 @@ public class AttributedElementCodeGenerator extends CodeGenerator {
 				if (transactionSupport) {
 					CodeSnippet readBlock = new CodeSnippet();
 					readBlock.setVariable("variableType", attribute.getDomain().getJavaClassName(schemaRootPackageName));
-					readBlock.add("#variableType# tmpVar;");
+					readBlock.add("#variableType# tmpVar = null;");
 					a.add(readBlock);
 					a.add(attribute.getDomain().getReadMethod(
 							schemaRootPackageName, "tmpVar", "_io"));
