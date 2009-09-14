@@ -7,6 +7,7 @@ import static org.junit.Assert.assertTrue;
 import java.io.IOException;
 import java.util.List;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -15,11 +16,12 @@ import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.GraphIO;
 import de.uni_koblenz.jgralab.GraphIOException;
 import de.uni_koblenz.jgralab.Vertex;
-import de.uni_koblenz.jgralab.impl.std.GraphImpl;
+import de.uni_koblenz.jgralab.impl.trans.GraphImpl;
 import de.uni_koblenz.jgralab.schema.AttributedElementClass;
 import de.uni_koblenz.jgralab.schema.EdgeClass;
 import de.uni_koblenz.jgralab.schema.GraphClass;
 import de.uni_koblenz.jgralab.schema.VertexClass;
+import de.uni_koblenz.jgralab.trans.CommitFailedException;
 import de.uni_koblenz.jgralabtest.schemas.minimal.MinimalGraph;
 import de.uni_koblenz.jgralabtest.schemas.minimal.MinimalSchema;
 import de.uni_koblenz.jgralabtest.schemas.vertextest.DoubleSubNode;
@@ -40,9 +42,14 @@ public class GraphTest {
 
 	@Before
 	public void setUp() {
-		graph = VertexTestSchema.instance().createVertexTestGraph();
-		graph2 = VertexTestSchema.instance().createVertexTestGraph();
+
+		graph = VertexTestSchema.instance().createVertexTestGraphWithTransactionSupport(); // .createVertexTestGraph();
+		graph2 = VertexTestSchema.instance().createVertexTestGraphWithTransactionSupport();
+		graph.createTransaction();
+		graph2.createTransaction();
+		System.out.println("Graph2 is instance of class " + graph2.getClass());
 		v1 = graph.createVertex(SubNode.class);
+		System.out.println("V1 is instance of class " + v1.getClass());
 		v2 = graph.createVertex(SubNode.class);
 		v3 = graph.createVertex(SubNode.class);
 		v4 = graph.createVertex(SubNode.class);
@@ -54,6 +61,18 @@ public class GraphTest {
 		v10 = graph.createVertex(DoubleSubNode.class);
 		v11 = graph.createVertex(DoubleSubNode.class);
 		v12 = graph.createVertex(DoubleSubNode.class);
+	}
+	
+	@After
+	public void tearDown() {
+//		try {
+//			graph.commit();
+//			graph2.commit();
+//		} catch (CommitFailedException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
+
 	}
 
 	public void getVertexClasses() {
@@ -248,7 +267,7 @@ public class GraphTest {
 	}
 
 	@Test
-	public void testIsGraphModified() {
+	public void testIsGraphModified() throws Exception {
 		long l1 = graph.getGraphVersion();
 		long l2 = graph2.getGraphVersion();
 
@@ -257,12 +276,16 @@ public class GraphTest {
 
 		graph.createEdge(SubLink.class, v9, v5);
 		graph2.createSubNode();
+		graph.commit();
+		graph2.commit();
 
 		assertEquals(true, graph.isGraphModified(l1));
 		assertEquals(true, graph2.isGraphModified(l2));
 		l1 = graph.getGraphVersion();
 		l2 = graph2.getGraphVersion();
 
+		graph.createTransaction();
+		graph2.createTransaction();
 		Edge e1 = graph.createEdge(Link.class, v1, v6);
 		graph2.createSuperNode();
 		assertEquals(true, graph.isGraphModified(l1));
