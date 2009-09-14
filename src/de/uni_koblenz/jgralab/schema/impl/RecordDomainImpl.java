@@ -61,8 +61,8 @@ public final class RecordDomainImpl extends CompositeDomainImpl implements
 		super(sn, pkg);
 
 		"ab".substring(0, 1);
-		for (String name : components.keySet()) {
-			addComponent(name, components.get(name));
+		for (Entry<String, Domain> e : components.entrySet()) {
+			addComponent(e.getKey(), e.getValue());
 		}
 	}
 
@@ -196,7 +196,7 @@ public final class RecordDomainImpl extends CompositeDomainImpl implements
 		}
 		return false;
 	}
-	
+
 	private void internalGetReadMethod(CodeSnippet code, String schemaPrefix,
 			String variableName, String graphIoVariableName) {
 		code.add("#init#");
@@ -212,19 +212,19 @@ public final class RecordDomainImpl extends CompositeDomainImpl implements
 		code.add("\t" + variableName + " = null;");
 		code.add("}");
 	}
-	
+
 	private void internalGetWriteMethod(CodeSnippet code,
 			String schemaRootPackagePrefix, String variableName,
 			String graphIoVariableName) {
 		code.add("if (#name# != null) {");
-		code.add("\t" + "#name#.writeComponentValues("
-				+ graphIoVariableName + ");");
+		code.add("\t" + "#name#.writeComponentValues(" + graphIoVariableName
+				+ ");");
 		code.add("} else {");
 		code.add("\t" + graphIoVariableName
 				+ ".writeIdentifier(GraphIO.NULL_LITERAL);");
 		code.add("}");
 	}
-	
+
 	@Override
 	public CodeBlock getTransactionReadMethod(String schemaPrefix,
 			String variableName, String graphIoVariableName) {

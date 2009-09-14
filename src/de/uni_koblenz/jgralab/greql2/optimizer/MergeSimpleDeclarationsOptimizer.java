@@ -2,6 +2,7 @@ package de.uni_koblenz.jgralab.greql2.optimizer;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map.Entry;
 import java.util.logging.Logger;
 
 import de.uni_koblenz.jgralab.EdgeDirection;
@@ -115,8 +116,9 @@ public class MergeSimpleDeclarationsOptimizer extends OptimizerBase {
 	 */
 	private void mergeSimpleDeclarations(
 			HashMap<String, ArrayList<SimpleDeclaration>> mergableSDMap) {
-		for (String key : mergableSDMap.keySet()) {
-			SimpleDeclaration survivor = mergableSDMap.get(key).get(0);
+		for (Entry<String, ArrayList<SimpleDeclaration>> e : mergableSDMap
+				.entrySet()) {
+			SimpleDeclaration survivor = e.getValue().get(0);
 			Declaration decl = (Declaration) survivor.getFirstIsSimpleDeclOf()
 					.getOmega();
 			IsSimpleDeclOf isSDOfSurvivor = survivor
@@ -124,7 +126,7 @@ public class MergeSimpleDeclarationsOptimizer extends OptimizerBase {
 			IsTypeExprOfDeclaration isTEODSurvivor = survivor
 					.getFirstIsTypeExprOfDeclaration(EdgeDirection.IN);
 
-			for (SimpleDeclaration s : mergableSDMap.get(key)) {
+			for (SimpleDeclaration s : e.getValue()) {
 
 				IsSimpleDeclOf isSDOfS = s
 						.getFirstIsSimpleDeclOf(EdgeDirection.OUT);
