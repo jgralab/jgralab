@@ -234,16 +234,6 @@ public class EdgeClassImpl extends GraphElementClassImpl implements EdgeClass {
 								+ " of inherited edge class "
 								+ ec.getQualifiedName());
 			}
-			if (toMin > ec.getToMax()) {
-				throw new InheritanceException(
-				"Cardinalities for To-connection of edge class "
-						+ getQualifiedName()
-						+ " doesn't fit to inherited cardinalities, minimal cardinality "
-						+ toMin
-						+ " is bigger than maximal cardinality "
-						+ ec.getToMax() + " of inherited edge class "
-						+ ec.getQualifiedName());
-			}
 			if (toMax > ec.getToMax()) {
 				throw new InheritanceException(
 						"Cardinalities for To-connection of edge class "
@@ -261,16 +251,6 @@ public class EdgeClassImpl extends GraphElementClassImpl implements EdgeClass {
 								+ " is not equal to or a subclass of "
 								+ " VertexClass " + ec.getFrom()
 								+ " of inherited edge class "
-								+ ec.getQualifiedName());
-			}
-			if (fromMin > ec.getFromMax()) {
-				throw new InheritanceException(
-						"Cardinalities for From-connection of edge class "
-								+ getQualifiedName()
-								+ " doesn't fit to inherited cardinalities, minimal cardinality "
-								+ fromMin
-								+ " is bigger than maximal cardinality "
-								+ ec.getFromMax() + " of inherited edge class "
 								+ ec.getQualifiedName());
 			}
 			if (fromMax > ec.getFromMax()) {
