@@ -249,7 +249,7 @@ public class EdgeClassImpl extends GraphElementClassImpl implements EdgeClass {
 						"Cardinalities for To-connection of edge class "
 								+ getQualifiedName()
 								+ " doesn't fit to inherited cardinalities, maximal cardinality "
-								+ toMin
+								+ toMax
 								+ " is bigger than maximal cardinality "
 								+ ec.getToMax() + " of inherited edge class "
 								+ ec.getQualifiedName());
