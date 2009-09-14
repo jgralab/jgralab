@@ -82,7 +82,7 @@ public final class SetDomainImpl extends CollectionDomainImpl implements
 		code.setVariable("init", "");
 		internalGetReadMethod(code, schemaRootPackagePrefix, variableName,
 				graphIoVariableName);
-		
+
 		return code;
 	}
 
@@ -98,7 +98,7 @@ public final class SetDomainImpl extends CollectionDomainImpl implements
 		code.setVariable("name", variableName);
 		internalGetWriteMethod(code, schemaRootPackagePrefix, variableName,
 				graphIoVariableName);
-		
+
 		return code;
 	}
 
@@ -106,7 +106,7 @@ public final class SetDomainImpl extends CollectionDomainImpl implements
 	public String toString() {
 		return "domain " + SETDOMAIN_NAME + "<" + baseDomain.toString() + ">";
 	}
-	
+
 	private void internalGetReadMethod(CodeList code,
 			String schemaRootPackagePrefix, String variableName,
 			String graphIoVariableName) {
@@ -125,15 +125,16 @@ public final class SetDomainImpl extends CollectionDomainImpl implements
 				"#io#.match(\"{\");", "while (!#io#.isNextToken(\"}\")) {",
 				"\t#basetype# element = null;"));
 		code.add(getBaseDomain().getReadMethod(schemaRootPackagePrefix,
-				 "element", graphIoVariableName), 1);
+				"element", graphIoVariableName), 1);
 		code.add(new CodeSnippet("\t#name#.add(element);", "}",
 				"#io#.match(\"}\");", "#io#.space();"));
-		code.addNoIndent(new CodeSnippet(
+		code
+				.addNoIndent(new CodeSnippet(
 						"} else if (#io#.isNextToken(GraphIO.NULL_LITERAL) || #io#.isNextToken(GraphIO.OLD_NULL_LITERAL)) {"));
 		code.add(new CodeSnippet("#io#.match();"));
 		code.addNoIndent(new CodeSnippet("}"));
 	}
-	
+
 	private void internalGetWriteMethod(CodeList code,
 			String schemaRootPackagePrefix, String variableName,
 			String graphIoVariableName) {
@@ -155,7 +156,7 @@ public final class SetDomainImpl extends CollectionDomainImpl implements
 				+ ".writeIdentifier(GraphIO.NULL_LITERAL);"));
 		code.addNoIndent(new CodeSnippet("}"));
 	}
-	
+
 	@Override
 	public CodeBlock getTransactionReadMethod(String schemaPrefix,
 			String variableName, String graphIoVariableName) {

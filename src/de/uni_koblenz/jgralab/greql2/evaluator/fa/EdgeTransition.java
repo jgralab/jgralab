@@ -82,7 +82,7 @@ public class EdgeTransition extends SimpleTransition {
 		if (!typeCollection.equals(et.typeCollection)) {
 			return false;
 		}
-		if (!validEdgeRole.equals(et.validEdgeRole)) {
+		if ((validEdgeRole != null) && !validEdgeRole.equals(et.validEdgeRole)) {
 			return false;
 		}
 		if (allowedEdgeEvaluator != et.allowedEdgeEvaluator) {
