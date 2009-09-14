@@ -358,7 +358,7 @@ public class MultiplicityTest {
 	 */
 
 	@Test
-	public void multiplicityTest16() throws GraphIOException {
+	public void multiplicityTest16() throws Exception {
 		compileSchema("Schema de.uni_koblenz.jgralabtest.TestSchema;"
 				+ "GraphClass TestGraph;" + "VertexClass VC1;"
 				+ "VertexClass VC2;"
@@ -367,7 +367,7 @@ public class MultiplicityTest {
 	}
 
 	@Test
-	public void multiplicityTest18() throws GraphIOException {
+	public void multiplicityTest18() throws Exception {
 		compileSchema("Schema de.uni_koblenz.jgralabtest.TestSchema;"
 				+ "GraphClass TestGraph;" + "VertexClass VC1;"
 				+ "VertexClass VC2;"
@@ -376,7 +376,7 @@ public class MultiplicityTest {
 	}
 
 	@Test
-	public void multiplicityTest22() throws GraphIOException {
+	public void multiplicityTest22() throws Exception {
 		compileSchema("Schema de.uni_koblenz.jgralabtest.TestSchema;"
 				+ "GraphClass TestGraph;" + "VertexClass VC1;"
 				+ "VertexClass VC2;" + "VertexClass VC3:VC1;"
@@ -394,7 +394,7 @@ public class MultiplicityTest {
 	 */
 	@Test(expected = GraphIOException.class)
 	// TODO Replace with the expected exception
-	public void multiplicityTest17() throws GraphIOException {
+	public void multiplicityTest17() throws Exception {
 		compileSchema("Schema de.uni_koblenz.jgralabtest.TestSchema;"
 				+ "GraphClass TestGraph;" + "VertexClass VC1;"
 				+ "VertexClass VC2;"
@@ -408,7 +408,7 @@ public class MultiplicityTest {
 	 */
 	@Test(expected = GraphIOException.class)
 	// TODO Replace with the expected exception
-	public void multiplicityTest19() throws GraphIOException {
+	public void multiplicityTest19() throws Exception {
 		compileSchema("Schema de.uni_koblenz.jgralabtest.TestSchema;"
 				+ "GraphClass TestGraph;" + "VertexClass VC1;"
 				+ "VertexClass VC2;"
@@ -420,7 +420,7 @@ public class MultiplicityTest {
 	 * Multiplicity of the child edge is smaller than the smallest possible
 	 * multiplicity of the parent edge, this is allowed
 	 */
-	public void multiplicityTest20() throws GraphIOException {
+	public void multiplicityTest20() throws Exception {
 		compileSchema("Schema de.uni_koblenz.jgralabtest.TestSchema;"
 				+ "GraphClass TestGraph;" + "VertexClass VC1;"
 				+ "VertexClass VC2;"
@@ -432,7 +432,7 @@ public class MultiplicityTest {
 	 * EC2 has a different toVertexType than its supertype.
 	 */
 	@Test(expected = GraphIOException.class)
-	public void multiplicityTest21() throws GraphIOException {
+	public void multiplicityTest21() throws Exception {
 		compileSchema("Schema de.uni_koblenz.jgralabtest.TestSchema;"
 				+ "GraphClass TestGraph;" 
 				+ "VertexClass VC1;"

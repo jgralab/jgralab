@@ -36,7 +36,6 @@ import javax.xml.stream.XMLStreamWriter;
 
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.Option;
-import org.w3c.dom.Document;
 
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.GraphIO;
@@ -83,9 +82,7 @@ public class JGraLab2OWL {
 	 *            each OWL construct representing an EdgeClass.
 	 * @throws IOException
 	 * 
-	 * @see #initializeDocument()
 	 * @see #createOntologyHeader(Schema schema)
-	 * @see #createOwlFile(Document doc)
 	 */
 	public static void saveSchemaToOWL(String filename, Schema schema,
 			boolean edgeClasses2Properties, boolean appendSuffix2EdgeClassName) {
@@ -127,9 +124,7 @@ public class JGraLab2OWL {
 	 *            converted.
 	 * @throws IOException
 	 * 
-	 * @see #initializeDocument()
 	 * @see #createOntologyHeader(Schema schema)
-	 * @see #createOwlFile(Document doc)
 	 */
 	public static void saveGraphToOWLInstances(String filename, Graph graph,
 			boolean edgeClasses2Properties, boolean appendSuffix2EdgeClassName,
@@ -182,9 +177,7 @@ public class JGraLab2OWL {
 	 *            converted.
 	 * @throws IOException
 	 * 
-	 * @see #initializeDocument()
 	 * @see #createOntologyHeader(Schema schema)
-	 * @see #createOwlFile(Document doc)
 	 */
 	public static void saveGraphsToOWLConcepts(String filename, Schema schema,
 			Graph[] graphs, boolean edgeClasses2Properties,
@@ -225,8 +218,8 @@ public class JGraLab2OWL {
 	 * 
 	 * @param filename
 	 *            The name of the OWL-file to be created.
-	 * @param schemaFilename
-	 *            The name of the TG file containing the graphs' common schema.
+	 * @param schema
+	 *            the common schema for all concept graphs
 	 * @param conceptGraphs
 	 *            The graphs which shall be converted to OWL concepts.
 	 * @param instanceGraph
@@ -243,11 +236,11 @@ public class JGraLab2OWL {
 	 *            If {@code true}, the graphs' schema is also converted and
 	 *            written to the file. If {@code false}, the schema is not
 	 *            converted.
+	 * @param pf
+	 *            a progress function (may be null)
 	 * @throws IOException
 	 * 
-	 * @see #initializeDocument()
 	 * @see #createOntologyHeader(Schema schema)
-	 * @see #createOwlFile(Document doc)
 	 */
 	public static void saveGraphsToOWLConceptsAndGraphToOWLInstances(
 			String filename, Schema schema, Graph[] conceptGraphs,

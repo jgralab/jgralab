@@ -117,9 +117,6 @@ public class JGraLabFacade {
 	 * @param schemaName
 	 *            the name of the Java class of the graph schema. This class
 	 *            must be on the classpath of the XMLRPC server.
-	 * @param graphClassName
-	 *            the name of the graph class the created graph shall be an
-	 *            instance of
 	 * @param graphId
 	 *            the id of the created graph
 	 * @return a {@code Map<String, Object>} with four entries (see method

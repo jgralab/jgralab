@@ -185,7 +185,7 @@ public class SchemaGraph2Tg {
 	/**
 	 * Gives the possibility to either format the output or not.
 	 * 
-	 * @param isFormated
+	 * @param isFormatted
 	 *            <code>true</code> will format the output.
 	 */
 	public void setIsFormatted(boolean isFormatted) {

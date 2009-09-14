@@ -163,9 +163,8 @@ public interface NamedElement {
 	 * <ul>
 	 * <li>if this named element is the <code>DefaultPackage</code> (
 	 * <code>namedElement.parentPackage</code> is <code>null</code>) and
-	 * {@link de.uni_koblenz.jgralab3.schema.Package.DEFAULTPACKAGE_NAME
-	 * DEFAULTPACKAGE_NAME} is an empty String, then the qualified name equals
-	 * this named element's simple name</li>
+	 * {@link Package#DEFAULTPACKAGE_NAME DEFAULTPACKAGE_NAME} is an empty
+	 * String, then the qualified name equals this named element's simple name</li>
 	 * <li>if the above does not apply, but this named element's parent package
 	 * is the <code>DefaultPackage</code>, then the qualified name equals this
 	 * named element's simple name
@@ -179,7 +178,8 @@ public interface NamedElement {
 	public String getQualifiedName();
 
 	/**
-	 * Return the qualified name relatively to the given package.
+	 * Computes the qualified name of this {@link NamedElement NamedElement}
+	 * relatively to the given {@link Package Package}.
 	 * 
 	 * <p>
 	 * <b>Pattern:</b> <code>relQn = namedElement.getQualifiedName(pkg);</code>
@@ -197,14 +197,15 @@ public interface NamedElement {
 	 * element's parent package</li>
 	 * <li>if the above does not apply and this element's parent package is the
 	 * <code>DefaultPackage</code>, then <code>relQn</code> is the composition
-	 * of the {@link de.uni_koblenz.jgralab3.schema.Package.DEFAULTPACKAGE_NAME
-	 * DEFAULTPACKAGE_NAME} + "." + <code>namedElement.simpleName</code></li>
+	 * of the {@link Package#DEFAULTPACKAGE_NAME DEFAULTPACKAGE_NAME} + "." +
+	 * <code>namedElement.simpleName</code></li>
 	 * <li>in any other case, <code>relQn</code> is this named element's
 	 * qualified name</li>
 	 * </ul>
 	 * 
 	 * @param pkg
-	 * @return
+	 *            a Package
+	 * @return the qualified name relative to the given package
 	 */
 	public String getQualifiedName(Package pkg);
 

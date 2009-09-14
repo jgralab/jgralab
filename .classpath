@@ -8,9 +8,7 @@
 	<classpathentry kind="var" path="UKOISTHOME/jgralab/lib/xmlrpc/xmlrpc-client-3.0.jar"/>
 	<classpathentry kind="var" path="UKOISTHOME/jgralab/lib/xmlrpc/xmlrpc-common-3.0.jar"/>
 	<classpathentry kind="var" path="UKOISTHOME/jgralab/lib/xmlrpc/xmlrpc-server-3.0.jar"/>
-	<classpathentry kind="var" path="UKOISTHOME/common/lib/antlr/org.antlr_3.1.1.jar"/>
 	<classpathentry kind="var" path="UKOISTHOME/common/lib/autoBuildID/de.uni_koblenz.autobuildid.jar"/>
-	<classpathentry kind="var" path="UKOISTHOME/common/lib/getopt/java-getopt-1.0.13.jar"/>
 	<classpathentry kind="var" path="UKOISTHOME/common/lib/jdom/jdom.jar"/>
 	<classpathentry kind="var" path="UKOISTHOME/common/lib/javaee/javaee.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>

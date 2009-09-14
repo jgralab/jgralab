@@ -258,8 +258,12 @@ public class JValueMap extends JValue {
 	}
 
 	/**
+	 * Computes the union of this JValueMap and the <code>other</code>
+	 * JValueMap. The key sets must be disjoint.
+	 * 
 	 * @param other
-	 * @return
+	 *            another JValueMap
+	 * @return the union of the two maps
 	 */
 	public JValueMap union(JValueMap other) {
 		JValueSet allKeys = new JValueSet();

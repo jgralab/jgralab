@@ -4,15 +4,11 @@ Steps needed to build JGraLab:
 
 2. Download jdom, antlr, javaee and xmlrpc, and copy the nessesary jar-files to these locations:
 	- jdom to common/lib/jdom
-	- antlr to common/lib/antlr
 	- javaee to common/lib/javaee
 	- xmlrpc to jgralab/lib/xmlrpc (more than one jar-file)
    
    jdom can be downloaded from:
    		http://www.jdom.org/
-   
-   antlr can be downloaded from:
-   		http://www.antlr.org/
    
    javaee (Java Enterprise Edition) can be downloaded from:
    		http://java.sun.com

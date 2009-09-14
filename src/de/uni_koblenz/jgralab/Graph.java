@@ -499,7 +499,7 @@ public interface Graph extends AttributedElement {
 	 * have the specified <code>vertexClass</code> (including subclasses), in
 	 * the order determined by the vertex sequence.
 	 * 
-	 * @param vertexClass
+	 * @param vertexclass
 	 *            a VertexClass (i.e. instance of schema.VertexClass)
 	 * 
 	 * @return an Iterable for all vertices of the specified

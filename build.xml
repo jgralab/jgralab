@@ -2,7 +2,7 @@
 
 <!--
     - JGraLab - The Java graph laboratory
-    - (c) 2006-2007 Institute for Software Technology
+    - (c) 2006-2009 Institute for Software Technology
     -               University of Koblenz-Landau, Germany
     -
     -               ist@uni-koblenz.de
@@ -302,20 +302,14 @@
         </ant>
 		<!-- unjar some commom jars -->
 		<unjar dest="${tmp.dir}">
-			<fileset dir="${comlib.dir}/getopt/" includes="**/*.jar"/>
-		</unjar>
-		<unjar dest="${tmp.dir}">
 					<fileset dir="${comlib.dir}/apache/commons/cli/" includes="**/*.jar"/>
 		</unjar>		
 		<unjar dest="${tmp.dir}">
 			<fileset dir="${comlib.dir}/jdom/" includes="**/*.jar"/>
 		</unjar>
-		<unjar dest="${tmp.dir}">
-			<fileset dir="${comlib.dir}/antlr/" includes="**/*.jar"/>
-		</unjar>
 		<!-- add license information -->
 		<copy todir="${tmp.dir}/META-INF/license">
-				<fileset dir="license" includes="antlr/** jdom/** jgralab/** xmlrpc/**"/>
+				<fileset dir="license" includes="jdom/** jgralab/** xmlrpc/**"/>
 		</copy>
 		<!-- add xmi2tgschema -->
 		<copy file="${src.dir}/de/uni_koblenz/jgralab/utilities/xmi2tgschema/XMI2TGSchema.xsl" 
@@ -360,9 +354,10 @@
 		<mkdir dir="${tmp.dir}/source"/>
 		<mkdir dir="${tmp.dir}/source/common"/>
 		<mkdir dir="${tmp.dir}/source/common/lib"/>
+		<mkdir dir="${tmp.dir}/source/common/lib/apache"/>
+		<mkdir dir="${tmp.dir}/source/common/lib/apache/commons"/>
+		<mkdir dir="${tmp.dir}/source/common/lib/apache/commons/cli"/>
 		<mkdir dir="${tmp.dir}/source/common/lib/jdom"/>
-		<mkdir dir="${tmp.dir}/source/common/lib/antlr"/>
-		<mkdir dir="${tmp.dir}/source/common/lib/getopt"/>
 		<mkdir dir="${tmp.dir}/source/jgralab"/>
 		<mkdir dir="${tmp.dir}/source/jgralab/lib"/>
 		<mkdir dir="${tmp.dir}/source/jgralab/lib/xmlrpc"/>
@@ -377,7 +372,7 @@
 		<copy todir="${tmp.dir}/source/jgralab/src">
 			<fileset dir="src" includes="de/**" excludes=" **/schema/** **/parser/** **/grumlschema/** **/*.class **/*.bak **/*~ **/*.tmp"/>
 		</copy>
-		<copy file="${common.dir}/lib/getopt/java-getopt-1.0.13.jar" todir="${tmp.dir}/source/common/lib/getopt"/>
+		<copy file="${common.dir}/lib/apache/commons/cli/commons-cli-1.2.jar" todir="${tmp.dir}/source/common/lib/apache/commons/cli"/>
 		<copy file="lib/plist/org.riediger.plist.jar" todir="${tmp.dir}/source/jgralab/lib"/>
 		<copy file="README" todir="${tmp.dir}/source/jgralab"/>
 		<copy file="README" todir="${tmp.dir}/source"/>
