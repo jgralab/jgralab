@@ -96,7 +96,7 @@ public class DefinitionEvaluator extends VertexEvaluator {
 		neededVariables = new HashSet<Variable>();
 		definedVariables = new HashSet<Variable>();
 		IsVarOf varInc = vertex.getFirstIsVarOf(EdgeDirection.IN);
-		if (varInc != null) {
+		while (varInc != null) {
 			definedVariables.add((Variable) varInc.getAlpha());
 			varInc = varInc.getNextIsVarOf(EdgeDirection.IN);
 		}
