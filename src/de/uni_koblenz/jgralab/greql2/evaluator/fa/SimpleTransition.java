@@ -77,16 +77,21 @@ public class SimpleTransition extends Transition {
 	 * greql2.evaluator.fa.Transition#equalSymbol(greql2.evaluator.fa.EdgeTransition
 	 * )
 	 */
+	@Override
 	public boolean equalSymbol(Transition t) {
-		if (!(t instanceof SimpleTransition))
+		if (!(t instanceof SimpleTransition)) {
 			return false;
+		}
 		SimpleTransition et = (SimpleTransition) t;
-		if (!typeCollection.equals(et.typeCollection))
+		if (!typeCollection.equals(et.typeCollection)) {
 			return false;
-		if (validEdgeRole != et.validEdgeRole)
+		}
+		if (!validEdgeRole.equals(et.validEdgeRole)) {
 			return false;
-		if (validDirection != et.validDirection)
+		}
+		if (!validDirection.equals(et.validDirection)) {
 			return false;
+		}
 		return true;
 	}
 
@@ -102,6 +107,7 @@ public class SimpleTransition extends Transition {
 	/**
 	 * returns a copy of this transition
 	 */
+	@Override
 	public Transition copy(boolean addToStates) {
 		return new SimpleTransition(this, addToStates);
 	}
@@ -156,12 +162,14 @@ public class SimpleTransition extends Transition {
 	 * 
 	 * @see greql2.evaluator.fa.Transition#reverse()
 	 */
+	@Override
 	public void reverse() {
 		super.reverse();
-		if (validDirection == AllowedEdgeDirection.IN)
+		if (validDirection == AllowedEdgeDirection.IN) {
 			validDirection = AllowedEdgeDirection.OUT;
-		else if (validDirection == AllowedEdgeDirection.OUT)
+		} else if (validDirection == AllowedEdgeDirection.OUT) {
 			validDirection = AllowedEdgeDirection.IN;
+		}
 	}
 
 	/*
@@ -169,6 +177,7 @@ public class SimpleTransition extends Transition {
 	 * 
 	 * @see greql2.evaluator.fa.Transition#isEpsilon()
 	 */
+	@Override
 	public boolean isEpsilon() {
 		return false;
 	}
@@ -179,16 +188,20 @@ public class SimpleTransition extends Transition {
 	 * @see greql2.evaluator.fa.Transition#accepts(jgralab.Vertex, jgralab.Edge,
 	 * greql2.evaluator.SubgraphTempAttribute)
 	 */
+	@Override
 	public boolean accepts(Vertex v, Edge e, BooleanGraphMarker subgraph)
 			throws EvaluateException {
-		if (e == null)
+		if (e == null) {
 			return false;
+		}
 		if (validDirection == AllowedEdgeDirection.OUT) {
-			if (!e.isNormal())
+			if (!e.isNormal()) {
 				return false;
+			}
 		} else if (validDirection == AllowedEdgeDirection.IN) {
-			if (e.isNormal())
+			if (e.isNormal()) {
 				return false;
+			}
 		}
 
 		// checks if the subgraphattribute is set and if the edge belongs to
@@ -201,13 +214,15 @@ public class SimpleTransition extends Transition {
 		}
 		// checks if a role restriction is set and if e has the right role
 		if (validEdgeRole != null) {
-			if (e.getThatRole() != validEdgeRole)
+			if (!e.getThatRole().equals(validEdgeRole)) {
 				return false;
+			}
 		}
 		// checks if a edgeTypeRestriction is set and if e has the right type
 		AttributedElementClass edgeClass = e.getAttributedElementClass();
-		if (!typeCollection.acceptsType(edgeClass))
+		if (!typeCollection.acceptsType(edgeClass)) {
 			return false;
+		}
 		return true;
 	}
 
@@ -215,6 +230,7 @@ public class SimpleTransition extends Transition {
 	 * returns the vertex of the datagraph which can be visited after this
 	 * transition has fired. This is the vertex at the end of the edge
 	 */
+	@Override
 	public Vertex getNextVertex(Vertex v, Edge e) {
 		return e.getThat();
 	}
