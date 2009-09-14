@@ -340,9 +340,9 @@ public class AttributedElementCodeGenerator extends CodeGenerator {
 						.add(
 								"\tif (#name# == null)",
 								"\t\treturn #initValue#;",
-								"\t#ttype# value = #name#.getValidValue(#graphreference#getCurrentTransaction());",
-								"\tif(value == null)",
-								"\t\treturn #initValue#;", "\treturn value;",
+								"\t#ttype# _value = #name#.getValidValue(#graphreference#getCurrentTransaction());",
+								"\tif(_value == null)",
+								"\t\treturn #initValue#;", "\treturn _value;",
 								"}");
 			}
 		} else {
