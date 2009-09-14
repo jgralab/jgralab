@@ -21,7 +21,6 @@ import de.uni_koblenz.jgralab.schema.AttributedElementClass;
 import de.uni_koblenz.jgralab.schema.EdgeClass;
 import de.uni_koblenz.jgralab.schema.GraphClass;
 import de.uni_koblenz.jgralab.schema.VertexClass;
-import de.uni_koblenz.jgralab.trans.CommitFailedException;
 import de.uni_koblenz.jgralabtest.schemas.minimal.MinimalGraph;
 import de.uni_koblenz.jgralabtest.schemas.minimal.MinimalSchema;
 import de.uni_koblenz.jgralabtest.schemas.vertextest.DoubleSubNode;
@@ -43,8 +42,10 @@ public class GraphTest {
 	@Before
 	public void setUp() {
 
-		graph = VertexTestSchema.instance().createVertexTestGraphWithTransactionSupport(); // .createVertexTestGraph();
-		graph2 = VertexTestSchema.instance().createVertexTestGraphWithTransactionSupport();
+		graph = VertexTestSchema.instance()
+				.createVertexTestGraphWithTransactionSupport(); // .createVertexTestGraph();
+		graph2 = VertexTestSchema.instance()
+				.createVertexTestGraphWithTransactionSupport();
 		graph.createTransaction();
 		graph2.createTransaction();
 		System.out.println("Graph2 is instance of class " + graph2.getClass());
@@ -62,16 +63,16 @@ public class GraphTest {
 		v11 = graph.createVertex(DoubleSubNode.class);
 		v12 = graph.createVertex(DoubleSubNode.class);
 	}
-	
+
 	@After
 	public void tearDown() {
-//		try {
-//			graph.commit();
-//			graph2.commit();
-//		} catch (CommitFailedException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		}
+		// try {
+		// graph.commit();
+		// graph2.commit();
+		// } catch (CommitFailedException e) {
+		// // TODO Auto-generated catch block
+		// e.printStackTrace();
+		// }
 
 	}
 
@@ -581,7 +582,7 @@ public class GraphTest {
 		int ecount = graph2.getECount();
 		graph2.createEdge(LinkBack.class, v19, v15);
 		assertTrue(graph2.isEdgeListModified(l2));
-		assertEquals(ecount+1, graph2.getECount());
+		assertEquals(ecount + 1, graph2.getECount());
 		l2 = graph2.getEdgeListVersion();
 		assertFalse(graph2.isEdgeListModified(l2));
 
@@ -671,7 +672,7 @@ public class GraphTest {
 
 		Vertex v26 = graph2.createVertex(SuperNode.class);
 		assertFalse(graph2.isEdgeListModified(l2));
-		
+
 		graph2.deleteVertex(v20);
 		assertTrue(graph2.isEdgeListModified(l2));
 
@@ -792,8 +793,9 @@ public class GraphTest {
 
 		// making sure that changing a vertex does not affect the edges
 		graph.deleteVertex(v9);
-		//TODO: Update this, the vertex has edges and thus the edge list  version
-		//      changes if the vertex is deleted
+		// TODO: Update this, the vertex has edges and thus the edge list
+		// version
+		// changes if the vertex is deleted
 		assertEquals(18, graph.getEdgeListVersion());
 
 		graph.createEdge(Link.class, v1, v5);

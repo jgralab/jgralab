@@ -3,7 +3,6 @@ package de.uni_koblenz.jgralabtest;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 
 import java.io.ByteArrayInputStream;
 import java.util.Set;
@@ -434,10 +433,8 @@ public class MultiplicityTest {
 	@Test(expected = GraphIOException.class)
 	public void multiplicityTest21() throws Exception {
 		compileSchema("Schema de.uni_koblenz.jgralabtest.TestSchema;"
-				+ "GraphClass TestGraph;" 
-				+ "VertexClass VC1;"
-				+ "VertexClass VC2;"
-				+ "VertexClass VC3;"
+				+ "GraphClass TestGraph;" + "VertexClass VC1;"
+				+ "VertexClass VC2;" + "VertexClass VC3;"
 				+ "EdgeClass EC1 from VC2 (0,*) to VC1 (2,6);"
 				+ "EdgeClass EC2:EC1 from VC2 (0,*) to VC3 (3,4);");
 	}
