@@ -186,17 +186,17 @@ public class JValue implements Comparable<JValue> {
 	public boolean equals(Object anObject) {
 		if (anObject instanceof JValue) {
 			JValue anotherValue = (JValue) anObject;
-			if (anotherValue.type == this.type
-					|| anotherValue.type == JValueType.OBJECT
-					|| this.type == JValueType.OBJECT) {
+			if ((anotherValue.type == this.type)
+					|| (anotherValue.type == JValueType.OBJECT)
+					|| (this.type == JValueType.OBJECT)) {
 				if (this.value == null) {
 					return (anotherValue.value == null);
 				}
 				return value.equals(anotherValue.value);
 			} else if (
 			// In GReQL enum values can only specified as string for comparison
-			(this.type == JValueType.ENUMVALUE && anotherValue.type == JValueType.STRING)
-					|| (this.type == JValueType.STRING && anotherValue.type == JValueType.ENUMVALUE)) {
+			((this.type == JValueType.ENUMVALUE) && (anotherValue.type == JValueType.STRING))
+					|| ((this.type == JValueType.STRING) && (anotherValue.type == JValueType.ENUMVALUE))) {
 				return value.toString().equals(anotherValue.value.toString());
 			}
 		}
@@ -1166,7 +1166,7 @@ public class JValue implements Comparable<JValue> {
 	@SuppressWarnings("unchecked")
 	public static JValue fromObject(Object o) {
 		if (o == null) {
-			return new JValue(o);
+			return new JValue();
 		}
 		Class objectsClass = o.getClass();
 		if (objectsClass == String.class) {

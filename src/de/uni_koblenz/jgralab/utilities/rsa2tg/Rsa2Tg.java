@@ -974,7 +974,7 @@ public class Rsa2Tg {
 
 		// Now usage of a StringBuilder, because this method will be call once
 		// at most.
-		String insertion = (type == null ? (" of type " + type) : "");
+		String insertion = (type != null) ? " of type " + type : "";
 		String message = "unexpected element <" + name + ">" + insertion
 				+ " at line: " + parser.getLocation().getLineNumber();
 		return new XMLStreamException(message);

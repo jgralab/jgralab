@@ -1062,7 +1062,7 @@ public class DefaultCostModel extends CostModelBase implements CostModel {
 				.getVertexEvaluatorGraphMarker().getMark(p);
 		long pathDescCosts = pathDescEval
 				.getCurrentSubtreeEvaluationCosts(graphSize);
-		long searchCosts = Math.round(pathDescCosts * searchFactor / 2
+		long searchCosts = Math.round(pathDescCosts * searchFactor / 2.0
 				* Math.sqrt(graphSize.getEdgeCount()));
 		long ownCosts = searchCosts;
 		long iteratedCosts = ownCosts * e.getVariableCombinations(graphSize);
