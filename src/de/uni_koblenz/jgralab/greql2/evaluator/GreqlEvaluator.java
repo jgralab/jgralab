@@ -103,10 +103,12 @@ public class GreqlEvaluator {
 	protected static Map<String, List<SyntaxGraphEntry>> optimizedGraphs;
 
 	public static void resetOptimizedSyntaxGraphs() {
-		if (optimizedGraphs == null) {
-			optimizedGraphs = new HashMap<String, List<SyntaxGraphEntry>>();
-		} else {
-			optimizedGraphs.clear();
+		synchronized (GreqlEvaluator.class) {
+			if (optimizedGraphs == null) {
+				optimizedGraphs = new HashMap<String, List<SyntaxGraphEntry>>();
+			} else {
+				optimizedGraphs.clear();
+			}
 		}
 	}
 
@@ -127,10 +129,12 @@ public class GreqlEvaluator {
 	protected static Map<String, GraphIndex> graphIndizes;
 
 	public static void resetGraphIndizes() {
-		if (graphIndizes == null) {
-			graphIndizes = new HashMap<String, GraphIndex>();
-		} else {
-			graphIndizes.clear();
+		synchronized (GreqlEvaluator.class) {
+			if (graphIndizes == null) {
+				graphIndizes = new HashMap<String, GraphIndex>();
+			} else {
+				graphIndizes.clear();
+			}
 		}
 	}
 
@@ -484,9 +488,13 @@ public class GreqlEvaluator {
 	 */
 	protected void createEvaluationLogger() {
 		if (evaluationLogger == null) {
-			if (evaluationLoggerDirectory == null) {
-				evaluationLoggerDirectory = getTmpDirectory();
+
+			synchronized (GreqlEvaluator.class) {
+				if (evaluationLoggerDirectory == null) {
+					evaluationLoggerDirectory = getTmpDirectory();
+				}
 			}
+
 			try {
 				evaluationLogger = new Level2Logger(evaluationLoggerDirectory,
 						datagraph, evaluationLoggingType);
@@ -566,35 +574,37 @@ public class GreqlEvaluator {
 	public AttributedElementClass getKnownType(String typeSimpleName) {
 		return knownTypes.get(typeSimpleName);
 	}
-	
+
 	private Graph minimalGraph = null;
 
 	/**
 	 * @return a minimal graph (no vertices and no edges) of a minimal schema.
 	 */
 	private Graph createMinimalGraph() {
-		 if (minimalGraph== null) {
-			Schema minimalSchema = new SchemaImpl("MinimalSchema", "de.uni_koblenz.jgralab.greqlminschema");
-			GraphClass gc =  minimalSchema.createGraphClass("MinimalGraph");
+		if (minimalGraph == null) {
+			Schema minimalSchema = new SchemaImpl("MinimalSchema",
+					"de.uni_koblenz.jgralab.greqlminschema");
+			GraphClass gc = minimalSchema.createGraphClass("MinimalGraph");
 			VertexClass n = gc.createVertexClass("Node");
 			gc.createEdgeClass("Link", n, n);
 			System.out.println("Trying to commit schema");
 			minimalSchema.compile();
-//			try {
-//				minimalSchema.commit("/home/dbildh/tmp");
-//			} catch (GraphIOException e1) {
-//				// TODO Auto-generated catch block
-//				e1.printStackTrace();
-//			}
+			// try {
+			// minimalSchema.commit("/home/dbildh/tmp");
+			// } catch (GraphIOException e1) {
+			// // TODO Auto-generated catch block
+			// e1.printStackTrace();
+			// }
 			System.out.println("Heureka");
 			Method graphCreateMethod = minimalSchema.getGraphCreateMethod();
 
 			try {
-				minimalGraph = (Graph) (graphCreateMethod.invoke(null, new Object[] {"test", 1, 1 }));
+				minimalGraph = (Graph) (graphCreateMethod.invoke(null,
+						new Object[] { "test", 1, 1 }));
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
-		 }	
+		}
 		return minimalGraph;
 	}
 
@@ -836,8 +846,9 @@ public class GreqlEvaluator {
 		}
 
 		long parseStartTime = System.currentTimeMillis();
-		if (queryString != null)
+		if (queryString != null) {
 			parseQuery(queryString);
+		}
 		parseTime = System.currentTimeMillis() - parseStartTime;
 		if (queryGraph == null) {
 			throw new RuntimeException(

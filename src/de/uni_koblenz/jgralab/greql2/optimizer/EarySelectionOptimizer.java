@@ -10,6 +10,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.Map.Entry;
 import java.util.logging.Logger;
 
 import de.uni_koblenz.jgralab.Attribute;
@@ -125,15 +126,12 @@ public class EarySelectionOptimizer extends OptimizerBase {
 					.getFirstIsConstraintOf(EdgeDirection.IN);
 			while (isConst != null) {
 				Expression exp = (Expression) isConst.getAlpha();
-				HashMap<SimpleDeclaration, Set<Expression>> movableExpressionsOfDecl = collectMovableExpressions(exp);
-
-				for (SimpleDeclaration sd : movableExpressionsOfDecl.keySet()) {
-					if (movableExpressions.containsKey(sd)) {
-						movableExpressions.get(sd).addAll(
-								movableExpressionsOfDecl.get(sd));
+				for (Entry<SimpleDeclaration, Set<Expression>> e : collectMovableExpressions(
+						exp).entrySet()) {
+					if (movableExpressions.containsKey(e.getKey())) {
+						movableExpressions.get(e.getKey()).addAll(e.getValue());
 					} else {
-						movableExpressions.put(sd, movableExpressionsOfDecl
-								.get(sd));
+						movableExpressions.put(e.getKey(), e.getValue());
 					}
 				}
 				isConst = isConst.getNextIsConstraintOf(EdgeDirection.IN);
@@ -579,16 +577,14 @@ public class EarySelectionOptimizer extends OptimizerBase {
 			FunctionApplication funApp = (FunctionApplication) exp;
 			IsArgumentOf isArg = funApp.getFirstIsArgumentOf(EdgeDirection.IN);
 			while (isArg != null) {
-				HashMap<SimpleDeclaration, Set<Expression>> subtreeMovableExpressions = collectMovableExpressions((Expression) isArg
-						.getAlpha());
-				for (SimpleDeclaration subSD : subtreeMovableExpressions
-						.keySet()) {
-					if (movableExpressions.containsKey(subSD)) {
-						movableExpressions.get(subSD).addAll(
-								subtreeMovableExpressions.get(subSD));
+				for (Entry<SimpleDeclaration, Set<Expression>> entry : collectMovableExpressions(
+						(Expression) isArg.getAlpha()).entrySet()) {
+					if (movableExpressions.containsKey(entry.getKey())) {
+						movableExpressions.get(entry.getKey()).addAll(
+								entry.getValue());
 					} else {
-						movableExpressions.put(subSD, subtreeMovableExpressions
-								.get(subSD));
+						movableExpressions
+								.put(entry.getKey(), entry.getValue());
 					}
 				}
 				isArg = isArg.getNextIsArgumentOf(EdgeDirection.IN);

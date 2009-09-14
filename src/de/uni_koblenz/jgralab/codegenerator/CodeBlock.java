@@ -119,9 +119,7 @@ public abstract class CodeBlock {
 	 *            contains variables and their values
 	 */
 	public void addVariables(Map<String, String> map) {
-		for (String key : map.keySet()) {
-			variables.put(key, map.get(key));
-		}
+		variables.putAll(map);
 	}
 
 	/**
