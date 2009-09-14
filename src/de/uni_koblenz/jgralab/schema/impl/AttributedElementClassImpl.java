@@ -461,6 +461,9 @@ public abstract class AttributedElementClassImpl extends NamedElementImpl
 
 	@Override
 	public boolean equals(Object o) {
+		if (o == null) {
+			return false;
+		}
 		if (getClass() == o.getClass()) {
 			AttributedElementClass other = (AttributedElementClass) o;
 			if (!qualifiedName.equals(other.getQualifiedName())) {
