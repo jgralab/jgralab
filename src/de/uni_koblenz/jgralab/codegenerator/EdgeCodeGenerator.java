@@ -85,21 +85,16 @@ public class EdgeCodeGenerator extends AttributedElementCodeGenerator {
 		CodeList code = (CodeList) super.createBody(createClass);
 		if (createClass) {
 			rootBlock.setVariable("baseClassName", "EdgeImpl");
-			if (!transactionSupport)
+			if (!transactionSupport) {
 				addImports("#jgImplStdPackage#.#baseClassName#");
-			else
+			} else {
 				addImports("#jgImplTransPackage#.#baseClassName#");
+			}
 		}
 		code.add(createNextEdgeInGraphMethods(createClass));
 		code.add(createNextEdgeAtVertexMethods(createClass));
 		return code;
 	}
-
-//	@Override
-//	protected CodeBlock createGetM1ClassMethod() {
-//		// TODO Auto-generated method stub
-//		return super.createGetM1ClassMethod();
-//	}
 
 	@Override
 	protected CodeBlock createSpecialConstructorCode() {
@@ -147,21 +142,27 @@ public class EdgeCodeGenerator extends AttributedElementCodeGenerator {
 		code.setVariable("ecCamelName", camelCase(ec.getUniqueName()));
 		code.setVariable("formalParams", (withTypeFlag ? "boolean noSubClasses"
 				: ""));
-		code.setVariable("actualParams", (withTypeFlag ? ", noSubClasses"
+		code
+				.setVariable("actualParams", (withTypeFlag ? ", noSubClasses"
 						: ""));
 
 		if (!createClass) {
-			code.add("/**",
-					 " * @return the next #ecQualifiedName# edge in the global edge sequence");
+			code
+					.add("/**",
+							" * @return the next #ecQualifiedName# edge in the global edge sequence");
 			if (withTypeFlag) {
-				code.add(" * @param noSubClasses if set to <code>true</code>, no subclasses of #ecQualifiedName# are accepted");
+				code
+						.add(" * @param noSubClasses if set to <code>true</code>, no subclasses of #ecQualifiedName# are accepted");
 			}
-			code.add(" */",
-					 "public #ecQualifiedName# getNext#ecCamelName#InGraph(#formalParams#);");
+			code
+					.add(" */",
+							"public #ecQualifiedName# getNext#ecCamelName#InGraph(#formalParams#);");
 		} else {
-			code.add("public #ecQualifiedName# getNext#ecCamelName#InGraph(#formalParams#) {",
-					 "\treturn (#ecQualifiedName#)getNextEdgeOfClassInGraph(#ecQualifiedName#.class#actualParams#);",
-					 "}");
+			code
+					.add(
+							"public #ecQualifiedName# getNext#ecCamelName#InGraph(#formalParams#) {",
+							"\treturn (#ecQualifiedName#)getNextEdgeOfClassInGraph(#ecQualifiedName#.class#actualParams#);",
+							"}");
 		}
 		return code;
 	}
@@ -212,21 +213,26 @@ public class EdgeCodeGenerator extends AttributedElementCodeGenerator {
 						+ (withOrientation && withTypeFlag ? ", " : "")
 						+ (withTypeFlag ? "noSubClasses" : ""));
 		if (!createClass) {
-			code.add("/**",
-					 " * @return the next edge of class #ecQualifiedName# at the \"this\" vertex");
+			code
+					.add("/**",
+							" * @return the next edge of class #ecQualifiedName# at the \"this\" vertex");
 
 			if (withOrientation) {
 				code.add(" * @param orientation the orientation of the edge");
 			}
 			if (withTypeFlag) {
-				code.add(" * @param noSubClasses if set to <code>true</code>, no subclasses of #ecQualifiedName# are accepted");
+				code
+						.add(" * @param noSubClasses if set to <code>true</code>, no subclasses of #ecQualifiedName# are accepted");
 			}
-			code.add(" */",
-					 "public #ecQualifiedName# getNext#ecCamelName#(#formalParams#);");
+			code
+					.add(" */",
+							"public #ecQualifiedName# getNext#ecCamelName#(#formalParams#);");
 		} else {
-			code.add("public #ecQualifiedName# getNext#ecCamelName#(#formalParams#) {",
-					 "\treturn (#ecQualifiedName#)getNextEdgeOfClass(#ecQualifiedName#.class#actualParams#);",
-					 "}");
+			code
+					.add(
+							"public #ecQualifiedName# getNext#ecCamelName#(#formalParams#) {",
+							"\treturn (#ecQualifiedName#)getNextEdgeOfClass(#ecQualifiedName#.class#actualParams#);",
+							"}");
 
 		}
 
