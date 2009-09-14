@@ -359,7 +359,7 @@ public class JValueSet extends JValueCollection implements Cloneable {
 		JValueSet resultingSet = new JValueSet(Math.min(s.size(), size()));
 		JValue currentElement;
 
-		if ((s instanceof JValueSet) && (s.size() > size())) {
+		if (s.size() > size()) {
 			/*
 			 * time complexity = O(min{|s|, |this|}) space complexity =
 			 * O(|resultingSet|)
@@ -397,24 +397,15 @@ public class JValueSet extends JValueCollection implements Cloneable {
 	public JValueSet difference(JValueSet s) {
 		JValueSet resultingSet;
 		JValue currentElement;
-
-		if (s instanceof JValueSet) {
-			/*
-			 * time complexity = O(|this|) space complexity = O(|this|)
-			 */
-			resultingSet = new JValueSet(size());
-			for (Iterator<JValue> iter = iterator(); iter.hasNext();) {
-				currentElement = iter.next();
-				if (!s.contains(currentElement)) {
-					resultingSet.add(currentElement);
-				}
+		/*
+		 * time complexity = O(|this|) space complexity = O(|this|)
+		 */
+		resultingSet = new JValueSet(size());
+		for (Iterator<JValue> iter = iterator(); iter.hasNext();) {
+			currentElement = iter.next();
+			if (!s.contains(currentElement)) {
+				resultingSet.add(currentElement);
 			}
-		} else {
-			/*
-			 * time complexity = O(|this| + |s|) space complexity = O(|this|)
-			 */
-			resultingSet = new JValueSet(this);
-			resultingSet.removeAll(s);
 		}
 		return resultingSet;
 	}
@@ -435,29 +426,17 @@ public class JValueSet extends JValueCollection implements Cloneable {
 		Iterator<JValue> iterThis;
 		JValue currentElement;
 
-		if (s instanceof JValueSet) {
-			resultingSet = new JValueSet();
-			for (iterThis = iterator(); iterThis.hasNext();) {
-				currentElement = iterThis.next();
-				if (!s.contains(currentElement)) {
-					resultingSet.add(currentElement);
-				}
+		resultingSet = new JValueSet();
+		for (iterThis = iterator(); iterThis.hasNext();) {
+			currentElement = iterThis.next();
+			if (!s.contains(currentElement)) {
+				resultingSet.add(currentElement);
 			}
-			for (iterSet = s.iterator(); iterSet.hasNext();) {
-				currentElement = iterSet.next();
-				if (!this.contains(currentElement)) {
-					resultingSet.add(currentElement);
-				}
-			}
-		} else {
-			resultingSet = new JValueSet(s);
-			for (iterThis = iterator(); iterThis.hasNext();) {
-				currentElement = iterThis.next();
-				if (resultingSet.contains(currentElement)) {
-					resultingSet.remove(currentElement);
-				} else {
-					resultingSet.add(currentElement);
-				}
+		}
+		for (iterSet = s.iterator(); iterSet.hasNext();) {
+			currentElement = iterSet.next();
+			if (!this.contains(currentElement)) {
+				resultingSet.add(currentElement);
 			}
 		}
 
