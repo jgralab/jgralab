@@ -76,6 +76,7 @@ public class IsTree extends AbstractGreql2Function {
 			break;
 		case 1:
 			subgraph = arguments[0].toSubgraphTempAttribute();
+			break;
 		default:
 			throw new WrongFunctionParameterException(this, null, arguments);
 		}
@@ -88,7 +89,7 @@ public class IsTree extends AbstractGreql2Function {
 				}
 				Vertex v = (Vertex) ae;
 				int inDegree = v.getDegree(EdgeDirection.IN);
-				if (inDegree > 1 || (inDegree == 0 && foundOneRoot)) {
+				if ((inDegree > 1) || ((inDegree == 0) && foundOneRoot)) {
 					return new JValue(JValueBoolean.getFalseValue());
 				}
 				if (inDegree == 0) {
@@ -98,7 +99,7 @@ public class IsTree extends AbstractGreql2Function {
 		} else {
 			for (Vertex v : graph.vertices()) {
 				int inDegree = v.getDegree(EdgeDirection.IN);
-				if (inDegree > 1 || (inDegree == 0 && foundOneRoot)) {
+				if ((inDegree > 1) || ((inDegree == 0) && foundOneRoot)) {
 					return new JValue(JValueBoolean.getFalseValue());
 				}
 				if (inDegree == 0) {
