@@ -105,8 +105,7 @@ public abstract class Formula {
 	}
 
 	public Formula optimize() {
-		ArrayList<Expression> nctExpressions = new ArrayList<Expression>();
-		nctExpressions = getNonConstantTermExpressions();
+		ArrayList<Expression> nctExpressions = getNonConstantTermExpressions();
 		if (nctExpressions.size() < 2) {
 			// This formula is a literal or a formula containing only one
 			// non-constant term, so there's nothing to optimize.

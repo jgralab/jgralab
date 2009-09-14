@@ -84,7 +84,6 @@ public class GReQLConsole {
 		}
 		if (builder.length() != 0) {
 			String query = builder.toString();
-			builder = new StringBuilder();
 			queries.add(query);
 		}
 		return queries;
