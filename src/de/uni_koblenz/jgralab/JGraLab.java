@@ -37,7 +37,7 @@ public class JGraLab {
 	// look but don't touch, both values are updated automatically
 	private static final String revision = "$Revision$";
 
-	private static final String buildID = "65";
+	private static final String buildID = "67";
 	//
 	// to use this information inside the text place $rev for the revision
 	// information
@@ -71,10 +71,6 @@ public class JGraLab {
 			"",
 			"This software uses:",
 			"",
-			"ANTLR 3.1.1",
-			"Copyright (c) 2003-2008, Terence Parr",
-			"All rights reserved.",
-			"",
 			"JDOM 1.0",
 			"Copyright (C) 2000-2004 Jason Hunter & Brett McLaughlin.",
 			"All rights reserved.",
@@ -82,7 +78,9 @@ public class JGraLab {
 			"Apache XML-RPC 3.0",
 			"Copyright (C) 2001-2008 The Apache Software Foundation",
 			"Please note, you need the Java Enterprise Edition to make full use",
-			"of this part of the software.", "", "Apache Commons CLI 1.2",
+			"of this part of the software.", 
+			"", 
+			"Apache Commons CLI 1.2",
 			"Copyright 2001-2009 The Apache Software Foundation" };
 
 	/**

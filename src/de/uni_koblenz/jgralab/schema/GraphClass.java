@@ -53,7 +53,7 @@ public interface GraphClass extends AttributedElementClass {
 	/**
 	 * creates an edge class between from and to with the edgeclassname name
 	 * 
-	 * @param name
+	 * @param qualifiedName
 	 *            a unique name in the schema
 	 * @param from
 	 *            the vertex class where the edge class starts
@@ -69,7 +69,7 @@ public interface GraphClass extends AttributedElementClass {
 	 * fromRoleName and vertex class to with the rolename toRoleName and the
 	 * edgeclassname name
 	 * 
-	 * @param name
+	 * @param qualifiedName
 	 *            a unique name in the schema
 	 * @param from
 	 *            the vertex class where the edge class starts
@@ -89,7 +89,7 @@ public interface GraphClass extends AttributedElementClass {
 	 * fromMax, and vertex class to, multiplicity toMin and toMax with the
 	 * edgeclassname name
 	 * 
-	 * @param name
+	 * @param qualifiedName
 	 *            a unique name in the schema
 	 * @param from
 	 *            the vertex class where the edge class starts
@@ -113,7 +113,7 @@ public interface GraphClass extends AttributedElementClass {
 	 * fromMax with the rolename fromRoleName, and vertex class to, multiplicity
 	 * toMin and toMax with the rolename toRoleName and the edgeclassname name
 	 * 
-	 * @param name
+	 * @param qualifiedName
 	 *            a unique name in the schema
 	 * @param from
 	 *            the vertex class where the edge class starts
@@ -153,9 +153,7 @@ public interface GraphClass extends AttributedElementClass {
 	 * <ul>
 	 * <li>The <code>name</code> is unique in the <code>Schema</code>.</li>
 	 * <li>The <code>name</code> does not contain
-	 * {@link de.uni_koblenz.jgralab.schema.Schema#reservedTGWords reserved TG
-	 * words} and/or
-	 * {@link de.uni_koblenz.jgralab.schema.Schema#reservedJavaWords reserved
+	 * {@link de.uni_koblenz.jgralab.schema.Schema#RESERVED_JAVA_WORDS reserved
 	 * Java words}.</li>
 	 * <li>The <code>from</code> and <code>to</code> <code>VertexClasses</code>
 	 * are known by <code>graphClass</code> prior to calling this method. This
@@ -217,9 +215,7 @@ public interface GraphClass extends AttributedElementClass {
 	 * <ul>
 	 * <li>The <code>name</code> is unique in the <code>Schema</code>.</li>
 	 * <li>The <code>name</code> does not contain
-	 * {@link de.uni_koblenz.jgralab.schema.Schema#reservedTGWords reserved TG
-	 * words} and/or
-	 * {@link de.uni_koblenz.jgralab.schema.Schema#reservedJavaWords reserved
+	 * {@link de.uni_koblenz.jgralab.schema.Schema#RESERVED_JAVA_WORDS reserved
 	 * Java words}.</li>
 	 * <li>The <code>from</code> and <code>to</code> <code>VertexClasses</code>
 	 * are known by <code>graphClass</code> prior to calling this method. This
@@ -234,7 +230,7 @@ public interface GraphClass extends AttributedElementClass {
 	 * <code>AggregationClass</code>.
 	 * </p>
 	 * 
-	 * @param name
+	 * @param qualifiedName
 	 *            a unique <code>name</code> in the <code>Schema</code>
 	 * @param from
 	 *            the <code>VertexClass</code> where the
@@ -286,9 +282,7 @@ public interface GraphClass extends AttributedElementClass {
 	 * <ul>
 	 * <li>The <code>name</code> is unique in the <code>Schema</code>.</li>
 	 * <li>The <code>name</code> does not contain
-	 * {@link de.uni_koblenz.jgralab.schema.Schema#reservedTGWords reserved TG
-	 * words} and/or
-	 * {@link de.uni_koblenz.jgralab.schema.Schema#reservedJavaWords reserved
+	 * {@link de.uni_koblenz.jgralab.schema.Schema#RESERVED_JAVA_WORDS reserved
 	 * Java words}.</li>
 	 * <li>The <code>from</code> and <code>to</code> <code>VertexClasses</code>
 	 * are known by <code>graphClass</code> prior to calling this method. This
@@ -305,7 +299,7 @@ public interface GraphClass extends AttributedElementClass {
 	 * <code>AggregationClass</code>.
 	 * </p>
 	 * 
-	 * @param name
+	 * @param qualifiedName
 	 *            a unique <code>name in the <code>Schema</code>
 	 * @param from
 	 *            the <code>VertexClass</code> where the
@@ -364,9 +358,7 @@ public interface GraphClass extends AttributedElementClass {
 	 * <ul>
 	 * <li>The <code>name</code> is unique in the <code>Schema</code>.</li>
 	 * <li>The <code>name</code> does not contain
-	 * {@link de.uni_koblenz.jgralab.schema.Schema#reservedTGWords reserved TG
-	 * words} and/or
-	 * {@link de.uni_koblenz.jgralab.schema.Schema#reservedJavaWords reserved
+	 * {@link de.uni_koblenz.jgralab.schema.Schema#RESERVED_JAVA_WORDS reserved
 	 * Java words}.</li>
 	 * <li>The <code>from</code> and <code>to</code> <code>VertexClasses</code>
 	 * are known by <code>graphClass</code> prior to calling this method. This
@@ -384,7 +376,7 @@ public interface GraphClass extends AttributedElementClass {
 	 * </p>
 	 * 
 	 * 
-	 * @param name
+	 * @param qualifiedName
 	 *            a unique <code>name in the <code>Schema</code>
 	 * @param from
 	 *            the <code>VertexClass</code> where the
@@ -418,7 +410,7 @@ public interface GraphClass extends AttributedElementClass {
 	 *             <ul>
 	 *             <li>there is an <code>AttributedElement</code> with the same
 	 *             <code>name</code> in the <code>Schema</code></li>
-	 *             <li><code>name</code> contains reserved TG/Java words</li>
+	 *             <li><code>name</code> contains reserved Java words</li>
 	 *             <li>the <code>from</code> and <code>to</code>
 	 *             <code>VertexClasses</code> are not known by
 	 *             <code>graphClass</code></li>
@@ -436,12 +428,12 @@ public interface GraphClass extends AttributedElementClass {
 	 * <code>VertexClasses</code> in this <code>GraphClass</code>. The default
 	 * cardinality on composite side is (1,1) and (0,*) on the other side.
 	 * 
-	 * @param name
+	 * @param qualifiedName
 	 *            a unique <code>name</code> in the <code>Schema</code>
 	 * @param from
 	 *            the <code>VertexClass</code> where the
 	 *            <code>CompositionClass</code> starts
-	 * @param aggregateFrom
+	 * @param compositeFrom
 	 *            set to <code>TRUE</code>, if the composition is on the
 	 *            'from'-side of the <code>CompositionClass</code>, set to
 	 *            <code>FALSE</code>, if the composition is on the 'to'-side of
@@ -462,7 +454,7 @@ public interface GraphClass extends AttributedElementClass {
 	 * compositionclassname name. The default cardinality on composite side is
 	 * (1,1) and (0,*) on the other side.
 	 * 
-	 * @param name
+	 * @param qualifiedName
 	 *            a unique name in the schema
 	 * @param from
 	 *            the vertex class where the composition class starts
@@ -487,7 +479,7 @@ public interface GraphClass extends AttributedElementClass {
 	 * fromMin and fromMax, and vertex class to, multiplicity toMin and toMax
 	 * with the compositionclassname name
 	 * 
-	 * @param name
+	 * @param qualifiedName
 	 *            a unique name in the schema
 	 * @param from
 	 *            the vertex class where the composition class starts
@@ -521,7 +513,7 @@ public interface GraphClass extends AttributedElementClass {
 	 * multiplicity toMin and toMax with the rolename toRoleName and the
 	 * composition classname name
 	 * 
-	 * @param name
+	 * @param qualifiedName
 	 *            a unique name in the schema
 	 * @param from
 	 *            the vertex class where the composition class starts

@@ -179,7 +179,7 @@ public interface Schema extends Comparable<Schema> {
 	 * 
 	 * @param keyDomain
 	 *            the domain of which all keys in the set are built of
-	 * @param keyDomain
+	 * @param valueDomain
 	 *            the domain of which all values in the set are built of
 	 * @return the new map domain
 	 */
@@ -344,7 +344,7 @@ public interface Schema extends Comparable<Schema> {
 	public LongDomain getLongDomain();
 
 	/**
-	 * @param packageName
+	 * @param qn
 	 *            the qualified name of the package
 	 * @return the package name packageName
 	 */

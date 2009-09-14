@@ -43,7 +43,6 @@ public interface Vertex extends GraphElement {
 
 	/**
 	 * @return the internal vertex structure version
-	 * @see #incidenceListModified()
 	 * @see #isIncidenceListModified(long)
 	 */
 	public long getIncidenceListVersion();

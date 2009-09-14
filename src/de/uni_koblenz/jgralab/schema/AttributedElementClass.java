@@ -95,9 +95,7 @@ public interface AttributedElementClass extends NamedElement,
 	 * <b>Preconditions:</b>
 	 * <ul>
 	 * <li>The <code>name</code> must not contain
-	 * {@link de.uni_koblenz.jgralab.schema.Schema#reservedTGWords reserved TG
-	 * words} and/or
-	 * {@link de.uni_koblenz.jgralab.schema.Schema#reservedJavaWords reserved
+	 * {@link de.uni_koblenz.jgralab.schema.Schema#RESERVED_JAVA_WORDS reserved
 	 * Java words}.</li>
 	 * <li>The new attribute´s <code>name</code> must be distinct from all of
 	 * this <code>attrElement´s</code> direct and inherited attributes´ names.</li>
@@ -122,9 +120,7 @@ public interface AttributedElementClass extends NamedElement,
 	 * 
 	 * @throws ReservedWordException
 	 *             if the <code>name</code> contains reserved
-	 *             {@link de.uni_koblenz.jgralab.schema.Schema#reservedTGWords
-	 *             TG}/
-	 *             {@link de.uni_koblenz.jgralab.schema.Schema#reservedJavaWords
+	 *             {@link de.uni_koblenz.jgralab.schema.Schema#RESERVED_JAVA_WORDS
 	 *             Java} words
 	 */
 	public void addAttribute(String name, Domain domain);
@@ -576,9 +572,9 @@ public interface AttributedElementClass extends NamedElement,
 
 	/**
 	 * Retrieves the name used for elements of this AttributedElementClass in
-	 * files created by the code generator
+	 * files created by the code generator.
 	 * 
-	 * @return
+	 * @return the variable name.
 	 */
 	public String getVariableName();
 

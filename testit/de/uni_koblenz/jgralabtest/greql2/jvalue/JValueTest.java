@@ -24,9 +24,9 @@
 
 package de.uni_koblenz.jgralabtest.greql2.jvalue;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.assertEquals;
 
 import java.util.ConcurrentModificationException;
 import java.util.Iterator;
@@ -199,11 +199,13 @@ public class JValueTest {
 		col.add(new JValue("one"));
 		col.add(new JValue("two"));
 		Iterator<JValue> iter = col.iterator();
-		if (iter.hasNext())
+		if (iter.hasNext()) {
 			iter.next();
+		}
 		col.add(new JValue("three"));
-		if (iter.hasNext())
+		if (iter.hasNext()) {
 			iter.next();
+		}
 	}
 
 	@Test(expected = ConcurrentModificationException.class)
@@ -226,17 +228,17 @@ public class JValueTest {
 		tryConcurrentModification(new JValueList());
 	}
 
-	private void tryRemoveIter(JValueCollection col) {
-		col.add(new JValue("one"));
-		col.add(new JValue("two"));
-		Iterator<JValue> iter = col.iterator();
-		if (iter.hasNext())
-			iter.next();
-		if (iter.hasNext())
-			iter.next();
-		iter.remove();
-		assertEquals(1, col.size());
-	}
+	// private void tryRemoveIter(JValueCollection col) {
+	// col.add(new JValue("one"));
+	// col.add(new JValue("two"));
+	// Iterator<JValue> iter = col.iterator();
+	// if (iter.hasNext())
+	// iter.next();
+	// if (iter.hasNext())
+	// iter.next();
+	// iter.remove();
+	// assertEquals(1, col.size());
+	// }
 
 	// @Test
 	// public void testRemoveOnTuple() {

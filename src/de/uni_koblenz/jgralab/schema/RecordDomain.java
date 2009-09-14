@@ -51,7 +51,7 @@ public interface RecordDomain extends CompositeDomain {
 	 * @param name
 	 *            the unique name of the record domain component in the record
 	 *            domain
-	 * @param aDomain
+	 * @param domain
 	 *            the domain of the component
 	 */
 	public void addComponent(String name, Domain domain);
