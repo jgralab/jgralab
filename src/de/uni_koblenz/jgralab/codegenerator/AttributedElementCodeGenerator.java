@@ -566,7 +566,7 @@ public class AttributedElementCodeGenerator extends CodeGenerator {
 
 		code
 				.addNoIndent(new CodeSnippet(true,
-						"public void readAttributeValues(GraphIO io) throws GraphIOException {"));
+						"public void readAttributeValues(GraphIO _io) throws GraphIOException {"));
 		if (attrSet != null) {
 			for (Attribute attribute : attrSet) {
 				CodeSnippet snippet = new CodeSnippet();
@@ -575,13 +575,13 @@ public class AttributedElementCodeGenerator extends CodeGenerator {
 				if (!transactionSupport) {
 					snippet.setVariable("variableName", attribute.getName());
 					code.add(attribute.getDomain().getReadMethod(
-							schemaRootPackageName, attribute.getName(), "io"));
+							schemaRootPackageName, attribute.getName(), "_io"));
 				} else {
 					// read-method for transaction support
 					snippet.setVariable("variableName", "tmp"
 							+ attribute.getName());
 					code.add(attribute.getDomain().getTransactionReadMethod(
-							schemaRootPackageName, attribute.getName(), "io"));
+							schemaRootPackageName, attribute.getName(), "_io"));
 				}
 				snippet.add("#setterName#(#variableName#);");
 				code.add(snippet);
@@ -600,17 +600,17 @@ public class AttributedElementCodeGenerator extends CodeGenerator {
 		code
 				.addNoIndent(new CodeSnippet(
 						true,
-						"public void writeAttributeValues(GraphIO io) throws GraphIOException, IOException {"));
+						"public void writeAttributeValues(GraphIO _io) throws GraphIOException, IOException {"));
 		if ((attrSet != null) && !attrSet.isEmpty()) {
-			code.add(new CodeSnippet("io.space();"));
+			code.add(new CodeSnippet("_io.space();"));
 			for (Attribute attribute : attrSet) {
 				if (!transactionSupport) {
 					code.add(attribute.getDomain().getWriteMethod(
-							schemaRootPackageName, attribute.getName(), "io"));
+							schemaRootPackageName, attribute.getName(), "_io"));
 				} else {
 					// write-method for transaction support
 					code.add(attribute.getDomain().getTransactionWriteMethod(
-							schemaRootPackageName, attribute.getName(), "io"));
+							schemaRootPackageName, attribute.getName(), "_io"));
 				}
 			}
 		}

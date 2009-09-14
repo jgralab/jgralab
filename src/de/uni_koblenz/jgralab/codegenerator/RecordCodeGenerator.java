@@ -93,8 +93,7 @@ public class RecordCodeGenerator extends CodeGenerator {
 		code.add("\tprivate Graph graph;");
 		return code;
 	}
-	
-	
+
 	/**
 	 * Getter-methods for fields needed for tranasction support.
 	 * 
@@ -115,17 +114,19 @@ public class RecordCodeGenerator extends CodeGenerator {
 			getterCode.setVariable("ctype", rdc.getValue()
 					.getTransactionJavaAttributeImplementationTypeName(
 							schemaRootPackageName));
-			if (rdc.getValue().isComposite())
+			if (rdc.getValue().isComposite()) {
 				getterCode.add("@SuppressWarnings(\"unchecked\")");
+			}
 			getterCode.add("public #type# #isOrGet##cName#() {");
 			getterCode.add("\tif(versionedRecord == null)");
 			getterCode.add("\t\treturn #name#;");
-			if (rdc.getValue().isComposite())
+			if (rdc.getValue().isComposite()) {
 				getterCode
 						.add("\treturn (#ctype#) versionedRecord.getValidValue(graph.getCurrentTransaction()).#name#.clone();");
-			else
+			} else {
 				getterCode
 						.add("\treturn versionedRecord.getValidValue(graph.getCurrentTransaction()).#name#;");
+			}
 			getterCode.add("}");
 			code.addNoIndent(getterCode);
 		}
@@ -181,13 +182,16 @@ public class RecordCodeGenerator extends CodeGenerator {
 			sb.append(rdc.getKey());
 
 			CodeBlock assign = null;
-			if (rdc.getValue() instanceof CollectionDomainImpl || rdc.getValue() instanceof MapDomainImpl) {
+			if ((rdc.getValue() instanceof CollectionDomainImpl)
+					|| (rdc.getValue() instanceof MapDomainImpl)) {
 				String attrImplTypeName = rdc.getValue()
-								.getTransactionJavaAttributeImplementationTypeName(schemaRootPackageName);
-				assign = new CodeSnippet("this.#name# = new " + attrImplTypeName + "(#name#);");
-			} else {	
+						.getTransactionJavaAttributeImplementationTypeName(
+								schemaRootPackageName);
+				assign = new CodeSnippet("this.#name# = new "
+						+ attrImplTypeName + "(#name#);");
+			} else {
 				assign = new CodeSnippet("this.#name# = #name#;");
-			}	
+			}
 			assign.setVariable("name", rdc.getKey());
 			code.add(assign);
 		}
@@ -207,12 +211,14 @@ public class RecordCodeGenerator extends CodeGenerator {
 				break;
 			}
 		}
-		code.addNoIndent(new CodeSnippet(false,
+		code
+				.addNoIndent(new CodeSnippet(false,
 						"public #simpleClassName#(java.util.Map<String, Object> fields) {"));
-		for (Entry<String, Domain> rdc : recordDomain.getComponents().entrySet()) {
+		for (Entry<String, Domain> rdc : recordDomain.getComponents()
+				.entrySet()) {
 			CodeBlock assign = new CodeSnippet("this.#name# = ("
-					+ rdc.getValue().getTransactionJavaClassName(schemaRootPackageName)
-					+ ")fields.get(\"#name#\");");
+					+ rdc.getValue().getTransactionJavaClassName(
+							schemaRootPackageName) + ")fields.get(\"#name#\");");
 			assign.setVariable("name", rdc.getKey());
 			code.add(assign);
 		}
@@ -223,17 +229,21 @@ public class RecordCodeGenerator extends CodeGenerator {
 	private CodeBlock createReadComponentsMethod() {
 		CodeList code = new CodeList();
 		addImports("#jgPackage#.GraphIO", "#jgPackage#.GraphIOException");
-		code.addNoIndent(new CodeSnippet(true,
-						"public #simpleClassName#(GraphIO io) throws GraphIOException {"));
-		code.add(new CodeSnippet("io.match(\"(\");"));
+		code
+				.addNoIndent(new CodeSnippet(true,
+						"public #simpleClassName#(GraphIO _io) throws GraphIOException {"));
+		code.add(new CodeSnippet("_io.match(\"(\");"));
 		for (Entry<String, Domain> c : recordDomain.getComponents().entrySet()) {
-			code.add(c.getValue().getTransactionReadMethod(schemaRootPackageName, c.getKey(), "io"));
+			code.add(c.getValue().getTransactionReadMethod(
+					schemaRootPackageName, c.getKey(), "_io"));
 			code.add(new CodeSnippet(c.getKey()
 					+ "= ("
-					+ c.getValue().getTransactionJavaAttributeImplementationTypeName(
-									schemaRootPackageName) + ") tmp"+ c.getKey() + ";"));
+					+ c.getValue()
+							.getTransactionJavaAttributeImplementationTypeName(
+									schemaRootPackageName) + ") tmp"
+					+ c.getKey() + ";"));
 		}
-		code.add(new CodeSnippet("io.match(\")\");"));
+		code.add(new CodeSnippet("_io.match(\")\");"));
 		code.addNoIndent(new CodeSnippet("}"));
 		return code;
 	}
@@ -245,16 +255,16 @@ public class RecordCodeGenerator extends CodeGenerator {
 		code
 				.addNoIndent(new CodeSnippet(
 						true,
-						"public void writeComponentValues(GraphIO io) throws IOException, GraphIOException {",
-						"\tio.writeSpace();", "\tio.write(\"(\");",
-						"\tio.noSpace();"));
+						"public void writeComponentValues(GraphIO _io) throws IOException, GraphIOException {",
+						"\t_io.writeSpace();", "\t_io.write(\"(\");",
+						"\t_io.noSpace();"));
 
 		for (Entry<String, Domain> c : recordDomain.getComponents().entrySet()) {
 			code.add(c.getValue().getWriteMethod(schemaRootPackageName,
-					c.getKey(), "io"));
+					c.getKey(), "_io"));
 		}
 
-		code.addNoIndent(new CodeSnippet("\tio.write(\")\");", "}"));
+		code.addNoIndent(new CodeSnippet("\t_io.write(\")\");", "}"));
 		return code;
 	}
 
@@ -298,7 +308,7 @@ public class RecordCodeGenerator extends CodeGenerator {
 				"\treturn sb.toString();", "}"));
 		return code;
 	}
-	
+
 	/**
 	 * Creates the clone()-method for the record.
 	 * 
@@ -314,17 +324,19 @@ public class RecordCodeGenerator extends CodeGenerator {
 		// TODO use construct in own code!!!
 		for (Entry<String, Domain> rdc : recordDomain.getComponents()
 				.entrySet()) {
-			if (rdc.getValue().isComposite())
+			if (rdc.getValue().isComposite()) {
 				constructorFields += "("
 						+ rdc
 								.getValue()
 								.getTransactionJavaAttributeImplementationTypeName(
 										schemaRootPackageName) + ") "
 						+ rdc.getKey() + ".clone()";
-			else
+			} else {
 				constructorFields += rdc.getKey();
-			if ((count + 1) != size)
+			}
+			if ((count + 1) != size) {
 				constructorFields += ", ";
+			}
 			count++;
 		}
 		code.addNoIndent(new CodeSnippet("\treturn new #simpleClassName#("

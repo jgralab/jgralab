@@ -84,7 +84,7 @@ public class AggregationTransition extends Transition {
 		if (!typeCollection.equals(et.typeCollection)) {
 			return false;
 		}
-		if (!validEdgeRole.equals(et.validEdgeRole)) {
+		if ((validEdgeRole != null) && !validEdgeRole.equals(et.validEdgeRole)) {
 			return false;
 		}
 		if (aggregateFrom != et.aggregateFrom) {
@@ -221,7 +221,8 @@ public class AggregationTransition extends Transition {
 		}
 		// checks if a role restriction is set and if e has the right role
 		if (validEdgeRole != null) {
-			if (!e.getThatRole().equals(validEdgeRole)) {
+			if ((e.getThatRole() != null)
+					&& !e.getThatRole().equals(validEdgeRole)) {
 				return false;
 			}
 		}

@@ -59,8 +59,6 @@ public final class RecordDomainImpl extends CompositeDomainImpl implements
 	 */
 	RecordDomainImpl(String sn, Package pkg, Map<String, Domain> components) {
 		super(sn, pkg);
-
-		"ab".substring(0, 1);
 		for (Entry<String, Domain> e : components.entrySet()) {
 			addComponent(e.getKey(), e.getValue());
 		}
