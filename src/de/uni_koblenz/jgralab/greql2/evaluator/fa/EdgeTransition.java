@@ -56,6 +56,7 @@ public class EdgeTransition extends SimpleTransition {
 	/**
 	 * returns a string which describes the edge
 	 */
+	@Override
 	public String edgeString() {
 		String desc = "EdgeTransition";
 		// String desc = "EdgeTransition ( Dir:" + validDirection.toString() + "
@@ -72,18 +73,24 @@ public class EdgeTransition extends SimpleTransition {
 	 * greql2.evaluator.fa.Transition#equalSymbol(greql2.evaluator.fa.EdgeTransition
 	 * )
 	 */
+	@Override
 	public boolean equalSymbol(Transition t) {
-		if (!(t instanceof EdgeTransition))
+		if (!(t instanceof EdgeTransition)) {
 			return false;
+		}
 		EdgeTransition et = (EdgeTransition) t;
-		if (!typeCollection.equals(et.typeCollection))
+		if (!typeCollection.equals(et.typeCollection)) {
 			return false;
-		if (validEdgeRole != et.validEdgeRole)
+		}
+		if (!validEdgeRole.equals(et.validEdgeRole)) {
 			return false;
-		if (allowedEdgeEvaluator != et.allowedEdgeEvaluator)
+		}
+		if (allowedEdgeEvaluator != et.allowedEdgeEvaluator) {
 			return false;
-		if (validDirection != et.validDirection)
+		}
+		if (validDirection != et.validDirection) {
 			return false;
+		}
 		return true;
 	}
 
@@ -98,6 +105,7 @@ public class EdgeTransition extends SimpleTransition {
 	/**
 	 * returns a copy of this transition
 	 */
+	@Override
 	public Transition copy(boolean addToStates) {
 		return new EdgeTransition(this, addToStates);
 	}
@@ -136,6 +144,7 @@ public class EdgeTransition extends SimpleTransition {
 	 * @see greql2.evaluator.fa.Transition#accepts(jgralab.Vertex, jgralab.Edge,
 	 * greql2.evaluator.SubgraphTempAttribute)
 	 */
+	@Override
 	public boolean accepts(Vertex v, Edge e, BooleanGraphMarker subgraph)
 			throws EvaluateException {
 		if (!super.accepts(v, e, subgraph)) {
@@ -150,8 +159,9 @@ public class EdgeTransition extends SimpleTransition {
 						.toEdge().getNormalEdge();
 				// GreqlEvaluator.println("Allowed Edge is: " +
 				// allowedEdge.toString());
-				if (e.getNormalEdge() != allowedEdge)
+				if (e.getNormalEdge() != allowedEdge) {
 					return false;
+				}
 			} catch (JValueInvalidTypeException ex) {
 				throw new EvaluateException(
 						"EdgeExpression in EdgePathDescription doesn't evaluate to edge",

@@ -95,17 +95,22 @@ public class JValueTypeCollection extends JValue {
 
 	@Override
 	public boolean equals(Object o) {
-		if (!(o instanceof JValueTypeCollection))
+		if (!(o instanceof JValueTypeCollection)) {
 			return false;
+		}
 		JValueTypeCollection col = (JValueTypeCollection) o;
-		if (forbiddenTypes.size() != col.forbiddenTypes.size())
+		if (forbiddenTypes.size() != col.forbiddenTypes.size()) {
 			return false;
-		if (allowedTypes.size() != col.allowedTypes.size())
+		}
+		if (allowedTypes.size() != col.allowedTypes.size()) {
 			return false;
-		if (!forbiddenTypes.containsAll(col.forbiddenTypes))
+		}
+		if (!forbiddenTypes.containsAll(col.forbiddenTypes)) {
 			return false;
-		if (!allowedTypes.containsAll(col.allowedTypes))
+		}
+		if (!allowedTypes.containsAll(col.allowedTypes)) {
 			return false;
+		}
 		return true;
 	}
 
@@ -147,6 +152,7 @@ public class JValueTypeCollection extends JValue {
 	/**
 	 * returns a string representation of this path
 	 */
+	@Override
 	public String toString() {
 		Iterator<AttributedElementClass> allowedIter = allowedTypes.iterator();
 		Iterator<AttributedElementClass> forbiddenIter = forbiddenTypes
@@ -184,6 +190,7 @@ public class JValueTypeCollection extends JValue {
 	/**
 	 * accepts te given visitor to visit this jvalue
 	 */
+	@Override
 	public void accept(JValueVisitor v) {
 		v.visitTypeCollection(this);
 	}

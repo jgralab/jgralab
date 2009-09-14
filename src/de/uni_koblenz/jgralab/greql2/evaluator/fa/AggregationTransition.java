@@ -75,16 +75,21 @@ public class AggregationTransition extends Transition {
 	 * greql2.evaluator.fa.Transition#equalSymbol(greql2.evaluator.fa.EdgeTransition
 	 * )
 	 */
+	@Override
 	public boolean equalSymbol(Transition t) {
-		if (!(t instanceof AggregationTransition))
+		if (!(t instanceof AggregationTransition)) {
 			return false;
+		}
 		AggregationTransition et = (AggregationTransition) t;
-		if (!typeCollection.equals(et.typeCollection))
+		if (!typeCollection.equals(et.typeCollection)) {
 			return false;
-		if (validEdgeRole != et.validEdgeRole)
+		}
+		if (!validEdgeRole.equals(et.validEdgeRole)) {
 			return false;
-		if (aggregateFrom != et.aggregateFrom)
+		}
+		if (aggregateFrom != et.aggregateFrom) {
 			return false;
+		}
 		return true;
 	}
 
@@ -101,6 +106,7 @@ public class AggregationTransition extends Transition {
 	/**
 	 * returns a copy of this transition
 	 */
+	@Override
 	public Transition copy(boolean addToStates) {
 		return new AggregationTransition(this, addToStates);
 	}
@@ -163,6 +169,7 @@ public class AggregationTransition extends Transition {
 	 * 
 	 * @see greql2.evaluator.fa.Transition#reverse()
 	 */
+	@Override
 	public void reverse() {
 		super.reverse();
 		aggregateFrom = !aggregateFrom;
@@ -173,6 +180,7 @@ public class AggregationTransition extends Transition {
 	 * 
 	 * @see greql2.evaluator.fa.Transition#isEpsilon()
 	 */
+	@Override
 	public boolean isEpsilon() {
 		return false;
 	}
@@ -183,6 +191,7 @@ public class AggregationTransition extends Transition {
 	 * @see greql2.evaluator.fa.Transition#accepts(jgralab.Vertex, jgralab.Edge,
 	 * greql2.evaluator.SubgraphTempAttribute)
 	 */
+	@Override
 	public boolean accepts(Vertex v, Edge e, BooleanGraphMarker subgraph)
 			throws EvaluateException {
 		if ((e == null) || !(e instanceof Aggregation)) {
@@ -212,8 +221,9 @@ public class AggregationTransition extends Transition {
 		}
 		// checks if a role restriction is set and if e has the right role
 		if (validEdgeRole != null) {
-			if (e.getThatRole() != validEdgeRole)
+			if (!e.getThatRole().equals(validEdgeRole)) {
 				return false;
+			}
 		}
 		// checks if a edgeTypeRestriction is set and if e has the right type
 		AttributedElementClass edgeClass = e.getAttributedElementClass();
@@ -227,6 +237,7 @@ public class AggregationTransition extends Transition {
 	 * returns the vertex of the datagraph which can be visited after this
 	 * transition has fired. This is the vertex at the end of the edge
 	 */
+	@Override
 	public Vertex getNextVertex(Vertex v, Edge e) {
 		return e.getThat();
 	}
