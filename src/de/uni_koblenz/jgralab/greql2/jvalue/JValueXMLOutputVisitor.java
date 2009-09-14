@@ -251,6 +251,7 @@ public class JValueXMLOutputVisitor extends JValueDefaultVisitor {
 	 * To store a subgraph is very tricky, one possibility is to store all
 	 * vertices and edges
 	 */
+	@Override
 	public void visitSubgraph(JValue s) {
 		if (dataGraph == null) {
 			throw new JValueVisitorException(
@@ -262,15 +263,18 @@ public class JValueXMLOutputVisitor extends JValueDefaultVisitor {
 		Vertex firstVertex = dataGraph.getFirstVertex();
 		Vertex currentVertex = firstVertex;
 		do {
-			if ((subgraph == null) || (subgraph.isMarked(currentVertex)))
+			if ((subgraph == null) || (subgraph.isMarked(currentVertex))) {
 				storeln("<vertex>" + currentVertex.getId() + "</vertex>");
+			}
 			currentVertex = currentVertex.getNextVertex();
 		} while (firstVertex != currentVertex);
 		Edge firstEdge = dataGraph.getFirstEdgeInGraph();
 		Edge currentEdge = firstEdge;
 		do {
-			if (subgraph.isMarked(currentEdge))
+			if (subgraph.isMarked(currentEdge)) {
 				storeln("<edge>" + currentEdge.getId() + "</edge>");
+			}
+			currentEdge = currentEdge.getNextEdgeInGraph();
 		} while (firstEdge != currentEdge);
 
 		storeln("</subgraph>");

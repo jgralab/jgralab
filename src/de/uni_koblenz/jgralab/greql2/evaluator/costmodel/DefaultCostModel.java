@@ -1548,6 +1548,7 @@ public class DefaultCostModel extends CostModelBase implements CostModel {
 			TypeIdEvaluator tidEval = (TypeIdEvaluator) greqlEvaluator
 					.getVertexEvaluatorGraphMarker().getMark(tid);
 			selectivity *= tidEval.getEstimatedSelectivity(graphSize);
+			inc = inc.getNextIsTypeRestrOf(EdgeDirection.IN);
 		}
 		return new GraphSize(Math.round(graphSize.getVertexCount()
 				* selectivity), Math.round(graphSize.getEdgeCount()
@@ -1639,6 +1640,7 @@ public class DefaultCostModel extends CostModelBase implements CostModel {
 			TypeIdEvaluator tidEval = (TypeIdEvaluator) greqlEvaluator
 					.getVertexEvaluatorGraphMarker().getMark(tid);
 			selectivity *= tidEval.getEstimatedSelectivity(graphSize);
+			inc = inc.getNextIsTypeRestrOf(EdgeDirection.IN);
 		}
 		return new GraphSize((int) Math.round(graphSize.getVertexCount()
 				* selectivity), (int) Math.round(graphSize.getEdgeCount()
