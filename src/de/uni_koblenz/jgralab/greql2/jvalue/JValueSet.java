@@ -38,7 +38,7 @@ import java.util.Iterator;
  * 
  * @author ist@uni-koblenz.de
  */
-public class JValueSet extends JValueCollection {
+public class JValueSet extends JValueCollection implements Cloneable {
 
 	/**
 	 * A 'wrapper' iterator class that uses <code>HashSet.iterator()</code>

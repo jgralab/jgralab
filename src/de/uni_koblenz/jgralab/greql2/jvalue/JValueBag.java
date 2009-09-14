@@ -43,7 +43,7 @@ import java.util.Map.Entry;
  * 
  * @author ist@uni-koblenz.de
  */
-public class JValueBag extends JValueCollection {
+public class JValueBag extends JValueCollection implements Cloneable {
 
 	/**
 	 * The backing instance of <code>HashMap</code> where the elements of this
@@ -252,7 +252,7 @@ public class JValueBag extends JValueCollection {
 			}
 			for (JValue val : this) {
 				if (!other.contains(val)
-						|| getQuantity(val) != other.getQuantity(val)) {
+						|| (getQuantity(val) != other.getQuantity(val))) {
 					return false;
 				}
 			}
