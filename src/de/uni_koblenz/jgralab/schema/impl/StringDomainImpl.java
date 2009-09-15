@@ -67,12 +67,12 @@ public final class StringDomainImpl extends BasicDomainImpl implements
 		return new CodeSnippet(graphIoVariableName + ".writeUtfString("
 				+ variableName + ");");
 	}
-	
+
 	@Override
 	public CodeBlock getTransactionReadMethod(String schemaPrefix,
 			String variableName, String graphIoVariableName) {
 		return new CodeSnippet(
-				getJavaAttributeImplementationTypeName(schemaPrefix) + " tmp"
+				getJavaAttributeImplementationTypeName(schemaPrefix) + " "
 						+ variableName + " = " + graphIoVariableName
 						+ ".matchUtfString();");
 	}

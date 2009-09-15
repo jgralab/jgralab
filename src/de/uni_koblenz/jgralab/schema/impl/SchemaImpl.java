@@ -123,7 +123,7 @@ public class SchemaImpl implements Schema {
 		return m1ClassManager;
 	}
 
-	//TODO Remove
+	// TODO Remove
 	private static final String GRAPH_IMPLEMENTATION_PACKAGE = "array";
 
 	static final Class<?>[] GRAPHCLASS_CREATE_SIGNATURE = { String.class,
@@ -135,7 +135,7 @@ public class SchemaImpl implements Schema {
 	 * the Schema.
 	 */
 	public static final String IMPL_PACKAGE_NAME = "impl";
-	
+
 	/**
 	 * This is the name of the package into which the implementation classes for
 	 * this schema are generated. The impl package is child of the package for
@@ -181,9 +181,9 @@ public class SchemaImpl implements Schema {
 	 * {@link #graphClass}.
 	 */
 	protected GraphFactory graphFactory;
-	
+
 	/**
- 	 * flag standard vs. transaction support
+	 * flag standard vs. transaction support
 	 */
 	protected boolean transactionSupport;
 
@@ -369,10 +369,11 @@ public class SchemaImpl implements Schema {
 		}
 
 		GraphCodeGenerator graphCodeGenerator = new GraphCodeGenerator(
-				graphClass, packagePrefix, GRAPH_IMPLEMENTATION_PACKAGE, name, false);
+				graphClass, packagePrefix, GRAPH_IMPLEMENTATION_PACKAGE, name,
+				false);
 		javaSources.addAll(graphCodeGenerator.createJavaSources());
-		graphCodeGenerator = new GraphCodeGenerator(
-				graphClass, packagePrefix, GRAPH_IMPLEMENTATION_PACKAGE, name, true);
+		graphCodeGenerator = new GraphCodeGenerator(graphClass, packagePrefix,
+				GRAPH_IMPLEMENTATION_PACKAGE, name, true);
 		javaSources.addAll(graphCodeGenerator.createJavaSources());
 
 		// build graphelementclasses
@@ -469,10 +470,11 @@ public class SchemaImpl implements Schema {
 		}
 
 		GraphCodeGenerator graphCodeGenerator = new GraphCodeGenerator(
-				graphClass, packagePrefix, GRAPH_IMPLEMENTATION_PACKAGE, name, true);
+				graphClass, packagePrefix, GRAPH_IMPLEMENTATION_PACKAGE, name,
+				true);
 		graphCodeGenerator.createFiles(pathPrefix);
-		graphCodeGenerator = new GraphCodeGenerator(
-				graphClass, packagePrefix, GRAPH_IMPLEMENTATION_PACKAGE, name, false);
+		graphCodeGenerator = new GraphCodeGenerator(graphClass, packagePrefix,
+				GRAPH_IMPLEMENTATION_PACKAGE, name, false);
 		graphCodeGenerator.createFiles(pathPrefix);
 
 		// build graphelementclasses
@@ -587,8 +589,6 @@ public class SchemaImpl implements Schema {
 			options.add(jgralabClassPath);
 		}
 
-		for (JavaSourceFromString st : javaSources)
-			System.out.println("SourceFromString: " + st);
 		compiler.getTask(null, manager, null, options, null, javaSources)
 				.call();
 	}
@@ -1037,13 +1037,14 @@ public class SchemaImpl implements Schema {
 	private Class<? extends Graph> getGraphClassImpl() {
 		String implClassName = packagePrefix + ".";
 		// determine package
-		if (!transactionSupport)
+		if (!transactionSupport) {
 			implClassName += IMPLSTDPACKAGENAME;
-		else
+		} else {
 			implClassName += IMPLTRANSPACKAGENAME;
+		}
 		implClassName = implClassName + "." + graphClass.getSimpleName()
 				+ "Impl";
-		
+
 		Class<? extends Graph> m1Class;
 		try {
 			m1Class = (Class<? extends Graph>) Class.forName(implClassName,
@@ -1209,7 +1210,7 @@ public class SchemaImpl implements Schema {
 	public String getPathName() {
 		return packagePrefix.replace('.', File.separatorChar);
 	}
-	
+
 	/**
 	 * Set flag that transaction support should be used or not.
 	 * 

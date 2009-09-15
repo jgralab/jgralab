@@ -396,7 +396,7 @@ public class AttributedElementCodeGenerator extends CodeGenerator {
 				Domain domain = attr.getDomain();
 				if (domain.isComposite()) {
 					if (!(domain instanceof RecordDomainImpl)) {
-						code.setVariable("tmpname", "tmp" + attr.getName());
+						code.setVariable("tmpname", "_" + attr.getName());
 						code.add("\t#ttype# #tmpname# = null;");
 						code.add("\tif(#name# != null)");
 						code.add("\t\t#tmpname# = new #ttype#(#name#);");
@@ -484,11 +484,11 @@ public class AttributedElementCodeGenerator extends CodeGenerator {
 					CodeSnippet readBlock = new CodeSnippet();
 					readBlock.setVariable("variableType", attribute.getDomain()
 							.getJavaClassName(schemaRootPackageName));
-					readBlock.add("#variableType# tmpVar = null;");
+					readBlock.add("#variableType# _tmpVar = null;");
 					a.add(readBlock);
 					a.add(attribute.getDomain().getReadMethod(
-							schemaRootPackageName, "tmpVar", "_io"));
-					a.addNoIndent(new CodeSnippet("\t#setterName#(tmpVar);",
+							schemaRootPackageName, "_tmpVar", "_io"));
+					a.addNoIndent(new CodeSnippet("\t#setterName#(_tmpVar);",
 							"\treturn;", "}"));
 				} else {
 					a.add(attribute.getDomain().getReadMethod(
@@ -578,8 +578,7 @@ public class AttributedElementCodeGenerator extends CodeGenerator {
 							schemaRootPackageName, attribute.getName(), "_io"));
 				} else {
 					// read-method for transaction support
-					snippet.setVariable("variableName", "tmp"
-							+ attribute.getName());
+					snippet.setVariable("variableName", attribute.getName());
 					code.add(attribute.getDomain().getTransactionReadMethod(
 							schemaRootPackageName, attribute.getName(), "_io"));
 				}

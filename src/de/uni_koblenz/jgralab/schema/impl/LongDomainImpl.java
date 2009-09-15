@@ -73,7 +73,7 @@ public final class LongDomainImpl extends BasicDomainImpl implements
 	public CodeBlock getTransactionReadMethod(String schemaPrefix,
 			String variableName, String graphIoVariableName) {
 		return new CodeSnippet(
-				getJavaAttributeImplementationTypeName(schemaPrefix) + " tmp"
+				getJavaAttributeImplementationTypeName(schemaPrefix) + " "
 						+ variableName + " = " + graphIoVariableName
 						+ ".matchLong();");
 	}

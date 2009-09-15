@@ -162,7 +162,7 @@ public final class SetDomainImpl extends CollectionDomainImpl implements
 			String variableName, String graphIoVariableName) {
 		CodeList code = new CodeList();
 		code.setVariable("init", "java.util.Set<#basedom#> #name# = null;");
-		internalGetReadMethod(code, schemaPrefix, "tmp" + variableName,
+		internalGetReadMethod(code, schemaPrefix, variableName,
 				graphIoVariableName);
 		return code;
 	}

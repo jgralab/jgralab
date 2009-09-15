@@ -42,10 +42,8 @@ public class GraphTest {
 	@Before
 	public void setUp() {
 
-		graph = VertexTestSchema.instance()
-				.createVertexTestGraphWithTransactionSupport(); // .createVertexTestGraph();
-		graph2 = VertexTestSchema.instance()
-				.createVertexTestGraphWithTransactionSupport();
+		graph = VertexTestSchema.instance().createVertexTestGraph(); // .createVertexTestGraph();
+		graph2 = VertexTestSchema.instance().createVertexTestGraph();
 		graph.createTransaction();
 		graph2.createTransaction();
 		System.out.println("Graph2 is instance of class " + graph2.getClass());

@@ -227,11 +227,11 @@ public final class RecordDomainImpl extends CompositeDomainImpl implements
 	public CodeBlock getTransactionReadMethod(String schemaPrefix,
 			String variableName, String graphIoVariableName) {
 		CodeSnippet code = new CodeSnippet();
-		code.setVariable("name", "tmp" + variableName);
+		code.setVariable("name", variableName);
 		code.setVariable("init",
 				getJavaAttributeImplementationTypeName(schemaPrefix)
-						+ " #name#;");
-		internalGetReadMethod(code, schemaPrefix, "tmp" + variableName,
+						+ " #name# = null;");
+		internalGetReadMethod(code, schemaPrefix, variableName,
 				graphIoVariableName);
 		return code;
 	}
