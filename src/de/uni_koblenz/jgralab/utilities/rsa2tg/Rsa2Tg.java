@@ -102,6 +102,8 @@ import de.uni_koblenz.jgralab.utilities.tg2dot.Tg2Dot;
 @WorkInProgress(description = "record comments,"
 		+ "error checking and reporting", responsibleDevelopers = "riediger, mmce")
 public class Rsa2Tg {
+	private static final String UML_ATTRIBUTE_ASSOCIATION = "association";
+
 	private static final String UML_UPPERVALUE = "upperValue";
 
 	private static final String UML_LOWERVALUE = "lowerValue";
@@ -540,8 +542,10 @@ public class Rsa2Tg {
 	 * 
 	 * @throws FileNotFoundException
 	 * @throws XMLStreamException
+	 * @throws GraphIOException
 	 */
-	public void process() throws FileNotFoundException, XMLStreamException {
+	public void process() throws FileNotFoundException, XMLStreamException,
+			GraphIOException {
 
 		InputStream in = new FileInputStream(filenameXmi);
 		currentXmiFile = new File(filenameXmi);
@@ -775,22 +779,34 @@ public class Rsa2Tg {
 	 */
 	public void endElement(String name, int line) throws XMLStreamException {
 
-		// TODO (nein, interne Implementation)
-		assert elementNameStack.size() > 0;
+		// TODO
+		if (elementNameStack.size() <= 0) {
+			throw new ProcessingException(filenameXmi, line,
+					"XML file is malformed. There is probably one end element to much.");
+		}
 		String s = elementNameStack.peek();
 		int p = s.indexOf('>');
 
-		// TODO (nein, interne Implementation)
-		assert p >= 0;
+		// TODO
+		if (p < 0) {
+			throw new ProcessingException(filenameXmi, line,
+					"FIXME: Internal error.");
+		}
 		String topName = s.substring(0, p);
 		String xmiId = s.substring(p + 1);
 
-		// TODO (nein, interne Implementation)
-		assert topName.equals(name);
+		// TODO
+		if (!topName.equals(name)) {
+			throw new ProcessingException(filenameXmi, line,
+					"XML file is malformed. The start element and end element do not fit together.");
+		}
 		if (ignoredElements.contains(name)) {
 
-			// TODO (nein, interne Implementation)
-			assert ignore > 0;
+			// TODO
+			if (ignore <= 0) {
+				throw new ProcessingException(filenameXmi, line,
+						"XML file is malformed. There is probably one end element to much.");
+			}
 			--ignore;
 		} else if (ignore == 0) {
 			if (inConstraint && name.equals(UML_BODY)) {
@@ -801,8 +817,12 @@ public class Rsa2Tg {
 			if (elem != null) {
 				if (elem instanceof Package) {
 
-					// TODO (nein, interne Implementation)
-					assert packageStack.size() > 1;
+					// TODO There should be at least one package element in the
+					// stack.
+					if (packageStack.size() <= 1) {
+						throw new ProcessingException(filenameXmi, line,
+								"XML file is malformed. There is probably one end element to much.");
+					}
 					packageStack.pop();
 				} else if (elem instanceof AttributedElementClass) {
 					currentClassId = null;
@@ -816,8 +836,11 @@ public class Rsa2Tg {
 			if (name.equals(UML_PACKAGE)) {
 				packageStack.pop();
 
-				// TODO (nein, interne Implementation)
-				assert (packageStack.size() == 0);
+				// TODO There should be no package left.
+				if (packageStack.size() != 0) {
+					throw new ProcessingException(filenameXmi, line,
+							"XML file is malformed. There is probably one end element to much.");
+				}
 			} else if (name.equals(UML_OWNEDATTRIBUTE)) {
 				currentRecordDomainComponent = null;
 				currentAssociationEnd = null;
@@ -837,17 +860,21 @@ public class Rsa2Tg {
 	 * 
 	 * @see org.xml.sax.helpers.DefaultHandler#endDocument()
 	 */
-	public void endDocument() throws XMLStreamException {
+	public void endDocument() throws XMLStreamException, GraphIOException {
 		// finalizes processing by creating missing links
 
 		// TODO ? Könnte darauf hindeuten, dass das XML-Dokument falsch
 		// generiert wurde.
-		assert elementNameStack.size() == 0;
-		assert ignore == 0;
+		// At this stage the stack 'elementNameStack' should be empty and the
+		// ignore flag zero.
+		if (elementNameStack.size() != 0 || ignore != 0) {
+			throw new ProcessingException(filenameXmi,
+					"XML file is malformed. There is probably one end element missing.");
+		}
 
 		if (graphClass.getQualifiedName() == null) {
-			throw new XMLStreamException(
-					"no <<graphclass>> defined in schema '"
+			throw new ProcessingException(filenameXmi,
+					"No <<graphclass>> defined in schema '"
 							+ schema.getPackagePrefix() + "."
 							+ schema.getName() + "'");
 		}
@@ -879,7 +906,8 @@ public class Rsa2Tg {
 		}
 
 		if (!preliminaryVertices.isEmpty()) {
-			throw new XMLStreamException("There are still vertices left over. ");
+			throw new ProcessingException(filenameXmi,
+					"There are still vertices left over. ");
 		}
 
 		processed = true;
@@ -892,16 +920,24 @@ public class Rsa2Tg {
 	 * Write a dot-file and a tg-file out.
 	 * 
 	 * @throws XMLStreamException
+	 * @throws GraphIOException
 	 */
-	public void writeOutput() throws XMLStreamException {
+	public void writeOutput() throws XMLStreamException, GraphIOException {
 		if (processed) {
 
-			// TODO (nein, interne Implementation)
-			assert schema != null;
+			// TODO
+			// There should be a generated schema
+			if (schema == null) {
+				throw new ProcessingException(filenameXmi,
+						"No Schema has been generated.");
+			}
 			String schemaName = schema.getName();
 
-			// TODO (nein, interne Implementation)
-			assert schemaName != null;
+			// TODO
+			if (schemaName == null) {
+				throw new ProcessingException(filenameXmi,
+						"No Schema name is present.");
+			}
 
 			String relativePathPrefix = currentXmiFile.getParent();
 			// if in current working directory parent is null
@@ -1006,7 +1042,11 @@ public class Rsa2Tg {
 		if (ae != null) {
 
 			// TODO Exception: Element with ID xmiID is not a Class
-			assert ae instanceof VertexClass;
+			if (!(ae instanceof VertexClass)) {
+				throw new ProcessingException(parser, filenameXmi,
+						"The element with ID '" + xmiId
+								+ "' is not a class. (VertexClass)");
+			}
 
 			assert preliminaryVertices.contains(ae);
 			preliminaryVertices.remove(ae);
@@ -1034,8 +1074,12 @@ public class Rsa2Tg {
 		EdgeClass ec = null;
 		if (ae != null) {
 
-			// TODO
-			assert ae instanceof EdgeClass;
+			// TODO s.o.
+			if (!(ae instanceof EdgeClass)) {
+				throw new ProcessingException(parser, filenameXmi,
+						"The element with ID '" + xmiId
+								+ "' is not a association. (EdgeClass)");
+			}
 
 			assert preliminaryVertices.contains(ae);
 			preliminaryVertices.remove(ae);
@@ -1058,7 +1102,11 @@ public class Rsa2Tg {
 		String memberEnd = parser.getAttributeValue(null, "memberEnd");
 
 		// TODO fehler im XMI
-		assert memberEnd != null;
+		if (memberEnd == null) {
+			throw new ProcessingException(parser, filenameXmi,
+					"The association with ID '" + xmiId
+							+ "' has no end member. (EdgeClass)");
+		}
 		memberEnd = memberEnd.trim().replaceAll("\\s+", " ");
 		int p = memberEnd.indexOf(' ');
 		String targetEnd = memberEnd.substring(0, p);
@@ -1129,12 +1177,18 @@ public class Rsa2Tg {
 	private Vertex handlePrimitiveType(XMLStreamReader parser) {
 		String typeName = parser.getAttributeValue(null, UML_ATTRIBUTE_NAME);
 
-		// TODO Exception
-		assert typeName != null;
+		// TODO Exception "No type name declared"
+		if (typeName == null) {
+			throw new ProcessingException(parser, filenameXmi,
+					"The current type is malformed, empty or not existing.");
+		}
 		typeName = typeName.replaceAll("\\s", "");
 
-		// TODO Exception
-		assert typeName.length() > 0;
+		// TODO Exception "Type name is empty"
+		if (typeName.length() <= 0) {
+			throw new ProcessingException(parser, filenameXmi,
+					"The current type is malformed, empty or not existing.");
+		}
 		Domain dom = createDomain(typeName);
 
 		assert dom != null;
@@ -1173,19 +1227,31 @@ public class Rsa2Tg {
 	}
 
 	private void handleEnumerationLiteral(XMLStreamReader parser) {
-		String classifier = parser.getAttributeValue(null, "classifier");
 
-		// TODO Exception
-		assert classifier != null;
-		EnumDomain ed = (EnumDomain) idMap.get(classifier);
 		String s = parser.getAttributeValue(null, UML_ATTRIBUTE_NAME);
 
-		// TODO Exception
-		assert s != null;
+		// TODO Exception "No Literal declared"
+		if (s == null) {
+			throw new ProcessingException(parser, filenameXmi,
+					"No Literal declared.");
+		}
 		s = s.trim();
 
-		// TODO Exception
-		assert s.length() > 0;
+		// TODO Exception "Literal is empty"
+		if (s.length() <= 0) {
+			throw new ProcessingException(parser, filenameXmi,
+					"Literal is empty.");
+		}
+
+		String classifier = parser.getAttributeValue(null, "classifier");
+
+		// TODO Exception "No Enum found for Literal " ... " found.
+		if (classifier == null) {
+			throw new ProcessingException(parser, filenameXmi,
+					"No Enumeration found for Literal '" + s + "'found.");
+		}
+		EnumDomain ed = (EnumDomain) idMap.get(classifier);
+
 		ed.getEnumConstants().add(s);
 	}
 
@@ -1196,7 +1262,7 @@ public class Rsa2Tg {
 			sg2tg.run();
 		} catch (IOException e) {
 			throw new RuntimeException(
-					"SchemaGraph2Tg faild with an IOException!", e);
+					"SchemaGraph2Tg failed with an IOException!", e);
 		}
 	}
 
@@ -1210,7 +1276,10 @@ public class Rsa2Tg {
 			To to = e.getFirstTo();
 
 			// TODO Exception
-			assert (from != null) && (to != null);
+			if (from == null || to == null) {
+				throw new ProcessingException(filenameXmi,
+						"No 'from' or 'to'-Edge declared.");
+			}
 			boolean fromIsNavigable = !ownedEnds.contains(from);
 			boolean toIsNavigable = !ownedEnds.contains(to);
 			if (fromIsNavigable == toIsNavigable) {
@@ -1263,15 +1332,22 @@ public class Rsa2Tg {
 
 			// TODO Constraint kann nur an GraphClass, VertexClass, EdgeClass
 			// bzw. Association Ends hängen
-			assert (ae instanceof AttributedElementClass)
-					|| (ae instanceof From) || (ae instanceof To);
+			if (!(ae instanceof AttributedElementClass)
+					&& !(ae instanceof From) && !(ae instanceof To)) {
+				throw new ProcessingException(filenameXmi,
+						"Constraint can only be attached to GraphClass, "
+								+ "VertexClass, EdgeClass or association ends.");
+			}
 			if (ae instanceof AttributedElementClass) {
 				for (String text : l) {
 					addGreqlConstraint((AttributedElementClass) ae, text);
 				}
 			} else {
 				// TODO Exception
-				assert l.size() == 1 : "Only one redefines allowed";
+				if (l.size() != 1) {
+					throw new ProcessingException(filenameXmi,
+							"Only one redefines Constraint allowed");
+				}
 				addRedefinesConstraint((Edge) ae, l.get(0));
 			}
 		}
@@ -1308,7 +1384,10 @@ public class Rsa2Tg {
 			}
 
 			// TODO Exception
-			assert (toRole != null) && (toRole.length() > 0);
+			if (toRole == null || toRole.length() <= 0) {
+				throw new ProcessingException(filenameXmi,
+						"There is no role name 'to'-Edge defined.");
+			}
 			if (ec instanceof AggregationClass) {
 				if (((AggregationClass) ec).isAggregateFrom()) {
 					ecName = "Contains" + toRole;
@@ -1333,7 +1412,10 @@ public class Rsa2Tg {
 				}
 
 				// TODO Exception
-				assert (fromRole != null) && (fromRole.length() > 0);
+				if (fromRole == null || fromRole.length() <= 0) {
+					throw new ProcessingException(filenameXmi,
+							"There is no role name of 'from'-Edge defined.");
+				}
 				name += fromRole;
 			}
 			// System.err.println(" ==> '" + name + "' + '" + ecName + "'");
@@ -1384,14 +1466,17 @@ public class Rsa2Tg {
 				preliminaryVertices.remove(d);
 				recordComponentType.removeMark(comp);
 			} else {
-				// TODO Exception JA!
-				System.err.println("Undefined Domain " + domainId);
+				throw new ProcessingException(filenameXmi,
+						"Undefined Domain with ID '" + domainId + "' found.");
 			}
 		}
 
 		// TODO Exception, es gibt RecordDomains mit Komponenten, deren Domain
 		// nicht aufgelöst wurde
-		assert recordComponentType.isEmpty();
+		if (!recordComponentType.isEmpty()) {
+			throw new ProcessingException(filenameXmi,
+					"There are some RocordDomain objects, whos domains are not resolved.");
+		}
 	}
 
 	private void linkAttributeDomains() {
@@ -1407,14 +1492,18 @@ public class Rsa2Tg {
 				attributeType.removeMark(att);
 			} else {
 				// TODO Exception
-				System.err.println("Undefined Domain " + domainId);
+				throw new ProcessingException(filenameXmi,
+						"Undefined Domain with ID '" + domainId + "' found.");
 			}
 
 			assert att.getDegree(HasDomain.class, EdgeDirection.OUT) == 1;
 		}
 
 		// TODO Exception, es gibt Attribute, deren Domain nicht aufgelöst wurde
-		assert attributeType.isEmpty();
+		if (!attributeType.isEmpty()) {
+			throw new ProcessingException(filenameXmi,
+					"There are some Attribute objects, whos domains are not resolved.");
+		}
 	}
 
 	private void writeDotFile(String dotName) {
@@ -1426,12 +1515,8 @@ public class Rsa2Tg {
 	}
 
 	private void writeSchemaGraph(String schemaGraphName)
-			throws XMLStreamException {
-		try {
-			GraphIO.saveGraphToFile(schemaGraphName, sg, null);
-		} catch (GraphIOException e) {
-			throw new XMLStreamException(e);
-		}
+			throws GraphIOException {
+		GraphIO.saveGraphToFile(schemaGraphName, sg, null);
 	}
 
 	private void linkGeneralizations() {
@@ -1455,24 +1540,38 @@ public class Rsa2Tg {
 						.get(id);
 
 				// TODO Exception, Superklasse mit ID nicht gefunden
-				assert (sup != null);
+				if (sup == null) {
+					throw new ProcessingException(filenameXmi,
+							"The superclass with ID '" + id
+									+ "' could not be found.");
+				}
 				if (sup instanceof VertexClass) {
 
 					// TODO VertexClass kann nur von VertexClass spezialisiert
 					// werden, nicht von (klasse von AE)
-					assert ae instanceof VertexClass;
+					if (!(ae instanceof VertexClass)) {
+						throw new ProcessingException(
+								filenameXmi,
+								"The superclasses do not share the same base type (Either EdgeClass or VertexClass).");
+					}
+
 					sg.createSpecializesVertexClass((VertexClass) ae,
 							(VertexClass) sup);
 				} else if (sup instanceof EdgeClass) {
 
 					// TODO EdgeClass kann nur ... s.o.
-					assert ae instanceof EdgeClass;
+					if (!(ae instanceof EdgeClass)) {
+						throw new ProcessingException(
+								filenameXmi,
+								"The superclasses do not share the same base type (Either EdgeClass or VertexClass).");
+					}
+
 					sg.createSpecializesEdgeClass((EdgeClass) ae,
 							(EdgeClass) sup);
 				} else {
 					// should not get here
 					throw new RuntimeException(
-							"FIXME: Super class must be VertexClass or EdgeClass!");
+							"FIXME: Unexpected super class type. Super class must be VertexClass or EdgeClass!");
 				}
 			}
 		}
@@ -1509,36 +1608,51 @@ public class Rsa2Tg {
 			}
 			l.add(text);
 		} else {
-			throw new XMLStreamException("Illegal constraint format: " + text
-					+ " at line " + line);
+			throw new ProcessingException(filenameXmi, line,
+					"Illegal constraint format: " + text);
 		}
 	}
 
 	private void addRedefinesConstraint(Edge constrainedEnd, String text)
 			throws XMLStreamException {
 
-		// Exception, redefines constraint kann nur an association ends stehen
-		assert (constrainedEnd instanceof From)
-				|| (constrainedEnd instanceof To);
+		// TODO: Exception, redefines constraint kann nur an association ends
+		// stehen
+		if (!(constrainedEnd instanceof From)
+				&& !(constrainedEnd instanceof To)) {
+			throw new ProcessingException(filenameXmi,
+					"Redefines constraints must be attached to one association end.");
+		}
 
 		text = text.trim().replaceAll("\\s+", " ");
 		if (!text.startsWith("redefines ")) {
-			throw new XMLStreamException("Wrong redefines constraint format.");
+			throw new ProcessingException(filenameXmi,
+					"Wrong redefines constraint format.");
 		}
 		String[] roles = text.substring(10).split("\\s*,\\s*");
 
 		// TODO Exception
-		assert roles.length >= 1;
+		if (roles.length < 1) {
+			throw new ProcessingException(filenameXmi,
+					"No role defined. At least one role have to be defined.");
+		}
 		Set<String> redefinedRoles = new TreeSet<String>();
 		for (String role : roles) {
 
 			// TODO Exception
-			assert role.length() >= 1;
+			if (role.length() < 1) {
+				throw new ProcessingException(filenameXmi,
+						"the role name is empty.");
+			}
 			redefinedRoles.add(role);
 		}
 
-		// TODO Exception
-		assert redefinedRoles.size() >= 1;
+		// TODO UNNECESSARY
+		if (redefinedRoles.size() < 1) {
+			throw new ProcessingException(filenameXmi,
+					"No redefined role has been added!");
+		}
+
 		if (constrainedEnd instanceof From) {
 			((From) constrainedEnd).setRedefinedRoles(redefinedRoles);
 		} else {
@@ -1580,7 +1694,7 @@ public class Rsa2Tg {
 								beginIndex + 1, i).trim());
 						break;
 					default:
-						throw new XMLStreamException(
+						throw new ProcessingException(filenameXmi,
 								"Illegal constraint format. The constraint text was '"
 										+ text + "'.");
 					}
@@ -1596,7 +1710,7 @@ public class Rsa2Tg {
 						inString = true;
 						beginIndex = i;
 					} else {
-						throw new XMLStreamException(
+						throw new ProcessingException(filenameXmi,
 								"Illegal constraint format. The constraint text was '"
 										+ text + "'.  Expected '\"' but got '"
 										+ c + "'.  (position = " + i + ").");
@@ -1605,7 +1719,7 @@ public class Rsa2Tg {
 			}
 		}
 		if (inString || escape || (stringCount < 2) || (stringCount > 3)) {
-			throw new XMLStreamException(
+			throw new ProcessingException(filenameXmi,
 					"Illegal constraint format.  The constraint text was '"
 							+ text + "'.");
 		}
@@ -1642,10 +1756,13 @@ public class Rsa2Tg {
 		if (key.equals("graphclass")) {
 			// convert currentClass to graphClass
 
-			// Exception, <<graphclass>> kann nur an einer (UML)Klasse stehen,
+			// TODO Exception, <<graphclass>> kann nur an einer (UML)Klasse
+			// stehen,
 			// nicht an anderen Elementen
-			assert currentClass != null;
-			assert currentClass instanceof VertexClass;
+			if (currentClass == null || !(currentClass instanceof VertexClass)) {
+				throw new ProcessingException(parser, filenameXmi,
+						"The stereotype <<graphclass>> is only allow for UML-classes.");
+			}
 
 			AttributedElementClass aec = (AttributedElementClass) idMap
 					.get(currentClassId);
@@ -1696,8 +1813,11 @@ public class Rsa2Tg {
 					} else {
 						String typeId = attributeType.getMark(att);
 
-						// TODO ?
-						assert typeId != null;
+						// TODO
+						if (typeId == null) {
+							throw new ProcessingException(parser, filenameXmi,
+									"No type id has been defined.");
+						}
 						Domain dom = sg.createStringDomain();
 						dom.setQualifiedName(typeId);
 						preliminaryVertices.add(dom);
@@ -1715,7 +1835,10 @@ public class Rsa2Tg {
 
 			// TODO Exception: Klasser <<record>> blabla darf keine
 			// Assoziationen haben
-			assert currentClass.getDegree() == 0;
+			if (currentClass.getDegree() != 0) {
+				throw new ProcessingException(parser, filenameXmi,
+						"A <<record>>-class must not have any association.");
+			}
 			domainMap.put(rd.getQualifiedName(), rd);
 			idMap.put(currentClassId, rd);
 			currentRecordDomain = rd;
@@ -1729,11 +1852,14 @@ public class Rsa2Tg {
 		} else if (key.equals("abstract")) {
 
 			// TODO Abstract darf nur an Klassen und Assoziationen stehen
-			assert currentClass != null;
+			if (currentClass == null) {
+				throw new ProcessingException(parser, filenameXmi,
+						"The modifier 'abstract' is only allowed for classes or associations.");
+			}
 			currentClass.setIsAbstract(true);
 		} else {
-			throw new XMLStreamException("unexpected stereotype " + key
-					+ " at line " + parser.getLocation().getLineNumber());
+			throw new ProcessingException(parser, filenameXmi,
+					"Unexpected stereotype '" + key + "'.");
 		}
 	}
 
@@ -1750,13 +1876,22 @@ public class Rsa2Tg {
 	private void handleNestedTypeElement(XMLStreamReader parser, String type)
 			throws XMLStreamException {
 
-		// TODO Dokumentstruktur, <type> nur in Attribut oder <<record>> Klasse
+		// TODO UNNECESSARY
+		// Dokumentstruktur, <type> nur in Attribut oder <<record>> Klasse
 		// erlaubt
-		assert (currentAttribute != null) || (currentRecordDomain != null);
+		if (currentAttribute == null && currentRecordDomain == null) {
+			throw new ProcessingException(
+					parser,
+					filenameXmi,
+					"The element <type> should only be included in Attributes or <<record>>-classes.");
+		}
 		String href = parser.getAttributeValue(null, "href");
 
 		// TODO Exc. Typname fehlt
-		assert href != null;
+		if (href == null) {
+			throw new ProcessingException(parser, filenameXmi,
+					"No type name defined.");
+		}
 		Domain dom = null;
 		if (href.endsWith("#String")) {
 			dom = createDomain("String");
@@ -1765,8 +1900,8 @@ public class Rsa2Tg {
 		} else if (href.endsWith("#Boolean")) {
 			dom = createDomain("Boolean");
 		} else {
-			throw new XMLStreamException("unexpected " + type + " with href "
-					+ href + " at line " + parser.getLocation().getLineNumber());
+			throw new ProcessingException(parser, filenameXmi, "Unexpected '"
+					+ type + "' with href '" + href + "'.");
 		}
 
 		if (currentRecordDomain != null) {
@@ -1787,7 +1922,12 @@ public class Rsa2Tg {
 			// type of an attribute of an AttributedElementClass
 
 			// TODO Exc. type muss in Attribute sein
-			assert currentAttribute != null;
+			if (currentAttribute == null) {
+				throw new ProcessingException(
+						parser,
+						filenameXmi,
+						"The element <type> should only be included in Attributes or <<record>>-classes.");
+			}
 			if (dom != null) {
 				sg.createHasDomain(currentAttribute, dom);
 				attributeType.removeMark(currentAttribute);
@@ -1799,18 +1939,32 @@ public class Rsa2Tg {
 
 		// TODO Exc. OwnedAttribute muss in einer Knoten/Kantenklasse oder einer
 		// <<record>>-Klasse stehen
-		assert (currentClass != null) || (currentRecordDomain != null);
-		String association = parser.getAttributeValue(null, "association");
+		if (currentClass == null && currentRecordDomain == null) {
+			throw new ProcessingException(
+					parser,
+					filenameXmi,
+					"An owned attribute have to be defined in a VertexClass, EdgeClass or a RecordDomain.");
+		}
+		String association = parser.getAttributeValue(null,
+				UML_ATTRIBUTE_ASSOCIATION);
 		if (association == null) {
 			String attrName = parser
 					.getAttributeValue(null, UML_ATTRIBUTE_NAME);
 
 			// TODO Exc.
-			assert attrName != null;
+			if (attrName == null) {
+				throw new ProcessingException(parser, filenameXmi,
+						"No attribute name defined.");
+			}
 			attrName = attrName.trim();
 
 			// TODO Exception
-			assert attrName.length() > 0;
+			if (attrName.length() <= 0) {
+				throw new ProcessingException(parser, filenameXmi,
+						"The attribute name is empty.");
+			}
+
+			String typeId = parser.getAttributeValue(null, UML_ATTRIBUTE_TYPE);
 
 			if (currentClass != null) {
 				// property is an "ordinary" attribute
@@ -1818,9 +1972,6 @@ public class Rsa2Tg {
 				currentAttribute = att;
 				att.setName(attrName);
 				sg.createHasAttribute(currentClass, att);
-
-				String typeId = parser.getAttributeValue(null,
-						UML_ATTRIBUTE_TYPE);
 				if (typeId != null) {
 					attributeType.mark(att, typeId);
 				}
@@ -1828,8 +1979,6 @@ public class Rsa2Tg {
 				// property is a record component
 				assert currentRecordDomain != null;
 				currentAttribute = null;
-				String typeId = parser.getAttributeValue(null,
-						UML_ATTRIBUTE_TYPE);
 				currentRecordDomainComponent = null;
 				if (typeId != null) {
 					Vertex v = (Vertex) idMap.get(typeId);
@@ -1860,7 +2009,12 @@ public class Rsa2Tg {
 		} else {
 
 			// TODO Exc. (s.o.)
-			assert (currentClass != null) && (currentRecordDomain == null);
+			if (currentClass == null || currentRecordDomain != null) {
+				throw new ProcessingException(
+						parser,
+						filenameXmi,
+						"An owned attribute have to be defined in a VertexClass, EdgeClass or a RecordDomain.");
+			}
 			handleAssociatioEnd(parser, xmiId);
 		}
 	}
@@ -1881,13 +2035,19 @@ public class Rsa2Tg {
 
 			// TODO Exception, weil der Fehler vom Input verursacht wird und
 			// wahrscheinlich deshalb nicht mehr weiter gearbeitet werden kann.
-			assert typeId != null;
+			if (typeId == null) {
+				throw new ProcessingException(parser, filenameXmi,
+						"No type has been defined.");
+			}
 			AttributedElement ae = idMap.get(typeId);
 			if (ae != null) {
 				// VertexClass found
 
 				// TODO Exc. (s.o.)
-				assert ae instanceof VertexClass;
+				if (!(ae instanceof VertexClass)) {
+					throw new ProcessingException(parser, filenameXmi,
+							"Both types must share the same base class. (Either VertexClass or EdgeClass)");
+				}
 				vc = (VertexClass) ae;
 			} else {
 				// create a preliminary vertex class
@@ -1909,18 +2069,24 @@ public class Rsa2Tg {
 			} else {
 				// we have an ownedAttribute
 				// edge class id is in "association"
-				String association = parser.getAttributeValue(null,
-						"association");
+				String associationId = parser.getAttributeValue(null,
+						UML_ATTRIBUTE_ASSOCIATION);
 
 				// TODO Exception, input error
-				assert association != null;
-				ae = idMap.get(association);
+				if (associationId == null) {
+					throw new ProcessingException(parser, filenameXmi,
+							"No Edge ID present.");
+				}
+				ae = idMap.get(associationId);
 
 				if (ae != null) {
 					// EdgeClass found
 
 					// TODO s.o.
-					assert ae instanceof EdgeClass;
+					if (!(ae instanceof EdgeClass)) {
+						throw new ProcessingException(parser, filenameXmi,
+								"Both types must share the same base class. (Either VertexClass or EdgeClass)");
+					}
 					ec = correctAggregationAndComposition((EdgeClass) ae,
 							aggregation, composition);
 				} else {
@@ -1930,7 +2096,7 @@ public class Rsa2Tg {
 									.createEdgeClass();
 				}
 				preliminaryVertices.add(ec);
-				idMap.put(association, ec);
+				idMap.put(associationId, ec);
 			}
 
 			assert (vc != null) && (ec != null);
@@ -1957,13 +2123,19 @@ public class Rsa2Tg {
 						UML_ATTRIBUTE_TYPE);
 
 				// TODO Exception
-				assert typeId != null;
+				if (typeId == null) {
+					throw new ProcessingException(parser, filenameXmi,
+							"No type ID found.");
+				}
 				AttributedElement ae = idMap.get(typeId);
 
 				if ((ae != null) && !vc.equals(ae)) {
 
 					// TODO s.o.
-					assert ae instanceof VertexClass;
+					if (!(ae instanceof VertexClass)) {
+						throw new ProcessingException(parser, filenameXmi,
+								"Both types must share the same base class. (Either VertexClass or EdgeClass)");
+					}
 					e.setOmega((VertexClass) ae);
 					vc.delete();
 					preliminaryVertices.remove(vc);
@@ -1971,7 +2143,7 @@ public class Rsa2Tg {
 					idMap.put(typeId, vc);
 				} else {
 					throw new RuntimeException(
-							"FIXME: You should not get here!");
+							"FIXME: Unexpected type. You should not get here!");
 				}
 			}
 		}
@@ -1991,7 +2163,8 @@ public class Rsa2Tg {
 		} else if (e instanceof From) {
 			((From) e).setRoleName(endName);
 		} else {
-			throw new RuntimeException("FIXME! Should never get here.");
+			throw new RuntimeException(
+					"FIXME! Unexpected type. Should never get here.");
 		}
 	}
 
@@ -2079,11 +2252,18 @@ public class Rsa2Tg {
 				}
 
 				// TODO Fehler im Typename (z.B. Map< List<bla, blubb>)
-				assert p >= 0;
+				if (p < 0) {
+					throw new ProcessingException(filenameXmi,
+							"Error in type name '" + typeName
+									+ "' of a Domain.");
+				}
 			}
 
 			// TODO s.o.
-			assert (p > 0) && (p < c.length - 1);
+			if (p <= 0 || (p >= c.length - 1)) {
+				throw new ProcessingException(filenameXmi,
+						"Error in type name '" + typeName + "' of a Domain.");
+			}
 			String keyDomainName = keyValueDomains.substring(0, p);
 			Domain keyDomain = createDomain(keyDomainName);
 			assert keyDomain != null;
