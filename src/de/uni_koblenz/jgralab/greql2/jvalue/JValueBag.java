@@ -124,7 +124,7 @@ public class JValueBag extends JValueCollection implements Cloneable {
 					Integer oldKeyCount, newKeyCount;
 
 					oldKeyCount = myHashMap.get(currentElement);
-					newKeyCount = new Integer(oldKeyCount.intValue() - 1);
+					newKeyCount = Integer.valueOf(oldKeyCount.intValue() - 1);
 					myHashMap.put(currentElement, newKeyCount);
 					multiElementNumber--;
 				} else {
@@ -377,7 +377,7 @@ public class JValueBag extends JValueCollection implements Cloneable {
 		} else {
 			if (oldQuantity != quantity) {
 				storedSize = storedSize + quantity - oldQuantity;
-				myHashMap.put(element, new Integer(quantity));
+				myHashMap.put(element, Integer.valueOf(quantity));
 			} else {
 				return false;
 			}
@@ -653,7 +653,7 @@ public class JValueBag extends JValueCollection implements Cloneable {
 			if (i == 0) {
 				myHashMap.remove(element);
 			} else {
-				newKeyCount = new Integer(i);
+				newKeyCount = Integer.valueOf(i);
 				myHashMap.put(element, newKeyCount);
 			}
 			storedSize -= removedItems;

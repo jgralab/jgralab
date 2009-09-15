@@ -59,8 +59,8 @@ public abstract class ConstraintViolation implements
 
 	@Override
 	public int compareTo(ConstraintViolation ci) {
-		if (this instanceof MultiplicityConstraintViolation
-				&& ci instanceof MultiplicityConstraintViolation) {
+		if ((this instanceof MultiplicityConstraintViolation)
+				&& (ci instanceof MultiplicityConstraintViolation)) {
 			MultiplicityConstraintViolation me = (MultiplicityConstraintViolation) this;
 			MultiplicityConstraintViolation other = (MultiplicityConstraintViolation) ci;
 			int result = me.getAttributedElementClass().getQualifiedName()
@@ -88,8 +88,8 @@ public abstract class ConstraintViolation implements
 			return -1;
 		}
 
-		if (this instanceof BrokenGReQLConstraintViolation
-				&& ci instanceof BrokenGReQLConstraintViolation) {
+		if ((this instanceof BrokenGReQLConstraintViolation)
+				&& (ci instanceof BrokenGReQLConstraintViolation)) {
 			BrokenGReQLConstraintViolation me = (BrokenGReQLConstraintViolation) this;
 			BrokenGReQLConstraintViolation other = (BrokenGReQLConstraintViolation) ci;
 			int result = me.getAttributedElementClass().getQualifiedName()
@@ -106,8 +106,8 @@ public abstract class ConstraintViolation implements
 			return me.getBrokenPart().compareTo(other.getBrokenPart());
 		}
 
-		if (this instanceof GReQLConstraintViolation
-				&& ci instanceof GReQLConstraintViolation) {
+		if ((this instanceof GReQLConstraintViolation)
+				&& (ci instanceof GReQLConstraintViolation)) {
 			GReQLConstraintViolation me = (GReQLConstraintViolation) this;
 			GReQLConstraintViolation other = (GReQLConstraintViolation) ci;
 			int result = me.getAttributedElementClass().getQualifiedName()
@@ -126,7 +126,7 @@ public abstract class ConstraintViolation implements
 						other.getOffendingElements())) {
 					return 0;
 				}
-				return new Integer(me.getOffendingElements().hashCode())
+				return Integer.valueOf(me.getOffendingElements().hashCode())
 						.compareTo(other.getOffendingElements().hashCode());
 			}
 			if (other.getOffendingElements() == null) {
