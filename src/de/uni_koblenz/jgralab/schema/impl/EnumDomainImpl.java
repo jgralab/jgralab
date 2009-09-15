@@ -119,15 +119,16 @@ public final class EnumDomainImpl extends DomainImpl implements EnumDomain {
 
 	@Override
 	public String toString() {
-		String output = "domain Enum " + getQualifiedName() + " (";
+		StringBuilder output = new StringBuilder("domain Enum "
+				+ getQualifiedName() + " (");
 		String delim = "";
 		int count = 0;
 		for (String s : constants) {
-			output += delim + count++ + ": " + s;
+			output.append(delim + count++ + ": " + s);
 			delim = ", ";
 		}
-		output += ")";
-		return output;
+		output.append(")");
+		return output.toString();
 	}
 
 	@Override

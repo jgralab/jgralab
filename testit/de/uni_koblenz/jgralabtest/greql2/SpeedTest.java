@@ -39,16 +39,17 @@ public class SpeedTest extends GenericTests {
 		int count = 10;
 		String part1 = "from i:a report ";
 		String part2 = " end where q:=a, l:=a, m:=a, n:=a, o:=a, p:=a, k:= a, j:=a, h := a, g := a, f:= a, e := a, d:=a, c:=a, b:=a, a:=4";
-		String queryString = "";
+		StringBuilder queryString = new StringBuilder();
 		for (int i = 0; i < count; i++) { // 65
-			queryString += part1;
+			queryString.append(part1);
 		}
-		queryString += " i, a, b, c, d, e ";
+		queryString.append(" i, a, b, c, d, e ");
 		for (int i = 0; i < count; i++) {
-			queryString += part2;
+			queryString.append(part2);
 		}
-		System.out.println("QueryString is : " + queryString);
-		Graph g = ManualGreqlParser.parse(queryString);
+		String query = queryString.toString();
+		System.out.println("QueryString is : " + query);
+		Graph g = ManualGreqlParser.parse(query);
 		printTestFunctionFooter("GenerateTestGraph");
 		return g;
 	}

@@ -318,29 +318,30 @@ public class RecordCodeGenerator extends CodeGenerator {
 		CodeList code = new CodeList();
 		code.addNoIndent(new CodeSnippet(true,
 				"@SuppressWarnings(\"unchecked\")", "public Object clone() {"));
-		String constructorFields = "";
+		StringBuilder constructorFields = new StringBuilder();
 		int count = 0;
 		int size = recordDomain.getComponents().entrySet().size();
 		// TODO use construct in own code!!!
 		for (Entry<String, Domain> rdc : recordDomain.getComponents()
 				.entrySet()) {
 			if (rdc.getValue().isComposite()) {
-				constructorFields += "("
-						+ rdc
-								.getValue()
-								.getTransactionJavaAttributeImplementationTypeName(
-										schemaRootPackageName) + ") "
-						+ rdc.getKey() + ".clone()";
+				constructorFields
+						.append("("
+								+ rdc
+										.getValue()
+										.getTransactionJavaAttributeImplementationTypeName(
+												schemaRootPackageName) + ") "
+								+ rdc.getKey() + ".clone()");
 			} else {
-				constructorFields += rdc.getKey();
+				constructorFields.append(rdc.getKey());
 			}
 			if ((count + 1) != size) {
-				constructorFields += ", ";
+				constructorFields.append(", ");
 			}
 			count++;
 		}
 		code.addNoIndent(new CodeSnippet("\treturn new #simpleClassName#("
-				+ constructorFields + ");"));
+				+ constructorFields.toString() + ");"));
 		code.addNoIndent(new CodeSnippet("}"));
 		return code;
 	}

@@ -192,20 +192,20 @@ public abstract class AttributedElementClassImpl extends NamedElementImpl
 	 * @return a textual representation of all attributes the element holds
 	 */
 	protected String attributesToString() {
-		String output = "\nSelf Attributes:\n";
+		StringBuilder output = new StringBuilder("\nSelf Attributes:\n");
 		Iterator<Attribute> it = attributeList.iterator();
 		Attribute a;
 		while (it.hasNext()) {
 			a = it.next();
-			output += a.toString() + "\n";
+			output.append(a.toString() + "\n");
 		}
-		output += "\nSelf + Inherited Attributes:\n";
+		output.append("\nSelf + Inherited Attributes:\n");
 		it = getAttributeList().iterator();
 		while (it.hasNext()) {
 			a = it.next();
-			output += a.toString() + "\n";
+			output.append(a.toString() + "\n");
 		}
-		return output;
+		return output.toString();
 	}
 
 	/**

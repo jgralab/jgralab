@@ -169,14 +169,14 @@ public final class RecordDomainImpl extends CompositeDomainImpl implements
 
 	@Override
 	public String toString() {
-		String output = "Record " + getQualifiedName();
+		StringBuilder output = new StringBuilder("Record " + getQualifiedName());
 		String delim = " (";
 		for (Entry<String, Domain> c : components.entrySet()) {
-			output += delim + c.toString();
+			output.append(delim + c.toString());
 			delim = ", ";
 		}
-		output += ")";
-		return output;
+		output.append(")");
+		return output.toString();
 	}
 
 	@Override

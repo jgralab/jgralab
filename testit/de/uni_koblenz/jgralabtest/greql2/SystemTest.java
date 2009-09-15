@@ -39,15 +39,16 @@ public class SystemTest extends GenericTests {
 		int count = 1;
 		String part1 = "from i:a report ";
 		String part2 = " end where q:=a, l:=a, m:=a, n:=a, o:=a, p:=a, k:= a, j:=a, h := a, g := a, f:= a, e := a, d:=a, c:=a, b:=a, a:=4";
-		String queryString = "";
+		StringBuilder queryString = new StringBuilder();
 		for (int i = 0; i < count; i++) { // 65
-			queryString += part1;
+			queryString.append(part1);
 		}
-		queryString += " plus(i, times( a, minus (b, modulo ( c, minus ( d, plus( e)))))) ";
+		queryString
+				.append(" plus(i, times( a, minus (b, modulo ( c, minus ( d, plus( e)))))) ");
 		for (int i = 0; i < count; i++) {
-			queryString += part2;
+			queryString.append(part2);
 		}
-		return ManualGreqlParser.parse(queryString);
+		return ManualGreqlParser.parse(queryString.toString());
 	}
 
 	@Test

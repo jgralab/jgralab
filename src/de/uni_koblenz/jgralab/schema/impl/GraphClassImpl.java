@@ -366,35 +366,36 @@ public final class GraphClassImpl extends AttributedElementClassImpl implements
 
 	@Override
 	public String toString() {
-		String output = "GraphClassImpl '" + getQualifiedName() + "'";
+		StringBuilder output = new StringBuilder("GraphClassImpl '"
+				+ getQualifiedName() + "'");
 		if (isAbstract()) {
-			output += " (abstract)";
+			output.append(" (abstract)");
 		}
-		output += ": \n";
+		output.append(": \n");
 
-		output += "subClasses of '" + getQualifiedName() + "': ";
+		output.append("subClasses of '" + getQualifiedName() + "': ");
 		Iterator<AttributedElementClass> it = getAllSubClasses().iterator();
 		while (it.hasNext()) {
-			output += "'" + ((GraphClassImpl) it.next()).getQualifiedName()
-					+ "' ";
+			output.append("'" + ((GraphClassImpl) it.next()).getQualifiedName()
+					+ "' ");
 		}
 
-		output += "\nsuperClasses of '" + getQualifiedName() + "': ";
+		output.append("\nsuperClasses of '" + getQualifiedName() + "': ");
 		Iterator<AttributedElementClass> it2 = getAllSuperClasses().iterator();
 		while (it2.hasNext()) {
-			output += "'" + ((GraphClassImpl) it2.next()).getQualifiedName()
-					+ "' ";
+			output.append("'"
+					+ ((GraphClassImpl) it2.next()).getQualifiedName() + "' ");
 		}
-		output += attributesToString();
+		output.append(attributesToString());
 
-		output += "\n\nGraphElementClasses of '" + getQualifiedName()
-				+ "':\n\n";
+		output.append("\n\nGraphElementClasses of '" + getQualifiedName()
+				+ "':\n\n");
 		Iterator<GraphElementClass> it3 = graphElementClasses.values()
 				.iterator();
 		while (it3.hasNext()) {
-			output += it3.next().toString() + "\n";
+			output.append(it3.next().toString() + "\n");
 		}
-		return output;
+		return output.toString();
 	}
 
 	@Override
