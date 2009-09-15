@@ -56,7 +56,7 @@ public abstract class CodeGenerator {
 	private ImportCodeSnippet imports;
 
 	protected String schemaRootPackageName;
-	
+
 	/**
 	 * Toggles, if the generated code supports transactions or not
 	 */
@@ -81,19 +81,24 @@ public abstract class CodeGenerator {
 	 *            "de.uni_koblenz.jgralab.greql2.impl.comprehension.Bagcomprehension"
 	 *            for the default implementation class
 	 * @param transactionSupport
-	 *            toggles, if code with transaction support should be generated           
+	 *            toggles, if code with transaction support should be generated
 	 */
-	public CodeGenerator(String schemaRootPackageName, String packageName, boolean transactionSupport) {
+	public CodeGenerator(String schemaRootPackageName, String packageName,
+			boolean transactionSupport) {
 		this.schemaRootPackageName = schemaRootPackageName;
 		this.transactionSupport = transactionSupport;
 		rootBlock = new CodeList(null);
-		rootBlock.setVariable("jgPackage",           "de.uni_koblenz.jgralab");
-		rootBlock.setVariable("jgImplPackage",       "de.uni_koblenz.jgralab.impl");
-		rootBlock.setVariable("jgImplStdPackage",    "de.uni_koblenz.jgralab.impl.std");
-		rootBlock.setVariable("jgImplTransPackage",	 "de.uni_koblenz.jgralab.impl.trans");
-		rootBlock.setVariable("jgSchemaPackage",     "de.uni_koblenz.jgralab.schema");
-		rootBlock.setVariable("jgSchemaImplPackage", "de.uni_koblenz.jgralab.schema.impl");
-		if (packageName != null && !packageName.equals("")) {
+		rootBlock.setVariable("jgPackage", "de.uni_koblenz.jgralab");
+		rootBlock.setVariable("jgImplPackage", "de.uni_koblenz.jgralab.impl");
+		rootBlock.setVariable("jgImplStdPackage",
+				"de.uni_koblenz.jgralab.impl.std");
+		rootBlock.setVariable("jgImplTransPackage",
+				"de.uni_koblenz.jgralab.impl.trans");
+		rootBlock.setVariable("jgSchemaPackage",
+				"de.uni_koblenz.jgralab.schema");
+		rootBlock.setVariable("jgSchemaImplPackage",
+				"de.uni_koblenz.jgralab.schema.impl");
+		if ((packageName != null) && !packageName.equals("")) {
 			rootBlock.setVariable("schemaPackage", schemaRootPackageName + "."
 					+ packageName);
 			// schema implementation packages (standard and for transaction)
@@ -150,7 +155,10 @@ public abstract class CodeGenerator {
 						+ "' exists but is not a directory");
 			}
 		} else {
-			dir.mkdirs();
+			if (!dir.mkdirs()) {
+				throw new GraphIOException(
+						"Couldn't create directory hierachy for '" + dir + "'.");
+			}
 		}
 
 		File outputFile = null;
@@ -173,19 +181,21 @@ public abstract class CodeGenerator {
 		String simpleImplClassName = rootBlock
 				.getVariable("simpleImplClassName");
 		String schemaImplPackage = "";
-		if (!transactionSupport)
+		if (!transactionSupport) {
 			schemaImplPackage = rootBlock.getVariable("schemaImplStdPackage");
-		else
+		} else {
 			schemaImplPackage = rootBlock.getVariable("schemaImplTransPackage");
+		}
 		logger.finer("createFiles(\"" + pathPrefix + "\")");
 		logger.finer(" - simpleClassName=" + simpleClassName);
 		logger.finer(" - schemaPackage=" + schemaPackage);
 		logger.finer(" - simpleImplClassName=" + simpleImplClassName);
-		if (!transactionSupport)
+		if (!transactionSupport) {
 			logger.finer(" - schemaImplStdPackage=" + schemaImplPackage);
-		else
+		} else {
 			logger.finer(" - schemaImplTransPackage=" + schemaImplPackage);
-		
+		}
+
 		if (rootBlock.getVariable("isClassOnly").equals("true")) {
 			// no separate implementaion
 			// create class only
@@ -194,16 +204,19 @@ public abstract class CodeGenerator {
 					schemaPackage);
 		} else if (rootBlock.getVariable("isAbstractClass").equals("true")) {
 			logger.finer("Creating interface for class: " + simpleClassName);
-			logger.finer("Writing file to: " + pathPrefix + "/"
+			logger
+					.finer("Writing file to: " + pathPrefix + "/"
 							+ schemaPackage);
 			// create interface only
 			if (!transactionSupport) {
 				createCode(false);
 				writeCodeToFile(pathPrefix, simpleClassName + ".java",
 						schemaPackage);
-			}	
+			}
 		} else {
-			if ((!rootBlock.getVariable("isImplementationClassOnly").equals("true")) && (!transactionSupport)) {
+			if ((!rootBlock.getVariable("isImplementationClassOnly").equals(
+					"true"))
+					&& (!transactionSupport)) {
 				// create interface
 				createCode(false);
 				writeCodeToFile(pathPrefix, simpleClassName + ".java",
@@ -216,7 +229,6 @@ public abstract class CodeGenerator {
 					schemaImplPackage);
 		}
 	}
-
 
 	/**
 	 * creates the generated code string for a class
@@ -242,12 +254,13 @@ public abstract class CodeGenerator {
 			code.add("package #schemaPackage#;");
 		} else {
 			// package declaration standard vs. transaction
-			if (!transactionSupport)
+			if (!transactionSupport) {
 				code.add(createClass ? "package #schemaImplStdPackage#;"
 						: "package #schemaPackage#;");
-			else
+			} else {
 				code.add(createClass ? "package #schemaImplTransPackage#;"
 						: "package #schemaPackage#;");
+			}
 		}
 		return code;
 	}
@@ -300,17 +313,17 @@ public abstract class CodeGenerator {
 			if (!transactionSupport) {
 				createCode(false);
 				javaSources.add(new JavaSourceFromString(className, rootBlock
-					.getCode()));
-			}	
+						.getCode()));
+			}
 		} else {
 			if (!rootBlock.getVariable("isImplementationClassOnly").equals(
 					"true")) {
 				// create interface
 				if (!transactionSupport) {
 					createCode(false);
-					javaSources.add(new JavaSourceFromString(className, rootBlock
-						.getCode()));
-				}	
+					javaSources.add(new JavaSourceFromString(className,
+							rootBlock.getCode()));
+				}
 			}
 			// create implementation
 			rootBlock.clear();
