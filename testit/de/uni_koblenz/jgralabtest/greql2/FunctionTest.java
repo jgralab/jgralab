@@ -696,7 +696,7 @@ public class FunctionTest extends GenericTests {
 	public void testModulo() throws Exception {
 		String queryString = "9 % 2";
 		JValue result = evalTestQuery("Modulo", queryString);
-		assertEquals(new Integer(1), result.toInteger());
+		assertEquals(Integer.valueOf(1), result.toInteger());
 	}
 
 	@Test

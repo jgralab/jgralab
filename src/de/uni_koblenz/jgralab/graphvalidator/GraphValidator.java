@@ -85,7 +85,7 @@ public class GraphValidator {
 		Set<AttributedElement> badOutgoing = new HashSet<AttributedElement>();
 		for (Vertex v : graph.vertices(ec.getFrom())) {
 			int degree = v.getDegree(ec, EdgeDirection.OUT);
-			if (degree < toMin || degree > toMax) {
+			if ((degree < toMin) || (degree > toMax)) {
 				badOutgoing.add(v);
 			}
 		}
@@ -103,7 +103,7 @@ public class GraphValidator {
 		Set<AttributedElement> badIncoming = new HashSet<AttributedElement>();
 		for (Vertex v : graph.vertices(ec.getTo())) {
 			int degree = v.getDegree(ec, EdgeDirection.IN);
-			if (degree < fromMin || degree > fromMax) {
+			if ((degree < fromMin) || (degree > fromMax)) {
 				badIncoming.add(v);
 			}
 		}
@@ -285,7 +285,7 @@ public class GraphValidator {
 				}
 				bw.append("<tr>");
 				bw.append("<td class=\"" + cssClass + "\">");
-				bw.append(new String(new Integer(no++).toString()));
+				bw.append(Integer.valueOf(no++).toString());
 				bw.append("</td>");
 				bw.append("<td class=\"" + cssClass + "\">");
 				bw.append(ci.getClass().getSimpleName());
