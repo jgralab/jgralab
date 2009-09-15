@@ -30,12 +30,10 @@ public class AggregationClassImplTest extends EdgeClassImplTest {
 
 		attributedElement = aggregationClass = graphClass
 				.createAggregationClass("AggregationClass1",
-						aggregationClassFromVertexClass, 0, (int) (Math
-								.random() * 100) + 1,
-						"AggregationClassFromRoleName", true,
-						aggregationClassToVertexClass, 0,
-						(int) (Math.random() * 100) + 1,
-						"AggregationClassToRoleName");
+						aggregationClassFromVertexClass, 0,
+						random.nextInt(100), "AggregationClassFromRoleName",
+						true, aggregationClassToVertexClass, 0, random
+								.nextInt(100), "AggregationClassToRoleName");
 	}
 
 	/**
@@ -66,8 +64,10 @@ public class AggregationClassImplTest extends EdgeClassImplTest {
 	@Override
 	public void testAddAttribute5() {
 		AggregationClass subClass = graphClass.createAggregationClass(
-				"AggregationClassSubClass", aggregationClassFromVertexClass, aggregationClass.getFromMin(), aggregationClass.getFromMax(),
-				true, aggregationClassToVertexClass, aggregationClass.getToMin(), aggregationClass.getToMax());
+				"AggregationClassSubClass", aggregationClassFromVertexClass,
+				aggregationClass.getFromMin(), aggregationClass.getFromMax(),
+				true, aggregationClassToVertexClass, aggregationClass
+						.getToMin(), aggregationClass.getToMax());
 
 		subClass.addSuperClass(aggregationClass);
 
@@ -102,8 +102,10 @@ public class AggregationClassImplTest extends EdgeClassImplTest {
 	@Override
 	public void testAddConstraint5() {
 		AggregationClass subClass = graphClass.createAggregationClass(
-				"AggregationClassSubClass", aggregationClassFromVertexClass, aggregationClass.getFromMin(), aggregationClass.getFromMax(),
-				true, aggregationClassToVertexClass, aggregationClass.getToMin(), aggregationClass.getToMax());
+				"AggregationClassSubClass", aggregationClassFromVertexClass,
+				aggregationClass.getFromMin(), aggregationClass.getFromMax(),
+				true, aggregationClassToVertexClass, aggregationClass
+						.getToMin(), aggregationClass.getToMax());
 
 		subClass.addSuperClass(aggregationClass);
 
@@ -207,8 +209,10 @@ public class AggregationClassImplTest extends EdgeClassImplTest {
 		Vector<AttributedElementClass> expectedSubClasses = new Vector<AttributedElementClass>();
 
 		AggregationClass subClass = graphClass.createAggregationClass(
-				"AggregationClassSubClass", aggregationClassFromVertexClass, aggregationClass.getFromMin(), aggregationClass.getFromMax(),
-				true, aggregationClassToVertexClass, aggregationClass.getToMin(), aggregationClass.getToMax());
+				"AggregationClassSubClass", aggregationClassFromVertexClass,
+				aggregationClass.getFromMin(), aggregationClass.getFromMax(),
+				true, aggregationClassToVertexClass, aggregationClass
+						.getToMin(), aggregationClass.getToMax());
 
 		subClass.addSuperClass(aggregationClass);
 
@@ -229,11 +233,15 @@ public class AggregationClassImplTest extends EdgeClassImplTest {
 		Vector<AttributedElementClass> expectedSubClasses = new Vector<AttributedElementClass>();
 
 		AggregationClass subClass = graphClass.createAggregationClass(
-				"AggregationClassSubClass", aggregationClassFromVertexClass, aggregationClass.getFromMin(), aggregationClass.getFromMax(),
-				true, aggregationClassToVertexClass, aggregationClass.getToMin(), aggregationClass.getToMax());
+				"AggregationClassSubClass", aggregationClassFromVertexClass,
+				aggregationClass.getFromMin(), aggregationClass.getFromMax(),
+				true, aggregationClassToVertexClass, aggregationClass
+						.getToMin(), aggregationClass.getToMax());
 		AggregationClass subClass2 = graphClass.createAggregationClass(
-				"AggregationClassSubClass2", aggregationClassFromVertexClass, aggregationClass.getFromMin(), aggregationClass.getFromMax(),
-				true, aggregationClassToVertexClass, aggregationClass.getToMin(), aggregationClass.getToMax());
+				"AggregationClassSubClass2", aggregationClassFromVertexClass,
+				aggregationClass.getFromMin(), aggregationClass.getFromMax(),
+				true, aggregationClassToVertexClass, aggregationClass
+						.getToMin(), aggregationClass.getToMax());
 
 		subClass.addSuperClass(aggregationClass);
 		subClass2.addSuperClass(aggregationClass);
@@ -256,11 +264,15 @@ public class AggregationClassImplTest extends EdgeClassImplTest {
 		Vector<AttributedElementClass> expectedSubClasses = new Vector<AttributedElementClass>();
 
 		AggregationClass subClass = graphClass.createAggregationClass(
-				"AggregationClassSubClass", aggregationClassFromVertexClass, aggregationClass.getFromMin(), aggregationClass.getFromMax(),
-				true, aggregationClassToVertexClass, aggregationClass.getToMin(), aggregationClass.getToMax());
+				"AggregationClassSubClass", aggregationClassFromVertexClass,
+				aggregationClass.getFromMin(), aggregationClass.getFromMax(),
+				true, aggregationClassToVertexClass, aggregationClass
+						.getToMin(), aggregationClass.getToMax());
 		AggregationClass subClass2 = graphClass.createAggregationClass(
-				"AggregationClassSubClass2", aggregationClassFromVertexClass, aggregationClass.getFromMin(), aggregationClass.getFromMax(),
-				true, aggregationClassToVertexClass, aggregationClass.getToMin(), aggregationClass.getToMax());
+				"AggregationClassSubClass2", aggregationClassFromVertexClass,
+				aggregationClass.getFromMin(), aggregationClass.getFromMax(),
+				true, aggregationClassToVertexClass, aggregationClass
+						.getToMin(), aggregationClass.getToMax());
 
 		subClass.addSuperClass(aggregationClass);
 		subClass2.addSuperClass(subClass);
@@ -409,8 +421,10 @@ public class AggregationClassImplTest extends EdgeClassImplTest {
 	@Override
 	public void testGetAttribute5() {
 		AggregationClass subClass = graphClass.createAggregationClass(
-				"AggregationClassSubClass", aggregationClassFromVertexClass, aggregationClass.getFromMin(), aggregationClass.getFromMax(),
-				true, aggregationClassToVertexClass, aggregationClass.getToMin(), aggregationClass.getToMax());
+				"AggregationClassSubClass", aggregationClassFromVertexClass,
+				aggregationClass.getFromMin(), aggregationClass.getFromMax(),
+				true, aggregationClassToVertexClass, aggregationClass
+						.getToMin(), aggregationClass.getToMax());
 
 		subClass.addSuperClass(aggregationClass);
 
@@ -463,8 +477,10 @@ public class AggregationClassImplTest extends EdgeClassImplTest {
 	@Override
 	public void testGetAttributeCount5() {
 		AggregationClass subClass = graphClass.createAggregationClass(
-				"AggregationClassSubClass", aggregationClassFromVertexClass, aggregationClass.getFromMin(), aggregationClass.getFromMax(),
-				true, aggregationClassToVertexClass, aggregationClass.getToMin(), aggregationClass.getToMax());
+				"AggregationClassSubClass", aggregationClassFromVertexClass,
+				aggregationClass.getFromMin(), aggregationClass.getFromMax(),
+				true, aggregationClassToVertexClass, aggregationClass
+						.getToMin(), aggregationClass.getToMax());
 
 		subClass.addSuperClass(aggregationClass);
 
@@ -517,8 +533,10 @@ public class AggregationClassImplTest extends EdgeClassImplTest {
 	@Override
 	public void testGetAttributeList5() {
 		AggregationClass subClass = graphClass.createAggregationClass(
-				"AggregationClassSubClass", aggregationClassFromVertexClass, aggregationClass.getFromMin(), aggregationClass.getFromMax(),
-				true, aggregationClassToVertexClass, aggregationClass.getToMin(), aggregationClass.getToMax());
+				"AggregationClassSubClass", aggregationClassFromVertexClass,
+				aggregationClass.getFromMin(), aggregationClass.getFromMax(),
+				true, aggregationClassToVertexClass, aggregationClass
+						.getToMin(), aggregationClass.getToMax());
 
 		subClass.addSuperClass(aggregationClass);
 
@@ -555,8 +573,10 @@ public class AggregationClassImplTest extends EdgeClassImplTest {
 		Vector<AttributedElementClass> expectedSubClasses = new Vector<AttributedElementClass>();
 
 		AggregationClass subClass = graphClass.createAggregationClass(
-				"AggregationClassSubClass", aggregationClassFromVertexClass, aggregationClass.getFromMin(), aggregationClass.getFromMax(),
-				true, aggregationClassToVertexClass, aggregationClass.getToMin(), aggregationClass.getToMax());
+				"AggregationClassSubClass", aggregationClassFromVertexClass,
+				aggregationClass.getFromMin(), aggregationClass.getFromMax(),
+				true, aggregationClassToVertexClass, aggregationClass
+						.getToMin(), aggregationClass.getToMax());
 
 		subClass.addSuperClass(aggregationClass);
 
@@ -577,11 +597,15 @@ public class AggregationClassImplTest extends EdgeClassImplTest {
 		Vector<AttributedElementClass> expectedSubClasses = new Vector<AttributedElementClass>();
 
 		AggregationClass subClass = graphClass.createAggregationClass(
-				"AggregationClassSubClass", aggregationClassFromVertexClass, aggregationClass.getFromMin(), aggregationClass.getFromMax(),
-				true, aggregationClassToVertexClass, aggregationClass.getToMin(), aggregationClass.getToMax());
+				"AggregationClassSubClass", aggregationClassFromVertexClass,
+				aggregationClass.getFromMin(), aggregationClass.getFromMax(),
+				true, aggregationClassToVertexClass, aggregationClass
+						.getToMin(), aggregationClass.getToMax());
 		AggregationClass subClass2 = graphClass.createAggregationClass(
-				"AggregationClassSubClass2", aggregationClassFromVertexClass, aggregationClass.getFromMin(), aggregationClass.getFromMax(),
-				true, aggregationClassToVertexClass, aggregationClass.getToMin(), aggregationClass.getToMax());
+				"AggregationClassSubClass2", aggregationClassFromVertexClass,
+				aggregationClass.getFromMin(), aggregationClass.getFromMax(),
+				true, aggregationClassToVertexClass, aggregationClass
+						.getToMin(), aggregationClass.getToMax());
 
 		subClass.addSuperClass(aggregationClass);
 		subClass2.addSuperClass(aggregationClass);
@@ -604,11 +628,15 @@ public class AggregationClassImplTest extends EdgeClassImplTest {
 		Vector<AttributedElementClass> expectedSubClasses = new Vector<AttributedElementClass>();
 
 		AggregationClass subClass = graphClass.createAggregationClass(
-				"AggregationClassSubClass", aggregationClassFromVertexClass, aggregationClass.getFromMin(), aggregationClass.getFromMax(),
-				true, aggregationClassToVertexClass, aggregationClass.getToMin(), aggregationClass.getToMax());
+				"AggregationClassSubClass", aggregationClassFromVertexClass,
+				aggregationClass.getFromMin(), aggregationClass.getFromMax(),
+				true, aggregationClassToVertexClass, aggregationClass
+						.getToMin(), aggregationClass.getToMax());
 		AggregationClass subClass2 = graphClass.createAggregationClass(
-				"AggregationClassSubClass2", aggregationClassFromVertexClass, aggregationClass.getFromMin(), aggregationClass.getFromMax(),
-				true, aggregationClassToVertexClass, aggregationClass.getToMin(), aggregationClass.getToMax());
+				"AggregationClassSubClass2", aggregationClassFromVertexClass,
+				aggregationClass.getFromMin(), aggregationClass.getFromMax(),
+				true, aggregationClassToVertexClass, aggregationClass
+						.getToMin(), aggregationClass.getToMax());
 
 		subClass.addSuperClass(aggregationClass);
 		subClass2.addSuperClass(subClass);
@@ -750,8 +778,10 @@ public class AggregationClassImplTest extends EdgeClassImplTest {
 	@Override
 	public void testGetOwnAttribute5() {
 		AggregationClass subClass = graphClass.createAggregationClass(
-				"AggregationClassSubClass", aggregationClassFromVertexClass, aggregationClass.getFromMin(), aggregationClass.getFromMax(),
-				true, aggregationClassToVertexClass, aggregationClass.getToMin(), aggregationClass.getToMax());
+				"AggregationClassSubClass", aggregationClassFromVertexClass,
+				aggregationClass.getFromMin(), aggregationClass.getFromMax(),
+				true, aggregationClassToVertexClass, aggregationClass
+						.getToMin(), aggregationClass.getToMax());
 		subClass.addSuperClass(aggregationClass);
 
 		testGetOwnAttribute4(subClass);
@@ -921,8 +951,10 @@ public class AggregationClassImplTest extends EdgeClassImplTest {
 	@Override
 	public void testIsDirectSubClassOf3() {
 		AggregationClass subClass = graphClass.createAggregationClass(
-				"AggregationClassSubClass", aggregationClassFromVertexClass, aggregationClass.getFromMin(), aggregationClass.getFromMax(),
-				true, aggregationClassToVertexClass, aggregationClass.getToMin(), aggregationClass.getToMax());
+				"AggregationClassSubClass", aggregationClassFromVertexClass,
+				aggregationClass.getFromMin(), aggregationClass.getFromMax(),
+				true, aggregationClassToVertexClass, aggregationClass
+						.getToMin(), aggregationClass.getToMax());
 		subClass.addSuperClass(aggregationClass);
 
 		testIsDirectSubClassOf2(subClass);
@@ -963,8 +995,10 @@ public class AggregationClassImplTest extends EdgeClassImplTest {
 	@Override
 	public void testIsDirectSuperClassOf() {
 		AggregationClass subClass = graphClass.createAggregationClass(
-				"AggregationClassSubClass", aggregationClassFromVertexClass, aggregationClass.getFromMin(), aggregationClass.getFromMax(),
-				true, aggregationClassToVertexClass, aggregationClass.getToMin(), aggregationClass.getToMax());
+				"AggregationClassSubClass", aggregationClassFromVertexClass,
+				aggregationClass.getFromMin(), aggregationClass.getFromMax(),
+				true, aggregationClassToVertexClass, aggregationClass
+						.getToMin(), aggregationClass.getToMax());
 		subClass.addSuperClass(aggregationClass);
 
 		testIsDirectSuperClassOf(subClass);
@@ -979,11 +1013,15 @@ public class AggregationClassImplTest extends EdgeClassImplTest {
 	@Override
 	public void testIsDirectSuperClassOf2() {
 		AggregationClass subClass = graphClass.createAggregationClass(
-				"AggregationClassSubClass", aggregationClassFromVertexClass, aggregationClass.getFromMin(), aggregationClass.getFromMax(),
-				true, aggregationClassToVertexClass, aggregationClass.getToMin(), aggregationClass.getToMax());		
+				"AggregationClassSubClass", aggregationClassFromVertexClass,
+				aggregationClass.getFromMin(), aggregationClass.getFromMax(),
+				true, aggregationClassToVertexClass, aggregationClass
+						.getToMin(), aggregationClass.getToMax());
 		AggregationClass subClass2 = graphClass.createAggregationClass(
-					"AggregationClassSubClass2", aggregationClassFromVertexClass, aggregationClass.getFromMin(), aggregationClass.getFromMax(),
-					true, aggregationClassToVertexClass, aggregationClass.getToMin(), aggregationClass.getToMax());
+				"AggregationClassSubClass2", aggregationClassFromVertexClass,
+				aggregationClass.getFromMin(), aggregationClass.getFromMax(),
+				true, aggregationClassToVertexClass, aggregationClass
+						.getToMin(), aggregationClass.getToMax());
 		subClass.addSuperClass(aggregationClass);
 		subClass2.addSuperClass(subClass);
 
@@ -1077,8 +1115,10 @@ public class AggregationClassImplTest extends EdgeClassImplTest {
 	@Override
 	public void testIsSubClassOf3() {
 		AggregationClass subClass = graphClass.createAggregationClass(
-				"AggregationClassSubClass", aggregationClassFromVertexClass, aggregationClass.getFromMin(), aggregationClass.getFromMax(),
-				true, aggregationClassToVertexClass, aggregationClass.getToMin(), aggregationClass.getToMax());
+				"AggregationClassSubClass", aggregationClassFromVertexClass,
+				aggregationClass.getFromMin(), aggregationClass.getFromMax(),
+				true, aggregationClassToVertexClass, aggregationClass
+						.getToMin(), aggregationClass.getToMax());
 		subClass.addSuperClass(aggregationClass);
 
 		testIsSubClassOf2(subClass);
@@ -1119,8 +1159,10 @@ public class AggregationClassImplTest extends EdgeClassImplTest {
 	@Override
 	public void testIsSuperClassOf() {
 		AggregationClass subClass = graphClass.createAggregationClass(
-				"AggregationClassSubClass", aggregationClassFromVertexClass, aggregationClass.getFromMin(), aggregationClass.getFromMax(),
-				true, aggregationClassToVertexClass, aggregationClass.getToMin(), aggregationClass.getToMax());
+				"AggregationClassSubClass", aggregationClassFromVertexClass,
+				aggregationClass.getFromMin(), aggregationClass.getFromMax(),
+				true, aggregationClassToVertexClass, aggregationClass
+						.getToMin(), aggregationClass.getToMax());
 		subClass.addSuperClass(aggregationClass);
 
 		testIsSuperClassOf(subClass);
@@ -1135,11 +1177,15 @@ public class AggregationClassImplTest extends EdgeClassImplTest {
 	@Override
 	public void testIsSuperClassOf2() {
 		AggregationClass subClass = graphClass.createAggregationClass(
-				"AggregationClassSubClass", aggregationClassFromVertexClass, aggregationClass.getFromMin(), aggregationClass.getFromMax(),
-				true, aggregationClassToVertexClass, aggregationClass.getToMin(), aggregationClass.getToMax());
+				"AggregationClassSubClass", aggregationClassFromVertexClass,
+				aggregationClass.getFromMin(), aggregationClass.getFromMax(),
+				true, aggregationClassToVertexClass, aggregationClass
+						.getToMin(), aggregationClass.getToMax());
 		AggregationClass subClass2 = graphClass.createAggregationClass(
-				"AggregationClassSubClass2", aggregationClassFromVertexClass, aggregationClass.getFromMin(), aggregationClass.getFromMax(),
-				true, aggregationClassToVertexClass, aggregationClass.getToMin(), aggregationClass.getToMax());
+				"AggregationClassSubClass2", aggregationClassFromVertexClass,
+				aggregationClass.getFromMin(), aggregationClass.getFromMax(),
+				true, aggregationClassToVertexClass, aggregationClass
+						.getToMin(), aggregationClass.getToMax());
 		subClass.addSuperClass(aggregationClass);
 		subClass2.addSuperClass(subClass);
 
@@ -1197,8 +1243,10 @@ public class AggregationClassImplTest extends EdgeClassImplTest {
 	@Override
 	public void testIsSuperClassOfOrEquals() {
 		AggregationClass subClass = graphClass.createAggregationClass(
-				"AggregationClassSubClass", aggregationClassFromVertexClass, aggregationClass.getFromMin(), aggregationClass.getFromMax(),
-				true, aggregationClassToVertexClass, aggregationClass.getToMin(), aggregationClass.getToMax());
+				"AggregationClassSubClass", aggregationClassFromVertexClass,
+				aggregationClass.getFromMin(), aggregationClass.getFromMax(),
+				true, aggregationClassToVertexClass, aggregationClass
+						.getToMin(), aggregationClass.getToMax());
 		subClass.addSuperClass(aggregationClass);
 
 		testIsSuperClassOfOrEquals(subClass);
@@ -1213,11 +1261,15 @@ public class AggregationClassImplTest extends EdgeClassImplTest {
 	@Override
 	public void testIsSuperClassOfOrEquals2() {
 		AggregationClass subClass = graphClass.createAggregationClass(
-				"AggregationClassSubClass", aggregationClassFromVertexClass, aggregationClass.getFromMin(), aggregationClass.getFromMax(),
-				true, aggregationClassToVertexClass, aggregationClass.getToMin(), aggregationClass.getToMax());
+				"AggregationClassSubClass", aggregationClassFromVertexClass,
+				aggregationClass.getFromMin(), aggregationClass.getFromMax(),
+				true, aggregationClassToVertexClass, aggregationClass
+						.getToMin(), aggregationClass.getToMax());
 		AggregationClass subClass2 = graphClass.createAggregationClass(
-				"AggregationClassSubClass2", aggregationClassFromVertexClass, aggregationClass.getFromMin(), aggregationClass.getFromMax(),
-				true, aggregationClassToVertexClass, aggregationClass.getToMin(), aggregationClass.getToMax());
+				"AggregationClassSubClass2", aggregationClassFromVertexClass,
+				aggregationClass.getFromMin(), aggregationClass.getFromMax(),
+				true, aggregationClassToVertexClass, aggregationClass
+						.getToMin(), aggregationClass.getToMax());
 		subClass.addSuperClass(aggregationClass);
 		subClass2.addSuperClass(subClass);
 

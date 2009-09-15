@@ -99,9 +99,10 @@ public class ManualGreqlLexer {
 
 	public ManualGreqlLexer(String source) {
 		this.query = source;
-		if (query == null)
+		if (query == null) {
 			throw new NullPointerException(
 					"Cannot parse nullpointer as GReQL query");
+		}
 	}
 
 	public static String getTokenString(TokenTypes token) {
@@ -109,11 +110,13 @@ public class ManualGreqlLexer {
 	}
 
 	private final static boolean isSeparator(int c) {
-		return c == ';' || c == '<' || c == '>' || c == '(' || c == ')'
-				|| c == '{' || c == '}' || c == ':' || c == '[' || c == ']'
-				|| c == ',' || c == ' ' || c == '.' || c == '-' || c == '+'
-				|| c == '*' || c == '/' || c == '%' || c == '~' || c == '='
-				|| c == '?' || c == '^' || c == '|' || c == '!' || c == '@';
+		return (c == ';') || (c == '<') || (c == '>') || (c == '(')
+				|| (c == ')') || (c == '{') || (c == '}') || (c == ':')
+				|| (c == '[') || (c == ']') || (c == ',') || (c == ' ')
+				|| (c == '.') || (c == '-') || (c == '+') || (c == '*')
+				|| (c == '/') || (c == '%') || (c == '~') || (c == '=')
+				|| (c == '?') || (c == '^') || (c == '|') || (c == '!')
+				|| (c == '@');
 	}
 
 	public Token getNextToken() {
@@ -125,8 +128,9 @@ public class ManualGreqlLexer {
 		for (Entry<TokenTypes, String> currentEntry : fixedTokens.entrySet()) {
 			String currentString = currentEntry.getValue();
 			int currLen = currentString.length();
-			if (bml > currLen)
+			if (bml > currLen) {
 				continue;
+			}
 			if (query.regionMatches(position, currentString, 0, currLen)) {
 				if (((position + currLen) == query.length())
 						|| isSeparator(query.charAt(position + currLen - 1))
@@ -142,15 +146,16 @@ public class ManualGreqlLexer {
 				position++;
 				int start = position;
 				StringBuilder sb = new StringBuilder();
-				while (position < query.length()
-						&& query.charAt(position) != '\"') {
+				while ((position < query.length())
+						&& (query.charAt(position) != '\"')) {
 					if (query.charAt(position) == '\\') {
-						if (position == query.length())
+						if (position == query.length()) {
 							throw new ParsingException(
 									"String started at position " + start
 											+ " but is not closed in query",
 									query.substring(start, position), start,
 									position - start);
+						}
 						if ((query.charAt(position + 1) == '"')
 								|| (query.charAt(position + 1) == '\\')) {
 							position++;
@@ -159,10 +164,11 @@ public class ManualGreqlLexer {
 					sb.append(query.charAt(position));
 					position++;
 				}
-				if (query.charAt(position) != '\"')
+				if (query.charAt(position) != '\"') {
 					throw new ParsingException("String started at position "
 							+ start + " but is not closed in query", sb
 							.toString(), start, position - start);
+				}
 				recognizedTokenType = TokenTypes.STRING;
 				recognizedToken = new ComplexToken(TokenTypes.STRING, start,
 						position, sb.toString());
@@ -172,8 +178,9 @@ public class ManualGreqlLexer {
 				StringBuffer nextPossibleToken = new StringBuffer();
 				int start = position;
 				while ((query.length() > position)
-						&& (!isSeparator(query.charAt(position))))
+						&& (!isSeparator(query.charAt(position)))) {
 					nextPossibleToken.append(query.charAt(position++));
+				}
 				String tokenText = nextPossibleToken.toString();
 				if (tokenText.equals("thisVertex")) {
 					recognizedToken = new ComplexToken(TokenTypes.THISVERTEX,
@@ -195,10 +202,11 @@ public class ManualGreqlLexer {
 					bml);
 			position += bml;
 		}
-		if (recognizedToken == null)
+		if (recognizedToken == null) {
 			throw new ParsingException(
 					"Error while scanning query at position", null, position,
 					position);
+		}
 		return recognizedToken;
 	}
 
@@ -273,8 +281,9 @@ public class ManualGreqlLexer {
 				}
 			}
 		}
-		if (type != TokenTypes.OCTLITERAL)
+		if (type != TokenTypes.OCTLITERAL) {
 			decValue = value;
+		}
 		return new IntegerToken(type, start, end - start, value, decValue);
 
 	}
@@ -285,20 +294,22 @@ public class ManualGreqlLexer {
 	}
 
 	private final static boolean isWs(int c) {
-		return c == ' ' || c == '\n' || c == '\t' || c == '\r';
+		return (c == ' ') || (c == '\n') || (c == '\t') || (c == '\r');
 	}
 
 	private final void skipWs() {
 		// skip whitespace and consecutive single line comments
 		do {
 			// skip whitespace
-			while ((position < query.length()) && isWs(query.charAt(position)))
+			while ((position < query.length()) && isWs(query.charAt(position))) {
 				position++;
+			}
 			// skip single line comments
 			if (query.regionMatches(position, "//", 0, 2)) {
 				while ((position < query.length())
-						&& (query.charAt(position) != '\n'))
+						&& (query.charAt(position) != '\n')) {
 					position++;
+				}
 			}
 		} while ((position < query.length()) && isWs(query.charAt(position)));
 	}

@@ -79,7 +79,7 @@ public class TGComparer {
 		String left, right;
 
 		int i;
-		for (i = 0; i < linesLeft.size() && i < linesRight.size(); i++) {
+		for (i = 0; (i < linesLeft.size()) && (i < linesRight.size()); i++) {
 			left = linesLeft.get(i);
 			right = linesRight.get(i);
 
@@ -190,7 +190,7 @@ public class TGComparer {
 		while (br.ready()) {
 			stringList.add(br.readLine());
 		}
-
+		br.close();
 		return stringList;
 	}
 

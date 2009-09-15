@@ -653,6 +653,7 @@ public class GreqlEvaluator {
 		while ((line = reader.readLine()) != null) {
 			queryString += line + "\n";
 		}
+		reader.close();
 		normalizeQueryString();
 	}
 
