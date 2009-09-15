@@ -415,7 +415,7 @@ public class TgSchema2Java {
 	private List<File> findFilesInDirectory(File folder) throws Exception {
 		List<File> javaSources = new ArrayList<File>();
 		for (File file : folder.listFiles()) {
-			if (file != null && file.isFile()
+			if ((file != null) && file.isFile()
 					&& file.getName().endsWith(".java")) {
 				javaSources.add(file);
 			} else if (file.isDirectory()) {
@@ -525,7 +525,7 @@ public class TgSchema2Java {
 		return oh.parse(args);
 	}
 
-	class JavaFileFilter implements FileFilter {
+	static class JavaFileFilter implements FileFilter {
 		public boolean accept(File file) {
 			return (file.isDirectory() || file.getName().endsWith(".java"));
 		}

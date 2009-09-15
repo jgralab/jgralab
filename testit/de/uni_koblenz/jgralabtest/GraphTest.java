@@ -3612,7 +3612,7 @@ public class GraphTest {
 		 */
 	}
 
-	public class GraphTestKlasse extends GraphImpl {
+	public static class GraphTestKlasse extends GraphImpl {
 
 		private String done;
 

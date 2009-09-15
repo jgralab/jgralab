@@ -25,7 +25,6 @@
 package de.uni_koblenz.jgralab.schema.impl;
 
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 import de.uni_koblenz.jgralab.codegenerator.CodeBlock;
@@ -39,16 +38,6 @@ import de.uni_koblenz.jgralab.schema.SetDomain;
 
 public final class SetDomainImpl extends CollectionDomainImpl implements
 		SetDomain {
-
-	/**
-	 * @param aSet
-	 *            the set which needs to be converted to a list
-	 * @return the converted list
-	 */
-	@SuppressWarnings("unchecked")
-	public static List toList(Set aSet) {
-		return (List) aSet;
-	}
 
 	SetDomainImpl(Schema schema, Domain aBaseDomain) {
 		super(SETDOMAIN_NAME + "<"

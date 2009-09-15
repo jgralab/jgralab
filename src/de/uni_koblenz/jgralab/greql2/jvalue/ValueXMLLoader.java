@@ -41,7 +41,7 @@ public class ValueXMLLoader extends DefaultHandler {
 	/**
 	 * This class modells a entry on the stack
 	 */
-	private class StackEntry {
+	private static class StackEntry {
 
 		String tag;
 
@@ -116,6 +116,7 @@ public class ValueXMLLoader extends DefaultHandler {
 		return loadedValue;
 	}
 
+	@Override
 	public void characters(char[] ch, int start, int length) {
 		String s = new String(ch, start, length);
 		currentData = s;
@@ -127,29 +128,32 @@ public class ValueXMLLoader extends DefaultHandler {
 	/**
 	 * This method is called by the SAX-Parser
 	 */
+	@Override
 	public void startElement(String uri, String localName, String qName,
 			Attributes attributes) {
 		// GreqlEvaluator.println("Starting: '" + qName + "'");
 		JValueCollection col = null;
-		if (qName.equals("set"))
+		if (qName.equals("set")) {
 			col = new JValueSet();
-		else if (qName.equals("bag"))
+		} else if (qName.equals("bag")) {
 			col = new JValueBag();
-		else if (qName.equals("list") || qName.equals("tabledata"))
+		} else if (qName.equals("list") || qName.equals("tabledata")) {
 			col = new JValueList();
-		else if ((qName.equals("tuple")) || (qName.equals("header")))
+		} else if ((qName.equals("tuple")) || (qName.equals("header"))) {
 			col = new JValueTuple();
-		else if (qName.equals("table"))
+		} else if (qName.equals("table")) {
 			col = new JValueTable();
-		else if (qName.equals("record"))
+		} else if (qName.equals("record")) {
 			col = new JValueRecord();
+		}
 		if (col != null) {
 			valueStack.push(new StackEntry(qName, col));
 		} else {
 			if (!qName.equals("value") && !qName.equals("browsevertex")
 					&& !qName.equals("browseedge")
-					&& !qName.equals("tabledata"))
+					&& !qName.equals("tabledata")) {
 				valueStack.push(new StackEntry(qName));
+			}
 		}
 
 	}
@@ -157,13 +161,15 @@ public class ValueXMLLoader extends DefaultHandler {
 	/**
 	 * This method is called by the SAX-Parser
 	 */
+	@Override
 	public void endElement(String uri, String localName, String qName) {
 		// GreqlEvaluator.println("CurrentData is: '" + currentData + "'");
 		// GreqlEvaluator.println("Loaded Value: " + loadedValue);
 		JValue value = null;
 		// GreqlEvaluator.println("endElement: '" + qName + "'");
-		if (qName.equals("xmlvalue"))
+		if (qName.equals("xmlvalue")) {
 			return;
+		}
 		StackEntry entry = valueStack.peek();
 		if (qName.equals("value")) {
 			entry.value = currentData;

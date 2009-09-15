@@ -33,7 +33,7 @@ public class ConditionalExpressionOptimizer extends OptimizerBase {
 	private static Logger logger = Logger
 			.getLogger(ConditionalExpressionOptimizer.class.getName());
 
-	private class VertexEdgeClassTuple {
+	private static class VertexEdgeClassTuple {
 		public VertexEdgeClassTuple(Greql2Vertex v, Class<? extends Edge> ec) {
 			this.v = v;
 			this.ec = ec;

@@ -41,7 +41,7 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueSet;
  */
 public class GraphIndex {
 
-	private class VertexIndexEntry {
+	private static class VertexIndexEntry {
 
 		public long modificationTime = 0;
 
@@ -148,8 +148,9 @@ public class GraphIndex {
 	 *            GraphElements
 	 */
 	public void reduceIndexSize(long maxIndexSize) {
-		if (indexSize <= maxIndexSize)
+		if (indexSize <= maxIndexSize) {
 			return;
+		}
 		TreeSet<Entry<String, VertexIndexEntry>> entrySet = new TreeSet<Entry<String, VertexIndexEntry>>(
 				new Comparator<Entry<String, VertexIndexEntry>>() {
 					public int compare(Entry<String, VertexIndexEntry> o1,
