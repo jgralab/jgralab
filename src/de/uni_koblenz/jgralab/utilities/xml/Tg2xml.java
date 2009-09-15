@@ -69,7 +69,7 @@ public class Tg2xml extends GraphVisitor {
 	private final IndentingXMLStreamWriter writer;
 	private final GraphMarker<IncidencePositionMark> incidencePositionMarker;
 
-	private class IncidencePositionMark {
+	private static class IncidencePositionMark {
 		public int fseq, tseq;
 	}
 

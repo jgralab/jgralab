@@ -560,11 +560,11 @@ public class GraphIO {
 	private void writeHierarchy(Package pkg, AttributedElementClass aec)
 			throws IOException {
 		String delim = ":";
-		for (AttributedElementClass baseClass : aec.getDirectSuperClasses()) {
-			if ((baseClass != this) && (!baseClass.isInternal())) {
+		for (AttributedElementClass superClass : aec.getDirectSuperClasses()) {
+			if (!superClass.isInternal()) {
 				TGOut.writeBytes(delim);
 				space();
-				writeIdentifier(baseClass.getQualifiedName(pkg));
+				writeIdentifier(superClass.getQualifiedName(pkg));
 				delim = ",";
 			}
 		}
@@ -723,7 +723,7 @@ public class GraphIO {
 			return loadGraphFromFile(filename, s, pf);
 		}
 	}
-	
+
 	/**
 	 * Loads a <code>Graph</code> from the given file with transaction support.
 	 * 
@@ -794,7 +794,6 @@ public class GraphIO {
 					+ filename + ", the file cannot be found", ex);
 		}
 	}
-
 
 	public static Graph loadGraphFromURL(String url, ProgressFunction pf)
 			throws GraphIOException {
@@ -2655,7 +2654,7 @@ public class GraphIO {
 	 * GraphClassData contains the parsed data of a GraphClass. This data is
 	 * used to create a GraphClass.
 	 */
-	private class GraphClassData {
+	private static class GraphClassData {
 		Set<Constraint> constraints = new HashSet<Constraint>(1);
 		String name;
 		boolean isAbstract = false;

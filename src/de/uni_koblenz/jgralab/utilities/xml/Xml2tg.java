@@ -97,7 +97,7 @@ public class Xml2tg {
 
 	private boolean assumeVerticesBeforeEdges;
 
-	private class IncidencePositionMark {
+	private static class IncidencePositionMark {
 		public int fseq, tseq;
 	}
 
