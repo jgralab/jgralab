@@ -579,6 +579,7 @@ public class SchemaImpl implements Schema {
 			System.out.println("Most probably you use a JRE instead of a JDK. "
 					+ "The JRE does not provide a compiler.");
 			e.printStackTrace();
+			throw new SchemaException(e);
 		}
 
 		ClassFileManager manager = new ClassFileManager(jfm);

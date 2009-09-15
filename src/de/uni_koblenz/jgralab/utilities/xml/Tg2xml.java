@@ -214,6 +214,7 @@ public class Tg2xml extends GraphVisitor {
 						new ProgressFunctionImpl());
 			} else {
 				e.printStackTrace();
+				throw e;
 			}
 		}
 
