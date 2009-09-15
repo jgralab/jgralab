@@ -143,12 +143,12 @@ public final class EnumDomainImpl extends DomainImpl implements EnumDomain {
 		}
 		return false;
 	}
-	
+
 	@Override
 	public CodeBlock getTransactionReadMethod(String schemaPrefix,
 			String variableName, String graphIoVariableName) {
 		return new CodeSnippet(
-				getJavaAttributeImplementationTypeName(schemaPrefix) + " tmp"
+				getJavaAttributeImplementationTypeName(schemaPrefix) + " "
 						+ variableName + " = "
 						+ getJavaAttributeImplementationTypeName(schemaPrefix)
 						+ ".valueOf(" + graphIoVariableName

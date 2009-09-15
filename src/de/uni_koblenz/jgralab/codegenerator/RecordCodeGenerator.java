@@ -235,13 +235,13 @@ public class RecordCodeGenerator extends CodeGenerator {
 		code.add(new CodeSnippet("_io.match(\"(\");"));
 		for (Entry<String, Domain> c : recordDomain.getComponents().entrySet()) {
 			code.add(c.getValue().getTransactionReadMethod(
-					schemaRootPackageName, c.getKey(), "_io"));
+					schemaRootPackageName, "_" + c.getKey(), "_io"));
 			code.add(new CodeSnippet(c.getKey()
 					+ "= ("
 					+ c.getValue()
 							.getTransactionJavaAttributeImplementationTypeName(
-									schemaRootPackageName) + ") tmp"
-					+ c.getKey() + ";"));
+									schemaRootPackageName) + ") _" + c.getKey()
+					+ ";"));
 		}
 		code.add(new CodeSnippet("_io.match(\")\");"));
 		code.addNoIndent(new CodeSnippet("}"));
