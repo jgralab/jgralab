@@ -217,7 +217,7 @@ public class SchemaGraph2Tg {
 	 */
 	public void run() throws IOException {
 
-		assert ((outputFilename != null) || !outputFilename.equals(EMPTY)) : "No filename specified!";
+		assert ((outputFilename != null) && !outputFilename.equals(EMPTY)) : "No output filename specified!";
 		assert (schemaGraph != null) : "No SchemaGraph specified!";
 		stream = new PrintWriter(outputFilename);
 
@@ -1234,7 +1234,8 @@ public class SchemaGraph2Tg {
 			// a package name
 			int index = qualifiedName.lastIndexOf('.');
 
-			assert (index == -1 || qualifiedName.substring(0, index).length() == 0) : "FIXME! The basic domain '"
+			assert ((index == -1) || (qualifiedName.substring(0, index)
+					.length() == 0)) : "FIXME! The basic domain '"
 					+ qualifiedName + "' is not in the default package.";
 			return qualifiedName;
 		}
@@ -1253,7 +1254,7 @@ public class SchemaGraph2Tg {
 	 */
 	private String getName(CollectionDomain element) {
 
-		assert (element instanceof SetDomain || element instanceof ListDomain) : "FIXME!"
+		assert ((element instanceof SetDomain) || (element instanceof ListDomain)) : "FIXME!"
 				+ " There might be a CollectionDomain not included of element is null.";
 
 		StringBuilder sb = new StringBuilder();
