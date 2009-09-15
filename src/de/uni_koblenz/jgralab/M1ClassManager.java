@@ -25,6 +25,8 @@
 package de.uni_koblenz.jgralab;
 
 import java.lang.ref.WeakReference;
+import java.security.AccessController;
+import java.security.PrivilegedAction;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -46,7 +48,7 @@ public class M1ClassManager extends ClassLoader {
 	private Map<String, ClassFileAbstraction> m1Classes;
 	private String schemaQName = null;
 
-	public static M1ClassManager instance(String qualifiedName) {
+	public static M1ClassManager instance(final String qualifiedName) {
 		WeakReference<M1ClassManager> ref = instances.get(qualifiedName);
 		if ((ref != null) && (ref.get() != null)) {
 			return ref.get();
@@ -56,8 +58,13 @@ public class M1ClassManager extends ClassLoader {
 			if ((ref != null) && (ref.get() != null)) {
 				return ref.get();
 			}
-			ref = new WeakReference<M1ClassManager>(new M1ClassManager(
-					qualifiedName));
+			ref = AccessController
+					.doPrivileged(new PrivilegedAction<WeakReference<M1ClassManager>>() {
+						public WeakReference<M1ClassManager> run() {
+							return new WeakReference<M1ClassManager>(
+									new M1ClassManager(qualifiedName));
+						}
+					});
 			instances.put(qualifiedName, ref);
 		}
 		return ref.get();

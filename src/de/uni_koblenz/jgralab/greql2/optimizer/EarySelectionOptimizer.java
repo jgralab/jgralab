@@ -376,19 +376,19 @@ public class EarySelectionOptimizer extends OptimizerBase {
 
 		// at last set the edges that connected to the original variables at
 		// the outer scope to a record access function
-		for (Variable var : varEdgeMap.keySet()) {
+		for (Entry<Variable, Set<Edge>> e : varEdgeMap.entrySet()) {
 			FunctionApplication funApp = syntaxgraph
 					.createFunctionApplication();
 			FunctionId funId = OptimizerUtility.findOrCreateFunctionId(
 					"getValue", syntaxgraph);
 			syntaxgraph.createIsFunctionIdOf(funId, funApp);
 			Identifier identifier = syntaxgraph.createIdentifier();
-			identifier.setName(var.getName());
+			identifier.setName(e.getKey().getName());
 			syntaxgraph.createIsArgumentOf(newOuterRecordVar, funApp);
 			syntaxgraph.createIsArgumentOf(identifier, funApp);
 			// now reset all old outgoing edges of the variable to the new
 			// funApp
-			for (Edge edge : varEdgeMap.get(var)) {
+			for (Edge edge : e.getValue()) {
 				edge.setAlpha(funApp);
 			}
 		}

@@ -38,6 +38,7 @@ import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
 import java.util.Set;
+import java.util.Map.Entry;
 
 import org.apache.xmlrpc.XmlRpcException;
 
@@ -2330,10 +2331,9 @@ public class JGraLabFacade {
 			Map<Object, Object> attrValue) throws XmlRpcException {
 		Map<Object, Object> map = new HashMap<Object, Object>();
 
-		for (Object key : attrValue.keySet()) {
-			Object val = attrValue.get(key);
-			map.put(convertAttribute(domain.getKeyDomain(), key),
-					convertAttribute(domain.getValueDomain(), val));
+		for (Entry<Object, Object> e : attrValue.entrySet()) {
+			map.put(convertAttribute(domain.getKeyDomain(), e.getKey()),
+					convertAttribute(domain.getValueDomain(), e.getValue()));
 		}
 		return map;
 	}
