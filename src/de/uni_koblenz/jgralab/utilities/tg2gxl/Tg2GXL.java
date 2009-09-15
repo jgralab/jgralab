@@ -519,9 +519,6 @@ public class Tg2GXL extends Tg2Whatever {
 			schemaGraphOutputName = graphOutputName.substring(0,
 					graphOutputName.length() - 4)
 					+ "Schema.gxl";
-			if (graphOutputName == null) {
-				System.exit(1);
-			}
 		}
 		if (outputName == null) {
 			outputName = "";

@@ -1029,7 +1029,7 @@ class Graph2OWLInstances {
 	 */
 	private void writeIndividualDatatypePropElement(String owlProp,
 			String datatype, String value) throws XMLStreamException {
-		if (value.equals("") || value == null) {
+		if ((value == null) || value.equals("")) {
 			writer.writeEmptyElement(owlProp);
 			writer.writeAttribute(JGraLab2OWL.rdfNS, "datatype", datatype);
 		} else {
