@@ -32,8 +32,7 @@ public final class CompositionClassImplTest extends AggregationClassImplTest {
 				.createCompositionClass("CompositionClass1",
 						compositionClassFromVertexClass, 0, 1,
 						"CompositionClassFromRoleName", true,
-						compositionClassToVertexClass, 1,
-						(int) (Math.random() * 100) + 1,
+						compositionClassToVertexClass, 1, random.nextInt(100),
 						"CompositionClassToRoleName");
 	}
 
@@ -190,11 +189,14 @@ public final class CompositionClassImplTest extends AggregationClassImplTest {
 
 		testContainsAttribute3(superClass);
 	}
-	
+
 	private CompositionClass createSubClass(int number) {
 		CompositionClass subClass = graphClass.createCompositionClass(
-				"CompositionClassSubClass"+number, compositionClassFromVertexClass, compositionClass.getFromMin(), compositionClass.getFromMax(),
-				true, compositionClassToVertexClass, compositionClass.getToMin(),compositionClass.getToMax());
+				"CompositionClassSubClass" + number,
+				compositionClassFromVertexClass, compositionClass.getFromMin(),
+				compositionClass.getFromMax(), true,
+				compositionClassToVertexClass, compositionClass.getToMin(),
+				compositionClass.getToMax());
 		return subClass;
 	}
 

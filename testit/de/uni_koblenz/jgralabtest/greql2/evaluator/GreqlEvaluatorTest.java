@@ -1510,6 +1510,7 @@ public class GreqlEvaluatorTest extends GenericTests {
 				new DefaultOptimizer());
 		assertEquals(result, resultWO);
 		result = evalTestQuery("MultipleEvaluation", queryString2);
+		assertEquals(result, resultWO);
 	}
 
 	/*

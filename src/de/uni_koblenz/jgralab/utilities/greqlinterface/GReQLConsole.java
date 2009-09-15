@@ -82,6 +82,7 @@ public class GReQLConsole {
 				builder.append(line + " \n");
 			}
 		}
+		reader.close();
 		if (builder.length() != 0) {
 			String query = builder.toString();
 			queries.add(query);
