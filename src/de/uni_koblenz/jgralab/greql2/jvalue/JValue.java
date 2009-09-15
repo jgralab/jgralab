@@ -1083,6 +1083,9 @@ public class JValue implements Comparable<JValue> {
 		if (this.type == atype) {
 			return 0;
 		}
+		if (type == null) {
+			return 50;
+		}
 		if (atype == JValueType.STRING) {
 			// String representation
 			return 100;

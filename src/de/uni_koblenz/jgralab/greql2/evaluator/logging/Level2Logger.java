@@ -188,8 +188,9 @@ public class Level2Logger extends Level2LoggingBase implements EvaluationLogger 
 			return false;
 		}
 
-		if (!loggerDirectory.exists()) {
-			loggerDirectory.mkdir();
+		if (!loggerDirectory.exists() && !loggerDirectory.mkdir()) {
+			throw new IOException("Couldn't create directory "
+					+ loggerDirectory + ".");
 		}
 
 		boolean result = store(getLogFile());

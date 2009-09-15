@@ -16,7 +16,7 @@ import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.GraphIO;
 import de.uni_koblenz.jgralab.GraphIOException;
 import de.uni_koblenz.jgralab.Vertex;
-import de.uni_koblenz.jgralab.impl.trans.GraphImpl;
+import de.uni_koblenz.jgralab.impl.std.GraphImpl;
 import de.uni_koblenz.jgralab.schema.AttributedElementClass;
 import de.uni_koblenz.jgralab.schema.EdgeClass;
 import de.uni_koblenz.jgralab.schema.GraphClass;
@@ -42,10 +42,8 @@ public class GraphTest {
 	@Before
 	public void setUp() {
 
-		graph = VertexTestSchema.instance().createVertexTestGraph(); // .createVertexTestGraph();
+		graph = VertexTestSchema.instance().createVertexTestGraph();
 		graph2 = VertexTestSchema.instance().createVertexTestGraph();
-		graph.createTransaction();
-		graph2.createTransaction();
 		System.out.println("Graph2 is instance of class " + graph2.getClass());
 		v1 = graph.createVertex(SubNode.class);
 		System.out.println("V1 is instance of class " + v1.getClass());
@@ -275,16 +273,12 @@ public class GraphTest {
 
 		graph.createEdge(SubLink.class, v9, v5);
 		graph2.createSubNode();
-		graph.commit();
-		graph2.commit();
 
 		assertEquals(true, graph.isGraphModified(l1));
 		assertEquals(true, graph2.isGraphModified(l2));
 		l1 = graph.getGraphVersion();
 		l2 = graph2.getGraphVersion();
 
-		graph.createTransaction();
-		graph2.createTransaction();
 		Edge e1 = graph.createEdge(Link.class, v1, v6);
 		graph2.createSuperNode();
 		assertEquals(true, graph.isGraphModified(l1));
@@ -3688,15 +3682,17 @@ public class GraphTest {
 		@Override
 		public void readAttributeValueFromString(String attributeName,
 				String value) throws GraphIOException, NoSuchFieldException {
-			// do nothing since this method is not needed in this test case.
+			// TODO Auto-generated method stub
+
 		}
 
 		@Override
 		public String writeAttributeValueToString(String attributeName)
 				throws IOException, GraphIOException, NoSuchFieldException {
-			// do nothing since this method is not needed in this test case.
+			// TODO Auto-generated method stub
 			return null;
 		}
+
 	}
 
 }
