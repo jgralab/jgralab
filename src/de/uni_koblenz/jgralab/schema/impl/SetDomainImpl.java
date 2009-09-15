@@ -123,10 +123,10 @@ public final class SetDomainImpl extends CollectionDomainImpl implements
 		code.add(new CodeSnippet(
 				"#name# = new java.util.HashSet<#basedom#>();",
 				"#io#.match(\"{\");", "while (!#io#.isNextToken(\"}\")) {",
-				"\t#basetype# element = null;"));
+				"\t#basetype# _element = null;"));
 		code.add(getBaseDomain().getReadMethod(schemaRootPackagePrefix,
-				"element", graphIoVariableName), 1);
-		code.add(new CodeSnippet("\t#name#.add(element);", "}",
+				"_element", graphIoVariableName), 1);
+		code.add(new CodeSnippet("\t#name#.add(_element);", "}",
 				"#io#.match(\"}\");", "#io#.space();"));
 		code
 				.addNoIndent(new CodeSnippet(

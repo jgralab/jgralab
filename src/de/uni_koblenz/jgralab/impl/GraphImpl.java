@@ -411,8 +411,6 @@ public abstract class GraphImpl implements Graph {
 	protected void appendVertexToVSeq(VertexImpl v) {
 		// moved from below to first place here - needed for working of
 		// transaction support
-		System.out.println("V is instance of: " + v.getClass());
-
 		getVertex()[v.id] = v;
 		setVCount(getVCount() + 1);
 		if (getFirstVertex() == null) {
