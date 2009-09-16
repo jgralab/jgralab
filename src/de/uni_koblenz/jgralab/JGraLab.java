@@ -40,9 +40,8 @@ public class JGraLab {
 	private static final String buildID = "67";
 	//
 	// to use this information inside the text place $rev for the revision
-	// information
-	// and $bid for the build id
-	private static final String version = "Carnotaurus";
+	// information and $bid for the build id
+	private static final String version = "Dimetrodon";
 	private static final String[] versionInfo = {
 			"JGraLab - The Java graph laboratory", "  Version : $ver",
 			"  $rev", "  Build ID: $bid" };
@@ -78,9 +77,7 @@ public class JGraLab {
 			"Apache XML-RPC 3.0",
 			"Copyright (C) 2001-2008 The Apache Software Foundation",
 			"Please note, you need the Java Enterprise Edition to make full use",
-			"of this part of the software.", 
-			"", 
-			"Apache Commons CLI 1.2",
+			"of this part of the software.", "", "Apache Commons CLI 1.2",
 			"Copyright 2001-2009 The Apache Software Foundation" };
 
 	/**
