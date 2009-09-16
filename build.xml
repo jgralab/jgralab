@@ -172,7 +172,7 @@
       </apply>
     </target>
 
-    <property name="clover.jar" value="${lib.dir}/clover/clover-2.5.0.jar"/>
+    <property name="clover.jar" value="${lib.dir}/clover/clover-2.6.0.jar"/>
     <property name="clover.dest" value="${project.dir}/build/clover-report"/>
     <taskdef resource="cloverlib.xml" classpath="${clover.jar}"/>
     <clover-env/>
