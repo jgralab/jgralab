@@ -4,6 +4,8 @@ import javax.xml.stream.XMLStreamReader;
 
 public class ProcessingException extends RuntimeException {
 
+	private static final long serialVersionUID = 5715378979859807085L;
+
 	public ProcessingException(XMLStreamReader parser, String file,
 			String message) {
 		this(file, parser.getLocation().getLineNumber(), message);
