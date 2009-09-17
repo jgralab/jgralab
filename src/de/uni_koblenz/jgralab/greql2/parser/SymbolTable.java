@@ -24,11 +24,6 @@
 
 package de.uni_koblenz.jgralab.greql2.parser;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.Set;
-
 import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.greql2.exception.DuplicateVariableException;
@@ -38,25 +33,9 @@ import de.uni_koblenz.jgralab.greql2.schema.IsDeclaredVarOf;
 import de.uni_koblenz.jgralab.greql2.schema.IsVarOf;
 import de.uni_koblenz.jgralab.greql2.schema.SourcePosition;
 
-public class SymbolTable {
+public class SymbolTable extends EasySymbolTable {
 
-	private LinkedList<HashMap<String, Vertex>> list = null;
-
-	public SymbolTable() {
-		list = new LinkedList<HashMap<String, Vertex>>();
-	}
-
-	public void blockBegin() {
-		HashMap<String, Vertex> map = new HashMap<String, Vertex>();
-		list.addFirst(map);
-	}
-
-	public void blockEnd() {
-		if (!list.isEmpty())
-			list.removeFirst();
-
-	}
-
+	@Override
 	public void insert(String ident, Vertex v)
 			throws DuplicateVariableException {
 
@@ -79,27 +58,6 @@ public class SymbolTable {
 					.getFirstEdge(EdgeDirection.IN)).getSourcePositions(),
 					new SourcePosition(offset, ident.length()));
 		}
-	}
-
-	public Vertex lookup(String ident) {
-		for (HashMap<String, Vertex> keyMap : list) {
-			if (keyMap.containsKey(ident))
-				return keyMap.get(ident);
-		}
-		return null;
-	}
-
-	/**
-	 * returns a set of known identifiers
-	 * 
-	 * @return
-	 */
-	public Set<String> getKnownIdentifierSet() {
-		Set<String> result = new HashSet<String>();
-		for (HashMap<String, Vertex> keyMap : list) {
-			result.addAll(keyMap.keySet());
-		}
-		return result;
 	}
 
 }

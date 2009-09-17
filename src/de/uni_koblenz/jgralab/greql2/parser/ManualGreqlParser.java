@@ -33,12 +33,24 @@ public class ManualGreqlParser extends ManualParserHelper {
 	private boolean predicateFulfilled = true;
 
 	private Greql2Schema schema = null;
-
+	
+	
+	/**
+	 * @return the set of variables which are valid at the current position
+	 * in the query
+	 */
+	public final Set<String> getValidVariables() {
+		return duringParsingvariableSymbolTable.getKnownIdentifierSet();
+	}
+	
+	
+	
+	
 	private final void ruleSucceeds(RuleEnum rule, int pos) {
 		int[] maySucceedArray = testedRules.get(rule);
 		maySucceedArray[pos] = current;
 	}
-
+	
 	/**
 	 * Checks if the rule specified by <code>rule</code> was already tested at
 	 * the current token position. If it was already tested, this method skips
@@ -105,9 +117,10 @@ public class ManualGreqlParser extends ManualParserHelper {
 		schema = Greql2Schema.instance();
 		graph = schema.createGreql2();
 		tokens = ManualGreqlLexer.scan(source);
-		variableSymbolTable = new SymbolTable();
-		functionSymbolTable = new SymbolTable();
-		functionSymbolTable.blockBegin();
+		afterParsingvariableSymbolTable = new SymbolTable();
+		duringParsingvariableSymbolTable = new EasySymbolTable();
+		duringParsingvariableSymbolTable.blockBegin();
+		functionSymbolTable = new HashMap<String, FunctionId>();
 		graphCleaned = false;
 		lookAhead = tokens.get(0);
 	}
@@ -482,14 +495,15 @@ public class ManualGreqlParser extends ManualParserHelper {
 		return vlist;
 	}
 
+
 	private final Variable parseVariable() {
 		String varName = matchIdentifier();
+		Variable var = null;
 		if (!inPredicateMode()) {
-			Variable var = graph.createVariable();
+			var = graph.createVariable();
 			var.setName(varName);
-			return var;
 		}
-		return null;
+		return var;
 	}
 
 	private final Expression parseExpression() {
@@ -550,6 +564,7 @@ public class ManualGreqlParser extends ManualParserHelper {
 			Quantifier quantifier = parseQuantifier();
 			lengthQuantifier = getLength(offsetQuantifier);
 			offsetQuantifiedDecl = getCurrentOffset();
+			duringParsingvariableSymbolTable.blockBegin();
 			Declaration decl = parseQuantifiedDeclaration();
 			lengthQuantifiedDecl = getLength(offsetQuantifiedDecl);
 			match(TokenTypes.AT);
@@ -575,6 +590,7 @@ public class ManualGreqlParser extends ManualParserHelper {
 				boundExprOf.setSourcePositions((createSourcePositionList(
 						lengthQuantifiedExpr, offsetQuantifiedExpr)));
 			}
+			duringParsingvariableSymbolTable.blockEnd();
 			return quantifiedExpr;
 		} else {
 			return parseLetExpression();
@@ -584,13 +600,15 @@ public class ManualGreqlParser extends ManualParserHelper {
 	private final Expression parseLetExpression() {
 		if (lookAhead.type == TokenTypes.LET) {
 			match();
+			duringParsingvariableSymbolTable.blockBegin();
 			List<VertexPosition<Definition>> defList = parseDefinitionList();
 			match(TokenTypes.IN);
 			int offset = getCurrentOffset();
 			Expression boundExpr = parseLetExpression();
+			LetExpression result = null;
 			if (!inPredicateMode() && !defList.isEmpty()) {
 				int length = getLength(offset);
-				LetExpression result = graph.createLetExpression();
+				result = graph.createLetExpression();
 				IsBoundExprOf exprOf = graph.createIsBoundExprOfDefinition(
 						boundExpr, result);
 				exprOf.setSourcePositions((createSourcePositionList(length,
@@ -601,9 +619,9 @@ public class ManualGreqlParser extends ManualParserHelper {
 					definitionOf.setSourcePositions((createSourcePositionList(
 							def.length, def.offset)));
 				}
-				return result;
 			}
-			return null;
+			duringParsingvariableSymbolTable.blockEnd();
+			return result;
 		} else {
 			return parseWhereExpression();
 		}
@@ -615,8 +633,9 @@ public class ManualGreqlParser extends ManualParserHelper {
 		if (tryMatch(TokenTypes.WHERE)) {
 			int length = getLength(offset);
 			List<VertexPosition<Definition>> defList = parseDefinitionList();
+			WhereExpression result = null;
 			if (!inPredicateMode()) {
-				WhereExpression result = graph.createWhereExpression();
+				result = graph.createWhereExpression();
 				IsBoundExprOf exprOf = graph.createIsBoundExprOfDefinition(
 						expr, result);
 				exprOf.setSourcePositions((createSourcePositionList(length,
@@ -627,9 +646,8 @@ public class ManualGreqlParser extends ManualParserHelper {
 					isDefOf.setSourcePositions((createSourcePositionList(
 							length, offset)));
 				}
-				return result;
 			}
-			return null;
+			return result;
 		} else {
 			return expr;
 		}
@@ -846,13 +864,7 @@ public class ManualGreqlParser extends ManualParserHelper {
 				opName = "uminus";
 			}
 			if (!inPredicateMode()) {
-				FunctionId unaryOp = (FunctionId) functionSymbolTable
-						.lookup(opName);
-				if (unaryOp == null) {
-					unaryOp = graph.createFunctionId();
-					unaryOp.setName(opName);
-					functionSymbolTable.insert(opName, unaryOp);
-				}
+				getFunctionId(opName); 
 			}
 			construct.postOp(opName);
 		}
@@ -2213,6 +2225,7 @@ public class ManualGreqlParser extends ManualParserHelper {
 		int offsetDecl = getCurrentOffset();
 		List<VertexPosition<SimpleDeclaration>> declarations = parseDeclarationList();
 		int lengthDecl = getLength(offsetDecl);
+		duringParsingvariableSymbolTable.blockBegin();
 		Declaration declaration = null;
 		if (!inPredicateMode()) {
 			declaration = graph.createDeclaration();
@@ -2251,6 +2264,7 @@ public class ManualGreqlParser extends ManualParserHelper {
 					lengthDecl, offsetDecl)));
 		}
 		match(TokenTypes.END);
+		duringParsingvariableSymbolTable.blockEnd();
 		return comprehension;
 	}
 
