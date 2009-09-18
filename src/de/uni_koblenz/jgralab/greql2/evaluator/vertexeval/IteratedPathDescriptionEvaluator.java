@@ -78,7 +78,7 @@ public class IteratedPathDescriptionEvaluator extends PathDescriptionEvaluator {
 		PathDescriptionEvaluator pathEval = (PathDescriptionEvaluator) greqlEvaluator
 				.getVertexEvaluatorGraphMarker().getMark(p);
 		NFA createdNFA = NFA.createIteratedPathDescriptionNFA(
-				pathEval.getNFA(), vertex.getTimes() == "star");
+				pathEval.getNFA(), vertex.get_times() == "star");
 		return new JValue(createdNFA);
 	}
 

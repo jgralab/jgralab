@@ -51,40 +51,40 @@ public class TestGraphGenerator {
 		Intersection v2 = g1.createIntersection();
 
 		CarPark v3 = g1.createCarPark();
-		v3.setCapacity(2500);
+		v3.set_capacity(2500);
 
 		Intersection v4 = g1.createIntersection();
 		Intersection v5 = g1.createIntersection();
 		Intersection v6 = g1.createIntersection();
 
 		CarPark v7 = g1.createCarPark();
-		v7.setCapacity(500);
+		v7.set_capacity(500);
 
 		CarPark v8 = g1.createCarPark();
-		v8.setCapacity(500);
+		v8.set_capacity(500);
 
 		Street e1 = g1.createStreet(v1, v2);
-		e1.setName("e1");
+		e1.set_name("e1");
 		Street e2 = g1.createStreet(v2, v3);
-		e2.setName("e2");
+		e2.set_name("e2");
 		Street e3 = g1.createStreet(v1, v4);
-		e3.setName("e3");
+		e3.set_name("e3");
 		Street e4 = g1.createStreet(v5, v2);
-		e4.setName("e4");
+		e4.set_name("e4");
 		Bridge e5 = g1.createBridge(v3, v6);
-		e5.setName("e5");
+		e5.set_name("e5");
 		Street e6 = g1.createStreet(v4, v5);
-		e6.setName("e6");
+		e6.set_name("e6");
 		Street e7 = g1.createStreet(v5, v6);
-		e7.setName("e7");
+		e7.set_name("e7");
 		Street e8 = g1.createStreet(v4, v7);
-		e8.setName("e8");
+		e8.set_name("e8");
 		Bridge e9 = g1.createBridge(v5, v8);
-		e9.setName("e9");
+		e9.set_name("e9");
 		Bridge e10 = g1.createBridge(v6, v8);
-		e10.setName("e10");
+		e10.set_name("e10");
 		Street e11 = g1.createStreet(v7, v8);
-		e11.setName("e11");
+		e11.set_name("e11");
 
 		System.out.println("Storing graph to file 'citymapgraph.tg'");
 		GraphIO.saveGraphToFile("citymapgraph.tg", g1,

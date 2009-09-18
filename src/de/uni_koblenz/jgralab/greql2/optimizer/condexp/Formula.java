@@ -60,7 +60,7 @@ public abstract class Formula {
 			GreqlEvaluator eval, Expression exp) {
 		if (exp instanceof BoolLiteral) {
 			BoolLiteral bool = (BoolLiteral) exp;
-			TrivalentBoolean value = bool.getBoolValue();
+			TrivalentBoolean value = bool.get_boolValue();
 			if (value == TrivalentBoolean.TRUE) {
 				return new True(eval);
 			}
@@ -165,7 +165,7 @@ public abstract class Formula {
 		if (exp instanceof FunctionApplication) {
 			FunctionApplication funApp = (FunctionApplication) exp;
 			return ((FunctionId) funApp.getFirstIsFunctionIdOf().getAlpha())
-					.getName().equals(functionName);
+					.get_name().equals(functionName);
 		}
 		return false;
 	}

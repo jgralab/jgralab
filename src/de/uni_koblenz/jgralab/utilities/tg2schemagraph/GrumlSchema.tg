@@ -2,15 +2,15 @@ Schema de.uni_koblenz.jgralab.grumlschema.GrumlSchema;
 
 GraphClass SchemaGraph 
   ["The GraphClass may not be abstract."
-  "forall gc: V{structure.GraphClass} @ not gc.isAbstract"
-  "from gc: V{structure.GraphClass} with gc.isAbstract reportSet gc end"]
+  "forall gc: V{structure.GraphClass} @ not gc.abstract"
+  "from gc: V{structure.GraphClass} with gc.abstract reportSet gc end"]
   ["There must be exactly one GraphClass."
   "count(V{structure.GraphClass}) = 1"
   "V{structure.GraphClass}"];
 
 Package structure;
 VertexClass Schema {name: String, packagePrefix: String};
-abstract VertexClass AttributedElementClass {isAbstract: Boolean, qualifiedName: String};
+abstract VertexClass AttributedElementClass {abstract: Boolean, qualifiedName: String};
 VertexClass AggregationClass: EdgeClass {aggregateFrom: Boolean};
 VertexClass Attribute {name: String};
 VertexClass CompositionClass: AggregationClass;

@@ -185,8 +185,8 @@ public class SchemaGraph2Schema {
 		assert (gSchema != null) : "FIXME! The Schema of the SchemaGraph should be null.";
 
 		// Gets all attributes of the Schema
-		String name = gSchema.getName();
-		String packagePrefix = gSchema.getPackagePrefix();
+		String name = gSchema.get_name();
+		String packagePrefix = gSchema.get_packagePrefix();
 		assert (name != null && packagePrefix != null) : "One of attributes \"name\" or \"packagePrefix\" is null";
 
 		// Creates a Schema with the given attributes
@@ -214,17 +214,17 @@ public class SchemaGraph2Schema {
 
 		// Creates a new GraphClass of the Schema
 		this.graphClass = schema.createGraphClass(gGraphClass
-				.getQualifiedName());
+				.get_qualifiedName());
 
 		// Sets its attributes and constraints
-		graphClass.setAbstract(gGraphClass.isIsAbstract());
+		graphClass.setAbstract(gGraphClass.is_abstract());
 		createAllAttributes(graphClass, gGraphClass);
 		createAllConstraints(graphClass, gGraphClass);
 
 		// Check
 		assert (graphClass.getQualifiedName().equals(gGraphClass
-				.getQualifiedName())) : "FIXME! The attribute \"qualifiedName\" is different.";
-		assert (graphClass.isAbstract() == gGraphClass.isIsAbstract()) : "FIXME! The attribute \"isAbstract\" is different.";
+				.get_qualifiedName())) : "FIXME! The attribute \"qualifiedName\" is different.";
+		assert (graphClass.isAbstract() == gGraphClass.is_abstract()) : "FIXME! The attribute \"abstract\" is different.";
 	}
 
 	/**
@@ -350,7 +350,7 @@ public class SchemaGraph2Schema {
 	private de.uni_koblenz.jgralab.schema.Domain createDomain(Domain gDomain) {
 
 		// Gets the QualifiedName and tries to query a Domain.
-		String qualifiedName = gDomain.getQualifiedName();
+		String qualifiedName = gDomain.get_qualifiedName();
 		de.uni_koblenz.jgralab.schema.Domain domain = schema
 				.getDomain(qualifiedName);
 
@@ -395,8 +395,8 @@ public class SchemaGraph2Schema {
 	private de.uni_koblenz.jgralab.schema.Domain createDomain(EnumDomain gDomain) {
 
 		// Creates a EnumDomain
-		return schema.createEnumDomain(gDomain.getQualifiedName(), gDomain
-				.getEnumConstants());
+		return schema.createEnumDomain(gDomain.get_qualifiedName(), gDomain
+				.get_enumConstants());
 	}
 
 	/**
@@ -418,12 +418,12 @@ public class SchemaGraph2Schema {
 				.getHasRecordDomainComponentIncidences(OUTGOING)) {
 			assert (hasRecordComponent != null && hasRecordComponent.getThat() instanceof Domain) : "FIXME! That should be an instance of Domain.";
 
-			recordComponents.put(hasRecordComponent.getName(),
+			recordComponents.put(hasRecordComponent.get_name(),
 					queryDomain((Domain) hasRecordComponent.getThat()));
 		}
 
 		// Creates a RecordDomain
-		return schema.createRecordDomain(gDomain.getQualifiedName(),
+		return schema.createRecordDomain(gDomain.get_qualifiedName(),
 				recordComponents);
 	}
 
@@ -522,7 +522,8 @@ public class SchemaGraph2Schema {
 
 		if (gElement instanceof VertexClass) {
 			// VertexClass is created.
-			element = graphClass.createVertexClass(gElement.getQualifiedName());
+			element = graphClass
+					.createVertexClass(gElement.get_qualifiedName());
 
 		} else if (gElement instanceof EdgeClass) {
 			// EdgeClass, AggregationClass or CompositionClass is created.
@@ -545,8 +546,8 @@ public class SchemaGraph2Schema {
 		assert (element != null) : "FIXME! No GraphElementClass has been created.";
 
 		// Gets and sets the attribute "isAbstract"
-		element.setAbstract(gElement.isIsAbstract());
-		assert (element.isAbstract() == gElement.isIsAbstract()) : "FIXME! The attribute \"isAbstract\" is not equal.";
+		element.setAbstract(gElement.is_abstract());
+		assert (element.isAbstract() == gElement.is_abstract()) : "FIXME! The attribute \"isAbstract\" is not equal.";
 
 		// Sets all Attribute objects
 		createAllAttributes(element, gElement);
@@ -576,22 +577,22 @@ public class SchemaGraph2Schema {
 
 		// Gets all attributes of the To edge
 		to = queryVertexClass((VertexClass) gTo.getThat());
-		toMin = gTo.getMin();
-		toMax = gTo.getMax();
-		toRoleName = gTo.getRoleName();
-		toRedefinedRoles = gTo.getRedefinedRoles();
+		toMin = gTo.get_min();
+		toMax = gTo.get_max();
+		toRoleName = gTo.get_roleName();
+		toRedefinedRoles = gTo.get_redefinedRoles();
 
 		// Gets all attributes of the From edge
 		from = queryVertexClass((VertexClass) gFrom.getThat());
-		fromMin = gFrom.getMin();
-		fromMax = gFrom.getMax();
-		fromRoleName = gFrom.getRoleName();
-		fromRedefinedRoles = gFrom.getRedefinedRoles();
+		fromMin = gFrom.get_min();
+		fromMax = gFrom.get_max();
+		fromRoleName = gFrom.get_roleName();
+		fromRedefinedRoles = gFrom.get_redefinedRoles();
 
 		// Gets some missing attribute
-		String qualifiedName = gElement.getQualifiedName();
+		String qualifiedName = gElement.get_qualifiedName();
 		boolean isAggegatedFrom = (gElement instanceof AggregationClass) ? ((AggregationClass) gElement)
-				.isAggregateFrom()
+				.is_aggregateFrom()
 				: false;
 
 		de.uni_koblenz.jgralab.schema.EdgeClass edgeClass;
@@ -648,9 +649,9 @@ public class SchemaGraph2Schema {
 			// Gets the Constraint
 			Constraint constraint = (Constraint) hasConstraint.getThat();
 			// Creates and adds the constraint
-			element.addConstraint(new ConstraintImpl(constraint.getMessage(),
-					constraint.getPredicateQuery(), constraint
-							.getOffendingElementsQuery()));
+			element.addConstraint(new ConstraintImpl(constraint.get_message(),
+					constraint.get_predicateQuery(), constraint
+							.get_offendingElementsQuery()));
 		}
 	}
 
@@ -676,14 +677,14 @@ public class SchemaGraph2Schema {
 			// Gets the Attribute
 			assert (hasAttribute != null && hasAttribute.getThat() instanceof Attribute) : "That should be an instance of Attribute.";
 			Attribute attribute = (Attribute) hasAttribute.getThat();
-			assert (attribute.getName() != null) : "The name of the Attribute is null.";
+			assert (attribute.get_name() != null) : "The name of the Attribute is null.";
 
 			// Gets the Domain
 			HasDomain hasDomain = attribute.getFirstHasDomain(OUTGOING);
 			assert (hasDomain != null) : "No \"HasDomain\" edge has been defined.";
 			assert (hasDomain.getThat() instanceof Domain) : "That should be an instance of Domain.";
 			// Creates and adds an Attribute
-			element.addAttribute(attribute.getName(),
+			element.addAttribute(attribute.get_name(),
 					queryDomain((Domain) hasDomain.getThat()));
 			assert (hasDomain.getNextHasDomain(OUTGOING) == null);
 		}
@@ -699,7 +700,8 @@ public class SchemaGraph2Schema {
 
 			// Gets a corresponding AttributedElementClass object
 			de.uni_koblenz.jgralab.schema.AttributedElementClass element = schema
-					.getAttributedElementClass(gGraphElement.getQualifiedName());
+					.getAttributedElementClass(gGraphElement
+							.get_qualifiedName());
 			assert (element != null) : "FIXME! No AttributedElementClass object found.";
 
 			if (gGraphElement instanceof VertexClass) {
@@ -751,7 +753,7 @@ public class SchemaGraph2Schema {
 
 			// Gets the corresponding superclass
 			de.uni_koblenz.jgralab.schema.AttributedElementClass superClass = schema
-					.getAttributedElementClass(gSuperClass.getQualifiedName());
+					.getAttributedElementClass(gSuperClass.get_qualifiedName());
 			assert (superClass instanceof de.uni_koblenz.jgralab.schema.EdgeClass) : "The retrieved superclass is not an instance of EdgeClass.";
 			// Stores the superclass
 			superClasses
@@ -792,7 +794,7 @@ public class SchemaGraph2Schema {
 
 			// Gets the corresponding superclass
 			de.uni_koblenz.jgralab.schema.AttributedElementClass superClass = schema
-					.getAttributedElementClass(gSuperClass.getQualifiedName());
+					.getAttributedElementClass(gSuperClass.get_qualifiedName());
 			assert (superClass instanceof de.uni_koblenz.jgralab.schema.VertexClass) : "The retrieved superclass is not an instance of VertexClass.";
 			// Stores the superclass
 			superClasses
@@ -821,7 +823,7 @@ public class SchemaGraph2Schema {
 
 		// Queries the VertexClass
 		de.uni_koblenz.jgralab.schema.AttributedElementClass element = schema
-				.getAttributedElementClass(gElement.getQualifiedName());
+				.getAttributedElementClass(gElement.get_qualifiedName());
 
 		// Returns only instances of VertexClass
 		return (element instanceof de.uni_koblenz.jgralab.schema.VertexClass) ? (de.uni_koblenz.jgralab.schema.VertexClass) element
@@ -840,7 +842,7 @@ public class SchemaGraph2Schema {
 
 		// Queries the Domain
 		de.uni_koblenz.jgralab.schema.Domain domain = schema.getDomain(gDomain
-				.getQualifiedName());
+				.get_qualifiedName());
 
 		// In the case of no found Domain a new Domain is created.
 		if (domain == null) {

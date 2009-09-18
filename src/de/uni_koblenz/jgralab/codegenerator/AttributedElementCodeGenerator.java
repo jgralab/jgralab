@@ -219,9 +219,9 @@ public class AttributedElementCodeGenerator extends CodeGenerator {
 			s.setVariable("name", attr.getName());
 			s.setVariable("isOrGet", attr.getDomain().getJavaClassName(
 					schemaRootPackageName).equals("Boolean") ? "is" : "get");
-			s.setVariable("cName", camelCase(attr.getName()));
+			s.setVariable("cName", attr.getName());
 			s
-					.add("if (attributeName.equals(\"#name#\")) return #isOrGet##cName#();");
+					.add("if (attributeName.equals(\"#name#\")) return #isOrGet#_#cName#();");
 			code.add(s);
 		}
 		code
@@ -251,7 +251,6 @@ public class AttributedElementCodeGenerator extends CodeGenerator {
 		for (Attribute attr : attrSet) {
 			CodeSnippet s = new CodeSnippet();
 			s.setVariable("name", attr.getName());
-			s.setVariable("cName", camelCase(attr.getName()));
 
 			if (attr.getDomain().isComposite()) {
 				s.setVariable("attributeClassName", attr.getDomain()
@@ -270,15 +269,15 @@ public class AttributedElementCodeGenerator extends CodeGenerator {
 				s.add("if (attributeName.equals(\"#name#\")) {");
 				s.add("\tif (data instanceof String) {");
 				s
-						.add("\t\tset#cName#(#attributeClassName#.valueOf((String) data));");
+						.add("\t\tset_#name#(#attributeClassName#.valueOf((String) data));");
 				s.add("\t} else {");
-				s.add("\t\tset#cName#((#attributeClassName#) data);");
+				s.add("\t\tset_#name#((#attributeClassName#) data);");
 				s.add("\t}");
 				s.add("\treturn;");
 				s.add("}");
 			} else {
 				s.add("if (attributeName.equals(\"#name#\")) {");
-				s.add("\tset#cName#((#attributeClassName#) data);");
+				s.add("\tset_#name#((#attributeClassName#) data);");
 				s.add("\treturn;");
 				s.add("}");
 			}
@@ -315,15 +314,14 @@ public class AttributedElementCodeGenerator extends CodeGenerator {
 	protected CodeBlock createGetter(Attribute attr, boolean createClass) {
 		CodeSnippet code = new CodeSnippet(true);
 		code.setVariable("name", attr.getName());
-		code.setVariable("cName", camelCase(attr.getName()));
 		code.setVariable("type", attr.getDomain()
 				.getJavaAttributeImplementationTypeName(schemaRootPackageName));
 		code.setVariable("isOrGet", attr.getDomain().getJavaClassName(
 				schemaRootPackageName).equals("Boolean") ? "is" : "get");
 		if (createClass) {
 			if (!transactionSupport) {
-				code.add("public #type# #isOrGet##cName#() {",
-						"\treturn #name#;", "}");
+				code.add("public #type# #isOrGet#_#name#() {",
+						"\treturn _#name#;", "}");
 			} else {
 				// getter for transaction support
 				code.setVariable("initValue", attr.getDomain()
@@ -333,20 +331,20 @@ public class AttributedElementCodeGenerator extends CodeGenerator {
 								schemaRootPackageName));
 				setGraphReferenceVariable(code);
 
-				code.add("public #type# #isOrGet##cName#() {");
+				code.add("public #type# #isOrGet#_#name#() {");
 
 				addCheckValidityCode(code);
 				code
 						.add(
-								"\tif (#name# == null)",
+								"\tif (_#name# == null)",
 								"\t\treturn #initValue#;",
-								"\t#ttype# _value = #name#.getValidValue(#graphreference#getCurrentTransaction());",
+								"\t#ttype# _value = _#name#.getValidValue(#graphreference#getCurrentTransaction());",
 								"\tif(_value == null)",
 								"\t\treturn #initValue#;", "\treturn _value;",
 								"}");
 			}
 		} else {
-			code.add("public #type# #isOrGet##cName#();");
+			code.add("public #type# #isOrGet#_#name#();");
 		}
 		return code;
 	}
@@ -365,15 +363,14 @@ public class AttributedElementCodeGenerator extends CodeGenerator {
 	protected CodeBlock createSetter(Attribute attr, boolean createClass) {
 		CodeSnippet code = new CodeSnippet(true);
 		code.setVariable("name", attr.getName());
-		code.setVariable("tmpname", attr.getName());
-		code.setVariable("cName", camelCase(attr.getName()));
+		code.setVariable("tmpname", "_" + attr.getName());
 		code.setVariable("type", attr.getDomain()
 				.getJavaAttributeImplementationTypeName(schemaRootPackageName));
 
 		if (createClass) {
 			if (!transactionSupport) {
-				code.add("public void set#cName#(#type# #name#) {",
-						"\tthis.#name# = #name#;", "\tgraphModified();", "}");
+				code.add("public void set_#name#(#type# _#name#) {",
+						"\tthis._#name# = _#name#;", "\tgraphModified();", "}");
 			} else {
 				// setter for transaction support
 				code.setVariable("ttype", attr.getDomain()
@@ -383,12 +380,12 @@ public class AttributedElementCodeGenerator extends CodeGenerator {
 						+ attr.getDomain().getVersionedClass(
 								schemaRootPackageName)
 						// TODO check: changed from myGraph to this!!!
-						+ "(this, #name#, \"#name#\");");
+						+ "(this, _#name#, \"#name#\");");
 				code.setVariable("init", "new "
 						+ attr.getDomain().getVersionedClass(
 						// TODO check: changed from myGraph to this!!!
 								schemaRootPackageName) + "(this);");
-				code.add("public void set#cName#(#type# #name#) {");
+				code.add("public void set_#name#(#type# _#name#) {");
 				addCheckValidityCode(code);
 
 				setGraphReferenceVariable(code);
@@ -396,10 +393,10 @@ public class AttributedElementCodeGenerator extends CodeGenerator {
 				Domain domain = attr.getDomain();
 				if (domain.isComposite()) {
 					if (!(domain instanceof RecordDomainImpl)) {
-						code.setVariable("tmpname", "_" + attr.getName());
+						code.setVariable("tmpname", "tmp_" + attr.getName());
 						code.add("\t#ttype# #tmpname# = null;");
-						code.add("\tif(#name# != null)");
-						code.add("\t\t#tmpname# = new #ttype#(#name#);");
+						code.add("\tif(_#name# != null)");
+						code.add("\t\t#tmpname# = new #ttype#(_#name#);");
 						code.setVariable("initLoading", "new "
 								+ attr.getDomain().getVersionedClass(
 										schemaRootPackageName)
@@ -409,10 +406,10 @@ public class AttributedElementCodeGenerator extends CodeGenerator {
 				}
 
 				code.add("\tif(#graphreference#isLoading())",
-						"\t\tthis.#name# = #initLoading#",
-						"\tif(this.#name# == null) {",
-						"\t\tthis.#name# = #init#",
-						"\t\tthis.#name#.setName(\"#name#\");", "\t}");
+						"\t\tthis._#name# = #initLoading#",
+						"\tif(this._#name# == null) {",
+						"\t\tthis._#name# = #init#",
+						"\t\tthis._#name#.setName(\"#name#\");", "\t}");
 
 				if (domain.isComposite()) {
 					// if (!(domain instanceof RecordDomainImpl)) {
@@ -421,32 +418,35 @@ public class AttributedElementCodeGenerator extends CodeGenerator {
 					code.add("\tif(#tmpname# != null)");
 					if (domain instanceof ListDomainImpl) {
 						code
-								.add("\t\t#tmpname#.setVersionedList(this.#name#);");
+								.add("\t\t#tmpname#.setVersionedList(this._#name#);");
 					}
 					if (domain instanceof SetDomainImpl) {
-						code.add("\t\t#tmpname#.setVersionedSet(this.#name#);");
+						code
+								.add("\t\t#tmpname#.setVersionedSet(this._#name#);");
 					}
 					if (domain instanceof MapDomainImpl) {
-						code.add("\t\t#tmpname#.setVersionedMap(this.#name#);");
+						code
+								.add("\t\t#tmpname#.setVersionedMap(this._#name#);");
 					}
 					if (domain instanceof RecordDomainImpl) {
-						code.add("\t\t#name#.setVersionedRecord(this.#name#);");
+						code
+								.add("\t\t#name#.setVersionedRecord(this._#name#);");
 					}
 				}
 				code
 						.add(
-								"\tthis.#name#.setValidValue(#tmpname#, #graphreference#getCurrentTransaction());",
-								"\tattributeChanged(this.#name#);",
+								"\tthis._#name#.setValidValue(#tmpname#, #graphreference#getCurrentTransaction());",
+								"\tattributeChanged(this._#name#);",
 								"\tgraphModified();", "}");
 			}
 		} else {
-			code.add("public void set#cName#(#type# #name#);");
+			code.add("public void set_#name#(#type# _#name#);");
 		}
 		return code;
 	}
 
 	protected CodeBlock createField(Attribute attr) {
-		CodeSnippet code = new CodeSnippet(true, "protected #type# #name#;");
+		CodeSnippet code = new CodeSnippet(true, "protected #type# _#name#;");
 		code.setVariable("name", attr.getName());
 		if (!transactionSupport) {
 			code.setVariable("type", attr.getDomain()
@@ -468,42 +468,41 @@ public class AttributedElementCodeGenerator extends CodeGenerator {
 		code
 				.addNoIndent(new CodeSnippet(
 						true,
-						"public void readAttributeValueFromString(String _attributeName, String _value) throws GraphIOException, NoSuchFieldException {"));
+						"public void readAttributeValueFromString(String attributeName, String value) throws GraphIOException, NoSuchFieldException {"));
 
 		if (attrSet != null) {
 			for (Attribute attribute : attrSet) {
 				CodeList a = new CodeList();
 				a.setVariable("variableName", attribute.getName());
-				a.setVariable("setterName", "set"
-						+ camelCase(attribute.getName()));
+				a.setVariable("setterName", "set_" + attribute.getName());
 				a
 						.addNoIndent(new CodeSnippet(
-								"if (_attributeName.equals(\"#variableName#\")) {",
-								"\tGraphIO _io = GraphIO.createStringReader(_value, getSchema());"));
+								"if (attributeName.equals(\"#variableName#\")) {",
+								"\tGraphIO io = GraphIO.createStringReader(value, getSchema());"));
 				if (transactionSupport) {
 					CodeSnippet readBlock = new CodeSnippet();
 					readBlock.setVariable("variableType", attribute.getDomain()
 							.getJavaClassName(schemaRootPackageName));
-					readBlock.add("#variableType# _tmpVar = null;");
+					readBlock.add("#variableType# tmpVar = null;");
 					a.add(readBlock);
 					a.add(attribute.getDomain().getReadMethod(
-							schemaRootPackageName, "_tmpVar", "_io"));
-					a.addNoIndent(new CodeSnippet("\t#setterName#(_tmpVar);",
+							schemaRootPackageName, "tmpVar", "io"));
+					a.addNoIndent(new CodeSnippet("\t#setterName#(tmpVar);",
 							"\treturn;", "}"));
 				} else {
 					a.add(attribute.getDomain().getReadMethod(
-							schemaRootPackageName, attribute.getName(), "_io"));
-					a
-							.addNoIndent(new CodeSnippet(
-									"\t#setterName#(#variableName#);",
-									"\treturn;", "}"));
+							schemaRootPackageName, "_" + attribute.getName(),
+							"io"));
+					a.addNoIndent(new CodeSnippet(
+							"\t#setterName#(_#variableName#);", "\treturn;",
+							"}"));
 				}
 				code.add(a);
 			}
 		}
 		code
 				.add(new CodeSnippet(
-						"throw new NoSuchFieldException(\"#qualifiedClassName# doesn't contain an attribute \" + _attributeName);"));
+						"throw new NoSuchFieldException(\"#qualifiedClassName# doesn't contain an attribute \" + attributeName);"));
 		code.addNoIndent(new CodeSnippet("}"));
 
 		return code;
@@ -523,38 +522,36 @@ public class AttributedElementCodeGenerator extends CodeGenerator {
 		code
 				.addNoIndent(new CodeSnippet(
 						true,
-						"public String writeAttributeValueToString(String _attributeName) throws IOException, GraphIOException, NoSuchFieldException {"));
+						"public String writeAttributeValueToString(String attributeName) throws IOException, GraphIOException, NoSuchFieldException {"));
 		if (attrSet != null) {
 			for (Attribute attribute : attrSet) {
 				CodeList a = new CodeList();
 				a.setVariable("variableName", attribute.getName());
-				a.setVariable("setterName", "set"
-						+ camelCase(attribute.getName()));
+				a.setVariable("setterName", "set_" + attribute.getName());
 				a
 						.addNoIndent(new CodeSnippet(
-								"if (_attributeName.equals(\"#variableName#\")) {",
-								"\tGraphIO _io = GraphIO.createStringWriter(getSchema());"));
+								"if (attributeName.equals(\"#variableName#\")) {",
+								"\tGraphIO io = GraphIO.createStringWriter(getSchema());"));
 				if (transactionSupport) {
-					a.add(attribute.getDomain()
-							.getWriteMethod(
-									schemaRootPackageName,
-									attribute.getName()
-											+ ".getLatestPersistentValue()",
-									"_io"));
+					a.add(attribute.getDomain().getWriteMethod(
+							schemaRootPackageName,
+							"_" + attribute.getName()
+									+ ".getLatestPersistentValue()", "io"));
 				} else {
 					a.add(attribute.getDomain().getWriteMethod(
-							schemaRootPackageName, attribute.getName(), "_io"));
+							schemaRootPackageName, "_" + attribute.getName(),
+							"io"));
 				}
 
 				a.addNoIndent(new CodeSnippet(
 				/* "\t#setterName#(#variableName#);", */
-				"\treturn _io.getStringWriterResult();", "}"));
+				"\treturn io.getStringWriterResult();", "}"));
 				code.add(a);
 			}
 		}
 		code
 				.add(new CodeSnippet(
-						"throw new NoSuchFieldException(\"#qualifiedClassName# doesn't contain an attribute \" + _attributeName);"));
+						"throw new NoSuchFieldException(\"#qualifiedClassName# doesn't contain an attribute \" + attributeName);"));
 		code.addNoIndent(new CodeSnippet("}"));
 		return code;
 	}
@@ -566,23 +563,23 @@ public class AttributedElementCodeGenerator extends CodeGenerator {
 
 		code
 				.addNoIndent(new CodeSnippet(true,
-						"public void readAttributeValues(GraphIO _io) throws GraphIOException {"));
+						"public void readAttributeValues(GraphIO io) throws GraphIOException {"));
 		if (attrSet != null) {
 			for (Attribute attribute : attrSet) {
 				CodeSnippet snippet = new CodeSnippet();
-				snippet.setVariable("setterName", "set"
-						+ camelCase(attribute.getName()));
+				snippet.setVariable("setterName", "set_" + attribute.getName());
+				snippet.setVariable("variableName", attribute.getName());
 				if (!transactionSupport) {
-					snippet.setVariable("variableName", attribute.getName());
 					code.add(attribute.getDomain().getReadMethod(
-							schemaRootPackageName, attribute.getName(), "_io"));
+							schemaRootPackageName, "_" + attribute.getName(),
+							"io"));
 				} else {
 					// read-method for transaction support
-					snippet.setVariable("variableName", attribute.getName());
 					code.add(attribute.getDomain().getTransactionReadMethod(
-							schemaRootPackageName, attribute.getName(), "_io"));
+							schemaRootPackageName, "_" + attribute.getName(),
+							"io"));
 				}
-				snippet.add("#setterName#(#variableName#);");
+				snippet.add("#setterName#(_#variableName#);");
 				code.add(snippet);
 			}
 		}
@@ -599,17 +596,19 @@ public class AttributedElementCodeGenerator extends CodeGenerator {
 		code
 				.addNoIndent(new CodeSnippet(
 						true,
-						"public void writeAttributeValues(GraphIO _io) throws GraphIOException, IOException {"));
+						"public void writeAttributeValues(GraphIO io) throws GraphIOException, IOException {"));
 		if ((attrSet != null) && !attrSet.isEmpty()) {
-			code.add(new CodeSnippet("_io.space();"));
+			code.add(new CodeSnippet("io.space();"));
 			for (Attribute attribute : attrSet) {
 				if (!transactionSupport) {
 					code.add(attribute.getDomain().getWriteMethod(
-							schemaRootPackageName, attribute.getName(), "_io"));
+							schemaRootPackageName, "_" + attribute.getName(),
+							"io"));
 				} else {
 					// write-method for transaction support
 					code.add(attribute.getDomain().getTransactionWriteMethod(
-							schemaRootPackageName, attribute.getName(), "_io"));
+							schemaRootPackageName, "_" + attribute.getName(),
+							"io"));
 				}
 			}
 		}
@@ -631,12 +630,12 @@ public class AttributedElementCodeGenerator extends CodeGenerator {
 			code
 					.add("public java.util.Set<de.uni_koblenz.jgralab.trans.VersionedDataObject<?>> attributes() {");
 			code
-					.add("\tjava.util.Set<de.uni_koblenz.jgralab.trans.VersionedDataObject<?>> _attributes = "
+					.add("\tjava.util.Set<de.uni_koblenz.jgralab.trans.VersionedDataObject<?>> attributes = "
 							+ "new java.util.HashSet<de.uni_koblenz.jgralab.trans.VersionedDataObject<?>>();");
 			for (Attribute attribute : attributeList) {
-				code.add("\t_attributes.add(" + attribute.getName() + ");");
+				code.add("\tattributes.add(_" + attribute.getName() + ");");
 			}
-			code.add("\treturn _attributes;");
+			code.add("\treturn attributes;");
 			code.add("}");
 			return code;
 		}

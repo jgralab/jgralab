@@ -4003,7 +4003,7 @@ public class EdgeTest {
 		DoubleSubNode v1 = graph.createDoubleSubNode();
 		Edge e1 = graph.createLink(v1, v1);
 		long graphversion = graph.getGraphVersion();
-		((Link) e1).setAString("Test");
+		((Link) e1).set_aString("Test");
 		assertEquals(++graphversion, graph.getGraphVersion());
 	}
 
@@ -4104,8 +4104,8 @@ public class EdgeTest {
 		VertexTestGraph loadedgraph = (VertexTestGraph) GraphIO
 				.loadGraphFromFile("test.tg", null);
 		SubLink loadede1 = loadedgraph.getFirstSubLinkInGraph();
-		assertEquals(e1.getAString(), loadede1.getAString());
-		assertEquals(e1.getAnInt(), loadede1.getAnInt());
+		assertEquals(e1.get_aString(), loadede1.get_aString());
+		assertEquals(e1.get_anInt(), loadede1.get_anInt());
 		// delete created file
 		System.gc();
 		reader.close();
@@ -4122,8 +4122,8 @@ public class EdgeTest {
 		DoubleSubNode v1 = graph.createDoubleSubNode();
 		DoubleSubNode v2 = graph.createDoubleSubNode();
 		SubLink e1 = graph.createSubLink(v1, v2);
-		e1.setAnInt(3);
-		e1.setAString("HelloWorld!");
+		e1.set_anInt(3);
+		e1.set_aString("HelloWorld!");
 		// test of writeAttributeValues
 		GraphIO.saveGraphToFile("test.tg", graph, null);
 		LineNumberReader reader = new LineNumberReader(
@@ -4146,8 +4146,8 @@ public class EdgeTest {
 		VertexTestGraph loadedgraph = (VertexTestGraph) GraphIO
 				.loadGraphFromFile("test.tg", null);
 		SubLink loadede1 = loadedgraph.getFirstSubLinkInGraph();
-		assertEquals(e1.getAString(), loadede1.getAString());
-		assertEquals(e1.getAnInt(), loadede1.getAnInt());
+		assertEquals(e1.get_aString(), loadede1.get_aString());
+		assertEquals(e1.get_anInt(), loadede1.get_anInt());
 		// delete created file
 		System.gc();
 		reader.close();
@@ -4165,8 +4165,8 @@ public class EdgeTest {
 	public void getAttributeTest0() throws NoSuchFieldException {
 		DoubleSubNode v = graph.createDoubleSubNode();
 		SubLink e = graph.createSubLink(v, v);
-		e.setAString("test");
-		e.setAnInt(4);
+		e.set_aString("test");
+		e.set_anInt(4);
 		assertEquals("test", e.getAttribute("aString"));
 		assertEquals(4, e.getAttribute("anInt"));
 	}
@@ -4178,8 +4178,8 @@ public class EdgeTest {
 	public void getAttributeTestR0() throws NoSuchFieldException {
 		DoubleSubNode v = graph.createDoubleSubNode();
 		SubLink e = (SubLink) graph.createSubLink(v, v).getReversedEdge();
-		e.setAString("test");
-		e.setAnInt(4);
+		e.set_aString("test");
+		e.set_anInt(4);
 		assertEquals("test", e.getAttribute("aString"));
 		assertEquals(4, e.getAttribute("anInt"));
 	}
@@ -4392,12 +4392,12 @@ public class EdgeTest {
 	public void getAnIntTest() {
 		DoubleSubNode v1 = graph.createDoubleSubNode();
 		SubLink e1 = graph.createSubLink(v1, v1);
-		e1.setAnInt(1);
-		assertEquals(1, e1.getAnInt());
-		e1.setAnInt(2);
-		assertEquals(2, e1.getAnInt());
-		e1.setAnInt(3);
-		assertEquals(3, e1.getAnInt());
+		e1.set_anInt(1);
+		assertEquals(1, e1.get_anInt());
+		e1.set_anInt(2);
+		assertEquals(2, e1.get_anInt());
+		e1.set_anInt(3);
+		assertEquals(3, e1.get_anInt());
 	}
 
 	// test of the methods getAString and setAString
@@ -4405,12 +4405,12 @@ public class EdgeTest {
 	public void getAStringTest() {
 		DoubleSubNode v1 = graph.createDoubleSubNode();
 		SubLink e1 = graph.createSubLink(v1, v1);
-		e1.setAString("Test1");
-		assertEquals("Test1", e1.getAString());
-		e1.setAString("Test2");
-		assertEquals("Test2", e1.getAString());
-		e1.setAString("");
-		assertEquals("", e1.getAString());
+		e1.set_aString("Test1");
+		assertEquals("Test1", e1.get_aString());
+		e1.set_aString("Test2");
+		assertEquals("Test2", e1.get_aString());
+		e1.set_aString("");
+		assertEquals("", e1.get_aString());
 	}
 
 	// test of the method getNextLinkInGraph

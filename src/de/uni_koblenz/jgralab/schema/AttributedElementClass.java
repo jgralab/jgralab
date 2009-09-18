@@ -31,7 +31,6 @@ import de.uni_koblenz.jgralab.Attribute;
 import de.uni_koblenz.jgralab.AttributedElement;
 import de.uni_koblenz.jgralab.schema.exception.DuplicateAttributeException;
 import de.uni_koblenz.jgralab.schema.exception.M1ClassAccessException;
-import de.uni_koblenz.jgralab.schema.exception.ReservedWordException;
 
 /**
  * This is the base class of any <code>GraphClass</code>/
@@ -94,11 +93,8 @@ public interface AttributedElementClass extends NamedElement,
 	 * <p>
 	 * <b>Preconditions:</b>
 	 * <ul>
-	 * <li>The <code>name</code> must not contain
-	 * {@link de.uni_koblenz.jgralab.schema.Schema#RESERVED_JAVA_WORDS reserved
-	 * Java words}.</li>
-	 * <li>The new attribute´s <code>name</code> must be distinct from all of
-	 * this <code>attrElement´s</code> direct and inherited attributes´ names.</li>
+	 * <li>The new attributes <code>name</code> must be distinct from all of
+	 * this <code>attrElements</code> direct and inherited attributes names.</li>
 	 * </ul>
 	 * </p>
 	 * 
@@ -117,11 +113,6 @@ public interface AttributedElementClass extends NamedElement,
 	 * @throws DuplicateAttributeException
 	 *             if this element has a direct or inherited attribute with the
 	 *             same <code>name</code>
-	 * 
-	 * @throws ReservedWordException
-	 *             if the <code>name</code> contains reserved
-	 *             {@link de.uni_koblenz.jgralab.schema.Schema#RESERVED_JAVA_WORDS
-	 *             Java} words
 	 */
 	public void addAttribute(String name, Domain domain);
 

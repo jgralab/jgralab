@@ -236,8 +236,8 @@ public class Schema2SchemaGraph {
 		assert schema.getPackagePrefix() != null : "FIXME! Package prefix should exist.";
 
 		// Sets all necessary Attributes
-		gSchema.setName(schema.getName());
-		gSchema.setPackagePrefix(schema.getPackagePrefix());
+		gSchema.set_name(schema.getName());
+		gSchema.set_packagePrefix(schema.getPackagePrefix());
 	}
 
 	private boolean checkSchemaAndSchemaGraph() {
@@ -272,9 +272,9 @@ public class Schema2SchemaGraph {
 		attributedElementClassMap.put(graphClass, gGraphClass);
 
 		// Sets all general attributes of the GraphClass.
-		gGraphClass.setIsAbstract(graphClass.isAbstract());
+		gGraphClass.set_abstract(graphClass.isAbstract());
 		assert (graphClass.getQualifiedName() != null) : "FIXME! GraphClass is broken. No QualifiedName is set.";
-		gGraphClass.setQualifiedName(graphClass.getQualifiedName());
+		gGraphClass.set_qualifiedName(graphClass.getQualifiedName());
 
 		// Links the new GraphClass to the new Schema.
 		schemaGraph.createDefinesGraphClass(gSchema, gGraphClass);
@@ -310,7 +310,7 @@ public class Schema2SchemaGraph {
 
 		// Sets all general attributes
 		assert (defaultPackage.getQualifiedName() != null) : "FIXME! Package has not QualifiedName defined.";
-		gDefaultPackage.setQualifiedName(defaultPackage.getQualifiedName());
+		gDefaultPackage.set_qualifiedName(defaultPackage.getQualifiedName());
 		packageMap.put(defaultPackage, gDefaultPackage);
 
 		// Links the new DefaultPackage to the new Schema
@@ -346,7 +346,7 @@ public class Schema2SchemaGraph {
 			// Creates the subpackage and sets the QualifiedName.
 			gSubPackage = schemaGraph.createPackage();
 			assert (gSubPackage != null) : "FIXME! A Package wasn't created.";
-			gSubPackage.setQualifiedName(subPackage.getQualifiedName());
+			gSubPackage.set_qualifiedName(subPackage.getQualifiedName());
 
 			// Stores the Package for further linking
 			packageMap.put(subPackage, gSubPackage);
@@ -442,7 +442,7 @@ public class Schema2SchemaGraph {
 
 			// General attributes are set.
 			assert (domain.getQualifiedName() != null) : "FIXME! QualifiedName is not defined";
-			gDomain.setQualifiedName(domain.getQualifiedName());
+			gDomain.set_qualifiedName(domain.getQualifiedName());
 			Package gPackage = packageMap.get(domain.getPackage());
 			ContainsDomain link = schemaGraph.createContainsDomain(gPackage,
 					gDomain);
@@ -503,7 +503,7 @@ public class Schema2SchemaGraph {
 
 		// The existing ArrayList is copied and set as EnumConstants
 		assert (domain.getConsts() != null) : "FIXME! No consts defined.";
-		gDomain.setEnumConstants(new ArrayList<String>(domain.getConsts()));
+		gDomain.set_enumConstants(new ArrayList<String>(domain.getConsts()));
 		return gDomain;
 	}
 
@@ -571,7 +571,7 @@ public class Schema2SchemaGraph {
 							.getValue()));
 			assert (edge != null) : "FIXME! No link HasRecordDomainComponent has been created!";
 			assert (entry.getKey() != null) : "FIXME! No name defined!";
-			edge.setName(entry.getKey());
+			edge.set_name(entry.getKey());
 		}
 
 		return gDomain;
@@ -620,8 +620,8 @@ public class Schema2SchemaGraph {
 			assert (gVertexClass != null) : "FIXME! No VertexClass has been created!";
 
 			// Sets all general attributes
-			gVertexClass.setIsAbstract(vertexClass.isAbstract());
-			gVertexClass.setQualifiedName(vertexClass.getQualifiedName());
+			gVertexClass.set_abstract(vertexClass.isAbstract());
+			gVertexClass.set_qualifiedName(vertexClass.getQualifiedName());
 
 			// Registers the new object with the old object as key
 			attributedElementClassMap.put(vertexClass, gVertexClass);
@@ -725,7 +725,7 @@ public class Schema2SchemaGraph {
 			// additional attributes to set for a CompositionClass
 			de.uni_koblenz.jgralab.schema.AggregationClass aggregationClass = (de.uni_koblenz.jgralab.schema.AggregationClass) edgeClass;
 
-			gAggregationClass.setAggregateFrom(aggregationClass
+			gAggregationClass.set_aggregateFrom(aggregationClass
 					.isAggregateFrom());
 			gEdgeClass = gAggregationClass;
 
@@ -738,8 +738,8 @@ public class Schema2SchemaGraph {
 		assert (gEdgeClass != null) : "FIXME! No EdgeClass has been created!";
 
 		// Sets all general attributes of an EdgeClass
-		gEdgeClass.setIsAbstract(edgeClass.isAbstract());
-		gEdgeClass.setQualifiedName(edgeClass.getQualifiedName());
+		gEdgeClass.set_abstract(edgeClass.isAbstract());
+		gEdgeClass.set_qualifiedName(edgeClass.getQualifiedName());
 
 		return gEdgeClass;
 	}
@@ -832,7 +832,7 @@ public class Schema2SchemaGraph {
 			// An new Attribute is created and its name is set.
 			gAttribute = schemaGraph.createAttribute();
 			assert (gAttribute != null) : "FIXME! No Attribute has been created!";
-			gAttribute.setName(attribute.getName());
+			gAttribute.set_name(attribute.getName());
 
 			// Corresponding new Domain for the new Attribute is queried.
 			assert (attribute.getDomain() != null) : "FIXME! No Domain has been defined!";
@@ -895,9 +895,9 @@ public class Schema2SchemaGraph {
 			gConstraint = schemaGraph.createConstraint();
 
 			// Sets all general attributes.
-			gConstraint.setMessage(constraint.getMessage());
-			gConstraint.setPredicateQuery(constraint.getPredicate());
-			gConstraint.setOffendingElementsQuery(constraint
+			gConstraint.set_message(constraint.getMessage());
+			gConstraint.set_predicateQuery(constraint.getPredicate());
+			gConstraint.set_offendingElementsQuery(constraint
 					.getOffendingElementsQuery());
 
 			// Links the new Constraint with its AttributedElementClass.
@@ -947,14 +947,14 @@ public class Schema2SchemaGraph {
 		assert (to != null) : "FIXME! No To edge has been created.";
 
 		// Sets all general attributes
-		to.setMin(edgeClass.getToMin());
-		to.setMax(edgeClass.getToMax());
-		to.setRoleName(edgeClass.getToRolename());
+		to.set_min(edgeClass.getToMin());
+		to.set_max(edgeClass.getToMax());
+		to.set_roleName(edgeClass.getToRolename());
 
 		redefinedRoles = edgeClass.getRedefinedToRoles();
 		if ((redefinedRoles != null) && (redefinedRoles.size() != 0)) {
 			// Clones the existing HashSet
-			to.setRedefinedRoles(new HashSet<String>(redefinedRoles));
+			to.set_redefinedRoles(new HashSet<String>(redefinedRoles));
 		}
 
 		// Then the From edge
@@ -967,14 +967,14 @@ public class Schema2SchemaGraph {
 		From from = schemaGraph.createFrom(gEdgeClass, vertexClass);
 		assert (from != null) : "FIXME! No From edge has been created.";
 		// Sets all general attributes
-		from.setMin(edgeClass.getFromMin());
-		from.setMax(edgeClass.getFromMax());
-		from.setRoleName(edgeClass.getFromRolename());
+		from.set_min(edgeClass.getFromMin());
+		from.set_max(edgeClass.getFromMax());
+		from.set_roleName(edgeClass.getFromRolename());
 
 		redefinedRoles = edgeClass.getRedefinedFromRoles();
 		if ((redefinedRoles != null) && (redefinedRoles.size() != 0)) {
 			// Clones the existing HashSet.
-			from.setRedefinedRoles(new HashSet<String>(redefinedRoles));
+			from.set_redefinedRoles(new HashSet<String>(redefinedRoles));
 		}
 	}
 

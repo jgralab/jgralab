@@ -63,7 +63,7 @@ public class Rsa2TgTest {
 
 		// Converts the SchemaGraph to a Schema
 		System.out.print("Loading Schema from File ...");
-		Schema schema = GraphIO.loadSchemaFromFile(folder + gSchema.getName()
+		Schema schema = GraphIO.loadSchemaFromFile(folder + gSchema.get_name()
 				+ ".rsa.tg");
 		System.out.println("\t\t\t\t\tdone");
 

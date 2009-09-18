@@ -33,24 +33,20 @@ public class ManualGreqlParser extends ManualParserHelper {
 	private boolean predicateFulfilled = true;
 
 	private Greql2Schema schema = null;
-	
-	
+
 	/**
-	 * @return the set of variables which are valid at the current position
-	 * in the query
+	 * @return the set of variables which are valid at the current position in
+	 *         the query
 	 */
 	public final Set<String> getValidVariables() {
 		return duringParsingvariableSymbolTable.getKnownIdentifierSet();
 	}
-	
-	
-	
-	
+
 	private final void ruleSucceeds(RuleEnum rule, int pos) {
 		int[] maySucceedArray = testedRules.get(rule);
 		maySucceedArray[pos] = current;
 	}
-	
+
 	/**
 	 * Checks if the rule specified by <code>rule</code> was already tested at
 	 * the current token position. If it was already tested, this method skips
@@ -181,7 +177,7 @@ public class ManualGreqlParser extends ManualParserHelper {
 			for (VertexPosition<? extends Vertex> expr : expressions) {
 				Greql2Aggregation edge = (Greql2Aggregation) graph.createEdge(
 						edgeClass, expr.node, parent);
-				edge.setSourcePositions((createSourcePositionList(expr.length,
+				edge.set_sourcePositions((createSourcePositionList(expr.length,
 						expr.offset)));
 			}
 		}
@@ -195,7 +191,7 @@ public class ManualGreqlParser extends ManualParserHelper {
 			for (VertexPosition<? extends Vertex> expr : expressions) {
 				Greql2Aggregation edge = (Greql2Aggregation) graph.createEdge(
 						edgeClass, expr.node, parent);
-				edge.setSourcePositions((createSourcePositionList(expr.length,
+				edge.set_sourcePositions((createSourcePositionList(expr.length,
 						expr.offset)));
 			}
 		}
@@ -209,7 +205,7 @@ public class ManualGreqlParser extends ManualParserHelper {
 			for (VertexPosition<? extends Vertex> expr : expressions) {
 				Greql2Aggregation edge = (Greql2Aggregation) graph.createEdge(
 						edgeClass, expr.node, parent);
-				edge.setSourcePositions((createSourcePositionList(expr.length,
+				edge.set_sourcePositions((createSourcePositionList(expr.length,
 						expr.offset)));
 			}
 		}
@@ -223,7 +219,7 @@ public class ManualGreqlParser extends ManualParserHelper {
 			for (VertexPosition<? extends Vertex> expr : expressions) {
 				Greql2Aggregation edge = (Greql2Aggregation) graph.createEdge(
 						edgeClass, expr.node, parent);
-				edge.setSourcePositions((createSourcePositionList(expr.length,
+				edge.set_sourcePositions((createSourcePositionList(expr.length,
 						expr.offset)));
 			}
 		}
@@ -432,14 +428,14 @@ public class ManualGreqlParser extends ManualParserHelper {
 
 	private final void parseQuery() {
 		Greql2Expression rootExpr = graph.createGreql2Expression();
-		rootExpr.setImportedTypes(parseImports());
+		rootExpr.set_importedTypes(parseImports());
 		if (lookAhead(0) == TokenTypes.USING) {
 			match();
 			List<VertexPosition<Variable>> varList = parseVariableList();
 			for (VertexPosition<Variable> var : varList) {
 				IsBoundVarOf isVarOf = graph.createIsBoundVarOf(var.node,
 						rootExpr);
-				isVarOf.setSourcePositions((createSourcePositionList(
+				isVarOf.set_sourcePositions((createSourcePositionList(
 						var.length, var.offset)));
 			}
 			match(TokenTypes.COLON);
@@ -447,15 +443,15 @@ public class ManualGreqlParser extends ManualParserHelper {
 		int offset = getCurrentOffset();
 		Expression expr = parseExpression();
 		IsQueryExprOf e = graph.createIsQueryExprOf(expr, rootExpr);
-		e.setSourcePositions((createSourcePositionList(offset)));
+		e.set_sourcePositions((createSourcePositionList(offset)));
 		if (lookAhead(0) == TokenTypes.STORE) {
 			match();
 			match(TokenTypes.AS);
 			Identifier ident = graph.createIdentifier();
 			offset = getCurrentOffset();
-			ident.setName(matchIdentifier());
+			ident.set_name(matchIdentifier());
 			IsIdOf isId = graph.createIsIdOf(ident, rootExpr);
-			isId.setSourcePositions(createSourcePositionList(offset));
+			isId.set_sourcePositions(createSourcePositionList(offset));
 		}
 		matchEOF();
 		testIllegalThisLiterals();
@@ -495,13 +491,12 @@ public class ManualGreqlParser extends ManualParserHelper {
 		return vlist;
 	}
 
-
 	private final Variable parseVariable() {
 		String varName = matchIdentifier();
 		Variable var = null;
 		if (!inPredicateMode()) {
 			var = graph.createVariable();
-			var.setName(varName);
+			var.set_name(varName);
 		}
 		return var;
 	}
@@ -536,12 +531,12 @@ public class ManualGreqlParser extends ManualParserHelper {
 		if (name != null) {
 			if (!inPredicateMode()) {
 				for (Quantifier quantifier : graph.getQuantifierVertices()) {
-					if (quantifier.getName().equals(name)) {
+					if (quantifier.get_name().equals(name)) {
 						return quantifier;
 					}
 				}
 				Quantifier quantifier = graph.createQuantifier();
-				quantifier.setName(name);
+				quantifier.set_name(name);
 				return quantifier;
 			}
 			return null;
@@ -576,18 +571,18 @@ public class ManualGreqlParser extends ManualParserHelper {
 				quantifiedExpr = graph.createQuantifiedExpression();
 				IsQuantifierOf quantifierOf = graph.createIsQuantifierOf(
 						quantifier, quantifiedExpr);
-				quantifierOf.setSourcePositions((createSourcePositionList(
+				quantifierOf.set_sourcePositions((createSourcePositionList(
 						lengthQuantifier, offsetQuantifier)));
 				// add declaration
 				IsQuantifiedDeclOf quantifiedDeclOf = graph
 						.createIsQuantifiedDeclOf(decl, quantifiedExpr);
-				quantifiedDeclOf.setSourcePositions((createSourcePositionList(
+				quantifiedDeclOf.set_sourcePositions((createSourcePositionList(
 						lengthQuantifiedDecl, offsetQuantifiedDecl)));
 				// add predicate
 				IsBoundExprOf boundExprOf = graph
 						.createIsBoundExprOfQuantifier(boundExpr,
 								quantifiedExpr);
-				boundExprOf.setSourcePositions((createSourcePositionList(
+				boundExprOf.set_sourcePositions((createSourcePositionList(
 						lengthQuantifiedExpr, offsetQuantifiedExpr)));
 			}
 			duringParsingvariableSymbolTable.blockEnd();
@@ -611,12 +606,12 @@ public class ManualGreqlParser extends ManualParserHelper {
 				result = graph.createLetExpression();
 				IsBoundExprOf exprOf = graph.createIsBoundExprOfDefinition(
 						boundExpr, result);
-				exprOf.setSourcePositions((createSourcePositionList(length,
+				exprOf.set_sourcePositions((createSourcePositionList(length,
 						offset)));
 				for (VertexPosition<Definition> def : defList) {
 					IsDefinitionOf definitionOf = graph.createIsDefinitionOf(
 							def.node, result);
-					definitionOf.setSourcePositions((createSourcePositionList(
+					definitionOf.set_sourcePositions((createSourcePositionList(
 							def.length, def.offset)));
 				}
 			}
@@ -638,12 +633,12 @@ public class ManualGreqlParser extends ManualParserHelper {
 				result = graph.createWhereExpression();
 				IsBoundExprOf exprOf = graph.createIsBoundExprOfDefinition(
 						expr, result);
-				exprOf.setSourcePositions((createSourcePositionList(length,
+				exprOf.set_sourcePositions((createSourcePositionList(length,
 						offset)));
 				for (VertexPosition<Definition> def : defList) {
 					IsDefinitionOf isDefOf = graph.createIsDefinitionOf(
 							def.node, result);
-					isDefOf.setSourcePositions((createSourcePositionList(
+					isDefOf.set_sourcePositions((createSourcePositionList(
 							length, offset)));
 				}
 			}
@@ -681,10 +676,10 @@ public class ManualGreqlParser extends ManualParserHelper {
 		if (!inPredicateMode()) {
 			Definition definition = graph.createDefinition();
 			IsVarOf varOf = graph.createIsVarOf(var, definition);
-			varOf.setSourcePositions((createSourcePositionList(lengthVar,
+			varOf.set_sourcePositions((createSourcePositionList(lengthVar,
 					offsetVar)));
 			IsExprOf exprOf = graph.createIsExprOf(expr, definition);
-			exprOf.setSourcePositions((createSourcePositionList(lengthExpr,
+			exprOf.set_sourcePositions((createSourcePositionList(lengthExpr,
 					offsetExpr)));
 			return definition;
 		}
@@ -718,22 +713,22 @@ public class ManualGreqlParser extends ManualParserHelper {
 				// add condition
 				IsConditionOf conditionOf = graph.createIsConditionOf(result,
 						condExpr);
-				conditionOf.setSourcePositions((createSourcePositionList(
+				conditionOf.set_sourcePositions((createSourcePositionList(
 						lengthExpr, offsetExpr)));
 				// add true-expression
 				IsTrueExprOf trueExprOf = graph.createIsTrueExprOf(trueExpr,
 						condExpr);
-				trueExprOf.setSourcePositions((createSourcePositionList(
+				trueExprOf.set_sourcePositions((createSourcePositionList(
 						lengthTrueExpr, offsetTrueExpr)));
 				// add false-expression
 				IsFalseExprOf falseExprOf = graph.createIsFalseExprOf(
 						falseExpr, condExpr);
-				falseExprOf.setSourcePositions((createSourcePositionList(
+				falseExprOf.set_sourcePositions((createSourcePositionList(
 						lengthFalseExpr, offsetFalseExpr)));
 				// add null-expression
 				IsNullExprOf nullExprOf = graph.createIsNullExprOf(nullExpr,
 						condExpr);
-				nullExprOf.setSourcePositions((createSourcePositionList(
+				nullExprOf.set_sourcePositions((createSourcePositionList(
 						lengthNullExpr, offsetNullExpr)));
 				result = condExpr;
 			}
@@ -864,7 +859,7 @@ public class ManualGreqlParser extends ManualParserHelper {
 				opName = "uminus";
 			}
 			if (!inPredicateMode()) {
-				getFunctionId(opName); 
+				getFunctionId(opName);
 			}
 			construct.postOp(opName);
 		}
@@ -879,7 +874,7 @@ public class ManualGreqlParser extends ManualParserHelper {
 		String ident = matchIdentifier();
 		if (!inPredicateMode()) {
 			RoleId roleId = graph.createRoleId();
-			roleId.setName(ident);
+			roleId.set_name(ident);
 			return roleId;
 		}
 		return null;
@@ -911,12 +906,12 @@ public class ManualGreqlParser extends ManualParserHelper {
 						.createRestrictedExpression();
 				IsRestrictedExprOf restrExprOf = graph
 						.createIsRestrictedExprOf(valAccess, restrExpr);
-				restrExprOf.setSourcePositions((createSourcePositionList(
+				restrExprOf.set_sourcePositions((createSourcePositionList(
 						lengthExpr, offsetExpr)));
 				// add restriction
 				IsRestrictionOf restrOf = graph.createIsRestrictionOf(
 						restriction, restrExpr);
-				restrOf.setSourcePositions((createSourcePositionList(
+				restrOf.set_sourcePositions((createSourcePositionList(
 						lengthRestr, offsetRestr)));
 				ruleSucceeds(RuleEnum.RESTRICTED_EXPRESSION, pos);
 				return restrExpr;
@@ -930,7 +925,7 @@ public class ManualGreqlParser extends ManualParserHelper {
 		String name = matchIdentifier();
 		if (!inPredicateMode()) {
 			Identifier ident = graph.createIdentifier();
-			ident.setName(name);
+			ident.set_name(name);
 			return ident;
 		}
 		return null;
@@ -1151,7 +1146,7 @@ public class ManualGreqlParser extends ManualParserHelper {
 				IsIntermediateVertexOf intermediateVertexOf = graph
 						.createIsIntermediateVertexOf(restrExpr, result);
 				intermediateVertexOf
-						.setSourcePositions((createSourcePositionList(
+						.set_sourcePositions((createSourcePositionList(
 								lengthExpr, offsetExpr)));
 			}
 			return result;
@@ -1207,7 +1202,7 @@ public class ManualGreqlParser extends ManualParserHelper {
 			if (expr != null) {
 				IsStartRestrOf startRestrOf = graph.createIsStartRestrOf(expr,
 						pathDescr);
-				startRestrOf.setSourcePositions((createSourcePositionList(
+				startRestrOf.set_sourcePositions((createSourcePositionList(
 						lengthRestr, offsetRest)));
 			} else {
 				if (typeIds != null) {
@@ -1215,7 +1210,7 @@ public class ManualGreqlParser extends ManualParserHelper {
 						IsStartRestrOf startRestrOf = graph
 								.createIsStartRestrOf(t.node, pathDescr);
 						startRestrOf
-								.setSourcePositions((createSourcePositionList(
+								.set_sourcePositions((createSourcePositionList(
 										t.length, t.offset)));
 					}
 				}
@@ -1240,7 +1235,7 @@ public class ManualGreqlParser extends ManualParserHelper {
 						IsGoalRestrOf goalRestrOf = graph.createIsGoalRestrOf(
 								t.node, pathDescr);
 						goalRestrOf
-								.setSourcePositions((createSourcePositionList(
+								.set_sourcePositions((createSourcePositionList(
 										t.length, t.offset)));
 					}
 				}
@@ -1251,7 +1246,7 @@ public class ManualGreqlParser extends ManualParserHelper {
 				if (!inPredicateMode()) {
 					IsGoalRestrOf goalRestrOf = graph.createIsGoalRestrOf(expr,
 							pathDescr);
-					goalRestrOf.setSourcePositions((createSourcePositionList(
+					goalRestrOf.set_sourcePositions((createSourcePositionList(
 							length, offset)));
 				}
 			}
@@ -1285,10 +1280,10 @@ public class ManualGreqlParser extends ManualParserHelper {
 			if (!inPredicateMode()) {
 				IteratedPathDescription ipd = graph
 						.createIteratedPathDescription();
-				ipd.setTimes(iteration);
+				ipd.set_times(iteration);
 				IsIteratedPathOf iteratedPathOf = graph.createIsIteratedPathOf(
 						iteratedPath, ipd);
-				iteratedPathOf.setSourcePositions((createSourcePositionList(
+				iteratedPathOf.set_sourcePositions((createSourcePositionList(
 						lengthPath, offsetPath)));
 				result = ipd;
 			}
@@ -1300,7 +1295,7 @@ public class ManualGreqlParser extends ManualParserHelper {
 					IsTransposedPathOf transposedPathOf = graph
 							.createIsTransposedPathOf(iteratedPath, tpd);
 					transposedPathOf
-							.setSourcePositions((createSourcePositionList(
+							.set_sourcePositions((createSourcePositionList(
 									lengthPath, offsetPath)));
 					result = tpd;
 				}
@@ -1317,11 +1312,11 @@ public class ManualGreqlParser extends ManualParserHelper {
 					IsExponentiatedPathOf exponentiatedPathOf = graph
 							.createIsExponentiatedPathOf(iteratedPath, epd);
 					exponentiatedPathOf
-							.setSourcePositions((createSourcePositionList(
+							.set_sourcePositions((createSourcePositionList(
 									lengthPath, offsetPath)));
 					IsExponentOf exponentOf = graph.createIsExponentOf(
 							(IntLiteral) ie, epd);
-					exponentOf.setSourcePositions((createSourcePositionList(
+					exponentOf.set_sourcePositions((createSourcePositionList(
 							lengthExpr, offsetExpr)));
 					result = epd;
 				}
@@ -1376,7 +1371,7 @@ public class ManualGreqlParser extends ManualParserHelper {
 						.createOptionalPathDescription();
 				IsOptionalPathOf optionalPathOf = graph.createIsOptionalPathOf(
 						pathDescr, optPathDescr);
-				optionalPathOf.setSourcePositions((createSourcePositionList(
+				optionalPathOf.set_sourcePositions((createSourcePositionList(
 						length, offset)));
 				return optPathDescr;
 			}
@@ -1406,7 +1401,7 @@ public class ManualGreqlParser extends ManualParserHelper {
 			PrimaryPathDescription result = graph.createSimplePathDescription();
 			dir = (Direction) graph.getFirstVertexOfClass(Direction.class);
 			while (dir != null) {
-				if (!dir.getDirValue().equals(direction)) {
+				if (!dir.get_dirValue().equals(direction)) {
 					dir = dir.getNextDirection();
 				} else {
 					break;
@@ -1414,16 +1409,16 @@ public class ManualGreqlParser extends ManualParserHelper {
 			}
 			if (dir == null) {
 				dir = graph.createDirection();
-				dir.setDirValue(direction);
+				dir.set_dirValue(direction);
 			}
 			IsDirectionOf directionOf = graph.createIsDirectionOf(dir, result);
-			directionOf.setSourcePositions((createSourcePositionList(0,
+			directionOf.set_sourcePositions((createSourcePositionList(0,
 					offsetDir)));
 			if (typeIds != null) {
 				for (VertexPosition<EdgeRestriction> t : typeIds) {
 					IsEdgeRestrOf edgeRestrOf = graph.createIsEdgeRestrOf(
 							t.node, result);
-					edgeRestrOf.setSourcePositions((createSourcePositionList(
+					edgeRestrOf.set_sourcePositions((createSourcePositionList(
 							t.length, t.offset)));
 				}
 			}
@@ -1447,12 +1442,12 @@ public class ManualGreqlParser extends ManualParserHelper {
 		if (!inPredicateMode()) {
 			AggregationPathDescription result = graph
 					.createAggregationPathDescription();
-			result.setOutAggregation(outAggregation);
+			result.set_outAggregation(outAggregation);
 			if (typeIds != null) {
 				for (VertexPosition<EdgeRestriction> t : typeIds) {
 					IsEdgeRestrOf edgeRestrOf = graph.createIsEdgeRestrOf(
 							t.node, result);
-					edgeRestrOf.setSourcePositions((createSourcePositionList(
+					edgeRestrOf.set_sourcePositions((createSourcePositionList(
 							t.length, t.offset)));
 				}
 			}
@@ -1495,7 +1490,7 @@ public class ManualGreqlParser extends ManualParserHelper {
 			}
 			dir = (Direction) graph.getFirstVertexOfClass(Direction.class);
 			while (dir != null) {
-				if (!dir.getDirValue().equals(direction)) {
+				if (!dir.get_dirValue().equals(direction)) {
 					dir = dir.getNextDirection();
 				} else {
 					break;
@@ -1503,14 +1498,14 @@ public class ManualGreqlParser extends ManualParserHelper {
 			}
 			if (dir == null) {
 				dir = graph.createDirection();
-				dir.setDirValue(direction);
+				dir.set_dirValue(direction);
 			}
 			IsDirectionOf directionOf = graph.createIsDirectionOf(dir, result);
-			directionOf.setSourcePositions((createSourcePositionList(lengthDir,
-					offsetDir)));
+			directionOf.set_sourcePositions((createSourcePositionList(
+					lengthDir, offsetDir)));
 			IsEdgeExprOf edgeExprOf = graph.createIsEdgeExprOf(expr, result);
-			edgeExprOf.setSourcePositions((createSourcePositionList(lengthExpr,
-					offsetExpr)));
+			edgeExprOf.set_sourcePositions((createSourcePositionList(
+					lengthExpr, offsetExpr)));
 			return result;
 		}
 		return null;
@@ -1540,13 +1535,13 @@ public class ManualGreqlParser extends ManualParserHelper {
 				FunctionId functionId = getFunctionId(name);
 				IsFunctionIdOf functionIdOf = graph.createIsFunctionIdOf(
 						functionId, funApp);
-				functionIdOf.setSourcePositions(createSourcePositionList(
+				functionIdOf.set_sourcePositions(createSourcePositionList(
 						length, offset));
 				if (typeIds != null) {
 					for (VertexPosition<TypeId> t : typeIds) {
 						IsTypeExprOf typeOf = graph.createIsTypeExprOfFunction(
 								t.node, funApp);
-						typeOf.setSourcePositions((createSourcePositionList(
+						typeOf.set_sourcePositions((createSourcePositionList(
 								t.length, t.offset)));
 					}
 				}
@@ -1554,7 +1549,7 @@ public class ManualGreqlParser extends ManualParserHelper {
 					for (VertexPosition<Expression> ex : expressions) {
 						IsArgumentOf argOf = graph.createIsArgumentOf(ex.node,
 								funApp);
-						argOf.setSourcePositions((createSourcePositionList(
+						argOf.set_sourcePositions((createSourcePositionList(
 								ex.length, ex.offset)));
 					}
 				}
@@ -1635,12 +1630,12 @@ public class ManualGreqlParser extends ManualParserHelper {
 		if (!inPredicateMode()) {
 			IsKeyExprOfConstruction keyEdge = graph
 					.createIsKeyExprOfConstruction(keyExpr, mapConstr);
-			keyEdge.setSourcePositions((createSourcePositionList(lengthKey,
+			keyEdge.set_sourcePositions((createSourcePositionList(lengthKey,
 					offsetKey)));
 			IsValueExprOfConstruction valueEdge = graph
 					.createIsValueExprOfConstruction(valueExpr, mapConstr);
-			valueEdge.setSourcePositions((createSourcePositionList(lengthValue,
-					offsetValue)));
+			valueEdge.set_sourcePositions((createSourcePositionList(
+					lengthValue, offsetValue)));
 		}
 		while (tryMatch(TokenTypes.COMMA)) {
 			offsetKey = getCurrentOffset();
@@ -1653,11 +1648,11 @@ public class ManualGreqlParser extends ManualParserHelper {
 			if (!inPredicateMode()) {
 				IsKeyExprOfConstruction keyEdge = graph
 						.createIsKeyExprOfConstruction(keyExpr, mapConstr);
-				keyEdge.setSourcePositions((createSourcePositionList(lengthKey,
-						offsetKey)));
+				keyEdge.set_sourcePositions((createSourcePositionList(
+						lengthKey, offsetKey)));
 				IsValueExprOfConstruction valueEdge = graph
 						.createIsValueExprOfConstruction(valueExpr, mapConstr);
-				valueEdge.setSourcePositions((createSourcePositionList(
+				valueEdge.set_sourcePositions((createSourcePositionList(
 						lengthValue, offsetValue)));
 			}
 		}
@@ -1681,11 +1676,11 @@ public class ManualGreqlParser extends ManualParserHelper {
 				result = graph.createListRangeConstruction();
 				IsFirstValueOf firstValueOf = graph.createIsFirstValueOf(
 						startExpr, (ListRangeConstruction) result);
-				firstValueOf.setSourcePositions((createSourcePositionList(
+				firstValueOf.set_sourcePositions((createSourcePositionList(
 						lengthStart, offsetStart)));
 				IsLastValueOf lastValueOf = graph.createIsLastValueOf(endExpr,
 						(ListRangeConstruction) result);
-				lastValueOf.setSourcePositions((createSourcePositionList(
+				lastValueOf.set_sourcePositions((createSourcePositionList(
 						lengthEnd, offsetEnd)));
 			}
 		} else {
@@ -1721,7 +1716,7 @@ public class ManualGreqlParser extends ManualParserHelper {
 				for (VertexPosition<RecordElement> expr : elements) {
 					IsRecordElementOf exprOf = graph.createIsRecordElementOf(
 							expr.node, valueConstr);
-					exprOf.setSourcePositions((createSourcePositionList(
+					exprOf.set_sourcePositions((createSourcePositionList(
 							expr.length, expr.offset)));
 				}
 			}
@@ -1741,14 +1736,14 @@ public class ManualGreqlParser extends ManualParserHelper {
 		int lengthExpr = getLength(offsetExpr);
 		if (!inPredicateMode()) {
 			RecordId recId = graph.createRecordId();
-			recId.setName(recIdName);
+			recId.set_name(recIdName);
 			RecordElement recElement = graph.createRecordElement();
 			IsRecordIdOf recIdOf = graph.createIsRecordIdOf(recId, recElement);
-			recIdOf.setSourcePositions((createSourcePositionList(lengthRecId,
+			recIdOf.set_sourcePositions((createSourcePositionList(lengthRecId,
 					offsetRecId)));
 			IsRecordExprOf exprOf = graph
 					.createIsRecordExprOf(expr, recElement);
-			exprOf.setSourcePositions((createSourcePositionList(lengthExpr,
+			exprOf.set_sourcePositions((createSourcePositionList(lengthExpr,
 					offsetExpr)));
 			return recElement;
 		}
@@ -1778,7 +1773,7 @@ public class ManualGreqlParser extends ManualParserHelper {
 		if (!inPredicateMode()) {
 			pathsystemConstr = graph.createPathSystemConstruction();
 			IsRootOf rootOf = graph.createIsRootOf(expr, pathsystemConstr);
-			rootOf.setSourcePositions((createSourcePositionList(lengthExpr,
+			rootOf.set_sourcePositions((createSourcePositionList(lengthExpr,
 					offsetExpr)));
 		}
 		while (tryMatch(TokenTypes.COMMA)) {
@@ -1788,7 +1783,7 @@ public class ManualGreqlParser extends ManualParserHelper {
 			if (!inPredicateMode()) {
 				IsEdgeVertexListOf exprOf = graph.createIsEdgeVertexListOf(
 						evList, pathsystemConstr);
-				exprOf.setSourcePositions((createSourcePositionList(
+				exprOf.set_sourcePositions((createSourcePositionList(
 						lengthEVList, offsetEVList)));
 			}
 		}
@@ -1811,7 +1806,7 @@ public class ManualGreqlParser extends ManualParserHelper {
 			if (!inPredicateMode()) {
 				IsConstraintOf constraintOf = graph.createIsConstraintOf(
 						constraintExpr, declaration);
-				constraintOf.setSourcePositions((createSourcePositionList(
+				constraintOf.set_sourcePositions((createSourcePositionList(
 						lengthConstraint, offsetConstraint)));
 			}
 			predicateStart();
@@ -1836,7 +1831,7 @@ public class ManualGreqlParser extends ManualParserHelper {
 			if (!inPredicateMode()) {
 				IsSubgraphOf subgraphOf = graph.createIsSubgraphOf(
 						subgraphExpr, declaration);
-				subgraphOf.setSourcePositions((createSourcePositionList(
+				subgraphOf.set_sourcePositions((createSourcePositionList(
 						lengthSubgraph, offsetSubgraph)));
 			}
 		}
@@ -1877,7 +1872,7 @@ public class ManualGreqlParser extends ManualParserHelper {
 					IsDeclaredVarOf.class, "");
 			IsTypeExprOf typeExprOf = graph.createIsTypeExprOfDeclaration(expr,
 					simpleDecl);
-			typeExprOf.setSourcePositions((createSourcePositionList(length,
+			typeExprOf.set_sourcePositions((createSourcePositionList(length,
 					offset)));
 			return simpleDecl;
 		}
@@ -1966,16 +1961,16 @@ public class ManualGreqlParser extends ManualParserHelper {
 		}
 		if (tryMatch(TokenTypes.CARET)) {
 			if (!inPredicateMode()) {
-				type.setExcluded(true);
+				type.set_excluded(true);
 			}
 		}
 		String s = matchQualifiedName();
 		if (!inPredicateMode()) {
-			type.setName(s);
+			type.set_name(s);
 		}
 		if (tryMatch(TokenTypes.EXCL)) {
 			if (!inPredicateMode()) {
-				type.setType(true);
+				type.set_type(true);
 			}
 		}
 		return type;
@@ -1995,11 +1990,11 @@ public class ManualGreqlParser extends ManualParserHelper {
 			eVList = graph.createEdgeVertexList();
 			IsEdgeOrVertexExprOf eExprOf = graph.createIsEdgeOrVertexExprOf(
 					edgeExpr, eVList);
-			eExprOf.setSourcePositions((createSourcePositionList(lengthE,
+			eExprOf.set_sourcePositions((createSourcePositionList(lengthE,
 					offsetE)));
 			IsEdgeOrVertexExprOf vExprOf = graph.createIsEdgeOrVertexExprOf(
 					vertexExpr, eVList);
-			vExprOf.setSourcePositions((createSourcePositionList(lengthV,
+			vExprOf.set_sourcePositions((createSourcePositionList(lengthV,
 					offsetV)));
 		}
 		while (tryMatch(TokenTypes.COMMA)) {
@@ -2008,7 +2003,7 @@ public class ManualGreqlParser extends ManualParserHelper {
 			int lengthEVList = getLength(offsetEVList);
 			if (!inPredicateMode()) {
 				IsElementOf exprOf = graph.createIsElementOf(eVList2, eVList);
-				exprOf.setSourcePositions((createSourcePositionList(
+				exprOf.set_sourcePositions((createSourcePositionList(
 						lengthEVList, offsetEVList)));
 			}
 		}
@@ -2041,12 +2036,12 @@ public class ManualGreqlParser extends ManualParserHelper {
 			er = graph.createEdgeRestriction();
 			if (type != null) {
 				IsTypeIdOf typeIdOf = graph.createIsTypeIdOf(type, er);
-				typeIdOf.setSourcePositions((createSourcePositionList(
+				typeIdOf.set_sourcePositions((createSourcePositionList(
 						lengthType, offsetType)));
 			}
 			if (role != null) {
 				IsRoleIdOf roleIdOf = graph.createIsRoleIdOf(role, er);
-				roleIdOf.setSourcePositions((createSourcePositionList(
+				roleIdOf.set_sourcePositions((createSourcePositionList(
 						lengthRole, offsetRole)));
 			}
 		}
@@ -2089,17 +2084,18 @@ public class ManualGreqlParser extends ManualParserHelper {
 					tupConstr = graph.createTupleConstruction();
 					IsCompResultDefOf e = graph.createIsCompResultDefOf(
 							tupConstr, bagCompr);
-					e.setSourcePositions((createSourcePositionList(
+					e.set_sourcePositions((createSourcePositionList(
 							getLength(offset), offset)));
 				}
 				IsPartOf partOf = graph.createIsPartOf(expr, tupConstr);
-				partOf.setSourcePositions((createSourcePositionList(lengthExpr,
-						offsetExpr)));
+				partOf.set_sourcePositions((createSourcePositionList(
+						lengthExpr, offsetExpr)));
 				if (hasLabel) {
 					IsTableHeaderOf tableHeaderOf = graph
 							.createIsTableHeaderOf(asExpr, bagCompr);
-					tableHeaderOf.setSourcePositions((createSourcePositionList(
-							lengthAsExpr, offsetAsExpr)));
+					tableHeaderOf
+							.set_sourcePositions((createSourcePositionList(
+									lengthAsExpr, offsetAsExpr)));
 				}
 			}
 		} while (tryMatch(TokenTypes.COMMA));
@@ -2164,9 +2160,9 @@ public class ManualGreqlParser extends ManualParserHelper {
 						.createIsValueExprOfComprehension(
 								reportList.get(1).node,
 								(MapComprehension) comprehension);
-				keyEdge.setSourcePositions(createSourcePositionList(reportList
+				keyEdge.set_sourcePositions(createSourcePositionList(reportList
 						.get(0).length, reportList.get(0).offset));
-				valueEdge.setSourcePositions(createSourcePositionList(
+				valueEdge.set_sourcePositions(createSourcePositionList(
 						reportList.get(1).length, reportList.get(1).offset));
 			}
 		} else if (vartable) {
@@ -2178,25 +2174,25 @@ public class ManualGreqlParser extends ManualParserHelper {
 						.createIsColumnHeaderExprOf((reportList.get(0)).node,
 								(TableComprehension) comprehension);
 				cHeaderE
-						.setSourcePositions((createSourcePositionList(
+						.set_sourcePositions((createSourcePositionList(
 								(reportList.get(0)).length,
 								(reportList.get(0)).offset)));
 				IsRowHeaderExprOf rHeaderE = graph.createIsRowHeaderExprOf(
 						(reportList.get(1)).node,
 						(TableComprehension) comprehension);
 				rHeaderE
-						.setSourcePositions((createSourcePositionList(
+						.set_sourcePositions((createSourcePositionList(
 								(reportList.get(1)).length,
 								(reportList.get(1)).offset)));
 				e = graph.createIsCompResultDefOf((reportList.get(2)).node,
 						comprehension);
-				e.setSourcePositions(createSourcePositionList((reportList
+				e.set_sourcePositions(createSourcePositionList((reportList
 						.get(2)).length, (reportList.get(2)).offset));
 				if (reportList.size() == 4) {
 					IsTableHeaderOf tHeaderE = graph.createIsTableHeaderOf(
 							(reportList.get(3)).node,
 							(ComprehensionWithTableHeader) comprehension);
-					tHeaderE.setSourcePositions((createSourcePositionList(
+					tHeaderE.set_sourcePositions((createSourcePositionList(
 							(reportList.get(3)).length,
 							(reportList.get(3)).offset)));
 				}
@@ -2213,7 +2209,7 @@ public class ManualGreqlParser extends ManualParserHelper {
 							comprehension);
 				}
 				e
-						.setSourcePositions((createSourcePositionList(length,
+						.set_sourcePositions((createSourcePositionList(length,
 								offset)));
 			}
 		}
@@ -2240,7 +2236,7 @@ public class ManualGreqlParser extends ManualParserHelper {
 			if (!inPredicateMode()) {
 				IsSubgraphOf subgraphOf = graph.createIsSubgraphOf(
 						subgraphExpr, declaration);
-				subgraphOf.setSourcePositions((createSourcePositionList(
+				subgraphOf.set_sourcePositions((createSourcePositionList(
 						lengthSubgraph, offsetSubgraph)));
 			}
 		}
@@ -2252,7 +2248,7 @@ public class ManualGreqlParser extends ManualParserHelper {
 			if (!inPredicateMode()) {
 				IsConstraintOf constraintOf = graph.createIsConstraintOf(
 						constraintExpr, declaration);
-				constraintOf.setSourcePositions((createSourcePositionList(
+				constraintOf.set_sourcePositions((createSourcePositionList(
 						lengthConstraint, offsetConstraint)));
 			}
 		}
@@ -2260,7 +2256,7 @@ public class ManualGreqlParser extends ManualParserHelper {
 		if (!inPredicateMode()) {
 			IsCompDeclOf comprDeclOf = graph.createIsCompDeclOf(declaration,
 					comprehension);
-			comprDeclOf.setSourcePositions((createSourcePositionList(
+			comprDeclOf.set_sourcePositions((createSourcePositionList(
 					lengthDecl, offsetDecl)));
 		}
 		match(TokenTypes.END);
@@ -2341,16 +2337,16 @@ public class ManualGreqlParser extends ManualParserHelper {
 				// add start vertex
 				IsStartExprOf startVertexOf = graph.createIsStartExprOf(expr,
 						pe);
-				startVertexOf.setSourcePositions((createSourcePositionList(
+				startVertexOf.set_sourcePositions((createSourcePositionList(
 						lengthArg1, offsetArg1)));
 				// add target vertex
 				IsTargetExprOf targetVertexOf = graph.createIsTargetExprOf(
 						restrExpr, pe);
-				targetVertexOf.setSourcePositions((createSourcePositionList(
+				targetVertexOf.set_sourcePositions((createSourcePositionList(
 						lengthExpr, offsetExpr)));
 				// add pathdescription
 				IsPathOf pathOf = graph.createIsPathOf(pathDescr, pe);
-				pathOf.setSourcePositions((createSourcePositionList(
+				pathOf.set_sourcePositions((createSourcePositionList(
 						lengthPathDescr, offsetPathDescr)));
 				return pe;
 			}
@@ -2362,11 +2358,11 @@ public class ManualGreqlParser extends ManualParserHelper {
 				// add start expr
 				IsStartExprOf startVertexOf = graph.createIsStartExprOf(expr,
 						fvs);
-				startVertexOf.setSourcePositions((createSourcePositionList(
+				startVertexOf.set_sourcePositions((createSourcePositionList(
 						lengthArg1, offsetArg1)));
 				// add pathdescr
 				IsPathOf pathOf = graph.createIsPathOf(pathDescr, fvs);
-				pathOf.setSourcePositions((createSourcePositionList(
+				pathOf.set_sourcePositions((createSourcePositionList(
 						lengthPathDescr, offsetPathDescr)));
 				return fvs;
 			}
@@ -2429,10 +2425,10 @@ public class ManualGreqlParser extends ManualParserHelper {
 				BackwardVertexSet bs = graph.createBackwardVertexSet();
 				IsTargetExprOf targetVertexOf = graph.createIsTargetExprOf(
 						restrExpr, bs);
-				targetVertexOf.setSourcePositions((createSourcePositionList(
+				targetVertexOf.set_sourcePositions((createSourcePositionList(
 						lengthExpr, offsetExpr)));
 				IsPathOf pathOf = graph.createIsPathOf(pathDescr, bs);
-				pathOf.setSourcePositions((createSourcePositionList(
+				pathOf.set_sourcePositions((createSourcePositionList(
 						lengthPathDescr, offsetPathDescr)));
 				return bs;
 			}
@@ -2445,7 +2441,7 @@ public class ManualGreqlParser extends ManualParserHelper {
 			RealLiteral literal = null;
 			if (!inPredicateMode()) {
 				literal = graph.createRealLiteral();
-				literal.setRealValue(((RealToken) lookAhead).getNumber());
+				literal.set_realValue(((RealToken) lookAhead).getNumber());
 			}
 			match();
 			return literal;
@@ -2455,7 +2451,7 @@ public class ManualGreqlParser extends ManualParserHelper {
 			IntLiteral literal = null;
 			if (!inPredicateMode()) {
 				literal = graph.createIntLiteral();
-				literal.setIntValue(((IntegerToken) lookAhead).getNumber());
+				literal.set_intValue(((IntegerToken) lookAhead).getNumber());
 			}
 			match();
 			return literal;
@@ -2481,14 +2477,14 @@ public class ManualGreqlParser extends ManualParserHelper {
 						decValue /= 10;
 					}
 					RealLiteral literal = graph.createRealLiteral();
-					literal.setRealValue(value + decValue);
+					literal.set_realValue(value + decValue);
 					return literal;
 				}
 				return null;
 			} else {
 				if (!inPredicateMode()) {
 					IntLiteral literal = graph.createIntLiteral();
-					literal.setIntValue(value);
+					literal.set_intValue(value);
 					return literal;
 				}
 				return null;
@@ -2510,7 +2506,7 @@ public class ManualGreqlParser extends ManualParserHelper {
 				StringLiteral sl = null;
 				if (!inPredicateMode()) {
 					sl = graph.createStringLiteral();
-					sl.setStringValue(lookAhead.getValue());
+					sl.set_stringValue(lookAhead.getValue());
 				}
 				match();
 				return sl;
@@ -2540,13 +2536,13 @@ public class ManualGreqlParser extends ManualParserHelper {
 				if (!inPredicateMode()) {
 					graph.getFirstBoolLiteral();
 					while ((tl != null)
-							&& (tl.getBoolValue() != TrivalentBoolean.TRUE)) {
+							&& (tl.get_boolValue() != TrivalentBoolean.TRUE)) {
 						tl = tl.getNextBoolLiteral();
 					}
 					if ((tl == null)
-							|| (tl.getBoolValue() != TrivalentBoolean.TRUE)) {
+							|| (tl.get_boolValue() != TrivalentBoolean.TRUE)) {
 						tl = graph.createBoolLiteral();
-						tl.setBoolValue(TrivalentBoolean.TRUE);
+						tl.set_boolValue(TrivalentBoolean.TRUE);
 					}
 				}
 				return tl;
@@ -2556,13 +2552,13 @@ public class ManualGreqlParser extends ManualParserHelper {
 				if (!inPredicateMode()) {
 					tl = graph.getFirstBoolLiteral();
 					while ((fl != null)
-							&& (fl.getBoolValue() != TrivalentBoolean.FALSE)) {
+							&& (fl.get_boolValue() != TrivalentBoolean.FALSE)) {
 						fl = fl.getNextBoolLiteral();
 					}
 					if ((fl == null)
-							|| (fl.getBoolValue() != TrivalentBoolean.FALSE)) {
+							|| (fl.get_boolValue() != TrivalentBoolean.FALSE)) {
 						fl = graph.createBoolLiteral();
-						fl.setBoolValue(TrivalentBoolean.FALSE);
+						fl.set_boolValue(TrivalentBoolean.FALSE);
 					}
 				}
 				return fl;
@@ -2572,13 +2568,13 @@ public class ManualGreqlParser extends ManualParserHelper {
 				if (!inPredicateMode()) {
 					nl = graph.getFirstBoolLiteral();
 					while ((nl != null)
-							&& (nl.getBoolValue() != TrivalentBoolean.NULL)) {
+							&& (nl.get_boolValue() != TrivalentBoolean.NULL)) {
 						nl = nl.getNextBoolLiteral();
 					}
 					if ((nl == null)
-							|| (nl.getBoolValue() != TrivalentBoolean.NULL)) {
+							|| (nl.get_boolValue() != TrivalentBoolean.NULL)) {
 						nl = graph.createBoolLiteral();
-						nl.setBoolValue(TrivalentBoolean.NULL);
+						nl.set_boolValue(TrivalentBoolean.NULL);
 					}
 				}
 				return nl;

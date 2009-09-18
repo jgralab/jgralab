@@ -277,8 +277,8 @@ public class SchemaGraph2Tg {
 	private void printTGSchema(SchemaGraph schemaGraph) {
 
 		Schema schema = schemaGraph.getFirstSchema();
-		println(SCHEMA, SPACE, schema.getPackagePrefix(), POINT, schema
-				.getName(), DELIMITER);
+		println(SCHEMA, SPACE, schema.get_packagePrefix(), POINT, schema
+				.get_name(), DELIMITER);
 
 		Edge edge;
 
@@ -343,7 +343,7 @@ public class SchemaGraph2Tg {
 			de.uni_koblenz.jgralab.grumlschema.structure.GraphClass graph) {
 
 		assert (graph != null) : "Object of type GraphClass is null!";
-		print(GRAPH_CLASS, SPACE, graph.getQualifiedName());
+		print(GRAPH_CLASS, SPACE, graph.get_qualifiedName());
 
 		// Prints all EdgeDirection.OUT edges of type HasAttribute are
 		// interesting
@@ -377,11 +377,11 @@ public class SchemaGraph2Tg {
 		}
 
 		if (hierarchical) {
-			packageName = tgPackage.getQualifiedName();
+			packageName = tgPackage.get_qualifiedName();
 			println(SPACE);
 		}
 
-		println(PACKAGE, SPACE, tgPackage.getQualifiedName(), DELIMITER);
+		println(PACKAGE, SPACE, tgPackage.get_qualifiedName(), DELIMITER);
 
 		if (hierarchical) {
 			ContainsDomain domain = tgPackage
@@ -454,7 +454,7 @@ public class SchemaGraph2Tg {
 	 */
 	public void printVertexClassDefinition(VertexClass vertexClass,
 			boolean printConstraints) {
-		if (vertexClass.isIsAbstract()) {
+		if (vertexClass.is_abstract()) {
 			print(ABSTRACT, SPACE);
 		}
 
@@ -514,11 +514,11 @@ public class SchemaGraph2Tg {
 
 		assert (edge != null) : "There is no EdgeClass object! \"edge == null\"";
 
-		if (edge.isIsAbstract()) {
+		if (edge.is_abstract()) {
 			print(ABSTRACT, SPACE);
 		}
 
-		assert (!edge.getQualifiedName().equals(EMPTY)) : "This EdgeClass object has not name!";
+		assert (!edge.get_qualifiedName().equals(EMPTY)) : "This EdgeClass object has not name!";
 
 		print(getEdgeClassIdentifier(edge), SPACE, getName(edge));
 		printSuperClasses(edge);
@@ -530,7 +530,7 @@ public class SchemaGraph2Tg {
 				|| (edge instanceof CompositionClass)) {
 			AggregationClass aggregation = (AggregationClass) edge;
 			print(SUBELEMENT, AGGREGATE, SPACE,
-					aggregation.isAggregateFrom() ? FROM : TO);
+					aggregation.is_aggregateFrom() ? FROM : TO);
 		}
 
 		printAttributes(edge.getFirstHasAttribute(EdgeDirection.OUT));
@@ -575,10 +575,10 @@ public class SchemaGraph2Tg {
 		// Getting referenced VertexClass
 		VertexClass vertex = (VertexClass) from.getOmega();
 		assert (vertex != null) : "There is no VertexClass object! \"vertex == null\"";
-		assert (!vertex.getQualifiedName().equals(EMPTY)) : "This VertexClass object has no name!";
+		assert (!vertex.get_qualifiedName().equals(EMPTY)) : "This VertexClass object has no name!";
 
-		printFromOrToEdge(true, vertex.getQualifiedName(), from.getMin(), from
-				.getMax(), from.getRoleName(), from.getRedefinedRoles());
+		printFromOrToEdge(true, vertex.get_qualifiedName(), from.get_min(),
+				from.get_max(), from.get_roleName(), from.get_redefinedRoles());
 	}
 
 	/**
@@ -616,10 +616,10 @@ public class SchemaGraph2Tg {
 		// Getting referenced VertexClass
 		VertexClass vertex = (VertexClass) to.getOmega();
 		assert (vertex != null) : "There is no VertexClass object! \"vertex == null\"";
-		assert (!vertex.getQualifiedName().equals(EMPTY)) : "This VertexClass object has no name!";
+		assert (!vertex.get_qualifiedName().equals(EMPTY)) : "This VertexClass object has no name!";
 
-		printFromOrToEdge(false, vertex.getQualifiedName(), to.getMin(), to
-				.getMax(), to.getRoleName(), to.getRedefinedRoles());
+		printFromOrToEdge(false, vertex.get_qualifiedName(), to.get_min(), to
+				.get_max(), to.get_roleName(), to.get_redefinedRoles());
 	}
 
 	/**
@@ -817,14 +817,14 @@ public class SchemaGraph2Tg {
 		// A RecordDomain object must have at least one HasRecordDomainComponent
 		// edge.
 		assert (hasComponent != null) : "HasRecordDomainComponent is null of Domain "
-				+ recordDomain.getQualifiedName();
+				+ recordDomain.get_qualifiedName();
 		// Gets the domain of the first record
 		Domain domain = (Domain) hasComponent.getOmega();
 
 		// Formated output of the EBNF rule "RecordDefinition" without the
 		// possible repetition.
 		print(RECORD_DOMAIN, SPACE, getName(recordDomain), SUBELEMENT,
-				ROUND_BRACKET_OPENED, hasComponent.getName(), COLON, SPACE,
+				ROUND_BRACKET_OPENED, hasComponent.get_name(), COLON, SPACE,
 				getName(domain));
 
 		// Next EdgeDirection.OUT edge
@@ -836,7 +836,7 @@ public class SchemaGraph2Tg {
 			domain = (Domain) hasComponent.getOmega();
 			// Formated output of the EBNF rule "RecordDefinition" with only the
 			// possible repetition.
-			print(COMMA, SPACE, hasComponent.getName(), COLON, SPACE,
+			print(COMMA, SPACE, hasComponent.get_name(), COLON, SPACE,
 					getName(domain));
 			// Next EdgeDirection.OUT edge
 			hasComponent = hasComponent
@@ -870,7 +870,7 @@ public class SchemaGraph2Tg {
 	 */
 	private void printEnumDomain(EnumDomain domain) {
 
-		List<String> list = domain.getEnumConstants();
+		List<String> list = domain.get_enumConstants();
 		// The EnumConstants list cannot be null!
 		assert (list != null) : "Enum Constants list is a NullPointer!";
 
@@ -1047,8 +1047,8 @@ public class SchemaGraph2Tg {
 			// edge
 			attribute = (Attribute) hasAttribute.getOmega();
 			assert (attribute != null) : "Object of type Attribute is null";
-			print(SUBELEMENT, CURLY_BRACKET_OPENED, SPACE, attribute.getName(),
-					COLON, SPACE);
+			print(SUBELEMENT, CURLY_BRACKET_OPENED, SPACE,
+					attribute.get_name(), COLON, SPACE);
 			// Prints the Domain
 			printDomain((Domain) attribute.getFirstHasDomain(EdgeDirection.OUT)
 					.getOmega());
@@ -1065,7 +1065,7 @@ public class SchemaGraph2Tg {
 			// edge
 			attribute = (Attribute) hasAttribute.getOmega();
 			assert (attribute != null) : "Object of type Attribute is null";
-			print(COMMA, SPACE, attribute.getName(), COLON, SPACE);
+			print(COMMA, SPACE, attribute.get_name(), COLON, SPACE);
 			// Prints the Domain
 			printDomain((Domain) attribute.getFirstHasDomain(EdgeDirection.OUT)
 					.getOmega());
@@ -1147,16 +1147,16 @@ public class SchemaGraph2Tg {
 	 */
 	private void printConstraint(Constraint constraint) {
 
-		assert (constraint.getMessage() != null) : "Message of a TG Constraint is null";
-		assert (constraint.getPredicateQuery() != null) : "PredicateQuery of a TG Constraint is null";
+		assert (constraint.get_message() != null) : "Message of a TG Constraint is null";
+		assert (constraint.get_predicateQuery() != null) : "PredicateQuery of a TG Constraint is null";
 
 		// GraphIO.toUtfString(String) transforms a given String to the
 		// appropriated format
 		print(SUBELEMENT, SQUARE_BRACKET_OPENED, GraphIO.toUtfString(constraint
-				.getMessage()), SUBELEMENT, SPACE, GraphIO
-				.toUtfString(constraint.getPredicateQuery()), SUBELEMENT,
+				.get_message()), SUBELEMENT, SPACE, GraphIO
+				.toUtfString(constraint.get_predicateQuery()), SUBELEMENT,
 				SPACE, GraphIO.toUtfString(constraint
-						.getOffendingElementsQuery()), SQUARE_BRACKET_CLOSED);
+						.get_offendingElementsQuery()), SQUARE_BRACKET_CLOSED);
 	}
 
 	/**
@@ -1204,7 +1204,7 @@ public class SchemaGraph2Tg {
 	 */
 	private String getName(AttributedElementClass element) {
 		assert (element != null) : "Object of type AttributedElementClass is null!";
-		return getName(element.getQualifiedName());
+		return getName(element.get_qualifiedName());
 	}
 
 	/**
@@ -1219,7 +1219,7 @@ public class SchemaGraph2Tg {
 	private String getName(Domain element) {
 		assert (element != null) : "FIXME!" + " Object of type Domain is null!";
 
-		String qualifiedName = element.getQualifiedName();
+		String qualifiedName = element.get_qualifiedName();
 
 		if ((element instanceof RecordDomain)
 				|| (element instanceof EnumDomain)) {

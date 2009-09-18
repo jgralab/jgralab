@@ -146,12 +146,12 @@ public class OptimizerUtility {
 	 */
 	public static void mergeSourcePositions(Greql2Aggregation from,
 			Greql2Aggregation to) {
-		List<SourcePosition> toSourcePositions = to.getSourcePositions();
+		List<SourcePosition> toSourcePositions = to.get_sourcePositions();
 		if (toSourcePositions == null) {
 			toSourcePositions = new ArrayList<SourcePosition>();
-			to.setSourcePositions(toSourcePositions);
+			to.set_sourcePositions(toSourcePositions);
 		}
-		for (SourcePosition sp : from.getSourcePositions()) {
+		for (SourcePosition sp : from.get_sourcePositions()) {
 			if (!toSourcePositions.contains(sp)) {
 				toSourcePositions.add(sp);
 			}
@@ -175,13 +175,13 @@ public class OptimizerUtility {
 	 */
 	public static FunctionId findOrCreateFunctionId(String name, Greql2 graph) {
 		for (FunctionId fid : graph.getFunctionIdVertices()) {
-			if (fid.getName().equals(name)) {
+			if (fid.get_name().equals(name)) {
 				return fid;
 			}
 		}
 		// no such FunctionId exists, so create one
 		FunctionId fid = graph.createFunctionId();
-		fid.setName(name);
+		fid.set_name(name);
 		return fid;
 	}
 
@@ -194,8 +194,8 @@ public class OptimizerUtility {
 	 */
 	public static void createMissingSourcePositions(Greql2 graph) {
 		for (Greql2Aggregation aggr : graph.getGreql2AggregationEdges()) {
-			if (aggr.getSourcePositions() == null) {
-				aggr.setSourcePositions(new ArrayList<SourcePosition>());
+			if (aggr.get_sourcePositions() == null) {
+				aggr.set_sourcePositions(new ArrayList<SourcePosition>());
 			}
 		}
 	}

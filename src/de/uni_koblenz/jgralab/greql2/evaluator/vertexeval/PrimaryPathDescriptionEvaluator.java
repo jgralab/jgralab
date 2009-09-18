@@ -66,10 +66,11 @@ public abstract class PrimaryPathDescriptionEvaluator extends
 		Edge dirEdge = vertex.getFirstIsDirectionOf(EdgeDirection.IN);
 		if (dirEdge != null) {
 			Direction dirVertex = (Direction) dirEdge.getAlpha();
-			if (dirVertex.getDirValue() == "in")
+			if (dirVertex.get_dirValue() == "in") {
 				validDirection = Transition.AllowedEdgeDirection.IN;
-			else if (dirVertex.getDirValue() == "out")
+			} else if (dirVertex.get_dirValue() == "out") {
 				validDirection = Transition.AllowedEdgeDirection.OUT;
+			}
 		}
 		return validDirection;
 	}
@@ -78,8 +79,9 @@ public abstract class PrimaryPathDescriptionEvaluator extends
 	 * Returns the edge role this PathDescription accepts
 	 */
 	protected String getEdgeRole(EdgeRestrictionEvaluator edgeRestEval) {
-		if (edgeRestEval == null)
+		if (edgeRestEval == null) {
 			return null;
+		}
 		return edgeRestEval.getEdgeRole();
 	}
 

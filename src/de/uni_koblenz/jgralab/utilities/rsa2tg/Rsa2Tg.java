@@ -635,8 +635,8 @@ public class Rsa2Tg {
 				int p = nm.lastIndexOf('.');
 				schema = sg.createSchema();
 				vertexId = schema;
-				schema.setPackagePrefix(nm.substring(0, p));
-				schema.setName(nm.substring(p + 1));
+				schema.set_packagePrefix(nm.substring(0, p));
+				schema.set_name(nm.substring(p + 1));
 
 				// Generates a GraphClass and links it with the created Schema
 				graphClass = sg.createGraphClass();
@@ -645,7 +645,7 @@ public class Rsa2Tg {
 				// Creates a default Package, links it and pushes it to the
 				// packageStack.
 				Package defaultPackage = sg.createPackage();
-				defaultPackage.setQualifiedName("");
+				defaultPackage.set_qualifiedName("");
 				sg.createContainsDefaultPackage(schema, defaultPackage);
 				packageStack.push(defaultPackage);
 			} else {
@@ -872,11 +872,11 @@ public class Rsa2Tg {
 					"XML file is malformed. There is probably one end element missing.");
 		}
 
-		if (graphClass.getQualifiedName() == null) {
+		if (graphClass.get_qualifiedName() == null) {
 			throw new ProcessingException(filenameXmi,
 					"No <<graphclass>> defined in schema '"
-							+ schema.getPackagePrefix() + "."
-							+ schema.getName() + "'");
+							+ schema.get_packagePrefix() + "."
+							+ schema.get_name() + "'");
 		}
 		linkGeneralizations();
 		linkRecordDomainComponents();
@@ -931,7 +931,7 @@ public class Rsa2Tg {
 				throw new ProcessingException(filenameXmi,
 						"No Schema has been generated.");
 			}
-			String schemaName = schema.getName();
+			String schemaName = schema.get_name();
 
 			// TODO
 			if (schemaName == null) {
@@ -1019,7 +1019,7 @@ public class Rsa2Tg {
 	private Vertex handlePackage(XMLStreamReader parser) {
 		de.uni_koblenz.jgralab.grumlschema.structure.Package pkg = sg
 				.createPackage();
-		pkg.setQualifiedName(getQualifiedName(parser.getAttributeValue(null,
+		pkg.set_qualifiedName(getQualifiedName(parser.getAttributeValue(null,
 				UML_ATTRIBUTE_NAME)));
 		sg.createContainsSubPackage(packageStack.peek(), pkg);
 		packageStack.push(pkg);
@@ -1057,8 +1057,8 @@ public class Rsa2Tg {
 		currentClassId = xmiId;
 		currentClass = vc;
 		String abs = parser.getAttributeValue(null, "isAbstract");
-		vc.setIsAbstract((abs != null) && abs.equals("true"));
-		vc.setQualifiedName(getQualifiedName(parser.getAttributeValue(null,
+		vc.set_abstract((abs != null) && abs.equals("true"));
+		vc.set_qualifiedName(getQualifiedName(parser.getAttributeValue(null,
 				UML_ATTRIBUTE_NAME)));
 		sg.createContainsGraphElementClass(packageStack.peek(), vc);
 
@@ -1090,13 +1090,13 @@ public class Rsa2Tg {
 		currentClassId = xmiId;
 		currentClass = ec;
 		String abs = parser.getAttributeValue(null, "isAbstract");
-		ec.setIsAbstract((abs != null) && abs.equals("true"));
+		ec.set_abstract((abs != null) && abs.equals("true"));
 		String n = parser.getAttributeValue(null, UML_ATTRIBUTE_NAME);
 		n = (n == null) ? "" : n.trim();
 		if (n.length() > 0) {
 			n = Character.toUpperCase(n.charAt(0)) + n.substring(1);
 		}
-		ec.setQualifiedName(getQualifiedName(n));
+		ec.set_qualifiedName(getQualifiedName(n));
 		sg.createContainsGraphElementClass(packageStack.peek(), ec);
 
 		String memberEnd = parser.getAttributeValue(null, "memberEnd");
@@ -1116,7 +1116,7 @@ public class Rsa2Tg {
 		if (e == null) {
 			VertexClass vc = sg.createVertexClass();
 			preliminaryVertices.add(vc);
-			vc.setQualifiedName("preliminary for source end " + sourceEnd);
+			vc.set_qualifiedName("preliminary for source end " + sourceEnd);
 			e = sg.createFrom(ec, vc);
 			idMap.put(sourceEnd, e);
 		}
@@ -1127,10 +1127,10 @@ public class Rsa2Tg {
 			assert e instanceof From;
 			From from = (From) e;
 			To to = sg.createTo(ec, (VertexClass) from.getOmega());
-			to.setMax(from.getMax());
-			to.setMin(from.getMin());
-			to.setRoleName(from.getRoleName());
-			to.setRedefinedRoles(from.getRedefinedRoles());
+			to.set_max(from.get_max());
+			to.set_min(from.get_min());
+			to.set_roleName(from.get_roleName());
+			to.set_redefinedRoles(from.get_redefinedRoles());
 			if (ownedEnds.contains(from)) {
 				ownedEnds.remove(from);
 				ownedEnds.add(to);
@@ -1144,7 +1144,7 @@ public class Rsa2Tg {
 		} else {
 			VertexClass vc = sg.createVertexClass();
 			preliminaryVertices.add(vc);
-			vc.setQualifiedName("preliminary for target end " + targetEnd);
+			vc.set_qualifiedName("preliminary for target end " + targetEnd);
 			e = sg.createTo(ec, vc);
 			idMap.put(targetEnd, e);
 		}
@@ -1155,11 +1155,11 @@ public class Rsa2Tg {
 		EnumDomain ed = sg.createEnumDomain();
 		de.uni_koblenz.jgralab.grumlschema.structure.Package p = packageStack
 				.peek();
-		ed.setQualifiedName(getQualifiedName(parser.getAttributeValue(null,
+		ed.set_qualifiedName(getQualifiedName(parser.getAttributeValue(null,
 				UML_ATTRIBUTE_NAME)));
 		sg.createContainsDomain(p, ed);
-		ed.setEnumConstants(new ArrayList<String>());
-		Domain dom = domainMap.get(ed.getQualifiedName());
+		ed.set_enumConstants(new ArrayList<String>());
+		Domain dom = domainMap.get(ed.get_qualifiedName());
 		if (dom != null) {
 			// there was a preliminary vertex for this domain
 			// link the edges to the correct one
@@ -1170,7 +1170,7 @@ public class Rsa2Tg {
 			dom.delete();
 			preliminaryVertices.remove(dom);
 		}
-		domainMap.put(ed.getQualifiedName(), ed);
+		domainMap.put(ed.get_qualifiedName(), ed);
 		return ed;
 	}
 
@@ -1252,7 +1252,7 @@ public class Rsa2Tg {
 		}
 		EnumDomain ed = (EnumDomain) idMap.get(classifier);
 
-		ed.getEnumConstants().add(s);
+		ed.get_enumConstants().add(s);
 	}
 
 	private void writeSchema(String schemaName, boolean formatTg) {
@@ -1298,25 +1298,25 @@ public class Rsa2Tg {
 			to.setThat(from.getThat());
 			from.setThat(vc);
 
-			int h = to.getMin();
-			to.setMin(from.getMin());
-			from.setMin(h);
+			int h = to.get_min();
+			to.set_min(from.get_min());
+			from.set_min(h);
 
-			h = to.getMax();
-			to.setMax(from.getMax());
-			from.setMax(h);
+			h = to.get_max();
+			to.set_max(from.get_max());
+			from.set_max(h);
 
-			String r = to.getRoleName();
-			to.setRoleName(from.getRoleName());
-			from.setRoleName(r);
+			String r = to.get_roleName();
+			to.set_roleName(from.get_roleName());
+			from.set_roleName(r);
 
-			Set<String> rd = to.getRedefinedRoles();
-			to.setRedefinedRoles(from.getRedefinedRoles());
-			from.setRedefinedRoles(rd);
+			Set<String> rd = to.get_redefinedRoles();
+			to.set_redefinedRoles(from.get_redefinedRoles());
+			from.set_redefinedRoles(rd);
 
 			if (e instanceof AggregationClass) {
 				AggregationClass ac = (AggregationClass) e;
-				ac.setAggregateFrom(!ac.isAggregateFrom());
+				ac.set_aggregateFrom(!ac.is_aggregateFrom());
 			}
 		}
 
@@ -1355,14 +1355,15 @@ public class Rsa2Tg {
 
 	private void setAggregateFromAttributes() {
 		for (Edge e : aggregateEnds) {
-			((AggregationClass) e.getAlpha()).setAggregateFrom(e instanceof To);
+			((AggregationClass) e.getAlpha())
+					.set_aggregateFrom(e instanceof To);
 		}
 		aggregateEnds.clear();
 	}
 
 	private void createEdgeClassNames() {
 		for (EdgeClass ec : sg.getEdgeClassVertices()) {
-			String name = ec.getQualifiedName().trim();
+			String name = ec.get_qualifiedName().trim();
 			if (!name.equals("") && !name.endsWith(".")) {
 				continue;
 			}
@@ -1370,10 +1371,10 @@ public class Rsa2Tg {
 			// System.err.print("createEdgeClassName for '" + name + "'");
 			String ecName = null;
 			// invent edgeclass name
-			String toRole = ec.getFirstTo().getRoleName();
+			String toRole = ec.getFirstTo().get_roleName();
 			if ((toRole == null) || toRole.equals("")) {
 				toRole = ((VertexClass) ec.getFirstTo().getOmega())
-						.getQualifiedName();
+						.get_qualifiedName();
 				int p = toRole.lastIndexOf('.');
 				if (p >= 0) {
 					toRole = toRole.substring(p + 1);
@@ -1389,7 +1390,7 @@ public class Rsa2Tg {
 						"There is no role name 'to'-Edge defined.");
 			}
 			if (ec instanceof AggregationClass) {
-				if (((AggregationClass) ec).isAggregateFrom()) {
+				if (((AggregationClass) ec).is_aggregateFrom()) {
 					ecName = "Contains" + toRole;
 				} else {
 					ecName = "IsPartOf" + toRole;
@@ -1398,10 +1399,10 @@ public class Rsa2Tg {
 				ecName = "LinksTo" + toRole;
 			}
 			if (isUseFromRole()) {
-				String fromRole = ec.getFirstFrom().getRoleName();
+				String fromRole = ec.getFirstFrom().get_roleName();
 				if ((fromRole == null) || fromRole.equals("")) {
 					fromRole = ((VertexClass) ec.getFirstFrom().getOmega())
-							.getQualifiedName();
+							.get_qualifiedName();
 					int p = fromRole.lastIndexOf('.');
 					if (p >= 0) {
 						fromRole = fromRole.substring(p + 1);
@@ -1421,7 +1422,7 @@ public class Rsa2Tg {
 			// System.err.println(" ==> '" + name + "' + '" + ecName + "'");
 
 			assert (ecName != null) && (ecName.length() > 0);
-			ec.setQualifiedName(name + ecName);
+			ec.set_qualifiedName(name + ecName);
 		}
 	}
 
@@ -1459,7 +1460,7 @@ public class Rsa2Tg {
 				// preliminary domain vertex exists and has type StringDomain,
 				// but the name of the StringDomain is the "real" domain name
 				assert (d instanceof StringDomain)
-						&& d.getQualifiedName().equals(domainId)
+						&& d.get_qualifiedName().equals(domainId)
 						&& preliminaryVertices.contains(d);
 				comp.setOmega(dom);
 				d.delete();
@@ -1585,7 +1586,7 @@ public class Rsa2Tg {
 		while (p != null) {
 			de.uni_koblenz.jgralab.grumlschema.structure.Package n = p
 					.getNextPackage();
-			if ((p.getDegree() == 1) && (p.getQualifiedName().length() > 0)) {
+			if ((p.getDegree() == 1) && (p.get_qualifiedName().length() > 0)) {
 				// System.out.println("...remove empty package '"
 				// + p.getQualifiedName() + "'");
 				p.delete();
@@ -1654,9 +1655,9 @@ public class Rsa2Tg {
 		}
 
 		if (constrainedEnd instanceof From) {
-			((From) constrainedEnd).setRedefinedRoles(redefinedRoles);
+			((From) constrainedEnd).set_redefinedRoles(redefinedRoles);
 		} else {
-			((To) constrainedEnd).setRedefinedRoles(redefinedRoles);
+			((To) constrainedEnd).set_redefinedRoles(redefinedRoles);
 		}
 	}
 
@@ -1682,15 +1683,15 @@ public class Rsa2Tg {
 					++stringCount;
 					switch (stringCount) {
 					case 1:
-						constraint.setMessage(text.substring(beginIndex + 1, i)
-								.trim());
+						constraint.set_message(text
+								.substring(beginIndex + 1, i).trim());
 						break;
 					case 2:
-						constraint.setPredicateQuery(text.substring(
+						constraint.set_predicateQuery(text.substring(
 								beginIndex + 1, i).trim());
 						break;
 					case 3:
-						constraint.setOffendingElementsQuery(text.substring(
+						constraint.set_offendingElementsQuery(text.substring(
 								beginIndex + 1, i).trim());
 						break;
 					default:
@@ -1728,9 +1729,9 @@ public class Rsa2Tg {
 	private void handleUpperValue(XMLStreamReader parser) {
 		int n = getValue(parser);
 		if (currentAssociationEnd instanceof From) {
-			((From) currentAssociationEnd).setMax(n);
+			((From) currentAssociationEnd).set_max(n);
 		} else {
-			((To) currentAssociationEnd).setMax(n);
+			((To) currentAssociationEnd).set_max(n);
 		}
 	}
 
@@ -1744,9 +1745,9 @@ public class Rsa2Tg {
 	private void handleLowerValue(XMLStreamReader parser) {
 		int n = getValue(parser);
 		if (currentAssociationEnd instanceof From) {
-			((From) currentAssociationEnd).setMin(n);
+			((From) currentAssociationEnd).set_min(n);
 		} else {
-			((To) currentAssociationEnd).setMin(n);
+			((To) currentAssociationEnd).set_min(n);
 		}
 	}
 
@@ -1766,7 +1767,7 @@ public class Rsa2Tg {
 
 			AttributedElementClass aec = (AttributedElementClass) idMap
 					.get(currentClassId);
-			graphClass.setQualifiedName(aec.getQualifiedName());
+			graphClass.set_qualifiedName(aec.get_qualifiedName());
 			Edge e = aec.getFirstEdge();
 			while (e != null) {
 				Edge n = e.getNextEdge();
@@ -1792,7 +1793,7 @@ public class Rsa2Tg {
 			assert currentClass instanceof VertexClass;
 
 			RecordDomain rd = sg.createRecordDomain();
-			rd.setQualifiedName(currentClass.getQualifiedName());
+			rd.set_qualifiedName(currentClass.get_qualifiedName());
 			Edge e = currentClass.getFirstEdge();
 			while (e != null) {
 				Edge n = e.getNextEdge();
@@ -1809,7 +1810,7 @@ public class Rsa2Tg {
 						Domain dom = (Domain) e.getThat();
 						HasRecordDomainComponent comp = sg
 								.createHasRecordDomainComponent(rd, dom);
-						comp.setName(att.getName());
+						comp.set_name(att.get_name());
 					} else {
 						String typeId = attributeType.getMark(att);
 
@@ -1819,7 +1820,7 @@ public class Rsa2Tg {
 									"No type id has been defined.");
 						}
 						Domain dom = sg.createStringDomain();
-						dom.setQualifiedName(typeId);
+						dom.set_qualifiedName(typeId);
 						preliminaryVertices.add(dom);
 						HasRecordDomainComponent comp = sg
 								.createHasRecordDomainComponent(rd, dom);
@@ -1839,7 +1840,7 @@ public class Rsa2Tg {
 				throw new ProcessingException(parser, filenameXmi,
 						"A <<record>>-class must not have any association.");
 			}
-			domainMap.put(rd.getQualifiedName(), rd);
+			domainMap.put(rd.get_qualifiedName(), rd);
 			idMap.put(currentClassId, rd);
 			currentRecordDomain = rd;
 			currentClass.delete();
@@ -1856,7 +1857,7 @@ public class Rsa2Tg {
 				throw new ProcessingException(parser, filenameXmi,
 						"The modifier 'abstract' is only allowed for classes or associations.");
 			}
-			currentClass.setIsAbstract(true);
+			currentClass.set_abstract(true);
 		} else {
 			throw new ProcessingException(parser, filenameXmi,
 					"Unexpected stereotype '" + key + "'.");
@@ -1911,7 +1912,7 @@ public class Rsa2Tg {
 			if (dom != null) {
 				Domain d = (Domain) currentRecordDomainComponent.getOmega();
 				assert (d instanceof StringDomain)
-						&& (d.getQualifiedName() == null)
+						&& (d.get_qualifiedName() == null)
 						&& preliminaryVertices.contains(d);
 				currentRecordDomainComponent.setOmega(dom);
 				d.delete();
@@ -1970,7 +1971,7 @@ public class Rsa2Tg {
 				// property is an "ordinary" attribute
 				Attribute att = sg.createAttribute();
 				currentAttribute = att;
-				att.setName(attrName);
+				att.set_name(attrName);
 				sg.createHasAttribute(currentClass, att);
 				if (typeId != null) {
 					attributeType.mark(att, typeId);
@@ -1989,7 +1990,7 @@ public class Rsa2Tg {
 										currentRecordDomain, (Domain) v);
 					} else {
 						Domain dom = sg.createStringDomain();
-						dom.setQualifiedName(typeId);
+						dom.set_qualifiedName(typeId);
 						preliminaryVertices.add(dom);
 						currentRecordDomainComponent = sg
 								.createHasRecordDomainComponent(
@@ -2004,7 +2005,7 @@ public class Rsa2Tg {
 							.createHasRecordDomainComponent(
 									currentRecordDomain, dom);
 				}
-				currentRecordDomainComponent.setName(attrName);
+				currentRecordDomainComponent.set_name(attrName);
 			}
 		} else {
 
@@ -2053,7 +2054,7 @@ public class Rsa2Tg {
 				// create a preliminary vertex class
 				vc = sg.createVertexClass();
 				preliminaryVertices.add(vc);
-				vc.setQualifiedName(typeId);
+				vc.set_qualifiedName(typeId);
 				idMap.put(typeId, vc);
 			}
 
@@ -2159,9 +2160,9 @@ public class Rsa2Tg {
 		}
 		idMap.put(xmiId, e);
 		if (e instanceof To) {
-			((To) e).setRoleName(endName);
+			((To) e).set_roleName(endName);
 		} else if (e instanceof From) {
-			((From) e).setRoleName(endName);
+			((From) e).set_roleName(endName);
 		} else {
 			throw new RuntimeException(
 					"FIXME! Unexpected type. Should never get here.");
@@ -2172,8 +2173,8 @@ public class Rsa2Tg {
 			boolean aggregation, boolean composition) {
 		if (composition && (ec.getM1Class() != CompositionClass.class)) {
 			EdgeClass cls = sg.createCompositionClass();
-			cls.setQualifiedName(ec.getQualifiedName());
-			cls.setIsAbstract(ec.isIsAbstract());
+			cls.set_qualifiedName(ec.get_qualifiedName());
+			cls.set_abstract(ec.is_abstract());
 			reconnectEdges(ec, cls);
 			ec.delete();
 			if (preliminaryVertices.contains(ec)) {
@@ -2184,8 +2185,8 @@ public class Rsa2Tg {
 		}
 		if (aggregation && (ec.getM1Class() != AggregationClass.class)) {
 			EdgeClass cls = sg.createAggregationClass();
-			cls.setQualifiedName(ec.getQualifiedName());
-			cls.setIsAbstract(ec.isIsAbstract());
+			cls.set_qualifiedName(ec.get_qualifiedName());
+			cls.set_abstract(ec.is_abstract());
 			reconnectEdges(ec, cls);
 			ec.delete();
 			if (preliminaryVertices.contains(ec)) {
@@ -2305,7 +2306,7 @@ public class Rsa2Tg {
 		}
 
 		assert dom != null;
-		dom.setQualifiedName(typeName);
+		dom.set_qualifiedName(typeName);
 		domainMap.put(typeName, dom);
 		return dom;
 	}
@@ -2329,10 +2330,10 @@ public class Rsa2Tg {
 		Package p = packageStack.peek();
 
 		assert p != null;
-		if (p.getQualifiedName().equals("")) {
+		if (p.get_qualifiedName().equals("")) {
 			return simpleName;
 		} else {
-			return p.getQualifiedName() + "." + simpleName;
+			return p.get_qualifiedName() + "." + simpleName;
 		}
 	}
 

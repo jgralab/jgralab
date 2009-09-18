@@ -66,9 +66,9 @@ public abstract class ManualParserHelper {
 	protected Greql2Schema schema = null;
 
 	protected SymbolTable afterParsingvariableSymbolTable = null;
-	
+
 	protected EasySymbolTable duringParsingvariableSymbolTable = null;
-	
+
 	protected Map<String, FunctionId> functionSymbolTable = null;
 
 	protected boolean graphCleaned = false;
@@ -98,11 +98,11 @@ public abstract class ManualParserHelper {
 		if (pathDescr == null) {
 			pathDescr = graph.createVertex(vc);
 			edge = (Greql2Aggregation) graph.createEdge(ec, part1, pathDescr);
-			edge.setSourcePositions((createSourcePositionList(lengthPart1,
+			edge.set_sourcePositions((createSourcePositionList(lengthPart1,
 					offsetPart1)));
 		}
 		edge = (Greql2Aggregation) graph.createEdge(ec, part2, pathDescr);
-		edge.setSourcePositions((createSourcePositionList(lengthPart2,
+		edge.set_sourcePositions((createSourcePositionList(lengthPart2,
 				offsetPart2)));
 		return pathDescr;
 	}
@@ -113,14 +113,16 @@ public abstract class ManualParserHelper {
 	 * @return the abstract syntax graph representing a GReQL 2 query
 	 */
 	public Greql2 getGraph() {
-		if (graph == null)
+		if (graph == null) {
 			return null;
+		}
 		if (!graphCleaned) {
 			Set<Vertex> reachableVertices = new HashSet<Vertex>();
 			Queue<Vertex> queue = new LinkedList<Vertex>();
 			Greql2Expression root = graph.getFirstGreql2Expression();
-			if (root == null)
+			if (root == null) {
 				return null;
+			}
 			queue.add(root);
 			while (!queue.isEmpty()) {
 				Vertex current = queue.poll();
@@ -170,7 +172,8 @@ public abstract class ManualParserHelper {
 		} else if (v instanceof ThisLiteral) {
 			return;
 		} else if (v instanceof Variable) {
-			Vertex var = afterParsingvariableSymbolTable.lookup(((Variable) v).getName());
+			Vertex var = afterParsingvariableSymbolTable.lookup(((Variable) v)
+					.get_name());
 			if (var != null) {
 				Edge inc = v.getFirstEdge(EdgeDirection.OUT);
 				inc.setAlpha(var);
@@ -180,8 +183,8 @@ public abstract class ManualParserHelper {
 			} else {
 				Greql2Aggregation e = (Greql2Aggregation) v
 						.getFirstEdge(EdgeDirection.OUT);
-				throw new UndefinedVariableException(((Variable) v).getName(),
-						e.getSourcePositions());
+				throw new UndefinedVariableException(((Variable) v).get_name(),
+						e.get_sourcePositions());
 			}
 		} else {
 			Edge inc = v.getFirstEdge(EdgeDirection.IN);
@@ -190,8 +193,9 @@ public abstract class ManualParserHelper {
 				incidenceList.add(inc);
 				inc = inc.getNextEdge(EdgeDirection.IN);
 			}
-			for (Edge e : incidenceList)
+			for (Edge e : incidenceList) {
 				mergeVariables(e.getAlpha());
+			}
 		}
 	}
 
@@ -208,8 +212,8 @@ public abstract class ManualParserHelper {
 		afterParsingvariableSymbolTable.blockBegin();
 		IsBoundVarOf isBoundVarOf = root.getFirstIsBoundVarOf(EdgeDirection.IN);
 		while (isBoundVarOf != null) {
-			afterParsingvariableSymbolTable.insert(((Variable) isBoundVarOf.getAlpha())
-					.getName(), isBoundVarOf.getAlpha());
+			afterParsingvariableSymbolTable.insert(((Variable) isBoundVarOf
+					.getAlpha()).get_name(), isBoundVarOf.getAlpha());
 			isBoundVarOf = isBoundVarOf.getNextIsBoundVarOf(EdgeDirection.IN);
 		}
 		IsQueryExprOf isQueryExprOf = root
@@ -235,7 +239,8 @@ public abstract class ManualParserHelper {
 			Definition definition = (Definition) isDefinitionOf.getAlpha();
 			Variable variable = (Variable) definition.getFirstIsVarOf(
 					EdgeDirection.IN).getAlpha();
-			afterParsingvariableSymbolTable.insert(variable.getName(), variable);
+			afterParsingvariableSymbolTable.insert(variable.get_name(),
+					variable);
 			isDefinitionOf = isDefinitionOf
 					.getNextIsDefinitionOf(EdgeDirection.IN);
 		}
@@ -274,7 +279,8 @@ public abstract class ManualParserHelper {
 					.getFirstIsDeclaredVarOf(EdgeDirection.IN);
 			while (isDeclaredVarOf != null) {
 				Variable variable = (Variable) isDeclaredVarOf.getAlpha();
-				afterParsingvariableSymbolTable.insert(variable.getName(), variable);
+				afterParsingvariableSymbolTable.insert(variable.get_name(),
+						variable);
 				isDeclaredVarOf = isDeclaredVarOf
 						.getNextIsDeclaredVarOf(EdgeDirection.IN);
 			}
@@ -359,8 +365,9 @@ public abstract class ManualParserHelper {
 				mergeVariables(rh.getAlpha());
 				IsTableHeaderOf th = tc
 						.getFirstIsTableHeaderOf(EdgeDirection.IN);
-				if (th != null)
+				if (th != null) {
 					mergeVariables(th.getAlpha());
+				}
 			}
 		}
 		if (v instanceof MapComprehension) {
@@ -414,8 +421,9 @@ public abstract class ManualParserHelper {
 		}
 
 		public FunctionApplication postArg2(Expression arg2) {
-			if (inPredicateMode())
+			if (inPredicateMode()) {
 				return null;
+			}
 			lengthArg2 = getLength(offsetArg2);
 			this.arg2 = arg2;
 			op = getFunctionId(operatorName);
@@ -428,10 +436,10 @@ public abstract class ManualParserHelper {
 	protected abstract void debug(String s);
 
 	protected final FunctionId getFunctionId(String name) {
-		FunctionId functionId = (FunctionId) functionSymbolTable.get(name);
+		FunctionId functionId = functionSymbolTable.get(name);
 		if (functionId == null) {
 			functionId = graph.createFunctionId();
-			functionId.setName(name);
+			functionId.set_name(name);
 			functionSymbolTable.put(name, functionId);
 		}
 		return functionId;
@@ -448,16 +456,16 @@ public abstract class ManualParserHelper {
 		FunctionApplication fa = graph.createFunctionApplication();
 		IsFunctionIdOf functionIdOf = graph
 				.createIsFunctionIdOf(functionId, fa);
-		functionIdOf.setSourcePositions((createSourcePositionList(
+		functionIdOf.set_sourcePositions((createSourcePositionList(
 				lengthOperator, offsetOperator)));
 		IsArgumentOf arg1Of = null;
 		if (binary) {
 			arg1Of = graph.createIsArgumentOf(arg1, fa);
-			arg1Of.setSourcePositions((createSourcePositionList(lengthArg1,
+			arg1Of.set_sourcePositions((createSourcePositionList(lengthArg1,
 					offsetArg1)));
 		}
 		IsArgumentOf arg2Of = graph.createIsArgumentOf(arg2, fa);
-		arg2Of.setSourcePositions((createSourcePositionList(lengthArg2,
+		arg2Of.set_sourcePositions((createSourcePositionList(lengthArg2,
 				offsetArg2)));
 		return fa;
 	}
@@ -491,24 +499,29 @@ public abstract class ManualParserHelper {
 							.incidences(EdgeDirection.OUT)) {
 						Greql2Vertex omega = (Greql2Vertex) edge.getOmega();
 						if (allowedClassesForThisLiterals.contains(omega
-								.getM1Class()))
+								.getM1Class())) {
 							continue;
+						}
 						if (omega instanceof FunctionApplication) {
 							FunctionApplication fa = (FunctionApplication) omega;
 							FunctionId funid = (FunctionId) fa
 									.getFirstIsFunctionIdOf(EdgeDirection.IN)
 									.getAlpha();
-							if (funid.getName().equals("pathSystem"))
+							if (funid.get_name().equals("pathSystem")) {
 								continue;
+							}
 						}
-						if (omega instanceof Greql2Expression)
+						if (omega instanceof Greql2Expression) {
 							throw new ParsingException(
 									"This literals must not be used outside pathdescriptions",
-									vertex.getName(),
+									vertex.get_name(),
 									((Greql2Aggregation) sourcePositionEdge)
-											.getSourcePositions().get(0).getOffset(),
+											.get_sourcePositions().get(0)
+											.get_offset(),
 									((Greql2Aggregation) sourcePositionEdge)
-											.getSourcePositions().get(0).getLength());
+											.get_sourcePositions().get(0)
+											.get_length());
+						}
 						queue.add(omega);
 					}
 				}

@@ -525,7 +525,7 @@ public abstract class VertexEvaluator {
 				EdgeDirection.OUT);
 		List<SourcePosition> possibleSourcePositions = new ArrayList<SourcePosition>();
 		while (inc != null) {
-			List<SourcePosition> sourcePositions = inc.getSourcePositions();
+			List<SourcePosition> sourcePositions = inc.get_sourcePositions();
 			possibleSourcePositions.addAll(sourcePositions);
 			inc = inc.getNextGreql2Aggregation(EdgeDirection.OUT);
 		}
@@ -537,7 +537,7 @@ public abstract class VertexEvaluator {
 	 */
 	protected List<SourcePosition> createSourcePositions(Greql2Aggregation edge) {
 		List<SourcePosition> possibleSourcePositions = new ArrayList<SourcePosition>();
-		List<SourcePosition> sourcePositions = edge.getSourcePositions();
+		List<SourcePosition> sourcePositions = edge.get_sourcePositions();
 		possibleSourcePositions.addAll(sourcePositions);
 		return possibleSourcePositions;
 	}
@@ -552,7 +552,7 @@ public abstract class VertexEvaluator {
 				EdgeDirection.OUT);
 		List<SourcePosition> possibleSourcePositions = new ArrayList<SourcePosition>();
 		while (inc != null) {
-			List<SourcePosition> sourcePositions = inc.getSourcePositions();
+			List<SourcePosition> sourcePositions = inc.get_sourcePositions();
 			possibleSourcePositions.addAll(sourcePositions);
 			inc = inc.getNextGreql2Aggregation(EdgeDirection.OUT);
 		}
@@ -567,9 +567,12 @@ public abstract class VertexEvaluator {
 					.iterator();
 			while (availableIter.hasNext()) {
 				SourcePosition availablePosition = availableIter.next();
-				if ((availablePosition.getOffset() <= currentPosition.getOffset())
-						&& (availablePosition.getOffset() + availablePosition.getLength() >= currentPosition.getOffset()
-								+ currentPosition.getLength())) {
+				if ((availablePosition.get_offset() <= currentPosition
+						.get_offset())
+						&& (availablePosition.get_offset()
+								+ availablePosition.get_length() >= currentPosition
+								.get_offset()
+								+ currentPosition.get_length())) {
 					accepted = true;
 					break;
 				}

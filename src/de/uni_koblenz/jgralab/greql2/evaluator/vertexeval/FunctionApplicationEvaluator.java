@@ -93,7 +93,7 @@ public class FunctionApplicationEvaluator extends VertexEvaluator {
 		if (functionName == null) {
 			FunctionId id = (FunctionId) vertex.getFirstIsFunctionIdOf(
 					EdgeDirection.IN).getAlpha();
-			functionName = id.getName();
+			functionName = id.get_name();
 		}
 		return functionName;
 	}
@@ -108,7 +108,7 @@ public class FunctionApplicationEvaluator extends VertexEvaluator {
 			if (functionName == null) {
 				FunctionId id = (FunctionId) vertex.getFirstIsFunctionIdOf(
 						EdgeDirection.IN).getAlpha();
-				functionName = id.getName();
+				functionName = id.get_name();
 			}
 			greql2Function = Greql2FunctionLibrary.instance().getGreqlFunction(
 					functionName);

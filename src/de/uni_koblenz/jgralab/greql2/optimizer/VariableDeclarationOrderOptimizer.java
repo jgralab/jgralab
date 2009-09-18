@@ -122,7 +122,7 @@ public class VariableDeclarationOrderOptimizer extends OptimizerBase {
 					Variable var = unit.getVariable();
 
 					logger.finer("  " + varDeclOrderBefore.get(i) + "  -->  v"
-							+ var.getId() + " (" + var.getName()
+							+ var.getId() + " (" + var.get_name()
 							+ "), changeCosts = "
 							+ unit.getVariableValueChangeCosts()
 							+ ", cardinality = "

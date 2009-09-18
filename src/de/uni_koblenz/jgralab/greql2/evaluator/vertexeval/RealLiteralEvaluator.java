@@ -60,7 +60,7 @@ public class RealLiteralEvaluator extends VertexEvaluator {
 
 	@Override
 	public JValue evaluate() throws EvaluateException {
-		return new JValue(vertex.getRealValue());
+		return new JValue(vertex.get_realValue());
 	}
 
 	@Override

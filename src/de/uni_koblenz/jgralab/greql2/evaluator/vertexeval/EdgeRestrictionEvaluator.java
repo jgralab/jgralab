@@ -68,8 +68,9 @@ public class EdgeRestrictionEvaluator extends VertexEvaluator {
 	 * Returns the typeCollection
 	 */
 	public JValueTypeCollection getTypeCollection() throws EvaluateException {
-		if (typeCollection == null)
+		if (typeCollection == null) {
 			evaluate();
+		}
 		return typeCollection;
 	}
 
@@ -124,7 +125,7 @@ public class EdgeRestrictionEvaluator extends VertexEvaluator {
 		IsRoleIdOf roleInc = vertex.getFirstIsRoleIdOf();
 		if (roleInc != null) {
 			RoleId role = (RoleId) roleInc.getAlpha();
-			validRole = role.getName();
+			validRole = role.get_name();
 		} else {
 			validRole = null;
 		}

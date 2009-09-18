@@ -715,13 +715,13 @@ public class SchemaGraph2XSD {
 		GraphClass gc = schemaGraph.getFirstGraphClass();
 
 		// Writes an element for the GraphClass
-		writeXSDElement(gc.getQualifiedName(), GRUML_PREFIX_GRAPHTYPE
-				+ gc.getQualifiedName());
+		writeXSDElement(gc.get_qualifiedName(), GRUML_PREFIX_GRAPHTYPE
+				+ gc.get_qualifiedName());
 
 		// Writes a complexType for the GraphClass and extending from the
 		// predefined GraphClass type.
-		writeStartXSDComplexType(
-				GRUML_PREFIX_GRAPHTYPE + gc.getQualifiedName(), false, true);
+		writeStartXSDComplexType(GRUML_PREFIX_GRAPHTYPE
+				+ gc.get_qualifiedName(), false, true);
 		writeStartXSDExtension(GRUML_GRAPHTYPE, true);
 
 		// Writes all attributes.
@@ -740,21 +740,21 @@ public class SchemaGraph2XSD {
 		// every non-abstract type.
 		String type;
 		for (VertexClass vc : schemaGraph.getVertexClassVertices()) {
-			if (vc.isIsAbstract() || !isIncluded(vc)) {
+			if (vc.is_abstract() || !isIncluded(vc)) {
 				continue;
 			}
 
-			type = GRUML_PREFIX_VERTEXTYPE + vc.getQualifiedName();
-			writeXSDElement(vc.getQualifiedName(), type);
+			type = GRUML_PREFIX_VERTEXTYPE + vc.get_qualifiedName();
+			writeXSDElement(vc.get_qualifiedName(), type);
 			vertices.put(type, vc);
 		}
 		for (EdgeClass ec : schemaGraph.getEdgeClassVertices()) {
-			if (ec.isIsAbstract() || !isIncluded(ec)) {
+			if (ec.is_abstract() || !isIncluded(ec)) {
 				continue;
 			}
 
-			type = GRUML_PREFIX_EDGETYPE + ec.getQualifiedName();
-			writeXSDElement(ec.getQualifiedName(), type);
+			type = GRUML_PREFIX_EDGETYPE + ec.get_qualifiedName();
+			writeXSDElement(ec.get_qualifiedName(), type);
 			edges.put(type, ec);
 		}
 
@@ -865,7 +865,7 @@ public class SchemaGraph2XSD {
 		} else {
 			// Handles unforeseen left out Domain types.
 			throw new RuntimeException("The type '" + domain.getClass()
-					+ "' of domain '" + domain.getQualifiedName()
+					+ "' of domain '" + domain.get_qualifiedName()
 					+ "' is not supported.");
 		}
 	}
@@ -876,7 +876,7 @@ public class SchemaGraph2XSD {
 		writeStartXSDRestriction(XSD_NS_PREFIX_PLUS_COLON + XSD_DOMAIN_STRING,
 				true);
 		// Loop over all enumeration constant strings
-		for (String enumConst : domain.getEnumConstants()) {
+		for (String enumConst : domain.get_enumConstants()) {
 			// Writes a enumeration element, which contains the current
 			// enumeration
 			// constant string as value of the attribute "value".
@@ -938,7 +938,7 @@ public class SchemaGraph2XSD {
 
 		// Creates a corresponding XML namespace for the Schema
 		Schema schema = schemaGraph.getFirstSchema();
-		String namespace = schema.getPackagePrefix() + "." + schema.getName();
+		String namespace = schema.get_packagePrefix() + "." + schema.get_name();
 		namespace = UtilityMethods.generateURI(namespace);
 
 		// Writes the generated namespace
@@ -1152,7 +1152,7 @@ public class SchemaGraph2XSD {
 	 * @throws XMLStreamException
 	 */
 	private void writeAttribute(Attribute attribute) throws XMLStreamException {
-		String name = attribute.getName();
+		String name = attribute.get_name();
 		Domain type = (Domain) attribute.getFirstHasDomain(EdgeDirection.OUT)
 				.getOmega();
 		writeXSDAttribute(name, getXSDType(type), XSD_REQUIRED);
@@ -1216,7 +1216,7 @@ public class SchemaGraph2XSD {
 			// nothing to do here
 		} else {
 			throw new RuntimeException("Don't know what to do with '"
-					+ attrElemClass.getQualifiedName() + "'.");
+					+ attrElemClass.get_qualifiedName() + "'.");
 		}
 	}
 
@@ -1283,12 +1283,12 @@ public class SchemaGraph2XSD {
 				 * Domain attributedElementClass := The name of the
 				 * AttributedElementClass, which defines the current Attribute.
 				 */
-				stringWriter.append(a.getName());
+				stringWriter.append(a.get_name());
 				stringWriter.append(" : ");
 				stringWriter.append(((Domain) a.getFirstHasDomain().getOmega())
-						.getQualifiedName());
+						.get_qualifiedName());
 				stringWriter.append(" (from ");
-				stringWriter.append(e.getValue().getQualifiedName());
+				stringWriter.append(e.getValue().get_qualifiedName());
 				stringWriter.append(")");
 			}
 		}
@@ -1318,7 +1318,7 @@ public class SchemaGraph2XSD {
 				.getHasRecordDomainComponentIncidences(EdgeDirection.OUT)) {
 			// Puts the current Attribute as String with it's corresponding
 			// Domain as String in the SortedMap.
-			map.put(component.getName(),
+			map.put(component.get_name(),
 					getXSDTypeWithoutPrefix((Domain) component.getOmega()));
 		}
 
@@ -1375,7 +1375,7 @@ public class SchemaGraph2XSD {
 		}
 		// This case ensures, that not handled domain types will be pointed out.
 		throw new RuntimeException("Unknown domain '"
-				+ domain.getQualifiedName() + "'.");
+				+ domain.get_qualifiedName() + "'.");
 	}
 
 	/**
@@ -1407,11 +1407,11 @@ public class SchemaGraph2XSD {
 		} else {
 			// Not handled types will be pointed out.
 			throw new RuntimeException("Unknown domain '"
-					+ domain.getQualifiedName() + "'.");
+					+ domain.get_qualifiedName() + "'.");
 		}
 
 		// The Qualified Name will be added to.
-		qualifiedName += domain.getQualifiedName();
+		qualifiedName += domain.get_qualifiedName();
 		assert (!domainMap.values().contains(qualifiedName)) : "FIXME! \"domainMap\" already contains a string \""
 				+ qualifiedName + "\" of the Domain '" + domain + "'!";
 

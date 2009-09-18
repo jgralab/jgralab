@@ -60,7 +60,7 @@ public class StringLiteralEvaluator extends VertexEvaluator {
 
 	@Override
 	public JValue evaluate() throws EvaluateException {
-		return new JValue(vertex.getStringValue());
+		return new JValue(vertex.get_stringValue());
 	}
 
 	@Override

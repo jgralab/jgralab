@@ -65,12 +65,13 @@ public class BoolLiteralEvaluator extends VertexEvaluator {
 
 	@Override
 	public JValue evaluate() throws EvaluateException {
-		if (vertex.getBoolValue() == TrivalentBoolean.TRUE)
+		if (vertex.get_boolValue() == TrivalentBoolean.TRUE) {
 			return new JValue(Boolean.TRUE);
-		else if (vertex.getBoolValue() == TrivalentBoolean.FALSE)
+		} else if (vertex.get_boolValue() == TrivalentBoolean.FALSE) {
 			return new JValue(Boolean.FALSE);
-		else
+		} else {
 			return new JValue(JValueBoolean.NULL);
+		}
 	}
 
 	@Override
@@ -82,8 +83,9 @@ public class BoolLiteralEvaluator extends VertexEvaluator {
 	public double calculateEstimatedSelectivity(GraphSize graphSize) {
 		// true has selectivity 1, but false and null can never be true, so
 		// their selectivity is 0.
-		if (vertex.getBoolValue() == TrivalentBoolean.TRUE)
+		if (vertex.get_boolValue() == TrivalentBoolean.TRUE) {
 			return 1;
+		}
 		return 0;
 	}
 }

@@ -229,19 +229,19 @@ public class SyntaxGraphEntry {
 		String costModelClassSimple = "";
 
 		Greql2Expression g2e = syntaxGraph.getFirstGreql2Expression();
-		g2e.setQueryText(queryText);
+		g2e.set_queryText(queryText);
 
 		if (optimizer != null) {
 			optimizerClass = optimizer.getClass().getName();
 			optimizerClassSimple = optimizer.getClass().getSimpleName();
 		}
-		g2e.setOptimizer(optimizerClass);
+		g2e.set_optimizer(optimizerClass);
 
 		if (costModel != null) {
 			costModelClass = costModel.getClass().getName();
 			costModelClassSimple = costModel.getClass().getSimpleName();
 		}
-		g2e.setCostModel(costModelClass);
+		g2e.set_costModel(costModelClass);
 
 		String fileName = directory.getPath() + File.separator
 				+ queryText.hashCode() + "-" + costModelClassSimple + "-"

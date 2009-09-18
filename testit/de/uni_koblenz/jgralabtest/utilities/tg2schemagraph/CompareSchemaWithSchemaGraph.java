@@ -108,9 +108,9 @@ public class CompareSchemaWithSchemaGraph {
 
 		// Compares there names and package prefixes
 		assertEquals("Both Schema objects have a different name.", schema
-				.getName(), gSchema.getName());
+				.getName(), gSchema.get_name());
 		assertEquals("Both Schema objects have a different package prefix.",
-				schema.getPackagePrefix(), gSchema.getPackagePrefix());
+				schema.getPackagePrefix(), gSchema.get_packagePrefix());
 
 		// GRAPHCLASS
 
@@ -163,7 +163,7 @@ public class CompareSchemaWithSchemaGraph {
 
 		// Comparison of the QualifiedName
 		assertEquals("Both Package objects have a different name.", xPackage
-				.getQualifiedName(), gPackage.getQualifiedName());
+				.getQualifiedName(), gPackage.get_qualifiedName());
 
 		// DOMAINS
 
@@ -203,8 +203,8 @@ public class CompareSchemaWithSchemaGraph {
 			Domain gDomain = (Domain) containsDomain.getOmega();
 
 			// Gets the simpleName for querying a the right domain
-			String qualifiedName = schema.getDomain(gDomain.getQualifiedName())
-					.getSimpleName();
+			String qualifiedName = schema
+					.getDomain(gDomain.get_qualifiedName()).getSimpleName();
 
 			// gQualifiedName = removeWhiteSpaces(gQualifiedName);
 			// qualifiedName = removeWhiteSpaces(qualifiedName);
@@ -286,7 +286,7 @@ public class CompareSchemaWithSchemaGraph {
 				VertexClass gVertexClass = (VertexClass) omega;
 				// Retrieving the simple name of the corresponding VertexClass
 				String simpleName = schema.getAttributedElementClass(
-						gVertexClass.getQualifiedName()).getSimpleName();
+						gVertexClass.get_qualifiedName()).getSimpleName();
 				// Queries, removes and compares at the same time two
 				// VertexClass objects
 				compareVertexClass(vertexClasses.remove(simpleName),
@@ -296,7 +296,7 @@ public class CompareSchemaWithSchemaGraph {
 				EdgeClass gEdgeClass = (EdgeClass) omega;
 				// Retrieving the simple name of the corresponding VertexClass
 				String simpleName = schema.getAttributedElementClass(
-						gEdgeClass.getQualifiedName()).getSimpleName();
+						gEdgeClass.get_qualifiedName()).getSimpleName();
 				// Queries, removes and compares at the same time two EdgeClass
 				// objects
 				compareEdgeClass(edgeClasses.remove(simpleName), gEdgeClass);
@@ -342,7 +342,7 @@ public class CompareSchemaWithSchemaGraph {
 					containsSubPackage.getOmega() instanceof Package);
 			Package gSubPackage = (Package) containsSubPackage.getOmega();
 			de.uni_koblenz.jgralab.schema.Package subpackage = schema
-					.getPackage(gSubPackage.getQualifiedName());
+					.getPackage(gSubPackage.get_qualifiedName());
 
 			// The references shouldn't be null
 			assertTrue("There is no corresponding Package in Schema.",
@@ -373,7 +373,7 @@ public class CompareSchemaWithSchemaGraph {
 
 		// Compares the QualifiedName
 		assertEquals("Both Domain objects should have a equal QualifiedName",
-				domain.getQualifiedName(), gDomain.getQualifiedName());
+				domain.getQualifiedName(), gDomain.get_qualifiedName());
 
 		// Differentiated comparison of different Domain types
 		if (domain instanceof de.uni_koblenz.jgralab.schema.MapDomain
@@ -433,9 +433,9 @@ public class CompareSchemaWithSchemaGraph {
 			// The comparison of the Component name is missed out, because it is
 			// implicitly done.
 			assertEquals("Both DomainComponents don't have an equal name.",
-					components.remove(hasRecordDomainComponent.getName())
+					components.remove(hasRecordDomainComponent.get_name())
 							.getQualifiedName(), domainComponent
-							.getQualifiedName());
+							.get_qualifiedName());
 		}
 		// The map should be empty or there are some components left over
 		assertTrue("There are more Components in Schema then in SchemaGraph",
@@ -467,7 +467,7 @@ public class CompareSchemaWithSchemaGraph {
 		assertEquals(
 				"Both key Domain objects should have the same QualifiedName.",
 				domain.getKeyDomain().getQualifiedName(), gKeyDomain
-						.getQualifiedName());
+						.get_qualifiedName());
 
 		// VALUE DOMAIN
 		HasValueDomain hasValueDomain = gDomain
@@ -484,7 +484,7 @@ public class CompareSchemaWithSchemaGraph {
 		assertEquals(
 				"Both value Domain objects should have an equal QualifiedName.",
 				domain.getValueDomain().getQualifiedName(), gValueDomain
-						.getQualifiedName());
+						.get_qualifiedName());
 	}
 
 	/**
@@ -514,7 +514,7 @@ public class CompareSchemaWithSchemaGraph {
 		assertEquals(
 				"Both base Domain objects should have an equal QualifiedName.",
 				domain.getBaseDomain().getQualifiedName(), gBaseDomain
-						.getQualifiedName());
+						.get_qualifiedName());
 	}
 
 	/**
@@ -529,7 +529,7 @@ public class CompareSchemaWithSchemaGraph {
 			de.uni_koblenz.jgralab.schema.EnumDomain domain, EnumDomain gDomain) {
 
 		List<String> enumConstants = domain.getConsts();
-		List<String> gEnumConstants = gDomain.getEnumConstants();
+		List<String> gEnumConstants = gDomain.get_enumConstants();
 
 		assertTrue("The size of enum constants are not equal.", enumConstants
 				.size() == gEnumConstants.size());
@@ -556,10 +556,10 @@ public class CompareSchemaWithSchemaGraph {
 
 		// Comparing the attribute \"isAbstract\"
 		assertEquals("Attribute \"isAbstract\" is different.", element
-				.isAbstract(), gElement.isIsAbstract());
+				.isAbstract(), gElement.is_abstract());
 		// Comparing the QualifiedName
 		assertEquals("Attribute \"qualifiedName\" is different.", element
-				.getQualifiedName(), gElement.getQualifiedName());
+				.getQualifiedName(), gElement.get_qualifiedName());
 
 		// Comparing all other Attributes and Constraints
 		compareAttributes(element, gElement);
@@ -602,8 +602,8 @@ public class CompareSchemaWithSchemaGraph {
 			// It gets, removes and compare the QualifiedNames
 			assertEquals(
 					"SuperClasses of these AttributeElementClass objects are different.",
-					superClasses.remove(element.getQualifiedName())
-							.getQualifiedName(), element.getQualifiedName());
+					superClasses.remove(element.get_qualifiedName())
+							.getQualifiedName(), element.get_qualifiedName());
 		}
 
 		// The map should be empty after the comparison.
@@ -648,8 +648,8 @@ public class CompareSchemaWithSchemaGraph {
 			// Gets, removes and compares the QualifiedNames
 			assertEquals(
 					"SuperClasses of these AttributeElementClass objects are different.",
-					superClasses.remove(element.getQualifiedName())
-							.getQualifiedName(), element.getQualifiedName());
+					superClasses.remove(element.get_qualifiedName())
+							.getQualifiedName(), element.get_qualifiedName());
 		}
 
 		// After the comparison the map should be empty
@@ -679,7 +679,7 @@ public class CompareSchemaWithSchemaGraph {
 			AggregationClass gAggregationClass = (AggregationClass) gEdgeClass;
 			assertEquals("These to edges are aggregated different.",
 					aggregationClass.isAggregateFrom(), gAggregationClass
-							.isAggregateFrom());
+							.is_aggregateFrom());
 		}
 	}
 
@@ -712,23 +712,23 @@ public class CompareSchemaWithSchemaGraph {
 		assertEquals(edgeClass.getQualifiedName()
 				+ ": Both \"To\" edges should have the same QualifiedName.",
 				edgeClass.getTo().getQualifiedName(), vertexClass
-						.getQualifiedName());
+						.get_qualifiedName());
 		assertEquals(edgeClass.getQualifiedName()
 				+ ": Both \"To\" edges should have the same min value.",
-				edgeClass.getToMin(), to.getMin());
+				edgeClass.getToMin(), to.get_min());
 		assertEquals(edgeClass.getQualifiedName()
 				+ ": Both \"To\" edges should have the same max value.",
-				edgeClass.getToMax(), to.getMax());
+				edgeClass.getToMax(), to.get_max());
 		assertEquals(edgeClass.getQualifiedName()
 				+ ": Both \"To\" edges should have the same RoleName.",
-				edgeClass.getToRolename(), to.getRoleName());
+				edgeClass.getToRolename(), to.get_roleName());
 
 		// Comparing the redefined Roles
 		Set<String> redefinedRoles, gRedefinedRoles;
 
 		// Gets the redefined roles
 		redefinedRoles = edgeClass.getRedefinedToRoles();
-		gRedefinedRoles = to.getRedefinedRoles();
+		gRedefinedRoles = to.get_redefinedRoles();
 
 		compareRedefinedRoles(redefinedRoles, gRedefinedRoles);
 	}
@@ -763,17 +763,17 @@ public class CompareSchemaWithSchemaGraph {
 		// QualifiedName, min, max and rolename are compared.
 		assertEquals("Both \"From\" edges should have the same QualifiedName.",
 				edgeClass.getFrom().getQualifiedName(), vertexClass
-						.getQualifiedName());
+						.get_qualifiedName());
 		assertEquals("Both \"From\" edges should have the same min value.",
-				edgeClass.getFromMin(), from.getMin());
+				edgeClass.getFromMin(), from.get_min());
 		assertEquals("Both \"From\" edges should have the same max value.",
-				edgeClass.getFromMax(), from.getMax());
+				edgeClass.getFromMax(), from.get_max());
 		assertEquals("Both \"From\" edges should have the same RoleName.",
-				edgeClass.getFromRolename(), from.getRoleName());
+				edgeClass.getFromRolename(), from.get_roleName());
 
 		// Gets the redefined roles
 		redefinedRoles = edgeClass.getRedefinedFromRoles();
-		gRedefinedRoles = from.getRedefinedRoles();
+		gRedefinedRoles = from.get_redefinedRoles();
 
 		compareRedefinedRoles(redefinedRoles, gRedefinedRoles);
 	}
@@ -832,7 +832,7 @@ public class CompareSchemaWithSchemaGraph {
 			// map
 
 			assertTrue("Attribute is not include in the AttributeMap.",
-					attributes.containsKey(gAttribute.getName()));
+					attributes.containsKey(gAttribute.get_name()));
 
 			// Get the Domain
 			HasDomain hasDomain = gAttribute.getFirstHasDomain(OUTGOING);
@@ -844,7 +844,7 @@ public class CompareSchemaWithSchemaGraph {
 					.getNextHasDomain(OUTGOING) != null);
 
 			// Compares both Domain object with their QualifiedName
-			compareDomain(attributes.remove(gAttribute.getName()).getDomain(),
+			compareDomain(attributes.remove(gAttribute.get_name()).getDomain(),
 					(Domain) vertex);
 		}
 
@@ -889,21 +889,21 @@ public class CompareSchemaWithSchemaGraph {
 			for (de.uni_koblenz.jgralab.schema.Constraint constraint : element
 					.getConstraints()) {
 
-				equal = constraint.getMessage()
-						.equals(gConstraint.getMessage())
+				equal = constraint.getMessage().equals(
+						gConstraint.get_message())
 						&& constraint.getPredicate().equals(
-								gConstraint.getPredicateQuery());
+								gConstraint.get_predicateQuery());
 				// If all String objects are present
 				foundMatch |= equal
 						&& (constraint.getOffendingElementsQuery() != null)
-						&& (gConstraint.getOffendingElementsQuery() != null)
+						&& (gConstraint.get_offendingElementsQuery() != null)
 						&& constraint.getOffendingElementsQuery().equals(
-								gConstraint.getOffendingElementsQuery());
+								gConstraint.get_offendingElementsQuery());
 				// If all String objects except for "OffendingElementQuery" are
 				// present
 				foundMatch |= equal
 						&& (constraint.getOffendingElementsQuery() == null)
-						&& (gConstraint.getOffendingElementsQuery() == null);
+						&& (gConstraint.get_offendingElementsQuery() == null);
 			}
 			// One match should be found!
 			assertTrue("No Match have been found for all Constraints.",
