@@ -88,6 +88,12 @@ public class EnumConstant extends AbstractGreql2Function {
 		Schema schema = graph.getSchema();
 
 		EnumDomain enumDomain = (EnumDomain) schema.getDomain(enumDomainName);
+
+		if (enumDomain == null) {
+			throw new EvaluateException("There's no EnumDomain named '"
+					+ enumDomainName + "'.");
+		}
+
 		JValue result = null;
 
 		String enumClassName = enumDomain.getJavaClassName(schema
