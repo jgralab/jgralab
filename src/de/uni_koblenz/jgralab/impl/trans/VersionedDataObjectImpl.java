@@ -143,7 +143,6 @@ public abstract class VersionedDataObjectImpl<E> implements
 		this.name = name;
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
 	public void createNewTemporaryValue(Transaction transaction) {
 		// assure that current transaction is valid for creating a new temporary
