@@ -29,7 +29,6 @@ import java.util.ArrayList;
 
 import de.uni_koblenz.jgralab.BooleanGraphMarker;
 import de.uni_koblenz.jgralab.Graph;
-import de.uni_koblenz.jgralab.M1ClassManager;
 import de.uni_koblenz.jgralab.greql2.exception.EvaluateException;
 import de.uni_koblenz.jgralab.greql2.exception.WrongFunctionParameterException;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
@@ -94,8 +93,6 @@ public class EnumConstant extends AbstractGreql2Function {
 		String enumClassName = enumDomain.getJavaClassName(schema
 				.getPackagePrefix());
 		try {
-			assert M1ClassManager.instance(schema.getQualifiedName()) == schema
-					.getClass().getClassLoader();
 			Class<?> myEnum = Class.forName(enumClassName, false, schema
 					.getClass().getClassLoader());
 			Method fromString = myEnum.getMethod("valueOf",
