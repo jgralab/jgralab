@@ -177,7 +177,7 @@ public class RecordCodeGenerator extends CodeGenerator {
 			delim = ", ";
 			sb.append(rdc.getValue().getJavaAttributeImplementationTypeName(
 					schemaRootPackageName));
-			sb.append(" ");
+			sb.append(" _");
 			sb.append(rdc.getKey());
 
 			CodeBlock assign = null;

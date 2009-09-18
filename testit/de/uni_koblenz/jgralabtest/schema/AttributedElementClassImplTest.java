@@ -203,32 +203,6 @@ public abstract class AttributedElementClassImplTest {
 				.containsAttribute(invalidAttributeName));
 	}
 
-	/**
-	 * addAttribute(QualifiedName, Domain)
-	 * 
-	 * TEST CASE: Adding an attribute with a name containing a reserved Java
-	 * word
-	 */
-	@Test
-	public final void testAddAttribute7() {
-		String invalidAttributeName = "abstract";
-
-		int attributeCountBefore = attributedElement.getAttributeCount();
-
-		try {
-			attributedElement.addAttribute(invalidAttributeName, schema
-					.getBooleanDomain());
-			// Assert.fail("ReservedWordException expected!");
-		} catch (ReservedWordException e) {
-		}
-
-		// The number of attributes does not change
-		Assert.assertEquals(attributeCountBefore, attributedElement
-				.getAttributeCount());
-		Assert.assertFalse(attributedElement
-				.containsAttribute(invalidAttributeName));
-	}
-
 	/*
 	 * Tests for the addConstraint(String) method.
 	 */
