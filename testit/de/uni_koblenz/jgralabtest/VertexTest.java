@@ -187,7 +187,7 @@ public class VertexTest {
 	@Test
 	public void getIdTest0() {
 		Vertex v = graph.createDoubleSubNode();
-	//	assertEquals(1, v.getId());
+		// assertEquals(1, v.getId());
 		Vertex w = graph.createDoubleSubNode();
 		assertEquals(2, w.getId());
 		graph.deleteVertex(v);
@@ -7579,7 +7579,7 @@ public class VertexTest {
 	public void graphModifiedTest3() {
 		Vertex v = graph.createDoubleSubNode();
 		long graphversion = graph.getGraphVersion();
-		((DoubleSubNode) v).setNumber(4);
+		((DoubleSubNode) v).set_number(4);
 		assertEquals(++graphversion, graph.getGraphVersion());
 	}
 
@@ -7670,9 +7670,9 @@ public class VertexTest {
 		VertexTestGraph loadedgraph = (VertexTestGraph) GraphIO
 				.loadGraphFromFile("test.tg", null);
 		DoubleSubNode loadedv0 = loadedgraph.getFirstDoubleSubNode();
-		assertEquals(v0.getName(), loadedv0.getName());
-		assertEquals(v0.getNumber(), loadedv0.getNumber());
-		assertEquals(v0.getNodeMap(), loadedv0.getNodeMap());
+		assertEquals(v0.get_name(), loadedv0.get_name());
+		assertEquals(v0.get_number(), loadedv0.get_number());
+		assertEquals(v0.get_nodeMap(), loadedv0.get_nodeMap());
 		// delete created file
 		System.gc();
 		reader.close();
@@ -7687,12 +7687,12 @@ public class VertexTest {
 	public void writeReadAttributeValues1() throws GraphIOException,
 			IOException {
 		DoubleSubNode v0 = graph.createDoubleSubNode();
-		v0.setName("NameVonV0");
-		v0.setNumber(17);
+		v0.set_name("NameVonV0");
+		v0.set_number(17);
 		HashMap<Integer, String> map = new HashMap<Integer, String>();
 		map.put(1, "First");
 		map.put(2, "Second");
-		v0.setNodeMap(map);
+		v0.set_nodeMap(map);
 		// test of writeAttributeValues
 		GraphIO.saveGraphToFile("test.tg", graph, null);
 		LineNumberReader reader = new LineNumberReader(
@@ -7724,9 +7724,9 @@ public class VertexTest {
 		VertexTestGraph loadedgraph = (VertexTestGraph) GraphIO
 				.loadGraphFromFile("test.tg", null);
 		DoubleSubNode loadedv0 = loadedgraph.getFirstDoubleSubNode();
-		assertEquals(v0.getName(), loadedv0.getName());
-		assertEquals(v0.getNumber(), loadedv0.getNumber());
-		assertEquals(v0.getNodeMap(), loadedv0.getNodeMap());
+		assertEquals(v0.get_name(), loadedv0.get_name());
+		assertEquals(v0.get_number(), loadedv0.get_number());
+		assertEquals(v0.get_nodeMap(), loadedv0.get_nodeMap());
 		// delete created file
 		System.gc();
 		reader.close();
@@ -7744,9 +7744,9 @@ public class VertexTest {
 	public void getAttributeTest0() throws NoSuchFieldException {
 		DoubleSubNode v = graph.createDoubleSubNode();
 		HashMap<Integer, String> map = new HashMap<Integer, String>();
-		v.setNodeMap(map);
-		v.setName("test");
-		v.setNumber(4);
+		v.set_nodeMap(map);
+		v.set_name("test");
+		v.set_number(4);
 		assertEquals(map, v.getAttribute("nodeMap"));
 		assertEquals("test", v.getAttribute("name"));
 		assertEquals(4, v.getAttribute("number"));
@@ -7880,24 +7880,24 @@ public class VertexTest {
 	@Test
 	public void setGetNameTest0() {
 		DoubleSubNode v0 = graph.createDoubleSubNode();
-		v0.setName("aName");
-		assertEquals("aName", v0.getName());
-		v0.setName("bName");
-		assertEquals("bName", v0.getName());
-		v0.setName("cName");
-		assertEquals("cName", v0.getName());
+		v0.set_name("aName");
+		assertEquals("aName", v0.get_name());
+		v0.set_name("bName");
+		assertEquals("bName", v0.get_name());
+		v0.set_name("cName");
+		assertEquals("cName", v0.get_name());
 	}
 
 	// tests of the methods setNumber and getNumber
 	@Test
 	public void setGetNumberTest0() {
 		DoubleSubNode v0 = graph.createDoubleSubNode();
-		v0.setNumber(0);
-		assertEquals(0, v0.getNumber());
-		v0.setNumber(1);
-		assertEquals(1, v0.getNumber());
-		v0.setNumber(-1);
-		assertEquals(-1, v0.getNumber());
+		v0.set_number(0);
+		assertEquals(0, v0.get_number());
+		v0.set_number(1);
+		assertEquals(1, v0.get_number());
+		v0.set_number(-1);
+		assertEquals(-1, v0.get_number());
 	}
 
 	// tests of the methods setNodeMap and getNodeMap
@@ -7905,14 +7905,14 @@ public class VertexTest {
 	public void setGetNodeMapTest0() {
 		DoubleSubNode v0 = graph.createDoubleSubNode();
 		HashMap<Integer, String> map = new HashMap<Integer, String>();
-		v0.setNodeMap(map);
-		assertEquals(map, v0.getNodeMap());
+		v0.set_nodeMap(map);
+		assertEquals(map, v0.get_nodeMap());
 		map.put(1, "first");
-		v0.setNodeMap(map);
-		assertEquals(map, v0.getNodeMap());
+		v0.set_nodeMap(map);
+		assertEquals(map, v0.get_nodeMap());
 		map.put(2, "second");
-		v0.setNodeMap(map);
-		assertEquals(map, v0.getNodeMap());
+		v0.set_nodeMap(map);
+		assertEquals(map, v0.get_nodeMap());
 	}
 
 	// tests of the method addSource
@@ -8801,7 +8801,7 @@ public class VertexTest {
 		VertexImpl v2 = (VertexImpl) graph.createDoubleSubNode();
 		IncidenceImpl e1 = (IncidenceImpl) graph.createLink(
 				(AbstractSuperNode) v1, (SuperNode) v2);
-		e1.putEdgeAfter( e1);
+		e1.putEdgeAfter(e1);
 	}
 
 	// tests of the method void putIncidenceBefore(IncidenceImpl, IncidenceImpl)

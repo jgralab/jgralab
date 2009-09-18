@@ -261,11 +261,11 @@ public class Tg2GXL extends Tg2Whatever {
 
 			if (e.getThis() instanceof de.uni_koblenz.jgralab.grumlschema.structure.AttributedElementClass) {
 				thisVertex = ((de.uni_koblenz.jgralab.grumlschema.structure.AttributedElementClass) e
-						.getThis()).getQualifiedName();
+						.getThis()).get_qualifiedName();
 			}
 			if (e.getThat() instanceof de.uni_koblenz.jgralab.grumlschema.structure.AttributedElementClass) {
 				thatVertex = ((de.uni_koblenz.jgralab.grumlschema.structure.AttributedElementClass) e
-						.getThat()).getQualifiedName();
+						.getThat()).get_qualifiedName();
 			}
 
 			out.println("<edge id=\"e:" + e.getId() + "\" to=\"" + thatVertex

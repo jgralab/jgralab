@@ -60,7 +60,7 @@ public class IntLiteralEvaluator extends VertexEvaluator {
 
 	@Override
 	public JValue evaluate() throws EvaluateException {
-		return new JValue(vertex.getIntValue());
+		return new JValue(vertex.get_intValue());
 	}
 
 	@Override

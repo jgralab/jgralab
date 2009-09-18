@@ -69,9 +69,9 @@ public class TempAttributeTest extends TestCase {
 		}
 		assertEquals(2, edgeList.size());
 		Street s = (Street) edgeList.get(0);
-		assertEquals("e1", s.getName());
+		assertEquals("e1", s.get_name());
 		s = (Street) edgeList.get(1);
-		assertEquals("e3", s.getName());
+		assertEquals("e3", s.get_name());
 	}
 
 	public void testForEachStreet() {
@@ -83,9 +83,9 @@ public class TempAttributeTest extends TestCase {
 		}
 		assertEquals(2, edgeList.size());
 		Street s = (Street) edgeList.get(0);
-		assertEquals("e1", s.getName());
+		assertEquals("e1", s.get_name());
 		s = (Street) edgeList.get(1);
-		assertEquals("e3", s.getName());
+		assertEquals("e3", s.get_name());
 	}
 
 	public void testForEachBridge() {
@@ -117,8 +117,8 @@ public class TempAttributeTest extends TestCase {
 		}
 		assertEquals(2, edgeList.size());
 		Street s = (Street) edgeList.get(0);
-		assertEquals("e1", s.getName());
+		assertEquals("e1", s.get_name());
 		s = (Street) edgeList.get(1);
-		assertEquals("e3", s.getName());
+		assertEquals("e3", s.get_name());
 	}
 }

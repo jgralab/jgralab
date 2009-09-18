@@ -28,7 +28,7 @@ public class False extends Literal {
 	@Override
 	public Expression toExpression() {
 		BoolLiteral bool = greqlEvaluator.getSyntaxGraph().createBoolLiteral();
-		bool.setBoolValue(TrivalentBoolean.FALSE);
+		bool.set_boolValue(TrivalentBoolean.FALSE);
 		return bool;
 	}
 

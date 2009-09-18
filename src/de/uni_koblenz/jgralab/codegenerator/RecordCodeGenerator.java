@@ -105,7 +105,6 @@ public class RecordCodeGenerator extends CodeGenerator {
 				.entrySet()) {
 			CodeSnippet getterCode = new CodeSnippet(true);
 			getterCode.setVariable("name", rdc.getKey());
-			getterCode.setVariable("cName", camelCase(rdc.getKey()));
 			getterCode.setVariable("isOrGet", rdc.getValue().getJavaClassName(
 					schemaRootPackageName).equals("Boolean") ? "is" : "get");
 			getterCode.setVariable("type", rdc.getValue()
@@ -117,15 +116,15 @@ public class RecordCodeGenerator extends CodeGenerator {
 			if (rdc.getValue().isComposite()) {
 				getterCode.add("@SuppressWarnings(\"unchecked\")");
 			}
-			getterCode.add("public #type# #isOrGet##cName#() {");
+			getterCode.add("public #type# #isOrGet#_#name#() {");
 			getterCode.add("\tif(versionedRecord == null)");
-			getterCode.add("\t\treturn #name#;");
+			getterCode.add("\t\treturn _#name#;");
 			if (rdc.getValue().isComposite()) {
 				getterCode
-						.add("\treturn (#ctype#) versionedRecord.getValidValue(graph.getCurrentTransaction()).#name#.clone();");
+						.add("\treturn (#ctype#) versionedRecord.getValidValue(graph.getCurrentTransaction())._#name#.clone();");
 			} else {
 				getterCode
-						.add("\treturn versionedRecord.getValidValue(graph.getCurrentTransaction()).#name#;");
+						.add("\treturn versionedRecord.getValidValue(graph.getCurrentTransaction())._#name#;");
 			}
 			getterCode.add("}");
 			code.addNoIndent(getterCode);
@@ -144,8 +143,8 @@ public class RecordCodeGenerator extends CodeGenerator {
 				.entrySet()) {
 			CodeSnippet setterCode = new CodeSnippet(true);
 			setterCode.setVariable("name", rdc.getKey());
-			setterCode.setVariable("setter", "set" + camelCase(rdc.getKey())
-					+ "(#type# #name#)");
+			setterCode.setVariable("setter", "set_" + rdc.getKey()
+					+ "(#type# _#name#)");
 			setterCode.setVariable("type", rdc.getValue()
 					.getJavaAttributeImplementationTypeName(
 							schemaRootPackageName));
@@ -154,11 +153,11 @@ public class RecordCodeGenerator extends CodeGenerator {
 							schemaRootPackageName));
 			setterCode.add("public void #setter# {");
 			setterCode.add("\tif(versionedRecord == null)");
-			setterCode.add("\t\tthis.#name# = (#ctype#) #name#;");
+			setterCode.add("\t\tthis._#name# = (#ctype#) _#name#;");
 			setterCode
 					.add("\tversionedRecord.setValidValue(this, graph.getCurrentTransaction());");
 			setterCode
-					.add("\tversionedRecord.getValidValue(graph.getCurrentTransaction()).#name# = (#ctype#) #name#;");
+					.add("\tversionedRecord.getValidValue(graph.getCurrentTransaction())._#name# = (#ctype#) _#name#;");
 			setterCode.add("}");
 			code.addNoIndent(setterCode);
 		}
@@ -187,10 +186,10 @@ public class RecordCodeGenerator extends CodeGenerator {
 				String attrImplTypeName = rdc.getValue()
 						.getTransactionJavaAttributeImplementationTypeName(
 								schemaRootPackageName);
-				assign = new CodeSnippet("this.#name# = new "
-						+ attrImplTypeName + "(#name#);");
+				assign = new CodeSnippet("this._#name# = new "
+						+ attrImplTypeName + "(_#name#);");
 			} else {
-				assign = new CodeSnippet("this.#name# = #name#;");
+				assign = new CodeSnippet("this._#name# = _#name#;");
 			}
 			assign.setVariable("name", rdc.getKey());
 			code.add(assign);
@@ -216,9 +215,10 @@ public class RecordCodeGenerator extends CodeGenerator {
 						"public #simpleClassName#(java.util.Map<String, Object> fields) {"));
 		for (Entry<String, Domain> rdc : recordDomain.getComponents()
 				.entrySet()) {
-			CodeBlock assign = new CodeSnippet("this.#name# = ("
+			CodeBlock assign = new CodeSnippet("this._#name# = ("
 					+ rdc.getValue().getTransactionJavaClassName(
-							schemaRootPackageName) + ")fields.get(\"#name#\");");
+							schemaRootPackageName)
+					+ ")fields.get(\"_#name#\");");
 			assign.setVariable("name", rdc.getKey());
 			code.add(assign);
 		}
@@ -231,19 +231,20 @@ public class RecordCodeGenerator extends CodeGenerator {
 		addImports("#jgPackage#.GraphIO", "#jgPackage#.GraphIOException");
 		code
 				.addNoIndent(new CodeSnippet(true,
-						"public #simpleClassName#(GraphIO _io) throws GraphIOException {"));
-		code.add(new CodeSnippet("_io.match(\"(\");"));
+						"public #simpleClassName#(GraphIO io) throws GraphIOException {"));
+		code.add(new CodeSnippet("io.match(\"(\");"));
 		for (Entry<String, Domain> c : recordDomain.getComponents().entrySet()) {
 			code.add(c.getValue().getTransactionReadMethod(
-					schemaRootPackageName, "_" + c.getKey(), "_io"));
-			code.add(new CodeSnippet(c.getKey()
+					schemaRootPackageName, "tmp_" + c.getKey(), "io"));
+			code.add(new CodeSnippet("_"
+					+ c.getKey()
 					+ "= ("
 					+ c.getValue()
 							.getTransactionJavaAttributeImplementationTypeName(
-									schemaRootPackageName) + ") _" + c.getKey()
-					+ ";"));
+									schemaRootPackageName) + ") tmp_"
+					+ c.getKey() + ";"));
 		}
-		code.add(new CodeSnippet("_io.match(\")\");"));
+		code.add(new CodeSnippet("io.match(\")\");"));
 		code.addNoIndent(new CodeSnippet("}"));
 		return code;
 	}
@@ -255,16 +256,16 @@ public class RecordCodeGenerator extends CodeGenerator {
 		code
 				.addNoIndent(new CodeSnippet(
 						true,
-						"public void writeComponentValues(GraphIO _io) throws IOException, GraphIOException {",
-						"\t_io.writeSpace();", "\t_io.write(\"(\");",
-						"\t_io.noSpace();"));
+						"public void writeComponentValues(GraphIO io) throws IOException, GraphIOException {",
+						"\tio.writeSpace();", "\tio.write(\"(\");",
+						"\tio.noSpace();"));
 
 		for (Entry<String, Domain> c : recordDomain.getComponents().entrySet()) {
 			code.add(c.getValue().getWriteMethod(schemaRootPackageName,
-					c.getKey(), "_io"));
+					"_" + c.getKey(), "io"));
 		}
 
-		code.addNoIndent(new CodeSnippet("\t_io.write(\")\");", "}"));
+		code.addNoIndent(new CodeSnippet("\tio.write(\")\");", "}"));
 		return code;
 	}
 
@@ -272,7 +273,7 @@ public class RecordCodeGenerator extends CodeGenerator {
 		CodeList code = new CodeList();
 		for (Entry<String, Domain> rdc : recordDomain.getComponents()
 				.entrySet()) {
-			CodeSnippet s = new CodeSnippet(true, "protected #type# #field#;");
+			CodeSnippet s = new CodeSnippet(true, "protected #type# _#field#;");
 			s.setVariable("type", rdc.getValue()
 					.getTransactionJavaAttributeImplementationTypeName(
 							schemaRootPackageName));
@@ -293,7 +294,7 @@ public class RecordCodeGenerator extends CodeGenerator {
 		for (String key : recordDomain.getComponents().keySet()) {
 			CodeSnippet s = new CodeSnippet("sb.append(\"#delim#\");",
 					"sb.append(\"#key#\");", "sb.append(\"=\");",
-					"sb.append(#key##toString#);");
+					"sb.append(_#key##toString#);");
 
 			Domain domain = recordDomain.getComponents().get(key);
 			s.setVariable("delim", delim);
@@ -330,10 +331,10 @@ public class RecordCodeGenerator extends CodeGenerator {
 								+ rdc
 										.getValue()
 										.getTransactionJavaAttributeImplementationTypeName(
-												schemaRootPackageName) + ") "
+												schemaRootPackageName) + ") _"
 								+ rdc.getKey() + ".clone()");
 			} else {
-				constructorFields.append(rdc.getKey());
+				constructorFields.append("_" + rdc.getKey());
 			}
 			if ((count + 1) != size) {
 				constructorFields.append(", ");

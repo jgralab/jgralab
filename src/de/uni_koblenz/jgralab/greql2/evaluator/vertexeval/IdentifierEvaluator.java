@@ -58,7 +58,7 @@ public class IdentifierEvaluator extends VertexEvaluator {
 
 	@Override
 	public JValue evaluate() throws EvaluateException {
-		return new JValue(vertex.getName());
+		return new JValue(vertex.get_name());
 	}
 
 	@Override

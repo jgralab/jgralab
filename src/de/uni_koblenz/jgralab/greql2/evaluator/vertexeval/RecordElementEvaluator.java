@@ -62,7 +62,7 @@ public class RecordElementEvaluator extends VertexEvaluator {
 		if (id == null) {
 			RecordId idVertex = (RecordId) vertex.getFirstIsRecordIdOf(
 					EdgeDirection.IN).getAlpha();
-			id = idVertex.getName();
+			id = idVertex.get_name();
 		}
 		return id;
 	}

@@ -62,7 +62,7 @@ public class AggregationPathDescriptionEvaluator extends
 			typeCollection.addTypes(edgeRestEval.getTypeCollection());
 		}
 		createdNFA = NFA.createAggregationPathDescriptionNFA(
-				((AggregationPathDescription) vertex).isOutAggregation(),
+				((AggregationPathDescription) vertex).is_outAggregation(),
 				typeCollection, getEdgeRole(edgeRestEval));
 		return new JValue(createdNFA);
 	}

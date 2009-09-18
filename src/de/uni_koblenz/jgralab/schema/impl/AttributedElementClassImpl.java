@@ -42,7 +42,6 @@ import de.uni_koblenz.jgralab.schema.Schema;
 import de.uni_koblenz.jgralab.schema.exception.DuplicateAttributeException;
 import de.uni_koblenz.jgralab.schema.exception.InheritanceException;
 import de.uni_koblenz.jgralab.schema.exception.M1ClassAccessException;
-import de.uni_koblenz.jgralab.schema.exception.ReservedWordException;
 
 public abstract class AttributedElementClassImpl extends NamedElementImpl
 		implements AttributedElementClass {
@@ -115,10 +114,6 @@ public abstract class AttributedElementClassImpl extends NamedElementImpl
 							+ getQualifiedName()
 							+ "'. "
 							+ "A derived AttributedElementClass already contains this Attribute.");
-		}
-		if (Schema.RESERVED_JAVA_WORDS.contains(anAttribute.getName())) {
-			throw new ReservedWordException(anAttribute.getName(),
-					"attribute name");
 		}
 		attributeList.add(anAttribute);
 	}

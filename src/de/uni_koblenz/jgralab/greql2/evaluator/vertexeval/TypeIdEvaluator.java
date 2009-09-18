@@ -73,18 +73,18 @@ public class TypeIdEvaluator extends VertexEvaluator {
 			throws EvaluateException {
 		ArrayList<AttributedElementClass> returnTypes = new ArrayList<AttributedElementClass>();
 		AttributedElementClass elemClass = schema
-				.getAttributedElementClass(vertex.getName());
+				.getAttributedElementClass(vertex.get_name());
 		if (elemClass == null) {
-			elemClass = greqlEvaluator.getKnownType(vertex.getName());
+			elemClass = greqlEvaluator.getKnownType(vertex.get_name());
 			if (elemClass == null) {
-				throw new UnknownTypeException(vertex.getName(),
+				throw new UnknownTypeException(vertex.get_name(),
 						createPossibleSourcePositions());
 			} else {
-				vertex.setName(elemClass.getQualifiedName());
+				vertex.set_name(elemClass.getQualifiedName());
 			}
 		}
 		returnTypes.add(elemClass);
-		if (!vertex.isType()) {
+		if (!vertex.is_type()) {
 			returnTypes.addAll(elemClass.getAllSubClasses());
 		}
 		return returnTypes;
@@ -94,7 +94,7 @@ public class TypeIdEvaluator extends VertexEvaluator {
 	public JValue evaluate() throws EvaluateException {
 		List<AttributedElementClass> typeList = createTypeList(getDatagraph()
 				.getSchema());
-		return new JValueTypeCollection(typeList, vertex.isExcluded());
+		return new JValueTypeCollection(typeList, vertex.is_excluded());
 	}
 
 	@Override
@@ -119,10 +119,10 @@ public class TypeIdEvaluator extends VertexEvaluator {
 	public String getLoggingName() {
 		StringBuilder name = new StringBuilder();
 		name.append(vertex.getAttributedElementClass().getQualifiedName());
-		if (vertex.isType()) {
+		if (vertex.is_type()) {
 			name.append("-type");
 		}
-		if (vertex.isExcluded()) {
+		if (vertex.is_excluded()) {
 			name.append("-excluded");
 		}
 		return name.toString();

@@ -1581,14 +1581,14 @@ public class DefaultCostModel extends CostModelBase implements CostModel {
 						.getKnownVertexTypes()) / 2.0);
 		double selectivity = 1.0;
 		TypeId id = (TypeId) e.getVertex();
-		if (id.isType()) {
+		if (id.is_type()) {
 			selectivity = 1.0 / typesInSchema;
 		} else {
 			double avgSubclasses = (graphSize.getAverageEdgeSubclasses() + graphSize
 					.getAverageVertexSubclasses()) / 2.0;
 			selectivity = avgSubclasses / typesInSchema;
 		}
-		if (id.isExcluded()) {
+		if (id.is_excluded()) {
 			selectivity = 1 - selectivity;
 		}
 		return selectivity;

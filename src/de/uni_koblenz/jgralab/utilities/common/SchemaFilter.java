@@ -125,7 +125,7 @@ public class SchemaFilter {
 	 */
 	private void writeDomainDebugInformation(Domain d) {
 		writeIncludeOrExcludeInformation(d);
-		debugOutputStream.println(d.getQualifiedName());
+		debugOutputStream.println(d.get_qualifiedName());
 	}
 
 	/**
@@ -136,7 +136,7 @@ public class SchemaFilter {
 	 */
 	private void writeElementDebugInformation(GraphElementClass gec) {
 		writeIncludeOrExcludeInformation(gec);
-		debugOutputStream.println(gec.getQualifiedName());
+		debugOutputStream.println(gec.get_qualifiedName());
 	}
 
 	/**
@@ -320,7 +320,7 @@ public class SchemaFilter {
 		BooleanGraphMarker processed = new BooleanGraphMarker(schemaGraph);
 		for (VertexClass currentVertexClass : schemaGraph
 				.getVertexClassVertices()) {
-			if (currentVertexClass.isIsAbstract()) {
+			if (currentVertexClass.is_abstract()) {
 				// only process abstract VertexClasses
 				if (isVertexClassExcluded(processed, currentVertexClass)) {
 					includes.unmark(currentVertexClass);
@@ -341,7 +341,7 @@ public class SchemaFilter {
 	private boolean isVertexClassExcluded(BooleanGraphMarker processed,
 			VertexClass currentVertexClass) {
 		if (processed.isMarked(currentVertexClass)
-				|| !currentVertexClass.isIsAbstract()) {
+				|| !currentVertexClass.is_abstract()) {
 			return !includes.isMarked(currentVertexClass);
 		}
 		processed.mark(currentVertexClass);
@@ -392,7 +392,7 @@ public class SchemaFilter {
 	 */
 	private void includeOrExcludeIfMatches(boolean include,
 			GraphElementClass gec, Pattern currentPattern) {
-		if (currentPattern.matcher(gec.getQualifiedName()).matches()) {
+		if (currentPattern.matcher(gec.get_qualifiedName()).matches()) {
 			if (include) {
 				includes.mark(gec);
 			} else {

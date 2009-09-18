@@ -287,7 +287,7 @@ public class EarySelectionOptimizer extends OptimizerBase {
 		int i = 1;
 		StringBuilder sb = new StringBuilder();
 		for (Variable var : varsDeclaredByOrigSD) {
-			sb.append(var + " (" + var.getName() + ")");
+			sb.append(var + " (" + var.get_name() + ")");
 			if (i < varsSize) {
 				sb.append(", ");
 			}
@@ -323,18 +323,18 @@ public class EarySelectionOptimizer extends OptimizerBase {
 		for (Variable var : varsDeclaredByOrigSD) {
 			// The new outer Record-variable is named as concatenation of
 			// all variable names.
-			newOuterVarName.append(var.getName());
+			newOuterVarName.append(var.get_name());
 			RecordElement recElem = syntaxgraph.createRecordElement();
 			syntaxgraph.createIsRecordElementOf(recElem, newOuterRecord);
 			RecordId recId = syntaxgraph.createRecordId();
-			recId.setName(var.getName());
+			recId.set_name(var.get_name());
 			syntaxgraph.createIsRecordIdOf(recId, recElem);
 			syntaxgraph.createIsRecordExprOf(var, recElem);
 		}
 
 		// create the new outer record variable
 		Variable newOuterRecordVar = syntaxgraph.createVariable();
-		newOuterRecordVar.setName(newOuterVarName.toString());
+		newOuterRecordVar.set_name(newOuterVarName.toString());
 
 		// We create a new SimpleDeclaration that will be used as new outer
 		// SimpleDeclaration
@@ -383,7 +383,7 @@ public class EarySelectionOptimizer extends OptimizerBase {
 					"getValue", syntaxgraph);
 			syntaxgraph.createIsFunctionIdOf(funId, funApp);
 			Identifier identifier = syntaxgraph.createIdentifier();
-			identifier.setName(e.getKey().getName());
+			identifier.set_name(e.getKey().get_name());
 			syntaxgraph.createIsArgumentOf(newOuterRecordVar, funApp);
 			syntaxgraph.createIsArgumentOf(identifier, funApp);
 			// now reset all old outgoing edges of the variable to the new
@@ -401,7 +401,7 @@ public class EarySelectionOptimizer extends OptimizerBase {
 
 		logger.finer(optimizerHeaderString()
 				+ "(M1) Performing early selection transformation for "
-				+ origSD + " declaring variable " + var + " (" + var.getName()
+				+ origSD + " declaring variable " + var + " (" + var.get_name()
 				+ ") with predicates " + predicates);
 
 		// Create the new vertices

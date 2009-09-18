@@ -142,7 +142,7 @@ public class VariableDeclarationOrderUnit implements
 	@Override
 	public String toString() {
 		return dependentVertices.size() + " Expressions depend on " + variable
-				+ " (" + variable.getName() + ") resulting in costs of "
+				+ " (" + variable.get_name() + ") resulting in costs of "
 				+ getVariableValueChangeCosts() + " on value changes.";
 	}
 
@@ -174,10 +174,11 @@ public class VariableDeclarationOrderUnit implements
 
 		// If there can be no decision made on costs and cardinality, then the
 		// variable with the lower ID should come first.
-		if (variable.getId() < o.getVariable().getId())
+		if (variable.getId() < o.getVariable().getId()) {
 			return -1;
-		else
+		} else {
 			return 1;
+		}
 	}
 
 	/**

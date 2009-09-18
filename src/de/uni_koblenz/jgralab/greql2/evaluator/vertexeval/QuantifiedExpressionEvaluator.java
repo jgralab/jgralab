@@ -95,7 +95,7 @@ public class QuantifiedExpressionEvaluator extends VertexEvaluator {
 				.getVertexEvaluatorGraphMarker().getMark(b);
 
 		int noOfVariableCombinations = 0;
-		if (quantifier.getName().equals("exists")) {
+		if (quantifier.get_name().equals("exists")) {
 			// exists at least one
 			boolean foundNull = false;
 			while (declLayer.iterate(subgraph)) {
@@ -106,19 +106,21 @@ public class QuantifiedExpressionEvaluator extends VertexEvaluator {
 						if (tempResult.toBoolean() == JValueBoolean
 								.getTrueValue()) {
 							return new JValue(JValueBoolean.getTrueValue());
-						} else if (tempResult.toBoolean() == null)
+						} else if (tempResult.toBoolean() == null) {
 							foundNull = true;
+						}
 					} catch (JValueInvalidTypeException exception) {
 						throw new EvaluateException(
 								"Error evaluation Exists clause", exception);
 					}
 				}
 			}
-			if (foundNull)
+			if (foundNull) {
 				return new JValue(JValueBoolean.getNullValue());
-			else
+			} else {
 				return new JValue(JValueBoolean.getFalseValue());
-		} else if (quantifier.getName().equals("exists!")) {
+			}
+		} else if (quantifier.get_name().equals("exists!")) {
 			// exists exactly one
 			boolean foundTrue = false;
 			boolean foundNull = false;
@@ -131,8 +133,9 @@ public class QuantifiedExpressionEvaluator extends VertexEvaluator {
 								.getTrueValue()) {
 							if (foundTrue == true) {
 								return new JValue(JValueBoolean.getFalseValue());
-							} else
+							} else {
 								foundTrue = true;
+							}
 						} else if (tempResult.toBoolean() == JValueBoolean
 								.getNullValue()) {
 							foundNull = true;
@@ -151,7 +154,7 @@ public class QuantifiedExpressionEvaluator extends VertexEvaluator {
 				return new JValue(JValueBoolean.getTrueValue());
 			}
 			return new JValue(JValueBoolean.getFalseValue());
-		} else if (quantifier.getName().equals("forall")) {
+		} else if (quantifier.get_name().equals("forall")) {
 			// for all
 			while (declLayer.iterate(subgraph)) {
 				noOfVariableCombinations++;

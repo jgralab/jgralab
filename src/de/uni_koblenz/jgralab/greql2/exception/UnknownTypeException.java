@@ -47,7 +47,8 @@ public class UnknownTypeException extends QuerySourceException {
 				sourcePositions, cause);
 		for (SourcePosition sp : sourcePositions) {
 			logger.severe("UnknownTypeException");
-			logger.severe("  (" + sp.getOffset() + ", " + sp.getLength() + ")");
+			logger.severe("  (" + sp.get_offset() + ", " + sp.get_length()
+					+ ")");
 		}
 
 	}
@@ -58,7 +59,8 @@ public class UnknownTypeException extends QuerySourceException {
 				sourcePositions);
 		for (SourcePosition sp : sourcePositions) {
 			logger.severe("UnknownTypeException");
-			logger.severe("  (" + sp.getOffset() + ", " + sp.getLength() + ")");
+			logger.severe("  (" + sp.get_offset() + ", " + sp.get_length()
+					+ ")");
 		}
 	}
 

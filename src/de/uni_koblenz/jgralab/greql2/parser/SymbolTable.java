@@ -46,16 +46,16 @@ public class SymbolTable extends EasySymbolTable {
 			int offset = -1;
 			if (var.getFirstEdge(EdgeDirection.OUT) instanceof IsDeclaredVarOf) {
 				offset = ((IsDeclaredVarOf) var.getFirstEdge(EdgeDirection.OUT))
-						.getSourcePositions().get(0).getOffset();
+						.get_sourcePositions().get(0).get_offset();
 			} else if (var.getFirstEdge(EdgeDirection.OUT) instanceof IsBoundVarOf) {
 				offset = ((IsBoundVarOf) var.getFirstEdge(EdgeDirection.OUT))
-						.getSourcePositions().get(0).getOffset();
+						.get_sourcePositions().get(0).get_offset();
 			} else if (var.getFirstEdge(EdgeDirection.OUT) instanceof IsVarOf) {
 				offset = ((IsVarOf) var.getFirstEdge(EdgeDirection.OUT))
-						.getSourcePositions().get(0).getOffset();
+						.get_sourcePositions().get(0).get_offset();
 			}
 			throw new DuplicateVariableException(ident, ((Greql2Aggregation) v
-					.getFirstEdge(EdgeDirection.IN)).getSourcePositions(),
+					.getFirstEdge(EdgeDirection.IN)).get_sourcePositions(),
 					new SourcePosition(offset, ident.length()));
 		}
 	}

@@ -96,9 +96,9 @@ public class Greql2ExpressionEvaluator extends VertexEvaluator {
 	 */
 	@Override
 	public JValue evaluate() throws EvaluateException {
-		if (vertex.getImportedTypes() != null) {
+		if (vertex.get_importedTypes() != null) {
 			Schema graphSchema = graph.getSchema();
-			for (String importedType : vertex.getImportedTypes()) {
+			for (String importedType : vertex.get_importedTypes()) {
 				if (importedType.endsWith(".*")) {
 					String packageName = importedType.substring(0, importedType
 							.length() - 2);
@@ -131,10 +131,10 @@ public class Greql2ExpressionEvaluator extends VertexEvaluator {
 		while (inc != null) {
 			Variable currentBoundVariable = (Variable) inc.getAlpha();
 			JValue variableValue = boundVariables.get(currentBoundVariable
-					.getName());
+					.get_name());
 			if (variableValue == null) {
 				throw new UndefinedVariableException(currentBoundVariable
-						.getName(), createSourcePositions(inc));
+						.get_name(), createSourcePositions(inc));
 			}
 			VariableEvaluator variableEval = (VariableEvaluator) greqlEvaluator
 					.getVertexEvaluatorGraphMarker().getMark(
