@@ -1520,7 +1520,7 @@ public class JGraLabFacade {
 	 */
 	public boolean setGraphAttribute(int graphNo, int vId, String attrName,
 			double value) throws XmlRpcException {
-		return setGraphAttribute(graphNo, attrName, new Double(value));
+		return setGraphAttribute(graphNo, attrName, Double.valueOf(value));
 	}
 
 	/**
@@ -1774,7 +1774,7 @@ public class JGraLabFacade {
 	 */
 	public boolean setVertexAttribute(int graphNo, int vId, String attrName,
 			double value) throws XmlRpcException {
-		return setVertexAttribute(graphNo, vId, attrName, new Double(value));
+		return setVertexAttribute(graphNo, vId, attrName, Double.valueOf(value));
 	}
 
 	/**
@@ -2036,7 +2036,7 @@ public class JGraLabFacade {
 	 */
 	public boolean setEdgeAttribute(int graphNo, int eId, String attrName,
 			double value) throws XmlRpcException {
-		return setEdgeAttribute(graphNo, eId, attrName, new Double(value));
+		return setEdgeAttribute(graphNo, eId, attrName, Double.valueOf(value));
 	}
 
 	/**

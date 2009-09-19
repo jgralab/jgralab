@@ -54,7 +54,7 @@ public abstract class ArithmeticFunction extends AbstractGreql2Function {
 			case MINUS:
 				return new JValue(l1 - l2);
 			case DIV:
-				return new JValue(new Double(l1) / l2);
+				return new JValue(Double.valueOf(l1) / l2);
 			case TIMES:
 				return new JValue(l1 * l2);
 			default:
@@ -70,7 +70,7 @@ public abstract class ArithmeticFunction extends AbstractGreql2Function {
 			case MINUS:
 				return new JValue(i1 - i2);
 			case DIV:
-				return new JValue(new Double(i1) / i2);
+				return new JValue(Double.valueOf(i1) / i2);
 			case TIMES:
 				return new JValue(i1 * i2);
 			default:
