@@ -26,8 +26,12 @@ package de.uni_koblenz.jgralab.codegenerator;
 
 import java.util.Map.Entry;
 
+import de.uni_koblenz.jgralab.schema.BooleanDomain;
 import de.uni_koblenz.jgralab.schema.Domain;
+import de.uni_koblenz.jgralab.schema.EnumDomain;
+import de.uni_koblenz.jgralab.schema.IntegerDomain;
 import de.uni_koblenz.jgralab.schema.RecordDomain;
+import de.uni_koblenz.jgralab.schema.StringDomain;
 import de.uni_koblenz.jgralab.schema.impl.CollectionDomainImpl;
 import de.uni_koblenz.jgralab.schema.impl.MapDomainImpl;
 
@@ -217,8 +221,7 @@ public class RecordCodeGenerator extends CodeGenerator {
 				.entrySet()) {
 			CodeBlock assign = new CodeSnippet("this._#name# = ("
 					+ rdc.getValue().getTransactionJavaClassName(
-							schemaRootPackageName)
-					+ ")fields.get(\"_#name#\");");
+							schemaRootPackageName) + ")fields.get(\"#name#\");");
 			assign.setVariable("name", rdc.getKey());
 			code.add(assign);
 		}
@@ -273,12 +276,26 @@ public class RecordCodeGenerator extends CodeGenerator {
 		CodeList code = new CodeList();
 		for (Entry<String, Domain> rdc : recordDomain.getComponents()
 				.entrySet()) {
-			CodeSnippet s = new CodeSnippet(true, "protected #type# _#field#;");
-			s.setVariable("type", rdc.getValue()
-					.getTransactionJavaAttributeImplementationTypeName(
-							schemaRootPackageName));
-			s.setVariable("field", rdc.getKey());
-			code.addNoIndent(s);
+			Domain dom = rdc.getValue();
+			String fieldType = dom
+					.getTransactionJavaAttributeImplementationTypeName(schemaRootPackageName);
+			if (dom.isComposite() || dom instanceof EnumDomain
+					|| dom instanceof StringDomain) {
+				CodeSnippet s = new CodeSnippet(true,
+						"protected #type# _#field#;");
+				s.setVariable("field", rdc.getKey());
+				s.setVariable("type", fieldType);
+				code.addNoIndent(s);
+			} else {
+				CodeSnippet s = new CodeSnippet(true,
+						"protected #type# _#field# = #type#.valueOf(#initValue#);");
+				s.setVariable("field", rdc.getKey());
+				s.setVariable("type", fieldType);
+				s.setVariable("initValue",
+						dom instanceof BooleanDomain ? "false"
+								: dom instanceof IntegerDomain ? "0" : "0.0");
+				code.addNoIndent(s);
+			}
 		}
 		return code;
 	}

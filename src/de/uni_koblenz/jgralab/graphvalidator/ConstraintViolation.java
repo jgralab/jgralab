@@ -79,7 +79,7 @@ public abstract class ConstraintViolation implements
 						other.getOffendingElements())) {
 					return 0;
 				}
-				return new Integer(me.getOffendingElements().hashCode())
+				return Integer.valueOf(me.getOffendingElements().hashCode())
 						.compareTo(other.getOffendingElements().hashCode());
 			}
 			if (other.getOffendingElements() == null) {
