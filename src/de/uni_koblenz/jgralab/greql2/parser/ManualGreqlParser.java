@@ -145,7 +145,7 @@ public class ManualGreqlParser extends ManualParserHelper {
 		if (current + i < tokens.size()) {
 			return tokens.get(current + i).type;
 		} else {
-			return null;
+			return TokenTypes.EOF;
 		}
 	}
 
@@ -246,11 +246,11 @@ public class ManualGreqlParser extends ManualParserHelper {
 		return !predicateStack.isEmpty();
 	}
 
-	private final void matchEOF() {
-		if (current < tokens.size() - 1) {
-			fail("Expected end of file");
-		}
-	}
+//	private final void matchEOF() {
+////		if (current < tokens.size() - 1) {
+////			fail("Expected end of file");
+////		}
+//	}
 
 	private final boolean predicateHolds() {
 		return predicateFulfilled;
@@ -455,7 +455,7 @@ public class ManualGreqlParser extends ManualParserHelper {
 			IsIdOf isId = graph.createIsIdOf(ident, rootExpr);
 			isId.set_sourcePositions(createSourcePositionList(offset));
 		}
-		matchEOF();
+		match(TokenTypes.EOF);
 		testIllegalThisLiterals();
 		mergeVariablesInGreql2Expression(rootExpr);
 	}
