@@ -25,7 +25,9 @@
 package de.uni_koblenz.jgralab.greql2.evaluator.fa;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Iterator;
+import java.util.Set;
 
 import de.uni_koblenz.jgralab.greql2.exception.EvaluateException;
 
@@ -56,8 +58,32 @@ public class DFA extends FiniteAutomaton {
 		stateList = new ArrayList<State>();
 		eleminateEpsilonTransitions(nfa);
 		myhillConstruction(nfa);
+		removeDuplicateTransitions();
 		// now set the state numbers and also the final-attribute of the states
 		updateStateAttributes();
+	}
+	
+	
+	private void removeDuplicateTransitions() {
+		Set<Transition> duplicateTransitions = new HashSet<Transition>();
+		for (State s : this.stateList) {
+			for (int i=0; i<s.outTransitions.size()-1; i++) {
+				Transition t1 = s.outTransitions.get(i);
+				for (int j=i+1; j<s.outTransitions.size(); j++) {
+					Transition t2 = s.outTransitions.get(j);
+					if ( (t1.endState == t2.endState) &&
+						 (t1.startState == t2.startState) &&
+						 (t1.equalSymbol(t2)))
+						duplicateTransitions.add(t2);
+				}
+				
+			}
+		}
+	//	System.out.println("Removing " + duplicateTransitions.size() + " duplicate transitions");
+		for (Transition t : duplicateTransitions) {
+			transitionList.remove(t);
+			t.delete();
+		}
 	}
 
 	/**
@@ -78,7 +104,7 @@ public class DFA extends FiniteAutomaton {
 					nfa.transitionList.add(newTransition);
 					newTransition.setStartState(X);
 					newTransition.setEndState(newTransition.getEndState());
-				}
+				} 				
 			}	
 		}
 		nfa.transitionList.remove(epsilonTransition);
