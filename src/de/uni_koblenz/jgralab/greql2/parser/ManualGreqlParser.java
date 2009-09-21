@@ -442,6 +442,8 @@ public class ManualGreqlParser extends ManualParserHelper {
 		}
 		int offset = getCurrentOffset();
 		Expression expr = parseExpression();
+		if (expr == null)
+			return;
 		IsQueryExprOf e = graph.createIsQueryExprOf(expr, rootExpr);
 		e.set_sourcePositions((createSourcePositionList(offset)));
 		if (lookAhead(0) == TokenTypes.STORE) {
