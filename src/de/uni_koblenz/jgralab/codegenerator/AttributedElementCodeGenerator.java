@@ -338,9 +338,8 @@ public class AttributedElementCodeGenerator extends CodeGenerator {
 						.add(
 								"\tif (_#name# == null)",
 								"\t\treturn #initValue#;",
-								"\t#ttype# _value = _#name#.getValidValue(#graphreference#getCurrentTransaction());",
-								"\tif(_value == null)",
-								"\t\treturn #initValue#;", "\treturn _value;",
+								"\t#ttype# value = _#name#.getValidValue(#graphreference#getCurrentTransaction());",
+								"\treturn (value == null) ? #initValue# : value;",
 								"}");
 			}
 		} else {
