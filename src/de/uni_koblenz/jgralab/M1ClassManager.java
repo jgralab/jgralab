@@ -95,7 +95,7 @@ public class M1ClassManager extends ClassLoader {
 			m1Classes.remove(name);
 			return clazz;
 		}
-		throw new ClassNotFoundException("Couldn't find class " + name);
+		return Class.forName(name);
 	}
 
 	@Override
