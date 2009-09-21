@@ -235,6 +235,8 @@ public class Level2Logger extends Level2LoggingBase implements EvaluationLogger 
 		FileWriter fw = new FileWriter(file);
 		BufferedWriter bw = new BufferedWriter(fw);
 		out.output(doc, bw);
+		bw.flush();
+		bw.close();
 		return true;
 	}
 

@@ -111,14 +111,14 @@ public abstract class Level2LoggingBase {
 		childList = inputElem.getChildren();
 		iter = childList.iterator();
 		while (iter.hasNext()) {
-			ArrayLogEntry logEntry = new ArrayLogEntry((Element) iter.next());
+			ArrayLogEntry logEntry = new ArrayLogEntry(iter.next());
 			inputSize.put(logEntry.getName(), logEntry);
 		}
 		Element selectivityElem = rootElement.getChild("selectivity");
 		childList = selectivityElem.getChildren();
 		iter = childList.iterator();
 		while (iter.hasNext()) {
-			SimpleLogEntry logEntry = new SimpleLogEntry((Element) iter.next());
+			SimpleLogEntry logEntry = new SimpleLogEntry(iter.next());
 			selectivity.put(logEntry.getName(), logEntry);
 		}
 		return true;
