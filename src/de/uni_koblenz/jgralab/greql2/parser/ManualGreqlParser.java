@@ -481,23 +481,25 @@ public class ManualGreqlParser extends ManualParserHelper {
 	private final List<VertexPosition<Variable>> parseVariableList() {
 		List<VertexPosition<Variable>> vlist = new ArrayList<VertexPosition<Variable>>();
 		int offset = getCurrentOffset();
-		vlist.add(new VertexPosition<Variable>(parseVariable(),
+		vlist.add(new VertexPosition<Variable>(parseVariable(true),
 				getLength(offset), offset));
 		while (lookAhead(0) == TokenTypes.COMMA) {
 			match();
-			vlist.add(new VertexPosition<Variable>(parseVariable(),
+			vlist.add(new VertexPosition<Variable>(parseVariable(true),
 					getLength(offset), offset));
 		}
 		return vlist;
 	}
 
-	private final Variable parseVariable() {
+	private final Variable parseVariable(boolean inDeclaration) {
 		String varName = matchIdentifier();
 		Variable var = null;
 		if (!inPredicateMode()) {
 			var = graph.createVariable();
 			var.set_name(varName);
 		}
+		if (inDeclaration)
+			duringParsingvariableSymbolTable.insert(varName, var);
 		return var;
 	}
 
@@ -667,7 +669,7 @@ public class ManualGreqlParser extends ManualParserHelper {
 
 	private final Definition parseDefinition() {
 		int offsetVar = getCurrentOffset();
-		Variable var = parseVariable();
+		Variable var = parseVariable(true);
 		int lengthVar = getLength(offsetVar);
 		match(TokenTypes.ASSIGN);
 		int offsetExpr = getCurrentOffset();
@@ -1046,11 +1048,11 @@ public class ManualGreqlParser extends ManualParserHelper {
 
 		predicateStart();
 		try {
-			parseVariable();
+			parseVariable(false);
 		} catch (ParsingException ex) {
 		}
 		if (predicateEnd()) {
-			return parseVariable();
+			return parseVariable(false);
 		}
 
 		predicateStart();
