@@ -276,6 +276,8 @@ public class ManualGreqlParser extends ManualParserHelper {
 			offset = lookAhead.getOffset();
 			length = lookAhead.getLength();
 			tokenText = lookAhead.getValue();
+		} else {
+			tokenText = lookAhead(0).name();
 		}
 		ParsingException ex = new ParsingException(msg, tokenText, offset,
 				length);

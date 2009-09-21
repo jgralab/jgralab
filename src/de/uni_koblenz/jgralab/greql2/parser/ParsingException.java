@@ -16,7 +16,7 @@ public class ParsingException extends RuntimeException {
 	private int length;
 
 	public ParsingException(String msg, String token, int offset, int length) {
-		super("Parsing error: " + msg + " at token " + token + " at position ("
+		super("Parsing error: " + msg + " at token '" + token + "' at position ("
 				+ offset + "," + length + ")");
 		message = msg;
 		this.tokenString = token;
