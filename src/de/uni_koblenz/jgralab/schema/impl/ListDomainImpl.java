@@ -109,7 +109,7 @@ public final class ListDomainImpl extends CollectionDomainImpl implements
 	private void internalGetReadMethod(CodeList code, String schemaPrefix,
 			String variableName, String graphIoVariableName) {
 		code.setVariable("name", variableName);
-		code.setVariable("tmpname", "_" + variableName);
+		code.setVariable("tmpname", "$" + variableName);
 		code.setVariable("basedom", getBaseDomain().getJavaClassName(
 				schemaPrefix));
 		code.setVariable("basetype", getBaseDomain()
@@ -123,12 +123,12 @@ public final class ListDomainImpl extends CollectionDomainImpl implements
 						"java.util.LinkedList<#basedom#> #tmpname# = new java.util.LinkedList<#basedom#>();",
 						"#io#.match(\"[\");",
 						"while (!#io#.isNextToken(\"]\")) {",
-						"\t#basetype# _#name#Element = null;"));
+						"\t#basetype# $#name#Element = null;"));
 		code.add(getBaseDomain().getReadMethod(schemaPrefix,
-				"_" + variableName + "Element", graphIoVariableName), 1);
+				"$" + variableName + "Element", graphIoVariableName), 1);
 		code
 				.add(new CodeSnippet(
-						"\t#tmpname#.add(_#name#Element);",
+						"\t#tmpname#.add($#name#Element);",
 						"}",
 						"#io#.match(\"]\");",
 						"#name# = new java.util.ArrayList<#basedom#>(#tmpname#.size());",
