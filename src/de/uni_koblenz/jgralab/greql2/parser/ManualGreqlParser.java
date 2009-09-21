@@ -467,7 +467,7 @@ public class ManualGreqlParser extends ManualParserHelper {
 			StringBuilder importedType = new StringBuilder();
 			importedType.append(matchPackageName());
 			match(TokenTypes.DOT);
-			if (lookAhead.type == TokenTypes.STAR) {
+			if (lookAhead(0) == TokenTypes.STAR) {
 				match(TokenTypes.STAR);
 				importedType.append(".*");
 			} else {
@@ -597,7 +597,7 @@ public class ManualGreqlParser extends ManualParserHelper {
 	}
 
 	private final Expression parseLetExpression() {
-		if (lookAhead.type == TokenTypes.LET) {
+		if (lookAhead(0) == TokenTypes.LET) {
 			match();
 			duringParsingvariableSymbolTable.blockBegin();
 			List<VertexPosition<Definition>> defList = parseDefinitionList();
