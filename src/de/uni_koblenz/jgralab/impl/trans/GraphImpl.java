@@ -1531,4 +1531,9 @@ public abstract class GraphImpl extends de.uni_koblenz.jgralab.impl.GraphImpl {
 			}
 		}
 	}
+
+	@Override
+	public final boolean hasTransactionSupport() {
+		return true;
+	}
 }

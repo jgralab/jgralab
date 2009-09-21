@@ -602,4 +602,11 @@ public interface Graph extends AttributedElement {
 	 */
 	public void restoreSavepoint(Savepoint savepoint)
 			throws InvalidSavepointException;
+
+	/**
+	 * Tells whether this graph instance supports transactions.
+	 * 
+	 * @return true if this graph instance supports transactions.
+	 */
+	public boolean hasTransactionSupport();
 }
