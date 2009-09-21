@@ -411,9 +411,6 @@ public class AttributedElementCodeGenerator extends CodeGenerator {
 						"\t\tthis._#name#.setName(\"#name#\");", "\t}");
 
 				if (domain.isComposite()) {
-					// if (!(domain instanceof RecordDomainImpl)) {
-					// code.add("\t\t#tmpname# = new #ttype#(#name#);");
-					// }
 					code.add("\tif(#tmpname# != null)");
 					if (domain instanceof ListDomainImpl) {
 						code
@@ -429,7 +426,7 @@ public class AttributedElementCodeGenerator extends CodeGenerator {
 					}
 					if (domain instanceof RecordDomainImpl) {
 						code
-								.add("\t\t#name#.setVersionedRecord(this._#name#);");
+								.add("\t\t_#name#.setVersionedRecord(this._#name#);");
 					}
 				}
 				code
