@@ -1,0 +1,226 @@
+package de.uni_koblenz.jgralabtest.transactiontest;
+
+import de.uni_koblenz.jgralab.Edge;
+import de.uni_koblenz.jgralab.GraphIO;
+import de.uni_koblenz.jgralab.GraphIOException;
+import de.uni_koblenz.jgralab.ProgressFunction;
+import de.uni_koblenz.jgralab.Vertex;
+import de.uni_koblenz.jgralab.impl.ProgressFunctionImpl;
+import de.uni_koblenz.jgralab.trans.CommitFailedException;
+import de.uni_koblenz.jgralabtest.schemas.motorwaymap.City;
+import de.uni_koblenz.jgralabtest.schemas.motorwaymap.Motorway;
+import de.uni_koblenz.jgralabtest.schemas.motorwaymap.MotorwayMap;
+import de.uni_koblenz.jgralabtest.schemas.motorwaymap.MotorwayMapSchema;
+
+public class BenchmarkTests {
+	private MotorwayMap motorwayMap;
+
+	private final int V = 1;
+	private final int E = 1;
+
+	private final int N = 1;
+
+	private final int MULTIPLIER = 5;
+	private final int NROFTHREADS = 20;
+
+	private final String FILENAME = "motorwaymap_benchmark.tg";
+	private ProgressFunction progressFunction;
+
+	/**
+	 * 
+	 */
+	private BenchmarkTests() {
+		progressFunction = new ProgressFunctionImpl();
+	}
+
+	/**
+	 * @param args
+	 * @throws CommitFailedException
+	 * @throws InterruptedException
+	 * @throws GraphIOException
+	 */
+	/**
+	 * @param args
+	 * @throws CommitFailedException
+	 * @throws InterruptedException
+	 * @throws GraphIOException
+	 */
+	public static void main(String[] args) throws CommitFailedException,
+			InterruptedException, GraphIOException {
+		BenchmarkTests benchmarkTests = new BenchmarkTests();
+		// benchmarkTests.iterateVertices();
+		// benchmarkTests.iterateVerticesWithTransactionSupport();
+		// benchmarkTests.addGraphElements();
+		// benchmarkTests.addGraphElementsWithTransactionSupport();
+		// benchmarkTests.addGraphElementsWithTransactionSupportParallel();
+		// benchmarkTests.loadGraph(false);
+		// benchmarkTests.loadGraph(true);
+		benchmarkTests.test();
+	}
+
+	/**
+	 * 
+	 * @param testMethodName
+	 */
+	private void printMemoryUsage(String testMethodName) {
+		System.out
+				.println("Speicherverbrauch "
+						+ testMethodName
+						+ ": "
+						+ ((new Double(Runtime.getRuntime().totalMemory()) / 1048576f) - (new Double(
+								Runtime.getRuntime().freeMemory()) / 1048576f))
+						+ " MB.");
+	}
+
+	private void addGraphElements() throws GraphIOException,
+			InterruptedException {
+		createGraph(false);
+		progressFunction.init(N * MULTIPLIER);
+		internaladdGraphElements();
+		progressFunction.finished();
+		printMemoryUsage("addGraphElements");
+		// Thread.sleep(20000);
+		saveGraph(false);
+	}
+
+	private void addGraphElementsWithTransactionSupport()
+			throws CommitFailedException, GraphIOException,
+			InterruptedException {
+		createGraph(true);
+		motorwayMap.createTransaction();
+		progressFunction.init(N * MULTIPLIER);
+		internaladdGraphElements();
+		progressFunction.finished();
+		printMemoryUsage("addGraphElementsWithTransactionSupport (vor Commit)");
+		progressFunction.init(N * MULTIPLIER);
+		motorwayMap.commit();
+		progressFunction.finished();
+		printMemoryUsage("addGraphElementsWithTransactionSupport (nach Commit)");
+		motorwayMap.createReadOnlyTransaction();
+		System.out.println(motorwayMap.getVCount() + motorwayMap.getECount());
+		saveGraph(true);
+	}
+
+	private void addGraphElementsWithTransactionSupportParallel()
+			throws GraphIOException {
+		createGraph(true);
+		progressFunction.init(N * MULTIPLIER * NROFTHREADS);
+		ThreadGroup group = new ThreadGroup("BenchmarkTests");
+		for (int i = 0; i < NROFTHREADS; i++) {
+			Thread thread = new Thread(group, "Thread-" + i) {
+				@Override
+				public void run() {
+					motorwayMap.createTransaction();
+					ProgressFunction p = new ProgressFunctionImpl();
+					p.init(1234);
+					internaladdGraphElements();
+					try {
+						p.finished();
+						motorwayMap.commit();
+					} catch (CommitFailedException e) {
+						e.printStackTrace();
+					}
+				}
+			};
+			thread.start();
+		}
+
+		while (group.activeCount() > 0) {
+
+		}
+		progressFunction.finished();
+		printMemoryUsage("addGraphElementsWithTransactionSupportParallel");
+		motorwayMap.createReadOnlyTransaction();
+		System.out.println(motorwayMap.getVCount() + motorwayMap.getECount());
+		saveGraph(true);
+	}
+
+	private void internaladdGraphElements() {
+		for (int i = 0; i < N; i++) {
+			City city = motorwayMap.createCity();
+			Motorway motorway = motorwayMap.createMotorway();
+			motorwayMap.createExit(city, motorway);
+			motorwayMap.createExit(city, motorway);
+			motorwayMap.createExit(city, motorway);
+		}
+	}
+
+	private void createGraph(boolean transactionSupport) {
+		if (transactionSupport)
+			motorwayMap = MotorwayMapSchema.instance()
+					.createMotorwayMapWithTransactionSupport(V, E);
+		else
+			motorwayMap = MotorwayMapSchema.instance().createMotorwayMap(V, E);
+	}
+
+	private void loadGraph(boolean transactionSupport) throws GraphIOException {
+		if (transactionSupport)
+			motorwayMap = MotorwayMapSchema.instance()
+					.loadMotorwayMapWithTransactionSupport(FILENAME,
+							new ProgressFunctionImpl());
+		else
+			motorwayMap = MotorwayMapSchema.instance().loadMotorwayMap(
+					FILENAME, new ProgressFunctionImpl());
+		printMemoryUsage("loadGraph");
+	}
+
+	private void saveGraph(boolean transactionSupport) throws GraphIOException {
+		if (transactionSupport)
+			motorwayMap.createReadOnlyTransaction();
+		GraphIO.saveGraphToFile(FILENAME, motorwayMap,
+				new ProgressFunctionImpl());
+	}
+
+	private void iterateVertices() throws GraphIOException,
+			InterruptedException {
+		addGraphElements();
+		internalIterateVertices();
+
+	}
+
+	private void iterateVerticesWithTransactionSupport()
+			throws CommitFailedException, GraphIOException,
+			InterruptedException {
+		addGraphElementsWithTransactionSupport();
+		motorwayMap.createReadOnlyTransaction();
+		internalIterateVertices();
+	}
+
+	private void internalIterateVertices() {
+		progressFunction.init(1000);
+		for (Vertex v : motorwayMap.vertices()) {
+			v.getId();
+			for (Edge edge : v.incidences()) {
+				edge.getAlpha();
+				edge.getOmega();
+			}
+		}
+		progressFunction.finished();
+	}
+
+	public void test() {
+		createGraph(true);
+		for (int j = 0; j < 1000000; j++) {
+			ThreadGroup group = new ThreadGroup("BenchmarkTests");
+			for (int i = 0; i < NROFTHREADS; i++) {
+				Thread thread = new Thread(group, "Thread-" + i) {
+					@Override
+					public void run() {
+						motorwayMap.createTransaction();
+						internaladdGraphElements();
+						try {
+							motorwayMap.commit();
+						} catch (CommitFailedException e) {
+							e.printStackTrace();
+						}
+					}
+				};
+				thread.start();
+			}
+			while (group.activeCount() > 0) {
+
+			}
+			System.out.println("Durchgang: " + j);
+		}
+	}
+}
