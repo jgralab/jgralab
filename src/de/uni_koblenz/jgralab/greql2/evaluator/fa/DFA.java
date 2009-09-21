@@ -72,15 +72,14 @@ public class DFA extends FiniteAutomaton {
 		if (X != Y) {
 			// copies all transitions Y->Z and generates transitions
 			// X->Z out of them
-			Iterator<Transition> outTransitionIter = Y.outTransitions
-					.iterator();
-			while (outTransitionIter.hasNext()) {
-				Transition newTransition = outTransitionIter.next().copy(false);
-				nfa.transitionList.add(newTransition);
-				newTransition.setStartState(X);
-				newTransition.setEndState(newTransition.getEndState());
-			}
-
+			for (Transition currentTransition : Y.outTransitions) {
+				if (!(currentTransition.isEpsilon() && currentTransition.getEndState() == X)) {
+					Transition newTransition = currentTransition.copy(false);
+					nfa.transitionList.add(newTransition);
+					newTransition.setStartState(X);
+					newTransition.setEndState(newTransition.getEndState());
+				}
+			}	
 		}
 		nfa.transitionList.remove(epsilonTransition);
 		epsilonTransition.delete();
