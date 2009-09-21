@@ -1,0 +1,11 @@
+Schema de.uni_koblenz.jgralabtest.schemas.motorwaymap.MotorwayMapSchema;
+GraphClass MotorwayMap {test : String};
+RecordDomain TestRecord (c1 : String, c2 : List<String>, c4 : Set<String>, c6 : Integer, c7 : Double, c8 : Long, c9 : Boolean);
+EnumDomain TestEnum (Test1, Test2, Test3);
+VertexClass City { name: String, testList : List<TestRecord>, testSet : Set<String>, testMap : Map<String, String>, testRecord : TestRecord, testEnum : TestEnum };
+VertexClass Motorway { length: Double,  name: String };
+VertexClass MotorwayRestaurant: StoppingPlace;
+VertexClass MotorwayStation: StoppingPlace;
+abstract VertexClass StoppingPlace { name: String };
+AggregationClass Exit from City (1,*) to Motorway (0,*) aggregate to { number: Integer };
+CompositionClass Offers from Motorway (1,1) to StoppingPlace (0,*) aggregate from;
