@@ -25,7 +25,6 @@
 package de.uni_koblenz.jgralab.greql2.funlib;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Queue;
 
@@ -108,12 +107,8 @@ public class ReachableVertices extends AbstractGreql2Function {
 			// markers[currentEntry.state.number].mark(currentEntry.vertex);
 			Edge inc = currentEntry.vertex.getFirstEdge();
 			while (inc != null) {
-				Iterator<Transition> transitionIter = currentEntry.state.outTransitions
-						.iterator();
-				while (transitionIter.hasNext()) {
-					Transition currentTransition = transitionIter.next();
-					Vertex nextVertex = currentTransition.getNextVertex(
-							currentEntry.vertex, inc);
+				for (Transition currentTransition : currentEntry.state.outTransitions) {
+					Vertex nextVertex = currentTransition.getNextVertex(currentEntry.vertex, inc);
 					if (!markers[currentTransition.getEndState().number]
 							.isMarked(nextVertex)) {
 						if (currentTransition.accepts(currentEntry.vertex, inc,
