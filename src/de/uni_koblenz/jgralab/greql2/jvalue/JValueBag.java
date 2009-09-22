@@ -33,14 +33,8 @@ import java.util.NoSuchElementException;
 import java.util.Map.Entry;
 
 /**
- * JValueBag implements a mathematic multiset of JValue-Objects. This includes
- * methods for union, difference, intersection etc. It is based on the class
- * <code>AbstractMathSet</code> and <code>HashMathSet</code> from the package
- * MathCollection which was developed in a project at the Institute for
- * Intelligent Systems at the University of Stuttgart
- * (http://www.iis.uni-stuttgart.de) under guidance of Dietmar Lippold
- * (dietmar.lippold@informatik.uni-stuttgart.de).
- * 
+ * JValueBag implements a mathematical multiset of JValue-Objects. This includes
+ * methods for union, difference, intersection etc.
  * @author ist@uni-koblenz.de
  */
 public class JValueBag extends JValueCollection implements Cloneable {
@@ -50,6 +44,8 @@ public class JValueBag extends JValueCollection implements Cloneable {
 	 * set are stored.
 	 */
 	private HashMap<JValue, Integer> myHashMap;
+	
+	//private List<JValue> sortedMembers;
 
 	/**
 	 * Acts as a cache for the size value of this set out of performance
