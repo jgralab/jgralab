@@ -61,8 +61,8 @@ public class VariableDeclarationOrderUnit implements
 		this.typeExpressionOfVariable = (Expression) this.simpleDeclarationOfVariable
 				.getFirstIsTypeExprOf(EdgeDirection.IN).getAlpha();
 
-		// Collect all expressions that have to be re-evaluated when the
-		// variable changes its value.
+		// Collect all vertices that depend on the variable and thus need to be
+		// recalculated when it changes its value.
 		dependentVertices = new HashSet<Vertex>();
 		addDependendVertices(variable);
 	}
@@ -74,13 +74,11 @@ public class VariableDeclarationOrderUnit implements
 	 *            a {@link Vertex}
 	 */
 	private void addDependendVertices(Vertex vertex) {
-		if ((vertexEvalMarker.getMark(vertex) != null)
-				&& ((vertex instanceof Expression) || (vertex instanceof SimpleDeclaration))) {
-			dependentVertices.add(vertex);
-			for (Edge e : vertex.incidences(EdgeDirection.OUT)) {
-				addDependendVertices(e.getOmega());
-			}
+		dependentVertices.add(vertex);
+		for (Edge e : vertex.incidences(EdgeDirection.OUT)) {
+			addDependendVertices(e.getOmega());
 		}
+
 	}
 
 	/**

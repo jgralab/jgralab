@@ -2,12 +2,9 @@ package de.uni_koblenz.jgralabtest.greql2.optimizer;
 
 import static org.junit.Assert.assertEquals;
 
-import java.util.logging.Level;
-
 import org.junit.Test;
 
 import de.uni_koblenz.jgralab.Graph;
-import de.uni_koblenz.jgralab.JGraLab;
 import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
 import de.uni_koblenz.jgralab.greql2.exception.OptimizerException;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
@@ -379,11 +376,18 @@ public class OptimizerTest extends GenericTests {
 
 	@Test
 	public void testVariableDeclarationOrderOptimizer5() throws Exception {
-		JGraLab.setLogLevel(Level.ALL);
 		String queryString = "from x:list(1..10), y:list(x..13), z:list(1..x) "
 				+ "           with x <> 0 and y <> 0 and z <> null "
 				+ "           report isPrime(z), isPrime(z*z), isPrime(z+z*z-1) end";
 		execTimedTest(queryString, "VariableDeclarationOrderOptimizer5()", vdoo);
+	}
+
+	@Test
+	public void testVariableDeclarationOrderOptimizer6() throws Exception {
+		String queryString = "from x:list(1..10), y:list(x..13), z:list(1..x), a : set(1, 2, 3), b : z "
+				+ "           with x <> 0 and y <> 0 and z <> null and (b <> z)"
+				+ "           report isPrime(z), isPrime(z*z), isPrime(z+z*z-1), b end";
+		execTimedTest(queryString, "VariableDeclarationOrderOptimizer6()", vdoo);
 	}
 
 	@Test
