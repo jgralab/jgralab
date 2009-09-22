@@ -139,7 +139,7 @@ public final class SetDomainImpl extends CollectionDomainImpl implements
 				"#io#.noSpace();", "for (#basetype# element: #name#) {"));
 		code.add(getBaseDomain().getWriteMethod(schemaRootPackagePrefix,
 				"element", graphIoVariableName), 1);
-		code.add(new CodeSnippet("}", "#io#.write(\"}\");"));
+		code.add(new CodeSnippet("}", "#io#.write(\"}\");", "#io#.space();"));
 		code.addNoIndent(new CodeSnippet("} else {"));
 		code.add(new CodeSnippet(graphIoVariableName
 				+ ".writeIdentifier(GraphIO.NULL_LITERAL);"));
