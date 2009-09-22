@@ -428,6 +428,8 @@ public class FunctionTest extends GenericTests {
 	public void testIntersection() throws Exception {
 		String queryString = "let x:= set(5, 7, 9, 13), y := set(5,6,7,8) in intersection(x, y)";
 		JValue result = evalTestQuery("Intersection", queryString);
+		for (JValue j: result.toCollection())
+			System.out.println("Element:" + j);
 		assertEquals(2, result.toCollection().size());
 	}
 

@@ -13,6 +13,7 @@ import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.GraphIO;
 import de.uni_koblenz.jgralab.Vertex;
+import de.uni_koblenz.jgralab.greql2.exception.ParseException;
 import de.uni_koblenz.jgralab.greql2.exception.UndefinedVariableException;
 import de.uni_koblenz.jgralab.greql2.parser.ManualGreqlParser;
 import de.uni_koblenz.jgralab.greql2.parser.ParsingException;
@@ -1171,7 +1172,7 @@ public class ParserTest {
 
 	@Test(timeout = 5000)
 	public void testParsingSpeed4() throws Exception {
-		parseQuery("(((((((((((((((((((((((((((((((((((((((9))))))))))))))))))))))))))))))))))))))))");
+		parseQuery("(((((((((((((((((((((((((((((((((((((((9)))))))))))))))))))))))))))))))))))))))");
 	}
 
 	@Test
@@ -1223,6 +1224,24 @@ public class ParserTest {
 		} catch (UndefinedVariableException ex) {
 			System.out.println("Exception offset: " + ex.getOffset());
 			assertEquals(7, ex.getOffset());
+		}
+	}
+	
+	
+	@Test
+	public void testGetKnownVariables() {
+		String query = "//test \n \n from var:V{} \n with \n var ";
+		ManualGreqlParser parser = new ManualGreqlParser(query);
+		try {
+			parser.parse();
+		} catch (ParsingException ex) {
+			ex.printStackTrace();
+			System.out.println("Known variables: ");
+			for (String vs : parser.getValidVariables())
+				System.out.println(vs);
+			assertEquals(1, parser.getValidVariables().size());
+			for (String vs : parser.getValidVariables())
+				assertEquals("var", vs);
 		}
 	}
 }

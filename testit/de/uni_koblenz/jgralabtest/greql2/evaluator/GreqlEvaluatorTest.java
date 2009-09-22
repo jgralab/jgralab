@@ -69,6 +69,8 @@ public class GreqlEvaluatorTest extends GenericTests {
 		return bag;
 	}
 
+	
+
 	@Test
 	public void testEvaluateNullLiteral2() throws Exception {
 		String queryString = "null";
@@ -481,6 +483,8 @@ public class GreqlEvaluatorTest extends GenericTests {
 				queryString, new DefaultOptimizer());
 		assertEquals(result, resultWO);
 	}
+	
+
 
 	/*
 	 * Test method for
@@ -761,6 +765,24 @@ public class GreqlEvaluatorTest extends GenericTests {
 		assertEquals(result, resultWO);
 	}
 
+	
+	@Test
+	public void testEvaluateDependentDeclarations() throws Exception {
+		String queryString = "from x:list(1..2), y:list(x..3) with y*y <> 7 report x*y end";
+		JValue result = evalTestQuery("DependentDeclarations", queryString);
+		assertEquals(5, result.toCollection().size());
+		JValueSet set = result.toCollection().toJValueSet();
+		assertTrue(set.contains(new JValue(1)));
+		assertTrue(set.contains(new JValue(2)));
+		assertTrue(set.contains(new JValue(3)));
+		assertTrue(set.contains(new JValue(4)));
+		assertTrue(set.contains(new JValue(6)));
+		JValue resultWO = evalTestQuery("DependentDeclarations (wo)",
+				queryString, new DefaultOptimizer());
+		assertEquals(result, resultWO);
+	}
+
+	
 	/*
 	 * Test method for
 	 * 'greql2.evaluator.GreqlEvaluator.evaluateOptionalPathDescription(OptionalPathDescription,
