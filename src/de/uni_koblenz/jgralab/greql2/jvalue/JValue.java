@@ -77,6 +77,10 @@ public class JValue implements Comparable<JValue> {
 	 * accepts the given visitor to visit this jvalue
 	 */
 	public void accept(JValueVisitor v) {
+		if (this.type == null) {
+			v.visitObject(this);
+			return;
+		}
 		switch (this.type) {
 		case BOOLEAN:
 			v.visitBoolean(this);
