@@ -211,27 +211,6 @@ public class JValueRecord extends JValueCollection implements
 		return values.iterator();
 	}
 
-	/**
-	 * Replaces the given first value with the given second value. Beware, this
-	 * method does not scale well
-	 * 
-	 * @return if valueToReplace was successfull replaced, false if it could not
-	 *         be found in this record
-	 */
-	@Override
-	public boolean replace(JValue valueToReplace, JValue replacement) {
-		Set<String> keySet = dataMap.keySet();
-		Iterator<String> keyIter = keySet.iterator();
-		while (keyIter.hasNext()) {
-			String key = keyIter.next();
-			if (dataMap.get(key) == valueToReplace) {
-				dataMap.remove(key);
-				dataMap.put(key, replacement);
-				return true;
-			}
-		}
-		return false;
-	}
 
 	/**
 	 * Adds the given value with the given key as id to this record

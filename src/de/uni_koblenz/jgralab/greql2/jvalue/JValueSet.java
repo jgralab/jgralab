@@ -24,32 +24,31 @@
 
 package de.uni_koblenz.jgralab.greql2.jvalue;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 
 /**
- * JValueSet implements a mathematic set of JValue-Objects. This includes
- * methods for union, difference, intersection etc. It is based on the class
- * <code>AbstractMathSet</code> and <code>HashMathSet</code> from the package
- * MathCollection which was developed in a project at the Institute for
- * Intelligent Systems at the University of Stuttgart
- * (http://www.iis.uni-stuttgart.de) under guidance of Dietmar Lippold
- * (dietmar.lippold@informatik.uni-stuttgart.de).
+ * JValueSet implements a mathematical set of JValue-Objects. This includes
+ * methods for union, difference, intersection etc.
  * 
  * @author ist@uni-koblenz.de
  */
 public class JValueSet extends JValueCollection implements Cloneable {
 
 	/**
-	 * A 'wrapper' iterator class that uses <code>HashSet.iterator()</code>
+	 * A wrapper iterator class that uses <code>List.iterator()</code>
 	 * while accounting for the additional <code>storedHashCode</code>
-	 * attribute.
+	 * attribute and the HashSet for fast member test.
 	 */
 	private class JValueSetIterator implements Iterator<JValue> {
 		private Iterator<JValue> myIterator;
 
+		private JValue current = null;
+		
 		public JValueSetIterator() {
-			myIterator = itemHashSet.iterator();
+			myIterator = sortedMembers.iterator();
 		}
 
 		public boolean hasNext() {
@@ -57,20 +56,27 @@ public class JValueSet extends JValueCollection implements Cloneable {
 		}
 
 		public JValue next() {
-			return myIterator.next();
+			current = myIterator.next();
+			return current;
 		}
 
 		public void remove() {
 			storedHashCode = 0;
+			itemHashSet.remove(current);
 			myIterator.remove();
 		}
 	}
 
 	/**
 	 * The backing instance of <code>HashSet<code> where the elements of this
-	 * set are stored.
+	 * set are stored for fast membership test
 	 */
 	private HashSet<JValue> itemHashSet;
+	
+	/**
+	 * List keeps the members in the order they are added to this set
+	 */
+	private List<JValue> sortedMembers;
 
 	/**
 	 * Constructs a new, empty mathematical set; the backing
@@ -79,6 +85,7 @@ public class JValueSet extends JValueCollection implements Cloneable {
 	 */
 	public JValueSet() {
 		itemHashSet = new HashSet<JValue>();
+		sortedMembers = new ArrayList<JValue>();
 	}
 
 	/**
@@ -94,6 +101,7 @@ public class JValueSet extends JValueCollection implements Cloneable {
 	 */
 	public JValueSet(JValueCollection collection) {
 		itemHashSet = new HashSet<JValue>(collection.size(), 0.75f);
+		sortedMembers = new ArrayList<JValue>(collection.size());
 		addAll(collection);
 	}
 
@@ -109,29 +117,14 @@ public class JValueSet extends JValueCollection implements Cloneable {
 	 */
 	public JValueSet(int initialCapacity) {
 		itemHashSet = new HashSet<JValue>(initialCapacity);
+		sortedMembers = new ArrayList<JValue>(initialCapacity);
 	}
 
-	/**
-	 * Constructs a new, empty mathematical set; the backing
-	 * <code>HashSet</code> instance has the specified initial capacity and the
-	 * specified load factor.
-	 * 
-	 * @param initialCapacity
-	 *            the initial capacity of the hash set.
-	 * @param loadFactor
-	 *            the load factor of the hash set.
-	 * @throws IllegalArgumentException
-	 *             if the initial capacity is less than zero, or if the load
-	 *             factor is nonpositive.
-	 */
-	public JValueSet(int initialCapacity, float loadFactor) {
-		itemHashSet = new HashSet<JValue>(initialCapacity, loadFactor);
-	}
 
 	/**
 	 * Returns an iterator over the elements in this mathematical set. The
 	 * elements are returned in no particular order, this in includes that two
-	 * calls of iterator() won't neccessary return the same order of elements.
+	 * calls of iterator() won't necessary return the same order of elements.
 	 * 
 	 * @return an Iterator over the elements in this set.
 	 * @see java.util.ConcurrentModificationException
@@ -147,11 +140,11 @@ public class JValueSet extends JValueCollection implements Cloneable {
 	}
 
 	/**
-	 * Returns the hash code value for this jvalue-set. To get the hash code of
-	 * this set, new hash code values for every element of this mathematical set
+	 * Returns the hash code value for this set. To get the hash code of
+	 * this set, new hash code values for every element of this set
 	 * are calculated from a polynomial of 3rd order and finally summed up. This
 	 * ensures that <code>s1.equals(s2)</code> implies that
-	 * <code>s1.hashCode()==s2.hashCode()</code> for any two mathematical sets
+	 * <code>s1.hashCode()==s2.hashCode()</code> for any two sets
 	 * <code>s1</code> and <code>s2</code>, as required by the general contract
 	 * of <code>Object.hashCode()</code>.
 	 * <p>
@@ -218,6 +211,7 @@ public class JValueSet extends JValueCollection implements Cloneable {
 	@Override
 	public void clear() {
 		itemHashSet.clear();
+		sortedMembers.clear();
 		this.storedHashCode = 0;
 	}
 
@@ -238,11 +232,6 @@ public class JValueSet extends JValueCollection implements Cloneable {
 	 * Adds the specified element to this set if it is not already present.
 	 * <p>
 	 * 
-	 * If the set gets altered, this implementation sets
-	 * <code>storedHashCode</code> to 0 (representing an unavailable hash code
-	 * value), which forces <code>hashCode()</code> to recalculate the actual
-	 * hash code value.
-	 * 
 	 * @param element
 	 *            element to be added to this set.
 	 * @return <code>true</code> if the set did not already contain the
@@ -252,6 +241,7 @@ public class JValueSet extends JValueCollection implements Cloneable {
 	public boolean add(JValue element) {
 		if (itemHashSet.add(element)) {
 			this.storedHashCode = 0;
+			sortedMembers.add(element);
 			return true;
 		} else {
 			return false;
@@ -260,12 +250,6 @@ public class JValueSet extends JValueCollection implements Cloneable {
 
 	/**
 	 * Removes the specified element from this set if it is present.
-	 * <p>
-	 * 
-	 * If the set gets altered, this implementation sets
-	 * <code>storedHashCode</code> to 0 (representing an unavailable hash code
-	 * value), which forces <code>hashCode()</code> to recalculate the actual
-	 * hash code value.
 	 * 
 	 * @param element
 	 *            object to be removed from this set, if present.
@@ -276,6 +260,7 @@ public class JValueSet extends JValueCollection implements Cloneable {
 	public boolean remove(JValue element) {
 		if (itemHashSet.remove(element)) {
 			this.storedHashCode = 0;
+			sortedMembers.remove(element);
 			return true;
 		} else {
 			return false;
@@ -289,17 +274,7 @@ public class JValueSet extends JValueCollection implements Cloneable {
 	 * in this set.
 	 * <p>
 	 * 
-	 * This implementation first checks if the given object is a
-	 * <code>HashMathSet</code>. If so, the hash code values of this
-	 * mathematical set and the specified <code>HashMathSet</code> are compared.
-	 * Since the hash code values are being cached, this represents a quick
-	 * solution if the sets aren't equal. However, if the hash code values are
-	 * equal, it cannot be assumed that the sets themselves are equal, since
-	 * different sets can have the same hash code value. In this case, the
-	 * result of the super method <code>equals()</code> is returned.
-	 * 
-	 * @param o
-	 *            object to be compared for equality with this set.
+	 * @param o object to be compared for equality with this set.
 	 * @return <code>true</code> if the specified object is equal to this set,
 	 *         <code>false</code> otherwise.
 	 */
@@ -307,20 +282,20 @@ public class JValueSet extends JValueCollection implements Cloneable {
 	public boolean equals(Object o) {
 		if (o instanceof JValueSet) {
 			JValueSet other = (JValueSet) o;
-			return itemHashSet.equals(other.itemHashSet);
+			return sortedMembers.equals(other.sortedMembers);
 		}
 		return false;
 	}
 
 	/**
-	 * Returns <code>true</code> if this mathematical set is a subset of the
-	 * specified set. That is, if all elements of this mathematical set are also
+	 * Returns <code>true</code> if this set is a subset of the
+	 * specified set. That is, if all elements of this set are also
 	 * present in the specified set.
 	 * 
 	 * @param s
 	 *            set to be checked for being a superset.
-	 * @return <code>true</code> if this mathematical set is a subset of the
-	 *         specifed set, <code>false</code> otherwise.
+	 * @return <code>true</code> if this set is a subset of the
+	 *         specified set, <code>false</code> otherwise.
 	 */
 	public boolean isSubset(JValueSet s) {
 		if (this.size() <= s.size()) {
@@ -332,7 +307,7 @@ public class JValueSet extends JValueCollection implements Cloneable {
 
 	/**
 	 * Returns the union with the specified set. This is a new
-	 * <code>HashMathSet</code> containing all elements that are present in this
+	 * <code>JValueSet</code> containing all elements that are present in this
 	 * mathematical set or in the specified set. This set and the given one are
 	 * unchanged
 	 * 
@@ -357,26 +332,16 @@ public class JValueSet extends JValueCollection implements Cloneable {
 	 */
 	public JValueSet intersection(JValueSet s) {
 		JValueSet resultingSet = new JValueSet(Math.min(s.size(), size()));
-		JValue currentElement;
 
 		if (s.size() > size()) {
-			/*
-			 * time complexity = O(min{|s|, |this|}) space complexity =
-			 * O(|resultingSet|)
-			 */
-			for (Iterator<JValue> iter = iterator(); iter.hasNext();) {
-				currentElement = iter.next();
+			for (JValue currentElement : this) {
 				if (s.contains(currentElement)) {
 					resultingSet.add(currentElement);
 				}
 			}
 		} else {
-			/*
-			 * time complexity = O(|s|) space complexity = O(|resultingSet|)
-			 */
-			for (Iterator<JValue> iter = s.iterator(); iter.hasNext();) {
-				currentElement = iter.next();
-				if (this.contains(currentElement)) {
+			for (JValue currentElement : s) {
+				if (s.contains(currentElement)) {
 					resultingSet.add(currentElement);
 				}
 			}
@@ -386,7 +351,7 @@ public class JValueSet extends JValueCollection implements Cloneable {
 
 	/**
 	 * Returns the asymmetric difference between this mathematical set and the
-	 * specified set. This is a new <code>HashMathSet</code> containing all
+	 * specified set. This is a new <code>JValueSet</code> containing all
 	 * elements that are present in this mathematical set but not in the
 	 * specified set.
 	 * 
@@ -395,14 +360,8 @@ public class JValueSet extends JValueCollection implements Cloneable {
 	 * @return the difference with the specified set.
 	 */
 	public JValueSet difference(JValueSet s) {
-		JValueSet resultingSet;
-		JValue currentElement;
-		/*
-		 * time complexity = O(|this|) space complexity = O(|this|)
-		 */
-		resultingSet = new JValueSet(size());
-		for (Iterator<JValue> iter = iterator(); iter.hasNext();) {
-			currentElement = iter.next();
+		JValueSet resultingSet = new JValueSet(size());
+		for (JValue currentElement : this) {
 			if (!s.contains(currentElement)) {
 				resultingSet.add(currentElement);
 			}
@@ -412,7 +371,7 @@ public class JValueSet extends JValueCollection implements Cloneable {
 
 	/**
 	 * Returns the symmetric difference between this mathematical set and the
-	 * specified set. This is a new <code>HashMathSet</code> containing all
+	 * specified set. This is a new <code>JValueSet</code> containing all
 	 * elements that are present either in this mathematical set or in the
 	 * specified set but not in both.
 	 * 
@@ -421,20 +380,13 @@ public class JValueSet extends JValueCollection implements Cloneable {
 	 * @return the symmetric difference with the specified set.
 	 */
 	public JValueSet symmetricDifference(JValueSet s) {
-		JValueSet resultingSet;
-		Iterator<JValue> iterSet;
-		Iterator<JValue> iterThis;
-		JValue currentElement;
-
-		resultingSet = new JValueSet();
-		for (iterThis = iterator(); iterThis.hasNext();) {
-			currentElement = iterThis.next();
+		JValueSet resultingSet = new JValueSet();
+		for (JValue currentElement : this) {
 			if (!s.contains(currentElement)) {
 				resultingSet.add(currentElement);
 			}
 		}
-		for (iterSet = s.iterator(); iterSet.hasNext();) {
-			currentElement = iterSet.next();
+		for (JValue currentElement : s) {
 			if (!this.contains(currentElement)) {
 				resultingSet.add(currentElement);
 			}
@@ -444,21 +396,14 @@ public class JValueSet extends JValueCollection implements Cloneable {
 	}
 
 	/**
-	 * Returns <code>true</code> if this mathematical set is a superset of the
+	 * Returns <code>true</code> if this set is a superset of the
 	 * specified set. That is, if all elements of the specified set are also
-	 * present in this mathematical set.
-	 * <p>
-	 * 
-	 * This implementation first compares the sizes of this mathematical set and
-	 * the specified set by invoking the <code>size</code> method on each. If
-	 * this mathematical set is bigger than the specified set then each element
-	 * of the specified set is checked for presence in this mathematical set.
-	 * Otherwise, <code>false</code> is returned.
+	 * present in this set.
 	 * 
 	 * @param s
 	 *            set to be checked for being a subset.
 	 * @return <code>true</code> if this mathematical set is a superset of the
-	 *         specifed set, <code>false</code> otherwise.
+	 *         specified set, <code>false</code> otherwise.
 	 * @see JValueSet#isSubset
 	 */
 	public boolean isSuperset(JValueSet s) {
@@ -470,36 +415,24 @@ public class JValueSet extends JValueCollection implements Cloneable {
 	}
 
 	/**
-	 * Returns <code>true</code> if this mathematical set has no common elements
+	 * Returns <code>true</code> if thisset has no common elements
 	 * with the specified set.
-	 * <p>
 	 * 
-	 * This implementation determines which is the smaller of this set and the
-	 * specified set by invoking the <code>size()</code> method on each. If this
-	 * set has fewer elements, then the implementation iterates over this set,
-	 * checking each element returned by the iterator in turn to see if it is
-	 * contained in the specified set. If it is so contained, <code>false</code>
-	 * is returned. If the specified set has fewer elements, then the
-	 * implementation iterates over the specified set, returning
-	 * <code>false</code> if it finds a common element.
 	 * 
-	 * @param s
-	 *            set to be checked for common elements.
-	 * @return <code>true</code> if this mathematical set has no common elements
-	 *         with the specifed set, <code>false</code> otherwise.
+	 * @param s set to be checked for common elements.
+	 * @return <code>true</code> if this set has no common elements
+	 *         with the specifi set, <code>false</code> otherwise.
 	 */
 	public boolean isDisjoint(JValueSet s) {
-		Iterator<JValue> iter;
-
 		if (this.size() < s.size()) {
-			for (iter = this.iterator(); iter.hasNext();) {
-				if (s.contains(iter.next())) {
+			for (JValue currentElement : this) {
+				if (s.contains(currentElement)) {
 					return false;
 				}
 			}
 		} else {
-			for (iter = s.iterator(); iter.hasNext();) {
-				if (this.contains(iter.next())) {
+			for (JValue currentElement : s) {
+				if (this.contains(currentElement)) {
 					return false;
 				}
 			}
@@ -507,23 +440,9 @@ public class JValueSet extends JValueCollection implements Cloneable {
 		return true;
 	}
 
-	/**
-	 * replaces the old element the given newElement
-	 * 
-	 * @param oldElement
-	 *            the element which should be replaced
-	 * @param newElement
-	 *            the element which should replace the old one
-	 * @return true if successfull, false otherwise
-	 */
-	@Override
-	public boolean replace(JValue oldElement, JValue newElement) {
-
-		return true;
-	}
 
 	/**
-	 * returns a pointer to the objec itself, very usefull to get a reference of
+	 * returns a pointer to the object itself, very useful to get a reference of
 	 * the right type if you guess that a JValueCollection is a set Cleaner and
 	 * faster than casting
 	 */
@@ -533,7 +452,7 @@ public class JValueSet extends JValueCollection implements Cloneable {
 	}
 
 	/**
-	 * accepts te given visitor to visit this jvalue
+	 * accepts the given visitor to visit this JValueSet
 	 */
 	@Override
 	public void accept(JValueVisitor v) {
