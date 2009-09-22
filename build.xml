@@ -146,7 +146,7 @@
 	  <ant dir="${common.dir}" antfile="build.xml" target="compile">
 		<property name="src.dir"
                   value="${src.dir}/de/uni_koblenz/${projectname}/utilities/"/>
-		<property name="compileincludes" value="rsa2tg/** tg2schemagraph/**"/>
+		<property name="compileincludes" value="rsa2tg/** tg2schemagraph/** common/**"/>
       </ant>
 	</target>
 	
