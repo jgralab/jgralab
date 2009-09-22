@@ -24,14 +24,9 @@
 
 package de.uni_koblenz.jgralabtest;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 
-import de.uni_koblenz.jgralab.trans.Transaction;
 
 /**
  * @author ist@uni-koblenz.de
@@ -41,6 +36,6 @@ import de.uni_koblenz.jgralab.trans.Transaction;
 @Suite.SuiteClasses( { EdgeListTest.class, IncidenceListTest.class,
 		LoadTest.class, VertexListTest.class, VertexTest.class, EdgeTest.class,
 		RoleNameTest.class, GraphTest.class })
-public class RunCoreTests {
+public class RunInstanceTests {
 
 }
