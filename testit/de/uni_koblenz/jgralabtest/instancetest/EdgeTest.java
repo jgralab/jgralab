@@ -11,11 +11,16 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.LineNumberReader;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Random;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
+import org.junit.runners.Parameterized.Parameters;
 
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.EdgeDirection;
@@ -26,6 +31,7 @@ import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.schema.EdgeClass;
 import de.uni_koblenz.jgralab.schema.GraphClass;
 import de.uni_koblenz.jgralab.schema.Schema;
+import de.uni_koblenz.jgralab.trans.CommitFailedException;
 import de.uni_koblenz.jgralabtest.schemas.vertextest.AbstractSuperNode;
 import de.uni_koblenz.jgralabtest.schemas.vertextest.DoubleSubNode;
 import de.uni_koblenz.jgralabtest.schemas.vertextest.Link;
@@ -36,8 +42,23 @@ import de.uni_koblenz.jgralabtest.schemas.vertextest.SuperNode;
 import de.uni_koblenz.jgralabtest.schemas.vertextest.VertexTestGraph;
 import de.uni_koblenz.jgralabtest.schemas.vertextest.VertexTestSchema;
 
-public class EdgeTest {
-	private VertexTestGraph graph;
+@RunWith(Parameterized.class)
+public class EdgeTest extends InstanceTest {
+
+	private static final int RANDOM_EDGE_COUNT = 30;
+	private static final int RANDOM_GRAPH_COUNT = 10;
+	private static final int RANDOM_VERTEX_COUNT = 1000;
+
+	public EdgeTest(boolean transactionsEnabled) {
+		super(transactionsEnabled);
+	}
+
+	@Parameters
+	public static Collection<Object[]> configure() {
+		return getParameters();
+	}
+
+	private VertexTestGraph g;
 	private Random rand;
 
 	/**
@@ -45,8 +66,16 @@ public class EdgeTest {
 	 */
 	@Before
 	public void setUp() {
-		graph = VertexTestSchema.instance().createVertexTestGraph();
+		g = transactionsEnabled ? VertexTestSchema.instance()
+				.createVertexTestGraphWithTransactionSupport()
+				: VertexTestSchema.instance().createVertexTestGraph();
 		rand = new Random(System.currentTimeMillis());
+		createTransaction(g);
+	}
+
+	@After
+	public void tearDown() throws CommitFailedException {
+		commit(g);
 	}
 
 	/*
@@ -58,19 +87,27 @@ public class EdgeTest {
 	 * If you create several edges and you delete one, the next edge should get
 	 * the id of the deleted edge. If you create a further edge it should get
 	 * the next free id.
+	 * 
+	 * @throws Exception
 	 */
 	@Test
-	public void getIdTest0() {
-		DoubleSubNode v0 = graph.createDoubleSubNode();
-		DoubleSubNode v1 = graph.createDoubleSubNode();
-		Edge e0 = graph.createLink(v0, v1);
+	public void getIdTest0() throws Exception {
+		DoubleSubNode v0 = g.createDoubleSubNode();
+		DoubleSubNode v1 = g.createDoubleSubNode();
+		Edge e0 = g.createLink(v0, v1);
 		assertEquals(1, e0.getId());
-		Edge e1 = graph.createLink(v0, v1);
+		Edge e1 = g.createLink(v0, v1);
 		assertEquals(2, e1.getId());
-		graph.deleteEdge(e0);
-		e0 = graph.createLink(v1, v0);
+		commit(g);
+
+		createTransaction(g);
+		g.deleteEdge(e0);
+		commit(g);
+		
+		createTransaction(g);
+		e0 = g.createLink(v1, v0);
 		assertEquals(1, e0.getId());
-		e0 = graph.createLink(v1, v0);
+		e0 = g.createLink(v1, v0);
 		assertEquals(3, e0.getId());
 	}
 
@@ -86,9 +123,9 @@ public class EdgeTest {
 	 */
 	@Test
 	public void getNextEdgeTestEdgeDirection0() {
-		DoubleSubNode v0 = graph.createDoubleSubNode();
-		DoubleSubNode v1 = graph.createDoubleSubNode();
-		Edge e0 = graph.createLink(v0, v1);
+		DoubleSubNode v0 = g.createDoubleSubNode();
+		DoubleSubNode v1 = g.createDoubleSubNode();
+		Edge e0 = g.createLink(v0, v1);
 		// edges of vertex v0
 		assertNull(e0.getNextEdge(EdgeDirection.INOUT));
 		assertNull(e0.getNextEdge(EdgeDirection.OUT));
@@ -104,13 +141,13 @@ public class EdgeTest {
 	 */
 	@Test
 	public void getNextEdgeTestEdgeDirection1() {
-		DoubleSubNode v1 = graph.createDoubleSubNode();
-		DoubleSubNode v2 = graph.createDoubleSubNode();
-		Edge e1 = graph.createLink(v1, v2);
-		Edge e2 = graph.createLink(v1, v2);
-		Edge e3 = graph.createLink(v2, v1);
-		Edge e4 = graph.createSubLink(v1, v2);
-		Edge e5 = graph.createLinkBack(v2, v1);
+		DoubleSubNode v1 = g.createDoubleSubNode();
+		DoubleSubNode v2 = g.createDoubleSubNode();
+		Edge e1 = g.createLink(v1, v2);
+		Edge e2 = g.createLink(v1, v2);
+		Edge e3 = g.createLink(v2, v1);
+		Edge e4 = g.createSubLink(v1, v2);
+		Edge e5 = g.createLinkBack(v2, v1);
 		// edges of vertex v0
 		assertEquals(e2, e1.getNextEdge(EdgeDirection.INOUT));
 		assertEquals(e2, e1.getNextEdge(EdgeDirection.OUT));
@@ -151,30 +188,35 @@ public class EdgeTest {
 
 	/**
 	 * Test in a randomly built graph
+	 * 
+	 * @throws Exception
 	 */
 	@Test
-	public void getNextEdgeTestEdgeDirection2() {
-		for (int i = 0; i < 1000; i++) {
-			graph = VertexTestSchema.instance().createVertexTestGraph();
-			DoubleSubNode v0 = graph.createDoubleSubNode();
-			DoubleSubNode v1 = graph.createDoubleSubNode();
-			Edge[] edges = new Edge[30];
-			Edge[] v0inout = new Edge[30];
-			Edge[] v0out = new Edge[30];
-			Edge[] v0in = new Edge[30];
-			Edge[] v1inout = new Edge[30];
-			Edge[] v1out = new Edge[30];
-			Edge[] v1in = new Edge[30];
+	public void getNextEdgeTestEdgeDirection2() throws Exception {
+		for (int i = 0; i < RANDOM_GRAPH_COUNT; i++) {
+			g = transactionsEnabled ? VertexTestSchema.instance()
+					.createVertexTestGraphWithTransactionSupport()
+					: VertexTestSchema.instance().createVertexTestGraph();
+			createTransaction(g);
+			DoubleSubNode v0 = g.createDoubleSubNode();
+			DoubleSubNode v1 = g.createDoubleSubNode();
+			Edge[] edges = new Edge[RANDOM_EDGE_COUNT];
+			Edge[] v0inout = new Edge[RANDOM_EDGE_COUNT];
+			Edge[] v0out = new Edge[RANDOM_EDGE_COUNT];
+			Edge[] v0in = new Edge[RANDOM_EDGE_COUNT];
+			Edge[] v1inout = new Edge[RANDOM_EDGE_COUNT];
+			Edge[] v1out = new Edge[RANDOM_EDGE_COUNT];
+			Edge[] v1in = new Edge[RANDOM_EDGE_COUNT];
 			int lastv0o = 0;
 			int lastv0i = 0;
 			int lastv1o = 0;
 			int lastv1i = 0;
 			int dir = 0;
 			boolean first = true;
-			for (int j = 0; j < 30; j++) {
+			for (int j = 0; j < RANDOM_EDGE_COUNT; j++) {
 				dir = rand.nextInt(2);
 				if (dir == 0) {
-					Edge e = graph.createLink(v0, v1);
+					Edge e = g.createLink(v0, v1);
 					edges[j] = e;
 					if (!first) {
 						v0inout[j - 1] = e;
@@ -189,7 +231,7 @@ public class EdgeTest {
 						}
 					}
 				} else {
-					Edge e = graph.createLink(v1, v0);
+					Edge e = g.createLink(v1, v0);
 					edges[j] = e;
 					if (!first) {
 						v0inout[j - 1] = e.getReversedEdge();
@@ -206,6 +248,8 @@ public class EdgeTest {
 				}
 				first = false;
 			}
+			commit(g);
+			createReadOnlyTransaction(g);
 			for (int k = 0; k < edges.length; k++) {
 				Edge e = edges[k];
 				if (e.getAlpha() == v0) {
@@ -230,6 +274,7 @@ public class EdgeTest {
 					assertEquals(v1in[k], e.getNextEdge(EdgeDirection.IN));
 				}
 			}
+			commit(g);
 		}
 	}
 
@@ -242,8 +287,7 @@ public class EdgeTest {
 	 */
 	private EdgeClass[] getEdgeClasses() {
 		EdgeClass[] ecs = new EdgeClass[3];
-		List<EdgeClass> a = graph.getSchema()
-				.getEdgeClassesInTopologicalOrder();
+		List<EdgeClass> a = g.getSchema().getEdgeClassesInTopologicalOrder();
 		for (EdgeClass ec : a) {
 			if (ec.getSimpleName().equals("Link")) {
 				ecs[0] = ec;
@@ -263,9 +307,9 @@ public class EdgeTest {
 	@Test
 	public void getNextEdgeOfClassTestEdgeClass0() {
 		EdgeClass[] ecs = getEdgeClasses();
-		DoubleSubNode v1 = graph.createDoubleSubNode();
-		DoubleSubNode v2 = graph.createDoubleSubNode();
-		Edge e1 = graph.createLink(v1, v2);
+		DoubleSubNode v1 = g.createDoubleSubNode();
+		DoubleSubNode v2 = g.createDoubleSubNode();
+		Edge e1 = g.createLink(v1, v2);
 		assertNull(e1.getNextEdgeOfClass(ecs[0]));
 		assertNull(e1.getNextEdgeOfClass(ecs[1]));
 		assertNull(e1.getNextEdgeOfClass(ecs[2]));
@@ -277,13 +321,13 @@ public class EdgeTest {
 	@Test
 	public void getNextEdgeOfClassTestEdgeClass1() {
 		EdgeClass[] ecs = getEdgeClasses();
-		DoubleSubNode v1 = graph.createDoubleSubNode();
-		DoubleSubNode v2 = graph.createDoubleSubNode();
-		Edge e1 = graph.createLink(v1, v2);
-		Edge e2 = graph.createLinkBack(v1, v2);
-		Edge e3 = graph.createSubLink(v2, v1);
-		Edge e4 = graph.createLink(v1, v1);
-		Edge e5 = graph.createLinkBack(v1, v2);
+		DoubleSubNode v1 = g.createDoubleSubNode();
+		DoubleSubNode v2 = g.createDoubleSubNode();
+		Edge e1 = g.createLink(v1, v2);
+		Edge e2 = g.createLinkBack(v1, v2);
+		Edge e3 = g.createSubLink(v2, v1);
+		Edge e4 = g.createLink(v1, v1);
+		Edge e5 = g.createLinkBack(v1, v2);
 		// test of edge e1
 		assertEquals(e3.getReversedEdge(), e1.getNextEdgeOfClass(ecs[0]));
 		assertEquals(e3.getReversedEdge(), e1.getNextEdgeOfClass(ecs[1]));
@@ -312,27 +356,32 @@ public class EdgeTest {
 
 	/**
 	 * Test in a randomly built graph
+	 * 
+	 * @throws CommitFailedException
 	 */
 	@Test
-	public void getNextEdgeOfClassTestEdgeClass2() {
+	public void getNextEdgeOfClassTestEdgeClass2() throws CommitFailedException {
 		EdgeClass[] ecs = getEdgeClasses();
-		for (int i = 0; i < 1000; i++) {
-			graph = VertexTestSchema.instance().createVertexTestGraph();
-			DoubleSubNode v0 = graph.createDoubleSubNode();
-			DoubleSubNode v1 = graph.createDoubleSubNode();
-			Edge[] edges = new Edge[30];
-			Edge[] link = new Edge[30];
-			Edge[] sublink = new Edge[30];
-			Edge[] linkback = new Edge[30];
+		for (int i = 0; i < RANDOM_GRAPH_COUNT; i++) {
+			g = transactionsEnabled ? VertexTestSchema.instance()
+					.createVertexTestGraphWithTransactionSupport()
+					: VertexTestSchema.instance().createVertexTestGraph();
+			createTransaction(g);
+			DoubleSubNode v0 = g.createDoubleSubNode();
+			DoubleSubNode v1 = g.createDoubleSubNode();
+			Edge[] edges = new Edge[RANDOM_EDGE_COUNT];
+			Edge[] link = new Edge[RANDOM_EDGE_COUNT];
+			Edge[] sublink = new Edge[RANDOM_EDGE_COUNT];
+			Edge[] linkback = new Edge[RANDOM_EDGE_COUNT];
 			int lastlink = 0;
 			int lastsublink = 0;
 			int lastlinkback = 0;
 			int edgetype = 0;
 			boolean first = true;
-			for (int j = 0; j < 30; j++) {
+			for (int j = 0; j < RANDOM_EDGE_COUNT; j++) {
 				edgetype = rand.nextInt(2);
 				if (edgetype == 0) {
-					Edge e = graph.createLink(v0, v1);
+					Edge e = g.createLink(v0, v1);
 					edges[j] = e;
 					if (!first) {
 						while (lastlink < j) {
@@ -342,7 +391,7 @@ public class EdgeTest {
 					}
 				}
 				if (edgetype == 1) {
-					Edge e = graph.createSubLink(v0, v1);
+					Edge e = g.createSubLink(v0, v1);
 					edges[j] = e;
 					if (!first) {
 						while (lastlink < j) {
@@ -355,7 +404,7 @@ public class EdgeTest {
 						}
 					}
 				} else {
-					Edge e = graph.createLinkBack(v0, v1);
+					Edge e = g.createLinkBack(v0, v1);
 					edges[j] = e;
 					if (!first) {
 						while (lastlinkback < j) {
@@ -366,12 +415,15 @@ public class EdgeTest {
 				}
 				first = false;
 			}
+			commit(g);
+			createReadOnlyTransaction(g);
 			for (int k = 0; k < edges.length; k++) {
 				Edge e = edges[k];
 				assertEquals(link[k], e.getNextEdgeOfClass(ecs[0]));
 				assertEquals(sublink[k], e.getNextEdgeOfClass(ecs[1]));
 				assertEquals(linkback[k], e.getNextEdgeOfClass(ecs[2]));
 			}
+			commit(g);
 		}
 	}
 
@@ -383,9 +435,9 @@ public class EdgeTest {
 	 */
 	@Test
 	public void getNextEdgeOfClassTestClass0() {
-		DoubleSubNode v1 = graph.createDoubleSubNode();
-		DoubleSubNode v2 = graph.createDoubleSubNode();
-		Edge e1 = graph.createLink(v1, v2);
+		DoubleSubNode v1 = g.createDoubleSubNode();
+		DoubleSubNode v2 = g.createDoubleSubNode();
+		Edge e1 = g.createLink(v1, v2);
 		assertNull(e1.getNextEdgeOfClass(Link.class));
 		assertNull(e1.getNextEdgeOfClass(SubLink.class));
 		assertNull(e1.getNextEdgeOfClass(LinkBack.class));
@@ -396,13 +448,13 @@ public class EdgeTest {
 	 */
 	@Test
 	public void getNextEdgeOfClassTestClass1() {
-		DoubleSubNode v1 = graph.createDoubleSubNode();
-		DoubleSubNode v2 = graph.createDoubleSubNode();
-		Edge e1 = graph.createLink(v1, v2);
-		Edge e2 = graph.createLinkBack(v1, v2);
-		Edge e3 = graph.createSubLink(v2, v1);
-		Edge e4 = graph.createLink(v1, v1);
-		Edge e5 = graph.createLinkBack(v1, v2);
+		DoubleSubNode v1 = g.createDoubleSubNode();
+		DoubleSubNode v2 = g.createDoubleSubNode();
+		Edge e1 = g.createLink(v1, v2);
+		Edge e2 = g.createLinkBack(v1, v2);
+		Edge e3 = g.createSubLink(v2, v1);
+		Edge e4 = g.createLink(v1, v1);
+		Edge e5 = g.createLinkBack(v1, v2);
 		// test of edge e1
 		assertEquals(e3.getReversedEdge(), e1.getNextEdgeOfClass(Link.class));
 		assertEquals(e3.getReversedEdge(), e1.getNextEdgeOfClass(SubLink.class));
@@ -433,26 +485,31 @@ public class EdgeTest {
 
 	/**
 	 * Test in a randomly built graph
+	 * 
+	 * @throws CommitFailedException
 	 */
 	@Test
-	public void getNextEdgeOfClassTestClass2() {
-		for (int i = 0; i < 1000; i++) {
-			graph = VertexTestSchema.instance().createVertexTestGraph();
-			DoubleSubNode v0 = graph.createDoubleSubNode();
-			DoubleSubNode v1 = graph.createDoubleSubNode();
-			Edge[] edges = new Edge[30];
-			Edge[] link = new Edge[30];
-			Edge[] sublink = new Edge[30];
-			Edge[] linkback = new Edge[30];
+	public void getNextEdgeOfClassTestClass2() throws CommitFailedException {
+		for (int i = 0; i < RANDOM_GRAPH_COUNT; i++) {
+			g = transactionsEnabled ? VertexTestSchema.instance()
+					.createVertexTestGraphWithTransactionSupport()
+					: VertexTestSchema.instance().createVertexTestGraph();
+			createTransaction(g);
+			DoubleSubNode v0 = g.createDoubleSubNode();
+			DoubleSubNode v1 = g.createDoubleSubNode();
+			Edge[] edges = new Edge[RANDOM_EDGE_COUNT];
+			Edge[] link = new Edge[RANDOM_EDGE_COUNT];
+			Edge[] sublink = new Edge[RANDOM_EDGE_COUNT];
+			Edge[] linkback = new Edge[RANDOM_EDGE_COUNT];
 			int lastlink = 0;
 			int lastsublink = 0;
 			int lastlinkback = 0;
 			int edgetype = 0;
 			boolean first = true;
-			for (int j = 0; j < 30; j++) {
+			for (int j = 0; j < RANDOM_EDGE_COUNT; j++) {
 				edgetype = rand.nextInt(2);
 				if (edgetype == 0) {
-					Edge e = graph.createLink(v0, v1);
+					Edge e = g.createLink(v0, v1);
 					edges[j] = e;
 					if (!first) {
 						while (lastlink < j) {
@@ -462,7 +519,7 @@ public class EdgeTest {
 					}
 				}
 				if (edgetype == 1) {
-					Edge e = graph.createSubLink(v0, v1);
+					Edge e = g.createSubLink(v0, v1);
 					edges[j] = e;
 					if (!first) {
 						while (lastlink < j) {
@@ -475,7 +532,7 @@ public class EdgeTest {
 						}
 					}
 				} else {
-					Edge e = graph.createLinkBack(v0, v1);
+					Edge e = g.createLinkBack(v0, v1);
 					edges[j] = e;
 					if (!first) {
 						while (lastlinkback < j) {
@@ -486,12 +543,15 @@ public class EdgeTest {
 				}
 				first = false;
 			}
+			commit(g);
+			createReadOnlyTransaction(g);
 			for (int k = 0; k < edges.length; k++) {
 				Edge e = edges[k];
 				assertEquals(link[k], e.getNextEdgeOfClass(Link.class));
 				assertEquals(sublink[k], e.getNextEdgeOfClass(SubLink.class));
 				assertEquals(linkback[k], e.getNextEdgeOfClass(LinkBack.class));
 			}
+			commit(g);
 		}
 	}
 
@@ -504,9 +564,9 @@ public class EdgeTest {
 	@Test
 	public void getNextEdgeOfClassTestEdgeClassEdgeDirection0() {
 		EdgeClass[] ecs = getEdgeClasses();
-		DoubleSubNode v1 = graph.createDoubleSubNode();
-		DoubleSubNode v2 = graph.createDoubleSubNode();
-		Edge e1 = graph.createLink(v1, v2);
+		DoubleSubNode v1 = g.createDoubleSubNode();
+		DoubleSubNode v2 = g.createDoubleSubNode();
+		Edge e1 = g.createLink(v1, v2);
 		assertNull(e1.getNextEdgeOfClass(ecs[0], EdgeDirection.INOUT));
 		assertNull(e1.getNextEdgeOfClass(ecs[1], EdgeDirection.INOUT));
 		assertNull(e1.getNextEdgeOfClass(ecs[2], EdgeDirection.INOUT));
@@ -524,13 +584,13 @@ public class EdgeTest {
 	@Test
 	public void getNextEdgeOfClassTestEdgeClassEdgeDirection1() {
 		EdgeClass[] ecs = getEdgeClasses();
-		DoubleSubNode v1 = graph.createDoubleSubNode();
-		DoubleSubNode v2 = graph.createDoubleSubNode();
-		Edge e1 = graph.createLink(v1, v2);
-		Edge e2 = graph.createLinkBack(v1, v2);
-		Edge e3 = graph.createSubLink(v2, v1);
-		Edge e4 = graph.createLink(v1, v1);
-		Edge e5 = graph.createLinkBack(v1, v2);
+		DoubleSubNode v1 = g.createDoubleSubNode();
+		DoubleSubNode v2 = g.createDoubleSubNode();
+		Edge e1 = g.createLink(v1, v2);
+		Edge e2 = g.createLinkBack(v1, v2);
+		Edge e3 = g.createSubLink(v2, v1);
+		Edge e4 = g.createLink(v1, v1);
+		Edge e5 = g.createLinkBack(v1, v2);
 		// test of edge e1
 		assertEquals(e3.getReversedEdge(), e1.getNextEdgeOfClass(ecs[0],
 				EdgeDirection.INOUT));
@@ -623,42 +683,48 @@ public class EdgeTest {
 
 	/**
 	 * Test in a randomly built graph
+	 * 
+	 * @throws CommitFailedException
 	 */
 	@Test
-	public void getNextEdgeOfClassTestEdgeClassEdgeDirection2() {
+	public void getNextEdgeOfClassTestEdgeClassEdgeDirection2()
+			throws CommitFailedException {
 		EdgeClass[] ecs = getEdgeClasses();
-		for (int i = 0; i < 1000; i++) {
-			graph = VertexTestSchema.instance().createVertexTestGraph();
-			DoubleSubNode v0 = graph.createDoubleSubNode();
-			DoubleSubNode v1 = graph.createDoubleSubNode();
-			Edge[] edges = new Edge[30];
-			Edge[] linkinout = new Edge[30];
-			Edge[] sublinkinout = new Edge[30];
-			Edge[] linkbackinout = new Edge[30];
+		for (int i = 0; i < RANDOM_GRAPH_COUNT; i++) {
+			g = transactionsEnabled ? VertexTestSchema.instance()
+					.createVertexTestGraphWithTransactionSupport()
+					: VertexTestSchema.instance().createVertexTestGraph();
+			createTransaction(g);
+			DoubleSubNode v0 = g.createDoubleSubNode();
+			DoubleSubNode v1 = g.createDoubleSubNode();
+			Edge[] edges = new Edge[RANDOM_EDGE_COUNT];
+			Edge[] linkinout = new Edge[RANDOM_EDGE_COUNT];
+			Edge[] sublinkinout = new Edge[RANDOM_EDGE_COUNT];
+			Edge[] linkbackinout = new Edge[RANDOM_EDGE_COUNT];
 			int lastlinkinout = 0;
 			int lastsublinkinout = 0;
 			int lastlinkbackinout = 0;
-			Edge[] linkout = new Edge[30];
-			Edge[] sublinkout = new Edge[30];
-			Edge[] linkbackout = new Edge[30];
+			Edge[] linkout = new Edge[RANDOM_EDGE_COUNT];
+			Edge[] sublinkout = new Edge[RANDOM_EDGE_COUNT];
+			Edge[] linkbackout = new Edge[RANDOM_EDGE_COUNT];
 			int lastlinkout = 0;
 			int lastsublinkout = 0;
 			int lastlinkbackout = 0;
-			Edge[] linkin = new Edge[30];
-			Edge[] sublinkin = new Edge[30];
-			Edge[] linkbackin = new Edge[30];
+			Edge[] linkin = new Edge[RANDOM_EDGE_COUNT];
+			Edge[] sublinkin = new Edge[RANDOM_EDGE_COUNT];
+			Edge[] linkbackin = new Edge[RANDOM_EDGE_COUNT];
 			int lastlinkin = 0;
 			int lastsublinkin = 0;
 			int lastlinkbackin = 0;
 			int edgetype = 0;
 			boolean direction = false;
 			boolean first = true;
-			for (int j = 0; j < 30; j++) {
+			for (int j = 0; j < RANDOM_EDGE_COUNT; j++) {
 				edgetype = rand.nextInt(2);
 				direction = rand.nextBoolean();
 				if (edgetype == 0) {
-					Edge e = direction ? graph.createLink(v0, v1) : graph
-							.createLink(v1, v0);
+					Edge e = direction ? g.createLink(v0, v1) : g.createLink(
+							v1, v0);
 					if (direction) {
 						edges[j] = e;
 						if (!first) {
@@ -686,7 +752,7 @@ public class EdgeTest {
 					}
 				}
 				if (edgetype == 1) {
-					Edge e = direction ? graph.createSubLink(v0, v1) : graph
+					Edge e = direction ? g.createSubLink(v0, v1) : g
 							.createSubLink(v1, v0);
 					if (direction) {
 						edges[j] = e;
@@ -731,7 +797,7 @@ public class EdgeTest {
 						}
 					}
 				} else {
-					Edge e = direction ? graph.createLinkBack(v0, v1) : graph
+					Edge e = direction ? g.createLinkBack(v0, v1) : g
 							.createLinkBack(v1, v0);
 					if (direction) {
 						edges[j] = e;
@@ -763,6 +829,8 @@ public class EdgeTest {
 				}
 				first = false;
 			}
+			commit(g);
+			createReadOnlyTransaction(g);
 			for (int k = 0; k < edges.length; k++) {
 				Edge e = edges[k];
 				assertEquals(linkinout[k], e.getNextEdgeOfClass(ecs[0],
@@ -784,6 +852,7 @@ public class EdgeTest {
 				assertEquals(linkbackin[k], e.getNextEdgeOfClass(ecs[2],
 						EdgeDirection.IN));
 			}
+			commit(g);
 		}
 	}
 
@@ -795,9 +864,9 @@ public class EdgeTest {
 	 */
 	@Test
 	public void getNextEdgeOfClassTestClassEdgeDirection0() {
-		DoubleSubNode v1 = graph.createDoubleSubNode();
-		DoubleSubNode v2 = graph.createDoubleSubNode();
-		Edge e1 = graph.createLink(v1, v2);
+		DoubleSubNode v1 = g.createDoubleSubNode();
+		DoubleSubNode v2 = g.createDoubleSubNode();
+		Edge e1 = g.createLink(v1, v2);
 		assertNull(e1.getNextEdgeOfClass(Link.class, EdgeDirection.INOUT));
 		assertNull(e1.getNextEdgeOfClass(SubLink.class, EdgeDirection.INOUT));
 		assertNull(e1.getNextEdgeOfClass(LinkBack.class, EdgeDirection.INOUT));
@@ -814,13 +883,13 @@ public class EdgeTest {
 	 */
 	@Test
 	public void getNextEdgeOfClassTestClassEdgeDirection1() {
-		DoubleSubNode v1 = graph.createDoubleSubNode();
-		DoubleSubNode v2 = graph.createDoubleSubNode();
-		Edge e1 = graph.createLink(v1, v2);
-		Edge e2 = graph.createLinkBack(v1, v2);
-		Edge e3 = graph.createSubLink(v2, v1);
-		Edge e4 = graph.createLink(v1, v1);
-		Edge e5 = graph.createLinkBack(v1, v2);
+		DoubleSubNode v1 = g.createDoubleSubNode();
+		DoubleSubNode v2 = g.createDoubleSubNode();
+		Edge e1 = g.createLink(v1, v2);
+		Edge e2 = g.createLinkBack(v1, v2);
+		Edge e3 = g.createSubLink(v2, v1);
+		Edge e4 = g.createLink(v1, v1);
+		Edge e5 = g.createLinkBack(v1, v2);
 		// test of edge e1
 		assertEquals(e3.getReversedEdge(), e1.getNextEdgeOfClass(Link.class,
 				EdgeDirection.INOUT));
@@ -919,41 +988,47 @@ public class EdgeTest {
 
 	/**
 	 * Test in a randomly built graph
+	 * 
+	 * @throws CommitFailedException
 	 */
 	@Test
-	public void getNextEdgeOfClassTestClassEdgeDirection2() {
-		for (int i = 0; i < 1000; i++) {
-			graph = VertexTestSchema.instance().createVertexTestGraph();
-			DoubleSubNode v0 = graph.createDoubleSubNode();
-			DoubleSubNode v1 = graph.createDoubleSubNode();
-			Edge[] edges = new Edge[30];
-			Edge[] linkinout = new Edge[30];
-			Edge[] sublinkinout = new Edge[30];
-			Edge[] linkbackinout = new Edge[30];
+	public void getNextEdgeOfClassTestClassEdgeDirection2()
+			throws CommitFailedException {
+		for (int i = 0; i < RANDOM_GRAPH_COUNT; i++) {
+			g = transactionsEnabled ? VertexTestSchema.instance()
+					.createVertexTestGraphWithTransactionSupport()
+					: VertexTestSchema.instance().createVertexTestGraph();
+			createTransaction(g);
+			DoubleSubNode v0 = g.createDoubleSubNode();
+			DoubleSubNode v1 = g.createDoubleSubNode();
+			Edge[] edges = new Edge[RANDOM_EDGE_COUNT];
+			Edge[] linkinout = new Edge[RANDOM_EDGE_COUNT];
+			Edge[] sublinkinout = new Edge[RANDOM_EDGE_COUNT];
+			Edge[] linkbackinout = new Edge[RANDOM_EDGE_COUNT];
 			int lastlinkinout = 0;
 			int lastsublinkinout = 0;
 			int lastlinkbackinout = 0;
-			Edge[] linkout = new Edge[30];
-			Edge[] sublinkout = new Edge[30];
-			Edge[] linkbackout = new Edge[30];
+			Edge[] linkout = new Edge[RANDOM_EDGE_COUNT];
+			Edge[] sublinkout = new Edge[RANDOM_EDGE_COUNT];
+			Edge[] linkbackout = new Edge[RANDOM_EDGE_COUNT];
 			int lastlinkout = 0;
 			int lastsublinkout = 0;
 			int lastlinkbackout = 0;
-			Edge[] linkin = new Edge[30];
-			Edge[] sublinkin = new Edge[30];
-			Edge[] linkbackin = new Edge[30];
+			Edge[] linkin = new Edge[RANDOM_EDGE_COUNT];
+			Edge[] sublinkin = new Edge[RANDOM_EDGE_COUNT];
+			Edge[] linkbackin = new Edge[RANDOM_EDGE_COUNT];
 			int lastlinkin = 0;
 			int lastsublinkin = 0;
 			int lastlinkbackin = 0;
 			int edgetype = 0;
 			boolean direction = false;
 			boolean first = true;
-			for (int j = 0; j < 30; j++) {
+			for (int j = 0; j < RANDOM_EDGE_COUNT; j++) {
 				edgetype = rand.nextInt(2);
 				direction = rand.nextBoolean();
 				if (edgetype == 0) {
-					Edge e = direction ? graph.createLink(v0, v1) : graph
-							.createLink(v1, v0);
+					Edge e = direction ? g.createLink(v0, v1) : g.createLink(
+							v1, v0);
 					if (direction) {
 						edges[j] = e;
 						if (!first) {
@@ -981,7 +1056,7 @@ public class EdgeTest {
 					}
 				}
 				if (edgetype == 1) {
-					Edge e = direction ? graph.createSubLink(v0, v1) : graph
+					Edge e = direction ? g.createSubLink(v0, v1) : g
 							.createSubLink(v1, v0);
 					if (direction) {
 						edges[j] = e;
@@ -1026,7 +1101,7 @@ public class EdgeTest {
 						}
 					}
 				} else {
-					Edge e = direction ? graph.createLinkBack(v0, v1) : graph
+					Edge e = direction ? g.createLinkBack(v0, v1) : g
 							.createLinkBack(v1, v0);
 					if (direction) {
 						edges[j] = e;
@@ -1058,6 +1133,8 @@ public class EdgeTest {
 				}
 				first = false;
 			}
+			commit(g);
+			createReadOnlyTransaction(g);
 			for (int k = 0; k < edges.length; k++) {
 				Edge e = edges[k];
 				assertEquals(linkinout[k], e.getNextEdgeOfClass(Link.class,
@@ -1080,6 +1157,7 @@ public class EdgeTest {
 						LinkBack.class, EdgeDirection.IN));
 			}
 		}
+		commit(g);
 	}
 
 	// tests for the method Edge getNextEdgeOfClass(EdgeClass anEdgeClass,
@@ -1091,9 +1169,9 @@ public class EdgeTest {
 	@Test
 	public void getNextEdgeOfClassTestEdgeClassBoolean0() {
 		EdgeClass[] ecs = getEdgeClasses();
-		DoubleSubNode v1 = graph.createDoubleSubNode();
-		DoubleSubNode v2 = graph.createDoubleSubNode();
-		Edge e1 = graph.createLink(v1, v2);
+		DoubleSubNode v1 = g.createDoubleSubNode();
+		DoubleSubNode v2 = g.createDoubleSubNode();
+		Edge e1 = g.createLink(v1, v2);
 		assertNull(e1.getNextEdgeOfClass(ecs[0], false));
 		assertNull(e1.getNextEdgeOfClass(ecs[1], false));
 		assertNull(e1.getNextEdgeOfClass(ecs[2], false));
@@ -1108,13 +1186,13 @@ public class EdgeTest {
 	@Test
 	public void getNextEdgeOfClassTestEdgeClassBoolean1() {
 		EdgeClass[] ecs = getEdgeClasses();
-		DoubleSubNode v1 = graph.createDoubleSubNode();
-		DoubleSubNode v2 = graph.createDoubleSubNode();
-		Edge e1 = graph.createLink(v1, v2);
-		Edge e2 = graph.createLinkBack(v1, v2);
-		Edge e3 = graph.createSubLink(v2, v1);
-		Edge e4 = graph.createLink(v1, v1);
-		Edge e5 = graph.createLinkBack(v1, v2);
+		DoubleSubNode v1 = g.createDoubleSubNode();
+		DoubleSubNode v2 = g.createDoubleSubNode();
+		Edge e1 = g.createLink(v1, v2);
+		Edge e2 = g.createLinkBack(v1, v2);
+		Edge e3 = g.createSubLink(v2, v1);
+		Edge e4 = g.createLink(v1, v1);
+		Edge e5 = g.createLinkBack(v1, v2);
 		// test of edge e1
 		assertEquals(e3.getReversedEdge(), e1.getNextEdgeOfClass(ecs[0], false));
 		assertEquals(e3.getReversedEdge(), e1.getNextEdgeOfClass(ecs[1], false));
@@ -1165,36 +1243,42 @@ public class EdgeTest {
 
 	/**
 	 * Test in a randomly built graph
+	 * 
+	 * @throws CommitFailedException
 	 */
 	@Test
-	public void getNextEdgeOfClassTestEdgeClassBoolean2() {
+	public void getNextEdgeOfClassTestEdgeClassBoolean2()
+			throws CommitFailedException {
 		EdgeClass[] ecs = getEdgeClasses();
-		for (int i = 0; i < 1000; i++) {
-			graph = VertexTestSchema.instance().createVertexTestGraph();
-			DoubleSubNode v0 = graph.createDoubleSubNode();
-			DoubleSubNode v1 = graph.createDoubleSubNode();
-			Edge[] edges = new Edge[30];
-			Edge[] linkfalse = new Edge[30];
-			Edge[] sublinkfalse = new Edge[30];
-			Edge[] linkbackfalse = new Edge[30];
+		for (int i = 0; i < RANDOM_GRAPH_COUNT; i++) {
+			g = transactionsEnabled ? VertexTestSchema.instance()
+					.createVertexTestGraphWithTransactionSupport()
+					: VertexTestSchema.instance().createVertexTestGraph();
+			createTransaction(g);
+			DoubleSubNode v0 = g.createDoubleSubNode();
+			DoubleSubNode v1 = g.createDoubleSubNode();
+			Edge[] edges = new Edge[RANDOM_EDGE_COUNT];
+			Edge[] linkfalse = new Edge[RANDOM_EDGE_COUNT];
+			Edge[] sublinkfalse = new Edge[RANDOM_EDGE_COUNT];
+			Edge[] linkbackfalse = new Edge[RANDOM_EDGE_COUNT];
 			int lastlinkfalse = 0;
 			int lastsublinkfalse = 0;
 			int lastlinkbackfalse = 0;
-			Edge[] linktrue = new Edge[30];
-			Edge[] sublinktrue = new Edge[30];
-			Edge[] linkbacktrue = new Edge[30];
+			Edge[] linktrue = new Edge[RANDOM_EDGE_COUNT];
+			Edge[] sublinktrue = new Edge[RANDOM_EDGE_COUNT];
+			Edge[] linkbacktrue = new Edge[RANDOM_EDGE_COUNT];
 			int lastlinktrue = 0;
 			int lastsublinktrue = 0;
 			int lastlinkbacktrue = 0;
 			int edgetype = 0;
 			boolean direction = false;
 			boolean first = true;
-			for (int j = 0; j < 30; j++) {
+			for (int j = 0; j < RANDOM_EDGE_COUNT; j++) {
 				edgetype = rand.nextInt(2);
 				direction = rand.nextBoolean();
 				if (edgetype == 0) {
-					Edge e = direction ? graph.createLink(v0, v1) : graph
-							.createLink(v1, v0).getReversedEdge();
+					Edge e = direction ? g.createLink(v0, v1) : g.createLink(
+							v1, v0).getReversedEdge();
 					edges[j] = e;
 					if (!first) {
 						while (lastlinkfalse < j) {
@@ -1208,7 +1292,7 @@ public class EdgeTest {
 					}
 				}
 				if (edgetype == 1) {
-					Edge e = direction ? graph.createSubLink(v0, v1) : graph
+					Edge e = direction ? g.createSubLink(v0, v1) : g
 							.createSubLink(v1, v0).getReversedEdge();
 					edges[j] = e;
 					if (!first) {
@@ -1226,7 +1310,7 @@ public class EdgeTest {
 						}
 					}
 				} else {
-					Edge e = direction ? graph.createLinkBack(v0, v1) : graph
+					Edge e = direction ? g.createLinkBack(v0, v1) : g
 							.createLinkBack(v1, v0).getReversedEdge();
 					edges[j] = e;
 					if (!first) {
@@ -1242,6 +1326,8 @@ public class EdgeTest {
 				}
 				first = false;
 			}
+			commit(g);
+			createReadOnlyTransaction(g);
 			for (int k = 0; k < edges.length; k++) {
 				Edge e = edges[k];
 				assertEquals(linkfalse[k], e.getNextEdgeOfClass(ecs[0], false));
@@ -1254,6 +1340,7 @@ public class EdgeTest {
 				assertEquals(linkbacktrue[k], e
 						.getNextEdgeOfClass(ecs[2], true));
 			}
+			commit(g);
 		}
 	}
 
@@ -1265,9 +1352,9 @@ public class EdgeTest {
 	 */
 	@Test
 	public void getNextEdgeOfClassTestClassBoolean0() {
-		DoubleSubNode v1 = graph.createDoubleSubNode();
-		DoubleSubNode v2 = graph.createDoubleSubNode();
-		Edge e1 = graph.createLink(v1, v2);
+		DoubleSubNode v1 = g.createDoubleSubNode();
+		DoubleSubNode v2 = g.createDoubleSubNode();
+		Edge e1 = g.createLink(v1, v2);
 		assertNull(e1.getNextEdgeOfClass(Link.class, false));
 		assertNull(e1.getNextEdgeOfClass(SubLink.class, false));
 		assertNull(e1.getNextEdgeOfClass(LinkBack.class, false));
@@ -1281,13 +1368,13 @@ public class EdgeTest {
 	 */
 	@Test
 	public void getNextEdgeOfClassTestClassBoolean1() {
-		DoubleSubNode v1 = graph.createDoubleSubNode();
-		DoubleSubNode v2 = graph.createDoubleSubNode();
-		Edge e1 = graph.createLink(v1, v2);
-		Edge e2 = graph.createLinkBack(v1, v2);
-		Edge e3 = graph.createSubLink(v2, v1);
-		Edge e4 = graph.createLink(v1, v1);
-		Edge e5 = graph.createLinkBack(v1, v2);
+		DoubleSubNode v1 = g.createDoubleSubNode();
+		DoubleSubNode v2 = g.createDoubleSubNode();
+		Edge e1 = g.createLink(v1, v2);
+		Edge e2 = g.createLinkBack(v1, v2);
+		Edge e3 = g.createSubLink(v2, v1);
+		Edge e4 = g.createLink(v1, v1);
+		Edge e5 = g.createLinkBack(v1, v2);
 		// test of edge e1
 		assertEquals(e3.getReversedEdge(), e1.getNextEdgeOfClass(Link.class,
 				false));
@@ -1354,35 +1441,41 @@ public class EdgeTest {
 
 	/**
 	 * Test in a randomly built graph
+	 * 
+	 * @throws CommitFailedException
 	 */
 	@Test
-	public void getNextEdgeOfClassTestClassBoolean2() {
-		for (int i = 0; i < 1000; i++) {
-			graph = VertexTestSchema.instance().createVertexTestGraph();
-			DoubleSubNode v0 = graph.createDoubleSubNode();
-			DoubleSubNode v1 = graph.createDoubleSubNode();
-			Edge[] edges = new Edge[30];
-			Edge[] linkfalse = new Edge[30];
-			Edge[] sublinkfalse = new Edge[30];
-			Edge[] linkbackfalse = new Edge[30];
+	public void getNextEdgeOfClassTestClassBoolean2()
+			throws CommitFailedException {
+		for (int i = 0; i < RANDOM_GRAPH_COUNT; i++) {
+			g = transactionsEnabled ? VertexTestSchema.instance()
+					.createVertexTestGraphWithTransactionSupport()
+					: VertexTestSchema.instance().createVertexTestGraph();
+			createTransaction(g);
+			DoubleSubNode v0 = g.createDoubleSubNode();
+			DoubleSubNode v1 = g.createDoubleSubNode();
+			Edge[] edges = new Edge[RANDOM_EDGE_COUNT];
+			Edge[] linkfalse = new Edge[RANDOM_EDGE_COUNT];
+			Edge[] sublinkfalse = new Edge[RANDOM_EDGE_COUNT];
+			Edge[] linkbackfalse = new Edge[RANDOM_EDGE_COUNT];
 			int lastlinkfalse = 0;
 			int lastsublinkfalse = 0;
 			int lastlinkbackfalse = 0;
-			Edge[] linktrue = new Edge[30];
-			Edge[] sublinktrue = new Edge[30];
-			Edge[] linkbacktrue = new Edge[30];
+			Edge[] linktrue = new Edge[RANDOM_EDGE_COUNT];
+			Edge[] sublinktrue = new Edge[RANDOM_EDGE_COUNT];
+			Edge[] linkbacktrue = new Edge[RANDOM_EDGE_COUNT];
 			int lastlinktrue = 0;
 			int lastsublinktrue = 0;
 			int lastlinkbacktrue = 0;
 			int edgetype = 0;
 			boolean direction = false;
 			boolean first = true;
-			for (int j = 0; j < 30; j++) {
+			for (int j = 0; j < RANDOM_EDGE_COUNT; j++) {
 				edgetype = rand.nextInt(2);
 				direction = rand.nextBoolean();
 				if (edgetype == 0) {
-					Edge e = direction ? graph.createLink(v0, v1) : graph
-							.createLink(v1, v0).getReversedEdge();
+					Edge e = direction ? g.createLink(v0, v1) : g.createLink(
+							v1, v0).getReversedEdge();
 					edges[j] = e;
 					if (!first) {
 						while (lastlinkfalse < j) {
@@ -1396,7 +1489,7 @@ public class EdgeTest {
 					}
 				}
 				if (edgetype == 1) {
-					Edge e = direction ? graph.createSubLink(v0, v1) : graph
+					Edge e = direction ? g.createSubLink(v0, v1) : g
 							.createSubLink(v1, v0).getReversedEdge();
 					edges[j] = e;
 					if (!first) {
@@ -1414,7 +1507,7 @@ public class EdgeTest {
 						}
 					}
 				} else {
-					Edge e = direction ? graph.createLinkBack(v0, v1) : graph
+					Edge e = direction ? g.createLinkBack(v0, v1) : g
 							.createLinkBack(v1, v0).getReversedEdge();
 					edges[j] = e;
 					if (!first) {
@@ -1430,6 +1523,8 @@ public class EdgeTest {
 				}
 				first = false;
 			}
+			commit(g);
+			createReadOnlyTransaction(g);
 			for (int k = 0; k < edges.length; k++) {
 				Edge e = edges[k];
 				assertEquals(linkfalse[k], e.getNextEdgeOfClass(Link.class,
@@ -1445,6 +1540,7 @@ public class EdgeTest {
 				assertEquals(linkbacktrue[k], e.getNextEdgeOfClass(
 						LinkBack.class, true));
 			}
+			commit(g);
 		}
 	}
 
@@ -1457,9 +1553,9 @@ public class EdgeTest {
 	@Test
 	public void getNextEdgeOfClassTestEdgeClassEdgeDirectionBoolean0() {
 		EdgeClass[] ecs = getEdgeClasses();
-		DoubleSubNode v1 = graph.createDoubleSubNode();
-		DoubleSubNode v2 = graph.createDoubleSubNode();
-		Edge e1 = graph.createLink(v1, v2);
+		DoubleSubNode v1 = g.createDoubleSubNode();
+		DoubleSubNode v2 = g.createDoubleSubNode();
+		Edge e1 = g.createLink(v1, v2);
 		assertNull(e1.getNextEdgeOfClass(ecs[0], EdgeDirection.INOUT, false));
 		assertNull(e1.getNextEdgeOfClass(ecs[1], EdgeDirection.INOUT, false));
 		assertNull(e1.getNextEdgeOfClass(ecs[2], EdgeDirection.INOUT, false));
@@ -1486,13 +1582,13 @@ public class EdgeTest {
 	@Test
 	public void getNextEdgeOfClassTestEdgeClassEdgeDirectionBoolean1() {
 		EdgeClass[] ecs = getEdgeClasses();
-		DoubleSubNode v1 = graph.createDoubleSubNode();
-		DoubleSubNode v2 = graph.createDoubleSubNode();
-		Edge e1 = graph.createLink(v1, v2);
-		Edge e2 = graph.createLinkBack(v1, v2);
-		Edge e3 = graph.createSubLink(v2, v1);
-		Edge e4 = graph.createLink(v1, v1);
-		Edge e5 = graph.createLinkBack(v1, v2);
+		DoubleSubNode v1 = g.createDoubleSubNode();
+		DoubleSubNode v2 = g.createDoubleSubNode();
+		Edge e1 = g.createLink(v1, v2);
+		Edge e2 = g.createLinkBack(v1, v2);
+		Edge e3 = g.createSubLink(v2, v1);
+		Edge e4 = g.createLink(v1, v1);
+		Edge e5 = g.createLinkBack(v1, v2);
 		// test of edge e1
 		assertEquals(e3.getReversedEdge(), e1.getNextEdgeOfClass(ecs[0],
 				EdgeDirection.INOUT, false));
@@ -1689,48 +1785,54 @@ public class EdgeTest {
 
 	/**
 	 * Test in a randomly built graph
+	 * 
+	 * @throws CommitFailedException
 	 */
 	@Test
-	public void getNextEdgeOfClassTestEdgeClassEdgeDirectionBoolean2() {
+	public void getNextEdgeOfClassTestEdgeClassEdgeDirectionBoolean2()
+			throws CommitFailedException {
 		EdgeClass[] ecs = getEdgeClasses();
-		for (int i = 0; i < 1000; i++) {
-			graph = VertexTestSchema.instance().createVertexTestGraph();
-			DoubleSubNode v0 = graph.createDoubleSubNode();
-			DoubleSubNode v1 = graph.createDoubleSubNode();
-			Edge[] edges = new Edge[30];
-			Edge[] linkinoutfalse = new Edge[30];
-			Edge[] sublinkinout = new Edge[30];
-			Edge[] linkbackinout = new Edge[30];
+		for (int i = 0; i < RANDOM_GRAPH_COUNT; i++) {
+			g = transactionsEnabled ? VertexTestSchema.instance()
+					.createVertexTestGraphWithTransactionSupport()
+					: VertexTestSchema.instance().createVertexTestGraph();
+			createTransaction(g);
+			DoubleSubNode v0 = g.createDoubleSubNode();
+			DoubleSubNode v1 = g.createDoubleSubNode();
+			Edge[] edges = new Edge[RANDOM_EDGE_COUNT];
+			Edge[] linkinoutfalse = new Edge[RANDOM_EDGE_COUNT];
+			Edge[] sublinkinout = new Edge[RANDOM_EDGE_COUNT];
+			Edge[] linkbackinout = new Edge[RANDOM_EDGE_COUNT];
 			int lastlinkinoutfalse = 0;
 			int lastsublinkinout = 0;
 			int lastlinkbackinout = 0;
-			Edge[] linkoutfalse = new Edge[30];
-			Edge[] sublinkout = new Edge[30];
-			Edge[] linkbackout = new Edge[30];
+			Edge[] linkoutfalse = new Edge[RANDOM_EDGE_COUNT];
+			Edge[] sublinkout = new Edge[RANDOM_EDGE_COUNT];
+			Edge[] linkbackout = new Edge[RANDOM_EDGE_COUNT];
 			int lastlinkoutfalse = 0;
 			int lastsublinkout = 0;
 			int lastlinkbackout = 0;
-			Edge[] linkinfalse = new Edge[30];
-			Edge[] sublinkin = new Edge[30];
-			Edge[] linkbackin = new Edge[30];
+			Edge[] linkinfalse = new Edge[RANDOM_EDGE_COUNT];
+			Edge[] sublinkin = new Edge[RANDOM_EDGE_COUNT];
+			Edge[] linkbackin = new Edge[RANDOM_EDGE_COUNT];
 			int lastlinkinfalse = 0;
 			int lastsublinkin = 0;
 			int lastlinkbackin = 0;
-			Edge[] linkinouttrue = new Edge[30];
+			Edge[] linkinouttrue = new Edge[RANDOM_EDGE_COUNT];
 			int lastlinkinouttrue = 0;
-			Edge[] linkouttrue = new Edge[30];
+			Edge[] linkouttrue = new Edge[RANDOM_EDGE_COUNT];
 			int lastlinkouttrue = 0;
-			Edge[] linkintrue = new Edge[30];
+			Edge[] linkintrue = new Edge[RANDOM_EDGE_COUNT];
 			int lastlinkintrue = 0;
 			int edgetype = 0;
 			boolean direction = false;
 			boolean first = true;
-			for (int j = 0; j < 30; j++) {
+			for (int j = 0; j < RANDOM_EDGE_COUNT; j++) {
 				edgetype = rand.nextInt(2);
 				direction = rand.nextBoolean();
 				if (edgetype == 0) {
-					Edge e = direction ? graph.createLink(v0, v1) : graph
-							.createLink(v1, v0);
+					Edge e = direction ? g.createLink(v0, v1) : g.createLink(
+							v1, v0);
 					if (direction) {
 						edges[j] = e;
 						if (!first) {
@@ -1778,7 +1880,7 @@ public class EdgeTest {
 					}
 				}
 				if (edgetype == 1) {
-					Edge e = direction ? graph.createSubLink(v0, v1) : graph
+					Edge e = direction ? g.createSubLink(v0, v1) : g
 							.createSubLink(v1, v0);
 					if (direction) {
 						edges[j] = e;
@@ -1825,7 +1927,7 @@ public class EdgeTest {
 						}
 					}
 				} else {
-					Edge e = direction ? graph.createLinkBack(v0, v1) : graph
+					Edge e = direction ? g.createLinkBack(v0, v1) : g
 							.createLinkBack(v1, v0);
 					if (direction) {
 						edges[j] = e;
@@ -1857,6 +1959,8 @@ public class EdgeTest {
 				}
 				first = false;
 			}
+			commit(g);
+			createReadOnlyTransaction(g);
 			for (int k = 0; k < edges.length; k++) {
 				Edge e = edges[k];
 				assertEquals(linkinoutfalse[k], e.getNextEdgeOfClass(ecs[0],
@@ -1897,6 +2001,7 @@ public class EdgeTest {
 				assertEquals(linkbackin[k], e.getNextEdgeOfClass(ecs[2],
 						EdgeDirection.IN, true));
 			}
+			commit(g);
 		}
 	}
 
@@ -1908,9 +2013,9 @@ public class EdgeTest {
 	 */
 	@Test
 	public void getNextEdgeOfClassTestClassEdgeDirectionBoolean0() {
-		DoubleSubNode v1 = graph.createDoubleSubNode();
-		DoubleSubNode v2 = graph.createDoubleSubNode();
-		Edge e1 = graph.createLink(v1, v2);
+		DoubleSubNode v1 = g.createDoubleSubNode();
+		DoubleSubNode v2 = g.createDoubleSubNode();
+		Edge e1 = g.createLink(v1, v2);
 		assertNull(e1
 				.getNextEdgeOfClass(Link.class, EdgeDirection.INOUT, false));
 		assertNull(e1.getNextEdgeOfClass(SubLink.class, EdgeDirection.INOUT,
@@ -1948,13 +2053,13 @@ public class EdgeTest {
 	 */
 	@Test
 	public void getNextEdgeOfClassTestClassEdgeDirectionBoolean1() {
-		DoubleSubNode v1 = graph.createDoubleSubNode();
-		DoubleSubNode v2 = graph.createDoubleSubNode();
-		Edge e1 = graph.createLink(v1, v2);
-		Edge e2 = graph.createLinkBack(v1, v2);
-		Edge e3 = graph.createSubLink(v2, v1);
-		Edge e4 = graph.createLink(v1, v1);
-		Edge e5 = graph.createLinkBack(v1, v2);
+		DoubleSubNode v1 = g.createDoubleSubNode();
+		DoubleSubNode v2 = g.createDoubleSubNode();
+		Edge e1 = g.createLink(v1, v2);
+		Edge e2 = g.createLinkBack(v1, v2);
+		Edge e3 = g.createSubLink(v2, v1);
+		Edge e4 = g.createLink(v1, v1);
+		Edge e5 = g.createLinkBack(v1, v2);
 		// test of edge e1
 		assertEquals(e3.getReversedEdge(), e1.getNextEdgeOfClass(Link.class,
 				EdgeDirection.INOUT, false));
@@ -2183,47 +2288,51 @@ public class EdgeTest {
 
 	/**
 	 * Test in a randomly built graph
+	 * @throws CommitFailedException 
 	 */
 	@Test
-	public void getNextEdgeOfClassTestClassEdgeDirectionBoolean2() {
-		for (int i = 0; i < 1000; i++) {
-			graph = VertexTestSchema.instance().createVertexTestGraph();
-			DoubleSubNode v0 = graph.createDoubleSubNode();
-			DoubleSubNode v1 = graph.createDoubleSubNode();
-			Edge[] edges = new Edge[30];
-			Edge[] linkinoutfalse = new Edge[30];
-			Edge[] sublinkinout = new Edge[30];
-			Edge[] linkbackinout = new Edge[30];
+	public void getNextEdgeOfClassTestClassEdgeDirectionBoolean2() throws CommitFailedException {
+		for (int i = 0; i < RANDOM_GRAPH_COUNT; i++) {
+			g = transactionsEnabled ? VertexTestSchema.instance()
+					.createVertexTestGraphWithTransactionSupport()
+					: VertexTestSchema.instance().createVertexTestGraph();
+			createTransaction(g);
+			DoubleSubNode v0 = g.createDoubleSubNode();
+			DoubleSubNode v1 = g.createDoubleSubNode();
+			Edge[] edges = new Edge[RANDOM_EDGE_COUNT];
+			Edge[] linkinoutfalse = new Edge[RANDOM_EDGE_COUNT];
+			Edge[] sublinkinout = new Edge[RANDOM_EDGE_COUNT];
+			Edge[] linkbackinout = new Edge[RANDOM_EDGE_COUNT];
 			int lastlinkinoutfalse = 0;
 			int lastsublinkinout = 0;
 			int lastlinkbackinout = 0;
-			Edge[] linkoutfalse = new Edge[30];
-			Edge[] sublinkout = new Edge[30];
-			Edge[] linkbackout = new Edge[30];
+			Edge[] linkoutfalse = new Edge[RANDOM_EDGE_COUNT];
+			Edge[] sublinkout = new Edge[RANDOM_EDGE_COUNT];
+			Edge[] linkbackout = new Edge[RANDOM_EDGE_COUNT];
 			int lastlinkoutfalse = 0;
 			int lastsublinkout = 0;
 			int lastlinkbackout = 0;
-			Edge[] linkinfalse = new Edge[30];
-			Edge[] sublinkin = new Edge[30];
-			Edge[] linkbackin = new Edge[30];
+			Edge[] linkinfalse = new Edge[RANDOM_EDGE_COUNT];
+			Edge[] sublinkin = new Edge[RANDOM_EDGE_COUNT];
+			Edge[] linkbackin = new Edge[RANDOM_EDGE_COUNT];
 			int lastlinkinfalse = 0;
 			int lastsublinkin = 0;
 			int lastlinkbackin = 0;
-			Edge[] linkinouttrue = new Edge[30];
+			Edge[] linkinouttrue = new Edge[RANDOM_EDGE_COUNT];
 			int lastlinkinouttrue = 0;
-			Edge[] linkouttrue = new Edge[30];
+			Edge[] linkouttrue = new Edge[RANDOM_EDGE_COUNT];
 			int lastlinkouttrue = 0;
-			Edge[] linkintrue = new Edge[30];
+			Edge[] linkintrue = new Edge[RANDOM_EDGE_COUNT];
 			int lastlinkintrue = 0;
 			int edgetype = 0;
 			boolean direction = false;
 			boolean first = true;
-			for (int j = 0; j < 30; j++) {
+			for (int j = 0; j < RANDOM_EDGE_COUNT; j++) {
 				edgetype = rand.nextInt(2);
 				direction = rand.nextBoolean();
 				if (edgetype == 0) {
-					Edge e = direction ? graph.createLink(v0, v1) : graph
-							.createLink(v1, v0);
+					Edge e = direction ? g.createLink(v0, v1) : g.createLink(
+							v1, v0);
 					if (direction) {
 						edges[j] = e;
 						if (!first) {
@@ -2271,7 +2380,7 @@ public class EdgeTest {
 					}
 				}
 				if (edgetype == 1) {
-					Edge e = direction ? graph.createSubLink(v0, v1) : graph
+					Edge e = direction ? g.createSubLink(v0, v1) : g
 							.createSubLink(v1, v0);
 					if (direction) {
 						edges[j] = e;
@@ -2318,7 +2427,7 @@ public class EdgeTest {
 						}
 					}
 				} else {
-					Edge e = direction ? graph.createLinkBack(v0, v1) : graph
+					Edge e = direction ? g.createLinkBack(v0, v1) : g
 							.createLinkBack(v1, v0);
 					if (direction) {
 						edges[j] = e;
@@ -2350,6 +2459,8 @@ public class EdgeTest {
 				}
 				first = false;
 			}
+			commit(g);
+			createReadOnlyTransaction(g);
 			for (int k = 0; k < edges.length; k++) {
 				Edge e = edges[k];
 				assertEquals(linkinoutfalse[k], e.getNextEdgeOfClass(
@@ -2390,36 +2501,35 @@ public class EdgeTest {
 				assertEquals(linkbackin[k], e.getNextEdgeOfClass(
 						LinkBack.class, EdgeDirection.IN, true));
 			}
+			commit(g);
 		}
 	}
 
 	// tests for the method Vertex getThis();
 
 	private Vertex[] createRandomGraph(boolean retThis) {
-		Vertex[] nodes = new Vertex[] { graph.createSubNode(),
-				graph.createDoubleSubNode(), graph.createSuperNode() };
-		Vertex[] ret = new Vertex[1000];
-		for (int i = 0; i < 1000; i++) {
+		Vertex[] nodes = new Vertex[] { g.createSubNode(),
+				g.createDoubleSubNode(), g.createSuperNode() };
+		Vertex[] ret = new Vertex[RANDOM_VERTEX_COUNT];
+		for (int i = 0; i < RANDOM_VERTEX_COUNT; i++) {
 			int edge = rand.nextInt(3);
 			switch (edge) {
 			case 0:
 				Vertex start = nodes[rand.nextInt(2)];
 				Vertex end = nodes[rand.nextInt(2) + 1];
-				graph.createLink((AbstractSuperNode) start, (SuperNode) end);
+				g.createLink((AbstractSuperNode) start, (SuperNode) end);
 				ret[i] = retThis ? start : end;
 				break;
 			case 1:
 				start = nodes[1];
 				end = nodes[rand.nextInt(2) + 1];
-				graph.createSubLink((DoubleSubNode) start, (SuperNode) end);
+				g.createSubLink((DoubleSubNode) start, (SuperNode) end);
 				ret[i] = retThis ? start : end;
 				break;
 			case 2:
 				start = nodes[rand.nextInt(2) + 1];
 				end = nodes[rand.nextInt(2)];
-				graph
-						.createLinkBack((SuperNode) start,
-								(AbstractSuperNode) end);
+				g.createLinkBack((SuperNode) start, (AbstractSuperNode) end);
 				ret[i] = retThis ? start : end;
 				break;
 			}
@@ -2432,12 +2542,12 @@ public class EdgeTest {
 	 */
 	@Test
 	public void getThisTest0() {
-		DoubleSubNode v1 = graph.createDoubleSubNode();
-		DoubleSubNode v2 = graph.createDoubleSubNode();
-		DoubleSubNode v3 = graph.createDoubleSubNode();
-		Edge e1 = graph.createLink(v1, v2);
-		Edge e2 = graph.createLinkBack(v2, v3);
-		Edge e3 = graph.createSubLink(v1, v3);
+		DoubleSubNode v1 = g.createDoubleSubNode();
+		DoubleSubNode v2 = g.createDoubleSubNode();
+		DoubleSubNode v3 = g.createDoubleSubNode();
+		Edge e1 = g.createLink(v1, v2);
+		Edge e2 = g.createLinkBack(v2, v3);
+		Edge e3 = g.createSubLink(v1, v3);
 		assertEquals(v1, e1.getThis());
 		assertEquals(v2, e1.getReversedEdge().getThis());
 		assertEquals(v2, e2.getThis());
@@ -2452,8 +2562,8 @@ public class EdgeTest {
 	@Test
 	public void getThisTest1() {
 		Vertex[] thisVertices = createRandomGraph(true);
-		for (int i = 0; i < graph.getECount(); i++) {
-			assertEquals(thisVertices[i], graph.getEdge(i + 1).getThis());
+		for (int i = 0; i < g.getECount(); i++) {
+			assertEquals(thisVertices[i], g.getEdge(i + 1).getThis());
 		}
 	}
 
@@ -2464,12 +2574,12 @@ public class EdgeTest {
 	 */
 	@Test
 	public void getThatTest0() {
-		DoubleSubNode v1 = graph.createDoubleSubNode();
-		DoubleSubNode v2 = graph.createDoubleSubNode();
-		DoubleSubNode v3 = graph.createDoubleSubNode();
-		Edge e1 = graph.createLink(v1, v2);
-		Edge e2 = graph.createLinkBack(v2, v3);
-		Edge e3 = graph.createSubLink(v1, v3);
+		DoubleSubNode v1 = g.createDoubleSubNode();
+		DoubleSubNode v2 = g.createDoubleSubNode();
+		DoubleSubNode v3 = g.createDoubleSubNode();
+		Edge e1 = g.createLink(v1, v2);
+		Edge e2 = g.createLinkBack(v2, v3);
+		Edge e3 = g.createSubLink(v1, v3);
 		assertEquals(v2, e1.getThat());
 		assertEquals(v1, e1.getReversedEdge().getThat());
 		assertEquals(v3, e2.getThat());
@@ -2484,8 +2594,8 @@ public class EdgeTest {
 	@Test
 	public void getThatTest1() {
 		Vertex[] thisVertices = createRandomGraph(false);
-		for (int i = 0; i < graph.getECount(); i++) {
-			assertEquals(thisVertices[i], graph.getEdge(i + 1).getThat());
+		for (int i = 0; i < g.getECount(); i++) {
+			assertEquals(thisVertices[i], g.getEdge(i + 1).getThat());
 		}
 	}
 
@@ -2496,11 +2606,11 @@ public class EdgeTest {
 	 */
 	@Test
 	public void getThisRoleTest() {
-		DoubleSubNode v1 = graph.createDoubleSubNode();
-		DoubleSubNode v2 = graph.createDoubleSubNode();
-		Edge e1 = graph.createLink(v1, v2);
-		Edge e2 = graph.createSubLink(v1, v2);
-		Edge e3 = graph.createLinkBack(v1, v2);
+		DoubleSubNode v1 = g.createDoubleSubNode();
+		DoubleSubNode v2 = g.createDoubleSubNode();
+		Edge e1 = g.createLink(v1, v2);
+		Edge e2 = g.createSubLink(v1, v2);
+		Edge e3 = g.createLinkBack(v1, v2);
 		assertEquals("source", e1.getThisRole());
 		assertEquals("target", e1.getReversedEdge().getThisRole());
 		assertEquals("sourcec", e2.getThisRole());
@@ -2516,11 +2626,11 @@ public class EdgeTest {
 	 */
 	@Test
 	public void getThatRoleTest() {
-		DoubleSubNode v1 = graph.createDoubleSubNode();
-		DoubleSubNode v2 = graph.createDoubleSubNode();
-		Edge e1 = graph.createLink(v1, v2);
-		Edge e2 = graph.createSubLink(v1, v2);
-		Edge e3 = graph.createLinkBack(v1, v2);
+		DoubleSubNode v1 = g.createDoubleSubNode();
+		DoubleSubNode v2 = g.createDoubleSubNode();
+		Edge e1 = g.createLink(v1, v2);
+		Edge e2 = g.createSubLink(v1, v2);
+		Edge e3 = g.createLinkBack(v1, v2);
 		assertEquals("target", e1.getThatRole());
 		assertEquals("source", e1.getReversedEdge().getThatRole());
 		assertEquals("targetc", e2.getThatRole());
@@ -2537,11 +2647,11 @@ public class EdgeTest {
 	 */
 	@Test
 	public void getNextEdgeInGraphTestR0() {
-		DoubleSubNode v1 = graph.createDoubleSubNode();
-		DoubleSubNode v2 = graph.createDoubleSubNode();
-		Edge e1 = graph.createLink(v1, v2);
-		Edge e2 = graph.createSubLink(v1, v2);
-		Edge e3 = graph.createLinkBack(v1, v2);
+		DoubleSubNode v1 = g.createDoubleSubNode();
+		DoubleSubNode v2 = g.createDoubleSubNode();
+		Edge e1 = g.createLink(v1, v2);
+		Edge e2 = g.createSubLink(v1, v2);
+		Edge e3 = g.createLinkBack(v1, v2);
 		Edge e1R = e1.getReversedEdge();
 		Edge e2R = e2.getReversedEdge();
 		Edge e3R = e3.getReversedEdge();
@@ -2563,8 +2673,8 @@ public class EdgeTest {
 	 */
 	private ArrayList<ArrayList<Edge>> createRandomGraph(boolean edgeClass,
 			boolean nosubclasses) {
-		Vertex[] nodes = new Vertex[] { graph.createSubNode(),
-				graph.createDoubleSubNode(), graph.createSuperNode() };
+		Vertex[] nodes = new Vertex[] { g.createSubNode(),
+				g.createDoubleSubNode(), g.createSuperNode() };
 		ArrayList<ArrayList<Edge>> ret = new ArrayList<ArrayList<Edge>>();
 		if (!edgeClass) {
 			// edges for getPrevEdgeInGraph() are needed
@@ -2594,15 +2704,14 @@ public class EdgeTest {
 			// 5=LinkBack true
 			ret.add(new ArrayList<Edge>());
 		}
-		for (int i = 0; i < 1000; i++) {
+		for (int i = 0; i < RANDOM_VERTEX_COUNT; i++) {
 			int edge = rand.nextInt(3);
 			Edge e = null;
 			switch (edge) {
 			case 0:
 				Vertex start = nodes[rand.nextInt(2)];
 				Vertex end = nodes[rand.nextInt(2) + 1];
-				e = graph
-						.createLink((AbstractSuperNode) start, (SuperNode) end);
+				e = g.createLink((AbstractSuperNode) start, (SuperNode) end);
 				if (!edgeClass) {
 					ret.get(0).add(e);
 				} else if (!nosubclasses) {
@@ -2615,7 +2724,7 @@ public class EdgeTest {
 			case 1:
 				start = nodes[1];
 				end = nodes[rand.nextInt(2) + 1];
-				e = graph.createSubLink((DoubleSubNode) start, (SuperNode) end);
+				e = g.createSubLink((DoubleSubNode) start, (SuperNode) end);
 				if (!edgeClass) {
 					ret.get(0).add(e);
 				} else if (!nosubclasses) {
@@ -2630,8 +2739,9 @@ public class EdgeTest {
 			case 2:
 				start = nodes[rand.nextInt(2) + 1];
 				end = nodes[rand.nextInt(2)];
-				e = graph.createLinkBack((SuperNode) start,
-						(AbstractSuperNode) end);
+				e = g
+						.createLinkBack((SuperNode) start,
+								(AbstractSuperNode) end);
 				if (!edgeClass) {
 					ret.get(0).add(e);
 				} else if (!nosubclasses) {
@@ -2651,11 +2761,11 @@ public class EdgeTest {
 	 */
 	@Test
 	public void getPrevEdgeInGraphTestR0() {
-		DoubleSubNode v1 = graph.createDoubleSubNode();
-		DoubleSubNode v2 = graph.createDoubleSubNode();
-		Edge e1 = graph.createLink(v1, v2);
-		Edge e2 = graph.createSubLink(v1, v2);
-		Edge e3 = graph.createLinkBack(v1, v2);
+		DoubleSubNode v1 = g.createDoubleSubNode();
+		DoubleSubNode v2 = g.createDoubleSubNode();
+		Edge e1 = g.createLink(v1, v2);
+		Edge e2 = g.createSubLink(v1, v2);
+		Edge e3 = g.createLinkBack(v1, v2);
 		Edge e1R = e1.getReversedEdge();
 		Edge e2R = e2.getReversedEdge();
 		Edge e3R = e3.getReversedEdge();
@@ -2669,8 +2779,8 @@ public class EdgeTest {
 	 */
 	@Test
 	public void getPrevEdgeInGraphTest0() {
-		DoubleSubNode v1 = graph.createDoubleSubNode();
-		Edge e1 = graph.createLink(v1, v1);
+		DoubleSubNode v1 = g.createDoubleSubNode();
+		Edge e1 = g.createLink(v1, v1);
 		assertNull(e1.getPrevEdgeInGraph());
 	}
 
@@ -2679,11 +2789,11 @@ public class EdgeTest {
 	 */
 	@Test
 	public void getPrevEdgeInGraphTest1() {
-		DoubleSubNode v1 = graph.createDoubleSubNode();
-		DoubleSubNode v2 = graph.createDoubleSubNode();
-		Edge e1 = graph.createLink(v1, v1);
-		Edge e2 = graph.createLink(v2, v2);
-		Edge e3 = graph.createLink(v1, v2);
+		DoubleSubNode v1 = g.createDoubleSubNode();
+		DoubleSubNode v2 = g.createDoubleSubNode();
+		Edge e1 = g.createLink(v1, v1);
+		Edge e2 = g.createLink(v2, v2);
+		Edge e3 = g.createLink(v1, v2);
 		assertEquals(e2, e3.getPrevEdgeInGraph());
 		assertEquals(e1, e2.getPrevEdgeInGraph());
 		assertNull(e1.getPrevEdgeInGraph());
@@ -2695,8 +2805,8 @@ public class EdgeTest {
 	@Test
 	public void getPrevEdgeInGraphTest2() {
 		ArrayList<ArrayList<Edge>> result = createRandomGraph(false, false);
-		Edge current = graph.getLastEdgeInGraph();
-		for (int i = graph.getECount() - 1; i >= 0; i--) {
+		Edge current = g.getLastEdgeInGraph();
+		for (int i = g.getECount() - 1; i >= 0; i--) {
 			assertEquals(result.get(0).get(i), current);
 			current = current.getPrevEdgeInGraph();
 		}
@@ -2711,9 +2821,9 @@ public class EdgeTest {
 	@Test
 	public void getNextEdgeOfClassInGraphTestEdgeClass0() {
 		EdgeClass[] ecs = getEdgeClasses();
-		DoubleSubNode v1 = graph.createDoubleSubNode();
-		DoubleSubNode v2 = graph.createDoubleSubNode();
-		Edge e1 = graph.createLink(v1, v2);
+		DoubleSubNode v1 = g.createDoubleSubNode();
+		DoubleSubNode v2 = g.createDoubleSubNode();
+		Edge e1 = g.createLink(v1, v2);
 		assertNull(e1.getNextEdgeOfClassInGraph(ecs[0]));
 		assertNull(e1.getNextEdgeOfClassInGraph(ecs[1]));
 		assertNull(e1.getNextEdgeOfClassInGraph(ecs[2]));
@@ -2725,13 +2835,13 @@ public class EdgeTest {
 	@Test
 	public void getNextEdgeOfClassInGraphTestEdgeClass1() {
 		EdgeClass[] ecs = getEdgeClasses();
-		DoubleSubNode v1 = graph.createDoubleSubNode();
-		DoubleSubNode v2 = graph.createDoubleSubNode();
-		Edge e1 = graph.createLink(v1, v2);
-		Edge e2 = graph.createLinkBack(v1, v2);
-		Edge e3 = graph.createSubLink(v2, v1);
-		Edge e4 = graph.createLink(v1, v1);
-		Edge e5 = graph.createLinkBack(v1, v2);
+		DoubleSubNode v1 = g.createDoubleSubNode();
+		DoubleSubNode v2 = g.createDoubleSubNode();
+		Edge e1 = g.createLink(v1, v2);
+		Edge e2 = g.createLinkBack(v1, v2);
+		Edge e3 = g.createSubLink(v2, v1);
+		Edge e4 = g.createLink(v1, v1);
+		Edge e5 = g.createLinkBack(v1, v2);
 		// test of edge e1
 		assertEquals(e3, e1.getNextEdgeOfClassInGraph(ecs[0]));
 		assertEquals(e3, e1.getNextEdgeOfClassInGraph(ecs[1]));
@@ -2787,17 +2897,17 @@ public class EdgeTest {
 	public void getNextEdgeOfClassInGraphTestEdgeClass2() {
 		EdgeClass[] ecs = getEdgeClasses();
 		ArrayList<ArrayList<Edge>> result = createRandomGraph(true, false);
-		Edge counter = graph.getFirstEdgeOfClassInGraph(ecs[0]);
+		Edge counter = g.getFirstEdgeOfClassInGraph(ecs[0]);
 		for (Edge e : result.get(0)) {
 			assertEquals(e, counter);
 			counter = counter.getNextEdgeOfClassInGraph(ecs[0]);
 		}
-		counter = graph.getFirstEdgeOfClassInGraph(ecs[1]);
+		counter = g.getFirstEdgeOfClassInGraph(ecs[1]);
 		for (Edge e : result.get(1)) {
 			assertEquals(e, counter);
 			counter = counter.getNextEdgeOfClassInGraph(ecs[1]);
 		}
-		counter = graph.getFirstEdgeOfClassInGraph(ecs[2]);
+		counter = g.getFirstEdgeOfClassInGraph(ecs[2]);
 		for (Edge e : result.get(2)) {
 			assertEquals(e, counter);
 			counter = counter.getNextEdgeOfClassInGraph(ecs[2]);
@@ -2812,9 +2922,9 @@ public class EdgeTest {
 	 */
 	@Test
 	public void getNextEdgeOfClassInGraphTestClass0() {
-		DoubleSubNode v1 = graph.createDoubleSubNode();
-		DoubleSubNode v2 = graph.createDoubleSubNode();
-		Edge e1 = graph.createLink(v1, v2);
+		DoubleSubNode v1 = g.createDoubleSubNode();
+		DoubleSubNode v2 = g.createDoubleSubNode();
+		Edge e1 = g.createLink(v1, v2);
 		assertNull(e1.getNextEdgeOfClassInGraph(Link.class));
 		assertNull(e1.getNextEdgeOfClassInGraph(SubLink.class));
 		assertNull(e1.getNextEdgeOfClassInGraph(LinkBack.class));
@@ -2825,13 +2935,13 @@ public class EdgeTest {
 	 */
 	@Test
 	public void getNextEdgeOfClassInGraphTestClass1() {
-		DoubleSubNode v1 = graph.createDoubleSubNode();
-		DoubleSubNode v2 = graph.createDoubleSubNode();
-		Edge e1 = graph.createLink(v1, v2);
-		Edge e2 = graph.createLinkBack(v1, v2);
-		Edge e3 = graph.createSubLink(v2, v1);
-		Edge e4 = graph.createLink(v1, v1);
-		Edge e5 = graph.createLinkBack(v1, v2);
+		DoubleSubNode v1 = g.createDoubleSubNode();
+		DoubleSubNode v2 = g.createDoubleSubNode();
+		Edge e1 = g.createLink(v1, v2);
+		Edge e2 = g.createLinkBack(v1, v2);
+		Edge e3 = g.createSubLink(v2, v1);
+		Edge e4 = g.createLink(v1, v1);
+		Edge e5 = g.createLinkBack(v1, v2);
 		// test of edge e1
 		assertEquals(e3, e1.getNextEdgeOfClassInGraph(Link.class));
 		assertEquals(e3, e1.getNextEdgeOfClassInGraph(SubLink.class));
@@ -2895,17 +3005,17 @@ public class EdgeTest {
 	@Test
 	public void getNextEdgeOfClassInGraphTestClass2() {
 		ArrayList<ArrayList<Edge>> result = createRandomGraph(true, false);
-		Edge counter = graph.getFirstEdgeOfClassInGraph(Link.class);
+		Edge counter = g.getFirstEdgeOfClassInGraph(Link.class);
 		for (Edge e : result.get(0)) {
 			assertEquals(e, counter);
 			counter = counter.getNextEdgeOfClassInGraph(Link.class);
 		}
-		counter = graph.getFirstEdgeOfClassInGraph(SubLink.class);
+		counter = g.getFirstEdgeOfClassInGraph(SubLink.class);
 		for (Edge e : result.get(1)) {
 			assertEquals(e, counter);
 			counter = counter.getNextEdgeOfClassInGraph(SubLink.class);
 		}
-		counter = graph.getFirstEdgeOfClassInGraph(LinkBack.class);
+		counter = g.getFirstEdgeOfClassInGraph(LinkBack.class);
 		for (Edge e : result.get(2)) {
 			assertEquals(e, counter);
 			counter = counter.getNextEdgeOfClassInGraph(LinkBack.class);
@@ -2921,9 +3031,9 @@ public class EdgeTest {
 	@Test
 	public void getNextEdgeOfClassInGraphTestEdgeClassBoolean0() {
 		EdgeClass[] ecs = getEdgeClasses();
-		DoubleSubNode v1 = graph.createDoubleSubNode();
-		DoubleSubNode v2 = graph.createDoubleSubNode();
-		Edge e1 = graph.createLink(v1, v2);
+		DoubleSubNode v1 = g.createDoubleSubNode();
+		DoubleSubNode v2 = g.createDoubleSubNode();
+		Edge e1 = g.createLink(v1, v2);
 		assertNull(e1.getNextEdgeOfClassInGraph(ecs[0], false));
 		assertNull(e1.getNextEdgeOfClassInGraph(ecs[1], false));
 		assertNull(e1.getNextEdgeOfClassInGraph(ecs[2], false));
@@ -2938,13 +3048,13 @@ public class EdgeTest {
 	@Test
 	public void getNextEdgeOfClassInGraphTestEdgeClassBoolean1() {
 		EdgeClass[] ecs = getEdgeClasses();
-		DoubleSubNode v1 = graph.createDoubleSubNode();
-		DoubleSubNode v2 = graph.createDoubleSubNode();
-		Edge e1 = graph.createLink(v1, v2);
-		Edge e2 = graph.createLinkBack(v1, v2);
-		Edge e3 = graph.createSubLink(v2, v1);
-		Edge e4 = graph.createLink(v1, v1);
-		Edge e5 = graph.createLinkBack(v1, v2);
+		DoubleSubNode v1 = g.createDoubleSubNode();
+		DoubleSubNode v2 = g.createDoubleSubNode();
+		Edge e1 = g.createLink(v1, v2);
+		Edge e2 = g.createLinkBack(v1, v2);
+		Edge e3 = g.createSubLink(v2, v1);
+		Edge e4 = g.createLink(v1, v1);
+		Edge e5 = g.createLinkBack(v1, v2);
 		// test of edge e1
 		assertEquals(e3, e1.getNextEdgeOfClassInGraph(ecs[0], false));
 		assertEquals(e3, e1.getNextEdgeOfClassInGraph(ecs[1], false));
@@ -3040,32 +3150,32 @@ public class EdgeTest {
 	public void getNextEdgeOfClassInGraphTestEdgeClassBoolean2() {
 		EdgeClass[] ecs = getEdgeClasses();
 		ArrayList<ArrayList<Edge>> result = createRandomGraph(true, true);
-		Edge counter = graph.getFirstEdgeOfClassInGraph(ecs[0], false);
+		Edge counter = g.getFirstEdgeOfClassInGraph(ecs[0], false);
 		for (Edge e : result.get(0)) {
 			assertEquals(e, counter);
 			counter = counter.getNextEdgeOfClassInGraph(ecs[0], false);
 		}
-		counter = graph.getFirstEdgeOfClassInGraph(ecs[0], true);
+		counter = g.getFirstEdgeOfClassInGraph(ecs[0], true);
 		for (Edge e : result.get(3)) {
 			assertEquals(e, counter);
 			counter = counter.getNextEdgeOfClassInGraph(ecs[0], true);
 		}
-		counter = graph.getFirstEdgeOfClassInGraph(ecs[1], false);
+		counter = g.getFirstEdgeOfClassInGraph(ecs[1], false);
 		for (Edge e : result.get(1)) {
 			assertEquals(e, counter);
 			counter = counter.getNextEdgeOfClassInGraph(ecs[1], false);
 		}
-		counter = graph.getFirstEdgeOfClassInGraph(ecs[1], true);
+		counter = g.getFirstEdgeOfClassInGraph(ecs[1], true);
 		for (Edge e : result.get(4)) {
 			assertEquals(e, counter);
 			counter = counter.getNextEdgeOfClassInGraph(ecs[1], true);
 		}
-		counter = graph.getFirstEdgeOfClassInGraph(ecs[2], false);
+		counter = g.getFirstEdgeOfClassInGraph(ecs[2], false);
 		for (Edge e : result.get(2)) {
 			assertEquals(e, counter);
 			counter = counter.getNextEdgeOfClassInGraph(ecs[2], false);
 		}
-		counter = graph.getFirstEdgeOfClassInGraph(ecs[2], true);
+		counter = g.getFirstEdgeOfClassInGraph(ecs[2], true);
 		for (Edge e : result.get(5)) {
 			assertEquals(e, counter);
 			counter = counter.getNextEdgeOfClassInGraph(ecs[2], true);
@@ -3080,9 +3190,9 @@ public class EdgeTest {
 	 */
 	@Test
 	public void getNextEdgeOfClassInGraphTestClassBoolean0() {
-		DoubleSubNode v1 = graph.createDoubleSubNode();
-		DoubleSubNode v2 = graph.createDoubleSubNode();
-		Edge e1 = graph.createLink(v1, v2);
+		DoubleSubNode v1 = g.createDoubleSubNode();
+		DoubleSubNode v2 = g.createDoubleSubNode();
+		Edge e1 = g.createLink(v1, v2);
 		assertNull(e1.getNextEdgeOfClassInGraph(Link.class, false));
 		assertNull(e1.getNextEdgeOfClassInGraph(SubLink.class, false));
 		assertNull(e1.getNextEdgeOfClassInGraph(LinkBack.class, false));
@@ -3096,13 +3206,13 @@ public class EdgeTest {
 	 */
 	@Test
 	public void getNextEdgeOfClassInGraphTestClassBoolean1() {
-		DoubleSubNode v1 = graph.createDoubleSubNode();
-		DoubleSubNode v2 = graph.createDoubleSubNode();
-		Edge e1 = graph.createLink(v1, v2);
-		Edge e2 = graph.createLinkBack(v1, v2);
-		Edge e3 = graph.createSubLink(v2, v1);
-		Edge e4 = graph.createLink(v1, v1);
-		Edge e5 = graph.createLinkBack(v1, v2);
+		DoubleSubNode v1 = g.createDoubleSubNode();
+		DoubleSubNode v2 = g.createDoubleSubNode();
+		Edge e1 = g.createLink(v1, v2);
+		Edge e2 = g.createLinkBack(v1, v2);
+		Edge e3 = g.createSubLink(v2, v1);
+		Edge e4 = g.createLink(v1, v1);
+		Edge e5 = g.createLinkBack(v1, v2);
 		// test of edge e1
 		assertEquals(e3, e1.getNextEdgeOfClassInGraph(Link.class, false));
 		assertEquals(e3, e1.getNextEdgeOfClassInGraph(SubLink.class, false));
@@ -3197,32 +3307,32 @@ public class EdgeTest {
 	@Test
 	public void getNextEdgeOfClassInGraphTestClassBoolean2() {
 		ArrayList<ArrayList<Edge>> result = createRandomGraph(true, true);
-		Edge counter = graph.getFirstEdgeOfClassInGraph(Link.class, false);
+		Edge counter = g.getFirstEdgeOfClassInGraph(Link.class, false);
 		for (Edge e : result.get(0)) {
 			assertEquals(e, counter);
 			counter = counter.getNextEdgeOfClassInGraph(Link.class, false);
 		}
-		counter = graph.getFirstEdgeOfClassInGraph(Link.class, true);
+		counter = g.getFirstEdgeOfClassInGraph(Link.class, true);
 		for (Edge e : result.get(3)) {
 			assertEquals(e, counter);
 			counter = counter.getNextEdgeOfClassInGraph(Link.class, true);
 		}
-		counter = graph.getFirstEdgeOfClassInGraph(SubLink.class, false);
+		counter = g.getFirstEdgeOfClassInGraph(SubLink.class, false);
 		for (Edge e : result.get(1)) {
 			assertEquals(e, counter);
 			counter = counter.getNextEdgeOfClassInGraph(SubLink.class, false);
 		}
-		counter = graph.getFirstEdgeOfClassInGraph(SubLink.class, true);
+		counter = g.getFirstEdgeOfClassInGraph(SubLink.class, true);
 		for (Edge e : result.get(4)) {
 			assertEquals(e, counter);
 			counter = counter.getNextEdgeOfClassInGraph(SubLink.class, true);
 		}
-		counter = graph.getFirstEdgeOfClassInGraph(LinkBack.class, false);
+		counter = g.getFirstEdgeOfClassInGraph(LinkBack.class, false);
 		for (Edge e : result.get(2)) {
 			assertEquals(e, counter);
 			counter = counter.getNextEdgeOfClassInGraph(LinkBack.class, false);
 		}
-		counter = graph.getFirstEdgeOfClassInGraph(LinkBack.class, true);
+		counter = g.getFirstEdgeOfClassInGraph(LinkBack.class, true);
 		for (Edge e : result.get(5)) {
 			assertEquals(e, counter);
 			counter = counter.getNextEdgeOfClassInGraph(LinkBack.class, true);
@@ -3242,8 +3352,8 @@ public class EdgeTest {
 	 */
 	@Test
 	public void isBeforeTest0() {
-		DoubleSubNode v1 = graph.createDoubleSubNode();
-		Edge e1 = graph.createLink(v1, v1);
+		DoubleSubNode v1 = g.createDoubleSubNode();
+		Edge e1 = g.createLink(v1, v1);
 		assertFalse(e1.isBefore(e1));
 	}
 
@@ -3253,10 +3363,10 @@ public class EdgeTest {
 	 */
 	@Test(expected = GraphException.class)
 	public void isBeforeTest1() {
-		DoubleSubNode v1 = graph.createDoubleSubNode();
-		DoubleSubNode v2 = graph.createDoubleSubNode();
-		Edge e1 = graph.createLink(v1, v2);
-		Edge e2 = graph.createLink(v2, v1);
+		DoubleSubNode v1 = g.createDoubleSubNode();
+		DoubleSubNode v2 = g.createDoubleSubNode();
+		Edge e1 = g.createLink(v1, v2);
+		Edge e2 = g.createLink(v2, v1);
 		assertFalse(e1.isBefore(e2));
 	}
 
@@ -3265,10 +3375,10 @@ public class EdgeTest {
 	 */
 	@Test
 	public void isBeforeTest2() {
-		DoubleSubNode v1 = graph.createDoubleSubNode();
-		DoubleSubNode v2 = graph.createDoubleSubNode();
-		Edge e1 = graph.createLink(v1, v2);
-		Edge e2 = graph.createLink(v1, v2);
+		DoubleSubNode v1 = g.createDoubleSubNode();
+		DoubleSubNode v2 = g.createDoubleSubNode();
+		Edge e1 = g.createLink(v1, v2);
+		Edge e2 = g.createLink(v1, v2);
 		assertTrue(e1.isBefore(e2));
 	}
 
@@ -3277,11 +3387,11 @@ public class EdgeTest {
 	 */
 	@Test
 	public void isBeforeTest3() {
-		DoubleSubNode v1 = graph.createDoubleSubNode();
-		DoubleSubNode v2 = graph.createDoubleSubNode();
-		Edge e1 = graph.createLink(v1, v2);
-		graph.createLink(v1, v2);
-		Edge e2 = graph.createLink(v1, v2);
+		DoubleSubNode v1 = g.createDoubleSubNode();
+		DoubleSubNode v2 = g.createDoubleSubNode();
+		Edge e1 = g.createLink(v1, v2);
+		g.createLink(v1, v2);
+		Edge e2 = g.createLink(v1, v2);
 		assertTrue(e1.isBefore(e2));
 		assertFalse(e2.isBefore(e1));
 	}
@@ -3293,8 +3403,8 @@ public class EdgeTest {
 	 */
 	@Test
 	public void isAfterTest0() {
-		DoubleSubNode v1 = graph.createDoubleSubNode();
-		Edge e1 = graph.createLink(v1, v1);
+		DoubleSubNode v1 = g.createDoubleSubNode();
+		Edge e1 = g.createLink(v1, v1);
 		assertFalse(e1.isAfter(e1));
 	}
 
@@ -3304,10 +3414,10 @@ public class EdgeTest {
 	 */
 	@Test(expected = GraphException.class)
 	public void isAfterTest1() {
-		DoubleSubNode v1 = graph.createDoubleSubNode();
-		DoubleSubNode v2 = graph.createDoubleSubNode();
-		Edge e1 = graph.createLink(v1, v2);
-		Edge e2 = graph.createLink(v2, v1);
+		DoubleSubNode v1 = g.createDoubleSubNode();
+		DoubleSubNode v2 = g.createDoubleSubNode();
+		Edge e1 = g.createLink(v1, v2);
+		Edge e2 = g.createLink(v2, v1);
 		assertFalse(e1.isAfter(e2));
 	}
 
@@ -3316,10 +3426,10 @@ public class EdgeTest {
 	 */
 	@Test
 	public void isAfterTest2() {
-		DoubleSubNode v1 = graph.createDoubleSubNode();
-		DoubleSubNode v2 = graph.createDoubleSubNode();
-		Edge e1 = graph.createLink(v1, v2);
-		Edge e2 = graph.createLink(v1, v2);
+		DoubleSubNode v1 = g.createDoubleSubNode();
+		DoubleSubNode v2 = g.createDoubleSubNode();
+		Edge e1 = g.createLink(v1, v2);
+		Edge e2 = g.createLink(v1, v2);
 		assertTrue(e2.isAfter(e1));
 	}
 
@@ -3328,11 +3438,11 @@ public class EdgeTest {
 	 */
 	@Test
 	public void isAfterTest3() {
-		DoubleSubNode v1 = graph.createDoubleSubNode();
-		DoubleSubNode v2 = graph.createDoubleSubNode();
-		Edge e1 = graph.createLink(v1, v2);
-		graph.createLink(v1, v2);
-		Edge e2 = graph.createLink(v1, v2);
+		DoubleSubNode v1 = g.createDoubleSubNode();
+		DoubleSubNode v2 = g.createDoubleSubNode();
+		Edge e1 = g.createLink(v1, v2);
+		g.createLink(v1, v2);
+		Edge e2 = g.createLink(v1, v2);
 		assertTrue(e2.isAfter(e1));
 		assertFalse(e1.isAfter(e2));
 	}
@@ -3345,8 +3455,8 @@ public class EdgeTest {
 	 */
 	@Test
 	public void isBeforeInGraphTest0() {
-		DoubleSubNode v1 = graph.createDoubleSubNode();
-		Edge e1 = graph.createLink(v1, v1);
+		DoubleSubNode v1 = g.createDoubleSubNode();
+		Edge e1 = g.createLink(v1, v1);
 		assertFalse(e1.isBeforeInGraph(e1));
 	}
 
@@ -3358,8 +3468,8 @@ public class EdgeTest {
 	 */
 	@Test
 	public void isAfterInGraphTest0() {
-		DoubleSubNode v1 = graph.createDoubleSubNode();
-		Edge e1 = graph.createLink(v1, v1);
+		DoubleSubNode v1 = g.createDoubleSubNode();
+		Edge e1 = g.createLink(v1, v1);
 		assertFalse(e1.isAfterInGraph(e1));
 	}
 
@@ -3395,10 +3505,10 @@ public class EdgeTest {
 	 */
 	@Test
 	public void setAlphaTest0() {
-		DoubleSubNode v1 = graph.createDoubleSubNode();
-		DoubleSubNode v2 = graph.createDoubleSubNode();
-		DoubleSubNode v3 = graph.createDoubleSubNode();
-		Edge e1 = graph.createLink(v1, v2);
+		DoubleSubNode v1 = g.createDoubleSubNode();
+		DoubleSubNode v2 = g.createDoubleSubNode();
+		DoubleSubNode v3 = g.createDoubleSubNode();
+		Edge e1 = g.createLink(v1, v2);
 		long v1vers = v1.getIncidenceListVersion();
 		long v2vers = v2.getIncidenceListVersion();
 		long v3vers = v3.getIncidenceListVersion();
@@ -3417,10 +3527,10 @@ public class EdgeTest {
 	 */
 	@Test
 	public void setAlphaTestR0() {
-		DoubleSubNode v1 = graph.createDoubleSubNode();
-		DoubleSubNode v2 = graph.createDoubleSubNode();
-		DoubleSubNode v3 = graph.createDoubleSubNode();
-		Edge e1 = graph.createLink(v1, v2).getReversedEdge();
+		DoubleSubNode v1 = g.createDoubleSubNode();
+		DoubleSubNode v2 = g.createDoubleSubNode();
+		DoubleSubNode v3 = g.createDoubleSubNode();
+		Edge e1 = g.createLink(v1, v2).getReversedEdge();
 		long v1vers = v1.getIncidenceListVersion();
 		long v2vers = v2.getIncidenceListVersion();
 		long v3vers = v3.getIncidenceListVersion();
@@ -3439,9 +3549,9 @@ public class EdgeTest {
 	 */
 	@Test
 	public void setAlphaTest1() {
-		DoubleSubNode v1 = graph.createDoubleSubNode();
-		DoubleSubNode v2 = graph.createDoubleSubNode();
-		Edge e1 = graph.createLink(v1, v2);
+		DoubleSubNode v1 = g.createDoubleSubNode();
+		DoubleSubNode v2 = g.createDoubleSubNode();
+		Edge e1 = g.createLink(v1, v2);
 		long v1vers = v1.getIncidenceListVersion();
 		long v2vers = v2.getIncidenceListVersion();
 		e1.setAlpha(v1);
@@ -3457,9 +3567,9 @@ public class EdgeTest {
 	 */
 	@Test
 	public void setAlphaTest2() {
-		DoubleSubNode v1 = graph.createDoubleSubNode();
-		DoubleSubNode v2 = graph.createDoubleSubNode();
-		Edge e1 = graph.createLink(v1, v2);
+		DoubleSubNode v1 = g.createDoubleSubNode();
+		DoubleSubNode v2 = g.createDoubleSubNode();
+		Edge e1 = g.createLink(v1, v2);
 		long v1vers = v1.getIncidenceListVersion();
 		long v2vers = v2.getIncidenceListVersion();
 		e1.setAlpha(v2);
@@ -3476,12 +3586,12 @@ public class EdgeTest {
 	 */
 	@Test
 	public void setAlphaTest3() {
-		DoubleSubNode v1 = graph.createDoubleSubNode();
-		DoubleSubNode v2 = graph.createDoubleSubNode();
-		DoubleSubNode v3 = graph.createDoubleSubNode();
-		Edge e1 = graph.createLink(v3, v1);
-		Edge e2 = graph.createLink(v1, v2);
-		Edge e3 = graph.createLink(v2, v3);
+		DoubleSubNode v1 = g.createDoubleSubNode();
+		DoubleSubNode v2 = g.createDoubleSubNode();
+		DoubleSubNode v3 = g.createDoubleSubNode();
+		Edge e1 = g.createLink(v3, v1);
+		Edge e2 = g.createLink(v1, v2);
+		Edge e3 = g.createLink(v2, v3);
 		long v1vers = v1.getIncidenceListVersion();
 		long v2vers = v2.getIncidenceListVersion();
 		long v3vers = v3.getIncidenceListVersion();
@@ -3501,9 +3611,9 @@ public class EdgeTest {
 	 */
 	@Test(expected = GraphException.class)
 	public void setAlphaTest4() {
-		DoubleSubNode v1 = graph.createDoubleSubNode();
-		SuperNode v2 = graph.createSuperNode();
-		Edge e1 = graph.createLink(v1, v2);
+		DoubleSubNode v1 = g.createDoubleSubNode();
+		SuperNode v2 = g.createSuperNode();
+		Edge e1 = g.createLink(v1, v2);
 		e1.setAlpha(v2);
 	}
 
@@ -3519,15 +3629,15 @@ public class EdgeTest {
 		ret.add(new ArrayList<Edge>());
 		ret.add(new ArrayList<Edge>());
 		ret.add(new ArrayList<Edge>());
-		Vertex[] nodes = new Vertex[] { graph.createSubNode(),
-				graph.createDoubleSubNode(), graph.createSuperNode() };
-		for (int i = 0; i < 1000; i++) {
+		Vertex[] nodes = new Vertex[] { g.createSubNode(),
+				g.createDoubleSubNode(), g.createSuperNode() };
+		for (int i = 0; i < RANDOM_VERTEX_COUNT; i++) {
 			int edge = rand.nextInt(3);
 			switch (edge) {
 			case 0:
 				int start = rand.nextInt(2);
 				int end = rand.nextInt(2) + 1;
-				Edge e = graph.createLink((AbstractSuperNode) nodes[start],
+				Edge e = g.createLink((AbstractSuperNode) nodes[start],
 						(SuperNode) nodes[end]);
 				ret.get(start).add(e);
 				ret.get(end).add(e.getReversedEdge());
@@ -3535,7 +3645,7 @@ public class EdgeTest {
 			case 1:
 				start = 1;
 				end = rand.nextInt(2) + 1;
-				e = graph.createSubLink((DoubleSubNode) nodes[start],
+				e = g.createSubLink((DoubleSubNode) nodes[start],
 						(SuperNode) nodes[end]);
 				ret.get(start).add(e);
 				ret.get(end).add(e.getReversedEdge());
@@ -3543,7 +3653,7 @@ public class EdgeTest {
 			case 2:
 				start = rand.nextInt(2) + 1;
 				end = rand.nextInt(2);
-				e = graph.createLinkBack((SuperNode) nodes[start],
+				e = g.createLinkBack((SuperNode) nodes[start],
 						(AbstractSuperNode) nodes[end]);
 				ret.get(start).add(e);
 				ret.get(end).add(e.getReversedEdge());
@@ -3559,12 +3669,12 @@ public class EdgeTest {
 	@Test
 	public void setAlphaTest5() {
 		ArrayList<ArrayList<Edge>> incidences = createRandomGraph();
-		for (int i = 0; i < 1000; i++) {
-			int edgeId = rand.nextInt(graph.getECount()) + 1;
-			Edge e = graph.getEdge(edgeId);
+		for (int i = 0; i < RANDOM_VERTEX_COUNT; i++) {
+			int edgeId = rand.nextInt(g.getECount()) + 1;
+			Edge e = g.getEdge(edgeId);
 			int oldAlphaId = e.getAlpha().getId();
 			int newAlphaId = rand.nextInt(3) + 1;
-			Vertex newAlpha = graph.getVertex(newAlphaId);
+			Vertex newAlpha = g.getVertex(newAlphaId);
 			try {
 				e.setAlpha(newAlpha);
 				if (oldAlphaId != newAlphaId) {
@@ -3587,12 +3697,12 @@ public class EdgeTest {
 				}
 			}
 		}
-		testIncidenceList(graph.getVertex(1), incidences.get(0).toArray(
-				new Edge[0]));
-		testIncidenceList(graph.getVertex(2), incidences.get(1).toArray(
-				new Edge[0]));
-		testIncidenceList(graph.getVertex(3), incidences.get(2).toArray(
-				new Edge[0]));
+		testIncidenceList(g.getVertex(1), incidences.get(0)
+				.toArray(new Edge[0]));
+		testIncidenceList(g.getVertex(2), incidences.get(1)
+				.toArray(new Edge[0]));
+		testIncidenceList(g.getVertex(3), incidences.get(2)
+				.toArray(new Edge[0]));
 	}
 
 	// tests of the method void setOmega(Vertex v);
@@ -3602,10 +3712,10 @@ public class EdgeTest {
 	 */
 	@Test
 	public void setOmegaTest0() {
-		DoubleSubNode v1 = graph.createDoubleSubNode();
-		DoubleSubNode v2 = graph.createDoubleSubNode();
-		DoubleSubNode v3 = graph.createDoubleSubNode();
-		Edge e1 = graph.createLink(v1, v2);
+		DoubleSubNode v1 = g.createDoubleSubNode();
+		DoubleSubNode v2 = g.createDoubleSubNode();
+		DoubleSubNode v3 = g.createDoubleSubNode();
+		Edge e1 = g.createLink(v1, v2);
 		long v1vers = v1.getIncidenceListVersion();
 		long v2vers = v2.getIncidenceListVersion();
 		long v3vers = v3.getIncidenceListVersion();
@@ -3624,10 +3734,10 @@ public class EdgeTest {
 	 */
 	@Test
 	public void setOmegaTestR0() {
-		DoubleSubNode v1 = graph.createDoubleSubNode();
-		DoubleSubNode v2 = graph.createDoubleSubNode();
-		DoubleSubNode v3 = graph.createDoubleSubNode();
-		Edge e1 = graph.createLink(v1, v2).getReversedEdge();
+		DoubleSubNode v1 = g.createDoubleSubNode();
+		DoubleSubNode v2 = g.createDoubleSubNode();
+		DoubleSubNode v3 = g.createDoubleSubNode();
+		Edge e1 = g.createLink(v1, v2).getReversedEdge();
 		long v1vers = v1.getIncidenceListVersion();
 		long v2vers = v2.getIncidenceListVersion();
 		long v3vers = v3.getIncidenceListVersion();
@@ -3646,9 +3756,9 @@ public class EdgeTest {
 	 */
 	@Test
 	public void setOmegaTest1() {
-		DoubleSubNode v1 = graph.createDoubleSubNode();
-		DoubleSubNode v2 = graph.createDoubleSubNode();
-		Edge e1 = graph.createLink(v1, v2);
+		DoubleSubNode v1 = g.createDoubleSubNode();
+		DoubleSubNode v2 = g.createDoubleSubNode();
+		Edge e1 = g.createLink(v1, v2);
 		long v1vers = v1.getIncidenceListVersion();
 		long v2vers = v2.getIncidenceListVersion();
 		e1.setOmega(v2);
@@ -3664,9 +3774,9 @@ public class EdgeTest {
 	 */
 	@Test
 	public void setOmegaTest2() {
-		DoubleSubNode v1 = graph.createDoubleSubNode();
-		DoubleSubNode v2 = graph.createDoubleSubNode();
-		Edge e1 = graph.createLink(v1, v2);
+		DoubleSubNode v1 = g.createDoubleSubNode();
+		DoubleSubNode v2 = g.createDoubleSubNode();
+		Edge e1 = g.createLink(v1, v2);
 		long v1vers = v1.getIncidenceListVersion();
 		long v2vers = v2.getIncidenceListVersion();
 		e1.setOmega(v1);
@@ -3683,12 +3793,12 @@ public class EdgeTest {
 	 */
 	@Test
 	public void setOmegaTest3() {
-		DoubleSubNode v1 = graph.createDoubleSubNode();
-		DoubleSubNode v2 = graph.createDoubleSubNode();
-		DoubleSubNode v3 = graph.createDoubleSubNode();
-		Edge e1 = graph.createLink(v3, v1);
-		Edge e2 = graph.createLink(v1, v2);
-		Edge e3 = graph.createLink(v2, v3);
+		DoubleSubNode v1 = g.createDoubleSubNode();
+		DoubleSubNode v2 = g.createDoubleSubNode();
+		DoubleSubNode v3 = g.createDoubleSubNode();
+		Edge e1 = g.createLink(v3, v1);
+		Edge e2 = g.createLink(v1, v2);
+		Edge e3 = g.createLink(v2, v3);
 		long v1vers = v1.getIncidenceListVersion();
 		long v2vers = v2.getIncidenceListVersion();
 		long v3vers = v3.getIncidenceListVersion();
@@ -3708,9 +3818,9 @@ public class EdgeTest {
 	 */
 	@Test(expected = GraphException.class)
 	public void setOmegaTest4() {
-		SubNode v1 = graph.createSubNode();
-		SuperNode v2 = graph.createSuperNode();
-		Edge e1 = graph.createLink(v1, v2);
+		SubNode v1 = g.createSubNode();
+		SuperNode v2 = g.createSuperNode();
+		Edge e1 = g.createLink(v1, v2);
 		e1.setOmega(v1);
 	}
 
@@ -3720,12 +3830,12 @@ public class EdgeTest {
 	@Test
 	public void setOmegaTest5() {
 		ArrayList<ArrayList<Edge>> incidences = createRandomGraph();
-		for (int i = 0; i < 1000; i++) {
-			int edgeId = rand.nextInt(graph.getECount()) + 1;
-			Edge e = graph.getEdge(edgeId);
+		for (int i = 0; i < RANDOM_VERTEX_COUNT; i++) {
+			int edgeId = rand.nextInt(g.getECount()) + 1;
+			Edge e = g.getEdge(edgeId);
 			int oldOmegaId = e.getOmega().getId();
 			int newOmegaId = rand.nextInt(3) + 1;
-			Vertex newOmega = graph.getVertex(newOmegaId);
+			Vertex newOmega = g.getVertex(newOmegaId);
 			try {
 				e.setOmega(newOmega);
 				if (oldOmegaId != newOmegaId) {
@@ -3743,12 +3853,12 @@ public class EdgeTest {
 				}
 			}
 		}
-		testIncidenceList(graph.getVertex(1), incidences.get(0).toArray(
-				new Edge[0]));
-		testIncidenceList(graph.getVertex(2), incidences.get(1).toArray(
-				new Edge[0]));
-		testIncidenceList(graph.getVertex(3), incidences.get(2).toArray(
-				new Edge[0]));
+		testIncidenceList(g.getVertex(1), incidences.get(0)
+				.toArray(new Edge[0]));
+		testIncidenceList(g.getVertex(2), incidences.get(1)
+				.toArray(new Edge[0]));
+		testIncidenceList(g.getVertex(3), incidences.get(2)
+				.toArray(new Edge[0]));
 	}
 
 	// tests of the method void setThis(Vertex v);
@@ -3759,12 +3869,12 @@ public class EdgeTest {
 	 */
 	@Test
 	public void setThisTest3() {
-		DoubleSubNode v1 = graph.createDoubleSubNode();
-		DoubleSubNode v2 = graph.createDoubleSubNode();
-		DoubleSubNode v3 = graph.createDoubleSubNode();
-		Edge e1 = graph.createLink(v3, v1);
-		Edge e2 = graph.createLink(v1, v2);
-		Edge e3 = graph.createLink(v2, v3);
+		DoubleSubNode v1 = g.createDoubleSubNode();
+		DoubleSubNode v2 = g.createDoubleSubNode();
+		DoubleSubNode v3 = g.createDoubleSubNode();
+		Edge e1 = g.createLink(v3, v1);
+		Edge e2 = g.createLink(v1, v2);
+		Edge e3 = g.createLink(v2, v3);
 		long v1vers = v1.getIncidenceListVersion();
 		long v2vers = v2.getIncidenceListVersion();
 		long v3vers = v3.getIncidenceListVersion();
@@ -3799,12 +3909,12 @@ public class EdgeTest {
 	 */
 	@Test
 	public void setThatTest3() {
-		DoubleSubNode v1 = graph.createDoubleSubNode();
-		DoubleSubNode v2 = graph.createDoubleSubNode();
-		DoubleSubNode v3 = graph.createDoubleSubNode();
-		Edge e1 = graph.createLink(v3, v1);
-		Edge e2 = graph.createLink(v1, v2);
-		Edge e3 = graph.createLink(v2, v3);
+		DoubleSubNode v1 = g.createDoubleSubNode();
+		DoubleSubNode v2 = g.createDoubleSubNode();
+		DoubleSubNode v3 = g.createDoubleSubNode();
+		Edge e1 = g.createLink(v3, v1);
+		Edge e2 = g.createLink(v1, v2);
+		Edge e3 = g.createLink(v2, v3);
 		long v1vers = v1.getIncidenceListVersion();
 		long v2vers = v2.getIncidenceListVersion();
 		long v3vers = v3.getIncidenceListVersion();
@@ -3844,12 +3954,12 @@ public class EdgeTest {
 	 */
 	@Test
 	public void getNormalEdgeTest0() {
-		DoubleSubNode v1 = graph.createDoubleSubNode();
-		SuperNode v2 = graph.createSuperNode();
-		SubNode v3 = graph.createSubNode();
-		Edge e1 = graph.createLink(v3, v2);
-		Edge e2 = graph.createSubLink(v1, v2);
-		Edge e3 = graph.createLinkBack(v2, v3);
+		DoubleSubNode v1 = g.createDoubleSubNode();
+		SuperNode v2 = g.createSuperNode();
+		SubNode v3 = g.createSubNode();
+		Edge e1 = g.createLink(v3, v2);
+		Edge e2 = g.createSubLink(v1, v2);
+		Edge e3 = g.createLinkBack(v2, v3);
 		assertEquals(e1, e1.getNormalEdge());
 		assertEquals(e1, e1.getReversedEdge().getNormalEdge());
 		assertEquals(e2, e2.getNormalEdge());
@@ -3865,12 +3975,12 @@ public class EdgeTest {
 	 */
 	@Test
 	public void getReversedEdgeTest0() {
-		DoubleSubNode v1 = graph.createDoubleSubNode();
-		SuperNode v2 = graph.createSuperNode();
-		SubNode v3 = graph.createSubNode();
-		Edge e1 = graph.createLink(v3, v2);
-		Edge e2 = graph.createSubLink(v1, v2);
-		Edge e3 = graph.createLinkBack(v2, v3);
+		DoubleSubNode v1 = g.createDoubleSubNode();
+		SuperNode v2 = g.createSuperNode();
+		SubNode v3 = g.createSubNode();
+		Edge e1 = g.createLink(v3, v2);
+		Edge e2 = g.createSubLink(v1, v2);
+		Edge e3 = g.createLinkBack(v2, v3);
 		assertEquals(e1.getReversedEdge(), e1.getReversedEdge());
 		assertEquals(e1, e1.getReversedEdge().getReversedEdge());
 		assertEquals(e2.getReversedEdge(), e2.getReversedEdge());
@@ -3886,12 +3996,12 @@ public class EdgeTest {
 	 */
 	@Test
 	public void isNormalTest0() {
-		DoubleSubNode v1 = graph.createDoubleSubNode();
-		SuperNode v2 = graph.createSuperNode();
-		SubNode v3 = graph.createSubNode();
-		Edge e1 = graph.createLink(v3, v2);
-		Edge e2 = graph.createSubLink(v1, v2);
-		Edge e3 = graph.createLinkBack(v2, v3);
+		DoubleSubNode v1 = g.createDoubleSubNode();
+		SuperNode v2 = g.createSuperNode();
+		SubNode v3 = g.createSubNode();
+		Edge e1 = g.createLink(v3, v2);
+		Edge e2 = g.createSubLink(v1, v2);
+		Edge e3 = g.createLinkBack(v2, v3);
 		assertFalse(e1.getReversedEdge().isNormal());
 		assertTrue(e1.isNormal());
 		assertFalse(e2.getReversedEdge().isNormal());
@@ -3907,14 +4017,14 @@ public class EdgeTest {
 	 */
 	@Test
 	public void isValidTest0() {
-		DoubleSubNode v1 = graph.createDoubleSubNode();
-		SuperNode v2 = graph.createSuperNode();
-		SubNode v3 = graph.createSubNode();
-		Edge e1 = graph.createLink(v3, v2);
-		Edge e2 = graph.createSubLink(v1, v2);
-		Edge e3 = graph.createLinkBack(v2, v3);
+		DoubleSubNode v1 = g.createDoubleSubNode();
+		SuperNode v2 = g.createSuperNode();
+		SubNode v3 = g.createSubNode();
+		Edge e1 = g.createLink(v3, v2);
+		Edge e2 = g.createSubLink(v1, v2);
+		Edge e3 = g.createLinkBack(v2, v3);
 		e3.delete();
-		graph.deleteEdge(e2);
+		g.deleteEdge(e2);
 		assertTrue(e1.isValid());
 		assertFalse(e2.isValid());
 		assertFalse(e3.isValid());
@@ -3930,17 +4040,17 @@ public class EdgeTest {
 	 */
 	@Test
 	public void getGraphTest() {
-		VertexTestGraph anotherGraph = ((VertexTestSchema) graph.getSchema())
+		VertexTestGraph anotherGraph = ((VertexTestSchema) g.getSchema())
 				.createVertexTestGraph();
-		DoubleSubNode v1 = graph.createDoubleSubNode();
-		DoubleSubNode v2 = graph.createDoubleSubNode();
+		DoubleSubNode v1 = g.createDoubleSubNode();
+		DoubleSubNode v2 = g.createDoubleSubNode();
 		DoubleSubNode v1a = anotherGraph.createDoubleSubNode();
 		DoubleSubNode v2a = anotherGraph.createDoubleSubNode();
-		Edge e1 = graph.createLink(v1, v2);
+		Edge e1 = g.createLink(v1, v2);
 		Edge e1a = anotherGraph.createLink(v1a, v2a);
-		assertEquals(graph, e1.getGraph());
+		assertEquals(g, e1.getGraph());
 		assertEquals(anotherGraph, e1a.getGraph());
-		assertEquals(graph, e1.getReversedEdge().getGraph());
+		assertEquals(g, e1.getReversedEdge().getGraph());
 		assertEquals(anotherGraph, e1a.getReversedEdge().getGraph());
 	}
 
@@ -3948,63 +4058,82 @@ public class EdgeTest {
 
 	/**
 	 * Tests if the graphversion is increased if the method is called.
+	 * @throws CommitFailedException 
 	 */
 	@Test
-	public void graphModifiedTest0() {
-		DoubleSubNode v = graph.createDoubleSubNode();
-		Edge e1 = graph.createLink(v, v);
-		long graphversion = graph.getGraphVersion();
+	public void graphModifiedTest0() throws CommitFailedException {
+		DoubleSubNode v = g.createDoubleSubNode();
+		Edge e1 = g.createLink(v, v);
+		commit(g);
+		
+		createTransaction(g);
+		long graphversion = g.getGraphVersion();
 		e1.graphModified();
-		assertEquals(++graphversion, graph.getGraphVersion());
+		commit(g);
+		
+		createReadOnlyTransaction(g);
+		assertEquals(++graphversion, g.getGraphVersion());
 	}
 
 	/**
 	 * Tests if the graphversion is increased if the method is called on
 	 * ReversedEdge.
+	 * @throws CommitFailedException 
 	 */
 	@Test
-	public void graphModifiedTestR0() {
-		DoubleSubNode v = graph.createDoubleSubNode();
-		Edge e1 = graph.createLink(v, v).getReversedEdge();
-		long graphversion = graph.getGraphVersion();
+	public void graphModifiedTestR0() throws CommitFailedException {
+		DoubleSubNode v = g.createDoubleSubNode();
+		Edge e1 = g.createLink(v, v).getReversedEdge();
+		long graphversion = g.getGraphVersion();
 		e1.graphModified();
-		assertEquals(++graphversion, graph.getGraphVersion());
+		commit(g);
+		createReadOnlyTransaction(g);
+		assertEquals(++graphversion, g.getGraphVersion());
 	}
 
 	/**
 	 * Tests if the graphversion is increased by creating a new edge.
+	 * @throws CommitFailedException 
 	 */
 	@Test
-	public void graphModifiedTest1() {
-		DoubleSubNode v1 = graph.createDoubleSubNode();
-		long graphversion = graph.getGraphVersion();
-		graph.createLink(v1, v1);
-		assertEquals(++graphversion, graph.getGraphVersion());
+	public void graphModifiedTest1() throws CommitFailedException {
+		DoubleSubNode v1 = g.createDoubleSubNode();
+		long graphversion = g.getGraphVersion();
+		g.createLink(v1, v1);
+		commit(g);
+		createReadOnlyTransaction(g);
+		assertEquals(++graphversion, g.getGraphVersion());
 	}
 
 	/**
 	 * Tests if the graphversion is increased by deleting an edge.
+	 * @throws CommitFailedException 
 	 */
 	@Test
-	public void graphModifiedTest2() {
-		DoubleSubNode v1 = graph.createDoubleSubNode();
-		Edge e1 = graph.createLink(v1, v1);
-		long graphversion = graph.getGraphVersion();
+	public void graphModifiedTest2() throws CommitFailedException {
+		DoubleSubNode v1 = g.createDoubleSubNode();
+		Edge e1 = g.createLink(v1, v1);
+		long graphversion = g.getGraphVersion();
 		e1.delete();
-		assertEquals(++graphversion, graph.getGraphVersion());
+		commit(g);
+		createReadOnlyTransaction(g);
+		assertEquals(++graphversion, g.getGraphVersion());
 	}
 
 	/**
 	 * Tests if the graphversion is increased by changing the attributes of an
 	 * edge.
+	 * @throws CommitFailedException 
 	 */
 	@Test
-	public void graphModifiedTest3() {
-		DoubleSubNode v1 = graph.createDoubleSubNode();
-		Edge e1 = graph.createLink(v1, v1);
-		long graphversion = graph.getGraphVersion();
+	public void graphModifiedTest3() throws CommitFailedException {
+		DoubleSubNode v1 = g.createDoubleSubNode();
+		Edge e1 = g.createLink(v1, v1);
+		long graphversion = g.getGraphVersion();
 		((Link) e1).set_aString("Test");
-		assertEquals(++graphversion, graph.getGraphVersion());
+		commit(g);
+		createReadOnlyTransaction(g);
+		assertEquals(++graphversion, g.getGraphVersion());
 	}
 
 	/*
@@ -4018,12 +4147,12 @@ public class EdgeTest {
 	@Test
 	public void getAttributedElementClassTest() {
 		EdgeClass[] edges = getEdgeClasses();
-		DoubleSubNode v1 = graph.createDoubleSubNode();
-		SubNode v2 = graph.createSubNode();
-		SuperNode v3 = graph.createSuperNode();
-		Edge e1 = graph.createLink(v2, v3);
-		Edge e2 = graph.createSubLink(v1, v3);
-		Edge e3 = graph.createLinkBack(v3, v2);
+		DoubleSubNode v1 = g.createDoubleSubNode();
+		SubNode v2 = g.createSubNode();
+		SuperNode v3 = g.createSuperNode();
+		Edge e1 = g.createLink(v2, v3);
+		Edge e2 = g.createSubLink(v1, v3);
+		Edge e3 = g.createLinkBack(v3, v2);
 		assertEquals(edges[0], e1.getAttributedElementClass());
 		assertEquals(edges[1], e2.getAttributedElementClass());
 		assertEquals(edges[2], e3.getAttributedElementClass());
@@ -4036,12 +4165,12 @@ public class EdgeTest {
 	 */
 	@Test
 	public void getM1ClassTest() {
-		DoubleSubNode v1 = graph.createDoubleSubNode();
-		SubNode v2 = graph.createSubNode();
-		SuperNode v3 = graph.createSuperNode();
-		Edge e1 = graph.createLink(v2, v3);
-		Edge e2 = graph.createSubLink(v1, v3);
-		Edge e3 = graph.createLinkBack(v3, v2);
+		DoubleSubNode v1 = g.createDoubleSubNode();
+		SubNode v2 = g.createSubNode();
+		SuperNode v3 = g.createSuperNode();
+		Edge e1 = g.createLink(v2, v3);
+		Edge e2 = g.createSubLink(v1, v3);
+		Edge e3 = g.createLinkBack(v3, v2);
 		assertEquals(Link.class, e1.getM1Class());
 		assertEquals(SubLink.class, e2.getM1Class());
 		assertEquals(LinkBack.class, e3.getM1Class());
@@ -4054,12 +4183,12 @@ public class EdgeTest {
 	 */
 	@Test
 	public void getGraphClassTest() {
-		VertexTestGraph anotherGraph = ((VertexTestSchema) graph.getSchema())
+		VertexTestGraph anotherGraph = ((VertexTestSchema) g.getSchema())
 				.createVertexTestGraph();
-		GraphClass gc = graph.getSchema().getGraphClass();
-		DoubleSubNode v1 = graph.createDoubleSubNode();
+		GraphClass gc = g.getSchema().getGraphClass();
+		DoubleSubNode v1 = g.createDoubleSubNode();
 		DoubleSubNode v1a = anotherGraph.createDoubleSubNode();
-		Edge e1 = graph.createLink(v1, v1);
+		Edge e1 = g.createLink(v1, v1);
 		Edge e1a = anotherGraph.createLink(v1a, v1a);
 		assertEquals(gc, e1.getGraphClass());
 		assertEquals(gc, e1a.getGraphClass());
@@ -4079,11 +4208,11 @@ public class EdgeTest {
 	@Test
 	public void writeReadAttributeValues0() throws GraphIOException,
 			IOException {
-		DoubleSubNode v1 = graph.createDoubleSubNode();
-		DoubleSubNode v2 = graph.createDoubleSubNode();
-		SubLink e1 = graph.createSubLink(v1, v2);
+		DoubleSubNode v1 = g.createDoubleSubNode();
+		DoubleSubNode v2 = g.createDoubleSubNode();
+		SubLink e1 = g.createSubLink(v1, v2);
 		// test of writeAttributeValues
-		GraphIO.saveGraphToFile("test.tg", graph, null);
+		GraphIO.saveGraphToFile("test.tg", g, null);
 		LineNumberReader reader = new LineNumberReader(
 				new FileReader("test.tg"));
 		String line = "";
@@ -4119,13 +4248,13 @@ public class EdgeTest {
 	@Test
 	public void writeReadAttributeValues1() throws GraphIOException,
 			IOException {
-		DoubleSubNode v1 = graph.createDoubleSubNode();
-		DoubleSubNode v2 = graph.createDoubleSubNode();
-		SubLink e1 = graph.createSubLink(v1, v2);
+		DoubleSubNode v1 = g.createDoubleSubNode();
+		DoubleSubNode v2 = g.createDoubleSubNode();
+		SubLink e1 = g.createSubLink(v1, v2);
 		e1.set_anInt(3);
 		e1.set_aString("HelloWorld!");
 		// test of writeAttributeValues
-		GraphIO.saveGraphToFile("test.tg", graph, null);
+		GraphIO.saveGraphToFile("test.tg", g, null);
 		LineNumberReader reader = new LineNumberReader(
 				new FileReader("test.tg"));
 		String line = "";
@@ -4163,8 +4292,8 @@ public class EdgeTest {
 	 */
 	@Test
 	public void getAttributeTest0() throws NoSuchFieldException {
-		DoubleSubNode v = graph.createDoubleSubNode();
-		SubLink e = graph.createSubLink(v, v);
+		DoubleSubNode v = g.createDoubleSubNode();
+		SubLink e = g.createSubLink(v, v);
 		e.set_aString("test");
 		e.set_anInt(4);
 		assertEquals("test", e.getAttribute("aString"));
@@ -4176,8 +4305,8 @@ public class EdgeTest {
 	 */
 	@Test
 	public void getAttributeTestR0() throws NoSuchFieldException {
-		DoubleSubNode v = graph.createDoubleSubNode();
-		SubLink e = (SubLink) graph.createSubLink(v, v).getReversedEdge();
+		DoubleSubNode v = g.createDoubleSubNode();
+		SubLink e = (SubLink) g.createSubLink(v, v).getReversedEdge();
 		e.set_aString("test");
 		e.set_anInt(4);
 		assertEquals("test", e.getAttribute("aString"));
@@ -4190,8 +4319,8 @@ public class EdgeTest {
 	 */
 	@Test(expected = NoSuchFieldException.class)
 	public void getAttributeTest1() throws NoSuchFieldException {
-		DoubleSubNode v = graph.createDoubleSubNode();
-		SubLink e = graph.createSubLink(v, v);
+		DoubleSubNode v = g.createDoubleSubNode();
+		SubLink e = g.createSubLink(v, v);
 		e.getAttribute("cd");
 	}
 
@@ -4201,8 +4330,8 @@ public class EdgeTest {
 	 */
 	@Test(expected = NoSuchFieldException.class)
 	public void getAttributeTest2() throws NoSuchFieldException {
-		DoubleSubNode v = graph.createDoubleSubNode();
-		SubLink e = graph.createSubLink(v, v);
+		DoubleSubNode v = g.createDoubleSubNode();
+		SubLink e = g.createSubLink(v, v);
 		e.getAttribute("");
 	}
 
@@ -4214,8 +4343,8 @@ public class EdgeTest {
 	 */
 	@Test
 	public void setAttributeTest0() throws NoSuchFieldException {
-		DoubleSubNode v = graph.createDoubleSubNode();
-		SubLink e = graph.createSubLink(v, v);
+		DoubleSubNode v = g.createDoubleSubNode();
+		SubLink e = g.createSubLink(v, v);
 		e.setAttribute("aString", "test");
 		e.setAttribute("anInt", 4);
 		assertEquals("test", e.getAttribute("aString"));
@@ -4227,8 +4356,8 @@ public class EdgeTest {
 	 */
 	@Test
 	public void setAttributeTestR0() throws NoSuchFieldException {
-		DoubleSubNode v = graph.createDoubleSubNode();
-		SubLink e = (SubLink) graph.createSubLink(v, v).getReversedEdge();
+		DoubleSubNode v = g.createDoubleSubNode();
+		SubLink e = (SubLink) g.createSubLink(v, v).getReversedEdge();
 		e.setAttribute("aString", "test");
 		e.setAttribute("anInt", 4);
 		assertEquals("test", e.getAttribute("aString"));
@@ -4240,8 +4369,8 @@ public class EdgeTest {
 	 */
 	@Test
 	public void setAttributeTest1() throws NoSuchFieldException {
-		DoubleSubNode v = graph.createDoubleSubNode();
-		SubLink e = graph.createSubLink(v, v);
+		DoubleSubNode v = g.createDoubleSubNode();
+		SubLink e = g.createSubLink(v, v);
 		e.setAttribute("aString", null);
 		assertNull(e.getAttribute("aString"));
 	}
@@ -4252,8 +4381,8 @@ public class EdgeTest {
 	 */
 	@Test(expected = NoSuchFieldException.class)
 	public void setAttributeTest2() throws NoSuchFieldException {
-		DoubleSubNode v = graph.createDoubleSubNode();
-		SubLink e = graph.createSubLink(v, v);
+		DoubleSubNode v = g.createDoubleSubNode();
+		SubLink e = g.createSubLink(v, v);
 		e.setAttribute("cd", "a");
 	}
 
@@ -4263,8 +4392,8 @@ public class EdgeTest {
 	 */
 	@Test(expected = NoSuchFieldException.class)
 	public void setAttributeTest3() throws NoSuchFieldException {
-		DoubleSubNode v = graph.createDoubleSubNode();
-		SubLink e = graph.createSubLink(v, v);
+		DoubleSubNode v = g.createDoubleSubNode();
+		SubLink e = g.createSubLink(v, v);
 		e.setAttribute("", "a");
 	}
 
@@ -4275,13 +4404,13 @@ public class EdgeTest {
 	 */
 	@Test
 	public void getSchemaTest() {
-		DoubleSubNode v1 = graph.createDoubleSubNode();
-		SubNode v2 = graph.createSubNode();
-		SuperNode v3 = graph.createSuperNode();
-		Edge e1 = graph.createLink(v2, v3);
-		Edge e2 = graph.createSubLink(v1, v3);
-		Edge e3 = graph.createLinkBack(v3, v2);
-		Schema schema = graph.getSchema();
+		DoubleSubNode v1 = g.createDoubleSubNode();
+		SubNode v2 = g.createSubNode();
+		SuperNode v3 = g.createSuperNode();
+		Edge e1 = g.createLink(v2, v3);
+		Edge e2 = g.createSubLink(v1, v3);
+		Edge e3 = g.createLinkBack(v3, v2);
+		Schema schema = g.getSchema();
 		assertEquals(schema, e1.getSchema());
 		assertEquals(schema, e2.getSchema());
 		assertEquals(schema, e3.getSchema());
@@ -4300,8 +4429,8 @@ public class EdgeTest {
 	 */
 	@Test
 	public void compareToTest0() {
-		DoubleSubNode v1 = graph.createDoubleSubNode();
-		Edge e1 = graph.createLink(v1, v1);
+		DoubleSubNode v1 = g.createDoubleSubNode();
+		Edge e1 = g.createLink(v1, v1);
 		assertEquals(0, e1.compareTo(e1));
 	}
 
@@ -4310,9 +4439,9 @@ public class EdgeTest {
 	 */
 	@Test
 	public void compareToTest1() {
-		DoubleSubNode v1 = graph.createDoubleSubNode();
-		Edge e1 = graph.createLink(v1, v1);
-		Edge e2 = graph.createLink(v1, v1);
+		DoubleSubNode v1 = g.createDoubleSubNode();
+		Edge e1 = g.createLink(v1, v1);
+		Edge e2 = g.createLink(v1, v1);
 		assertTrue(e1.compareTo(e2) < 0);
 	}
 
@@ -4321,9 +4450,9 @@ public class EdgeTest {
 	 */
 	@Test
 	public void compareToTest2() {
-		DoubleSubNode v1 = graph.createDoubleSubNode();
-		Edge e1 = graph.createLink(v1, v1);
-		Edge e2 = graph.createLink(v1, v1);
+		DoubleSubNode v1 = g.createDoubleSubNode();
+		Edge e1 = g.createLink(v1, v1);
+		Edge e2 = g.createLink(v1, v1);
 		assertTrue(e2.compareTo(e1) > 0);
 	}
 
@@ -4334,8 +4463,8 @@ public class EdgeTest {
 	 */
 	@Test
 	public void compareToTestR0() {
-		DoubleSubNode v1 = graph.createDoubleSubNode();
-		Edge e1 = graph.createLink(v1, v1).getReversedEdge();
+		DoubleSubNode v1 = g.createDoubleSubNode();
+		Edge e1 = g.createLink(v1, v1).getReversedEdge();
 		assertEquals(0, e1.compareTo(e1));
 	}
 
@@ -4344,9 +4473,9 @@ public class EdgeTest {
 	 */
 	@Test
 	public void compareToTestR1() {
-		DoubleSubNode v1 = graph.createDoubleSubNode();
-		Edge e1 = graph.createLink(v1, v1).getReversedEdge();
-		Edge e2 = graph.createLink(v1, v1).getReversedEdge();
+		DoubleSubNode v1 = g.createDoubleSubNode();
+		Edge e1 = g.createLink(v1, v1).getReversedEdge();
+		Edge e2 = g.createLink(v1, v1).getReversedEdge();
 		assertTrue(e1.compareTo(e2) < 0);
 	}
 
@@ -4355,9 +4484,9 @@ public class EdgeTest {
 	 */
 	@Test
 	public void compareToTestR2() {
-		DoubleSubNode v1 = graph.createDoubleSubNode();
-		Edge e1 = graph.createLink(v1, v1).getReversedEdge();
-		Edge e2 = graph.createLink(v1, v1).getReversedEdge();
+		DoubleSubNode v1 = g.createDoubleSubNode();
+		Edge e1 = g.createLink(v1, v1).getReversedEdge();
+		Edge e2 = g.createLink(v1, v1).getReversedEdge();
 		assertTrue(e2.compareTo(e1) > 0);
 	}
 
@@ -4368,8 +4497,8 @@ public class EdgeTest {
 	 */
 	@Test
 	public void compareToTestM0() {
-		DoubleSubNode v1 = graph.createDoubleSubNode();
-		Edge e1 = graph.createLink(v1, v1);
+		DoubleSubNode v1 = g.createDoubleSubNode();
+		Edge e1 = g.createLink(v1, v1);
 		assertTrue(e1.compareTo(e1.getReversedEdge()) < 0);
 	}
 
@@ -4378,8 +4507,8 @@ public class EdgeTest {
 	 */
 	@Test
 	public void compareToTestM1() {
-		DoubleSubNode v1 = graph.createDoubleSubNode();
-		Edge e1 = graph.createLink(v1, v1);
+		DoubleSubNode v1 = g.createDoubleSubNode();
+		Edge e1 = g.createLink(v1, v1);
 		assertTrue(e1.getReversedEdge().compareTo(e1) > 0);
 	}
 
@@ -4390,8 +4519,8 @@ public class EdgeTest {
 	// test of the methods getAnInt and setAnInt
 	@Test
 	public void getAnIntTest() {
-		DoubleSubNode v1 = graph.createDoubleSubNode();
-		SubLink e1 = graph.createSubLink(v1, v1);
+		DoubleSubNode v1 = g.createDoubleSubNode();
+		SubLink e1 = g.createSubLink(v1, v1);
 		e1.set_anInt(1);
 		assertEquals(1, e1.get_anInt());
 		e1.set_anInt(2);
@@ -4403,8 +4532,8 @@ public class EdgeTest {
 	// test of the methods getAString and setAString
 	@Test
 	public void getAStringTest() {
-		DoubleSubNode v1 = graph.createDoubleSubNode();
-		SubLink e1 = graph.createSubLink(v1, v1);
+		DoubleSubNode v1 = g.createDoubleSubNode();
+		SubLink e1 = g.createSubLink(v1, v1);
 		e1.set_aString("Test1");
 		assertEquals("Test1", e1.get_aString());
 		e1.set_aString("Test2");
@@ -4416,13 +4545,13 @@ public class EdgeTest {
 	// test of the method getNextLinkInGraph
 	@Test
 	public void getNextLinkInGraphTest() {
-		DoubleSubNode v1 = graph.createDoubleSubNode();
-		SubNode v2 = graph.createSubNode();
-		SuperNode v3 = graph.createSuperNode();
-		SubLink e1 = graph.createSubLink(v1, v1);
-		graph.createLinkBack(v3, v2);
-		SubLink e3 = graph.createSubLink(v1, v3);
-		Link e4 = graph.createLink(v2, v1);
+		DoubleSubNode v1 = g.createDoubleSubNode();
+		SubNode v2 = g.createSubNode();
+		SuperNode v3 = g.createSuperNode();
+		SubLink e1 = g.createSubLink(v1, v1);
+		g.createLinkBack(v3, v2);
+		SubLink e3 = g.createSubLink(v1, v3);
+		Link e4 = g.createLink(v2, v1);
 		assertEquals(e3, e1.getNextLinkInGraph());
 		assertEquals(e4, e3.getNextLinkInGraph());
 		assertEquals(null, e4.getNextLinkInGraph());
@@ -4431,13 +4560,13 @@ public class EdgeTest {
 	// test of the method getNextSubLinkInGraph
 	@Test
 	public void getNextSubLinkInGraphTest() {
-		DoubleSubNode v1 = graph.createDoubleSubNode();
-		SubNode v2 = graph.createSubNode();
-		SuperNode v3 = graph.createSuperNode();
-		SubLink e1 = graph.createSubLink(v1, v1);
-		graph.createLinkBack(v3, v2);
-		graph.createLink(v2, v1);
-		SubLink e4 = graph.createSubLink(v1, v3);
+		DoubleSubNode v1 = g.createDoubleSubNode();
+		SubNode v2 = g.createSubNode();
+		SuperNode v3 = g.createSuperNode();
+		SubLink e1 = g.createSubLink(v1, v1);
+		g.createLinkBack(v3, v2);
+		g.createLink(v2, v1);
+		SubLink e4 = g.createSubLink(v1, v3);
 		assertEquals(e4, e1.getNextSubLinkInGraph());
 		assertEquals(null, e4.getNextSubLinkInGraph());
 	}
@@ -4445,12 +4574,12 @@ public class EdgeTest {
 	// test of the method getNextLink
 	@Test
 	public void getNextLinkTest() {
-		DoubleSubNode v1 = graph.createDoubleSubNode();
-		DoubleSubNode v2 = graph.createDoubleSubNode();
-		SubLink e1 = graph.createSubLink(v1, v1);
-		graph.createLinkBack(v1, v2);
-		Link e3 = graph.createLink(v2, v1);
-		graph.createSubLink(v2, v2);
+		DoubleSubNode v1 = g.createDoubleSubNode();
+		DoubleSubNode v2 = g.createDoubleSubNode();
+		SubLink e1 = g.createSubLink(v1, v1);
+		g.createLinkBack(v1, v2);
+		Link e3 = g.createLink(v2, v1);
+		g.createSubLink(v2, v2);
 		assertEquals(e1.getReversedEdge(), e1.getNextLink());
 		assertEquals(e3.getReversedEdge(), ((SubLink) e1.getReversedEdge())
 				.getNextLink());
@@ -4460,12 +4589,12 @@ public class EdgeTest {
 	// test of the method getNextSubLink
 	@Test
 	public void getNextSubLinkTest() {
-		DoubleSubNode v1 = graph.createDoubleSubNode();
-		DoubleSubNode v2 = graph.createDoubleSubNode();
-		SubLink e1 = graph.createSubLink(v1, v1);
-		graph.createLinkBack(v1, v2);
-		graph.createLink(v2, v1);
-		SubLink e4 = graph.createSubLink(v1, v2);
+		DoubleSubNode v1 = g.createDoubleSubNode();
+		DoubleSubNode v2 = g.createDoubleSubNode();
+		SubLink e1 = g.createSubLink(v1, v1);
+		g.createLinkBack(v1, v2);
+		g.createLink(v2, v1);
+		SubLink e4 = g.createSubLink(v1, v2);
 		assertEquals(e1.getReversedEdge(), e1.getNextSubLink());
 		assertEquals(e4, ((SubLink) e1.getReversedEdge()).getNextSubLink());
 		assertEquals(null, e4.getNextSubLink());
@@ -4474,13 +4603,13 @@ public class EdgeTest {
 	// test of the method getNextLink(EdgeDirection orientation)
 	@Test
 	public void getNextLinkTestEdgeDirection() {
-		DoubleSubNode v1 = graph.createDoubleSubNode();
-		DoubleSubNode v2 = graph.createDoubleSubNode();
-		SubLink e1 = graph.createSubLink(v1, v1);
-		graph.createLinkBack(v1, v2);
-		Link e3 = graph.createLink(v2, v1);
-		graph.createSubLink(v2, v2);
-		Link e5 = graph.createLink(v1, v2);
+		DoubleSubNode v1 = g.createDoubleSubNode();
+		DoubleSubNode v2 = g.createDoubleSubNode();
+		SubLink e1 = g.createSubLink(v1, v1);
+		g.createLinkBack(v1, v2);
+		Link e3 = g.createLink(v2, v1);
+		g.createSubLink(v2, v2);
+		Link e5 = g.createLink(v1, v2);
 		assertEquals(e1.getReversedEdge(), e1.getNextLink(EdgeDirection.INOUT));
 		assertEquals(e1.getReversedEdge(), e1.getNextLink(EdgeDirection.IN));
 		assertEquals(e5, e1.getNextLink(EdgeDirection.OUT));
@@ -4504,14 +4633,14 @@ public class EdgeTest {
 	// test of the method getNextSubLink(EdgeDirection orientation)
 	@Test
 	public void getNextSubLinkTestEdgeDirection() {
-		DoubleSubNode v1 = graph.createDoubleSubNode();
-		DoubleSubNode v2 = graph.createDoubleSubNode();
-		SubLink e1 = graph.createSubLink(v1, v1);
-		graph.createLinkBack(v1, v2);
-		graph.createLink(v2, v1);
-		graph.createSubLink(v2, v2);
-		SubLink e5 = graph.createSubLink(v1, v2);
-		SubLink e6 = graph.createSubLink(v2, v1);
+		DoubleSubNode v1 = g.createDoubleSubNode();
+		DoubleSubNode v2 = g.createDoubleSubNode();
+		SubLink e1 = g.createSubLink(v1, v1);
+		g.createLinkBack(v1, v2);
+		g.createLink(v2, v1);
+		g.createSubLink(v2, v2);
+		SubLink e5 = g.createSubLink(v1, v2);
+		SubLink e6 = g.createSubLink(v2, v1);
 		assertEquals(e1.getReversedEdge(), e1
 				.getNextSubLink(EdgeDirection.INOUT));
 		assertEquals(e1.getReversedEdge(), e1.getNextSubLink(EdgeDirection.IN));
