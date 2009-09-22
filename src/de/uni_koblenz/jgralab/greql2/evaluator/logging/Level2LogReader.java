@@ -9,6 +9,7 @@ import java.util.HashMap;
 import java.util.logging.Logger;
 
 import de.uni_koblenz.jgralab.Graph;
+import de.uni_koblenz.jgralab.JGraLab;
 import de.uni_koblenz.jgralab.greql2.schema.Greql2Vertex;
 import de.uni_koblenz.jgralab.schema.Schema;
 
@@ -24,8 +25,8 @@ import de.uni_koblenz.jgralab.schema.Schema;
 public class Level2LogReader extends Level2LoggingBase implements
 		EvaluationLogReader {
 
-	private static Logger logger = Logger.getLogger(Level2LogReader.class
-			.getName());
+	private static Logger logger = JGraLab.getChildLogger(Level2LogReader.class
+			.getPackage().getName());
 
 	private Level2LogReader() {
 		inputSize = new HashMap<String, ArrayLogEntry>();

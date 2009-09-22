@@ -9,6 +9,7 @@ import java.util.logging.Logger;
 import de.uni_koblenz.jgralab.Attribute;
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.EdgeDirection;
+import de.uni_koblenz.jgralab.JGraLab;
 import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
 import de.uni_koblenz.jgralab.greql2.exception.OptimizerException;
 import de.uni_koblenz.jgralab.greql2.schema.Greql2;
@@ -48,8 +49,9 @@ import de.uni_koblenz.jgralab.greql2.schema.Variable;
  */
 public class CommonSubgraphOptimizer extends OptimizerBase {
 
-	private static Logger logger = Logger
-			.getLogger(CommonSubgraphOptimizer.class.getName());
+	private static Logger logger = JGraLab
+			.getChildLogger(CommonSubgraphOptimizer.class.getPackage()
+					.getName());
 
 	private boolean anOptimizationWasDone = false;
 

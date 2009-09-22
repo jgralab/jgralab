@@ -18,6 +18,7 @@ import de.uni_koblenz.jgralab.AttributedElement;
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.Graph;
+import de.uni_koblenz.jgralab.JGraLab;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
 import de.uni_koblenz.jgralab.greql2.exception.EvaluateException;
@@ -50,8 +51,8 @@ import de.uni_koblenz.jgralab.greql2.schema.Variable;
  */
 public class EarySelectionOptimizer extends OptimizerBase {
 
-	private static Logger logger = Logger
-			.getLogger(EarySelectionOptimizer.class.getName());
+	private static Logger logger = JGraLab
+			.getChildLogger(EarySelectionOptimizer.class.getPackage().getName());
 
 	private Greql2 syntaxgraph;
 

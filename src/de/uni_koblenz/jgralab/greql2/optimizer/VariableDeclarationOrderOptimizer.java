@@ -12,6 +12,7 @@ import java.util.logging.Logger;
 
 import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.GraphMarker;
+import de.uni_koblenz.jgralab.JGraLab;
 import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
 import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.GraphSize;
 import de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.SimpleDeclarationEvaluator;
@@ -44,8 +45,9 @@ import de.uni_koblenz.jgralab.greql2.schema.Variable;
  */
 public class VariableDeclarationOrderOptimizer extends OptimizerBase {
 
-	private static Logger logger = Logger
-			.getLogger(VariableDeclarationOrderOptimizer.class.getName());
+	private static Logger logger = JGraLab
+			.getChildLogger(VariableDeclarationOrderOptimizer.class
+					.getPackage().getName());
 
 	/*
 	 * (non-Javadoc)

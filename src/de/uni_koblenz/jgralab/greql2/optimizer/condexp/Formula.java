@@ -9,6 +9,7 @@ import java.util.logging.Logger;
 
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.EdgeDirection;
+import de.uni_koblenz.jgralab.JGraLab;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
 import de.uni_koblenz.jgralab.greql2.optimizer.OptimizerUtility;
@@ -26,7 +27,7 @@ import de.uni_koblenz.jgralab.greql2.schema.TrivalentBoolean;
  * 
  */
 public abstract class Formula {
-	protected static Logger logger = Logger.getLogger(Formula.class
+	protected static Logger logger = JGraLab.getChildLogger(Formula.class
 			.getPackage().getName());
 
 	/**

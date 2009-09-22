@@ -10,6 +10,7 @@ import java.util.logging.Logger;
 
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.EdgeDirection;
+import de.uni_koblenz.jgralab.JGraLab;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
 import de.uni_koblenz.jgralab.greql2.exception.EvaluateException;
@@ -30,8 +31,9 @@ import de.uni_koblenz.jgralab.greql2.schema.Literal;
  */
 public class ConditionalExpressionOptimizer extends OptimizerBase {
 
-	private static Logger logger = Logger
-			.getLogger(ConditionalExpressionOptimizer.class.getName());
+	private static Logger logger = JGraLab
+			.getChildLogger(ConditionalExpressionOptimizer.class.getPackage()
+					.getName());
 
 	private static class VertexEdgeClassTuple {
 		public VertexEdgeClassTuple(Greql2Vertex v, Class<? extends Edge> ec) {

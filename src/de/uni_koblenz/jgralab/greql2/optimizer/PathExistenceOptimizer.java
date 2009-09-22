@@ -11,6 +11,7 @@ import java.util.logging.Logger;
 
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.EdgeDirection;
+import de.uni_koblenz.jgralab.JGraLab;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
 import de.uni_koblenz.jgralab.greql2.exception.EvaluateException;
@@ -40,8 +41,8 @@ import de.uni_koblenz.jgralab.greql2.schema.Variable;
  */
 public class PathExistenceOptimizer extends OptimizerBase {
 
-	private static Logger logger = Logger
-			.getLogger(PathExistenceOptimizer.class.getName());
+	private static Logger logger = JGraLab
+			.getChildLogger(PathExistenceOptimizer.class.getPackage().getName());
 
 	private Greql2 syntaxgraph;
 
