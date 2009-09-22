@@ -414,15 +414,6 @@ public class JValueTable extends JValueCollection {
 	}
 
 	/**
-	 * replaces the given JValueTuple oldValue with the given newValue. If the
-	 * given element newValue is not a tuple, nothing happens
-	 */
-	@Override
-	public boolean replace(JValue oldValue, JValue newValue) {
-		return data.replace(oldValue, newValue);
-	}
-
-	/**
 	 * accepts te given visitor to visit this jvalue
 	 */
 	@Override

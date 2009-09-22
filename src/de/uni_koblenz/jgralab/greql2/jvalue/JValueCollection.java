@@ -161,17 +161,6 @@ abstract public class JValueCollection extends JValue implements
 	}
 
 	/**
-	 * replaces the old element the given newElement
-	 * 
-	 * @param oldElement
-	 *            the element which should be replaced
-	 * @param newElement
-	 *            the element which should replace the old one
-	 * @return true if successfull, false otherwise
-	 */
-	abstract public boolean replace(JValue oldElement, JValue newElement);
-
-	/**
 	 * 
 	 * @return the number of elements in this collection
 	 */

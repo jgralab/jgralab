@@ -673,19 +673,6 @@ public class JValueBag extends JValueCollection implements Cloneable {
 		return remove(element, 1);
 	}
 
-	/**
-	 * replaces the old element the given newElement
-	 * 
-	 * @param oldElement
-	 *            the element which should be replaced
-	 * @param newElement
-	 *            the element which should replace the old one
-	 * @return true if successfull, false otherwise
-	 */
-	@Override
-	public boolean replace(JValue oldElement, JValue newElement) {
-		return true;
-	}
 
 	/**
 	 * returns a pointer to the objec itself, very usefull to get a reference of
