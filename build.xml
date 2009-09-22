@@ -119,7 +119,7 @@
 	
 	<!-- compile -->
 	<!-- calls targets jgralab, tgtools, greql2 and utilities -->
-	<target name="compile" depends="jgralab,tgtools,greql2,graphvalidator,rsa2tg,utilities,generatetestschemas"/>
+	<target name="compile" depends="jgralab,tgtools,greql2,graphvalidator,commonutilities,rsa2tg,utilities,generatetestschemas"/>
 
 	<!-- jgralab -->
 	<!-- compiles jgralab basic sources -->
@@ -280,16 +280,22 @@
 	</target>
 
 	<!-- utilities -->
+	<!-- compiles common utility sources -->	
+	<target name="commonutilities">
+		<!-- calls target compile in general ant file ${ant}/build.xml -->
+	   	<ant dir="${common.dir}" antfile="build.xml" target="compile">
+	   		<property name="src.dir" value="${src.dir}/de/uni_koblenz/${projectname}/utilities/common"/>
+	   	</ant>
+	</target>
+
 	<!-- compiles utility sources -->	
-	<target name="utilities" depends="grumlsourcesCompile">
+	<target name="utilities" depends="commonutilities,grumlsourcesCompile">
 		<!-- calls target compile in general ant file ${ant}/build.xml -->
 	   	<ant dir="${common.dir}" antfile="build.xml" target="compile">
 	   		<property name="src.dir" value="${src.dir}/de/uni_koblenz/${projectname}/utilities"/>
-	   		<!--	
-	   		-->
 	   		<property name="additional.pathelementlocation" value="${classes.dir}/de/uni_koblenz/jgralab/grumlschema/**"/>
             <!-- Those have been compiled before -->
-	   		<property name="compileexcludes" value="tgschema2java/** rsa2tg/** tg2dot/** tg2whatever/**"/>	   		
+	   		<property name="compileexcludes" value="common/** tgschema2java/** rsa2tg/** tg2dot/** tg2whatever/**"/>	   		
 	   	</ant>
 	</target>
 	

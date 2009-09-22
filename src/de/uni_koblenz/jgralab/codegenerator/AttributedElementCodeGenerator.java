@@ -32,6 +32,7 @@ import de.uni_koblenz.jgralab.Attribute;
 import de.uni_koblenz.jgralab.schema.AttributedElementClass;
 import de.uni_koblenz.jgralab.schema.Domain;
 import de.uni_koblenz.jgralab.schema.EnumDomain;
+import de.uni_koblenz.jgralab.schema.RecordDomain;
 import de.uni_koblenz.jgralab.schema.impl.ListDomainImpl;
 import de.uni_koblenz.jgralab.schema.impl.MapDomainImpl;
 import de.uni_koblenz.jgralab.schema.impl.RecordDomainImpl;
@@ -237,7 +238,8 @@ public class AttributedElementCodeGenerator extends CodeGenerator {
 		CodeSnippet snip = new CodeSnippet(true);
 		boolean suppressWarningsNeeded = false;
 		for (Attribute attr : attrSet) {
-			if (attr.getDomain().isComposite()) {
+			if (attr.getDomain().isComposite()
+					&& !(attr.getDomain() instanceof RecordDomain)) {
 				suppressWarningsNeeded = true;
 				break;
 			}
