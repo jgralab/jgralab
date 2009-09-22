@@ -190,18 +190,22 @@ public class JValue implements Comparable<JValue> {
 	public boolean equals(Object anObject) {
 		if (anObject instanceof JValue) {
 			JValue anotherValue = (JValue) anObject;
-			if ((anotherValue.type == this.type)
-					|| (anotherValue.type == JValueType.OBJECT)
-					|| (this.type == JValueType.OBJECT)) {
-				if (this.value == null) {
-					return (anotherValue.value == null);
+			if (this.value == null) {
+				return anotherValue.value == null;
+			} else {
+				if ((anotherValue.type == this.type)
+						|| (anotherValue.type == JValueType.OBJECT)
+						|| (this.type == JValueType.OBJECT)) {
+					if (this.value == null) {
+						return (anotherValue.value == null);
+					}
+					return value.equals(anotherValue.value);
+				} else if (
+				// In GReQL enum values can only specified as string for comparison
+				((this.type == JValueType.ENUMVALUE) && (anotherValue.type == JValueType.STRING))
+						|| ((this.type == JValueType.STRING) && (anotherValue.type == JValueType.ENUMVALUE))) {
+					return value.toString().equals(anotherValue.value.toString());
 				}
-				return value.equals(anotherValue.value);
-			} else if (
-			// In GReQL enum values can only specified as string for comparison
-			((this.type == JValueType.ENUMVALUE) && (anotherValue.type == JValueType.STRING))
-					|| ((this.type == JValueType.STRING) && (anotherValue.type == JValueType.ENUMVALUE))) {
-				return value.toString().equals(anotherValue.value.toString());
 			}
 		}
 		return false;
