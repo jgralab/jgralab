@@ -29,7 +29,7 @@ public abstract class CompareFunction extends AbstractGreql2Function {
 	public JValue evaluate(JValue[] arguments, CompareOperator op)
 			throws EvaluateException {
 		String s1 = null, s2 = null;
-		Double d1 = null, d2 = null;
+		double d1 = 0, d2 = 0;
 		switch (checkArguments(arguments)) {
 		case 0:
 			d1 = arguments[0].toDouble();
