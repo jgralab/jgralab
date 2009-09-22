@@ -1,4 +1,4 @@
-package de.uni_koblenz.jgralabtest;
+package de.uni_koblenz.jgralabtest.instancetest;
 
 import java.util.ArrayList;
 import java.util.Collection;

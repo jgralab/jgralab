@@ -1,4 +1,4 @@
-package de.uni_koblenz.jgralabtest;
+package de.uni_koblenz.jgralabtest.instancetest;
 
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertNotNull;
