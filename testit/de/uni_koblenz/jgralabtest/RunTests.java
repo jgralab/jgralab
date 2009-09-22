@@ -6,6 +6,7 @@ import org.junit.runners.Suite;
 import de.uni_koblenz.jgralabtest.codegenerator.RunCodeGeneratorTests;
 import de.uni_koblenz.jgralabtest.graphvalidator.RunGraphValidatorTests;
 import de.uni_koblenz.jgralabtest.greql2.RunGreql2Tests;
+import de.uni_koblenz.jgralabtest.instancetest.RunInstanceTests;
 import de.uni_koblenz.jgralabtest.schema.RunSchemaTests;
 
 /**

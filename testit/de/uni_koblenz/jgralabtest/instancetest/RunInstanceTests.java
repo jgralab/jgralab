@@ -22,7 +22,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-package de.uni_koblenz.jgralabtest;
+package de.uni_koblenz.jgralabtest.instancetest;
 
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
