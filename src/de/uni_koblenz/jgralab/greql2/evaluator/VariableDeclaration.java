@@ -27,10 +27,14 @@ package de.uni_koblenz.jgralab.greql2.evaluator;
 import java.util.ArrayList;
 import java.util.Iterator;
 
+import de.uni_koblenz.jgralab.BooleanGraphMarker;
 import de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.VariableEvaluator;
 import de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.VertexEvaluator;
+import de.uni_koblenz.jgralab.greql2.exception.EvaluateException;
+import de.uni_koblenz.jgralab.greql2.exception.JValueInvalidTypeException;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValueCollection;
+import de.uni_koblenz.jgralab.greql2.jvalue.JValueSet;
 import de.uni_koblenz.jgralab.greql2.schema.SimpleDeclaration;
 import de.uni_koblenz.jgralab.greql2.schema.Variable;
 
@@ -48,16 +52,20 @@ public class VariableDeclaration implements Comparable<VariableDeclaration> {
 	 * Holds the set of possible values the variable may have
 	 */
 	private JValueCollection definitionSet;
+	
+	private BooleanGraphMarker subgraph;
 
 	/**
 	 * Holds the variable-vertex of this declaration.
 	 */
 	private VariableEvaluator variableEval;
+	
+	private VertexEvaluator definitionSetEvaluator;
 
 	/**
 	 * Used for simple Iteration over the possible values
 	 */
-	private Iterator<JValue> iter;
+	private Iterator<JValue> iter = null;
 
 	/**
 	 * Holds all Vertices in the greql-syntaxgraph whose result depends on this
@@ -79,12 +87,14 @@ public class VariableDeclaration implements Comparable<VariableDeclaration> {
 	 * @param eval
 	 *            the GreqlEvaluator which is used to evaluate the query
 	 */
-	public VariableDeclaration(Variable var, JValueCollection definitionSet,
+	public VariableDeclaration(Variable var, VertexEvaluator definitionSetEvaluator,  BooleanGraphMarker subgraph,
 			SimpleDeclaration decl, GreqlEvaluator eval) {
 		variableEval = (VariableEvaluator) eval.getVertexEvaluatorGraphMarker()
 				.getMark(var);
-		this.definitionSet = definitionSet;
-		iter = definitionSet.iterator();
+		//this.definitionSet = definitionSet;
+		this.definitionSetEvaluator = definitionSetEvaluator;
+		this.subgraph = subgraph;
+		//iter = definitionSet.iterator();
 		dependingExpressions = new ArrayList<VertexEvaluator>();
 	}
 
@@ -93,6 +103,26 @@ public class VariableDeclaration implements Comparable<VariableDeclaration> {
 	 * another value was found, false otherwise
 	 */
 	public boolean iterate() {
+		if (iter == null) {
+			JValue tempAttribute = definitionSetEvaluator.getResult(subgraph);
+			if (tempAttribute.isCollection()) {
+				try {
+					JValueCollection col = tempAttribute.toCollection();
+					definitionSet = col.toJValueSet();
+					if (col.size() > definitionSet.size())
+						throw new EvaluateException(
+								"A collection that doesn't fulfill the set property is used as variable range definition");
+				} catch (JValueInvalidTypeException exception) {
+					throw new EvaluateException(
+							"Error evaluating a SimpleDeclaration : "
+									+ exception.toString());
+				}
+			} else {
+				definitionSet = new JValueSet();
+				definitionSet.add(tempAttribute);
+			}
+			iter = definitionSet.iterator();	
+		}	
 		if (iter.hasNext()) {
 			deleteDependingResults();
 			variableEval.setValue(iter.next());
@@ -113,7 +143,7 @@ public class VariableDeclaration implements Comparable<VariableDeclaration> {
 	 * Resets the iterator to the first element
 	 */
 	protected void reset() {
-		iter = definitionSet.iterator();
+		iter = null;
 	}
 
 	/**
@@ -136,7 +166,8 @@ public class VariableDeclaration implements Comparable<VariableDeclaration> {
 	 * @return the cardinality of the collection this variable is bound to
 	 */
 	public int getDefinitionCardinality() {
-		return definitionSet.size();
+	//	return definitionSet.size();
+		return 40;
 	}
 
 }

@@ -33,11 +33,8 @@ import de.uni_koblenz.jgralab.greql2.evaluator.VariableDeclaration;
 import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.GraphSize;
 import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.VertexCosts;
 import de.uni_koblenz.jgralab.greql2.exception.EvaluateException;
-import de.uni_koblenz.jgralab.greql2.exception.JValueInvalidTypeException;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
-import de.uni_koblenz.jgralab.greql2.jvalue.JValueCollection;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValueList;
-import de.uni_koblenz.jgralab.greql2.jvalue.JValueSet;
 import de.uni_koblenz.jgralab.greql2.schema.Expression;
 import de.uni_koblenz.jgralab.greql2.schema.IsDeclaredVarOf;
 import de.uni_koblenz.jgralab.greql2.schema.IsTypeExprOf;
@@ -90,38 +87,16 @@ public class SimpleDeclarationEvaluator extends VertexEvaluator {
 			exprEval = greqlEvaluator.getVertexEvaluatorGraphMarker().getMark(
 					typeExpression);
 		}
-		JValue tempAttribute = exprEval.getResult(subgraph);
-		JValueSet declarationSet = null;
-		if (tempAttribute.isCollection()) {
-			try {
-				JValueCollection col = tempAttribute.toCollection();
-				declarationSet = col.toJValueSet();
-				if (col.size() > declarationSet.size())
-					throw new EvaluateException(
-							"A collection that doesn't fulfill the set property is used as variable range definition");
-			} catch (JValueInvalidTypeException exception) {
-				throw new EvaluateException(
-						"Error evaluating a SimpleDeclaration : "
-								+ exception.toString());
-			}
-		} else {
-			declarationSet = new JValueSet();
-			declarationSet.add(tempAttribute);
+		JValueList varDeclList = new JValueList();
+		IsDeclaredVarOf varInc = vertex.getFirstIsDeclaredVarOf(EdgeDirection.IN);
+		while (varInc != null) {
+			VariableDeclaration varDecl = new VariableDeclaration(
+					(Variable) varInc.getAlpha(), exprEval, subgraph, vertex,
+					greqlEvaluator);
+			varDeclList.add(new JValue(varDecl));
+			varInc = varInc.getNextIsDeclaredVarOf(EdgeDirection.IN);
 		}
-		if (declarationSet != null) {
-			JValueList varDeclList = new JValueList();
-			IsDeclaredVarOf varInc = vertex
-					.getFirstIsDeclaredVarOf(EdgeDirection.IN);
-			while (varInc != null) {
-				VariableDeclaration varDecl = new VariableDeclaration(
-						(Variable) varInc.getAlpha(), declarationSet, vertex,
-						greqlEvaluator);
-				varDeclList.add(new JValue(varDecl));
-				varInc = varInc.getNextIsDeclaredVarOf(EdgeDirection.IN);
-			}
-			return varDeclList;
-		}
-		return null;
+		return varDeclList;
 	}
 
 	@Override

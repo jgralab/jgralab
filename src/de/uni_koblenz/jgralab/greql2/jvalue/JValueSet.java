@@ -282,7 +282,8 @@ public class JValueSet extends JValueCollection implements Cloneable {
 	public boolean equals(Object o) {
 		if (o instanceof JValueSet) {
 			JValueSet other = (JValueSet) o;
-			return sortedMembers.equals(other.sortedMembers);
+			//return sortedMembers.equals(other.sortedMembers);
+			return itemHashSet.equals(other.itemHashSet);
 		}
 		return false;
 	}
@@ -341,7 +342,7 @@ public class JValueSet extends JValueCollection implements Cloneable {
 			}
 		} else {
 			for (JValue currentElement : s) {
-				if (s.contains(currentElement)) {
+				if (this.contains(currentElement)) {
 					resultingSet.add(currentElement);
 				}
 			}
