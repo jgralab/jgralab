@@ -375,6 +375,12 @@ public class OptimizerTest extends GenericTests {
 	}
 
 	@Test
+	public void testVariableDeclarationOrderOptimizer5() throws Exception {
+		String queryString = "from x:list(1..10), y:list(x..13), z:list(1..x) report isPrime(z), isPrime(z*z), isPrime(z+z*z-1) end";
+		execTimedTest(queryString, "VariableDeclarationOrderOptimizer5()", vdoo);
+	}
+
+	@Test
 	public void testConditionalExpressionOptimizer0() throws Exception {
 		String query = "from u, v, w : set(true, false, null)     "
 				+ "     with (u or v) and w and true and ((u and false) or (w or true))          "

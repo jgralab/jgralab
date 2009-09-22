@@ -47,6 +47,7 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueSet;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValueTable;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValueTuple;
 import de.uni_koblenz.jgralab.greql2.optimizer.DefaultOptimizer;
+import de.uni_koblenz.jgralab.greql2.optimizer.VariableDeclarationOrderOptimizer;
 import de.uni_koblenz.jgralab.greql2.parser.ManualGreqlParser;
 import de.uni_koblenz.jgralab.greql2.schema.Greql2;
 import de.uni_koblenz.jgralabtest.greql2.GenericTests;
@@ -68,8 +69,6 @@ public class GreqlEvaluatorTest extends GenericTests {
 		}
 		return bag;
 	}
-
-	
 
 	@Test
 	public void testEvaluateNullLiteral2() throws Exception {
@@ -483,8 +482,6 @@ public class GreqlEvaluatorTest extends GenericTests {
 				queryString, new DefaultOptimizer());
 		assertEquals(result, resultWO);
 	}
-	
-
 
 	/*
 	 * Test method for
@@ -765,24 +762,17 @@ public class GreqlEvaluatorTest extends GenericTests {
 		assertEquals(result, resultWO);
 	}
 
-	
 	@Test
 	public void testEvaluateDependentDeclarations() throws Exception {
-		String queryString = "from x:list(1..2), y:list(x..3) with y*y <> 7 report x*y end";
+		String queryString = "from x:list(1..10), z:list(1..x), y:list(x..13) report isPrime(z), isPrime(z*z), isPrime(z+z*z-1) end";
 		JValue result = evalTestQuery("DependentDeclarations", queryString);
-		assertEquals(5, result.toCollection().size());
+		assertEquals(385, result.toCollection().size());
 		JValueSet set = result.toCollection().toJValueSet();
-		assertTrue(set.contains(new JValue(1)));
-		assertTrue(set.contains(new JValue(2)));
-		assertTrue(set.contains(new JValue(3)));
-		assertTrue(set.contains(new JValue(4)));
-		assertTrue(set.contains(new JValue(6)));
 		JValue resultWO = evalTestQuery("DependentDeclarations (wo)",
-				queryString, new DefaultOptimizer());
+				queryString, new VariableDeclarationOrderOptimizer());
 		assertEquals(result, resultWO);
 	}
 
-	
 	/*
 	 * Test method for
 	 * 'greql2.evaluator.GreqlEvaluator.evaluateOptionalPathDescription(OptionalPathDescription,

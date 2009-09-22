@@ -33,6 +33,12 @@ import de.uni_koblenz.jgralab.greql2.schema.Variable;
  * If two {@link Variable} result in the same re-evaluation costs on value
  * changes, the one with a higher cardinality is declared after the other one.
  * 
+ * If there's a dependency, then it is ensured, that the variables stay in the
+ * correct order. Example: In a declaration containing
+ * <code>x : list(1..10), y : list(x..20)</code>, the simple declaration of
+ * <code>y</code> will never be moved before the simple declaration of
+ * <code>x</code>.
+ * 
  * @author ist@uni-koblenz.de
  * 
  */
@@ -81,13 +87,9 @@ public class VariableDeclarationOrderOptimizer extends OptimizerBase {
 		for (Declaration decl : syntaxgraph.getDeclarationVertices()) {
 			List<VariableDeclarationOrderUnit> units = new ArrayList<VariableDeclarationOrderUnit>();
 			Set<Variable> varsOfDecl = collectVariablesDeclaredBy(decl);
-			if ((varsOfDecl.size() < 2)
-					|| (decl.getFirstIsConstraintOf(EdgeDirection.IN) == null)
-					|| (OptimizerUtility
-							.collectInternallyDeclaredVariablesBelow(
-									decl.getFirstIsConstraintOf(
-											EdgeDirection.IN).getAlpha())
-							.size() == 0)) {
+			if (varsOfDecl.size() < 2) {
+				// With only one Variable, there's
+				// nothing to reorder
 				continue;
 			}
 
@@ -118,7 +120,6 @@ public class VariableDeclarationOrderOptimizer extends OptimizerBase {
 				int i = 0;
 				for (VariableDeclarationOrderUnit unit : units) {
 					oldSDs.add(unit.getSimpleDeclarationOfVariable());
-					marker.removeMark(unit.getSimpleDeclarationOfVariable());
 					Variable var = unit.getVariable();
 
 					logger.finer("  " + varDeclOrderBefore.get(i) + "  -->  v"
@@ -136,6 +137,7 @@ public class VariableDeclarationOrderOptimizer extends OptimizerBase {
 							.getTypeExpressionOfVariable(), newSD);
 					syntaxgraph.createIsSimpleDeclOf(newSD, unit
 							.getDeclaringDeclaration());
+					marker.removeMark(unit.getSimpleDeclarationOfVariable());
 					marker.mark(newSD, new SimpleDeclarationEvaluator(newSD,
 							eval));
 				}

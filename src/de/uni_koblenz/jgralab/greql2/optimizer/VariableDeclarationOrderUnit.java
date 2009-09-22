@@ -14,7 +14,6 @@ import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.GraphSize;
 import de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.VertexEvaluator;
 import de.uni_koblenz.jgralab.greql2.schema.Declaration;
 import de.uni_koblenz.jgralab.greql2.schema.Expression;
-import de.uni_koblenz.jgralab.greql2.schema.IsConstraintOf;
 import de.uni_koblenz.jgralab.greql2.schema.IsTypeExprOf;
 import de.uni_koblenz.jgralab.greql2.schema.SimpleDeclaration;
 import de.uni_koblenz.jgralab.greql2.schema.Variable;
@@ -64,31 +63,22 @@ public class VariableDeclarationOrderUnit implements
 
 		// Collect all expressions that have to be re-evaluated when the
 		// variable changes its value.
-		IsConstraintOf inc = this.declaringDeclaration
-				.getFirstIsConstraintOf(EdgeDirection.IN);
 		dependentVertices = new HashSet<Vertex>();
-		while (inc != null) {
-			// calculate the set of dependent expressions in the constraints
-			addDependentVerticesBelow(inc.getAlpha());
-			inc = inc.getNextIsConstraintOf(EdgeDirection.IN);
-		}
+		addDependendVertices(variable);
 	}
 
 	/**
-	 * Adds the vertices below <code>vertex</code> that depend on this
-	 * {@link VariableDeclarationOrderUnit}'s {@link Variable}.
+	 * Adds the vertices that depend on the expression <code>vertex</code>.
 	 * 
 	 * @param vertex
 	 *            a {@link Vertex}
 	 */
-	private void addDependentVerticesBelow(Vertex vertex) {
-		if (vertexEvalMarker.getMark(vertex) != null
-				&& OptimizerUtility.isAbove(vertex, variable)) {
+	private void addDependendVertices(Vertex vertex) {
+		if ((vertexEvalMarker.getMark(vertex) != null)
+				&& ((vertex instanceof Expression) || (vertex instanceof SimpleDeclaration))) {
 			dependentVertices.add(vertex);
-			Edge inc = vertex.getFirstEdge(EdgeDirection.IN);
-			while (inc != null) {
-				addDependentVerticesBelow(inc.getAlpha());
-				inc = inc.getNextEdge(EdgeDirection.IN);
+			for (Edge e : vertex.incidences(EdgeDirection.OUT)) {
+				addDependendVertices(e.getOmega());
 			}
 		}
 	}
@@ -153,6 +143,17 @@ public class VariableDeclarationOrderUnit implements
 	 */
 	@Override
 	public int compareTo(VariableDeclarationOrderUnit o) {
+		// Units which depend on a variable of another unit have to come first,
+		// no matter what the recalculation costs are. So if the other vars
+		// simple decl is in my dependency set, then I have to come first. (And
+		// the other way round...)
+		if (dependentVertices.contains(o.simpleDeclarationOfVariable)) {
+			return -1;
+		}
+		if (o.dependentVertices.contains(simpleDeclarationOfVariable)) {
+			return 1;
+		}
+
 		// Sort that units with higher costs come first.
 		if (getVariableValueChangeCosts() < o.getVariableValueChangeCosts()) {
 			return 1;
