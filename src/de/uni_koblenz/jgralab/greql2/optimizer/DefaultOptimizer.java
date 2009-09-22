@@ -141,7 +141,7 @@ public class DefaultOptimizer extends OptimizerBase {
 		}
 		;
 
-		// printGraphAsDot(syntaxgraph, "after-optimization");
+		// printGraphAsDot(syntaxgraph, "after-optimization.tg");
 		// printCosts(eval, syntaxgraph);
 
 		logger.fine(optimizerHeaderString() + " finished after " + noOfRuns
@@ -149,6 +149,14 @@ public class DefaultOptimizer extends OptimizerBase {
 
 		return aTransformationWasDone;
 	}
+
+	// private void printGraphAsDot(Greql2 syntaxgraph, String string) {
+	// Tg2Dot t2d = new Tg2Dot();
+	// t2d.setGraph(syntaxgraph);
+	// t2d.setReversedEdges(true);
+	// t2d.setOutputFile(string);
+	// t2d.printGraph();
+	// }
 
 	@SuppressWarnings("unused")
 	private void printCosts(GreqlEvaluator eval, Greql2 syntaxgraph) {

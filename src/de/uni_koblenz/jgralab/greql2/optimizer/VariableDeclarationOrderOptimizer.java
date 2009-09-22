@@ -139,7 +139,6 @@ public class VariableDeclarationOrderOptimizer extends OptimizerBase {
 							.getTypeExpressionOfVariable(), newSD);
 					syntaxgraph.createIsSimpleDeclOf(newSD, unit
 							.getDeclaringDeclaration());
-					marker.removeMark(unit.getSimpleDeclarationOfVariable());
 					marker.mark(newSD, new SimpleDeclarationEvaluator(newSD,
 							eval));
 				}
