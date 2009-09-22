@@ -13,7 +13,7 @@ import de.uni_koblenz.jgralabtest.schema.RunSchemaTests;
  * 
  */
 @RunWith(Suite.class)
-@Suite.SuiteClasses( { RunCoreTests.class, RunSchemaTests.class,
+@Suite.SuiteClasses( { RunInstanceTests.class, RunSchemaTests.class,
 		RunGraphValidatorTests.class, RunGreql2Tests.class,
 		RunCodeGeneratorTests.class })
 public class RunTests {
