@@ -170,15 +170,21 @@ public class VariableDeclarationLayer implements
 	 */
 	private boolean getNextCombination(BooleanGraphMarker subgraphMarker)
 			throws EvaluateException {
+		int firstLayerToReset = 0;
 		for (int i = variableDeclarations.size() - 1; i >= 0; i--) {
 			VariableDeclaration currDecl = variableDeclarations.get(i);
 			if (currDecl.iterate()) {
-				return true;
-			} else {
-				/* reset this variabledeclaration and sets it to the first value */
+				firstLayerToReset = i+1;
+				break;
+			}
+		}
+		if (firstLayerToReset > 0) {
+			for (int i = firstLayerToReset; i<variableDeclarations.size(); i++) {
+				VariableDeclaration currDecl = variableDeclarations.get(i);
 				currDecl.reset();
 				currDecl.iterate();
 			}
+			return true;	
 		}
 		return false;
 	}
