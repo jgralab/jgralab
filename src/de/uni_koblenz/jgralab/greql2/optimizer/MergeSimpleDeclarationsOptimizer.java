@@ -6,6 +6,7 @@ import java.util.Map.Entry;
 import java.util.logging.Logger;
 
 import de.uni_koblenz.jgralab.EdgeDirection;
+import de.uni_koblenz.jgralab.JGraLab;
 import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
 import de.uni_koblenz.jgralab.greql2.schema.Declaration;
 import de.uni_koblenz.jgralab.greql2.schema.Expression;
@@ -28,8 +29,9 @@ import de.uni_koblenz.jgralab.greql2.schema.SimpleDeclaration;
  */
 public class MergeSimpleDeclarationsOptimizer extends OptimizerBase {
 
-	private static Logger logger = Logger
-			.getLogger(MergeSimpleDeclarationsOptimizer.class.getName());
+	private static Logger logger = JGraLab
+			.getChildLogger(MergeSimpleDeclarationsOptimizer.class.getPackage()
+					.getName());
 
 	private boolean anOptimizationWasDone = false;
 

@@ -28,6 +28,7 @@ import java.util.Set;
 import java.util.logging.Logger;
 
 import de.uni_koblenz.jgralab.GraphMarker;
+import de.uni_koblenz.jgralab.JGraLab;
 import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
 import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.GraphSize;
 import de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.VertexEvaluator;
@@ -43,8 +44,8 @@ import de.uni_koblenz.jgralab.greql2.schema.Variable;
  */
 public class DefaultOptimizer extends OptimizerBase {
 
-	private static Logger logger = Logger.getLogger(DefaultOptimizer.class
-			.getName());
+	private static Logger logger = JGraLab
+			.getChildLogger(DefaultOptimizer.class.getPackage().getName());
 
 	@Override
 	protected String optimizerHeaderString() {

@@ -15,5 +15,4 @@ public abstract class OptimizerBase implements Optimizer {
 	protected String optimizerHeaderString() {
 		return "*** " + this.getClass().getSimpleName() + ": ";
 	}
-
 }
