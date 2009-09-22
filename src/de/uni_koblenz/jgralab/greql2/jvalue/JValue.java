@@ -201,10 +201,12 @@ public class JValue implements Comparable<JValue> {
 					}
 					return value.equals(anotherValue.value);
 				} else if (
-				// In GReQL enum values can only specified as string for comparison
+				// In GReQL enum values can only specified as string for
+				// comparison
 				((this.type == JValueType.ENUMVALUE) && (anotherValue.type == JValueType.STRING))
 						|| ((this.type == JValueType.STRING) && (anotherValue.type == JValueType.ENUMVALUE))) {
-					return value.toString().equals(anotherValue.value.toString());
+					return value.toString().equals(
+							anotherValue.value.toString());
 				}
 			}
 		}
@@ -408,7 +410,7 @@ public class JValue implements Comparable<JValue> {
 	 */
 	public JValue(AttributedElement elem) {
 		this.type = JValueType.ATTRIBUTEDELEMENT;
-		this.value = type;
+		this.value = elem;
 		browsingInfo = elem;
 	}
 
