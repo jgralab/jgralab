@@ -373,7 +373,7 @@ public class Rsa2Tg {
 	private String filenameDot;
 
 	/**
-	 * Filaname for validation
+	 * Filename for validation
 	 */
 	private String filenameValidation;
 
@@ -650,9 +650,9 @@ public class Rsa2Tg {
 				packageStack.push(defaultPackage);
 			} else {
 				// Unexpected root element
-				throw new XMLStreamException("root element at line "
-						+ parser.getLocation().getLineNumber() + " must be "
-						+ UML_MODEL + " or " + UML_PACKAGE);
+				throw new XMLStreamProcessingException(parser, filenameXmi,
+						"root element must be " + UML_MODEL + " or "
+								+ UML_PACKAGE);
 			}
 		} else {
 			// inside top level element
@@ -781,7 +781,7 @@ public class Rsa2Tg {
 
 		// TODO
 		if (elementNameStack.size() <= 0) {
-			throw new ProcessingException(filenameXmi, line,
+			throw new XMLStreamProcessingException(filenameXmi, line,
 					"XML file is malformed. There is probably one end element to much.");
 		}
 		String s = elementNameStack.peek();
@@ -797,14 +797,14 @@ public class Rsa2Tg {
 
 		// TODO
 		if (!topName.equals(name)) {
-			throw new ProcessingException(filenameXmi, line,
+			throw new XMLStreamProcessingException(filenameXmi, line,
 					"XML file is malformed. The start element and end element do not fit together.");
 		}
 		if (ignoredElements.contains(name)) {
 
 			// TODO
 			if (ignore <= 0) {
-				throw new ProcessingException(filenameXmi, line,
+				throw new XMLStreamProcessingException(filenameXmi, line,
 						"XML file is malformed. There is probably one end element to much.");
 			}
 			--ignore;
@@ -820,7 +820,8 @@ public class Rsa2Tg {
 					// TODO There should be at least one package element in the
 					// stack.
 					if (packageStack.size() <= 1) {
-						throw new ProcessingException(filenameXmi, line,
+						throw new XMLStreamProcessingException(filenameXmi,
+								line,
 								"XML file is malformed. There is probably one end element to much.");
 					}
 					packageStack.pop();
@@ -838,7 +839,7 @@ public class Rsa2Tg {
 
 				// TODO There should be no package left.
 				if (packageStack.size() != 0) {
-					throw new ProcessingException(filenameXmi, line,
+					throw new XMLStreamProcessingException(filenameXmi, line,
 							"XML file is malformed. There is probably one end element to much.");
 				}
 			} else if (name.equals(UML_OWNEDATTRIBUTE)) {
@@ -868,7 +869,7 @@ public class Rsa2Tg {
 		// At this stage the stack 'elementNameStack' should be empty and the
 		// ignore flag zero.
 		if (elementNameStack.size() != 0 || ignore != 0) {
-			throw new ProcessingException(filenameXmi,
+			throw new XMLStreamProcessingException(filenameXmi,
 					"XML file is malformed. There is probably one end element missing.");
 		}
 
@@ -1180,14 +1181,14 @@ public class Rsa2Tg {
 		// TODO Exception "No type name declared"
 		if (typeName == null) {
 			throw new ProcessingException(parser, filenameXmi,
-					"The current type is malformed, empty or not existing.");
+					"No type name declared.");
 		}
 		typeName = typeName.replaceAll("\\s", "");
 
 		// TODO Exception "Type name is empty"
 		if (typeName.length() <= 0) {
 			throw new ProcessingException(parser, filenameXmi,
-					"The current type is malformed, empty or not existing.");
+					"The current type is empty.");
 		}
 		Domain dom = createDomain(typeName);
 
@@ -1248,7 +1249,7 @@ public class Rsa2Tg {
 		// TODO Exception "No Enum found for Literal " ... " found.
 		if (classifier == null) {
 			throw new ProcessingException(parser, filenameXmi,
-					"No Enumeration found for Literal '" + s + "'found.");
+					"No Enumeration found for Literal '" + s + "'.");
 		}
 		EnumDomain ed = (EnumDomain) idMap.get(classifier);
 
@@ -1387,7 +1388,8 @@ public class Rsa2Tg {
 			// TODO Exception
 			if (toRole == null || toRole.length() <= 0) {
 				throw new ProcessingException(filenameXmi,
-						"There is no role name 'to'-Edge defined.");
+						"There is no role name 'to' for the edge '" + name
+								+ "' defined.");
 			}
 			if (ec instanceof AggregationClass) {
 				if (((AggregationClass) ec).is_aggregateFrom()) {
@@ -1415,7 +1417,8 @@ public class Rsa2Tg {
 				// TODO Exception
 				if (fromRole == null || fromRole.length() <= 0) {
 					throw new ProcessingException(filenameXmi,
-							"There is no role name of 'from'-Edge defined.");
+							"There is no role name of 'from' for the edge '"
+									+ name + "' defined.");
 				}
 				name += fromRole;
 			}

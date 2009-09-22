@@ -34,6 +34,47 @@ import de.uni_koblenz.jgralab.Vertex;
 public class UtilityMethods {
 
 	/**
+	 * Generates a UnexpectedError message, which includes a filename, a line
+	 * number and a message. Line number and message are optional. If you don't
+	 * want to declare a line number use a negative number. For no message use
+	 * 'null'.
+	 * 
+	 * @param file
+	 *            Filename of the current processed file. A null reference will
+	 *            throw a NullPointerException.
+	 * @param lineNumber
+	 *            Line number, at which processing stopped. A value less then
+	 *            zero results an error message without mentioning the line
+	 *            number.
+	 * @param message
+	 *            Message, which should be added at the end. A null reference
+	 *            will be handled like an empty message.
+	 * @return UnexpectedError message
+	 */
+	public static String generateUnexpectedErrorMessage(String file,
+			int lineNumber, String message) {
+
+		StringBuilder sb = new StringBuilder();
+
+		sb.append("Unexpected error occured in file '");
+		sb.append(file);
+		sb.append("'");
+
+		if (lineNumber >= 0) {
+			sb.append(" at line ");
+			sb.append(lineNumber);
+		}
+
+		sb.append(".");
+		if (message != null) {
+			sb.append("\n");
+			sb.append(message);
+		}
+
+		return sb.toString();
+	}
+
+	/**
 	 * Generates a URI from a qualified Name for using in XML-files. It replaces
 	 * all occurrences of "_" with "-", swaps the first and the second element
 	 * of the qualified name and appends the remainder as folder structure.
