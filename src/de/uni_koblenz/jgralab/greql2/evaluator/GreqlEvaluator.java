@@ -115,13 +115,13 @@ public class GreqlEvaluator {
 	/**
 	 * The directory where the GreqlEvaluator stores the optimized syntax graphs
 	 */
-	protected static File optimizedSyntaxGraphsDirectory;
+	protected static File optimizedSyntaxGraphsDirectory = getTmpDirectory();
 
 	/**
 	 * The directory where the {@link EvaluationLogger} stores and loads its
 	 * logfiles from.
 	 */
-	protected static File evaluationLoggerDirectory;
+	protected static File evaluationLoggerDirectory = getTmpDirectory();
 
 	/**
 	 * stores the graph indizes
@@ -470,7 +470,7 @@ public class GreqlEvaluator {
 	/**
 	 * @return the tmp directory of that system. On Unix/Linux this is /tmp.
 	 */
-	private File getTmpDirectory() {
+	private static File getTmpDirectory() {
 		File tmpFile = null, tmpDir = null;
 		try {
 			tmpFile = File.createTempFile("_tmp", "xyz");
@@ -488,13 +488,6 @@ public class GreqlEvaluator {
 	 */
 	protected void createEvaluationLogger() {
 		if (evaluationLogger == null) {
-
-			synchronized (GreqlEvaluator.class) {
-				if (evaluationLoggerDirectory == null) {
-					evaluationLoggerDirectory = getTmpDirectory();
-				}
-			}
-
 			try {
 				evaluationLogger = new Level2Logger(evaluationLoggerDirectory,
 						datagraph, evaluationLoggingType);
