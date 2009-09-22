@@ -192,7 +192,8 @@ public class GraphValidator {
 	}
 
 	private Set<AttributedElement> jvalueSet2Set(JValueSet resultSet) {
-		Set<AttributedElement> set = new HashSet<AttributedElement>();
+		Set<AttributedElement> set = new HashSet<AttributedElement>(resultSet
+				.size());
 		for (JValue jv : resultSet) {
 			set.add(jv.toAttributedElement());
 		}
