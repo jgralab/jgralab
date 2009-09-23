@@ -168,7 +168,7 @@ queries are evaluated.  Set it with `greql-set-graph'.")
   (greql-set-fontlock-keywords-3))
 
 (defun greql-set-extra-classpath (file-or-dir)
-  (interactive "F")
+  (interactive "FExtra classpath: ")
   (setq greql-extra-classpath file-or-dir))
 
 (defun greql-parse-schema ()
