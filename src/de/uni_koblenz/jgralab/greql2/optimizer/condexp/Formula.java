@@ -27,7 +27,7 @@ import de.uni_koblenz.jgralab.greql2.schema.TrivalentBoolean;
  * 
  */
 public abstract class Formula {
-	protected static Logger logger = JGraLab.getChildLogger(Formula.class
+	protected static Logger logger = JGraLab.getLogger(Formula.class
 			.getPackage().getName());
 
 	/**

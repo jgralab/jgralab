@@ -32,7 +32,7 @@ import de.uni_koblenz.jgralab.greql2.schema.Literal;
 public class ConditionalExpressionOptimizer extends OptimizerBase {
 
 	private static Logger logger = JGraLab
-			.getChildLogger(ConditionalExpressionOptimizer.class.getPackage()
+			.getLogger(ConditionalExpressionOptimizer.class.getPackage()
 					.getName());
 
 	private static class VertexEdgeClassTuple {

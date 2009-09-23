@@ -30,7 +30,7 @@ import de.uni_koblenz.jgralab.greql2.schema.SimpleDeclaration;
 public class MergeSimpleDeclarationsOptimizer extends OptimizerBase {
 
 	private static Logger logger = JGraLab
-			.getChildLogger(MergeSimpleDeclarationsOptimizer.class.getPackage()
+			.getLogger(MergeSimpleDeclarationsOptimizer.class.getPackage()
 					.getName());
 
 	private boolean anOptimizationWasDone = false;

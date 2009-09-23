@@ -24,6 +24,7 @@
 
 package de.uni_koblenz.jgralab;
 
+import java.util.HashMap;
 import java.util.logging.ConsoleHandler;
 import java.util.logging.Formatter;
 import java.util.logging.Level;
@@ -83,7 +84,8 @@ public class JGraLab {
 			"of this part of the software.", "", "Apache Commons CLI 1.2",
 			"Copyright 2001-2009 The Apache Software Foundation" };
 
-	private static Logger JGRALAB_ROOT_LOGGER = getRootLogger();
+	private static Logger rootLogger;
+	private static HashMap<String, Logger> loggerMap = new HashMap<String, Logger>();
 
 	/**
 	 * Sets the log level for package de.uni_koblenz.jgralab and all its
@@ -97,10 +99,10 @@ public class JGraLab {
 	}
 
 	public static Logger getRootLogger() {
-		if (JGRALAB_ROOT_LOGGER == null) {
-			JGRALAB_ROOT_LOGGER = Logger.getLogger(JGraLab.class.getPackage()
-					.getName());
-			JGRALAB_ROOT_LOGGER.setUseParentHandlers(false);
+		if (rootLogger == null) {
+			rootLogger = Logger.getLogger(JGraLab.class.getPackage().getName());
+			loggerMap.put(JGraLab.class.getPackage().getName(), rootLogger);
+			rootLogger.setUseParentHandlers(false);
 			ConsoleHandler consoleHandler = new ConsoleHandler();
 			// the handler logs everything, but what is sent to the handler is
 			// specified by the logger.
@@ -119,16 +121,20 @@ public class JGraLab {
 					return sb.toString();
 				}
 			});
-			JGRALAB_ROOT_LOGGER.addHandler(consoleHandler);
+			rootLogger.addHandler(consoleHandler);
 		}
-		return JGRALAB_ROOT_LOGGER;
+		return rootLogger;
 	}
 
-	public static Logger getChildLogger(String name) {
-		Logger l = Logger.getLogger(name, null);
-		l.setParent(getRootLogger());
-		l.setLevel(null); // inherit level from parent
-		l.setUseParentHandlers(true);
+	public static Logger getLogger(String name) {
+		Logger l = loggerMap.get(name);
+		if (l == null) {
+			l = Logger.getLogger(name, null);
+			l.setParent(getRootLogger());
+			l.setLevel(null); // inherit level from parent
+			l.setUseParentHandlers(true);
+			loggerMap.put(name, l);
+		}
 		return l;
 	}
 

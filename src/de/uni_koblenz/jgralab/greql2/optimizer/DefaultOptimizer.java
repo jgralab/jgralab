@@ -45,7 +45,7 @@ import de.uni_koblenz.jgralab.greql2.schema.Variable;
 public class DefaultOptimizer extends OptimizerBase {
 
 	private static Logger logger = JGraLab
-			.getChildLogger(DefaultOptimizer.class.getPackage().getName());
+			.getLogger(DefaultOptimizer.class.getPackage().getName());
 
 	@Override
 	protected String optimizerHeaderString() {
