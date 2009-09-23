@@ -25,7 +25,9 @@
 package de.uni_koblenz.jgralab;
 
 import java.util.logging.ConsoleHandler;
+import java.util.logging.Formatter;
 import java.util.logging.Level;
+import java.util.logging.LogRecord;
 import java.util.logging.Logger;
 
 /**
@@ -100,9 +102,23 @@ public class JGraLab {
 					.getName());
 			JGRALAB_ROOT_LOGGER.setUseParentHandlers(false);
 			ConsoleHandler consoleHandler = new ConsoleHandler();
-			// The handler logs everything, but what is sent to the handler is
+			// the handler logs everything, but what is sent to the handler is
 			// specified by the logger.
 			consoleHandler.setLevel(Level.ALL);
+
+			// simple Formatter for single line output (<level> <method>:
+			// <message>)
+			consoleHandler.setFormatter(new Formatter() {
+				@Override
+				public String format(LogRecord record) {
+					StringBuilder sb = new StringBuilder();
+					sb.append(record.getLevel()).append(" ").append(
+							record.getSourceClassName()).append(".").append(
+							record.getSourceMethodName()).append(": ").append(
+							record.getMessage());
+					return sb.toString();
+				}
+			});
 			JGRALAB_ROOT_LOGGER.addHandler(consoleHandler);
 		}
 		return JGRALAB_ROOT_LOGGER;
