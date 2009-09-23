@@ -88,7 +88,8 @@ public final class EnumDomainImpl extends DomainImpl implements EnumDomain {
 			String graphIoVariableName) {
 		return new CodeSnippet(variableName + " = "
 				+ getJavaAttributeImplementationTypeName(schemaPrefix)
-				+ ".valueOf(" + graphIoVariableName + ".matchEnumConstant());");
+				+ ".valueOfPermitNull(" + graphIoVariableName
+				+ ".matchEnumConstant());");
 	}
 
 	@Override
@@ -152,7 +153,7 @@ public final class EnumDomainImpl extends DomainImpl implements EnumDomain {
 				getJavaAttributeImplementationTypeName(schemaPrefix) + " "
 						+ variableName + " = "
 						+ getJavaAttributeImplementationTypeName(schemaPrefix)
-						+ ".valueOf(" + graphIoVariableName
+						+ ".valueOfPermitNull(" + graphIoVariableName
 						+ ".matchEnumConstant());");
 	}
 

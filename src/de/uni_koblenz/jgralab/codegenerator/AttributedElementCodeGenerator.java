@@ -271,7 +271,7 @@ public class AttributedElementCodeGenerator extends CodeGenerator {
 				s.add("if (attributeName.equals(\"#name#\")) {");
 				s.add("\tif (data instanceof String) {");
 				s
-						.add("\t\tset_#name#(#attributeClassName#.valueOf((String) data));");
+						.add("\t\tset_#name#(#attributeClassName#.valueOfPermitNull((String) data));");
 				s.add("\t} else {");
 				s.add("\t\tset_#name#((#attributeClassName#) data);");
 				s.add("\t}");
