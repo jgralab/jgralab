@@ -376,12 +376,14 @@ public class SchemaGraph2Tg {
 			return;
 		}
 
+		String packageName = tgPackage.get_qualifiedName();
+
 		if (hierarchical) {
-			packageName = tgPackage.get_qualifiedName();
+			this.packageName = packageName;
 			println(SPACE);
 		}
 
-		println(PACKAGE, SPACE, tgPackage.get_qualifiedName(), DELIMITER);
+		println(PACKAGE, SPACE, packageName, DELIMITER);
 
 		if (hierarchical) {
 			ContainsDomain domain = tgPackage
@@ -393,11 +395,9 @@ public class SchemaGraph2Tg {
 
 			// First only VertexClass should be printed!
 			GraphElementClass graphElement;
-			Iterator<ContainsGraphElementClass> itGraphElement = tgPackage
-					.getContainsGraphElementClassIncidences(EdgeDirection.OUT)
-					.iterator();
-			while (itGraphElement.hasNext()) {
-				graphElement = (GraphElementClass) itGraphElement.next()
+			for (ContainsGraphElementClass containsGraphElement : tgPackage
+					.getContainsGraphElementClassIncidences(EdgeDirection.OUT)) {
+				graphElement = (GraphElementClass) containsGraphElement
 						.getOmega();
 				if (graphElement instanceof VertexClass) {
 					printVertexClassDefinition((VertexClass) graphElement, true);
@@ -405,10 +405,9 @@ public class SchemaGraph2Tg {
 			}
 
 			// Now all sorts of EdgeClass objects are printed
-			itGraphElement = tgPackage.getContainsGraphElementClassIncidences(
-					EdgeDirection.OUT).iterator();
-			while (itGraphElement.hasNext()) {
-				graphElement = (GraphElementClass) itGraphElement.next()
+			for (ContainsGraphElementClass containsGraphElement : tgPackage
+					.getContainsGraphElementClassIncidences(EdgeDirection.OUT)) {
+				graphElement = (GraphElementClass) containsGraphElement
 						.getOmega();
 				if (graphElement instanceof EdgeClass) {
 					printEdgeClassDefinition((EdgeClass) graphElement, true);
