@@ -117,7 +117,7 @@ public class JGraLab {
 					sb.append(record.getLevel()).append(" ").append(
 							record.getSourceClassName()).append(".").append(
 							record.getSourceMethodName()).append(": ").append(
-							record.getMessage());
+							record.getMessage()).append('\n');
 					return sb.toString();
 				}
 			});
