@@ -29,7 +29,7 @@ import de.uni_koblenz.jgralab.greql2.schema.IsConstraintOf;
 public class MergeConstraintsOptimizer extends OptimizerBase {
 
 	private static Logger logger = JGraLab
-			.getChildLogger(MergeConstraintsOptimizer.class.getPackage()
+			.getLogger(MergeConstraintsOptimizer.class.getPackage()
 					.getName());
 
 	/*

@@ -52,7 +52,7 @@ import de.uni_koblenz.jgralab.greql2.schema.Variable;
 public class EarySelectionOptimizer extends OptimizerBase {
 
 	private static Logger logger = JGraLab
-			.getChildLogger(EarySelectionOptimizer.class.getPackage().getName());
+			.getLogger(EarySelectionOptimizer.class.getPackage().getName());
 
 	private Greql2 syntaxgraph;
 

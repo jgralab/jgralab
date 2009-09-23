@@ -25,7 +25,7 @@ import de.uni_koblenz.jgralab.schema.Schema;
 public class Level2LogReader extends Level2LoggingBase implements
 		EvaluationLogReader {
 
-	private static Logger logger = JGraLab.getChildLogger(Level2LogReader.class
+	private static Logger logger = JGraLab.getLogger(Level2LogReader.class
 			.getPackage().getName());
 
 	private Level2LogReader() {

@@ -29,7 +29,7 @@ import de.uni_koblenz.jgralab.greql2.schema.IsArgumentOf;
 public class TransformXorFunctionApplicationOptimizer extends OptimizerBase {
 
 	private static Logger logger = JGraLab
-			.getChildLogger(TransformXorFunctionApplicationOptimizer.class
+			.getLogger(TransformXorFunctionApplicationOptimizer.class
 					.getPackage().getName());
 
 	/*

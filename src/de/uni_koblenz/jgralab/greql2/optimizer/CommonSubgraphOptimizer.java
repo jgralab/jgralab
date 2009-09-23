@@ -50,7 +50,7 @@ import de.uni_koblenz.jgralab.greql2.schema.Variable;
 public class CommonSubgraphOptimizer extends OptimizerBase {
 
 	private static Logger logger = JGraLab
-			.getChildLogger(CommonSubgraphOptimizer.class.getPackage()
+			.getLogger(CommonSubgraphOptimizer.class.getPackage()
 					.getName());
 
 	private boolean anOptimizationWasDone = false;

@@ -42,7 +42,7 @@ import de.uni_koblenz.jgralab.greql2.schema.Variable;
 public class PathExistenceOptimizer extends OptimizerBase {
 
 	private static Logger logger = JGraLab
-			.getChildLogger(PathExistenceOptimizer.class.getPackage().getName());
+			.getLogger(PathExistenceOptimizer.class.getPackage().getName());
 
 	private Greql2 syntaxgraph;
 
