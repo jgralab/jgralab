@@ -102,6 +102,12 @@ import de.uni_koblenz.jgralab.utilities.tg2dot.Tg2Dot;
 @WorkInProgress(description = "record comments,"
 		+ "error checking and reporting", responsibleDevelopers = "riediger, mmce")
 public class Rsa2Tg {
+	private static final String UML_ATTRIBUTE_CLASSIFIER = "classifier";
+
+	private static final String UML_ATTRIBUTE_CLIENT = "client";
+
+	private static final String UML_ATTRIBUTE_SUPPLIER = "supplier";
+
 	private static final String UML_ATTRIBUTE_ASSOCIATION = "association";
 
 	private static final String UML_UPPERVALUE = "upperValue";
@@ -382,6 +388,14 @@ public class Rsa2Tg {
 	 */
 	private String filenameXmi;
 
+	/**
+	 * Processes an XMI-file to a TG-file as schema or a schema in a grUML
+	 * graph. For all command line options see
+	 * {@link Rsa2Tg#processCommandLineOptions(String[])}.
+	 * 
+	 * @param args
+	 *            Command line options.
+	 */
 	public static void main(String[] args) {
 
 		System.out.println("RSA to TG");
@@ -439,7 +453,7 @@ public class Rsa2Tg {
 	 *            {@link CommandLine} parameters.
 	 * @return {@link CommandLine} object, which holds all necessary values.
 	 */
-	private static CommandLine processCommandLineOptions(String[] args) {
+	public static CommandLine processCommandLineOptions(String[] args) {
 
 		// Creates a OptionHandler.
 		String toolString = "java " + Rsa2Tg.class.getName();
@@ -534,15 +548,16 @@ public class Rsa2Tg {
 	}
 
 	/**
-	 * TODO: This method comment is not correct / incomplete!
-	 * 
-	 * Processes one RSA XMI file by creating a STAX parser and submitting this
-	 * file to the parse() method. All actions take place in overridden methods
-	 * of the STAX DefaultHandler.
+	 * Processes one RSA XMI file by creating a STAX parser and distinguishing
+	 * different events.
 	 * 
 	 * @throws FileNotFoundException
+	 *             Occurs, if the RSA XMI file is not present.
 	 * @throws XMLStreamException
+	 *             Occurs, in case of an {@link IOException} or in case of a
+	 *             broken XMI-file.
 	 * @throws GraphIOException
+	 *             Occurs, in case of processing error in the {@link GraphIO}.
 	 */
 	public void process() throws FileNotFoundException, XMLStreamException,
 			GraphIOException {
@@ -564,8 +579,7 @@ public class Rsa2Tg {
 				startElement(parser);
 				break;
 			case XMLStreamConstants.END_ELEMENT:
-				endElement(getElementName(parser), parser.getLocation()
-						.getLineNumber());
+				endElement(parser);
 				break;
 			case XMLStreamConstants.CHARACTERS:
 				elementContent.peek().append(parser.getText());
@@ -575,6 +589,10 @@ public class Rsa2Tg {
 		endDocument();
 	}
 
+	/**
+	 * Sets up several a {@link SchemaGraph} and data structures before the
+	 * processing can start.
+	 */
 	public void startDocument() {
 
 		sg = GrumlSchema.instance().createSchemaGraph();
@@ -599,6 +617,8 @@ public class Rsa2Tg {
 	}
 
 	/**
+	 * Processes a XML element and decides how to handle it in order to get a
+	 * Schema element.
 	 * 
 	 * @param parser
 	 * @throws XMLStreamException
@@ -607,7 +627,7 @@ public class Rsa2Tg {
 
 		// Name and id are retrieved and remembered in the elementNameStack and
 		// elementContent
-		String name = getElementName(parser);
+		String name = createElementName(parser);
 		String xmiId = parser.getAttributeValue(parser
 				.getNamespaceURI(XMI_NAMESPACE_PREFIX), "id");
 		elementNameStack.push(name + ">" + (xmiId != null ? xmiId : ""));
@@ -651,7 +671,7 @@ public class Rsa2Tg {
 			} else {
 				// Unexpected root element
 				throw new XMLStreamProcessingException(parser, filenameXmi,
-						"root element must be " + UML_MODEL + " or "
+						"Root element must be " + UML_MODEL + " or "
 								+ UML_PACKAGE);
 			}
 		} else {
@@ -677,8 +697,8 @@ public class Rsa2Tg {
 				} else if (type.equals(UML_REALIZATION)) {
 					handleRealization(parser);
 				} else {
-					throw generateExceptionForUnexpectedElement(parser, name,
-							type);
+					throw new XMLStreamProcessingException(parser, filenameXmi,
+							createUnexpectedElementMessage(name, type));
 				}
 
 			} else if (name.equals(UML_OWNEDRULE)) {
@@ -703,8 +723,8 @@ public class Rsa2Tg {
 					// in a constraint.
 					|| name.equals(UML_LANGUAGE) || name.equals(UML_BODY)) {
 				if (!inConstraint) {
-					throw generateExceptionForUnexpectedElement(parser, name,
-							null);
+					throw new ProcessingException(parser, filenameXmi,
+							createUnexpectedElementMessage(name, null));
 				}
 
 			} else if (name.equals(UML_OWNEDEND)) {
@@ -714,8 +734,8 @@ public class Rsa2Tg {
 						&& (currentClass instanceof EdgeClass)) {
 					handleAssociatioEnd(parser, xmiId);
 				} else {
-					throw generateExceptionForUnexpectedElement(parser, name,
-							type);
+					throw new XMLStreamProcessingException(parser, filenameXmi,
+							createUnexpectedElementMessage(name, type));
 				}
 
 			} else if (name.equals(UML_OWNEDATTRIBUTE)) {
@@ -723,18 +743,18 @@ public class Rsa2Tg {
 				if (type.equals(UML_PROPERTY)) {
 					handleOwnedAttribute(parser, xmiId);
 				} else {
-					throw generateExceptionForUnexpectedElement(parser, name,
-							type);
+					throw new XMLStreamProcessingException(parser, filenameXmi,
+							createUnexpectedElementMessage(name, type));
 				}
 
 			} else if (name.equals(UML_ATTRIBUTE_TYPE)) {
 				// Handles the type of the current attribute, which should be a
-				// primitiv type.
+				// primitive type.
 				if (type.equals(UML_PRIMITIVE_TYPE)) {
 					handleNestedTypeElement(parser, type);
 				} else {
-					throw generateExceptionForUnexpectedElement(parser, name,
-							type);
+					throw new XMLStreamProcessingException(parser, filenameXmi,
+							createUnexpectedElementMessage(name, type));
 				}
 
 			} else if (name.equals(UML_OWNEDLITERAL)) {
@@ -742,8 +762,8 @@ public class Rsa2Tg {
 				if (type.equals(UML_ENUMERATIONLITERAL)) {
 					handleEnumerationLiteral(parser);
 				} else {
-					throw generateExceptionForUnexpectedElement(parser, name,
-							type);
+					throw new XMLStreamProcessingException(parser, filenameXmi,
+							createUnexpectedElementMessage(name, type));
 				}
 			} else if (name.equals(XMI_EXTENSION)) {
 				// ignore
@@ -759,7 +779,8 @@ public class Rsa2Tg {
 				handleUpperValue(parser);
 			} else {
 				// for unexpected cases
-				throw generateExceptionForUnexpectedElement(parser, name, type);
+				throw new XMLStreamProcessingException(parser, filenameXmi,
+						createUnexpectedElementMessage(name, type));
 			}
 		}
 
@@ -770,58 +791,73 @@ public class Rsa2Tg {
 	}
 
 	/**
+	 * Processes a XML element end tag in order to
 	 * 
-	 * @param name
-	 *            the name of the end element
-	 * @param line
-	 *            the line at which the end element is in the xmi-file
+	 * @param parser
+	 *            {@link XMLStreamReader}, which points to the current element.
 	 * @throws XMLStreamException
 	 */
-	public void endElement(String name, int line) throws XMLStreamException {
+	public void endElement(XMLStreamReader parser) throws XMLStreamException {
+
+		// Retrieves the name of the current element.
+		String name = createElementName(parser);
+
+		if (name == null) {
+			throw new XMLStreamProcessingException(parser, filenameXmi, "");
+		}
 
 		// TODO
+		// The element name stack must at least have one element left.
 		if (elementNameStack.size() <= 0) {
-			throw new XMLStreamProcessingException(filenameXmi, line,
+			throw new XMLStreamProcessingException(parser, filenameXmi,
 					"XML file is malformed. There is probably one end element to much.");
 		}
 		String s = elementNameStack.peek();
 		int p = s.indexOf('>');
 
 		// TODO
+		// In the top name of the element stack must have a '>' in it's name.
 		if (p < 0) {
-			throw new ProcessingException(filenameXmi, line,
+			throw new ProcessingException(parser, filenameXmi,
 					"FIXME: Internal error.");
 		}
+
 		String topName = s.substring(0, p);
 		String xmiId = s.substring(p + 1);
 
 		// TODO
+		// The top name of the element stack and the name of the currently
+		// terminated element must be the same.
 		if (!topName.equals(name)) {
-			throw new XMLStreamProcessingException(filenameXmi, line,
+			throw new XMLStreamProcessingException(parser, filenameXmi,
 					"XML file is malformed. The start element and end element do not fit together.");
 		}
 		if (ignoredElements.contains(name)) {
 
 			// TODO
+			// The current element cannot be in the list of ignored elements and
+			// the ignore flag zero (indicating, that the current or a higher
+			// element in the hierarchy is ignored).
 			if (ignore <= 0) {
-				throw new XMLStreamProcessingException(filenameXmi, line,
+				throw new XMLStreamProcessingException(parser, filenameXmi,
 						"XML file is malformed. There is probably one end element to much.");
 			}
 			--ignore;
 		} else if (ignore == 0) {
 			if (inConstraint && name.equals(UML_BODY)) {
 				s = elementContent.peek().toString().trim().replace("\\s", " ");
-				handleConstraint(s, line);
+				handleConstraint(s, parser.getLocation().getLineNumber());
 			}
 			AttributedElement elem = idMap.get(xmiId);
 			if (elem != null) {
 				if (elem instanceof Package) {
 
-					// TODO There should be at least one package element in the
+					// TODO
+					// There should be at least one package element in the
 					// stack.
 					if (packageStack.size() <= 1) {
-						throw new XMLStreamProcessingException(filenameXmi,
-								line,
+						throw new XMLStreamProcessingException(parser,
+								filenameXmi,
 								"XML file is malformed. There is probably one end element to much.");
 					}
 					packageStack.pop();
@@ -837,9 +873,10 @@ public class Rsa2Tg {
 			if (name.equals(UML_PACKAGE)) {
 				packageStack.pop();
 
-				// TODO There should be no package left.
+				// TODO
+				// There should be no package left.
 				if (packageStack.size() != 0) {
-					throw new XMLStreamProcessingException(filenameXmi, line,
+					throw new XMLStreamProcessingException(parser, filenameXmi,
 							"XML file is malformed. There is probably one end element to much.");
 				}
 			} else if (name.equals(UML_OWNEDATTRIBUTE)) {
@@ -856,41 +893,51 @@ public class Rsa2Tg {
 		elementContent.pop();
 	}
 
-	/*
-	 * (non-Javadoc)
+	/**
+	 * Finalizes the created SchemaGraph by creating missing links between
+	 * several objects.
 	 * 
-	 * @see org.xml.sax.helpers.DefaultHandler#endDocument()
+	 * @throws XMLStreamException
+	 * @throws GraphIOException
 	 */
 	public void endDocument() throws XMLStreamException, GraphIOException {
 		// finalizes processing by creating missing links
 
 		// TODO ? Könnte darauf hindeuten, dass das XML-Dokument falsch
 		// generiert wurde.
-		// At this stage the stack 'elementNameStack' should be empty and the
+		// At this stage the stack of element names should be empty and the
 		// ignore flag zero.
 		if (elementNameStack.size() != 0 || ignore != 0) {
 			throw new XMLStreamProcessingException(filenameXmi,
 					"XML file is malformed. There is probably one end element missing.");
 		}
 
+		// The qualified name of the GraphClass should be set.
 		if (graphClass.get_qualifiedName() == null) {
 			throw new ProcessingException(filenameXmi,
 					"No <<graphclass>> defined in schema '"
 							+ schema.get_packagePrefix() + "."
 							+ schema.get_name() + "'");
 		}
+
+		// Now the RSA XMI file has been processed, but no linkage between
+		// several objects in the SchemaGraph has occurred.
 		linkGeneralizations();
 		linkRecordDomainComponents();
 		linkAttributeDomains();
 		setAggregateFromAttributes();
+
 		if (isUseNavigability()) {
 			correctEdgeDirection();
 		}
+
 		attachConstraints();
 		createEdgeClassNames();
+
 		if (isRemoveUnusedDomains()) {
 			removeUnusedDomains();
 		}
+
 		removeEmptyPackages();
 		// preliminaryVertices must be empty at this time of processing,
 		// otherwise there is an error...
@@ -918,16 +965,17 @@ public class Rsa2Tg {
 	}
 
 	/**
-	 * Write a dot-file and a tg-file out.
+	 * Writes a DOT file and a TG file out.
 	 * 
 	 * @throws XMLStreamException
 	 * @throws GraphIOException
 	 */
 	public void writeOutput() throws XMLStreamException, GraphIOException {
+
 		if (processed) {
 
 			// TODO
-			// There should be a generated schema
+			// There should exist a Schema.
 			if (schema == null) {
 				throw new ProcessingException(filenameXmi,
 						"No Schema has been generated.");
@@ -935,13 +983,15 @@ public class Rsa2Tg {
 			String schemaName = schema.get_name();
 
 			// TODO
+			// A Schema name must exist.
 			if (schemaName == null) {
 				throw new ProcessingException(filenameXmi,
 						"No Schema name is present.");
 			}
 
 			String relativePathPrefix = currentXmiFile.getParent();
-			// if in current working directory parent is null
+
+			// If in current working directory parent is null.
 			relativePathPrefix = relativePathPrefix == null ? ""
 					: relativePathPrefix + File.separator;
 
@@ -959,15 +1009,22 @@ public class Rsa2Tg {
 
 			validateGraph(schemaName, relativePathPrefix);
 
-			String tgSchemaName = (filenameSchema != null) ? filenameSchema
-					: schemaName;
-			tgSchemaName = createFilename(schemaName, relativePathPrefix,
-					tgSchemaName, ".rsa.tg");
+			String tgSchemaName = createFilename(schemaName,
+					relativePathPrefix, filenameSchema, ".rsa.tg");
 			writeSchema(tgSchemaName, false);
 		}
 	}
 
+	/**
+	 * Performs a graph validation and writes a report in a file.
+	 * 
+	 * @param schemaName
+	 *            Name of the Schema.
+	 * @param relativePathPrefix
+	 *            Relative path to a folder.
+	 */
 	private void validateGraph(String schemaName, String relativePathPrefix) {
+
 		try {
 			GraphValidator validator = new GraphValidator(sg);
 			Set<ConstraintViolation> s;
@@ -993,8 +1050,33 @@ public class Rsa2Tg {
 		}
 	}
 
+	/**
+	 * Out of the given String objects a file name is created, which looks like
+	 * this:
+	 * 
+	 * <pre>
+	 * &lt;pathPrefix&gt;&lt;name&gt;
+	 * </pre>
+	 * 
+	 * In case of 'name == null' the file name looks like this:
+	 * 
+	 * <pre>
+	 * &lt;pathPrefix&gt;&lt;schemaName&gt;&lt;extension&gt;
+	 * </pre>
+	 * 
+	 * @param schemaName
+	 *            Name of the Schema.
+	 * @param pathPrefix
+	 *            Relative path to a folder.
+	 * @param name
+	 *            Name of the file.
+	 * @param extension
+	 *            Default extension of the file.
+	 * @return Created file name.
+	 */
 	private String createFilename(String schemaName, String pathPrefix,
 			String name, String extension) {
+
 		StringBuilder out = new StringBuilder();
 		out.append(pathPrefix);
 		if (name == null) {
@@ -1006,20 +1088,32 @@ public class Rsa2Tg {
 		return out.toString();
 	}
 
-	private XMLStreamException generateExceptionForUnexpectedElement(
-			XMLStreamReader parser, String name, String type) {
+	/**
+	 * Creates a message for an unexpected element and includes its type.
+	 * 
+	 * @param name
+	 *            Name of the unexpected element.
+	 * @param type
+	 *            Type of the unexpected element.
+	 * @return Created message.
+	 */
+	private String createUnexpectedElementMessage(String name, String type) {
 
-		// Now usage of a StringBuilder, because this method will be call once
-		// at most.
-		String insertion = (type != null) ? " of type " + type : "";
-		String message = "unexpected element <" + name + ">" + insertion
-				+ " at line: " + parser.getLocation().getLineNumber();
-		return new XMLStreamException(message);
+		String typeInsertion = (type != null) ? " of type " + type : "";
+		return "Unexpected element <" + name + ">" + typeInsertion + ".";
 	}
 
+	/**
+	 * Handles a 'uml:Package' element by creating a corresponding grUML Package
+	 * element.
+	 * 
+	 * @param parser
+	 *            XMLStreamReader, which points to the current XML element.
+	 * @return Created Package object as Vertex.
+	 */
 	private Vertex handlePackage(XMLStreamReader parser) {
-		de.uni_koblenz.jgralab.grumlschema.structure.Package pkg = sg
-				.createPackage();
+
+		Package pkg = sg.createPackage();
 		pkg.set_qualifiedName(getQualifiedName(parser.getAttributeValue(null,
 				UML_ATTRIBUTE_NAME)));
 		sg.createContainsSubPackage(packageStack.peek(), pkg);
@@ -1027,7 +1121,15 @@ public class Rsa2Tg {
 		return pkg;
 	}
 
-	private String getElementName(XMLStreamReader parser) {
+	/**
+	 * Creates the element name.
+	 * 
+	 * @param parser
+	 *            XMLStreamReader, which points to the current XML element.
+	 * @return Element name
+	 */
+	private String createElementName(XMLStreamReader parser) {
+
 		String name;
 		if (parser.getPrefix() == null) {
 			name = parser.getLocalName();
@@ -1037,12 +1139,24 @@ public class Rsa2Tg {
 		return name;
 	}
 
+	/**
+	 * Handles a 'uml:Class' element by creating a corresponding grUML
+	 * VertexClass element.
+	 * 
+	 * @param parser
+	 *            XMLStreamReader, which points to the current XML element.
+	 * @param xmiId
+	 *            XMI ID in RSA XMI file.
+	 * @return Created VertexClass as Vertex.
+	 */
 	private Vertex handleClass(XMLStreamReader parser, String xmiId) {
+
 		AttributedElement ae = idMap.get(xmiId);
 		VertexClass vc = null;
 		if (ae != null) {
 
-			// TODO Exception: Element with ID xmiID is not a Class
+			// TODO
+			// Element with ID xmiID must be a VertexClass
 			if (!(ae instanceof VertexClass)) {
 				throw new ProcessingException(parser, filenameXmi,
 						"The element with ID '" + xmiId
@@ -1068,7 +1182,18 @@ public class Rsa2Tg {
 		return vc;
 	}
 
+	/**
+	 * Handles a 'uml:Association' or a 'uml:AssociationClass' element by
+	 * creating a corresponding EdgeClass element.
+	 * 
+	 * @param parser
+	 *            XMLStreamReader, which points to the current XML element.
+	 * @param xmiId
+	 *            XMI ID in XMI file.
+	 * @return Created EdgeClass as Vertex.
+	 */
 	private Vertex handleAssociation(XMLStreamReader parser, String xmiId) {
+
 		// create an EdgeClass at first, probably, this has to
 		// become an Aggregation or Composition later...
 		AttributedElement ae = idMap.get(xmiId);
@@ -1076,6 +1201,7 @@ public class Rsa2Tg {
 		if (ae != null) {
 
 			// TODO s.o.
+			// Element with ID xmiID must be a EdgeClass
 			if (!(ae instanceof EdgeClass)) {
 				throw new ProcessingException(parser, filenameXmi,
 						"The element with ID '" + xmiId
@@ -1102,7 +1228,8 @@ public class Rsa2Tg {
 
 		String memberEnd = parser.getAttributeValue(null, "memberEnd");
 
-		// TODO fehler im XMI
+		// TODO
+		// An association have to have a end member.
 		if (memberEnd == null) {
 			throw new ProcessingException(parser, filenameXmi,
 					"The association with ID '" + xmiId
@@ -1152,7 +1279,16 @@ public class Rsa2Tg {
 		return ec;
 	}
 
+	/**
+	 * Handles a 'uml:Enumeration' element by creating a corresponding
+	 * EnumDomain element.
+	 * 
+	 * @param parser
+	 *            XMLStreamReader, which points to the current XML element.
+	 * @return Created EnumDomain as Vertex.
+	 */
 	private Vertex handleEnumeration(XMLStreamReader parser) {
+
 		EnumDomain ed = sg.createEnumDomain();
 		de.uni_koblenz.jgralab.grumlschema.structure.Package p = packageStack
 				.peek();
@@ -1175,10 +1311,20 @@ public class Rsa2Tg {
 		return ed;
 	}
 
+	/**
+	 * Handles a 'uml:PrimitiveType' element by creating a corresponding Domain
+	 * element.
+	 * 
+	 * @param parser
+	 *            XMLStreamReader, which points to the current XML element.
+	 * @return Created Domain as Vertex.
+	 */
 	private Vertex handlePrimitiveType(XMLStreamReader parser) {
+
 		String typeName = parser.getAttributeValue(null, UML_ATTRIBUTE_NAME);
 
-		// TODO Exception "No type name declared"
+		// TODO
+		// A type name must be defined.
 		if (typeName == null) {
 			throw new ProcessingException(parser, filenameXmi,
 					"No type name declared.");
@@ -1196,9 +1342,18 @@ public class Rsa2Tg {
 		return dom;
 	}
 
+	/**
+	 * Handles a 'uml:Realization' by putting it into a map of realizations. By
+	 * this, missing generalizations can be traced.
+	 * 
+	 * @param parser
+	 *            XMLStreamReader, which points to the current XML element.
+	 */
 	private void handleRealization(XMLStreamReader parser) {
-		String supplier = parser.getAttributeValue(null, "supplier");
-		String client = parser.getAttributeValue(null, "client");
+
+		String supplier = parser
+				.getAttributeValue(null, UML_ATTRIBUTE_SUPPLIER);
+		String client = parser.getAttributeValue(null, UML_ATTRIBUTE_CLIENT);
 		Set<String> reals = realizations.get(client);
 		if (reals == null) {
 			reals = new TreeSet<String>();
@@ -1207,19 +1362,31 @@ public class Rsa2Tg {
 		reals.add(supplier);
 	}
 
-	private String attributedElement2String(AttributedElement a)
+	/**
+	 * Creates a String for a AttributedElementClass by writing the
+	 * AttributedElementClass name first and than a list of attributes with
+	 * their values.
+	 * 
+	 * @param attributedElement
+	 *            AttributedElement, of which a String representation should be
+	 *            created.
+	 * @return A String representing the given AttributedElement.
+	 * @throws NoSuchFieldException
+	 */
+	private String attributedElement2String(AttributedElement attributedElement)
 			throws NoSuchFieldException {
+
 		StringBuilder sb = new StringBuilder();
 
-		de.uni_koblenz.jgralab.schema.AttributedElementClass aec = a
+		de.uni_koblenz.jgralab.schema.AttributedElementClass aec = attributedElement
 				.getAttributedElementClass();
-		sb.append(a);
+		sb.append(attributedElement);
 		sb.append(" { ");
 
 		for (de.uni_koblenz.jgralab.Attribute attr : aec.getAttributeList()) {
 			sb.append(attr.getName());
 			sb.append(" = ");
-			sb.append(a.getAttribute(attr.getName()));
+			sb.append(attributedElement.getAttribute(attr.getName()));
 			sb.append("; ");
 		}
 		sb.append("}\n");
@@ -1227,26 +1394,37 @@ public class Rsa2Tg {
 		return sb.toString();
 	}
 
+	/**
+	 * Handles a 'uml:EnumerationLiteral' by creating a corresponding
+	 * enumeration literal and adding it to its EnumDomain.
+	 * 
+	 * @param parser
+	 *            XMLStreamReader, which points to the current XML element.
+	 */
 	private void handleEnumerationLiteral(XMLStreamReader parser) {
 
 		String s = parser.getAttributeValue(null, UML_ATTRIBUTE_NAME);
 
-		// TODO Exception "No Literal declared"
+		// TODO
+		// A Literal must be declared.
 		if (s == null) {
 			throw new ProcessingException(parser, filenameXmi,
 					"No Literal declared.");
 		}
 		s = s.trim();
 
-		// TODO Exception "Literal is empty"
+		// TODO
+		// Literal must not be empty.
 		if (s.length() <= 0) {
 			throw new ProcessingException(parser, filenameXmi,
 					"Literal is empty.");
 		}
 
-		String classifier = parser.getAttributeValue(null, "classifier");
+		String classifier = parser.getAttributeValue(null,
+				UML_ATTRIBUTE_CLASSIFIER);
 
-		// TODO Exception "No Enum found for Literal " ... " found.
+		// TODO
+		// Exception "No Enum found for Literal " ... " found.
 		if (classifier == null) {
 			throw new ProcessingException(parser, filenameXmi,
 					"No Enumeration found for Literal '" + s + "'.");
@@ -1256,7 +1434,16 @@ public class Rsa2Tg {
 		ed.get_enumConstants().add(s);
 	}
 
+	/**
+	 * Writes the current processed Schema as a Schema to a TG file.
+	 * 
+	 * @param schemaName
+	 *            Name of the Schema.
+	 * @param formatTg
+	 *            Flag to format the TG file.
+	 */
 	private void writeSchema(String schemaName, boolean formatTg) {
+
 		try {
 			SchemaGraph2Tg sg2tg = new SchemaGraph2Tg(sg, schemaName);
 			sg2tg.setIsFormatted(formatTg);
@@ -1267,7 +1454,12 @@ public class Rsa2Tg {
 		}
 	}
 
+	/**
+	 * Corrects the current edge direction of every EdgeClass by using the
+	 * navigability.
+	 */
 	private void correctEdgeDirection() {
+
 		if (!isUseNavigability()) {
 			return;
 		}
@@ -1276,10 +1468,11 @@ public class Rsa2Tg {
 			From from = e.getFirstFrom();
 			To to = e.getFirstTo();
 
-			// TODO Exception
+			// TODO
+			// 'from' and 'to' Edge have to be declared.
 			if (from == null || to == null) {
 				throw new ProcessingException(filenameXmi,
-						"No 'from' or 'to'-Edge declared.");
+						"No 'from'-, 'to'-Edge or both are declared.");
 			}
 			boolean fromIsNavigable = !ownedEnds.contains(from);
 			boolean toIsNavigable = !ownedEnds.contains(to);
@@ -1323,6 +1516,11 @@ public class Rsa2Tg {
 
 	}
 
+	/**
+	 * Attaches all Constraints to their corresponding AttributedElementClass.
+	 * 
+	 * @throws XMLStreamException
+	 */
 	private void attachConstraints() throws XMLStreamException {
 		for (String constrainedElementId : constraints.keySet()) {
 			List<String> l = constraints.get(constrainedElementId);
@@ -1331,8 +1529,9 @@ public class Rsa2Tg {
 				ae = graphClass;
 			}
 
-			// TODO Constraint kann nur an GraphClass, VertexClass, EdgeClass
-			// bzw. Association Ends hängen
+			// TODO
+			// Constraint are attached to GraphClass, VertexClass, EdgeClass or
+			// Association Ends.
 			if (!(ae instanceof AttributedElementClass)
 					&& !(ae instanceof From) && !(ae instanceof To)) {
 				throw new ProcessingException(filenameXmi,
@@ -1354,6 +1553,9 @@ public class Rsa2Tg {
 		}
 	}
 
+	/**
+	 * Sets of all aggregated Ends the aggregatedFrom Attribute.
+	 */
 	private void setAggregateFromAttributes() {
 		for (Edge e : aggregateEnds) {
 			((AggregationClass) e.getAlpha())

@@ -138,7 +138,6 @@ public class UtilityMethods {
 
 				incidenceList.remove(currentMinimum);
 			}
-
 		}
 	}
 }
