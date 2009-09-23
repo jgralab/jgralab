@@ -49,7 +49,7 @@ public class EnumCodeGenerator extends CodeGenerator {
 
 	@Override
 	protected CodeBlock createBody(boolean createClass) {
-		CodeSnippet code = new CodeSnippet(true);
+		CodeSnippet constCode = new CodeSnippet(true);
 		String delim = "";
 		StringBuilder constants = new StringBuilder();
 		for (String s : enumDomain.getConsts()) {
@@ -58,10 +58,19 @@ public class EnumCodeGenerator extends CodeGenerator {
 			delim = ", ";
 		}
 		constants.append(";");
-		code.add(constants.toString());
+		constCode.add(constants.toString());
+
+		CodeSnippet valueOfCode = new CodeSnippet(true);
+		valueOfCode
+				.add(
+						"public static #simpleClassName# valueOfPermitNull(String val) {",
+						"\tif (val.equals(de.uni_koblenz.jgralab.GraphIO.NULL_LITERAL) || val.equals(de.uni_koblenz.jgralab.GraphIO.OLD_NULL_LITERAL)) {",
+						"\t\treturn null;", "\t}", "\treturn valueOf(val);",
+						"}");
 
 		CodeList result = new CodeList();
-		result.add(code);
+		result.add(constCode);
+		result.add(valueOfCode);
 		return result;
 	}
 
