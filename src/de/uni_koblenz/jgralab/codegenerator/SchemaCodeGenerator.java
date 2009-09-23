@@ -24,8 +24,8 @@
 
 package de.uni_koblenz.jgralab.codegenerator;
 
-import de.uni_koblenz.jgralab.Attribute;
 import de.uni_koblenz.jgralab.schema.AggregationClass;
+import de.uni_koblenz.jgralab.schema.Attribute;
 import de.uni_koblenz.jgralab.schema.AttributedElementClass;
 import de.uni_koblenz.jgralab.schema.CompositeDomain;
 import de.uni_koblenz.jgralab.schema.CompositionClass;

@@ -67,12 +67,12 @@ public abstract class GraphElementImpl implements GraphElement {
 		return graph.getSchema();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see de.uni_koblenz.jgralab.GraphElement#graphModified()
+	/**
+	 * Changes the graph version of the graph this element belongs to. Should be
+	 * called whenever the graph is changed, all changes like adding, creating
+	 * and reordering of edges and vertices or changes of attributes of the
+	 * graph, an edge or a vertex are treated as a change.
 	 */
-	@Override
 	public void graphModified() {
 		graph.graphModified();
 	}

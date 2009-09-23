@@ -24,7 +24,7 @@
 
 package de.uni_koblenz.jgralab.schema.impl;
 
-import de.uni_koblenz.jgralab.Attribute;
+import de.uni_koblenz.jgralab.schema.Attribute;
 import de.uni_koblenz.jgralab.schema.AttributedElementClass;
 import de.uni_koblenz.jgralab.schema.Domain;
 

@@ -818,7 +818,7 @@ public class CompareSchemaWithSchemaGraph {
 			AttributedElementClass gElement) {
 
 		// Clone the map of Attribute objects.
-		Map<String, de.uni_koblenz.jgralab.Attribute> attributes = new HashMap<String, de.uni_koblenz.jgralab.Attribute>(
+		Map<String, de.uni_koblenz.jgralab.schema.Attribute> attributes = new HashMap<String, de.uni_koblenz.jgralab.schema.Attribute>(
 				getAttributeMap(element.getOwnAttributeList()));
 
 		// Loop over all HasAttribute edges
@@ -922,12 +922,12 @@ public class CompareSchemaWithSchemaGraph {
 	 *            be created.
 	 * @return Map of Attribute objects with their QualifiedName as key.
 	 */
-	final private Map<String, de.uni_koblenz.jgralab.Attribute> getAttributeMap(
-			SortedSet<de.uni_koblenz.jgralab.Attribute> attributeList) {
+	final private Map<String, de.uni_koblenz.jgralab.schema.Attribute> getAttributeMap(
+			SortedSet<de.uni_koblenz.jgralab.schema.Attribute> attributeList) {
 
-		Map<String, de.uni_koblenz.jgralab.Attribute> attributes = new HashMap<String, de.uni_koblenz.jgralab.Attribute>();
+		Map<String, de.uni_koblenz.jgralab.schema.Attribute> attributes = new HashMap<String, de.uni_koblenz.jgralab.schema.Attribute>();
 
-		for (de.uni_koblenz.jgralab.Attribute attribute : attributeList) {
+		for (de.uni_koblenz.jgralab.schema.Attribute attribute : attributeList) {
 			attributes.put(attribute.getName(), attribute);
 		}
 
