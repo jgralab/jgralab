@@ -6,7 +6,6 @@ package de.uni_koblenz.jgralab.greql2.optimizer;
 import java.util.HashMap;
 import java.util.logging.Logger;
 
-import de.uni_koblenz.jgralab.Attribute;
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.JGraLab;
@@ -17,6 +16,7 @@ import de.uni_koblenz.jgralab.greql2.schema.Greql2Aggregation;
 import de.uni_koblenz.jgralab.greql2.schema.Greql2Vertex;
 import de.uni_koblenz.jgralab.greql2.schema.PathDescription;
 import de.uni_koblenz.jgralab.greql2.schema.Variable;
+import de.uni_koblenz.jgralab.schema.Attribute;
 
 /**
  * This {@link Optimizer} finds all subgraps in a {@link Greql2} syntaxgraph

@@ -103,7 +103,7 @@ public class EdgeTest extends InstanceTest {
 		createTransaction(g);
 		g.deleteEdge(e0);
 		commit(g);
-		
+
 		createTransaction(g);
 		e0 = g.createLink(v1, v0);
 		assertEquals(1, e0.getId());
@@ -2288,10 +2288,12 @@ public class EdgeTest extends InstanceTest {
 
 	/**
 	 * Test in a randomly built graph
-	 * @throws CommitFailedException 
+	 * 
+	 * @throws CommitFailedException
 	 */
 	@Test
-	public void getNextEdgeOfClassTestClassEdgeDirectionBoolean2() throws CommitFailedException {
+	public void getNextEdgeOfClassTestClassEdgeDirectionBoolean2()
+			throws CommitFailedException {
 		for (int i = 0; i < RANDOM_GRAPH_COUNT; i++) {
 			g = transactionsEnabled ? VertexTestSchema.instance()
 					.createVertexTestGraphWithTransactionSupport()
@@ -4058,42 +4060,45 @@ public class EdgeTest extends InstanceTest {
 
 	/**
 	 * Tests if the graphversion is increased if the method is called.
-	 * @throws CommitFailedException 
+	 * 
+	 * @throws CommitFailedException
 	 */
-	@Test
-	public void graphModifiedTest0() throws CommitFailedException {
-		DoubleSubNode v = g.createDoubleSubNode();
-		Edge e1 = g.createLink(v, v);
-		commit(g);
-		
-		createTransaction(g);
-		long graphversion = g.getGraphVersion();
-		e1.graphModified();
-		commit(g);
-		
-		createReadOnlyTransaction(g);
-		assertEquals(++graphversion, g.getGraphVersion());
-	}
+	// @Test
+	// public void graphModifiedTest0() throws CommitFailedException {
+	// DoubleSubNode v = g.createDoubleSubNode();
+	// Edge e1 = g.createLink(v, v);
+	// commit(g);
+	//
+	// createTransaction(g);
+	// long graphversion = g.getGraphVersion();
+	// e1.graphModified();
+	// commit(g);
+	//
+	// createReadOnlyTransaction(g);
+	// assertEquals(1 + graphversion, g.getGraphVersion());
+	// }
 
 	/**
 	 * Tests if the graphversion is increased if the method is called on
 	 * ReversedEdge.
-	 * @throws CommitFailedException 
+	 * 
+	 * @throws CommitFailedException
 	 */
-	@Test
-	public void graphModifiedTestR0() throws CommitFailedException {
-		DoubleSubNode v = g.createDoubleSubNode();
-		Edge e1 = g.createLink(v, v).getReversedEdge();
-		long graphversion = g.getGraphVersion();
-		e1.graphModified();
-		commit(g);
-		createReadOnlyTransaction(g);
-		assertEquals(++graphversion, g.getGraphVersion());
-	}
+	// @Test
+	// public void graphModifiedTestR0() throws CommitFailedException {
+	// DoubleSubNode v = g.createDoubleSubNode();
+	// Edge e1 = g.createLink(v, v).getReversedEdge();
+	// long graphversion = g.getGraphVersion();
+	// e1.graphModified();
+	// commit(g);
+	// createReadOnlyTransaction(g);
+	// assertEquals(++graphversion, g.getGraphVersion());
+	// }
 
 	/**
 	 * Tests if the graphversion is increased by creating a new edge.
-	 * @throws CommitFailedException 
+	 * 
+	 * @throws CommitFailedException
 	 */
 	@Test
 	public void graphModifiedTest1() throws CommitFailedException {
@@ -4107,7 +4112,8 @@ public class EdgeTest extends InstanceTest {
 
 	/**
 	 * Tests if the graphversion is increased by deleting an edge.
-	 * @throws CommitFailedException 
+	 * 
+	 * @throws CommitFailedException
 	 */
 	@Test
 	public void graphModifiedTest2() throws CommitFailedException {
@@ -4123,7 +4129,8 @@ public class EdgeTest extends InstanceTest {
 	/**
 	 * Tests if the graphversion is increased by changing the attributes of an
 	 * edge.
-	 * @throws CommitFailedException 
+	 * 
+	 * @throws CommitFailedException
 	 */
 	@Test
 	public void graphModifiedTest3() throws CommitFailedException {

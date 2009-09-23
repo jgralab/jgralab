@@ -7542,13 +7542,13 @@ public class VertexTest {
 	/**
 	 * Tests if the graphversion is increased if the method is called.
 	 */
-	@Test
-	public void graphModifiedTest0() {
-		Vertex v = graph.createDoubleSubNode();
-		long graphversion = graph.getGraphVersion();
-		v.graphModified();
-		assertEquals(++graphversion, graph.getGraphVersion());
-	}
+	// @Test
+	// public void graphModifiedTest0() {
+	// Vertex v = graph.createDoubleSubNode();
+	// long graphversion = graph.getGraphVersion();
+	// v.graphModified();
+	// assertEquals(++graphversion, graph.getGraphVersion());
+	// }
 
 	/**
 	 * Tests if the graphversion is increased by creating a new vertex.

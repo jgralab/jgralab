@@ -47,14 +47,6 @@ public interface GraphElement extends AttributedElement {
 	public Graph getGraph();
 
 	/**
-	 * Changes the graph version of the graph this element belongs to. Should be
-	 * called whenever the graph is changed, all changes like adding, creating
-	 * and reordering of edges and vertices or changes of attributes of the
-	 * graph, an edge or a vertex are treated as a change.
-	 */
-	public void graphModified();
-
-	/**
 	 * returns true if this GraphElement is still present in the Graph (i.e. not
 	 * deleted). This check is equivalent to getGraph().containsVertex(this) or
 	 * getGraph().containsEdge(this).

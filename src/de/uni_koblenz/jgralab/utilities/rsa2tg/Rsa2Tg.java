@@ -1383,7 +1383,7 @@ public class Rsa2Tg {
 		sb.append(attributedElement);
 		sb.append(" { ");
 
-		for (de.uni_koblenz.jgralab.Attribute attr : aec.getAttributeList()) {
+		for (de.uni_koblenz.jgralab.schema.Attribute attr : aec.getAttributeList()) {
 			sb.append(attr.getName());
 			sb.append(" = ");
 			sb.append(attributedElement.getAttribute(attr.getName()));

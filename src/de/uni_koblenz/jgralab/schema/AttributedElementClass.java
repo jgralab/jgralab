@@ -27,7 +27,6 @@ package de.uni_koblenz.jgralab.schema;
 import java.util.Set;
 import java.util.SortedSet;
 
-import de.uni_koblenz.jgralab.Attribute;
 import de.uni_koblenz.jgralab.AttributedElement;
 import de.uni_koblenz.jgralab.schema.exception.DuplicateAttributeException;
 import de.uni_koblenz.jgralab.schema.exception.M1ClassAccessException;

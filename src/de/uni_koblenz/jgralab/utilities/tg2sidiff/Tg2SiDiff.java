@@ -27,11 +27,11 @@ package de.uni_koblenz.jgralab.utilities.tg2sidiff;
 import java.io.PrintStream;
 
 import de.uni_koblenz.jgralab.Aggregation;
-import de.uni_koblenz.jgralab.Attribute;
 import de.uni_koblenz.jgralab.AttributedElement;
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.schema.AggregationClass;
+import de.uni_koblenz.jgralab.schema.Attribute;
 import de.uni_koblenz.jgralab.schema.AttributedElementClass;
 import de.uni_koblenz.jgralab.schema.EdgeClass;
 import de.uni_koblenz.jgralab.utilities.tg2whatever.Tg2Whatever;

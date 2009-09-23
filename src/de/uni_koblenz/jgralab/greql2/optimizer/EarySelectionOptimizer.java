@@ -13,7 +13,6 @@ import java.util.Set;
 import java.util.Map.Entry;
 import java.util.logging.Logger;
 
-import de.uni_koblenz.jgralab.Attribute;
 import de.uni_koblenz.jgralab.AttributedElement;
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.EdgeDirection;
@@ -41,6 +40,7 @@ import de.uni_koblenz.jgralab.greql2.schema.RecordId;
 import de.uni_koblenz.jgralab.greql2.schema.SetComprehension;
 import de.uni_koblenz.jgralab.greql2.schema.SimpleDeclaration;
 import de.uni_koblenz.jgralab.greql2.schema.Variable;
+import de.uni_koblenz.jgralab.schema.Attribute;
 
 /**
  * This {@link Optimizer} implements the transformation "Selection as early as

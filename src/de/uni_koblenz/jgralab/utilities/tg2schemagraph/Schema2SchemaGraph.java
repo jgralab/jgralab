@@ -824,7 +824,7 @@ public class Schema2SchemaGraph {
 		Domain gDomain;
 
 		// Loop over all Attribute objects in the given element.
-		for (de.uni_koblenz.jgralab.Attribute attribute : element
+		for (de.uni_koblenz.jgralab.schema.Attribute attribute : element
 				.getOwnAttributeList()) {
 
 			assert ((attribute != null) && (attribute.getName() != null)) : "FIXME! No name for this Attribute is defined!";

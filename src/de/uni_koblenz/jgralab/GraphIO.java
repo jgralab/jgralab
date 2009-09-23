@@ -56,6 +56,7 @@ import java.util.logging.Logger;
 
 import de.uni_koblenz.jgralab.impl.GraphImpl;
 import de.uni_koblenz.jgralab.schema.AggregationClass;
+import de.uni_koblenz.jgralab.schema.Attribute;
 import de.uni_koblenz.jgralab.schema.AttributedElementClass;
 import de.uni_koblenz.jgralab.schema.BasicDomain;
 import de.uni_koblenz.jgralab.schema.CompositionClass;
