@@ -84,8 +84,8 @@ public class JGraLab {
 			"of this part of the software.", "", "Apache Commons CLI 1.2",
 			"Copyright 2001-2009 The Apache Software Foundation" };
 
-	private static Logger rootLogger;
 	private static HashMap<String, Logger> loggerMap = new HashMap<String, Logger>();
+	private static Logger rootLogger = getRootLogger();
 
 	/**
 	 * Sets the log level for package de.uni_koblenz.jgralab and all its
