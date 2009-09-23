@@ -334,8 +334,18 @@ public class RecordCodeGenerator extends CodeGenerator {
 	 */
 	private CodeBlock createCloneMethod() {
 		CodeList code = new CodeList();
-		code.addNoIndent(new CodeSnippet(true,
-				"@SuppressWarnings(\"unchecked\")", "public Object clone() {"));
+		boolean suppressWarningsNeeded = false;
+		for (Domain dom : recordDomain.getComponents().values()) {
+			if (dom.isComposite() && !(dom instanceof RecordDomain)) {
+				suppressWarningsNeeded = true;
+				break;
+			}
+		}
+		if (suppressWarningsNeeded) {
+			code.addNoIndent(new CodeSnippet(true,
+					"@SuppressWarnings(\"unchecked\")"));
+		}
+		code.addNoIndent(new CodeSnippet("public Object clone() {"));
 		StringBuilder constructorFields = new StringBuilder();
 		int count = 0;
 		int size = recordDomain.getComponents().entrySet().size();
@@ -358,7 +368,7 @@ public class RecordCodeGenerator extends CodeGenerator {
 			}
 			count++;
 		}
-		code.addNoIndent(new CodeSnippet("\treturn new #simpleClassName#("
+		code.add(new CodeSnippet("return new #simpleClassName#("
 				+ constructorFields.toString() + ");"));
 		code.addNoIndent(new CodeSnippet("}"));
 		return code;
