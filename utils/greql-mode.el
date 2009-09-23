@@ -23,7 +23,7 @@
 ;; Major mode for editing GReQL2 files with Emacs and executing queries.
 
 ;;; Version:
-;; <2009-06-12 Fri 18:41>
+;; <2009-09-23 Wed 21:49>
 
 ;;; Code:
 
@@ -174,64 +174,52 @@ queries are evaluated.  Set it with `greql-set-graph'.")
 (defun greql-parse-schema ()
   "Parse `greql-graph' and extract schema information into
 `greql-schema-alist'."
+  (interactive) ;; TODO: Remove interactive spec...
   (goto-char (point-min))
   (let ((current-package "")
-        schema-alist)
-    (while (re-search-forward
-            (rx bol ;; Anchor at the beginning of line.
-                (and
-                 ;; First, there may be the keyword abstract followed by
-                 ;; whitespaces.
-                 (zero-or-one "abstract")
-                 (zero-or-more (syntax whitespace))
-                 ;; Now comes the Meta-Meta-Model type.  We need it later, so
-                 ;; extract it.
-                 (group
-                  (or "VertexClass" "Package" "AggregationClass" "CompsitionClass"
-                      "EdgeClass" "Schema" "GraphClass"
-                      (and (one-or-more (or (syntax word) (any "_."))) "Domain")))
-                 ;; Then there may be whitespaces again...
-                 (zero-or-more (syntax whitespace))
-                 ;; Now comes the Meta-Model type name.
-                 (or (group (one-or-more (or (syntax word) (any "_.")))) ";")
-                 ;; Superclasses
-                 (zero-or-one
-                  (and (zero-or-more (syntax whitespace))
-                       ":" (zero-or-more (syntax whitespace))
-                       (minimal-match (and (group (and (one-or-more anything)
-                                                       (not (any ",;"))))
-                                           (any " ;")))))
-                 ;; Attributes
-                 (zero-or-one (and (zero-or-more (not (any "\n")))
-                                   "{" (group (zero-or-more (not (any "\n")))) "}"))))
-            nil t)
-      (let ((vc-or-pkg (match-string 1))
-            (name (match-string 2))
-            (superclasses (greql-parse-superclasses (match-string 3) current-package))
-            (attributes (greql-parse-attributes (match-string 4))))
-        (cond ((string= vc-or-pkg "Package")
-               ;; All following elements belong to this package, so make it
-               ;; current.
-               (setq current-package (if name (concat name ".") "")))
-              ((string= vc-or-pkg "VertexClass")
-               (setq schema-alist (cons (list (intern vc-or-pkg)
-                                              (concat current-package name)
-                                              superclasses
-                                              attributes)
-                                        schema-alist)))
-              ((or (string= vc-or-pkg "EdgeClass")
-                   (string= vc-or-pkg "AggregationClass")
-                   (string= vc-or-pkg "CompositionClass"))
-               (setq schema-alist (cons (list 'EdgeClass
-                                              (concat current-package name)
-                                              superclasses
-                                              attributes)
-                                        schema-alist)))
-              (t
-               ;; This must be a domain
-               (setq schema-alist (cons (list (intern vc-or-pkg)
-                                              (concat current-package name))
-                                        schema-alist))))))
+        schema-alist
+        finished)
+    (while (not finished)
+      (cond
+       ;; Packages
+       ((looking-at "^Package\s+\\([[:alnum:]._]+\\)")
+        (let ((match (match-string 1)))
+          (setq current-package (if (string-match "^\s*$" match)
+                                    ""
+                                  (concat  (match-string 1) "."))))
+        ;;(message "Found pkg '%s'" current-package)
+        )
+       ;; GraphClass
+       ((looking-at "^GraphClass\s+\\([[:alnum:]._]+\\)\s*\\(?:{\\([^}]*\\)}\\)?")
+        ;;(message "GraphClass %s" (match-string 1))
+        )
+       ;; VertexClass
+       ((looking-at "^\\(?:abstract\\)?\s*VertexClass\s+\\([[:alnum:]._]+\\)\s*\\(?::\\([^{;]+\\)\\)?\s*\\(?:{\\([^}]*\\)}\\)?")
+        (setq schema-alist
+              (cons (list 'VertexClass
+                          (concat current-package (match-string 1)) 
+                          (greql-parse-superclasses (match-string 2) current-package)
+                          (greql-parse-attributes (match-string 3)))
+                    schema-alist)))
+       ;; EdgeClasses
+       ((looking-at (concat "^\\(?:abstract\s+\\)?"
+                            "\\(?:Edge\\|Aggregation\\|Composition\\)Class\s+"
+                            "\\([[:alnum:]._]+\\)\s*"      ;; Name
+                            "\\(?::\\([[:alnum:]._ ]+\\)\\)?\s+"    ;; Supertypes
+                            "from [^{;]+"                       ;; skip from/to, roles, multis
+                            "\\(?:{\\([^}]*\\)}\\)?"       ;; Attributes
+                            ))
+        (setq schema-alist
+              (cons (list 'EdgeClass
+                          (concat current-package (match-string 1)) 
+                          (greql-parse-superclasses (match-string 2) current-package)
+                          (greql-parse-attributes (match-string 3)))
+                    schema-alist)))
+       ;; End of schema (part)
+       ((or (= (point) (point-max)))
+        (looking-at "Graph[[:space:]]+")
+        (setq finished t)))
+      (forward-line))
     schema-alist))
 
 (defun greql-parse-superclasses (str current-package)
