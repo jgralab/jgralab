@@ -306,9 +306,10 @@
 		<ant dir="${common.dir}" antfile="build.xml" target="unjar">
           <property name="unjarexcludes" value="**/clover*.jar"/>	   		
         </ant>
-		<!-- unjar some commom jars -->
+		<!-- unjar some commom jars-->
 		<unjar dest="${tmp.dir}">
 					<fileset dir="${comlib.dir}/apache/commons/cli/" includes="**/*.jar"/>
+					<fileset dir="${comlib.dir}/ist_utilities/" includes="**/*.jar"/>
 		</unjar>		
 		<unjar dest="${tmp.dir}">
 			<fileset dir="${comlib.dir}/jdom/" includes="**/*.jar"/>
