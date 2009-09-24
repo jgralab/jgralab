@@ -152,13 +152,17 @@ public class VariableDeclarationLayer implements
 	 */
 	private boolean getFirstCombination(BooleanGraphMarker subgraph)
 			throws EvaluateException {
+		boolean isValidCombination = true;
 		for (int i = 0; i < variableDeclarations.size(); i++) {
 			VariableDeclaration currDecl = variableDeclarations.get(i);
 			if (!currDecl.iterate()) {
-				return false;
+				isValidCombination = false;
 			}
 		}
-		return true;
+		if (!isValidCombination)
+			return getNextCombination(subgraph);
+		else
+			return true;
 	}
 
 	/**
