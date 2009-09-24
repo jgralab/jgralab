@@ -108,7 +108,7 @@ public class IsPrime extends AbstractGreql2Function {
 		}
 
 		y = (x * x) % n;
-		if (y == 1 && x != 1 && x != n - 1) {
+		if ((y == 1) && (x != 1) && (x != n - 1)) {
 			return 0;
 		}
 
