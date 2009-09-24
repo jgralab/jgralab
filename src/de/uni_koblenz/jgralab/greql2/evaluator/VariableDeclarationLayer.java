@@ -176,32 +176,27 @@ public class VariableDeclarationLayer implements
 	private boolean getNextCombination(BooleanGraphMarker subgraphMarker)
 			throws EvaluateException {
 		int size = variableDeclarations.size();
-		int lastLayerToIterate = size - 1;
-		boolean foundCombination = false;
-		while (!foundCombination) {
+		int pointer = size - 1;
+		while (pointer<size) {
 			VariableDeclaration currDecl = null;
 			do {
-				//System.out.println("Iterating " + lastLayerToIterate);
-				if (lastLayerToIterate == -1)
+				if (pointer < 0)
 					return false;
-				currDecl = variableDeclarations.get(lastLayerToIterate--);
+				currDecl = variableDeclarations.get(pointer--);
 			} while (!currDecl.iterate());
-			foundCombination = true;
-			int layerToReset = lastLayerToIterate+2;
-			while (layerToReset < size) {
-				//System.out.println("Ressting " + layerToReset);
-				currDecl = variableDeclarations.get(layerToReset++);
+			pointer += 2;
+			while (pointer < size) {
+				currDecl = variableDeclarations.get(pointer++);
 				currDecl.reset();
 				if (!currDecl.iterate()) {
-					lastLayerToIterate = layerToReset-2;
-					foundCombination = false;
+					pointer-=2;
 					break;
 				}	
 			}
 		}	
 		return true;
 	}
-	
+
 	
 	
 
