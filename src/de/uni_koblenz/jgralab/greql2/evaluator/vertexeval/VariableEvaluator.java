@@ -157,8 +157,9 @@ public class VariableEvaluator extends VertexEvaluator {
 			Greql2Vertex currentVertex = queue.poll();
 			VertexEvaluator eval = greqlEvaluator
 					.getVertexEvaluatorGraphMarker().getMark(currentVertex);
-			if ((eval != null) && (!dependingEvaluators.contains(eval)))
+			if ((eval != null) && (!dependingEvaluators.contains(eval))) {
 				dependingEvaluators.add(eval);
+			}
 			Greql2Aggregation currentEdge = currentVertex
 					.getFirstGreql2Aggregation(EdgeDirection.OUT);
 			while (currentEdge != null) {
