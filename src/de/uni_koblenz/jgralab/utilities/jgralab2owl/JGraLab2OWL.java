@@ -37,13 +37,13 @@ import javax.xml.stream.XMLStreamWriter;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.Option;
 
+import de.uni_koblenz.ist.utilities.option_handler.OptionHandler;
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.GraphIO;
 import de.uni_koblenz.jgralab.JGraLab;
 import de.uni_koblenz.jgralab.ProgressFunction;
 import de.uni_koblenz.jgralab.impl.ProgressFunctionImpl;
 import de.uni_koblenz.jgralab.schema.Schema;
-import de.uni_koblenz.jgralab.utilities.common.OptionHandler;
 import de.uni_koblenz.jgralab.utilities.xml.IndentingXMLStreamWriter;
 
 public class JGraLab2OWL {

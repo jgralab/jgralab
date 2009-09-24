@@ -43,6 +43,7 @@ import javax.tools.ToolProvider;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.Option;
 
+import de.uni_koblenz.ist.utilities.option_handler.OptionHandler;
 import de.uni_koblenz.jgralab.GraphIO;
 import de.uni_koblenz.jgralab.GraphIOException;
 import de.uni_koblenz.jgralab.JGraLab;
@@ -51,7 +52,6 @@ import de.uni_koblenz.jgralab.schema.EdgeClass;
 import de.uni_koblenz.jgralab.schema.GraphClass;
 import de.uni_koblenz.jgralab.schema.Schema;
 import de.uni_koblenz.jgralab.schema.VertexClass;
-import de.uni_koblenz.jgralab.utilities.common.OptionHandler;
 
 public class TgSchema2Java {
 

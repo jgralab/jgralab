@@ -44,6 +44,7 @@ import javax.xml.stream.XMLStreamException;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.Option;
 
+import de.uni_koblenz.ist.utilities.option_handler.OptionHandler;
 import de.uni_koblenz.jgralab.AttributedElement;
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.Graph;
@@ -57,7 +58,6 @@ import de.uni_koblenz.jgralab.impl.ProgressFunctionImpl;
 import de.uni_koblenz.jgralab.schema.Attribute;
 import de.uni_koblenz.jgralab.schema.Schema;
 import de.uni_koblenz.jgralab.utilities.common.GraphVisitor;
-import de.uni_koblenz.jgralab.utilities.common.OptionHandler;
 import de.uni_koblenz.jgralab.utilities.common.UtilityMethods;
 
 @WorkInProgress(description = "Attribute values missing, testing required, command line parameter checks missing", responsibleDevelopers = "strauss, riediger", expectedFinishingDate = "2009/08")

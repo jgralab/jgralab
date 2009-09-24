@@ -49,6 +49,7 @@ import javax.xml.stream.XMLStreamReader;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.Option;
 
+import de.uni_koblenz.ist.utilities.option_handler.OptionHandler;
 import de.uni_koblenz.jgralab.AttributedElement;
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.EdgeDirection;
@@ -84,7 +85,6 @@ import de.uni_koblenz.jgralab.grumlschema.structure.Package;
 import de.uni_koblenz.jgralab.grumlschema.structure.Schema;
 import de.uni_koblenz.jgralab.grumlschema.structure.To;
 import de.uni_koblenz.jgralab.grumlschema.structure.VertexClass;
-import de.uni_koblenz.jgralab.utilities.common.OptionHandler;
 import de.uni_koblenz.jgralab.utilities.tg2dot.Tg2Dot;
 
 /**

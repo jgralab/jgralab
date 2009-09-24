@@ -4,7 +4,7 @@ import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.Option;
 import org.apache.commons.cli.OptionGroup;
 
-import de.uni_koblenz.jgralab.utilities.common.OptionHandler;
+import de.uni_koblenz.ist.utilities.option_handler.OptionHandler;
 
 public class TryCLI {
 
