@@ -224,6 +224,9 @@ public class EarySelectionOptimizer extends OptimizerBase {
 			}
 		}
 
+		// OptimizerUtility.printGraphAsDot(syntaxgraph,
+		// "/home/horn/after-early-selection-"
+		// + System.currentTimeMillis() + ".dot");
 		return aTransformationWasDone;
 	}
 
