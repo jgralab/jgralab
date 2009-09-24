@@ -1678,4 +1678,31 @@ public class GreqlEvaluatorTest extends GenericTests {
 		assertEquals(null, result.toBoolean());
 	}
 
+	@Test
+	public void testEquivalentQueries() throws Exception {
+		String query1 = "from x : list(1..5)                  "
+				+ "      with isPrime(x)                      "
+				+ "      reportSet x, from y : list(21..25),  "
+				+ "                        z : list(21..30)   "
+				+ "                   with isPrime(y+x) and isPrime(z+x) "
+				+ "                   reportSet y, z end      "
+				+ "      end                                  ";
+		GreqlEvaluator e1 = new GreqlEvaluator(query1, null, null);
+		e1.setOptimize(false);
+		e1.startEvaluation();
+		JValue r1 = e1.getEvaluationResult();
+		String query2 = "from x : list(1..5)                   "
+				+ "      with isPrime(x)                       "
+				+ "      reportSet x, from y : from a : list(21..25) with isPrime(a+x) reportSet a end,"
+				+ "                        z : from b : list(21..30) with isPrime(b+x) reportSet b end "
+				+ "                   reportSet y, z end       "
+				+ "      end                                   ";
+		GreqlEvaluator e2 = new GreqlEvaluator(query2, null, null);
+		e2.setOptimize(false);
+		e2.startEvaluation();
+		JValue r2 = e2.getEvaluationResult();
+
+		assertEquals(r1, r2);
+	}
+
 }

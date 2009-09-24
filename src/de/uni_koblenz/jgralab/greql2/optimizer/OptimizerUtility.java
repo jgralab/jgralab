@@ -31,6 +31,13 @@ import de.uni_koblenz.jgralab.greql2.schema.Variable;
  * 
  */
 public class OptimizerUtility {
+	// public static void printGraphAsDot(Greql2 syntaxgraph, String string) {
+	// Tg2Dot t2d = new Tg2Dot();
+	// t2d.setGraph(syntaxgraph);
+	// t2d.setReversedEdges(true);
+	// t2d.setOutputFile(string);
+	// t2d.printGraph();
+	// }
 
 	/**
 	 * Checks if <code>v1</code> is above <code>v2</code> in the {@link Greql2}
@@ -245,7 +252,7 @@ public class OptimizerUtility {
 	private static Set<Variable> collectInternallyDeclaredVariablesBelow(
 			Vertex vertex, Set<Variable> vars) {
 		// GreqlEvaluator.println("collectVariablesBelow(" + vertex + ")");
-		if (vertex instanceof Variable && !(vertex instanceof ThisLiteral)) {
+		if ((vertex instanceof Variable) && !(vertex instanceof ThisLiteral)) {
 			Variable v = (Variable) vertex;
 			if (v.getFirstIsBoundVarOf(EdgeDirection.OUT) == null) {
 				// it's no externally bound variable, but a variable declared in
@@ -290,7 +297,7 @@ public class OptimizerUtility {
 		for (Edge inc : vertex.incidences(EdgeDirection.IN)) {
 			nextOrphans.add(inc.getAlpha());
 		}
-		if (vertex.getFirstEdge(EdgeDirection.OUT) == null
+		if ((vertex.getFirstEdge(EdgeDirection.OUT) == null)
 				&& !verticesToOmit.contains(vertex)) {
 			// vertex is orphaned
 			alreadyDeletedVertices.add(vertex);

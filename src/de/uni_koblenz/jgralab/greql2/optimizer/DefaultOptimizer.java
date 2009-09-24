@@ -44,8 +44,8 @@ import de.uni_koblenz.jgralab.greql2.schema.Variable;
  */
 public class DefaultOptimizer extends OptimizerBase {
 
-	private static Logger logger = JGraLab
-			.getLogger(DefaultOptimizer.class.getPackage().getName());
+	private static Logger logger = JGraLab.getLogger(DefaultOptimizer.class
+			.getPackage().getName());
 
 	@Override
 	protected String optimizerHeaderString() {
@@ -149,14 +149,6 @@ public class DefaultOptimizer extends OptimizerBase {
 
 		return aTransformationWasDone;
 	}
-
-	// private void printGraphAsDot(Greql2 syntaxgraph, String string) {
-	// Tg2Dot t2d = new Tg2Dot();
-	// t2d.setGraph(syntaxgraph);
-	// t2d.setReversedEdges(true);
-	// t2d.setOutputFile(string);
-	// t2d.printGraph();
-	// }
 
 	@SuppressWarnings("unused")
 	private void printCosts(GreqlEvaluator eval, Greql2 syntaxgraph) {
