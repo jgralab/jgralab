@@ -104,7 +104,6 @@ public class VariableDeclarationLayer implements
 	public boolean addVariableDeclaration(VariableDeclaration d) {
 		if (firstIteration == true) {
 			variableDeclarations.add(d);
-			d.reset();
 			return true;
 		}
 		return false;
@@ -131,7 +130,7 @@ public class VariableDeclarationLayer implements
 			firstIteration = false;
 		}
 		while (!constraintsFullfilled) {
-			if (!getNextCombination(subgraph)) {
+			if (!getNextCombination(subgraph,variableDeclarations.size()-1)) {
 				if (logger != null) {
 					logger.logResultSize("Declaration", possibleCombinations);
 				}
@@ -152,19 +151,9 @@ public class VariableDeclarationLayer implements
 	 */
 	private boolean getFirstCombination(BooleanGraphMarker subgraph)
 			throws EvaluateException {
-		boolean isValidCombination = true;
-		for (int i = 0; i < variableDeclarations.size(); i++) {
-			VariableDeclaration currDecl = variableDeclarations.get(i);
-			if (!currDecl.iterate()) {
-				isValidCombination = false;
-			}
-		}
-		if (!isValidCombination)
-			return getNextCombination(subgraph);
-		else
-			return true;
+		variableDeclarations.get(0).reset();
+		return getNextCombination(subgraph,0);
 	}
-
 	
 	/**
 	 * Gets the next possible variable combination
@@ -173,7 +162,35 @@ public class VariableDeclarationLayer implements
 	 * @return true if a next combination exists, false otherwise
 	 * @throws EvaluateException
 	 */
-	private boolean getNextCombination(BooleanGraphMarker subgraphMarker)
+	private boolean getNextCombination(BooleanGraphMarker subgraphMarker, int pointer)
+			throws EvaluateException {
+		int size = variableDeclarations.size();
+		VariableDeclaration currDecl = null;
+		do {
+			if (pointer < 0)
+				return false;
+			currDecl = variableDeclarations.get(pointer--);
+		} while (!currDecl.iterate());
+		pointer += 2;
+		while (pointer < size) {
+			currDecl = variableDeclarations.get(pointer++);
+			currDecl.reset();
+			if (!currDecl.iterate()) {
+				return getNextCombination(subgraphMarker, pointer-2);
+			}	
+		}
+		return true;
+	}
+	
+	
+	/**
+	 * Gets the next possible variable combination
+	 * 
+	 * @param subgraphMarker
+	 * @return true if a next combination exists, false otherwise
+	 * @throws EvaluateException
+	 */
+	private boolean getNextCombination2(BooleanGraphMarker subgraphMarker)
 			throws EvaluateException {
 		int size = variableDeclarations.size();
 		int pointer = size - 1;

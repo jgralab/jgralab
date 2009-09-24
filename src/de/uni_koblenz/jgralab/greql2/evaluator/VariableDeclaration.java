@@ -91,10 +91,8 @@ public class VariableDeclaration implements Comparable<VariableDeclaration> {
 			SimpleDeclaration decl, GreqlEvaluator eval) {
 		variableEval = (VariableEvaluator) eval.getVertexEvaluatorGraphMarker()
 				.getMark(var);
-		//this.definitionSet = definitionSet;
 		this.definitionSetEvaluator = definitionSetEvaluator;
 		this.subgraph = subgraph;
-		//iter = definitionSet.iterator();
 		dependingExpressions = new ArrayList<VertexEvaluator>();
 	}
 
@@ -103,27 +101,7 @@ public class VariableDeclaration implements Comparable<VariableDeclaration> {
 	 * another value was found, false otherwise
 	 */
 	public boolean iterate() {
-		if (iter == null) {
-			JValue tempAttribute = definitionSetEvaluator.getResult(subgraph);
-			if (tempAttribute.isCollection()) {
-				try {
-					JValueCollection col = tempAttribute.toCollection();
-					definitionSet = col.toJValueSet();
-					if (col.size() > definitionSet.size())
-						throw new EvaluateException(
-								"A collection that doesn't fulfill the set property is used as variable range definition");
-				} catch (JValueInvalidTypeException exception) {
-					throw new EvaluateException(
-							"Error evaluating a SimpleDeclaration : "
-									+ exception.toString());
-				}
-			} else {
-				definitionSet = new JValueSet();
-				definitionSet.add(tempAttribute);
-			}
-			iter = definitionSet.iterator();	
-		}	
-		if (iter.hasNext()) {
+		if ((iter!=null) && (iter.hasNext())) {
 			deleteDependingResults();
 			variableEval.setValue(iter.next());
 			return true;
@@ -143,7 +121,24 @@ public class VariableDeclaration implements Comparable<VariableDeclaration> {
 	 * Resets the iterator to the first element
 	 */
 	protected void reset() {
-		iter = null;
+		JValue tempAttribute = definitionSetEvaluator.getResult(subgraph);
+		if (tempAttribute.isCollection()) {
+			try {
+				JValueCollection col = tempAttribute.toCollection();
+				definitionSet = col.toJValueSet();
+				if (col.size() > definitionSet.size())
+					throw new EvaluateException(
+							"A collection that doesn't fulfill the set property is used as variable range definition");
+			} catch (JValueInvalidTypeException exception) {
+				throw new EvaluateException(
+						"Error evaluating a SimpleDeclaration : "
+								+ exception.toString());
+			}
+		} else {
+			definitionSet = new JValueSet();
+			definitionSet.add(tempAttribute);
+		}
+		iter = definitionSet.iterator();	
 	}
 
 	/**
