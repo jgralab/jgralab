@@ -165,6 +165,7 @@ public class VariableDeclarationLayer implements
 			return true;
 	}
 
+	
 	/**
 	 * Gets the next possible variable combination
 	 * 
@@ -174,24 +175,35 @@ public class VariableDeclarationLayer implements
 	 */
 	private boolean getNextCombination(BooleanGraphMarker subgraphMarker)
 			throws EvaluateException {
-		int firstLayerToReset = 0;
-		for (int i = variableDeclarations.size() - 1; i >= 0; i--) {
-			VariableDeclaration currDecl = variableDeclarations.get(i);
-			if (currDecl.iterate()) {
-				firstLayerToReset = i+1;
-				break;
-			}
-		}
-		if (firstLayerToReset > 0) {
-			for (int i = firstLayerToReset; i<variableDeclarations.size(); i++) {
-				VariableDeclaration currDecl = variableDeclarations.get(i);
+		int size = variableDeclarations.size();
+		int lastLayerToIterate = size - 1;
+		boolean foundCombination = false;
+		while (!foundCombination) {
+			VariableDeclaration currDecl = null;
+			do {
+				//System.out.println("Iterating " + lastLayerToIterate);
+				if (lastLayerToIterate == -1)
+					return false;
+				currDecl = variableDeclarations.get(lastLayerToIterate--);
+			} while (!currDecl.iterate());
+			foundCombination = true;
+			int layerToReset = lastLayerToIterate+2;
+			while (layerToReset < size) {
+				//System.out.println("Ressting " + layerToReset);
+				currDecl = variableDeclarations.get(layerToReset++);
 				currDecl.reset();
-				currDecl.iterate();
+				if (!currDecl.iterate()) {
+					lastLayerToIterate = layerToReset-2;
+					foundCombination = false;
+					break;
+				}	
 			}
-			return true;	
-		}
-		return false;
+		}	
+		return true;
 	}
+	
+	
+	
 
 	/**
 	 * Checks if the current variable combination fullfills the constraints.
