@@ -193,7 +193,6 @@ public class EnhancedGreql2 extends Greql2Impl implements Greql2 {
 	}
 
 	private void serializeDeclaration(Declaration v, boolean declOfFWR) {
-		sb.append("from ");
 		boolean first = true;
 		for (SimpleDeclaration sd : v.getSimpleDeclList()) {
 			if (first) {
@@ -203,10 +202,9 @@ public class EnhancedGreql2 extends Greql2Impl implements Greql2 {
 			}
 			serializeSimpleDeclaration(sd);
 		}
-		sb.append(' ');
 
 		if (!v.getSubgraphList().isEmpty()) {
-			sb.append("in ");
+			sb.append(" in ");
 			serializeExpression(v.getSubgraphList().get(0), true);
 		}
 
@@ -219,7 +217,7 @@ public class EnhancedGreql2 extends Greql2Impl implements Greql2 {
 				// comma
 				sb.append(", ");
 			}
-			serializeExpression(constraint, true);
+			serializeExpression(constraint, false);
 		}
 	}
 
@@ -702,6 +700,7 @@ public class EnhancedGreql2 extends Greql2Impl implements Greql2 {
 	}
 
 	private void serializeComprehension(Comprehension exp) {
+		sb.append("from ");
 		serializeDeclaration(exp.getCompDeclList().get(0), true);
 		if (exp instanceof SetComprehension) {
 			sb.append("reportSet ");
@@ -738,6 +737,8 @@ public class EnhancedGreql2 extends Greql2Impl implements Greql2 {
 		serializeQuantifier(exp.getQuantifierList().get(0));
 		sb.append(' ');
 		serializeDeclaration(exp.getQuantifiedDeclList().get(0), false);
+		sb.append(" @ ");
+		serializeExpression(exp.getBoundExprOfQuantifierList().get(0), false);
 	}
 
 	private void serializeLiteral(Literal exp) {
@@ -804,6 +805,9 @@ public class EnhancedGreql2 extends Greql2Impl implements Greql2 {
 			return;
 		} else if (id.equals("reMatch")) {
 			serializeFunctionApplicationInfix(exp, "=~");
+			return;
+		} else if (id.equals("modulo")) {
+			serializeFunctionApplicationInfix(exp, "%");
 			return;
 		}
 
