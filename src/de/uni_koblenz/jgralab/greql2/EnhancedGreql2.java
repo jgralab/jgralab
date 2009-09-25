@@ -398,6 +398,7 @@ public class EnhancedGreql2 extends Greql2Impl implements Greql2 {
 		if (result instanceof TupleConstruction) {
 			// here the tup() can be omitted
 			serializeTupleConstruction((TupleConstruction) result, sb, true);
+			sb.append(' ');
 		} else {
 			serializeExpression(result, sb, true);
 		}
