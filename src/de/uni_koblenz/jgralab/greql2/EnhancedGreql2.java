@@ -7,6 +7,9 @@ import java.util.List;
 
 import de.uni_koblenz.jgralab.WorkInProgress;
 import de.uni_koblenz.jgralab.greql2.exception.Greql2Exception;
+import de.uni_koblenz.jgralab.greql2.schema.AggregationPathDescription;
+import de.uni_koblenz.jgralab.greql2.schema.AlternativePathDescription;
+import de.uni_koblenz.jgralab.greql2.schema.BackwardVertexSet;
 import de.uni_koblenz.jgralab.greql2.schema.BagComprehension;
 import de.uni_koblenz.jgralab.greql2.schema.BagConstruction;
 import de.uni_koblenz.jgralab.greql2.schema.BoolLiteral;
@@ -16,40 +19,51 @@ import de.uni_koblenz.jgralab.greql2.schema.Declaration;
 import de.uni_koblenz.jgralab.greql2.schema.Definition;
 import de.uni_koblenz.jgralab.greql2.schema.DefinitionExpression;
 import de.uni_koblenz.jgralab.greql2.schema.Direction;
+import de.uni_koblenz.jgralab.greql2.schema.EdgePathDescription;
 import de.uni_koblenz.jgralab.greql2.schema.EdgeRestriction;
 import de.uni_koblenz.jgralab.greql2.schema.EdgeVertexList;
 import de.uni_koblenz.jgralab.greql2.schema.ElementSetExpression;
+import de.uni_koblenz.jgralab.greql2.schema.ExponentiatedPathDescription;
 import de.uni_koblenz.jgralab.greql2.schema.Expression;
+import de.uni_koblenz.jgralab.greql2.schema.ForwardVertexSet;
 import de.uni_koblenz.jgralab.greql2.schema.FunctionApplication;
 import de.uni_koblenz.jgralab.greql2.schema.Greql2;
 import de.uni_koblenz.jgralab.greql2.schema.Greql2Expression;
 import de.uni_koblenz.jgralab.greql2.schema.Greql2Vertex;
 import de.uni_koblenz.jgralab.greql2.schema.Identifier;
 import de.uni_koblenz.jgralab.greql2.schema.IntLiteral;
+import de.uni_koblenz.jgralab.greql2.schema.IntermediateVertexPathDescription;
+import de.uni_koblenz.jgralab.greql2.schema.IteratedPathDescription;
 import de.uni_koblenz.jgralab.greql2.schema.ListConstruction;
 import de.uni_koblenz.jgralab.greql2.schema.ListRangeConstruction;
 import de.uni_koblenz.jgralab.greql2.schema.Literal;
 import de.uni_koblenz.jgralab.greql2.schema.MapComprehension;
 import de.uni_koblenz.jgralab.greql2.schema.MapConstruction;
 import de.uni_koblenz.jgralab.greql2.schema.NullLiteral;
+import de.uni_koblenz.jgralab.greql2.schema.OptionalPathDescription;
 import de.uni_koblenz.jgralab.greql2.schema.PathConstruction;
 import de.uni_koblenz.jgralab.greql2.schema.PathDescription;
+import de.uni_koblenz.jgralab.greql2.schema.PathExistence;
 import de.uni_koblenz.jgralab.greql2.schema.PathExpression;
 import de.uni_koblenz.jgralab.greql2.schema.PathSystemConstruction;
+import de.uni_koblenz.jgralab.greql2.schema.PrimaryPathDescription;
 import de.uni_koblenz.jgralab.greql2.schema.QuantifiedExpression;
 import de.uni_koblenz.jgralab.greql2.schema.Quantifier;
 import de.uni_koblenz.jgralab.greql2.schema.RealLiteral;
 import de.uni_koblenz.jgralab.greql2.schema.RecordConstruction;
 import de.uni_koblenz.jgralab.greql2.schema.RecordElement;
 import de.uni_koblenz.jgralab.greql2.schema.RestrictedExpression;
+import de.uni_koblenz.jgralab.greql2.schema.SequentialPathDescription;
 import de.uni_koblenz.jgralab.greql2.schema.SetComprehension;
 import de.uni_koblenz.jgralab.greql2.schema.SetConstruction;
 import de.uni_koblenz.jgralab.greql2.schema.SimpleDeclaration;
+import de.uni_koblenz.jgralab.greql2.schema.SimplePathDescription;
 import de.uni_koblenz.jgralab.greql2.schema.StringLiteral;
 import de.uni_koblenz.jgralab.greql2.schema.SubgraphExpression;
 import de.uni_koblenz.jgralab.greql2.schema.TableComprehension;
 import de.uni_koblenz.jgralab.greql2.schema.ThisEdge;
 import de.uni_koblenz.jgralab.greql2.schema.ThisVertex;
+import de.uni_koblenz.jgralab.greql2.schema.TransposedPathDescription;
 import de.uni_koblenz.jgralab.greql2.schema.TupleConstruction;
 import de.uni_koblenz.jgralab.greql2.schema.ValueConstruction;
 import de.uni_koblenz.jgralab.greql2.schema.Variable;
@@ -358,13 +372,186 @@ public class EnhancedGreql2 extends Greql2Impl implements Greql2 {
 	}
 
 	private void serializePathExpression(PathExpression exp, StringBuffer sb) {
+		if (exp instanceof BackwardVertexSet) {
+			serializeBackwardVertexSet((BackwardVertexSet) exp, sb);
+		} else if (exp instanceof ForwardVertexSet) {
+			serializeForwardVertexSet((ForwardVertexSet) exp, sb);
+		} else if (exp instanceof PathExistence) {
+			serializePathExistence((PathExistence) exp, sb);
+		} else {
+			throw new Greql2Exception("Unknown PathExpression " + exp + ".");
+		}
+	}
+
+	private void serializePathExistence(PathExistence exp, StringBuffer sb) {
+		serializeExpression(exp.getStartExprList().get(0), sb, true);
+		serializeExpression(exp.getPathList().get(0), sb, true);
+		serializeExpression(exp.getTargetExprList().get(0), sb, false);
+	}
+
+	private void serializeForwardVertexSet(ForwardVertexSet exp, StringBuffer sb) {
+		serializeExpression(exp.getStartExprList().get(0), sb, true);
+		serializeExpression(exp.getPathList().get(0), sb, false);
+	}
+
+	private void serializeBackwardVertexSet(BackwardVertexSet exp,
+			StringBuffer sb) {
+		serializeExpression(exp.getPathList().get(0), sb, true);
+		serializeExpression(exp.getTargetExprList().get(0), sb, false);
+	}
+
+	private void serializePathDescription(PathDescription exp, StringBuffer sb) {
+		if (!exp.getStartRestrList().isEmpty()) {
+			sb.append("{");
+			serializeExpression(exp.getStartRestrList().get(0), sb, false);
+			sb.append("} & ");
+		}
+
+		if (exp instanceof AlternativePathDescription) {
+			serializeAlternativePathDescription(
+					(AlternativePathDescription) exp, sb);
+		} else if (exp instanceof ExponentiatedPathDescription) {
+			serializeExponentiatedPathDescription(
+					(ExponentiatedPathDescription) exp, sb);
+		} else if (exp instanceof IntermediateVertexPathDescription) {
+			serializeIntermediateVertexPathDescription(
+					(IntermediateVertexPathDescription) exp, sb);
+		} else if (exp instanceof IteratedPathDescription) {
+			serializeIteratedPathDescription((IteratedPathDescription) exp, sb);
+		} else if (exp instanceof OptionalPathDescription) {
+			serializeOptionalPathDescription((OptionalPathDescription) exp, sb);
+		} else if (exp instanceof SequentialPathDescription) {
+			serializeSequentialPathDescription((SequentialPathDescription) exp,
+					sb);
+		} else if (exp instanceof TransposedPathDescription) {
+			serializeTransposedPathDescription((TransposedPathDescription) exp,
+					sb);
+		} else if (exp instanceof PrimaryPathDescription) {
+			serializePrimaryPathDescription((PrimaryPathDescription) exp, sb);
+		} else {
+			throw new Greql2Exception("Unknown PathDescription " + exp + ".");
+		}
+
+		if (!exp.getGoalRestrList().isEmpty()) {
+			sb.append(" & {");
+			serializeExpression(exp.getGoalRestrList().get(0), sb, false);
+			sb.append("}");
+		}
+		sb.append(' ');
+	}
+
+	private void serializePrimaryPathDescription(PrimaryPathDescription exp,
+			StringBuffer sb) {
+		if (exp instanceof EdgePathDescription) {
+			serializeEdgePathDescription((EdgePathDescription) exp, sb);
+		} else if (exp instanceof SimplePathDescription) {
+			serializeSimplePathDescription((SimplePathDescription) exp, sb);
+		} else if (exp instanceof AggregationPathDescription) {
+			serializeAggregationPathDescription(
+					(AggregationPathDescription) exp, sb);
+		} else {
+			throw new Greql2Exception("Unknown PrimaryPathDescription " + exp
+					+ ".");
+		}
+
+		if (!exp.getEdgeRestrList().isEmpty()) {
+			sb.append("{");
+			for (EdgeRestriction er : exp.getEdgeRestrList()) {
+				serializeEdgeRestriction(er, sb);
+			}
+			sb.append("}");
+		}
+	}
+
+	private void serializeAggregationPathDescription(
+			AggregationPathDescription exp, StringBuffer sb) {
+		String a = "--";
+		if (exp.is_outAggregation()) {
+			a = "<>" + a;
+		} else {
+			a = a + "<>";
+		}
+
+		String dir = exp.getDirectionList().get(0).get_dirValue();
+		if (dir.equals("out")) {
+			sb.append(a);
+			sb.append(">");
+		} else if (dir.equals("in")) {
+			sb.append("<");
+			sb.append(a);
+		} else {
+			sb.append("<");
+			sb.append(a);
+			sb.append(">");
+		}
+	}
+
+	private void serializeSimplePathDescription(SimplePathDescription exp,
+			StringBuffer sb) {
+		String dir = exp.getDirectionList().get(0).get_dirValue();
+		if (dir.equals("out")) {
+			sb.append("-->");
+		} else if (dir.equals("in")) {
+			sb.append("<--");
+		} else {
+			sb.append("<->");
+		}
+	}
+
+	private void serializeEdgePathDescription(EdgePathDescription exp,
+			StringBuffer sb) {
 		// TODO Auto-generated method stub
 
 	}
 
-	private void serializePathDescription(PathDescription exp, StringBuffer sb) {
+	private void serializeTransposedPathDescription(
+			TransposedPathDescription exp, StringBuffer sb) {
 		// TODO Auto-generated method stub
 
+	}
+
+	private void serializeSequentialPathDescription(
+			SequentialPathDescription exp, StringBuffer sb) {
+		for (PathDescription pd : exp.getSequenceElementList()) {
+			serializePathDescription(pd, sb);
+		}
+	}
+
+	private void serializeOptionalPathDescription(OptionalPathDescription exp,
+			StringBuffer sb) {
+		// TODO Auto-generated method stub
+
+	}
+
+	private void serializeIteratedPathDescription(IteratedPathDescription exp,
+			StringBuffer sb) {
+		// TODO Auto-generated method stub
+
+	}
+
+	private void serializeIntermediateVertexPathDescription(
+			IntermediateVertexPathDescription exp, StringBuffer sb) {
+		// TODO Auto-generated method stub
+
+	}
+
+	private void serializeExponentiatedPathDescription(
+			ExponentiatedPathDescription exp, StringBuffer sb) {
+		// TODO Auto-generated method stub
+
+	}
+
+	private void serializeAlternativePathDescription(
+			AlternativePathDescription exp, StringBuffer sb) {
+		boolean first = true;
+		for (PathDescription a : exp.getAlternatePathList()) {
+			if (first) {
+				first = false;
+			} else {
+				sb.append(" | ");
+			}
+			serializePathDescription(a, sb);
+		}
 	}
 
 	private void serializeElementSetExpression(ElementSetExpression exp,
