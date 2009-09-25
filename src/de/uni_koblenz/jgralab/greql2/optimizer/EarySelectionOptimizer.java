@@ -817,7 +817,9 @@ public class EarySelectionOptimizer extends OptimizerBase {
 		copyAttributes(origVertex, topVertex);
 
 		if (topVertex instanceof Variable) {
-			copiedVarMap.put((Variable) origVertex, (Variable) topVertex);
+			Variable newVar = (Variable) topVertex;
+			newVar.set_name("_" + newVar.get_name());
+			copiedVarMap.put((Variable) origVertex, newVar);
 		}
 
 		Edge origEdge = origVertex.getFirstEdge(EdgeDirection.IN);
