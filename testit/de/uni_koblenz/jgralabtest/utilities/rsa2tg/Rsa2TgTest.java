@@ -50,12 +50,11 @@ public class Rsa2TgTest {
 		System.out.println("Testing with: " + folder + filename);
 		System.out
 				.print("Loading XMI, creating SchemaGraph and creating TG-file... ");
-		r.setFilenameXmi(folder + filename);
 		r.setFilenameDot(null);
 		r.setFilenameValidation(null);
 		r.setFilenameSchema(null);
 		r.setFilenameSchemaGraph(null);
-		r.process();
+		r.process(folder + filename);
 		System.out.println("\tdone");
 
 		de.uni_koblenz.jgralab.grumlschema.structure.Schema gSchema = r
