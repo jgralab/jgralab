@@ -1485,13 +1485,10 @@ public class ManualGreqlParser extends ManualParserHelper {
 		Expression expr = parseExpression();
 		int lengthExpr = getLength(offsetExpr);
 
-		if (edgeStart) {
-			if (!tryMatch(TokenTypes.EDGEEND)) {
-				match(TokenTypes.EDGE);
-			}
-		} else {
-			match(TokenTypes.EDGEEND);
+		if (tryMatch(TokenTypes.EDGEEND)) {
 			edgeEnd = true;
+		} else {
+			match(TokenTypes.EDGE);
 		}
 
 		if (!inPredicateMode()) {

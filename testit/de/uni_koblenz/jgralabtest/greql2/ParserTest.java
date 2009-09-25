@@ -13,7 +13,6 @@ import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.GraphIO;
 import de.uni_koblenz.jgralab.Vertex;
-import de.uni_koblenz.jgralab.greql2.exception.ParseException;
 import de.uni_koblenz.jgralab.greql2.exception.UndefinedVariableException;
 import de.uni_koblenz.jgralab.greql2.parser.ManualGreqlParser;
 import de.uni_koblenz.jgralab.greql2.parser.ParsingException;
@@ -1226,8 +1225,7 @@ public class ParserTest {
 			assertEquals(7, ex.getOffset());
 		}
 	}
-	
-	
+
 	@Test
 	public void testGetKnownVariables() {
 		String query = "//test \n \n from var:V{} \n with \n var ";
@@ -1235,13 +1233,15 @@ public class ParserTest {
 		try {
 			parser.parse();
 		} catch (ParsingException ex) {
-			ex.printStackTrace();
+			// ex.printStackTrace();
 			System.out.println("Known variables: ");
-			for (String vs : parser.getValidVariables())
+			for (String vs : parser.getValidVariables()) {
 				System.out.println(vs);
+			}
 			assertEquals(1, parser.getValidVariables().size());
-			for (String vs : parser.getValidVariables())
+			for (String vs : parser.getValidVariables()) {
 				assertEquals("var", vs);
+			}
 		}
 	}
 }
