@@ -11,10 +11,16 @@ import java.util.Stack;
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.Vertex;
+import de.uni_koblenz.jgralab.greql2.EnhancedGreql2;
 import de.uni_koblenz.jgralab.greql2.funlib.Greql2FunctionLibrary;
 import de.uni_koblenz.jgralab.greql2.schema.*;
 
 public class ManualGreqlParser extends ManualParserHelper {
+
+	static {
+		Greql2Schema.instance().getGraphFactory().setGraphImplementationClass(
+				Greql2.class, EnhancedGreql2.class);
+	}
 
 	private Map<RuleEnum, int[]> testedRules = new HashMap<RuleEnum, int[]>();
 
@@ -246,11 +252,11 @@ public class ManualGreqlParser extends ManualParserHelper {
 		return !predicateStack.isEmpty();
 	}
 
-//	private final void matchEOF() {
-////		if (current < tokens.size() - 1) {
-////			fail("Expected end of file");
-////		}
-//	}
+	// private final void matchEOF() {
+	// // if (current < tokens.size() - 1) {
+	// // fail("Expected end of file");
+	// // }
+	// }
 
 	private final boolean predicateHolds() {
 		return predicateFulfilled;
@@ -444,8 +450,9 @@ public class ManualGreqlParser extends ManualParserHelper {
 		}
 		int offset = getCurrentOffset();
 		Expression expr = parseExpression();
-		if (expr == null)
+		if (expr == null) {
 			return;
+		}
 		IsQueryExprOf e = graph.createIsQueryExprOf(expr, rootExpr);
 		e.set_sourcePositions((createSourcePositionList(offset)));
 		if (lookAhead(0) == TokenTypes.STORE) {
@@ -502,8 +509,9 @@ public class ManualGreqlParser extends ManualParserHelper {
 			var = graph.createVariable();
 			var.set_name(varName);
 		}
-		if (inDeclaration)
+		if (inDeclaration) {
 			duringParsingvariableSymbolTable.insert(varName, var);
+		}
 		return var;
 	}
 
