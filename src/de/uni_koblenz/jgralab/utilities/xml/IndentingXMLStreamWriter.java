@@ -9,56 +9,34 @@ public class IndentingXMLStreamWriter implements XMLStreamWriter {
 	/**
 	 * the current indentation level
 	 */
-	private int indentationLevel = 0;
+	private int indentationLevel;
 
 	/**
 	 * the spaces to insert for each indentation level
 	 */
-	private String indentation = "";
+	private String indentation;
 
 	/**
 	 * the {@link XMLStreamWriter} to be delegated to
 	 */
 	private XMLStreamWriter writer;
 
-	/**
-	 * The character used for indentation;
-	 */
-	private String indentationChar;
+	public IndentingXMLStreamWriter(XMLStreamWriter writer) {
+		this(writer, "\t");
+	}
 
-	/**
-	 * The number of indentationCharacters to write
-	 */
-	private int numberSpaces;
+	public IndentingXMLStreamWriter(XMLStreamWriter writer, String indentation) {
+		this.writer = writer;
+		this.indentation = indentation;
+		indentationLevel = 0;
+	}
 
 	public void setIndentationLevel(int indentationLevel) {
 		this.indentationLevel = indentationLevel;
-		setIndentation();
 	}
 
-	public void setIndentationChar(char indentationChar) {
-		this.indentationChar = "" + indentationChar;
-		setIndentation();
-	}
-
-	/**
-	 * 
-	 * @param writer
-	 *            the {@link XMLStreamWriter} to be delegated to
-	 * @param numberSpaces
-	 *            the number of spaces to insert for each indentation level;
-	 */
-	public IndentingXMLStreamWriter(XMLStreamWriter writer, int numberSpaces) {
-		this.writer = writer;
-		indentationChar = " ";
-		this.numberSpaces = numberSpaces;
-		setIndentation();
-	}
-
-	private void setIndentation() {
-		for (int i = 0; i < this.numberSpaces; i++) {
-			indentation = indentation.concat(indentationChar);
-		}
+	public void setIndentation(String indentation) {
+		this.indentation = indentation;
 	}
 
 	@Override
@@ -266,7 +244,6 @@ public class IndentingXMLStreamWriter implements XMLStreamWriter {
 	 */
 	private void writeIndentation() throws XMLStreamException {
 		writer.writeCharacters("\n");
-
 		for (int i = 0; i < indentationLevel; i++) {
 			writer.writeCharacters(indentation);
 		}

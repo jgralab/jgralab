@@ -1122,24 +1122,6 @@ public class Rsa2Tg {
 	}
 
 	/**
-	 * Creates the element name.
-	 * 
-	 * @param parser
-	 *            XMLStreamReader, which points to the current XML element.
-	 * @return Element name
-	 */
-	private String createElementName(XMLStreamReader parser) {
-
-		String name;
-		if (parser.getPrefix() == null) {
-			name = parser.getLocalName();
-		} else {
-			name = parser.getPrefix() + ":" + parser.getLocalName();
-		}
-		return name;
-	}
-
-	/**
 	 * Handles a 'uml:Class' element by creating a corresponding grUML
 	 * VertexClass element.
 	 * 
@@ -1383,7 +1365,8 @@ public class Rsa2Tg {
 		sb.append(attributedElement);
 		sb.append(" { ");
 
-		for (de.uni_koblenz.jgralab.schema.Attribute attr : aec.getAttributeList()) {
+		for (de.uni_koblenz.jgralab.schema.Attribute attr : aec
+				.getAttributeList()) {
 			sb.append(attr.getName());
 			sb.append(" = ");
 			sb.append(attributedElement.getAttribute(attr.getName()));

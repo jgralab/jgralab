@@ -333,7 +333,7 @@ public class JGraLab2OWL {
 
 		XMLOutputFactory factory = XMLOutputFactory.newInstance();
 		writer = new IndentingXMLStreamWriter(factory.createXMLStreamWriter(
-				outputStream, "UTF-8"), 4);
+				outputStream, "UTF-8"), "\t");
 
 		writer.writeStartDocument("UTF-8", "1.0");
 	}

@@ -40,6 +40,7 @@ import java.io.InputStream;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.Queue;
 import java.util.Stack;
@@ -71,7 +72,6 @@ import de.uni_koblenz.jgralab.schema.GraphClass;
 import de.uni_koblenz.jgralab.schema.Schema;
 import de.uni_koblenz.jgralab.schema.VertexClass;
 import de.uni_koblenz.jgralab.schema.exception.SchemaException;
-import de.uni_koblenz.jgralab.utilities.common.UtilityMethods;
 
 @WorkInProgress
 public class Xml2tg {
@@ -314,20 +314,19 @@ public class Xml2tg {
 		long processed = 0L;
 		long updateInterval = progress.getUpdateInterval();
 		for (Vertex currentVertex : graph.vertices()) {
-			UtilityMethods.sortIncidenceList(currentVertex,
-					new Comparator<Edge>() {
+			sortIncidenceList(currentVertex, new Comparator<Edge>() {
 
-						@Override
-						public int compare(Edge e1, Edge e2) {
-							IncidencePositionMark mark1 = incidencePositionMarker
-									.getMark(e1);
-							IncidencePositionMark mark2 = incidencePositionMarker
-									.getMark(e2);
-							int seq1 = e1.isNormal() ? mark1.fseq : mark1.tseq;
-							int seq2 = e2.isNormal() ? mark2.fseq : mark2.tseq;
-							return Double.compare(seq1, seq2);
-						}
-					});
+				@Override
+				public int compare(Edge e1, Edge e2) {
+					IncidencePositionMark mark1 = incidencePositionMarker
+							.getMark(e1);
+					IncidencePositionMark mark2 = incidencePositionMarker
+							.getMark(e2);
+					int seq1 = e1.isNormal() ? mark1.fseq : mark1.tseq;
+					int seq2 = e2.isNormal() ? mark2.fseq : mark2.tseq;
+					return Double.compare(seq1, seq2);
+				}
+			});
 			if (++processed % updateInterval == 0) {
 				progress.progress(processed);
 			}
@@ -448,6 +447,45 @@ public class Xml2tg {
 
 	public void setAssumeVerticesBeforeEdges(boolean assumeVerticesBeforeEdges) {
 		this.assumeVerticesBeforeEdges = assumeVerticesBeforeEdges;
+	}
+
+	public void sortIncidenceList(Vertex v, Comparator<Edge> cmp) {
+		if (v.getDegree() > 0) {
+
+			Edge currentSorted = null;
+
+			// create copy of incidenceList
+			List<Edge> incidenceList = new LinkedList<Edge>();
+			for (Edge currentEdge : v.incidences()) {
+				incidenceList.add(currentEdge);
+			}
+
+			// selection sort
+			// maybe TODO change it to mergesort
+			while (!incidenceList.isEmpty()) {
+				// select minimum
+				Edge currentMinimum = incidenceList.get(0);
+				for (Edge currentEdge : incidenceList) {
+					if (cmp.compare(currentEdge, currentMinimum) < 0) {
+						currentMinimum = currentEdge;
+					}
+				}
+
+				// place edge where it belongs
+				if (currentSorted == null) {
+					if (currentMinimum != v.getFirstEdge()) {
+						// only put it there if the first edge is not already in
+						// place
+						currentMinimum.putEdgeBefore(v.getFirstEdge());
+					}
+				} else {
+					currentMinimum.putEdgeAfter(currentSorted);
+				}
+				currentSorted = currentMinimum;
+
+				incidenceList.remove(currentMinimum);
+			}
+		}
 	}
 
 	// private Vertex createDummyVertex(String xmlId) {
