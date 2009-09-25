@@ -44,7 +44,6 @@ import de.uni_koblenz.jgralab.JGraLab;
 import de.uni_koblenz.jgralab.ProgressFunction;
 import de.uni_koblenz.jgralab.impl.ProgressFunctionImpl;
 import de.uni_koblenz.jgralab.schema.Schema;
-import de.uni_koblenz.jgralab.utilities.xml.IndentingXMLStreamWriter;
 
 public class JGraLab2OWL {
 
@@ -332,8 +331,8 @@ public class JGraLab2OWL {
 		}
 
 		XMLOutputFactory factory = XMLOutputFactory.newInstance();
-		writer = new IndentingXMLStreamWriter(factory.createXMLStreamWriter(
-				outputStream, "UTF-8"), "\t");
+		writer = new de.uni_koblenz.ist.utilities.xml.IndentingXMLStreamWriter(
+				factory.createXMLStreamWriter(outputStream, "UTF-8"), "\t");
 
 		writer.writeStartDocument("UTF-8", "1.0");
 	}
