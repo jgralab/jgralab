@@ -92,9 +92,7 @@ public class Tg2xml extends GraphVisitor {
 		this.outputStream = outputStream;
 		XMLOutputFactory factory = XMLOutputFactory.newInstance();
 		writer = new IndentingXMLStreamWriter(factory.createXMLStreamWriter(
-				outputStream, "UTF-8"), 1);
-		writer.setIndentationChar('\t');
-
+				outputStream, "UTF-8"));
 	}
 
 	@Override

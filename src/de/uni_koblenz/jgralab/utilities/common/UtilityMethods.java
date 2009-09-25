@@ -24,58 +24,12 @@
 
 package de.uni_koblenz.jgralab.utilities.common;
 
-import java.util.Comparator;
-import java.util.LinkedList;
-import java.util.List;
 
-import de.uni_koblenz.jgralab.Edge;
-import de.uni_koblenz.jgralab.Vertex;
 
 public class UtilityMethods {
 
 	/**
-	 * Generates a UnexpectedError message, which includes a filename, a line
-	 * number and a message. Line number and message are optional. If you don't
-	 * want to declare a line number use a negative number. For no message use
-	 * 'null'.
-	 * 
-	 * @param file
-	 *            Filename of the current processed file. A null reference will
-	 *            throw a NullPointerException.
-	 * @param lineNumber
-	 *            Line number, at which processing stopped. A value less then
-	 *            zero results an error message without mentioning the line
-	 *            number.
-	 * @param message
-	 *            Message, which should be added at the end. A null reference
-	 *            will be handled like an empty message.
-	 * @return UnexpectedError message
-	 */
-	public static String generateUnexpectedErrorMessage(String file,
-			int lineNumber, String message) {
-
-		StringBuilder sb = new StringBuilder();
-
-		sb.append("Unexpected error occured in file '");
-		sb.append(file);
-		sb.append("'");
-
-		if (lineNumber >= 0) {
-			sb.append(" at line ");
-			sb.append(lineNumber);
-		}
-
-		sb.append(".");
-		if (message != null) {
-			sb.append("\n");
-			sb.append(message);
-		}
-
-		return sb.toString();
-	}
-
-	/**
-	 * Generates a URI from a qualified Name for using in XML-files. It replaces
+	 * Generates a URI from a qualified Name for use in XML-files. It replaces
 	 * all occurrences of "_" with "-", swaps the first and the second element
 	 * of the qualified name and appends the remainder as folder structure.
 	 * Example: de.uni_koblenz.jgralab.greql2 => uni-koblenz.de/jgralab/greql2
@@ -100,44 +54,5 @@ public class UtilityMethods {
 		}
 
 		return namespaceURI.toString();
-	}
-
-	public static void sortIncidenceList(Vertex v, Comparator<Edge> cmp) {
-		if (v.getDegree() > 0) {
-
-			Edge currentSorted = null;
-
-			// create copy of incidenceList
-			List<Edge> incidenceList = new LinkedList<Edge>();
-			for (Edge currentEdge : v.incidences()) {
-				incidenceList.add(currentEdge);
-			}
-
-			// selection sort
-			// maybe TODO change it to mergesort
-			while (!incidenceList.isEmpty()) {
-				// select minimum
-				Edge currentMinimum = incidenceList.get(0);
-				for (Edge currentEdge : incidenceList) {
-					if (cmp.compare(currentEdge, currentMinimum) < 0) {
-						currentMinimum = currentEdge;
-					}
-				}
-
-				// place edge where it belongs
-				if (currentSorted == null) {
-					if (currentMinimum != v.getFirstEdge()) {
-						// only put it there if the first edge is not already in
-						// place
-						currentMinimum.putEdgeBefore(v.getFirstEdge());
-					}
-				} else {
-					currentMinimum.putEdgeAfter(currentSorted);
-				}
-				currentSorted = currentMinimum;
-
-				incidenceList.remove(currentMinimum);
-			}
-		}
 	}
 }

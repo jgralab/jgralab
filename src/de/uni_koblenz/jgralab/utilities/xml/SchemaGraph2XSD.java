@@ -489,8 +489,7 @@ public class SchemaGraph2XSD {
 				.createXMLStreamWriter(new FileOutputStream(outFile));
 		// Wraps an object around the XMLStreamWriter, to provide correct
 		// indentation. Indentation is "    ".
-		IndentingXMLStreamWriter xml = new IndentingXMLStreamWriter(writer, 4);
-		xml.setIndentationChar(' ');
+		IndentingXMLStreamWriter xml = new IndentingXMLStreamWriter(writer);
 
 		// Sets the IndentingXMLStreamWriter as XMLStreamWriter.
 		this.xml = xml;
