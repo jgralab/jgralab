@@ -31,14 +31,6 @@ import de.uni_koblenz.jgralab.greql2.schema.Variable;
  * 
  */
 public class OptimizerUtility {
-	// public static void printGraphAsDot(Greql2 syntaxgraph, String string) {
-	// Tg2Dot t2d = new Tg2Dot();
-	// t2d.setGraph(syntaxgraph);
-	// t2d.setReversedEdges(true);
-	// t2d.setOutputFile(string);
-	// t2d.printGraph();
-	// }
-
 	/**
 	 * Checks if <code>v1</code> is above <code>v2</code> in the {@link Greql2}
 	 * syntaxgraph. The {@link Greql2Expression} is considered to be above all

@@ -28,6 +28,7 @@ import java.io.PrintStream;
 
 import de.uni_koblenz.jgralab.AttributedElement;
 import de.uni_koblenz.jgralab.Edge;
+import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.schema.Attribute;
 import de.uni_koblenz.jgralab.schema.AttributedElementClass;
@@ -320,5 +321,14 @@ public class Tg2Dot extends Tg2Whatever {
 
 	public void setAbbreviateAttributeNames(boolean abbreviateAttributeNames) {
 		this.abbreviateEdgeAttributeNames = abbreviateAttributeNames;
+	}
+
+	public static void printGraphAsDot(Graph graph, boolean reversedEdges,
+			String outputFileName) {
+		Tg2Dot t2d = new Tg2Dot();
+		t2d.setGraph(graph);
+		t2d.setReversedEdges(reversedEdges);
+		t2d.setOutputFile(outputFileName);
+		t2d.printGraph();
 	}
 }
