@@ -193,12 +193,12 @@ public class Rsa2Tg extends XmlProcessor {
 	private SchemaGraph sg;
 
 	/**
-	 * The Schema vertex of the schema graph.
+	 * The {@link Schema} vertex of the schema graph.
 	 */
 	private Schema schema;
 
 	/**
-	 * The GraphClass vertex of the schema graph.
+	 * The {@link GraphClass} vertex of the schema graph.
 	 */
 	private GraphClass graphClass;
 
@@ -219,14 +219,14 @@ public class Rsa2Tg extends XmlProcessor {
 	private String currentClassId;
 
 	/**
-	 * Remembers the current VertexClass/EdgeClass vertex for processing of
-	 * nested elements.
+	 * Remembers the current {@link VertexClass}/{@link EdgeClass} vertex for
+	 * processing of nested elements.
 	 */
 	private AttributedElementClass currentClass;
 
 	/**
-	 * Remembers the current RecordDomain vertex for processing of nested
-	 * elements.
+	 * Remembers the current {@link RecordDomain} vertex for processing of
+	 * nested elements.
 	 */
 	private RecordDomain currentRecordDomain;
 
@@ -237,36 +237,39 @@ public class Rsa2Tg extends XmlProcessor {
 	private HasRecordDomainComponent currentRecordDomainComponent;
 
 	/**
-	 * Remembers the current Attribute vertex for processing of nested elements.
+	 * Remembers the current {@link Attribute} vertex for processing of nested
+	 * elements.
 	 */
 	private Attribute currentAttribute;
 
 	/**
-	 * Marks Vertex/EdgeClass vertices with a set of XMI Ids of superclasses.
+	 * Marks {@link VertexClass} and {@link EdgeClass} vertices with a set of
+	 * XMI Ids of superclasses.
 	 */
 	private GraphMarker<Set<String>> generalizations;
 
 	/**
-	 * Keeps track of uml:Realizations (key = client id, value = set of supplier
-	 * ids) as workaround for missing generalizations between association and
-	 * association class.
+	 * Keeps track of 'uml:Realization's (key = client id, value = set of
+	 * supplier ids) as workaround for missing generalizations between
+	 * association and association class.
 	 */
 	private Map<String, Set<String>> realizations;
 
 	/**
-	 * Marks Attribute vertices with the XMI Id of its type if the type can not
-	 * be resolved at the time the Attribute is processed.
+	 * Marks {@link Attribute} vertices with the XMI Id of its type if the type
+	 * can not be resolved at the time the Attribute is processed.
 	 */
 	private GraphMarker<String> attributeType;
 
 	/**
-	 * Marks RecordDomainComponent edges with the XMI Id of its type if the type
-	 * can not be resolved at the time the component is processed.
+	 * Marks {@link HasRecordDomainComponent} edges with the XMI Id of its type
+	 * if the type can not be resolved at the time the component is processed.
 	 */
 	private GraphMarker<String> recordComponentType;
 
 	/**
-	 * Maps qualified names of domains to the corresponding Domain vertex.
+	 * Maps qualified names of domains to the corresponding {@link Domain}
+	 * vertex.
 	 */
 	private Map<String, Domain> domainMap;
 
@@ -279,26 +282,22 @@ public class Rsa2Tg extends XmlProcessor {
 	private Set<Vertex> preliminaryVertices;
 
 	/**
-	 * Remembers the current association end edge (To/From edge), which can be
-	 * an ownedEnd or an ownedAttribute, for processing of nested elements.
+	 * Remembers the current association end edge ({@link To}/{@link From}
+	 * edge), which can be an ownedEnd or an ownedAttribute, for processing of
+	 * nested elements.
 	 */
 	private Edge currentAssociationEnd;
 
 	/**
-	 * The XMI file that's currently processed.
-	 */
-	private File currentXmiFile;
-
-	/**
-	 * The set of To/From edges which are the aggregate side of an
-	 * AggregationClass/CompositionClass (use to determine the aggregateFrom
-	 * attribute).
+	 * A Set of {@link To} and{@link From} edges, which are the aggregate side
+	 * of an {@link AggregationClass}/{@link CompositionClass} (use to determine
+	 * the aggregateFrom attribute).
 	 */
 	private Set<Edge> aggregateEnds;
 
 	/**
-	 * The set of To/From edges which are represented by ownedEnd elements (used
-	 * to determine the direction of edges).
+	 * The Set of {@link To}/{@link From} edges, which are represented by
+	 * ownedEnd elements (used to determine the direction of edges).
 	 */
 	private Set<Edge> ownedEnds;
 
@@ -310,7 +309,7 @@ public class Rsa2Tg extends XmlProcessor {
 	/**
 	 * The XMI Id of the constrained element if the constraint has exactly one
 	 * constrained element, null otherwise. If set to null, the constraint will
-	 * be attached to the GraphClass vertex.
+	 * be attached to the {@link GraphClass} vertex.
 	 */
 	private String constrainedElementId;
 
@@ -322,13 +321,14 @@ public class Rsa2Tg extends XmlProcessor {
 	private Map<String, List<String>> constraints;
 
 	/**
-	 * When creating EdgeClass names, also use the rolename of the "from" end.
+	 * When creating {@link EdgeClass} names, also use the role name of the
+	 * 'from' end.
 	 */
 	private boolean useFromRole;
 
 	/**
-	 * After processing is complete, remove Domain vertices which are not used
-	 * by an attribute or by a record domain component.
+	 * After processing is complete, remove {@link Domain} vertices which are
+	 * not used by an attribute or by a record domain component.
 	 */
 	private boolean removeUnusedDomains;
 
@@ -349,7 +349,7 @@ public class Rsa2Tg extends XmlProcessor {
 	private boolean processed;
 
 	/**
-	 * Flag for writing the output as SchemaGraph.
+	 * Flag for writing the output as {@link SchemaGraph}.
 	 */
 	private boolean writeSchemaGraph;
 
@@ -364,12 +364,12 @@ public class Rsa2Tg extends XmlProcessor {
 	private boolean validate;
 
 	/**
-	 * Filename for the Schema.
+	 * Filename for the {@link Schema}.
 	 */
 	private String filenameSchema;
 
 	/**
-	 * Filename for the SchemaGraph;
+	 * Filename for the {@link SchemaGraph};
 	 */
 	private String filenameSchemaGraph;
 
@@ -394,7 +394,7 @@ public class Rsa2Tg extends XmlProcessor {
 	 * {@link Rsa2Tg#processCommandLineOptions(String[])}.
 	 * 
 	 * @param args
-	 *            Command line options.
+	 *            {@link String} array of command line options.
 	 */
 	public static void main(String[] args) {
 
@@ -430,6 +430,7 @@ public class Rsa2Tg extends XmlProcessor {
 		r.setFilenameSchemaGraph(schemaGraph);
 		r.setFilenameDot(export);
 		r.setFilenameValidation(validation);
+		r.filenameXmi = input;
 
 		try {
 			System.out.println("processing: " + input);
@@ -446,7 +447,8 @@ public class Rsa2Tg extends XmlProcessor {
 
 	/**
 	 * Processes all command line parameters and returns a {@link CommandLine}
-	 * object, which holds all values included in the given String array.
+	 * object, which holds all values included in the given {@link String}
+	 * array.
 	 * 
 	 * @param args
 	 *            {@link CommandLine} parameters.
@@ -571,9 +573,8 @@ public class Rsa2Tg extends XmlProcessor {
 
 	/**
 	 * Processes a XML element and decides how to handle it in order to get a
-	 * Schema element.
+	 * {@link Schema} element.
 	 * 
-	 * @param parser
 	 * @throws XMLStreamException
 	 */
 	@Override
@@ -727,10 +728,10 @@ public class Rsa2Tg extends XmlProcessor {
 	}
 
 	/**
-	 * Processes a XML element end tag in order to
+	 * Processes a XML end element tags in order to set internal states.
 	 * 
-	 * @param parser
-	 *            {@link XMLStreamReader}, which points to the current element.
+	 * TODO Some @param are missing.
+	 * 
 	 * @throws XMLStreamException
 	 */
 	@Override
@@ -783,8 +784,8 @@ public class Rsa2Tg extends XmlProcessor {
 	}
 
 	/**
-	 * Finalizes the created SchemaGraph by creating missing links between
-	 * several objects.
+	 * Finalizes the created {@link SchemaGraph} by creating missing links
+	 * between several objects.
 	 * 
 	 * @throws XMLStreamException
 	 * @throws GraphIOException
@@ -874,7 +875,7 @@ public class Rsa2Tg extends XmlProcessor {
 						"No Schema name is present.");
 			}
 
-			String relativePathPrefix = currentXmiFile.getParent();
+			String relativePathPrefix = new File(filenameXmi).getParent();
 
 			// If in current working directory parent is null.
 			relativePathPrefix = relativePathPrefix == null ? ""
@@ -936,8 +937,8 @@ public class Rsa2Tg extends XmlProcessor {
 	}
 
 	/**
-	 * Out of the given String objects a file name is created, which looks like
-	 * this:
+	 * Out of the given {@link String} objects a file name is created, which
+	 * looks like this:
 	 * 
 	 * <pre>
 	 * &lt;pathPrefix&gt;&lt;name&gt;
@@ -992,8 +993,6 @@ public class Rsa2Tg extends XmlProcessor {
 	 * Handles a 'uml:Package' element by creating a corresponding grUML Package
 	 * element.
 	 * 
-	 * @param parser
-	 *            XMLStreamReader, which points to the current XML element.
 	 * @return Created Package object as Vertex.
 	 */
 	private Vertex handlePackage() throws XMLStreamException {
@@ -1008,13 +1007,11 @@ public class Rsa2Tg extends XmlProcessor {
 
 	/**
 	 * Handles a 'uml:Class' element by creating a corresponding grUML
-	 * VertexClass element.
+	 * {@link VertexClass} element.
 	 * 
-	 * @param parser
-	 *            XMLStreamReader, which points to the current XML element.
 	 * @param xmiId
 	 *            XMI ID in RSA XMI file.
-	 * @return Created VertexClass as Vertex.
+	 * @return Created VertexClass as {@link Vertex}.
 	 * @throws XMLStreamException
 	 */
 	private Vertex handleClass(String xmiId) throws XMLStreamException {
@@ -1052,13 +1049,12 @@ public class Rsa2Tg extends XmlProcessor {
 
 	/**
 	 * Handles a 'uml:Association' or a 'uml:AssociationClass' element by
-	 * creating a corresponding EdgeClass element.
+	 * creating a corresponding {@link EdgeClass} element.
 	 * 
-	 * @param parser
-	 *            XMLStreamReader, which points to the current XML element.
 	 * @param xmiId
 	 *            XMI ID in XMI file.
-	 * @return Created EdgeClass as Vertex.
+	 * @return Created EdgeClass as {@link Vertex}.
+	 * @throws XMLStreamException
 	 */
 	private Vertex handleAssociation(String xmiId) throws XMLStreamException {
 
@@ -1149,18 +1145,15 @@ public class Rsa2Tg extends XmlProcessor {
 
 	/**
 	 * Handles a 'uml:Enumeration' element by creating a corresponding
-	 * EnumDomain element.
+	 * {@link EnumDomain} element.
 	 * 
-	 * @param parser
-	 *            XMLStreamReader, which points to the current XML element.
-	 * @return Created EnumDomain as Vertex.
+	 * @return Created EnumDomain as {@link Vertex}.
 	 * @throws XMLStreamException
 	 */
 	private Vertex handleEnumeration() throws XMLStreamException {
 
 		EnumDomain ed = sg.createEnumDomain();
-		de.uni_koblenz.jgralab.grumlschema.structure.Package p = packageStack
-				.peek();
+		Package p = packageStack.peek();
 		ed
 				.set_qualifiedName(getQualifiedName(getAttribute(UML_ATTRIBUTE_NAME)));
 		sg.createContainsDomain(p, ed);
@@ -1181,8 +1174,8 @@ public class Rsa2Tg extends XmlProcessor {
 	}
 
 	/**
-	 * Handles a 'uml:PrimitiveType' element by creating a corresponding Domain
-	 * element.
+	 * Handles a 'uml:PrimitiveType' element by creating a corresponding
+	 * {@link Domain} element.
 	 * 
 	 * @return Created Domain as Vertex.
 	 */
@@ -1213,8 +1206,7 @@ public class Rsa2Tg extends XmlProcessor {
 	 * Handles a 'uml:Realization' by putting it into a map of realizations. By
 	 * this, missing generalizations can be traced.
 	 * 
-	 * @param parser
-	 *            XMLStreamReader, which points to the current XML element.
+	 * @throws XMLStreamException
 	 */
 	private void handleRealization() throws XMLStreamException {
 
@@ -1229,13 +1221,13 @@ public class Rsa2Tg extends XmlProcessor {
 	}
 
 	/**
-	 * Creates a String for a AttributedElementClass by writing the
+	 * Creates a String for a {@link AttributedElementClass} by writing the
 	 * AttributedElementClass name first and than a list of attributes with
-	 * their values.
+	 * their values of the AttributedElementClass.
 	 * 
 	 * @param attributedElement
-	 *            AttributedElement, of which a String representation should be
-	 *            created.
+	 *            {@link AttributedElement}, of which a {@link String}
+	 *            representation should be created.
 	 * @return A String representing the given AttributedElement.
 	 * @throws NoSuchFieldException
 	 */
@@ -1263,7 +1255,9 @@ public class Rsa2Tg extends XmlProcessor {
 
 	/**
 	 * Handles a 'uml:EnumerationLiteral' by creating a corresponding
-	 * enumeration literal and adding it to its EnumDomain.
+	 * enumeration literal and adding it to its {@link EnumDomain}.
+	 * 
+	 * @throws XMLStreamException
 	 */
 	private void handleEnumerationLiteral() throws XMLStreamException {
 
@@ -1298,7 +1292,7 @@ public class Rsa2Tg extends XmlProcessor {
 	}
 
 	/**
-	 * Writes the current processed Schema as a Schema to a TG file.
+	 * Writes the current processed {@link Schema} as a Schema to a TG file.
 	 * 
 	 * @param schemaName
 	 *            Name of the Schema.
@@ -1318,8 +1312,8 @@ public class Rsa2Tg extends XmlProcessor {
 	}
 
 	/**
-	 * Corrects the current edge direction of every EdgeClass by using the
-	 * navigability.
+	 * Corrects the current edge direction of every {@link EdgeClass} by using
+	 * the navigability.
 	 */
 	private void correctEdgeDirection() {
 
@@ -1380,7 +1374,8 @@ public class Rsa2Tg extends XmlProcessor {
 	}
 
 	/**
-	 * Attaches all Constraints to their corresponding AttributedElementClass.
+	 * Attaches all Constraint objects to their corresponding
+	 * {@link AttributedElementClass}.
 	 * 
 	 * @throws XMLStreamException
 	 */
@@ -1417,7 +1412,7 @@ public class Rsa2Tg extends XmlProcessor {
 	}
 
 	/**
-	 * Sets of all aggregated Ends the aggregatedFrom Attribute.
+	 * Sets of all aggregated Ends the 'aggregatedFrom' attribute.
 	 */
 	private void setAggregateFromAttributes() {
 		for (Edge e : aggregateEnds) {
@@ -1427,6 +1422,11 @@ public class Rsa2Tg extends XmlProcessor {
 		aggregateEnds.clear();
 	}
 
+	/**
+	 * Creates {@link EdgeClass} names for all EdgeClass objects ...
+	 * 
+	 * TODO Needs to be described.
+	 */
 	private void createEdgeClassNames() {
 		for (EdgeClass ec : sg.getEdgeClassVertices()) {
 			String name = ec.get_qualifiedName().trim();
@@ -1450,7 +1450,9 @@ public class Rsa2Tg extends XmlProcessor {
 						+ toRole.substring(1);
 			}
 
-			// TODO Exception
+			// TODO
+			// There must be a 'to' role name, which is different than null and
+			// not empty.
 			if (toRole == null || toRole.length() <= 0) {
 				throw new ProcessingException(filenameXmi,
 						"There is no role name 'to' for the edge '" + name
@@ -1479,7 +1481,9 @@ public class Rsa2Tg extends XmlProcessor {
 							+ fromRole.substring(1);
 				}
 
-				// TODO Exception
+				// TODO
+				// There must be a 'from' role name, which is different than
+				// null and not empty.
 				if (fromRole == null || fromRole.length() <= 0) {
 					throw new ProcessingException(filenameXmi,
 							"There is no role name of 'from' for the edge '"
@@ -1487,13 +1491,16 @@ public class Rsa2Tg extends XmlProcessor {
 				}
 				name += fromRole;
 			}
-			// System.err.println(" ==> '" + name + "' + '" + ecName + "'");
 
 			assert (ecName != null) && (ecName.length() > 0);
 			ec.set_qualifiedName(name + ecName);
 		}
 	}
 
+	/**
+	 * Removes unused {@link Domain} objects, which are included in the current
+	 * {@link SchemaGraph}.
+	 */
 	private void removeUnusedDomains() {
 		if (!isRemoveUnusedDomains()) {
 			return;
@@ -1514,13 +1521,21 @@ public class Rsa2Tg extends XmlProcessor {
 		}
 	}
 
+	/**
+	 * Resolves all preliminary {@link StringDomain}, which store the domain id,
+	 * to existing {@link Domain} objects and links them to their corresponding
+	 * {@link RecordDomain} objects.
+	 */
 	private void linkRecordDomainComponents() {
+
 		for (HasRecordDomainComponent comp : sg
 				.getHasRecordDomainComponentEdges()) {
+
 			String domainId = recordComponentType.getMark(comp);
 			if (domainId == null) {
 				continue;
 			}
+
 			Domain dom = (Domain) idMap.get(domainId);
 			if (dom != null) {
 				Domain d = (Domain) comp.getOmega();
@@ -1548,7 +1563,12 @@ public class Rsa2Tg extends XmlProcessor {
 		}
 	}
 
+	/**
+	 * Links {@link Attribute} and {@link Domain} objects to each other by
+	 * creating a {@link HasDomain} edge.
+	 */
 	private void linkAttributeDomains() {
+
 		for (Attribute att : sg.getAttributeVertices()) {
 			String domainId = attributeType.getMark(att);
 			if (domainId == null) {
@@ -1560,7 +1580,8 @@ public class Rsa2Tg extends XmlProcessor {
 				sg.createHasDomain(att, dom);
 				attributeType.removeMark(att);
 			} else {
-				// TODO Exception
+				// TODO
+				// Every Attribute must have a Domain.
 				throw new ProcessingException(filenameXmi,
 						"Undefined Domain with ID '" + domainId + "' found.");
 			}
@@ -1568,13 +1589,22 @@ public class Rsa2Tg extends XmlProcessor {
 			assert att.getDegree(HasDomain.class, EdgeDirection.OUT) == 1;
 		}
 
-		// TODO Exception, es gibt Attribute, deren Domain nicht aufgelöst wurde
+		// TODO
+		// If 'attributeType' is not empty, there will be a Domain objects
+		// left over.
 		if (!attributeType.isEmpty()) {
 			throw new ProcessingException(filenameXmi,
 					"There are some Attribute objects, whos domains are not resolved.");
 		}
 	}
 
+	/**
+	 * Writes the {@link SchemaGraph} as Dotty-Graph to a DOT file with the name
+	 * of 'dotName'.
+	 * 
+	 * @param dotName
+	 *            File name of the DOT output file.
+	 */
 	private void writeDotFile(String dotName) {
 		Tg2Dot tg2Dot = new Tg2Dot();
 		tg2Dot.setGraph(sg);
@@ -1583,11 +1613,24 @@ public class Rsa2Tg extends XmlProcessor {
 		tg2Dot.printGraph();
 	}
 
+	/**
+	 * Writes the {@link SchemaGraph} as a Graph to a TG file with the specified
+	 * file name <code>schemaGraphName</code>.
+	 * 
+	 * @param schemaGraphName
+	 *            File name of the TG output file.
+	 * @throws GraphIOException
+	 */
 	private void writeSchemaGraph(String schemaGraphName)
 			throws GraphIOException {
 		GraphIO.saveGraphToFile(schemaGraphName, sg, null);
 	}
 
+	/**
+	 * Realizes the Generalization relationship by linking
+	 * {@link AttributedElementClass} objects to their direct extended
+	 * {@link AttributedElementClass}.
+	 */
 	private void linkGeneralizations() {
 		for (String clientId : realizations.keySet()) {
 			Set<String> suppliers = realizations.get(clientId);
@@ -1608,7 +1651,8 @@ public class Rsa2Tg extends XmlProcessor {
 				AttributedElementClass sup = (AttributedElementClass) idMap
 						.get(id);
 
-				// TODO Exception, Superklasse mit ID nicht gefunden
+				// TODO
+				// No superclass with the specified ID has been found.
 				if (sup == null) {
 					throw new ProcessingException(filenameXmi,
 							"The superclass with ID '" + id
@@ -1616,8 +1660,8 @@ public class Rsa2Tg extends XmlProcessor {
 				}
 				if (sup instanceof VertexClass) {
 
-					// TODO VertexClass kann nur von VertexClass spezialisiert
-					// werden, nicht von (klasse von AE)
+					// TODO
+					// VertexClass can only extend a VertexClass
 					if (!(ae instanceof VertexClass)) {
 						throw new ProcessingException(
 								filenameXmi,
@@ -1628,7 +1672,8 @@ public class Rsa2Tg extends XmlProcessor {
 							(VertexClass) sup);
 				} else if (sup instanceof EdgeClass) {
 
-					// TODO EdgeClass kann nur ... s.o.
+					// TODO
+					// EdgeClass can only extend a EdgeClass
 					if (!(ae instanceof EdgeClass)) {
 						throw new ProcessingException(
 								filenameXmi,
@@ -1638,7 +1683,7 @@ public class Rsa2Tg extends XmlProcessor {
 					sg.createSpecializesEdgeClass((EdgeClass) ae,
 							(EdgeClass) sup);
 				} else {
-					// should not get here
+					// Should not get here
 					throw new RuntimeException(
 							"FIXME: Unexpected super class type. Super class must be VertexClass or EdgeClass!");
 				}
@@ -1647,13 +1692,14 @@ public class Rsa2Tg extends XmlProcessor {
 		generalizations.clear();
 	}
 
+	/**
+	 * Removes empty {@link Package} objects from the {@link SchemaGraph}.
+	 */
 	private void removeEmptyPackages() {
 		// remove all empty packages except the default package
-		de.uni_koblenz.jgralab.grumlschema.structure.Package p = sg
-				.getFirstPackage();
+		Package p = sg.getFirstPackage();
 		while (p != null) {
-			de.uni_koblenz.jgralab.grumlschema.structure.Package n = p
-					.getNextPackage();
+			Package n = p.getNextPackage();
 			if ((p.getDegree() == 1) && (p.get_qualifiedName().length() > 0)) {
 				// System.out.println("...remove empty package '"
 				// + p.getQualifiedName() + "'");
@@ -1667,6 +1713,17 @@ public class Rsa2Tg extends XmlProcessor {
 		}
 	}
 
+	/**
+	 * Handles a {@link Constraint} by adding it to a preliminary {@link Map} of
+	 * Constraints and their ids.
+	 * 
+	 * @param text
+	 *            Constraint as {@link String}.
+	 * @param line
+	 *            Line number, at which the current Constraint has been found.
+	 *            Only needed for exception purposes.
+	 * @throws XMLStreamException
+	 */
 	private void handleConstraint(String text) throws XMLStreamException {
 		if (text.startsWith("redefines") || text.startsWith("\"")) {
 			List<String> l = constraints.get(constrainedElementId);
@@ -1682,11 +1739,24 @@ public class Rsa2Tg extends XmlProcessor {
 		}
 	}
 
+	/**
+	 * Adds redefinesConstraint {@link String} objects to a specific
+	 * {@link Edge}.
+	 * 
+	 * @param constrainedEnd
+	 *            Edge, to which all redefinesConstraint String objects will be
+	 *            added.
+	 * @param text
+	 *            RedefinedConstraint String, which can contain multiple
+	 *            constraints.
+	 * @throws XMLStreamException
+	 */
 	private void addRedefinesConstraint(Edge constrainedEnd, String text)
 			throws XMLStreamException {
 
-		// TODO: Exception, redefines constraint kann nur an association ends
-		// stehen
+		// TODO:
+		// RedefinesConstraints can only be attached to the end of an
+		// association
 		if (!(constrainedEnd instanceof From)
 				&& !(constrainedEnd instanceof To)) {
 			throw new ProcessingException(filenameXmi,
@@ -1700,7 +1770,8 @@ public class Rsa2Tg extends XmlProcessor {
 		}
 		String[] roles = text.substring(10).split("\\s*,\\s*");
 
-		// TODO Exception
+		// TODO
+		// String array of 'roles' must not be empty.
 		if (roles.length < 1) {
 			throw new ProcessingException(filenameXmi,
 					"No role defined. At least one role have to be defined.");
@@ -1708,7 +1779,8 @@ public class Rsa2Tg extends XmlProcessor {
 		Set<String> redefinedRoles = new TreeSet<String>();
 		for (String role : roles) {
 
-			// TODO Exception
+			// TODO
+			// A role String must not be empty.
 			if (role.length() < 1) {
 				throw new ProcessingException(filenameXmi,
 						"the role name is empty.");
@@ -1716,7 +1788,8 @@ public class Rsa2Tg extends XmlProcessor {
 			redefinedRoles.add(role);
 		}
 
-		// TODO UNNECESSARY
+		// TODO
+		// At least one redefined role must have been added.
 		if (redefinedRoles.size() < 1) {
 			throw new ProcessingException(filenameXmi,
 					"No redefined role has been added!");
@@ -1729,6 +1802,15 @@ public class Rsa2Tg extends XmlProcessor {
 		}
 	}
 
+	/**
+	 * Adds a Greql constraint to a {@link AttributedElementClass} object.
+	 * 
+	 * @param constrainedClass
+	 *            {@link AttributedElementClass}, which should be constraint.
+	 * @param text
+	 *            Constraint as String.
+	 * @throws XMLStreamException
+	 */
 	private void addGreqlConstraint(AttributedElementClass constrainedClass,
 			String text) throws XMLStreamException {
 
@@ -1794,6 +1876,12 @@ public class Rsa2Tg extends XmlProcessor {
 		}
 	}
 
+	/**
+	 * Sets the upper bound of the multiplicity of an {@link Edge} as the 'max'
+	 * value of the current 'from' or 'to' Edge.
+	 * 
+	 * @throws XMLStreamException
+	 */
 	private void handleUpperValue() throws XMLStreamException {
 		int n = getValue();
 		if (currentAssociationEnd instanceof From) {
@@ -1803,6 +1891,13 @@ public class Rsa2Tg extends XmlProcessor {
 		}
 	}
 
+	/**
+	 * Retrieves the value of the 'value' attribute of the current XML element
+	 * and returns it.
+	 * 
+	 * @throws XMLStreamException
+	 * @return Retrieved integer value.
+	 */
 	private int getValue() throws XMLStreamException {
 		assert currentAssociationEnd != null;
 		String val = getAttribute(UML_ATTRIBUTE_VALUE);
@@ -1810,6 +1905,12 @@ public class Rsa2Tg extends XmlProcessor {
 				: Integer.parseInt(val);
 	}
 
+	/**
+	 * Sets the lower bound of the multiplicity of an {@link Edge} as the 'min'
+	 * value of the current 'from' or 'to' Edge.
+	 * 
+	 * @throws XMLStreamException
+	 */
 	private void handleLowerValue() throws XMLStreamException {
 		int n = getValue();
 		if (currentAssociationEnd instanceof From) {
@@ -1819,6 +1920,11 @@ public class Rsa2Tg extends XmlProcessor {
 		}
 	}
 
+	/**
+	 * TODO
+	 * 
+	 * @throws XMLStreamException
+	 */
 	private void handleStereotype() throws XMLStreamException {
 		String key = getAttribute(UML_ATTRIBUTE_KEY);
 		if (key.equals("graphclass")) {
@@ -1865,10 +1971,7 @@ public class Rsa2Tg extends XmlProcessor {
 			while (e != null) {
 				Edge n = e.getNextEdge();
 				if (e instanceof ContainsGraphElementClass) {
-					sg
-							.createContainsDomain(
-									(de.uni_koblenz.jgralab.grumlschema.structure.Package) e
-											.getThat(), rd);
+					sg.createContainsDomain((Package) e.getThat(), rd);
 					e.delete();
 				} else if (e instanceof HasAttribute) {
 					Attribute att = (Attribute) e.getThat();
@@ -1931,6 +2034,13 @@ public class Rsa2Tg extends XmlProcessor {
 		}
 	}
 
+	/**
+	 * Handles a 'generalization' XML element by marking the current class.
+	 * 
+	 * @param parser
+	 *            {@link XMLStreamReader}, which points to the current XML
+	 *            element.
+	 */
 	private void handleGeneralization() throws XMLStreamException {
 		String general = getAttribute(UML_ATTRIBUTE_GENERAL);
 		Set<String> gens = generalizations.getMark(currentClass);
@@ -1941,9 +2051,17 @@ public class Rsa2Tg extends XmlProcessor {
 		gens.add(general);
 	}
 
+	/**
+	 * Handles a nested 'uml:PrimitivType' XML element by creating a
+	 * corresponding {@link Domain}.
+	 * 
+	 * @param type
+	 *            Type name of the nested Type.
+	 * @throws XMLStreamException
+	 */
 	private void handleNestedTypeElement(String type) throws XMLStreamException {
 
-		// TODO UNNECESSARY
+		// TODO
 		// Dokumentstruktur, <type> nur in Attribut oder <<record>> Klasse
 		// erlaubt
 		if (currentAttribute == null && currentRecordDomain == null) {
@@ -2002,6 +2120,17 @@ public class Rsa2Tg extends XmlProcessor {
 		}
 	}
 
+	/**
+	 * Handles a 'ownedAttribute' XML element of type 'uml:Property' by creating
+	 * a {@link Attribute} and linking it with its
+	 * {@link AttributedElementClass}.
+	 * 
+	 * @param parser
+	 *            {@link XMLStreamReader}, which points to the current XML
+	 *            element.
+	 * @param xmiId
+	 *            XMI id of the current XML element.
+	 */
 	private void handleOwnedAttribute(String xmiId) throws XMLStreamException {
 
 		// TODO Exc. OwnedAttribute muss in einer Knoten/Kantenklasse oder einer
@@ -2084,6 +2213,13 @@ public class Rsa2Tg extends XmlProcessor {
 		}
 	}
 
+	/**
+	 * Handles a 'ownedEnd' XML element of type 'uml:Property' by creating ...
+	 * TODO
+	 * 
+	 * @throws XMLStreamException
+	 * @param xmiId
+	 */
 	private void handleAssociatioEnd(String xmiId) throws XMLStreamException {
 		String endName = getAttribute(UML_ATTRIBUTE_NAME);
 		String agg = getAttribute(UML_ATTRIBUTE_AGGREGATION);
@@ -2231,6 +2367,13 @@ public class Rsa2Tg extends XmlProcessor {
 		}
 	}
 
+	/**
+	 * 
+	 * @param ec
+	 * @param aggregation
+	 * @param composition
+	 * @return
+	 */
 	private EdgeClass correctAggregationAndComposition(EdgeClass ec,
 			boolean aggregation, boolean composition) {
 		if (composition && (ec.getM1Class() != CompositionClass.class)) {
@@ -2260,6 +2403,11 @@ public class Rsa2Tg extends XmlProcessor {
 		return ec;
 	}
 
+	/**
+	 * 
+	 * @param oldVertex
+	 * @param newVertex
+	 */
 	private void reconnectEdges(Vertex oldVertex, Vertex newVertex) {
 		Edge curr = oldVertex.getFirstEdge();
 		while (curr != null) {
@@ -2278,7 +2426,8 @@ public class Rsa2Tg extends XmlProcessor {
 	 * edge, and the type is "StringDomain".
 	 * 
 	 * @param typeName
-	 * @return
+	 *            Describes the Domain, which should be created.
+	 * @return Created Domain.
 	 */
 	private Domain createDomain(String typeName) {
 		Domain dom = domainMap.get(typeName);
