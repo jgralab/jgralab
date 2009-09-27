@@ -384,11 +384,6 @@ public class Rsa2Tg extends XmlProcessor {
 	private String filenameValidation;
 
 	/**
-	 * Filename for the xmi file
-	 */
-	private String filenameXmi;
-
-	/**
 	 * Processes an XMI-file to a TG-file as schema or a schema in a grUML
 	 * graph. For all command line options see
 	 * {@link Rsa2Tg#processCommandLineOptions(String[])}.
@@ -430,7 +425,6 @@ public class Rsa2Tg extends XmlProcessor {
 		r.setFilenameSchemaGraph(schemaGraph);
 		r.setFilenameDot(export);
 		r.setFilenameValidation(validation);
-		r.filenameXmi = input;
 
 		try {
 			System.out.println("processing: " + input);
@@ -609,7 +603,7 @@ public class Rsa2Tg extends XmlProcessor {
 				packageStack.push(defaultPackage);
 			} else {
 				// Unexpected root element
-				throw new ProcessingException(getParser(), filenameXmi,
+				throw new ProcessingException(getParser(), getFileName(),
 						"Root element must be " + UML_MODEL + " or "
 								+ UML_PACKAGE);
 			}
@@ -635,7 +629,7 @@ public class Rsa2Tg extends XmlProcessor {
 				} else if (type.equals(UML_REALIZATION)) {
 					handleRealization();
 				} else {
-					throw new ProcessingException(getParser(), filenameXmi,
+					throw new ProcessingException(getParser(), getFileName(),
 							createUnexpectedElementMessage(name, type));
 				}
 
@@ -660,7 +654,7 @@ public class Rsa2Tg extends XmlProcessor {
 					// in a constraint.
 					|| name.equals(UML_LANGUAGE) || name.equals(UML_BODY)) {
 				if (!inConstraint) {
-					throw new ProcessingException(getParser(), filenameXmi,
+					throw new ProcessingException(getParser(), getFileName(),
 							createUnexpectedElementMessage(name, null));
 				}
 
@@ -671,7 +665,7 @@ public class Rsa2Tg extends XmlProcessor {
 						&& (currentClass instanceof EdgeClass)) {
 					handleAssociatioEnd(xmiId);
 				} else {
-					throw new ProcessingException(getParser(), filenameXmi,
+					throw new ProcessingException(getParser(), getFileName(),
 							createUnexpectedElementMessage(name, type));
 				}
 
@@ -680,7 +674,7 @@ public class Rsa2Tg extends XmlProcessor {
 				if (type.equals(UML_PROPERTY)) {
 					handleOwnedAttribute(xmiId);
 				} else {
-					throw new ProcessingException(getParser(), filenameXmi,
+					throw new ProcessingException(getParser(), getFileName(),
 							createUnexpectedElementMessage(name, type));
 				}
 
@@ -690,7 +684,7 @@ public class Rsa2Tg extends XmlProcessor {
 				if (type.equals(UML_PRIMITIVE_TYPE)) {
 					handleNestedTypeElement(type);
 				} else {
-					throw new ProcessingException(getParser(), filenameXmi,
+					throw new ProcessingException(getParser(), getFileName(),
 							createUnexpectedElementMessage(name, type));
 				}
 
@@ -699,7 +693,7 @@ public class Rsa2Tg extends XmlProcessor {
 				if (type.equals(UML_ENUMERATIONLITERAL)) {
 					handleEnumerationLiteral();
 				} else {
-					throw new ProcessingException(getParser(), filenameXmi,
+					throw new ProcessingException(getParser(), getFileName(),
 							createUnexpectedElementMessage(name, type));
 				}
 			} else if (name.equals(XMI_EXTENSION)) {
@@ -716,7 +710,7 @@ public class Rsa2Tg extends XmlProcessor {
 				handleUpperValue();
 			} else {
 				// for unexpected cases
-				throw new ProcessingException(getParser(), filenameXmi,
+				throw new ProcessingException(getParser(), getFileName(),
 						createUnexpectedElementMessage(name, type));
 			}
 		}
@@ -737,6 +731,7 @@ public class Rsa2Tg extends XmlProcessor {
 	@Override
 	protected void endElement(String name, StringBuilder content)
 			throws XMLStreamException {
+
 		String xmiId = xmiIdStack.pop();
 
 		if (inConstraint && name.equals(UML_BODY)) {
@@ -750,7 +745,7 @@ public class Rsa2Tg extends XmlProcessor {
 				// There should be at least one package element in the
 				// stack.
 				if (packageStack.size() <= 1) {
-					throw new ProcessingException(getParser(), filenameXmi,
+					throw new ProcessingException(getParser(), getFileName(),
 							"XMI file is malformed. There is probably one end element to much.");
 				}
 				packageStack.pop();
@@ -769,7 +764,7 @@ public class Rsa2Tg extends XmlProcessor {
 			// TODO
 			// There should be no package left.
 			if (packageStack.size() != 0) {
-				throw new ProcessingException(getParser(), filenameXmi,
+				throw new ProcessingException(getParser(), getFileName(),
 						"XMI file is malformed. There is probably one end element to much.");
 			}
 		} else if (name.equals(UML_OWNEDATTRIBUTE)) {
@@ -796,7 +791,7 @@ public class Rsa2Tg extends XmlProcessor {
 
 		// The qualified name of the GraphClass should be set.
 		if (graphClass.get_qualifiedName() == null) {
-			throw new ProcessingException(filenameXmi,
+			throw new ProcessingException(getFileName(),
 					"No <<graphclass>> defined in schema '"
 							+ schema.get_packagePrefix() + "."
 							+ schema.get_name() + "'");
@@ -836,7 +831,7 @@ public class Rsa2Tg extends XmlProcessor {
 		}
 
 		if (!preliminaryVertices.isEmpty()) {
-			throw new ProcessingException(filenameXmi,
+			throw new ProcessingException(getFileName(),
 					"There are still vertices left over. ");
 		}
 
@@ -863,19 +858,18 @@ public class Rsa2Tg extends XmlProcessor {
 			// TODO
 			// There should exist a Schema.
 			if (schema == null) {
-				throw new ProcessingException(filenameXmi,
+				throw new ProcessingException(getFileName(),
 						"No Schema has been generated.");
 			}
 			String schemaName = schema.get_name();
-
 			// TODO
 			// A Schema name must exist.
 			if (schemaName == null) {
-				throw new ProcessingException(filenameXmi,
+				throw new ProcessingException(getFileName(),
 						"No Schema name is present.");
 			}
 
-			String relativePathPrefix = new File(filenameXmi).getParent();
+			String relativePathPrefix = new File(getFileName()).getParent();
 
 			// If in current working directory parent is null.
 			relativePathPrefix = relativePathPrefix == null ? ""
@@ -1023,7 +1017,7 @@ public class Rsa2Tg extends XmlProcessor {
 			// TODO
 			// Element with ID xmiID must be a VertexClass
 			if (!(ae instanceof VertexClass)) {
-				throw new ProcessingException(getParser(), filenameXmi,
+				throw new ProcessingException(getParser(), getFileName(),
 						"The element with ID '" + xmiId
 								+ "' is not a class. (VertexClass)");
 			}
@@ -1067,7 +1061,7 @@ public class Rsa2Tg extends XmlProcessor {
 			// TODO s.o.
 			// Element with ID xmiID must be a EdgeClass
 			if (!(ae instanceof EdgeClass)) {
-				throw new ProcessingException(getParser(), filenameXmi,
+				throw new ProcessingException(getParser(), getFileName(),
 						"The element with ID '" + xmiId
 								+ "' is not a association. (EdgeClass)");
 			}
@@ -1095,7 +1089,7 @@ public class Rsa2Tg extends XmlProcessor {
 		// TODO
 		// An association have to have a end member.
 		if (memberEnd == null) {
-			throw new ProcessingException(getParser(), filenameXmi,
+			throw new ProcessingException(getParser(), getFileName(),
 					"The association with ID '" + xmiId
 							+ "' has no end member. (EdgeClass)");
 		}
@@ -1186,14 +1180,14 @@ public class Rsa2Tg extends XmlProcessor {
 		// TODO
 		// A type name must be defined.
 		if (typeName == null) {
-			throw new ProcessingException(getParser(), filenameXmi,
+			throw new ProcessingException(getParser(), getFileName(),
 					"No type name declared.");
 		}
 		typeName = typeName.replaceAll("\\s", "");
 
 		// TODO Exception "Type name is empty"
 		if (typeName.length() <= 0) {
-			throw new ProcessingException(getParser(), filenameXmi,
+			throw new ProcessingException(getParser(), getFileName(),
 					"The current type is empty.");
 		}
 		Domain dom = createDomain(typeName);
@@ -1266,7 +1260,7 @@ public class Rsa2Tg extends XmlProcessor {
 		// TODO
 		// A Literal must be declared.
 		if (s == null) {
-			throw new ProcessingException(getParser(), filenameXmi,
+			throw new ProcessingException(getParser(), getFileName(),
 					"No Literal declared.");
 		}
 		s = s.trim();
@@ -1274,7 +1268,7 @@ public class Rsa2Tg extends XmlProcessor {
 		// TODO
 		// Literal must not be empty.
 		if (s.length() <= 0) {
-			throw new ProcessingException(getParser(), filenameXmi,
+			throw new ProcessingException(getParser(), getFileName(),
 					"Literal is empty.");
 		}
 
@@ -1283,7 +1277,7 @@ public class Rsa2Tg extends XmlProcessor {
 		// TODO
 		// Exception "No Enum found for Literal " ... " found.
 		if (classifier == null) {
-			throw new ProcessingException(getParser(), filenameXmi,
+			throw new ProcessingException(getParser(), getFileName(),
 					"No Enumeration found for Literal '" + s + "'.");
 		}
 		EnumDomain ed = (EnumDomain) idMap.get(classifier);
@@ -1328,7 +1322,7 @@ public class Rsa2Tg extends XmlProcessor {
 			// TODO
 			// 'from' and 'to' Edge have to be declared.
 			if (from == null || to == null) {
-				throw new ProcessingException(filenameXmi,
+				throw new ProcessingException(getFileName(),
 						"No 'from'-, 'to'-Edge or both are declared.");
 			}
 			boolean fromIsNavigable = !ownedEnds.contains(from);
@@ -1392,7 +1386,7 @@ public class Rsa2Tg extends XmlProcessor {
 			// Association Ends.
 			if (!(ae instanceof AttributedElementClass)
 					&& !(ae instanceof From) && !(ae instanceof To)) {
-				throw new ProcessingException(filenameXmi,
+				throw new ProcessingException(getFileName(),
 						"Constraint can only be attached to GraphClass, "
 								+ "VertexClass, EdgeClass or association ends.");
 			}
@@ -1403,7 +1397,7 @@ public class Rsa2Tg extends XmlProcessor {
 			} else {
 				// TODO Exception
 				if (l.size() != 1) {
-					throw new ProcessingException(filenameXmi,
+					throw new ProcessingException(getFileName(),
 							"Only one redefines Constraint allowed");
 				}
 				addRedefinesConstraint((Edge) ae, l.get(0));
@@ -1454,7 +1448,7 @@ public class Rsa2Tg extends XmlProcessor {
 			// There must be a 'to' role name, which is different than null and
 			// not empty.
 			if (toRole == null || toRole.length() <= 0) {
-				throw new ProcessingException(filenameXmi,
+				throw new ProcessingException(getFileName(),
 						"There is no role name 'to' for the edge '" + name
 								+ "' defined.");
 			}
@@ -1485,7 +1479,7 @@ public class Rsa2Tg extends XmlProcessor {
 				// There must be a 'from' role name, which is different than
 				// null and not empty.
 				if (fromRole == null || fromRole.length() <= 0) {
-					throw new ProcessingException(filenameXmi,
+					throw new ProcessingException(getFileName(),
 							"There is no role name of 'from' for the edge '"
 									+ name + "' defined.");
 				}
@@ -1550,7 +1544,7 @@ public class Rsa2Tg extends XmlProcessor {
 				preliminaryVertices.remove(d);
 				recordComponentType.removeMark(comp);
 			} else {
-				throw new ProcessingException(filenameXmi,
+				throw new ProcessingException(getFileName(),
 						"Undefined Domain with ID '" + domainId + "' found.");
 			}
 		}
@@ -1558,7 +1552,7 @@ public class Rsa2Tg extends XmlProcessor {
 		// TODO Exception, es gibt RecordDomains mit Komponenten, deren Domain
 		// nicht aufgelöst wurde
 		if (!recordComponentType.isEmpty()) {
-			throw new ProcessingException(filenameXmi,
+			throw new ProcessingException(getFileName(),
 					"There are some RocordDomain objects, whos domains are not resolved.");
 		}
 	}
@@ -1582,7 +1576,7 @@ public class Rsa2Tg extends XmlProcessor {
 			} else {
 				// TODO
 				// Every Attribute must have a Domain.
-				throw new ProcessingException(filenameXmi,
+				throw new ProcessingException(getFileName(),
 						"Undefined Domain with ID '" + domainId + "' found.");
 			}
 
@@ -1593,7 +1587,7 @@ public class Rsa2Tg extends XmlProcessor {
 		// If 'attributeType' is not empty, there will be a Domain objects
 		// left over.
 		if (!attributeType.isEmpty()) {
-			throw new ProcessingException(filenameXmi,
+			throw new ProcessingException(getFileName(),
 					"There are some Attribute objects, whos domains are not resolved.");
 		}
 	}
@@ -1654,7 +1648,7 @@ public class Rsa2Tg extends XmlProcessor {
 				// TODO
 				// No superclass with the specified ID has been found.
 				if (sup == null) {
-					throw new ProcessingException(filenameXmi,
+					throw new ProcessingException(getFileName(),
 							"The superclass with ID '" + id
 									+ "' could not be found.");
 				}
@@ -1664,7 +1658,7 @@ public class Rsa2Tg extends XmlProcessor {
 					// VertexClass can only extend a VertexClass
 					if (!(ae instanceof VertexClass)) {
 						throw new ProcessingException(
-								filenameXmi,
+								getFileName(),
 								"The superclasses do not share the same base type (Either EdgeClass or VertexClass).");
 					}
 
@@ -1676,7 +1670,7 @@ public class Rsa2Tg extends XmlProcessor {
 					// EdgeClass can only extend a EdgeClass
 					if (!(ae instanceof EdgeClass)) {
 						throw new ProcessingException(
-								filenameXmi,
+								getFileName(),
 								"The superclasses do not share the same base type (Either EdgeClass or VertexClass).");
 					}
 
@@ -1733,7 +1727,7 @@ public class Rsa2Tg extends XmlProcessor {
 			}
 			l.add(text);
 		} else {
-			throw new ProcessingException(filenameXmi, getParser()
+			throw new ProcessingException(getFileName(), getParser()
 					.getLocation().getLineNumber(),
 					"Illegal constraint format: " + text);
 		}
@@ -1759,13 +1753,13 @@ public class Rsa2Tg extends XmlProcessor {
 		// association
 		if (!(constrainedEnd instanceof From)
 				&& !(constrainedEnd instanceof To)) {
-			throw new ProcessingException(filenameXmi,
+			throw new ProcessingException(getFileName(),
 					"Redefines constraints must be attached to one association end.");
 		}
 
 		text = text.trim().replaceAll("\\s+", " ");
 		if (!text.startsWith("redefines ")) {
-			throw new ProcessingException(filenameXmi,
+			throw new ProcessingException(getFileName(),
 					"Wrong redefines constraint format.");
 		}
 		String[] roles = text.substring(10).split("\\s*,\\s*");
@@ -1773,7 +1767,7 @@ public class Rsa2Tg extends XmlProcessor {
 		// TODO
 		// String array of 'roles' must not be empty.
 		if (roles.length < 1) {
-			throw new ProcessingException(filenameXmi,
+			throw new ProcessingException(getFileName(),
 					"No role defined. At least one role have to be defined.");
 		}
 		Set<String> redefinedRoles = new TreeSet<String>();
@@ -1782,7 +1776,7 @@ public class Rsa2Tg extends XmlProcessor {
 			// TODO
 			// A role String must not be empty.
 			if (role.length() < 1) {
-				throw new ProcessingException(filenameXmi,
+				throw new ProcessingException(getFileName(),
 						"the role name is empty.");
 			}
 			redefinedRoles.add(role);
@@ -1791,7 +1785,7 @@ public class Rsa2Tg extends XmlProcessor {
 		// TODO
 		// At least one redefined role must have been added.
 		if (redefinedRoles.size() < 1) {
-			throw new ProcessingException(filenameXmi,
+			throw new ProcessingException(getFileName(),
 					"No redefined role has been added!");
 		}
 
@@ -1845,7 +1839,7 @@ public class Rsa2Tg extends XmlProcessor {
 								beginIndex + 1, i).trim());
 						break;
 					default:
-						throw new ProcessingException(filenameXmi,
+						throw new ProcessingException(getFileName(),
 								"Illegal constraint format. The constraint text was '"
 										+ text + "'.");
 					}
@@ -1861,7 +1855,7 @@ public class Rsa2Tg extends XmlProcessor {
 						inString = true;
 						beginIndex = i;
 					} else {
-						throw new ProcessingException(filenameXmi,
+						throw new ProcessingException(getFileName(),
 								"Illegal constraint format. The constraint text was '"
 										+ text + "'.  Expected '\"' but got '"
 										+ c + "'.  (position = " + i + ").");
@@ -1870,7 +1864,7 @@ public class Rsa2Tg extends XmlProcessor {
 			}
 		}
 		if (inString || escape || (stringCount < 2) || (stringCount > 3)) {
-			throw new ProcessingException(filenameXmi,
+			throw new ProcessingException(getFileName(),
 					"Illegal constraint format.  The constraint text was '"
 							+ text + "'.");
 		}
@@ -1934,7 +1928,7 @@ public class Rsa2Tg extends XmlProcessor {
 			// stehen,
 			// nicht an anderen Elementen
 			if (currentClass == null || !(currentClass instanceof VertexClass)) {
-				throw new ProcessingException(getParser(), filenameXmi,
+				throw new ProcessingException(getParser(), getFileName(),
 						"The stereotype <<graphclass>> is only allow for UML-classes.");
 			}
 
@@ -1987,7 +1981,8 @@ public class Rsa2Tg extends XmlProcessor {
 						// TODO
 						if (typeId == null) {
 							throw new ProcessingException(getParser(),
-									filenameXmi, "No type id has been defined.");
+									getFileName(),
+									"No type id has been defined.");
 						}
 						Domain dom = sg.createStringDomain();
 						dom.set_qualifiedName(typeId);
@@ -2007,7 +2002,7 @@ public class Rsa2Tg extends XmlProcessor {
 			// TODO Exception: Klasser <<record>> blabla darf keine
 			// Assoziationen haben
 			if (currentClass.getDegree() != 0) {
-				throw new ProcessingException(getParser(), filenameXmi,
+				throw new ProcessingException(getParser(), getFileName(),
 						"A <<record>>-class must not have any association.");
 			}
 			domainMap.put(rd.get_qualifiedName(), rd);
@@ -2024,12 +2019,12 @@ public class Rsa2Tg extends XmlProcessor {
 
 			// TODO Abstract darf nur an Klassen und Assoziationen stehen
 			if (currentClass == null) {
-				throw new ProcessingException(getParser(), filenameXmi,
+				throw new ProcessingException(getParser(), getFileName(),
 						"The modifier 'abstract' is only allowed for classes or associations.");
 			}
 			currentClass.set_abstract(true);
 		} else {
-			throw new ProcessingException(getParser(), filenameXmi,
+			throw new ProcessingException(getParser(), getFileName(),
 					"Unexpected stereotype '" + key + "'.");
 		}
 	}
@@ -2067,14 +2062,14 @@ public class Rsa2Tg extends XmlProcessor {
 		if (currentAttribute == null && currentRecordDomain == null) {
 			throw new ProcessingException(
 					getParser(),
-					filenameXmi,
+					getFileName(),
 					"The element <type> should only be included in Attributes or <<record>>-classes.");
 		}
 		String href = getAttribute(UML_ATTRIBUTE_HREF);
 
 		// TODO Exc. Typname fehlt
 		if (href == null) {
-			throw new ProcessingException(getParser(), filenameXmi,
+			throw new ProcessingException(getParser(), getFileName(),
 					"No type name defined.");
 		}
 		Domain dom = null;
@@ -2085,7 +2080,7 @@ public class Rsa2Tg extends XmlProcessor {
 		} else if (href.endsWith("#Boolean")) {
 			dom = createDomain("Boolean");
 		} else {
-			throw new ProcessingException(getParser(), filenameXmi,
+			throw new ProcessingException(getParser(), getFileName(),
 					"Unexpected '" + type + "' with href '" + href + "'.");
 		}
 
@@ -2110,7 +2105,7 @@ public class Rsa2Tg extends XmlProcessor {
 			if (currentAttribute == null) {
 				throw new ProcessingException(
 						getParser(),
-						filenameXmi,
+						getFileName(),
 						"The element <type> should only be included in Attributes or <<record>>-classes.");
 			}
 			if (dom != null) {
@@ -2138,7 +2133,7 @@ public class Rsa2Tg extends XmlProcessor {
 		if (currentClass == null && currentRecordDomain == null) {
 			throw new ProcessingException(
 					getParser(),
-					filenameXmi,
+					getFileName(),
 					"An owned attribute have to be defined in a VertexClass, EdgeClass or a RecordDomain.");
 		}
 		String association = getAttribute(UML_ATTRIBUTE_ASSOCIATION);
@@ -2147,14 +2142,14 @@ public class Rsa2Tg extends XmlProcessor {
 
 			// TODO Exc.
 			if (attrName == null) {
-				throw new ProcessingException(getParser(), filenameXmi,
+				throw new ProcessingException(getParser(), getFileName(),
 						"No attribute name defined.");
 			}
 			attrName = attrName.trim();
 
 			// TODO Exception
 			if (attrName.length() <= 0) {
-				throw new ProcessingException(getParser(), filenameXmi,
+				throw new ProcessingException(getParser(), getFileName(),
 						"The attribute name is empty.");
 			}
 
@@ -2206,7 +2201,7 @@ public class Rsa2Tg extends XmlProcessor {
 			if (currentClass == null || currentRecordDomain != null) {
 				throw new ProcessingException(
 						getParser(),
-						filenameXmi,
+						getFileName(),
 						"An owned attribute have to be defined in a VertexClass, EdgeClass or a RecordDomain.");
 			}
 			handleAssociatioEnd(xmiId);
@@ -2237,7 +2232,7 @@ public class Rsa2Tg extends XmlProcessor {
 			// TODO Exception, weil der Fehler vom Input verursacht wird und
 			// wahrscheinlich deshalb nicht mehr weiter gearbeitet werden kann.
 			if (typeId == null) {
-				throw new ProcessingException(getParser(), filenameXmi,
+				throw new ProcessingException(getParser(), getFileName(),
 						"No type has been defined.");
 			}
 			AttributedElement ae = idMap.get(typeId);
@@ -2246,7 +2241,7 @@ public class Rsa2Tg extends XmlProcessor {
 
 				// TODO Exc. (s.o.)
 				if (!(ae instanceof VertexClass)) {
-					throw new ProcessingException(getParser(), filenameXmi,
+					throw new ProcessingException(getParser(), getFileName(),
 							"Both types must share the same base class. (Either VertexClass or EdgeClass)");
 				}
 				vc = (VertexClass) ae;
@@ -2274,7 +2269,7 @@ public class Rsa2Tg extends XmlProcessor {
 
 				// TODO Exception, input error
 				if (associationId == null) {
-					throw new ProcessingException(getParser(), filenameXmi,
+					throw new ProcessingException(getParser(), getFileName(),
 							"No Edge ID present.");
 				}
 				ae = idMap.get(associationId);
@@ -2284,7 +2279,8 @@ public class Rsa2Tg extends XmlProcessor {
 
 					// TODO s.o.
 					if (!(ae instanceof EdgeClass)) {
-						throw new ProcessingException(getParser(), filenameXmi,
+						throw new ProcessingException(getParser(),
+								getFileName(),
 								"Both types must share the same base class. (Either VertexClass or EdgeClass)");
 					}
 					ec = correctAggregationAndComposition((EdgeClass) ae,
@@ -2323,7 +2319,7 @@ public class Rsa2Tg extends XmlProcessor {
 
 				// TODO Exception
 				if (typeId == null) {
-					throw new ProcessingException(getParser(), filenameXmi,
+					throw new ProcessingException(getParser(), getFileName(),
 							"No type ID found.");
 				}
 				AttributedElement ae = idMap.get(typeId);
@@ -2332,7 +2328,8 @@ public class Rsa2Tg extends XmlProcessor {
 
 					// TODO s.o.
 					if (!(ae instanceof VertexClass)) {
-						throw new ProcessingException(getParser(), filenameXmi,
+						throw new ProcessingException(getParser(),
+								getFileName(),
 								"Both types must share the same base class. (Either VertexClass or EdgeClass)");
 					}
 					e.setOmega((VertexClass) ae);
@@ -2465,7 +2462,7 @@ public class Rsa2Tg extends XmlProcessor {
 
 				// TODO Fehler im Typename (z.B. Map< List<bla, blubb>)
 				if (p < 0) {
-					throw new ProcessingException(filenameXmi,
+					throw new ProcessingException(getFileName(),
 							"Error in type name '" + typeName
 									+ "' of a Domain.");
 				}
@@ -2473,7 +2470,7 @@ public class Rsa2Tg extends XmlProcessor {
 
 			// TODO s.o.
 			if (p <= 0 || (p >= c.length - 1)) {
-				throw new ProcessingException(filenameXmi,
+				throw new ProcessingException(getFileName(),
 						"Error in type name '" + typeName + "' of a Domain.");
 			}
 			String keyDomainName = keyValueDomains.substring(0, p);
@@ -2613,7 +2610,7 @@ public class Rsa2Tg extends XmlProcessor {
 	}
 
 	public String getFilenameXmi() {
-		return filenameXmi;
+		return getFileName();
 	}
 
 	public String getFilenameDot() {
