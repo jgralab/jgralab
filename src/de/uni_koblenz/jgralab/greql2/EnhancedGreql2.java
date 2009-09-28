@@ -97,9 +97,10 @@ public class EnhancedGreql2 extends Greql2Impl implements Greql2 {
 		return sb.toString();
 	}
 
-	public void serializeGreql2Vertex(Greql2Vertex v) {
+	public String serializeGreql2Vertex(Greql2Vertex v) {
 		sb = new StringBuffer();
 		serializeGreql2Vertex(v, false);
+		return sb.toString();
 	}
 
 	private void serializeGreql2Vertex(Greql2Vertex v, boolean addSpace) {
