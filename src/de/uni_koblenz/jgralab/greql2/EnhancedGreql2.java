@@ -205,13 +205,13 @@ public class EnhancedGreql2 extends Greql2Impl implements Greql2 {
 
 		if (!v.getSubgraphList().isEmpty()) {
 			sb.append(" in ");
-			serializeExpression(v.getSubgraphList().get(0), true);
+			serializeExpression(v.getSubgraphList().get(0), false);
 		}
 
 		first = true;
 		for (Expression constraint : v.getConstraintList()) {
 			if (declOfFWR) {
-				sb.append("with ");
+				sb.append(" with ");
 			} else {
 				// in QuantifiedExpressions, the constraints are separated with
 				// comma
@@ -703,13 +703,13 @@ public class EnhancedGreql2 extends Greql2Impl implements Greql2 {
 		sb.append("from ");
 		serializeDeclaration(exp.getCompDeclList().get(0), true);
 		if (exp instanceof SetComprehension) {
-			sb.append("reportSet ");
+			sb.append(" reportSet ");
 		} else if (exp instanceof BagComprehension) {
-			sb.append("report ");
+			sb.append(" report ");
 		} else if (exp instanceof TableComprehension) {
-			sb.append("reportTable ");
+			sb.append(" reportTable ");
 		} else if (exp instanceof MapComprehension) {
-			sb.append("reportMap ");
+			sb.append(" reportMap ");
 		} else {
 			throw new Greql2Exception("Unknown Comprehension " + exp + ".");
 		}
@@ -734,11 +734,13 @@ public class EnhancedGreql2 extends Greql2Impl implements Greql2 {
 	}
 
 	private void serializeQuantifiedExpression(QuantifiedExpression exp) {
+		sb.append('(');
 		serializeQuantifier(exp.getQuantifierList().get(0));
 		sb.append(' ');
 		serializeDeclaration(exp.getQuantifiedDeclList().get(0), false);
 		sb.append(" @ ");
 		serializeExpression(exp.getBoundExprOfQuantifierList().get(0), false);
+		sb.append(')');
 	}
 
 	private void serializeLiteral(Literal exp) {
@@ -751,7 +753,6 @@ public class EnhancedGreql2 extends Greql2Impl implements Greql2 {
 			sb.append("null");
 		} else if (exp instanceof RealLiteral) {
 			sb.append(((RealLiteral) exp).get_realValue());
-
 		} else if (exp instanceof StringLiteral) {
 			sb.append("\"");
 			sb.append(((StringLiteral) exp).get_stringValue());
@@ -808,6 +809,15 @@ public class EnhancedGreql2 extends Greql2Impl implements Greql2 {
 			return;
 		} else if (id.equals("modulo")) {
 			serializeFunctionApplicationInfix(exp, "%");
+			return;
+		} else if (id.equals("and")) {
+			serializeFunctionApplicationInfix(exp, "and");
+			return;
+		} else if (id.equals("or")) {
+			serializeFunctionApplicationInfix(exp, "or");
+			return;
+		} else if (id.equals("xor")) {
+			serializeFunctionApplicationInfix(exp, "xor");
 			return;
 		}
 
