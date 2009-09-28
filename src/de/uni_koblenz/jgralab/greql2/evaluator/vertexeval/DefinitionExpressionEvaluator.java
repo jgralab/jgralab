@@ -24,9 +24,9 @@
 
 package de.uni_koblenz.jgralab.greql2.evaluator.vertexeval;
 
-import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
 import de.uni_koblenz.jgralab.greql2.schema.DefinitionExpression;
+import de.uni_koblenz.jgralab.greql2.schema.Greql2Vertex;
 
 /**
  * This is the baseclass for LetExpressionEvaluator and
@@ -46,7 +46,7 @@ public abstract class DefinitionExpressionEvaluator extends VertexEvaluator {
 	 * returns the vertex this VertexEvaluator evaluates
 	 */
 	@Override
-	public Vertex getVertex() {
+	public Greql2Vertex getVertex() {
 		return vertex;
 	}
 

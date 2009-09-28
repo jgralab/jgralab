@@ -81,7 +81,7 @@ public class MergeMaps extends AbstractGreql2Function {
 	public JValue evaluate(Graph graph, BooleanGraphMarker subgraph,
 			JValue[] arguments) throws EvaluateException {
 		if (checkArguments(arguments) < 0) {
-			throw new WrongFunctionParameterException(this, null, arguments);
+			throw new WrongFunctionParameterException(this, arguments);
 		}
 		JValueMap m1 = arguments[0].toJValueMap();
 		JValueMap m2 = arguments[1].toJValueMap();

@@ -81,7 +81,7 @@ public class Modulo extends AbstractGreql2Function {
 			return new JValue(arguments[0].toInteger()
 					% arguments[1].toInteger());
 		default:
-			throw new WrongFunctionParameterException(this, null, arguments);
+			throw new WrongFunctionParameterException(this, arguments);
 		}
 	}
 

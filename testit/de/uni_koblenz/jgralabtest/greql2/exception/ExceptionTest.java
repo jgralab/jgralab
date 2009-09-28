@@ -27,12 +27,12 @@ package de.uni_koblenz.jgralabtest.greql2.exception;
 import org.junit.Test;
 
 import de.uni_koblenz.jgralab.greql2.exception.EvaluateException;
-import de.uni_koblenz.jgralab.greql2.exception.WrongFunctionParameterException;
+import de.uni_koblenz.jgralab.greql2.exception.QuerySourceException;
 import de.uni_koblenz.jgralabtest.greql2.GenericTests;
 
 public class ExceptionTest extends GenericTests {
 
-	@Test(expected = WrongFunctionParameterException.class)
+	@Test(expected = QuerySourceException.class)
 	public void testFunctionException() throws Exception {
 		String queryString = "let x:=list(\"a\",4 ,5) in avg(x)";
 		evalTestQuery("FunctionException", queryString);

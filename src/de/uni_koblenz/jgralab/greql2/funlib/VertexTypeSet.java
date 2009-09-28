@@ -90,7 +90,7 @@ public class VertexTypeSet extends AbstractGreql2Function {
 		case 2:
 			return arguments[0].toPathSystem().vertexTypes();
 		default:
-			throw new WrongFunctionParameterException(this, null, arguments);
+			throw new WrongFunctionParameterException(this, arguments);
 		}
 	}
 

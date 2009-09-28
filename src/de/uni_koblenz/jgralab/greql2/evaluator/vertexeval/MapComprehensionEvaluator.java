@@ -14,6 +14,7 @@ import de.uni_koblenz.jgralab.greql2.exception.JValueInvalidTypeException;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValueMap;
 import de.uni_koblenz.jgralab.greql2.schema.Declaration;
+import de.uni_koblenz.jgralab.greql2.schema.Greql2Vertex;
 import de.uni_koblenz.jgralab.greql2.schema.MapComprehension;
 
 /**
@@ -90,7 +91,7 @@ public class MapComprehensionEvaluator extends VertexEvaluator {
 	 * ()
 	 */
 	@Override
-	public Vertex getVertex() {
+	public Greql2Vertex getVertex() {
 		return vertex;
 	}
 

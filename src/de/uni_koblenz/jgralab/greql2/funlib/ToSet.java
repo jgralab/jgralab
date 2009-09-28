@@ -74,7 +74,7 @@ public class ToSet extends AbstractGreql2Function {
 			set.add(arguments[0]);
 			return set;
 		default:
-			throw new WrongFunctionParameterException(this, null, arguments);
+			throw new WrongFunctionParameterException(this, arguments);
 		}
 	}
 

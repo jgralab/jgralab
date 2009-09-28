@@ -74,7 +74,7 @@ public class StartVertex extends AbstractGreql2Function {
 		case 1:
 			return new JValue(arguments[0].toEdge().getAlpha());
 		default:
-			throw new WrongFunctionParameterException(this, null, arguments);
+			throw new WrongFunctionParameterException(this, arguments);
 		}
 	}
 

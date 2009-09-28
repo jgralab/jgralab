@@ -93,7 +93,7 @@ public class Contains extends AbstractGreql2Function {
 			return new JValue(pathsys.contains((GraphElement) arguments[1]
 					.toAttributedElement()));
 		default:
-			throw new WrongFunctionParameterException(this, null, arguments);
+			throw new WrongFunctionParameterException(this, arguments);
 		}
 	}
 

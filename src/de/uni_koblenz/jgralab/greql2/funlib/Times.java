@@ -102,7 +102,7 @@ public class Times extends ArithmeticFunction {
 			}
 			return new JValue(sb.toString());
 		default:
-			throw new WrongFunctionParameterException(this, null, arguments);
+			throw new WrongFunctionParameterException(this, arguments);
 		}
 	}
 }

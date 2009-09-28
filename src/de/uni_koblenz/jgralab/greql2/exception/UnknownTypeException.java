@@ -25,7 +25,6 @@
 package de.uni_koblenz.jgralab.greql2.exception;
 
 import java.util.List;
-import java.util.logging.Logger;
 
 import de.uni_koblenz.jgralab.greql2.schema.SourcePosition;
 
@@ -37,31 +36,19 @@ import de.uni_koblenz.jgralab.greql2.schema.SourcePosition;
  * 
  */
 public class UnknownTypeException extends QuerySourceException {
-	private static Logger logger = Logger.getLogger(UnknownTypeException.class
-			.getName());
+
 	static final long serialVersionUID = -1234560;
 
 	public UnknownTypeException(String typeName,
 			List<SourcePosition> sourcePositions, Exception cause) {
-		super("The Datagraph schema doesn't contain a type ", typeName,
-				sourcePositions, cause);
-		for (SourcePosition sp : sourcePositions) {
-			logger.severe("UnknownTypeException");
-			logger.severe("  (" + sp.get_offset() + ", " + sp.get_length()
-					+ ")");
-		}
-
+		super("The Datagraph schema doesn't contain a type '" + typeName + "'",
+				null, sourcePositions, cause);
 	}
 
 	public UnknownTypeException(String typeName,
 			List<SourcePosition> sourcePositions) {
-		super("The Datagraph schema doesn't contain a type ", typeName,
-				sourcePositions);
-		for (SourcePosition sp : sourcePositions) {
-			logger.severe("UnknownTypeException");
-			logger.severe("  (" + sp.get_offset() + ", " + sp.get_length()
-					+ ")");
-		}
+		super("The Datagraph schema doesn't contain a type '" + typeName + "'",
+				null, sourcePositions);
 	}
 
 }

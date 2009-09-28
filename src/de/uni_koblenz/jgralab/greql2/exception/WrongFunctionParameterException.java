@@ -24,12 +24,9 @@
 
 package de.uni_koblenz.jgralab.greql2.exception;
 
-import java.util.List;
-
 import de.uni_koblenz.jgralab.greql2.funlib.Greql2Function;
 import de.uni_koblenz.jgralab.greql2.funlib.Greql2FunctionLibrary;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
-import de.uni_koblenz.jgralab.greql2.schema.SourcePosition;
 
 /**
  * Should be thrown if a function is called with the wrong parameter count or
@@ -38,7 +35,7 @@ import de.uni_koblenz.jgralab.greql2.schema.SourcePosition;
  * @author ist@uni-koblenz.de
  * 
  */
-public class WrongFunctionParameterException extends QuerySourceException {
+public class WrongFunctionParameterException extends EvaluateException {
 
 	static final long serialVersionUID = -1234561;
 
@@ -67,30 +64,22 @@ public class WrongFunctionParameterException extends QuerySourceException {
 	}
 
 	public WrongFunctionParameterException(Greql2Function function,
-			List<SourcePosition> sourcePositions, JValue[] wrongArguments) {
+			JValue[] wrongArguments) {
 		super("Function "
 				+ Greql2FunctionLibrary.instance().toFunctionName(
 						function.getClass().getCanonicalName())
 				+ function.getExpectedParameters()
 				+ " is not applicable for the arguments "
-				+ parametersToString(wrongArguments), Greql2FunctionLibrary
-				.instance().toFunctionName(
-						function.getClass().getCanonicalName()),
-				sourcePositions);
+				+ parametersToString(wrongArguments));
 	}
 
 	public WrongFunctionParameterException(Greql2Function function,
-			List<SourcePosition> sourcePositions, JValue[] wrongArguments,
-			Exception cause) {
+			JValue[] wrongArguments, Exception cause) {
 		super("Function "
 				+ Greql2FunctionLibrary.instance().toFunctionName(
 						function.getClass().getCanonicalName())
 				+ function.getExpectedParameters()
 				+ " is not applicable for the arguments "
-				+ parametersToString(wrongArguments), Greql2FunctionLibrary
-				.instance().toFunctionName(
-						function.getClass().getCanonicalName()),
-				sourcePositions, cause);
+				+ parametersToString(wrongArguments), cause);
 	}
-
 }

@@ -26,6 +26,7 @@ package de.uni_koblenz.jgralab.greql2.exception;
 
 import java.util.List;
 
+import de.uni_koblenz.jgralab.greql2.schema.FunctionApplication;
 import de.uni_koblenz.jgralab.greql2.schema.SourcePosition;
 
 /**
@@ -39,14 +40,14 @@ public class UndefinedFunctionException extends QuerySourceException {
 
 	static final long serialVersionUID = -1234563;
 
-	public UndefinedFunctionException(String functionName,
+	public UndefinedFunctionException(FunctionApplication function,
 			List<SourcePosition> sourcePositions, Exception cause) {
-		super("Undefined Function ", functionName, sourcePositions, cause);
+		super("Undefined Function ", function, sourcePositions, cause);
 	}
 
-	public UndefinedFunctionException(String functionName,
+	public UndefinedFunctionException(FunctionApplication function,
 			List<SourcePosition> sourcePositions) {
-		super("Undefined Function ", functionName, sourcePositions);
+		super("Undefined Function ", function, sourcePositions);
 	}
 
 }

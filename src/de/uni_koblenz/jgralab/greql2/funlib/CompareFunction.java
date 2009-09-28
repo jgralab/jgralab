@@ -64,7 +64,7 @@ public abstract class CompareFunction extends AbstractGreql2Function {
 			}
 			break;
 		default:
-			throw new WrongFunctionParameterException(this, null, arguments);
+			throw new WrongFunctionParameterException(this, arguments);
 		}
 		throw new EvaluateException("You mustn't come here!");
 	}

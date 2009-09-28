@@ -88,7 +88,7 @@ public class Children extends AbstractGreql2Function {
 			vertex = arguments[0].toVertex();
 			break;
 		default:
-			throw new WrongFunctionParameterException(this, null, arguments);
+			throw new WrongFunctionParameterException(this, arguments);
 		}
 
 		if (pathSystem != null) {

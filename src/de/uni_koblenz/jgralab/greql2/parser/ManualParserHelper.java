@@ -184,8 +184,8 @@ public abstract class ManualParserHelper {
 			} else {
 				Greql2Aggregation e = (Greql2Aggregation) v
 						.getFirstEdge(EdgeDirection.OUT);
-				throw new UndefinedVariableException(((Variable) v).get_name(),
-						e.get_sourcePositions());
+				throw new UndefinedVariableException((Variable) v, e
+						.get_sourcePositions());
 			}
 		} else {
 			Edge inc = v.getFirstEdge(EdgeDirection.IN);

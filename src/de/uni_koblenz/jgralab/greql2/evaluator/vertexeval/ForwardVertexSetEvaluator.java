@@ -36,6 +36,7 @@ import de.uni_koblenz.jgralab.greql2.funlib.Greql2FunctionLibrary;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
 import de.uni_koblenz.jgralab.greql2.schema.Expression;
 import de.uni_koblenz.jgralab.greql2.schema.ForwardVertexSet;
+import de.uni_koblenz.jgralab.greql2.schema.Greql2Vertex;
 import de.uni_koblenz.jgralab.greql2.schema.PathDescription;
 
 /**
@@ -52,7 +53,7 @@ public class ForwardVertexSetEvaluator extends PathSearchEvaluator {
 	 * returns the vertex this VertexEvaluator evaluates
 	 */
 	@Override
-	public Vertex getVertex() {
+	public Greql2Vertex getVertex() {
 		return vertex;
 	}
 

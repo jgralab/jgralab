@@ -27,6 +27,7 @@ package de.uni_koblenz.jgralab.greql2.exception;
 import java.util.List;
 
 import de.uni_koblenz.jgralab.greql2.schema.SourcePosition;
+import de.uni_koblenz.jgralab.greql2.schema.Variable;
 
 /**
  * Should be thrown if a undefined Variable is used
@@ -43,9 +44,9 @@ public class UndefinedVariableException extends QuerySourceException {
 	 * @param variableName
 	 * @param sourcePositions
 	 */
-	public UndefinedVariableException(String variableName,
+	public UndefinedVariableException(Variable variable,
 			List<SourcePosition> sourcePositions) {
-		super("Undefined variable ", variableName, sourcePositions);
+		super("Undefined variable ", variable, sourcePositions);
 	}
 
 }

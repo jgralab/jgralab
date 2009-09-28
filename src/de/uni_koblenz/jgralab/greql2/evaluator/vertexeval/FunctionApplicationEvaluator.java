@@ -25,10 +25,8 @@
 package de.uni_koblenz.jgralab.greql2.evaluator.vertexeval;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import de.uni_koblenz.jgralab.EdgeDirection;
-import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
 import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.GraphSize;
 import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.VertexCosts;
@@ -43,9 +41,9 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueTypeCollection;
 import de.uni_koblenz.jgralab.greql2.schema.Expression;
 import de.uni_koblenz.jgralab.greql2.schema.FunctionApplication;
 import de.uni_koblenz.jgralab.greql2.schema.FunctionId;
+import de.uni_koblenz.jgralab.greql2.schema.Greql2Vertex;
 import de.uni_koblenz.jgralab.greql2.schema.IsArgumentOf;
 import de.uni_koblenz.jgralab.greql2.schema.IsTypeExprOf;
-import de.uni_koblenz.jgralab.greql2.schema.SourcePosition;
 import de.uni_koblenz.jgralab.greql2.schema.TypeId;
 
 /**
@@ -62,7 +60,7 @@ public class FunctionApplicationEvaluator extends VertexEvaluator {
 	 * returns the vertex this VertexEvaluator evaluates
 	 */
 	@Override
-	public Vertex getVertex() {
+	public Greql2Vertex getVertex() {
 		return vertex;
 	}
 
@@ -190,7 +188,7 @@ public class FunctionApplicationEvaluator extends VertexEvaluator {
 		}
 		getGreql2Function();
 		if (greql2Function == null) {
-			throw new UndefinedFunctionException(functionName,
+			throw new UndefinedFunctionException(vertex,
 					createPossibleSourcePositions());
 		}
 
@@ -200,10 +198,9 @@ public class FunctionApplicationEvaluator extends VertexEvaluator {
 
 		try {
 			result = greql2Function.evaluate(graph, subgraph, parameters);
-		} catch (QuerySourceException ex) {
-			List<SourcePosition> positionList = ex.getSourcePositions();
-			positionList.addAll(createPossibleSourcePositions());
-			throw ex;
+		} catch (EvaluateException ex) {
+			throw new QuerySourceException(ex.getMessage(), vertex,
+					createPossibleSourcePositions(), ex);
 		}
 		return result;
 	}

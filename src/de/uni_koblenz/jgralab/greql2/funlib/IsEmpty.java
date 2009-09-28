@@ -51,7 +51,7 @@ public class IsEmpty extends AbstractGreql2Function {
 		case 1:
 			return new JValue(arguments[0].toJValueMap().size() == 0);
 		default:
-			throw new WrongFunctionParameterException(this, null, arguments);
+			throw new WrongFunctionParameterException(this, arguments);
 		}
 	}
 

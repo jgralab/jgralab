@@ -104,7 +104,7 @@ public class IsIn extends AbstractGreql2Function {
 			AttributedElement ae = arguments[0].toAttributedElement();
 			return new JValue(subgraph.isMarked(ae));
 		default:
-			throw new WrongFunctionParameterException(this, null, arguments);
+			throw new WrongFunctionParameterException(this, arguments);
 		}
 	}
 

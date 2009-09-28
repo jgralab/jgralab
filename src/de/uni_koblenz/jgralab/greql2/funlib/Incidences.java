@@ -84,7 +84,7 @@ public abstract class Incidences extends AbstractGreql2Function {
 			typeCol = arguments[1].toJValueTypeCollection();
 			break;
 		default:
-			throw new WrongFunctionParameterException(this, null, arguments);
+			throw new WrongFunctionParameterException(this, arguments);
 		}
 		Vertex vertex = arguments[0].toVertex();
 

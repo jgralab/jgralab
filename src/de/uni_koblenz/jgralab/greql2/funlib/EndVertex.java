@@ -75,7 +75,7 @@ public class EndVertex extends AbstractGreql2Function {
 		case 1:
 			return new JValue(arguments[0].toPath().getEndVertex());
 		default:
-			throw new WrongFunctionParameterException(this, null, arguments);
+			throw new WrongFunctionParameterException(this, arguments);
 		}
 	}
 

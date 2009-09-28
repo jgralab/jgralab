@@ -97,7 +97,7 @@ public class Plus extends ArithmeticFunction {
 		case 3:
 			return new JValue(arguments[0].toString() + arguments[1].toString());
 		default:
-			throw new WrongFunctionParameterException(this, null, arguments);
+			throw new WrongFunctionParameterException(this, arguments);
 		}
 	}
 }

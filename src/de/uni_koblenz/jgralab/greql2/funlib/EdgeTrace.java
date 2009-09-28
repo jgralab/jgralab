@@ -75,7 +75,7 @@ public class EdgeTrace extends AbstractGreql2Function {
 	public JValue evaluate(Graph graph, BooleanGraphMarker subgraph,
 			JValue[] arguments) throws EvaluateException {
 		if (checkArguments(arguments) == -1) {
-			throw new WrongFunctionParameterException(this, null, arguments);
+			throw new WrongFunctionParameterException(this, arguments);
 		}
 		JValuePath path = arguments[0].toPath();
 		List<Edge> list = path.edgeTrace();

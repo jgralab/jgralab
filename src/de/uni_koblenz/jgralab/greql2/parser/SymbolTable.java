@@ -32,6 +32,7 @@ import de.uni_koblenz.jgralab.greql2.schema.IsBoundVarOf;
 import de.uni_koblenz.jgralab.greql2.schema.IsDeclaredVarOf;
 import de.uni_koblenz.jgralab.greql2.schema.IsVarOf;
 import de.uni_koblenz.jgralab.greql2.schema.SourcePosition;
+import de.uni_koblenz.jgralab.greql2.schema.Variable;
 
 public class SymbolTable extends EasySymbolTable {
 
@@ -54,9 +55,10 @@ public class SymbolTable extends EasySymbolTable {
 				offset = ((IsVarOf) var.getFirstEdge(EdgeDirection.OUT))
 						.get_sourcePositions().get(0).get_offset();
 			}
-			throw new DuplicateVariableException(ident, ((Greql2Aggregation) v
-					.getFirstEdge(EdgeDirection.IN)).get_sourcePositions(),
-					new SourcePosition(offset, ident.length()));
+			throw new DuplicateVariableException((Variable) var,
+					((Greql2Aggregation) v.getFirstEdge(EdgeDirection.IN))
+							.get_sourcePositions(), new SourcePosition(offset,
+							ident.length()));
 		}
 	}
 

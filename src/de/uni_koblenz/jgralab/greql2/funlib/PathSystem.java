@@ -231,7 +231,7 @@ public class PathSystem extends AbstractGreql2Function {
 			dfa = new DFA(nfa);
 			break;
 		default:
-			throw new WrongFunctionParameterException(this, null, arguments);
+			throw new WrongFunctionParameterException(this, arguments);
 		}
 
 		Vertex startVertex = arguments[0].toVertex();
