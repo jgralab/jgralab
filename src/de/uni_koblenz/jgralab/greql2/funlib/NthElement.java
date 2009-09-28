@@ -29,7 +29,6 @@ import java.util.ArrayList;
 import de.uni_koblenz.jgralab.BooleanGraphMarker;
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.greql2.exception.EvaluateException;
-import de.uni_koblenz.jgralab.greql2.exception.FunctionInvalidIndexException;
 import de.uni_koblenz.jgralab.greql2.exception.WrongFunctionParameterException;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValueCollection;
@@ -76,8 +75,8 @@ public class NthElement extends AbstractGreql2Function {
 		int index = arguments[1].toInteger();
 		JValueCollection col = arguments[0].toCollection();
 		if (index >= col.size()) {
-			throw new FunctionInvalidIndexException(col.getClass().getName(),
-					index, null);
+			throw new EvaluateException("The given collection has fewer than "
+					+ (index - 1) + " elements.");
 		}
 
 		return col.toJValueList().get(index);

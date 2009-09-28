@@ -1,13 +1,10 @@
-package de.uni_koblenz.jgralab.greql2.parser;
+package de.uni_koblenz.jgralab.greql2.exception;
 
-public class ParsingException extends RuntimeException {
+public class ParsingException extends Greql2Exception {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 894099164202915776L;
 
-	private String message;
+	private String errorMessage;
 
 	private String tokenString;
 
@@ -16,11 +13,10 @@ public class ParsingException extends RuntimeException {
 	private int length;
 
 	public ParsingException(String msg, String token, int offset, int length) {
-		super("Parsing error: " + msg + " at token '" + token + "' at position ("
-				+ offset + "," + length + ")");
-		message = msg;
+		super("Parsing error: " + msg + " at token '" + token
+				+ "' at position (" + offset + "," + length + ")");
+		errorMessage = msg;
 		this.tokenString = token;
-		;
 		this.offset = offset;
 		this.length = length;
 	}
@@ -34,7 +30,7 @@ public class ParsingException extends RuntimeException {
 	}
 
 	public String getErrorMessage() {
-		return message;
+		return errorMessage;
 	}
 
 	public String getToken() {

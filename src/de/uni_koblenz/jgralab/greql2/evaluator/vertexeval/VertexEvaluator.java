@@ -44,9 +44,7 @@ import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.GraphSize;
 import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.VertexCosts;
 import de.uni_koblenz.jgralab.greql2.evaluator.logging.EvaluationLogger;
 import de.uni_koblenz.jgralab.greql2.exception.EvaluateException;
-import de.uni_koblenz.jgralab.greql2.exception.IncompleteVertexEvaluatorException;
 import de.uni_koblenz.jgralab.greql2.exception.QuerySourceException;
-import de.uni_koblenz.jgralab.greql2.exception.UnknownVertexException;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValueTypeCollection;
 import de.uni_koblenz.jgralab.greql2.schema.Greql2Aggregation;
@@ -618,15 +616,15 @@ public abstract class VertexEvaluator {
 					.newInstance(vertex, eval);
 			return vertexEval;
 		} catch (ClassNotFoundException ex) {
-			throw new UnknownVertexException(className, ex);
+			throw new EvaluateException(className, ex);
 		} catch (NoSuchMethodException ex) {
-			throw new IncompleteVertexEvaluatorException(className, ex);
+			throw new EvaluateException(className, ex);
 		} catch (IllegalAccessException ex) {
-			throw new IncompleteVertexEvaluatorException(className, ex);
+			throw new EvaluateException(className, ex);
 		} catch (InstantiationException ex) {
-			throw new IncompleteVertexEvaluatorException(className, ex);
+			throw new EvaluateException(className, ex);
 		} catch (InvocationTargetException ex) {
-			throw new IncompleteVertexEvaluatorException(className, ex);
+			throw new EvaluateException(className, ex);
 		}
 	}
 
