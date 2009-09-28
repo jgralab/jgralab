@@ -6,6 +6,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import de.uni_koblenz.jgralab.greql2.exception.ParsingException;
+
 public class ManualGreqlLexer {
 
 	protected static Map<TokenTypes, String> fixedTokens;
