@@ -74,7 +74,7 @@ public class Type extends AbstractGreql2Function {
 			return new JValue(graph.getSchema().getAttributedElementClass(
 					arguments[0].toString()));
 		default:
-			throw new WrongFunctionParameterException(this, null, arguments);
+			throw new WrongFunctionParameterException(this, arguments);
 		}
 	}
 

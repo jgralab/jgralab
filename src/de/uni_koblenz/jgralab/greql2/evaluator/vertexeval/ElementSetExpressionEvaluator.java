@@ -24,9 +24,9 @@
 
 package de.uni_koblenz.jgralab.greql2.evaluator.vertexeval;
 
-import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
 import de.uni_koblenz.jgralab.greql2.schema.ElementSetExpression;
+import de.uni_koblenz.jgralab.greql2.schema.Greql2Vertex;
 
 /**
  * This is the base class for VertexSetExpressionEvaluator and
@@ -46,7 +46,7 @@ public abstract class ElementSetExpressionEvaluator extends
 	/**
 	 * returns the vertex this VertexEvaluator evaluates
 	 */
-	public Vertex getVertex() {
+	public Greql2Vertex getVertex() {
 		return vertex;
 	}
 

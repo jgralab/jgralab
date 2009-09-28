@@ -165,7 +165,7 @@ public class IsPrime extends AbstractGreql2Function {
 			}
 			break;
 		default:
-			throw new WrongFunctionParameterException(this, null, arguments);
+			throw new WrongFunctionParameterException(this, arguments);
 		}
 		long number = arguments[0].toLong();
 

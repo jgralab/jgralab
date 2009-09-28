@@ -80,7 +80,7 @@ public class EnumConstant extends AbstractGreql2Function {
 	public JValue evaluate(Graph graph, BooleanGraphMarker subgraph,
 			JValue[] arguments) throws EvaluateException {
 		if (checkArguments(arguments) < 0) {
-			throw new WrongFunctionParameterException(this, null, arguments);
+			throw new WrongFunctionParameterException(this, arguments);
 		}
 		String enumDomainName = arguments[0].toString();
 		String enumConstantName = arguments[1].toString();

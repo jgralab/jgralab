@@ -91,7 +91,7 @@ public class Matches extends AbstractGreql2Function {
 			dfa = new DFA(arguments[1].toNFA());
 			break;
 		default:
-			throw new WrongFunctionParameterException(this, null, arguments);
+			throw new WrongFunctionParameterException(this, arguments);
 		}
 
 		JValuePath path = arguments[0].toPath();

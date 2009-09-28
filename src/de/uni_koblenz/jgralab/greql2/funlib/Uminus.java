@@ -79,7 +79,7 @@ public class Uminus extends AbstractGreql2Function {
 		case 2:
 			return new JValue(-arguments[0].toDouble());
 		default:
-			throw new WrongFunctionParameterException(this, null, arguments);
+			throw new WrongFunctionParameterException(this, arguments);
 		}
 	}
 

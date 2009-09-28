@@ -183,7 +183,7 @@ public abstract class VertexEvaluator {
 	/**
 	 * returns the vertex this VertexEvaluator evaluates
 	 */
-	public abstract Vertex getVertex();
+	public abstract Greql2Vertex getVertex();
 
 	/**
 	 * @return the name of the associated {@link Greql2Vertex} used for logging.

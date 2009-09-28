@@ -69,7 +69,7 @@ public class TopologicalSort extends AbstractGreql2Function {
 			subgraph = arguments[0].toSubgraphTempAttribute();
 			break;
 		default:
-			throw new WrongFunctionParameterException(this, null, arguments);
+			throw new WrongFunctionParameterException(this, arguments);
 		}
 
 		JValueList result = new JValueList();

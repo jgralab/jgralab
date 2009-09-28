@@ -88,7 +88,7 @@ public class IsSibling extends AbstractGreql2Function {
 			pathSystem = arguments[2].toPathSystem();
 			break;
 		default:
-			throw new WrongFunctionParameterException(this, null, arguments);
+			throw new WrongFunctionParameterException(this, arguments);
 		}
 		Vertex firstVertex = arguments[0].toVertex();
 		Vertex secondVertex = arguments[1].toVertex();

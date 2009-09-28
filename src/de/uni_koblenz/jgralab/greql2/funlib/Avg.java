@@ -70,7 +70,7 @@ public class Avg extends AbstractGreql2Function {
 	public JValue evaluate(Graph graph, BooleanGraphMarker subgraph,
 			JValue[] arguments) throws EvaluateException {
 		if (checkArguments(arguments) == -1) {
-			throw new WrongFunctionParameterException(this, null, arguments);
+			throw new WrongFunctionParameterException(this, arguments);
 		}
 
 		JValueCollection col = arguments[0].toCollection();
@@ -81,7 +81,7 @@ public class Avg extends AbstractGreql2Function {
 			if (curVal.isNumber()) {
 				sum += curVal.toNumber().doubleValue();
 			} else {
-				throw new WrongFunctionParameterException(this, null, arguments);
+				throw new WrongFunctionParameterException(this, arguments);
 			}
 		}
 		return new JValue(1.0 * sum / col.size());

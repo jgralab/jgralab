@@ -78,7 +78,7 @@ public class Id extends AbstractGreql2Function {
 			Edge e = arguments[0].toEdge();
 			return new JValue(e.getId(), e);
 		default:
-			throw new WrongFunctionParameterException(this, null, arguments);
+			throw new WrongFunctionParameterException(this, arguments);
 		}
 
 	}

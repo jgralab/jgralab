@@ -78,7 +78,7 @@ public class IsTree extends AbstractGreql2Function {
 			subgraph = arguments[0].toSubgraphTempAttribute();
 			break;
 		default:
-			throw new WrongFunctionParameterException(this, null, arguments);
+			throw new WrongFunctionParameterException(this, arguments);
 		}
 		boolean foundOneRoot = false;
 

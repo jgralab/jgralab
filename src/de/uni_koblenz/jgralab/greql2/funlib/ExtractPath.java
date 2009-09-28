@@ -95,7 +95,7 @@ public class ExtractPath extends AbstractGreql2Function {
 			length = arguments[1].toInteger();
 			break;
 		default:
-			throw new WrongFunctionParameterException(this, null, arguments);
+			throw new WrongFunctionParameterException(this, arguments);
 		}
 
 		JValuePathSystem pathSystem = arguments[0].toPathSystem();

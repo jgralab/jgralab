@@ -54,7 +54,7 @@ public abstract class DegreeFunction extends AbstractGreql2Function {
 			pathSystem = arguments[1].toPathSystem();
 			break;
 		default:
-			throw new WrongFunctionParameterException(this, null, arguments);
+			throw new WrongFunctionParameterException(this, arguments);
 		}
 		vertex = arguments[0].toVertex();
 

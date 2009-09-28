@@ -76,7 +76,7 @@ public class Intersection extends AbstractGreql2Function {
 	public JValue evaluate(Graph graph, BooleanGraphMarker subgraph,
 			JValue[] arguments) throws EvaluateException {
 		if (checkArguments(arguments) == -1) {
-			throw new WrongFunctionParameterException(this, null, arguments);
+			throw new WrongFunctionParameterException(this, arguments);
 		}
 
 		JValueSet firstSet = arguments[0].toCollection().toJValueSet();

@@ -25,7 +25,6 @@
 package de.uni_koblenz.jgralab.greql2.evaluator.vertexeval;
 
 import de.uni_koblenz.jgralab.EdgeDirection;
-import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
 import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.GraphSize;
 import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.VertexCosts;
@@ -34,6 +33,7 @@ import de.uni_koblenz.jgralab.greql2.exception.JValueInvalidTypeException;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValueTypeCollection;
 import de.uni_koblenz.jgralab.greql2.schema.EdgeRestriction;
+import de.uni_koblenz.jgralab.greql2.schema.Greql2Vertex;
 import de.uni_koblenz.jgralab.greql2.schema.IsRoleIdOf;
 import de.uni_koblenz.jgralab.greql2.schema.IsTypeIdOf;
 import de.uni_koblenz.jgralab.greql2.schema.RoleId;
@@ -55,7 +55,7 @@ public class EdgeRestrictionEvaluator extends VertexEvaluator {
 	 * returns the vertex this VertexEvaluator evaluates
 	 */
 	@Override
-	public Vertex getVertex() {
+	public Greql2Vertex getVertex() {
 		return vertex;
 	}
 

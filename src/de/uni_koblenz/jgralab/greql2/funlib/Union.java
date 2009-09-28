@@ -100,8 +100,7 @@ public class Union extends AbstractGreql2Function {
 			JValueSet result = new JValueSet();
 			for (JValue jv : set) {
 				if (!(jv instanceof JValueCollection)) {
-					throw new WrongFunctionParameterException(this, null,
-							arguments);
+					throw new WrongFunctionParameterException(this, arguments);
 				}
 				for (JValue jv2 : jv.toCollection().toJValueSet()) {
 					result.add(jv2);
@@ -109,7 +108,7 @@ public class Union extends AbstractGreql2Function {
 			}
 			return result;
 		default:
-			throw new WrongFunctionParameterException(this, null, arguments);
+			throw new WrongFunctionParameterException(this, arguments);
 		}
 	}
 

@@ -85,7 +85,7 @@ public class IsReachable extends AbstractGreql2Function {
 			JValue[] arguments) throws EvaluateException {
 
 		if (checkArguments(arguments) == -1) {
-			throw new WrongFunctionParameterException(this, null, arguments);
+			throw new WrongFunctionParameterException(this, arguments);
 		}
 		Vertex startVertex = arguments[0].toVertex();
 		Vertex endVertex = arguments[1].toVertex();

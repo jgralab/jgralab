@@ -79,7 +79,7 @@ public class IsAcyclic extends AbstractGreql2Function {
 			subgraph = arguments[0].toSubgraphTempAttribute();
 			break;
 		default:
-			throw new WrongFunctionParameterException(this, null, arguments);
+			throw new WrongFunctionParameterException(this, arguments);
 		}
 
 		Queue<Vertex> queue = new ArrayDeque<Vertex>();

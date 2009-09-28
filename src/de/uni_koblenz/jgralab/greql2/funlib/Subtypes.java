@@ -85,7 +85,7 @@ public class Subtypes extends AbstractGreql2Function {
 			clazz = arguments[0].toAttributedElementClass();
 			break;
 		default:
-			throw new WrongFunctionParameterException(this, null, arguments);
+			throw new WrongFunctionParameterException(this, arguments);
 		}
 
 		JValueSet typeSet = new JValueSet();

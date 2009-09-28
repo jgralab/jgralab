@@ -110,7 +110,7 @@ public class ElementsIn extends AbstractGreql2Function {
 			set.addAll(pathSystem.nodes());
 			break;
 		default:
-			throw new WrongFunctionParameterException(this, null, arguments);
+			throw new WrongFunctionParameterException(this, arguments);
 		}
 		return set;
 	}

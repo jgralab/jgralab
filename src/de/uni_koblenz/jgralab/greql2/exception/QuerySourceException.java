@@ -27,6 +27,8 @@ package de.uni_koblenz.jgralab.greql2.exception;
 import java.util.ArrayList;
 import java.util.List;
 
+import de.uni_koblenz.jgralab.greql2.EnhancedGreql2;
+import de.uni_koblenz.jgralab.greql2.schema.Greql2Vertex;
 import de.uni_koblenz.jgralab.greql2.schema.SourcePosition;
 
 /**
@@ -41,14 +43,14 @@ public class QuerySourceException extends EvaluateException {
 	static final long serialVersionUID = -1234561;
 
 	/**
-	 * the position in the query where the undefined variable is used
+	 * the position in the query where exception occured
 	 */
 	private List<SourcePosition> positions;
 
 	/**
-	 * the name of the elements that causes the error
+	 * the element that causes the error
 	 */
-	private String elementName;
+	private Greql2Vertex element;
 
 	/**
 	 * the error message
@@ -57,15 +59,15 @@ public class QuerySourceException extends EvaluateException {
 
 	/**
 	 * 
-	 * @param elementName
-	 *            the name of the element that caused the error
+	 * @param element
+	 *            the element that caused the error
 	 * @param sourcePositions
 	 *            a list of sourceposition where the error possible occurs
 	 */
-	public QuerySourceException(String errorMessage, String elementName,
+	public QuerySourceException(String errorMessage, Greql2Vertex element,
 			List<SourcePosition> sourcePositions, Exception cause) {
-		super(errorMessage + elementName, cause);
-		this.elementName = elementName;
+		super(errorMessage, cause);
+		this.element = element;
 		this.errorMessage = errorMessage;
 		if (sourcePositions != null) {
 			positions = sourcePositions;
@@ -76,42 +78,42 @@ public class QuerySourceException extends EvaluateException {
 
 	/**
 	 * 
-	 * @param elementName
-	 *            the name of the element that caused the error
+	 * @param element
+	 *            the element that caused the error
 	 * @param sourcePosition
 	 *            the sourceposition where the error occurs
 	 */
-	public QuerySourceException(String errorMessage, String elementName,
+	public QuerySourceException(String errorMessage, Greql2Vertex element,
 			SourcePosition sourcePosition, Exception cause) {
-		super(errorMessage + elementName, cause);
+		super(errorMessage, cause);
 		this.errorMessage = errorMessage;
-		this.elementName = elementName;
+		this.element = element;
 		positions = new ArrayList<SourcePosition>();
 		positions.add(sourcePosition);
 	}
 
 	/**
 	 * 
-	 * @param elementName
-	 *            the name of the element that caused the error
+	 * @param element
+	 *            the element that caused the error
 	 * @param sourcePositions
 	 *            a list of sourceposition where the error possible occurs
 	 */
-	public QuerySourceException(String errorMessage, String elementName,
+	public QuerySourceException(String errorMessage, Greql2Vertex element,
 			List<SourcePosition> sourcePositions) {
-		this(errorMessage, elementName, sourcePositions, null);
+		this(errorMessage, element, sourcePositions, null);
 	}
 
 	/**
 	 * 
-	 * @param elementName
-	 *            the name of the element that caused the error
+	 * @param element
+	 *            the element that caused the error
 	 * @param sourcePosition
 	 *            the sourceposition where the error occurs
 	 */
-	public QuerySourceException(String errorMessage, String elementName,
+	public QuerySourceException(String errorMessage, Greql2Vertex element,
 			SourcePosition sourcePosition) {
-		this(errorMessage, elementName, sourcePosition, null);
+		this(errorMessage, element, sourcePosition, null);
 	}
 
 	/**
@@ -119,13 +121,25 @@ public class QuerySourceException extends EvaluateException {
 	 */
 	@Override
 	public String getMessage() {
+		StringBuilder sb = new StringBuilder();
 		if (positions.size() > 0) {
-			return errorMessage + " " + elementName + " at position ("
-					+ positions.get(0).get_offset() + ", "
-					+ positions.get(0).get_length() + ")";
+			sb.append(errorMessage);
+			sb.append(": query part '");
+			sb.append((element != null) ? ((EnhancedGreql2) element.getGraph())
+					.serializeGreql2Vertex(element) : "<unknown element>");
+			sb.append("' at position (");
+			sb.append(positions.get(0).get_offset());
+			sb.append(", ");
+			sb.append(positions.get(0).get_length());
+			sb.append(")");
 		} else {
-			return errorMessage + elementName + " at unknown position in query";
+			sb.append(errorMessage);
+			sb.append(": query part '");
+			sb.append((element != null) ? ((EnhancedGreql2) element.getGraph())
+					.serializeGreql2Vertex(element) : "<unknown element>");
+			sb.append("' at unknown position in query");
 		}
+		return sb.toString();
 	}
 
 	/**
@@ -156,10 +170,10 @@ public class QuerySourceException extends EvaluateException {
 	}
 
 	/**
-	 * @return the name of the undefinedvariable
+	 * @return the broken element
 	 */
-	public String getElementName() {
-		return elementName;
+	public Greql2Vertex getElement() {
+		return element;
 	}
 
 }

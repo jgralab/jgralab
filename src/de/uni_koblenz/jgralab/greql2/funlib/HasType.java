@@ -95,7 +95,7 @@ public class HasType extends AbstractGreql2Function {
 			typeCollection = arguments[1].toJValueTypeCollection();
 			break;
 		default:
-			throw new WrongFunctionParameterException(this, null, arguments);
+			throw new WrongFunctionParameterException(this, arguments);
 		}
 		AttributedElement elem = arguments[0].toAttributedElement();
 

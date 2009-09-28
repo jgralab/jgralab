@@ -85,7 +85,7 @@ public class GetValue extends AbstractGreql2Function {
 			record = arguments[0].toJValueRecord();
 			break;
 		default:
-			throw new WrongFunctionParameterException(this, null, arguments);
+			throw new WrongFunctionParameterException(this, arguments);
 		}
 		String fieldName = arguments[1].toString();
 

@@ -97,7 +97,7 @@ public class IsA extends AbstractGreql2Function {
 			aec2 = arguments[1].toAttributedElementClass();
 			break;
 		default:
-			throw new WrongFunctionParameterException(this, null, arguments);
+			throw new WrongFunctionParameterException(this, arguments);
 		}
 		if (s1 != null || s2 != null) {
 			Schema schema = graph.getGraphClass().getSchema();

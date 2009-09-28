@@ -78,7 +78,7 @@ public abstract class ArithmeticFunction extends AbstractGreql2Function {
 						+ operator + ".");
 			}
 		default:
-			throw new WrongFunctionParameterException(this, null, arguments);
+			throw new WrongFunctionParameterException(this, arguments);
 		}
 	}
 

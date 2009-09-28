@@ -86,7 +86,7 @@ public class HasAttribute extends AbstractGreql2Function {
 			clazz = arguments[0].toAttributedElementClass();
 			break;
 		default:
-			throw new WrongFunctionParameterException(this, null, arguments);
+			throw new WrongFunctionParameterException(this, arguments);
 		}
 		return new JValue(clazz.containsAttribute(arguments[1].toString()));
 	}
