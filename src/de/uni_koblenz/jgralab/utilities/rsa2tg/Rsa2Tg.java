@@ -663,7 +663,7 @@ public class Rsa2Tg extends XmlProcessor {
 				// an edgeClasss.
 				if (type.equals(UML_PROPERTY)
 						&& (currentClass instanceof EdgeClass)) {
-					handleAssociatioEnd(xmiId);
+					handleAssociationEnd(xmiId);
 				} else {
 					throw new ProcessingException(getParser(), getFileName(),
 							createUnexpectedElementMessage(name, type));
@@ -724,14 +724,16 @@ public class Rsa2Tg extends XmlProcessor {
 	/**
 	 * Processes a XML end element tags in order to set internal states.
 	 * 
-	 * TODO Some @param are missing.
+	 * @param name
+	 *            Name of the XML element, which will be closed.
+	 * @param content
+	 *            TODO
 	 * 
 	 * @throws XMLStreamException
 	 */
 	@Override
 	protected void endElement(String name, StringBuilder content)
 			throws XMLStreamException {
-
 		String xmiId = xmiIdStack.pop();
 
 		if (inConstraint && name.equals(UML_BODY)) {
@@ -762,7 +764,7 @@ public class Rsa2Tg extends XmlProcessor {
 			packageStack.pop();
 
 			// TODO
-			// There should be no package left.
+			// There should be no packages left over.
 			if (packageStack.size() != 0) {
 				throw new ProcessingException(getParser(), getFileName(),
 						"XMI file is malformed. There is probably one end element to much.");
@@ -1417,9 +1419,8 @@ public class Rsa2Tg extends XmlProcessor {
 	}
 
 	/**
-	 * Creates {@link EdgeClass} names for all EdgeClass objects ...
-	 * 
-	 * TODO Needs to be described.
+	 * Creates {@link EdgeClass} names for all EdgeClass objects, which do have
+	 * an empty String or a String, which ends with a '.'.
 	 */
 	private void createEdgeClassNames() {
 		for (EdgeClass ec : sg.getEdgeClassVertices()) {
@@ -1428,7 +1429,6 @@ public class Rsa2Tg extends XmlProcessor {
 				continue;
 			}
 
-			// System.err.print("createEdgeClassName for '" + name + "'");
 			String ecName = null;
 			// invent edgeclass name
 			String toRole = ec.getFirstTo().get_roleName();
@@ -1915,21 +1915,41 @@ public class Rsa2Tg extends XmlProcessor {
 	}
 
 	/**
-	 * TODO
+	 * Handles the stereotypes '<<graphclass>>', '<<record>>' and '<<abstract>>'
+	 * by taking the appropriate action for every stereotype.
+	 * 
+	 * '<<graphclass>>': The GraphClass will get the qualified name and all edge
+	 * of the stereotyped class. The stereotyped class will be deleted.
+	 * 
+	 * '<<record>>': A RecordDomain will be created and the qualified name and
+	 * all attributes will be transfered to it. The stereotyped class will be
+	 * deleted.
+	 * 
+	 * '<<abstract>>': The stereotype will be set to abstract.
 	 * 
 	 * @throws XMLStreamException
 	 */
 	private void handleStereotype() throws XMLStreamException {
 		String key = getAttribute(UML_ATTRIBUTE_KEY);
+
+		if (currentClass == null) {
+			throw new ProcessingException(
+					getParser(),
+					getFileName(),
+					"A stereotype, like the current stereotype '<<"
+							+ key
+							+ ">>', is only allow for UML classes or UML associations.");
+		}
+
 		if (key.equals("graphclass")) {
 			// convert currentClass to graphClass
 
-			// TODO Exception, <<graphclass>> kann nur an einer (UML)Klasse
-			// stehen,
-			// nicht an anderen Elementen
-			if (currentClass == null || !(currentClass instanceof VertexClass)) {
+			// TODO
+			// The stereotype '<<graphclass>>' can only be attached to UML
+			// classes.
+			if (!(currentClass instanceof VertexClass)) {
 				throw new ProcessingException(getParser(), getFileName(),
-						"The stereotype <<graphclass>> is only allow for UML-classes.");
+						"The stereotype '<<graphclass>>' is only allow for UML-classes.");
 			}
 
 			AttributedElementClass aec = (AttributedElementClass) idMap
@@ -1948,16 +1968,15 @@ public class Rsa2Tg extends XmlProcessor {
 			aec.delete();
 			currentClass = graphClass;
 
-			// System.out.println("currentClass = " + currentClass + " "
-			// + currentClass.getQualifiedName());
-
 		} else if (key.equals("record")) {
 			// convert current class to RecordDomain
 
-			// Exception, <<record>> kann nur an einer (UML)Klasse stehen,
-			// nicht an anderen Elementen
-			assert currentClass != null;
-			assert currentClass instanceof VertexClass;
+			// TODO
+			// The stereotype '<<record>>' can only be attached to UML classes.
+			if (!(currentClass instanceof VertexClass)) {
+				throw new ProcessingException(getParser(), getFileName(),
+						"The stereotype '<<record>>' is only allow for UML-classes.");
+			}
 
 			RecordDomain rd = sg.createRecordDomain();
 			rd.set_qualifiedName(currentClass.get_qualifiedName());
@@ -1979,6 +1998,7 @@ public class Rsa2Tg extends XmlProcessor {
 						String typeId = attributeType.getMark(att);
 
 						// TODO
+						// There have to be a typeId.
 						if (typeId == null) {
 							throw new ProcessingException(getParser(),
 									getFileName(),
@@ -1994,6 +2014,8 @@ public class Rsa2Tg extends XmlProcessor {
 					}
 					att.delete();
 				} else {
+					// TODO Sollte hier nur eine Fehlermeldung ausgegeben
+					// werden?
 					System.err.println("Can't handle " + e);
 				}
 				e = n;
@@ -2017,15 +2039,10 @@ public class Rsa2Tg extends XmlProcessor {
 			// + rd + " " + rd.getQualifiedName());
 		} else if (key.equals("abstract")) {
 
-			// TODO Abstract darf nur an Klassen und Assoziationen stehen
-			if (currentClass == null) {
-				throw new ProcessingException(getParser(), getFileName(),
-						"The modifier 'abstract' is only allowed for classes or associations.");
-			}
 			currentClass.set_abstract(true);
 		} else {
 			throw new ProcessingException(getParser(), getFileName(),
-					"Unexpected stereotype '" + key + "'.");
+					"Unexpected stereotype '<<" + key + ">>'.");
 		}
 	}
 
@@ -2204,22 +2221,31 @@ public class Rsa2Tg extends XmlProcessor {
 						getFileName(),
 						"An owned attribute have to be defined in a VertexClass, EdgeClass or a RecordDomain.");
 			}
-			handleAssociatioEnd(xmiId);
+			handleAssociationEnd(xmiId);
 		}
 	}
 
 	/**
-	 * Handles a 'ownedEnd' XML element of type 'uml:Property' by creating ...
-	 * TODO
+	 * Handles a 'ownedEnd' XML element of type 'uml:Property' by creating an
+	 * appropriate {@link From} edge.
 	 * 
-	 * @throws XMLStreamException
 	 * @param xmiId
+	 * @throws XMLStreamException
 	 */
-	private void handleAssociatioEnd(String xmiId) throws XMLStreamException {
+	private void handleAssociationEnd(String xmiId) throws XMLStreamException {
 		String endName = getAttribute(UML_ATTRIBUTE_NAME);
 		String agg = getAttribute(UML_ATTRIBUTE_AGGREGATION);
 		boolean aggregation = (agg != null) && agg.equals(UML_SHARED);
 		boolean composition = (agg != null) && agg.equals(UML_COMPOSITE);
+
+		String typeId = getAttribute(UML_ATTRIBUTE_TYPE);
+
+		// TODO
+		// There have to be a typeId.
+		if (typeId == null) {
+			throw new ProcessingException(getParser(), getFileName(),
+					"No type has been defined.");
+		}
 
 		Edge e = (Edge) idMap.get(xmiId);
 		if (e == null) {
@@ -2227,14 +2253,7 @@ public class Rsa2Tg extends XmlProcessor {
 			// if not found, create a preliminary VertexClass
 			VertexClass vc = null;
 			// we have an "ownedEnd", vertex class id is in "type" attribute
-			String typeId = getAttribute(UML_ATTRIBUTE_TYPE);
 
-			// TODO Exception, weil der Fehler vom Input verursacht wird und
-			// wahrscheinlich deshalb nicht mehr weiter gearbeitet werden kann.
-			if (typeId == null) {
-				throw new ProcessingException(getParser(), getFileName(),
-						"No type has been defined.");
-			}
 			AttributedElement ae = idMap.get(typeId);
 			if (ae != null) {
 				// VertexClass found
@@ -2315,13 +2334,7 @@ public class Rsa2Tg extends XmlProcessor {
 			// with a possibly preliminary vertex class
 			VertexClass vc = (VertexClass) e.getOmega();
 			if (preliminaryVertices.contains(vc)) {
-				String typeId = getAttribute(UML_ATTRIBUTE_TYPE);
 
-				// TODO Exception
-				if (typeId == null) {
-					throw new ProcessingException(getParser(), getFileName(),
-							"No type ID found.");
-				}
 				AttributedElement ae = idMap.get(typeId);
 
 				if ((ae != null) && !vc.equals(ae)) {
@@ -2365,45 +2378,102 @@ public class Rsa2Tg extends XmlProcessor {
 	}
 
 	/**
+	 * Changes the type of an {@link EdgeClass} to its correct type by creating
+	 * an {@link AggregationClass} or a {@link CompositionClass} or leaving the
+	 * EdgeClass as it is. If the type is changed, all important elements of the
+	 * EdgeClass will be moved to the new type.
+	 * 
+	 * <p>
+	 * Legend:<br>
+	 * - T stands for the type of the given class.<br>
+	 * - * stands for any boolean value.
+	 * </p>
+	 * <table border="1">
+	 * <tr>
+	 * <th>Given class</th>
+	 * <th>value of <br>
+	 * <code>aggregation</code></th>
+	 * <th>value of <br>
+	 * <code>composition</code></th>
+	 * <th>return type</code></th>
+	 * </tr>
+	 * <tr>
+	 * <td>T</td>
+	 * <td>false</td>
+	 * <td>false</td>
+	 * <td>T</td>
+	 * </tr>
+	 * <tr>
+	 * <td>T != AggregationClass</td>
+	 * <td>true</td>
+	 * <td>false</td>
+	 * <td>AggregationClass <br>
+	 * (new created object)</td>
+	 * </tr>
+	 * <td>T == AggregationClass</td>
+	 * <td>true</td>
+	 * <td>false</td>
+	 * <td>AggregationClass</td>
+	 * </tr>
+	 * <td>T != CompositionClass</td>
+	 * <td>*</td>
+	 * <td>true</td>
+	 * <td>CompositionClass <br>
+	 * (new created object)</td>
+	 * </tr>
+	 * <td>T == CompositionClass</td>
+	 * <td>*</td>
+	 * <td>true</td>
+	 * <td>CompositionClass</td>
+	 * </tr>
+	 * 
+	 * </table>
+	 * <br>
 	 * 
 	 * @param ec
+	 *            EdgeClass, which should be corrected.
 	 * @param aggregation
+	 *            Flag, to indicate, that this EdgeClass should be corrected to
+	 *            an AggregationClass.
 	 * @param composition
-	 * @return
+	 *            Flag, to indicate, that this EdgeClass should be corrected to
+	 *            a CompositionClass.
+	 * @return Corrected EdgeClass. (see table above)
 	 */
 	private EdgeClass correctAggregationAndComposition(EdgeClass ec,
 			boolean aggregation, boolean composition) {
+
+		EdgeClass cls = null;
 		if (composition && (ec.getM1Class() != CompositionClass.class)) {
-			EdgeClass cls = sg.createCompositionClass();
-			cls.set_qualifiedName(ec.get_qualifiedName());
-			cls.set_abstract(ec.is_abstract());
-			reconnectEdges(ec, cls);
-			ec.delete();
-			if (preliminaryVertices.contains(ec)) {
-				preliminaryVertices.remove(ec);
-				preliminaryVertices.add(cls);
-			}
-			return cls;
+			cls = sg.createCompositionClass();
+		} else if (aggregation && (ec.getM1Class() != AggregationClass.class)) {
+			cls = sg.createAggregationClass();
+		} else {
+			// The given EdgeClass is not a CompositionClass or a
+			// AggregationClass.
+			// --> return
+			return ec;
 		}
-		if (aggregation && (ec.getM1Class() != AggregationClass.class)) {
-			EdgeClass cls = sg.createAggregationClass();
-			cls.set_qualifiedName(ec.get_qualifiedName());
-			cls.set_abstract(ec.is_abstract());
-			reconnectEdges(ec, cls);
-			ec.delete();
-			if (preliminaryVertices.contains(ec)) {
-				preliminaryVertices.remove(ec);
-				preliminaryVertices.add(cls);
-			}
-			return cls;
+
+		cls.set_qualifiedName(ec.get_qualifiedName());
+		cls.set_abstract(ec.is_abstract());
+		reconnectEdges(ec, cls);
+		ec.delete();
+		if (preliminaryVertices.contains(ec)) {
+			preliminaryVertices.remove(ec);
+			preliminaryVertices.add(cls);
 		}
-		return ec;
+		return cls;
 	}
 
 	/**
+	 * Reconnects all edges of an <code>oldVertex</code> to
+	 * <code>newVertex</code>.
 	 * 
 	 * @param oldVertex
+	 *            Old {@link Vertex}, of which all edge should be reattached.
 	 * @param newVertex
+	 *            New {@link Vertex}, to which all edge should be attached.
 	 */
 	private void reconnectEdges(Vertex oldVertex, Vertex newVertex) {
 		Edge curr = oldVertex.getFirstEdge();
@@ -2545,94 +2615,224 @@ public class Rsa2Tg extends XmlProcessor {
 		}
 	}
 
+	/**
+	 * <code>true</code> indicates, that the roles from {@link From} edges
+	 * should be used.
+	 * 
+	 * @param useFromRole
+	 *            Value for the <code>useFromRole</code> flag.
+	 */
 	public void setUseFromRole(boolean useFromRole) {
 		this.useFromRole = useFromRole;
 	}
 
+	/**
+	 * Will return <code>true</code>, if the roles from the {@link From} edge
+	 * should be used.
+	 * 
+	 * @return Value of the <code>useFromRole</code> flag.
+	 */
 	private boolean isUseFromRole() {
 		return useFromRole;
 	}
 
+	/**
+	 * <code>true</code> forces the removal of all unlinked {@link Domain}
+	 * objects.
+	 * 
+	 * @param removeUnusedDomains
+	 *            Value of the <code>removeUnusedDomain</code> flag.
+	 */
 	public void setRemoveUnusedDomains(boolean removeUnusedDomains) {
 		this.removeUnusedDomains = removeUnusedDomains;
 	}
 
+	/**
+	 * Will return <code>true</code>, if unlinked {@link Domain} objects should
+	 * be removed in the last processing step.
+	 * 
+	 * @return Value of the <code>removeUnusedDoimain</code> flag.
+	 */
 	private boolean isRemoveUnusedDomains() {
 		return removeUnusedDomains;
 	}
 
+	/**
+	 * <code>true</code> indicates, that the navigability of edges should be
+	 * used.
+	 * 
+	 * @param useNavigability
+	 *            Value for the <code>useNavigability</code> flag.
+	 */
 	public void setUseNavigability(boolean useNavigability) {
 		this.useNavigability = useNavigability;
 	}
 
+	/**
+	 * Will return <code>true</code>, if the navigability of edges should be
+	 * used.
+	 * 
+	 * @return Value of the <code>useNavigability</code> flag.
+	 */
 	private boolean isUseNavigability() {
 		return useNavigability;
 	}
 
+	/**
+	 * Returns the {@link SchemaGraph}, which has been created after executing
+	 * {@link Rsa2Tg#process(String)}.
+	 * 
+	 * @return Created SchemaGraph.
+	 */
 	public SchemaGraph getSchemaGraph() {
 		return sg;
 	}
 
+	/**
+	 * Determines whether or not all output will be suppressed.
+	 * 
+	 * @param suppressOutput
+	 *            Value for the <code>suppressOutput</code> flag.
+	 */
 	public void setSuppressOutput(boolean suppressOutput) {
 		this.suppressOutput = suppressOutput;
 	}
 
+	/**
+	 * Will return <code>true</code>, if a TG grUML SchemaGraph should be
+	 * written.
+	 * 
+	 * @return Value of the <code>writeSchemaGraph</code> flag.
+	 */
 	public boolean isWriteSchemaGraph() {
 		return writeSchemaGraph;
 	}
 
+	/**
+	 * Determines whether or not a TG grUML SchemaGraph file will be written.
+	 * 
+	 * @param writeSchemaGraph
+	 *            Value for the <code>writeSchemaGraph</code> flag.
+	 */
 	public void setWriteSchemaGraph(boolean writeSchemaGraph) {
 		this.writeSchemaGraph = writeSchemaGraph;
 	}
 
+	/**
+	 * Will return <code>true</code>, if a DOT file is written after executing
+	 * {@link Rsa2Tg#process(String)}.
+	 * 
+	 * @return Value if the <code>writeDot</code> flag.
+	 */
 	public boolean isWriteDot() {
 		return writeDot;
 	}
 
-	public void setWriteDot(boolean writeDebug) {
-		this.writeDot = writeDebug;
+	/**
+	 * Determines whether or not a DOT file is written. If the boolean value is
+	 * set to <code>true</code>, a DOT file will be written.
+	 * 
+	 * @param writeDot
+	 *            Value for the <code>writeDot</code> flag.
+	 */
+	public void setWriteDot(boolean writeDot) {
+		this.writeDot = writeDot;
 	}
 
+	/**
+	 * Returns the file name of the TG Schema file.
+	 * 
+	 * @return File name as {@link String}.
+	 */
 	public String getFilenameSchema() {
 		return filenameSchema;
 	}
 
+	/**
+	 * Sets the file name of the TG Schema file.
+	 * 
+	 * @param filenameSchema
+	 *            File name as {@link String}.
+	 */
 	public void setFilenameSchema(String filenameSchema) {
 		this.filenameSchema = filenameSchema;
 	}
 
+	/**
+	 * Returns the file name of the TG grUML SchemaGraph file.
+	 * 
+	 * @return File name as {@link String}.
+	 */
 	public String getFilenameSchemaGraph() {
 		return filenameSchemaGraph;
 	}
 
+	/**
+	 * Sets the file name of the TG grUML SchemaGraph file.
+	 * 
+	 * @param filenameSchemaGraph
+	 *            file name as {@link String}.
+	 */
 	public void setFilenameSchemaGraph(String filenameSchemaGraph) {
 		this.filenameSchemaGraph = filenameSchemaGraph;
 	}
 
-	public String getFilenameXmi() {
-		return getFileName();
-	}
-
+	/**
+	 * Returns the file name of the DOT file.
+	 * 
+	 * @return File name as {@link String}.
+	 */
 	public String getFilenameDot() {
 		return filenameDot;
 	}
 
+	/**
+	 * Sets the file name of the DOT file.
+	 * 
+	 * @param filenameDot
+	 *            File name as {@link String}.
+	 */
 	public void setFilenameDot(String filenameDot) {
 		this.filenameDot = filenameDot;
 	}
 
+	/**
+	 * Returns the file name of the HTML validation file.
+	 * 
+	 * @return File name as {@link String}.
+	 */
 	public String getFilenameValidation() {
 		return filenameValidation;
 	}
 
+	/**
+	 * Sets the file name of the HTML validation file.
+	 * 
+	 * @param filenameValidation
+	 *            File name as {@link String}.
+	 */
 	public void setFilenameValidation(String filenameValidation) {
 		this.filenameValidation = filenameValidation;
 	}
 
+	/**
+	 * Will return <code>true</code>, if a validation will be performed. If not
+	 * --> <code>false</code>.
+	 * 
+	 * @return Value of the <code>validation</code> flag.
+	 */
 	public boolean isValidate() {
 		return validate;
 	}
 
+	/**
+	 * Sets the <code>validation</code> flag. <code>true</code> will perform a
+	 * validation after processing a XMI file to a SchemaGraph. (also see
+	 * {@link Rsa2Tg#process(String)})
+	 * 
+	 * @param validate
+	 *            Boolean value for the <code>validation</code> flag.
+	 */
 	public void setValidate(boolean validate) {
 		this.validate = validate;
 	}
