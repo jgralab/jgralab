@@ -24,6 +24,11 @@
 
 package de.uni_koblenz.jgralab.greql2.jvalue;
 
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.Map.Entry;
+
 import de.uni_koblenz.jgralab.AttributedElement;
 import de.uni_koblenz.jgralab.BooleanGraphMarker;
 import de.uni_koblenz.jgralab.Edge;
@@ -1214,6 +1219,28 @@ public class JValue implements Comparable<JValue> {
 		}
 		if (o instanceof Graph) {
 			return new JValue((Graph) o);
+		}
+		if (o instanceof Set) {
+			JValueSet retVal = new JValueSet();
+			for (Object member : ((Set)o)) {
+				retVal.add(JValue.fromObject(member));
+			}
+			return retVal;
+		}
+		if (o instanceof List) {
+			JValueList retVal = new JValueList();
+			for (Object member : ((List)o)) {
+				retVal.add(JValue.fromObject(member));
+			}
+			return retVal;
+		}
+		if (o instanceof Map) {
+			JValueMap retVal = new JValueMap();
+			Map<? extends Object, ? extends Object> m = (Map) o;
+			for (Map.Entry<? extends Object, ? extends Object> entry : m.entrySet()) {
+				retVal.put(JValue.fromObject(entry.getKey()), JValue.fromObject(entry.getValue()));
+			}
+			return retVal;
 		}
 		return new JValue(o);
 	}
