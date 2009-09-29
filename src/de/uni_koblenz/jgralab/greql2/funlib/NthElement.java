@@ -40,6 +40,7 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
  * <dl>
  * <dt><b>GReQL-signature</b></dt>
  * <dd><code>OBJECT nthElement(list:LIST&lt;OBJECT&gt;, n:INTEGER)</code></dd>
+ * <dd><code>OBJECT nthElement(list:SET&lt;OBJECT&gt;, n:INTEGER)</code></dd>
  * <dd><code>OBJECT nthElement(tuple:TUPLE&lt;OBJECT&gt;, n:INTEGER)</code></dd>
  * <dd>&nbsp;</dd>
  * </dl>
@@ -49,6 +50,7 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
  * <dl>
  * <dt><b>Parameters:</b></dt>
  * <dd><code>list</code> - list to return n-th element for</dd>
+ * <dd><code>set</code> - sorted set to return n-th element for</dd>
  * <dd><code>tuple</code> - tuple to return n-th element for</dd>
  * <dd><code>n</code> - index of the element to return</dd>
  * <dt><b>Returns:</b></dt>

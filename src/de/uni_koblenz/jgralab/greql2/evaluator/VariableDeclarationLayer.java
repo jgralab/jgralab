@@ -183,38 +183,6 @@ public class VariableDeclarationLayer implements
 	}
 	
 	
-	/**
-	 * Gets the next possible variable combination
-	 * 
-	 * @param subgraphMarker
-	 * @return true if a next combination exists, false otherwise
-	 * @throws EvaluateException
-	 */
-	private boolean getNextCombination2(BooleanGraphMarker subgraphMarker)
-			throws EvaluateException {
-		int size = variableDeclarations.size();
-		int pointer = size - 1;
-		while (pointer<size) {
-			VariableDeclaration currDecl = null;
-			do {
-				if (pointer < 0)
-					return false;
-				currDecl = variableDeclarations.get(pointer--);
-			} while (!currDecl.iterate());
-			pointer += 2;
-			while (pointer < size) {
-				currDecl = variableDeclarations.get(pointer++);
-				currDecl.reset();
-				if (!currDecl.iterate()) {
-					pointer-=2;
-					break;
-				}	
-			}
-		}	
-		return true;
-	}
-
-	
 	
 
 	/**
