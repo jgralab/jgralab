@@ -59,6 +59,7 @@ public class GraphIOTest {
 		Schema ioTest = GraphIO.loadSchemaFromFile("GraphIOTestInput.tg");
 
 		GraphIO.saveSchemaToFile("GraphIOTestOutput.tg", ioTest);
+		System.out.println("Fini.");
 	}
 
 }

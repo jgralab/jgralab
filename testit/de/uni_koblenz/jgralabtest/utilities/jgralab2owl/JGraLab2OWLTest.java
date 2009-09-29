@@ -14,7 +14,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-package de.uni_koblenz.jgralabtest.utilities.jgralab2owltest;
+package de.uni_koblenz.jgralabtest.utilities.jgralab2owl;
 
 import de.uni_koblenz.jgralab.GraphIO;
 import de.uni_koblenz.jgralab.GraphIOException;
@@ -24,12 +24,16 @@ import de.uni_koblenz.jgralab.utilities.jgralab2owl.JGraLab2OWL;
 public class JGraLab2OWLTest {
 
 	public static void main(String[] args) {
+
+		String path = "testit/de/uni_koblenz/jgralabtest/utilities/jgralab2owl/";
+		String input = "citymapschema.tg";
+		String output = "CityMap.owl";
+
 		try {
-			Schema cityMapSchema = GraphIO
-					.loadSchemaFromFile("src/de/uni_koblenz/jgralabtest/java2owltest/citymapschema.tg");
-			JGraLab2OWL.saveSchemaToOWL(
-					"src/de/uni_koblenz/jgralabtest/java2owltest/CityMap.owl",
-					cityMapSchema, true, false);
+
+			Schema cityMapSchema = GraphIO.loadSchemaFromFile(path + input);
+			JGraLab2OWL.saveSchemaToOWL(path + output, cityMapSchema, true,
+					false);
 		} catch (GraphIOException gioe) {
 			gioe.printStackTrace();
 		}
