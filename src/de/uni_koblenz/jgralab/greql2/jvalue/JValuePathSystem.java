@@ -190,7 +190,7 @@ public class JValuePathSystem extends JValue {
 	public void addVertex(Vertex vertex, int stateNumber, Edge parentEdge,
 			Vertex parentVertex, int parentStateNumber, int distance,
 			boolean finalState) {
-		System.out.println("Adding vertex: " + vertex);
+		// System.out.println("Adding vertex: " + vertex);
 		PathSystemKey key = new PathSystemKey(vertex, stateNumber);
 		if (!keyToEntryMap.containsKey(key)) {
 			PathSystemEntry entry = new PathSystemEntry(parentVertex,
@@ -241,8 +241,9 @@ public class JValuePathSystem extends JValue {
 	 */
 	public JValueSet siblings(Vertex vertex) {
 		System.out.println("Getting siblings for vertex " + vertex);
-		for (Vertex v : vertexToFirstKeyMap.keySet())
+		for (Vertex v : vertexToFirstKeyMap.keySet()) {
 			System.out.println("Vertex in Map: " + v);
+		}
 		PathSystemKey key = vertexToFirstKeyMap.get(vertex);
 		return siblings(key);
 	}

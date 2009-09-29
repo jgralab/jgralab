@@ -53,7 +53,7 @@ public class JValueTuple extends JValueList {
 			int number = 1;
 
 			for (JValue currentElement : itemList) {
-				System.out.println("Current element is: " + currentElement);
+				// System.out.println("Current element is: " + currentElement);
 				elementHashCode = currentElement.hashCode();
 				newHashCode += -1 + (3 + elementHashCode)
 						* (7 + elementHashCode) * (11 + elementHashCode)
@@ -112,8 +112,9 @@ public class JValueTuple extends JValueList {
 	 */
 	@Override
 	public boolean add(JValue element) {
-		if (element == null)
+		if (element == null) {
 			throw new RuntimeException("Nullllllllllllllllll");
+		}
 		storedHashCode = 0;
 		return itemList.add(element);
 	}

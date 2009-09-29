@@ -580,15 +580,7 @@ public class GreqlEvaluator {
 			GraphClass gc = minimalSchema.createGraphClass("MinimalGraph");
 			VertexClass n = gc.createVertexClass("Node");
 			gc.createEdgeClass("Link", n, n);
-			System.out.println("Trying to commit schema");
 			minimalSchema.compile();
-			// try {
-			// minimalSchema.commit("/home/dbildh/tmp");
-			// } catch (GraphIOException e1) {
-			// // TODO Auto-generated catch block
-			// e1.printStackTrace();
-			// }
-			System.out.println("Heureka");
 			Method graphCreateMethod = minimalSchema.getGraphCreateMethod();
 
 			try {
