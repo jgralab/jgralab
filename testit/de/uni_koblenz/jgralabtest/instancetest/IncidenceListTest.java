@@ -6,6 +6,7 @@ import static junit.framework.Assert.assertNull;
 import static org.junit.Assert.assertFalse;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Random;
 
@@ -13,16 +14,31 @@ import junit.framework.Assert;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
+import org.junit.runners.Parameterized.Parameters;
 
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.GraphException;
 import de.uni_koblenz.jgralab.Vertex;
+import de.uni_koblenz.jgralab.trans.CommitFailedException;
 import de.uni_koblenz.jgralabtest.schemas.minimal.MinimalGraph;
 import de.uni_koblenz.jgralabtest.schemas.minimal.MinimalSchema;
 import de.uni_koblenz.jgralabtest.schemas.minimal.Node;
 
-public class IncidenceListTest {
+@RunWith(Parameterized.class)
+public class IncidenceListTest extends InstanceTest {
+
+	public IncidenceListTest(boolean transactionsEnabled) {
+		super(transactionsEnabled);
+	}
+
+	@Parameters
+	public static Collection<Object[]> configure() {
+		return getParameters();
+	}
+
 	final int V = 4; // initial max vertex count
 	final int E = 4; // initial max edge count
 	final int N = 100; // created vertex count
@@ -32,17 +48,23 @@ public class IncidenceListTest {
 	private Random rnd;
 
 	@Before
-	public void setup() {
+	public void setup() throws CommitFailedException {
 		rnd = new Random(System.currentTimeMillis());
-		g = MinimalSchema.instance().createMinimalGraph(V, E);
+		g = transactionsEnabled ? MinimalSchema.instance()
+				.createMinimalGraphWithTransactionSupport(V, E) : MinimalSchema
+				.instance().createMinimalGraph(V, E);
 		nodes = new Node[N];
+		
+		createTransaction(g);
 		for (int i = 0; i < N; ++i) {
 			nodes[i] = g.createNode();
 		}
+		commit(g);
 	}
 
 	@Test
 	public void addEdgeTest() throws Exception {
+		onlyTestWithoutTransactionSupport();
 		// incidence lists must initially be empty
 		for (int i = 0; i < N; ++i) {
 			assertEquals(0, nodes[i].getDegree());
@@ -121,6 +143,7 @@ public class IncidenceListTest {
 
 	@Test
 	public void putEdgeBeforeTest() throws Exception {
+		onlyTestWithoutTransactionSupport();
 		createRandomEdges();
 		// at each vertex, shuffle edges
 		for (Vertex v : g.vertices()) {
@@ -150,30 +173,35 @@ public class IncidenceListTest {
 
 	@Test(expected = GraphException.class)
 	public void putEdgeBeforeSelf() throws Exception {
+		onlyTestWithoutTransactionSupport();
 		Edge e = g.createLink(nodes[0], nodes[1]);
 		e.putEdgeBefore(e);
 	}
 
 	@Test(expected = GraphException.class)
 	public void putEdgeAfterSelf() throws Exception {
+		onlyTestWithoutTransactionSupport();
 		Edge e = g.createLink(nodes[0], nodes[1]);
 		e.putEdgeAfter(e);
 	}
 
 	@Test(expected = GraphException.class)
 	public void putEdgeAfterDifferentThis() throws Exception {
+		onlyTestWithoutTransactionSupport();
 		Edge e = g.createLink(nodes[0], nodes[1]);
 		e.putEdgeAfter(e.getReversedEdge());
 	}
 
 	@Test(expected = GraphException.class)
 	public void putEdgeBeforeDifferentThis() throws Exception {
+		onlyTestWithoutTransactionSupport();
 		Edge e = g.createLink(nodes[0], nodes[1]);
 		e.putEdgeBefore(e.getReversedEdge());
 	}
 
 	@Test
 	public void putEdgeAfterTest() throws Exception {
+		onlyTestWithoutTransactionSupport();
 		createRandomEdges();
 		// at each vertex, shuffle edges 1000 times
 		for (Vertex v : g.vertices()) {
@@ -245,6 +273,7 @@ public class IncidenceListTest {
 
 	@Test
 	public void deleteEdgeTest() throws Exception {
+		onlyTestWithoutTransactionSupport();
 		createRandomEdges();
 
 		int eCount = g.getECount();

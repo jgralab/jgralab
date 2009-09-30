@@ -1350,209 +1350,207 @@ public class GraphTest extends InstanceTest {
 	// TODO continue here
 	@Test
 	public void testGetEdgeListVersion() {
-		if (!transactionsEnabled) {
-			// preparations...
-			Vertex v1 = g1.createVertex(SubNode.class);
-			Vertex v2 = g1.createVertex(SubNode.class);
-			Vertex v3 = g1.createVertex(SubNode.class);
-			Vertex v4 = g1.createVertex(SubNode.class);
-			Vertex v5 = g1.createVertex(SuperNode.class);
-			Vertex v6 = g1.createVertex(SuperNode.class);
-			Vertex v7 = g1.createVertex(SuperNode.class);
-			Vertex v8 = g1.createVertex(SuperNode.class);
-			Vertex v9 = g1.createVertex(DoubleSubNode.class);
-			Vertex v10 = g1.createVertex(DoubleSubNode.class);
-			Vertex v11 = g1.createVertex(DoubleSubNode.class);
-			Vertex v12 = g1.createVertex(DoubleSubNode.class);
+		onlyTestWithoutTransactionSupport();
+		// preparations...
+		Vertex v1 = g1.createVertex(SubNode.class);
+		Vertex v2 = g1.createVertex(SubNode.class);
+		Vertex v3 = g1.createVertex(SubNode.class);
+		Vertex v4 = g1.createVertex(SubNode.class);
+		Vertex v5 = g1.createVertex(SuperNode.class);
+		Vertex v6 = g1.createVertex(SuperNode.class);
+		Vertex v7 = g1.createVertex(SuperNode.class);
+		Vertex v8 = g1.createVertex(SuperNode.class);
+		Vertex v9 = g1.createVertex(DoubleSubNode.class);
+		Vertex v10 = g1.createVertex(DoubleSubNode.class);
+		Vertex v11 = g1.createVertex(DoubleSubNode.class);
+		Vertex v12 = g1.createVertex(DoubleSubNode.class);
 
-			// border cases
-			assertEquals(0, g1.getEdgeListVersion());
-			assertEquals(0, g2.getEdgeListVersion());
+		// border cases
+		assertEquals(0, g1.getEdgeListVersion());
+		assertEquals(0, g2.getEdgeListVersion());
 
-			Edge e1 = g1.createEdge(SubLink.class, v9, v7);
-			assertEquals(1, g1.getEdgeListVersion());
+		Edge e1 = g1.createEdge(SubLink.class, v9, v7);
+		assertEquals(1, g1.getEdgeListVersion());
 
-			g1.deleteEdge(e1);
-			assertEquals(2, g1.getEdgeListVersion());
+		g1.deleteEdge(e1);
+		assertEquals(2, g1.getEdgeListVersion());
 
-			// normal cases
-			g1.createEdge(SubLink.class, v10, v5);
-			assertEquals(3, g1.getEdgeListVersion());
+		// normal cases
+		g1.createEdge(SubLink.class, v10, v5);
+		assertEquals(3, g1.getEdgeListVersion());
 
-			g1.createEdge(SubLink.class, v10, v6);
-			assertEquals(4, g1.getEdgeListVersion());
+		g1.createEdge(SubLink.class, v10, v6);
+		assertEquals(4, g1.getEdgeListVersion());
 
-			g1.createEdge(SubLink.class, v10, v7);
-			assertEquals(5, g1.getEdgeListVersion());
+		g1.createEdge(SubLink.class, v10, v7);
+		assertEquals(5, g1.getEdgeListVersion());
 
-			g1.createEdge(SubLink.class, v10, v8);
-			assertEquals(6, g1.getEdgeListVersion());
+		g1.createEdge(SubLink.class, v10, v8);
+		assertEquals(6, g1.getEdgeListVersion());
 
-			g1.createEdge(SubLink.class, v11, v5);
-			assertEquals(7, g1.getEdgeListVersion());
+		g1.createEdge(SubLink.class, v11, v5);
+		assertEquals(7, g1.getEdgeListVersion());
 
-			g1.createEdge(SubLink.class, v11, v6);
-			assertEquals(8, g1.getEdgeListVersion());
+		g1.createEdge(SubLink.class, v11, v6);
+		assertEquals(8, g1.getEdgeListVersion());
 
-			g1.createEdge(SubLink.class, v11, v7);
-			assertEquals(9, g1.getEdgeListVersion());
+		g1.createEdge(SubLink.class, v11, v7);
+		assertEquals(9, g1.getEdgeListVersion());
 
-			g1.createEdge(SubLink.class, v11, v8);
-			assertEquals(10, g1.getEdgeListVersion());
+		g1.createEdge(SubLink.class, v11, v8);
+		assertEquals(10, g1.getEdgeListVersion());
 
-			g1.createEdge(SubLink.class, v12, v5);
-			assertEquals(11, g1.getEdgeListVersion());
+		g1.createEdge(SubLink.class, v12, v5);
+		assertEquals(11, g1.getEdgeListVersion());
 
-			g1.createEdge(SubLink.class, v12, v6);
-			assertEquals(12, g1.getEdgeListVersion());
+		g1.createEdge(SubLink.class, v12, v6);
+		assertEquals(12, g1.getEdgeListVersion());
 
-			g1.createEdge(SubLink.class, v12, v7);
-			assertEquals(13, g1.getEdgeListVersion());
+		g1.createEdge(SubLink.class, v12, v7);
+		assertEquals(13, g1.getEdgeListVersion());
 
-			Edge e3 = g1.createEdge(SubLink.class, v12, v8);
-			assertEquals(14, g1.getEdgeListVersion());
+		Edge e3 = g1.createEdge(SubLink.class, v12, v8);
+		assertEquals(14, g1.getEdgeListVersion());
 
-			g1.createEdge(SubLink.class, v9, v6);
-			assertEquals(15, g1.getEdgeListVersion());
+		g1.createEdge(SubLink.class, v9, v6);
+		assertEquals(15, g1.getEdgeListVersion());
 
-			g1.createEdge(SubLink.class, v9, v7);
-			assertEquals(16, g1.getEdgeListVersion());
+		g1.createEdge(SubLink.class, v9, v7);
+		assertEquals(16, g1.getEdgeListVersion());
 
-			g1.createEdge(SubLink.class, v9, v8);
-			assertEquals(17, g1.getEdgeListVersion());
+		g1.createEdge(SubLink.class, v9, v8);
+		assertEquals(17, g1.getEdgeListVersion());
 
-			g1.deleteEdge(e3);
-			assertEquals(18, g1.getEdgeListVersion());
+		g1.deleteEdge(e3);
+		assertEquals(18, g1.getEdgeListVersion());
 
-			// making sure that changing a vertex does not affect the edges
-			g1.deleteVertex(v9);
-			// TODO: Update this, the vertex has edges and thus the edge list
-			// version
-			// changes if the vertex is deleted
-			assertEquals(18, g1.getEdgeListVersion());
+		// making sure that changing a vertex does not affect the edges
+		g1.deleteVertex(v9);
+		// TODO: Update this, the vertex has edges and thus the edge list
+		// version
+		// changes if the vertex is deleted
+		assertEquals(18, g1.getEdgeListVersion());
 
-			g1.createEdge(Link.class, v1, v5);
-			assertEquals(19, g1.getEdgeListVersion());
+		g1.createEdge(Link.class, v1, v5);
+		assertEquals(19, g1.getEdgeListVersion());
 
-			g1.createEdge(Link.class, v2, v5);
-			assertEquals(20, g1.getEdgeListVersion());
+		g1.createEdge(Link.class, v2, v5);
+		assertEquals(20, g1.getEdgeListVersion());
 
-			g1.createEdge(Link.class, v3, v5);
-			assertEquals(21, g1.getEdgeListVersion());
+		g1.createEdge(Link.class, v3, v5);
+		assertEquals(21, g1.getEdgeListVersion());
 
-			g1.createEdge(Link.class, v4, v5);
-			assertEquals(22, g1.getEdgeListVersion());
+		g1.createEdge(Link.class, v4, v5);
+		assertEquals(22, g1.getEdgeListVersion());
 
-			// TODO how can this work if I have already deleted v9?
-			// isValis() even returns true
-			g1.createEdge(Link.class, v9, v5);
-			assertEquals(23, g1.getEdgeListVersion());
+		// TODO how can this work if I have already deleted v9?
+		// isValis() even returns true
+		g1.createEdge(Link.class, v9, v5);
+		assertEquals(23, g1.getEdgeListVersion());
 
-			g1.createEdge(Link.class, v10, v5);
-			assertEquals(24, g1.getEdgeListVersion());
+		g1.createEdge(Link.class, v10, v5);
+		assertEquals(24, g1.getEdgeListVersion());
 
-			g1.createEdge(Link.class, v11, v5);
-			assertEquals(25, g1.getEdgeListVersion());
+		g1.createEdge(Link.class, v11, v5);
+		assertEquals(25, g1.getEdgeListVersion());
 
-			g1.createEdge(Link.class, v12, v5);
-			assertEquals(26, g1.getEdgeListVersion());
+		g1.createEdge(Link.class, v12, v5);
+		assertEquals(26, g1.getEdgeListVersion());
 
-			g1.createEdge(Link.class, v1, v6);
-			assertEquals(27, g1.getEdgeListVersion());
+		g1.createEdge(Link.class, v1, v6);
+		assertEquals(27, g1.getEdgeListVersion());
 
-			g1.createEdge(Link.class, v1, v7);
-			assertEquals(28, g1.getEdgeListVersion());
+		g1.createEdge(Link.class, v1, v7);
+		assertEquals(28, g1.getEdgeListVersion());
 
-			g1.createEdge(Link.class, v1, v8);
-			assertEquals(29, g1.getEdgeListVersion());
+		g1.createEdge(Link.class, v1, v8);
+		assertEquals(29, g1.getEdgeListVersion());
 
-			Edge e4 = g1.createEdge(Link.class, v3, v7);
-			assertEquals(30, g1.getEdgeListVersion());
+		Edge e4 = g1.createEdge(Link.class, v3, v7);
+		assertEquals(30, g1.getEdgeListVersion());
 
-			g1.createEdge(Link.class, v11, v8);
-			assertEquals(31, g1.getEdgeListVersion());
+		g1.createEdge(Link.class, v11, v8);
+		assertEquals(31, g1.getEdgeListVersion());
 
-			g1.createEdge(LinkBack.class, v5, v1);
-			assertEquals(32, g1.getEdgeListVersion());
+		g1.createEdge(LinkBack.class, v5, v1);
+		assertEquals(32, g1.getEdgeListVersion());
 
-			g1.createEdge(LinkBack.class, v6, v2);
-			assertEquals(33, g1.getEdgeListVersion());
+		g1.createEdge(LinkBack.class, v6, v2);
+		assertEquals(33, g1.getEdgeListVersion());
 
-			Edge e5 = g1.createEdge(LinkBack.class, v7, v3);
-			assertEquals(34, g1.getEdgeListVersion());
+		Edge e5 = g1.createEdge(LinkBack.class, v7, v3);
+		assertEquals(34, g1.getEdgeListVersion());
 
-			g1.createEdge(LinkBack.class, v8, v4);
-			assertEquals(35, g1.getEdgeListVersion());
+		g1.createEdge(LinkBack.class, v8, v4);
+		assertEquals(35, g1.getEdgeListVersion());
 
-			g1.createEdge(LinkBack.class, v8, v9);
-			assertEquals(36, g1.getEdgeListVersion());
+		g1.createEdge(LinkBack.class, v8, v9);
+		assertEquals(36, g1.getEdgeListVersion());
 
-			g1.createEdge(LinkBack.class, v7, v10);
-			assertEquals(37, g1.getEdgeListVersion());
+		g1.createEdge(LinkBack.class, v7, v10);
+		assertEquals(37, g1.getEdgeListVersion());
 
-			g1.createEdge(LinkBack.class, v6, v11);
-			assertEquals(38, g1.getEdgeListVersion());
+		g1.createEdge(LinkBack.class, v6, v11);
+		assertEquals(38, g1.getEdgeListVersion());
 
-			Edge e6 = g1.createEdge(LinkBack.class, v5, v12);
-			assertEquals(39, g1.getEdgeListVersion());
+		Edge e6 = g1.createEdge(LinkBack.class, v5, v12);
+		assertEquals(39, g1.getEdgeListVersion());
 
-			g1.deleteEdge(e4);
-			assertEquals(40, g1.getEdgeListVersion());
+		g1.deleteEdge(e4);
+		assertEquals(40, g1.getEdgeListVersion());
 
-			g1.deleteEdge(e5);
-			assertEquals(41, g1.getEdgeListVersion());
+		g1.deleteEdge(e5);
+		assertEquals(41, g1.getEdgeListVersion());
 
-			g1.deleteEdge(e6);
-			assertEquals(42, g1.getEdgeListVersion());
+		g1.deleteEdge(e6);
+		assertEquals(42, g1.getEdgeListVersion());
 
-			// reordering edges does change the edgeListVersion
-			Edge e7 = g1.createEdge(SubLink.class, v9, v5);
-			assertEquals(43, g1.getEdgeListVersion());
+		// reordering edges does change the edgeListVersion
+		Edge e7 = g1.createEdge(SubLink.class, v9, v5);
+		assertEquals(43, g1.getEdgeListVersion());
 
-			Edge e8 = g1.createEdge(SubLink.class, v12, v7);
-			assertEquals(44, g1.getEdgeListVersion());
+		Edge e8 = g1.createEdge(SubLink.class, v12, v7);
+		assertEquals(44, g1.getEdgeListVersion());
 
-			Edge e9 = g1.createEdge(SubLink.class, v11, v6);
-			assertEquals(45, g1.getEdgeListVersion());
+		Edge e9 = g1.createEdge(SubLink.class, v11, v6);
+		assertEquals(45, g1.getEdgeListVersion());
 
-			e7.putBeforeInGraph(e9);
-			assertEquals(46, g1.getEdgeListVersion());
+		e7.putBeforeInGraph(e9);
+		assertEquals(46, g1.getEdgeListVersion());
 
-			e8.putBeforeInGraph(e7);
-			assertEquals(46, g1.getEdgeListVersion());
+		e8.putBeforeInGraph(e7);
+		assertEquals(46, g1.getEdgeListVersion());
 
-			e9.putAfterInGraph(e8);
-			assertEquals(47, g1.getEdgeListVersion());
+		e9.putAfterInGraph(e8);
+		assertEquals(47, g1.getEdgeListVersion());
 
-			e8.putAfterInGraph(e7);
+		e8.putAfterInGraph(e7);
+		assertEquals(48, g1.getEdgeListVersion());
+
+		// changing attributes does not change the edgeListVersion
+		try {
+			e7.setAttribute("anInt", 22);
 			assertEquals(48, g1.getEdgeListVersion());
 
-			// changing attributes does not change the edgeListVersion
-			try {
-				e7.setAttribute("anInt", 22);
-				assertEquals(48, g1.getEdgeListVersion());
+			e8.setAttribute("anInt", 203);
+			assertEquals(48, g1.getEdgeListVersion());
 
-				e8.setAttribute("anInt", 203);
-				assertEquals(48, g1.getEdgeListVersion());
+			e9.setAttribute("anInt", 2209);
+			assertEquals(48, g1.getEdgeListVersion());
 
-				e9.setAttribute("anInt", 2209);
-				assertEquals(48, g1.getEdgeListVersion());
-
-				e7.setAttribute("anInt", 15);
-				assertEquals(48, g1.getEdgeListVersion());
-			} catch (NoSuchFieldException e) {
-				// :(
-				e.printStackTrace();
-			}
-
-			System.out.println("Done testing getEdgeListVersion.");
-		} else {
-			notTestedWithTransactionSupport("testWGetEdgeListVersion");
+			e7.setAttribute("anInt", 15);
+			assertEquals(48, g1.getEdgeListVersion());
+		} catch (NoSuchFieldException e) {
+			// :(
+			e.printStackTrace();
 		}
+
+		System.out.println("Done testing getEdgeListVersion.");
 	}
 
 	@Test
 	public void testContainsVertex() {
+		onlyTestWithoutTransactionSupport();
 		DoubleSubNode v13 = g1.createDoubleSubNode();
 		DoubleSubNode v14 = g2.createDoubleSubNode();
 		SubNode v15 = g1.createSubNode();
@@ -1625,6 +1623,7 @@ public class GraphTest extends InstanceTest {
 
 	@Test
 	public void testContainsEdge() {
+		onlyTestWithoutTransactionSupport();
 		DoubleSubNode v13 = g2.createDoubleSubNode();
 		DoubleSubNode v14 = g2.createDoubleSubNode();
 		SubNode v15 = g2.createSubNode();
@@ -1730,6 +1729,7 @@ public class GraphTest extends InstanceTest {
 
 	@Test
 	public void testDeleteVertex() {
+		onlyTestWithoutTransactionSupport();
 		// TODO:
 		// Removes the vertex from the vertex sequence of this graph.
 		// any edges incident to the vertex are deleted
@@ -1777,6 +1777,7 @@ public class GraphTest extends InstanceTest {
 
 	@Test
 	public void testVertexDeleted() {
+		onlyTestWithoutTransactionSupport();
 		GraphTestKlasse gTest = new GraphTestKlasse(g1.getGraphClass());
 		String name = "";
 
@@ -1867,6 +1868,7 @@ public class GraphTest extends InstanceTest {
 
 	@Test
 	public void testVertexAdded() {
+		onlyTestWithoutTransactionSupport();
 		GraphTestKlasse gTest = new GraphTestKlasse(g1.getGraphClass());
 		Vertex v = gTest.createVertex(SubNode.class);
 		assertEquals("vertexAdded" + v.toString(), gTest.getDone());
@@ -1906,6 +1908,7 @@ public class GraphTest extends InstanceTest {
 
 	@Test
 	public void testDeleteEdge() {
+		onlyTestWithoutTransactionSupport();
 		/*
 		 * TODO apparently one cannot delete ALL edges of the same type (here:
 		 * SubLink) after deleting a vertex?
@@ -2009,6 +2012,7 @@ public class GraphTest extends InstanceTest {
 
 	@Test
 	public void testEdgeDeleted() {
+		onlyTestWithoutTransactionSupport();
 		GraphTestKlasse gTest = new GraphTestKlasse(g1.getGraphClass());
 		String name = "";
 
@@ -2100,6 +2104,7 @@ public class GraphTest extends InstanceTest {
 
 	@Test
 	public void testEdgeAdded() {
+		onlyTestWithoutTransactionSupport();
 		GraphTestKlasse gTest = new GraphTestKlasse(g1.getGraphClass());
 
 		Vertex v1 = gTest.createVertex(SubNode.class);
@@ -2162,6 +2167,7 @@ public class GraphTest extends InstanceTest {
 
 	@Test
 	public void testGetFirstVertex() {
+		onlyTestWithoutTransactionSupport();
 		assertEquals(v1, g1.getFirstVertex());
 		assertEquals(null, g2.getFirstVertex());
 
@@ -2182,6 +2188,7 @@ public class GraphTest extends InstanceTest {
 
 	@Test
 	public void testGetLastVertex() {
+		onlyTestWithoutTransactionSupport();
 		// border cases
 		assertEquals(v12, g1.getLastVertex());
 		assertEquals(null, g2.getLastVertex());
@@ -2228,6 +2235,7 @@ public class GraphTest extends InstanceTest {
 
 	@Test
 	public void testGetFirstVertexOfClass() {
+		onlyTestWithoutTransactionSupport();
 		assertEquals(null, g2.getFirstVertexOfClass(SubNode.class));
 		assertEquals(null, g2.getFirstVertexOfClass(SuperNode.class));
 		assertEquals(null, g2.getFirstVertexOfClass(DoubleSubNode.class));
@@ -2327,6 +2335,7 @@ public class GraphTest extends InstanceTest {
 
 	@Test
 	public void testGetFirstVertexOfClass2() {
+		onlyTestWithoutTransactionSupport();
 		assertEquals(null, g2.getFirstVertexOfClass(SubNode.class, true));
 		assertEquals(null, g2.getFirstVertexOfClass(SubNode.class, false));
 		assertEquals(null, g2.getFirstVertexOfClass(SuperNode.class, true));
@@ -2491,6 +2500,7 @@ public class GraphTest extends InstanceTest {
 
 	@Test
 	public void testGetFirstVertexOfClass3() {
+		onlyTestWithoutTransactionSupport();
 		// preparations
 		getVertexClasses();
 
@@ -2593,6 +2603,7 @@ public class GraphTest extends InstanceTest {
 
 	@Test
 	public void testGetFirstVertexOfClass4() {
+		onlyTestWithoutTransactionSupport();
 		// preparations
 		getVertexClasses();
 
@@ -2785,6 +2796,7 @@ public class GraphTest extends InstanceTest {
 
 	@Test
 	public void testGetFirstEdgeInGraph() {
+		onlyTestWithoutTransactionSupport();
 		Vertex v13 = g1.createVertex(SuperNode.class);
 
 		assertEquals(null, g1.getFirstEdgeInGraph());
@@ -2842,6 +2854,7 @@ public class GraphTest extends InstanceTest {
 
 	@Test
 	public void testGetLastEdgeInGraph() {
+		onlyTestWithoutTransactionSupport();
 		Vertex v13 = g1.createVertex(SuperNode.class);
 
 		assertEquals(null, g1.getLastEdgeInGraph());
@@ -2905,6 +2918,7 @@ public class GraphTest extends InstanceTest {
 
 	@Test
 	public void testGetFirstEdgeOfClassInGraph() {
+		onlyTestWithoutTransactionSupport();
 		Vertex v13 = g1.createVertex(SuperNode.class);
 
 		assertEquals(null, g1.getFirstEdgeOfClassInGraph(Link.class));
@@ -3016,6 +3030,7 @@ public class GraphTest extends InstanceTest {
 
 	@Test
 	public void testGetFirstEdgeOfClassInGraph2() {
+		onlyTestWithoutTransactionSupport();
 		Vertex v13 = g1.createVertex(SuperNode.class);
 
 		assertEquals(null, g1.getFirstEdgeOfClassInGraph(Link.class, true));
@@ -3190,6 +3205,7 @@ public class GraphTest extends InstanceTest {
 
 	@Test
 	public void testGetFirstEdgeOfClassInGraph3() {
+		onlyTestWithoutTransactionSupport();
 		// preparations
 		getEdgeClasses();
 		Vertex v13 = g1.createVertex(SuperNode.class);
@@ -3304,6 +3320,7 @@ public class GraphTest extends InstanceTest {
 
 	@Test
 	public void testGetFirstEdgeOfClassInGraph4() {
+		onlyTestWithoutTransactionSupport();
 		// preparations...
 		getEdgeClasses();
 		Vertex v13 = g1.createVertex(SuperNode.class);
@@ -3473,6 +3490,7 @@ public class GraphTest extends InstanceTest {
 
 	@Test
 	public void testGetVertex() {
+		onlyTestWithoutTransactionSupport();
 		Vertex v13 = g1.createVertex(SubNode.class);
 		Vertex v14 = g1.createVertex(DoubleSubNode.class);
 		Vertex v15 = g1.createVertex(SuperNode.class);
@@ -3512,6 +3530,7 @@ public class GraphTest extends InstanceTest {
 
 	@Test
 	public void testGetEdge() {
+		onlyTestWithoutTransactionSupport();
 		Edge e1 = g1.createEdge(LinkBack.class, v5, v1);
 		Edge e2 = g1.createEdge(Link.class, v2, v7);
 		Edge e3 = g1.createEdge(LinkBack.class, v8, v4);
@@ -3553,6 +3572,7 @@ public class GraphTest extends InstanceTest {
 
 	@Test
 	public void testGetMaxVCount() {
+		onlyTestWithoutTransactionSupport();
 		assertEquals(1000, g1.getMaxVCount());
 		assertEquals(1000, g2.getMaxVCount());
 		MinimalGraph graph3 = MinimalSchema.instance().createMinimalGraph();
@@ -3584,6 +3604,7 @@ public class GraphTest extends InstanceTest {
 
 	@Test
 	public void testGetExpandedEdgeCount() {
+		onlyTestWithoutTransactionSupport();
 		// border case
 		assertEquals(2000, g1.getExpandedEdgeCount());
 
@@ -3608,6 +3629,7 @@ public class GraphTest extends InstanceTest {
 
 	@Test
 	public void testGetMaxECount() {
+		onlyTestWithoutTransactionSupport();
 		assertEquals(1000, g1.getMaxECount());
 		assertEquals(1000, g2.getMaxECount());
 		MinimalGraph graph3 = MinimalSchema.instance().createMinimalGraph();
@@ -3618,6 +3640,7 @@ public class GraphTest extends InstanceTest {
 
 	@Test
 	public void testGetVCount() {
+		onlyTestWithoutTransactionSupport();
 		// border cases
 		assertEquals(0, g2.getVCount());
 
@@ -3691,6 +3714,7 @@ public class GraphTest extends InstanceTest {
 
 	@Test
 	public void testGetECount() {
+		onlyTestWithoutTransactionSupport();
 		// border cases
 		assertEquals(0, g1.getECount());
 		Edge e1 = g1.createEdge(LinkBack.class, v5, v1);
@@ -3750,6 +3774,7 @@ public class GraphTest extends InstanceTest {
 
 	@Test
 	public void testSetId() {
+		onlyTestWithoutTransactionSupport();
 		g1.setId("alpha");
 		assertEquals("alpha", g1.getId());
 
@@ -3791,6 +3816,7 @@ public class GraphTest extends InstanceTest {
 
 	@Test
 	public void testEdges() {
+		onlyTestWithoutTransactionSupport();
 		assertEquals(null, g1.edges().iterator().next());
 		assertEquals(false, g1.edges().iterator().hasNext());
 
@@ -3846,6 +3872,7 @@ public class GraphTest extends InstanceTest {
 
 	@Test
 	public void testEdges2() {
+		onlyTestWithoutTransactionSupport();
 		// preparations...
 		getEdgeClasses();
 
@@ -3920,6 +3947,7 @@ public class GraphTest extends InstanceTest {
 
 	@Test
 	public void testEdges3() {
+		onlyTestWithoutTransactionSupport();
 		Edge e1 = g1.createEdge(Link.class, v3, v7);
 		Edge e2 = g1.createEdge(Link.class, v4, v8);
 		Edge e3 = g1.createEdge(Link.class, v1, v8);
@@ -3984,6 +4012,7 @@ public class GraphTest extends InstanceTest {
 
 	@Test
 	public void testVertices() {
+		onlyTestWithoutTransactionSupport();
 		assertEquals(false, g2.vertices().iterator().hasNext());
 		assertEquals(true, g1.vertices().iterator().hasNext());
 
@@ -4031,6 +4060,7 @@ public class GraphTest extends InstanceTest {
 
 	@Test
 	public void testVertices2() {
+		onlyTestWithoutTransactionSupport();
 		// preparations...
 		getVertexClasses();
 
@@ -4100,6 +4130,7 @@ public class GraphTest extends InstanceTest {
 
 	@Test
 	public void testVertices3() {
+		onlyTestWithoutTransactionSupport();
 		assertEquals(false, g2.vertices(SubNode.class).iterator().hasNext());
 		assertEquals(false, g2.vertices(SuperNode.class).iterator().hasNext());
 		assertEquals(false, g2.vertices(DoubleSubNode.class).iterator()
@@ -4167,6 +4198,7 @@ public class GraphTest extends InstanceTest {
 
 	@Test
 	public void testDefragment() {
+		onlyTestWithoutTransactionSupport();
 		/*
 		 * Testen der defragment()-Methode: Ein Vorher-Nachher Abbild von
 		 * Vertex- Referenzen sammeln und vergleichen, genauso mit Kantenseq.

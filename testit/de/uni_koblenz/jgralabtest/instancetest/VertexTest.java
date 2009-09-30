@@ -10,6 +10,7 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.LineNumberReader;
+import java.util.Collection;
 import java.util.ConcurrentModificationException;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -19,6 +20,9 @@ import java.util.Random;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
+import org.junit.runners.Parameterized.Parameters;
 
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.EdgeDirection;
@@ -42,7 +46,17 @@ import de.uni_koblenz.jgralabtest.schemas.vertextest.SuperNode;
 import de.uni_koblenz.jgralabtest.schemas.vertextest.VertexTestGraph;
 import de.uni_koblenz.jgralabtest.schemas.vertextest.VertexTestSchema;
 
-public class VertexTest {
+@RunWith(Parameterized.class)
+public class VertexTest extends InstanceTest {
+
+	public VertexTest(boolean transactionsEnabled) {
+		super(transactionsEnabled);
+	}
+
+	@Parameters
+	public static Collection<Object[]> configure() {
+		return getParameters();
+	}
 
 	private VertexTestGraph graph;
 	private Random rand;
@@ -52,7 +66,9 @@ public class VertexTest {
 	 */
 	@Before
 	public void setUp() {
-		graph = VertexTestSchema.instance().createVertexTestGraph(100, 100);
+		graph = transactionsEnabled ? VertexTestSchema.instance()
+				.createVertexTestGraphWithTransactionSupport(100, 100)
+				: VertexTestSchema.instance().createVertexTestGraph(100, 100);
 		rand = new Random(System.currentTimeMillis());
 	}
 
@@ -66,6 +82,7 @@ public class VertexTest {
 	 */
 	@Test
 	public void isIncidenceListModifiedTest0() {
+		onlyTestWithoutTransactionSupport();
 		AbstractSuperNode asn = graph.createSubNode();
 		SuperNode sn = graph.createSuperNode();
 		DoubleSubNode dsn = graph.createDoubleSubNode();
@@ -83,6 +100,7 @@ public class VertexTest {
 	 */
 	@Test
 	public void isIncidenceListModifiedTest1() {
+		onlyTestWithoutTransactionSupport();
 		Vertex[] nodes = new Vertex[3];
 		long[] versions = new long[3];
 		nodes[0] = graph.createSubNode();
@@ -145,6 +163,7 @@ public class VertexTest {
 	 */
 	@Test
 	public void getIncidenceListVersionTest0() {
+		onlyTestWithoutTransactionSupport();
 		Vertex[] nodes = new Vertex[3];
 		nodes[0] = graph.createSubNode();
 		nodes[1] = graph.createDoubleSubNode();
@@ -186,6 +205,7 @@ public class VertexTest {
 	 */
 	@Test
 	public void getIdTest0() {
+		onlyTestWithoutTransactionSupport();
 		Vertex v = graph.createDoubleSubNode();
 		// assertEquals(1, v.getId());
 		Vertex w = graph.createDoubleSubNode();
@@ -204,6 +224,7 @@ public class VertexTest {
 	 */
 	@Test
 	public void getDegreeTest0() {
+		onlyTestWithoutTransactionSupport();
 		Vertex v = graph.createDoubleSubNode();
 		assertEquals(0, v.getDegree());
 	}
@@ -213,6 +234,7 @@ public class VertexTest {
 	 */
 	@Test
 	public void getDegreeTest1() {
+		onlyTestWithoutTransactionSupport();
 		SubNode subn = graph.createSubNode();
 		DoubleSubNode dsubn = graph.createDoubleSubNode();
 		DoubleSubNode dsubnWithout = graph.createDoubleSubNode();
@@ -233,6 +255,7 @@ public class VertexTest {
 	 */
 	@Test
 	public void getDegreeTest2() {
+		onlyTestWithoutTransactionSupport();
 		Vertex[] nodes = new Vertex[3];
 		nodes[0] = graph.createSubNode();
 		nodes[1] = graph.createDoubleSubNode();
@@ -278,6 +301,7 @@ public class VertexTest {
 	 */
 	@Test
 	public void getDegreeTestEdgeDirection0() {
+		onlyTestWithoutTransactionSupport();
 		Vertex v = graph.createDoubleSubNode();
 		assertEquals(0, v.getDegree(EdgeDirection.IN));
 		assertEquals(0, v.getDegree(EdgeDirection.OUT));
@@ -289,6 +313,7 @@ public class VertexTest {
 	 */
 	@Test
 	public void getDegreeTestEdgeDirection1() {
+		onlyTestWithoutTransactionSupport();
 		SubNode subn = graph.createSubNode();
 		DoubleSubNode dsubn = graph.createDoubleSubNode();
 		DoubleSubNode dsubnWithout = graph.createDoubleSubNode();
@@ -318,6 +343,7 @@ public class VertexTest {
 	 */
 	@Test
 	public void getDegreeTestEdgeDirection2() {
+		onlyTestWithoutTransactionSupport();
 		Vertex[] nodes = new Vertex[3];
 		nodes[0] = graph.createSubNode();
 		nodes[1] = graph.createDoubleSubNode();
@@ -398,6 +424,7 @@ public class VertexTest {
 	 */
 	@Test
 	public void getDegreeTestEdgeClass0() {
+		onlyTestWithoutTransactionSupport();
 		Vertex v = graph.createDoubleSubNode();
 		testVertexForEdgeClass(v, 0, 0, 0);
 	}
@@ -407,6 +434,7 @@ public class VertexTest {
 	 */
 	@Test
 	public void getDegreeTestEdgeClass1() {
+		onlyTestWithoutTransactionSupport();
 		SubNode subn = graph.createSubNode();
 		DoubleSubNode dsubn = graph.createDoubleSubNode();
 		DoubleSubNode dsubnWithout = graph.createDoubleSubNode();
@@ -429,6 +457,7 @@ public class VertexTest {
 	 */
 	@Test
 	public void getDegreeTestEdgeClass2() {
+		onlyTestWithoutTransactionSupport();
 		Vertex[] nodes = new Vertex[3];
 		nodes[0] = graph.createSubNode();
 		nodes[1] = graph.createDoubleSubNode();
@@ -552,6 +581,7 @@ public class VertexTest {
 	 */
 	@Test
 	public void getDegreeTestClass0() {
+		onlyTestWithoutTransactionSupport();
 		Vertex v = graph.createDoubleSubNode();
 		assertEquals(0, v.getDegree(Link.class));
 		assertEquals(0, v.getDegree(SubLink.class));
@@ -563,6 +593,7 @@ public class VertexTest {
 	 */
 	@Test
 	public void getDegreeTestClass1() {
+		onlyTestWithoutTransactionSupport();
 		SubNode subn = graph.createSubNode();
 		DoubleSubNode dsubn = graph.createDoubleSubNode();
 		DoubleSubNode dsubnWithout = graph.createDoubleSubNode();
@@ -593,6 +624,7 @@ public class VertexTest {
 	 */
 	@Test
 	public void getDegreeTestClass2() {
+		onlyTestWithoutTransactionSupport();
 		Vertex[] nodes = new Vertex[3];
 		nodes[0] = graph.createSubNode();
 		nodes[1] = graph.createDoubleSubNode();
@@ -686,6 +718,7 @@ public class VertexTest {
 	 */
 	@Test
 	public void getDegreeTestEdgeClassBoolean0() {
+		onlyTestWithoutTransactionSupport();
 		Vertex v = graph.createDoubleSubNode();
 		testVertexForEdgeClassSubClass(v, 0, 0, 0);
 	}
@@ -695,6 +728,7 @@ public class VertexTest {
 	 */
 	@Test
 	public void getDegreeTestEdgeClassBoolean1() {
+		onlyTestWithoutTransactionSupport();
 		SubNode subn = graph.createSubNode();
 		DoubleSubNode dsubn = graph.createDoubleSubNode();
 		DoubleSubNode dsubnWithout = graph.createDoubleSubNode();
@@ -715,6 +749,7 @@ public class VertexTest {
 	 */
 	@Test
 	public void getDegreeTestEdgeClassBoolean2() {
+		onlyTestWithoutTransactionSupport();
 		DoubleSubNode dsubn = graph.createDoubleSubNode();
 		SuperNode supern = graph.createSuperNode();
 		graph.createSubLink(dsubn, supern);
@@ -730,6 +765,7 @@ public class VertexTest {
 	 */
 	@Test
 	public void getDegreeTestEdgeClassBoolean3() {
+		onlyTestWithoutTransactionSupport();
 		Vertex[] nodes = new Vertex[3];
 		nodes[0] = graph.createSubNode();
 		nodes[1] = graph.createDoubleSubNode();
@@ -837,6 +873,7 @@ public class VertexTest {
 	 */
 	@Test
 	public void getDegreeTestClassBoolean0() {
+		onlyTestWithoutTransactionSupport();
 		Vertex v = graph.createDoubleSubNode();
 		testVertexForClassSubClass(v, 0, 0, 0);
 	}
@@ -846,6 +883,7 @@ public class VertexTest {
 	 */
 	@Test
 	public void getDegreeTestClassBoolean1() {
+		onlyTestWithoutTransactionSupport();
 		SubNode subn = graph.createSubNode();
 		DoubleSubNode dsubn = graph.createDoubleSubNode();
 		DoubleSubNode dsubnWithout = graph.createDoubleSubNode();
@@ -865,6 +903,7 @@ public class VertexTest {
 	 */
 	@Test
 	public void getDegreeTestClassBoolean2() {
+		onlyTestWithoutTransactionSupport();
 		DoubleSubNode dsubn = graph.createDoubleSubNode();
 		SuperNode supern = graph.createSuperNode();
 		graph.createSubLink(dsubn, supern);
@@ -880,6 +919,7 @@ public class VertexTest {
 	 */
 	@Test
 	public void getDegreeTestClassBoolean3() {
+		onlyTestWithoutTransactionSupport();
 		Vertex[] nodes = new Vertex[3];
 		nodes[0] = graph.createSubNode();
 		nodes[1] = graph.createDoubleSubNode();
@@ -985,6 +1025,7 @@ public class VertexTest {
 	 */
 	@Test
 	public void getDegreeTestEdgeClassEdgeDirection0() {
+		onlyTestWithoutTransactionSupport();
 		Vertex v = graph.createDoubleSubNode();
 		testVertexForEdgeClassEdgeDirection(v, 0, 0, 0, EdgeDirection.INOUT);
 		testVertexForEdgeClassEdgeDirection(v, 0, 0, 0, EdgeDirection.IN);
@@ -996,6 +1037,7 @@ public class VertexTest {
 	 */
 	@Test
 	public void getDegreeTestEdgeClassEdgeDirection1() {
+		onlyTestWithoutTransactionSupport();
 		SubNode subn = graph.createSubNode();
 		DoubleSubNode dsubn = graph.createDoubleSubNode();
 		DoubleSubNode dsubnWithout = graph.createDoubleSubNode();
@@ -1029,6 +1071,7 @@ public class VertexTest {
 	 */
 	@Test
 	public void getDegreeTestEdgeClassEdgeDirection2() {
+		onlyTestWithoutTransactionSupport();
 		SuperNode dsubn = graph.createSuperNode();
 		AbstractSuperNode supern = graph.createSubNode();
 		graph.createLinkBack(dsubn, supern);
@@ -1049,6 +1092,7 @@ public class VertexTest {
 	 */
 	@Test
 	public void getDegreeTestEdgeClassEdgeDirection3() {
+		onlyTestWithoutTransactionSupport();
 		Vertex[] nodes = new Vertex[3];
 		nodes[0] = graph.createSubNode();
 		nodes[1] = graph.createDoubleSubNode();
@@ -1206,6 +1250,7 @@ public class VertexTest {
 	 */
 	@Test
 	public void getDegreeTestClassEdgeDirection0() {
+		onlyTestWithoutTransactionSupport();
 		Vertex v = graph.createDoubleSubNode();
 		testVertexForClassEdgeDirection(v, 0, 0, 0, EdgeDirection.INOUT);
 		testVertexForClassEdgeDirection(v, 0, 0, 0, EdgeDirection.IN);
@@ -1217,6 +1262,7 @@ public class VertexTest {
 	 */
 	@Test
 	public void getDegreeTestClassEdgeDirection1() {
+		onlyTestWithoutTransactionSupport();
 		SubNode subn = graph.createSubNode();
 		DoubleSubNode dsubn = graph.createDoubleSubNode();
 		DoubleSubNode dsubnWithout = graph.createDoubleSubNode();
@@ -1248,6 +1294,7 @@ public class VertexTest {
 	 */
 	@Test
 	public void getDegreeTestClassEdgeDirection2() {
+		onlyTestWithoutTransactionSupport();
 		SuperNode dsubn = graph.createSuperNode();
 		AbstractSuperNode supern = graph.createSubNode();
 		graph.createLinkBack(dsubn, supern);
@@ -1266,6 +1313,7 @@ public class VertexTest {
 	 */
 	@Test
 	public void getDegreeTestClassEdgeDirection3() {
+		onlyTestWithoutTransactionSupport();
 		Vertex[] nodes = new Vertex[3];
 		nodes[0] = graph.createSubNode();
 		nodes[1] = graph.createDoubleSubNode();
@@ -1424,6 +1472,7 @@ public class VertexTest {
 	 */
 	@Test
 	public void getDegreeTestEdgeClassEdgeDirectionBoolean0() {
+		onlyTestWithoutTransactionSupport();
 		Vertex v = graph.createDoubleSubNode();
 		testVertexForEdgeClassEdgeDirectionBoolean(v, 0, 0, 0,
 				EdgeDirection.INOUT);
@@ -1437,6 +1486,7 @@ public class VertexTest {
 	 */
 	@Test
 	public void getDegreeTestEdgeClassEdgeDirectionBoolean1() {
+		onlyTestWithoutTransactionSupport();
 		SubNode subn = graph.createSubNode();
 		DoubleSubNode dsubn = graph.createDoubleSubNode();
 		DoubleSubNode dsubnWithout = graph.createDoubleSubNode();
@@ -1478,6 +1528,7 @@ public class VertexTest {
 	 */
 	@Test
 	public void getDegreeTestEdgeClassEdgeDirectionBoolean2() {
+		onlyTestWithoutTransactionSupport();
 		SuperNode dsubn = graph.createSuperNode();
 		AbstractSuperNode supern = graph.createSubNode();
 		graph.createLinkBack(dsubn, supern);
@@ -1500,6 +1551,7 @@ public class VertexTest {
 	 */
 	@Test
 	public void getDegreeTestEdgeClassEdgeDirectionBoolean3() {
+		onlyTestWithoutTransactionSupport();
 		SuperNode dsubn = graph.createSuperNode();
 		AbstractSuperNode supern = graph.createSubNode();
 		graph.createLink(supern, dsubn);
@@ -1525,6 +1577,7 @@ public class VertexTest {
 	 */
 	@Test
 	public void getDegreeTestEdgeClassEdgeDirectionBoolean5() {
+		onlyTestWithoutTransactionSupport();
 		Vertex[] nodes = new Vertex[3];
 		nodes[0] = graph.createSubNode();
 		nodes[1] = graph.createDoubleSubNode();
@@ -1696,6 +1749,7 @@ public class VertexTest {
 	 */
 	@Test
 	public void getDegreeTestClassEdgeDirectionBoolean0() {
+		onlyTestWithoutTransactionSupport();
 		Vertex v = graph.createDoubleSubNode();
 		testVertexForClassEdgeDirectionBoolean(v, 0, 0, 0, EdgeDirection.INOUT);
 		testVertexForClassEdgeDirectionBoolean(v, 0, 0, 0, EdgeDirection.IN);
@@ -1707,6 +1761,7 @@ public class VertexTest {
 	 */
 	@Test
 	public void getDegreeTestClassEdgeDirectionBoolean1() {
+		onlyTestWithoutTransactionSupport();
 		SubNode subn = graph.createSubNode();
 		DoubleSubNode dsubn = graph.createDoubleSubNode();
 		DoubleSubNode dsubnWithout = graph.createDoubleSubNode();
@@ -1745,6 +1800,7 @@ public class VertexTest {
 	 */
 	@Test
 	public void getDegreeTestClassEdgeDirectionBoolean2() {
+		onlyTestWithoutTransactionSupport();
 		SuperNode dsubn = graph.createSuperNode();
 		AbstractSuperNode supern = graph.createSubNode();
 		graph.createLinkBack(dsubn, supern);
@@ -1766,6 +1822,7 @@ public class VertexTest {
 	 */
 	@Test
 	public void getDegreeTestClassEdgeDirectionBoolean3() {
+		onlyTestWithoutTransactionSupport();
 		SuperNode dsubn = graph.createSuperNode();
 		AbstractSuperNode supern = graph.createSubNode();
 		graph.createLink(supern, dsubn);
@@ -1790,6 +1847,7 @@ public class VertexTest {
 	 */
 	@Test
 	public void getDegreeTestClassEdgeDirectionBoolean5() {
+		onlyTestWithoutTransactionSupport();
 		Vertex[] nodes = new Vertex[3];
 		nodes[0] = graph.createSubNode();
 		nodes[1] = graph.createDoubleSubNode();
@@ -1953,6 +2011,7 @@ public class VertexTest {
 	 */
 	@Test
 	public void getPrevVertexTest0() {
+		onlyTestWithoutTransactionSupport();
 		Vertex v = graph.createSuperNode();
 		assertNull(v.getPrevVertex());
 	}
@@ -1962,6 +2021,7 @@ public class VertexTest {
 	 */
 	@Test
 	public void getPrevVertexTest1() {
+		onlyTestWithoutTransactionSupport();
 		Vertex v0 = graph.createDoubleSubNode();
 		Vertex v1 = graph.createSubNode();
 		Vertex v2 = graph.createSuperNode();
@@ -1979,6 +2039,7 @@ public class VertexTest {
 	 */
 	@Test
 	public void getPrevVertexTest2() {
+		onlyTestWithoutTransactionSupport();
 		for (int i = 0; i < 1000; i++) {
 			graph = VertexTestSchema.instance().createVertexTestGraph(100, 100);
 			Vertex[] vertices = new Vertex[30];
@@ -2002,6 +2063,7 @@ public class VertexTest {
 	 */
 	@Test
 	public void getNextVertexTest0() {
+		onlyTestWithoutTransactionSupport();
 		Vertex v = graph.createSuperNode();
 		assertNull(v.getNextVertex());
 	}
@@ -2011,6 +2073,7 @@ public class VertexTest {
 	 */
 	@Test
 	public void getNextVertexTest1() {
+		onlyTestWithoutTransactionSupport();
 		Vertex v0 = graph.createDoubleSubNode();
 		Vertex v1 = graph.createSubNode();
 		Vertex v2 = graph.createSuperNode();
@@ -2028,6 +2091,7 @@ public class VertexTest {
 	 */
 	@Test
 	public void getNextVertexTest2() {
+		onlyTestWithoutTransactionSupport();
 		for (int i = 0; i < 1000; i++) {
 			graph = VertexTestSchema.instance().createVertexTestGraph(100, 100);
 			Vertex[] vertices = new Vertex[30];
@@ -2077,6 +2141,7 @@ public class VertexTest {
 	 */
 	@Test
 	public void getNextVertexTestVertexClass0() {
+		onlyTestWithoutTransactionSupport();
 		VertexClass[] vertices = getVertexClasses();
 		Vertex v = graph.createSubNode();
 		assertNull(v.getNextVertexOfClass(vertices[0]));
@@ -2091,6 +2156,7 @@ public class VertexTest {
 	 */
 	@Test
 	public void getNextVertexTestVertexClass1() {
+		onlyTestWithoutTransactionSupport();
 		VertexClass[] vertices = getVertexClasses();
 		Vertex v0 = graph.createDoubleSubNode();
 		Vertex v1 = graph.createSubNode();
@@ -2106,6 +2172,7 @@ public class VertexTest {
 	 */
 	@Test
 	public void getNextVertexTestVertexClass2() {
+		onlyTestWithoutTransactionSupport();
 		VertexClass[] vertices = getVertexClasses();
 		Vertex v0 = graph.createDoubleSubNode();
 		Vertex v1 = graph.createDoubleSubNode();
@@ -2121,6 +2188,7 @@ public class VertexTest {
 	 */
 	@Test
 	public void getNextVertexTestVertexClass3() {
+		onlyTestWithoutTransactionSupport();
 		VertexClass[] vertices = getVertexClasses();
 		Vertex v0 = graph.createSubNode();
 		Vertex v1 = graph.createSuperNode();
@@ -2171,6 +2239,7 @@ public class VertexTest {
 	 */
 	@Test
 	public void getNextVertexTestVertexClass4() {
+		onlyTestWithoutTransactionSupport();
 		VertexClass[] vClasses = getVertexClasses();
 		for (int i = 0; i < 1000; i++) {
 			graph = VertexTestSchema.instance().createVertexTestGraph();
@@ -2279,6 +2348,7 @@ public class VertexTest {
 	 */
 	@Test
 	public void getNextVertexTestClass0() {
+		onlyTestWithoutTransactionSupport();
 		Vertex v = graph.createSubNode();
 		assertNull(v.getNextVertexOfClass(AbstractSuperNode.class));
 		assertNull(v.getNextVertexOfClass(SubNode.class));
@@ -2292,6 +2362,7 @@ public class VertexTest {
 	 */
 	@Test
 	public void getNextVertexTestClass1() {
+		onlyTestWithoutTransactionSupport();
 		Vertex v0 = graph.createDoubleSubNode();
 		Vertex v1 = graph.createSubNode();
 		assertEquals(v1, v0.getNextVertexOfClass(AbstractSuperNode.class));
@@ -2306,6 +2377,7 @@ public class VertexTest {
 	 */
 	@Test
 	public void getNextVertexTestClass2() {
+		onlyTestWithoutTransactionSupport();
 		Vertex v0 = graph.createDoubleSubNode();
 		Vertex v1 = graph.createDoubleSubNode();
 		assertEquals(v1, v0.getNextVertexOfClass(AbstractSuperNode.class));
@@ -2320,6 +2392,7 @@ public class VertexTest {
 	 */
 	@Test
 	public void getNextVertexTestClass3() {
+		onlyTestWithoutTransactionSupport();
 		Vertex v0 = graph.createSubNode();
 		Vertex v1 = graph.createSuperNode();
 		Vertex v2 = graph.createDoubleSubNode();
@@ -2369,6 +2442,7 @@ public class VertexTest {
 	 */
 	@Test
 	public void getNextVertexTestClass4() {
+		onlyTestWithoutTransactionSupport();
 		for (int i = 0; i < 1000; i++) {
 			graph = VertexTestSchema.instance().createVertexTestGraph();
 			// all vertices in the graph
@@ -2476,6 +2550,7 @@ public class VertexTest {
 	 */
 	@Test
 	public void getNextVertexTestVertexClassBoolean0() {
+		onlyTestWithoutTransactionSupport();
 		VertexClass[] vertices = getVertexClasses();
 		Vertex v = graph.createSubNode();
 		assertNull(v.getNextVertexOfClass(vertices[0], false));
@@ -2494,6 +2569,7 @@ public class VertexTest {
 	 */
 	@Test
 	public void getNextVertexTestVertexClassBoolean1() {
+		onlyTestWithoutTransactionSupport();
 		VertexClass[] vertices = getVertexClasses();
 		Vertex v0 = graph.createDoubleSubNode();
 		Vertex v1 = graph.createSubNode();
@@ -2513,6 +2589,7 @@ public class VertexTest {
 	 */
 	@Test
 	public void getNextVertexTestVertexClassBoolean2() {
+		onlyTestWithoutTransactionSupport();
 		VertexClass[] vertices = getVertexClasses();
 		Vertex v0 = graph.createDoubleSubNode();
 		Vertex v1 = graph.createDoubleSubNode();
@@ -2532,6 +2609,7 @@ public class VertexTest {
 	 */
 	@Test
 	public void getNextVertexTestVertexClassBoolean3() {
+		onlyTestWithoutTransactionSupport();
 		VertexClass[] vertices = getVertexClasses();
 		Vertex v0 = graph.createSubNode();
 		Vertex v1 = graph.createSuperNode();
@@ -2610,6 +2688,7 @@ public class VertexTest {
 	 */
 	@Test
 	public void getNextVertexTestVertexClassBoolean4() {
+		onlyTestWithoutTransactionSupport();
 		VertexClass[] vClasses = getVertexClasses();
 		for (int i = 0; i < 1000; i++) {
 			graph = VertexTestSchema.instance().createVertexTestGraph();
@@ -2759,6 +2838,7 @@ public class VertexTest {
 	 */
 	@Test
 	public void getNextVertexTestClassBoolean0() {
+		onlyTestWithoutTransactionSupport();
 		Vertex v = graph.createSubNode();
 		assertNull(v.getNextVertexOfClass(AbstractSuperNode.class, false));
 		assertNull(v.getNextVertexOfClass(AbstractSuperNode.class, true));
@@ -2776,6 +2856,7 @@ public class VertexTest {
 	 */
 	@Test
 	public void getNextVertexTestClassBoolean1() {
+		onlyTestWithoutTransactionSupport();
 		Vertex v0 = graph.createDoubleSubNode();
 		Vertex v1 = graph.createSubNode();
 		assertEquals(v1, v0
@@ -2795,6 +2876,7 @@ public class VertexTest {
 	 */
 	@Test
 	public void getNextVertexTestClassBoolean2() {
+		onlyTestWithoutTransactionSupport();
 		Vertex v0 = graph.createDoubleSubNode();
 		Vertex v1 = graph.createDoubleSubNode();
 		assertEquals(v1, v0
@@ -2814,6 +2896,7 @@ public class VertexTest {
 	 */
 	@Test
 	public void getNextVertexTestClassBoolean3() {
+		onlyTestWithoutTransactionSupport();
 		Vertex v0 = graph.createSubNode();
 		Vertex v1 = graph.createSuperNode();
 		Vertex v2 = graph.createDoubleSubNode();
@@ -2897,6 +2980,7 @@ public class VertexTest {
 	 */
 	@Test
 	public void getNextVertexTestVertexBoolean4() {
+		onlyTestWithoutTransactionSupport();
 		for (int i = 0; i < 1000; i++) {
 			graph = VertexTestSchema.instance().createVertexTestGraph();
 			// all vertices in the graph
@@ -3050,6 +3134,7 @@ public class VertexTest {
 	 */
 	@Test
 	public void getFirstEdgeTestEdgeDirection0() {
+		onlyTestWithoutTransactionSupport();
 		Vertex v0 = graph.createDoubleSubNode();
 		assertNull(v0.getFirstEdge(EdgeDirection.INOUT));
 		assertNull(v0.getFirstEdge(EdgeDirection.IN));
@@ -3061,6 +3146,7 @@ public class VertexTest {
 	 */
 	@Test
 	public void getFirstEdgeTestEdgeDirection1() {
+		onlyTestWithoutTransactionSupport();
 		Vertex v0 = graph.createDoubleSubNode();
 		Vertex v1 = graph.createDoubleSubNode();
 		Edge e = graph.createLink((AbstractSuperNode) v0, (SuperNode) v1);
@@ -3077,6 +3163,7 @@ public class VertexTest {
 	 */
 	@Test
 	public void getFirstEdgeTestEdgeDirection2() {
+		onlyTestWithoutTransactionSupport();
 		Vertex v0 = graph.createDoubleSubNode();
 		Vertex v1 = graph.createDoubleSubNode();
 		Edge e1 = graph.createLink((AbstractSuperNode) v0, (SuperNode) v1);
@@ -3094,6 +3181,7 @@ public class VertexTest {
 	 */
 	@Test
 	public void getFirstEdgeTestEdgeDirection3() {
+		onlyTestWithoutTransactionSupport();
 		Vertex v0 = graph.createDoubleSubNode();
 		Vertex v1 = graph.createDoubleSubNode();
 		Edge e1 = graph.createLink((AbstractSuperNode) v0, (SuperNode) v1);
@@ -3111,6 +3199,7 @@ public class VertexTest {
 	 */
 	@Test
 	public void getFirstEdgeTestEdgeDirection4() {
+		onlyTestWithoutTransactionSupport();
 		Vertex v0 = graph.createDoubleSubNode();
 		Edge e1 = graph.createLink((AbstractSuperNode) v0, (SuperNode) v0);
 		assertEquals(e1, v0.getFirstEdge(EdgeDirection.INOUT));
@@ -3123,6 +3212,7 @@ public class VertexTest {
 	 */
 	@Test
 	public void getFirstEdgeTestEdgeDirection5() {
+		onlyTestWithoutTransactionSupport();
 		for (int i = 0; i < 1000; i++) {
 			graph = VertexTestSchema.instance().createVertexTestGraph();
 			Vertex[] vertices = new Vertex[] { graph.createSubNode(),
@@ -3214,6 +3304,7 @@ public class VertexTest {
 	 */
 	@Test
 	public void getFirstEdgeTestEdgeClass0() {
+		onlyTestWithoutTransactionSupport();
 		EdgeClass[] eclasses = getEdgeClasses();
 		Vertex v0 = graph.createDoubleSubNode();
 		assertNull(v0.getFirstEdgeOfClass(eclasses[0]));
@@ -3226,6 +3317,7 @@ public class VertexTest {
 	 */
 	@Test
 	public void getFirstEdgeTestEdgeClass1() {
+		onlyTestWithoutTransactionSupport();
 		EdgeClass[] eclasses = getEdgeClasses();
 		Vertex v0 = graph.createDoubleSubNode();
 		Vertex v1 = graph.createDoubleSubNode();
@@ -3243,6 +3335,7 @@ public class VertexTest {
 	 */
 	@Test
 	public void getFirstEdgeTestEdgeClass2() {
+		onlyTestWithoutTransactionSupport();
 		EdgeClass[] eclasses = getEdgeClasses();
 		Vertex v0 = graph.createDoubleSubNode();
 		Vertex v1 = graph.createDoubleSubNode();
@@ -3260,6 +3353,7 @@ public class VertexTest {
 	 */
 	@Test
 	public void getFirstEdgeTestEdgeClass3() {
+		onlyTestWithoutTransactionSupport();
 		EdgeClass[] eclasses = getEdgeClasses();
 		Vertex v0 = graph.createDoubleSubNode();
 		Vertex v1 = graph.createDoubleSubNode();
@@ -3278,6 +3372,7 @@ public class VertexTest {
 	 */
 	@Test
 	public void getFirstEdgeTestEdgeClass4() {
+		onlyTestWithoutTransactionSupport();
 		EdgeClass[] eclasses = getEdgeClasses();
 		Vertex v0 = graph.createDoubleSubNode();
 		Edge e1 = graph.createLink((AbstractSuperNode) v0, (SuperNode) v0);
@@ -3291,6 +3386,7 @@ public class VertexTest {
 	 */
 	@Test
 	public void getFirstEdgeTestEdgeClass5() {
+		onlyTestWithoutTransactionSupport();
 		EdgeClass[] eclasses = getEdgeClasses();
 		for (int i = 0; i < 1000; i++) {
 			graph = VertexTestSchema.instance().createVertexTestGraph();
@@ -3372,6 +3468,7 @@ public class VertexTest {
 	 */
 	@Test
 	public void getFirstEdgeTestClass0() {
+		onlyTestWithoutTransactionSupport();
 		Vertex v0 = graph.createDoubleSubNode();
 		assertNull(v0.getFirstEdgeOfClass(Link.class));
 		assertNull(v0.getFirstEdgeOfClass(SubLink.class));
@@ -3383,6 +3480,7 @@ public class VertexTest {
 	 */
 	@Test
 	public void getFirstEdgeTestClass1() {
+		onlyTestWithoutTransactionSupport();
 		Vertex v0 = graph.createDoubleSubNode();
 		Vertex v1 = graph.createDoubleSubNode();
 		Edge e = graph.createLink((AbstractSuperNode) v0, (SuperNode) v1);
@@ -3399,6 +3497,7 @@ public class VertexTest {
 	 */
 	@Test
 	public void getFirstEdgeTestClass2() {
+		onlyTestWithoutTransactionSupport();
 		Vertex v0 = graph.createDoubleSubNode();
 		Vertex v1 = graph.createDoubleSubNode();
 		Edge e1 = graph.createSubLink((DoubleSubNode) v0, (SuperNode) v1);
@@ -3416,6 +3515,7 @@ public class VertexTest {
 	 */
 	@Test
 	public void getFirstEdgeTestClass3() {
+		onlyTestWithoutTransactionSupport();
 		Vertex v0 = graph.createDoubleSubNode();
 		Vertex v1 = graph.createDoubleSubNode();
 		Edge e1 = graph.createLink((AbstractSuperNode) v0, (SuperNode) v1);
@@ -3434,6 +3534,7 @@ public class VertexTest {
 	 */
 	@Test
 	public void getFirstEdgeTestClass4() {
+		onlyTestWithoutTransactionSupport();
 		Vertex v0 = graph.createDoubleSubNode();
 		Edge e1 = graph.createLink((AbstractSuperNode) v0, (SuperNode) v0);
 		assertEquals(e1, v0.getFirstEdgeOfClass(Link.class));
@@ -3446,6 +3547,7 @@ public class VertexTest {
 	 */
 	@Test
 	public void getFirstEdgeTestClass5() {
+		onlyTestWithoutTransactionSupport();
 		for (int i = 0; i < 1000; i++) {
 			graph = VertexTestSchema.instance().createVertexTestGraph();
 			Vertex[] vertices = new Vertex[] { graph.createSubNode(),
@@ -3526,6 +3628,7 @@ public class VertexTest {
 	 */
 	@Test
 	public void getFirstEdgeTestEdgeClassEdgeDirection0() {
+		onlyTestWithoutTransactionSupport();
 		EdgeClass[] eclasses = getEdgeClasses();
 		Vertex v0 = graph.createDoubleSubNode();
 
@@ -3547,6 +3650,7 @@ public class VertexTest {
 	 */
 	@Test
 	public void getFirstEdgeTestEdgeClassEdgeDirection1() {
+		onlyTestWithoutTransactionSupport();
 		EdgeClass[] eclasses = getEdgeClasses();
 		Vertex v0 = graph.createDoubleSubNode();
 		Vertex v1 = graph.createDoubleSubNode();
@@ -3582,6 +3686,7 @@ public class VertexTest {
 	 */
 	@Test
 	public void getFirstEdgeTestEdgeClassEdgeDirection2() {
+		onlyTestWithoutTransactionSupport();
 		EdgeClass[] eclasses = getEdgeClasses();
 		Vertex v0 = graph.createDoubleSubNode();
 		Vertex v1 = graph.createDoubleSubNode();
@@ -3620,6 +3725,7 @@ public class VertexTest {
 	 */
 	@Test
 	public void getFirstEdgeTestEdgeClassEdgeDirection3() {
+		onlyTestWithoutTransactionSupport();
 		EdgeClass[] eclasses = getEdgeClasses();
 		Vertex v0 = graph.createDoubleSubNode();
 		Vertex v1 = graph.createDoubleSubNode();
@@ -3659,6 +3765,7 @@ public class VertexTest {
 	 */
 	@Test
 	public void getFirstEdgeTestEdgeClassEdgeDirection4() {
+		onlyTestWithoutTransactionSupport();
 		EdgeClass[] eclasses = getEdgeClasses();
 		Vertex v0 = graph.createDoubleSubNode();
 		Edge e1 = graph.createLink((AbstractSuperNode) v0, (SuperNode) v0);
@@ -3683,6 +3790,7 @@ public class VertexTest {
 	 */
 	@Test
 	public void getFirstEdgeTestEdgeClassEdgeDirection5() {
+		onlyTestWithoutTransactionSupport();
 		EdgeClass[] eclasses = getEdgeClasses();
 		for (int i = 0; i < 1000; i++) {
 			graph = VertexTestSchema.instance().createVertexTestGraph();
@@ -3832,6 +3940,7 @@ public class VertexTest {
 	 */
 	@Test
 	public void getFirstEdgeTestClassEdgeDirection0() {
+		onlyTestWithoutTransactionSupport();
 		Vertex v0 = graph.createDoubleSubNode();
 
 		assertNull(v0.getFirstEdgeOfClass(Link.class, EdgeDirection.INOUT));
@@ -3852,6 +3961,7 @@ public class VertexTest {
 	 */
 	@Test
 	public void getFirstEdgeTestClassEdgeDirection1() {
+		onlyTestWithoutTransactionSupport();
 		Vertex v0 = graph.createDoubleSubNode();
 		Vertex v1 = graph.createDoubleSubNode();
 		Edge e = graph.createLink((AbstractSuperNode) v0, (SuperNode) v1);
@@ -3885,6 +3995,7 @@ public class VertexTest {
 	 */
 	@Test
 	public void getFirstEdgeTestClassEdgeDirection2() {
+		onlyTestWithoutTransactionSupport();
 		Vertex v0 = graph.createDoubleSubNode();
 		Vertex v1 = graph.createDoubleSubNode();
 		Edge e1 = graph.createSubLink((DoubleSubNode) v0, (SuperNode) v1);
@@ -3923,6 +4034,7 @@ public class VertexTest {
 	 */
 	@Test
 	public void getFirstEdgeTestClassEdgeDirection3() {
+		onlyTestWithoutTransactionSupport();
 		Vertex v0 = graph.createDoubleSubNode();
 		Vertex v1 = graph.createDoubleSubNode();
 		Edge e1 = graph.createLink((AbstractSuperNode) v0, (SuperNode) v1);
@@ -3962,6 +4074,7 @@ public class VertexTest {
 	 */
 	@Test
 	public void getFirstEdgeTestClassEdgeDirection4() {
+		onlyTestWithoutTransactionSupport();
 		Vertex v0 = graph.createDoubleSubNode();
 		Edge e1 = graph.createLink((AbstractSuperNode) v0, (SuperNode) v0);
 
@@ -3985,6 +4098,7 @@ public class VertexTest {
 	 */
 	@Test
 	public void getFirstEdgeTestClassEdgeDirection5() {
+		onlyTestWithoutTransactionSupport();
 		for (int i = 0; i < 1000; i++) {
 			graph = VertexTestSchema.instance().createVertexTestGraph();
 			Vertex[] vertices = new Vertex[] { graph.createSubNode(),
@@ -4133,6 +4247,7 @@ public class VertexTest {
 	 */
 	@Test
 	public void getFirstEdgeTestEdgeClassBoolean0() {
+		onlyTestWithoutTransactionSupport();
 		EdgeClass[] eclasses = getEdgeClasses();
 		Vertex v0 = graph.createDoubleSubNode();
 
@@ -4150,6 +4265,7 @@ public class VertexTest {
 	 */
 	@Test
 	public void getFirstEdgeTestEdgeClassBoolean1() {
+		onlyTestWithoutTransactionSupport();
 		EdgeClass[] eclasses = getEdgeClasses();
 		Vertex v0 = graph.createDoubleSubNode();
 		Vertex v1 = graph.createDoubleSubNode();
@@ -4177,6 +4293,7 @@ public class VertexTest {
 	 */
 	@Test
 	public void getFirstEdgeTestEdgeClassBoolean2() {
+		onlyTestWithoutTransactionSupport();
 		EdgeClass[] eclasses = getEdgeClasses();
 		Vertex v0 = graph.createDoubleSubNode();
 		Vertex v1 = graph.createDoubleSubNode();
@@ -4205,6 +4322,7 @@ public class VertexTest {
 	 */
 	@Test
 	public void getFirstEdgeTestEdgeClassBoolean3() {
+		onlyTestWithoutTransactionSupport();
 		EdgeClass[] eclasses = getEdgeClasses();
 		Vertex v0 = graph.createDoubleSubNode();
 		Vertex v1 = graph.createDoubleSubNode();
@@ -4235,6 +4353,7 @@ public class VertexTest {
 	 */
 	@Test
 	public void getFirstEdgeTestEdgeClassBoolean4() {
+		onlyTestWithoutTransactionSupport();
 		EdgeClass[] eclasses = getEdgeClasses();
 		Vertex v0 = graph.createDoubleSubNode();
 		Edge e1 = graph.createLink((AbstractSuperNode) v0, (SuperNode) v0);
@@ -4253,6 +4372,7 @@ public class VertexTest {
 	 */
 	@Test
 	public void getFirstEdgeTestEdgeClassBoolean5() {
+		onlyTestWithoutTransactionSupport();
 		EdgeClass[] eclasses = getEdgeClasses();
 		for (int i = 0; i < 1000; i++) {
 			graph = VertexTestSchema.instance().createVertexTestGraph();
@@ -4374,6 +4494,7 @@ public class VertexTest {
 	 */
 	@Test
 	public void getFirstEdgeTestClassBoolean0() {
+		onlyTestWithoutTransactionSupport();
 		Vertex v0 = graph.createDoubleSubNode();
 
 		assertNull(v0.getFirstEdgeOfClass(Link.class, false));
@@ -4390,6 +4511,7 @@ public class VertexTest {
 	 */
 	@Test
 	public void getFirstEdgeTestClassBoolean1() {
+		onlyTestWithoutTransactionSupport();
 		Vertex v0 = graph.createDoubleSubNode();
 		Vertex v1 = graph.createDoubleSubNode();
 		Edge e = graph.createLink((AbstractSuperNode) v0, (SuperNode) v1);
@@ -4416,6 +4538,7 @@ public class VertexTest {
 	 */
 	@Test
 	public void getFirstEdgeTestClassBoolean2() {
+		onlyTestWithoutTransactionSupport();
 		Vertex v0 = graph.createDoubleSubNode();
 		Vertex v1 = graph.createDoubleSubNode();
 		Edge e1 = graph.createSubLink((DoubleSubNode) v0, (SuperNode) v1);
@@ -4443,6 +4566,7 @@ public class VertexTest {
 	 */
 	@Test
 	public void getFirstEdgeTestClassBoolean3() {
+		onlyTestWithoutTransactionSupport();
 		Vertex v0 = graph.createDoubleSubNode();
 		Vertex v1 = graph.createDoubleSubNode();
 		Edge e1 = graph.createLink((AbstractSuperNode) v0, (SuperNode) v1);
@@ -4472,6 +4596,7 @@ public class VertexTest {
 	 */
 	@Test
 	public void getFirstEdgeTestClassBoolean4() {
+		onlyTestWithoutTransactionSupport();
 		Vertex v0 = graph.createDoubleSubNode();
 		Edge e1 = graph.createLink((AbstractSuperNode) v0, (SuperNode) v0);
 
@@ -4489,6 +4614,7 @@ public class VertexTest {
 	 */
 	@Test
 	public void getFirstEdgeTestClassBoolean5() {
+		onlyTestWithoutTransactionSupport();
 		for (int i = 0; i < 1000; i++) {
 			graph = VertexTestSchema.instance().createVertexTestGraph();
 			Vertex[] vertices = new Vertex[] { graph.createSubNode(),
@@ -4609,6 +4735,7 @@ public class VertexTest {
 	 */
 	@Test
 	public void getFirstEdgeTestEdgeClassEdgeDirectionBoolean0() {
+		onlyTestWithoutTransactionSupport();
 		EdgeClass[] eclasses = getEdgeClasses();
 		Vertex v0 = graph.createDoubleSubNode();
 
@@ -4651,6 +4778,7 @@ public class VertexTest {
 	 */
 	@Test
 	public void getFirstEdgeTestEdgeClassEdgeDirectionBoolean1() {
+		onlyTestWithoutTransactionSupport();
 		EdgeClass[] eclasses = getEdgeClasses();
 		Vertex v0 = graph.createDoubleSubNode();
 		Vertex v1 = graph.createDoubleSubNode();
@@ -4725,6 +4853,7 @@ public class VertexTest {
 	 */
 	@Test
 	public void getFirstEdgeTestEdgeClassEdgeDirectionBoolean2() {
+		onlyTestWithoutTransactionSupport();
 		EdgeClass[] eclasses = getEdgeClasses();
 		Vertex v0 = graph.createDoubleSubNode();
 		Vertex v1 = graph.createDoubleSubNode();
@@ -4800,6 +4929,7 @@ public class VertexTest {
 	 */
 	@Test
 	public void getFirstEdgeTestEdgeClassEdgeDirectionBoolean3() {
+		onlyTestWithoutTransactionSupport();
 		EdgeClass[] eclasses = getEdgeClasses();
 		Vertex v0 = graph.createDoubleSubNode();
 		Vertex v1 = graph.createDoubleSubNode();
@@ -4878,6 +5008,7 @@ public class VertexTest {
 	 */
 	@Test
 	public void getFirstEdgeTestEdgeClassEdgeDirectionBoolean4() {
+		onlyTestWithoutTransactionSupport();
 		EdgeClass[] eclasses = getEdgeClasses();
 		Vertex v0 = graph.createDoubleSubNode();
 		Edge e1 = graph.createLink((AbstractSuperNode) v0, (SuperNode) v0);
@@ -4924,6 +5055,7 @@ public class VertexTest {
 	 */
 	@Test
 	public void getFirstEdgeTestEdgeClassEdgeDirectionBoolean5() {
+		onlyTestWithoutTransactionSupport();
 		EdgeClass[] eclasses = getEdgeClasses();
 		for (int i = 0; i < 1000; i++) {
 			graph = VertexTestSchema.instance().createVertexTestGraph();
@@ -5193,6 +5325,7 @@ public class VertexTest {
 	 */
 	@Test
 	public void getFirstEdgeTestClassEdgeDirectionBoolean0() {
+		onlyTestWithoutTransactionSupport();
 		Vertex v0 = graph.createDoubleSubNode();
 
 		assertNull(v0.getFirstEdgeOfClass(Link.class, EdgeDirection.INOUT,
@@ -5239,6 +5372,7 @@ public class VertexTest {
 	 */
 	@Test
 	public void getFirstEdgeTestClassEdgeDirectionBoolean1() {
+		onlyTestWithoutTransactionSupport();
 		Vertex v0 = graph.createDoubleSubNode();
 		Vertex v1 = graph.createDoubleSubNode();
 		Edge e = graph.createLink((AbstractSuperNode) v0, (SuperNode) v1);
@@ -5323,6 +5457,7 @@ public class VertexTest {
 	 */
 	@Test
 	public void getFirstEdgeTestClassEdgeDirectionBoolean2() {
+		onlyTestWithoutTransactionSupport();
 		Vertex v0 = graph.createDoubleSubNode();
 		Vertex v1 = graph.createDoubleSubNode();
 		Edge e1 = graph.createSubLink((DoubleSubNode) v0, (SuperNode) v1);
@@ -5405,6 +5540,7 @@ public class VertexTest {
 	 */
 	@Test
 	public void getFirstEdgeTestClassEdgeDirectionBoolean3() {
+		onlyTestWithoutTransactionSupport();
 		Vertex v0 = graph.createDoubleSubNode();
 		Vertex v1 = graph.createDoubleSubNode();
 		Edge e1 = graph.createLink((AbstractSuperNode) v0, (SuperNode) v1);
@@ -5490,6 +5626,7 @@ public class VertexTest {
 	 */
 	@Test
 	public void getFirstEdgeTestClassEdgeDirectionBoolean4() {
+		onlyTestWithoutTransactionSupport();
 		Vertex v0 = graph.createDoubleSubNode();
 		Edge e1 = graph.createLink((AbstractSuperNode) v0, (SuperNode) v0);
 
@@ -5541,6 +5678,7 @@ public class VertexTest {
 	 */
 	@Test
 	public void getFirstEdgeTestClassEdgeDirectionBoolean5() {
+		onlyTestWithoutTransactionSupport();
 		for (int i = 0; i < 1000; i++) {
 			graph = VertexTestSchema.instance().createVertexTestGraph();
 			Vertex[] vertices = new Vertex[] { graph.createSubNode(),
@@ -5827,6 +5965,7 @@ public class VertexTest {
 	 */
 	@Test
 	public void isBeforeTest0() {
+		onlyTestWithoutTransactionSupport();
 		Vertex v1 = graph.createDoubleSubNode();
 		assertFalse(v1.isBefore(v1));
 	}
@@ -5842,6 +5981,7 @@ public class VertexTest {
 	 */
 	@Test
 	public void isAfterTest0() {
+		onlyTestWithoutTransactionSupport();
 		Vertex v1 = graph.createDoubleSubNode();
 		assertFalse(v1.isAfter(v1));
 	}
@@ -5857,6 +5997,7 @@ public class VertexTest {
 	 */
 	@Test
 	public void deleteTest0() {
+		onlyTestWithoutTransactionSupport();
 		DoubleSubNode v1 = graph.createDoubleSubNode();
 		DoubleSubNode v2 = graph.createDoubleSubNode();
 		DoubleSubNode v3 = graph.createDoubleSubNode();
@@ -5882,6 +6023,7 @@ public class VertexTest {
 	 */
 	@Test
 	public void deleteTest1() {
+		onlyTestWithoutTransactionSupport();
 		DoubleSubNode v1 = graph.createDoubleSubNode();
 		DoubleSubNode v2 = graph.createDoubleSubNode();
 		DoubleSubNode v3 = graph.createDoubleSubNode();
@@ -5907,6 +6049,7 @@ public class VertexTest {
 	 */
 	@Test
 	public void deleteTest2() {
+		onlyTestWithoutTransactionSupport();
 		DoubleSubNode v1 = graph.createDoubleSubNode();
 		DoubleSubNode v2 = graph.createDoubleSubNode();
 		DoubleSubNode v3 = graph.createDoubleSubNode();
@@ -5923,6 +6066,7 @@ public class VertexTest {
 	 */
 	@Test
 	public void deleteTest3() {
+		onlyTestWithoutTransactionSupport();
 		DoubleSubNode v1 = graph.createDoubleSubNode();
 		DoubleSubNode v2 = graph.createDoubleSubNode();
 		DoubleSubNode v3 = graph.createDoubleSubNode();
@@ -5939,6 +6083,7 @@ public class VertexTest {
 	 */
 	@Test
 	public void deleteTest4() {
+		onlyTestWithoutTransactionSupport();
 		DoubleSubNode v1 = graph.createDoubleSubNode();
 		DoubleSubNode v2 = graph.createDoubleSubNode();
 		graph.createSubLink(v1, v2);
@@ -5954,6 +6099,7 @@ public class VertexTest {
 	 */
 	@Test
 	public void deleteTest5() {
+		onlyTestWithoutTransactionSupport();
 		DoubleSubNode v1 = graph.createDoubleSubNode();
 		DoubleSubNode v2 = graph.createDoubleSubNode();
 		DoubleSubNode v3 = graph.createDoubleSubNode();
@@ -5973,6 +6119,7 @@ public class VertexTest {
 	 */
 	@Test(expected = GraphException.class)
 	public void incidencesTest0() {
+		onlyTestWithoutTransactionSupport();
 		Vertex v0 = graph.createDoubleSubNode();
 		Vertex v1 = graph.createDoubleSubNode();
 		graph.createLink((AbstractSuperNode) v0, (SuperNode) v1);
@@ -5988,6 +6135,7 @@ public class VertexTest {
 	 */
 	@Test
 	public void incidencesTest1() {
+		onlyTestWithoutTransactionSupport();
 		Vertex v0 = graph.createDoubleSubNode();
 		Vertex v1 = graph.createDoubleSubNode();
 		Edge e1 = graph.createLink((AbstractSuperNode) v0, (SuperNode) v1);
@@ -6004,6 +6152,7 @@ public class VertexTest {
 	 */
 	@Test
 	public void incidencesTes2() {
+		onlyTestWithoutTransactionSupport();
 		Vertex v0 = graph.createDoubleSubNode();
 		Vertex v1 = graph.createDoubleSubNode();
 		Edge e1 = graph.createLink((AbstractSuperNode) v0, (SuperNode) v1);
@@ -6024,6 +6173,7 @@ public class VertexTest {
 	 */
 	@Test(expected = ConcurrentModificationException.class)
 	public void incidencesTestFailFast0() {
+		onlyTestWithoutTransactionSupport();
 		Vertex v0 = graph.createDoubleSubNode();
 		Vertex v1 = graph.createDoubleSubNode();
 		graph.createLink((AbstractSuperNode) v0, (SuperNode) v1);
@@ -6042,6 +6192,7 @@ public class VertexTest {
 	 */
 	@Test(expected = ConcurrentModificationException.class)
 	public void incidencesTestFailFast1() {
+		onlyTestWithoutTransactionSupport();
 		Vertex v0 = graph.createDoubleSubNode();
 		Vertex v1 = graph.createDoubleSubNode();
 		graph.createLink((AbstractSuperNode) v0, (SuperNode) v1);
@@ -6060,6 +6211,7 @@ public class VertexTest {
 	 */
 	@Test(expected = ConcurrentModificationException.class)
 	public void incidencesTestFailFast2() {
+		onlyTestWithoutTransactionSupport();
 		Vertex v0 = graph.createDoubleSubNode();
 		Vertex v1 = graph.createDoubleSubNode();
 		graph.createLink((AbstractSuperNode) v0, (SuperNode) v1);
@@ -6080,6 +6232,7 @@ public class VertexTest {
 	 */
 	@Test(expected = ConcurrentModificationException.class)
 	public void incidencesTestFailFast3() {
+		onlyTestWithoutTransactionSupport();
 		Vertex v0 = graph.createDoubleSubNode();
 		Vertex v1 = graph.createDoubleSubNode();
 		graph.createLink((AbstractSuperNode) v0, (SuperNode) v1);
@@ -6096,6 +6249,7 @@ public class VertexTest {
 	 */
 	@Test(expected = ConcurrentModificationException.class)
 	public void incidencesTestFailFast4() {
+		onlyTestWithoutTransactionSupport();
 		Vertex v0 = graph.createDoubleSubNode();
 		Vertex v1 = graph.createDoubleSubNode();
 		graph.createLink((AbstractSuperNode) v0, (SuperNode) v1);
@@ -6112,6 +6266,7 @@ public class VertexTest {
 	 */
 	@Test(expected = ConcurrentModificationException.class)
 	public void incidencesTestFailFast5() {
+		onlyTestWithoutTransactionSupport();
 		Vertex v0 = graph.createDoubleSubNode();
 		Vertex v1 = graph.createDoubleSubNode();
 		graph.createLink((AbstractSuperNode) v0, (SuperNode) v1);
@@ -6180,6 +6335,7 @@ public class VertexTest {
 	 */
 	@Test
 	public void incidencesTestEdgeDirection0() {
+		onlyTestWithoutTransactionSupport();
 		Vertex v0 = graph.createDoubleSubNode();
 		checkIncidenceList(v0, null, null, EdgeDirection.INOUT,
 				new LinkedList<Edge>());
@@ -6194,6 +6350,7 @@ public class VertexTest {
 	 */
 	@Test
 	public void incidencesTestEdgeDirection1() {
+		onlyTestWithoutTransactionSupport();
 		Vertex v0 = graph.createDoubleSubNode();
 		Vertex v1 = graph.createDoubleSubNode();
 		LinkedList<Edge> v0inout = new LinkedList<Edge>();
@@ -6222,6 +6379,7 @@ public class VertexTest {
 	 */
 	@Test
 	public void incidencesTestEdgeDirection2() {
+		onlyTestWithoutTransactionSupport();
 		Vertex v0 = graph.createSubNode();
 		Vertex v1 = graph.createDoubleSubNode();
 		Vertex v2 = graph.createSuperNode();
@@ -6273,6 +6431,7 @@ public class VertexTest {
 	 */
 	@Test
 	public void incidencesTestEdgeDirection3() {
+		onlyTestWithoutTransactionSupport();
 		for (int i = 0; i < 100; i++) {
 			graph = VertexTestSchema.instance().createVertexTestGraph();
 			Vertex[] vertices = new Vertex[] { graph.createSubNode(),
@@ -6350,6 +6509,7 @@ public class VertexTest {
 	 */
 	@Test(expected = ConcurrentModificationException.class)
 	public void inciencesTestEdgeDirectionFailFast0() {
+		onlyTestWithoutTransactionSupport();
 		Vertex v0 = graph.createDoubleSubNode();
 		Vertex v1 = graph.createDoubleSubNode();
 		Edge e0 = graph.createLink((AbstractSuperNode) v0, (SuperNode) v1);
@@ -6366,6 +6526,7 @@ public class VertexTest {
 	 */
 	@Test(expected = ConcurrentModificationException.class)
 	public void inciencesTestEdgeDirectionFailFast1() {
+		onlyTestWithoutTransactionSupport();
 		Vertex v0 = graph.createDoubleSubNode();
 		Vertex v1 = graph.createDoubleSubNode();
 		Edge e0 = graph.createLink((AbstractSuperNode) v0, (SuperNode) v1);
@@ -6382,6 +6543,7 @@ public class VertexTest {
 	 */
 	@Test(expected = ConcurrentModificationException.class)
 	public void inciencesTestEdgeDirectionFailFast2() {
+		onlyTestWithoutTransactionSupport();
 		Vertex v0 = graph.createDoubleSubNode();
 		Vertex v1 = graph.createDoubleSubNode();
 		graph.createLink((AbstractSuperNode) v0, (SuperNode) v1);
@@ -6398,6 +6560,7 @@ public class VertexTest {
 	 */
 	@Test(expected = ConcurrentModificationException.class)
 	public void inciencesTestEdgeDirectionFailFast3() {
+		onlyTestWithoutTransactionSupport();
 		Vertex v0 = graph.createDoubleSubNode();
 		Vertex v1 = graph.createDoubleSubNode();
 		graph.createLink((AbstractSuperNode) v0, (SuperNode) v1);
@@ -6414,6 +6577,7 @@ public class VertexTest {
 	 */
 	@Test(expected = ConcurrentModificationException.class)
 	public void inciencesTestEdgeDirectionFailFast4() {
+		onlyTestWithoutTransactionSupport();
 		Vertex v0 = graph.createDoubleSubNode();
 		Vertex v1 = graph.createDoubleSubNode();
 		graph.createLink((AbstractSuperNode) v0, (SuperNode) v1);
@@ -6430,6 +6594,7 @@ public class VertexTest {
 	 */
 	@Test(expected = ConcurrentModificationException.class)
 	public void inciencesTestEdgeDirectionFailFast5() {
+		onlyTestWithoutTransactionSupport();
 		Vertex v0 = graph.createDoubleSubNode();
 		Vertex v1 = graph.createDoubleSubNode();
 		graph.createLink((AbstractSuperNode) v0, (SuperNode) v1);
@@ -6448,6 +6613,7 @@ public class VertexTest {
 	 */
 	@Test
 	public void incidencesTestEdgeClass0() {
+		onlyTestWithoutTransactionSupport();
 		EdgeClass[] ecs = getEdgeClasses();
 		Vertex v0 = graph.createDoubleSubNode();
 		checkIncidenceList(v0, ecs[0], null, null, new LinkedList<Edge>());
@@ -6460,6 +6626,7 @@ public class VertexTest {
 	 */
 	@Test
 	public void incidencesTestEdgeClass1() {
+		onlyTestWithoutTransactionSupport();
 		EdgeClass[] ecs = getEdgeClasses();
 		Vertex v0 = graph.createDoubleSubNode();
 		Vertex v1 = graph.createDoubleSubNode();
@@ -6489,6 +6656,7 @@ public class VertexTest {
 	 */
 	@Test
 	public void incidencesTestEdgeClass2() {
+		onlyTestWithoutTransactionSupport();
 		EdgeClass[] ecs = getEdgeClasses();
 		Vertex v0 = graph.createSubNode();
 		Vertex v1 = graph.createDoubleSubNode();
@@ -6535,6 +6703,7 @@ public class VertexTest {
 	 */
 	@Test
 	public void incidencesTestEdgeClass3() {
+		onlyTestWithoutTransactionSupport();
 		for (int i = 0; i < 100; i++) {
 			graph = VertexTestSchema.instance().createVertexTestGraph();
 			EdgeClass[] ecs = getEdgeClasses();
@@ -6603,6 +6772,7 @@ public class VertexTest {
 	 */
 	@Test
 	public void incidencesTestClass0() {
+		onlyTestWithoutTransactionSupport();
 		Vertex v0 = graph.createDoubleSubNode();
 		checkIncidenceList(v0, null, Link.class, null, new LinkedList<Edge>());
 		checkIncidenceList(v0, null, SubLink.class, null,
@@ -6616,6 +6786,7 @@ public class VertexTest {
 	 */
 	@Test
 	public void incidencesTestClass1() {
+		onlyTestWithoutTransactionSupport();
 		Vertex v0 = graph.createDoubleSubNode();
 		Vertex v1 = graph.createDoubleSubNode();
 		LinkedList<Edge> v0link = new LinkedList<Edge>();
@@ -6644,6 +6815,7 @@ public class VertexTest {
 	 */
 	@Test
 	public void incidencesTestClass2() {
+		onlyTestWithoutTransactionSupport();
 		Vertex v0 = graph.createSubNode();
 		Vertex v1 = graph.createDoubleSubNode();
 		Vertex v2 = graph.createSuperNode();
@@ -6689,6 +6861,7 @@ public class VertexTest {
 	 */
 	@Test
 	public void incidencesTestClass3() {
+		onlyTestWithoutTransactionSupport();
 		for (int i = 0; i < 100; i++) {
 			graph = VertexTestSchema.instance().createVertexTestGraph();
 			Vertex[] vertices = new Vertex[] { graph.createSubNode(),
@@ -6762,6 +6935,7 @@ public class VertexTest {
 	 */
 	@Test
 	public void incidencesTestEdgeClassEdgeDirection0() {
+		onlyTestWithoutTransactionSupport();
 		EdgeClass[] ecs = getEdgeClasses();
 		Vertex v0 = graph.createDoubleSubNode();
 
@@ -6792,6 +6966,7 @@ public class VertexTest {
 	 */
 	@Test
 	public void incidencesTestEdgeClassEdgeDirection1() {
+		onlyTestWithoutTransactionSupport();
 		EdgeClass[] ecs = getEdgeClasses();
 		Vertex v0 = graph.createDoubleSubNode();
 		Vertex v1 = graph.createDoubleSubNode();
@@ -6857,6 +7032,7 @@ public class VertexTest {
 	 */
 	@Test
 	public void incidencesTestEdgeClassEdgeDirection2() {
+		onlyTestWithoutTransactionSupport();
 		EdgeClass[] ecs = getEdgeClasses();
 		Vertex v0 = graph.createSubNode();
 		Vertex v1 = graph.createDoubleSubNode();
@@ -6961,6 +7137,7 @@ public class VertexTest {
 	 */
 	@Test
 	public void incidencesTestEdgeClassEdgeDirection3() {
+		onlyTestWithoutTransactionSupport();
 		for (int i = 0; i < 100; i++) {
 			graph = VertexTestSchema.instance().createVertexTestGraph();
 			EdgeClass[] ecs = getEdgeClasses();
@@ -7115,6 +7292,7 @@ public class VertexTest {
 	 */
 	@Test
 	public void incidencesTestClassEdgeDirection0() {
+		onlyTestWithoutTransactionSupport();
 		Vertex v0 = graph.createDoubleSubNode();
 
 		checkIncidenceList(v0, null, Link.class, EdgeDirection.INOUT,
@@ -7144,6 +7322,7 @@ public class VertexTest {
 	 */
 	@Test
 	public void incidencesTestClassEdgeDirection1() {
+		onlyTestWithoutTransactionSupport();
 		Vertex v0 = graph.createDoubleSubNode();
 		Vertex v1 = graph.createDoubleSubNode();
 		LinkedList<Edge> v0linkInout = new LinkedList<Edge>();
@@ -7218,6 +7397,7 @@ public class VertexTest {
 	 */
 	@Test
 	public void incidencesTestClassEdgeDirection2() {
+		onlyTestWithoutTransactionSupport();
 		Vertex v0 = graph.createSubNode();
 		Vertex v1 = graph.createDoubleSubNode();
 		Vertex v2 = graph.createSuperNode();
@@ -7336,6 +7516,7 @@ public class VertexTest {
 	 */
 	@Test
 	public void incidencesTestClassEdgeDirection3() {
+		onlyTestWithoutTransactionSupport();
 		for (int i = 0; i < 100; i++) {
 			graph = VertexTestSchema.instance().createVertexTestGraph();
 			Vertex[] vertices = new Vertex[] { graph.createSubNode(),
@@ -7488,6 +7669,7 @@ public class VertexTest {
 	 */
 	@Test
 	public void isValidAlphaTest0() {
+		onlyTestWithoutTransactionSupport();
 		Vertex v0 = graph.createSubNode();
 		Vertex v1 = graph.createSuperNode();
 		Vertex v2 = graph.createDoubleSubNode();
@@ -7508,6 +7690,7 @@ public class VertexTest {
 	 */
 	@Test
 	public void isValidOmegaTest0() {
+		onlyTestWithoutTransactionSupport();
 		Vertex v0 = graph.createSubNode();
 		Vertex v1 = graph.createSuperNode();
 		assertTrue(v0.isValid());
@@ -7527,6 +7710,7 @@ public class VertexTest {
 	 */
 	@Test
 	public void getGraphTest() {
+		onlyTestWithoutTransactionSupport();
 		VertexTestGraph anotherGraph = ((VertexTestSchema) graph.getSchema())
 				.createVertexTestGraph();
 		Vertex v0 = graph.createDoubleSubNode();
@@ -7555,6 +7739,7 @@ public class VertexTest {
 	 */
 	@Test
 	public void graphModifiedTest1() {
+		onlyTestWithoutTransactionSupport();
 		long graphversion = graph.getGraphVersion();
 		graph.createDoubleSubNode();
 		assertEquals(++graphversion, graph.getGraphVersion());
@@ -7565,6 +7750,7 @@ public class VertexTest {
 	 */
 	@Test
 	public void graphModifiedTest2() {
+		onlyTestWithoutTransactionSupport();
 		Vertex v = graph.createDoubleSubNode();
 		long graphversion = graph.getGraphVersion();
 		v.delete();
@@ -7577,6 +7763,7 @@ public class VertexTest {
 	 */
 	@Test
 	public void graphModifiedTest3() {
+		onlyTestWithoutTransactionSupport();
 		Vertex v = graph.createDoubleSubNode();
 		long graphversion = graph.getGraphVersion();
 		((DoubleSubNode) v).set_number(4);
@@ -7593,6 +7780,7 @@ public class VertexTest {
 	 */
 	@Test
 	public void getAttributedElementClassTest() {
+		onlyTestWithoutTransactionSupport();
 		VertexClass[] vertices = getVertexClasses();
 		Vertex v0 = graph.createDoubleSubNode();
 		Vertex v1 = graph.createSubNode();
@@ -7609,6 +7797,7 @@ public class VertexTest {
 	 */
 	@Test
 	public void getM1ClassTest() {
+		onlyTestWithoutTransactionSupport();
 		Vertex v0 = graph.createDoubleSubNode();
 		Vertex v1 = graph.createSubNode();
 		Vertex v2 = graph.createSuperNode();
@@ -7624,6 +7813,7 @@ public class VertexTest {
 	 */
 	@Test
 	public void getGraphClassTest() {
+		onlyTestWithoutTransactionSupport();
 		VertexTestGraph anotherGraph = ((VertexTestSchema) graph.getSchema())
 				.createVertexTestGraph();
 		GraphClass gc = graph.getSchema().getGraphClass();
@@ -7647,6 +7837,7 @@ public class VertexTest {
 	@Test
 	public void writeReadAttributeValues0() throws GraphIOException,
 			IOException {
+		onlyTestWithoutTransactionSupport();
 		DoubleSubNode v0 = graph.createDoubleSubNode();
 		// test of writeAttributeValues
 		GraphIO.saveGraphToFile("test.tg", graph, null);
@@ -7686,6 +7877,7 @@ public class VertexTest {
 	@Test
 	public void writeReadAttributeValues1() throws GraphIOException,
 			IOException {
+		onlyTestWithoutTransactionSupport();
 		DoubleSubNode v0 = graph.createDoubleSubNode();
 		v0.set_name("NameVonV0");
 		v0.set_number(17);
@@ -7742,6 +7934,7 @@ public class VertexTest {
 	 */
 	@Test
 	public void getAttributeTest0() throws NoSuchFieldException {
+		onlyTestWithoutTransactionSupport();
 		DoubleSubNode v = graph.createDoubleSubNode();
 		HashMap<Integer, String> map = new HashMap<Integer, String>();
 		v.set_nodeMap(map);
@@ -7758,6 +7951,7 @@ public class VertexTest {
 	 */
 	@Test(expected = NoSuchFieldException.class)
 	public void getAttributeTest1() throws NoSuchFieldException {
+		onlyTestWithoutTransactionSupport();
 		DoubleSubNode v = graph.createDoubleSubNode();
 		v.getAttribute("cd");
 	}
@@ -7768,6 +7962,7 @@ public class VertexTest {
 	 */
 	@Test(expected = NoSuchFieldException.class)
 	public void getAttributeTest2() throws NoSuchFieldException {
+		onlyTestWithoutTransactionSupport();
 		DoubleSubNode v = graph.createDoubleSubNode();
 		v.getAttribute("");
 	}
@@ -7780,6 +7975,7 @@ public class VertexTest {
 	 */
 	@Test
 	public void setAttributeTest0() throws NoSuchFieldException {
+		onlyTestWithoutTransactionSupport();
 		DoubleSubNode v = graph.createDoubleSubNode();
 		HashMap<Integer, String> map = new HashMap<Integer, String>();
 		v.setAttribute("nodeMap", map);
@@ -7795,6 +7991,7 @@ public class VertexTest {
 	 */
 	@Test
 	public void setAttributeTest1() throws NoSuchFieldException {
+		onlyTestWithoutTransactionSupport();
 		DoubleSubNode v = graph.createDoubleSubNode();
 		v.setAttribute("nodeMap", null);
 		v.setAttribute("name", null);
@@ -7808,6 +8005,7 @@ public class VertexTest {
 	 */
 	@Test(expected = NoSuchFieldException.class)
 	public void setAttributeTest2() throws NoSuchFieldException {
+		onlyTestWithoutTransactionSupport();
 		DoubleSubNode v = graph.createDoubleSubNode();
 		v.setAttribute("cd", "a");
 	}
@@ -7818,6 +8016,7 @@ public class VertexTest {
 	 */
 	@Test(expected = NoSuchFieldException.class)
 	public void setAttributeTest3() throws NoSuchFieldException {
+		onlyTestWithoutTransactionSupport();
 		DoubleSubNode v = graph.createDoubleSubNode();
 		v.setAttribute("", "a");
 	}
@@ -7829,6 +8028,7 @@ public class VertexTest {
 	 */
 	@Test
 	public void getSchemaTest() {
+		onlyTestWithoutTransactionSupport();
 		Vertex v0 = graph.createDoubleSubNode();
 		Vertex v1 = graph.createSubNode();
 		Vertex v2 = graph.createSuperNode();
@@ -7848,6 +8048,7 @@ public class VertexTest {
 	 */
 	@Test
 	public void compareToTest0() {
+		onlyTestWithoutTransactionSupport();
 		Vertex v0 = graph.createDoubleSubNode();
 		assertEquals(0, v0.compareTo(v0));
 	}
@@ -7857,6 +8058,7 @@ public class VertexTest {
 	 */
 	@Test
 	public void compareToTest1() {
+		onlyTestWithoutTransactionSupport();
 		Vertex v0 = graph.createDoubleSubNode();
 		Vertex v1 = graph.createDoubleSubNode();
 		assertTrue(v0.compareTo(v1) < 0);
@@ -7867,6 +8069,7 @@ public class VertexTest {
 	 */
 	@Test
 	public void compareToTest2() {
+		onlyTestWithoutTransactionSupport();
 		Vertex v0 = graph.createDoubleSubNode();
 		Vertex v1 = graph.createDoubleSubNode();
 		assertTrue(v1.compareTo(v0) > 0);
@@ -7879,6 +8082,7 @@ public class VertexTest {
 	// tests of the methods setName and getName
 	@Test
 	public void setGetNameTest0() {
+		onlyTestWithoutTransactionSupport();
 		DoubleSubNode v0 = graph.createDoubleSubNode();
 		v0.set_name("aName");
 		assertEquals("aName", v0.get_name());
@@ -7891,6 +8095,7 @@ public class VertexTest {
 	// tests of the methods setNumber and getNumber
 	@Test
 	public void setGetNumberTest0() {
+		onlyTestWithoutTransactionSupport();
 		DoubleSubNode v0 = graph.createDoubleSubNode();
 		v0.set_number(0);
 		assertEquals(0, v0.get_number());
@@ -7903,6 +8108,7 @@ public class VertexTest {
 	// tests of the methods setNodeMap and getNodeMap
 	@Test
 	public void setGetNodeMapTest0() {
+		onlyTestWithoutTransactionSupport();
 		DoubleSubNode v0 = graph.createDoubleSubNode();
 		HashMap<Integer, String> map = new HashMap<Integer, String>();
 		v0.set_nodeMap(map);
@@ -7918,6 +8124,7 @@ public class VertexTest {
 	// tests of the method addSource
 	@Test
 	public void addSourceTest0() {
+		onlyTestWithoutTransactionSupport();
 		DoubleSubNode v0 = graph.createDoubleSubNode();
 		// v0 -->{Link} v0
 		Link e0 = v0.addSource(v0);
@@ -7942,6 +8149,7 @@ public class VertexTest {
 	// tests of the method removeSource
 	@Test
 	public void removeSourceTest0() {
+		onlyTestWithoutTransactionSupport();
 		DoubleSubNode v0 = graph.createDoubleSubNode();
 		DoubleSubNode v1 = graph.createDoubleSubNode();
 		Link e0 = v0.addSource(v0);
@@ -7968,6 +8176,7 @@ public class VertexTest {
 	// tests of the method getSourceList
 	@Test
 	public void getSourceListTest0() {
+		onlyTestWithoutTransactionSupport();
 		DoubleSubNode v0 = graph.createDoubleSubNode();
 		SuperNode v1 = graph.createSuperNode();
 		SubNode v2 = graph.createSubNode();
@@ -8028,6 +8237,7 @@ public class VertexTest {
 	// tests of the method addSourceb
 	@Test
 	public void addSourcebTest0() {
+		onlyTestWithoutTransactionSupport();
 		DoubleSubNode v0 = graph.createDoubleSubNode();
 		// v0 -->{LinkBack} v0
 		LinkBack e0 = v0.addSourceb(v0);
@@ -8052,6 +8262,7 @@ public class VertexTest {
 	// tests of the method removeSourceb
 	@Test
 	public void removeSourcebTest0() {
+		onlyTestWithoutTransactionSupport();
 		DoubleSubNode v0 = graph.createDoubleSubNode();
 		DoubleSubNode v1 = graph.createDoubleSubNode();
 		LinkBack e0 = v0.addSourceb(v0);
@@ -8078,6 +8289,7 @@ public class VertexTest {
 	// tests of the method getSourcebList
 	@Test
 	public void getSourcebListTest0() {
+		onlyTestWithoutTransactionSupport();
 		DoubleSubNode v0 = graph.createDoubleSubNode();
 		SuperNode v1 = graph.createSuperNode();
 		SubNode v2 = graph.createSubNode();
@@ -8096,6 +8308,7 @@ public class VertexTest {
 	// tests of the method addSourcec
 	@Test
 	public void addSourcecTest0() {
+		onlyTestWithoutTransactionSupport();
 		DoubleSubNode v0 = graph.createDoubleSubNode();
 		// v0 -->{SubLink} v0
 		SubLink e0 = v0.addSourcec(v0);
@@ -8123,6 +8336,7 @@ public class VertexTest {
 	 */
 	@Test
 	public void removeSourcecTest0() {
+		onlyTestWithoutTransactionSupport();
 		DoubleSubNode v0 = graph.createDoubleSubNode();
 		v0.addSourcec(v0);
 		v0.removeSourcec(v0);
@@ -8134,6 +8348,7 @@ public class VertexTest {
 	 */
 	@Test
 	public void removeSourcecTest1() {
+		onlyTestWithoutTransactionSupport();
 		DoubleSubNode v0 = graph.createDoubleSubNode();
 		SuperNode v1 = graph.createSuperNode();
 		v1.addSourcec(v0);
@@ -8144,6 +8359,7 @@ public class VertexTest {
 	// tests of the method getSourcecList
 	@Test
 	public void getSourcecListTest0() {
+		onlyTestWithoutTransactionSupport();
 		DoubleSubNode v0 = graph.createDoubleSubNode();
 		SuperNode v1 = graph.createSuperNode();
 		v0.addSourcec(v0);
@@ -8161,6 +8377,7 @@ public class VertexTest {
 	// tests of the method addTarget
 	@Test
 	public void addTargetTest0() {
+		onlyTestWithoutTransactionSupport();
 		DoubleSubNode v0 = graph.createDoubleSubNode();
 		// v0 -->{Link} v0
 		Link e0 = v0.addTarget(v0);
@@ -8239,6 +8456,7 @@ public class VertexTest {
 	// tests of the method removeTarget
 	@Test
 	public void removeTargetTest0() {
+		onlyTestWithoutTransactionSupport();
 		DoubleSubNode v0 = graph.createDoubleSubNode();
 		DoubleSubNode v1 = graph.createDoubleSubNode();
 		Link e0 = v0.addTarget(v0);
@@ -8265,6 +8483,7 @@ public class VertexTest {
 	// tests of the method getTargetList
 	@Test
 	public void getTargetListTest0() {
+		onlyTestWithoutTransactionSupport();
 		DoubleSubNode v0 = graph.createDoubleSubNode();
 		SuperNode v1 = graph.createSuperNode();
 		SubNode v2 = graph.createSubNode();
@@ -8283,6 +8502,7 @@ public class VertexTest {
 	// tests of the method addTargetb
 	@Test
 	public void addTargetbTest0() {
+		onlyTestWithoutTransactionSupport();
 		DoubleSubNode v0 = graph.createDoubleSubNode();
 		// v0 -->{LinkBack} v0
 		LinkBack e0 = v0.addTargetb(v0);
@@ -8361,6 +8581,7 @@ public class VertexTest {
 	// tests of the method removeTargetb
 	@Test
 	public void removeTargetbTest0() {
+		onlyTestWithoutTransactionSupport();
 		DoubleSubNode v0 = graph.createDoubleSubNode();
 		DoubleSubNode v1 = graph.createDoubleSubNode();
 		LinkBack e0 = v0.addTargetb(v0);
@@ -8387,6 +8608,7 @@ public class VertexTest {
 	// tests of the method getTargetbList
 	@Test
 	public void getTargetbListTest0() {
+		onlyTestWithoutTransactionSupport();
 		DoubleSubNode v0 = graph.createDoubleSubNode();
 		SuperNode v1 = graph.createSuperNode();
 		SubNode v2 = graph.createSubNode();
@@ -8405,6 +8627,7 @@ public class VertexTest {
 	// tests of the method addTargetc
 	@Test
 	public void addTargetcTest0() {
+		onlyTestWithoutTransactionSupport();
 		DoubleSubNode v0 = graph.createDoubleSubNode();
 		// v0 -->{SubLink} v0
 		SubLink e0 = v0.addTargetc(v0);
@@ -8483,6 +8706,7 @@ public class VertexTest {
 	// tests of the method removeTargetc
 	@Test
 	public void removeTargetcTest0() {
+		onlyTestWithoutTransactionSupport();
 		DoubleSubNode v0 = graph.createDoubleSubNode();
 		DoubleSubNode v1 = graph.createDoubleSubNode();
 		SubLink e0 = v0.addTargetc(v0);
@@ -8509,6 +8733,7 @@ public class VertexTest {
 	// tests of the method getTargetcList
 	@Test
 	public void getTargetcListTest0() {
+		onlyTestWithoutTransactionSupport();
 		DoubleSubNode v0 = graph.createDoubleSubNode();
 		SuperNode v1 = graph.createSuperNode();
 		v0.addTargetc(v0);
@@ -8522,6 +8747,7 @@ public class VertexTest {
 	// tests of the method getNextAbstractSuperNode
 	@Test
 	public void getNextAbstractSuperNodeTest0() {
+		onlyTestWithoutTransactionSupport();
 		DoubleSubNode v0 = graph.createDoubleSubNode();
 		graph.createSuperNode();
 		SubNode v2 = graph.createSubNode();
@@ -8537,6 +8763,7 @@ public class VertexTest {
 	// tests of the method getNextSubNode
 	@Test
 	public void getNextSubNodeTest0() {
+		onlyTestWithoutTransactionSupport();
 		DoubleSubNode v0 = graph.createDoubleSubNode();
 		graph.createSuperNode();
 		SubNode v2 = graph.createSubNode();
@@ -8552,6 +8779,7 @@ public class VertexTest {
 	// tests of the method getNextSuperNode
 	@Test
 	public void getNextSuperNodeTest0() {
+		onlyTestWithoutTransactionSupport();
 		SuperNode v0 = graph.createSuperNode();
 		graph.createSubNode();
 		SuperNode v2 = graph.createSuperNode();
@@ -8567,6 +8795,7 @@ public class VertexTest {
 	// tests of the method getNextDoubleSubNode
 	@Test
 	public void getNextDoubleSubNodeTest0() {
+		onlyTestWithoutTransactionSupport();
 		DoubleSubNode v0 = graph.createDoubleSubNode();
 		graph.createSubNode();
 		DoubleSubNode v2 = graph.createDoubleSubNode();
@@ -8582,6 +8811,7 @@ public class VertexTest {
 	// tests of the method getFirstLink
 	@Test
 	public void getFirstLinkTest0() {
+		onlyTestWithoutTransactionSupport();
 		DoubleSubNode v0 = graph.createDoubleSubNode();
 		DoubleSubNode v1 = graph.createDoubleSubNode();
 		graph.createLinkBack(v0, v1);
@@ -8595,6 +8825,7 @@ public class VertexTest {
 	// tests of the method getFirstLink(EdgeDirection)
 	@Test
 	public void getFirstLinkEdgeDirectionTest0() {
+		onlyTestWithoutTransactionSupport();
 		DoubleSubNode v0 = graph.createDoubleSubNode();
 		DoubleSubNode v1 = graph.createDoubleSubNode();
 		graph.createLinkBack(v0, v1);
@@ -8612,6 +8843,7 @@ public class VertexTest {
 	// tests of the method getFirstLinkBack
 	@Test
 	public void getFirstLinkBackTest0() {
+		onlyTestWithoutTransactionSupport();
 		DoubleSubNode v0 = graph.createDoubleSubNode();
 		DoubleSubNode v1 = graph.createDoubleSubNode();
 		graph.createLink(v0, v1);
@@ -8625,6 +8857,7 @@ public class VertexTest {
 	// tests of the method getFirstLinkBack(EdgeDirection)
 	@Test
 	public void getFirstLinkBackEdgeDirectionTest0() {
+		onlyTestWithoutTransactionSupport();
 		DoubleSubNode v0 = graph.createDoubleSubNode();
 		DoubleSubNode v1 = graph.createDoubleSubNode();
 		graph.createLink(v0, v1);
@@ -8645,6 +8878,7 @@ public class VertexTest {
 	// tests of the method getFirstSubLink
 	@Test
 	public void getFirstSubLinkTest0() {
+		onlyTestWithoutTransactionSupport();
 		DoubleSubNode v0 = graph.createDoubleSubNode();
 		DoubleSubNode v1 = graph.createDoubleSubNode();
 		graph.createLink(v0, v1);
@@ -8658,6 +8892,7 @@ public class VertexTest {
 	// tests of the method getFirstSubLink(EdgeDirection)
 	@Test
 	public void getFirstSubLinkEdgeDirectionTest0() {
+		onlyTestWithoutTransactionSupport();
 		DoubleSubNode v0 = graph.createDoubleSubNode();
 		DoubleSubNode v1 = graph.createDoubleSubNode();
 		graph.createLink(v0, v1);
@@ -8732,6 +8967,7 @@ public class VertexTest {
 	// tests of the method get#Edge#Incidences
 	@Test
 	public void getLinkIncidencesTest0() {
+		onlyTestWithoutTransactionSupport();
 		DoubleSubNode v0 = graph.createDoubleSubNode();
 		DoubleSubNode v1 = graph.createDoubleSubNode();
 		LinkBack e0 = graph.createLinkBack(v0, v1);
@@ -8751,6 +8987,7 @@ public class VertexTest {
 	// tests of the method get#Edge#Incidences(EdgeDirection)
 	@Test
 	public void getLinkIncidencesTestEdgeDirection0() {
+		onlyTestWithoutTransactionSupport();
 		DoubleSubNode v0 = graph.createDoubleSubNode();
 		DoubleSubNode v1 = graph.createDoubleSubNode();
 		LinkBack e0 = graph.createLinkBack(v0, v1);
@@ -8797,6 +9034,7 @@ public class VertexTest {
 	// tests of the method void putIncidenceAfter(IncidenceImpl, IncidenceImpl)
 	@Test(expected = GraphException.class)
 	public void putIncidenceAfterTest0() {
+		onlyTestWithoutTransactionSupport();
 		VertexImpl v1 = (VertexImpl) graph.createDoubleSubNode();
 		VertexImpl v2 = (VertexImpl) graph.createDoubleSubNode();
 		IncidenceImpl e1 = (IncidenceImpl) graph.createLink(
@@ -8808,6 +9046,7 @@ public class VertexTest {
 
 	@Test(expected = GraphException.class)
 	public void putIncidenceBeforeTest0() {
+		onlyTestWithoutTransactionSupport();
 		VertexImpl v1 = (VertexImpl) graph.createDoubleSubNode();
 		VertexImpl v2 = (VertexImpl) graph.createDoubleSubNode();
 		IncidenceImpl e1 = (IncidenceImpl) graph.createLink(

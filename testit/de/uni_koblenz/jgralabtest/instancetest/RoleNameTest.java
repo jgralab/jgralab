@@ -3,6 +3,7 @@ package de.uni_koblenz.jgralabtest.instancetest;
 import static org.junit.Assert.assertEquals;
 
 import java.io.ByteArrayInputStream;
+import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.PriorityQueue;
@@ -10,6 +11,9 @@ import java.util.Random;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
+import org.junit.runners.Parameterized.Parameters;
 
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.GraphException;
@@ -33,7 +37,17 @@ import de.uni_koblenz.jgralabtest.schemas.vertextest.J;
 import de.uni_koblenz.jgralabtest.schemas.vertextest.VertexTestGraph;
 import de.uni_koblenz.jgralabtest.schemas.vertextest.VertexTestSchema;
 
-public class RoleNameTest {
+@RunWith(Parameterized.class)
+public class RoleNameTest extends InstanceTest {
+
+	public RoleNameTest(boolean transactionsEnabled) {
+		super(transactionsEnabled);
+	}
+
+	@Parameters
+	public static Collection<Object[]> configure() {
+		return getParameters();
+	}
 
 	private VertexTestGraph graph;
 	private Random rand;
@@ -43,7 +57,9 @@ public class RoleNameTest {
 	 */
 	@Before
 	public void setUp() {
-		graph = VertexTestSchema.instance().createVertexTestGraph(100, 100);
+		graph = transactionsEnabled ? VertexTestSchema.instance()
+				.createVertexTestGraphWithTransactionSupport(100, 100)
+				: VertexTestSchema.instance().createVertexTestGraph(100, 100);
 		rand = new Random(System.currentTimeMillis());
 	}
 
@@ -105,7 +121,7 @@ public class RoleNameTest {
 	 * @param v8Inci
 	 * @param v9Inci
 	 */
-	private void testIncidences(A v1, C v2, B v3, D v4, B v5, D v6, A v7, C v8,
+	private void testIncidences(A v1, C v2, B v3, D v4, B v5, D v6, A v7, C v8,	
 			LinkedList<Edge> v1Inci, LinkedList<Edge> v2Inci,
 			LinkedList<Edge> v3Inci, LinkedList<Edge> v4Inci,
 			LinkedList<Edge> v5Inci, LinkedList<Edge> v6Inci,
@@ -1046,6 +1062,7 @@ public class RoleNameTest {
 	 */
 	@Test
 	public void eAddTargetrolenameTest0() {
+		onlyTestWithoutTransactionSupport();
 		A v1 = graph.createA();
 		B v2 = graph.createB();
 		D v3 = graph.createD();
@@ -1064,6 +1081,7 @@ public class RoleNameTest {
 	 */
 	@Test
 	public void eAddTargetrolenameTest1() {
+		onlyTestWithoutTransactionSupport();
 		A v1 = graph.createA();
 		B v2 = graph.createB();
 		E e1 = v1.addX(v2);
@@ -1080,6 +1098,7 @@ public class RoleNameTest {
 	 */
 	@Test
 	public void eAddTargetrolenameTest2() {
+		onlyTestWithoutTransactionSupport();
 		A v1 = graph.createA();
 		A v2 = graph.createA();
 		C v3 = graph.createC();
@@ -1099,6 +1118,7 @@ public class RoleNameTest {
 	 */
 	@Test(expected = GraphException.class)
 	public void eAddTargetrolenameTestException0() {
+		onlyTestWithoutTransactionSupport();
 		C v1 = graph.createC();
 		B v2 = graph.createB();
 		v1.addX(v2);
@@ -1110,6 +1130,7 @@ public class RoleNameTest {
 	 */
 	@Test(expected = GraphException.class)
 	public void eAddTargetrolenameTestException1() {
+		onlyTestWithoutTransactionSupport();
 		C v1 = graph.createC();
 		B v2 = graph.createB();
 		graph.createE(v1, v2);
@@ -1121,6 +1142,7 @@ public class RoleNameTest {
 	 */
 	@Test(expected = GraphException.class)
 	public void eAddTargetrolenameTestException2() {
+		onlyTestWithoutTransactionSupport();
 		C2 v1 = graph.createC2();
 		B v2 = graph.createB();
 		graph.createE(v1, v2);
@@ -1131,6 +1153,7 @@ public class RoleNameTest {
 	 */
 	@Test(expected = GraphException.class)
 	public void eAddTargetrolenameTestException3() {
+		onlyTestWithoutTransactionSupport();
 		A v1 = graph.createA();
 		v1.addX(null);
 	}
@@ -1140,6 +1163,7 @@ public class RoleNameTest {
 	 */
 	@Test
 	public void fAddTargetrolenameTest0() {
+		onlyTestWithoutTransactionSupport();
 		C v1 = graph.createC();
 		D v2 = graph.createD();
 		F e1 = v1.addY(v2);
@@ -1156,6 +1180,7 @@ public class RoleNameTest {
 	 */
 	@Test
 	public void fAddTargetrolenameTest1() {
+		onlyTestWithoutTransactionSupport();
 		C v1 = graph.createC();
 		D v2 = graph.createD();
 		F e1 = v1.addY(v2);
@@ -1172,6 +1197,7 @@ public class RoleNameTest {
 	 */
 	@Test
 	public void gAddTargetrolenameTest0() {
+		onlyTestWithoutTransactionSupport();
 		C v1 = graph.createC();
 		D v2 = graph.createD();
 		G e1 = v1.addZ(v2);
@@ -1188,6 +1214,7 @@ public class RoleNameTest {
 	 */
 	@Test
 	public void gAddTargetrolenameTest1() {
+		onlyTestWithoutTransactionSupport();
 		C v1 = graph.createC();
 		D v2 = graph.createD();
 		G e1 = v1.addZ(v2);
@@ -1204,6 +1231,7 @@ public class RoleNameTest {
 	 */
 	@Test
 	public void mixedAddTargetrolenameTest0() {
+		onlyTestWithoutTransactionSupport();
 		A v1 = graph.createA();
 		B v2 = graph.createB();
 		C v3 = graph.createC();
@@ -1260,6 +1288,7 @@ public class RoleNameTest {
 	 */
 	@Test
 	public void addTargetrolenameRandomTest0() {
+		onlyTestWithoutTransactionSupport();
 		A v1 = graph.createA();
 		C v2 = graph.createC();
 		B v3 = graph.createB();
@@ -1299,6 +1328,7 @@ public class RoleNameTest {
 	 */
 	@Test
 	public void removeTargetRoleNameTest0() {
+		onlyTestWithoutTransactionSupport();
 		A v1 = graph.createA();
 		C v2 = graph.createC();
 		D v3 = graph.createD();
@@ -1314,6 +1344,7 @@ public class RoleNameTest {
 	 */
 	@Test
 	public void removeTargetRoleNameTest1() {
+		onlyTestWithoutTransactionSupport();
 		A v1 = graph.createA();
 		C v2 = graph.createC();
 		D v3 = graph.createD();
@@ -1336,6 +1367,7 @@ public class RoleNameTest {
 	 */
 	@Test
 	public void removeTargetrolenameTest2() {
+		onlyTestWithoutTransactionSupport();
 		A v1 = graph.createA();
 		A v2 = graph.createA();
 		C v3 = graph.createC();
@@ -1355,6 +1387,7 @@ public class RoleNameTest {
 	 */
 	@Test(expected = GraphException.class)
 	public void removeTargetrolenameTestException0() {
+		onlyTestWithoutTransactionSupport();
 		C v1 = graph.createC();
 		B v2 = graph.createB();
 		v1.removeX(v2);
@@ -1366,6 +1399,7 @@ public class RoleNameTest {
 	 */
 	@Test(expected = GraphException.class)
 	public void removeTargetrolenameTestException3() {
+		onlyTestWithoutTransactionSupport();
 		C2 v1 = graph.createC2();
 		B v2 = graph.createB();
 		v1.removeX(v2);
@@ -1376,6 +1410,7 @@ public class RoleNameTest {
 	 */
 	@Test
 	public void removeTargetrolenameRandomTest0() {
+		onlyTestWithoutTransactionSupport();
 		A v1 = graph.createA();
 		C v2 = graph.createC();
 		B v3 = graph.createB();
@@ -1417,6 +1452,7 @@ public class RoleNameTest {
 	 */
 	@Test
 	public void getRoleNameListTest0() {
+		onlyTestWithoutTransactionSupport();
 		A v1 = graph.createA();
 		compareLists(new LinkedList<Vertex>(), v1.getXList().toArray(
 				new Vertex[0]));
@@ -1427,6 +1463,7 @@ public class RoleNameTest {
 	 */
 	@Test
 	public void getRoleNameListTest1() {
+		onlyTestWithoutTransactionSupport();
 		C v1 = graph.createC();
 		D v2 = graph.createD();
 		v1.addW(v2);
@@ -1450,6 +1487,7 @@ public class RoleNameTest {
 	 */
 	@Test
 	public void getRoleNameListTest2() {
+		onlyTestWithoutTransactionSupport();
 		A v1 = graph.createA();
 		v1.addV(v1);
 		graph.createI(v1, v1);
@@ -1465,6 +1503,7 @@ public class RoleNameTest {
 	 */
 	@Test(expected = GraphException.class)
 	public void getRoleNameListTestException0() {
+		onlyTestWithoutTransactionSupport();
 		C v1 = graph.createC();
 		v1.getXList();
 	}
@@ -1475,6 +1514,7 @@ public class RoleNameTest {
 	 */
 	@Test(expected = GraphException.class)
 	public void getRoleNameListTestException1() {
+		onlyTestWithoutTransactionSupport();
 		C2 v1 = graph.createC2();
 		v1.getXList();
 	}
@@ -1484,6 +1524,7 @@ public class RoleNameTest {
 	 */
 	@Test
 	public void getRoleNameListRandomTest0() {
+		onlyTestWithoutTransactionSupport();
 		A v1 = graph.createA();
 		C v2 = graph.createC();
 		B v3 = graph.createB();
@@ -1550,6 +1591,7 @@ public class RoleNameTest {
 	 */
 	@Test
 	public void addSourcerolenameTest0() {
+		onlyTestWithoutTransactionSupport();
 		A v1 = graph.createA();
 		B v2 = graph.createB();
 		D v3 = graph.createD();
@@ -1568,6 +1610,7 @@ public class RoleNameTest {
 	 */
 	@Test
 	public void addSourcerolenameTest1() {
+		onlyTestWithoutTransactionSupport();
 		A v1 = graph.createA();
 		B v2 = graph.createB();
 		E e1 = v2.addSourceE(v1);
@@ -1584,6 +1627,7 @@ public class RoleNameTest {
 	 */
 	@Test
 	public void addSourcerolenameTest2() {
+		onlyTestWithoutTransactionSupport();
 		A v1 = graph.createA();
 		A v2 = graph.createA();
 		C v3 = graph.createC();
@@ -1603,6 +1647,7 @@ public class RoleNameTest {
 	 */
 	@Test(expected = GraphException.class)
 	public void addSourcerolenameTestException0() {
+		onlyTestWithoutTransactionSupport();
 		D2 v1 = graph.createD2();
 		A v2 = graph.createA();
 		v1.addSourceE(v2);
@@ -1614,6 +1659,7 @@ public class RoleNameTest {
 	 */
 	@Test(expected = GraphException.class)
 	public void addSourcerolenameTestException1() {
+		onlyTestWithoutTransactionSupport();
 		D2 v1 = graph.createD2();
 		A v2 = graph.createA();
 		graph.createE(v2, v1);
@@ -1624,6 +1670,7 @@ public class RoleNameTest {
 	 */
 	@Test(expected = GraphException.class)
 	public void addSourcerolenameTestException2() {
+		onlyTestWithoutTransactionSupport();
 		B v1 = graph.createB();
 		v1.addSourceE(null);
 	}
@@ -1633,6 +1680,7 @@ public class RoleNameTest {
 	 */
 	@Test
 	public void mixedAddSourcerolenameTest0() {
+		onlyTestWithoutTransactionSupport();
 		A v1 = graph.createA();
 		B v2 = graph.createB();
 		C v3 = graph.createC();
@@ -1689,6 +1737,7 @@ public class RoleNameTest {
 	 */
 	@Test
 	public void addSourcerolenameRandomTest0() {
+		onlyTestWithoutTransactionSupport();
 		A v1 = graph.createA();
 		C v2 = graph.createC();
 		B v3 = graph.createB();
@@ -1738,6 +1787,7 @@ public class RoleNameTest {
 	 */
 	@Test
 	public void removeSourceRoleNameTest0() {
+		onlyTestWithoutTransactionSupport();
 		A v1 = graph.createA();
 		C v2 = graph.createC();
 		D v3 = graph.createD();
@@ -1753,6 +1803,7 @@ public class RoleNameTest {
 	 */
 	@Test
 	public void removeSourceRoleNameTest1() {
+		onlyTestWithoutTransactionSupport();
 		A v1 = graph.createA();
 		C v2 = graph.createC();
 		D v3 = graph.createD();
@@ -1775,6 +1826,7 @@ public class RoleNameTest {
 	 */
 	@Test
 	public void removeSourcerolenameTest2() {
+		onlyTestWithoutTransactionSupport();
 		A v1 = graph.createA();
 		A v2 = graph.createA();
 		C v3 = graph.createC();
@@ -1794,6 +1846,7 @@ public class RoleNameTest {
 	 */
 	@Test(expected = GraphException.class)
 	public void removeSourcerolenameTestException0() {
+		onlyTestWithoutTransactionSupport();
 		C2 v1 = graph.createC2();
 		D2 v2 = graph.createD2();
 		v2.removeSourceE(v1);
@@ -1804,6 +1857,7 @@ public class RoleNameTest {
 	 */
 	@Test
 	public void removeSourcerolenameRandomTest0() {
+		onlyTestWithoutTransactionSupport();
 		A v1 = graph.createA();
 		C v2 = graph.createC();
 		B v3 = graph.createB();
@@ -1862,6 +1916,7 @@ public class RoleNameTest {
 	 */
 	@Test
 	public void getSourceRoleNameListTest0() {
+		onlyTestWithoutTransactionSupport();
 		B v1 = graph.createB();
 		compareLists(new LinkedList<Vertex>(), v1.getSourceEList().toArray(
 				new Vertex[0]));
@@ -1872,6 +1927,7 @@ public class RoleNameTest {
 	 */
 	@Test
 	public void getSourceRoleNameListTest1() {
+		onlyTestWithoutTransactionSupport();
 		C v1 = graph.createC();
 		D v2 = graph.createD();
 		v2.addSourceH(v1);
@@ -1895,6 +1951,7 @@ public class RoleNameTest {
 	 */
 	@Test
 	public void getSourceRoleNameListTest2() {
+		onlyTestWithoutTransactionSupport();
 		A v1 = graph.createA();
 		v1.addSourceI(v1);
 		graph.createI(v1, v1);
@@ -1910,6 +1967,7 @@ public class RoleNameTest {
 	 */
 	@Test(expected = GraphException.class)
 	public void getSourceRoleNameListTestException0() {
+		onlyTestWithoutTransactionSupport();
 		D2 v1 = graph.createD2();
 		v1.getSourceEList();
 	}
@@ -1919,6 +1977,7 @@ public class RoleNameTest {
 	 */
 	@Test
 	public void getSourceRoleNameListRandomTest0() {
+		onlyTestWithoutTransactionSupport();
 		A v1 = graph.createA();
 		C v2 = graph.createC();
 		B v3 = graph.createB();
@@ -2005,6 +2064,7 @@ public class RoleNameTest {
 	 */
 	@Test
 	public void illegalRolenamesTest0() throws Exception {
+		onlyTestWithoutTransactionSupport();
 		compileSchema("Schema de.uni_koblenz.jgralabtest.TestSchema;"
 				+ "GraphClass TestGraph;"
 				+ "VertexClass A;"
@@ -2020,6 +2080,7 @@ public class RoleNameTest {
 	 */
 	@Test
 	public void illegalRolenamesTest1() throws Exception {
+		onlyTestWithoutTransactionSupport();
 		compileSchema("Schema de.uni_koblenz.jgralabtest.TestSchema;"
 				+ "GraphClass TestGraph;"
 				+ "VertexClass A;"
@@ -2035,6 +2096,7 @@ public class RoleNameTest {
 	 */
 	@Test
 	public void illegalRolenamesTest2() throws Exception {
+		onlyTestWithoutTransactionSupport();
 		compileSchema("Schema de.uni_koblenz.jgralabtest.TestSchema;"
 				+ "GraphClass TestGraph;"
 				+ "VertexClass A;"
@@ -2052,6 +2114,7 @@ public class RoleNameTest {
 	 */
 	@Test(expected = InheritanceException.class)
 	public void illegalRolenamesTest3() throws Exception {
+		onlyTestWithoutTransactionSupport();
 		compileSchema("Schema de.uni_koblenz.jgralabtest.TestSchema;"
 				+ "GraphClass TestGraph;" + "VertexClass A;" + "VertexClass B;"
 				+ "EdgeClass E from A (0,*) to B (0,*) role targetE;"
@@ -2065,6 +2128,7 @@ public class RoleNameTest {
 	 */
 	@Test(expected = InheritanceException.class)
 	public void illegalRolenamesTest4() throws Exception {
+		onlyTestWithoutTransactionSupport();
 		compileSchema("Schema de.uni_koblenz.jgralabtest.TestSchema;"
 				+ "GraphClass TestGraph;"
 				+ "VertexClass A;"
@@ -2080,6 +2144,7 @@ public class RoleNameTest {
 	 */
 	@Test(expected = InheritanceException.class)
 	public void illegalRolenamesTest5() throws Exception {
+		onlyTestWithoutTransactionSupport();
 		compileSchema("Schema de.uni_koblenz.jgralabtest.TestSchema;"
 				+ "GraphClass TestGraph;"
 				+ "VertexClass A;"
@@ -2094,6 +2159,7 @@ public class RoleNameTest {
 	 */
 	@Test
 	public void illegalRolenamesTest6() throws Exception {
+		onlyTestWithoutTransactionSupport();
 		compileSchema("Schema de.uni_koblenz.jgralabtest.TestSchema;"
 				+ "GraphClass TestGraph;"
 				+ "VertexClass A;"
@@ -2107,6 +2173,7 @@ public class RoleNameTest {
 	 */
 	@Test
 	public void illegalRolenamesTest7() throws Exception {
+		onlyTestWithoutTransactionSupport();
 		compileSchema("Schema de.uni_koblenz.jgralabtest.TestSchema;"
 				+ "GraphClass TestGraph;"
 				+ "VertexClass A;"
@@ -2120,6 +2187,7 @@ public class RoleNameTest {
 	 */
 	@Test(expected = InheritanceException.class)
 	public void illegalRolenamesTest8() throws Exception {
+		onlyTestWithoutTransactionSupport();
 		compileSchema("Schema de.uni_koblenz.jgralabtest.TestSchema;"
 				+ "GraphClass TestGraph;"
 				+ "VertexClass A;"
@@ -2133,6 +2201,7 @@ public class RoleNameTest {
 	 */
 	@Test(expected = InheritanceException.class)
 	public void illegalRolenamesTest9() throws Exception {
+		onlyTestWithoutTransactionSupport();
 		compileSchema("Schema de.uni_koblenz.jgralabtest.TestSchema;"
 				+ "GraphClass TestGraph;"
 				+ "VertexClass A;"
@@ -2147,6 +2216,7 @@ public class RoleNameTest {
 	 */
 	@Test
 	public void illegalRolenamesTest10() throws Exception {
+		onlyTestWithoutTransactionSupport();
 		compileSchema("Schema de.uni_koblenz.jgralabtest.TestSchema;"
 				+ "GraphClass TestGraph;"
 				+ "VertexClass A;"
@@ -2161,6 +2231,7 @@ public class RoleNameTest {
 	 */
 	@Test(expected = InheritanceException.class)
 	public void illegalRolenamesTest11() throws Exception {
+		onlyTestWithoutTransactionSupport();
 		compileSchema("Schema de.uni_koblenz.jgralabtest.TestSchema;"
 				+ "GraphClass TestGraph;"
 				+ "VertexClass A;"
@@ -2175,6 +2246,7 @@ public class RoleNameTest {
 	 */
 	@Test
 	public void illegalRolenamesTest12() throws Exception {
+		onlyTestWithoutTransactionSupport();
 		compileSchema("Schema de.uni_koblenz.jgralabtest.TestSchema;"
 				+ "GraphClass TestGraph;"
 				+ "VertexClass A;"
@@ -2189,6 +2261,7 @@ public class RoleNameTest {
 	 */
 	@Test
 	public void illegalRolenamesTest13() throws Exception {
+		onlyTestWithoutTransactionSupport();
 		compileSchema("Schema de.uni_koblenz.jgralabtest.TestSchema;"
 				+ "GraphClass TestGraph;"
 				+ "VertexClass A;"
@@ -2205,6 +2278,7 @@ public class RoleNameTest {
 	 */
 	@Test
 	public void illegalRolenamesTest14() throws Exception {
+		onlyTestWithoutTransactionSupport();
 		compileSchema("Schema de.uni_koblenz.jgralabtest.TestSchema;"
 				+ "GraphClass TestGraph;"
 				+ "VertexClass A;"
@@ -2222,6 +2296,7 @@ public class RoleNameTest {
 	 */
 	@Test
 	public void illegalRolenamesTest15() throws Exception {
+		onlyTestWithoutTransactionSupport();
 		compileSchema("Schema de.uni_koblenz.jgralabtest.TestSchema;"
 				+ "GraphClass TestGraph;"
 				+ "VertexClass A;"
@@ -2238,6 +2313,7 @@ public class RoleNameTest {
 	 */
 	@Test(expected = InheritanceException.class)
 	public void illegalRolenamesTest16() throws Exception {
+		onlyTestWithoutTransactionSupport();
 		compileSchema("Schema de.uni_koblenz.jgralabtest.TestSchema;"
 				+ "GraphClass TestGraph;"
 				+ "VertexClass A;"
@@ -2254,6 +2330,7 @@ public class RoleNameTest {
 	 */
 	@Test
 	public void illegalRolenamesTest17() throws Exception {
+		onlyTestWithoutTransactionSupport();
 		compileSchema("Schema de.uni_koblenz.jgralabtest.TestSchema;"
 				+ "GraphClass TestGraph;"
 				+ "VertexClass A;"
@@ -2269,6 +2346,7 @@ public class RoleNameTest {
 	 */
 	@Test(expected = InheritanceException.class)
 	public void illegalRolenamesTest18() throws Exception {
+		onlyTestWithoutTransactionSupport();
 		compileSchema("Schema de.uni_koblenz.jgralabtest.TestSchema;"
 				+ "GraphClass TestGraph;"
 				+ "VertexClass A;"
@@ -2288,6 +2366,7 @@ public class RoleNameTest {
 	 */
 	@Test(expected = InheritanceException.class)
 	public void illegalRolenamesTest19() throws Exception {
+		onlyTestWithoutTransactionSupport();
 		compileSchema("Schema de.uni_koblenz.jgralabtest.TestSchema;"
 				+ "GraphClass TestGraph;"
 				+ "VertexClass A;"
@@ -2304,6 +2383,7 @@ public class RoleNameTest {
 	 */
 	@Test(expected = InheritanceException.class)
 	public void illegalRolenamesTest23() throws Exception {
+		onlyTestWithoutTransactionSupport();
 		compileSchema("Schema de.uni_koblenz.jgralabtest.TestSchema;"
 				+ "GraphClass TestGraph;"
 				+ "VertexClass A;"
@@ -2318,6 +2398,7 @@ public class RoleNameTest {
 	 */
 	@Test
 	public void illegalRolenamesTest20() throws Exception {
+		onlyTestWithoutTransactionSupport();
 		compileSchema("Schema de.uni_koblenz.jgralabtest.TestSchema;"
 				+ "GraphClass TestGraph;"
 				+ "VertexClass A;"
@@ -2334,6 +2415,7 @@ public class RoleNameTest {
 	 */
 	@Test(expected = InheritanceException.class)
 	public void illegalRolenamesTest21() throws Exception {
+		onlyTestWithoutTransactionSupport();
 		compileSchema("Schema de.uni_koblenz.jgralabtest.TestSchema;"
 				+ "GraphClass TestGraph;"
 				+ "VertexClass A;"
@@ -2350,6 +2432,7 @@ public class RoleNameTest {
 	 */
 	@Test(expected = InheritanceException.class)
 	public void illegalRolenamesTest22() throws Exception {
+		onlyTestWithoutTransactionSupport();
 		compileSchema("Schema de.uni_koblenz.jgralabtest.TestSchema;"
 				+ "GraphClass TestGraph;"
 				+ "VertexClass A;"
@@ -2366,6 +2449,7 @@ public class RoleNameTest {
 	 */
 	@Test(expected = InheritanceException.class)
 	public void illegalRolenamesTest24() throws Exception {
+		onlyTestWithoutTransactionSupport();
 		compileSchema("Schema de.uni_koblenz.jgralabtest.TestSchema;"
 				+ "GraphClass TestGraph;"
 				+ "VertexClass A;"
@@ -2380,6 +2464,7 @@ public class RoleNameTest {
 	 */
 	@Test
 	public void illegalRolenamesTest25() throws Exception {
+		onlyTestWithoutTransactionSupport();
 		compileSchema("Schema de.uni_koblenz.jgralabtest.TestSchema;"
 				+ "GraphClass TestGraph;"
 				+ "VertexClass A;"
@@ -2398,6 +2483,7 @@ public class RoleNameTest {
 	 * versions
 	 */
 	public void illegalRolenamesTest26() throws Exception {
+		onlyTestWithoutTransactionSupport();
 		compileSchema("Schema de.uni_koblenz.jgralabtest.TestSchema;"
 				+ "GraphClass TestGraph;"
 				+ "VertexClass A;"
@@ -2414,6 +2500,7 @@ public class RoleNameTest {
 	 */
 	@Test(expected = InheritanceException.class)
 	public void illegalRolenamesTest27() throws Exception {
+		onlyTestWithoutTransactionSupport();
 		compileSchema("Schema de.uni_koblenz.jgralabtest.TestSchema;"
 				+ "GraphClass TestGraph;"
 				+ "VertexClass A;"
@@ -2430,6 +2517,7 @@ public class RoleNameTest {
 	 */
 	@Test
 	public void illegalRolenamesTest28() throws Exception {
+		onlyTestWithoutTransactionSupport();
 		compileSchema("Schema de.uni_koblenz.jgralabtest.TestSchema;"
 				+ "GraphClass TestGraph;"
 				+ "VertexClass A;"
@@ -2448,6 +2536,7 @@ public class RoleNameTest {
 	 */
 	@Test
 	public void illegalRolenamesTest29() throws Exception {
+		onlyTestWithoutTransactionSupport();
 		compileSchema("Schema de.uni_koblenz.jgralabtest.TestSchema;"
 				+ "GraphClass TestGraph;"
 				+ "VertexClass A;"
@@ -2463,6 +2552,7 @@ public class RoleNameTest {
 	 */
 	@Test
 	public void illegalRolenamesTest30() throws Exception {
+		onlyTestWithoutTransactionSupport();
 		compileSchema("Schema de.uni_koblenz.jgralabtest.TestSchema;"
 				+ "GraphClass TestGraph;" + "VertexClass A {xList: Integer};"
 				+ "VertexClass B;"

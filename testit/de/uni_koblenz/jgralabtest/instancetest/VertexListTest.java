@@ -4,29 +4,50 @@ import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertFalse;
 import static junit.framework.Assert.assertTrue;
 
+import java.util.Collection;
+
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
+import org.junit.runners.Parameterized.Parameters;
 
 import de.uni_koblenz.jgralab.Vertex;
+import de.uni_koblenz.jgralab.trans.CommitFailedException;
 import de.uni_koblenz.jgralabtest.schemas.minimal.MinimalGraph;
 import de.uni_koblenz.jgralabtest.schemas.minimal.MinimalSchema;
 
-public class VertexListTest {
+@RunWith(Parameterized.class)
+public class VertexListTest extends InstanceTest {
+	public VertexListTest(boolean transactionsEnabled) {
+		super(transactionsEnabled);
+	}
+
+	@Parameters
+	public static Collection<Object[]> configure() {
+		return getParameters();
+	}
+
 	final int V = 4;
 	final int E = 4;
 	final int N = 10;
 	MinimalGraph g;
 
 	@Before
-	public void setup() {
-		g = MinimalSchema.instance().createMinimalGraph(V, E);
+	public void setup() throws CommitFailedException {
+		g = transactionsEnabled ? MinimalSchema.instance()
+				.createMinimalGraphWithTransactionSupport(V, E) : MinimalSchema
+				.instance().createMinimalGraph(V, E);
+		createTransaction(g);
 		for (int i = 0; i < N; ++i) {
 			g.createNode();
 		}
+		commit(g);
 	}
 
 	@Test
 	public void addVertexTest() throws Exception {
+		onlyTestWithoutTransactionSupport();
 		assertEquals(10, g.getVCount());
 		assertEquals("v1 v2 v3 v4 v5 v6 v7 v8 v9 v10", getVSeq());
 	}
@@ -41,6 +62,7 @@ public class VertexListTest {
 
 	@Test
 	public void putBeforeTest() throws Exception {
+		onlyTestWithoutTransactionSupport();
 		Vertex v5 = g.getVertex(5);
 		v5.putBefore(g.getVertex(6));
 		assertTrue(v5.isBefore(g.getVertex(6)));
@@ -69,6 +91,7 @@ public class VertexListTest {
 
 	@Test
 	public void putAfterTest() throws Exception {
+		onlyTestWithoutTransactionSupport();
 		Vertex v5 = g.getVertex(5);
 
 		v5.putAfter(g.getVertex(4));
@@ -86,6 +109,7 @@ public class VertexListTest {
 
 	@Test
 	public void deleteVertexTest() throws Exception {
+		onlyTestWithoutTransactionSupport();
 		Vertex v = g.getVertex(5);
 		v.delete();
 		assertFalse(v.isValid());

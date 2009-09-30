@@ -6,8 +6,12 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.lang.reflect.Field;
+import java.util.Collection;
 
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
+import org.junit.runners.Parameterized.Parameters;
 
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.Graph;
@@ -24,20 +28,31 @@ import de.uni_koblenz.jgralabtest.schemas.vertextest.A;
 import de.uni_koblenz.jgralabtest.schemas.vertextest.VertexTestGraph;
 import de.uni_koblenz.jgralabtest.schemas.vertextest.VertexTestSchema;
 
-public class LoadTest {
-
-	public static void main(String[] args) {
-		LoadTest t = new LoadTest();
-		t.testFreeElementList();
+@RunWith(Parameterized.class)
+public class LoadTest extends InstanceTest {
+	
+	public LoadTest(boolean transactionsEnabled) {
+		super(transactionsEnabled);
 	}
 
-	protected Graph createTestGraph() throws Exception {
+	@Parameters
+	public static Collection<Object[]> configure() {
+		return getParameters();
+	}
+	
+	// public static void main(String[] args) {
+	// LoadTest t = new LoadTest();
+	// t.testFreeElementList();
+	// }
+
+	private Graph createTestGraph() throws Exception {
 		String query = "from i:c report i end where d:=\"drölfundfünfzig\", c:=b, b:=a, a:=\"Mensaessen\"";
 		return ManualGreqlParser.parse(query);
 	}
 
 	@Test
 	public void testFreeElementList() {
+		onlyTestWithoutTransactionSupport();
 		Greql2 g1 = null;
 		Greql2 g2 = null;
 		try {
@@ -225,6 +240,7 @@ public class LoadTest {
 	 */
 	@Test
 	public void allocateIndexTest0() {
+		onlyTestWithoutTransactionSupport();
 		VertexTestGraph graph = VertexTestSchema.instance()
 				.createVertexTestGraph(1, 1);
 		A v1 = graph.createA();
@@ -240,6 +256,7 @@ public class LoadTest {
 	 */
 	@Test
 	public void allocateIndexTest1() {
+		onlyTestWithoutTransactionSupport();
 		VertexTestGraph graph = VertexTestSchema.instance()
 				.createVertexTestGraph(1, 1);
 		FreeIndexList vList = getFreeIndexListOfVertices(graph, true);
@@ -254,6 +271,7 @@ public class LoadTest {
 	 */
 	@Test
 	public void allocateIndexTest2() {
+		onlyTestWithoutTransactionSupport();
 		VertexTestGraph graph = VertexTestSchema.instance()
 				.createVertexTestGraph(1, 1);
 		FreeIndexList vList = getFreeIndexListOfVertices(graph, true);
@@ -280,6 +298,7 @@ public class LoadTest {
 	 */
 	@Test
 	public void allocateIndexTest3() {
+		onlyTestWithoutTransactionSupport();
 		VertexTestGraph graph = VertexTestSchema.instance()
 				.createVertexTestGraph(17, 1);
 		FreeIndexList vList = getFreeIndexListOfVertices(graph, true);
@@ -305,6 +324,7 @@ public class LoadTest {
 	 */
 	@Test
 	public void freeRangeTest0() {
+		onlyTestWithoutTransactionSupport();
 		VertexTestGraph graph = VertexTestSchema.instance()
 				.createVertexTestGraph(1, 1);
 		FreeIndexList vList = getFreeIndexListOfVertices(graph, true);
@@ -325,6 +345,7 @@ public class LoadTest {
 	 */
 	@Test
 	public void freeRangeTest1() {
+		onlyTestWithoutTransactionSupport();
 		VertexTestGraph graph = VertexTestSchema.instance()
 				.createVertexTestGraph(2, 1);
 		FreeIndexList vList = getFreeIndexListOfVertices(graph, true);
@@ -340,6 +361,7 @@ public class LoadTest {
 	 */
 	@Test
 	public void freeRangeTest2() {
+		onlyTestWithoutTransactionSupport();
 		VertexTestGraph graph = VertexTestSchema.instance()
 				.createVertexTestGraph(17, 1);
 		FreeIndexList vList = getFreeIndexListOfVertices(graph, true);
@@ -367,6 +389,7 @@ public class LoadTest {
 	 */
 	@Test
 	public void freeRangeTest3() {
+		onlyTestWithoutTransactionSupport();
 		VertexTestGraph graph = VertexTestSchema.instance()
 				.createVertexTestGraph(16, 1);
 		FreeIndexList vList = getFreeIndexListOfVertices(graph, true);
@@ -393,6 +416,7 @@ public class LoadTest {
 	 */
 	@Test
 	public void freeRangeTest4() {
+		onlyTestWithoutTransactionSupport();
 		VertexTestGraph graph = VertexTestSchema.instance()
 				.createVertexTestGraph(16, 1);
 		FreeIndexList vList = getFreeIndexListOfVertices(graph, true);
@@ -420,6 +444,7 @@ public class LoadTest {
 	 */
 	@Test
 	public void freeRangeTest5() {
+		onlyTestWithoutTransactionSupport();
 		VertexTestGraph graph = VertexTestSchema.instance()
 				.createVertexTestGraph(4, 1);
 		FreeIndexList vList = getFreeIndexListOfVertices(graph, true);
@@ -438,6 +463,7 @@ public class LoadTest {
 	 */
 	@Test
 	public void freeRangeTest6() {
+		onlyTestWithoutTransactionSupport();
 		VertexTestGraph graph = VertexTestSchema.instance()
 				.createVertexTestGraph(3, 1);
 		FreeIndexList vList = getFreeIndexListOfVertices(graph, true);
@@ -456,6 +482,7 @@ public class LoadTest {
 	 */
 	@Test
 	public void freeRangeTest7() {
+		onlyTestWithoutTransactionSupport();
 		VertexTestGraph graph = VertexTestSchema.instance()
 				.createVertexTestGraph(17, 1);
 		FreeIndexList vList = getFreeIndexListOfVertices(graph, true);
