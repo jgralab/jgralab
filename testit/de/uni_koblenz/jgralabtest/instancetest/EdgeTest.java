@@ -4866,7 +4866,7 @@ public class EdgeTest extends InstanceTest {
 
 		createReadOnlyTransaction(g);
 		// assertEquals(graphversion + 1, g.getGraphVersion());
-		assertFalse(graphversion == g.getGraphVersion());
+		assertTrue(graphversion < g.getGraphVersion());
 		commit(g);
 	}
 
@@ -4892,7 +4892,7 @@ public class EdgeTest extends InstanceTest {
 
 		createReadOnlyTransaction(g);
 		// assertEquals(graphversion + 1, g.getGraphVersion());
-		assertFalse(graphversion == g.getGraphVersion());
+		assertTrue(graphversion < g.getGraphVersion());
 		commit(g);
 	}
 
@@ -4918,7 +4918,7 @@ public class EdgeTest extends InstanceTest {
 		commit(g);
 
 		createReadOnlyTransaction(g);
-		assertEquals(graphversion + 1, g.getGraphVersion());
+		assertTrue(graphversion < g.getGraphVersion());
 		commit(g);
 	}
 

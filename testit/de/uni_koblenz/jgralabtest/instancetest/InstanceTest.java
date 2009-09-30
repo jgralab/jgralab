@@ -9,7 +9,7 @@ import de.uni_koblenz.jgralab.trans.CommitFailedException;
 public abstract class InstanceTest {
 
 	private static Collection<Object[]> parameters;
-	
+
 	static {
 		parameters = new ArrayList<Object[]>();
 		parameters.add(new Object[] { Boolean.FALSE });
@@ -19,7 +19,7 @@ public abstract class InstanceTest {
 	public static Collection<Object[]> getParameters() {
 		return parameters;
 	}
-	
+
 	/**
 	 * Flag for indicating whether transactions are enabled or not.
 	 */
@@ -64,5 +64,16 @@ public abstract class InstanceTest {
 		if (transactionsEnabled) {
 			g.commit();
 		}
+	}
+
+	/**
+	 * Prints a warning that the method with the given methodName has not been
+	 * tested with transaction support. This method is subject to be removed
+	 * when all instance tests have been changed to support transactions.
+	 * 
+	 * @param methodName the name of the method that cannot be tested yet.
+	 */
+	protected void notTestedWithTransactionSupport(String methodName) {
+		System.err.println(methodName + " not tested with transactionSupport.");
 	}
 }
