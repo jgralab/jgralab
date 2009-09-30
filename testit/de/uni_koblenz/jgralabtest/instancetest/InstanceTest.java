@@ -1,5 +1,6 @@
 package de.uni_koblenz.jgralabtest.instancetest;
 
+import static org.junit.Assert.fail;
 import java.util.ArrayList;
 import java.util.Collection;
 
@@ -71,9 +72,12 @@ public abstract class InstanceTest {
 	 * tested with transaction support. This method is subject to be removed
 	 * when all instance tests have been changed to support transactions.
 	 * 
-	 * @param methodName the name of the method that cannot be tested yet.
+	 * @param methodName
+	 *            the name of the method that cannot be tested yet.
 	 */
-	protected void notTestedWithTransactionSupport(String methodName) {
-		System.err.println(methodName + " not tested with transactionSupport.");
+	protected void onlyTestWithoutTransactionSupport() {
+		if (transactionsEnabled) {
+			fail("Current test does not support transactions yet");
+		}
 	}
 }
