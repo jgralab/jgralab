@@ -74,6 +74,7 @@ public class ForwardVertexSetEvaluator extends PathSearchEvaluator {
 		VertexEvaluator startEval = greqlEvaluator
 				.getVertexEvaluatorGraphMarker().getMark(startExpression);
 		JValue res = startEval.getResult(subgraph);
+
 		/**
 		 * check if the result is invalid, this may occur because the
 		 * restrictedExpression may return a null-value
