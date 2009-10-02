@@ -3,6 +3,7 @@
  */
 package de.uni_koblenz.jgralab.greql2.optimizer;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -65,6 +66,7 @@ public class VariableDeclarationOrderUnit implements
 		// recalculated when it changes its value.
 		dependentVertices = new HashSet<Vertex>();
 		addDependendVertices(variable);
+		extendDependendVertices();
 	}
 
 	/**
@@ -74,11 +76,35 @@ public class VariableDeclarationOrderUnit implements
 	 *            a {@link Vertex}
 	 */
 	private void addDependendVertices(Vertex vertex) {
+		if (vertex == simpleDeclarationOfVariable) {
+			return;
+		}
 		dependentVertices.add(vertex);
 		for (Edge e : vertex.incidences(EdgeDirection.OUT)) {
 			addDependendVertices(e.getOmega());
 		}
+	}
 
+	/**
+	 * 
+	 */
+	private void extendDependendVertices() {
+		ArrayList<Vertex> list = new ArrayList<Vertex>(dependentVertices.size());
+		for (Vertex v : dependentVertices) {
+			list.add(v);
+		}
+		for (Vertex v : list) {
+			if (!(v instanceof SimpleDeclaration)) {
+				continue;
+			}
+			SimpleDeclaration sd = (SimpleDeclaration) v;
+			if (sd == simpleDeclarationOfVariable) {
+				continue;
+			}
+			for (Variable var : sd.getDeclaredVarList()) {
+				addDependendVertices(var);
+			}
+		}
 	}
 
 	/**
@@ -141,6 +167,9 @@ public class VariableDeclarationOrderUnit implements
 	 */
 	@Override
 	public int compareTo(VariableDeclarationOrderUnit o) {
+		if (this == o) {
+			return 0;
+		}
 		// Units which depend on a variable of another unit have to come first,
 		// no matter what the recalculation costs are. So if the other vars
 		// simple decl is in my dependency set, then I have to come first. (And

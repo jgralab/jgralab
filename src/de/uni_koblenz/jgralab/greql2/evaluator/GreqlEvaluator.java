@@ -865,13 +865,6 @@ public class GreqlEvaluator {
 			createOptimizedSyntaxGraph();
 		}
 
-		// Tg2Dot t2d = new Tg2Dot();
-		// t2d.setGraph(queryGraph);
-		// t2d.setReversedEdges(true);
-		// t2d.setOutputFile("/home/horn/optimized-query.dot");
-		// t2d.printGraph();
-		// System.out.println("Written dot file!");
-
 		optimizationTime = System.currentTimeMillis() - optimizerStartTime;
 
 		// Calculate the evaluation costs

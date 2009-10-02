@@ -46,8 +46,8 @@ import de.uni_koblenz.jgralab.greql2.schema.Variable;
 public class VariableDeclarationOrderOptimizer extends OptimizerBase {
 
 	private static Logger logger = JGraLab
-			.getLogger(VariableDeclarationOrderOptimizer.class
-					.getPackage().getName());
+			.getLogger(VariableDeclarationOrderOptimizer.class.getPackage()
+					.getName());
 
 	/*
 	 * (non-Javadoc)
