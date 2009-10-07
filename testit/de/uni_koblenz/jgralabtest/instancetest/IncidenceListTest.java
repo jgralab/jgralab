@@ -4,9 +4,11 @@ import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertNotNull;
 import static junit.framework.Assert.assertNull;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Random;
 
@@ -21,14 +23,20 @@ import org.junit.runners.Parameterized.Parameters;
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.GraphException;
+import de.uni_koblenz.jgralab.GraphMarker;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.trans.CommitFailedException;
+import de.uni_koblenz.jgralabtest.schemas.minimal.Link;
 import de.uni_koblenz.jgralabtest.schemas.minimal.MinimalGraph;
 import de.uni_koblenz.jgralabtest.schemas.minimal.MinimalSchema;
 import de.uni_koblenz.jgralabtest.schemas.minimal.Node;
+import de.uni_koblenz.jgralabtest.tools.RandomBufferGeneric;
 
 @RunWith(Parameterized.class)
 public class IncidenceListTest extends InstanceTest {
+
+	private static final int RANDOM_TEST_AMOUNT = 100;
+	private static final int NODE_COUNT = 10000;
 
 	public IncidenceListTest(boolean transactionsEnabled) {
 		super(transactionsEnabled);
@@ -54,7 +62,7 @@ public class IncidenceListTest extends InstanceTest {
 				.createMinimalGraphWithTransactionSupport(V, E) : MinimalSchema
 				.instance().createMinimalGraph(V, E);
 		nodes = new Node[N];
-		
+
 		createTransaction(g);
 		for (int i = 0; i < N; ++i) {
 			nodes[i] = g.createNode();
@@ -330,4 +338,115 @@ public class IncidenceListTest extends InstanceTest {
 			}
 		}
 	}
+
+	@Test
+	public void testSortIncidences() {
+		onlyTestWithoutTransactionSupport();
+		MinimalGraph g = transactionsEnabled ? MinimalSchema.instance()
+				.createMinimalGraphWithTransactionSupport(V, E) : MinimalSchema
+				.instance().createMinimalGraph(V, E);
+		Node[] nodes = new Node[NODE_COUNT];
+		for (int i = 0; i < nodes.length; i++) {
+			nodes[i] = g.createNode();
+		}
+
+		// create edges from node 0 to all others
+		List<Link> links = new ArrayList<Link>();
+		for (int i = 1; i < nodes.length; i++) {
+			links.add(g.createLink(nodes[0], nodes[i]));
+		}
+
+		final GraphMarker<Integer> marker = new GraphMarker<Integer>(g);
+		Comparator<Edge> comp = new Comparator<Edge>() {
+
+			@Override
+			public int compare(Edge o1, Edge o2) {
+				Integer mark1 = marker.getMark(o1);
+				Integer mark2 = marker.getMark(o2);
+				if (mark1 == null && mark2 == null) {
+					return 0;
+				}
+				if (mark1 == null) {
+					return -1;
+				}
+				if (mark2 == null) {
+					return 1;
+				}
+				return Double.compare(mark1.doubleValue(), mark2.doubleValue());
+			}
+		};
+
+		// test if list is not modified if sorting is called when they are
+		// already sorted
+		markInOrder(links, marker);
+		long version = nodes[0].getIncidenceListVersion();
+		nodes[0].sortIncidences(comp);
+		assertEquals(version, nodes[0].getIncidenceListVersion());
+		checkInOrder(nodes, links);
+
+		// test if sorting works if order is reversed
+		markInverse(links, marker);
+		nodes[0].sortIncidences(comp);
+		assertTrue(version < nodes[0].getIncidenceListVersion());
+		checkInverse(nodes, links);
+
+		// reset state and check if it is correct
+		markInOrder(links, marker);
+		version = nodes[0].getIncidenceListVersion();
+		nodes[0].sortIncidences(comp);
+		assertTrue(version < nodes[0].getIncidenceListVersion());
+		checkInOrder(nodes, links);
+
+		// TODO add random tests
+		for (int i = 0; i < RANDOM_TEST_AMOUNT; i++) {
+			List<Link> randomOrder = copyAndMix(links);
+			markInOrder(randomOrder, marker);
+			nodes[0].sortIncidences(comp);
+			checkInOrder(nodes, randomOrder);
+		}
+
+	}
+
+	private List<Link> copyAndMix(List<Link> original) {
+		List<Link> copy = new ArrayList<Link>(original.size());
+		RandomBufferGeneric<Link> mixer = new RandomBufferGeneric<Link>(
+				original.size());
+		for (Link current : original) {
+			mixer.put(current);
+		}
+		while (!mixer.isEmpty()) {
+			copy.add(mixer.getNext());
+		}
+		return copy;
+	}
+
+	private void checkInOrder(Node[] nodes, List<Link> links) {
+		int i = 0;
+		for (Edge current : nodes[0].incidences()) {
+			assertEquals(links.get(i), current);
+			i++;
+		}
+	}
+
+	private void checkInverse(Node[] nodes, List<Link> links) {
+		int size = links.size();
+		int i = 0;
+		for (Edge current : nodes[0].incidences()) {
+			assertEquals(links.get(size - (i + 1)), current);
+			i++;
+		}
+	}
+
+	private void markInOrder(List<Link> links, final GraphMarker<Integer> marker) {
+		for (int i = 0; i < links.size(); i++) {
+			marker.mark(links.get(i), i);
+		}
+	}
+
+	private void markInverse(List<Link> links, final GraphMarker<Integer> marker) {
+		for (int i = 0; i < links.size(); i++) {
+			marker.mark(links.get(i), links.size() - i);
+		}
+	}
+
 }

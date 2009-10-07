@@ -24,6 +24,10 @@
 
 package de.uni_koblenz.jgralab.impl;
 
+import java.util.Comparator;
+import java.util.LinkedList;
+import java.util.NoSuchElementException;
+
 import de.uni_koblenz.jgralab.AttributedElement;
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.EdgeDirection;
@@ -39,7 +43,7 @@ import de.uni_koblenz.jgralab.schema.VertexClass;
  * @author ist@uni-koblenz.de
  */
 public abstract class VertexImpl extends GraphElementImpl implements Vertex {
-	//protected int id;
+	// protected int id;
 
 	abstract protected void setIncidenceListVersion(long incidenceListVersion);
 
@@ -764,4 +768,135 @@ public abstract class VertexImpl extends GraphElementImpl implements Vertex {
 	abstract protected void setFirstIncidence(IncidenceImpl firstIncidence);
 
 	abstract protected void setLastIncidence(IncidenceImpl lastIncidence);
+
+	public void sortIncidences(Comparator<Edge> comp) {
+		class IncidenceList {
+			IncidenceImpl first;
+			IncidenceImpl last;
+
+			public void add(IncidenceImpl e) {
+				if (first == null) {
+					first = e;
+					assert (last == null);
+					last = e;
+				} else {
+					e.setPrevIncidence(last);
+					last.setNextIncidence(e);
+					last = e;
+				}
+				e.setNextIncidence(null);
+			}
+
+			public IncidenceImpl remove() {
+				if (first == null) {
+					throw new NoSuchElementException();
+				}
+				IncidenceImpl out;
+				if (first == last) {
+					out = first;
+					first = null;
+					last = null;
+					return out;
+				}
+				out = first;
+				first = out.getNextIncidence();
+				first.setPrevIncidence(null);
+				return out;
+			}
+
+			public boolean isEmpty() {
+				assert ((first == null) == (last == null));
+				return first == null;
+			}
+
+		};
+		
+		IncidenceList a = new IncidenceList();
+		IncidenceList b = new IncidenceList();
+		IncidenceList out = a;
+
+		// split
+		IncidenceImpl last;
+		IncidenceList l = new IncidenceList();
+		l.first = getFirstIncidence();
+		l.last = getLastIncidence();
+		
+		out.add(last = l.remove());
+		while (!l.isEmpty()) {
+			IncidenceImpl current = l.remove();
+			if (comp.compare(current, last) < 0) {
+				out = (out == a) ? b : a;
+			}
+			out.add(current);
+			last = current;
+		}
+		if (a.isEmpty() || b.isEmpty()) {
+			out =  a.isEmpty() ? b : a;
+			setFirstIncidence(out.first);
+			setLastIncidence(out.last);
+			return;
+		}
+		
+		while (true) {
+			if (a.isEmpty() || b.isEmpty()) {
+				out =  a.isEmpty() ? b : a;
+				setFirstIncidence(out.first);
+				setLastIncidence(out.last);
+				incidenceListModified();
+				return;
+			}
+
+			IncidenceList c = new IncidenceList();
+			IncidenceList d = new IncidenceList();
+			out = c;
+
+			last = null;
+			while (!a.isEmpty() && !b.isEmpty()) {
+				int compareAToLast = last != null ? comp.compare(a.first,
+						last) : 0;
+				int compareBToLast = last != null ? comp.compare(b.first,
+						last) : 0;
+
+				if (compareAToLast >= 0 && compareBToLast >= 0) {
+					if (comp.compare(a.first, b.first) <= 0) {
+						out.add(last = a.remove());
+					} else {
+						out.add(last = b.remove());
+					}
+				} else if (compareAToLast < 0 && compareBToLast < 0) {
+					out = (out == c) ? d : c;
+					last = null;
+				} else if (compareAToLast < 0 && compareBToLast >= 0) {
+					out.add(last = b.remove());
+				} else {
+					out.add(last = a.remove());
+				}
+			}
+
+			// copy rest of A
+			while (!a.isEmpty()) {
+				IncidenceImpl current = a.remove();
+				if (comp.compare(current, last) < 0) {
+					out = (out == c) ? d : c;
+				}
+				out.add(current);
+				last = current;
+			}
+
+			// copy rest of B
+			while (!b.isEmpty()) {
+				IncidenceImpl current = b.remove();
+				if (comp.compare(current, last) < 0) {
+					out = (out == c) ? d : c;
+				}
+				out.add(current);
+				last = current;
+			}
+
+			a = c;
+			b = d;
+		}
+		
+	}
+
 }
