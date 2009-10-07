@@ -24,6 +24,9 @@
 
 package de.uni_koblenz.jgralab;
 
+import java.util.Comparator;
+
+import de.uni_koblenz.jgralab.impl.IncidenceImpl;
 import de.uni_koblenz.jgralab.schema.EdgeClass;
 import de.uni_koblenz.jgralab.schema.VertexClass;
 
@@ -401,5 +404,14 @@ public interface Vertex extends GraphElement {
 	 * @return <code>true</code> iff <code>edge</code> may end at this vertex
 	 */
 	public boolean isValidOmega(Edge edge);
+
+	/**
+	 * Sorts the incidence list according to the given comparator in ascending
+	 * order.
+	 * 
+	 * @param comp
+	 *            the comparator that defines the order of the incidence list.
+	 */
+	public void sortIncidences(Comparator<Edge> comp);
 
 }

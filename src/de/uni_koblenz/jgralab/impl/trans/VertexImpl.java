@@ -1,5 +1,6 @@
 package de.uni_koblenz.jgralab.impl.trans;
 
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -466,5 +467,10 @@ public abstract class VertexImpl extends de.uni_koblenz.jgralab.impl.VertexImpl 
 		boolean result = super.isValid();
 		((GraphImpl) graph).vertexSync.readLock().unlock();
 		return result;
+	}
+	
+	@Override
+	public void sortIncidences(Comparator<Edge> comp) {
+		throw new UnsupportedOperationException();
 	}
 }
