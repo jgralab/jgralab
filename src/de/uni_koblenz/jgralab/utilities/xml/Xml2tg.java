@@ -214,6 +214,7 @@ public class Xml2tg {
 		// // assert (nextEvent == START_ELEMENT);
 		// }
 		int level = 0;
+		int elementCount = 0;
 		if (!assumeVerticesBeforeEdges) {
 			edgesToCreate = new LinkedList<AttributedElementInfo>();
 		}
@@ -221,10 +222,14 @@ public class Xml2tg {
 			int nextEvent = reader.next();
 			switch (nextEvent) {
 			case START_DOCUMENT:
-				System.out.println("It begins");
+				// System.out.println("It begins");
 				break;
 			case START_ELEMENT:
 				level += 1;
+				if (++elementCount % 1000 == 0) {
+					System.out.print(".");
+					System.out.flush();
+				}
 				if (level == 2) {
 					// graph element
 					String attributedElementClassName = reader.getName()
@@ -251,13 +256,13 @@ public class Xml2tg {
 							GRUML_ATTRIBUTE_ID);
 
 					try {
-						System.out.println("Creating instance of "
-								+ graphClassName);
+						// System.out.println("Creating instance of "
+						// + graphClassName);
 						graph = (Graph) schema.getGraphCreateMethod().invoke(
 								null,
 								new Object[] { graphID, MAX_VERTEX_COUNT,
 										MAX_EDGE_COUNT });
-						System.out.println("done.");
+						// System.out.println("done.");
 					} catch (Exception e) {
 						throw new GraphIOException(
 								"Unable to create instance of "
@@ -290,6 +295,8 @@ public class Xml2tg {
 			}
 		}
 
+		System.out.println();
+
 		assert (level == 0);
 		reader.close();
 		if (!assumeVerticesBeforeEdges) {
@@ -303,10 +310,12 @@ public class Xml2tg {
 	}
 
 	private void saveGraph() throws GraphIOException {
+		System.out.println("Saving graph to " + tgOutput);
 		GraphIO.saveGraphToFile(tgOutput, graph, new ProgressFunctionImpl());
 	}
 
 	private void sortIncidenceLists() {
+
 		System.out.println("Sorting incidence lists.");
 		ProgressFunction progress = new ProgressFunctionImpl();
 
@@ -314,8 +323,8 @@ public class Xml2tg {
 		long processed = 0L;
 		long updateInterval = progress.getUpdateInterval();
 		for (Vertex currentVertex : graph.vertices()) {
-			sortIncidenceList(currentVertex, new Comparator<Edge>() {
-
+			currentVertex.sortIncidences(new Comparator<Edge>() {
+				
 				@Override
 				public int compare(Edge e1, Edge e2) {
 					IncidencePositionMark mark1 = incidencePositionMarker
@@ -343,7 +352,7 @@ public class Xml2tg {
 	}
 
 	private void createEdge(AttributedElementInfo current) {
-		System.out.println("Creating edge of type " + current.getqName());
+		// System.out.println("Creating edge of type " + current.getqName());
 		Map<String, String> attributes = current.getAttributes();
 		String toId = attributes.get(GRUML_ATTRIBUTE_TO);
 		String fromId = attributes.get(GRUML_ATTRIBUTE_FROM);
@@ -395,7 +404,7 @@ public class Xml2tg {
 	// }
 
 	private void createVertex(AttributedElementInfo current) {
-		System.out.println("Creating vertex of type " + current.getqName());
+		// System.out.println("Creating vertex of type " + current.getqName());
 		Map<String, String> attributes = current.getAttributes();
 		Vertex currentVertex = graph.createVertex(((VertexClass) current
 				.getAttributedElementClass()).getM1Class());
@@ -424,11 +433,11 @@ public class Xml2tg {
 
 	private void setAttributes(AttributedElement element,
 			Map<String, String> attributes) {
-		System.out.println("Setting attributes for instance of "
-				+ element.getAttributedElementClass().getQualifiedName());
-		if (element instanceof GraphElement) {
-			System.out.println("Id: " + ((GraphElement) element).getId());
-		}
+		// System.out.println("Setting attributes for instance of "
+		// + element.getAttributedElementClass().getQualifiedName());
+		// if (element instanceof GraphElement) {
+		// System.out.println("Id: " + ((GraphElement) element).getId());
+		// }
 
 		for (Entry<String, String> currentEntry : attributes.entrySet()) {
 			try {
@@ -442,50 +451,10 @@ public class Xml2tg {
 				e.printStackTrace();
 			}
 		}
-
 	}
 
 	public void setAssumeVerticesBeforeEdges(boolean assumeVerticesBeforeEdges) {
 		this.assumeVerticesBeforeEdges = assumeVerticesBeforeEdges;
-	}
-
-	public void sortIncidenceList(Vertex v, Comparator<Edge> cmp) {
-		if (v.getDegree() > 0) {
-
-			Edge currentSorted = null;
-
-			// create copy of incidenceList
-			List<Edge> incidenceList = new LinkedList<Edge>();
-			for (Edge currentEdge : v.incidences()) {
-				incidenceList.add(currentEdge);
-			}
-
-			// selection sort
-			// maybe TODO change it to mergesort
-			while (!incidenceList.isEmpty()) {
-				// select minimum
-				Edge currentMinimum = incidenceList.get(0);
-				for (Edge currentEdge : incidenceList) {
-					if (cmp.compare(currentEdge, currentMinimum) < 0) {
-						currentMinimum = currentEdge;
-					}
-				}
-
-				// place edge where it belongs
-				if (currentSorted == null) {
-					if (currentMinimum != v.getFirstEdge()) {
-						// only put it there if the first edge is not already in
-						// place
-						currentMinimum.putEdgeBefore(v.getFirstEdge());
-					}
-				} else {
-					currentMinimum.putEdgeAfter(currentSorted);
-				}
-				currentSorted = currentMinimum;
-
-				incidenceList.remove(currentMinimum);
-			}
-		}
 	}
 
 	// private Vertex createDummyVertex(String xmlId) {
