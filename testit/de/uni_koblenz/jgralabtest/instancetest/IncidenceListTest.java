@@ -363,7 +363,7 @@ public class IncidenceListTest extends InstanceTest {
 			public int compare(Edge o1, Edge o2) {
 				Integer mark1 = marker.getMark(o1);
 				Integer mark2 = marker.getMark(o2);
-				if (mark1 == null && mark2 == null) {
+				if ((mark1 == null) && (mark2 == null)) {
 					return 0;
 				}
 				if (mark1 == null) {
@@ -397,7 +397,7 @@ public class IncidenceListTest extends InstanceTest {
 		assertTrue(version < nodes[0].getIncidenceListVersion());
 		checkInOrder(nodes, links);
 
-		// TODO add random tests
+		// random tests
 		for (int i = 0; i < RANDOM_TEST_AMOUNT; i++) {
 			List<Link> randomOrder = copyAndMix(links);
 			markInOrder(randomOrder, marker);

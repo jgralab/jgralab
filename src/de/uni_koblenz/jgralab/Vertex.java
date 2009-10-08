@@ -26,7 +26,6 @@ package de.uni_koblenz.jgralab;
 
 import java.util.Comparator;
 
-import de.uni_koblenz.jgralab.impl.IncidenceImpl;
 import de.uni_koblenz.jgralab.schema.EdgeClass;
 import de.uni_koblenz.jgralab.schema.VertexClass;
 

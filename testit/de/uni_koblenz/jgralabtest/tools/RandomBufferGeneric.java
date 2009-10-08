@@ -8,13 +8,13 @@ public class RandomBufferGeneric<T> {
 	private Object[] data;
 	private int initialSize;
 	private int filled;
-	private Random rng;
+	private Random rnd;
 
 	public RandomBufferGeneric(int initialSize) {
 		this.initialSize = initialSize;
 		data = new Object[initialSize];
 		filled = 0;
-		rng = new Random();
+		rnd = new Random();
 	}
 
 	private void expand() {
@@ -30,7 +30,7 @@ public class RandomBufferGeneric<T> {
 		if (filled == 0) {
 			throw new NoSuchElementException("Buffer is empty");
 		}
-		int position = rng.nextInt(filled);
+		int position = rnd.nextInt(filled);
 		@SuppressWarnings("unchecked")
 		T out = (T) data[position];
 		data[position] = data[--filled];
