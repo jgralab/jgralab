@@ -25,7 +25,6 @@
 package de.uni_koblenz.jgralab.impl;
 
 import java.util.Comparator;
-import java.util.LinkedList;
 import java.util.NoSuchElementException;
 
 import de.uni_koblenz.jgralab.AttributedElement;
@@ -809,8 +808,8 @@ public abstract class VertexImpl extends GraphElementImpl implements Vertex {
 				return first == null;
 			}
 
-		};
-		
+		}
+
 		IncidenceList a = new IncidenceList();
 		IncidenceList b = new IncidenceList();
 		IncidenceList out = a;
@@ -820,7 +819,7 @@ public abstract class VertexImpl extends GraphElementImpl implements Vertex {
 		IncidenceList l = new IncidenceList();
 		l.first = getFirstIncidence();
 		l.last = getLastIncidence();
-		
+
 		out.add(last = l.remove());
 		while (!l.isEmpty()) {
 			IncidenceImpl current = l.remove();
@@ -831,15 +830,15 @@ public abstract class VertexImpl extends GraphElementImpl implements Vertex {
 			last = current;
 		}
 		if (a.isEmpty() || b.isEmpty()) {
-			out =  a.isEmpty() ? b : a;
+			out = a.isEmpty() ? b : a;
 			setFirstIncidence(out.first);
 			setLastIncidence(out.last);
 			return;
 		}
-		
+
 		while (true) {
 			if (a.isEmpty() || b.isEmpty()) {
-				out =  a.isEmpty() ? b : a;
+				out = a.isEmpty() ? b : a;
 				setFirstIncidence(out.first);
 				setLastIncidence(out.last);
 				incidenceListModified();
@@ -852,21 +851,21 @@ public abstract class VertexImpl extends GraphElementImpl implements Vertex {
 
 			last = null;
 			while (!a.isEmpty() && !b.isEmpty()) {
-				int compareAToLast = last != null ? comp.compare(a.first,
-						last) : 0;
-				int compareBToLast = last != null ? comp.compare(b.first,
-						last) : 0;
+				int compareAToLast = last != null ? comp.compare(a.first, last)
+						: 0;
+				int compareBToLast = last != null ? comp.compare(b.first, last)
+						: 0;
 
-				if (compareAToLast >= 0 && compareBToLast >= 0) {
+				if ((compareAToLast >= 0) && (compareBToLast >= 0)) {
 					if (comp.compare(a.first, b.first) <= 0) {
 						out.add(last = a.remove());
 					} else {
 						out.add(last = b.remove());
 					}
-				} else if (compareAToLast < 0 && compareBToLast < 0) {
+				} else if ((compareAToLast < 0) && (compareBToLast < 0)) {
 					out = (out == c) ? d : c;
 					last = null;
-				} else if (compareAToLast < 0 && compareBToLast >= 0) {
+				} else if ((compareAToLast < 0) && (compareBToLast >= 0)) {
 					out.add(last = b.remove());
 				} else {
 					out.add(last = a.remove());
@@ -896,7 +895,7 @@ public abstract class VertexImpl extends GraphElementImpl implements Vertex {
 			a = c;
 			b = d;
 		}
-		
+
 	}
 
 }
