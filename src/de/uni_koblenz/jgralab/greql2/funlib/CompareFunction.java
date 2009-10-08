@@ -30,21 +30,29 @@ public abstract class CompareFunction extends AbstractGreql2Function {
 			throws EvaluateException {
 		String s1 = null, s2 = null;
 		double d1 = 0, d2 = 0;
+		JValue result = null;
 		switch (checkArguments(arguments)) {
 		case 0:
 			d1 = arguments[0].toDouble();
 			d2 = arguments[1].toDouble();
 			switch (op) {
 			case GR_EQUAL:
-				return new JValue(d1 >= d2);
+				result = new JValue(d1 >= d2);
+				break;
 			case GR_THAN:
-				return new JValue(d1 > d2);
+				result = new JValue(d1 > d2);
+				break;
 			case LE_EQUAL:
-				return new JValue(d1 <= d2);
+				result = new JValue(d1 <= d2);
+				break;
 			case LE_THAN:
-				return new JValue(d1 < d2);
+				result = new JValue(d1 < d2);
+				break;
 			case NOT_EQUAL:
-				return new JValue(d1 != d2);
+				result = new JValue(d1 != d2);
+				break;
+			default:
+				throw new EvaluateException("Unknown operator: " + op);
 			}
 			break;
 		case 1:
@@ -52,21 +60,28 @@ public abstract class CompareFunction extends AbstractGreql2Function {
 			s2 = arguments[1].toString();
 			switch (op) {
 			case GR_EQUAL:
-				return new JValue(s1.compareTo(s2) >= 0);
+				result = new JValue(s1.compareTo(s2) >= 0);
+				break;
 			case GR_THAN:
-				return new JValue(s1.compareTo(s2) == 1);
+				result = new JValue(s1.compareTo(s2) == 1);
+				break;
 			case LE_EQUAL:
-				return new JValue(s1.compareTo(s2) <= 0);
+				result = new JValue(s1.compareTo(s2) <= 0);
+				break;
 			case LE_THAN:
-				return new JValue(s1.compareTo(s2) == -1);
+				result = new JValue(s1.compareTo(s2) == -1);
+				break;
 			case NOT_EQUAL:
-				return new JValue(s1.compareTo(s2) != 0);
+				result = new JValue(s1.compareTo(s2) != 0);
+				break;
+			default:
+				throw new EvaluateException("Unknown operator: " + op);
 			}
 			break;
 		default:
 			throw new WrongFunctionParameterException(this, arguments);
 		}
-		throw new EvaluateException("You mustn't come here!");
+		return result;
 	}
 
 	/*

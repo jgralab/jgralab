@@ -69,17 +69,21 @@ public class Count extends AbstractGreql2Function {
 
 	public JValue evaluate(Graph graph, BooleanGraphMarker subgraph,
 			JValue[] arguments) throws EvaluateException {
+		JValue result = null;
 		switch (checkArguments(arguments)) {
 		case 0:
-			return new JValue(arguments[0].toCollection().size());
+			result = new JValue(arguments[0].toCollection().size());
+			break;
 		case 1:
-			return new JValue(1);
+			result = new JValue(1);
+			break;
 		case 2:
-			return new JValue(arguments[0].toJValueMap().size());
+			result = new JValue(arguments[0].toJValueMap().size());
+			break;
 		default:
 			throw new WrongFunctionParameterException(this, arguments);
 		}
-
+		return result;
 	}
 
 	public long getEstimatedCosts(ArrayList<Long> inElements) {
