@@ -1398,9 +1398,11 @@ public class ManualGreqlParser extends ManualParserHelper {
 
 	private final PrimaryPathDescription parseSimplePathDescription() {
 		Direction dir = null;
-		List<VertexPosition<EdgeRestriction>> typeIds = null;
+		EdgeRestriction edgeRestr = null;
 		String direction = "any";
 		int offsetDir = getCurrentOffset();
+		int offsetEdgeRestr = 0;
+		int lengthEdgeRestr = 0;
 		if (tryMatch(TokenTypes.RARROW)) {
 			direction = "out";
 		} else if (tryMatch(TokenTypes.LARROW)) {
@@ -1409,7 +1411,9 @@ public class ManualGreqlParser extends ManualParserHelper {
 			match(TokenTypes.ARROW);
 		}
 		if (tryMatch(TokenTypes.LCURLY)) {
-			typeIds = parseEdgeRestrictionList();
+			offsetEdgeRestr = getCurrentOffset();
+			edgeRestr = parseEdgeRestriction();
+			lengthEdgeRestr = getLength(offsetEdgeRestr);
 			match(TokenTypes.RCURLY);
 		}
 		if (!inPredicateMode()) {
@@ -1429,47 +1433,50 @@ public class ManualGreqlParser extends ManualParserHelper {
 			IsDirectionOf directionOf = graph.createIsDirectionOf(dir, result);
 			directionOf.set_sourcePositions((createSourcePositionList(0,
 					offsetDir)));
-			if (typeIds != null) {
-				for (VertexPosition<EdgeRestriction> t : typeIds) {
+			if (edgeRestr != null) {
 					IsEdgeRestrOf edgeRestrOf = graph.createIsEdgeRestrOf(
-							t.node, result);
+							edgeRestr, result);
 					edgeRestrOf.set_sourcePositions((createSourcePositionList(
-							t.length, t.offset)));
-				}
+						lengthEdgeRestr, offsetEdgeRestr)));
 			}
 			return result;
 		}
 		return null;
 	}
+	
+	
 
 	private final PrimaryPathDescription parseAggregationPathDescription() {
 		boolean outAggregation = true;
-		List<VertexPosition<EdgeRestriction>> typeIds = null;
+		EdgeRestriction edgeRestr = null;
+		int restrOffset = 0;
+		int restrLength = 0;
 		if (tryMatch(TokenTypes.INAGGREGATION)) {
 			outAggregation = false;
 		} else {
 			match(TokenTypes.OUTAGGREGATION);
 		}
 		if (tryMatch(TokenTypes.LCURLY)) {
-			typeIds = parseEdgeRestrictionList();
+			restrOffset = getCurrentOffset();
+			edgeRestr = parseEdgeRestriction();
+			restrLength = getLength(restrOffset);
 			match(TokenTypes.RCURLY);
 		}
 		if (!inPredicateMode()) {
 			AggregationPathDescription result = graph
 					.createAggregationPathDescription();
 			result.set_outAggregation(outAggregation);
-			if (typeIds != null) {
-				for (VertexPosition<EdgeRestriction> t : typeIds) {
-					IsEdgeRestrOf edgeRestrOf = graph.createIsEdgeRestrOf(
-							t.node, result);
-					edgeRestrOf.set_sourcePositions((createSourcePositionList(
-							t.length, t.offset)));
-				}
+			if (edgeRestr != null) {
+				IsEdgeRestrOf edgeRestrOf = graph.createIsEdgeRestrOf(edgeRestr, result);
+				edgeRestrOf.set_sourcePositions((createSourcePositionList(restrLength, restrOffset)));
 			}
 			return result;
 		}
 		return null;
 	}
+	
+	
+
 
 	private final EdgePathDescription parseEdgePathDescription() {
 		Direction dir = null;
@@ -1954,6 +1961,17 @@ public class ManualGreqlParser extends ManualParserHelper {
 		}
 		return expr;
 	}
+	
+	private final List<VertexPosition<RoleId>> parseRoleIdList() {
+		List<VertexPosition<RoleId>> list = new ArrayList<VertexPosition<RoleId>>();
+		do {
+			int offset = getCurrentOffset();
+			RoleId r = parseRoleId();
+			int length = getLength(offset);
+			list.add(new VertexPosition<RoleId>(r, length, offset));
+		} while (tryMatch(TokenTypes.COMMA));
+		return list;
+	}
 
 	private final List<VertexPosition<TypeId>> parseTypeExpressionList() {
 		List<VertexPosition<TypeId>> list = new ArrayList<VertexPosition<TypeId>>();
@@ -2023,49 +2041,40 @@ public class ManualGreqlParser extends ManualParserHelper {
 		return eVList;
 	}
 
-	private final List<VertexPosition<EdgeRestriction>> parseEdgeRestrictionList() {
-		List<VertexPosition<EdgeRestriction>> list = new ArrayList<VertexPosition<EdgeRestriction>>();
-		int offsetRole = 0;
-		int lengthRole = 0;
-		int offsetType = getCurrentOffset();
-		int lengthType = 0;
-		RoleId role = null;
-		TypeId type = null;
+	
+	private final EdgeRestriction parseEdgeRestriction() {
+		List<VertexPosition<TypeId>> typeIds = null;
+		List<VertexPosition<RoleId>> roleIds = null;
 		if (tryMatch(TokenTypes.AT)) {
-			offsetRole = getCurrentOffset();
-			role = parseRoleId();
+			roleIds = parseRoleIdList();
 		} else {
-			type = parseTypeId();
-			lengthType = getLength(offsetType);
+			typeIds = parseTypeExpressionList();
 			if (tryMatch(TokenTypes.AT)) {
-				offsetRole = getCurrentOffset();
-				role = parseRoleId();
+				roleIds = parseRoleIdList();
 			}
 		}
-		lengthRole = getLength(offsetRole);
 		EdgeRestriction er = null;
 		if (!inPredicateMode()) {
 			er = graph.createEdgeRestriction();
-			if (type != null) {
-				IsTypeIdOf typeIdOf = graph.createIsTypeIdOf(type, er);
-				typeIdOf.set_sourcePositions((createSourcePositionList(
-						lengthType, offsetType)));
+			if (typeIds != null) {
+				for (VertexPosition<TypeId> type : typeIds) {
+					IsTypeIdOf typeIdOf = graph.createIsTypeIdOf(type.node, er);
+					typeIdOf.set_sourcePositions((createSourcePositionList(
+						type.length, type.offset)));
+				}	
 			}
-			if (role != null) {
-				IsRoleIdOf roleIdOf = graph.createIsRoleIdOf(role, er);
-				roleIdOf.set_sourcePositions((createSourcePositionList(
-						lengthRole, offsetRole)));
+			if (roleIds != null) {
+				for (VertexPosition<RoleId> role : roleIds) {
+					IsRoleIdOf roleIdOf = graph.createIsRoleIdOf(role.node, er);
+					roleIdOf.set_sourcePositions((createSourcePositionList(
+							role.length, role.offset)));
+				}	
 			}
 		}
-		VertexPosition<EdgeRestriction> v = new VertexPosition<EdgeRestriction>(
-				er, getLength(offsetType), offsetType);
-		list.add(v);
-		if (tryMatch(TokenTypes.COMMA)) {
-			list.addAll(parseEdgeRestrictionList());
-		}
-		return list;
+		return er;
 	}
 
+	
 	private final Comprehension parseLabeledReportList() {
 		TupleConstruction tupConstr = null;
 		boolean hasLabel = false;
