@@ -35,11 +35,11 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueCollection;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
 
 /**
- * Calculates the arithmetic average of the given collection.
+ * Calculates the minimum of the given collection.
  * 
  * <dl>
  * <dt><b>GReQL-signature</b></dt>
- * <dd><code>DOUBLE avg(c:COLLECTION)</code></dd>
+ * <dd><code>DOUBLE min(c:COLLECTION)</code></dd>
  * <dd>&nbsp;</dd>
  * </dl>
  * <dl>
@@ -49,7 +49,7 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
  * <dt><b>Parameters:</b></dt>
  * <dd><code>c</code> - collection to calculate the average for</dd>
  * <dt><b>Returns:</b></dt>
- * <dd>the arithmetic average of the given collection</dd>
+ * <dd>the minimum of the given collection</dd>
  * <dd><code>Null</code> if one of the parameters is <code>Null</code></dd>
  * </dl>
  * </dd>
@@ -59,7 +59,7 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
  * 
  */
 
-public class Avg extends AbstractGreql2Function {
+public class Min extends AbstractGreql2Function {
 
 	{
 		JValueType[][] x = { { JValueType.COLLECTION } };
@@ -73,15 +73,17 @@ public class Avg extends AbstractGreql2Function {
 		}
 
 		JValueCollection col = arguments[0].toCollection();
-		double sum = 0;
+		Double min = null;
 		for (JValue curVal : col) {
 			if (curVal.isNumber()) {
-				sum += curVal.toNumber().doubleValue();
+				if (min == null || curVal.toNumber().doubleValue() < min) {
+					min = curVal.toNumber().doubleValue();
+				}	
 			} else {
 				throw new WrongFunctionParameterException(this, arguments);
 			}
 		}
-		return new JValue(1.0 * sum / col.size());
+		return new JValue(min);
 	}
 
 	public long getEstimatedCosts(ArrayList<Long> inElements) {

@@ -126,7 +126,7 @@ public class Slice extends AbstractGreql2Function {
 			list = new PathSystemMarkerList(s, v);
 			currentMarker.mark(v, list);
 		}
-		list.add(m);
+		list.put(parentVertex, m);
 		return true;
 	}
 
@@ -143,7 +143,7 @@ public class Slice extends AbstractGreql2Function {
 		}
 		PathSystemMarkerList list = currentMarker.getMark(v);
 		if (list != null) {
-			for (PathSystemMarkerEntry entry : list) {
+			for (PathSystemMarkerEntry entry : list.values()) {
 				if (entry.edgeToParentVertex == parentEdge) {
 					return true;
 				}
@@ -333,8 +333,7 @@ public class Slice extends AbstractGreql2Function {
 				// each
 				// state)
 				if (currentGraphMarker.getMark(leaf) != null) {
-					for (PathSystemMarkerEntry currentMarker : currentGraphMarker
-							.getMark(leaf)) { // iterate through list of
+					for (PathSystemMarkerEntry currentMarker : currentGraphMarker.getMark(leaf).values()) { // iterate through list of
 						// PathSystemMarkerEntrys for a
 						// particular GraphMarker (a
 						// particular state)
@@ -369,7 +368,7 @@ public class Slice extends AbstractGreql2Function {
 
 							for (PathSystemMarkerEntry marker : getMarkersWithState(
 									currentVertex, currentStateMarker
-											.getMark(currentVertex))) {
+											.getMark(currentVertex)).values()) {
 								int parentStateNumber = 0;
 								parentState = marker.parentState;
 								if (parentState != null) {
