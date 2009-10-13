@@ -24,13 +24,12 @@
 
 package de.uni_koblenz.jgralab.greql2.funlib.pathsearch;
 
-import java.util.HashSet;
-import java.util.Iterator;
+import java.util.HashMap;
 
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.greql2.evaluator.fa.State;
 
-public class PathSystemMarkerList extends HashSet<PathSystemMarkerEntry> {
+public class PathSystemMarkerList extends HashMap<Vertex, PathSystemMarkerEntry> {
 
 	public static final long serialVersionUID = 1;
 
@@ -43,16 +42,10 @@ public class PathSystemMarkerList extends HashSet<PathSystemMarkerEntry> {
 		this.vertex = vertex;
 		this.state = state;
 	}
-
-	public PathSystemMarkerEntry getPathSystemMarkerEntryWithParentVertex(
-			Vertex parentVertex) {
-		Iterator<PathSystemMarkerEntry> iter = iterator();
-		while (iter.hasNext()) {
-			PathSystemMarkerEntry entry = iter.next();
-			if (entry.parentVertex == parentVertex)
-				return entry;
-		}
-		return null;
+	
+	public PathSystemMarkerEntry getPathSystemMarkerEntryWithParentVertex(Vertex parentVertex) {
+		return get(parentVertex);
 	}
+	
 
 }

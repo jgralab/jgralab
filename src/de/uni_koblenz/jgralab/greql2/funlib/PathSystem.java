@@ -90,9 +90,9 @@ public class PathSystem extends AbstractGreql2Function {
 	}
 
 	/**
-	 * for each state in the fa (normally < 10) a seperate GraphMarker is used
+	 * for each state in the finite automaton a seperate GraphMarker is used
 	 */
-	private ArrayList<GraphMarker<PathSystemMarkerList>> marker;
+	private List<GraphMarker<PathSystemMarkerList>> marker;
 
 	/**
 	 * The graph the search is performed on
@@ -114,18 +114,27 @@ public class PathSystem extends AbstractGreql2Function {
 			Edge e, State ps, int d) {
 		PathSystemMarkerEntry m = new PathSystemMarkerEntry(parentVertex, e, s,
 				ps, d);
-		GraphMarker<PathSystemMarkerList> currentMarker = marker.get(s.number);
-		if (currentMarker == null) {
-			currentMarker = new GraphMarker<PathSystemMarkerList>(graph);
-			marker.set(s.number, currentMarker);
-		}
+		GraphMarker<PathSystemMarkerList> currentMarker = getGraphMarkerForState(s.number);
 		PathSystemMarkerList list = currentMarker.getMark(v);
 		if (list == null) {
 			list = new PathSystemMarkerList(s, v);
 			currentMarker.mark(v, list);
 		}
-		list.add(m);
+		list.put(parentVertex, m);
 		return true;
+	}
+	
+	/**
+	 * @param stateNumber
+	 * @return the GraphMarker for the given state number
+	 */
+	private final GraphMarker<PathSystemMarkerList> getGraphMarkerForState(int stateNumber) {
+		GraphMarker<PathSystemMarkerList> currentMarker = marker.get(stateNumber);
+		if (currentMarker == null) {
+			currentMarker = new GraphMarker<PathSystemMarkerList>(graph);
+			marker.set(stateNumber, currentMarker);
+		}
+		return currentMarker;
 	}
 
 	/**
@@ -273,7 +282,7 @@ public class PathSystem extends AbstractGreql2Function {
 			for (GraphMarker<PathSystemMarkerList> currentGraphMarker : marker) {
 				Object tempAttribute = currentGraphMarker.getMark(leaf);
 				if (tempAttribute != null) {
-					for (PathSystemMarkerEntry currentMarker : (PathSystemMarkerList) tempAttribute) {
+					for (PathSystemMarkerEntry currentMarker : ((PathSystemMarkerList) tempAttribute).values()) {
 						if (!currentMarker.state.isFinal || // if state of
 								// current
 								// PathSystemMarkerEntry
@@ -365,7 +374,7 @@ public class PathSystem extends AbstractGreql2Function {
 		}
 		GraphMarker<PathSystemMarkerList> currentMarker = marker.get(s.number);
 		PathSystemMarkerList list = currentMarker.getMark(v);
-		Iterator<PathSystemMarkerEntry> iter = list.iterator();
+		Iterator<PathSystemMarkerEntry> iter = list.values().iterator();
 		if (iter.hasNext()) {
 			return iter.next();
 		}
