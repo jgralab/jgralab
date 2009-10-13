@@ -263,9 +263,18 @@ public class JValueMap extends JValue {
 	 * 
 	 * @param other
 	 *            another JValueMap
+	 * @param forceDisjointness
+	 *            if true, the function will error if the keys of the maps are
+	 *            not disjoint. Else, the values of the other will win.
 	 * @return the union of the two maps
 	 */
-	public JValueMap union(JValueMap other) {
+	public JValueMap union(JValueMap other, boolean forceDisjointness) {
+		if (!forceDisjointness) {
+			JValueMap ret = new JValueMap();
+			ret.map.putAll(map);
+			ret.map.putAll(other.map);
+			return ret;
+		}
 		JValueSet allKeys = new JValueSet();
 		allKeys.addAll(keySet());
 		allKeys.addAll(other.keySet());

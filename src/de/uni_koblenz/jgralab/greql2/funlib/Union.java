@@ -50,7 +50,7 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
  * </code><br/>
  * <code>SET&lt;OBJECT&gt; union(s:SET&lt;OBJECT&gt;)
  * </code><br/>
- * <code>MAP&lt;OBJECT,OBJECT&gt; union(s1:MAP&lt;OBJECT,OBJECT&gt;, s2:MAP&lt;OBJECT,OBJECT&gt;)</code>
+ * <code>MAP&lt;OBJECT,OBJECT&gt; union(s1:MAP&lt;OBJECT,OBJECT&gt;, s2:MAP&lt;OBJECT,OBJECT&gt;, forceDisjointKeys:BOOLEAN)</code>
  * </dd>
  * <dd>&nbsp;</dd>
  * </dl>
@@ -62,6 +62,9 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
  * <dd><code>s1</code> - first set or map</dd>
  * <dd><code>s2</code> - second set or map</dd>
  * <dd><code>s</code> - a set of sets</dd>
+ * <dd><code>forceDisjointKeys</code> - a boolean: when true, the function will
+ * error ef the keys are not disjoint, else the values of the second map
+ * override those of the first</dd>
  * <dt><b>Returns:</b></dt>
  * <dd>the union of the two given sets or maps. If only one set is given, it has
  * to be a set of sets and the union of those nested sets are computed.</dd>
@@ -80,7 +83,8 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
 public class Union extends AbstractGreql2Function {
 	{
 		JValueType[][] x = { { JValueType.COLLECTION, JValueType.COLLECTION },
-				{ JValueType.MAP, JValueType.MAP }, { JValueType.COLLECTION } };
+				{ JValueType.MAP, JValueType.MAP, JValueType.BOOLEAN },
+				{ JValueType.COLLECTION } };
 		signatures = x;
 	}
 
@@ -94,7 +98,7 @@ public class Union extends AbstractGreql2Function {
 		case 1:
 			JValueMap firstMap = arguments[0].toJValueMap();
 			JValueMap secondMap = arguments[1].toJValueMap();
-			return firstMap.union(secondMap);
+			return firstMap.union(secondMap, arguments[2].toBoolean());
 		case 2:
 			JValueSet set = arguments[0].toCollection().toJValueSet();
 			JValueSet result = new JValueSet();
