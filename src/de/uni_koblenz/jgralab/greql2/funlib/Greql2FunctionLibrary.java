@@ -173,9 +173,8 @@ public class Greql2FunctionLibrary {
 	 * registeres the given class as a GReQL-function in this Library
 	 * 
 	 * @param functionClass
-	 *            the class that implements the GReQL function
+	 *            the class that implements the GReQL function interface
 	 */
-	@SuppressWarnings("unchecked")
 	public void registerUserDefinedFunction(
 			Class<? extends Greql2Function> functionClass)
 			throws DuplicateGreqlFunctionException {
@@ -187,22 +186,18 @@ public class Greql2FunctionLibrary {
 							+ functionClass.getName()
 							+ " can not be registered as GReQL function, there is already a function ");
 		}
-		Class[] interfaces = functionClass.getInterfaces();
-		String funIntName = packageName + ".Greql2Function";
-		for (Class interface1 : interfaces) {
-			logger.finer("Implementing interface " + interface1.getName());
-			if (interface1.getName().equals(funIntName)) {
-				try {
-					Object o = functionClass.getConstructor().newInstance();
-					availableFunctions.put(toFunctionName(functionClass
-							.getSimpleName()), (Greql2Function) o);
-				} catch (Exception ex) {
-					throw new RuntimeException(
-							"The class "
-									+ functionClass.getName()
-									+ " has no default constructor and is thus not usable as GReQL function");
-				}
-			}
+		try {
+			Object o = functionClass.getConstructor().newInstance();
+			availableFunctions.put(
+					toFunctionName(functionClass.getSimpleName()),
+					(Greql2Function) o);
+			System.out.println("put "
+					+ toFunctionName(functionClass.getSimpleName()));
+		} catch (Exception ex) {
+			throw new RuntimeException(
+					"The class "
+							+ functionClass.getName()
+							+ " has no default constructor and is thus not usable as GReQL function");
 		}
 	}
 
