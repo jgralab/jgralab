@@ -718,10 +718,13 @@ public class ManualGreqlParser extends ManualParserHelper {
 			int offsetFalseExpr = getCurrentOffset();
 			Expression falseExpr = parseConditionalExpression();
 			int lengthFalseExpr = getLength(offsetFalseExpr);
-			match(TokenTypes.COLON);
-			int offsetNullExpr = getCurrentOffset();
-			Expression nullExpr = parseConditionalExpression();
-			int lengthNullExpr = getLength(offsetNullExpr);
+			Expression nullExpr = null;
+			int offsetNullExpr = 0, lengthNullExpr = 0;
+			if (tryMatch(TokenTypes.COLON)) {
+				offsetNullExpr = getCurrentOffset();
+				nullExpr = parseConditionalExpression();
+				lengthNullExpr = getLength(offsetNullExpr);
+			}
 			if (!inPredicateMode()) {
 				ConditionalExpression condExpr = graph
 						.createConditionalExpression();
@@ -740,11 +743,13 @@ public class ManualGreqlParser extends ManualParserHelper {
 						falseExpr, condExpr);
 				falseExprOf.set_sourcePositions((createSourcePositionList(
 						lengthFalseExpr, offsetFalseExpr)));
-				// add null-expression
-				IsNullExprOf nullExprOf = graph.createIsNullExprOf(nullExpr,
-						condExpr);
-				nullExprOf.set_sourcePositions((createSourcePositionList(
-						lengthNullExpr, offsetNullExpr)));
+				if (nullExpr != null) {
+					// add null-expression
+					IsNullExprOf nullExprOf = graph.createIsNullExprOf(
+							nullExpr, condExpr);
+					nullExprOf.set_sourcePositions((createSourcePositionList(
+							lengthNullExpr, offsetNullExpr)));
+				}
 				result = condExpr;
 			}
 		}
@@ -1434,17 +1439,15 @@ public class ManualGreqlParser extends ManualParserHelper {
 			directionOf.set_sourcePositions((createSourcePositionList(0,
 					offsetDir)));
 			if (edgeRestr != null) {
-					IsEdgeRestrOf edgeRestrOf = graph.createIsEdgeRestrOf(
-							edgeRestr, result);
-					edgeRestrOf.set_sourcePositions((createSourcePositionList(
+				IsEdgeRestrOf edgeRestrOf = graph.createIsEdgeRestrOf(
+						edgeRestr, result);
+				edgeRestrOf.set_sourcePositions((createSourcePositionList(
 						lengthEdgeRestr, offsetEdgeRestr)));
 			}
 			return result;
 		}
 		return null;
 	}
-	
-	
 
 	private final PrimaryPathDescription parseAggregationPathDescription() {
 		boolean outAggregation = true;
@@ -1467,16 +1470,15 @@ public class ManualGreqlParser extends ManualParserHelper {
 					.createAggregationPathDescription();
 			result.set_outAggregation(outAggregation);
 			if (edgeRestr != null) {
-				IsEdgeRestrOf edgeRestrOf = graph.createIsEdgeRestrOf(edgeRestr, result);
-				edgeRestrOf.set_sourcePositions((createSourcePositionList(restrLength, restrOffset)));
+				IsEdgeRestrOf edgeRestrOf = graph.createIsEdgeRestrOf(
+						edgeRestr, result);
+				edgeRestrOf.set_sourcePositions((createSourcePositionList(
+						restrLength, restrOffset)));
 			}
 			return result;
 		}
 		return null;
 	}
-	
-	
-
 
 	private final EdgePathDescription parseEdgePathDescription() {
 		Direction dir = null;
@@ -1961,7 +1963,7 @@ public class ManualGreqlParser extends ManualParserHelper {
 		}
 		return expr;
 	}
-	
+
 	private final List<VertexPosition<RoleId>> parseRoleIdList() {
 		List<VertexPosition<RoleId>> list = new ArrayList<VertexPosition<RoleId>>();
 		do {
@@ -2041,7 +2043,6 @@ public class ManualGreqlParser extends ManualParserHelper {
 		return eVList;
 	}
 
-	
 	private final EdgeRestriction parseEdgeRestriction() {
 		List<VertexPosition<TypeId>> typeIds = null;
 		List<VertexPosition<RoleId>> roleIds = null;
@@ -2060,21 +2061,20 @@ public class ManualGreqlParser extends ManualParserHelper {
 				for (VertexPosition<TypeId> type : typeIds) {
 					IsTypeIdOf typeIdOf = graph.createIsTypeIdOf(type.node, er);
 					typeIdOf.set_sourcePositions((createSourcePositionList(
-						type.length, type.offset)));
-				}	
+							type.length, type.offset)));
+				}
 			}
 			if (roleIds != null) {
 				for (VertexPosition<RoleId> role : roleIds) {
 					IsRoleIdOf roleIdOf = graph.createIsRoleIdOf(role.node, er);
 					roleIdOf.set_sourcePositions((createSourcePositionList(
 							role.length, role.offset)));
-				}	
+				}
 			}
 		}
 		return er;
 	}
 
-	
 	private final Comprehension parseLabeledReportList() {
 		TupleConstruction tupConstr = null;
 		boolean hasLabel = false;

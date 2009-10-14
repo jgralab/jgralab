@@ -104,7 +104,7 @@ public class LogCostModel extends DefaultCostModel {
 		super(eval);
 		this.logReader = logReader;
 
-		if (logScalingFactor < 0 || logScalingFactor > 1) {
+		if ((logScalingFactor < 0) || (logScalingFactor > 1)) {
 			throw new CostModelException(
 					"scalingFactor has to be between 0.0 and 1.0, but was "
 							+ logScalingFactor);
@@ -530,7 +530,7 @@ public class LogCostModel extends DefaultCostModel {
 		BackwardVertexSet vertex = (BackwardVertexSet) e.getVertex();
 		Expression targetExpression = (Expression) vertex
 				.getFirstIsTargetExprOf().getAlpha();
-		VertexEvaluator vertexEval = (VertexEvaluator) greqlEvaluator
+		VertexEvaluator vertexEval = greqlEvaluator
 				.getVertexEvaluatorGraphMarker().getMark(targetExpression);
 		long targetCosts = vertexEval
 				.getCurrentSubtreeEvaluationCosts(graphSize);
@@ -578,7 +578,7 @@ public class LogCostModel extends DefaultCostModel {
 
 		double conditionSelectivity = logReader
 				.getAvgSelectivity(conditionEvaluator.getLoggingName());
-		if (conditionSelectivity <= 0 || conditionSelectivity >= 1) {
+		if ((conditionSelectivity <= 0) || (conditionSelectivity >= 1)) {
 			conditionSelectivity = 1.0 / 3.0;
 		}
 
@@ -596,11 +596,14 @@ public class LogCostModel extends DefaultCostModel {
 		long falseCosts = vertexEval
 				.getCurrentSubtreeEvaluationCosts(graphSize);
 
-		expressionToEvaluate = (Expression) vertex.getFirstIsNullExprOf()
-				.getAlpha();
-		vertexEval = greqlEvaluator.getVertexEvaluatorGraphMarker().getMark(
-				expressionToEvaluate);
-		long nullCosts = vertexEval.getCurrentSubtreeEvaluationCosts(graphSize);
+		long nullCosts = 0;
+		if (vertex.getFirstIsNullExprOf() != null) {
+			expressionToEvaluate = (Expression) vertex.getFirstIsNullExprOf()
+					.getAlpha();
+			vertexEval = greqlEvaluator.getVertexEvaluatorGraphMarker()
+					.getMark(expressionToEvaluate);
+			nullCosts = vertexEval.getCurrentSubtreeEvaluationCosts(graphSize);
+		}
 
 		// We say the costs are the average of all costs weighted by the
 		// probability for each case. The probability of the true-case is given
@@ -892,7 +895,7 @@ public class LogCostModel extends DefaultCostModel {
 				.getLoggingName());
 		Greql2Function func = e.getGreql2Function();
 		double definedSelectiviy = func.getSelectivity();
-		if (loggedSelectivity > 0 && loggedSelectivity < 1) {
+		if ((loggedSelectivity > 0) && (loggedSelectivity < 1)) {
 			return (loggedSelectivity * logScalingFactor)
 					+ ((1 - logScalingFactor) * definedSelectiviy);
 		}
@@ -913,7 +916,7 @@ public class LogCostModel extends DefaultCostModel {
 			GraphSize graphSize) {
 		double loggedSelectivity = logReader.getAvgSelectivity(e
 				.getLoggingName());
-		if (loggedSelectivity > 0 || loggedSelectivity <= 1) {
+		if ((loggedSelectivity > 0) || (loggedSelectivity <= 1)) {
 			return (loggedSelectivity * logScalingFactor)
 					+ ((1 - logScalingFactor) * super
 							.calculateSelectivityPathExistence(e, graphSize));
@@ -934,7 +937,7 @@ public class LogCostModel extends DefaultCostModel {
 			GraphSize graphSize) {
 		double loggedSelectivity = logReader.getAvgSelectivity(e
 				.getLoggingName());
-		if (loggedSelectivity > 0 && loggedSelectivity <= 1) {
+		if ((loggedSelectivity > 0) && (loggedSelectivity <= 1)) {
 			return (loggedSelectivity * logScalingFactor)
 					+ ((1 - logScalingFactor) * super
 							.calculateSelectivityTypeId(e, graphSize));
