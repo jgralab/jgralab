@@ -428,8 +428,9 @@ public class FunctionTest extends GenericTests {
 	public void testIntersection() throws Exception {
 		String queryString = "let x:= set(5, 7, 9, 13), y := set(5,6,7,8) in intersection(x, y)";
 		JValue result = evalTestQuery("Intersection", queryString);
-		for (JValue j: result.toCollection())
+		for (JValue j : result.toCollection()) {
 			System.out.println("Element:" + j);
+		}
 		assertEquals(2, result.toCollection().size());
 	}
 
@@ -849,7 +850,7 @@ public class FunctionTest extends GenericTests {
 		boundVariables.put("map1", map1);
 		boundVariables.put("map2", map2);
 
-		String queryString = "using map1, map2: union(map1, map2)";
+		String queryString = "using map1, map2: union(map1, map2, true)";
 		JValue result = evalTestQuery("Union2", queryString);
 		assertEquals(6, result.toJValueMap().size());
 		JValueMap rmap = result.toJValueMap();

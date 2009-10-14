@@ -88,17 +88,26 @@ public class ConditionalExpressionEvaluator extends VertexEvaluator {
 				expressionToEvaluate = (Expression) vertex
 						.getFirstIsFalseExprOf(EdgeDirection.IN).getAlpha();
 			} else {
+				if (vertex.getFirstIsNullExprOf(EdgeDirection.IN) != null) {
+					expressionToEvaluate = (Expression) vertex
+							.getFirstIsNullExprOf(EdgeDirection.IN).getAlpha();
+				}
+			}
+		} else {
+			if (vertex.getFirstIsNullExprOf(EdgeDirection.IN) != null) {
 				expressionToEvaluate = (Expression) vertex
 						.getFirstIsNullExprOf(EdgeDirection.IN).getAlpha();
 			}
-		} else {
-			expressionToEvaluate = (Expression) vertex.getFirstIsNullExprOf(
-					EdgeDirection.IN).getAlpha();
 		}
 
-		VertexEvaluator exprEvaluator = greqlEvaluator
-				.getVertexEvaluatorGraphMarker().getMark(expressionToEvaluate);
-		result = exprEvaluator.getResult(subgraph);
+		if (expressionToEvaluate != null) {
+			VertexEvaluator exprEvaluator = greqlEvaluator
+					.getVertexEvaluatorGraphMarker().getMark(
+							expressionToEvaluate);
+			result = exprEvaluator.getResult(subgraph);
+		} else {
+			result = new JValue();
+		}
 		return result;
 	}
 
