@@ -208,6 +208,8 @@ public final class RecordDomainImpl extends CompositeDomainImpl implements
 				+ ".isNextToken(GraphIO.OLD_NULL_LITERAL)) {");
 		code.add("\t" + graphIoVariableName + ".match();");
 		code.add("\t" + variableName + " = null;");
+		code.add("} else {");
+		code.add("\tthrow new GraphIOException(\"This is no record!\");");
 		code.add("}");
 	}
 
