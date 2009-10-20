@@ -299,7 +299,7 @@ public class JValueMap extends JValue {
 	public Object toObject() {
 		HashMap<Object, Object> result = new HashMap<Object, Object>(map.size());
 		for (Entry<JValue, JValue> e : map.entrySet()) {
-			result.put(e.getKey(), e.getValue());
+			result.put(e.getKey().toObject(), e.getValue().toObject());
 		}
 		return result;
 	}
