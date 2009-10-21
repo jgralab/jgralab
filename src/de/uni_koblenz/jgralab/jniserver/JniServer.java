@@ -420,7 +420,7 @@ public class JniServer {
 			Class<?> attrType = Class.forName(domain.getSchema()
 					.getPackagePrefix()
 					+ "." + domain.getQualifiedName());
-			Object enumValue = attrType.getMethod("fromString",
+			Object enumValue = attrType.getMethod("valueOf",
 					new Class[] { String.class }).invoke(null, value);
 			if (enumValue == null) {
 				throw new GraphException("Enum value " + value
