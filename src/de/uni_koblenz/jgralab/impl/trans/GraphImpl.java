@@ -308,8 +308,8 @@ public abstract class GraphImpl extends de.uni_koblenz.jgralab.impl.GraphImpl {
 	 *            update value of graphVersion which is used as
 	 *            persistentVersionCounter
 	 * 
-	 *            TODO rethink with -1 at the beginning. Maybe there is a more
-	 *            elegant way?!
+	 * TODO rethink with -1 at the beginning. Maybe there is a more elegant
+	 * way?!
 	 */
 	@Override
 	public void setGraphVersion(long graphVersion) {
@@ -521,8 +521,8 @@ public abstract class GraphImpl extends de.uni_koblenz.jgralab.impl.GraphImpl {
 	}
 
 	/**
-	 * Should be called from generated <code>Graph</code> implementation classes
-	 * whenever a versioned attribute is changed.
+	 * Should be called from generated <code>Graph</code> implementation
+	 * classes whenever a versioned attribute is changed.
 	 * 
 	 * @param versionedAttribute
 	 *            the changed attribute
@@ -629,9 +629,9 @@ public abstract class GraphImpl extends de.uni_koblenz.jgralab.impl.GraphImpl {
 	/**
 	 * Checks whether an <code>Edge</code> with the given <code>index</code>
 	 * exists for at least one other parallel running read-write
-	 * <code>Transaction</code>. If so the given <code>index</code> may not be
-	 * freed yet, but has to be marked as "to-be-freed" in the future by putting
-	 * it into <code>edgeIndexesToBeFreed</code>.
+	 * <code>Transaction</code>. If so the given <code>index</code> may not
+	 * be freed yet, but has to be marked as "to-be-freed" in the future by
+	 * putting it into <code>edgeIndexesToBeFreed</code>.
 	 * 
 	 * @param index
 	 * @return
@@ -690,9 +690,9 @@ public abstract class GraphImpl extends de.uni_koblenz.jgralab.impl.GraphImpl {
 	/**
 	 * Checks whether an <code>Vertex</code> with the given <code>index</code>
 	 * exists for at least one other parallel running read-write
-	 * <code>Transaction</code>. If so the given <code>index</code> may not be
-	 * freed yet, but has to be marked as "to-be-freed" in the future by putting
-	 * it into <code>vertexIndexesToBeFreed</code>.
+	 * <code>Transaction</code>. If so the given <code>index</code> may not
+	 * be freed yet, but has to be marked as "to-be-freed" in the future by
+	 * putting it into <code>vertexIndexesToBeFreed</code>.
 	 * 
 	 * @param index
 	 * @return
@@ -1194,6 +1194,14 @@ public abstract class GraphImpl extends de.uni_koblenz.jgralab.impl.GraphImpl {
 				transaction.changedIncidences.remove(vertexToBeDeleted);
 			}
 		}
+		if (transaction.getState() == TransactionState.WRITING) {
+			if (transaction.deletedVerticesWhileWriting == null)
+				transaction.deletedVerticesWhileWriting = new ArrayList<VertexImpl>(
+						1);
+			transaction.deletedVerticesWhileWriting
+					.add((de.uni_koblenz.jgralab.impl.trans.VertexImpl) vertexToBeDeleted);
+		}
+
 	}
 
 	@Override
@@ -1511,7 +1519,8 @@ public abstract class GraphImpl extends de.uni_koblenz.jgralab.impl.GraphImpl {
 	}
 
 	/**
-	 * Trying to free cached <code>Vertex</code>- and <code>Edge</code> indexes.
+	 * Trying to free cached <code>Vertex</code>- and <code>Edge</code>
+	 * indexes.
 	 */
 	protected void freeStoredIndexes() {
 		synchronized (freeVertexList) {

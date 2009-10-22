@@ -53,6 +53,7 @@ public class TransactionImpl implements Transaction {
 	protected Map<EdgeImpl, VertexPosition> changedEdges;
 	protected Map<AttributedElement, Set<VersionedDataObject<?>>> changedAttributes;
 
+	protected List<VertexImpl> deletedVerticesWhileWriting;
 	protected List<de.uni_koblenz.jgralab.impl.VertexImpl> deleteVertexList;
 
 	protected SavepointImpl latestDefinedSavepoint;

@@ -106,11 +106,16 @@ public class WritingComponent {
 		// delete vertices
 		if (transaction.deletedVertices != null) {
 			for (VertexImpl vertex : transaction.deletedVertices) {
-				assert (transaction.addedVertices == null || !transaction.addedVertices
-						.contains(vertex));
-				// delete current vertex
-				vertex.delete();
+				if (transaction.deletedVerticesWhileWriting == null
+						|| !transaction.deletedVerticesWhileWriting
+								.contains(vertex)) {
+					assert (transaction.addedVertices == null || !transaction.addedVertices
+							.contains(vertex));
+					// delete current vertex
+					vertex.delete();
+				}
 			}
+			transaction.deletedVerticesWhileWriting = null;
 			if (transaction.deletedVertices.size() > 0)
 				transaction.changedDuringCommit.add(graph.vertex);
 		}
