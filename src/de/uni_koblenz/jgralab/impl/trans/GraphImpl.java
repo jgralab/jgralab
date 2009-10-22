@@ -471,12 +471,12 @@ public abstract class GraphImpl extends de.uni_koblenz.jgralab.impl.GraphImpl {
 	}
 
 	@Override
-	public Transaction createReadOnlyTransaction() {
+	public Transaction newReadOnlyTransaction() {
 		return transactionManager.createReadOnlyTransaction();
 	}
 
 	@Override
-	public Transaction createTransaction() {
+	public Transaction newTransaction() {
 		return transactionManager.createTransaction();
 	}
 

@@ -48,7 +48,7 @@ public class ConflictDetectionTest {
 	public void setUp() throws CommitFailedException {
 		MotorwayMapSchema schema = MotorwayMapSchema.instance();
 		motorwayMap = schema.createMotorwayMapWithTransactionSupport(V, E);
-		motorwayMap.createTransaction();
+		motorwayMap.newTransaction();
 		// city (v1) and motorway (v2) have 10 incidences
 		// (<e1,e2,e3,e4,e5,e6,...,e10> and
 		// <-e1,-e2,-e3,-e4,-e5,-e6,...,-e10> respectively)
@@ -71,8 +71,8 @@ public class ConflictDetectionTest {
 		}
 		motorwayMap.commit();
 
-		readWriteTransaction1 = motorwayMap.createTransaction();
-		readWriteTransaction2 = motorwayMap.createTransaction();
+		readWriteTransaction1 = motorwayMap.newTransaction();
+		readWriteTransaction2 = motorwayMap.newTransaction();
 		threadGroup = new ThreadGroup("ThreadGroup");
 		conflict = false;
 		lastTransactionCommitted = null;
@@ -119,7 +119,7 @@ public class ConflictDetectionTest {
 			assertEquals(motorwayMap.getVCount(), internalVCount + 1);
 			readWriteTransaction2.commit();
 
-			readOnlyTransaction = motorwayMap.createReadOnlyTransaction();
+			readOnlyTransaction = motorwayMap.newReadOnlyTransaction();
 			assertTrue(!v2.isValid());
 			assertTrue(v23.isValid());
 			assertTrue(v24.isValid());
@@ -229,7 +229,7 @@ public class ConflictDetectionTest {
 			assert (lastTransactionCommitted == lastToCommit);
 			assertTrue(!readWriteTransaction1.isValid()
 					&& !readWriteTransaction2.isValid());
-			readOnlyTransaction = motorwayMap.createReadOnlyTransaction();
+			readOnlyTransaction = motorwayMap.newReadOnlyTransaction();
 			assertTrue(motorwayMap.getVertex(2) == null);
 			assertTrue(motorwayMap.getVertex(internalVCount + 1).isValid());
 			assertTrue(motorwayMap.getVertex(internalVCount + 2).isValid());
@@ -329,7 +329,7 @@ public class ConflictDetectionTest {
 			assertTrue(e2.isValid());
 			readWriteTransaction2.commit();
 
-			readOnlyTransaction = motorwayMap.createReadOnlyTransaction();
+			readOnlyTransaction = motorwayMap.newReadOnlyTransaction();
 			assertTrue(!e2.isValid());
 			assertTrue(e21.isValid());
 			assertTrue(e22.isValid());
@@ -455,7 +455,7 @@ public class ConflictDetectionTest {
 			assertTrue(!readWriteTransaction1.isValid()
 					&& !readWriteTransaction2.isValid());
 			assertTrue(lastTransactionCommitted == lastToCommit);
-			readOnlyTransaction = motorwayMap.createReadOnlyTransaction();
+			readOnlyTransaction = motorwayMap.newReadOnlyTransaction();
 			assertTrue(motorwayMap.getEdge(7) == null);
 			assertTrue(motorwayMap.getEdge(internalECount + 1).isValid());
 			assertTrue(motorwayMap.getEdge(internalECount + 2).isValid());
@@ -1061,7 +1061,7 @@ public class ConflictDetectionTest {
 			motorwayMap.setCurrentTransaction(readWriteTransaction2);
 			readWriteTransaction2.commit();
 
-			readOnlyTransaction = motorwayMap.createReadOnlyTransaction();
+			readOnlyTransaction = motorwayMap.newReadOnlyTransaction();
 			// <v1, v4, v2, v5, v6,...>
 			assertEquals(motorwayMap.getFirstVertex(), v1);
 			assertEquals(v1.getPrevVertex(), null);
@@ -1188,7 +1188,7 @@ public class ConflictDetectionTest {
 		while (threadGroup.activeCount() > 0) {
 		}
 		assertTrue(lastTransactionCommitted == lastToCommit);
-		readOnlyTransaction = motorwayMap.createReadOnlyTransaction();
+		readOnlyTransaction = motorwayMap.newReadOnlyTransaction();
 		// <v1, v4, v2, v5, v6,...>
 		assertEquals(motorwayMap.getFirstVertex(), v1);
 		assertEquals(v1.getPrevVertex(), null);
@@ -1275,7 +1275,7 @@ public class ConflictDetectionTest {
 			motorwayMap.setCurrentTransaction(readWriteTransaction1);
 			readWriteTransaction1.commit();
 
-			readOnlyTransaction = motorwayMap.createReadOnlyTransaction();
+			readOnlyTransaction = motorwayMap.newReadOnlyTransaction();
 			// Vseq at BOT of t4 <v1, v2, v4, v3, v5, v6,...>
 			assertEquals(motorwayMap.getFirstVertex(), v1);
 			assertEquals(v1.getPrevVertex(), null);
@@ -1292,7 +1292,7 @@ public class ConflictDetectionTest {
 			motorwayMap.setCurrentTransaction(readWriteTransaction2);
 			readWriteTransaction2.commit();
 
-			readOnlyTransaction = motorwayMap.createReadOnlyTransaction();
+			readOnlyTransaction = motorwayMap.newReadOnlyTransaction();
 			// <v2, v4, v3, v1, v5, v6,...>
 			assertEquals(motorwayMap.getFirstVertex(), v2);
 			assertEquals(v2.getPrevVertex(), null);
@@ -1432,7 +1432,7 @@ public class ConflictDetectionTest {
 		while (threadGroup.activeCount() > 0) {
 		}
 		assertTrue(lastTransactionCommitted == lastToCommit);
-		readOnlyTransaction = motorwayMap.createReadOnlyTransaction();
+		readOnlyTransaction = motorwayMap.newReadOnlyTransaction();
 		// <v2, v4, v3, v1, v5, v6,...>
 		assertEquals(motorwayMap.getFirstVertex(), v2);
 		assertEquals(v2.getPrevVertex(), null);
@@ -1825,7 +1825,7 @@ public class ConflictDetectionTest {
 			motorwayMap.setCurrentTransaction(readWriteTransaction2);
 			readWriteTransaction2.commit();
 
-			readOnlyTransaction = motorwayMap.createReadOnlyTransaction();
+			readOnlyTransaction = motorwayMap.newReadOnlyTransaction();
 			// <e1, e4, e2, e5, e6,...>
 			assertEquals(motorwayMap.getFirstEdgeInGraph(), e1);
 			assertEquals(e1.getPrevEdgeInGraph(), null);
@@ -1957,7 +1957,7 @@ public class ConflictDetectionTest {
 		while (threadGroup.activeCount() > 0) {
 		}
 		assertTrue(lastTransactionCommitted == lastToCommit);
-		readOnlyTransaction = motorwayMap.createReadOnlyTransaction();
+		readOnlyTransaction = motorwayMap.newReadOnlyTransaction();
 		// <e1, e4, e2, e5, e6,...>
 		assertEquals(motorwayMap.getFirstEdgeInGraph(), e1);
 		assertEquals(e1.getPrevEdgeInGraph(), null);
@@ -2044,7 +2044,7 @@ public class ConflictDetectionTest {
 			motorwayMap.setCurrentTransaction(readWriteTransaction1);
 			readWriteTransaction1.commit();
 
-			readOnlyTransaction = motorwayMap.createReadOnlyTransaction();
+			readOnlyTransaction = motorwayMap.newReadOnlyTransaction();
 			// Eseq at BOT <e1, e2, e4, e3, e5, e6,...>
 			assertEquals(motorwayMap.getFirstEdgeInGraph(), e1);
 			assertEquals(e1.getPrevEdgeInGraph(), null);
@@ -2061,7 +2061,7 @@ public class ConflictDetectionTest {
 			motorwayMap.setCurrentTransaction(readWriteTransaction2);
 			readWriteTransaction2.commit();
 
-			readOnlyTransaction = motorwayMap.createReadOnlyTransaction();
+			readOnlyTransaction = motorwayMap.newReadOnlyTransaction();
 			// <e2, e4, e3, e1, e5, e6,...>
 			assertEquals(motorwayMap.getFirstEdgeInGraph(), e2);
 			assertEquals(e2.getPrevEdgeInGraph(), null);
@@ -2207,7 +2207,7 @@ public class ConflictDetectionTest {
 		while (threadGroup.activeCount() > 0) {
 		}
 		assert (lastTransactionCommitted == lastToCommit);
-		readOnlyTransaction = motorwayMap.createReadOnlyTransaction();
+		readOnlyTransaction = motorwayMap.newReadOnlyTransaction();
 		// <e2, e4, e3, e1, e5, e6,...>
 		assertEquals(motorwayMap.getFirstEdgeInGraph(), e2);
 		assertEquals(e2.getPrevEdgeInGraph(), null);
@@ -2756,7 +2756,7 @@ public class ConflictDetectionTest {
 			motorwayMap.setCurrentTransaction(readWriteTransaction2);
 			readWriteTransaction2.commit();
 
-			readOnlyTransaction = motorwayMap.createReadOnlyTransaction();
+			readOnlyTransaction = motorwayMap.newReadOnlyTransaction();
 			// <+e1, +e4, +e2, +e5, +e6,...>
 			assertEquals(incidentVertex.getFirstEdge(), e1);
 			assertEquals(e1.getPrevEdge(), null);
@@ -2882,7 +2882,7 @@ public class ConflictDetectionTest {
 		while (threadGroup.activeCount() > 0) {
 		}
 		assertTrue(lastTransactionCommitted == lastToCommit);
-		readOnlyTransaction = motorwayMap.createReadOnlyTransaction();
+		readOnlyTransaction = motorwayMap.newReadOnlyTransaction();
 		// <+e1, +e4, +e2, +e5, +e6,...>
 		assertEquals(incidentVertex.getFirstEdge(), e1);
 		assertEquals(e1.getPrevEdge(), null);
@@ -2970,7 +2970,7 @@ public class ConflictDetectionTest {
 			motorwayMap.setCurrentTransaction(readWriteTransaction1);
 			readWriteTransaction1.commit();
 
-			readOnlyTransaction = motorwayMap.createReadOnlyTransaction();
+			readOnlyTransaction = motorwayMap.newReadOnlyTransaction();
 			// Iseq(v1) at BOT <+e1, +e2, +e4, +e3, +e5, +e6,...>
 			assertEquals(incidentVertex.getFirstEdge(), e1);
 			assertEquals(e1.getPrevEdge(), null);
@@ -2987,7 +2987,7 @@ public class ConflictDetectionTest {
 			motorwayMap.setCurrentTransaction(readWriteTransaction2);
 			readWriteTransaction2.commit();
 
-			readOnlyTransaction = motorwayMap.createReadOnlyTransaction();
+			readOnlyTransaction = motorwayMap.newReadOnlyTransaction();
 			// <+e2, +e4, +e3, +e1, +e5, +e6,...>
 			assertEquals(incidentVertex.getFirstEdge(), e2);
 			assertEquals(e2.getPrevEdge(), null);
@@ -3129,7 +3129,7 @@ public class ConflictDetectionTest {
 		while (threadGroup.activeCount() > 0) {
 		}
 		assertTrue(lastTransactionCommitted == lastToCommit);
-		readOnlyTransaction = motorwayMap.createReadOnlyTransaction();
+		readOnlyTransaction = motorwayMap.newReadOnlyTransaction();
 		// <+e2, +e4, +e3, +e1, +e5, +e6,...>
 		assertEquals(incidentVertex.getFirstEdge(), e2);
 		assertEquals(e2.getPrevEdge(), null);
@@ -3986,7 +3986,7 @@ public class ConflictDetectionTest {
 			motorwayMap.setCurrentTransaction(readWriteTransaction2);
 			readWriteTransaction2.commit();
 
-			readOnlyTransaction = motorwayMap.createReadOnlyTransaction();
+			readOnlyTransaction = motorwayMap.newReadOnlyTransaction();
 			assertTrue(e1.getAlpha() == v11);
 			assertTrue(e1.getOmega() == v12);
 			readOnlyTransaction.commit();
@@ -4078,7 +4078,7 @@ public class ConflictDetectionTest {
 			assert (lastTransactionCommitted == lastToCommit);
 			assertTrue(!readWriteTransaction1.isValid()
 					&& !readWriteTransaction2.isValid());
-			readOnlyTransaction = motorwayMap.createReadOnlyTransaction();
+			readOnlyTransaction = motorwayMap.newReadOnlyTransaction();
 			assertTrue(e1.getAlpha() == v11);
 			assertTrue(e1.getOmega() == v12);
 			readOnlyTransaction.commit();

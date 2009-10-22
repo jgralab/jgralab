@@ -41,9 +41,9 @@ public class SavepointImplTest {
 	public void setUp() {
 		MotorwayMapSchema schema = MotorwayMapSchema.instance();
 		motorwayMap = schema.createMotorwayMapWithTransactionSupport(V, E);
-		readWriteTransaction1 = motorwayMap.createTransaction();
-		readWriteTransaction2 = motorwayMap.createTransaction();
-		readOnlyTransaction = motorwayMap.createReadOnlyTransaction();
+		readWriteTransaction1 = motorwayMap.newTransaction();
+		readWriteTransaction2 = motorwayMap.newTransaction();
+		readOnlyTransaction = motorwayMap.newReadOnlyTransaction();
 	}
 
 	@After
