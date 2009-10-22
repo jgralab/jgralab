@@ -40,7 +40,7 @@ public class AttributedElementIterableTest {
 	public void setUp() throws CommitFailedException {
 		MotorwayMapSchema schema = MotorwayMapSchema.instance();
 		motorwayMap = schema.createMotorwayMapWithTransactionSupport(V, E);
-		motorwayMap.createTransaction();
+		motorwayMap.newTransaction();
 		// city (v1) and motorway (v2) have 10 incidences
 		// (<e1,e2,e3,e4,e5,e6,...,e10> and
 		// <-e1,-e2,-e3,-e4,-e5,-e6,...,-e10> respectively)
@@ -57,8 +57,8 @@ public class AttributedElementIterableTest {
 		}
 		motorwayMap.commit();
 
-		readWriteTransaction1 = motorwayMap.createTransaction();
-		readWriteTransaction2 = motorwayMap.createTransaction();
+		readWriteTransaction1 = motorwayMap.newTransaction();
+		readWriteTransaction2 = motorwayMap.newTransaction();
 	}
 
 	@After

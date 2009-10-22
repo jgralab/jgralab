@@ -536,12 +536,12 @@ public interface Graph extends AttributedElement {
 	/**
 	 * @return a read-write-<code>Transaction</code>
 	 */
-	public Transaction createTransaction();
+	public Transaction newTransaction();
 
 	/**
 	 * @return a read-only-<code>Transaction</code>
 	 */
-	public Transaction createReadOnlyTransaction();
+	public Transaction newReadOnlyTransaction();
 
 	/**
 	 * Sets the given <code>transaction</code> as the active

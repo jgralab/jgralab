@@ -225,13 +225,13 @@ public abstract class GraphImpl extends de.uni_koblenz.jgralab.impl.GraphImpl {
 	}
 
 	@Override
-	public Transaction createReadOnlyTransaction() {
+	public Transaction newReadOnlyTransaction() {
 		throw new UnsupportedOperationException(
 				"Creation of read-only-transactions is not supported for this graph.");
 	}
 
 	@Override
-	public Transaction createTransaction() {
+	public Transaction newTransaction() {
 		throw new UnsupportedOperationException(
 				"Creation of read-write-transactions is not supported for this graph.");
 	}

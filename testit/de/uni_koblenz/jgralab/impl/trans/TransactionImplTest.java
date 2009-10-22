@@ -70,9 +70,9 @@ public class TransactionImplTest {
 				.createMotorwayMapWithTransactionSupport(V, E);
 
 		readWriteTransaction1 = (TransactionImpl) motorwayMap
-				.createTransaction();
+				.newTransaction();
 		readOnlyTransaction = (TransactionImpl) motorwayMap
-				.createReadOnlyTransaction();
+				.newReadOnlyTransaction();
 		motorwayMap.setCurrentTransaction(readWriteTransaction1);
 	}
 
@@ -93,7 +93,7 @@ public class TransactionImplTest {
 	public void testInvalidCommit() {
 		try {
 			readWriteTransaction2 = (TransactionImpl) motorwayMap
-					.createTransaction();
+					.newTransaction();
 			readWriteTransaction1.commit();
 			fail();
 		} catch (GraphException e) {
@@ -116,7 +116,7 @@ public class TransactionImplTest {
 	public void testInvalidAbort() {
 		try {
 			readWriteTransaction2 = (TransactionImpl) motorwayMap
-					.createTransaction();
+					.newTransaction();
 			readWriteTransaction1.abort();
 			fail();
 		} catch (GraphException e) {
@@ -213,7 +213,7 @@ public class TransactionImplTest {
 			testAddVertex();
 			motorwayMap.commit();
 			readOnlyTransaction = (TransactionImpl) motorwayMap
-					.createReadOnlyTransaction();
+					.newReadOnlyTransaction();
 			ex1 = motorwayMap.createExit(c1, mw1);
 			fail();
 		} catch (GraphException e) {
@@ -256,7 +256,7 @@ public class TransactionImplTest {
 			// so that added vertices are valid in
 			// <code>readWriteTransaction2</code> from beginning
 			readWriteTransaction2 = (TransactionImpl) motorwayMap
-					.createTransaction();
+					.newTransaction();
 			c1.delete();
 			c2.delete();
 			c3.delete();
@@ -284,7 +284,7 @@ public class TransactionImplTest {
 			testAddVertex();
 			motorwayMap.commit();
 			readOnlyTransaction = (TransactionImpl) motorwayMap
-					.createReadOnlyTransaction();
+					.newReadOnlyTransaction();
 			c1.delete();
 			fail();
 		} catch (GraphException ge) {
@@ -327,7 +327,7 @@ public class TransactionImplTest {
 			// so that added vertices are valid in
 			// <code>readWriteTransaction2</code> from beginning
 			readWriteTransaction2 = (TransactionImpl) motorwayMap
-					.createTransaction();
+					.newTransaction();
 			ex1.delete();
 			ex2.delete();
 			ex3.delete();
@@ -354,7 +354,7 @@ public class TransactionImplTest {
 			testAddEdge();
 			motorwayMap.commit();
 			readOnlyTransaction = (TransactionImpl) motorwayMap
-					.createReadOnlyTransaction();
+					.newReadOnlyTransaction();
 			ex1.delete();
 			fail();
 		} catch (GraphException ge) {
@@ -400,7 +400,7 @@ public class TransactionImplTest {
 			testAddVertex();
 			motorwayMap.commit();
 			readOnlyTransaction = (TransactionImpl) motorwayMap
-					.createReadOnlyTransaction();
+					.newReadOnlyTransaction();
 			c1.putAfter(c2);
 			fail();
 		} catch (GraphException ge) {
@@ -447,7 +447,7 @@ public class TransactionImplTest {
 			testAddVertex();
 			motorwayMap.commit();
 			readOnlyTransaction = (TransactionImpl) motorwayMap
-					.createReadOnlyTransaction();
+					.newReadOnlyTransaction();
 			c2.putBefore(c1);
 			fail();
 		} catch (GraphException ge) {
@@ -492,7 +492,7 @@ public class TransactionImplTest {
 			testAddEdge();
 			motorwayMap.commit();
 			readOnlyTransaction = (TransactionImpl) motorwayMap
-					.createReadOnlyTransaction();
+					.newReadOnlyTransaction();
 			ex1.putAfterInGraph(ex2);
 			fail();
 		} catch (GraphException ge) {
@@ -539,7 +539,7 @@ public class TransactionImplTest {
 			testAddEdge();
 			motorwayMap.commit();
 			readOnlyTransaction = (TransactionImpl) motorwayMap
-					.createReadOnlyTransaction();
+					.newReadOnlyTransaction();
 			ex2.putBeforeInGraph(ex1);
 			fail();
 		} catch (GraphException ge) {
@@ -588,7 +588,7 @@ public class TransactionImplTest {
 			testAddEdge();
 			motorwayMap.commit();
 			readOnlyTransaction = (TransactionImpl) motorwayMap
-					.createReadOnlyTransaction();
+					.newReadOnlyTransaction();
 			ex1.putEdgeAfter(ex2);
 			fail();
 		} catch (GraphException ge) {
@@ -638,7 +638,7 @@ public class TransactionImplTest {
 			testAddEdge();
 			motorwayMap.commit();
 			readOnlyTransaction = (TransactionImpl) motorwayMap
-					.createReadOnlyTransaction();
+					.newReadOnlyTransaction();
 			ex2.putEdgeBefore(ex1);
 			fail();
 		} catch (GraphException ge) {
@@ -678,7 +678,7 @@ public class TransactionImplTest {
 			c2 = motorwayMap.createCity();
 			motorwayMap.commit();
 			readOnlyTransaction = (TransactionImpl) motorwayMap
-					.createReadOnlyTransaction();
+					.newReadOnlyTransaction();
 			ex1.setAlpha(c2);
 			fail();
 		} catch (GraphException ge) {
@@ -718,7 +718,7 @@ public class TransactionImplTest {
 			mw2 = motorwayMap.createMotorway();
 			motorwayMap.commit();
 			readOnlyTransaction = (TransactionImpl) motorwayMap
-					.createReadOnlyTransaction();
+					.newReadOnlyTransaction();
 			ex1.setOmega(mw2);
 			fail();
 		} catch (GraphException ge) {
@@ -781,7 +781,7 @@ public class TransactionImplTest {
 			testAddVertex();
 			motorwayMap.commit();
 			readOnlyTransaction = (TransactionImpl) motorwayMap
-					.createReadOnlyTransaction();
+					.newReadOnlyTransaction();
 			CityImpl c1Impl = (CityImpl) c1;
 			c1Impl.set_name("test");
 			fail();
@@ -807,7 +807,7 @@ public class TransactionImplTest {
 			testAddEdge();
 			motorwayMap.commit();
 			readWriteTransaction2 = (TransactionImpl) motorwayMap
-					.createTransaction();
+					.newTransaction();
 			c1.set_name("name");
 			assertTrue(readWriteTransaction2.changedAttributes.containsKey(c1));
 			c1.putAfter(c3);
@@ -840,7 +840,7 @@ public class TransactionImplTest {
 			testAddEdge();
 			motorwayMap.commit();
 			readWriteTransaction2 = (TransactionImpl) motorwayMap
-					.createTransaction();
+					.newTransaction();
 			ex1.set_number(2);
 			assertTrue(readWriteTransaction2.changedAttributes.containsKey(ex1));
 			ex1.putAfterInGraph(ex3);

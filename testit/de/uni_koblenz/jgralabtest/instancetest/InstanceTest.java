@@ -38,7 +38,7 @@ public abstract class InstanceTest {
 	 */
 	protected void createReadOnlyTransaction(Graph g) {
 		if (transactionsEnabled) {
-			g.createReadOnlyTransaction();
+			g.newReadOnlyTransaction();
 		}
 	}
 
@@ -50,7 +50,7 @@ public abstract class InstanceTest {
 	 */
 	protected void createTransaction(Graph g) {
 		if (transactionsEnabled) {
-			g.createTransaction();
+			g.newTransaction();
 		}
 	}
 

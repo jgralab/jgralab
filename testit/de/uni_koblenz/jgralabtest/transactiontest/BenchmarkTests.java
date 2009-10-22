@@ -87,7 +87,7 @@ public class BenchmarkTests {
 			throws CommitFailedException, GraphIOException,
 			InterruptedException {
 		createGraph(true);
-		motorwayMap.createTransaction();
+		motorwayMap.newTransaction();
 		progressFunction.init(N * MULTIPLIER);
 		internaladdGraphElements();
 		progressFunction.finished();
@@ -96,7 +96,7 @@ public class BenchmarkTests {
 		motorwayMap.commit();
 		progressFunction.finished();
 		printMemoryUsage("addGraphElementsWithTransactionSupport (nach Commit)");
-		motorwayMap.createReadOnlyTransaction();
+		motorwayMap.newReadOnlyTransaction();
 		System.out.println(motorwayMap.getVCount() + motorwayMap.getECount());
 		saveGraph(true);
 	}
@@ -110,7 +110,7 @@ public class BenchmarkTests {
 			Thread thread = new Thread(group, "Thread-" + i) {
 				@Override
 				public void run() {
-					motorwayMap.createTransaction();
+					motorwayMap.newTransaction();
 					ProgressFunction p = new ProgressFunctionImpl();
 					p.init(1234);
 					internaladdGraphElements();
@@ -130,7 +130,7 @@ public class BenchmarkTests {
 		}
 		progressFunction.finished();
 		printMemoryUsage("addGraphElementsWithTransactionSupportParallel");
-		motorwayMap.createReadOnlyTransaction();
+		motorwayMap.newReadOnlyTransaction();
 		System.out.println(motorwayMap.getVCount() + motorwayMap.getECount());
 		saveGraph(true);
 	}
@@ -166,7 +166,7 @@ public class BenchmarkTests {
 
 	private void saveGraph(boolean transactionSupport) throws GraphIOException {
 		if (transactionSupport)
-			motorwayMap.createReadOnlyTransaction();
+			motorwayMap.newReadOnlyTransaction();
 		GraphIO.saveGraphToFile(FILENAME, motorwayMap,
 				new ProgressFunctionImpl());
 	}
@@ -182,7 +182,7 @@ public class BenchmarkTests {
 			throws CommitFailedException, GraphIOException,
 			InterruptedException {
 		addGraphElementsWithTransactionSupport();
-		motorwayMap.createReadOnlyTransaction();
+		motorwayMap.newReadOnlyTransaction();
 		internalIterateVertices();
 	}
 
@@ -206,7 +206,7 @@ public class BenchmarkTests {
 				Thread thread = new Thread(group, "Thread-" + i) {
 					@Override
 					public void run() {
-						motorwayMap.createTransaction();
+						motorwayMap.newTransaction();
 						internaladdGraphElements();
 						try {
 							motorwayMap.commit();
