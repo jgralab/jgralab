@@ -70,9 +70,9 @@ public class RecordCodeGenerator extends CodeGenerator {
 	protected CodeBlock createBody(boolean createClass) {
 		CodeList code = new CodeList();
 		code.add(createRecordComponents(createClass));
-		// getter-methods for fields
+		// getter-methods for components
 		code.add(createGetterMethods(createClass));
-		// setter-methods for fields
+		// setter-methods for components
 		code.add(createSetterMethods(createClass));
 		code.add(createFieldConstructor(createClass));
 		code.add(createMapConstructor(createClass));
@@ -148,6 +148,7 @@ public class RecordCodeGenerator extends CodeGenerator {
 			} else {
 				getterCode.add("public #type# #isOrGet#_#name#() {");
 				if (transactionSupport)
+					// TODO think about if this is still necessary
 					getterCode.add("\tif(versionedRecord == null)");
 				getterCode.add("\t\treturn _#name#;");
 				if (transactionSupport) {
@@ -196,6 +197,7 @@ public class RecordCodeGenerator extends CodeGenerator {
 			else {
 				setterCode.add("public void #setter# {");
 				if (transactionSupport)
+					// TODO think about this is still necessary?!
 					setterCode.add("\tif(versionedRecord == null)");
 				setterCode.add("\t\tthis._#name# = (#ctype#) _#name#;");
 				if (transactionSupport) {
@@ -497,7 +499,8 @@ public class RecordCodeGenerator extends CodeGenerator {
 			code
 					.addNoIndent(new CodeSnippet(
 							true,
-							"public void setVersionedRecord(VersionedJGraLabCloneableImpl<#simpleImplClassName#> versionedRecord) {",
+							// TODO check if it needs to be public?
+							"protected void setVersionedRecord(VersionedJGraLabCloneableImpl<#simpleImplClassName#> versionedRecord) {",
 							"\tthis.versionedRecord = versionedRecord;",
 							"\tgraph = versionedRecord.getGraph();", "}"));
 		}
