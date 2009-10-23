@@ -763,7 +763,7 @@ public class TransactionImplTest {
 		c1Impl.set_testList(new ArrayList<TestRecord>());
 		c1Impl.set_testMap(new HashMap<String, String>());
 		c1Impl.set_testSet(new HashSet<String>());
-		c1Impl.set_testRecord(new TestRecord("test", new ArrayList<String>(),
+		c1Impl.set_testRecord(motorwayMap.createTestRecord("test", new ArrayList<String>(),
 				new HashSet<String>(), 2, 2D, 2L, false));
 		Map<AttributedElement, Set<VersionedDataObject<?>>> changedAttributesMap = new HashMap<AttributedElement, Set<VersionedDataObject<?>>>();
 		changedAttributesMap.put(c1, c1Impl.attributes());
