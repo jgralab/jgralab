@@ -61,7 +61,7 @@ public class RecordCodeGenerator extends CodeGenerator {
 		rootBlock.setVariable("simpleImplClassName", recordDomain
 				.getSimpleName()
 				+ "Impl");
-		// TODO changed - false to true
+		// one abstract class and two implementation classes need to be generated
 		rootBlock.setVariable("isClassOnly", "false");
 		this.recordDomain = recordDomain;
 	}
@@ -69,29 +69,19 @@ public class RecordCodeGenerator extends CodeGenerator {
 	@Override
 	protected CodeBlock createBody(boolean createClass) {
 		CodeList code = new CodeList();
-		// TODO changed
 		code.add(createRecordComponents(createClass));
 		// getter-methods for fields
-		// TODO changed
 		code.add(createGetterMethods(createClass));
 		// setter-methods for fields
-		// TODO changed
 		code.add(createSetterMethods(createClass));
-		// TODO changed
 		code.add(createFieldConstructor(createClass));
-		// TODO changed
 		code.add(createMapConstructor(createClass));
-		// TODO changed
 		code.add(createToStringMethod(createClass));
-		// TODO changed
 		code.add(createReadComponentsMethod(createClass));
-		// TODO changed
 		code.add(createWriteComponentsMethod(createClass));
 		// needed for transaction support
-		// TODO changed
 		code.add(createSetVersionedRecordMethod(createClass));
 		// clone()-method for record
-		// TODO changed
 		code.add(createCloneMethod(createClass));
 		return code;
 	}
@@ -101,15 +91,15 @@ public class RecordCodeGenerator extends CodeGenerator {
 		// return new CodeSnippet(true, "public class #simpleClassName# {");
 		if (transactionSupport)
 			addImports(
-					"de.uni_koblenz.jgralab.trans.JGraLabCloneable",
-					"de.uni_koblenz.jgralab.impl.trans.VersionedJGraLabCloneableImpl",
-					"de.uni_koblenz.jgralab.Graph");
+					"#jgTransPackage#.JGraLabCloneable",
+					"#jgImplTransPackage#.VersionedJGraLabCloneableImpl",
+					"#jgPackage#.Graph");
 		CodeSnippet code = null;
 		if (createClass) {
 			addImports(schemaRootPackageName + ".#simpleClassName#");
 			if (transactionSupport) {
 				code = new CodeSnippet(true,
-						"public class #simpleImplClassName# extends #simpleClassName#" 
+						"public class #simpleImplClassName# extends #simpleClassName#"
 								+ " implements JGraLabCloneable" + " {");
 				code
 						.add("\tprivate VersionedJGraLabCloneableImpl<#simpleImplClassName#> versionedRecord;");
@@ -118,12 +108,8 @@ public class RecordCodeGenerator extends CodeGenerator {
 				code = new CodeSnippet(true,
 						"public class #simpleImplClassName# extends #simpleClassName# {");
 		} else {
-			// TODO interface or abstract class
-			// code = new CodeSnippet(true, "public interface #simpleClassName#
-			// "
-			// + "implements JGraLabCloneable" + " {");
+			// abstract class (or better use interface?)
 			code = new CodeSnippet(true,
-					// TODO abstract
 					"public abstract class #simpleClassName# " + " {");
 		}
 		return code;
@@ -133,8 +119,6 @@ public class RecordCodeGenerator extends CodeGenerator {
 	 * Getter-methods for fields needed for transaction support.
 	 * 
 	 * @return
-	 * 
-	 * TODO changed
 	 */
 	protected CodeBlock createGetterMethods(boolean createClass) {
 		CodeList code = new CodeList();
@@ -158,9 +142,8 @@ public class RecordCodeGenerator extends CodeGenerator {
 			if (rdc.getValue().isComposite()) {
 				getterCode.add("@SuppressWarnings(\"unchecked\")");
 			}
-			// TODO changed
 			if (!createClass) {
-				// TODO abstract
+				// abstract class (or better use interface?)
 				getterCode.add("public abstract #type# #isOrGet#_#name#();");
 			} else {
 				getterCode.add("public #type# #isOrGet#_#name#() {");
@@ -207,7 +190,6 @@ public class RecordCodeGenerator extends CodeGenerator {
 				setterCode.setVariable("ctype", rdc.getValue()
 						.getJavaAttributeImplementationTypeName(
 								schemaRootPackageName));
-			// TODO changed
 			if (!createClass)
 				// abstract
 				setterCode.add("public abstract void #setter#;");
@@ -229,7 +211,6 @@ public class RecordCodeGenerator extends CodeGenerator {
 		return code;
 	}
 
-	// TODO changed
 	private CodeBlock createFieldConstructor(boolean createClass) {
 		CodeList code = new CodeList();
 		if (createClass) {
@@ -252,18 +233,21 @@ public class RecordCodeGenerator extends CodeGenerator {
 				if ((rdc.getValue() instanceof CollectionDomainImpl)
 						|| (rdc.getValue() instanceof MapDomainImpl)) {
 					String attrImplTypeName = null;
-					// TODO changed
-					if (transactionSupport)
+					if (transactionSupport) {
 						attrImplTypeName = rdc
 								.getValue()
 								.getTransactionJavaAttributeImplementationTypeName(
 										schemaRootPackageName);
-					else
-						attrImplTypeName = rdc.getValue()
-								.getJavaAttributeImplementationTypeName(
-										schemaRootPackageName);
-					assign = new CodeSnippet("this._#name# = new "
-							+ attrImplTypeName + "(_#name#);");
+						assign = new CodeSnippet("this._#name# = new "
+								+ attrImplTypeName + "(_#name#);");
+					} else {
+						/*
+						 * attrImplTypeName = rdc.getValue()
+						 * .getJavaAttributeImplementationTypeName(
+						 * schemaRootPackageName);
+						 */
+						assign = new CodeSnippet("this._#name# = _#name#;");
+					}
 				} else {
 					assign = new CodeSnippet("this._#name# = _#name#;");
 				}
@@ -288,7 +272,6 @@ public class RecordCodeGenerator extends CodeGenerator {
 					break;
 				}
 			}
-			// TODO changed
 			code
 					.addNoIndent(new CodeSnippet(false,
 							"public #simpleImplClassName#(java.util.Map<String, Object> fields) {"));
@@ -315,7 +298,7 @@ public class RecordCodeGenerator extends CodeGenerator {
 
 	private CodeBlock createReadComponentsMethod(boolean createClass) {
 		CodeList code = new CodeList();
-		// TODO interface or abstract class
+		// abstract class (or better use interface?)
 		if (createClass) {
 			addImports("#jgPackage#.GraphIO", "#jgPackage#.GraphIOException");
 			code
@@ -324,14 +307,14 @@ public class RecordCodeGenerator extends CodeGenerator {
 			code.add(new CodeSnippet("io.match(\"(\");"));
 			for (Entry<String, Domain> c : recordDomain.getComponents()
 					.entrySet()) {
-				// TODO changed
 				if (transactionSupport)
 					code.add(c.getValue().getTransactionReadMethod(
 							schemaRootPackageName, "tmp_" + c.getKey(), "io"));
-				/*else
-					code.add(c.getValue().getReadMethod(schemaRootPackageName,
-							"tmp_" + c.getKey(), "io"));*/
-				// TODO changed
+				/*
+				 * else
+				 * code.add(c.getValue().getReadMethod(schemaRootPackageName,
+				 * "tmp_" + c.getKey(), "io"));
+				 */
 				if (transactionSupport)
 					code
 							.add(new CodeSnippet(
@@ -344,8 +327,8 @@ public class RecordCodeGenerator extends CodeGenerator {
 															schemaRootPackageName)
 											+ ") tmp_" + c.getKey() + ";"));
 				else
-					code.add(c.getValue().getReadMethod(
-							schemaRootPackageName, "_" + c.getKey(), "io"));
+					code.add(c.getValue().getReadMethod(schemaRootPackageName,
+							"_" + c.getKey(), "io"));
 			}
 			code.add(new CodeSnippet("io.match(\")\");"));
 			code.addNoIndent(new CodeSnippet("}"));
@@ -355,7 +338,7 @@ public class RecordCodeGenerator extends CodeGenerator {
 
 	private CodeBlock createWriteComponentsMethod(boolean createClass) {
 		CodeList code = new CodeList();
-		// TODO interface or abstract class
+		// abstract class (or better use interface?)
 		if (!createClass) {
 			addImports("#jgPackage#.GraphIO", "#jgPackage#.GraphIOException",
 					"java.io.IOException");
@@ -368,9 +351,13 @@ public class RecordCodeGenerator extends CodeGenerator {
 
 			for (Entry<String, Domain> c : recordDomain.getComponents()
 					.entrySet()) {
+				//code.setVariable("isOrGet",
+				//	c.getValue() instanceof BooleanDomain ? "is" : "get");
+				String isOrGet = c.getValue() instanceof BooleanDomain ? "is" : "get";
 				code.add(c.getValue().getWriteMethod(schemaRootPackageName,
-				// TODO changed
-						"get_" + c.getKey() + "()", "io"));
+						isOrGet + "_" + c.getKey() + "()", "io"));
+				//code.add(c.getValue().getWriteMethod(schemaRootPackageName,
+					//	"#isOrGet#_" + c.getKey() + "()", "io"));
 			}
 
 			code.addNoIndent(new CodeSnippet("\tio.write(\")\");", "}"));
@@ -378,7 +365,6 @@ public class RecordCodeGenerator extends CodeGenerator {
 		return code;
 	}
 
-	// TODO changed
 	private CodeBlock createRecordComponents(boolean createClass) {
 		CodeList code = new CodeList();
 		if (createClass) {
@@ -386,7 +372,6 @@ public class RecordCodeGenerator extends CodeGenerator {
 					.entrySet()) {
 				Domain dom = rdc.getValue();
 				String fieldType = null;
-				// TODO changed
 				if (transactionSupport)
 					fieldType = dom
 							.getTransactionJavaAttributeImplementationTypeName(schemaRootPackageName);
@@ -423,21 +408,24 @@ public class RecordCodeGenerator extends CodeGenerator {
 	 */
 	private CodeBlock createToStringMethod(boolean createClass) {
 		CodeList code = new CodeList();
-		// TODO interface or abstract class
+		// abstract class (or better use interface?)
 		if (!createClass) {
 			code.addNoIndent(new CodeSnippet(true,
 					"public String toString() {",
 					"\tStringBuilder sb = new StringBuilder();"));
 			String delim = "[";
-			for (String key : recordDomain.getComponents().keySet()) {
+			for (Entry<String, Domain> c : recordDomain.getComponents()
+					.entrySet()) {
 				CodeSnippet s = new CodeSnippet("sb.append(\"#delim#\");",
 						"sb.append(\"#key#\");", "sb.append(\"=\");",
-						// TODO changed
-						"sb.append(get_#key#()#toString#);");
-
-				Domain domain = recordDomain.getComponents().get(key);
+						"sb.append(#isOrGet#_#key#()#toString#);");
+				Domain domain = c.getValue();
+				s
+						.setVariable("isOrGet", domain.getJavaClassName(
+								schemaRootPackageName).equals("Boolean") ? "is"
+								: "get");
 				s.setVariable("delim", delim);
-				s.setVariable("key", key);
+				s.setVariable("key", c.getKey());
 				s.setVariable("toString", domain.isComposite() ? ".toString()"
 						: "");
 				code.add(s);
@@ -454,7 +442,6 @@ public class RecordCodeGenerator extends CodeGenerator {
 	 * 
 	 * @return
 	 */
-	// TODO changed
 	private CodeBlock createCloneMethod(boolean createClass) {
 		CodeList code = new CodeList();
 		if (transactionSupport) {
@@ -473,7 +460,7 @@ public class RecordCodeGenerator extends CodeGenerator {
 			StringBuilder constructorFields = new StringBuilder();
 			int count = 0;
 			int size = recordDomain.getComponents().entrySet().size();
-			// TODO use construct in own code!!!
+			// TODO use construct in separate code!!!
 			for (Entry<String, Domain> rdc : recordDomain.getComponents()
 					.entrySet()) {
 				if (rdc.getValue().isComposite()) {
@@ -504,7 +491,6 @@ public class RecordCodeGenerator extends CodeGenerator {
 	 * 
 	 * @return
 	 */
-	// TODO changed
 	private CodeBlock createSetVersionedRecordMethod(boolean createClass) {
 		CodeList code = new CodeList();
 		if (transactionSupport) {

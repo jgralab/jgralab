@@ -227,7 +227,7 @@ public class ReversedEdgeCodeGenerator extends AttributedElementCodeGenerator {
 	}
 
 	@Override
-	protected CodeBlock createFields(Set<Attribute> attrSet) {
+	protected CodeBlock createFields(Set<Attribute> attrSet, boolean createClass) {
 		return null;
 	}
 

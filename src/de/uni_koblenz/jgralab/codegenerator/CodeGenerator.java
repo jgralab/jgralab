@@ -89,6 +89,7 @@ public abstract class CodeGenerator {
 		this.transactionSupport = transactionSupport;
 		rootBlock = new CodeList(null);
 		rootBlock.setVariable("jgPackage", "de.uni_koblenz.jgralab");
+		rootBlock.setVariable("jgTransPackage", "de.uni_koblenz.jgralab.trans");
 		rootBlock.setVariable("jgImplPackage", "de.uni_koblenz.jgralab.impl");
 		rootBlock.setVariable("jgImplStdPackage",
 				"de.uni_koblenz.jgralab.impl.std");
