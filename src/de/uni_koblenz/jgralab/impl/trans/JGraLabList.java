@@ -13,7 +13,7 @@ import de.uni_koblenz.jgralab.trans.JGraLabCloneable;
  * Own implementation class for attributes of type
  * <code>java.util.List<E></code>.
  * 
- * @author JosÃ© Monte(monte@uni-koblenz.de)
+ * @author José Monte(monte@uni-koblenz.de)
  * 
  * @param <E>
  * 
@@ -31,7 +31,7 @@ public class JGraLabList<E> extends ArrayList<E> implements JGraLabCloneable {
 	/**
 	 * 
 	 */
-	public JGraLabList() {
+	/*protected*/ public JGraLabList() {
 		super();
 		versionedList = null;
 		graph = null;
@@ -42,20 +42,24 @@ public class JGraLabList<E> extends ArrayList<E> implements JGraLabCloneable {
 	 * 
 	 * @param initialSize
 	 */
-	public JGraLabList(int initialSize) {
+	/*protected*/ public JGraLabList(int initialSize) {
 		super(initialSize);
 		versionedList = null;
 		graph = null;
 	}
-
-	/**
-	 * 
-	 */
-	public JGraLabList(List<E> list) {
-		super(list);
+	
+	@SuppressWarnings("unchecked")
+	/*protected*/ public JGraLabList(Collection/*<E>*/ collection) {
+		super(collection);
 		versionedList = null;
 		graph = null;
 	}
+
+	/*public JGraLabList(List<E> list) {
+		super(list);
+		versionedList = null;
+		graph = null;
+	}*/
 
 	/**
 	 * 

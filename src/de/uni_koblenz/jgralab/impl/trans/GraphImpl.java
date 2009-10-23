@@ -1,6 +1,7 @@
 package de.uni_koblenz.jgralab.impl.trans;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -1544,5 +1545,49 @@ public abstract class GraphImpl extends de.uni_koblenz.jgralab.impl.GraphImpl {
 	@Override
 	public final boolean hasTransactionSupport() {
 		return true;
+	}
+	
+	public <T> List<T> createList(Class<T> type) {
+		return new JGraLabList<T>();
+	}
+
+	public <T> List<T> createList(Class<T> type, Collection<? extends T> collection) {
+		return new JGraLabList<T>(collection);
+	}
+
+	public <T> List<T> createList(Class<T> type, int initialCapacity) {
+		return new JGraLabList<T>(initialCapacity);
+	}
+
+	public <T> Set<T> createSet(Class<T> type) {
+		return new JGraLabSet<T>();
+	}
+
+	public <T> Set<T> createSet(Class<T> type, Collection<? extends T> collection) {
+		return new JGraLabSet<T>(collection);
+	}
+
+	public <T> Set<T> createSet(Class<T> type, int initialCapacity) {
+		return new JGraLabSet<T>(initialCapacity);
+	}
+
+	public <T> Set<T> createSet(Class<T> type, int initialCapacity, float loadFactor) {
+		return new JGraLabSet<T>(initialCapacity, loadFactor);
+	}
+
+	public <K, V> Map<K, V> createMap(Class<K> key, Class<V> value) {
+		return new JGraLabMap<K, V>();
+	}
+	
+	public <K, V> Map<K, V> createMap(Class<K> key, Class<V> value, Map<? extends K,? extends V> map) {
+		return new JGraLabMap<K, V>(map);
+	}
+	
+	public <K, V> Map<K, V> createMap(Class<K> key, Class<V> value, int initialCapacity) {
+		return new JGraLabMap<K, V>(initialCapacity);
+	}
+
+	public <K, V> Map<K, V> createMap(Class<K> key, Class<V> value, int initialCapacity, float loadFactor) {
+		return new JGraLabMap<K, V>(initialCapacity, loadFactor);
 	}
 }

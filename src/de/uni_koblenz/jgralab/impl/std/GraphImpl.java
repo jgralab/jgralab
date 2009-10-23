@@ -1,6 +1,12 @@
 package de.uni_koblenz.jgralab.impl.std;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.Vertex;
@@ -315,5 +321,54 @@ public abstract class GraphImpl extends de.uni_koblenz.jgralab.impl.GraphImpl {
 	@Override
 	public final boolean hasTransactionSupport() {
 		return false;
+	}
+
+	public <T> List<T> createList(Class<T> cls) {
+		return new ArrayList<T>();
+	}
+
+	public <T> List<T> createList(Class<T> cls,
+			Collection<? extends T> collection) {
+		return new ArrayList<T>(collection);
+	}
+
+	public <T> List<T> createList(Class<T> cls, int initialCapacity) {
+		return new ArrayList<T>(initialCapacity);
+	}
+
+	public <T> Set<T> createSet(Class<T> cls) {
+		return new HashSet<T>();
+	}
+
+	public <T> Set<T> createSet(Class<T> cls, Collection<? extends T> collection) {
+		return new HashSet<T>(collection);
+	}
+
+	public <T> Set<T> createSet(Class<T> cls, int initialCapacity) {
+		return new HashSet<T>(initialCapacity);
+	}
+
+	public <T> Set<T> createSet(Class<T> cls, int initialCapacity,
+			float loadFactor) {
+		return new HashSet<T>(initialCapacity, loadFactor);
+	}
+
+	public <K, V> Map<K, V> createMap(Class<K> key, Class<V> value) {
+		return new HashMap<K, V>();
+	}
+
+	public <K, V> Map<K, V> createMap(Class<K> key, Class<V> value,
+			Map<? extends K, ? extends V> map) {
+		return new HashMap<K, V>(map);
+	}
+
+	public <K, V> Map<K, V> createMap(Class<K> key, Class<V> value,
+			int initialCapacity) {
+		return new HashMap<K, V>(initialCapacity);
+	}
+
+	public <K, V> Map<K, V> createMap(Class<K> key, Class<V> value,
+			int initialCapacity, float loadFactor) {
+		return new HashMap<K, V>(initialCapacity, loadFactor);
 	}
 }
