@@ -199,9 +199,16 @@ public final class RecordDomainImpl extends CompositeDomainImpl implements
 			String variableName, String graphIoVariableName) {
 		code.add("#init#");
 		code.add("if (" + graphIoVariableName + ".isNextToken(\"(\")) {");
-		code.add("\t" + "#name# = new "
-				+ getJavaAttributeImplementationTypeName(schemaPrefix) + "("
-				+ graphIoVariableName + ");");
+		/*
+		 * code.add("\t" + "#name# = new " +
+		 * getJavaAttributeImplementationTypeName(schemaPrefix) + "(" +
+		 * graphIoVariableName + ");");
+		 */
+		// to be able to the create<Record>-method a cast of the graph-instance
+		// is needed
+		code.add("\t" + "#name# = ((" + schemaPrefix + "."
+				+ parentPackage.getSchema().getGraphClass().getSimpleName()
+				+ ")" + "graph).create" + getSimpleName() + "(io);");
 		code.add("} else if (" + graphIoVariableName
 				+ ".isNextToken(GraphIO.NULL_LITERAL) || "
 				+ graphIoVariableName
@@ -252,7 +259,9 @@ public final class RecordDomainImpl extends CompositeDomainImpl implements
 	@Override
 	public String getTransactionJavaAttributeImplementationTypeName(
 			String schemaRootPackagePrefix) {
-		return getJavaAttributeImplementationTypeName(schemaRootPackagePrefix);
+		return getJavaAttributeImplementationTypeName(schemaRootPackagePrefix
+				+ ".impl.trans")
+				+ "Impl";
 	}
 
 	@Override
