@@ -32,11 +32,11 @@ import de.uni_koblenz.jgralab.schema.Attribute;
 import de.uni_koblenz.jgralab.schema.AttributedElementClass;
 import de.uni_koblenz.jgralab.schema.Domain;
 import de.uni_koblenz.jgralab.schema.EnumDomain;
+//import de.uni_koblenz.jgralab.schema.GraphClass;
+import de.uni_koblenz.jgralab.schema.ListDomain;
+import de.uni_koblenz.jgralab.schema.MapDomain;
 import de.uni_koblenz.jgralab.schema.RecordDomain;
-import de.uni_koblenz.jgralab.schema.impl.ListDomainImpl;
-import de.uni_koblenz.jgralab.schema.impl.MapDomainImpl;
-import de.uni_koblenz.jgralab.schema.impl.RecordDomainImpl;
-import de.uni_koblenz.jgralab.schema.impl.SetDomainImpl;
+import de.uni_koblenz.jgralab.schema.SetDomain;
 
 /**
  * TODO add comment
@@ -104,7 +104,12 @@ public class AttributedElementCodeGenerator extends CodeGenerator {
 	protected CodeBlock createBody(boolean createClass) {
 		CodeList code = new CodeList();
 		if (createClass) {
-			code.add(createFields(aec.getAttributeList()));
+			/*
+			 * if (!(aec instanceof GraphClass))
+			 * addImports("#schemaPackageName#." +
+			 * aec.getSchema().getGraphClass().getSimpleName());
+			 */
+			code.add(createFields(aec.getAttributeList(), createClass));
 			code.add(createConstructor());
 			code.add(createGetAttributedElementClassMethod());
 			code.add(createGetM1ClassMethod());
@@ -133,6 +138,10 @@ public class AttributedElementCodeGenerator extends CodeGenerator {
 	@Override
 	protected CodeBlock createHeader(boolean createClass) {
 		CodeSnippet code = new CodeSnippet(true);
+		/*
+		 * if (createClass) addImports("#schemaPackageName#." +
+		 * aec.getSchema().getGraphClass().getSimpleName());
+		 */
 		code.setVariable("classOrInterface", createClass ? " class"
 				: " interface");
 		code.setVariable("abstract",
@@ -293,10 +302,10 @@ public class AttributedElementCodeGenerator extends CodeGenerator {
 		return code;
 	}
 
-	protected CodeBlock createFields(Set<Attribute> attrSet) {
+	protected CodeBlock createFields(Set<Attribute> attrSet, boolean createClass) {
 		CodeList code = new CodeList();
 		for (Attribute attr : attrSet) {
-			code.addNoIndent(createField(attr));
+			code.addNoIndent(createField(attr, createClass));
 		}
 		return code;
 	}
@@ -373,15 +382,24 @@ public class AttributedElementCodeGenerator extends CodeGenerator {
 				code.add("public void set_#name#(#type# _#name#) {",
 						"\tthis._#name# = _#name#;", "\tgraphModified();", "}");
 			} else {
+				Domain domain = attr.getDomain();
 				// setter for transaction support
 				code.setVariable("ttype", attr.getDomain()
 						.getTransactionJavaAttributeImplementationTypeName(
 								schemaRootPackageName));
-				code.setVariable("initLoading", "new "
-						+ attr.getDomain().getVersionedClass(
-								schemaRootPackageName)
-						// TODO check: changed from myGraph to this!!!
-						+ "(this, _#name#, \"#name#\");");
+				if (!(domain instanceof RecordDomain))
+					code.setVariable("initLoading", "new "
+							+ attr.getDomain().getVersionedClass(
+									schemaRootPackageName)
+							// TODO check: changed from myGraph to this!!!
+							+ "(this, _#name#, \"#name#\");");
+				else
+					code.setVariable("initLoading", "new "
+							+ attr.getDomain().getVersionedClass(
+									schemaRootPackageName)
+							// TODO check: changed from myGraph to this!!!
+							+ "(this, (" + attr.getDomain().getSimpleName()
+							+ "Impl)" + " _#name#, \"#name#\");");
 				code.setVariable("init", "new "
 						+ attr.getDomain().getVersionedClass(
 						// TODO check: changed from myGraph to this!!!
@@ -390,10 +408,8 @@ public class AttributedElementCodeGenerator extends CodeGenerator {
 				addCheckValidityCode(code);
 
 				setGraphReferenceVariable(code);
-
-				Domain domain = attr.getDomain();
 				if (domain.isComposite()) {
-					if (!(domain instanceof RecordDomainImpl)) {
+					if (!(domain instanceof RecordDomain)) {
 						code.setVariable("tmpname", "tmp_" + attr.getName());
 						code.add("\t#ttype# #tmpname# = null;");
 						code.add("\tif(_#name# != null)");
@@ -414,28 +430,39 @@ public class AttributedElementCodeGenerator extends CodeGenerator {
 
 				if (domain.isComposite()) {
 					code.add("\tif(#tmpname# != null)");
-					if (domain instanceof ListDomainImpl) {
+					if (domain instanceof ListDomain) {
 						code
 								.add("\t\t#tmpname#.setVersionedList(this._#name#);");
 					}
-					if (domain instanceof SetDomainImpl) {
+					if (domain instanceof SetDomain) {
 						code
 								.add("\t\t#tmpname#.setVersionedSet(this._#name#);");
 					}
-					if (domain instanceof MapDomainImpl) {
+					if (domain instanceof MapDomain) {
 						code
 								.add("\t\t#tmpname#.setVersionedMap(this._#name#);");
 					}
-					if (domain instanceof RecordDomainImpl) {
+					if (domain instanceof RecordDomain) {
 						code
-								.add("\t\t_#name#.setVersionedRecord(this._#name#);");
+								.add("\t\t(("
+										+ attr.getDomain().getSimpleName()
+										+ "Impl) _#name#).setVersionedRecord(this._#name#);");
 					}
 				}
-				code
-						.add(
-								"\tthis._#name#.setValidValue(#tmpname#, #graphreference#getCurrentTransaction());",
-								"\tattributeChanged(this._#name#);",
-								"\tgraphModified();", "}");
+				if (domain instanceof RecordDomain)
+					code
+							.add(
+									"\tthis._#name#.setValidValue(("
+											+ attr.getDomain().getSimpleName()
+											+ "Impl) #tmpname#, #graphreference#getCurrentTransaction());",
+									"\tattributeChanged(this._#name#);",
+									"\tgraphModified();", "}");
+				else
+					code
+							.add(
+									"\tthis._#name#.setValidValue(#tmpname#, #graphreference#getCurrentTransaction());",
+									"\tattributeChanged(this._#name#);",
+									"\tgraphModified();", "}");
 			}
 		} else {
 			code.add("public void set_#name#(#type# _#name#);");
@@ -443,8 +470,13 @@ public class AttributedElementCodeGenerator extends CodeGenerator {
 		return code;
 	}
 
-	protected CodeBlock createField(Attribute attr) {
+	protected CodeBlock createField(Attribute attr, boolean createClass) {
 		CodeSnippet code = new CodeSnippet(true, "protected #type# _#name#;");
+		/*
+		 * if (attr.getDomain() instanceof RecordDomain && createClass && !(aec
+		 * instanceof GraphClass)) addImports("#schemaPackageName#." +
+		 * aec.getSchema().getGraphClass().getSimpleName());
+		 */
 		code.setVariable("name", attr.getName());
 		if (!transactionSupport) {
 			code.setVariable("type", attr.getDomain()
@@ -470,6 +502,11 @@ public class AttributedElementCodeGenerator extends CodeGenerator {
 
 		if (attrSet != null) {
 			for (Attribute attribute : attrSet) {
+				/*
+				 * if (attribute.getDomain() instanceof RecordDomain && !(aec
+				 * instanceof GraphClass)) addImports("#schemaPackageName#." +
+				 * aec.getSchema().getGraphClass().getSimpleName());
+				 */
 				CodeList a = new CodeList();
 				a.setVariable("variableName", attribute.getName());
 				a.setVariable("setterName", "set_" + attribute.getName());
@@ -507,7 +544,7 @@ public class AttributedElementCodeGenerator extends CodeGenerator {
 	}
 
 	/**
-	 * TODO: Check if the really the persistent values should be written when
+	 * TODO: Check if really the persistent values should be written when
 	 * transaction support is enabled
 	 * 
 	 * @param attrSet
@@ -564,6 +601,11 @@ public class AttributedElementCodeGenerator extends CodeGenerator {
 						"public void readAttributeValues(GraphIO io) throws GraphIOException {"));
 		if (attrSet != null) {
 			for (Attribute attribute : attrSet) {
+				/*
+				 * if (attribute.getDomain() instanceof RecordDomain && !(aec
+				 * instanceof GraphClass)) addImports("#schemaPackageName#." +
+				 * aec.getSchema().getGraphClass().getSimpleName());
+				 */
 				CodeSnippet snippet = new CodeSnippet();
 				snippet.setVariable("setterName", "set_" + attribute.getName());
 				snippet.setVariable("variableName", attribute.getName());
