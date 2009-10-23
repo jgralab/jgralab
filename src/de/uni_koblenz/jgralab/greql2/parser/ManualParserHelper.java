@@ -474,7 +474,8 @@ public abstract class ManualParserHelper {
 	protected final List<SourcePosition> createSourcePositionList(int length,
 			int offset) {
 		List<SourcePosition> list = new ArrayList<SourcePosition>();
-		list.add(new SourcePosition(length, offset));
+		//list.add(new SourcePosition(length, offset));
+		list.add(graph.createSourcePosition(length, offset));
 		return list;
 	}
 
