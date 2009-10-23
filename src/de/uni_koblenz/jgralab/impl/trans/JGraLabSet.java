@@ -3,7 +3,7 @@ package de.uni_koblenz.jgralab.impl.trans;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.Set;
+//import java.util.Set;
 
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.trans.JGraLabCloneable;
@@ -24,22 +24,27 @@ public class JGraLabSet<E> extends HashSet<E> implements JGraLabCloneable {
 	/**
 	 * 
 	 */
-	public JGraLabSet() {
+	/*protected*/ public JGraLabSet() {
 		super();
 	}
 
+	@SuppressWarnings("unchecked")
+	/*protected*/ public JGraLabSet(Collection/*<E>*/ set) {
+		super(set);
+	}
+	
 	/**
 	 * 
 	 */
-	public JGraLabSet(Set<E> set) {
+	/*public JGraLabSet(Set<E> set) {
 		super(set);
-	}
+	}*/
 
 	/**
 	 * 
 	 * @param initialSize
 	 */
-	public JGraLabSet(int initialSize) {
+	/*protected*/ public JGraLabSet(int initialSize) {
 		super(initialSize);
 	}
 
@@ -48,7 +53,7 @@ public class JGraLabSet<E> extends HashSet<E> implements JGraLabCloneable {
 	 * @param initialSize
 	 * @param loadFactor
 	 */
-	public JGraLabSet(int initialSize, float loadFactor) {
+	/*protected*/ public JGraLabSet(int initialSize, float loadFactor) {
 		super(initialSize, loadFactor);
 	}
 

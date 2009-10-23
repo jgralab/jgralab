@@ -26,7 +26,7 @@ public class JGraLabMap<K, V> extends HashMap<K, V> implements JGraLabCloneable 
 	/**
 	 * 
 	 */
-	public JGraLabMap() {
+	/*protected*/ public JGraLabMap() {
 		super();
 	}
 
@@ -34,7 +34,7 @@ public class JGraLabMap<K, V> extends HashMap<K, V> implements JGraLabCloneable 
 	 * 
 	 * @param initialSize
 	 */
-	public JGraLabMap(int initialSize) {
+	/*protected*/ public JGraLabMap(int initialSize) {
 		super(initialSize);
 	}
 
@@ -43,7 +43,7 @@ public class JGraLabMap<K, V> extends HashMap<K, V> implements JGraLabCloneable 
 	 * @param initialSize
 	 * @param loadFactor
 	 */
-	public JGraLabMap(int initialSize, float loadFactor) {
+	/*protected*/ public JGraLabMap(int initialSize, float loadFactor) {
 		super(initialSize, loadFactor);
 	}
 
@@ -51,7 +51,8 @@ public class JGraLabMap<K, V> extends HashMap<K, V> implements JGraLabCloneable 
 	 * 
 	 * @param map
 	 */
-	public JGraLabMap(Map<K, V> map) {
+	@SuppressWarnings("unchecked")
+	/*protected*/ public JGraLabMap(Map/*<K, V>*/ map) {
 		super(map);
 	}
 
