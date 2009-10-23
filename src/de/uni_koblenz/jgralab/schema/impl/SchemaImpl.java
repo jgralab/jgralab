@@ -416,9 +416,14 @@ public class SchemaImpl implements Schema {
 		// build records and enums
 		for (Domain domain : domains.values()) {
 			if (domain instanceof RecordDomain) {
+				// also generate an abstract class for Records
 				CodeGenerator rcode = new RecordCodeGenerator(
 						(RecordDomain) domain, packagePrefix,
-						GRAPH_IMPLEMENTATION_PACKAGE);
+						GRAPH_IMPLEMENTATION_PACKAGE, true);
+				javaSources.addAll(rcode.createJavaSources());
+				rcode = new RecordCodeGenerator(
+						(RecordDomain) domain, packagePrefix,
+						GRAPH_IMPLEMENTATION_PACKAGE, false);
 				javaSources.addAll(rcode.createJavaSources());
 			} else if (domain instanceof EnumDomain) {
 				CodeGenerator ecode = new EnumCodeGenerator(
@@ -527,9 +532,14 @@ public class SchemaImpl implements Schema {
 
 		for (Domain domain : domains.values()) {
 			if (domain instanceof RecordDomain) {
+				// also generate an abstract class for Records
 				CodeGenerator rcode = new RecordCodeGenerator(
 						(RecordDomain) domain, packagePrefix,
-						GRAPH_IMPLEMENTATION_PACKAGE);
+						GRAPH_IMPLEMENTATION_PACKAGE, true);
+				rcode.createFiles(pathPrefix);
+				rcode = new RecordCodeGenerator(
+						(RecordDomain) domain, packagePrefix,
+						GRAPH_IMPLEMENTATION_PACKAGE, false);
 				rcode.createFiles(pathPrefix);
 			} else if (domain instanceof EnumDomain) {
 				CodeGenerator ecode = new EnumCodeGenerator(
