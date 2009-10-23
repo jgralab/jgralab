@@ -115,7 +115,7 @@ public class GraphCodeGenerator extends AttributedElementCodeGenerator {
 				int count = 0;
 				for (String component : rd.getComponents().keySet()) {
 					parametersWithTypes += rd.getDomainOfComponent(component)
-							.getJavaClassName(schemaRootPackageName)
+							.getJavaAttributeImplementationTypeName(schemaRootPackageName)
 							+ " " + component;
 					parametersWithoutTypes += component;
 					count++;
@@ -148,7 +148,7 @@ public class GraphCodeGenerator extends AttributedElementCodeGenerator {
 				int count = 0;
 				for (String component : rd.getComponents().keySet()) {
 					parameters += rd.getDomainOfComponent(component)
-							.getJavaClassName(schemaRootPackageName)
+							.getJavaAttributeImplementationTypeName(schemaRootPackageName)
 							+ " " + component;
 					count++;
 					if (size != count)
