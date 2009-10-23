@@ -13,6 +13,6 @@
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="var" path="UKOISTHOME/common/lib/apache/commons/cli/commons-cli-1.2.jar"/>
 	<classpathentry kind="var" path="UKOISTHOME/common/lib/ist_utilities/ist_utilities.jar"/>
-	<classpathentry kind="lib" path="common/lib/junit/junit-4.7.jar"/>
+	<classpathentry kind="lib" path="UKOISTHOME/common/lib/junit/junit-4.7.jar"/>
 	<classpathentry kind="output" path="build/classes"/>
 </classpath>
