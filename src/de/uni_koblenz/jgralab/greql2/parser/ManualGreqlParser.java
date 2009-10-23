@@ -159,7 +159,9 @@ public class ManualGreqlParser extends ManualParserHelper {
 	protected final List<SourcePosition> createSourcePositionList(
 			int startOffset) {
 		List<SourcePosition> list = new ArrayList<SourcePosition>();
-		list.add(new SourcePosition(getCurrentOffset() - startOffset,
+		//list.add(new SourcePosition(getCurrentOffset() - startOffset,
+		//		startOffset));
+		list.add(graph.createSourcePosition(getCurrentOffset() - startOffset,
 				startOffset));
 		return list;
 	}
