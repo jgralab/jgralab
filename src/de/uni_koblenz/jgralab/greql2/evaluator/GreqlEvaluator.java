@@ -693,6 +693,9 @@ public class GreqlEvaluator {
 	}
 
 	public void normalizeQueryString() {
+		if (queryString == null) {
+			return;
+		}
 		// Delete one-line-comments (//).
 		queryString = queryString.replaceAll("//.*", "");
 		// Replace newlines with space.
