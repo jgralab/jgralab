@@ -27,13 +27,13 @@ package de.uni_koblenz.jgralab.codegenerator;
 import java.util.Map.Entry;
 
 import de.uni_koblenz.jgralab.schema.BooleanDomain;
+import de.uni_koblenz.jgralab.schema.CollectionDomain;
 import de.uni_koblenz.jgralab.schema.Domain;
 import de.uni_koblenz.jgralab.schema.EnumDomain;
 import de.uni_koblenz.jgralab.schema.IntegerDomain;
+import de.uni_koblenz.jgralab.schema.MapDomain;
 import de.uni_koblenz.jgralab.schema.RecordDomain;
 import de.uni_koblenz.jgralab.schema.StringDomain;
-import de.uni_koblenz.jgralab.schema.impl.CollectionDomainImpl;
-import de.uni_koblenz.jgralab.schema.impl.MapDomainImpl;
 
 /**
  * TODO add comment
@@ -93,7 +93,7 @@ public class RecordCodeGenerator extends CodeGenerator {
 		if (transactionSupport)
 			addImports("#jgTransPackage#.JGraLabCloneable",
 					"#jgImplTransPackage#.VersionedJGraLabCloneableImpl",
-					"#jgPackage#.Graph");
+					"#jgPackage#.Graph", "#jgPackage#.GraphException");
 		CodeSnippet code = null;
 		if (createClass) {
 			// TODO fix
@@ -153,18 +153,21 @@ public class RecordCodeGenerator extends CodeGenerator {
 				getterCode.add("public abstract #type# #isOrGet#_#name#();");
 			} else {
 				getterCode.add("public #type# #isOrGet#_#name#() {");
-				if (transactionSupport)
-					// TODO think about if this is still necessary
-					getterCode.add("\tif(versionedRecord == null)");
-				getterCode.add("\t\treturn _#name#;");
 				if (transactionSupport) {
-					if (rdc.getValue().isComposite()) {
-						getterCode
-								.add("\treturn (#ctype#) versionedRecord.getValidValue(graph.getCurrentTransaction())._#name#.clone();");
-					} else {
-						getterCode
-								.add("\treturn versionedRecord.getValidValue(graph.getCurrentTransaction())._#name#;");
-					}
+					getterCode.add("\tif(versionedRecord == null)");
+					getterCode
+							.add("\t\tthrow new GraphException(\"Versioning is not working for this Record.\");");
+				} else
+					getterCode.add("\t\treturn _#name#;");
+				if (transactionSupport) {
+					// if (rdc.getValue().isComposite()) {
+					// getterCode
+					// .add("\treturn (#ctype#)
+					// versionedRecord.getValidValue(graph.getCurrentTransaction())._#name#.clone();");
+					// } else {
+					getterCode
+							.add("\treturn versionedRecord.getValidValue(graph.getCurrentTransaction())._#name#.getValidValue(graph.getCurrentTransaction());");
+					// }
 				}
 				getterCode.add("}");
 			}
@@ -202,19 +205,51 @@ public class RecordCodeGenerator extends CodeGenerator {
 				setterCode.add("public abstract void #setter#;");
 			else {
 				setterCode.add("public void #setter# {");
-				if (transactionSupport)
-					// TODO think about this is still necessary?!
-					setterCode.add("\tif(versionedRecord == null)");
-				setterCode.add("\t\tthis._#name# = (#ctype#) _#name#;");
 				if (transactionSupport) {
+					setterCode.add("\tif(versionedRecord == null)");
 					setterCode
-							.add("\tversionedRecord.setValidValue(this, graph.getCurrentTransaction());");
+							.add("\t\tthrow new GraphException(\"Versioning is not working for this Record.\");");
+				} else
+					setterCode.add("\t\tthis._#name# = (#ctype#) _#name#;");
+				if (transactionSupport) {
 					if (rdc.getValue().isComposite())
 						setterCode
-								.add("\tversionedRecord.getValidValue(graph.getCurrentTransaction())._#name# = new #ctype#(_#name#);");
-					else
+								.add("\tversionedRecord.setValidValue(this, graph.getCurrentTransaction());");
+					// if (rdc.getValue().isComposite())
+					// setterCode
+					// .add("\tversionedRecord.getValidValue(graph.getCurrentTransaction())._#name#
+					// = new #ctype#(_#name#);");
+					// else
+					// setterCode
+					// .add("\tversionedRecord.getValidValue(graph.getCurrentTransaction())._#name#
+					// = (#ctype#) _#name#;");
+					if (rdc.getValue() instanceof CollectionDomain
+							|| rdc.getValue() instanceof MapDomain) {
+						// TODO weitermachen
 						setterCode
-								.add("\tversionedRecord.getValidValue(graph.getCurrentTransaction())._#name# = (#ctype#) _#name#;");
+								.add("\t"
+										+ rdc.getValue().getTransactionJavaAttributeImplementationTypeName(
+												schemaRootPackageName)
+										+ " tmp_#name# = null;");
+						setterCode.add("\tif(!(_#name# instanceof "
+								+ rdc.getValue().getTransactionJavaClassName(
+										schemaRootPackageName) + "))");
+						setterCode
+								.add("\t\ttmp_#name# = new "
+										+ rdc
+												.getValue()
+												.getTransactionJavaAttributeImplementationTypeName(
+														schemaRootPackageName)
+										+ "(_#name#);");
+						setterCode.add("\telse");
+						setterCode.add("\t\ttmp_#name# = ("
+								+ rdc.getValue().getTransactionJavaAttributeImplementationTypeName(
+										schemaRootPackageName) + ") _#name#;");
+						setterCode
+								.add("\tversionedRecord.getValidValue(graph.getCurrentTransaction())._#name#.setValidValue(tmp_#name#, graph.getCurrentTransaction());");
+					} else
+						setterCode
+								.add("\tversionedRecord.getValidValue(graph.getCurrentTransaction())._#name#.setValidValue(_#name#, graph.getCurrentTransaction());");
 				}
 				setterCode.add("}");
 			}
@@ -242,27 +277,28 @@ public class RecordCodeGenerator extends CodeGenerator {
 				sb.append(rdc.getKey());
 
 				CodeBlock assign = null;
-				if ((rdc.getValue() instanceof CollectionDomainImpl)
-						|| (rdc.getValue() instanceof MapDomainImpl)) {
-					String attrImplTypeName = null;
-					if (transactionSupport) {
-						attrImplTypeName = rdc
-								.getValue()
-								.getTransactionJavaAttributeImplementationTypeName(
-										schemaRootPackageName);
-						assign = new CodeSnippet("this._#name# = new "
-								+ attrImplTypeName + "(_#name#);");
-					} else {
-						/*
-						 * attrImplTypeName = rdc.getValue()
-						 * .getJavaAttributeImplementationTypeName(
-						 * schemaRootPackageName);
-						 */
-						assign = new CodeSnippet("this._#name# = _#name#;");
-					}
+				// if ((rdc.getValue() instanceof CollectionDomainImpl)
+				// || (rdc.getValue() instanceof MapDomainImpl)) {
+				String attrImplTypeName = null;
+				if (transactionSupport) {
+					attrImplTypeName = rdc.getValue()
+							.getTransactionJavaAttributeImplementationTypeName(
+									schemaRootPackageName);
+					assign = new CodeSnippet("this._#name# = new "
+							+ rdc.getValue().getVersionedClass(
+									schemaRootPackageName) + "(("
+							+ attrImplTypeName + ") _#name#);");
 				} else {
+					/*
+					 * attrImplTypeName = rdc.getValue()
+					 * .getJavaAttributeImplementationTypeName(
+					 * schemaRootPackageName);
+					 */
 					assign = new CodeSnippet("this._#name# = _#name#;");
 				}
+				// } else {
+				// assign = new CodeSnippet("this._#name# = _#name#;");
+				// }
 				assign.setVariable("name", rdc.getKey());
 				code.add(assign);
 			}
@@ -291,10 +327,13 @@ public class RecordCodeGenerator extends CodeGenerator {
 					.entrySet()) {
 				CodeBlock assign = null;
 				if (transactionSupport)
-					assign = new CodeSnippet("this._#name# = ("
+					assign = new CodeSnippet("this._#name# = new "
+							+ rdc.getValue().getVersionedClass(
+									schemaRootPackageName)
+							+ "(("
 							+ rdc.getValue().getTransactionJavaClassName(
 									schemaRootPackageName)
-							+ ")fields.get(\"#name#\");");
+							+ ")fields.get(\"#name#\"));");
 				else
 					assign = new CodeSnippet("this._#name# = ("
 							+ rdc.getValue().getJavaClassName(
@@ -332,12 +371,15 @@ public class RecordCodeGenerator extends CodeGenerator {
 							.add(new CodeSnippet(
 									"_"
 											+ c.getKey()
-											+ "= ("
+											+ "= new "
+											+ c.getValue().getVersionedClass(
+													schemaRootPackageName)
+											+ "(("
 											+ c
 													.getValue()
 													.getTransactionJavaAttributeImplementationTypeName(
 															schemaRootPackageName)
-											+ ") tmp_" + c.getKey() + ";"));
+											+ ") tmp_" + c.getKey() + ");"));
 				else
 					code.add(c.getValue().getReadMethod(schemaRootPackageName,
 							"_" + c.getKey(), "io"));
@@ -386,8 +428,9 @@ public class RecordCodeGenerator extends CodeGenerator {
 				Domain dom = rdc.getValue();
 				String fieldType = null;
 				if (transactionSupport)
-					fieldType = dom
-							.getTransactionJavaAttributeImplementationTypeName(schemaRootPackageName);
+					// fieldType = dom
+					// .getTransactionJavaAttributeImplementationTypeName(schemaRootPackageName);
+					fieldType = dom.getVersionedClass(schemaRootPackageName);
 				else
 					fieldType = dom
 							.getJavaAttributeImplementationTypeName(schemaRootPackageName);
@@ -399,12 +442,17 @@ public class RecordCodeGenerator extends CodeGenerator {
 					s.setVariable("type", fieldType);
 					code.addNoIndent(s);
 				} else {
+					// CodeSnippet s = new CodeSnippet(true,
+					// "protected #type# _#field# =
+					// #ntype#.valueOf(#initValue#);");
 					CodeSnippet s = new CodeSnippet(true,
-							"protected #type# _#field# = #type#.valueOf(#initValue#);");
+							"protected #type# _#field#;");
 					// TODO check if it works
-					fieldType = dom.getJavaClassName(schemaRootPackageName);
+					// fieldType = dom.getJavaClassName(schemaRootPackageName);
 					s.setVariable("field", rdc.getKey());
 					s.setVariable("type", fieldType);
+					s.setVariable("ntype", dom
+							.getJavaClassName(schemaRootPackageName));
 					s.setVariable("initValue",
 							dom instanceof BooleanDomain ? "false"
 									: dom instanceof IntegerDomain ? "0"
@@ -483,9 +531,12 @@ public class RecordCodeGenerator extends CodeGenerator {
 											.getValue()
 											.getTransactionJavaAttributeImplementationTypeName(
 													schemaRootPackageName)
-									+ ") _" + rdc.getKey() + ".clone()");
+									+ ") _"
+									+ rdc.getKey()
+									+ ".getValidValue(graph.getCurrentTransaction()).clone()");
 				} else {
-					constructorFields.append("_" + rdc.getKey());
+					constructorFields.append("_" + rdc.getKey()
+							+ ".getValidValue(graph.getCurrentTransaction())");
 				}
 				if ((count + 1) != size) {
 					constructorFields.append(", ");
