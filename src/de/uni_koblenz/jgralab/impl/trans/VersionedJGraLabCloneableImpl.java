@@ -56,6 +56,10 @@ public class VersionedJGraLabCloneableImpl<E extends JGraLabCloneable> extends
 	public VersionedJGraLabCloneableImpl(AttributedElement attributedElement) {
 		super(attributedElement);
 	}
+	
+	public VersionedJGraLabCloneableImpl() {
+		super();
+	}
 
 	@SuppressWarnings("unchecked")
 	@Override

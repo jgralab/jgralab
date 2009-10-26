@@ -53,8 +53,10 @@ public class GraphCodeGenerator extends AttributedElementCodeGenerator {
 
 	@Override
 	protected CodeBlock createHeader(boolean createClass) {
-		/*addImports("#schemaPackageName#."
-				+ aec.getSchema().getGraphClass().getSimpleName());*/
+		/*
+		 * addImports("#schemaPackageName#." +
+		 * aec.getSchema().getGraphClass().getSimpleName());
+		 */
 		return super.createHeader(createClass);
 	}
 
@@ -90,32 +92,59 @@ public class GraphCodeGenerator extends AttributedElementCodeGenerator {
 				addImports("#jgPackage#.GraphIOException");
 			}
 		} else {
-			if(aec.getSchema().getRecordDomains().size() > 0)
+			if (aec.getSchema().getRecordDomains().size() > 0)
 				addImports("java.util.Map");
 		}
 		CodeSnippet cs = new CodeSnippet(true);
 		if (createClass) {
 			// Methods added to interface
 			for (RecordDomain rd : aec.getSchema().getRecordDomains()) {
+				// create-method for GraphIO
 				cs.add("public " + rd.getJavaClassName(schemaRootPackageName)
 						+ " create" + rd.getSimpleName()
 						+ "(GraphIO io) throws GraphIOException {");
-				cs.add("\treturn new " + rd.getSimpleName() + "Impl(io);");
+				if (transactionSupport)
+					cs
+							.add("\treturn new "
+									+ rd
+											.getTransactionJavaAttributeImplementationTypeName(schemaRootPackageName)
+									+ "(io);");
+				else
+					cs
+							.add("\treturn new "
+									+ rd
+											.getStandardJavaAttributeImplementationTypeName(schemaRootPackageName)
+									+ "(io);");
 				cs.add("}");
 				cs.add("");
+				// create-method with Map<String, Object>
 				cs.add("public " + rd.getJavaClassName(schemaRootPackageName)
 						+ " create" + rd.getSimpleName()
 						+ "(Map<String, Object> fields) {");
-				cs.add("\treturn new " + rd.getSimpleName() + "Impl(fields);");
+				if (transactionSupport)
+					cs
+							.add("\treturn new "
+									+ rd
+											.getTransactionJavaAttributeImplementationTypeName(schemaRootPackageName)
+									+ "(fields);");
+				else
+					cs
+							.add("\treturn new "
+									+ rd
+											.getStandardJavaAttributeImplementationTypeName(schemaRootPackageName)
+									+ "(fields);");
+
 				cs.add("}");
 				cs.add("");
+				// create-method with record-components as parameters
 				String parametersWithTypes = "";
 				String parametersWithoutTypes = "";
 				int size = rd.getComponents().keySet().size();
 				int count = 0;
 				for (String component : rd.getComponents().keySet()) {
 					parametersWithTypes += rd.getDomainOfComponent(component)
-							.getJavaAttributeImplementationTypeName(schemaRootPackageName)
+							.getJavaAttributeImplementationTypeName(
+									schemaRootPackageName)
 							+ " " + component;
 					parametersWithoutTypes += component;
 					count++;
@@ -128,8 +157,19 @@ public class GraphCodeGenerator extends AttributedElementCodeGenerator {
 				cs.add("public " + rd.getJavaClassName(schemaRootPackageName)
 						+ " create" + rd.getSimpleName() + "("
 						+ parametersWithTypes + ") {");
-				cs.add("\treturn new " + rd.getSimpleName() + "Impl("
-						+ parametersWithoutTypes + ");");
+
+				if (transactionSupport)
+					cs
+							.add("\treturn new "
+									+ rd
+											.getTransactionJavaAttributeImplementationTypeName(schemaRootPackageName)
+									+ "(" + parametersWithoutTypes + ");");
+				else
+					cs
+							.add("\treturn new "
+									+ rd
+											.getStandardJavaAttributeImplementationTypeName(schemaRootPackageName)
+									+ "(" + parametersWithoutTypes + ");");
 				cs.add("}");
 				cs.add("");
 			}
@@ -148,7 +188,8 @@ public class GraphCodeGenerator extends AttributedElementCodeGenerator {
 				int count = 0;
 				for (String component : rd.getComponents().keySet()) {
 					parameters += rd.getDomainOfComponent(component)
-							.getJavaAttributeImplementationTypeName(schemaRootPackageName)
+							.getJavaAttributeImplementationTypeName(
+									schemaRootPackageName)
 							+ " " + component;
 					count++;
 					if (size != count)

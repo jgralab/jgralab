@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.ListIterator;
 
 import de.uni_koblenz.jgralab.Graph;
+import de.uni_koblenz.jgralab.GraphException;
 import de.uni_koblenz.jgralab.trans.JGraLabCloneable;
 
 /**
@@ -17,11 +18,10 @@ import de.uni_koblenz.jgralab.trans.JGraLabCloneable;
  * 
  * @param <E>
  * 
- *            TODO if E is a mutable reference type elements of List are hard to
- *            version too?! (same for JGraLabSet and JGraLabMap) maybe just
- *            return a copy in getter for attributes of type List, Set and Map
- *            and only allow updating these attributes by using the
- *            corresponding setters?!
+ * TODO if E is a mutable reference type elements of List are hard to version
+ * too?! (same for JGraLabSet and JGraLabMap) maybe just return a copy in getter
+ * for attributes of type List, Set and Map and only allow updating these
+ * attributes by using the corresponding setters?!
  */
 public class JGraLabList<E> extends ArrayList<E> implements JGraLabCloneable {
 	private static final long serialVersionUID = -1881528493844357904L;
@@ -31,10 +31,11 @@ public class JGraLabList<E> extends ArrayList<E> implements JGraLabCloneable {
 	/**
 	 * 
 	 */
-	/*protected*/ public JGraLabList() {
+	/* protected */public JGraLabList(Graph g) {
 		super();
-		versionedList = null;
-		graph = null;
+		init(g);
+		// versionedList = null;
+		// graph = null;
 	}
 
 	/**
@@ -42,24 +43,50 @@ public class JGraLabList<E> extends ArrayList<E> implements JGraLabCloneable {
 	 * 
 	 * @param initialSize
 	 */
-	/*protected*/ public JGraLabList(int initialSize) {
+	/* protected */public JGraLabList(Graph g, int initialSize) {
 		super(initialSize);
-		versionedList = null;
-		graph = null;
-	}
-	
-	@SuppressWarnings("unchecked")
-	/*protected*/ public JGraLabList(Collection/*<E>*/ collection) {
-		super(collection);
-		versionedList = null;
-		graph = null;
+		init(g);
+		// versionedList = null;
+		// graph = null;
 	}
 
-	/*public JGraLabList(List<E> list) {
-		super(list);
-		versionedList = null;
-		graph = null;
-	}*/
+	@SuppressWarnings("unchecked")
+	/* protected */public JGraLabList(Graph g,
+			Collection/* <E> */collection) {
+		super(collection);
+		init(g);
+		// versionedList = null;
+		// graph = null;
+	}
+
+	public JGraLabList(Collection<E> collection) {
+		super(collection);
+		//versionedList = null;
+		//graph = null;
+	}
+	
+	public JGraLabList() {
+		super();
+		//versionedList = null;
+		//graph = null;
+	}
+
+	public void init(Graph g) {
+		/*Graph g = null;
+		if (ae instanceof Graph) {
+			g = (Graph) ae;
+		} else {
+			g = ((GraphElement) ae).getGraph();
+		}*/
+		if (g == null)
+			throw new GraphException(
+					"Given attributed element must be instance of Graph or GraphElement.");
+		if (!g.hasTransactionSupport())
+			throw new GraphException(
+					"An instance of JGraLabList can only be created for graphs with transaction support");
+		graph = g;
+		versionedList = new VersionedJGraLabCloneableImpl<JGraLabList<E>>();
+	}
 
 	/**
 	 * 
