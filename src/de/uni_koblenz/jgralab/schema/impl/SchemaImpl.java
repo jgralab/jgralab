@@ -379,7 +379,7 @@ public class SchemaImpl implements Schema {
 		// build graphelementclasses
 		AttributedElementCodeGenerator codeGenerator = null;
 		for (GraphElementClass graphElementClass : graphClass
-				.getOwnGraphElementClasses()) {
+				.getGraphElementClasses()) {
 			if (graphElementClass instanceof VertexClass) {
 				codeGenerator = new VertexCodeGenerator(
 						(VertexClass) graphElementClass, packagePrefix,
@@ -485,7 +485,7 @@ public class SchemaImpl implements Schema {
 		// build graphelementclasses
 		AttributedElementCodeGenerator codeGenerator = null;
 		for (GraphElementClass graphElementClass : graphClass
-				.getOwnGraphElementClasses()) {
+				.getGraphElementClasses()) {
 			if (graphElementClass instanceof VertexClass) {
 				codeGenerator = new VertexCodeGenerator(
 						(VertexClass) graphElementClass, packagePrefix,
@@ -949,9 +949,7 @@ public class SchemaImpl implements Schema {
 		HashSet<EdgeClass> edgeClassSet = new HashSet<EdgeClass>();
 
 		// store edge classes in edgeClassSet
-		edgeClassSet.addAll(graphClass.getOwnEdgeClasses());
-		edgeClassSet.addAll(graphClass.getOwnAggregationClasses());
-		edgeClassSet.addAll(graphClass.getOwnCompositionClasses());
+		edgeClassSet.addAll(graphClass.getEdgeClasses());
 
 		topologicalOrderList.add(defaultEdgeClass);
 		topologicalOrderList.add(defaultAggregationClass);
@@ -1090,7 +1088,7 @@ public class SchemaImpl implements Schema {
 	 * @return number of graphelementclasses contained in graphclass
 	 */
 	private int getNumberOfElements() {
-		return graphClass.getOwnGraphElementClasses().size() + 1;
+		return graphClass.getGraphElementClasses().size() + 1;
 	}
 
 	@Override
@@ -1132,7 +1130,7 @@ public class SchemaImpl implements Schema {
 		HashSet<VertexClass> vertexClassSet = new HashSet<VertexClass>();
 
 		// store vertex classes in vertexClassSet
-		vertexClassSet.addAll(graphClass.getOwnVertexClasses());
+		vertexClassSet.addAll(graphClass.getVertexClasses());
 		// first only the default vertex class is in the topo list
 		topologicalOrderList.add(defaultVertexClass);
 

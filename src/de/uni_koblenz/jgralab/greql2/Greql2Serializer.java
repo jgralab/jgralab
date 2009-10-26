@@ -29,7 +29,6 @@ import de.uni_koblenz.jgralab.greql2.schema.Expression;
 import de.uni_koblenz.jgralab.greql2.schema.ForwardVertexSet;
 import de.uni_koblenz.jgralab.greql2.schema.FunctionApplication;
 import de.uni_koblenz.jgralab.greql2.schema.FunctionId;
-import de.uni_koblenz.jgralab.greql2.schema.Greql2;
 import de.uni_koblenz.jgralab.greql2.schema.Greql2Expression;
 import de.uni_koblenz.jgralab.greql2.schema.Greql2Vertex;
 import de.uni_koblenz.jgralab.greql2.schema.Identifier;
@@ -74,28 +73,14 @@ import de.uni_koblenz.jgralab.greql2.schema.Variable;
 import de.uni_koblenz.jgralab.greql2.schema.VertexSetExpression;
 import de.uni_koblenz.jgralab.greql2.schema.VertexSubgraphExpression;
 import de.uni_koblenz.jgralab.greql2.schema.WhereExpression;
-import de.uni_koblenz.jgralab.greql2.schema.impl.std.Greql2Impl;
 
 /**
  * @author Tassilo Horn &lt;horn@uni-koblenz.de&gt;
  * 
  */
-public class EnhancedGreql2 extends Greql2Impl implements Greql2 {
-	public EnhancedGreql2(int vMax, int eMax) {
-		this(null, vMax, eMax);
-	}
-
-	public EnhancedGreql2(java.lang.String id, int vMax, int eMax) {
-		super(id, vMax, eMax);
-	}
+public class Greql2Serializer {
 
 	private StringBuffer sb = null;
-
-	public String serialize() {
-		sb = new StringBuffer();
-		serializeGreql2Expression(getFirstGreql2Expression());
-		return sb.toString();
-	}
 
 	public String serializeGreql2Vertex(Greql2Vertex v) {
 		sb = new StringBuffer();

@@ -44,8 +44,7 @@ public class GraphFactoryGenerator extends CodeGenerator {
 		super(schemaPackageName, "", false);
 		this.schema = schema;
 		rootBlock.setVariable("className", schema.getName() + "Factory");
-		rootBlock.setVariable("simpleClassName", schema.getName()
-				+ "Factory");
+		rootBlock.setVariable("simpleClassName", schema.getName() + "Factory");
 		rootBlock.setVariable("isClassOnly", "true");
 	}
 
@@ -84,16 +83,10 @@ public class GraphFactoryGenerator extends CodeGenerator {
 
 		GraphClass graphClass = schema.getGraphClass();
 		code.add(createFillTableForGraph(graphClass));
-		for (VertexClass vertexClass : graphClass.getOwnVertexClasses()) {
+		for (VertexClass vertexClass : graphClass.getVertexClasses()) {
 			code.add(createFillTableForVertex(vertexClass));
 		}
-		for (EdgeClass edgeClass : graphClass.getOwnEdgeClasses()) {
-			code.add(createFillTableForEdge(edgeClass));
-		}
-		for (EdgeClass edgeClass : graphClass.getOwnAggregationClasses()) {
-			code.add(createFillTableForEdge(edgeClass));
-		}
-		for (EdgeClass edgeClass : graphClass.getOwnCompositionClasses()) {
+		for (EdgeClass edgeClass : graphClass.getEdgeClasses()) {
 			code.add(createFillTableForEdge(edgeClass));
 		}
 
@@ -117,8 +110,10 @@ public class GraphFactoryGenerator extends CodeGenerator {
 
 		if (!graphClass.isAbstract()) {
 			code.add("/* code for graph #graphName# */");
-			code.add("setGraphImplementationClass(#graphName#.class, #graphImplName#Impl.class);");
-			code.add("setGraphTransactionImplementationClass(#graphName#.class, #graphTransactionImplName#Impl.class);");
+			code
+					.add("setGraphImplementationClass(#graphName#.class, #graphImplName#Impl.class);");
+			code
+					.add("setGraphTransactionImplementationClass(#graphName#.class, #graphTransactionImplName#Impl.class);");
 		}
 		return code;
 	}
@@ -135,8 +130,10 @@ public class GraphFactoryGenerator extends CodeGenerator {
 		code.setVariable("vertexTransactionImplName", schemaRootPackageName
 				+ ".impl.trans." + vertexClass.getQualifiedName());
 		if (!vertexClass.isAbstract()) {
-			code.add("setVertexImplementationClass(#vertexName#.class, #vertexImplName#Impl.class);");
-			code.add("setVertexTransactionImplementationClass(#vertexName#.class, #vertexTransactionImplName#Impl.class);");
+			code
+					.add("setVertexImplementationClass(#vertexName#.class, #vertexImplName#Impl.class);");
+			code
+					.add("setVertexTransactionImplementationClass(#vertexName#.class, #vertexTransactionImplName#Impl.class);");
 		}
 		return code;
 	}
@@ -151,8 +148,10 @@ public class GraphFactoryGenerator extends CodeGenerator {
 				+ ".impl.trans." + edgeClass.getQualifiedName());
 
 		if (!edgeClass.isAbstract()) {
-			code.add("setEdgeImplementationClass(#edgeName#.class, #edgeImplName#Impl.class);");
-			code.add("setEdgeTransactionImplementationClass(#edgeName#.class, #edgeTransactionImplName#Impl.class);");
+			code
+					.add("setEdgeImplementationClass(#edgeName#.class, #edgeImplName#Impl.class);");
+			code
+					.add("setEdgeTransactionImplementationClass(#edgeName#.class, #edgeTransactionImplName#Impl.class);");
 		}
 		return code;
 	}

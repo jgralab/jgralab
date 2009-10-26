@@ -11,7 +11,8 @@ import java.util.Stack;
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.Vertex;
-import de.uni_koblenz.jgralab.greql2.EnhancedGreql2;
+import de.uni_koblenz.jgralab.greql2.SerializableGreql2Impl;
+import de.uni_koblenz.jgralab.greql2.SerializableGreql2TransactionsImpl;
 import de.uni_koblenz.jgralab.greql2.exception.ParsingException;
 import de.uni_koblenz.jgralab.greql2.funlib.Greql2FunctionLibrary;
 import de.uni_koblenz.jgralab.greql2.schema.*;
@@ -20,7 +21,10 @@ public class ManualGreqlParser extends ManualParserHelper {
 
 	static {
 		Greql2Schema.instance().getGraphFactory().setGraphImplementationClass(
-				Greql2.class, EnhancedGreql2.class);
+				Greql2.class, SerializableGreql2Impl.class);
+		Greql2Schema.instance().getGraphFactory()
+				.setGraphTransactionImplementationClass(Greql2.class,
+						SerializableGreql2TransactionsImpl.class);
 	}
 
 	private Map<RuleEnum, int[]> testedRules = new HashMap<RuleEnum, int[]>();

@@ -58,8 +58,8 @@ public class GraphSize {
 		edgeCount = dataGraph.getECount();
 		GraphClass graphClass = (GraphClass) dataGraph
 				.getAttributedElementClass();
-		knownVertexTypes = graphClass.getOwnVertexClassCount();
-		knownEdgeTypes = graphClass.getOwnEdgeClassCount();
+		knownVertexTypes = graphClass.getVertexClassCount();
+		knownEdgeTypes = graphClass.getEdgeClassCount();
 	}
 
 	/**
@@ -108,8 +108,8 @@ public class GraphSize {
 	public GraphSize(GraphClass graphClass, int vCount, int eCount) {
 		vertexCount = vCount;
 		edgeCount = eCount;
-		this.knownEdgeTypes = graphClass.getOwnEdgeClassCount();
-		this.knownVertexTypes = graphClass.getOwnVertexClassCount();
+		this.knownEdgeTypes = graphClass.getEdgeClassCount();
+		this.knownVertexTypes = graphClass.getVertexClassCount();
 	}
 
 	/**

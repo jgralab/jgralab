@@ -7,7 +7,7 @@ import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
 
-import de.uni_koblenz.jgralab.greql2.EnhancedGreql2;
+import de.uni_koblenz.jgralab.greql2.SerializableGreql2;
 import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
 
@@ -22,7 +22,7 @@ public class GreqlSerializationTest {
 		e1.parseQuery();
 		e1.setDatagraph(e1.getSyntaxGraph());
 
-		GreqlEvaluator e2 = new GreqlEvaluator(((EnhancedGreql2) e1
+		GreqlEvaluator e2 = new GreqlEvaluator(((SerializableGreql2) e1
 				.getSyntaxGraph()).serialize(), e1.getSyntaxGraph(), null);
 
 		e1.startEvaluation();
