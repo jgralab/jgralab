@@ -301,6 +301,11 @@ public class GreqlEvaluator {
 	 */
 	protected String queryString = null;
 
+	public void setQuery(String queryString) {
+		this.queryString = queryString;
+		queryGraph = null;
+	}
+
 	/**
 	 * This attribute holds the query-graph
 	 */
@@ -678,6 +683,13 @@ public class GreqlEvaluator {
 		}
 		this.queryGraph = queryGraph;
 		this.variableMap = variables;
+	}
+
+	public void setGreqlVariable(String varName, JValue value) {
+		if (variableMap == null) {
+			variableMap = new HashMap<String, JValue>();
+		}
+		variableMap.put(varName, value);
 	}
 
 	public void normalizeQueryString() {

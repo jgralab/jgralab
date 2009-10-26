@@ -399,117 +399,22 @@ public final class GraphClassImpl extends AttributedElementClassImpl implements
 	}
 
 	@Override
-	public List<GraphElementClass> getOwnGraphElementClasses() {
+	public List<GraphElementClass> getGraphElementClasses() {
 		return new ArrayList<GraphElementClass>(graphElementClasses.values());
 	}
 
 	@Override
-	public List<GraphElementClass> getGraphElementClasses() {
-		List<GraphElementClass> allClasses = new ArrayList<GraphElementClass>();
-
-		for (AttributedElementClass superGraphClass : getAllSuperClasses()) {
-			allClasses.addAll(((GraphClass) superGraphClass)
-					.getOwnGraphElementClasses());
-		}
-
-		allClasses.addAll(graphElementClasses.values());
-
-		return allClasses;
-	}
-
-	@Override
-	public List<EdgeClass> getOwnEdgeClasses() {
-		List<EdgeClass> list = new ArrayList<EdgeClass>(edgeClasses.values());
-		for (EdgeClass ac : getOwnAggregationClasses()) {
-			list.add(ac);
-		}
-		return list;
-	}
-
-	@Override
 	public List<EdgeClass> getEdgeClasses() {
-		List<EdgeClass> allClasses = new ArrayList<EdgeClass>();
-
-		for (AttributedElementClass superGraphClass : getAllSuperClasses()) {
-			allClasses.addAll(((GraphClass) superGraphClass)
-					.getOwnEdgeClasses());
-		}
-
-		allClasses.addAll(getOwnEdgeClasses());
-
+		List<EdgeClass> allClasses = new ArrayList<EdgeClass>(edgeClasses
+				.values());
+		allClasses.addAll(aggregationClasses.values());
+		allClasses.addAll(compositionClasses.values());
 		return allClasses;
-	}
-
-	@Override
-	public List<CompositionClass> getOwnCompositionClasses() {
-		return new ArrayList<CompositionClass>(compositionClasses.values());
-	}
-
-	@Override
-	public List<CompositionClass> getCompositionClasses() {
-		List<CompositionClass> allClasses = new ArrayList<CompositionClass>();
-
-		for (AttributedElementClass superGraphClass : getAllSuperClasses()) {
-			allClasses.addAll(((GraphClass) superGraphClass)
-					.getOwnCompositionClasses());
-		}
-
-		allClasses.addAll(getOwnCompositionClasses());
-
-		return allClasses;
-	}
-
-	@Override
-	public List<AggregationClass> getOwnAggregationClasses() {
-		List<AggregationClass> list = new ArrayList<AggregationClass>(
-				aggregationClasses.values());
-		for (AggregationClass cc : getOwnCompositionClasses()) {
-			list.add(cc);
-		}
-		return list;
-	}
-
-	@Override
-	public List<AggregationClass> getAggregationClasses() {
-		List<AggregationClass> allClasses = new ArrayList<AggregationClass>();
-
-		for (AttributedElementClass superGraphClass : getAllSuperClasses()) {
-			allClasses.addAll(((GraphClass) superGraphClass)
-					.getOwnAggregationClasses());
-		}
-
-		allClasses.addAll(getOwnAggregationClasses());
-
-		return allClasses;
-	}
-
-	@Override
-	public List<VertexClass> getOwnVertexClasses() {
-		return new ArrayList<VertexClass>(vertexClasses.values());
 	}
 
 	@Override
 	public List<VertexClass> getVertexClasses() {
-		List<VertexClass> allClasses = new ArrayList<VertexClass>();
-
-		for (AttributedElementClass superGraphClass : getAllSuperClasses()) {
-			allClasses.addAll(((GraphClass) superGraphClass)
-					.getOwnVertexClasses());
-		}
-
-		allClasses.addAll(vertexClasses.values());
-
-		return allClasses;
-	}
-
-	@Override
-	public int getOwnEdgeClassCount() {
-		return edgeClasses.size();
-	}
-
-	@Override
-	public int getOwnVertexClassCount() {
-		return vertexClasses.size();
+		return new ArrayList<VertexClass>(vertexClasses.values());
 	}
 
 	@Override
@@ -582,6 +487,17 @@ public final class GraphClassImpl extends AttributedElementClassImpl implements
 			}
 		}
 		return null;
+	}
+
+	@Override
+	public int getEdgeClassCount() {
+		return edgeClasses.size() + aggregationClasses.size()
+				+ compositionClasses.size();
+	}
+
+	@Override
+	public int getVertexClassCount() {
+		return vertexClasses.size();
 	}
 
 }

@@ -380,8 +380,6 @@ public class GraphCodeGenerator extends AttributedElementCodeGenerator {
 
 		Set<EdgeClass> edgeClassSet = new HashSet<EdgeClass>();
 		edgeClassSet.addAll(gc.getEdgeClasses());
-		edgeClassSet.addAll(gc.getAggregationClasses());
-		edgeClassSet.addAll(gc.getCompositionClasses());
 
 		for (EdgeClass edge : edgeClassSet) {
 			if (edge.isInternal()) {

@@ -581,46 +581,10 @@ public interface GraphClass extends AttributedElementClass {
 	public GraphElementClass getGraphElementClass(String name);
 
 	/**
-	 * @return a list of all edge classes this graphclass knows, excluding
-	 *         inherited edge classes
-	 */
-	public List<EdgeClass> getOwnEdgeClasses();
-
-	/**
 	 * @return a list of all EdgeClasses this graphclass knows, including
 	 *         inherited EdgeClasses
 	 */
 	public List<EdgeClass> getEdgeClasses();
-
-	/**
-	 * @return a list of all composition classes this graphclass knows,
-	 *         excluding inherited composition classes
-	 */
-	public List<CompositionClass> getOwnCompositionClasses();
-
-	/**
-	 * @return a list of all composition classes this graphclass knows,
-	 *         including inherited composition classes
-	 */
-	public List<CompositionClass> getCompositionClasses();
-
-	/**
-	 * @return a list of all aggregation classes this graphclass knows,
-	 *         excluding inherited aggregation classes
-	 */
-	public List<AggregationClass> getOwnAggregationClasses();
-
-	/**
-	 * @return a list of all aggregation classes this graphclass knows,
-	 *         including inherited aggregation classes
-	 */
-	public List<AggregationClass> getAggregationClasses();
-
-	/**
-	 * @return a list of all the edge/vertex/aggregation/composition classes of
-	 *         this graph class, excluding inherited classes
-	 */
-	public List<GraphElementClass> getOwnGraphElementClasses();
 
 	/**
 	 * @return a list of all the edge/vertex/aggregation/composition classes of
@@ -629,30 +593,10 @@ public interface GraphClass extends AttributedElementClass {
 	public List<GraphElementClass> getGraphElementClasses();
 
 	/**
-	 * @return a list of all the vertex classes of this graph class, excluding
-	 *         inherited vertex classes
-	 */
-	public List<VertexClass> getOwnVertexClasses();
-
-	/**
 	 * @return a list of all the vertex classes of this graph class, including
 	 *         inherited vertex classes
 	 */
 	public List<VertexClass> getVertexClasses();
-
-	/**
-	 * 
-	 * @return the number of edge classes this graph class knows, excluding
-	 *         inherited edge classes
-	 */
-	public int getOwnEdgeClassCount();
-
-	/**
-	 * 
-	 * @return the number of vertex classes this graph class knows, excluding
-	 *         inherited vertex classes
-	 */
-	public int getOwnVertexClassCount();
 
 	/**
 	 * Returns the VertexClass with the given name. This GraphClass and the
@@ -666,6 +610,13 @@ public interface GraphClass extends AttributedElementClass {
 	public VertexClass getVertexClass(String name);
 
 	/**
+	 * Returns the number of VertexClasses defined in this GraphClass.
+	 * 
+	 * @return the number of VertexClasses defined in this GraphClass.
+	 */
+	public int getVertexClassCount();
+
+	/**
 	 * Returns the EdgeClass with the given name. This GraphClass and the
 	 * superclasses will be searched for a EdgeClass with this name
 	 * 
@@ -675,6 +626,14 @@ public interface GraphClass extends AttributedElementClass {
 	 *         exists
 	 */
 	public EdgeClass getEdgeClass(String name);
+
+	/**
+	 * Returns the number of EdgeClasses (that is Edge-/Aggregation- and
+	 * CompositionClasses) defined in this GraphClass.
+	 * 
+	 * @return the number of EdgeClasses defined in this GraphClass.
+	 */
+	public int getEdgeClassCount();
 
 	/**
 	 * Returns the CompositionClass with the given name. This GraphClass and the
