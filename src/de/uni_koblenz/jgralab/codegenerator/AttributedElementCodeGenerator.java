@@ -422,8 +422,19 @@ public class AttributedElementCodeGenerator extends CodeGenerator {
 					if (!(domain instanceof RecordDomain)) {
 						code.setVariable("tmpname", "tmp_" + attr.getName());
 						code.add("\t#ttype# #tmpname# = null;");
-						code.add("\tif(_#name# != null)");
+						code
+								.add("\tif(_#name# != null && !(_#name# instanceof "
+										+ attr
+												.getDomain()
+												.getTransactionJavaClassName(
+														schemaRootPackageName)
+										+ "))");
 						code.add("\t\t#tmpname# = new #ttype#(_#name#);");
+						code.add("\telse");
+						code.add("\t\t#tmpname# = (" + attr
+								.getDomain()
+								.getTransactionJavaAttributeImplementationTypeName(
+										schemaRootPackageName)  + ") _#name#;");
 						code.setVariable("initLoading", "new "
 								+ attr.getDomain().getVersionedClass(
 										schemaRootPackageName)
@@ -455,7 +466,10 @@ public class AttributedElementCodeGenerator extends CodeGenerator {
 					if (domain instanceof RecordDomain) {
 						code
 								.add("\t\t(("
-										+ attr.getDomain().getTransactionJavaAttributeImplementationTypeName(schemaRootPackageName)
+										+ attr
+												.getDomain()
+												.getTransactionJavaAttributeImplementationTypeName(
+														schemaRootPackageName)
 										+ ") _#name#).setVersionedRecord(this._#name#);");
 					}
 				}
@@ -463,7 +477,10 @@ public class AttributedElementCodeGenerator extends CodeGenerator {
 					code
 							.add(
 									"\tthis._#name#.setValidValue(("
-											+ attr.getDomain().getTransactionJavaAttributeImplementationTypeName(schemaRootPackageName)
+											+ attr
+													.getDomain()
+													.getTransactionJavaAttributeImplementationTypeName(
+															schemaRootPackageName)
 											+ ") #tmpname#, #graphreference#getCurrentTransaction());",
 									"\tattributeChanged(this._#name#);",
 									"\tgraphModified();", "}");

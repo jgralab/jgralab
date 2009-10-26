@@ -1560,34 +1560,34 @@ public abstract class GraphImpl extends de.uni_koblenz.jgralab.impl.GraphImpl {
 	}
 
 	public <T> Set<T> createSet(Class<T> type) {
-		return new JGraLabSet<T>();
+		return new JGraLabSet<T>(this);
 	}
 
 	public <T> Set<T> createSet(Class<T> type, Collection<? extends T> collection) {
-		return new JGraLabSet<T>(collection);
+		return new JGraLabSet<T>(this, collection);
 	}
 
 	public <T> Set<T> createSet(Class<T> type, int initialCapacity) {
-		return new JGraLabSet<T>(initialCapacity);
+		return new JGraLabSet<T>(this, initialCapacity);
 	}
 
 	public <T> Set<T> createSet(Class<T> type, int initialCapacity, float loadFactor) {
-		return new JGraLabSet<T>(initialCapacity, loadFactor);
+		return new JGraLabSet<T>(this, initialCapacity, loadFactor);
 	}
 
 	public <K, V> Map<K, V> createMap(Class<K> key, Class<V> value) {
-		return new JGraLabMap<K, V>();
+		return new JGraLabMap<K, V>(this);
 	}
 	
 	public <K, V> Map<K, V> createMap(Class<K> key, Class<V> value, Map<? extends K,? extends V> map) {
-		return new JGraLabMap<K, V>(map);
+		return new JGraLabMap<K, V>(this, map);
 	}
 	
 	public <K, V> Map<K, V> createMap(Class<K> key, Class<V> value, int initialCapacity) {
-		return new JGraLabMap<K, V>(initialCapacity);
+		return new JGraLabMap<K, V>(this, initialCapacity);
 	}
 
 	public <K, V> Map<K, V> createMap(Class<K> key, Class<V> value, int initialCapacity, float loadFactor) {
-		return new JGraLabMap<K, V>(initialCapacity, loadFactor);
+		return new JGraLabMap<K, V>(this, initialCapacity, loadFactor);
 	}
 }

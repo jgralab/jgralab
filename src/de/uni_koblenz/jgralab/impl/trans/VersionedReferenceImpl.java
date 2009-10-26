@@ -38,6 +38,15 @@ public class VersionedReferenceImpl<E> extends VersionedDataObjectImpl<E> {
 			E initialPersistentValue) {
 		super(attributedElement, initialPersistentValue);
 	}
+	
+	/**
+	 * 
+	 * @param initialPersistentValue
+	 */
+	public VersionedReferenceImpl(
+			E initialPersistentValue) {
+		super(null, initialPersistentValue);
+	}
 
 	/**
 	 * 

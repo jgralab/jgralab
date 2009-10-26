@@ -38,6 +38,16 @@ public class VersionedJGraLabCloneableImpl<E extends JGraLabCloneable> extends
 			E initialPersistentValue) {
 		super(attributedElement, initialPersistentValue);
 	}
+	
+	/**
+	 * 
+	 * @param graph
+	 * @param initialPersistentValue
+	 */
+	public VersionedJGraLabCloneableImpl(
+			E initialPersistentValue) {
+		super(null, initialPersistentValue);
+	}
 
 	/**
 	 * 
