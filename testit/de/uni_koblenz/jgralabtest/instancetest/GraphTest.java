@@ -1349,8 +1349,8 @@ public class GraphTest extends InstanceTest {
 
 	// TODO continue here
 	@Test
-	public void testGetEdgeListVersion() {
-		onlyTestWithoutTransactionSupport();
+	public void testGetEdgeListVersion() throws Exception {
+		createTransaction(g1);
 		// preparations...
 		Vertex v1 = g1.createVertex(SubNode.class);
 		Vertex v2 = g1.createVertex(SubNode.class);
@@ -1364,188 +1364,395 @@ public class GraphTest extends InstanceTest {
 		Vertex v10 = g1.createVertex(DoubleSubNode.class);
 		Vertex v11 = g1.createVertex(DoubleSubNode.class);
 		Vertex v12 = g1.createVertex(DoubleSubNode.class);
+		commit(g1);
 
+		long elv1;
+		createReadOnlyTransaction(g1);
 		// border cases
-		assertEquals(0, g1.getEdgeListVersion());
+		elv1 = g1.getEdgeListVersion();
+		assertEquals(0, elv1);
 		assertEquals(0, g2.getEdgeListVersion());
+		commit(g1);
 
+		createTransaction(g1);
 		Edge e1 = g1.createEdge(SubLink.class, v9, v7);
-		assertEquals(1, g1.getEdgeListVersion());
+		commit(g1);
 
+		elv1 = checkIfEdgeListVersionChanged(elv1);
+
+		createTransaction(g1);
 		g1.deleteEdge(e1);
-		assertEquals(2, g1.getEdgeListVersion());
+		commit(g1);
+
+		elv1 = checkIfEdgeListVersionChanged(elv1);
 
 		// normal cases
+		createTransaction(g1);
 		g1.createEdge(SubLink.class, v10, v5);
-		assertEquals(3, g1.getEdgeListVersion());
+		commit(g1);
 
+		elv1 = checkIfEdgeListVersionChanged(elv1);
+
+		createTransaction(g1);
 		g1.createEdge(SubLink.class, v10, v6);
-		assertEquals(4, g1.getEdgeListVersion());
+		commit(g1);
 
+		elv1 = checkIfEdgeListVersionChanged(elv1);
+
+		createTransaction(g1);
 		g1.createEdge(SubLink.class, v10, v7);
-		assertEquals(5, g1.getEdgeListVersion());
+		commit(g1);
 
+		elv1 = checkIfEdgeListVersionChanged(elv1);
+
+		createTransaction(g1);
 		g1.createEdge(SubLink.class, v10, v8);
-		assertEquals(6, g1.getEdgeListVersion());
+		commit(g1);
 
+		elv1 = checkIfEdgeListVersionChanged(elv1);
+
+		createTransaction(g1);
 		g1.createEdge(SubLink.class, v11, v5);
-		assertEquals(7, g1.getEdgeListVersion());
+		commit(g1);
 
+		elv1 = checkIfEdgeListVersionChanged(elv1);
+
+		createTransaction(g1);
 		g1.createEdge(SubLink.class, v11, v6);
-		assertEquals(8, g1.getEdgeListVersion());
+		commit(g1);
 
+		elv1 = checkIfEdgeListVersionChanged(elv1);
+
+		createTransaction(g1);
 		g1.createEdge(SubLink.class, v11, v7);
-		assertEquals(9, g1.getEdgeListVersion());
+		commit(g1);
 
+		elv1 = checkIfEdgeListVersionChanged(elv1);
+
+		createTransaction(g1);
 		g1.createEdge(SubLink.class, v11, v8);
-		assertEquals(10, g1.getEdgeListVersion());
+		commit(g1);
 
+		elv1 = checkIfEdgeListVersionChanged(elv1);
+
+		createTransaction(g1);
 		g1.createEdge(SubLink.class, v12, v5);
-		assertEquals(11, g1.getEdgeListVersion());
+		commit(g1);
 
+		elv1 = checkIfEdgeListVersionChanged(elv1);
+
+		createTransaction(g1);
 		g1.createEdge(SubLink.class, v12, v6);
-		assertEquals(12, g1.getEdgeListVersion());
+		commit(g1);
 
+		elv1 = checkIfEdgeListVersionChanged(elv1);
+
+		createTransaction(g1);
 		g1.createEdge(SubLink.class, v12, v7);
-		assertEquals(13, g1.getEdgeListVersion());
+		commit(g1);
 
+		elv1 = checkIfEdgeListVersionChanged(elv1);
+
+		createTransaction(g1);
 		Edge e3 = g1.createEdge(SubLink.class, v12, v8);
-		assertEquals(14, g1.getEdgeListVersion());
+		commit(g1);
 
+		elv1 = checkIfEdgeListVersionChanged(elv1);
+
+		createTransaction(g1);
 		g1.createEdge(SubLink.class, v9, v6);
-		assertEquals(15, g1.getEdgeListVersion());
+		commit(g1);
 
+		elv1 = checkIfEdgeListVersionChanged(elv1);
+
+		createTransaction(g1);
 		g1.createEdge(SubLink.class, v9, v7);
-		assertEquals(16, g1.getEdgeListVersion());
+		commit(g1);
 
+		elv1 = checkIfEdgeListVersionChanged(elv1);
+
+		createTransaction(g1);
 		g1.createEdge(SubLink.class, v9, v8);
-		assertEquals(17, g1.getEdgeListVersion());
+		commit(g1);
 
+		elv1 = checkIfEdgeListVersionChanged(elv1);
+
+		createTransaction(g1);
 		g1.deleteEdge(e3);
-		assertEquals(18, g1.getEdgeListVersion());
+		commit(g1);
+
+		elv1 = checkIfEdgeListVersionChanged(elv1);
 
 		// making sure that changing a vertex does not affect the edges
+		createTransaction(g1);
 		g1.deleteVertex(v9);
-		// TODO: Update this, the vertex has edges and thus the edge list
-		// version
-		// changes if the vertex is deleted
-		assertEquals(18, g1.getEdgeListVersion());
+		commit(g1);
 
+		elv1 = checkIfEdgeListVersionChanged(elv1);
+		
+		createTransaction(g1);
+		Vertex v13 = g1.createVertex(DoubleSubNode.class);
+		commit(g1);
+		
+		// same
+		checkIfEdgeListVersionRemained(elv1);
+		
+		createTransaction(g1);
+		g1.deleteVertex(v13);
+		commit(g1);
+		
+		// same
+		checkIfEdgeListVersionRemained(elv1);
+
+		createTransaction(g1);
 		g1.createEdge(Link.class, v1, v5);
-		assertEquals(19, g1.getEdgeListVersion());
+		commit(g1);
 
+		elv1 = checkIfEdgeListVersionChanged(elv1);
+
+		createTransaction(g1);
 		g1.createEdge(Link.class, v2, v5);
-		assertEquals(20, g1.getEdgeListVersion());
+		commit(g1);
 
+		elv1 = checkIfEdgeListVersionChanged(elv1);
+
+		createTransaction(g1);
 		g1.createEdge(Link.class, v3, v5);
-		assertEquals(21, g1.getEdgeListVersion());
+		commit(g1);
 
+		elv1 = checkIfEdgeListVersionChanged(elv1);
+
+		createTransaction(g1);
 		g1.createEdge(Link.class, v4, v5);
-		assertEquals(22, g1.getEdgeListVersion());
+		commit(g1);
 
-		// TODO how can this work if I have already deleted v9?
-		// isValis() even returns true
-		g1.createEdge(Link.class, v9, v5);
-		assertEquals(23, g1.getEdgeListVersion());
+		elv1 = checkIfEdgeListVersionChanged(elv1);
 
+		createTransaction(g1);
 		g1.createEdge(Link.class, v10, v5);
-		assertEquals(24, g1.getEdgeListVersion());
+		commit(g1);
 
+		elv1 = checkIfEdgeListVersionChanged(elv1);
+
+		createTransaction(g1);
 		g1.createEdge(Link.class, v11, v5);
-		assertEquals(25, g1.getEdgeListVersion());
+		commit(g1);
 
+		elv1 = checkIfEdgeListVersionChanged(elv1);
+
+		createTransaction(g1);
 		g1.createEdge(Link.class, v12, v5);
-		assertEquals(26, g1.getEdgeListVersion());
+		commit(g1);
 
+		elv1 = checkIfEdgeListVersionChanged(elv1);
+
+		createTransaction(g1);
 		g1.createEdge(Link.class, v1, v6);
-		assertEquals(27, g1.getEdgeListVersion());
+		commit(g1);
 
+		elv1 = checkIfEdgeListVersionChanged(elv1);
+
+		createTransaction(g1);
 		g1.createEdge(Link.class, v1, v7);
-		assertEquals(28, g1.getEdgeListVersion());
+		commit(g1);
 
+		elv1 = checkIfEdgeListVersionChanged(elv1);
+
+		createTransaction(g1);
 		g1.createEdge(Link.class, v1, v8);
-		assertEquals(29, g1.getEdgeListVersion());
+		commit(g1);
 
+		elv1 = checkIfEdgeListVersionChanged(elv1);
+
+		createTransaction(g1);
 		Edge e4 = g1.createEdge(Link.class, v3, v7);
-		assertEquals(30, g1.getEdgeListVersion());
+		commit(g1);
 
+		elv1 = checkIfEdgeListVersionChanged(elv1);
+
+		createTransaction(g1);
 		g1.createEdge(Link.class, v11, v8);
-		assertEquals(31, g1.getEdgeListVersion());
+		commit(g1);
 
+		elv1 = checkIfEdgeListVersionChanged(elv1);
+
+		createTransaction(g1);
 		g1.createEdge(LinkBack.class, v5, v1);
-		assertEquals(32, g1.getEdgeListVersion());
+		commit(g1);
 
+		elv1 = checkIfEdgeListVersionChanged(elv1);
+
+		createTransaction(g1);
 		g1.createEdge(LinkBack.class, v6, v2);
-		assertEquals(33, g1.getEdgeListVersion());
+		commit(g1);
 
+		elv1 = checkIfEdgeListVersionChanged(elv1);
+
+		createTransaction(g1);
 		Edge e5 = g1.createEdge(LinkBack.class, v7, v3);
-		assertEquals(34, g1.getEdgeListVersion());
+		commit(g1);
 
+		elv1 = checkIfEdgeListVersionChanged(elv1);
+
+		createTransaction(g1);
 		g1.createEdge(LinkBack.class, v8, v4);
-		assertEquals(35, g1.getEdgeListVersion());
+		commit(g1);
 
+		elv1 = checkIfEdgeListVersionChanged(elv1);
+
+		createTransaction(g1);
 		g1.createEdge(LinkBack.class, v8, v9);
-		assertEquals(36, g1.getEdgeListVersion());
+		commit(g1);
 
+		elv1 = checkIfEdgeListVersionChanged(elv1);
+
+		createTransaction(g1);
 		g1.createEdge(LinkBack.class, v7, v10);
-		assertEquals(37, g1.getEdgeListVersion());
+		commit(g1);
 
+		elv1 = checkIfEdgeListVersionChanged(elv1);
+
+		createTransaction(g1);
 		g1.createEdge(LinkBack.class, v6, v11);
-		assertEquals(38, g1.getEdgeListVersion());
+		commit(g1);
 
+		elv1 = checkIfEdgeListVersionChanged(elv1);
+
+		createTransaction(g1);
 		Edge e6 = g1.createEdge(LinkBack.class, v5, v12);
-		assertEquals(39, g1.getEdgeListVersion());
+		commit(g1);
 
+		elv1 = checkIfEdgeListVersionChanged(elv1);
+
+		createTransaction(g1);
 		g1.deleteEdge(e4);
-		assertEquals(40, g1.getEdgeListVersion());
+		commit(g1);
 
+		elv1 = checkIfEdgeListVersionChanged(elv1);
+
+		createTransaction(g1);
 		g1.deleteEdge(e5);
-		assertEquals(41, g1.getEdgeListVersion());
+		commit(g1);
 
+		elv1 = checkIfEdgeListVersionChanged(elv1);
+
+		createTransaction(g1);
 		g1.deleteEdge(e6);
-		assertEquals(42, g1.getEdgeListVersion());
+		commit(g1);
+
+		elv1 = checkIfEdgeListVersionChanged(elv1);
 
 		// reordering edges does change the edgeListVersion
+		createTransaction(g1);
 		Edge e7 = g1.createEdge(SubLink.class, v9, v5);
-		assertEquals(43, g1.getEdgeListVersion());
+		commit(g1);
 
+		elv1 = checkIfEdgeListVersionChanged(elv1);
+
+		createTransaction(g1);
 		Edge e8 = g1.createEdge(SubLink.class, v12, v7);
-		assertEquals(44, g1.getEdgeListVersion());
+		commit(g1);
 
+		elv1 = checkIfEdgeListVersionChanged(elv1);
+
+		createTransaction(g1);
 		Edge e9 = g1.createEdge(SubLink.class, v11, v6);
-		assertEquals(45, g1.getEdgeListVersion());
+		commit(g1);
 
+		elv1 = checkIfEdgeListVersionChanged(elv1);
+
+		createTransaction(g1);
 		e7.putBeforeInGraph(e9);
-		assertEquals(46, g1.getEdgeListVersion());
+		commit(g1);
 
+		elv1 = checkIfEdgeListVersionChanged(elv1);
+
+		createTransaction(g1);
 		e8.putBeforeInGraph(e7);
-		assertEquals(46, g1.getEdgeListVersion());
+		commit(g1);
 
+		// same
+		checkIfEdgeListVersionRemained(elv1);
+
+		createTransaction(g1);
 		e9.putAfterInGraph(e8);
-		assertEquals(47, g1.getEdgeListVersion());
+		commit(g1);
 
+		elv1 = checkIfEdgeListVersionChanged(elv1);
+
+		createTransaction(g1);
 		e8.putAfterInGraph(e7);
-		assertEquals(48, g1.getEdgeListVersion());
+		commit(g1);
+
+		elv1 = checkIfEdgeListVersionChanged(elv1);
 
 		// changing attributes does not change the edgeListVersion
-		try {
-			e7.setAttribute("anInt", 22);
-			assertEquals(48, g1.getEdgeListVersion());
+		createTransaction(g1);
+		e7.setAttribute("anInt", 22);
+		commit(g1);
 
-			e8.setAttribute("anInt", 203);
-			assertEquals(48, g1.getEdgeListVersion());
+		// same
+		checkIfEdgeListVersionRemained(elv1);
 
-			e9.setAttribute("anInt", 2209);
-			assertEquals(48, g1.getEdgeListVersion());
+		createTransaction(g1);
+		e8.setAttribute("anInt", 203);
+		commit(g1);
 
-			e7.setAttribute("anInt", 15);
-			assertEquals(48, g1.getEdgeListVersion());
-		} catch (NoSuchFieldException e) {
-			// :(
-			e.printStackTrace();
-		}
+		// same
+		checkIfEdgeListVersionRemained(elv1);
+
+		createTransaction(g1);
+		e9.setAttribute("anInt", 2209);
+		commit(g1);
+
+		// same
+		checkIfEdgeListVersionRemained(elv1);
+
+		createTransaction(g1);
+		e7.setAttribute("anInt", 15);
+		commit(g1);
+
+		// same
+		checkIfEdgeListVersionRemained(elv1);
 
 		System.out.println("Done testing getEdgeListVersion.");
+	}
+
+	/**
+	 * Asserts true if the edgeListVersion has changed. Returns the new
+	 * edgeListVersion.
+	 * 
+	 * @param elv1
+	 *            the edgeListVersion before the transaction.
+	 * @return the edgeListVersion after the transaction.
+	 * @throws CommitFailedException
+	 *             should not happen.
+	 */
+	private long checkIfEdgeListVersionChanged(long elv1)
+			throws CommitFailedException {
+		long out;
+		createReadOnlyTransaction(g1);
+		assertTrue(elv1 < g1.getEdgeListVersion());
+		out = g1.getEdgeListVersion();
+		commit(g1);
+		return out;
+	}
+
+	/**
+	 * Asserts true if the edgeListVersion has not changed.
+	 * 
+	 * @param elv1
+	 *            the edgeListVersion before the transaction.
+	 * @throws CommitFailedException
+	 *             should not happen.
+	 */
+	private void checkIfEdgeListVersionRemained(long elv1)
+			throws CommitFailedException {
+		long out;
+		createReadOnlyTransaction(g1);
+		assertTrue(elv1 == g1.getEdgeListVersion());
+		out = g1.getEdgeListVersion();
+		commit(g1);
 	}
 
 	@Test
