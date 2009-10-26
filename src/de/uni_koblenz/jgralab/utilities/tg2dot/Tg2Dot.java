@@ -329,6 +329,7 @@ public class Tg2Dot extends Tg2Whatever {
 		Tg2Dot t2d = new Tg2Dot();
 		t2d.setGraph(graph);
 		t2d.setReversedEdges(reversedEdges);
+		t2d.setPrintEdgeAttributes(true);
 		t2d.setOutputFile(outputFileName);
 		t2d.printGraph();
 	}
@@ -339,6 +340,7 @@ public class Tg2Dot extends Tg2Whatever {
 		t2d.setGraphMarker(marker);
 		t2d.setGraph(marker.getGraph());
 		t2d.setReversedEdges(reversedEdges);
+		t2d.setPrintEdgeAttributes(true);
 		t2d.setOutputFile(outputFileName);
 		t2d.printGraph();
 	}
