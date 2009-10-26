@@ -1548,15 +1548,15 @@ public abstract class GraphImpl extends de.uni_koblenz.jgralab.impl.GraphImpl {
 	}
 	
 	public <T> List<T> createList(Class<T> type) {
-		return new JGraLabList<T>();
+		return new JGraLabList<T>(this);
 	}
 
 	public <T> List<T> createList(Class<T> type, Collection<? extends T> collection) {
-		return new JGraLabList<T>(collection);
+		return new JGraLabList<T>(this, collection);
 	}
 
 	public <T> List<T> createList(Class<T> type, int initialCapacity) {
-		return new JGraLabList<T>(initialCapacity);
+		return new JGraLabList<T>(this, initialCapacity);
 	}
 
 	public <T> Set<T> createSet(Class<T> type) {

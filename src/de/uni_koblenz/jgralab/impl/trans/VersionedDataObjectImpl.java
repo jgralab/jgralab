@@ -142,6 +142,10 @@ public abstract class VersionedDataObjectImpl<E> implements
 		this(attributedElement);
 		this.name = name;
 	}
+	
+	protected VersionedDataObjectImpl() {
+		
+	}
 
 	@Override
 	public void createNewTemporaryValue(Transaction transaction) {
@@ -1149,7 +1153,7 @@ public abstract class VersionedDataObjectImpl<E> implements
 	/**
 	 * Check whether this versioned data object belongs to a graph element which
 	 * has been added within the current transaction. If so, this versioned data
-	 * object isn't reference by any other transaction.
+	 * object isn't referenced by any other transaction.
 	 * 
 	 * @return if this versioned data object has been added within the current
 	 *         transaction.

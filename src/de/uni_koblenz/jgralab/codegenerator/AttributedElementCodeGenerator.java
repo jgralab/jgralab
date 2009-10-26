@@ -32,7 +32,7 @@ import de.uni_koblenz.jgralab.schema.Attribute;
 import de.uni_koblenz.jgralab.schema.AttributedElementClass;
 import de.uni_koblenz.jgralab.schema.Domain;
 import de.uni_koblenz.jgralab.schema.EnumDomain; // import
-													// de.uni_koblenz.jgralab.schema.GraphClass;
+// de.uni_koblenz.jgralab.schema.GraphClass;
 import de.uni_koblenz.jgralab.schema.ListDomain;
 import de.uni_koblenz.jgralab.schema.MapDomain;
 import de.uni_koblenz.jgralab.schema.RecordDomain;
@@ -394,12 +394,22 @@ public class AttributedElementCodeGenerator extends CodeGenerator {
 							// TODO check: changed from myGraph to this!!!
 							+ "(this, _#name#, \"#name#\");");
 				else
-					code.setVariable("initLoading", "new "
-							+ attr.getDomain().getVersionedClass(
-									schemaRootPackageName)
-							// TODO check: changed from myGraph to this!!!
-							+ "(this, (" + attr.getDomain().getSimpleName()
-							+ "Impl)" + " _#name#, \"#name#\");");
+					code
+							.setVariable(
+									"initLoading",
+									"new "
+											+ attr
+													.getDomain()
+													.getVersionedClass(
+															schemaRootPackageName)
+											// TODO check: changed from myGraph
+											// to this!!!
+											+ "(this, ("
+											+ attr
+													.getDomain()
+													.getTransactionJavaAttributeImplementationTypeName(
+															schemaRootPackageName)
+											+ ")" + " _#name#, \"#name#\");");
 				code.setVariable("init", "new "
 						+ attr.getDomain().getVersionedClass(
 						// TODO check: changed from myGraph to this!!!
@@ -445,16 +455,16 @@ public class AttributedElementCodeGenerator extends CodeGenerator {
 					if (domain instanceof RecordDomain) {
 						code
 								.add("\t\t(("
-										+ attr.getDomain().getSimpleName()
-										+ "Impl) _#name#).setVersionedRecord(this._#name#);");
+										+ attr.getDomain().getTransactionJavaAttributeImplementationTypeName(schemaRootPackageName)
+										+ ") _#name#).setVersionedRecord(this._#name#);");
 					}
 				}
 				if (domain instanceof RecordDomain)
 					code
 							.add(
 									"\tthis._#name#.setValidValue(("
-											+ attr.getDomain().getSimpleName()
-											+ "Impl) #tmpname#, #graphreference#getCurrentTransaction());",
+											+ attr.getDomain().getTransactionJavaAttributeImplementationTypeName(schemaRootPackageName)
+											+ ") #tmpname#, #graphreference#getCurrentTransaction());",
 									"\tattributeChanged(this._#name#);",
 									"\tgraphModified();", "}");
 				else
@@ -479,6 +489,7 @@ public class AttributedElementCodeGenerator extends CodeGenerator {
 		 */
 		code.setVariable("name", attr.getName());
 		if (!transactionSupport) {
+			// TODO check
 			code.setVariable("type", attr.getDomain()
 					.getJavaAttributeImplementationTypeName(
 							schemaRootPackageName));

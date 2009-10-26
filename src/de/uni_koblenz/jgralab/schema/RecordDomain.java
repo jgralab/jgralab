@@ -55,4 +55,12 @@ public interface RecordDomain extends CompositeDomain {
 	 *            the domain of the component
 	 */
 	public void addComponent(String name, Domain domain);
+	
+	/**
+	 * Returns the standard-implementation-class (folder impl.std) 
+	 * 
+	 * @return java representation of this attribute
+	 */
+	public String getStandardJavaAttributeImplementationTypeName(
+			String schemaRootPackagePrefix);
 }

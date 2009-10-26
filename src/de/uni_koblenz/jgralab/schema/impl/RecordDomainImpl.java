@@ -115,6 +115,7 @@ public final class RecordDomainImpl extends CompositeDomainImpl implements
 	@Override
 	public String getJavaClassName(String schemaRootPackagePrefix) {
 		return getJavaAttributeImplementationTypeName(schemaRootPackagePrefix);
+		// return getJavaAttributeTypeName(schemaRootPackagePrefix);
 	}
 
 	@Override
@@ -279,5 +280,12 @@ public final class RecordDomainImpl extends CompositeDomainImpl implements
 	@Override
 	public String getInitialValue() {
 		return "null";
+	}
+
+	@Override
+	public String getStandardJavaAttributeImplementationTypeName(
+			String schemaRootPackagePrefix) {
+		return schemaRootPackagePrefix + ".impl.std." + getQualifiedName()
+				+ "Impl";
 	}
 }

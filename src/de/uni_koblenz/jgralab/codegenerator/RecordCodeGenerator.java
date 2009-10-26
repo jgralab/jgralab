@@ -61,7 +61,8 @@ public class RecordCodeGenerator extends CodeGenerator {
 		rootBlock.setVariable("simpleImplClassName", recordDomain
 				.getSimpleName()
 				+ "Impl");
-		// one abstract class and two implementation classes need to be generated
+		// one abstract class and two implementation classes need to be
+		// generated
 		rootBlock.setVariable("isClassOnly", "false");
 		this.recordDomain = recordDomain;
 	}
@@ -90,23 +91,28 @@ public class RecordCodeGenerator extends CodeGenerator {
 	protected CodeBlock createHeader(boolean createClass) {
 		// return new CodeSnippet(true, "public class #simpleClassName# {");
 		if (transactionSupport)
-			addImports(
-					"#jgTransPackage#.JGraLabCloneable",
+			addImports("#jgTransPackage#.JGraLabCloneable",
 					"#jgImplTransPackage#.VersionedJGraLabCloneableImpl",
 					"#jgPackage#.Graph");
 		CodeSnippet code = null;
 		if (createClass) {
-			addImports(schemaRootPackageName + ".#simpleClassName#");
+			// TODO fix
+			// addImports(schemaRootPackageName + ".#simpleClassName#");
+			addImports("#schemaPackage#.#simpleClassName#");
 			if (transactionSupport) {
+				// addImports("#schemaImplTransPackage#.#simpleClassName#");
 				code = new CodeSnippet(true,
 						"public class #simpleImplClassName# extends #simpleClassName#"
 								+ " implements JGraLabCloneable" + " {");
 				code
 						.add("\tprivate VersionedJGraLabCloneableImpl<#simpleImplClassName#> versionedRecord;");
 				code.add("\tprivate Graph graph;");
-			} else
+
+			} else {
+				// addImports("#schemaImplStdPackage#.#simpleClassName#");
 				code = new CodeSnippet(true,
 						"public class #simpleImplClassName# extends #simpleClassName# {");
+			}
 		} else {
 			// abstract class (or better use interface?)
 			code = new CodeSnippet(true,
@@ -203,8 +209,12 @@ public class RecordCodeGenerator extends CodeGenerator {
 				if (transactionSupport) {
 					setterCode
 							.add("\tversionedRecord.setValidValue(this, graph.getCurrentTransaction());");
-					setterCode
-							.add("\tversionedRecord.getValidValue(graph.getCurrentTransaction())._#name# = (#ctype#) _#name#;");
+					if (rdc.getValue().isComposite())
+						setterCode
+								.add("\tversionedRecord.getValidValue(graph.getCurrentTransaction())._#name# = new #ctype#(_#name#);");
+					else
+						setterCode
+								.add("\tversionedRecord.getValidValue(graph.getCurrentTransaction())._#name# = (#ctype#) _#name#;");
 				}
 				setterCode.add("}");
 			}
@@ -353,13 +363,14 @@ public class RecordCodeGenerator extends CodeGenerator {
 
 			for (Entry<String, Domain> c : recordDomain.getComponents()
 					.entrySet()) {
-				//code.setVariable("isOrGet",
-				//	c.getValue() instanceof BooleanDomain ? "is" : "get");
-				String isOrGet = c.getValue() instanceof BooleanDomain ? "is" : "get";
+				// code.setVariable("isOrGet",
+				// c.getValue() instanceof BooleanDomain ? "is" : "get");
+				String isOrGet = c.getValue() instanceof BooleanDomain ? "is"
+						: "get";
 				code.add(c.getValue().getWriteMethod(schemaRootPackageName,
 						isOrGet + "_" + c.getKey() + "()", "io"));
-				//code.add(c.getValue().getWriteMethod(schemaRootPackageName,
-					//	"#isOrGet#_" + c.getKey() + "()", "io"));
+				// code.add(c.getValue().getWriteMethod(schemaRootPackageName,
+				// "#isOrGet#_" + c.getKey() + "()", "io"));
 			}
 
 			code.addNoIndent(new CodeSnippet("\tio.write(\")\");", "}"));
@@ -499,8 +510,7 @@ public class RecordCodeGenerator extends CodeGenerator {
 			code
 					.addNoIndent(new CodeSnippet(
 							true,
-							// TODO check if it needs to be public?
-							"protected void setVersionedRecord(VersionedJGraLabCloneableImpl<#simpleImplClassName#> versionedRecord) {",
+							"public void setVersionedRecord(VersionedJGraLabCloneableImpl<#simpleImplClassName#> versionedRecord) {",
 							"\tthis.versionedRecord = versionedRecord;",
 							"\tgraph = versionedRecord.getGraph();", "}"));
 		}
