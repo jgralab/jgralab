@@ -326,14 +326,18 @@ public class Tg2Dot extends Tg2Whatever {
 
 	public static void printGraphAsDot(Graph graph, boolean reversedEdges,
 			String outputFileName) {
-		printGraphAsDot(graph, null, reversedEdges, outputFileName);
+		Tg2Dot t2d = new Tg2Dot();
+		t2d.setGraph(graph);
+		t2d.setReversedEdges(reversedEdges);
+		t2d.setOutputFile(outputFileName);
+		t2d.printGraph();
 	}
 
-	public static void printGraphAsDot(Graph graph, BooleanGraphMarker marker,
+	public static void printGraphAsDot(BooleanGraphMarker marker,
 			boolean reversedEdges, String outputFileName) {
 		Tg2Dot t2d = new Tg2Dot();
 		t2d.setGraphMarker(marker);
-		t2d.setGraph(graph);
+		t2d.setGraph(marker.getGraph());
 		t2d.setReversedEdges(reversedEdges);
 		t2d.setOutputFile(outputFileName);
 		t2d.printGraph();
