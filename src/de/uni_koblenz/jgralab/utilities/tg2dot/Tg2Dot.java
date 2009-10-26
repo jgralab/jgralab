@@ -27,6 +27,7 @@ package de.uni_koblenz.jgralab.utilities.tg2dot;
 import java.io.PrintStream;
 
 import de.uni_koblenz.jgralab.AttributedElement;
+import de.uni_koblenz.jgralab.BooleanGraphMarker;
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.Vertex;
@@ -325,7 +326,13 @@ public class Tg2Dot extends Tg2Whatever {
 
 	public static void printGraphAsDot(Graph graph, boolean reversedEdges,
 			String outputFileName) {
+		printGraphAsDot(graph, null, reversedEdges, outputFileName);
+	}
+
+	public static void printGraphAsDot(Graph graph, BooleanGraphMarker marker,
+			boolean reversedEdges, String outputFileName) {
 		Tg2Dot t2d = new Tg2Dot();
+		t2d.setGraphMarker(marker);
 		t2d.setGraph(graph);
 		t2d.setReversedEdges(reversedEdges);
 		t2d.setOutputFile(outputFileName);
