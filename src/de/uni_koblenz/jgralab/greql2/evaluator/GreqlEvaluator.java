@@ -34,11 +34,15 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import de.uni_koblenz.jgralab.Graph;
+import de.uni_koblenz.jgralab.GraphIO;
 import de.uni_koblenz.jgralab.GraphIOException;
 import de.uni_koblenz.jgralab.GraphMarker;
+import de.uni_koblenz.jgralab.JGraLab;
 import de.uni_koblenz.jgralab.ProgressFunction;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.GraphIO.TGFilenameFilter;
@@ -75,6 +79,33 @@ import de.uni_koblenz.jgralab.schema.impl.SchemaImpl;
  * 
  */
 public class GreqlEvaluator {
+
+	public static void main(String[] args) throws FileNotFoundException,
+			IOException, GraphIOException {
+		if (args.length != 2) {
+			System.err
+					.println("Usage: java GreqlEvaluator <graphfile> <query>");
+			System.exit(1);
+		}
+		JGraLab.setLogLevel(Level.OFF);
+		String graphfile = args[0];
+		String query = args[1];
+		GreqlEvaluator eval = new GreqlEvaluator(query, GraphIO
+				.loadSchemaAndGraphFromFile(graphfile, null), null);
+		eval.startEvaluation();
+		JValue result = eval.getEvaluationResult();
+		if (result.isCollection()) {
+			for (JValue jv : result.toCollection()) {
+				System.out.println(jv);
+			}
+		} else if (result.isMap()) {
+			for (Entry<JValue, JValue> e : result.toJValueMap().entrySet()) {
+				System.out.println(e.getKey() + " --> " + e.getValue());
+			}
+		} else {
+			System.out.println(result);
+		}
+	}
 
 	/**
 	 * toggles which expressions are added to the index. Only vertex- and

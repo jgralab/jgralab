@@ -24,6 +24,9 @@ public class ParsingException extends Greql2Exception {
 	}
 
 	private static String surrounding(String query, int off, int len) {
+		if ((len < 0) || (off < 0)) {
+			return "";
+		}
 		int s = off - 20;
 		if (s < 0) {
 			s = 0;
@@ -32,6 +35,7 @@ public class ParsingException extends Greql2Exception {
 		if (e > query.length()) {
 			e = query.length();
 		}
+		// System.out.println(off + ", " + len + ", " + s + ", " + e);
 		String start = query.substring(s, off);
 		String end = query.substring(off + len, e);
 		String problematicPart = query.substring(off, off + len);
