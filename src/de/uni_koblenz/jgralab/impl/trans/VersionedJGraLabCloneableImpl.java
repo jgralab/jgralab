@@ -46,10 +46,10 @@ public class VersionedJGraLabCloneableImpl<E extends JGraLabCloneable> extends
 	 * 
 	 * TODO this constructor leads to conflict together with the constructor below
 	 */
-	/*public VersionedJGraLabCloneableImpl(
+	public VersionedJGraLabCloneableImpl(
 			E initialPersistentValue) {
 		super(null, initialPersistentValue);
-	}*/
+	}
 
 	/**
 	 * 
