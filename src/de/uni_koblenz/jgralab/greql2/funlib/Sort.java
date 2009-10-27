@@ -12,6 +12,7 @@ import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.greql2.exception.EvaluateException;
 import de.uni_koblenz.jgralab.greql2.exception.WrongFunctionParameterException;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
+import de.uni_koblenz.jgralab.greql2.jvalue.JValueCollection;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValueList;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
 
@@ -42,18 +43,22 @@ public class Sort extends AbstractGreql2Function implements Greql2Function {
 		signatures = x;
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
 	public JValue evaluate(Graph graph, BooleanGraphMarker subgraph,
 			JValue[] arguments) throws EvaluateException {
 		switch (checkArguments(arguments)) {
 		case 0:
-			List<Comparable<Object>> l = (List<Comparable<Object>>) arguments[0]
-					.toCollection().toJValueList().toObject();
+			JValueCollection col = arguments[0].toCollection();
+			List<JValue> l = new ArrayList<JValue>(col.size());
+			for (JValue jv : col) {
+				l.add(jv);
+			}
+
 			Collections.sort(l);
-			JValueList jl = new JValueList();
-			for (Object o : l) {
-				jl.add(new JValue(o));
+
+			JValueList jl = new JValueList(col.size());
+			for (JValue jv : l) {
+				jl.add(jv);
 			}
 			return jl;
 		default:

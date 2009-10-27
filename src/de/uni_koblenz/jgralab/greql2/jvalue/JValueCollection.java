@@ -171,6 +171,28 @@ abstract public class JValueCollection extends JValue implements
 	 */
 	abstract public void clear();
 
+	@Override
+	public int compareTo(JValue o) {
+		// if both are the same class (e.g. two tuples)...
+		if (this.getClass() != o.getClass()) {
+			return super.compareTo(o);
+		}
+		// then compare the values (e.g. tuple components) pairwise.
+		JValueCollection other = (JValueCollection) o;
+		Iterator<JValue> oi = other.iterator();
+		for (JValue jv : this) {
+			if (!oi.hasNext()) {
+				return 1;
+			}
+			JValue ov = oi.next();
+			int val = jv.compareTo(ov);
+			if (val != 0) {
+				return val;
+			}
+		}
+		return 0;
+	}
+
 	/**
 	 * @return true if this collection contains no elements, false otherwise
 	 */
