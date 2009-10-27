@@ -23,7 +23,7 @@
 ;; Major mode for editing GReQL2 files with Emacs and executing queries.
 
 ;;; Version:
-;; <2009-09-23 Wed 21:49>
+;; <2009-10-27 Tue 17:21>
 
 ;;; Code:
 
@@ -98,7 +98,7 @@
   "Distance between tab stops (for display of tab characters), in
 columns.")
 
-(defvar greql-script-program "~/bin/greqlscript"
+(defvar greql-program "~/repos/utils/greqleval"
   "The program to execute GReQL queries.")
 
 (defvar greql-buffer "*GReQL*"
@@ -342,24 +342,20 @@ queries are evaluated.  Set it with `greql-set-graph'.")
     (setq greql-result-file (make-temp-file "greql-result" nil ".html"))
     (with-current-buffer buffer (erase-buffer))
     (let ((proc (start-process "GReQL process" buffer
-                               greql-script-program
+                               greql-program
                                (if greql-extra-classpath
                                     "--extra-cp"
                                  "")
                                (if greql-extra-classpath
                                     greql-extra-classpath
                                  "")
-                               "-e" evalstr
-                               "-r" greql-result-file
-                               (if greql-graph
-                                   (concat "-g" (expand-file-name greql-graph))
-                                 ""))))
+                               (expand-file-name greql-graph)
+                               evalstr)))
       (set-process-sentinel proc 'greql-display-result))
     (display-buffer buffer)))
 
 (defun greql-display-result (proc change)
-  (select-window (get-buffer-window (get-buffer-create greql-buffer)))
-  (w3m-find-file greql-result-file))
+  (select-window (get-buffer-window (get-buffer-create greql-buffer))))
 
 (defun greql-vertex-set-expression-p ()
   (looking-back "V{[[:word:]._,^ ]*"))
