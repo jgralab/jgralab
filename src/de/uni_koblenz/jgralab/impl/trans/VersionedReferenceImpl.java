@@ -42,11 +42,13 @@ public class VersionedReferenceImpl<E> extends VersionedDataObjectImpl<E> {
 	/**
 	 * 
 	 * @param initialPersistentValue
+	 * 
+	 * TODO this constructor leads to errors, conflict with constructor below
 	 */
-	public VersionedReferenceImpl(
+	/*public VersionedReferenceImpl(
 			E initialPersistentValue) {
 		super(null, initialPersistentValue);
-	}
+	}*/
 
 	/**
 	 * 
