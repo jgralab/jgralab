@@ -23,18 +23,18 @@ public class ParsingException extends Greql2Exception {
 		this.length = length;
 	}
 
-	private static String surrounding(String query, int offset, int length) {
-		int s = offset - 20;
+	private static String surrounding(String query, int off, int len) {
+		int s = off - 20;
 		if (s < 0) {
 			s = 0;
 		}
-		int e = offset + length + 20;
+		int e = off + len + 20;
 		if (e > query.length()) {
 			e = query.length();
 		}
-		String start = query.substring(s, offset);
-		String end = query.substring(offset + length, e);
-		String problematicPart = query.substring(offset, offset + length);
+		String start = query.substring(s, off);
+		String end = query.substring(off + len, e);
+		String problematicPart = query.substring(off, off + len);
 		return start + "‹" + problematicPart + "›" + end;
 	}
 
