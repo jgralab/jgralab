@@ -1483,24 +1483,28 @@ public class GraphTest extends InstanceTest {
 
 		elv1 = checkIfEdgeListVersionChanged(elv1);
 
-		// making sure that changing a vertex does not affect the edges
+		// when deleting a vertex, incident edges are also deleted and the
+		// edgeListVersion changes.
 		createTransaction(g1);
-		g1.deleteVertex(v9);
+		Vertex v13 = g1.createVertex(DoubleSubNode.class);
+		Vertex v14 = g1.createVertex(DoubleSubNode.class);
+		g1.createEdge(Link.class, v13, v14);
 		commit(g1);
 
 		elv1 = checkIfEdgeListVersionChanged(elv1);
-		
-		createTransaction(g1);
-		Vertex v13 = g1.createVertex(DoubleSubNode.class);
-		commit(g1);
-		
-		// same
-		checkIfEdgeListVersionRemained(elv1);
-		
+
 		createTransaction(g1);
 		g1.deleteVertex(v13);
 		commit(g1);
-		
+
+		elv1 = checkIfEdgeListVersionChanged(elv1);
+
+		// when deleting a vertex with degree=0, the edgeListVersion should
+		// remain unchanged.
+		createTransaction(g1);
+		g1.deleteVertex(v14);
+		commit(g1);
+
 		// same
 		checkIfEdgeListVersionRemained(elv1);
 
@@ -1546,6 +1550,7 @@ public class GraphTest extends InstanceTest {
 
 		elv1 = checkIfEdgeListVersionChanged(elv1);
 
+		// v6 does not exist anymore
 		createTransaction(g1);
 		g1.createEdge(Link.class, v1, v6);
 		commit(g1);
@@ -1748,16 +1753,15 @@ public class GraphTest extends InstanceTest {
 	 */
 	private void checkIfEdgeListVersionRemained(long elv1)
 			throws CommitFailedException {
-		long out;
 		createReadOnlyTransaction(g1);
 		assertTrue(elv1 == g1.getEdgeListVersion());
-		out = g1.getEdgeListVersion();
 		commit(g1);
 	}
 
 	@Test
-	public void testContainsVertex() {
-		onlyTestWithoutTransactionSupport();
+	public void testContainsVertex() throws CommitFailedException {
+		createTransaction(g1);
+		createTransaction(g2);
 		DoubleSubNode v13 = g1.createDoubleSubNode();
 		DoubleSubNode v14 = g2.createDoubleSubNode();
 		SubNode v15 = g1.createSubNode();
@@ -1767,7 +1771,11 @@ public class GraphTest extends InstanceTest {
 		Vertex v19 = g2.createVertex(DoubleSubNode.class);
 		Vertex v20 = g2.createVertex(SubNode.class);
 		Vertex v21 = g2.createVertex(SuperNode.class);
+		commit(g1);
+		commit(g2);
 
+		createReadOnlyTransaction(g1);
+		createReadOnlyTransaction(g2);
 		assertTrue(g1.containsVertex(v13));
 		assertTrue(g1.containsVertex(v15));
 		assertTrue(g1.containsVertex(v17));
@@ -1814,23 +1822,41 @@ public class GraphTest extends InstanceTest {
 		assertFalse(g2.containsVertex(v10));
 		assertFalse(g2.containsVertex(v11));
 		assertFalse(g2.containsVertex(v12));
+		commit(g1);
+		commit(g2);
 
 		// deleting vertices changes the contains-information accordingly
+		createTransaction(g1);
 		g1.deleteVertex(v1);
+		commit(g1);
+
+		createReadOnlyTransaction(g1);
 		assertFalse(g1.containsVertex(v1));
+		commit(g1);
 
+		createTransaction(g1);
 		g1.deleteVertex(v9);
-		assertFalse(g1.containsVertex(v9));
+		commit(g1);
 
+		createReadOnlyTransaction(g1);
+		assertFalse(g1.containsVertex(v9));
+		commit(g1);
+
+		createTransaction(g2);
 		g2.deleteVertex(v14);
+		commit(g2);
+
+		createReadOnlyTransaction(g2);
 		assertFalse(g2.containsVertex(v14));
+		commit(g2);
 
 		System.out.println("Done testing containsVertex.");
 	}
 
 	@Test
-	public void testContainsEdge() {
-		onlyTestWithoutTransactionSupport();
+	public void testContainsEdge() throws CommitFailedException {
+		createTransaction(g1);
+		createTransaction(g2);
 		DoubleSubNode v13 = g2.createDoubleSubNode();
 		DoubleSubNode v14 = g2.createDoubleSubNode();
 		SubNode v15 = g2.createSubNode();
@@ -1851,7 +1877,11 @@ public class GraphTest extends InstanceTest {
 		Edge e11 = g2.createEdge(SubLink.class, v14, v17);
 		Edge e12 = g2.createEdge(Link.class, v16, v18);
 		Edge e13 = g2.createEdge(LinkBack.class, v18, v13);
+		commit(g1);
+		commit(g2);
 
+		createReadOnlyTransaction(g1);
+		createReadOnlyTransaction(g2);
 		assertTrue(g1.containsEdge(e1));
 		assertTrue(g2.containsEdge(e2));
 		assertTrue(g1.containsEdge(e3));
@@ -1881,17 +1911,36 @@ public class GraphTest extends InstanceTest {
 		assertFalse(g1.containsEdge(e11));
 		assertFalse(g1.containsEdge(e12));
 		assertFalse(g1.containsEdge(e13));
+		commit(g1);
+		commit(g2);
 
 		// when a vertex is deleted, the edges to which it belonged are deleted
 		// as well
+		createTransaction(g1);
 		e1 = g1.createEdge(SubLink.class, v10, v12);
 		Edge e14 = g1.createEdge(SubLink.class, v9, v6);
 		Edge e17 = g1.createEdge(LinkBack.class, v8, v10);
+		commit(g1);
+
+		createReadOnlyTransaction(g1);
 		assertTrue(g1.containsEdge(e1));
 		assertTrue(g1.containsEdge(e17));
+		commit(g1);
 
+		createTransaction(g1);
 		g1.deleteVertex(v10);
+		// create new instances of implicitly deleted vertices
+		v12 = g1.createVertex(DoubleSubNode.class);
+		commit(g1);
+
 		// all edges from or to v10 do no longer exist
+		createReadOnlyTransaction(g1);
+		// check if implicitly deleted vertex v5 was really deleted and check if
+		// its incident edges have been deleted.
+		assertFalse(g1.containsVertex(v5));
+		assertFalse(g1.containsEdge(e9));
+		assertFalse(g1.containsEdge(e10));
+
 		assertFalse(g1.containsEdge(e1));
 		assertFalse(g1.containsEdge(e3));
 		assertFalse(g1.containsEdge(e7));
@@ -1900,43 +1949,73 @@ public class GraphTest extends InstanceTest {
 		assertTrue(g1.containsEdge(e5));
 		assertTrue(g1.containsEdge(e8));
 		assertTrue(g1.containsEdge(e14));
+		commit(g1);
 
+		createTransaction(g1);
 		Edge e15 = g1.createEdge(LinkBack.class, v6, v11);
 		Edge e16 = g1.createEdge(Link.class, v12, v8);
-		assertTrue(g1.containsEdge(e15));
-		assertTrue(g1.containsEdge(e16));
+		commit(g1);
 
+		createReadOnlyTransaction(g1);
+		assertTrue(g1.containsEdge(e15));
+		// assertTrue(g1.containsEdge(e16));
+		commit(g1);
+
+		createTransaction(g1);
 		g1.deleteEdge(e5);
+		commit(g1);
+
+		createReadOnlyTransaction(g1);
 		assertFalse(g1.containsEdge(e5));
 		assertTrue(g1.containsEdge(e8));
 		assertTrue(g1.containsEdge(e14));
 		assertTrue(g1.containsEdge(e15));
-		assertTrue(g1.containsEdge(e16));
+		// assertTrue(g1.containsEdge(e16));
+		commit(g1);
 
+		createTransaction(g1);
 		g1.deleteEdge(e16);
+		commit(g1);
+
+		createReadOnlyTransaction(g1);
 		assertFalse(g1.containsEdge(e16));
 		assertTrue(g1.containsEdge(e8));
 		assertTrue(g1.containsEdge(e14));
 		assertTrue(g1.containsEdge(e15));
+		commit(g1);
 
+		createTransaction(g1);
 		g1.deleteEdge(e14);
+		commit(g1);
+
+		createReadOnlyTransaction(g1);
 		assertFalse(g1.containsEdge(e14));
 		assertTrue(g1.containsEdge(e8));
 		assertTrue(g1.containsEdge(e15));
+		commit(g1);
 
+		createTransaction(g1);
 		g1.deleteEdge(e8);
+		commit(g1);
+
+		createReadOnlyTransaction(g1);
 		assertFalse(g1.containsEdge(e8));
 		assertTrue(g1.containsEdge(e15));
+		commit(g1);
 
+		createTransaction(g1);
 		g1.deleteEdge(e15);
+		commit(g1);
+
+		createReadOnlyTransaction(g1);
 		assertFalse(g1.containsEdge(e15));
+		commit(g1);
 
 		System.out.println("Done testing containsEdge.");
 	}
 
 	@Test
-	public void testDeleteVertex() {
-		onlyTestWithoutTransactionSupport();
+	public void testDeleteVertex() throws CommitFailedException {
 		// TODO:
 		// Removes the vertex from the vertex sequence of this graph.
 		// any edges incident to the vertex are deleted
@@ -1945,41 +2024,91 @@ public class GraphTest extends InstanceTest {
 		// Pre: v.isValid()
 		// Post: !v.isValid() && !containsVertex(v) && getVertex(v.getId()) ==
 		// null
-
-		g2.createSubNode();
-		DoubleSubNode v15 = g2.createDoubleSubNode();
-
+		createTransaction(g1);
 		g1.deleteVertex(v1);
-		assertFalse(g1.containsVertex(v1));
-		g1.deleteVertex(v2);
-		assertFalse(g1.containsVertex(v2));
-		g1.deleteVertex(v3);
-		assertFalse(g1.containsVertex(v3));
-		g1.deleteVertex(v7);
-		assertFalse(g1.containsVertex(v7));
-		g1.deleteVertex(v5);
-		assertFalse(g1.containsVertex(v5));
-		g1.deleteVertex(v6);
-		assertFalse(g1.containsVertex(v6));
-		g1.deleteVertex(v9);
-		assertFalse(g1.containsVertex(v9));
-		g1.deleteVertex(v10);
-		assertFalse(g1.containsVertex(v10));
-		g1.deleteVertex(v11);
-		assertFalse(g1.containsVertex(v11));
+		commit(g1);
 
-		// v13 only returns an AssertionError if a SubNode is created in graph2
-		// before the creation of v13; v15 always returns a
-		// NullPointerException;
-		// if v14 is the first vertex of graph2 it returns a
-		// NullPointerException as
-		// well otherwise it returns an AssertionError
-		// TODO what is going on and why?
-		try {
-			g1.deleteVertex(v15);
-		} catch (NullPointerException e) {
-			// Exception ok
-		}
+		createReadOnlyTransaction(g1);
+		assertFalse(g1.containsVertex(v1));
+		createTransaction(g1);
+		g1.deleteVertex(v2);
+		commit(g1);
+
+		createReadOnlyTransaction(g1);
+		assertFalse(g1.containsVertex(v2));
+		createTransaction(g1);
+		g1.deleteVertex(v3);
+		commit(g1);
+
+		createReadOnlyTransaction(g1);
+		assertFalse(g1.containsVertex(v3));
+		commit(g1);
+
+		createTransaction(g1);
+		g1.deleteVertex(v7);
+		commit(g1);
+
+		createReadOnlyTransaction(g1);
+		assertFalse(g1.containsVertex(v7));
+		commit(g1);
+
+		createTransaction(g1);
+		g1.deleteVertex(v5);
+		commit(g1);
+
+		createReadOnlyTransaction(g1);
+		assertFalse(g1.containsVertex(v5));
+		commit(g1);
+
+		createTransaction(g1);
+		g1.deleteVertex(v6);
+		commit(g1);
+
+		createReadOnlyTransaction(g1);
+		assertFalse(g1.containsVertex(v6));
+		commit(g1);
+
+		createTransaction(g1);
+		g1.deleteVertex(v9);
+		commit(g1);
+
+		createReadOnlyTransaction(g1);
+		assertFalse(g1.containsVertex(v9));
+		commit(g1);
+
+		createTransaction(g1);
+		g1.deleteVertex(v10);
+		commit(g1);
+
+		createReadOnlyTransaction(g1);
+		assertFalse(g1.containsVertex(v10));
+		commit(g1);
+
+		createTransaction(g1);
+		g1.deleteVertex(v11);
+		commit(g1);
+
+		createReadOnlyTransaction(g1);
+		assertFalse(g1.containsVertex(v11));
+		commit(g1);
+
+	}
+
+	/**
+	 * Tests if an exception is thrown if a vertex from another graph is subject
+	 * to be removed.
+	 * 
+	 * @throws CommitFailedException
+	 */
+	@Test(expected = GraphException.class)
+	public void testDeleteVertex2() throws CommitFailedException {
+		createTransaction(g2);
+		DoubleSubNode v15 = g2.createDoubleSubNode();
+		commit(g2);
+
+		createTransaction(g1);
+		g1.deleteVertex(v15);
+		commit(g1);
 	}
 
 	@Test
@@ -3790,6 +3919,7 @@ public class GraphTest extends InstanceTest {
 
 	@Test
 	public void testGetExpandedVertexCount() {
+		onlyTestWithoutTransactionSupport();
 		// border case
 		assertEquals(2000, g1.getExpandedVertexCount());
 
