@@ -445,6 +445,10 @@ public class JniServer {
 		addListElement(list, index, Double.valueOf(element));
 	}
 
+	void addStringListElement(List<Object> list, int index, String element) {
+		addListElement(list, index, element);
+	}
+
 	int getListSize(List<?> list) {
 		return list.size();
 	}
@@ -462,6 +466,10 @@ public class JniServer {
 	}
 
 	double getDoubleListElement(List<Double> list, int index) {
+		return list.get(index);
+	}
+
+	String getStringListElement(List<String> list, int index) {
 		return list.get(index);
 	}
 
