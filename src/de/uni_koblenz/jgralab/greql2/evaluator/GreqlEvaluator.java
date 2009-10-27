@@ -303,7 +303,17 @@ public class GreqlEvaluator {
 
 	public void setQuery(String queryString) {
 		this.queryString = queryString;
+		reset();
+	}
+
+	/**
+	 * Reset to before-start state, so that a new query can be evaluated.
+	 */
+	private void reset() {
 		queryGraph = null;
+		result = null;
+		started = false;
+		vertexEvalGraphMarker = null;
 	}
 
 	/**
@@ -456,6 +466,17 @@ public class GreqlEvaluator {
 	 */
 	public Map<String, JValue> getVariables() {
 		return variableMap;
+	}
+
+	public void setVariables(Map<String, JValue> varMap) {
+		variableMap = varMap;
+	}
+
+	public void setVariable(String varName, JValue value) {
+		if (variableMap == null) {
+			variableMap = new HashMap<String, JValue>();
+		}
+		variableMap.put(varName, value);
 	}
 
 	/**
@@ -683,13 +704,6 @@ public class GreqlEvaluator {
 		}
 		this.queryGraph = queryGraph;
 		this.variableMap = variables;
-	}
-
-	public void setGreqlVariable(String varName, JValue value) {
-		if (variableMap == null) {
-			variableMap = new HashMap<String, JValue>();
-		}
-		variableMap.put(varName, value);
 	}
 
 	public void normalizeQueryString() {
