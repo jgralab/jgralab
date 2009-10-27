@@ -35,10 +35,14 @@ public class ParsingException extends Greql2Exception {
 		if (e > query.length()) {
 			e = query.length();
 		}
+		int ol = off + len;
+		if (ol > query.length()) {
+			ol = query.length();
+		}
 		// System.out.println(off + ", " + len + ", " + s + ", " + e);
 		String start = query.substring(s, off);
-		String end = query.substring(off + len, e);
-		String problematicPart = query.substring(off, off + len);
+		String problematicPart = query.substring(off, ol);
+		String end = query.substring(ol, e);
 		return start + "‹" + problematicPart + "›" + end;
 	}
 

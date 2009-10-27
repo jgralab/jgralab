@@ -349,8 +349,8 @@ queries are evaluated.  Set it with `greql-set-graph'.")
                                (if greql-extra-classpath
                                     greql-extra-classpath
                                  "")
-                               (expand-file-name greql-graph)
-                               evalstr)))
+                               evalstr
+                               (expand-file-name greql-graph))))
       (set-process-sentinel proc 'greql-display-result))
     (display-buffer buffer)))
 
