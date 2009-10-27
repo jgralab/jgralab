@@ -296,6 +296,11 @@ public class JniServer {
 				value);
 	}
 
+	public void setEdgeListAttribute(int graphId, int edgeId,
+			String attributeName, List<?> value) {
+		setAttribute(graphs.get(graphId).getEdge(edgeId), attributeName, value);
+	}
+
 	public boolean getEdgeBooleanAttribute(int graphId, int edgeId,
 			String attributeName) {
 		return (Boolean) getAttribute(graphs.get(graphId).getEdge(edgeId),
@@ -331,6 +336,12 @@ public class JniServer {
 	public String getEdgeEnumAttribute(int graphId, int edgeId,
 			String attributeName) {
 		return getEnumAttribute(graphs.get(graphId).getEdge(edgeId),
+				attributeName);
+	}
+
+	public List<?> getEdgeListAttribute(int graphId, int edgeId,
+			String attributeName) {
+		return (List<?>) getAttribute(graphs.get(graphId).getEdge(edgeId),
 				attributeName);
 	}
 
