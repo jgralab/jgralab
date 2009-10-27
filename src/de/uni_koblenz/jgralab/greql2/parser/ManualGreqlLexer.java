@@ -156,7 +156,7 @@ public class ManualGreqlLexer {
 									"String started at position " + start
 											+ " but is not closed in query",
 									query.substring(start, position), start,
-									position - start);
+									position - start, query);
 						}
 						if ((query.charAt(position + 1) == '"')
 								|| (query.charAt(position + 1) == '\\')) {
@@ -169,7 +169,7 @@ public class ManualGreqlLexer {
 				if (query.charAt(position) != '\"') {
 					throw new ParsingException("String started at position "
 							+ start + " but is not closed in query", sb
-							.toString(), start, position - start);
+							.toString(), start, position - start, query);
 				}
 				recognizedTokenType = TokenTypes.STRING;
 				recognizedToken = new ComplexToken(TokenTypes.STRING, start,
@@ -207,7 +207,7 @@ public class ManualGreqlLexer {
 		if (recognizedToken == null) {
 			throw new ParsingException(
 					"Error while scanning query at position", null, position,
-					position);
+					position, query);
 		}
 		return recognizedToken;
 	}
@@ -235,7 +235,7 @@ public class ManualGreqlLexer {
 					value = Integer.parseInt(text.substring(2), 16);
 				} catch (NumberFormatException ex) {
 					throw new ParsingException("Not a valid hex number", text,
-							start, end - start);
+							start, end - start, query);
 				}
 			} else {
 				type = TokenTypes.OCTLITERAL;
@@ -244,7 +244,7 @@ public class ManualGreqlLexer {
 					decValue = Integer.parseInt(text);
 				} catch (NumberFormatException ex) {
 					throw new ParsingException("Not a valid octal number",
-							text, start, end - start);
+							text, start, end - start, query);
 				}
 			}
 		} else {
@@ -256,7 +256,7 @@ public class ManualGreqlLexer {
 							text.length() - 1), 16);
 				} catch (NumberFormatException ex) {
 					throw new ParsingException("Not a valid hex number", text,
-							start, end - start);
+							start, end - start, query);
 				}
 				break;
 			case 'd':
@@ -271,7 +271,7 @@ public class ManualGreqlLexer {
 							.parseDouble(tokenString));
 				} catch (NumberFormatException ex) {
 					throw new ParsingException("Not a valid float number",
-							text, start, end - start);
+							text, start, end - start, query);
 				}
 			default:
 				type = TokenTypes.INTLITERAL;
@@ -279,7 +279,7 @@ public class ManualGreqlLexer {
 					value = Integer.parseInt(text);
 				} catch (NumberFormatException ex) {
 					throw new ParsingException("Not a valid integer number",
-							text, start, end - start);
+							text, start, end - start, query);
 				}
 			}
 		}

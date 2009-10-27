@@ -293,7 +293,7 @@ public class ManualGreqlParser extends ManualParserHelper {
 			tokenText = lookAhead(0).name();
 		}
 		ParsingException ex = new ParsingException(msg, tokenText, offset,
-				length);
+				length, query);
 		predicateFulfilled = false;
 		if (getCurrentOffset() > farestOffset) {
 			farestException = ex;
