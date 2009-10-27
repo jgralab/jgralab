@@ -26,7 +26,9 @@ package de.uni_koblenz.jgralab.jniserver;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.Hashtable;
+import java.util.List;
 import java.util.Map;
 
 import de.uni_koblenz.jgralab.AttributedElement;
@@ -188,45 +190,57 @@ public class JniServer {
 				attributeName, value);
 	}
 
+	public void setVertexListAttribute(int graphId, int vertexId,
+			String attributeName, List<?> value) {
+		setAttribute(graphs.get(graphId).getVertex(vertexId), attributeName,
+				value);
+	}
+
 	public String getVertexClassName(int graphId, int vertexId) {
 		return graphs.get(graphId).getVertex(vertexId)
 				.getAttributedElementClass().getQualifiedName();
 	}
 
-	public boolean getVertexBooleanAttribute(int graphId, int edgeId,
+	public boolean getVertexBooleanAttribute(int graphId, int vertexId,
 			String attributeName) {
-		return (Boolean) getAttribute(graphs.get(graphId).getVertex(edgeId),
+		return (Boolean) getAttribute(graphs.get(graphId).getVertex(vertexId),
 				attributeName);
 	}
 
-	public int getVertexIntegerAttribute(int graphId, int edgeId,
+	public int getVertexIntegerAttribute(int graphId, int vertexId,
 			String attributeName) {
-		return (Integer) getAttribute(graphs.get(graphId).getVertex(edgeId),
+		return (Integer) getAttribute(graphs.get(graphId).getVertex(vertexId),
 				attributeName);
 	}
 
-	public long getVertexLongAttribute(int graphId, int edgeId,
+	public long getVertexLongAttribute(int graphId, int vertexId,
 			String attributeName) {
-		return (Long) getAttribute(graphs.get(graphId).getVertex(edgeId),
+		return (Long) getAttribute(graphs.get(graphId).getVertex(vertexId),
 				attributeName);
 	}
 
-	public double getVertexDoubleAttribute(int graphId, int edgeId,
+	public double getVertexDoubleAttribute(int graphId, int vertexId,
 			String attributeName) {
-		return (Double) getAttribute(graphs.get(graphId).getVertex(edgeId),
+		return (Double) getAttribute(graphs.get(graphId).getVertex(vertexId),
 				attributeName);
 	}
 
-	public String getVertexStringAttribute(int graphId, int edgeId,
+	public String getVertexStringAttribute(int graphId, int vertexId,
 			String attributeName) {
-		return (String) getAttribute(graphs.get(graphId).getVertex(edgeId),
+		return (String) getAttribute(graphs.get(graphId).getVertex(vertexId),
 				attributeName);
 
 	}
 
-	public String getVertexEnumAttribute(int graphId, int edgeId,
+	public String getVertexEnumAttribute(int graphId, int vertexId,
 			String attributeName) {
-		return getEnumAttribute(graphs.get(graphId).getVertex(edgeId),
+		return getEnumAttribute(graphs.get(graphId).getVertex(vertexId),
+				attributeName);
+	}
+
+	public List<?> getVertexListAttribute(int graphId, int vertexId,
+			String attributeName) {
+		return (List<?>) getAttribute(graphs.get(graphId).getVertex(vertexId),
 				attributeName);
 	}
 
@@ -403,6 +417,61 @@ public class JniServer {
 	// ----------------------------------------------------------------------------
 	// ----------------------------------------------------------------------------
 
+	public List<?> createList() {
+		return new ArrayList<Object>();
+	}
+
+	void clearList(List<?> list) {
+		list.clear();
+	}
+
+	void addListElement(List<Object> list, int index, Object element) {
+		if (index < 0) {
+			list.add(element);
+		} else {
+			list.add(index, element);
+		}
+	}
+
+	void addIntegerListElement(List<Object> list, int index, int element) {
+		addListElement(list, index, Integer.valueOf(element));
+	}
+
+	void addLongListElement(List<Object> list, int index, long element) {
+		addListElement(list, index, Long.valueOf(element));
+	}
+
+	void addDoubleListElement(List<Object> list, int index, double element) {
+		addListElement(list, index, Double.valueOf(element));
+	}
+
+	int getListSize(List<?> list) {
+		return list.size();
+	}
+
+	Object getListElement(List<Object> list, int index) {
+		return list.get(index);
+	}
+
+	int getIntegerListElement(List<Integer> list, int index) {
+		return list.get(index);
+	}
+
+	long getLongListElement(List<Long> list, int index) {
+		return list.get(index);
+	}
+
+	double getDoubleListElement(List<Double> list, int index) {
+		return list.get(index);
+	}
+
+	void removeListElement(List<?> list, int index) {
+		list.remove(index);
+	}
+
+	// ----------------------------------------------------------------------------
+	// ----------------------------------------------------------------------------
+
 	private void setEnumAttribute(AttributedElement e, String attributeName,
 			Object value) {
 		try {
@@ -474,4 +543,5 @@ public class JniServer {
 			throw new GraphException(ex);
 		}
 	}
+
 }
