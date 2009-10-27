@@ -1,0 +1,6 @@
+Schema de.uni_koblenz.jgralabtest.schemas.jniclient.JniTestSchema;
+GraphClass JniTestGraph;
+
+EnumDomain Color (RED, GREEN, BLUE, YELLOW, BLACK, WHITE);
+VertexClass Node { b: Boolean, i: Integer, l: Long, d: Double, s: String, color: Color, li: List<Integer>, ll: List<Long>, ld: List<Double>, ls: List<String> };
+EdgeClass Link from Node (0,*) to Node (0,*);
