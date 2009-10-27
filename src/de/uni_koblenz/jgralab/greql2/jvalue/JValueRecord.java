@@ -118,6 +118,15 @@ public class JValueRecord extends JValueCollection implements
 		return this;
 	}
 
+	@Override
+	public Object toObject() {
+		Map<String, Object> result = new HashMap<String, Object>(dataMap.size());
+		for (Entry<String, JValue> e : dataMap.entrySet()) {
+			result.put(e.getKey(), e.getValue().toObject());
+		}
+		return result;
+	}
+
 	/**
 	 * returns a JValueRecord-Reference to this object
 	 */
@@ -210,7 +219,6 @@ public class JValueRecord extends JValueCollection implements
 		Collection<JValue> values = dataMap.values();
 		return values.iterator();
 	}
-
 
 	/**
 	 * Adds the given value with the given key as id to this record
