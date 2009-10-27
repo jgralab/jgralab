@@ -63,6 +63,7 @@ import de.uni_koblenz.jgralab.greql2.optimizer.DefaultOptimizer;
 import de.uni_koblenz.jgralab.greql2.optimizer.Optimizer;
 import de.uni_koblenz.jgralab.greql2.parser.ManualGreqlParser;
 import de.uni_koblenz.jgralab.greql2.schema.Greql2;
+import de.uni_koblenz.jgralab.impl.ProgressFunctionImpl;
 import de.uni_koblenz.jgralab.schema.AttributedElementClass;
 import de.uni_koblenz.jgralab.schema.GraphClass;
 import de.uni_koblenz.jgralab.schema.Schema;
@@ -82,18 +83,25 @@ public class GreqlEvaluator {
 
 	public static void main(String[] args) throws FileNotFoundException,
 			IOException, GraphIOException {
-		if (args.length != 2) {
+		if ((args.length < 1) || (args.length > 2)) {
 			System.err
-					.println("Usage: java GreqlEvaluator <graphfile> <query>");
+					.println("Usage: java GreqlEvaluator <query> [<graphfile>]");
 			System.exit(1);
 		}
 		JGraLab.setLogLevel(Level.OFF);
-		String graphfile = args[0];
-		String query = args[1];
-		GreqlEvaluator eval = new GreqlEvaluator(query, GraphIO
-				.loadSchemaAndGraphFromFile(graphfile, null), null);
+
+		String query = args[0];
+		Graph datagraph = null;
+		if (args.length == 2) {
+			datagraph = GraphIO.loadSchemaAndGraphFromFile(args[1],
+					new ProgressFunctionImpl());
+		}
+
+		GreqlEvaluator eval = new GreqlEvaluator(query, datagraph, null);
 		eval.startEvaluation();
 		JValue result = eval.getEvaluationResult();
+		System.out.println("Evaluation Result:");
+		System.out.println("==================");
 		if (result.isCollection()) {
 			for (JValue jv : result.toCollection()) {
 				System.out.println(jv);
