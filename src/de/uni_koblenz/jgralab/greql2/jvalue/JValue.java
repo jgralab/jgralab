@@ -353,6 +353,10 @@ public class JValue implements Comparable<JValue> {
 		throw new JValueInvalidTypeException(JValueType.PATHSYSTEM, type);
 	}
 
+	public JValueSlice toSlice() throws JValueInvalidTypeException {
+		throw new JValueInvalidTypeException(JValueType.SLICE, type);
+	}
+	
 	/**
 	 * constructs a new JValue with encapsulates a GraphElementClass (also
 	 * called type)
@@ -1275,5 +1279,7 @@ public class JValue implements Comparable<JValue> {
 		}
 		throw new JValueInvalidTypeException(JValueType.NUMBER, type);
 	}
+
+
 
 }

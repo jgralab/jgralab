@@ -222,17 +222,20 @@ public class Slice extends AbstractGreql2Function {
 							currentEntry.vertex, inc);
 					if (!isMarked(nextVertex, currentTransition.getEndState(),
 							inc)) {
-						if (currentTransition.accepts(currentEntry.vertex, inc,
-								subgraph)) {
+						if (currentTransition.accepts(currentEntry.vertex, inc, subgraph)) {
+							Edge traversedEdge = inc;
+							if (nextVertex == currentEntry.vertex) {
+								traversedEdge = null;
+							}
 							if (!isMarked(nextVertex, currentTransition
 									.getEndState())) {
 								queue.add(new PathSystemQueueEntry(nextVertex,
-										currentTransition.getEndState(), inc,
+										currentTransition.getEndState(), traversedEdge,
 										currentEntry.state,
 										currentEntry.distanceToRoot + 1));
 							}
 							markVertex(nextVertex, currentTransition
-									.getEndState(), currentEntry.vertex, inc,
+									.getEndState(), currentEntry.vertex, traversedEdge,
 									currentEntry.state,
 									currentEntry.distanceToRoot + 1);
 						}
