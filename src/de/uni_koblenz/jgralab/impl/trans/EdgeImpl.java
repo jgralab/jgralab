@@ -25,7 +25,7 @@ import de.uni_koblenz.jgralab.trans.VertexPosition;
  * Next and previous edge in Eseq, the incident vertex and the next and previous
  * incidence in Iseq(incidentVertex) are versioned.
  * 
- * @author JosÃ© Monte(monte@uni-koblenz.de)
+ * @author José Monte(monte@uni-koblenz.de)
  */
 public abstract class EdgeImpl extends de.uni_koblenz.jgralab.impl.EdgeImpl
 		implements VersionedIncidence {

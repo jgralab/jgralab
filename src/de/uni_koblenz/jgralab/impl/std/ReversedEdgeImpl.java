@@ -9,7 +9,7 @@ import de.uni_koblenz.jgralab.impl.VertexImpl;
  * The implementation of an ReversedEdge accessing attributes without
  * versioning.
  * 
- * @author JosÃ© Monte(monte@uni-koblenz.de)
+ * @author José Monte(monte@uni-koblenz.de)
  */
 public abstract class ReversedEdgeImpl extends
 		de.uni_koblenz.jgralab.impl.ReversedEdgeImpl {

@@ -11,7 +11,7 @@ import java.util.List;
  * 
  * This interface is only relevant for internal use.
  * 
- * @author JosÃ© Monte(monte@uni-koblenz.de)
+ * @author José Monte(monte@uni-koblenz.de)
  */
 public interface TransactionManager {
 	/**

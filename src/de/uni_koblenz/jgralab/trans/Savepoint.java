@@ -12,7 +12,7 @@ package de.uni_koblenz.jgralab.trans;
  * {@link Transaction#restoreSavepoint(Savepoint savepoint) restoreSavepoint}
  * </code> of the corresponding <code>Transaction</code>.
  * 
- * @author JosÃ© Monte(monte@uni-koblenz.de)
+ * @author José Monte(monte@uni-koblenz.de)
  */
 public interface Savepoint {
 	/**

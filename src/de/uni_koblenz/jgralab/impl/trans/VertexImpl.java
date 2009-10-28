@@ -24,7 +24,7 @@ import de.uni_koblenz.jgralab.trans.VersionedDataObject;
  * 
  * Next and previous vertex in Vseq, the first and last incidence in Iseq(this) and the incidenceListVersion are versioned.
  * 
- * @author JosÃ© Monte(monte@uni-koblenz.de)
+ * @author José Monte(monte@uni-koblenz.de)
  */
 public abstract class VertexImpl extends de.uni_koblenz.jgralab.impl.VertexImpl {
 	// next and previous vertex in Vseq

@@ -18,7 +18,7 @@ import de.uni_koblenz.jgralab.trans.VertexPosition;
  * executing write() at the same time. No other transaction should be doing BOT
  * or validation.
  * 
- * @author JosÃ© Monte(monte@uni-koblenz.de)
+ * @author José Monte(monte@uni-koblenz.de)
  */
 public class WritingComponent {
 	private TransactionImpl transaction;
@@ -430,7 +430,7 @@ public class WritingComponent {
 				// TODO how can the unchecked usage of VersionedDataObject can
 				// be avoided (using <?> doesn't work)
 				Set<VersionedDataObject<?>> attributes = entry.getValue();
-				for (VersionedDataObject attribute : attributes) {
+				for (VersionedDataObject<?> attribute : attributes) {
 					// the temporary value of attribute for current transaction
 					Object tempValue = attribute.getTemporaryValue(transaction);
 					// create new persistent value
@@ -444,5 +444,17 @@ public class WritingComponent {
 				}
 			}
 		}
+		// also write persistent values for remaining versioned dataobjects
+		// TODO this doesn't seem to work correctly
+		/*Set<VersionedDataObject<?>> versionedDataObjects = transaction
+				.getRemainingVersionedDataObjects();
+		System.out.println("Größe: " + versionedDataObjects.size());
+		for (VersionedDataObject<?> vdo : versionedDataObjects) {
+			if (!transaction.changedDuringCommit.contains(vdo)) {
+				Object tempValue = vdo.getTemporaryValue(transaction);
+				((VersionedDataObjectImpl) vdo).setValidValue(tempValue, graph
+						.getCurrentTransaction(), true);
+			}
+		}*/
 	}
 }
