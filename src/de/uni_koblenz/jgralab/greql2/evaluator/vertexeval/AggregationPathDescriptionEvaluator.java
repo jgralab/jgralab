@@ -34,7 +34,6 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValueTypeCollection;
 import de.uni_koblenz.jgralab.greql2.schema.AggregationPathDescription;
 import de.uni_koblenz.jgralab.greql2.schema.IsEdgeRestrOf;
-import de.uni_koblenz.jgralab.greql2.schema.IsTypeRestrOf;
 
 /**
  * Evaluates an AggregationPathDescription, that is something link v

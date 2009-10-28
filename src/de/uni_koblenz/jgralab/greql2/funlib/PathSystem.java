@@ -202,15 +202,18 @@ public class PathSystem extends AbstractGreql2Function {
 					Vertex nextVertex = currentTransition.getNextVertex(
 							currentEntry.vertex, inc);
 					if (!isMarked(nextVertex, currentTransition.getEndState())) {
-						if (currentTransition.accepts(currentEntry.vertex, inc,
-								subgraph)) {
+						if (currentTransition.accepts(currentEntry.vertex, inc, subgraph)) {
+							Edge traversedEdge = inc;
+							if (nextVertex == currentEntry.vertex) {
+								traversedEdge = null;
+							}
 							markVertex(nextVertex, currentTransition
-									.getEndState(), currentEntry.vertex, inc,
+									.getEndState(), currentEntry.vertex, traversedEdge,
 									currentEntry.state,
 									currentEntry.distanceToRoot + 1);
 							PathSystemQueueEntry nextEntry = new PathSystemQueueEntry(
 									nextVertex,
-									currentTransition.getEndState(), inc,
+									currentTransition.getEndState(), traversedEdge,
 									currentEntry.state,
 									currentEntry.distanceToRoot + 1);
 							queue.add(nextEntry);
@@ -284,14 +287,10 @@ public class PathSystem extends AbstractGreql2Function {
 				if (tempAttribute != null) {
 					for (PathSystemMarkerEntry currentMarker : ((PathSystemMarkerList) tempAttribute).values()) {
 						if (!currentMarker.state.isFinal || // if state of
-								// current
-								// PathSystemMarkerEntry
-								// is final or
+								// current PathSystemMarkerEntry is final or
 								isVertexMarkedWithState(leaf,
 										currentMarker.state)) { // (leaf, state)
-							// has already
-							// been
-							// processed
+							// has already been processed
 							continue;
 						}
 						Vertex currentVertex = leaf;
