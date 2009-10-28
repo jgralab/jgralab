@@ -30,7 +30,6 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Map;
 import java.util.Queue;
-import java.util.Map.Entry;
 import java.util.logging.Logger;
 
 import de.uni_koblenz.jgralab.Edge;
@@ -152,7 +151,11 @@ public class JValuePathSystem extends JValue {
 		if (!isCleared) {
 			while (!entriesWithoutParentEdge.isEmpty()) {
 				PathSystemEntry te = entriesWithoutParentEdge.poll();
-				PathSystemEntry pe = keyToEntryMap.get(new PathSystemKey(te.getParentVertex(), te.getParentStateNumber()));
+				PathSystemEntry pe = null;
+				if (te.getParentVertex() != null)
+					pe = keyToEntryMap.get(new PathSystemKey(te.getParentVertex(), te.getParentStateNumber()));
+				else
+					pe = keyToEntryMap.get(new PathSystemKey(rootVertex, te.getParentStateNumber()));
 				te.setParentEdge(pe.getParentEdge());
 				te.setDistanceToRoot(pe.getDistanceToRoot());
 				te.setParentStateNumber(pe.getParentStateNumber());

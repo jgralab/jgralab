@@ -28,8 +28,10 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Queue;
 import java.util.Set;
 import java.util.logging.Logger;
 
@@ -133,11 +135,39 @@ public class JValueSlice extends JValue {
 		datagraph = graph;
 		keyToEntryMap = new HashMap<PathSystemKey, List<PathSystemEntry>>();
 		vertexToFirstKeyMap = new HashMap<Vertex, PathSystemKey>();
-		type = JValueType.PATHSYSTEM;
+		type = JValueType.SLICE;
 		sliCritVertices = new HashSet<Vertex>();
 
 	}
 
+	private Queue<PathSystemEntry> entriesWithoutParentEdge = new LinkedList<PathSystemEntry>();  
+	
+	
+	boolean isCleared = true;
+	
+	public void clearPathSystem() {
+		if (!isCleared) {
+			while (!entriesWithoutParentEdge.isEmpty()) {
+				PathSystemEntry te = entriesWithoutParentEdge.poll();
+				Vertex p = te.getParentVertex();
+				if (p == null) {
+					//root vertex 
+					
+				} else {
+					List<PathSystemEntry> pel = keyToEntryMap.get(new PathSystemKey(p, te.getParentStateNumber()));
+					PathSystemEntry pe = pel.get(0);
+					te.setParentEdge(pe.getParentEdge());
+					te.setDistanceToRoot(pe.getDistanceToRoot());
+					te.setParentStateNumber(pe.getParentStateNumber());
+					te.setParentVertex(pe.getParentVertex());
+					if (te.getParentEdge() == null)
+						entriesWithoutParentEdge.add(te);
+				}	
+			}
+			isCleared = true;
+		}			
+	}
+	
 	/**
 	 * adds a vertex of the slice which is described by the parameters to the
 	 * slicing criterion
@@ -152,6 +182,7 @@ public class JValueSlice extends JValue {
 	 */
 	public void addSlicingCriterionVertex(Vertex vertex, int stateNumber,
 			boolean finalState) {
+		System.out.println("Adding vertex " + vertex + " as slicing criterion");
 		PathSystemKey key = new PathSystemKey(vertex, stateNumber);
 		PathSystemEntry entry = new PathSystemEntry(null, null, -1, 0,
 				finalState);
@@ -184,6 +215,7 @@ public class JValueSlice extends JValue {
 	 */
 	public void addVertex(Vertex vertex, int stateNumber, Edge parentEdge,
 			Vertex parentVertex, int parentStateNumber, boolean finalState) {
+		System.out.println("Adding vertex " + vertex);
 		PathSystemKey key = new PathSystemKey(vertex, stateNumber);
 		List<PathSystemEntry> entryList = keyToEntryMap.get(key);
 		if (entryList == null) {
@@ -198,6 +230,10 @@ public class JValueSlice extends JValue {
 		if (!entryList.contains(entry)) {
 			entryList.add(entry);
 		}
+		if (parentEdge == null) {
+			entriesWithoutParentEdge.add(entry);
+			isCleared = false;
+		}
 	}
 
 
@@ -208,6 +244,7 @@ public class JValueSlice extends JValue {
 	 * invalid JValue will be returned
 	 */
 	public JValue parents(Vertex vertex) {
+		clearPathSystem();
 		PathSystemKey key = vertexToFirstKeyMap.get(vertex);
 		return parents(key);
 	}
@@ -216,6 +253,7 @@ public class JValueSlice extends JValue {
 	 * Calculates the parent vertices of the given key in this slice.
 	 */
 	public JValueSet parents(PathSystemKey key) {
+		clearPathSystem();
 		JValueSet resultSet = new JValueSet();
 
 		for (PathSystemEntry entry : keyToEntryMap.get(key)) {
@@ -231,6 +269,7 @@ public class JValueSlice extends JValue {
 	 * Calculates the set of edges nodes in this slice.
 	 */
 	public JValueSet edges() {
+		clearPathSystem();
 		JValueSet resultSet = new JValueSet();
 		for (Map.Entry<PathSystemKey, List<PathSystemEntry>> mapEntry : keyToEntryMap
 				.entrySet()) {
@@ -246,6 +285,7 @@ public class JValueSlice extends JValue {
 	 * Calculates the set of nodes which are part of this slice.
 	 */
 	public JValueSet nodes() {
+		clearPathSystem();
 		JValueSet resultSet = new JValueSet();
 		for (PathSystemKey mapKey : keyToEntryMap.keySet()) {
 			resultSet.add(new JValue(mapKey.getVertex()));
@@ -260,6 +300,7 @@ public class JValueSlice extends JValue {
 	 * of vertices in the slice
 	 */
 	public JValueSet innerNodes() {
+		clearPathSystem();
 		JValueSet resultSet = new JValueSet();
 		for (Map.Entry<PathSystemKey, List<PathSystemEntry>> mapEntry : keyToEntryMap
 				.entrySet()) {
@@ -279,6 +320,7 @@ public class JValueSlice extends JValue {
 	 * field <code>leaves</code>, so the creation has to be done only once.
 	 */
 	public JValueSet leaves() {
+		clearPathSystem();
 		JValueSet leaves = new JValueSet();
 		if (leafKeys == null) {
 			createLeafKeys();
@@ -294,6 +336,7 @@ public class JValueSlice extends JValue {
 	 * create the set of leaf keys if it is not already created
 	 */
 	private void createLeafKeys() {
+		clearPathSystem();
 		if (leafKeys != null) {
 			return;
 		}
@@ -317,6 +360,7 @@ public class JValueSlice extends JValue {
 	 * this slice n times, it is counted n times
 	 */
 	public int weight() {
+		clearPathSystem();
 		return keyToEntryMap.size();
 	}
 
@@ -328,6 +372,7 @@ public class JValueSlice extends JValue {
 	 *         of this slice, false is returned
 	 */
 	public boolean isNeighbour(Vertex v1, Vertex v2) {
+		clearPathSystem();
 		PathSystemKey key1 = vertexToFirstKeyMap.get(v1);
 		PathSystemKey key2 = vertexToFirstKeyMap.get(v2);
 		return isNeighbour(key1, key2);
@@ -340,6 +385,7 @@ public class JValueSlice extends JValue {
 	 *         part of this slice, false is returned
 	 */
 	public boolean isNeighbour(PathSystemKey key1, PathSystemKey key2) {
+		clearPathSystem();
 		if ((key1 == null) || (key2 == null)) {
 			return false;
 		}
@@ -364,6 +410,7 @@ public class JValueSlice extends JValue {
 	 * key may occur multiple times.
 	 */
 	public void printEntryMap() {
+		clearPathSystem();
 		logger.info("<Key, Entry> set of slice is:");
 		for (Map.Entry<PathSystemKey, List<PathSystemEntry>> mapEntry : keyToEntryMap
 				.entrySet()) {
@@ -378,6 +425,7 @@ public class JValueSlice extends JValue {
 	 * Prints the <vertex, key map>.
 	 */
 	public void printKeyMap() {
+		clearPathSystem();
 		Iterator<Map.Entry<Vertex, PathSystemKey>> iter = vertexToFirstKeyMap
 				.entrySet().iterator();
 		logger.info("<Vertex, FirstKey> set of slice is:");
@@ -390,10 +438,36 @@ public class JValueSlice extends JValue {
 	}
 
 	/**
-	 * accepts te given visitor to visit this jvalue
+	 * accepts the given visitor to visit this jvalue
 	 */
 	public void accept(JValueVisitor v) {
+		clearPathSystem();
 		v.visitSlice(this);
+	}
+	
+	/**
+	 * returns a string representation of this path system
+	 */
+	@Override
+	public String toString() {
+		clearPathSystem();
+		Set<Vertex> vset = new HashSet<Vertex>();
+		vset.addAll(vertexToFirstKeyMap.keySet());
+		Set<Edge> eset = new HashSet<Edge>();
+		for (List<PathSystemEntry> pl : keyToEntryMap.values()) {
+			for (PathSystemEntry pe : pl) {
+				eset.add(pe.getParentEdge());
+			}
+		}
+		
+		StringBuffer returnString = new StringBuffer("Slice: \n");
+		returnString.append("Vertices of slice: ");
+		for (Vertex v : vset)
+			returnString.append(v);
+		returnString.append("Edges of slice: ");
+		for (Edge e : eset) 
+			returnString.append(e);
+		return returnString.toString();
 	}
 
 }

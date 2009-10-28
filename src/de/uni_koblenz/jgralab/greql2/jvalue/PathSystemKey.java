@@ -39,8 +39,9 @@ public class PathSystemKey {
 	private int hashValue = 0;
 
 	public int hashCode() {
+		System.out.println("Vertex: " + vertex);
 		if (hashValue == 0)
-			hashValue = vertex.getId() * 200 + stateNumber;
+			hashValue = this.getClass().hashCode() + vertex.getId() * 2373  + stateNumber;
 		return hashValue;
 	}
 
