@@ -108,7 +108,7 @@ public class GraphCodeGenerator extends AttributedElementCodeGenerator {
 							.add("\treturn new "
 									+ rd
 											.getTransactionJavaAttributeImplementationTypeName(schemaRootPackageName)
-									+ "(io);");
+									+ "(this, io);");
 				else
 					cs
 							.add("\treturn new "
@@ -126,7 +126,7 @@ public class GraphCodeGenerator extends AttributedElementCodeGenerator {
 							.add("\treturn new "
 									+ rd
 											.getTransactionJavaAttributeImplementationTypeName(schemaRootPackageName)
-									+ "(fields);");
+									+ "(this, fields);");
 				else
 					cs
 							.add("\treturn new "
@@ -163,7 +163,7 @@ public class GraphCodeGenerator extends AttributedElementCodeGenerator {
 							.add("\treturn new "
 									+ rd
 											.getTransactionJavaAttributeImplementationTypeName(schemaRootPackageName)
-									+ "(" + parametersWithoutTypes + ");");
+									+ "(this, " + parametersWithoutTypes + ");");
 				else
 					cs
 							.add("\treturn new "

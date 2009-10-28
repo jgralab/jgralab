@@ -84,6 +84,7 @@ public class JGraLabMap<K, V> extends HashMap<K, V> implements JGraLabCloneable 
 			throw new GraphException(
 					"An instance of JGraLabMap can only be created for graphs with transaction support");
 		graph = g;
+		// TODO this or no this?
 		versionedMap = new VersionedJGraLabCloneableImpl<JGraLabMap<K,V>>();
 	}
 
@@ -310,7 +311,7 @@ public class JGraLabMap<K, V> extends HashMap<K, V> implements JGraLabCloneable 
 	 * 
 	 * @param versionedList
 	 */
-	public void setVersionedMap(
+	protected void setVersionedMap(
 			VersionedJGraLabCloneableImpl<JGraLabMap<K, V>> versionedMap) {
 		this.versionedMap = versionedMap;
 		if (versionedMap != null)
@@ -328,15 +329,22 @@ public class JGraLabMap<K, V> extends HashMap<K, V> implements JGraLabCloneable 
 					.getCurrentTransaction());
 		JGraLabMap<K, V> jgralabMap = new JGraLabMap<K, V>();
 		jgralabMap.setVersionedMap(versionedMap);
+		// TODO internal or normal add?
 		for (Entry<K, V> entry : toBeCloned.entrySet()) {
 			K newKey = entry.getKey();
 			V newValue = entry.getValue();
-			if (entry.getKey() instanceof JGraLabCloneable)
-				newKey = (K) ((JGraLabCloneable) entry.getKey()).clone();
-			if (entry.getValue() instanceof JGraLabCloneable)
-				newValue = (V) ((JGraLabCloneable) entry.getValue()).clone();
+			if (newKey instanceof JGraLabCloneable)
+				newKey = (K) ((JGraLabCloneable) newKey).clone();
+			if (newValue instanceof JGraLabCloneable)
+				newValue = (V) ((JGraLabCloneable) newValue).clone();
+			// TODO internal or normal add?
 			jgralabMap.put(newKey, newValue);
 		}
 		return jgralabMap;
+	}
+
+	@Override
+	public Graph getGraph() {
+		return graph;
 	}
 }

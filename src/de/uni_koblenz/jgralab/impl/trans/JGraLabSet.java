@@ -81,7 +81,7 @@ public class JGraLabSet<E> extends HashSet<E> implements JGraLabCloneable {
 	 * 
 	 * @param versionedList
 	 */
-	public void setVersionedSet(
+	protected void setVersionedSet(
 			VersionedJGraLabCloneableImpl<JGraLabSet<E>> versionedSet) {
 		this.versionedSet = versionedSet;
 		if (versionedSet != null)
@@ -96,7 +96,14 @@ public class JGraLabSet<E> extends HashSet<E> implements JGraLabCloneable {
 			throw new GraphException(
 					"An instance of JGraLabSet can only be created for graphs with transaction support");
 		graph = g;
-		versionedSet = new VersionedJGraLabCloneableImpl<JGraLabSet<E>>();
+		if (graph.isLoading())
+			versionedSet = new VersionedJGraLabCloneableImpl<JGraLabSet<E>>(
+					g, this);
+		if (versionedSet == null)
+			// TODO this or graph
+			versionedSet = new VersionedJGraLabCloneableImpl<JGraLabSet<E>>(
+					graph);
+		versionedSet.setValidValue(this, g.getCurrentTransaction());
 	}
 
 	@Override
@@ -347,10 +354,17 @@ public class JGraLabSet<E> extends HashSet<E> implements JGraLabCloneable {
 		jgralabSet.setVersionedSet(versionedSet);
 		for (E element : toBeCloned) {
 			if (element instanceof JGraLabCloneable)
+				// TODO internal or normal add?
 				jgralabSet.add((E) ((JGraLabCloneable) element).clone());
 			else
+				// TODO internal or normal add?
 				jgralabSet.add(element);
 		}
 		return jgralabSet;
+	}
+
+	@Override
+	public Graph getGraph() {
+		return graph;
 	}
 }

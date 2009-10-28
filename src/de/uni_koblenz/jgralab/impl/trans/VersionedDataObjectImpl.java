@@ -31,7 +31,7 @@ import de.uni_koblenz.jgralab.trans.VersionedDataObject;
 public abstract class VersionedDataObjectImpl<E> implements
 		VersionedDataObject<E> {
 	// private GraphImpl graph;
-	private AttributedElement attributedElement;
+	protected AttributedElement attributedElement;
 
 	/**
 	 * Needed for attributes and validation.
@@ -46,6 +46,8 @@ public abstract class VersionedDataObjectImpl<E> implements
 	 *         belongs to
 	 */
 	public Graph getGraph() {
+		if(attributedElement == null)
+			return null;
 		if (attributedElement instanceof Graph) {
 			return (Graph) attributedElement;
 		} else {
@@ -101,6 +103,21 @@ public abstract class VersionedDataObjectImpl<E> implements
 		this(attributedElement);
 		// initialization - first and only persistent value for this data-object
 		persistentValue = initialPersistentValue;
+	}
+	
+	// TODO think about that
+	@SuppressWarnings("unchecked")
+	protected VersionedDataObjectImpl(VersionedDataObjectImpl<E> old) {
+		persistentVersionMap.putAll(old.persistentVersionMap);
+		persistentValue = old.persistentValue;
+		dataObjectPersistentVersionMap.putAll(VersionedDataObjectImpl.dataObjectPersistentVersionMap);
+		TransactionImpl trans = (TransactionImpl) getGraph().getCurrentTransaction();
+		Object oldValue = trans.temporaryValueMap.get(old);
+		trans.temporaryValueMap.remove(old);
+		trans.temporaryValueMap.put(this, oldValue);
+		oldValue = trans.temporaryVersionMap.get(old);
+		trans.temporaryVersionMap.remove(old);
+		trans.temporaryVersionMap.put(this, (SortedMap<Long, Object>) oldValue);
 	}
 
 	/**
@@ -1164,6 +1181,9 @@ public abstract class VersionedDataObjectImpl<E> implements
 		if (currentTransaction == null) {
 			throw new GraphException("Current transaction is null.");
 		}
+		// TODO think about this
+		/*if(attributedElement == null)
+			return true;*/
 		if (attributedElement != null) {
 			if (attributedElement instanceof Vertex) {
 				VertexImpl[] vertexArray = ((GraphImpl) getGraph()).vertex
