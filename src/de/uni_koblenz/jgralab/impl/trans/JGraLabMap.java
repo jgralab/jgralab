@@ -2,6 +2,7 @@ package de.uni_koblenz.jgralab.impl.trans;
 
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.Map.Entry;
@@ -18,6 +19,8 @@ import de.uni_koblenz.jgralab.trans.JGraLabCloneable;
  * 
  * @param <K>
  * @param <V>
+ * 
+ * TODO maybe add check to putAll-methods?
  */
 public class JGraLabMap<K, V> extends HashMap<K, V> implements JGraLabCloneable {
 	private static final long serialVersionUID = -9198046937053316052L;
@@ -220,6 +223,22 @@ public class JGraLabMap<K, V> extends HashMap<K, V> implements JGraLabCloneable 
 		if (versionedMap == null)
 			//return internalPut(key, value);
 			throw new GraphException("Versioning is not working for this Map.");
+		if ((key instanceof Map || key instanceof List || key instanceof Set)
+				&& !(key instanceof JGraLabCloneable))
+			throw new GraphException(
+					"The key added to this map does not support transactions.");
+		if (key instanceof JGraLabCloneable)
+			if (((JGraLabCloneable) key).getGraph() != graph)
+				throw new GraphException(
+						"The key added to this map is from another graph.");
+		if ((value instanceof Map || value instanceof List || value instanceof Set)
+				&& !(value instanceof JGraLabCloneable))
+			throw new GraphException(
+					"The value added to this map does not support transactions.");
+		if (value instanceof JGraLabCloneable)
+			if (((JGraLabCloneable) key).getGraph() != graph)
+				throw new GraphException(
+						"The value added to this map is from another graph.");
 		versionedMap.setValidValue(this, graph.getCurrentTransaction());
 		return versionedMap.getValidValue(graph.getCurrentTransaction())
 				.internalPut(key, value);

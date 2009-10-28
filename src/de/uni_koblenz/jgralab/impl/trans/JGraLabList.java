@@ -5,6 +5,8 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
+import java.util.Map;
+import java.util.Set;
 
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.GraphException;
@@ -22,6 +24,8 @@ import de.uni_koblenz.jgralab.trans.JGraLabCloneable;
  * too?! (same for JGraLabSet and JGraLabMap) maybe just return a copy in getter
  * for attributes of type List, Set and Map and only allow updating these
  * attributes by using the corresponding setters?!
+ * 
+ * TODO maybe add check to addAll-methods?
  */
 public class JGraLabList<E> extends ArrayList<E> implements JGraLabCloneable {
 	private static final long serialVersionUID = -1881528493844357904L;
@@ -108,6 +112,14 @@ public class JGraLabList<E> extends ArrayList<E> implements JGraLabCloneable {
 			// internalAdd(e);
 			throw new GraphException("Versioning is not working for this list.");
 		}
+		if ((e instanceof Map || e instanceof List || e instanceof Set)
+				&& !(e instanceof JGraLabCloneable))
+			throw new GraphException(
+					"The element added to this list does not support transactions.");
+		if (e instanceof JGraLabCloneable)
+			if (((JGraLabCloneable) e).getGraph() != graph)
+				throw new GraphException(
+						"The element added to this list is from another graph.");
 		versionedList.setValidValue(this, graph.getCurrentTransaction());
 		return versionedList.getValidValue(graph.getCurrentTransaction())
 				.internalAdd(e);
@@ -128,6 +140,14 @@ public class JGraLabList<E> extends ArrayList<E> implements JGraLabCloneable {
 			// internalAdd(index, element);
 			throw new GraphException("Versioning is not working for this list.");
 		} else {
+			if ((element instanceof Map || element instanceof List || element instanceof Set)
+					&& !(element instanceof JGraLabCloneable))
+				throw new GraphException(
+						"The element added to this list does not support transactions.");
+			if (element instanceof JGraLabCloneable)
+				if (((JGraLabCloneable) element).getGraph() != graph)
+					throw new GraphException(
+							"The element added to this list is from another graph.");
 			versionedList.setValidValue(this, graph.getCurrentTransaction());
 			versionedList.getValidValue(graph.getCurrentTransaction())
 					.internalAdd(index, element);

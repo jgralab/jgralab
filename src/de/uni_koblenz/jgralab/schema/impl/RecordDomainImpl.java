@@ -125,7 +125,7 @@ public final class RecordDomainImpl extends CompositeDomainImpl implements
 		code.setVariable("name", variableName);
 		code.setVariable("init", "");
 		internalGetReadMethod(code, schemaPrefix, variableName,
-				graphIoVariableName);
+				graphIoVariableName, false);
 
 		return code;
 	}
@@ -197,19 +197,18 @@ public final class RecordDomainImpl extends CompositeDomainImpl implements
 	}
 
 	private void internalGetReadMethod(CodeSnippet code, String schemaPrefix,
-			String variableName, String graphIoVariableName) {
+			String variableName, String graphIoVariableName,
+			boolean transactionSupport) {
 		code.add("#init#");
 		code.add("if (" + graphIoVariableName + ".isNextToken(\"(\")) {");
-		/*
-		 * code.add("\t" + "#name# = new " +
-		 * getJavaAttributeImplementationTypeName(schemaPrefix) + "(" +
-		 * graphIoVariableName + ");");
-		 */
-		// to be able to the create<Record>-method a cast of the graph-instance
-		// is needed
-		code.add("\t" + "#name# = ((" + schemaPrefix + "."
-				+ parentPackage.getSchema().getGraphClass().getSimpleName()
-				+ ")" + "graph).create" + getSimpleName() + "(io);");
+		if (transactionSupport)
+			code.add("\t" + "#name# = ((" + schemaPrefix + "."
+					+ parentPackage.getSchema().getGraphClass().getSimpleName()
+					+ ")" + "graph).create" + getSimpleName() + "(io);");
+		else
+			code.add("\t" + "#name# = new "
+					+ getStandardJavaAttributeImplementationTypeName(schemaPrefix)
+					+ "(" + graphIoVariableName + ");");
 		code.add("} else if (" + graphIoVariableName
 				+ ".isNextToken(GraphIO.NULL_LITERAL) || "
 				+ graphIoVariableName
@@ -242,7 +241,7 @@ public final class RecordDomainImpl extends CompositeDomainImpl implements
 				getJavaAttributeImplementationTypeName(schemaPrefix)
 						+ " #name# = null;");
 		internalGetReadMethod(code, schemaPrefix, variableName,
-				graphIoVariableName);
+				graphIoVariableName, true);
 		return code;
 	}
 

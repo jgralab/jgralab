@@ -3,6 +3,9 @@ package de.uni_koblenz.jgralab.impl.trans;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 //import java.util.Set;
 
 import de.uni_koblenz.jgralab.Graph;
@@ -16,6 +19,8 @@ import de.uni_koblenz.jgralab.trans.JGraLabCloneable;
  * @author José Monte(monte@uni-koblenz.de)
  * 
  * @param <E>
+ * 
+ * TODO maybe add check to addAll-methods?
  */
 public class JGraLabSet<E> extends HashSet<E> implements JGraLabCloneable {
 	private static final long serialVersionUID = -8812018025682692472L;
@@ -111,6 +116,14 @@ public class JGraLabSet<E> extends HashSet<E> implements JGraLabCloneable {
 		if (versionedSet == null)
 			throw new GraphException("Versioning is not working for this set.");
 			//return internalAdd(e);
+		if ((e instanceof Map || e instanceof List || e instanceof Set)
+				&& !(e instanceof JGraLabCloneable))
+			throw new GraphException(
+					"The element added to this set does not support transactions.");
+		if (e instanceof JGraLabCloneable)
+			if (((JGraLabCloneable) e).getGraph() != graph)
+				throw new GraphException(
+						"The element added to this set is from another graph.");
 		versionedSet.setValidValue(this, graph.getCurrentTransaction());
 		return versionedSet.getValidValue(graph.getCurrentTransaction())
 				.internalAdd(e);

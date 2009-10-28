@@ -28,6 +28,7 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.TreeSet;
 
+//import de.uni_koblenz.jgralab.GraphException;
 import de.uni_koblenz.jgralab.schema.EdgeClass;
 import de.uni_koblenz.jgralab.schema.GraphClass;
 import de.uni_koblenz.jgralab.schema.GraphElementClass;
@@ -90,6 +91,8 @@ public class GraphCodeGenerator extends AttributedElementCodeGenerator {
 				addImports("java.util.Map");
 				addImports("#jgPackage#.GraphIO");
 				addImports("#jgPackage#.GraphIOException");
+				/*if(transactionSupport)
+					addImports("#jgPackage#.GraphException");*/
 			}
 		} else {
 			if (aec.getSchema().getRecordDomains().size() > 0)
@@ -103,13 +106,19 @@ public class GraphCodeGenerator extends AttributedElementCodeGenerator {
 				cs.add("public " + rd.getJavaClassName(schemaRootPackageName)
 						+ " create" + rd.getSimpleName()
 						+ "(GraphIO io) throws GraphIOException {");
-				if (transactionSupport)
+				if (transactionSupport) {
+					cs.add("\tif(getCurrentTransaction().isReadOnly())");
+					cs
+							.add("\t\tthrow new #jgPackage#.GraphException(\"Read-only transactions are not allowed to create instances of "
+									+ rd
+											.getJavaAttributeImplementationTypeName(schemaRootPackageName)
+									+ ".\");");
 					cs
 							.add("\treturn new "
 									+ rd
 											.getTransactionJavaAttributeImplementationTypeName(schemaRootPackageName)
 									+ "(this, io);");
-				else
+				} else
 					cs
 							.add("\treturn new "
 									+ rd
@@ -121,13 +130,19 @@ public class GraphCodeGenerator extends AttributedElementCodeGenerator {
 				cs.add("public " + rd.getJavaClassName(schemaRootPackageName)
 						+ " create" + rd.getSimpleName()
 						+ "(Map<String, Object> fields) {");
-				if (transactionSupport)
+				if (transactionSupport) {
+					cs.add("\tif(getCurrentTransaction().isReadOnly())");
+					cs
+							.add("\t\tthrow new #jgPackage#.GraphException(\"Read-only transactions are not allowed to create instances of "
+									+ rd
+											.getJavaAttributeImplementationTypeName(schemaRootPackageName)
+									+ ".\");");
 					cs
 							.add("\treturn new "
 									+ rd
 											.getTransactionJavaAttributeImplementationTypeName(schemaRootPackageName)
 									+ "(this, fields);");
-				else
+				} else
 					cs
 							.add("\treturn new "
 									+ rd
@@ -158,13 +173,19 @@ public class GraphCodeGenerator extends AttributedElementCodeGenerator {
 						+ " create" + rd.getSimpleName() + "("
 						+ parametersWithTypes + ") {");
 
-				if (transactionSupport)
+				if (transactionSupport) {
+					cs.add("\tif(getCurrentTransaction().isReadOnly())");
+					cs
+							.add("\t\tthrow new #jgPackage#.GraphException(\"Read-only transactions are not allowed to create instances of "
+									+ rd
+											.getJavaAttributeImplementationTypeName(schemaRootPackageName)
+									+ ".\");");
 					cs
 							.add("\treturn new "
 									+ rd
 											.getTransactionJavaAttributeImplementationTypeName(schemaRootPackageName)
 									+ "(this, " + parametersWithoutTypes + ");");
-				else
+				} else
 					cs
 							.add("\treturn new "
 									+ rd

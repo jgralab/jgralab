@@ -29,11 +29,11 @@ import java.util.Map.Entry;
 // import de.uni_koblenz.jgralab.Graph;
 // import de.uni_koblenz.jgralab.GraphException;
 import de.uni_koblenz.jgralab.schema.BooleanDomain; // import
-													// de.uni_koblenz.jgralab.schema.CollectionDomain;
+// de.uni_koblenz.jgralab.schema.CollectionDomain;
 import de.uni_koblenz.jgralab.schema.Domain;
 import de.uni_koblenz.jgralab.schema.EnumDomain;
 import de.uni_koblenz.jgralab.schema.IntegerDomain; // import
-													// de.uni_koblenz.jgralab.schema.MapDomain;
+// de.uni_koblenz.jgralab.schema.MapDomain;
 import de.uni_koblenz.jgralab.schema.RecordDomain;
 import de.uni_koblenz.jgralab.schema.StringDomain;
 
@@ -290,7 +290,26 @@ public class RecordCodeGenerator extends CodeGenerator {
 					 * .add("\tversionedRecord.getValidValue(graph.getCurrentTransaction())._#name#.setValidValue(tmp_#name#,
 					 * graph.getCurrentTransaction());"); } else setterCode
 					 * .add("\tversionedRecord.getValidValue(graph.getCurrentTransaction())._#name#.setValidValue(_#name#,
-					 * graph.getCurrentTransaction());");*/
+					 * graph.getCurrentTransaction());");
+					 */
+					if (rdc.getValue().isComposite()) {
+						setterCode
+								.add("\tif(_#name# != null && !(_#name# instanceof "
+										+ rdc.getValue()
+												.getTransactionJavaClassName(
+														schemaRootPackageName)
+										+ "))");
+						setterCode
+								.add("\t\tthrow new GraphException(\"The given parameter of type "
+										+ rdc.getValue().getSimpleName()
+										+ " doesn't support transactions.\");");
+						setterCode
+								.add("\tif(((#jgTransPackage#.JGraLabCloneable)_#name#).getGraph() != graph)");
+						setterCode
+								.add("\t\tthrow new GraphException(\"The given parameter of type "
+										+ rdc.getValue().getSimpleName()
+										+ " belongs to another graph.\");");
+					}
 					setterCode.add("\tif(graph.isLoading())");
 					setterCode.add("\t\t this._#name# = new "
 							+ rdc.getValue().getVersionedClass(
@@ -456,7 +475,9 @@ public class RecordCodeGenerator extends CodeGenerator {
 					 */
 					code
 							.add(new CodeSnippet(
-									"set_"+ c.getKey() +"(("
+									"set_"
+											+ c.getKey()
+											+ "(("
 											+ c
 													.getValue()
 													.getTransactionJavaAttributeImplementationTypeName(
@@ -465,7 +486,7 @@ public class RecordCodeGenerator extends CodeGenerator {
 				else
 					code.add(c.getValue().getReadMethod(schemaRootPackageName,
 							"_" + c.getKey(), "io"));
-				//code.setVariable("name", c.getKey());
+				// code.setVariable("name", c.getKey());
 			}
 			code.add(new CodeSnippet("io.match(\")\");"));
 			code.addNoIndent(new CodeSnippet("}"));
