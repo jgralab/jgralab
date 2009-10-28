@@ -6,7 +6,7 @@ import de.uni_koblenz.jgralab.impl.trans.VersionedReferenceImpl;
 /**
  * For internal use in validation.
  * 
- * @author JosÃ© Monte(monte@uni-koblenz.de)
+ * @author José Monte(monte@uni-koblenz.de)
  */
 public interface VersionedIncidence {
 

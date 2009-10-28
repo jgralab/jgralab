@@ -24,7 +24,7 @@ import de.uni_koblenz.jgralab.trans.VertexPosition;
 /**
  * The implementation of a <code>Transaction</code>.
  * 
- * @author JosÃ© Monte(monte@uni-koblenz.de)
+ * @author José Monte(monte@uni-koblenz.de)
  */
 public class TransactionImpl implements Transaction {
 	protected long temporaryVersionCounter;
@@ -303,8 +303,8 @@ public class TransactionImpl implements Transaction {
 		if (changedDuringCommit != null) {
 			for (VersionedDataObjectImpl<?> versionedDataObject : changedDuringCommit) {
 				/*
-				 * if(versionedDataObject == graph.edge || versionedDataObject
-				 * == graph.revEdge) graph.edgeSync.writeLock().lock(); if
+				 * if(versionedDataObject == graph.edge || versionedDataObject ==
+				 * graph.revEdge) graph.edgeSync.writeLock().lock(); if
 				 * (versionedDataObject == graph.vertex)
 				 * graph.vertexSync.writeLock().lock();
 				 */
@@ -343,8 +343,8 @@ public class TransactionImpl implements Transaction {
 					}
 				}
 				/*
-				 * if(versionedDataObject == graph.edge || versionedDataObject
-				 * == graph.revEdge) graph.edgeSync.writeLock().unlock(); if
+				 * if(versionedDataObject == graph.edge || versionedDataObject ==
+				 * graph.revEdge) graph.edgeSync.writeLock().unlock(); if
 				 * (versionedDataObject == graph.vertex)
 				 * graph.vertexSync.writeLock().unlock();
 				 */
@@ -583,5 +583,83 @@ public class TransactionImpl implements Transaction {
 	 */
 	protected boolean leadsToInconsistency() {
 		return false;
+	}
+
+	/**
+	 * 
+	 * @return a set containing all versioned data-objects which are not part of
+	 *         the change sets
+	 */
+	public Set<VersionedDataObject<?>> getRemainingVersionedDataObjects() {
+		Set<VersionedDataObject<?>> versionedDataObjects = new HashSet<VersionedDataObject<?>>();
+		if (temporaryValueMap != null && temporaryValueMap.size() > 0) {
+			versionedDataObjects = new HashSet<VersionedDataObject<?>>(
+					temporaryValueMap.keySet());
+		}
+		if (temporaryVersionMap != null && temporaryVersionMap.size() > 0) {
+			versionedDataObjects = new HashSet<VersionedDataObject<?>>(
+					temporaryVersionMap.keySet());
+		}
+		if (versionedDataObjects.size() > 0) {
+			Set<EdgeImpl> edges = new HashSet<EdgeImpl>();
+			Set<ReversedEdgeImpl> reversedEdges = new HashSet<ReversedEdgeImpl>();
+			if (addedEdges != null)
+				edges.addAll(addedEdges);
+			if (changedEdges != null)
+				edges.addAll(changedEdges.keySet());
+			if (changedEseqEdges != null)
+				edges.addAll(changedEseqEdges.keySet());
+			if (deletedEdges != null)
+				edges.addAll(deletedEdges);
+			if (changedIncidences != null) {
+				for (Map<IncidenceImpl, Map<ListPosition, Boolean>> map : changedIncidences
+						.values()) {
+					for (IncidenceImpl incidence : map.keySet()) {
+						if (incidence instanceof EdgeImpl)
+							edges.add((EdgeImpl) incidence);
+						if (incidence instanceof ReversedEdgeImpl)
+							reversedEdges.add((ReversedEdgeImpl) incidence);
+					}
+				}
+			}
+			for (EdgeImpl edge : edges) {
+				versionedDataObjects.remove(edge.incidentVertex);
+				versionedDataObjects.remove(edge.nextEdge);
+				versionedDataObjects.remove(edge.nextIncidence);
+				versionedDataObjects.remove(edge.prevEdge);
+				versionedDataObjects.remove(edge.prevIncidence);
+			}
+			for (ReversedEdgeImpl reversedEdge : reversedEdges) {
+				versionedDataObjects.remove(reversedEdge.incidentVertex);
+				versionedDataObjects.remove(reversedEdge.nextIncidence);
+				versionedDataObjects.remove(reversedEdge.prevIncidence);
+			}
+			Set<VertexImpl> vertices = new HashSet<VertexImpl>();
+			if (addedVertices != null)
+				vertices.addAll(addedVertices);
+			if (changedVseqVertices != null)
+				vertices.addAll(changedVseqVertices.keySet());
+			if (deletedVertices != null)
+				vertices.addAll(deletedVertices);
+			if (changedIncidences != null)
+				vertices.addAll(changedIncidences.keySet());
+			for (VertexImpl vertex : vertices) {
+				versionedDataObjects.remove(vertex.firstIncidence);
+				versionedDataObjects.remove(vertex.incidenceListVersion);
+				versionedDataObjects.remove(vertex.lastIncidence);
+				versionedDataObjects.remove(vertex.nextVertex);
+				versionedDataObjects.remove(vertex.prevVertex);
+			}
+			if (changedAttributes != null) {
+				for (Entry<AttributedElement, Set<VersionedDataObject<?>>> entry : changedAttributes
+						.entrySet()) {
+					Set<VersionedDataObject<?>> attributes = entry.getValue();
+					for (VersionedDataObject<?> attribute : attributes) {
+						versionedDataObjects.remove(attribute);
+					}
+				}
+			}
+		}
+		return versionedDataObjects;
 	}
 }

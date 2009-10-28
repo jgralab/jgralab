@@ -18,7 +18,7 @@ import de.uni_koblenz.jgralab.trans.VertexPosition;
 /**
  * Executes validation (check for conflicts) for a transaction.
  * 
- * @author JosÃ© Monte(monte@uni-koblenz.de)
+ * @author José Monte(monte@uni-koblenz.de)
  */
 public class ValidationComponent {
 	private TransactionImpl transaction;
@@ -779,11 +779,11 @@ public class ValidationComponent {
 										/*
 										 * if (nextIncidence
 										 * .getLatestPersistentValue()
-										 * instanceof EdgeImpl) { EdgeImpl edge
-										 * = (EdgeImpl) nextIncidence
+										 * instanceof EdgeImpl) { EdgeImpl edge =
+										 * (EdgeImpl) nextIncidence
 										 * .getLatestPersistentValue();
-										 * niPrevIncidence = edge.prevIncidence;
-										 * } if (nextIncidence
+										 * niPrevIncidence = edge.prevIncidence; }
+										 * if (nextIncidence
 										 * .getLatestPersistentValue()
 										 * instanceof ReversedEdgeImpl) {
 										 * ReversedEdgeImpl revEdge =
@@ -877,11 +877,11 @@ public class ValidationComponent {
 										/*
 										 * if (prevIncidence
 										 * .getLatestPersistentValue()
-										 * instanceof EdgeImpl) { EdgeImpl edge
-										 * = (EdgeImpl) prevIncidence
+										 * instanceof EdgeImpl) { EdgeImpl edge =
+										 * (EdgeImpl) prevIncidence
 										 * .getLatestPersistentValue();
-										 * piNextIncidence = edge.nextIncidence;
-										 * } if (prevIncidence
+										 * piNextIncidence = edge.nextIncidence; }
+										 * if (prevIncidence
 										 * .getLatestPersistentValue()
 										 * instanceof ReversedEdgeImpl) {
 										 * ReversedEdgeImpl revEdge =
@@ -1100,18 +1100,31 @@ public class ValidationComponent {
 				for (VersionedDataObject<?> attribute : attributes) {
 					// check if lost update occured...
 					if (attribute.getLatestPersistentVersion() > transaction.persistentVersionAtBot) {
-						Object temporaryValue = attribute
-								.getTemporaryValue(transaction);
-						boolean conflict = false;
-						if (temporaryValue == null
-								&& attribute.getLatestPersistentValue() == null)
-							continue;
-						if (temporaryValue == null
-								&& attribute.getLatestPersistentValue() != null)
-							conflict = true;
-						if (!attribute.getTemporaryValue(transaction).equals(
-								attribute.getLatestPersistentValue()))
-							conflict = true;
+						/*
+						 * Object temporaryValue = attribute
+						 * .getTemporaryValue(transaction);
+						 */
+						boolean conflict = isAttributeInConflict(attribute);/*
+																			 * false;
+																			 * if
+																			 * (temporaryValue ==
+																			 * null &&
+																			 * attribute.getLatestPersistentValue() ==
+																			 * null)
+																			 * continue;
+																			 * if
+																			 * (temporaryValue ==
+																			 * null &&
+																			 * attribute.getLatestPersistentValue() !=
+																			 * null)
+																			 * conflict =
+																			 * true;
+																			 * if
+																			 * (!attribute.getTemporaryValue(transaction).equals(
+																			 * attribute.getLatestPersistentValue()))
+																			 * conflict =
+																			 * true;
+																			 */
 						if (conflict) {
 							conflictReason = "A lost update has been detected for the attribute "
 									+ attribute
@@ -1123,6 +1136,39 @@ public class ValidationComponent {
 					}
 				}
 			}
+			// also check all versioned dataobjects which were changed within
+			// the transaction without the usage of setter
+			Set<VersionedDataObject<?>> versionedDataObjects = transaction
+					.getRemainingVersionedDataObjects();
+			for (VersionedDataObject<?> vdo : versionedDataObjects) {
+				boolean conflict = isAttributeInConflict(vdo);
+				if (conflict) {
+					conflictReason = "A lost update has been detected for the versioned dataobject "
+							+ vdo + ".";
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+
+	/**
+	 * 
+	 * @param attribute
+	 * @return
+	 */
+	private boolean isAttributeInConflict(VersionedDataObject<?> attribute) {
+		if (attribute.getLatestPersistentVersion() > transaction.persistentVersionAtBot) {
+			Object temporaryValue = attribute.getTemporaryValue(transaction);
+			if (temporaryValue == null
+					&& attribute.getLatestPersistentValue() == null)
+				return false;
+			if (temporaryValue == null
+					&& attribute.getLatestPersistentValue() != null)
+				return true;
+			if (!attribute.getTemporaryValue(transaction).equals(
+					attribute.getLatestPersistentValue()))
+				return true;
 		}
 		return false;
 	}

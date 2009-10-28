@@ -15,7 +15,7 @@ import de.uni_koblenz.jgralab.trans.JGraLabCloneable;
  * Own implementation class for attributes of type
  * <code>java.util.Map<K,V></code>.
  * 
- * @author JosÃ© Monte(monte@uni-koblenz.de)
+ * @author José Monte(monte@uni-koblenz.de)
  * 
  * @param <K>
  * @param <V>

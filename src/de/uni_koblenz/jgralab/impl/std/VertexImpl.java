@@ -8,7 +8,7 @@ import de.uni_koblenz.jgralab.impl.IncidenceImpl;
  * The implementation of a <code>Vertex</code> accessing attributes without
  * versioning.
  * 
- * @author JosÃ© Monte(monte@uni-koblenz.de)
+ * @author José Monte(monte@uni-koblenz.de)
  */
 public abstract class VertexImpl extends de.uni_koblenz.jgralab.impl.VertexImpl {
 	private VertexImpl nextVertex;

@@ -5,7 +5,7 @@ package de.uni_koblenz.jgralab.trans;
  * <code>Edge</code> that the alpha (ALPHA), omega (OMEGA) or both has (have)
  * been changed within a <code>Transaction</code>.
  * 
- * @author JosÃ© Monte(monte@uni-koblenz.de)
+ * @author José Monte(monte@uni-koblenz.de)
  */
 public enum VertexPosition {
 	ALPHA, OMEGA, ALPHAOMEGA

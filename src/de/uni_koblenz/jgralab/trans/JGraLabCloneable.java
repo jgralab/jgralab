@@ -8,7 +8,7 @@ import de.uni_koblenz.jgralab.Graph;
  * <code>java.util.List<E></code>, <code>java.util.Set<E></code>,
  * <code>java.util.Map<K,V></code> and Record within JGraLab.
  * 
- * @author JosÃ© Monte(monte@uni-koblenz)
+ * @author José Monte(monte@uni-koblenz)
  */
 public interface JGraLabCloneable extends Cloneable {
 	/**

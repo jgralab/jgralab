@@ -32,7 +32,7 @@ import de.uni_koblenz.jgralab.trans.VersionedDataObject;
 /**
  * The implementation of a <code>Graph</edge> with versioning.
  * 
- * @author JosÃ© Monte(monte@uni-koblenz.de)
+ * @author José Monte(monte@uni-koblenz.de)
  */
 public abstract class GraphImpl extends de.uni_koblenz.jgralab.impl.GraphImpl {
 	// the transactions of this instance are managed by a transaction manager
