@@ -1116,6 +1116,7 @@ public class ManualGreqlParser extends ManualParserHelper {
 			//match(TokenTypes.RPAREN);
 			return expr;
 		}
+		match(TokenTypes.LPAREN);
 		Expression expr = parseExpression();
 		match(TokenTypes.RPAREN);
 		return expr;
