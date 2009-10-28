@@ -1032,7 +1032,7 @@ public class ManualGreqlParser extends ManualParserHelper {
 	}
 
 	private final Expression parsePrimaryExpression() {
-		if (tryMatch(TokenTypes.LPAREN)) {
+		if (lookAhead(0) == TokenTypes.LPAREN) {
 			return parseParenthesedExpression();
 		}
 
@@ -1108,15 +1108,14 @@ public class ManualGreqlParser extends ManualParserHelper {
 		predicateStart();
 		try {
 			parseAltPathDescription();
-			match(TokenTypes.RPAREN);
+		//	match(TokenTypes.RPAREN);
 		} catch (ParsingException ex) {
 		}
 		if (predicateEnd()) {
 			Expression expr = parseAltPathDescription();
-			match(TokenTypes.RPAREN);
+			//match(TokenTypes.RPAREN);
 			return expr;
 		}
-
 		Expression expr = parseExpression();
 		match(TokenTypes.RPAREN);
 		return expr;
