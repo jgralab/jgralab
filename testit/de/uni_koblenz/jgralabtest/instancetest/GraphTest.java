@@ -3,9 +3,7 @@ package de.uni_koblenz.jgralabtest.instancetest;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -17,20 +15,10 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
 
-import sun.font.CreatedFontTracker;
-
-import de.uni_koblenz.jgralab.AttributedElement;
 import de.uni_koblenz.jgralab.Edge;
-import de.uni_koblenz.jgralab.Graph;
-import de.uni_koblenz.jgralab.GraphElement;
 import de.uni_koblenz.jgralab.GraphException;
-import de.uni_koblenz.jgralab.GraphIO;
-import de.uni_koblenz.jgralab.GraphIOException;
 import de.uni_koblenz.jgralab.Vertex;
-import de.uni_koblenz.jgralab.impl.std.GraphImpl;
-import de.uni_koblenz.jgralab.schema.AttributedElementClass;
 import de.uni_koblenz.jgralab.schema.EdgeClass;
-import de.uni_koblenz.jgralab.schema.GraphClass;
 import de.uni_koblenz.jgralab.schema.VertexClass;
 import de.uni_koblenz.jgralab.trans.CommitFailedException;
 import de.uni_koblenz.jgralabtest.schemas.minimal.MinimalGraph;
@@ -43,7 +31,6 @@ import de.uni_koblenz.jgralabtest.schemas.vertextest.SubNode;
 import de.uni_koblenz.jgralabtest.schemas.vertextest.SuperNode;
 import de.uni_koblenz.jgralabtest.schemas.vertextest.VertexTestGraph;
 import de.uni_koblenz.jgralabtest.schemas.vertextest.VertexTestSchema;
-import de.uni_koblenz.jgralabtest.schemas.vertextest.impl.std.VertexTestGraphImpl;
 
 @RunWith(Parameterized.class)
 public class GraphTest extends InstanceTest {
@@ -355,23 +342,23 @@ public class GraphTest extends InstanceTest {
 		 */
 	}
 
-	@Test
-	public void testLoadingCompleted() throws CommitFailedException {
-		// TODO
-		createReadOnlyTransaction(g1);
-		GraphTestClass gTest = new GraphTestClass(g1.getGraphClass());
-		commit(g1);
-
-		assertEquals("nothing", gTest.getDone());
-
-		/*
-		 * try { graph =VertexTestSchema.instance().loadVertexTestGraph(
-		 * "../../../testschemas/VertexTestSchema.tg"); } catch
-		 * (GraphIOException e) { e.printStackTrace(); }
-		 */
-
-		// assertEquals("loadingCompleted", gTest.getDone());
-	}
+	// @Test
+	// public void testLoadingCompleted() throws CommitFailedException {
+	// // TODO
+	// createReadOnlyTransaction(g1);
+	// GraphTestClass gTest = new GraphTestClass(g1.getGraphClass());
+	// commit(g1);
+	//
+	// assertEquals("nothing", gTest.getDone());
+	//
+	// /*
+	// * try { graph =VertexTestSchema.instance().loadVertexTestGraph(
+	// * "../../../testschemas/VertexTestSchema.tg"); } catch
+	// * (GraphIOException e) { e.printStackTrace(); }
+	// */
+	//
+	// // assertEquals("loadingCompleted", gTest.getDone());
+	// }
 
 	@Test
 	public void testIsGraphModified() throws Exception {
@@ -2402,29 +2389,11 @@ public class GraphTest extends InstanceTest {
 	public void testVertexDeleted() throws CommitFailedException {
 
 		// set new class for GraphFactory
-		VertexTestSchema.instance().getGraphFactory()
-				.setGraphImplementationClass(VertexTestGraph.class,
-						VertexTestGraphImplTest.class);
-		VertexTestSchema.instance().getGraphFactory()
-				.setGraphTransactionImplementationClass(
-						VertexTestGraph.class,
-						VertexTestGraphImplTestWithTransactionSupport.class);
+		setTestGraphClasses();
 
 		VertexTestGraph g = transactionsEnabled ? VertexTestSchema.instance()
 				.createVertexTestGraphWithTransactionSupport()
 				: VertexTestSchema.instance().createVertexTestGraph();
-		// assertEquals(
-		// g.getClass(),
-		// transactionsEnabled ?
-		// VertexTestGraphImplTestWithTransactionSupport.class
-		// : VertexTestGraphImplTest.class);
-		// fail();
-
-		// createReadOnlyTransaction(g);
-		// GraphTestClass gTest = new GraphTestClass(g.getGraphClass());
-		// commit(g);
-		// String name = "";
-
 		// create a simple graph
 		createTransaction(g);
 		SubNode v1 = g.createSubNode();
@@ -2451,7 +2420,6 @@ public class GraphTest extends InstanceTest {
 				.getDeletedVertices();
 
 		// test if vertexDeleted was invoked only once
-		System.out.println(deletedVertices);
 		assertEquals(1, deletedVertices.size());
 		// test if the correct vertex was affected
 		assertTrue(v1 == deletedVertices.get(0));
@@ -2474,53 +2442,60 @@ public class GraphTest extends InstanceTest {
 		assertTrue(v4 == deletedVertices.get(1));
 
 		// reset implementation class for graph factory
+		resetGraphClasses();
+
+		System.out.println("Done testing vertexDeleted.");
+	}
+
+	private void resetGraphClasses() {
 		VertexTestSchema
 				.instance()
 				.getGraphFactory()
 				.setGraphImplementationClass(
 						VertexTestGraph.class,
-						transactionsEnabled ? de.uni_koblenz.jgralabtest.schemas.vertextest.impl.trans.VertexTestGraphImpl.class
-								: de.uni_koblenz.jgralabtest.schemas.vertextest.impl.std.VertexTestGraphImpl.class);
+						de.uni_koblenz.jgralabtest.schemas.vertextest.impl.std.VertexTestGraphImpl.class);
+		VertexTestSchema
+				.instance()
+				.getGraphFactory()
+				.setGraphTransactionImplementationClass(
+						VertexTestGraph.class,
+						de.uni_koblenz.jgralabtest.schemas.vertextest.impl.trans.VertexTestGraphImpl.class);
 
-		System.out.println("Done testing vertexDeleted.");
+	}
+
+	private void setTestGraphClasses() {
+		VertexTestSchema.instance().getGraphFactory()
+				.setGraphImplementationClass(VertexTestGraph.class,
+						VertexTestGraphImplTest.class);
+		VertexTestSchema.instance().getGraphFactory()
+				.setGraphTransactionImplementationClass(VertexTestGraph.class,
+						VertexTestGraphImplTestWithTransactionSupport.class);
 	}
 
 	@Test
-	public void testVertexAdded() {
-		onlyTestWithoutTransactionSupport();
-		GraphTestClass gTest = new GraphTestClass(g1.getGraphClass());
-		Vertex v = gTest.createVertex(SubNode.class);
-		assertEquals("vertexAdded" + v.toString(), gTest.getDone());
+	public void testVertexAdded() throws CommitFailedException {
+		setTestGraphClasses();
 
-		v = gTest.createVertex(SuperNode.class);
-		assertEquals("vertexAdded" + v.toString(), gTest.getDone());
+		VertexTestGraph g = transactionsEnabled ? VertexTestSchema.instance()
+				.createVertexTestGraphWithTransactionSupport()
+				: VertexTestSchema.instance().createVertexTestGraph();
+		
+		((VertexTestGraphTest) g).resetAddedVertices();
+				
+		// create a vertex
+		createTransaction(g);
+		SubNode v1 = g.createSubNode();
+		commit(g);
 
-		v = gTest.createVertex(DoubleSubNode.class);
-		assertEquals("vertexAdded" + v.toString(), gTest.getDone());
+		// obtain list of added vertices
+		List<Vertex> addedVertices = ((VertexTestGraphTest) g).getAddedVertices();
+		
+		// test if method was invoked exactly once
+		assertEquals(1, addedVertices.size());
+		// test if the correct vertex was affected
+		assertTrue(v1 == addedVertices.get(0));
 
-		v = gTest.createVertex(SuperNode.class);
-		assertEquals("vertexAdded" + v.toString(), gTest.getDone());
-
-		v = gTest.createVertex(DoubleSubNode.class);
-		assertEquals("vertexAdded" + v.toString(), gTest.getDone());
-
-		for (int i = 0; i < 100; i++) {
-			v = gTest.createVertex(SubNode.class);
-			assertEquals("vertexAdded" + v.toString(), gTest.getDone());
-		}
-
-		v = gTest.createVertex(SuperNode.class);
-		assertEquals("vertexAdded" + v.toString(), gTest.getDone());
-
-		gTest = new GraphTestClass(g2.getGraphClass());
-		v = gTest.createVertex(SuperNode.class);
-		assertEquals("vertexAdded" + v.toString(), gTest.getDone());
-
-		v = gTest.createVertex(DoubleSubNode.class);
-		assertEquals("vertexAdded" + v.toString(), gTest.getDone());
-
-		v = gTest.createVertex(SubNode.class);
-		assertEquals("vertexAdded" + v.toString(), gTest.getDone());
+		resetGraphClasses();
 
 		System.out.println("Done testing vertexAdded.");
 	}
@@ -2630,158 +2605,74 @@ public class GraphTest extends InstanceTest {
 	}
 
 	@Test
-	public void testEdgeDeleted() {
-		onlyTestWithoutTransactionSupport();
-		GraphTestClass gTest = new GraphTestClass(g1.getGraphClass());
-		String name = "";
+	public void testEdgeDeleted() throws CommitFailedException {
+		// set new class for GraphFactory
+		setTestGraphClasses();
 
-		Vertex v1 = gTest.createVertex(SubNode.class);
-		Vertex v2 = gTest.createVertex(SubNode.class);
-		Vertex v3 = gTest.createVertex(SuperNode.class);
-		Vertex v4 = gTest.createVertex(SuperNode.class);
-		Vertex v5 = gTest.createVertex(SuperNode.class);
-		Vertex v6 = gTest.createVertex(SuperNode.class);
-		Vertex v7 = gTest.createVertex(DoubleSubNode.class);
-		Vertex v8 = gTest.createVertex(DoubleSubNode.class);
-		Vertex v9 = gTest.createVertex(DoubleSubNode.class);
+		VertexTestGraph g = transactionsEnabled ? VertexTestSchema.instance()
+				.createVertexTestGraphWithTransactionSupport()
+				: VertexTestSchema.instance().createVertexTestGraph();
+		// create a simple graph
+		createTransaction(g);
+		SubNode v1 = g.createSubNode();
+		SuperNode v2 = g.createSuperNode();
+		
+		Link e1 = g.createLink(v1, v2);
+		
+		commit(g);
 
-		Edge e1 = gTest.createEdge(SubLink.class, v8, v6);
-		Edge e2 = gTest.createEdge(SubLink.class, v7, v3);
-		Edge e3 = gTest.createEdge(Link.class, v1, v4);
-		Edge e4 = gTest.createEdge(Link.class, v7, v5);
-		Edge e5 = gTest.createEdge(LinkBack.class, v3, v2);
-		Edge e6 = gTest.createEdge(LinkBack.class, v6, v9);
+		// reset list of deleted edges
+		((VertexTestGraphTest) g).resetDeletedEdges();
 
-		name = "edgeDeleted" + e4.toString();
-		gTest.deleteEdge(e4);
-		assertEquals(name, gTest.getDone());
+		// delete e1
+		createTransaction(g);
+		g.deleteEdge(e1);
+		commit(g);
 
-		name = "edgeDeleted" + e2.toString();
-		gTest.deleteEdge(e2);
-		assertEquals(name, gTest.getDone());
+		// obtain list of deleted edges
+		List<Edge> deletedEdges = ((VertexTestGraphTest) g)
+				.getDeletedEdges();
 
-		name = "edgeDeleted" + e6.toString();
-		gTest.deleteEdge(e6);
-		assertEquals(name, gTest.getDone());
+		// test if edgeDeleted was invoked only once
+		assertEquals(1, deletedEdges.size());
+		// test if the correct vertex was affected
+		assertTrue(e1 == deletedEdges.get(0));
+		((VertexTestGraphTest) g).resetDeletedVertices();
 
-		name = "edgeDeleted" + e3.toString();
-		gTest.deleteEdge(e3);
-		assertEquals(name, gTest.getDone());
-
-		name = "edgeDeleted" + e1.toString();
-		gTest.deleteEdge(e1);
-		assertEquals(name, gTest.getDone());
-
-		name = "edgeDeleted" + e5.toString();
-		gTest.deleteEdge(e5);
-		assertEquals(name, gTest.getDone());
-
-		Edge e7 = gTest.createEdge(Link.class, v2, v3);
-		name = "edgeDeleted" + e7.toString();
-		gTest.deleteEdge(e7);
-		assertEquals(name, gTest.getDone());
-
-		Edge e8 = gTest.createEdge(LinkBack.class, v5, v8);
-		name = "edgeDeleted" + e8.toString();
-		gTest.deleteEdge(e8);
-		assertEquals(name, gTest.getDone());
-
-		Edge e9 = gTest.createEdge(SubLink.class, v9, v4);
-		name = "edgeDeleted" + e9.toString();
-		gTest.deleteEdge(e9);
-		assertEquals(name, gTest.getDone());
-
-		gTest = new GraphTestClass(g2.getGraphClass());
-		Vertex v10 = gTest.createVertex(SubNode.class);
-		Vertex v11 = gTest.createVertex(SuperNode.class);
-		Vertex v12 = gTest.createVertex(DoubleSubNode.class);
-		Vertex v13 = gTest.createVertex(SuperNode.class);
-
-		Edge e10 = gTest.createEdge(SubLink.class, v12, v11);
-		Edge e11 = gTest.createEdge(Link.class, v12, v11);
-		Edge e12 = gTest.createEdge(LinkBack.class, v11, v12);
-		Edge e13 = gTest.createEdge(Link.class, v10, v13);
-
-		name = "edgeDeleted" + e11.toString();
-		gTest.deleteEdge(e11);
-		assertEquals(name, gTest.getDone());
-
-		name = "edgeDeleted" + e10.toString();
-		gTest.deleteEdge(e10);
-		assertEquals(name, gTest.getDone());
-
-		name = "edgeDeleted" + e13.toString();
-		gTest.deleteEdge(e13);
-		assertEquals(name, gTest.getDone());
-
-		name = "edgeDeleted" + e12.toString();
-		gTest.deleteEdge(e12);
-		assertEquals(name, gTest.getDone());
+		// reset implementation class for graph factory
+		resetGraphClasses();
 
 		System.out.println("Done testing edgeDeleted.");
 	}
 
 	@Test
-	public void testEdgeAdded() {
-		onlyTestWithoutTransactionSupport();
-		GraphTestClass gTest = new GraphTestClass(g1.getGraphClass());
+	public void testEdgeAdded() throws CommitFailedException {
+		setTestGraphClasses();
 
-		Vertex v1 = gTest.createVertex(SubNode.class);
-		Vertex v2 = gTest.createVertex(SubNode.class);
-		Vertex v3 = gTest.createVertex(SuperNode.class);
-		Vertex v4 = gTest.createVertex(SuperNode.class);
-		Vertex v5 = gTest.createVertex(SuperNode.class);
-		Vertex v6 = gTest.createVertex(SuperNode.class);
-		Vertex v7 = gTest.createVertex(DoubleSubNode.class);
-		Vertex v8 = gTest.createVertex(DoubleSubNode.class);
-		Vertex v9 = gTest.createVertex(DoubleSubNode.class);
+		VertexTestGraph g = transactionsEnabled ? VertexTestSchema.instance()
+				.createVertexTestGraphWithTransactionSupport()
+				: VertexTestSchema.instance().createVertexTestGraph();
+		
+		((VertexTestGraphTest) g).resetAddedEdges();
+				
+		// create a simple graph
+		createTransaction(g);
+		SubNode v1 = g.createSubNode();
+		SuperNode v2 = g.createSuperNode();
+		
+		Link e1 = g.createLink(v1, v2);
+		
+		commit(g);
 
-		Edge e = gTest.createEdge(SubLink.class, v8, v6);
-		assertEquals("edgeAdded" + e.toString(), gTest.getDone());
+		// obtain list of added edges
+		List<Edge> addedEdges = ((VertexTestGraphTest) g).getAddedEdges();
+		
+		// test if method was invoked exactly once
+		assertEquals(1, addedEdges.size());
+		// test if the correct vertex was affected
+		assertTrue(e1 == addedEdges.get(0));
 
-		e = gTest.createEdge(SubLink.class, v7, v3);
-		assertEquals("edgeAdded" + e.toString(), gTest.getDone());
-
-		e = gTest.createEdge(Link.class, v1, v4);
-		assertEquals("edgeAdded" + e.toString(), gTest.getDone());
-
-		e = gTest.createEdge(Link.class, v7, v5);
-		assertEquals("edgeAdded" + e.toString(), gTest.getDone());
-
-		e = gTest.createEdge(LinkBack.class, v3, v2);
-		assertEquals("edgeAdded" + e.toString(), gTest.getDone());
-
-		e = gTest.createEdge(LinkBack.class, v6, v9);
-		assertEquals("edgeAdded" + e.toString(), gTest.getDone());
-
-		e = gTest.createEdge(Link.class, v2, v3);
-		assertEquals("edgeAdded" + e.toString(), gTest.getDone());
-
-		e = gTest.createEdge(LinkBack.class, v5, v8);
-		assertEquals("edgeAdded" + e.toString(), gTest.getDone());
-
-		e = gTest.createEdge(SubLink.class, v9, v4);
-		assertEquals("edgeAdded" + e.toString(), gTest.getDone());
-
-		gTest = new GraphTestClass(g2.getGraphClass());
-		Vertex v10 = gTest.createVertex(SubNode.class);
-		Vertex v11 = gTest.createVertex(SuperNode.class);
-		Vertex v12 = gTest.createVertex(DoubleSubNode.class);
-		Vertex v13 = gTest.createVertex(SuperNode.class);
-
-		e = gTest.createEdge(SubLink.class, v12, v11);
-		assertEquals("edgeAdded" + e.toString(), gTest.getDone());
-
-		e = gTest.createEdge(Link.class, v12, v11);
-		assertEquals("edgeAdded" + e.toString(), gTest.getDone());
-
-		e = gTest.createEdge(LinkBack.class, v11, v12);
-		assertEquals("edgeAdded" + e.toString(), gTest.getDone());
-
-		e = gTest.createEdge(Link.class, v10, v13);
-		assertEquals("edgeAdded" + e.toString(), gTest.getDone());
-
-		System.out.println("Done testing edgeAdded.");
+		resetGraphClasses();
 	}
 
 	@Test
@@ -4829,87 +4720,87 @@ public class GraphTest extends InstanceTest {
 		 */
 	}
 
-	public static class GraphTestClass extends GraphImpl {
-
-		private String done;
-
-		public GraphTestClass(GraphClass gC) {
-			super("blubb", gC);
-			done = "nothing";
-		}
-
-		@Override
-		public Object getAttribute(String name) throws NoSuchFieldException {
-			return null;
-		}
-
-		@Override
-		public AttributedElementClass getAttributedElementClass() {
-			return null;
-		}
-
-		@Override
-		public Class<? extends AttributedElement> getM1Class() {
-			return null;
-		}
-
-		@Override
-		public void readAttributeValues(GraphIO io) throws GraphIOException {
-		}
-
-		@Override
-		public void setAttribute(String name, Object data)
-				throws NoSuchFieldException {
-		}
-
-		@Override
-		public void writeAttributeValues(GraphIO io) throws IOException,
-				GraphIOException {
-		}
-
-		public String getDone() {
-			return done;
-		}
-
-		@Override
-		public void loadingCompleted() {
-			done = "loadingCompleted";
-		}
-
-		@Override
-		public void vertexDeleted(Vertex v) {
-			done = "vertexDeleted" + v.toString();
-		}
-
-		@Override
-		public void vertexAdded(Vertex v) {
-			done = "vertexAdded" + v.toString();
-		}
-
-		@Override
-		public void edgeDeleted(Edge e) {
-			done = "edgeDeleted" + e.toString();
-		}
-
-		@Override
-		public void edgeAdded(Edge e) {
-			done = "edgeAdded" + e.toString();
-		}
-
-		@Override
-		public void readAttributeValueFromString(String attributeName,
-				String value) throws GraphIOException, NoSuchFieldException {
-			// TODO Auto-generated method stub
-
-		}
-
-		@Override
-		public String writeAttributeValueToString(String attributeName)
-				throws IOException, GraphIOException, NoSuchFieldException {
-			// TODO Auto-generated method stub
-			return null;
-		}
-
-	}
+	// public static class GraphTestClass extends GraphImpl {
+	//
+	// private String done;
+	//
+	// public GraphTestClass(GraphClass gC) {
+	// super("blubb", gC);
+	// done = "nothing";
+	// }
+	//
+	// @Override
+	// public Object getAttribute(String name) throws NoSuchFieldException {
+	// return null;
+	// }
+	//
+	// @Override
+	// public AttributedElementClass getAttributedElementClass() {
+	// return null;
+	// }
+	//
+	// @Override
+	// public Class<? extends AttributedElement> getM1Class() {
+	// return null;
+	// }
+	//
+	// @Override
+	// public void readAttributeValues(GraphIO io) throws GraphIOException {
+	// }
+	//
+	// @Override
+	// public void setAttribute(String name, Object data)
+	// throws NoSuchFieldException {
+	// }
+	//
+	// @Override
+	// public void writeAttributeValues(GraphIO io) throws IOException,
+	// GraphIOException {
+	// }
+	//
+	// public String getDone() {
+	// return done;
+	// }
+	//
+	// @Override
+	// public void loadingCompleted() {
+	// done = "loadingCompleted";
+	// }
+	//
+	// @Override
+	// public void vertexDeleted(Vertex v) {
+	// done = "vertexDeleted" + v.toString();
+	// }
+	//
+	// @Override
+	// public void vertexAdded(Vertex v) {
+	// done = "vertexAdded" + v.toString();
+	// }
+	//
+	// @Override
+	// public void edgeDeleted(Edge e) {
+	// done = "edgeDeleted" + e.toString();
+	// }
+	//
+	// @Override
+	// public void edgeAdded(Edge e) {
+	// done = "edgeAdded" + e.toString();
+	// }
+	//
+	// @Override
+	// public void readAttributeValueFromString(String attributeName,
+	// String value) throws GraphIOException, NoSuchFieldException {
+	// // TODO Auto-generated method stub
+	//
+	// }
+	//
+	// @Override
+	// public String writeAttributeValueToString(String attributeName)
+	// throws IOException, GraphIOException, NoSuchFieldException {
+	// // TODO Auto-generated method stub
+	// return null;
+	// }
+	//
+	// }
 
 }
