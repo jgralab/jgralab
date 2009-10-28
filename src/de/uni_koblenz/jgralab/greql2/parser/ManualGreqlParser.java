@@ -333,17 +333,42 @@ public class ManualGreqlParser extends ManualParserHelper {
 			fail("Expected " + type);
 		}
 	}
+	
+	
+	
+	private static final boolean isValidName(TokenTypes token) {
+		switch (token) {
+			case MAP:
+			case AS:
+			case BAG:
+			case IMPORT:
+			case IN:
+			case PATH:
+			case PATHSYSTEM:
+			case SET:
+			case LIST:
+			case REC:
+			case FROM:
+			case WITH:
+			case REPORT:
+			case WHERE:
+			case LET:	
+				return true;
+			default:
+				return false;
+		}
+	}
+	
 
 	private final String matchPackageName() {
-		if ((lookAhead(0) == TokenTypes.IDENTIFIER)
-				&& (isValidPackageName(getLookAheadValue(0)))) {
+		if (((lookAhead(0) == TokenTypes.IDENTIFIER) || isValidName(lookAhead(0)))	&& (isValidPackageName(getLookAheadValue(0)))) {
 			StringBuilder name = new StringBuilder();
 			name.append(lookAhead.getValue());
 			match();
 			boolean ph = true;
 			do {
 				if (lookAhead(0) == TokenTypes.DOT) {
-					if ((lookAhead(1) == TokenTypes.IDENTIFIER)
+					if (((lookAhead(0) == TokenTypes.IDENTIFIER) || isValidName(lookAhead(0)))
 							&& (isValidPackageName(getLookAheadValue(1)))) {
 						ph = true;
 						match(TokenTypes.DOT);
