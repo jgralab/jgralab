@@ -2400,16 +2400,15 @@ public class GraphTest extends InstanceTest {
 
 	@Test
 	public void testVertexDeleted() throws CommitFailedException {
-		// TODO WTF?
 
 		// set new class for GraphFactory
-		VertexTestSchema
-				.instance()
-				.getGraphFactory()
-				.setGraphImplementationClass(
+		VertexTestSchema.instance().getGraphFactory()
+				.setGraphImplementationClass(VertexTestGraph.class,
+						VertexTestGraphImplTest.class);
+		VertexTestSchema.instance().getGraphFactory()
+				.setGraphTransactionImplementationClass(
 						VertexTestGraph.class,
-						transactionsEnabled ? VertexTestGraphImplTestWithTransactionSupport.class
-								: VertexTestGraphImplTest.class);
+						VertexTestGraphImplTestWithTransactionSupport.class);
 
 		VertexTestGraph g = transactionsEnabled ? VertexTestSchema.instance()
 				.createVertexTestGraphWithTransactionSupport()
@@ -2452,6 +2451,7 @@ public class GraphTest extends InstanceTest {
 				.getDeletedVertices();
 
 		// test if vertexDeleted was invoked only once
+		System.out.println(deletedVertices);
 		assertEquals(1, deletedVertices.size());
 		// test if the correct vertex was affected
 		assertTrue(v1 == deletedVertices.get(0));
