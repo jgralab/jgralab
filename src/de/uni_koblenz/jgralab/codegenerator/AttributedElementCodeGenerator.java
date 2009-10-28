@@ -423,9 +423,15 @@ public class AttributedElementCodeGenerator extends CodeGenerator {
 										+ "))");
 						// code.add("\t\t#tmpname# = new #ttype#(_#name#);");
 						code
-								.add("\t\tthrow new GraphException(\"The given parameter of type"
+								.add("\t\tthrow new GraphException(\"The given parameter of type "
 										+ attr.getDomain().getSimpleName()
 										+ " doesn't support transactions.\");");
+						code
+								.add("\tif(((#jgTransPackage#.JGraLabCloneable)_#name#).getGraph() != graph)");
+						code
+								.add("\t\tthrow new GraphException(\"The given parameter of type "
+										+ attr.getDomain().getSimpleName()
+										+ " belongs to another graph.\");");
 						// code.add("\telse");
 						/*
 						 * code.add("\t\t#tmpname# = (" + attr .getDomain()
@@ -446,25 +452,18 @@ public class AttributedElementCodeGenerator extends CodeGenerator {
 						"\t\tthis._#name# = #init#",
 						"\t\tthis._#name#.setName(\"#name#\");", "\t}");
 
-				/*if (domain.isComposite()) {
-					code.add("\tif(_#name# != null)");
-					if (domain instanceof ListDomain) {
-						code
-								.add("\t\t((#ttype#)_#name#).setVersionedList(this._#name#);");
-					}
-					if (domain instanceof SetDomain) {
-						code
-								.add("\t\t((#ttype#)_#name#).setVersionedSet(this._#name#);");
-					}
-					if (domain instanceof MapDomain) {
-						code
-								.add("\t\t((#ttype#)_#name#).setVersionedMap(this._#name#);");
-					}
-					if (domain instanceof RecordDomain) {
-						code
-								.add("\t\t((#ttype#) _#name#).setVersionedRecord(this._#name#);");
-					}
-				}*/
+				/*
+				 * if (domain.isComposite()) { code.add("\tif(_#name# !=
+				 * null)"); if (domain instanceof ListDomain) { code
+				 * .add("\t\t((#ttype#)_#name#).setVersionedList(this._#name#);"); }
+				 * if (domain instanceof SetDomain) { code
+				 * .add("\t\t((#ttype#)_#name#).setVersionedSet(this._#name#);"); }
+				 * if (domain instanceof MapDomain) { code
+				 * .add("\t\t((#ttype#)_#name#).setVersionedMap(this._#name#);"); }
+				 * if (domain instanceof RecordDomain) { code
+				 * .add("\t\t((#ttype#)
+				 * _#name#).setVersionedRecord(this._#name#);"); } }
+				 */
 				// if (domain instanceof RecordDomain)
 				code
 						.add(
@@ -584,9 +583,8 @@ public class AttributedElementCodeGenerator extends CodeGenerator {
 								"\tGraphIO io = GraphIO.createStringWriter(getSchema());"));
 				if (transactionSupport) {
 					a.add(attribute.getDomain().getTransactionWriteMethod(
-							schemaRootPackageName,
-							"_" + attribute.getName(),
-									"io"));
+							schemaRootPackageName, "_" + attribute.getName(),
+							"io"));
 				} else {
 					a.add(attribute.getDomain().getWriteMethod(
 							schemaRootPackageName, "_" + attribute.getName(),
