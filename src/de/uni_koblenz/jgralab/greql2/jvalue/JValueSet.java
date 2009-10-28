@@ -36,36 +36,36 @@ import java.util.List;
  * @author ist@uni-koblenz.de
  */
 public class JValueSet extends JValueCollection implements Cloneable {
-
-	/**
-	 * A wrapper iterator class that uses <code>List.iterator()</code>
-	 * while accounting for the additional <code>storedHashCode</code>
-	 * attribute and the HashSet for fast member test.
-	 */
-	private class JValueSetIterator implements Iterator<JValue> {
-		private Iterator<JValue> myIterator;
-
-		private JValue current = null;
-		
-		public JValueSetIterator() {
-			myIterator = sortedMembers.iterator();
-		}
-
-		public boolean hasNext() {
-			return myIterator.hasNext();
-		}
-
-		public JValue next() {
-			current = myIterator.next();
-			return current;
-		}
-
-		public void remove() {
-			storedHashCode = 0;
-			itemHashSet.remove(current);
-			myIterator.remove();
-		}
-	}
+//
+//	/**
+//	 * A wrapper iterator class that uses <code>List.iterator()</code>
+//	 * while accounting for the additional <code>storedHashCode</code>
+//	 * attribute and the HashSet for fast member test.
+//	 */
+//	private class JValueSetIterator implements Iterator<JValue> {
+//		private Iterator<JValue> myIterator;
+//
+//		private JValue current = null;
+//		
+//		public JValueSetIterator() {
+//			myIterator = sortedMembers.iterator();
+//		}
+//
+//		public boolean hasNext() {
+//			return myIterator.hasNext();
+//		}
+//
+//		public JValue next() {
+//			current = myIterator.next();
+//			return current;
+//		}
+//
+//		public void remove() {
+//			storedHashCode = 0;
+//			itemHashSet.remove(current);
+//			myIterator.remove();
+//		}
+//	}
 
 	/**
 	 * The backing instance of <code>HashSet<code> where the elements of this
@@ -131,12 +131,16 @@ public class JValueSet extends JValueCollection implements Cloneable {
 	 */
 	@Override
 	public Iterator<JValue> iterator() {
-		return new JValueSetIterator();
+		return sortedMembers.iterator();
 	}
 
 	@Override
 	public boolean isJValueSet() {
 		return true;
+	}
+	
+	public int indexOf(JValue val) {
+		return sortedMembers.indexOf(val);
 	}
 
 	/**

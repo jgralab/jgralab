@@ -159,7 +159,7 @@ public class JValueTable extends JValueCollection {
 	 *            of a bag, so every element can exists only one in the table
 	 */
 	public JValueTable(boolean useSet) {
-		this(new JValueTuple(), false);
+		this(new JValueTuple(), true);
 	}
 
 	/**
@@ -167,7 +167,7 @@ public class JValueTable extends JValueCollection {
 	 * tuple as header of that table
 	 */
 	public JValueTable(JValueTuple header) {
-		this(header, false);
+		this(header, true);
 	}
 
 	/**
@@ -194,7 +194,7 @@ public class JValueTable extends JValueCollection {
 	 */
 	public JValueTable(JValueCollection col) {
 		super();
-		data = new JValueBag();
+		data = new JValueSet();
 		headerTuple = new JValueTuple();
 		addAll(col);
 	}
