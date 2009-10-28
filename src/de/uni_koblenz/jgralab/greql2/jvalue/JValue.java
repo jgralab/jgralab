@@ -151,6 +151,12 @@ public class JValue implements Comparable<JValue> {
 	 */
 	@SuppressWarnings("unchecked")
 	public int compareTo(JValue o) {
+		if (o.type == null) {
+			return 1;
+		}
+		if (type == null) {
+			return -1;
+		}
 		if (type != o.type) {
 			return (type.compareTo(o.type));
 		} else {
@@ -1221,14 +1227,14 @@ public class JValue implements Comparable<JValue> {
 		}
 		if (o instanceof Set) {
 			JValueSet retVal = new JValueSet();
-			for (Object member : ((Set)o)) {
+			for (Object member : ((Set) o)) {
 				retVal.add(JValue.fromObject(member));
 			}
 			return retVal;
 		}
 		if (o instanceof List) {
 			JValueList retVal = new JValueList();
-			for (Object member : ((List)o)) {
+			for (Object member : ((List) o)) {
 				retVal.add(JValue.fromObject(member));
 			}
 			return retVal;
@@ -1236,8 +1242,10 @@ public class JValue implements Comparable<JValue> {
 		if (o instanceof Map) {
 			JValueMap retVal = new JValueMap();
 			Map<? extends Object, ? extends Object> m = (Map) o;
-			for (Map.Entry<? extends Object, ? extends Object> entry : m.entrySet()) {
-				retVal.put(JValue.fromObject(entry.getKey()), JValue.fromObject(entry.getValue()));
+			for (Map.Entry<? extends Object, ? extends Object> entry : m
+					.entrySet()) {
+				retVal.put(JValue.fromObject(entry.getKey()), JValue
+						.fromObject(entry.getValue()));
 			}
 			return retVal;
 		}
