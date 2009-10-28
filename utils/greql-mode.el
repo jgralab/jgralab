@@ -23,7 +23,7 @@
 ;; Major mode for editing GReQL2 files with Emacs and executing queries.
 
 ;;; Version:
-;; <2009-10-27 Tue 17:21>
+;; <2009-10-28 Wed 08:58>
 
 ;;; Code:
 
@@ -31,7 +31,7 @@
   '("E" "V" "as" "bag" "eSubgraph" "end" "exists!" "exists" "forall"
     "from" "in" "let" "list" "path" "pathSystem" "rec" "report"
     "reportBag" "reportSet" "reportMap" "set" "store" "tup" "using"
-    "vSubgraph" "where" "with" "thisVertex" "map")
+    "vSubgraph" "where" "with" "thisEdge" "thisVertex" "map")
   "GReQL keywords that should be completed and highlighted.")
 (put 'greql-keywords 'risky-local-variable-p t)
 

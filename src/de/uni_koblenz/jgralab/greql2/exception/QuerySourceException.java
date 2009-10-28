@@ -27,7 +27,7 @@ package de.uni_koblenz.jgralab.greql2.exception;
 import java.util.ArrayList;
 import java.util.List;
 
-import de.uni_koblenz.jgralab.greql2.Greql2Serializer;
+import de.uni_koblenz.jgralab.greql2.SerializableGreql2;
 import de.uni_koblenz.jgralab.greql2.schema.Greql2Vertex;
 import de.uni_koblenz.jgralab.greql2.schema.SourcePosition;
 
@@ -125,8 +125,8 @@ public class QuerySourceException extends EvaluateException {
 		if (positions.size() > 0) {
 			sb.append(errorMessage);
 			sb.append(": query part '");
-			sb.append((element != null) ? ((Greql2Serializer) element.getGraph())
-					.serializeGreql2Vertex(element) : "<unknown element>");
+			sb.append((element != null) ? ((SerializableGreql2) element
+					.getGraph()).serialize(element) : "<unknown element>");
 			sb.append("' at position (");
 			sb.append(positions.get(0).get_offset());
 			sb.append(", ");
@@ -135,8 +135,8 @@ public class QuerySourceException extends EvaluateException {
 		} else {
 			sb.append(errorMessage);
 			sb.append(": query part '");
-			sb.append((element != null) ? ((Greql2Serializer) element.getGraph())
-					.serializeGreql2Vertex(element) : "<unknown element>");
+			sb.append((element != null) ? ((SerializableGreql2) element
+					.getGraph()).serialize(element) : "<unknown element>");
 			sb.append("' at unknown position in query");
 		}
 		return sb.toString();
