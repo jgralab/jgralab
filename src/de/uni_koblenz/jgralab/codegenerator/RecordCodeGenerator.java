@@ -26,12 +26,14 @@ package de.uni_koblenz.jgralab.codegenerator;
 
 import java.util.Map.Entry;
 
-import de.uni_koblenz.jgralab.schema.BooleanDomain;
-import de.uni_koblenz.jgralab.schema.CollectionDomain;
+// import de.uni_koblenz.jgralab.Graph;
+// import de.uni_koblenz.jgralab.GraphException;
+import de.uni_koblenz.jgralab.schema.BooleanDomain; // import
+													// de.uni_koblenz.jgralab.schema.CollectionDomain;
 import de.uni_koblenz.jgralab.schema.Domain;
 import de.uni_koblenz.jgralab.schema.EnumDomain;
-import de.uni_koblenz.jgralab.schema.IntegerDomain;
-import de.uni_koblenz.jgralab.schema.MapDomain;
+import de.uni_koblenz.jgralab.schema.IntegerDomain; // import
+													// de.uni_koblenz.jgralab.schema.MapDomain;
 import de.uni_koblenz.jgralab.schema.RecordDomain;
 import de.uni_koblenz.jgralab.schema.StringDomain;
 
@@ -81,9 +83,43 @@ public class RecordCodeGenerator extends CodeGenerator {
 		code.add(createReadComponentsMethod(createClass));
 		code.add(createWriteComponentsMethod(createClass));
 		// needed for transaction support
-		code.add(createSetVersionedRecordMethod(createClass));
+		// code.add(createSetVersionedRecordMethod(createClass));
 		// clone()-method for record
 		code.add(createCloneMethod(createClass));
+		code.add(createInitMethod(createClass));
+		code.add(createGetGraphMethod(createClass));
+		return code;
+	}
+
+	private CodeBlock createGetGraphMethod(boolean createClass) {
+		CodeList code = new CodeList();
+		if (createClass && transactionSupport) {
+			code.add(new CodeSnippet(true, "public Graph getGraph() {"));
+			code.add(new CodeSnippet("\treturn graph;"));
+			code.add(new CodeSnippet("}"));
+		}
+		return code;
+	}
+
+	private CodeBlock createInitMethod(boolean createClass) {
+		CodeList code = new CodeList();
+		if (createClass && transactionSupport) {
+			code.add(new CodeSnippet(true, "private void init(Graph g) {"));
+			code.add(new CodeSnippet("\tif (g == null)"));
+			code
+					.add(new CodeSnippet(
+							"\t\tthrow new GraphException(\"Given graph cannot be null.\");"));
+			code.add(new CodeSnippet("\tif (!g.hasTransactionSupport())"));
+			code
+					.add(new CodeSnippet(
+							"\t\tthrow new GraphException("
+									+ "\"An instance of "
+									+ recordDomain
+											.getTransactionJavaClassName(schemaRootPackageName)
+									+ " can only be created for graphs with transaction support.\");"));
+			code.add(new CodeSnippet("\tgraph = g;"));
+			code.add(new CodeSnippet("}"));
+		}
 		return code;
 	}
 
@@ -92,7 +128,7 @@ public class RecordCodeGenerator extends CodeGenerator {
 		// return new CodeSnippet(true, "public class #simpleClassName# {");
 		if (transactionSupport)
 			addImports("#jgTransPackage#.JGraLabCloneable",
-					"#jgImplTransPackage#.VersionedJGraLabCloneableImpl",
+			// "#jgImplTransPackage#.VersionedJGraLabCloneableImpl",
 					"#jgPackage#.Graph", "#jgPackage#.GraphException");
 		CodeSnippet code = null;
 		if (createClass) {
@@ -104,8 +140,10 @@ public class RecordCodeGenerator extends CodeGenerator {
 				code = new CodeSnippet(true,
 						"public class #simpleImplClassName# extends #simpleClassName#"
 								+ " implements JGraLabCloneable" + " {");
-				code
-						.add("\tprivate VersionedJGraLabCloneableImpl<#simpleImplClassName#> versionedRecord;");
+				// code
+				// .add("\tprivate
+				// VersionedJGraLabCloneableImpl<#simpleImplClassName#>
+				// versionedRecord;");
 				code.add("\tprivate Graph graph;");
 
 			} else {
@@ -154,9 +192,12 @@ public class RecordCodeGenerator extends CodeGenerator {
 			} else {
 				getterCode.add("public #type# #isOrGet#_#name#() {");
 				if (transactionSupport) {
-					getterCode.add("\tif(versionedRecord == null)");
-					getterCode
-							.add("\t\tthrow new GraphException(\"Versioning is not working for this Record.\");");
+					/*
+					 * getterCode.add("\tif(versionedRecord == null)");
+					 * getterCode .add("\t\tthrow new
+					 * GraphException(\"Versioning is not working for this
+					 * Record.\");");
+					 */
 				} else
 					getterCode.add("\t\treturn _#name#;");
 				if (transactionSupport) {
@@ -165,8 +206,11 @@ public class RecordCodeGenerator extends CodeGenerator {
 					// .add("\treturn (#ctype#)
 					// versionedRecord.getValidValue(graph.getCurrentTransaction())._#name#.clone();");
 					// } else {
+					// getterCode
+					// .add("\treturn
+					// versionedRecord.getValidValue(graph.getCurrentTransaction())._#name#.getValidValue(graph.getCurrentTransaction());");
 					getterCode
-							.add("\treturn versionedRecord.getValidValue(graph.getCurrentTransaction())._#name#.getValidValue(graph.getCurrentTransaction());");
+							.add("\treturn _#name#.getValidValue(graph.getCurrentTransaction());");
 					// }
 				}
 				getterCode.add("}");
@@ -206,15 +250,19 @@ public class RecordCodeGenerator extends CodeGenerator {
 			else {
 				setterCode.add("public void #setter# {");
 				if (transactionSupport) {
-					setterCode.add("\tif(versionedRecord == null)");
-					setterCode
-							.add("\t\tthrow new GraphException(\"Versioning is not working for this Record.\");");
+					/*
+					 * setterCode.add("\tif(versionedRecord == null)");
+					 * setterCode .add("\t\tthrow new
+					 * GraphException(\"Versioning is not working for this
+					 * Record.\");");
+					 */
 				} else
 					setterCode.add("\t\tthis._#name# = (#ctype#) _#name#;");
 				if (transactionSupport) {
-					if (rdc.getValue().isComposite())
-						setterCode
-								.add("\tversionedRecord.setValidValue(this, graph.getCurrentTransaction());");
+					// if (rdc.getValue().isComposite())
+					// setterCode
+					// .add("\tversionedRecord.setValidValue(this,
+					// graph.getCurrentTransaction());");
 					// if (rdc.getValue().isComposite())
 					// setterCode
 					// .add("\tversionedRecord.getValidValue(graph.getCurrentTransaction())._#name#
@@ -223,34 +271,39 @@ public class RecordCodeGenerator extends CodeGenerator {
 					// setterCode
 					// .add("\tversionedRecord.getValidValue(graph.getCurrentTransaction())._#name#
 					// = (#ctype#) _#name#;");
-					if (rdc.getValue() instanceof CollectionDomain
-							|| rdc.getValue() instanceof MapDomain) {
-						// TODO weitermachen
-						setterCode
-								.add("\t"
-										+ rdc.getValue().getTransactionJavaAttributeImplementationTypeName(
-												schemaRootPackageName)
-										+ " tmp_#name# = null;");
-						setterCode.add("\tif(!(_#name# instanceof "
-								+ rdc.getValue().getTransactionJavaClassName(
-										schemaRootPackageName) + "))");
-						setterCode
-								.add("\t\ttmp_#name# = new "
-										+ rdc
-												.getValue()
-												.getTransactionJavaAttributeImplementationTypeName(
-														schemaRootPackageName)
-										+ "(_#name#);");
-						setterCode.add("\telse");
-						setterCode.add("\t\ttmp_#name# = ("
-								+ rdc.getValue().getTransactionJavaAttributeImplementationTypeName(
-										schemaRootPackageName) + ") _#name#;");
-						setterCode
-								.add("\tversionedRecord.getValidValue(graph.getCurrentTransaction())._#name#.setValidValue(tmp_#name#, graph.getCurrentTransaction());");
-					} else
-						setterCode
-								.add("\tversionedRecord.getValidValue(graph.getCurrentTransaction())._#name#.setValidValue(_#name#, graph.getCurrentTransaction());");
+					/*
+					 * if (rdc.getValue() instanceof CollectionDomain ||
+					 * rdc.getValue() instanceof MapDomain) { // TODO
+					 * weitermachen setterCode .add("\t" + rdc .getValue()
+					 * .getTransactionJavaAttributeImplementationTypeName(
+					 * schemaRootPackageName) + " tmp_#name# = null;");
+					 * setterCode.add("\tif(!(_#name# instanceof " +
+					 * rdc.getValue().getTransactionJavaClassName(
+					 * schemaRootPackageName) + "))"); setterCode
+					 * .add("\t\ttmp_#name# = new " + rdc .getValue()
+					 * .getTransactionJavaAttributeImplementationTypeName(
+					 * schemaRootPackageName) + "(_#name#);");
+					 * setterCode.add("\telse"); setterCode .add("\t\ttmp_#name# = (" +
+					 * rdc .getValue()
+					 * .getTransactionJavaAttributeImplementationTypeName(
+					 * schemaRootPackageName) + ") _#name#;"); setterCode
+					 * .add("\tversionedRecord.getValidValue(graph.getCurrentTransaction())._#name#.setValidValue(tmp_#name#,
+					 * graph.getCurrentTransaction());"); } else setterCode
+					 * .add("\tversionedRecord.getValidValue(graph.getCurrentTransaction())._#name#.setValidValue(_#name#,
+					 * graph.getCurrentTransaction());");*/
+					setterCode.add("\tif(graph.isLoading())");
+					setterCode.add("\t\t this._#name# = new "
+							+ rdc.getValue().getVersionedClass(
+									schemaRootPackageName)
+							+ "(graph, (#ctype#) _#name#);");
+					setterCode.add("\tif(this._#name# == null)");
+					setterCode.add("\t\t this._#name# = new "
+							+ rdc.getValue().getVersionedClass(
+									schemaRootPackageName) + "(graph);");
+					setterCode
+							.add("\tthis._#name#.setValidValue((#ctype#) _#name#, graph.getCurrentTransaction());");
 				}
+
 				setterCode.add("}");
 			}
 			code.addNoIndent(setterCode);
@@ -262,9 +315,16 @@ public class RecordCodeGenerator extends CodeGenerator {
 		CodeList code = new CodeList();
 		if (createClass) {
 			StringBuilder sb = new StringBuilder();
-			CodeSnippet header = new CodeSnippet(true,
-					"public #simpleImplClassName#(#fields#) {");
+			CodeSnippet header = null;
+			if (transactionSupport)
+				header = new CodeSnippet(true,
+						"public #simpleImplClassName#(Graph g, #fields#) {");
+			else
+				header = new CodeSnippet(true,
+						"public #simpleImplClassName#(#fields#) {");
 			code.addNoIndent(header);
+			if (transactionSupport)
+				code.add(new CodeSnippet("init(g);"));
 			String delim = "";
 			for (Entry<String, Domain> rdc : recordDomain.getComponents()
 					.entrySet()) {
@@ -279,15 +339,17 @@ public class RecordCodeGenerator extends CodeGenerator {
 				CodeBlock assign = null;
 				// if ((rdc.getValue() instanceof CollectionDomainImpl)
 				// || (rdc.getValue() instanceof MapDomainImpl)) {
-				String attrImplTypeName = null;
+				// String attrImplTypeName = null;
 				if (transactionSupport) {
-					attrImplTypeName = rdc.getValue()
-							.getTransactionJavaAttributeImplementationTypeName(
-									schemaRootPackageName);
-					assign = new CodeSnippet("this._#name# = new "
-							+ rdc.getValue().getVersionedClass(
-									schemaRootPackageName) + "(("
-							+ attrImplTypeName + ") _#name#);");
+					/*
+					 * attrImplTypeName = rdc.getValue()
+					 * .getTransactionJavaAttributeImplementationTypeName(
+					 * schemaRootPackageName); assign = new
+					 * CodeSnippet("this._#name# = new " +
+					 * rdc.getValue().getVersionedClass( schemaRootPackageName) +
+					 * "((" + attrImplTypeName + ") _#name#);");
+					 */
+					assign = new CodeSnippet("set_#name#(_#name#);");
 				} else {
 					/*
 					 * attrImplTypeName = rdc.getValue()
@@ -320,18 +382,29 @@ public class RecordCodeGenerator extends CodeGenerator {
 					break;
 				}
 			}
-			code
-					.addNoIndent(new CodeSnippet(false,
-							"public #simpleImplClassName#(java.util.Map<String, Object> fields) {"));
+			if (transactionSupport)
+				code
+						.addNoIndent(new CodeSnippet(false,
+								"public #simpleImplClassName#(Graph g, java.util.Map<String, Object> fields) {"));
+			else
+				code
+						.addNoIndent(new CodeSnippet(false,
+								"public #simpleImplClassName#(java.util.Map<String, Object> fields) {"));
+			if (transactionSupport)
+				code.add(new CodeSnippet("init(g);"));
 			for (Entry<String, Domain> rdc : recordDomain.getComponents()
 					.entrySet()) {
 				CodeBlock assign = null;
 				if (transactionSupport)
-					assign = new CodeSnippet("this._#name# = new "
-							+ rdc.getValue().getVersionedClass(
-									schemaRootPackageName)
-							+ "(("
-							+ rdc.getValue().getTransactionJavaClassName(
+
+					/*
+					 * assign = new CodeSnippet("this._#name# = new " +
+					 * rdc.getValue().getVersionedClass( schemaRootPackageName) +
+					 * "((" + rdc.getValue().getTransactionJavaClassName(
+					 * schemaRootPackageName) + ")fields.get(\"#name#\"));");
+					 */
+					assign = new CodeSnippet("set_#name#(("
+							+ rdc.getValue().getJavaClassName(
 									schemaRootPackageName)
 							+ ")fields.get(\"#name#\"));");
 				else
@@ -352,9 +425,16 @@ public class RecordCodeGenerator extends CodeGenerator {
 		// abstract class (or better use interface?)
 		if (createClass) {
 			addImports("#jgPackage#.GraphIO", "#jgPackage#.GraphIOException");
-			code
-					.addNoIndent(new CodeSnippet(true,
-							"public #simpleImplClassName#(GraphIO io) throws GraphIOException {"));
+			if (transactionSupport)
+				code
+						.addNoIndent(new CodeSnippet(true,
+								"public #simpleImplClassName#(Graph g, GraphIO io) throws GraphIOException {"));
+			else
+				code
+						.addNoIndent(new CodeSnippet(true,
+								"public #simpleImplClassName#(GraphIO io) throws GraphIOException {"));
+			if (transactionSupport)
+				code.add(new CodeSnippet("init(g);"));
 			code.add(new CodeSnippet("io.match(\"(\");"));
 			for (Entry<String, Domain> c : recordDomain.getComponents()
 					.entrySet()) {
@@ -367,14 +447,16 @@ public class RecordCodeGenerator extends CodeGenerator {
 				 * "tmp_" + c.getKey(), "io"));
 				 */
 				if (transactionSupport)
+					/*
+					 * code .add(new CodeSnippet( "_" + c.getKey() + "= new " +
+					 * c.getValue().getVersionedClass( schemaRootPackageName) +
+					 * "((" + c .getValue()
+					 * .getTransactionJavaAttributeImplementationTypeName(
+					 * schemaRootPackageName) + ") tmp_" + c.getKey() + ");"));
+					 */
 					code
 							.add(new CodeSnippet(
-									"_"
-											+ c.getKey()
-											+ "= new "
-											+ c.getValue().getVersionedClass(
-													schemaRootPackageName)
-											+ "(("
+									"set_"+ c.getKey() +"(("
 											+ c
 													.getValue()
 													.getTransactionJavaAttributeImplementationTypeName(
@@ -383,6 +465,7 @@ public class RecordCodeGenerator extends CodeGenerator {
 				else
 					code.add(c.getValue().getReadMethod(schemaRootPackageName,
 							"_" + c.getKey(), "io"));
+				//code.setVariable("name", c.getKey());
 			}
 			code.add(new CodeSnippet("io.match(\")\");"));
 			code.addNoIndent(new CodeSnippet("}"));
@@ -543,8 +626,15 @@ public class RecordCodeGenerator extends CodeGenerator {
 				}
 				count++;
 			}
-			code.add(new CodeSnippet("return new #simpleImplClassName#("
+			code.add(new CodeSnippet("return new #simpleImplClassName#(graph, "
 					+ constructorFields.toString() + ");"));
+			/*
+			 * code .add(new CodeSnippet("#simpleImplClassName# clone = new
+			 * #simpleImplClassName#(" + constructorFields.toString() + ");"));
+			 * code.add(new
+			 * CodeSnippet("clone.setVersionedRecord(versionedRecord);"));
+			 * code.add(new CodeSnippet("return clone;"));
+			 */
 			code.addNoIndent(new CodeSnippet("}"));
 		}
 		return code;
@@ -555,17 +645,13 @@ public class RecordCodeGenerator extends CodeGenerator {
 	 * 
 	 * @return
 	 */
-	private CodeBlock createSetVersionedRecordMethod(boolean createClass) {
-		CodeList code = new CodeList();
-		if (transactionSupport) {
-			code
-					.addNoIndent(new CodeSnippet(
-							true,
-							"public void setVersionedRecord(VersionedJGraLabCloneableImpl<#simpleImplClassName#> versionedRecord) {",
-							"\tthis.versionedRecord = versionedRecord;",
-							"\tgraph = versionedRecord.getGraph();", "}"));
-		}
-		return code;
-	}
+	/*
+	 * private CodeBlock createSetVersionedRecordMethod(boolean createClass) {
+	 * CodeList code = new CodeList(); if (transactionSupport) { code
+	 * .addNoIndent(new CodeSnippet( true, "protected void
+	 * setVersionedRecord(VersionedJGraLabCloneableImpl<#simpleImplClassName#>
+	 * versionedRecord) {", "\tthis.versionedRecord = versionedRecord;",
+	 * "\tgraph = versionedRecord.getGraph();", "}")); } return code; }
+	 */
 
 }

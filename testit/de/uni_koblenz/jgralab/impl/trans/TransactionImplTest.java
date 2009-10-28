@@ -760,11 +760,11 @@ public class TransactionImplTest {
 		CityImpl c1Impl = (CityImpl) c1;
 		c1Impl.set_name("test");
 		c1Impl.set_testEnum(TestEnum.Test1);
-		c1Impl.set_testList(new ArrayList<TestRecord>());
-		c1Impl.set_testMap(new HashMap<String, String>());
-		c1Impl.set_testSet(new HashSet<String>());
-		c1Impl.set_testRecord(motorwayMap.createTestRecord("test", new ArrayList<String>(),
-				new HashSet<String>(), 2, 2D, 2L, false));
+		c1Impl.set_testList(c1.getGraph().createList(TestRecord.class));
+		c1Impl.set_testMap(c1.getGraph().createMap(String.class, String.class));
+		c1Impl.set_testSet(c1.getGraph().createSet(String.class));
+		c1Impl.set_testRecord(motorwayMap.createTestRecord("test", c1.getGraph().createList(String.class),
+				c1.getGraph().createSet(String.class), 2, 2D, 2L, false));
 		Map<AttributedElement, Set<VersionedDataObject<?>>> changedAttributesMap = new HashMap<AttributedElement, Set<VersionedDataObject<?>>>();
 		changedAttributesMap.put(c1, c1Impl.attributes());
 		assertEquals(readWriteTransaction1.changedAttributes,

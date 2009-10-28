@@ -1,5 +1,7 @@
 package de.uni_koblenz.jgralab.trans;
 
+import de.uni_koblenz.jgralab.Graph;
+
 /**
  * This interface declares the clone()-method missing in Java-interface
  * <code>java.lang.Cloneable</code> to allow deep copying of attributes of type
@@ -14,4 +16,10 @@ public interface JGraLabCloneable extends Cloneable {
 	 * @return a deep copy of the current object
 	 */
 	public Object clone();
+	
+	/**
+	 * 
+	 * @return a reference to the graph the object belongs to
+	 */
+	public Graph getGraph();
 }
