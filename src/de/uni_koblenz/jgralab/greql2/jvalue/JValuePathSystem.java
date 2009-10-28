@@ -190,7 +190,6 @@ public class JValuePathSystem extends JValue {
 	public void addVertex(Vertex vertex, int stateNumber, Edge parentEdge,
 			Vertex parentVertex, int parentStateNumber, int distance,
 			boolean finalState) {
-		// System.out.println("Adding vertex: " + vertex);
 		PathSystemKey key = new PathSystemKey(vertex, stateNumber);
 		if (!keyToEntryMap.containsKey(key)) {
 			PathSystemEntry entry = new PathSystemEntry(parentVertex,
@@ -240,10 +239,6 @@ public class JValuePathSystem extends JValue {
 	 * occurence if used.
 	 */
 	public JValueSet siblings(Vertex vertex) {
-		System.out.println("Getting siblings for vertex " + vertex);
-		for (Vertex v : vertexToFirstKeyMap.keySet()) {
-			System.out.println("Vertex in Map: " + v);
-		}
 		PathSystemKey key = vertexToFirstKeyMap.get(vertex);
 		return siblings(key);
 	}
@@ -252,19 +247,12 @@ public class JValuePathSystem extends JValue {
 	 * Calculates the set of children the given key has in this PathSystem
 	 */
 	public JValueSet siblings(PathSystemKey key) {
-		System.out.println("Key is: " + key);
 		PathSystemEntry entry = keyToEntryMap.get(key);
 		JValueSet returnSet = new JValueSet();
-		Iterator<Map.Entry<PathSystemKey, PathSystemEntry>> iter = keyToEntryMap
-				.entrySet().iterator();
-		while (iter.hasNext()) {
-			Map.Entry<PathSystemKey, PathSystemEntry> mapEntry = iter.next();
-			PathSystemEntry thisEntry = mapEntry.getValue();
-			System.out.println("ThisEntry: " + thisEntry);
-			System.out.println("Entry: " + entry);
-			if ((thisEntry.getParentVertex() == entry.getParentVertex())
-					&& (thisEntry.getParentStateNumber() == entry
-							.getParentStateNumber())
+		for (Map.Entry<PathSystemKey, PathSystemEntry> mapEntry : keyToEntryMap.entrySet()) { 
+			PathSystemEntry value = mapEntry.getValue();
+			if ((value.getParentVertex() == entry.getParentVertex())
+					&& (value.getParentStateNumber() == entry.getParentStateNumber())
 					&& (mapEntry.getKey().getVertex() != key.getVertex())) {
 				Vertex v = mapEntry.getKey().getVertex();
 				returnSet.add(new JValue(v, v));
@@ -622,7 +610,7 @@ public class JValuePathSystem extends JValue {
 	/**
 	 * Extract the path which starts with the root vertex and ends with the
 	 * given vertex from the PathSystem. If the given vertex exists more than
-	 * one times in this pathsystem, the first occurence if used. If the given
+	 * one times in this pathsystem, the first occurrence if used. If the given
 	 * vertex is not part of this pathsystem, null will be returned
 	 * 
 	 * @param vertex

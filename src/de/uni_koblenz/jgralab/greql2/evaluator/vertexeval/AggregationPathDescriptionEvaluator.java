@@ -34,6 +34,7 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValueTypeCollection;
 import de.uni_koblenz.jgralab.greql2.schema.AggregationPathDescription;
 import de.uni_koblenz.jgralab.greql2.schema.IsEdgeRestrOf;
+import de.uni_koblenz.jgralab.greql2.schema.IsTypeRestrOf;
 
 /**
  * Evaluates an AggregationPathDescription, that is something link v
@@ -61,6 +62,7 @@ public class AggregationPathDescriptionEvaluator extends
 					.getVertexEvaluatorGraphMarker().getMark(inc.getAlpha());
 			typeCollection.addTypes(edgeRestEval.getTypeCollection());
 		}
+		
 		createdNFA = NFA.createAggregationPathDescriptionNFA(
 				((AggregationPathDescription) vertex).is_outAggregation(),
 				typeCollection, getEdgeRole(edgeRestEval));

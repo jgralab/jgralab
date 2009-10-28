@@ -77,7 +77,8 @@ public class IsReachable extends AbstractGreql2Function {
 
 	{
 		JValueType[][] x = { { JValueType.VERTEX, JValueType.VERTEX,
-				JValueType.DFA } };
+				JValueType.DFA } , { JValueType.VERTEX, JValueType.VERTEX,
+			JValueType.NFA } };
 		signatures = x;
 	}
 
@@ -89,7 +90,12 @@ public class IsReachable extends AbstractGreql2Function {
 		}
 		Vertex startVertex = arguments[0].toVertex();
 		Vertex endVertex = arguments[1].toVertex();
-		DFA dfa = arguments[2].toDFA();
+		DFA dfa = null;
+		if (arguments[2].isNFA()) {
+			dfa = new DFA(arguments[2].toNFA());
+		} else {
+			dfa = arguments[2].toDFA();
+		}
 		BooleanGraphMarker[] markers = new BooleanGraphMarker[dfa.stateList
 				.size()];
 		for (State s : dfa.stateList) {

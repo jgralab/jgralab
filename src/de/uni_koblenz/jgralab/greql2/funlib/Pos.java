@@ -33,6 +33,7 @@ import de.uni_koblenz.jgralab.greql2.exception.WrongFunctionParameterException;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValueCollection;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValueList;
+import de.uni_koblenz.jgralab.greql2.jvalue.JValueSet;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValueTuple;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
 
@@ -87,8 +88,12 @@ public class Pos extends AbstractGreql2Function {
 			JValueTuple tup = col.toJValueTuple();
 			return new JValue(tup.indexOf(object));
 		}
+		if (col.isJValueSet ()) {
+			JValueSet set = col.toJValueSet();
+			return new JValue(set.indexOf(object));
+		}
 		throw new EvaluateException(
-				"Pos has to be called with a LIST or TUPLE.");
+				"Pos has to be called with a LIST, TUPLE or sorted SET.");
 	}
 
 	public long getEstimatedCosts(ArrayList<Long> inElements) {
