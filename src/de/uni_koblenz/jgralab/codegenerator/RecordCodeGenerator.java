@@ -88,13 +88,41 @@ public class RecordCodeGenerator extends CodeGenerator {
 		code.add(createCloneMethod(createClass));
 		code.add(createInitMethod(createClass));
 		code.add(createGetGraphMethod(createClass));
+		code.add(createEqualsMethod(createClass));
+		return code;
+	}
+
+	private CodeBlock createEqualsMethod(boolean createClass) {
+		CodeList code = new CodeList();
+		if (createClass && transactionSupport) {
+			code.addNoIndent(new CodeSnippet(true,
+					"public boolean equals(Object o) {"));
+			code.add(new CodeSnippet("\tif(this == o)"));
+			code.add(new CodeSnippet("\t\treturn true;"));
+			for (Entry<String, Domain> entry : recordDomain.getComponents()
+					.entrySet()) {
+				String name = entry.getKey();
+				code
+						.add(new CodeSnippet(
+								"\tif (!_"
+										+ name
+										+ ".getTemporaryValue(graph.getCurrentTransaction()).equals(_"
+										+ name
+										+ ".getLatestPersistentValue()))"));
+				code.add(new CodeSnippet("\t\treturn false;"));
+			}
+			code.add(new CodeSnippet("\treturn true;"));
+			code.add(new CodeSnippet("}"));
+		}
 		return code;
 	}
 
 	private CodeBlock createGetGraphMethod(boolean createClass) {
 		CodeList code = new CodeList();
 		if (createClass && transactionSupport) {
-			code.addNoIndent(new CodeSnippet(true, "public Graph getGraph() {"));
+			code
+					.addNoIndent(new CodeSnippet(true,
+							"public Graph getGraph() {"));
 			code.add(new CodeSnippet("\treturn graph;"));
 			code.add(new CodeSnippet("}"));
 		}
@@ -104,7 +132,8 @@ public class RecordCodeGenerator extends CodeGenerator {
 	private CodeBlock createInitMethod(boolean createClass) {
 		CodeList code = new CodeList();
 		if (createClass && transactionSupport) {
-			code.addNoIndent(new CodeSnippet(true, "private void init(Graph g) {"));
+			code.addNoIndent(new CodeSnippet(true,
+					"private void init(Graph g) {"));
 			code.add(new CodeSnippet("\tif (g == null)"));
 			code
 					.add(new CodeSnippet(
