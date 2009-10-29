@@ -54,10 +54,6 @@ public class GraphCodeGenerator extends AttributedElementCodeGenerator {
 
 	@Override
 	protected CodeBlock createHeader(boolean createClass) {
-		/*
-		 * addImports("#schemaPackageName#." +
-		 * aec.getSchema().getGraphClass().getSimpleName());
-		 */
 		return super.createHeader(createClass);
 	}
 

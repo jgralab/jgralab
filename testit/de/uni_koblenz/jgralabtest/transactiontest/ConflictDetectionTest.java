@@ -2,7 +2,7 @@ package de.uni_koblenz.jgralabtest.transactiontest;
 
 import static org.junit.Assert.*; //import junit.framework.JUnit4TestAdapter;
 
-import java.util.List;
+//import java.util.List;
 import java.util.Set;
 
 import org.junit.After;
@@ -20,7 +20,7 @@ import de.uni_koblenz.jgralabtest.schemas.motorwaymap.Exit;
 import de.uni_koblenz.jgralabtest.schemas.motorwaymap.Motorway;
 import de.uni_koblenz.jgralabtest.schemas.motorwaymap.MotorwayMap;
 import de.uni_koblenz.jgralabtest.schemas.motorwaymap.MotorwayMapSchema;
-import de.uni_koblenz.jgralabtest.schemas.motorwaymap.TestRecord;
+//import de.uni_koblenz.jgralabtest.schemas.motorwaymap.TestRecord;
 
 /**
  * 
@@ -4367,7 +4367,7 @@ public class ConflictDetectionTest {
 			t2.commit();
 			fail();
 		} catch (CommitFailedException e) {
-			System.out.println("\n- changeListWithoutSetterConflict -");
+			System.out.println("\n- changeSetWithoutSetterConflict -");
 			System.out.println("##########################");
 			System.out.println(e.getMessage());
 			assertTrue(true);

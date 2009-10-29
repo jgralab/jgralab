@@ -94,7 +94,7 @@ public class RecordCodeGenerator extends CodeGenerator {
 	private CodeBlock createGetGraphMethod(boolean createClass) {
 		CodeList code = new CodeList();
 		if (createClass && transactionSupport) {
-			code.add(new CodeSnippet(true, "public Graph getGraph() {"));
+			code.addNoIndent(new CodeSnippet(true, "public Graph getGraph() {"));
 			code.add(new CodeSnippet("\treturn graph;"));
 			code.add(new CodeSnippet("}"));
 		}
@@ -104,7 +104,7 @@ public class RecordCodeGenerator extends CodeGenerator {
 	private CodeBlock createInitMethod(boolean createClass) {
 		CodeList code = new CodeList();
 		if (createClass && transactionSupport) {
-			code.add(new CodeSnippet(true, "private void init(Graph g) {"));
+			code.addNoIndent(new CodeSnippet(true, "private void init(Graph g) {"));
 			code.add(new CodeSnippet("\tif (g == null)"));
 			code
 					.add(new CodeSnippet(
