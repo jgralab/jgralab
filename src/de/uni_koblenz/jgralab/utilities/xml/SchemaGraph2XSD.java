@@ -878,12 +878,15 @@ public class SchemaGraph2XSD {
 		// Loop over all enumeration constant strings
 		for (String enumConst : domain.get_enumConstants()) {
 			// Writes a enumeration element, which contains the current
-			// enumeration
-			// constant string as value of the attribute "value".
+			// enumeration constant string as value of the attribute "value".
 			xml.writeEmptyElement(XSD_NAMESPACE_PREFIX, XSD_ENUMERATION,
 					XMLConstants.W3C_XML_SCHEMA_NS_URI);
 			xml.writeAttribute(XSD_ATTRIBUTE_VALUE, enumConst);
 		}
+		// write the "n" null value
+		xml.writeEmptyElement(XSD_NAMESPACE_PREFIX, XSD_ENUMERATION,
+				XMLConstants.W3C_XML_SCHEMA_NS_URI);
+		xml.writeAttribute(XSD_ATTRIBUTE_VALUE, "n");
 		writeEndXSDElement(2);
 	}
 
