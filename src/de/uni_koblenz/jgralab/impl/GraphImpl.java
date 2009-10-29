@@ -303,8 +303,12 @@ public abstract class GraphImpl implements Graph {
 			a.incidenceListModified();
 			o.incidenceListModified();
 			edgeListModified();
-			edgeAdded(e);
+			internalEdgeAdded(e);
 		}
+	}
+
+	protected void internalEdgeAdded(EdgeImpl e) {
+		edgeAdded(e);
 	}
 
 	/**
@@ -373,8 +377,12 @@ public abstract class GraphImpl implements Graph {
 
 		if (!isLoading()) {
 			vertexListModified();
-			vertexAdded(v);
+			internalVertexAdded(v);
 		}
+	}
+
+	protected void internalVertexAdded(VertexImpl v) {
+		vertexAdded(v);
 	}
 
 	/**
@@ -1025,7 +1033,7 @@ public abstract class GraphImpl implements Graph {
 	 */
 	private void internalDeleteEdge(Edge edge) {
 		EdgeImpl e = (EdgeImpl) edge.getNormalEdge();
-		edgeDeleted(e);
+		internalEdgeDeleted(e);
 
 		VertexImpl alpha = e.getIncidentVertex();
 		alpha.removeIncidenceFromLambaSeq(e);
@@ -1039,6 +1047,10 @@ public abstract class GraphImpl implements Graph {
 		edgeAfterDeleted(e, alpha, omega);
 	}
 
+	protected void internalEdgeDeleted(EdgeImpl e) {
+		edgeDeleted(e);
+	}
+
 	/**
 	 * Deletes all vertices in deleteVertexList from the internal structures of
 	 * this graph. Possibly, cascading deletes of child vertices occur when
@@ -1047,7 +1059,7 @@ public abstract class GraphImpl implements Graph {
 	private void internalDeleteVertex() {
 		while (!getDeleteVertexList().isEmpty()) {
 			VertexImpl v = getDeleteVertexList().remove(0);
-			vertexDeleted(v);
+			internalVertexDeleted(v);
 			removeVertexFromVSeq(v);
 			vertexListModified();
 			vertexAfterDeleted(v);
@@ -1093,6 +1105,10 @@ public abstract class GraphImpl implements Graph {
 				e = v.getFirstEdge();
 			}
 		}
+	}
+
+	protected void internalVertexDeleted(VertexImpl v) {
+		vertexDeleted(v);
 	}
 
 	/**
