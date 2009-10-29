@@ -14,7 +14,7 @@ import de.uni_koblenz.jgralab.trans.Transaction;
  * -instance can only be used in the <code>Transaction</code> in which it has
  * been created.
  * 
- * @author José Monte(monte@uni-koblenz)
+ * @author Jose Monte(monte@uni-koblenz)
  * 
  * @param <A>
  *            <code>Vertex</code> or <code>Edge</code>

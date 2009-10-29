@@ -34,7 +34,7 @@ import de.uni_koblenz.jgralabtest.schemas.motorwaymap.impl.trans.CityImpl;
 /**
  * Test cases for class TransactionImpl.
  * 
- * @author José Monte(monte@uni-koblenz.de)
+ * @author Jose Monte(monte@uni-koblenz.de)
  * 
  *         TODO think about moving this class to package
  *         de.uni_koblenz.jgralabtest.transactiontest - problem with protected

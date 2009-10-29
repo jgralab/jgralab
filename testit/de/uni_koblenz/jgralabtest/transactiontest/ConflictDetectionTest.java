@@ -2,6 +2,9 @@ package de.uni_koblenz.jgralabtest.transactiontest;
 
 import static org.junit.Assert.*; //import junit.framework.JUnit4TestAdapter;
 
+import java.util.List;
+import java.util.Set;
+
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -17,10 +20,11 @@ import de.uni_koblenz.jgralabtest.schemas.motorwaymap.Exit;
 import de.uni_koblenz.jgralabtest.schemas.motorwaymap.Motorway;
 import de.uni_koblenz.jgralabtest.schemas.motorwaymap.MotorwayMap;
 import de.uni_koblenz.jgralabtest.schemas.motorwaymap.MotorwayMapSchema;
+import de.uni_koblenz.jgralabtest.schemas.motorwaymap.TestRecord;
 
 /**
  * 
- * @author José Monte(monte@uni-koblenz.de)
+ * @author Jose Monte(monte@uni-koblenz.de)
  */
 public class ConflictDetectionTest {
 	private MotorwayMap motorwayMap;
@@ -3167,6 +3171,7 @@ public class ConflictDetectionTest {
 
 			motorwayMap.setCurrentTransaction(readWriteTransaction2);
 			readWriteTransaction2.commit();
+			fail();
 		} catch (CommitFailedException e) {
 			System.out.println("\n- testSetAlphaConflict1 -");
 			System.out.println("##########################");
@@ -3277,6 +3282,7 @@ public class ConflictDetectionTest {
 
 			motorwayMap.setCurrentTransaction(readWriteTransaction2);
 			readWriteTransaction2.commit();
+			fail();
 		} catch (CommitFailedException e) {
 			System.out.println("\n- testSetAlphaConflict2 -");
 			System.out.println("##########################");
@@ -3318,6 +3324,7 @@ public class ConflictDetectionTest {
 
 			motorwayMap.setCurrentTransaction(readWriteTransaction2);
 			readWriteTransaction2.commit();
+			fail();
 		} catch (CommitFailedException e) {
 			System.out.println("\n- testSetAlphaConflict3 -");
 			System.out.println("##########################");
@@ -3418,6 +3425,7 @@ public class ConflictDetectionTest {
 
 			motorwayMap.setCurrentTransaction(readWriteTransaction2);
 			readWriteTransaction2.commit();
+			fail();
 		} catch (CommitFailedException e) {
 			System.out.println("\n- testSetAlphaConflict4 -");
 			System.out.println("##########################");
@@ -3459,6 +3467,7 @@ public class ConflictDetectionTest {
 
 			motorwayMap.setCurrentTransaction(readWriteTransaction2);
 			readWriteTransaction2.commit();
+			fail();
 		} catch (CommitFailedException e) {
 			System.out.println("\n- testSetAlphaConflict5 -");
 			System.out.println("##########################");
@@ -3568,6 +3577,7 @@ public class ConflictDetectionTest {
 
 			motorwayMap.setCurrentTransaction(readWriteTransaction2);
 			readWriteTransaction2.commit();
+			fail();
 		} catch (CommitFailedException e) {
 			System.out.println("\n- testSetOmegaConflict1 -");
 			System.out.println("##########################");
@@ -3684,6 +3694,7 @@ public class ConflictDetectionTest {
 
 			motorwayMap.setCurrentTransaction(readWriteTransaction2);
 			readWriteTransaction2.commit();
+			fail();
 		} catch (CommitFailedException e) {
 			System.out.println("\n- testSetOmegaConflict2 -");
 			System.out.println("##########################");
@@ -3725,6 +3736,7 @@ public class ConflictDetectionTest {
 
 			motorwayMap.setCurrentTransaction(readWriteTransaction2);
 			readWriteTransaction2.commit();
+			fail();
 		} catch (CommitFailedException e) {
 			System.out.println("\n- testSetOmegaConflict3 -");
 			System.out.println("##########################");
@@ -3834,6 +3846,7 @@ public class ConflictDetectionTest {
 
 			motorwayMap.setCurrentTransaction(readWriteTransaction2);
 			readWriteTransaction2.commit();
+			fail();
 		} catch (CommitFailedException e) {
 			System.out.println("\n- testSetOmegaConflict4 -");
 			System.out.println("##########################");
@@ -3875,6 +3888,7 @@ public class ConflictDetectionTest {
 
 			motorwayMap.setCurrentTransaction(readWriteTransaction2);
 			readWriteTransaction2.commit();
+			fail();
 		} catch (CommitFailedException e) {
 			System.out.println("\n- testSetOmegaConflict5 -");
 			System.out.println("##########################");
@@ -4107,6 +4121,7 @@ public class ConflictDetectionTest {
 
 			motorwayMap.setCurrentTransaction(readWriteTransaction2);
 			readWriteTransaction2.commit();
+			fail();
 		} catch (CommitFailedException e) {
 			System.out.println("\n- testSetAttributeConflict1 -");
 			System.out.println("##########################");
@@ -4206,6 +4221,7 @@ public class ConflictDetectionTest {
 
 			motorwayMap.setCurrentTransaction(readWriteTransaction2);
 			readWriteTransaction2.commit();
+			fail();
 		} catch (CommitFailedException e) {
 			System.out.println("\n- testSetAttributeConflict2 -");
 			System.out.println("##########################");
@@ -4247,6 +4263,7 @@ public class ConflictDetectionTest {
 
 			motorwayMap.setCurrentTransaction(readWriteTransaction2);
 			readWriteTransaction2.commit();
+			fail();
 		} catch (CommitFailedException e) {
 			System.out.println("\n- testSetAttributeConflict3 -");
 			System.out.println("##########################");
@@ -4325,6 +4342,36 @@ public class ConflictDetectionTest {
 		System.out.println("##########################");
 		System.out.println(conflictReason);
 		assertTrue(conflict);
+	}
+	
+	@Test
+	public void changeSetWithoutSetterConflict() {
+		try {
+			motorwayMap.setCurrentTransaction(readWriteTransaction1);
+			City city = motorwayMap.getFirstCity();
+			Set<String> set = city.getGraph().createSet(String.class);
+			set.add("Test1");
+			set.add("Test2");
+			city.set_testSet(set);
+			readWriteTransaction1.commit();
+
+			Transaction t1 = motorwayMap.newTransaction();
+			motorwayMap.setCurrentTransaction(t1);
+			city.get_testSet().add("Test3");
+			Transaction t2 = motorwayMap.newTransaction();
+			motorwayMap.setCurrentTransaction(t2);
+			city.get_testSet().add("Test4");
+			motorwayMap.setCurrentTransaction(t1);
+			t1.commit();
+			motorwayMap.setCurrentTransaction(t2);
+			t2.commit();
+			fail();
+		} catch (CommitFailedException e) {
+			System.out.println("\n- changeListWithoutSetterConflict -");
+			System.out.println("##########################");
+			System.out.println(e.getMessage());
+			assertTrue(true);
+		}
 	}
 
 	/**

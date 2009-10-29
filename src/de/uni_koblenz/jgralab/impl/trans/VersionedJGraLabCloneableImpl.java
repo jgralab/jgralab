@@ -8,7 +8,7 @@ import de.uni_koblenz.jgralab.trans.JGraLabCloneable;
  * context of JGraLab. These can be attributes of type JGraLabList, JGraLabSet,
  * JGraLabMap and Record-classes.
  * 
- * @author José Monte(monte@uni-koblenz.de)
+ * @author Jose Monte(monte@uni-koblenz.de)
  * 
  * @param <E>
  *            the type

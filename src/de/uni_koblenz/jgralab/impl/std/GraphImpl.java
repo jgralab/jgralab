@@ -22,7 +22,7 @@ import de.uni_koblenz.jgralab.trans.Transaction;
  * The implementation of a <code>Graph</code> accessing attributes without
  * versioning.
  * 
- * @author José Monte(monte@uni-koblenz.de)
+ * @author Jose Monte(monte@uni-koblenz.de)
  */
 public abstract class GraphImpl extends de.uni_koblenz.jgralab.impl.GraphImpl {
 	private VertexImpl[] vertex;

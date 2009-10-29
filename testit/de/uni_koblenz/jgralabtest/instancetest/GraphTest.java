@@ -2479,17 +2479,18 @@ public class GraphTest extends InstanceTest {
 		VertexTestGraph g = transactionsEnabled ? VertexTestSchema.instance()
 				.createVertexTestGraphWithTransactionSupport()
 				: VertexTestSchema.instance().createVertexTestGraph();
-		
+
 		((VertexTestGraphTest) g).resetAddedVertices();
-				
+
 		// create a vertex
 		createTransaction(g);
 		SubNode v1 = g.createSubNode();
 		commit(g);
 
 		// obtain list of added vertices
-		List<Vertex> addedVertices = ((VertexTestGraphTest) g).getAddedVertices();
-		
+		List<Vertex> addedVertices = ((VertexTestGraphTest) g)
+				.getAddedVertices();
+
 		// test if method was invoked exactly once
 		assertEquals(1, addedVertices.size());
 		// test if the correct vertex was affected
@@ -2616,9 +2617,9 @@ public class GraphTest extends InstanceTest {
 		createTransaction(g);
 		SubNode v1 = g.createSubNode();
 		SuperNode v2 = g.createSuperNode();
-		
+
 		Link e1 = g.createLink(v1, v2);
-		
+
 		commit(g);
 
 		// reset list of deleted edges
@@ -2630,8 +2631,7 @@ public class GraphTest extends InstanceTest {
 		commit(g);
 
 		// obtain list of deleted edges
-		List<Edge> deletedEdges = ((VertexTestGraphTest) g)
-				.getDeletedEdges();
+		List<Edge> deletedEdges = ((VertexTestGraphTest) g).getDeletedEdges();
 
 		// test if edgeDeleted was invoked only once
 		assertEquals(1, deletedEdges.size());
@@ -2652,21 +2652,21 @@ public class GraphTest extends InstanceTest {
 		VertexTestGraph g = transactionsEnabled ? VertexTestSchema.instance()
 				.createVertexTestGraphWithTransactionSupport()
 				: VertexTestSchema.instance().createVertexTestGraph();
-		
+
 		((VertexTestGraphTest) g).resetAddedEdges();
-				
+
 		// create a simple graph
 		createTransaction(g);
 		SubNode v1 = g.createSubNode();
 		SuperNode v2 = g.createSuperNode();
-		
+
 		Link e1 = g.createLink(v1, v2);
-		
+
 		commit(g);
 
 		// obtain list of added edges
 		List<Edge> addedEdges = ((VertexTestGraphTest) g).getAddedEdges();
-		
+
 		// test if method was invoked exactly once
 		assertEquals(1, addedEdges.size());
 		// test if the correct vertex was affected

@@ -18,7 +18,7 @@ import de.uni_koblenz.jgralab.trans.VertexPosition;
 /**
  * Executes validation (check for conflicts) for a transaction.
  * 
- * @author José Monte(monte@uni-koblenz.de)
+ * @author Jose Monte(monte@uni-koblenz.de)
  */
 public class ValidationComponent {
 	private TransactionImpl transaction;
@@ -1136,18 +1136,18 @@ public class ValidationComponent {
 					}
 				}
 			}
-			// also check all versioned dataobjects which were changed within
-			// the transaction without the usage of setter
-			Set<VersionedDataObject<?>> versionedDataObjects = transaction
-					.getRemainingVersionedDataObjects();
-			for (VersionedDataObject<?> vdo : versionedDataObjects) {
-				if (vdo.isCloneable()) {
-					boolean conflict = isAttributeInConflict(vdo);
-					if (conflict) {
-						conflictReason = "A lost update has been detected for the versioned dataobject "
-								+ vdo + ".";
-						return true;
-					}
+		}
+		// also check all versioned dataobjects which were changed within
+		// the transaction without the usage of setter
+		Set<VersionedDataObject<?>> versionedDataObjects = transaction
+				.getRemainingVersionedDataObjects();
+		for (VersionedDataObject<?> vdo : versionedDataObjects) {
+			if (vdo.isCloneable()) {
+				boolean conflict = isAttributeInConflict(vdo);
+				if (conflict) {
+					conflictReason = "A lost update has been detected for the versioned dataobject "
+							+ vdo + ".";
+					return true;
 				}
 			}
 		}

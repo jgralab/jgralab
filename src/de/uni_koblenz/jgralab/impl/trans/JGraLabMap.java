@@ -15,7 +15,7 @@ import de.uni_koblenz.jgralab.trans.JGraLabCloneable;
  * Own implementation class for attributes of type
  * <code>java.util.Map<K,V></code>.
  * 
- * @author José Monte(monte@uni-koblenz.de)
+ * @author Jose Monte(monte@uni-koblenz.de)
  * 
  * @param <K>
  * @param <V>
@@ -357,7 +357,7 @@ public class JGraLabMap<K, V> extends HashMap<K, V> implements JGraLabCloneable 
 			if (newValue instanceof JGraLabCloneable)
 				newValue = (V) ((JGraLabCloneable) newValue).clone();
 			// TODO internal or normal add?
-			jgralabMap.put(newKey, newValue);
+			jgralabMap.internalPut(newKey, newValue);
 		}
 		return jgralabMap;
 	}

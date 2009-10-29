@@ -18,7 +18,7 @@ import de.uni_koblenz.jgralab.trans.VertexPosition;
  * executing write() at the same time. No other transaction should be doing BOT
  * or validation.
  * 
- * @author José Monte(monte@uni-koblenz.de)
+ * @author Jose Monte(monte@uni-koblenz.de)
  */
 public class WritingComponent {
 	private TransactionImpl transaction;
@@ -449,8 +449,9 @@ public class WritingComponent {
 		Set<VersionedDataObject<?>> versionedDataObjects = transaction
 				.getRemainingVersionedDataObjects();
 		for (VersionedDataObject<?> vdo : versionedDataObjects) {
-			if (!transaction.changedDuringCommit.contains(vdo)
-					&& vdo.isCloneable()) {
+			if (((transaction.changedDuringCommit == null || (transaction.changedDuringCommit != null && !transaction.changedDuringCommit
+					.contains(vdo)))
+					&& vdo.isCloneable())) {
 				Object tempValue = vdo.getTemporaryValue(transaction);
 				((VersionedDataObjectImpl) vdo).setValidValue(tempValue, graph
 						.getCurrentTransaction(), true);

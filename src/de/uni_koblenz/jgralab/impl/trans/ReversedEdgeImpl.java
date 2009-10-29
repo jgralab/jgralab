@@ -17,7 +17,7 @@ import de.uni_koblenz.jgralab.trans.VersionedIncidence;
  * Incident vertex and next and previous incidence in Iseq(incident vertex) are
  * versioned.
  * 
- * @author José Monte(monte@uni-koblenz.de)
+ * @author Jose Monte(monte@uni-koblenz.de)
  */
 public abstract class ReversedEdgeImpl extends
 		de.uni_koblenz.jgralab.impl.ReversedEdgeImpl implements

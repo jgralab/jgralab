@@ -25,7 +25,7 @@ import de.uni_koblenz.jgralabtest.schemas.motorwaymap.MotorwayMapSchema;
  * Test cases for class AttributedElementIterableTest. Generalized
  * Iterable-Implementation for transaction concept.
  * 
- * @author José Monte(monte@uni-koblenz.de)
+ * @author Jose Monte(monte@uni-koblenz.de)
  */
 public class AttributedElementIterableTest {
 	private MotorwayMap motorwayMap;
