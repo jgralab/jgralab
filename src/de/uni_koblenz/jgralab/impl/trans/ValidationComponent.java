@@ -1141,11 +1141,13 @@ public class ValidationComponent {
 			Set<VersionedDataObject<?>> versionedDataObjects = transaction
 					.getRemainingVersionedDataObjects();
 			for (VersionedDataObject<?> vdo : versionedDataObjects) {
-				boolean conflict = isAttributeInConflict(vdo);
-				if (conflict) {
-					conflictReason = "A lost update has been detected for the versioned dataobject "
-							+ vdo + ".";
-					return true;
+				if (vdo.isCloneable()) {
+					boolean conflict = isAttributeInConflict(vdo);
+					if (conflict) {
+						conflictReason = "A lost update has been detected for the versioned dataobject "
+								+ vdo + ".";
+						return true;
+					}
 				}
 			}
 		}

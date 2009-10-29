@@ -14,7 +14,7 @@ import de.uni_koblenz.jgralab.GraphException;
  * @param <E>
  *            the type (<b>must be an Array-type</b>)
  * 
- *            TODO is it possible to check if E really is of Array-type?
+ * TODO is it possible to check if E really is of Array-type?
  */
 public class VersionedArrayImpl<E> extends VersionedDataObjectImpl<E> {
 
@@ -78,4 +78,8 @@ public class VersionedArrayImpl<E> extends VersionedDataObjectImpl<E> {
 		}
 	}
 
+	@Override
+	public boolean isCloneable() {
+		return false;
+	}
 }
