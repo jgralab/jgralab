@@ -1093,7 +1093,7 @@ public abstract class VersionedDataObjectImpl<E> implements
 		if (name != null) {
 			return name;
 		}
-		return "";
+		return new Integer(this.hashCode()).toString();
 	}
 
 	/**

@@ -11,6 +11,7 @@ import java.util.Set;
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.GraphException;
 import de.uni_koblenz.jgralab.trans.JGraLabCloneable;
+import de.uni_koblenz.jgralab.trans.TransactionState;
 
 /**
  * Own implementation class for attributes of type
@@ -94,6 +95,14 @@ public class JGraLabList<E> extends ArrayList<E> implements JGraLabCloneable {
 		versionedList.setValidValue(this, g.getCurrentTransaction());
 	}
 
+	// TODO this should not be necessary, but using setValidValue doesn't work
+	private void hasTemporaryVersionCheck() {
+		if (!versionedList.hasTemporaryValue(graph.getCurrentTransaction())
+				&& graph.getCurrentTransaction().getState() == TransactionState.RUNNING)
+			versionedList
+					.createNewTemporaryValue(graph.getCurrentTransaction());
+	}
+
 	/**
 	 * 
 	 * @param versionedList
@@ -120,7 +129,8 @@ public class JGraLabList<E> extends ArrayList<E> implements JGraLabCloneable {
 			if (((JGraLabCloneable) e).getGraph() != graph)
 				throw new GraphException(
 						"The element added to this list is from another graph.");
-		versionedList.setValidValue(this, graph.getCurrentTransaction());
+		// versionedList.setValidValue(this, graph.getCurrentTransaction());
+		hasTemporaryVersionCheck();
 		return versionedList.getValidValue(graph.getCurrentTransaction())
 				.internalAdd(e);
 	}
@@ -148,7 +158,8 @@ public class JGraLabList<E> extends ArrayList<E> implements JGraLabCloneable {
 				if (((JGraLabCloneable) element).getGraph() != graph)
 					throw new GraphException(
 							"The element added to this list is from another graph.");
-			versionedList.setValidValue(this, graph.getCurrentTransaction());
+			// versionedList.setValidValue(this, graph.getCurrentTransaction());
+			hasTemporaryVersionCheck();
 			versionedList.getValidValue(graph.getCurrentTransaction())
 					.internalAdd(index, element);
 		}
@@ -169,7 +180,8 @@ public class JGraLabList<E> extends ArrayList<E> implements JGraLabCloneable {
 			throw new GraphException("Versioning is not working for this list.");
 			// return internalAddAll(c);
 		}
-		versionedList.setValidValue(this, graph.getCurrentTransaction());
+		// versionedList.setValidValue(this, graph.getCurrentTransaction());
+		hasTemporaryVersionCheck();
 		return versionedList.getValidValue(graph.getCurrentTransaction())
 				.internalAddAll(c);
 	}
@@ -190,7 +202,8 @@ public class JGraLabList<E> extends ArrayList<E> implements JGraLabCloneable {
 			// return internalAddAll(index, c);
 
 		}
-		versionedList.setValidValue(this, graph.getCurrentTransaction());
+		// versionedList.setValidValue(this, graph.getCurrentTransaction());
+		hasTemporaryVersionCheck();
 		return versionedList.getValidValue(graph.getCurrentTransaction())
 				.internalAddAll(index, c);
 	}
@@ -211,7 +224,8 @@ public class JGraLabList<E> extends ArrayList<E> implements JGraLabCloneable {
 			throw new GraphException("Versioning is not working for this list.");
 			// internalClear();
 		} else {
-			versionedList.setValidValue(this, graph.getCurrentTransaction());
+			// versionedList.setValidValue(this, graph.getCurrentTransaction());
+			hasTemporaryVersionCheck();
 			versionedList.getValidValue(graph.getCurrentTransaction())
 					.internalClear();
 		}
@@ -228,9 +242,7 @@ public class JGraLabList<E> extends ArrayList<E> implements JGraLabCloneable {
 	public boolean contains(Object o) {
 		if (versionedList == null) {
 			throw new GraphException("Versioning is not working for this list.");
-
 			// return internalContains(o);
-
 		}
 		return versionedList.getValidValue(graph.getCurrentTransaction())
 				.internalContains(o);
@@ -249,11 +261,8 @@ public class JGraLabList<E> extends ArrayList<E> implements JGraLabCloneable {
 	public boolean containsAll(Collection<?> c) {
 		if (versionedList == null) {
 			throw new GraphException("Versioning is not working for this list.");
-
 			// return internalContainsAll(c);
-
 		}
-
 		return versionedList.getValidValue(graph.getCurrentTransaction())
 				.internalContainsAll(c);
 	}
@@ -273,7 +282,8 @@ public class JGraLabList<E> extends ArrayList<E> implements JGraLabCloneable {
 			throw new GraphException("Versioning is not working for this list.");
 			// internalEnsureCapacity(minCapacity);
 		} else {
-			versionedList.setValidValue(this, graph.getCurrentTransaction());
+			// versionedList.setValidValue(this, graph.getCurrentTransaction());
+			hasTemporaryVersionCheck();
 			versionedList.getValidValue(graph.getCurrentTransaction())
 					.internalEnsureCapacity(minCapacity);
 		}
@@ -287,17 +297,21 @@ public class JGraLabList<E> extends ArrayList<E> implements JGraLabCloneable {
 		super.ensureCapacity(minCapacity);
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public boolean equals(Object o) {
-		if (versionedList == null) {
-			throw new GraphException("Versioning is not working for this list.");
-
-			// return internalEquals(o);
-
+		if(o instanceof JGraLabList)
+			return false;
+		JGraLabList<E> object = (JGraLabList<E>) o;
+		if (object == this)
+			return true;
+		if (size() != object.size())
+			return false;
+		for(int i = 0; i < size(); i++) {
+			if(this.get(i) != object.get(i))
+				return false;
 		}
-
-		return versionedList.getValidValue(graph.getCurrentTransaction())
-				.internalEquals(o);
+		return true;
 	}
 
 	/**
@@ -305,19 +319,16 @@ public class JGraLabList<E> extends ArrayList<E> implements JGraLabCloneable {
 	 * @param o
 	 * @return
 	 */
-	private boolean internalEquals(Object o) {
-		return super.equals(o);
-	}
+	/*
+	 * private boolean internalEquals(Object o) { return super.equals(o); }
+	 */
 
 	@Override
 	public E get(int index) {
 		if (versionedList == null) {
 			throw new GraphException("Versioning is not working for this list.");
-
 			// return internalGet(index);
-
 		}
-
 		return versionedList.getValidValue(graph.getCurrentTransaction())
 				.internalGet(index);
 	}
@@ -335,11 +346,8 @@ public class JGraLabList<E> extends ArrayList<E> implements JGraLabCloneable {
 	public int indexOf(Object o) {
 		if (versionedList == null) {
 			throw new GraphException("Versioning is not working for this list.");
-
 			// return internalIndexOf(o);
-
 		}
-
 		return versionedList.getValidValue(graph.getCurrentTransaction())
 				.internalIndexOf(o);
 	}
@@ -357,11 +365,8 @@ public class JGraLabList<E> extends ArrayList<E> implements JGraLabCloneable {
 	public boolean isEmpty() {
 		if (versionedList == null) {
 			throw new GraphException("Versioning is not working for this list.");
-
 			// return internalIsEmpty();
-
 		}
-
 		return versionedList.getValidValue(graph.getCurrentTransaction())
 				.internalIsEmpty();
 	}
@@ -378,9 +383,7 @@ public class JGraLabList<E> extends ArrayList<E> implements JGraLabCloneable {
 	public Iterator<E> iterator() {
 		if (versionedList == null) {
 			throw new GraphException("Versioning is not working for this list.");
-
 			// return internalIterator();
-
 		}
 		return versionedList.getValidValue(graph.getCurrentTransaction())
 				.internalIterator();
@@ -398,11 +401,8 @@ public class JGraLabList<E> extends ArrayList<E> implements JGraLabCloneable {
 	public int lastIndexOf(Object o) {
 		if (versionedList == null) {
 			throw new GraphException("Versioning is not working for this list.");
-
 			// return internalLastIndexOf(o);
-
 		}
-
 		return versionedList.getValidValue(graph.getCurrentTransaction())
 				.internalLastIndexOf(o);
 	}
@@ -420,11 +420,8 @@ public class JGraLabList<E> extends ArrayList<E> implements JGraLabCloneable {
 	public ListIterator<E> listIterator() {
 		if (versionedList == null) {
 			throw new GraphException("Versioning is not working for this list.");
-
 			// return internalListIterator();
-
 		}
-
 		return versionedList.getValidValue(graph.getCurrentTransaction())
 				.internalListIterator();
 	}
@@ -441,11 +438,8 @@ public class JGraLabList<E> extends ArrayList<E> implements JGraLabCloneable {
 	public ListIterator<E> listIterator(int index) {
 		if (versionedList == null) {
 			throw new GraphException("Versioning is not working for this list.");
-
 			// return internalListIterator(index);
-
 		}
-
 		return versionedList.getValidValue(graph.getCurrentTransaction())
 				.internalListIterator(index);
 	}
@@ -463,12 +457,10 @@ public class JGraLabList<E> extends ArrayList<E> implements JGraLabCloneable {
 	public E remove(int index) {
 		if (versionedList == null) {
 			throw new GraphException("Versioning is not working for this list.");
-
 			// return internalRemove(index);
-
 		}
-
-		versionedList.setValidValue(this, graph.getCurrentTransaction());
+		hasTemporaryVersionCheck();
+		// versionedList.setValidValue(this, graph.getCurrentTransaction());
 		return versionedList.getValidValue(graph.getCurrentTransaction())
 				.internalRemove(index);
 	}
@@ -486,12 +478,10 @@ public class JGraLabList<E> extends ArrayList<E> implements JGraLabCloneable {
 	public boolean remove(Object o) {
 		if (versionedList == null) {
 			throw new GraphException("Versioning is not working for this list.");
-
 			// return internalRemove(o);
-
 		}
-
-		versionedList.setValidValue(this, graph.getCurrentTransaction());
+		hasTemporaryVersionCheck();
+		// versionedList.setValidValue(this, graph.getCurrentTransaction());
 		return versionedList.getValidValue(graph.getCurrentTransaction())
 				.internalRemove(o);
 	}
@@ -509,12 +499,10 @@ public class JGraLabList<E> extends ArrayList<E> implements JGraLabCloneable {
 	public boolean removeAll(Collection<?> c) {
 		if (versionedList == null) {
 			throw new GraphException("Versioning is not working for this list.");
-
 			// return internalRemoveAll(c);
-
 		}
-
-		versionedList.setValidValue(this, graph.getCurrentTransaction());
+		hasTemporaryVersionCheck();
+		// versionedList.setValidValue(this, graph.getCurrentTransaction());
 		return versionedList.getValidValue(graph.getCurrentTransaction())
 				.internalRemoveAll(c);
 	}
@@ -534,7 +522,8 @@ public class JGraLabList<E> extends ArrayList<E> implements JGraLabCloneable {
 			throw new GraphException("Versioning is not working for this list.");
 			// internalRemoveRange(fromIndex, toIndex);
 		} else {
-			versionedList.setValidValue(this, graph.getCurrentTransaction());
+			hasTemporaryVersionCheck();
+			// versionedList.setValidValue(this, graph.getCurrentTransaction());
 			versionedList.getValidValue(graph.getCurrentTransaction())
 					.internalRemoveRange(fromIndex, toIndex);
 		}
@@ -554,12 +543,10 @@ public class JGraLabList<E> extends ArrayList<E> implements JGraLabCloneable {
 	public boolean retainAll(Collection<?> c) {
 		if (versionedList == null) {
 			throw new GraphException("Versioning is not working for this list.");
-
 			// return internalRetainAll(c);
-
 		}
-
-		versionedList.setValidValue(this, graph.getCurrentTransaction());
+		hasTemporaryVersionCheck();
+		// versionedList.setValidValue(this, graph.getCurrentTransaction());
 		return versionedList.getValidValue(graph.getCurrentTransaction())
 				.internalRetainAll(c);
 	}
@@ -578,10 +565,9 @@ public class JGraLabList<E> extends ArrayList<E> implements JGraLabCloneable {
 		if (versionedList == null) {
 			throw new GraphException("Versioning is not working for this list.");
 			// return internalSet(index, element);
-
 		}
-
-		versionedList.setValidValue(this, graph.getCurrentTransaction());
+		hasTemporaryVersionCheck();
+		// versionedList.setValidValue(this, graph.getCurrentTransaction());
 		return versionedList.getValidValue(graph.getCurrentTransaction())
 				.internalSet(index, element);
 	}
@@ -600,11 +586,8 @@ public class JGraLabList<E> extends ArrayList<E> implements JGraLabCloneable {
 	public int size() {
 		if (versionedList == null) {
 			throw new GraphException("Versioning is not working for this list.");
-
 			// return internalSize();
-
 		}
-
 		return versionedList.getValidValue(graph.getCurrentTransaction())
 				.internalSize();
 	}
@@ -621,11 +604,8 @@ public class JGraLabList<E> extends ArrayList<E> implements JGraLabCloneable {
 	public List<E> subList(int fromIndex, int toIndex) {
 		if (versionedList == null) {
 			throw new GraphException("Versioning is not working for this list.");
-
 			// return internalSubList(fromIndex, toIndex);
-
 		}
-
 		return versionedList.getValidValue(graph.getCurrentTransaction())
 				.internalSubList(fromIndex, toIndex);
 	}
@@ -644,11 +624,8 @@ public class JGraLabList<E> extends ArrayList<E> implements JGraLabCloneable {
 	public Object[] toArray() {
 		if (versionedList == null) {
 			throw new GraphException("Versioning is not working for this list.");
-
 			// return internalToArray();
-
 		}
-
 		return versionedList.getValidValue(graph.getCurrentTransaction())
 				.internalToArray();
 	}
@@ -665,11 +642,8 @@ public class JGraLabList<E> extends ArrayList<E> implements JGraLabCloneable {
 	public <T> T[] toArray(T[] a) {
 		if (versionedList == null) {
 			throw new GraphException("Versioning is not working for this list.");
-
 			// return internalToArray(a);
-
 		}
-
 		return versionedList.getValidValue(graph.getCurrentTransaction())
 				.internalToArray(a);
 	}
@@ -716,7 +690,8 @@ public class JGraLabList<E> extends ArrayList<E> implements JGraLabCloneable {
 		for (E element : toBeCloned) {
 			if (element instanceof JGraLabCloneable) {
 				// TODO internal or normal add?
-				jgralabList.internalAdd((E) ((JGraLabCloneable) element).clone());
+				jgralabList.internalAdd((E) ((JGraLabCloneable) element)
+						.clone());
 			} else {
 				// TODO internal or normal add?
 				jgralabList.internalAdd(element);
