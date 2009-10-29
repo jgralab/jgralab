@@ -152,4 +152,6 @@ public interface VersionedDataObject<E> {
 	 * @return a deep copy of the given object
 	 */
 	public E copyOf(E dataObject);
+	
+	public boolean isCloneable();
 }

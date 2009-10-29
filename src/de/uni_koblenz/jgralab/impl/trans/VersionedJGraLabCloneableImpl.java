@@ -80,4 +80,9 @@ public class VersionedJGraLabCloneableImpl<E extends JGraLabCloneable> extends
 			return null;
 		return (E) dataObject.clone();
 	}
+	
+	@Override
+	public boolean isCloneable() {
+		return true;
+	}
 }

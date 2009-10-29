@@ -62,4 +62,9 @@ public class VersionedReferenceImpl<E> extends VersionedDataObjectImpl<E> {
 	public E copyOf(E dataObject) {
 		return dataObject;
 	}
+
+	@Override
+	public boolean isCloneable() {
+		return false;
+	}
 }

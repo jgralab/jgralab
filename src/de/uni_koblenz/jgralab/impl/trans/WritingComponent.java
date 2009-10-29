@@ -446,15 +446,15 @@ public class WritingComponent {
 		}
 		// also write persistent values for remaining versioned dataobjects
 		// TODO this doesn't seem to work correctly
-		/*Set<VersionedDataObject<?>> versionedDataObjects = transaction
+		Set<VersionedDataObject<?>> versionedDataObjects = transaction
 				.getRemainingVersionedDataObjects();
-		System.out.println("Größe: " + versionedDataObjects.size());
 		for (VersionedDataObject<?> vdo : versionedDataObjects) {
-			if (!transaction.changedDuringCommit.contains(vdo)) {
+			if (!transaction.changedDuringCommit.contains(vdo)
+					&& vdo.isCloneable()) {
 				Object tempValue = vdo.getTemporaryValue(transaction);
 				((VersionedDataObjectImpl) vdo).setValidValue(tempValue, graph
 						.getCurrentTransaction(), true);
 			}
-		}*/
+		}
 	}
 }
