@@ -1100,31 +1100,7 @@ public class ValidationComponent {
 				for (VersionedDataObject<?> attribute : attributes) {
 					// check if lost update occured...
 					if (attribute.getLatestPersistentVersion() > transaction.persistentVersionAtBot) {
-						/*
-						 * Object temporaryValue = attribute
-						 * .getTemporaryValue(transaction);
-						 */
-						boolean conflict = isAttributeInConflict(attribute);/*
-																			 * false;
-																			 * if
-																			 * (temporaryValue ==
-																			 * null &&
-																			 * attribute.getLatestPersistentValue() ==
-																			 * null)
-																			 * continue;
-																			 * if
-																			 * (temporaryValue ==
-																			 * null &&
-																			 * attribute.getLatestPersistentValue() !=
-																			 * null)
-																			 * conflict =
-																			 * true;
-																			 * if
-																			 * (!attribute.getTemporaryValue(transaction).equals(
-																			 * attribute.getLatestPersistentValue()))
-																			 * conflict =
-																			 * true;
-																			 */
+						boolean conflict = isAttributeInConflict(attribute);
 						if (conflict) {
 							conflictReason = "A lost update has been detected for the attribute "
 									+ attribute
