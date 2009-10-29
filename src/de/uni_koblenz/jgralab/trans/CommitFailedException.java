@@ -4,7 +4,7 @@ package de.uni_koblenz.jgralab.trans;
  * This exception indicates, that the commit of a <code>Transaction</code>
  * failed.
  * 
- * @author José Monte(monte@uni-koblenz.de)
+ * @author Jose Monte(monte@uni-koblenz.de)
  */
 public class CommitFailedException extends Exception {
 	private static final long serialVersionUID = 1L;

@@ -5,18 +5,17 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
-//import java.util.Set;
+import java.util.Set; //import java.util.Set;
 
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.GraphException;
 import de.uni_koblenz.jgralab.trans.JGraLabCloneable;
+import de.uni_koblenz.jgralab.trans.TransactionState;
 
 /**
- * Own implementation class for attributes of type <code>java.util.Set<E></code>
- * .
+ * Own implementation class for attributes of type <code>java.util.Set<E></code> .
  * 
- * @author José Monte(monte@uni-koblenz.de)
+ * @author Jose Monte(monte@uni-koblenz.de)
  * 
  * @param <E>
  * 
@@ -26,30 +25,30 @@ public class JGraLabSet<E> extends HashSet<E> implements JGraLabCloneable {
 	private static final long serialVersionUID = -8812018025682692472L;
 	private VersionedJGraLabCloneableImpl<JGraLabSet<E>> versionedSet;
 	private Graph graph;
-	
+
 	/**
 	 * 
 	 */
-	/*protected*/ public JGraLabSet() {
+	/* protected */public JGraLabSet() {
 		super();
 	}
 
-	/*protected*/ public JGraLabSet(Collection<E> set) {
+	/* protected */public JGraLabSet(Collection<E> set) {
 		super(set);
 	}
-	
+
 	/**
 	 * 
 	 */
-	/*public JGraLabSet(Set<E> set) {
-		super(set);
-	}*/
+	/*
+	 * public JGraLabSet(Set<E> set) { super(set); }
+	 */
 
 	/**
 	 * 
 	 * @param initialSize
 	 */
-	/*protected*/ public JGraLabSet(int initialSize) {
+	/* protected */public JGraLabSet(int initialSize) {
 		super(initialSize);
 	}
 
@@ -58,7 +57,7 @@ public class JGraLabSet<E> extends HashSet<E> implements JGraLabCloneable {
 	 * @param initialSize
 	 * @param loadFactor
 	 */
-	/*protected*/ public JGraLabSet(int initialSize, float loadFactor) {
+	/* protected */public JGraLabSet(int initialSize, float loadFactor) {
 		super(initialSize, loadFactor);
 	}
 
@@ -92,18 +91,17 @@ public class JGraLabSet<E> extends HashSet<E> implements JGraLabCloneable {
 		if (versionedSet != null)
 			graph = versionedSet.getGraph();
 	}
-	
+
 	public void init(Graph g) {
 		if (g == null)
-			throw new GraphException(
-					"Given graph cannot be null.");
+			throw new GraphException("Given graph cannot be null.");
 		if (!g.hasTransactionSupport())
 			throw new GraphException(
 					"An instance of JGraLabSet can only be created for graphs with transaction support");
 		graph = g;
 		if (graph.isLoading())
-			versionedSet = new VersionedJGraLabCloneableImpl<JGraLabSet<E>>(
-					g, this);
+			versionedSet = new VersionedJGraLabCloneableImpl<JGraLabSet<E>>(g,
+					this);
 		if (versionedSet == null)
 			// TODO this or graph
 			versionedSet = new VersionedJGraLabCloneableImpl<JGraLabSet<E>>(
@@ -111,11 +109,29 @@ public class JGraLabSet<E> extends HashSet<E> implements JGraLabCloneable {
 		versionedSet.setValidValue(this, g.getCurrentTransaction());
 	}
 
+	/*private void transactionIsNullCheck() {
+		if (graph.getCurrentTransaction() == null)
+			throw new GraphException(
+					"Access to this list is only allowed in the context of a transaction. Current transaction is null.");
+	}
+
+	private void transactionIsReadOnlyCheck() {
+		if (graph.getCurrentTransaction().isReadOnly())
+			throw new GraphException(
+					"Modification of this list is only allowed for read-write-transactions.");
+	}*/
+
+	private void hasTemporaryVersionCheck() {
+		if (!versionedSet.hasTemporaryValue(graph.getCurrentTransaction())
+				&& graph.getCurrentTransaction().getState() == TransactionState.RUNNING)
+			versionedSet.createNewTemporaryValue(graph.getCurrentTransaction());
+	}
+
 	@Override
 	public boolean add(E e) {
 		if (versionedSet == null)
 			throw new GraphException("Versioning is not working for this set.");
-			//return internalAdd(e);
+		// return internalAdd(e);
 		if ((e instanceof Map || e instanceof List || e instanceof Set)
 				&& !(e instanceof JGraLabCloneable))
 			throw new GraphException(
@@ -124,7 +140,10 @@ public class JGraLabSet<E> extends HashSet<E> implements JGraLabCloneable {
 			if (((JGraLabCloneable) e).getGraph() != graph)
 				throw new GraphException(
 						"The element added to this set is from another graph.");
-		versionedSet.setValidValue(this, graph.getCurrentTransaction());
+		//transactionIsNullCheck();
+		//transactionIsReadOnlyCheck();
+		hasTemporaryVersionCheck();
+		//versionedSet.setValidValue(this, graph.getCurrentTransaction());
 		return versionedSet.getValidValue(graph.getCurrentTransaction())
 				.internalAdd(e);
 	}
@@ -142,7 +161,10 @@ public class JGraLabSet<E> extends HashSet<E> implements JGraLabCloneable {
 	public boolean addAll(Collection<? extends E> c) {
 		if (versionedSet == null)
 			throw new GraphException("Versioning is not working for this set.");
-			//return internalAddAll(c);
+		//transactionIsNullCheck();
+		//transactionIsReadOnlyCheck();
+		// hasTemporaryVersionCheck();
+		// return internalAddAll(c);
 		versionedSet.setValidValue(this, graph.getCurrentTransaction());
 		return versionedSet.getValidValue(graph.getCurrentTransaction())
 				.internalAddAll(c);
@@ -161,8 +183,11 @@ public class JGraLabSet<E> extends HashSet<E> implements JGraLabCloneable {
 	public void clear() {
 		if (versionedSet == null) {
 			throw new GraphException("Versioning is not working for this set.");
-			//internalClear();
+			// internalClear();
 		} else {
+			//transactionIsNullCheck();
+			//transactionIsReadOnlyCheck();
+			//hasTemporaryVersionCheck();
 			versionedSet.setValidValue(this, graph.getCurrentTransaction());
 			versionedSet.getValidValue(graph.getCurrentTransaction())
 					.internalClear();
@@ -180,7 +205,8 @@ public class JGraLabSet<E> extends HashSet<E> implements JGraLabCloneable {
 	public boolean contains(Object o) {
 		if (versionedSet == null)
 			throw new GraphException("Versioning is not working for this set.");
-			//return internalContains(o);
+		// return internalContains(o);
+		//transactionIsNullCheck();
 		return versionedSet.getValidValue(graph.getCurrentTransaction())
 				.internalContains(o);
 	}
@@ -198,7 +224,8 @@ public class JGraLabSet<E> extends HashSet<E> implements JGraLabCloneable {
 	public boolean containsAll(Collection<?> c) {
 		if (versionedSet == null)
 			throw new GraphException("Versioning is not working for this set.");
-			//return internalContainsAll(c);
+		// return internalContainsAll(c);
+		//transactionIsNullCheck();
 		return versionedSet.getValidValue(graph.getCurrentTransaction())
 				.internalContainsAll(c);
 	}
@@ -216,7 +243,8 @@ public class JGraLabSet<E> extends HashSet<E> implements JGraLabCloneable {
 	public boolean isEmpty() {
 		if (versionedSet == null)
 			throw new GraphException("Versioning is not working for this set.");
-			//return internalIsEmpty();
+		// return internalIsEmpty();
+		//transactionIsNullCheck();
 		return versionedSet.getValidValue(graph.getCurrentTransaction())
 				.internalIsEmpty();
 	}
@@ -233,7 +261,8 @@ public class JGraLabSet<E> extends HashSet<E> implements JGraLabCloneable {
 	public Iterator<E> iterator() {
 		if (versionedSet == null)
 			throw new GraphException("Versioning is not working for this set.");
-			//return internalIterator();
+		// return internalIterator();
+		//transactionIsNullCheck();
 		return versionedSet.getValidValue(graph.getCurrentTransaction())
 				.internalIterator();
 	}
@@ -250,8 +279,11 @@ public class JGraLabSet<E> extends HashSet<E> implements JGraLabCloneable {
 	public boolean remove(Object o) {
 		if (versionedSet == null)
 			throw new GraphException("Versioning is not working for this set.");
-			//return internalRemove(o);
-		versionedSet.setValidValue(this, graph.getCurrentTransaction());
+		// return internalRemove(o);
+		// versionedSet.setValidValue(this, graph.getCurrentTransaction());
+		//transactionIsNullCheck();
+		//transactionIsReadOnlyCheck();
+		//hasTemporaryVersionCheck();
 		return versionedSet.getValidValue(graph.getCurrentTransaction())
 				.internalRemove(o);
 	}
@@ -269,8 +301,11 @@ public class JGraLabSet<E> extends HashSet<E> implements JGraLabCloneable {
 	public boolean removeAll(Collection<?> c) {
 		if (versionedSet == null)
 			throw new GraphException("Versioning is not working for this set.");
-			//return internalRemoveAll(c);
-		versionedSet.setValidValue(this, graph.getCurrentTransaction());
+		// return internalRemoveAll(c);
+		// versionedSet.setValidValue(this, graph.getCurrentTransaction());
+		//transactionIsNullCheck();
+		//transactionIsReadOnlyCheck();
+		//hasTemporaryVersionCheck();
 		return versionedSet.getValidValue(graph.getCurrentTransaction())
 				.internalRemoveAll(c);
 	}
@@ -288,8 +323,11 @@ public class JGraLabSet<E> extends HashSet<E> implements JGraLabCloneable {
 	public boolean retainAll(Collection<?> c) {
 		if (versionedSet == null)
 			throw new GraphException("Versioning is not working for this set.");
-			//return internalRetainAll(c);
-		versionedSet.setValidValue(this, graph.getCurrentTransaction());
+		// return internalRetainAll(c);
+		// versionedSet.setValidValue(this, graph.getCurrentTransaction());
+		//transactionIsNullCheck();
+		//transactionIsReadOnlyCheck();
+		//hasTemporaryVersionCheck();
 		return versionedSet.getValidValue(graph.getCurrentTransaction())
 				.internalRetainAll(c);
 	}
@@ -307,7 +345,8 @@ public class JGraLabSet<E> extends HashSet<E> implements JGraLabCloneable {
 	public int size() {
 		if (versionedSet == null && graph == null)
 			throw new GraphException("Versioning is not working for this set.");
-			//return internalSize();
+		// return internalSize();
+		//transactionIsNullCheck();
 		return versionedSet.getValidValue(graph.getCurrentTransaction())
 				.internalSize();
 	}
@@ -324,7 +363,8 @@ public class JGraLabSet<E> extends HashSet<E> implements JGraLabCloneable {
 	public Object[] toArray() {
 		if (versionedSet == null && graph == null)
 			throw new GraphException("Versioning is not working for this set.");
-			//return internalToArray();
+		// return internalToArray();
+		//transactionIsNullCheck();
 		return versionedSet.getValidValue(graph.getCurrentTransaction())
 				.internalToArray();
 	}
@@ -341,7 +381,8 @@ public class JGraLabSet<E> extends HashSet<E> implements JGraLabCloneable {
 	public <T> T[] toArray(T[] a) {
 		if (versionedSet == null && graph == null)
 			throw new GraphException("Versioning is not working for this set.");
-			//return internalToArray(a);
+		// return internalToArray(a);
+		//transactionIsNullCheck();
 		return versionedSet.getValidValue(graph.getCurrentTransaction())
 				.internalToArray(a);
 	}
@@ -368,10 +409,10 @@ public class JGraLabSet<E> extends HashSet<E> implements JGraLabCloneable {
 		for (E element : toBeCloned) {
 			if (element instanceof JGraLabCloneable)
 				// TODO internal or normal add?
-				jgralabSet.add((E) ((JGraLabCloneable) element).clone());
+				jgralabSet.internalAdd((E) ((JGraLabCloneable) element).clone());
 			else
 				// TODO internal or normal add?
-				jgralabSet.add(element);
+				jgralabSet.internalAdd(element);
 		}
 		return jgralabSet;
 	}

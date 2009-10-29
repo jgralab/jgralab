@@ -24,7 +24,7 @@ import de.uni_koblenz.jgralab.trans.VertexPosition;
 /**
  * The implementation of a <code>Transaction</code>.
  * 
- * @author José Monte(monte@uni-koblenz.de)
+ * @author Jose Monte(monte@uni-koblenz.de)
  */
 public class TransactionImpl implements Transaction {
 	protected long temporaryVersionCounter;

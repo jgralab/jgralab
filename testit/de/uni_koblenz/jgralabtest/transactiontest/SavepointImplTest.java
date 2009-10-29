@@ -24,7 +24,7 @@ import de.uni_koblenz.jgralabtest.schemas.motorwaymap.MotorwayMapSchema;
 /**
  * Test cases for class SavepointImpl.
  * 
- * @author José Monte(monte@uni-koblenz.de)
+ * @author Jose Monte(monte@uni-koblenz.de)
  */
 public class SavepointImplTest {
 	private MotorwayMap motorwayMap;

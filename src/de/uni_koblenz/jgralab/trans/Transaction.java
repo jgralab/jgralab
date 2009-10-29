@@ -7,7 +7,7 @@ import de.uni_koblenz.jgralab.Graph;
 /**
  * This interface represents a transaction within JGraLab.
  * 
- * @author José Monte(monte@uni-koblenz.de)
+ * @author Jose Monte(monte@uni-koblenz.de)
  */
 public interface Transaction {
 	/**

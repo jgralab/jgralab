@@ -17,7 +17,7 @@ import de.uni_koblenz.jgralab.trans.VertexPosition;
 /**
  * Implementation of a save-point.
  * 
- * @author José Monte(monte@uni-koblenz.de)
+ * @author Jose Monte(monte@uni-koblenz.de)
  */
 public class SavepointImpl implements Savepoint {
 	private short id;

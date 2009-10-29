@@ -23,7 +23,7 @@ import de.uni_koblenz.jgralab.trans.VersionedDataObject;
 /**
  * Implementation for versioning of a data-object.
  * 
- * @author José Monte(monte@uni-koblenz.de)
+ * @author Jose Monte(monte@uni-koblenz.de)
  * 
  * @param <E>
  *            the type of the data-object to be versioned

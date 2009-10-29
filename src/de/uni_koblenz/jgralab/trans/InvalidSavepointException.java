@@ -4,7 +4,7 @@ package de.uni_koblenz.jgralab.trans;
  * This exception indicates, that a <code>Savepoint</code> to be restored is
  * invalid for a <code>Transaction</code>.
  * 
- * @author José Monte(monte@uni-koblenz.de)
+ * @author Jose Monte(monte@uni-koblenz.de)
  */
 public class InvalidSavepointException extends Exception {
 	private static final long serialVersionUID = 1L;

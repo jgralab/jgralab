@@ -16,7 +16,7 @@ import de.uni_koblenz.jgralab.trans.JGraLabCloneable;
  * Own implementation class for attributes of type
  * <code>java.util.List<E></code>.
  * 
- * @author José Monte(monte@uni-koblenz.de)
+ * @author Jose Monte(monte@uni-koblenz.de)
  * 
  * @param <E>
  * 
@@ -716,10 +716,10 @@ public class JGraLabList<E> extends ArrayList<E> implements JGraLabCloneable {
 		for (E element : toBeCloned) {
 			if (element instanceof JGraLabCloneable) {
 				// TODO internal or normal add?
-				jgralabList.add((E) ((JGraLabCloneable) element).clone());
+				jgralabList.internalAdd((E) ((JGraLabCloneable) element).clone());
 			} else {
 				// TODO internal or normal add?
-				jgralabList.add(element);
+				jgralabList.internalAdd(element);
 			}
 		}
 		return jgralabList;

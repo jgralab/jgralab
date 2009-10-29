@@ -6,7 +6,7 @@ package de.uni_koblenz.jgralab.trans;
  * (PREV) or next (NEXT) element has been explicitly changed within a
  * <code>Transaction</code>.
  * 
- * @author José Monte(monte@uni-koblenz.de)
+ * @author Jose Monte(monte@uni-koblenz.de)
  */
 public enum ListPosition {
 	PREV, NEXT;

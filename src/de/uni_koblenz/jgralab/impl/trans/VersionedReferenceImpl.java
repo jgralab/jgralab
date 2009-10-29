@@ -9,7 +9,7 @@ import de.uni_koblenz.jgralab.AttributedElement;
  * This class is responsible for the versioning of references. References are
  * also immutable types like: - String - Wrapper (Integer, Double, Long) - Enum
  * 
- * @author José Monte(monte@uni-koblenz.de)
+ * @author Jose Monte(monte@uni-koblenz.de)
  * 
  * @param <E>
  *            the type

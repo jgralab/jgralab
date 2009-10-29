@@ -8,7 +8,7 @@ package de.uni_koblenz.jgralab.trans;
  * 
  * This interface is only relevant for internal use.
  * 
- * @author José Monte(monte@uni-koblenz.de)
+ * @author Jose Monte(monte@uni-koblenz.de)
  * 
  * @param <E>
  *            the type of the data-object to be versioned

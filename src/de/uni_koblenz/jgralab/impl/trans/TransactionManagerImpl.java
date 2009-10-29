@@ -14,7 +14,7 @@ import de.uni_koblenz.jgralab.trans.TransactionManager;
 /**
  * The implementation of the <code>TransactionManager</code>.
  * 
- * @author José Monte(monte@uni-koblenz.de)
+ * @author Jose Monte(monte@uni-koblenz.de)
  */
 public class TransactionManagerImpl implements TransactionManager {
 	// load factor for maps - only for testing regarding memory usage!!!

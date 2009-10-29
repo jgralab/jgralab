@@ -9,7 +9,7 @@ import de.uni_koblenz.jgralab.impl.VertexImpl;
  * The implementation of an <code>Edge</code> accessing attributes without
  * versioning.
  * 
- * @author José Monte(monte@uni-koblenz.de)
+ * @author Jose Monte(monte@uni-koblenz.de)
  */
 public abstract class EdgeImpl extends de.uni_koblenz.jgralab.impl.EdgeImpl {
 	// global edge sequence
