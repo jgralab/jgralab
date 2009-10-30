@@ -40,12 +40,12 @@ import java.io.InputStream;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.LinkedList;
-//import java.util.List;
 import java.util.Map;
 import java.util.Queue;
 import java.util.Stack;
 import java.util.Map.Entry;
 
+import javax.xml.stream.FactoryConfigurationError;
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
@@ -57,7 +57,6 @@ import de.uni_koblenz.ist.utilities.option_handler.OptionHandler;
 import de.uni_koblenz.jgralab.AttributedElement;
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.Graph;
-//import de.uni_koblenz.jgralab.GraphElement;
 import de.uni_koblenz.jgralab.GraphIO;
 import de.uni_koblenz.jgralab.GraphIOException;
 import de.uni_koblenz.jgralab.GraphMarker;
@@ -75,11 +74,13 @@ import de.uni_koblenz.jgralab.schema.exception.SchemaException;
 
 @WorkInProgress
 public class Xml2tg {
+	private static OptionHandler optionHandler = null;
 
 	public static final int MAX_VERTEX_COUNT = 1024;
 	public static final int MAX_EDGE_COUNT = 1024;
 
 	private String tgOutput;
+	private boolean multiXml = false;
 
 	private Schema schema;
 	private Graph graph;
@@ -144,16 +145,30 @@ public class Xml2tg {
 		CommandLine cmdl = processCommandLineOptions(args);
 
 		String schemaFilename = cmdl.getOptionValue('s').trim();
-		String inputFilename = cmdl.getOptionValue('i').trim();
 		String outputFilename = cmdl.getOptionValue('o').trim();
 
-		Schema currentSchema = GraphIO.loadSchemaFromFile(schemaFilename);
-		Xml2tg tester = new Xml2tg(new BufferedInputStream(new FileInputStream(
-				inputFilename)), outputFilename, currentSchema);
-		if (cmdl.hasOption('V')) {
-			tester.setAssumeVerticesBeforeEdges(true);
+		if ((cmdl.getArgList().size() > 1) && !cmdl.hasOption('m')) {
+			System.err
+					.println("When multiple XML files are given, the -m option has to be specified.");
+			optionHandler.printHelpAndExit(1);
 		}
-		tester.importXml();
+
+		Schema currentSchema = GraphIO.loadSchemaFromFile(schemaFilename);
+		currentSchema.compile();
+		Xml2tg xml2tg = null;
+		for (String inputXML : cmdl.getArgs()) {
+			if (xml2tg == null) {
+				xml2tg = new Xml2tg(new BufferedInputStream(
+						new FileInputStream(inputXML)), outputFilename,
+						currentSchema);
+				xml2tg.setAssumeVerticesBeforeEdges(cmdl.hasOption('V'));
+				xml2tg.setMultiXml(cmdl.hasOption('m'));
+			} else {
+				xml2tg.setXmlInput(inputXML);
+			}
+			xml2tg.importXml();
+		}
+		xml2tg.saveGraph();
 		System.out.println("Fini.");
 	}
 
@@ -162,14 +177,8 @@ public class Xml2tg {
 		String versionString = JGraLab.getInfo(false);
 		OptionHandler oh = new OptionHandler(toolString, versionString);
 
-		Option input = new Option("i", "input", true,
-				"(required): name of XML file to read from.");
-		input.setRequired(true);
-		input.setArgName("file");
-		oh.addOption(input);
-
 		Option output = new Option("o", "output", true,
-				"(required): name of TG file to write graph to");
+				"(required): name of TG file to write graph to.");
 		output.setRequired(true);
 		output.setArgName("file");
 		oh.addOption(output);
@@ -178,7 +187,8 @@ public class Xml2tg {
 				"s",
 				"schema",
 				true,
-				"(required): name of the TG file containing the schema of the resulting graph. The compiled version of this schema also has to be in the classpath.");
+				"(required): name of the TG file containing the schema of the resulting graph. "
+						+ "The compiled version of this schema also has to be in the classpath.");
 		schema.setRequired(true);
 		schema.setArgName("file");
 		oh.addOption(schema);
@@ -187,9 +197,19 @@ public class Xml2tg {
 				"V",
 				"vertices-first",
 				false,
-				"(optional): if this flag is set, the parser assumes that vertex classes are located before edge classes in the xml. If it is set and they are not, the parse will fail. It is faster then the fail proof parse version.");
+				"(optional): if this flag is set, the parser assumes that vertex classes are located before edge classes in the xml. "
+						+ "If it is set and they are not, the parse will fail. "
+						+ "It is faster then the fail proof parse version.");
 		verticesBeforeEdges.setRequired(false);
 		oh.addOption(verticesBeforeEdges);
+
+		Option multiXmlIntoOneGraph = new Option(
+				"m",
+				"multi-xml",
+				false,
+				"(optional): if this flag is set, then the result is one graph containing all vertices and edges from all given XML files.");
+		multiXmlIntoOneGraph.setRequired(false);
+		oh.addOption(multiXmlIntoOneGraph);
 
 		return oh.parse(args);
 	}
@@ -204,6 +224,15 @@ public class Xml2tg {
 		stack = new Stack<AttributedElementInfo>();
 		// dummyVertexMap = new HashMap<String, Vertex>();
 		assumeVerticesBeforeEdges = false;
+	}
+
+	public void setXmlInput(String fileName) throws FileNotFoundException,
+			XMLStreamException, FactoryConfigurationError {
+		reader = XMLInputFactory.newInstance().createXMLStreamReader(
+				new FileInputStream(fileName));
+		stack.clear();
+		xmlIdToVertexMap.clear();
+
 	}
 
 	public void importXml() throws XMLStreamException, ClassNotFoundException,
@@ -252,9 +281,11 @@ public class Xml2tg {
 					}
 					stack.push(new AttributedElementInfo(schema
 							.getAttributedElementClass(graphClassName)));
+					if ((graph != null) && multiXml) {
+						break;
+					}
 					String graphID = stack.peek().getAttributes().get(
 							GRUML_ATTRIBUTE_ID);
-
 					try {
 						// System.out.println("Creating instance of "
 						// + graphClassName);
@@ -306,10 +337,9 @@ public class Xml2tg {
 			}
 		}
 		sortIncidenceLists();
-		saveGraph();
 	}
 
-	private void saveGraph() throws GraphIOException {
+	public void saveGraph() throws GraphIOException {
 		System.out.println("Saving graph to " + tgOutput);
 		GraphIO.saveGraphToFile(tgOutput, graph, new ProgressFunctionImpl());
 	}
@@ -324,7 +354,7 @@ public class Xml2tg {
 		long updateInterval = progress.getUpdateInterval();
 		for (Vertex currentVertex : graph.vertices()) {
 			currentVertex.sortIncidences(new Comparator<Edge>() {
-				
+
 				@Override
 				public int compare(Edge e1, Edge e2) {
 					IncidencePositionMark mark1 = incidencePositionMarker
@@ -455,6 +485,10 @@ public class Xml2tg {
 
 	public void setAssumeVerticesBeforeEdges(boolean assumeVerticesBeforeEdges) {
 		this.assumeVerticesBeforeEdges = assumeVerticesBeforeEdges;
+	}
+
+	public void setMultiXml(boolean multiXml) {
+		this.multiXml = multiXml;
 	}
 
 	// private Vertex createDummyVertex(String xmlId) {
