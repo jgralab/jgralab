@@ -26,7 +26,6 @@ package de.uni_koblenz.jgralab.greql2.funlib;
 
 import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
@@ -131,8 +130,7 @@ public class Slice extends AbstractGreql2Function {
 	}
 
 	/**
-	 * Checks if the given vertex is marked with the given state and parent
-	 * vertex
+	 * Checks if the given vertex is marked with the given state and parent edge
 	 * 
 	 * @return true if the vertex is marked, false otherwise
 	 */
@@ -178,7 +176,7 @@ public class Slice extends AbstractGreql2Function {
 	 *            the DFA which accepts the regular path expression that
 	 *            describes the slice
 	 * @param subgraph
-	 *            the subgraph all parts of the slice belong to
+	 *             the subgraph all parts of the slice belong to
 	 * @return the list of leaves in the slice, that is the set of states which
 	 *         are marked with a final state of the dfa
 	 * @throws EvaluateException
@@ -194,17 +192,11 @@ public class Slice extends AbstractGreql2Function {
 
 		// fill queue with vertices in slicing criterion and mark these vertices
 		for (Vertex v : sliCritVertices) {
-			currentEntry = new PathSystemQueueEntry(v, dfa.initialState, null,
-					null, 0);
+			currentEntry = new PathSystemQueueEntry(v, dfa.initialState, null, null, 0);
 			queue.offer(currentEntry);
 			markVertex(v, dfa.initialState, null /* no parent state */,
-					null /* no parent vertex */, null /* no parent state */, 0 /*
-																			 * distance
-																			 * to
-																			 * root
-																			 * is
-																			 * null
-																			 */);
+					null /* no parent vertex */, null /* no parent state */, 
+					0 /* distance to root is null */);
 		}
 
 		while (!queue.isEmpty()) {
@@ -212,36 +204,33 @@ public class Slice extends AbstractGreql2Function {
 			if (currentEntry.state.isFinal) {
 				finalVertices.add(currentEntry.vertex);
 			}
-			Edge inc = currentEntry.vertex.getFirstEdge();
-			while (inc != null) {
-				Iterator<Transition> transitionIter = currentEntry.state.outTransitions
-						.iterator();
-				while (transitionIter.hasNext()) {
-					Transition currentTransition = transitionIter.next();
-					Vertex nextVertex = currentTransition.getNextVertex(
-							currentEntry.vertex, inc);
-					if (!isMarked(nextVertex, currentTransition.getEndState(),
-							inc)) {
-						if (currentTransition.accepts(currentEntry.vertex, inc, subgraph)) {
-							Edge traversedEdge = inc;
-							if (nextVertex == currentEntry.vertex) {
-								traversedEdge = null;
-							}
-							if (!isMarked(nextVertex, currentTransition
-									.getEndState())) {
-								queue.add(new PathSystemQueueEntry(nextVertex,
-										currentTransition.getEndState(), traversedEdge,
-										currentEntry.state,
-										currentEntry.distanceToRoot + 1));
-							}
-							markVertex(nextVertex, currentTransition
-									.getEndState(), currentEntry.vertex, traversedEdge,
-									currentEntry.state,
-									currentEntry.distanceToRoot + 1);
+			for (Edge inc : currentEntry.vertex.incidences()) {
+				for (Transition currentTransition : currentEntry.state.outTransitions) {
+					Vertex nextVertex = currentTransition.getNextVertex(currentEntry.vertex, inc);
+				    if ((!isMarked(nextVertex, currentTransition.getEndState(), inc)) &&
+						 (currentTransition.accepts(currentEntry.vertex, inc, subgraph))) {
+						Edge traversedEdge = inc;
+						int distanceToRoot = currentEntry.distanceToRoot;
+						if (nextVertex == currentEntry.vertex) {
+							traversedEdge = null;
+						} else {
+							distanceToRoot++;
+						}						
+						/* if the vertex is not marked with the state, add it to
+						 * the queue for further processing - the parent edge doesn't
+						 * matter but only the state
+						 */
+						if (!isMarked(nextVertex, currentTransition.getEndState())) {
+							queue.add(new PathSystemQueueEntry(nextVertex,
+									currentTransition.getEndState(), traversedEdge,
+									currentEntry.state, distanceToRoot));
 						}
+						/* mark the vertex with all reachability information */
+						markVertex(nextVertex, currentTransition.getEndState(), 
+								   currentEntry.vertex, traversedEdge,
+					   			   currentEntry.state, 	distanceToRoot);
 					}
 				}
-				inc = inc.getNextEdge();
 			}
 		}
 
@@ -328,50 +317,25 @@ public class Slice extends AbstractGreql2Function {
 		GraphMarker<State> currentStateMarker = new GraphMarker<State>(graph);
 
 		for (Vertex leaf : leaves) { // iterate through leaves
-			for (GraphMarker<PathSystemMarkerList> currentGraphMarker : marker) { // iterate
-				// through
-				// GraphMarkers
-				// (one
-				// for
-				// each
-				// state)
+			// iterate through GraphMarkers (one for each state)
+			for (GraphMarker<PathSystemMarkerList> currentGraphMarker : marker) { 
 				if (currentGraphMarker.getMark(leaf) != null) {
-					for (PathSystemMarkerEntry currentMarker : currentGraphMarker.getMark(leaf).values()) { // iterate through list of
-						// PathSystemMarkerEntrys for a
-						// particular GraphMarker (a
-						// particular state)
-						if (!currentMarker.state.isFinal || // if state of
-								// current
-								// PathSystemMarkerEntry
-								// is final or
-								isVertexMarkedWithState(leaf,
-										currentMarker.state)) { // (leaf, state)
-							// has already
-							// been
-							// processed
+					// iterate through list of PathSystemMarkerEntrys 
+					// for a particular GraphMarker (a particular state)
+					for (PathSystemMarkerEntry currentMarker : currentGraphMarker.getMark(leaf).values()) {  
+						// if state of current PathSystemMarkerEntry is final or
+						if (!currentMarker.state.isFinal || isVertexMarkedWithState(leaf, currentMarker.state)) { 
+							// (leaf, state) has already been processed
 							continue;
 						}
-						markVertexWithState(leaf, currentMarker.state); // remember
-						// that
-						// (leaf,
-						// state)
-						// has
-						// already
-						// been
-						// processed
-						currentStateMarker.mark(leaf, currentMarker.state); // mark
-						// leaf
-						// with
-						// current
-						// state
+						// remember that (leaf, state) has already been processed
+						markVertexWithState(leaf, currentMarker.state); 
+						// mark leaf with current state
+						currentStateMarker.mark(leaf, currentMarker.state); 
 						queue.add(leaf);
-
 						while (!queue.isEmpty()) {
 							currentVertex = queue.poll();
-
-							for (PathSystemMarkerEntry marker : getMarkersWithState(
-									currentVertex, currentStateMarker
-											.getMark(currentVertex)).values()) {
+							for (PathSystemMarkerEntry marker : getMarkersWithState(currentVertex, currentStateMarker.getMark(currentVertex)).values()) {
 								int parentStateNumber = 0;
 								parentState = marker.parentState;
 								if (parentState != null) {
@@ -383,24 +347,11 @@ public class Slice extends AbstractGreql2Function {
 										marker.parentVertex, parentStateNumber,
 										marker.state.isFinal);
 								parentVertex = marker.parentVertex;
-								if (parentVertex != null
-										&& !isVertexMarkedWithState(
-												parentVertex, parentState)) { // if
-									// (parentVertex,
-									// parentState)
-									// has
-									// not
-									// already
-									// been
-									// processed
-									markVertexWithState(parentVertex,
-											parentState); // remember that
-									// (parentVertex,
-									// parentState) has
-									// been processed
-									// now
-									currentStateMarker.mark(parentVertex,
-											parentState);
+								if (parentVertex != null && !isVertexMarkedWithState(parentVertex, parentState)) { 
+									// if (parentVertex, parentState) has not already
+									// been processed, remember that is has been processed now 
+									markVertexWithState(parentVertex, parentState); 
+									currentStateMarker.mark(parentVertex,parentState);
 									queue.add(parentVertex); // add parentVertex
 									// to queue
 								}
