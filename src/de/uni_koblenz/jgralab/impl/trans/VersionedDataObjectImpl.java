@@ -834,6 +834,8 @@ public abstract class VersionedDataObjectImpl<E> implements
 	 * @param dataObject
 	 * @param transaction
 	 * @param incrVersionNumber
+	 * 
+	 * TODO maybe fix so that also types like List, Set, Map and Array work, too.
 	 */
 	private void internalSetValidValue(E dataObject, Transaction transaction,
 			boolean explicitChange) {

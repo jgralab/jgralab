@@ -111,9 +111,13 @@ public class JGraLabSet<E> extends HashSet<E> implements JGraLabCloneable {
 
 	// TODO this should not be necessary, but using setValidValue doesn't work
 	private void hasTemporaryVersionCheck() {
-		if (!versionedSet.hasTemporaryValue(graph.getCurrentTransaction())
-				&& graph.getCurrentTransaction().getState() == TransactionState.RUNNING)
-			versionedSet.createNewTemporaryValue(graph.getCurrentTransaction());
+		if (graph.getCurrentTransaction().getState() == TransactionState.RUNNING) {
+			versionedSet.handleSavepoint((TransactionImpl) graph
+					.getCurrentTransaction());
+			if (!versionedSet.hasTemporaryValue(graph.getCurrentTransaction()))
+				versionedSet.createNewTemporaryValue(graph
+						.getCurrentTransaction());
+		}
 	}
 
 	@Override
@@ -398,12 +402,12 @@ public class JGraLabSet<E> extends HashSet<E> implements JGraLabCloneable {
 
 	@SuppressWarnings("unchecked")
 	public boolean equals(Object o) {
-		if(o instanceof JGraLabSet)
+		if(!(o instanceof JGraLabSet))
 			return false;
 		JGraLabSet<E> object = (JGraLabSet<E>) o;
 		if (object == this)
 			return true;
-		if (size() != object.size())
+		if (internalSize() != object.internalSize())
 			return false;
 		Iterator<E> iter = this.internalIterator();
 		while (iter.hasNext()) {

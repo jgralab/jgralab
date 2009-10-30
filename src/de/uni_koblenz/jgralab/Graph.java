@@ -615,26 +615,144 @@ public interface Graph extends AttributedElement {
 	 */
 	public boolean hasTransactionSupport();
 
-	// methods to create Lists, Sets and Maps...(schema independent)
+	/**
+	 * 
+	 * @param <T>
+	 *            the generic type
+	 * @param cls
+	 *            the class for the generic type of the list
+	 * @return
+	 */
 	public <T> List<T> createList(Class<T> cls);
 
-	public <T> List<T> createList(Class<T> cls, Collection<? extends T> collection);
+	/**
+	 * 
+	 * @param <T>
+	 *            the generic type
+	 * @param cls
+	 *            the class for the generic type of the list
+	 * @param collection
+	 * @return
+	 */
+	public <T> List<T> createList(Class<T> cls,
+			Collection<? extends T> collection);
 
+	/**
+	 * 
+	 * @param <T>
+	 *            the generic type
+	 * @param cls
+	 *            the class for the generic type of the list
+	 * @param initialCapacity
+	 * @return
+	 */
 	public <T> List<T> createList(Class<T> cls, int initialCapacity);
 
+	/**
+	 * 
+	 * @param <T>
+	 *            the generic type
+	 * @param cls
+	 *            the class for the generic type of the set
+	 * @return
+	 */
 	public <T> Set<T> createSet(Class<T> cls);
 
+	/**
+	 * 
+	 * @param <T>
+	 *            the generic type
+	 * @param cls
+	 *            the class for the generic type of the set
+	 * @param collection
+	 * @return
+	 */
 	public <T> Set<T> createSet(Class<T> cls, Collection<? extends T> collection);
 
+	/**
+	 * 
+	 * @param <T>
+	 *            the generic type
+	 * @param cls
+	 *            the class for the generic type of the set
+	 * @param initialCapacity
+	 * @return
+	 */
 	public <T> Set<T> createSet(Class<T> cls, int initialCapacity);
 
-	public <T> Set<T> createSet(Class<T> cls, int initialCapacity, float loadFactor);
+	/**
+	 * 
+	 * @param <T>
+	 *            the generic type
+	 * @param cls
+	 *            the class for the generic type of the set
+	 * @param initialCapacity
+	 * @param loadFactor
+	 * @return
+	 */
+	public <T> Set<T> createSet(Class<T> cls, int initialCapacity,
+			float loadFactor);
 
+	/**
+	 * 
+	 * @param <K>
+	 *            the generic type for the key
+	 * @param <V>
+	 *            the generic type for the value
+	 * @param key
+	 *            the class for the generic type of the key
+	 * @param value
+	 *            the class for the generic type of the value
+	 * @return
+	 */
 	public <K, V> Map<K, V> createMap(Class<K> key, Class<V> value);
-	
-	public <K, V> Map<K, V> createMap(Class<K> key, Class<V> value, Map<? extends K,? extends V> map);
-	
-	public <K, V> Map<K, V> createMap(Class<K> key, Class<V> value, int initialCapacity);
 
-	public <K, V> Map<K, V> createMap(Class<K> key, Class<V> value, int initialCapacity, float loadFactor);
+	/**
+	 * 
+	 * @param <K>
+	 *            the generic type for the key
+	 * @param <V>
+	 *            the generic type for the value
+	 * @param key
+	 *            the class for the generic type of the key
+	 * @param value
+	 *            the class for the generic type of the value
+	 * @param map
+	 * @return
+	 */
+	public <K, V> Map<K, V> createMap(Class<K> key, Class<V> value,
+			Map<? extends K, ? extends V> map);
+
+	/**
+	 * 
+	 * @param <K>
+	 *            the generic type for the key
+	 * @param <V>
+	 *            the generic type for the value
+	 * @param key
+	 *            the class for the generic type of the key
+	 * @param value
+	 *            the class for the generic type of the value
+	 * @param initialCapacity
+	 * @return
+	 */
+	public <K, V> Map<K, V> createMap(Class<K> key, Class<V> value,
+			int initialCapacity);
+
+	/**
+	 * 
+	 * @param <K>
+	 *            the generic type for the key
+	 * @param <V>
+	 *            the generic type for the value
+	 * @param key
+	 *            the class for the generic type of the key
+	 * @param value
+	 *            the class for the generic type of the value
+	 * @param initialCapacity
+	 * @param loadFactor
+	 * @return
+	 */
+	public <K, V> Map<K, V> createMap(Class<K> key, Class<V> value,
+			int initialCapacity, float loadFactor);
 }

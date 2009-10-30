@@ -95,12 +95,15 @@ public class JGraLabList<E> extends ArrayList<E> implements JGraLabCloneable {
 		versionedList.setValidValue(this, g.getCurrentTransaction());
 	}
 
-	// TODO this should not be necessary, but using setValidValue doesn't work
+	// TODO this should not be necessary, but using setValidValue doesn't work yet
 	private void hasTemporaryVersionCheck() {
-		if (!versionedList.hasTemporaryValue(graph.getCurrentTransaction())
-				&& graph.getCurrentTransaction().getState() == TransactionState.RUNNING)
-			versionedList
-					.createNewTemporaryValue(graph.getCurrentTransaction());
+		if (graph.getCurrentTransaction().getState() == TransactionState.RUNNING) {
+			versionedList.handleSavepoint((TransactionImpl) graph
+					.getCurrentTransaction());
+			if (!versionedList.hasTemporaryValue(graph.getCurrentTransaction()))
+				versionedList.createNewTemporaryValue(graph
+						.getCurrentTransaction());
+		}
 	}
 
 	/**
@@ -300,15 +303,15 @@ public class JGraLabList<E> extends ArrayList<E> implements JGraLabCloneable {
 	@SuppressWarnings("unchecked")
 	@Override
 	public boolean equals(Object o) {
-		if(o instanceof JGraLabList)
+		if (!(o instanceof JGraLabList))
 			return false;
 		JGraLabList<E> object = (JGraLabList<E>) o;
 		if (object == this)
 			return true;
-		if (size() != object.size())
+		if (internalSize() != object.internalSize())
 			return false;
-		for(int i = 0; i < size(); i++) {
-			if(this.get(i) != object.get(i))
+		for (int i = 0; i < internalSize(); i++) {
+			if (this.get(i) != object.get(i))
 				return false;
 		}
 		return true;

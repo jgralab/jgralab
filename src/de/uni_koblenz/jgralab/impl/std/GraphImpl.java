@@ -323,50 +323,61 @@ public abstract class GraphImpl extends de.uni_koblenz.jgralab.impl.GraphImpl {
 		return false;
 	}
 
+	@Override
 	public <T> List<T> createList(Class<T> cls) {
 		return new ArrayList<T>();
 	}
 
+	@Override
 	public <T> List<T> createList(Class<T> cls,
 			Collection<? extends T> collection) {
 		return new ArrayList<T>(collection);
 	}
 
+	@Override
 	public <T> List<T> createList(Class<T> cls, int initialCapacity) {
 		return new ArrayList<T>(initialCapacity);
 	}
 
+	@Override
 	public <T> Set<T> createSet(Class<T> cls) {
 		return new HashSet<T>();
 	}
 
+	@Override
 	public <T> Set<T> createSet(Class<T> cls, Collection<? extends T> collection) {
 		return new HashSet<T>(collection);
 	}
 
+	@Override
 	public <T> Set<T> createSet(Class<T> cls, int initialCapacity) {
 		return new HashSet<T>(initialCapacity);
 	}
 
+	@Override
 	public <T> Set<T> createSet(Class<T> cls, int initialCapacity,
 			float loadFactor) {
 		return new HashSet<T>(initialCapacity, loadFactor);
 	}
 
+	@Override
 	public <K, V> Map<K, V> createMap(Class<K> key, Class<V> value) {
 		return new HashMap<K, V>();
 	}
 
+	@Override
 	public <K, V> Map<K, V> createMap(Class<K> key, Class<V> value,
 			Map<? extends K, ? extends V> map) {
 		return new HashMap<K, V>(map);
 	}
 
+	@Override
 	public <K, V> Map<K, V> createMap(Class<K> key, Class<V> value,
 			int initialCapacity) {
 		return new HashMap<K, V>(initialCapacity);
 	}
 
+	@Override
 	public <K, V> Map<K, V> createMap(Class<K> key, Class<V> value,
 			int initialCapacity, float loadFactor) {
 		return new HashMap<K, V>(initialCapacity, loadFactor);
