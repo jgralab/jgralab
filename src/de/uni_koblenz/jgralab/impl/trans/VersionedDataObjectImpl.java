@@ -70,6 +70,8 @@ public abstract class VersionedDataObjectImpl<E> implements
 	 */
 	private E persistentValue;
 
+	private boolean isPartOfRecord = false;
+
 	/**
 	 * This map is needed, to assign the "real" version number to a versioned
 	 * data-object, which differs from the last assigned version number in
@@ -1203,5 +1205,13 @@ public abstract class VersionedDataObjectImpl<E> implements
 			}
 		}
 		return false;
+	}
+	
+	public boolean isPartOfRecord() {
+		return isPartOfRecord;
+	}
+	
+	public void setPartOfRecord(boolean isPartOfRecord) {
+		this.isPartOfRecord = isPartOfRecord;
 	}
 }

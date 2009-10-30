@@ -95,7 +95,8 @@ public class JGraLabList<E> extends ArrayList<E> implements JGraLabCloneable {
 		versionedList.setValidValue(this, g.getCurrentTransaction());
 	}
 
-	// TODO this should not be necessary, but using setValidValue doesn't work yet
+	// TODO this should not be necessary, but using setValidValue doesn't work
+	// yet
 	private void hasTemporaryVersionCheck() {
 		if (graph.getCurrentTransaction().getState() == TransactionState.RUNNING) {
 			versionedList.handleSavepoint((TransactionImpl) graph
@@ -280,38 +281,40 @@ public class JGraLabList<E> extends ArrayList<E> implements JGraLabCloneable {
 	}
 
 	@Override
+	// TODO conflict ensureCapacity and cloning
 	public void ensureCapacity(int minCapacity) {
-		if (versionedList == null) {
+		/*if (versionedList == null) {
 			throw new GraphException("Versioning is not working for this list.");
 			// internalEnsureCapacity(minCapacity);
 		} else {
 			// versionedList.setValidValue(this, graph.getCurrentTransaction());
-			hasTemporaryVersionCheck();
+			//hasTemporaryVersionCheck();
 			versionedList.getValidValue(graph.getCurrentTransaction())
 					.internalEnsureCapacity(minCapacity);
-		}
+		}*/
 	}
 
 	/**
 	 * 
 	 * @param minCapacity
 	 */
-	private void internalEnsureCapacity(int minCapacity) {
+	// TODO conflict ensureCapacity and cloning
+	/*private void internalEnsureCapacity(int minCapacity) {
 		super.ensureCapacity(minCapacity);
-	}
+	}*/
 
 	@SuppressWarnings("unchecked")
 	@Override
 	public boolean equals(Object o) {
 		if (!(o instanceof JGraLabList))
 			return false;
-		JGraLabList<E> object = (JGraLabList<E>) o;
-		if (object == this)
+		JGraLabList<E> list = (JGraLabList<E>) o;
+		if (list == this)
 			return true;
-		if (internalSize() != object.internalSize())
+		if (internalSize() != list.internalSize())
 			return false;
 		for (int i = 0; i < internalSize(); i++) {
-			if (this.get(i) != object.get(i))
+			if (!this.get(i).equals(list.get(i)))
 				return false;
 		}
 		return true;
@@ -691,10 +694,10 @@ public class JGraLabList<E> extends ArrayList<E> implements JGraLabCloneable {
 		JGraLabList<E> jgralabList = new JGraLabList<E>();
 		jgralabList.setVersionedList(versionedList);
 		for (E element : toBeCloned) {
-			if (element instanceof JGraLabCloneable) {
+			if (element instanceof JGraLabCloneable && element != null) {
 				// TODO internal or normal add?
-				jgralabList.internalAdd((E) ((JGraLabCloneable) element)
-						.clone());
+				element = (E) ((JGraLabCloneable) element).clone();
+				jgralabList.internalAdd(element);
 			} else {
 				// TODO internal or normal add?
 				jgralabList.internalAdd(element);

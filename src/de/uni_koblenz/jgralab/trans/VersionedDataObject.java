@@ -154,4 +154,8 @@ public interface VersionedDataObject<E> {
 	public E copyOf(E dataObject);
 	
 	public boolean isCloneable();
+	
+	public boolean isPartOfRecord();
+	
+	public void setPartOfRecord(boolean isPartOfRecord);
 }

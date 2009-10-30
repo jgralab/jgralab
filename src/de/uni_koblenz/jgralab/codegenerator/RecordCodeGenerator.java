@@ -97,14 +97,20 @@ public class RecordCodeGenerator extends CodeGenerator {
 		if (createClass && transactionSupport) {
 			code.addNoIndent(new CodeSnippet(true,
 					"public boolean equals(Object o) {"));
-			code.add(new CodeSnippet("\tif(this == o)"));
-			code.add(new CodeSnippet("\t\treturn true;"));
+			//code.add(new CodeSnippet("\tif(this == o)"));
+			//code.add(new CodeSnippet("\t\treturn true;"));
 			for (Entry<String, Domain> entry : recordDomain.getComponents()
 					.entrySet()) {
 				String name = entry.getKey();
 				code
 						.add(new CodeSnippet(
-								"\tif (!_"
+								"\tif (!(_"
+										+ name
+										+ ".getTemporaryValue(graph.getCurrentTransaction()) == null && _"
+										+ name
+										+ ".getLatestPersistentValue() == null) && _"
+										+ name
+										+ ".getTemporaryValue(graph.getCurrentTransaction()) != null && !_"
 										+ name
 										+ ".getTemporaryValue(graph.getCurrentTransaction()).equals(_"
 										+ name
@@ -333,21 +339,25 @@ public class RecordCodeGenerator extends CodeGenerator {
 										+ rdc.getValue().getSimpleName()
 										+ " doesn't support transactions.\");");
 						setterCode
-								.add("\tif(((#jgTransPackage#.JGraLabCloneable)_#name#).getGraph() != graph)");
+								.add("\tif(_#name# != null && ((#jgTransPackage#.JGraLabCloneable)_#name#).getGraph() != graph)");
 						setterCode
 								.add("\t\tthrow new GraphException(\"The given parameter of type "
 										+ rdc.getValue().getSimpleName()
 										+ " belongs to another graph.\");");
 					}
-					setterCode.add("\tif(graph.isLoading())");
+					setterCode.add("\tif(graph.isLoading()) {");
 					setterCode.add("\t\t this._#name# = new "
 							+ rdc.getValue().getVersionedClass(
 									schemaRootPackageName)
 							+ "(graph, (#ctype#) _#name#);");
-					setterCode.add("\tif(this._#name# == null)");
+					setterCode.add("\t\t this._#name#.setPartOfRecord(true);");
+					setterCode.add("\t}");
+					setterCode.add("\tif(this._#name# == null) {");
 					setterCode.add("\t\t this._#name# = new "
 							+ rdc.getValue().getVersionedClass(
 									schemaRootPackageName) + "(graph);");
+					setterCode.add("\t\t this._#name#.setPartOfRecord(true);");
+					setterCode.add("\t}");
 					setterCode
 							.add("\tthis._#name#.setValidValue((#ctype#) _#name#, graph.getCurrentTransaction());");
 				}

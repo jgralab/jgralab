@@ -3,6 +3,7 @@ package de.uni_koblenz.jgralabtest.transactiontest;
 import static org.junit.Assert.*; //import junit.framework.JUnit4TestAdapter;
 
 //import java.util.List;
+import java.util.List;
 import java.util.Set;
 
 import org.junit.After;
@@ -19,8 +20,8 @@ import de.uni_koblenz.jgralabtest.schemas.motorwaymap.City;
 import de.uni_koblenz.jgralabtest.schemas.motorwaymap.Exit;
 import de.uni_koblenz.jgralabtest.schemas.motorwaymap.Motorway;
 import de.uni_koblenz.jgralabtest.schemas.motorwaymap.MotorwayMap;
-import de.uni_koblenz.jgralabtest.schemas.motorwaymap.MotorwayMapSchema;
-//import de.uni_koblenz.jgralabtest.schemas.motorwaymap.TestRecord;
+import de.uni_koblenz.jgralabtest.schemas.motorwaymap.MotorwayMapSchema; //import de.uni_koblenz.jgralabtest.schemas.motorwaymap.TestRecord;
+import de.uni_koblenz.jgralabtest.schemas.motorwaymap.TestRecord;
 
 /**
  * 
@@ -88,8 +89,8 @@ public class ConflictDetectionTest {
 	}
 
 	/**
-	 * Adding and deleting of vertices by <code>readWriteTransaction1</code> and
-	 * <code>readWriteTransaction2</code>. No conflicts expected.
+	 * Adding and deleting of vertices by <code>readWriteTransaction1</code>
+	 * and <code>readWriteTransaction2</code>. No conflicts expected.
 	 * 
 	 * @see dpthesis Tab 4.1
 	 */
@@ -136,8 +137,9 @@ public class ConflictDetectionTest {
 	}
 
 	/**
-	 * Adding and deleting of vertices by <code>readWriteTransaction1</code> and
-	 * <code>readWriteTransaction2</code> (in parallel). No conflicts expected.
+	 * Adding and deleting of vertices by <code>readWriteTransaction1</code>
+	 * and <code>readWriteTransaction2</code> (in parallel). No conflicts
+	 * expected.
 	 * 
 	 * <code>readWriteTransaction1</code> commits first.
 	 * 
@@ -149,8 +151,9 @@ public class ConflictDetectionTest {
 	}
 
 	/**
-	 * Adding and deleting of vertices by <code>readWriteTransaction1</code> and
-	 * <code>readWriteTransaction2</code> (in parallel). No conflicts expected.
+	 * Adding and deleting of vertices by <code>readWriteTransaction1</code>
+	 * and <code>readWriteTransaction2</code> (in parallel). No conflicts
+	 * expected.
 	 * 
 	 * <code>readWriteTransaction2</code> commits first.
 	 * 
@@ -246,8 +249,8 @@ public class ConflictDetectionTest {
 	}
 
 	/**
-	 * <code>readWriteTransaction1</code> trying to delete a <code>Vertex</code>
-	 * (v24) which isn't valid within the transaction.
+	 * <code>readWriteTransaction1</code> trying to delete a
+	 * <code>Vertex</code> (v24) which isn't valid within the transaction.
 	 * 
 	 * Note: test case parallel missing, because scenario is not (easily)
 	 * reproducible.
@@ -351,7 +354,8 @@ public class ConflictDetectionTest {
 
 	/**
 	 * Adding and deleting of edges by <code>readWriteTransaction1</code> and
-	 * <code>readWriteTransaction2</code> (in parallel). No conflicts expected.
+	 * <code>readWriteTransaction2</code> (in parallel). No conflicts
+	 * expected.
 	 * 
 	 * <code>readWriteTransaction1</code> commits first.
 	 * 
@@ -364,7 +368,8 @@ public class ConflictDetectionTest {
 
 	/**
 	 * Adding and deleting of edges by <code>readWriteTransaction1</code> and
-	 * <code>readWriteTransaction2</code> (in parallel). No conflicts expected.
+	 * <code>readWriteTransaction2</code> (in parallel). No conflicts
+	 * expected.
 	 * 
 	 * <code>readWriteTransaction2</code> commits first.
 	 * 
@@ -477,8 +482,8 @@ public class ConflictDetectionTest {
 	}
 
 	/**
-	 * <code>readWriteTransaction1</code> trying to delete an <code>Edge</code>
-	 * (e22) which isn't valid within the transaction.
+	 * <code>readWriteTransaction1</code> trying to delete an
+	 * <code>Edge</code> (e22) which isn't valid within the transaction.
 	 * 
 	 * Note: test case parallel missing, because scenario is not (easily)
 	 * reproducible.
@@ -526,9 +531,9 @@ public class ConflictDetectionTest {
 	}
 
 	/**
-	 * <code>readWriteTransaction2</code> tries to delete a <code>Vertex</code>
-	 * (v1) which has been used in <code>readWriteTransaction1</code> to add a
-	 * <code>Edge</code> (e21).
+	 * <code>readWriteTransaction2</code> tries to delete a
+	 * <code>Vertex</code> (v1) which has been used in
+	 * <code>readWriteTransaction1</code> to add a <code>Edge</code> (e21).
 	 * 
 	 * @see dpthesis Tab 4.5
 	 */
@@ -569,9 +574,10 @@ public class ConflictDetectionTest {
 	}
 
 	/**
-	 * <code>readWriteTransaction2</code> tries to delete a <code>Vertex</code>
-	 * (v1) which has been used in <code>readWriteTransaction1</code> to add a
-	 * <code>Edge</code> (e21) (in parallel).
+	 * <code>readWriteTransaction2</code> tries to delete a
+	 * <code>Vertex</code> (v1) which has been used in
+	 * <code>readWriteTransaction1</code> to add a <code>Edge</code> (e21)
+	 * (in parallel).
 	 * 
 	 * <code>readWriteTransaction1</code> commits first.
 	 * 
@@ -584,9 +590,10 @@ public class ConflictDetectionTest {
 	}
 
 	/**
-	 * <code>readWriteTransaction2</code> tries to delete a <code>Vertex</code>
-	 * (v1) which has been used in <code>readWriteTransaction1</code> to add a
-	 * <code>Edge</code> (e21) (in parallel).
+	 * <code>readWriteTransaction2</code> tries to delete a
+	 * <code>Vertex</code> (v1) which has been used in
+	 * <code>readWriteTransaction1</code> to add a <code>Edge</code> (e21)
+	 * (in parallel).
 	 * 
 	 * <code>readWriteTransaction2</code> commits first.
 	 * 
@@ -1616,8 +1623,8 @@ public class ConflictDetectionTest {
 	}
 
 	/**
-	 * Lost Update of the changes made in <code>readWriteTransaction1</code> for
-	 * <code>Edge</code> e4.
+	 * Lost Update of the changes made in <code>readWriteTransaction1</code>
+	 * for <code>Edge</code> e4.
 	 * 
 	 * @see dpthesis Tab. 4.16
 	 */
@@ -4343,7 +4350,7 @@ public class ConflictDetectionTest {
 		System.out.println(conflictReason);
 		assertTrue(conflict);
 	}
-	
+
 	@Test
 	public void changeSetWithoutSetterConflict1() {
 		try {
@@ -4373,7 +4380,7 @@ public class ConflictDetectionTest {
 			assertTrue(true);
 		}
 	}
-	
+
 	@Test
 	public void changeSetWithoutSetterNoConflict1() {
 		try {
@@ -4397,13 +4404,86 @@ public class ConflictDetectionTest {
 			t2.commit();
 			assertTrue(true);
 		} catch (CommitFailedException e) {
-			System.out.println("\n- changeSetWithoutSetterNoConflict1 -");
-			System.out.println("##########################");
-			System.out.println(e.getMessage());
 			fail();
 		}
 	}
 
+	@Test
+	public void changeListWithoutSetterConflict1() {
+		try {
+			motorwayMap.setCurrentTransaction(readWriteTransaction1);
+			City city = motorwayMap.getFirstCity();
+			List<TestRecord> list = motorwayMap.createList(TestRecord.class);
+			list.add(motorwayMap.createTestRecord("Test1", motorwayMap
+					.createList(String.class), motorwayMap
+					.createSet(String.class), 3, 3, 3, true));
+			list.add(motorwayMap.createTestRecord("Test2", motorwayMap
+					.createList(String.class), motorwayMap
+					.createSet(String.class), 3, 3, 3, true));
+			city.set_testList(list);
+			readWriteTransaction1.commit();
+
+			Transaction t1 = motorwayMap.newTransaction();
+			motorwayMap.setCurrentTransaction(t1);
+			city.get_testList().add(motorwayMap.createTestRecord("Test3", motorwayMap
+					.createList(String.class), motorwayMap
+					.createSet(String.class), 3, 3, 3, true));
+			Transaction t2 = motorwayMap.newTransaction();
+			motorwayMap.setCurrentTransaction(t2);
+			city.get_testList().add(motorwayMap.createTestRecord("Test4", motorwayMap
+					.createList(String.class), motorwayMap
+					.createSet(String.class), 3, 3, 4, true));
+			motorwayMap.setCurrentTransaction(t1);
+			t1.commit();
+			motorwayMap.setCurrentTransaction(t2);
+			t2.commit();
+			fail();
+		} catch (CommitFailedException e) {
+			System.out.println("\n- changeListWithoutSetterConflict1 -");
+			System.out.println("##########################");
+			System.out.println(e.getMessage());
+			assertTrue(true);
+		}
+	}
+	
+	@Test
+	public void changeListWithoutSetterNoConflict1() {
+		try {
+			motorwayMap.setCurrentTransaction(readWriteTransaction1);
+			City city = motorwayMap.getFirstCity();
+			List<TestRecord> list = motorwayMap.createList(TestRecord.class);
+			TestRecord test = motorwayMap.createTestRecord("Test1", motorwayMap
+					.createList(String.class), motorwayMap
+					.createSet(String.class), 3, 3, 3, true);
+			list.add(test);
+			list.add(motorwayMap.createTestRecord("Test2", motorwayMap
+					.createList(String.class), motorwayMap
+					.createSet(String.class), 3, 3, 3, true));
+			city.set_testList(list);
+			readWriteTransaction1.commit();
+
+			Transaction t1 = motorwayMap.newTransaction();
+			motorwayMap.setCurrentTransaction(t1);
+			TestRecord test2 = motorwayMap.createTestRecord("Test3", motorwayMap
+					.createList(String.class), motorwayMap
+					.createSet(String.class), 3, 3, 3, true);
+			city.get_testList().add(test2);
+			Transaction t2 = motorwayMap.newTransaction();
+			motorwayMap.setCurrentTransaction(t2);
+			TestRecord test3 = motorwayMap.createTestRecord("Test3", motorwayMap
+					.createList(String.class), motorwayMap
+					.createSet(String.class), 3, 3, 3, true);
+			city.get_testList().add(test3);
+			motorwayMap.setCurrentTransaction(t1);
+			t1.commit();
+			motorwayMap.setCurrentTransaction(t2);
+			t2.commit();
+			assertTrue(true);
+		} catch (CommitFailedException e) {
+			fail();
+		}
+	}
+	
 	/**
 	 * 
 	 * @return
