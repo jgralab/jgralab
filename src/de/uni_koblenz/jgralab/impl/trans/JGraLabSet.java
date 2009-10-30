@@ -384,7 +384,7 @@ public class JGraLabSet<E> extends HashSet<E> implements JGraLabCloneable {
 		JGraLabSet<E> jgralabSet = new JGraLabSet<E>();
 		jgralabSet.setVersionedSet(versionedSet);
 		for (E element : toBeCloned) {
-			if (element instanceof JGraLabCloneable)
+			if (element instanceof JGraLabCloneable && element != null)
 				// TODO internal or normal add?
 				jgralabSet
 						.internalAdd((E) ((JGraLabCloneable) element).clone());
@@ -404,14 +404,14 @@ public class JGraLabSet<E> extends HashSet<E> implements JGraLabCloneable {
 	public boolean equals(Object o) {
 		if(!(o instanceof JGraLabSet))
 			return false;
-		JGraLabSet<E> object = (JGraLabSet<E>) o;
-		if (object == this)
+		JGraLabSet<E> set = (JGraLabSet<E>) o;
+		if (set == this)
 			return true;
-		if (internalSize() != object.internalSize())
+		if (internalSize() != set.internalSize())
 			return false;
 		Iterator<E> iter = this.internalIterator();
 		while (iter.hasNext()) {
-			if (!object.internalContains(iter.next()))
+			if (!set.internalContains(iter.next()))
 				return false;
 		}
 		return true;

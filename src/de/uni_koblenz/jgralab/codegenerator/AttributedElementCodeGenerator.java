@@ -415,7 +415,7 @@ public class AttributedElementCodeGenerator extends CodeGenerator {
 									+ attr.getDomain().getSimpleName()
 									+ " doesn't support transactions.\");");
 					code
-							.add("\tif(((#jgTransPackage#.JGraLabCloneable)_#name#).getGraph() != graph)");
+							.add("\tif(_#name# != null && ((#jgTransPackage#.JGraLabCloneable)_#name#).getGraph() != graph)");
 					code
 							.add("\t\tthrow new GraphException(\"The given parameter of type "
 									+ attr.getDomain().getSimpleName()

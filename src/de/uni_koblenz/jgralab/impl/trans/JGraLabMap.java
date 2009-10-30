@@ -31,7 +31,7 @@ public class JGraLabMap<K, V> extends HashMap<K, V> implements JGraLabCloneable 
 	/**
 	 * 
 	 */
-	/*protected*/ public JGraLabMap() {
+	/* protected */public JGraLabMap() {
 		super();
 	}
 
@@ -39,7 +39,7 @@ public class JGraLabMap<K, V> extends HashMap<K, V> implements JGraLabCloneable 
 	 * 
 	 * @param initialSize
 	 */
-	/*protected*/ public JGraLabMap(int initialSize) {
+	/* protected */public JGraLabMap(int initialSize) {
 		super(initialSize);
 	}
 
@@ -48,7 +48,7 @@ public class JGraLabMap<K, V> extends HashMap<K, V> implements JGraLabCloneable 
 	 * @param initialSize
 	 * @param loadFactor
 	 */
-	/*protected*/ public JGraLabMap(int initialSize, float loadFactor) {
+	/* protected */public JGraLabMap(int initialSize, float loadFactor) {
 		super(initialSize, loadFactor);
 	}
 
@@ -56,7 +56,7 @@ public class JGraLabMap<K, V> extends HashMap<K, V> implements JGraLabCloneable 
 	 * 
 	 * @param map
 	 */
-	/*protected*/ public JGraLabMap(Map<K, V> map) {
+	/* protected */public JGraLabMap(Map<K, V> map) {
 		super(map);
 	}
 
@@ -64,7 +64,7 @@ public class JGraLabMap<K, V> extends HashMap<K, V> implements JGraLabCloneable 
 		super();
 		init(g);
 	}
-	
+
 	public JGraLabMap(Graph g, Map<? extends K, ? extends V> map) {
 		super(map);
 		init(g);
@@ -82,17 +82,23 @@ public class JGraLabMap<K, V> extends HashMap<K, V> implements JGraLabCloneable 
 
 	public void init(Graph g) {
 		if (g == null)
-			throw new GraphException(
-					"Given graph cannot be null.");
+			throw new GraphException("Given graph cannot be null.");
 		if (!g.hasTransactionSupport())
 			throw new GraphException(
-					"An instance of JGraLabMap can only be created for graphs with transaction support");
+					"An instance of JGraLabSet can only be created for graphs with transaction support");
 		graph = g;
-		// TODO this or no this?
-		versionedMap = new VersionedJGraLabCloneableImpl<JGraLabMap<K,V>>();
+		if (graph.isLoading())
+			versionedMap = new VersionedJGraLabCloneableImpl<JGraLabMap<K, V>>(
+					g, this);
+		if (versionedMap == null)
+			// TODO this or graph
+			versionedMap = new VersionedJGraLabCloneableImpl<JGraLabMap<K, V>>(
+					graph);
+		versionedMap.setValidValue(this, g.getCurrentTransaction());
 	}
-	
-	// TODO this should not be necessary, but using setValidValue doesn't work yet
+
+	// TODO this should not be necessary, but using setValidValue doesn't work
+	// yet
 	private void hasTemporaryVersionCheck() {
 		if (graph.getCurrentTransaction().getState() == TransactionState.RUNNING) {
 			versionedMap.handleSavepoint((TransactionImpl) graph
@@ -107,8 +113,8 @@ public class JGraLabMap<K, V> extends HashMap<K, V> implements JGraLabCloneable 
 	public void clear() {
 		if (versionedMap == null)
 			throw new GraphException("Versioning is not working for this Map.");
-			//internalClear();
-		//versionedMap.setValidValue(this, graph.getCurrentTransaction());
+		// internalClear();
+		// versionedMap.setValidValue(this, graph.getCurrentTransaction());
 		hasTemporaryVersionCheck();
 		versionedMap.getValidValue(graph.getCurrentTransaction())
 				.internalClear();
@@ -124,9 +130,9 @@ public class JGraLabMap<K, V> extends HashMap<K, V> implements JGraLabCloneable 
 	@Override
 	public boolean containsKey(Object key) {
 		if (versionedMap == null)
-			//return internalContainsKey(key);
+			// return internalContainsKey(key);
 			throw new GraphException("Versioning is not working for this Map.");
-		//versionedMap.setValidValue(this, graph.getCurrentTransaction());
+		// versionedMap.setValidValue(this, graph.getCurrentTransaction());
 		return versionedMap.getValidValue(graph.getCurrentTransaction())
 				.internalContainsKey(key);
 	}
@@ -143,9 +149,9 @@ public class JGraLabMap<K, V> extends HashMap<K, V> implements JGraLabCloneable 
 	@Override
 	public boolean containsValue(Object value) {
 		if (versionedMap == null)
-			//return internalContainsValue(value);
+			// return internalContainsValue(value);
 			throw new GraphException("Versioning is not working for this Map.");
-		//versionedMap.setValidValue(this, graph.getCurrentTransaction());
+		// versionedMap.setValidValue(this, graph.getCurrentTransaction());
 		return versionedMap.getValidValue(graph.getCurrentTransaction())
 				.internalContainsValue(value);
 	}
@@ -162,9 +168,9 @@ public class JGraLabMap<K, V> extends HashMap<K, V> implements JGraLabCloneable 
 	@Override
 	public Set<Entry<K, V>> entrySet() {
 		if (versionedMap == null)
-			//return internalEntrySet();
+			// return internalEntrySet();
 			throw new GraphException("Versioning is not working for this Map.");
-		//versionedMap.setValidValue(this, graph.getCurrentTransaction());
+		// versionedMap.setValidValue(this, graph.getCurrentTransaction());
 		return versionedMap.getValidValue(graph.getCurrentTransaction())
 				.internalEntrySet();
 	}
@@ -180,9 +186,9 @@ public class JGraLabMap<K, V> extends HashMap<K, V> implements JGraLabCloneable 
 	@Override
 	public V get(Object key) {
 		if (versionedMap == null)
-			//return internalGet(key);
+			// return internalGet(key);
 			throw new GraphException("Versioning is not working for this Map.");
-		//versionedMap.setValidValue(this, graph.getCurrentTransaction());
+		// versionedMap.setValidValue(this, graph.getCurrentTransaction());
 		return versionedMap.getValidValue(graph.getCurrentTransaction())
 				.internalGet(key);
 	}
@@ -198,9 +204,9 @@ public class JGraLabMap<K, V> extends HashMap<K, V> implements JGraLabCloneable 
 
 	public boolean isEmpty() {
 		if (versionedMap == null)
-			//return internalIsEmpty();
+			// return internalIsEmpty();
 			throw new GraphException("Versioning is not working for this Map.");
-		//versionedMap.setValidValue(this, graph.getCurrentTransaction());
+		// versionedMap.setValidValue(this, graph.getCurrentTransaction());
 		return versionedMap.getValidValue(graph.getCurrentTransaction())
 				.internalIsEmpty();
 	}
@@ -216,9 +222,9 @@ public class JGraLabMap<K, V> extends HashMap<K, V> implements JGraLabCloneable 
 	@Override
 	public Set<K> keySet() {
 		if (versionedMap == null)
-			//return internalKeySet();
+			// return internalKeySet();
 			throw new GraphException("Versioning is not working for this Map.");
-		//versionedMap.setValidValue(this, graph.getCurrentTransaction());
+		// versionedMap.setValidValue(this, graph.getCurrentTransaction());
 		return versionedMap.getValidValue(graph.getCurrentTransaction())
 				.internalKeySet();
 	}
@@ -234,7 +240,7 @@ public class JGraLabMap<K, V> extends HashMap<K, V> implements JGraLabCloneable 
 	@Override
 	public V put(K key, V value) {
 		if (versionedMap == null)
-			//return internalPut(key, value);
+			// return internalPut(key, value);
 			throw new GraphException("Versioning is not working for this Map.");
 		if ((key instanceof Map || key instanceof List || key instanceof Set)
 				&& !(key instanceof JGraLabCloneable))
@@ -252,7 +258,7 @@ public class JGraLabMap<K, V> extends HashMap<K, V> implements JGraLabCloneable 
 			if (((JGraLabCloneable) key).getGraph() != graph)
 				throw new GraphException(
 						"The value added to this map is from another graph.");
-		//versionedMap.setValidValue(this, graph.getCurrentTransaction());
+		// versionedMap.setValidValue(this, graph.getCurrentTransaction());
 		hasTemporaryVersionCheck();
 		return versionedMap.getValidValue(graph.getCurrentTransaction())
 				.internalPut(key, value);
@@ -272,7 +278,7 @@ public class JGraLabMap<K, V> extends HashMap<K, V> implements JGraLabCloneable 
 	public void putAll(Map<? extends K, ? extends V> m) {
 		if (versionedMap == null)
 			internalPutAll(m);
-		//versionedMap.setValidValue(this, graph.getCurrentTransaction());
+		// versionedMap.setValidValue(this, graph.getCurrentTransaction());
 		hasTemporaryVersionCheck();
 		versionedMap.getValidValue(graph.getCurrentTransaction())
 				.internalPutAll(m);
@@ -289,9 +295,9 @@ public class JGraLabMap<K, V> extends HashMap<K, V> implements JGraLabCloneable 
 	@Override
 	public V remove(Object key) {
 		if (versionedMap == null)
-			//return internalRemove(key);
+			// return internalRemove(key);
 			throw new GraphException("Versioning is not working for this Map.");
-		//versionedMap.setValidValue(this, graph.getCurrentTransaction());
+		// versionedMap.setValidValue(this, graph.getCurrentTransaction());
 		hasTemporaryVersionCheck();
 		return versionedMap.getValidValue(graph.getCurrentTransaction())
 				.internalRemove(key);
@@ -309,9 +315,9 @@ public class JGraLabMap<K, V> extends HashMap<K, V> implements JGraLabCloneable 
 	@Override
 	public int size() {
 		if (versionedMap == null)
-			//return internalSize();
+			// return internalSize();
 			throw new GraphException("Versioning is not working for this Map.");
-		//versionedMap.setValidValue(this, graph.getCurrentTransaction());
+		// versionedMap.setValidValue(this, graph.getCurrentTransaction());
 		return versionedMap.getValidValue(graph.getCurrentTransaction())
 				.internalSize();
 	}
@@ -327,9 +333,9 @@ public class JGraLabMap<K, V> extends HashMap<K, V> implements JGraLabCloneable 
 	@Override
 	public Collection<V> values() {
 		if (versionedMap == null)
-			//return internalValues();
+			// return internalValues();
 			throw new GraphException("Versioning is not working for this Map.");
-		//versionedMap.setValidValue(this, graph.getCurrentTransaction());
+		// versionedMap.setValidValue(this, graph.getCurrentTransaction());
 		return versionedMap.getValidValue(graph.getCurrentTransaction())
 				.internalValues();
 	}
@@ -368,29 +374,29 @@ public class JGraLabMap<K, V> extends HashMap<K, V> implements JGraLabCloneable 
 		for (Entry<K, V> entry : toBeCloned.entrySet()) {
 			K newKey = entry.getKey();
 			V newValue = entry.getValue();
-			if (newKey instanceof JGraLabCloneable)
+			if (newKey instanceof JGraLabCloneable && newKey != null)
 				newKey = (K) ((JGraLabCloneable) newKey).clone();
-			if (newValue instanceof JGraLabCloneable)
+			if (newValue instanceof JGraLabCloneable && newValue != null)
 				newValue = (V) ((JGraLabCloneable) newValue).clone();
 			// TODO internal or normal add?
 			jgralabMap.internalPut(newKey, newValue);
 		}
 		return jgralabMap;
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	public boolean equals(Object o) {
-		if(!(o instanceof JGraLabMap))
+		if (!(o instanceof JGraLabMap))
 			return false;
-		JGraLabMap<K,V> object = (JGraLabMap<K, V>) o;
-		if(this == object)
+		JGraLabMap<K, V> object = (JGraLabMap<K, V>) o;
+		if (this == object)
 			return true;
-		if(!internalKeySet().equals(object.internalKeySet()))
+		if (!internalKeySet().equals(object.internalKeySet()))
 			return false;
-		if(internalSize() != object.internalSize())
+		if (internalSize() != object.internalSize())
 			return false;
-		for(Entry<K,V> entry : this.internalEntrySet()) {
-			if(!object.internalEntrySet().contains(entry))
+		for (Entry<K, V> entry : this.internalEntrySet()) {
+			if (!object.internalEntrySet().contains(entry))
 				return false;
 		}
 		return true;

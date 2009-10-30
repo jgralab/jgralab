@@ -451,7 +451,7 @@ public class WritingComponent {
 		for (VersionedDataObject<?> vdo : versionedDataObjects) {
 			if (((transaction.changedDuringCommit == null || (transaction.changedDuringCommit != null && !transaction.changedDuringCommit
 					.contains(vdo)))
-					&& vdo.isCloneable())) {
+					&& (vdo.isCloneable() || vdo.isPartOfRecord()))) {
 				Object tempValue = vdo.getTemporaryValue(transaction);
 				((VersionedDataObjectImpl) vdo).setValidValue(tempValue, graph
 						.getCurrentTransaction(), true);
