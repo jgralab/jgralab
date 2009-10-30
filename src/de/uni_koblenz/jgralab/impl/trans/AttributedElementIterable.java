@@ -56,7 +56,7 @@ public class AttributedElementIterable<A extends AttributedElement> implements
 	 * This iterator is only valid within the transaction the corresponding
 	 * <code>Iterable</code> was initialized.
 	 * 
-	 * @author José Monte(monte@uni-koblenz.de)
+	 * @author Jose Monte(monte@uni-koblenz.de)
 	 * 
 	 */
 	private class AttributedElementIterator implements Iterator<A> {

@@ -1546,6 +1546,7 @@ public abstract class GraphImpl extends de.uni_koblenz.jgralab.impl.GraphImpl {
 		return true;
 	}
 
+	@Override
 	public <T> List<T> createList(Class<T> type) {
 		if (getCurrentTransaction().isReadOnly())
 			throw new GraphException(
@@ -1553,6 +1554,7 @@ public abstract class GraphImpl extends de.uni_koblenz.jgralab.impl.GraphImpl {
 		return new JGraLabList<T>(this);
 	}
 
+	@Override
 	public <T> List<T> createList(Class<T> type,
 			Collection<? extends T> collection) {
 		if (getCurrentTransaction().isReadOnly())
@@ -1561,6 +1563,7 @@ public abstract class GraphImpl extends de.uni_koblenz.jgralab.impl.GraphImpl {
 		return new JGraLabList<T>(this, collection);
 	}
 
+	@Override
 	public <T> List<T> createList(Class<T> type, int initialCapacity) {
 		if (getCurrentTransaction().isReadOnly())
 			throw new GraphException(
@@ -1568,6 +1571,7 @@ public abstract class GraphImpl extends de.uni_koblenz.jgralab.impl.GraphImpl {
 		return new JGraLabList<T>(this, initialCapacity);
 	}
 
+	@Override
 	public <T> Set<T> createSet(Class<T> type) {
 		if (getCurrentTransaction().isReadOnly())
 			throw new GraphException(
@@ -1575,6 +1579,7 @@ public abstract class GraphImpl extends de.uni_koblenz.jgralab.impl.GraphImpl {
 		return new JGraLabSet<T>(this);
 	}
 
+	@Override
 	public <T> Set<T> createSet(Class<T> type,
 			Collection<? extends T> collection) {
 		if (getCurrentTransaction().isReadOnly())
@@ -1583,6 +1588,7 @@ public abstract class GraphImpl extends de.uni_koblenz.jgralab.impl.GraphImpl {
 		return new JGraLabSet<T>(this, collection);
 	}
 
+	@Override
 	public <T> Set<T> createSet(Class<T> type, int initialCapacity) {
 		if (getCurrentTransaction().isReadOnly())
 			throw new GraphException(
@@ -1590,6 +1596,7 @@ public abstract class GraphImpl extends de.uni_koblenz.jgralab.impl.GraphImpl {
 		return new JGraLabSet<T>(this, initialCapacity);
 	}
 
+	@Override
 	public <T> Set<T> createSet(Class<T> type, int initialCapacity,
 			float loadFactor) {
 		if (getCurrentTransaction().isReadOnly())
@@ -1598,6 +1605,7 @@ public abstract class GraphImpl extends de.uni_koblenz.jgralab.impl.GraphImpl {
 		return new JGraLabSet<T>(this, initialCapacity, loadFactor);
 	}
 
+	@Override
 	public <K, V> Map<K, V> createMap(Class<K> key, Class<V> value) {
 		if (getCurrentTransaction().isReadOnly())
 			throw new GraphException(
@@ -1605,6 +1613,7 @@ public abstract class GraphImpl extends de.uni_koblenz.jgralab.impl.GraphImpl {
 		return new JGraLabMap<K, V>(this);
 	}
 
+	@Override
 	public <K, V> Map<K, V> createMap(Class<K> key, Class<V> value,
 			Map<? extends K, ? extends V> map) {
 		if (getCurrentTransaction().isReadOnly())
@@ -1613,6 +1622,7 @@ public abstract class GraphImpl extends de.uni_koblenz.jgralab.impl.GraphImpl {
 		return new JGraLabMap<K, V>(this, map);
 	}
 
+	@Override
 	public <K, V> Map<K, V> createMap(Class<K> key, Class<V> value,
 			int initialCapacity) {
 		if (getCurrentTransaction().isReadOnly())
@@ -1621,6 +1631,7 @@ public abstract class GraphImpl extends de.uni_koblenz.jgralab.impl.GraphImpl {
 		return new JGraLabMap<K, V>(this, initialCapacity);
 	}
 
+	@Override
 	public <K, V> Map<K, V> createMap(Class<K> key, Class<V> value,
 			int initialCapacity, float loadFactor) {
 		if (getCurrentTransaction().isReadOnly())

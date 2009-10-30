@@ -92,12 +92,15 @@ public class JGraLabMap<K, V> extends HashMap<K, V> implements JGraLabCloneable 
 		versionedMap = new VersionedJGraLabCloneableImpl<JGraLabMap<K,V>>();
 	}
 	
-	// TODO this should not be necessary, but using setValidValue doesn't work
+	// TODO this should not be necessary, but using setValidValue doesn't work yet
 	private void hasTemporaryVersionCheck() {
-		if (!versionedMap.hasTemporaryValue(graph.getCurrentTransaction())
-				&& graph.getCurrentTransaction().getState() == TransactionState.RUNNING)
-			versionedMap
-					.createNewTemporaryValue(graph.getCurrentTransaction());
+		if (graph.getCurrentTransaction().getState() == TransactionState.RUNNING) {
+			versionedMap.handleSavepoint((TransactionImpl) graph
+					.getCurrentTransaction());
+			if (!versionedMap.hasTemporaryValue(graph.getCurrentTransaction()))
+				versionedMap.createNewTemporaryValue(graph
+						.getCurrentTransaction());
+		}
 	}
 
 	@Override
@@ -377,17 +380,17 @@ public class JGraLabMap<K, V> extends HashMap<K, V> implements JGraLabCloneable 
 	
 	@SuppressWarnings("unchecked")
 	public boolean equals(Object o) {
-		if(o instanceof JGraLabMap)
+		if(!(o instanceof JGraLabMap))
 			return false;
 		JGraLabMap<K,V> object = (JGraLabMap<K, V>) o;
 		if(this == object)
 			return true;
 		if(!internalKeySet().equals(object.internalKeySet()))
 			return false;
-		if(size() != object.size())
+		if(internalSize() != object.internalSize())
 			return false;
 		for(Entry<K,V> entry : this.internalEntrySet()) {
-			if(!object.entrySet().contains(entry))
+			if(!object.internalEntrySet().contains(entry))
 				return false;
 		}
 		return true;

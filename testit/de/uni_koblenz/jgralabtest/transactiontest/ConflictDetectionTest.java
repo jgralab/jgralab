@@ -4345,7 +4345,7 @@ public class ConflictDetectionTest {
 	}
 	
 	@Test
-	public void changeSetWithoutSetterConflict() {
+	public void changeSetWithoutSetterConflict1() {
 		try {
 			motorwayMap.setCurrentTransaction(readWriteTransaction1);
 			City city = motorwayMap.getFirstCity();
@@ -4367,10 +4367,40 @@ public class ConflictDetectionTest {
 			t2.commit();
 			fail();
 		} catch (CommitFailedException e) {
-			System.out.println("\n- changeSetWithoutSetterConflict -");
+			System.out.println("\n- changeSetWithoutSetterConflict1 -");
 			System.out.println("##########################");
 			System.out.println(e.getMessage());
 			assertTrue(true);
+		}
+	}
+	
+	@Test
+	public void changeSetWithoutSetterNoConflict1() {
+		try {
+			motorwayMap.setCurrentTransaction(readWriteTransaction1);
+			City city = motorwayMap.getFirstCity();
+			Set<String> set = city.getGraph().createSet(String.class);
+			set.add("Test1");
+			set.add("Test2");
+			city.set_testSet(set);
+			readWriteTransaction1.commit();
+
+			Transaction t1 = motorwayMap.newTransaction();
+			motorwayMap.setCurrentTransaction(t1);
+			city.get_testSet().add("Test3");
+			Transaction t2 = motorwayMap.newTransaction();
+			motorwayMap.setCurrentTransaction(t2);
+			city.get_testSet().add("Test3");
+			motorwayMap.setCurrentTransaction(t1);
+			t1.commit();
+			motorwayMap.setCurrentTransaction(t2);
+			t2.commit();
+			assertTrue(true);
+		} catch (CommitFailedException e) {
+			System.out.println("\n- changeSetWithoutSetterNoConflict1 -");
+			System.out.println("##########################");
+			System.out.println(e.getMessage());
+			fail();
 		}
 	}
 
