@@ -215,7 +215,6 @@ public class JValueSlice extends JValue {
 	 */
 	public void addVertex(Vertex vertex, int stateNumber, Edge parentEdge,
 			Vertex parentVertex, int parentStateNumber, boolean finalState) {
-		System.out.println("Adding vertex " + vertex);
 		PathSystemKey key = new PathSystemKey(vertex, stateNumber);
 		List<PathSystemEntry> entryList = keyToEntryMap.get(key);
 		if (entryList == null) {
