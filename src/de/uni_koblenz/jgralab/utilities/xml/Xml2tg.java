@@ -173,15 +173,15 @@ public class Xml2tg {
 	}
 
 	private static CommandLine processCommandLineOptions(String[] args) {
-		String toolString = Xml2tg.class.getName();
+		String toolString = Xml2tg.class.getSimpleName();
 		String versionString = JGraLab.getInfo(false);
-		OptionHandler oh = new OptionHandler(toolString, versionString);
+		optionHandler = new OptionHandler(toolString, versionString);
 
 		Option output = new Option("o", "output", true,
 				"(required): name of TG file to write graph to.");
 		output.setRequired(true);
 		output.setArgName("file");
-		oh.addOption(output);
+		optionHandler.addOption(output);
 
 		Option schema = new Option(
 				"s",
@@ -191,7 +191,7 @@ public class Xml2tg {
 						+ "The compiled version of this schema also has to be in the classpath.");
 		schema.setRequired(true);
 		schema.setArgName("file");
-		oh.addOption(schema);
+		optionHandler.addOption(schema);
 
 		Option verticesBeforeEdges = new Option(
 				"V",
@@ -201,7 +201,7 @@ public class Xml2tg {
 						+ "If it is set and they are not, the parse will fail. "
 						+ "It is faster then the fail proof parse version.");
 		verticesBeforeEdges.setRequired(false);
-		oh.addOption(verticesBeforeEdges);
+		optionHandler.addOption(verticesBeforeEdges);
 
 		Option multiXmlIntoOneGraph = new Option(
 				"m",
@@ -209,9 +209,9 @@ public class Xml2tg {
 				false,
 				"(optional): if this flag is set, then the result is one graph containing all vertices and edges from all given XML files.");
 		multiXmlIntoOneGraph.setRequired(false);
-		oh.addOption(multiXmlIntoOneGraph);
+		optionHandler.addOption(multiXmlIntoOneGraph);
 
-		return oh.parse(args);
+		return optionHandler.parse(args);
 	}
 
 	public Xml2tg(InputStream xmlInput, String tgOutput, Schema schema)
