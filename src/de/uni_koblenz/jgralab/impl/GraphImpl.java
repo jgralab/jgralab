@@ -259,7 +259,7 @@ public abstract class GraphImpl implements Graph {
 		if (!o.isValidOmega(e)) {
 			throw new GraphException("Edges of class "
 					+ e.getAttributedElementClass().getQualifiedName()
-					+ " may not end at at vertices of class "
+					+ " may not end at vertices of class "
 					+ o.getAttributedElementClass().getQualifiedName());
 		}
 

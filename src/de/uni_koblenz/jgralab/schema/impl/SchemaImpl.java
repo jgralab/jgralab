@@ -380,6 +380,8 @@ public class SchemaImpl implements Schema {
 		AttributedElementCodeGenerator codeGenerator = null;
 		for (GraphElementClass graphElementClass : graphClass
 				.getGraphElementClasses()) {
+			System.out.println("Code for "
+					+ graphElementClass.getQualifiedName());
 			if (graphElementClass instanceof VertexClass) {
 				codeGenerator = new VertexCodeGenerator(
 						(VertexClass) graphElementClass, packagePrefix,
@@ -421,9 +423,8 @@ public class SchemaImpl implements Schema {
 						(RecordDomain) domain, packagePrefix,
 						GRAPH_IMPLEMENTATION_PACKAGE, true);
 				javaSources.addAll(rcode.createJavaSources());
-				rcode = new RecordCodeGenerator(
-						(RecordDomain) domain, packagePrefix,
-						GRAPH_IMPLEMENTATION_PACKAGE, false);
+				rcode = new RecordCodeGenerator((RecordDomain) domain,
+						packagePrefix, GRAPH_IMPLEMENTATION_PACKAGE, false);
 				javaSources.addAll(rcode.createJavaSources());
 			} else if (domain instanceof EnumDomain) {
 				CodeGenerator ecode = new EnumCodeGenerator(
@@ -537,9 +538,8 @@ public class SchemaImpl implements Schema {
 						(RecordDomain) domain, packagePrefix,
 						GRAPH_IMPLEMENTATION_PACKAGE, true);
 				rcode.createFiles(pathPrefix);
-				rcode = new RecordCodeGenerator(
-						(RecordDomain) domain, packagePrefix,
-						GRAPH_IMPLEMENTATION_PACKAGE, false);
+				rcode = new RecordCodeGenerator((RecordDomain) domain,
+						packagePrefix, GRAPH_IMPLEMENTATION_PACKAGE, false);
 				rcode.createFiles(pathPrefix);
 			} else if (domain instanceof EnumDomain) {
 				CodeGenerator ecode = new EnumCodeGenerator(
