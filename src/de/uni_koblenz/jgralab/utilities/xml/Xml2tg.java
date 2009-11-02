@@ -154,7 +154,7 @@ public class Xml2tg {
 		}
 
 		Schema currentSchema = GraphIO.loadSchemaFromFile(schemaFilename);
-		currentSchema.compile();
+
 		Xml2tg xml2tg = null;
 		for (String inputXML : cmdl.getArgs()) {
 			if (xml2tg == null) {
