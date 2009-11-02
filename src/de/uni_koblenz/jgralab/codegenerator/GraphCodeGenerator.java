@@ -218,9 +218,9 @@ public class GraphCodeGenerator extends AttributedElementCodeGenerator {
 						+ ");");
 				cs.add("");
 			}
-			cs.add("");
+			//cs.add("");
 		}
-		code.add(cs);
+		code.addNoIndent(cs);
 		return code;
 	}
 
