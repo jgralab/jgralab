@@ -4404,6 +4404,10 @@ public class ConflictDetectionTest {
 			t2.commit();
 			assertTrue(true);
 		} catch (CommitFailedException e) {
+			System.out.println("\n- changeSetWithoutSetterNoConflict1 -");
+			System.out.println("\n- This should not have happened. -");
+			System.out.println("##########################");
+			System.out.println(e.getMessage());
 			fail();
 		}
 	}
@@ -4459,6 +4463,7 @@ public class ConflictDetectionTest {
 			list.add(motorwayMap.createTestRecord("Test2", motorwayMap
 					.createList(String.class), motorwayMap
 					.createSet(String.class), 3, 3, 3, true));
+			assertEquals(2, list.size());
 			city.set_testList(list);
 			readWriteTransaction1.commit();
 
@@ -4467,19 +4472,34 @@ public class ConflictDetectionTest {
 			TestRecord test2 = motorwayMap.createTestRecord("Test3", motorwayMap
 					.createList(String.class), motorwayMap
 					.createSet(String.class), 3, 3, 3, true);
-			city.get_testList().add(test2);
+			List<TestRecord> t1List = city.get_testList();
+			assertEquals(2, t1List.size());
+			t1List.add(test2);
+			t1List = city.get_testList();
+			assertEquals(3, t1List.size());
+			
 			Transaction t2 = motorwayMap.newTransaction();
 			motorwayMap.setCurrentTransaction(t2);
 			TestRecord test3 = motorwayMap.createTestRecord("Test3", motorwayMap
 					.createList(String.class), motorwayMap
 					.createSet(String.class), 3, 3, 3, true);
-			city.get_testList().add(test3);
+			List<TestRecord> t2List = city.get_testList();
+			assertEquals(2, t2List.size());
+			t2List.add(test3);
+			t2List = city.get_testList();
+			assertEquals(3, t2List.size());
+			
 			motorwayMap.setCurrentTransaction(t1);
 			t1.commit();
+			
 			motorwayMap.setCurrentTransaction(t2);
 			t2.commit();
 			assertTrue(true);
 		} catch (CommitFailedException e) {
+			System.out.println("\n- changeListWithoutSetterNoConflict1 -");
+			System.out.println("\n- This should not have happened. -");
+			System.out.println("##########################");
+			System.out.println(e.getMessage());
 			fail();
 		}
 	}

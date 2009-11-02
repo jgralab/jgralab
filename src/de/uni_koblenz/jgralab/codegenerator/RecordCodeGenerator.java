@@ -97,25 +97,63 @@ public class RecordCodeGenerator extends CodeGenerator {
 		if (createClass && transactionSupport) {
 			code.addNoIndent(new CodeSnippet(true,
 					"public boolean equals(Object o) {"));
-			//code.add(new CodeSnippet("\tif(this == o)"));
-			//code.add(new CodeSnippet("\t\treturn true;"));
+			// code.add(new CodeSnippet("\tif(this == o)"));
+			// code.add(new CodeSnippet("\t\treturn true;"));
+			code
+					.add(new CodeSnippet(
+							"#simpleImplClassName# record = (#simpleImplClassName#) o;"));
 			for (Entry<String, Domain> entry : recordDomain.getComponents()
 					.entrySet()) {
-				String name = entry.getKey();
-				code
-						.add(new CodeSnippet(
-								"\tif (!(_"
-										+ name
-										+ ".getTemporaryValue(graph.getCurrentTransaction()) == null && _"
-										+ name
-										+ ".getLatestPersistentValue() == null) && _"
-										+ name
-										+ ".getTemporaryValue(graph.getCurrentTransaction()) != null && !_"
-										+ name
-										+ ".getTemporaryValue(graph.getCurrentTransaction()).equals(_"
-										+ name
-										+ ".getLatestPersistentValue()))"));
-				code.add(new CodeSnippet("\t\treturn false;"));
+				CodeSnippet codeSnippet = new CodeSnippet(true);
+				codeSnippet.add("\t#comptype# this_#name# = null;");
+				codeSnippet
+						.add("\tif(_#name#.hasTemporaryValue(graph.getCurrentTransaction()))");
+				codeSnippet
+						.add("\t\tthis_#name# = _#name#.getTemporaryValue(graph.getCurrentTransaction());");
+				codeSnippet.add("\telse");
+				codeSnippet
+						.add("\t\tthis_#name# = _#name#.getLatestPersistentValue();");
+				codeSnippet
+						.add("\t#comptype# that_#name# = record._#name#.getLatestPersistentValue();");
+				codeSnippet
+						.add("\tif (!(this_#name# == null && that_#name# == null) && this_#name# != null "
+								+ "&& !this_#name#.equals(that_#name#))");
+				codeSnippet.add("\t\treturn false;");
+				// code.add(new CodeSnippet("\t#comptype# this_#name# =
+				// null;"));
+				// code
+				// .add(new CodeSnippet(
+				// "\tif(_#name#.hasTemporaryValue(graph.getCurrentTransaction()))"));
+				// code
+				// .add(new CodeSnippet(
+				// "\t\tthis_#name# =
+				// _#name#.getTemporaryValue(graph.getCurrentTransaction());"));
+				// code.add(new CodeSnippet("\telse"));
+				// code
+				// .add(new CodeSnippet(
+				// "\t\tthis_#name# = _#name#.getLatestPersistentValue();"));
+				// code
+				// .add(new CodeSnippet(
+				// "\tif (!(this_#name# == null &&
+				// record._#name#.getLatestPersistentValue() == null) &&
+				// this_#name# != null "
+				// + "&&
+				// !this_#name#.equals(record._#name#.getLatestPersistentValue()))"));
+				/*
+				 * code .add(new CodeSnippet( "\tif (!(_" + name +
+				 * ".getTemporaryValue(graph.getCurrentTransaction()) == null && _" +
+				 * name + ".getLatestPersistentValue() == null) && _" + name +
+				 * ".getTemporaryValue(graph.getCurrentTransaction()) != null &&
+				 * !_" + name +
+				 * ".getTemporaryValue(graph.getCurrentTransaction()).equals(_" +
+				 * name + ".getLatestPersistentValue()))"));
+				 */
+				// code.add(new CodeSnippet("\t\treturn false;"));
+				code.add(codeSnippet);
+				codeSnippet.setVariable("comptype", entry.getValue()
+						.getTransactionJavaAttributeImplementationTypeName(
+								schemaRootPackageName));
+				codeSnippet.setVariable("name", entry.getKey());
 			}
 			code.add(new CodeSnippet("\treturn true;"));
 			code.add(new CodeSnippet("}"));
@@ -662,6 +700,7 @@ public class RecordCodeGenerator extends CodeGenerator {
 			}
 			code.addNoIndent(new CodeSnippet("public Object clone() {"));
 			StringBuilder constructorFields = new StringBuilder();
+			StringBuilder versionedComponents = new StringBuilder();
 			int count = 0;
 			int size = recordDomain.getComponents().entrySet().size();
 			// TODO use construct in separate code!!!
@@ -684,10 +723,17 @@ public class RecordCodeGenerator extends CodeGenerator {
 				if ((count + 1) != size) {
 					constructorFields.append(", ");
 				}
+				// TODO maybe this is not necessary or even leads to unexpected behaviour?
+				versionedComponents.append("record._" + rdc.getKey() + " =_"
+						+ rdc.getKey() + ";");
 				count++;
 			}
-			code.add(new CodeSnippet("return new #simpleImplClassName#(graph, "
-					+ constructorFields.toString() + ");"));
+			code.add(new CodeSnippet(
+					"#simpleImplClassName# record = new #simpleImplClassName#(graph, "
+							+ constructorFields.toString() + ");"));
+			// TODO maybe this is not necessary or even leads to unexpected behaviour?
+			code.add(new CodeSnippet(true, versionedComponents.toString()));
+			code.add(new CodeSnippet("return record;"));
 			/*
 			 * code .add(new CodeSnippet("#simpleImplClassName# clone = new
 			 * #simpleImplClassName#(" + constructorFields.toString() + ");"));
