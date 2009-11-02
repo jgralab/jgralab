@@ -283,15 +283,16 @@ public class JGraLabList<E> extends ArrayList<E> implements JGraLabCloneable {
 	@Override
 	// TODO conflict ensureCapacity and cloning
 	public void ensureCapacity(int minCapacity) {
-		/*if (versionedList == null) {
-			throw new GraphException("Versioning is not working for this list.");
-			// internalEnsureCapacity(minCapacity);
-		} else {
-			// versionedList.setValidValue(this, graph.getCurrentTransaction());
-			//hasTemporaryVersionCheck();
-			versionedList.getValidValue(graph.getCurrentTransaction())
-					.internalEnsureCapacity(minCapacity);
-		}*/
+		/*
+		 * if (versionedList == null) { throw new GraphException("Versioning is
+		 * not working for this list."); // internalEnsureCapacity(minCapacity); }
+		 * else { // versionedList.setValidValue(this,
+		 * graph.getCurrentTransaction()); //hasTemporaryVersionCheck();
+		 * versionedList.getValidValue(graph.getCurrentTransaction())
+		 * .internalEnsureCapacity(minCapacity); }
+		 */
+		throw new GraphException(
+				"The operation \"ensureCapacity\" of List is not supported within transactions.");
 	}
 
 	/**
@@ -299,9 +300,10 @@ public class JGraLabList<E> extends ArrayList<E> implements JGraLabCloneable {
 	 * @param minCapacity
 	 */
 	// TODO conflict ensureCapacity and cloning
-	/*private void internalEnsureCapacity(int minCapacity) {
-		super.ensureCapacity(minCapacity);
-	}*/
+	/*
+	 * private void internalEnsureCapacity(int minCapacity) {
+	 * super.ensureCapacity(minCapacity); }
+	 */
 
 	@SuppressWarnings("unchecked")
 	@Override
@@ -314,7 +316,7 @@ public class JGraLabList<E> extends ArrayList<E> implements JGraLabCloneable {
 		if (internalSize() != list.internalSize())
 			return false;
 		for (int i = 0; i < internalSize(); i++) {
-			if (!this.get(i).equals(list.get(i)))
+			if (!this.internalGet(i).equals(list.internalGet(i)))
 				return false;
 		}
 		return true;
