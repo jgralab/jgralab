@@ -74,6 +74,10 @@ public class GraphTest extends InstanceTest {
 		commit(g1);
 	}
 
+	/**
+	 * 
+	 * @return
+	 */
 	private VertexTestGraph createNewGraph() {
 		return transactionsEnabled ? VertexTestSchema.instance()
 				.createVertexTestGraphWithTransactionSupport()

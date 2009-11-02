@@ -21,17 +21,12 @@ import de.uni_koblenz.jgralab.trans.TransactionState;
  * 
  * @param <E>
  * 
- * TODO if E is a mutable reference type elements of List are hard to version
- * too?! (same for JGraLabSet and JGraLabMap) maybe just return a copy in getter
- * for attributes of type List, Set and Map and only allow updating these
- * attributes by using the corresponding setters?!
- * 
  * TODO maybe add check to addAll-methods?
  */
 public class JGraLabList<E> extends ArrayList<E> implements JGraLabCloneable {
 	private static final long serialVersionUID = -1881528493844357904L;
 	private VersionedJGraLabCloneableImpl<JGraLabList<E>> versionedList;
-	// TODO maybe use AttributedElement instead
+	
 	private Graph graph;
 	private String name;
 
@@ -41,8 +36,6 @@ public class JGraLabList<E> extends ArrayList<E> implements JGraLabCloneable {
 	/* protected */public JGraLabList(Graph g) {
 		super();
 		init(g);
-		// versionedList = null;
-		// graph = null;
 	}
 
 	/**
@@ -53,8 +46,6 @@ public class JGraLabList<E> extends ArrayList<E> implements JGraLabCloneable {
 	/* protected */public JGraLabList(Graph g, int initialSize) {
 		super(initialSize);
 		init(g);
-		// versionedList = null;
-		// graph = null;
 	}
 
 	@SuppressWarnings("unchecked")
@@ -62,20 +53,14 @@ public class JGraLabList<E> extends ArrayList<E> implements JGraLabCloneable {
 			Collection<? extends E> collection) {
 		super(collection);
 		init(g);
-		// versionedList = null;
-		// graph = null;
 	}
 
 	public JGraLabList(Collection<E> collection) {
 		super(collection);
-		// versionedList = null;
-		// graph = null;
 	}
 
 	public JGraLabList() {
 		super();
-		// versionedList = null;
-		// graph = null;
 	}
 
 	public void init(Graph g) {
@@ -91,7 +76,6 @@ public class JGraLabList<E> extends ArrayList<E> implements JGraLabCloneable {
 			versionedList = new VersionedJGraLabCloneableImpl<JGraLabList<E>>(
 					g, this);
 		if (versionedList == null)
-			// TODO this or no this?
 			versionedList = new VersionedJGraLabCloneableImpl<JGraLabList<E>>(g);
 		versionedList.setValidValue(this, g.getCurrentTransaction());
 	}
@@ -706,11 +690,9 @@ public class JGraLabList<E> extends ArrayList<E> implements JGraLabCloneable {
 		jgralabList.setVersionedList(versionedList);
 		for (E element : toBeCloned) {
 			if (element instanceof JGraLabCloneable && element != null) {
-				// TODO internal or normal add?
 				element = (E) ((JGraLabCloneable) element).clone();
 				jgralabList.internalAdd(element);
 			} else {
-				// TODO internal or normal add?
 				jgralabList.internalAdd(element);
 			}
 		}

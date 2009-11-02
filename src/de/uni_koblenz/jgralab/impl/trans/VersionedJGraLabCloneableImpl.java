@@ -1,6 +1,6 @@
 package de.uni_koblenz.jgralab.impl.trans;
 
-import de.uni_koblenz.jgralab.AttributedElement; //import de.uni_koblenz.jgralab.Graph;
+import de.uni_koblenz.jgralab.AttributedElement;
 import de.uni_koblenz.jgralab.trans.JGraLabCloneable;
 
 /**
@@ -38,18 +38,6 @@ public class VersionedJGraLabCloneableImpl<E extends JGraLabCloneable> extends
 			E initialPersistentValue) {
 		super(attributedElement, initialPersistentValue);
 	}
-	
-	/**
-	 * 
-	 * @param graph
-	 * @param initialPersistentValue
-	 * 
-	 * TODO this constructor leads to conflict together with the constructor below
-	 */
-	/*public VersionedJGraLabCloneableImpl(
-			E initialPersistentValue) {
-		super(null, initialPersistentValue);
-	}*/
 
 	/**
 	 * 

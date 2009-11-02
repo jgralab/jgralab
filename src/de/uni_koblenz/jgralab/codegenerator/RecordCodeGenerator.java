@@ -147,36 +147,6 @@ public class RecordCodeGenerator extends CodeGenerator {
 						.add("\tif (!(this_#name# == null && that_#name# == null) && this_#name# != null "
 								+ "&& !this_#name#.equals(that_#name#))");
 				codeSnippet.add("\t\treturn false;");
-				// code.add(new CodeSnippet("\t#comptype# this_#name# =
-				// null;"));
-				// code
-				// .add(new CodeSnippet(
-				// "\tif(_#name#.hasTemporaryValue(graph.getCurrentTransaction()))"));
-				// code
-				// .add(new CodeSnippet(
-				// "\t\tthis_#name# =
-				// _#name#.getTemporaryValue(graph.getCurrentTransaction());"));
-				// code.add(new CodeSnippet("\telse"));
-				// code
-				// .add(new CodeSnippet(
-				// "\t\tthis_#name# = _#name#.getLatestPersistentValue();"));
-				// code
-				// .add(new CodeSnippet(
-				// "\tif (!(this_#name# == null &&
-				// record._#name#.getLatestPersistentValue() == null) &&
-				// this_#name# != null "
-				// + "&&
-				// !this_#name#.equals(record._#name#.getLatestPersistentValue()))"));
-				/*
-				 * code .add(new CodeSnippet( "\tif (!(_" + name +
-				 * ".getTemporaryValue(graph.getCurrentTransaction()) == null && _" +
-				 * name + ".getLatestPersistentValue() == null) && _" + name +
-				 * ".getTemporaryValue(graph.getCurrentTransaction()) != null &&
-				 * !_" + name +
-				 * ".getTemporaryValue(graph.getCurrentTransaction()).equals(_" +
-				 * name + ".getLatestPersistentValue()))"));
-				 */
-				// code.add(new CodeSnippet("\t\treturn false;"));
 				code.addNoIndent(codeSnippet);
 				codeSnippet.setVariable("comptype", entry.getValue()
 						.getTransactionJavaAttributeImplementationTypeName(
@@ -285,9 +255,9 @@ public class RecordCodeGenerator extends CodeGenerator {
 				getterCode.setVariable("ctype", rdc.getValue()
 						.getJavaAttributeImplementationTypeName(
 								schemaRootPackageName));
-			if (rdc.getValue().isComposite()) {
+			/*if (rdc.getValue().isComposite()) {
 				getterCode.add("@SuppressWarnings(\"unchecked\")");
-			}
+			}*/
 			if (!createClass) {
 				// abstract class (or better use interface?)
 				getterCode.add("public abstract #type# #isOrGet#_#name#();");
@@ -612,7 +582,7 @@ public class RecordCodeGenerator extends CodeGenerator {
 				if (dom.isComposite() || dom instanceof EnumDomain
 						|| dom instanceof StringDomain) {
 					CodeSnippet s = new CodeSnippet(true,
-							"protected #type# _#field#;");
+							"private #type# _#field#;");
 					s.setVariable("field", rdc.getKey());
 					s.setVariable("type", fieldType);
 					code.addNoIndent(s);
@@ -621,7 +591,7 @@ public class RecordCodeGenerator extends CodeGenerator {
 					// "protected #type# _#field# =
 					// #ntype#.valueOf(#initValue#);");
 					CodeSnippet s = new CodeSnippet(true,
-							"protected #type# _#field#;");
+							"private #type# _#field#;");
 					// TODO check if it works
 					// fieldType = dom.getJavaClassName(schemaRootPackageName);
 					s.setVariable("field", rdc.getKey());

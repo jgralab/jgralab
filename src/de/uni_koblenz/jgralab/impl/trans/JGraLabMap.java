@@ -92,7 +92,6 @@ public class JGraLabMap<K, V> extends HashMap<K, V> implements JGraLabCloneable 
 			versionedMap = new VersionedJGraLabCloneableImpl<JGraLabMap<K, V>>(
 					g, this);
 		if (versionedMap == null)
-			// TODO this or graph
 			versionedMap = new VersionedJGraLabCloneableImpl<JGraLabMap<K, V>>(
 					graph);
 		versionedMap.setValidValue(this, g.getCurrentTransaction());
@@ -377,7 +376,6 @@ public class JGraLabMap<K, V> extends HashMap<K, V> implements JGraLabCloneable 
 					.getCurrentTransaction());
 		JGraLabMap<K, V> jgralabMap = new JGraLabMap<K, V>();
 		jgralabMap.setVersionedMap(versionedMap);
-		// TODO internal or normal add?
 		for (Entry<K, V> entry : toBeCloned.entrySet()) {
 			K newKey = entry.getKey();
 			V newValue = entry.getValue();
@@ -385,7 +383,6 @@ public class JGraLabMap<K, V> extends HashMap<K, V> implements JGraLabCloneable 
 				newKey = (K) ((JGraLabCloneable) newKey).clone();
 			if (newValue instanceof JGraLabCloneable && newValue != null)
 				newValue = (V) ((JGraLabCloneable) newValue).clone();
-			// TODO internal or normal add?
 			jgralabMap.internalPut(newKey, newValue);
 		}
 		return jgralabMap;

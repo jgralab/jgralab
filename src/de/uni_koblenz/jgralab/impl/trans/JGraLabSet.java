@@ -40,13 +40,6 @@ public class JGraLabSet<E> extends HashSet<E> implements JGraLabCloneable {
 
 	/**
 	 * 
-	 */
-	/*
-	 * public JGraLabSet(Set<E> set) { super(set); }
-	 */
-
-	/**
-	 * 
 	 * @param initialSize
 	 */
 	/* protected */public JGraLabSet(int initialSize) {
@@ -62,21 +55,41 @@ public class JGraLabSet<E> extends HashSet<E> implements JGraLabCloneable {
 		super(initialSize, loadFactor);
 	}
 
+	/**
+	 * 
+	 * @param g
+	 */
 	public JGraLabSet(Graph g) {
 		super();
 		init(g);
 	}
 
+	/**
+	 * 
+	 * @param g
+	 * @param collection
+	 */
 	public JGraLabSet(Graph g, Collection<? extends E> collection) {
 		super(collection);
 		init(g);
 	}
 
+	/**
+	 * 
+	 * @param g
+	 * @param initialCapacity
+	 */
 	public JGraLabSet(Graph g, int initialCapacity) {
 		super(initialCapacity);
 		init(g);
 	}
 
+	/**
+	 * 
+	 * @param g
+	 * @param initialCapacity
+	 * @param loadFactor
+	 */
 	public JGraLabSet(Graph g, int initialCapacity, float loadFactor) {
 		super(initialCapacity, loadFactor);
 		init(g);
@@ -104,7 +117,6 @@ public class JGraLabSet<E> extends HashSet<E> implements JGraLabCloneable {
 			versionedSet = new VersionedJGraLabCloneableImpl<JGraLabSet<E>>(g,
 					this);
 		if (versionedSet == null)
-			// TODO this or graph
 			versionedSet = new VersionedJGraLabCloneableImpl<JGraLabSet<E>>(
 					graph);
 		versionedSet.setValidValue(this, g.getCurrentTransaction());
@@ -389,11 +401,9 @@ public class JGraLabSet<E> extends HashSet<E> implements JGraLabCloneable {
 		jgralabSet.setVersionedSet(versionedSet);
 		for (E element : toBeCloned) {
 			if (element instanceof JGraLabCloneable && element != null)
-				// TODO internal or normal add?
 				jgralabSet
 						.internalAdd((E) ((JGraLabCloneable) element).clone());
 			else
-				// TODO internal or normal add?
 				jgralabSet.internalAdd(element);
 		}
 		return jgralabSet;
@@ -406,7 +416,7 @@ public class JGraLabSet<E> extends HashSet<E> implements JGraLabCloneable {
 
 	@SuppressWarnings("unchecked")
 	public boolean equals(Object o) {
-		if(!(o instanceof JGraLabSet))
+		if (!(o instanceof JGraLabSet))
 			return false;
 		JGraLabSet<E> set = (JGraLabSet<E>) o;
 		if (set == this)
