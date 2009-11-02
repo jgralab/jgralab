@@ -954,7 +954,7 @@ public class ValidationComponent {
 						&& (transaction.addedEdges == null || !transaction.addedEdges
 								.contains(edge))) {
 					conflictReason = "Changes made to edge " + edge
-							+ "can't be committed, because " + edge
+							+ " can't be committed, because " + edge
 							+ " doesn't exist anymore";
 					return true;
 				}

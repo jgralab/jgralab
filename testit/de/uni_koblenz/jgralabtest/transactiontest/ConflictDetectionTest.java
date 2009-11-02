@@ -4659,6 +4659,218 @@ public class ConflictDetectionTest {
 	}
 	
 	@Test
+	public void changeRecordWithoutSetterConflict2() {
+		try {
+			motorwayMap.setCurrentTransaction(readWriteTransaction1);
+			City city = motorwayMap.getFirstCity();
+			TestRecord record = motorwayMap.createTestRecord("Test1", motorwayMap
+					.createList(String.class), motorwayMap
+					.createSet(String.class), 3, 3, 3, true);
+			city.set_testRecord(record);
+			readWriteTransaction1.commit();
+
+			Transaction t1 = motorwayMap.newTransaction();
+			motorwayMap.setCurrentTransaction(t1);
+			TestRecord t1_record = city.get_testRecord();
+			List<String> list1 = motorwayMap.createList(String.class);
+			list1.add("Entry1");
+			t1_record.set_c2(list1);
+
+			Transaction t2 = motorwayMap.newTransaction();
+			motorwayMap.setCurrentTransaction(t2);
+			TestRecord t2_record = city.get_testRecord();
+			List<String> list2 = motorwayMap.createList(String.class);
+			list2.add("Entry2");
+			t2_record.set_c2(list2);
+
+			motorwayMap.setCurrentTransaction(t1);
+			t1.commit();
+			motorwayMap.setCurrentTransaction(t2);
+			t2.commit();
+			fail();
+		} catch (CommitFailedException e) {
+			System.out.println("\n- changeRecordWithoutSetterConflict2 -");
+			System.out.println("##########################");
+			System.out.println(e.getMessage());
+			assertTrue(true);
+		}
+	}
+	
+	@Test
+	public void changeRecordWithoutSetterConflict3() {
+		try {
+			motorwayMap.setCurrentTransaction(readWriteTransaction1);
+			City city = motorwayMap.getFirstCity();
+			TestRecord record = motorwayMap.createTestRecord("Test1", motorwayMap
+					.createList(String.class), motorwayMap
+					.createSet(String.class), 3, 3, 3, true);
+			city.set_testRecord(record);
+			readWriteTransaction1.commit();
+
+			Transaction t1 = motorwayMap.newTransaction();
+			motorwayMap.setCurrentTransaction(t1);
+			TestRecord t1_record = city.get_testRecord();
+			Set<String> set1 = motorwayMap.createSet(String.class);
+			set1.add("Entry1");
+			t1_record.set_c4(set1);
+
+			Transaction t2 = motorwayMap.newTransaction();
+			motorwayMap.setCurrentTransaction(t2);
+			TestRecord t2_record = city.get_testRecord();
+			Set<String> set2 = motorwayMap.createSet(String.class);
+			set2.add("Entry2");
+			t2_record.set_c4(set2);
+
+			motorwayMap.setCurrentTransaction(t1);
+			t1.commit();
+			motorwayMap.setCurrentTransaction(t2);
+			t2.commit();
+			fail();
+		} catch (CommitFailedException e) {
+			System.out.println("\n- changeRecordWithoutSetterConflict3 -");
+			System.out.println("##########################");
+			System.out.println(e.getMessage());
+			assertTrue(true);
+		}
+	}
+	
+	@Test
+	public void changeRecordWithoutSetterConflict4() {
+		try {
+			motorwayMap.setCurrentTransaction(readWriteTransaction1);
+			City city = motorwayMap.getFirstCity();
+			TestRecord record = motorwayMap.createTestRecord("Test1", motorwayMap
+					.createList(String.class), motorwayMap
+					.createSet(String.class), 3, 3, 3, true);
+			city.set_testRecord(record);
+			readWriteTransaction1.commit();
+
+			Transaction t1 = motorwayMap.newTransaction();
+			motorwayMap.setCurrentTransaction(t1);
+			TestRecord t1_record = city.get_testRecord();;
+			t1_record.set_c6(1);
+
+			Transaction t2 = motorwayMap.newTransaction();
+			motorwayMap.setCurrentTransaction(t2);
+			TestRecord t2_record = city.get_testRecord();
+			t2_record.set_c6(2);
+
+			motorwayMap.setCurrentTransaction(t1);
+			t1.commit();
+			motorwayMap.setCurrentTransaction(t2);
+			t2.commit();
+			fail();
+		} catch (CommitFailedException e) {
+			System.out.println("\n- changeRecordWithoutSetterConflict4 -");
+			System.out.println("##########################");
+			System.out.println(e.getMessage());
+			assertTrue(true);
+		}
+	}
+	
+	@Test
+	public void changeRecordWithoutSetterConflict5() {
+		try {
+			motorwayMap.setCurrentTransaction(readWriteTransaction1);
+			City city = motorwayMap.getFirstCity();
+			TestRecord record = motorwayMap.createTestRecord("Test1", motorwayMap
+					.createList(String.class), motorwayMap
+					.createSet(String.class), 3, 3, 3, true);
+			city.set_testRecord(record);
+			readWriteTransaction1.commit();
+
+			Transaction t1 = motorwayMap.newTransaction();
+			motorwayMap.setCurrentTransaction(t1);
+			TestRecord t1_record = city.get_testRecord();;
+			t1_record.set_c7(1);
+
+			Transaction t2 = motorwayMap.newTransaction();
+			motorwayMap.setCurrentTransaction(t2);
+			TestRecord t2_record = city.get_testRecord();
+			t2_record.set_c7(2);
+
+			motorwayMap.setCurrentTransaction(t1);
+			t1.commit();
+			motorwayMap.setCurrentTransaction(t2);
+			t2.commit();
+			fail();
+		} catch (CommitFailedException e) {
+			System.out.println("\n- changeRecordWithoutSetterConflict5 -");
+			System.out.println("##########################");
+			System.out.println(e.getMessage());
+			assertTrue(true);
+		}
+	}
+	
+	@Test
+	public void changeRecordWithoutSetterConflict6() {
+		try {
+			motorwayMap.setCurrentTransaction(readWriteTransaction1);
+			City city = motorwayMap.getFirstCity();
+			TestRecord record = motorwayMap.createTestRecord("Test1", motorwayMap
+					.createList(String.class), motorwayMap
+					.createSet(String.class), 3, 3, 3, true);
+			city.set_testRecord(record);
+			readWriteTransaction1.commit();
+
+			Transaction t1 = motorwayMap.newTransaction();
+			motorwayMap.setCurrentTransaction(t1);
+			TestRecord t1_record = city.get_testRecord();;
+			t1_record.set_c8(1);
+
+			Transaction t2 = motorwayMap.newTransaction();
+			motorwayMap.setCurrentTransaction(t2);
+			TestRecord t2_record = city.get_testRecord();
+			t2_record.set_c8(2);
+
+			motorwayMap.setCurrentTransaction(t1);
+			t1.commit();
+			motorwayMap.setCurrentTransaction(t2);
+			t2.commit();
+			fail();
+		} catch (CommitFailedException e) {
+			System.out.println("\n- changeRecordWithoutSetterConflict6 -");
+			System.out.println("##########################");
+			System.out.println(e.getMessage());
+			assertTrue(true);
+		}
+	}
+	
+	@Test
+	public void changeRecordWithoutSetterConflict7() {
+		try {
+			motorwayMap.setCurrentTransaction(readWriteTransaction1);
+			City city = motorwayMap.getFirstCity();
+			TestRecord record = motorwayMap.createTestRecord("Test1", motorwayMap
+					.createList(String.class), motorwayMap
+					.createSet(String.class), 3, 3, 3, true);
+			city.set_testRecord(record);
+			readWriteTransaction1.commit();
+
+			Transaction t1 = motorwayMap.newTransaction();
+			motorwayMap.setCurrentTransaction(t1);
+			TestRecord t1_record = city.get_testRecord();;
+			t1_record.set_c9(true);
+
+			Transaction t2 = motorwayMap.newTransaction();
+			motorwayMap.setCurrentTransaction(t2);
+			TestRecord t2_record = city.get_testRecord();
+			t2_record.set_c9(false);
+
+			motorwayMap.setCurrentTransaction(t1);
+			t1.commit();
+			motorwayMap.setCurrentTransaction(t2);
+			t2.commit();
+			fail();
+		} catch (CommitFailedException e) {
+			System.out.println("\n- changeRecordWithoutSetterConflict7 -");
+			System.out.println("##########################");
+			System.out.println(e.getMessage());
+			assertTrue(true);
+		}
+	}
+	
+	@Test
 	public void changeRecordWithoutSetterNoConflict1() {
 		try {
 			motorwayMap.setCurrentTransaction(readWriteTransaction1);
@@ -4689,7 +4901,225 @@ public class ConflictDetectionTest {
 			System.out.println("\n- This should not have happened. -");
 			System.out.println("##########################");
 			System.out.println(e.getMessage());
+			fail();
+		}
+	}
+	
+	@Test
+	public void changeRecordWithoutSetterNoConflict2() {
+		try {
+			motorwayMap.setCurrentTransaction(readWriteTransaction1);
+			City city = motorwayMap.getFirstCity();
+			TestRecord record = motorwayMap.createTestRecord("Test1", motorwayMap
+					.createList(String.class), motorwayMap
+					.createSet(String.class), 3, 3, 3, true);
+			city.set_testRecord(record);
+			readWriteTransaction1.commit();
+
+			Transaction t1 = motorwayMap.newTransaction();
+			motorwayMap.setCurrentTransaction(t1);
+			TestRecord t1_record = city.get_testRecord();
+			List<String> list1 = motorwayMap.createList(String.class);
+			list1.add("Entry1");
+			t1_record.set_c2(list1);
+
+			Transaction t2 = motorwayMap.newTransaction();
+			motorwayMap.setCurrentTransaction(t2);
+			TestRecord t2_record = city.get_testRecord();
+			List<String> list2 = motorwayMap.createList(String.class);
+			list2.add("Entry1");
+			t2_record.set_c2(list2);
+
+			motorwayMap.setCurrentTransaction(t1);
+			t1.commit();
+			motorwayMap.setCurrentTransaction(t2);
+			t2.commit();
 			assertTrue(true);
+		} catch (CommitFailedException e) {
+			System.out.println("\n- changeRecordWithoutSetterConflict2 -");
+			System.out.println("\n- This should not have happened. -");
+			System.out.println("##########################");
+			System.out.println(e.getMessage());
+			fail();
+		}
+	}
+	
+	@Test
+	public void changeRecordWithoutSetterNoConflict3() {
+		try {
+			motorwayMap.setCurrentTransaction(readWriteTransaction1);
+			City city = motorwayMap.getFirstCity();
+			TestRecord record = motorwayMap.createTestRecord("Test1", motorwayMap
+					.createList(String.class), motorwayMap
+					.createSet(String.class), 3, 3, 3, true);
+			city.set_testRecord(record);
+			readWriteTransaction1.commit();
+
+			Transaction t1 = motorwayMap.newTransaction();
+			motorwayMap.setCurrentTransaction(t1);
+			TestRecord t1_record = city.get_testRecord();
+			Set<String> set1 = motorwayMap.createSet(String.class);
+			set1.add("Entry1");
+			t1_record.set_c4(set1);
+
+			Transaction t2 = motorwayMap.newTransaction();
+			motorwayMap.setCurrentTransaction(t2);
+			TestRecord t2_record = city.get_testRecord();
+			Set<String> set2 = motorwayMap.createSet(String.class);
+			set2.add("Entry1");
+			t2_record.set_c4(set2);
+
+			motorwayMap.setCurrentTransaction(t1);
+			t1.commit();
+			motorwayMap.setCurrentTransaction(t2);
+			t2.commit();
+			assertTrue(true);
+		} catch (CommitFailedException e) {
+			System.out.println("\n- changeRecordWithoutSetterNoConflict3 -");
+			System.out.println("\n- This should not have happened. -");
+			System.out.println("##########################");
+			System.out.println(e.getMessage());
+			fail();
+		}
+	}
+	
+	@Test
+	public void changeRecordWithoutSetterNoConflict4() {
+		try {
+			motorwayMap.setCurrentTransaction(readWriteTransaction1);
+			City city = motorwayMap.getFirstCity();
+			TestRecord record = motorwayMap.createTestRecord("Test1", motorwayMap
+					.createList(String.class), motorwayMap
+					.createSet(String.class), 3, 3, 3, true);
+			city.set_testRecord(record);
+			readWriteTransaction1.commit();
+
+			Transaction t1 = motorwayMap.newTransaction();
+			motorwayMap.setCurrentTransaction(t1);
+			TestRecord t1_record = city.get_testRecord();;
+			t1_record.set_c6(1);
+
+			Transaction t2 = motorwayMap.newTransaction();
+			motorwayMap.setCurrentTransaction(t2);
+			TestRecord t2_record = city.get_testRecord();
+			t2_record.set_c6(1);
+
+			motorwayMap.setCurrentTransaction(t1);
+			t1.commit();
+			motorwayMap.setCurrentTransaction(t2);
+			t2.commit();
+			assertTrue(true);
+		} catch (CommitFailedException e) {
+			System.out.println("\n- changeRecordWithoutSetterNoConflict4 -");
+			System.out.println("\n- This should not have happened. -");
+			System.out.println("##########################");
+			System.out.println(e.getMessage());
+			fail();
+		}
+	}
+	
+	@Test
+	public void changeRecordWithoutSetterNoConflict5() {
+		try {
+			motorwayMap.setCurrentTransaction(readWriteTransaction1);
+			City city = motorwayMap.getFirstCity();
+			TestRecord record = motorwayMap.createTestRecord("Test1", motorwayMap
+					.createList(String.class), motorwayMap
+					.createSet(String.class), 3, 3, 3, true);
+			city.set_testRecord(record);
+			readWriteTransaction1.commit();
+
+			Transaction t1 = motorwayMap.newTransaction();
+			motorwayMap.setCurrentTransaction(t1);
+			TestRecord t1_record = city.get_testRecord();;
+			t1_record.set_c7(1);
+
+			Transaction t2 = motorwayMap.newTransaction();
+			motorwayMap.setCurrentTransaction(t2);
+			TestRecord t2_record = city.get_testRecord();
+			t2_record.set_c7(1);
+
+			motorwayMap.setCurrentTransaction(t1);
+			t1.commit();
+			motorwayMap.setCurrentTransaction(t2);
+			t2.commit();
+			assertTrue(true);
+		} catch (CommitFailedException e) {
+			System.out.println("\n- changeRecordWithoutSetterConflict5 -");
+			System.out.println("\n- This should not have happened. -");
+			System.out.println("##########################");
+			System.out.println(e.getMessage());
+			fail();
+		}
+	}
+	
+	@Test
+	public void changeRecordWithoutSetterNoConflict6() {
+		try {
+			motorwayMap.setCurrentTransaction(readWriteTransaction1);
+			City city = motorwayMap.getFirstCity();
+			TestRecord record = motorwayMap.createTestRecord("Test1", motorwayMap
+					.createList(String.class), motorwayMap
+					.createSet(String.class), 3, 3, 3, true);
+			city.set_testRecord(record);
+			readWriteTransaction1.commit();
+
+			Transaction t1 = motorwayMap.newTransaction();
+			motorwayMap.setCurrentTransaction(t1);
+			TestRecord t1_record = city.get_testRecord();;
+			t1_record.set_c8(1);
+
+			Transaction t2 = motorwayMap.newTransaction();
+			motorwayMap.setCurrentTransaction(t2);
+			TestRecord t2_record = city.get_testRecord();
+			t2_record.set_c8(1);
+
+			motorwayMap.setCurrentTransaction(t1);
+			t1.commit();
+			motorwayMap.setCurrentTransaction(t2);
+			t2.commit();
+			assertTrue(true);
+		} catch (CommitFailedException e) {
+			System.out.println("\n- changeRecordWithoutSetterNoConflict6 -");
+			System.out.println("\n- This should not have happened. -");
+			System.out.println("##########################");
+			System.out.println(e.getMessage());
+			fail();
+		}
+	}
+	
+	@Test
+	public void changeRecordWithoutSetterNoConflict7() {
+		try {
+			motorwayMap.setCurrentTransaction(readWriteTransaction1);
+			City city = motorwayMap.getFirstCity();
+			TestRecord record = motorwayMap.createTestRecord("Test1", motorwayMap
+					.createList(String.class), motorwayMap
+					.createSet(String.class), 3, 3, 3, true);
+			city.set_testRecord(record);
+			readWriteTransaction1.commit();
+
+			Transaction t1 = motorwayMap.newTransaction();
+			motorwayMap.setCurrentTransaction(t1);
+			TestRecord t1_record = city.get_testRecord();;
+			t1_record.set_c9(true);
+
+			Transaction t2 = motorwayMap.newTransaction();
+			motorwayMap.setCurrentTransaction(t2);
+			TestRecord t2_record = city.get_testRecord();
+			t2_record.set_c9(true);
+
+			motorwayMap.setCurrentTransaction(t1);
+			t1.commit();
+			motorwayMap.setCurrentTransaction(t2);
+			t2.commit();
+			assertTrue(true);
+		} catch (CommitFailedException e) {
+			System.out.println("\n- changeRecordWithoutSetterNoConflict7 -");
+			System.out.println("\n- This should not have happened. -");
+			System.out.println("##########################");
+			System.out.println(e.getMessage());
+			fail();
 		}
 	}
 

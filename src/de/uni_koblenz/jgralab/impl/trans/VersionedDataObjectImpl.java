@@ -106,21 +106,6 @@ public abstract class VersionedDataObjectImpl<E> implements
 		// initialization - first and only persistent value for this data-object
 		persistentValue = initialPersistentValue;
 	}
-	
-	// TODO think about that
-	@SuppressWarnings("unchecked")
-	protected VersionedDataObjectImpl(VersionedDataObjectImpl<E> old) {
-		persistentVersionMap.putAll(old.persistentVersionMap);
-		persistentValue = old.persistentValue;
-		dataObjectPersistentVersionMap.putAll(VersionedDataObjectImpl.dataObjectPersistentVersionMap);
-		TransactionImpl trans = (TransactionImpl) getGraph().getCurrentTransaction();
-		Object oldValue = trans.temporaryValueMap.get(old);
-		trans.temporaryValueMap.remove(old);
-		trans.temporaryValueMap.put(this, oldValue);
-		oldValue = trans.temporaryVersionMap.get(old);
-		trans.temporaryVersionMap.remove(old);
-		trans.temporaryVersionMap.put(this, (SortedMap<Long, Object>) oldValue);
-	}
 
 	/**
 	 * 
