@@ -380,8 +380,7 @@ public class SchemaImpl implements Schema {
 		AttributedElementCodeGenerator codeGenerator = null;
 		for (GraphElementClass graphElementClass : graphClass
 				.getGraphElementClasses()) {
-			System.out.println("Code for "
-					+ graphElementClass.getQualifiedName());
+
 			if (graphElementClass instanceof VertexClass) {
 				codeGenerator = new VertexCodeGenerator(
 						(VertexClass) graphElementClass, packagePrefix,
