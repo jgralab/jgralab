@@ -368,8 +368,7 @@ public class ManualGreqlParser extends ManualParserHelper {
 			boolean ph = true;
 			do {
 				if (lookAhead(0) == TokenTypes.DOT) {
-					if (((lookAhead(0) == TokenTypes.IDENTIFIER) || isValidName(lookAhead(0)))
-							&& (isValidPackageName(getLookAheadValue(1)))) {
+					if (((lookAhead(1) == TokenTypes.IDENTIFIER) || isValidName(lookAhead(1)))	&& (isValidPackageName(getLookAheadValue(1)))) {
 						ph = true;
 						match(TokenTypes.DOT);
 						name.append(".");
