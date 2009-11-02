@@ -27,6 +27,7 @@ public class JGraLabMap<K, V> extends HashMap<K, V> implements JGraLabCloneable 
 	private static final long serialVersionUID = -9198046937053316052L;
 	private VersionedJGraLabCloneableImpl<JGraLabMap<K, V>> versionedMap;
 	private Graph graph;
+	private String name;
 
 	/**
 	 * 
@@ -246,18 +247,24 @@ public class JGraLabMap<K, V> extends HashMap<K, V> implements JGraLabCloneable 
 				&& !(key instanceof JGraLabCloneable))
 			throw new GraphException(
 					"The key added to this map does not support transactions.");
-		if (key instanceof JGraLabCloneable)
+		if (key instanceof JGraLabCloneable) {
 			if (((JGraLabCloneable) key).getGraph() != graph)
 				throw new GraphException(
 						"The key added to this map is from another graph.");
+			if (name != null)
+				((JGraLabCloneable) key).setName(name + "_keyentry");
+		}
 		if ((value instanceof Map || value instanceof List || value instanceof Set)
 				&& !(value instanceof JGraLabCloneable))
 			throw new GraphException(
 					"The value added to this map does not support transactions.");
-		if (value instanceof JGraLabCloneable)
+		if (value instanceof JGraLabCloneable) {
 			if (((JGraLabCloneable) key).getGraph() != graph)
 				throw new GraphException(
 						"The value added to this map is from another graph.");
+			if (name != null)
+				((JGraLabCloneable) value).setName(name + "_valueentry");
+		}
 		// versionedMap.setValidValue(this, graph.getCurrentTransaction());
 		hasTemporaryVersionCheck();
 		return versionedMap.getValidValue(graph.getCurrentTransaction())
@@ -405,5 +412,11 @@ public class JGraLabMap<K, V> extends HashMap<K, V> implements JGraLabCloneable 
 	@Override
 	public Graph getGraph() {
 		return graph;
+	}
+
+	@Override
+	public void setName(String name) {
+		this.name = name;
+		this.versionedMap.setName(name);
 	}
 }

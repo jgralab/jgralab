@@ -22,4 +22,6 @@ public interface JGraLabCloneable extends Cloneable {
 	 * @return a reference to the graph the object belongs to
 	 */
 	public Graph getGraph();
+	
+	public void setName(String name);
 }

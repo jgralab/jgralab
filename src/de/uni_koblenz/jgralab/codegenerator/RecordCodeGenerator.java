@@ -89,9 +89,37 @@ public class RecordCodeGenerator extends CodeGenerator {
 		code.add(createInitMethod(createClass));
 		code.add(createGetGraphMethod(createClass));
 		code.add(createEqualsMethod(createClass));
+		code.add(createSetNameMethod(createClass));
 		return code;
 	}
 
+	/**
+	 * 
+	 * @param createClass
+	 * @return
+	 */
+	private CodeBlock createSetNameMethod(boolean createClass) {
+		CodeList code = new CodeList();
+		if(createClass && transactionSupport) {
+			code.addNoIndent(new CodeSnippet(true, "public void setName(String name) {"));
+			code.add(new CodeSnippet("this.name = name;"));
+			for(Entry<String, Domain> entry : recordDomain.getComponents().entrySet()) {
+				CodeSnippet codeSnippet = new CodeSnippet();
+				codeSnippet.add("if(_#name# != null)");
+				codeSnippet.add("\t_#name#.setName(this.name + \"_#name#\");");
+				codeSnippet.setVariable("name", entry.getKey());
+				code.add(codeSnippet);
+			}
+			code.add(new CodeSnippet("}"));
+		}
+		return code;	
+	}
+
+	/**
+	 * 
+	 * @param createClass
+	 * @return
+	 */
 	private CodeBlock createEqualsMethod(boolean createClass) {
 		CodeList code = new CodeList();
 		if (createClass && transactionSupport) {
@@ -218,6 +246,7 @@ public class RecordCodeGenerator extends CodeGenerator {
 				// VersionedJGraLabCloneableImpl<#simpleImplClassName#>
 				// versionedRecord;");
 				code.add("\tprivate Graph graph;");
+				code.add("\tprivate String name;");
 
 			} else {
 				// addImports("#schemaImplStdPackage#.#simpleClassName#");
@@ -283,7 +312,10 @@ public class RecordCodeGenerator extends CodeGenerator {
 					// .add("\treturn
 					// versionedRecord.getValidValue(graph.getCurrentTransaction())._#name#.getValidValue(graph.getCurrentTransaction());");
 					getterCode
-							.add("\treturn _#name#.getValidValue(graph.getCurrentTransaction());");
+							.add("\t#ctype# value = _#name#.getValidValue(graph.getCurrentTransaction());");
+					if(rdc.getValue().isComposite())
+						getterCode.add("\tvalue.setName(name + \"_#name#\");");
+					getterCode.add("\treturn value;");
 					// }
 				}
 				getterCode.add("}");
@@ -396,6 +428,8 @@ public class RecordCodeGenerator extends CodeGenerator {
 									schemaRootPackageName) + "(graph);");
 					setterCode.add("\t\t this._#name#.setPartOfRecord(true);");
 					setterCode.add("\t}");
+					if(rdc.getValue().isComposite()) 
+						setterCode.add("\t((JGraLabCloneable)_#name#).setName(name + \"_#name#\");");
 					setterCode
 							.add("\tthis._#name#.setValidValue((#ctype#) _#name#, graph.getCurrentTransaction());");
 				}
