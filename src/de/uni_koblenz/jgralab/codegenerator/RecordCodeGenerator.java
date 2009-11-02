@@ -110,7 +110,7 @@ public class RecordCodeGenerator extends CodeGenerator {
 				codeSnippet.setVariable("name", entry.getKey());
 				code.add(codeSnippet);
 			}
-			code.add(new CodeSnippet("}"));
+			code.addNoIndent(new CodeSnippet("}"));
 		}
 		return code;	
 	}
@@ -177,7 +177,7 @@ public class RecordCodeGenerator extends CodeGenerator {
 				 * name + ".getLatestPersistentValue()))"));
 				 */
 				// code.add(new CodeSnippet("\t\treturn false;"));
-				code.add(codeSnippet);
+				code.addNoIndent(codeSnippet);
 				codeSnippet.setVariable("comptype", entry.getValue()
 						.getTransactionJavaAttributeImplementationTypeName(
 								schemaRootPackageName));
@@ -195,8 +195,8 @@ public class RecordCodeGenerator extends CodeGenerator {
 			code
 					.addNoIndent(new CodeSnippet(true,
 							"public Graph getGraph() {"));
-			code.add(new CodeSnippet("\treturn graph;"));
-			code.add(new CodeSnippet("}"));
+			code.add(new CodeSnippet("return graph;"));
+			code.addNoIndent(new CodeSnippet("}"));
 		}
 		return code;
 	}
@@ -206,20 +206,20 @@ public class RecordCodeGenerator extends CodeGenerator {
 		if (createClass && transactionSupport) {
 			code.addNoIndent(new CodeSnippet(true,
 					"private void init(Graph g) {"));
-			code.add(new CodeSnippet("\tif (g == null)"));
+			code.add(new CodeSnippet("if (g == null)"));
 			code
 					.add(new CodeSnippet(
-							"\t\tthrow new GraphException(\"Given graph cannot be null.\");"));
-			code.add(new CodeSnippet("\tif (!g.hasTransactionSupport())"));
+							"\tthrow new GraphException(\"Given graph cannot be null.\");"));
+			code.add(new CodeSnippet("if (!g.hasTransactionSupport())"));
 			code
 					.add(new CodeSnippet(
-							"\t\tthrow new GraphException("
+							"\tthrow new GraphException("
 									+ "\"An instance of "
 									+ recordDomain
 											.getTransactionJavaClassName(schemaRootPackageName)
 									+ " can only be created for graphs with transaction support.\");"));
 			code.add(new CodeSnippet("\tgraph = g;"));
-			code.add(new CodeSnippet("}"));
+			code.addNoIndent(new CodeSnippet("}"));
 		}
 		return code;
 	}
@@ -301,7 +301,7 @@ public class RecordCodeGenerator extends CodeGenerator {
 					 * Record.\");");
 					 */
 				} else
-					getterCode.add("\t\treturn _#name#;");
+					getterCode.add("\treturn _#name#;");
 				if (transactionSupport) {
 					// if (rdc.getValue().isComposite()) {
 					// getterCode
@@ -354,49 +354,9 @@ public class RecordCodeGenerator extends CodeGenerator {
 				setterCode.add("public abstract void #setter#;");
 			else {
 				setterCode.add("public void #setter# {");
+				if (!transactionSupport) 
+					setterCode.add("\tthis._#name# = (#ctype#) _#name#;");
 				if (transactionSupport) {
-					/*
-					 * setterCode.add("\tif(versionedRecord == null)");
-					 * setterCode .add("\t\tthrow new
-					 * GraphException(\"Versioning is not working for this
-					 * Record.\");");
-					 */
-				} else
-					setterCode.add("\t\tthis._#name# = (#ctype#) _#name#;");
-				if (transactionSupport) {
-					// if (rdc.getValue().isComposite())
-					// setterCode
-					// .add("\tversionedRecord.setValidValue(this,
-					// graph.getCurrentTransaction());");
-					// if (rdc.getValue().isComposite())
-					// setterCode
-					// .add("\tversionedRecord.getValidValue(graph.getCurrentTransaction())._#name#
-					// = new #ctype#(_#name#);");
-					// else
-					// setterCode
-					// .add("\tversionedRecord.getValidValue(graph.getCurrentTransaction())._#name#
-					// = (#ctype#) _#name#;");
-					/*
-					 * if (rdc.getValue() instanceof CollectionDomain ||
-					 * rdc.getValue() instanceof MapDomain) { // TODO
-					 * weitermachen setterCode .add("\t" + rdc .getValue()
-					 * .getTransactionJavaAttributeImplementationTypeName(
-					 * schemaRootPackageName) + " tmp_#name# = null;");
-					 * setterCode.add("\tif(!(_#name# instanceof " +
-					 * rdc.getValue().getTransactionJavaClassName(
-					 * schemaRootPackageName) + "))"); setterCode
-					 * .add("\t\ttmp_#name# = new " + rdc .getValue()
-					 * .getTransactionJavaAttributeImplementationTypeName(
-					 * schemaRootPackageName) + "(_#name#);");
-					 * setterCode.add("\telse"); setterCode .add("\t\ttmp_#name# = (" +
-					 * rdc .getValue()
-					 * .getTransactionJavaAttributeImplementationTypeName(
-					 * schemaRootPackageName) + ") _#name#;"); setterCode
-					 * .add("\tversionedRecord.getValidValue(graph.getCurrentTransaction())._#name#.setValidValue(tmp_#name#,
-					 * graph.getCurrentTransaction());"); } else setterCode
-					 * .add("\tversionedRecord.getValidValue(graph.getCurrentTransaction())._#name#.setValidValue(_#name#,
-					 * graph.getCurrentTransaction());");
-					 */
 					if (rdc.getValue().isComposite()) {
 						setterCode
 								.add("\tif(_#name# != null && !(_#name# instanceof "
@@ -749,17 +709,17 @@ public class RecordCodeGenerator extends CodeGenerator {
 													schemaRootPackageName)
 									+ ") _"
 									+ rdc.getKey()
-									+ ".getValidValue(graph.getCurrentTransaction()).clone()");
+									+ ".getValidValue(graph.getCurrentTransaction()).clone()\n\t\t");
 				} else {
 					constructorFields.append("_" + rdc.getKey()
-							+ ".getValidValue(graph.getCurrentTransaction())");
+							+ ".getValidValue(graph.getCurrentTransaction())\n\t\t");
 				}
 				if ((count + 1) != size) {
 					constructorFields.append(", ");
 				}
 				// TODO maybe this is not necessary or even leads to unexpected behaviour?
 				versionedComponents.append("record._" + rdc.getKey() + " =_"
-						+ rdc.getKey() + ";");
+						+ rdc.getKey() + ";\n\t\t");
 				count++;
 			}
 			code.add(new CodeSnippet(
