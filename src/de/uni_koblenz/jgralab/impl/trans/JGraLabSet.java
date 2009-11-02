@@ -13,7 +13,7 @@ import de.uni_koblenz.jgralab.trans.JGraLabCloneable;
 import de.uni_koblenz.jgralab.trans.TransactionState;
 
 /**
- * Own implementation class for attributes of type <code>java.util.Set<E></code> .
+ * Own implementation class for attributes of type <code>java.util.Set<E></code>.
  * 
  * @author Jose Monte(monte@uni-koblenz.de)
  * 
@@ -25,6 +25,7 @@ public class JGraLabSet<E> extends HashSet<E> implements JGraLabCloneable {
 	private static final long serialVersionUID = -8812018025682692472L;
 	private VersionedJGraLabCloneableImpl<JGraLabSet<E>> versionedSet;
 	private Graph graph;
+	private String name;
 
 	/**
 	 * 
@@ -121,22 +122,25 @@ public class JGraLabSet<E> extends HashSet<E> implements JGraLabCloneable {
 	}
 
 	@Override
-	public boolean add(E e) {
+	public boolean add(E element) {
 		if (versionedSet == null)
 			throw new GraphException("Versioning is not working for this set.");
 		// return internalAdd(e);
-		if ((e instanceof Map || e instanceof List || e instanceof Set)
-				&& !(e instanceof JGraLabCloneable))
+		if ((element instanceof Map || element instanceof List || element instanceof Set)
+				&& !(element instanceof JGraLabCloneable))
 			throw new GraphException(
 					"The element added to this set does not support transactions.");
-		if (e instanceof JGraLabCloneable)
-			if (((JGraLabCloneable) e).getGraph() != graph)
+		if (element instanceof JGraLabCloneable) {
+			if (((JGraLabCloneable) element).getGraph() != graph)
 				throw new GraphException(
 						"The element added to this set is from another graph.");
+			if (name != null)
+				((JGraLabCloneable) element).setName(name + "_setentry");
+		}
 		hasTemporaryVersionCheck();
 		// versionedSet.setValidValue(this, graph.getCurrentTransaction());
 		return versionedSet.getValidValue(graph.getCurrentTransaction())
-				.internalAdd(e);
+				.internalAdd(element);
 	}
 
 	/**
@@ -415,5 +419,11 @@ public class JGraLabSet<E> extends HashSet<E> implements JGraLabCloneable {
 				return false;
 		}
 		return true;
+	}
+
+	@Override
+	public void setName(String name) {
+		this.name = name;
+		this.versionedSet.setName(this.name);
 	}
 }
