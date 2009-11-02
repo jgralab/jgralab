@@ -251,7 +251,7 @@ public class Xml2tg {
 			int nextEvent = reader.next();
 			switch (nextEvent) {
 			case START_DOCUMENT:
-				// System.out.println("It begins");
+				System.out.println("Starting Document");
 				break;
 			case START_ELEMENT:
 				level += 1;
