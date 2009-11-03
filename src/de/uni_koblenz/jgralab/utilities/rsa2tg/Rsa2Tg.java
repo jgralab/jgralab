@@ -513,7 +513,7 @@ public class Rsa2Tg extends XmlProcessor {
 
 		Option unusedDomains = new Option(
 				"u",
-				"ommitUnusedDomains",
+				"omitUnusedDomains",
 				false,
 				"(optional): if this flag is set, all unused domains will not be defined in the schema.");
 		unusedDomains.setRequired(false);
