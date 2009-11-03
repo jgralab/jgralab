@@ -38,11 +38,13 @@ import de.uni_koblenz.jgralab.schema.VertexClass;
 public class GraphFactoryGenerator extends CodeGenerator {
 
 	private Schema schema;
+	private boolean transactionSupport;
 
 	public GraphFactoryGenerator(Schema schema, String schemaPackageName,
-			String implementationName) {
+			String implementationName, boolean transactionSupport) {
 		super(schemaPackageName, "", false);
 		this.schema = schema;
+		this.transactionSupport = transactionSupport;
 		rootBlock.setVariable("className", schema.getName() + "Factory");
 		rootBlock.setVariable("simpleClassName", schema.getName() + "Factory");
 		rootBlock.setVariable("isClassOnly", "true");
@@ -112,8 +114,10 @@ public class GraphFactoryGenerator extends CodeGenerator {
 			code.add("/* code for graph #graphName# */");
 			code
 					.add("setGraphImplementationClass(#graphName#.class, #graphImplName#Impl.class);");
-			code
-					.add("setGraphTransactionImplementationClass(#graphName#.class, #graphTransactionImplName#Impl.class);");
+			if (transactionSupport) {
+				code
+						.add("setGraphTransactionImplementationClass(#graphName#.class, #graphTransactionImplName#Impl.class);");
+			}
 		}
 		return code;
 	}
@@ -132,8 +136,10 @@ public class GraphFactoryGenerator extends CodeGenerator {
 		if (!vertexClass.isAbstract()) {
 			code
 					.add("setVertexImplementationClass(#vertexName#.class, #vertexImplName#Impl.class);");
-			code
-					.add("setVertexTransactionImplementationClass(#vertexName#.class, #vertexTransactionImplName#Impl.class);");
+			if (transactionSupport) {
+				code
+						.add("setVertexTransactionImplementationClass(#vertexName#.class, #vertexTransactionImplName#Impl.class);");
+			}
 		}
 		return code;
 	}
@@ -150,8 +156,10 @@ public class GraphFactoryGenerator extends CodeGenerator {
 		if (!edgeClass.isAbstract()) {
 			code
 					.add("setEdgeImplementationClass(#edgeName#.class, #edgeImplName#Impl.class);");
-			code
-					.add("setEdgeTransactionImplementationClass(#edgeName#.class, #edgeTransactionImplName#Impl.class);");
+			if (transactionSupport) {
+				code
+						.add("setEdgeTransactionImplementationClass(#edgeName#.class, #edgeTransactionImplName#Impl.class);");
+			}
 		}
 		return code;
 	}

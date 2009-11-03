@@ -167,6 +167,7 @@
         <arg value="de.uni_koblenz.jgralab.utilities.tgschema2java.TgSchema2Java"/>
         <arg value="-s"/>
         <srcfile/>
+        <arg value="-t"/> <!-- transaction support -->
         <arg line="-p ${test.dir}"/>
         <fileset dir="${testschemas.dir}" includes="*.tg"/>
       </apply>

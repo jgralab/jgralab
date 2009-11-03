@@ -121,7 +121,7 @@ public class RoleNameTest extends InstanceTest {
 	 * @param v8Inci
 	 * @param v9Inci
 	 */
-	private void testIncidences(A v1, C v2, B v3, D v4, B v5, D v6, A v7, C v8,	
+	private void testIncidences(A v1, C v2, B v3, D v4, B v5, D v6, A v7, C v8,
 			LinkedList<Edge> v1Inci, LinkedList<Edge> v2Inci,
 			LinkedList<Edge> v3Inci, LinkedList<Edge> v4Inci,
 			LinkedList<Edge> v5Inci, LinkedList<Edge> v6Inci,
@@ -945,8 +945,8 @@ public class RoleNameTest extends InstanceTest {
 			String... rolenames) {
 		for (int i = 0; i < inciFrom.size(); i++) {
 			Edge e = inciFrom.get(i).getNormalEdge();
-			if (e.getAlpha() == from
-					&& e.getOmega() == to
+			if ((e.getAlpha() == from)
+					&& (e.getOmega() == to)
 					&& checkRoleName(useTarget ? e.getThatRole() : e
 							.getThisRole(), rolenames)) {
 				inciFrom.remove(i--);
@@ -954,8 +954,8 @@ public class RoleNameTest extends InstanceTest {
 		}
 		for (int i = 0; i < inciTo.size(); i++) {
 			Edge e = inciTo.get(i).getNormalEdge();
-			if (e.getAlpha() == from
-					&& e.getOmega() == to
+			if ((e.getAlpha() == from)
+					&& (e.getOmega() == to)
 					&& checkRoleName(useTarget ? e.getThatRole() : e
 							.getThisRole(), rolenames)) {
 				inciTo.remove(i--);
@@ -1009,7 +1009,8 @@ public class RoleNameTest extends InstanceTest {
 		LinkedList<Vertex> ret = new LinkedList<Vertex>();
 		PriorityQueue<Edge> edges = new PriorityQueue<Edge>();
 		for (Edge e : graph.edges()) {
-			if (e.getOmega() == to && checkRoleName(e.getThisRole(), rolenames)) {
+			if ((e.getOmega() == to)
+					&& checkRoleName(e.getThisRole(), rolenames)) {
 				edges.add(e);
 			}
 		}
@@ -1045,7 +1046,7 @@ public class RoleNameTest extends InstanceTest {
 				.getBytes());
 		Schema s = null;
 		s = GraphIO.loadSchemaFromStream(input);
-		s.compile();
+		s.compile(true);
 		return s;
 	}
 

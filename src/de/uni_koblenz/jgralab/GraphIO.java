@@ -713,14 +713,15 @@ public class GraphIO {
 	}
 
 	public static Graph loadSchemaAndGraphFromFile(String filename,
-			ProgressFunction pf) throws GraphIOException {
+			boolean transactionSupport, ProgressFunction pf)
+			throws GraphIOException {
 		try {
 			logger.finer("Loading graph " + filename);
 			return loadGraphFromFile(filename, null, pf);
 		} catch (GraphIOException ex) {
 			logger.fine("Schema was unknown, so loading that first.");
 			Schema s = loadSchemaFromFile(filename);
-			s.compile();
+			s.compile(transactionSupport);
 			return loadGraphFromFile(filename, s, pf);
 		}
 	}

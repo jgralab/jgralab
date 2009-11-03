@@ -93,7 +93,7 @@ public class GreqlEvaluator {
 		String query = args[0];
 		Graph datagraph = null;
 		if (args.length == 2) {
-			datagraph = GraphIO.loadSchemaAndGraphFromFile(args[1],
+			datagraph = GraphIO.loadSchemaAndGraphFromFile(args[1], false,
 					new ProgressFunctionImpl());
 		}
 
@@ -645,7 +645,7 @@ public class GreqlEvaluator {
 			GraphClass gc = minimalSchema.createGraphClass("MinimalGraph");
 			VertexClass n = gc.createVertexClass("Node");
 			gc.createEdgeClass("Link", n, n);
-			minimalSchema.compile();
+			minimalSchema.compile(false);
 			Method graphCreateMethod = minimalSchema.getGraphCreateMethod();
 
 			try {

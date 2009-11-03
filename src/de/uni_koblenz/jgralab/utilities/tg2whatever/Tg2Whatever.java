@@ -128,7 +128,7 @@ public abstract class Tg2Whatever {
 	 */
 	public void setGraph(String fileName) throws GraphIOException {
 		graphFileName = fileName;
-		graph = GraphIO.loadSchemaAndGraphFromFile(graphFileName,
+		graph = GraphIO.loadSchemaAndGraphFromFile(graphFileName, false,
 				new ProgressFunctionImpl());
 	}
 
@@ -201,7 +201,7 @@ public abstract class Tg2Whatever {
 					try {
 						System.out.println("Loading Schema from Graph");
 						schema = GraphIO.loadSchemaFromFile(graphFileName);
-						schema.compile();
+						schema.compile(false);
 						System.out.println("Schema loaded");
 					} catch (GraphIOException ex) {
 						System.err.println("Graph in file '" + graphFileName
