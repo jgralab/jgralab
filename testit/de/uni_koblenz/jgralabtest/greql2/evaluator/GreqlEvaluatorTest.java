@@ -36,6 +36,7 @@ import java.util.List;
 import org.junit.Test;
 
 import de.uni_koblenz.jgralab.Graph;
+import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValueBag;
@@ -49,7 +50,9 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueTuple;
 import de.uni_koblenz.jgralab.greql2.optimizer.DefaultOptimizer;
 import de.uni_koblenz.jgralab.greql2.optimizer.VariableDeclarationOrderOptimizer;
 import de.uni_koblenz.jgralab.greql2.parser.ManualGreqlParser;
+import de.uni_koblenz.jgralab.greql2.schema.Definition;
 import de.uni_koblenz.jgralab.greql2.schema.Greql2;
+import de.uni_koblenz.jgralab.greql2.schema.IsDefinitionOf;
 import de.uni_koblenz.jgralabtest.greql2.GenericTests;
 
 public class GreqlEvaluatorTest extends GenericTests {
@@ -70,6 +73,28 @@ public class GreqlEvaluatorTest extends GenericTests {
 		return bag;
 	}
 
+	@Test
+	public void testVertices() throws Exception {
+		Graph graph = getTestGraph();
+		Vertex first = graph.getFirstVertex().getNextVertex();
+		Vertex last = graph.getLastVertex().getPrevVertex().getPrevVertex();
+		JValue firstV = new JValue(first);
+		JValue lastV = new JValue(last);
+		boundVariables.put("firstV", firstV);
+		boundVariables.put("lastV", lastV);
+		String queryString = "using firstV, lastV: vertices{Definition}(firstV, lastV)";
+		JValue result = evalTestQuery("vertices", queryString);
+		JValueSet set = result.toJValueSet();
+		if (!(first instanceof Definition))
+			first = first.getNextVertexOfClass(Definition.class);
+		Definition current = (Definition) first;
+		for (JValue cv : set) {
+			assertEquals(current, cv.toVertex());
+			current = current.getNextDefinition();
+		}
+		assertNull(current.getNextDefinition());
+	}
+	
 	@Test
 	public void testEvaluateNullLiteral2() throws Exception {
 		String queryString = "null";
@@ -773,6 +798,38 @@ public class GreqlEvaluatorTest extends GenericTests {
 		assertEquals(result, resultWO);
 	}
 
+	@Test
+	public void testEvaluateDependentDeclarations2() throws Exception {
+		String queryString = "from whe: V{WhereExpression}, def: -->{IsDefinitionOf} whe reportSet def end";
+		JValue result = evalTestQuery("DependentDeclarations2", queryString);
+		assertEquals(4, result.toCollection().size());
+		JValueSet set = result.toCollection().toJValueSet();
+		for (Definition def : ((Greql2)getTestGraph()).getDefinitionVertices()) {
+			assertTrue(set.contains(new JValue(def)));
+		}
+		JValue resultWO = evalTestQuery("DependentDeclarations2 (wo)",
+				queryString, new DefaultOptimizer());
+		assertEquals(result, resultWO);
+	}
+	
+	
+	@Test
+	public void testEvaluateDependentDeclarations3() throws Exception {
+		getTestGraph().getVertex(10).getFirstEdgeOfClass(IsDefinitionOf.class).delete();
+		String queryString = "from def: V{Definition}, whe: <--{IsDefinitionOf} def report def end";
+		JValue result = evalTestQuery("DependentDeclarations3", queryString);
+		assertEquals(4, result.toCollection().size());
+		JValueSet set = result.toCollection().toJValueSet();
+		for (Definition def : ((Greql2)getTestGraph()).getDefinitionVertices()) {
+			assertTrue(set.contains(new JValue(def)));
+		}
+		JValue resultWO = evalTestQuery("DependentDeclarations3 (wo)",
+				queryString, new DefaultOptimizer());
+		assertEquals(result, resultWO);
+	}
+	
+	
+	
 	/*
 	 * Test method for
 	 * 'greql2.evaluator.GreqlEvaluator.evaluateOptionalPathDescription(OptionalPathDescription,

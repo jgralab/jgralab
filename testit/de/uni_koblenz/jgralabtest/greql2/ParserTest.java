@@ -80,6 +80,10 @@ import de.uni_koblenz.jgralab.greql2.schema.TypeId;
 import de.uni_koblenz.jgralab.greql2.schema.Variable;
 import de.uni_koblenz.jgralab.greql2.schema.VertexSetExpression;
 import de.uni_koblenz.jgralab.greql2.schema.VertexSubgraphExpression;
+import de.uni_koblenz.jgralab.schema.GraphClass;
+import de.uni_koblenz.jgralab.schema.Schema;
+import de.uni_koblenz.jgralab.schema.VertexClass;
+import de.uni_koblenz.jgralab.schema.impl.SchemaImpl;
 
 /*
  * GReQL Constructs where discussions are needed
@@ -1243,5 +1247,15 @@ public class ParserTest {
 				assertEquals("var", vs);
 			}
 		}
+	}
+	
+	@Test
+	public void testKeywordsInPackageNames() {
+		Schema s = new SchemaImpl("SampleSchema", "de.uni_koblenz.jgralab.sampleschema");
+		GraphClass gc = s.createGraphClass("SampleGraph");
+		VertexClass vc = gc.createVertexClass("map.SampleVertex");
+		s.commit();
+		String query = "import map.SampleVertex;  true ";
+		parseQuery(query);
 	}
 }

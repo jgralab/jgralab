@@ -479,7 +479,7 @@ public class SchemaImpl implements Schema {
 				packagePrefix, GRAPH_IMPLEMENTATION_PACKAGE, transactionSupport);
 		factoryCodeGenerator.createFiles(pathPrefix);
 
-		// generate graph classes
+		// generate graph class
 		if (graphClass.getQualifiedName().equals("Graph")) {
 			throw new SchemaException(
 					"The defined GraphClass must not be named Graph!");
