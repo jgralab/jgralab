@@ -468,7 +468,7 @@ public abstract class VertexImpl extends de.uni_koblenz.jgralab.impl.VertexImpl 
 		((GraphImpl) graph).vertexSync.readLock().unlock();
 		return result;
 	}
-	
+
 	@Override
 	public void sortIncidences(Comparator<Edge> comp) {
 		throw new UnsupportedOperationException();
