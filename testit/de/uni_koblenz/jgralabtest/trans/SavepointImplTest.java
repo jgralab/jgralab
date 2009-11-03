@@ -1,4 +1,4 @@
-package de.uni_koblenz.jgralabtest.transactiontest;
+package de.uni_koblenz.jgralabtest.trans;
 
 import static org.junit.Assert.*;
 
