@@ -50,6 +50,12 @@ public abstract class CodeGenerator {
 	 * "noSubclasses" should be generated.
 	 */
 	public static final boolean CREATE_METHODS_WITH_TYPEFLAG = false;
+	
+	/**
+	 * toggles, if additional getNextEdge-Methods with a parameter
+	 * "noSubclasses" should be generated.
+	 */
+	public static final boolean CREATE_TYPESPECIFIC_METHODS = false;
 
 	protected CodeList rootBlock;
 
@@ -179,8 +185,7 @@ public abstract class CodeGenerator {
 		// String className = rootBlock.getVariable("className");
 		String simpleClassName = rootBlock.getVariable("simpleClassName");
 		String schemaPackage = rootBlock.getVariable("schemaPackage");
-		String simpleImplClassName = rootBlock
-				.getVariable("simpleImplClassName");
+		String simpleImplClassName = rootBlock.getVariable("simpleImplClassName");
 		String schemaImplPackage = "";
 		if (!transactionSupport) {
 			schemaImplPackage = rootBlock.getVariable("schemaImplStdPackage");
@@ -205,8 +210,7 @@ public abstract class CodeGenerator {
 					schemaPackage);
 		} else if (rootBlock.getVariable("isAbstractClass").equals("true")) {
 			logger.finer("Creating interface for class: " + simpleClassName);
-			logger
-					.finer("Writing file to: " + pathPrefix + "/"
+			logger.finer("Writing file to: " + pathPrefix + "/"
 							+ schemaPackage);
 			// create interface only
 			if (!transactionSupport) {
@@ -215,8 +219,7 @@ public abstract class CodeGenerator {
 						schemaPackage);
 			}
 		} else {
-			if ((!rootBlock.getVariable("isImplementationClassOnly").equals(
-					"true"))
+			if ((!rootBlock.getVariable("isImplementationClassOnly").equals("true"))
 					&& (!transactionSupport)) {
 				// create interface
 				createCode(false);

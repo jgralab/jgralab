@@ -29,6 +29,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import java.util.ConcurrentModificationException;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
@@ -68,6 +69,21 @@ public class JValueTest {
 		l2 = graph.createLink(n2, n1);
 		l3 = graph.createLink(n3, n4);
 		l4 = graph.createLink(n4, n1);
+	}
+	
+	@Test
+	public void testValueFromSet() {
+		HashSet<Integer> set = new HashSet<Integer>();
+		set.add(1);
+		set.add(2);
+		set.add(3);
+		JValue v = JValue.fromObject(set);
+		assertTrue(v.isCollection());
+		JValueSet s = v.toCollection().toJValueSet();
+		assertTrue(s.contains(new JValue(1)));
+		assertTrue(s.contains(new JValue(2)));
+		assertTrue(s.contains(new JValue(3)));
+		assertEquals(3, s.size());
 	}
 
 	@Test

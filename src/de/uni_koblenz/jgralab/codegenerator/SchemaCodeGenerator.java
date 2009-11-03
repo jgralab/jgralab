@@ -95,17 +95,11 @@ public class SchemaCodeGenerator extends CodeGenerator {
 		CodeList code = new CodeList();
 		code.add(createVariables());
 		code.add(createConstructor());
-		code.add(createGraphFactoryMethods());
+		code.add(createGraphFactoryMethod());
 		return code;
 	}
 
-	private CodeBlock createGraphFactoryMethods() {
-		CodeList code = new CodeList();
-		code.addNoIndent(createGraphFactoryMethods(schema.getGraphClass()));
-		return code;
-	}
-
-	private CodeBlock createGraphFactoryMethods(GraphClass gc) {
+	private CodeBlock createGraphFactoryMethod() {
 		addImports("#jgPackage#.Graph", "#jgPackage#.ProgressFunction",
 				"#jgPackage#.GraphIO", "#jgPackage#.GraphIOException");
 		CodeSnippet code = new CodeSnippet(
@@ -244,17 +238,16 @@ public class SchemaCodeGenerator extends CodeGenerator {
 						+ "\t}" + "\treturn (#gcName#) graph;"
 						: "\tthrow new UnsupportedOperationException(\"No Transaction support compiled.\");"),
 				"}");
+		code.setVariable("gcName", schema.getGraphClass().getQualifiedName());
+		code.setVariable("gcCamelName", camelCase(schema.getGraphClass().getQualifiedName()));
+		code.setVariable("gcImplName", schema.getGraphClass().getQualifiedName() + "Impl");
 
-		code.setVariable("gcName", gc.getQualifiedName());
-		code.setVariable("gcCamelName", camelCase(gc.getQualifiedName()));
-		code.setVariable("gcImplName", gc.getQualifiedName() + "Impl");
 		return code;
 	}
 
 	private CodeBlock createConstructor() {
 		CodeList code = new CodeList();
-		code
-				.addNoIndent(new CodeSnippet(
+		code.addNoIndent(new CodeSnippet(
 						true,
 						"/**",
 						" * the weak reference to the singleton instance",
@@ -313,8 +306,7 @@ public class SchemaCodeGenerator extends CodeGenerator {
 		code.setVariable("aecVariable", "gc");
 		code.setVariable("schemaVariable", gc.getVariableName());
 		code.setVariable("gcAbstract", gc.isAbstract() ? "true" : "false");
-		code
-				.addNoIndent(new CodeSnippet(
+		code.addNoIndent(new CodeSnippet(
 						true,
 						"{",
 						"\tGraphClass #gcVariable# = #schemaVariable# = createGraphClass(\"#gcName#\");",
@@ -400,8 +392,7 @@ public class SchemaCodeGenerator extends CodeGenerator {
 				+ ec.getFromMax() + ", \"#fromRole#\"");
 		code.setVariable("toPart", "#toClass#, " + ec.getToMin() + ", "
 				+ ec.getToMax() + ", \"#toRole#\"");
-		code
-				.addNoIndent(new CodeSnippet(
+		code.addNoIndent(new CodeSnippet(
 						true,
 						"{",
 						"\t#ecType# #ecVariable# = #schemaVariable# = #gcVariable#.create#ecType#(\"#ecName#\",",
@@ -453,8 +444,7 @@ public class SchemaCodeGenerator extends CodeGenerator {
 		code.setVariable("aecVariable", "vc");
 		code.setVariable("schemaVariable", vc.getVariableName());
 		code.setVariable("vcAbstract", vc.isAbstract() ? "true" : "false");
-		code
-				.addNoIndent(new CodeSnippet(
+		code.addNoIndent(new CodeSnippet(
 						true,
 						"{",
 						"\tVertexClass #vcVariable# = #schemaVariable# = #gcVariable#.createVertexClass(\"#vcName#\");",
@@ -492,22 +482,18 @@ public class SchemaCodeGenerator extends CodeGenerator {
 		CodeList code = new CodeList();
 		for (Constraint constraint : aec.getConstraints()) {
 			addImports("#jgSchemaImplPackage#.ConstraintImpl");
-			code
-					.addNoIndent(new CodeSnippet(
-							false,
-							"#aecVariable#.addConstraint(new ConstraintImpl(\""
-									+ CodeGenerator.stringQuote(constraint
-											.getMessage())
-									+ "\", \""
-									+ CodeGenerator.stringQuote(constraint
-											.getPredicate())
-									+ "\", "
-									+ ((constraint.getOffendingElementsQuery() != null) ? "\""
-											+ CodeGenerator
-													.stringQuote(constraint
-															.getOffendingElementsQuery())
-											+ "\""
-											: "null") + "));"));
+			CodeSnippet constraintSnippet = new CodeSnippet(false);
+			constraintSnippet.add("#aecVariable#.addConstraint(" +
+					              "new ConstraintImpl(#message#, #predicate#, #offendingElements#));");
+			
+			constraintSnippet.setVariable("message", "\"" + stringQuote(constraint.getMessage()) + "\"");
+			constraintSnippet.setVariable("predicate", "\"" + stringQuote(constraint.getPredicate()) + "\"");
+			if (constraint.getOffendingElementsQuery() != null)
+				constraintSnippet.setVariable("offendingElements", "\"" + 
+											  stringQuote(constraint.getOffendingElementsQuery()) + "\"");
+			else
+				constraintSnippet.setVariable("offendingElements", "\"null\"");
+			code.addNoIndent(constraintSnippet);
 		}
 		return code;
 	}
@@ -546,22 +532,16 @@ public class SchemaCodeGenerator extends CodeGenerator {
 				s.add("createSetDomain(getDomain(\"#componentDomainName#\"));");
 			} else if (dom instanceof MapDomain) {
 				MapDomain mapDom = (MapDomain) dom;
-				s.setVariable("keyDomainName", mapDom.getKeyDomain()
-						.getQualifiedName());
-				s.setVariable("valueDomainName", mapDom.getValueDomain()
-						.getQualifiedName());
-				s
-						.add("createMapDomain(getDomain(\"#keyDomainName#\"), getDomain(\"#valueDomainName#\"));");
+				s.setVariable("keyDomainName", mapDom.getKeyDomain().getQualifiedName());
+				s.setVariable("valueDomainName", mapDom.getValueDomain().getQualifiedName());
+				s.add("createMapDomain(getDomain(\"#keyDomainName#\"), getDomain(\"#valueDomainName#\"));");
 			} else if (dom instanceof RecordDomain) {
 				addImports("#jgSchemaPackage#.RecordDomain");
-				s
-						.add("{",
-								"\tRecordDomain dom = createRecordDomain(\"#domName#\");");
+				s.add("{", "\tRecordDomain dom = createRecordDomain(\"#domName#\");");
 				RecordDomain rd = (RecordDomain) dom;
 				for (String cName : rd.getComponents().keySet()) {
 					s.add("\tdom.addComponent(\"" + cName + "\", getDomain(\""
-							+ rd.getComponents().get(cName).getQualifiedName()
-							+ "\"));");
+							+ rd.getComponents().get(cName).getQualifiedName() + "\"));");
 				}
 				s.add("}");
 			} else {

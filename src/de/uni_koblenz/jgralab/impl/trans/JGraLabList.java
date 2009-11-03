@@ -48,7 +48,7 @@ public class JGraLabList<E> extends ArrayList<E> implements JGraLabCloneable {
 		init(g);
 	}
 
-	@SuppressWarnings("unchecked")
+
 	/* protected */protected JGraLabList(Graph g,
 			Collection<? extends E> collection) {
 		super(collection);
