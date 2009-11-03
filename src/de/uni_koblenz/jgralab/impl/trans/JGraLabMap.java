@@ -109,6 +109,34 @@ public class JGraLabMap<K, V> extends HashMap<K, V> implements JGraLabCloneable 
 		}
 	}
 
+	private void isValidValueCheck(V value) {
+		if ((value instanceof Map || value instanceof List || value instanceof Set)
+				&& !(value instanceof JGraLabCloneable))
+			throw new GraphException(
+					"The value added to this map does not support transactions.");
+		if (value instanceof JGraLabCloneable) {
+			if (((JGraLabCloneable) value).getGraph() != graph)
+				throw new GraphException(
+						"The value added to this map is from another graph.");
+			if (name != null)
+				((JGraLabCloneable) value).setName(name + "_valueentry");
+		}
+	}
+
+	private void isValidKeyCheck(K key) {
+		if ((key instanceof Map || key instanceof List || key instanceof Set)
+				&& !(key instanceof JGraLabCloneable))
+			throw new GraphException(
+					"The key added to this map does not support transactions.");
+		if (key instanceof JGraLabCloneable) {
+			if (((JGraLabCloneable) key).getGraph() != graph)
+				throw new GraphException(
+						"The key added to this map is from another graph.");
+			if (name != null)
+				((JGraLabCloneable) key).setName(name + "_keyentry");
+		}
+	}
+
 	@Override
 	public void clear() {
 		if (versionedMap == null)
@@ -242,28 +270,8 @@ public class JGraLabMap<K, V> extends HashMap<K, V> implements JGraLabCloneable 
 		if (versionedMap == null)
 			// return internalPut(key, value);
 			throw new GraphException("Versioning is not working for this Map.");
-		if ((key instanceof Map || key instanceof List || key instanceof Set)
-				&& !(key instanceof JGraLabCloneable))
-			throw new GraphException(
-					"The key added to this map does not support transactions.");
-		if (key instanceof JGraLabCloneable) {
-			if (((JGraLabCloneable) key).getGraph() != graph)
-				throw new GraphException(
-						"The key added to this map is from another graph.");
-			if (name != null)
-				((JGraLabCloneable) key).setName(name + "_keyentry");
-		}
-		if ((value instanceof Map || value instanceof List || value instanceof Set)
-				&& !(value instanceof JGraLabCloneable))
-			throw new GraphException(
-					"The value added to this map does not support transactions.");
-		if (value instanceof JGraLabCloneable) {
-			if (((JGraLabCloneable) key).getGraph() != graph)
-				throw new GraphException(
-						"The value added to this map is from another graph.");
-			if (name != null)
-				((JGraLabCloneable) value).setName(name + "_valueentry");
-		}
+		isValidKeyCheck(key);
+		isValidValueCheck(value);
 		// versionedMap.setValidValue(this, graph.getCurrentTransaction());
 		hasTemporaryVersionCheck();
 		return versionedMap.getValidValue(graph.getCurrentTransaction())
@@ -285,6 +293,10 @@ public class JGraLabMap<K, V> extends HashMap<K, V> implements JGraLabCloneable 
 		if (versionedMap == null)
 			internalPutAll(m);
 		// versionedMap.setValidValue(this, graph.getCurrentTransaction());
+		for (Entry<? extends K, ? extends V> entry : m.entrySet()) {
+			isValidKeyCheck(entry.getKey());
+			isValidValueCheck(entry.getValue());
+		}
 		hasTemporaryVersionCheck();
 		versionedMap.getValidValue(graph.getCurrentTransaction())
 				.internalPutAll(m);

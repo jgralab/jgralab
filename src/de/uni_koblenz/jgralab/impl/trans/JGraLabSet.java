@@ -133,11 +133,7 @@ public class JGraLabSet<E> extends HashSet<E> implements JGraLabCloneable {
 		}
 	}
 
-	@Override
-	public boolean add(E element) {
-		if (versionedSet == null)
-			throw new GraphException("Versioning is not working for this set.");
-		// return internalAdd(e);
+	private void isValidElementCheck(E element) {
 		if ((element instanceof Map || element instanceof List || element instanceof Set)
 				&& !(element instanceof JGraLabCloneable))
 			throw new GraphException(
@@ -149,6 +145,14 @@ public class JGraLabSet<E> extends HashSet<E> implements JGraLabCloneable {
 			if (name != null)
 				((JGraLabCloneable) element).setName(name + "_setentry");
 		}
+	}
+
+	@Override
+	public boolean add(E element) {
+		if (versionedSet == null)
+			throw new GraphException("Versioning is not working for this set.");
+		// return internalAdd(e);
+		isValidElementCheck(element);
 		hasTemporaryVersionCheck();
 		// versionedSet.setValidValue(this, graph.getCurrentTransaction());
 		return versionedSet.getValidValue(graph.getCurrentTransaction())
@@ -169,6 +173,9 @@ public class JGraLabSet<E> extends HashSet<E> implements JGraLabCloneable {
 		if (versionedSet == null)
 			throw new GraphException("Versioning is not working for this set.");
 		// return internalAddAll(c);
+		Iterator<? extends E> iter = c.iterator();
+		while(iter.hasNext())
+			isValidElementCheck(iter.next());
 		hasTemporaryVersionCheck();
 		// versionedSet.setValidValue(this, graph.getCurrentTransaction());
 		return versionedSet.getValidValue(graph.getCurrentTransaction())

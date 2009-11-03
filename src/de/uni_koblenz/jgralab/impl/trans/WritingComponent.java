@@ -445,7 +445,7 @@ public class WritingComponent {
 			}
 		}
 		// also write persistent values for remaining versioned dataobjects
-		// TODO this doesn't seem to work correctly
+		// should be all "somehow" be part of an attribute of a GraphElement
 		Set<VersionedDataObject<?>> versionedDataObjects = transaction
 				.getRemainingVersionedDataObjects();
 		for (VersionedDataObject<?> vdo : versionedDataObjects) {
