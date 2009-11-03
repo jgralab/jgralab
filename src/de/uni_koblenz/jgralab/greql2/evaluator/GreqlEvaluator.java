@@ -908,7 +908,7 @@ public class GreqlEvaluator {
 			throw new RuntimeException(
 					"Empty query graph supplied, no evaluation possible");
 		}
-		System.out.println("Successfully parsed query");
+
 		createVertexEvaluators();
 
 		// Initialize the CostModel if there's none
