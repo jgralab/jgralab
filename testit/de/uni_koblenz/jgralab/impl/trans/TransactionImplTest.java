@@ -2,6 +2,7 @@ package de.uni_koblenz.jgralab.impl.trans;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.fail;
 
 import java.util.ArrayList;
@@ -36,9 +37,7 @@ import de.uni_koblenz.jgralabtest.schemas.motorwaymap.impl.trans.CityImpl;
  * 
  * @author Jose Monte(monte@uni-koblenz.de)
  * 
- *         TODO think about moving this class to package
- *         de.uni_koblenz.jgralabtest.transactiontest - problem with protected
- *         (package visible) fields
+ * TODO think about, if protected-methods should really be tested
  */
 public class TransactionImplTest {
 	private MotorwayMap motorwayMap;
@@ -235,7 +234,7 @@ public class TransactionImplTest {
 		c3.delete();
 		// Should be null, because deleteVertices should only be initialized, if
 		// at least one already existing vertex is deleted.
-		assertEquals(readWriteTransaction1.deletedVertices, null);
+		assertNull(readWriteTransaction1.deletedVertices);
 	}
 
 	/**
@@ -306,7 +305,7 @@ public class TransactionImplTest {
 		ex3.delete();
 		// Should be null, because deleteEdges should only be initialized, if
 		// at least one already existing edge is deleted.
-		assertEquals(readWriteTransaction1.deletedEdges, null);
+		assertNull(readWriteTransaction1.deletedEdges);
 	}
 
 	/**
