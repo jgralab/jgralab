@@ -33,7 +33,7 @@ public class JGraLabList<E> extends ArrayList<E> implements JGraLabCloneable {
 	/**
 	 * 
 	 */
-	/* protected */public JGraLabList(Graph g) {
+	/* protected */protected JGraLabList(Graph g) {
 		super();
 		init(g);
 	}
@@ -43,23 +43,23 @@ public class JGraLabList<E> extends ArrayList<E> implements JGraLabCloneable {
 	 * 
 	 * @param initialSize
 	 */
-	/* protected */public JGraLabList(Graph g, int initialSize) {
+	/* protected */protected JGraLabList(Graph g, int initialSize) {
 		super(initialSize);
 		init(g);
 	}
 
 	@SuppressWarnings("unchecked")
-	/* protected */public JGraLabList(Graph g,
+	/* protected */protected JGraLabList(Graph g,
 			Collection<? extends E> collection) {
 		super(collection);
 		init(g);
 	}
 
-	public JGraLabList(Collection<E> collection) {
+	protected JGraLabList(Collection<E> collection) {
 		super(collection);
 	}
 
-	public JGraLabList() {
+	protected JGraLabList() {
 		super();
 	}
 

@@ -30,11 +30,11 @@ public class JGraLabSet<E> extends HashSet<E> implements JGraLabCloneable {
 	/**
 	 * 
 	 */
-	/* protected */public JGraLabSet() {
+	/* protected */protected JGraLabSet() {
 		super();
 	}
 
-	/* protected */public JGraLabSet(Collection<E> set) {
+	/* protected */protected JGraLabSet(Collection<E> set) {
 		super(set);
 	}
 
@@ -42,7 +42,7 @@ public class JGraLabSet<E> extends HashSet<E> implements JGraLabCloneable {
 	 * 
 	 * @param initialSize
 	 */
-	/* protected */public JGraLabSet(int initialSize) {
+	/* protected */protected JGraLabSet(int initialSize) {
 		super(initialSize);
 	}
 
@@ -51,7 +51,7 @@ public class JGraLabSet<E> extends HashSet<E> implements JGraLabCloneable {
 	 * @param initialSize
 	 * @param loadFactor
 	 */
-	/* protected */public JGraLabSet(int initialSize, float loadFactor) {
+	/* protected */protected JGraLabSet(int initialSize, float loadFactor) {
 		super(initialSize, loadFactor);
 	}
 
@@ -59,7 +59,7 @@ public class JGraLabSet<E> extends HashSet<E> implements JGraLabCloneable {
 	 * 
 	 * @param g
 	 */
-	public JGraLabSet(Graph g) {
+	protected JGraLabSet(Graph g) {
 		super();
 		init(g);
 	}
@@ -69,7 +69,7 @@ public class JGraLabSet<E> extends HashSet<E> implements JGraLabCloneable {
 	 * @param g
 	 * @param collection
 	 */
-	public JGraLabSet(Graph g, Collection<? extends E> collection) {
+	protected JGraLabSet(Graph g, Collection<? extends E> collection) {
 		super(collection);
 		init(g);
 	}

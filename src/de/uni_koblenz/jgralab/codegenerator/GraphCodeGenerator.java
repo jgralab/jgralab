@@ -100,7 +100,8 @@ public class GraphCodeGenerator extends AttributedElementCodeGenerator {
 			for (RecordDomain rd : aec.getSchema().getRecordDomains()) {
 				// create-method for GraphIO
 				cs.add("public " + rd.getJavaClassName(schemaRootPackageName)
-						+ " create" + rd.getSimpleName()
+						// getSimpleName() vs. getUniqueName()
+						+ " create" + rd.getUniqueName()
 						+ "(GraphIO io) throws GraphIOException {");
 				if (transactionSupport) {
 					cs.add("\tif(getCurrentTransaction().isReadOnly())");
@@ -119,7 +120,7 @@ public class GraphCodeGenerator extends AttributedElementCodeGenerator {
 							.add("\treturn new "
 									+ rd
 											.getStandardJavaAttributeImplementationTypeName(schemaRootPackageName)
-									+ "(io);");
+									+ "(this, io);");
 				cs.add("}");
 				cs.add("");
 				// create-method with Map<String, Object>
@@ -143,7 +144,7 @@ public class GraphCodeGenerator extends AttributedElementCodeGenerator {
 							.add("\treturn new "
 									+ rd
 											.getStandardJavaAttributeImplementationTypeName(schemaRootPackageName)
-									+ "(fields);");
+									+ "(this, fields);");
 
 				cs.add("}");
 				cs.add("");
@@ -186,7 +187,7 @@ public class GraphCodeGenerator extends AttributedElementCodeGenerator {
 							.add("\treturn new "
 									+ rd
 											.getStandardJavaAttributeImplementationTypeName(schemaRootPackageName)
-									+ "(" + parametersWithoutTypes + ");");
+									+ "(this, " + parametersWithoutTypes + ");");
 				cs.add("}");
 				cs.add("");
 			}

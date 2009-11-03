@@ -6,11 +6,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.SortedMap;
+//import java.util.SortedSet;
 import java.util.Map.Entry;
 
 import de.uni_koblenz.jgralab.AttributedElement;
 import de.uni_koblenz.jgralab.Graph;
-import de.uni_koblenz.jgralab.GraphException;
+import de.uni_koblenz.jgralab.GraphException; 
+//import de.uni_koblenz.jgralab.graphvalidator.ConstraintViolation;
 //import de.uni_koblenz.jgralab.graphvalidator.GraphValidator;
 import de.uni_koblenz.jgralab.impl.IncidenceImpl;
 import de.uni_koblenz.jgralab.trans.CommitFailedException;
@@ -203,12 +205,12 @@ public class TransactionImpl implements Transaction {
 				throw new CommitFailedException(this, validationComponent
 						.getConflictReason());
 			}
-			if (leadsToInconsistency()) {
+			/*SortedSet<ConstraintViolation> constraintViolations = validateConstraints();
+			if (!constraintViolations.isEmpty()) {
 				state = TransactionState.RUNNING;
 				transactionManager.commitSync.writeLock().unlock();
-				throw new CommitFailedException(this,
-						"Inconsitencies detected.");
-			}
+				throw new CommitFailedException(this, constraintViolations);
+			}*/
 			// make sure no other transaction is executing isInConflict()-method
 			transactionManager.commitValidatingSync.writeLock().lock();
 			// make sure no other transaction is doing its BOT
@@ -582,9 +584,12 @@ public class TransactionImpl implements Transaction {
 	 * 
 	 * @return
 	 */
-	protected boolean leadsToInconsistency() {
-		return false;
-	}
+	/*protected SortedSet<ConstraintViolation> validateConstraints() {
+		if(persistentVersionAtBot == persistentVersionAtCommit)
+			state = TransactionState.RUNNING;
+		GraphValidator graphValidator = new GraphValidator(graph);
+		return graphValidator.validate();
+	}*/
 
 	/**
 	 * 
