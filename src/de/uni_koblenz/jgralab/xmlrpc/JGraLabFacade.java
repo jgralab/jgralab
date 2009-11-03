@@ -295,7 +295,7 @@ public class JGraLabFacade {
 				Class.forName(schema.getQualifiedName(), true, M1ClassManager
 						.instance(schema.getQualifiedName()));
 			} catch (ClassNotFoundException e) {
-				schema.compile();
+				schema.compile(false);
 			}
 
 			graphCreateMethod = schema.getGraphCreateMethod();
@@ -341,10 +341,10 @@ public class JGraLabFacade {
 				Class.forName(schema.getQualifiedName(), true, M1ClassManager
 						.instance(schema.getQualifiedName()));
 			} catch (ClassNotFoundException e) {
-				schema.compile();
+				schema.compile(false);
 			}
 
-			GraphIO.loadSchemaFromURL(url).compile();
+			GraphIO.loadSchemaFromURL(url).compile(false);
 
 			graph = GraphIO.loadGraphFromURL(url, null);
 			graphNo = graphContainer.addGraph(graph);

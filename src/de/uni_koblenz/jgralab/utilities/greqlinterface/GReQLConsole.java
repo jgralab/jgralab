@@ -43,7 +43,7 @@ public class GReQLConsole {
 	public GReQLConsole(String filename) {
 		try {
 			Schema schema = GraphIO.loadSchemaFromFile(filename);
-			schema.compile();
+			schema.compile(false);
 			graph = GraphIO.loadGraphFromFile(filename,
 					new ProgressFunctionImpl());
 		} catch (GraphIOException e) {

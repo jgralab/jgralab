@@ -49,7 +49,7 @@ public class MultiplicityTest {
 		Schema s = null;
 		s = GraphIO.loadSchemaFromStream(input);
 		try {
-			s.compile();
+			s.compile(true);
 		} catch (Exception e) {
 			throw new GraphIOException("", e);
 		}

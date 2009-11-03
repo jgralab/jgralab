@@ -12,7 +12,6 @@ import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.greql2.SerializableGreql2Impl;
-import de.uni_koblenz.jgralab.greql2.SerializableGreql2TransactionsImpl;
 import de.uni_koblenz.jgralab.greql2.exception.ParsingException;
 import de.uni_koblenz.jgralab.greql2.funlib.Greql2FunctionLibrary;
 import de.uni_koblenz.jgralab.greql2.schema.*;
@@ -22,9 +21,6 @@ public class ManualGreqlParser extends ManualParserHelper {
 	static {
 		Greql2Schema.instance().getGraphFactory().setGraphImplementationClass(
 				Greql2.class, SerializableGreql2Impl.class);
-		Greql2Schema.instance().getGraphFactory()
-				.setGraphTransactionImplementationClass(Greql2.class,
-						SerializableGreql2TransactionsImpl.class);
 	}
 
 	private Map<RuleEnum, int[]> testedRules = new HashMap<RuleEnum, int[]>();
@@ -333,42 +329,41 @@ public class ManualGreqlParser extends ManualParserHelper {
 			fail("Expected " + type);
 		}
 	}
-	
-	
-	
+
 	private static final boolean isValidName(TokenTypes token) {
 		switch (token) {
-			case MAP:
-			case AS:
-			case BAG:
-			case IMPORT:
-			case IN:
-			case PATH:
-			case PATHSYSTEM:
-			case SET:
-			case LIST:
-			case REC:
-			case FROM:
-			case WITH:
-			case REPORT:
-			case WHERE:
-			case LET:	
-				return true;
-			default:
-				return false;
+		case MAP:
+		case AS:
+		case BAG:
+		case IMPORT:
+		case IN:
+		case PATH:
+		case PATHSYSTEM:
+		case SET:
+		case LIST:
+		case REC:
+		case FROM:
+		case WITH:
+		case REPORT:
+		case WHERE:
+		case LET:
+			return true;
+		default:
+			return false;
 		}
 	}
-	
 
 	private final String matchPackageName() {
-		if (((lookAhead(0) == TokenTypes.IDENTIFIER) || isValidName(lookAhead(0)))	&& (isValidPackageName(getLookAheadValue(0)))) {
+		if (((lookAhead(0) == TokenTypes.IDENTIFIER) || isValidName(lookAhead(0)))
+				&& (isValidPackageName(getLookAheadValue(0)))) {
 			StringBuilder name = new StringBuilder();
 			name.append(lookAhead.getValue());
 			match();
 			boolean ph = true;
 			do {
 				if (lookAhead(0) == TokenTypes.DOT) {
-					if (((lookAhead(1) == TokenTypes.IDENTIFIER) || isValidName(lookAhead(1)))	&& (isValidPackageName(getLookAheadValue(1)))) {
+					if (((lookAhead(1) == TokenTypes.IDENTIFIER) || isValidName(lookAhead(1)))
+							&& (isValidPackageName(getLookAheadValue(1)))) {
 						ph = true;
 						match(TokenTypes.DOT);
 						name.append(".");
@@ -1132,12 +1127,12 @@ public class ManualGreqlParser extends ManualParserHelper {
 		predicateStart();
 		try {
 			parseAltPathDescription();
-		//	match(TokenTypes.RPAREN);
+			// match(TokenTypes.RPAREN);
 		} catch (ParsingException ex) {
 		}
 		if (predicateEnd()) {
 			Expression expr = parseAltPathDescription();
-			//match(TokenTypes.RPAREN);
+			// match(TokenTypes.RPAREN);
 			return expr;
 		}
 		match(TokenTypes.LPAREN);

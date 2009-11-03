@@ -95,10 +95,9 @@ public class GreqlGui extends JFrame {
 					final File file = fileChooser.getSelectedFile();
 
 					try {
-						graph = GraphIO
-								.loadSchemaAndGraphFromFile(file
-										.getCanonicalPath(),
-										new ProgressFunctionImpl());
+						graph = GraphIO.loadSchemaAndGraphFromFile(file
+								.getCanonicalPath(), false,
+								new ProgressFunctionImpl());
 					} catch (Exception e1) {
 						e1.printStackTrace();
 						JOptionPane.showMessageDialog(null, e1.getMessage(), e1

@@ -35,7 +35,7 @@ public class TryIt {
 			// Graph graph = createRandomGraph(false);
 			Schema schema = GraphIO.loadSchemaFromFile("GrumlSchema.gruml.tg");
 			System.out.println("Compiling schema");
-			schema.compile();
+			schema.compile(true);
 			System.out.println("done");
 			Graph graph = GraphIO.loadGraphFromFile("GrumlSchema.gruml.tg",
 					new ProgressFunctionImpl());

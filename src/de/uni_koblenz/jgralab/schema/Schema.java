@@ -72,8 +72,11 @@ public interface Schema extends Comparable<Schema> {
 	/**
 	 * After creating the schema, this command serves to generate code for the
 	 * m1 classes, contained in {@code JavaSourceFromString} objects.
+	 * 
+	 * @param transactionSupport
+	 *            create code for transaction support
 	 */
-	public Vector<JavaSourceFromString> commit();
+	public Vector<JavaSourceFromString> commit(boolean transactionSupport);
 
 	/**
 	 * after creating the schema, this command serves to make it permanent, m2
@@ -81,12 +84,14 @@ public interface Schema extends Comparable<Schema> {
 	 * 
 	 * @param path
 	 *            the path to the m1 classes which are to be generated
-	 * 
+	 * @param transactionSupport
+	 *            create code for transaction support
 	 * 
 	 * @throws GraphIOException
 	 *             if an error occured during optional compilation
 	 */
-	public void commit(String path) throws GraphIOException;
+	public void commit(String path, boolean transactionSupport)
+			throws GraphIOException;
 
 	/**
 	 * after creating the schema, this command serves to make it permanent, m2
@@ -94,20 +99,25 @@ public interface Schema extends Comparable<Schema> {
 	 * 
 	 * @param path
 	 *            the path to the m1 classes which are to be generated
+	 * @param transactionSupport
+	 *            create code for transaction support
 	 * @param progressFunction
 	 *            an optional progressfunction
 	 * @throws GraphIOException
 	 *             if an error occured during optional compilation
 	 */
-	public void commit(String path, ProgressFunction progressFunction)
-			throws GraphIOException;
+	public void commit(String path, boolean transactionSupport,
+			ProgressFunction progressFunction) throws GraphIOException;
 
 	/**
 	 * After creating the schema, this command serves to generate and compile
 	 * code for the m1 classes. The class files are not written to disk, but
 	 * only held in memory.
+	 * 
+	 * @param transactionSupport
+	 *            create code for transaction support
 	 */
-	public void compile();
+	public void compile(boolean transactionSupport);
 
 	/**
 	 * After creating the schema, this command serves to generate and compile
@@ -116,8 +126,10 @@ public interface Schema extends Comparable<Schema> {
 	 * 
 	 * @param jgralabClassPath
 	 *            the classpath to JGraLab
+	 * @param transactionSupport
+	 *            create code for transaction support
 	 */
-	public void compile(String jgralabClassPath);
+	public void compile(String jgralabClassPath, boolean transactionSupport);
 
 	/**
 	 * Creates a new Attribute <code>name</code> with domain <code>dom</code>.
