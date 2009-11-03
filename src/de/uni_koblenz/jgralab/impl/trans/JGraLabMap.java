@@ -32,7 +32,7 @@ public class JGraLabMap<K, V> extends HashMap<K, V> implements JGraLabCloneable 
 	/**
 	 * 
 	 */
-	/* protected */public JGraLabMap() {
+	/* protected */protected JGraLabMap() {
 		super();
 	}
 
@@ -40,7 +40,7 @@ public class JGraLabMap<K, V> extends HashMap<K, V> implements JGraLabCloneable 
 	 * 
 	 * @param initialSize
 	 */
-	/* protected */public JGraLabMap(int initialSize) {
+	/* protected */protected JGraLabMap(int initialSize) {
 		super(initialSize);
 	}
 
@@ -49,7 +49,7 @@ public class JGraLabMap<K, V> extends HashMap<K, V> implements JGraLabCloneable 
 	 * @param initialSize
 	 * @param loadFactor
 	 */
-	/* protected */public JGraLabMap(int initialSize, float loadFactor) {
+	/* protected */protected JGraLabMap(int initialSize, float loadFactor) {
 		super(initialSize, loadFactor);
 	}
 
@@ -57,26 +57,26 @@ public class JGraLabMap<K, V> extends HashMap<K, V> implements JGraLabCloneable 
 	 * 
 	 * @param map
 	 */
-	/* protected */public JGraLabMap(Map<K, V> map) {
+	/* protected */protected JGraLabMap(Map<K, V> map) {
 		super(map);
 	}
 
-	public JGraLabMap(Graph g) {
+	protected JGraLabMap(Graph g) {
 		super();
 		init(g);
 	}
 
-	public JGraLabMap(Graph g, Map<? extends K, ? extends V> map) {
+	protected JGraLabMap(Graph g, Map<? extends K, ? extends V> map) {
 		super(map);
 		init(g);
 	}
 
-	public JGraLabMap(Graph g, int initialCapacity) {
+	protected JGraLabMap(Graph g, int initialCapacity) {
 		super(initialCapacity);
 		init(g);
 	}
 
-	public JGraLabMap(Graph g, int initialCapacity, float loadFactor) {
+	protected JGraLabMap(Graph g, int initialCapacity, float loadFactor) {
 		super(initialCapacity, loadFactor);
 		init(g);
 	}

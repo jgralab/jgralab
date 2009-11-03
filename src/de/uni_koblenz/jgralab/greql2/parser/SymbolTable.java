@@ -30,8 +30,8 @@ import de.uni_koblenz.jgralab.greql2.exception.DuplicateVariableException;
 import de.uni_koblenz.jgralab.greql2.schema.Greql2Aggregation;
 import de.uni_koblenz.jgralab.greql2.schema.IsBoundVarOf;
 import de.uni_koblenz.jgralab.greql2.schema.IsDeclaredVarOf;
-import de.uni_koblenz.jgralab.greql2.schema.IsVarOf;
-//import de.uni_koblenz.jgralab.greql2.schema.SourcePosition;
+import de.uni_koblenz.jgralab.greql2.schema.IsVarOf; // import
+														// de.uni_koblenz.jgralab.greql2.schema.SourcePosition;
 import de.uni_koblenz.jgralab.greql2.schema.Variable;
 import de.uni_koblenz.jgralab.greql2.schema.impl.std.SourcePositionImpl;
 
@@ -58,10 +58,10 @@ public class SymbolTable extends EasySymbolTable {
 			}
 			throw new DuplicateVariableException((Variable) var,
 					((Greql2Aggregation) v.getFirstEdge(EdgeDirection.IN))
-							//.get_sourcePositions(), new SourcePosition(offset,
-							//ident.length()));
-							.get_sourcePositions(), new SourcePositionImpl(offset,
-							ident.length()));
+					// .get_sourcePositions(), new SourcePosition(offset,
+							// ident.length()));
+							.get_sourcePositions(), new SourcePositionImpl(v
+							.getGraph(), offset, ident.length()));
 		}
 	}
 

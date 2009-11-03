@@ -157,7 +157,7 @@ public final class MapDomainImpl extends CompositeDomainImpl implements
 
 		code.addNoIndent(new CodeSnippet("#init#"));
 		code.addNoIndent(new CodeSnippet("if (#io#.isNextToken(\"{\")) {"));
-		if (transactionSupport)
+		if (/*transactionSupport*/true)
 			code
 					.add(new CodeSnippet(
 							"#name# = graph.createMap(#keydom#.class, #valuedom#.class);"));

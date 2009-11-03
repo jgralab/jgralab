@@ -346,8 +346,10 @@ public class AttributedElementCodeGenerator extends CodeGenerator {
 								"\tif (_#name# == null)",
 								"\t\treturn #initValue#;",
 								"\t#ttype# value = _#name#.getValidValue(#graphreference#getCurrentTransaction());");
-				if(attr.getDomain().isComposite())
-					code.add("\tvalue.setName(this + \":#name#\");");
+				if(attr.getDomain().isComposite()) {
+					code.add("\tif(_#name# != null)");
+					code.add("\t\tvalue.setName(this + \":#name#\");");
+				}
 				code.add("\treturn (value == null) ? #initValue# : value;",
 								"}");
 			}
@@ -435,6 +437,7 @@ public class AttributedElementCodeGenerator extends CodeGenerator {
 						"\t\tthis._#name# = #init#",
 						"\t\tthis._#name#.setName(\"#name#\");", "\t}");
 				if(domain.isComposite()) {
+					code.add("\tif(_#name# != null)");
 					code.add("\t((JGraLabCloneable)_#name#).setName(this + \":#name#\");");
 					addImports("#jgTransPackage#.JGraLabCloneable");
 				}

@@ -131,7 +131,7 @@ public final class ListDomainImpl extends CollectionDomainImpl implements
 						"\t#tmpname#.add($#name#Element);",
 						"}",
 						"#io#.match(\"]\");"));
-		if(transactionSupport)
+		if(/*transactionSupport*/true)
 			code.add(
 					new CodeSnippet("#name# = graph.createList(#basedom#.class, #tmpname#.size());"));
 		else
