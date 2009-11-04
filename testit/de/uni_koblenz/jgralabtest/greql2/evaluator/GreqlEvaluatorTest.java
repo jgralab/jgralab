@@ -53,7 +53,6 @@ import de.uni_koblenz.jgralab.greql2.optimizer.VariableDeclarationOrderOptimizer
 import de.uni_koblenz.jgralab.greql2.parser.ManualGreqlParser;
 import de.uni_koblenz.jgralab.greql2.schema.Definition;
 import de.uni_koblenz.jgralab.greql2.schema.Greql2;
-import de.uni_koblenz.jgralab.greql2.schema.IsDefinitionOf;
 import de.uni_koblenz.jgralabtest.greql2.GenericTests;
 
 public class GreqlEvaluatorTest extends GenericTests {
@@ -793,7 +792,7 @@ public class GreqlEvaluatorTest extends GenericTests {
 		String queryString = "from x:list(1..10), z:list(1..x), y:list(x..13) report isPrime(z), isPrime(z*z), isPrime(z+z*z-1) end";
 		JValue result = evalTestQuery("DependentDeclarations", queryString);
 		assertEquals(385, result.toCollection().size());
-		JValueSet set = result.toCollection().toJValueSet();
+		result.toCollection().toJValueSet();
 		JValue resultWO = evalTestQuery("DependentDeclarations (wo)",
 				queryString, new VariableDeclarationOrderOptimizer());
 		assertEquals(result, resultWO);

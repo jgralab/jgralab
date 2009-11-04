@@ -1,8 +1,9 @@
 package de.uni_koblenz.jgralabtest.trans;
 
-import static org.junit.Assert.*; //import junit.framework.JUnit4TestAdapter;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
-//import java.util.List;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -11,9 +12,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import de.uni_koblenz.jgralab.Edge; //import de.uni_koblenz.jgralab.GraphException;
-//import de.uni_koblenz.jgralab.GraphIO;
-//import de.uni_koblenz.jgralab.GraphIOException;
+import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.trans.CommitFailedException;
 import de.uni_koblenz.jgralab.trans.Transaction;
