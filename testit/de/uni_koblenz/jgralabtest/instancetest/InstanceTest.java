@@ -1,6 +1,7 @@
 package de.uni_koblenz.jgralabtest.instancetest;
 
 import static org.junit.Assert.fail;
+
 import java.util.ArrayList;
 import java.util.Collection;
 

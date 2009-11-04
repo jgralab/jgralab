@@ -1,10 +1,10 @@
 package de.uni_koblenz.jgralabtest.trans;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import java.util.Arrays;
-
-//import junit.framework.JUnit4TestAdapter;
 
 import org.junit.After;
 import org.junit.Before;

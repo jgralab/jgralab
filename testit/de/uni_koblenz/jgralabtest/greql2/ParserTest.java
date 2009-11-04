@@ -83,7 +83,6 @@ import de.uni_koblenz.jgralab.greql2.schema.VertexSetExpression;
 import de.uni_koblenz.jgralab.greql2.schema.VertexSubgraphExpression;
 import de.uni_koblenz.jgralab.schema.GraphClass;
 import de.uni_koblenz.jgralab.schema.Schema;
-import de.uni_koblenz.jgralab.schema.VertexClass;
 import de.uni_koblenz.jgralab.schema.impl.SchemaImpl;
 
 /*
@@ -1255,7 +1254,7 @@ public class ParserTest {
 		Schema s = new SchemaImpl("SampleSchema",
 				"de.uni_koblenz.jgralab.sampleschema");
 		GraphClass gc = s.createGraphClass("SampleGraph");
-		VertexClass vc = gc.createVertexClass("map.SampleVertex");
+		gc.createVertexClass("map.SampleVertex");
 		s.commit(CodeGeneratorConfiguration.WITHOUT_TRANSACTIONS);
 		String query = "import map.SampleVertex;  true ";
 		parseQuery(query);
