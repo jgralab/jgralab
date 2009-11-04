@@ -1248,13 +1248,14 @@ public class ParserTest {
 			}
 		}
 	}
-	
+
 	@Test
 	public void testKeywordsInPackageNames() {
-		Schema s = new SchemaImpl("SampleSchema", "de.uni_koblenz.jgralab.sampleschema");
+		Schema s = new SchemaImpl("SampleSchema",
+				"de.uni_koblenz.jgralab.sampleschema");
 		GraphClass gc = s.createGraphClass("SampleGraph");
 		VertexClass vc = gc.createVertexClass("map.SampleVertex");
-		s.commit();
+		s.commit(false);
 		String query = "import map.SampleVertex;  true ";
 		parseQuery(query);
 	}
