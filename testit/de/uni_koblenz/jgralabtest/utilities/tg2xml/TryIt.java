@@ -8,6 +8,7 @@ import javax.xml.stream.XMLStreamException;
 
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.GraphIO;
+import de.uni_koblenz.jgralab.codegenerator.CodeGeneratorConfiguration;
 import de.uni_koblenz.jgralab.impl.ProgressFunctionImpl;
 import de.uni_koblenz.jgralab.schema.Schema;
 import de.uni_koblenz.jgralab.utilities.xml.Tg2xml;
@@ -35,7 +36,7 @@ public class TryIt {
 			// Graph graph = createRandomGraph(false);
 			Schema schema = GraphIO.loadSchemaFromFile("GrumlSchema.gruml.tg");
 			System.out.println("Compiling schema");
-			schema.compile(true);
+			schema.compile(CodeGeneratorConfiguration.FULL_WITHOUT_SUBCLASS_FLAGS);
 			System.out.println("done");
 			Graph graph = GraphIO.loadGraphFromFile("GrumlSchema.gruml.tg",
 					new ProgressFunctionImpl());

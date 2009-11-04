@@ -14,6 +14,7 @@ import org.junit.Test;
 import de.uni_koblenz.jgralab.AttributedElement;
 import de.uni_koblenz.jgralab.GraphIO;
 import de.uni_koblenz.jgralab.GraphIOException;
+import de.uni_koblenz.jgralab.codegenerator.CodeGeneratorConfiguration;
 import de.uni_koblenz.jgralab.graphvalidator.GraphValidator;
 import de.uni_koblenz.jgralab.graphvalidator.MultiplicityConstraintViolation;
 import de.uni_koblenz.jgralab.schema.EdgeClass;
@@ -49,7 +50,7 @@ public class MultiplicityTest {
 		Schema s = null;
 		s = GraphIO.loadSchemaFromStream(input);
 		try {
-			s.compile(true);
+			s.compile(CodeGeneratorConfiguration.FULL_WITHOUT_SUBCLASS_FLAGS);
 		} catch (Exception e) {
 			throw new GraphIOException("", e);
 		}

@@ -26,6 +26,7 @@ package de.uni_koblenz.jgralabtest.greql2.evaluator;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
@@ -815,12 +816,12 @@ public class GreqlEvaluatorTest extends GenericTests {
 	
 	@Test
 	public void testEvaluateDependentDeclarations3() throws Exception {
-		getTestGraph().getVertex(10).getFirstEdgeOfClass(IsDefinitionOf.class).delete();
 		String queryString = "from def: V{Definition}, whe: <--{IsDefinitionOf} def report def end";
 		JValue result = evalTestQuery("DependentDeclarations3", queryString);
 		assertEquals(4, result.toCollection().size());
 		JValueSet set = result.toCollection().toJValueSet();
 		for (Definition def : ((Greql2)getTestGraph()).getDefinitionVertices()) {
+			assertNotNull(def.getFirstIsDefinitionOf());
 			assertTrue(set.contains(new JValue(def)));
 		}
 		JValue resultWO = evalTestQuery("DependentDeclarations3 (wo)",

@@ -93,7 +93,7 @@ public class GenericTests {
 	}
 
 	protected Graph createTestGraph() throws Exception {
-		String query = "from i:c report i end where d:=\"drölfundfünfzig\", c:=b, b:=a, a:=\"Mensaessen\"";
+		String query = "from i:c report i end where d:=\"nada\", c:=b, b:=a, a:=\"Mensaessen\"";
 		return ManualGreqlParser.parse(query);
 	}
 

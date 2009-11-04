@@ -255,12 +255,6 @@ public class ManualGreqlParser extends ManualParserHelper {
 		return !predicateStack.isEmpty();
 	}
 
-	// private final void matchEOF() {
-	// // if (current < tokens.size() - 1) {
-	// // fail("Expected end of file");
-	// // }
-	// }
-
 	private final boolean predicateHolds() {
 		return predicateFulfilled;
 	}
