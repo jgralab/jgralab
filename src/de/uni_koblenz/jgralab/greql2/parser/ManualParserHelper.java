@@ -173,14 +173,15 @@ public abstract class ManualParserHelper {
 		} else if (v instanceof ThisLiteral) {
 			return;
 		} else if (v instanceof Variable) {
-			Vertex var = afterParsingvariableSymbolTable.lookup(((Variable) v)
-					.get_name());
+			Vertex var = afterParsingvariableSymbolTable.lookup(((Variable) v).get_name());
 			if (var != null) {
-				Edge inc = v.getFirstEdge(EdgeDirection.OUT);
-				inc.setAlpha(var);
-				if (v.getDegree() <= 0) {
-					v.delete();
-				}
+				if (var != v) {
+					Edge inc = v.getFirstEdge(EdgeDirection.OUT);
+					inc.setAlpha(var);
+					if (v.getDegree() <= 0) {
+						v.delete();
+					}
+				}	
 			} else {
 				Greql2Aggregation e = (Greql2Aggregation) v
 						.getFirstEdge(EdgeDirection.OUT);
@@ -188,11 +189,9 @@ public abstract class ManualParserHelper {
 						.get_sourcePositions());
 			}
 		} else {
-			Edge inc = v.getFirstEdge(EdgeDirection.IN);
 			ArrayList<Edge> incidenceList = new ArrayList<Edge>();
-			while (inc != null) {
+			for (Edge inc : v.incidences(EdgeDirection.IN)) {
 				incidenceList.add(inc);
-				inc = inc.getNextEdge(EdgeDirection.IN);
 			}
 			for (Edge e : incidenceList) {
 				mergeVariables(e.getAlpha());
@@ -211,14 +210,10 @@ public abstract class ManualParserHelper {
 	protected final void mergeVariablesInGreql2Expression(Greql2Expression root)
 			throws DuplicateVariableException, UndefinedVariableException {
 		afterParsingvariableSymbolTable.blockBegin();
-		IsBoundVarOf isBoundVarOf = root.getFirstIsBoundVarOf(EdgeDirection.IN);
-		while (isBoundVarOf != null) {
-			afterParsingvariableSymbolTable.insert(((Variable) isBoundVarOf
-					.getAlpha()).get_name(), isBoundVarOf.getAlpha());
-			isBoundVarOf = isBoundVarOf.getNextIsBoundVarOf(EdgeDirection.IN);
+		for (IsBoundVarOf isBoundVarOf : root.getIsBoundVarOfIncidences(EdgeDirection.IN)) {
+			afterParsingvariableSymbolTable.insert(((Variable) isBoundVarOf.getAlpha()).get_name(), isBoundVarOf.getAlpha());
 		}
-		IsQueryExprOf isQueryExprOf = root
-				.getFirstIsQueryExprOf(EdgeDirection.IN);
+		IsQueryExprOf isQueryExprOf = root.getFirstIsQueryExprOf(EdgeDirection.IN);
 		mergeVariables(isQueryExprOf.getAlpha());
 		afterParsingvariableSymbolTable.blockEnd();
 	}
@@ -234,28 +229,17 @@ public abstract class ManualParserHelper {
 	private void mergeVariablesInDefinitionExpression(DefinitionExpression v)
 			throws DuplicateVariableException, UndefinedVariableException {
 		afterParsingvariableSymbolTable.blockBegin();
-		IsDefinitionOf isDefinitionOf = v
-				.getFirstIsDefinitionOf(EdgeDirection.IN);
-		while (isDefinitionOf != null) {
-			Definition definition = (Definition) isDefinitionOf.getAlpha();
-			Variable variable = (Variable) definition.getFirstIsVarOf(
-					EdgeDirection.IN).getAlpha();
-			afterParsingvariableSymbolTable.insert(variable.get_name(),
-					variable);
-			isDefinitionOf = isDefinitionOf
-					.getNextIsDefinitionOf(EdgeDirection.IN);
+		for (IsDefinitionOf currentEdge : v.getIsDefinitionOfIncidences(EdgeDirection.IN)) {
+			Definition definition = (Definition) currentEdge.getAlpha();
+			Variable variable = (Variable) definition.getFirstIsVarOf(EdgeDirection.IN).getAlpha();
+			afterParsingvariableSymbolTable.insert(variable.get_name(), variable);
 		}
-		isDefinitionOf = v.getFirstIsDefinitionOf(EdgeDirection.IN);
-		while (isDefinitionOf != null) {
-			Definition definition = (Definition) isDefinitionOf.getAlpha();
-			Expression expr = (Expression) definition.getFirstIsExprOf(
-					EdgeDirection.IN).getAlpha();
+		for (IsDefinitionOf currentEdge : v.getIsDefinitionOfIncidences(EdgeDirection.IN)) {
+			Definition definition = (Definition) currentEdge.getAlpha();
+			Expression expr = (Expression) definition.getFirstIsExprOf(EdgeDirection.IN).getAlpha();
 			mergeVariables(expr);
-			isDefinitionOf = isDefinitionOf
-					.getNextIsDefinitionOf(EdgeDirection.IN);
 		}
-		Edge isBoundExprOf = v
-				.getFirstIsBoundExprOfDefinition(EdgeDirection.IN);
+		Edge isBoundExprOf = v.getFirstIsBoundExprOfDefinition(EdgeDirection.IN);
 		mergeVariables(isBoundExprOf.getAlpha());
 		afterParsingvariableSymbolTable.blockEnd();
 	}
@@ -271,43 +255,26 @@ public abstract class ManualParserHelper {
 	 */
 	private void mergeVariablesInDeclaration(Declaration v)
 			throws DuplicateVariableException, UndefinedVariableException {
-		IsSimpleDeclOf isSimpleDeclOf = v
-				.getFirstIsSimpleDeclOf(EdgeDirection.IN);
-		while (isSimpleDeclOf != null) {
-			SimpleDeclaration simpleDecl = (SimpleDeclaration) isSimpleDeclOf
-					.getAlpha();
-			IsDeclaredVarOf isDeclaredVarOf = simpleDecl
-					.getFirstIsDeclaredVarOf(EdgeDirection.IN);
-			while (isDeclaredVarOf != null) {
+		for (IsSimpleDeclOf currentEdge : v.getIsSimpleDeclOfIncidences(EdgeDirection.IN)) {
+			SimpleDeclaration simpleDecl = (SimpleDeclaration) currentEdge.getAlpha();
+			for (IsDeclaredVarOf isDeclaredVarOf : simpleDecl.getIsDeclaredVarOfIncidences(EdgeDirection.IN)) {
 				Variable variable = (Variable) isDeclaredVarOf.getAlpha();
-				afterParsingvariableSymbolTable.insert(variable.get_name(),
-						variable);
-				isDeclaredVarOf = isDeclaredVarOf
-						.getNextIsDeclaredVarOf(EdgeDirection.IN);
+				afterParsingvariableSymbolTable.insert(variable.get_name(), variable);
 			}
-			isSimpleDeclOf = isSimpleDeclOf
-					.getNextIsSimpleDeclOf(EdgeDirection.IN);
 		}
-		isSimpleDeclOf = v.getFirstIsSimpleDeclOf(EdgeDirection.IN);
-		while (isSimpleDeclOf != null) {
-			SimpleDeclaration simpleDecl = (SimpleDeclaration) isSimpleDeclOf
-					.getAlpha();
-			Expression expr = (Expression) simpleDecl.getFirstIsTypeExprOf(
-					EdgeDirection.IN).getAlpha();
+		
+		for (IsSimpleDeclOf currentEdge : v.getIsSimpleDeclOfIncidences(EdgeDirection.IN)) {
+			SimpleDeclaration simpleDecl = (SimpleDeclaration) currentEdge.getAlpha();
+			Expression expr = (Expression) simpleDecl.getFirstIsTypeExprOf(EdgeDirection.IN).getAlpha();
 			mergeVariables(expr);
-			isSimpleDeclOf = isSimpleDeclOf
-					.getNextIsSimpleDeclOf(EdgeDirection.IN);
 		}
+
 		IsSubgraphOf isSubgraphOf = v.getFirstIsSubgraphOf(EdgeDirection.IN);
 		if (isSubgraphOf != null) {
 			mergeVariables(isSubgraphOf.getAlpha());
 		}
-		IsConstraintOf isConstraintOf = v
-				.getFirstIsConstraintOf(EdgeDirection.IN);
-		while (isConstraintOf != null) {
+		for (IsConstraintOf isConstraintOf : v.getIsConstraintOfIncidences(EdgeDirection.IN)) {
 			mergeVariables(isConstraintOf.getAlpha());
-			isConstraintOf = isConstraintOf
-					.getNextIsConstraintOf(EdgeDirection.IN);
 		}
 	}
 
@@ -322,11 +289,9 @@ public abstract class ManualParserHelper {
 	private void mergeVariablesInQuantifiedExpression(QuantifiedExpression v)
 			throws DuplicateVariableException, UndefinedVariableException {
 		afterParsingvariableSymbolTable.blockBegin();
-		IsQuantifiedDeclOf isQuantifiedDeclOf = v
-				.getFirstIsQuantifiedDeclOf(EdgeDirection.IN);
+		IsQuantifiedDeclOf isQuantifiedDeclOf = v.getFirstIsQuantifiedDeclOf(EdgeDirection.IN);
 		mergeVariablesInDeclaration((Declaration) isQuantifiedDeclOf.getAlpha());
-		IsBoundExprOfQuantifier isBoundExprOfQuantifier = v
-				.getFirstIsBoundExprOfQuantifier(EdgeDirection.IN);
+		IsBoundExprOfQuantifier isBoundExprOfQuantifier = v.getFirstIsBoundExprOfQuantifier(EdgeDirection.IN);
 		mergeVariables(isBoundExprOfQuantifier.getAlpha());
 		afterParsingvariableSymbolTable.blockEnd();
 	}

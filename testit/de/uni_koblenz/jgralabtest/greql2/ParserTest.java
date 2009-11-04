@@ -13,6 +13,7 @@ import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.GraphIO;
 import de.uni_koblenz.jgralab.Vertex;
+import de.uni_koblenz.jgralab.codegenerator.CodeGeneratorConfiguration;
 import de.uni_koblenz.jgralab.greql2.exception.ParsingException;
 import de.uni_koblenz.jgralab.greql2.exception.UndefinedVariableException;
 import de.uni_koblenz.jgralab.greql2.parser.ManualGreqlParser;
@@ -1255,7 +1256,7 @@ public class ParserTest {
 				"de.uni_koblenz.jgralab.sampleschema");
 		GraphClass gc = s.createGraphClass("SampleGraph");
 		VertexClass vc = gc.createVertexClass("map.SampleVertex");
-		s.commit(false);
+		s.commit(CodeGeneratorConfiguration.WITHOUT_TRANSACTIONS);
 		String query = "import map.SampleVertex;  true ";
 		parseQuery(query);
 	}

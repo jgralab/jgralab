@@ -29,6 +29,7 @@ import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.GraphException;
 import de.uni_koblenz.jgralab.Vertex;
+import de.uni_koblenz.jgralab.greql2.schema.IsDefinitionOf;
 import de.uni_koblenz.jgralab.schema.EdgeClass;
 
 /**
