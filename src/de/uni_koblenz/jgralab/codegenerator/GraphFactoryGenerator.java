@@ -38,13 +38,11 @@ import de.uni_koblenz.jgralab.schema.VertexClass;
 public class GraphFactoryGenerator extends CodeGenerator {
 
 	private Schema schema;
-	private boolean transactionSupport;
 
 	public GraphFactoryGenerator(Schema schema, String schemaPackageName,
-			String implementationName, boolean transactionSupport) {
-		super(schemaPackageName, "", false);
+			String implementationName, CodeGeneratorConfiguration config) {
+		super(schemaPackageName, "", config);
 		this.schema = schema;
-		this.transactionSupport = transactionSupport;
 		rootBlock.setVariable("className", schema.getName() + "Factory");
 		rootBlock.setVariable("simpleClassName", schema.getName() + "Factory");
 		rootBlock.setVariable("isClassOnly", "true");
@@ -112,11 +110,9 @@ public class GraphFactoryGenerator extends CodeGenerator {
 
 		if (!graphClass.isAbstract()) {
 			code.add("/* code for graph #graphName# */");
-			code
-					.add("setGraphImplementationClass(#graphName#.class, #graphImplName#Impl.class);");
-			if (transactionSupport) {
-				code
-						.add("setGraphTransactionImplementationClass(#graphName#.class, #graphTransactionImplName#Impl.class);");
+			code.add("setGraphImplementationClass(#graphName#.class, #graphImplName#Impl.class);");
+			if (config.hasTransactionSupport()) {
+				code.add("setGraphTransactionImplementationClass(#graphName#.class, #graphTransactionImplName#Impl.class);");
 			}
 		}
 		return code;
@@ -134,11 +130,9 @@ public class GraphFactoryGenerator extends CodeGenerator {
 		code.setVariable("vertexTransactionImplName", schemaRootPackageName
 				+ ".impl.trans." + vertexClass.getQualifiedName());
 		if (!vertexClass.isAbstract()) {
-			code
-					.add("setVertexImplementationClass(#vertexName#.class, #vertexImplName#Impl.class);");
-			if (transactionSupport) {
-				code
-						.add("setVertexTransactionImplementationClass(#vertexName#.class, #vertexTransactionImplName#Impl.class);");
+			code.add("setVertexImplementationClass(#vertexName#.class, #vertexImplName#Impl.class);");
+			if (config.hasTransactionSupport()) {
+				code.add("setVertexTransactionImplementationClass(#vertexName#.class, #vertexTransactionImplName#Impl.class);");
 			}
 		}
 		return code;
@@ -154,11 +148,9 @@ public class GraphFactoryGenerator extends CodeGenerator {
 				+ ".impl.trans." + edgeClass.getQualifiedName());
 
 		if (!edgeClass.isAbstract()) {
-			code
-					.add("setEdgeImplementationClass(#edgeName#.class, #edgeImplName#Impl.class);");
-			if (transactionSupport) {
-				code
-						.add("setEdgeTransactionImplementationClass(#edgeName#.class, #edgeTransactionImplName#Impl.class);");
+			code.add("setEdgeImplementationClass(#edgeName#.class, #edgeImplName#Impl.class);");
+			if (config.hasTransactionSupport()) {
+				code.add("setEdgeTransactionImplementationClass(#edgeName#.class, #edgeTransactionImplName#Impl.class);");
 			}
 		}
 		return code;

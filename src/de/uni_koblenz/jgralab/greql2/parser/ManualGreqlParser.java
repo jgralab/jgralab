@@ -678,6 +678,7 @@ public class ManualGreqlParser extends ManualParserHelper {
 				for (VertexPosition<Definition> def : defList) {
 					IsDefinitionOf isDefOf = graph.createIsDefinitionOf(
 							def.node, result);
+					System.out.println("Creating isDefinitionOf edge " + isDefOf + " from Definition " + def.node + " where expression " + result);
 					isDefOf.set_sourcePositions((createSourcePositionList(
 							length, offset)));
 				}

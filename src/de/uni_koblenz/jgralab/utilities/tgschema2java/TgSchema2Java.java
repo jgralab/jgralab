@@ -47,6 +47,7 @@ import de.uni_koblenz.ist.utilities.option_handler.OptionHandler;
 import de.uni_koblenz.jgralab.GraphIO;
 import de.uni_koblenz.jgralab.GraphIOException;
 import de.uni_koblenz.jgralab.JGraLab;
+import de.uni_koblenz.jgralab.codegenerator.CodeGeneratorConfiguration;
 import de.uni_koblenz.jgralab.schema.Domain;
 import de.uni_koblenz.jgralab.schema.EdgeClass;
 import de.uni_koblenz.jgralab.schema.GraphClass;
@@ -98,9 +99,9 @@ public class TgSchema2Java {
 	private Schema schema;
 
 	/**
-	 * Compile code for transaction support.
+	 * Configures which options the generated code should support
 	 */
-	private boolean transactionSupport = false;
+	private CodeGeneratorConfiguration config = new CodeGeneratorConfiguration();
 
 	// /**
 	// * Holds the long options
@@ -302,8 +303,12 @@ public class TgSchema2Java {
 			jarFileName = comLine.getOptionValue("j");
 		}
 		if (comLine.hasOption('t')) {
-			transactionSupport = true;
+			config.wantsToHaveTransactionSupport(true);
 		}
+		if (comLine.hasOption('w')) {
+			config.wantsToHaveTypespecificMethodsSupport(false);
+		}
+			
 	}
 
 	public void compile() throws Exception {
@@ -364,7 +369,7 @@ public class TgSchema2Java {
 				deleteFolder(commitPath + File.separator + schema.getPathName());
 				System.out.println("Committing schema "
 						+ schema.getQualifiedName());
-				schema.commit(commitPath, transactionSupport);
+				schema.commit(commitPath, config);
 				System.out.println("Schema " + schema.getQualifiedName()
 						+ " committed successfully");
 			}
@@ -431,9 +436,14 @@ public class TgSchema2Java {
 		oh.addOption(jar);
 
 		Option transactions = new Option("t", "transaction-support", false,
-				"(optional): Compile transaction support code");
-		jar.setRequired(false);
+				"(optional): Create transaction support code");
+		transactions.setRequired(false);
 		oh.addOption(transactions);
+		
+		Option without_types = new Option("w", "without-types", false,
+		"(optional): Don't create typespecific methods in classes");
+		without_types.setRequired(false);
+		oh.addOption(without_types);
 
 		Option path = new Option(
 				"p",

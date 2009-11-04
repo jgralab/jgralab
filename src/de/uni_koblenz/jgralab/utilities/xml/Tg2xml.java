@@ -55,6 +55,7 @@ import de.uni_koblenz.jgralab.GraphMarker;
 import de.uni_koblenz.jgralab.JGraLab;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.WorkInProgress;
+import de.uni_koblenz.jgralab.codegenerator.CodeGeneratorConfiguration;
 import de.uni_koblenz.jgralab.impl.ProgressFunctionImpl;
 import de.uni_koblenz.jgralab.schema.Attribute;
 import de.uni_koblenz.jgralab.schema.Schema;
@@ -200,7 +201,7 @@ public class Tg2xml extends GraphVisitor {
 		String xsdLocation = comLine.getOptionValue("x").trim();
 		String outputFile = comLine.getOptionValue("o").trim();
 
-		Graph theGraph = GraphIO.loadSchemaAndGraphFromFile(graphFile, false,
+		Graph theGraph = GraphIO.loadSchemaAndGraphFromFile(graphFile, CodeGeneratorConfiguration.WITHOUT_TRANSACTIONS,
 				new ProgressFunctionImpl());
 
 		Tg2xml converter = new Tg2xml(new BufferedOutputStream(

@@ -43,6 +43,7 @@ import de.uni_koblenz.jgralab.GraphIO;
 import de.uni_koblenz.jgralab.GraphIOException;
 import de.uni_koblenz.jgralab.JGraLab;
 import de.uni_koblenz.jgralab.Vertex;
+import de.uni_koblenz.jgralab.codegenerator.CodeGeneratorConfiguration;
 import de.uni_koblenz.jgralab.impl.ProgressFunctionImpl;
 import de.uni_koblenz.jgralab.schema.Schema;
 
@@ -128,7 +129,7 @@ public abstract class Tg2Whatever {
 	 */
 	public void setGraph(String fileName) throws GraphIOException {
 		graphFileName = fileName;
-		graph = GraphIO.loadSchemaAndGraphFromFile(graphFileName, false,
+		graph = GraphIO.loadSchemaAndGraphFromFile(graphFileName, CodeGeneratorConfiguration.WITHOUT_TRANSACTIONS,
 				new ProgressFunctionImpl());
 	}
 
@@ -201,7 +202,7 @@ public abstract class Tg2Whatever {
 					try {
 						System.out.println("Loading Schema from Graph");
 						schema = GraphIO.loadSchemaFromFile(graphFileName);
-						schema.compile(false);
+						schema.compile(CodeGeneratorConfiguration.MINIMAL);
 						System.out.println("Schema loaded");
 					} catch (GraphIOException ex) {
 						System.err.println("Graph in file '" + graphFileName

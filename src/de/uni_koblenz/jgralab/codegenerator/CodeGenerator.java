@@ -45,28 +45,15 @@ public abstract class CodeGenerator {
 	private static Logger logger = Logger.getLogger(CodeGenerator.class
 			.getName());
 
-	/**
-	 * toggles, if additional getNextEdge-Methods with a parameter
-	 * "noSubclasses" should be generated.
-	 */
-	public static final boolean CREATE_METHODS_WITH_TYPEFLAG = false;
-	
-	/**
-	 * toggles, if additional getNextEdge-Methods with a parameter
-	 * "noSubclasses" should be generated.
-	 */
-	public static final boolean CREATE_TYPESPECIFIC_METHODS = false;
-
 	protected CodeList rootBlock;
 
 	private ImportCodeSnippet imports;
 
 	protected String schemaRootPackageName;
 
-	/**
-	 * Toggles, if the generated code supports transactions or not
-	 */
-	protected boolean transactionSupport;
+
+	protected CodeGeneratorConfiguration config;
+	
 
 	/**
 	 * Creates a CodeGenerator for a single class
@@ -90,9 +77,9 @@ public abstract class CodeGenerator {
 	 *            toggles, if code with transaction support should be generated
 	 */
 	public CodeGenerator(String schemaRootPackageName, String packageName,
-			boolean transactionSupport) {
+			CodeGeneratorConfiguration config) {
 		this.schemaRootPackageName = schemaRootPackageName;
-		this.transactionSupport = transactionSupport;
+		this.config = config;
 		rootBlock = new CodeList(null);
 		rootBlock.setVariable("jgPackage", "de.uni_koblenz.jgralab");
 		rootBlock.setVariable("jgTransPackage", "de.uni_koblenz.jgralab.trans");
@@ -187,7 +174,7 @@ public abstract class CodeGenerator {
 		String schemaPackage = rootBlock.getVariable("schemaPackage");
 		String simpleImplClassName = rootBlock.getVariable("simpleImplClassName");
 		String schemaImplPackage = "";
-		if (!transactionSupport) {
+		if (!config.hasTransactionSupport()) {
 			schemaImplPackage = rootBlock.getVariable("schemaImplStdPackage");
 		} else {
 			schemaImplPackage = rootBlock.getVariable("schemaImplTransPackage");
@@ -196,7 +183,7 @@ public abstract class CodeGenerator {
 		logger.finer(" - simpleClassName=" + simpleClassName);
 		logger.finer(" - schemaPackage=" + schemaPackage);
 		logger.finer(" - simpleImplClassName=" + simpleImplClassName);
-		if (!transactionSupport) {
+		if (!config.hasTransactionSupport()) {
 			logger.finer(" - schemaImplStdPackage=" + schemaImplPackage);
 		} else {
 			logger.finer(" - schemaImplTransPackage=" + schemaImplPackage);
@@ -213,14 +200,14 @@ public abstract class CodeGenerator {
 			logger.finer("Writing file to: " + pathPrefix + "/"
 							+ schemaPackage);
 			// create interface only
-			if (!transactionSupport) {
+			if (!config.hasTransactionSupport()) {
 				createCode(false);
 				writeCodeToFile(pathPrefix, simpleClassName + ".java",
 						schemaPackage);
 			}
 		} else {
 			if ((!rootBlock.getVariable("isImplementationClassOnly").equals("true"))
-					&& (!transactionSupport)) {
+					&& (!config.hasTransactionSupport())) {
 				// create interface
 				createCode(false);
 				writeCodeToFile(pathPrefix, simpleClassName + ".java",
@@ -258,7 +245,7 @@ public abstract class CodeGenerator {
 			code.add("package #schemaPackage#;");
 		} else {
 			// package declaration standard vs. transaction
-			if (!transactionSupport) {
+			if (!config.hasTransactionSupport()) {
 				code.add(createClass ? "package #schemaImplStdPackage#;"
 						: "package #schemaPackage#;");
 			} else {
@@ -314,7 +301,7 @@ public abstract class CodeGenerator {
 					.getCode()));
 		} else if (rootBlock.getVariable("isAbstractClass").equals("true")) {
 			// create interface only
-			if (!transactionSupport) {
+			if (!config.hasTransactionSupport()) {
 				createCode(false);
 				javaSources.add(new JavaSourceFromString(className, rootBlock
 						.getCode()));
@@ -323,7 +310,7 @@ public abstract class CodeGenerator {
 			if (!rootBlock.getVariable("isImplementationClassOnly").equals(
 					"true")) {
 				// create interface
-				if (!transactionSupport) {
+				if (!config.hasTransactionSupport()) {
 					createCode(false);
 					javaSources.add(new JavaSourceFromString(className,
 							rootBlock.getCode()));

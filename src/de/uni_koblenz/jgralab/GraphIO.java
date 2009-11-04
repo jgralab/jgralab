@@ -54,6 +54,7 @@ import java.util.TreeSet;
 import java.util.Map.Entry;
 import java.util.logging.Logger;
 
+import de.uni_koblenz.jgralab.codegenerator.CodeGeneratorConfiguration;
 import de.uni_koblenz.jgralab.impl.GraphImpl;
 import de.uni_koblenz.jgralab.schema.AggregationClass;
 import de.uni_koblenz.jgralab.schema.Attribute;
@@ -713,7 +714,7 @@ public class GraphIO {
 	}
 
 	public static Graph loadSchemaAndGraphFromFile(String filename,
-			boolean transactionSupport, ProgressFunction pf)
+			CodeGeneratorConfiguration config, ProgressFunction pf)
 			throws GraphIOException {
 		try {
 			logger.finer("Loading graph " + filename);
@@ -721,7 +722,7 @@ public class GraphIO {
 		} catch (GraphIOException ex) {
 			logger.fine("Schema was unknown, so loading that first.");
 			Schema s = loadSchemaFromFile(filename);
-			s.compile(transactionSupport);
+			s.compile(config);
 			return loadGraphFromFile(filename, s, pf);
 		}
 	}
@@ -736,7 +737,7 @@ public class GraphIO {
 	 */
 	public static Graph loadGraphFromFileWithTransactionSupport(
 			String filename, ProgressFunction pf) throws GraphIOException {
-		return loadGraphFromFile(filename, null, pf, true);
+		return loadGraphFromFile(filename, null, pf, CodeGeneratorConfiguration.FULL_WITHOUT_SUBCLASS_FLAGS);
 	}
 
 	/**
@@ -752,7 +753,7 @@ public class GraphIO {
 	public static Graph loadGraphFromFileWithTransactionSupport(
 			String filename, Schema schema, ProgressFunction pf)
 			throws GraphIOException {
-		return loadGraphFromFile(filename, schema, pf, true);
+		return loadGraphFromFile(filename, schema, pf, CodeGeneratorConfiguration.FULL_WITHOUT_SUBCLASS_FLAGS);
 	}
 
 	/**
@@ -765,12 +766,12 @@ public class GraphIO {
 	 */
 	public static Graph loadGraphFromFile(String filename, ProgressFunction pf)
 			throws GraphIOException {
-		return loadGraphFromFile(filename, null, pf, false);
+		return loadGraphFromFile(filename, null, pf, CodeGeneratorConfiguration.WITHOUT_TRANSACTIONS);
 	}
 
 	public static Graph loadGraphFromFile(String filename, Schema schema,
 			ProgressFunction pf) throws GraphIOException {
-		return loadGraphFromFile(filename, schema, pf, false);
+		return loadGraphFromFile(filename, schema, pf, CodeGeneratorConfiguration.WITHOUT_TRANSACTIONS);
 	}
 
 	/**
@@ -783,13 +784,13 @@ public class GraphIO {
 	 * @throws GraphIOException
 	 */
 	private static Graph loadGraphFromFile(String filename, Schema schema,
-			ProgressFunction pf, boolean transactionSupport)
+			ProgressFunction pf, CodeGeneratorConfiguration config)
 			throws GraphIOException {
 		try {
 			logger.finer("Loading graph " + filename);
 			return loadGraphFromStream(new BufferedInputStream(
 					new FileInputStream(filename), 65536), schema, pf,
-					transactionSupport);
+					config);
 
 		} catch (IOException ex) {
 			throw new GraphIOException("Unable to load graph from file "
@@ -806,7 +807,7 @@ public class GraphIO {
 			ProgressFunction pf) throws GraphIOException {
 		try {
 			return loadGraphFromStream(new URL(url).openStream(), schema, pf,
-					false);
+					CodeGeneratorConfiguration.WITHOUT_TRANSACTIONS);
 		} catch (IOException ex) {
 			throw new GraphIOException("Unable to load graph from url " + url
 					+ ", the resource cannot be found", ex);
@@ -814,13 +815,13 @@ public class GraphIO {
 	}
 
 	public static Graph loadGraphFromStream(InputStream in,
-			ProgressFunction pf, boolean transactionSupport)
+			ProgressFunction pf, CodeGeneratorConfiguration config)
 			throws GraphIOException {
-		return loadGraphFromStream(in, null, pf, transactionSupport);
+		return loadGraphFromStream(in, null, pf, config);
 	}
 
 	public static Graph loadGraphFromStream(InputStream in, Schema schema,
-			ProgressFunction pf, boolean transactionSupport)
+			ProgressFunction pf, CodeGeneratorConfiguration config)
 			throws GraphIOException {
 		try {
 			GraphIO io = new GraphIO();
@@ -833,7 +834,7 @@ public class GraphIO {
 			Method instanceMethod = schemaClass.getMethod("instance",
 					(Class<?>[]) null);
 			io.schema = (Schema) instanceMethod.invoke(null, new Object[0]);
-			((SchemaImpl) io.schema).setTransactionSupport(transactionSupport);
+			((SchemaImpl) io.schema).setConfiguration(config);
 			GraphImpl g = io.graph(pf);
 			g.internalLoadingCompleted(io.firstIncidence, io.nextIncidence);
 			io.firstIncidence = null;
