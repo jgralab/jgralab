@@ -50,6 +50,7 @@ import de.uni_koblenz.jgralab.GraphIO;
 import de.uni_koblenz.jgralab.GraphIOException;
 import de.uni_koblenz.jgralab.M1ClassManager;
 import de.uni_koblenz.jgralab.Vertex;
+import de.uni_koblenz.jgralab.codegenerator.CodeGeneratorConfiguration;
 import de.uni_koblenz.jgralab.schema.Attribute;
 import de.uni_koblenz.jgralab.schema.CompositeDomain;
 import de.uni_koblenz.jgralab.schema.Domain;
@@ -295,7 +296,7 @@ public class JGraLabFacade {
 				Class.forName(schema.getQualifiedName(), true, M1ClassManager
 						.instance(schema.getQualifiedName()));
 			} catch (ClassNotFoundException e) {
-				schema.compile(false);
+				schema.compile(CodeGeneratorConfiguration.WITHOUT_TRANSACTIONS);
 			}
 
 			graphCreateMethod = schema.getGraphCreateMethod();
@@ -341,10 +342,10 @@ public class JGraLabFacade {
 				Class.forName(schema.getQualifiedName(), true, M1ClassManager
 						.instance(schema.getQualifiedName()));
 			} catch (ClassNotFoundException e) {
-				schema.compile(false);
+				schema.compile(CodeGeneratorConfiguration.WITHOUT_TRANSACTIONS);
 			}
 
-			GraphIO.loadSchemaFromURL(url).compile(false);
+			GraphIO.loadSchemaFromURL(url).compile(CodeGeneratorConfiguration.WITHOUT_TRANSACTIONS);
 
 			graph = GraphIO.loadGraphFromURL(url, null);
 			graphNo = graphContainer.addGraph(graph);

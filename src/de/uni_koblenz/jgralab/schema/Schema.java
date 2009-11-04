@@ -35,6 +35,7 @@ import java.util.Vector;
 import de.uni_koblenz.jgralab.GraphFactory;
 import de.uni_koblenz.jgralab.GraphIOException;
 import de.uni_koblenz.jgralab.ProgressFunction;
+import de.uni_koblenz.jgralab.codegenerator.CodeGeneratorConfiguration;
 import de.uni_koblenz.jgralab.codegenerator.JavaSourceFromString;
 
 /**
@@ -76,7 +77,7 @@ public interface Schema extends Comparable<Schema> {
 	 * @param transactionSupport
 	 *            create code for transaction support
 	 */
-	public Vector<JavaSourceFromString> commit(boolean transactionSupport);
+	public Vector<JavaSourceFromString> commit(CodeGeneratorConfiguration config);
 
 	/**
 	 * after creating the schema, this command serves to make it permanent, m2
@@ -90,7 +91,7 @@ public interface Schema extends Comparable<Schema> {
 	 * @throws GraphIOException
 	 *             if an error occured during optional compilation
 	 */
-	public void commit(String path, boolean transactionSupport)
+	public void commit(String path, CodeGeneratorConfiguration config)
 			throws GraphIOException;
 
 	/**
@@ -106,7 +107,7 @@ public interface Schema extends Comparable<Schema> {
 	 * @throws GraphIOException
 	 *             if an error occured during optional compilation
 	 */
-	public void commit(String path, boolean transactionSupport,
+	public void commit(String path, CodeGeneratorConfiguration config,
 			ProgressFunction progressFunction) throws GraphIOException;
 
 	/**
@@ -114,10 +115,10 @@ public interface Schema extends Comparable<Schema> {
 	 * code for the m1 classes. The class files are not written to disk, but
 	 * only held in memory.
 	 * 
-	 * @param transactionSupport
-	 *            create code for transaction support
+	 * @param config configures the CodeGenerator and which classes and 
+	 *               methods to be created
 	 */
-	public void compile(boolean transactionSupport);
+	public void compile(CodeGeneratorConfiguration config);
 
 	/**
 	 * After creating the schema, this command serves to generate and compile
@@ -126,10 +127,22 @@ public interface Schema extends Comparable<Schema> {
 	 * 
 	 * @param jgralabClassPath
 	 *            the classpath to JGraLab
-	 * @param transactionSupport
-	 *            create code for transaction support
+	 * @param config configures the CodeGenerator and which classes and 
+	 *               methods to be created
 	 */
-	public void compile(String jgralabClassPath, boolean transactionSupport);
+	public void compile(String jgralabClassPath, CodeGeneratorConfiguration config);
+	
+	
+	/**
+	 * After creating the schema, this command serves to generate and compile
+	 * code for the m1 classes. The class files are not written to disk, but
+	 * only held in memory.
+	 * 
+	 * @param jgralabClassPath
+	 *            the classpath to JGraLab
+	 */
+	public void compile(String jgralabClassPath);
+	
 
 	/**
 	 * Creates a new Attribute <code>name</code> with domain <code>dom</code>.

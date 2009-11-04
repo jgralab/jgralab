@@ -49,8 +49,7 @@ import de.uni_koblenz.jgralab.schema.VertexClass;
 public class SchemaCodeGenerator extends CodeGenerator {
 
 	private Schema schema;
-	private boolean transactionSupport = true;
-
+	
 	/**
 	 * Creates a new SchemaCodeGenerator which creates code for the given schema
 	 * 
@@ -62,9 +61,8 @@ public class SchemaCodeGenerator extends CodeGenerator {
 	 *            the special jgralab package name to use
 	 */
 	public SchemaCodeGenerator(Schema schema, String schemaPackageName,
-			String implementationName, boolean transactionSupport) {
-		super(schemaPackageName, "", false);
-		this.transactionSupport = transactionSupport;
+			String implementationName, CodeGeneratorConfiguration config) {
+		super(schemaPackageName, "", config);
 		this.schema = schema;
 
 		rootBlock.setVariable("simpleClassName", schema.getName());
@@ -149,7 +147,7 @@ public class SchemaCodeGenerator extends CodeGenerator {
 				" * @param eMax initial edge count",
 				"*/",
 				"public #gcName# create#gcCamelName#WithTransactionSupport(int vMax, int eMax) {",
-				((transactionSupport) ? "\treturn (#gcCamelName#) graphFactory.createGraphWithTransactionSupport(#gcCamelName#.class, null, vMax, eMax);"
+				((config.hasTransactionSupport()) ? "\treturn (#gcCamelName#) graphFactory.createGraphWithTransactionSupport(#gcCamelName#.class, null, vMax, eMax);"
 						: "\tthrow new UnsupportedOperationException(\"No Transaction support compiled.\");"),
 				"}",
 				"",
@@ -161,7 +159,7 @@ public class SchemaCodeGenerator extends CodeGenerator {
 				" * @param eMax initial edge count",
 				" */",
 				"public #gcName# create#gcCamelName#WithTransactionSupport(String id, int vMax, int eMax) {",
-				((transactionSupport) ? "\treturn (#gcCamelName#) graphFactory.createGraphWithTransactionSupport(#gcCamelName#.class, id, vMax, eMax);"
+				((config.hasTransactionSupport()) ? "\treturn (#gcCamelName#) graphFactory.createGraphWithTransactionSupport(#gcCamelName#.class, id, vMax, eMax);"
 						: "\tthrow new UnsupportedOperationException(\"No Transaction support compiled.\");"),
 				"}",
 				"",
@@ -169,7 +167,7 @@ public class SchemaCodeGenerator extends CodeGenerator {
 				" * Creates a new #gcName# graph.",
 				"*/",
 				"public #gcName# create#gcCamelName#WithTransactionSupport() {",
-				((transactionSupport) ? "\treturn (#gcCamelName#) graphFactory.createGraphWithTransactionSupport(#gcCamelName#.class, null);"
+				((config.hasTransactionSupport()) ? "\treturn (#gcCamelName#) graphFactory.createGraphWithTransactionSupport(#gcCamelName#.class, null);"
 						: "\tthrow new UnsupportedOperationException(\"No Transaction support compiled.\");"),
 				"}",
 				"",
@@ -179,7 +177,7 @@ public class SchemaCodeGenerator extends CodeGenerator {
 				" * @param id the id name of the new graph",
 				" */",
 				"public #gcName# create#gcCamelName#WithTransactionSupport(String id) {",
-				((transactionSupport) ? "\treturn (#gcCamelName#) graphFactory.createGraphWithTransactionSupport(#gcCamelName#.class, id);"
+				((config.hasTransactionSupport()) ? "\treturn (#gcCamelName#) graphFactory.createGraphWithTransactionSupport(#gcCamelName#.class, id);"
 						: "\tthrow new UnsupportedOperationException(\"No Transaction support compiled.\");"),
 				"}",
 				"",
@@ -219,7 +217,7 @@ public class SchemaCodeGenerator extends CodeGenerator {
 				" * @throws GraphIOException if the graph cannot be loaded",
 				" */",
 				"public #gcName# load#gcCamelName#WithTransactionSupport(String filename) throws GraphIOException {",
-				((transactionSupport) ? "\treturn load#gcCamelName#WithTransactionSupport(filename, null);"
+				((config.hasTransactionSupport()) ? "\treturn load#gcCamelName#WithTransactionSupport(filename, null);"
 						: "\tthrow new UnsupportedOperationException(\"No Transaction support compiled.\");"),
 				"}",
 				"",
@@ -232,7 +230,7 @@ public class SchemaCodeGenerator extends CodeGenerator {
 				" * @throws GraphIOException if the graph cannot be loaded",
 				" */",
 				"public #gcName# load#gcCamelName#WithTransactionSupport(String filename, ProgressFunction pf) throws GraphIOException {",
-				((transactionSupport) ? "\tGraph graph = GraphIO.loadGraphFromFileWithTransactionSupport(filename, pf);\n"
+				((config.hasTransactionSupport()) ? "\tGraph graph = GraphIO.loadGraphFromFileWithTransactionSupport(filename, pf);\n"
 						+ "\tif (!(graph instanceof #gcName#)) {\n"
 						+ "\t\tthrow new GraphIOException(\"Graph in file '\" + filename + \"' is not an instance of GraphClass #gcName#\");\n"
 						+ "\t}" + "\treturn (#gcName#) graph;"

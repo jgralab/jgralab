@@ -20,6 +20,7 @@ import de.uni_koblenz.jgralab.GraphIO;
 import de.uni_koblenz.jgralab.GraphIOException;
 import de.uni_koblenz.jgralab.JGraLab;
 import de.uni_koblenz.jgralab.WorkInProgress;
+import de.uni_koblenz.jgralab.codegenerator.CodeGeneratorConfiguration;
 import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
 import de.uni_koblenz.jgralab.greql2.exception.EvaluateException;
 import de.uni_koblenz.jgralab.greql2.exception.OptimizerException;
@@ -43,7 +44,7 @@ public class GReQLConsole {
 	public GReQLConsole(String filename) {
 		try {
 			Schema schema = GraphIO.loadSchemaFromFile(filename);
-			schema.compile(false);
+			schema.compile(CodeGeneratorConfiguration.WITHOUT_TRANSACTIONS);
 			graph = GraphIO.loadGraphFromFile(filename,
 					new ProgressFunctionImpl());
 		} catch (GraphIOException e) {

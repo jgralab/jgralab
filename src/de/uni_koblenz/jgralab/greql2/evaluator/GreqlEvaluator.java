@@ -46,6 +46,7 @@ import de.uni_koblenz.jgralab.JGraLab;
 import de.uni_koblenz.jgralab.ProgressFunction;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.GraphIO.TGFilenameFilter;
+import de.uni_koblenz.jgralab.codegenerator.CodeGeneratorConfiguration;
 import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.CostModel;
 import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.GraphSize;
 import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.LogCostModel;
@@ -93,7 +94,7 @@ public class GreqlEvaluator {
 		String query = args[0];
 		Graph datagraph = null;
 		if (args.length == 2) {
-			datagraph = GraphIO.loadSchemaAndGraphFromFile(args[1], false,
+			datagraph = GraphIO.loadSchemaAndGraphFromFile(args[1], CodeGeneratorConfiguration.WITHOUT_TRANSACTIONS,
 					new ProgressFunctionImpl());
 		}
 
@@ -645,7 +646,7 @@ public class GreqlEvaluator {
 			GraphClass gc = minimalSchema.createGraphClass("MinimalGraph");
 			VertexClass n = gc.createVertexClass("Node");
 			gc.createEdgeClass("Link", n, n);
-			minimalSchema.compile(false);
+			minimalSchema.compile(CodeGeneratorConfiguration.WITHOUT_TRANSACTIONS);
 			Method graphCreateMethod = minimalSchema.getGraphCreateMethod();
 
 			try {

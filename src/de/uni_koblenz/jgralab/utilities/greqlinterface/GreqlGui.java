@@ -22,6 +22,7 @@ import javax.swing.filechooser.FileFilter;
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.GraphIO;
 import de.uni_koblenz.jgralab.WorkInProgress;
+import de.uni_koblenz.jgralab.codegenerator.CodeGeneratorConfiguration;
 import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValueHTMLOutputVisitor;
@@ -96,7 +97,7 @@ public class GreqlGui extends JFrame {
 
 					try {
 						graph = GraphIO.loadSchemaAndGraphFromFile(file
-								.getCanonicalPath(), false,
+								.getCanonicalPath(), CodeGeneratorConfiguration.WITHOUT_TRANSACTIONS,
 								new ProgressFunctionImpl());
 					} catch (Exception e1) {
 						e1.printStackTrace();
