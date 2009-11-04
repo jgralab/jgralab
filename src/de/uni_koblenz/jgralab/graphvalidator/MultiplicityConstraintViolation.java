@@ -78,7 +78,7 @@ public class MultiplicityConstraintViolation extends ConstraintViolation {
 	@Override
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
-		sb.append("Broken constraint attached to ");
+		sb.append("Broken multiplicity constraint at EdgeClass ");
 		sb.append(attributedElementClass.getQualifiedName());
 		sb.append("! ");
 		sb.append(message);
