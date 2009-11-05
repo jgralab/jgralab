@@ -588,8 +588,14 @@ public class Rsa2Tg extends XmlProcessor {
 				int p = nm.lastIndexOf('.');
 				schema = sg.createSchema();
 				vertexId = schema;
-				schema.set_packagePrefix(nm.substring(0, p));
-				schema.set_name(nm.substring(p + 1));
+
+				// In case nm (:= Schema-name) contains only a name
+				if (p == -1) {
+					schema.set_name(nm);
+				} else {
+					schema.set_packagePrefix(nm.substring(0, p));
+					schema.set_name(nm.substring(p + 1));
+				}
 
 				// Generates a GraphClass and links it with the created Schema
 				graphClass = sg.createGraphClass();
@@ -881,22 +887,34 @@ public class Rsa2Tg extends XmlProcessor {
 		if (writeDot) {
 			filename = createFilename(schemaName, defaultPath, filenameDot,
 					".dot");
+			printTypeAndFilename("Dot-file", filename);
 			writeDotFile(filename);
 		}
 
 		if (writeSchemaGraph) {
 			filename = createFilename(schemaName, defaultPath,
 					filenameSchemaGraph, ".gruml.tg");
+			printTypeAndFilename("Schema-Graph-file", filename);
 			writeSchemaGraph(filename);
 		}
 
 		filename = createFilename(schemaName, defaultPath, filenameValidation,
 				".html");
+		printTypeAndFilename("ValidationReport-file", filename);
 		validateGraph(filename);
 
 		filename = createFilename(schemaName, defaultPath, filenameSchema,
 				".rsa.tg");
+		printTypeAndFilename("Schema-file", filename);
 		writeSchema(filename, false);
+	}
+
+	private void printTypeAndFilename(String type, String filename) {
+		System.out.print("Creating a ");
+		System.out.print(type);
+		System.out.println(" to:");
+		System.out.print("\t");
+		System.out.println(filename);
 	}
 
 	/**
