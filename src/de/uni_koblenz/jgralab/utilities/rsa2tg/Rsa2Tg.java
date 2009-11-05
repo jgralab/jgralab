@@ -24,7 +24,6 @@
 
 package de.uni_koblenz.jgralab.utilities.rsa2tg;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -344,26 +343,6 @@ public class Rsa2Tg extends XmlProcessor {
 	private boolean suppressOutput;
 
 	/**
-	 * Marks whether or not the xmi-file has been processed.
-	 */
-	private boolean processed;
-
-	/**
-	 * Flag for writing the output as {@link SchemaGraph}.
-	 */
-	private boolean writeSchemaGraph;
-
-	/**
-	 * Flag for exporting to dot
-	 */
-	private boolean writeDot;
-
-	/**
-	 * Flag for validation
-	 */
-	private boolean validate;
-
-	/**
 	 * Filename for the {@link Schema}.
 	 */
 	private String filenameSchema;
@@ -404,13 +383,6 @@ public class Rsa2Tg extends XmlProcessor {
 		// All XMI input files
 		String input = cli.getOptionValue('i');
 
-		// Debug output filenames
-		String export = cli.getOptionValue('e');
-		String validation = cli.getOptionValue('r');
-
-		String output = cli.getOptionValue('o');
-		String schemaGraph = cli.getOptionValue('s');
-
 		Rsa2Tg r = new Rsa2Tg();
 
 		r.setUseFromRole(cli.hasOption('f'));
@@ -418,16 +390,13 @@ public class Rsa2Tg extends XmlProcessor {
 		r.setUseNavigability(cli.hasOption('n'));
 
 		// apply options
-		r.setWriteDot(cli.hasOption('e'));
-		r.setValidate(cli.hasOption('r'));
-		r.setWriteSchemaGraph(cli.hasOption('s'));
-		r.setFilenameSchema(output);
-		r.setFilenameSchemaGraph(schemaGraph);
-		r.setFilenameDot(export);
-		r.setFilenameValidation(validation);
+		r.setFilenameSchema(cli.getOptionValue('o'));
+		r.setFilenameSchemaGraph(cli.getOptionValue('s'));
+		r.setFilenameDot(cli.getOptionValue('e'));
+		r.setFilenameValidation(cli.getOptionValue('r'));
 
 		try {
-			System.out.println("processing: " + input);
+			System.out.println("processing: " + input + "\n");
 			r.process(input);
 		} catch (Exception e) {
 			System.err.println("An Exception occured while processing " + input
@@ -460,35 +429,30 @@ public class Rsa2Tg extends XmlProcessor {
 				"r",
 				"report",
 				true,
-				"(optional): write a validation report '<filename>.html' In case of no given filename, <filename> := "
-						+ "'<NAME_OF_SCHEMA>'.");
+				"(optional): writes a validation report to the given filename. "
+						+ "Free naming, but should look like this: '<filename>.html'");
 		validate.setRequired(false);
 		validate.setArgName("filename");
-		validate.setOptionalArg(true);
 		oh.addOption(validate);
 
 		Option export = new Option(
 				"e",
 				"export",
 				true,
-				"(optional): write a dotty-graph "
-						+ "'<filename>.dot'. The <filename> is optional.  In case of no given filename, <filename> := '<NAME_OF_"
-						+ "SCHEMA>.dot'.");
+				"(optional): writes a dotty-graph to the given filename. "
+						+ "Free naming, but should look like this: '<filename>.dot'");
 		export.setRequired(false);
 		export.setArgName("filename");
-		export.setOptionalArg(true);
 		oh.addOption(export);
 
 		Option schemaGraph = new Option(
 				"s",
 				"schemaGraph",
 				true,
-				"(optional): write a TG-file of the Schema as graph instance in '<filename>.tg'"
-						+ ". <filename> is optional. In case of no given filename, <filename> := '<NAME_OF_"
-						+ "SCHEMA>.gruml.tg'.");
+				"(optional): writes a TG-file of the Schema as graph instance to the given filename. "
+						+ "Free naming, but should look like this:  '<filename>.tg'");
 		schemaGraph.setRequired(false);
 		schemaGraph.setArgName("filename");
-		schemaGraph.setOptionalArg(true);
 		oh.addOption(schemaGraph);
 
 		Option input = new Option("i", "input", true,
@@ -497,8 +461,12 @@ public class Rsa2Tg extends XmlProcessor {
 		input.setArgName("filename");
 		oh.addOption(input);
 
-		Option output = new Option("o", "output", true,
-				"(optional): write a TG-file of the Schema in '<filename>.rsa.tg.'");
+		Option output = new Option(
+				"o",
+				"output",
+				true,
+				"(optional): writes a TG-file of the Schema to the given filename. "
+						+ "Free naming, but should look like this: '<filename>.rsa.tg.'");
 		output.setRequired(false);
 		output.setArgName("filename");
 		oh.addOption(output);
@@ -842,7 +810,6 @@ public class Rsa2Tg extends XmlProcessor {
 					"There are still vertices left over. ");
 		}
 
-		processed = true;
 		if (!suppressOutput) {
 			try {
 				writeOutput();
@@ -860,53 +827,37 @@ public class Rsa2Tg extends XmlProcessor {
 	 */
 	public void writeOutput() throws XMLStreamException, GraphIOException {
 
-		if (!processed) {
-			return;
+		boolean fileCreated = false;
+
+		if (filenameDot != null) {
+			writeDotFile(filenameDot);
+			printTypeAndFilename("DottyGraph", filenameDot);
+			fileCreated = true;
 		}
 
-		// There should exist a Schema.
-		if (schema == null) {
-			throw new ProcessingException(getFileName(),
-					"No Schema has been generated.");
-		}
-		String schemaName = schema.get_name();
-
-		// A Schema name must exist.
-		if (schemaName == null) {
-			throw new ProcessingException(getFileName(),
-					"No Schema name is present.");
+		if (filenameSchemaGraph != null) {
+			writeSchemaGraph(filenameSchemaGraph);
+			printTypeAndFilename("SchemaGraph", filenameSchemaGraph);
+			fileCreated = true;
 		}
 
-		String defaultPath = new File(getFileName()).getParent();
-
-		// If in current working directory parent is null.
-		defaultPath = defaultPath == null ? "" : defaultPath;
-
-		String filename;
-
-		if (writeDot) {
-			filename = createFilename(schemaName, defaultPath, filenameDot,
-					".dot");
-			printTypeAndFilename("Dot-file", filename);
-			writeDotFile(filename);
+		// The Graph is always validated, but not always written to a hard
+		// drive.
+		validateGraph(filenameValidation);
+		if (filenameValidation != null) {
+			printTypeAndFilename("ValidationReport", filenameValidation);
+			fileCreated = true;
 		}
 
-		if (writeSchemaGraph) {
-			filename = createFilename(schemaName, defaultPath,
-					filenameSchemaGraph, ".gruml.tg");
-			printTypeAndFilename("Schema-Graph-file", filename);
-			writeSchemaGraph(filename);
+		if (filenameSchema != null) {
+			writeSchema(filenameSchema, false);
+			printTypeAndFilename("Schema", filenameSchema);
+			fileCreated = true;
 		}
 
-		filename = createFilename(schemaName, defaultPath, filenameValidation,
-				".html");
-		printTypeAndFilename("ValidationReport-file", filename);
-		validateGraph(filename);
-
-		filename = createFilename(schemaName, defaultPath, filenameSchema,
-				".rsa.tg");
-		printTypeAndFilename("Schema-file", filename);
-		writeSchema(filename, false);
+		if (!fileCreated) {
+			System.out.println("No files have been created.");
+		}
 	}
 
 	private void printTypeAndFilename(String type, String filename) {
@@ -930,10 +881,8 @@ public class Rsa2Tg extends XmlProcessor {
 		try {
 			GraphValidator validator = new GraphValidator(sg);
 			Set<ConstraintViolation> s;
-			if (validate) {
-
+			if (filePath != null) {
 				s = validator.createValidationReport(filePath);
-
 			} else {
 				s = validator.validate();
 			}
@@ -947,61 +896,6 @@ public class Rsa2Tg extends XmlProcessor {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-	}
-
-	/**
-	 * Out of the given {@link String} objects a file name is created, which
-	 * looks like this:
-	 * 
-	 * <pre>
-	 * &lt;pathPrefix&gt;&lt;name&gt;
-	 * </pre>
-	 * 
-	 * In case of 'name == null' the file name looks like this:
-	 * 
-	 * <pre>
-	 * &lt;pathPrefix&gt;&lt;schemaName&gt;&lt;extension&gt;
-	 * </pre>
-	 * 
-	 * @param schemaName
-	 *            Name of the Schema.
-	 * @param defaultPath
-	 *            Relative path to a folder.
-	 * @param proposedFilename
-	 *            Name of the file.
-	 * @param extension
-	 *            Default extension of the file.
-	 * @return Created file name.
-	 */
-	private String createFilename(String schemaName, String defaultPath,
-			String proposedFilename, String extension) {
-
-		StringBuilder out = new StringBuilder();
-
-		String path = "";
-		String filename = "";
-		// 1. Checking the path
-
-		if (proposedFilename == null) {
-			path = defaultPath;
-			filename = schemaName;
-		} else {
-			File file = new File(proposedFilename);
-
-			path = file.getParent();
-			path = path == null ? defaultPath : path;
-			filename = file.getName();
-		}
-
-		out.append(path);
-		out.append(File.separator);
-		out.append(filename);
-
-		if (proposedFilename == null) {
-			out.append(extension);
-		}
-
-		return out.toString();
 	}
 
 	/**
@@ -2708,47 +2602,6 @@ public class Rsa2Tg extends XmlProcessor {
 	}
 
 	/**
-	 * Will return <code>true</code>, if a TG grUML SchemaGraph should be
-	 * written.
-	 * 
-	 * @return Value of the <code>writeSchemaGraph</code> flag.
-	 */
-	public boolean isWriteSchemaGraph() {
-		return writeSchemaGraph;
-	}
-
-	/**
-	 * Determines whether or not a TG grUML SchemaGraph file will be written.
-	 * 
-	 * @param writeSchemaGraph
-	 *            Value for the <code>writeSchemaGraph</code> flag.
-	 */
-	public void setWriteSchemaGraph(boolean writeSchemaGraph) {
-		this.writeSchemaGraph = writeSchemaGraph;
-	}
-
-	/**
-	 * Will return <code>true</code>, if a DOT file is written after executing
-	 * {@link Rsa2Tg#process(String)}.
-	 * 
-	 * @return Value if the <code>writeDot</code> flag.
-	 */
-	public boolean isWriteDot() {
-		return writeDot;
-	}
-
-	/**
-	 * Determines whether or not a DOT file is written. If the boolean value is
-	 * set to <code>true</code>, a DOT file will be written.
-	 * 
-	 * @param writeDot
-	 *            Value for the <code>writeDot</code> flag.
-	 */
-	public void setWriteDot(boolean writeDot) {
-		this.writeDot = writeDot;
-	}
-
-	/**
 	 * Returns the file name of the TG Schema file.
 	 * 
 	 * @return File name as {@link String}.
@@ -2824,25 +2677,4 @@ public class Rsa2Tg extends XmlProcessor {
 		this.filenameValidation = filenameValidation;
 	}
 
-	/**
-	 * Will return <code>true</code>, if a validation will be performed. If not
-	 * --> <code>false</code>.
-	 * 
-	 * @return Value of the <code>validation</code> flag.
-	 */
-	public boolean isValidate() {
-		return validate;
-	}
-
-	/**
-	 * Sets the <code>validation</code> flag. <code>true</code> will perform a
-	 * validation after processing a XMI file to a SchemaGraph. (also see
-	 * {@link Rsa2Tg#process(String)})
-	 * 
-	 * @param validate
-	 *            Boolean value for the <code>validation</code> flag.
-	 */
-	public void setValidate(boolean validate) {
-		this.validate = validate;
-	}
 }
