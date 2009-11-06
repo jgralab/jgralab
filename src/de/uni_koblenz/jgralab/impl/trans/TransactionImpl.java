@@ -5,14 +5,12 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.SortedMap;
-//import java.util.SortedSet;
+import java.util.SortedMap; //import java.util.SortedSet;
 import java.util.Map.Entry;
 
 import de.uni_koblenz.jgralab.AttributedElement;
 import de.uni_koblenz.jgralab.Graph;
-import de.uni_koblenz.jgralab.GraphException; 
-//import de.uni_koblenz.jgralab.graphvalidator.ConstraintViolation;
+import de.uni_koblenz.jgralab.GraphException; //import de.uni_koblenz.jgralab.graphvalidator.ConstraintViolation;
 //import de.uni_koblenz.jgralab.graphvalidator.GraphValidator;
 import de.uni_koblenz.jgralab.impl.IncidenceImpl;
 import de.uni_koblenz.jgralab.trans.CommitFailedException;
@@ -173,7 +171,7 @@ public class TransactionImpl implements Transaction {
 		savepointList = null;
 		changedDuringCommit = null;
 		temporaryValueMap = null;
-		System.gc();
+		//System.gc();
 	}
 
 	@Override
@@ -205,12 +203,13 @@ public class TransactionImpl implements Transaction {
 				throw new CommitFailedException(this, validationComponent
 						.getConflictReason());
 			}
-			/*SortedSet<ConstraintViolation> constraintViolations = validateConstraints();
-			if (!constraintViolations.isEmpty()) {
-				state = TransactionState.RUNNING;
-				transactionManager.commitSync.writeLock().unlock();
-				throw new CommitFailedException(this, constraintViolations);
-			}*/
+			/*
+			 * SortedSet<ConstraintViolation> constraintViolations =
+			 * validateConstraints(); if (!constraintViolations.isEmpty()) {
+			 * state = TransactionState.RUNNING;
+			 * transactionManager.commitSync.writeLock().unlock(); throw new
+			 * CommitFailedException(this, constraintViolations); }
+			 */
 			// make sure no other transaction is executing isInConflict()-method
 			transactionManager.commitValidatingSync.writeLock().lock();
 			// make sure no other transaction is doing its BOT
@@ -281,7 +280,7 @@ public class TransactionImpl implements Transaction {
 		savepointList = null;
 		changedDuringCommit = null;
 		temporaryValueMap = null;
-		System.gc();
+		//System.gc();
 	}
 
 	/**
@@ -370,7 +369,7 @@ public class TransactionImpl implements Transaction {
 			temporaryVersionMap.clear();
 			temporaryVersionMap = null;
 		}
-		System.gc();
+		//System.gc();
 	}
 
 	@Override
@@ -470,7 +469,7 @@ public class TransactionImpl implements Transaction {
 		changedVseqVertices = sp.changedVseqVertices;
 		changedIncidences = sp.changedIncidences;
 		changedAttributes = sp.changedAttributes;
-		System.gc();
+		//System.gc();
 	}
 
 	/**
@@ -504,7 +503,7 @@ public class TransactionImpl implements Transaction {
 		// now this can be set to <code>null<code> again, because invalid
 		// temporary values have been removed...
 		latestRestoredSavepoint = null;
-		System.gc();
+		//System.gc();
 	}
 
 	@Override
@@ -541,10 +540,14 @@ public class TransactionImpl implements Transaction {
 		if (thread != Thread.currentThread())
 			throw new GraphException(
 					"Transaction is not active in current thread.");
-		if (savepointList != null) {
+		if (savepoint.getTransaction() != this)
+			throw new GraphException(
+					"This savepoint doesn't belong to this transaction.");
+		if (savepointList != null && !savepointList.isEmpty()) {
 			synchronized (savepointList) {
+				int position = savepointList.indexOf(savepoint);
 				savepointList.remove(savepoint);
-				// if there are no save-points left
+				// savepoint is the first and only savepoint
 				if (savepointList.isEmpty()
 						&& latestRestoredSavepoint != savepoint) {
 					// move every versioned data-object from
@@ -557,12 +560,16 @@ public class TransactionImpl implements Transaction {
 						SortedMap<Long, Object> versionsMap = entries
 								.getValue();
 						temporaryValueMap.put(versionedDataObject, versionsMap
-								.lastKey());
+								.get(versionsMap.lastKey()));
 						temporaryVersionMap.remove(versionedDataObject);
 					}
 					temporaryVersionMap = null;
 				} else {
-					// TODO implement garbage collection!? - not so trivial
+					// savepoint is the latest defined
+					if(savepointList.size() == position)
+						;// TODO implement
+					else
+						;// TODO implement
 				}
 			}
 		}
@@ -584,12 +591,12 @@ public class TransactionImpl implements Transaction {
 	 * 
 	 * @return
 	 */
-	/*protected SortedSet<ConstraintViolation> validateConstraints() {
-		if(persistentVersionAtBot == persistentVersionAtCommit)
-			state = TransactionState.RUNNING;
-		GraphValidator graphValidator = new GraphValidator(graph);
-		return graphValidator.validate();
-	}*/
+	/*
+	 * protected SortedSet<ConstraintViolation> validateConstraints() {
+	 * if(persistentVersionAtBot == persistentVersionAtCommit) state =
+	 * TransactionState.RUNNING; GraphValidator graphValidator = new
+	 * GraphValidator(graph); return graphValidator.validate(); }
+	 */
 
 	/**
 	 * 

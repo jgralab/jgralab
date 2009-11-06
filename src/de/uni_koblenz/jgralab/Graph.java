@@ -755,4 +755,33 @@ public interface Graph extends AttributedElement {
 	 */
 	public <K, V> Map<K, V> createMap(Class<K> key, Class<V> value,
 			int initialCapacity, float loadFactor);
+	
+	/**
+	 * Generic creation of records.
+	 * 
+	 * @param <T>
+	 * * 
+	 * @param recordClass
+	 * @param io
+	 * @return
+	 */
+	public <T> T createRecord(Class<T> recordClass, GraphIO io); 
+	
+	/**
+	 * 
+	 * @param <T>
+	 * @param recordClass
+	 * @param io
+	 * @return
+	 */
+	public <T> T createRecord(Class<T> recordClass, Map<String, Object> fields); 
+	
+	/**
+	 * 
+	 * @param <T>
+	 * @param recordClass
+	 * @param io
+	 * @return
+	 */
+	public <T> T createRecord(Class<T> recordClass, Object... components); 
 }

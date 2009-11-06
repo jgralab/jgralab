@@ -24,14 +24,17 @@
 
 package de.uni_koblenz.jgralab.impl;
 
+import java.lang.reflect.Constructor;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 import de.uni_koblenz.jgralab.AttributedElement;
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.GraphException;
 import de.uni_koblenz.jgralab.GraphFactory;
+import de.uni_koblenz.jgralab.GraphIO;
 import de.uni_koblenz.jgralab.RandomIdGenerator;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.schema.AttributedElementClass;
@@ -1699,5 +1702,62 @@ public abstract class GraphImpl implements Graph {
 	 */
 	protected void setFreeEdgeList(FreeIndexList freeEdgeList) {
 		this.freeEdgeList = freeEdgeList;
+	}
+	
+	/**
+	 * 
+	 * @param <T>
+	 * @param recordClass
+	 * @param io
+	 * @return
+	 */
+	public <T> T createRecord(Class<T> recordClass, GraphIO io) {
+		T record = null;
+		try {
+			Constructor<T> cons = recordClass.getDeclaredConstructor(Graph.class, GraphIO.class);
+			cons.setAccessible(true);
+			record = cons.newInstance(this, io);
+		} catch (Exception e) {
+			e.printStackTrace();
+		} 
+		return record;
+	}
+	
+	/**
+	 * 
+	 * @param <T>
+	 * @param recordClass
+	 * @param io
+	 * @return
+	 */
+	public <T> T createRecord(Class<T> recordClass, Map<String, Object> fields) {
+		T record = null;
+		try {
+			Constructor<T> cons = recordClass.getDeclaredConstructor(Graph.class, Map.class);
+			cons.setAccessible(true);
+			record = cons.newInstance(this, fields);
+		} catch (Exception e) {
+			e.printStackTrace();
+		} 
+		return record;
+	}
+	
+	/**
+	 * 
+	 * @param <T>
+	 * @param recordClass
+	 * @param io
+	 * @return
+	 */
+	public <T> T createRecord(Class<T> recordClass, Object... components) {
+		T record = null;
+		try {
+			Constructor<T> cons = recordClass.getDeclaredConstructor(Graph.class, Object[].class);
+			cons.setAccessible(true);
+			record = cons.newInstance(this, components);
+		} catch (Exception e) {
+			e.printStackTrace();
+		} 
+		return record;
 	}
 }
