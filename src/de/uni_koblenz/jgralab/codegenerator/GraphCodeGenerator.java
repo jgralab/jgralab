@@ -94,10 +94,10 @@ public class GraphCodeGenerator extends AttributedElementCodeGenerator {
 			if (aec.getSchema().getRecordDomains().size() > 0)
 				addImports("java.util.Map");
 		}
-		CodeSnippet cs = new CodeSnippet(true);
+		
 		if (createClass) {
 			for (RecordDomain rd : aec.getSchema().getRecordDomains()) {
-
+				CodeSnippet cs = new CodeSnippet(true);
 				cs
 						.add("public #rcname# create#rname#(GraphIO io) throws GraphIOException {");
 				if (config.hasTransactionSupport()) {
@@ -157,9 +157,11 @@ public class GraphCodeGenerator extends AttributedElementCodeGenerator {
 								"rstdtype",
 								rd
 										.getStandardJavaAttributeImplementationTypeName(schemaRootPackageName));
+				code.addNoIndent(cs);
 			}
 		} else {
 			for (RecordDomain rd : aec.getSchema().getRecordDomains()) {
+				CodeSnippet cs = new CodeSnippet(true);
 				cs.add("public #rcname# create#rname#(GraphIO io) throws GraphIOException;");
 				cs.add("");
 				
@@ -173,9 +175,9 @@ public class GraphCodeGenerator extends AttributedElementCodeGenerator {
 						.getJavaClassName(schemaRootPackageName));
 				cs.setVariable("rname", rd.getUniqueName());
 				cs.add("");
+				code.addNoIndent(cs);
 			}
 		}
-		code.addNoIndent(cs);
 		return code;
 	}
 
