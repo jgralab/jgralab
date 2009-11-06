@@ -101,6 +101,7 @@ public class BenchmarkTests {
 		saveGraph(true);
 	}
 
+	@SuppressWarnings("unused")
 	private void addGraphElementsWithTransactionSupportParallel()
 			throws GraphIOException {
 		createGraph(true);
@@ -153,6 +154,7 @@ public class BenchmarkTests {
 			motorwayMap = MotorwayMapSchema.instance().createMotorwayMap(V, E);
 	}
 
+	@SuppressWarnings("unused")
 	private void loadGraph(boolean transactionSupport) throws GraphIOException {
 		if (transactionSupport)
 			motorwayMap = MotorwayMapSchema.instance()
@@ -171,6 +173,7 @@ public class BenchmarkTests {
 				new ProgressFunctionImpl());
 	}
 
+	@SuppressWarnings("unused")
 	private void iterateVertices() throws GraphIOException,
 			InterruptedException {
 		addGraphElements();
@@ -178,6 +181,7 @@ public class BenchmarkTests {
 
 	}
 
+	@SuppressWarnings("unused")
 	private void iterateVerticesWithTransactionSupport()
 			throws CommitFailedException, GraphIOException,
 			InterruptedException {
