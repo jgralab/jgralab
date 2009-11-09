@@ -253,8 +253,10 @@ public class NFA extends FiniteAutomaton {
 				nextIterationNFA = nfaToCopy;
 			exponentiatedNFA.constructFinalStatesEpsilonTransitions(
 					nextIterationNFA.initialState, true);
+			exponentiatedNFA.finalStates.clear();
 			exponentiatedNFA.finalStates.addAll(nextIterationNFA.finalStates);
 			exponentiatedNFA.stateList.addAll(nextIterationNFA.stateList);
+			exponentiatedNFA.transitionList.addAll(nextIterationNFA.transitionList);
 		}
 		exponentiatedNFA.updateStateAttributes();
 		return exponentiatedNFA;
