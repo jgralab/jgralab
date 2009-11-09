@@ -25,8 +25,10 @@
 package de.uni_koblenz.jgralab.greql2.evaluator.fa;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import de.uni_koblenz.jgralab.GraphMarker;
 import de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.VertexEvaluator;
@@ -52,47 +54,40 @@ public class NFA extends FiniteAutomaton {
 	 * transition and stateList are the same object)
 	 * 
 	 * @param realcopy
-	 *            : if true, a deepcopy will be created
+	 *            : if true, a deep copy will be created
 	 * 
 	 */
-	protected NFA(NFA nfaToCopy, boolean realCopy) {
-		if (realCopy) {
-			finalStates = new ArrayList<State>();
-			stateList = new ArrayList<State>();
-			transitionList = new ArrayList<Transition>();
-			// copy all states
-			Iterator<State> stateIter = nfaToCopy.stateList.iterator();
-			while (stateIter.hasNext()) {
-				State currentState = stateIter.next();
-				State newState = new State();
-				if (nfaToCopy.finalStates.contains(currentState))
-					finalStates.add(newState);
-				if (nfaToCopy.initialState == currentState) {
-					initialState = newState;
-				}
-				stateList.add(newState);
+	protected NFA(NFA nfaToCopy) {
+		Map<Integer, State> oldStateToNewStateMap = new HashMap<Integer, State>();
+		nfaToCopy.updateStateAttributes();
+		finalStates = new ArrayList<State>();
+		stateList = new ArrayList<State>();
+		transitionList = new ArrayList<Transition>();
+		// copy all states
+		for (State currentState : nfaToCopy.stateList) {
+			State newState = new State();
+			newState.number = currentState.number;
+			if (nfaToCopy.finalStates.contains(currentState))
+				finalStates.add(newState);
+			if (nfaToCopy.initialState == currentState) {
+				initialState = newState;
 			}
-			// now copy all transitions
-			Iterator<Transition> transitionIter = nfaToCopy.transitionList
-					.iterator();
-			while (transitionIter.hasNext()) {
-				Transition currentTransition = transitionIter.next();
-				Transition newTransition = currentTransition.copy(false);
-				int startStateNumber = nfaToCopy.stateList
-						.indexOf(currentTransition.getStartState());
-				int endStateNumber = nfaToCopy.stateList
-						.indexOf(currentTransition.getEndState());
-				newTransition.setStartState(stateList.get(startStateNumber));
-				newTransition.setEndState(stateList.get(endStateNumber));
-			}
-			updateStateAttributes();
-		} else {
-			finalStates = nfaToCopy.finalStates;
-			transitionList = nfaToCopy.transitionList;
-			stateList = nfaToCopy.stateList;
-			initialState = nfaToCopy.initialState;
+			oldStateToNewStateMap.put(currentState.number, newState);
+			stateList.add(newState);
 		}
-	}
+		updateStateAttributes();
+		// now copy all transitions
+		for (Transition currentTransition : nfaToCopy.transitionList) {
+			Transition newTransition = currentTransition.copy(false);
+			transitionList.add(newTransition);
+			State startState = oldStateToNewStateMap.get(currentTransition.getStartState().number);
+			State endState = oldStateToNewStateMap.get(currentTransition.getEndState().number);
+			newTransition.setStartState(startState);
+			newTransition.setEndState(endState);
+		}
+		updateStateAttributes();
+	} 
+
 
 	/**
 	 * creates a nfa for the given path description, calling the right
@@ -244,9 +239,10 @@ public class NFA extends FiniteAutomaton {
 	 */
 	public static NFA createExponentiatedPathDescriptionNFA(
 			NFA exponentiatedNFA, int exponent) throws EvaluateException {
-		NFA nfaToCopy = new NFA(exponentiatedNFA, true);
+		NFA nfaToCopy = new NFA(exponentiatedNFA);
+		
 		for (int i = 1; i < exponent; i++) {
-			NFA nextIterationNFA = new NFA(nfaToCopy, true);
+			NFA nextIterationNFA = new NFA(nfaToCopy);
 			exponentiatedNFA.constructFinalStatesEpsilonTransitions(
 					nextIterationNFA.initialState, true);
 			exponentiatedNFA.finalStates.addAll(nextIterationNFA.finalStates);
