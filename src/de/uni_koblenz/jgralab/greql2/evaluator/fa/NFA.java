@@ -246,14 +246,9 @@ public class NFA extends FiniteAutomaton {
 			NFA exponentiatedNFA, int exponent) throws EvaluateException {
 		NFA nfaToCopy = new NFA(exponentiatedNFA, true);
 		for (int i = 1; i < exponent; i++) {
-			NFA nextIterationNFA;
-			if (i < exponent)
-				nextIterationNFA = new NFA(nfaToCopy, true);
-			else
-				nextIterationNFA = nfaToCopy;
+			NFA nextIterationNFA = new NFA(nfaToCopy, true);
 			exponentiatedNFA.constructFinalStatesEpsilonTransitions(
 					nextIterationNFA.initialState, true);
-			exponentiatedNFA.finalStates.clear();
 			exponentiatedNFA.finalStates.addAll(nextIterationNFA.finalStates);
 			exponentiatedNFA.stateList.addAll(nextIterationNFA.stateList);
 			exponentiatedNFA.transitionList.addAll(nextIterationNFA.transitionList);
@@ -296,7 +291,6 @@ public class NFA extends FiniteAutomaton {
 		nfa.transitionList.clear();
 		nfa.initialState.outTransitions.clear();
 		nfa.finalStates.get(0).inTransitions.clear();
-		// GreqlEvaluator.println("NFA.createEdgePathDescription");
 		SimpleTransition t = new EdgeTransition(nfa.initialState,
 				nfa.finalStates.get(0), dir, typeCollection, role, edgeEval);
 		nfa.transitionList.add(t);
