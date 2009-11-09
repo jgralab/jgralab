@@ -23,7 +23,7 @@
 ;; Major mode for editing GReQL2 files with Emacs and executing queries.
 
 ;;; Version:
-;; <2009-10-28 Wed 08:58>
+;; <2009-11-09 Mon 14:51>
 
 ;;; Code:
 
@@ -355,7 +355,7 @@ queries are evaluated.  Set it with `greql-set-graph'.")
     (display-buffer buffer)))
 
 (defun greql-display-result (proc change)
-  (select-window (get-buffer-window (get-buffer-create greql-buffer))))
+  (display-buffer (get-buffer-window (get-buffer-create greql-buffer))))
 
 (defun greql-vertex-set-expression-p ()
   (looking-back "V{[[:word:]._,^ ]*"))
