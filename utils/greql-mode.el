@@ -169,7 +169,9 @@ queries are evaluated.  Set it with `greql-set-graph'.")
 
 (defun greql-set-extra-classpath (file-or-dir)
   (interactive "FExtra classpath: ")
-  (setq greql-extra-classpath file-or-dir))
+  (if (null greql-extra-classpath)
+      (setq greql-extra-classpath file-or-dir)
+    (setq greql-extra-classpath (concat greql-extra-classpath ":" file-or-dir))))
 
 (defun greql-parse-schema ()
   "Parse `greql-graph' and extract schema information into
