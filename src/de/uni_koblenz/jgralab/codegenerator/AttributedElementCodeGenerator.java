@@ -439,8 +439,7 @@ public class AttributedElementCodeGenerator extends CodeGenerator {
 					.getJavaAttributeImplementationTypeName(
 							schemaRootPackageName));
 		} else {
-			code.setVariable("type", attr.getDomain().getVersionedClass(
-					schemaRootPackageName));
+			code.setVariable("type", attr.getDomain().getVersionedClass(schemaRootPackageName));
 		}
 		return code;
 	}

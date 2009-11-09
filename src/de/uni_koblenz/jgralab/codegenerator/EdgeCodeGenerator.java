@@ -91,8 +91,10 @@ public class EdgeCodeGenerator extends AttributedElementCodeGenerator {
 				addImports("#jgImplTransPackage#.#baseClassName#");
 			}
 		}
-		code.add(createNextEdgeInGraphMethods(createClass));
-		code.add(createNextEdgeAtVertexMethods(createClass));
+		if (config.hasTypespecificMethodsSupport()) {
+			code.add(createNextEdgeInGraphMethods(createClass));
+			code.add(createNextEdgeAtVertexMethods(createClass));
+		}	
 		return code;
 	}
 

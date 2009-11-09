@@ -73,10 +73,12 @@ public class VertexCodeGenerator extends AttributedElementCodeGenerator {
 			rootBlock.setVariable("baseClassName", "VertexImpl");
 			code.add(createValidEdgeSets((VertexClass) aec));
 		}
-		code.add(createNextVertexMethods(createClass));
-		code.add(createFirstEdgeMethods(createClass));
-		code.add(rolenameGenerator.createRolenameMethods(createClass));
-		code.add(createIncidenceIteratorMethods(createClass));
+		if (config.hasTypespecificMethodsSupport()) {
+			code.add(createNextVertexMethods(createClass));
+			code.add(createFirstEdgeMethods(createClass));
+			code.add(rolenameGenerator.createRolenameMethods(createClass));
+			code.add(createIncidenceIteratorMethods(createClass));
+		}	
 		return code;
 	}
 
