@@ -111,30 +111,6 @@ public class AggregationTransition extends Transition {
 		return new AggregationTransition(this, addToStates);
 	}
 
-	// /**
-	// * Creates a new transition from start state to end state. The Transition
-	// * accepts all aggregations that have the right aggregation direction,
-	// role, startVertexType,
-	// * endVertexType, edgeType and even it's possible to define a specific
-	// edge.
-	// *
-	// * @param start
-	// * The state where this transition starts
-	// * @param end
-	// * The state where this transition ends
-	// * @param aggregateFrom
-	// * The direction of the aggregation, true for an aggregation with the
-	// aggregation
-	// * end at the near vertex, false for an aggregation with the aggregation
-	// end at the
-	// * far vertex
-	// */
-	// public AggregationTransition(State start, State end, boolean
-	// aggregateFrom) {
-	// super(start, end);
-	// this.aggregateFrom = aggregateFrom;
-	// this.typeCollection = new JValueTypeCollection();
-	// }
 
 	/**
 	 * Creates a new transition from start state to end state. The Transition
