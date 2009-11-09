@@ -357,7 +357,7 @@ queries are evaluated.  Set it with `greql-set-graph'.")
     (display-buffer buffer)))
 
 (defun greql-display-result (proc change)
-  (display-buffer (get-buffer-window (get-buffer-create greql-buffer))))
+  (display-buffer (get-buffer-create greql-buffer)))
 
 (defun greql-vertex-set-expression-p ()
   (looking-back "V{[[:word:]._,^ ]*"))

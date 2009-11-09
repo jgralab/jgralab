@@ -103,6 +103,7 @@ public class JValueSlice extends JValue {
 	/**
 	 * returns a JValueSlice-Reference to this JValue object
 	 */
+	@Override
 	public JValueSlice toSlice() throws JValueInvalidTypeException {
 		return this;
 	}
@@ -110,6 +111,7 @@ public class JValueSlice extends JValue {
 	/**
 	 * returns the hashcode of this slice
 	 */
+	@Override
 	public int hashCode() {
 		if (hashvalue == 0) {
 			Iterator<Map.Entry<PathSystemKey, List<PathSystemEntry>>> iter = keyToEntryMap
@@ -118,11 +120,13 @@ public class JValueSlice extends JValue {
 				Map.Entry<PathSystemKey, List<PathSystemEntry>> mapEntry = iter
 						.next();
 				PathSystemKey key = mapEntry.getKey();
-				for (PathSystemEntry thisEntry : mapEntry.getValue())
+				for (PathSystemEntry thisEntry : mapEntry.getValue()) {
 					hashvalue += key.hashCode() * 11 + thisEntry.hashCode() * 7;
+				}
 			}
-			if (hashvalue < 0)
+			if (hashvalue < 0) {
 				hashvalue = -hashvalue;
+			}
 		}
 		return hashvalue;
 	}
@@ -140,34 +144,34 @@ public class JValueSlice extends JValue {
 
 	}
 
-	private Queue<PathSystemEntry> entriesWithoutParentEdge = new LinkedList<PathSystemEntry>();  
-	
-	
+	private Queue<PathSystemEntry> entriesWithoutParentEdge = new LinkedList<PathSystemEntry>();
+
 	boolean isCleared = true;
-	
+
 	public void clearPathSystem() {
 		if (!isCleared) {
 			while (!entriesWithoutParentEdge.isEmpty()) {
 				PathSystemEntry te = entriesWithoutParentEdge.poll();
 				Vertex p = te.getParentVertex();
 				if (p == null) {
-					//root vertex 
-					
+					// root vertex
 				} else {
-					List<PathSystemEntry> pel = keyToEntryMap.get(new PathSystemKey(p, te.getParentStateNumber()));
+					List<PathSystemEntry> pel = keyToEntryMap
+							.get(new PathSystemKey(p, te.getParentStateNumber()));
 					PathSystemEntry pe = pel.get(0);
 					te.setParentEdge(pe.getParentEdge());
 					te.setDistanceToRoot(pe.getDistanceToRoot());
 					te.setParentStateNumber(pe.getParentStateNumber());
 					te.setParentVertex(pe.getParentVertex());
-					if (te.getParentEdge() == null)
+					if (te.getParentEdge() == null) {
 						entriesWithoutParentEdge.add(te);
-				}	
+					}
+				}
 			}
 			isCleared = true;
-		}			
+		}
 	}
-	
+
 	/**
 	 * adds a vertex of the slice which is described by the parameters to the
 	 * slicing criterion
@@ -189,8 +193,9 @@ public class JValueSlice extends JValue {
 		List<PathSystemEntry> entryList = new ArrayList<PathSystemEntry>();
 		entryList.add(entry);
 		keyToEntryMap.put(key, entryList);
-		if (!vertexToFirstKeyMap.containsKey(vertex))
+		if (!vertexToFirstKeyMap.containsKey(vertex)) {
 			vertexToFirstKeyMap.put(vertex, key);
+		}
 		leafKeys = null;
 		hashvalue = 0;
 		sliCritVertices.add(vertex);
@@ -220,8 +225,9 @@ public class JValueSlice extends JValue {
 		if (entryList == null) {
 			entryList = new ArrayList<PathSystemEntry>();
 			keyToEntryMap.put(key, entryList);
-			if (!vertexToFirstKeyMap.containsKey(vertex))
+			if (!vertexToFirstKeyMap.containsKey(vertex)) {
 				vertexToFirstKeyMap.put(vertex, key);
+			}
 			leafKeys = null;
 		}
 		PathSystemEntry entry = new PathSystemEntry(parentVertex, parentEdge,
@@ -234,7 +240,6 @@ public class JValueSlice extends JValue {
 			isCleared = false;
 		}
 	}
-
 
 	/**
 	 * Calculates the parent vertices of the given vertex in this slice. If the
@@ -263,7 +268,6 @@ public class JValueSlice extends JValue {
 		return resultSet;
 	}
 
-
 	/**
 	 * Calculates the set of edges nodes in this slice.
 	 */
@@ -273,8 +277,9 @@ public class JValueSlice extends JValue {
 		for (Map.Entry<PathSystemKey, List<PathSystemEntry>> mapEntry : keyToEntryMap
 				.entrySet()) {
 			for (PathSystemEntry thisEntry : mapEntry.getValue()) {
-				if (thisEntry.getParentEdge() != null)
+				if (thisEntry.getParentEdge() != null) {
 					resultSet.add(new JValue(thisEntry.getParentEdge()));
+				}
 			}
 		}
 		return resultSet;
@@ -344,15 +349,15 @@ public class JValueSlice extends JValue {
 				.entrySet()) {
 			boolean isFinal = false;
 			for (PathSystemEntry entry : mapEntry.getValue()) {
-				if (entry.isStateIsFinal())
+				if (entry.isStateIsFinal()) {
 					isFinal = true;
+				}
 			}
 			if (isFinal) {
 				leafKeys.add(mapEntry.getKey());
 			}
 		}
 	}
-
 
 	/**
 	 * calculate the number of vertices this slice has. If a vertex is part of
@@ -392,17 +397,18 @@ public class JValueSlice extends JValue {
 			for (PathSystemEntry entry2 : keyToEntryMap.get(key2)) {
 				if ((entry1.getParentVertex() == key2.getVertex())
 						&& (entry1.getParentStateNumber() == key2
-								.getStateNumber()))
+								.getStateNumber())) {
 					return true;
+				}
 				if ((entry2.getParentVertex() == key1.getVertex())
 						&& (entry2.getParentStateNumber() == key1
-								.getStateNumber()))
+								.getStateNumber())) {
 					return true;
+				}
 			}
 		}
 		return false;
 	}
-
 
 	/**
 	 * Prints the <key, List<entry>> map as single <key, entry> entries, i.e. a
@@ -439,13 +445,14 @@ public class JValueSlice extends JValue {
 	/**
 	 * accepts the given visitor to visit this jvalue
 	 */
+	@Override
 	public void accept(JValueVisitor v) {
 		clearPathSystem();
 		v.visitSlice(this);
 	}
-	
+
 	/**
-	 * returns a string representation of this path system
+	 * returns a string representation of this slice
 	 */
 	@Override
 	public String toString() {
@@ -458,14 +465,30 @@ public class JValueSlice extends JValue {
 				eset.add(pe.getParentEdge());
 			}
 		}
-		
-		StringBuffer returnString = new StringBuffer("Slice: \n");
-		returnString.append("Vertices of slice: ");
-		for (Vertex v : vset)
-			returnString.append(v);
-		returnString.append("Edges of slice: ");
-		for (Edge e : eset) 
-			returnString.append(e);
+
+		StringBuffer returnString = new StringBuffer("Slice: ");
+		returnString.append("Vertices: ");
+		boolean first = true;
+		for (Vertex v : vset) {
+			if (first) {
+				first = false;
+				returnString.append(v);
+			} else {
+				returnString.append(", ");
+				returnString.append(v);
+			}
+		}
+		returnString.append(", Edges: ");
+		first = true;
+		for (Edge e : eset) {
+			if (first) {
+				first = false;
+				returnString.append(e);
+			} else {
+				returnString.append(", ");
+				returnString.append(e);
+			}
+		}
 		return returnString.toString();
 	}
 
