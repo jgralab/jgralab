@@ -154,7 +154,7 @@ public class Xml2tg {
 		}
 
 		Schema currentSchema = GraphIO.loadSchemaFromFile(schemaFilename);
-
+		
 		Xml2tg xml2tg = null;
 		for (String inputXML : cmdl.getArgs()) {
 			if (xml2tg == null) {
@@ -210,6 +210,10 @@ public class Xml2tg {
 				"(optional): if this flag is set, then the result is one graph containing all vertices and edges from all given XML files.");
 		multiXmlIntoOneGraph.setRequired(false);
 		optionHandler.addOption(multiXmlIntoOneGraph);
+		
+		optionHandler.setArgumentCount(Option.UNLIMITED_VALUES);
+		optionHandler.setArgumentName("xml-file");
+		optionHandler.setOptionalArgument(false);
 
 		return optionHandler.parse(args);
 	}
