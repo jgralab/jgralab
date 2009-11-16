@@ -238,7 +238,7 @@ public class RecordCodeGenerator extends CodeGenerator {
 
 	@Override
 	protected CodeBlock createHeader(boolean createClass) {
-		if (config.hasTransactionSupport())
+		if (config.hasTransactionSupport() && createClass)
 			addImports("#jgTransPackage#.JGraLabCloneable",
 					"#jgPackage#.GraphException");
 		CodeSnippet code = null;
@@ -611,7 +611,7 @@ public class RecordCodeGenerator extends CodeGenerator {
 	 */
 	private CodeBlock createCloneMethod(boolean createClass) {
 		CodeList code = new CodeList();
-		if (config.hasTransactionSupport()) {
+		if (config.hasTransactionSupport() && createClass) {
 
 			boolean suppressWarningsNeeded = false;
 			for (Domain dom : recordDomain.getComponents().values()) {

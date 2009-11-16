@@ -109,7 +109,8 @@ public class SchemaCodeGenerator extends CodeGenerator {
 				" * @param eMax initial edge count",
 				"*/",
 				"public #gcName# create#gcCamelName#(int vMax, int eMax) {",
-				"\treturn (#gcCamelName#) graphFactory.createGraph(#gcCamelName#.class, null, vMax, eMax);",
+				((config.hasStandardSupport()) ? "\treturn (#gcCamelName#) graphFactory.createGraph(#gcCamelName#.class, null, vMax, eMax);" : 
+					"\tthrow new UnsupportedOperationException(\"No Standard support compiled.\");"),
 				"}",
 				"",
 				"/**",
@@ -120,14 +121,16 @@ public class SchemaCodeGenerator extends CodeGenerator {
 				" * @param eMax initial edge count",
 				" */",
 				"public #gcName# create#gcCamelName#(String id, int vMax, int eMax) {",
-				"\treturn (#gcCamelName#) graphFactory.createGraph(#gcCamelName#.class, id, vMax, eMax);",
+				((config.hasStandardSupport()) ? "\treturn (#gcCamelName#) graphFactory.createGraph(#gcCamelName#.class, id, vMax, eMax);" : 
+				"\tthrow new UnsupportedOperationException(\"No Standard support compiled.\");"),
 				"}",
 				"",
 				"/**",
 				" * Creates a new #gcName# graph.",
 				"*/",
 				"public #gcName# create#gcCamelName#() {",
-				"\treturn (#gcCamelName#) graphFactory.createGraph(#gcCamelName#.class, null);",
+				((config.hasStandardSupport()) ? "\treturn (#gcCamelName#) graphFactory.createGraph(#gcCamelName#.class, null);" : 
+				"\tthrow new UnsupportedOperationException(\"No Standard support compiled.\");"),
 				"}",
 				"",
 				"/**",
@@ -136,7 +139,8 @@ public class SchemaCodeGenerator extends CodeGenerator {
 				" * @param id the id name of the new graph",
 				" */",
 				"public #gcName# create#gcCamelName#(String id) {",
-				"\treturn (#gcCamelName#) graphFactory.createGraph(#gcCamelName#.class, id);",
+				((config.hasStandardSupport()) ? "\treturn (#gcCamelName#) graphFactory.createGraph(#gcCamelName#.class, id);" :
+				"\tthrow new UnsupportedOperationException(\"No Standard support compiled.\");"),
 				"}",
 				"",
 				// ---- transaction support ----
@@ -190,7 +194,7 @@ public class SchemaCodeGenerator extends CodeGenerator {
 				" * @throws GraphIOException if the graph cannot be loaded",
 				" */",
 				"public #gcName# load#gcCamelName#(String filename) throws GraphIOException {",
-				"\treturn load#gcCamelName#(filename, null);",
+				((config.hasStandardSupport()) ? "\treturn load#gcCamelName#(filename, null);" : "\tthrow new UnsupportedOperationException(\"No Standard support compiled.\");"),
 				"}",
 				"",
 				"/**",
@@ -202,11 +206,10 @@ public class SchemaCodeGenerator extends CodeGenerator {
 				" * @throws GraphIOException if the graph cannot be loaded",
 				" */",
 				"public #gcName# load#gcCamelName#(String filename, ProgressFunction pf) throws GraphIOException {",
-				"\tGraph graph = GraphIO.loadGraphFromFile(filename, this, pf);",
-				"\tif (!(graph instanceof #gcName#)) {",
-				"\t\tthrow new GraphIOException(\"Graph in file '\" + filename + \"' is not an instance of GraphClass #gcName#\");",
-				"\t}",
-				"\treturn (#gcName#) graph;",
+				((config.hasStandardSupport()) ? "\tGraph graph = GraphIO.loadGraphFromFile(filename, this, pf);" +
+				"\tif (!(graph instanceof #gcName#)) {" +
+				"\t\tthrow new GraphIOException(\"Graph in file '\" + filename + \"' is not an instance of GraphClass #gcName#\");" +
+				"\t}" + "\treturn (#gcName#) graph;" : "\tthrow new UnsupportedOperationException(\"No Standard support compiled.\");"),
 				"}",
 				// ---- transaction support ----
 				"/**",

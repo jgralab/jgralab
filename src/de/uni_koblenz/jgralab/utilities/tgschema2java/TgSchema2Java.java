@@ -42,6 +42,7 @@ import javax.tools.ToolProvider;
 
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.Option;
+import org.apache.commons.cli.OptionGroup;
 
 import de.uni_koblenz.ist.utilities.option_handler.OptionHandler;
 import de.uni_koblenz.jgralab.GraphIO;
@@ -302,9 +303,14 @@ public class TgSchema2Java {
 			createJar = true;
 			jarFileName = comLine.getOptionValue("j");
 		}
-		if (comLine.hasOption('t')) {
+		if (comLine.hasOption("so")) {
+			config.wantsToHaveStandardSupport(true);
+			config.wantsToHaveTransactionSupport(false);
+		} else if(comLine.hasOption("to")) {
+			config.wantsToHaveStandardSupport(false);
 			config.wantsToHaveTransactionSupport(true);
-		}
+		} 
+		
 		if (comLine.hasOption('w')) {
 			config.wantsToHaveTypespecificMethodsSupport(false);
 		}
@@ -435,10 +441,21 @@ public class TgSchema2Java {
 		jar.setArgName("file");
 		oh.addOption(jar);
 
-		Option transactions = new Option("t", "transaction-support", false,
-				"(optional): Create transaction support code");
+		OptionGroup group = new OptionGroup();
+		group.setRequired(false);
+		Option standard = new Option("so", "standard-support only", false,
+		"(optional): Create standard support code only");
+		standard.setRequired(false);
+		oh.addOption(standard);
+
+		Option transactions = new Option("to", "transaction-support only", false,
+		"(optional): Create transaction support code only");
 		transactions.setRequired(false);
 		oh.addOption(transactions);
+		
+		group.addOption(standard);
+		group.addOption(transactions);
+		oh.addOptionGroup(group);
 		
 		Option without_types = new Option("w", "without-types", false,
 		"(optional): Don't create typespecific methods in classes");

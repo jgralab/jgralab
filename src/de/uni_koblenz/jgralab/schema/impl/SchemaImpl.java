@@ -375,7 +375,7 @@ public class SchemaImpl implements Schema {
 			CodeGenerator rcode = new RecordCodeGenerator((RecordDomain) domain, packagePrefix, GRAPH_IMPLEMENTATION_PACKAGE, config);
 			javaSources.addAll(rcode.createJavaSources());
 		}
-		if (!config.hasTransactionSupport())
+		//if (config.hasTransactionSupport())
 			for (Domain domain : getEnumDomains()) {
 				CodeGenerator ecode = new EnumCodeGenerator((EnumDomain) domain, packagePrefix,	GRAPH_IMPLEMENTATION_PACKAGE);
 				javaSources.addAll(ecode.createJavaSources());
@@ -407,7 +407,7 @@ public class SchemaImpl implements Schema {
 		}
 		
 		javaSources.addAll(createClasses(config));
-		if (config.hasTransactionSupport()) {
+		if (config.hasTransactionSupport() && config.hasStandardSupport()) {
 			CodeGeneratorConfiguration stdconfig = new CodeGeneratorConfiguration(config);
 			stdconfig.wantsToHaveTransactionSupport(false);
 			javaSources.addAll(createClasses(stdconfig));
@@ -473,7 +473,7 @@ public class SchemaImpl implements Schema {
 				}
 			}
 		}
-		if (!config.hasTransactionSupport())
+		//if (!config.hasTransactionSupport())
 			for (Domain domain : getEnumDomains()) {
 				CodeGenerator ecode = new EnumCodeGenerator((EnumDomain) domain, packagePrefix,	GRAPH_IMPLEMENTATION_PACKAGE);
 				ecode.createFiles(pathPrefix);
@@ -534,7 +534,7 @@ public class SchemaImpl implements Schema {
 		}
 
 		createFiles(config, pathPrefix, progressFunction, schemaElements, currentCount, interval);
-		if (config.hasTransactionSupport()) {
+		if (config.hasTransactionSupport() && config.hasStandardSupport()) {
 			CodeGeneratorConfiguration stdconfig = new CodeGeneratorConfiguration(config);
 			stdconfig.wantsToHaveTransactionSupport(false);
 			createFiles(stdconfig, pathPrefix, progressFunction, schemaElements, currentCount, interval);
