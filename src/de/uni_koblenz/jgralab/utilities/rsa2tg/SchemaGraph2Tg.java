@@ -227,6 +227,7 @@ public class SchemaGraph2Tg {
 		printTGSchema(schemaGraph);
 
 		// Write out, close and dispose the Printstream object.
+		stream.append('\n');
 		stream.flush();
 		stream.close();
 		stream = null;
