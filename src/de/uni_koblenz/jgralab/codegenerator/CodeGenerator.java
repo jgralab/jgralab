@@ -200,14 +200,14 @@ public abstract class CodeGenerator {
 			logger.finer("Writing file to: " + pathPrefix + "/"
 							+ schemaPackage);
 			// create interface only
-			if (!config.hasTransactionSupport()) {
+			//if (!config.hasTransactionSupport()) {
 				createCode(false);
 				writeCodeToFile(pathPrefix, simpleClassName + ".java",
 						schemaPackage);
-			}
+			//}
 		} else {
 			if ((!rootBlock.getVariable("isImplementationClassOnly").equals("true"))
-					&& (!config.hasTransactionSupport())) {
+					/*&& (!config.hasTransactionSupport())*/) {
 				// create interface
 				createCode(false);
 				writeCodeToFile(pathPrefix, simpleClassName + ".java",
@@ -301,20 +301,20 @@ public abstract class CodeGenerator {
 					.getCode()));
 		} else if (rootBlock.getVariable("isAbstractClass").equals("true")) {
 			// create interface only
-			if (!config.hasTransactionSupport()) {
+			//if (!config.hasTransactionSupport()) {
 				createCode(false);
 				javaSources.add(new JavaSourceFromString(className, rootBlock
 						.getCode()));
-			}
+			//}
 		} else {
 			if (!rootBlock.getVariable("isImplementationClassOnly").equals(
 					"true")) {
 				// create interface
-				if (!config.hasTransactionSupport()) {
+				//if (!config.hasTransactionSupport()) {
 					createCode(false);
 					javaSources.add(new JavaSourceFromString(className,
 							rootBlock.getCode()));
-				}
+				//}
 			}
 			// create implementation
 			rootBlock.clear();

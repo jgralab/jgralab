@@ -110,10 +110,12 @@ public class GraphFactoryGenerator extends CodeGenerator {
 
 		if (!graphClass.isAbstract()) {
 			code.add("/* code for graph #graphName# */");
-			code.add("setGraphImplementationClass(#graphName#.class, #graphImplName#Impl.class);");
-			if (config.hasTransactionSupport()) {
-				code.add("setGraphTransactionImplementationClass(#graphName#.class, #graphTransactionImplName#Impl.class);");
-			}
+			if (config.hasStandardSupport())
+				code
+						.add("setGraphImplementationClass(#graphName#.class, #graphImplName#Impl.class);");
+			if (config.hasTransactionSupport())
+				code
+						.add("setGraphTransactionImplementationClass(#graphName#.class, #graphTransactionImplName#Impl.class);");
 		}
 		return code;
 	}
@@ -130,10 +132,12 @@ public class GraphFactoryGenerator extends CodeGenerator {
 		code.setVariable("vertexTransactionImplName", schemaRootPackageName
 				+ ".impl.trans." + vertexClass.getQualifiedName());
 		if (!vertexClass.isAbstract()) {
-			code.add("setVertexImplementationClass(#vertexName#.class, #vertexImplName#Impl.class);");
-			if (config.hasTransactionSupport()) {
-				code.add("setVertexTransactionImplementationClass(#vertexName#.class, #vertexTransactionImplName#Impl.class);");
-			}
+			if (config.hasStandardSupport())
+				code
+						.add("setVertexImplementationClass(#vertexName#.class, #vertexImplName#Impl.class);");
+			if (config.hasTransactionSupport())
+				code
+						.add("setVertexTransactionImplementationClass(#vertexName#.class, #vertexTransactionImplName#Impl.class);");
 		}
 		return code;
 	}
@@ -148,10 +152,12 @@ public class GraphFactoryGenerator extends CodeGenerator {
 				+ ".impl.trans." + edgeClass.getQualifiedName());
 
 		if (!edgeClass.isAbstract()) {
-			code.add("setEdgeImplementationClass(#edgeName#.class, #edgeImplName#Impl.class);");
-			if (config.hasTransactionSupport()) {
-				code.add("setEdgeTransactionImplementationClass(#edgeName#.class, #edgeTransactionImplName#Impl.class);");
-			}
+			if (config.hasStandardSupport())
+				code
+						.add("setEdgeImplementationClass(#edgeName#.class, #edgeImplName#Impl.class);");
+			if (config.hasTransactionSupport())
+				code
+						.add("setEdgeTransactionImplementationClass(#edgeName#.class, #edgeTransactionImplName#Impl.class);");
 		}
 		return code;
 	}

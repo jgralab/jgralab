@@ -201,14 +201,9 @@ public final class RecordDomainImpl extends CompositeDomainImpl implements
 			boolean transactionSupport) {
 		code.add("#init#");
 		code.add("if (" + graphIoVariableName + ".isNextToken(\"(\")) {");
-		if (/*transactionSupport*/true)
-			code.add("\t" + "#name# = ((" + schemaPrefix + "."
-					+ parentPackage.getSchema().getGraphClass().getSimpleName()
-					+ ")" + "graph).create" + getSimpleName() + "(io);");
-		else
-			code.add("\t" + "#name# = new "
-					+ getStandardJavaAttributeImplementationTypeName(schemaPrefix)
-					+ "(" + graphIoVariableName + ");");
+		code.add("\t" + "#name# = ((" + schemaPrefix + "."
+				+ parentPackage.getSchema().getGraphClass().getSimpleName()
+				+ ")" + "graph).create" + getSimpleName() + "(io);");
 		code.add("} else if (" + graphIoVariableName
 				+ ".isNextToken(GraphIO.NULL_LITERAL) || "
 				+ graphIoVariableName
