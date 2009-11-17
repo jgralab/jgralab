@@ -2506,13 +2506,14 @@ public class GraphTest extends InstanceTest {
 	}
 
 	@Test
-	public void testDeleteEdge() {
-		onlyTestWithoutTransactionSupport();
+	public void testDeleteEdge() throws CommitFailedException {
 		/*
 		 * TODO apparently one cannot delete ALL edges of the same type (here:
 		 * SubLink) after deleting a vertex?
 		 */
 		// TODO faults => assertions
+		
+		createTransaction(g1);
 		Link e1 = g1.createEdge(Link.class, v1, v6);
 		Link e2 = g1.createEdge(Link.class, v11, v5);
 		Link e3 = g1.createEdge(Link.class, v2, v8);
@@ -2525,80 +2526,176 @@ public class GraphTest extends InstanceTest {
 		Link e10 = g1.createEdge(Link.class, v12, v7);
 		SubLink e11 = g1.createEdge(SubLink.class, v10, v6);
 		SubLink e12 = g1.createEdge(SubLink.class, v9, v7);
+		commit(g1);
+		
 		// SubLink e10 = graph2.createEdge(SubLink.class, v9, v6);
-
+		createReadOnlyTransaction(g1);
 		int id = e12.getId();
+		commit(g1);
+		
+		createTransaction(g1);
 		g1.deleteEdge(e12);
+		commit(g1);
+		
+		createReadOnlyTransaction(g1);
 		assertFalse(e12.isValid());
 		assertFalse(g1.containsEdge(e12));
 		assertEquals(null, g1.getEdge(id));
+		commit(g1);
 
+		createReadOnlyTransaction(g1);
 		id = e1.getId();
+		commit(g1);
+		
+		createTransaction(g1);
 		g1.deleteEdge(e1);
+		commit(g1);
+		
+		createReadOnlyTransaction(g1);
 		assertFalse(e1.isValid());
 		assertFalse(g1.containsEdge(e1));
 		assertEquals(null, g1.getEdge(id));
-
+		commit(g1);
+		
+		createReadOnlyTransaction(g1);
 		id = e2.getId();
+		commit(g1);
+		
+		createTransaction(g1);
 		g1.deleteEdge(e2);
+		commit(g1);
+		
+		createReadOnlyTransaction(g1);
 		assertFalse(e2.isValid());
 		assertFalse(g1.containsEdge(e2));
 		assertEquals(null, g1.getEdge(id));
-
+		commit(g1);
+		
+		createReadOnlyTransaction(g1);
 		id = e7.getId();
+		commit(g1);
+		
+		createTransaction(g1);
 		g1.deleteEdge(e7);
+		commit(g1);
+		
+		createReadOnlyTransaction(g1);
 		assertFalse(e7.isValid());
 		assertFalse(g1.containsEdge(e7));
 		assertEquals(null, g1.getEdge(id));
-
+		commit(g1);
+		
+		createReadOnlyTransaction(g1);
 		id = e3.getId();
+		commit(g1);
+		
+		createTransaction(g1);
 		g1.deleteEdge(e3);
+		commit(g1);
+		
+		createReadOnlyTransaction(g1);
 		assertFalse(e3.isValid());
 		assertFalse(g1.containsEdge(e3));
 		assertEquals(null, g1.getEdge(id));
-
+		commit(g1);
+		
+		createReadOnlyTransaction(g1);
 		id = e9.getId();
+		commit(g1);
+		
+		createTransaction(g1);
 		g1.deleteEdge(e9);
+		commit(g1);
+		
+		createReadOnlyTransaction(g1);
 		assertFalse(e9.isValid());
 		assertFalse(g1.containsEdge(e9));
 		assertEquals(null, g1.getEdge(id));
-
+		commit(g1);
+		
+		createReadOnlyTransaction(g1);
 		id = e4.getId();
+		commit(g1);
+		
+		createTransaction(g1);
 		g1.deleteEdge(e4);
+		commit(g1);
+		
+		createReadOnlyTransaction(g1);
 		assertFalse(e4.isValid());
 		assertFalse(g1.containsEdge(e4));
 		assertEquals(null, g1.getEdge(id));
-
+		commit(g1);
+		
+		createReadOnlyTransaction(g1);
 		id = e10.getId();
+		commit(g1);
+		
+		createTransaction(g1);
 		g1.deleteEdge(e10);
+		commit(g1);
+		
+		createReadOnlyTransaction(g1);
 		assertFalse(e10.isValid());
 		assertFalse(g1.containsEdge(e10));
 		assertEquals(null, g1.getEdge(id));
-
+		commit(g1);
+		
+		createReadOnlyTransaction(g1);
 		id = e5.getId();
+		commit(g1);
+		
+		createTransaction(g1);
 		g1.deleteEdge(e5);
+		commit(g1);
+		
+		createReadOnlyTransaction(g1);
 		assertFalse(e5.isValid());
 		assertFalse(g1.containsEdge(e5));
 		assertEquals(null, g1.getEdge(id));
-
+		commit(g1);
+		
+		createReadOnlyTransaction(g1);
 		id = e8.getId();
+		commit(g1);
+		
+		createTransaction(g1);
 		g1.deleteEdge(e8);
+		commit(g1);
+		
+		createReadOnlyTransaction(g1);
 		assertFalse(e8.isValid());
 		assertFalse(g1.containsEdge(e8));
 		assertEquals(null, g1.getEdge(id));
-
+		commit(g1);
+		
+		createReadOnlyTransaction(g1);
 		id = e11.getId();
+		commit(g1);
+		
+		createTransaction(g1);
 		g1.deleteEdge(e11);
+		commit(g1);
+		
+		createReadOnlyTransaction(g1);
 		assertFalse(e11.isValid());
 		assertFalse(g1.containsEdge(e11));
 		assertEquals(null, g1.getEdge(id));
-
+		commit(g1);
+		
+		createReadOnlyTransaction(g1);
 		id = e6.getId();
+		commit(g1);
+		
+		createTransaction(g1);
 		g1.deleteEdge(e6);
+		commit(g1);
+		
+		createReadOnlyTransaction(g1);
 		assertFalse(e6.isValid());
 		assertFalse(g1.containsEdge(e6));
 		assertEquals(null, g1.getEdge(id));
-
+		commit(g1);
 		// border cases
 
 		// faults
@@ -2680,170 +2777,344 @@ public class GraphTest extends InstanceTest {
 	}
 
 	@Test
-	public void testGetFirstVertex() {
-		onlyTestWithoutTransactionSupport();
+	public void testGetFirstVertex() throws CommitFailedException {
+		createReadOnlyTransaction(g1);
+		createReadOnlyTransaction(g2);
 		assertEquals(v1, g1.getFirstVertex());
 		assertEquals(null, g2.getFirstVertex());
+		commit(g2);
+		commit(g1);
 
+		createTransaction(g2);
 		SubNode v13 = g2.createSubNode();
 		g2.createSuperNode();
+		commit(g2);
 
+		createReadOnlyTransaction(g2);
 		assertEquals(v13, g2.getFirstVertex());
-
+		commit(g2);
+		
+		createTransaction(g2);
 		g2.createDoubleSubNode();
 		g2.createSubNode();
+		commit(g2);
+		
+		createReadOnlyTransaction(g2);
 		assertEquals(v13, g2.getFirstVertex());
-
+		commit(g2);
+		
+		createTransaction(g1);
 		g1.createDoubleSubNode();
+		commit(g1);
+		
+		createReadOnlyTransaction(g1);
 		assertEquals(v1, g1.getFirstVertex());
-
+		commit(g1);
+		
 		System.out.println("Done testing getFirstVertex.");
 	}
 
 	@Test
-	public void testGetLastVertex() {
-		onlyTestWithoutTransactionSupport();
+	public void testGetLastVertex() throws CommitFailedException {
+		
+		createReadOnlyTransaction(g1);
 		// border cases
 		assertEquals(v12, g1.getLastVertex());
+		commit(g1);
+		
+		createReadOnlyTransaction(g2);
 		assertEquals(null, g2.getLastVertex());
-
+		commit(g2);
+		
+		createTransaction(g1);
 		Vertex v13 = g1.createVertex(SubNode.class);
+		commit(g1);
+		
+		createReadOnlyTransaction(g1);
 		assertEquals(v13, g1.getLastVertex());
-
+		commit(g1);
+		
 		// normal cases
+		createTransaction(g1);
 		Vertex v14 = g1.createVertex(SubNode.class);
+		commit(g1);
+		
+		createReadOnlyTransaction(g1);
 		assertEquals(v14, g1.getLastVertex());
-
+		commit(g1);
+		
+		createTransaction(g1);
 		Vertex v15 = g1.createVertex(SubNode.class);
+		commit(g1);
+		
+		createReadOnlyTransaction(g1);
 		assertEquals(v15, g1.getLastVertex());
-
+		commit(g1);
+		
+		createTransaction(g1);
 		Vertex v16 = g1.createVertex(SubNode.class);
+		commit(g1);
+		
+		createReadOnlyTransaction(g1);
 		assertEquals(v16, g1.getLastVertex());
-
+		commit(g1);
+		
+		createTransaction(g1);
 		Vertex v17 = g1.createVertex(SuperNode.class);
+		commit(g1);
+		
+		createReadOnlyTransaction(g1);
 		assertEquals(v17, g1.getLastVertex());
-
+		commit(g1);
+		
+		createTransaction(g1);
 		Vertex v18 = g1.createVertex(SuperNode.class);
+		commit(g1);
+		
+		createReadOnlyTransaction(g1);
 		assertEquals(v18, g1.getLastVertex());
-
+		commit(g1);
+		
+		createTransaction(g1);
 		Vertex v19 = g1.createVertex(SuperNode.class);
+		commit(g1);
+		
+		createReadOnlyTransaction(g1);
 		assertEquals(v19, g1.getLastVertex());
-
+		commit(g1);
+		
+		createTransaction(g1);
 		Vertex v20 = g1.createVertex(SuperNode.class);
+		commit(g1);
+		
+		createReadOnlyTransaction(g1);
 		assertEquals(v20, g1.getLastVertex());
-
+		commit(g1);
+		
+		createTransaction(g1);
 		Vertex v21 = g1.createVertex(DoubleSubNode.class);
+		commit(g1);
+		
+		createReadOnlyTransaction(g1);
 		assertEquals(v21, g1.getLastVertex());
-
+		commit(g1);
+		
+		createTransaction(g1);
 		Vertex v22 = g1.createVertex(DoubleSubNode.class);
+		commit(g1);
+		
+		createReadOnlyTransaction(g1);
 		assertEquals(v22, g1.getLastVertex());
-
+		commit(g1);
+		
+		createTransaction(g1);
 		Vertex v23 = g1.createVertex(DoubleSubNode.class);
+		commit(g1);
+		
+		createReadOnlyTransaction(g1);
 		assertEquals(v23, g1.getLastVertex());
-
+		commit(g1);
+		
+		createTransaction(g1);
 		Vertex v24 = g1.createVertex(DoubleSubNode.class);
+		commit(g1);
+		
+		createReadOnlyTransaction(g1);
 		assertEquals(v24, g1.getLastVertex());
+		commit(g1);
 
 		System.out.println("Done testing getLastVertex.");
 	}
 
 	@Test
-	public void testGetFirstVertexOfClass() {
-		onlyTestWithoutTransactionSupport();
+	public void testGetFirstVertexOfClass() throws CommitFailedException {
+
+		createReadOnlyTransaction(g2);
 		assertEquals(null, g2.getFirstVertexOfClass(SubNode.class));
 		assertEquals(null, g2.getFirstVertexOfClass(SuperNode.class));
 		assertEquals(null, g2.getFirstVertexOfClass(DoubleSubNode.class));
-
+		commit(g2);
+		
+		createTransaction(g2);
 		Vertex v13 = g2.createVertex(SubNode.class);
+		commit(g2);
+		
+		createReadOnlyTransaction(g2);
 		assertEquals(v13, g2.getFirstVertexOfClass(SubNode.class));
 		assertEquals(null, g2.getFirstVertexOfClass(SuperNode.class));
 		assertEquals(null, g2.getFirstVertexOfClass(DoubleSubNode.class));
-
+		commit(g2);
+		
+		createTransaction(g2);
 		Vertex v14 = g2.createVertex(SuperNode.class);
+		commit(g2);
+		
+		createReadOnlyTransaction(g2);
 		assertEquals(v13, g2.getFirstVertexOfClass(SubNode.class));
 		assertEquals(v14, g2.getFirstVertexOfClass(SuperNode.class));
 		assertEquals(null, g2.getFirstVertexOfClass(DoubleSubNode.class));
-
+		commit(g2);
+		
+		createTransaction(g2);
 		Vertex v15 = g2.createVertex(SubNode.class);
+		commit(g2);
+		
+		createReadOnlyTransaction(g2);
 		assertEquals(v13, g2.getFirstVertexOfClass(SubNode.class));
 		assertEquals(v14, g2.getFirstVertexOfClass(SuperNode.class));
 		assertEquals(null, g2.getFirstVertexOfClass(DoubleSubNode.class));
-
+		commit(g2);
+		
+		createTransaction(g2);
 		Vertex v16 = g2.createVertex(SubNode.class);
+		commit(g2);
+		
+		createReadOnlyTransaction(g2);
 		assertEquals(v13, g2.getFirstVertexOfClass(SubNode.class));
 		assertEquals(v14, g2.getFirstVertexOfClass(SuperNode.class));
 		assertEquals(null, g2.getFirstVertexOfClass(DoubleSubNode.class));
-
+		commit(g2);
+		
+		createTransaction(g2);
 		Vertex v17 = g2.createVertex(DoubleSubNode.class);
+		commit(g2);
+		
+		createReadOnlyTransaction(g2);
 		assertEquals(v13, g2.getFirstVertexOfClass(SubNode.class));
 		assertEquals(v14, g2.getFirstVertexOfClass(SuperNode.class));
 		assertEquals(v17, g2.getFirstVertexOfClass(DoubleSubNode.class));
-
+		commit(g2);
+		
+		createTransaction(g2);
 		Vertex v18 = g2.createVertex(SuperNode.class);
+		commit(g2);
+		
+		createReadOnlyTransaction(g2);
 		assertEquals(v13, g2.getFirstVertexOfClass(SubNode.class));
 		assertEquals(v14, g2.getFirstVertexOfClass(SuperNode.class));
 		assertEquals(v17, g2.getFirstVertexOfClass(DoubleSubNode.class));
-
+		commit(g2);
+		
+		createTransaction(g2);
 		Vertex v19 = g2.createVertex(SubNode.class);
+		commit(g2);
+		
+		createReadOnlyTransaction(g2);
 		assertEquals(v13, g2.getFirstVertexOfClass(SubNode.class));
 		assertEquals(v14, g2.getFirstVertexOfClass(SuperNode.class));
 		assertEquals(v17, g2.getFirstVertexOfClass(DoubleSubNode.class));
-
+		commit(g2);
+		
+		createTransaction(g2);
 		Vertex v20 = g2.createVertex(DoubleSubNode.class);
+		commit(g2);
+		
+		createReadOnlyTransaction(g2);
 		assertEquals(v13, g2.getFirstVertexOfClass(SubNode.class));
 		assertEquals(v14, g2.getFirstVertexOfClass(SuperNode.class));
 		assertEquals(v17, g2.getFirstVertexOfClass(DoubleSubNode.class));
-
+		commit(g2);
+		
+		createTransaction(g2);
 		g2.deleteVertex(v14);
+		commit(g2);
+		
+		createReadOnlyTransaction(g2);
 		assertEquals(v13, g2.getFirstVertexOfClass(SubNode.class));
 		assertEquals(v17, g2.getFirstVertexOfClass(SuperNode.class));
 		assertEquals(v17, g2.getFirstVertexOfClass(DoubleSubNode.class));
-
+		commit(g2);
+		
+		createTransaction(g2);
 		Vertex v21 = g2.createVertex(DoubleSubNode.class);
+		commit(g2);
+		
+		createReadOnlyTransaction(g2);
 		assertEquals(v13, g2.getFirstVertexOfClass(SubNode.class));
 		assertEquals(v17, g2.getFirstVertexOfClass(SuperNode.class));
 		assertEquals(v17, g2.getFirstVertexOfClass(DoubleSubNode.class));
-
+		commit(g2);
+		
+		createTransaction(g2);
 		g2.deleteVertex(v16);
+		commit(g2);
+		
+		createReadOnlyTransaction(g2);
 		assertEquals(v13, g2.getFirstVertexOfClass(SubNode.class));
 		assertEquals(v17, g2.getFirstVertexOfClass(SuperNode.class));
 		assertEquals(v17, g2.getFirstVertexOfClass(DoubleSubNode.class));
-
+		commit(g2);
+		
+		createTransaction(g2);
 		g2.createVertex(SuperNode.class);
+		commit(g2);
+		
+		createReadOnlyTransaction(g2);
 		assertEquals(v13, g2.getFirstVertexOfClass(SubNode.class));
 		assertEquals(v17, g2.getFirstVertexOfClass(SuperNode.class));
 		assertEquals(v17, g2.getFirstVertexOfClass(DoubleSubNode.class));
-
+		commit(g2);
+		
+		createTransaction(g2);
 		g2.createVertex(DoubleSubNode.class);
+		commit(g2);
+		
+		createReadOnlyTransaction(g2);
 		assertEquals(v13, g2.getFirstVertexOfClass(SubNode.class));
 		assertEquals(v17, g2.getFirstVertexOfClass(SuperNode.class));
 		assertEquals(v17, g2.getFirstVertexOfClass(DoubleSubNode.class));
-
+		commit(g2);
+		
+		createTransaction(g2);
 		g2.deleteVertex(v13);
+		commit(g2);
+		
+		createReadOnlyTransaction(g2);
 		assertEquals(v15, g2.getFirstVertexOfClass(SubNode.class));
 		assertEquals(v17, g2.getFirstVertexOfClass(SuperNode.class));
 		assertEquals(v17, g2.getFirstVertexOfClass(DoubleSubNode.class));
-
+		commit(g2);
+		
+		createTransaction(g2);
 		g2.deleteVertex(v17);
+		commit(g2);
+		
+		createReadOnlyTransaction(g2);
 		assertEquals(v15, g2.getFirstVertexOfClass(SubNode.class));
 		assertEquals(v18, g2.getFirstVertexOfClass(SuperNode.class));
 		assertEquals(v20, g2.getFirstVertexOfClass(DoubleSubNode.class));
-
+		commit(g2);
+		
+		createTransaction(g2);
 		g2.deleteVertex(v20);
+		commit(g2);
+
+		createReadOnlyTransaction(g2);
 		assertEquals(v15, g2.getFirstVertexOfClass(SubNode.class));
 		assertEquals(v18, g2.getFirstVertexOfClass(SuperNode.class));
 		assertEquals(v21, g2.getFirstVertexOfClass(DoubleSubNode.class));
-
+		commit(g2);
+		
+		createTransaction(g2);
 		g2.createVertex(SuperNode.class);
+		commit(g2);
+		
+		createReadOnlyTransaction(g2);
 		assertEquals(v15, g2.getFirstVertexOfClass(SubNode.class));
 		assertEquals(v18, g2.getFirstVertexOfClass(SuperNode.class));
 		assertEquals(v21, g2.getFirstVertexOfClass(DoubleSubNode.class));
-
+		commit(g2);
+		
+		createTransaction(g2);
 		g2.deleteVertex(v15);
+		commit(g2);
+		
+		createReadOnlyTransaction(g2);
 		assertEquals(v19, g2.getFirstVertexOfClass(SubNode.class));
 		assertEquals(v18, g2.getFirstVertexOfClass(SuperNode.class));
 		assertEquals(v21, g2.getFirstVertexOfClass(DoubleSubNode.class));
-
+		commit(g2);
+		
 		System.out.println("Done testing getFirstVertexOfClass.");
 	}
 
