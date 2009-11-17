@@ -163,8 +163,8 @@ public class SchemaImpl implements Schema {
 	private Package defaultPackage;
 
 	private VertexClass defaultVertexClass;
-	
-	protected CodeGeneratorConfiguration config = new CodeGeneratorConfiguration();
+
+	protected CodeGeneratorConfiguration config;
 
 	/**
 	 * Maps from qualified name to the {@link Domain}.
@@ -290,6 +290,24 @@ public class SchemaImpl implements Schema {
 				.createDefaultAggregationClass(this);
 		defaultCompositionClass = CompositionClassImpl
 				.createDefaultCompositionClass(this);
+
+		config = createDefaultConfig();
+	}
+
+	private CodeGeneratorConfiguration createDefaultConfig() {
+		boolean stdSupport = false;
+		if (java.lang.Package.getPackage(packagePrefix + ". "
+				+ IMPLSTDPACKAGENAME) != null) {
+			stdSupport = true;
+		}
+		boolean transSupport = false;
+		if (java.lang.Package.getPackage(packagePrefix + ". "
+				+ IMPLTRANSPACKAGENAME) != null) {
+			transSupport = true;
+		}
+		// TODO: Monte, check for the other values :-)
+		return new CodeGeneratorConfiguration(stdSupport, transSupport, true,
+				true);
 	}
 
 	void addDomain(Domain dom) {
@@ -341,49 +359,52 @@ public class SchemaImpl implements Schema {
 	public boolean allowsLowercaseEnumConstants() {
 		return allowLowercaseEnumConstants;
 	}
-	
-	
-	
-	
-	private Vector<JavaSourceFromString> createClasses(CodeGeneratorConfiguration config) {
+
+	private Vector<JavaSourceFromString> createClasses(
+			CodeGeneratorConfiguration config) {
 		Vector<JavaSourceFromString> javaSources = new Vector<JavaSourceFromString>();
-		
+
 		/* create code for graph */
 		GraphCodeGenerator graphCodeGenerator = new GraphCodeGenerator(
 				graphClass, packagePrefix, GRAPH_IMPLEMENTATION_PACKAGE, name,
 				config);
 		javaSources.addAll(graphCodeGenerator.createJavaSources());
-		
+
 		for (VertexClass vertexClass : graphClass.getVertexClasses()) {
-			VertexCodeGenerator codeGen = new VertexCodeGenerator(vertexClass, packagePrefix, GRAPH_IMPLEMENTATION_PACKAGE, config);
+			VertexCodeGenerator codeGen = new VertexCodeGenerator(vertexClass,
+					packagePrefix, GRAPH_IMPLEMENTATION_PACKAGE, config);
 			javaSources.addAll(codeGen.createJavaSources());
 		}
 
 		for (EdgeClass edgeClass : graphClass.getEdgeClasses()) {
-			CodeGenerator codeGen = new EdgeCodeGenerator(edgeClass, packagePrefix, GRAPH_IMPLEMENTATION_PACKAGE, config);
+			CodeGenerator codeGen = new EdgeCodeGenerator(edgeClass,
+					packagePrefix, GRAPH_IMPLEMENTATION_PACKAGE, config);
 			javaSources.addAll(codeGen.createJavaSources());
-			
+
 			if (!edgeClass.isAbstract()) {
-				codeGen = new ReversedEdgeCodeGenerator(edgeClass, packagePrefix, GRAPH_IMPLEMENTATION_PACKAGE, config);
+				codeGen = new ReversedEdgeCodeGenerator(edgeClass,
+						packagePrefix, GRAPH_IMPLEMENTATION_PACKAGE, config);
 				javaSources.addAll(codeGen.createJavaSources());
-			}	
+			}
 		}
-				
+
 		// build records and enums
 		for (Domain domain : getRecordDomains()) {
 			// also generate an abstract class for Records
-			CodeGenerator rcode = new RecordCodeGenerator((RecordDomain) domain, packagePrefix, GRAPH_IMPLEMENTATION_PACKAGE, config);
+			CodeGenerator rcode = new RecordCodeGenerator(
+					(RecordDomain) domain, packagePrefix,
+					GRAPH_IMPLEMENTATION_PACKAGE, config);
 			javaSources.addAll(rcode.createJavaSources());
 		}
-		//if (config.hasTransactionSupport())
-			for (Domain domain : getEnumDomains()) {
-				CodeGenerator ecode = new EnumCodeGenerator((EnumDomain) domain, packagePrefix,	GRAPH_IMPLEMENTATION_PACKAGE);
-				javaSources.addAll(ecode.createJavaSources());
-			}
-		
+		// if (config.hasTransactionSupport())
+		for (Domain domain : getEnumDomains()) {
+			CodeGenerator ecode = new EnumCodeGenerator((EnumDomain) domain,
+					packagePrefix, GRAPH_IMPLEMENTATION_PACKAGE);
+			javaSources.addAll(ecode.createJavaSources());
+		}
+
 		return javaSources;
 	}
-	
 
 	@Override
 	public Vector<JavaSourceFromString> commit(CodeGeneratorConfiguration config) {
@@ -405,10 +426,11 @@ public class SchemaImpl implements Schema {
 			throw new SchemaException(
 					"The defined GraphClass must not be named Graph!");
 		}
-		
+
 		javaSources.addAll(createClasses(config));
 		if (config.hasTransactionSupport() && config.hasStandardSupport()) {
-			CodeGeneratorConfiguration stdconfig = new CodeGeneratorConfiguration(config);
+			CodeGeneratorConfiguration stdconfig = new CodeGeneratorConfiguration(
+					config);
 			stdconfig.setTransactionSupport(false);
 			javaSources.addAll(createClasses(stdconfig));
 		}
@@ -416,20 +438,20 @@ public class SchemaImpl implements Schema {
 		return javaSources;
 	}
 
+	private void createFiles(CodeGeneratorConfiguration config,
+			String pathPrefix, ProgressFunction progressFunction,
+			long schemaElements, long currentCount, long interval)
+			throws GraphIOException {
 
-		
-	
-	
-	private void createFiles(CodeGeneratorConfiguration config, String pathPrefix, ProgressFunction progressFunction, long schemaElements, long currentCount, long interval) throws GraphIOException {
-		
 		/* create code for graph */
 		GraphCodeGenerator graphCodeGenerator = new GraphCodeGenerator(
 				graphClass, packagePrefix, GRAPH_IMPLEMENTATION_PACKAGE, name,
 				config);
 		graphCodeGenerator.createFiles(pathPrefix);
-		
+
 		for (VertexClass vertexClass : graphClass.getVertexClasses()) {
-			VertexCodeGenerator codeGen = new VertexCodeGenerator(vertexClass, packagePrefix, GRAPH_IMPLEMENTATION_PACKAGE, config);
+			VertexCodeGenerator codeGen = new VertexCodeGenerator(vertexClass,
+					packagePrefix, GRAPH_IMPLEMENTATION_PACKAGE, config);
 			codeGen.createFiles(pathPrefix);
 			if (progressFunction != null) {
 				schemaElements++;
@@ -442,13 +464,15 @@ public class SchemaImpl implements Schema {
 		}
 
 		for (EdgeClass edgeClass : graphClass.getEdgeClasses()) {
-			CodeGenerator codeGen = new EdgeCodeGenerator(edgeClass, packagePrefix, GRAPH_IMPLEMENTATION_PACKAGE, config);
+			CodeGenerator codeGen = new EdgeCodeGenerator(edgeClass,
+					packagePrefix, GRAPH_IMPLEMENTATION_PACKAGE, config);
 			codeGen.createFiles(pathPrefix);
-			
+
 			if (!edgeClass.isAbstract()) {
-				codeGen = new ReversedEdgeCodeGenerator(edgeClass, packagePrefix, GRAPH_IMPLEMENTATION_PACKAGE, config);
+				codeGen = new ReversedEdgeCodeGenerator(edgeClass,
+						packagePrefix, GRAPH_IMPLEMENTATION_PACKAGE, config);
 				codeGen.createFiles(pathPrefix);
-			}	
+			}
 			if (progressFunction != null) {
 				schemaElements++;
 				currentCount++;
@@ -458,11 +482,13 @@ public class SchemaImpl implements Schema {
 				}
 			}
 		}
-				
+
 		// build records and enums
 		for (Domain domain : getRecordDomains()) {
 			// also generate an abstract class for Records
-			CodeGenerator rcode = new RecordCodeGenerator((RecordDomain) domain, packagePrefix, GRAPH_IMPLEMENTATION_PACKAGE, config);
+			CodeGenerator rcode = new RecordCodeGenerator(
+					(RecordDomain) domain, packagePrefix,
+					GRAPH_IMPLEMENTATION_PACKAGE, config);
 			rcode.createFiles(pathPrefix);
 			if (progressFunction != null) {
 				schemaElements++;
@@ -473,11 +499,12 @@ public class SchemaImpl implements Schema {
 				}
 			}
 		}
-		//if (!config.hasTransactionSupport())
-			for (Domain domain : getEnumDomains()) {
-				CodeGenerator ecode = new EnumCodeGenerator((EnumDomain) domain, packagePrefix,	GRAPH_IMPLEMENTATION_PACKAGE);
-				ecode.createFiles(pathPrefix);
-			}
+		// if (!config.hasTransactionSupport())
+		for (Domain domain : getEnumDomains()) {
+			CodeGenerator ecode = new EnumCodeGenerator((EnumDomain) domain,
+					packagePrefix, GRAPH_IMPLEMENTATION_PACKAGE);
+			ecode.createFiles(pathPrefix);
+		}
 		if (progressFunction != null) {
 			schemaElements++;
 			currentCount++;
@@ -487,27 +514,24 @@ public class SchemaImpl implements Schema {
 			}
 		}
 	}
-	
-	
-	
+
 	@Override
 	public void commit(String pathPrefix, CodeGeneratorConfiguration config)
 			throws GraphIOException {
 		commit(pathPrefix, config, null);
 	}
-	
 
 	@Override
 	public void commit(String pathPrefix, CodeGeneratorConfiguration config,
 			ProgressFunction progressFunction) throws GraphIOException {
-
 		// progress bar for schema generation
 		// ProgressFunctionImpl pf;
 		long schemaElements = 0, currentCount = 0, interval = 1;
 		if (progressFunction != null) {
 			int elements = getNumberOfElements();
-			if (config.hasTransactionSupport())
+			if (config.hasTransactionSupport()) {
 				elements *= 2;
+			}
 			progressFunction.init(getNumberOfElements());
 			interval = progressFunction.getUpdateInterval();
 		}
@@ -533,11 +557,14 @@ public class SchemaImpl implements Schema {
 					"The defined GraphClass must not be named Graph!");
 		}
 
-		createFiles(config, pathPrefix, progressFunction, schemaElements, currentCount, interval);
+		createFiles(config, pathPrefix, progressFunction, schemaElements,
+				currentCount, interval);
 		if (config.hasTransactionSupport() && config.hasStandardSupport()) {
-			CodeGeneratorConfiguration stdconfig = new CodeGeneratorConfiguration(config);
+			CodeGeneratorConfiguration stdconfig = new CodeGeneratorConfiguration(
+					config);
 			stdconfig.setTransactionSupport(false);
-			createFiles(stdconfig, pathPrefix, progressFunction, schemaElements, currentCount, interval);
+			createFiles(stdconfig, pathPrefix, progressFunction,
+					schemaElements, currentCount, interval);
 		}
 
 		// finish progress bar
@@ -560,9 +587,10 @@ public class SchemaImpl implements Schema {
 	public void compile(String jgralabClassPath) {
 		compile(jgralabClassPath, new CodeGeneratorConfiguration());
 	}
-	
+
 	@Override
-	public void compile(String jgralabClassPath, CodeGeneratorConfiguration config) {
+	public void compile(String jgralabClassPath,
+			CodeGeneratorConfiguration config) {
 		JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
 		JavaFileManager jfm = null;
 
@@ -1038,7 +1066,8 @@ public class SchemaImpl implements Schema {
 		} else {
 			implClassName += IMPLTRANSPACKAGENAME;
 		}
-		implClassName = implClassName + "." + graphClass.getSimpleName() + "Impl";
+		implClassName = implClassName + "." + graphClass.getSimpleName()
+				+ "Impl";
 
 		Class<? extends Graph> m1Class;
 		try {
