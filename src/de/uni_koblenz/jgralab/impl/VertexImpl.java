@@ -769,6 +769,10 @@ public abstract class VertexImpl extends GraphElementImpl implements Vertex {
 	abstract protected void setLastIncidence(IncidenceImpl lastIncidence);
 
 	public void sortIncidences(Comparator<Edge> comp) {
+		if(getDegree() == 0){
+			// no sorting required for empty incidence lists
+			return;
+		}
 		class IncidenceList {
 			IncidenceImpl first;
 			IncidenceImpl last;

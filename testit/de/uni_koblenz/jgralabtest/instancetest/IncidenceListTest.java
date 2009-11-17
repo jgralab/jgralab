@@ -349,7 +349,9 @@ public class IncidenceListTest extends InstanceTest {
 		for (int i = 0; i < nodes.length; i++) {
 			nodes[i] = g.createNode();
 		}
-
+		
+		Node isolated = g.createNode();
+		
 		// create edges from node 0 to all others
 		List<Link> links = new ArrayList<Link>();
 		for (int i = 1; i < nodes.length; i++) {
@@ -404,6 +406,9 @@ public class IncidenceListTest extends InstanceTest {
 			nodes[0].sortIncidences(comp);
 			checkInOrder(nodes, randomOrder);
 		}
+		
+		// check if the sorting succeeds if the vertex is isolated
+		isolated.sortIncidences(comp);
 
 	}
 
