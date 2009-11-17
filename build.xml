@@ -26,139 +26,139 @@
 
 
 <project name="de.uni_koblenz.jgralab" basedir="." default="build">
-	
-	<property name="enable-xmlrpc"
-		  value="no"/>
-	
-	<!-- project name -->
-	<property name="projectname"			
-		value="jgralab"/>
-	
-	<property name="basePackage"
-		  value="de.uni_koblenz.${projectname}"/>
-	
-	<!-- main class name -->
-	<property name="main"					
-		value="JGraLab"/>
-	
-	<!-- project directory -->
-	<property name="project.dir"			
-		value="../${projectname}"/>
-	
-	<!-- directory of general ant file -->
-	<property name="common.dir"				
-		value="../common"/>
-	
-	<!-- source directory -->
-	<property name="src.dir"				
-		      value="${project.dir}/src"/>
-    
-	<!-- test directory -->
-	<property name="test.dir"				
-		      value="${project.dir}/testit"/>
+
+    <property name="enable-xmlrpc"
+          value="no"/>
+
+    <!-- project name -->
+    <property name="projectname"
+        value="jgralab"/>
+
+    <property name="basePackage"
+          value="de.uni_koblenz.${projectname}"/>
+
+    <!-- main class name -->
+    <property name="main"
+        value="JGraLab"/>
+
+    <!-- project directory -->
+    <property name="project.dir"
+        value="../${projectname}"/>
+
+    <!-- directory of general ant file -->
+    <property name="common.dir"
+        value="../common"/>
+
+    <!-- source directory -->
+    <property name="src.dir"
+              value="${project.dir}/src"/>
+
+    <!-- test directory -->
+    <property name="test.dir"
+              value="${project.dir}/testit"/>
 
         <property name="testschemas.dir"
-	          value="${test.dir}/testschemas"/>
+              value="${test.dir}/testschemas"/>
 
 
-	<!-- classes directory -->
-	<property name="classes.dir"			
-		      value="${project.dir}/build/classes"/>
+    <!-- classes directory -->
+    <property name="classes.dir"
+              value="${project.dir}/build/classes"/>
 
-	<!-- temporary directory -->
-	<!-- propterty can be overwritten from caller -->
-	<property name="tmp.dir" 		
-		value="${project.dir}/build/tmp"/>
-	
-	<!-- directory of general ant file -->
-	<property name="common.dir"				
-		value="../common"/>
-	
-	<!-- common library directory -->
-	<property name="comlib.dir"				
-		value="../common/lib"/>
-	
-	<!-- library directory -->
-	<property name="lib.dir"				
-		      value="${project.dir}/lib"/>	
-	
-	<!-- build -->
-	<!-- main target - calls targets clean and jar -->	
-	<target name="build" depends="clean,jar"/>
-	
-	<!-- release -->
-	<!-- calls targets modify, clean, jar, test and document -->
-	<target name="release" depends="modify,cleanall,jar,source,document"/>
-	
-	<!-- clean -->
-	<!-- deletes all classes, the jar, the temporary files and all generated schema and parser files -->
-	<target name="clean">
-	  <!-- calls target clean in general ant file ${ant}/build.xml -->
-	  <ant dir="${common.dir}" antfile="build.xml" target="clean">
-		<property name="subprojectname" value="jgralab/greql2"/>
-	  </ant>
+    <!-- temporary directory -->
+    <!-- propterty can be overwritten from caller -->
+    <property name="tmp.dir"
+        value="${project.dir}/build/tmp"/>
+
+    <!-- directory of general ant file -->
+    <property name="common.dir"
+        value="../common"/>
+
+    <!-- common library directory -->
+    <property name="comlib.dir"
+        value="../common/lib"/>
+
+    <!-- library directory -->
+    <property name="lib.dir"
+              value="${project.dir}/lib"/>
+
+    <!-- build -->
+    <!-- main target - calls targets clean and jar -->
+    <target name="build" depends="clean,jar"/>
+
+    <!-- release -->
+    <!-- calls targets modify, clean, jar, test and document -->
+    <target name="release" depends="modify,cleanall,jar,source,document"/>
+
+    <!-- clean -->
+    <!-- deletes all classes, the jar, the temporary files and all generated schema and parser files -->
+    <target name="clean">
+      <!-- calls target clean in general ant file ${ant}/build.xml -->
+      <ant dir="${common.dir}" antfile="build.xml" target="clean">
+        <property name="subprojectname" value="jgralab/greql2"/>
+      </ant>
       <delete dir="${test.dir}/de/uni_koblenz/jgralabtest/schemas/" />
       <delete dir="${src.dir}/de/uni_koblenz/jgralab/grumlschema/" />
     </target>
-	
-	<!-- clean all -->
-	<!-- deletes all classes, the jar, the temporary files, the documentation, the testresults and all generated schema and grammar files -->
-	<target name="cleanall">
-		<!-- calls target clean all in general ant file ${ant}/build.xml -->
-		<ant dir="${common.dir}" antfile="build.xml" target="cleanall">
-		  <property name="subprojectname" value="jgralab/greql2"/>
-	    </ant>	
-	</target>
-	
-	<!-- modify -->
-	<!-- modifies the projects main class -->
-	<target name="modify">
-		<!-- calls target modify in general ant file ${ant}/build.xml -->
-		<ant dir="${common.dir}" antfile="build.xml" target="modify"/>
-	</target>
-	
-	<!-- compile -->
-	<!-- calls targets jgralab, tgtools, greql2 and utilities -->
-	<target name="compile" depends="jgralab,tgtools,greql2,graphvalidator,commonutilities,rsa2tg,utilities,generatetestschemas"/>
 
-	<!-- jgralab -->
-	<!-- compiles jgralab basic sources -->
-	<target name="jgralab">
-		<!-- calls target compile in general ant file ${ant}/build.xml -->
-	   	<ant dir="${common.dir}" antfile="build.xml" target="compile">
-	   		<property name="src.dir" value="${src.dir}/de/uni_koblenz/${projectname}"/>
-	   		<property name="compileincludes" value="*.java schema/** codegenerator/** impl/** jniserver/** trans/**"/>
-			<property name="compileexcludes" value="xmlrpc/**"/>
-	   	</ant>
-	</target>
+    <!-- clean all -->
+    <!-- deletes all classes, the jar, the temporary files, the documentation, the testresults and all generated schema and grammar files -->
+    <target name="cleanall">
+        <!-- calls target clean all in general ant file ${ant}/build.xml -->
+        <ant dir="${common.dir}" antfile="build.xml" target="cleanall">
+          <property name="subprojectname" value="jgralab/greql2"/>
+        </ant>
+    </target>
+
+    <!-- modify -->
+    <!-- modifies the projects main class -->
+    <target name="modify">
+        <!-- calls target modify in general ant file ${ant}/build.xml -->
+        <ant dir="${common.dir}" antfile="build.xml" target="modify"/>
+    </target>
+
+    <!-- compile -->
+    <!-- calls targets jgralab, tgtools, greql2 and utilities -->
+    <target name="compile" depends="jgralab,tgtools,greql2,graphvalidator,commonutilities,rsa2tg,utilities,generatetestschemas"/>
+
+    <!-- jgralab -->
+    <!-- compiles jgralab basic sources -->
+    <target name="jgralab">
+        <!-- calls target compile in general ant file ${ant}/build.xml -->
+        <ant dir="${common.dir}" antfile="build.xml" target="compile">
+            <property name="src.dir" value="${src.dir}/de/uni_koblenz/${projectname}"/>
+            <property name="compileincludes" value="*.java schema/** codegenerator/** impl/** jniserver/** trans/**"/>
+            <property name="compileexcludes" value="xmlrpc/**"/>
+        </ant>
+    </target>
 
     <!-- graphvalidator -->
     <target name="graphvalidator">
-	  <!-- calls target compile in general ant file ${ant}/build.xml -->
-	  <ant dir="${common.dir}" antfile="build.xml" target="compile">
-	   	<property name="src.dir" value="${src.dir}/de/uni_koblenz/${projectname}/"/>
-	   	<property name="compileincludes" value="graphvalidator/**"/>
-	  </ant>
-	</target>
+      <!-- calls target compile in general ant file ${ant}/build.xml -->
+      <ant dir="${common.dir}" antfile="build.xml" target="compile">
+        <property name="src.dir" value="${src.dir}/de/uni_koblenz/${projectname}/"/>
+        <property name="compileincludes" value="graphvalidator/**"/>
+      </ant>
+    </target>
 
     <target name="rsa2tg" depends="grumlsourcesCompile">
       <!-- calls target compile in general ant file ${ant}/build.xml -->
-	  <ant dir="${common.dir}" antfile="build.xml" target="compile">
-		<property name="src.dir"
+      <ant dir="${common.dir}" antfile="build.xml" target="compile">
+        <property name="src.dir"
                   value="${src.dir}/de/uni_koblenz/${projectname}/utilities/"/>
-		<property name="compileincludes" value="rsa2tg/** tg2schemagraph/** common/**"/>
+        <property name="compileincludes" value="rsa2tg/** tg2schemagraph/** common/**"/>
       </ant>
-	</target>
-	
+    </target>
 
 
-	<!-- jgralabtest -->
 
-	<path id="testschemasclasspath">
-	  <pathelement location="${classes.dir}" />
-	  <fileset dir="${lib.dir}" includes="**/*.jar"/>	
-	  <fileset dir="${comlib.dir}" includes="**/*.jar"/>	
-	</path>
+    <!-- jgralabtest -->
+
+    <path id="testschemasclasspath">
+      <pathelement location="${classes.dir}" />
+      <fileset dir="${lib.dir}" includes="**/*.jar"/>
+      <fileset dir="${comlib.dir}" includes="**/*.jar"/>
+    </path>
 
     <target name="generatetestschemas">
       <apply executable="java">
@@ -184,7 +184,7 @@
                   value="de.uni_koblenz.jgralabtest.RunTests"/>
       </ant>
     </target>
-    
+
     <target name="jdepend">
       <jdepend outputfile="jdepend-report.txt">
       <exclude name="java.*"/>
@@ -196,198 +196,199 @@
     </target>
 
 
-	<!-- Check XML-RPC -->
-	<target name="checkxmlrpc">
-		<condition property="is_xmlrpc_enabled">
-			<or>
-				<equals arg1="${enable-xmlrpc}"
-					arg2="true"
-					casesensitive="no"/>
-				<equals arg1="${enable-xmlrpc}"
-					arg2="yes"
-					casesensitive="no"/>
-			</or>
-		</condition>
-	</target>
-	
-	<target name="xmlrpc" depends="checkxmlrpc" if="is_xmlrpc_enabled">
-		<ant dir="${common.dir}" antfile="build.xml" target="compile">
-			<property name="src.dir"
+    <!-- Check XML-RPC -->
+    <target name="checkxmlrpc">
+        <condition property="is_xmlrpc_enabled">
+            <or>
+                <equals arg1="${enable-xmlrpc}"
+                    arg2="true"
+                    casesensitive="no"/>
+                <equals arg1="${enable-xmlrpc}"
+                    arg2="yes"
+                    casesensitive="no"/>
+            </or>
+        </condition>
+    </target>
+
+    <target name="xmlrpc" depends="checkxmlrpc" if="is_xmlrpc_enabled">
+        <ant dir="${common.dir}" antfile="build.xml" target="compile">
+            <property name="src.dir"
                       value="${src.dir}/de/uni_koblenz/${projectname}"/>
-			<property name="compileincludes" value="xmlrpc/**"/>
+            <property name="compileincludes" value="xmlrpc/**"/>
             <!-- <property name="compileexcludes" value="impl/list/**"/> -->
-	   	</ant>
-	</target>
-	
-	<!-- tgtools (utils which are needed for schema creation (TgSchema2Java)
-	     and that don't depend on schemas themselves) -->
-	<target name="tgtools" depends="jgralab">
-		<!-- calls target compile in general ant file ${ant}/build.xml -->
-	   	<ant dir="${common.dir}" antfile="build.xml" target="compile">
-	   	  <property name="compileincludes" 
-	   			    value="**/utilities/tgschema2java/** **/utilities/tg2dot/** **/utilities/tg2whatever/**"/>
-	   	</ant>
-	</target>
-	
-	
-	<!-- greql2 -->
-	<!-- generates greql2 schmema sources and parser sources, compiles greql2 sources -->
-	<target name="citymap" depends="tgtools">
-		<!-- calls target generateschema in general ant file ${ant}/build.xml -->
-		<ant dir="${common.dir}" antfile="build.xml" target="generateschema">
-			<property name="subprojectname" value = "jgralab/citymap"/>			
-			<property name="schemafile" value = "citymap.tg"/>			
-		</ant>
-		<ant dir="${common.dir}" antfile="build.xml" target="compile">
-			<property name="src.dir" value="${src.dir}/de/uni_koblenz/${projectname}/citymap"/>
-	   	</ant>
-	</target>
-
-	
-	<!-- greql2 -->
-	<!-- generates greql2 schmema sources and parser sources, compiles greql2 sources -->
-	<target name="greql2sources" depends="tgtools">
-		<!-- calls target generateschema in general ant file ${ant}/build.xml -->
-	   	<ant dir="${common.dir}" antfile="build.xml" target="generateschema">
-			<property name="subprojectname" value = "greql2"/>			
-			<property name="schemafile" value = "greql2Schema.tg"/>			
-	   	</ant>
-	</target>
-
-	<!-- compiles greql2 sources -->
-	<target name="greql2" depends="greql2sources">
-		<!-- calls target compile in general ant file ${ant}/build.xml -->
-	   	<ant dir="${common.dir}" antfile="build.xml" target="compile">
-	   		<property name="src.dir" value="${src.dir}/de/uni_koblenz/${projectname}/greql2"/>
-			<property name="compileexcludes" value="evaluator/test/**"/>
-	   	</ant>
-	</target>
-	
-	<target name="grumlsources" depends="xmlrpc,tgtools">
-		<!-- calls target generateschema in general ant file ${ant}/build.xml -->
-	   	<ant dir="${common.dir}" antfile="build.xml" target="generateschema">
-			<property name="subprojectname" value = "utilities/tg2schemagraph/"/>	
-			<property name="schemafile" 
-				value = "GrumlSchema.tg"/>			
-	   	</ant>
-	</target>
-	
-	<!-- -->
-	<target name="grumlsourcesCompile" depends="grumlsources">
-		<ant dir="${common.dir}" antfile="build.xml" target="compile">
-			<property name="src.dir" value="${src.dir}/de/uni_koblenz/${projectname}/grumlschema"/>
-		</ant>
-	</target>
-
-	<!-- utilities -->
-	<!-- compiles common utility sources -->	
-	<target name="commonutilities">
-		<!-- calls target compile in general ant file ${ant}/build.xml -->
-	   	<ant dir="${common.dir}" antfile="build.xml" target="compile">
-	   		<property name="src.dir" value="${src.dir}/de/uni_koblenz/${projectname}/utilities/common"/>
-	   	</ant>
-	</target>
-
-	<!-- compiles utility sources -->	
-	<target name="utilities" depends="commonutilities,grumlsourcesCompile">
-		<!-- calls target compile in general ant file ${ant}/build.xml -->
-	   	<ant dir="${common.dir}" antfile="build.xml" target="compile">
-	   		<property name="src.dir" value="${src.dir}/de/uni_koblenz/${projectname}/utilities"/>
-	   		<property name="additional.pathelementlocation" value="${classes.dir}/de/uni_koblenz/jgralab/grumlschema/**"/>
-            <!-- Those have been compiled before -->
-	   		<property name="compileexcludes" value="common/** tgschema2java/** rsa2tg/** tg2dot/** tg2whatever/**"/>	   		
-	   	</ant>
-	</target>
-	
-	<!-- jar -->
-	<!-- makes executable jar file out of all classes in ${classes.dir} and puts jar file into /build/jar -->
-	<target name="jar" depends="compile">
-		<!-- calls target unjar in general ant file ${ant}/build.xml -->	
-		<ant dir="${common.dir}" antfile="build.xml" target="unjar">
-          <property name="unjarexcludes" value="**/clover*.jar"/>	   		
         </ant>
-		<!-- unjar some commom jars-->
-		<unjar dest="${tmp.dir}">
-					<fileset dir="${comlib.dir}/apache/commons/cli/" includes="**/*.jar"/>
-					<fileset dir="${comlib.dir}/ist_utilities/" includes="**/*.jar"/>
-		</unjar>		
-		<unjar dest="${tmp.dir}">
-			<fileset dir="${comlib.dir}/jdom/" includes="**/*.jar"/>
-		</unjar>
-		<!-- add license information -->
-		<copy todir="${tmp.dir}/META-INF/license">
-				<fileset dir="license" includes="jdom/** jgralab/** xmlrpc/**"/>
-		</copy>
-		<!-- add xmi2tgschema -->
-		<copy file="${src.dir}/de/uni_koblenz/jgralab/utilities/xmi2tgschema/XMI2TGSchema.xsl" 
-			todir="${classes.dir}/de/uni_koblenz/jgralab/utilities/xmi2tgschema"/>
-		<!-- calls target jar in general ant file ${ant}/build.xml -->	
-		<ant dir="${common.dir}" antfile="build.xml" target="jar"/>
-	</target>
-			
-	<!-- document -->
-	<!-- documents all sources -->
-	<target name="verbosedocument" depends="grumlsources,greql2sources">
-		<ant dir="${common.dir}" antfile="build.xml" target="document">
-			<property name="documentexcludes"
-				  value="{basePackage}.greql2.evaluator.test.*"/>
-			<property name="doc.maxmem" value="256"/>
-		</ant>
-	</target>
-	
-	<target name="document">
-		<!-- calls target document in general ant file ../common/build.xml -->
-		<ant dir="${common.dir}" antfile="build.xml" target="document">
-<!-- 				<property name="excludedPackageNames" -->
-				<property name="documentexcludes"
-					value="${basePackage}.greql2.schema.**,
-					${basePackage}.greql2.schema.*,
-					${basePackage}.greql2.funlib.pathsearch.*,
-					${basePackage}.greql2.evaluator.costmodel.*,
-					${basePackage}.greql2.evaluator.fa.*,
-					${basePackage}.greql2.evaluator.logging.*,
-					${basePackage}.greql2.evaluator.test.*,
-					${basePackage}.greql2.evaluator.vertexeval.*,
-					${basePackage}.greql2.parser.*,
-					${basePackage}.utilities.tg2schemagraph.**,
-					${basePackage}.utilities.tg2schemagraph.*,
-					${basePackage}.greql2.optimizer.**,
-					${basePackage}.greql2.optimizer.*" />
-				<property name="doc.maxmem" value="256"/>
-		</ant>
-	</target>
+    </target>
 
-	<target name="source" depends="cleansource">
-		<mkdir dir="${tmp.dir}/source"/>
-		<mkdir dir="${tmp.dir}/source/common"/>
-		<mkdir dir="${tmp.dir}/source/common/lib"/>
-		<mkdir dir="${tmp.dir}/source/common/lib/apache"/>
-		<mkdir dir="${tmp.dir}/source/common/lib/apache/commons"/>
-		<mkdir dir="${tmp.dir}/source/common/lib/apache/commons/cli"/>
-		<mkdir dir="${tmp.dir}/source/common/lib/jdom"/>
-		<mkdir dir="${tmp.dir}/source/jgralab"/>
-		<mkdir dir="${tmp.dir}/source/jgralab/lib"/>
-		<mkdir dir="${tmp.dir}/source/jgralab/lib/xmlrpc"/>
-		<mkdir dir="${tmp.dir}/source/jgralab/lib/javaee"/>
-		<mkdir dir="${tmp.dir}/source/jgralab/src"/>
-		<mkdir dir="${tmp.dir}/source/jgralab/license"/>
-		<copy file="build.xml" todir="${tmp.dir}/source/jgralab"/>
-		<copy file="${common.dir}/build.xml" todir="${tmp.dir}/source/common"/>
-		<copy todir="${tmp.dir}/source/jgralab/license">
-			<fileset dir="license" excludes="addheader.sh fix.java.txt fix.tg.txt gpl-2.0-header.java.txt gpl-2.0-header.xml.txt fix.sh fix.xml.txt gpl-2.0-header.tg.txt gpl-2.0.txt"/>
-		</copy>
-		<copy todir="${tmp.dir}/source/jgralab/src">
-			<fileset dir="src" includes="de/**" excludes=" **/schema/** **/parser/** **/grumlschema/** **/*.class **/*.bak **/*~ **/*.tmp"/>
-		</copy>
-		<copy file="${common.dir}/lib/apache/commons/cli/commons-cli-1.2.jar" todir="${tmp.dir}/source/common/lib/apache/commons/cli"/>
-		<copy file="lib/plist/org.riediger.plist.jar" todir="${tmp.dir}/source/jgralab/lib"/>
-		<copy file="README" todir="${tmp.dir}/source/jgralab"/>
-		<copy file="README" todir="${tmp.dir}/source"/>
-		<mkdir dir="build/zip"/>
-		<zip basedir="${tmp.dir}/source" destfile="build/zip/source.zip"/>
-	</target>
-	
-	<target name="cleansource">
-		<delete dir="${tmp.dir}/source"/>
-	</target>
+    <!-- tgtools (utils which are needed for schema creation (TgSchema2Java)
+         and that don't depend on schemas themselves) -->
+    <target name="tgtools" depends="jgralab">
+        <!-- calls target compile in general ant file ${ant}/build.xml -->
+        <ant dir="${common.dir}" antfile="build.xml" target="compile">
+          <property name="compileincludes"
+                    value="**/utilities/tgschema2java/** **/utilities/tg2dot/** **/utilities/tg2whatever/**"/>
+        </ant>
+    </target>
+
+
+    <!-- greql2 -->
+    <!-- generates greql2 schmema sources and parser sources, compiles greql2 sources -->
+    <target name="citymap" depends="tgtools">
+        <!-- calls target generateschema in general ant file ${ant}/build.xml -->
+        <ant dir="${common.dir}" antfile="build.xml" target="generateschema">
+            <property name="subprojectname" value = "jgralab/citymap"/>
+            <property name="schemafile" value = "citymap.tg"/>
+        </ant>
+        <ant dir="${common.dir}" antfile="build.xml" target="compile">
+            <property name="src.dir" value="${src.dir}/de/uni_koblenz/${projectname}/citymap"/>
+        </ant>
+    </target>
+
+
+    <!-- greql2 -->
+    <!-- generates greql2 schmema sources and parser sources, compiles greql2 sources -->
+    <target name="greql2sources" depends="tgtools">
+        <!-- calls target generateschema in general ant file ${ant}/build.xml -->
+        <ant dir="${common.dir}" antfile="build.xml" target="generateschema">
+            <property name="subprojectname" value = "greql2"/>
+            <property name="schemafile" value = "greql2Schema.tg"/>
+            <property name="generateschema.opts" value = "--standard-support-only"/>
+        </ant>
+    </target>
+
+    <!-- compiles greql2 sources -->
+    <target name="greql2" depends="greql2sources">
+        <!-- calls target compile in general ant file ${ant}/build.xml -->
+        <ant dir="${common.dir}" antfile="build.xml" target="compile">
+            <property name="src.dir" value="${src.dir}/de/uni_koblenz/${projectname}/greql2"/>
+            <property name="compileexcludes" value="evaluator/test/**"/>
+        </ant>
+    </target>
+
+    <target name="grumlsources" depends="xmlrpc,tgtools">
+        <!-- calls target generateschema in general ant file ${ant}/build.xml -->
+        <ant dir="${common.dir}" antfile="build.xml" target="generateschema">
+            <property name="subprojectname" value = "utilities/tg2schemagraph/"/>
+            <property name="schemafile"
+                value = "GrumlSchema.tg"/>
+        </ant>
+    </target>
+
+    <!-- -->
+    <target name="grumlsourcesCompile" depends="grumlsources">
+        <ant dir="${common.dir}" antfile="build.xml" target="compile">
+            <property name="src.dir" value="${src.dir}/de/uni_koblenz/${projectname}/grumlschema"/>
+        </ant>
+    </target>
+
+    <!-- utilities -->
+    <!-- compiles common utility sources -->
+    <target name="commonutilities">
+        <!-- calls target compile in general ant file ${ant}/build.xml -->
+        <ant dir="${common.dir}" antfile="build.xml" target="compile">
+            <property name="src.dir" value="${src.dir}/de/uni_koblenz/${projectname}/utilities/common"/>
+        </ant>
+    </target>
+
+    <!-- compiles utility sources -->
+    <target name="utilities" depends="commonutilities,grumlsourcesCompile">
+        <!-- calls target compile in general ant file ${ant}/build.xml -->
+        <ant dir="${common.dir}" antfile="build.xml" target="compile">
+            <property name="src.dir" value="${src.dir}/de/uni_koblenz/${projectname}/utilities"/>
+            <property name="additional.pathelementlocation" value="${classes.dir}/de/uni_koblenz/jgralab/grumlschema/**"/>
+            <!-- Those have been compiled before -->
+            <property name="compileexcludes" value="common/** tgschema2java/** rsa2tg/** tg2dot/** tg2whatever/**"/>
+        </ant>
+    </target>
+
+    <!-- jar -->
+    <!-- makes executable jar file out of all classes in ${classes.dir} and puts jar file into /build/jar -->
+    <target name="jar" depends="compile">
+        <!-- calls target unjar in general ant file ${ant}/build.xml -->
+        <ant dir="${common.dir}" antfile="build.xml" target="unjar">
+          <property name="unjarexcludes" value="**/clover*.jar"/>
+        </ant>
+        <!-- unjar some commom jars-->
+        <unjar dest="${tmp.dir}">
+                    <fileset dir="${comlib.dir}/apache/commons/cli/" includes="**/*.jar"/>
+                    <fileset dir="${comlib.dir}/ist_utilities/" includes="**/*.jar"/>
+        </unjar>
+        <unjar dest="${tmp.dir}">
+            <fileset dir="${comlib.dir}/jdom/" includes="**/*.jar"/>
+        </unjar>
+        <!-- add license information -->
+        <copy todir="${tmp.dir}/META-INF/license">
+                <fileset dir="license" includes="jdom/** jgralab/** xmlrpc/**"/>
+        </copy>
+        <!-- add xmi2tgschema -->
+        <copy file="${src.dir}/de/uni_koblenz/jgralab/utilities/xmi2tgschema/XMI2TGSchema.xsl"
+            todir="${classes.dir}/de/uni_koblenz/jgralab/utilities/xmi2tgschema"/>
+        <!-- calls target jar in general ant file ${ant}/build.xml -->
+        <ant dir="${common.dir}" antfile="build.xml" target="jar"/>
+    </target>
+
+    <!-- document -->
+    <!-- documents all sources -->
+    <target name="verbosedocument" depends="grumlsources,greql2sources">
+        <ant dir="${common.dir}" antfile="build.xml" target="document">
+            <property name="documentexcludes"
+                  value="{basePackage}.greql2.evaluator.test.*"/>
+            <property name="doc.maxmem" value="256"/>
+        </ant>
+    </target>
+
+    <target name="document">
+        <!-- calls target document in general ant file ../common/build.xml -->
+        <ant dir="${common.dir}" antfile="build.xml" target="document">
+<!--                <property name="excludedPackageNames" -->
+                <property name="documentexcludes"
+                    value="${basePackage}.greql2.schema.**,
+                    ${basePackage}.greql2.schema.*,
+                    ${basePackage}.greql2.funlib.pathsearch.*,
+                    ${basePackage}.greql2.evaluator.costmodel.*,
+                    ${basePackage}.greql2.evaluator.fa.*,
+                    ${basePackage}.greql2.evaluator.logging.*,
+                    ${basePackage}.greql2.evaluator.test.*,
+                    ${basePackage}.greql2.evaluator.vertexeval.*,
+                    ${basePackage}.greql2.parser.*,
+                    ${basePackage}.utilities.tg2schemagraph.**,
+                    ${basePackage}.utilities.tg2schemagraph.*,
+                    ${basePackage}.greql2.optimizer.**,
+                    ${basePackage}.greql2.optimizer.*" />
+                <property name="doc.maxmem" value="256"/>
+        </ant>
+    </target>
+
+    <target name="source" depends="cleansource">
+        <mkdir dir="${tmp.dir}/source"/>
+        <mkdir dir="${tmp.dir}/source/common"/>
+        <mkdir dir="${tmp.dir}/source/common/lib"/>
+        <mkdir dir="${tmp.dir}/source/common/lib/apache"/>
+        <mkdir dir="${tmp.dir}/source/common/lib/apache/commons"/>
+        <mkdir dir="${tmp.dir}/source/common/lib/apache/commons/cli"/>
+        <mkdir dir="${tmp.dir}/source/common/lib/jdom"/>
+        <mkdir dir="${tmp.dir}/source/jgralab"/>
+        <mkdir dir="${tmp.dir}/source/jgralab/lib"/>
+        <mkdir dir="${tmp.dir}/source/jgralab/lib/xmlrpc"/>
+        <mkdir dir="${tmp.dir}/source/jgralab/lib/javaee"/>
+        <mkdir dir="${tmp.dir}/source/jgralab/src"/>
+        <mkdir dir="${tmp.dir}/source/jgralab/license"/>
+        <copy file="build.xml" todir="${tmp.dir}/source/jgralab"/>
+        <copy file="${common.dir}/build.xml" todir="${tmp.dir}/source/common"/>
+        <copy todir="${tmp.dir}/source/jgralab/license">
+            <fileset dir="license" excludes="addheader.sh fix.java.txt fix.tg.txt gpl-2.0-header.java.txt gpl-2.0-header.xml.txt fix.sh fix.xml.txt gpl-2.0-header.tg.txt gpl-2.0.txt"/>
+        </copy>
+        <copy todir="${tmp.dir}/source/jgralab/src">
+            <fileset dir="src" includes="de/**" excludes=" **/schema/** **/parser/** **/grumlschema/** **/*.class **/*.bak **/*~ **/*.tmp"/>
+        </copy>
+        <copy file="${common.dir}/lib/apache/commons/cli/commons-cli-1.2.jar" todir="${tmp.dir}/source/common/lib/apache/commons/cli"/>
+        <copy file="lib/plist/org.riediger.plist.jar" todir="${tmp.dir}/source/jgralab/lib"/>
+        <copy file="README" todir="${tmp.dir}/source/jgralab"/>
+        <copy file="README" todir="${tmp.dir}/source"/>
+        <mkdir dir="build/zip"/>
+        <zip basedir="${tmp.dir}/source" destfile="build/zip/source.zip"/>
+    </target>
+
+    <target name="cleansource">
+        <delete dir="${tmp.dir}/source"/>
+    </target>
 </project>
