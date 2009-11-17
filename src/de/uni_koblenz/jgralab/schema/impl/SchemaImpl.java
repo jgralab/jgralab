@@ -409,7 +409,7 @@ public class SchemaImpl implements Schema {
 		javaSources.addAll(createClasses(config));
 		if (config.hasTransactionSupport() && config.hasStandardSupport()) {
 			CodeGeneratorConfiguration stdconfig = new CodeGeneratorConfiguration(config);
-			stdconfig.wantsToHaveTransactionSupport(false);
+			stdconfig.setTransactionSupport(false);
 			javaSources.addAll(createClasses(stdconfig));
 		}
 
@@ -536,7 +536,7 @@ public class SchemaImpl implements Schema {
 		createFiles(config, pathPrefix, progressFunction, schemaElements, currentCount, interval);
 		if (config.hasTransactionSupport() && config.hasStandardSupport()) {
 			CodeGeneratorConfiguration stdconfig = new CodeGeneratorConfiguration(config);
-			stdconfig.wantsToHaveTransactionSupport(false);
+			stdconfig.setTransactionSupport(false);
 			createFiles(stdconfig, pathPrefix, progressFunction, schemaElements, currentCount, interval);
 		}
 

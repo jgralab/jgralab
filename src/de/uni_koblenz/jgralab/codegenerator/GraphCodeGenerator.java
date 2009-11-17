@@ -294,7 +294,7 @@ public class GraphCodeGenerator extends AttributedElementCodeGenerator {
 	private CodeBlock createGetFirstMethods(GraphElementClass gec,
 			boolean createClass) {
 		CodeList code = new CodeList();
-		if (config.hasTypespecificMethodsSupport()) {
+		if (config.hasTypeSpecificMethodsSupport()) {
 			code.addNoIndent(createGetFirstMethod(gec, false, createClass));
 			if (config.hasMethodsForSubclassesSupport()) {
 				if (!gec.isAbstract()) {
@@ -416,7 +416,7 @@ public class GraphCodeGenerator extends AttributedElementCodeGenerator {
 		GraphClass gc = (GraphClass) aec;
 
 		CodeList code = new CodeList();
-		if (!config.hasTypespecificMethodsSupport())
+		if (!config.hasTypeSpecificMethodsSupport())
 			return code;
 
 		Set<EdgeClass> edgeClassSet = new HashSet<EdgeClass>();
@@ -483,7 +483,7 @@ public class GraphCodeGenerator extends AttributedElementCodeGenerator {
 		GraphClass gc = (GraphClass) aec;
 
 		CodeList code = new CodeList();
-		if (!config.hasTypespecificMethodsSupport())
+		if (!config.hasTypeSpecificMethodsSupport())
 			return code;
 
 		Set<VertexClass> vertexClassSet = new HashSet<VertexClass>();

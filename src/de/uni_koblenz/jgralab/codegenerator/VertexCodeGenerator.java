@@ -73,7 +73,7 @@ public class VertexCodeGenerator extends AttributedElementCodeGenerator {
 			rootBlock.setVariable("baseClassName", "VertexImpl");
 			code.add(createValidEdgeSets((VertexClass) aec));
 		}
-		if (config.hasTypespecificMethodsSupport()) {
+		if (config.hasTypeSpecificMethodsSupport()) {
 			code.add(createNextVertexMethods(createClass));
 			code.add(createFirstEdgeMethods(createClass));
 			code.add(rolenameGenerator.createRolenameMethods(createClass));
@@ -96,7 +96,7 @@ public class VertexCodeGenerator extends AttributedElementCodeGenerator {
 				continue;
 			}
 			addImports("#jgPackage#.EdgeDirection");
-			if (config.hasTypespecificMethodsSupport()) {
+			if (config.hasTypeSpecificMethodsSupport()) {
 				code.addNoIndent(createFirstEdgeMethod(ec, false, false,
 					         createClass));
 				code.addNoIndent(createFirstEdgeMethod(ec, true, false,
@@ -176,7 +176,7 @@ public class VertexCodeGenerator extends AttributedElementCodeGenerator {
 		superClasses.addAll(aec.getAllSuperClasses());
 		superClasses.add(aec);
 
-		if (config.hasTypespecificMethodsSupport())
+		if (config.hasTypeSpecificMethodsSupport())
 			for (AttributedElementClass ec : superClasses) {
 				if (ec.isInternal()) {
 					continue;
@@ -238,7 +238,7 @@ public class VertexCodeGenerator extends AttributedElementCodeGenerator {
 
 		CodeList code = new CodeList();
 		
-		if (!config.hasTypespecificMethodsSupport())
+		if (!config.hasTypeSpecificMethodsSupport())
 			return code;
 
 		Set<EdgeClass> edgeClassSet = null;
