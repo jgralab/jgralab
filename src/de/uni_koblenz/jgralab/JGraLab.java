@@ -88,8 +88,8 @@ public class JGraLab {
 	private static Logger rootLogger = getRootLogger();
 
 	/**
-	 * Sets the log level for package de.uni_koblenz.jgralab and all its
-	 * children to <code>level</code>.
+	 * Sets the log level for the whole logging hierachy starting with the
+	 * default package to <code>level</code>.
 	 * 
 	 * @param level
 	 *            new log level
@@ -100,8 +100,8 @@ public class JGraLab {
 
 	public static Logger getRootLogger() {
 		if (rootLogger == null) {
-			rootLogger = Logger.getLogger(JGraLab.class.getPackage().getName());
-			loggerMap.put(JGraLab.class.getPackage().getName(), rootLogger);
+			rootLogger = Logger.getLogger("");
+			loggerMap.put("", rootLogger);
 			rootLogger.setUseParentHandlers(false);
 			ConsoleHandler consoleHandler = new ConsoleHandler();
 			// the handler logs everything, but what is sent to the handler is
@@ -126,16 +126,39 @@ public class JGraLab {
 		return rootLogger;
 	}
 
-	public static Logger getLogger(String name) {
-		Logger l = loggerMap.get(name);
-		if (l == null) {
-			l = Logger.getLogger(name, null);
-			l.setParent(getRootLogger());
-			l.setLevel(null); // inherit level from parent
-			l.setUseParentHandlers(true);
-			loggerMap.put(name, l);
+	/**
+	 * Gets the {@link Logger} for the specified package and create a logger
+	 * hierarchy down to the default package.
+	 * 
+	 * @param pkgName
+	 *            the name of the package.
+	 * @return the {@link Logger} for the package <code>pkgName</code>
+	 */
+	public static Logger getLogger(String pkgName) {
+		if (pkgName.equals("")) {
+			return getRootLogger();
 		}
+		Logger l = loggerMap.get(pkgName);
+		if (l != null) {
+			return l;
+		}
+		l = Logger.getLogger(pkgName, null);
+		System.out.println("Creating logger for " + pkgName);
+		l.setParent(getParentLogger(pkgName));
+		l.setLevel(null); // inherit level from parent
+		l.setUseParentHandlers(true);
+		loggerMap.put(pkgName, l);
 		return l;
+	}
+
+	private static Logger getParentLogger(String childPkgName) {
+		if (!childPkgName.contains(".")) {
+			// the parent is the root logger
+			return getRootLogger();
+		}
+		int lastDot = childPkgName.lastIndexOf('.');
+		String parentPkgName = childPkgName.substring(0, lastDot);
+		return getLogger(parentPkgName);
 	}
 
 	/**
