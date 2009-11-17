@@ -143,7 +143,7 @@ public class JGraLab {
 			return l;
 		}
 		l = Logger.getLogger(pkgName, null);
-		System.out.println("Creating logger for " + pkgName);
+//		System.out.println("Creating logger for " + pkgName); // disable debugging output (af)
 		l.setParent(getParentLogger(pkgName));
 		l.setLevel(null); // inherit level from parent
 		l.setUseParentHandlers(true);
