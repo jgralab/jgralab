@@ -306,15 +306,15 @@ public class TgSchema2Java {
 		if (comLine.hasOption("so")) {
 			config.wantsToHaveStandardSupport(true);
 			config.wantsToHaveTransactionSupport(false);
-		} else if(comLine.hasOption("to")) {
+		} else if (comLine.hasOption("to")) {
 			config.wantsToHaveStandardSupport(false);
 			config.wantsToHaveTransactionSupport(true);
-		} 
-		
+		}
+
 		if (comLine.hasOption('w')) {
 			config.wantsToHaveTypespecificMethodsSupport(false);
 		}
-			
+
 	}
 
 	public void compile() throws Exception {
@@ -443,22 +443,22 @@ public class TgSchema2Java {
 
 		OptionGroup group = new OptionGroup();
 		group.setRequired(false);
-		Option standard = new Option("so", "standard-support only", false,
-		"(optional): Create standard support code only");
+		Option standard = new Option("so", "standard-support-only", false,
+				"(optional): Create standard support code only");
 		standard.setRequired(false);
 		oh.addOption(standard);
 
-		Option transactions = new Option("to", "transaction-support only", false,
-		"(optional): Create transaction support code only");
+		Option transactions = new Option("to", "transaction-support-only",
+				false, "(optional): Create transaction support code only");
 		transactions.setRequired(false);
 		oh.addOption(transactions);
-		
+
 		group.addOption(standard);
 		group.addOption(transactions);
 		oh.addOptionGroup(group);
-		
+
 		Option without_types = new Option("w", "without-types", false,
-		"(optional): Don't create typespecific methods in classes");
+				"(optional): Don't create typespecific methods in classes");
 		without_types.setRequired(false);
 		oh.addOption(without_types);
 
