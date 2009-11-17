@@ -37,6 +37,8 @@ import java.io.BufferedInputStream;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -141,10 +143,13 @@ public class Xml2tg {
 	// }
 
 	public static void main(String[] args) throws FileNotFoundException,
-			XMLStreamException, GraphIOException, ClassNotFoundException {
+			XMLStreamException, GraphIOException, ClassNotFoundException,
+			IllegalArgumentException, IllegalAccessException,
+			InvocationTargetException, InstantiationException,
+			SecurityException, NoSuchMethodException {
 		CommandLine cmdl = processCommandLineOptions(args);
 
-		String schemaFilename = cmdl.getOptionValue('s').trim();
+		String schemaName = cmdl.getOptionValue('s').trim();
 		String outputFilename = cmdl.getOptionValue('o').trim();
 
 		if ((cmdl.getArgList().size() > 1) && !cmdl.hasOption('m')) {
@@ -153,14 +158,15 @@ public class Xml2tg {
 			optionHandler.printHelpAndExit(1);
 		}
 
-		Schema currentSchema = GraphIO.loadSchemaFromFile(schemaFilename);
-		
+		Class<?> currentSchema = Class.forName(schemaName);
+		Method inst = currentSchema.getMethod("instance");
+		Schema schema = (Schema) inst.invoke(currentSchema);
+
 		Xml2tg xml2tg = null;
 		for (String inputXML : cmdl.getArgs()) {
 			if (xml2tg == null) {
 				xml2tg = new Xml2tg(new BufferedInputStream(
-						new FileInputStream(inputXML)), outputFilename,
-						currentSchema);
+						new FileInputStream(inputXML)), outputFilename, schema);
 				xml2tg.setAssumeVerticesBeforeEdges(cmdl.hasOption('V'));
 				xml2tg.setMultiXml(cmdl.hasOption('m'));
 			} else {
@@ -185,10 +191,10 @@ public class Xml2tg {
 
 		Option schema = new Option(
 				"s",
-				"schema",
+				"schemaName",
 				true,
-				"(required): name of the TG file containing the schema of the resulting graph. "
-						+ "The compiled version of this schema also has to be in the classpath.");
+				"(required): Name of the schema class, e.g. de.soamig.schema.SoamigSchema_0_12.  "
+						+ "It has to be compiled and in the classpath.");
 		schema.setRequired(true);
 		schema.setArgName("file");
 		optionHandler.addOption(schema);
@@ -210,7 +216,7 @@ public class Xml2tg {
 				"(optional): if this flag is set, then the result is one graph containing all vertices and edges from all given XML files.");
 		multiXmlIntoOneGraph.setRequired(false);
 		optionHandler.addOption(multiXmlIntoOneGraph);
-		
+
 		optionHandler.setArgumentCount(Option.UNLIMITED_VALUES);
 		optionHandler.setArgumentName("xml-file");
 		optionHandler.setOptionalArgument(false);
