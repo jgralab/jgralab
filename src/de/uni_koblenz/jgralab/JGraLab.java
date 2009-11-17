@@ -27,6 +27,7 @@ package de.uni_koblenz.jgralab;
 import java.util.HashMap;
 import java.util.logging.ConsoleHandler;
 import java.util.logging.Formatter;
+import java.util.logging.Handler;
 import java.util.logging.Level;
 import java.util.logging.LogRecord;
 import java.util.logging.Logger;
@@ -121,9 +122,16 @@ public class JGraLab {
 					return sb.toString();
 				}
 			});
+			removeHandlers(rootLogger);
 			rootLogger.addHandler(consoleHandler);
 		}
 		return rootLogger;
+	}
+
+	private static void removeHandlers(Logger l) {
+		for (Handler h : l.getHandlers()) {
+			l.removeHandler(h);
+		}
 	}
 
 	/**
@@ -143,7 +151,6 @@ public class JGraLab {
 			return l;
 		}
 		l = Logger.getLogger(pkgName, null);
-//		System.out.println("Creating logger for " + pkgName); // disable debugging output (af)
 		l.setParent(getParentLogger(pkgName));
 		l.setLevel(null); // inherit level from parent
 		l.setUseParentHandlers(true);
