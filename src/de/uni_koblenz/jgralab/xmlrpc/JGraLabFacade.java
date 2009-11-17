@@ -167,7 +167,7 @@ public class JGraLabFacade {
 			Schema schema = (Schema) (schemaClass.getMethod("instance",
 					(Class[]) null).invoke(null));
 
-			Method graphCreateMethod = schema.getGraphCreateMethod();
+			Method graphCreateMethod = schema.getGraphCreateMethod(false);
 
 			Graph graph = (Graph) (graphCreateMethod.invoke(null, new Object[] {
 					graphId, vMax, eMax }));
@@ -299,7 +299,7 @@ public class JGraLabFacade {
 				schema.compile(CodeGeneratorConfiguration.WITHOUT_TRANSACTIONS);
 			}
 
-			graphCreateMethod = schema.getGraphCreateMethod();
+			graphCreateMethod = schema.getGraphCreateMethod(false);
 			graph = (Graph) graphCreateMethod.invoke(null, new Object[] {
 					graphId, vMax, eMax });
 

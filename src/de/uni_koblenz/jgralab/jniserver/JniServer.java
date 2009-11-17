@@ -113,7 +113,7 @@ public class JniServer {
 			Schema schema = (Schema) (schemaClass.getMethod("instance",
 					(Class[]) null).invoke(null));
 
-			Method graphCreateMethod = schema.getGraphCreateMethod();
+			Method graphCreateMethod = schema.getGraphCreateMethod(false);
 
 			Graph g = (Graph) (graphCreateMethod.invoke(null, new Object[] {
 					null, vMax, eMax }));

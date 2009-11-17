@@ -647,7 +647,7 @@ public class GreqlEvaluator {
 			VertexClass n = gc.createVertexClass("Node");
 			gc.createEdgeClass("Link", n, n);
 			minimalSchema.compile(CodeGeneratorConfiguration.WITHOUT_TRANSACTIONS);
-			Method graphCreateMethod = minimalSchema.getGraphCreateMethod();
+			Method graphCreateMethod = minimalSchema.getGraphCreateMethod(false);
 
 			try {
 				minimalGraph = (Graph) (graphCreateMethod.invoke(null,

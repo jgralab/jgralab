@@ -332,7 +332,7 @@ public interface Schema extends Comparable<Schema> {
 	 *            the name of the edge to create
 	 * @return the Method-Object that represents the method to create such edges
 	 */
-	public Method getEdgeCreateMethod(String edgeClassName);
+	public Method getEdgeCreateMethod(String edgeClassName, boolean transactionSupport);
 
 	/**
 	 * Returns a list of all enum domains
@@ -354,7 +354,7 @@ public interface Schema extends Comparable<Schema> {
 	 * @return the Method-Object that represents the method to create graphs of
 	 *         this schema
 	 */
-	public Method getGraphCreateMethod();
+	public Method getGraphCreateMethod(boolean transactionSupport);
 
 	/**
 	 * @return the factory that is used to create graphs, vertices and edges
@@ -414,7 +414,7 @@ public interface Schema extends Comparable<Schema> {
 	 * @return the Method-Object that represents the method to create such
 	 *         vertices
 	 */
-	public Method getVertexCreateMethod(String vertexClassQName);
+	public Method getVertexCreateMethod(String vertexClassQName, boolean transactionSupport);
 
 	public boolean isSimpleNameUnique(String sn);
 
