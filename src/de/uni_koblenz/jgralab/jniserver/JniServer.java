@@ -260,6 +260,10 @@ public class JniServer {
 		graphs.get(graphId).getEdge(edgeId).delete();
 	}
 
+	public Edge getEdge(int graphId, int edgeId) {
+		return graphs.get(graphId).getEdge(edgeId);
+	}
+
 	public String getEdgeClassName(int graphId, int edgeId) {
 		return graphs.get(graphId).getEdge(edgeId).getAttributedElementClass()
 				.getQualifiedName();
@@ -366,6 +370,10 @@ public class JniServer {
 
 	// ----------------------------------------------------------------------------
 	// ----------------------------------------------------------------------------
+
+	public Vertex getVertex(int graphId, int vertexId) {
+		return graphs.get(graphId).getVertex(vertexId);
+	}
 
 	public int getFirstVertex(int graphId, String vertexClassName) {
 		Graph g = graphs.get(graphId);
