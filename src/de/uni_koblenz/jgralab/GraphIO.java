@@ -737,7 +737,8 @@ public class GraphIO {
 	 */
 	public static Graph loadGraphFromFileWithTransactionSupport(
 			String filename, ProgressFunction pf) throws GraphIOException {
-		return loadGraphFromFile(filename, null, pf, CodeGeneratorConfiguration.FULL_WITHOUT_SUBCLASS_FLAGS);
+		return loadGraphFromFile(filename, null, pf,
+				CodeGeneratorConfiguration.FULL_WITHOUT_SUBCLASS_FLAGS);
 	}
 
 	/**
@@ -753,7 +754,8 @@ public class GraphIO {
 	public static Graph loadGraphFromFileWithTransactionSupport(
 			String filename, Schema schema, ProgressFunction pf)
 			throws GraphIOException {
-		return loadGraphFromFile(filename, schema, pf, CodeGeneratorConfiguration.FULL_WITHOUT_SUBCLASS_FLAGS);
+		return loadGraphFromFile(filename, schema, pf,
+				CodeGeneratorConfiguration.FULL_WITHOUT_SUBCLASS_FLAGS);
 	}
 
 	/**
@@ -766,12 +768,14 @@ public class GraphIO {
 	 */
 	public static Graph loadGraphFromFile(String filename, ProgressFunction pf)
 			throws GraphIOException {
-		return loadGraphFromFile(filename, null, pf, CodeGeneratorConfiguration.WITHOUT_TRANSACTIONS);
+		return loadGraphFromFile(filename, null, pf,
+				CodeGeneratorConfiguration.WITHOUT_TRANSACTIONS);
 	}
 
 	public static Graph loadGraphFromFile(String filename, Schema schema,
 			ProgressFunction pf) throws GraphIOException {
-		return loadGraphFromFile(filename, schema, pf, CodeGeneratorConfiguration.WITHOUT_TRANSACTIONS);
+		return loadGraphFromFile(filename, schema, pf,
+				CodeGeneratorConfiguration.WITHOUT_TRANSACTIONS);
 	}
 
 	/**
@@ -789,8 +793,7 @@ public class GraphIO {
 		try {
 			logger.finer("Loading graph " + filename);
 			return loadGraphFromStream(new BufferedInputStream(
-					new FileInputStream(filename), 65536), schema, pf,
-					config);
+					new FileInputStream(filename), 65536), schema, pf, config);
 
 		} catch (IOException ex) {
 			throw new GraphIOException("Unable to load graph from file "
@@ -1865,7 +1868,7 @@ public class GraphIO {
 		}
 		if (la == -1) {
 			throw new GraphIOException("unterminated string starting in line "
-					+ startLine);
+					+ startLine + ".  lookAhead = '" + lookAhead + "'");
 		}
 		la = read();
 	}
