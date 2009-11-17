@@ -191,8 +191,6 @@ public class Greql2FunctionLibrary {
 			availableFunctions.put(
 					toFunctionName(functionClass.getSimpleName()),
 					(Greql2Function) o);
-			System.out.println("put "
-					+ toFunctionName(functionClass.getSimpleName()));
 		} catch (Exception ex) {
 			throw new RuntimeException(
 					"The class "
