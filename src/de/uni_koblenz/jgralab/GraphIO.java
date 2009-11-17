@@ -737,8 +737,7 @@ public class GraphIO {
 	 */
 	public static Graph loadGraphFromFileWithTransactionSupport(
 			String filename, ProgressFunction pf) throws GraphIOException {
-		return loadGraphFromFile(filename, null, pf,
-				CodeGeneratorConfiguration.FULL_WITHOUT_SUBCLASS_FLAGS);
+		return loadGraphFromFile(filename, null, pf, true);
 	}
 
 	/**
@@ -754,8 +753,7 @@ public class GraphIO {
 	public static Graph loadGraphFromFileWithTransactionSupport(
 			String filename, Schema schema, ProgressFunction pf)
 			throws GraphIOException {
-		return loadGraphFromFile(filename, schema, pf,
-				CodeGeneratorConfiguration.FULL_WITHOUT_SUBCLASS_FLAGS);
+		return loadGraphFromFile(filename, schema, pf, true);
 	}
 
 	/**
@@ -768,14 +766,12 @@ public class GraphIO {
 	 */
 	public static Graph loadGraphFromFile(String filename, ProgressFunction pf)
 			throws GraphIOException {
-		return loadGraphFromFile(filename, null, pf,
-				CodeGeneratorConfiguration.WITHOUT_TRANSACTIONS);
+		return loadGraphFromFile(filename, null, pf, false);
 	}
 
 	public static Graph loadGraphFromFile(String filename, Schema schema,
 			ProgressFunction pf) throws GraphIOException {
-		return loadGraphFromFile(filename, schema, pf,
-				CodeGeneratorConfiguration.WITHOUT_TRANSACTIONS);
+		return loadGraphFromFile(filename, schema, pf, false);
 	}
 
 	/**
@@ -788,12 +784,12 @@ public class GraphIO {
 	 * @throws GraphIOException
 	 */
 	private static Graph loadGraphFromFile(String filename, Schema schema,
-			ProgressFunction pf, CodeGeneratorConfiguration config)
+			ProgressFunction pf, boolean transactionSupport)
 			throws GraphIOException {
 		try {
 			logger.finer("Loading graph " + filename);
 			return loadGraphFromStream(new BufferedInputStream(
-					new FileInputStream(filename), 65536), schema, pf, config);
+					new FileInputStream(filename), 65536), schema, pf, transactionSupport);
 
 		} catch (IOException ex) {
 			throw new GraphIOException("Unable to load graph from file "
@@ -809,8 +805,7 @@ public class GraphIO {
 	public static Graph loadGraphFromURL(String url, Schema schema,
 			ProgressFunction pf) throws GraphIOException {
 		try {
-			return loadGraphFromStream(new URL(url).openStream(), schema, pf,
-					CodeGeneratorConfiguration.WITHOUT_TRANSACTIONS);
+			return loadGraphFromStream(new URL(url).openStream(), schema, pf, false);
 		} catch (IOException ex) {
 			throw new GraphIOException("Unable to load graph from url " + url
 					+ ", the resource cannot be found", ex);
@@ -818,13 +813,13 @@ public class GraphIO {
 	}
 
 	public static Graph loadGraphFromStream(InputStream in,
-			ProgressFunction pf, CodeGeneratorConfiguration config)
+			ProgressFunction pf, boolean transactionSupport)
 			throws GraphIOException {
-		return loadGraphFromStream(in, null, pf, config);
+		return loadGraphFromStream(in, null, pf, transactionSupport);
 	}
 
 	public static Graph loadGraphFromStream(InputStream in, Schema schema,
-			ProgressFunction pf, CodeGeneratorConfiguration config)
+			ProgressFunction pf, boolean transactionSupport)
 			throws GraphIOException {
 		try {
 			GraphIO io = new GraphIO();
@@ -837,8 +832,8 @@ public class GraphIO {
 			Method instanceMethod = schemaClass.getMethod("instance",
 					(Class<?>[]) null);
 			io.schema = (Schema) instanceMethod.invoke(null, new Object[0]);
-			((SchemaImpl) io.schema).setConfiguration(config);
-			GraphImpl g = io.graph(pf);
+			//((SchemaImpl) io.schema).setConfiguration(config);
+			GraphImpl g = io.graph(pf, transactionSupport);
 			g.internalLoadingCompleted(io.firstIncidence, io.nextIncidence);
 			io.firstIncidence = null;
 			io.nextIncidence = null;
@@ -2076,7 +2071,7 @@ public class GraphIO {
 		return result;
 	}
 
-	private GraphImpl graph(ProgressFunction pf) throws GraphIOException {
+	private GraphImpl graph(ProgressFunction pf, boolean transactionSupport) throws GraphIOException {
 		currentPackageName = "";
 		match("Graph");
 		String graphIdVersion = matchUtfString();
@@ -2139,7 +2134,7 @@ public class GraphIO {
 		}
 		GraphImpl graph = null;
 		try {
-			graph = (GraphImpl) schema.getGraphCreateMethod().invoke(null,
+			graph = (GraphImpl) schema.getGraphCreateMethod(transactionSupport).invoke(null,
 					new Object[] { graphId, maxV, maxE });
 		} catch (Exception e) {
 			throw new GraphIOException("can't create graph for class '"
@@ -2154,7 +2149,7 @@ public class GraphIO {
 			if (lookAhead.equals("Package")) {
 				parsePackage();
 			} else {
-				vertexDesc(graph);
+				vertexDesc(graph, transactionSupport);
 				// update progress bar
 				if (pf != null) {
 					graphElements++;
@@ -2173,7 +2168,7 @@ public class GraphIO {
 			if (lookAhead.equals("Package")) {
 				parsePackage();
 			} else {
-				edgeDesc(graph);
+				edgeDesc(graph, transactionSupport);
 				// update progress bar
 				if (pf != null) {
 					graphElements++;
@@ -2206,7 +2201,7 @@ public class GraphIO {
 		}
 	}
 
-	private void vertexDesc(Graph graph) throws GraphIOException {
+	private void vertexDesc(Graph graph, boolean transactionSupport) throws GraphIOException {
 		int vId = vId();
 		String vcName = className();
 		Vertex vertex;
@@ -2214,7 +2209,7 @@ public class GraphIO {
 		createMethod = createMethods.get(vcName);
 		try {
 			if (createMethod == null) {
-				createMethod = schema.getVertexCreateMethod(vcName);
+				createMethod = schema.getVertexCreateMethod(vcName, transactionSupport);
 				createMethods.put(vcName, createMethod);
 			}
 			vertexDescTempObject[0] = vId;
@@ -2230,7 +2225,7 @@ public class GraphIO {
 		match(";");
 	}
 
-	private void edgeDesc(Graph graph) throws GraphIOException {
+	private void edgeDesc(Graph graph, boolean transactionSupport) throws GraphIOException {
 		int eId = eId();
 		String className = className();
 		EdgeClass ec = graph.getGraphClass().getEdgeClass(className);
@@ -2245,7 +2240,7 @@ public class GraphIO {
 		try {
 			if (createMethod == null) {
 				logger.finer("Searching create method for edge " + ecName);
-				createMethod = schema.getEdgeCreateMethod(ecName);
+				createMethod = schema.getEdgeCreateMethod(ecName, transactionSupport);
 				createMethods.put(ecName, createMethod);
 			}
 			edgeDescTempObject[0] = eId;

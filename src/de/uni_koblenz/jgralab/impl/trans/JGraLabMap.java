@@ -100,12 +100,15 @@ public class JGraLabMap<K, V> extends HashMap<K, V> implements JGraLabCloneable 
 	// TODO this should not be necessary, but using setValidValue doesn't work
 	// yet
 	private void hasTemporaryVersionCheck() {
-		if (graph.getCurrentTransaction().getState() == TransactionState.RUNNING) {
-			versionedMap.handleSavepoint((TransactionImpl) graph
-					.getCurrentTransaction());
-			if (!versionedMap.hasTemporaryValue(graph.getCurrentTransaction()))
-				versionedMap.createNewTemporaryValue(graph
+		if (!graph.isLoading()) {
+			if (graph.getCurrentTransaction().getState() == TransactionState.RUNNING) {
+				versionedMap.handleSavepoint((TransactionImpl) graph
 						.getCurrentTransaction());
+				if (!versionedMap.hasTemporaryValue(graph
+						.getCurrentTransaction()))
+					versionedMap.createNewTemporaryValue(graph
+							.getCurrentTransaction());
+			}
 		}
 	}
 

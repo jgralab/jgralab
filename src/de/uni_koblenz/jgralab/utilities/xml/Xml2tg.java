@@ -299,7 +299,7 @@ public class Xml2tg {
 					try {
 						// System.out.println("Creating instance of "
 						// + graphClassName);
-						graph = (Graph) schema.getGraphCreateMethod().invoke(
+						graph = (Graph) schema.getGraphCreateMethod(false).invoke(
 								null,
 								new Object[] { graphID, MAX_VERTEX_COUNT,
 										MAX_EDGE_COUNT });

@@ -26,7 +26,7 @@ import de.uni_koblenz.jgralab.trans.TransactionState;
 public class JGraLabList<E> extends ArrayList<E> implements JGraLabCloneable {
 	private static final long serialVersionUID = -1881528493844357904L;
 	private VersionedJGraLabCloneableImpl<JGraLabList<E>> versionedList;
-	
+
 	private Graph graph;
 	private String name;
 
@@ -47,7 +47,6 @@ public class JGraLabList<E> extends ArrayList<E> implements JGraLabCloneable {
 		super(initialSize);
 		init(g);
 	}
-
 
 	/* protected */protected JGraLabList(Graph g,
 			Collection<? extends E> collection) {
@@ -83,15 +82,18 @@ public class JGraLabList<E> extends ArrayList<E> implements JGraLabCloneable {
 	// TODO this should not be necessary, but using setValidValue doesn't work
 	// yet
 	private void hasTemporaryVersionCheck() {
-		if (graph.getCurrentTransaction().getState() == TransactionState.RUNNING) {
-			versionedList.handleSavepoint((TransactionImpl) graph
-					.getCurrentTransaction());
-			if (!versionedList.hasTemporaryValue(graph.getCurrentTransaction()))
-				versionedList.createNewTemporaryValue(graph
+		if (!graph.isLoading()) {
+			if (graph.getCurrentTransaction().getState() == TransactionState.RUNNING) {
+				versionedList.handleSavepoint((TransactionImpl) graph
 						.getCurrentTransaction());
+				if (!versionedList.hasTemporaryValue(graph
+						.getCurrentTransaction()))
+					versionedList.createNewTemporaryValue(graph
+							.getCurrentTransaction());
+			}
 		}
 	}
-	
+
 	private void isValidElementCheck(E element) {
 		if ((element instanceof Map || element instanceof List || element instanceof Set)
 				&& !(element instanceof JGraLabCloneable))
@@ -171,7 +173,7 @@ public class JGraLabList<E> extends ArrayList<E> implements JGraLabCloneable {
 		}
 		// versionedList.setValidValue(this, graph.getCurrentTransaction());
 		Iterator<? extends E> iter = c.iterator();
-		while(iter.hasNext())
+		while (iter.hasNext())
 			isValidElementCheck(iter.next());
 		hasTemporaryVersionCheck();
 		return versionedList.getValidValue(graph.getCurrentTransaction())
@@ -196,7 +198,7 @@ public class JGraLabList<E> extends ArrayList<E> implements JGraLabCloneable {
 		}
 		// versionedList.setValidValue(this, graph.getCurrentTransaction());
 		Iterator<? extends E> iter = c.iterator();
-		while(iter.hasNext())
+		while (iter.hasNext())
 			isValidElementCheck(iter.next());
 		hasTemporaryVersionCheck();
 		return versionedList.getValidValue(graph.getCurrentTransaction())

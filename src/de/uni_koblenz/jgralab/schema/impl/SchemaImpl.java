@@ -887,11 +887,11 @@ public class SchemaImpl implements Schema {
 	}
 
 	private Method getCreateMethod(String className, String graphClassName,
-			Class<?>[] signature) {
+			Class<?>[] signature, boolean transactionSupport) {
 		Class<? extends Graph> m1Class = null;
 		AttributedElementClass aec = null;
 		try {
-			m1Class = getGraphClassImpl();
+			m1Class = getGraphClassImpl(transactionSupport);
 			if (className.equals(graphClassName)) {
 				return m1Class.getMethod("create", signature);
 			} else {
@@ -987,7 +987,7 @@ public class SchemaImpl implements Schema {
 	}
 
 	@Override
-	public Method getEdgeCreateMethod(String edgeClassName) {
+	public Method getEdgeCreateMethod(String edgeClassName, boolean transactionSupport) {
 		// Edge class create method cannot be found directly by its signature
 		// because the vertex parameters are subclassed to match the to- and
 		// from-class. Those subclasses are unknown in this method. Therefore,
@@ -1002,7 +1002,7 @@ public class SchemaImpl implements Schema {
 		EdgeClass ec = (EdgeClass) aec;
 		String methodName = "create"
 				+ CodeGenerator.camelCase(ec.getUniqueName());
-		Class<?> m1Class = getGraphClassImpl();
+		Class<?> m1Class = getGraphClassImpl(transactionSupport);
 		for (Method m : m1Class.getMethods()) {
 			if (m.getName().equals(methodName)
 					&& (m.getParameterTypes().length == 3)) {
@@ -1057,11 +1057,16 @@ public class SchemaImpl implements Schema {
 		return graphClass;
 	}
 
+	/**
+	 * 
+	 * @param transactionSupport
+	 * @return
+	 */
 	@SuppressWarnings("unchecked")
-	private Class<? extends Graph> getGraphClassImpl() {
+	private Class<? extends Graph> getGraphClassImpl(boolean transactionSupport) {
 		String implClassName = packagePrefix + ".";
 		// determine package
-		if (!config.hasTransactionSupport()) {
+		if (!transactionSupport) {
 			implClassName += IMPLSTDPACKAGENAME;
 		} else {
 			implClassName += IMPLTRANSPACKAGENAME;
@@ -1082,9 +1087,9 @@ public class SchemaImpl implements Schema {
 	}
 
 	@Override
-	public Method getGraphCreateMethod() {
+	public Method getGraphCreateMethod(boolean transactionSupport) {
 		return getCreateMethod(graphClass.getSimpleName(), graphClass
-				.getSimpleName(), GRAPHCLASS_CREATE_SIGNATURE);
+				.getSimpleName(), GRAPHCLASS_CREATE_SIGNATURE, transactionSupport);
 	}
 
 	@Override
@@ -1165,9 +1170,9 @@ public class SchemaImpl implements Schema {
 	}
 
 	@Override
-	public Method getVertexCreateMethod(String vertexClassName) {
+	public Method getVertexCreateMethod(String vertexClassName, boolean transactionSupport) {
 		return getCreateMethod(vertexClassName, graphClass.getSimpleName(),
-				VERTEX_CLASS_CREATE_SIGNATURE);
+				VERTEX_CLASS_CREATE_SIGNATURE, transactionSupport);
 	}
 
 	@Override

@@ -13,6 +13,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import de.uni_koblenz.jgralab.Edge;
+import de.uni_koblenz.jgralab.GraphIOException;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.trans.CommitFailedException;
 import de.uni_koblenz.jgralab.trans.Transaction;
@@ -50,7 +51,7 @@ public class ConflictDetectionTest {
 	private final int N = 10;
 
 	@Before
-	public void setUp() throws CommitFailedException {
+	public void setUp() throws CommitFailedException, GraphIOException {
 		MotorwayMapSchema schema = MotorwayMapSchema.instance();
 		motorwayMap = schema.createMotorwayMapWithTransactionSupport(V, E);
 		motorwayMap.newTransaction();
