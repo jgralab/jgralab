@@ -2,16 +2,20 @@ package de.uni_koblenz.jgralab.codegenerator;
 
 /**
  * This class keeps the configurations of the code generator and is passed to
- * all instances. It keeps and manages the following configuration entries: -
- * <code>standardSupport</code> toggles, if the classes for standard
- * support should be created, enabled by default -
- * <code>transactionSupport</code> toggles, if the classes for transaction
- * support should be created, enabled by default -
- * <code>typespecificMethodsSupport</code> toggles, if the typespecific
- * methods such as "getNextXYVertex" should be created, enabled by default -
- * <code>methodsForSubclasseSupport</code> toggles, if the methods with an
+ * all instances. It keeps and manages the following configuration entries:
+ * 
+ * - <code>standardSupport</code> toggles, if the classes for standard support
+ * should be created, enabled by default
+ * 
+ * - <code>transactionSupport</code> toggles, if the classes for transaction
+ * support should be created, enabled by default
+ * 
+ * - <code>typespecificMethodsSupport</code> toggles, if the typespecific
+ * methods such as "getNextXYVertex" should be created, enabled by default
+ * 
+ * - <code>methodsForSubclasseSupport</code> toggles, if the methods with an
  * additional subtype-flag like "getNextXYVertex(boolean withSubclasses)" should
- * be created. Needs typespecifigMethodsSupport to be enabled. Disabled by
+ * be created. Needs typeSpecifigMethodsSupport to be enabled. Disabled by
  * default.
  */
 public class CodeGeneratorConfiguration {
@@ -33,7 +37,7 @@ public class CodeGeneratorConfiguration {
 
 	/** toggles, if the classes for standard support should be created */
 	private boolean standardSupport = true;
-	
+
 	/** toggles, if the classes for transaction support should be created */
 	private boolean transactionSupport = true;
 
@@ -49,33 +53,32 @@ public class CodeGeneratorConfiguration {
 	 * typespecifigMethodsSupport to be enabled.
 	 */
 	private boolean methodsForSubclassesSupport = false;
-	
-	public void wantsToHaveStandardSupport(boolean standardSupport) {
+
+	public void setStandardSupport(boolean standardSupport) {
 		this.standardSupport = standardSupport;
 	}
-	
+
 	public boolean hasStandardSupport() {
 		return standardSupport;
 	}
 
-	public void wantsToHaveTransactionSupport(boolean transactionSupport) {
+	public void setTransactionSupport(boolean transactionSupport) {
 		this.transactionSupport = transactionSupport;
 	}
-	
+
 	public boolean hasTransactionSupport() {
 		return transactionSupport;
 	}
 
-	public void wantsToHaveTypespecificMethodsSupport(
-			boolean typespecificMethodSupport) {
+	public void setTypeSpecificMethodsSupport(boolean typespecificMethodSupport) {
 		this.typespecificMethodSupport = typespecificMethodSupport;
 	}
 
-	public boolean hasTypespecificMethodsSupport() {
+	public boolean hasTypeSpecificMethodsSupport() {
 		return typespecificMethodSupport;
 	}
 
-	public void wantsToHaveMethodsForSubclassesSupport(
+	public void setMethodsForSubclassesSupport(
 			boolean methodsForSubclassesSupport) {
 		this.methodsForSubclassesSupport = methodsForSubclassesSupport;
 	}
@@ -103,8 +106,8 @@ public class CodeGeneratorConfiguration {
 
 	}
 
-	public CodeGeneratorConfiguration(boolean standardSupport, boolean transactionSupport,
-			boolean typespecificMethodSupport,
+	public CodeGeneratorConfiguration(boolean standardSupport,
+			boolean transactionSupport, boolean typespecificMethodSupport,
 			boolean methodsForSubclassesSupport) {
 		this.standardSupport = standardSupport;
 		this.transactionSupport = transactionSupport;

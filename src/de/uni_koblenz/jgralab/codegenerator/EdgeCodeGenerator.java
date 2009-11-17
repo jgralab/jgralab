@@ -91,7 +91,7 @@ public class EdgeCodeGenerator extends AttributedElementCodeGenerator {
 				addImports("#jgImplTransPackage#.#baseClassName#");
 			}
 		}
-		if (config.hasTypespecificMethodsSupport()) {
+		if (config.hasTypeSpecificMethodsSupport()) {
 			code.add(createNextEdgeInGraphMethods(createClass));
 			code.add(createNextEdgeAtVertexMethods(createClass));
 		}	
@@ -119,7 +119,7 @@ public class EdgeCodeGenerator extends AttributedElementCodeGenerator {
 		superClasses.addAll(aec.getAllSuperClasses());
 		superClasses.add(aec);
 
-		if (config.hasTypespecificMethodsSupport())
+		if (config.hasTypeSpecificMethodsSupport())
 		for (AttributedElementClass ec : superClasses) {
 			if (ec.isInternal()) {
 				continue;
@@ -169,7 +169,7 @@ public class EdgeCodeGenerator extends AttributedElementCodeGenerator {
 		superClasses.addAll(aec.getAllSuperClasses());
 		superClasses.add(aec);
 
-		if (config.hasTypespecificMethodsSupport())
+		if (config.hasTypeSpecificMethodsSupport())
 		for (AttributedElementClass ec : superClasses) {
 			if (ec.isInternal()) {
 				continue;

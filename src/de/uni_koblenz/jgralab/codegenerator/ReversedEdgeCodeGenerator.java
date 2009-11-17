@@ -68,7 +68,7 @@ public class ReversedEdgeCodeGenerator extends AttributedElementCodeGenerator {
 			}
 		}
 		CodeList code = (CodeList) super.createBody(createClass);
-		if (config.hasTypespecificMethodsSupport()) {
+		if (config.hasTypeSpecificMethodsSupport()) {
 			code.add(createNextEdgeInGraphMethods());
 			code.add(createNextEdgeAtVertexMethods());
 		}	

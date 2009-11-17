@@ -124,8 +124,6 @@ public class TgSchema2Java {
 		createJar = false;
 		overwrite = true;
 
-		// createLongOptions();
-
 		try {
 			// processing command line arguments
 			processArguments(args);
@@ -304,15 +302,15 @@ public class TgSchema2Java {
 			jarFileName = comLine.getOptionValue("j");
 		}
 		if (comLine.hasOption("so")) {
-			config.wantsToHaveStandardSupport(true);
-			config.wantsToHaveTransactionSupport(false);
+			config.setStandardSupport(true);
+			config.setTransactionSupport(false);
 		} else if (comLine.hasOption("to")) {
-			config.wantsToHaveStandardSupport(false);
-			config.wantsToHaveTransactionSupport(true);
+			config.setStandardSupport(false);
+			config.setTransactionSupport(true);
 		}
 
 		if (comLine.hasOption('w')) {
-			config.wantsToHaveTypespecificMethodsSupport(false);
+			config.setTypeSpecificMethodsSupport(false);
 		}
 
 	}
