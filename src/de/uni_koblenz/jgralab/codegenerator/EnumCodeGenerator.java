@@ -41,39 +41,45 @@ public class EnumCodeGenerator extends CodeGenerator {
 	 */
 	public EnumCodeGenerator(EnumDomain enumDomain, String schemaPackageName,
 			String implementationName) {
-		super(schemaPackageName, enumDomain.getPackageName(), new CodeGeneratorConfiguration());
+		super(schemaPackageName, enumDomain.getPackageName(),
+				new CodeGeneratorConfiguration());
 		rootBlock.setVariable("simpleClassName", enumDomain.getSimpleName());
 		rootBlock.setVariable("isClassOnly", "true");
 		this.enumDomain = enumDomain;
 	}
 
 	@Override
-	protected CodeBlock createBody(boolean createClass) {
+	protected CodeBlock createBody() {
 		CodeSnippet constCode = new CodeSnippet(true);
-		String delim = "";
-		StringBuilder constants = new StringBuilder();
-		for (String s : enumDomain.getConsts()) {
-			constants.append(delim);
-			constants.append(s);
-			delim = ", ";
-		}
-		constants.append(";");
-		constCode.add(constants.toString());
-
-		CodeSnippet valueOfCode = new CodeSnippet(true);
-		valueOfCode.add("public static #simpleClassName# valueOfPermitNull(String val) {",
-						"\tif (val.equals(de.uni_koblenz.jgralab.GraphIO.NULL_LITERAL) || val.equals(de.uni_koblenz.jgralab.GraphIO.OLD_NULL_LITERAL)) {",
-						"\t\treturn null;", "\t}", "\treturn valueOf(val);",
-						"}");
-
 		CodeList result = new CodeList();
-		result.add(constCode);
-		result.add(valueOfCode);
+		if (currentCycle.isClassOnly()) {
+			String delim = "";
+			StringBuilder constants = new StringBuilder();
+			for (String s : enumDomain.getConsts()) {
+				constants.append(delim);
+				constants.append(s);
+				delim = ", ";
+			}
+			constants.append(";");
+			constCode.add(constants.toString());
+
+			CodeSnippet valueOfCode = new CodeSnippet(true);
+			valueOfCode
+					.add(
+							"public static #simpleClassName# valueOfPermitNull(String val) {",
+							"\tif (val.equals(de.uni_koblenz.jgralab.GraphIO.NULL_LITERAL) || val.equals(de.uni_koblenz.jgralab.GraphIO.OLD_NULL_LITERAL)) {",
+							"\t\treturn null;", "\t}",
+							"\treturn valueOf(val);", "}");
+			result.add(constCode);
+			result.add(valueOfCode);
+		}
 		return result;
 	}
 
 	@Override
-	protected CodeBlock createHeader(boolean createClass) {
-		return new CodeSnippet(true, "public enum #simpleClassName# {");
+	protected CodeBlock createHeader() {
+		if (currentCycle.isClassOnly())
+			return new CodeSnippet(true, "public enum #simpleClassName# {");
+		return new CodeSnippet();
 	}
 }

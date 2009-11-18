@@ -114,5 +114,4 @@ public class CodeGeneratorConfiguration {
 		this.typespecificMethodSupport = typespecificMethodSupport;
 		this.methodsForSubclassesSupport = methodsForSubclassesSupport;
 	}
-
 }

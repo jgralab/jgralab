@@ -90,17 +90,16 @@ public class AttributedElementCodeGenerator extends CodeGenerator {
 	}
 
 	@Override
-	protected CodeBlock createBody(boolean createClass) {
+	protected CodeBlock createBody() {
 		CodeList code = new CodeList();
-		if (createClass) {
-			code.add(createFields(aec.getAttributeList(), createClass));
+		if (currentCycle.isStdOrTransImpl()) {
+			code.add(createFields(aec.getAttributeList()));
 			code.add(createConstructor());
 			code.add(createGetAttributedElementClassMethod());
 			code.add(createGetM1ClassMethod());
 			code.add(createGenericGetter(aec.getAttributeList()));
 			code.add(createGenericSetter(aec.getAttributeList()));
-			code.add(createGettersAndSetters(aec.getAttributeList(),
-					createClass));
+			code.add(createGettersAndSetters(aec.getAttributeList()));
 			code.add(createReadAttributesMethod(aec.getAttributeList()));
 			code.add(createReadAttributesFromStringMethod(aec
 					.getAttributeList()));
@@ -108,38 +107,36 @@ public class AttributedElementCodeGenerator extends CodeGenerator {
 			code
 					.add(createWriteAttributeToStringMethod(aec
 							.getAttributeList()));
-			if (config.hasTransactionSupport()) {
-				code.add(createGetVersionedAttributesMethod(aec
+			code.add(createGetVersionedAttributesMethod(aec
 						.getAttributeList()));
-			}
-		} else {
-			code.add(createGettersAndSetters(aec.getOwnAttributeList(),
-					createClass));
+		}	
+		if(currentCycle.isAbstract()) {
+			code.add(createGettersAndSetters(aec.getOwnAttributeList()));
 		}
 		return code;
 	}
 
 	@Override
-	protected CodeBlock createHeader(boolean createClass) {
+	protected CodeBlock createHeader() {
 		CodeSnippet code = new CodeSnippet(true);
 
-		code.setVariable("classOrInterface", createClass ? " class"
+		code.setVariable("classOrInterface", currentCycle.isStdOrTransImpl() ? " class"
 				: " interface");
 		code.setVariable("abstract",
-				createClass && aec.isAbstract() ? " abstract" : "");
+				currentCycle.isStdOrTransImpl() && aec.isAbstract() ? " abstract" : "");
 		code
-				.setVariable("impl", createClass && !aec.isAbstract() ? "Impl"
+				.setVariable("impl", currentCycle.isStdOrTransImpl() && !aec.isAbstract() ? "Impl"
 						: "");
 		code
 				.add("public#abstract##classOrInterface# #simpleClassName##impl##extends##implements# {");
-		code.setVariable("extends", createClass ? " extends #baseClassName#"
+		code.setVariable("extends", currentCycle.isStdOrTransImpl() ? " extends #baseClassName#"
 				: "");
 
 		StringBuffer buf = new StringBuffer();
 		if (interfaces.size() > 0) {
-			String delim = createClass ? " implements " : " extends ";
+			String delim = currentCycle.isStdOrTransImpl() ? " implements " : " extends ";
 			for (String interfaceName : interfaces) {
-				if (createClass
+				if (currentCycle.isStdOrTransImpl()
 						|| !interfaceName.equals(aec.getQualifiedName())) {
 					if (interfaceName.equals("Vertex")
 							|| interfaceName.equals("Edge")
@@ -282,61 +279,63 @@ public class AttributedElementCodeGenerator extends CodeGenerator {
 		return code;
 	}
 
-	protected CodeBlock createFields(Set<Attribute> attrSet, boolean createClass) {
+	protected CodeBlock createFields(Set<Attribute> attrSet) {
 		CodeList code = new CodeList();
 		for (Attribute attr : attrSet) {
-			code.addNoIndent(createField(attr, createClass));
+			code.addNoIndent(createField(attr));
 		}
 		return code;
 	}
 
-	protected CodeBlock createGettersAndSetters(Set<Attribute> attrSet,
-			boolean createClass) {
+	protected CodeBlock createGettersAndSetters(Set<Attribute> attrSet) {
 		CodeList code = new CodeList();
 		for (Attribute attr : attrSet) {
-			code.addNoIndent(createGetter(attr, createClass));
-			code.addNoIndent(createSetter(attr, createClass));
+			code.addNoIndent(createGetter(attr));
+			code.addNoIndent(createSetter(attr));
 		}
 		return code;
 	}
 
-	protected CodeBlock createGetter(Attribute attr, boolean createClass) {
+	protected CodeBlock createGetter(Attribute attr) {
 		CodeSnippet code = new CodeSnippet(true);
 		code.setVariable("name", attr.getName());
 		code.setVariable("type", attr.getDomain()
 				.getJavaAttributeImplementationTypeName(schemaRootPackageName));
 		code.setVariable("isOrGet", attr.getDomain().getJavaClassName(
 				schemaRootPackageName).equals("Boolean") ? "is" : "get");
-		if (createClass) {
-			if (!config.hasTransactionSupport()) {
-				code.add("public #type# #isOrGet#_#name#() {",
-						"\treturn _#name#;", "}");
-			} else {
-				code.setVariable("initValue", attr.getDomain()
-						.getInitialValue());
-				code.setVariable("ttype", attr.getDomain()
-						.getTransactionJavaAttributeImplementationTypeName(
-								schemaRootPackageName));
-				setGraphReferenceVariable(code);
-
-				code.add("public #type# #isOrGet#_#name#() {");
-				addCheckValidityCode(code);
-				code
-						.add(
-								"\tif (_#name# == null)",
-								"\t\treturn #initValue#;",
-								"\t#ttype# value = _#name#.getValidValue(#graphreference#getCurrentTransaction());");
-
-				if (attr.getDomain().isComposite()) {
-					code.add("\tif(_#name# != null)");
-					code.add("\t\tvalue.setName(this + \":#name#\");");
-				}
-				code
-						.add("\treturn (value == null) ? #initValue# : value;",
-								"}");
-			}
-		} else {
+		
+		switch(currentCycle) {
+		case ABSTRACT : 
 			code.add("public #type# #isOrGet#_#name#();");
+			break;
+		case STDIMPL : 
+			code.add("public #type# #isOrGet#_#name#() {",
+					"\treturn _#name#;", "}");
+			break;
+		case TRANSIMPL :
+			code.setVariable("initValue", attr.getDomain()
+					.getInitialValue());
+			code.setVariable("ttype", attr.getDomain()
+					.getTransactionJavaAttributeImplementationTypeName(
+							schemaRootPackageName));
+			setGraphReferenceVariable(code);
+
+			code.add("public #type# #isOrGet#_#name#() {");
+			addCheckValidityCode(code);
+			code
+					.add(
+							"\tif (_#name# == null)",
+							"\t\treturn #initValue#;",
+							"\t#ttype# value = _#name#.getValidValue(#graphreference#getCurrentTransaction());");
+
+			if (attr.getDomain().isComposite()) {
+				code.add("\tif(_#name# != null)");
+				code.add("\t\tvalue.setName(this + \":#name#\");");
+			}
+			code
+					.add("\treturn (value == null) ? #initValue# : value;",
+							"}");
+			break;
 		}
 		return code;
 	}
@@ -352,93 +351,96 @@ public class AttributedElementCodeGenerator extends CodeGenerator {
 		code.setVariable("graphreference", "graph.");
 	}
 
-	protected CodeBlock createSetter(Attribute attr, boolean createClass) {
+	protected CodeBlock createSetter(Attribute attr) {
 		CodeSnippet code = new CodeSnippet(true);
 		code.setVariable("name", attr.getName());
 		code.setVariable("type", attr.getDomain()
 				.getJavaAttributeImplementationTypeName(schemaRootPackageName));
 		code.setVariable("dname", attr.getDomain().getSimpleName());
 
-		if (createClass) {
-			if (!config.hasTransactionSupport()) {
-				code.add("public void set_#name#(#type# _#name#) {",
-						"\tthis._#name# = _#name#;", "\tgraphModified();", "}");
-			} else {
-				Domain domain = attr.getDomain();
-				// setter for transaction support
-				code.setVariable("ttype", attr.getDomain()
-						.getTransactionJavaAttributeImplementationTypeName(
-								schemaRootPackageName));
-				code.setVariable("vclass", attr.getDomain().getVersionedClass(
-						schemaRootPackageName));
-
-				if (!(domain instanceof RecordDomain)) {
-					code.setVariable("initLoading",
-							"new #vclass#(this, _#name#, \"#name#\");");
-				} else {
-					code
-							.setVariable("initLoading",
-									"new #vclass#(this, (#ttype) _#name#, \"#name#\");");
-				}
-				code.setVariable("init", "new #vclass#(this);");
-
-				code.add("public void set_#name#(#type# _#name#) {");
-				addCheckValidityCode(code);
-
-				setGraphReferenceVariable(code);
-
-				if (domain.isComposite()) {
-					addImports("#jgPackage#.GraphException");
-					code
-							.setVariable("tclassname", attr.getDomain()
-									.getTransactionJavaClassName(
-											schemaRootPackageName));
-					code
-							.add("\tif(_#name# != null && !(_#name# instanceof #tclassname#))");
-					code
-							.add("\t\tthrow new GraphException(\"The given parameter of type #dname# doesn't support transactions.\");");
-					code
-							.add("\tif(_#name# != null && ((#jgTransPackage#.JGraLabCloneable)_#name#).getGraph() != graph)");
-					code
-							.add("\t\tthrow new GraphException(\"The given parameter of type #dname# belongs to another graph.\");");
-					code
-							.setVariable("initLoading",
-									"new #vclass#(this, (#ttype#) _#name#, \"#name#\");");
-				}
-
-				code.add("\tif(#graphreference#isLoading())",
-						"\t\tthis._#name# = #initLoading#",
-						"\tif(this._#name# == null) {",
-						"\t\tthis._#name# = #init#",
-						"\t\tthis._#name#.setName(\"#name#\");", "\t}");
-
-				if (domain.isComposite()) {
-					code.add("\tif(_#name# != null)");
-					code
-							.add("\t((JGraLabCloneable)_#name#).setName(this + \":#name#\");");
-					addImports("#jgTransPackage#.JGraLabCloneable");
-				}
-
-				code
-						.add(
-								"\tthis._#name#.setValidValue((#ttype#) _#name#, #graphreference#getCurrentTransaction());",
-								"\tattributeChanged(this._#name#);",
-								"\tgraphModified();", "}");
-			}
-		} else {
+		switch(currentCycle) {
+		case ABSTRACT : 
 			code.add("public void set_#name#(#type# _#name#);");
+			break;
+		case STDIMPL :
+			code.add("public void set_#name#(#type# _#name#) {",
+					"\tthis._#name# = _#name#;", "\tgraphModified();", "}");
+			break;
+		case TRANSIMPL :
+			Domain domain = attr.getDomain();
+			// setter for transaction support
+			code.setVariable("ttype", attr.getDomain()
+					.getTransactionJavaAttributeImplementationTypeName(
+							schemaRootPackageName));
+			code.setVariable("vclass", attr.getDomain().getVersionedClass(
+					schemaRootPackageName));
+
+			if (!(domain instanceof RecordDomain)) {
+				code.setVariable("initLoading",
+						"new #vclass#(this, _#name#, \"#name#\");");
+			} else {
+				code
+						.setVariable("initLoading",
+								"new #vclass#(this, (#ttype) _#name#, \"#name#\");");
+			}
+			code.setVariable("init", "new #vclass#(this);");
+
+			code.add("public void set_#name#(#type# _#name#) {");
+			addCheckValidityCode(code);
+
+			setGraphReferenceVariable(code);
+
+			if (domain.isComposite()) {
+				addImports("#jgPackage#.GraphException");
+				code
+						.setVariable("tclassname", attr.getDomain()
+								.getTransactionJavaClassName(
+										schemaRootPackageName));
+				code
+						.add("\tif(_#name# != null && !(_#name# instanceof #tclassname#))");
+				code
+						.add("\t\tthrow new GraphException(\"The given parameter of type #dname# doesn't support transactions.\");");
+				code
+						.add("\tif(_#name# != null && ((#jgTransPackage#.JGraLabCloneable)_#name#).getGraph() != graph)");
+				code
+						.add("\t\tthrow new GraphException(\"The given parameter of type #dname# belongs to another graph.\");");
+				code
+						.setVariable("initLoading",
+								"new #vclass#(this, (#ttype#) _#name#, \"#name#\");");
+			}
+
+			code.add("\tif(#graphreference#isLoading())",
+					"\t\tthis._#name# = #initLoading#",
+					"\tif(this._#name# == null) {",
+					"\t\tthis._#name# = #init#",
+					"\t\tthis._#name#.setName(\"#name#\");", "\t}");
+
+			if (domain.isComposite()) {
+				code.add("\tif(_#name# != null)");
+				code
+						.add("\t((JGraLabCloneable)_#name#).setName(this + \":#name#\");");
+				addImports("#jgTransPackage#.JGraLabCloneable");
+			}
+
+			code
+					.add(
+							"\tthis._#name#.setValidValue((#ttype#) _#name#, #graphreference#getCurrentTransaction());",
+							"\tattributeChanged(this._#name#);",
+							"\tgraphModified();", "}");
+			break;
 		}
 		return code;
 	}
 
-	protected CodeBlock createField(Attribute attr, boolean createClass) {
+	protected CodeBlock createField(Attribute attr) {
 		CodeSnippet code = new CodeSnippet(true, "protected #type# _#name#;");
 		code.setVariable("name", attr.getName());
-		if (!config.hasTransactionSupport()) {
+		if (currentCycle.isStdImpl()) {
 			code.setVariable("type", attr.getDomain()
 					.getJavaAttributeImplementationTypeName(
 							schemaRootPackageName));
-		} else {
+		}
+		if(currentCycle.isTransImpl()) {
 			code.setVariable("type", attr.getDomain().getVersionedClass(schemaRootPackageName));
 		}
 		return code;
@@ -463,7 +465,7 @@ public class AttributedElementCodeGenerator extends CodeGenerator {
 						.addNoIndent(new CodeSnippet(
 								"if (attributeName.equals(\"#variableName#\")) {",
 								"\tGraphIO io = GraphIO.createStringReader(value, getSchema());"));
-				if (config.hasTransactionSupport()) {
+				if (currentCycle.isTransImpl()) {
 					CodeSnippet readBlock = new CodeSnippet();
 					readBlock.setVariable("variableType", attribute.getDomain()
 							.getJavaClassName(schemaRootPackageName));
@@ -473,7 +475,8 @@ public class AttributedElementCodeGenerator extends CodeGenerator {
 							schemaRootPackageName, "tmpVar", "io"));
 					a.addNoIndent(new CodeSnippet("\t#setterName#(tmpVar);",
 							"\treturn;", "}"));
-				} else {
+				} 
+				if(currentCycle.isStdImpl()) {
 					a.add(attribute.getDomain().getReadMethod(
 							schemaRootPackageName, "_" + attribute.getName(),
 							"io"));
@@ -514,16 +517,16 @@ public class AttributedElementCodeGenerator extends CodeGenerator {
 						.addNoIndent(new CodeSnippet(
 								"if (attributeName.equals(\"#variableName#\")) {",
 								"\tGraphIO io = GraphIO.createStringWriter(getSchema());"));
-				if (config.hasTransactionSupport()) {
+				if (currentCycle.isTransImpl()) {
 					a.add(attribute.getDomain().getTransactionWriteMethod(
 							schemaRootPackageName, "_" + attribute.getName(),
 							"io"));
-				} else {
+				} 
+				if(currentCycle.isStdImpl()) {
 					a.add(attribute.getDomain().getWriteMethod(
 							schemaRootPackageName, "_" + attribute.getName(),
 							"io"));
 				}
-
 				a.addNoIndent(new CodeSnippet(
 						"\treturn io.getStringWriterResult();", "}"));
 				code.add(a);
@@ -549,11 +552,12 @@ public class AttributedElementCodeGenerator extends CodeGenerator {
 				CodeSnippet snippet = new CodeSnippet();
 				snippet.setVariable("setterName", "set_" + attribute.getName());
 				snippet.setVariable("variableName", attribute.getName());
-				if (!config.hasTransactionSupport()) {
+				if (currentCycle.isStdImpl()) {
 					code.add(attribute.getDomain().getReadMethod(
 							schemaRootPackageName, "_" + attribute.getName(),
 							"io"));
-				} else {
+				} 
+				if(currentCycle.isTransImpl()) {
 					code.add(attribute.getDomain().getTransactionReadMethod(
 							schemaRootPackageName, "_" + attribute.getName(),
 							"io"));
@@ -579,11 +583,12 @@ public class AttributedElementCodeGenerator extends CodeGenerator {
 		if ((attrSet != null) && !attrSet.isEmpty()) {
 			code.add(new CodeSnippet("io.space();"));
 			for (Attribute attribute : attrSet) {
-				if (!config.hasTransactionSupport()) {
+				if (currentCycle.isStdImpl()) {
 					code.add(attribute.getDomain().getWriteMethod(
 							schemaRootPackageName, "_" + attribute.getName(),
 							"io"));
-				} else {
+				} 
+				if(currentCycle.isTransImpl()) {
 					code.add(attribute.getDomain().getTransactionWriteMethod(
 							schemaRootPackageName, "_" + attribute.getName(),
 							"io"));
@@ -604,7 +609,7 @@ public class AttributedElementCodeGenerator extends CodeGenerator {
 	protected CodeBlock createGetVersionedAttributesMethod(
 			SortedSet<Attribute> attributeList) {
 		CodeList code = new CodeList();
-		if (config.hasTransactionSupport()) {
+		if (currentCycle.isTransImpl()) {
 			CodeSnippet codeSnippet = new CodeSnippet();
 			codeSnippet
 					.add("public java.util.Set<#jgTransPackage#.VersionedDataObject<?>> attributes() {");

@@ -49,7 +49,7 @@ import de.uni_koblenz.jgralab.schema.VertexClass;
 public class SchemaCodeGenerator extends CodeGenerator {
 
 	private Schema schema;
-	
+
 	/**
 	 * Creates a new SchemaCodeGenerator which creates code for the given schema
 	 * 
@@ -74,7 +74,7 @@ public class SchemaCodeGenerator extends CodeGenerator {
 	}
 
 	@Override
-	protected CodeBlock createHeader(boolean createClass) {
+	protected CodeBlock createHeader() {
 		addImports("#jgSchemaImplPackage#.#baseClassName#");
 		addImports("#jgSchemaPackage#.VertexClass");
 		addImports("java.lang.ref.WeakReference");
@@ -89,11 +89,13 @@ public class SchemaCodeGenerator extends CodeGenerator {
 	}
 
 	@Override
-	protected CodeBlock createBody(boolean createClass) {
+	protected CodeBlock createBody() {
 		CodeList code = new CodeList();
-		code.add(createVariables());
-		code.add(createConstructor());
-		code.add(createGraphFactoryMethod());
+		if (currentCycle.isClassOnly()) {
+			code.add(createVariables());
+			code.add(createConstructor());
+			code.add(createGraphFactoryMethod());
+		}
 		return code;
 	}
 
@@ -109,8 +111,8 @@ public class SchemaCodeGenerator extends CodeGenerator {
 				" * @param eMax initial edge count",
 				"*/",
 				"public #gcName# create#gcCamelName#(int vMax, int eMax) {",
-				((config.hasStandardSupport()) ? "\treturn (#gcCamelName#) graphFactory.createGraph(#gcCamelName#.class, null, vMax, eMax);" : 
-					"\tthrow new UnsupportedOperationException(\"No Standard support compiled.\");"),
+				((config.hasStandardSupport()) ? "\treturn (#gcCamelName#) graphFactory.createGraph(#gcCamelName#.class, null, vMax, eMax);"
+						: "\tthrow new UnsupportedOperationException(\"No Standard support compiled.\");"),
 				"}",
 				"",
 				"/**",
@@ -121,16 +123,16 @@ public class SchemaCodeGenerator extends CodeGenerator {
 				" * @param eMax initial edge count",
 				" */",
 				"public #gcName# create#gcCamelName#(String id, int vMax, int eMax) {",
-				((config.hasStandardSupport()) ? "\treturn (#gcCamelName#) graphFactory.createGraph(#gcCamelName#.class, id, vMax, eMax);" : 
-				"\tthrow new UnsupportedOperationException(\"No Standard support compiled.\");"),
+				((config.hasStandardSupport()) ? "\treturn (#gcCamelName#) graphFactory.createGraph(#gcCamelName#.class, id, vMax, eMax);"
+						: "\tthrow new UnsupportedOperationException(\"No Standard support compiled.\");"),
 				"}",
 				"",
 				"/**",
 				" * Creates a new #gcName# graph.",
 				"*/",
 				"public #gcName# create#gcCamelName#() {",
-				((config.hasStandardSupport()) ? "\treturn (#gcCamelName#) graphFactory.createGraph(#gcCamelName#.class, null);" : 
-				"\tthrow new UnsupportedOperationException(\"No Standard support compiled.\");"),
+				((config.hasStandardSupport()) ? "\treturn (#gcCamelName#) graphFactory.createGraph(#gcCamelName#.class, null);"
+						: "\tthrow new UnsupportedOperationException(\"No Standard support compiled.\");"),
 				"}",
 				"",
 				"/**",
@@ -139,8 +141,8 @@ public class SchemaCodeGenerator extends CodeGenerator {
 				" * @param id the id name of the new graph",
 				" */",
 				"public #gcName# create#gcCamelName#(String id) {",
-				((config.hasStandardSupport()) ? "\treturn (#gcCamelName#) graphFactory.createGraph(#gcCamelName#.class, id);" :
-				"\tthrow new UnsupportedOperationException(\"No Standard support compiled.\");"),
+				((config.hasStandardSupport()) ? "\treturn (#gcCamelName#) graphFactory.createGraph(#gcCamelName#.class, id);"
+						: "\tthrow new UnsupportedOperationException(\"No Standard support compiled.\");"),
 				"}",
 				"",
 				// ---- transaction support ----
@@ -194,7 +196,8 @@ public class SchemaCodeGenerator extends CodeGenerator {
 				" * @throws GraphIOException if the graph cannot be loaded",
 				" */",
 				"public #gcName# load#gcCamelName#(String filename) throws GraphIOException {",
-				((config.hasStandardSupport()) ? "\treturn load#gcCamelName#(filename, null);" : "\tthrow new UnsupportedOperationException(\"No Standard support compiled.\");"),
+				((config.hasStandardSupport()) ? "\treturn load#gcCamelName#(filename, null);"
+						: "\tthrow new UnsupportedOperationException(\"No Standard support compiled.\");"),
 				"}",
 				"",
 				"/**",
@@ -206,10 +209,11 @@ public class SchemaCodeGenerator extends CodeGenerator {
 				" * @throws GraphIOException if the graph cannot be loaded",
 				" */",
 				"public #gcName# load#gcCamelName#(String filename, ProgressFunction pf) throws GraphIOException {",
-				((config.hasStandardSupport()) ? "\tGraph graph = GraphIO.loadGraphFromFile(filename, this, pf);" +
-				"\tif (!(graph instanceof #gcName#)) {" +
-				"\t\tthrow new GraphIOException(\"Graph in file '\" + filename + \"' is not an instance of GraphClass #gcName#\");" +
-				"\t}" + "\treturn (#gcName#) graph;" : "\tthrow new UnsupportedOperationException(\"No Standard support compiled.\");"),
+				((config.hasStandardSupport()) ? "\tGraph graph = GraphIO.loadGraphFromFile(filename, this, pf);"
+						+ "\tif (!(graph instanceof #gcName#)) {"
+						+ "\t\tthrow new GraphIOException(\"Graph in file '\" + filename + \"' is not an instance of GraphClass #gcName#\");"
+						+ "\t}" + "\treturn (#gcName#) graph;"
+						: "\tthrow new UnsupportedOperationException(\"No Standard support compiled.\");"),
 				"}",
 				// ---- transaction support ----
 				"/**",
@@ -240,15 +244,19 @@ public class SchemaCodeGenerator extends CodeGenerator {
 						: "\tthrow new UnsupportedOperationException(\"No Transaction support compiled.\");"),
 				"}");
 		code.setVariable("gcName", schema.getGraphClass().getQualifiedName());
-		code.setVariable("gcCamelName", camelCase(schema.getGraphClass().getQualifiedName()));
-		code.setVariable("gcImplName", schema.getGraphClass().getQualifiedName() + "Impl");
+		code.setVariable("gcCamelName", camelCase(schema.getGraphClass()
+				.getQualifiedName()));
+		code.setVariable("gcImplName", schema.getGraphClass()
+				.getQualifiedName()
+				+ "Impl");
 
 		return code;
 	}
 
 	private CodeBlock createConstructor() {
 		CodeList code = new CodeList();
-		code.addNoIndent(new CodeSnippet(
+		code
+				.addNoIndent(new CodeSnippet(
 						true,
 						"/**",
 						" * the weak reference to the singleton instance",
@@ -307,7 +315,8 @@ public class SchemaCodeGenerator extends CodeGenerator {
 		code.setVariable("aecVariable", "gc");
 		code.setVariable("schemaVariable", gc.getVariableName());
 		code.setVariable("gcAbstract", gc.isAbstract() ? "true" : "false");
-		code.addNoIndent(new CodeSnippet(
+		code
+				.addNoIndent(new CodeSnippet(
 						true,
 						"{",
 						"\tGraphClass #gcVariable# = #schemaVariable# = createGraphClass(\"#gcName#\");",
@@ -393,7 +402,8 @@ public class SchemaCodeGenerator extends CodeGenerator {
 				+ ec.getFromMax() + ", \"#fromRole#\"");
 		code.setVariable("toPart", "#toClass#, " + ec.getToMin() + ", "
 				+ ec.getToMax() + ", \"#toRole#\"");
-		code.addNoIndent(new CodeSnippet(
+		code
+				.addNoIndent(new CodeSnippet(
 						true,
 						"{",
 						"\t#ecType# #ecVariable# = #schemaVariable# = #gcVariable#.create#ecType#(\"#ecName#\",",
@@ -445,7 +455,8 @@ public class SchemaCodeGenerator extends CodeGenerator {
 		code.setVariable("aecVariable", "vc");
 		code.setVariable("schemaVariable", vc.getVariableName());
 		code.setVariable("vcAbstract", vc.isAbstract() ? "true" : "false");
-		code.addNoIndent(new CodeSnippet(
+		code
+				.addNoIndent(new CodeSnippet(
 						true,
 						"{",
 						"\tVertexClass #vcVariable# = #schemaVariable# = #gcVariable#.createVertexClass(\"#vcName#\");",
@@ -484,14 +495,18 @@ public class SchemaCodeGenerator extends CodeGenerator {
 		for (Constraint constraint : aec.getConstraints()) {
 			addImports("#jgSchemaImplPackage#.ConstraintImpl");
 			CodeSnippet constraintSnippet = new CodeSnippet(false);
-			constraintSnippet.add("#aecVariable#.addConstraint(" +
-					              "new ConstraintImpl(#message#, #predicate#, #offendingElements#));");
-			
-			constraintSnippet.setVariable("message", "\"" + stringQuote(constraint.getMessage()) + "\"");
-			constraintSnippet.setVariable("predicate", "\"" + stringQuote(constraint.getPredicate()) + "\"");
+			constraintSnippet
+					.add("#aecVariable#.addConstraint("
+							+ "new ConstraintImpl(#message#, #predicate#, #offendingElements#));");
+
+			constraintSnippet.setVariable("message", "\""
+					+ stringQuote(constraint.getMessage()) + "\"");
+			constraintSnippet.setVariable("predicate", "\""
+					+ stringQuote(constraint.getPredicate()) + "\"");
 			if (constraint.getOffendingElementsQuery() != null)
-				constraintSnippet.setVariable("offendingElements", "\"" + 
-											  stringQuote(constraint.getOffendingElementsQuery()) + "\"");
+				constraintSnippet.setVariable("offendingElements", "\""
+						+ stringQuote(constraint.getOffendingElementsQuery())
+						+ "\"");
 			else
 				constraintSnippet.setVariable("offendingElements", "\"null\"");
 			code.addNoIndent(constraintSnippet);
@@ -533,16 +548,22 @@ public class SchemaCodeGenerator extends CodeGenerator {
 				s.add("createSetDomain(getDomain(\"#componentDomainName#\"));");
 			} else if (dom instanceof MapDomain) {
 				MapDomain mapDom = (MapDomain) dom;
-				s.setVariable("keyDomainName", mapDom.getKeyDomain().getQualifiedName());
-				s.setVariable("valueDomainName", mapDom.getValueDomain().getQualifiedName());
-				s.add("createMapDomain(getDomain(\"#keyDomainName#\"), getDomain(\"#valueDomainName#\"));");
+				s.setVariable("keyDomainName", mapDom.getKeyDomain()
+						.getQualifiedName());
+				s.setVariable("valueDomainName", mapDom.getValueDomain()
+						.getQualifiedName());
+				s
+						.add("createMapDomain(getDomain(\"#keyDomainName#\"), getDomain(\"#valueDomainName#\"));");
 			} else if (dom instanceof RecordDomain) {
 				addImports("#jgSchemaPackage#.RecordDomain");
-				s.add("{", "\tRecordDomain dom = createRecordDomain(\"#domName#\");");
+				s
+						.add("{",
+								"\tRecordDomain dom = createRecordDomain(\"#domName#\");");
 				RecordDomain rd = (RecordDomain) dom;
 				for (String cName : rd.getComponents().keySet()) {
 					s.add("\tdom.addComponent(\"" + cName + "\", getDomain(\""
-							+ rd.getComponents().get(cName).getQualifiedName() + "\"));");
+							+ rd.getComponents().get(cName).getQualifiedName()
+							+ "\"));");
 				}
 				s.add("}");
 			} else {
