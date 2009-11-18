@@ -94,7 +94,8 @@ public class GreqlEvaluator {
 		String query = args[0];
 		Graph datagraph = null;
 		if (args.length == 2) {
-			datagraph = GraphIO.loadSchemaAndGraphFromFile(args[1], CodeGeneratorConfiguration.WITHOUT_TRANSACTIONS,
+			datagraph = GraphIO.loadSchemaAndGraphFromFile(args[1],
+					CodeGeneratorConfiguration.WITHOUT_TRANSACTIONS,
 					new ProgressFunctionImpl());
 		}
 
@@ -646,7 +647,8 @@ public class GreqlEvaluator {
 			GraphClass gc = minimalSchema.createGraphClass("MinimalGraph");
 			VertexClass n = gc.createVertexClass("Node");
 			gc.createEdgeClass("Link", n, n);
-			minimalSchema.compile(CodeGeneratorConfiguration.WITHOUT_TRANSACTIONS);
+			minimalSchema
+					.compile(CodeGeneratorConfiguration.WITHOUT_TRANSACTIONS);
 			Method graphCreateMethod = minimalSchema.getGraphCreateMethod(false);
 
 			try {
@@ -983,7 +985,7 @@ public class GreqlEvaluator {
 		}
 
 		overallEvaluationTime = System.currentTimeMillis() - startTime;
-
+		started = false;
 		return true;
 	}
 
