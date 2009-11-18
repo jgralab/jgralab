@@ -55,29 +55,26 @@ public class RecordCodeGenerator extends CodeGenerator {
 		rootBlock.setVariable("simpleImplClassName", recordDomain
 				.getSimpleName()
 				+ "Impl");
-		// one abstract class and two implementation classes need to be
-		// generated
-		rootBlock.setVariable("isClassOnly", "false");
 		this.recordDomain = recordDomain;
 	}
 
 	@Override
-	protected CodeBlock createBody(boolean createClass) {
+	protected CodeBlock createBody() {
 		CodeList code = new CodeList();
-		code.add(createRecordComponents(createClass));
-		code.add(createGetterMethods(createClass));
-		code.add(createSetterMethods(createClass));
-		code.add(createVariableParametersConstructor(createClass));
-		code.add(createFieldConstructor(createClass));
-		code.add(createMapConstructor(createClass));
-		code.add(createToStringMethod(createClass));
-		code.add(createReadComponentsMethod(createClass));
-		code.add(createWriteComponentsMethod(createClass));
-		code.add(createCloneMethod(createClass));
-		code.add(createInitMethod(createClass));
-		code.add(createGetGraphMethod(createClass));
-		code.add(createEqualsMethod(createClass));
-		code.add(createSetNameMethod(createClass));
+		code.add(createRecordComponents());
+		code.add(createGetterMethods());
+		code.add(createSetterMethods());
+		code.add(createVariableParametersConstructor());
+		code.add(createFieldConstructor());
+		code.add(createMapConstructor());
+		code.add(createToStringMethod());
+		code.add(createReadComponentsMethod());
+		code.add(createWriteComponentsMethod());
+		code.add(createCloneMethod());
+		code.add(createInitMethod());
+		code.add(createGetGraphMethod());
+		code.add(createEqualsMethod());
+		code.add(createSetNameMethod());
 		return code;
 	}
 
@@ -86,17 +83,17 @@ public class RecordCodeGenerator extends CodeGenerator {
 	 * @param createClass
 	 * @return
 	 */
-	private CodeBlock createVariableParametersConstructor(boolean createClass) {
+	private CodeBlock createVariableParametersConstructor() {
 		CodeList code = new CodeList();
 
-		if (createClass) {
+		if (currentCycle.isStdOrTransImpl()) {
 			CodeSnippet codeSnippet = new CodeSnippet(true,
 					"@SuppressWarnings(\"unchecked\")");
 
 			codeSnippet
 					.add("protected #simpleImplClassName#(Graph g, Object... components) {");
 
-			if (config.hasTransactionSupport())
+			if (currentCycle.isTransImpl())
 				codeSnippet.add("\tinit(g);");
 			else
 				codeSnippet.add("\tgraph = g;");
@@ -109,7 +106,7 @@ public class RecordCodeGenerator extends CodeGenerator {
 
 				CodeSnippet assign = null;
 
-				if (config.hasTransactionSupport())
+				if (currentCycle.isTransImpl())
 					assign = new CodeSnippet(
 							"\tset_#name#((#type#) components[#index#]);");
 				else
@@ -136,9 +133,9 @@ public class RecordCodeGenerator extends CodeGenerator {
 	 * @param createClass
 	 * @return
 	 */
-	private CodeBlock createSetNameMethod(boolean createClass) {
+	private CodeBlock createSetNameMethod() {
 		CodeList code = new CodeList();
-		if (createClass && config.hasTransactionSupport()) {
+		if (currentCycle.isTransImpl()) {
 			code.addNoIndent(new CodeSnippet(true,
 					"public void setName(String name) {"));
 			code.add(new CodeSnippet("this.name = name;"));
@@ -162,9 +159,9 @@ public class RecordCodeGenerator extends CodeGenerator {
 	 * @param createClass
 	 * @return
 	 */
-	private CodeBlock createEqualsMethod(boolean createClass) {
+	private CodeBlock createEqualsMethod() {
 		CodeList code = new CodeList();
-		if (createClass && config.hasTransactionSupport()) {
+		if (currentCycle.isTransImpl()) {
 			code.addNoIndent(new CodeSnippet(true,
 					"public boolean equals(Object o) {"));
 			code
@@ -199,9 +196,9 @@ public class RecordCodeGenerator extends CodeGenerator {
 		return code;
 	}
 
-	private CodeBlock createGetGraphMethod(boolean createClass) {
+	private CodeBlock createGetGraphMethod() {
 		CodeList code = new CodeList();
-		if (createClass && config.hasTransactionSupport()) {
+		if (currentCycle.isTransImpl()) {
 			code
 					.addNoIndent(new CodeSnippet(true,
 							"public Graph getGraph() {"));
@@ -211,9 +208,9 @@ public class RecordCodeGenerator extends CodeGenerator {
 		return code;
 	}
 
-	private CodeBlock createInitMethod(boolean createClass) {
+	private CodeBlock createInitMethod() {
 		CodeList code = new CodeList();
-		if (createClass && config.hasTransactionSupport()) {
+		if (currentCycle.isTransImpl()) {
 			CodeSnippet codeSnippet = new CodeSnippet(true,
 					"private void init(Graph g) {");
 
@@ -237,29 +234,31 @@ public class RecordCodeGenerator extends CodeGenerator {
 	}
 
 	@Override
-	protected CodeBlock createHeader(boolean createClass) {
-		if (config.hasTransactionSupport() && createClass)
-			addImports("#jgTransPackage#.JGraLabCloneable",
-					"#jgPackage#.GraphException");
+	protected CodeBlock createHeader() {
 		CodeSnippet code = null;
-		if (createClass) {
+		switch(currentCycle) {
+		case ABSTRACT : code = new CodeSnippet(true,
+			"public abstract class #simpleClassName# {");
+			break;
+		case STDIMPL : 
 			addImports("#jgPackage#.Graph");
 			addImports("#schemaPackage#.#simpleClassName#");
-			if (config.hasTransactionSupport()) {
-				code = new CodeSnippet(true,
-						"public class #simpleImplClassName# extends #simpleClassName#"
-								+ " implements JGraLabCloneable {");
-				code.add("\tprivate String name;");
-				code.add("\tprivate Graph graph;");
-			} else {
-				code = new CodeSnippet(true,
-						"public class #simpleImplClassName# extends #simpleClassName# {");
-				code.add("\t@SuppressWarnings(\"unused\")");
-				code.add("\tprivate Graph graph;");
-			}
-		} else {
 			code = new CodeSnippet(true,
-					"public abstract class #simpleClassName# {");
+			"public class #simpleImplClassName# extends #simpleClassName# {");
+			code.add("\t@SuppressWarnings(\"unused\")");
+			code.add("\tprivate Graph graph;");
+			break;
+		case TRANSIMPL : 
+			addImports("#jgPackage#.Graph");
+			addImports("#schemaPackage#.#simpleClassName#");
+			addImports("#jgTransPackage#.JGraLabCloneable",
+			"#jgPackage#.GraphException");
+			code = new CodeSnippet(true,
+					"public class #simpleImplClassName# extends #simpleClassName#"
+							+ " implements JGraLabCloneable {");
+			code.add("\tprivate String name;");
+			code.add("\tprivate Graph graph;");
+			break;
 		}
 		return code;
 	}
@@ -269,7 +268,7 @@ public class RecordCodeGenerator extends CodeGenerator {
 	 * 
 	 * @return
 	 */
-	protected CodeBlock createGetterMethods(boolean createClass) {
+	protected CodeBlock createGetterMethods() {
 		CodeList code = new CodeList();
 		for (Entry<String, Domain> rdc : recordDomain.getComponents()
 				.entrySet()) {
@@ -281,32 +280,30 @@ public class RecordCodeGenerator extends CodeGenerator {
 					.getJavaAttributeImplementationTypeName(
 							schemaRootPackageName));
 
-			if (config.hasTransactionSupport())
-				getterCode.setVariable("ctype", rdc.getValue()
-						.getTransactionJavaAttributeImplementationTypeName(
-								schemaRootPackageName));
-			else
+			switch(currentCycle) {
+			case ABSTRACT : 
+				getterCode.add("public abstract #type# #isOrGet#_#name#();");
+				break;
+			case STDIMPL : 
 				getterCode.setVariable("ctype", rdc.getValue()
 						.getJavaAttributeImplementationTypeName(
 								schemaRootPackageName));
-			if (!createClass) {
-				getterCode.add("public abstract #type# #isOrGet#_#name#();");
-			} else {
 				getterCode.add("public #type# #isOrGet#_#name#() {");
-
-				if (config.hasTransactionSupport()) {
-					getterCode
-							.add("\t#ctype# value = _#name#.getValidValue(graph.getCurrentTransaction());");
-					if (rdc.getValue().isComposite()) {
-						getterCode.add("\tif(_#name# != null)");
-						getterCode
-								.add("\t\tvalue.setName(name + \"_#name#\");");
-					}
-					getterCode.add("\treturn value;");
-				} else {
-					getterCode.add("\treturn _#name#;");
+				getterCode.add("\treturn _#name#;");
+				getterCode.add("}");
+				break;
+			case TRANSIMPL : 
+				getterCode.setVariable("ctype", rdc.getValue()
+						.getTransactionJavaAttributeImplementationTypeName(
+								schemaRootPackageName));
+				getterCode.add("public #type# #isOrGet#_#name#() {");
+				getterCode
+				.add("\t#ctype# value = _#name#.getValidValue(graph.getCurrentTransaction());");
+				if (rdc.getValue().isComposite()) {
+					getterCode.add("\tif(_#name# != null)");
+					getterCode.add("\t\tvalue.setName(name + \"_#name#\");");
 				}
-
+				getterCode.add("\treturn value;");
 				getterCode.add("}");
 			}
 			code.addNoIndent(getterCode);
@@ -319,7 +316,7 @@ public class RecordCodeGenerator extends CodeGenerator {
 	 * 
 	 * @return
 	 */
-	protected CodeBlock createSetterMethods(boolean createClass) {
+	protected CodeBlock createSetterMethods() {
 		CodeList code = new CodeList();
 		for (Entry<String, Domain> rdc : recordDomain.getComponents()
 				.entrySet()) {
@@ -331,79 +328,79 @@ public class RecordCodeGenerator extends CodeGenerator {
 					.getJavaAttributeImplementationTypeName(
 							schemaRootPackageName));
 
-			if (config.hasTransactionSupport())
-				setterCode.setVariable("ctype", rdc.getValue()
-						.getTransactionJavaAttributeImplementationTypeName(
-								schemaRootPackageName));
-			else
+			switch(currentCycle) {
+			case ABSTRACT : 
+				setterCode.add("public abstract void #setter#;");
+				break;
+			case STDIMPL : 
 				setterCode.setVariable("ctype", rdc.getValue()
 						.getJavaAttributeImplementationTypeName(
 								schemaRootPackageName));
-
-			if (!createClass)
-				setterCode.add("public abstract void #setter#;");
-			else {
 				setterCode.add("public void #setter# {");
-
-				if (config.hasTransactionSupport()) {
-					setterCode.setVariable("dvclass", rdc.getValue()
-							.getVersionedClass(schemaRootPackageName));
-
-					if (rdc.getValue().isComposite()) {
-						setterCode.setVariable("dname", rdc.getValue()
-								.getSimpleName());
-						setterCode.setVariable("dtransclass", rdc.getValue()
-								.getTransactionJavaClassName(
-										schemaRootPackageName));
-
-						setterCode
-								.add("\tif(_#name# != null && !(_#name# instanceof #dtransclass#))");
-						setterCode
-								.add("\t\tthrow new GraphException(\"The given parameter of type #dname# doesn't support transactions.\");");
-						setterCode
-								.add("\tif(_#name# != null && ((#jgTransPackage#.JGraLabCloneable)_#name#).getGraph() != graph)");
-						setterCode
-								.add("\t\tthrow new GraphException(\"The given parameter of type #dname# belongs to another graph.\");");
-					}
-
-					setterCode.add("\tif(graph.isLoading()) {");
-					setterCode
-							.add("\t\t this._#name# = new #dvclass#(graph, (#ctype#) _#name#);");
-					setterCode.add("\t\t this._#name#.setPartOfRecord(true);");
-					setterCode.add("\t}");
-					setterCode.add("\tif(this._#name# == null) {");
-					setterCode.add("\t\t this._#name# = new #dvclass#(graph);");
-					setterCode.add("\t\t this._#name#.setPartOfRecord(true);");
-					setterCode.add("\t}");
-
-					if (rdc.getValue().isComposite()) {
-						setterCode.add("\tif(_#name# != null)");
-						setterCode
-								.add("\t\t((JGraLabCloneable)_#name#).setName(name + \"_#name#\");");
-					}
-
-					setterCode
-							.add("\tthis._#name#.setValidValue((#ctype#) _#name#, graph.getCurrentTransaction());");
-				} else
-					setterCode.add("\tthis._#name# = (#ctype#) _#name#;");
-
+				setterCode.add("\tthis._#name# = (#ctype#) _#name#;");
 				setterCode.add("}");
+				break;
+			case TRANSIMPL : 
+				setterCode.setVariable("ctype", rdc.getValue()
+						.getTransactionJavaAttributeImplementationTypeName(
+								schemaRootPackageName));
+				setterCode.setVariable("dvclass", rdc.getValue()
+						.getVersionedClass(schemaRootPackageName));
+
+				setterCode.add("public void #setter# {");
+				if (rdc.getValue().isComposite()) {
+					setterCode.setVariable("dname", rdc.getValue()
+							.getSimpleName());
+					setterCode.setVariable("dtransclass", rdc.getValue()
+							.getTransactionJavaClassName(
+									schemaRootPackageName));
+
+					setterCode
+							.add("\tif(_#name# != null && !(_#name# instanceof #dtransclass#))");
+					setterCode
+							.add("\t\tthrow new GraphException(\"The given parameter of type #dname# doesn't support transactions.\");");
+					setterCode
+							.add("\tif(_#name# != null && ((#jgTransPackage#.JGraLabCloneable)_#name#).getGraph() != graph)");
+					setterCode
+							.add("\t\tthrow new GraphException(\"The given parameter of type #dname# belongs to another graph.\");");
+				}
+
+				setterCode.add("\tif(graph.isLoading()) {");
+				setterCode
+						.add("\t\t this._#name# = new #dvclass#(graph, (#ctype#) _#name#);");
+				setterCode.add("\t\t this._#name#.setPartOfRecord(true);");
+				setterCode.add("\t}");
+				setterCode.add("\tif(this._#name# == null) {");
+				setterCode.add("\t\t this._#name# = new #dvclass#(graph);");
+				setterCode.add("\t\t this._#name#.setPartOfRecord(true);");
+				setterCode.add("\t}");
+
+				if (rdc.getValue().isComposite()) {
+					setterCode.add("\tif(_#name# != null)");
+					setterCode
+							.add("\t\t((JGraLabCloneable)_#name#).setName(name + \"_#name#\");");
+				}
+
+				setterCode
+						.add("\tthis._#name#.setValidValue((#ctype#) _#name#, graph.getCurrentTransaction());");
+				setterCode.add("}");
+				break;
 			}
 			code.addNoIndent(setterCode);
 		}
 		return code;
 	}
 
-	private CodeBlock createFieldConstructor(boolean createClass) {
+	private CodeBlock createFieldConstructor() {
 		CodeList code = new CodeList();
-		if (createClass) {
+		if (currentCycle.isStdOrTransImpl()) {
 			StringBuilder sb = new StringBuilder();
 			CodeSnippet header = null;
 			header = new CodeSnippet(true,
 					"protected #simpleImplClassName#(Graph g, #fields#) {");
 
 			code.addNoIndent(header);
-			if (config.hasTransactionSupport())
+			if (currentCycle.isTransImpl())
 				code.add(new CodeSnippet("init(g);"));
 			else
 				code.add(new CodeSnippet("graph = g;"));
@@ -421,7 +418,7 @@ public class RecordCodeGenerator extends CodeGenerator {
 
 				CodeBlock assign = null;
 
-				if (config.hasTransactionSupport())
+				if (currentCycle.isTransImpl())
 					assign = new CodeSnippet("set_#name#(_#name#);");
 				else
 					assign = new CodeSnippet("this._#name# = _#name#;");
@@ -435,9 +432,9 @@ public class RecordCodeGenerator extends CodeGenerator {
 		return code;
 	}
 
-	private CodeBlock createMapConstructor(boolean createClass) {
+	private CodeBlock createMapConstructor() {
 		CodeList code = new CodeList();
-		if (createClass) {
+		if (currentCycle.isStdOrTransImpl()) {
 			// suppress "unchecked" warnings if this record domain contains a
 			// Collection domain (Set<E>, List<E>, Map<K, V>)
 			for (Domain d : recordDomain.getComponents().values()) {
@@ -453,7 +450,7 @@ public class RecordCodeGenerator extends CodeGenerator {
 							false,
 							"protected #simpleImplClassName#(Graph g, java.util.Map<String, Object> fields) {"));
 
-			if (config.hasTransactionSupport())
+			if (currentCycle.isTransImpl())
 				code.add(new CodeSnippet("init(g);"));
 			else
 				code.add(new CodeSnippet("graph=g;"));
@@ -461,7 +458,7 @@ public class RecordCodeGenerator extends CodeGenerator {
 			for (Entry<String, Domain> rdc : recordDomain.getComponents()
 					.entrySet()) {
 				CodeBlock assign = null;
-				if (config.hasTransactionSupport())
+				if (currentCycle.isTransImpl())
 					assign = new CodeSnippet(
 							"set_#name#((#cname#)fields.get(\"#name#\"));");
 				else
@@ -478,17 +475,17 @@ public class RecordCodeGenerator extends CodeGenerator {
 		return code;
 	}
 
-	private CodeBlock createReadComponentsMethod(boolean createClass) {
+	private CodeBlock createReadComponentsMethod() {
 		CodeList code = new CodeList();
 		// abstract class (or better use interface?)
-		if (createClass) {
+		if (currentCycle.isStdOrTransImpl()) {
 			addImports("#jgPackage#.GraphIO", "#jgPackage#.GraphIOException");
 			code
 					.addNoIndent(new CodeSnippet(
 							true,
 							"protected #simpleImplClassName#(Graph g, GraphIO io) throws GraphIOException {"));
 
-			if (config.hasTransactionSupport())
+			if (currentCycle.isTransImpl())
 				code.add(new CodeSnippet("init(g);"));
 			else
 				code.add(new CodeSnippet("graph = g;"));
@@ -496,7 +493,7 @@ public class RecordCodeGenerator extends CodeGenerator {
 			code.add(new CodeSnippet("io.match(\"(\");"));
 			for (Entry<String, Domain> c : recordDomain.getComponents()
 					.entrySet()) {
-				if (config.hasTransactionSupport()) {
+				if (currentCycle.isTransImpl()) {
 					code.add(c.getValue().getTransactionReadMethod(
 							schemaRootPackageName, "tmp_" + c.getKey(), "io"));
 					CodeSnippet cs = new CodeSnippet(
@@ -518,9 +515,9 @@ public class RecordCodeGenerator extends CodeGenerator {
 		return code;
 	}
 
-	private CodeBlock createWriteComponentsMethod(boolean createClass) {
+	private CodeBlock createWriteComponentsMethod() {
 		CodeList code = new CodeList();
-		if (!createClass) {
+		if (currentCycle.isAbstract()) {
 			addImports("#jgPackage#.GraphIO", "#jgPackage#.GraphIOException",
 					"java.io.IOException");
 			code
@@ -543,9 +540,9 @@ public class RecordCodeGenerator extends CodeGenerator {
 		return code;
 	}
 
-	private CodeBlock createRecordComponents(boolean createClass) {
+	private CodeBlock createRecordComponents() {
 		CodeList code = new CodeList();
-		if (createClass) {
+		if (currentCycle.isStdOrTransImpl()) {
 			for (Entry<String, Domain> rdc : recordDomain.getComponents()
 					.entrySet()) {
 				Domain dom = rdc.getValue();
@@ -554,7 +551,7 @@ public class RecordCodeGenerator extends CodeGenerator {
 						"private #type# _#field#;");
 				s.setVariable("field", rdc.getKey());
 
-				if (config.hasTransactionSupport())
+				if (currentCycle.isTransImpl())
 					s.setVariable("type", dom
 							.getVersionedClass(schemaRootPackageName));
 				else
@@ -572,10 +569,10 @@ public class RecordCodeGenerator extends CodeGenerator {
 	/**
 	 * Creates the toString()-method for this record domain
 	 */
-	private CodeBlock createToStringMethod(boolean createClass) {
+	private CodeBlock createToStringMethod() {
 		CodeList code = new CodeList();
 
-		if (!createClass) {
+		if (currentCycle.isAbstract()) {
 			code.addNoIndent(new CodeSnippet(true,
 					"public String toString() {",
 					"\tStringBuilder sb = new StringBuilder();"));
@@ -609,9 +606,9 @@ public class RecordCodeGenerator extends CodeGenerator {
 	 * 
 	 * @return
 	 */
-	private CodeBlock createCloneMethod(boolean createClass) {
+	private CodeBlock createCloneMethod() {
 		CodeList code = new CodeList();
-		if (config.hasTransactionSupport() && createClass) {
+		if (currentCycle.isTransImpl()) {
 
 			boolean suppressWarningsNeeded = false;
 			for (Domain dom : recordDomain.getComponents().values()) {

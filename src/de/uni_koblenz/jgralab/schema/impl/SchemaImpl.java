@@ -396,7 +396,6 @@ public class SchemaImpl implements Schema {
 					GRAPH_IMPLEMENTATION_PACKAGE, config);
 			javaSources.addAll(rcode.createJavaSources());
 		}
-		// if (config.hasTransactionSupport())
 		for (Domain domain : getEnumDomains()) {
 			CodeGenerator ecode = new EnumCodeGenerator((EnumDomain) domain,
 					packagePrefix, GRAPH_IMPLEMENTATION_PACKAGE);
@@ -428,12 +427,6 @@ public class SchemaImpl implements Schema {
 		}
 
 		javaSources.addAll(createClasses(config));
-		if (config.hasTransactionSupport() && config.hasStandardSupport()) {
-			CodeGeneratorConfiguration stdconfig = new CodeGeneratorConfiguration(
-					config);
-			stdconfig.setTransactionSupport(false);
-			javaSources.addAll(createClasses(stdconfig));
-		}
 
 		return javaSources;
 	}
@@ -499,7 +492,6 @@ public class SchemaImpl implements Schema {
 				}
 			}
 		}
-		// if (!config.hasTransactionSupport())
 		for (Domain domain : getEnumDomains()) {
 			CodeGenerator ecode = new EnumCodeGenerator((EnumDomain) domain,
 					packagePrefix, GRAPH_IMPLEMENTATION_PACKAGE);
@@ -559,13 +551,6 @@ public class SchemaImpl implements Schema {
 
 		createFiles(config, pathPrefix, progressFunction, schemaElements,
 				currentCount, interval);
-		if (config.hasTransactionSupport() && config.hasStandardSupport()) {
-			CodeGeneratorConfiguration stdconfig = new CodeGeneratorConfiguration(
-					config);
-			stdconfig.setTransactionSupport(false);
-			createFiles(stdconfig, pathPrefix, progressFunction,
-					schemaElements, currentCount, interval);
-		}
 
 		// finish progress bar
 		if (progressFunction != null) {

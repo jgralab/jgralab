@@ -49,7 +49,7 @@ public class GraphFactoryGenerator extends CodeGenerator {
 	}
 
 	@Override
-	protected CodeBlock createHeader(boolean createClass) {
+	protected CodeBlock createHeader() {
 		addImports("#jgImplPackage#.GraphFactoryImpl");
 		CodeSnippet code = new CodeSnippet(true);
 		code.setVariable("className", schema.getName() + "Factory");
@@ -58,10 +58,12 @@ public class GraphFactoryGenerator extends CodeGenerator {
 	}
 
 	@Override
-	protected CodeBlock createBody(boolean createClass) {
+	protected CodeBlock createBody() {
 		CodeList code = new CodeList();
-		code.add(createConstructor());
-		code.add(createFillTableMethod());
+		if (currentCycle.isClassOnly()) {
+			code.add(createConstructor());
+			code.add(createFillTableMethod());
+		}
 		return code;
 	}
 

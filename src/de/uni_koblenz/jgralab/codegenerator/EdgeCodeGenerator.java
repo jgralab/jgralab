@@ -53,7 +53,7 @@ public class EdgeCodeGenerator extends AttributedElementCodeGenerator {
 	}
 
 	@Override
-	protected CodeBlock createHeader(boolean createClass) {
+	protected CodeBlock createHeader() {
 		CodeList code = new CodeList();
 		EdgeClass ec = (EdgeClass) aec;
 		code.setVariable("fromVertexClass", ec.getFrom().getQualifiedName());
@@ -69,7 +69,7 @@ public class EdgeCodeGenerator extends AttributedElementCodeGenerator {
 		snippet.add(" * ToRoleName : #toRoleName#");
 		snippet.add(" */");
 		code.addNoIndent(snippet);
-		code.addNoIndent(super.createHeader(createClass));
+		code.addNoIndent(super.createHeader());
 		// adds the composition interface, since composition might be no
 		// "direct" superclass
 		if (aec instanceof CompositionClass) {
@@ -81,38 +81,41 @@ public class EdgeCodeGenerator extends AttributedElementCodeGenerator {
 	}
 
 	@Override
-	protected CodeBlock createBody(boolean createClass) {
-		CodeList code = (CodeList) super.createBody(createClass);
-		if (createClass) {
+	protected CodeBlock createBody() {
+		CodeList code = (CodeList) super.createBody();
+		if (currentCycle.isStdOrTransImpl()) {
 			rootBlock.setVariable("baseClassName", "EdgeImpl");
-			if (!config.hasTransactionSupport()) {
+			if (currentCycle.isStdImpl()) {
 				addImports("#jgImplStdPackage#.#baseClassName#");
-			} else {
+			} 
+			if(currentCycle.isTransImpl()) {
 				addImports("#jgImplTransPackage#.#baseClassName#");
 			}
 		}
-		if (config.hasTypeSpecificMethodsSupport()) {
-			code.add(createNextEdgeInGraphMethods(createClass));
-			code.add(createNextEdgeAtVertexMethods(createClass));
+		if (config.hasTypeSpecificMethodsSupport() && !currentCycle.isClassOnly()) {
+			code.add(createNextEdgeInGraphMethods());
+			code.add(createNextEdgeAtVertexMethods());
 		}	
 		return code;
 	}
 
 	@Override
 	protected CodeBlock createSpecialConstructorCode() {
-		if (!config.hasTransactionSupport()) {
+		if (currentCycle.isStdImpl()) {
 			addImports("#schemaImplStdPackage#.Reversed#simpleClassName#Impl");
 			return new CodeSnippet(
 					"reversedEdge = new Reversed#simpleClassName#Impl(this, g);");
-		} else {
+		} 
+		if(currentCycle.isTransImpl()) {
 			addImports("#schemaImplTransPackage#.Reversed#simpleClassName#Impl");
 			return new CodeSnippet(
 					"reversedEdge = new Reversed#simpleClassName#Impl(this, g);\n"
 							+ "\t");
 		}
+		return new CodeSnippet();
 	}
 
-	private CodeBlock createNextEdgeInGraphMethods(boolean createClass) {
+	private CodeBlock createNextEdgeInGraphMethods() {
 		CodeList code = new CodeList();
 
 		TreeSet<AttributedElementClass> superClasses = new TreeSet<AttributedElementClass>();
@@ -125,12 +128,10 @@ public class EdgeCodeGenerator extends AttributedElementCodeGenerator {
 				continue;
 			}
 			EdgeClass ecl = (EdgeClass) ec;
-			code.addNoIndent(createNextEdgeInGraphMethod(ecl, false,
-					createClass));
+			code.addNoIndent(createNextEdgeInGraphMethod(ecl, false));
 			if (config.hasMethodsForSubclassesSupport()) {
 				if (!ecl.isAbstract()) {
-					code.addNoIndent(createNextEdgeInGraphMethod(ecl, true,
-							createClass));
+					code.addNoIndent(createNextEdgeInGraphMethod(ecl, true));
 				}
 			}
 		}
@@ -138,7 +139,7 @@ public class EdgeCodeGenerator extends AttributedElementCodeGenerator {
 	}
 
 	private CodeBlock createNextEdgeInGraphMethod(EdgeClass ec,
-			boolean withTypeFlag, boolean createClass) {
+			boolean withTypeFlag) {
 		CodeSnippet code = new CodeSnippet(true);
 		code.setVariable("ecQualifiedName", schemaRootPackageName + "."
 				+ ec.getQualifiedName());
@@ -146,7 +147,7 @@ public class EdgeCodeGenerator extends AttributedElementCodeGenerator {
 		code.setVariable("formalParams", (withTypeFlag ? "boolean noSubClasses"	: ""));
 		code.setVariable("actualParams", (withTypeFlag ? ", noSubClasses" : ""));
 
-		if (!createClass) {
+		if (currentCycle.isAbstract()) {
 			code.add("/**",
 					 " * @return the next #ecQualifiedName# edge in the global edge sequence");
 			if (withTypeFlag) {
@@ -154,7 +155,8 @@ public class EdgeCodeGenerator extends AttributedElementCodeGenerator {
 			}
 			code.add(" */",
 					 "public #ecQualifiedName# getNext#ecCamelName#InGraph(#formalParams#);");
-		} else {
+		} 
+		if(currentCycle.isStdOrTransImpl()) {
 			code.add("public #ecQualifiedName# getNext#ecCamelName#InGraph(#formalParams#) {",
 					 "\treturn (#ecQualifiedName#)getNextEdgeOfClassInGraph(#ecQualifiedName#.class#actualParams#);",
 					 "}");
@@ -162,7 +164,7 @@ public class EdgeCodeGenerator extends AttributedElementCodeGenerator {
 		return code;
 	}
 
-	private CodeBlock createNextEdgeAtVertexMethods(boolean createClass) {
+	private CodeBlock createNextEdgeAtVertexMethods() {
 		CodeList code = new CodeList();
 
 		TreeSet<AttributedElementClass> superClasses = new TreeSet<AttributedElementClass>();
@@ -176,16 +178,14 @@ public class EdgeCodeGenerator extends AttributedElementCodeGenerator {
 			}
 			addImports("#jgPackage#.EdgeDirection");
 			EdgeClass ecl = (EdgeClass) ec;
-			code.addNoIndent(createNextEdgeAtVertexMethod(ecl, false, false,
-					createClass));
-			code.addNoIndent(createNextEdgeAtVertexMethod(ecl, true, false,
-					createClass));
+			code.addNoIndent(createNextEdgeAtVertexMethod(ecl, false, false));
+			code.addNoIndent(createNextEdgeAtVertexMethod(ecl, true, false));
 			if (config.hasMethodsForSubclassesSupport()) {
 				if (!ecl.isAbstract()) {
 					code.addNoIndent(createNextEdgeAtVertexMethod(ecl, false,
-							true, createClass));
+							true));
 					code.addNoIndent(createNextEdgeAtVertexMethod(ecl, true,
-							true, createClass));
+							true));
 				}
 			}
 		}
@@ -193,7 +193,7 @@ public class EdgeCodeGenerator extends AttributedElementCodeGenerator {
 	}
 
 	private CodeBlock createNextEdgeAtVertexMethod(EdgeClass ec,
-			boolean withOrientation, boolean withTypeFlag, boolean createClass) {
+			boolean withOrientation, boolean withTypeFlag) {
 
 		CodeSnippet code = new CodeSnippet(true);
 		code.setVariable("ecQualifiedName", schemaRootPackageName + "."
@@ -208,7 +208,7 @@ public class EdgeCodeGenerator extends AttributedElementCodeGenerator {
 						+ (withOrientation ? "orientation" : "")
 						+ (withOrientation && withTypeFlag ? ", " : "")
 						+ (withTypeFlag ? "noSubClasses" : ""));
-		if (!createClass) {
+		if (currentCycle.isAbstract()) {
 			code.add("/**",
 					 " * @return the next edge of class #ecQualifiedName# at the \"this\" vertex");
 
@@ -220,7 +220,8 @@ public class EdgeCodeGenerator extends AttributedElementCodeGenerator {
 			}
 			code.add(" */",
 					 "public #ecQualifiedName# getNext#ecCamelName#(#formalParams#);");
-		} else {
+		}
+		if(currentCycle.isStdOrTransImpl()) {
 			code.add("public #ecQualifiedName# getNext#ecCamelName#(#formalParams#) {",
 					 "\treturn (#ecQualifiedName#)getNextEdgeOfClass(#ecQualifiedName#.class#actualParams#);",
 					 "}");
