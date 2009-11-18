@@ -59,6 +59,7 @@ import de.uni_koblenz.ist.utilities.option_handler.OptionHandler;
 import de.uni_koblenz.jgralab.AttributedElement;
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.Graph;
+import de.uni_koblenz.jgralab.GraphException;
 import de.uni_koblenz.jgralab.GraphIO;
 import de.uni_koblenz.jgralab.GraphIOException;
 import de.uni_koblenz.jgralab.GraphMarker;
@@ -83,6 +84,7 @@ public class Xml2tg {
 
 	private String tgOutput;
 	private boolean multiXml = false;
+	private boolean keepGoing = false;
 
 	private Schema schema;
 	private Graph graph;
@@ -123,24 +125,10 @@ public class Xml2tg {
 			return aec;
 		}
 
-		public String getqName() {
-			return aec.getQualifiedName();
-		}
-
 		public Map<String, String> getAttributes() {
 			return attributes;
 		}
 	}
-
-	// public static void validate(String filename, String xsdFilename)
-	// throws FileNotFoundException, XMLStreamException {
-	// XMLInputFactory factory = XMLInputFactory.newInstance();
-	// XMLStreamReader reader = factory
-	// .createXMLStreamReader(new FileInputStream(filename));
-	// SchemaFactory schemaFactory =
-	// SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
-	// schemaFactory.setErrorHandler()
-	// }
 
 	public static void main(String[] args) throws FileNotFoundException,
 			XMLStreamException, GraphIOException, ClassNotFoundException,
@@ -169,6 +157,7 @@ public class Xml2tg {
 						new FileInputStream(inputXML)), outputFilename, schema);
 				xml2tg.setAssumeVerticesBeforeEdges(cmdl.hasOption('V'));
 				xml2tg.setMultiXml(cmdl.hasOption('m'));
+				xml2tg.setKeepGoing(cmdl.hasOption('k'));
 			} else {
 				xml2tg.setXmlInput(inputXML);
 			}
@@ -196,7 +185,7 @@ public class Xml2tg {
 				"(required): Name of the schema class, e.g. de.soamig.schema.SoamigSchema_0_12.  "
 						+ "It has to be compiled and in the classpath.");
 		schema.setRequired(true);
-		schema.setArgName("file");
+		schema.setArgName("name");
 		optionHandler.addOption(schema);
 
 		Option verticesBeforeEdges = new Option(
@@ -216,6 +205,14 @@ public class Xml2tg {
 				"(optional): if this flag is set, then the result is one graph containing all vertices and edges from all given XML files.");
 		multiXmlIntoOneGraph.setRequired(false);
 		optionHandler.addOption(multiXmlIntoOneGraph);
+
+		Option keepGoing = new Option(
+				"k",
+				"keep-going",
+				false,
+				"(optional): if this flag is set, then exceptions while creating edges won't abort.");
+		keepGoing.setRequired(false);
+		optionHandler.addOption(keepGoing);
 
 		optionHandler.setArgumentCount(Option.UNLIMITED_VALUES);
 		optionHandler.setArgumentName("xml-file");
@@ -299,10 +296,12 @@ public class Xml2tg {
 					try {
 						// System.out.println("Creating instance of "
 						// + graphClassName);
-						graph = (Graph) schema.getGraphCreateMethod(false).invoke(
-								null,
-								new Object[] { graphID, MAX_VERTEX_COUNT,
-										MAX_EDGE_COUNT });
+						graph = (Graph) schema.getGraphCreateMethod(false)
+								.invoke(
+										null,
+										new Object[] { graphID,
+												MAX_VERTEX_COUNT,
+												MAX_EDGE_COUNT });
 						// System.out.println("done.");
 					} catch (Exception e) {
 						throw new GraphIOException(
@@ -401,47 +400,38 @@ public class Xml2tg {
 		// create dummy vertices
 		Vertex fromVertex, toVertex;
 		fromVertex = xmlIdToVertexMap.get(fromId);
-		// if (fromVertex == null) {
-		// System.out.println("creating dummy vertex \"from\"");
-		// fromVertex = createDummyVertex(fromId);
-		// }
 		toVertex = xmlIdToVertexMap.get(toId);
-		// if (toVertex == null) {
-		// System.out.println("creating dummy vertex \"to\"");
-		// toVertex = createDummyVertex(toId);
-		// }
 
 		// create edge
-		Edge currentEdge = graph.createEdge(((EdgeClass) current
-				.getAttributedElementClass()).getM1Class(), fromVertex,
-				toVertex);
+		try {
+			Edge currentEdge = graph.createEdge(((EdgeClass) current
+					.getAttributedElementClass()).getM1Class(), fromVertex,
+					toVertex);
+			// mark new edge with incidence position information
+			IncidencePositionMark incidences = new IncidencePositionMark();
+			String fseq = attributes.get(GRUML_ATTRIBUTE_FSEQ);
+			String tseq = attributes.get(GRUML_ATTRIBUTE_TSEQ);
+			incidences.fseq = fseq == null ? Integer.MAX_VALUE : Integer
+					.parseInt(fseq);
+			incidences.tseq = tseq == null ? Integer.MAX_VALUE : Integer
+					.parseInt(tseq);
+			incidencePositionMarker.mark(currentEdge, incidences);
 
-		// mark new edge with incidence position information
-		IncidencePositionMark incidences = new IncidencePositionMark();
-		String fseq = attributes.get(GRUML_ATTRIBUTE_FSEQ);
-		String tseq = attributes.get(GRUML_ATTRIBUTE_TSEQ);
-		incidences.fseq = fseq == null ? Integer.MAX_VALUE : Integer
-				.parseInt(fseq);
-		incidences.tseq = tseq == null ? Integer.MAX_VALUE : Integer
-				.parseInt(tseq);
-		incidencePositionMarker.mark(currentEdge, incidences);
+			// delete some attributes from HashMap
+			attributes.remove(GRUML_ATTRIBUTE_TO);
+			attributes.remove(GRUML_ATTRIBUTE_FROM);
+			attributes.remove(GRUML_ATTRIBUTE_FSEQ);
+			attributes.remove(GRUML_ATTRIBUTE_TSEQ);
 
-		// delete some attributes from HashMap
-		attributes.remove(GRUML_ATTRIBUTE_TO);
-		attributes.remove(GRUML_ATTRIBUTE_FROM);
-		attributes.remove(GRUML_ATTRIBUTE_FSEQ);
-		attributes.remove(GRUML_ATTRIBUTE_TSEQ);
-
-		// set attributes for Edge
-		setAttributes(currentEdge, attributes);
+			// set attributes for Edge
+			setAttributes(currentEdge, attributes);
+		} catch (GraphException e) {
+			e.printStackTrace();
+			if (!keepGoing) {
+				System.exit(1);
+			}
+		}
 	}
-
-	// private Vertex createDummyVertex(String xmlId) {
-	// Vertex dummyVertex;
-	// dummyVertex = graph.createVertex(Vertex.class);
-	// dummyVertexMap.put(xmlId, dummyVertex);
-	// return dummyVertex;
-	// }
 
 	private void createVertex(AttributedElementInfo current) {
 		// System.out.println("Creating vertex of type " + current.getqName());
@@ -449,18 +439,6 @@ public class Xml2tg {
 		Vertex currentVertex = graph.createVertex(((VertexClass) current
 				.getAttributedElementClass()).getM1Class());
 		String currentId = attributes.get(GRUML_ATTRIBUTE_ID);
-
-		// check if dummy vertex of this id exists if so, add the edges to the
-		// new vertex and delet ethe dummy vertex
-		// Vertex currentDummyVertex = dummyVertexMap.get(currentId);
-		// if (currentDummyVertex != null) {
-		// for (Edge currentIncidence : currentDummyVertex.incidences()) {
-		// currentIncidence.setThis(currentVertex);
-		// }
-		// dummyVertexMap.remove(currentId);
-		// graph.deleteVertex(currentDummyVertex);
-		// System.out.println("Replaced dummy vertex.");
-		// }
 
 		// add currentVertex to Map
 		xmlIdToVertexMap.put(currentId, currentVertex);
@@ -473,11 +451,6 @@ public class Xml2tg {
 
 	private void setAttributes(AttributedElement element,
 			Map<String, String> attributes) {
-		// System.out.println("Setting attributes for instance of "
-		// + element.getAttributedElementClass().getQualifiedName());
-		// if (element instanceof GraphElement) {
-		// System.out.println("Id: " + ((GraphElement) element).getId());
-		// }
 
 		for (Entry<String, String> currentEntry : attributes.entrySet()) {
 			try {
@@ -501,10 +474,11 @@ public class Xml2tg {
 		this.multiXml = multiXml;
 	}
 
-	// private Vertex createDummyVertex(String xmlId) {
-	// Vertex dummyVertex;
-	// dummyVertex = graph.createVertex(Vertex.class);
-	// dummyVertexMap.put(xmlId, dummyVertex);
-	// return dummyVertex;
-	// }
+	public boolean isKeepGoing() {
+		return keepGoing;
+	}
+
+	public void setKeepGoing(boolean keepGoing) {
+		this.keepGoing = keepGoing;
+	}
 }
