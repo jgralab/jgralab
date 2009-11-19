@@ -390,8 +390,8 @@ public class Rsa2Tg extends XmlProcessor {
 		r.setUseNavigability(cli.hasOption('n'));
 
 		// If no output option is selected, Rsa2Tg will abort.
-		if (!cli.hasOption('o') && !cli.hasOption('o') && !cli.hasOption('o')
-				&& !cli.hasOption('o')) {
+		if (!cli.hasOption('o') && !cli.hasOption('s') && !cli.hasOption('e')
+				&& !cli.hasOption('r')) {
 			System.err.println("No output Option has been selected!");
 			System.err
 					.println("Please use the commandline option '-h' to look up all possibilities.");
