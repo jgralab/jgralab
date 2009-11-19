@@ -57,7 +57,7 @@ public abstract class CodeGenerator {
 		 * 
 		 * @return
 		 */
-		public boolean isStdImpl() {
+		protected boolean isStdImpl() {
 			if(this == STDIMPL)
 				return true;
 			return false;
@@ -67,7 +67,7 @@ public abstract class CodeGenerator {
 		 * 
 		 * @return
 		 */
-		public boolean isTransImpl() {
+		protected boolean isTransImpl() {
 			if(this == TRANSIMPL)
 				return true;
 			return false;
@@ -77,7 +77,7 @@ public abstract class CodeGenerator {
 		 * 
 		 * @return
 		 */
-		public boolean isAbstract() {
+		protected boolean isAbstract() {
 			if(this == ABSTRACT)
 				return true;
 			return false;
@@ -87,7 +87,7 @@ public abstract class CodeGenerator {
 		 * 
 		 * @return
 		 */
-		public boolean isClassOnly() {
+		protected boolean isClassOnly() {
 			if(this == CLASSONLY)
 				return true;
 			return false;
@@ -97,7 +97,7 @@ public abstract class CodeGenerator {
 		 * 
 		 * @return
 		 */
-		public boolean isStdOrTransImpl() {
+		protected boolean isStdOrTransImpl() {
 			if(this == STDIMPL || this == TRANSIMPL)
 				return true;
 			return false;
@@ -376,10 +376,10 @@ public abstract class CodeGenerator {
 	 * 
 	 * @return 
 	 */
-	public GenerationCycle getNextCycle() {
+	private GenerationCycle getNextCycle() {
 		// end of generation cycle
 		if(cycleCount >= cycles.length) {
-			cycleCount = 0;
+			//cycleCount = 0;
 			return null;
 		}
 
