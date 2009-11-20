@@ -207,9 +207,9 @@ public class GraphCodeGenerator extends AttributedElementCodeGenerator {
 		addImports("#schemaPackageName#.#schemaName#");
 		CodeSnippet code = new CodeSnippet(true);
 		if (currentCycle.isTransImpl())
-			code.setVariable("createSuffix", "");
-		if(currentCycle.isStdImpl());
 			code.setVariable("createSuffix", "WithTransactionSupport");
+		if(currentCycle.isStdImpl())
+			code.setVariable("createSuffix", "");
 		
 		code
 				.add(
