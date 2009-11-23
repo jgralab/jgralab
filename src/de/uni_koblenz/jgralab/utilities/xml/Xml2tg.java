@@ -33,10 +33,8 @@ import static javax.xml.stream.XMLStreamConstants.END_ELEMENT;
 import static javax.xml.stream.XMLStreamConstants.START_DOCUMENT;
 import static javax.xml.stream.XMLStreamConstants.START_ELEMENT;
 
-import java.io.BufferedInputStream;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Comparator;
@@ -102,6 +100,8 @@ public class Xml2tg {
 
 	private boolean assumeVerticesBeforeEdges;
 
+	private String xmlInput;
+
 	private static class IncidencePositionMark {
 		public int fseq, tseq;
 	}
@@ -153,8 +153,7 @@ public class Xml2tg {
 		Xml2tg xml2tg = null;
 		for (String inputXML : cmdl.getArgs()) {
 			if (xml2tg == null) {
-				xml2tg = new Xml2tg(new BufferedInputStream(
-						new FileInputStream(inputXML)), outputFilename, schema);
+				xml2tg = new Xml2tg(inputXML, outputFilename, schema);
 				xml2tg.setAssumeVerticesBeforeEdges(cmdl.hasOption('V'));
 				xml2tg.setMultiXml(cmdl.hasOption('m'));
 				xml2tg.setKeepGoing(cmdl.hasOption('k'));
@@ -221,13 +220,14 @@ public class Xml2tg {
 		return optionHandler.parse(args);
 	}
 
-	public Xml2tg(InputStream xmlInput, String tgOutput, Schema schema)
-			throws XMLStreamException {
+	public Xml2tg(String inputXml, String tgOutput, Schema schema)
+			throws XMLStreamException, FileNotFoundException {
 		this.tgOutput = tgOutput;
+		this.xmlInput = inputXml;
 		this.schema = schema;
 		xmlIdToVertexMap = new HashMap<String, Vertex>();
 		XMLInputFactory factory = XMLInputFactory.newInstance();
-		reader = factory.createXMLStreamReader(xmlInput);
+		reader = factory.createXMLStreamReader(new FileInputStream(inputXml));
 		stack = new Stack<AttributedElementInfo>();
 		// dummyVertexMap = new HashMap<String, Vertex>();
 		assumeVerticesBeforeEdges = false;
@@ -426,6 +426,8 @@ public class Xml2tg {
 			// set attributes for Edge
 			setAttributes(currentEdge, attributes);
 		} catch (GraphException e) {
+			System.err.println("In file " + xmlInput + " at edge with ID "
+					+ current.attributes.get(GRUML_ATTRIBUTE_ID));
 			e.printStackTrace();
 			if (!keepGoing) {
 				System.exit(1);
