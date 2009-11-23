@@ -126,6 +126,26 @@ public class Xml2tg {
 		public Map<String, String> getAttributes() {
 			return attributes;
 		}
+
+		@Override
+		public String toString() {
+			StringBuffer sb = new StringBuffer();
+			sb.append(aec.getQualifiedName());
+			sb.append(": ");
+			boolean first = true;
+			for (Entry<String, String> e : attributes.entrySet()) {
+				if (first) {
+					first = false;
+				} else {
+					sb.append(", ");
+				}
+				sb.append(e.getKey());
+				sb.append(" = '");
+				sb.append(e.getValue());
+				sb.append("'");
+			}
+			return sb.toString();
+		}
 	}
 
 	public static void main(String[] args) throws FileNotFoundException,
@@ -221,19 +241,18 @@ public class Xml2tg {
 	public Xml2tg(String inputXml, String tgOutput, Schema schema)
 			throws XMLStreamException, FileNotFoundException {
 		this.tgOutput = tgOutput;
-		this.xmlInput = inputXml;
 		this.schema = schema;
 		xmlIdToVertexMap = new HashMap<String, Vertex>();
-		XMLInputFactory factory = XMLInputFactory.newInstance();
-		reader = factory.createXMLStreamReader(new FileInputStream(inputXml));
 		stack = new Stack<AttributedElementInfo>();
 		assumeVerticesBeforeEdges = false;
+		setXmlInput(inputXml);
 	}
 
 	public void setXmlInput(String fileName) throws FileNotFoundException,
 			XMLStreamException, FactoryConfigurationError {
 		reader = XMLInputFactory.newInstance().createXMLStreamReader(
 				new FileInputStream(fileName));
+		xmlInput = fileName;
 		stack.clear();
 		xmlIdToVertexMap.clear();
 
@@ -415,8 +434,7 @@ public class Xml2tg {
 			// set attributes for Edge
 			setAttributes(currentEdge, attributes);
 		} catch (GraphException e) {
-			System.err.println("In file " + xmlInput + " at edge with ID "
-					+ current.attributes.get(GRUML_ATTRIBUTE_ID));
+			System.err.println("In file " + xmlInput + " at edge " + current);
 			e.printStackTrace();
 			if (!keepGoing) {
 				System.exit(1);
