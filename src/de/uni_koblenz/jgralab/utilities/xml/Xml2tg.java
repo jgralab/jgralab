@@ -91,8 +91,6 @@ public class Xml2tg {
 	private Stack<AttributedElementInfo> stack;
 
 	private Map<String, Vertex> xmlIdToVertexMap;
-	// private BooleanGraphMarker dummyVertexMarker;
-	// private Map<String, Vertex> dummyVertexMap;
 
 	private Queue<AttributedElementInfo> edgesToCreate;
 
@@ -229,7 +227,6 @@ public class Xml2tg {
 		XMLInputFactory factory = XMLInputFactory.newInstance();
 		reader = factory.createXMLStreamReader(new FileInputStream(inputXml));
 		stack = new Stack<AttributedElementInfo>();
-		// dummyVertexMap = new HashMap<String, Vertex>();
 		assumeVerticesBeforeEdges = false;
 	}
 
@@ -244,11 +241,6 @@ public class Xml2tg {
 
 	public void importXml() throws XMLStreamException, ClassNotFoundException,
 			GraphIOException {
-		// read root element
-		// if (reader.hasNext()) {
-		// int nextEvent = reader.next();
-		// // assert (nextEvent == START_ELEMENT);
-		// }
 		int level = 0;
 		int elementCount = 0;
 		if (!assumeVerticesBeforeEdges) {
@@ -309,13 +301,10 @@ public class Xml2tg {
 										+ graphClassName, e);
 					}
 					// inicialize markers
-					// dummyVertexMarker = new BooleanGraphMarker(graph);
 					incidencePositionMarker = new GraphMarker<IncidencePositionMark>(
 							graph);
 
 				}
-				// System.out.println(reader.getName() + ":"); \\
-
 				break;
 			case END_ELEMENT:
 				AttributedElementInfo current = stack.pop();
