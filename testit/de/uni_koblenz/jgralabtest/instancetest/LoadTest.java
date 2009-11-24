@@ -5,11 +5,9 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
-import java.io.File;
 import java.lang.reflect.Field;
 import java.util.Collection;
 
-import org.junit.AfterClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
@@ -65,33 +63,62 @@ public class LoadTest extends InstanceTest {
 	}
 
 	@Test
-	public void testFreeElementList() {
+	public void testFreeElementList() throws CommitFailedException {
 		onlyTestWithoutTransactionSupport();
 		Greql2 g1 = null;
 		Greql2 g2 = null;
 		try {
+			// g1 is always without transaction support
 			g1 = createTestGraph();
 			GraphIO.saveGraphToFile(TESTGRAPH_PATH + TESTGRAPH_FILENAME, g1,
 					null);
-			g2 = Greql2Schema.instance().loadGreql2(
-					TESTGRAPH_PATH + TESTGRAPH_FILENAME);
+			g2 = transactionsEnabled ? Greql2Schema.instance()
+					.loadGreql2WithTransactionSupport(
+							TESTGRAPH_PATH + TESTGRAPH_FILENAME) : Greql2Schema
+					.instance().loadGreql2(TESTGRAPH_PATH + TESTGRAPH_FILENAME);
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		}
+		createReadOnlyTransaction(g2);
 		checkEqualVertexList(g1, g2);
 		checkEqualEdgeList(g1, g2);
+		commit(g2);
+
+		createTransaction(g2);
 		fillVertexList(g1, g2);
+		commit(g2);
+
+		createReadOnlyTransaction(g2);
 		checkEqualVertexList(g1, g2);
 		checkEqualEdgeList(g1, g2);
+		commit(g2);
+
+		createTransaction(g2);
 		removeVertices(g1, g2);
+		commit(g2);
+
+		createReadOnlyTransaction(g2);
 		checkEqualVertexList(g1, g2);
 		checkEqualEdgeList(g1, g2);
+		commit(g2);
+
+		createTransaction(g2);
 		fillVertexList(g1, g2);
+		commit(g2);
+
+		createReadOnlyTransaction(g2);
 		checkEqualVertexList(g1, g2);
 		checkEqualEdgeList(g1, g2);
+		commit(g2);
+
+		createTransaction(g2);
 		removeVertices(g1, g2);
+		commit(g2);
+
+		createReadOnlyTransaction(g2);
 		checkEqualVertexList(g1, g2);
 		checkEqualEdgeList(g1, g2);
+		commit(g2);
 	}
 
 	private void checkEqualVertexList(Graph g1, Graph g2) {
@@ -252,7 +279,8 @@ public class LoadTest extends InstanceTest {
 
 	/**
 	 * Test if graph has only one vertex.
-	 * @throws CommitFailedException 
+	 * 
+	 * @throws CommitFailedException
 	 */
 	@Test
 	public void allocateIndexTest0() throws CommitFailedException {
@@ -275,7 +303,8 @@ public class LoadTest extends InstanceTest {
 	/**
 	 * Test if graph has a limit of one vertex and you want to create another
 	 * one.
-	 * @throws CommitFailedException 
+	 * 
+	 * @throws CommitFailedException
 	 */
 	@Test
 	public void allocateIndexTest1() throws CommitFailedException {
@@ -299,7 +328,8 @@ public class LoadTest extends InstanceTest {
 
 	/**
 	 * Test if you fill runs completely by the allocate method.
-	 * @throws CommitFailedException 
+	 * 
+	 * @throws CommitFailedException
 	 */
 	@Test
 	public void allocateIndexTest2() throws CommitFailedException {
@@ -307,15 +337,21 @@ public class LoadTest extends InstanceTest {
 		createTransaction(g);
 		FreeIndexList vList = getFreeIndexListOfVertices(g, true);
 		commit(g);
-		createTransaction(g);
 		for (int i = 0; i < 18; i++) {
+			createTransaction(g);
 			g.createA();
+			commit(g);
 		}
 		// delete every second vertex
 		for (int i = 1; i < 15; i = i + 2) {
+			createTransaction(g);
 			g.getVertex(i).delete();
+			commit(g);
 		}
+		createTransaction(g);
 		g.getVertex(2).delete();
+		commit(g);
+		createTransaction(g);
 		g.getVertex(15).delete();
 		commit(g);
 		createReadOnlyTransaction(g);
@@ -335,7 +371,8 @@ public class LoadTest extends InstanceTest {
 	 * Test if you reach an increase of runs by the allocate method.
 	 * runs=[2,-1,1,-1,1,-1,1,-1,1,-1,1,-1,1,-1,1,-1] and then create a new
 	 * vertex.
-	 * @throws CommitFailedException 
+	 * 
+	 * @throws CommitFailedException
 	 */
 	@Test
 	public void allocateIndexTest3() throws CommitFailedException {
@@ -343,17 +380,23 @@ public class LoadTest extends InstanceTest {
 		createReadOnlyTransaction(g);
 		FreeIndexList vList = getFreeIndexListOfVertices(g, true);
 		commit(g);
-		createTransaction(g);
 		for (int i = 1; i <= 17; i++) {
+			createTransaction(g);
 			g.createA();
+			commit(g);
 		}
 		// delete the vertices
+		createTransaction(g);
 		g.getVertex(1).delete();
-		g.getVertex(2).delete();
-		for (int i = 4; i <= 17; i = i + 2) {
-			g.getVertex(i).delete();
-		}
 		commit(g);
+		createTransaction(g);
+		g.getVertex(2).delete();
+		commit(g);
+		for (int i = 4; i <= 17; i = i + 2) {
+			createTransaction(g);
+			g.getVertex(i).delete();
+			commit(g);
+		}
 		createReadOnlyTransaction(g);
 		checkFreeIndexList(vList, 8, 9, 16, 2, -1, 1, -1, 1, -1, 1, -1, 1, -1,
 				1, -1, 1, -1, 1, -1);
@@ -370,12 +413,13 @@ public class LoadTest extends InstanceTest {
 	/**
 	 * Test if you create 17 vertices and you delete every second(FreeIndexList
 	 * must be increased).
-	 * @throws CommitFailedException 
+	 * 
+	 * @throws CommitFailedException
 	 */
 	@Test
 	public void freeRangeTest0() throws CommitFailedException {
 		VertexTestGraph g = createVertexTestGraph(1, 1);
-		
+
 		createReadOnlyTransaction(g);
 		FreeIndexList vList = getFreeIndexListOfVertices(g, true);
 		commit(g);
@@ -401,7 +445,8 @@ public class LoadTest extends InstanceTest {
 
 	/**
 	 * A graph which has at most 2 vertices. One vertex is created and deleted.
-	 * @throws CommitFailedException 
+	 * 
+	 * @throws CommitFailedException
 	 */
 	@Test
 	public void freeRangeTest1() throws CommitFailedException {
@@ -426,7 +471,8 @@ public class LoadTest extends InstanceTest {
 	/**
 	 * Delete first node at a FreeIndexList.runs= [-2, 1, -1, 1, -1, 1, -1, 1,
 	 * -1, 1, -1, 1, -1, 1, -1, 1]
-	 * @throws CommitFailedException 
+	 * 
+	 * @throws CommitFailedException
 	 */
 	@Test
 	public void freeRangeTest2() throws CommitFailedException {
@@ -467,7 +513,8 @@ public class LoadTest extends InstanceTest {
 	/**
 	 * FreeIndexList.runs= [1, -1, 1, -1, 1, -1, 1, -1, 1, -1, 1, -1, 1, -3, 0,
 	 * 0] Delete the middle vertex of -3.
-	 * @throws CommitFailedException 
+	 * 
+	 * @throws CommitFailedException
 	 */
 	@Test
 	public void freeRangeTest3() throws CommitFailedException {
@@ -507,7 +554,8 @@ public class LoadTest extends InstanceTest {
 	/**
 	 * FreeIndexList.runs= [1, -1, 1, -3, 1, -1, 1, -1, 1, -1, 1, -1, 1, -1, 0,
 	 * 0] Delete the middle vertex of -3.
-	 * @throws CommitFailedException 
+	 * 
+	 * @throws CommitFailedException
 	 */
 	@Test
 	public void freeRangeTest4() throws CommitFailedException {
@@ -548,7 +596,8 @@ public class LoadTest extends InstanceTest {
 
 	/**
 	 * FreeIndexList.runs= [-1, 1, -2, 0,...] Delete the first vertex of -2.
-	 * @throws CommitFailedException 
+	 * 
+	 * @throws CommitFailedException
 	 */
 	@Test
 	public void freeRangeTest5() throws CommitFailedException {
@@ -558,9 +607,17 @@ public class LoadTest extends InstanceTest {
 		commit(g);
 		createTransaction(g);
 		g.createA();
+		commit(g);
+		createTransaction(g);
 		g.createA();
+		commit(g);
+		createTransaction(g);
 		g.createA();
+		commit(g);
+		createTransaction(g);
 		g.createA();
+		commit(g);
+		createTransaction(g);
 		g.getVertex(2).delete();
 		commit(g);
 		createReadOnlyTransaction(g);
@@ -576,7 +633,8 @@ public class LoadTest extends InstanceTest {
 
 	/**
 	 * FreeIndexList.runs= [-1, 1, -1, 0,...] Delete the last used index.
-	 * @throws CommitFailedException 
+	 * 
+	 * @throws CommitFailedException
 	 */
 	@Test
 	public void freeRangeTest6() throws CommitFailedException {
@@ -586,8 +644,14 @@ public class LoadTest extends InstanceTest {
 		commit(g);
 		createTransaction(g);
 		g.createA();
+		commit(g);
+		createTransaction(g);
 		g.createA();
+		commit(g);
+		createTransaction(g);
 		g.createA();
+		commit(g);
+		createTransaction(g);
 		g.getVertex(2).delete();
 		commit(g);
 		createReadOnlyTransaction(g);
@@ -604,7 +668,8 @@ public class LoadTest extends InstanceTest {
 	/**
 	 * FreeIndexList.runs= [1,-1,1,-1,1,-1,1,-1,1,-1,1,-1,1,-1,1,-2] Delete the
 	 * last used index.
-	 * @throws CommitFailedException 
+	 * 
+	 * @throws CommitFailedException
 	 */
 	@Test
 	public void freeRangeTest7() throws CommitFailedException {
@@ -612,14 +677,16 @@ public class LoadTest extends InstanceTest {
 		createReadOnlyTransaction(g);
 		FreeIndexList vList = getFreeIndexListOfVertices(g, true);
 		commit(g);
-		createTransaction(g);
 		for (int i = 1; i <= 17; i++) {
+			createTransaction(g);
 			g.createA();
+			commit(g);
 		}
 		for (int i = 15; i > 0; i = i - 2) {
+			createTransaction(g);
 			g.getVertex(i).delete();
+			commit(g);
 		}
-		commit(g);
 		createReadOnlyTransaction(g);
 		checkFreeIndexList(vList, 9, 8, 16, 1, -1, 1, -1, 1, -1, 1, -1, 1, -1,
 				1, -1, 1, -1, 1, -2);
