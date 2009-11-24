@@ -24,6 +24,7 @@
 
 package de.uni_koblenz.jgralab.utilities.rsa2tg;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -389,16 +390,6 @@ public class Rsa2Tg extends XmlProcessor {
 		r.setRemoveUnusedDomains(cli.hasOption('u'));
 		r.setUseNavigability(cli.hasOption('n'));
 
-		// If no output option is selected, Rsa2Tg will abort.
-		if (!cli.hasOption('o') && !cli.hasOption('s') && !cli.hasOption('e')
-				&& !cli.hasOption('r')) {
-			System.err.println("No output Option has been selected!");
-			System.err
-					.println("Please use the commandline option '-h' to look up all possibilities.");
-			System.out.println("Abort.");
-			return;
-		}
-
 		// apply options
 		r.setFilenameSchema(cli.getOptionValue('o'));
 		r.setFilenameSchemaGraph(cli.getOptionValue('s'));
@@ -413,6 +404,40 @@ public class Rsa2Tg extends XmlProcessor {
 					+ ".");
 			System.err.println(e.getMessage());
 			e.printStackTrace();
+		}
+
+		// If no output option is selected, Rsa2Tg will abort.
+		boolean noOutputOptionSelected = !cli.hasOption('o')
+				&& !cli.hasOption('s') && !cli.hasOption('e')
+				&& !cli.hasOption('r');
+		if (noOutputOptionSelected) {
+			System.out.println("No optional output option has been selected. "
+					+ "A TG-file of the Schema will be written.");
+
+			StringBuilder filenameBuilder = new StringBuilder();
+
+			// The path of the input XMI-file is used.
+			filenameBuilder.append(new File(input).getParent());
+			filenameBuilder.append(File.separatorChar);
+			// The simple name of the Schema will be the filename.
+			filenameBuilder.append(r.getSchemaGraph().getSchema().getName());
+			// The extension is ....
+			filenameBuilder.append(".rsa.tg");
+
+			// filename have to be set
+			r.setFilenameSchema(filenameBuilder.toString());
+
+			try {
+				// Till now, no output has been generated. This line will
+				// trigger a rewrite!
+				r.writeOutput();
+			} catch (XMLStreamException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (GraphIOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 
 		System.out.println("Fini.");
@@ -432,6 +457,11 @@ public class Rsa2Tg extends XmlProcessor {
 		// Creates a OptionHandler.
 		String toolString = "java " + Rsa2Tg.class.getName();
 		String versionString = JGraLab.getInfo(false);
+
+		// Adds an additional help string to the help page.
+		versionString += "\n\n"
+				+ "If no optional output option is selected, a file with the name "
+				+ "\"<SchemaName>.rsa.tg\" will be written.";
 		OptionHandler oh = new OptionHandler(toolString, versionString);
 
 		// Several Options are declared.
@@ -866,7 +896,7 @@ public class Rsa2Tg extends XmlProcessor {
 		}
 
 		if (!fileCreated) {
-			System.out.println("No files have been created.");
+			System.out.println("No files have been created.\n");
 		}
 	}
 
@@ -2545,7 +2575,7 @@ public class Rsa2Tg extends XmlProcessor {
 	 * 
 	 * @return Value of the <code>useFromRole</code> flag.
 	 */
-	private boolean isUseFromRole() {
+	public boolean isUseFromRole() {
 		return useFromRole;
 	}
 
@@ -2566,7 +2596,7 @@ public class Rsa2Tg extends XmlProcessor {
 	 * 
 	 * @return Value of the <code>removeUnusedDoimain</code> flag.
 	 */
-	private boolean isRemoveUnusedDomains() {
+	public boolean isRemoveUnusedDomains() {
 		return removeUnusedDomains;
 	}
 
@@ -2587,7 +2617,7 @@ public class Rsa2Tg extends XmlProcessor {
 	 * 
 	 * @return Value of the <code>useNavigability</code> flag.
 	 */
-	private boolean isUseNavigability() {
+	public boolean isUseNavigability() {
 		return useNavigability;
 	}
 
