@@ -7,6 +7,7 @@ import static org.junit.Assert.fail;
 
 import java.lang.reflect.Field;
 import java.util.Collection;
+import java.util.Random;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -26,6 +27,11 @@ import de.uni_koblenz.jgralab.schema.GraphClass;
 import de.uni_koblenz.jgralab.schema.VertexClass;
 import de.uni_koblenz.jgralab.trans.CommitFailedException;
 import de.uni_koblenz.jgralabtest.schemas.vertextest.A;
+import de.uni_koblenz.jgralabtest.schemas.vertextest.B;
+import de.uni_koblenz.jgralabtest.schemas.vertextest.C;
+import de.uni_koblenz.jgralabtest.schemas.vertextest.C2;
+import de.uni_koblenz.jgralabtest.schemas.vertextest.D;
+import de.uni_koblenz.jgralabtest.schemas.vertextest.D2;
 import de.uni_koblenz.jgralabtest.schemas.vertextest.VertexTestGraph;
 import de.uni_koblenz.jgralabtest.schemas.vertextest.VertexTestSchema;
 
@@ -49,9 +55,40 @@ public class LoadTest extends InstanceTest {
 	// t.testFreeElementList();
 	// }
 
-	private Greql2 createTestGraph() throws Exception {
-		String query = "from i:c report i end where d:=\"drölfundfünfzig\", c:=b, b:=a, a:=\"Mensaessen\"";
-		return ManualGreqlParser.parse(query);
+	private Graph createTestGraph() throws Exception {
+		if (!transactionsEnabled) {
+			String query = "from i:c report i end where d:=\"drölfundfünfzig\", c:=b, b:=a, a:=\"Mensaessen\"";
+			return ManualGreqlParser.parse(query);
+		}
+		int vertexClasses = 6;
+		int edgeClasses = 7;
+		int vertexCountPerClass = 5;
+		int edgeCountPerClass = 5;
+
+		VertexTestGraph g = createVertexTestGraph(vertexClasses
+				* vertexCountPerClass, edgeClasses * edgeCountPerClass);
+		A[] as = new A[vertexCountPerClass];
+		B[] bs = new B[vertexCountPerClass];
+		C[] cs = new C[vertexCountPerClass];
+		D[] ds = new D[vertexCountPerClass];
+		C2[] c2s = new C2[vertexCountPerClass];
+		D2[] d2s = new D2[vertexCountPerClass];
+
+		// create some vertices
+		for (int i = 0; i < vertexCountPerClass; i++) {
+			as[i] = g.createA();
+			bs[i] = g.createB();
+			cs[i] = g.createC();
+			ds[i] = g.createD();
+			c2s[i] = g.createC2();
+			d2s[i] = g.createD2();
+		}
+
+		Random r = new Random();
+		// TODO create edge arrays 
+		// TODO iterate and select alpha and omega randomly
+		// TODO respect multiplicity constraints
+		return g;
 	}
 
 	private VertexTestGraph createVertexTestGraph(int vMax, int eMax) {
@@ -62,11 +99,69 @@ public class LoadTest extends InstanceTest {
 		return graph;
 	}
 
+	// @Test
+	// public void testFreeElementList() throws CommitFailedException {
+	// onlyTestWithoutTransactionSupport();
+	// Greql2 g1 = null;
+	// Greql2 g2 = null;
+	// try {
+	// // g1 is always without transaction support
+	// g1 = createTestGraph();
+	// GraphIO.saveGraphToFile(TESTGRAPH_PATH + TESTGRAPH_FILENAME, g1,
+	// null);
+	// g2 = transactionsEnabled ? Greql2Schema.instance()
+	// .loadGreql2WithTransactionSupport(
+	// TESTGRAPH_PATH + TESTGRAPH_FILENAME) : Greql2Schema
+	// .instance().loadGreql2(TESTGRAPH_PATH + TESTGRAPH_FILENAME);
+	// } catch (Exception ex) {
+	// ex.printStackTrace();
+	// }
+	// createReadOnlyTransaction(g2);
+	// checkEqualVertexList(g1, g2);
+	// checkEqualEdgeList(g1, g2);
+	// commit(g2);
+	//
+	// createTransaction(g2);
+	// fillVertexList(g1, g2);
+	// commit(g2);
+	//
+	// createReadOnlyTransaction(g2);
+	// checkEqualVertexList(g1, g2);
+	// checkEqualEdgeList(g1, g2);
+	// commit(g2);
+	//
+	// createTransaction(g2);
+	// removeVertices(g1, g2);
+	// commit(g2);
+	//
+	// createReadOnlyTransaction(g2);
+	// checkEqualVertexList(g1, g2);
+	// checkEqualEdgeList(g1, g2);
+	// commit(g2);
+	//
+	// createTransaction(g2);
+	// fillVertexList(g1, g2);
+	// commit(g2);
+	//
+	// createReadOnlyTransaction(g2);
+	// checkEqualVertexList(g1, g2);
+	// checkEqualEdgeList(g1, g2);
+	// commit(g2);
+	//
+	// createTransaction(g2);
+	// removeVertices(g1, g2);
+	// commit(g2);
+	//
+	// createReadOnlyTransaction(g2);
+	// checkEqualVertexList(g1, g2);
+	// checkEqualEdgeList(g1, g2);
+	// commit(g2);
+	// }
 	@Test
 	public void testFreeElementList() throws CommitFailedException {
 		onlyTestWithoutTransactionSupport();
-		Greql2 g1 = null;
-		Greql2 g2 = null;
+		Graph g1 = null;
+		Graph g2 = null;
 		try {
 			// g1 is always without transaction support
 			g1 = createTestGraph();
@@ -157,7 +252,7 @@ public class LoadTest extends InstanceTest {
 		}
 	}
 
-	private void fillVertexList(Greql2 g1, Greql2 g2) {
+	private void fillVertexList(Graph g1, Graph g2) {
 		GraphClass gc = g1.getGraphClass();
 		for (int i = 0; i < 100; i++) {
 			VertexClass vertexClass = gc.getVertexClasses().get(
@@ -176,7 +271,7 @@ public class LoadTest extends InstanceTest {
 		}
 	}
 
-	private void removeVertices(Greql2 g1, Greql2 g2) {
+	private void removeVertices(Graph g1, Graph g2) {
 		for (int i = 1; i < g1.getVCount(); i += 7) {
 			Vertex v1 = g1.getVertex(i);
 			Vertex v2 = g2.getVertex(i);
