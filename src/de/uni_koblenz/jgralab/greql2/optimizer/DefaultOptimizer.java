@@ -27,8 +27,8 @@ package de.uni_koblenz.jgralab.greql2.optimizer;
 import java.util.Set;
 import java.util.logging.Logger;
 
-import de.uni_koblenz.jgralab.GraphMarker;
 import de.uni_koblenz.jgralab.JGraLab;
+import de.uni_koblenz.jgralab.graphmarker.GraphMarker;
 import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
 import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.GraphSize;
 import de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.VertexEvaluator;

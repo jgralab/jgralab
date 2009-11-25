@@ -99,11 +99,11 @@ import org.apache.commons.cli.OptionGroup;
 
 import de.uni_koblenz.ist.utilities.option_handler.OptionHandler;
 import de.uni_koblenz.ist.utilities.xml.IndentingXMLStreamWriter;
-import de.uni_koblenz.jgralab.BooleanGraphMarker;
 import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.GraphIOException;
 import de.uni_koblenz.jgralab.JGraLab;
 import de.uni_koblenz.jgralab.WorkInProgress;
+import de.uni_koblenz.jgralab.graphmarker.BooleanGraphMarker;
 import de.uni_koblenz.jgralab.grumlschema.GrumlSchema;
 import de.uni_koblenz.jgralab.grumlschema.SchemaGraph;
 import de.uni_koblenz.jgralab.grumlschema.domains.BooleanDomain;

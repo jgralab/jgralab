@@ -22,10 +22,15 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-package de.uni_koblenz.jgralab;
+package de.uni_koblenz.jgralab.graphmarker;
 
 import java.util.HashMap;
 
+import de.uni_koblenz.jgralab.AttributedElement;
+import de.uni_koblenz.jgralab.Edge;
+import de.uni_koblenz.jgralab.Graph;
+import de.uni_koblenz.jgralab.GraphException;
+import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.impl.ReversedEdgeImpl;
 
 /**

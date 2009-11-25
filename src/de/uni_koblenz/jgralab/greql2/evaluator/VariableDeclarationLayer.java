@@ -26,7 +26,7 @@ package de.uni_koblenz.jgralab.greql2.evaluator;
 
 import java.util.ArrayList;
 
-import de.uni_koblenz.jgralab.BooleanGraphMarker;
+import de.uni_koblenz.jgralab.graphmarker.BooleanGraphMarker;
 import de.uni_koblenz.jgralab.greql2.evaluator.logging.EvaluationLogger;
 import de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.DeclarationEvaluator;
 import de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.VertexEvaluator;

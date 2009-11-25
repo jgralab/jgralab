@@ -25,8 +25,8 @@ import org.junit.Test;
 
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.EdgeDirection;
-import de.uni_koblenz.jgralab.GraphMarker;
 import de.uni_koblenz.jgralab.Vertex;
+import de.uni_koblenz.jgralab.graphmarker.GraphMarker;
 import de.uni_koblenz.jgralabtest.schemas.citymap.CityMap;
 import de.uni_koblenz.jgralabtest.schemas.citymap.CityMapSchema;
 import de.uni_koblenz.jgralabtest.schemas.citymap.Intersection;
