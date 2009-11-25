@@ -15,6 +15,7 @@ import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
 
 import de.uni_koblenz.jgralab.Edge;
+import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.GraphIO;
 import de.uni_koblenz.jgralab.Vertex;
@@ -32,6 +33,13 @@ import de.uni_koblenz.jgralabtest.schemas.vertextest.C;
 import de.uni_koblenz.jgralabtest.schemas.vertextest.C2;
 import de.uni_koblenz.jgralabtest.schemas.vertextest.D;
 import de.uni_koblenz.jgralabtest.schemas.vertextest.D2;
+import de.uni_koblenz.jgralabtest.schemas.vertextest.E;
+import de.uni_koblenz.jgralabtest.schemas.vertextest.F;
+import de.uni_koblenz.jgralabtest.schemas.vertextest.G;
+import de.uni_koblenz.jgralabtest.schemas.vertextest.H;
+import de.uni_koblenz.jgralabtest.schemas.vertextest.I;
+import de.uni_koblenz.jgralabtest.schemas.vertextest.J;
+import de.uni_koblenz.jgralabtest.schemas.vertextest.K;
 import de.uni_koblenz.jgralabtest.schemas.vertextest.VertexTestGraph;
 import de.uni_koblenz.jgralabtest.schemas.vertextest.VertexTestSchema;
 
@@ -67,6 +75,9 @@ public class LoadTest extends InstanceTest {
 
 		VertexTestGraph g = createVertexTestGraph(vertexClasses
 				* vertexCountPerClass, edgeClasses * edgeCountPerClass);
+
+		createTransaction(g);
+
 		A[] as = new A[vertexCountPerClass];
 		B[] bs = new B[vertexCountPerClass];
 		C[] cs = new C[vertexCountPerClass];
@@ -85,9 +96,92 @@ public class LoadTest extends InstanceTest {
 		}
 
 		Random r = new Random();
-		// TODO create edge arrays 
-		// TODO iterate and select alpha and omega randomly
-		// TODO respect multiplicity constraints
+		// create edge arrays
+		// E[] es = new E[edgeCountPerClass];
+		// F[] fs = new F[edgeCountPerClass];
+		// G[] gs = new G[edgeCountPerClass];
+		// H[] hs = new H[edgeCountPerClass];
+		// I[] is = new I[edgeCountPerClass];
+		// J[] js = new J[edgeCountPerClass];
+		// K[] ks = new K[edgeCountPerClass];
+
+		// iterate and select alpha and omega randomly
+		for (int i = 0; i < edgeCountPerClass; i++) {
+			// E
+			A alphaA = as[r.nextInt(vertexCountPerClass)];
+			B omegaB = bs[r.nextInt(vertexCountPerClass)];
+			g.createE(alphaA, omegaB);
+
+			// F
+			C alphaC = cs[r.nextInt(vertexCountPerClass)];
+			D omegaD;
+			omegaD = ds[r.nextInt(vertexCountPerClass)];
+			if (omegaD.getDegree(F.class, EdgeDirection.IN) > 3) {
+				g.createF(alphaC, omegaD);
+			}
+
+			// G
+			alphaC = cs[r.nextInt(vertexCountPerClass)];
+			omegaD = ds[r.nextInt(vertexCountPerClass)];
+			if (omegaD.getDegree(G.class, EdgeDirection.IN) > 3) {
+				g.createG(alphaC, omegaD);
+			}
+
+			// H
+			alphaA = as[r.nextInt(vertexCountPerClass)];
+			omegaB = bs[r.nextInt(vertexCountPerClass)];
+			if (omegaD.getDegree(H.class, EdgeDirection.IN) > 4) {
+				g.createH(alphaA, omegaB);
+			}
+
+			// I
+			alphaA = as[r.nextInt(vertexCountPerClass)];
+			A omegaA = as[r.nextInt(vertexCountPerClass)];
+			g.createI(alphaA, omegaA);
+
+			// J
+			C2 alphaC2 = c2s[r.nextInt(vertexCountPerClass)];
+			D2 omegaD2 = d2s[r.nextInt(vertexCountPerClass)];
+			if (omegaD2.getDegree(J.class, EdgeDirection.IN) > 3) {
+				g.createJ(alphaC2, omegaD2);
+			}
+
+			// K
+			alphaA = as[r.nextInt(vertexCountPerClass)];
+			omegaB = bs[r.nextInt(vertexCountPerClass)];
+			if (omegaB.getDegree(K.class, EdgeDirection.IN) > 3) {
+				g.createK(alphaA, omegaB);
+			}
+		}
+
+		for (int i = 0; i < vertexCountPerClass; i++) {
+			B currentB = bs[i];
+			while (currentB.getDegree(H.class, EdgeDirection.IN) < 1) {
+				A alphaA = as[r.nextInt(vertexCountPerClass)];
+				g.createH(alphaA, currentB);
+			}
+			while (currentB.getDegree(K.class, EdgeDirection.IN) < 2) {
+				A alphaA = as[r.nextInt(vertexCountPerClass)];
+				g.createK(alphaA, currentB);
+			}
+
+			D currentD = ds[i];
+			while (currentD.getDegree(F.class, EdgeDirection.IN) < 1) {
+				C alphaC = cs[r.nextInt(vertexCountPerClass)];
+				g.createF(alphaC, currentD);
+			}
+			while (currentD.getDegree(G.class, EdgeDirection.IN) < 1) {
+				C alphaC = cs[r.nextInt(vertexCountPerClass)];
+				g.createG(alphaC, currentD);
+			}
+
+			D2 currentD2 = d2s[i];
+			while (currentD2.getDegree(J.class, EdgeDirection.IN) < 1) {
+				C2 alphaC2 = c2s[r.nextInt(vertexCountPerClass)];
+				g.createJ(alphaC2, currentD2);
+			}
+		}
+		commit(g);
 		return g;
 	}
 
@@ -159,61 +253,80 @@ public class LoadTest extends InstanceTest {
 	// }
 	@Test
 	public void testFreeElementList() throws CommitFailedException {
-		onlyTestWithoutTransactionSupport();
 		Graph g1 = null;
 		Graph g2 = null;
 		try {
 			// g1 is always without transaction support
 			g1 = createTestGraph();
+			createReadOnlyTransaction(g1);
 			GraphIO.saveGraphToFile(TESTGRAPH_PATH + TESTGRAPH_FILENAME, g1,
 					null);
-			g2 = transactionsEnabled ? Greql2Schema.instance()
-					.loadGreql2WithTransactionSupport(
-							TESTGRAPH_PATH + TESTGRAPH_FILENAME) : Greql2Schema
-					.instance().loadGreql2(TESTGRAPH_PATH + TESTGRAPH_FILENAME);
+			commit(g1);
+			g2 = !transactionsEnabled ? Greql2Schema.instance().loadGreql2(
+					TESTGRAPH_PATH + TESTGRAPH_FILENAME) : VertexTestSchema
+					.instance().loadVertexTestGraphWithTransactionSupport(
+							TESTGRAPH_PATH + TESTGRAPH_FILENAME);
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		}
 		createReadOnlyTransaction(g2);
+		createReadOnlyTransaction(g1);
 		checkEqualVertexList(g1, g2);
 		checkEqualEdgeList(g1, g2);
 		commit(g2);
+		commit(g1);
 
 		createTransaction(g2);
+		createTransaction(g1);
 		fillVertexList(g1, g2);
 		commit(g2);
+		commit(g1);
 
 		createReadOnlyTransaction(g2);
+		createReadOnlyTransaction(g1);
 		checkEqualVertexList(g1, g2);
 		checkEqualEdgeList(g1, g2);
 		commit(g2);
+		commit(g1);
 
 		createTransaction(g2);
+		createTransaction(g1);
 		removeVertices(g1, g2);
 		commit(g2);
+		commit(g1);
 
 		createReadOnlyTransaction(g2);
+		createReadOnlyTransaction(g1);
 		checkEqualVertexList(g1, g2);
 		checkEqualEdgeList(g1, g2);
 		commit(g2);
+		commit(g1);
 
 		createTransaction(g2);
+		createTransaction(g1);
 		fillVertexList(g1, g2);
 		commit(g2);
+		commit(g1);
 
 		createReadOnlyTransaction(g2);
+		createReadOnlyTransaction(g1);
 		checkEqualVertexList(g1, g2);
 		checkEqualEdgeList(g1, g2);
 		commit(g2);
+		commit(g1);
 
 		createTransaction(g2);
+		createTransaction(g1);
 		removeVertices(g1, g2);
 		commit(g2);
+		commit(g1);
 
 		createReadOnlyTransaction(g2);
+		createReadOnlyTransaction(g1);
 		checkEqualVertexList(g1, g2);
 		checkEqualEdgeList(g1, g2);
 		commit(g2);
+		commit(g1);
 	}
 
 	private void checkEqualVertexList(Graph g1, Graph g2) {
