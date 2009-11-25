@@ -682,17 +682,26 @@ public class GraphIO {
 	public static Schema loadSchemaFromFile(String filename)
 			throws GraphIOException {
 		try {
-			return loadSchemaFromStream(new BufferedInputStream(
-					new FileInputStream(filename), 10000));
+			BufferedInputStream inputStream = new BufferedInputStream(
+					new FileInputStream(filename), 10000);
+			Schema loadedSchema = loadSchemaFromStream(inputStream);
+			inputStream.close();
+			return loadedSchema;
 		} catch (FileNotFoundException ex) {
 			throw new GraphIOException("Unable to load schema from file "
 					+ filename + ", the file cannot be found", ex);
+		} catch (IOException ex) {
+			throw new GraphIOException("Error while reading from file "
+					+ filename + ".", ex);
 		}
 	}
 
 	public static Schema loadSchemaFromURL(String url) throws GraphIOException {
 		try {
-			return loadSchemaFromStream(new URL(url).openStream());
+			InputStream openedStream = new URL(url).openStream();
+			Schema loadedSchema = loadSchemaFromStream(openedStream);
+			openedStream.close();
+			return loadedSchema;
 		} catch (IOException ex) {
 			throw new GraphIOException("Unable to load graph from url " + url
 					+ ", the resource cannot be found", ex);
@@ -788,8 +797,12 @@ public class GraphIO {
 			throws GraphIOException {
 		try {
 			logger.finer("Loading graph " + filename);
-			return loadGraphFromStream(new BufferedInputStream(
-					new FileInputStream(filename), 65536), schema, pf, transactionSupport);
+			BufferedInputStream inputStream = new BufferedInputStream(
+					new FileInputStream(filename), 65536);
+			Graph loadedGraph = loadGraphFromStream(inputStream, schema, pf,
+					transactionSupport);
+			inputStream.close();
+			return loadedGraph;
 
 		} catch (IOException ex) {
 			throw new GraphIOException("Unable to load graph from file "
@@ -805,7 +818,11 @@ public class GraphIO {
 	public static Graph loadGraphFromURL(String url, Schema schema,
 			ProgressFunction pf) throws GraphIOException {
 		try {
-			return loadGraphFromStream(new URL(url).openStream(), schema, pf, false);
+			InputStream openedStream = new URL(url).openStream();
+			Graph loadedGraph = loadGraphFromStream(openedStream, schema, pf,
+					false);
+			openedStream.close();
+			return loadedGraph;
 		} catch (IOException ex) {
 			throw new GraphIOException("Unable to load graph from url " + url
 					+ ", the resource cannot be found", ex);
@@ -832,7 +849,7 @@ public class GraphIO {
 			Method instanceMethod = schemaClass.getMethod("instance",
 					(Class<?>[]) null);
 			io.schema = (Schema) instanceMethod.invoke(null, new Object[0]);
-			//((SchemaImpl) io.schema).setConfiguration(config);
+			// ((SchemaImpl) io.schema).setConfiguration(config);
 			GraphImpl g = io.graph(pf, transactionSupport);
 			g.internalLoadingCompleted(io.firstIncidence, io.nextIncidence);
 			io.firstIncidence = null;
@@ -2071,7 +2088,8 @@ public class GraphIO {
 		return result;
 	}
 
-	private GraphImpl graph(ProgressFunction pf, boolean transactionSupport) throws GraphIOException {
+	private GraphImpl graph(ProgressFunction pf, boolean transactionSupport)
+			throws GraphIOException {
 		currentPackageName = "";
 		match("Graph");
 		String graphIdVersion = matchUtfString();
@@ -2134,8 +2152,8 @@ public class GraphIO {
 		}
 		GraphImpl graph = null;
 		try {
-			graph = (GraphImpl) schema.getGraphCreateMethod(transactionSupport).invoke(null,
-					new Object[] { graphId, maxV, maxE });
+			graph = (GraphImpl) schema.getGraphCreateMethod(transactionSupport)
+					.invoke(null, new Object[] { graphId, maxV, maxE });
 		} catch (Exception e) {
 			throw new GraphIOException("can't create graph for class '"
 					+ gcName + "'", e);
@@ -2201,7 +2219,8 @@ public class GraphIO {
 		}
 	}
 
-	private void vertexDesc(Graph graph, boolean transactionSupport) throws GraphIOException {
+	private void vertexDesc(Graph graph, boolean transactionSupport)
+			throws GraphIOException {
 		int vId = vId();
 		String vcName = className();
 		Vertex vertex;
@@ -2209,7 +2228,8 @@ public class GraphIO {
 		createMethod = createMethods.get(vcName);
 		try {
 			if (createMethod == null) {
-				createMethod = schema.getVertexCreateMethod(vcName, transactionSupport);
+				createMethod = schema.getVertexCreateMethod(vcName,
+						transactionSupport);
 				createMethods.put(vcName, createMethod);
 			}
 			vertexDescTempObject[0] = vId;
@@ -2225,7 +2245,8 @@ public class GraphIO {
 		match(";");
 	}
 
-	private void edgeDesc(Graph graph, boolean transactionSupport) throws GraphIOException {
+	private void edgeDesc(Graph graph, boolean transactionSupport)
+			throws GraphIOException {
 		int eId = eId();
 		String className = className();
 		EdgeClass ec = graph.getGraphClass().getEdgeClass(className);
@@ -2240,7 +2261,8 @@ public class GraphIO {
 		try {
 			if (createMethod == null) {
 				logger.finer("Searching create method for edge " + ecName);
-				createMethod = schema.getEdgeCreateMethod(ecName, transactionSupport);
+				createMethod = schema.getEdgeCreateMethod(ecName,
+						transactionSupport);
 				createMethods.put(ecName, createMethod);
 			}
 			edgeDescTempObject[0] = eId;
