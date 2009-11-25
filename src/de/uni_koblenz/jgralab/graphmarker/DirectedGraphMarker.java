@@ -14,9 +14,9 @@ import de.uni_koblenz.jgralab.Vertex;
  * 
  * @author ist@uni-koblenz.de
  * 
- * @param <T>
+ * @param <O>
  */
-public class DirectedGraphMarker<T> extends GraphMarker<T> {
+public class DirectedGraphMarker<O> extends GenericGraphMarker<AttributedElement, O> {
 
 	/**
 	 * Creates a new GraphMarker
@@ -34,7 +34,7 @@ public class DirectedGraphMarker<T> extends GraphMarker<T> {
 	 * @return the object that marks the given element or <code>null</code> if
 	 *         the given element is not marked in this marking.
 	 */
-	public T getMark(AttributedElement elem) {
+	public O getMark(AttributedElement elem) {
 		if (elem == null)
 			return null;
 		return tempAttributeMap.get(elem);
@@ -50,7 +50,7 @@ public class DirectedGraphMarker<T> extends GraphMarker<T> {
 	 * @return true on success, false if the given element already contains a
 	 *         marking
 	 */
-	public T mark(AttributedElement elem, T value) {
+	public O mark(AttributedElement elem, O value) {
 
 		if ((elem instanceof Vertex && ((Vertex) elem).getGraph() == graph)
 				|| (elem instanceof Edge && ((Edge) elem).getGraph() == graph)

@@ -24,14 +24,8 @@
 
 package de.uni_koblenz.jgralab.graphmarker;
 
-import java.util.HashMap;
-
 import de.uni_koblenz.jgralab.AttributedElement;
-import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.Graph;
-import de.uni_koblenz.jgralab.GraphException;
-import de.uni_koblenz.jgralab.Vertex;
-import de.uni_koblenz.jgralab.impl.ReversedEdgeImpl;
 
 /**
  * This class can be used to "colorize" graphs, edges and vertices. If a
@@ -41,123 +35,17 @@ import de.uni_koblenz.jgralab.impl.ReversedEdgeImpl;
  * example how that could be done is located in the tutorial in the class
  * <code>DijkstraVertexMarker</code>.
  * 
+ * This Marker only exists for compatibility reasons to older versions of
+ * JGraLab. The new marker class <code>GenericGraphMarker</code> allows a
+ * stricter limitation to specific <code>AttributedElement</code>s.
+ * 
  * @author ist@uni-koblenz.de
  * 
  */
-public class GraphMarker<T> {
+public class GraphMarker<O> extends GenericGraphMarker<AttributedElement, O> {
 
-	/**
-	 * Stores the mapping between Graph, Edge or Vertex and the attribute
-	 */
-	protected HashMap<AttributedElement, T> tempAttributeMap;
-
-	/**
-	 * The graph which is marked by this GraphMarker.
-	 */
-	protected Graph graph;
-
-	/**
-	 * Creates a new GraphMarker
-	 */
 	public GraphMarker(Graph g) {
-		graph = g;
-		tempAttributeMap = new HashMap<AttributedElement, T>();
+		super(g);
 	}
 
-	/**
-	 * returns the object that marks the given Graph, Edge or Vertex in this
-	 * marking.
-	 * 
-	 * @param elem
-	 *            the element to get the marking for
-	 * @return the object that marks the given element or <code>null</code> if
-	 *         the given element is not marked in this marking.
-	 */
-	public T getMark(AttributedElement elem) {
-		if (elem == null) {
-			return null;
-		}
-		if (elem instanceof ReversedEdgeImpl) {
-			elem = ((ReversedEdgeImpl) elem).getNormalEdge();
-		}
-		return tempAttributeMap.get(elem);
-	}
-
-	/**
-	 * marks the given element with the given value
-	 * 
-	 * @param elem
-	 *            the element (Graph, Vertex or Edge) to mark
-	 * @param value
-	 *            the object that should be used as marking
-	 * @return true on success, false if the given element already contains a
-	 *         marking
-	 */
-	public T mark(AttributedElement elem, T value) {
-
-		if (elem instanceof ReversedEdgeImpl) {
-			elem = ((ReversedEdgeImpl) elem).getNormalEdge();
-		}
-
-		if ((elem instanceof Vertex && ((Vertex) elem).getGraph() == graph)
-				|| (elem instanceof Edge && ((Edge) elem).getGraph() == graph)
-				|| elem == graph) {
-			return tempAttributeMap.put(elem, value);
-		}
-		throw new GraphException("Can't mark the element " + elem
-				+ ", because it belongs to a different graph.");
-	}
-
-	/**
-	 * Returns the number of marked elements in this GraphMarker.
-	 * 
-	 * @return The number of marked elements.
-	 */
-	public int size() {
-		return tempAttributeMap.size();
-	}
-
-	/**
-	 * Returns <code>true</code> if nothing is marked by this GraphMarker.
-	 * 
-	 * @return <code>true</code> if no graph element is marked by this
-	 *         GraphMarker.
-	 */
-	public boolean isEmpty() {
-		return tempAttributeMap.isEmpty();
-	}
-
-	/**
-	 * Clears this GraphMarker such that no element is marked.
-	 */
-	public void clear() {
-		tempAttributeMap.clear();
-	}
-
-	/**
-	 * Returns the Graph of this GraphMarker.
-	 * 
-	 * @return the Graph of this GraphMarker.
-	 */
-	public Graph getGraph() {
-		return graph;
-	}
-
-	/**
-	 * Remove the mark from <code>elem</code>.
-	 * 
-	 * @param elem
-	 *            a marked {@link AttributedElement}
-	 */
-	public void removeMark(AttributedElement elem) {
-		tempAttributeMap.remove(elem);
-	}
-
-	/**
-	 * @return An {@link Iterable} of all {@link AttributedElement}s in the
-	 *         {@link Graph} that are marked by this marker.
-	 */
-	public Iterable<AttributedElement> getMarkedElements() {
-		return tempAttributeMap.keySet();
-	}
 }
