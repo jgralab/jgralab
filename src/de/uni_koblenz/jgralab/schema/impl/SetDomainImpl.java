@@ -70,7 +70,7 @@ public final class SetDomainImpl extends CollectionDomainImpl implements
 		CodeList code = new CodeList();
 		code.setVariable("init", "");
 		internalGetReadMethod(code, schemaRootPackagePrefix, variableName,
-				graphIoVariableName, false);
+				graphIoVariableName);
 
 		return code;
 	}
@@ -98,7 +98,7 @@ public final class SetDomainImpl extends CollectionDomainImpl implements
 
 	private void internalGetReadMethod(CodeList code,
 			String schemaRootPackagePrefix, String variableName,
-			String graphIoVariableName, boolean transactionSupport) {
+			String graphIoVariableName) {
 		code.setVariable("name", variableName);
 		code.setVariable("basedom", getBaseDomain().getJavaClassName(
 				schemaRootPackagePrefix));
@@ -109,12 +109,7 @@ public final class SetDomainImpl extends CollectionDomainImpl implements
 
 		code.addNoIndent(new CodeSnippet("#init#"));
 		code.addNoIndent(new CodeSnippet("if (#io#.isNextToken(\"{\")) {"));
-		if (/*transactionSupport*/true)
-			code.add(new CodeSnippet(
-					"#name# = graph.createSet(#basedom#.class);"));
-		else
-			code.add(new CodeSnippet(
-					"#name# = new java.util.HashSet<#basedom#>();"));
+		code.add(new CodeSnippet("#name# = graph.createSet(#basedom#.class);"));
 		code.add(new CodeSnippet("#io#.match(\"{\");",
 				"while (!#io#.isNextToken(\"}\")) {",
 				"\t#basetype# $#name#Element;"));
@@ -157,7 +152,7 @@ public final class SetDomainImpl extends CollectionDomainImpl implements
 		CodeList code = new CodeList();
 		code.setVariable("init", "java.util.Set<#basedom#> #name# = null;");
 		internalGetReadMethod(code, schemaPrefix, variableName,
-				graphIoVariableName, true);
+				graphIoVariableName);
 		return code;
 	}
 

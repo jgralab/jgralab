@@ -113,7 +113,7 @@ public class JGraLabMap<K, V> extends HashMap<K, V> implements JGraLabCloneable 
 	}
 
 	private void isValidValueCheck(V value) {
-		if ((value instanceof Map || value instanceof List || value instanceof Set)
+		if ((value instanceof Map<?,?> || value instanceof List<?> || value instanceof Set<?>)
 				&& !(value instanceof JGraLabCloneable))
 			throw new GraphException(
 					"The value added to this map does not support transactions.");
@@ -127,7 +127,7 @@ public class JGraLabMap<K, V> extends HashMap<K, V> implements JGraLabCloneable 
 	}
 
 	private void isValidKeyCheck(K key) {
-		if ((key instanceof Map || key instanceof List || key instanceof Set)
+		if ((key instanceof Map<?,?> || key instanceof List<?> || key instanceof Set<?>)
 				&& !(key instanceof JGraLabCloneable))
 			throw new GraphException(
 					"The key added to this map does not support transactions.");

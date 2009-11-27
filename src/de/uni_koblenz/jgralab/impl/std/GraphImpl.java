@@ -309,7 +309,7 @@ public abstract class GraphImpl extends de.uni_koblenz.jgralab.impl.GraphImpl {
 
 	@Override
 	protected void vertexAfterDeleted(Vertex vertexToBeDeleted) {
-
+		
 	}
 
 	@Override

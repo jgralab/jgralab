@@ -46,13 +46,11 @@ public abstract class VersionedDataObjectImpl<E> implements
 	 *         belongs to
 	 */
 	public Graph getGraph() {
-		if(attributedElement == null)
+		if (attributedElement == null)
 			return null;
-		if (attributedElement instanceof Graph) {
+		if (attributedElement instanceof Graph)
 			return (Graph) attributedElement;
-		} else {
-			return ((GraphElement) attributedElement).getGraph();
-		}
+		return ((GraphElement) attributedElement).getGraph();
 	}
 
 	/**
@@ -146,9 +144,12 @@ public abstract class VersionedDataObjectImpl<E> implements
 		this(attributedElement);
 		this.name = name;
 	}
-	
+
+	/**
+	 * Default constructor.
+	 */
 	protected VersionedDataObjectImpl() {
-		
+
 	}
 
 	@Override
@@ -379,19 +380,18 @@ public abstract class VersionedDataObjectImpl<E> implements
 			synchronized (trans.temporaryValueMap) {
 				return (E) trans.temporaryValueMap.get(this);
 			}
-		} else {
-			assert (trans.temporaryVersionMap != null);
-			SortedMap<Long, Object> transactionMap = trans.temporaryVersionMap
-					.get(this);
-			assert (trans.temporaryVersionMap != null);
-			if (trans.latestRestoredSavepoint != null) {
-				SortedMap<Long, Object> subMap = transactionMap.subMap(
-						transactionMap.firstKey(),
-						trans.latestRestoredSavepoint.versionAtSavepoint + 1);
-				return (E) subMap.get(subMap.lastKey());
-			}
-			return (E) transactionMap.get(transactionMap.lastKey());
 		}
+		assert (trans.temporaryVersionMap != null);
+		SortedMap<Long, Object> transactionMap = trans.temporaryVersionMap
+				.get(this);
+		assert (trans.temporaryVersionMap != null);
+		if (trans.latestRestoredSavepoint != null) {
+			SortedMap<Long, Object> subMap = transactionMap.subMap(
+					transactionMap.firstKey(),
+					trans.latestRestoredSavepoint.versionAtSavepoint + 1);
+			return (E) subMap.get(subMap.lastKey());
+		}
+		return (E) transactionMap.get(transactionMap.lastKey());
 	}
 
 	@Override
@@ -738,8 +738,8 @@ public abstract class VersionedDataObjectImpl<E> implements
 	}
 
 	/**
-	 * Returns the valid value for the given <code>transaction</code> depending
-	 * on his current state and depending on the result of
+	 * Returns the valid value for the given <code>transaction</code>
+	 * depending on his current state and depending on the result of
 	 * {@link TransactionImpl#isReadOnly() <code>transaction</code>
 	 * .isReadOnly()}
 	 * 
@@ -811,8 +811,8 @@ public abstract class VersionedDataObjectImpl<E> implements
 	}
 
 	/**
-	 * Sets the valid value for the given <code>transaction</code> depending on
-	 * his current state and depending on the result of
+	 * Sets the valid value for the given <code>transaction</code> depending
+	 * on his current state and depending on the result of
 	 * {@link TransactionImpl#isReadOnly() <code>transaction</code>
 	 * .isReadOnly()}
 	 * 
@@ -822,7 +822,8 @@ public abstract class VersionedDataObjectImpl<E> implements
 	 * @param transaction
 	 * @param incrVersionNumber
 	 * 
-	 * TODO maybe fix so that also types like List, Set, Map and Array work, too.
+	 * TODO maybe fix so that also types like List, Set, Map and Array work,
+	 * too.
 	 */
 	private void internalSetValidValue(E dataObject, Transaction transaction,
 			boolean explicitChange) {
@@ -1171,8 +1172,9 @@ public abstract class VersionedDataObjectImpl<E> implements
 			throw new GraphException("Current transaction is null.");
 		}
 		// TODO think about this
-		/*if(attributedElement == null)
-			return true;*/
+		/*
+		 * if(attributedElement == null) return true;
+		 */
 		if (attributedElement != null) {
 			if (attributedElement instanceof Vertex) {
 				VertexImpl[] vertexArray = ((GraphImpl) getGraph()).vertex
@@ -1191,11 +1193,11 @@ public abstract class VersionedDataObjectImpl<E> implements
 		}
 		return false;
 	}
-	
+
 	public boolean isPartOfRecord() {
 		return isPartOfRecord;
 	}
-	
+
 	public void setPartOfRecord(boolean isPartOfRecord) {
 		this.isPartOfRecord = isPartOfRecord;
 	}

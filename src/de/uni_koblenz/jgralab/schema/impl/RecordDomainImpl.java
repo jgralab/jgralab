@@ -125,7 +125,7 @@ public final class RecordDomainImpl extends CompositeDomainImpl implements
 		code.setVariable("name", variableName);
 		code.setVariable("init", "");
 		internalGetReadMethod(code, schemaPrefix, variableName,
-				graphIoVariableName, false);
+				graphIoVariableName);
 
 		return code;
 	}
@@ -197,8 +197,7 @@ public final class RecordDomainImpl extends CompositeDomainImpl implements
 	}
 
 	private void internalGetReadMethod(CodeSnippet code, String schemaPrefix,
-			String variableName, String graphIoVariableName,
-			boolean transactionSupport) {
+			String variableName, String graphIoVariableName) {
 		code.add("#init#");
 		code.add("if (" + graphIoVariableName + ".isNextToken(\"(\")) {");
 		code.add("\t" + "#name# = ((" + schemaPrefix + "."
@@ -236,7 +235,7 @@ public final class RecordDomainImpl extends CompositeDomainImpl implements
 				getJavaAttributeImplementationTypeName(schemaPrefix)
 						+ " #name# = null;");
 		internalGetReadMethod(code, schemaPrefix, variableName,
-				graphIoVariableName, true);
+				graphIoVariableName);
 		return code;
 	}
 

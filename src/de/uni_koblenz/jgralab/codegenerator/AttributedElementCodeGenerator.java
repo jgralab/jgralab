@@ -32,6 +32,7 @@ import de.uni_koblenz.jgralab.schema.Attribute;
 import de.uni_koblenz.jgralab.schema.AttributedElementClass;
 import de.uni_koblenz.jgralab.schema.Domain;
 import de.uni_koblenz.jgralab.schema.EnumDomain;
+import de.uni_koblenz.jgralab.schema.MapDomain;
 import de.uni_koblenz.jgralab.schema.RecordDomain;
 
 /**
@@ -391,13 +392,18 @@ public class AttributedElementCodeGenerator extends CodeGenerator {
 			setGraphReferenceVariable(code);
 
 			if (domain.isComposite()) {
+				String genericType = "";
+				if(!(domain instanceof RecordDomain))
+					genericType = "<?>";
+				if(domain instanceof MapDomain) 
+					genericType = "<?,?>";
 				addImports("#jgPackage#.GraphException");
 				code
 						.setVariable("tclassname", attr.getDomain()
 								.getTransactionJavaClassName(
 										schemaRootPackageName));
 				code
-						.add("\tif(_#name# != null && !(_#name# instanceof #tclassname#))");
+						.add("\tif(_#name# != null && !(_#name# instanceof #tclassname#" + genericType + "))");
 				code
 						.add("\t\tthrow new GraphException(\"The given parameter of type #dname# doesn't support transactions.\");");
 				code
