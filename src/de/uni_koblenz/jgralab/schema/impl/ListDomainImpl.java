@@ -80,7 +80,7 @@ public final class ListDomainImpl extends CollectionDomainImpl implements
 		CodeList code = new CodeList();
 		code.setVariable("init", "");
 		internalGetReadMethod(code, schemaPrefix, variableName,
-				graphIoVariableName, false);
+				graphIoVariableName);
 
 		return code;
 	}
@@ -107,7 +107,7 @@ public final class ListDomainImpl extends CollectionDomainImpl implements
 	}
 
 	private void internalGetReadMethod(CodeList code, String schemaPrefix,
-			String variableName, String graphIoVariableName, boolean transactionSupport) {
+			String variableName, String graphIoVariableName) {
 		code.setVariable("name", variableName);
 		code.setVariable("tmpname", "$" + variableName);
 		code.setVariable("basedom", getBaseDomain().getJavaClassName(
@@ -126,19 +126,12 @@ public final class ListDomainImpl extends CollectionDomainImpl implements
 						"\t#basetype# $#name#Element;"));
 		code.add(getBaseDomain().getReadMethod(schemaPrefix,
 				"$" + variableName + "Element", graphIoVariableName), 1);
+		code.add(new CodeSnippet("\t#tmpname#.add($#name#Element);", "}",
+				"#io#.match(\"]\");"));
 		code
 				.add(new CodeSnippet(
-						"\t#tmpname#.add($#name#Element);",
-						"}",
-						"#io#.match(\"]\");"));
-		if(/*transactionSupport*/true)
-			code.add(
-					new CodeSnippet("#name# = graph.createList(#basedom#.class, #tmpname#.size());"));
-		else
-			code.add(
-					new CodeSnippet("#name# = new java.util.ArrayList<#basedom#>(#tmpname#.size());"));
-		code.add(
-						new CodeSnippet("#name#.addAll(#tmpname#);"));
+						"#name# = graph.createList(#basedom#.class, #tmpname#.size());"));
+		code.add(new CodeSnippet("#name#.addAll(#tmpname#);"));
 		code
 				.addNoIndent(new CodeSnippet(
 						"} else if (#io#.isNextToken(GraphIO.NULL_LITERAL) || #io#.isNextToken(GraphIO.OLD_NULL_LITERAL)) {"));
@@ -175,7 +168,7 @@ public final class ListDomainImpl extends CollectionDomainImpl implements
 		CodeList code = new CodeList();
 		code.setVariable("init", "java.util.List<#basedom#> #name# = null;");
 		internalGetReadMethod(code, schemaPrefix, variableName,
-				graphIoVariableName, true);
+				graphIoVariableName);
 		return code;
 	}
 

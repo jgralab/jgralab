@@ -453,6 +453,7 @@ public abstract class GraphImpl extends de.uni_koblenz.jgralab.impl.GraphImpl {
 	@Override
 	protected void setDeleteVertexList(
 			List<de.uni_koblenz.jgralab.impl.VertexImpl> deleteVertexList) {
+		// do nothing here
 	}
 
 	@Override
@@ -640,7 +641,6 @@ public abstract class GraphImpl extends de.uni_koblenz.jgralab.impl.GraphImpl {
 	protected boolean isEdgeIndexReferenced(int index) {
 		edgeSync.readLock().lock();
 		boolean result = false;
-		;
 		List<Transaction> transactionsList = transactionManager
 				.getTransactions();
 		Transaction currentTransaction = getCurrentTransaction();

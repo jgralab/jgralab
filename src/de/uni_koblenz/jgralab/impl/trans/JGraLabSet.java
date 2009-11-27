@@ -13,13 +13,14 @@ import de.uni_koblenz.jgralab.trans.JGraLabCloneable;
 import de.uni_koblenz.jgralab.trans.TransactionState;
 
 /**
- * Own implementation class for attributes of type <code>java.util.Set<E></code>.
+ * Own implementation class for attributes of type <code>java.util.Set<E></code>
+ * .
  * 
  * @author Jose Monte(monte@uni-koblenz.de)
  * 
  * @param <E>
  * 
- * TODO maybe add check to addAll-methods?
+ *            TODO maybe add check to addAll-methods?
  */
 public class JGraLabSet<E> extends HashSet<E> implements JGraLabCloneable {
 	private static final long serialVersionUID = -8812018025682692472L;
@@ -137,7 +138,7 @@ public class JGraLabSet<E> extends HashSet<E> implements JGraLabCloneable {
 	}
 
 	private void isValidElementCheck(E element) {
-		if ((element instanceof Map || element instanceof List || element instanceof Set)
+		if ((element instanceof Map<?, ?> || element instanceof List<?> || element instanceof Set<?>)
 				&& !(element instanceof JGraLabCloneable))
 			throw new GraphException(
 					"The element added to this set does not support transactions.");
@@ -196,16 +197,16 @@ public class JGraLabSet<E> extends HashSet<E> implements JGraLabCloneable {
 
 	@Override
 	public void clear() {
-		if (versionedSet == null) {
+		if (versionedSet == null)
 			throw new GraphException("Versioning is not working for this set.");
-			// internalClear();
-		} else {
-			// hasTemporaryVersionCheck();
-			hasTemporaryVersionCheck();
-			// versionedSet.setValidValue(this, graph.getCurrentTransaction());
-			versionedSet.getValidValue(graph.getCurrentTransaction())
-					.internalClear();
-		}
+		// internalClear();
+		// } else {
+		// hasTemporaryVersionCheck();
+		hasTemporaryVersionCheck();
+		// versionedSet.setValidValue(this, graph.getCurrentTransaction());
+		versionedSet.getValidValue(graph.getCurrentTransaction())
+				.internalClear();
+		// }
 	}
 
 	/**

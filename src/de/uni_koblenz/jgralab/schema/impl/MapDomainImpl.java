@@ -85,7 +85,7 @@ public final class MapDomainImpl extends CompositeDomainImpl implements
 		CodeList code = new CodeList();
 		code.setVariable("init", "");
 		internalGetReadMethod(code, schemaRootPackagePrefix, variableName,
-				graphIoVariableName, false);
+				graphIoVariableName);
 
 		return code;
 	}
@@ -138,7 +138,7 @@ public final class MapDomainImpl extends CompositeDomainImpl implements
 
 	private void internalGetReadMethod(CodeList code,
 			String schemaRootPackagePrefix, String variableName,
-			String graphIoVariableName, boolean transactionSupport) {
+			String graphIoVariableName) {
 		code.setVariable("name", variableName);
 
 		code.setVariable("keydom", getKeyDomain().getJavaClassName(
@@ -157,13 +157,8 @@ public final class MapDomainImpl extends CompositeDomainImpl implements
 
 		code.addNoIndent(new CodeSnippet("#init#"));
 		code.addNoIndent(new CodeSnippet("if (#io#.isNextToken(\"{\")) {"));
-		if (/*transactionSupport*/true)
-			code
-					.add(new CodeSnippet(
-							"#name# = graph.createMap(#keydom#.class, #valuedom#.class);"));
-		else
-			code.add(new CodeSnippet(
-					"#name# = new java.util.HashMap<#keydom#, #valuedom#>();"));
+		code.add(new CodeSnippet(
+				"#name# = graph.createMap(#keydom#.class, #valuedom#.class);"));
 		code.add(new CodeSnippet("#io#.match(\"{\");",
 				"while (!#io#.isNextToken(\"}\")) {", "\t#keytype# #name#Key;",
 				"\t#valuetype# #name#Value;"));
@@ -230,7 +225,7 @@ public final class MapDomainImpl extends CompositeDomainImpl implements
 		code.setVariable("init",
 				"java.util.Map<#keydom#, #valuedom#> #name# = null;");
 		internalGetReadMethod(code, schemaPrefix, variableName,
-				graphIoVariableName, true);
+				graphIoVariableName);
 		return code;
 	}
 
