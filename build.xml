@@ -119,7 +119,7 @@
 
     <!-- compile -->
     <!-- calls targets jgralab, tgtools, greql2 and utilities -->
-    <target name="compile" depends="jgralab,graphmarker,tgtools,greql2,graphvalidator,commonutilities,rsa2tg,utilities,generatetestschemas"/>
+    <target name="compile" depends="jgralab,tgtools,greql2,graphvalidator,commonutilities,rsa2tg,utilities,generatetestschemas"/>
 
     <!-- jgralab -->
     <!-- compiles jgralab basic sources -->
@@ -127,7 +127,7 @@
         <!-- calls target compile in general ant file ${ant}/build.xml -->
         <ant dir="${common.dir}" antfile="build.xml" target="compile">
             <property name="src.dir" value="${src.dir}/de/uni_koblenz/${projectname}"/>
-            <property name="compileincludes" value="*.java schema/** codegenerator/** impl/** jniserver/** trans/**"/>
+            <property name="compileincludes" value="*.java graphmarker/** schema/** codegenerator/** impl/** jniserver/** trans/**"/>
             <property name="compileexcludes" value="xmlrpc/**"/>
         </ant>
     </target>
@@ -255,16 +255,8 @@
         </ant>
     </target>
 
-    <target name="graphmarker" depends="jgralab">
-        <!-- calls target compile in general ant file ${ant}/build.xml -->
-        <ant dir="${common.dir}" antfile="build.xml" target="compile">
-            <property name="src.dir" value="${src.dir}/de/uni_koblenz/${projectname}/graphmarker"/>
-        </ant>
-    </target>
-
-
     <!-- compiles greql2 sources -->
-    <target name="greql2" depends="greql2sources,graphmarker">
+    <target name="greql2" depends="greql2sources">
         <!-- calls target compile in general ant file ${ant}/build.xml -->
         <ant dir="${common.dir}" antfile="build.xml" target="compile">
             <property name="src.dir" value="${src.dir}/de/uni_koblenz/${projectname}/greql2"/>
