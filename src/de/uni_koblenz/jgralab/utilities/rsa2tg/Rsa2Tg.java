@@ -370,8 +370,9 @@ public class Rsa2Tg extends XmlProcessor {
 	 * 
 	 * @param args
 	 *            {@link String} array of command line options.
+	 * @throws IOException
 	 */
-	public static void main(String[] args) {
+	public static void main(String[] args) throws IOException {
 
 		System.out.println("RSA to TG");
 		System.out.println("=========");
@@ -382,7 +383,7 @@ public class Rsa2Tg extends XmlProcessor {
 
 		assert cli != null : "No CommandLine object has been generated!";
 		// All XMI input files
-		String input = cli.getOptionValue('i');
+		File input = new File(cli.getOptionValue('i'));
 
 		Rsa2Tg r = new Rsa2Tg();
 
@@ -397,8 +398,8 @@ public class Rsa2Tg extends XmlProcessor {
 		r.setFilenameValidation(cli.getOptionValue('r'));
 
 		try {
-			System.out.println("processing: " + input + "\n");
-			r.process(input);
+			System.out.println("processing: " + input.getPath() + "\n");
+			r.process(input.getPath());
 		} catch (Exception e) {
 			System.err.println("An Exception occured while processing " + input
 					+ ".");
@@ -414,18 +415,8 @@ public class Rsa2Tg extends XmlProcessor {
 			System.out.println("No optional output option has been selected. "
 					+ "A TG-file of the Schema will be written.");
 
-			StringBuilder filenameBuilder = new StringBuilder();
-
-			// The path of the input XMI-file is used.
-			filenameBuilder.append(new File(input).getParent());
-			filenameBuilder.append(File.separatorChar);
-			// The simple name of the Schema will be the filename.
-			filenameBuilder.append(r.getSchemaGraph().getSchema().getName());
-			// The extension is ....
-			filenameBuilder.append(".rsa.tg");
-
 			// filename have to be set
-			r.setFilenameSchema(filenameBuilder.toString());
+			r.setFilenameSchema(createFilename(input));
 
 			try {
 				// Till now, no output has been generated. This line will
@@ -444,6 +435,36 @@ public class Rsa2Tg extends XmlProcessor {
 	}
 
 	/**
+	 * Creates a file path similar to the of <code>inputFile</code>, but with
+	 * the file extension '.rsa.tg'.
+	 * 
+	 * @param file
+	 *            Is a File object, which is path used to created the new Path.
+	 * @return New generated Path with the extension '.rsa.tg'.
+	 */
+	public static String createFilename(File file) {
+		StringBuilder filenameBuilder = new StringBuilder();
+
+		// The path of the input XMI-file is used.
+		filenameBuilder.append(file.getParent());
+		filenameBuilder.append(File.separatorChar);
+
+		String filename = file.getName();
+		int periodePosition = filename.lastIndexOf('.');
+		if (periodePosition != -1) {
+			filename = filename.substring(0, periodePosition);
+		}
+
+		// The simple name of the Schema will be the filename.
+		// filenameBuilder.append(r.getSchemaGraph().getFirstSchema()
+		// .get_name());
+		filenameBuilder.append(filename);
+		// The extension is ....
+		filenameBuilder.append(".rsa.tg");
+		return filenameBuilder.toString();
+	}
+
+	/**
 	 * Processes all command line parameters and returns a {@link CommandLine}
 	 * object, which holds all values included in the given {@link String}
 	 * array.
@@ -459,9 +480,12 @@ public class Rsa2Tg extends XmlProcessor {
 		String versionString = JGraLab.getInfo(false);
 
 		// Adds an additional help string to the help page.
-		versionString += "\n\n"
-				+ "If no optional output option is selected, a file with the name "
-				+ "\"<SchemaName>.rsa.tg\" will be written.";
+		// TODO: this String needs to be included into the Optionhandler, but
+		// the functionality is not present.
+		String aditional = "If no optional output option is selected, a file with the name "
+				+ "\"<InputFileName>.rsa.tg\" will be written."
+				+ "\n\n"
+				+ toolString;
 		OptionHandler oh = new OptionHandler(toolString, versionString);
 
 		// Several Options are declared.
