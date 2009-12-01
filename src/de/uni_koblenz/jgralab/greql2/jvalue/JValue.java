@@ -417,28 +417,11 @@ public class JValue implements Comparable<JValue> {
 	}
 
 	/**
-	 * constructs a new JValue with encapsulates a AttributedElement
-	 */
-	public JValue(AttributedElement elem) {
-		this.type = JValueType.ATTRIBUTEDELEMENT;
-		this.value = elem;
-		browsingInfo = elem;
-	}
-
-	/**
-	 * constructs a new JValue with encapsulates a AttributedElement
-	 */
-	public JValue(AttributedElement elem, AttributedElement browsingInfo) {
-		this(elem);
-		this.browsingInfo = browsingInfo;
-	}
-
-	/**
 	 * @return true if this JValue encapsulates a graphlement value, that is
-	 *         either a vertex or an edge, false otherwise
+	 *         either a vertex, an edge, or a graph, false otherwise
 	 */
 	public boolean isAttributedElement() {
-		return (type == JValueType.ATTRIBUTEDELEMENT) || isEdge() || isVertex();
+		return (isEdge() || isVertex() || isGraph());
 	}
 
 	/**
@@ -448,7 +431,7 @@ public class JValue implements Comparable<JValue> {
 	 */
 	public AttributedElement toAttributedElement()
 			throws JValueInvalidTypeException {
-		if (isAttributedElement() || (canConvert(JValueType.ATTRIBUTEDELEMENT))) {
+		if (isAttributedElement()) {
 			return (AttributedElement) value;
 		}
 		throw new JValueInvalidTypeException(JValueType.ATTRIBUTEDELEMENT, type);

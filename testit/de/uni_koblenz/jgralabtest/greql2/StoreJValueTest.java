@@ -31,7 +31,7 @@ import org.junit.Test;
 
 import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValueXMLOutputVisitor;
-import de.uni_koblenz.jgralab.greql2.jvalue.ValueXMLLoader;
+import de.uni_koblenz.jgralab.greql2.jvalue.JValueXMLLoader;
 
 public class StoreJValueTest extends GenericTests {
 
@@ -42,7 +42,7 @@ public class StoreJValueTest extends GenericTests {
 		JValueXMLOutputVisitor outputVisitor = new JValueXMLOutputVisitor(
 				result, "testit/testdata/storejvaluetest1.xml");
 		outputVisitor.toString();
-		ValueXMLLoader loader = new ValueXMLLoader(getTestGraph());
+		JValueXMLLoader loader = new JValueXMLLoader(getTestGraph());
 		JValue loadedValue = loader
 				.load("testit/testdata/storejvaluetest1.xml");
 		assertNotNull(loadedValue);
@@ -56,7 +56,7 @@ public class StoreJValueTest extends GenericTests {
 		JValueXMLOutputVisitor outputVisitor = new JValueXMLOutputVisitor(
 				result, "testit/testdata/storejvaluetest2.xml");
 		outputVisitor.toString();
-		ValueXMLLoader loader = new ValueXMLLoader(getTestGraph());
+		JValueXMLLoader loader = new JValueXMLLoader(getTestGraph());
 		JValue loadedValue = loader
 				.load("testit/testdata/storejvaluetest2.xml");
 		assertNotNull(loadedValue);
@@ -70,7 +70,7 @@ public class StoreJValueTest extends GenericTests {
 		JValueXMLOutputVisitor outputVisitor = new JValueXMLOutputVisitor(
 				result, "testit/testdata/storejvaluetest3.xml");
 		outputVisitor.toString();
-		ValueXMLLoader loader = new ValueXMLLoader(getTestGraph());
+		JValueXMLLoader loader = new JValueXMLLoader(getTestGraph());
 		JValue loadedValue = loader
 				.load("testit/testdata/storejvaluetest3.xml");
 		assertNotNull(loadedValue);

@@ -294,7 +294,7 @@ public class JValueDefaultVisitor implements JValueVisitor {
 	@Override
 	public void cantVisit(JValue v) {
 		throw new JValueVisitorException(getClass().getSimpleName()
-				+ " can not handle " + v.getType(), null);
+				+ " can not handle " + v.getType(), v);
 
 	}
 
