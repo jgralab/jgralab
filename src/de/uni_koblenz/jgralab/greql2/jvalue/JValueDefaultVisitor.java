@@ -237,11 +237,6 @@ public class JValueDefaultVisitor implements JValueVisitor {
 	}
 
 	@Override
-	public void visitTrivalentBoolean(JValue b) {
-		cantVisit(b);
-	}
-
-	@Override
 	public void visitObject(JValue o) {
 		cantVisit(o);
 	}

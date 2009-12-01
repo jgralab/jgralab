@@ -214,14 +214,6 @@ public interface JValueVisitor {
 	public void visitBoolean(JValue b);
 
 	/**
-	 * The method to visit a TrivalentBoolean value
-	 * 
-	 * @param b
-	 *            the TrivalentBoolean value to visit
-	 */
-	public void visitTrivalentBoolean(JValue b);
-
-	/**
 	 * The method to visit a Object value
 	 * 
 	 * @param o
