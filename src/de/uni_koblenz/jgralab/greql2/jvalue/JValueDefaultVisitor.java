@@ -25,6 +25,7 @@
 package de.uni_koblenz.jgralab.greql2.jvalue;
 
 import java.util.Iterator;
+import java.util.Map.Entry;
 
 import de.uni_koblenz.jgralab.greql2.exception.JValueVisitorException;
 
@@ -90,6 +91,24 @@ public class JValueDefaultVisitor implements JValueVisitor {
 				inter();
 			}
 			iter.next().accept(this);
+		}
+		post();
+	}
+
+	@Override
+	public void visitMap(JValueMap b) {
+		boolean first = true;
+		pre();
+		for (Entry<JValue, JValue> e : b.entrySet()) {
+			if (first) {
+				first = false;
+			} else {
+				inter();
+			}
+			JValueTuple t = new JValueTuple();
+			t.add(e.getKey());
+			t.add(e.getValue());
+			t.accept(this);
 		}
 		post();
 	}
@@ -282,11 +301,6 @@ public class JValueDefaultVisitor implements JValueVisitor {
 		throw new JValueVisitorException(getClass().getSimpleName()
 				+ " can not handle " + v.getType(), null);
 
-	}
-
-	@Override
-	public void visitMap(JValueMap b) {
-		cantVisit(b);
 	}
 
 }
