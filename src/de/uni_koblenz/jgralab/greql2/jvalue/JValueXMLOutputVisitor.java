@@ -24,298 +24,354 @@
 
 package de.uni_koblenz.jgralab.greql2.jvalue;
 
-import java.io.BufferedWriter;
-import java.io.FileWriter;
-import java.io.IOException;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.util.Map.Entry;
 
-import de.uni_koblenz.jgralab.AttributedElement;
+import javax.xml.stream.FactoryConfigurationError;
+import javax.xml.stream.XMLOutputFactory;
+import javax.xml.stream.XMLStreamException;
+
+import de.uni_koblenz.ist.utilities.xml.IndentingXMLStreamWriter;
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.Vertex;
-import de.uni_koblenz.jgralab.graphmarker.BooleanGraphMarker;
-import de.uni_koblenz.jgralab.greql2.exception.JValueVisitorException;
 import de.uni_koblenz.jgralab.schema.AttributedElementClass;
 
 public class JValueXMLOutputVisitor extends JValueDefaultVisitor {
 
-	/**
-	 * The writer which stores the elements
-	 */
-	private BufferedWriter outputWriter;
+	private IndentingXMLStreamWriter writer = null;
 
-	/**
-	 * The path to the file the value should be stored in
-	 */
-	private String filePath;
+	public JValueXMLOutputVisitor(JValue val, String fileName)
+			throws FileNotFoundException, XMLStreamException,
+			FactoryConfigurationError {
+		writer = new IndentingXMLStreamWriter(XMLOutputFactory.newInstance()
+				.createXMLStreamWriter(new FileOutputStream(fileName), "UTF-8"));
 
-	/**
-	 * The graph all elements in the jvalue to visit belong to
-	 */
-	private Graph dataGraph = null;
-
-	private void storeln(String s) {
-		try {
-			outputWriter.write(s);
-			outputWriter.write("\n");
-		} catch (IOException e) {
-			throw new JValueVisitorException("Can't write to output file",
-					null, e);
-		}
-	}
-
-	private void store(String s) {
-		try {
-			outputWriter.write(s);
-		} catch (IOException e) {
-			throw new JValueVisitorException("Can't write to output file",
-					null, e);
-		}
-	}
-
-	private String xmlQuote(String string) {
-		StringBuffer result = new StringBuffer();
-		for (int i = 0; i < string.length(); ++i) {
-			char c = string.charAt(i);
-			if (c == '<') {
-				result.append("&lt;");
-			} else if (c == '>') {
-				result.append("&gt;");
-			} else if (c == '"') {
-				result.append("&quot;");
-			} else if (c == '\'') {
-				result.append("&apos;");
-			} else if (c == '&') {
-				result.append("&amp;");
-			} else {
-				result.append(c);
-			}
-		}
-		return result.toString();
-	}
-
-	private void storeBrowsingInfo(JValue n) {
-		AttributedElement browsingInfo = n.getBrowsingInfo();
-		if (browsingInfo instanceof Vertex) {
-			Vertex browsingVertex = (Vertex) browsingInfo;
-			store("<browsevertex>" + browsingVertex.getId() + "</browsevertex>");
-		} else if (browsingInfo instanceof Edge) {
-			Edge browsingEdge = (Edge) browsingInfo;
-			store("<browseedge>" + browsingEdge.getId() + "</browseedge>");
-		}
-	}
-
-	public JValueXMLOutputVisitor(JValue value, String filePath) {
-		this(value, filePath, null);
-	}
-
-	public JValueXMLOutputVisitor(JValue value, String filePath, Graph dataGraph) {
-		this.filePath = filePath;
-		this.dataGraph = dataGraph;
 		head();
-		value.accept(this);
+		val.accept(this);
 		foot();
-	}
-
-	@Override
-	public void visitSet(JValueSet set) {
-		storeln("<set>");
-		super.visitSet(set);
-		storeln("</set>");
-	}
-
-	@Override
-	public void visitBag(JValueBag bag) {
-		storeln("<bag>");
-		super.visitBag(bag);
-		storeln("</bag>");
-	}
-
-	@Override
-	public void visitList(JValueList list) {
-		storeln("<list>");
-		super.visitList(list);
-		storeln("</list>");
-	}
-
-	@Override
-	public void visitTuple(JValueTuple tuple) {
-		storeln("<tuple>");
-		super.visitTuple(tuple);
-		storeln("</tuple>");
-	}
-
-	@Override
-	public void visitRecord(JValueRecord record) {
-		storeln("<record>");
-		super.visitRecord(record);
-		storeln("</record>");
-	}
-
-	@Override
-	public void visitTable(JValueTable table) {
-		storeln("<table>");
-		storeln("<header>");
-		super.visitTuple(table.getHeader());
-		storeln("</header>");
-		storeln("<tabledata>");
-		table.getData().accept(this);
-		storeln("</tabledata>");
-		storeln("</table>");
-	}
-
-	@Override
-	public void visitVertex(JValue v) {
-		Vertex vertex = null;
-		vertex = v.toVertex();
-		storeln("<vertex>");
-		store("<value>" + vertex.getId() + "</value>");
-		storeBrowsingInfo(v);
-		storeln("</vertex>");
-	}
-
-	@Override
-	public void visitEdge(JValue e) {
-		Edge edge = null;
-		edge = e.toEdge();
-		store("<edge>");
-		store("<value>" + edge.getId() + "</value>");
-		storeBrowsingInfo(e);
-		storeln("</edge>");
-	}
-
-	@Override
-	public void visitInt(JValue n) {
-		Integer b = n.toInteger();
-		store("<integer>");
-		store("<value>" + b.intValue() + "</value>");
-		storeBrowsingInfo(n);
-		storeln("</integer>");
-	}
-
-	@Override
-	public void visitLong(JValue n) {
-		Long b = n.toLong();
-		store("<long>");
-		store("<value>" + b.longValue() + "</value>");
-		storeBrowsingInfo(n);
-		storeln("</long>");
-	}
-
-	@Override
-	public void visitDouble(JValue n) {
-		Double b = n.toDouble();
-		store("<double>");
-		store("<value>" + b.doubleValue() + "</value>");
-		storeBrowsingInfo(n);
-		storeln("</double>");
-	}
-
-	@Override
-	public void visitString(JValue s) {
-		String st = s.toString();
-		store("<string>");
-		store("<value>" + xmlQuote(st) + "</value>");
-		storeBrowsingInfo(s);
-		storeln("</string>");
-	}
-
-	@Override
-	public void visitEnumValue(JValue e) {
-		String st = e.toString();
-		store("<enumvalue>");
-		store("<value>" + xmlQuote(st) + "</value>");
-		storeBrowsingInfo(e);
-		storeln("</enumvalue>");
-	}
-
-	@Override
-	public void visitGraph(JValue g) {
-		Graph gr = g.toGraph();
-		store("<graph>");
-		store("<value>" + gr.getId() + "</value>");
-		storeBrowsingInfo(g);
-		storeln("</graph>");
-	}
-
-	/**
-	 * To store a subgraph is very tricky, one possibility is to store all
-	 * vertices and edges
-	 */
-	@Override
-	public void visitSubgraph(JValue s) {
-		if (dataGraph == null) {
-			throw new JValueVisitorException(
-					"Cannot write a Subgraph to xml if no Graph is given", s);
-		}
-		storeln("<subgraph>");
-		storeBrowsingInfo(s);
-		BooleanGraphMarker subgraph = s.toSubgraphTempAttribute();
-		Vertex firstVertex = dataGraph.getFirstVertex();
-		Vertex currentVertex = firstVertex;
-		do {
-			if ((subgraph == null) || (subgraph.isMarked(currentVertex))) {
-				storeln("<vertex>" + currentVertex.getId() + "</vertex>");
-			}
-			currentVertex = currentVertex.getNextVertex();
-		} while (firstVertex != currentVertex);
-		Edge firstEdge = dataGraph.getFirstEdgeInGraph();
-		Edge currentEdge = firstEdge;
-		do {
-			if (subgraph.isMarked(currentEdge)) {
-				storeln("<edge>" + currentEdge.getId() + "</edge>");
-			}
-			currentEdge = currentEdge.getNextEdgeInGraph();
-		} while (firstEdge != currentEdge);
-
-		storeln("</subgraph>");
-	}
-
-	@Override
-	public void visitBoolean(JValue b) {
-		Boolean bool = b.toBoolean();
-		store("<bool>");
-		store("<value>" + bool + "</value>");
-		storeBrowsingInfo(b);
-		storeln("</bool>");
-	}
-
-	@Override
-	public void visitObject(JValue o) {
-		Object t = o.toObject();
-		store("<object>");
-		store("<value>" + xmlQuote(t.toString()) + "</value>");
-		storeBrowsingInfo(o);
-		storeln("</object>");
-	}
-
-	@Override
-	public void visitAttributedElementClass(JValue a) {
-		AttributedElementClass c = a.toAttributedElementClass();
-		store("<attributedelementclass>");
-		store("<value>" + c.getQualifiedName() + "</value>");
-		storeBrowsingInfo(a);
-		storeln("</attributedelementclass>");
 	}
 
 	@Override
 	public void head() {
 		try {
-			outputWriter = new BufferedWriter(new FileWriter(filePath));
-		} catch (IOException e) {
-			throw new JValueVisitorException("Can't create output file", null,
-					e);
+			writer.writeStartDocument("UTF-8", "1.0");
+		} catch (XMLStreamException e) {
+			e.printStackTrace();
 		}
-		storeln("<xmlvalue>");
 	}
 
 	@Override
 	public void foot() {
-		storeln("</xmlvalue>");
 		try {
-			outputWriter.close();
-		} catch (IOException e) {
-			throw new JValueVisitorException("Can't close output file", null, e);
+			writer.writeEndDocument();
+			writer.writeCharacters("\n");
+			writer.flush();
+			writer.close();
+		} catch (XMLStreamException e) {
+			e.printStackTrace();
 		}
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @seede.uni_koblenz.jgralab.greql2.jvalue.JValueDefaultVisitor#
+	 * visitAttributedElementClass(de.uni_koblenz.jgralab.greql2.jvalue.JValue)
+	 */
+	@Override
+	public void visitAttributedElementClass(JValue a) {
+		AttributedElementClass aec = a.toAttributedElementClass();
+		try {
+			writer.writeEmptyElement(JValueXMLConstants.ATTRIBUTEDELEMENTCLASS);
+			writer.writeAttribute("name", aec.getQualifiedName());
+			writer.writeAttribute("schema", aec.getSchema().getQualifiedName());
+		} catch (XMLStreamException e) {
+			e.printStackTrace();
+		}
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * de.uni_koblenz.jgralab.greql2.jvalue.JValueDefaultVisitor#visitBag(de
+	 * .uni_koblenz.jgralab.greql2.jvalue.JValueBag)
+	 */
+	@Override
+	public void visitBag(JValueBag b) {
+		try {
+			writer.writeStartElement(JValueXMLConstants.BAG);
+			super.visitBag(b);
+			writer.writeEndElement();
+		} catch (XMLStreamException e) {
+			e.printStackTrace();
+		}
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * de.uni_koblenz.jgralab.greql2.jvalue.JValueDefaultVisitor#visitBoolean
+	 * (de.uni_koblenz.jgralab.greql2.jvalue.JValue)
+	 */
+	@Override
+	public void visitBoolean(JValue b) {
+		try {
+			writer.writeEmptyElement(JValueXMLConstants.BOOLEAN);
+			writer.writeAttribute("value", b.toBoolean().toString());
+		} catch (XMLStreamException e) {
+			e.printStackTrace();
+		}
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * de.uni_koblenz.jgralab.greql2.jvalue.JValueDefaultVisitor#visitDouble
+	 * (de.uni_koblenz.jgralab.greql2.jvalue.JValue)
+	 */
+	@Override
+	public void visitDouble(JValue n) {
+		try {
+			writer.writeEmptyElement(JValueXMLConstants.DOUBLE);
+			writer.writeAttribute("value", n.toDouble().toString());
+		} catch (XMLStreamException e) {
+			e.printStackTrace();
+		}
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * de.uni_koblenz.jgralab.greql2.jvalue.JValueDefaultVisitor#visitEdge(de
+	 * .uni_koblenz.jgralab.greql2.jvalue.JValue)
+	 */
+	@Override
+	public void visitEdge(JValue e) {
+		Edge edge = e.toEdge();
+		try {
+			writer.writeEmptyElement(JValueXMLConstants.EDGE);
+			writer.writeAttribute("id", String.valueOf(edge.getId()));
+			writer.writeAttribute("graphId", String.valueOf(edge.getGraph()
+					.getId()));
+		} catch (XMLStreamException ex) {
+			ex.printStackTrace();
+		}
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * de.uni_koblenz.jgralab.greql2.jvalue.JValueDefaultVisitor#visitEnumValue
+	 * (de.uni_koblenz.jgralab.greql2.jvalue.JValue)
+	 */
+	@Override
+	public void visitEnumValue(JValue e) {
+		String val = e.toEnum();
+		try {
+			writer.writeEmptyElement(JValueXMLConstants.ENUMVALUE);
+			writer.writeAttribute("value", val);
+		} catch (XMLStreamException ex) {
+			ex.printStackTrace();
+		}
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * de.uni_koblenz.jgralab.greql2.jvalue.JValueDefaultVisitor#visitGraph(
+	 * de.uni_koblenz.jgralab.greql2.jvalue.JValue)
+	 */
+	@Override
+	public void visitGraph(JValue g) {
+		Graph graph = g.toGraph();
+		try {
+			writer.writeEmptyElement(JValueXMLConstants.GRAPH);
+			writer.writeAttribute("id", graph.getId());
+		} catch (XMLStreamException ex) {
+			ex.printStackTrace();
+		}
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * de.uni_koblenz.jgralab.greql2.jvalue.JValueDefaultVisitor#visitInt(de
+	 * .uni_koblenz.jgralab.greql2.jvalue.JValue)
+	 */
+	@Override
+	public void visitInt(JValue n) {
+		try {
+			writer.writeEmptyElement(JValueXMLConstants.INTEGER);
+			writer.writeAttribute("value", n.toInteger().toString());
+		} catch (XMLStreamException e) {
+			e.printStackTrace();
+		}
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * de.uni_koblenz.jgralab.greql2.jvalue.JValueDefaultVisitor#visitList(de
+	 * .uni_koblenz.jgralab.greql2.jvalue.JValueList)
+	 */
+	@Override
+	public void visitList(JValueList b) {
+		try {
+			writer.writeStartElement(JValueXMLConstants.LIST);
+			super.visitList(b);
+			writer.writeEndElement();
+		} catch (XMLStreamException e) {
+			e.printStackTrace();
+		}
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * de.uni_koblenz.jgralab.greql2.jvalue.JValueDefaultVisitor#visitLong(de
+	 * .uni_koblenz.jgralab.greql2.jvalue.JValue)
+	 */
+	@Override
+	public void visitLong(JValue n) {
+		try {
+			writer.writeEmptyElement(JValueXMLConstants.LONG);
+			writer.writeAttribute("value", n.toLong().toString());
+		} catch (XMLStreamException e) {
+			e.printStackTrace();
+		}
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * de.uni_koblenz.jgralab.greql2.jvalue.JValueDefaultVisitor#visitMap(de
+	 * .uni_koblenz.jgralab.greql2.jvalue.JValueMap)
+	 */
+	@Override
+	public void visitMap(JValueMap b) {
+		try {
+			writer.writeStartElement(JValueXMLConstants.MAP);
+
+			for (Entry<JValue, JValue> e : b.entrySet()) {
+				writer.writeStartElement(JValueXMLConstants.MAP_ENTRY);
+				e.getKey().accept(this);
+				e.getValue().accept(this);
+				writer.writeEndElement();
+			}
+
+			writer.writeEndElement();
+		} catch (XMLStreamException e) {
+			e.printStackTrace();
+		}
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * de.uni_koblenz.jgralab.greql2.jvalue.JValueDefaultVisitor#visitRecord
+	 * (de.uni_koblenz.jgralab.greql2.jvalue.JValueRecord)
+	 */
+	@Override
+	public void visitRecord(JValueRecord r) {
+		try {
+			writer.writeStartElement(JValueXMLConstants.RECORD);
+
+			for (String component : r.keySet()) {
+				writer.writeStartElement(JValueXMLConstants.RECORD_COMPONENT);
+				writer.writeAttribute("name", component);
+				r.get(component).accept(this);
+				writer.writeEndElement();
+			}
+
+			writer.writeEndElement();
+		} catch (XMLStreamException e) {
+			e.printStackTrace();
+		}
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * de.uni_koblenz.jgralab.greql2.jvalue.JValueDefaultVisitor#visitSet(de
+	 * .uni_koblenz.jgralab.greql2.jvalue.JValueSet)
+	 */
+	@Override
+	public void visitSet(JValueSet s) {
+		try {
+			writer.writeStartElement(JValueXMLConstants.SET);
+			super.visitSet(s);
+			writer.writeEndElement();
+		} catch (XMLStreamException e) {
+			e.printStackTrace();
+		}
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * de.uni_koblenz.jgralab.greql2.jvalue.JValueDefaultVisitor#visitString
+	 * (de.uni_koblenz.jgralab.greql2.jvalue.JValue)
+	 */
+	@Override
+	public void visitString(JValue s) {
+		try {
+			writer.writeEmptyElement(JValueXMLConstants.STRING);
+			writer.writeAttribute("value", s.toString());
+		} catch (XMLStreamException e) {
+			e.printStackTrace();
+		}
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * de.uni_koblenz.jgralab.greql2.jvalue.JValueDefaultVisitor#visitTuple(
+	 * de.uni_koblenz.jgralab.greql2.jvalue.JValueTuple)
+	 */
+	@Override
+	public void visitTuple(JValueTuple t) {
+		try {
+			writer.writeStartElement(JValueXMLConstants.TUPLE);
+			super.visitTuple(t);
+			writer.writeEndElement();
+		} catch (XMLStreamException e) {
+			e.printStackTrace();
+		}
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * de.uni_koblenz.jgralab.greql2.jvalue.JValueDefaultVisitor#visitVertex
+	 * (de.uni_koblenz.jgralab.greql2.jvalue.JValue)
+	 */
+	@Override
+	public void visitVertex(JValue v) {
+		Vertex vertex = v.toVertex();
+		try {
+			writer.writeEmptyElement(JValueXMLConstants.EDGE);
+			writer.writeAttribute("id", String.valueOf(vertex.getId()));
+			writer.writeAttribute("graphId", String.valueOf(vertex.getGraph()
+					.getId()));
+		} catch (XMLStreamException ex) {
+			ex.printStackTrace();
+		}
+	}
 }

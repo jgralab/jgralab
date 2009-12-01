@@ -40,7 +40,7 @@ public class StoreJValueTest extends GenericTests {
 		String queryString = "bag(tup(\"Nodes:\", count(from v:V{} report v end)), tup(\"Edges:\", count(from e:E{} report e end)))";
 		JValue result = evalTestQuery("StoreJValue1", queryString);
 		JValueXMLOutputVisitor outputVisitor = new JValueXMLOutputVisitor(
-				result, "testit/testdata/storejvaluetest1.xml", getTestGraph());
+				result, "testit/testdata/storejvaluetest1.xml");
 		outputVisitor.toString();
 		ValueXMLLoader loader = new ValueXMLLoader(getTestGraph());
 		JValue loadedValue = loader
@@ -54,7 +54,7 @@ public class StoreJValueTest extends GenericTests {
 		String queryString = "from v:V{} report v as \"Nodes\" end";
 		JValue result = evalTestQuery("StoreJValue2", queryString);
 		JValueXMLOutputVisitor outputVisitor = new JValueXMLOutputVisitor(
-				result, "testit/testdata/storejvaluetest2.xml", getTestGraph());
+				result, "testit/testdata/storejvaluetest2.xml");
 		outputVisitor.toString();
 		ValueXMLLoader loader = new ValueXMLLoader(getTestGraph());
 		JValue loadedValue = loader
@@ -68,7 +68,7 @@ public class StoreJValueTest extends GenericTests {
 		String queryString = "from x,y:list(1..100) reportTable \"X\", \"Y\", x*y end";
 		JValue result = evalTestQuery("StoreJValue3", queryString);
 		JValueXMLOutputVisitor outputVisitor = new JValueXMLOutputVisitor(
-				result, "testit/testdata/storejvaluetest3.xml", getTestGraph());
+				result, "testit/testdata/storejvaluetest3.xml");
 		outputVisitor.toString();
 		ValueXMLLoader loader = new ValueXMLLoader(getTestGraph());
 		JValue loadedValue = loader
