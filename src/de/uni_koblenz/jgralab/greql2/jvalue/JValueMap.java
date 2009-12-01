@@ -25,6 +25,7 @@
 package de.uni_koblenz.jgralab.greql2.jvalue;
 
 import java.util.HashMap;
+import java.util.Map;
 import java.util.Set;
 import java.util.Map.Entry;
 
@@ -82,6 +83,13 @@ public class JValueMap extends JValue {
 	 */
 	public int size() {
 		return map.size();
+	}
+
+	/**
+	 * @see Map#clear()
+	 */
+	public void clear() {
+		map.clear();
 	}
 
 	/**
