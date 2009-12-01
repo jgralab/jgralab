@@ -211,16 +211,6 @@ public class JValueXMLOutputVisitor extends JValueDefaultVisitor {
 	}
 
 	@Override
-	public void visitChar(JValue c) {
-		Character b = c.toCharacter();
-		String s = String.valueOf(b);
-		store("<char>");
-		store("<value>" + xmlQuote(s) + "</value>");
-		storeBrowsingInfo(c);
-		storeln("</char>");
-	}
-
-	@Override
 	public void visitString(JValue s) {
 		String st = s.toString();
 		store("<string>");

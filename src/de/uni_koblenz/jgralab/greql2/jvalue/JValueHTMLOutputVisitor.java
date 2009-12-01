@@ -139,10 +139,11 @@ public class JValueHTMLOutputVisitor extends JValueDefaultVisitor {
 		storeln("<table><tr><td>");
 		boolean first = true;
 		for (JValue val : t) {
-			if (first)
+			if (first) {
 				first = false;
-			else
+			} else {
 				storeln("</td><td>");
+			}
 			val.accept(this);
 		}
 		storeln("</td></tr></table>");
@@ -153,10 +154,11 @@ public class JValueHTMLOutputVisitor extends JValueDefaultVisitor {
 		storeln("<table><tr><td>");
 		boolean first = true;
 		for (Map.Entry<String, JValue> entry : r.entrySet()) {
-			if (first)
+			if (first) {
 				first = false;
-			else
+			} else {
 				storeln("</td><td>");
+			}
 			storeln(entry.getKey() + ": ");
 			entry.getValue().accept(this);
 		}
@@ -168,10 +170,11 @@ public class JValueHTMLOutputVisitor extends JValueDefaultVisitor {
 		store("<table style=\"align:left;\"><tr><th>");
 		boolean first = true;
 		for (JValue val : table.getHeader()) {
-			if (first)
+			if (first) {
 				first = false;
-			else
+			} else {
 				store("</th><th>");
+			}
 			val.accept(this);
 		}
 		storeln("</th></tr>");
@@ -266,14 +269,6 @@ public class JValueHTMLOutputVisitor extends JValueDefaultVisitor {
 	}
 
 	@Override
-	public void visitChar(JValue c) {
-		simplePre(c);
-		Character b = c.toCharacter();
-		storeln(htmlQuote(b.toString()));
-		simplePost(c);
-	}
-
-	@Override
 	public void visitString(JValue s) {
 		simplePre(s);
 		String b = s.toString();
@@ -301,6 +296,7 @@ public class JValueHTMLOutputVisitor extends JValueDefaultVisitor {
 		}
 	}
 
+	@Override
 	public void visitInvalid(JValue i) {
 		store("[invalid value]");
 	}
