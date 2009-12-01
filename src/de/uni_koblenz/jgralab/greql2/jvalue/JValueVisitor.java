@@ -153,14 +153,6 @@ public interface JValueVisitor {
 	public void visitDouble(JValue n);
 
 	/**
-	 * Method to visit a Character
-	 * 
-	 * @param c
-	 *            the Character to visit
-	 */
-	public void visitChar(JValue c);
-
-	/**
 	 * Method to visit a String
 	 * 
 	 * @param s

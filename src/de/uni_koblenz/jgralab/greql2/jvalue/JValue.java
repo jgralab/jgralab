@@ -89,9 +89,6 @@ public class JValue implements Comparable<JValue> {
 		case BOOLEAN:
 			v.visitBoolean(this);
 			return;
-		case CHARACTER:
-			v.visitChar(this);
-			return;
 		case INTEGER:
 			v.visitInt(this);
 			return;
@@ -356,7 +353,7 @@ public class JValue implements Comparable<JValue> {
 	public JValueSlice toSlice() throws JValueInvalidTypeException {
 		throw new JValueInvalidTypeException(JValueType.SLICE, type);
 	}
-	
+
 	/**
 	 * constructs a new JValue with encapsulates a GraphElementClass (also
 	 * called type)
@@ -615,42 +612,6 @@ public class JValue implements Comparable<JValue> {
 			return (Double) value;
 		}
 		throw new JValueInvalidTypeException(JValueType.DOUBLE, type);
-	}
-
-	/**
-	 * creates a new JValue which encapsulates the given Character
-	 */
-	public JValue(Character c) {
-		this.type = JValueType.CHARACTER;
-		this.value = c;
-		browsingInfo = null;
-	}
-
-	/**
-	 * creates a new JValue which encapsulates the given Character
-	 */
-	public JValue(Character c, AttributedElement browsingInfo) {
-		this(c);
-		this.browsingInfo = browsingInfo;
-	}
-
-	/**
-	 * @return true if this JValue encapsulates a Char value, false otherwise
-	 */
-	public boolean isCharacter() {
-		return (type == JValueType.CHARACTER);
-	}
-
-	/**
-	 * @return the encapsulated Character value
-	 * @throws JValueInvalidTypeException
-	 *             if this JValue does not encapsulate a T value
-	 */
-	public Character toCharacter() throws JValueInvalidTypeException {
-		if (isCharacter()) {
-			return (Character) value;
-		}
-		throw new JValueInvalidTypeException(JValueType.CHARACTER, type);
 	}
 
 	/**
@@ -1120,13 +1081,6 @@ public class JValue implements Comparable<JValue> {
 		switch (this.type) {
 		case BOOLEAN:
 			return -1;
-		case CHARACTER:
-			switch (atype) {
-			case STRING:
-				return 2;
-			default:
-				return -1;
-			}
 		case INTEGER:
 			switch (atype) {
 			case LONG:
@@ -1218,7 +1172,7 @@ public class JValue implements Comparable<JValue> {
 			return new JValue(o);
 		}
 		if (objectsClass == Character.class) {
-			return new JValue((Character) o);
+			return new JValue(o);
 		}
 		if (o instanceof Edge) {
 			return new JValue((Edge) o);
@@ -1279,7 +1233,5 @@ public class JValue implements Comparable<JValue> {
 		}
 		throw new JValueInvalidTypeException(JValueType.NUMBER, type);
 	}
-
-
 
 }

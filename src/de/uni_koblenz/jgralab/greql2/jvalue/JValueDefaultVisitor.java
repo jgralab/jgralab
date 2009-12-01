@@ -178,11 +178,6 @@ public class JValueDefaultVisitor implements JValueVisitor {
 	}
 
 	@Override
-	public void visitChar(JValue c) {
-		cantVisit(c);
-	}
-
-	@Override
 	public void visitString(JValue s) {
 		cantVisit(s);
 	}
@@ -291,22 +286,7 @@ public class JValueDefaultVisitor implements JValueVisitor {
 
 	@Override
 	public void visitMap(JValueMap b) {
-		boolean first = true;
-		pre();
-		for (JValue k : b.keySet()) {
-			if (first) {
-				first = false;
-			} else {
-				inter();
-			}
-			JValueTuple tup = new JValueTuple(b.size());
-			tup.add(k);
-			tup.add(b.get(k));
-			tup.accept(this);
-			// k.accept(this);
-			// b.get(k).accept(this);
-		}
-		post();
+		cantVisit(b);
 	}
 
 }
