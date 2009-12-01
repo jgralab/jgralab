@@ -34,16 +34,16 @@ import de.uni_koblenz.jgralab.AttributedElement;
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.Vertex;
+import de.uni_koblenz.jgralab.WorkInProgress;
 import de.uni_koblenz.jgralab.greql2.exception.JValueLoadException;
 
-public class ValueXMLLoader extends DefaultHandler {
+@WorkInProgress(description = "Don't use, this will be completely rewritten!", responsibleDevelopers = "horn")
+public class JValueXMLLoader extends DefaultHandler {
 
 	/**
 	 * This class modells a entry on the stack
 	 */
 	private static class StackEntry {
-
-		String tag;
 
 		JValueCollection collection;
 
@@ -62,13 +62,11 @@ public class ValueXMLLoader extends DefaultHandler {
 		}
 
 		StackEntry(String tagName) {
-			tag = tagName;
 			this.value = "";
 			this.collection = null;
 		}
 
 		StackEntry(String tagName, JValueCollection col) {
-			tag = tagName;
 			this.value = "";
 			this.collection = col;
 		}
@@ -100,7 +98,7 @@ public class ValueXMLLoader extends DefaultHandler {
 	/**
 	 * creates a new JValue out of the given xmlfile
 	 */
-	public ValueXMLLoader(Graph graph) {
+	public JValueXMLLoader(Graph graph) {
 		valueStack = new Stack<StackEntry>();
 		this.graph = graph;
 	}

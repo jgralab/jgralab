@@ -366,7 +366,7 @@ public class JValueXMLOutputVisitor extends JValueDefaultVisitor {
 	public void visitVertex(JValue v) {
 		Vertex vertex = v.toVertex();
 		try {
-			writer.writeEmptyElement(JValueXMLConstants.EDGE);
+			writer.writeEmptyElement(JValueXMLConstants.VERTEX);
 			writer.writeAttribute("id", String.valueOf(vertex.getId()));
 			writer.writeAttribute("graphId", String.valueOf(vertex.getGraph()
 					.getId()));

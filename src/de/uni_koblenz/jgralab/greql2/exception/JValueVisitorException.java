@@ -43,8 +43,9 @@ public class JValueVisitorException extends RuntimeException {
 		this.value = value;
 	}
 
-	public String getMEssage() {
-		return super.getMessage() + "(value was: " + value + ")";
+	@Override
+	public String getMessage() {
+		return super.getMessage() + " (value was: " + value + ")";
 	}
 
 }
