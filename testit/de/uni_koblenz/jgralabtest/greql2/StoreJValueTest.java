@@ -30,8 +30,8 @@ import static org.junit.Assert.assertNotNull;
 import org.junit.Test;
 
 import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
-import de.uni_koblenz.jgralab.greql2.jvalue.JValueXMLOutputVisitor;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValueXMLLoader;
+import de.uni_koblenz.jgralab.greql2.jvalue.JValueXMLOutputVisitor;
 
 public class StoreJValueTest extends GenericTests {
 
@@ -53,9 +53,8 @@ public class StoreJValueTest extends GenericTests {
 	public void testStoreJValue2() throws Exception {
 		String queryString = "from v:V{} report v as \"Nodes\" end";
 		JValue result = evalTestQuery("StoreJValue2", queryString);
-		JValueXMLOutputVisitor outputVisitor = new JValueXMLOutputVisitor(
-				result, "testit/testdata/storejvaluetest2.xml");
-		outputVisitor.toString();
+		new JValueXMLOutputVisitor(result,
+				"testit/testdata/storejvaluetest2.xml");
 		JValueXMLLoader loader = new JValueXMLLoader(getTestGraph());
 		JValue loadedValue = loader
 				.load("testit/testdata/storejvaluetest2.xml");
@@ -67,13 +66,12 @@ public class StoreJValueTest extends GenericTests {
 	public void testStoreJValue3() throws Exception {
 		String queryString = "from x,y:list(1..100) reportTable \"X\", \"Y\", x*y end";
 		JValue result = evalTestQuery("StoreJValue3", queryString);
-		JValueXMLOutputVisitor outputVisitor = new JValueXMLOutputVisitor(
-				result, "testit/testdata/storejvaluetest3.xml");
-		outputVisitor.toString();
+		new JValueXMLOutputVisitor(result,
+				"testit/testdata/storejvaluetest3.xml");
 		JValueXMLLoader loader = new JValueXMLLoader(getTestGraph());
 		JValue loadedValue = loader
 				.load("testit/testdata/storejvaluetest3.xml");
 		assertNotNull(loadedValue);
+		assertEquals(result, loadedValue);
 	}
-
 }

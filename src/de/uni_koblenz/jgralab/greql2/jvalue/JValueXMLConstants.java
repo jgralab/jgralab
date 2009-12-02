@@ -32,6 +32,7 @@ public class JValueXMLConstants {
 	public static final String BAG = "bag";
 	public static final String MAP = "map";
 	public static final String MAP_ENTRY = "mapEntry";
+	public static final String TABLE = "table";
 
 	public static final String ATTR_ID = "id";
 	public static final String ATTR_SCHEMA = "schema";

@@ -40,7 +40,7 @@ import de.uni_koblenz.jgralab.greql2.exception.JValueLoadException;
 import de.uni_koblenz.jgralab.schema.AttributedElementClass;
 import de.uni_koblenz.jgralab.schema.Schema;
 
-@WorkInProgress(description = "Don't use, this will be completely rewritten!", responsibleDevelopers = "horn")
+@WorkInProgress(description = "TODO: Handle BrowsingInfos!", responsibleDevelopers = "horn")
 public class JValueXMLLoader extends XmlProcessor {
 
 	/**
@@ -119,20 +119,34 @@ public class JValueXMLLoader extends XmlProcessor {
 			JValueMapEntry jme = (JValueMapEntry) parentElement;
 			if (jme.key == null) {
 				jme.key = endedElement;
-			} else {
+			} else if (jme.value == null) {
 				jme.value = endedElement;
+			} else {
+				throw new JValueLoadException(
+						"Encountered MapEntry with more than 2 elements!", null);
 			}
 		} else if (parentElement instanceof JValueRecordComponent) {
 			JValueRecordComponent rc = (JValueRecordComponent) parentElement;
 			rc.jvalue = endedElement;
 		} else if (parentElement.isCollection()) {
 			// ok, parent is a collection, so we can simply add with the
-			// exception of records
+			// exception of records and tables
 			JValueCollection coll = parentElement.toCollection();
 			if (coll.isJValueRecord()) {
 				JValueRecord rec = coll.toJValueRecord();
 				JValueRecordComponent comp = (JValueRecordComponent) endedElement;
 				rec.add(comp.componentName, comp.jvalue);
+			} else if (coll.isJValueTable()) {
+				JValueTable tab = coll.toJValueTable();
+				if (tab.getHeader() == null) {
+					tab.setHeader(endedElement.toJValueTuple());
+				} else if (tab.getData() == null) {
+					tab.setData(endedElement.toCollection());
+				} else {
+					throw new JValueLoadException(
+							"Table containing more children than header and data!",
+							null);
+				}
 			} else {
 				coll.add(endedElement);
 			}
@@ -152,9 +166,19 @@ public class JValueXMLLoader extends XmlProcessor {
 		JValue val = null;
 		if (elem.equals(JValueXMLConstants.ATTRIBUTEDELEMENTCLASS)) {
 			String qName = getAttribute(JValueXMLConstants.ATTR_NAME);
-			String schema = getAttribute(JValueXMLConstants.ATTR_SCHEMA);
-			AttributedElementClass aec = schemaName2Schema.get(schema)
+			String schemaName = getAttribute(JValueXMLConstants.ATTR_SCHEMA);
+			Schema schema = schemaName2Schema.get(schemaName);
+			if (schema == null) {
+				throw new JValueLoadException("Couldn't retrieve Schema '"
+						+ schemaName + "'", null);
+			}
+			AttributedElementClass aec = schema
 					.getAttributedElementClass(qName);
+			if (aec == null) {
+				throw new JValueLoadException(
+						"Couldn't retrieve attributed element '" + qName
+								+ "' from schema '" + schemaName + "'.", null);
+			}
 			val = new JValue(aec);
 			// ---------------------------------------------------------------
 		} else if (elem.equals(JValueXMLConstants.BAG)) {
@@ -226,6 +250,14 @@ public class JValueXMLLoader extends XmlProcessor {
 			// ---------------------------------------------------------------
 		} else if (elem.equals(JValueXMLConstants.STRING)) {
 			val = new JValue(getAttribute(JValueXMLConstants.ATTR_VALUE));
+			// ---------------------------------------------------------------
+		} else if (elem.equals(JValueXMLConstants.TABLE)) {
+			JValueTable tab = new JValueTable();
+			// header is empty by default, but we rely that it's not set when
+			// assigning children to parent jvalues is endElement().
+			tab.setHeader(null);
+			tab.setData(null);
+			val = tab;
 			// ---------------------------------------------------------------
 		} else if (elem.equals(JValueXMLConstants.TUPLE)) {
 			val = new JValueTuple();
