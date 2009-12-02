@@ -24,219 +24,157 @@
 
 package de.uni_koblenz.jgralab.greql2.jvalue;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Stack;
 
-import org.riediger.plist.MinimalSAXParser;
-import org.xml.sax.Attributes;
-import org.xml.sax.helpers.DefaultHandler;
+import javax.xml.stream.XMLStreamException;
 
-import de.uni_koblenz.jgralab.AttributedElement;
+import de.uni_koblenz.ist.utilities.xml.XmlProcessor;
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.Graph;
-import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.WorkInProgress;
 import de.uni_koblenz.jgralab.greql2.exception.JValueLoadException;
+import de.uni_koblenz.jgralab.schema.AttributedElementClass;
+import de.uni_koblenz.jgralab.schema.Schema;
 
 @WorkInProgress(description = "Don't use, this will be completely rewritten!", responsibleDevelopers = "horn")
-public class JValueXMLLoader extends DefaultHandler {
+public class JValueXMLLoader extends XmlProcessor {
 
 	/**
-	 * This class modells a entry on the stack
+	 * Synthetic class to ease XML parsing
 	 */
-	private static class StackEntry {
+	private class JValueRecordComponent extends JValue {
+		String componentName;
+		JValue jvalue;
 
-		JValueCollection collection;
-
-		AttributedElement browsingInfo = null;
-
-		String value;
-
-		public void setBrowsingEdge(Graph graph, String edgeIdString) {
-			int edgeId = Integer.parseInt(edgeIdString);
-			browsingInfo = graph.getEdge(edgeId);
+		public JValueRecordComponent(String compName, JValue v) {
+			componentName = compName;
+			jvalue = v;
 		}
-
-		public void setBrowsingVertex(Graph graph, String vertexIdString) {
-			int vertexId = Integer.parseInt(vertexIdString);
-			browsingInfo = graph.getVertex(vertexId);
-		}
-
-		StackEntry(String tagName) {
-			this.value = "";
-			this.collection = null;
-		}
-
-		StackEntry(String tagName, JValueCollection col) {
-			this.value = "";
-			this.collection = col;
-		}
-
 	}
 
 	/**
-	 * This stack holds all jvalue object that were created but not finished
+	 * Synthetic class to ease XML parsing
 	 */
-	private Stack<StackEntry> valueStack;
-
-	/**
-	 * The Graph all elements in the created jvalue belong to. Without this
-	 * graph, it is not possible to load a JValue which contains vertices, edges
-	 * etc.
-	 */
-	private Graph graph;
-
-	/**
-	 * The JValue which was loaded
-	 */
-	private JValue loadedValue = null;
-
-	/**
-	 * The String of the current Data
-	 */
-	private String currentData = "";
-
-	/**
-	 * creates a new JValue out of the given xmlfile
-	 */
-	public JValueXMLLoader(Graph graph) {
-		valueStack = new Stack<StackEntry>();
-		this.graph = graph;
+	private class JValueMapEntry extends JValueTuple {
 	}
 
-	public JValue load(String pathToXMLFile) throws JValueLoadException {
-		MinimalSAXParser parser = new MinimalSAXParser();
+	private Map<String, Graph> id2GraphMap = null;
+	private Map<String, Schema> schemaName2Schema = null;
+	private Stack<JValue> stack = new Stack<JValue>();
+
+	public JValueXMLLoader(Graph... graphs) {
+		id2GraphMap = new HashMap<String, Graph>(graphs.length);
+		for (Graph g : graphs) {
+			id2GraphMap.put(g.getId(), g);
+		}
+
+		schemaName2Schema = new HashMap<String, Schema>(graphs.length);
+		for (Graph g : graphs) {
+			Schema s = g.getSchema();
+			schemaName2Schema.put(s.getQualifiedName(), s);
+		}
+	}
+
+	public JValue load(String fileName) {
+		// TODO: implement me!
+		return null;
+	}
+
+	@Override
+	protected void endDocument() throws XMLStreamException {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	protected void endElement(String arg0, StringBuilder arg1)
+			throws XMLStreamException {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	protected void startDocument() throws XMLStreamException {
+		stack.clear();
+	}
+
+	@Override
+	protected void startElement(String elem) throws XMLStreamException {
+		JValue val = null;
+		if (elem.equals(JValueXMLConstants.ATTRIBUTEDELEMENTCLASS)) {
+			String qName = getAttribute(JValueXMLConstants.ATTR_NAME);
+			String schema = getAttribute(JValueXMLConstants.ATTR_SCHEMA);
+			AttributedElementClass aec = schemaName2Schema.get(schema)
+					.getAttributedElementClass(qName);
+			val = new JValue(aec);
+			// ---------------------------------------------------------------
+		} else if (elem.equals(JValueXMLConstants.BAG)) {
+			val = new JValueBag();
+			// ---------------------------------------------------------------
+		} else if (elem.equals(JValueXMLConstants.BOOLEAN)) {
+			val = new JValue(Boolean
+					.valueOf(getAttribute(JValueXMLConstants.ATTR_VALUE)));
+			// ---------------------------------------------------------------
+		} else if (elem.equals(JValueXMLConstants.DOUBLE)) {
+			val = new JValue(Double
+					.valueOf(getAttribute(JValueXMLConstants.ATTR_VALUE)));
+			// ---------------------------------------------------------------
+		} else if (elem.equals(JValueXMLConstants.EDGE)) {
+			int id = Integer.valueOf(getAttribute(JValueXMLConstants.ATTR_ID));
+			String gid = getAttribute(JValueXMLConstants.ATTR_GRAPH_ID);
+			Graph g = id2GraphMap.get(gid);
+			if (g == null) {
+				throw new JValueLoadException("There's no graph with id '"
+						+ gid + "'.", null);
+			}
+			Edge e = g.getEdge(id);
+			if (e == null) {
+				throw new JValueLoadException("There's no edge with id '" + gid
+						+ "' in graph '" + gid + "'.", null);
+			}
+			val = new JValue(e);
+			// ---------------------------------------------------------------
+		} else if (elem.equals(JValueXMLConstants.ENUMVALUE)) {
+			String litName = getAttribute(JValueXMLConstants.ATTR_VALUE);
+			String enumTypeName = getAttribute(JValueXMLConstants.ATTR_TYPE);
+			val = createEnum(litName, enumTypeName);
+			// ---------------------------------------------------------------
+		} else if (elem.equals(JValueXMLConstants.GRAPH)) {
+			String gid = getAttribute(JValueXMLConstants.ATTR_GRAPH_ID);
+			Graph g = id2GraphMap.get(gid);
+			if (g == null) {
+				throw new JValueLoadException("There's no graph with id '"
+						+ gid + "'.", null);
+			}
+			val = new JValue(g);
+			// ---------------------------------------------------------------
+		} else if (elem.equals(JValueXMLConstants.INTEGER)) {
+			val = new JValue(Integer
+					.valueOf(getAttribute(JValueXMLConstants.ATTR_VALUE)));
+			// ---------------------------------------------------------------
+		}
+
+		// -------------------------------------------------------------------
+		if (val == null) {
+			throw new JValueLoadException("Unrecognized XML element '" + elem
+					+ "'.", null);
+		}
+	}
+
+	@SuppressWarnings("unchecked")
+	private JValue createEnum(String litName, String enumTypeName) {
+		JValue val = null;
 		try {
-			parser.parse(pathToXMLFile, this);
-		} catch (Exception e) {
-			throw new JValueLoadException("Error reading JValue from '"
-					+ pathToXMLFile + "'", e);
+			Class<? extends Enum> e = (Class<? extends Enum>) Class
+					.forName(enumTypeName);
+			val = new JValue(Enum.valueOf(e, litName));
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
+			throw new JValueLoadException("The Enum class '" + enumTypeName
+					+ "' could not be loaded.", e);
 		}
-		return loadedValue;
+		return val;
 	}
-
-	@Override
-	public void characters(char[] ch, int start, int length) {
-		String s = new String(ch, start, length);
-		currentData = s;
-		// if (!valueStack.empty()) {
-		// valueStack.peek().value = s;
-		// }
-	}
-
-	/**
-	 * This method is called by the SAX-Parser
-	 */
-	@Override
-	public void startElement(String uri, String localName, String qName,
-			Attributes attributes) {
-		// GreqlEvaluator.println("Starting: '" + qName + "'");
-		JValueCollection col = null;
-		if (qName.equals("set")) {
-			col = new JValueSet();
-		} else if (qName.equals("bag")) {
-			col = new JValueBag();
-		} else if (qName.equals("list") || qName.equals("tabledata")) {
-			col = new JValueList();
-		} else if ((qName.equals("tuple")) || (qName.equals("header"))) {
-			col = new JValueTuple();
-		} else if (qName.equals("table")) {
-			col = new JValueTable();
-		} else if (qName.equals("record")) {
-			col = new JValueRecord();
-		}
-		if (col != null) {
-			valueStack.push(new StackEntry(qName, col));
-		} else {
-			if (!qName.equals("value") && !qName.equals("browsevertex")
-					&& !qName.equals("browseedge")
-					&& !qName.equals("tabledata")) {
-				valueStack.push(new StackEntry(qName));
-			}
-		}
-
-	}
-
-	/**
-	 * This method is called by the SAX-Parser
-	 */
-	@Override
-	public void endElement(String uri, String localName, String qName) {
-		// GreqlEvaluator.println("CurrentData is: '" + currentData + "'");
-		// GreqlEvaluator.println("Loaded Value: " + loadedValue);
-		JValue value = null;
-		// GreqlEvaluator.println("endElement: '" + qName + "'");
-		if (qName.equals("xmlvalue")) {
-			return;
-		}
-		StackEntry entry = valueStack.peek();
-		if (qName.equals("value")) {
-			entry.value = currentData;
-		} else if (qName.equals("browsevertex")) {
-			entry.setBrowsingVertex(graph, currentData);
-		} else if (qName.equals("browseedge")) {
-			entry.setBrowsingEdge(graph, currentData);
-		} else {
-			entry = valueStack.pop();
-			if ((qName.equals("set")) || (qName.equals("bag"))
-					|| (qName.equals("list")) || (qName.equals("tuple"))
-					|| (qName.equals("table")) || (qName.equals("record"))) {
-				if (!valueStack.empty()) {
-					entry.collection.setBrowsingInfo(entry.browsingInfo);
-					value = entry.collection;
-				}
-			} else if (qName.equals("header")) {
-				value = null;
-				JValueTable tab = (JValueTable) valueStack.peek().collection;
-				tab.setHeader((JValueTuple) entry.collection);
-			} else if (qName.equals("tabledata")) {
-				value = null;
-				JValueTable tab = (JValueTable) valueStack.peek().collection;
-				JValueList list = (JValueList) entry.collection;
-				JValueCollection col = (JValueCollection) list.get(0);
-				tab.setData(col);
-			} else if ((qName.equals("vertex"))) {
-				int vertexId = Integer.parseInt(entry.value);
-				Vertex vertex = graph.getVertex(vertexId);
-				value = new JValue(vertex);
-			} else if ((qName.equals("edge"))) {
-				int edgeId = Integer.parseInt(entry.value);
-				Edge edge = graph.getEdge(edgeId);
-				value = new JValue(edge);
-			} else if ((qName.equals("bool"))) {
-				value = new JValue(Boolean.parseBoolean(entry.value));
-			} else if ((qName.equals("integer"))) {
-				value = new JValue(Integer.parseInt(entry.value));
-			} else if ((qName.equals("long"))) {
-				value = new JValue(Long.parseLong(entry.value));
-			} else if ((qName.equals("double"))) {
-				value = new JValue(Double.parseDouble(entry.value));
-			} else if ((qName.equals("string"))) {
-				value = new JValue(entry.value);
-			} else if ((qName.equals("enumvalue"))) {
-				// TODO change load method in a way that the enum is restored
-				value = new JValue(entry.value);
-			} else if ((qName.equals("char"))) {
-				value = new JValue(entry.value.charAt(0));
-			}
-			if (value != null) {
-				value.setBrowsingInfo(entry.browsingInfo);
-				loadedValue = value;
-				addElement(value);
-			}
-		}
-		currentData = "";
-	}
-
-	/**
-	 * Adds the given JValue to the JValue on top of the vertex
-	 */
-	public void addElement(JValue element) {
-		if (!valueStack.empty()) {
-			JValueCollection col = valueStack.peek().collection;
-			if (col != null) {
-				col.add(element);
-			}
-		}
-	}
-
 }

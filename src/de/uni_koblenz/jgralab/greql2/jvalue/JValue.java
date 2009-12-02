@@ -667,15 +667,16 @@ public class JValue implements Comparable<JValue> {
 	}
 
 	/**
-	 * Returns the encapsulated Stringvalue or transforms the encapsulted value
-	 * to its string representation usinng object.toString
 	 * 
-	 * @return the encapsulated String value or a String representation of the
-	 *         encapsulated vale if it's not a string
+	 * @return the encapsulated Enum
 	 * 
 	 */
-	public String toEnum() {
-		return value.toString();
+	@SuppressWarnings("unchecked")
+	public Enum toEnum() {
+		if (isEnum()) {
+			return (Enum) value;
+		}
+		throw new JValueInvalidTypeException(JValueType.VERTEX, type);
 	}
 
 	/**
