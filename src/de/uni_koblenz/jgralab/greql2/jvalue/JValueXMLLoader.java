@@ -24,6 +24,7 @@
 
 package de.uni_koblenz.jgralab.greql2.jvalue;
 
+import java.io.FileNotFoundException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Stack;
@@ -33,6 +34,7 @@ import javax.xml.stream.XMLStreamException;
 import de.uni_koblenz.ist.utilities.xml.XmlProcessor;
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.Graph;
+import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.WorkInProgress;
 import de.uni_koblenz.jgralab.greql2.exception.JValueLoadException;
 import de.uni_koblenz.jgralab.schema.AttributedElementClass;
@@ -48,16 +50,17 @@ public class JValueXMLLoader extends XmlProcessor {
 		String componentName;
 		JValue jvalue;
 
-		public JValueRecordComponent(String compName, JValue v) {
+		JValueRecordComponent(String compName) {
 			componentName = compName;
-			jvalue = v;
 		}
 	}
 
 	/**
 	 * Synthetic class to ease XML parsing
 	 */
-	private class JValueMapEntry extends JValueTuple {
+	private class JValueMapEntry extends JValue {
+		JValue key = null;
+		JValue value = null;
 	}
 
 	private Map<String, Graph> id2GraphMap = null;
@@ -77,22 +80,66 @@ public class JValueXMLLoader extends XmlProcessor {
 		}
 	}
 
-	public JValue load(String fileName) {
-		// TODO: implement me!
-		return null;
+	public JValue load(String fileName) throws FileNotFoundException,
+			XMLStreamException {
+		process(fileName);
+		if (stack.size() != 1) {
+			throw new JValueLoadException(
+					"Something went wrong.  stack.size() = " + stack.size()
+							+ " != 1.  This must not happen!", null);
+		}
+		return stack.firstElement();
 	}
 
 	@Override
 	protected void endDocument() throws XMLStreamException {
-		// TODO Auto-generated method stub
 
 	}
 
 	@Override
 	protected void endElement(String arg0, StringBuilder arg1)
 			throws XMLStreamException {
-		// TODO Auto-generated method stub
+		JValue endedElement = stack.pop();
 
+		if (stack.isEmpty()) {
+			// This was the top level element, so add it back and return.
+			stack.push(endedElement);
+			return;
+		}
+
+		// Ok, there was a parent, so the current element has to be added to
+		// that (the parent has to be some kind of collection or map)
+		JValue parentElement = stack.peek();
+		if (parentElement.isMap()) {
+			// the current element has to be a mapEntry
+			JValueMapEntry jme = (JValueMapEntry) endedElement;
+			parentElement.toJValueMap().put(jme.key, jme.value);
+		} else if (parentElement instanceof JValueMapEntry) {
+			// the current elem is a key or a value of the entry
+			JValueMapEntry jme = (JValueMapEntry) parentElement;
+			if (jme.key == null) {
+				jme.key = endedElement;
+			} else {
+				jme.value = endedElement;
+			}
+		} else if (parentElement instanceof JValueRecordComponent) {
+			JValueRecordComponent rc = (JValueRecordComponent) parentElement;
+			rc.jvalue = endedElement;
+		} else if (parentElement.isCollection()) {
+			// ok, parent is a collection, so we can simply add with the
+			// exception of records
+			JValueCollection coll = parentElement.toCollection();
+			if (coll.isJValueRecord()) {
+				JValueRecord rec = coll.toJValueRecord();
+				JValueRecordComponent comp = (JValueRecordComponent) endedElement;
+				rec.add(comp.componentName, comp.jvalue);
+			} else {
+				coll.add(endedElement);
+			}
+		} else {
+			throw new JValueLoadException("The element '" + endedElement
+					+ "' couldn't be added to its parent.", null);
+		}
 	}
 
 	@Override
@@ -154,13 +201,63 @@ public class JValueXMLLoader extends XmlProcessor {
 			val = new JValue(Integer
 					.valueOf(getAttribute(JValueXMLConstants.ATTR_VALUE)));
 			// ---------------------------------------------------------------
+		} else if (elem.equals(JValueXMLConstants.LIST)) {
+			val = new JValueList();
+			// ---------------------------------------------------------------
+		} else if (elem.equals(JValueXMLConstants.LONG)) {
+			val = new JValue(Long
+					.valueOf(getAttribute(JValueXMLConstants.ATTR_VALUE)));
+			// ---------------------------------------------------------------
+		} else if (elem.equals(JValueXMLConstants.MAP)) {
+			val = new JValueMap();
+			// ---------------------------------------------------------------
+		} else if (elem.equals(JValueXMLConstants.MAP_ENTRY)) {
+			val = new JValueMapEntry();
+			// ---------------------------------------------------------------
+		} else if (elem.equals(JValueXMLConstants.RECORD)) {
+			val = new JValueRecord();
+			// ---------------------------------------------------------------
+		} else if (elem.equals(JValueXMLConstants.RECORD_COMPONENT)) {
+			val = new JValueRecordComponent(
+					getAttribute(JValueXMLConstants.ATTR_NAME));
+			// ---------------------------------------------------------------
+		} else if (elem.equals(JValueXMLConstants.SET)) {
+			val = new JValueSet();
+			// ---------------------------------------------------------------
+		} else if (elem.equals(JValueXMLConstants.STRING)) {
+			val = new JValue(getAttribute(JValueXMLConstants.ATTR_VALUE));
+			// ---------------------------------------------------------------
+		} else if (elem.equals(JValueXMLConstants.TUPLE)) {
+			val = new JValueTuple();
+			// ---------------------------------------------------------------
+		} else if (elem.equals(JValueXMLConstants.VERTEX)) {
+			int id = Integer.valueOf(getAttribute(JValueXMLConstants.ATTR_ID));
+			String gid = getAttribute(JValueXMLConstants.ATTR_GRAPH_ID);
+			Graph g = id2GraphMap.get(gid);
+			if (g == null) {
+				throw new JValueLoadException("There's no graph with id '"
+						+ gid + "'.", null);
+			}
+			Vertex v = g.getVertex(id);
+			if (v == null) {
+				throw new JValueLoadException("There's no vertex with id '"
+						+ gid + "' in graph '" + gid + "'.", null);
+			}
+			val = new JValue(v);
+			// ---------------------------------------------------------------
+		} else {
+			throw new JValueLoadException("Unrecognized XML element '" + elem
+					+ "'.", null);
+			// ---------------------------------------------------------------
 		}
 
 		// -------------------------------------------------------------------
 		if (val == null) {
-			throw new JValueLoadException("Unrecognized XML element '" + elem
-					+ "'.", null);
+			throw new JValueLoadException(
+					"Couldn't read the value of element '" + elem + "'.", null);
 		}
+
+		stack.push(val);
 	}
 
 	@SuppressWarnings("unchecked")
