@@ -129,7 +129,7 @@ columns.")
            greql-fontlock-keywords-3)))
 
   (setq tab-width greql-tab-width)
-  
+
   ;; List of functions to be run when mode is activated
   (define-key greql-mode-map (kbd "M-TAB")   'greql-complete)
   (define-key greql-mode-map (kbd "C-c C-v") 'greql-complete-vertexclass)
@@ -209,7 +209,7 @@ queries are evaluated.  Set it with `greql-set-graph'.")
        ((looking-at "^\\(?:abstract\\)?\s*VertexClass\s+\\([[:alnum:]._]+\\)\s*\\(?::\\([^{;]+\\)\\)?\s*\\(?:{\\([^}]*\\)}\\)?")
         (setq schema-alist
               (cons (list 'VertexClass
-                          (concat current-package (match-string 1)) 
+                          (concat current-package (match-string 1))
                           (greql-parse-superclasses (match-string 2) current-package)
                           (greql-parse-attributes (match-string 3)))
                     schema-alist)))
@@ -223,7 +223,7 @@ queries are evaluated.  Set it with `greql-set-graph'.")
                             ))
         (setq schema-alist
               (cons (list 'EdgeClass
-                          (concat current-package (match-string 1)) 
+                          (concat current-package (match-string 1))
                           (greql-parse-superclasses (match-string 2) current-package)
                           (greql-parse-attributes (match-string 3)))
                     schema-alist)))
@@ -344,14 +344,15 @@ queries are evaluated.  Set it with `greql-set-graph'.")
   (interactive)
   (greql-complete-1 (greql-completion-list '(keyword funlib))))
 
-(defvar greql-result-file nil)
-
-(defun greql-execute ()
-  "Execute the query in the current buffer on `greql-graph'."
-  (interactive)
+(defun greql-execute (beg end)
+  "Execute the query in the current buffer on `greql-graph'.
+If a region is active, use only that as query."
+  (interactive "r")
   (let ((buffer (get-buffer-create greql-buffer))
-        (evalstr (buffer-substring-no-properties (point-min) (point-max))))
-    (setq greql-result-file (make-temp-file "greql-result" nil ".html"))
+        (evalstr (if (region-active-p)
+                     (buffer-substring-no-properties beg end)
+                   (buffer-substring-no-properties
+                    (point-min) (point-max)))))
     (with-current-buffer buffer (erase-buffer))
     (let ((proc (start-process "GReQL process" buffer
                                greql-program

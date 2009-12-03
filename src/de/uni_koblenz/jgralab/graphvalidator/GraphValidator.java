@@ -182,6 +182,7 @@ public class GraphValidator {
 					}
 				}
 			} catch (EvaluateException e) {
+				e.printStackTrace();
 				brokenConstraints.add(new BrokenGReQLConstraintViolation(aec,
 						constraint, query));
 			}
