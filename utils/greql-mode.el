@@ -23,7 +23,7 @@
 ;; Major mode for editing GReQL2 files with Emacs and executing queries.
 
 ;;; Version:
-;; <2009-12-03 Thu 16:02>
+;; <2009-12-03 Thu 16:12>
 
 ;;; TODO:
 ;; - Implement handling of imports in completion (DONE) and highlighting (still
@@ -358,7 +358,7 @@ queries are evaluated.  Set it with `greql-set-graph'.")
     (let* ((vartypes (greql-variable-types))
            (attrs (greql-attributes vartypes)))
       (greql-complete-1 attrs "[.]")))
-   ;; complete keywords
+   ;; complete keywords / functions
    (t (greql-complete-keyword-or-function))))
 
 (defun greql-complete-anyclass ()
@@ -441,20 +441,22 @@ If a region is active, use only that as query."
       (setq var (buffer-substring-no-properties (+ 1 (point)) end))
       (re-search-backward
        (concat var "[[:space:],]*[[:alnum:][:space:]]*:[[:space:]]*\\([VE]\\){\\(.*\\)}") nil t 1)
-      (let* ((mtype-match (buffer-substring-no-properties (match-beginning 1)
-                                                          (match-end 1)))
-             (mtype (cond
-                     ((or (not mtype-match) (string= mtype-match "E")) 'EdgeClass)
-                     ((string= mtype-match "V") 'VertexClass)
-                     (t (error "Not match!"))))
-             (types (replace-regexp-in-string
-                     "[[:space:]]+" ""
-                     (buffer-substring-no-properties (match-beginning 2)
-                                                     (match-end 2)))))
-        (list mtype (split-string types "[,]"))))))
+      (when (and (match-beginning 1) (match-end 1))
+        (let* ((mtype-match (buffer-substring-no-properties (match-beginning 1)
+                                                            (match-end 1)))
+               (mtype (cond
+                       ((or (not mtype-match) (string= mtype-match "E")) 'EdgeClass)
+                       ((string= mtype-match "V") 'VertexClass)
+                       (t (error "Not match!"))))
+               (types (replace-regexp-in-string
+                       "[[:space:]]+" ""
+                       (buffer-substring-no-properties (match-beginning 2)
+                                                       (match-end 2)))))
+          (list mtype (split-string types "[,]")))))))
 
 (defun greql-attributes (typelist)
-  (greql-attributes-1 (car typelist) (cadr typelist)))
+  (when typelist
+    (greql-attributes-1 (car typelist) (cadr typelist))))
 
 (defun greql-find-schema-line (mtype type)
   "Get the line/list of `greql-schema-alist' that corresponds to
