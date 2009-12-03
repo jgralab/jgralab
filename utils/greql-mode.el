@@ -23,10 +23,11 @@
 ;; Major mode for editing GReQL2 files with Emacs and executing queries.
 
 ;;; Version:
-;; <2009-12-01 Tue 10:25>
+;; <2009-12-03 Thu 16:02>
 
 ;;; TODO:
-;; - Implement handling of imports in completion and highlighting
+;; - Implement handling of imports in completion (DONE) and highlighting (still
+;;   not done)
 
 ;;; Code:
 
@@ -257,6 +258,36 @@ queries are evaluated.  Set it with `greql-set-graph'.")
           (setq i (+ i 1)))
         result))))
 
+(defun greql-import-completion-list (&optional types)
+  "Additional completions due to imports."
+  (let ((comp-lst (greql-completion-list types))
+        lst)
+    (save-excursion
+      (goto-char 0)
+      (while (re-search-forward "import\s+\\([^;]+\\);" nil t)
+        (let ((import (match-string-no-properties 1)))
+          (if (string-match "\\*$" import)
+              ;; A package import
+              (setq
+               lst
+               (nconc lst
+                      (delq nil
+                            (mapcar
+                             (lambda (str)
+                               (let ((regex (regexp-quote
+                                             (substring
+                                              import 0 (- (length import) 1)))))
+                                 (if (string-match regex str)
+                                     (replace-regexp-in-string regex "" str)
+                                   nil)))
+                             comp-lst))))
+            ;; An element import
+            (when (member import comp-lst)
+              (setq lst (cons
+                         (replace-regexp-in-string "\\([[:word:]._]+\\.\\)\\([^.]+\\)" "\\2" import)
+                         lst)))))))
+    lst))
+
 (defun greql-completion-list (&optional types)
   (when greql-schema-alist
     (let (completions)
@@ -319,6 +350,9 @@ queries are evaluated.  Set it with `greql-set-graph'.")
    ((or (greql-edge-set-expression-p)
         (greql-edge-restriction-p))
     (greql-complete-edgeclass))
+   ;; Complete any classes
+   ((greql-import-p)
+    (greql-complete-anyclass))
    ;; complete attributes
    ((greql-variable-p)
     (let* ((vartypes (greql-variable-types))
@@ -327,18 +361,27 @@ queries are evaluated.  Set it with `greql-set-graph'.")
    ;; complete keywords
    (t (greql-complete-keyword-or-function))))
 
+(defun greql-complete-anyclass ()
+  (interactive)
+  (let ((types '(EdgeClass VertexClass)))
+    (greql-complete-1 (nconc (greql-import-completion-list types)
+                             (greql-completion-list types)))))
+
 (defun greql-complete-vertexclass ()
   (interactive)
-  (greql-complete-1 (greql-completion-list '(VertexClass))))
+  (greql-complete-1 (nconc (greql-import-completion-list '(VertexClass))
+                           (greql-completion-list '(VertexClass)))))
 
 (defun greql-complete-edgeclass ()
   (interactive)
-  (greql-complete-1 (greql-completion-list '(EdgeClass))))
+  (greql-complete-1 (nconc (greql-import-completion-list '(EdgeClass))
+                           (greql-completion-list '(EdgeClass)))))
 
 (defun greql-complete-domain ()
   (interactive)
-  (greql-complete-1 (greql-completion-list
-                     '(EnumDomain RecordDomain ListDomain SetDomain BagDomain))))
+  (let ((types '(EnumDomain RecordDomain ListDomain SetDomain BagDomain)))
+    (greql-complete-1 (nconc (greql-import-completion-list types)
+                             (greql-completion-list types)))))
 
 (defun greql-complete-keyword-or-function ()
   (interactive)
@@ -384,6 +427,9 @@ If a region is active, use only that as query."
 
 (defun greql-variable-p ()
   (looking-back "[^{][[:word:]]+[.][[:word:]]*"))
+
+(defun greql-import-p ()
+  (looking-back "import\s+[[:word:]._]*"))
 
 (defun greql-variable-types ()
   "Return something like (VertexClass (Type1 Type2 Type3))."
