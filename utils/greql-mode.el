@@ -23,7 +23,7 @@
 ;; Major mode for editing GReQL2 files with Emacs and executing queries.
 
 ;;; Version:
-;; <2009-12-03 Thu 16:12>
+;; <2009-12-04 Fri 09:26>
 
 ;;; TODO:
 ;; - Implement handling of imports in completion (DONE) and highlighting (still
@@ -320,7 +320,8 @@ queries are evaluated.  Set it with `greql-set-graph'.")
               (scroll-up))))
       (cond
        ((null compl)
-        (message "No completion possible.  Did you set a graph?"))
+        ;; Do nothing here.
+        nil)
        ((stringp compl)
         (if (string= word compl)
             ;; Show completion buffer
@@ -455,8 +456,10 @@ If a region is active, use only that as query."
           (list mtype (split-string types "[,]")))))))
 
 (defun greql-attributes (typelist)
-  (when typelist
-    (greql-attributes-1 (car typelist) (cadr typelist))))
+  (if typelist
+      (greql-attributes-1 (car typelist) (cadr typelist))
+    (message "Couldn't infer the variable type")
+    nil))
 
 (defun greql-find-schema-line (mtype type)
   "Get the line/list of `greql-schema-alist' that corresponds to
