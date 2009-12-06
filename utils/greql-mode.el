@@ -23,7 +23,7 @@
 ;; Major mode for editing GReQL2 files with Emacs and executing queries.
 
 ;;; Version:
-;; <2009-12-04 Fri 09:26>
+;; <2009-12-06 Sun 19:36>
 
 ;;; TODO:
 ;; - Implement handling of imports in completion (DONE) and highlighting (still
@@ -31,12 +31,8 @@
 
 ;;; Code:
 
-(when (not (fboundp 'defparameter))
-  (defmacro defparameter (symbol &optional initvalue docstring)
-    "Common Lisps defparameter."
-    `(progn
-       (defvar ,symbol nil ,docstring)
-       (setq   ,symbol ,initvalue))))
+;; TG mode contains the schema parsing stuff.
+(require 'tg-mode)
 
 (defparameter greql-keywords
   '("E" "V" "as" "bag" "eSubgraph" "end" "exists!" "exists" "forall"
@@ -95,7 +91,7 @@
                        (concat "{\\(\\([\s^,!]*"
                                (regexp-opt
                                 (let (lst)
-                                  (dolist (i greql-schema-alist)
+                                  (dolist (i tg-schema-alist)
                                     (when (or (eq (car i) 'EdgeClass)
                                               (eq (car i) 'VertexClass))
                                       (setq lst (cons (second i) lst))))
@@ -149,32 +145,28 @@ queries are evaluated.  Set it with `greql-set-graph'.")
   "Extra classpath elements as string.")
 (make-variable-buffer-local 'greql-extra-classpath)
 
-(defvar greql-schema-alist nil)
-(make-variable-buffer-local 'greql-schema-alist)
-
 (defun greql-initialize-schema ()
-  (when (and greql-graph (not greql-schema-alist))
+  (when (and greql-graph (not tg-schema-alist))
     (greql-set-graph greql-graph)
     (greql-set-fontlock-keywords-3)))
 
 (defun greql-set-graph (graph)
-  "Set `greql-graph' to GRAPH and parse it with
-`greql-parse-schema'."
+  "Set `greql-graph' to GRAPH and parse it with `tg-parse-schema'."
   (interactive "fGraph file: ")
   (setq greql-graph graph)
   (let ((g greql-graph)
         schema-alist)
     (with-temp-buffer
       (insert-file-contents g)
-      (setq schema-alist (greql-parse-schema)))
-    (setq greql-schema-alist schema-alist))
+      (setq schema-alist (tg-parse-schema)))
+    (setq tg-schema-alist schema-alist))
   ;; add keywords and functions, too
   (dolist (key greql-keywords)
-    (setq greql-schema-alist (cons (list 'keyword key)
-                                   greql-schema-alist)))
+    (setq tg-schema-alist (cons (list 'keyword key)
+                                   tg-schema-alist)))
   (dolist (fun greql-functions)
-    (setq greql-schema-alist (cons (list 'funlib fun)
-                                   greql-schema-alist)))
+    (setq tg-schema-alist (cons (list 'funlib fun)
+                                   tg-schema-alist)))
 
   (greql-set-fontlock-keywords-3))
 
@@ -183,80 +175,6 @@ queries are evaluated.  Set it with `greql-set-graph'.")
   (if (null greql-extra-classpath)
       (setq greql-extra-classpath file-or-dir)
     (setq greql-extra-classpath (concat greql-extra-classpath ":" file-or-dir))))
-
-(defun greql-parse-schema ()
-  "Parse `greql-graph' and extract schema information into
-`greql-schema-alist'."
-  (interactive) ;; TODO: Remove interactive spec...
-  (goto-char (point-min))
-  (let ((current-package "")
-        schema-alist
-        finished)
-    (while (not finished)
-      (cond
-       ;; Packages
-       ((looking-at "^Package\s+\\([[:alnum:]._]+\\)")
-        (let ((match (match-string 1)))
-          (setq current-package (if (string-match "^\s*$" match)
-                                    ""
-                                  (concat  (match-string 1) "."))))
-        ;;(message "Found pkg '%s'" current-package)
-        )
-       ;; GraphClass
-       ((looking-at "^GraphClass\s+\\([[:alnum:]._]+\\)\s*\\(?:{\\([^}]*\\)}\\)?")
-        ;;(message "GraphClass %s" (match-string 1))
-        )
-       ;; VertexClass
-       ((looking-at "^\\(?:abstract\\)?\s*VertexClass\s+\\([[:alnum:]._]+\\)\s*\\(?::\\([^{;]+\\)\\)?\s*\\(?:{\\([^}]*\\)}\\)?")
-        (setq schema-alist
-              (cons (list 'VertexClass
-                          (concat current-package (match-string 1))
-                          (greql-parse-superclasses (match-string 2) current-package)
-                          (greql-parse-attributes (match-string 3)))
-                    schema-alist)))
-       ;; EdgeClasses
-       ((looking-at (concat "^\\(?:abstract\s+\\)?"
-                            "\\(?:Edge\\|Aggregation\\|Composition\\)Class\s+"
-                            "\\([[:alnum:]._]+\\)\s*"      ;; Name
-                            "\\(?::\\([[:alnum:]._ ]+\\)\\)?\s+"    ;; Supertypes
-                            "from [^{;]+"                       ;; skip from/to, roles, multis
-                            "\\(?:{\\([^}]*\\)}\\)?"       ;; Attributes
-                            ))
-        (setq schema-alist
-              (cons (list 'EdgeClass
-                          (concat current-package (match-string 1))
-                          (greql-parse-superclasses (match-string 2) current-package)
-                          (greql-parse-attributes (match-string 3)))
-                    schema-alist)))
-       ;; End of schema (part)
-       ((or (= (point) (point-max)))
-        (looking-at "Graph[[:space:]]+")
-        (setq finished t)))
-      (forward-line))
-    schema-alist))
-
-(defun greql-parse-superclasses (str current-package)
-  "Given a string \"Foo, Bar, Baz\" it returns (\"Foo\" \"Bar\"
-\"Baz\")"
-  (when str
-    (setq str (replace-regexp-in-string "[[:space:]]+" "" str))
-    (save-match-data
-      (mapcar
-       (lambda (class) (concat current-package class))
-       (split-string str "[,]+")))))
-
-(defun greql-parse-attributes (str)
-  (when str
-    (save-match-data
-      (setq str (replace-regexp-in-string "[[:space:]]+" "" str))
-      (let ((list (split-string str "[:,]+"))
-            result
-            (i 1))
-        (dolist (elem list)
-          (when (= (mod i 2) 1)
-            (setq result (cons elem result)))
-          (setq i (+ i 1)))
-        result))))
 
 (defun greql-import-completion-list (&optional types)
   "Additional completions due to imports."
@@ -289,9 +207,9 @@ queries are evaluated.  Set it with `greql-set-graph'.")
     lst))
 
 (defun greql-completion-list (&optional types)
-  (when greql-schema-alist
+  (when tg-schema-alist
     (let (completions)
-      (dolist (line greql-schema-alist)
+      (dolist (line tg-schema-alist)
         (when (or (null types) (member (car line) types))
           (let ((elem (cadr line)))
             (setq completions (cons elem completions)))))
@@ -357,7 +275,7 @@ queries are evaluated.  Set it with `greql-set-graph'.")
    ;; complete attributes
    ((greql-variable-p)
     (let* ((vartypes (greql-variable-types))
-           (attrs (greql-attributes vartypes)))
+           (attrs (tg-attributes vartypes)))
       (greql-complete-1 attrs "[.]")))
    ;; complete keywords / functions
    (t (greql-complete-keyword-or-function))))
@@ -433,7 +351,10 @@ If a region is active, use only that as query."
   (looking-back "import\s+[[:word:]._]*"))
 
 (defun greql-variable-types ()
-  "Return something like (VertexClass (Type1 Type2 Type3))."
+  "Return something like (VertexClass (\"Type1\" \"Type2\")),
+for some variable declared as
+
+  x : V{Type1, Type2}"
   (save-excursion
     (search-backward "." nil t 1)
     (let ((end (point))
@@ -454,42 +375,6 @@ If a region is active, use only that as query."
                        (buffer-substring-no-properties (match-beginning 2)
                                                        (match-end 2)))))
           (list mtype (split-string types "[,]")))))))
-
-(defun greql-attributes (typelist)
-  (if typelist
-      (greql-attributes-1 (car typelist) (cadr typelist))
-    (message "Couldn't infer the variable type")
-    nil))
-
-(defun greql-find-schema-line (mtype type)
-  "Get the line/list of `greql-schema-alist' that corresponds to
-MTYPE TYPE."
-  (dolist (line greql-schema-alist)
-    (when (and (eq mtype (car line))
-               (string= type (second line)))
-      (return line))))
-
-(defun greql-all-attributes (mtype type)
-  "Returns a list of all attribute names of the MTYPE TYPE (and
-its supertypes)."
-  (let ((line (greql-find-schema-line mtype type)))
-    (apply 'append
-           (fourth line)
-           (mapcar (lambda (supertype)
-                     (greql-all-attributes mtype supertype))
-                   (third line)))))
-
-(defun greql-attributes-1 (mtype types)
-  "Returns a list of all attribute names that are defined in all
-MTYPEs TYPES."
-  (let ((attr-list (mapcar
-                    (lambda (type)
-                      (greql-all-attributes mtype type))
-                    types)))
-    (if (= (length attr-list) 1)
-        (car attr-list)
-      (apply 'intersection
-             attr-list))))
 
 (defun greql-kill-region-as-java-string (beg end)
   "Puts the marked region as java string on the kill-ring."
