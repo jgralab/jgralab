@@ -24,7 +24,7 @@
 
 
 ;;; Version
-;; <2009-12-06 Sun 19:35>
+;; <2009-12-08 Tue 13:37>
 
 ;;* Code
 
@@ -123,17 +123,13 @@
   (when typelist
     (tg-attributes-1 (car typelist) (cadr typelist))))
 
-(defun tg-find-schema-line (mtype type &optional lax-match)
+(defun tg-find-schema-line (mtype type)
   "Get the line/list of `tg-schema-alist' that corresponds to
 MTYPE TYPE."
   (catch 'found
     (dolist (line tg-schema-alist)
       (when (and (eq mtype (car line))
-                 (if lax-match
-                     (or
-                      (string= type (second line))
-                      (string-match (concat "\\." type "$") (second line)))
-                   (string= type (second line))))
+                 (string= type (second line)))
         (throw 'found line)))))
 
 (defun tg-all-attributes (mtype type)
@@ -263,7 +259,13 @@ vertex."
     (goto-char (line-beginning-position))
     (if (looking-at "[[:digit:]]+\s+\\([[:word:]_.]+\\)")
       (let* ((name (match-string-no-properties 1))
-             (line (tg-find-schema-line mtype name t))
+             (qname (progn
+                      (re-search-backward "^Package[[:space:]]+\\(.*\\);[[:space:]]*$" nil t 1)
+                      (let ((pkg (match-string-no-properties 1)))
+                        (if pkg
+                            (concat pkg "." name)
+                          name))))
+             (line (tg-find-schema-line mtype qname))
              (type (second line))
              (supers (tg-flatten (third line)))
              (attrs (tg-flatten (tg-all-attributes mtype type))))
@@ -300,7 +302,9 @@ vertex."
          (eid
           (tg-eldoc-vertex-or-edge 'EdgeClass))
          (vid
-          (tg-eldoc-vertex-or-edge 'VertexClass))))
+          (tg-eldoc-vertex-or-edge 'VertexClass))
+         (t
+          (setq tg--last-doc nil))))
       tg--last-doc)))
 
 (defun tg-eldoc-init ()
