@@ -24,7 +24,7 @@
 
 
 ;;; Version
-;; <2009-12-08 Tue 13:37>
+;; <2009-12-08 Tue 23:42>
 
 ;;* Code
 
@@ -132,7 +132,7 @@ MTYPE TYPE."
                  (string= type (second line)))
         (throw 'found line)))))
 
-(defun tg-all-attributes (mtype type)
+(defun tg-all-attributes (mtype type &optional with-supertype)
   "Returns a list of all attribute names of the MTYPE TYPE (and
 its supertypes)."
   (let ((line (tg-find-schema-line mtype type)))
@@ -141,7 +141,12 @@ its supertypes)."
       (apply 'append
              (fourth line)
              (mapcar (lambda (supertype)
-                       (tg-all-attributes mtype supertype))
+                       (let ((attrs (tg-all-attributes mtype supertype with-supertype)))
+                         (if with-supertype
+                             (mapcar (lambda (a)
+                                       (concat a "#" supertype))
+                                     attrs)
+                           attrs)))
                      (third line)))
       :test 'string=)
      'string-lessp)))
@@ -254,40 +259,55 @@ vertex."
         (setq tg--last-doc (buffer-substring (line-beginning-position)
                                              (line-end-position)))))))
 
+(defface tg-attribute-father-face '((t ( :inherit font-lock-type-face :height 0.6)))
+  "Face used for the forfather introducing an attribute.")
+
+(defface tg-supertype-face '((t ( :inherit font-lock-type-face :height 0.8)))
+  "Face used for supertypes.")
+
 (defun tg-eldoc-vertex-or-edge (mtype)
   (save-excursion
     (goto-char (line-beginning-position))
     (if (looking-at "[[:digit:]]+\s+\\([[:word:]_.]+\\)")
-      (let* ((name (match-string-no-properties 1))
-             (qname (progn
-                      (re-search-backward "^Package[[:space:]]+\\(.*\\);[[:space:]]*$" nil t 1)
-                      (let ((pkg (match-string-no-properties 1)))
-                        (if (and pkg (not (string= "" pkg)))
-                            (concat pkg "." name)
-                          name))))
-             (line (tg-find-schema-line mtype qname))
-             (type (second line))
-             (supers (tg-flatten (third line)))
-             (attrs (tg-flatten (tg-all-attributes mtype type))))
-        (setq tg--last-doc (concat (propertize (symbol-name mtype)
-                                               'face 'font-lock-keyword-face)
-                                   " "
-                                   (propertize type
-                                               'face 'font-lock-type-face)
-                                   " : "
-                                   (propertize supers
-                                               'face 'font-lock-type-face)
-                                   " { "
-                                   (propertize attrs
-                                               'face 'font-lock-constant-face) " }")))
+        (let* ((name (match-string-no-properties 1))
+               (qname (save-excursion
+                        (re-search-backward "^Package[[:space:]]+\\(.*\\);[[:space:]]*$" nil t 1)
+                        (let ((pkg (match-string-no-properties 1)))
+                          (if (and pkg (not (string= "" pkg)))
+                              (concat pkg "." name)
+                            name))))
+               (line (tg-find-schema-line mtype qname))
+               (type (second line))
+               (supers (tg-format-list (third line) 'tg-supertype-face))
+               (attrs (tg-format-list (tg-all-attributes mtype type 'with-supertype)
+                                      'font-lock-constant-face
+                                      'tg-attribute-father-face)))
+          (setq tg--last-doc (concat (propertize (symbol-name mtype)
+                                                 'face 'font-lock-keyword-face)
+                                     " "
+                                     (propertize type 'face 'font-lock-type-face)
+                                     ": "
+                                     supers
+                                     " {"
+                                     attrs
+                                     "}")))
       (setq tg--last-doc nil))))
 
-(defun tg-flatten (lst)
+(defun tg-format-list (lst face1 &optional face2)
   "Return a string representation of the given list."
-  (if lst
-      (let ((str (format "%s" lst)))
-        (substring str 1 (- (length str) 1)))
-    ""))
+  (let ((c (car lst)))
+    (if (null c)
+        ""
+      (concat
+       (if (string-match "#" c)
+           (let ((split (split-string c "#")))
+             (concat (propertize (first split) 'face face1)
+                     (propertize (second split) 'face face2)))
+         (propertize c 'face face1))
+       (let ((reststr (tg-format-list (cdr lst) face1 face2)))
+         (if (= (length reststr) 0)
+             reststr
+           (concat " " reststr)))))))
 
 (defun tg-documentation-function ()
   (let ((thing (thing-at-point 'sexp)))
