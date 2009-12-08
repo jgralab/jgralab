@@ -262,7 +262,7 @@ vertex."
              (qname (progn
                       (re-search-backward "^Package[[:space:]]+\\(.*\\);[[:space:]]*$" nil t 1)
                       (let ((pkg (match-string-no-properties 1)))
-                        (if pkg
+                        (if (and pkg (not (string= "" pkg)))
                             (concat pkg "." name)
                           name))))
              (line (tg-find-schema-line mtype qname))
