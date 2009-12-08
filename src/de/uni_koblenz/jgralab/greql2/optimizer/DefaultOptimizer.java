@@ -136,6 +136,12 @@ public class DefaultOptimizer extends OptimizerBase {
 			aTransformationWasDone = true;
 			noOfRuns++;
 
+			if (noOfRuns > 100) {
+				logger
+						.warning("Optimizer didn't finish after 100 runs. Stopping here.");
+				break;
+			}
+
 			logger.fine(optimizerHeaderString() + "starts a new iteration ("
 					+ noOfRuns + ")...");
 		}
