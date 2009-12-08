@@ -3,6 +3,7 @@
  */
 package de.uni_koblenz.jgralab.greql2.optimizer;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -17,6 +18,8 @@ import de.uni_koblenz.jgralab.AttributedElement;
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.Graph;
+import de.uni_koblenz.jgralab.GraphIO;
+import de.uni_koblenz.jgralab.GraphIOException;
 import de.uni_koblenz.jgralab.JGraLab;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
@@ -467,8 +470,16 @@ public class EarySelectionOptimizer extends OptimizerBase {
 			FunctionApplication funApp = (FunctionApplication) upEdge
 					.getOmega();
 			if (funApp == null) {
+				String file = System.getProperty("user.home") + File.separator
+						+ "brokenGreqlGraph.tg";
+				try {
+					GraphIO.saveGraphToFile(file, syntaxgraph, null);
+				} catch (GraphIOException e1) {
+					e1.printStackTrace();
+				}
 				throw new OptimizerException(
-						"Something pretty wrong. upEdge.getOmega() returned null!!");
+						"Something's pretty wrong. upEdge.getOmega() returned null!! upEdge = "
+								+ upEdge + ".  Query graph saved as " + file);
 			}
 			Expression otherArg = null;
 			for (IsArgumentOf inc : funApp

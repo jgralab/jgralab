@@ -66,7 +66,9 @@ public class VariableDeclarationOrderUnit implements
 		// recalculated when it changes its value.
 		dependentVertices = new HashSet<Vertex>();
 		addDependendVertices(variable);
-		extendDependendVertices();
+		while (extendDependendVertices()) {
+			// Add dependent vertices transitively
+		}
 	}
 
 	/**
@@ -95,8 +97,11 @@ public class VariableDeclarationOrderUnit implements
 	 * find variables declared by other {@link SimpleDeclaration}s of
 	 * declaringDeclaration, but the simple declarations are included. So add
 	 * the variables of them and their dependencies, too.
+	 * 
+	 * @return true if extension was needed and done
 	 */
-	private void extendDependendVertices() {
+	private boolean extendDependendVertices() {
+		boolean extensionWasNeeded = false;
 		ArrayList<Vertex> list = new ArrayList<Vertex>(dependentVertices.size());
 		for (Vertex v : dependentVertices) {
 			list.add(v);
@@ -110,9 +115,15 @@ public class VariableDeclarationOrderUnit implements
 				continue;
 			}
 			for (Variable var : sd.getDeclaredVarList()) {
-				addDependendVertices(var);
+				// if it is already in the set, then the extension was already
+				// done.
+				if (!dependentVertices.contains(var)) {
+					extensionWasNeeded = true;
+					addDependendVertices(var);
+				}
 			}
 		}
+		return extensionWasNeeded;
 	}
 
 	/**
@@ -182,10 +193,12 @@ public class VariableDeclarationOrderUnit implements
 		// no matter what the recalculation costs are. So if the other vars
 		// simple decl is in my dependency set, then I have to come first. (And
 		// the other way round...)
-		if (dependentVertices.contains(o.simpleDeclarationOfVariable)) {
+		if (dependentVertices.contains(o.variable)) {
+			assert !o.dependentVertices.contains(variable) : "Circular dependency!";
 			return -1;
 		}
-		if (o.dependentVertices.contains(simpleDeclarationOfVariable)) {
+		if (o.dependentVertices.contains(variable)) {
+			assert !dependentVertices.contains(o.variable) : "Circular dependency!";
 			return 1;
 		}
 
