@@ -34,6 +34,7 @@ import de.uni_koblenz.jgralab.greql2.exception.EvaluateException;
 import de.uni_koblenz.jgralab.greql2.exception.JValueInvalidTypeException;
 import de.uni_koblenz.jgralab.greql2.funlib.Greql2FunctionLibrary;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
+import de.uni_koblenz.jgralab.greql2.jvalue.JValueSet;
 import de.uni_koblenz.jgralab.greql2.schema.Expression;
 import de.uni_koblenz.jgralab.greql2.schema.ForwardVertexSet;
 import de.uni_koblenz.jgralab.greql2.schema.Greql2Vertex;
@@ -83,7 +84,7 @@ public class ForwardVertexSetEvaluator extends PathSearchEvaluator {
 		 * restrictedExpression may return a null-value
 		 */
 		if (!res.isValid()) {
-			return new JValue();
+			return new JValueSet(0);
 		}
 		Vertex startVertex = null;
 		try {

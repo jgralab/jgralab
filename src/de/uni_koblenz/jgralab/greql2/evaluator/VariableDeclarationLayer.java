@@ -130,7 +130,7 @@ public class VariableDeclarationLayer implements
 			firstIteration = false;
 		}
 		while (!constraintsFullfilled) {
-			if (!getNextCombination(subgraph,variableDeclarations.size()-1)) {
+			if (!getNextCombination(subgraph, variableDeclarations.size() - 1)) {
 				if (logger != null) {
 					logger.logResultSize("Declaration", possibleCombinations);
 				}
@@ -152,9 +152,9 @@ public class VariableDeclarationLayer implements
 	private boolean getFirstCombination(BooleanGraphMarker subgraph)
 			throws EvaluateException {
 		variableDeclarations.get(0).reset();
-		return getNextCombination(subgraph,0);
+		return getNextCombination(subgraph, 0);
 	}
-	
+
 	/**
 	 * Gets the next possible variable combination
 	 * 
@@ -162,13 +162,14 @@ public class VariableDeclarationLayer implements
 	 * @return true if a next combination exists, false otherwise
 	 * @throws EvaluateException
 	 */
-	private boolean getNextCombination(BooleanGraphMarker subgraphMarker, int pointer)
-			throws EvaluateException {
+	private boolean getNextCombination(BooleanGraphMarker subgraphMarker,
+			int pointer) throws EvaluateException {
 		int size = variableDeclarations.size();
 		VariableDeclaration currDecl = null;
 		do {
-			if (pointer < 0)
+			if (pointer < 0) {
 				return false;
+			}
 			currDecl = variableDeclarations.get(pointer--);
 		} while (!currDecl.iterate());
 		pointer += 2;
@@ -176,14 +177,11 @@ public class VariableDeclarationLayer implements
 			currDecl = variableDeclarations.get(pointer++);
 			currDecl.reset();
 			if (!currDecl.iterate()) {
-				return getNextCombination(subgraphMarker, pointer-2);
-			}	
+				return getNextCombination(subgraphMarker, pointer - 2);
+			}
 		}
 		return true;
 	}
-	
-	
-	
 
 	/**
 	 * Checks if the current variable combination fullfills the constraints.

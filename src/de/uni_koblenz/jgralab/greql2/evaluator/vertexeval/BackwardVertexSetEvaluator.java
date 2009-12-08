@@ -35,6 +35,7 @@ import de.uni_koblenz.jgralab.greql2.exception.EvaluateException;
 import de.uni_koblenz.jgralab.greql2.exception.JValueInvalidTypeException;
 import de.uni_koblenz.jgralab.greql2.funlib.Greql2FunctionLibrary;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
+import de.uni_koblenz.jgralab.greql2.jvalue.JValueSet;
 import de.uni_koblenz.jgralab.greql2.schema.BackwardVertexSet;
 import de.uni_koblenz.jgralab.greql2.schema.Expression;
 import de.uni_koblenz.jgralab.greql2.schema.Greql2Vertex;
@@ -75,12 +76,16 @@ public class BackwardVertexSetEvaluator extends PathSearchEvaluator {
 		VertexEvaluator targetEval = greqlEvaluator
 				.getVertexEvaluatorGraphMarker().getMark(targetExpression);
 		JValue res = targetEval.getResult(subgraph);
+
+		assert (res != null) : "The evaluator " + targetEval
+				+ " returned null!!!!!!";
+
 		/**
 		 * check if the result is invalid, this may occur because the
 		 * restrictedExpression may return a null-value
 		 */
 		if (!res.isValid()) {
-			return new JValue();
+			return new JValueSet(0);
 		}
 		Vertex targetVertex = null;
 		try {
