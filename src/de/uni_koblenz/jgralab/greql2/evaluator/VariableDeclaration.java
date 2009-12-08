@@ -52,14 +52,14 @@ public class VariableDeclaration implements Comparable<VariableDeclaration> {
 	 * Holds the set of possible values the variable may have
 	 */
 	private JValueCollection definitionSet;
-	
+
 	private BooleanGraphMarker subgraph;
 
 	/**
 	 * Holds the variable-vertex of this declaration.
 	 */
 	private VariableEvaluator variableEval;
-	
+
 	private VertexEvaluator definitionSetEvaluator;
 
 	/**
@@ -87,8 +87,10 @@ public class VariableDeclaration implements Comparable<VariableDeclaration> {
 	 * @param eval
 	 *            the GreqlEvaluator which is used to evaluate the query
 	 */
-	public VariableDeclaration(Variable var, VertexEvaluator definitionSetEvaluator,  BooleanGraphMarker subgraph,
-			SimpleDeclaration decl, GreqlEvaluator eval) {
+	public VariableDeclaration(Variable var,
+			VertexEvaluator definitionSetEvaluator,
+			BooleanGraphMarker subgraph, SimpleDeclaration decl,
+			GreqlEvaluator eval) {
 		variableEval = (VariableEvaluator) eval.getVertexEvaluatorGraphMarker()
 				.getMark(var);
 		this.definitionSetEvaluator = definitionSetEvaluator;
@@ -101,7 +103,7 @@ public class VariableDeclaration implements Comparable<VariableDeclaration> {
 	 * another value was found, false otherwise
 	 */
 	public boolean iterate() {
-		if ((iter!=null) && (iter.hasNext())) {
+		if ((iter != null) && (iter.hasNext())) {
 			deleteDependingResults();
 			variableEval.setValue(iter.next());
 			return true;
@@ -126,9 +128,10 @@ public class VariableDeclaration implements Comparable<VariableDeclaration> {
 			try {
 				JValueCollection col = tempAttribute.toCollection();
 				definitionSet = col.toJValueSet();
-				if (col.size() > definitionSet.size())
+				if (col.size() > definitionSet.size()) {
 					throw new EvaluateException(
 							"A collection that doesn't fulfill the set property is used as variable range definition");
+				}
 			} catch (JValueInvalidTypeException exception) {
 				throw new EvaluateException(
 						"Error evaluating a SimpleDeclaration : "
@@ -138,7 +141,7 @@ public class VariableDeclaration implements Comparable<VariableDeclaration> {
 			definitionSet = new JValueSet();
 			definitionSet.add(tempAttribute);
 		}
-		iter = definitionSet.iterator();	
+		iter = definitionSet.iterator();
 	}
 
 	/**
@@ -161,7 +164,7 @@ public class VariableDeclaration implements Comparable<VariableDeclaration> {
 	 * @return the cardinality of the collection this variable is bound to
 	 */
 	public int getDefinitionCardinality() {
-	//	return definitionSet.size();
+		// return definitionSet.size();
 		return 40;
 	}
 
