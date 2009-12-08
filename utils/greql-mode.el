@@ -23,7 +23,7 @@
 ;; Major mode for editing GReQL2 files with Emacs and executing queries.
 
 ;;; Version:
-;; <2009-12-06 Sun 19:36>
+;; <2009-12-08 Tue 13:59>
 
 ;;; TODO:
 ;; - Implement handling of imports in completion (DONE) and highlighting (still
@@ -306,13 +306,13 @@ queries are evaluated.  Set it with `greql-set-graph'.")
   (interactive)
   (greql-complete-1 (greql-completion-list '(keyword funlib))))
 
-(defun greql-execute (beg end)
+(defun greql-execute ()
   "Execute the query in the current buffer on `greql-graph'.
 If a region is active, use only that as query."
-  (interactive "r")
+  (interactive)
   (let ((buffer (get-buffer-create greql-buffer))
         (evalstr (if (region-active-p)
-                     (buffer-substring-no-properties beg end)
+                     (buffer-substring-no-properties (region-beginning) (region-end))
                    (buffer-substring-no-properties
                     (point-min) (point-max)))))
     (with-current-buffer buffer (erase-buffer))
