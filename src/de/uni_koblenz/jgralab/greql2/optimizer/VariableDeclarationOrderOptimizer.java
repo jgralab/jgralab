@@ -123,10 +123,9 @@ public class VariableDeclarationOrderOptimizer extends OptimizerBase {
 				for (VariableDeclarationOrderUnit unit : units) {
 					oldSDs.add(unit.getSimpleDeclarationOfVariable());
 					Variable var = unit.getVariable();
-
-					logger.finer("  " + varDeclOrderBefore.get(i) + "  -->  v"
-							+ var.getId() + " (" + var.get_name()
-							+ "), changeCosts = "
+					Variable old = varDeclOrderBefore.get(i);
+					logger.finer("  " + old + " (" + old.get_name() + ") --> "
+							+ var + " (" + var.get_name() + "), changeCosts = "
 							+ unit.getVariableValueChangeCosts()
 							+ ", cardinality = "
 							+ unit.getTypeExpressionCardinality());
