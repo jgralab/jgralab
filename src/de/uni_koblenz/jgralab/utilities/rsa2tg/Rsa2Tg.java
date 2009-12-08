@@ -1797,21 +1797,20 @@ public class Rsa2Tg extends XmlProcessor {
 					escape = true;
 				} else if (!escape && (c == '"')) {
 					++stringCount;
+					String constraintText = text.substring(beginIndex + 1, i)
+							.trim().replaceAll("\\\\(.)", "$1");
+					if (constraintText.isEmpty()) {
+						constraintText = null;
+					}
 					switch (stringCount) {
 					case 1:
-						constraint.set_message(text
-								.substring(beginIndex + 1, i).trim()
-								.replaceAll("\\\\(.)", "$1"));
+						constraint.set_message(constraintText);
 						break;
 					case 2:
-						constraint.set_predicateQuery(text.substring(
-								beginIndex + 1, i).trim().replaceAll("\\\\(.)",
-								"$1"));
+						constraint.set_predicateQuery(constraintText);
 						break;
 					case 3:
-						constraint.set_offendingElementsQuery(text.substring(
-								beginIndex + 1, i).trim().replaceAll("\\\\(.)",
-								"$1"));
+						constraint.set_offendingElementsQuery(constraintText);
 						break;
 					default:
 						throw new ProcessingException(getFileName(),
