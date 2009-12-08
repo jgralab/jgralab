@@ -70,23 +70,31 @@ public class VariableDeclarationOrderUnit implements
 	}
 
 	/**
-	 * Adds the vertices that depend on the expression <code>vertex</code>.
+	 * Adds the vertices that depend on the expression <code>vertex</code> to
+	 * dependentVertices (but not vertex itself)
 	 * 
 	 * @param vertex
 	 *            a {@link Vertex}
 	 */
 	private void addDependendVertices(Vertex vertex) {
-		if (vertex == simpleDeclarationOfVariable) {
+		if ((vertex == simpleDeclarationOfVariable)
+				|| (vertex == declaringDeclaration)) {
 			return;
 		}
-		dependentVertices.add(vertex);
+		if (variable != vertex) {
+			dependentVertices.add(vertex);
+		}
 		for (Edge e : vertex.incidences(EdgeDirection.OUT)) {
 			addDependendVertices(e.getOmega());
 		}
 	}
 
 	/**
-	 * 
+	 * addDependentVertices(variable) added all vertices that depend on variable
+	 * by simply following forward edges till declaringDeclaration. This doesn't
+	 * find variables declared by other {@link SimpleDeclaration}s of
+	 * declaringDeclaration, but the simple declarations are included. So add
+	 * the variables of them and their dependencies, too.
 	 */
 	private void extendDependendVertices() {
 		ArrayList<Vertex> list = new ArrayList<Vertex>(dependentVertices.size());
