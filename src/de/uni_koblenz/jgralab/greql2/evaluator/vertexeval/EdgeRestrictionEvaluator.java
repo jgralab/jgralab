@@ -129,7 +129,7 @@ public class EdgeRestrictionEvaluator extends VertexEvaluator {
 		} else {
 			validRole = null;
 		}
-		return null;
+		return new JValue();
 	}
 
 	@Override

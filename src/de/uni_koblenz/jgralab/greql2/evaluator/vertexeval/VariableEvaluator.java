@@ -73,7 +73,7 @@ public class VariableEvaluator extends VertexEvaluator {
 	/**
 	 * This is the value that has been set from outside
 	 */
-	private JValue variableValue;
+	private JValue variableValue = new JValue();
 
 	/**
 	 * This is the estimated cardinality of the definitionset of this variable
