@@ -467,6 +467,9 @@ public class EarySelectionOptimizer extends OptimizerBase {
 			}
 		}
 		for (Edge upEdge : upEdges) {
+			if (!upEdge.isValid()) {
+				continue;
+			}
 			FunctionApplication funApp = (FunctionApplication) upEdge
 					.getOmega();
 			if (funApp == null) {
