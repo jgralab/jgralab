@@ -39,8 +39,7 @@ public class JValueInvalidTypeException extends RuntimeException {
 	}
 
 	public JValueInvalidTypeException(JValueType wanted, JValueType encapsulated) {
-		super("Trying to get type " + wanted.toString() + " but was "
-				+ encapsulated.toString());
+		super("Trying to get type " + wanted + " but was " + encapsulated);
 	}
 
 }

@@ -75,6 +75,9 @@ public class ForwardVertexSetEvaluator extends PathSearchEvaluator {
 				.getVertexEvaluatorGraphMarker().getMark(startExpression);
 		JValue res = startEval.getResult(subgraph);
 
+		assert (res != null) : "The evaluator " + startEval
+				+ " returned null!!!!!!";
+
 		/**
 		 * check if the result is invalid, this may occur because the
 		 * restrictedExpression may return a null-value
