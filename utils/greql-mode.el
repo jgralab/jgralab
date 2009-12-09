@@ -23,7 +23,7 @@
 ;; Major mode for editing GReQL2 files with Emacs and executing queries.
 
 ;;; Version:
-;; <2009-12-08 Tue 13:59>
+;; <2009-12-09 Wed 09:17>
 
 ;;; TODO:
 ;; - Implement handling of imports in completion (DONE) and highlighting (still
@@ -81,7 +81,7 @@
   (append greql-fontlock-keywords-1
           (list (concat "\\<" (regexp-opt greql-keywords t) "\\>"))))
 
-(defparameter greql-fontlock-keywords-3 greql-fontlock-keywords-2)
+(defvar greql-fontlock-keywords-3 greql-fontlock-keywords-2)
 (make-variable-buffer-local 'greql-fontlock-keywords-3)
 
 (defun greql-set-fontlock-keywords-3 ()
