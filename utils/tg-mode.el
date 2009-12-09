@@ -20,11 +20,12 @@
 
 ;;; Commentary:
 
-;; Major mode for editing TG files with Emacs
+;; Major mode for editing TG files with Emacs.  Include superior navigation
+;; functions, a full schema parser, and eldoc capabilities.
 
 
 ;;; Version
-;; <2009-12-08 Tue 23:42>
+;; <2009-12-09 Wed 09:17>
 
 ;;* Code
 
@@ -144,12 +145,43 @@ its supertypes)."
                        (let ((attrs (tg-all-attributes mtype supertype with-supertype)))
                          (if with-supertype
                              (mapcar (lambda (a)
-                                       (concat a "#" supertype))
+                                       (if (string-match "#" a)
+                                           a
+                                         (concat a "#" supertype)))
                                      attrs)
                            attrs)))
                      (third line)))
       :test 'string=)
      'string-lessp)))
+
+(define-hash-table-test 'string= 'string= 'sxhash)
+(defvar tg--unique-name-hashmap (make-hash-table :test 'string=)
+  "Maps qualified names to unique names.")
+(make-variable-buffer-local 'tg--unique-name-hashmap)
+
+(defun tg-unique-name (qname)
+  (let ((val (gethash qname tg--unique-name-hashmap)))
+    (or val
+        (let ((uname (replace-regexp-in-string "\\(?:.*\\.\\)\\([^.]+\\)" "\\1" qname)))
+          (if (tg-unique-name-p uname)
+              (progn
+                (puthash qname uname tg--unique-name-hashmap)
+                uname)
+            ;; Not unique
+            (puthash qname qname tg--unique-name-hashmap)
+            qname)))))
+
+(defun tg-unique-name-p (name)
+  (catch 'tg-unique
+    (dolist (line tg-schema-alist)
+      (when (or (eq (car line) 'VertexClass)
+                (eq (car line) 'EdgeClass))
+        (let ((simple-name (replace-regexp-in-string
+                            "\\(?:.*\\.\\)\\([^.]+\\)" ""
+                            (second line))))
+          (when (string= name simple-name)
+            (throw 'tg-unique nil)))))
+    (throw 'tg-unique t)))
 
 (defun tg-attributes-1 (mtype types)
   "Returns a list of all attribute names that are defined in all
@@ -201,7 +233,7 @@ MTYPEs TYPES."
          (looking-at "^\\([[:digit:]]+\\)\s+[[:word:]._]+")
          (match-string-no-properties 1))))
 
-;;** Eldoc & Navigation
+;;** Navigation
 
 (defun tg-vertex-by-incidence (inc)
   "Return the buffer position of the incidence INC in some incidence list."
@@ -215,11 +247,14 @@ MTYPEs TYPES."
     (search-backward inc)
     (point)))
 
-(defun tg-goto-opposite-incidence (arg)
-  "When on an incidence number, jump to the vertex that is the
-That-Vertex of the incident edge.  When on an edge, jump to the
-vertex it is starting from.  With prefix arg, jump to the target
-vertex."
+(defun tg-jump (arg)
+  "Jump to an appropriate position depending on position of point.
+
+When on an incidence number, jump to the vertex that is the
+That-Vertex of the incident edge.
+
+When on an edge, jump to the vertex it is starting from.  With
+prefix arg, jump to the target vertex."
   (interactive "P")
   (cond
    ((tg-incidence-list-p)
@@ -239,10 +274,31 @@ vertex."
 
 (defparameter tg-mode-map
   (let ((m (make-sparse-keymap)))
-    (define-key m (kbd "C-c C-c") 'tg-goto-opposite-incidence)
+    (define-key m (kbd "C-c C-c") 'tg-jump)
     (define-key m (kbd "C-c C-d") 'eldoc-mode)
     m)
   "The keymap used in tg-mode.")
+
+;;** Eldoc
+
+;;*** Faces
+
+(defface tg-attribute-father-face '((t ( :inherit font-lock-type-face :height 0.6)))
+  "Face used for the forfather introducing an attribute.")
+
+(defface tg-attribute-face '((t ( :inherit font-lock-constant-face)))
+  "Face used for the forfather introducing an attribute.")
+
+(defface tg-supertype-face '((t ( :inherit font-lock-type-face :height 0.8)))
+  "Face used for supertypes.")
+
+(defface tg-type-face '((t ( :inherit font-lock-type-face)))
+  "Face used for types.")
+
+(defface tg-metatype-face '((t ( :inherit font-lock-keyword-face)))
+  "Face used for meta-types.")
+
+;;*** Code
 
 (defvar tg--last-thing "")
 (make-variable-buffer-local 'tg--last-thing)
@@ -259,13 +315,8 @@ vertex."
         (setq tg--last-doc (buffer-substring (line-beginning-position)
                                              (line-end-position)))))))
 
-(defface tg-attribute-father-face '((t ( :inherit font-lock-type-face :height 0.6)))
-  "Face used for the forfather introducing an attribute.")
-
-(defface tg-supertype-face '((t ( :inherit font-lock-type-face :height 0.8)))
-  "Face used for supertypes.")
-
 (defun tg-eldoc-vertex-or-edge (mtype)
+  "Eldoc MTYPE element at current line."
   (save-excursion
     (goto-char (line-beginning-position))
     (if (looking-at "[[:digit:]]+\s+\\([[:word:]_.]+\\)")
@@ -278,14 +329,14 @@ vertex."
                             name))))
                (line (tg-find-schema-line mtype qname))
                (type (second line))
-               (supers (tg-format-list (third line) 'tg-supertype-face))
+               (supers (tg-format-list (third line) 'tg-supertype-face nil t))
                (attrs (tg-format-list (tg-all-attributes mtype type 'with-supertype)
-                                      'font-lock-constant-face
+                                      'tg-attribute-face
                                       'tg-attribute-father-face)))
           (setq tg--last-doc (concat (propertize (symbol-name mtype)
-                                                 'face 'font-lock-keyword-face)
+                                                 'face 'tg-metatype-face)
                                      " "
-                                     (propertize type 'face 'font-lock-type-face)
+                                     (propertize (tg-unique-name type) 'face 'tg-type-face)
                                      ": "
                                      supers
                                      " {"
@@ -293,8 +344,19 @@ vertex."
                                      "}")))
       (setq tg--last-doc nil))))
 
-(defun tg-format-list (lst face1 &optional face2)
-  "Return a string representation of the given list."
+(defun tg-format-list (lst face1 &optional face2 alltypes)
+  "Return a string representation of the given list of strings of the form
+  (\"item1\" \"item2#type\")
+
+Normal strings like item1 are propertized with FACE1.
+
+Strings containing # are split there, and the first part is
+propertized with FACE1, and the second part with FACE2.  The
+second part must be a qualified type name that is made unique
+here, too.
+
+If ALLTYPES is non-nil, assume that simple entries (those without
+#) are also qualified type names and make them unique."
   (let ((c (car lst)))
     (if (null c)
         ""
@@ -302,8 +364,10 @@ vertex."
        (if (string-match "#" c)
            (let ((split (split-string c "#")))
              (concat (propertize (first split) 'face face1)
-                     (propertize (second split) 'face face2)))
-         (propertize c 'face face1))
+                     (propertize (tg-unique-name (second split)) 'face face2)))
+         (if alltypes
+             (propertize (tg-unique-name c) 'face face1)
+           (propertize c 'face face1)))
        (let ((reststr (tg-format-list (cdr lst) face1 face2)))
          (if (= (length reststr) 0)
              reststr
