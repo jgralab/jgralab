@@ -473,16 +473,9 @@ public class EarySelectionOptimizer extends OptimizerBase {
 			FunctionApplication funApp = (FunctionApplication) upEdge
 					.getOmega();
 			if (funApp == null) {
-				String file = System.getProperty("user.home") + File.separator
-						+ "brokenGreqlGraph.tg";
-				try {
-					GraphIO.saveGraphToFile(file, syntaxgraph, null);
-				} catch (GraphIOException e1) {
-					e1.printStackTrace();
-				}
 				throw new OptimizerException(
 						"Something's pretty wrong. upEdge.getOmega() returned null!! upEdge = "
-								+ upEdge + ".  Query graph saved as " + file);
+								+ upEdge + ".");
 			}
 			Expression otherArg = null;
 			for (IsArgumentOf inc : funApp
