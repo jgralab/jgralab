@@ -25,7 +25,7 @@
 
 
 ;;; Version
-;; <2009-12-09 Wed 09:17>
+;; <2009-12-10 Thu 16:53>
 
 ;;* Code
 
@@ -85,8 +85,8 @@
                             (tg-parse-attributes (match-string-no-properties 3)))
                       schema-alist)))
          ;; End of schema (part)
-         ((or (= (point) (point-max)))
-          (looking-at "Graph[[:space:]]+")
+         ((or (= (point) (point-max))
+              (looking-at "Graph[[:space:]]+"))
           (setq finished t)))
         (forward-line))
       schema-alist)))
