@@ -50,7 +50,7 @@ public class GreqlServer extends Thread {
 					}
 					currentGraphFile = newGraphFile;
 					out.println("Loading " + currentGraphFile + ".");
-					System.out.println("Loding " + currentGraphFile + ".");
+					System.out.println("Loading " + currentGraphFile + ".");
 					eval.setDatagraph(GraphIO.loadSchemaAndGraphFromFile(
 							currentGraphFile,
 							CodeGeneratorConfiguration.MINIMAL,
