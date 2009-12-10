@@ -23,7 +23,7 @@
 ;; Major mode for editing GReQL2 files with Emacs and executing queries.
 
 ;;; Version:
-;; <2009-12-10 Thu 09:55>
+;; <2009-12-10 Thu 12:08>
 
 ;;; TODO:
 ;; - Implement handling of imports in completion (DONE) and highlighting (still
@@ -130,7 +130,8 @@ columns.")
   (define-key greql-mode-map (kbd "C-c C-e") 'greql-complete-edgeclass)
   (define-key greql-mode-map (kbd "C-c C-d") 'greql-complete-domain)
   (define-key greql-mode-map (kbd "C-c C-s") 'greql-set-graph)
-  (define-key greql-mode-map (kbd "C-c C-c") 'greql-execute))
+  (define-key greql-mode-map (kbd "C-c C-c") 'greql-execute)
+  (define-key greql-mode-map (kbd "C-c C-f") 'greql-format))
 
 (defvar greql-graph nil
   "The graph which is used to extract schema information on which
@@ -292,6 +293,29 @@ queries are evaluated.  Set it with `greql-set-graph'.")
 (defun greql-complete-keyword-or-function ()
   (interactive)
   (greql-complete-1 (greql-completion-list '(keyword funlib))))
+
+(defun greql-format ()
+  "Formats the current buffer.
+TODO: This should work on active region only, too."
+  (interactive)
+  (save-excursion
+    (goto-char (point-min))
+    (replace-string "\n" " ")
+    (goto-char (point-min))
+    (replace-regexp "[[:space:]]+" " ")
+    (goto-char (point-min))
+    (let ((funs '("and" "or" "xor")))
+      (while (re-search-forward
+              (concat "\\<" (regexp-opt (append funs
+                                                (remove "E"
+                                                        (remove "V" greql-keywords)))) "\\>") nil t)
+        (goto-char (match-beginning 0))
+        (if (member (match-string 0) funs)
+            (progn
+              (insert "\n  ")
+              (goto-char (+ 3 (match-end 0))))
+          (insert "\n")
+          (goto-char (1+ (match-end 0))))))))
 
 (defvar greql-process nil
   "Network process to the GreqlEvalServer.")
