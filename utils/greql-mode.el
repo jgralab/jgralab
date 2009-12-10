@@ -312,17 +312,18 @@ If a region is active, use only that as query."
                      (save-buffer)
                      (expand-file-name (buffer-file-name)))))
     (with-current-buffer buffer (erase-buffer))
-    (let ((proc (or greql-process
-                    (setq greql-process (make-network-process
-                                         :name "GreqlEvalServer Connection"
-                                         :buffer buffer
-                                         ;; TODO:  This should be customizable
-                                         :host "localhost"
-                                         :service 10101
-                                         :sentinel 'greql-display-result)))))
-      (process-send-string proc (concat "g:" (expand-file-name greql-graph)))
-      (process-send-string proc (concat "q:" queryfile)))
-    (display-buffer buffer)))
+    (when (or (not greql-process) (not (eq (process-status greql-process) 'open)))
+      (setq greql-process (make-network-process
+                           :name "GreqlEvalServer Connection"
+                           :buffer buffer
+                           ;; TODO:  This should be customizable
+                           :host "localhost"
+                           :service 10101
+                           :sentinel 'greql-display-result)))
+    (process-send-string greql-process (concat "g:" (expand-file-name greql-graph) "\n"))
+    (process-send-string greql-process (concat "q:" queryfile "\n"))
+    ;;(display-buffer buffer)
+    ))
 
 (defun greql-display-result (proc change)
   (display-buffer (get-buffer-create greql-buffer)))
