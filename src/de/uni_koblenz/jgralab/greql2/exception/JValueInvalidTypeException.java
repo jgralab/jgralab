@@ -26,13 +26,9 @@ package de.uni_koblenz.jgralab.greql2.exception;
 
 import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
 
-public class JValueInvalidTypeException extends RuntimeException {
+public class JValueInvalidTypeException extends Greql2Exception {
 
 	static final long serialVersionUID = 0;
-
-	public JValueInvalidTypeException() {
-		super();
-	}
 
 	public JValueInvalidTypeException(String s) {
 		super(s);
