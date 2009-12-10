@@ -18,23 +18,22 @@ import de.uni_koblenz.jgralab.greql2.exception.Greql2Exception;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
 import de.uni_koblenz.jgralab.impl.ProgressFunctionImpl;
 
-public class GreqlEvalServer extends Thread {
+public class GreqlServer extends Thread {
 
 	private static Thread clientHandlerLoop;
-	private static HashSet<GreqlEvalServer> clients = new HashSet<GreqlEvalServer>();
+	private static HashSet<GreqlServer> clients = new HashSet<GreqlServer>();
 
 	private Socket socket;
 	private BufferedReader in;
 	private PrintWriter out;
 	private GreqlEvaluator eval;
 
-	public GreqlEvalServer(Socket s) throws IOException {
+	public GreqlServer(Socket s) throws IOException {
 		socket = s;
 		in = new BufferedReader(new InputStreamReader(s.getInputStream()));
 		out = new PrintWriter(new OutputStreamWriter(s.getOutputStream()));
 		eval = new GreqlEvaluator((String) null, (Graph) null, null);
-		System.out
-				.println("New GreqlEvalServer for " + socket.getInetAddress());
+		System.out.println("New GreqlServer for " + socket.getInetAddress());
 	}
 
 	@Override
@@ -50,6 +49,7 @@ public class GreqlEvalServer extends Thread {
 						continue;
 					}
 					currentGraphFile = newGraphFile;
+					out.println("Loading " + currentGraphFile + ".");
 					System.out.println("Loding " + currentGraphFile + ".");
 					eval.setDatagraph(GraphIO.loadSchemaAndGraphFromFile(
 							currentGraphFile,
@@ -57,11 +57,13 @@ public class GreqlEvalServer extends Thread {
 							new ProgressFunctionImpl()));
 				} else if (line.startsWith("q:")) {
 					String f = line.substring(2);
+					out.println("Evaling query file " + f + ".");
 					System.out.println("Evaling query file " + f + ".");
 					eval.setQueryFile(new File(f));
 					try {
 						eval.startEvaluation();
 						JValue result = eval.getEvaluationResult();
+						out.println();
 						out.println("Evaluation Result:");
 						out.println("==================");
 						if (result.isCollection()) {
@@ -79,25 +81,27 @@ public class GreqlEvalServer extends Thread {
 										+ e.getValue());
 							}
 						} else {
+							out.println(result.toString());
 							System.out.println(result.toString());
 						}
-						out.println(Character.digit(0xC, 16));
-						out.flush();
 					} catch (Greql2Exception e) {
 						e.printStackTrace();
 						e.printStackTrace(out);
-						out.flush();
 					}
 				} else {
 					out.println("Don't understand line '" + line + "'.");
 					System.out.println("Don't understand line '" + line + "'.");
 				}
+				out.println("\u000C");
 				out.flush();
 			}
 			System.out.println("Goodbye!");
 			in.close();
 			out.close();
 			socket.close();
+			synchronized (GreqlServer.class) {
+				clients.remove(this);
+			}
 		} catch (Exception e) {
 			e.printStackTrace();
 			e.printStackTrace(out);
@@ -127,7 +131,7 @@ public class GreqlEvalServer extends Thread {
 					Socket s = null;
 					try {
 						s = socket.accept();
-						GreqlEvalServer client = new GreqlEvalServer(s);
+						GreqlServer client = new GreqlServer(s);
 						clients.add(client);
 						client.start();
 					} catch (IOException e) {
@@ -144,7 +148,7 @@ public class GreqlEvalServer extends Thread {
 	private static void terminateServer() {
 		clientHandlerLoop.interrupt();
 
-		for (GreqlEvalServer client : clients) {
+		for (GreqlServer client : clients) {
 			client.interrupt();
 		}
 	}

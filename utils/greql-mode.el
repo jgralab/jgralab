@@ -23,7 +23,7 @@
 ;; Major mode for editing GReQL2 files with Emacs and executing queries.
 
 ;;; Version:
-;; <2009-12-09 Wed 09:17>
+;; <2009-12-10 Thu 09:55>
 
 ;;; TODO:
 ;; - Implement handling of imports in completion (DONE) and highlighting (still
@@ -322,8 +322,7 @@ If a region is active, use only that as query."
                            :sentinel 'greql-display-result)))
     (process-send-string greql-process (concat "g:" (expand-file-name greql-graph) "\n"))
     (process-send-string greql-process (concat "q:" queryfile "\n"))
-    ;;(display-buffer buffer)
-    ))
+    (display-buffer buffer)))
 
 (defun greql-display-result (proc change)
   (display-buffer (get-buffer-create greql-buffer)))
