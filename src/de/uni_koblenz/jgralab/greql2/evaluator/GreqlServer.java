@@ -70,7 +70,6 @@ public class GreqlServer extends Thread {
 						if (result.isCollection()) {
 							for (JValue jv : result.toCollection()) {
 								out.println(jv.toString());
-								System.out.println(jv.toString());
 							}
 						} else if (result.isMap()) {
 							for (Entry<JValue, JValue> e : result.toJValueMap()
@@ -78,12 +77,9 @@ public class GreqlServer extends Thread {
 								out
 										.println(e.getKey() + " --> "
 												+ e.getValue());
-								System.out.println(e.getKey() + " --> "
-										+ e.getValue());
 							}
 						} else {
 							out.println(result.toString());
-							System.out.println(result.toString());
 						}
 					} catch (Greql2Exception e) {
 						e.printStackTrace();

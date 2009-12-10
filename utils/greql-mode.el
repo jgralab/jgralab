@@ -297,7 +297,7 @@ queries are evaluated.  Set it with `greql-set-graph'.")
 (defun greql-format ()
   "Formats the current buffer.
 TODO: This should work on active region only, too.
-TODO: Don't format anything in strings!"
+TODO: Don't format anything in strings and comments!"
   (interactive)
   (save-excursion
     (goto-char (point-min))
@@ -312,9 +312,11 @@ TODO: Don't format anything in strings!"
            (regexp (concat "\\(" indenters "\\|" deindenters "\\|\\<"
                            (regexp-opt
                             (append funs 
-                                    (set-difference greql-keywords
-                                                    '("E" "V" "list" "set" "tup" "map")
-                                                    :test 'string=))) "\\>\\)"))
+                                    (set-difference 
+                                     greql-keywords
+                                     '("E" "V" "list" "set" "tup" "map" "true" "false"
+                                       "null")
+                                     :test 'string=))) "\\>\\)"))
            (case-fold-search nil))
       (while (re-search-forward regexp nil t)
         (let ((match (match-string 1)))
