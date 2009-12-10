@@ -23,7 +23,7 @@
 ;; Major mode for editing GReQL2 files with Emacs and executing queries.
 
 ;;; Version:
-;; <2009-12-10 Thu 13:21>
+;; <2009-12-10 Thu 16:49>
 
 ;;; TODO:
 ;; - Implement handling of imports in completion (DONE) and highlighting (still
@@ -346,7 +346,7 @@ TODO: Don't format anything in strings!"
 If a region is active, use only that as query."
   (interactive)
   (let ((buffer (get-buffer-create greql-buffer))
-        (queryfile (if (region-active-p)
+        (queryfile (if (use-region-p)
                        (let ((f (make-temp-file "greql-query"))
                              (str (buffer-substring-no-properties (region-beginning) (region-end))))
                          (with-current-buffer (find-file-noselect f)
