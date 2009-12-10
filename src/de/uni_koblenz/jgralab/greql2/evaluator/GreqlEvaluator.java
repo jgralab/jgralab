@@ -347,6 +347,20 @@ public class GreqlEvaluator {
 		reset();
 	}
 
+	public void setQueryFile(File query) throws IOException {
+		BufferedReader reader = new BufferedReader(new FileReader(query));
+		String line = null;
+		StringBuffer sb = new StringBuffer();
+		while ((line = reader.readLine()) != null) {
+			sb.append(line);
+			sb.append('\n');
+		}
+		reader.close();
+		queryString = sb.toString();
+		normalizeQueryString();
+		reset();
+	}
+
 	/**
 	 * Reset to before-start state, so that a new query can be evaluated.
 	 */
@@ -649,7 +663,8 @@ public class GreqlEvaluator {
 			gc.createEdgeClass("Link", n, n);
 			minimalSchema
 					.compile(CodeGeneratorConfiguration.WITHOUT_TRANSACTIONS);
-			Method graphCreateMethod = minimalSchema.getGraphCreateMethod(false);
+			Method graphCreateMethod = minimalSchema
+					.getGraphCreateMethod(false);
 
 			try {
 				minimalGraph = (Graph) (graphCreateMethod.invoke(null,
@@ -700,14 +715,7 @@ public class GreqlEvaluator {
 		}
 		this.variableMap = variables;
 		this.progressFunction = progressFunction;
-		BufferedReader reader = new BufferedReader(new FileReader(queryFile));
-		String line = null;
-		queryString = "";
-		while ((line = reader.readLine()) != null) {
-			queryString += line + "\n";
-		}
-		reader.close();
-		normalizeQueryString();
+
 	}
 
 	/**

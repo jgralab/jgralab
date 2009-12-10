@@ -2,6 +2,7 @@ package de.uni_koblenz.jgralab.greql2.evaluator;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
@@ -36,14 +37,21 @@ public class GreqlEvalServer extends Thread {
 	@Override
 	public void run() {
 		try {
+			String currentGraphFile = null;
 			String line = null;
 			while (((line = in.readLine()) != null) && !isInterrupted()) {
 				if (line.startsWith("g:")) {
-					eval.setDatagraph(GraphIO.loadSchemaAndGraphFromFile(line
-							.substring(2), CodeGeneratorConfiguration.MINIMAL,
+					String newGraphFile = line.substring(2);
+					if (newGraphFile.equals(currentGraphFile)) {
+						continue;
+					}
+					currentGraphFile = newGraphFile;
+					eval.setDatagraph(GraphIO.loadSchemaAndGraphFromFile(
+							currentGraphFile,
+							CodeGeneratorConfiguration.MINIMAL,
 							new ProgressFunctionImpl()));
 				} else if (line.startsWith("q:")) {
-					eval.setQuery(line.substring(2));
+					eval.setQueryFile(new File(line.substring(2)));
 					eval.startEvaluation();
 					JValue result = eval.getEvaluationResult();
 					out.append("Evaluation Result:\n");
@@ -63,7 +71,8 @@ public class GreqlEvalServer extends Thread {
 						out.append(result.toString());
 						out.newLine();
 					}
-					out.append(Character.forDigit(12, 10));
+					out
+							.append("-----------------------------------------------------------");
 					out.newLine();
 					out.flush();
 				}

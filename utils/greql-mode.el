@@ -106,9 +106,6 @@
   "Distance between tab stops (for display of tab characters), in
 columns.")
 
-(defvar greql-program "~/repos/utils/greqleval"
-  "The program to execute GReQL queries.")
-
 (defvar greql-buffer "*GReQL*"
   "Name of the GReQL status buffer.")
 
@@ -133,17 +130,12 @@ columns.")
   (define-key greql-mode-map (kbd "C-c C-e") 'greql-complete-edgeclass)
   (define-key greql-mode-map (kbd "C-c C-d") 'greql-complete-domain)
   (define-key greql-mode-map (kbd "C-c C-s") 'greql-set-graph)
-  (define-key greql-mode-map (kbd "C-c C-p") 'greql-set-extra-classpath)
   (define-key greql-mode-map (kbd "C-c C-c") 'greql-execute))
 
 (defvar greql-graph nil
   "The graph which is used to extract schema information on which
 queries are evaluated.  Set it with `greql-set-graph'.")
 (make-variable-buffer-local 'greql-graph)
-
-(defvar greql-extra-classpath nil
-  "Extra classpath elements as string.")
-(make-variable-buffer-local 'greql-extra-classpath)
 
 (defun greql-initialize-schema ()
   (when (and greql-graph (not tg-schema-alist))
@@ -170,11 +162,6 @@ queries are evaluated.  Set it with `greql-set-graph'.")
 
   (greql-set-fontlock-keywords-3))
 
-(defun greql-set-extra-classpath (file-or-dir)
-  (interactive "FExtra classpath: ")
-  (if (null greql-extra-classpath)
-      (setq greql-extra-classpath file-or-dir)
-    (setq greql-extra-classpath (concat greql-extra-classpath ":" file-or-dir))))
 
 (defun greql-import-completion-list (&optional types)
   "Additional completions due to imports."
@@ -306,27 +293,35 @@ queries are evaluated.  Set it with `greql-set-graph'.")
   (interactive)
   (greql-complete-1 (greql-completion-list '(keyword funlib))))
 
+(defvar greql-process nil
+  "Network process to the GreqlEvalServer.")
+(make-variable-buffer-local 'greql-process)
+
 (defun greql-execute ()
   "Execute the query in the current buffer on `greql-graph'.
 If a region is active, use only that as query."
   (interactive)
   (let ((buffer (get-buffer-create greql-buffer))
-        (evalstr (if (region-active-p)
-                     (buffer-substring-no-properties (region-beginning) (region-end))
-                   (buffer-substring-no-properties
-                    (point-min) (point-max)))))
+        (queryfile (if (region-active-p)
+                       (let ((f (make-temp-file "greql-query"))
+                             (str (buffer-substring-no-properties (region-beginning) (region-end))))
+                         (with-current-buffer (find-file-noselect f)
+                           (insert str)
+                           (save-buffer))
+                         f)
+                     (save-buffer)
+                     (expand-file-name (buffer-file-name)))))
     (with-current-buffer buffer (erase-buffer))
-    (let ((proc (start-process "GReQL process" buffer
-                               greql-program
-                               (if greql-extra-classpath
-                                    "--extra-cp"
-                                 "")
-                               (if greql-extra-classpath
-                                    greql-extra-classpath
-                                 "")
-                               evalstr
-                               (expand-file-name greql-graph))))
-      (set-process-sentinel proc 'greql-display-result))
+    (let ((proc (or greql-process
+                    (setq greql-process (make-network-process
+                                         :name "GreqlEvalServer Connection"
+                                         :buffer buffer
+                                         ;; TODO:  This should be customizable
+                                         :host "localhost"
+                                         :service 10101
+                                         :sentinel 'greql-display-result)))))
+      (process-send-string proc (concat "g:" (expand-file-name greql-graph)))
+      (process-send-string proc (concat "q:" queryfile)))
     (display-buffer buffer)))
 
 (defun greql-display-result (proc change)
