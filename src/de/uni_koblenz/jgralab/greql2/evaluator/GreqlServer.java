@@ -63,6 +63,7 @@ public class GreqlServer extends Thread {
 					try {
 						eval.startEvaluation();
 						JValue result = eval.getEvaluationResult();
+						System.out.println("<result not printed>");
 						out.println();
 						out.println("Evaluation Result:");
 						out.println("==================");
