@@ -23,7 +23,7 @@
 ;; Major mode for editing GReQL2 files with Emacs and executing queries.
 
 ;;; Version:
-;; <2009-12-10 Thu 12:08>
+;; <2009-12-10 Thu 13:21>
 
 ;;; TODO:
 ;; - Implement handling of imports in completion (DONE) and highlighting (still
@@ -296,7 +296,8 @@ queries are evaluated.  Set it with `greql-set-graph'.")
 
 (defun greql-format ()
   "Formats the current buffer.
-TODO: This should work on active region only, too."
+TODO: This should work on active region only, too.
+TODO: Don't format anything in strings!"
   (interactive)
   (save-excursion
     (goto-char (point-min))
@@ -304,18 +305,37 @@ TODO: This should work on active region only, too."
     (goto-char (point-min))
     (replace-regexp "[[:space:]]+" " ")
     (goto-char (point-min))
-    (let ((funs '("and" "or" "xor")))
-      (while (re-search-forward
-              (concat "\\<" (regexp-opt (append funs
-                                                (remove "E"
-                                                        (remove "V" greql-keywords)))) "\\>") nil t)
-        (goto-char (match-beginning 0))
-        (if (member (match-string 0) funs)
-            (progn
-              (insert "\n  ")
-              (goto-char (+ 3 (match-end 0))))
-          (insert "\n")
-          (goto-char (1+ (match-end 0))))))))
+    (let* ((funs '("and"))
+           (indent-level 1)
+           (indenters "[(]")
+           (deindenters "[)]")
+           (regexp (concat "\\(" indenters "\\|" deindenters "\\|\\<"
+                           (regexp-opt
+                            (append funs 
+                                    (set-difference greql-keywords
+                                                    '("E" "V" "list" "set" "tup" "map")
+                                                    :test 'string=))) "\\>\\)"))
+           (case-fold-search nil))
+      (while (re-search-forward regexp nil t)
+        (let ((match (match-string 1)))
+          (cond
+           ((save-match-data
+              (string-match indenters match))
+            (setq indent-level (1+ indent-level)))
+           ((save-match-data
+              (string-match deindenters match))
+            (setq indent-level (1- indent-level)))
+           ((member match funs)
+            (goto-char (match-beginning 1))
+            (insert "\n")
+            (dotimes (i (* indent-level tab-width))
+              (insert " "))
+            (goto-char (+ 1 (* tab-width indent-level) (match-end 1))))
+           (t
+            (goto-char (match-beginning 0))
+            (insert "\n")
+            (goto-char (1+ (match-end 1)))))))
+      (delete-trailing-whitespace))))
 
 (defvar greql-process nil
   "Network process to the GreqlEvalServer.")
