@@ -24,6 +24,7 @@
 
 package de.uni_koblenz.jgralab.greql2.exception;
 
+
 /**
  * Should be thrown everytime there is an error in the evaluator that is not
  * covered by any other Exception
@@ -42,5 +43,4 @@ public class EvaluateException extends Greql2Exception {
 	public EvaluateException(String message, Exception cause) {
 		super(message, cause);
 	}
-
 }

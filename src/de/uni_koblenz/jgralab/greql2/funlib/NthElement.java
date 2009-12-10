@@ -78,7 +78,8 @@ public class NthElement extends AbstractGreql2Function {
 		JValueCollection col = arguments[0].toCollection();
 		if (index >= col.size()) {
 			throw new EvaluateException("The given collection has fewer than "
-					+ (index + 1) + " elements.");
+					+ (index + 1) + " elements.  There are exactly "
+					+ col.size() + ".");
 		}
 
 		return col.toJValueList().get(index);

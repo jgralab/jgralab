@@ -139,6 +139,10 @@ public class QuerySourceException extends EvaluateException {
 					.getGraph()).serialize(element) : "<unknown element>");
 			sb.append("' at unknown position in query");
 		}
+
+		sb.append("\nComplete (optimized) Query: ");
+		sb.append(((SerializableGreql2) element.getGraph()).serialize());
+
 		return sb.toString();
 	}
 

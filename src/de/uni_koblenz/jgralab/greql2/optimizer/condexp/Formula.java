@@ -27,6 +27,13 @@ import de.uni_koblenz.jgralab.greql2.schema.TrivalentBoolean;
  * 
  */
 public abstract class Formula {
+	/**
+	 * The maximum number of non-constant terms a formula may have to try to
+	 * calculate the optimal ordering. If there are less NCTs, then the current
+	 * order will be used.
+	 */
+	private static final int MAX_NON_CONSTANT_TERM_NUMBER = 3;
+
 	protected static Logger logger = JGraLab.getLogger(Formula.class
 			.getPackage().getName());
 
@@ -113,15 +120,13 @@ public abstract class Formula {
 			return this;
 		}
 
-		simplifiedOrOptimized = true;
-
 		ConditionalExpressionUnit bestUnit = calculateBestConditionalExpressionUnit(nctExpressions);
 		return bestUnit.toConditionalExpression();
 	}
 
 	/**
 	 * @param nonConstantTermExpressions
-	 *            A set of all expressions that are contained in any
+	 *            A list of all expressions that are contained in any
 	 *            {@link NonConstantTerm}s
 	 * @return the {@link ConditionalExpressionUnit} with the highest
 	 *         <code>selectivity(booleanDifference) / costs(expression)</code>
@@ -129,6 +134,12 @@ public abstract class Formula {
 	 */
 	private ConditionalExpressionUnit calculateBestConditionalExpressionUnit(
 			ArrayList<Expression> nonConstantTermExpressions) {
+		if (nonConstantTermExpressions.size() > MAX_NON_CONSTANT_TERM_NUMBER) {
+			logger.fine("Formula: " + nonConstantTermExpressions.size()
+					+ " NCTEs ==> shortcutting...");
+			return new ConditionalExpressionUnit(nonConstantTermExpressions
+					.get(0), this);
+		}
 		ConditionalExpressionUnit current, best = null;
 		boolean hasTypeFunAppFound = false;
 		for (Expression exp : nonConstantTermExpressions) {

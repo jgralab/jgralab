@@ -81,15 +81,16 @@ public class ConditionalExpressionOptimizer extends OptimizerBase {
 			top.delete();
 			Formula optimizedFormula = formula.simplify().optimize();
 			if (!formula.equals(optimizedFormula)) {
+				Formula.setSimplifiedOrOptimized(true);
 				logger.fine(optimizerHeaderString()
 						+ "Transformed constraint\n    " + formula
 						+ "\nto\n    " + optimizedFormula + ".");
+				Greql2Vertex newTop = optimizedFormula.toExpression();
+				for (VertexEdgeClassTuple vect : relinkables) {
+					syntaxgraph.createEdge(vect.ec, newTop, vect.v);
+				}
+				top = findAndOrNotFunApp(syntaxgraph.getFirstGreql2Expression());
 			}
-			Greql2Vertex newTop = optimizedFormula.toExpression();
-			for (VertexEdgeClassTuple vect : relinkables) {
-				syntaxgraph.createEdge(vect.ec, newTop, vect.v);
-			}
-			top = findAndOrNotFunApp(syntaxgraph.getFirstGreql2Expression());
 		}
 
 		try {
