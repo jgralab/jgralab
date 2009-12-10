@@ -23,7 +23,7 @@
 ;; Major mode for editing GReQL2 files with Emacs and executing queries.
 
 ;;; Version:
-;; <2009-12-10 Thu 16:49>
+;; <2009-12-10 Thu 23:18>
 
 ;;; TODO:
 ;; - Implement handling of imports in completion (DONE) and highlighting (still
@@ -123,6 +123,7 @@ columns.")
            greql-fontlock-keywords-3)))
 
   (setq tab-width greql-tab-width)
+  (set (make-local-variable 'indent-line-function) 'greql-indent-line)
 
   ;; List of functions to be run when mode is activated
   (define-key greql-mode-map (kbd "M-TAB")   'greql-complete)
@@ -294,6 +295,52 @@ queries are evaluated.  Set it with `greql-set-graph'.")
   (interactive)
   (greql-complete-1 (greql-completion-list '(keyword funlib))))
 
+(defparameter greql--indent-regexp
+  "\\(?:\\<\\(?:exists!?\\|forall\\|from\\)\\>\\|(\\)")
+
+(defparameter greql--deindent-regexp
+  "\\(?:)\\|\\<end\\>\\)")
+
+(defun greql-calculate-indent ()
+  (let ((i 0) (d 0)
+        (bound (save-excursion
+                 (forward-line -1)
+                 (point)))
+        (prev-line-indent
+         (save-excursion
+           (forward-line -1)
+           (looking-at "^[[:space:]]*")
+           (- (match-end 0) (match-beginning 0)))))
+    (save-excursion
+      (forward-line 0)
+      (when (looking-at "[[:space:]]*\\(?:)\\|with\\|end\\|report\\(?:\\|Bag\\|Map\\|Set\\)\\)")
+        (setq i (1- i)))
+      (while (re-search-backward greql--indent-regexp bound t)
+        (setq i (1+ i))))
+    (save-excursion
+      (forward-line 0)
+      (while (re-search-backward greql--deindent-regexp bound t)
+        (setq d (1+ d)))
+      (goto-char bound)
+      (when (looking-at "[[:space:]]*\\(?:)\\|with\\|end\\|report\\(?:\\|Bag\\|Map\\|Set\\)\\)")
+        (setq d (1- d))))
+    (+ (/ prev-line-indent tab-width) (- i d))))
+
+(defun greql-indent-line ()
+  (let ((d (greql-calculate-indent))
+        (col (- (point) (line-beginning-position)))
+        spaces)
+    (forward-line 0)
+    (re-search-forward "^[[:space:]]*" (line-end-position) t)
+    (setq spaces (- (match-end 0) (match-beginning 0)))
+    (replace-match "")
+    (dotimes (i (* tab-width d))
+      (insert " "))
+    (when (> col spaces)
+      (forward-char (- col spaces)))
+    (when (looking-back "^[[:space:]]+")
+      (skip-chars-forward " \t"))))
+
 (defun greql-format ()
   "Formats the current buffer.
 TODO: This should work on active region only, too.
@@ -311,8 +358,8 @@ TODO: Don't format anything in strings and comments!"
            (deindenters "[)]")
            (regexp (concat "\\(" indenters "\\|" deindenters "\\|\\<"
                            (regexp-opt
-                            (append funs 
-                                    (set-difference 
+                            (append funs
+                                    (set-difference
                                      greql-keywords
                                      '("E" "V" "list" "set" "tup" "map" "true" "false"
                                        "null")
