@@ -397,6 +397,19 @@ public class Rsa2Tg extends XmlProcessor {
 		r.setFilenameDot(cli.getOptionValue('e'));
 		r.setFilenameValidation(cli.getOptionValue('r'));
 
+		// If no output option is selected, Rsa2Tg will write at least the
+		// schema file.
+		boolean noOutputOptionSelected = !cli.hasOption('o')
+				&& !cli.hasOption('s') && !cli.hasOption('e')
+				&& !cli.hasOption('r');
+		if (noOutputOptionSelected) {
+			System.out.println("No output option has been selected. "
+					+ "A TG-file for the Schema will be written.");
+
+			// filename have to be set
+			r.setFilenameSchema(createFilename(input));
+		}
+
 		try {
 			System.out.println("processing: " + input.getPath() + "\n");
 			r.process(input.getPath());
@@ -405,30 +418,6 @@ public class Rsa2Tg extends XmlProcessor {
 					+ ".");
 			System.err.println(e.getMessage());
 			e.printStackTrace();
-		}
-
-		// If no output option is selected, Rsa2Tg will abort.
-		boolean noOutputOptionSelected = !cli.hasOption('o')
-				&& !cli.hasOption('s') && !cli.hasOption('e')
-				&& !cli.hasOption('r');
-		if (noOutputOptionSelected) {
-			System.out.println("No optional output option has been selected. "
-					+ "A TG-file of the Schema will be written.");
-
-			// filename have to be set
-			r.setFilenameSchema(createFilename(input));
-
-			try {
-				// Till now, no output has been generated. This line will
-				// trigger a rewrite!
-				r.writeOutput();
-			} catch (XMLStreamException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (GraphIOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
 		}
 
 		System.out.println("Fini.");
@@ -482,10 +471,13 @@ public class Rsa2Tg extends XmlProcessor {
 		// Adds an additional help string to the help page.
 		// TODO: this String needs to be included into the Optionhandler, but
 		// the functionality is not present.
-		String aditional = "If no optional output option is selected, a file with the name "
-				+ "\"<InputFileName>.rsa.tg\" will be written."
-				+ "\n\n"
-				+ toolString;
+
+		// String aditional =
+		// "If no optional output option is selected, a file with the name "
+		// + "\"<InputFileName>.rsa.tg\" will be written."
+		// + "\n\n"
+		// + toolString;
+
 		OptionHandler oh = new OptionHandler(toolString, versionString);
 
 		// Several Options are declared.
@@ -1618,6 +1610,7 @@ public class Rsa2Tg extends XmlProcessor {
 				superClasses.addAll(suppliers);
 			}
 		}
+
 		for (AttributedElement ae : generalizations.getMarkedElements()) {
 			Set<String> superclasses = generalizations.getMark(ae);
 			for (String id : superclasses) {
@@ -2315,6 +2308,13 @@ public class Rsa2Tg extends XmlProcessor {
 								"Both types must share the same base class. (Either VertexClass or EdgeClass)");
 					}
 					e.setOmega((VertexClass) ae);
+
+					Set<String> gens = generalizations.getMark(vc);
+					if (gens != null) {
+						generalizations.removeMark(vc);
+						generalizations.mark(ae, gens);
+					}
+
 					vc.delete();
 					preliminaryVertices.remove(vc);
 				} else if (ae == null) {
@@ -2385,13 +2385,13 @@ public class Rsa2Tg extends XmlProcessor {
 	 * <td>AggregationClass</td>
 	 * </tr>
 	 * <td>T != CompositionClass</td>
-	 * <td>*</td>
+	 * <td></td>
 	 * <td>true</td>
 	 * <td>CompositionClass <br>
 	 * (new created object)</td>
 	 * </tr>
 	 * <td>T == CompositionClass</td>
-	 * <td>*</td>
+	 * <td></td>
 	 * <td>true</td>
 	 * <td>CompositionClass</td>
 	 * </tr>
@@ -2427,6 +2427,13 @@ public class Rsa2Tg extends XmlProcessor {
 		cls.set_qualifiedName(ec.get_qualifiedName());
 		cls.set_abstract(ec.is_abstract());
 		reconnectEdges(ec, cls);
+
+		Set<String> gens = generalizations.getMark(ec);
+		if (gens != null) {
+			generalizations.removeMark(ec);
+			generalizations.mark(cls, gens);
+		}
+
 		ec.delete();
 		if (preliminaryVertices.contains(ec)) {
 			preliminaryVertices.remove(ec);
