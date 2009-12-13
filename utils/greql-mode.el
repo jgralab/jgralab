@@ -23,7 +23,7 @@
 ;; Major mode for editing GReQL2 files with Emacs and executing queries.
 
 ;;; Version:
-;; <2009-12-10 Thu 23:18>
+;; <2009-12-13 Sun 18:49>
 
 ;;; TODO:
 ;; - Implement handling of imports in completion (DONE) and highlighting (still
@@ -125,7 +125,6 @@ columns.")
   (setq tab-width greql-tab-width)
   (set (make-local-variable 'indent-line-function) 'greql-indent-line)
 
-  ;; List of functions to be run when mode is activated
   (define-key greql-mode-map (kbd "M-TAB")   'greql-complete)
   (define-key greql-mode-map (kbd "C-c C-v") 'greql-complete-vertexclass)
   (define-key greql-mode-map (kbd "C-c C-e") 'greql-complete-edgeclass)
@@ -309,11 +308,13 @@ queries are evaluated.  Set it with `greql-set-graph'.")
         (prev-line-indent
          (save-excursion
            (forward-line -1)
-           (looking-at "^[[:space:]]*")
-           (- (match-end 0) (match-beginning 0)))))
+           (if (looking-at "^\\([[:space:]]*\\)[^[:space:]]")
+               (- (match-end 1) (match-beginning 1))
+             0)))
+        (regexp "[[:space:]]*\\(?:)\\|with\\|end\\|report\\(?:\\|Bag\\|Map\\|Set\\)\\)"))
     (save-excursion
       (forward-line 0)
-      (when (looking-at "[[:space:]]*\\(?:)\\|with\\|end\\|report\\(?:\\|Bag\\|Map\\|Set\\)\\)")
+      (when (looking-at regexp)
         (setq i (1- i)))
       (while (re-search-backward greql--indent-regexp bound t)
         (setq i (1+ i))))
@@ -322,7 +323,7 @@ queries are evaluated.  Set it with `greql-set-graph'.")
       (while (re-search-backward greql--deindent-regexp bound t)
         (setq d (1+ d)))
       (goto-char bound)
-      (when (looking-at "[[:space:]]*\\(?:)\\|with\\|end\\|report\\(?:\\|Bag\\|Map\\|Set\\)\\)")
+      (when (looking-at regexp)
         (setq d (1- d))))
     (+ (/ prev-line-indent tab-width) (- i d))))
 
@@ -342,48 +343,26 @@ queries are evaluated.  Set it with `greql-set-graph'.")
       (skip-chars-forward " \t"))))
 
 (defun greql-format ()
-  "Formats the current buffer.
-TODO: This should work on active region only, too.
-TODO: Don't format anything in strings and comments!"
+  "Formats the current buffer or marked region."
   (interactive)
   (save-excursion
-    (goto-char (point-min))
-    (replace-string "\n" " ")
-    (goto-char (point-min))
-    (replace-regexp "[[:space:]]+" " ")
-    (goto-char (point-min))
-    (let* ((funs '("and"))
-           (indent-level 1)
-           (indenters "[(]")
-           (deindenters "[)]")
-           (regexp (concat "\\(" indenters "\\|" deindenters "\\|\\<"
-                           (regexp-opt
-                            (append funs
-                                    (set-difference
-                                     greql-keywords
-                                     '("E" "V" "list" "set" "tup" "map" "true" "false"
-                                       "null")
-                                     :test 'string=))) "\\>\\)"))
-           (case-fold-search nil))
-      (while (re-search-forward regexp nil t)
-        (let ((match (match-string 1)))
-          (cond
-           ((save-match-data
-              (string-match indenters match))
-            (setq indent-level (1+ indent-level)))
-           ((save-match-data
-              (string-match deindenters match))
-            (setq indent-level (1- indent-level)))
-           ((member match funs)
-            (goto-char (match-beginning 1))
-            (insert "\n")
-            (dotimes (i (* indent-level tab-width))
-              (insert " "))
-            (goto-char (+ 1 (* tab-width indent-level) (match-end 1))))
-           (t
-            (goto-char (match-beginning 0))
-            (insert "\n")
-            (goto-char (1+ (match-end 1)))))))
+    (let ((beg (if (use-region-p) (region-beginning) (point-min)))
+          (end (if (use-region-p) (region-end) (point-max)))
+          (line-break-regexp "\\<\\(?:from\\|with\\|report\\(?:\\|Set\\|Map\\)\\|and\\|end\\)\\>"))
+      (goto-char beg)
+      (while (search-forward "\n" end t)
+        (replace-match " " nil t))
+      (goto-char (1+ beg))
+      (while (re-search-forward line-break-regexp end t)
+        (goto-char (match-beginning 0))
+        (when (looking-back "[[:space:]]")
+          (replace-match "" nil t))
+        (insert "\n")
+        (forward-char 1))
+      (goto-char beg)
+      (while (< (point) end)
+        (greql-indent-line)
+        (forward-line 1))
       (delete-trailing-whitespace))))
 
 (defvar greql-process nil
