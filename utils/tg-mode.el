@@ -210,13 +210,26 @@ MTYPE TYPE."
   (catch 'found
     (dolist (line tg-schema-alist)
       (when (and (eq mtype (car line))
-                 (string= type (second line)))
+                 (or (string= type (second line))
+                     (string= (tg-unique-name type) (second line))))
         (throw 'found line)))))
 
-(defun tg-unique-name (name)
-  "Given a qualified name, return the unique name.  Given a
-unique name, return the qualified name."
-  (gethash name tg-unique-name-hashmap))
+(defun tg-unique-name (name &optional type)
+  "Given a qualified name, return the unique name and vice versa.
+The optional TYPE specifies that the returned name has to be the
+'unique or 'qualified name."
+  (if (string-match "\\." name)
+      ;; this is qualified
+      (if (and type (eq type 'unique))
+          ;; we want the unique name
+          (gethash name tg-unique-name-hashmap)
+        ;; we want the qualified name
+        name)
+    ;; a unique name is given
+    (if (and type (eq type 'qualified))
+          ;; we want the qualified name
+          (gethash name tg-unique-name-hashmap)
+      name)))
 
 (defun tg-edgeclass-from (ec-name)
   (fifth (tg-find-schema-line 'EdgeClass ec-name)))
@@ -344,7 +357,7 @@ prefix arg, jump to the target vertex."
         (setq tg--last-doc (buffer-substring (line-beginning-position)
                                              (line-end-position)))))))
 
-(defun tg-eldoc-vertex-or-edge (mtype)
+(defun tg--eldoc-vertex-or-edge (mtype)
   "Eldoc MTYPE element at current line."
   (save-excursion
     (goto-char (line-beginning-position))
@@ -355,31 +368,35 @@ prefix arg, jump to the target vertex."
                         (let ((pkg (match-string-no-properties 1)))
                           (if (and pkg (not (string= "" pkg)))
                               (concat pkg "." name)
-                            name))))
-               (line (tg-find-schema-line mtype qname))
-               (type (second line))
-               (supers (tg-format-list (third line) 'tg-supertype-face nil t))
-               (attrs (tg-format-list (tg-all-attributes mtype type 'with-supertype)
-                                      'tg-attribute-face
-                                      'tg-attribute-father-face)))
-          (setq tg--last-doc (concat (propertize (symbol-name mtype)
-                                                 'face 'tg-metatype-face)
-                                     " "
-                                     (propertize (tg-unique-name type) 'face 'tg-type-face)
-                                     ": "
-                                     supers
-                                     (if (eq mtype 'EdgeClass)
-                                         (concat " from "
-                                                 (propertize (tg-edgeclass-from type)
-                                                             'face 'tg-type-face)
-                                                 " to "
-                                                 (propertize (tg-edgeclass-to type)
-                                                             'face 'tg-type-face))
-                                       "")
-                                     " {"
-                                     attrs
-                                     "}")))
+                            name)))))
+          (setq tg--last-doc (tg-eldoc-vertex-or-edge mtype qname)))
       (setq tg--last-doc nil))))
+
+(defun tg-eldoc-vertex-or-edge (mtype type)
+  "Return a doc string for MTYPE TYPE"
+  (let* ((line (tg-find-schema-line mtype type))
+         (name (second line))
+         (supers (tg-format-list (third line) 'tg-supertype-face nil t))
+         (attrs (tg-format-list (tg-all-attributes mtype name 'with-supertype)
+                                'tg-attribute-face
+                                'tg-attribute-father-face)))
+    (concat (propertize (symbol-name mtype)
+                        'face 'tg-metatype-face)
+            " "
+            (propertize (tg-unique-name name 'unique) 'face 'tg-type-face)
+            ": "
+            supers
+            (if (eq mtype 'EdgeClass)
+                (concat " from "
+                        (propertize (tg-unique-name (tg-edgeclass-from name) 'unique)
+                                    'face 'tg-type-face)
+                        " to "
+                        (propertize (tg-unique-name (tg-edgeclass-to name) 'unique)
+                                    'face 'tg-type-face))
+              "")
+            " {"
+            attrs
+            "}")))
 
 (defun tg-format-list (lst face1 &optional face2 alltypes)
   "Return a string representation of the given list of strings of the form
@@ -401,9 +418,9 @@ If ALLTYPES is non-nil, assume that simple entries (those without
        (if (string-match "#" c)
            (let ((split (split-string c "#")))
              (concat (propertize (first split) 'face face1)
-                     (propertize (tg-unique-name (second split)) 'face face2)))
+                     (propertize (tg-unique-name (second split) 'unique) 'face face2)))
          (if alltypes
-             (propertize (tg-unique-name c) 'face face1)
+             (propertize (tg-unique-name c 'unique) 'face face1)
            (propertize c 'face face1)))
        (let ((reststr (tg-format-list (cdr lst) face1 face2)))
          (if (= (length reststr) 0)
@@ -421,9 +438,9 @@ If ALLTYPES is non-nil, assume that simple entries (those without
          ((tg-incidence-list-p)
           (tg-eldoc-incidence))
          (eid
-          (tg-eldoc-vertex-or-edge 'EdgeClass))
+          (tg--eldoc-vertex-or-edge 'EdgeClass))
          (vid
-          (tg-eldoc-vertex-or-edge 'VertexClass))
+          (tg--eldoc-vertex-or-edge 'VertexClass))
          (t
           (setq tg--last-doc nil))))
       tg--last-doc)))
