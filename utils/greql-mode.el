@@ -23,7 +23,7 @@
 ;; Major mode for editing GReQL2 files with Emacs and executing queries.
 
 ;;; Version:
-;; <2009-12-13 Sun 18:49>
+;; $Revision$
 
 ;;; TODO:
 ;; - Implement handling of imports in completion (DONE) and highlighting (still
@@ -262,9 +262,9 @@ queries are evaluated.  Set it with `greql-set-graph'.")
     (greql-complete-anyclass))
    ;; complete attributes
    ((greql-variable-p)
-    (let* ((vartypes (greql-variable-types))
-           (attrs (tg-attributes vartypes)))
-      (greql-complete-1 attrs "[.]")))
+    (let ((vartypes (greql-variable-types)))
+      (when vartypes
+        (greql-complete-1 (tg-attributes-multi (car vartypes) (cadr vartypes)) "[.]"))))
    ;; complete keywords / functions
    (t (greql-complete-keyword-or-function))))
 
