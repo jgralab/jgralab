@@ -58,20 +58,20 @@
       (while (not finished)
         (cond
          ;; Packages
-         ((looking-at "^Package\s+\\([[:alnum:]._]+\\)")
+         ((looking-at "^Package[[:space:]]+\\([[:alnum:]._]+\\)")
           (let ((match (match-string-no-properties 1)))
-            (setq current-package (if (string-match "^\s*$" match)
+            (setq current-package (if (string-match "^[[:space:]]*$" match)
                                       ""
                                     (concat  (match-string-no-properties 1) ".")))))
          ;; GraphClass
-         ((looking-at "^GraphClass\s+\\([[:alnum:]._]+\\)\s*\\(?:{\\([^}]*\\)}\\)?"))
+         ((looking-at "^GraphClass[[:space:]]+\\([[:alnum:]._]+\\)[[:space:]]*\\(?:{\\([^}]*\\)}\\)?"))
          ;; VertexClass
-         ((looking-at (concat "^\\(?:abstract\s+\\)?"
-                              "VertexClass\s+"
-                              "\\([[:alnum:]._]+\\)\s*"
-                              "\\(?::\\([^{[;]+\\)\\)?\s*" ;; Superclasses
+         ((looking-at (concat "^\\(?:abstract[[:space:]]+\\)?"
+                              "VertexClass[[:space:]]+"
+                              "\\([[:alnum:]._]+\\)[[:space:]]*"
+                              "\\(?::\\([^{[;]+\\)\\)?[[:space:]]*" ;; Superclasses
                               "\\(?:{\\([^}]*\\)}\\)?"     ;; Attributes
-                              "\\(?:[[].*[]]\\)*\s*;"      ;; Constraints
+                              "\\(?:[[].*[]]\\)*[[:space:]]*;"      ;; Constraints
                               ))
           (setq schema-alist
                 (cons (list 'VertexClass
@@ -80,13 +80,13 @@
                             (tg--parse-attributes (match-string-no-properties 3)))
                       schema-alist)))
          ;; EdgeClasses
-         ((looking-at (concat "^\\(?:abstract\s+\\)?"
-                              "\\(?:Edge\\|Aggregation\\|Composition\\)Class\s+"
-                              "\\([[:alnum:]._]+\\)\s*" ;; Name
-                              "\\(?::\\([[:alnum:]._ ]+\\)\\)?\s*" ;; Supertypes
-                              "\\<from\\>\s+\\([[:alnum:]._]+\\)\s+.*\\<to\\>\s+\\([[:alnum:]._]+\\)\s+.*" ;; from/to
+         ((looking-at (concat "^\\(?:abstract[[:space:]]+\\)?"
+                              "\\(?:Edge\\|Aggregation\\|Composition\\)Class[[:space:]]+"
+                              "\\([[:alnum:]._]+\\)[[:space:]]*" ;; Name
+                              "\\(?::\\([[:alnum:]._ ]+\\)\\)?[[:space:]]*" ;; Supertypes
+                              "\\<from\\>[[:space:]]+\\([[:alnum:]._]+\\)[[:space:]]+.*\\<to\\>[[:space:]]+\\([[:alnum:]._]+\\)[[:space:]]+.*" ;; from/to
                               "\\(?:{\\([^}]*\\)}\\)?" ;; Attributes
-                              "\\(?:[[].*[]]\\)*\s*;"  ;; Constraints
+                              "\\(?:[[].*[]]\\)*[[:space:]]*;"  ;; Constraints
                               ))
           (let ((from (match-string-no-properties 3))
                 (to   (match-string-no-properties 4)))
@@ -142,7 +142,7 @@
 
 (defun tg--init-unique-name-hashmap ()
   (setq tg-unique-name-hashmap
-        (if tg-unique-name-hashmap 
+        (if tg-unique-name-hashmap
             (clrhash tg-unique-name-hashmap)
           (make-hash-table :test 'string=)))
   (dolist (l tg-schema-alist)
@@ -264,7 +264,7 @@ The optional TYPE specifies that the returned name has to be the
   "Return the vertex id (as string), if on a vertex line, else return nil."
   (save-excursion
     (goto-char (line-beginning-position))
-    (and (looking-at "^\\([[:digit:]]+\\)\s+[[:word:]._]+\s+<[[:digit:]- ]+>")
+    (and (looking-at "^\\([[:digit:]]+\\)[[:space:]]+[[:word:]._]+[[:space:]]+<[[:digit:]- ]+>")
          (match-string-no-properties 1))))
 
 (defun tg-edge-p ()
@@ -272,7 +272,7 @@ The optional TYPE specifies that the returned name has to be the
   (save-excursion
     (goto-char (line-beginning-position))
     (and (not (tg-vertex-p))
-         (looking-at "^\\([[:digit:]]+\\)\s+[[:word:]._]+")
+         (looking-at "^\\([[:digit:]]+\\)[[:space:]]+[[:word:]._]+")
          (match-string-no-properties 1))))
 
 ;;** Navigation
@@ -281,9 +281,9 @@ The optional TYPE specifies that the returned name has to be the
   "Return the buffer position of the incidence INC in some incidence list."
   (save-excursion
     (goto-char (point-min))
-    (re-search-forward "^Graph\s+")
+    (re-search-forward "^Graph[[:space:]]+")
     (re-search-forward
-     (concat "^[[:digit:]]+ +[[:word:]._]+ +<\\(?:[-]?[[:digit:]]+\s+\\)*"
+     (concat "^[[:digit:]]+ +[[:word:]._]+ +<\\(?:[-]?[[:digit:]]+[[:space:]]+\\)*"
              (regexp-quote inc)
              "[[:digit:]- ]*>") nil t 1)
     (search-backward inc)
@@ -308,7 +308,7 @@ prefix arg, jump to the target vertex."
                                              (concat "-" incnum)))))))
    ((tg-edge-p)
     (goto-char (line-beginning-position))
-    (when (looking-at "\\([[:digit:]]+\\)\s+")
+    (when (looking-at "\\([[:digit:]]+\\)[[:space:]]+")
       (let ((no (match-string-no-properties 1)))
         (goto-char (tg-vertex-by-incidence (if arg
                                                (concat "-" no)
@@ -361,7 +361,7 @@ prefix arg, jump to the target vertex."
   "Eldoc MTYPE element at current line."
   (save-excursion
     (goto-char (line-beginning-position))
-    (if (looking-at "[[:digit:]]+\s+\\([[:word:]_.]+\\)")
+    (if (looking-at "[[:digit:]]+[[:space:]]+\\([[:word:]_.]+\\)")
         (let* ((name (match-string-no-properties 1))
                (qname (save-excursion
                         (re-search-backward "^Package[[:space:]]+\\(.*\\);[[:space:]]*$" nil t 1)
