@@ -635,7 +635,7 @@ public class Rsa2Tg extends XmlProcessor {
 				// Unexpected root element
 				throw new ProcessingException(getParser(), getFileName(),
 						"Root element must be " + UML_MODEL + " or "
-								+ UML_PACKAGE);
+								+ UML_PACKAGE + ", buf was " + name);
 			}
 		} else {
 			// inside top level element
