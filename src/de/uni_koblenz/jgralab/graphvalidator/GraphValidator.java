@@ -39,7 +39,7 @@ import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
-import de.uni_koblenz.jgralab.greql2.exception.EvaluateException;
+import de.uni_koblenz.jgralab.greql2.exception.Greql2Exception;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValueSet;
 import de.uni_koblenz.jgralab.schema.AttributedElementClass;
@@ -56,6 +56,7 @@ import de.uni_koblenz.jgralab.schema.Schema;
 public class GraphValidator {
 
 	private Graph graph;
+	private GreqlEvaluator eval;
 
 	/**
 	 * @param graph
@@ -63,6 +64,7 @@ public class GraphValidator {
 	 */
 	public GraphValidator(Graph graph) {
 		this.graph = graph;
+		this.eval = new GreqlEvaluator((String) null, graph, null);
 	}
 
 	/**
@@ -163,16 +165,15 @@ public class GraphValidator {
 		SortedSet<ConstraintViolation> brokenConstraints = new TreeSet<ConstraintViolation>();
 		for (Constraint constraint : aec.getConstraints()) {
 			String query = constraint.getPredicate();
-			GreqlEvaluator eval = new GreqlEvaluator(query, graph, null);
+			eval.setQuery(query);
 			try {
 				eval.startEvaluation();
 				if (!eval.getEvaluationResult().toBoolean()) {
 					if (constraint.getOffendingElementsQuery() != null) {
 						query = constraint.getOffendingElementsQuery();
-						GreqlEvaluator eval2 = new GreqlEvaluator(query, graph,
-								null);
-						eval2.startEvaluation();
-						JValueSet resultSet = eval2.getEvaluationResult()
+						eval.setQuery(query);
+						eval.startEvaluation();
+						JValueSet resultSet = eval.getEvaluationResult()
 								.toJValueSet();
 						brokenConstraints.add(new GReQLConstraintViolation(aec,
 								constraint, jvalueSet2Set(resultSet)));
@@ -181,8 +182,7 @@ public class GraphValidator {
 								constraint, null));
 					}
 				}
-			} catch (EvaluateException e) {
-				e.printStackTrace();
+			} catch (Greql2Exception e) {
 				brokenConstraints.add(new BrokenGReQLConstraintViolation(aec,
 						constraint, query));
 			}
