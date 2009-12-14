@@ -25,7 +25,7 @@
 
 
 ;;; Version
-;; <2009-12-10 Thu 16:53>
+;; <2009-12-14 Mon 16:08>
 
 ;;* Code
 
@@ -63,7 +63,13 @@
          ;; GraphClass
          ((looking-at "^GraphClass\s+\\([[:alnum:]._]+\\)\s*\\(?:{\\([^}]*\\)}\\)?"))
          ;; VertexClass
-         ((looking-at "^\\(?:abstract\\)?\s*VertexClass\s+\\([[:alnum:]._]+\\)\s*\\(?::\\([^{;]+\\)\\)?\s*\\(?:{\\([^}]*\\)}\\)?")
+         ((looking-at (concat "^\\(?:abstract\s+\\)?"
+                              "VertexClass\s+"
+                              "\\([[:alnum:]._]+\\)\s*"
+                              "\\(?::\\([^{;]+\\)\\)?\s*" ;; Superclasses
+                              "\\(?:{\\([^}]*\\)}\\)?"    ;; Attributes
+                              "\\(?:[[].*[]]\\)?\s*;"     ;; Constraints
+                              ))
           (setq schema-alist
                 (cons (list 'VertexClass
                             (concat current-package (match-string-no-properties 1))
@@ -77,6 +83,7 @@
                               "\\(?::\\([[:alnum:]._ ]+\\)\\)?\s+" ;; Supertypes
                               "from [^{;]+" ;; skip from/to, roles, multis
                               "\\(?:{\\([^}]*\\)}\\)?" ;; Attributes
+                              "\\(?:[[].*[]]\\)?\s*;"  ;; Constraints
                               ))
           (setq schema-alist
                 (cons (list 'EdgeClass
