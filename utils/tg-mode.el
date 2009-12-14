@@ -25,7 +25,7 @@
 
 
 ;;; Version
-;; <2009-12-14 Mon 16:08>
+;; <2009-12-14 Mon 16:10>
 
 ;;* Code
 
@@ -68,7 +68,7 @@
                               "\\([[:alnum:]._]+\\)\s*"
                               "\\(?::\\([^{;]+\\)\\)?\s*" ;; Superclasses
                               "\\(?:{\\([^}]*\\)}\\)?"    ;; Attributes
-                              "\\(?:[[].*[]]\\)?\s*;"     ;; Constraints
+                              "\\(?:[[].*[]]\\)*\s*;"     ;; Constraints
                               ))
           (setq schema-alist
                 (cons (list 'VertexClass
@@ -83,7 +83,7 @@
                               "\\(?::\\([[:alnum:]._ ]+\\)\\)?\s+" ;; Supertypes
                               "from [^{;]+" ;; skip from/to, roles, multis
                               "\\(?:{\\([^}]*\\)}\\)?" ;; Attributes
-                              "\\(?:[[].*[]]\\)?\s*;"  ;; Constraints
+                              "\\(?:[[].*[]]\\)*\s*;"  ;; Constraints
                               ))
           (setq schema-alist
                 (cons (list 'EdgeClass
