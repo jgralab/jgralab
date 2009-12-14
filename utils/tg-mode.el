@@ -24,7 +24,7 @@
 ;; functions, a full schema parser, and eldoc capabilities.
 
 ;;; Version
-;; <2009-12-14 Mon 17:08>
+;; $Revision$
 
 ;;; Todos:
 ;; - Show from/to when eldocing EdgeClasses.
@@ -136,18 +136,17 @@
 
 ;;** Schema querying
 
-(defun tg-attributes (typelist)
-  (when typelist
-    (tg-attributes-1 (car typelist) (cadr typelist))))
-
-(defun tg-find-schema-line (mtype type)
-  "Get the line/list of `tg-schema-alist' that corresponds to
-MTYPE TYPE."
-  (catch 'found
-    (dolist (line tg-schema-alist)
-      (when (and (eq mtype (car line))
-                 (string= type (second line)))
-        (throw 'found line)))))
+(defun tg-attributes-multi (mtype types)
+  "Returns a list of all attribute names that are defined in all
+MTYPEs TYPES."
+  (let ((attr-list (mapcar
+                    (lambda (type)
+                      (tg-all-attributes mtype type))
+                    types)))
+    (if (= (length attr-list) 1)
+        (car attr-list)
+      (apply 'intersection
+             attr-list))))
 
 (defun tg-all-attributes (mtype type &optional with-supertype)
   "Returns a list of all attribute names of the MTYPE TYPE (and
@@ -169,6 +168,15 @@ its supertypes)."
                      (third line)))
       :test 'string=)
      'string-lessp)))
+
+(defun tg-find-schema-line (mtype type)
+  "Get the line/list of `tg-schema-alist' that corresponds to
+MTYPE TYPE."
+  (catch 'found
+    (dolist (line tg-schema-alist)
+      (when (and (eq mtype (car line))
+                 (string= type (second line)))
+        (throw 'found line)))))
 
 (define-hash-table-test 'string= 'string= 'sxhash)
 (defvar tg--unique-name-hashmap (make-hash-table :test 'string=)
@@ -199,17 +207,11 @@ its supertypes)."
             (throw 'tg-unique nil)))))
     (throw 'tg-unique t)))
 
-(defun tg-attributes-1 (mtype types)
-  "Returns a list of all attribute names that are defined in all
-MTYPEs TYPES."
-  (let ((attr-list (mapcar
-                    (lambda (type)
-                      (tg-all-attributes mtype type))
-                    types)))
-    (if (= (length attr-list) 1)
-        (car attr-list)
-      (apply 'intersection
-             attr-list))))
+(defun tg-edgeclass-from (ec-name)
+  (fifth (tg-find-schema-line 'EdgeClass ec-name)))
+
+(defun tg-edgeclass-to (ec-name)
+  (sixth (tg-find-schema-line 'EdgeClass ec-name)))
 
 ;;** The Mode
 
@@ -355,6 +357,14 @@ prefix arg, jump to the target vertex."
                                      (propertize (tg-unique-name type) 'face 'tg-type-face)
                                      ": "
                                      supers
+                                     (if (eq mtype 'EdgeClass)
+                                         (concat " from "
+                                                 (propertize (tg-edgeclass-from type)
+                                                             'face 'tg-type-face)
+                                                 " to "
+                                                 (propertize (tg-edgeclass-to type)
+                                                             'face 'tg-type-face))
+                                       "")
                                      " {"
                                      attrs
                                      "}")))
