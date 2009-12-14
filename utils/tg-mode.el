@@ -208,11 +208,11 @@ its supertypes)."
   "Get the line/list of `tg-schema-alist' that corresponds to
 MTYPE TYPE."
   (catch 'found
-    (dolist (line tg-schema-alist)
-      (when (and (eq mtype (car line))
-                 (or (string= type (second line))
-                     (string= (tg-unique-name type) (second line))))
-        (throw 'found line)))))
+    (let ((qname (tg-unique-name type 'qualified)))
+      (dolist (line tg-schema-alist)
+        (when (and (eq mtype (car line))
+                   (string= qname (second line)))
+          (throw 'found line))))))
 
 (defun tg-unique-name (name &optional type)
   "Given a qualified name, return the unique name and vice versa.
