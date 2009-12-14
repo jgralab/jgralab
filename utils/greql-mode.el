@@ -29,7 +29,9 @@
 ;; - Implement handling of imports in completion (DONE) and highlighting (still
 ;;   not done)
 
-;;; Code:
+;;* Code:
+
+;;** Main
 
 ;; TG mode contains the schema parsing stuff.
 (require 'tg-mode)
@@ -88,7 +90,7 @@
   (setq greql-fontlock-keywords-3
         (append greql-fontlock-keywords-2
                 (list (list
-                       (concat "{\\(\\([\s^,!]*"
+                       (concat "{\\(\\([[:space:]^,!]*"
                                (regexp-opt
                                 (let (lst)
                                   (dolist (i tg-schema-alist)
@@ -112,9 +114,8 @@ columns.")
 (define-derived-mode greql-mode text-mode "GReQL"
   "A major mode for GReQL2."
   ;; Comments
-  (set (make-local-variable 'comment-start)      "/*")
-  (set (make-local-variable 'comment-start-skip) "\\(//+\\|/\\*+\\)\\s *")
-  (set (make-local-variable 'comment-end)        " */")
+  (set (make-local-variable 'comment-start)      "//")
+  (set (make-local-variable 'comment-end)        "")
 
   ;; Keywords
   (setq font-lock-defaults
@@ -124,6 +125,8 @@ columns.")
 
   (setq tab-width greql-tab-width)
   (set (make-local-variable 'indent-line-function) 'greql-indent-line)
+  (set (make-local-variable 'eldoc-documentation-function)
+       'greql-documentation-function)
 
   (define-key greql-mode-map (kbd "M-TAB")   'greql-complete)
   (define-key greql-mode-map (kbd "C-c C-v") 'greql-complete-vertexclass)
@@ -173,7 +176,7 @@ queries are evaluated.  Set it with `greql-set-graph'.")
         lst)
     (save-excursion
       (goto-char 0)
-      (while (re-search-forward "import\s+\\([^;]+\\);" nil t)
+      (while (re-search-forward "import[[:space:]]+\\([^;]+\\);" nil t)
         (let ((import (match-string-no-properties 1)))
           (if (string-match "\\*$" import)
               ;; A package import
@@ -418,7 +421,7 @@ If a region is active, use only that as query."
   (looking-back "[^{][[:word:]]+[.][[:word:]]*"))
 
 (defun greql-import-p ()
-  (looking-back "import\s+[[:word:]._]*"))
+  (looking-back "import[[:space:]]+[[:word:]._]*"))
 
 (defun greql-variable-types ()
   "Return something like (VertexClass (\"Type1\" \"Type2\")),
@@ -459,6 +462,37 @@ for some variable declared as
         (replace-match " \"\n+ \""))
       (insert "\"")
       (kill-region (point-min) (point-max)))))
+
+;;** Eldoc
+
+(defvar greql--last-thing "")
+(make-variable-buffer-local 'greql--last-thing)
+(defvar greql--last-doc "")
+(make-variable-buffer-local 'greql--last-doc)
+
+(defun greql-documentation-function ()
+  (let ((thing (thing-at-point 'sexp)))
+    (if (string= thing greql--last-thing)
+        greql--last-doc
+      (setq greql--last-thing thing)
+      (setq greql--last-doc
+            (cond
+             ;; document vertex classes
+             ((or (greql-vertex-set-expression-p)
+                  (greql-start-or-goal-restriction-p))
+              (save-excursion
+                (re-search-backward "[{ ,]" (line-beginning-position) t)
+                (when (looking-at "[{ ,]\\([[:alnum:]._]+\\)")
+                  (tg-eldoc-vertex-or-edge 'VertexClass (match-string 1)))))
+             ;; document edge classes
+             ((or (greql-edge-set-expression-p)
+                  (greql-edge-restriction-p))
+              (save-excursion
+                (re-search-backward "[{ ,]" (line-beginning-position) t)
+                (when (looking-at "[{ ,]\\([[:alnum:]._]+\\)")
+                  (tg-eldoc-vertex-or-edge 'EdgeClass (match-string 1)))))
+             ;; complete keywords / functions
+             (t ""))))))
 
 (provide 'greql-mode)
 
