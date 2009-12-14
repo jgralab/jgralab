@@ -119,8 +119,10 @@ public class GreqlServer extends Thread {
 			}
 		});
 
+		final int port = 10101;
+
 		clientHandlerLoop = new Thread() {
-			ServerSocket socket = new ServerSocket(10101);
+			ServerSocket socket = new ServerSocket(port);
 
 			@Override
 			public void run() {
@@ -140,6 +142,8 @@ public class GreqlServer extends Thread {
 			}
 		};
 		clientHandlerLoop.start();
+
+		System.out.println("GreqlServer listening on port " + port);
 	}
 
 	private static void terminateServer() {
