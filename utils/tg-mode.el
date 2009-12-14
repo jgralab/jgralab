@@ -23,9 +23,11 @@
 ;; Major mode for editing TG files with Emacs.  Include superior navigation
 ;; functions, a full schema parser, and eldoc capabilities.
 
-
 ;;; Version
-;; <2009-12-14 Mon 16:10>
+;; <2009-12-14 Mon 17:08>
+
+;;; Todos:
+;; - Show from/to when eldocing EdgeClasses.
 
 ;;* Code
 
@@ -66,9 +68,9 @@
          ((looking-at (concat "^\\(?:abstract\s+\\)?"
                               "VertexClass\s+"
                               "\\([[:alnum:]._]+\\)\s*"
-                              "\\(?::\\([^{;]+\\)\\)?\s*" ;; Superclasses
-                              "\\(?:{\\([^}]*\\)}\\)?"    ;; Attributes
-                              "\\(?:[[].*[]]\\)*\s*;"     ;; Constraints
+                              "\\(?::\\([^{[;]+\\)\\)?\s*" ;; Superclasses
+                              "\\(?:{\\([^}]*\\)}\\)?"     ;; Attributes
+                              "\\(?:[[].*[]]\\)*\s*;"      ;; Constraints
                               ))
           (setq schema-alist
                 (cons (list 'VertexClass
@@ -80,17 +82,24 @@
          ((looking-at (concat "^\\(?:abstract\s+\\)?"
                               "\\(?:Edge\\|Aggregation\\|Composition\\)Class\s+"
                               "\\([[:alnum:]._]+\\)\s*" ;; Name
-                              "\\(?::\\([[:alnum:]._ ]+\\)\\)?\s+" ;; Supertypes
-                              "from [^{;]+" ;; skip from/to, roles, multis
+                              "\\(?::\\([[:alnum:]._ ]+\\)\\)?\s*" ;; Supertypes
+                              "\\<from\\>\s+\\([[:alnum:]._]+\\)\s+.*\\<to\\>\s+\\([[:alnum:]._]+\\)\s+.*" ;; from/to
                               "\\(?:{\\([^}]*\\)}\\)?" ;; Attributes
                               "\\(?:[[].*[]]\\)*\s*;"  ;; Constraints
                               ))
-          (setq schema-alist
-                (cons (list 'EdgeClass
-                            (concat current-package (match-string-no-properties 1))
-                            (tg-parse-superclasses (match-string-no-properties 2) current-package)
-                            (tg-parse-attributes (match-string-no-properties 3)))
-                      schema-alist)))
+          (let ((from (match-string-no-properties 3))
+                (to   (match-string-no-properties 4)))
+            (save-match-data
+              (setq from (if (string-match "\\." from) from (concat current-package from)))
+              (setq to   (if (string-match "\\." to)   to   (concat current-package to))))
+            (setq schema-alist
+                  (cons (list 'EdgeClass
+                              (concat current-package (match-string-no-properties 1))
+                              (tg-parse-superclasses (match-string-no-properties 2) current-package)
+                              (tg-parse-attributes (match-string-no-properties 5))
+                              from
+                              to)
+                        schema-alist))))
          ;; End of schema (part)
          ((or (= (point) (point-max))
               (looking-at "Graph[[:space:]]+"))
