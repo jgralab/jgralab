@@ -44,10 +44,11 @@
   "The schema of the current TG file.")
 (make-variable-buffer-local 'tg-schema-alist)
 
-(defun tg-init-schema-alist ()
-  (setq tg-schema-alist (tg-parse-schema)))
+(defun tg-init-schema ()
+  (setq tg-schema-alist (tg--parse-schema))
+  (tg--init-unique-name-hashmap))
 
-(defun tg-parse-schema ()
+(defun tg--parse-schema ()
   "Parse the schema of the current schema/graph file."
   (save-excursion
     (goto-char (point-min))
@@ -75,8 +76,8 @@
           (setq schema-alist
                 (cons (list 'VertexClass
                             (concat current-package (match-string-no-properties 1))
-                            (tg-parse-superclasses (match-string-no-properties 2) current-package)
-                            (tg-parse-attributes (match-string-no-properties 3)))
+                            (tg--parse-superclasses (match-string-no-properties 2) current-package)
+                            (tg--parse-attributes (match-string-no-properties 3)))
                       schema-alist)))
          ;; EdgeClasses
          ((looking-at (concat "^\\(?:abstract\s+\\)?"
@@ -95,8 +96,8 @@
             (setq schema-alist
                   (cons (list 'EdgeClass
                               (concat current-package (match-string-no-properties 1))
-                              (tg-parse-superclasses (match-string-no-properties 2) current-package)
-                              (tg-parse-attributes (match-string-no-properties 5))
+                              (tg--parse-superclasses (match-string-no-properties 2) current-package)
+                              (tg--parse-attributes (match-string-no-properties 5))
                               from
                               to)
                         schema-alist))))
@@ -107,7 +108,7 @@
         (forward-line))
       schema-alist)))
 
-(defun tg-parse-superclasses (str current-package)
+(defun tg--parse-superclasses (str current-package)
   "Given a string \"Foo, Bar, Baz\" it returns (\"Foo\" \"Bar\"
 \"Baz\") where Foo, Bar, Baz are fully qualified."
   (when str
@@ -121,7 +122,7 @@
                          (concat current-package class)))
        (split-string str "[,]+")))))
 
-(defun tg-parse-attributes (str)
+(defun tg--parse-attributes (str)
   (when str
     (save-match-data
       (setq str (replace-regexp-in-string "[[:space:]]+" "" str))
@@ -133,6 +134,40 @@
             (setq result (cons elem result)))
           (setq i (+ i 1)))
         result))))
+
+(define-hash-table-test 'string= 'string= 'sxhash)
+(defvar tg-unique-name-hashmap nil
+  "Maps qualified names to unique names and vice versa.")
+(make-variable-buffer-local 'tg-unique-name-hashmap)
+
+(defun tg--init-unique-name-hashmap ()
+  (setq tg-unique-name-hashmap
+        (if tg-unique-name-hashmap 
+            (clrhash tg-unique-name-hashmap)
+          (make-hash-table :test 'string=)))
+  (dolist (l tg-schema-alist)
+    (let* ((qname (second l))
+           (uname (replace-regexp-in-string "\\(?:.*\\.\\)\\([^.]+\\)" "\\1" qname)))
+      (if (not (tg--unique-name-p uname))
+          ;; Not unique
+          (puthash qname qname tg-unique-name-hashmap)
+        (puthash uname qname tg-unique-name-hashmap)
+        (puthash qname uname tg-unique-name-hashmap)))))
+
+(defun tg--unique-name-p (name)
+  (catch 'tg-unique
+    ;; when name is already in it, there's no change of being unique.
+    (when (gethash name tg-unique-name-hashmap)
+      (throw 'tg-unique nil))
+    (dolist (line tg-schema-alist)
+      (when (or (eq (car line) 'VertexClass)
+                (eq (car line) 'EdgeClass))
+        (let ((simple-name (replace-regexp-in-string
+                            "\\(?:.*\\.\\)\\([^.]+\\)" ""
+                            (second line))))
+          (when (string= name simple-name)
+            (throw 'tg-unique nil)))))
+    (throw 'tg-unique t)))
 
 ;;** Schema querying
 
@@ -178,34 +213,10 @@ MTYPE TYPE."
                  (string= type (second line)))
         (throw 'found line)))))
 
-(define-hash-table-test 'string= 'string= 'sxhash)
-(defvar tg--unique-name-hashmap (make-hash-table :test 'string=)
-  "Maps qualified names to unique names.")
-(make-variable-buffer-local 'tg--unique-name-hashmap)
-
-(defun tg-unique-name (qname)
-  (let ((val (gethash qname tg--unique-name-hashmap)))
-    (or val
-        (let ((uname (replace-regexp-in-string "\\(?:.*\\.\\)\\([^.]+\\)" "\\1" qname)))
-          (if (tg-unique-name-p uname)
-              (progn
-                (puthash qname uname tg--unique-name-hashmap)
-                uname)
-            ;; Not unique
-            (puthash qname qname tg--unique-name-hashmap)
-            qname)))))
-
-(defun tg-unique-name-p (name)
-  (catch 'tg-unique
-    (dolist (line tg-schema-alist)
-      (when (or (eq (car line) 'VertexClass)
-                (eq (car line) 'EdgeClass))
-        (let ((simple-name (replace-regexp-in-string
-                            "\\(?:.*\\.\\)\\([^.]+\\)" ""
-                            (second line))))
-          (when (string= name simple-name)
-            (throw 'tg-unique nil)))))
-    (throw 'tg-unique t)))
+(defun tg-unique-name (name)
+  "Given a qualified name, return the unique name.  Given a
+unique name, return the qualified name."
+  (gethash name tg-unique-name-hashmap))
 
 (defun tg-edgeclass-from (ec-name)
   (fifth (tg-find-schema-line 'EdgeClass ec-name)))
@@ -421,8 +432,8 @@ If ALLTYPES is non-nil, assume that simple entries (those without
   (set (make-local-variable 'eldoc-documentation-function)
        'tg-documentation-function)
   (add-hook 'after-save-hook
-            'tg-init-schema-alist)
-  (tg-init-schema-alist))
+            'tg-init-schema)
+  (tg-init-schema))
 
 ;;** Init function
 
