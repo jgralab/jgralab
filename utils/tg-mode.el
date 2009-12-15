@@ -81,23 +81,24 @@
                       schema-alist)))
          ;; EdgeClasses
          ((looking-at (concat "^\\(?:abstract[[:space:]]+\\)?"
-                              "\\(?:Edge\\|Aggregation\\|Composition\\)Class[[:space:]]+"
+                              "\\(\\(?:Edge\\|Aggregation\\|Composition\\)Class\\)[[:space:]]+"
                               "\\([[:alnum:]._]+\\)[[:space:]]*" ;; Name
                               "\\(?::\\([[:alnum:]._ ]+\\)\\)?[[:space:]]*" ;; Supertypes
                               "\\<from\\>[[:space:]]+\\([[:alnum:]._]+\\)[[:space:]]+.*\\<to\\>[[:space:]]+\\([[:alnum:]._]+\\)[[:space:]]+.*" ;; from/to
                               "\\(?:{\\([^}]*\\)}\\)?" ;; Attributes
                               "\\(?:[[].*[]]\\)*[[:space:]]*;"  ;; Constraints
                               ))
-          (let ((from (match-string-no-properties 3))
-                (to   (match-string-no-properties 4)))
+          (let ((from (match-string-no-properties 4))
+                (to   (match-string-no-properties 5)))
             (save-match-data
               (setq from (if (string-match "\\." from) from (concat current-package from)))
               (setq to   (if (string-match "\\." to)   to   (concat current-package to))))
             (setq schema-alist
                   (cons (list 'EdgeClass
-                              (concat current-package (match-string-no-properties 1))
-                              (tg--parse-superclasses (match-string-no-properties 2) current-package)
-                              (tg--parse-attributes (match-string-no-properties 5))
+                              (concat current-package (match-string-no-properties 2))
+                              (tg--parse-superclasses (match-string-no-properties 3) current-package)
+                              (tg--parse-attributes (match-string-no-properties 6))
+                              (match-string-no-properties 1)
                               from
                               to)
                         schema-alist))))
@@ -220,10 +221,10 @@ The optional TYPE specifies that the returned name has to be the
       name)))
 
 (defun tg-edgeclass-from (ec-name)
-  (fifth (tg-find-schema-line 'EdgeClass ec-name)))
+  (sixth (tg-find-schema-line 'EdgeClass ec-name)))
 
 (defun tg-edgeclass-to (ec-name)
-  (sixth (tg-find-schema-line 'EdgeClass ec-name)))
+  (seventh (tg-find-schema-line 'EdgeClass ec-name)))
 
 ;;** The Mode
 
@@ -313,13 +314,13 @@ prefix arg, jump to the target vertex."
 
 ;;*** Faces
 
-(defface tg-attribute-father-face '((t ( :inherit font-lock-type-face :height 0.6)))
+(defface tg-attribute-father-face '((t ( :inherit font-lock-type-face :height 0.7)))
   "Face used for the forfather introducing an attribute.")
 
 (defface tg-attribute-face '((t ( :inherit font-lock-constant-face)))
   "Face used for the forfather introducing an attribute.")
 
-(defface tg-supertype-face '((t ( :inherit font-lock-type-face :height 0.8)))
+(defface tg-supertype-face '((t ( :inherit font-lock-type-face :height 0.85)))
   "Face used for supertypes.")
 
 (defface tg-type-face '((t ( :inherit font-lock-type-face)))
@@ -327,6 +328,9 @@ prefix arg, jump to the target vertex."
 
 (defface tg-metatype-face '((t ( :inherit font-lock-keyword-face)))
   "Face used for meta-types.")
+
+(defface tg-keyword-face '((t ( :inherit font-lock-keyword-face)))
+  "Face used for keywords.")
 
 ;;*** Code
 
@@ -368,17 +372,18 @@ prefix arg, jump to the target vertex."
          (attrs (tg-format-list (tg-all-attributes mtype name 'with-supertype)
                                 'tg-attribute-face
                                 'tg-attribute-father-face)))
-    (concat (propertize (symbol-name mtype)
+    (concat (propertize (if (eq mtype 'EdgeClass)
+                            (fifth line)
+                          (symbol-name mtype))
                         'face 'tg-metatype-face)
             " "
             (propertize (tg-unique-name name 'unique) 'face 'tg-type-face)
-            ": "
-            supers
+            (if (= (length supers) 0) "" (concat ": " supers))
             (if (eq mtype 'EdgeClass)
-                (concat " from "
+                (concat (propertize " from " 'face 'tg-keyword-face)
                         (propertize (tg-unique-name (tg-edgeclass-from name) 'unique)
                                     'face 'tg-type-face)
-                        " to "
+                        (propertize " to " 'face 'tg-keyword-face)
                         (propertize (tg-unique-name (tg-edgeclass-to name) 'unique)
                                     'face 'tg-type-face))
               "")
