@@ -148,26 +148,14 @@
   (dolist (l tg-schema-alist)
     (let* ((qname (second l))
            (uname (replace-regexp-in-string "\\(?:.*\\.\\)\\([^.]+\\)" "\\1" qname)))
-      (if (not (tg--unique-name-p uname))
-          ;; Not unique
-          (puthash qname qname tg-unique-name-hashmap)
+      (if (gethash uname tg-unique-name-hashmap)
+          ;; Not unique, remove the old entry, too
+          (let ((oldqname (gethash uname tg-unique-name-hashmap)))
+            (remhash uname tg-unique-name-hashmap)
+            (puthash oldqname oldqname tg-unique-name-hashmap)
+            (puthash qname qname tg-unique-name-hashmap))
         (puthash uname qname tg-unique-name-hashmap)
         (puthash qname uname tg-unique-name-hashmap)))))
-
-(defun tg--unique-name-p (name)
-  (catch 'tg-unique
-    ;; when name is already in it, there's no change of being unique.
-    (when (gethash name tg-unique-name-hashmap)
-      (throw 'tg-unique nil))
-    (dolist (line tg-schema-alist)
-      (when (or (eq (car line) 'VertexClass)
-                (eq (car line) 'EdgeClass))
-        (let ((simple-name (replace-regexp-in-string
-                            "\\(?:.*\\.\\)\\([^.]+\\)" ""
-                            (second line))))
-          (when (string= name simple-name)
-            (throw 'tg-unique nil)))))
-    (throw 'tg-unique t)))
 
 ;;** Schema querying
 
@@ -264,7 +252,7 @@ The optional TYPE specifies that the returned name has to be the
   "Return the vertex id (as string), if on a vertex line, else return nil."
   (save-excursion
     (goto-char (line-beginning-position))
-    (and (looking-at "^\\([[:digit:]]+\\)[[:space:]]+[[:word:]._]+[[:space:]]+<[[:digit:]- ]+>")
+    (and (looking-at "^\\([[:digit:]]+\\)[[:space:]]+[[:word:]._]+[[:space:]]+<[[:digit:]- ]*>")
          (match-string-no-properties 1))))
 
 (defun tg-edge-p ()
