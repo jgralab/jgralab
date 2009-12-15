@@ -85,7 +85,11 @@ public class Tg2xml extends GraphVisitor {
 		Schema schema = graph.getSchema();
 		String qualifiedName = schema.getQualifiedName();
 
-		// TODO check that nameSpacePrefix is legal (e.g. "xml" is forbidden...)
+		if (nameSpacePrefix.equals(XMLConstants.XML_NS_PREFIX)
+				|| nameSpacePrefix.equals(XMLConstants.XML_NS_PREFIX)) {
+			throw new RuntimeException(
+					"The namespace prefixes xml and xsi must not be used!");
+		}
 		this.prefix = nameSpacePrefix;
 		this.schemaLocation = schemaLocation;
 
@@ -104,10 +108,10 @@ public class Tg2xml extends GraphVisitor {
 			writer.writeStartElement(prefix, graph.getAttributedElementClass()
 					.getQualifiedName(), namespaceURI);
 			writer.writeNamespace(prefix, namespaceURI);
-			writer.writeNamespace(XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI,
+			writer.writeNamespace("xsi",
 					XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI);
-			writer.writeAttribute(XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI
-					+ ":schemaLocation", namespaceURI + " " + schemaLocation);
+			writer.writeAttribute("xsi:schemaLocation", namespaceURI + " "
+					+ schemaLocation);
 			writer.writeAttribute(GRUML_ATTRIBUTE_ID, GRUML_ID_PREFIX_GRAPH
 					+ graph.getId());
 			writeAttributes(graph);
