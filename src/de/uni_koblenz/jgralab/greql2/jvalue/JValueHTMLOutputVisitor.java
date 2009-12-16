@@ -305,7 +305,11 @@ public class JValueHTMLOutputVisitor extends JValueDefaultVisitor {
 	public void visitBoolean(JValue b) {
 		simplePre(b);
 		Boolean v = b.toBoolean();
-		storeln(v.toString());
+		if (v != null) {
+			storeln(v.toString());
+		} else {
+			storeln("null");
+		}
 		simplePost(b);
 	}
 
