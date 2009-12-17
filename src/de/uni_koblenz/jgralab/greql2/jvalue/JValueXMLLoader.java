@@ -32,6 +32,7 @@ import java.util.Stack;
 import javax.xml.stream.XMLStreamException;
 
 import de.uni_koblenz.ist.utilities.xml.XmlProcessor;
+import de.uni_koblenz.jgralab.AttributedElement;
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.Vertex;
@@ -61,6 +62,13 @@ public class JValueXMLLoader extends XmlProcessor {
 	private class JValueMapEntry extends JValue {
 		JValue key = null;
 		JValue value = null;
+	}
+
+	/**
+	 * Synthetic class to ease XML parsing
+	 */
+	private class JValueBrowsingInfo extends JValue {
+		AttributedElement browsingInfo = null;
 	}
 
 	private Map<String, Graph> id2GraphMap = null;
