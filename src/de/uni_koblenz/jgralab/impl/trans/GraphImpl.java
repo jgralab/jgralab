@@ -14,6 +14,7 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
 import de.uni_koblenz.jgralab.AttributedElement;
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.GraphException;
+import de.uni_koblenz.jgralab.GraphStructureChangedListener;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.impl.FreeIndexList;
 import de.uni_koblenz.jgralab.impl.IncidenceImpl;
@@ -1684,6 +1685,27 @@ public abstract class GraphImpl extends de.uni_koblenz.jgralab.impl.GraphImpl {
 	protected void internalEdgeAdded(de.uni_koblenz.jgralab.impl.EdgeImpl e) {
 		if (isWriting()) {
 			super.internalEdgeAdded(e);
+		}
+	}
+
+	@Override
+	public void register(GraphStructureChangedListener newListener) {
+		synchronized (graphStructureChangedListeners) {
+			super.register(newListener);
+		}
+	}
+
+	@Override
+	public void unregister(GraphStructureChangedListener listener) {
+		synchronized (graphStructureChangedListeners) {
+			super.unregister(listener);
+		}
+	}
+
+	@Override
+	public void unregisterAll() {
+		synchronized (graphStructureChangedListeners) {
+			super.unregisterAll();
 		}
 	}
 
