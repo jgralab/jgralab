@@ -10,6 +10,8 @@ public abstract class AbstractGraphMarker<T extends GraphElement> extends
 
 	protected AbstractGraphMarker(Graph graph) {
 		this.graph = graph;
+		// register the graph marker at the graph
+		graph.register(this);
 	}
 
 	/**
@@ -53,4 +55,12 @@ public abstract class AbstractGraphMarker<T extends GraphElement> extends
 	public Graph getGraph() {
 		return graph;
 	}
+
+	@Override
+	protected void finalize() throws Throwable {
+		super.finalize();
+		// TODO maybe remove
+		graph.unregister(this);
+	}
+
 }
