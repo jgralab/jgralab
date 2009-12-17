@@ -24,6 +24,8 @@ public class JValueXMLConstants {
 
 	public static final String ATTRIBUTEDELEMENTCLASS = "attributedElementClass";
 
+	public static final String BROWSINGINFO = "browsingInfo";
+
 	public static final String RECORD = "record";
 	public static final String RECORD_COMPONENT = "recordComponent";
 	public static final String TUPLE = "tuple";
