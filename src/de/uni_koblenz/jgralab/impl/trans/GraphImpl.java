@@ -773,6 +773,7 @@ public abstract class GraphImpl extends de.uni_koblenz.jgralab.impl.GraphImpl {
 					freeVertexList.expandBy(newSize - vMax);
 				}
 				vMax = newSize;
+				notifyMaxVertexCountIncreased(newSize);
 			}
 		} finally {
 			vertexSync.writeLock().unlock();
@@ -822,6 +823,7 @@ public abstract class GraphImpl extends de.uni_koblenz.jgralab.impl.GraphImpl {
 					freeEdgeList.expandBy(newSize - eMax);
 				}
 				eMax = newSize;
+				notifyMaxEdgeCountIncreased(newSize);
 			}
 		} finally {
 			edgeSync.writeLock().unlock();
@@ -1196,9 +1198,10 @@ public abstract class GraphImpl extends de.uni_koblenz.jgralab.impl.GraphImpl {
 			}
 		}
 		if (transaction.getState() == TransactionState.WRITING) {
-			if (transaction.deletedVerticesWhileWriting == null)
+			if (transaction.deletedVerticesWhileWriting == null) {
 				transaction.deletedVerticesWhileWriting = new ArrayList<VertexImpl>(
 						1);
+			}
 			transaction.deletedVerticesWhileWriting
 					.add((de.uni_koblenz.jgralab.impl.trans.VertexImpl) vertexToBeDeleted);
 		}
@@ -1548,95 +1551,106 @@ public abstract class GraphImpl extends de.uni_koblenz.jgralab.impl.GraphImpl {
 
 	@Override
 	public <T> List<T> createList(Class<T> type) {
-		if (!isLoading() && getCurrentTransaction().isReadOnly())
+		if (!isLoading() && getCurrentTransaction().isReadOnly()) {
 			throw new GraphException(
 					"Read-only transactions are not allowed to create Lists.");
+		}
 		return new JGraLabList<T>(this);
 	}
 
 	@Override
 	public <T> List<T> createList(Class<T> type,
 			Collection<? extends T> collection) {
-		if (!isLoading() && getCurrentTransaction().isReadOnly())
+		if (!isLoading() && getCurrentTransaction().isReadOnly()) {
 			throw new GraphException(
 					"Read-only transactions are not allowed to create Lists.");
+		}
 		return new JGraLabList<T>(this, collection);
 	}
 
 	@Override
 	public <T> List<T> createList(Class<T> type, int initialCapacity) {
-		if (!isLoading() && getCurrentTransaction().isReadOnly())
+		if (!isLoading() && getCurrentTransaction().isReadOnly()) {
 			throw new GraphException(
 					"Read-only transactions are not allowed to create Lists.");
+		}
 		return new JGraLabList<T>(this, initialCapacity);
 	}
 
 	@Override
 	public <T> Set<T> createSet(Class<T> type) {
-		if (!isLoading() && getCurrentTransaction().isReadOnly())
+		if (!isLoading() && getCurrentTransaction().isReadOnly()) {
 			throw new GraphException(
 					"Read-only transactions are not allowed to create Sets.");
+		}
 		return new JGraLabSet<T>(this);
 	}
 
 	@Override
 	public <T> Set<T> createSet(Class<T> type,
 			Collection<? extends T> collection) {
-		if (!isLoading() && getCurrentTransaction().isReadOnly())
+		if (!isLoading() && getCurrentTransaction().isReadOnly()) {
 			throw new GraphException(
 					"Read-only transactions are not allowed to create Sets.");
+		}
 		return new JGraLabSet<T>(this, collection);
 	}
 
 	@Override
 	public <T> Set<T> createSet(Class<T> type, int initialCapacity) {
-		if (!isLoading() && getCurrentTransaction().isReadOnly())
+		if (!isLoading() && getCurrentTransaction().isReadOnly()) {
 			throw new GraphException(
 					"Read-only transactions are not allowed to create Sets.");
+		}
 		return new JGraLabSet<T>(this, initialCapacity);
 	}
 
 	@Override
 	public <T> Set<T> createSet(Class<T> type, int initialCapacity,
 			float loadFactor) {
-		if (!isLoading() && getCurrentTransaction().isReadOnly())
+		if (!isLoading() && getCurrentTransaction().isReadOnly()) {
 			throw new GraphException(
 					"Read-only transactions are not allowed to create Sets.");
+		}
 		return new JGraLabSet<T>(this, initialCapacity, loadFactor);
 	}
 
 	@Override
 	public <K, V> Map<K, V> createMap(Class<K> key, Class<V> value) {
-		if (!isLoading() && getCurrentTransaction().isReadOnly())
+		if (!isLoading() && getCurrentTransaction().isReadOnly()) {
 			throw new GraphException(
 					"Read-only transactions are not allowed to create Maps.");
+		}
 		return new JGraLabMap<K, V>(this);
 	}
 
 	@Override
 	public <K, V> Map<K, V> createMap(Class<K> key, Class<V> value,
 			Map<? extends K, ? extends V> map) {
-		if (!isLoading() && getCurrentTransaction().isReadOnly())
+		if (!isLoading() && getCurrentTransaction().isReadOnly()) {
 			throw new GraphException(
 					"Read-only transactions are not allowed to create Maps.");
+		}
 		return new JGraLabMap<K, V>(this, map);
 	}
 
 	@Override
 	public <K, V> Map<K, V> createMap(Class<K> key, Class<V> value,
 			int initialCapacity) {
-		if (!isLoading() && getCurrentTransaction().isReadOnly())
+		if (!isLoading() && getCurrentTransaction().isReadOnly()) {
 			throw new GraphException(
 					"Read-only transactions are not allowed to create Maps.");
+		}
 		return new JGraLabMap<K, V>(this, initialCapacity);
 	}
 
 	@Override
 	public <K, V> Map<K, V> createMap(Class<K> key, Class<V> value,
 			int initialCapacity, float loadFactor) {
-		if (!isLoading() && getCurrentTransaction().isReadOnly())
+		if (!isLoading() && getCurrentTransaction().isReadOnly()) {
 			throw new GraphException(
 					"Read-only transactions are not allowed to create Maps.");
+		}
 		return new JGraLabMap<K, V>(this, initialCapacity, loadFactor);
 	}
 

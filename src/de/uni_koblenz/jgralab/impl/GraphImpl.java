@@ -24,7 +24,9 @@
 
 package de.uni_koblenz.jgralab.impl;
 
+import java.lang.ref.WeakReference;
 import java.lang.reflect.Constructor;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -35,6 +37,7 @@ import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.GraphException;
 import de.uni_koblenz.jgralab.GraphFactory;
 import de.uni_koblenz.jgralab.GraphIO;
+import de.uni_koblenz.jgralab.GraphStructureChangedListener;
 import de.uni_koblenz.jgralab.RandomIdGenerator;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.schema.AttributedElementClass;
@@ -63,7 +66,7 @@ public abstract class GraphImpl implements Graph {
 	/**
 	 * The schema this graph belongs to
 	 */
-	private Schema schema;
+	private final Schema schema;
 
 	/**
 	 * The GraphFactory that was used to create this graph. This factory wil lbe
@@ -312,6 +315,7 @@ public abstract class GraphImpl implements Graph {
 
 	protected void internalEdgeAdded(EdgeImpl e) {
 		edgeAdded(e);
+		notifyEdgeAdded(e);
 	}
 
 	/**
@@ -386,6 +390,7 @@ public abstract class GraphImpl implements Graph {
 
 	protected void internalVertexAdded(VertexImpl v) {
 		vertexAdded(v);
+		notifyVertexAdded(v);
 	}
 
 	/**
@@ -721,6 +726,7 @@ public abstract class GraphImpl implements Graph {
 			getFreeEdgeList().expandBy(newSize - eMax);
 		}
 		eMax = newSize;
+		notifyMaxEdgeCountIncreased(newSize);
 	}
 
 	/**
@@ -747,6 +753,7 @@ public abstract class GraphImpl implements Graph {
 		}
 		setVertex(expandedArray);
 		vMax = newSize;
+		notifyMaxVertexCountIncreased(newSize);
 	}
 
 	/*
@@ -1052,6 +1059,7 @@ public abstract class GraphImpl implements Graph {
 
 	protected void internalEdgeDeleted(EdgeImpl e) {
 		edgeDeleted(e);
+		notifyEdgeDeleted(e);
 	}
 
 	/**
@@ -1112,6 +1120,7 @@ public abstract class GraphImpl implements Graph {
 
 	protected void internalVertexDeleted(VertexImpl v) {
 		vertexDeleted(v);
+		notifyVertexDeleted(v);
 	}
 
 	/**
@@ -1703,7 +1712,7 @@ public abstract class GraphImpl implements Graph {
 	protected void setFreeEdgeList(FreeIndexList freeEdgeList) {
 		this.freeEdgeList = freeEdgeList;
 	}
-	
+
 	/**
 	 * 
 	 * @param <T>
@@ -1714,15 +1723,16 @@ public abstract class GraphImpl implements Graph {
 	public <T> T createRecord(Class<T> recordClass, GraphIO io) {
 		T record = null;
 		try {
-			Constructor<T> cons = recordClass.getDeclaredConstructor(Graph.class, GraphIO.class);
+			Constructor<T> cons = recordClass.getDeclaredConstructor(
+					Graph.class, GraphIO.class);
 			cons.setAccessible(true);
 			record = cons.newInstance(this, io);
 		} catch (Exception e) {
 			e.printStackTrace();
-		} 
+		}
 		return record;
 	}
-	
+
 	/**
 	 * 
 	 * @param <T>
@@ -1733,15 +1743,16 @@ public abstract class GraphImpl implements Graph {
 	public <T> T createRecord(Class<T> recordClass, Map<String, Object> fields) {
 		T record = null;
 		try {
-			Constructor<T> cons = recordClass.getDeclaredConstructor(Graph.class, Map.class);
+			Constructor<T> cons = recordClass.getDeclaredConstructor(
+					Graph.class, Map.class);
 			cons.setAccessible(true);
 			record = cons.newInstance(this, fields);
 		} catch (Exception e) {
 			e.printStackTrace();
-		} 
+		}
 		return record;
 	}
-	
+
 	/**
 	 * 
 	 * @param <T>
@@ -1752,12 +1763,192 @@ public abstract class GraphImpl implements Graph {
 	public <T> T createRecord(Class<T> recordClass, Object... components) {
 		T record = null;
 		try {
-			Constructor<T> cons = recordClass.getDeclaredConstructor(Graph.class, Object[].class);
+			Constructor<T> cons = recordClass.getDeclaredConstructor(
+					Graph.class, Object[].class);
 			cons.setAccessible(true);
 			record = cons.newInstance(this, components);
 		} catch (Exception e) {
 			e.printStackTrace();
-		} 
+		}
 		return record;
+	}
+
+	/**
+	 * A list of all registered <code>GraphStructureChangedListener</code> as
+	 * <i>WeakReference</i>s.
+	 */
+	protected List<WeakReference<GraphStructureChangedListener>> graphStructureChangedListeners;
+	{
+		graphStructureChangedListeners = new LinkedList<WeakReference<GraphStructureChangedListener>>();
+	}
+
+	@Override
+	public void register(GraphStructureChangedListener newListener) {
+		graphStructureChangedListeners
+				.add(new WeakReference<GraphStructureChangedListener>(
+						newListener));
+	}
+
+	@Override
+	public void unregister(GraphStructureChangedListener listener) {
+		Iterator<WeakReference<GraphStructureChangedListener>> iterator = getListenerListIterator();
+		while (iterator.hasNext()) {
+			WeakReference<GraphStructureChangedListener> currentListener = iterator
+					.next();
+			if (currentListener.get() == null) {
+				iterator.remove();
+				continue;
+			}
+			if (currentListener.get() == listener) {
+				iterator.remove();
+				// break;
+			}
+		}
+	}
+
+	@Override
+	public void unregisterAll() {
+		graphStructureChangedListeners.clear();
+	}
+
+	@Override
+	public int getGraphStructureChangedListenerCount() {
+		return graphStructureChangedListeners.size();
+	}
+
+	private Iterator<WeakReference<GraphStructureChangedListener>> getListenerListIterator() {
+		return graphStructureChangedListeners.iterator();
+	}
+
+	/**
+	 * Notifies all registered <code>GraphStructureChangedListener</code> that
+	 * the given vertex <code>v</code> is about to be deleted. All invalid
+	 * <code>WeakReference</code>s are deleted automatically from the internal
+	 * listener list.
+	 * 
+	 * @param v
+	 *            the vertex that is about to be deleted.
+	 */
+	protected void notifyVertexDeleted(Vertex v) {
+		Iterator<WeakReference<GraphStructureChangedListener>> iterator = getListenerListIterator();
+		while (iterator.hasNext()) {
+			WeakReference<GraphStructureChangedListener> currentListener = iterator
+					.next();
+			if (currentListener.get() == null) {
+				iterator.remove();
+				continue;
+			}
+			currentListener.get().vertexDeleted(v);
+		}
+	}
+
+	/**
+	 * Notifies all registered <code>GraphStructureChangedListener</code> that
+	 * the given vertex <code>v</code> has been created. All invalid
+	 * <code>WeakReference</code>s are deleted automatically from the internal
+	 * listener list.
+	 * 
+	 * @param v
+	 *            the vertex that has been created.
+	 */
+	protected void notifyVertexAdded(Vertex v) {
+		Iterator<WeakReference<GraphStructureChangedListener>> iterator = getListenerListIterator();
+		while (iterator.hasNext()) {
+			WeakReference<GraphStructureChangedListener> currentListener = iterator
+					.next();
+			if (currentListener.get() == null) {
+				iterator.remove();
+				continue;
+			}
+			currentListener.get().vertexAdded(v);
+		}
+	}
+
+	/**
+	 * Notifies all registered <code>GraphStructureChangedListener</code> that
+	 * the given edge <code>e</code> is about to be deleted. All invalid
+	 * <code>WeakReference</code>s are deleted automatically from the internal
+	 * listener list.
+	 * 
+	 * @param e
+	 *            the edge that is about to be deleted.
+	 */
+	protected void notifyEdgeDeleted(Edge e) {
+		Iterator<WeakReference<GraphStructureChangedListener>> iterator = getListenerListIterator();
+		while (iterator.hasNext()) {
+			WeakReference<GraphStructureChangedListener> currentListener = iterator
+					.next();
+			if (currentListener.get() == null) {
+				iterator.remove();
+				continue;
+			}
+			currentListener.get().edgeDeleted(e);
+		}
+	}
+
+	/**
+	 * Notifies all registered <code>GraphStructureChangedListener</code> that
+	 * the given edge <code>e</code> has been created. All invalid
+	 * <code>WeakReference</code>s are deleted automatically from the internal
+	 * listener list.
+	 * 
+	 * @param e
+	 *            the edge that has been created.
+	 */
+	protected void notifyEdgeAdded(Edge e) {
+		Iterator<WeakReference<GraphStructureChangedListener>> iterator = getListenerListIterator();
+		while (iterator.hasNext()) {
+			WeakReference<GraphStructureChangedListener> currentListener = iterator
+					.next();
+			if (currentListener.get() == null) {
+				iterator.remove();
+				continue;
+			}
+			currentListener.get().edgeAdded(e);
+		}
+	}
+
+	/**
+	 * Notifies all registered <code>GraphStructureChangedListener</code> that
+	 * the maximum vertex count has been increased to the given
+	 * <code>newValue</code>. All invalid <code>WeakReference</code>s are
+	 * deleted automatically from the internal listener list.
+	 * 
+	 * @param newValue
+	 *            the new maximum vertex count.
+	 */
+	protected void notifyMaxVertexCountIncreased(int newValue) {
+		Iterator<WeakReference<GraphStructureChangedListener>> iterator = getListenerListIterator();
+		while (iterator.hasNext()) {
+			WeakReference<GraphStructureChangedListener> currentListener = iterator
+					.next();
+			if (currentListener.get() == null) {
+				iterator.remove();
+				continue;
+			}
+			currentListener.get().maxVertexCountIncreased(newValue);
+		}
+	}
+
+	/**
+	 * Notifies all registered <code>GraphStructureChangedListener</code> that
+	 * the maximum edge count has been increased to the given
+	 * <code>newValue</code>. All invalid <code>WeakReference</code>s are
+	 * deleted automatically from the internal listener list.
+	 * 
+	 * @param newValue
+	 *            the new maximum edge count.
+	 */
+	protected void notifyMaxEdgeCountIncreased(int newValue) {
+		Iterator<WeakReference<GraphStructureChangedListener>> iterator = getListenerListIterator();
+		while (iterator.hasNext()) {
+			WeakReference<GraphStructureChangedListener> currentListener = iterator
+					.next();
+			if (currentListener.get() == null) {
+				iterator.remove();
+				continue;
+			}
+			currentListener.get().maxEdgeCountIncreased(newValue);
+		}
 	}
 }

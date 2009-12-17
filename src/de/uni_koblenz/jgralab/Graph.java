@@ -59,8 +59,8 @@ public interface Graph extends AttributedElement {
 
 	/**
 	 * Creates an edge of the specified class <code>cls</code> that connects
-	 * <code>alpha</code> and <code>omega</code> vertices and adds the new
-	 * edge to this Graph.
+	 * <code>alpha</code> and <code>omega</code> vertices and adds the new edge
+	 * to this Graph.
 	 */
 	public <T extends Edge> T createEdge(Class<T> cls, Vertex alpha,
 			Vertex omega);
@@ -121,9 +121,9 @@ public interface Graph extends AttributedElement {
 
 	/**
 	 * Checks if the edge sequence of this has changed with respect to the given
-	 * <code>previousVersion</code>. Changes in the edge sequence are
-	 * creation and deletion as well as reordering of edges, but not changes of
-	 * attribute values.
+	 * <code>previousVersion</code>. Changes in the edge sequence are creation
+	 * and deletion as well as reordering of edges, but not changes of attribute
+	 * values.
 	 * 
 	 * @return <code>true</code> if the edge list version of this graph is
 	 *         different from <code>previousVersion</code>.
@@ -149,10 +149,10 @@ public interface Graph extends AttributedElement {
 	boolean containsEdge(Edge e);
 
 	/**
-	 * Removes the vertex <code>v</code> from the vertex sequence of this
-	 * graph. Also, any edges incident to vertex <code>v</code> are deleted.
-	 * If <code>v</code> is the parent of a composition, all child vertices
-	 * are also deleted.
+	 * Removes the vertex <code>v</code> from the vertex sequence of this graph.
+	 * Also, any edges incident to vertex <code>v</code> are deleted. If
+	 * <code>v</code> is the parent of a composition, all child vertices are
+	 * also deleted.
 	 * 
 	 * Preconditions: v.isValid()
 	 * 
@@ -177,9 +177,9 @@ public interface Graph extends AttributedElement {
 
 	/**
 	 * Callback function for triggered actions just after the vertex
-	 * <code>v</code> was added to this Graph. Override this method to
-	 * implement user-defined behaviour upon addition of vertices. Note that any
-	 * changes to this graph are forbidden.
+	 * <code>v</code> was added to this Graph. Override this method to implement
+	 * user-defined behaviour upon addition of vertices. Note that any changes
+	 * to this graph are forbidden.
 	 * 
 	 * @param v
 	 *            the added vertex
@@ -214,9 +214,9 @@ public interface Graph extends AttributedElement {
 
 	/**
 	 * Callback function for triggered actions just after the edge
-	 * <code>e</code> was added to this Graph. Override this method to
-	 * implement user-defined behaviour upon addition of edges. Note that any
-	 * changes to this graph are forbidden.
+	 * <code>e</code> was added to this Graph. Override this method to implement
+	 * user-defined behaviour upon addition of edges. Note that any changes to
+	 * this graph are forbidden.
 	 * 
 	 * @param e
 	 *            the added Edge
@@ -312,8 +312,8 @@ public interface Graph extends AttributedElement {
 	public Edge getLastEdgeInGraph();
 
 	/**
-	 * Returns the first Edge of the specified <code>edgeClass</code>
-	 * (including subclasses) in the edge sequence of this Graph.
+	 * Returns the first Edge of the specified <code>edgeClass</code> (including
+	 * subclasses) in the edge sequence of this Graph.
 	 * 
 	 * @param edgeClass
 	 *            an EdgeClass (i.e. an instance of schema.EdgeClass)
@@ -324,9 +324,9 @@ public interface Graph extends AttributedElement {
 	public Edge getFirstEdgeOfClassInGraph(EdgeClass edgeClass);
 
 	/**
-	 * Returns the first Edge of the specified <code>edgeClass</code>,
-	 * including subclasses only if <code>noSubclasses</code> is set to false,
-	 * in the edge sequence of this Graph.
+	 * Returns the first Edge of the specified <code>edgeClass</code>, including
+	 * subclasses only if <code>noSubclasses</code> is set to false, in the edge
+	 * sequence of this Graph.
 	 * 
 	 * @param edgeClass
 	 *            an EdgeClass (i.e. an instance of schema.EdgeClass)
@@ -342,8 +342,8 @@ public interface Graph extends AttributedElement {
 			boolean noSubclasses);
 
 	/**
-	 * Returns the first Edge of the specified <code>edgeClass</code>
-	 * (including subclasses) in the edge sequence of this Graph.
+	 * Returns the first Edge of the specified <code>edgeClass</code> (including
+	 * subclasses) in the edge sequence of this Graph.
 	 * 
 	 * @param edgeClass
 	 *            an EdgeClass (i.e. an M1 interface extending Edge)
@@ -354,9 +354,9 @@ public interface Graph extends AttributedElement {
 	public Edge getFirstEdgeOfClassInGraph(Class<? extends Edge> edgeClass);
 
 	/**
-	 * Returns the first Edge of the specified <code>edgeClass</code>,
-	 * including subclasses only if <code>noSubclasses</code> is set to false,
-	 * in the edge sequence of this Graph.
+	 * Returns the first Edge of the specified <code>edgeClass</code>, including
+	 * subclasses only if <code>noSubclasses</code> is set to false, in the edge
+	 * sequence of this Graph.
 	 * 
 	 * @param edgeClass
 	 *            an EdgeClass (i.e. an M1 interface extending Edge)
@@ -469,8 +469,8 @@ public interface Graph extends AttributedElement {
 
 	/**
 	 * Returns an Iterable which iterates over all edges of this Graph which
-	 * have the specified <code>edgeClass</code> (including subclasses), in
-	 * the order determined by the edge sequence.
+	 * have the specified <code>edgeClass</code> (including subclasses), in the
+	 * order determined by the edge sequence.
 	 * 
 	 * @param edgeClass
 	 *            an EdgeClass (i.e. instance of schema.EdgeClass)
@@ -481,8 +481,8 @@ public interface Graph extends AttributedElement {
 
 	/**
 	 * Returns an Iterable which iterates over all edges of this Graph which
-	 * have the specified <code>edgeClass</code> (including subclasses), in
-	 * the order determined by the edge sequence.
+	 * have the specified <code>edgeClass</code> (including subclasses), in the
+	 * order determined by the edge sequence.
 	 * 
 	 * @param edgeClass
 	 *            an EdgeClass (i.e. an M1 interface extending Edge)
@@ -755,18 +755,18 @@ public interface Graph extends AttributedElement {
 	 */
 	public <K, V> Map<K, V> createMap(Class<K> key, Class<V> value,
 			int initialCapacity, float loadFactor);
-	
+
 	/**
 	 * Generic creation of records.
 	 * 
 	 * @param <T>
-	 * * 
+	 *            *
 	 * @param recordClass
 	 * @param io
 	 * @return
 	 */
-	public <T> T createRecord(Class<T> recordClass, GraphIO io); 
-	
+	public <T> T createRecord(Class<T> recordClass, GraphIO io);
+
 	/**
 	 * 
 	 * @param <T>
@@ -774,8 +774,8 @@ public interface Graph extends AttributedElement {
 	 * @param io
 	 * @return
 	 */
-	public <T> T createRecord(Class<T> recordClass, Map<String, Object> fields); 
-	
+	public <T> T createRecord(Class<T> recordClass, Map<String, Object> fields);
+
 	/**
 	 * 
 	 * @param <T>
@@ -783,5 +783,38 @@ public interface Graph extends AttributedElement {
 	 * @param io
 	 * @return
 	 */
-	public <T> T createRecord(Class<T> recordClass, Object... components); 
+	public <T> T createRecord(Class<T> recordClass, Object... components);
+
+	/**
+	 * Registers the given <code>newListener</code> to the internal listener
+	 * list.
+	 * 
+	 * @param newListener
+	 *            the new <code>GraphStructureChangedListener</code> to
+	 *            register.
+	 */
+	public void register(GraphStructureChangedListener newListener);
+
+	/**
+	 * Removes the given <code>listener</code> from the internal listener list.
+	 * 
+	 * @param listener
+	 *            the <code>GraphStructureChangedListener</code> to be removed.
+	 */
+	public void unregister(GraphStructureChangedListener listener);
+
+	/**
+	 * Removes all <code>GraphStructureChangedListener</code> from the internal
+	 * listener list.
+	 */
+	public void unregisterAll();
+
+	/**
+	 * Returns the amount of registered
+	 * <code>GraphStructureChangedListener</code>s.
+	 * 
+	 * @return the amount of registered
+	 *         <code>GraphStructureChangedListener</code>s
+	 */
+	public int getGraphStructureChangedListenerCount();
 }
