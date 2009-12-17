@@ -62,6 +62,74 @@ public class SubGraphMarker extends AbstractGraphMarker<GraphElement> {
 		}
 	}
 
+	/**
+	 * Does the same as <code>unmark</code> but without performing an
+	 * <code>instanceof</code> check. It is recommended to use this method
+	 * instead.
+	 * 
+	 * @param e
+	 *            the edge to unmark
+	 * @return false if the given edge has already been unmarked.
+	 */
+	public boolean unmark(Edge e) {
+		return edgeGraphMarker.unmark(e);
+	}
+
+	/**
+	 * Does the same as <code>unmark</code> but without performing an
+	 * <code>instanceof</code> check. It is recommended to use this method
+	 * instead.
+	 * 
+	 * @param v
+	 *            the vertex to unmark
+	 * @return false if the given vertex has already been unmarked.
+	 */
+	public boolean unmark(Vertex v) {
+		return vertexGraphMarker.unmark(v);
+	}
+
+	/**
+	 * Marks the given <code>graphElement</code>.
+	 * 
+	 * @param graphElement
+	 *            the graph element to mark
+	 * @return false if the given <code>graphElement</code> has already been
+	 *         marked.
+	 */
+	public boolean mark(GraphElement graphElement) {
+		if (graphElement instanceof Edge) {
+			return edgeGraphMarker.mark((Edge) graphElement);
+		} else {
+			return vertexGraphMarker.mark((Vertex) graphElement);
+		}
+	}
+
+	/**
+	 * Does the same as <code>mark</code> but without performing an
+	 * <code>instanceof</code> check. It is recommended to use this method
+	 * instead.
+	 * 
+	 * @param e
+	 *            the edge to mark
+	 * @return false if the given edge has already been marked.
+	 */
+	public boolean mark(Edge e) {
+		return edgeGraphMarker.mark(e);
+	}
+
+	/**
+	 * Does the same as <code>mark</code> but without performing an
+	 * <code>instanceof</code> check. It is recommended to use this method
+	 * instead.
+	 * 
+	 * @param v
+	 *            the vertex to mark
+	 * @return false if the given vertex has already been marked.
+	 */
+	public boolean mark(Vertex v) {
+		return vertexGraphMarker.mark(v);
+	}
+
 	// TODO these are not needed, are they?
 	@Override
 	public void edgeDeleted(Edge e) {
