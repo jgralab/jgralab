@@ -369,6 +369,7 @@ public class GreqlEvaluator {
 		result = null;
 		started = false;
 		vertexEvalGraphMarker = null;
+		knownTypes.clear();
 	}
 
 	/**
