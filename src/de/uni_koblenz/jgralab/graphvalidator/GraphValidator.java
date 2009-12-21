@@ -94,7 +94,7 @@ public class GraphValidator {
 		if (!badOutgoing.isEmpty()) {
 			brokenConstraints.add(new MultiplicityConstraintViolation(ec,
 					"Invalid number of outgoing edges, allowed are (" + toMin
-							+ ", "
+							+ ","
 							+ ((toMax == Integer.MAX_VALUE) ? "*" : toMax)
 							+ ").", badOutgoing));
 		}
@@ -111,10 +111,11 @@ public class GraphValidator {
 		if (!badIncoming.isEmpty()) {
 			brokenConstraints.add(new MultiplicityConstraintViolation(ec,
 					"Invalid number of incoming edges, allowed are (" + fromMin
-							+ ", "
+							+ ","
 							+ ((fromMax == Integer.MAX_VALUE) ? "*" : fromMax)
 							+ ").", badIncoming));
 		}
+
 		return brokenConstraints;
 	}
 
