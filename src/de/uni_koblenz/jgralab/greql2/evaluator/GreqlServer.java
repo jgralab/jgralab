@@ -35,7 +35,8 @@ public class GreqlServer extends Thread {
 		in = new BufferedReader(new InputStreamReader(s.getInputStream()));
 		out = new PrintWriter(new OutputStreamWriter(s.getOutputStream()));
 		eval = new GreqlEvaluator((String) null, (Graph) null, null);
-		System.out.println("New GreqlServer for " + socket.getInetAddress());
+		println("Hi! I'm your GreqlServer (" + socket.getInetAddress() + ")",
+				PrintTarget.BOTH);
 	}
 
 	private enum PrintTarget {
