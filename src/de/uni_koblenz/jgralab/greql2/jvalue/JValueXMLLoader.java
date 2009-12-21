@@ -36,12 +36,10 @@ import de.uni_koblenz.jgralab.AttributedElement;
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.Vertex;
-import de.uni_koblenz.jgralab.WorkInProgress;
 import de.uni_koblenz.jgralab.greql2.exception.JValueLoadException;
 import de.uni_koblenz.jgralab.schema.AttributedElementClass;
 import de.uni_koblenz.jgralab.schema.Schema;
 
-@WorkInProgress(description = "TODO: Handle BrowsingInfos!", responsibleDevelopers = "horn")
 public class JValueXMLLoader extends XmlProcessor {
 
 	/**

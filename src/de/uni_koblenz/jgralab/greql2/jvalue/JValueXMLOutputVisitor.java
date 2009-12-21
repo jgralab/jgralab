@@ -38,10 +38,8 @@ import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.GraphElement;
 import de.uni_koblenz.jgralab.Vertex;
-import de.uni_koblenz.jgralab.WorkInProgress;
 import de.uni_koblenz.jgralab.schema.AttributedElementClass;
 
-@WorkInProgress(description = "DONE but not tested: Handle BrowsingInfos!", responsibleDevelopers = "horn")
 public class JValueXMLOutputVisitor extends JValueDefaultVisitor {
 
 	private IndentingXMLStreamWriter writer = null;
