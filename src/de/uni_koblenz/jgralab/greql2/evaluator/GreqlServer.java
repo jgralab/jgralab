@@ -16,6 +16,8 @@ import de.uni_koblenz.jgralab.GraphIO;
 import de.uni_koblenz.jgralab.codegenerator.CodeGeneratorConfiguration;
 import de.uni_koblenz.jgralab.greql2.exception.Greql2Exception;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
+import de.uni_koblenz.jgralab.greql2.jvalue.JValueCollection;
+import de.uni_koblenz.jgralab.greql2.jvalue.JValueMap;
 import de.uni_koblenz.jgralab.impl.ProgressFunctionImpl;
 
 public class GreqlServer extends Thread {
@@ -36,6 +38,26 @@ public class GreqlServer extends Thread {
 		System.out.println("New GreqlServer for " + socket.getInetAddress());
 	}
 
+	private enum PrintTarget {
+		CLIENT, SERVER, BOTH
+	}
+
+	private void println(String message, PrintTarget target) {
+		switch (target) {
+		case CLIENT:
+			out.println(message);
+			break;
+		case SERVER:
+			System.out.println(message);
+			break;
+		case BOTH:
+			out.println(message);
+			System.out.println(message);
+		default:
+			break;
+		}
+	}
+
 	@Override
 	public void run() {
 		try {
@@ -45,54 +67,58 @@ public class GreqlServer extends Thread {
 				if (line.startsWith("g:")) {
 					String newGraphFile = line.substring(2);
 					if (newGraphFile.equals(currentGraphFile)) {
-						System.out.println("This graph is already set.");
+						println("This graph is already set.",
+								PrintTarget.SERVER);
 						continue;
 					}
 					currentGraphFile = newGraphFile;
-					out.println("Loading " + currentGraphFile + ".");
-					System.out.println("Loading " + currentGraphFile + ".");
+					println("Loading " + currentGraphFile + ".",
+							PrintTarget.BOTH);
 					eval.setDatagraph(GraphIO.loadSchemaAndGraphFromFile(
 							currentGraphFile,
 							CodeGeneratorConfiguration.MINIMAL,
 							new ProgressFunctionImpl()));
 				} else if (line.startsWith("q:")) {
 					String f = line.substring(2);
-					out.println("Evaling query file " + f + ".");
-					System.out.println("Evaling query file " + f + ".");
+					println("Evaling query file " + f + ".", PrintTarget.BOTH);
 					eval.setQueryFile(new File(f));
 					try {
 						eval.startEvaluation();
 						JValue result = eval.getEvaluationResult();
-						System.out.println("<result not printed>");
+						println("<result not printed>", PrintTarget.SERVER);
 						out.println();
 						out.println("Evaluation Result:");
 						out.println("==================");
 						if (result.isCollection()) {
-							for (JValue jv : result.toCollection()) {
-								out.println(jv.toString());
+							JValueCollection coll = result.toCollection();
+							println("Result contains " + coll.size()
+									+ " elements.", PrintTarget.CLIENT);
+							for (JValue jv : coll) {
+								println(jv.toString(), PrintTarget.CLIENT);
 							}
 						} else if (result.isMap()) {
-							for (Entry<JValue, JValue> e : result.toJValueMap()
-									.entrySet()) {
-								out
-										.println(e.getKey() + " --> "
-												+ e.getValue());
+							JValueMap map = result.toJValueMap();
+							println("Result contains " + map.size()
+									+ " map entries.", PrintTarget.CLIENT);
+							for (Entry<JValue, JValue> e : map.entrySet()) {
+								println(e.getKey() + " --> " + e.getValue(),
+										PrintTarget.CLIENT);
 							}
 						} else {
-							out.println(result.toString());
+							println(result.toString(), PrintTarget.CLIENT);
 						}
 					} catch (Greql2Exception e) {
 						e.printStackTrace();
 						e.printStackTrace(out);
 					}
 				} else {
-					out.println("Don't understand line '" + line + "'.");
-					System.out.println("Don't understand line '" + line + "'.");
+					println("Don't understand line '" + line + "'.",
+							PrintTarget.BOTH);
 				}
 				out.println("\u000C");
 				out.flush();
 			}
-			System.out.println("Goodbye!");
+			println("GreqlServer says goodbye!", PrintTarget.BOTH);
 			in.close();
 			out.close();
 			socket.close();

@@ -863,7 +863,15 @@ public class JValue implements Comparable<JValue> {
 	 * creates a new JValue which encapsulates the given Object
 	 */
 	public JValue(Object o) {
-		this.type = JValueType.OBJECT;
+		if (o instanceof Edge) {
+			this.type = JValueType.EDGE;
+		} else if (o instanceof Vertex) {
+			this.type = JValueType.VERTEX;
+		} else if (o instanceof Graph) {
+			this.type = JValueType.GRAPH;
+		} else {
+			this.type = JValueType.OBJECT;
+		}
 		this.value = o;
 		browsingInfo = null;
 	}
