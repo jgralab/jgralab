@@ -118,12 +118,25 @@ public class JValueXMLLoader extends XmlProcessor {
 		// Ok, there was a parent, so the current element has to be added to
 		// that (the parent has to be some kind of collection or map)
 		JValue parentElement = stack.peek();
-		if (parentElement.isMap()) {
-			// the current element has to be a mapEntry
+
+		// Each and every element may be have a browsing info, so check that
+		// first.
+		if (endedElement instanceof JValueBrowsingInfo) {
+			// We ended a browsing info, so add its info to the parent.
+			parentElement
+					.setBrowsingInfo(((JValueBrowsingInfo) endedElement).browsingInfo);
+		} else if (parentElement instanceof JValueBrowsingInfo) {
+			// We ended an element inside a browsingInfo, so this has to be an
+			// attributed element.
+			((JValueBrowsingInfo) parentElement).browsingInfo = endedElement
+					.toAttributedElement();
+		} else if (parentElement.isMap()) {
+			// Parent is a Map, so the current element has to be a mapEntry
 			JValueMapEntry jme = (JValueMapEntry) endedElement;
 			parentElement.toJValueMap().put(jme.key, jme.value);
 		} else if (parentElement instanceof JValueMapEntry) {
-			// the current elem is a key or a value of the entry
+			// Parent is a map entry, so the current elem is a key or a value of
+			// the entry.
 			JValueMapEntry jme = (JValueMapEntry) parentElement;
 			if (jme.key == null) {
 				jme.key = endedElement;
@@ -134,6 +147,7 @@ public class JValueXMLLoader extends XmlProcessor {
 						"Encountered MapEntry with more than 2 elements!", null);
 			}
 		} else if (parentElement instanceof JValueRecordComponent) {
+			// Parent is a record component, so this has to be its value.
 			JValueRecordComponent rc = (JValueRecordComponent) parentElement;
 			rc.jvalue = endedElement;
 		} else if (parentElement.isCollection()) {
@@ -285,6 +299,8 @@ public class JValueXMLLoader extends XmlProcessor {
 			}
 			val = new JValue(v);
 			// ---------------------------------------------------------------
+		} else if (elem.equals(JValueXMLConstants.BROWSINGINFO)) {
+			val = new JValueBrowsingInfo();
 		} else {
 			throw new JValueLoadException("Unrecognized XML element '" + elem
 					+ "'.", null);
