@@ -73,12 +73,13 @@
                               "\\(?:{\\([^}]*\\)}\\)?"     ;; Attributes
                               "\\(?:[[].*[]]\\)*[[:space:]]*;"      ;; Constraints
                               ))
-          (setq schema-alist
-                (cons (list :meta 'VertexClass
-                            :qname (concat current-package (match-string-no-properties 1))
-                            :super (tg--parse-superclasses (match-string-no-properties 2) current-package)
-                            :attrs (tg--parse-attributes (match-string-no-properties 3)))
-                      schema-alist)))
+          (let ((qname (concat current-package (match-string-no-properties 1))))
+            (setq schema-alist
+                  (cons (list :meta 'VertexClass
+                              :qname qname
+                              :super (tg--parse-superclasses (match-string-no-properties 2) current-package)
+                              :attrs (tg--parse-attributes qname (match-string-no-properties 3)))
+                        schema-alist))))
          ;; EdgeClasses
          ((looking-at (concat "^\\(?:abstract[[:space:]]+\\)?"
                               "\\(\\(?:Edge\\|Aggregation\\|Composition\\)Class\\)[[:space:]]+"
@@ -88,16 +89,17 @@
                               "\\(?:{\\([^}]*\\)}\\)?" ;; Attributes
                               "\\(?:[[].*[]]\\)*[[:space:]]*;"  ;; Constraints
                               ))
-          (let ((from (match-string-no-properties 4))
+          (let ((qname (concat current-package (match-string-no-properties 2)))
+                (from (match-string-no-properties 4))
                 (to   (match-string-no-properties 5)))
             (save-match-data
               (setq from (if (string-match "\\." from) from (concat current-package from)))
               (setq to   (if (string-match "\\." to)   to   (concat current-package to))))
             (setq schema-alist
                   (cons (list :meta 'EdgeClass
-                              :qname (concat current-package (match-string-no-properties 2))
+                              :qname qname
                               :super (tg--parse-superclasses (match-string-no-properties 3) current-package)
-                              :attr (tg--parse-attributes (match-string-no-properties 6))
+                              :attr (tg--parse-attributes qname (match-string-no-properties 6))
                               :edgetype (match-string-no-properties 1)
                               :from from
                               :to to)
@@ -123,7 +125,7 @@
                          (concat current-package class)))
        (split-string str "[,]+")))))
 
-(defun tg--parse-attributes (str)
+(defun tg--parse-attributes (qname str)
   "Parse STR to an attribute list."
   (when str
     (save-match-data
@@ -132,8 +134,9 @@
             result)
         (dolist (elem list)
           (let ((split (split-string elem ":")))
-            (setq result (cons (cons (car split)
-                                     (cadr split))
+            (setq result (cons (list :name (car split)
+                                     :domain (cadr split)
+                                     :owner qname)
                                result))))
         result))))
 
@@ -161,42 +164,49 @@
 
 ;;** Schema querying
 
+(defun tg--intersection (lists predicate)
+  (cond
+   ((null lists) nil)
+   ((= (length lists) 1)
+    (car lists))
+   ((= (length lists) 2)
+    (intersection (first lists) (second lists) :test predicate))
+   (t
+    (intersection (first lists)
+                  (tg--intersection (cdr lists) predicate)
+                  :test predicate))))
+
+;; TODO: Currently, if 2 types have 2 different attributes with the same name,
+;; then those won't be listed.  Am I sure that's the right thing?  Probably I
+;; want to keep both...
 (defun tg-all-attributes-multi (mtype types)
   "Returns a list of all attributes that are defined in all TYPES
 of meta type MTYPE."
-  (let ((attr-list (mapcar
-                    (lambda (type)
-                      (tg-all-attributes (tg-get-schema-element mtype type)))
-                    types)))
-    (if (= (length attr-list) 1)
-        (car attr-list)
-      (apply 'intersection
-             attr-list))))
+  (tg--intersection
+   (mapcar (lambda (type)
+             (tg-all-attributes (tg-get-schema-element mtype type)))
+           types)
+   (lambda (a1 a2)
+     (and (string= (plist-get a1 :name) (plist-get a2 :name))
+          (string= (plist-get a1 :domain) (plist-get a2 :domain))
+          (string= (plist-get a1 :owner) (plist-get a2 :owner))))))
 
-(defun tg-all-attributes (elem &optional mark-inherited)
-  "Returns a list of all attribute names of the schema element
+(defun tg-all-attributes (elem)
+  "Returns an alist of all attribute of the schema element
 ELEM (and its supertypes)."
   (sort
    (remove-duplicates
-    (apply 'append
-           (plist-get elem :attrs)
-           (mapcar (lambda (supertype)
-                     (let ((attrs (tg-all-attributes (tg-get-schema-element 
-                                                      (plist-get elem :meta)
-                                                      supertype))))
-                       (if mark-inherited
-                           (mapcar
-                            (lambda (c)
-                              (cons (concat (car c)
-                                            "#" (tg-unique-name supertype 'unique))
-                                    (cdr c)))
-                            attrs)
-                           attrs)))
-                   (plist-get elem :super)))
+    (apply 'append (plist-get elem :attrs)
+           (mapcar
+            (lambda (supertype)
+              (tg-all-attributes (tg-get-schema-element
+                                  (plist-get elem :meta)
+                                  supertype)))
+            (plist-get elem :super)))
     :test (lambda (a1 a2)
-            (string= (car a1) (car a2))))
+            (string= (plist-get a1 :name) (plist-get a2 :name))))
    (lambda (a1 a2)
-     (string-lessp (car a1) (car a2)))))
+     (string-lessp (plist-get a1 :name) (plist-get a2 :name)))))
 
 (defun tg-get-schema-element (meta name)
   "Get the line/list of `tg-schema-alist' that corresponds to the
@@ -370,7 +380,7 @@ prefix arg, jump to the target vertex."
   (let* ((mtype (plist-get elem :meta))
          (name (plist-get elem :qname))
          (supers (tg-format-type-list (plist-get elem :super) 'tg-supertype-face))
-         (attrs (tg-format-attr-list (tg-all-attributes elem t)
+         (attrs (tg-format-attr-list (tg-all-attributes elem)
                                      'tg-attribute-face
                                      'tg-type-face
                                      'tg-supertype-face)))
@@ -409,8 +419,8 @@ name is used."
 
 (defun tg-format-attr-list (lst face1 face2 face3)
   "Return a string representation of the given attribute list:
-IN: ((\"attr1\" . \"domain1\") (\"attr2#Type\" . \"domain2\"))
-OUT: attr1 : domain1, attr2 : domain2
+IN: ((\"attr1\" \"domain1\" \"OwningType\") (\"attr2\" \"domain2\"))
+OUT: attr1 : domain1 (OwningType), attr2 : domain2
 
 Attributes are propertized using FACE1, domains with FACE2, and
 types with FACE3."
@@ -418,15 +428,11 @@ types with FACE3."
     (if (null c)
         ""
       (concat
-       (concat (let ((attr-name (car c)))
-                 (if (string-match "#" attr-name)
-                     (let ((name-type (split-string attr-name "#")))
-                       (concat (propertize (car name-type) 'face face1)
-                               "⤻"
-                               (propertize (cadr name-type) 'face face3)))
-                   (propertize attr-name 'face face1)))
-               ":"
-               (propertize (cdr c) 'face face2))
+       (propertize (plist-get c :name) 'face face1)
+       ":"
+       (propertize (plist-get c :domain) 'face face2)
+       (when (plist-get c :owner)
+         (concat "(" (propertize (plist-get c :owner) 'face face3) ")"))
        (let ((reststr (tg-format-attr-list (cdr lst) face1 face2 face3)))
          (if (= (length reststr) 0)
              reststr
