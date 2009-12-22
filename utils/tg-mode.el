@@ -432,7 +432,7 @@ types with FACE3."
        ":"
        (propertize (plist-get c :domain) 'face face2)
        (when (plist-get c :owner)
-         (concat "(" (propertize (plist-get c :owner) 'face face3) ")"))
+         (concat "(" (propertize (tg-unique-name (plist-get c :owner) 'unique) 'face face3) ")"))
        (let ((reststr (tg-format-attr-list (cdr lst) face1 face2 face3)))
          (if (= (length reststr) 0)
              reststr
