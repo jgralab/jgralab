@@ -354,4 +354,24 @@ public class JValueRecord extends JValueCollection implements
 	public void accept(JValueVisitor v) {
 		v.visitRecord(this);
 	}
+
+	/**
+	 * Returns this Record as a String representation, { comp1=arg1, comp2=arg2,
+	 * comp3=arg3 }
+	 */
+	@Override
+	public String toString() {
+		StringBuilder sb = new StringBuilder();
+		sb.append("{");
+		boolean first = true;
+		for (Entry<String, JValue> e : dataMap.entrySet()) {
+			if (!first) {
+				sb.append(", ");
+			}
+			first = false;
+			sb.append(e.getKey() + " = " + e.getValue().toString());
+		}
+		sb.append("}");
+		return sb.toString();
+	}
 }
