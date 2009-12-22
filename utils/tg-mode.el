@@ -372,7 +372,8 @@ prefix arg, jump to the target vertex."
          (supers (tg-format-type-list (plist-get elem :super) 'tg-supertype-face))
          (attrs (tg-format-attr-list (tg-all-attributes elem t)
                                      'tg-attribute-face
-                                     'tg-type-face)))
+                                     'tg-type-face
+                                     'tg-supertype-face)))
     (concat (propertize (if (eq mtype 'EdgeClass)
                             (plist-get elem :edgetype)
                           (symbol-name mtype))
@@ -406,20 +407,27 @@ name is used."
              reststr
            (concat ", " reststr)))))))
 
-(defun tg-format-attr-list (lst face1 face2)
+(defun tg-format-attr-list (lst face1 face2 face3)
   "Return a string representation of the given attribute list:
-IN: ((\"attr1\" . \"domain1\") (\"attr2\" . \"domain2\"))
+IN: ((\"attr1\" . \"domain1\") (\"attr2#Type\" . \"domain2\"))
 OUT: attr1 : domain1, attr2 : domain2
 
-Attributes are propertized using FACE1, domains with FACE2."
+Attributes are propertized using FACE1, domains with FACE2, and
+types with FACE3."
   (let ((c (car lst)))
     (if (null c)
         ""
       (concat
-       (concat (propertize (car c) 'face face1)
+       (concat (let ((attr-name (car c)))
+                 (if (string-match "#" attr-name)
+                     (let ((name-type (split-string attr-name "#")))
+                       (concat (propertize (car name-type) 'face face1)
+                               "⤻"
+                               (propertize (cadr name-type) 'face face3)))
+                   (propertize attr-name 'face face1)))
                ":"
                (propertize (cdr c) 'face face2))
-       (let ((reststr (tg-format-attr-list (cdr lst) face1 face2)))
+       (let ((reststr (tg-format-attr-list (cdr lst) face1 face2 face3)))
          (if (= (length reststr) 0)
              reststr
            (concat ", " reststr)))))))
