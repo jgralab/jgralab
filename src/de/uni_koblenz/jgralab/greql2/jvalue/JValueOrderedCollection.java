@@ -36,6 +36,7 @@ abstract public class JValueOrderedCollection extends JValueCollection {
 	/**
 	 * @return true if this collection is ordered
 	 */
+	@Override
 	public boolean isOrderedCollection() {
 		return true;
 	}

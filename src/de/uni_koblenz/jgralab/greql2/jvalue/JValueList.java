@@ -28,6 +28,13 @@ import java.util.ArrayList;
 import java.util.Iterator;
 
 public class JValueList extends JValueOrderedCollection {
+	/**
+	 * Used by JValueCollection.toString()
+	 */
+	{
+		OPENING_PAREN = "(";
+		CLOSING_PAREN = ")";
+	}
 
 	/**
 	 * all items are stored in this arraylist
