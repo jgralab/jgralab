@@ -173,7 +173,7 @@ of meta type MTYPE."
       (apply 'intersection
              attr-list))))
 
-(defun tg-all-attributes (elem)
+(defun tg-all-attributes (elem &optional mark-inherited)
   "Returns a list of all attribute names of the schema element
 ELEM (and its supertypes)."
   (sort
@@ -181,8 +181,17 @@ ELEM (and its supertypes)."
     (apply 'append
            (plist-get elem :attrs)
            (mapcar (lambda (supertype)
-                     (tg-all-attributes (tg-get-schema-element (plist-get elem :meta)
-                                                               supertype)))
+                     (let ((attrs (tg-all-attributes (tg-get-schema-element 
+                                                      (plist-get elem :meta)
+                                                      supertype))))
+                       (if mark-inherited
+                           (mapcar
+                            (lambda (c)
+                              (cons (concat (car c)
+                                            "#" (tg-unique-name supertype 'unique))
+                                    (cdr c)))
+                            attrs)
+                           attrs)))
                    (plist-get elem :super)))
     :test (lambda (a1 a2)
             (string= (car a1) (car a2))))
@@ -361,7 +370,7 @@ prefix arg, jump to the target vertex."
   (let* ((mtype (plist-get elem :meta))
          (name (plist-get elem :qname))
          (supers (tg-format-type-list (plist-get elem :super) 'tg-supertype-face))
-         (attrs (tg-format-attr-list (tg-all-attributes elem)
+         (attrs (tg-format-attr-list (tg-all-attributes elem t)
                                      'tg-attribute-face
                                      'tg-type-face)))
     (concat (propertize (if (eq mtype 'EdgeClass)
