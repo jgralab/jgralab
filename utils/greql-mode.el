@@ -93,14 +93,14 @@
                 (list (list
                        (concat "{\\(\\([[:space:]^,!]*"
                                (regexp-opt
-                                (let (lst)
-                                  (dolist (elem tg-schema-alist)
-                                    (when (or (eq (plist-get elem :meta) 'EdgeClass)
-                                              (eq (plist-get elem :meta) 'VertexClass))
-                                      (setq lst (cons (plist-get elem :qname) lst))))
-                                  lst) t)
+                                (mapcar
+                                 (lambda (elem) (car elem))
+                                 (append (greql-import-completion-list '(EdgeClass VertexClass))
+                                         (greql-completion-list '(EdgeClass VertexClass))))
+                                t)
                                "\\)+\\)}")
                        1 font-lock-type-face))))
+  ;; TODO: This should not be needed
   (set (make-local-variable 'font-lock-keywords) greql-fontlock-keywords-3)
   ;; TODO: Redisplay seems not to suffice
   (redisplay t))
@@ -124,6 +124,8 @@ columns.")
         '((greql-fontlock-keywords-1
            greql-fontlock-keywords-2
            greql-fontlock-keywords-3)))
+  ;; Update highlighting of Vertex- and EdgeClasses after saving
+  (add-hook 'after-save-hook 'greql-set-fontlock-keywords-3 t t)
 
   (setq tab-width greql-tab-width)
   (set (make-local-variable 'indent-line-function) 'greql-indent-line)
@@ -168,40 +170,39 @@ queries are evaluated.  Set it with `greql-set-graph'.")
     (setq tg-unique-name-hashmap unique-name-map))
   ;; add keywords and functions, too
   (greql-add-functions-and-keywords)
+  ;; Setup schema element font locking
   (greql-set-fontlock-keywords-3))
 
-(defun greql-import-completion-list (&optional mtypes)
+(defun greql-import-completion-list (mtypes)
   "Additional completions due to imports."
   (let ((comp-lst (greql-completion-list mtypes))
         lst)
     (save-excursion
-      (goto-char 0)
-      (while (re-search-forward "import[[:space:]]+\\([^;]+\\);" nil t)
-        (let ((import (match-string-no-properties 1)))
-          (if (string-match "\\*$" import)
-              ;; A package import
-              (setq
-               lst
-               (nconc lst
-                      (delq nil
-                            (mapcar
-                             (lambda (elem)
-                               (let ((regex (regexp-quote
-                                             (substring
-                                              import 0 (- (length import) 1)))))
+      (while (re-search-backward "import[[:space:]]+\\([^;]+\\);" nil t)
+        (unless (looking-back ".*//.*")
+          (let* ((import (match-string-no-properties 1))
+                 (regex (regexp-quote (substring import 0 (- (length import) 1)))))
+            (if (string-match "\\*$" import)
+                ;; A package import
+                (setq
+                 lst
+                 (nconc lst
+                        (delq nil
+                              (mapcar
+                               (lambda (elem)
                                  (if (string-match regex (car elem))
                                      (list (replace-regexp-in-string regex "" (car elem))
                                            (cadr elem))
-                                   nil)))
-                             comp-lst))))
-            ;; An element import
-            (when (member import comp-lst)
-              (setq lst (cons
-                         (replace-regexp-in-string "\\([[:word:]._]+\\.\\)\\([^.]+\\)" "\\2" import)
-                         lst)))))))
+                                   nil))
+                               comp-lst))))
+              ;; An element import
+              (when (member import comp-lst)
+                (setq lst (cons
+                           (replace-regexp-in-string "\\([[:word:]._]+\\.\\)\\([^.]+\\)" "\\2" import)
+                           lst))))))))
     lst))
 
-(defun greql-completion-list (&optional mtypes key)
+(defun greql-completion-list (mtypes &optional key)
   "Return a completion list of all MTYPES (:meta values) of
 KEY (:qname by default)."
   (when tg-schema-alist
@@ -321,7 +322,7 @@ tg-all-attributes-multi for completion."
 
 (defun greql-complete-domain ()
   (interactive)
-  (let ((types '(EnumDomain RecordDomain ListDomain SetDomain BagDomain)))
+  (let ((types '(EnumDomain RecordDomain ListDomain SetDomain BagDomain MapDomain)))
     (greql-complete-1 (nconc (greql-import-completion-list types)
                              (greql-completion-list types)))))
 
