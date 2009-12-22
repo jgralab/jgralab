@@ -313,13 +313,16 @@ abstract public class JValueCollection extends JValue implements
 		return new JValueRecord(this);
 	}
 
+	protected String OPENING_PAREN = "{";
+	protected String CLOSING_PAREN = "}";
+
 	/**
 	 * Returns this Collection as a String representation, { arg1, arg2, arg3 }
 	 */
 	@Override
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
-		sb.append("{");
+		sb.append(OPENING_PAREN);
 		boolean first = true;
 		for (JValue j : this) {
 			if (!first) {
@@ -328,7 +331,7 @@ abstract public class JValueCollection extends JValue implements
 			first = false;
 			sb.append(j.toString());
 		}
-		sb.append("}");
+		sb.append(CLOSING_PAREN);
 		return sb.toString();
 	}
 

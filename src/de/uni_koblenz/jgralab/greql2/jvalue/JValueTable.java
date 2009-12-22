@@ -40,6 +40,13 @@ import de.uni_koblenz.jgralab.greql2.exception.JValueInvalidTypeException;
  * 
  */
 public class JValueTable extends JValueCollection {
+	/**
+	 * Used by JValueCollection.toString()
+	 */
+	{
+		OPENING_PAREN = "[";
+		CLOSING_PAREN = "]";
+	}
 
 	private static Logger logger = Logger
 			.getLogger(JValueTable.class.getName());
@@ -385,7 +392,7 @@ public class JValueTable extends JValueCollection {
 	 *            column is 1.
 	 */
 	public boolean columnContainsDuplicateEntries(int colNumber) {
-		if (this.size() < 1 || colNumber < 1) {
+		if ((this.size() < 1) || (colNumber < 1)) {
 			return false;
 		}
 

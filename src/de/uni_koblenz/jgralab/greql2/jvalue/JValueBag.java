@@ -35,6 +35,7 @@ import java.util.Map.Entry;
 /**
  * JValueBag implements a mathematical multiset of JValue-Objects. This includes
  * methods for union, difference, intersection etc.
+ * 
  * @author ist@uni-koblenz.de
  */
 public class JValueBag extends JValueCollection implements Cloneable {
@@ -44,8 +45,16 @@ public class JValueBag extends JValueCollection implements Cloneable {
 	 * set are stored.
 	 */
 	private HashMap<JValue, Integer> myHashMap;
-	
-	//private List<JValue> sortedMembers;
+
+	/**
+	 * Used by JValueCollection.toString()
+	 */
+	{
+		OPENING_PAREN = "[";
+		CLOSING_PAREN = "]";
+	}
+
+	// private List<JValue> sortedMembers;
 
 	/**
 	 * Acts as a cache for the size value of this set out of performance
@@ -668,7 +677,6 @@ public class JValueBag extends JValueCollection implements Cloneable {
 	public boolean remove(JValue element) {
 		return remove(element, 1);
 	}
-
 
 	/**
 	 * returns a pointer to the objec itself, very usefull to get a reference of
