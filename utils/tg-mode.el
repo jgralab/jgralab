@@ -124,16 +124,17 @@
        (split-string str "[,]+")))))
 
 (defun tg--parse-attributes (str)
+  "Parse STR to an attribute list."
   (when str
     (save-match-data
       (setq str (replace-regexp-in-string "[[:space:]]+" "" str))
-      (let ((list (split-string str "[:,]+"))
-            result
-            (i 1))
+      (let ((list (split-string str ","))
+            result)
         (dolist (elem list)
-          (when (= (mod i 2) 1)
-            (setq result (cons elem result)))
-          (setq i (+ i 1)))
+          (let ((split (split-string elem ":")))
+            (setq result (cons (cons (car split)
+                                     (cadr split))
+                               result))))
         result))))
 
 (define-hash-table-test 'string= 'string= 'sxhash)
@@ -160,39 +161,33 @@
 
 ;;** Schema querying
 
-(defun tg-attributes-multi (mtype types)
-  "Returns a list of all attribute names that are defined in all
-TYPES of meta type MTYPE."
+(defun tg-all-attributes-multi (mtype types)
+  "Returns a list of all attributes that are defined in all TYPES
+of meta type MTYPE."
   (let ((attr-list (mapcar
                     (lambda (type)
-                      (tg-all-attributes mtype type))
+                      (tg-all-attributes (tg-get-schema-element mtype type)))
                     types)))
     (if (= (length attr-list) 1)
         (car attr-list)
       (apply 'intersection
              attr-list))))
 
-(defun tg-all-attributes (mtype type &optional with-supertype)
+(defun tg-all-attributes (elem)
   "Returns a list of all attribute names of the schema element
-ELEM (and its supertypes).  If WITH-SUPERTYPE is non-nil, suffix
-the names with the declaring types."
-  (let ((elem (tg-get-schema-element mtype type)))
-    (sort
-     (remove-duplicates
-      (apply 'append
-             (plist-get elem :attrs)
-             (mapcar (lambda (supertype)
-                       (let ((attrs (tg-all-attributes mtype supertype with-supertype)))
-                         (if with-supertype
-                             (mapcar (lambda (a)
-                                       (if (string-match "#" a)
-                                           a
-                                         (concat a "#" supertype)))
-                                     attrs)
-                           attrs)))
-                     (plist-get elem :super)))
-      :test 'string=)
-     'string-lessp)))
+ELEM (and its supertypes)."
+  (sort
+   (remove-duplicates
+    (apply 'append
+           (plist-get elem :attrs)
+           (mapcar (lambda (supertype)
+                     (tg-all-attributes (tg-get-schema-element (plist-get elem :meta)
+                                                               supertype)))
+                   (plist-get elem :super)))
+    :test (lambda (a1 a2)
+            (string= (car a1) (car a2))))
+   (lambda (a1 a2)
+     (string-lessp (car a1) (car a2)))))
 
 (defun tg-get-schema-element (meta name)
   "Get the line/list of `tg-schema-alist' that corresponds to the
@@ -336,6 +331,7 @@ prefix arg, jump to the target vertex."
 (make-variable-buffer-local 'tg--last-doc)
 
 (defun tg-eldoc-incidence ()
+  "Return a doc string for the incidence at point."
   (save-excursion
     (re-search-backward "[^[:digit:]]" nil t 1)
     (when (looking-at "[^[:digit:]]\\([[:digit:]]+\\)")
@@ -345,7 +341,7 @@ prefix arg, jump to the target vertex."
         (setq tg--last-doc (buffer-substring (line-beginning-position)
                                              (line-end-position)))))))
 
-(defun tg--eldoc-vertex-or-edge (mtype)
+(defun tg-eldoc-vertex-or-edge-at-point (mtype)
   "Eldoc MTYPE element at current line."
   (save-excursion
     (goto-char (line-beginning-position))
@@ -364,10 +360,10 @@ prefix arg, jump to the target vertex."
   "Return a doc string for schema element ELEM."
   (let* ((mtype (plist-get elem :meta))
          (name (plist-get elem :qname))
-         (supers (tg-format-list (plist-get elem :super) 'tg-supertype-face nil t))
-         (attrs (tg-format-list (tg-all-attributes mtype name 'with-supertype)
-                                'tg-attribute-face
-                                'tg-attribute-father-face)))
+         (supers (tg-format-type-list (plist-get elem :super) 'tg-supertype-face))
+         (attrs (tg-format-attr-list (tg-all-attributes elem)
+                                     'tg-attribute-face
+                                     'tg-type-face)))
     (concat (propertize (if (eq mtype 'EdgeClass)
                             (plist-get elem :edgetype)
                           (symbol-name mtype))
@@ -387,34 +383,37 @@ prefix arg, jump to the target vertex."
             attrs
             "}")))
 
-(defun tg-format-list (lst face1 &optional face2 alltypes)
-  "Return a string representation of the given list of strings of the form
-  (\"item1\" \"item2#type\")
-
-Normal strings like item1 are propertized with FACE1.
-
-Strings containing # are split there, and the first part is
-propertized with FACE1, and the second part with FACE2.  The
-second part must be a qualified type name that is made unique
-here, too.
-
-If ALLTYPES is non-nil, assume that simple entries (those without
-#) are also qualified type names and make them unique."
+(defun tg-format-type-list (lst face)
+  "Return a string representation of the given list of type names
+propertized with FACE.  If the types are unique, their unique
+name is used."
   (let ((c (car lst)))
     (if (null c)
         ""
       (concat
-       (if (string-match "#" c)
-           (let ((split (split-string c "#")))
-             (concat (propertize (first split) 'face face1)
-                     (propertize (tg-unique-name (second split) 'unique) 'face face2)))
-         (if alltypes
-             (propertize (tg-unique-name c 'unique) 'face face1)
-           (propertize c 'face face1)))
-       (let ((reststr (tg-format-list (cdr lst) face1 face2)))
+       (propertize (tg-unique-name c 'unique) 'face face)
+       (let ((reststr (tg-format-type-list (cdr lst) face)))
          (if (= (length reststr) 0)
              reststr
-           (concat " " reststr)))))))
+           (concat ", " reststr)))))))
+
+(defun tg-format-attr-list (lst face1 face2)
+  "Return a string representation of the given attribute list:
+IN: ((\"attr1\" . \"domain1\") (\"attr2\" . \"domain2\"))
+OUT: attr1 : domain1, attr2 : domain2
+
+Attributes are propertized using FACE1, domains with FACE2."
+  (let ((c (car lst)))
+    (if (null c)
+        ""
+      (concat
+       (concat (propertize (car c) 'face face1)
+               ":"
+               (propertize (cdr c) 'face face2))
+       (let ((reststr (tg-format-attr-list (cdr lst) face1 face2)))
+         (if (= (length reststr) 0)
+             reststr
+           (concat ", " reststr)))))))
 
 (defun tg-documentation-function ()
   (let ((thing (thing-at-point 'sexp)))
@@ -427,9 +426,9 @@ If ALLTYPES is non-nil, assume that simple entries (those without
          ((tg-incidence-list-p)
           (tg-eldoc-incidence))
          (eid
-          (tg--eldoc-vertex-or-edge 'EdgeClass))
+          (tg-eldoc-vertex-or-edge-at-point 'EdgeClass))
          (vid
-          (tg--eldoc-vertex-or-edge 'VertexClass))
+          (tg-eldoc-vertex-or-edge-at-point 'VertexClass))
          (t
           (setq tg--last-doc nil))))
       tg--last-doc)))
