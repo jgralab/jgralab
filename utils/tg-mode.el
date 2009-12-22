@@ -74,10 +74,10 @@
                               "\\(?:[[].*[]]\\)*[[:space:]]*;"      ;; Constraints
                               ))
           (setq schema-alist
-                (cons (list 'VertexClass
-                            (concat current-package (match-string-no-properties 1))
-                            (tg--parse-superclasses (match-string-no-properties 2) current-package)
-                            (tg--parse-attributes (match-string-no-properties 3)))
+                (cons (list :meta 'VertexClass
+                            :qname (concat current-package (match-string-no-properties 1))
+                            :super (tg--parse-superclasses (match-string-no-properties 2) current-package)
+                            :attrs (tg--parse-attributes (match-string-no-properties 3)))
                       schema-alist)))
          ;; EdgeClasses
          ((looking-at (concat "^\\(?:abstract[[:space:]]+\\)?"
@@ -94,13 +94,13 @@
               (setq from (if (string-match "\\." from) from (concat current-package from)))
               (setq to   (if (string-match "\\." to)   to   (concat current-package to))))
             (setq schema-alist
-                  (cons (list 'EdgeClass
-                              (concat current-package (match-string-no-properties 2))
-                              (tg--parse-superclasses (match-string-no-properties 3) current-package)
-                              (tg--parse-attributes (match-string-no-properties 6))
-                              (match-string-no-properties 1)
-                              from
-                              to)
+                  (cons (list :meta 'EdgeClass
+                              :qname (concat current-package (match-string-no-properties 2))
+                              :super (tg--parse-superclasses (match-string-no-properties 3) current-package)
+                              :attr (tg--parse-attributes (match-string-no-properties 6))
+                              :edgetype (match-string-no-properties 1)
+                              :from from
+                              :to to)
                         schema-alist))))
          ;; End of schema (part)
          ((or (= (point) (point-max))
@@ -147,7 +147,7 @@
             (clrhash tg-unique-name-hashmap)
           (make-hash-table :test 'string=)))
   (dolist (l tg-schema-alist)
-    (let* ((qname (second l))
+    (let* ((qname (plist-get l :qname))
            (uname (replace-regexp-in-string "\\(?:.*\\.\\)\\([^.]+\\)" "\\1" qname)))
       (if (gethash uname tg-unique-name-hashmap)
           ;; Not unique, remove the old entry, too
@@ -162,7 +162,7 @@
 
 (defun tg-attributes-multi (mtype types)
   "Returns a list of all attribute names that are defined in all
-MTYPEs TYPES."
+TYPES of meta type MTYPE."
   (let ((attr-list (mapcar
                     (lambda (type)
                       (tg-all-attributes mtype type))
@@ -173,13 +173,14 @@ MTYPEs TYPES."
              attr-list))))
 
 (defun tg-all-attributes (mtype type &optional with-supertype)
-  "Returns a list of all attribute names of the MTYPE TYPE (and
-its supertypes)."
-  (let ((line (tg-find-schema-line mtype type)))
+  "Returns a list of all attribute names of the schema element
+ELEM (and its supertypes).  If WITH-SUPERTYPE is non-nil, suffix
+the names with the declaring types."
+  (let ((elem (tg-get-schema-element mtype type)))
     (sort
      (remove-duplicates
       (apply 'append
-             (fourth line)
+             (plist-get elem :attrs)
              (mapcar (lambda (supertype)
                        (let ((attrs (tg-all-attributes mtype supertype with-supertype)))
                          (if with-supertype
@@ -189,19 +190,20 @@ its supertypes)."
                                          (concat a "#" supertype)))
                                      attrs)
                            attrs)))
-                     (third line)))
+                     (plist-get elem :super)))
       :test 'string=)
      'string-lessp)))
 
-(defun tg-find-schema-line (mtype type)
-  "Get the line/list of `tg-schema-alist' that corresponds to
-MTYPE TYPE."
+(defun tg-get-schema-element (meta name)
+  "Get the line/list of `tg-schema-alist' that corresponds to the
+meta type META and has the name NAME.  NAME may be qualified or
+unique."
   (catch 'found
-    (let ((qname (tg-unique-name type 'qualified)))
-      (dolist (line tg-schema-alist)
-        (when (and (eq mtype (car line))
-                   (string= qname (second line)))
-          (throw 'found line))))))
+    (let ((qname (tg-unique-name name 'qualified)))
+      (dolist (elem tg-schema-alist)
+        (when (and (eq meta (plist-get elem :meta))
+                   (string= qname (plist-get elem :qname)))
+          (throw 'found elem))))))
 
 (defun tg-unique-name (name &optional type)
   "Given a qualified name, return the unique name and vice versa.
@@ -219,12 +221,6 @@ The optional TYPE specifies that the returned name has to be the
           ;; we want the qualified name
           (gethash name tg-unique-name-hashmap)
       name)))
-
-(defun tg-edgeclass-from (ec-name)
-  (sixth (tg-find-schema-line 'EdgeClass ec-name)))
-
-(defun tg-edgeclass-to (ec-name)
-  (seventh (tg-find-schema-line 'EdgeClass ec-name)))
 
 ;;** The Mode
 
@@ -361,19 +357,19 @@ prefix arg, jump to the target vertex."
                           (if (and pkg (not (string= "" pkg)))
                               (concat pkg "." name)
                             name)))))
-          (setq tg--last-doc (tg-eldoc-vertex-or-edge mtype qname)))
+          (setq tg--last-doc (tg-eldoc-vertex-or-edge (tg-get-schema-element mtype qname))))
       (setq tg--last-doc nil))))
 
-(defun tg-eldoc-vertex-or-edge (mtype type)
-  "Return a doc string for MTYPE TYPE"
-  (let* ((line (tg-find-schema-line mtype type))
-         (name (second line))
-         (supers (tg-format-list (third line) 'tg-supertype-face nil t))
+(defun tg-eldoc-vertex-or-edge (elem)
+  "Return a doc string for schema element ELEM."
+  (let* ((mtype (plist-get elem :meta))
+         (name (plist-get elem :qname))
+         (supers (tg-format-list (plist-get elem :super) 'tg-supertype-face nil t))
          (attrs (tg-format-list (tg-all-attributes mtype name 'with-supertype)
                                 'tg-attribute-face
                                 'tg-attribute-father-face)))
     (concat (propertize (if (eq mtype 'EdgeClass)
-                            (fifth line)
+                            (plist-get elem :edgetype)
                           (symbol-name mtype))
                         'face 'tg-metatype-face)
             " "
@@ -381,10 +377,10 @@ prefix arg, jump to the target vertex."
             (if (= (length supers) 0) "" (concat ": " supers))
             (if (eq mtype 'EdgeClass)
                 (concat (propertize " from " 'face 'tg-keyword-face)
-                        (propertize (tg-unique-name (tg-edgeclass-from name) 'unique)
+                        (propertize (tg-unique-name (plist-get elem :from) 'unique)
                                     'face 'tg-type-face)
                         (propertize " to " 'face 'tg-keyword-face)
-                        (propertize (tg-unique-name (tg-edgeclass-to name) 'unique)
+                        (propertize (tg-unique-name (plist-get elem :from) 'unique)
                                     'face 'tg-type-face))
               "")
             " {"

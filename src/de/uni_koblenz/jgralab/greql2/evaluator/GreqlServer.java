@@ -99,7 +99,7 @@ public class GreqlServer extends Thread {
 						if (result.isCollection()) {
 							JValueCollection coll = result.toCollection();
 							println("Result contains " + coll.size()
-									+ " elements.", PrintTarget.CLIENT, true);
+									+ " elements.\n", PrintTarget.CLIENT, true);
 							for (JValue jv : coll) {
 								println(jv.toString(), PrintTarget.CLIENT,
 										false);
@@ -107,12 +107,15 @@ public class GreqlServer extends Thread {
 						} else if (result.isMap()) {
 							JValueMap map = result.toJValueMap();
 							println("Result contains " + map.size()
-									+ " map entries.", PrintTarget.CLIENT, true);
+									+ " map entries.\n", PrintTarget.CLIENT,
+									true);
 							for (Entry<JValue, JValue> e : map.entrySet()) {
 								println(e.getKey() + " --> " + e.getValue(),
 										PrintTarget.CLIENT, false);
 							}
 						} else {
+							println("Result is a single element.\n",
+									PrintTarget.CLIENT, true);
 							println(result.toString(), PrintTarget.CLIENT,
 									false);
 						}
