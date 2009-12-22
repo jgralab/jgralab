@@ -101,11 +101,8 @@ public class Greql2FunctionLibrary {
 	 */
 	static {
 		packageName = Greql2FunctionLibrary.class.getPackage().getName();
-		logger.finer("Packagename : " + packageName);
 		nondottedPackageName = packageName.replace(".", "/");
-		logger.finer("Nondotted Package name " + nondottedPackageName);
 		thisInstance = new Greql2FunctionLibrary();
-		logger.finer("FunctionLibrary successfull loaded");
 	}
 
 	/**
