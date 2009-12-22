@@ -32,6 +32,7 @@ import java.net.URLDecoder;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Set;
+import java.util.TreeSet;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 import java.util.logging.Level;
@@ -124,8 +125,8 @@ public class Greql2FunctionLibrary {
 
 	public static void main(String[] args) {
 		JGraLab.setLogLevel(Level.OFF);
-		for (String function : Greql2FunctionLibrary.instance().availableFunctions
-				.keySet()) {
+		for (String function : new TreeSet<String>(Greql2FunctionLibrary
+				.instance().availableFunctions.keySet())) {
 			System.out.println(function);
 		}
 	}

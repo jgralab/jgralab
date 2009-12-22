@@ -19,6 +19,8 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValueTypeCollection;
 
 /**
+ * Superclass of {@link EdgesConnected}, {@link EdgesFrom}, and {@link EdgesTo}.
+ * 
  * @author Tassilo Horn <horn@uni-koblenz.de>
  * 
  */
