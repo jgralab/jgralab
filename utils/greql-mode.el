@@ -29,7 +29,7 @@
 ;; - Implement handling of imports in completion (DONE) and highlighting (still
 ;;   not done)
 
-;;* Code:
+;;* Code
 
 ;;** Main
 
@@ -170,9 +170,9 @@ queries are evaluated.  Set it with `greql-set-graph'.")
   (greql-set-fontlock-keywords-3))
 
 
-(defun greql-import-completion-list (&optional types)
+(defun greql-import-completion-list (&optional mtypes)
   "Additional completions due to imports."
-  (let ((comp-lst (greql-completion-list types))
+  (let ((comp-lst (greql-completion-list mtypes))
         lst)
     (save-excursion
       (goto-char 0)
@@ -185,12 +185,13 @@ queries are evaluated.  Set it with `greql-set-graph'.")
                (nconc lst
                       (delq nil
                             (mapcar
-                             (lambda (str)
+                             (lambda (elem)
                                (let ((regex (regexp-quote
                                              (substring
                                               import 0 (- (length import) 1)))))
-                                 (if (string-match regex str)
-                                     (replace-regexp-in-string regex "" str)
+                                 (if (string-match regex (car elem))
+                                     (list (replace-regexp-in-string regex "" (car elem))
+                                           (cadr elem))
                                    nil)))
                              comp-lst))))
             ;; An element import
@@ -200,14 +201,28 @@ queries are evaluated.  Set it with `greql-set-graph'.")
                          lst)))))))
     lst))
 
-(defun greql-completion-list (&optional types)
+(defun greql-completion-list (&optional mtypes)
+  "Return a completion list of all MTYPES."
   (when tg-schema-alist
     (let (completions)
-      (dolist (line tg-schema-alist)
-        (when (or (null types) (member (car line) types))
-          (let ((elem (cadr line)))
-            (setq completions (cons elem completions)))))
+      (dolist (elem tg-schema-alist)
+        (when (or (null mtypes) (member (plist-get elem :meta) mtypes))
+          (setq completions (cons (list (plist-get elem :qname)
+                                        (concat " (" (symbol-name (plist-get elem :meta)) ")"))
+                                  completions))))
       completions)))
+
+(defun greql-attribute-completion-list (al)
+  "Formats the attribute list retrieved by
+tg-all-attributes-multi for completion."
+  (when al
+    (let ((cl (mapcar
+                (lambda (plst)
+                  (list (plist-get plst :name)
+                        (concat " : " (plist-get plst :domain)
+                                " (" (tg-unique-name (plist-get plst :owner) 'unique) ")")))
+                al)))
+      cl)))
 
 (defun greql-complete-1 (completion-list &optional backward-regexp)
   (let* ((window (get-buffer-window "*Completions*" 0))
@@ -216,8 +231,7 @@ queries are evaluated.  Set it with `greql-set-graph'.")
                           (or backward-regexp "[^[:word:]._]")
                           nil t) 0))))
          (word (buffer-substring-no-properties beg (point)))
-         (compl (try-completion word
-                                completion-list)))
+         (compl (try-completion word completion-list)))
     (if (and (eq last-command this-command)
              window (window-live-p window) (window-buffer window)
              (buffer-name (window-buffer window)))
@@ -237,11 +251,16 @@ queries are evaluated.  Set it with `greql-set-graph'.")
        ((stringp compl)
         (if (string= word compl)
             ;; Show completion buffer
-            (let ((list (all-completions word
-                                         completion-list)))
-              (setq list (sort list 'string<))
+            (let ((list (all-completions word completion-list)))
               (with-output-to-temp-buffer "*Completions*"
-                (display-completion-list list word)))
+                (display-completion-list
+                 (remove-if-not
+                  (lambda (elem)
+                    (if (stringp elem)
+                        (member elem list)
+                      (member (car elem) list)))
+                  completion-list)
+                 word)))
           ;; Complete
           (delete-region beg (point))
           (insert compl)
@@ -268,11 +287,17 @@ queries are evaluated.  Set it with `greql-set-graph'.")
     (greql-complete-anyclass))
    ;; complete attributes
    ((greql-variable-p)
-    (let ((vartypes (greql-variable-types)))
-      (when vartypes
-        (greql-complete-1 (tg-attributes-multi (car vartypes) (cadr vartypes)) "[.]"))))
+    (greql-complete-attributes))
    ;; complete keywords / functions
    (t (greql-complete-keyword-or-function))))
+
+(defun greql-complete-attributes ()
+  (interactive)
+  (let ((vartypes (greql-variable-types)))
+    (when vartypes
+      (let ((compl-list (greql-attribute-completion-list
+                         (tg-all-attributes-multi (car vartypes) (cadr vartypes)))))
+        (greql-complete-1 compl-list "[.]")))))
 
 (defun greql-complete-anyclass ()
   (interactive)
@@ -446,8 +471,11 @@ for some variable declared as
                (types (replace-regexp-in-string
                        "[[:space:]]+" ""
                        (buffer-substring-no-properties (match-beginning 2)
-                                                       (match-end 2)))))
-          (list mtype (split-string types "[,]")))))))
+                                                                      (match-end 2)))))
+          (if (string= types "")
+              (setq types nil)
+            (setq types (split-string types ",")))
+          (list mtype types))))))
 
 (defun greql-kill-region-as-java-string (beg end)
   "Puts the marked region as java string on the kill-ring."
@@ -471,28 +499,31 @@ for some variable declared as
 (make-variable-buffer-local 'greql--last-doc)
 
 (defun greql-documentation-function ()
-  (let ((thing (thing-at-point 'sexp)))
-    (if (string= thing greql--last-thing)
-        greql--last-doc
-      (setq greql--last-thing thing)
-      (setq greql--last-doc
-            (cond
-             ;; document vertex classes
-             ((or (greql-vertex-set-expression-p)
-                  (greql-start-or-goal-restriction-p))
-              (save-excursion
-                (re-search-backward "[{ ,]" (line-beginning-position) t)
-                (when (looking-at "[{ ,]\\([[:alnum:]._]+\\)")
-                  (tg-eldoc-vertex-or-edge 'VertexClass (match-string 1)))))
-             ;; document edge classes
-             ((or (greql-edge-set-expression-p)
-                  (greql-edge-restriction-p))
-              (save-excursion
-                (re-search-backward "[{ ,]" (line-beginning-position) t)
-                (when (looking-at "[{ ,]\\([[:alnum:]._]+\\)")
-                  (tg-eldoc-vertex-or-edge 'EdgeClass (match-string 1)))))
-             ;; complete keywords / functions
-             (t ""))))))
+  (when (and tg-schema-alist tg-unique-name-hashmap)
+    (let ((thing (thing-at-point 'sexp)))
+      (if (string= thing greql--last-thing)
+          greql--last-doc
+        (setq greql--last-thing thing)
+        (setq greql--last-doc
+              (cond
+               ;; document vertex classes
+               ((or (greql-vertex-set-expression-p)
+                    (greql-start-or-goal-restriction-p))
+                (save-excursion
+                  (re-search-backward "[{ ,]" (line-beginning-position) t)
+                  (when (looking-at "[{ ,]\\([[:alnum:]._]+\\)")
+                    (tg-eldoc-vertex-or-edge (tg-get-schema-element 'VertexClass
+                                                                    (match-string-no-properties 1))))))
+               ;; document edge classes
+               ((or (greql-edge-set-expression-p)
+                    (greql-edge-restriction-p))
+                (save-excursion
+                  (re-search-backward "[{ ,]" (line-beginning-position) t)
+                  (when (looking-at "[{ ,]\\([[:alnum:]._]+\\)")
+                    (tg-eldoc-vertex-or-edge (tg-get-schema-element 'EdgeClass
+                                                                    (match-string-no-properties 1))))))
+               ;; complete keywords / functions
+               (t "")))))))
 
 (provide 'greql-mode)
 
