@@ -75,6 +75,8 @@ public class Contains extends AbstractGreql2Function {
 				{ JValueType.PATH, JValueType.ATTRIBUTEDELEMENT },
 				{ JValueType.PATHSYSTEM, JValueType.ATTRIBUTEDELEMENT } };
 		signatures = x;
+
+		description = "Return true, iff the given collection/path/pathsystem contains the given element.";
 	}
 
 	public JValue evaluate(Graph graph, BooleanGraphMarker subgraph,

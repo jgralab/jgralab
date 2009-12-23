@@ -19,6 +19,8 @@ public abstract class BooleanFunction extends AbstractGreql2Function {
 	{
 		JValueType[][] x = { { JValueType.BOOLEAN, JValueType.BOOLEAN } };
 		signatures = x;
+
+		description = "Return the value of this logical operation on the given two booleans.";
 	}
 
 	protected enum BooleanOperator {

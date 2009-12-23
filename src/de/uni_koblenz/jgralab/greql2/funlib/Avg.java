@@ -64,6 +64,8 @@ public class Avg extends AbstractGreql2Function {
 	{
 		JValueType[][] x = { { JValueType.COLLECTION } };
 		signatures = x;
+
+		description = "Return the average of the numbers in the given collection.";
 	}
 
 	public JValue evaluate(Graph graph, BooleanGraphMarker subgraph,

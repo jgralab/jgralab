@@ -70,6 +70,9 @@ public class EdgeTrace extends AbstractGreql2Function {
 	{
 		JValueType[][] x = { { JValueType.PATH } };
 		signatures = x;
+
+		description = "Return the edgetrace of the given path.\n"
+				+ "An edgetrace is a list of all edges of this path in correct order.";
 	}
 
 	public JValue evaluate(Graph graph, BooleanGraphMarker subgraph,

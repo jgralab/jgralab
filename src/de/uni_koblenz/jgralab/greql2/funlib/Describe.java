@@ -54,6 +54,9 @@ public class Describe extends AbstractGreql2Function {
 	{
 		JValueType[][] x = { {}, { JValueType.ATTRIBUTEDELEMENT } };
 		signatures = x;
+
+		description = "Return a tuple (QName, ID, Attrs) describing the given attributed element.\n"
+				+ "If no element is given, describe the graph itself, producing: (QName, (ID, Version), Attrs).";
 	}
 
 	/*

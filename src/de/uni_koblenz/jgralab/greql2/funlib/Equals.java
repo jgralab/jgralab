@@ -68,6 +68,8 @@ public class Equals extends AbstractGreql2Function {
 	{
 		JValueType[][] x = { { JValueType.OBJECT, JValueType.OBJECT } };
 		signatures = x;
+
+		description = "Return true, iff both objects are equal.";
 	}
 
 	/**

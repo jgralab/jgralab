@@ -70,6 +70,8 @@ public class EdgeTypeSet extends AbstractGreql2Function {
 		JValueType[][] x = { { JValueType.COLLECTION }, { JValueType.PATH },
 				{ JValueType.PATHSYSTEM } };
 		signatures = x;
+
+		description = "Return a set of all edge-types that occure in the given structure.";
 	}
 
 	public JValue evaluate(Graph graph, BooleanGraphMarker subgraph,
