@@ -107,8 +107,9 @@
   "Distance between tab stops (for display of tab characters), in
 columns.")
 
-(defvar greql-buffer "*GReQL*"
-  "Name of the GReQL status buffer.")
+(defvar greql-evaluation-buffer nil
+  "Name of the GReQL evaluation buffer.")
+(make-variable-buffer-local 'greql-evaluation-buffer)
 
 (define-derived-mode greql-mode text-mode "GReQL"
   "A major mode for GReQL2."
@@ -117,11 +118,12 @@ columns.")
   (set (make-local-variable 'comment-end)        "")
 
   ;; Keywords
-  (greql-set-fontlock-keywords-3)
   (setq font-lock-defaults
         '((greql-fontlock-keywords-1
            greql-fontlock-keywords-2
            greql-fontlock-keywords-3)))
+  (greql-set-fontlock-keywords-3)
+
   ;; Update highlighting of Vertex- and EdgeClasses after saving
   (add-hook 'after-save-hook 'greql-set-fontlock-keywords-3 t t)
 
@@ -129,6 +131,8 @@ columns.")
   (set (make-local-variable 'indent-line-function) 'greql-indent-line)
   (set (make-local-variable 'eldoc-documentation-function)
        'greql-documentation-function)
+
+  (setq greql-evaluation-buffer (concat "*GReQL Evaluation: " (buffer-name) "*"))
 
   (greql-add-functions-and-keywords)
 
@@ -423,7 +427,7 @@ objects."
   "Execute the query in the current buffer on `greql-graph'.
 If a region is active, use only that as query."
   (interactive)
-  (let ((buffer (get-buffer-create greql-buffer))
+  (let ((buffer (get-buffer-create greql-evaluation-buffer))
         (queryfile (if (use-region-p)
                        (let ((f (make-temp-file "greql-query"))
                              (str (buffer-substring-no-properties (region-beginning) (region-end))))
@@ -447,7 +451,7 @@ If a region is active, use only that as query."
     (display-buffer buffer)))
 
 (defun greql-display-result (proc change)
-  (display-buffer (get-buffer-create greql-buffer)))
+  (display-buffer (get-buffer-create greql-evaluation-buffer)))
 
 (defun greql-vertex-set-expression-p ()
   (looking-back "V{[[:word:]._,^ ]*"))
