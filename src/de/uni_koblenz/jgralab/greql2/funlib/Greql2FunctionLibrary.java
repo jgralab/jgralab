@@ -190,8 +190,8 @@ public class Greql2FunctionLibrary {
 
 	private static String describeAllFunction() {
 		StringBuilder sb = new StringBuilder();
-		for (String fun : Greql2FunctionLibrary.instance().availableFunctions
-				.keySet()) {
+		for (String fun : new TreeSet<String>(
+				Greql2FunctionLibrary.instance().availableFunctions.keySet())) {
 			sb.append(describeFunction(fun, false));
 			sb.append("\u000C\n");
 		}
