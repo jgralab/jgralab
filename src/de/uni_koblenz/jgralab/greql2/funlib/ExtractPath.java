@@ -72,7 +72,7 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
  * 
  */
 
-public class ExtractPath extends AbstractGreql2Function {
+public class ExtractPath extends Greql2Function {
 
 	{
 		JValueType[][] x = { { JValueType.PATHSYSTEM },

@@ -67,7 +67,7 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueTypeCollection;
  * 
  */
 
-public class Vertices extends AbstractGreql2Function {
+public class Vertices extends Greql2Function {
 	{
 		JValueType[][] x = { { JValueType.VERTEX, JValueType.VERTEX },  { JValueType.VERTEX, JValueType.VERTEX, JValueType.TYPECOLLECTION } };
 		signatures = x;

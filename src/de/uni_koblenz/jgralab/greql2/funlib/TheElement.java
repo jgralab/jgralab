@@ -42,7 +42,7 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
  * 
  * @author ist@uni-koblenz.de
  */
-public class TheElement extends AbstractGreql2Function {
+public class TheElement extends Greql2Function {
 	{
 		JValueType[][] x = { { JValueType.COLLECTION } };
 		signatures = x;

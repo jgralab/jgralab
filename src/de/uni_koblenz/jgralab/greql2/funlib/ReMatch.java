@@ -64,7 +64,7 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
  * 
  */
 
-public class ReMatch extends AbstractGreql2Function {
+public class ReMatch extends Greql2Function {
 	{
 		JValueType[][] x = { { JValueType.STRING, JValueType.STRING } };
 		signatures = x;

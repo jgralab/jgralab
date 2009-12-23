@@ -58,7 +58,7 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
  * 
  */
 
-public class ToSet extends AbstractGreql2Function {
+public class ToSet extends Greql2Function {
 	{
 		JValueType[][] x = { { JValueType.COLLECTION }, { JValueType.OBJECT } };
 		signatures = x;

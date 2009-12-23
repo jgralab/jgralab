@@ -36,43 +36,13 @@ import java.util.List;
  * @author ist@uni-koblenz.de
  */
 public class JValueSet extends JValueCollection implements Cloneable {
-//
-//	/**
-//	 * A wrapper iterator class that uses <code>List.iterator()</code>
-//	 * while accounting for the additional <code>storedHashCode</code>
-//	 * attribute and the HashSet for fast member test.
-//	 */
-//	private class JValueSetIterator implements Iterator<JValue> {
-//		private Iterator<JValue> myIterator;
-//
-//		private JValue current = null;
-//		
-//		public JValueSetIterator() {
-//			myIterator = sortedMembers.iterator();
-//		}
-//
-//		public boolean hasNext() {
-//			return myIterator.hasNext();
-//		}
-//
-//		public JValue next() {
-//			current = myIterator.next();
-//			return current;
-//		}
-//
-//		public void remove() {
-//			storedHashCode = 0;
-//			itemHashSet.remove(current);
-//			myIterator.remove();
-//		}
-//	}
 
 	/**
 	 * The backing instance of <code>HashSet<code> where the elements of this
 	 * set are stored for fast membership test
 	 */
 	private HashSet<JValue> itemHashSet;
-	
+
 	/**
 	 * List keeps the members in the order they are added to this set
 	 */
@@ -120,7 +90,6 @@ public class JValueSet extends JValueCollection implements Cloneable {
 		sortedMembers = new ArrayList<JValue>(initialCapacity);
 	}
 
-
 	/**
 	 * Returns an iterator over the elements in this mathematical set. The
 	 * elements are returned in no particular order, this in includes that two
@@ -138,16 +107,16 @@ public class JValueSet extends JValueCollection implements Cloneable {
 	public boolean isJValueSet() {
 		return true;
 	}
-	
+
 	public int indexOf(JValue val) {
 		return sortedMembers.indexOf(val);
 	}
 
 	/**
-	 * Returns the hash code value for this set. To get the hash code of
-	 * this set, new hash code values for every element of this set
-	 * are calculated from a polynomial of 3rd order and finally summed up. This
-	 * ensures that <code>s1.equals(s2)</code> implies that
+	 * Returns the hash code value for this set. To get the hash code of this
+	 * set, new hash code values for every element of this set are calculated
+	 * from a polynomial of 3rd order and finally summed up. This ensures that
+	 * <code>s1.equals(s2)</code> implies that
 	 * <code>s1.hashCode()==s2.hashCode()</code> for any two sets
 	 * <code>s1</code> and <code>s2</code>, as required by the general contract
 	 * of <code>Object.hashCode()</code>.
@@ -278,7 +247,8 @@ public class JValueSet extends JValueCollection implements Cloneable {
 	 * in this set.
 	 * <p>
 	 * 
-	 * @param o object to be compared for equality with this set.
+	 * @param o
+	 *            object to be compared for equality with this set.
 	 * @return <code>true</code> if the specified object is equal to this set,
 	 *         <code>false</code> otherwise.
 	 */
@@ -286,21 +256,21 @@ public class JValueSet extends JValueCollection implements Cloneable {
 	public boolean equals(Object o) {
 		if (o instanceof JValueSet) {
 			JValueSet other = (JValueSet) o;
-			//return sortedMembers.equals(other.sortedMembers);
+			// return sortedMembers.equals(other.sortedMembers);
 			return itemHashSet.equals(other.itemHashSet);
 		}
 		return false;
 	}
 
 	/**
-	 * Returns <code>true</code> if this set is a subset of the
-	 * specified set. That is, if all elements of this set are also
-	 * present in the specified set.
+	 * Returns <code>true</code> if this set is a subset of the specified set.
+	 * That is, if all elements of this set are also present in the specified
+	 * set.
 	 * 
 	 * @param s
 	 *            set to be checked for being a superset.
-	 * @return <code>true</code> if this set is a subset of the
-	 *         specified set, <code>false</code> otherwise.
+	 * @return <code>true</code> if this set is a subset of the specified set,
+	 *         <code>false</code> otherwise.
 	 */
 	public boolean isSubset(JValueSet s) {
 		if (this.size() <= s.size()) {
@@ -401,9 +371,9 @@ public class JValueSet extends JValueCollection implements Cloneable {
 	}
 
 	/**
-	 * Returns <code>true</code> if this set is a superset of the
-	 * specified set. That is, if all elements of the specified set are also
-	 * present in this set.
+	 * Returns <code>true</code> if this set is a superset of the specified set.
+	 * That is, if all elements of the specified set are also present in this
+	 * set.
 	 * 
 	 * @param s
 	 *            set to be checked for being a subset.
@@ -420,13 +390,14 @@ public class JValueSet extends JValueCollection implements Cloneable {
 	}
 
 	/**
-	 * Returns <code>true</code> if thisset has no common elements
-	 * with the specified set.
+	 * Returns <code>true</code> if thisset has no common elements with the
+	 * specified set.
 	 * 
 	 * 
-	 * @param s set to be checked for common elements.
-	 * @return <code>true</code> if this set has no common elements
-	 *         with the specifi set, <code>false</code> otherwise.
+	 * @param s
+	 *            set to be checked for common elements.
+	 * @return <code>true</code> if this set has no common elements with the
+	 *         specifi set, <code>false</code> otherwise.
 	 */
 	public boolean isDisjoint(JValueSet s) {
 		if (this.size() < s.size()) {
@@ -444,7 +415,6 @@ public class JValueSet extends JValueCollection implements Cloneable {
 		}
 		return true;
 	}
-
 
 	/**
 	 * returns a pointer to the object itself, very useful to get a reference of

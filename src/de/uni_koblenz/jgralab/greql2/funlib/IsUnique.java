@@ -62,7 +62,7 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
  * 
  */
 
-public class IsUnique extends AbstractGreql2Function {
+public class IsUnique extends Greql2Function {
 
 	{
 		JValueType[][] x = { { JValueType.COLLECTION } };

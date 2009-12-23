@@ -1,27 +1,6 @@
-/*
- * JGraLab - The Java graph laboratory
- * (c) 2006-2009 Institute for Software Technology
- *               University of Koblenz-Landau, Germany
+/**
  *
- *               ist@uni-koblenz.de
- *
- * Please report bugs to http://serres.uni-koblenz.de/bugzilla
- *
- * This program is free software; you can redistribute it and/or
- * modify it under the terms of the GNU General Public License
- * as published by the Free Software Foundation; either version 2
- * of the License, or (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
-
 package de.uni_koblenz.jgralab.greql2.funlib;
 
 import java.util.ArrayList;
@@ -30,9 +9,10 @@ import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.graphmarker.BooleanGraphMarker;
 import de.uni_koblenz.jgralab.greql2.exception.EvaluateException;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
+import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
 
 /**
- * This interface is implemented by every class, that implements a
+ * This abstract class is extended by every class, that implements a
  * GReQL-Function. The method <code>evaluate(...)</code> can be used to evaluate
  * the GReQL2 Function Each Function will get the following parameters:
  * <ul>
@@ -55,7 +35,80 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
  * @author ist@uni-koblenz.de
  * 
  */
-public interface Greql2Function {
+public abstract class Greql2Function {
+
+	/**
+	 * The description string of this function. The first line should be a brief
+	 * description, additional details should be given in following lines.
+	 */
+	protected String description = "TODO: No description set for this function.";
+
+	/**
+	 * Represents a list of allowed signatures for this {@link Greql2Function}.
+	 */
+	protected JValueType[][] signatures;
+
+	/**
+	 * @param args
+	 *            the actual parameters given to that function
+	 * @return the index in <code>signatures</code> that matches
+	 *         <code>args</code>
+	 */
+	protected final int checkArguments(JValue[] args) {
+		int[] indexAndCosts = { -1, Integer.MAX_VALUE };
+		for (int i = 0; i < signatures.length; i++) {
+			if (signatures[i].length != args.length) {
+				// The current arglist has another length than the given one, so
+				// it cannot match.
+				continue;
+			}
+			int conversionCosts = 0;
+			for (int j = 0; j < signatures[i].length; j++) {
+				int thisArgsCosts = args[j].conversionCosts(signatures[i][j]);
+				if (thisArgsCosts == -1) {
+					// conversion is not possible
+					conversionCosts = Integer.MAX_VALUE;
+					break;
+				}
+				conversionCosts += thisArgsCosts;
+			}
+			if (conversionCosts == 0) {
+				// this signature was a perfect match!
+				return i;
+			} else if ((conversionCosts > 0)
+					&& (conversionCosts < indexAndCosts[1])) {
+				// this signature can at least be converted and is the best till
+				// now
+				indexAndCosts[0] = i;
+				indexAndCosts[1] = conversionCosts;
+			}
+		}
+		return indexAndCosts[0];
+	}
+
+	protected final void printArguments(JValue[] args) {
+		for (int i = 0; i < args.length; i++) {
+			System.out.println("  args[" + i + "] = " + args[i]);
+		}
+	}
+
+	public final String getExpectedParameters() {
+		StringBuilder sb = new StringBuilder();
+		for (int i = 0; i < signatures.length; i++) {
+			sb.append("(");
+			for (int j = 0; j < signatures[i].length; j++) {
+				sb.append(signatures[i][j]);
+				if (j != signatures[i].length - 1) {
+					sb.append(", ");
+				}
+			}
+			sb.append(")");
+			if (i < signatures.length - 1) {
+				sb.append(" or ");
+			}
+		}
+		return sb.toString();
+	}
 
 	/**
 	 * evaluates this GReQL-Function
@@ -66,7 +119,7 @@ public interface Greql2Function {
 	 * @throws EvaluateException
 	 *             if something went wrong
 	 */
-	public JValue evaluate(Graph graph, BooleanGraphMarker subgraph,
+	public abstract JValue evaluate(Graph graph, BooleanGraphMarker subgraph,
 			JValue[] arguments) throws EvaluateException;
 
 	/**
@@ -77,7 +130,7 @@ public interface Greql2Function {
 	 * @return The estimated costs in the abstract measure-unit "interpretation
 	 *         steps"
 	 */
-	public long getEstimatedCosts(ArrayList<Long> inElements);
+	public abstract long getEstimatedCosts(ArrayList<Long> inElements);
 
 	/**
 	 * Calculates the estimated selectivity of this boolean function. If this
@@ -85,7 +138,7 @@ public interface Greql2Function {
 	 * 
 	 * @return the selectivity of this function, 0 < selectivity <= 1
 	 */
-	public double getSelectivity();
+	public abstract double getSelectivity();
 
 	/**
 	 * Calculates the estimated result size for the given number of input
@@ -95,12 +148,5 @@ public interface Greql2Function {
 	 *            the number of input elements to calculate the result size for
 	 * @return the estimated number of elements in the result
 	 */
-	public long getEstimatedCardinality(int inElements);
-
-	/**
-	 * @return the expected parameters for this function as string. This is
-	 *         needed to create helpful outputs like "Function X(a,b) is not
-	 *         applicable for the arguments (a,c)"
-	 */
-	public String getExpectedParameters();
+	public abstract long getEstimatedCardinality(int inElements);
 }

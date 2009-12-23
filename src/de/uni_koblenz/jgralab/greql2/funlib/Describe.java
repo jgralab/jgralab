@@ -50,7 +50,7 @@ import de.uni_koblenz.jgralab.schema.AttributedElementClass;
  * @author Tassilo Horn &lt;horn@uni-koblenz.de&gt;
  * 
  */
-public class Describe extends AbstractGreql2Function {
+public class Describe extends Greql2Function {
 	{
 		JValueType[][] x = { {}, { JValueType.ATTRIBUTEDELEMENT } };
 		signatures = x;

@@ -59,7 +59,7 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
  * 
  */
 
-public class Max extends AbstractGreql2Function {
+public class Max extends Greql2Function {
 
 	{
 		JValueType[][] x = { { JValueType.COLLECTION } };

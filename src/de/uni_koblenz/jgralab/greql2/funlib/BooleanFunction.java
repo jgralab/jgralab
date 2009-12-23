@@ -15,7 +15,7 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
  * @author Tassilo Horn <horn@uni-koblenz.de>
  * 
  */
-public abstract class BooleanFunction extends AbstractGreql2Function {
+public abstract class BooleanFunction extends Greql2Function {
 	{
 		JValueType[][] x = { { JValueType.BOOLEAN, JValueType.BOOLEAN } };
 		signatures = x;

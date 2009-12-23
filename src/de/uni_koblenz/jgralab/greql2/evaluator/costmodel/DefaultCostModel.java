@@ -1259,7 +1259,7 @@ public class DefaultCostModel extends CostModelBase implements CostModel {
 	public VertexCosts calculateCostsSetConstruction(
 			SetConstructionEvaluator e, GraphSize graphSize) {
 		SetConstruction setCons = (SetConstruction) e.getVertex();
-		IsPartOf inc = setCons.getFirstIsPartOf();
+		IsPartOf inc = setCons.getFirstIsPartOf(EdgeDirection.IN);
 		long parts = 0;
 		long partCosts = 0;
 		while (inc != null) {
@@ -1267,7 +1267,7 @@ public class DefaultCostModel extends CostModelBase implements CostModel {
 					.getVertexEvaluatorGraphMarker().getMark(inc.getAlpha());
 			partCosts += veval.getCurrentSubtreeEvaluationCosts(graphSize);
 			parts++;
-			inc = inc.getNextIsPartOf();
+			inc = inc.getNextIsPartOf(EdgeDirection.IN);
 		}
 
 		long ownCosts = parts * addToSetCosts + 2;

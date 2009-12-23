@@ -14,7 +14,7 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
  * @author Tassilo Horn <horn@uni-koblenz.de>
  * 
  */
-public abstract class ArithmeticFunction extends AbstractGreql2Function {
+public abstract class ArithmeticFunction extends Greql2Function {
 	{
 		JValueType[][] x = { { JValueType.DOUBLE, JValueType.DOUBLE },
 				{ JValueType.LONG, JValueType.LONG },

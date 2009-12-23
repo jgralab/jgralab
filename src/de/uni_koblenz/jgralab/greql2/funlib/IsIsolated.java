@@ -61,7 +61,7 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
  * 
  */
 
-public class IsIsolated extends AbstractGreql2Function {
+public class IsIsolated extends Greql2Function {
 	{
 		JValueType[][] x = { { JValueType.VERTEX } };
 		signatures = x;

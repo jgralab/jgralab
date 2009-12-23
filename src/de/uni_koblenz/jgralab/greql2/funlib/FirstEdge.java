@@ -58,7 +58,7 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueTypeCollection;
  * 
  */
 
-public class FirstEdge extends AbstractGreql2Function {
+public class FirstEdge extends Greql2Function {
 	{
 		JValueType[][] x = { { },  { JValueType.TYPECOLLECTION } };
 		signatures = x;

@@ -62,7 +62,7 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
  * 
  */
 
-public class Id extends AbstractGreql2Function {
+public class Id extends Greql2Function {
 	{
 		JValueType[][] x = { { JValueType.VERTEX }, { JValueType.EDGE } };
 		signatures = x;

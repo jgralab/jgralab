@@ -65,7 +65,7 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
  * 
  */
 
-public class VertexTypeSet extends AbstractGreql2Function {
+public class VertexTypeSet extends Greql2Function {
 	{
 		JValueType[][] x = { { JValueType.COLLECTION }, { JValueType.PATH },
 				{ JValueType.PATHSYSTEM } };

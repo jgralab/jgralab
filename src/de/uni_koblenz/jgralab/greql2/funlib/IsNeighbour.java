@@ -71,7 +71,7 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
  * 
  */
 
-public class IsNeighbour extends AbstractGreql2Function {
+public class IsNeighbour extends Greql2Function {
 	{
 		JValueType[][] x = { { JValueType.VERTEX, JValueType.VERTEX },
 				{ JValueType.VERTEX, JValueType.VERTEX, JValueType.PATHSYSTEM } };

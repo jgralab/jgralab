@@ -59,7 +59,7 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
  * 
  */
 
-public class GetEdge extends AbstractGreql2Function {
+public class GetEdge extends Greql2Function {
 	{
 		JValueType[][] x = { { JValueType.INTEGER } };
 		signatures = x;

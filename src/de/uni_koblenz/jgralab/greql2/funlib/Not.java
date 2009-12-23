@@ -78,7 +78,7 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
  * 
  */
 
-public class Not extends AbstractGreql2Function {
+public class Not extends Greql2Function {
 	{
 		JValueType[][] x = { { JValueType.BOOLEAN } };
 		signatures = x;

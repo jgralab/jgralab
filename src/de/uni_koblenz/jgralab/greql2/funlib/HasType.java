@@ -69,7 +69,7 @@ import de.uni_koblenz.jgralab.schema.AttributedElementClass;
  * 
  */
 
-public class HasType extends AbstractGreql2Function {
+public class HasType extends Greql2Function {
 	{
 		JValueType[][] x = {
 				{ JValueType.ATTRIBUTEDELEMENT, JValueType.STRING },

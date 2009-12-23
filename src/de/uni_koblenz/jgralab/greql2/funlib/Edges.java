@@ -65,7 +65,7 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueTypeCollection;
  * 
  */
 
-public class Edges extends AbstractGreql2Function {
+public class Edges extends Greql2Function {
 	{
 		JValueType[][] x = { { JValueType.EDGE, JValueType.EDGE },
 				{ JValueType.EDGE, JValueType.EDGE, JValueType.TYPECOLLECTION } };

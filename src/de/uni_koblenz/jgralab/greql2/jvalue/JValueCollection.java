@@ -322,7 +322,7 @@ abstract public class JValueCollection extends JValue implements
 	@Override
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
-		sb.append(OPENING_PAREN);
+		sb.append(this.OPENING_PAREN);
 		boolean first = true;
 		for (JValue j : this) {
 			if (!first) {
@@ -331,7 +331,7 @@ abstract public class JValueCollection extends JValue implements
 			first = false;
 			sb.append(j.toString());
 		}
-		sb.append(CLOSING_PAREN);
+		sb.append(this.CLOSING_PAREN);
 		return sb.toString();
 	}
 

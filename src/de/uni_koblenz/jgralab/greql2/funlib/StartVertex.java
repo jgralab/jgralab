@@ -60,7 +60,7 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
  * 
  */
 
-public class StartVertex extends AbstractGreql2Function {
+public class StartVertex extends Greql2Function {
 	{
 		JValueType[][] x = { { JValueType.PATH }, { JValueType.EDGE } };
 		signatures = x;

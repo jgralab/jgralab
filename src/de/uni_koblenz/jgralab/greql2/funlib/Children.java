@@ -68,7 +68,7 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
  * 
  */
 
-public class Children extends AbstractGreql2Function {
+public class Children extends Greql2Function {
 
 	{
 		JValueType[][] x = { { JValueType.VERTEX },

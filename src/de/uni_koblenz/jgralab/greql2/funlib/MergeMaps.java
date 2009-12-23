@@ -63,7 +63,7 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
  * @author ist@uni-koblenz.de
  * 
  */
-public class MergeMaps extends AbstractGreql2Function {
+public class MergeMaps extends Greql2Function {
 	{
 		JValueType[][] x = { { JValueType.MAP, JValueType.MAP } };
 		signatures = x;

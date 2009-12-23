@@ -64,7 +64,7 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
  * @author ist@uni-koblenz.de
  * 
  */
-public class IsAcyclic extends AbstractGreql2Function {
+public class IsAcyclic extends Greql2Function {
 	{
 		JValueType[][] x = { {}, { JValueType.SUBGRAPHTEMPATTRIBUTE } };
 		signatures = x;

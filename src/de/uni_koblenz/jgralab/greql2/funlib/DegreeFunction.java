@@ -21,7 +21,7 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueTypeCollection;
  * @author Tassilo Horn <horn@uni-koblenz.de>
  * 
  */
-public abstract class DegreeFunction extends AbstractGreql2Function {
+public abstract class DegreeFunction extends Greql2Function {
 	{
 		JValueType[][] x = {
 				{ JValueType.VERTEX },

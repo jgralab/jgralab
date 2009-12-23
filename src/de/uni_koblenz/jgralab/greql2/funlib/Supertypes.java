@@ -74,7 +74,7 @@ import de.uni_koblenz.jgralab.schema.AttributedElementClass;
  * Thesis
  */
 
-public class Supertypes extends AbstractGreql2Function {
+public class Supertypes extends Greql2Function {
 	{
 		JValueType[][] x = { { JValueType.STRING },
 				{ JValueType.ATTRIBUTEDELEMENTCLASS } };

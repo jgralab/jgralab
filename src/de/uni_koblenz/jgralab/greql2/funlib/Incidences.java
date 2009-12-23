@@ -24,7 +24,7 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueTypeCollection;
  * @author Tassilo Horn <horn@uni-koblenz.de>
  * 
  */
-public abstract class Incidences extends AbstractGreql2Function {
+public abstract class Incidences extends Greql2Function {
 
 	{
 		JValueType[][] x = { { JValueType.VERTEX },

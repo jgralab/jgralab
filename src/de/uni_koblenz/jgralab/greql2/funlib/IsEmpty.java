@@ -36,7 +36,7 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
  * @author Tassilo Horn <horn@uni-koblenz.de>
  * 
  */
-public class IsEmpty extends AbstractGreql2Function {
+public class IsEmpty extends Greql2Function {
 	{
 		JValueType[][] x = { { JValueType.COLLECTION }, { JValueType.MAP } };
 		signatures = x;

@@ -65,7 +65,7 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
  * 
  */
 
-public class EdgeTrace extends AbstractGreql2Function {
+public class EdgeTrace extends Greql2Function {
 
 	{
 		JValueType[][] x = { { JValueType.PATH } };

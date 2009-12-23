@@ -64,7 +64,7 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
  * @author ist@uni-koblenz.de
  * 
  */
-public class IsSubSet extends AbstractGreql2Function {
+public class IsSubSet extends Greql2Function {
 
 	{
 		JValueType[][] x = { { JValueType.COLLECTION, JValueType.COLLECTION } };
