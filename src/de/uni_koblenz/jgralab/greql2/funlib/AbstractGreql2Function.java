@@ -12,6 +12,8 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
  */
 public abstract class AbstractGreql2Function implements Greql2Function {
 
+	protected String description = "No description set for this function.";
+
 	/**
 	 * Represents a list of allowed signatures for this {@link Greql2Function}.
 	 */
@@ -44,8 +46,8 @@ public abstract class AbstractGreql2Function implements Greql2Function {
 			if (conversionCosts == 0) {
 				// this signature was a perfect match!
 				return i;
-			} else if (conversionCosts > 0
-					&& conversionCosts < indexAndCosts[1]) {
+			} else if ((conversionCosts > 0)
+					&& (conversionCosts < indexAndCosts[1])) {
 				// this signature can at least be converted and is the best till
 				// now
 				indexAndCosts[0] = i;
