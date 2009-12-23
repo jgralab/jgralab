@@ -62,6 +62,10 @@ public class Greql2FunctionLibrary {
 	private static Logger logger = Logger.getLogger(Greql2FunctionLibrary.class
 			.getName());
 
+	static {
+		logger.setLevel(Level.OFF);
+	}
+
 	/**
 	 * this is the package name as greql2.evaluator.funlib
 	 */
@@ -145,6 +149,13 @@ public class Greql2FunctionLibrary {
 		describeFunction.setArgName("functionName");
 		group.addOption(describeFunction);
 
+		Option brieflyDescribeFunction = new Option("b",
+				"briefly-describe-function", true,
+				"Describe the given function briefly (only one line)");
+		brieflyDescribeFunction.setRequired(true);
+		brieflyDescribeFunction.setArgName("functionName");
+		group.addOption(brieflyDescribeFunction);
+
 		oh.addOptionGroup(group);
 		return oh.parse(args);
 	}
@@ -159,7 +170,9 @@ public class Greql2FunctionLibrary {
 		if (cmd.hasOption('l')) {
 			output = listFunctions();
 		} else if (cmd.hasOption('d')) {
-			output = describeFunction(cmd.getOptionValue('d'));
+			output = describeFunction(cmd.getOptionValue('d'), false);
+		} else if (cmd.hasOption('b')) {
+			output = describeFunction(cmd.getOptionValue('b'), true);
 		}
 		if (output != null) {
 			System.out.println(output);
@@ -177,19 +190,29 @@ public class Greql2FunctionLibrary {
 				sb.append('\n');
 			}
 			first = false;
-			sb.append(function);
+			sb.append(describeFunction(function, true));
 		}
 		return sb.toString();
 	}
 
-	private static String describeFunction(String functionName) {
+	private static String describeFunction(String functionName, boolean briefly) {
 		Greql2Function fun = Greql2FunctionLibrary.instance().availableFunctions
 				.get(functionName);
 		if (fun == null) {
 			return "`" + functionName + "' is not a known function.";
 		}
-		StringBuilder sb = new StringBuilder();
+
 		AbstractGreql2Function afun = (AbstractGreql2Function) fun;
+
+		if (briefly) {
+			int end = afun.description.indexOf("\n");
+			if (end == -1) {
+				return functionName + ": " + afun.description.substring(0);
+			}
+			return functionName + ": " + afun.description.substring(0, end);
+		}
+
+		StringBuilder sb = new StringBuilder();
 		sb.append("Function `");
 		String className = afun.getClass().getSimpleName();
 		sb.append(className.substring(0, 1).toLowerCase());
@@ -223,7 +246,6 @@ public class Greql2FunctionLibrary {
 			}
 			sb.append(")\n");
 		}
-		sb.append('\n');
 		return sb.toString();
 	}
 

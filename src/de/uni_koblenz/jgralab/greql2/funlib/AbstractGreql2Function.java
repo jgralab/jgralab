@@ -12,6 +12,10 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
  */
 public abstract class AbstractGreql2Function implements Greql2Function {
 
+	/**
+	 * The description string of this function. The first line should be a brief
+	 * description, additional details should be given in following lines.
+	 */
 	protected String description = "No description set for this function.";
 
 	/**
