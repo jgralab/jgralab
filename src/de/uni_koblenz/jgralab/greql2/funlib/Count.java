@@ -65,6 +65,9 @@ public class Count extends AbstractGreql2Function {
 		JValueType[][] x = { { JValueType.COLLECTION }, { JValueType.OBJECT },
 				{ JValueType.MAP } };
 		signatures = x;
+		description = "Returns the number of elements in a given Object.\n"
+				+ "If the object is not a collection or map, 1 is returned.\n"
+				+ "For a map the number of entries is returned.";
 	}
 
 	public JValue evaluate(Graph graph, BooleanGraphMarker subgraph,

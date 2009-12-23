@@ -38,8 +38,14 @@ import java.util.jar.JarFile;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import org.apache.commons.cli.CommandLine;
+import org.apache.commons.cli.Option;
+import org.apache.commons.cli.OptionGroup;
+
+import de.uni_koblenz.ist.utilities.option_handler.OptionHandler;
 import de.uni_koblenz.jgralab.JGraLab;
 import de.uni_koblenz.jgralab.greql2.exception.DuplicateGreqlFunctionException;
+import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
 
 /**
  * This class is the core of the function libary. It's implemented following the
@@ -120,12 +126,105 @@ public class Greql2FunctionLibrary {
 		return thisInstance;
 	}
 
+	private static CommandLine processCommandLineOptions(String[] args) {
+		String toolString = "java "
+				+ Greql2FunctionLibrary.class.getSimpleName();
+		String versionString = JGraLab.getInfo(false);
+		OptionHandler oh = new OptionHandler(toolString, versionString);
+
+		OptionGroup group = new OptionGroup();
+
+		Option listFunctions = new Option("l", "list-functions", false,
+				"List all available functions");
+		listFunctions.setRequired(true);
+		group.addOption(listFunctions);
+
+		Option describeFunction = new Option("d", "describe-function", true,
+				"Describe the given function");
+		describeFunction.setRequired(true);
+		describeFunction.setArgName("functionName");
+		group.addOption(describeFunction);
+
+		oh.addOptionGroup(group);
+		return oh.parse(args);
+	}
+
 	public static void main(String[] args) {
 		JGraLab.setLogLevel(Level.OFF);
+		logger.setLevel(Level.OFF);
+
+		CommandLine cmd = processCommandLineOptions(args);
+
+		String output = null;
+		if (cmd.hasOption('l')) {
+			output = listFunctions();
+		} else if (cmd.hasOption('d')) {
+			output = describeFunction(cmd.getOptionValue('d'));
+		}
+		if (output != null) {
+			System.out.println(output);
+		} else {
+			System.out.println("Don't know what to do!");
+		}
+	}
+
+	private static String listFunctions() {
+		StringBuilder sb = new StringBuilder();
+		boolean first = true;
 		for (String function : new TreeSet<String>(Greql2FunctionLibrary
 				.instance().availableFunctions.keySet())) {
-			System.out.println(function);
+			if (!first) {
+				sb.append('\n');
+			}
+			first = false;
+			sb.append(function);
 		}
+		return sb.toString();
+	}
+
+	private static String describeFunction(String functionName) {
+		Greql2Function fun = Greql2FunctionLibrary.instance().availableFunctions
+				.get(functionName);
+		if (fun == null) {
+			return "`" + functionName + "' is not a known function.";
+		}
+		StringBuilder sb = new StringBuilder();
+		AbstractGreql2Function afun = (AbstractGreql2Function) fun;
+		sb.append("Function `");
+		String className = afun.getClass().getSimpleName();
+		sb.append(className.substring(0, 1).toLowerCase());
+		sb.append(className.substring(1));
+		sb.append("':\n");
+		String cur = sb.toString();
+		for (int i = 0; i < cur.length() - 1; i++) {
+			sb.append("=");
+		}
+
+		sb.append("\n\n");
+		sb.append(afun.description);
+		sb.append("\n\n");
+
+		sb.append("Signatures:\n");
+		sb.append("-----------");
+		sb.append("\n\n");
+		for (int i = 0; i < afun.signatures.length; i++) {
+			boolean first = true;
+			sb.append("  ");
+			sb.append(i + 1);
+			sb.append(". ");
+			sb.append(functionName);
+			sb.append("(");
+			for (JValueType t : afun.signatures[i]) {
+				if (!first) {
+					sb.append(", ");
+				}
+				first = false;
+				sb.append(t.toString());
+			}
+			sb.append(")\n");
+		}
+		sb.append('\n');
+		return sb.toString();
 	}
 
 	/**
