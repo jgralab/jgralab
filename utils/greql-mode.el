@@ -56,13 +56,23 @@
                   "-l")
     (goto-char (point-min))
     (let (list)
-      (while (re-search-forward "^\\([[:alpha:]][[:alnum:]]*\\)$" nil t)
-        (setq list (cons (match-string 1) list)))
+      (while (re-search-forward "^\\([[:word:]]+\\):[[:space:]]*\\([^[:space:]].*\\)$" nil t)
+        (setq list (cons (list :meta 'function 
+                               :name (match-string-no-properties 1)
+                               :description (match-string-no-properties 2))
+                         list)))
       (nreverse list))))
+
+(defun greql-function-p ()
+  "Return a function plist if point is on a function."
+  (let ((fun (current-word t t)))
+    (catch 'fun
+      (dolist (f greql-functions)
+        (when (string= (plist-get f :name) fun)
+          (throw 'fun f))))))
 
 (defparameter greql-functions (greql-functions)
   "GReQL functions that should be completed and highlighted.")
-(put 'greql-functions 'risky-local-variable-p t)
 
 (dolist (ext '("\\.greqlquery$" "\\.grq$" "\\.greql$"))
   (add-to-list 'auto-mode-alist (cons ext 'greql-mode)))
@@ -70,7 +80,9 @@
 (defparameter greql-fontlock-keywords-1
   `(
     ;; Highlight function names
-    ,(list (concat "[^.]" (regexp-opt greql-functions 'words) "[^.]")
+    ,(list (concat "[^.]" (regexp-opt (mapcar (lambda (f)
+                                                (plist-get f :name))
+                                              greql-functions) 'words) "[^.]")
            1 font-lock-function-name-face)
     ;; Highlight strings
     ,(list "\".*?\"" 0 font-lock-string-face t)
@@ -138,10 +150,7 @@ columns.")
   (greql-add-functions-and-keywords)
 
   (define-key greql-mode-map (kbd "M-TAB")   'greql-complete)
-  (define-key greql-mode-map (kbd "C-c C-v") 'greql-complete-vertexclass)
-  (define-key greql-mode-map (kbd "C-c C-e") 'greql-complete-edgeclass)
-  (define-key greql-mode-map (kbd "C-c C-d") 'greql-complete-domain)
-  (define-key greql-mode-map (kbd "C-c C-a") 'greql-complete-attributes)
+  (define-key greql-mode-map (kbd "C-c C-d") 'greql-show-documentation)
   (define-key greql-mode-map (kbd "C-c C-s") 'greql-set-graph)
   (define-key greql-mode-map (kbd "C-c C-c") 'greql-execute)
   (define-key greql-mode-map (kbd "C-c C-f") 'greql-format))
@@ -156,8 +165,7 @@ queries are evaluated.  Set it with `greql-set-graph'.")
     (setq tg-schema-alist (cons (list :meta 'keyword :name key)
                                 tg-schema-alist)))
   (dolist (fun greql-functions)
-    (setq tg-schema-alist (cons (list :meta 'function :name fun)
-                                tg-schema-alist))))
+    (setq tg-schema-alist (cons fun tg-schema-alist))))
 
 (defun greql-set-graph (graph)
   "Set `greql-graph' to GRAPH and parse it with `tg-parse-schema'."
@@ -515,12 +523,35 @@ for some variable declared as
       (insert "\"")
       (kill-region (point-min) (point-max)))))
 
-;;** Eldoc
+;;** Eldoc & GReQL Doc
 
 (defvar greql--last-thing "")
 (make-variable-buffer-local 'greql--last-thing)
 (defvar greql--last-doc "")
 (make-variable-buffer-local 'greql--last-doc)
+
+(defparameter greql-doc-buffer "*GReQL Documentation*"
+  "The name of the GReQL documentation buffer.")
+
+(defun greql-show-function-documentation (fun)
+  (interactive "sFunction: ")
+  (set-buffer (get-buffer-create greql-doc-buffer))
+  (erase-buffer)
+  (call-process "java" nil
+                (get-buffer-create greql-doc-buffer)
+                nil
+                "-cp" greql-jgralab-jar-file
+                "de.uni_koblenz.jgralab.greql2.funlib.Greql2FunctionLibrary"
+                "-d" fun)
+  (display-buffer (get-buffer-create greql-doc-buffer) t))
+
+(defun greql-show-documentation ()
+  (interactive)
+  (cond
+   ((let ((fun (greql-function-p)))
+      (when fun
+        (greql-show-function-documentation (plist-get fun :name)))))
+   (t (message "No docs avaliable for this element."))))
 
 (defun greql-documentation-function ()
   (let ((thing (thing-at-point 'sexp)))
@@ -529,6 +560,11 @@ for some variable declared as
       (setq greql--last-thing thing)
       (setq greql--last-doc
             (cond
+             ((let ((fun (greql-function-p)))
+                (when fun
+                  (concat (propertize (plist-get fun :name) 'face 'font-lock-function-name-face)
+                          ": "
+                          (plist-get fun :description)))))
              ((null tg-schema-alist)
               "Set a graph for eldoc features.")
              ;; document vertex classes
