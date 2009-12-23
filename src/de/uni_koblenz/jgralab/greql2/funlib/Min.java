@@ -59,7 +59,7 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
  * 
  */
 
-public class Min extends AbstractGreql2Function {
+public class Min extends Greql2Function {
 
 	{
 		JValueType[][] x = { { JValueType.COLLECTION } };

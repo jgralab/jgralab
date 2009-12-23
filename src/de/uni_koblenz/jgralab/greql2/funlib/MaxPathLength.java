@@ -59,7 +59,7 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
  * 
  */
 
-public class MaxPathLength extends AbstractGreql2Function {
+public class MaxPathLength extends Greql2Function {
 	{
 		JValueType[][] x = { { JValueType.PATHSYSTEM } };
 		signatures = x;

@@ -63,7 +63,7 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
  * 
  */
 
-public class Equals extends AbstractGreql2Function {
+public class Equals extends Greql2Function {
 
 	{
 		JValueType[][] x = { { JValueType.OBJECT, JValueType.OBJECT } };

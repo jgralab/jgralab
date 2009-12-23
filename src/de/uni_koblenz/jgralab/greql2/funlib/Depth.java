@@ -59,7 +59,7 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
  * 
  */
 
-public class Depth extends AbstractGreql2Function {
+public class Depth extends Greql2Function {
 	{
 		JValueType[][] x = { { JValueType.PATHSYSTEM } };
 		signatures = x;

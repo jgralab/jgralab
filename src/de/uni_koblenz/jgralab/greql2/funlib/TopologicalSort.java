@@ -44,7 +44,7 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
  * @author ist@uni-koblenz.de
  * 
  */
-public class TopologicalSort extends AbstractGreql2Function {
+public class TopologicalSort extends Greql2Function {
 
 	{
 		JValueType[][] x = { {}, { JValueType.SUBGRAPHTEMPATTRIBUTE } };

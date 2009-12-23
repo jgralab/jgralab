@@ -61,7 +61,7 @@ import de.uni_koblenz.jgralab.schema.Schema;
  * @author ist@uni-koblenz.de
  * 
  */
-public class EnumConstant extends AbstractGreql2Function {
+public class EnumConstant extends Greql2Function {
 
 	{
 		JValueType[][] x = { { JValueType.STRING, JValueType.STRING } };

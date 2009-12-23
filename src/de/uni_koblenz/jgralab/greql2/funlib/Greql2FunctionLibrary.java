@@ -220,7 +220,7 @@ public class Greql2FunctionLibrary {
 			return "`" + functionName + "' is not a known function.";
 		}
 
-		AbstractGreql2Function afun = (AbstractGreql2Function) fun;
+		Greql2Function afun = (Greql2Function) fun;
 
 		if (briefly) {
 			int end = afun.description.indexOf("\n");

@@ -362,7 +362,7 @@ public class JValueRecord extends JValueCollection implements
 	@Override
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
-		sb.append("{");
+		sb.append(OPENING_PAREN);
 		boolean first = true;
 		for (Entry<String, JValue> e : dataMap.entrySet()) {
 			if (!first) {
@@ -371,7 +371,7 @@ public class JValueRecord extends JValueCollection implements
 			first = false;
 			sb.append(e.getKey() + " = " + e.getValue().toString());
 		}
-		sb.append("}");
+		sb.append(CLOSING_PAREN);
 		return sb.toString();
 	}
 }

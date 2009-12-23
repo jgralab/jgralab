@@ -65,7 +65,7 @@ import de.uni_koblenz.jgralab.schema.AttributedElementClass;
  * @author ist@uni-koblenz.de
  * 
  */
-public class Subtypes extends AbstractGreql2Function {
+public class Subtypes extends Greql2Function {
 
 	{
 		JValueType[][] x = { { JValueType.STRING },

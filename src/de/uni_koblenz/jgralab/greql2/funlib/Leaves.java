@@ -61,7 +61,7 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
  * 
  */
 
-public class Leaves extends AbstractGreql2Function {
+public class Leaves extends Greql2Function {
 
 	{
 		JValueType[][] x = { { JValueType.PATHSYSTEM } };

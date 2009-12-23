@@ -35,7 +35,7 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
  * @author ist@uni-koblenz.de
  * 
  */
-public class CapitalizeFirst extends AbstractGreql2Function {
+public class CapitalizeFirst extends Greql2Function {
 	{
 		JValueType[][] x = { { JValueType.STRING } };
 		signatures = x;

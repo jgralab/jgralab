@@ -58,7 +58,7 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
  * 
  */
 
-public class PathLength extends AbstractGreql2Function {
+public class PathLength extends Greql2Function {
 
 	{
 		JValueType[][] x = { { JValueType.PATH } };

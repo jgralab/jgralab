@@ -67,7 +67,7 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
  * 
  */
 
-public class Pos extends AbstractGreql2Function {
+public class Pos extends Greql2Function {
 	{
 		JValueType[][] x = { { JValueType.COLLECTION, JValueType.OBJECT } };
 		signatures = x;

@@ -63,7 +63,7 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
  * 
  */
 
-public class Distance extends AbstractGreql2Function {
+public class Distance extends Greql2Function {
 	{
 		JValueType[][] x = { { JValueType.PATHSYSTEM, JValueType.VERTEX } };
 		signatures = x;

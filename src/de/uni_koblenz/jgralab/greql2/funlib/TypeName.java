@@ -58,7 +58,7 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
  * @author ist@uni-koblenz.de
  * 
  */
-public class TypeName extends AbstractGreql2Function {
+public class TypeName extends Greql2Function {
 
 	{
 		JValueType[][] x = { { JValueType.ATTRIBUTEDELEMENT } };

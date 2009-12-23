@@ -65,7 +65,7 @@ import de.uni_koblenz.jgralab.schema.AttributedElementClass;
  * 
  */
 
-public class HasAttribute extends AbstractGreql2Function {
+public class HasAttribute extends Greql2Function {
 
 	{
 		JValueType[][] x = {

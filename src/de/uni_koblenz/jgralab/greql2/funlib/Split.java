@@ -59,7 +59,7 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
  * @author Tassilo Horn &lt;horn@uni-koblenz.de&gt;
  * 
  */
-public class Split extends AbstractGreql2Function {
+public class Split extends Greql2Function {
 	{
 		JValueType[][] x = { { JValueType.STRING, JValueType.STRING } };
 		signatures = x;

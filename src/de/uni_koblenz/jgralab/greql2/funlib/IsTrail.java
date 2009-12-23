@@ -62,7 +62,7 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
  * 
  */
 
-public class IsTrail extends AbstractGreql2Function {
+public class IsTrail extends Greql2Function {
 
 	{
 		JValueType[][] x = { { JValueType.PATH } };

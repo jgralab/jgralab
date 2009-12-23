@@ -31,7 +31,7 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
  * @author Tassilo Horn &lt;horn@uni-koblenz.de&gt;
  * 
  */
-public class GetGraph extends AbstractGreql2Function {
+public class GetGraph extends Greql2Function {
 	{
 		JValueType[][] x = { {} };
 		signatures = x;

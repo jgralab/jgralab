@@ -62,7 +62,7 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
  * 
  */
 
-public class Uminus extends AbstractGreql2Function {
+public class Uminus extends Greql2Function {
 	{
 		JValueType[][] x = { { JValueType.LONG }, { JValueType.INTEGER },
 				{ JValueType.DOUBLE } };

@@ -14,7 +14,7 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
  * @author Tassilo Horn <horn@uni-koblenz.de>
  * 
  */
-public abstract class CompareFunction extends AbstractGreql2Function {
+public abstract class CompareFunction extends Greql2Function {
 
 	protected enum CompareOperator {
 		GR_THAN, GR_EQUAL, LE_THAN, LE_EQUAL, NOT_EQUAL

@@ -71,7 +71,7 @@ import de.uni_koblenz.jgralab.schema.Schema;
  * 
  */
 
-public class IsA extends AbstractGreql2Function {
+public class IsA extends Greql2Function {
 	{
 		JValueType[][] x = { { JValueType.STRING, JValueType.STRING },
 				{ JValueType.STRING, JValueType.ATTRIBUTEDELEMENTCLASS },

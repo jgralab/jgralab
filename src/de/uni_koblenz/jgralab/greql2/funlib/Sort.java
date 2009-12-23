@@ -37,7 +37,7 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
  * @author Tassilo Horn &lt;horn@uni-koblenz.de&gt;
  * 
  */
-public class Sort extends AbstractGreql2Function implements Greql2Function {
+public class Sort extends Greql2Function {
 	{
 		JValueType[][] x = { { JValueType.COLLECTION } };
 		signatures = x;

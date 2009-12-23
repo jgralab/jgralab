@@ -60,7 +60,7 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
  * @author ist@uni-koblenz.de
  * 
  */
-public class SquareRoot extends AbstractGreql2Function {
+public class SquareRoot extends Greql2Function {
 	{
 		JValueType[][] x = { { JValueType.DOUBLE } };
 		signatures = x;

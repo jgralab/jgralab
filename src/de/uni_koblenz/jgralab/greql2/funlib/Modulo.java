@@ -65,7 +65,7 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
  * 
  */
 
-public class Modulo extends AbstractGreql2Function {
+public class Modulo extends Greql2Function {
 	{
 		JValueType[][] x = { { JValueType.LONG, JValueType.LONG },
 				{ JValueType.INTEGER, JValueType.INTEGER } };

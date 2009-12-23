@@ -32,7 +32,7 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
  * @author ist@uni-koblenz.de
  * 
  */
-public class Values extends AbstractGreql2Function {
+public class Values extends Greql2Function {
 	{
 		JValueType[][] x = { { JValueType.MAP } };
 		signatures = x;

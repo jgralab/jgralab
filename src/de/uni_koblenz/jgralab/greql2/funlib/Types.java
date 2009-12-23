@@ -59,7 +59,7 @@ import de.uni_koblenz.jgralab.schema.AttributedElementClass;
  * @author ist@uni-koblenz.de
  * 
  */
-public class Types extends AbstractGreql2Function {
+public class Types extends Greql2Function {
 
 	{
 		JValueType[][] x = { {} };
