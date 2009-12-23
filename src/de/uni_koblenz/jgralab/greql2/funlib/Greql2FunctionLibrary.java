@@ -193,6 +193,7 @@ public class Greql2FunctionLibrary {
 		for (String fun : new TreeSet<String>(
 				Greql2FunctionLibrary.instance().availableFunctions.keySet())) {
 			sb.append(describeFunction(fun, false));
+			sb.append('\n');
 			sb.append("\u000C\n");
 		}
 		return sb.toString();

@@ -57,7 +57,7 @@
     (goto-char (point-min))
     (let (list)
       (while (re-search-forward "^\\([[:word:]]+\\):[[:space:]]*\\([^[:space:]].*\\)$" nil t)
-        (setq list (cons (list :meta 'function 
+        (setq list (cons (list :meta 'function
                                :name (match-string-no-properties 1)
                                :description (match-string-no-properties 2))
                          list)))
@@ -149,11 +149,13 @@ columns.")
 
   (greql-add-functions-and-keywords)
 
-  (define-key greql-mode-map (kbd "M-TAB")   'greql-complete)
-  (define-key greql-mode-map (kbd "C-c C-d") 'greql-show-documentation)
-  (define-key greql-mode-map (kbd "C-c C-s") 'greql-set-graph)
-  (define-key greql-mode-map (kbd "C-c C-c") 'greql-execute)
-  (define-key greql-mode-map (kbd "C-c C-f") 'greql-format))
+  (progn
+    (define-key greql-mode-map (kbd "M-TAB")   'greql-complete)
+    (define-key greql-mode-map (kbd "C-c C-d C-d") 'greql-show-documentation)
+    (define-key greql-mode-map (kbd "C-c C-d C-f") 'greql-show-function-documentation)
+    (define-key greql-mode-map (kbd "C-c C-s") 'greql-set-graph)
+    (define-key greql-mode-map (kbd "C-c C-c") 'greql-execute)
+    (define-key greql-mode-map (kbd "C-c C-f") 'greql-format)))
 
 (defvar greql-graph nil
   "The graph which is used to extract schema information on which
@@ -533,36 +535,76 @@ for some variable declared as
 (defparameter greql-doc-buffer "*GReQL Documentation*"
   "The name of the GReQL documentation buffer.")
 
-(defun greql-show-function-documentation (fun)
-  (interactive "sFunction: ")
-  (set-buffer (get-buffer-create greql-doc-buffer))
-  (erase-buffer)
-  (call-process "java" nil
-                (get-buffer-create greql-doc-buffer)
-                nil
-                "-cp" greql-jgralab-jar-file
-                "de.uni_koblenz.jgralab.greql2.funlib.Greql2FunctionLibrary"
-                "-d" fun)
-  (display-buffer (get-buffer-create greql-doc-buffer) t))
+(defun greql-doc-next (n)
+  (interactive "p")
+  (and (search-forward "" nil t n)
+       (forward-line 1)))
 
-(defun greql-show-all-function-documentation ()
-  (interactive)
+(defun greql-doc-previous (n)
+  (interactive "p")
+  (and (search-backward "" nil t (1+ n))
+       (forward-line 1)))
+
+(define-derived-mode greql-doc-mode nil "GReQLDoc"
+  "Mode used in *GReQL Documentation* buffers."
+  :group 'greql
+  (setq buffer-read-only t)
+  (setq font-lock-defaults '(greql-fontlock-keywords-doc))
+  (font-lock-mode 1)
+
+  (progn
+    (define-key greql-doc-mode-map (kbd "q") 'bury-buffer)
+
+    (define-key greql-doc-mode-map (kbd "f") 'forward-char)
+    (define-key greql-doc-mode-map (kbd "b") 'backward-char)
+    (define-key greql-doc-mode-map (kbd "n") 'next-line)
+    (define-key greql-doc-mode-map (kbd "p") 'previous-line)
+
+    (define-key greql-doc-mode-map (kbd "SPC") 'greql-doc-next)
+    (define-key greql-doc-mode-map (kbd "DEL") 'greql-doc-previous)))
+
+(defparameter greql-fontlock-keywords-doc
+  (let ((regex (regexp-opt (mapcar (lambda (elem) (plist-get elem :name))
+                                   greql-functions) t)))
+    (list (list (concat "\\(?:[`]?" regex "['(]\\)")
+                1 font-lock-function-name-face)
+          (list "^\\(Function\\)[[:space:]]+`"
+                1 (quote 'bold))
+          (list "^\\([=]+\\)$"
+                1 (quote 'bold)))))
+
+(defun greql--show-function-documentation (&optional func-name)
   (set-buffer (get-buffer-create greql-doc-buffer))
-  (erase-buffer)
-  (call-process "java" nil
-                (get-buffer-create greql-doc-buffer)
-                nil
-                "-cp" greql-jgralab-jar-file
-                "de.uni_koblenz.jgralab.greql2.funlib.Greql2FunctionLibrary"
-                "-a")
-  (display-buffer (get-buffer-create greql-doc-buffer) t))
+  (let ((inhibit-read-only t))
+    (erase-buffer)
+    (call-process "java" nil
+                  (get-buffer-create greql-doc-buffer)
+                  nil
+                  "-cp" greql-jgralab-jar-file
+                  "de.uni_koblenz.jgralab.greql2.funlib.Greql2FunctionLibrary"
+                  "-a"))
+
+  (goto-char (point-min))
+  (greql-doc-mode)
+  (switch-to-buffer (get-buffer-create greql-doc-buffer))
+  (when func-name
+    (re-search-forward (concat  "^Function `" func-name "':") nil t)
+    (forward-line 0)))
+
+(defun greql-show-function-documentation (fun)
+  (interactive
+   (list (completing-read "Function: "
+                          (mapcar (lambda (elem)
+                                    (plist-get elem :name))
+                                  greql-functions))))
+  (greql--show-function-documentation fun))
 
 (defun greql-show-documentation ()
   (interactive)
   (cond
    ((let ((fun (greql-function-p)))
       (when fun
-        (greql-show-function-documentation (plist-get fun :name) t))))
+        (greql-show-function-documentation (plist-get fun :name)))))
    (t (message "No docs avaliable for this element."))))
 
 (defun greql-documentation-function ()
