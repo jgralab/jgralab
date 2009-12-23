@@ -52,7 +52,8 @@
                   (current-buffer)
                   nil
                   "-cp" greql-jgralab-jar-file
-                  "de.uni_koblenz.jgralab.greql2.funlib.Greql2FunctionLibrary")
+                  "de.uni_koblenz.jgralab.greql2.funlib.Greql2FunctionLibrary"
+                  "-l")
     (goto-char (point-min))
     (let (list)
       (while (re-search-forward "^\\([[:alpha:]][[:alnum:]]*\\)$" nil t)
