@@ -100,9 +100,8 @@
                                 t)
                                "\\)+\\)}")
                        1 font-lock-type-face))))
-  ;; TODO: This should not be needed
-  (set (make-local-variable 'font-lock-keywords) greql-fontlock-keywords-3)
-  ;; TODO: Redisplay seems not to suffice
+  (let (font-lock-set-defaults) (font-lock-set-defaults))
+  (jit-lock-refontify (point-min) (point-max))
   (redisplay t))
 
 (defvar greql-tab-width 2
