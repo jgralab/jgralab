@@ -143,6 +143,11 @@ public class Greql2FunctionLibrary {
 		listFunctions.setRequired(true);
 		group.addOption(listFunctions);
 
+		Option describeAllFunctions = new Option("a", "describe-all-functions",
+				false, "Describe all available functions");
+		describeAllFunctions.setRequired(true);
+		group.addOption(describeAllFunctions);
+
 		Option describeFunction = new Option("d", "describe-function", true,
 				"Describe the given function");
 		describeFunction.setRequired(true);
@@ -173,12 +178,24 @@ public class Greql2FunctionLibrary {
 			output = describeFunction(cmd.getOptionValue('d'), false);
 		} else if (cmd.hasOption('b')) {
 			output = describeFunction(cmd.getOptionValue('b'), true);
+		} else if (cmd.hasOption('a')) {
+			output = describeAllFunction();
 		}
 		if (output != null) {
 			System.out.println(output);
 		} else {
 			System.out.println("Don't know what to do!");
 		}
+	}
+
+	private static String describeAllFunction() {
+		StringBuilder sb = new StringBuilder();
+		for (String fun : Greql2FunctionLibrary.instance().availableFunctions
+				.keySet()) {
+			sb.append(describeFunction(fun, false));
+			sb.append("\u000C\n");
+		}
+		return sb.toString();
 	}
 
 	private static String listFunctions() {

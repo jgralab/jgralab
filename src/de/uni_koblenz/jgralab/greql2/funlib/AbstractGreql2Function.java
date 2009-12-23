@@ -16,7 +16,7 @@ public abstract class AbstractGreql2Function implements Greql2Function {
 	 * The description string of this function. The first line should be a brief
 	 * description, additional details should be given in following lines.
 	 */
-	protected String description = "No description set for this function.";
+	protected String description = "TODO: No description set for this function.";
 
 	/**
 	 * Represents a list of allowed signatures for this {@link Greql2Function}.

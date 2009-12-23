@@ -545,12 +545,24 @@ for some variable declared as
                 "-d" fun)
   (display-buffer (get-buffer-create greql-doc-buffer) t))
 
+(defun greql-show-all-function-documentation ()
+  (interactive)
+  (set-buffer (get-buffer-create greql-doc-buffer))
+  (erase-buffer)
+  (call-process "java" nil
+                (get-buffer-create greql-doc-buffer)
+                nil
+                "-cp" greql-jgralab-jar-file
+                "de.uni_koblenz.jgralab.greql2.funlib.Greql2FunctionLibrary"
+                "-a")
+  (display-buffer (get-buffer-create greql-doc-buffer) t))
+
 (defun greql-show-documentation ()
   (interactive)
   (cond
    ((let ((fun (greql-function-p)))
       (when fun
-        (greql-show-function-documentation (plist-get fun :name)))))
+        (greql-show-function-documentation (plist-get fun :name) t))))
    (t (message "No docs avaliable for this element."))))
 
 (defun greql-documentation-function ()
