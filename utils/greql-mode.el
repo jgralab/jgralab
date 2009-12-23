@@ -455,7 +455,6 @@ If a region is active, use only that as query."
       (setq greql-process (make-network-process
                            :name "GreqlEvalServer Connection"
                            :buffer buffer
-                           ;; TODO:  This should be customizable
                            :host "localhost"
                            :service greql-server-port
                            :sentinel 'greql-display-result)))
