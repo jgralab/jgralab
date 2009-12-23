@@ -136,6 +136,7 @@ columns.")
   (define-key greql-mode-map (kbd "C-c C-v") 'greql-complete-vertexclass)
   (define-key greql-mode-map (kbd "C-c C-e") 'greql-complete-edgeclass)
   (define-key greql-mode-map (kbd "C-c C-d") 'greql-complete-domain)
+  (define-key greql-mode-map (kbd "C-c C-a") 'greql-complete-attributes)
   (define-key greql-mode-map (kbd "C-c C-s") 'greql-set-graph)
   (define-key greql-mode-map (kbd "C-c C-c") 'greql-execute)
   (define-key greql-mode-map (kbd "C-c C-f") 'greql-format))
@@ -217,7 +218,7 @@ KEY (:qname by default)."
 
 (defun greql-attribute-completion-list (al)
   "Formats the attribute list retrieved by
-tg-all-attributes-multi for completion."
+`tg-all-attributes-multi' for completion."
   (when al
     (let ((cl (mapcar
                 (lambda (plst)
@@ -230,6 +231,9 @@ tg-all-attributes-multi for completion."
 (defun greql-completion-sort (c1 c2)
   (string-lessp (car c1) (car c2)))
 
+(defvar greql--last-completion-list nil)
+(make-variable-buffer-local 'greql--last-completion-list)
+
 (defun greql-complete-1 (completion-list &optional backward-regexp)
   (let* ((window (get-buffer-window "*Completions*" 0))
          (beg (save-excursion
@@ -239,6 +243,7 @@ tg-all-attributes-multi for completion."
          (word (buffer-substring-no-properties beg (point)))
          (compl (try-completion word completion-list)))
     (if (and (eq last-command this-command)
+             (equal greql--last-completion-list completion-list)
              window (window-live-p window) (window-buffer window)
              (buffer-name (window-buffer window)))
         ;; If this command was repeated, and there's a fresh completion window
@@ -253,7 +258,7 @@ tg-all-attributes-multi for completion."
       (cond
        ((null compl)
         ;; Do nothing here.
-        nil)
+        (message "No completion possible."))
        ((stringp compl)
         (if (string= word compl)
             ;; Show completion buffer
@@ -274,11 +279,16 @@ tg-all-attributes-multi for completion."
           ;; close completion buffer if there's one
           (let ((win (get-buffer-window "*Completions*" 0)))
             (if win (quit-window nil win)))))
-       (t (message "That's the only possible completion."))))))
+       (t (message "That's the only possible completion.")))))
+  (setq greql--last-completion-list completion-list))
 
-(defun greql-complete ()
-  "Complete word at point somehow intelligently."
-  (interactive)
+(defun greql-complete (arg)
+  "Complete word at point intelligently.
+When ARG is given, complete more restrictive.  For example, if
+there's a variable that is bound to either a Foo or a Bar, then
+show only those attributes, which are valid for both Foo and Bar
+objects."
+  (interactive "P")
   (cond
    ;; Complete vertex classes
    ((or (greql-vertex-set-expression-p)
@@ -293,16 +303,16 @@ tg-all-attributes-multi for completion."
     (greql-complete-anyclass))
    ;; complete attributes
    ((greql-variable-p)
-    (greql-complete-attributes))
+    (greql-complete-attributes arg))
    ;; complete keywords / functions
    (t (greql-complete-keyword-or-function))))
 
-(defun greql-complete-attributes ()
-  (interactive)
+(defun greql-complete-attributes (arg)
+  (interactive "P")
   (let ((vartypes (greql-variable-types)))
     (when vartypes
       (let ((compl-list (greql-attribute-completion-list
-                         (tg-all-attributes-multi (car vartypes) (cadr vartypes)))))
+                         (tg-all-attributes-multi (car vartypes) (cadr vartypes) arg))))
         (greql-complete-1 compl-list "[.]")))))
 
 (defun greql-complete-anyclass ()
@@ -406,6 +416,9 @@ tg-all-attributes-multi for completion."
   "Network process to the GreqlEvalServer.")
 (make-variable-buffer-local 'greql-process)
 
+(defvar greql-server-port 10101
+  "The port where the GreqlServer listenes for connections.")
+
 (defun greql-execute ()
   "Execute the query in the current buffer on `greql-graph'.
 If a region is active, use only that as query."
@@ -427,7 +440,7 @@ If a region is active, use only that as query."
                            :buffer buffer
                            ;; TODO:  This should be customizable
                            :host "localhost"
-                           :service 10101
+                           :service greql-server-port
                            :sentinel 'greql-display-result)))
     (process-send-string greql-process (concat "g:" (expand-file-name greql-graph) "\n"))
     (process-send-string greql-process (concat "q:" queryfile "\n"))
