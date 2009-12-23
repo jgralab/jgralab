@@ -74,6 +74,10 @@ public class Children extends AbstractGreql2Function {
 		JValueType[][] x = { { JValueType.VERTEX },
 				{ JValueType.VERTEX, JValueType.PATHSYSTEM } };
 		signatures = x;
+
+		description = "Return all children of the given vertex (restricted by an optional pathsystem).\n"
+				+ "Children are those vertices, from which edges point to the given vertex. The\n"
+				+ "child vertices are returned as a set.";
 	}
 
 	public JValue evaluate(Graph graph, BooleanGraphMarker subgraph,

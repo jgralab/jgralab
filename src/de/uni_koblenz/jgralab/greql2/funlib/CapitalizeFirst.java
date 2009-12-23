@@ -39,6 +39,8 @@ public class CapitalizeFirst extends AbstractGreql2Function {
 	{
 		JValueType[][] x = { { JValueType.STRING } };
 		signatures = x;
+
+		description = "Return the given string with the first character made uppercase.";
 	}
 
 	@Override

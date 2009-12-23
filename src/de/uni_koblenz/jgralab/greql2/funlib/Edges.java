@@ -51,8 +51,7 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueTypeCollection;
  * <dd>
  * <dl>
  * <dt><b>Parameters:</b></dt>
- * <dd><code>start</code> - the first edge of the subsequence of Eseq to
- * return</dd>
+ * <dd><code>start</code> - the first edge of the subsequence of Eseq to return</dd>
  * <dd><code>end</code> - the last rdge of the subsequence of Eseq to return</dd>
  * <dt><b>Returns:</b></dt>
  * <dd>the subsequence of Eseq containing all edges between start and end
@@ -68,8 +67,12 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueTypeCollection;
 
 public class Edges extends AbstractGreql2Function {
 	{
-		JValueType[][] x = { { JValueType.EDGE, JValueType.EDGE },  { JValueType.EDGE, JValueType.EDGE, JValueType.TYPECOLLECTION } };
+		JValueType[][] x = { { JValueType.EDGE, JValueType.EDGE },
+				{ JValueType.EDGE, JValueType.EDGE, JValueType.TYPECOLLECTION } };
 		signatures = x;
+
+		description = "Returns the global edge sequence from the first to the second given edge.\n"
+				+ "The edge types may be restricted by a type collection.";
 	}
 
 	public JValue evaluate(Graph graph, BooleanGraphMarker subgraph,
@@ -82,18 +85,21 @@ public class Edges extends AbstractGreql2Function {
 		case 0:
 			while (current != null) {
 				edges.add(new JValue(current));
-				if (current == end)
+				if (current == end) {
 					return edges;
+				}
 				current = current.getNextEdge();
 			}
 			return edges;
 		case 1:
 			JValueTypeCollection tc = arguments[2].toJValueTypeCollection();
 			while (current != null) {
-				if (tc.acceptsType(current.getAttributedElementClass()))
+				if (tc.acceptsType(current.getAttributedElementClass())) {
 					edges.add(new JValue(current));
-				if (current == end)
+				}
+				if (current == end) {
 					return edges;
+				}
 				current = current.getNextEdge();
 			}
 			return edges;

@@ -67,6 +67,8 @@ public class Distance extends AbstractGreql2Function {
 	{
 		JValueType[][] x = { { JValueType.PATHSYSTEM, JValueType.VERTEX } };
 		signatures = x;
+
+		description = "In the given pathsystem, return the distance from the root to the given vertex.";
 	}
 
 	public JValue evaluate(Graph graph, BooleanGraphMarker subgraph,

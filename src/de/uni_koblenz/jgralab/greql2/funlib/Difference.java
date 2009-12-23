@@ -72,6 +72,8 @@ public class Difference extends AbstractGreql2Function {
 	{
 		JValueType[][] x = { { JValueType.COLLECTION, JValueType.COLLECTION } };
 		signatures = x;
+
+		description = "Return the set difference of two given 2 collections.";
 	}
 
 	public JValue evaluate(Graph graph, BooleanGraphMarker subgraph,

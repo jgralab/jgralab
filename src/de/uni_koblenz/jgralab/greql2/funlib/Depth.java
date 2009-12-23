@@ -63,6 +63,8 @@ public class Depth extends AbstractGreql2Function {
 	{
 		JValueType[][] x = { { JValueType.PATHSYSTEM } };
 		signatures = x;
+
+		description = "Return the depth (length of longes path) of the given pathsystem.";
 	}
 
 	public JValue evaluate(Graph graph, BooleanGraphMarker subgraph,

@@ -63,6 +63,8 @@ public class ContainsKey extends AbstractGreql2Function {
 	{
 		JValueType[][] x = { { JValueType.MAP, JValueType.OBJECT } };
 		signatures = x;
+
+		description = "Return true, iff the given map contains the given element as key.";
 	}
 
 	/*

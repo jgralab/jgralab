@@ -71,6 +71,8 @@ public class ElementsIn extends AbstractGreql2Function {
 		JValueType[][] x = { { JValueType.COLLECTION }, { JValueType.PATH },
 				{ JValueType.PATHSYSTEM } };
 		signatures = x;
+
+		description = "Return the set of elements that are part of the given structure.";
 	}
 
 	public JValue evaluate(Graph graph, BooleanGraphMarker subgraph,

@@ -65,6 +65,8 @@ public class EndVertex extends AbstractGreql2Function {
 	{
 		JValueType[][] x = { { JValueType.EDGE }, { JValueType.PATH } };
 		signatures = x;
+
+		description = "Return the end-vertex of a given path.";
 	}
 
 	public JValue evaluate(Graph graph, BooleanGraphMarker subgraph,

@@ -31,6 +31,8 @@ public abstract class DegreeFunction extends AbstractGreql2Function {
 				{ JValueType.VERTEX, JValueType.PATHSYSTEM,
 						JValueType.TYPECOLLECTION } };
 		signatures = x;
+
+		description = "Returns the (in/out/both)-degree of the given vertex.";
 	}
 
 	public JValue evaluate(BooleanGraphMarker subgraph, JValue[] arguments,
@@ -58,14 +60,14 @@ public abstract class DegreeFunction extends AbstractGreql2Function {
 		}
 		vertex = arguments[0].toVertex();
 
-		if (path == null && pathSystem == null) {
+		if ((path == null) && (pathSystem == null)) {
 			if (typeCol == null) {
 				return new JValue(vertex.getDegree(direction));
 			} else {
 				Edge inc = vertex.getFirstEdge(direction);
 				int count = 0;
 				while (inc != null) {
-					if ((subgraph == null || subgraph.isMarked(inc))
+					if (((subgraph == null) || subgraph.isMarked(inc))
 							&& typeCol.acceptsType(inc
 									.getAttributedElementClass())) {
 						count++;

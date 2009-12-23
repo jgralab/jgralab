@@ -39,6 +39,8 @@ public class EntrySet extends AbstractGreql2Function {
 	{
 		JValueType[][] x = { { JValueType.MAP } };
 		signatures = x;
+
+		description = "Return the entries of the given map as set of key-value tuples.";
 	}
 
 	/*
