@@ -25,10 +25,6 @@
 ;;; Version:
 ;; $Revision$
 
-;;; TODO:
-;; - Implement handling of imports in completion (DONE) and highlighting (still
-;;   not done)
-
 ;;* Code
 
 ;;** Main
@@ -95,8 +91,11 @@
                                (regexp-opt
                                 (mapcar
                                  (lambda (elem) (car elem))
-                                 (append (greql-import-completion-list '(EdgeClass VertexClass))
-                                         (greql-completion-list '(EdgeClass VertexClass))))
+                                 (append
+                                  (save-excursion
+                                    (goto-char (point-max))
+                                    (greql-import-completion-list '(EdgeClass VertexClass)))
+                                  (greql-completion-list '(EdgeClass VertexClass))))
                                 t)
                                "\\)+\\)}")
                        1 font-lock-type-face))))
@@ -177,28 +176,31 @@ queries are evaluated.  Set it with `greql-set-graph'.")
   (let ((comp-lst (greql-completion-list mtypes))
         lst)
     (save-excursion
+      (goto-char (line-end-position))
       (while (re-search-backward "import[[:space:]]+\\([^;]+\\);" nil t)
         (unless (looking-back ".*//.*")
-          (let* ((import (match-string-no-properties 1))
-                 (regex (regexp-quote (substring import 0 (- (length import) 1)))))
+          (let ((import (match-string-no-properties 1)))
             (if (string-match "\\*$" import)
                 ;; A package import
-                (setq
-                 lst
-                 (nconc lst
-                        (delq nil
-                              (mapcar
-                               (lambda (elem)
-                                 (if (string-match regex (car elem))
-                                     (list (replace-regexp-in-string regex "" (car elem))
-                                           (cadr elem))
-                                   nil))
-                               comp-lst))))
+                (let ((regex (regexp-quote (substring import 0 (- (length import) 1)))))
+                  (setq lst
+                        (nconc lst
+                               (delq nil (mapcar
+                                          (lambda (elem)
+                                            (if (string-match  (car elem))
+                                                (list (replace-regexp-in-string regex "" (car elem))
+                                                      (cadr elem))
+                                              nil))
+                                          comp-lst)))))
               ;; An element import
-              (when (member import comp-lst)
-                (setq lst (cons
-                           (replace-regexp-in-string "\\([[:word:]._]+\\.\\)\\([^.]+\\)" "\\2" import)
-                           lst))))))))
+              (let ((elem (catch 'elem (dolist (m comp-lst)
+                                         (when (string= (car m) import)
+                                           (throw 'elem m))))))
+                (when elem
+                  (setq lst (cons
+                             (cons (replace-regexp-in-string "\\([[:word:]._]+\\.\\)\\([^.]+\\)" "\\2" import)
+                                   (cdr elem))
+                             lst)))))))))
     lst))
 
 (defun greql-completion-list (mtypes &optional key)
