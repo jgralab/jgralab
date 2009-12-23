@@ -164,32 +164,45 @@
 
 ;;** Schema querying
 
-(defun tg--intersection (lists predicate)
-  (cond
-   ((null lists) nil)
-   ((= (length lists) 1)
-    (car lists))
-   ((= (length lists) 2)
-    (intersection (first lists) (second lists) :test predicate))
-   (t
-    (intersection (first lists)
-                  (tg--intersection (cdr lists) predicate)
-                  :test predicate))))
+(defun tg--attribute-name-member-p (a lst)
+  "Return non-nil, if the attribute list LST contains some
+attribute, which is named like the attribute A.  Attributes are
+plists (:name \"a\" :domain \"d\" :owner \"o\")."
+  (catch 'found
+    (dolist (e lst)
+      (when (string= (plist-get e :name) (plist-get a :name))
+        (throw 'found t)))))
 
-;; TODO: Currently, if 2 types have 2 different attributes with the same name,
-;; then those won't be listed.  Am I sure that's the right thing?  Probably I
-;; want to keep both...
-(defun tg-all-attributes-multi (mtype types)
+(defun tg--attribute-restriction (lists)
+  "Gets a list of lists, where each list is the list of
+attributes from some schema element.  Returns a list of common
+attributes, where common means, that only the attribute names
+have to equal, but not the domain or owner."
+  (let (result)
+    (dolist (attr (reduce 'append lists))
+      (let ((in-all (catch 'in-all
+                      (dolist (type lists)
+                        (when (not (tg--attribute-name-member-p attr type))
+                          (throw 'in-all nil)))
+                      (throw 'in-all t))))
+        (when (and in-all (not (member attr result)))
+          (setq result (cons attr result)))))
+    result))
+
+(defun tg-all-attributes-multi (mtype types &optional only-in-all)
   "Returns a list of all attributes that are defined in all TYPES
-of meta type MTYPE."
-  (tg--intersection
-   (mapcar (lambda (type)
-             (tg-all-attributes (tg-get-schema-element mtype type)))
-           types)
-   (lambda (a1 a2)
-     (and (string= (plist-get a1 :name) (plist-get a2 :name))
-          (string= (plist-get a1 :domain) (plist-get a2 :domain))
-          (string= (plist-get a1 :owner) (plist-get a2 :owner))))))
+of meta type MTYPE.
+
+If ONLY-IN-ALL is non-nil, restrict them to attributes that are
+valid for all TYPES."
+  (let ((all-attrs (mapcar
+                    (lambda (type)
+                      (tg-all-attributes (tg-get-schema-element mtype type)))
+                    types)))
+    (if only-in-all
+        (tg--attribute-restriction all-attrs)
+      (remove-duplicates
+       (reduce 'nconc all-attrs )))))
 
 (defun tg-all-attributes (elem)
   "Returns an alist of all attribute of the schema element
