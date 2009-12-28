@@ -93,28 +93,50 @@
   (append greql-fontlock-keywords-1
           (list (concat "\\<" (regexp-opt greql-keywords t) "\\>"))))
 
-(defvar greql-fontlock-keywords-3 nil)
-(make-variable-buffer-local 'greql-fontlock-keywords-3)
+(defun greql-fontlock-known-types (limit)
+  (catch 'found
+    (while (re-search-forward "[{,]" limit t)
+      (when (and greql-fontlock-types-regex
+                 (not (string= greql-fontlock-types-regex ""))
+                 (looking-back "{[[:alnum:][:space:]^.!_,]*")
+                 (looking-at   "[[:alnum:][:space:]^.!_,]*}")
+                 (looking-at (concat "[[:space:]^]*\\<" greql-fontlock-types-regex "\\>"))
+                 (match-string 1))
+        (goto-char (match-end 1))
+        (throw 'found t)))))
 
-(defun greql-set-fontlock-keywords-3 ()
-  (setq greql-fontlock-keywords-3
-        (append greql-fontlock-keywords-2
-                (list (list
-                       (concat "{\\(\\([[:space:]^,!]*"
-                               (regexp-opt
-                                (mapcar
-                                 (lambda (elem) (car elem))
-                                 (append
-                                  (save-excursion
-                                    (goto-char (point-max))
-                                    (greql-import-completion-list '(EdgeClass VertexClass)))
-                                  (greql-completion-list '(EdgeClass VertexClass))))
-                                t)
-                               "\\)+\\)}")
-                       1 font-lock-type-face))))
-  (let (font-lock-set-defaults) (font-lock-set-defaults))
-  (jit-lock-refontify (point-min) (point-max))
-  (redisplay t))
+(defun greql-fontlock-unknown-types (limit)
+  (catch 'found
+    (while (re-search-forward "[{,]" limit t)
+      (when (and (looking-back "{[[:alnum:][:space:]^.!_,]*")
+                 (looking-at   "[[:alnum:][:space:]^.!_,]*}")
+                 (or greql-fontlock-types-regex
+                     (not (string= greql-fontlock-types-regex ""))
+                     (not (looking-at (concat "[[:space:]^]*\\<" greql-fontlock-types-regex "\\>")))))
+        (looking-at "[[:space:]^]*\\<\\([[:alnum:]._]+\\)\\>")
+        (goto-char (match-end 1))
+        (throw 'found t)))))
+
+(defparameter greql-fontlock-keywords-3
+  (append greql-fontlock-keywords-2
+          (list
+           (list 'greql-fontlock-known-types 1 font-lock-type-face)
+           (list 'greql-fontlock-unknown-types 1 font-lock-warning-face))))
+
+(defvar greql-fontlock-types-regex nil)
+(make-variable-buffer-local 'greql-fontlock-types-regex)
+
+(defun greql-set-fontlock-types-regex ()
+  (setq greql-fontlock-types-regex
+        (regexp-opt
+         (mapcar
+          (lambda (elem) (car elem))
+          (append
+           (save-excursion
+             (goto-char (point-max))
+             (greql-import-completion-list '(EdgeClass VertexClass)))
+           (greql-completion-list '(EdgeClass VertexClass))))
+         t)))
 
 (defvar greql-tab-width 2
   "Distance between tab stops (for display of tab characters), in
@@ -135,10 +157,10 @@ columns.")
         '((greql-fontlock-keywords-1
            greql-fontlock-keywords-2
            greql-fontlock-keywords-3)))
-  (greql-set-fontlock-keywords-3)
+  (greql-set-fontlock-types-regex)
 
   ;; Update highlighting of Vertex- and EdgeClasses after saving
-  (add-hook 'after-save-hook 'greql-set-fontlock-keywords-3 t t)
+  (add-hook 'after-save-hook 'greql-set-fontlock-types-regex t t)
 
   (setq tab-width greql-tab-width)
   (set (make-local-variable 'indent-line-function) 'greql-indent-line)
@@ -185,7 +207,7 @@ queries are evaluated.  Set it with `greql-set-graph'.")
   ;; add keywords and functions, too
   (greql-add-functions-and-keywords)
   ;; Setup schema element font locking
-  (greql-set-fontlock-keywords-3))
+  (greql-set-fontlock-types-regex))
 
 (defun greql-import-completion-list (mtypes)
   "Additional completions due to imports."
