@@ -25,6 +25,9 @@
 ;;; Version:
 ;; $Revision$
 
+;;; TODO:
+;; - Document all keywords and functions.
+
 ;;* Code
 
 ;;** Main
@@ -33,12 +36,40 @@
 (require 'tg-mode)
 
 (defparameter greql-keywords
-  (sort '("E" "V" "as" "bag" "eSubgraph" "end" "exists!" "exists" "forall"
-          "from" "in" "let" "list" "path" "pathSystem" "rec" "report"
-          "reportBag" "reportSet" "reportMap" "set" "store" "tup" "using"
-          "vSubgraph" "where" "with" "thisEdge" "thisVertex" "map" "import"
-          "true" "false" "null")
-        'string-lessp)
+  '((:meta keyword :name "E" :description "EdgeSetExpression: E{<Type>+}")
+    (:meta keyword :name "V" :description "VertexSetExpression: V{<Type>+}")
+    (:meta keyword :name "as" :description "Assign a name to a table header.")
+    (:meta keyword :name "bag" :description "BagConstruction: bag(<Exp>+)")
+    (:meta keyword :name "eSubgraph" :description "")
+    (:meta keyword :name "end" :description "Comprehension: from [with <Exp>+] report <Exp>+ end")
+    (:meta keyword :name "exists!" :description "QuantifiedExpression: exists! <VarDecl>+ @ <Exp>")
+    (:meta keyword :name "exists" :description "QuantifiedExpression: exists <VarDecl>+ @ <Exp>")
+    (:meta keyword :name "forall" :description "QuantifiedExpression: forall <VarDecl>+ @ <Exp>")
+    (:meta keyword :name "from" :description "Comprehension: from [with <Exp>+] report <Exps> end")
+    (:meta keyword :name "in" :description "LetExpression: let <<Name> := <Exp>>+ in <Exp>")
+    (:meta keyword :name "let" :description "LetExpression: let <<Name> := <Exp>>+ in <Exp>")
+    (:meta keyword :name "list" :description "ListConstruction: list(<Exp>+|<Range>)")
+    (:meta keyword :name "path" :description "")
+    (:meta keyword :name "pathSystem" :description "")
+    (:meta keyword :name "rec" :description "RecordConstruction: rec(<<Name> := <Exp>>+)")
+    (:meta keyword :name "report" :description "TableComprehension: from [with <Exp>+] report <<Exp> [as \"TabName\"]>+ end")
+    (:meta keyword :name "reportBag" :description "BagComprehension: from [with <Exp>+] reportBag <Exp>+ end")
+    (:meta keyword :name "reportSet" :description "SetComprehension: from [with <Exp>+] reportSet <Exp>+ end")
+    (:meta keyword :name "reportMap" :description "MapComprehension: from [with <Exp>+] reportMap <KeyExp>, <ValueExp> end")
+    (:meta keyword :name "set" :description "SetConstruction: set(<Exp>+)")
+    (:meta keyword :name "store" :description "")
+    (:meta keyword :name "tup" :description "TupleConstruction: tup(<Exp>+)")
+    (:meta keyword :name "using" :description "")
+    (:meta keyword :name "vSubgraph" :description "")
+    (:meta keyword :name "where" :description "WhereExpression: <Exp> where <<Name> := <Exp>>+")
+    (:meta keyword :name "with" :description "Comprehension: from [with <Exp>+] report <Exp>+ end")
+    (:meta keyword :name "thisEdge" :description "ThisEdge: The currently iterated edge.")
+    (:meta keyword :name "thisVertex" :description "ThisVertex: The currently iterated vertex.")
+    (:meta keyword :name "map" :description "BagConstruction: map(<<KeyExp> -> <ValueExp>>+)")
+    (:meta keyword :name "import" :description "ImportStatement: import <Type>|<Wildcart>")
+    (:meta keyword :name "true" :description "Logically true")
+    (:meta keyword :name "false" :description "Logically false")
+    (:meta keyword :name "null" :description "Absence of a value"))
   "GReQL keywords that should be completed and highlighted.")
 (put 'greql-keywords 'risky-local-variable-p t)
 
@@ -71,6 +102,14 @@
         (when (string= (plist-get f :name) fun)
           (throw 'fun f))))))
 
+(defun greql-keyword-p ()
+  "Return a keyword plist if point is on a keyword."
+  (let ((key (current-word t t)))
+    (catch 'keyword
+      (dolist (k greql-keywords)
+        (when (string= (plist-get k :name) key)
+          (throw 'keyword k))))))
+
 (defparameter greql-functions (greql-functions)
   "GReQL functions that should be completed and highlighted.")
 
@@ -91,7 +130,9 @@
 
 (defparameter greql-fontlock-keywords-2
   (append greql-fontlock-keywords-1
-          (list (concat "\\<" (regexp-opt greql-keywords t) "\\>"))))
+          (list (concat "\\<" (regexp-opt (mapcar (lambda (key) (plist-get key :name))
+                                                  greql-keywords)
+                                          t) "\\>"))))
 
 (defun greql-fontlock-known-types (limit)
   (catch 'found
@@ -169,8 +210,6 @@ columns.")
 
   (setq greql-evaluation-buffer (concat "*GReQL Evaluation: " (buffer-name) "*"))
 
-  (greql-add-functions-and-keywords)
-
   (progn
     (define-key greql-mode-map (kbd "M-TAB")   'greql-complete)
     (define-key greql-mode-map (kbd "C-c C-d C-d") 'greql-show-documentation)
@@ -183,13 +222,6 @@ columns.")
   "The graph which is used to extract schema information on which
 queries are evaluated.  Set it with `greql-set-graph'.")
 (make-variable-buffer-local 'greql-graph)
-
-(defun greql-add-functions-and-keywords ()
-  (dolist (key greql-keywords)
-    (setq tg-schema-alist (cons (list :meta 'keyword :name key)
-                                tg-schema-alist)))
-  (dolist (fun greql-functions)
-    (setq tg-schema-alist (cons fun tg-schema-alist))))
 
 (defun greql-set-graph (graph)
   "Set `greql-graph' to GRAPH and parse it with `tg-parse-schema'."
@@ -204,8 +236,6 @@ queries are evaluated.  Set it with `greql-set-graph'.")
       (setq unique-name-map tg-unique-name-hashmap))
     (setq tg-schema-alist schema-alist)
     (setq tg-unique-name-hashmap unique-name-map))
-  ;; add keywords and functions, too
-  (greql-add-functions-and-keywords)
   ;; Setup schema element font locking
   (greql-set-fontlock-types-regex))
 
@@ -243,14 +273,13 @@ queries are evaluated.  Set it with `greql-set-graph'.")
                              lst)))))))))
     lst))
 
-(defun greql-completion-list (mtypes &optional key)
-  "Return a completion list of all MTYPES (:meta values) of
-KEY (:qname by default)."
+(defun greql-completion-list (mtypes)
+  "Return a completion list of all MTYPES (:meta values)."
   (when tg-schema-alist
     (let (completions)
       (dolist (elem tg-schema-alist)
         (when (or (null mtypes) (member (plist-get elem :meta) mtypes))
-          (setq completions (cons (list (plist-get elem (or key :qname))
+          (setq completions (cons (list (plist-get elem :qname)
                                         (concat " (" (symbol-name (plist-get elem :meta)) ")"))
                                   completions))))
       completions)))
@@ -378,7 +407,18 @@ objects."
 
 (defun greql-complete-keyword-or-function ()
   (interactive)
-  (greql-complete-1 (greql-completion-list '(keyword function) :name)))
+  (flet ((format-entry (fun)
+                       (let* ((name (plist-get fun :name))
+                              (i (- 79 (length name))))
+                         (list name
+                               (format (concat "% " (number-to-string i) "."
+                                               (number-to-string (- i 2)) "s")
+                                       (plist-get fun :description))))))
+    (greql-complete-1 (append
+                       (mapcar 'format-entry
+                               greql-keywords)
+                       (mapcar 'format-entry
+                               greql-functions)))))
 
 (defparameter greql--indent-regexp
   "\\(?:\\<\\(?:exists!?\\|forall\\|from\\)\\>\\|(\\)")
@@ -637,11 +677,18 @@ for some variable declared as
       (setq greql--last-thing thing)
       (setq greql--last-doc
             (cond
+             ;; Functions
              ((let ((fun (greql-function-p)))
                 (when fun
                   (concat (propertize (plist-get fun :name) 'face 'font-lock-function-name-face)
                           ": "
                           (plist-get fun :description)))))
+             ;; Keywords
+             ((let ((key (greql-keyword-p)))
+                (when key
+                  (concat (propertize (plist-get key :name) 'face 'font-lock-keyword-face)
+                          ": "
+                          (plist-get key :description)))))
              ((null tg-schema-alist)
               "Set a graph for eldoc features.")
              ;; document vertex classes
