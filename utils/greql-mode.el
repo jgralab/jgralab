@@ -36,40 +36,59 @@
 (require 'tg-mode)
 
 (defparameter greql-keywords
-  '((:meta keyword :name "E" :description "EdgeSetExpression: E{<Type>+}")
-    (:meta keyword :name "V" :description "VertexSetExpression: V{<Type>+}")
-    (:meta keyword :name "as" :description "Assign a name to a table header.")
-    (:meta keyword :name "bag" :description "BagConstruction: bag(<Exp>+)")
-    (:meta keyword :name "eSubgraph" :description "")
-    (:meta keyword :name "end" :description "Comprehension: from [with <Exp>+] report <Exp>+ end")
-    (:meta keyword :name "exists!" :description "QuantifiedExpression: exists! <VarDecl>+ @ <Exp>")
-    (:meta keyword :name "exists" :description "QuantifiedExpression: exists <VarDecl>+ @ <Exp>")
-    (:meta keyword :name "forall" :description "QuantifiedExpression: forall <VarDecl>+ @ <Exp>")
-    (:meta keyword :name "from" :description "Comprehension: from [with <Exp>+] report <Exps> end")
-    (:meta keyword :name "in" :description "LetExpression: let <<Name> := <Exp>>+ in <Exp>")
-    (:meta keyword :name "let" :description "LetExpression: let <<Name> := <Exp>>+ in <Exp>")
-    (:meta keyword :name "list" :description "ListConstruction: list(<Exp>+|<Range>)")
-    (:meta keyword :name "path" :description "")
-    (:meta keyword :name "pathSystem" :description "")
-    (:meta keyword :name "rec" :description "RecordConstruction: rec(<<Name> := <Exp>>+)")
-    (:meta keyword :name "report" :description "TableComprehension: from [with <Exp>+] report <<Exp> [as \"TabName\"]>+ end")
-    (:meta keyword :name "reportBag" :description "BagComprehension: from [with <Exp>+] reportBag <Exp>+ end")
-    (:meta keyword :name "reportSet" :description "SetComprehension: from [with <Exp>+] reportSet <Exp>+ end")
-    (:meta keyword :name "reportMap" :description "MapComprehension: from [with <Exp>+] reportMap <KeyExp>, <ValueExp> end")
-    (:meta keyword :name "set" :description "SetConstruction: set(<Exp>+)")
-    (:meta keyword :name "store" :description "")
-    (:meta keyword :name "tup" :description "TupleConstruction: tup(<Exp>+)")
-    (:meta keyword :name "using" :description "")
-    (:meta keyword :name "vSubgraph" :description "")
-    (:meta keyword :name "where" :description "WhereExpression: <Exp> where <<Name> := <Exp>>+")
-    (:meta keyword :name "with" :description "Comprehension: from [with <Exp>+] report <Exp>+ end")
-    (:meta keyword :name "thisEdge" :description "ThisEdge: The currently iterated edge.")
-    (:meta keyword :name "thisVertex" :description "ThisVertex: The currently iterated vertex.")
-    (:meta keyword :name "map" :description "BagConstruction: map(<<KeyExp> -> <ValueExp>>+)")
-    (:meta keyword :name "import" :description "ImportStatement: import <Type>|<Wildcart>")
-    (:meta keyword :name "true" :description "Logically true")
-    (:meta keyword :name "false" :description "Logically false")
-    (:meta keyword :name "null" :description "Absence of a value"))
+  (let ((lst '((:meta keyword :name "E" :description "EdgeSetExpression: E{<Type>+}")
+               (:meta keyword :name "V" :description "VertexSetExpression: V{<Type>+}")
+               (:meta keyword :name "as" :description "Assign a name to a table header.")
+               (:meta keyword :name "bag" :description "BagConstruction: bag(<Exp>+)")
+               (:meta keyword :name "eSubgraph" :description "EdgeSubgraphExpression: eSubgraph(<EdgeType>+)")
+               (:meta keyword :name "end" :description "Comprehension: from [with <Exp>+] report <Exp>+ end")
+               (:meta keyword :name "exists!" :description "QuantifiedExpression: exists! <VarDecl>+ @ <Exp>")
+               (:meta keyword :name "exists" :description "QuantifiedExpression: exists <VarDecl>+ @ <Exp>")
+               (:meta keyword :name "forall" :description "QuantifiedExpression: forall <VarDecl>+ @ <Exp>")
+               (:meta keyword :name "from" :description "Comprehension: from [with <Exp>+] report <Exps> end")
+               (:meta keyword :name "in" :description "LetExpression: let <<Name> := <Exp>>+ in <Exp>")
+               (:meta keyword :name "let" :description "LetExpression: let <<Name> := <Exp>>+ in <Exp>")
+               (:meta keyword :name "list" :description "ListConstruction: list(<Exp>+|<Range>)")
+               (:meta keyword :name "path" :description "")
+               (:meta keyword :name "pathsystem" :description "")
+               (:meta keyword :name "rec" :description "RecordConstruction: rec(<<Name> := <Exp>>+)")
+               (:meta keyword :name "report" :description "TableComprehension: from [with <Exp>+] report <<Exp> [as <TabHdrName>]>+ end")
+               (:meta keyword :name "reportBag" :description "BagComprehension: from [with <Exp>+] reportBag <Exp>+ end")
+               (:meta keyword :name "reportSet" :description "SetComprehension: from [with <Exp>+] reportSet <Exp>+ end")
+               (:meta keyword :name "reportMap" :description "MapComprehension: from [with <Exp>+] reportMap <KeyExp>, <ValueExp> end")
+               (:meta keyword :name "set" :description "SetConstruction: set(<Exp>+)")
+               (:meta keyword :name "store" :description "Store result as XML")
+               (:meta keyword :name "tup" :description "TupleConstruction: tup(<Exp>+)")
+               (:meta keyword :name "using" :description "Use global variables: using <VarName>+;")
+               (:meta keyword :name "vSubgraph" :description "VertexSubgraphExpression: vSubgraph(<VertexType>+)")
+               (:meta keyword :name "where" :description "WhereExpression: <Exp> where <<Name> := <Exp>>+")
+               (:meta keyword :name "with" :description "Comprehension: from [with <Exp>+] report <Exp>+ end")
+               (:meta keyword :name "thisEdge" :description "ThisEdge: The currently iterated edge.")
+               (:meta keyword :name "thisVertex" :description "ThisVertex: The currently iterated vertex.")
+               (:meta keyword :name "map" :description "BagConstruction: map(<<KeyExp> -> <ValueExp>>+)")
+               (:meta keyword :name "import" :description "ImportStatement: import <Type>|<Wildcart>")
+               (:meta keyword :name "true" :description "Logically true")
+               (:meta keyword :name "false" :description "Logically false")
+               (:meta keyword :name "null" :description "Absence of a value"))))
+    (let ((rx (concat "\\<" (regexp-opt
+                             (mapcar (lambda (e) (plist-get e :name))
+                                     lst)
+                             t)
+                      "\\>"))
+          lst2)
+      (dolist (kw lst)
+        (setq lst2 (cons (list
+                          :meta (plist-get kw :meta)
+                          :name (plist-get kw :name)
+                          :description (with-temp-buffer
+                                         (insert (plist-get kw :description))
+                                         (goto-char (point-min))
+                                         (while (re-search-forward rx nil t)
+                                           (put-text-property (match-beginning 1)
+                                                              (match-end 1) 'face 'bold))
+                                         (buffer-substring (point-min) (point-max))))
+                         lst2)))
+      lst2))
   "GReQL keywords that should be completed and highlighted.")
 (put 'greql-keywords 'risky-local-variable-p t)
 
@@ -240,7 +259,10 @@ queries are evaluated.  Set it with `greql-set-graph'.")
   (greql-set-fontlock-types-regex))
 
 (defun greql-import-completion-list (mtypes)
-  "Additional completions due to imports."
+  "Return a completion list for imported elements.
+If the package foo is imported, then the element \"Bar\" will be
+in the result, supplementing its qualified name foo.Bar gathered
+by normal completion."
   (let ((comp-lst (greql-completion-list mtypes))
         lst)
     (save-excursion
@@ -289,11 +311,11 @@ queries are evaluated.  Set it with `greql-set-graph'.")
 `tg-all-attributes-multi' for completion."
   (when al
     (let ((cl (mapcar
-                (lambda (plst)
-                  (list (plist-get plst :name)
-                        (concat " : " (plist-get plst :domain)
-                                " (" (tg-unique-name (plist-get plst :owner) 'unique) ")")))
-                al)))
+               (lambda (plst)
+                 (list (plist-get plst :name)
+                       (concat " : " (plist-get plst :domain)
+                               " (" (tg-unique-name (plist-get plst :owner) 'unique) ")")))
+               al)))
       cl)))
 
 (defun greql-completion-sort (c1 c2)
@@ -376,6 +398,11 @@ objects."
    (t (greql-complete-keyword-or-function))))
 
 (defun greql-complete-attributes (arg)
+  "Complete attributes of the current variable.
+If a prefix ARG is given, complete only attributes that are
+applicable for all possible bound types.  For example, if there's
+a variable that is bound to either a Foo or a Bar, then show only
+those attributes, which are valid for both Foo and Bar objects."
   (interactive "P")
   (let ((vartypes (greql-variable-types)))
     (when vartypes
@@ -384,28 +411,33 @@ objects."
         (greql-complete-1 compl-list "[.]")))))
 
 (defun greql-complete-anyclass ()
+  "Complete vertex and edge classes."
   (interactive)
   (let ((types '(EdgeClass VertexClass)))
     (greql-complete-1 (nconc (greql-import-completion-list types)
                              (greql-completion-list types)))))
 
 (defun greql-complete-vertexclass ()
+  "Complete vertex classes."
   (interactive)
   (greql-complete-1 (nconc (greql-import-completion-list '(VertexClass))
                            (greql-completion-list '(VertexClass)))))
 
 (defun greql-complete-edgeclass ()
+  "Complete edge classes."
   (interactive)
   (greql-complete-1 (nconc (greql-import-completion-list '(EdgeClass))
                            (greql-completion-list '(EdgeClass)))))
 
 (defun greql-complete-domain ()
+  "Complete domains."
   (interactive)
   (let ((types '(EnumDomain RecordDomain ListDomain SetDomain BagDomain MapDomain)))
     (greql-complete-1 (nconc (greql-import-completion-list types)
                              (greql-completion-list types)))))
 
 (defun greql-complete-keyword-or-function ()
+  "Complete keywords and functions."
   (interactive)
   (flet ((format-entry (fun)
                        (let* ((name (plist-get fun :name))
@@ -427,6 +459,7 @@ objects."
   "\\(?:)\\|\\<end\\>\\)")
 
 (defun greql-calculate-indent ()
+  "Calculate the indentation level of the current line."
   (let ((i 0) (d 0)
         (bound (save-excursion
                  (forward-line -1)
@@ -454,6 +487,7 @@ objects."
     (+ (/ prev-line-indent tab-width) (- i d))))
 
 (defun greql-indent-line ()
+  "Indent the line according to the previous line and syntactic elements."
   (let ((d (greql-calculate-indent))
         (col (- (point) (line-beginning-position)))
         spaces)
