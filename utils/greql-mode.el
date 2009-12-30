@@ -52,7 +52,7 @@
                (:meta keyword :name "path" :description "")
                (:meta keyword :name "pathsystem" :description "")
                (:meta keyword :name "rec" :description "RecordConstruction: rec(<<Name> := <Exp>>+)")
-               (:meta keyword :name "report" :description "TableComprehension: from [with <Exp>+] report <<Exp> [as <TabHdrName>]>+ end")
+               (:meta keyword :name "report" :description "TableComprehension: from [with <Exp>+] report <<Exp> [as <HdrName>]>+ end")
                (:meta keyword :name "reportBag" :description "BagComprehension: from [with <Exp>+] reportBag <Exp>+ end")
                (:meta keyword :name "reportSet" :description "SetComprehension: from [with <Exp>+] reportSet <Exp>+ end")
                (:meta keyword :name "reportMap" :description "MapComprehension: from [with <Exp>+] reportMap <KeyExp>, <ValueExp> end")
