@@ -71,8 +71,11 @@ public class Pos extends Greql2Function {
 	{
 		JValueType[][] x = { { JValueType.COLLECTION, JValueType.OBJECT } };
 		signatures = x;
+
+		description = "Return the index of the given object in the given list or tuple.";
 	}
 
+	@Override
 	public JValue evaluate(Graph graph, BooleanGraphMarker subgraph,
 			JValue[] arguments) throws EvaluateException {
 		if (checkArguments(arguments) == -1) {
@@ -88,7 +91,7 @@ public class Pos extends Greql2Function {
 			JValueTuple tup = col.toJValueTuple();
 			return new JValue(tup.indexOf(object));
 		}
-		if (col.isJValueSet ()) {
+		if (col.isJValueSet()) {
 			JValueSet set = col.toJValueSet();
 			return new JValue(set.indexOf(object));
 		}
@@ -96,14 +99,17 @@ public class Pos extends Greql2Function {
 				"Pos has to be called with a LIST, TUPLE or sorted SET.");
 	}
 
+	@Override
 	public long getEstimatedCosts(ArrayList<Long> inElements) {
 		return 2;
 	}
 
+	@Override
 	public double getSelectivity() {
 		return 1;
 	}
 
+	@Override
 	public long getEstimatedCardinality(int inElements) {
 		return 1;
 	}

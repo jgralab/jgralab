@@ -77,8 +77,13 @@ public class HasType extends Greql2Function {
 						JValueType.ATTRIBUTEDELEMENTCLASS },
 				{ JValueType.ATTRIBUTEDELEMENT, JValueType.TYPECOLLECTION } };
 		signatures = x;
+
+		description = "Checks if the given AttrElem has the given type.\n"
+				+ "The type may be given as qualified name (String), as\n"
+				+ "TypeCollection, or as AttributedElementClass.";
 	}
 
+	@Override
 	public JValue evaluate(Graph graph, BooleanGraphMarker subgraph,
 			JValue[] arguments) throws EvaluateException {
 		String typeName = null;
@@ -105,25 +110,28 @@ public class HasType extends Greql2Function {
 		}
 
 		if (aeClass != null) {
-			return new JValue(elem.getAttributedElementClass() == aeClass
+			return new JValue((elem.getAttributedElementClass() == aeClass)
 					|| elem.getAttributedElementClass().isSubClassOf(aeClass),
 					elem);
 		}
 
 		AttributedElementClass type = elem.getSchema()
 				.getAttributedElementClass(typeName);
-		return new JValue(elem.getAttributedElementClass() == type
+		return new JValue((elem.getAttributedElementClass() == type)
 				|| elem.getAttributedElementClass().isSubClassOf(type), elem);
 	}
 
+	@Override
 	public long getEstimatedCosts(ArrayList<Long> inElements) {
 		return 2;
 	}
 
+	@Override
 	public double getSelectivity() {
 		return 0.1;
 	}
 
+	@Override
 	public long getEstimatedCardinality(int inElements) {
 		return 1;
 	}

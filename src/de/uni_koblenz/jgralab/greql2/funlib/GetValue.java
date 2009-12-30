@@ -70,8 +70,12 @@ public class GetValue extends Greql2Function {
 				{ JValueType.ATTRIBUTEDELEMENT, JValueType.STRING },
 				{ JValueType.RECORD, JValueType.STRING } };
 		signatures = x;
+
+		description = "Return the value of the given AttrElem's or Record's attribute or component.\n"
+				+ "This function can be used with the point operator.";
 	}
 
+	@Override
 	public JValue evaluate(Graph graph, BooleanGraphMarker subgraph,
 			JValue[] arguments) throws EvaluateException {
 		AttributedElement attrElem = null;
@@ -101,14 +105,17 @@ public class GetValue extends Greql2Function {
 		return record.get(fieldName);
 	}
 
+	@Override
 	public long getEstimatedCosts(ArrayList<Long> inElements) {
 		return 2;
 	}
 
+	@Override
 	public double getSelectivity() {
 		return 1;
 	}
 
+	@Override
 	public long getEstimatedCardinality(int inElements) {
 		return 1;
 	}

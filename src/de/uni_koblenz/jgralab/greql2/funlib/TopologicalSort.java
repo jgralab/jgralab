@@ -78,10 +78,10 @@ public class TopologicalSort extends Greql2Function {
 		GraphMarker<Integer> marker = new GraphMarker<Integer>(graph);
 		int vCount = 0;
 		for (Vertex v : graph.vertices()) {
-			if (subgraph == null || subgraph.isMarked(v)) {
+			if ((subgraph == null) || subgraph.isMarked(v)) {
 				int inDegree = 0;
 				for (Edge inc : v.incidences(EdgeDirection.IN)) {
-					if (subgraph == null || subgraph.isMarked(inc)) {
+					if ((subgraph == null) || subgraph.isMarked(inc)) {
 						inDegree++;
 					}
 				}
@@ -98,9 +98,9 @@ public class TopologicalSort extends Greql2Function {
 			Vertex v = queue.poll();
 			vCount--;
 			for (Edge inc : v.incidences(EdgeDirection.OUT)) {
-				if (subgraph == null || subgraph.isMarked(inc)) {
+				if ((subgraph == null) || subgraph.isMarked(inc)) {
 					Vertex omega = inc.getOmega();
-					assert subgraph == null || subgraph.isMarked(omega);
+					assert (subgraph == null) || subgraph.isMarked(omega);
 					int decVal = marker.getMark(omega) - 1;
 					marker.mark(omega, decVal);
 					if (decVal == 0) {
@@ -114,7 +114,8 @@ public class TopologicalSort extends Greql2Function {
 		if (vCount == 0) {
 			return result;
 		}
-		return null;
+
+		return new JValue();
 	}
 
 	/*

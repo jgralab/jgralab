@@ -65,8 +65,12 @@ public class IsLoop extends Greql2Function {
 	{
 		JValueType[][] x = { { JValueType.EDGE } };
 		signatures = x;
+
+		description = "Return true, iff the given edge is a loop.\n"
+				+ "That means, its start- and end-vertex is the same.";
 	}
 
+	@Override
 	public JValue evaluate(Graph graph, BooleanGraphMarker subgraph,
 			JValue[] arguments) throws EvaluateException {
 		if (checkArguments(arguments) == -1) {
@@ -76,14 +80,17 @@ public class IsLoop extends Greql2Function {
 		return new JValue(edge.getAlpha() == edge.getOmega(), edge);
 	}
 
+	@Override
 	public long getEstimatedCosts(ArrayList<Long> inElements) {
 		return 2;
 	}
 
+	@Override
 	public double getSelectivity() {
 		return 0.01;
 	}
 
+	@Override
 	public long getEstimatedCardinality(int inElements) {
 		return 1;
 	}

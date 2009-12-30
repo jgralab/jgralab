@@ -20,6 +20,7 @@ public abstract class ArithmeticFunction extends Greql2Function {
 				{ JValueType.LONG, JValueType.LONG },
 				{ JValueType.INTEGER, JValueType.INTEGER } };
 		signatures = x;
+		description = "Perform arithmetic operation on the given 2 number.";
 	}
 
 	protected enum ArithmeticOperator {

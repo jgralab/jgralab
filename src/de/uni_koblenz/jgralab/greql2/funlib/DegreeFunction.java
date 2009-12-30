@@ -31,8 +31,6 @@ public abstract class DegreeFunction extends Greql2Function {
 				{ JValueType.VERTEX, JValueType.PATHSYSTEM,
 						JValueType.TYPECOLLECTION } };
 		signatures = x;
-
-		description = "Returns the (in/out/both)-degree of the given vertex.";
 	}
 
 	public JValue evaluate(BooleanGraphMarker subgraph, JValue[] arguments,

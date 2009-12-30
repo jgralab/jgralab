@@ -24,16 +24,10 @@
 
 package de.uni_koblenz.jgralab.greql2.funlib;
 
-import java.util.ArrayDeque;
 import java.util.ArrayList;
-import java.util.Queue;
 
-import de.uni_koblenz.jgralab.Edge;
-import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.Graph;
-import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.graphmarker.BooleanGraphMarker;
-import de.uni_koblenz.jgralab.graphmarker.GraphMarker;
 import de.uni_koblenz.jgralab.greql2.exception.EvaluateException;
 import de.uni_koblenz.jgralab.greql2.exception.WrongFunctionParameterException;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
@@ -68,8 +62,12 @@ public class IsAcyclic extends Greql2Function {
 	{
 		JValueType[][] x = { {}, { JValueType.SUBGRAPHTEMPATTRIBUTE } };
 		signatures = x;
+
+		description = "Return true, if the current graph or the given subgraph is cycle-free.\n"
+				+ "Also have a look at the function `topologicalSort'.";
 	}
 
+	@Override
 	public JValue evaluate(Graph graph, BooleanGraphMarker subgraph,
 			JValue[] arguments) throws EvaluateException {
 		switch (checkArguments(arguments)) {
@@ -82,51 +80,24 @@ public class IsAcyclic extends Greql2Function {
 			throw new WrongFunctionParameterException(this, arguments);
 		}
 
-		Queue<Vertex> queue = new ArrayDeque<Vertex>();
-		GraphMarker<Integer> marker = new GraphMarker<Integer>(graph);
-		int vCount = 0;
-		for (Vertex v : graph.vertices()) {
-			if (subgraph == null || subgraph.isMarked(v)) {
-				int inDegree = 0;
-				for (Edge inc : v.incidences(EdgeDirection.IN)) {
-					if (subgraph == null || subgraph.isMarked(inc)) {
-						inDegree++;
-					}
-				}
-				marker.mark(v, inDegree);
-				if (inDegree == 0) {
-					queue.offer(v);
-				}
-				vCount++;
-			}
-		}
-
-		while (!queue.isEmpty()) {
-			Vertex v = queue.poll();
-			vCount--;
-			for (Edge inc : v.incidences(EdgeDirection.OUT)) {
-				if (subgraph == null || subgraph.isMarked(inc)) {
-					Vertex omega = inc.getOmega();
-					assert subgraph == null || subgraph.isMarked(omega);
-					int decVal = marker.getMark(omega) - 1;
-					marker.mark(omega, decVal);
-					if (decVal == 0) {
-						queue.offer(omega);
-					}
-				}
-			}
-		}
-		return new JValue(vCount == 0);
+		Greql2Function topoSort = Greql2FunctionLibrary.instance()
+				.getGreqlFunction("topologicalSort");
+		JValue result = topoSort.evaluate(graph, subgraph, arguments);
+		// when topological sort returns a valid list, then it cannot be cyclic
+		return new JValue(result.isValid() && result.isCollection());
 	}
 
+	@Override
 	public long getEstimatedCosts(ArrayList<Long> inElements) {
 		return 100;
 	}
 
+	@Override
 	public double getSelectivity() {
 		return 0.1;
 	}
 
+	@Override
 	public long getEstimatedCardinality(int inElements) {
 		return 1;
 	}

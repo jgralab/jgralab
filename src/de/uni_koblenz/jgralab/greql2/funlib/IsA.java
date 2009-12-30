@@ -77,8 +77,13 @@ public class IsA extends Greql2Function {
 				{ JValueType.STRING, JValueType.ATTRIBUTEDELEMENTCLASS },
 				{ JValueType.ATTRIBUTEDELEMENTCLASS, JValueType.STRING } };
 		signatures = x;
+
+		description = "Return true, iff the first type is a subtype of the second type.\n"
+				+ "The types may be given as attributed element class or by\n"
+				+ "their qualified name given as string.";
 	}
 
+	@Override
 	public JValue evaluate(Graph graph, BooleanGraphMarker subgraph,
 			JValue[] arguments) throws EvaluateException {
 		String s1 = null, s2 = null;
@@ -99,7 +104,7 @@ public class IsA extends Greql2Function {
 		default:
 			throw new WrongFunctionParameterException(this, arguments);
 		}
-		if (s1 != null || s2 != null) {
+		if ((s1 != null) || (s2 != null)) {
 			Schema schema = graph.getGraphClass().getSchema();
 			if (s1 != null) {
 				aec1 = schema.getAttributedElementClass(s1);
@@ -111,14 +116,17 @@ public class IsA extends Greql2Function {
 		return new JValue(aec1.isSubClassOf(aec2));
 	}
 
+	@Override
 	public long getEstimatedCosts(ArrayList<Long> inElements) {
 		return 5;
 	}
 
+	@Override
 	public double getSelectivity() {
 		return 1;
 	}
 
+	@Override
 	public long getEstimatedCardinality(int inElements) {
 		return 1;
 	}

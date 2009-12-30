@@ -40,6 +40,8 @@ public class IsEmpty extends Greql2Function {
 	{
 		JValueType[][] x = { { JValueType.COLLECTION }, { JValueType.MAP } };
 		signatures = x;
+
+		description = "Return true, iff the given collection or map is empty.";
 	}
 
 	@Override

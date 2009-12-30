@@ -65,8 +65,12 @@ public class IsCycle extends Greql2Function {
 	{
 		JValueType[][] x = { { JValueType.PATH } };
 		signatures = x;
+
+		description = "Return true, iff the given path is a cycle.\n"
+				+ "In a cycle, the start and end vertex are identical.";
 	}
 
+	@Override
 	public JValue evaluate(Graph graph, BooleanGraphMarker subgraph,
 			JValue[] arguments) throws EvaluateException {
 		if (checkArguments(arguments) == -1) {
@@ -75,14 +79,17 @@ public class IsCycle extends Greql2Function {
 		return new JValue(arguments[0].toPath().isCycle());
 	}
 
+	@Override
 	public long getEstimatedCosts(ArrayList<Long> inElements) {
 		return 5;
 	}
 
+	@Override
 	public double getSelectivity() {
 		return 0.1;
 	}
 
+	@Override
 	public long getEstimatedCardinality(int inElements) {
 		return 1;
 	}

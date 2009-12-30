@@ -66,8 +66,13 @@ public class InnerNodes extends Greql2Function {
 	{
 		JValueType[][] x = { { JValueType.PATHSYSTEM } };
 		signatures = x;
+
+		description = "Return all inner nodes of the given pathsystem as set.\n"
+				+ "Inner nodes are all vertices besides leaves of the pathsystem. That\n"
+				+ "means, all vertices, that are neither end of a path or the root.";
 	}
 
+	@Override
 	public JValue evaluate(Graph graph, BooleanGraphMarker subgraph,
 			JValue[] arguments) throws EvaluateException {
 		if (checkArguments(arguments) == -1) {
@@ -77,15 +82,18 @@ public class InnerNodes extends Greql2Function {
 		return ps.innerNodes();
 	}
 
+	@Override
 	public long getEstimatedCosts(ArrayList<Long> inElements) {
 		// TODO Auto-generated method stub
 		return 0;
 	}
 
+	@Override
 	public double getSelectivity() {
 		return 1;
 	}
 
+	@Override
 	public long getEstimatedCardinality(int inElements) {
 		return 1;
 	}
