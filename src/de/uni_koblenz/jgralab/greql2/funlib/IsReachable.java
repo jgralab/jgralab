@@ -76,12 +76,18 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
 public class IsReachable extends Greql2Function {
 
 	{
-		JValueType[][] x = { { JValueType.VERTEX, JValueType.VERTEX,
-				JValueType.DFA } , { JValueType.VERTEX, JValueType.VERTEX,
-			JValueType.NFA } };
+		JValueType[][] x = {
+				{ JValueType.VERTEX, JValueType.VERTEX, JValueType.DFA },
+				{ JValueType.VERTEX, JValueType.VERTEX, JValueType.NFA } };
 		signatures = x;
+
+		description = "Return true, iff there is a path from the first to the second vertex.\n"
+				+ "The third parameter is a path description describing the structure\n"
+				+ "of the path.  If you are only interested in \"somehow connected\",\n"
+				+ "use <->* here.";
 	}
 
+	@Override
 	public JValue evaluate(Graph graph, BooleanGraphMarker subgraph,
 			JValue[] arguments) throws EvaluateException {
 
@@ -134,14 +140,17 @@ public class IsReachable extends Greql2Function {
 		return new JValue(false, startVertex);
 	}
 
+	@Override
 	public long getEstimatedCosts(ArrayList<Long> inElements) {
 		return 50;
 	}
 
+	@Override
 	public double getSelectivity() {
 		return 0.01;
 	}
 
+	@Override
 	public long getEstimatedCardinality(int inElements) {
 		return 1;
 	}

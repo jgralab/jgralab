@@ -35,7 +35,7 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
 
 /**
- * Returns the edge with the given id in the datagraph.
+ * Returns the vertex with the given id in the datagraph.
  * 
  * <dl>
  * <dt><b>GReQL-signature</b></dt>
@@ -63,8 +63,11 @@ public class GetVertex extends Greql2Function {
 	{
 		JValueType[][] x = { { JValueType.INTEGER } };
 		signatures = x;
+
+		description = "Return the vertex with the given id.";
 	}
 
+	@Override
 	public JValue evaluate(Graph graph, BooleanGraphMarker subgraph,
 			JValue[] arguments) throws EvaluateException {
 		if (checkArguments(arguments) == -1) {
@@ -74,14 +77,17 @@ public class GetVertex extends Greql2Function {
 		return new JValue(vertex, vertex);
 	}
 
+	@Override
 	public long getEstimatedCosts(ArrayList<Long> inElements) {
 		return 5;
 	}
 
+	@Override
 	public double getSelectivity() {
 		return 1;
 	}
 
+	@Override
 	public long getEstimatedCardinality(int inElements) {
 		return 1;
 	}

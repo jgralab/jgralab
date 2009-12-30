@@ -62,6 +62,8 @@ public class Get extends Greql2Function {
 	{
 		JValueType[][] x = { { JValueType.MAP, JValueType.OBJECT } };
 		signatures = x;
+
+		description = "Return the given map's value associated with the given key.";
 	}
 
 	/*

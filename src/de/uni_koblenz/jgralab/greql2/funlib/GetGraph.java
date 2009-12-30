@@ -13,9 +13,6 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
 
 /**
  * 
- * Splits the given string {@code str} at the positions where {@code regex}
- * matches and returns a list of the splits.
- * 
  * <dl>
  * <dt><b>GReQL-signature</b></dt>
  * <dd><code>GRAPH getGraph()</code></dd>
@@ -35,6 +32,8 @@ public class GetGraph extends Greql2Function {
 	{
 		JValueType[][] x = { {} };
 		signatures = x;
+
+		description = "Return the graph the query is evaluated on.";
 	}
 
 	/*

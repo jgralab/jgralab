@@ -66,8 +66,11 @@ public class Id extends Greql2Function {
 	{
 		JValueType[][] x = { { JValueType.VERTEX }, { JValueType.EDGE } };
 		signatures = x;
+
+		description = "Return the id of the given vertex or edge.";
 	}
 
+	@Override
 	public JValue evaluate(Graph graph, BooleanGraphMarker subgraph,
 			JValue[] arguments) throws EvaluateException {
 		switch (checkArguments(arguments)) {
@@ -83,14 +86,17 @@ public class Id extends Greql2Function {
 
 	}
 
+	@Override
 	public long getEstimatedCosts(ArrayList<Long> inElements) {
 		return 2;
 	}
 
+	@Override
 	public double getSelectivity() {
 		return 1;
 	}
 
+	@Override
 	public long getEstimatedCardinality(int inElements) {
 		return 1;
 	}

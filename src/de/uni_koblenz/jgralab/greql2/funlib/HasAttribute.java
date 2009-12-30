@@ -72,8 +72,11 @@ public class HasAttribute extends Greql2Function {
 				{ JValueType.ATTRIBUTEDELEMENT, JValueType.STRING },
 				{ JValueType.ATTRIBUTEDELEMENTCLASS, JValueType.STRING } };
 		signatures = x;
+
+		description = "Return true, iff the given AttrElem has an attribute with the given name.";
 	}
 
+	@Override
 	public JValue evaluate(Graph graph, BooleanGraphMarker subgraph,
 			JValue[] arguments) throws EvaluateException {
 		AttributedElementClass clazz = null;
@@ -91,14 +94,17 @@ public class HasAttribute extends Greql2Function {
 		return new JValue(clazz.containsAttribute(arguments[1].toString()));
 	}
 
+	@Override
 	public long getEstimatedCosts(ArrayList<Long> inElements) {
 		return 2;
 	}
 
+	@Override
 	public double getSelectivity() {
 		return 0.1;
 	}
 
+	@Override
 	public long getEstimatedCardinality(int inElements) {
 		return 1;
 	}

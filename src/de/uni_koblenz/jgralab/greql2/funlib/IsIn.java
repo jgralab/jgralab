@@ -75,8 +75,13 @@ public class IsIn extends Greql2Function {
 						JValueType.SUBGRAPHTEMPATTRIBUTE },
 				{ JValueType.ATTRIBUTEDELEMENT } };
 		signatures = x;
+
+		description = "Return true, iff the given element is part of the given structure.\n"
+				+ "If only an attributed element is given, then check if that is\n"
+				+ "contained in the graph the query is evaluated on.";
 	}
 
+	@Override
 	public JValue evaluate(Graph graph, BooleanGraphMarker subgraph,
 			JValue[] arguments) throws EvaluateException {
 		switch (checkArguments(arguments)) {
@@ -108,14 +113,17 @@ public class IsIn extends Greql2Function {
 		}
 	}
 
+	@Override
 	public long getEstimatedCosts(ArrayList<Long> inElements) {
 		return inElements.get(0);
 	}
 
+	@Override
 	public double getSelectivity() {
 		return 0.1;
 	}
 
+	@Override
 	public long getEstimatedCardinality(int inElements) {
 		return 1;
 	}

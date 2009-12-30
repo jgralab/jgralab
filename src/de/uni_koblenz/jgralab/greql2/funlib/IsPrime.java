@@ -67,6 +67,13 @@ public class IsPrime extends Greql2Function {
 		JValueType[][] x = { { JValueType.LONG },
 				{ JValueType.LONG, JValueType.INTEGER } };
 		signatures = x;
+
+		description = "Return true, if the given number is a prime number.\n"
+				+ "This function performs the Miller-Rabin pseudo primality\n"
+				+ "test. The optional second parameter k is an integer that\n"
+				+ "specifies influences the probability of being a prime.\n"
+				+ "The chances of being prime is 1-(1/4)^k.  The default\n"
+				+ "value of k is 10.";
 	}
 
 	/**
@@ -151,6 +158,7 @@ public class IsPrime extends Greql2Function {
 		return true;
 	}
 
+	@Override
 	public JValue evaluate(Graph graph, BooleanGraphMarker subgraph,
 			JValue[] arguments) throws EvaluateException {
 		int noOfTestRuns = 10;
@@ -176,10 +184,12 @@ public class IsPrime extends Greql2Function {
 		return new JValue(isPrime(number, noOfTestRuns));
 	}
 
+	@Override
 	public long getEstimatedCardinality(int inElements) {
 		return 1;
 	}
 
+	@Override
 	public long getEstimatedCosts(ArrayList<Long> inElements) {
 		return 10 * ESTIMATED_COSTS_PER_RUN;
 	}

@@ -67,7 +67,7 @@ public class EnumConstant extends Greql2Function {
 		JValueType[][] x = { { JValueType.STRING, JValueType.STRING } };
 		signatures = x;
 
-		description = "Return the enum literal specified by the given enum type name and literal name.";
+		description = "Return the enum literal specified by enum type name and literal name.";
 	}
 
 	/*

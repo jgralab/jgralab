@@ -76,8 +76,13 @@ public class IsNeighbour extends Greql2Function {
 		JValueType[][] x = { { JValueType.VERTEX, JValueType.VERTEX },
 				{ JValueType.VERTEX, JValueType.VERTEX, JValueType.PATHSYSTEM } };
 		signatures = x;
+
+		description = "Return true, iff two given vertices are neighbours.\n"
+				+ "That means, there is an edge between these two vertices. If a pathsystem\n"
+				+ "is also given, this check is performed on two vertices in this pathsystem.";
 	}
 
+	@Override
 	public JValue evaluate(Graph graph, BooleanGraphMarker subgraph,
 			JValue[] arguments) throws EvaluateException {
 		JValuePathSystem pathSystem = null;
@@ -110,14 +115,17 @@ public class IsNeighbour extends Greql2Function {
 		return new JValue(JValueBoolean.getFalseValue(), firstVertex);
 	}
 
+	@Override
 	public long getEstimatedCosts(ArrayList<Long> inElements) {
 		return 10;
 	}
 
+	@Override
 	public double getSelectivity() {
 		return 1;
 	}
 
+	@Override
 	public long getEstimatedCardinality(int inElements) {
 		return 2;
 	}

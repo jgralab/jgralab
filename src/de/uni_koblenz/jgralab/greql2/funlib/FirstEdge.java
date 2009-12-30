@@ -36,7 +36,8 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValueTypeCollection;
 
 /**
- * Returns the first edge (of a type matching the given TypeCollection) in the graph
+ * Returns the first edge (of a type matching the given TypeCollection) in the
+ * graph
  * 
  * <dl>
  * <dt><b>GReQL-signature</b></dt>
@@ -50,8 +51,7 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueTypeCollection;
  * <dd>
  * <dd>the first edge (of a type matching tc) in Eseq
  * </dl>
- * </dd>
- * </dl>
+ * </dd> </dl>
  * 
  * @see LastEdge, FirstVertex
  * @author ist@uni-koblenz.de
@@ -60,10 +60,13 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueTypeCollection;
 
 public class FirstEdge extends Greql2Function {
 	{
-		JValueType[][] x = { { },  { JValueType.TYPECOLLECTION } };
+		JValueType[][] x = { {}, { JValueType.TYPECOLLECTION } };
 		signatures = x;
+
+		description = "Return the 1st edge (of optionally given type) in the graph.";
 	}
 
+	@Override
 	public JValue evaluate(Graph graph, BooleanGraphMarker subgraph,
 			JValue[] arguments) throws EvaluateException {
 		switch (checkArguments(arguments)) {
@@ -73,24 +76,28 @@ public class FirstEdge extends Greql2Function {
 			Edge current = graph.getFirstEdgeInGraph();
 			JValueTypeCollection tc = arguments[2].toJValueTypeCollection();
 			while (current != null) {
-				if (tc.acceptsType(current.getAttributedElementClass()))
+				if (tc.acceptsType(current.getAttributedElementClass())) {
 					return new JValue(current);
+				}
 				current = current.getNextEdgeInGraph();
 			}
-			return new JValue((Edge)null);
+			return new JValue((Edge) null);
 		default:
 			throw new WrongFunctionParameterException(this, arguments);
 		}
 	}
 
+	@Override
 	public long getEstimatedCosts(ArrayList<Long> inElements) {
 		return 1000;
 	}
 
+	@Override
 	public double getSelectivity() {
 		return 0.2;
 	}
 
+	@Override
 	public long getEstimatedCardinality(int inElements) {
 		return 100;
 	}

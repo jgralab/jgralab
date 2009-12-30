@@ -66,8 +66,13 @@ public class IsParallel extends Greql2Function {
 	{
 		JValueType[][] x = { { JValueType.PATH, JValueType.PATH } };
 		signatures = x;
+
+		description = "Return true, iff two given paths are parallel.\n"
+				+ "That means, they have the same start-vertex and end-vertex\n"
+				+ "and no other shared vertices.";
 	}
 
+	@Override
 	public JValue evaluate(Graph graph, BooleanGraphMarker subgraph,
 			JValue[] arguments) throws EvaluateException {
 		if (checkArguments(arguments) == -1) {
@@ -77,14 +82,17 @@ public class IsParallel extends Greql2Function {
 				arguments[1].toPath()));
 	}
 
+	@Override
 	public long getEstimatedCosts(ArrayList<Long> inElements) {
 		return 5;
 	}
 
+	@Override
 	public double getSelectivity() {
 		return 1;
 	}
 
+	@Override
 	public long getEstimatedCardinality(int inElements) {
 		return 1;
 	}

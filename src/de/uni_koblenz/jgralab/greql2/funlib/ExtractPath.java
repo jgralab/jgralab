@@ -79,8 +79,15 @@ public class ExtractPath extends Greql2Function {
 				{ JValueType.PATHSYSTEM, JValueType.VERTEX },
 				{ JValueType.PATHSYSTEM, JValueType.INTEGER } };
 		signatures = x;
+
+		description = "Return a path from the given pathsystem's root to the given vertex.\n"
+				+ "If the given vertex is contained more then once, the first occurrence will be\n"
+				+ "used. If no vertex is given, the paths from the root to all leaves are returned\n"
+				+ "as set. If an integer is given instead of a vertex, all paths are returned that\n"
+				+ "have the length of this integer.";
 	}
 
+	@Override
 	public JValue evaluate(Graph graph, BooleanGraphMarker subgraph,
 			JValue[] arguments) throws EvaluateException {
 		Vertex vertex = null;
@@ -110,14 +117,17 @@ public class ExtractPath extends Greql2Function {
 		return pathSystem.extractPaths();
 	}
 
+	@Override
 	public long getEstimatedCosts(ArrayList<Long> inElements) {
 		return 50;
 	}
 
+	@Override
 	public double getSelectivity() {
 		return 1;
 	}
 
+	@Override
 	public long getEstimatedCardinality(int inElements) {
 		return 2;
 	}

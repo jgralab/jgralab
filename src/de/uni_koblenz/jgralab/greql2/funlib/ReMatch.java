@@ -68,8 +68,12 @@ public class ReMatch extends Greql2Function {
 	{
 		JValueType[][] x = { { JValueType.STRING, JValueType.STRING } };
 		signatures = x;
+
+		description = "Return true, iff the given string matches the given regular expression.\n"
+				+ "This function can be used with the myString =~ myRegexp operator.";
 	}
 
+	@Override
 	public JValue evaluate(Graph graph, BooleanGraphMarker subgraph,
 			JValue[] arguments) throws EvaluateException {
 		if (checkArguments(arguments) == -1) {
@@ -80,14 +84,17 @@ public class ReMatch extends Greql2Function {
 		return new JValue(s.matches(p));
 	}
 
+	@Override
 	public long getEstimatedCosts(ArrayList<Long> inElements) {
 		return 10;
 	}
 
+	@Override
 	public double getSelectivity() {
 		return 0.1;
 	}
 
+	@Override
 	public long getEstimatedCardinality(int inElements) {
 		return 1;
 	}

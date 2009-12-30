@@ -71,10 +71,11 @@ public class Edges extends Greql2Function {
 				{ JValueType.EDGE, JValueType.EDGE, JValueType.TYPECOLLECTION } };
 		signatures = x;
 
-		description = "Returns the global edge sequence from the first to the second given edge.\n"
+		description = "Returns the global edge sequence from the 1st to the 2nd given edge.\n"
 				+ "The edge types may be restricted by a type collection.";
 	}
 
+	@Override
 	public JValue evaluate(Graph graph, BooleanGraphMarker subgraph,
 			JValue[] arguments) throws EvaluateException {
 		JValueSet edges = new JValueSet();
@@ -108,14 +109,17 @@ public class Edges extends Greql2Function {
 		}
 	}
 
+	@Override
 	public long getEstimatedCosts(ArrayList<Long> inElements) {
 		return 1000;
 	}
 
+	@Override
 	public double getSelectivity() {
 		return 0.2;
 	}
 
+	@Override
 	public long getEstimatedCardinality(int inElements) {
 		return 100;
 	}

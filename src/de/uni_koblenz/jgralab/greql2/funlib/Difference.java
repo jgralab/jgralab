@@ -73,9 +73,11 @@ public class Difference extends Greql2Function {
 		JValueType[][] x = { { JValueType.COLLECTION, JValueType.COLLECTION } };
 		signatures = x;
 
-		description = "Return the set difference of two given 2 collections.";
+		description = "Return the set difference of two given 2 collections.\n"
+				+ "Both collections are converted to sets first.";
 	}
 
+	@Override
 	public JValue evaluate(Graph graph, BooleanGraphMarker subgraph,
 			JValue[] arguments) throws EvaluateException {
 		if (checkArguments(arguments) == -1) {
@@ -87,6 +89,7 @@ public class Difference extends Greql2Function {
 		return firstSet.difference(secondSet);
 	}
 
+	@Override
 	public long getEstimatedCosts(ArrayList<Long> inElements) {
 		long elems = 0;
 		for (Long i : inElements) {
@@ -95,10 +98,12 @@ public class Difference extends Greql2Function {
 		return elems * 2;
 	}
 
+	@Override
 	public double getSelectivity() {
 		return 1;
 	}
 
+	@Override
 	public long getEstimatedCardinality(int inElements) {
 		return 1;
 	}

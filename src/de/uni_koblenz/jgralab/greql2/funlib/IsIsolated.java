@@ -65,8 +65,13 @@ public class IsIsolated extends Greql2Function {
 	{
 		JValueType[][] x = { { JValueType.VERTEX } };
 		signatures = x;
+
+		description = "Return true, iff the given vertex is isolated.\n"
+				+ "Isolated means, that there are no edges running\n"
+				+ "into or out of the given vertex.";
 	}
 
+	@Override
 	public JValue evaluate(Graph graph, BooleanGraphMarker subgraph,
 			JValue[] arguments) throws EvaluateException {
 		if (checkArguments(arguments) == -1) {
@@ -77,14 +82,17 @@ public class IsIsolated extends Greql2Function {
 		return new JValue(firstVertex.getDegree() == 0, firstVertex);
 	}
 
+	@Override
 	public long getEstimatedCosts(ArrayList<Long> inElements) {
 		return 2;
 	}
 
+	@Override
 	public double getSelectivity() {
 		return 0.0001;
 	}
 
+	@Override
 	public long getEstimatedCardinality(int inElements) {
 		return 1;
 	}
