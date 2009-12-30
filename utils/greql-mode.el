@@ -646,6 +646,7 @@ for some variable declared as
   "Mode used in *GReQL Documentation* buffers."
   :group 'greql
   (setq buffer-read-only t)
+  (set-fill-column 72)
   (setq font-lock-defaults '(greql-fontlock-keywords-doc))
   (font-lock-mode 1)
 
@@ -679,10 +680,20 @@ for some variable declared as
                   nil
                   "-cp" greql-jgralab-jar-file
                   "de.uni_koblenz.jgralab.greql2.funlib.Greql2FunctionLibrary"
-                  "-a"))
+                  "-a")
 
+    (goto-char (point-min))
+    (greql-doc-mode)
+
+    ;; Format the buffer.
+    (while (re-search-forward "===+" nil t)
+      (forward-line 1)
+      (let ((beg (point)))
+        (re-search-forward "^Signatures:$" nil t)
+        (forward-line -1)
+        (fill-region beg (point) 'full))))
   (goto-char (point-min))
-  (greql-doc-mode)
+
   (switch-to-buffer (get-buffer-create greql-doc-buffer))
   (when func-name
     (re-search-forward (concat  "^Function `" func-name "':") nil t)
