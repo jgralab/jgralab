@@ -67,8 +67,11 @@ public class Uminus extends Greql2Function {
 		JValueType[][] x = { { JValueType.LONG }, { JValueType.INTEGER },
 				{ JValueType.DOUBLE } };
 		signatures = x;
+
+		description = "Return (-1 * givenNumber).";
 	}
 
+	@Override
 	public JValue evaluate(Graph graph, BooleanGraphMarker subgraph,
 			JValue[] arguments) throws EvaluateException {
 		switch (checkArguments(arguments)) {
@@ -83,14 +86,17 @@ public class Uminus extends Greql2Function {
 		}
 	}
 
+	@Override
 	public long getEstimatedCosts(ArrayList<Long> inElements) {
 		return 1;
 	}
 
+	@Override
 	public double getSelectivity() {
 		return 1;
 	}
 
+	@Override
 	public long getEstimatedCardinality(int inElements) {
 		return 1;
 	}

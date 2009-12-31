@@ -67,8 +67,11 @@ public class TypeSet extends Greql2Function {
 		JValueType[][] x = { { JValueType.COLLECTION }, { JValueType.PATH },
 				{ JValueType.PATHSYSTEM } };
 		signatures = x;
+
+		description = "Return a set of all types that occure in the given structure.";
 	}
 
+	@Override
 	public JValue evaluate(Graph graph, BooleanGraphMarker subgraph,
 			JValue[] arguments) throws EvaluateException {
 		switch (checkArguments(arguments)) {
@@ -93,14 +96,17 @@ public class TypeSet extends Greql2Function {
 		}
 	}
 
+	@Override
 	public long getEstimatedCosts(ArrayList<Long> inElements) {
 		return 50;
 	}
 
+	@Override
 	public double getSelectivity() {
 		return 1;
 	}
 
+	@Override
 	public long getEstimatedCardinality(int inElements) {
 		return 20;
 	}

@@ -86,8 +86,16 @@ public class Union extends Greql2Function {
 				{ JValueType.MAP, JValueType.MAP, JValueType.BOOLEAN },
 				{ JValueType.COLLECTION } };
 		signatures = x;
+
+		description = "Return the union ef the given collections.\n"
+				+ "If 2 collections are given, both are converted to sets before.\n"
+				+ "With 2 maps, the third parameter says if the keys have to be\n"
+				+ "disjoint.  If not, the 2nd map's entries override the 1st one's.\n"
+				+ "If only a collection of collections is given, return the union of\n"
+				+ "all member collections.";
 	}
 
+	@Override
 	public JValue evaluate(Graph graph, BooleanGraphMarker subgraph,
 			JValue[] arguments) throws EvaluateException {
 		switch (checkArguments(arguments)) {
@@ -116,6 +124,7 @@ public class Union extends Greql2Function {
 		}
 	}
 
+	@Override
 	public long getEstimatedCosts(ArrayList<Long> inElements) {
 		long elems = 0;
 		for (Long i : inElements) {
@@ -124,10 +133,12 @@ public class Union extends Greql2Function {
 		return elems * 2;
 	}
 
+	@Override
 	public double getSelectivity() {
 		return 1;
 	}
 
+	@Override
 	public long getEstimatedCardinality(int inElements) {
 		return inElements;
 	}

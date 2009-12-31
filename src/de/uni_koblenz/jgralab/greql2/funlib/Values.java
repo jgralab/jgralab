@@ -36,6 +36,8 @@ public class Values extends Greql2Function {
 	{
 		JValueType[][] x = { { JValueType.MAP } };
 		signatures = x;
+
+		description = "Return the bag of values of the given map.";
 	}
 
 	@Override
