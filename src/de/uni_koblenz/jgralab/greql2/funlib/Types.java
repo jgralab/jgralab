@@ -64,8 +64,13 @@ public class Types extends Greql2Function {
 	{
 		JValueType[][] x = { {} };
 		signatures = x;
+
+		description = "Return a set of all types known by the schema of the current graph.\n"
+				+ "The list is sortet in topological order (first superclasses, then\n"
+				+ "subclasses). First come the vertex classes, then the edge classes.";
 	}
 
+	@Override
 	public JValue evaluate(Graph graph, BooleanGraphMarker subgraph,
 			JValue[] arguments) throws EvaluateException {
 		if (checkArguments(arguments) == -1) {
@@ -84,14 +89,17 @@ public class Types extends Greql2Function {
 		return typeList;
 	}
 
+	@Override
 	public long getEstimatedCosts(ArrayList<Long> inElements) {
 		return 50;
 	}
 
+	@Override
 	public double getSelectivity() {
 		return 1;
 	}
 
+	@Override
 	public long getEstimatedCardinality(int inElements) {
 		return 1;
 	}

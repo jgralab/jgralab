@@ -69,10 +69,17 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueTypeCollection;
 
 public class Vertices extends Greql2Function {
 	{
-		JValueType[][] x = { { JValueType.VERTEX, JValueType.VERTEX },  { JValueType.VERTEX, JValueType.VERTEX, JValueType.TYPECOLLECTION } };
+		JValueType[][] x = {
+				{ JValueType.VERTEX, JValueType.VERTEX },
+				{ JValueType.VERTEX, JValueType.VERTEX,
+						JValueType.TYPECOLLECTION } };
 		signatures = x;
+
+		description = "Return a part of the global vertex sequence from v1 to v2.\n"
+				+ "Optionally, the vertices may be restricted by a type collection.";
 	}
 
+	@Override
 	public JValue evaluate(Graph graph, BooleanGraphMarker subgraph,
 			JValue[] arguments) throws EvaluateException {
 		JValueSet vertices = new JValueSet();
@@ -83,18 +90,21 @@ public class Vertices extends Greql2Function {
 		case 0:
 			while (current != null) {
 				vertices.add(new JValue(current));
-				if (current == end)
+				if (current == end) {
 					return vertices;
+				}
 				current = current.getNextVertex();
 			}
 			return vertices;
 		case 1:
 			JValueTypeCollection tc = arguments[2].toJValueTypeCollection();
 			while (current != null) {
-				if (tc.acceptsType(current.getAttributedElementClass()))
+				if (tc.acceptsType(current.getAttributedElementClass())) {
 					vertices.add(new JValue(current));
-				if (current == end)
+				}
+				if (current == end) {
 					return vertices;
+				}
 				current = current.getNextVertex();
 			}
 			return vertices;
@@ -103,14 +113,17 @@ public class Vertices extends Greql2Function {
 		}
 	}
 
+	@Override
 	public long getEstimatedCosts(ArrayList<Long> inElements) {
 		return 1000;
 	}
 
+	@Override
 	public double getSelectivity() {
 		return 0.2;
 	}
 
+	@Override
 	public long getEstimatedCardinality(int inElements) {
 		return 100;
 	}

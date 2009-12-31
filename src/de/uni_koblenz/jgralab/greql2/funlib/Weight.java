@@ -65,8 +65,13 @@ public class Weight extends Greql2Function {
 	{
 		JValueType[][] x = { { JValueType.PATHSYSTEM } };
 		signatures = x;
+
+		description = "Return the weight of the given pathsystem.\n"
+				+ "The weight of a pathsystem is its amount of vertices. If vertices occur\n"
+				+ "multiple times, they are counted multiple times as well.";
 	}
 
+	@Override
 	public JValue evaluate(Graph graph, BooleanGraphMarker subgraph,
 			JValue[] arguments) throws EvaluateException {
 		if (checkArguments(arguments) == -1) {
@@ -77,14 +82,17 @@ public class Weight extends Greql2Function {
 		return new JValue(pathSystem.weight());
 	}
 
+	@Override
 	public long getEstimatedCosts(ArrayList<Long> inElements) {
 		return 20;
 	}
 
+	@Override
 	public double getSelectivity() {
 		return 1;
 	}
 
+	@Override
 	public long getEstimatedCardinality(int inElements) {
 		return 1;
 	}
