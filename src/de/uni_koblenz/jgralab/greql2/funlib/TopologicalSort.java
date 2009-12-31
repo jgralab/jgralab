@@ -49,6 +49,9 @@ public class TopologicalSort extends Greql2Function {
 	{
 		JValueType[][] x = { {}, { JValueType.SUBGRAPHTEMPATTRIBUTE } };
 		signatures = x;
+
+		description = "Return a list of vertices in topological ordering.\n"
+				+ "The sort can be restricted to a subgraph.";
 	}
 
 	/*

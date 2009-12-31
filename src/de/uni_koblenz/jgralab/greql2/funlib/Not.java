@@ -82,8 +82,11 @@ public class Not extends Greql2Function {
 	{
 		JValueType[][] x = { { JValueType.BOOLEAN } };
 		signatures = x;
+
+		description = "Return the complement of the given boolean.";
 	}
 
+	@Override
 	public JValue evaluate(Graph graph, BooleanGraphMarker subgraph,
 			JValue[] arguments) throws EvaluateException {
 		if (checkArguments(arguments) == -1) {
@@ -92,14 +95,17 @@ public class Not extends Greql2Function {
 		return JValueBoolean.not(arguments[0]);
 	}
 
+	@Override
 	public long getEstimatedCosts(ArrayList<Long> inElements) {
 		return 2;
 	}
 
+	@Override
 	public double getSelectivity() {
 		return 1d / 3;
 	}
 
+	@Override
 	public long getEstimatedCardinality(int inElements) {
 		return 1;
 	}

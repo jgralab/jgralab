@@ -66,8 +66,14 @@ public class PathConcat extends Greql2Function {
 	{
 		JValueType[][] x = { { JValueType.PATH, JValueType.PATH } };
 		signatures = x;
+
+		description = "Return the concatenation of two given paths.\n"
+				+ "This function only works, if the last vertex of the first path and the\n"
+				+ "first vertex of the second path are the same. If this is not the case,\n"
+				+ "null is returned.";
 	}
 
+	@Override
 	public JValue evaluate(Graph graph, BooleanGraphMarker subgraph,
 			JValue[] arguments) throws EvaluateException {
 		if (checkArguments(arguments) == -1) {
@@ -79,14 +85,17 @@ public class PathConcat extends Greql2Function {
 		return path1.pathConcat(path2);
 	}
 
+	@Override
 	public long getEstimatedCosts(ArrayList<Long> inElements) {
 		return 50;
 	}
 
+	@Override
 	public double getSelectivity() {
 		return 1;
 	}
 
+	@Override
 	public long getEstimatedCardinality(int inElements) {
 		return 1;
 	}

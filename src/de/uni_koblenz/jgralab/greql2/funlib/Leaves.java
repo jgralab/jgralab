@@ -66,8 +66,13 @@ public class Leaves extends Greql2Function {
 	{
 		JValueType[][] x = { { JValueType.PATHSYSTEM } };
 		signatures = x;
+
+		description = "Return a set of all leaves of the given pathsystem.\n"
+				+ "Leaves are all vertices besides the inner nodes of the pathsystem. That\n"
+				+ "means, all vertices, that are an end of a path.";
 	}
 
+	@Override
 	public JValue evaluate(Graph graph, BooleanGraphMarker subgraph,
 			JValue[] arguments) throws EvaluateException {
 		if (checkArguments(arguments) == -1) {
@@ -76,14 +81,17 @@ public class Leaves extends Greql2Function {
 		return arguments[0].toPathSystem().leaves();
 	}
 
+	@Override
 	public long getEstimatedCosts(ArrayList<Long> inElements) {
 		return 20;
 	}
 
+	@Override
 	public double getSelectivity() {
 		return 1;
 	}
 
+	@Override
 	public long getEstimatedCardinality(int inElements) {
 		return 1;
 	}

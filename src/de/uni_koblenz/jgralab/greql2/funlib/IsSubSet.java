@@ -69,8 +69,13 @@ public class IsSubSet extends Greql2Function {
 	{
 		JValueType[][] x = { { JValueType.COLLECTION, JValueType.COLLECTION } };
 		signatures = x;
+
+		description = "Return true, iff the first collection is a subset of the second collection.\n"
+				+ "That means, all elements from the first collection are also elements in the\n"
+				+ "second collection.  Both arguments are converted to sets before.";
 	}
 
+	@Override
 	public JValue evaluate(Graph graph, BooleanGraphMarker subgraph,
 			JValue[] arguments) throws EvaluateException {
 		if (checkArguments(arguments) == -1) {
@@ -83,6 +88,7 @@ public class IsSubSet extends Greql2Function {
 
 	}
 
+	@Override
 	public long getEstimatedCosts(ArrayList<Long> inElements) {
 		long elems = 1;
 		for (Long i : inElements) {
@@ -91,10 +97,12 @@ public class IsSubSet extends Greql2Function {
 		return elems * 2;
 	}
 
+	@Override
 	public double getSelectivity() {
 		return 0.5;
 	}
 
+	@Override
 	public long getEstimatedCardinality(int inElements) {
 		return 1;
 	}

@@ -74,8 +74,14 @@ public class Siblings extends Greql2Function {
 		JValueType[][] x = { { JValueType.VERTEX },
 				{ JValueType.VERTEX, JValueType.PATHSYSTEM } };
 		signatures = x;
+
+		description = "Return the set of all siblings of the given vertex.\n"
+				+ "If a pathsystem is given, all siblings that are in the pathsystem are\n"
+				+ "returned.  Two or more vertices are siblings, if they have at least one\n"
+				+ "same parent.";
 	}
 
+	@Override
 	public JValue evaluate(Graph graph, BooleanGraphMarker subgraph,
 			JValue[] arguments) throws EvaluateException {
 		JValuePathSystem pathSystem = null;
@@ -112,14 +118,17 @@ public class Siblings extends Greql2Function {
 		return returnSet;
 	}
 
+	@Override
 	public long getEstimatedCosts(ArrayList<Long> inElements) {
 		return 10;
 	}
 
+	@Override
 	public double getSelectivity() {
 		return 1;
 	}
 
+	@Override
 	public long getEstimatedCardinality(int inElements) {
 		return 2;
 	}

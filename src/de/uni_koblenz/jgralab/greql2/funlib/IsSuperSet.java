@@ -69,8 +69,13 @@ public class IsSuperSet extends Greql2Function {
 	{
 		JValueType[][] x = { { JValueType.COLLECTION, JValueType.COLLECTION } };
 		signatures = x;
+
+		description = "Return true, iff the first collection is a superset of the second collection.\n"
+				+ "That means, all elements from the 2nd collection are also elements in the\n"
+				+ "1st collection.  Both arguments are converted to sets before.";
 	}
 
+	@Override
 	public JValue evaluate(Graph graph, BooleanGraphMarker subgraph,
 			JValue[] arguments) throws EvaluateException {
 		if (checkArguments(arguments) == -1) {
@@ -82,6 +87,7 @@ public class IsSuperSet extends Greql2Function {
 		return new JValue(firstSet.isSuperset(secondSet));
 	}
 
+	@Override
 	public long getEstimatedCosts(ArrayList<Long> inElements) {
 		long elems = 1;
 		for (Long i : inElements) {
@@ -90,10 +96,12 @@ public class IsSuperSet extends Greql2Function {
 		return elems * 2;
 	}
 
+	@Override
 	public double getSelectivity() {
 		return 0.5;
 	}
 
+	@Override
 	public long getEstimatedCardinality(int inElements) {
 		return 1;
 	}

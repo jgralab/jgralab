@@ -62,8 +62,13 @@ public class Type extends Greql2Function {
 		JValueType[][] x = { { JValueType.ATTRIBUTEDELEMENT },
 				{ JValueType.STRING } };
 		signatures = x;
+
+		description = "Return the type of the given attributed element.\n"
+				+ "If a qualified name (String) is given, return the attributed\n"
+				+ "element class with that qualified name.";
 	}
 
+	@Override
 	public JValue evaluate(Graph graph, BooleanGraphMarker subgraph,
 			JValue[] arguments) throws EvaluateException {
 		switch (checkArguments(arguments)) {
@@ -78,14 +83,17 @@ public class Type extends Greql2Function {
 		}
 	}
 
+	@Override
 	public long getEstimatedCosts(ArrayList<Long> inElements) {
 		return 2;
 	}
 
+	@Override
 	public double getSelectivity() {
 		return 1;
 	}
 
+	@Override
 	public long getEstimatedCardinality(int inElements) {
 		return 1;
 	}

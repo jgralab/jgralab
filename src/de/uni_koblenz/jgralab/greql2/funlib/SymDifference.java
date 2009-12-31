@@ -69,8 +69,14 @@ public class SymDifference extends Greql2Function {
 	{
 		JValueType[][] x = { { JValueType.COLLECTION, JValueType.COLLECTION } };
 		signatures = x;
+
+		description = "Return the symmetric difference of the given 2 collections."
+				+ "Both collections are converted to sets before.  The symmetric\n"
+				+ "difference are all elements of both sets, which are not contained\n"
+				+ "in both sets.";
 	}
 
+	@Override
 	public JValue evaluate(Graph graph, BooleanGraphMarker subgraph,
 			JValue[] arguments) throws EvaluateException {
 		if (checkArguments(arguments) == -1) {
@@ -81,6 +87,7 @@ public class SymDifference extends Greql2Function {
 		return firstSet.symmetricDifference(secondSet);
 	}
 
+	@Override
 	public long getEstimatedCosts(ArrayList<Long> inElements) {
 		long elems = 0;
 		for (Long i : inElements) {
@@ -89,10 +96,12 @@ public class SymDifference extends Greql2Function {
 		return elems * 3;
 	}
 
+	@Override
 	public double getSelectivity() {
 		return 1;
 	}
 
+	@Override
 	public long getEstimatedCardinality(int inElements) {
 		return 1;
 	}

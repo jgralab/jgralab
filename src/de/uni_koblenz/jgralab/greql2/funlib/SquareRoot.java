@@ -62,8 +62,10 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
  */
 public class SquareRoot extends Greql2Function {
 	{
-		JValueType[][] x = { { JValueType.DOUBLE } };
+		JValueType[][] x = { { JValueType.NUMBER } };
 		signatures = x;
+
+		description = "Return the square root of the given number.";
 	}
 
 	@Override
@@ -77,14 +79,17 @@ public class SquareRoot extends Greql2Function {
 		return new JValue(Math.sqrt(arg1));
 	}
 
+	@Override
 	public long getEstimatedCosts(ArrayList<Long> inElements) {
 		return 2;
 	}
 
+	@Override
 	public double getSelectivity() {
 		return 1;
 	}
 
+	@Override
 	public long getEstimatedCardinality(int inElements) {
 		return 1;
 	}

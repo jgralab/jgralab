@@ -67,8 +67,12 @@ public class IsTrail extends Greql2Function {
 	{
 		JValueType[][] x = { { JValueType.PATH } };
 		signatures = x;
+
+		description = "Return true, iff the given path is a trail.\n"
+				+ "That means, no vertex occurs more than once.";
 	}
 
+	@Override
 	public JValue evaluate(Graph graph, BooleanGraphMarker subgraph,
 			JValue[] arguments) throws EvaluateException {
 		if (checkArguments(arguments) == -1) {
@@ -78,14 +82,17 @@ public class IsTrail extends Greql2Function {
 		return new JValue(p1.isTrail());
 	}
 
+	@Override
 	public long getEstimatedCosts(ArrayList<Long> inElements) {
 		return 50;
 	}
 
+	@Override
 	public double getSelectivity() {
 		return 0.5;
 	}
 
+	@Override
 	public long getEstimatedCardinality(int inElements) {
 		return 1;
 	}

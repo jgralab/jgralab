@@ -36,6 +36,8 @@ public class KeySet extends Greql2Function {
 	{
 		JValueType[][] x = { { JValueType.MAP } };
 		signatures = x;
+
+		description = "Return the set of keys of the given map.";
 	}
 
 	@Override

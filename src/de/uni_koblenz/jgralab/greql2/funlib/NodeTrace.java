@@ -66,8 +66,12 @@ public class NodeTrace extends Greql2Function {
 	{
 		JValueType[][] x = { { JValueType.PATH } };
 		signatures = x;
+
+		description = "Return the nodetrace of the given path.\n"
+				+ "A nodetrace is a list of all vertices of this path in correct order.";
 	}
 
+	@Override
 	public JValue evaluate(Graph graph, BooleanGraphMarker subgraph,
 			JValue[] arguments) throws EvaluateException {
 		if (checkArguments(arguments) == -1) {
@@ -81,14 +85,17 @@ public class NodeTrace extends Greql2Function {
 		return resultList;
 	}
 
+	@Override
 	public long getEstimatedCosts(ArrayList<Long> inElements) {
 		return 10;
 	}
 
+	@Override
 	public double getSelectivity() {
 		return 1;
 	}
 
+	@Override
 	public long getEstimatedCardinality(int inElements) {
 		return 1;
 	}

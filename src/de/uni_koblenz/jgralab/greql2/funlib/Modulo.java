@@ -70,8 +70,11 @@ public class Modulo extends Greql2Function {
 		JValueType[][] x = { { JValueType.LONG, JValueType.LONG },
 				{ JValueType.INTEGER, JValueType.INTEGER } };
 		signatures = x;
+
+		description = "Return the remainder of param1 / param2.";
 	}
 
+	@Override
 	public JValue evaluate(Graph graph, BooleanGraphMarker subgraph,
 			JValue[] arguments) throws EvaluateException {
 		switch (checkArguments(arguments)) {
@@ -85,14 +88,17 @@ public class Modulo extends Greql2Function {
 		}
 	}
 
+	@Override
 	public long getEstimatedCosts(ArrayList<Long> inElements) {
 		return 2;
 	}
 
+	@Override
 	public double getSelectivity() {
 		return 1;
 	}
 
+	@Override
 	public long getEstimatedCardinality(int inElements) {
 		return 1;
 	}

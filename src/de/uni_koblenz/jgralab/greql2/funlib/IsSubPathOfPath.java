@@ -69,8 +69,13 @@ public class IsSubPathOfPath extends Greql2Function {
 	{
 		JValueType[][] x = { { JValueType.PATH, JValueType.PATH } };
 		signatures = x;
+
+		description = "Return true, iff the first path is a subpath of the second path.\n"
+				+ "That means, the second given path contains all vertices and edges of the\n"
+				+ "first given path in the same order.";
 	}
 
+	@Override
 	public JValue evaluate(Graph graph, BooleanGraphMarker subgraph,
 			JValue[] arguments) throws EvaluateException {
 		if (checkArguments(arguments) == -1) {
@@ -83,14 +88,17 @@ public class IsSubPathOfPath extends Greql2Function {
 
 	}
 
+	@Override
 	public long getEstimatedCosts(ArrayList<Long> inElements) {
 		return 50;
 	}
 
+	@Override
 	public double getSelectivity() {
 		return 0.1;
 	}
 
+	@Override
 	public long getEstimatedCardinality(int inElements) {
 		return 1;
 	}

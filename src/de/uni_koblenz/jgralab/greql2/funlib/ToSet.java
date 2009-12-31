@@ -62,8 +62,12 @@ public class ToSet extends Greql2Function {
 	{
 		JValueType[][] x = { { JValueType.COLLECTION }, { JValueType.OBJECT } };
 		signatures = x;
+
+		description = "Convert the given collection or object to a set.\n"
+				+ "In the second case, a set with one value (the object) is returned.";
 	}
 
+	@Override
 	public JValue evaluate(Graph graph, BooleanGraphMarker subgraph,
 			JValue[] arguments) throws EvaluateException {
 		switch (checkArguments(arguments)) {
@@ -78,14 +82,17 @@ public class ToSet extends Greql2Function {
 		}
 	}
 
+	@Override
 	public long getEstimatedCosts(ArrayList<Long> inElements) {
 		return 2;
 	}
 
+	@Override
 	public double getSelectivity() {
 		return 1;
 	}
 
+	@Override
 	public long getEstimatedCardinality(int inElements) {
 		return 1;
 	}
