@@ -87,6 +87,8 @@ public class PathSystem extends Greql2Function {
 		JValueType[][] x = { { JValueType.VERTEX, JValueType.DFA },
 				{ JValueType.VERTEX, JValueType.NFA } };
 		signatures = x;
+
+		description = "Return a pathsystem with root vertex and structured according path description.";
 	}
 
 	/**
@@ -123,13 +125,15 @@ public class PathSystem extends Greql2Function {
 		list.put(parentVertex, m);
 		return true;
 	}
-	
+
 	/**
 	 * @param stateNumber
 	 * @return the GraphMarker for the given state number
 	 */
-	private final GraphMarker<PathSystemMarkerList> getGraphMarkerForState(int stateNumber) {
-		GraphMarker<PathSystemMarkerList> currentMarker = marker.get(stateNumber);
+	private final GraphMarker<PathSystemMarkerList> getGraphMarkerForState(
+			int stateNumber) {
+		GraphMarker<PathSystemMarkerList> currentMarker = marker
+				.get(stateNumber);
 		if (currentMarker == null) {
 			currentMarker = new GraphMarker<PathSystemMarkerList>(graph);
 			marker.set(stateNumber, currentMarker);
@@ -202,19 +206,20 @@ public class PathSystem extends Greql2Function {
 					Vertex nextVertex = currentTransition.getNextVertex(
 							currentEntry.vertex, inc);
 					if (!isMarked(nextVertex, currentTransition.getEndState())) {
-						if (currentTransition.accepts(currentEntry.vertex, inc, subgraph)) {
+						if (currentTransition.accepts(currentEntry.vertex, inc,
+								subgraph)) {
 							Edge traversedEdge = inc;
 							if (nextVertex == currentEntry.vertex) {
 								traversedEdge = null;
 							}
 							markVertex(nextVertex, currentTransition
-									.getEndState(), currentEntry.vertex, traversedEdge,
-									currentEntry.state,
+									.getEndState(), currentEntry.vertex,
+									traversedEdge, currentEntry.state,
 									currentEntry.distanceToRoot + 1);
 							PathSystemQueueEntry nextEntry = new PathSystemQueueEntry(
 									nextVertex,
-									currentTransition.getEndState(), traversedEdge,
-									currentEntry.state,
+									currentTransition.getEndState(),
+									traversedEdge, currentEntry.state,
 									currentEntry.distanceToRoot + 1);
 							queue.add(nextEntry);
 						}
@@ -231,6 +236,7 @@ public class PathSystem extends Greql2Function {
 	/**
 	 * creates the pathsystem
 	 */
+	@Override
 	public JValue evaluate(Graph graph, BooleanGraphMarker subgraph,
 			JValue[] arguments) throws EvaluateException {
 		DFA dfa = null;
@@ -285,7 +291,8 @@ public class PathSystem extends Greql2Function {
 			for (GraphMarker<PathSystemMarkerList> currentGraphMarker : marker) {
 				Object tempAttribute = currentGraphMarker.getMark(leaf);
 				if (tempAttribute != null) {
-					for (PathSystemMarkerEntry currentMarker : ((PathSystemMarkerList) tempAttribute).values()) {
+					for (PathSystemMarkerEntry currentMarker : ((PathSystemMarkerList) tempAttribute)
+							.values()) {
 						if (!currentMarker.state.isFinal || // if state of
 								// current PathSystemMarkerEntry is final or
 								isVertexMarkedWithState(leaf,
@@ -294,7 +301,7 @@ public class PathSystem extends Greql2Function {
 							continue;
 						}
 						Vertex currentVertex = leaf;
-						while (currentVertex != null
+						while ((currentVertex != null)
 								&& !isVertexMarkedWithState(currentVertex,
 										currentMarker.state)) {
 							int parentStateNumber = 0;
@@ -380,14 +387,17 @@ public class PathSystem extends Greql2Function {
 		return null;
 	}
 
+	@Override
 	public long getEstimatedCosts(ArrayList<Long> inElements) {
 		return 1000;
 	}
 
+	@Override
 	public double getSelectivity() {
 		return 0.001f;
 	}
 
+	@Override
 	public long getEstimatedCardinality(int inElements) {
 		return 1;
 	}

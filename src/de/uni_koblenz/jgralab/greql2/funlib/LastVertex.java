@@ -36,7 +36,8 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValueTypeCollection;
 
 /**
- * Returns the last vertex (of a type matching the given TypeCollection) in the graph
+ * Returns the last vertex (of a type matching the given TypeCollection) in the
+ * graph
  * 
  * <dl>
  * <dt><b>GReQL-signature</b></dt>
@@ -50,8 +51,7 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueTypeCollection;
  * <dd>
  * <dd>the last vertex (of a type matching tc) in Vseq
  * </dl>
- * </dd>
- * </dl>
+ * </dd> </dl>
  * 
  * @see FirstVertex, LastEdge
  * @author ist@uni-koblenz.de
@@ -60,10 +60,13 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueTypeCollection;
 
 public class LastVertex extends Greql2Function {
 	{
-		JValueType[][] x = { { },  { JValueType.TYPECOLLECTION } };
+		JValueType[][] x = { {}, { JValueType.TYPECOLLECTION } };
 		signatures = x;
+
+		description = "Return the last vertex (restr. by optional TypeCollection) in the graph.";
 	}
 
+	@Override
 	public JValue evaluate(Graph graph, BooleanGraphMarker subgraph,
 			JValue[] arguments) throws EvaluateException {
 		switch (checkArguments(arguments)) {
@@ -73,24 +76,28 @@ public class LastVertex extends Greql2Function {
 			Vertex current = graph.getLastVertex();
 			JValueTypeCollection tc = arguments[2].toJValueTypeCollection();
 			while (current != null) {
-				if (tc.acceptsType(current.getAttributedElementClass()))
+				if (tc.acceptsType(current.getAttributedElementClass())) {
 					return new JValue(current);
+				}
 				current = current.getPrevVertex();
 			}
-			return new JValue((Vertex)null);
+			return new JValue((Vertex) null);
 		default:
 			throw new WrongFunctionParameterException(this, arguments);
 		}
 	}
 
+	@Override
 	public long getEstimatedCosts(ArrayList<Long> inElements) {
 		return 1000;
 	}
 
+	@Override
 	public double getSelectivity() {
 		return 0.2;
 	}
 
+	@Override
 	public long getEstimatedCardinality(int inElements) {
 		return 100;
 	}

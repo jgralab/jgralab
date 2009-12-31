@@ -78,8 +78,11 @@ public class Matches extends Greql2Function {
 		JValueType[][] x = { { JValueType.PATH, JValueType.DFA },
 				{ JValueType.PATH, JValueType.NFA } };
 		signatures = x;
+
+		description = "Return true, iff the given path description matches the given path.";
 	}
 
+	@Override
 	public JValue evaluate(Graph graph, BooleanGraphMarker subgraph,
 			JValue[] arguments) throws EvaluateException {
 		DFA dfa = null;
@@ -132,14 +135,17 @@ public class Matches extends Greql2Function {
 		return new JValue(false);
 	}
 
+	@Override
 	public long getEstimatedCosts(ArrayList<Long> inElements) {
 		return 40;
 	}
 
+	@Override
 	public double getSelectivity() {
 		return 0.1;
 	}
 
+	@Override
 	public long getEstimatedCardinality(int inElements) {
 		return 1;
 	}

@@ -63,8 +63,11 @@ public class PathLength extends Greql2Function {
 	{
 		JValueType[][] x = { { JValueType.PATH } };
 		signatures = x;
+
+		description = "Return the length of the given path.";
 	}
 
+	@Override
 	public JValue evaluate(Graph graph, BooleanGraphMarker subgraph,
 			JValue[] arguments) throws EvaluateException {
 		if (checkArguments(arguments) == -1) {
@@ -73,14 +76,17 @@ public class PathLength extends Greql2Function {
 		return new JValue(arguments[0].toPath().pathLength());
 	}
 
+	@Override
 	public long getEstimatedCosts(ArrayList<Long> inElements) {
 		return 2;
 	}
 
+	@Override
 	public double getSelectivity() {
 		return 1;
 	}
 
+	@Override
 	public long getEstimatedCardinality(int inElements) {
 		return 1;
 	}

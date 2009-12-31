@@ -46,6 +46,8 @@ public class TheElement extends Greql2Function {
 	{
 		JValueType[][] x = { { JValueType.COLLECTION } };
 		signatures = x;
+
+		description = "Return the single element of the given collection.";
 	}
 
 	@Override

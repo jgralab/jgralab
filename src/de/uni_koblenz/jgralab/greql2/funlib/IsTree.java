@@ -67,8 +67,13 @@ public class IsTree extends Greql2Function {
 	{
 		JValueType[][] x = { {}, { JValueType.SUBGRAPHTEMPATTRIBUTE } };
 		signatures = x;
+
+		description = "Return true if the current graph or subgraph is a tree.\n"
+				+ "That means, the graph is acyclic, has exactly one vertex without\n"
+				+ "incoming edges and all other vertices have exactly one incoming edge.";
 	}
 
+	@Override
 	public JValue evaluate(Graph graph, BooleanGraphMarker subgraph,
 			JValue[] arguments) throws EvaluateException {
 		switch (checkArguments(arguments)) {
@@ -110,14 +115,17 @@ public class IsTree extends Greql2Function {
 		return new JValue(foundOneRoot);
 	}
 
+	@Override
 	public long getEstimatedCosts(ArrayList<Long> inElements) {
 		return 5;
 	}
 
+	@Override
 	public double getSelectivity() {
 		return 0.01;
 	}
 
+	@Override
 	public long getEstimatedCardinality(int inElements) {
 		return 1;
 	}

@@ -78,8 +78,11 @@ public class ReachableVertices extends Greql2Function {
 				{ JValueType.VERTEX, JValueType.DFA,
 						JValueType.SUBGRAPHTEMPATTRIBUTE } };
 		signatures = x;
+
+		description = "Return all vertices that are reachable from vertex with path description.";
 	}
 
+	@Override
 	public JValue evaluate(Graph graph, BooleanGraphMarker subgraph,
 			JValue[] arguments) throws EvaluateException {
 		if (checkArguments(arguments) == -1) {
@@ -108,7 +111,8 @@ public class ReachableVertices extends Greql2Function {
 			Edge inc = currentEntry.vertex.getFirstEdge();
 			while (inc != null) {
 				for (Transition currentTransition : currentEntry.state.outTransitions) {
-					Vertex nextVertex = currentTransition.getNextVertex(currentEntry.vertex, inc);
+					Vertex nextVertex = currentTransition.getNextVertex(
+							currentEntry.vertex, inc);
 					if (!markers[currentTransition.getEndState().number]
 							.isMarked(nextVertex)) {
 						if (currentTransition.accepts(currentEntry.vertex, inc,
@@ -126,14 +130,17 @@ public class ReachableVertices extends Greql2Function {
 		return resultSet;
 	}
 
+	@Override
 	public long getEstimatedCosts(ArrayList<Long> inElements) {
 		return 100;
 	}
 
+	@Override
 	public double getSelectivity() {
 		return 1;
 	}
 
+	@Override
 	public long getEstimatedCardinality(int inElements) {
 		return 1;
 	}

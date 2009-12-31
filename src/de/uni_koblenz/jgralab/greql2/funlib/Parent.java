@@ -69,8 +69,13 @@ public class Parent extends Greql2Function {
 	{
 		JValueType[][] x = { { JValueType.PATHSYSTEM, JValueType.VERTEX } };
 		signatures = x;
+
+		description = "Return the parent-vertex of the given vertex in the given pathsystem.\n"
+				+ "The parent-vertex of a vertex, is the vertex that connects the vertex\n"
+				+ "with an incoming edge.";
 	}
 
+	@Override
 	public JValue evaluate(Graph graph, BooleanGraphMarker subgraph,
 			JValue[] arguments) throws EvaluateException {
 		if (checkArguments(arguments) == -1) {
@@ -81,14 +86,17 @@ public class Parent extends Greql2Function {
 		return pathSystem.parent(vertex);
 	}
 
+	@Override
 	public long getEstimatedCosts(ArrayList<Long> inElements) {
 		return 5;
 	}
 
+	@Override
 	public double getSelectivity() {
 		return 1;
 	}
 
+	@Override
 	public long getEstimatedCardinality(int inElements) {
 		return 1;
 	}

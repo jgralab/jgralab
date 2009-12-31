@@ -41,6 +41,8 @@ public class Sort extends Greql2Function {
 	{
 		JValueType[][] x = { { JValueType.COLLECTION } };
 		signatures = x;
+
+		description = "Sort the given collection according natural ordering.";
 	}
 
 	@Override

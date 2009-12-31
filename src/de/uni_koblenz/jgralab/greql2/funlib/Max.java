@@ -64,8 +64,11 @@ public class Max extends Greql2Function {
 	{
 		JValueType[][] x = { { JValueType.COLLECTION } };
 		signatures = x;
+
+		description = "Return the maximum of the given collection of numbers.";
 	}
 
+	@Override
 	public JValue evaluate(Graph graph, BooleanGraphMarker subgraph,
 			JValue[] arguments) throws EvaluateException {
 		if (checkArguments(arguments) == -1) {
@@ -76,9 +79,9 @@ public class Max extends Greql2Function {
 		Double max = null;
 		for (JValue curVal : col) {
 			if (curVal.isNumber()) {
-				if (max == null || curVal.toNumber().doubleValue() > max) {
+				if ((max == null) || (curVal.toNumber().doubleValue() > max)) {
 					max = curVal.toNumber().doubleValue();
-				}	
+				}
 			} else {
 				throw new WrongFunctionParameterException(this, arguments);
 			}
@@ -86,14 +89,17 @@ public class Max extends Greql2Function {
 		return new JValue(max);
 	}
 
+	@Override
 	public long getEstimatedCosts(ArrayList<Long> inElements) {
 		return inElements.get(0);
 	}
 
+	@Override
 	public double getSelectivity() {
 		return 1;
 	}
 
+	@Override
 	public long getEstimatedCardinality(int inElements) {
 		return 1;
 	}

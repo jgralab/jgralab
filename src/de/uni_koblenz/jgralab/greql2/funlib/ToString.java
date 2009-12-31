@@ -60,8 +60,11 @@ public class ToString extends Greql2Function {
 	{
 		JValueType[][] x = { { JValueType.OBJECT } };
 		signatures = x;
+
+		description = "Return the toString() output of the given object.";
 	}
 
+	@Override
 	public JValue evaluate(Graph graph, BooleanGraphMarker subgraph,
 			JValue[] arguments) throws EvaluateException {
 		if (checkArguments(arguments) == -1) {
@@ -71,14 +74,17 @@ public class ToString extends Greql2Function {
 		return new JValue(arguments[0].toString());
 	}
 
+	@Override
 	public long getEstimatedCosts(ArrayList<Long> inElements) {
 		return 1;
 	}
 
+	@Override
 	public double getSelectivity() {
 		return 1;
 	}
 
+	@Override
 	public long getEstimatedCardinality(int inElements) {
 		return 1;
 	}

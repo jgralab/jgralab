@@ -63,6 +63,8 @@ public class Split extends Greql2Function {
 	{
 		JValueType[][] x = { { JValueType.STRING, JValueType.STRING } };
 		signatures = x;
+
+		description = "Split string according to regexp and return splits as list.";
 	}
 
 	/*

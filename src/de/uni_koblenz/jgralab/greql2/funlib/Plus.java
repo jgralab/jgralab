@@ -85,8 +85,11 @@ public class Plus extends ArithmeticFunction {
 				{ JValueType.INTEGER, JValueType.INTEGER },
 				{ JValueType.STRING, JValueType.STRING } };
 		signatures = x;
+
+		description = "Add the given 2 numbers or concatenate the given 2 strings.";
 	}
 
+	@Override
 	public JValue evaluate(Graph graph, BooleanGraphMarker subgraph,
 			JValue[] arguments) throws EvaluateException {
 		switch (checkArguments(arguments)) {

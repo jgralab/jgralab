@@ -36,7 +36,7 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueSet;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
 
 /**
- * Checks if all elements in a given collection are unique. 
+ * Checks if all elements in a given collection are unique.
  * 
  * <dl>
  * <dt><b>GReQL-signature</b></dt>
@@ -50,8 +50,7 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
  * <dt><b>Parameters:</b></dt>
  * <dd><code>c</code> - collection to check</dd>
  * <dt><b>Returns:</b></dt>
- * <dd><code>true</code> if there is no element twice in the collection
- * </dd>
+ * <dd><code>true</code> if there is no element twice in the collection</dd>
  * <dd><code>Null</code> if the collection is <code>Null</code></dd>
  * <dd><code>false</code> otherwise</dd>
  * </dl>
@@ -67,16 +66,21 @@ public class IsUnique extends Greql2Function {
 	{
 		JValueType[][] x = { { JValueType.COLLECTION } };
 		signatures = x;
+
+		description = "Return true, iff all elements in the collection occure only once.\n"
+				+ "That means, the collection is a set.";
 	}
 
+	@Override
 	public JValue evaluate(Graph graph, BooleanGraphMarker subgraph,
 			JValue[] arguments) throws EvaluateException {
 
 		switch (checkArguments(arguments)) {
 		case 0:
 			JValueCollection col = arguments[0].toCollection();
-			if (col.isJValueSet())
+			if (col.isJValueSet()) {
 				return new JValue(true);
+			}
 			JValueSet set = col.toJValueSet();
 			return new JValue(set.size() == col.size());
 		default:
@@ -84,14 +88,17 @@ public class IsUnique extends Greql2Function {
 		}
 	}
 
+	@Override
 	public long getEstimatedCosts(ArrayList<Long> inElements) {
 		return inElements.size();
 	}
 
+	@Override
 	public double getSelectivity() {
 		return 0.2;
 	}
 
+	@Override
 	public long getEstimatedCardinality(int inElements) {
 		return 1;
 	}

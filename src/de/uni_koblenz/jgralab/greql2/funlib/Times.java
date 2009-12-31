@@ -83,8 +83,11 @@ public class Times extends ArithmeticFunction {
 				{ JValueType.INTEGER, JValueType.INTEGER },
 				{ JValueType.STRING, JValueType.LONG } };
 		signatures = x;
+
+		description = "Multiply the given two numbers, or concat the given string many times.";
 	}
 
+	@Override
 	public JValue evaluate(Graph graph, BooleanGraphMarker subgraph,
 			JValue[] arguments) throws EvaluateException {
 		switch (checkArguments(arguments)) {

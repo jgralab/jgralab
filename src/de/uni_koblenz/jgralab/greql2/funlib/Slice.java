@@ -88,6 +88,8 @@ public class Slice extends Greql2Function {
 				{ JValueType.VERTEX, JValueType.DFA },
 				{ JValueType.VERTEX, JValueType.NFA } };
 		signatures = x;
+
+		description = "Return a slice, starting at root(s) and structured according path description.";
 	}
 
 	/**
@@ -176,7 +178,7 @@ public class Slice extends Greql2Function {
 	 *            the DFA which accepts the regular path expression that
 	 *            describes the slice
 	 * @param subgraph
-	 *             the subgraph all parts of the slice belong to
+	 *            the subgraph all parts of the slice belong to
 	 * @return the list of leaves in the slice, that is the set of states which
 	 *         are marked with a final state of the dfa
 	 * @throws EvaluateException
@@ -192,11 +194,17 @@ public class Slice extends Greql2Function {
 
 		// fill queue with vertices in slicing criterion and mark these vertices
 		for (Vertex v : sliCritVertices) {
-			currentEntry = new PathSystemQueueEntry(v, dfa.initialState, null, null, 0);
+			currentEntry = new PathSystemQueueEntry(v, dfa.initialState, null,
+					null, 0);
 			queue.offer(currentEntry);
 			markVertex(v, dfa.initialState, null /* no parent state */,
-					null /* no parent vertex */, null /* no parent state */, 
-					0 /* distance to root is null */);
+					null /* no parent vertex */, null /* no parent state */, 0 /*
+																			 * distance
+																			 * to
+																			 * root
+																			 * is
+																			 * null
+																			 */);
 		}
 
 		while (!queue.isEmpty()) {
@@ -206,29 +214,35 @@ public class Slice extends Greql2Function {
 			}
 			for (Edge inc : currentEntry.vertex.incidences()) {
 				for (Transition currentTransition : currentEntry.state.outTransitions) {
-					Vertex nextVertex = currentTransition.getNextVertex(currentEntry.vertex, inc);
-				    if ((!isMarked(nextVertex, currentTransition.getEndState(), inc)) &&
-						 (currentTransition.accepts(currentEntry.vertex, inc, subgraph))) {
+					Vertex nextVertex = currentTransition.getNextVertex(
+							currentEntry.vertex, inc);
+					if ((!isMarked(nextVertex, currentTransition.getEndState(),
+							inc))
+							&& (currentTransition.accepts(currentEntry.vertex,
+									inc, subgraph))) {
 						Edge traversedEdge = inc;
 						int distanceToRoot = currentEntry.distanceToRoot;
 						if (nextVertex == currentEntry.vertex) {
 							traversedEdge = null;
 						} else {
 							distanceToRoot++;
-						}						
-						/* if the vertex is not marked with the state, add it to
-						 * the queue for further processing - the parent edge doesn't
-						 * matter but only the state
+						}
+						/*
+						 * if the vertex is not marked with the state, add it to
+						 * the queue for further processing - the parent edge
+						 * doesn't matter but only the state
 						 */
-						if (!isMarked(nextVertex, currentTransition.getEndState())) {
+						if (!isMarked(nextVertex, currentTransition
+								.getEndState())) {
 							queue.add(new PathSystemQueueEntry(nextVertex,
-									currentTransition.getEndState(), traversedEdge,
-									currentEntry.state, distanceToRoot));
+									currentTransition.getEndState(),
+									traversedEdge, currentEntry.state,
+									distanceToRoot));
 						}
 						/* mark the vertex with all reachability information */
-						markVertex(nextVertex, currentTransition.getEndState(), 
-								   currentEntry.vertex, traversedEdge,
-					   			   currentEntry.state, 	distanceToRoot);
+						markVertex(nextVertex, currentTransition.getEndState(),
+								currentEntry.vertex, traversedEdge,
+								currentEntry.state, distanceToRoot);
 					}
 				}
 			}
@@ -240,6 +254,7 @@ public class Slice extends Greql2Function {
 	/**
 	 * creates the slice
 	 */
+	@Override
 	public JValue evaluate(Graph graph, BooleanGraphMarker subgraph,
 			JValue[] arguments) throws EvaluateException {
 		Set<Vertex> sliCritVertices = new HashSet<Vertex>();
@@ -318,24 +333,31 @@ public class Slice extends Greql2Function {
 
 		for (Vertex leaf : leaves) { // iterate through leaves
 			// iterate through GraphMarkers (one for each state)
-			for (GraphMarker<PathSystemMarkerList> currentGraphMarker : marker) { 
+			for (GraphMarker<PathSystemMarkerList> currentGraphMarker : marker) {
 				if (currentGraphMarker.getMark(leaf) != null) {
-					// iterate through list of PathSystemMarkerEntrys 
+					// iterate through list of PathSystemMarkerEntrys
 					// for a particular GraphMarker (a particular state)
-					for (PathSystemMarkerEntry currentMarker : currentGraphMarker.getMark(leaf).values()) {  
+					for (PathSystemMarkerEntry currentMarker : currentGraphMarker
+							.getMark(leaf).values()) {
 						// if state of current PathSystemMarkerEntry is final or
-						if (!currentMarker.state.isFinal || isVertexMarkedWithState(leaf, currentMarker.state)) { 
+						if (!currentMarker.state.isFinal
+								|| isVertexMarkedWithState(leaf,
+										currentMarker.state)) {
 							// (leaf, state) has already been processed
 							continue;
 						}
-						// remember that (leaf, state) has already been processed
-						markVertexWithState(leaf, currentMarker.state); 
+						// remember that (leaf, state) has already been
+						// processed
+						markVertexWithState(leaf, currentMarker.state);
 						// mark leaf with current state
-						currentStateMarker.mark(leaf, currentMarker.state); 
+						currentStateMarker.mark(leaf, currentMarker.state);
 						queue.add(leaf);
 						while (!queue.isEmpty()) {
 							currentVertex = queue.poll();
-							for (PathSystemMarkerEntry marker : getMarkersWithState(currentVertex, currentStateMarker.getMark(currentVertex)).values()) {
+							for (PathSystemMarkerEntry marker : getMarkersWithState(
+									currentVertex,
+									currentStateMarker.getMark(currentVertex))
+									.values()) {
 								int parentStateNumber = 0;
 								parentState = marker.parentState;
 								if (parentState != null) {
@@ -347,11 +369,17 @@ public class Slice extends Greql2Function {
 										marker.parentVertex, parentStateNumber,
 										marker.state.isFinal);
 								parentVertex = marker.parentVertex;
-								if (parentVertex != null && !isVertexMarkedWithState(parentVertex, parentState)) { 
-									// if (parentVertex, parentState) has not already
-									// been processed, remember that is has been processed now 
-									markVertexWithState(parentVertex, parentState); 
-									currentStateMarker.mark(parentVertex,parentState);
+								if ((parentVertex != null)
+										&& !isVertexMarkedWithState(
+												parentVertex, parentState)) {
+									// if (parentVertex, parentState) has not
+									// already
+									// been processed, remember that is has been
+									// processed now
+									markVertexWithState(parentVertex,
+											parentState);
+									currentStateMarker.mark(parentVertex,
+											parentState);
 									queue.add(parentVertex); // add parentVertex
 									// to queue
 								}
@@ -416,14 +444,17 @@ public class Slice extends Greql2Function {
 		return currentMarker.getMark(v);
 	}
 
+	@Override
 	public long getEstimatedCosts(ArrayList<Long> inElements) {
 		return 1000;
 	}
 
+	@Override
 	public double getSelectivity() {
 		return 0.001f;
 	}
 
+	@Override
 	public long getEstimatedCardinality(int inElements) {
 		return 1;
 	}

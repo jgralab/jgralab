@@ -71,8 +71,12 @@ public class Subtypes extends Greql2Function {
 		JValueType[][] x = { { JValueType.STRING },
 				{ JValueType.ATTRIBUTEDELEMENTCLASS } };
 		signatures = x;
+
+		description = "Return the set of direct subtypes of the given type.\n"
+				+ "The type may be given as string or attributed element class.";
 	}
 
+	@Override
 	public JValue evaluate(Graph graph, BooleanGraphMarker subgraph,
 			JValue[] arguments) throws EvaluateException {
 		AttributedElementClass clazz = null;
@@ -95,14 +99,17 @@ public class Subtypes extends Greql2Function {
 		return typeSet;
 	}
 
+	@Override
 	public long getEstimatedCosts(ArrayList<Long> inElements) {
 		return 5;
 	}
 
+	@Override
 	public double getSelectivity() {
 		return 1;
 	}
 
+	@Override
 	public long getEstimatedCardinality(int inElements) {
 		return 1;
 	}
