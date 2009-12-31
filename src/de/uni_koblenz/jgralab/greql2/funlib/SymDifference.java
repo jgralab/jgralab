@@ -70,7 +70,7 @@ public class SymDifference extends Greql2Function {
 		JValueType[][] x = { { JValueType.COLLECTION, JValueType.COLLECTION } };
 		signatures = x;
 
-		description = "Return the symmetric difference of the given 2 collections."
+		description = "Return the symmetric difference of the given 2 collections.\n"
 				+ "Both collections are converted to sets before.  The symmetric\n"
 				+ "difference are all elements of both sets, which are not contained\n"
 				+ "in both sets.";

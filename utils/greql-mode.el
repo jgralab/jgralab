@@ -686,12 +686,12 @@ for some variable declared as
     (greql-doc-mode)
 
     ;; Format the buffer.
-    (while (re-search-forward "===+" nil t)
-      (forward-line 1)
+    (while (re-search-forward "^===+$" nil t)
+      (forward-line 3)
       (let ((beg (point)))
         (re-search-forward "^Signatures:$" nil t)
         (forward-line -1)
-        (fill-region beg (point) 'full))))
+        (fill-region beg (point)))))
   (goto-char (point-min))
 
   (switch-to-buffer (get-buffer-create greql-doc-buffer))
