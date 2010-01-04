@@ -31,6 +31,7 @@ import de.uni_koblenz.jgralab.greql2.schema.Greql2Expression;
 import de.uni_koblenz.jgralab.greql2.schema.Greql2Schema;
 import de.uni_koblenz.jgralab.greql2.schema.Greql2Vertex;
 import de.uni_koblenz.jgralab.greql2.schema.IsArgumentOf;
+import de.uni_koblenz.jgralab.greql2.schema.IsBooleanPredicateOfEdgeRestriction;
 import de.uni_koblenz.jgralab.greql2.schema.IsBoundExprOfQuantifier;
 import de.uni_koblenz.jgralab.greql2.schema.IsBoundVarOf;
 import de.uni_koblenz.jgralab.greql2.schema.IsColumnHeaderExprOf;
@@ -38,11 +39,13 @@ import de.uni_koblenz.jgralab.greql2.schema.IsConstraintOf;
 import de.uni_koblenz.jgralab.greql2.schema.IsDeclaredVarOf;
 import de.uni_koblenz.jgralab.greql2.schema.IsDefinitionOf;
 import de.uni_koblenz.jgralab.greql2.schema.IsFunctionIdOf;
+import de.uni_koblenz.jgralab.greql2.schema.IsGoalRestrOf;
 import de.uni_koblenz.jgralab.greql2.schema.IsKeyExprOfComprehension;
 import de.uni_koblenz.jgralab.greql2.schema.IsQuantifiedDeclOf;
 import de.uni_koblenz.jgralab.greql2.schema.IsQueryExprOf;
 import de.uni_koblenz.jgralab.greql2.schema.IsRowHeaderExprOf;
 import de.uni_koblenz.jgralab.greql2.schema.IsSimpleDeclOf;
+import de.uni_koblenz.jgralab.greql2.schema.IsStartRestrOf;
 import de.uni_koblenz.jgralab.greql2.schema.IsSubgraphOf;
 import de.uni_koblenz.jgralab.greql2.schema.IsTableHeaderOf;
 import de.uni_koblenz.jgralab.greql2.schema.IsValueExprOfComprehension;
@@ -444,40 +447,31 @@ public abstract class ManualParserHelper {
 		return list;
 	}
 
+	//TODO: Modify test so that thisVertex can be used only in Goal and StartRestrictions an thisEdge only in BooleanPredicates
+	
 	/**
 	 * Test if all ThisLiterals occur only inside PathDescriptions because they
 	 * must not be used outside PathDescriptions If any ThisLiteral that occurs
 	 * outside a PathDescription is found, a ParseException is thrown.
 	 */
 	protected final void testIllegalThisLiterals() {
-		Set<Class<? extends Greql2Vertex>> allowedClassesForThisLiterals = new HashSet<Class<? extends Greql2Vertex>>();
-		allowedClassesForThisLiterals.add(PathDescription.class);
-		allowedClassesForThisLiterals.add(PathExistence.class);
-		allowedClassesForThisLiterals.add(ForwardVertexSet.class);
-		allowedClassesForThisLiterals.add(BackwardVertexSet.class);
+		Set<Class<? extends Greql2Aggregation>> allowedEdgesForThisVertex = new HashSet<Class<? extends Greql2Aggregation>>();
+		Set<Class<? extends Greql2Aggregation>> allowedEdgesForThisEdge = new HashSet<Class<? extends Greql2Aggregation>>();
+		allowedEdgesForThisVertex.add(IsGoalRestrOf.class);
+		allowedEdgesForThisVertex.add(IsStartRestrOf.class);
+		allowedEdgesForThisEdge.add(IsBooleanPredicateOfEdgeRestriction.class);
 
-		for (ThisLiteral vertex : graph.getThisLiteralVertices()) {
+		for (ThisLiteral vertex : graph.getThisVertexVertices()) {
 			for (Edge sourcePositionEdge : vertex.incidences(EdgeDirection.OUT)) {
 				Queue<Greql2Vertex> queue = new LinkedList<Greql2Vertex>();
 				queue.add(vertex);
 				while (!queue.isEmpty()) {
 					Greql2Vertex currentVertex = queue.poll();
-					for (Edge edge : currentVertex
-							.incidences(EdgeDirection.OUT)) {
-						Greql2Vertex omega = (Greql2Vertex) edge.getOmega();
-						if (allowedClassesForThisLiterals.contains(omega
-								.getM1Class())) {
+					for (Edge edge : currentVertex.incidences(EdgeDirection.OUT)) {
+						if (allowedEdgesForThisVertex.contains(edge.getM1Class())) {
 							continue;
 						}
-						if (omega instanceof FunctionApplication) {
-							FunctionApplication fa = (FunctionApplication) omega;
-							FunctionId funid = (FunctionId) fa
-									.getFirstIsFunctionIdOf(EdgeDirection.IN)
-									.getAlpha();
-							if (funid.get_name().equals("pathSystem")) {
-								continue;
-							}
-						}
+						Greql2Vertex omega = (Greql2Vertex) edge.getOmega();
 						if (omega instanceof Greql2Expression) {
 							throw new ParsingException(
 									"This literals must not be used outside pathdescriptions",
@@ -494,6 +488,36 @@ public abstract class ManualParserHelper {
 				}
 			}
 		}
+		
+		
+		for (ThisLiteral vertex : graph.getThisEdgeVertices()) {
+			for (Edge sourcePositionEdge : vertex.incidences(EdgeDirection.OUT)) {
+				Queue<Greql2Vertex> queue = new LinkedList<Greql2Vertex>();
+				queue.add(vertex);
+				while (!queue.isEmpty()) {
+					Greql2Vertex currentVertex = queue.poll();
+					for (Edge edge : currentVertex.incidences(EdgeDirection.OUT)) {
+						if (allowedEdgesForThisEdge.contains(edge.getM1Class())) {
+							continue;
+						}
+						Greql2Vertex omega = (Greql2Vertex) edge.getOmega();
+						if (omega instanceof Greql2Expression) {
+							throw new ParsingException(
+									"This literals must not be used outside pathdescriptions",
+									vertex.get_name(),
+									((Greql2Aggregation) sourcePositionEdge)
+											.get_sourcePositions().get(0)
+											.get_offset(),
+									((Greql2Aggregation) sourcePositionEdge)
+											.get_sourcePositions().get(0)
+											.get_length(), query);
+						}
+						queue.add(omega);
+					}
+				}
+			}
+		}
+		LinkedList<Vertex> literalsToDelete = new LinkedList<Vertex>();
 		ThisVertex firstThisVertex = null;
 		for (ThisVertex thisVertex : graph.getThisVertexVertices()) {
 			if (firstThisVertex == null) {
@@ -503,6 +527,7 @@ public abstract class ManualParserHelper {
 					Edge e = thisVertex.getFirstEdge();
 					e.setThis(firstThisVertex);
 				}
+				literalsToDelete.add(thisVertex);
 			}
 		}
 		ThisEdge firstThisEdge = null;
@@ -514,8 +539,11 @@ public abstract class ManualParserHelper {
 					Edge e = thisEdge.getFirstEdge();
 					e.setThis(firstThisEdge);
 				}
+				literalsToDelete.add(thisEdge);
 			}
 		}
+		while (!literalsToDelete.isEmpty())
+			literalsToDelete.getFirst().delete();
 	}
 
 }

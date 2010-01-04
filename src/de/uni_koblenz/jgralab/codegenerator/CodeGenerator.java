@@ -154,19 +154,14 @@ public abstract class CodeGenerator {
 		rootBlock.setVariable("jgSchemaPackage", "de.uni_koblenz.jgralab.schema");
 		rootBlock.setVariable("jgSchemaImplPackage", "de.uni_koblenz.jgralab.schema.impl");
 		if ((packageName != null) && !packageName.equals("")) {
-			rootBlock.setVariable("schemaPackage", schemaRootPackageName + "."
-					+ packageName);
+			rootBlock.setVariable("schemaPackage", schemaRootPackageName + "." + packageName);
 			// schema implementation packages (standard and for transaction)
-			rootBlock.setVariable("schemaImplStdPackage", schemaRootPackageName
-					+ ".impl.std." + packageName);
-			rootBlock.setVariable("schemaImplTransPackage",
-					schemaRootPackageName + ".impl.trans." + packageName);
+			rootBlock.setVariable("schemaImplStdPackage", schemaRootPackageName	+ ".impl.std." + packageName);
+			rootBlock.setVariable("schemaImplTransPackage",	schemaRootPackageName + ".impl.trans." + packageName);
 		} else {
 			rootBlock.setVariable("schemaPackage", schemaRootPackageName);
-			rootBlock.setVariable("schemaImplStdPackage", schemaRootPackageName
-					+ ".impl.std");
-			rootBlock.setVariable("schemaImplTransPackage",
-					schemaRootPackageName + ".impl.trans");
+			rootBlock.setVariable("schemaImplStdPackage", schemaRootPackageName	+ ".impl.std");
+			rootBlock.setVariable("schemaImplTransPackage",	schemaRootPackageName + ".impl.trans");
 		}
 		rootBlock.setVariable("isClassOnly", "false");
 		rootBlock.setVariable("isImplementationClassOnly", "false");

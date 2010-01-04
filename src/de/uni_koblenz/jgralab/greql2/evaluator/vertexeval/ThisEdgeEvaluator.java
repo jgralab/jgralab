@@ -43,7 +43,7 @@ public class ThisEdgeEvaluator extends VariableEvaluator {
 	 */
 	public ThisEdgeEvaluator(ThisEdge vertex, GreqlEvaluator eval) {
 		super(vertex, eval);
-		this.vertex = vertex;
+	//	this.vertex = vertex;
 	}
 
 }

@@ -24,6 +24,9 @@
 
 package de.uni_koblenz.jgralab.greql2.evaluator.vertexeval;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
 import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.GraphSize;
@@ -34,6 +37,7 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValueTypeCollection;
 import de.uni_koblenz.jgralab.greql2.schema.EdgeRestriction;
 import de.uni_koblenz.jgralab.greql2.schema.Greql2Vertex;
+import de.uni_koblenz.jgralab.greql2.schema.IsBooleanPredicateOfEdgeRestriction;
 import de.uni_koblenz.jgralab.greql2.schema.IsRoleIdOf;
 import de.uni_koblenz.jgralab.greql2.schema.IsTypeIdOf;
 import de.uni_koblenz.jgralab.greql2.schema.RoleId;
@@ -50,6 +54,8 @@ public class EdgeRestrictionEvaluator extends VertexEvaluator {
 	 * The EdgeRestriction vertex in the GReQL Syntaxgraph
 	 */
 	private EdgeRestriction vertex;
+	
+	private VertexEvaluator predicateEvaluator = null;
 
 	/**
 	 * returns the vertex this VertexEvaluator evaluates
@@ -59,6 +65,11 @@ public class EdgeRestrictionEvaluator extends VertexEvaluator {
 		return vertex;
 	}
 
+	
+	public VertexEvaluator getPredicateEvaluator() {
+		return predicateEvaluator;
+	}
+	
 	/**
 	 * The JValueTypeCollection which holds all the allowed and forbidden types
 	 */
@@ -77,13 +88,13 @@ public class EdgeRestrictionEvaluator extends VertexEvaluator {
 	/**
 	 * the valid role of an edge
 	 */
-	private String validRole;
+	private Set<String> validRoles;
 
 	/**
 	 * @return the valid edge role
 	 */
-	public String getEdgeRole() {
-		return validRole;
+	public Set<String> getEdgeRoles() {
+		return validRoles;
 	}
 
 	/**
@@ -124,10 +135,16 @@ public class EdgeRestrictionEvaluator extends VertexEvaluator {
 		}
 		IsRoleIdOf roleInc = vertex.getFirstIsRoleIdOf();
 		if (roleInc != null) {
-			RoleId role = (RoleId) roleInc.getAlpha();
-			validRole = role.get_name();
-		} else {
-			validRole = null;
+			validRoles = new HashSet<String>();
+			for (IsRoleIdOf e : vertex.getIsRoleIdOfIncidences()) {
+				RoleId role = (RoleId) e.getAlpha();
+				validRoles.add(role.get_name());
+			}
+		} 
+		IsBooleanPredicateOfEdgeRestriction predInc = vertex.getFirstIsBooleanPredicateOfEdgeRestriction(EdgeDirection.IN);
+		if (predInc != null) {
+			System.out.println("Found a BooleanPredicateOfEdge");
+			predicateEvaluator = greqlEvaluator.getVertexEvaluatorGraphMarker().getMark(predInc.getAlpha());
 		}
 		return new JValue();
 	}
