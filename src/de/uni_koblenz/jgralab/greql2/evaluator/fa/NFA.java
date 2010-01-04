@@ -29,6 +29,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import de.uni_koblenz.jgralab.graphmarker.GraphMarker;
 import de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.VertexEvaluator;
@@ -277,18 +278,19 @@ public class NFA extends FiniteAutomaton {
 
 	/**
 	 * Constructs a NFA which accepts the given EdgePathDescription The
-	 * EdgeRestrictions (RoleId, TypeId) are modelled in the Transition.
+	 * EdgeRestrictions (RoleId, TypeId) are modeled in the Transition.
 	 */
 	public static NFA createEdgePathDescriptionNFA(
 			Transition.AllowedEdgeDirection dir,
-			JValueTypeCollection typeCollection, String role,
-			VertexEvaluator edgeEval) {
+			JValueTypeCollection typeCollection, Set<String> roles,
+			VertexEvaluator edgeEval, VertexEvaluator predicateEvaluator, GraphMarker<VertexEvaluator> marker) {
 		NFA nfa = new NFA();
 		nfa.transitionList.clear();
 		nfa.initialState.outTransitions.clear();
 		nfa.finalStates.get(0).inTransitions.clear();
+		System.out.println("Creating new EdgeTransition with predicateEval: " + predicateEvaluator);
 		SimpleTransition t = new EdgeTransition(nfa.initialState,
-				nfa.finalStates.get(0), dir, typeCollection, role, edgeEval);
+				nfa.finalStates.get(0), dir, typeCollection, roles, edgeEval, predicateEvaluator, marker);
 		nfa.transitionList.add(t);
 		nfa.updateStateAttributes();
 		return nfa;
@@ -296,17 +298,17 @@ public class NFA extends FiniteAutomaton {
 
 	/**
 	 * Constructs a NFA which accepts the given SimplePathDescription. The
-	 * EdgeRestrictions (RoleId, TypeId) are modelled in the Transition.
+	 * EdgeRestrictions (RoleId, TypeId) are modeled in the Transition.
 	 */
 	public static NFA createSimplePathDescriptionNFA(
 			Transition.AllowedEdgeDirection dir,
-			JValueTypeCollection typeCollection, String role) {
+			JValueTypeCollection typeCollection, Set<String> roles, VertexEvaluator predicateEvaluator, GraphMarker<VertexEvaluator> marker) {
 		NFA nfa = new NFA();
 		nfa.transitionList.clear();
 		nfa.initialState.outTransitions.clear();
 		nfa.finalStates.get(0).inTransitions.clear();
 		SimpleTransition t = new SimpleTransition(nfa.initialState,
-				nfa.finalStates.get(0), dir, typeCollection, role);
+				nfa.finalStates.get(0), dir, typeCollection, roles, predicateEvaluator, marker);
 		nfa.transitionList.add(t);
 		nfa.updateStateAttributes();
 		return nfa;
@@ -314,17 +316,17 @@ public class NFA extends FiniteAutomaton {
 
 	/**
 	 * Constructs a NFA which accepts the given AggregationPathDescription. The
-	 * EdgeRestrictions (RoleId, TypeId) are modelled in the Transition.
+	 * EdgeRestrictions (RoleId, TypeId) are modeled in the Transition.
 	 */
 	public static NFA createAggregationPathDescriptionNFA(
 			boolean aggregateFrom, JValueTypeCollection typeCollection,
-			String role) {
+			Set<String> roles, VertexEvaluator predicateEvaluator, GraphMarker<VertexEvaluator> marker) {
 		NFA nfa = new NFA();
 		nfa.transitionList.clear();
 		nfa.initialState.outTransitions.clear();
 		nfa.finalStates.get(0).inTransitions.clear();
 		AggregationTransition t = new AggregationTransition(nfa.initialState,
-				nfa.finalStates.get(0), aggregateFrom, typeCollection, role);
+				nfa.finalStates.get(0), aggregateFrom, typeCollection, roles, predicateEvaluator, marker);
 		nfa.transitionList.add(t);
 		nfa.updateStateAttributes();
 		return nfa;

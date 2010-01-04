@@ -54,18 +54,18 @@ public class SimplePathDescriptionEvaluator extends
 	public JValue evaluate() throws EvaluateException {
 		JValueTypeCollection typeCollection = new JValueTypeCollection();
 		EdgeRestrictionEvaluator edgeRestEval = null;
+		VertexEvaluator predicateEvaluator = null;
 		for (IsEdgeRestrOf inc : vertex
 				.getIsEdgeRestrOfIncidences(EdgeDirection.IN)) {
 			edgeRestEval = (EdgeRestrictionEvaluator) greqlEvaluator
 					.getVertexEvaluatorGraphMarker().getMark(inc.getAlpha());
 			typeCollection.addTypes(edgeRestEval.getTypeCollection());
+			predicateEvaluator = edgeRestEval.getPredicateEvaluator();
+			System.out.println("Predicate evaluator om evaluate of pathdescr is: " + predicateEvaluator);
 		}
-		// TODO (Daniel): What's that "role" here? Since there can be many
-		// EdgeRestrictions below a SimplePD, which role to choose, or how to
-		// combine them?
 		createdNFA = NFA.createSimplePathDescriptionNFA(
 				getEdgeDirection(vertex), typeCollection,
-				getEdgeRole(edgeRestEval));
+				getEdgeRoles(edgeRestEval), predicateEvaluator, greqlEvaluator.getVertexEvaluatorGraphMarker());
 		return new JValue(createdNFA);
 	}
 

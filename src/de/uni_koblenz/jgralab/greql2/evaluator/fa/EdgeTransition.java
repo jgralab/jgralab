@@ -24,9 +24,12 @@
 
 package de.uni_koblenz.jgralab.greql2.evaluator.fa;
 
+import java.util.Set;
+
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.graphmarker.BooleanGraphMarker;
+import de.uni_koblenz.jgralab.graphmarker.GraphMarker;
 import de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.VertexEvaluator;
 import de.uni_koblenz.jgralab.greql2.exception.EvaluateException;
 import de.uni_koblenz.jgralab.greql2.exception.JValueInvalidTypeException;
@@ -82,14 +85,30 @@ public class EdgeTransition extends SimpleTransition {
 		if (!typeCollection.equals(et.typeCollection)) {
 			return false;
 		}
-		if ((validEdgeRole != null) && !validEdgeRole.equals(et.validEdgeRole)) {
-			return false;
+		if (validEdgeRoles != null) {
+			if (et.validEdgeRoles == null)
+				return false;
+			if (!validEdgeRoles.equals(et.validEdgeRoles))
+				return false;
+		}
+		if (validEdgeRoles == null) {
+			if (et.validEdgeRoles != null)
+				return false;
 		}
 		if (allowedEdgeEvaluator != et.allowedEdgeEvaluator) {
 			return false;
 		}
 		if (validDirection != et.validDirection) {
 			return false;
+		}
+		if (predicateEvaluator != null) {
+			if (et.predicateEvaluator == null)
+				return false;
+			if (!predicateEvaluator.equals(et.predicateEvaluator))
+				return false;
+		} else {
+			if (et.predicateEvaluator != null)
+				return false;
 		}
 		return true;
 	}
@@ -132,9 +151,9 @@ public class EdgeTransition extends SimpleTransition {
 	 *            be accepted
 	 */
 	public EdgeTransition(State start, State end, AllowedEdgeDirection dir,
-			JValueTypeCollection typeCollection, String role,
-			VertexEvaluator edgeEval) {
-		super(start, end, dir, typeCollection, role);
+			JValueTypeCollection typeCollection, Set<String> roles, VertexEvaluator edgeEval,
+			VertexEvaluator predicateEval, GraphMarker<VertexEvaluator> graphMarker) {
+		super(start, end, dir, typeCollection, roles, predicateEval, graphMarker);
 		allowedEdgeEvaluator = edgeEval;
 	}
 
@@ -150,15 +169,11 @@ public class EdgeTransition extends SimpleTransition {
 		if (!super.accepts(v, e, subgraph)) {
 			return false;
 		}
-		// GreqlEvaluator.println("Checking edge path for Edge: " +
-		// e.toString());
 		// checks if only one edge is allowed an if e is this allowed edge
 		if (allowedEdgeEvaluator != null) {
 			try {
 				Edge allowedEdge = allowedEdgeEvaluator.getResult(subgraph)
 						.toEdge().getNormalEdge();
-				// GreqlEvaluator.println("Allowed Edge is: " +
-				// allowedEdge.toString());
 				if (e.getNormalEdge() != allowedEdge) {
 					return false;
 				}

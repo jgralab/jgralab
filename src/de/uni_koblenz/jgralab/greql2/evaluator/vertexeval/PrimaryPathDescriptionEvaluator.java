@@ -24,6 +24,8 @@
 
 package de.uni_koblenz.jgralab.greql2.evaluator.vertexeval;
 
+import java.util.Set;
+
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
@@ -76,13 +78,13 @@ public abstract class PrimaryPathDescriptionEvaluator extends
 	}
 
 	/**
-	 * Returns the edge role this PathDescription accepts
+	 * Returns the set of edge role this PathDescription accepts
 	 */
-	protected String getEdgeRole(EdgeRestrictionEvaluator edgeRestEval) {
+	protected Set<String> getEdgeRoles(EdgeRestrictionEvaluator edgeRestEval) {
 		if (edgeRestEval == null) {
 			return null;
 		}
-		return edgeRestEval.getEdgeRole();
+		return edgeRestEval.getEdgeRoles();
 	}
 
 }

@@ -132,7 +132,17 @@ public class GreqlEvaluatorTest extends GenericTests {
 		assertEquals(result, resultWO);
 	}
 
-	/*
+	
+	@Test
+	public void testEvaluateExponentiatedPathDescription() throws Exception {
+		String queryString = "from var: V{Definition} with var  <->^2 var report var end";
+		JValue result = evalTestQuery("ExponentiatedPathDescription", queryString);
+		assertEquals(4, result.toCollection().size());
+		JValue resultWO = evalTestQuery("ExponentiatedPathDescription (wo)",
+				queryString, new DefaultOptimizer());
+		assertEquals(result, resultWO);
+	}
+		/*
 	 * Test method for
 	 * 'greql2.evaluator.GreqlEvaluator.evaluateForwardVertexSet(ForwardVertexSet,
 	 * Graph)'
@@ -553,27 +563,6 @@ public class GreqlEvaluatorTest extends GenericTests {
 		assertEquals(result, resultWO);
 	}
 
-	/*
-	 * Test method for
-	 * 'greql2.evaluator.GreqlEvaluator.evaluateSequentialPathDescription(SequentialPathDescription,
-	 * Graph)'
-	 */
-	@Test
-	public void testEvaluateRestrictedExpression() throws Exception {
-		String queryString = "from var: V{Variable}, def: V{WhereExpression} with var & {hasType(thisVertex, \"Variable\")} -->{IsVarOf} -->{IsDefinitionOf} def report var end";
-		JValue result = evalTestQuery("RestrictedExpression", queryString);
-		assertEquals(4, result.toCollection().size());
-		JValue resultWO = evalTestQuery("RestrictedExpression", queryString,
-				new DefaultOptimizer());
-		assertEquals(result, resultWO);
-	}
-
-	@Test
-	public void testGreTLQuery() throws Exception {
-		String query = "from t : V{Vertex}    " + "report t --> "
-				+ "     & {hasType(thisVertex, \"MyType\")} " + "end";
-		evalTestQuery("RestrictedExpression", query);
-	}
 
 	/*
 	 * Test method for
@@ -597,7 +586,7 @@ public class GreqlEvaluatorTest extends GenericTests {
 	 */
 	@Test
 	public void testEvaluateRestrictedEdgePathDescription() throws Exception {
-		String queryString = "from var: V{Variable}, def: V{WhereExpression} with var  -->{IsVarOf} & {type(thisEdge)} def report var end";
+		String queryString = "from var: V{Variable}, def: V{WhereExpression} with var  -->{IsVarOf @ thisEdge <> def} def report var end";
 		JValue result = evalTestQuery("GoalRestriction2", queryString);
 		assertEquals(0, result.toCollection().size());
 		JValue resultWO = evalTestQuery("GoalRestriction2 (wo)", queryString,
@@ -1235,7 +1224,7 @@ public class GreqlEvaluatorTest extends GenericTests {
 	@Test
 	public void testEvaluateAggregationPathDescriptionWithRole()
 			throws Exception {
-		String queryString = "from var: V{Variable}, def: V{Definition} with def <>--{@undefinedRole} var report var end";
+		String queryString = "from var: V{Variable}, def: V{Definition} with def <>--{undefinedRole} var report var end";
 		JValue result = evalTestQuery("SimplePathDescription2", queryString);
 		assertEquals(0, result.toCollection().size());
 		JValue resultWO = evalTestQuery("SimplePathDescription2 (wo)",
@@ -1315,7 +1304,7 @@ public class GreqlEvaluatorTest extends GenericTests {
 	 */
 	@Test
 	public void testEvaluateStartRestriction3() throws Exception {
-		String queryString = "from var: V{Variable}, def: V{WhereExpression} with var  -->{IsVarOf} & {1 = 2} -->{IsDefinitionOf} def  report var end";
+		String queryString = "from var: V{Variable}, def: V{WhereExpression} with var  -->{IsVarOf} & {@1 = 2} -->{IsDefinitionOf} def  report var end";
 		JValue result = evalTestQuery("StartRestriction3", queryString);
 		assertEquals(0, result.toCollection().size());
 		JValue resultWO = evalTestQuery("StartRestriction3 (wo)", queryString,
@@ -1330,7 +1319,7 @@ public class GreqlEvaluatorTest extends GenericTests {
 	 */
 	@Test
 	public void testEvaluateStartRestriction4() throws Exception {
-		String queryString = "from var: V{Variable}, def: V{WhereExpression} with var  -->{IsVarOf} & {1 = 1} -->{IsDefinitionOf} def  report var end";
+		String queryString = "from var: V{Variable}, def: V{WhereExpression} with var  -->{IsVarOf} & {@1 = 1} -->{IsDefinitionOf} def  report var end";
 		JValue result = evalTestQuery("StartRestriction4", queryString);
 		assertEquals(4, result.toCollection().size());
 		JValue resultWO = evalTestQuery("StartRestriction4 (wo)", queryString,

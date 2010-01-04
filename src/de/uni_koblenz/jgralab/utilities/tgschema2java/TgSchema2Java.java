@@ -104,11 +104,6 @@ public class TgSchema2Java {
 	 */
 	private CodeGeneratorConfiguration config = new CodeGeneratorConfiguration();
 
-	// /**
-	// * Holds the long options
-	// */
-	// private LongOpt[] longOptions;
-
 	/**
 	 * Constructs an instance of TgSchema2Java with the given command line
 	 * arguments and creates the schema-object after reading the .tg-file

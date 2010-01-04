@@ -28,13 +28,11 @@ import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.graphmarker.BooleanGraphMarker;
 import de.uni_koblenz.jgralab.graphmarker.GraphMarker;
-import de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.ThisEdgeEvaluator;
 import de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.ThisVertexEvaluator;
 import de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.VertexEvaluator;
 import de.uni_koblenz.jgralab.greql2.exception.EvaluateException;
 import de.uni_koblenz.jgralab.greql2.exception.JValueInvalidTypeException;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
-import de.uni_koblenz.jgralab.greql2.schema.ThisEdge;
 import de.uni_koblenz.jgralab.greql2.schema.ThisVertex;
 
 /**
@@ -49,8 +47,6 @@ public class BoolExpressionTransition extends Transition {
 	private VertexEvaluator boolExpressionEvaluator;
 
 	private ThisVertexEvaluator thisVertexEvaluator;
-
-	private ThisEdgeEvaluator thisEdgeEvaluator;
 
 	/**
 	 * returns a string which describes the edge
@@ -88,8 +84,6 @@ public class BoolExpressionTransition extends Transition {
 		super(t, addToStates);
 		boolExpressionEvaluator = t.boolExpressionEvaluator;
 		thisVertexEvaluator = t.thisVertexEvaluator;
-		thisEdgeEvaluator = t.thisEdgeEvaluator;
-
 	}
 
 	/**
@@ -118,14 +112,9 @@ public class BoolExpressionTransition extends Transition {
 			VertexEvaluator boolEval, GraphMarker<VertexEvaluator> graphMarker) {
 		super(start, end);
 		boolExpressionEvaluator = boolEval;
-		Vertex v = graphMarker.getGraph().getFirstVertexOfClass(
-				ThisVertex.class);
+		Vertex v = graphMarker.getGraph().getFirstVertexOfClass(ThisVertex.class);
 		if (v != null) {
 			thisVertexEvaluator = (ThisVertexEvaluator) graphMarker.getMark(v);
-		}
-		v = graphMarker.getGraph().getFirstVertexOfClass(ThisEdge.class);
-		if (v != null) {
-			thisEdgeEvaluator = (ThisEdgeEvaluator) graphMarker.getMark(v);
 		}
 	}
 
@@ -148,9 +137,6 @@ public class BoolExpressionTransition extends Transition {
 	@Override
 	public boolean accepts(Vertex v, Edge e, BooleanGraphMarker subgraph)
 			throws EvaluateException {
-		if (thisEdgeEvaluator != null) {
-			thisEdgeEvaluator.setValue(new JValue(e));
-		}
 		if (thisVertexEvaluator != null) {
 			thisVertexEvaluator.setValue(new JValue(v));
 		}

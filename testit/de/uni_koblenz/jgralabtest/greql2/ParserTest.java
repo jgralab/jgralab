@@ -378,7 +378,7 @@ public class ParserTest {
 	@Test
 	public void testGreTLQuery() throws Exception {
 		String query = "from t : V{Vertex}    " + "report t --> "
-				+ "     & {hasType(thisVertex, \"MyType\")} " + "end";
+				+ "     & {@hasType(thisVertex, \"MyType\")} " + "end";
 		Greql2 graph = parseQuery(query);
 		assertNotNull(graph);
 		ThisVertex tv = graph.getFirstThisVertex();
@@ -398,7 +398,7 @@ public class ParserTest {
 
 	@Test
 	public void testRole() throws Exception {
-		String queryString = "from var: V{Variable} report <>--{@undefinedRole} end";
+		String queryString = "from var: V{Variable} report <>--{undefinedRole} end";
 		Greql2 graph = parseQuery(queryString);
 		assertNotNull(graph);
 		RoleId id = graph.getFirstRoleId();
@@ -1068,7 +1068,7 @@ public class ParserTest {
 	@Test
 	public void testStartRestrictedPathDescriptionWithExpression()
 			throws Exception {
-		Greql2 graph = parseQuery("using v: v {v.a=3} & --> ");
+		Greql2 graph = parseQuery("using v: v {@v.a=3} & --> ");
 
 		SimplePathDescription srpd = graph.getFirstSimplePathDescription();
 		assertNotNull(srpd);
@@ -1104,7 +1104,7 @@ public class ParserTest {
 
 	@Test
 	public void testGoalRestrictedPathDescription() throws Exception {
-		Greql2 graph = parseQuery("using v: v --> & {false} ");
+		Greql2 graph = parseQuery("using v: v --> & {@false} ");
 		ForwardVertexSet vset = graph.getFirstForwardVertexSet();
 		assertNotNull(vset);
 
