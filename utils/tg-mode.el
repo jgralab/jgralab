@@ -106,9 +106,10 @@
                         schema-alist))))
          ;; End of schema (part)
          ((or (= (point) (point-max))
+              (looking-at "^[[:space:]]*$")
               (looking-at "Graph[[:space:]]+"))
           (setq finished t)))
-        (forward-line))
+        (forward-line 1))
       schema-alist)))
 
 (defun tg--parse-superclasses (str current-package)
