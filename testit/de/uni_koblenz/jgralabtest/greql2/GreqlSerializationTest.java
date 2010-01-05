@@ -8,14 +8,21 @@ import static org.junit.Assert.assertEquals;
 import org.junit.Test;
 
 import de.uni_koblenz.jgralab.greql2.SerializableGreql2;
+import de.uni_koblenz.jgralab.greql2.SerializableGreql2Impl;
 import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
+import de.uni_koblenz.jgralab.greql2.schema.Greql2;
+import de.uni_koblenz.jgralab.greql2.schema.Greql2Schema;
 
 /**
  * @author Tassilo Horn &lt;horn@uni-koblenz.de&gt;
  * 
  */
 public class GreqlSerializationTest {
+	static {
+		Greql2Schema.instance().getGraphFactory().setGraphImplementationClass(
+				Greql2.class, SerializableGreql2Impl.class);
+	}
 
 	private void check(String query) {
 		GreqlEvaluator e1 = new GreqlEvaluator(query, null, null);

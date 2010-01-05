@@ -85,8 +85,9 @@ public class GreqlEvaluatorTest extends GenericTests {
 		String queryString = "using firstV, lastV: vertices{Definition}(firstV, lastV)";
 		JValue result = evalTestQuery("vertices", queryString);
 		JValueSet set = result.toJValueSet();
-		if (!(first instanceof Definition))
+		if (!(first instanceof Definition)) {
 			first = first.getNextVertexOfClass(Definition.class);
+		}
 		Definition current = (Definition) first;
 		for (JValue cv : set) {
 			assertEquals(current, cv.toVertex());
@@ -94,12 +95,11 @@ public class GreqlEvaluatorTest extends GenericTests {
 		}
 		assertNull(current.getNextDefinition());
 	}
-	
+
 	@Test
 	public void testEvaluateNullLiteral2() throws Exception {
 		String queryString = "null";
 		JValue result = evalTestQuery("NullLiteral2", queryString);
-		assertFalse(result.isValid());
 		// Now check if the optimized query produces the same result.
 		JValue resultWO = evalTestQuery("NullLiteral2 (wo)", queryString,
 				new DefaultOptimizer());
@@ -110,7 +110,6 @@ public class GreqlEvaluatorTest extends GenericTests {
 	public void testEvaluateNullLiteral() throws Exception {
 		String queryString = "from a : set(true, null, false) with a reportSet a end";
 		JValue result = evalTestQuery("NullLiteral", queryString);
-		assertFalse(result.isValid());
 		// Now check if the optimized query produces the same result.
 		JValue resultWO = evalTestQuery("NullLiteral (wo)", queryString,
 				new DefaultOptimizer());
@@ -132,17 +131,18 @@ public class GreqlEvaluatorTest extends GenericTests {
 		assertEquals(result, resultWO);
 	}
 
-	
 	@Test
 	public void testEvaluateExponentiatedPathDescription() throws Exception {
 		String queryString = "from var: V{Definition} with var  <->^2 var report var end";
-		JValue result = evalTestQuery("ExponentiatedPathDescription", queryString);
+		JValue result = evalTestQuery("ExponentiatedPathDescription",
+				queryString);
 		assertEquals(4, result.toCollection().size());
 		JValue resultWO = evalTestQuery("ExponentiatedPathDescription (wo)",
 				queryString, new DefaultOptimizer());
 		assertEquals(result, resultWO);
 	}
-		/*
+
+	/*
 	 * Test method for
 	 * 'greql2.evaluator.GreqlEvaluator.evaluateForwardVertexSet(ForwardVertexSet,
 	 * Graph)'
@@ -563,7 +563,6 @@ public class GreqlEvaluatorTest extends GenericTests {
 		assertEquals(result, resultWO);
 	}
 
-
 	/*
 	 * Test method for
 	 * 'greql2.evaluator.GreqlEvaluator.evaluateSequentialPathDescription(SequentialPathDescription,
@@ -793,22 +792,21 @@ public class GreqlEvaluatorTest extends GenericTests {
 		JValue result = evalTestQuery("DependentDeclarations2", queryString);
 		assertEquals(4, result.toCollection().size());
 		JValueSet set = result.toCollection().toJValueSet();
-		for (Definition def : ((Greql2)getTestGraph()).getDefinitionVertices()) {
+		for (Definition def : ((Greql2) getTestGraph()).getDefinitionVertices()) {
 			assertTrue(set.contains(new JValue(def)));
 		}
 		JValue resultWO = evalTestQuery("DependentDeclarations2 (wo)",
 				queryString, new DefaultOptimizer());
 		assertEquals(result, resultWO);
 	}
-	
-	
+
 	@Test
 	public void testEvaluateDependentDeclarations3() throws Exception {
 		String queryString = "from def: V{Definition}, whe: <--{IsDefinitionOf} def report def end";
 		JValue result = evalTestQuery("DependentDeclarations3", queryString);
 		assertEquals(4, result.toCollection().size());
 		JValueSet set = result.toCollection().toJValueSet();
-		for (Definition def : ((Greql2)getTestGraph()).getDefinitionVertices()) {
+		for (Definition def : ((Greql2) getTestGraph()).getDefinitionVertices()) {
 			assertNotNull(def.getFirstIsDefinitionOf());
 			assertTrue(set.contains(new JValue(def)));
 		}
@@ -816,9 +814,7 @@ public class GreqlEvaluatorTest extends GenericTests {
 				queryString, new DefaultOptimizer());
 		assertEquals(result, resultWO);
 	}
-	
-	
-	
+
 	/*
 	 * Test method for
 	 * 'greql2.evaluator.GreqlEvaluator.evaluateOptionalPathDescription(OptionalPathDescription,
