@@ -25,9 +25,6 @@
 ;;; Version:
 ;; $Revision$
 
-;;; TODO:
-;; - Document all keywords and functions.
-
 ;;* Code
 
 ;;** Main
@@ -116,10 +113,11 @@
 (defun greql-function-p ()
   "Return a function plist if point is on a function."
   (let ((fun (current-word t t)))
-    (catch 'fun
-      (dolist (f greql-functions)
-        (when (string= (plist-get f :name) fun)
-          (throw 'fun f))))))
+    (and (looking-at "[[:word:]]*(")
+         (catch 'fun
+           (dolist (f greql-functions)
+             (when (string= (plist-get f :name) fun)
+               (throw 'fun f)))))))
 
 (defun greql-keyword-p ()
   "Return a keyword plist if point is on a keyword."
@@ -159,7 +157,7 @@
       (when (and greql-fontlock-types-regex
                  (not (string= greql-fontlock-types-regex ""))
                  (looking-back "{[[:alnum:][:space:]^.!_,]*")
-                 (looking-at   "[[:alnum:][:space:]^.!_,]*}")
+                 (looking-at   "[[:alnum:][:space:]^.!_,]*\\(?:@.*\\)?}")
                  (looking-at (concat "[[:space:]^]*\\<" greql-fontlock-types-regex "\\>"))
                  (match-string 1))
         (goto-char (match-end 1))
@@ -169,7 +167,7 @@
   (catch 'found
     (while (re-search-forward "[{,]" limit t)
       (when (and (looking-back "{[[:alnum:][:space:]^.!_,]*")
-                 (looking-at   "[[:alnum:][:space:]^.!_,]*}")
+                 (looking-at   "[[:alnum:][:space:]^.!_,]*\\(?:@.*\\)?}")
                  (or greql-fontlock-types-regex
                      (not (string= greql-fontlock-types-regex ""))
                      (not (looking-at (concat "[[:space:]^]*\\<" greql-fontlock-types-regex "\\>")))))
@@ -231,8 +229,7 @@ columns.")
 
   (progn
     (define-key greql-mode-map (kbd "M-TAB")   'greql-complete)
-    (define-key greql-mode-map (kbd "C-c C-d C-d") 'greql-show-documentation)
-    (define-key greql-mode-map (kbd "C-c C-d C-f") 'greql-show-function-documentation)
+    (define-key greql-mode-map (kbd "C-c C-d") 'greql-show-documentation)
     (define-key greql-mode-map (kbd "C-c C-s") 'greql-set-graph)
     (define-key greql-mode-map (kbd "C-c C-c") 'greql-execute)
     (define-key greql-mode-map (kbd "C-c C-f") 'greql-format)))
@@ -382,11 +379,11 @@ objects."
   (cond
    ;; Complete vertex classes
    ((or (greql-vertex-set-expression-p)
-        (greql-start-or-goal-restriction-p))
+        (greql-start-or-goal-restriction-p nil))
     (greql-complete-vertexclass))
    ;; Complete edge classes
    ((or (greql-edge-set-expression-p)
-        (greql-edge-restriction-p))
+        (greql-edge-restriction-p nil))
     (greql-complete-edgeclass))
    ;; Complete any classes
    ((greql-import-p)
@@ -523,6 +520,7 @@ those attributes, which are valid for both Foo and Bar objects."
       (while (< (point) end)
         (greql-indent-line)
         (forward-line 1))
+      (greql-indent-line)
       (delete-trailing-whitespace))))
 
 (defvar greql-process nil
@@ -564,14 +562,21 @@ If a region is active, use only that as query."
 (defun greql-vertex-set-expression-p ()
   (looking-back "V{[[:word:]._,^ ]*"))
 
-(defun greql-start-or-goal-restriction-p ()
-  (looking-back "[^-VE>]{[[:word:]._,^ ]*"))
+(defun greql-start-or-goal-restriction-p (after-at)
+  (looking-back (concat "[^-VE>]{[[:word:]._,^ ]*"
+                        (if after-at
+                            "@[[:word:]._,()^ ]*"
+                          ""))))
 
 (defun greql-edge-set-expression-p ()
   (looking-back "E{[[:word:]._,^ ]*"))
 
-(defun greql-edge-restriction-p ()
-  (looking-back "\\(<--\\|-->\\|<>--\\|--<>\\)[ ]*{[[:word:]._,^ ]*"))
+(defun greql-edge-restriction-p (after-at)
+  (looking-back
+   (concat "\\(<--\\|-->\\|<>--\\|--<>\\)[[:space:]]*{[[:word:]._,^ ]*"
+           (if after-at
+               "@[[:word:]._,()^ ]*"
+             ""))))
 
 (defun greql-variable-p ()
   (looking-back "[^{][[:word:]]+[.][[:word:]]*"))
@@ -737,22 +742,22 @@ for some variable declared as
              ((null tg-schema-alist)
               "Set a graph for eldoc features.")
              ;; document vertex classes
-             ((or (greql-vertex-set-expression-p)
-                  (greql-start-or-goal-restriction-p))
-              (save-excursion
-                (re-search-backward "[{ ,]" (line-beginning-position) t)
-                (when (looking-at "[{ ,]\\([[:alnum:]._]+\\)")
-                  (tg-eldoc-vertex-or-edge (tg-get-schema-element 'VertexClass
-                                                                  (match-string-no-properties 1))))))
+             ((and (or (greql-vertex-set-expression-p)
+                       (greql-start-or-goal-restriction-p nil))
+                   (save-excursion
+                     (re-search-backward "[{ ,]" (line-beginning-position) t)
+                     (when (looking-at "[{ ,]\\([[:alnum:]._]+\\)")
+                       (tg-eldoc-vertex-or-edge (tg-get-schema-element 'VertexClass
+                                                                       (match-string-no-properties 1)))))))
              ;; document edge classes
-             ((or (greql-edge-set-expression-p)
-                  (greql-edge-restriction-p))
-              (save-excursion
-                (re-search-backward "[{ ,]" (line-beginning-position) t)
-                (when (looking-at "[{ ,]\\([[:alnum:]._]+\\)")
-                  (tg-eldoc-vertex-or-edge (tg-get-schema-element 'EdgeClass
-                                                                  (match-string-no-properties 1))))))
-             ;; complete keywords / functions
+             ((and (or (greql-edge-set-expression-p)
+                       (greql-edge-restriction-p nil))
+                   (save-excursion
+                     (re-search-backward "[{ ,]" (line-beginning-position) t)
+                     (when (looking-at "[{ ,]\\([[:alnum:]._]+\\)")
+                       (tg-eldoc-vertex-or-edge (tg-get-schema-element 'EdgeClass
+                                                                       (match-string-no-properties 1)))))))
+             ;; nothing to be done...
              (t ""))))))
 
 (provide 'greql-mode)
