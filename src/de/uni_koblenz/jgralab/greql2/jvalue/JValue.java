@@ -181,11 +181,11 @@ public class JValue implements Comparable<JValue> {
 	}
 
 	/**
-	 * returns true if this JValue is valid, that means, that its value is not
+	 * returns true if this JValue is valid, that means, that its type is not
 	 * null.
 	 */
 	public boolean isValid() {
-		return value != null;
+		return type != null;
 	}
 
 	/**
@@ -631,9 +631,7 @@ public class JValue implements Comparable<JValue> {
 	 */
 	@Override
 	public String toString() {
-		if (isString()) {
-			return (String) value;
-		} else if (isValid()) {
+		if (value != null) {
 			return value.toString();
 		} else {
 			return "null";

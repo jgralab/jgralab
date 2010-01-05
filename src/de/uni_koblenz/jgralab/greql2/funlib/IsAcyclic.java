@@ -84,6 +84,9 @@ public class IsAcyclic extends Greql2Function {
 				.getGreqlFunction("topologicalSort");
 		JValue result = topoSort.evaluate(graph, subgraph, arguments);
 		// when topological sort returns a valid list, then it cannot be cyclic
+		System.out.println("isAcyclic(topoSort)= " + result);
+		System.out.println("valid? " + result.isValid());
+		System.out.println("collection? " + result.isCollection());
 		return new JValue(result.isValid() && result.isCollection());
 	}
 
