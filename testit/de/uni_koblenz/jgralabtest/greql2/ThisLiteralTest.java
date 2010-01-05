@@ -59,10 +59,11 @@ public class ThisLiteralTest extends GenericTests {
 
 	@Test
 	public void testThisEdge1() throws Exception {
-		String queryString = "from v,w:V{WhereExpression} with v -->{@id(thisEdge)=-15} <--  w report v end";
+		String queryString = "from v:V{Definition}, w:V{WhereExpression}  with v -->{@id(thisEdge)=15}  w report v,w end";
 		JValue result = evalTestQuery("ThisEdge1", queryString);
 		assertEquals(1, result.toCollection().size());
 	}
+	
 
 
 

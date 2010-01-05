@@ -288,7 +288,6 @@ public class NFA extends FiniteAutomaton {
 		nfa.transitionList.clear();
 		nfa.initialState.outTransitions.clear();
 		nfa.finalStates.get(0).inTransitions.clear();
-		System.out.println("Creating new EdgeTransition with predicateEval: " + predicateEvaluator);
 		SimpleTransition t = new EdgeTransition(nfa.initialState,
 				nfa.finalStates.get(0), dir, typeCollection, roles, edgeEval, predicateEvaluator, marker);
 		nfa.transitionList.add(t);

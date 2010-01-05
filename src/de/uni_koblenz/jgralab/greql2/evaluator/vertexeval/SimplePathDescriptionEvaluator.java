@@ -61,7 +61,6 @@ public class SimplePathDescriptionEvaluator extends
 					.getVertexEvaluatorGraphMarker().getMark(inc.getAlpha());
 			typeCollection.addTypes(edgeRestEval.getTypeCollection());
 			predicateEvaluator = edgeRestEval.getPredicateEvaluator();
-			System.out.println("Predicate evaluator om evaluate of pathdescr is: " + predicateEvaluator);
 		}
 		createdNFA = NFA.createSimplePathDescriptionNFA(
 				getEdgeDirection(vertex), typeCollection,

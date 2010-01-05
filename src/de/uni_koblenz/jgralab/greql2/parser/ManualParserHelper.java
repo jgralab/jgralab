@@ -15,14 +15,12 @@ import de.uni_koblenz.jgralab.greql2.exception.DuplicateVariableException;
 import de.uni_koblenz.jgralab.greql2.exception.ParsingException;
 import de.uni_koblenz.jgralab.greql2.exception.UndefinedVariableException;
 import de.uni_koblenz.jgralab.greql2.funlib.Greql2FunctionLibrary;
-import de.uni_koblenz.jgralab.greql2.schema.BackwardVertexSet;
 import de.uni_koblenz.jgralab.greql2.schema.BagComprehension;
 import de.uni_koblenz.jgralab.greql2.schema.Comprehension;
 import de.uni_koblenz.jgralab.greql2.schema.Declaration;
 import de.uni_koblenz.jgralab.greql2.schema.Definition;
 import de.uni_koblenz.jgralab.greql2.schema.DefinitionExpression;
 import de.uni_koblenz.jgralab.greql2.schema.Expression;
-import de.uni_koblenz.jgralab.greql2.schema.ForwardVertexSet;
 import de.uni_koblenz.jgralab.greql2.schema.FunctionApplication;
 import de.uni_koblenz.jgralab.greql2.schema.FunctionId;
 import de.uni_koblenz.jgralab.greql2.schema.Greql2;
@@ -51,7 +49,6 @@ import de.uni_koblenz.jgralab.greql2.schema.IsTableHeaderOf;
 import de.uni_koblenz.jgralab.greql2.schema.IsValueExprOfComprehension;
 import de.uni_koblenz.jgralab.greql2.schema.MapComprehension;
 import de.uni_koblenz.jgralab.greql2.schema.PathDescription;
-import de.uni_koblenz.jgralab.greql2.schema.PathExistence;
 import de.uni_koblenz.jgralab.greql2.schema.QuantifiedExpression;
 import de.uni_koblenz.jgralab.greql2.schema.SimpleDeclaration;
 import de.uni_koblenz.jgralab.greql2.schema.SourcePosition;
@@ -382,6 +379,8 @@ public abstract class ManualParserHelper {
 			lengthArg1 = getLength(offsetArg1);
 			offsetOperator = getCurrentOffset();
 		}
+		//TODO: Modify test so that thisVertex can be used only in Goal and StartRestrictions an thisEdge only in BooleanPredicates
+		
 
 		public void postOp(String op) {
 			lengthOperator = getLength(offsetOperator);
@@ -447,8 +446,6 @@ public abstract class ManualParserHelper {
 		return list;
 	}
 
-	//TODO: Modify test so that thisVertex can be used only in Goal and StartRestrictions an thisEdge only in BooleanPredicates
-	
 	/**
 	 * Test if all ThisLiterals occur only inside PathDescriptions because they
 	 * must not be used outside PathDescriptions If any ThisLiteral that occurs

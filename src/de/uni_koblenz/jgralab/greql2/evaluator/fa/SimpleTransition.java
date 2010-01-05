@@ -187,7 +187,6 @@ public class SimpleTransition extends Transition {
 		validDirection = dir;
 		validEdgeRoles = roles;
 		this.typeCollection = typeCollection;
-		System.out.println("Predicate evaluator in simpletranscons: " + predicateEvaluator);
 		this.predicateEvaluator = predicateEvaluator;
 		Vertex v = graphMarker.getGraph().getFirstVertexOfClass(ThisEdge.class);
 		if (v != null) {
@@ -263,7 +262,6 @@ public class SimpleTransition extends Transition {
 		
 		// checks if a boolean expression exists and if it evaluates to true
 		if (predicateEvaluator != null) {
-			System.out.println("Predicate evaluator is: " + predicateEvaluator);
 			if (thisEdgeEvaluator != null)
 				thisEdgeEvaluator.setValue(new JValue(e));
 			JValue res = predicateEvaluator.getResult(subgraph);

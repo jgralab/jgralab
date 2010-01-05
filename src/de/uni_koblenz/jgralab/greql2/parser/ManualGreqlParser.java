@@ -665,16 +665,11 @@ public class ManualGreqlParser extends ManualParserHelper {
 			WhereExpression result = null;
 			if (!inPredicateMode()) {
 				result = graph.createWhereExpression();
-				IsBoundExprOf exprOf = graph.createIsBoundExprOfDefinition(
-						expr, result);
-				exprOf.set_sourcePositions((createSourcePositionList(length,
-						offset)));
+				IsBoundExprOf exprOf = graph.createIsBoundExprOfDefinition(expr, result);
+				exprOf.set_sourcePositions((createSourcePositionList(length,offset)));
 				for (VertexPosition<Definition> def : defList) {
-					IsDefinitionOf isDefOf = graph.createIsDefinitionOf(
-							def.node, result);
-					System.out.println("Creating isDefinitionOf edge " + isDefOf + " from Definition " + def.node + " where expression " + result);
-					isDefOf.set_sourcePositions((createSourcePositionList(
-							length, offset)));
+					IsDefinitionOf isDefOf = graph.createIsDefinitionOf(def.node, result);
+					isDefOf.set_sourcePositions((createSourcePositionList(length, offset)));
 				}
 			}
 			return result;
@@ -920,47 +915,6 @@ public class ManualGreqlParser extends ManualParserHelper {
 		return null;
 	}
 
-//	/**
-//	 * matches restricted vertex expressions
-//	 * 
-//	 * @return
-//	 */
-//	private final Expression parseRestrictedExpression() {
-//		int pos = alreadySucceeded(RuleEnum.RESTRICTED_EXPRESSION);
-//		if (skipRule(pos)) {
-//			return null;
-//		}
-//		int offsetExpr = getCurrentOffset();
-//		Expression valAccess = parseValueAccess();
-//		int lengthExpr = getLength(offsetExpr);
-//		if ((lookAhead(0) == TokenTypes.AMP)
-//				&& (lookAhead(1) == TokenTypes.LCURLY)) {
-//			match(TokenTypes.AMP);
-//			match(TokenTypes.LCURLY);
-//			int offsetRestr = getCurrentOffset();
-//			Expression restriction = parseExpression();
-//			int lengthRestr = getLength(offsetRestr);
-//			match(TokenTypes.RCURLY);
-//			if (!inPredicateMode()) {
-//				RestrictedExpression restrExpr = graph
-//						.createRestrictedExpression();
-//				IsRestrictedExprOf restrExprOf = graph
-//						.createIsRestrictedExprOf(valAccess, restrExpr);
-//				restrExprOf.set_sourcePositions((createSourcePositionList(
-//						lengthExpr, offsetExpr)));
-//				// add restriction
-//				IsRestrictionOf restrOf = graph.createIsRestrictionOf(
-//						restriction, restrExpr);
-//				restrOf.set_sourcePositions((createSourcePositionList(
-//						lengthRestr, offsetRestr)));
-//				ruleSucceeds(RuleEnum.RESTRICTED_EXPRESSION, pos);
-//				return restrExpr;
-//			}
-//		}
-//		ruleSucceeds(RuleEnum.RESTRICTED_EXPRESSION, pos);
-//		return valAccess;
-//	}
-
 	private final Identifier parseIdentifier() {
 		String name = matchIdentifier();
 		if (!inPredicateMode()) {
@@ -1122,12 +1076,10 @@ public class ManualGreqlParser extends ManualParserHelper {
 		predicateStart();
 		try {
 			parseAltPathDescription();
-			// match(TokenTypes.RPAREN);
 		} catch (ParsingException ex) {
 		}
 		if (predicateEnd()) {
 			Expression expr = parseAltPathDescription();
-			// match(TokenTypes.RPAREN);
 			return expr;
 		}
 		match(TokenTypes.LPAREN);
@@ -1262,7 +1214,6 @@ public class ManualGreqlParser extends ManualParserHelper {
 		PathDescription pathDescr = parseIteratedOrTransposedPathDescription();
 		if (tryMatch(TokenTypes.AMP)) {
 			match(TokenTypes.LCURLY);
-			System.err.println("Parsing GoalRestrictedPathDescription");
 			predicateStart();
 			try {
 				parseTypeAndRoleExpressionList();
@@ -1278,7 +1229,6 @@ public class ManualGreqlParser extends ManualParserHelper {
 				}
 			} 
 			if (tryMatch(TokenTypes.AT)) {
-				System.out.println("Matched at");
 				int offset = getCurrentOffset();
 				Expression expr = parseExpression();
 				int length = getLength(offset);
@@ -1883,8 +1833,7 @@ public class ManualGreqlParser extends ManualParserHelper {
 		int offset = getCurrentOffset();
 		SimpleDeclaration decl = parseSimpleDeclaration();
 		int length = getLength(offset);
-		declList
-				.add(new VertexPosition<SimpleDeclaration>(decl, length, offset));
+		declList.add(new VertexPosition<SimpleDeclaration>(decl, length, offset));
 		if (lookAhead(0) == TokenTypes.COMMA) {
 			predicateStart();
 			try {
@@ -2087,19 +2036,27 @@ public class ManualGreqlParser extends ManualParserHelper {
 		int predicateOffset = 0;
 		int predicateLength = 0;
 		
-		List<VertexPosition<? extends TypeOrRoleId>> typeOrRoleIds = parseTypeAndRoleExpressionList();
-		if (typeOrRoleIds != null) {
-			typeIds = new ArrayList<VertexPosition<TypeId>>();
-			roleIds = new ArrayList<VertexPosition<RoleId>>();
-			for (VertexPosition<? extends TypeOrRoleId> id : typeOrRoleIds) {
-				if (id.node instanceof TypeId) {
-					typeIds.add((VertexPosition<TypeId>)id);
-				}	
-				else {
-					roleIds.add((VertexPosition<RoleId>)id);
-				}	
-			}
+		predicateStart();
+		try {
+			parseTypeOrRoleId();
+		} catch (ParsingException ex) {
+			//failed predicate
 		}
+		if (predicateEnd()) {		
+			List<VertexPosition<? extends TypeOrRoleId>> typeOrRoleIds = parseTypeAndRoleExpressionList();
+			if (typeOrRoleIds != null) {
+				typeIds = new ArrayList<VertexPosition<TypeId>>();
+				roleIds = new ArrayList<VertexPosition<RoleId>>();
+				for (VertexPosition<? extends TypeOrRoleId> id : typeOrRoleIds) {
+					if (id.node instanceof TypeId) {
+						typeIds.add((VertexPosition<TypeId>)id);
+					}	
+					else {
+						roleIds.add((VertexPosition<RoleId>)id);
+					}	
+				}
+			}
+		}	
 		if (tryMatch(TokenTypes.AT)) {
 			predicateOffset = getCurrentOffset();
 			predicate = parseExpression();
@@ -2284,9 +2241,7 @@ public class ManualGreqlParser extends ManualParserHelper {
 					e = graph.createIsCompResultDefOf((reportList.get(0)).node,
 							comprehension);
 				}
-				e
-						.set_sourcePositions((createSourcePositionList(length,
-								offset)));
+				e.set_sourcePositions((createSourcePositionList(length,	offset)));
 			}
 		}
 		return comprehension;
