@@ -136,9 +136,10 @@
 (defparameter greql-fontlock-keywords-1
   `(
     ;; Highlight function names
-    ,(list (concat "[^.]" (regexp-opt (mapcar (lambda (f)
-                                                (plist-get f :name))
-                                              greql-functions) 'words) "[^.]")
+    ,(list (regexp-opt (mapcar (lambda (f)
+                                 (plist-get f :name))
+                               greql-functions)
+                       'words)
            1 font-lock-function-name-face)
     ;; Highlight strings
     ,(list "\".*?\"" 0 font-lock-string-face t)
@@ -147,9 +148,9 @@
 
 (defparameter greql-fontlock-keywords-2
   (append greql-fontlock-keywords-1
-          (list (concat "\\<" (regexp-opt (mapcar (lambda (key) (plist-get key :name))
-                                                  greql-keywords)
-                                          t) "\\>"))))
+          (list (regexp-opt (mapcar (lambda (key) (plist-get key :name))
+                                    greql-keywords)
+                            'words))))
 
 (defun greql-fontlock-known-types (limit)
   (catch 'found
