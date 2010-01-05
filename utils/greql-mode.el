@@ -627,6 +627,23 @@ for some variable declared as
       (insert "\"")
       (kill-region (point-min) (point-max)))))
 
+;;** Yasnippets
+
+(when (featurep 'yasnippet)
+    (yas/define-snippets
+     'greql-mode
+     '(("fr"  "from $1\nreport$0\nend"          "from ... report ... end")
+       ("fwr" "from $1\nwith $2\nreport$0\nend" "from ... with ... report ... end")
+       ("ex"  "exists$1 @ $0"                   "exists ... @ ...")
+       ("fa"  "forall $1 @ $0"                  "forall ... @ ...")
+       ("vs"  "V{$0}"                           "V{...}")
+       ("es"  "E{$0}"                           "E{...}")
+       ("e+"  "-->{$0}"                         "-->{...}")
+       ("e-"  "<--{$0}"                         "<--{...}")
+       ("e="  "<->{$0}"                         "<->{...}")
+       ("a+"  "<>--{$0}"                        "<>--{...}")
+       ("a-"  "--<>{$0}"                        "--<>{...}"))))
+
 ;;** Eldoc & GReQL Doc
 
 (defvar greql--last-thing "")
@@ -747,16 +764,20 @@ for some variable declared as
                    (save-excursion
                      (re-search-backward "[{ ,]" (line-beginning-position) t)
                      (when (looking-at "[{ ,]\\([[:alnum:]._]+\\)")
-                       (tg-eldoc-vertex-or-edge (tg-get-schema-element 'VertexClass
-                                                                       (match-string-no-properties 1)))))))
+                       (let ((ec (tg-get-schema-element 'VertexClass (match-string-no-properties 1))))
+                         (if ec
+                             (tg-eldoc-vertex-or-edge ec)
+                           "Name is neither qualified nor unique."))))))
              ;; document edge classes
              ((and (or (greql-edge-set-expression-p)
                        (greql-edge-restriction-p nil))
                    (save-excursion
                      (re-search-backward "[{ ,]" (line-beginning-position) t)
                      (when (looking-at "[{ ,]\\([[:alnum:]._]+\\)")
-                       (tg-eldoc-vertex-or-edge (tg-get-schema-element 'EdgeClass
-                                                                       (match-string-no-properties 1)))))))
+                       (let ((vc (tg-get-schema-element 'EdgeClass (match-string-no-properties 1))))
+                         (if vc
+                             (tg-eldoc-vertex-or-edge vc)
+                           "Name is neither qualified nor unique."))))))
              ;; nothing to be done...
              (t ""))))))
 
