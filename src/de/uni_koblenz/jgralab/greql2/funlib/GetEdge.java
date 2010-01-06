@@ -61,7 +61,7 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
 
 public class GetEdge extends Greql2Function {
 	{
-		JValueType[][] x = { { JValueType.INTEGER } };
+		JValueType[][] x = { { JValueType.INTEGER, JValueType.EDGE } };
 		signatures = x;
 
 		description = "Return the edge with the given id.";

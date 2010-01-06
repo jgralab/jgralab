@@ -62,12 +62,13 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
 public class Avg extends Greql2Function {
 
 	{
-		JValueType[][] x = { { JValueType.COLLECTION } };
+		JValueType[][] x = { { JValueType.COLLECTION, JValueType.NUMBER } };
 		signatures = x;
 
 		description = "Return the average of the numbers in the given collection.";
 	}
 
+	@Override
 	public JValue evaluate(Graph graph, BooleanGraphMarker subgraph,
 			JValue[] arguments) throws EvaluateException {
 		if (checkArguments(arguments) == -1) {
@@ -86,14 +87,17 @@ public class Avg extends Greql2Function {
 		return new JValue(1.0 * sum / col.size());
 	}
 
+	@Override
 	public long getEstimatedCosts(ArrayList<Long> inElements) {
 		return inElements.get(0);
 	}
 
+	@Override
 	public double getSelectivity() {
 		return 1;
 	}
 
+	@Override
 	public long getEstimatedCardinality(int inElements) {
 		return 1;
 	}

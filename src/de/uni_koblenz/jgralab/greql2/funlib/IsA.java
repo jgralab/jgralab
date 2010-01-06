@@ -73,9 +73,12 @@ import de.uni_koblenz.jgralab.schema.Schema;
 
 public class IsA extends Greql2Function {
 	{
-		JValueType[][] x = { { JValueType.STRING, JValueType.STRING },
-				{ JValueType.STRING, JValueType.ATTRIBUTEDELEMENTCLASS },
-				{ JValueType.ATTRIBUTEDELEMENTCLASS, JValueType.STRING } };
+		JValueType[][] x = {
+				{ JValueType.STRING, JValueType.STRING, JValueType.BOOLEAN },
+				{ JValueType.STRING, JValueType.ATTRIBUTEDELEMENTCLASS,
+						JValueType.BOOLEAN },
+				{ JValueType.ATTRIBUTEDELEMENTCLASS, JValueType.STRING,
+						JValueType.BOOLEAN } };
 		signatures = x;
 
 		description = "Return true, iff the first type is a subtype of the second type.\n"

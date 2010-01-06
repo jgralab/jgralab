@@ -73,8 +73,10 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
 
 public class IsSibling extends Greql2Function {
 	{
-		JValueType[][] x = { { JValueType.VERTEX, JValueType.VERTEX },
-				{ JValueType.VERTEX, JValueType.VERTEX, JValueType.PATHSYSTEM } };
+		JValueType[][] x = {
+				{ JValueType.VERTEX, JValueType.VERTEX, JValueType.BOOLEAN },
+				{ JValueType.VERTEX, JValueType.VERTEX, JValueType.PATHSYSTEM,
+						JValueType.BOOLEAN } };
 		signatures = x;
 
 		description = "Return true, iff the given two vertices are siblings.\n"

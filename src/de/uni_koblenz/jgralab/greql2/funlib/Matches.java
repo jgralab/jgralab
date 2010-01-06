@@ -75,8 +75,9 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
 public class Matches extends Greql2Function {
 
 	{
-		JValueType[][] x = { { JValueType.PATH, JValueType.DFA },
-				{ JValueType.PATH, JValueType.NFA } };
+		JValueType[][] x = {
+				{ JValueType.PATH, JValueType.DFA, JValueType.BOOLEAN },
+				{ JValueType.PATH, JValueType.NFA, JValueType.BOOLEAN } };
 		signatures = x;
 
 		description = "Return true, iff the given path description matches the given path.";

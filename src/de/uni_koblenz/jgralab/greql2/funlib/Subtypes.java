@@ -68,8 +68,8 @@ import de.uni_koblenz.jgralab.schema.AttributedElementClass;
 public class Subtypes extends Greql2Function {
 
 	{
-		JValueType[][] x = { { JValueType.STRING },
-				{ JValueType.ATTRIBUTEDELEMENTCLASS } };
+		JValueType[][] x = { { JValueType.STRING, JValueType.COLLECTION },
+				{ JValueType.ATTRIBUTEDELEMENTCLASS, JValueType.COLLECTION } };
 		signatures = x;
 
 		description = "Return the set of direct subtypes of the given type.\n"

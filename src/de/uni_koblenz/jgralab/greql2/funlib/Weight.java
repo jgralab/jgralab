@@ -63,7 +63,7 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
 
 public class Weight extends Greql2Function {
 	{
-		JValueType[][] x = { { JValueType.PATHSYSTEM } };
+		JValueType[][] x = { { JValueType.PATHSYSTEM, JValueType.INTEGER } };
 		signatures = x;
 
 		description = "Return the weight of the given pathsystem.\n"

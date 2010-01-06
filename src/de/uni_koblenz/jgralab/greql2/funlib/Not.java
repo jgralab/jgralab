@@ -80,7 +80,7 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
 
 public class Not extends Greql2Function {
 	{
-		JValueType[][] x = { { JValueType.BOOLEAN } };
+		JValueType[][] x = { { JValueType.BOOLEAN, JValueType.BOOLEAN } };
 		signatures = x;
 
 		description = "Return the complement of the given boolean.";

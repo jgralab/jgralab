@@ -71,15 +71,19 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
 public class Children extends Greql2Function {
 
 	{
-		JValueType[][] x = { { JValueType.VERTEX },
-				{ JValueType.VERTEX, JValueType.PATHSYSTEM } };
+		JValueType[][] x = {
+				{ JValueType.VERTEX, JValueType.COLLECTION },
+				{ JValueType.VERTEX, JValueType.PATHSYSTEM,
+						JValueType.COLLECTION } };
 		signatures = x;
 
-		description = "Return all children of the given vertex (restricted by an optional pathsystem).\n"
+		description = "Return the set of all children of the given vertex.\n"
+				+ "They may be restricted by an optional pathsystem.\n"
 				+ "Children are those vertices, from which edges point to the given vertex. The\n"
 				+ "child vertices are returned as a set.";
 	}
 
+	@Override
 	public JValue evaluate(Graph graph, BooleanGraphMarker subgraph,
 			JValue[] arguments) throws EvaluateException {
 		Vertex vertex = null;
@@ -112,15 +116,18 @@ public class Children extends Greql2Function {
 		}
 	}
 
+	@Override
 	public long getEstimatedCosts(ArrayList<Long> inElements) {
 		// TODO Auto-generated method stub
 		return 5;
 	}
 
+	@Override
 	public double getSelectivity() {
 		return 1;
 	}
 
+	@Override
 	public long getEstimatedCardinality(int inElements) {
 		return 2;
 	}

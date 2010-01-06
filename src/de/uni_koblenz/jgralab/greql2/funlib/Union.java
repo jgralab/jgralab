@@ -82,9 +82,12 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
  */
 public class Union extends Greql2Function {
 	{
-		JValueType[][] x = { { JValueType.COLLECTION, JValueType.COLLECTION },
-				{ JValueType.MAP, JValueType.MAP, JValueType.BOOLEAN },
-				{ JValueType.COLLECTION } };
+		JValueType[][] x = {
+				{ JValueType.COLLECTION, JValueType.COLLECTION,
+						JValueType.COLLECTION },
+				{ JValueType.MAP, JValueType.MAP, JValueType.BOOLEAN,
+						JValueType.MAP, },
+				{ JValueType.COLLECTION, JValueType.COLLECTION } };
 		signatures = x;
 
 		description = "Return the union ef the given collections.\n"

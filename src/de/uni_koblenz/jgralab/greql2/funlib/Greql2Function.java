@@ -45,6 +45,8 @@ public abstract class Greql2Function {
 
 	/**
 	 * Represents a list of allowed signatures for this {@link Greql2Function}.
+	 * Each signature is an array of JValueTypes. The first describe the input
+	 * paramereters, the last is the return type.
 	 */
 	protected JValueType[][] signatures;
 
@@ -57,13 +59,13 @@ public abstract class Greql2Function {
 	protected final int checkArguments(JValue[] args) {
 		int[] indexAndCosts = { -1, Integer.MAX_VALUE };
 		for (int i = 0; i < signatures.length; i++) {
-			if (signatures[i].length != args.length) {
+			if (signatures[i].length - 1 != args.length) {
 				// The current arglist has another length than the given one, so
 				// it cannot match.
 				continue;
 			}
 			int conversionCosts = 0;
-			for (int j = 0; j < signatures[i].length; j++) {
+			for (int j = 0; j < args.length; j++) {
 				int thisArgsCosts = args[j].conversionCosts(signatures[i][j]);
 				if (thisArgsCosts == -1) {
 					// conversion is not possible
@@ -96,7 +98,7 @@ public abstract class Greql2Function {
 		StringBuilder sb = new StringBuilder();
 		for (int i = 0; i < signatures.length; i++) {
 			sb.append("(");
-			for (int j = 0; j < signatures[i].length; j++) {
+			for (int j = 0; j < signatures[i].length - 1; j++) {
 				sb.append(signatures[i][j]);
 				if (j != signatures[i].length - 1) {
 					sb.append(", ");

@@ -64,7 +64,7 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
  */
 public class First extends Greql2Function {
 	{
-		JValueType[][] x = { { JValueType.COLLECTION } };
+		JValueType[][] x = { { JValueType.COLLECTION, JValueType.OBJECT } };
 		signatures = x;
 
 		description = "Return the given collection's first element."

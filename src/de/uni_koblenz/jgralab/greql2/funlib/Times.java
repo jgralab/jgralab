@@ -78,10 +78,11 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
  */
 public class Times extends ArithmeticFunction {
 	{
-		JValueType[][] x = { { JValueType.DOUBLE, JValueType.DOUBLE },
-				{ JValueType.LONG, JValueType.LONG },
-				{ JValueType.INTEGER, JValueType.INTEGER },
-				{ JValueType.STRING, JValueType.LONG } };
+		JValueType[][] x = {
+				{ JValueType.DOUBLE, JValueType.DOUBLE, JValueType.DOUBLE },
+				{ JValueType.LONG, JValueType.LONG, JValueType.LONG },
+				{ JValueType.INTEGER, JValueType.INTEGER, JValueType.INTEGER },
+				{ JValueType.STRING, JValueType.LONG, JValueType.STRING } };
 		signatures = x;
 
 		description = "Multiply the given two numbers, or concat the given string many times.";

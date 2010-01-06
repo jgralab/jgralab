@@ -60,7 +60,8 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
  */
 public class IsAcyclic extends Greql2Function {
 	{
-		JValueType[][] x = { {}, { JValueType.SUBGRAPHTEMPATTRIBUTE } };
+		JValueType[][] x = { { JValueType.BOOLEAN },
+				{ JValueType.SUBGRAPH, JValueType.BOOLEAN } };
 		signatures = x;
 
 		description = "Return true, if the current graph or the given subgraph is cycle-free.\n"

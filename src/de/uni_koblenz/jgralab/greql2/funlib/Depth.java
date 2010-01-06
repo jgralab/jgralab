@@ -61,12 +61,13 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
 
 public class Depth extends Greql2Function {
 	{
-		JValueType[][] x = { { JValueType.PATHSYSTEM } };
+		JValueType[][] x = { { JValueType.PATHSYSTEM, JValueType.INTEGER } };
 		signatures = x;
 
 		description = "Return the depth (length of longes path) of the given pathsystem.";
 	}
 
+	@Override
 	public JValue evaluate(Graph graph, BooleanGraphMarker subgraph,
 			JValue[] arguments) throws EvaluateException {
 		if (checkArguments(arguments) == -1) {
@@ -75,15 +76,18 @@ public class Depth extends Greql2Function {
 		return new JValue(arguments[0].toPathSystem().depth());
 	}
 
+	@Override
 	public long getEstimatedCosts(ArrayList<Long> inElements) {
 		// TODO Auto-generated method stub
 		return 0;
 	}
 
+	@Override
 	public double getSelectivity() {
 		return 1;
 	}
 
+	@Override
 	public long getEstimatedCardinality(int inElements) {
 		return 1;
 	}

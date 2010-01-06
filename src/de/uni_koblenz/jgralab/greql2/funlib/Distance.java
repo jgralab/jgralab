@@ -65,12 +65,14 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
 
 public class Distance extends Greql2Function {
 	{
-		JValueType[][] x = { { JValueType.PATHSYSTEM, JValueType.VERTEX } };
+		JValueType[][] x = { { JValueType.PATHSYSTEM, JValueType.VERTEX,
+				JValueType.INTEGER } };
 		signatures = x;
 
 		description = "In the given pathsystem, return the distance from the root to the given vertex.";
 	}
 
+	@Override
 	public JValue evaluate(Graph graph, BooleanGraphMarker subgraph,
 			JValue[] arguments) throws EvaluateException {
 		if (checkArguments(arguments) == -1) {
@@ -82,15 +84,18 @@ public class Distance extends Greql2Function {
 		return new JValue(pathSystem.distance(vertex));
 	}
 
+	@Override
 	public long getEstimatedCosts(ArrayList<Long> inElements) {
 		// TODO Auto-generated method stub
 		return 1;
 	}
 
+	@Override
 	public double getSelectivity() {
 		return 1;
 	}
 
+	@Override
 	public long getEstimatedCardinality(int inElements) {
 		return 2;
 	}

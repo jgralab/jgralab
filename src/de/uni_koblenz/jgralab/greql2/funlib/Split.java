@@ -61,7 +61,8 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
  */
 public class Split extends Greql2Function {
 	{
-		JValueType[][] x = { { JValueType.STRING, JValueType.STRING } };
+		JValueType[][] x = { { JValueType.STRING, JValueType.STRING,
+				JValueType.COLLECTION } };
 		signatures = x;
 
 		description = "Split string according to regexp and return splits as list.";

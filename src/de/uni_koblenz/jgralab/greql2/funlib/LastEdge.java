@@ -60,7 +60,8 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueTypeCollection;
 
 public class LastEdge extends Greql2Function {
 	{
-		JValueType[][] x = { {}, { JValueType.TYPECOLLECTION } };
+		JValueType[][] x = { { JValueType.EDGE },
+				{ JValueType.TYPECOLLECTION, JValueType.EDGE } };
 		signatures = x;
 
 		description = "Return the last edge (restricted by optional TypeCollection) in the graph.";

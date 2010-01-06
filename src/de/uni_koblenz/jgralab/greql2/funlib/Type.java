@@ -59,8 +59,10 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
  */
 public class Type extends Greql2Function {
 	{
-		JValueType[][] x = { { JValueType.ATTRIBUTEDELEMENT },
-				{ JValueType.STRING } };
+		JValueType[][] x = {
+				{ JValueType.ATTRIBUTEDELEMENT,
+						JValueType.ATTRIBUTEDELEMENTCLASS },
+				{ JValueType.STRING, JValueType.ATTRIBUTEDELEMENTCLASS } };
 		signatures = x;
 
 		description = "Return the type of the given attributed element.\n"

@@ -67,8 +67,9 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
 
 public class Modulo extends Greql2Function {
 	{
-		JValueType[][] x = { { JValueType.LONG, JValueType.LONG },
-				{ JValueType.INTEGER, JValueType.INTEGER } };
+		JValueType[][] x = {
+				{ JValueType.LONG, JValueType.LONG, JValueType.LONG },
+				{ JValueType.INTEGER, JValueType.INTEGER, JValueType.INTEGER } };
 		signatures = x;
 
 		description = "Return the remainder of param1 / param2.";

@@ -71,8 +71,10 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
 public class Siblings extends Greql2Function {
 
 	{
-		JValueType[][] x = { { JValueType.VERTEX },
-				{ JValueType.VERTEX, JValueType.PATHSYSTEM } };
+		JValueType[][] x = {
+				{ JValueType.VERTEX, JValueType.COLLECTION },
+				{ JValueType.VERTEX, JValueType.PATHSYSTEM,
+						JValueType.COLLECTION } };
 		signatures = x;
 
 		description = "Return the set of all siblings of the given vertex.\n"

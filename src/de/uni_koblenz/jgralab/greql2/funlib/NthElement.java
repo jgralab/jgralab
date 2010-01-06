@@ -65,7 +65,8 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
  */
 public class NthElement extends Greql2Function {
 	{
-		JValueType[][] x = { { JValueType.COLLECTION, JValueType.INTEGER } };
+		JValueType[][] x = { { JValueType.COLLECTION, JValueType.INTEGER,
+				JValueType.OBJECT } };
 		signatures = x;
 
 		description = "Return the element of the given collection on the given index.";

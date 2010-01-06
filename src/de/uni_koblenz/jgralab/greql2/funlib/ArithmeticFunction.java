@@ -16,9 +16,10 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
  */
 public abstract class ArithmeticFunction extends Greql2Function {
 	{
-		JValueType[][] x = { { JValueType.DOUBLE, JValueType.DOUBLE },
-				{ JValueType.LONG, JValueType.LONG },
-				{ JValueType.INTEGER, JValueType.INTEGER } };
+		JValueType[][] x = {
+				{ JValueType.DOUBLE, JValueType.DOUBLE, JValueType.DOUBLE },
+				{ JValueType.LONG, JValueType.LONG, JValueType.LONG },
+				{ JValueType.INTEGER, JValueType.INTEGER, JValueType.INTEGER } };
 		signatures = x;
 		description = "Perform arithmetic operation on the given operands.";
 	}

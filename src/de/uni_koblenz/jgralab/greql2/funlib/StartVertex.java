@@ -62,7 +62,8 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
 
 public class StartVertex extends Greql2Function {
 	{
-		JValueType[][] x = { { JValueType.PATH }, { JValueType.EDGE } };
+		JValueType[][] x = { { JValueType.PATH, JValueType.VERTEX },
+				{ JValueType.EDGE, JValueType.VERTEX } };
 		signatures = x;
 
 		description = "Return the start vertex of the given edge or path.";

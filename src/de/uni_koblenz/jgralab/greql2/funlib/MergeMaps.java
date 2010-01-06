@@ -65,7 +65,7 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
  */
 public class MergeMaps extends Greql2Function {
 	{
-		JValueType[][] x = { { JValueType.MAP, JValueType.MAP } };
+		JValueType[][] x = { { JValueType.MAP, JValueType.MAP, JValueType.MAP } };
 		signatures = x;
 
 		description = "Merges the given two maps (the values must be collections).\n"

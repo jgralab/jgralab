@@ -64,7 +64,7 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
 
 public class InnerNodes extends Greql2Function {
 	{
-		JValueType[][] x = { { JValueType.PATHSYSTEM } };
+		JValueType[][] x = { { JValueType.PATHSYSTEM, JValueType.COLLECTION } };
 		signatures = x;
 
 		description = "Return all inner nodes of the given pathsystem as set.\n"

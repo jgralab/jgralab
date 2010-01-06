@@ -61,7 +61,7 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
 public class TypeName extends Greql2Function {
 
 	{
-		JValueType[][] x = { { JValueType.ATTRIBUTEDELEMENT } };
+		JValueType[][] x = { { JValueType.ATTRIBUTEDELEMENT, JValueType.STRING } };
 		signatures = x;
 
 		description = "Return the qualified type name of the given attr elem.";

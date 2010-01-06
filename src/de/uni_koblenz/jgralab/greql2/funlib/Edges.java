@@ -67,8 +67,10 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueTypeCollection;
 
 public class Edges extends Greql2Function {
 	{
-		JValueType[][] x = { { JValueType.EDGE, JValueType.EDGE },
-				{ JValueType.EDGE, JValueType.EDGE, JValueType.TYPECOLLECTION } };
+		JValueType[][] x = {
+				{ JValueType.EDGE, JValueType.EDGE, JValueType.COLLECTION },
+				{ JValueType.EDGE, JValueType.EDGE, JValueType.TYPECOLLECTION,
+						JValueType.COLLECTION } };
 		signatures = x;
 
 		description = "Returns the global edge sequence from the 1st to the 2nd given edge.\n"

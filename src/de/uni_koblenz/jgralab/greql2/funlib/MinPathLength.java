@@ -61,7 +61,7 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
 
 public class MinPathLength extends Greql2Function {
 	{
-		JValueType[][] x = { { JValueType.PATHSYSTEM } };
+		JValueType[][] x = { { JValueType.PATHSYSTEM, JValueType.INTEGER } };
 		signatures = x;
 
 		description = "Return the length of the shortest path in the given pathsystem.";

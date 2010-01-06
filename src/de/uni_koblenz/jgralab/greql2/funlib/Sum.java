@@ -60,7 +60,7 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
  */
 public class Sum extends Greql2Function {
 	{
-		JValueType[][] x = { { JValueType.COLLECTION } };
+		JValueType[][] x = { { JValueType.COLLECTION, JValueType.DOUBLE } };
 		signatures = x;
 
 		description = "Return the sum of the given collection of numbers.";

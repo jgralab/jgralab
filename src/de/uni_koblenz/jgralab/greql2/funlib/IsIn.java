@@ -67,13 +67,15 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
 public class IsIn extends Greql2Function {
 	{
 		JValueType[][] x = {
-				{ JValueType.OBJECT, JValueType.COLLECTION },
-				{ JValueType.ATTRIBUTEDELEMENT, JValueType.PATH },
-				{ JValueType.ATTRIBUTEDELEMENT, JValueType.PATHSYSTEM },
-				{ JValueType.PATH, JValueType.PATHSYSTEM },
-				{ JValueType.ATTRIBUTEDELEMENT,
-						JValueType.SUBGRAPHTEMPATTRIBUTE },
-				{ JValueType.ATTRIBUTEDELEMENT } };
+				{ JValueType.OBJECT, JValueType.COLLECTION, JValueType.BOOLEAN },
+				{ JValueType.ATTRIBUTEDELEMENT, JValueType.PATH,
+						JValueType.BOOLEAN },
+				{ JValueType.ATTRIBUTEDELEMENT, JValueType.PATHSYSTEM,
+						JValueType.BOOLEAN },
+				{ JValueType.PATH, JValueType.PATHSYSTEM, JValueType.BOOLEAN },
+				{ JValueType.ATTRIBUTEDELEMENT, JValueType.SUBGRAPH,
+						JValueType.BOOLEAN },
+				{ JValueType.ATTRIBUTEDELEMENT, JValueType.BOOLEAN } };
 		signatures = x;
 
 		description = "Return true, iff the given element is part of the given structure.\n"

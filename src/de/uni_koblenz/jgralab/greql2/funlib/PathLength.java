@@ -61,7 +61,7 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
 public class PathLength extends Greql2Function {
 
 	{
-		JValueType[][] x = { { JValueType.PATH } };
+		JValueType[][] x = { { JValueType.PATH, JValueType.INTEGER } };
 		signatures = x;
 
 		description = "Return the length of the given path.";

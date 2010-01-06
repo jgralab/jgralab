@@ -62,7 +62,7 @@ import de.uni_koblenz.jgralab.schema.AttributedElementClass;
 public class Types extends Greql2Function {
 
 	{
-		JValueType[][] x = { {} };
+		JValueType[][] x = { { JValueType.COLLECTION } };
 		signatures = x;
 
 		description = "Return a set of all types known by the schema of the current graph.\n"

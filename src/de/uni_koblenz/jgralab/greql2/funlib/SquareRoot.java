@@ -62,7 +62,7 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
  */
 public class SquareRoot extends Greql2Function {
 	{
-		JValueType[][] x = { { JValueType.NUMBER } };
+		JValueType[][] x = { { JValueType.NUMBER, JValueType.DOUBLE } };
 		signatures = x;
 
 		description = "Return the square root of the given number.";

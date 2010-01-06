@@ -60,7 +60,8 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueTypeCollection;
 
 public class LastVertex extends Greql2Function {
 	{
-		JValueType[][] x = { {}, { JValueType.TYPECOLLECTION } };
+		JValueType[][] x = { { JValueType.VERTEX },
+				{ JValueType.TYPECOLLECTION, JValueType.VERTEX } };
 		signatures = x;
 
 		description = "Return the last vertex (restr. by optional TypeCollection) in the graph.";
