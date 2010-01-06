@@ -44,7 +44,8 @@ import de.uni_koblenz.jgralab.impl.ReversedEdgeImpl;
  * This marker class allows a stricter limitation to specific
  * <code>AttributedElement</code>s. For example a vertex function can be
  * realized by<br/>
- * <code>GenericGraphMarker vertexFunction = new GenericGraphMarker<Vertex,Object>();</code><br/>
+ * <code>GenericGraphMarker vertexFunction = new GenericGraphMarker<Vertex,Object>();</code>
+ * <br/>
  * <br/>
  * 
  *Edge functions can be created in analogy to vertex functions.
@@ -98,8 +99,8 @@ public class GenericGraphMarker<T extends AttributedElement, O> {
 	 *            the element (Graph, Vertex or Edge) to mark
 	 * @param value
 	 *            the object that should be used as marking
-	 * @return true on success, false if the given element already contains a
-	 *         marking
+	 * @return The previous element the given graph element has been marked
+	 *         with, <code>null</code> if the given element has not been marked.
 	 */
 	public O mark(T elem, O value) {
 
