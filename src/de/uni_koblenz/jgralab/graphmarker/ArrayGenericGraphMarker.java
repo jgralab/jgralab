@@ -12,8 +12,8 @@ import de.uni_koblenz.jgralab.Vertex;
  * 
  * @param <T>
  */
-public abstract class ArrayGenericGraphMarker<T extends GraphElement> extends
-		AbstractGraphMarker<T> {
+public abstract class ArrayGenericGraphMarker<T extends GraphElement, O>
+		extends AbstractGraphMarker<T> {
 
 	/**
 	 * The array of temporary attributes.
@@ -47,11 +47,30 @@ public abstract class ArrayGenericGraphMarker<T extends GraphElement> extends
 		return temporaryAttributes[graphElement.getId()] != null;
 	}
 
-	public T getMark(T graphElement) {
+	public O getMark(T graphElement) {
 		assert (graphElement.getId() <= (graphElement instanceof Vertex ? graph
 				.getMaxVCount() : graph.getMaxECount()));
 		@SuppressWarnings("unchecked")
-		T out = (T) temporaryAttributes[graphElement.getId()];
+		O out = (O) temporaryAttributes[graphElement.getId()];
+		return out;
+	}
+
+	/**
+	 * marks the given element with the given value
+	 * 
+	 * @param elem
+	 *            the graph element to mark
+	 * @param value
+	 *            the object that should be used as marking
+	 * @return The previous element the given graph element has been marked
+	 *         with, <code>null</code> if the given element has not been marked.
+	 */
+	public O mark(T graphElement, O value) {
+		assert (graphElement.getId() <= (graphElement instanceof Vertex ? graph
+				.getMaxVCount() : graph.getMaxECount()));
+		@SuppressWarnings("unchecked")
+		O out = (O) temporaryAttributes[graphElement.getId()];
+		temporaryAttributes[graphElement.getId()] = value;
 		marked += 1;
 		return out;
 	}
@@ -94,6 +113,10 @@ public abstract class ArrayGenericGraphMarker<T extends GraphElement> extends
 		// newTemporaryAttributes[i] = temporaryAttributes[i];
 		// }
 		temporaryAttributes = newTemporaryAttributes;
+	}
+
+	public int maxSize() {
+		return temporaryAttributes.length;
 	}
 
 }
