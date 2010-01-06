@@ -99,7 +99,7 @@ public class Describe extends Greql2Function {
 		for (Attribute attr : attrElem.getAttributedElementClass()
 				.getAttributeList()) {
 			try {
-				attrRecord.add(attr.getName(), new JValue(attrElem
+				attrRecord.add(attr.getName(), JValue.fromObject(attrElem
 						.getAttribute(attr.getName())));
 			} catch (NoSuchFieldException e) {
 				e.printStackTrace();
