@@ -42,7 +42,7 @@ import de.uni_koblenz.jgralab.schema.AttributedElementClass;
  * 
  * <dl>
  * <dt><b>GReQL-signature</b></dt>
- * <dd><code>LIST&lt;ATTRIBUTEDELEMENTCLASS&gt; types()</code></dd>
+ * <dd><code>LIST&lt;ATTRELEMCLASS&gt; types()</code></dd>
  * <dd>&nbsp;</dd>
  * </dl>
  * <dl>

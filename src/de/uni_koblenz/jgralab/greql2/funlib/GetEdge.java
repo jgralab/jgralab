@@ -39,7 +39,7 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
  * 
  * <dl>
  * <dt><b>GReQL-signature</b></dt>
- * <dd><code>EDGE getEdge(id:INTEGER)</code></dd>
+ * <dd><code>EDGE getEdge(id:INT)</code></dd>
  * <dd>&nbsp;</dd>
  * </dl>
  * <dl>
@@ -61,7 +61,7 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
 
 public class GetEdge extends Greql2Function {
 	{
-		JValueType[][] x = { { JValueType.INTEGER, JValueType.EDGE } };
+		JValueType[][] x = { { JValueType.INT, JValueType.EDGE } };
 		signatures = x;
 
 		description = "Return the edge with the given id.";

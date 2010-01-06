@@ -34,16 +34,16 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
  * strings a lexicographical order is used.
  * <dl>
  * <dt><b>GReQL-signature</b></dt>
- * <dd><code>BOOLEAN grEqual(a: INTEGER, b: INTEGER)</code></dd>
- * <dd><code>BOOLEAN grEqual(a: INTEGER, b: LONG)</code></dd>
- * <dd><code>BOOLEAN grEqual(a: INTEGER, b: DOUBLE)</code></dd>
- * <dd><code>BOOLEAN grEqual(a: LONG, b: INTEGER)</code></dd>
- * <dd><code>BOOLEAN grEqual(a: LONG, b: LONG)</code></dd>
- * <dd><code>BOOLEAN grEqual(a: LONG, b: DOUBLE)</code></dd>
- * <dd><code>BOOLEAN grEqual(a: DOUBLE, b: INTEGER)</code></dd>
- * <dd><code>BOOLEAN grEqual(a: DOUBLE, b: LONG)</code></dd>
- * <dd><code>BOOLEAN grEqual(a: DOUBLE, b: DOUBLE)</code></dd>
- * <dd><code>BOOLEAN grEqual(s1: STRING, s2: STRING)</code></dd>
+ * <dd><code>BOOL grEqual(a: INT, b: INT)</code></dd>
+ * <dd><code>BOOL grEqual(a: INT, b: LONG)</code></dd>
+ * <dd><code>BOOL grEqual(a: INT, b: DOUBLE)</code></dd>
+ * <dd><code>BOOL grEqual(a: LONG, b: INT)</code></dd>
+ * <dd><code>BOOL grEqual(a: LONG, b: LONG)</code></dd>
+ * <dd><code>BOOL grEqual(a: LONG, b: DOUBLE)</code></dd>
+ * <dd><code>BOOL grEqual(a: DOUBLE, b: INT)</code></dd>
+ * <dd><code>BOOL grEqual(a: DOUBLE, b: LONG)</code></dd>
+ * <dd><code>BOOL grEqual(a: DOUBLE, b: DOUBLE)</code></dd>
+ * <dd><code>BOOL grEqual(s1: STRING, s2: STRING)</code></dd>
  * <dd>&nbsp;</dd>
  * <dd>This function can be used with the (>=)-Operator: <code>a >= b</code></dd>
  * </dl>
@@ -52,11 +52,11 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
  * <dd>
  * <dl>
  * <dt><b>Parameters:</b></dt>
- * <dd><code>a: INTEGER</code> - first number to compare</dd>
+ * <dd><code>a: INT</code> - first number to compare</dd>
  * <dd><code>a: LONG</code> - first number to compare</dd>
  * <dd><code>a: DOUBLE</code> - first number to compare</dd>
  * <dd><code>s1: STRING</code> - first string to compare</dd>
- * <dd><code>b: INTEGER</code> - second number to compare</dd>
+ * <dd><code>b: INT</code> - second number to compare</dd>
  * <dd><code>b: LONG</code> - second number to compare</dd>
  * <dd><code>b: DOUBLE</code> - second number to compare</dd>
  * <dd><code>s2: STRING</code> - second string to compare</dd>

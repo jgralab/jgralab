@@ -36,13 +36,13 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
  * concatenation of two given strings s1 and s2.
  * <dl>
  * <dt><b>GReQL-signature</b></dt>
- * <dd><code>INTEGER plus(a: INTEGER, b: INTEGER)</code></dd>
- * <dd><code>LONG plus(a: LONG, b: INTEGER)</code></dd>
- * <dd><code>LONG plus(a: INTEGER, b: LONG)</code></dd>
+ * <dd><code>INT plus(a: INT, b: INT)</code></dd>
+ * <dd><code>LONG plus(a: LONG, b: INT)</code></dd>
+ * <dd><code>LONG plus(a: INT, b: LONG)</code></dd>
  * <dd><code>LONG plus(a: LONG, b: LONG)</code></dd>
- * <dd><code>DOUBLE plus(a: DOUBLE, b: INTEGER)</code></dd>
+ * <dd><code>DOUBLE plus(a: DOUBLE, b: INT)</code></dd>
  * <dd><code>DOUBLE plus(a: DOUBLE, b: LONG)</code></dd>
- * <dd><code>DOUBLE plus(a: INTEGER, b: DOUBLE)</code></dd>
+ * <dd><code>DOUBLE plus(a: INT, b: DOUBLE)</code></dd>
  * <dd><code>DOUBLE plus(a: LONG, b: DOUBLE)</code></dd>
  * <dd><code>DOUBLE plus(a: DOUBLE, b: DOUBLE)</code></dd>
  * <dd><code>STRING plus(s1: STRING, s2: STRING)</code></dd>
@@ -58,11 +58,11 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
  * <dd>
  * <dl>
  * <dt><b>Parameters:</b></dt>
- * <dd><code>a: INTEGER</code> - first summand</dd>
+ * <dd><code>a: INT</code> - first summand</dd>
  * <dd><code>a: LONG</code> - first summand</dd>
  * <dd><code>a: DOUBLE</code> - first summand</dd>
  * <dd><code>s1: STRING</code> - first string to concatenate</dd>
- * <dd><code>b: INTEGER</code> - second summand</dd>
+ * <dd><code>b: INT</code> - second summand</dd>
  * <dd><code>b: LONG</code> - second summand</dd>
  * <dd><code>b: DOUBLE</code> - second summand</dd>
  * <dd><code>s2: STRING</code> - second string to concatenate</dd>
@@ -83,7 +83,7 @@ public class Plus extends ArithmeticFunction {
 		JValueType[][] x = {
 				{ JValueType.DOUBLE, JValueType.DOUBLE, JValueType.DOUBLE },
 				{ JValueType.LONG, JValueType.LONG, JValueType.LONG },
-				{ JValueType.INTEGER, JValueType.INTEGER, JValueType.INTEGER },
+				{ JValueType.INT, JValueType.INT, JValueType.INT },
 				{ JValueType.STRING, JValueType.STRING, JValueType.STRING } };
 		signatures = x;
 

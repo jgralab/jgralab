@@ -50,7 +50,7 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
  * </code><br/>
  * <code>SET&lt;OBJECT&gt; union(s:SET&lt;OBJECT&gt;)
  * </code><br/>
- * <code>MAP&lt;OBJECT,OBJECT&gt; union(s1:MAP&lt;OBJECT,OBJECT&gt;, s2:MAP&lt;OBJECT,OBJECT&gt;, forceDisjointKeys:BOOLEAN)</code>
+ * <code>MAP&lt;OBJECT,OBJECT&gt; union(s1:MAP&lt;OBJECT,OBJECT&gt;, s2:MAP&lt;OBJECT,OBJECT&gt;, forceDisjointKeys:BOOL)</code>
  * </dd>
  * <dd>&nbsp;</dd>
  * </dl>
@@ -85,7 +85,7 @@ public class Union extends Greql2Function {
 		JValueType[][] x = {
 				{ JValueType.COLLECTION, JValueType.COLLECTION,
 						JValueType.COLLECTION },
-				{ JValueType.MAP, JValueType.MAP, JValueType.BOOLEAN,
+				{ JValueType.MAP, JValueType.MAP, JValueType.BOOL,
 						JValueType.MAP, },
 				{ JValueType.COLLECTION, JValueType.COLLECTION } };
 		signatures = x;

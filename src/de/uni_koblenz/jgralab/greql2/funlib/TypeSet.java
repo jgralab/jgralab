@@ -39,9 +39,9 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
  * 
  * <dl>
  * <dt><b>GReQL-signature</b></dt>
- * <dd><code>SET&lt;ATTRIBUTEDELEMENTCLASS&gt; TypeSet(c:COLLECTION)</code></dd>
- * <dd><code>SET&lt;ATTRIBUTEDELEMENTCLASS&gt; TypeSet(p:PATH)</code></dd>
- * <dd><code>SET&lt;ATTRIBUTEDELEMENTCLASS&gt; TypeSet(ps:PATHSYSTEM)</code></dd>
+ * <dd><code>SET&lt;ATTRELEMCLASS&gt; TypeSet(c:COLLECTION)</code></dd>
+ * <dd><code>SET&lt;ATTRELEMCLASS&gt; TypeSet(p:PATH)</code></dd>
+ * <dd><code>SET&lt;ATTRELEMCLASS&gt; TypeSet(ps:PATHSYSTEM)</code></dd>
  * <dd>&nbsp;</dd>
  * </dl>
  * <dl>

@@ -42,8 +42,8 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
  * 
  * <dl>
  * <dt><b>GReQL-signature</b></dt>
- * <dd><code>INTEGER pos(list:LIST&lt;OBJECT&gt;, element:OBJECT)</code></dd>
- * <dd><code>INTEGER pos(tuple:TUPLE&lt;OBJECT&gt;, element:OBJECT)</code></dd>
+ * <dd><code>INT pos(list:LIST&lt;OBJECT&gt;, element:OBJECT)</code></dd>
+ * <dd><code>INT pos(tuple:TUPLE&lt;OBJECT&gt;, element:OBJECT)</code></dd>
  * <dd>&nbsp;</dd>
  * </dl>
  * <dl>
@@ -70,7 +70,7 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
 public class Pos extends Greql2Function {
 	{
 		JValueType[][] x = { { JValueType.COLLECTION, JValueType.OBJECT,
-				JValueType.INTEGER } };
+				JValueType.INT } };
 		signatures = x;
 
 		description = "Return the index of the given object in the given list or tuple.";

@@ -39,7 +39,7 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
  * 
  * <dl>
  * <dt><b>GReQL-signature</b></dt>
- * <dd><code>BOOLEAN reMatch(s:STRING, rexp:STRING)</code></dd>
+ * <dd><code>BOOL reMatch(s:STRING, rexp:STRING)</code></dd>
  * <dd>&nbsp;</dd>
  * <dd>This function can be used with the (<code>=~</code>)-Operator:
  * <code>s =~ rexp</code></dd>
@@ -67,7 +67,7 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
 public class ReMatch extends Greql2Function {
 	{
 		JValueType[][] x = { { JValueType.STRING, JValueType.STRING,
-				JValueType.BOOLEAN } };
+				JValueType.BOOL } };
 		signatures = x;
 
 		description = "Return true, iff the given string matches the given regular expression.\n"

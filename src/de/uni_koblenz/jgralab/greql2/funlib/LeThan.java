@@ -34,16 +34,16 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
  * strings a lexicographical order is used.
  * <dl>
  * <dt><b>GReQL-signature</b></dt>
- * <dd><code>BOOLEAN leThan(a: INTEGER, b: INTEGER)</code></dd>
- * <dd><code>BOOLEAN leThan(a: INTEGER, b: LONG)</code></dd>
- * <dd><code>BOOLEAN leThan(a: INTEGER, b: DOUBLE)</code></dd>
- * <dd><code>BOOLEAN leThan(a: LONG, b: INTEGER)</code></dd>
- * <dd><code>BOOLEAN leThan(a: LONG, b: LONG)</code></dd>
- * <dd><code>BOOLEAN leThan(a: LONG, b: DOUBLE)</code></dd>
- * <dd><code>BOOLEAN leThan(a: DOUBLE, b: INTEGER)</code></dd>
- * <dd><code>BOOLEAN leThan(a: DOUBLE, b: LONG)</code></dd>
- * <dd><code>BOOLEAN leThan(a: DOUBLE, b: DOUBLE)</code></dd>
- * <dd><code>BOOLEAN leThan(s1: STRING, s2: STRING)</code></dd>
+ * <dd><code>BOOL leThan(a: INT, b: INT)</code></dd>
+ * <dd><code>BOOL leThan(a: INT, b: LONG)</code></dd>
+ * <dd><code>BOOL leThan(a: INT, b: DOUBLE)</code></dd>
+ * <dd><code>BOOL leThan(a: LONG, b: INT)</code></dd>
+ * <dd><code>BOOL leThan(a: LONG, b: LONG)</code></dd>
+ * <dd><code>BOOL leThan(a: LONG, b: DOUBLE)</code></dd>
+ * <dd><code>BOOL leThan(a: DOUBLE, b: INT)</code></dd>
+ * <dd><code>BOOL leThan(a: DOUBLE, b: LONG)</code></dd>
+ * <dd><code>BOOL leThan(a: DOUBLE, b: DOUBLE)</code></dd>
+ * <dd><code>BOOL leThan(s1: STRING, s2: STRING)</code></dd>
  * <dd>&nbsp;</dd>
  * <dd>This function can be used with the (&lt;)-Operator: <code>a &lt; b</code>
  * </dd>
@@ -53,11 +53,11 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
  * <dd>
  * <dl>
  * <dt><b>Parameters:</b></dt>
- * <dd><code>a: INTEGER</code> - first number to compare</dd>
+ * <dd><code>a: INT</code> - first number to compare</dd>
  * <dd><code>a: LONG</code> - first number to compare</dd>
  * <dd><code>a: DOUBLE</code> - first number to compare</dd>
  * <dd><code>s1: STRING</code> - first string to compare</dd>
- * <dd><code>b: INTEGER</code> - second number to compare</dd>
+ * <dd><code>b: INT</code> - second number to compare</dd>
  * <dd><code>b: LONG</code> - second number to compare</dd>
  * <dd><code>b: DOUBLE</code> - second number to compare</dd>
  * <dd><code>s2: STRING</code> - second string to compare</dd>

@@ -41,10 +41,10 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
  * <dl>
  * <dt><b>GReQL-signature</b></dt>
  * <dd>
- * <code>SET&lt;ATTRIBUTEDELEMENTCLASS&gt; vertexTypeSet(c:COLLECTION)</code></dd>
- * <dd><code>SET&lt;ATTRIBUTEDELEMENTCLASS&gt; vertexTypeSet(p:PATH)</code></dd>
+ * <code>SET&lt;ATTRELEMCLASS&gt; vertexTypeSet(c:COLLECTION)</code></dd>
+ * <dd><code>SET&lt;ATTRELEMCLASS&gt; vertexTypeSet(p:PATH)</code></dd>
  * <dd>
- * <code>SET&lt;ATTRIBUTEDELEMENTCLASS&gt; vertexTypeSet(ps:PATHSYSTEM)</code></dd>
+ * <code>SET&lt;ATTRELEMCLASS&gt; vertexTypeSet(ps:PATHSYSTEM)</code></dd>
  * <dd>&nbsp;</dd>
  * </dl>
  * <dl>

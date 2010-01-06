@@ -42,7 +42,7 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
  * 
  * <dl>
  * <dt><b>GReQL-signature</b></dt>
- * <dd><code>BOOLEAN isIn(obj:OBJECT, struct:STRUCTURE)</code></dd>
+ * <dd><code>BOOL isIn(obj:OBJECT, struct:STRUCTURE)</code></dd>
  * <dd>&nbsp;</dd>
  * </dl>
  * <dl>
@@ -67,15 +67,15 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
 public class IsIn extends Greql2Function {
 	{
 		JValueType[][] x = {
-				{ JValueType.OBJECT, JValueType.COLLECTION, JValueType.BOOLEAN },
-				{ JValueType.ATTRIBUTEDELEMENT, JValueType.PATH,
-						JValueType.BOOLEAN },
-				{ JValueType.ATTRIBUTEDELEMENT, JValueType.PATHSYSTEM,
-						JValueType.BOOLEAN },
-				{ JValueType.PATH, JValueType.PATHSYSTEM, JValueType.BOOLEAN },
-				{ JValueType.ATTRIBUTEDELEMENT, JValueType.SUBGRAPH,
-						JValueType.BOOLEAN },
-				{ JValueType.ATTRIBUTEDELEMENT, JValueType.BOOLEAN } };
+				{ JValueType.OBJECT, JValueType.COLLECTION, JValueType.BOOL },
+				{ JValueType.ATTRELEM, JValueType.PATH,
+						JValueType.BOOL },
+				{ JValueType.ATTRELEM, JValueType.PATHSYSTEM,
+						JValueType.BOOL },
+				{ JValueType.PATH, JValueType.PATHSYSTEM, JValueType.BOOL },
+				{ JValueType.ATTRELEM, JValueType.SUBGRAPH,
+						JValueType.BOOL },
+				{ JValueType.ATTRELEM, JValueType.BOOL } };
 		signatures = x;
 
 		description = "Return true, iff the given element is part of the given structure.\n"

@@ -41,7 +41,7 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
  * 
  * <dl>
  * <dt><b>GReQL-signature</b></dt>
- * <dd><code>BOOLEAN isSubPathOf(p1:PATH, p2:PATH)</code></dd>
+ * <dd><code>BOOL isSubPathOf(p1:PATH, p2:PATH)</code></dd>
  * <dd>&nbsp;</dd>
  * </dl>
  * <dl>
@@ -68,7 +68,7 @@ public class IsSubPathOfPath extends Greql2Function {
 
 	{
 		JValueType[][] x = { { JValueType.PATH, JValueType.PATH,
-				JValueType.BOOLEAN } };
+				JValueType.BOOL } };
 		signatures = x;
 
 		description = "Return true, iff the first path is a subpath of the second path.\n"

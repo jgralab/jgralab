@@ -39,7 +39,7 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
  * 
  * <dl>
  * <dt><b>GReQL-signature</b></dt>
- * <dd><code>STRING TypeName(ae:ATTRIBUTEDELEMENT)</code></dd>
+ * <dd><code>STRING TypeName(ae:ATTRELEM)</code></dd>
  * <dd>&nbsp;</dd>
  * </dl>
  * <dl>
@@ -61,7 +61,7 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
 public class TypeName extends Greql2Function {
 
 	{
-		JValueType[][] x = { { JValueType.ATTRIBUTEDELEMENT, JValueType.STRING } };
+		JValueType[][] x = { { JValueType.ATTRELEM, JValueType.STRING } };
 		signatures = x;
 
 		description = "Return the qualified type name of the given attr elem.";

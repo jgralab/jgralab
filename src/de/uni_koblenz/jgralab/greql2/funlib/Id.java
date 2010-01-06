@@ -40,8 +40,8 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
  * or an edge.
  * <dl>
  * <dt><b>GReQL-signature</b></dt>
- * <dd><code>INTEGER id(v:VERTEX)</code></dd>
- * <dd><code>INTEGER id(e:EDGE)</code></dd>
+ * <dd><code>INT id(v:VERTEX)</code></dd>
+ * <dd><code>INT id(e:EDGE)</code></dd>
  * <dd>&nbsp;</dd>
  * </dl>
  * <dl>
@@ -64,8 +64,8 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
 
 public class Id extends Greql2Function {
 	{
-		JValueType[][] x = { { JValueType.VERTEX, JValueType.INTEGER },
-				{ JValueType.EDGE, JValueType.INTEGER } };
+		JValueType[][] x = { { JValueType.VERTEX, JValueType.INT },
+				{ JValueType.EDGE, JValueType.INT } };
 		signatures = x;
 
 		description = "Return the id of the given vertex or edge.";

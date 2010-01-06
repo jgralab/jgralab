@@ -37,7 +37,7 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
  * Calculates the negation of a given scalar.
  * <dl>
  * <dt><b>GReQL-signature</b></dt>
- * <dd><code>INTEGER uminus (a: INTEGER)</code></dd>
+ * <dd><code>INT uminus (a: INT)</code></dd>
  * <dd><code>LONG uminus (a: LONG)</code></dd>
  * <dd><code>DOUBLE uminus (a: DOUBLE)</code></dd>
  * <dd></dd>
@@ -48,7 +48,7 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
  * <dd>
  * <dl>
  * <dt><b>Parameters:</b></dt>
- * <dd><code>a: INTEGER</code> - value to be negated</dd>
+ * <dd><code>a: INT</code> - value to be negated</dd>
  * <dd><code>a: LONG</code> - value to be negated</dd>
  * <dd><code>a: DOUBLE</code> - value to be negated</dd>
  * <dt><b>Returns:</b></dt>
@@ -65,7 +65,7 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
 public class Uminus extends Greql2Function {
 	{
 		JValueType[][] x = { { JValueType.LONG, JValueType.LONG },
-				{ JValueType.INTEGER, JValueType.INTEGER },
+				{ JValueType.INT, JValueType.INT },
 				{ JValueType.DOUBLE, JValueType.DOUBLE } };
 		signatures = x;
 

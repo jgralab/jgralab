@@ -38,7 +38,7 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
  * 
  * <dl>
  * <dt><b>GReQL-signature</b></dt>
- * <dd><code>BOOLEAN equals(obj1:OBJECT, obj2:OBJECT)</code></dd>
+ * <dd><code>BOOL equals(obj1:OBJECT, obj2:OBJECT)</code></dd>
  * <dd>&nbsp;</dd>
  * <dd>This function can be used with the (=)-Operator: <code>obj1 = obj2</code>
  * </dd>
@@ -67,7 +67,7 @@ public class Equals extends Greql2Function {
 
 	{
 		JValueType[][] x = { { JValueType.OBJECT, JValueType.OBJECT,
-				JValueType.BOOLEAN } };
+				JValueType.BOOL } };
 		signatures = x;
 
 		description = "Return true, iff both objects are equal.";

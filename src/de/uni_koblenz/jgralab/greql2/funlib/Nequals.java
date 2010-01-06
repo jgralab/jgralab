@@ -34,7 +34,7 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
  * 
  * <dl>
  * <dt><b>GReQL-signature</b></dt>
- * <dd><code>BOOLEAN nequals(obj1:OBJECT, obj2:OBJECT)</code></dd>
+ * <dd><code>BOOL nequals(obj1:OBJECT, obj2:OBJECT)</code></dd>
  * <dd>This function can be used with the (&lt;&gt;)-Operator:
  * <code>obj1 &lt;&gt; obj2</code></dd>
  * <dd>&nbsp;</dd>

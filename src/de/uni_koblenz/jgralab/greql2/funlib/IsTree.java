@@ -44,7 +44,7 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
  * 
  * <dl>
  * <dt><b>GReQL-signature</b></dt>
- * <dd><code>BOOLEAN isTree()</code></dd>
+ * <dd><code>BOOL isTree()</code></dd>
  * <dd>&nbsp;</dd>
  * </dl>
  * <dl>
@@ -65,8 +65,8 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
 public class IsTree extends Greql2Function {
 
 	{
-		JValueType[][] x = { { JValueType.BOOLEAN },
-				{ JValueType.SUBGRAPH, JValueType.BOOLEAN } };
+		JValueType[][] x = { { JValueType.BOOL },
+				{ JValueType.SUBGRAPH, JValueType.BOOL } };
 		signatures = x;
 
 		description = "Return true if the current graph or subgraph is a tree.\n"

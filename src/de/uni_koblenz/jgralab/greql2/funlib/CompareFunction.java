@@ -22,8 +22,8 @@ public abstract class CompareFunction extends Greql2Function {
 
 	{
 		JValueType[][] x = {
-				{ JValueType.NUMBER, JValueType.NUMBER, JValueType.BOOLEAN },
-				{ JValueType.STRING, JValueType.STRING, JValueType.BOOLEAN } };
+				{ JValueType.NUMBER, JValueType.NUMBER, JValueType.BOOL },
+				{ JValueType.STRING, JValueType.STRING, JValueType.BOOL } };
 		signatures = x;
 
 		description = "Compare 2 number or strings, and return a boolean.";

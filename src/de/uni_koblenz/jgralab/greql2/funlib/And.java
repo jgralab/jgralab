@@ -33,7 +33,7 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
  * Returns the result of the logical operation <code>a and b</code>.
  * <dl>
  * <dt><b>GReQL-signature</b></dt>
- * <dd><code>BOOLEAN and(a:BOOLEAN, b:BOOLEAN)</code></dd>
+ * <dd><code>BOOL and(a:BOOL, b:BOOL)</code></dd>
  * <dd>&nbsp;</dd>
  * <dd>This function can be used in infix notation: <code>a and b</code></dd>
  * <dd>&nbsp;</dd>
@@ -43,8 +43,8 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
  * <dd>
  * <dl>
  * <dt><b>Parameters:</b></dt>
- * <dd><code>a: BOOLEAN</code> - first operand</dd>
- * <dd><code>b: BOOLEAN</code> - second operand</dd>
+ * <dd><code>a: BOOL</code> - first operand</dd>
+ * <dd><code>b: BOOL</code> - second operand</dd>
  * <dt><b>Returns:</b></dt>
  * <dd>the result of the logical operation <code>a and b</code> as defined
  * below:</dd>

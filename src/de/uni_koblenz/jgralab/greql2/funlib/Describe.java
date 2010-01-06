@@ -29,7 +29,7 @@ import de.uni_koblenz.jgralab.schema.AttributedElementClass;
  * 
  * <dl>
  * <dt><b>GReQL-signature</b></dt>
- * <dd><code>TUPLE describe(ae:ATTRIBUTEDELEMENT)</code></dd>
+ * <dd><code>TUPLE describe(ae:ATTRELEM)</code></dd>
  * <dd><code>TUPLE describe()</code></dd>
  * <dd>&nbsp;</dd>
  * </dl>
@@ -53,7 +53,7 @@ import de.uni_koblenz.jgralab.schema.AttributedElementClass;
 public class Describe extends Greql2Function {
 	{
 		JValueType[][] x = { { JValueType.COLLECTION },
-				{ JValueType.ATTRIBUTEDELEMENT, JValueType.COLLECTION } };
+				{ JValueType.ATTRELEM, JValueType.COLLECTION } };
 		signatures = x;
 
 		description = "Return a tuple (QName, ID, Attrs) describing the given attributed element.\n"

@@ -37,7 +37,7 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
  * Calculates the squareroot of a given scalar.
  * <dl>
  * <dt><b>GReQL-signature</b></dt>
- * <dd><code>DOUBLE squareRoot(a: INTEGER)</code></dd>
+ * <dd><code>DOUBLE squareRoot(a: INT)</code></dd>
  * <dd><code>DOUBLE squareRoot(a: LONG)</code></dd>
  * <dd><code>DOUBLE squareRoot(a: DOUBLE)</code></dd>
  * <dd>&nbsp;</dd>
@@ -47,7 +47,7 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
  * <dd>
  * <dl>
  * <dt><b>Parameters:</b></dt>
- * <dd><code>a: INTEGER</code> - value to calculate squareroot for</dd>
+ * <dd><code>a: INT</code> - value to calculate squareroot for</dd>
  * <dd><code>a: LONG</code> - value to calculate squareroot for</dd>
  * <dd><code>a: DOUBLE</code> - value to calculate squareroot for</dd>
  * <dt><b>Returns:</b></dt>

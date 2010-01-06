@@ -36,16 +36,16 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
  * a given string.
  * <dl>
  * <dt><b>GReQL-signature</b></dt>
- * <dd><code>INTEGER times(a: INTEGER, b: INTEGER)</code></dd>
- * <dd><code>LONG times(a: LONG, b: INTEGER)</code></dd>
- * <dd><code>LONG times(a: INTEGER, b: LONG)</code></dd>
+ * <dd><code>INT times(a: INT, b: INT)</code></dd>
+ * <dd><code>LONG times(a: LONG, b: INT)</code></dd>
+ * <dd><code>LONG times(a: INT, b: LONG)</code></dd>
  * <dd><code>LONG times(a: LONG, b: LONG)</code></dd>
- * <dd><code>DOUBLE times(a: DOUBLE, b: INTEGER)</code></dd>
+ * <dd><code>DOUBLE times(a: DOUBLE, b: INT)</code></dd>
  * <dd><code>DOUBLE times(a: DOUBLE, b: LONG)</code></dd>
- * <dd><code>DOUBLE times(a: INTEGER, b: DOUBLE)</code></dd>
+ * <dd><code>DOUBLE times(a: INT, b: DOUBLE)</code></dd>
  * <dd><code>DOUBLE times(a: LONG, b: DOUBLE)</code></dd>
  * <dd><code>DOUBLE times(a: DOUBLE, b: DOUBLE)</code></dd>
- * <dd><code>STRING times(s: STRING, n: INTEGER)</code></dd>
+ * <dd><code>STRING times(s: STRING, n: INT)</code></dd>
  * <dd><code>STRING times(s: STRING, n: LONG)</code></dd>
  * <dd>&nbsp;</dd>
  * <dd>This function can be used with the (*)-Operator: <code>a * b</code></dd>
@@ -56,14 +56,14 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
  * <dd>
  * <dl>
  * <dt><b>Parameters:</b></dt>
- * <dd><code>a: INTEGER</code> - left factor</dd>
+ * <dd><code>a: INT</code> - left factor</dd>
  * <dd><code>a: LONG</code> - left factor</dd>
  * <dd><code>a: DOUBLE</code> - left factor</dd>
- * <dd><code>b: INTEGER</code> - right factor</dd>
+ * <dd><code>b: INT</code> - right factor</dd>
  * <dd><code>b: LONG</code> - right factor</dd>
  * <dd><code>b: DOUBLE</code> - right factor</dd>
  * <dd><code>s: STRING</code> - string for n-fold concatenation
- * <dd><code>n: INTEGER</code> - amount of corcatenations
+ * <dd><code>n: INT</code> - amount of corcatenations
  * <dd><code>n: LONG</code> - amount of concatenations
  * <dt><b>Returns:</b></dt>
  * <dd>the product <code>a * b</code> or the n-fold concatenation
@@ -81,7 +81,7 @@ public class Times extends ArithmeticFunction {
 		JValueType[][] x = {
 				{ JValueType.DOUBLE, JValueType.DOUBLE, JValueType.DOUBLE },
 				{ JValueType.LONG, JValueType.LONG, JValueType.LONG },
-				{ JValueType.INTEGER, JValueType.INTEGER, JValueType.INTEGER },
+				{ JValueType.INT, JValueType.INT, JValueType.INT },
 				{ JValueType.STRING, JValueType.LONG, JValueType.STRING } };
 		signatures = x;
 

@@ -34,9 +34,9 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
  * values a and b.
  * <dl>
  * <dt><b>GReQL-signature</b></dt>
- * <dd><code>INTEGER modulo(a: INTEGER, b: INTEGER)</code></dd>
- * <dd><code>LONG modulo(a: INTEGER, b: LONG)</code>
- * <dd><code>LONG modulo(a: LONG, b: INTEGER)</code></dd>
+ * <dd><code>INT modulo(a: INT, b: INT)</code></dd>
+ * <dd><code>LONG modulo(a: INT, b: LONG)</code>
+ * <dd><code>LONG modulo(a: LONG, b: INT)</code></dd>
  * <dd><code>LONG modulo(a: LONG, b: LONG)</code></dd>
  * <dd>&nbsp;</dd>
  * <dd>This function can be used with the (%)-Operator: <code>a % b</code></dd>
@@ -46,9 +46,9 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
  * <dd>
  * <dl>
  * <dt><b>Parameters:</b></dt>
- * <dd><code>a: INTEGER</code> - dividend</dd>
+ * <dd><code>a: INT</code> - dividend</dd>
  * <dd><code>a: LONG</code> - dividend</dd>
- * <dd><code>b: INTEGER</code> - divisor</dd>
+ * <dd><code>b: INT</code> - divisor</dd>
  * <dd><code>b: LONG</code> - divisor</dd>
  * <dt><b>Returns:</b></dt>
  * <dd>the remainder of the integer-division <code>a / b</code></dd>

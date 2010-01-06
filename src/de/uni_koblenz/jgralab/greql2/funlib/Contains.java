@@ -43,9 +43,9 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
  * 
  * <dl>
  * <dt><b>GReQL-signature</b></dt>
- * <dd><code>BOOLEAN contains(c:COLLECTION, obj:OBJECT)</code></dd>
- * <dd><code>BOOLEAN contains(c:PATH, obj:ATTRIBUTEDELEMENT)</code></dd>
- * <dd><code>BOOLEAN contains(c:PATHSYSTEM, obj:ATTRIBUTEDELEMENT)</code></dd>
+ * <dd><code>BOOL contains(c:COLLECTION, obj:OBJECT)</code></dd>
+ * <dd><code>BOOL contains(c:PATH, obj:ATTRELEM)</code></dd>
+ * <dd><code>BOOL contains(c:PATHSYSTEM, obj:ATTRELEM)</code></dd>
  * <dd>&nbsp;</dd>
  * </dl>
  * <dl>
@@ -72,11 +72,11 @@ public class Contains extends Greql2Function {
 
 	{
 		JValueType[][] x = {
-				{ JValueType.COLLECTION, JValueType.OBJECT, JValueType.BOOLEAN },
-				{ JValueType.PATH, JValueType.ATTRIBUTEDELEMENT,
-						JValueType.BOOLEAN },
-				{ JValueType.PATHSYSTEM, JValueType.ATTRIBUTEDELEMENT,
-						JValueType.BOOLEAN } };
+				{ JValueType.COLLECTION, JValueType.OBJECT, JValueType.BOOL },
+				{ JValueType.PATH, JValueType.ATTRELEM,
+						JValueType.BOOL },
+				{ JValueType.PATHSYSTEM, JValueType.ATTRELEM,
+						JValueType.BOOL } };
 		signatures = x;
 
 		description = "Return true, iff the given collection/path/pathsystem contains the given element.";

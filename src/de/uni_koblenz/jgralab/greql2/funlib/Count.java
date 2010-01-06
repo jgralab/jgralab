@@ -62,9 +62,9 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
 public class Count extends Greql2Function {
 
 	{
-		JValueType[][] x = { { JValueType.COLLECTION, JValueType.INTEGER },
-				{ JValueType.OBJECT, JValueType.INTEGER },
-				{ JValueType.MAP, JValueType.INTEGER } };
+		JValueType[][] x = { { JValueType.COLLECTION, JValueType.INT },
+				{ JValueType.OBJECT, JValueType.INT },
+				{ JValueType.MAP, JValueType.INT } };
 		signatures = x;
 		description = "Return the number of elements in the given object.\n"
 				+ "If the object is not a collection or map, 1 is returned.\n"
