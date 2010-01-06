@@ -657,13 +657,15 @@ for some variable declared as
 
 (defun greql-doc-next (n)
   (interactive "p")
-  (and (search-forward "" nil t n)
-       (forward-line 1)))
+  (forward-line 1)
+  (re-search-forward "^Function `" nil t n)
+  (forward-line 0))
 
 (defun greql-doc-previous (n)
   (interactive "p")
-  (and (search-backward "" nil t (1+ n))
-       (forward-line 1)))
+  (forward-line -1)
+  (re-search-backward "^Function `" nil t n)
+  (forward-line 0))
 
 (define-derived-mode greql-doc-mode nil "GReQLDoc"
   "Mode used in *GReQL Documentation* buffers."
