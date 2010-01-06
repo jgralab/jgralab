@@ -68,13 +68,14 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
 public class EdgeTrace extends Greql2Function {
 
 	{
-		JValueType[][] x = { { JValueType.PATH } };
+		JValueType[][] x = { { JValueType.PATH, JValueType.COLLECTION } };
 		signatures = x;
 
 		description = "Return the edgetrace of the given path.\n"
 				+ "An edgetrace is a list of all edges of this path in correct order.";
 	}
 
+	@Override
 	public JValue evaluate(Graph graph, BooleanGraphMarker subgraph,
 			JValue[] arguments) throws EvaluateException {
 		if (checkArguments(arguments) == -1) {
@@ -91,14 +92,17 @@ public class EdgeTrace extends Greql2Function {
 		return resultList;
 	}
 
+	@Override
 	public long getEstimatedCosts(ArrayList<Long> inElements) {
 		return 10;
 	}
 
+	@Override
 	public double getSelectivity() {
 		return 1;
 	}
 
+	@Override
 	public long getEstimatedCardinality(int inElements) {
 		return 1;
 	}

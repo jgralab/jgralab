@@ -37,7 +37,7 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
  */
 public class EntrySet extends Greql2Function {
 	{
-		JValueType[][] x = { { JValueType.MAP } };
+		JValueType[][] x = { { JValueType.MAP, JValueType.COLLECTION } };
 		signatures = x;
 
 		description = "Return the entries of the given map as set of key-value tuples.";

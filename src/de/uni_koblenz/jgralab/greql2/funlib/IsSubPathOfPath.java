@@ -67,7 +67,8 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
 public class IsSubPathOfPath extends Greql2Function {
 
 	{
-		JValueType[][] x = { { JValueType.PATH, JValueType.PATH } };
+		JValueType[][] x = { { JValueType.PATH, JValueType.PATH,
+				JValueType.BOOLEAN } };
 		signatures = x;
 
 		description = "Return true, iff the first path is a subpath of the second path.\n"

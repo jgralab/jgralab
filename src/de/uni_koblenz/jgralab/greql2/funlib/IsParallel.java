@@ -64,7 +64,8 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
 
 public class IsParallel extends Greql2Function {
 	{
-		JValueType[][] x = { { JValueType.PATH, JValueType.PATH } };
+		JValueType[][] x = { { JValueType.PATH, JValueType.PATH,
+				JValueType.BOOLEAN } };
 		signatures = x;
 
 		description = "Return true, iff two given paths are parallel.\n"

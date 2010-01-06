@@ -64,7 +64,7 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
 
 public class NodeTrace extends Greql2Function {
 	{
-		JValueType[][] x = { { JValueType.PATH } };
+		JValueType[][] x = { { JValueType.PATH, JValueType.COLLECTION } };
 		signatures = x;
 
 		description = "Return the nodetrace of the given path.\n"

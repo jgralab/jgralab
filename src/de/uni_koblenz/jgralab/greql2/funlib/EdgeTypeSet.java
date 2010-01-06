@@ -67,13 +67,15 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
 public class EdgeTypeSet extends Greql2Function {
 
 	{
-		JValueType[][] x = { { JValueType.COLLECTION }, { JValueType.PATH },
-				{ JValueType.PATHSYSTEM } };
+		JValueType[][] x = { { JValueType.COLLECTION, JValueType.COLLECTION },
+				{ JValueType.PATH, JValueType.COLLECTION },
+				{ JValueType.PATHSYSTEM, JValueType.COLLECTION } };
 		signatures = x;
 
 		description = "Return a set of all edge-types that occure in the given structure.";
 	}
 
+	@Override
 	public JValue evaluate(Graph graph, BooleanGraphMarker subgraph,
 			JValue[] arguments) throws EvaluateException {
 		switch (checkArguments(arguments)) {
@@ -96,14 +98,17 @@ public class EdgeTypeSet extends Greql2Function {
 		}
 	}
 
+	@Override
 	public long getEstimatedCosts(ArrayList<Long> inElements) {
 		return 45;
 	}
 
+	@Override
 	public double getSelectivity() {
 		return 1;
 	}
 
+	@Override
 	public long getEstimatedCardinality(int inElements) {
 		return 100;
 	}

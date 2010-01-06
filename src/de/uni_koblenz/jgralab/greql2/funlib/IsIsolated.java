@@ -63,7 +63,7 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
 
 public class IsIsolated extends Greql2Function {
 	{
-		JValueType[][] x = { { JValueType.VERTEX } };
+		JValueType[][] x = { { JValueType.VERTEX, JValueType.BOOLEAN } };
 		signatures = x;
 
 		description = "Return true, iff the given vertex is isolated.\n"

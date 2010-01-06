@@ -24,12 +24,13 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueTypeCollection;
 public abstract class DegreeFunction extends Greql2Function {
 	{
 		JValueType[][] x = {
-				{ JValueType.VERTEX },
-				{ JValueType.VERTEX, JValueType.TYPECOLLECTION },
-				{ JValueType.VERTEX, JValueType.PATH },
-				{ JValueType.VERTEX, JValueType.PATHSYSTEM },
+				{ JValueType.VERTEX, JValueType.INTEGER },
+				{ JValueType.VERTEX, JValueType.TYPECOLLECTION,
+						JValueType.INTEGER },
+				{ JValueType.VERTEX, JValueType.PATH, JValueType.INTEGER },
+				{ JValueType.VERTEX, JValueType.PATHSYSTEM, JValueType.INTEGER },
 				{ JValueType.VERTEX, JValueType.PATHSYSTEM,
-						JValueType.TYPECOLLECTION } };
+						JValueType.TYPECOLLECTION, JValueType.INTEGER } };
 		signatures = x;
 	}
 

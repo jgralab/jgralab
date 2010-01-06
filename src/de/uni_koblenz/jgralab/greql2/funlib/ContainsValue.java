@@ -62,7 +62,8 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
  */
 public class ContainsValue extends Greql2Function {
 	{
-		JValueType[][] x = { { JValueType.MAP, JValueType.OBJECT } };
+		JValueType[][] x = { { JValueType.MAP, JValueType.OBJECT,
+				JValueType.BOOLEAN } };
 		signatures = x;
 
 		description = "Return true, iff the given map contains the given element as value.";

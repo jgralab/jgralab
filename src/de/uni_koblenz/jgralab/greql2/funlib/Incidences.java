@@ -27,10 +27,13 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueTypeCollection;
 public abstract class Incidences extends Greql2Function {
 
 	{
-		JValueType[][] x = { { JValueType.VERTEX },
-				{ JValueType.VERTEX, JValueType.PATH },
-				{ JValueType.VERTEX, JValueType.PATHSYSTEM },
-				{ JValueType.VERTEX, JValueType.TYPECOLLECTION }, };
+		JValueType[][] x = {
+				{ JValueType.VERTEX, JValueType.COLLECTION },
+				{ JValueType.VERTEX, JValueType.PATH, JValueType.COLLECTION },
+				{ JValueType.VERTEX, JValueType.PATHSYSTEM,
+						JValueType.COLLECTION },
+				{ JValueType.VERTEX, JValueType.TYPECOLLECTION,
+						JValueType.COLLECTION }, };
 		signatures = x;
 	}
 

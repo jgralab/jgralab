@@ -77,8 +77,10 @@ public class IsReachable extends Greql2Function {
 
 	{
 		JValueType[][] x = {
-				{ JValueType.VERTEX, JValueType.VERTEX, JValueType.DFA },
-				{ JValueType.VERTEX, JValueType.VERTEX, JValueType.NFA } };
+				{ JValueType.VERTEX, JValueType.VERTEX, JValueType.DFA,
+						JValueType.BOOLEAN },
+				{ JValueType.VERTEX, JValueType.VERTEX, JValueType.NFA,
+						JValueType.BOOLEAN } };
 		signatures = x;
 
 		description = "Return true, iff there is a path from the first to the second vertex.\n"

@@ -64,8 +64,8 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
  */
 public class IsPrime extends Greql2Function {
 	{
-		JValueType[][] x = { { JValueType.LONG },
-				{ JValueType.LONG, JValueType.INTEGER } };
+		JValueType[][] x = { { JValueType.LONG, JValueType.BOOLEAN },
+				{ JValueType.LONG, JValueType.INTEGER, JValueType.BOOLEAN } };
 		signatures = x;
 
 		description = "Return true, if the given number is a prime number.\n"

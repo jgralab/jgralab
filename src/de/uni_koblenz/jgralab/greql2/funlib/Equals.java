@@ -66,7 +66,8 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
 public class Equals extends Greql2Function {
 
 	{
-		JValueType[][] x = { { JValueType.OBJECT, JValueType.OBJECT } };
+		JValueType[][] x = { { JValueType.OBJECT, JValueType.OBJECT,
+				JValueType.BOOLEAN } };
 		signatures = x;
 
 		description = "Return true, iff both objects are equal.";
@@ -75,6 +76,7 @@ public class Equals extends Greql2Function {
 	/**
 	 * checks if the two function parameters are semanticly identical
 	 */
+	@Override
 	public JValue evaluate(Graph graph, BooleanGraphMarker subgraph,
 			JValue[] arguments) throws EvaluateException {
 		if (checkArguments(arguments) == -1) {
@@ -83,14 +85,17 @@ public class Equals extends Greql2Function {
 		return new JValue(arguments[0].equals(arguments[1]));
 	}
 
+	@Override
 	public long getEstimatedCosts(ArrayList<Long> inElements) {
 		return 2;
 	}
 
+	@Override
 	public double getSelectivity() {
 		return 0.05;
 	}
 
+	@Override
 	public long getEstimatedCardinality(int inElements) {
 		return 1;
 	}

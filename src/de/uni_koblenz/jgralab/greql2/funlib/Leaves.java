@@ -64,7 +64,7 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
 public class Leaves extends Greql2Function {
 
 	{
-		JValueType[][] x = { { JValueType.PATHSYSTEM } };
+		JValueType[][] x = { { JValueType.PATHSYSTEM, JValueType.COLLECTION } };
 		signatures = x;
 
 		description = "Return a set of all leaves of the given pathsystem.\n"

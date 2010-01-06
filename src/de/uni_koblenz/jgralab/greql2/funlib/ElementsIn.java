@@ -68,13 +68,15 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
 public class ElementsIn extends Greql2Function {
 
 	{
-		JValueType[][] x = { { JValueType.COLLECTION }, { JValueType.PATH },
-				{ JValueType.PATHSYSTEM } };
+		JValueType[][] x = { { JValueType.COLLECTION, JValueType.COLLECTION },
+				{ JValueType.PATH, JValueType.COLLECTION },
+				{ JValueType.PATHSYSTEM, JValueType.COLLECTION } };
 		signatures = x;
 
 		description = "Return the set of elements that are part of the given structure.";
 	}
 
+	@Override
 	public JValue evaluate(Graph graph, BooleanGraphMarker subgraph,
 			JValue[] arguments) throws EvaluateException {
 		JValueSet set = new JValueSet();
@@ -117,14 +119,17 @@ public class ElementsIn extends Greql2Function {
 		return set;
 	}
 
+	@Override
 	public long getEstimatedCosts(ArrayList<Long> inElements) {
 		return inElements.get(0) * 2;
 	}
 
+	@Override
 	public double getSelectivity() {
 		return 0.1;
 	}
 
+	@Override
 	public long getEstimatedCardinality(int inElements) {
 		return inElements / 10;
 	}

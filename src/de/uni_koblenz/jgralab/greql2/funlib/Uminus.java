@@ -64,8 +64,9 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
 
 public class Uminus extends Greql2Function {
 	{
-		JValueType[][] x = { { JValueType.LONG }, { JValueType.INTEGER },
-				{ JValueType.DOUBLE } };
+		JValueType[][] x = { { JValueType.LONG, JValueType.LONG },
+				{ JValueType.INTEGER, JValueType.INTEGER },
+				{ JValueType.DOUBLE, JValueType.DOUBLE } };
 		signatures = x;
 
 		description = "Return (-1 * givenNumber).";

@@ -60,7 +60,8 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueTypeCollection;
 
 public class FirstVertex extends Greql2Function {
 	{
-		JValueType[][] x = { {}, { JValueType.TYPECOLLECTION } };
+		JValueType[][] x = { { JValueType.VERTEX },
+				{ JValueType.TYPECOLLECTION, JValueType.VERTEX } };
 		signatures = x;
 
 		description = "Return the 1st vertex (of optionally given type) in the graph.";

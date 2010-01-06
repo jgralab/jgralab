@@ -60,7 +60,8 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
  */
 public class Get extends Greql2Function {
 	{
-		JValueType[][] x = { { JValueType.MAP, JValueType.OBJECT } };
+		JValueType[][] x = { { JValueType.MAP, JValueType.OBJECT,
+				JValueType.OBJECT } };
 		signatures = x;
 
 		description = "Return the given map's value associated with the given key.";

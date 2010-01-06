@@ -63,7 +63,7 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
 public class IsLoop extends Greql2Function {
 
 	{
-		JValueType[][] x = { { JValueType.EDGE } };
+		JValueType[][] x = { { JValueType.EDGE, JValueType.BOOLEAN } };
 		signatures = x;
 
 		description = "Return true, iff the given edge is a loop.\n"

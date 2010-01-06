@@ -45,7 +45,6 @@ import org.apache.commons.cli.OptionGroup;
 import de.uni_koblenz.ist.utilities.option_handler.OptionHandler;
 import de.uni_koblenz.jgralab.JGraLab;
 import de.uni_koblenz.jgralab.greql2.exception.DuplicateGreqlFunctionException;
-import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
 
 /**
  * This class is the core of the function libary. It's implemented following the
@@ -255,14 +254,16 @@ public class Greql2FunctionLibrary {
 			sb.append(". ");
 			sb.append(functionName);
 			sb.append("(");
-			for (JValueType t : afun.signatures[i]) {
+			for (int j = 0; j < afun.signatures[i].length - 1; j++) {
 				if (!first) {
 					sb.append(", ");
 				}
 				first = false;
-				sb.append(t.toString());
+				sb.append(afun.signatures[i][j]);
 			}
-			sb.append(")\n");
+			sb.append(") : ");
+			sb.append(afun.signatures[i][afun.signatures[i].length - 1]);
+			sb.append('\n');
 		}
 		return sb.toString();
 	}

@@ -47,7 +47,8 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
 public class TopologicalSort extends Greql2Function {
 
 	{
-		JValueType[][] x = { {}, { JValueType.SUBGRAPHTEMPATTRIBUTE } };
+		JValueType[][] x = { { JValueType.COLLECTION },
+				{ JValueType.SUBGRAPH, JValueType.COLLECTION } };
 		signatures = x;
 
 		description = "Return a list of vertices in topological ordering.\n"

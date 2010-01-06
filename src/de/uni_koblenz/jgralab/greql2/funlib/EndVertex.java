@@ -63,7 +63,8 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
 public class EndVertex extends Greql2Function {
 
 	{
-		JValueType[][] x = { { JValueType.EDGE }, { JValueType.PATH } };
+		JValueType[][] x = { { JValueType.EDGE, JValueType.VERTEX },
+				{ JValueType.PATH, JValueType.VERTEX } };
 		signatures = x;
 
 		description = "Return the end-vertex of the given edge or path.";

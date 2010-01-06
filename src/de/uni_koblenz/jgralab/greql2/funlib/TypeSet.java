@@ -64,8 +64,9 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
 public class TypeSet extends Greql2Function {
 
 	{
-		JValueType[][] x = { { JValueType.COLLECTION }, { JValueType.PATH },
-				{ JValueType.PATHSYSTEM } };
+		JValueType[][] x = { { JValueType.COLLECTION, JValueType.COLLECTION },
+				{ JValueType.PATH, JValueType.COLLECTION },
+				{ JValueType.PATHSYSTEM, JValueType.COLLECTION } };
 		signatures = x;
 
 		description = "Return a set of all types that occure in the given structure.";

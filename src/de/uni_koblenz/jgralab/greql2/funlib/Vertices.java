@@ -70,9 +70,9 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueTypeCollection;
 public class Vertices extends Greql2Function {
 	{
 		JValueType[][] x = {
-				{ JValueType.VERTEX, JValueType.VERTEX },
+				{ JValueType.VERTEX, JValueType.VERTEX, JValueType.COLLECTION },
 				{ JValueType.VERTEX, JValueType.VERTEX,
-						JValueType.TYPECOLLECTION } };
+						JValueType.TYPECOLLECTION, JValueType.COLLECTION } };
 		signatures = x;
 
 		description = "Return a part of the global vertex sequence from v1 to v2.\n"

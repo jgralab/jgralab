@@ -71,14 +71,18 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
 public class Contains extends Greql2Function {
 
 	{
-		JValueType[][] x = { { JValueType.COLLECTION, JValueType.OBJECT },
-				{ JValueType.PATH, JValueType.ATTRIBUTEDELEMENT },
-				{ JValueType.PATHSYSTEM, JValueType.ATTRIBUTEDELEMENT } };
+		JValueType[][] x = {
+				{ JValueType.COLLECTION, JValueType.OBJECT, JValueType.BOOLEAN },
+				{ JValueType.PATH, JValueType.ATTRIBUTEDELEMENT,
+						JValueType.BOOLEAN },
+				{ JValueType.PATHSYSTEM, JValueType.ATTRIBUTEDELEMENT,
+						JValueType.BOOLEAN } };
 		signatures = x;
 
 		description = "Return true, iff the given collection/path/pathsystem contains the given element.";
 	}
 
+	@Override
 	public JValue evaluate(Graph graph, BooleanGraphMarker subgraph,
 			JValue[] arguments) throws EvaluateException {
 
@@ -99,14 +103,17 @@ public class Contains extends Greql2Function {
 		}
 	}
 
+	@Override
 	public long getEstimatedCosts(ArrayList<Long> inElements) {
 		return 2;
 	}
 
+	@Override
 	public double getSelectivity() {
 		return 0.2;
 	}
 
+	@Override
 	public long getEstimatedCardinality(int inElements) {
 		return 1;
 	}

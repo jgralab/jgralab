@@ -80,10 +80,11 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
 
 public class Plus extends ArithmeticFunction {
 	{
-		JValueType[][] x = { { JValueType.DOUBLE, JValueType.DOUBLE },
-				{ JValueType.LONG, JValueType.LONG },
-				{ JValueType.INTEGER, JValueType.INTEGER },
-				{ JValueType.STRING, JValueType.STRING } };
+		JValueType[][] x = {
+				{ JValueType.DOUBLE, JValueType.DOUBLE, JValueType.DOUBLE },
+				{ JValueType.LONG, JValueType.LONG, JValueType.LONG },
+				{ JValueType.INTEGER, JValueType.INTEGER, JValueType.INTEGER },
+				{ JValueType.STRING, JValueType.STRING, JValueType.STRING } };
 		signatures = x;
 
 		description = "Add the given 2 numbers or concatenate the given 2 strings.";

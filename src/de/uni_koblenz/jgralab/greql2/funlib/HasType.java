@@ -72,10 +72,12 @@ import de.uni_koblenz.jgralab.schema.AttributedElementClass;
 public class HasType extends Greql2Function {
 	{
 		JValueType[][] x = {
-				{ JValueType.ATTRIBUTEDELEMENT, JValueType.STRING },
+				{ JValueType.ATTRIBUTEDELEMENT, JValueType.STRING,
+						JValueType.BOOLEAN },
 				{ JValueType.ATTRIBUTEDELEMENT,
-						JValueType.ATTRIBUTEDELEMENTCLASS },
-				{ JValueType.ATTRIBUTEDELEMENT, JValueType.TYPECOLLECTION } };
+						JValueType.ATTRIBUTEDELEMENTCLASS, JValueType.BOOLEAN },
+				{ JValueType.ATTRIBUTEDELEMENT, JValueType.TYPECOLLECTION,
+						JValueType.BOOLEAN } };
 		signatures = x;
 
 		description = "Checks if the given AttrElem has the given type.\n"

@@ -69,7 +69,8 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
 
 public class Intersection extends Greql2Function {
 	{
-		JValueType[][] x = { { JValueType.COLLECTION, JValueType.COLLECTION } };
+		JValueType[][] x = { { JValueType.COLLECTION, JValueType.COLLECTION,
+				JValueType.COLLECTION } };
 		signatures = x;
 
 		description = "Return the intersection of two given collections.\n"

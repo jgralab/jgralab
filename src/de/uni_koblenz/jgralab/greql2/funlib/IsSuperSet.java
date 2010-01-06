@@ -67,7 +67,8 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
  */
 public class IsSuperSet extends Greql2Function {
 	{
-		JValueType[][] x = { { JValueType.COLLECTION, JValueType.COLLECTION } };
+		JValueType[][] x = { { JValueType.COLLECTION, JValueType.COLLECTION,
+				JValueType.BOOLEAN } };
 		signatures = x;
 
 		description = "Return true, iff the first collection is a superset of the second collection.\n"

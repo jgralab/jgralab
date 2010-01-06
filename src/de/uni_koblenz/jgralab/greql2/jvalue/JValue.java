@@ -131,7 +131,7 @@ public class JValue implements Comparable<JValue> {
 		case TRANSITION:
 			v.visitTransition(this);
 			return;
-		case SUBGRAPHTEMPATTRIBUTE:
+		case SUBGRAPH:
 			v.visitSubgraph(this);
 			return;
 		case VERTEX:
@@ -635,12 +635,7 @@ public class JValue implements Comparable<JValue> {
 			assert value != null : "JValue.type is null, but value is " + value;
 			return "null";
 		}
-		switch (type) {
-		case STRING:
-			return "\"" + value + "\"";
-		default:
-			return (value != null) ? value.toString() : "null";
-		}
+		return (value != null) ? value.toString() : "null";
 	}
 
 	/**
@@ -1006,7 +1001,7 @@ public class JValue implements Comparable<JValue> {
 	 * constructs a new invalid JValue. Is only called in subclasses
 	 */
 	public JValue(BooleanGraphMarker t) {
-		type = JValueType.SUBGRAPHTEMPATTRIBUTE;
+		type = JValueType.SUBGRAPH;
 		value = t;
 		browsingInfo = null;
 	}
@@ -1023,7 +1018,7 @@ public class JValue implements Comparable<JValue> {
 	 * @return true if this JValue encapsulates a boolean value, false otherwise
 	 */
 	public boolean isSubgraphTempAttribute() {
-		return (type == JValueType.SUBGRAPHTEMPATTRIBUTE);
+		return (type == JValueType.SUBGRAPH);
 	}
 
 	/**
@@ -1036,8 +1031,7 @@ public class JValue implements Comparable<JValue> {
 		if (isSubgraphTempAttribute()) {
 			return (BooleanGraphMarker) value;
 		}
-		throw new JValueInvalidTypeException(JValueType.SUBGRAPHTEMPATTRIBUTE,
-				type);
+		throw new JValueInvalidTypeException(JValueType.SUBGRAPH, type);
 	}
 
 	/**

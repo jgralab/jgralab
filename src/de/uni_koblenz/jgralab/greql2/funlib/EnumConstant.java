@@ -64,7 +64,8 @@ import de.uni_koblenz.jgralab.schema.Schema;
 public class EnumConstant extends Greql2Function {
 
 	{
-		JValueType[][] x = { { JValueType.STRING, JValueType.STRING } };
+		JValueType[][] x = { { JValueType.STRING, JValueType.STRING,
+				JValueType.ENUMVALUE } };
 		signatures = x;
 
 		description = "Return the enum literal specified by enum type name and literal name.";

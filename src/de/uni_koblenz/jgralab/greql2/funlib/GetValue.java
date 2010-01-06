@@ -67,8 +67,9 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
 public class GetValue extends Greql2Function {
 	{
 		JValueType[][] x = {
-				{ JValueType.ATTRIBUTEDELEMENT, JValueType.STRING },
-				{ JValueType.RECORD, JValueType.STRING } };
+				{ JValueType.ATTRIBUTEDELEMENT, JValueType.STRING,
+						JValueType.OBJECT },
+				{ JValueType.RECORD, JValueType.STRING, JValueType.OBJECT } };
 		signatures = x;
 
 		description = "Return the value of the given AttrElem's or Record's attribute or component.\n"

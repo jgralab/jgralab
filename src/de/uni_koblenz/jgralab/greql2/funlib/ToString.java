@@ -58,7 +58,7 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
  */
 public class ToString extends Greql2Function {
 	{
-		JValueType[][] x = { { JValueType.OBJECT } };
+		JValueType[][] x = { { JValueType.OBJECT, JValueType.STRING } };
 		signatures = x;
 
 		description = "Return the toString() output of the given object.";

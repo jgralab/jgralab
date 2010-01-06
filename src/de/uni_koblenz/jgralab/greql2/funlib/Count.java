@@ -62,14 +62,16 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
 public class Count extends Greql2Function {
 
 	{
-		JValueType[][] x = { { JValueType.COLLECTION }, { JValueType.OBJECT },
-				{ JValueType.MAP } };
+		JValueType[][] x = { { JValueType.COLLECTION, JValueType.INTEGER },
+				{ JValueType.OBJECT, JValueType.INTEGER },
+				{ JValueType.MAP, JValueType.INTEGER } };
 		signatures = x;
 		description = "Return the number of elements in the given object.\n"
 				+ "If the object is not a collection or map, 1 is returned.\n"
 				+ "For a map the number of entries is returned.";
 	}
 
+	@Override
 	public JValue evaluate(Graph graph, BooleanGraphMarker subgraph,
 			JValue[] arguments) throws EvaluateException {
 		JValue result = null;
@@ -89,14 +91,17 @@ public class Count extends Greql2Function {
 		return result;
 	}
 
+	@Override
 	public long getEstimatedCosts(ArrayList<Long> inElements) {
 		return 2;
 	}
 
+	@Override
 	public double getSelectivity() {
 		return 1;
 	}
 
+	@Override
 	public long getEstimatedCardinality(int inElements) {
 		return 1;
 	}

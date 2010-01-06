@@ -84,8 +84,9 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
 public class PathSystem extends Greql2Function {
 
 	{
-		JValueType[][] x = { { JValueType.VERTEX, JValueType.DFA },
-				{ JValueType.VERTEX, JValueType.NFA } };
+		JValueType[][] x = {
+				{ JValueType.VERTEX, JValueType.DFA, JValueType.PATHSYSTEM },
+				{ JValueType.VERTEX, JValueType.NFA, JValueType.PATHSYSTEM } };
 		signatures = x;
 
 		description = "Return a pathsystem with root vertex and structured according path description.";

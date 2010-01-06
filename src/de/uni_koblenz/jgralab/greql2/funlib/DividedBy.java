@@ -28,6 +28,7 @@ import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.graphmarker.BooleanGraphMarker;
 import de.uni_koblenz.jgralab.greql2.exception.EvaluateException;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
+import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
 
 /**
  * Calculates the quotient (a/b) for given scalar values a and b. The quotient
@@ -69,7 +70,15 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
  */
 
 public class DividedBy extends ArithmeticFunction {
+	{
+		JValueType[][] x = {
+				{ JValueType.DOUBLE, JValueType.DOUBLE, JValueType.DOUBLE },
+				{ JValueType.LONG, JValueType.LONG, JValueType.DOUBLE },
+				{ JValueType.INTEGER, JValueType.INTEGER, JValueType.DOUBLE } };
+		signatures = x;
+	}
 
+	@Override
 	public JValue evaluate(Graph graph, BooleanGraphMarker subgraph,
 			JValue[] arguments) throws EvaluateException {
 		return evaluate(arguments, ArithmeticOperator.DIV);

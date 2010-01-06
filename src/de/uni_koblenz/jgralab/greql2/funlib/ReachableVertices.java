@@ -74,9 +74,9 @@ public class ReachableVertices extends Greql2Function {
 
 	{
 		JValueType[][] x = {
-				{ JValueType.VERTEX, JValueType.DFA },
-				{ JValueType.VERTEX, JValueType.DFA,
-						JValueType.SUBGRAPHTEMPATTRIBUTE } };
+				{ JValueType.VERTEX, JValueType.DFA, JValueType.COLLECTION },
+				{ JValueType.VERTEX, JValueType.DFA, JValueType.SUBGRAPH,
+						JValueType.COLLECTION } };
 		signatures = x;
 
 		description = "Return all vertices that are reachable from vertex with path description.";

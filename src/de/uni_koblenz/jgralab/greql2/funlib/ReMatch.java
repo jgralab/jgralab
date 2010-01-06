@@ -66,7 +66,8 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
 
 public class ReMatch extends Greql2Function {
 	{
-		JValueType[][] x = { { JValueType.STRING, JValueType.STRING } };
+		JValueType[][] x = { { JValueType.STRING, JValueType.STRING,
+				JValueType.BOOLEAN } };
 		signatures = x;
 
 		description = "Return true, iff the given string matches the given regular expression.\n"

@@ -67,7 +67,8 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
 public class Parent extends Greql2Function {
 
 	{
-		JValueType[][] x = { { JValueType.PATHSYSTEM, JValueType.VERTEX } };
+		JValueType[][] x = { { JValueType.PATHSYSTEM, JValueType.VERTEX,
+				JValueType.VERTEX } };
 		signatures = x;
 
 		description = "Return the parent-vertex of the given vertex in the given pathsystem.\n"

@@ -30,7 +30,7 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
  */
 public class GetGraph extends Greql2Function {
 	{
-		JValueType[][] x = { {} };
+		JValueType[][] x = { { JValueType.GRAPH } };
 		signatures = x;
 
 		description = "Return the graph the query is evaluated on.";

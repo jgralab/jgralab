@@ -83,10 +83,11 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
 public class Slice extends Greql2Function {
 
 	{
-		JValueType[][] x = { { JValueType.COLLECTION, JValueType.DFA },
-				{ JValueType.COLLECTION, JValueType.NFA },
-				{ JValueType.VERTEX, JValueType.DFA },
-				{ JValueType.VERTEX, JValueType.NFA } };
+		JValueType[][] x = {
+				{ JValueType.COLLECTION, JValueType.DFA, JValueType.SLICE },
+				{ JValueType.COLLECTION, JValueType.NFA, JValueType.SLICE },
+				{ JValueType.VERTEX, JValueType.DFA, JValueType.SLICE },
+				{ JValueType.VERTEX, JValueType.NFA, JValueType.SLICE } };
 		signatures = x;
 
 		description = "Return a slice, starting at root(s) and structured according path description.";

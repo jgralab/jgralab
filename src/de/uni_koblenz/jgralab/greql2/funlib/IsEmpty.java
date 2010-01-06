@@ -38,7 +38,8 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
  */
 public class IsEmpty extends Greql2Function {
 	{
-		JValueType[][] x = { { JValueType.COLLECTION }, { JValueType.MAP } };
+		JValueType[][] x = { { JValueType.COLLECTION, JValueType.BOOLEAN },
+				{ JValueType.MAP, JValueType.BOOLEAN } };
 		signatures = x;
 
 		description = "Return true, iff the given collection or map is empty.";

@@ -64,7 +64,8 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
 
 public class PathConcat extends Greql2Function {
 	{
-		JValueType[][] x = { { JValueType.PATH, JValueType.PATH } };
+		JValueType[][] x = { { JValueType.PATH, JValueType.PATH,
+				JValueType.PATH } };
 		signatures = x;
 
 		description = "Return the concatenation of two given paths.\n"

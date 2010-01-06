@@ -52,7 +52,8 @@ import de.uni_koblenz.jgralab.schema.AttributedElementClass;
  */
 public class Describe extends Greql2Function {
 	{
-		JValueType[][] x = { {}, { JValueType.ATTRIBUTEDELEMENT } };
+		JValueType[][] x = { { JValueType.COLLECTION },
+				{ JValueType.ATTRIBUTEDELEMENT, JValueType.COLLECTION } };
 		signatures = x;
 
 		description = "Return a tuple (QName, ID, Attrs) describing the given attributed element.\n"

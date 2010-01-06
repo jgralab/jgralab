@@ -34,7 +34,7 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
  */
 public class Values extends Greql2Function {
 	{
-		JValueType[][] x = { { JValueType.MAP } };
+		JValueType[][] x = { { JValueType.MAP, JValueType.COLLECTION } };
 		signatures = x;
 
 		description = "Return the bag of values of the given map.";

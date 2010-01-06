@@ -69,8 +69,10 @@ public class HasAttribute extends Greql2Function {
 
 	{
 		JValueType[][] x = {
-				{ JValueType.ATTRIBUTEDELEMENT, JValueType.STRING },
-				{ JValueType.ATTRIBUTEDELEMENTCLASS, JValueType.STRING } };
+				{ JValueType.ATTRIBUTEDELEMENT, JValueType.STRING,
+						JValueType.BOOLEAN },
+				{ JValueType.ATTRIBUTEDELEMENTCLASS, JValueType.STRING,
+						JValueType.BOOLEAN } };
 		signatures = x;
 
 		description = "Return true, iff the given AttrElem has an attribute with the given name.";
