@@ -32,6 +32,9 @@ public abstract class DegreeFunction extends Greql2Function {
 				{ JValueType.VERTEX, JValueType.PATHSYSTEM,
 						JValueType.TYPECOLLECTION, JValueType.INTEGER } };
 		signatures = x;
+
+		Category[] c = { Category.GRAPH };
+		categories = c;
 	}
 
 	public JValue evaluate(BooleanGraphMarker subgraph, JValue[] arguments,

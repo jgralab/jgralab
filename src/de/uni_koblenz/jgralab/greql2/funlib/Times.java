@@ -86,6 +86,9 @@ public class Times extends ArithmeticFunction {
 		signatures = x;
 
 		description = "Multiply the given two numbers, or concat the given string many times.";
+
+		Category[] c = { Category.ARITHMETICAL, Category.STRINGS };
+		categories = c;
 	}
 
 	@Override

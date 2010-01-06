@@ -96,6 +96,9 @@ public class Union extends Greql2Function {
 				+ "disjoint.  If not, the 2nd map's entries override the 1st one's.\n"
 				+ "If only a collection of collections is given, return the union of\n"
 				+ "all member collections.";
+
+		Category[] c = { Category.COLLECTIONS_AND_MAPS };
+		categories = c;
 	}
 
 	@Override

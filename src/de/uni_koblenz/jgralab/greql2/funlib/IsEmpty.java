@@ -43,6 +43,9 @@ public class IsEmpty extends Greql2Function {
 		signatures = x;
 
 		description = "Return true, iff the given collection or map is empty.";
+
+		Category[] c = { Category.COLLECTIONS_AND_MAPS };
+		categories = c;
 	}
 
 	@Override

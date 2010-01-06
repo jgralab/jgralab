@@ -73,6 +73,9 @@ public class EdgeTypeSet extends Greql2Function {
 		signatures = x;
 
 		description = "Return a set of all edge-types that occure in the given structure.";
+
+		Category[] c = { Category.SCHEMA_ACCESS };
+		categories = c;
 	}
 
 	@Override

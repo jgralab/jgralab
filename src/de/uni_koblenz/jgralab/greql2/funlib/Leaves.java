@@ -70,6 +70,9 @@ public class Leaves extends Greql2Function {
 		description = "Return a set of all leaves of the given pathsystem.\n"
 				+ "Leaves are all vertices besides the inner nodes of the pathsystem. That\n"
 				+ "means, all vertices, that are an end of a path.";
+
+		Category[] c = { Category.PATHS_AND_PATHSYSTEMS };
+		categories = c;
 	}
 
 	@Override

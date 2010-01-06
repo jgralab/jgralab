@@ -70,6 +70,9 @@ public class Uminus extends Greql2Function {
 		signatures = x;
 
 		description = "Return (-1 * givenNumber).";
+
+		Category[] c = { Category.ARITHMETICAL };
+		categories = c;
 	}
 
 	@Override

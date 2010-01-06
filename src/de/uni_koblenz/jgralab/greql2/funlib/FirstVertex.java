@@ -65,6 +65,9 @@ public class FirstVertex extends Greql2Function {
 		signatures = x;
 
 		description = "Return the 1st vertex (of optionally given type) in the graph.";
+
+		Category[] c = { Category.GRAPH };
+		categories = c;
 	}
 
 	@Override

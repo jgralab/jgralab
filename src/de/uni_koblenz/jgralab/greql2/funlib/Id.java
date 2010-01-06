@@ -69,6 +69,9 @@ public class Id extends Greql2Function {
 		signatures = x;
 
 		description = "Return the id of the given vertex or edge.";
+
+		Category[] c = { Category.GRAPH };
+		categories = c;
 	}
 
 	@Override

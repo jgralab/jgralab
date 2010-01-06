@@ -65,6 +65,9 @@ public class GetEdge extends Greql2Function {
 		signatures = x;
 
 		description = "Return the edge with the given id.";
+
+		Category[] c = { Category.GRAPH };
+		categories = c;
 	}
 
 	@Override

@@ -27,6 +27,9 @@ public abstract class CompareFunction extends Greql2Function {
 		signatures = x;
 
 		description = "Compare 2 number or strings, and return a boolean.";
+
+		Category[] c = { Category.COMPARISONS };
+		categories = c;
 	}
 
 	public JValue evaluate(JValue[] arguments, CompareOperator op)

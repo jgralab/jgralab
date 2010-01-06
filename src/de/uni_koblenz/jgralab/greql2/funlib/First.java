@@ -69,6 +69,9 @@ public class First extends Greql2Function {
 
 		description = "Return the given collection's first element."
 				+ "The collection will be converted to a list before.";
+
+		Category[] c = { Category.COLLECTIONS_AND_MAPS };
+		categories = c;
 		;
 	}
 

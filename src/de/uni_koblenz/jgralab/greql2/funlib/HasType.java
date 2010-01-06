@@ -83,6 +83,9 @@ public class HasType extends Greql2Function {
 		description = "Checks if the given AttrElem has the given type.\n"
 				+ "The type may be given as qualified name (String), as\n"
 				+ "TypeCollection, or as AttributedElementClass.";
+
+		Category[] c = { Category.SCHEMA_ACCESS };
+		categories = c;
 	}
 
 	@Override

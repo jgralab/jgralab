@@ -72,6 +72,9 @@ public class IsTree extends Greql2Function {
 		description = "Return true if the current graph or subgraph is a tree.\n"
 				+ "That means, the graph is acyclic, has exactly one vertex without\n"
 				+ "incoming edges and all other vertices have exactly one incoming edge.";
+
+		Category[] c = { Category.GRAPH };
+		categories = c;
 	}
 
 	@Override

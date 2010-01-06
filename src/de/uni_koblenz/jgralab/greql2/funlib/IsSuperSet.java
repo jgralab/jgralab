@@ -74,6 +74,9 @@ public class IsSuperSet extends Greql2Function {
 		description = "Return true, iff the first collection is a superset of the second collection.\n"
 				+ "That means, all elements from the 2nd collection are also elements in the\n"
 				+ "1st collection.  Both arguments are converted to sets before.";
+
+		Category[] c = { Category.COLLECTIONS_AND_MAPS };
+		categories = c;
 	}
 
 	@Override

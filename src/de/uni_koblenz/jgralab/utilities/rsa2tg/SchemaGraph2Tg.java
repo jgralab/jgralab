@@ -1381,7 +1381,7 @@ public class SchemaGraph2Tg {
 	 * Instead of writing
 	 * 
 	 * <pre>
-	 * stream.print(SCHEMA);
+	 * stream.print(SCHEMA_ACCESS);
 	 * stream.print(SPACE);
 	 * stream.print(s.getPackageName());
 	 * stream.print(POINT);
@@ -1392,7 +1392,7 @@ public class SchemaGraph2Tg {
 	 * it is possible to simply write
 	 * 
 	 * <pre>
-	 * print(SCHEMA, SPACE, &quot;node&quot;, POINT, &quot;Nothing&quot;, DELIMITER);
+	 * print(SCHEMA_ACCESS, SPACE, &quot;node&quot;, POINT, &quot;Nothing&quot;, DELIMITER);
 	 * </pre>
 	 * 
 	 * @param strings
@@ -1422,7 +1422,7 @@ public class SchemaGraph2Tg {
 	 * Instead of writing
 	 * 
 	 * <pre>
-	 * stream.print(SCHEMA);
+	 * stream.print(SCHEMA_ACCESS);
 	 * stream.print(SPACE);
 	 * stream.print(s.getPackageName());
 	 * stream.print(POINT);
@@ -1433,7 +1433,7 @@ public class SchemaGraph2Tg {
 	 * it is possible to simply write
 	 * 
 	 * <pre>
-	 * print(SCHEMA, SPACE, &quot;node&quot;, POINT, &quot;Nothing&quot;, DELIMITER);
+	 * print(SCHEMA_ACCESS, SPACE, &quot;node&quot;, POINT, &quot;Nothing&quot;, DELIMITER);
 	 * </pre>
 	 * 
 	 * @param strings

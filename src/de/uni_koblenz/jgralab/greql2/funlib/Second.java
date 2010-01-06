@@ -69,6 +69,9 @@ public class Second extends Greql2Function {
 
 		description = "Return the second element of the given collection.\n"
 				+ "The collection will be converted to a list before.";
+
+		Category[] c = { Category.COLLECTIONS_AND_MAPS };
+		categories = c;
 	}
 
 	@Override

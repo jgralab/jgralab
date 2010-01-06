@@ -62,6 +62,9 @@ public class ToString extends Greql2Function {
 		signatures = x;
 
 		description = "Return the toString() output of the given object.";
+
+		Category[] c = { Category.STRINGS };
+		categories = c;
 	}
 
 	@Override

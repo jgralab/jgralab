@@ -73,6 +73,9 @@ public class VertexTypeSet extends Greql2Function {
 		signatures = x;
 
 		description = "Return a set of all vertex-types that occure in the given structure.";
+
+		Category[] c = { Category.SCHEMA_ACCESS };
+		categories = c;
 	}
 
 	@Override

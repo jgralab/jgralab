@@ -65,6 +65,9 @@ public class TypeName extends Greql2Function {
 		signatures = x;
 
 		description = "Return the qualified type name of the given attr elem.";
+
+		Category[] c = { Category.SCHEMA_ACCESS };
+		categories = c;
 	}
 
 	@Override

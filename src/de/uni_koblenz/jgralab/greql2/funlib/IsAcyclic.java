@@ -66,6 +66,9 @@ public class IsAcyclic extends Greql2Function {
 
 		description = "Return true, if the current graph or the given subgraph is cycle-free.\n"
 				+ "Also have a look at the function `topologicalSort'.";
+
+		Category[] c = { Category.GRAPH };
+		categories = c;
 	}
 
 	@Override

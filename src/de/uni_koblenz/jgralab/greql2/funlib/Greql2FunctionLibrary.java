@@ -45,6 +45,7 @@ import org.apache.commons.cli.OptionGroup;
 import de.uni_koblenz.ist.utilities.option_handler.OptionHandler;
 import de.uni_koblenz.jgralab.JGraLab;
 import de.uni_koblenz.jgralab.greql2.exception.DuplicateGreqlFunctionException;
+import de.uni_koblenz.jgralab.greql2.funlib.Greql2Function.Category;
 
 /**
  * This class is the core of the function libary. It's implemented following the
@@ -192,7 +193,6 @@ public class Greql2FunctionLibrary {
 		for (String fun : new TreeSet<String>(
 				Greql2FunctionLibrary.instance().availableFunctions.keySet())) {
 			sb.append(describeFunction(fun, false));
-			sb.append('\n');
 			sb.append("\u000C\n");
 		}
 		return sb.toString();
@@ -265,6 +265,18 @@ public class Greql2FunctionLibrary {
 			sb.append(afun.signatures[i][afun.signatures[i].length - 1]);
 			sb.append('\n');
 		}
+		sb.append('\n');
+
+		sb.append("Categories: ");
+		boolean first = true;
+		for (Category category : afun.categories) {
+			if (!first) {
+				sb.append(", ");
+			}
+			first = false;
+			sb.append(category.toString());
+		}
+		sb.append("\n-----------\n");
 		return sb.toString();
 	}
 

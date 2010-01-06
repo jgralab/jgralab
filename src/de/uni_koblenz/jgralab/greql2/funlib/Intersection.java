@@ -75,6 +75,9 @@ public class Intersection extends Greql2Function {
 
 		description = "Return the intersection of two given collections.\n"
 				+ "Both collections are converted to sets before.";
+
+		Category[] c = { Category.COLLECTIONS_AND_MAPS };
+		categories = c;
 	}
 
 	@Override

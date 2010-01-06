@@ -74,6 +74,9 @@ public class IsPrime extends Greql2Function {
 				+ "specifies influences the probability of being a prime.\n"
 				+ "The chances of being prime is 1-(1/4)^k.  The default\n"
 				+ "value of k is 10.";
+
+		Category[] c = { Category.ARITHMETICAL };
+		categories = c;
 	}
 
 	/**

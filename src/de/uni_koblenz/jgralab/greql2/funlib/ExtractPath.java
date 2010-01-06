@@ -88,6 +88,9 @@ public class ExtractPath extends Greql2Function {
 				+ "used. If no vertex is given, the paths from the root to all leaves are returned\n"
 				+ "as set. If an integer is given instead of a vertex, all paths are returned that\n"
 				+ "have the length of this integer, again as set of paths.";
+
+		Category[] c = { Category.PATHS_AND_PATHSYSTEMS };
+		categories = c;
 	}
 
 	@Override

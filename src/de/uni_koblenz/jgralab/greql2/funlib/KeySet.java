@@ -38,6 +38,9 @@ public class KeySet extends Greql2Function {
 		signatures = x;
 
 		description = "Return the set of keys of the given map.";
+
+		Category[] c = { Category.COLLECTIONS_AND_MAPS };
+		categories = c;
 	}
 
 	@Override

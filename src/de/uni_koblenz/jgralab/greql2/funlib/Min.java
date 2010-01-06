@@ -66,6 +66,9 @@ public class Min extends Greql2Function {
 		signatures = x;
 
 		description = "Return the minimum of the given collection of numbers.";
+
+		Category[] c = { Category.COLLECTIONS_AND_MAPS };
+		categories = c;
 	}
 
 	@Override

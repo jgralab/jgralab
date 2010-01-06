@@ -81,6 +81,9 @@ public class Matches extends Greql2Function {
 		signatures = x;
 
 		description = "Return true, iff the given path description matches the given path.";
+
+		Category[] c = { Category.PATHS_AND_PATHSYSTEMS };
+		categories = c;
 	}
 
 	@Override

@@ -75,6 +75,9 @@ public class Edges extends Greql2Function {
 
 		description = "Returns the global edge sequence from the 1st to the 2nd given edge.\n"
 				+ "The edge types may be restricted by a type collection.";
+
+		Category[] c = { Category.GRAPH };
+		categories = c;
 	}
 
 	@Override

@@ -72,6 +72,9 @@ public class ReMatch extends Greql2Function {
 
 		description = "Return true, iff the given string matches the given regular expression.\n"
 				+ "This function can be used with the myString =~ myRegexp operator.";
+
+		Category[] c = { Category.STRINGS };
+		categories = c;
 	}
 
 	@Override

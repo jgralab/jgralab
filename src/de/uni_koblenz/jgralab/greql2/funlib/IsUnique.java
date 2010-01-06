@@ -69,6 +69,9 @@ public class IsUnique extends Greql2Function {
 
 		description = "Return true, iff all elements in the collection occure only once.\n"
 				+ "That means, the collection is a set.";
+
+		Category[] c = { Category.COLLECTIONS_AND_MAPS };
+		categories = c;
 	}
 
 	@Override

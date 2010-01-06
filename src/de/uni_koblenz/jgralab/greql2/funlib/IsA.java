@@ -84,6 +84,9 @@ public class IsA extends Greql2Function {
 		description = "Return true, iff the first type is a subtype of the second type.\n"
 				+ "The types may be given as attributed element class or by\n"
 				+ "their qualified name given as string.";
+
+		Category[] c = { Category.SCHEMA_ACCESS };
+		categories = c;
 	}
 
 	@Override

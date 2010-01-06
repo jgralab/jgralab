@@ -68,6 +68,9 @@ public class IsCycle extends Greql2Function {
 
 		description = "Return true, iff the given path is a cycle.\n"
 				+ "In a cycle, the start and end vertex are identical.";
+
+		Category[] c = { Category.PATHS_AND_PATHSYSTEMS };
+		categories = c;
 	}
 
 	@Override

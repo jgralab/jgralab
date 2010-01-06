@@ -37,6 +37,10 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
  */
 public abstract class Greql2Function {
 
+	public enum Category {
+		LOGICS, COMPARISONS, ARITHMETICAL, STRINGS, COLLECTIONS_AND_MAPS, PATHS_AND_PATHSYSTEMS, SCHEMA_ACCESS, GRAPH, UNDEFINED
+	};
+
 	/**
 	 * The description string of this function. The first line should be a brief
 	 * description, additional details should be given in following lines.
@@ -49,6 +53,11 @@ public abstract class Greql2Function {
 	 * paramereters, the last is the return type.
 	 */
 	protected JValueType[][] signatures;
+
+	/**
+	 * The categories this function belongs to.
+	 */
+	protected Category[] categories = { Category.UNDEFINED };
 
 	/**
 	 * @param args

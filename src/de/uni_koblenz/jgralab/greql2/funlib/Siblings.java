@@ -81,6 +81,9 @@ public class Siblings extends Greql2Function {
 				+ "If a pathsystem is given, all siblings that are in the pathsystem are\n"
 				+ "returned.  Two or more vertices are siblings, if they have at least one\n"
 				+ "same parent.";
+
+		Category[] c = { Category.GRAPH, Category.PATHS_AND_PATHSYSTEMS };
+		categories = c;
 	}
 
 	@Override

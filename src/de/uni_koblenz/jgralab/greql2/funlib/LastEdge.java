@@ -65,6 +65,9 @@ public class LastEdge extends Greql2Function {
 		signatures = x;
 
 		description = "Return the last edge (restricted by optional TypeCollection) in the graph.";
+
+		Category[] c = { Category.GRAPH };
+		categories = c;
 	}
 
 	@Override

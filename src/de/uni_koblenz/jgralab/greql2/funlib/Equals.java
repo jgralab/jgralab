@@ -71,6 +71,9 @@ public class Equals extends Greql2Function {
 		signatures = x;
 
 		description = "Return true, iff both objects are equal.";
+
+		Category[] c = { Category.COMPARISONS };
+		categories = c;
 	}
 
 	/**

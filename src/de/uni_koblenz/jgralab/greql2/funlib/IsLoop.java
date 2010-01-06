@@ -68,6 +68,9 @@ public class IsLoop extends Greql2Function {
 
 		description = "Return true, iff the given edge is a loop.\n"
 				+ "That means, its start- and end-vertex is the same.";
+
+		Category[] c = { Category.GRAPH };
+		categories = c;
 	}
 
 	@Override

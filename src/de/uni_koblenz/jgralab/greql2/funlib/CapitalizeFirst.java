@@ -41,6 +41,9 @@ public class CapitalizeFirst extends Greql2Function {
 		signatures = x;
 
 		description = "Return the given string with the first character made uppercase.";
+
+		Category[] c = { Category.STRINGS };
+		categories = c;
 	}
 
 	@Override
