@@ -80,6 +80,10 @@ public class Contains extends Greql2Function {
 		signatures = x;
 
 		description = "Return true, iff the given collection/path/pathsystem contains the given element.";
+
+		Category[] c = { Category.COLLECTIONS_AND_MAPS,
+				Category.PATHS_AND_PATHSYSTEMS };
+		categories = c;
 	}
 
 	@Override

@@ -66,6 +66,9 @@ public class ContainsKey extends Greql2Function {
 		signatures = x;
 
 		description = "Return true, iff the given map contains the given element as key.";
+
+		Category[] c = { Category.COLLECTIONS_AND_MAPS };
+		categories = c;
 	}
 
 	/*

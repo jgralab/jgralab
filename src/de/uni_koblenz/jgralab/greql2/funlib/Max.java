@@ -66,6 +66,9 @@ public class Max extends Greql2Function {
 		signatures = x;
 
 		description = "Return the maximum of the given collection of numbers.";
+
+		Category[] c = { Category.COLLECTIONS_AND_MAPS };
+		categories = c;
 	}
 
 	@Override

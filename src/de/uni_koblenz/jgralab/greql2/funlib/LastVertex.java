@@ -65,6 +65,9 @@ public class LastVertex extends Greql2Function {
 		signatures = x;
 
 		description = "Return the last vertex (restr. by optional TypeCollection) in the graph.";
+
+		Category[] c = { Category.GRAPH };
+		categories = c;
 	}
 
 	@Override

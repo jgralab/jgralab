@@ -67,6 +67,9 @@ public class ContainsValue extends Greql2Function {
 		signatures = x;
 
 		description = "Return true, iff the given map contains the given element as value.";
+
+		Category[] c = { Category.COLLECTIONS_AND_MAPS };
+		categories = c;
 	}
 
 	/*

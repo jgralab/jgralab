@@ -70,6 +70,9 @@ public class InnerNodes extends Greql2Function {
 		description = "Return all inner nodes of the given pathsystem as set.\n"
 				+ "Inner nodes are all vertices besides leaves of the pathsystem. That\n"
 				+ "means, all vertices, that are neither end of a path or the root.";
+
+		Category[] c = { Category.PATHS_AND_PATHSYSTEMS };
+		categories = c;
 	}
 
 	@Override

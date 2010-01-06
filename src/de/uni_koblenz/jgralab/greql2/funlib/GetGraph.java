@@ -34,6 +34,9 @@ public class GetGraph extends Greql2Function {
 		signatures = x;
 
 		description = "Return the graph the query is evaluated on.";
+
+		Category[] c = { Category.GRAPH };
+		categories = c;
 	}
 
 	/*

@@ -82,6 +82,9 @@ public class IsSibling extends Greql2Function {
 		description = "Return true, iff the given two vertices are siblings.\n"
 				+ "That means, they have at least one same parent. If a pathsystem is\n"
 				+ "given, this check is performed on two vertices in this pathsystem.";
+
+		Category[] c = { Category.GRAPH, Category.PATHS_AND_PATHSYSTEMS };
+		categories = c;
 	}
 
 	@Override

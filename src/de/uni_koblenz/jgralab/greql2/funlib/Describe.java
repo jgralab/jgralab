@@ -58,6 +58,9 @@ public class Describe extends Greql2Function {
 
 		description = "Return a tuple (QName, ID, Attrs) describing the given attributed element.\n"
 				+ "If no element is given, describe the graph itself, producing: (QName, (ID, Version), Attrs).";
+
+		Category[] c = { Category.GRAPH };
+		categories = c;
 	}
 
 	/*

@@ -74,6 +74,9 @@ public class GetValue extends Greql2Function {
 
 		description = "Return the value of the given AttrElem's or Record's attribute or component.\n"
 				+ "This function can be used with the point operator.";
+
+		Category[] c = { Category.GRAPH };
+		categories = c;
 	}
 
 	@Override

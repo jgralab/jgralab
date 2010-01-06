@@ -74,6 +74,10 @@ public class ElementsIn extends Greql2Function {
 		signatures = x;
 
 		description = "Return the set of elements that are part of the given structure.";
+
+		Category[] c = { Category.COLLECTIONS_AND_MAPS,
+				Category.PATHS_AND_PATHSYSTEMS };
+		categories = c;
 	}
 
 	@Override

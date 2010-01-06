@@ -22,10 +22,13 @@ public abstract class ArithmeticFunction extends Greql2Function {
 				{ JValueType.INTEGER, JValueType.INTEGER, JValueType.INTEGER } };
 		signatures = x;
 		description = "Perform arithmetic operation on the given operands.";
+
+		Category[] c = { Category.ARITHMETICAL };
+		categories = c;
 	}
 
 	protected enum ArithmeticOperator {
-		PLUS, MINUS, DIV, TIMES
+		PLUS, MINUS, DIV, TIMES, MODULO
 	};
 
 	public JValue evaluate(JValue[] arguments, ArithmeticOperator operator)
@@ -43,6 +46,8 @@ public abstract class ArithmeticFunction extends Greql2Function {
 				return new JValue(d1 / d2);
 			case TIMES:
 				return new JValue(d1 * d2);
+			case MODULO:
+				return new JValue(d1 % d2);
 			default:
 				throw new EvaluateException("Unknown ArithmeticOperator "
 						+ operator + ".");
@@ -59,6 +64,8 @@ public abstract class ArithmeticFunction extends Greql2Function {
 				return new JValue(Double.valueOf(l1) / l2);
 			case TIMES:
 				return new JValue(l1 * l2);
+			case MODULO:
+				return new JValue(l1 % l2);
 			default:
 				throw new EvaluateException("Unknown ArithmeticOperator "
 						+ operator + ".");
@@ -75,6 +82,8 @@ public abstract class ArithmeticFunction extends Greql2Function {
 				return new JValue(Double.valueOf(i1) / i2);
 			case TIMES:
 				return new JValue(i1 * i2);
+			case MODULO:
+				return new JValue(i1 % i2);
 			default:
 				throw new EvaluateException("Unknown ArithmeticOperator "
 						+ operator + ".");

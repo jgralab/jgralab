@@ -41,6 +41,9 @@ public class EntrySet extends Greql2Function {
 		signatures = x;
 
 		description = "Return the entries of the given map as set of key-value tuples.";
+
+		Category[] c = { Category.COLLECTIONS_AND_MAPS };
+		categories = c;
 	}
 
 	/*

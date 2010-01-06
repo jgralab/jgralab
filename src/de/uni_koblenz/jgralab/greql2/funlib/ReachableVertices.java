@@ -80,6 +80,9 @@ public class ReachableVertices extends Greql2Function {
 		signatures = x;
 
 		description = "Return all vertices that are reachable from vertex with path description.";
+
+		Category[] c = { Category.GRAPH, Category.PATHS_AND_PATHSYSTEMS };
+		categories = c;
 	}
 
 	@Override

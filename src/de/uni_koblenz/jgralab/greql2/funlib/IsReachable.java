@@ -87,6 +87,9 @@ public class IsReachable extends Greql2Function {
 				+ "The third parameter is a path description describing the structure\n"
 				+ "of the path.  If you are only interested in \"somehow connected\",\n"
 				+ "use <->* here.";
+
+		Category[] c = { Category.GRAPH, Category.PATHS_AND_PATHSYSTEMS };
+		categories = c;
 	}
 
 	@Override

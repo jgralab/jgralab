@@ -22,6 +22,9 @@ public abstract class BooleanFunction extends Greql2Function {
 		signatures = x;
 
 		description = "Return the value of this logical operation on the given two booleans.";
+
+		Category[] c = { Category.LOGICS };
+		categories = c;
 	}
 
 	protected enum BooleanOperator {

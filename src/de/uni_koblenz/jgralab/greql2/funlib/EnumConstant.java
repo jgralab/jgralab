@@ -69,6 +69,9 @@ public class EnumConstant extends Greql2Function {
 		signatures = x;
 
 		description = "Return the enum literal specified by enum type name and literal name.";
+
+		Category[] c = { Category.SCHEMA_ACCESS };
+		categories = c;
 	}
 
 	/*

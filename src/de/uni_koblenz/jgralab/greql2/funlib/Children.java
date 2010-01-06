@@ -81,6 +81,9 @@ public class Children extends Greql2Function {
 				+ "They may be restricted by an optional pathsystem.\n"
 				+ "Children are those vertices, from which edges point to the given vertex. The\n"
 				+ "child vertices are returned as a set.";
+
+		Category[] c = { Category.GRAPH };
+		categories = c;
 	}
 
 	@Override

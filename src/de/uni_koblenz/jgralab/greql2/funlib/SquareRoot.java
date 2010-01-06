@@ -66,6 +66,9 @@ public class SquareRoot extends Greql2Function {
 		signatures = x;
 
 		description = "Return the square root of the given number.";
+
+		Category[] c = { Category.ARITHMETICAL };
+		categories = c;
 	}
 
 	@Override

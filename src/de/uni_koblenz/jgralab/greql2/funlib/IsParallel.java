@@ -71,6 +71,9 @@ public class IsParallel extends Greql2Function {
 		description = "Return true, iff two given paths are parallel.\n"
 				+ "That means, they have the same start-vertex and end-vertex\n"
 				+ "and no other shared vertices.";
+
+		Category[] c = { Category.PATHS_AND_PATHSYSTEMS };
+		categories = c;
 	}
 
 	@Override

@@ -81,6 +81,10 @@ public class IsIn extends Greql2Function {
 		description = "Return true, iff the given element is part of the given structure.\n"
 				+ "If only an attributed element is given, then check if that is\n"
 				+ "contained in the graph the query is evaluated on.";
+
+		Category[] c = { Category.COLLECTIONS_AND_MAPS,
+				Category.PATHS_AND_PATHSYSTEMS, Category.GRAPH };
+		categories = c;
 	}
 
 	@Override

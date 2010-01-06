@@ -66,6 +66,9 @@ public class Split extends Greql2Function {
 		signatures = x;
 
 		description = "Split string according to regexp and return splits as list.";
+
+		Category[] c = { Category.STRINGS };
+		categories = c;
 	}
 
 	/*

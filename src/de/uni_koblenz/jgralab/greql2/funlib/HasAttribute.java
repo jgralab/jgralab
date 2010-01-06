@@ -76,6 +76,9 @@ public class HasAttribute extends Greql2Function {
 		signatures = x;
 
 		description = "Return true, iff the given AttrElem has an attribute with the given name.";
+
+		Category[] c = { Category.GRAPH, Category.SCHEMA_ACCESS };
+		categories = c;
 	}
 
 	@Override

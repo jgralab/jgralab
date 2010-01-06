@@ -74,6 +74,9 @@ public class IsSubSet extends Greql2Function {
 		description = "Return true, iff the first collection is a subset of the second collection.\n"
 				+ "That means, all elements from the first collection are also elements in the\n"
 				+ "second collection.  Both arguments are converted to sets before.";
+
+		Category[] c = { Category.COLLECTIONS_AND_MAPS };
+		categories = c;
 	}
 
 	@Override

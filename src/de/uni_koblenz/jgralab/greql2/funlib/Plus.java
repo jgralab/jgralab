@@ -88,6 +88,9 @@ public class Plus extends ArithmeticFunction {
 		signatures = x;
 
 		description = "Add the given 2 numbers or concatenate the given 2 strings.";
+
+		Category[] c = { Category.ARITHMETICAL, Category.STRINGS };
+		categories = c;
 	}
 
 	@Override

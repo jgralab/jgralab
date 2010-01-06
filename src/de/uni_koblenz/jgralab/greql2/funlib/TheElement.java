@@ -48,6 +48,9 @@ public class TheElement extends Greql2Function {
 		signatures = x;
 
 		description = "Return the single element of the given collection.";
+
+		Category[] c = { Category.COLLECTIONS_AND_MAPS };
+		categories = c;
 	}
 
 	@Override

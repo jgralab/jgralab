@@ -65,6 +65,9 @@ public class FirstEdge extends Greql2Function {
 		signatures = x;
 
 		description = "Return the 1st edge (of optionally given type) in the graph.";
+
+		Category[] c = { Category.GRAPH };
+		categories = c;
 	}
 
 	@Override

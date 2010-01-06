@@ -53,6 +53,9 @@ public class TopologicalSort extends Greql2Function {
 
 		description = "Return a list of vertices in topological ordering.\n"
 				+ "The sort can be restricted to a subgraph.";
+
+		Category[] c = { Category.GRAPH };
+		categories = c;
 	}
 
 	/*

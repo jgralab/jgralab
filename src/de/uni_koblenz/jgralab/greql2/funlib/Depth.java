@@ -65,6 +65,9 @@ public class Depth extends Greql2Function {
 		signatures = x;
 
 		description = "Return the depth (length of longes path) of the given pathsystem.";
+
+		Category[] c = { Category.PATHS_AND_PATHSYSTEMS };
+		categories = c;
 	}
 
 	@Override
@@ -78,8 +81,7 @@ public class Depth extends Greql2Function {
 
 	@Override
 	public long getEstimatedCosts(ArrayList<Long> inElements) {
-		// TODO Auto-generated method stub
-		return 0;
+		return 10;
 	}
 
 	@Override

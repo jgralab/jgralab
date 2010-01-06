@@ -75,6 +75,9 @@ public class SymDifference extends Greql2Function {
 				+ "Both collections are converted to sets before.  The symmetric\n"
 				+ "difference are all elements of both sets, which are not contained\n"
 				+ "in both sets.";
+
+		Category[] c = { Category.COLLECTIONS_AND_MAPS };
+		categories = c;
 	}
 
 	@Override

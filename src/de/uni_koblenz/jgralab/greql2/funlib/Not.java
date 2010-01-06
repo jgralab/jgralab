@@ -84,6 +84,9 @@ public class Not extends Greql2Function {
 		signatures = x;
 
 		description = "Return the complement of the given boolean.";
+
+		Category[] c = { Category.LOGICS };
+		categories = c;
 	}
 
 	@Override

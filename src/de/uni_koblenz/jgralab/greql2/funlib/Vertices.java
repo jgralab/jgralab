@@ -77,6 +77,9 @@ public class Vertices extends Greql2Function {
 
 		description = "Return a part of the global vertex sequence from v1 to v2.\n"
 				+ "Optionally, the vertices may be restricted by a type collection.";
+
+		Category[] c = { Category.GRAPH };
+		categories = c;
 	}
 
 	@Override

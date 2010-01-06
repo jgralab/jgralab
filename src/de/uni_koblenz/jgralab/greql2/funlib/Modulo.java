@@ -24,14 +24,10 @@
 
 package de.uni_koblenz.jgralab.greql2.funlib;
 
-import java.util.ArrayList;
-
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.graphmarker.BooleanGraphMarker;
 import de.uni_koblenz.jgralab.greql2.exception.EvaluateException;
-import de.uni_koblenz.jgralab.greql2.exception.WrongFunctionParameterException;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
-import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
 
 /**
  * Calculates the remainder of the integer-division (a / b) for given integer
@@ -65,43 +61,14 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
  * 
  */
 
-public class Modulo extends Greql2Function {
+public class Modulo extends ArithmeticFunction {
 	{
-		JValueType[][] x = {
-				{ JValueType.LONG, JValueType.LONG, JValueType.LONG },
-				{ JValueType.INTEGER, JValueType.INTEGER, JValueType.INTEGER } };
-		signatures = x;
-
 		description = "Return the remainder of param1 / param2.";
 	}
 
 	@Override
 	public JValue evaluate(Graph graph, BooleanGraphMarker subgraph,
 			JValue[] arguments) throws EvaluateException {
-		switch (checkArguments(arguments)) {
-		case 0:
-			return new JValue(arguments[0].toLong() % arguments[1].toLong());
-		case 1:
-			return new JValue(arguments[0].toInteger()
-					% arguments[1].toInteger());
-		default:
-			throw new WrongFunctionParameterException(this, arguments);
-		}
+		return evaluate(arguments, ArithmeticOperator.MODULO);
 	}
-
-	@Override
-	public long getEstimatedCosts(ArrayList<Long> inElements) {
-		return 2;
-	}
-
-	@Override
-	public double getSelectivity() {
-		return 1;
-	}
-
-	@Override
-	public long getEstimatedCardinality(int inElements) {
-		return 1;
-	}
-
 }

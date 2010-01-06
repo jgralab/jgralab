@@ -69,6 +69,9 @@ public class Count extends Greql2Function {
 		description = "Return the number of elements in the given object.\n"
 				+ "If the object is not a collection or map, 1 is returned.\n"
 				+ "For a map the number of entries is returned.";
+
+		Category[] c = { Category.COLLECTIONS_AND_MAPS };
+		categories = c;
 	}
 
 	@Override

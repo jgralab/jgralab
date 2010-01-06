@@ -74,6 +74,9 @@ public class Subtypes extends Greql2Function {
 
 		description = "Return the set of direct subtypes of the given type.\n"
 				+ "The type may be given as string or attributed element class.";
+
+		Category[] c = { Category.SCHEMA_ACCESS };
+		categories = c;
 	}
 
 	@Override

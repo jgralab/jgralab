@@ -70,6 +70,9 @@ public class NthElement extends Greql2Function {
 		signatures = x;
 
 		description = "Return the element of the given collection on the given index.";
+
+		Category[] c = { Category.COLLECTIONS_AND_MAPS };
+		categories = c;
 	}
 
 	@Override

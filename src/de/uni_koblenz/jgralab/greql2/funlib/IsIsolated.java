@@ -69,6 +69,9 @@ public class IsIsolated extends Greql2Function {
 		description = "Return true, iff the given vertex is isolated.\n"
 				+ "Isolated means, that there are no edges running\n"
 				+ "into or out of the given vertex.";
+
+		Category[] c = { Category.GRAPH };
+		categories = c;
 	}
 
 	@Override

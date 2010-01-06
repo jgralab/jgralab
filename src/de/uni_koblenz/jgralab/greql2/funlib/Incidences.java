@@ -35,6 +35,9 @@ public abstract class Incidences extends Greql2Function {
 				{ JValueType.VERTEX, JValueType.TYPECOLLECTION,
 						JValueType.COLLECTION }, };
 		signatures = x;
+
+		Category[] c = { Category.GRAPH, Category.PATHS_AND_PATHSYSTEMS };
+		categories = c;
 	}
 
 	/*

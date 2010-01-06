@@ -72,6 +72,9 @@ public class MergeMaps extends Greql2Function {
 				+ "That means, that the returned map contains mappings for the union of the\n"
 				+ "keys, and if both maps contain a mapping for a key, the value\n"
 				+ "collections are merged.";
+
+		Category[] c = { Category.COLLECTIONS_AND_MAPS };
+		categories = c;
 	}
 
 	/*

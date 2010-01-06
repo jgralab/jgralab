@@ -68,6 +68,9 @@ public class Third extends Greql2Function {
 		signatures = x;
 
 		description = "Return the third element of the given collection.";
+
+		Category[] c = { Category.COLLECTIONS_AND_MAPS };
+		categories = c;
 	}
 
 	@Override

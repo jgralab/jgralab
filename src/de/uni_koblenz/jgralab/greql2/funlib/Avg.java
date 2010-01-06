@@ -66,6 +66,9 @@ public class Avg extends Greql2Function {
 		signatures = x;
 
 		description = "Return the average of the numbers in the given collection.";
+
+		Category[] c = { Category.COLLECTIONS_AND_MAPS };
+		categories = c;
 	}
 
 	@Override

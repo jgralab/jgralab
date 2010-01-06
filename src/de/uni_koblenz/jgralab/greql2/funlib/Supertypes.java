@@ -82,6 +82,9 @@ public class Supertypes extends Greql2Function {
 
 		description = "Return the set of direct supertypes of the given type.\n"
 				+ "The type may be given as string or attributed element class.";
+
+		Category[] c = { Category.SCHEMA_ACCESS };
+		categories = c;
 	}
 
 	@Override

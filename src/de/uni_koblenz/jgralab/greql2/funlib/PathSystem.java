@@ -90,6 +90,9 @@ public class PathSystem extends Greql2Function {
 		signatures = x;
 
 		description = "Return a pathsystem with root vertex and structured according path description.";
+
+		Category[] c = { Category.PATHS_AND_PATHSYSTEMS };
+		categories = c;
 	}
 
 	/**
