@@ -88,9 +88,11 @@ public abstract class ArrayGenericGraphMarker<T extends GraphElement> extends
 	protected void expand(int newSize) {
 		assert (newSize > temporaryAttributes.length);
 		Object[] newTemporaryAttributes = new Object[newSize];
-		for (int i = 0; i < temporaryAttributes.length; i++) {
-			newTemporaryAttributes[i] = temporaryAttributes[i];
-		}
+		System.arraycopy(temporaryAttributes, 0, newTemporaryAttributes, 0,
+				temporaryAttributes.length);
+		// for (int i = 0; i < temporaryAttributes.length; i++) {
+		// newTemporaryAttributes[i] = temporaryAttributes[i];
+		// }
 		temporaryAttributes = newTemporaryAttributes;
 	}
 
