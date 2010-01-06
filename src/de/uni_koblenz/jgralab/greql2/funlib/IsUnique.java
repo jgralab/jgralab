@@ -40,7 +40,7 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
  * 
  * <dl>
  * <dt><b>GReQL-signature</b></dt>
- * <dd><code>BOOLEAN isUnique(c:COLLECTION)</code></dd>
+ * <dd><code>BOOL isUnique(c:COLLECTION)</code></dd>
  * <dd>&nbsp;</dd>
  * </dl>
  * <dl>
@@ -64,7 +64,7 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
 public class IsUnique extends Greql2Function {
 
 	{
-		JValueType[][] x = { { JValueType.COLLECTION, JValueType.BOOLEAN } };
+		JValueType[][] x = { { JValueType.COLLECTION, JValueType.BOOL } };
 		signatures = x;
 
 		description = "Return true, iff all elements in the collection occure only once.\n"

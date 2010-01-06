@@ -41,7 +41,7 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
  * <dl>
  * <dt><b>GReQL-signature</b></dt>
  * <dd>
- * <code>BOOLEAN isSubSet(set1:SET&lt;OBJECT&gt;, set2:SET&lt;OBJECT&gt;)</code>
+ * <code>BOOL isSubSet(set1:SET&lt;OBJECT&gt;, set2:SET&lt;OBJECT&gt;)</code>
  * </dd>
  * <dd>&nbsp;</dd>
  * </dl>
@@ -68,7 +68,7 @@ public class IsSubSet extends Greql2Function {
 
 	{
 		JValueType[][] x = { { JValueType.COLLECTION, JValueType.COLLECTION,
-				JValueType.BOOLEAN } };
+				JValueType.BOOL } };
 		signatures = x;
 
 		description = "Return true, iff the first collection is a subset of the second collection.\n"

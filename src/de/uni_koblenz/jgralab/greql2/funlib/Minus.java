@@ -33,13 +33,13 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
  * Calculates a-b for given scalar values a and b.
  * <dl>
  * <dt><b>GReQL-signature</b></dt>
- * <dd><code>INTEGER minus(a: INTEGER, b: INTEGER)</code></dd>
- * <dd><code>LONG minus(a: LONG, b: INTEGER)</code></dd>
- * <dd><code>LONG minus(a: INTEGER, b: LONG)</code></dd>
+ * <dd><code>INT minus(a: INT, b: INT)</code></dd>
+ * <dd><code>LONG minus(a: LONG, b: INT)</code></dd>
+ * <dd><code>LONG minus(a: INT, b: LONG)</code></dd>
  * <dd><code>LONG minus(a: LONG, b: LONG)</code></dd>
- * <dd><code>DOUBLE minus(a: DOUBLE, b: INTEGER)</code></dd>
+ * <dd><code>DOUBLE minus(a: DOUBLE, b: INT)</code></dd>
  * <dd><code>DOUBLE minus(a: DOUBLE, b: LONG)</code></dd>
- * <dd><code>DOUBLE minus(a: INTEGER, b: DOUBLE)</code></dd>
+ * <dd><code>DOUBLE minus(a: INT, b: DOUBLE)</code></dd>
  * <dd><code>DOUBLE minus(a: LONG, b: DOUBLE)</code></dd>
  * <dd><code>DOUBLE minus(a: DOUBLE, b: DOUBLE)</code></dd>
  * <dd>&nbsp;</dd>
@@ -51,10 +51,10 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
  * <dd>
  * <dl>
  * <dt><b>Parameters:</b></dt>
- * <dd><code>a: INTEGER</code> - minuend</dd>
+ * <dd><code>a: INT</code> - minuend</dd>
  * <dd><code>a: LONG</code> - minuend</dd>
  * <dd><code>a: DOUBLE</code> - minuend</dd>
- * <dd><code>b: INTEGER</code> - subtrahend</dd>
+ * <dd><code>b: INT</code> - subtrahend</dd>
  * <dd><code>b: LONG</code> - subtrahend</dd>
  * <dd><code>b: DOUBLE</code> - subtrahend</dd>
  * <dt><b>Returns:</b></dt>

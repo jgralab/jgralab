@@ -47,7 +47,7 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
  * <dt><b>GReQL-signature</b></dt>
  * <dd><code>PATH extractPath(ps:PATHSYSTEM, v:VERTEX)</code></dd>
  * <dd><code>SET&lt;PATH&gt; extractPath(ps:PATHSYSTEM)</code></dd>
- * <dd><code>SET&lt;PATH&gt; extractPath(ps:PATHSYSTEM, length:INTEGER)</code></dd>
+ * <dd><code>SET&lt;PATH&gt; extractPath(ps:PATHSYSTEM, length:INT)</code></dd>
  * <dd>&nbsp;</dd>
  * </dl>
  * <dl>
@@ -79,7 +79,7 @@ public class ExtractPath extends Greql2Function {
 				{ JValueType.PATHSYSTEM, JValueType.PATH },
 				{ JValueType.PATHSYSTEM, JValueType.VERTEX,
 						JValueType.COLLECTION },
-				{ JValueType.PATHSYSTEM, JValueType.INTEGER,
+				{ JValueType.PATHSYSTEM, JValueType.INT,
 						JValueType.COLLECTION } };
 		signatures = x;
 

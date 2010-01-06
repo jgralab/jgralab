@@ -40,7 +40,7 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
  * 
  * <dl>
  * <dt><b>GReQL-signature</b></dt>
- * <dd><code>BOOLEAN isIsolated(v:VERTEX)</code></dd>
+ * <dd><code>BOOL isIsolated(v:VERTEX)</code></dd>
  * <dd>&nbsp;</dd>
  * </dl>
  * <dl>
@@ -63,7 +63,7 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
 
 public class IsIsolated extends Greql2Function {
 	{
-		JValueType[][] x = { { JValueType.VERTEX, JValueType.BOOLEAN } };
+		JValueType[][] x = { { JValueType.VERTEX, JValueType.BOOL } };
 		signatures = x;
 
 		description = "Return true, iff the given vertex is isolated.\n"

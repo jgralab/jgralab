@@ -39,7 +39,7 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
  * 
  * <dl>
  * <dt><b>GReQL-signature</b></dt>
- * <dd><code>BOOLEAN isCycle(p:PATH)</code></dd>
+ * <dd><code>BOOL isCycle(p:PATH)</code></dd>
  * <dd>&nbsp;</dd>
  * </dl>
  * <dl>
@@ -63,7 +63,7 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
 public class IsCycle extends Greql2Function {
 
 	{
-		JValueType[][] x = { { JValueType.PATH, JValueType.BOOLEAN } };
+		JValueType[][] x = { { JValueType.PATH, JValueType.BOOL } };
 		signatures = x;
 
 		description = "Return true, iff the given path is a cycle.\n"

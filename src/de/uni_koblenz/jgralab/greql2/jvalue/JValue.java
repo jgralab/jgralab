@@ -86,10 +86,10 @@ public class JValue implements Comparable<JValue> {
 			return;
 		}
 		switch (this.type) {
-		case BOOLEAN:
+		case BOOL:
 			v.visitBoolean(this);
 			return;
-		case INTEGER:
+		case INT:
 			v.visitInt(this);
 			return;
 		case LONG:
@@ -104,7 +104,7 @@ public class JValue implements Comparable<JValue> {
 		case ENUMVALUE:
 			v.visitEnumValue(this);
 			return;
-		case ATTRIBUTEDELEMENTCLASS:
+		case ATTRELEMCLASS:
 			v.visitAttributedElementClass(this);
 			return;
 		case VARIABLEDECLARATION:
@@ -359,7 +359,7 @@ public class JValue implements Comparable<JValue> {
 	 * called type)
 	 */
 	public JValue(AttributedElementClass type) {
-		this.type = JValueType.ATTRIBUTEDELEMENTCLASS;
+		this.type = JValueType.ATTRELEMCLASS;
 		this.value = type;
 		browsingInfo = null;
 	}
@@ -378,7 +378,7 @@ public class JValue implements Comparable<JValue> {
 	 *         , false otherwise
 	 */
 	public boolean isAttributedElementClass() {
-		return (type == JValueType.ATTRIBUTEDELEMENTCLASS);
+		return (type == JValueType.ATTRELEMCLASS);
 	}
 
 	/**
@@ -391,7 +391,7 @@ public class JValue implements Comparable<JValue> {
 		if (isAttributedElementClass()) {
 			return (AttributedElementClass) value;
 		}
-		throw new JValueInvalidTypeException(JValueType.ATTRIBUTEDELEMENTCLASS,
+		throw new JValueInvalidTypeException(JValueType.ATTRELEMCLASS,
 				type);
 	}
 
@@ -434,14 +434,14 @@ public class JValue implements Comparable<JValue> {
 		if (isAttributedElement()) {
 			return (AttributedElement) value;
 		}
-		throw new JValueInvalidTypeException(JValueType.ATTRIBUTEDELEMENT, type);
+		throw new JValueInvalidTypeException(JValueType.ATTRELEM, type);
 	}
 
 	/**
 	 * constructs a new JValue with encapsulates a TrivalentBoolean value
 	 */
 	public JValue(Boolean b) {
-		this.type = JValueType.BOOLEAN;
+		this.type = JValueType.BOOL;
 		this.value = b;
 		browsingInfo = null;
 	}
@@ -458,7 +458,7 @@ public class JValue implements Comparable<JValue> {
 	 * @return true if this JValue encapsulates a boolean value, false otherwise
 	 */
 	public boolean isBoolean() {
-		return (type == JValueType.BOOLEAN);
+		return (type == JValueType.BOOL);
 	}
 
 	/**
@@ -470,14 +470,14 @@ public class JValue implements Comparable<JValue> {
 		if (isBoolean()) {
 			return (Boolean) value;
 		}
-		throw new JValueInvalidTypeException(JValueType.BOOLEAN, type);
+		throw new JValueInvalidTypeException(JValueType.BOOL, type);
 	}
 
 	/**
 	 * @return true if this JValue encapsulates a integer value, false otherwise
 	 */
 	public boolean isInteger() {
-		return (type == JValueType.INTEGER);
+		return (type == JValueType.INT);
 	}
 
 	public boolean isNumber() {
@@ -490,17 +490,17 @@ public class JValue implements Comparable<JValue> {
 	 *             if this JValue does not encapsulate an integer value
 	 */
 	public Integer toInteger() throws JValueInvalidTypeException {
-		if (isInteger() || (canConvert(JValueType.INTEGER))) {
+		if (isInteger() || (canConvert(JValueType.INT))) {
 			return (Integer) value;
 		}
-		throw new JValueInvalidTypeException(JValueType.INTEGER, type);
+		throw new JValueInvalidTypeException(JValueType.INT, type);
 	}
 
 	/**
 	 * constructs a new JValue with encapsulates a Integer or int value
 	 */
 	public JValue(Integer i) {
-		this.type = JValueType.INTEGER;
+		this.type = JValueType.INT;
 		this.value = i;
 		browsingInfo = null;
 	}
@@ -1068,9 +1068,9 @@ public class JValue implements Comparable<JValue> {
 			return 100;
 		}
 		switch (this.type) {
-		case BOOLEAN:
+		case BOOL:
 			return -1;
-		case INTEGER:
+		case INT:
 			switch (atype) {
 			case LONG:
 				return 1;
@@ -1099,21 +1099,21 @@ public class JValue implements Comparable<JValue> {
 			}
 		case VERTEX:
 			switch (atype) {
-			case ATTRIBUTEDELEMENT:
+			case ATTRELEM:
 				return 0;
 			default:
 				return -1;
 			}
 		case EDGE:
 			switch (atype) {
-			case ATTRIBUTEDELEMENT:
+			case ATTRELEM:
 				return 0;
 			default:
 				return -1;
 			}
 		case GRAPH:
 			switch (atype) {
-			case ATTRIBUTEDELEMENT:
+			case ATTRELEM:
 				return 0;
 			default:
 				return -1;

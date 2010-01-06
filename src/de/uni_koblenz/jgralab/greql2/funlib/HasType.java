@@ -42,9 +42,9 @@ import de.uni_koblenz.jgralab.schema.AttributedElementClass;
  * 
  * <dl>
  * <dt><b>GReQL-signature</b></dt>
- * <dd><code>BOOLEAN hasType(ae:ATTRIBUTEDELEMENT, type:STRING)</code></dd>
+ * <dd><code>BOOL hasType(ae:ATTRELEM, type:STRING)</code></dd>
  * <dd>
- * <code>BOOLEAN hasType(ae:ATTRIBUTEDELEMENT, aec:ATTRIBUTEDELEMENTCLASS)</code>
+ * <code>BOOL hasType(ae:ATTRELEM, aec:ATTRELEMCLASS)</code>
  * </dd>
  * <dd>&nbsp;</dd>
  * </dl>
@@ -72,12 +72,12 @@ import de.uni_koblenz.jgralab.schema.AttributedElementClass;
 public class HasType extends Greql2Function {
 	{
 		JValueType[][] x = {
-				{ JValueType.ATTRIBUTEDELEMENT, JValueType.STRING,
-						JValueType.BOOLEAN },
-				{ JValueType.ATTRIBUTEDELEMENT,
-						JValueType.ATTRIBUTEDELEMENTCLASS, JValueType.BOOLEAN },
-				{ JValueType.ATTRIBUTEDELEMENT, JValueType.TYPECOLLECTION,
-						JValueType.BOOLEAN } };
+				{ JValueType.ATTRELEM, JValueType.STRING,
+						JValueType.BOOL },
+				{ JValueType.ATTRELEM,
+						JValueType.ATTRELEMCLASS, JValueType.BOOL },
+				{ JValueType.ATTRELEM, JValueType.TYPECOLLECTION,
+						JValueType.BOOL } };
 		signatures = x;
 
 		description = "Checks if the given AttrElem has the given type.\n"

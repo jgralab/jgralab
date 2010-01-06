@@ -41,7 +41,7 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
  * 
  * <dl>
  * <dt><b>GReQL-signature</b></dt>
- * <dd><code>INTEGER distance(ps:PATHSYSTEM, v:VERTEX)</code></dd>
+ * <dd><code>INT distance(ps:PATHSYSTEM, v:VERTEX)</code></dd>
  * <dd>&nbsp;</dd>
  * </dl>
  * <dl>
@@ -66,7 +66,7 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
 public class Distance extends Greql2Function {
 	{
 		JValueType[][] x = { { JValueType.PATHSYSTEM, JValueType.VERTEX,
-				JValueType.INTEGER } };
+				JValueType.INT } };
 		signatures = x;
 
 		description = "In the given pathsystem, return the distance from the root to the given vertex.";

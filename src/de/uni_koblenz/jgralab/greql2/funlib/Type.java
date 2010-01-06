@@ -38,7 +38,7 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
  * 
  * <dl>
  * <dt><b>GReQL-signature</b></dt>
- * <dd><code>ATTRIBUTEDELEMENTCLASS Type(ae:ATTRIBUTEDELEMENT)</code></dd>
+ * <dd><code>ATTRELEMCLASS Type(ae:ATTRELEM)</code></dd>
  * <dd>&nbsp;</dd>
  * </dl>
  * <dl>
@@ -60,9 +60,9 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
 public class Type extends Greql2Function {
 	{
 		JValueType[][] x = {
-				{ JValueType.ATTRIBUTEDELEMENT,
-						JValueType.ATTRIBUTEDELEMENTCLASS },
-				{ JValueType.STRING, JValueType.ATTRIBUTEDELEMENTCLASS } };
+				{ JValueType.ATTRELEM,
+						JValueType.ATTRELEMCLASS },
+				{ JValueType.STRING, JValueType.ATTRELEMCLASS } };
 		signatures = x;
 
 		description = "Return the type of the given attributed element.\n"

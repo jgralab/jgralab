@@ -19,7 +19,7 @@ public abstract class ArithmeticFunction extends Greql2Function {
 		JValueType[][] x = {
 				{ JValueType.DOUBLE, JValueType.DOUBLE, JValueType.DOUBLE },
 				{ JValueType.LONG, JValueType.LONG, JValueType.LONG },
-				{ JValueType.INTEGER, JValueType.INTEGER, JValueType.INTEGER } };
+				{ JValueType.INT, JValueType.INT, JValueType.INT } };
 		signatures = x;
 		description = "Perform arithmetic operation on the given operands.";
 

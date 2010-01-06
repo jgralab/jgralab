@@ -37,11 +37,11 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
  * 
  * <dl>
  * <dt><b>GReQL-signature</b></dt>
- * <dd><code>INTEGER degree(v:Vertex)</code></dd>
- * <dd><code>INTEGER degree(v:Vertex, tc:TYPECOLLECTION)</code></dd>
- * <dd><code>INTEGER degree(v:Vertex, ps:PATH)</code></dd>
- * <dd><code>INTEGER degree(v:Vertex, ps:PATHSYSTEM)</code></dd>
- * <dd><code>INTEGER degree(v:Vertex, ps:PATHSYSTEM, tc:TYPECOLLECTION)</code></dd>
+ * <dd><code>INT degree(v:Vertex)</code></dd>
+ * <dd><code>INT degree(v:Vertex, tc:TYPECOLLECTION)</code></dd>
+ * <dd><code>INT degree(v:Vertex, ps:PATH)</code></dd>
+ * <dd><code>INT degree(v:Vertex, ps:PATHSYSTEM)</code></dd>
+ * <dd><code>INT degree(v:Vertex, ps:PATHSYSTEM, tc:TYPECOLLECTION)</code></dd>
  * <dd>&nbsp;</dd>
  * </dl>
  * <dl>

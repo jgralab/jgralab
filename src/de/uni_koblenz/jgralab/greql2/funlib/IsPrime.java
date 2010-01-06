@@ -39,8 +39,8 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
  * Checks if the given number is a prime number.
  * <dl>
  * <dt><b>GReQL-signature</b></dt>
- * <dd><code>BOOLEAN isPrime(number:LONG, noOfTestRuns:INTEGER)</code></dd>
- * <dd><code>BOOLEAN isPrime(number:LONG)</code></dd>
+ * <dd><code>BOOL isPrime(number:LONG, noOfTestRuns:INT)</code></dd>
+ * <dd><code>BOOL isPrime(number:LONG)</code></dd>
  * <dd>&nbsp;</dd>
  * </dl>
  * <dl>
@@ -49,7 +49,7 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
  * <dl>
  * <dt><b>Parameters:</b></dt>
  * <dd><code>number: LONG</code> - the number you want to test for primality</dd>
- * <dd><code>noOfTestRuns: INTEGER</code> - the number of test runs (defaults to
+ * <dd><code>noOfTestRuns: INT</code> - the number of test runs (defaults to
  * 10 if omitted)</dd>
  * <dt><b>Returns:</b></dt>
  * <dd><code>false</code> if <code>number</code> is no prime number. If it
@@ -64,15 +64,15 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
  */
 public class IsPrime extends Greql2Function {
 	{
-		JValueType[][] x = { { JValueType.LONG, JValueType.BOOLEAN },
-				{ JValueType.LONG, JValueType.INTEGER, JValueType.BOOLEAN } };
+		JValueType[][] x = { { JValueType.LONG, JValueType.BOOL },
+				{ JValueType.LONG, JValueType.INT, JValueType.BOOL } };
 		signatures = x;
 
 		description = "Return true, if the given number is a prime number.\n"
 				+ "This function performs the Miller-Rabin pseudo primality\n"
 				+ "test. The optional second parameter k is an integer that\n"
 				+ "specifies influences the probability of being a prime.\n"
-				+ "The chances of being prime is 1-(1/4)^k.  The default\n"
+				+ "The chances of being prime is 1-power((1/4), k).  The default\n"
 				+ "value of k is 10.";
 
 		Category[] c = { Category.ARITHMETICAL };

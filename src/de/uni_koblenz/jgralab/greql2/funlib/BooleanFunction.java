@@ -17,8 +17,8 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
  */
 public abstract class BooleanFunction extends Greql2Function {
 	{
-		JValueType[][] x = { { JValueType.BOOLEAN, JValueType.BOOLEAN,
-				JValueType.BOOLEAN } };
+		JValueType[][] x = { { JValueType.BOOL, JValueType.BOOL,
+				JValueType.BOOL } };
 		signatures = x;
 
 		description = "Return the value of this logical operation on the given two booleans.";

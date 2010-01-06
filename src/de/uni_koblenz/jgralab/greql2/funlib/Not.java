@@ -38,7 +38,7 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
  * Returns the result of the logical operation <code>not a</code>.
  * <dl>
  * <dt><b>GReQL-signature</b></dt>
- * <dd><code>BOOLEAN not(a: BOOLEAN)</code></dd>
+ * <dd><code>BOOL not(a: BOOL)</code></dd>
  * <dd></dd>
  * <dd>The parentheses can be omitted: <code>not a</code></dd>
  * </dl>
@@ -80,7 +80,7 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
 
 public class Not extends Greql2Function {
 	{
-		JValueType[][] x = { { JValueType.BOOLEAN, JValueType.BOOLEAN } };
+		JValueType[][] x = { { JValueType.BOOL, JValueType.BOOL } };
 		signatures = x;
 
 		description = "Return the complement of the given boolean.";

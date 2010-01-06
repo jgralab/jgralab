@@ -44,8 +44,8 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
  * 
  * <dl>
  * <dt><b>GReQL-signature</b></dt>
- * <dd><code>BOOLEAN isNeighbour(v1:VERTEX, v2:VERTEX)</code></dd>
- * <dd><code>BOOLEAN isNeighbour(v1:VERTEX, v2:VERTEX, ps:PATHSYSTEM)</code></dd>
+ * <dd><code>BOOL isNeighbour(v1:VERTEX, v2:VERTEX)</code></dd>
+ * <dd><code>BOOL isNeighbour(v1:VERTEX, v2:VERTEX, ps:PATHSYSTEM)</code></dd>
  * <dd>&nbsp;</dd>
  * </dl>
  * <dl>
@@ -74,9 +74,9 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
 public class IsNeighbour extends Greql2Function {
 	{
 		JValueType[][] x = {
-				{ JValueType.VERTEX, JValueType.VERTEX, JValueType.BOOLEAN },
+				{ JValueType.VERTEX, JValueType.VERTEX, JValueType.BOOL },
 				{ JValueType.VERTEX, JValueType.VERTEX, JValueType.PATHSYSTEM,
-						JValueType.BOOLEAN } };
+						JValueType.BOOL } };
 		signatures = x;
 
 		description = "Return true, iff two given vertices are neighbours.\n"

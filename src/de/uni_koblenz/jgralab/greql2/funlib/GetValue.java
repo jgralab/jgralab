@@ -41,7 +41,7 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
  * 
  * <dl>
  * <dt><b>GReQL-signature</b></dt>
- * <dd><code>OBJECT getValue(elem:ATTRIBUTEDELEMENT, name:String)</code></dd>
+ * <dd><code>OBJECT getValue(elem:ATTRELEM, name:String)</code></dd>
  * <dd><code>OBJECT getValue(elem:RECORD, name:String)</code></dd>
  * <dd>&nbsp;</dd>
  * </dl>
@@ -67,7 +67,7 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
 public class GetValue extends Greql2Function {
 	{
 		JValueType[][] x = {
-				{ JValueType.ATTRIBUTEDELEMENT, JValueType.STRING,
+				{ JValueType.ATTRELEM, JValueType.STRING,
 						JValueType.OBJECT },
 				{ JValueType.RECORD, JValueType.STRING, JValueType.OBJECT } };
 		signatures = x;

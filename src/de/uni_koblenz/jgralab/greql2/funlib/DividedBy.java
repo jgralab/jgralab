@@ -35,13 +35,13 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
  * (a / 0) will return the value positive or negative infinity.
  * <dl>
  * <dt><b>GReQL-signature</b></dt>
- * <dd><code>DOUBLE dividedBy(a: INTEGER, b: INTEGER)</code></dd>
- * <dd><code>DOUBLE dividedBy(a: LONG, b: INTEGER)</code></dd>
- * <dd><code>DOUBLE dividedBy(a: INTEGER, b: LONG)</code></dd>
+ * <dd><code>DOUBLE dividedBy(a: INT, b: INT)</code></dd>
+ * <dd><code>DOUBLE dividedBy(a: LONG, b: INT)</code></dd>
+ * <dd><code>DOUBLE dividedBy(a: INT, b: LONG)</code></dd>
  * <dd><code>DOUBLE dividedBy(a: LONG, b: LONG)</code></dd>
- * <dd><code>DOUBLE dividedBy(a: DOUBLE, b: INTEGER)</code></dd>
+ * <dd><code>DOUBLE dividedBy(a: DOUBLE, b: INT)</code></dd>
  * <dd><code>DOUBLE dividedBy(a: DOUBLE, b: LONG)</code></dd>
- * <dd><code>DOUBLE dividedBy(a: INTEGER, b: DOUBLE)</code></dd>
+ * <dd><code>DOUBLE dividedBy(a: INT, b: DOUBLE)</code></dd>
  * <dd><code>DOUBLE dividedBy(a: LONG, b: DOUBLE)</code></dd>
  * <dd><code>DOUBLE dividedBy(a: DOUBLE, b: DOUBLE)</code></dd>
  * <dd></dd>
@@ -52,10 +52,10 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
  * <dd>
  * <dl>
  * <dt><b>Parameters:</b></dt>
- * <dd><code>a: INTEGER</code> - dividend</dd>
+ * <dd><code>a: INT</code> - dividend</dd>
  * <dd><code>a: LONG</code> - dividend</dd>
  * <dd><code>a: DOUBLE</code> - dividend</dd>
- * <dd><code>b: INTEGER</code> - divisor</dd>
+ * <dd><code>b: INT</code> - divisor</dd>
  * <dd><code>b: LONG</code> - divisor</dd>
  * <dd><code>b: DOUBLE</code> - divisor</dd>
  * <dt><b>Returns:</b></dt>
@@ -74,7 +74,7 @@ public class DividedBy extends ArithmeticFunction {
 		JValueType[][] x = {
 				{ JValueType.DOUBLE, JValueType.DOUBLE, JValueType.DOUBLE },
 				{ JValueType.LONG, JValueType.LONG, JValueType.DOUBLE },
-				{ JValueType.INTEGER, JValueType.INTEGER, JValueType.DOUBLE } };
+				{ JValueType.INT, JValueType.INT, JValueType.DOUBLE } };
 		signatures = x;
 	}
 

@@ -49,7 +49,7 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
  * <dl>
  * <dt><b>GReQL-signature</b></dt>
  * <dd>
- * <code>BOOLEAN isReachable(startVertex:VERTEX, targetVertex:VERTEX, dfa: DFA)</code>
+ * <code>BOOL isReachable(startVertex:VERTEX, targetVertex:VERTEX, dfa: DFA)</code>
  * </dd>
  * <dd>&nbsp;</dd>
  * </dl>
@@ -78,14 +78,14 @@ public class IsReachable extends Greql2Function {
 	{
 		JValueType[][] x = {
 				{ JValueType.VERTEX, JValueType.VERTEX, JValueType.DFA,
-						JValueType.BOOLEAN },
+						JValueType.BOOL },
 				{ JValueType.VERTEX, JValueType.VERTEX, JValueType.NFA,
-						JValueType.BOOLEAN } };
+						JValueType.BOOL } };
 		signatures = x;
 
 		description = "Return true, iff there is a path from the first to the second vertex.\n"
 				+ "The third parameter is a path description describing the structure\n"
-				+ "of the path.  If you are only interested in \"somehow connected\",\n"
+				+ "of the path.  If you are only interested in only somehow connected,\n"
 				+ "use <->* here.";
 
 		Category[] c = { Category.GRAPH, Category.PATHS_AND_PATHSYSTEMS };

@@ -49,7 +49,7 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
  * 
  * <dl>
  * <dt><b>GReQL-signature</b></dt>
- * <dd><code>BOOLEAN matches(p1:PATH, dfa:DFA)</code></dd>
+ * <dd><code>BOOL matches(p1:PATH, dfa:DFA)</code></dd>
  * <dd>&nbsp;</dd>
  * </dl>
  * <dl>
@@ -76,8 +76,8 @@ public class Matches extends Greql2Function {
 
 	{
 		JValueType[][] x = {
-				{ JValueType.PATH, JValueType.DFA, JValueType.BOOLEAN },
-				{ JValueType.PATH, JValueType.NFA, JValueType.BOOLEAN } };
+				{ JValueType.PATH, JValueType.DFA, JValueType.BOOL },
+				{ JValueType.PATH, JValueType.NFA, JValueType.BOOL } };
 		signatures = x;
 
 		description = "Return true, iff the given path description matches the given path.";

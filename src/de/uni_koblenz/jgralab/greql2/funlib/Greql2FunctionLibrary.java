@@ -29,10 +29,15 @@ import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Modifier;
 import java.net.URL;
 import java.net.URLDecoder;
+import java.util.Comparator;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Set;
+import java.util.SortedMap;
+import java.util.SortedSet;
+import java.util.TreeMap;
 import java.util.TreeSet;
+import java.util.Map.Entry;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 import java.util.logging.Level;
@@ -46,6 +51,7 @@ import de.uni_koblenz.ist.utilities.option_handler.OptionHandler;
 import de.uni_koblenz.jgralab.JGraLab;
 import de.uni_koblenz.jgralab.greql2.exception.DuplicateGreqlFunctionException;
 import de.uni_koblenz.jgralab.greql2.funlib.Greql2Function.Category;
+import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
 
 /**
  * This class is the core of the function libary. It's implemented following the
@@ -148,6 +154,11 @@ public class Greql2FunctionLibrary {
 		describeAllFunctions.setRequired(true);
 		group.addOption(describeAllFunctions);
 
+		Option greqlRefCard = new Option("g", "greql-ref-card", false,
+				"Produce LaTeX longtable output for the GReQL Reference Card");
+		greqlRefCard.setRequired(true);
+		group.addOption(greqlRefCard);
+
 		Option describeFunction = new Option("d", "describe-function", true,
 				"Describe the given function");
 		describeFunction.setRequired(true);
@@ -180,6 +191,8 @@ public class Greql2FunctionLibrary {
 			output = describeFunction(cmd.getOptionValue('b'), true);
 		} else if (cmd.hasOption('a')) {
 			output = describeAllFunction();
+		} else if (cmd.hasOption('g')) {
+			output = generateGreqlReferenceCard();
 		}
 		if (output != null) {
 			System.out.println(output);
@@ -190,8 +203,8 @@ public class Greql2FunctionLibrary {
 
 	private static String describeAllFunction() {
 		StringBuilder sb = new StringBuilder();
-		for (String fun : new TreeSet<String>(
-				Greql2FunctionLibrary.instance().availableFunctions.keySet())) {
+		for (String fun : new TreeSet<String>(instance().availableFunctions
+				.keySet())) {
 			sb.append(describeFunction(fun, false));
 			sb.append("\u000C\n");
 		}
@@ -213,8 +226,7 @@ public class Greql2FunctionLibrary {
 	}
 
 	private static String describeFunction(String functionName, boolean briefly) {
-		Greql2Function fun = Greql2FunctionLibrary.instance().availableFunctions
-				.get(functionName);
+		Greql2Function fun = instance().availableFunctions.get(functionName);
 		if (fun == null) {
 			return "`" + functionName + "' is not a known function.";
 		}
@@ -277,6 +289,89 @@ public class Greql2FunctionLibrary {
 			sb.append(category.toString());
 		}
 		sb.append("\n-----------\n");
+		return sb.toString();
+	}
+
+	private static String generateGreqlReferenceCard() {
+		SortedMap<Category, SortedSet<Greql2Function>> map = new TreeMap<Category, SortedSet<Greql2Function>>();
+		for (Greql2Function fun : instance().availableFunctions.values()) {
+			for (Category cat : fun.categories) {
+				SortedSet<Greql2Function> set = map.get(cat);
+				if (set == null) {
+					set = new TreeSet<Greql2Function>(
+							new Comparator<Greql2Function>() {
+								@Override
+								public int compare(Greql2Function o1,
+										Greql2Function o2) {
+									return o1.getClass().getSimpleName()
+											.compareTo(
+													o2.getClass()
+															.getSimpleName());
+								}
+							});
+					map.put(cat, set);
+				}
+				set.add(fun);
+			}
+		}
+
+		StringBuilder sb = new StringBuilder();
+		sb.append("\\section{Functions}\n\n");
+		for (Entry<Category, SortedSet<Greql2Function>> e : map.entrySet()) {
+			sb.append("\\subsection{");
+			String subSect = e.getKey().toString().toLowerCase().replace("_",
+					" ");
+			sb.append(subSect.substring(0, 1).toUpperCase()
+					+ subSect.substring(1));
+			sb.append("}\n\n");
+
+			sb
+					.append("\\begin{longtable}{|l|p{0.45\\textwidth}|p{0.35\\textwidth}|}\n");
+
+			sb.append("\\hline\n");
+			sb
+					.append("\\textbf{Name} & \\textbf{Description} & \\textbf{Signatures} \\\\ \n");
+			sb.append("\\hline\n");
+			sb.append("\\endfirsthead\n");
+			sb.append("\\hline\n");
+			sb
+					.append("\\textbf{Name} & \\textbf{Description} & \\textbf{Signatures (continued...)} \\\\ \n");
+			sb.append("\\hline\n");
+			sb.append("\\endhead\n\n");
+			for (Greql2Function fun : e.getValue()) {
+				String n = fun.getClass().getSimpleName();
+				String funName = n.substring(0, 1).toLowerCase()
+						+ n.substring(1);
+
+				sb.append("\\emph{");
+				sb.append(funName);
+				sb.append("}");
+				sb.append(" & ");
+				sb.append(fun.description);
+				sb.append(" & {\\scriptsize ");
+
+				boolean outerfirst = true;
+				for (JValueType[] signature : fun.signatures) {
+					if (!outerfirst) {
+						sb.append("\\newline ");
+					}
+					outerfirst = false;
+					boolean first = true;
+					for (int j = 0; j < signature.length - 1; j++) {
+						if (!first) {
+							sb.append(" $\\times$ ");
+						}
+						first = false;
+						sb.append(signature[j]);
+					}
+					sb.append(" $\\rightarrow$ ");
+					sb.append(signature[signature.length - 1]);
+				}
+
+				sb.append(" } \\\\ \n\\hline\n");
+			}
+			sb.append("\\end{longtable}\n\n");
+		}
 		return sb.toString();
 	}
 

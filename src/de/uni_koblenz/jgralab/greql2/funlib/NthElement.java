@@ -39,9 +39,9 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
  * 
  * <dl>
  * <dt><b>GReQL-signature</b></dt>
- * <dd><code>OBJECT nthElement(list:LIST&lt;OBJECT&gt;, n:INTEGER)</code></dd>
- * <dd><code>OBJECT nthElement(list:SET&lt;OBJECT&gt;, n:INTEGER)</code></dd>
- * <dd><code>OBJECT nthElement(tuple:TUPLE&lt;OBJECT&gt;, n:INTEGER)</code></dd>
+ * <dd><code>OBJECT nthElement(list:LIST&lt;OBJECT&gt;, n:INT)</code></dd>
+ * <dd><code>OBJECT nthElement(list:SET&lt;OBJECT&gt;, n:INT)</code></dd>
+ * <dd><code>OBJECT nthElement(tuple:TUPLE&lt;OBJECT&gt;, n:INT)</code></dd>
  * <dd>&nbsp;</dd>
  * </dl>
  * <dl>
@@ -65,7 +65,7 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
  */
 public class NthElement extends Greql2Function {
 	{
-		JValueType[][] x = { { JValueType.COLLECTION, JValueType.INTEGER,
+		JValueType[][] x = { { JValueType.COLLECTION, JValueType.INT,
 				JValueType.OBJECT } };
 		signatures = x;
 

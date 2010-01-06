@@ -40,11 +40,11 @@ import de.uni_koblenz.jgralab.schema.Schema;
  * 
  * <dl>
  * <dt><b>GReQL-signature</b></dt>
- * <dd><code>BOOLEAN isA(type:STRING, supertype:STRING)</code></dd>
- * <dd><code>BOOLEAN isA(typeA:ATTRIBUTEDELEMENTCLASS, supertype:STRING)</code></dd>
- * <dd><code>BOOLEAN isA(type:STRING, supertypeA:ATTRIBUTEDELEMENTCLASS)</code></dd>
+ * <dd><code>BOOL isA(type:STRING, supertype:STRING)</code></dd>
+ * <dd><code>BOOL isA(typeA:ATTRELEMCLASS, supertype:STRING)</code></dd>
+ * <dd><code>BOOL isA(type:STRING, supertypeA:ATTRELEMCLASS)</code></dd>
  * <dd>
- * <code>BOOLEAN isA(typeA:ATTRIBUTEDELEMENTCLASS, supertypeA:ATTRIBUTEDELEMENTCLASS)</code>
+ * <code>BOOL isA(typeA:ATTRELEMCLASS, supertypeA:ATTRELEMCLASS)</code>
  * </dd>
  * <dd>&nbsp;</dd>
  * </dl>
@@ -74,11 +74,11 @@ import de.uni_koblenz.jgralab.schema.Schema;
 public class IsA extends Greql2Function {
 	{
 		JValueType[][] x = {
-				{ JValueType.STRING, JValueType.STRING, JValueType.BOOLEAN },
-				{ JValueType.STRING, JValueType.ATTRIBUTEDELEMENTCLASS,
-						JValueType.BOOLEAN },
-				{ JValueType.ATTRIBUTEDELEMENTCLASS, JValueType.STRING,
-						JValueType.BOOLEAN } };
+				{ JValueType.STRING, JValueType.STRING, JValueType.BOOL },
+				{ JValueType.STRING, JValueType.ATTRELEMCLASS,
+						JValueType.BOOL },
+				{ JValueType.ATTRELEMCLASS, JValueType.STRING,
+						JValueType.BOOL } };
 		signatures = x;
 
 		description = "Return true, iff the first type is a subtype of the second type.\n"

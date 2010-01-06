@@ -40,9 +40,9 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
  * 
  * <dl>
  * <dt><b>GReQL-signature</b></dt>
- * <dd><code>SET&lt;ATTRIBUTEDELEMENTCLASS&gt; edgeTypeSet(c:COLLECTION)</code></dd>
- * <dd><code>SET&lt;ATTRIBUTEDELEMENTCLASS&gt; edgeTypeSet(p:PATH)</code></dd>
- * <dd><code>SET&lt;ATTRIBUTEDELEMENTCLASS&gt; edgeTypeSet(ps:PATHSYSTEM)</code>
+ * <dd><code>SET&lt;ATTRELEMCLASS&gt; edgeTypeSet(c:COLLECTION)</code></dd>
+ * <dd><code>SET&lt;ATTRELEMCLASS&gt; edgeTypeSet(p:PATH)</code></dd>
+ * <dd><code>SET&lt;ATTRELEMCLASS&gt; edgeTypeSet(ps:PATHSYSTEM)</code>
  * </dd>
  * <dd>&nbsp;</dd>
  * </dl>

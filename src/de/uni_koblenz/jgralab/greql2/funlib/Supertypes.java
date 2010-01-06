@@ -41,9 +41,9 @@ import de.uni_koblenz.jgralab.schema.AttributedElementClass;
  * 
  * <dl>
  * <dt><b>GReQL-signature</b></dt>
- * <dd><code>SET&lt;ATTRIBUTEDELEMENTCLASS&gt; superTypes(type:STRING)</code></dd>
+ * <dd><code>SET&lt;ATTRELEMCLASS&gt; superTypes(type:STRING)</code></dd>
  * <dd>
- * <code>SET&lt;ATTRIBUTEDELEMENTCLASS&gt; superTypes(typeA:ATTRIBUTEDELEMENTCLASS)</code>
+ * <code>SET&lt;ATTRELEMCLASS&gt; superTypes(typeA:ATTRELEMCLASS)</code>
  * </dd>
  * <dd>&nbsp;</dd>
  * </dl>
@@ -77,7 +77,7 @@ import de.uni_koblenz.jgralab.schema.AttributedElementClass;
 public class Supertypes extends Greql2Function {
 	{
 		JValueType[][] x = { { JValueType.STRING, JValueType.COLLECTION },
-				{ JValueType.ATTRIBUTEDELEMENTCLASS, JValueType.COLLECTION } };
+				{ JValueType.ATTRELEMCLASS, JValueType.COLLECTION } };
 		signatures = x;
 
 		description = "Return the set of direct supertypes of the given type.\n"
