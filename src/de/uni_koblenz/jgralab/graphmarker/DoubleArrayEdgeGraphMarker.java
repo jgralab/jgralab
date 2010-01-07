@@ -7,7 +7,7 @@ import de.uni_koblenz.jgralab.Vertex;
 public class DoubleArrayEdgeGraphMarker extends DoubleArrayGraphMarker<Edge> {
 
 	public DoubleArrayEdgeGraphMarker(Graph graph) {
-		super(graph, graph.getMaxECount());
+		super(graph, graph.getMaxECount() + 1);
 	}
 
 	@Override
@@ -17,6 +17,7 @@ public class DoubleArrayEdgeGraphMarker extends DoubleArrayGraphMarker<Edge> {
 
 	@Override
 	public void maxEdgeCountIncreased(int newValue) {
+		newValue++;
 		if (newValue > temporaryAttributes.length) {
 			expand(newValue);
 		}

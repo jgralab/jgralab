@@ -14,7 +14,7 @@ import de.uni_koblenz.jgralab.Vertex;
 public class ArrayVertexGraphMarker<O> extends ArrayGraphMarker<Vertex, O> {
 
 	public ArrayVertexGraphMarker(Graph graph) {
-		super(graph, graph.getMaxVCount());
+		super(graph, graph.getMaxVCount() + 1);
 	}
 
 	@Override
@@ -29,6 +29,7 @@ public class ArrayVertexGraphMarker<O> extends ArrayGraphMarker<Vertex, O> {
 
 	@Override
 	public void maxVertexCountIncreased(int newValue) {
+		newValue++;
 		if (newValue > temporaryAttributes.length) {
 			expand(newValue);
 		}

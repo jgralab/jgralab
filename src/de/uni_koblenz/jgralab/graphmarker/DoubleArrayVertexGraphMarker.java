@@ -8,7 +8,7 @@ public class DoubleArrayVertexGraphMarker extends
 		DoubleArrayGraphMarker<Vertex> {
 
 	public DoubleArrayVertexGraphMarker(Graph graph) {
-		super(graph, graph.getMaxVCount());
+		super(graph, graph.getMaxVCount() + 1);
 	}
 
 	@Override
@@ -23,6 +23,7 @@ public class DoubleArrayVertexGraphMarker extends
 
 	@Override
 	public void maxVertexCountIncreased(int newValue) {
+		newValue++;
 		if (newValue > temporaryAttributes.length) {
 			expand(newValue);
 		}

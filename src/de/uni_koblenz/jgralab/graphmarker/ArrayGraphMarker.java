@@ -107,7 +107,7 @@ public abstract class ArrayGraphMarker<T extends GraphElement, O> extends
 	}
 
 	public int maxSize() {
-		return temporaryAttributes.length;
+		return temporaryAttributes.length - 1;
 	}
 
 }
