@@ -87,7 +87,7 @@ public class Xor extends BooleanFunction {
 
 	{
 		description = "Logical operation $(a \\wedge \\neg b) \\vee (\\neg a\\wedge b)$. \n"
-				+ "Alternativ usage: a xor b.";
+				+ "Alternative usage: a xor b.";
 	}
 
 	@Override
