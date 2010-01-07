@@ -87,7 +87,8 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
 public class And extends BooleanFunction {
 
 	{
-		description = "Logical operation a & b (\" and \").";
+		description = "Logical operation $a\\wedge b$. \n"
+				+ "Alternativ usage: \\texttt{a and b}.";
 	}
 
 	@Override
