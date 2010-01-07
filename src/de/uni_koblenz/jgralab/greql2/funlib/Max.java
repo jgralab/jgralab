@@ -82,7 +82,7 @@ public class Max extends Greql2Function {
 		Double max = null;
 		for (JValue curVal : col) {
 			if (curVal.isNumber()) {
-				if ((max == null) || (curVal.toNumber().doubleValue() > max)) {
+				if (max == null || curVal.toNumber().doubleValue() > max) {
 					max = curVal.toNumber().doubleValue();
 				}
 			} else {

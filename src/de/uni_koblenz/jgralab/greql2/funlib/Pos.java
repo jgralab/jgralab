@@ -73,7 +73,7 @@ public class Pos extends Greql2Function {
 				JValueType.INT } };
 		signatures = x;
 
-		description = "Return the index of the given object in the given list or tuple.";
+		description = "Returns the index of the given object in the given collection.";
 
 		Category[] c = { Category.COLLECTIONS_AND_MAPS };
 		categories = c;

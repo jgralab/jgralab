@@ -73,8 +73,8 @@ public class Intersection extends Greql2Function {
 				JValueType.COLLECTION } };
 		signatures = x;
 
-		description = "Return the intersection of two given collections.\n"
-				+ "Both collections are converted to sets before.";
+		description = "Returns the intersection of two given collections.\n"
+				+ "Both collections are converted to sets first.";
 
 		Category[] c = { Category.COLLECTIONS_AND_MAPS };
 		categories = c;

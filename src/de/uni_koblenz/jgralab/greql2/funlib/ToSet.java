@@ -64,8 +64,8 @@ public class ToSet extends Greql2Function {
 				{ JValueType.OBJECT, JValueType.COLLECTION } };
 		signatures = x;
 
-		description = "Convert the given collection or object to a set.\n"
-				+ "In the second case, a set with one value (the object) is returned.";
+		description = "Converts the given collection or object to a set.\n"
+				+ "In the second case, a set only with the object is returned.";
 
 		Category[] c = { Category.COLLECTIONS_AND_MAPS };
 		categories = c;

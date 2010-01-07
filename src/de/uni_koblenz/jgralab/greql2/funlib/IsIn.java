@@ -68,18 +68,15 @@ public class IsIn extends Greql2Function {
 	{
 		JValueType[][] x = {
 				{ JValueType.OBJECT, JValueType.COLLECTION, JValueType.BOOL },
-				{ JValueType.ATTRELEM, JValueType.PATH,
-						JValueType.BOOL },
-				{ JValueType.ATTRELEM, JValueType.PATHSYSTEM,
-						JValueType.BOOL },
+				{ JValueType.ATTRELEM, JValueType.PATH, JValueType.BOOL },
+				{ JValueType.ATTRELEM, JValueType.PATHSYSTEM, JValueType.BOOL },
 				{ JValueType.PATH, JValueType.PATHSYSTEM, JValueType.BOOL },
-				{ JValueType.ATTRELEM, JValueType.SUBGRAPH,
-						JValueType.BOOL },
+				{ JValueType.ATTRELEM, JValueType.SUBGRAPH, JValueType.BOOL },
 				{ JValueType.ATTRELEM, JValueType.BOOL } };
 		signatures = x;
 
-		description = "Return true, iff the given element is part of the given structure.\n"
-				+ "If only an attributed element is given, then check if that is\n"
+		description = "Returns true, iff the given element is part of the given structure.\n"
+				+ "If only an attributed element is given, then check if that is \n"
 				+ "contained in the graph the query is evaluated on.";
 
 		Category[] c = { Category.COLLECTIONS_AND_MAPS,

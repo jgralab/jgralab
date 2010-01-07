@@ -65,7 +65,7 @@ public class Min extends Greql2Function {
 		JValueType[][] x = { { JValueType.COLLECTION, JValueType.DOUBLE } };
 		signatures = x;
 
-		description = "Return the minimum of the given collection of numbers.";
+		description = "Returns the minimum of the given collection of numbers.";
 
 		Category[] c = { Category.COLLECTIONS_AND_MAPS };
 		categories = c;
@@ -82,7 +82,7 @@ public class Min extends Greql2Function {
 		Double min = null;
 		for (JValue curVal : col) {
 			if (curVal.isNumber()) {
-				if ((min == null) || (curVal.toNumber().doubleValue() < min)) {
+				if (min == null || curVal.toNumber().doubleValue() < min) {
 					min = curVal.toNumber().doubleValue();
 				}
 			} else {

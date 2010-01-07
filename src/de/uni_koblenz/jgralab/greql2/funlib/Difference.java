@@ -74,7 +74,7 @@ public class Difference extends Greql2Function {
 				JValueType.COLLECTION } };
 		signatures = x;
 
-		description = "Return the set difference of two given 2 collections.\n"
+		description = "Returns the set difference of two given 2 collections.\n"
 				+ "Both collections are converted to sets first.";
 
 		Category[] c = { Category.COLLECTIONS_AND_MAPS };

@@ -63,7 +63,7 @@ public class Sum extends Greql2Function {
 		JValueType[][] x = { { JValueType.COLLECTION, JValueType.DOUBLE } };
 		signatures = x;
 
-		description = "Return the sum of the given collection of numbers.";
+		description = "Returns the sum of the given collection of numbers.";
 
 		Category[] c = { Category.COLLECTIONS_AND_MAPS };
 		categories = c;

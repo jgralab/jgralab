@@ -67,7 +67,7 @@ public class IsUnique extends Greql2Function {
 		JValueType[][] x = { { JValueType.COLLECTION, JValueType.BOOL } };
 		signatures = x;
 
-		description = "Return true, iff all elements in the collection occure only once.\n"
+		description = "Returns true, iff all elements in the collection occure only once.\n"
 				+ "That means, the collection is a set.";
 
 		Category[] c = { Category.COLLECTIONS_AND_MAPS };
