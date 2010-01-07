@@ -49,8 +49,8 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
  * <dl>
  * <dt><b>Parameters:</b></dt>
  * <dd><code>number: LONG</code> - the number you want to test for primality</dd>
- * <dd><code>noOfTestRuns: INT</code> - the number of test runs (defaults to
- * 10 if omitted)</dd>
+ * <dd><code>noOfTestRuns: INT</code> - the number of test runs (defaults to 10
+ * if omitted)</dd>
  * <dt><b>Returns:</b></dt>
  * <dd><code>false</code> if <code>number</code> is no prime number. If it
  * returns <code>true</code> the probability that <code>number</code> is indeed
@@ -70,10 +70,10 @@ public class IsPrime extends Greql2Function {
 
 		description = "Return true, if the given number is a prime number.\n"
 				+ "This function performs the Miller-Rabin pseudo primality\n"
-				+ "test. The optional second parameter k is an integer that\n"
+				+ "test. The optional second parameter $k$ is an integer that\n"
 				+ "specifies influences the probability of being a prime.\n"
-				+ "The chances of being prime is 1-power((1/4), k).  The default\n"
-				+ "value of k is 10.";
+				+ "The chances of being prime is $1- (\\frac{1}{4})^k$.  The default\n"
+				+ "value of $k$ is 10.";
 
 		Category[] c = { Category.ARITHMETICAL };
 		categories = c;
@@ -117,13 +117,13 @@ public class IsPrime extends Greql2Function {
 			return 0;
 		}
 
-		y = (x * x) % n;
-		if ((y == 1) && (x != 1) && (x != n - 1)) {
+		y = x * x % n;
+		if (y == 1 && x != 1 && x != n - 1) {
 			return 0;
 		}
 
 		if (i % 2 != 0) {
-			y = (a * y) % n;
+			y = a * y % n;
 		}
 		return y;
 	}
