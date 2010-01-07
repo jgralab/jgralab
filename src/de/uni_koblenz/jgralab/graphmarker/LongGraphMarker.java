@@ -109,4 +109,23 @@ public abstract class LongGraphMarker<T extends GraphElement> extends
 		temporaryAttributes = newTemporaryAttributes;
 	}
 
+	public long getUnmarkedValue() {
+		return unmarkedValue;
+	}
+
+	public void setUnmarkedValue(long newUnmarkedValue) {
+		for (int i = 0; i < temporaryAttributes.length; i++) {
+			// keep track of implicitly unmarked values
+			if (temporaryAttributes[i] == newUnmarkedValue) {
+				marked -= 1;
+			}
+			// set all unmarked elements to new value
+			if (temporaryAttributes[i] == this.unmarkedValue) {
+				temporaryAttributes[i] = newUnmarkedValue;
+			}
+
+		}
+		this.unmarkedValue = newUnmarkedValue;
+	}
+
 }
