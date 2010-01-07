@@ -230,6 +230,7 @@ columns.")
 
   (progn
     (define-key greql-mode-map (kbd "M-TAB")   'greql-complete)
+    (define-key greql-mode-map (kbd "C-c SPC") 'greql-complete)
     (define-key greql-mode-map (kbd "C-c C-d") 'greql-show-documentation)
     (define-key greql-mode-map (kbd "C-c C-s") 'greql-set-graph)
     (define-key greql-mode-map (kbd "C-c C-c") 'greql-execute)
