@@ -87,7 +87,7 @@ public class Or extends BooleanFunction {
 
 	{
 		description = "Logical operation $a \\vee b$. \n"
-				+ "Alternativ usage: a or b.";
+				+ "Alternative usage: a or b.";
 	}
 
 	@Override

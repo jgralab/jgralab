@@ -60,9 +60,14 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
 
 public class Nequals extends CompareFunction {
 
+	{
+		description = "Returns true, if $a\\neq b$, otherwise false. \nAlternative usage: a <> b.";
+	}
+
 	/**
 	 * checks if the two function parameters are semanticly identical
 	 */
+	@Override
 	public JValue evaluate(Graph graph, BooleanGraphMarker subgraph,
 			JValue[] arguments) throws EvaluateException {
 		return evaluate(arguments, CompareOperator.NOT_EQUAL);

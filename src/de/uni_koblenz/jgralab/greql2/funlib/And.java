@@ -88,7 +88,7 @@ public class And extends BooleanFunction {
 
 	{
 		description = "Logical operation $a\\wedge b$. \n"
-				+ "Alternativ usage: a and b.";
+				+ "Alternative usage: a and b.";
 	}
 
 	@Override
