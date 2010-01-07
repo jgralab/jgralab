@@ -65,7 +65,7 @@ public class ContainsKey extends Greql2Function {
 				JValueType.BOOL } };
 		signatures = x;
 
-		description = "Return true, iff the given map contains the given element as key.";
+		description = "Returns true, iff the given map contains the given element as key.";
 
 		Category[] c = { Category.COLLECTIONS_AND_MAPS };
 		categories = c;

@@ -83,7 +83,7 @@ public class Not extends Greql2Function {
 		JValueType[][] x = { { JValueType.BOOL, JValueType.BOOL } };
 		signatures = x;
 
-		description = "Logical operation $\\neg a$.";
+		description = "Logical operation $\\neg a$. \nAlternative usage: not a.";
 
 		Category[] c = { Category.LOGICS };
 		categories = c;

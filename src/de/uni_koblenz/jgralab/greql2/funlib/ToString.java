@@ -61,7 +61,7 @@ public class ToString extends Greql2Function {
 		JValueType[][] x = { { JValueType.OBJECT, JValueType.STRING } };
 		signatures = x;
 
-		description = "Return the toString() output of the given object.";
+		description = "Returns the string representation of the given object.";
 
 		Category[] c = { Category.STRINGS };
 		categories = c;

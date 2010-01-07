@@ -65,7 +65,7 @@ public class Split extends Greql2Function {
 				JValueType.COLLECTION } };
 		signatures = x;
 
-		description = "Split string according to regexp and return splits as list.";
+		description = "Splits the given string accordingly to the given regexp and returns splits as list.";
 
 		Category[] c = { Category.STRINGS };
 		categories = c;
