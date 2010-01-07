@@ -4,23 +4,23 @@ import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.GraphElement;
 import de.uni_koblenz.jgralab.Vertex;
 
-public abstract class IntegerGraphMarker<T extends GraphElement> extends
+public abstract class DoubleArrayGraphMarker<T extends GraphElement> extends
 		AbstractGraphMarker<T> {
 
-	private static final int DEFAULT_UNMARKED_VALUE = Integer.MIN_VALUE;
+	private static final double DEFAULT_UNMARKED_VALUE = Double.NaN;
 
-	protected int[] temporaryAttributes;
+	protected double[] temporaryAttributes;
 	protected int marked;
-	protected int unmarkedValue;
+	protected double unmarkedValue;
 
-	protected IntegerGraphMarker(Graph graph, int size) {
+	protected DoubleArrayGraphMarker(Graph graph, int size) {
 		super(graph);
 		unmarkedValue = DEFAULT_UNMARKED_VALUE;
 		temporaryAttributes = createNewArray(size);
 	}
 
-	private int[] createNewArray(int size) {
-		int[] newArray = new int[size];
+	private double[] createNewArray(int size) {
+		double[] newArray = new double[size];
 		for (int i = 0; i < size; i++) {
 			newArray[i] = unmarkedValue;
 		}
@@ -58,21 +58,21 @@ public abstract class IntegerGraphMarker<T extends GraphElement> extends
 	 * @return The previous element the given graph element has been marked
 	 *         with, <code>null</code> if the given element has not been marked.
 	 */
-	public int mark(T graphElement, int value) {
+	public double mark(T graphElement, double value) {
 		assert (graphElement.getGraph() == graph);
 		assert (graphElement.getId() <= (graphElement instanceof Vertex ? graph
 				.getMaxVCount() : graph.getMaxECount()));
-		int out = temporaryAttributes[graphElement.getId()];
+		double out = temporaryAttributes[graphElement.getId()];
 		temporaryAttributes[graphElement.getId()] = value;
 		marked += 1;
 		return out;
 	}
 
-	public int getMark(T graphElement) {
+	public double getMark(T graphElement) {
 		assert (graphElement.getGraph() == graph);
 		assert (graphElement.getId() <= (graphElement instanceof Vertex ? graph
 				.getMaxVCount() : graph.getMaxECount()));
-		int out = temporaryAttributes[graphElement.getId()];
+		double out = temporaryAttributes[graphElement.getId()];
 		return out;
 	}
 
@@ -100,7 +100,7 @@ public abstract class IntegerGraphMarker<T extends GraphElement> extends
 
 	protected void expand(int newSize) {
 		assert (newSize > temporaryAttributes.length);
-		int[] newTemporaryAttributes = createNewArray(newSize);
+		double[] newTemporaryAttributes = createNewArray(newSize);
 		System.arraycopy(temporaryAttributes, 0, newTemporaryAttributes, 0,
 				temporaryAttributes.length);
 		// for (int i = 0; i < temporaryAttributes.length; i++) {
@@ -109,11 +109,11 @@ public abstract class IntegerGraphMarker<T extends GraphElement> extends
 		temporaryAttributes = newTemporaryAttributes;
 	}
 
-	public int getUnmarkedValue() {
+	public double getUnmarkedValue() {
 		return unmarkedValue;
 	}
 
-	public void setUnmarkedValue(int newUnmarkedValue) {
+	public void setUnmarkedValue(double newUnmarkedValue) {
 		for (int i = 0; i < temporaryAttributes.length; i++) {
 			// keep track of implicitly unmarked values
 			if (temporaryAttributes[i] == newUnmarkedValue) {

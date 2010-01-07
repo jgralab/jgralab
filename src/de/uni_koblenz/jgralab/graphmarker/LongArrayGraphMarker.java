@@ -4,7 +4,7 @@ import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.GraphElement;
 import de.uni_koblenz.jgralab.Vertex;
 
-public abstract class LongGraphMarker<T extends GraphElement> extends
+public abstract class LongArrayGraphMarker<T extends GraphElement> extends
 		AbstractGraphMarker<T> {
 
 	private static final long DEFAULT_UNMARKED_VALUE = Long.MIN_VALUE;
@@ -13,7 +13,7 @@ public abstract class LongGraphMarker<T extends GraphElement> extends
 	protected int marked;
 	protected long unmarkedValue;
 
-	protected LongGraphMarker(Graph graph, int size) {
+	protected LongArrayGraphMarker(Graph graph, int size) {
 		super(graph);
 		unmarkedValue = DEFAULT_UNMARKED_VALUE;
 		temporaryAttributes = createNewArray(size);

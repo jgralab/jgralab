@@ -4,32 +4,32 @@ import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.Vertex;
 
-public class IntegerVertexGraphMarker extends IntegerGraphMarker<Vertex> {
+public class IntegerArrayEdgeGraphMarker extends IntegerArrayGraphMarker<Edge> {
 
-	protected IntegerVertexGraphMarker(Graph graph) {
-		super(graph, graph.getMaxVCount());
+	protected IntegerArrayEdgeGraphMarker(Graph graph) {
+		super(graph, graph.getMaxECount());
 	}
 
 	@Override
 	public void edgeDeleted(Edge e) {
-		// do nothing
+		removeMark(e);
 	}
 
 	@Override
 	public void maxEdgeCountIncreased(int newValue) {
-		// do nothing
-	}
-
-	@Override
-	public void maxVertexCountIncreased(int newValue) {
 		if (newValue > temporaryAttributes.length) {
 			expand(newValue);
 		}
 	}
 
 	@Override
+	public void maxVertexCountIncreased(int newValue) {
+		// do nothing
+	}
+
+	@Override
 	public void vertexDeleted(Vertex v) {
-		removeMark(v);
+		// do nothing
 	}
 
 }
