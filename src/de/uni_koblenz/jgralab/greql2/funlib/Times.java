@@ -85,7 +85,7 @@ public class Times extends ArithmeticFunction {
 				{ JValueType.STRING, JValueType.LONG, JValueType.STRING } };
 		signatures = x;
 
-		description = "Multiply the given two numbers, or concat the given string many times.";
+		description = "Calculates the sum $a\\cdot b$ or repeats the string $a$ $b$ times.";
 
 		Category[] c = { Category.ARITHMETICAL, Category.STRINGS };
 		categories = c;

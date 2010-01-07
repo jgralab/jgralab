@@ -70,6 +70,10 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
 
 public class Minus extends ArithmeticFunction {
 
+	{
+		description = "Calculates the difference $a-b$.";
+	}
+
 	@Override
 	public JValue evaluate(Graph graph, BooleanGraphMarker subgraph,
 			JValue[] arguments) throws EvaluateException {

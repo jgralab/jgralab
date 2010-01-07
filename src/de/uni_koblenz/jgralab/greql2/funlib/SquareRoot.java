@@ -65,7 +65,7 @@ public class SquareRoot extends Greql2Function {
 		JValueType[][] x = { { JValueType.NUMBER, JValueType.DOUBLE } };
 		signatures = x;
 
-		description = "Return the square root of the given number.";
+		description = "Calculates the square root $\\sqrt{a}$ of the given number a.";
 
 		Category[] c = { Category.ARITHMETICAL };
 		categories = c;
