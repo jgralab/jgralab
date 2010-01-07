@@ -85,6 +85,10 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
 
 public class Xor extends BooleanFunction {
 
+	{
+		description = "Logical operation a ^ b  or (a & !b) | (!a & b) (\" xor \").";
+	}
+
 	@Override
 	public JValue evaluate(Graph graph, BooleanGraphMarker subgraph,
 			JValue[] arguments) throws EvaluateException {
