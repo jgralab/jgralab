@@ -4,10 +4,10 @@ import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.Vertex;
 
-public class ArrayGenericEdgeGraphMarker<O> extends
-		ArrayGenericGraphMarker<Edge, O> {
+public class ArrayEdgeGraphMarker<O> extends
+		ArrayGraphMarker<Edge, O> {
 
-	protected ArrayGenericEdgeGraphMarker(Graph graph) {
+	protected ArrayEdgeGraphMarker(Graph graph) {
 		super(graph, graph.getMaxECount());
 	}
 

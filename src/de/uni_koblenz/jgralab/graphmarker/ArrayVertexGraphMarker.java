@@ -11,10 +11,10 @@ import de.uni_koblenz.jgralab.Vertex;
  * @author ist@uni-koblenz.de
  * 
  */
-public class ArrayGenericVertexGraphMarker<O> extends
-		ArrayGenericGraphMarker<Vertex, O> {
+public class ArrayVertexGraphMarker<O> extends
+		ArrayGraphMarker<Vertex, O> {
 
-	public ArrayGenericVertexGraphMarker(Graph graph) {
+	public ArrayVertexGraphMarker(Graph graph) {
 		super(graph, graph.getMaxVCount());
 	}
 

@@ -12,7 +12,7 @@ import de.uni_koblenz.jgralab.Vertex;
  * 
  * @param <T>
  */
-public abstract class ArrayGenericGraphMarker<T extends GraphElement, O>
+public abstract class ArrayGraphMarker<T extends GraphElement, O>
 		extends AbstractGraphMarker<T> {
 
 	/**
@@ -21,7 +21,7 @@ public abstract class ArrayGenericGraphMarker<T extends GraphElement, O>
 	protected Object[] temporaryAttributes;
 	protected int marked;
 
-	protected ArrayGenericGraphMarker(Graph graph, int size) {
+	protected ArrayGraphMarker(Graph graph, int size) {
 		super(graph);
 		temporaryAttributes = new Object[size];
 		marked = 0;
