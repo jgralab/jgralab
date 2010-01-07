@@ -25,7 +25,9 @@
 package de.uni_koblenz.jgralab.graphmarker;
 
 import de.uni_koblenz.jgralab.AttributedElement;
+import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.Graph;
+import de.uni_koblenz.jgralab.Vertex;
 
 /**
  * This class can be used to "colorize" graphs, edges and vertices. If a
@@ -42,10 +44,20 @@ import de.uni_koblenz.jgralab.Graph;
  * @author ist@uni-koblenz.de
  * 
  */
-public class GraphMarker<O> extends GenericGraphMarker<AttributedElement, O> {
+public class GraphMarker<O> extends MapGraphMarker<AttributedElement, O> {
 
 	public GraphMarker(Graph g) {
 		super(g);
+	}
+
+	@Override
+	public void edgeDeleted(Edge e) {
+		tempAttributeMap.remove(e);
+	}
+
+	@Override
+	public void vertexDeleted(Vertex v) {
+		tempAttributeMap.remove(v);
 	}
 
 }
