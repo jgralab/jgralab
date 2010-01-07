@@ -7,7 +7,7 @@ import de.uni_koblenz.jgralab.Vertex;
 public class LongArrayVertexGraphMarker extends LongArrayGraphMarker<Vertex> {
 
 	public LongArrayVertexGraphMarker(Graph graph) {
-		super(graph, graph.getMaxVCount());
+		super(graph, graph.getMaxVCount() + 1);
 	}
 
 	@Override
@@ -22,6 +22,7 @@ public class LongArrayVertexGraphMarker extends LongArrayGraphMarker<Vertex> {
 
 	@Override
 	public void maxVertexCountIncreased(int newValue) {
+		newValue++;
 		if (newValue > temporaryAttributes.length) {
 			expand(newValue);
 		}

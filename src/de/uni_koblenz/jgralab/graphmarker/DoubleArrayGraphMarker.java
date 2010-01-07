@@ -95,7 +95,7 @@ public abstract class DoubleArrayGraphMarker<T extends GraphElement> extends
 	}
 
 	public int maxSize() {
-		return temporaryAttributes.length;
+		return temporaryAttributes.length - 1;
 	}
 
 	protected void expand(int newSize) {
