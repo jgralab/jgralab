@@ -76,6 +76,9 @@ public class DividedBy extends ArithmeticFunction {
 				{ JValueType.LONG, JValueType.LONG, JValueType.DOUBLE },
 				{ JValueType.INT, JValueType.INT, JValueType.DOUBLE } };
 		signatures = x;
+
+		description = "Calculates the quotient $\\frac{a}{b}$. "
+				+ "$\\frac{a}{0}$ will return either a positive or a negative infinity.";
 	}
 
 	@Override
