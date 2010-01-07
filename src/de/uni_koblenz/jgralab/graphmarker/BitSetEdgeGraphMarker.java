@@ -6,7 +6,7 @@ import de.uni_koblenz.jgralab.Vertex;
 
 public class BitSetEdgeGraphMarker extends BitSetGraphMarker<Edge> {
 
-	protected BitSetEdgeGraphMarker(Graph graph) {
+	public BitSetEdgeGraphMarker(Graph graph) {
 		super(graph);
 	}
 

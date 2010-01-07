@@ -6,7 +6,7 @@ import de.uni_koblenz.jgralab.Vertex;
 
 public class LongArrayEdgeGraphMarker extends LongArrayGraphMarker<Edge> {
 
-	protected LongArrayEdgeGraphMarker(Graph graph) {
+	public LongArrayEdgeGraphMarker(Graph graph) {
 		super(graph, graph.getMaxECount());
 	}
 
