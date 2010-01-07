@@ -4,9 +4,9 @@ import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.Vertex;
 
-public class LongEdgeGraphMarker extends LongGraphMarker<Edge> {
+public class DoubleArrayEdgeGraphMarker extends DoubleArrayGraphMarker<Edge> {
 
-	protected LongEdgeGraphMarker(Graph graph) {
+	protected DoubleArrayEdgeGraphMarker(Graph graph) {
 		super(graph, graph.getMaxECount());
 	}
 
