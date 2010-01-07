@@ -29,6 +29,7 @@ import java.util.HashMap;
 import de.uni_koblenz.jgralab.AttributedElement;
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.Graph;
+import de.uni_koblenz.jgralab.GraphElement;
 import de.uni_koblenz.jgralab.GraphException;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.impl.ReversedEdgeImpl;
@@ -82,6 +83,8 @@ public abstract class GenericGraphMarker<T extends AttributedElement, O>
 		if (elem == null) {
 			return null;
 		}
+		assert ((elem instanceof GraphElement && ((GraphElement) elem)
+				.getGraph() == graph) || elem == graph);
 		if (elem instanceof ReversedEdgeImpl) {
 			elem = getNormalEdge(elem);
 		}
@@ -99,18 +102,15 @@ public abstract class GenericGraphMarker<T extends AttributedElement, O>
 	 *         with, <code>null</code> if the given element has not been marked.
 	 */
 	public O mark(T elem, O value) {
+		assert ((elem instanceof GraphElement && ((GraphElement) elem)
+				.getGraph() == graph) || elem == graph);
 
 		if (elem instanceof ReversedEdgeImpl) {
 			elem = getNormalEdge(elem);
 		}
 
-		if ((elem instanceof Vertex && ((Vertex) elem).getGraph() == graph)
-				|| (elem instanceof Edge && ((Edge) elem).getGraph() == graph)
-				|| elem == graph) {
-			return tempAttributeMap.put(elem, value);
-		}
-		throw new GraphException("Can't mark the element " + elem
-				+ ", because it belongs to a different graph.");
+		return tempAttributeMap.put(elem, value);
+
 	}
 
 	@SuppressWarnings("unchecked")
@@ -158,6 +158,8 @@ public abstract class GenericGraphMarker<T extends AttributedElement, O>
 
 	@Override
 	public boolean isMarked(T elem) {
+		assert ((elem instanceof GraphElement && ((GraphElement) elem)
+				.getGraph() == graph) || elem == graph);
 		if (elem instanceof ReversedEdgeImpl) {
 			elem = getNormalEdge(elem);
 		}
@@ -166,6 +168,8 @@ public abstract class GenericGraphMarker<T extends AttributedElement, O>
 
 	@Override
 	public boolean removeMark(T elem) {
+		assert ((elem instanceof GraphElement && ((GraphElement) elem)
+				.getGraph() == graph) || elem == graph);
 		if (elem instanceof ReversedEdgeImpl) {
 			elem = getNormalEdge(elem);
 		}

@@ -71,7 +71,7 @@ public class SubGraphMarker extends AbstractGraphMarker<GraphElement> {
 	 *            the edge to unmark
 	 * @return false if the given edge has already been unmarked.
 	 */
-	public boolean unmark(Edge e) {
+	public boolean removeMark(Edge e) {
 		return edgeGraphMarker.removeMark(e);
 	}
 
@@ -84,7 +84,7 @@ public class SubGraphMarker extends AbstractGraphMarker<GraphElement> {
 	 *            the vertex to unmark
 	 * @return false if the given vertex has already been unmarked.
 	 */
-	public boolean unmark(Vertex v) {
+	public boolean removeMark(Vertex v) {
 		return vertexGraphMarker.removeMark(v);
 	}
 
@@ -130,7 +130,6 @@ public class SubGraphMarker extends AbstractGraphMarker<GraphElement> {
 		return vertexGraphMarker.mark(v);
 	}
 
-	// TODO these are not needed, are they?
 	@Override
 	public void edgeDeleted(Edge e) {
 		edgeGraphMarker.edgeDeleted(e);

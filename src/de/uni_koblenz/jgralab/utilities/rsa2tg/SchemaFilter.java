@@ -185,7 +185,7 @@ public class SchemaFilter {
 	private void excludeGraphElementClass(BooleanGraphMarker processed,
 			VertexClass currentGraphElementClass) {
 		processed.mark(currentGraphElementClass);
-		includes.unmark(currentGraphElementClass);
+		includes.removeMark(currentGraphElementClass);
 		for (SpecializesVertexClass current : currentGraphElementClass
 				.getSpecializesVertexClassIncidences(EdgeDirection.IN)) {
 			VertexClass superclass = (VertexClass) current.getThat();
@@ -204,7 +204,7 @@ public class SchemaFilter {
 	private void excludeGraphElementClass(BooleanGraphMarker processed,
 			EdgeClass currentGraphElementClass) {
 		processed.mark(currentGraphElementClass);
-		includes.unmark(currentGraphElementClass);
+		includes.removeMark(currentGraphElementClass);
 		for (SpecializesEdgeClass current : currentGraphElementClass
 				.getSpecializesEdgeClassIncidences(EdgeDirection.IN)) {
 			EdgeClass superclass = (EdgeClass) current.getThat();
@@ -307,7 +307,7 @@ public class SchemaFilter {
 								.getThat())) {
 					// exclude all EdgeClasses whose to or from VertexClasses
 					// are already excluded
-					includes.unmark(currentEdgeClass);
+					includes.removeMark(currentEdgeClass);
 				}
 			}
 		}
@@ -323,7 +323,7 @@ public class SchemaFilter {
 			if (currentVertexClass.is_abstract()) {
 				// only process abstract VertexClasses
 				if (isVertexClassExcluded(processed, currentVertexClass)) {
-					includes.unmark(currentVertexClass);
+					includes.removeMark(currentVertexClass);
 				}
 			}
 		}
@@ -396,7 +396,7 @@ public class SchemaFilter {
 			if (include) {
 				includes.mark(gec);
 			} else {
-				includes.unmark(gec);
+				includes.removeMark(gec);
 			}
 		}
 	}

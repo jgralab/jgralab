@@ -29,7 +29,7 @@ import java.util.HashSet;
 import de.uni_koblenz.jgralab.AttributedElement;
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.Graph;
-import de.uni_koblenz.jgralab.GraphException;
+import de.uni_koblenz.jgralab.GraphElement;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.impl.ReversedEdgeImpl;
 
@@ -41,18 +41,16 @@ import de.uni_koblenz.jgralab.impl.ReversedEdgeImpl;
  * 
  * @author ist@uni-koblenz.de
  */
-public class BooleanGraphMarker {
+public class BooleanGraphMarker extends AbstractGraphMarker<AttributedElement> {
 
-	private HashSet<AttributedElement> markedElements;
-
-	private Graph graph;
+	private final HashSet<AttributedElement> markedElements;
 
 	/**
 	 * creates a new boolean graph marker
 	 * 
 	 */
 	public BooleanGraphMarker(Graph g) {
-		graph = g;
+		super(g);
 		markedElements = new HashSet<AttributedElement>();
 	}
 
@@ -64,7 +62,10 @@ public class BooleanGraphMarker {
 	 *            the Graph, Vertex or Edge to check for a marking
 	 * @return true if this GraphMarker marks the given element, false otherwise
 	 */
+	@Override
 	public boolean isMarked(AttributedElement elem) {
+		assert ((elem instanceof GraphElement && ((GraphElement) elem)
+				.getGraph() == graph) || elem == graph);
 		if (elem instanceof ReversedEdgeImpl) {
 			elem = ((ReversedEdgeImpl) elem).getNormalEdge();
 		}
@@ -80,17 +81,14 @@ public class BooleanGraphMarker {
 	 *         element is already marked by this GraphMarker
 	 */
 	public boolean mark(AttributedElement elem) {
+		assert ((elem instanceof GraphElement && ((GraphElement) elem)
+				.getGraph() == graph) || elem == graph);
 		if (elem instanceof ReversedEdgeImpl) {
 			elem = ((ReversedEdgeImpl) elem).getNormalEdge();
 		}
 
-		if ((elem instanceof Vertex && ((Vertex) elem).getGraph() == graph)
-				|| (elem instanceof Edge && ((Edge) elem).getGraph() == graph)
-				|| elem == graph) {
-			return markedElements.add(elem);
-		}
-		throw new GraphException("Can't mark the element " + elem
-				+ ", because it belongs to a different graph.");
+		return markedElements.add(elem);
+
 	}
 
 	/**
@@ -101,7 +99,13 @@ public class BooleanGraphMarker {
 	 * @return <code>true</code> it the given element was marked,
 	 *         <code>false</code> otherwise
 	 */
-	public boolean unmark(AttributedElement elem) {
+	@Override
+	public boolean removeMark(AttributedElement elem) {
+		assert ((elem instanceof GraphElement && ((GraphElement) elem)
+				.getGraph() == graph) || elem == graph);
+		if (elem instanceof ReversedEdgeImpl) {
+			elem = ((ReversedEdgeImpl) elem).getNormalEdge();
+		}
 		return markedElements.remove(elem);
 	}
 
@@ -110,7 +114,7 @@ public class BooleanGraphMarker {
 	 * 
 	 * @return the markedElements
 	 */
-	public HashSet<AttributedElement> getMarkedElements() {
+	public Iterable<AttributedElement> getMarkedElements() {
 		return markedElements;
 	}
 
@@ -119,6 +123,7 @@ public class BooleanGraphMarker {
 	 * 
 	 * @return The number of marked elements.
 	 */
+	@Override
 	public int size() {
 		return markedElements.size();
 	}
@@ -129,6 +134,7 @@ public class BooleanGraphMarker {
 	 * @return <code>true</code> if no graph element is marked by this
 	 *         GraphMarker.
 	 */
+	@Override
 	public boolean isEmpty() {
 		return markedElements.isEmpty();
 	}
@@ -136,6 +142,7 @@ public class BooleanGraphMarker {
 	/**
 	 * Clears this GraphMarker such that no element is marked.
 	 */
+	@Override
 	public void clear() {
 		markedElements.clear();
 	}
@@ -145,7 +152,28 @@ public class BooleanGraphMarker {
 	 * 
 	 * @return the Graph of this GraphMarker.
 	 */
+	@Override
 	public Graph getGraph() {
 		return graph;
+	}
+
+	@Override
+	public void edgeDeleted(Edge e) {
+		markedElements.remove(e);
+	}
+
+	@Override
+	public void maxEdgeCountIncreased(int newValue) {
+		// do nothing
+	}
+
+	@Override
+	public void maxVertexCountIncreased(int newValue) {
+		// do nothing
+	}
+
+	@Override
+	public void vertexDeleted(Vertex v) {
+		markedElements.remove(v);
 	}
 }

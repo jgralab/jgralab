@@ -3,6 +3,7 @@ package de.uni_koblenz.jgralab.graphmarker;
 import de.uni_koblenz.jgralab.AttributedElement;
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.Graph;
+import de.uni_koblenz.jgralab.GraphElement;
 import de.uni_koblenz.jgralab.GraphException;
 import de.uni_koblenz.jgralab.Vertex;
 
@@ -40,6 +41,8 @@ public class DirectedGraphMarker<O> extends
 		if (elem == null) {
 			return null;
 		}
+		assert ((elem instanceof GraphElement && ((GraphElement) elem)
+				.getGraph() == graph) || elem == graph);
 		return tempAttributeMap.get(elem);
 	}
 
@@ -55,14 +58,11 @@ public class DirectedGraphMarker<O> extends
 	 */
 	@Override
 	public O mark(AttributedElement elem, O value) {
+		assert ((elem instanceof GraphElement && ((GraphElement) elem)
+				.getGraph() == graph) || elem == graph);
 
-		if ((elem instanceof Vertex && ((Vertex) elem).getGraph() == graph)
-				|| (elem instanceof Edge && ((Edge) elem).getGraph() == graph)
-				|| elem == graph) {
-			return tempAttributeMap.put(elem, value);
-		}
-		throw new GraphException("Can't mark the element " + elem
-				+ ", because it belongs to a different graph.");
+		return tempAttributeMap.put(elem, value);
+
 	}
 
 	@Override
@@ -73,11 +73,15 @@ public class DirectedGraphMarker<O> extends
 
 	@Override
 	public boolean isMarked(AttributedElement elem) {
+		assert ((elem instanceof GraphElement && ((GraphElement) elem)
+				.getGraph() == graph) || elem == graph);
 		return tempAttributeMap.containsKey(elem);
 	}
 
 	@Override
 	public boolean removeMark(AttributedElement elem) {
+		assert ((elem instanceof GraphElement && ((GraphElement) elem)
+				.getGraph() == graph) || elem == graph);
 		return tempAttributeMap.remove(elem) != null;
 	}
 
