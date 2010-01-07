@@ -71,8 +71,8 @@ public class Parent extends Greql2Function {
 				JValueType.VERTEX } };
 		signatures = x;
 
-		description = "Return the parent-vertex of the given vertex in the given pathsystem.\n"
-				+ "The parent-vertex of a vertex, is the vertex that connects the vertex\n"
+		description = "Returns the parent-vertex of the given vertex in the given pathsystem.\n"
+				+ "The parent-vertex of a vertex, is the vertex that is connected the vertex\n"
 				+ "with an incoming edge.";
 
 		Category[] c = { Category.PATHS_AND_PATHSYSTEMS };

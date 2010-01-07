@@ -67,7 +67,7 @@ public class Leaves extends Greql2Function {
 		JValueType[][] x = { { JValueType.PATHSYSTEM, JValueType.COLLECTION } };
 		signatures = x;
 
-		description = "Return a set of all leaves of the given pathsystem.\n"
+		description = "Returns a set of all leaves of the given pathsystem.\n"
 				+ "Leaves are all vertices besides the inner nodes of the pathsystem. That\n"
 				+ "means, all vertices, that are an end of a path.";
 

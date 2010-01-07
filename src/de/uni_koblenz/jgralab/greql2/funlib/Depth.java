@@ -64,7 +64,7 @@ public class Depth extends Greql2Function {
 		JValueType[][] x = { { JValueType.PATHSYSTEM, JValueType.INT } };
 		signatures = x;
 
-		description = "Return the depth (length of longes path) of the given pathsystem.";
+		description = "Returns the depth of the given pathsystem (length of the longes path).";
 
 		Category[] c = { Category.PATHS_AND_PATHSYSTEMS };
 		categories = c;

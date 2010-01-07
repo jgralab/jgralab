@@ -64,7 +64,7 @@ public class PathLength extends Greql2Function {
 		JValueType[][] x = { { JValueType.PATH, JValueType.INT } };
 		signatures = x;
 
-		description = "Return the length of the given path.";
+		description = "Returns the length of the given path.";
 
 		Category[] c = { Category.PATHS_AND_PATHSYSTEMS };
 		categories = c;

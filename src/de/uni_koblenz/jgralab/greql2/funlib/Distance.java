@@ -69,7 +69,7 @@ public class Distance extends Greql2Function {
 				JValueType.INT } };
 		signatures = x;
 
-		description = "In the given pathsystem, return the distance from the root to the given vertex.";
+		description = "Returns the distance from the root to the given vertex in the given pathsystem.";
 
 		Category[] c = { Category.PATHS_AND_PATHSYSTEMS };
 		categories = c;

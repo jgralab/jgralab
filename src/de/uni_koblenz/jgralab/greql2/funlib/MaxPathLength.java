@@ -64,7 +64,7 @@ public class MaxPathLength extends Greql2Function {
 		JValueType[][] x = { { JValueType.PATHSYSTEM, JValueType.INT } };
 		signatures = x;
 
-		description = "Return the length of the longest path in the given pathsystem.";
+		description = "Returns the length of the longest path in the given pathsystem.";
 
 		Category[] c = { Category.PATHS_AND_PATHSYSTEMS };
 		categories = c;

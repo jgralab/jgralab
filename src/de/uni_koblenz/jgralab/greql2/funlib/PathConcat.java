@@ -68,7 +68,7 @@ public class PathConcat extends Greql2Function {
 				JValueType.PATH } };
 		signatures = x;
 
-		description = "Return the concatenation of two given paths.\n"
+		description = "Returns the concatenation of two given paths.\n"
 				+ "This function only works, if the last vertex of the first path and the\n"
 				+ "first vertex of the second path are the same. If this is not the case,\n"
 				+ "null is returned.";

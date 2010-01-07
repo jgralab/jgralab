@@ -66,7 +66,7 @@ public class StartVertex extends Greql2Function {
 				{ JValueType.EDGE, JValueType.VERTEX } };
 		signatures = x;
 
-		description = "Return the start vertex of the given edge or path.";
+		description = "Returns the start vertex of the given edge or path.";
 
 		Category[] c = { Category.PATHS_AND_PATHSYSTEMS, Category.GRAPH };
 		categories = c;
