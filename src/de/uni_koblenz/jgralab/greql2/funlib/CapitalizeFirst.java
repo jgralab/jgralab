@@ -40,7 +40,7 @@ public class CapitalizeFirst extends Greql2Function {
 		JValueType[][] x = { { JValueType.STRING, JValueType.STRING } };
 		signatures = x;
 
-		description = "Return the given string with the first character made uppercase.";
+		description = "Returns the given string with the first character made uppercase.";
 
 		Category[] c = { Category.STRINGS };
 		categories = c;

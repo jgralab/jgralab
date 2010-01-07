@@ -70,8 +70,8 @@ public class ReMatch extends Greql2Function {
 				JValueType.BOOL } };
 		signatures = x;
 
-		description = "Return true, iff the given string matches the given regular expression.\n"
-				+ "This function can be used with the myString =~ myRegexp operator.";
+		description = "Returns true, iff the given string matches the given regular expression. \n"
+				+ "Alternative usage: myString =~ myRegexp.";
 
 		Category[] c = { Category.STRINGS };
 		categories = c;
