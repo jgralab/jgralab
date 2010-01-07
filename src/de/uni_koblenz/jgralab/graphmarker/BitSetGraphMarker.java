@@ -40,6 +40,7 @@ public abstract class BitSetGraphMarker<T extends GraphElement> extends
 	 *         marked.
 	 */
 	public boolean mark(T graphElement) {
+		assert (graphElement.getGraph() == graph);
 		assert (graphElement.getId() <= (graphElement instanceof Vertex ? graph
 				.getMaxVCount() : graph.getMaxECount()));
 		boolean out = isMarked(graphElement);
@@ -49,6 +50,7 @@ public abstract class BitSetGraphMarker<T extends GraphElement> extends
 
 	@Override
 	public boolean removeMark(T graphElement) {
+		assert (graphElement.getGraph() == graph);
 		assert (graphElement.getId() <= (graphElement instanceof Vertex ? graph
 				.getMaxVCount() : graph.getMaxECount()));
 		boolean out = isMarked(graphElement);
@@ -73,6 +75,7 @@ public abstract class BitSetGraphMarker<T extends GraphElement> extends
 
 	@Override
 	public boolean isMarked(T graphElement) {
+		assert (graphElement.getGraph() == graph);
 		assert (graphElement.getId() <= (graphElement instanceof Vertex ? graph
 				.getMaxVCount() : graph.getMaxECount()));
 		return marks.get(graphElement.getId());

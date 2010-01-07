@@ -41,12 +41,14 @@ public abstract class ArrayGraphMarker<T extends GraphElement, O> extends
 
 	@Override
 	public boolean isMarked(T graphElement) {
+		assert (graphElement.getGraph() == graph);
 		assert (graphElement.getId() <= (graphElement instanceof Vertex ? graph
 				.getMaxVCount() : graph.getMaxECount()));
 		return temporaryAttributes[graphElement.getId()] != null;
 	}
 
 	public O getMark(T graphElement) {
+		assert (graphElement.getGraph() == graph);
 		assert (graphElement.getId() <= (graphElement instanceof Vertex ? graph
 				.getMaxVCount() : graph.getMaxECount()));
 		@SuppressWarnings("unchecked")
@@ -65,6 +67,7 @@ public abstract class ArrayGraphMarker<T extends GraphElement, O> extends
 	 *         with, <code>null</code> if the given element has not been marked.
 	 */
 	public O mark(T graphElement, O value) {
+		assert (graphElement.getGraph() == graph);
 		assert (graphElement.getId() <= (graphElement instanceof Vertex ? graph
 				.getMaxVCount() : graph.getMaxECount()));
 		@SuppressWarnings("unchecked")
@@ -81,6 +84,7 @@ public abstract class ArrayGraphMarker<T extends GraphElement, O> extends
 
 	@Override
 	public boolean removeMark(T graphElement) {
+		assert (graphElement.getGraph() == graph);
 		assert (graphElement.getId() <= (graphElement instanceof Vertex ? graph
 				.getMaxVCount() : graph.getMaxECount()));
 		if (temporaryAttributes[graphElement.getId()] == null) {
