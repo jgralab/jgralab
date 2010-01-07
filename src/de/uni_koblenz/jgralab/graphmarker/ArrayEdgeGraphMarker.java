@@ -4,8 +4,7 @@ import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.Vertex;
 
-public class ArrayEdgeGraphMarker<O> extends
-		ArrayGraphMarker<Edge, O> {
+public class ArrayEdgeGraphMarker<O> extends ArrayGraphMarker<Edge, O> {
 
 	protected ArrayEdgeGraphMarker(Graph graph) {
 		super(graph, graph.getMaxECount());
@@ -13,7 +12,7 @@ public class ArrayEdgeGraphMarker<O> extends
 
 	@Override
 	public void edgeDeleted(Edge e) {
-		unmark(e);
+		removeMark(e);
 	}
 
 	@Override

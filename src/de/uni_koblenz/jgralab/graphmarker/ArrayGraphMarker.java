@@ -1,6 +1,5 @@
 package de.uni_koblenz.jgralab.graphmarker;
 
-import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.GraphElement;
 import de.uni_koblenz.jgralab.Vertex;
@@ -12,8 +11,8 @@ import de.uni_koblenz.jgralab.Vertex;
  * 
  * @param <T>
  */
-public abstract class ArrayGraphMarker<T extends GraphElement, O>
-		extends AbstractGraphMarker<T> {
+public abstract class ArrayGraphMarker<T extends GraphElement, O> extends
+		AbstractGraphMarker<T> {
 
 	/**
 	 * The array of temporary attributes.
@@ -81,7 +80,7 @@ public abstract class ArrayGraphMarker<T extends GraphElement, O>
 	}
 
 	@Override
-	public boolean unmark(T graphElement) {
+	public boolean removeMark(T graphElement) {
 		assert (graphElement.getId() <= (graphElement instanceof Vertex ? graph
 				.getMaxVCount() : graph.getMaxECount()));
 		if (temporaryAttributes[graphElement.getId()] == null) {
@@ -91,18 +90,6 @@ public abstract class ArrayGraphMarker<T extends GraphElement, O>
 		marked -= 1;
 		return true;
 	}
-
-	@Override
-	public abstract void edgeDeleted(Edge e);
-
-	@Override
-	public abstract void maxEdgeCountIncreased(int newValue);
-
-	@Override
-	public abstract void maxVertexCountIncreased(int newValue);
-
-	@Override
-	public abstract void vertexDeleted(Vertex v);
 
 	protected void expand(int newSize) {
 		assert (newSize > temporaryAttributes.length);

@@ -54,11 +54,11 @@ public class SubGraphMarker extends AbstractGraphMarker<GraphElement> {
 	}
 
 	@Override
-	public boolean unmark(GraphElement graphElement) {
+	public boolean removeMark(GraphElement graphElement) {
 		if (graphElement instanceof Edge) {
-			return edgeGraphMarker.unmark((Edge) graphElement);
+			return edgeGraphMarker.removeMark((Edge) graphElement);
 		} else {
-			return vertexGraphMarker.unmark((Vertex) graphElement);
+			return vertexGraphMarker.removeMark((Vertex) graphElement);
 		}
 	}
 
@@ -72,7 +72,7 @@ public class SubGraphMarker extends AbstractGraphMarker<GraphElement> {
 	 * @return false if the given edge has already been unmarked.
 	 */
 	public boolean unmark(Edge e) {
-		return edgeGraphMarker.unmark(e);
+		return edgeGraphMarker.removeMark(e);
 	}
 
 	/**
@@ -85,7 +85,7 @@ public class SubGraphMarker extends AbstractGraphMarker<GraphElement> {
 	 * @return false if the given vertex has already been unmarked.
 	 */
 	public boolean unmark(Vertex v) {
-		return vertexGraphMarker.unmark(v);
+		return vertexGraphMarker.removeMark(v);
 	}
 
 	/**
@@ -139,5 +139,15 @@ public class SubGraphMarker extends AbstractGraphMarker<GraphElement> {
 	@Override
 	public void vertexDeleted(Vertex v) {
 		vertexGraphMarker.vertexDeleted(v);
+	}
+
+	@Override
+	public void maxEdgeCountIncreased(int newValue) {
+		// do nothing
+	}
+
+	@Override
+	public void maxVertexCountIncreased(int newValue) {
+		// do nothing
 	}
 }

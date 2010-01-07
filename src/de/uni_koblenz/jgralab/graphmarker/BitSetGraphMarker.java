@@ -48,7 +48,7 @@ public abstract class BitSetGraphMarker<T extends GraphElement> extends
 	}
 
 	@Override
-	public boolean unmark(T graphElement) {
+	public boolean removeMark(T graphElement) {
 		assert (graphElement.getId() <= (graphElement instanceof Vertex ? graph
 				.getMaxVCount() : graph.getMaxECount()));
 		boolean out = isMarked(graphElement);
@@ -79,8 +79,12 @@ public abstract class BitSetGraphMarker<T extends GraphElement> extends
 	}
 
 	@Override
-	public abstract void vertexDeleted(Vertex v);
+	public void maxEdgeCountIncreased(int newValue) {
+		// do nothing
+	}
 
 	@Override
-	public abstract void edgeDeleted(Edge e);
+	public void maxVertexCountIncreased(int newValue) {
+		// do nothing
+	}
 }

@@ -12,7 +12,7 @@ public class BitSetVertexGraphMarker extends BitSetGraphMarker<Vertex> {
 
 	@Override
 	public void vertexDeleted(Vertex v) {
-		unmark(v);
+		removeMark(v);
 	}
 
 	@Override

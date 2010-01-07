@@ -12,7 +12,7 @@ public class BitSetEdgeGraphMarker extends BitSetGraphMarker<Edge> {
 
 	@Override
 	public void edgeDeleted(Edge e) {
-		unmark(e);
+		removeMark(e);
 	}
 
 	@Override

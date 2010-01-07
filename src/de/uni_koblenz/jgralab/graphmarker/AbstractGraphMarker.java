@@ -1,10 +1,13 @@
 package de.uni_koblenz.jgralab.graphmarker;
 
+import de.uni_koblenz.jgralab.AttributedElement;
+import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.GraphElement;
 import de.uni_koblenz.jgralab.GraphStructureChangedAdapter;
+import de.uni_koblenz.jgralab.Vertex;
 
-public abstract class AbstractGraphMarker<T extends GraphElement> extends
+public abstract class AbstractGraphMarker<T extends AttributedElement> extends
 		GraphStructureChangedAdapter {
 	protected final Graph graph;
 
@@ -31,7 +34,7 @@ public abstract class AbstractGraphMarker<T extends GraphElement> extends
 	 * @return false if the given <code>graphElement</code> has already been
 	 *         unmarked.
 	 */
-	public abstract boolean unmark(T graphElement);
+	public abstract boolean removeMark(T graphElement);
 
 	/**
 	 * Returns the number of marked graph elements.
@@ -62,5 +65,17 @@ public abstract class AbstractGraphMarker<T extends GraphElement> extends
 		// TODO maybe remove
 		graph.unregister(this);
 	}
+
+	@Override
+	public abstract void edgeDeleted(Edge e);
+
+	@Override
+	public abstract void maxEdgeCountIncreased(int newValue);
+
+	@Override
+	public abstract void maxVertexCountIncreased(int newValue);
+
+	@Override
+	public abstract void vertexDeleted(Vertex v);
 
 }

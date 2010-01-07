@@ -11,8 +11,7 @@ import de.uni_koblenz.jgralab.Vertex;
  * @author ist@uni-koblenz.de
  * 
  */
-public class ArrayVertexGraphMarker<O> extends
-		ArrayGraphMarker<Vertex, O> {
+public class ArrayVertexGraphMarker<O> extends ArrayGraphMarker<Vertex, O> {
 
 	public ArrayVertexGraphMarker(Graph graph) {
 		super(graph, graph.getMaxVCount());
@@ -37,7 +36,7 @@ public class ArrayVertexGraphMarker<O> extends
 
 	@Override
 	public void vertexDeleted(Vertex v) {
-		unmark(v);
+		removeMark(v);
 	}
 
 }
