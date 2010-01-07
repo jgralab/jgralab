@@ -62,7 +62,7 @@ public abstract class MapGraphMarker<T extends AttributedElement, O> extends
 	/**
 	 * Creates a new GraphMarker
 	 */
-	public MapGraphMarker(Graph g) {
+	protected MapGraphMarker(Graph g) {
 		super(g);
 		tempAttributeMap = new HashMap<T, O>();
 	}

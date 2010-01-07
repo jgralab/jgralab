@@ -6,7 +6,7 @@ import de.uni_koblenz.jgralab.Vertex;
 
 public class LongArrayVertexGraphMarker extends LongArrayGraphMarker<Vertex> {
 
-	protected LongArrayVertexGraphMarker(Graph graph) {
+	public LongArrayVertexGraphMarker(Graph graph) {
 		super(graph, graph.getMaxVCount());
 	}
 

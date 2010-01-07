@@ -4,9 +4,10 @@ import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.Vertex;
 
-public class DoubleArrayVertexGraphMarker extends DoubleArrayGraphMarker<Vertex> {
+public class DoubleArrayVertexGraphMarker extends
+		DoubleArrayGraphMarker<Vertex> {
 
-	protected DoubleArrayVertexGraphMarker(Graph graph) {
+	public DoubleArrayVertexGraphMarker(Graph graph) {
 		super(graph, graph.getMaxVCount());
 	}
 
