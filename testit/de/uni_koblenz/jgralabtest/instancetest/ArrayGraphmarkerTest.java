@@ -234,29 +234,29 @@ public class ArrayGraphmarkerTest extends InstanceTest {
 		assertEquals(1, marker.size());
 		marker.mark(v2, new TestMarkerObject());
 		assertEquals(2, marker.size());
-		marker.unmark(v1);
+		marker.removeMark(v1);
 		assertEquals(1, marker.size());
-		marker.unmark(v2);
+		marker.removeMark(v2);
 		assertEquals(0, marker.size());
 		assertTrue(marker.isEmpty());
 	}
 
 	@Test
-	public void testUnmark() {
-		assertFalse(marker.unmark(v1));
-		assertFalse(marker.unmark(v2));
+	public void testremoveMark() {
+		assertFalse(marker.removeMark(v1));
+		assertFalse(marker.removeMark(v2));
 		marker.mark(v1, new TestMarkerObject());
 		marker.mark(v2, new TestMarkerObject());
 
 		assertTrue(marker.isMarked(v1));
-		assertTrue(marker.unmark(v1));
+		assertTrue(marker.removeMark(v1));
 		assertFalse(marker.isMarked(v1));
-		assertFalse(marker.unmark(v1));
+		assertFalse(marker.removeMark(v1));
 
 		assertTrue(marker.isMarked(v2));
-		assertTrue(marker.unmark(v2));
+		assertTrue(marker.removeMark(v2));
 		assertFalse(marker.isMarked(v2));
-		assertFalse(marker.unmark(v2));
+		assertFalse(marker.removeMark(v2));
 	}
 
 	@Test

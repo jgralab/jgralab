@@ -9,14 +9,15 @@ import de.uni_koblenz.jgralab.Vertex;
 /**
  * Marks directed graphs with arbitrary objects. In contrast to the marking
  * mechanism implemented by {@link GraphMarker}, in this case the edges are
- * marked taking their direction into account. That means, a incomming edge and
+ * marked taking their direction into account. That means, an incoming edge and
  * the same edge in the outgoing direction are marked independently
  * 
  * @author ist@uni-koblenz.de
  * 
  * @param <O>
  */
-public class DirectedGraphMarker<O> extends GenericGraphMarker<AttributedElement, O> {
+public class DirectedGraphMarker<O> extends
+		GenericGraphMarker<AttributedElement, O> {
 
 	/**
 	 * Creates a new GraphMarker
@@ -34,9 +35,11 @@ public class DirectedGraphMarker<O> extends GenericGraphMarker<AttributedElement
 	 * @return the object that marks the given element or <code>null</code> if
 	 *         the given element is not marked in this marking.
 	 */
+	@Override
 	public O getMark(AttributedElement elem) {
-		if (elem == null)
+		if (elem == null) {
 			return null;
+		}
 		return tempAttributeMap.get(elem);
 	}
 
@@ -50,6 +53,7 @@ public class DirectedGraphMarker<O> extends GenericGraphMarker<AttributedElement
 	 * @return true on success, false if the given element already contains a
 	 *         marking
 	 */
+	@Override
 	public O mark(AttributedElement elem, O value) {
 
 		if ((elem instanceof Vertex && ((Vertex) elem).getGraph() == graph)
@@ -59,6 +63,22 @@ public class DirectedGraphMarker<O> extends GenericGraphMarker<AttributedElement
 		}
 		throw new GraphException("Can't mark the element " + elem
 				+ ", because it belongs to a different graph.");
+	}
+
+	@Override
+	public void edgeDeleted(Edge e) {
+		tempAttributeMap.remove(e);
+		tempAttributeMap.remove(e.getReversedEdge());
+	}
+
+	@Override
+	public boolean isMarked(AttributedElement elem) {
+		return tempAttributeMap.containsKey(elem);
+	}
+
+	@Override
+	public boolean removeMark(AttributedElement elem) {
+		return tempAttributeMap.remove(elem) != null;
 	}
 
 }

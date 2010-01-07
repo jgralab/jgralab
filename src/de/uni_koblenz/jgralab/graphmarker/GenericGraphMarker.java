@@ -53,7 +53,8 @@ import de.uni_koblenz.jgralab.impl.ReversedEdgeImpl;
  * @author ist@uni-koblenz.de
  * 
  */
-public class GenericGraphMarker<T extends AttributedElement, O> {
+public abstract class GenericGraphMarker<T extends AttributedElement, O>
+		extends AbstractGraphMarker<T> {
 
 	/**
 	 * Stores the mapping between Graph, Edge or Vertex and the attribute
@@ -61,15 +62,10 @@ public class GenericGraphMarker<T extends AttributedElement, O> {
 	protected HashMap<T, O> tempAttributeMap;
 
 	/**
-	 * The graph which is marked by this GraphMarker.
-	 */
-	protected Graph graph;
-
-	/**
 	 * Creates a new GraphMarker
 	 */
 	public GenericGraphMarker(Graph g) {
-		graph = g;
+		super(g);
 		tempAttributeMap = new HashMap<T, O>();
 	}
 
@@ -128,6 +124,7 @@ public class GenericGraphMarker<T extends AttributedElement, O> {
 	 * 
 	 * @return The number of marked elements.
 	 */
+	@Override
 	public int size() {
 		return tempAttributeMap.size();
 	}
@@ -138,6 +135,7 @@ public class GenericGraphMarker<T extends AttributedElement, O> {
 	 * @return <code>true</code> if no graph element is marked by this
 	 *         GraphMarker.
 	 */
+	@Override
 	public boolean isEmpty() {
 		return tempAttributeMap.isEmpty();
 	}
@@ -145,27 +143,9 @@ public class GenericGraphMarker<T extends AttributedElement, O> {
 	/**
 	 * Clears this GraphMarker such that no element is marked.
 	 */
+	@Override
 	public void clear() {
 		tempAttributeMap.clear();
-	}
-
-	/**
-	 * Returns the Graph of this GraphMarker.
-	 * 
-	 * @return the Graph of this GraphMarker.
-	 */
-	public Graph getGraph() {
-		return graph;
-	}
-
-	/**
-	 * Remove the mark from <code>elem</code>.
-	 * 
-	 * @param elem
-	 *            a marked {@link T}
-	 */
-	public void removeMark(T elem) {
-		tempAttributeMap.remove(elem);
 	}
 
 	/**
@@ -175,4 +155,41 @@ public class GenericGraphMarker<T extends AttributedElement, O> {
 	public Iterable<T> getMarkedElements() {
 		return tempAttributeMap.keySet();
 	}
+
+	@Override
+	public boolean isMarked(T elem) {
+		if (elem instanceof ReversedEdgeImpl) {
+			elem = getNormalEdge(elem);
+		}
+		return tempAttributeMap.containsKey(elem);
+	}
+
+	@Override
+	public boolean removeMark(T elem) {
+		if (elem instanceof ReversedEdgeImpl) {
+			elem = getNormalEdge(elem);
+		}
+		return tempAttributeMap.remove(elem) != null;
+	}
+
+	@Override
+	public void edgeDeleted(Edge e) {
+		tempAttributeMap.remove(e);
+	}
+
+	@Override
+	public void maxEdgeCountIncreased(int newValue) {
+		// do nothing
+	}
+
+	@Override
+	public void maxVertexCountIncreased(int newValue) {
+		// do nothing
+	}
+
+	@Override
+	public void vertexDeleted(Vertex v) {
+		tempAttributeMap.remove(v);
+	}
+
 }
