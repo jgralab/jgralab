@@ -120,7 +120,7 @@ public abstract class DoubleArrayGraphMarker<T extends GraphElement> extends
 				marked -= 1;
 			}
 			// set all unmarked elements to new value
-			if (temporaryAttributes[i] == this.unmarkedValue) {
+			if (Double.compare(temporaryAttributes[i], this.unmarkedValue) == 0) {
 				temporaryAttributes[i] = newUnmarkedValue;
 			}
 
