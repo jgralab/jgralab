@@ -49,10 +49,6 @@ public class EdgeIterable<E extends Edge> implements Iterable<E> {
 
 	class EdgeIterator implements Iterator<E> {
 
-		private boolean first = true;
-
-		private boolean gotNext = true;
-
 		protected E current = null;
 
 		protected Graph graph = null;
@@ -68,28 +64,26 @@ public class EdgeIterable<E extends Edge> implements Iterable<E> {
 		EdgeIterator(Graph g) {
 			graph = g;
 			edgeListVersion = g.getEdgeListVersion();
+			current = getFirst();
 		}
 
+		protected EdgeIterator() {
+		};
+
 		public E next() {
-			if (graph.isEdgeListModified(edgeListVersion))
+			if (graph.isEdgeListModified(edgeListVersion)) {
 				throw new ConcurrentModificationException(
 						"The edge list of the graph has been modified - the iterator is not longer valid");
-			gotNext = true;
-			return current;
+			}
+			E e = current;
+			if (current != null) {
+				current = getNext();
+			}
+			return e;
 		}
 
 		public boolean hasNext() {
-			if (gotNext) {
-				if (first) {
-					current = getFirst();
-					first = false;
-				} else {
-					current = getNext();
-				}
-				gotNext = false;
-				return current != null;
-			} else
-				return true;
+			return current != null;
 		}
 
 		@SuppressWarnings("unchecked")
@@ -116,16 +110,20 @@ public class EdgeIterable<E extends Edge> implements Iterable<E> {
 		EdgeClass ec;
 
 		public EdgeIteratorEdgeClassExplicit(Graph g, EdgeClass c, boolean type) {
-			super(g);
+			graph = g;
+			edgeListVersion = g.getEdgeListVersion();
 			this.type = type;
 			ec = c;
+			current = getFirst();
 		}
 
+		@Override
 		@SuppressWarnings("unchecked")
 		protected E getNext() {
 			return (E) current.getNextEdgeOfClassInGraph(ec, type);
 		}
 
+		@Override
 		@SuppressWarnings("unchecked")
 		protected E getFirst() {
 			return (E) graph.getFirstEdgeOfClassInGraph(ec, type);
@@ -141,16 +139,20 @@ public class EdgeIterable<E extends Edge> implements Iterable<E> {
 
 		public EdgeIteratorClassExplicit(Graph g, Class<? extends Edge> c,
 				boolean type) {
-			super(g);
+			graph = g;
+			edgeListVersion = g.getEdgeListVersion();
 			this.type = type;
 			ec = c;
+			current = getFirst();
 		}
 
+		@Override
 		@SuppressWarnings("unchecked")
 		protected E getNext() {
 			return (E) current.getNextEdgeOfClassInGraph(ec, type);
 		}
 
+		@Override
 		@SuppressWarnings("unchecked")
 		protected E getFirst() {
 			return (E) graph.getFirstEdgeOfClassInGraph(ec, type);
