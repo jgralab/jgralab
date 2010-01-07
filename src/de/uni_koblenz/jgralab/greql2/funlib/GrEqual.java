@@ -74,6 +74,11 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
 
 public class GrEqual extends CompareFunction {
 
+	{
+		description = "Returns true, if $a\\geq b$, otherwise false. \nAlternative usage: a >= b.";
+	}
+
+	@Override
 	public JValue evaluate(Graph graph, BooleanGraphMarker subgraph,
 			JValue[] arguments) throws EvaluateException {
 		return evaluate(arguments, CompareOperator.GR_EQUAL);

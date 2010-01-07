@@ -70,14 +70,14 @@ public class Equals extends Greql2Function {
 				JValueType.BOOL } };
 		signatures = x;
 
-		description = "Return true, iff both objects are equal.";
+		description = "Returns true, if two objects a and b are equal, otherwise false. \nAlternative usage: a = b.";
 
 		Category[] c = { Category.COMPARISONS };
 		categories = c;
 	}
 
 	/**
-	 * checks if the two function parameters are semanticly identical
+	 * Checks if the two function parameters are semantically identical.
 	 */
 	@Override
 	public JValue evaluate(Graph graph, BooleanGraphMarker subgraph,

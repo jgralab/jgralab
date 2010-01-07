@@ -75,6 +75,11 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
 
 public class LeThan extends CompareFunction {
 
+	{
+		description = "Returns true, if $a < b$, otherwise false. \nAlternative usage: a < b.";
+	}
+
+	@Override
 	public JValue evaluate(Graph graph, BooleanGraphMarker subgraph,
 			JValue[] arguments) throws EvaluateException {
 		return evaluate(arguments, CompareOperator.LE_THAN);
