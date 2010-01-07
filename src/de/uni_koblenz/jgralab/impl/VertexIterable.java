@@ -54,16 +54,6 @@ public class VertexIterable<V extends Vertex> implements Iterable<V> {
 	 * 
 	 */
 	class VertexIterator implements Iterator<V> {
-		/**
-		 * toggles wether the first elemet has to be touched
-		 */
-		private boolean first = true;
-
-		/**
-		 * toggles if the next current next element was already returned, so
-		 * hasNext() will retrieve the next one and stores it in field current
-		 */
-		private boolean gotNext = true;
 
 		/**
 		 * the vertex that hasNext() retrieved and that a call of next() will
@@ -93,35 +83,33 @@ public class VertexIterable<V extends Vertex> implements Iterable<V> {
 		VertexIterator(Graph g) {
 			graph = g;
 			vertexListVersion = g.getVertexListVersion();
+			current = getFirst();
 		}
+
+		protected VertexIterator() {
+		};
 
 		/**
 		 * @return the next vertex in the graph which mathes the conditions of
 		 *         this iterator
 		 */
 		public V next() {
-			if (graph.isVertexListModified(vertexListVersion))
+			if (graph.isVertexListModified(vertexListVersion)) {
 				throw new ConcurrentModificationException(
 						"The vertex list of the graph has been modified - the iterator is not longer valid");
-			gotNext = true;
-			return current;
+			}
+			V v = current;
+			if (current != null) {
+				current = getNext();
+			}
+			return v;
 		}
 
 		/**
 		 * @return true iff there is at least one next vertex to retrieve
 		 */
 		public boolean hasNext() {
-			if (gotNext) {
-				if (first) {
-					current = getFirst();
-					first = false;
-				} else {
-					current = getNext();
-				}
-				gotNext = false;
-				return current != null;
-			} else
-				return true;
+			return current != null;
 		}
 
 		/**
@@ -162,15 +150,19 @@ public class VertexIterable<V extends Vertex> implements Iterable<V> {
 		Class<? extends Vertex> ec;
 
 		public VertexIteratorClass(Graph g, Class<? extends Vertex> c) {
-			super(g);
+			graph = g;
+			vertexListVersion = g.getVertexListVersion();
 			ec = c;
+			current = getFirst();
 		}
 
+		@Override
 		@SuppressWarnings("unchecked")
 		protected V getNext() {
 			return (V) current.getNextVertexOfClass(ec);
 		}
 
+		@Override
 		@SuppressWarnings("unchecked")
 		protected V getFirst() {
 			return (V) graph.getFirstVertexOfClass(ec);
