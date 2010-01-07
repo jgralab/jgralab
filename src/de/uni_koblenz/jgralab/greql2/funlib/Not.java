@@ -83,7 +83,7 @@ public class Not extends Greql2Function {
 		JValueType[][] x = { { JValueType.BOOL, JValueType.BOOL } };
 		signatures = x;
 
-		description = "Return the complement of the given boolean.";
+		description = "Logical operation !a.";
 
 		Category[] c = { Category.LOGICS };
 		categories = c;

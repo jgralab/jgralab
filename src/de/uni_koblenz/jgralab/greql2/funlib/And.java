@@ -86,6 +86,10 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
  */
 public class And extends BooleanFunction {
 
+	{
+		description = "Logical operation a & b (\" and \").";
+	}
+
 	@Override
 	public JValue evaluate(Graph graph, BooleanGraphMarker subgraph,
 			JValue[] arguments) throws EvaluateException {

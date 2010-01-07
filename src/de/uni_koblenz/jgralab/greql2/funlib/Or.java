@@ -85,6 +85,11 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
 
 public class Or extends BooleanFunction {
 
+	{
+		description = "Logical operation a | b (\"or\").";
+	}
+
+	@Override
 	public JValue evaluate(Graph graph, BooleanGraphMarker subgraph,
 			JValue[] arguments) throws EvaluateException {
 		return evaluate(arguments, BooleanOperator.OR);
