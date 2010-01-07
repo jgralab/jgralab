@@ -67,7 +67,7 @@ public class EndVertex extends Greql2Function {
 				{ JValueType.PATH, JValueType.VERTEX } };
 		signatures = x;
 
-		description = "Return the end-vertex of the given edge or path.";
+		description = "Returns the end-vertex of the given edge or path.";
 
 		Category[] c = { Category.PATHS_AND_PATHSYSTEMS, Category.GRAPH };
 		categories = c;

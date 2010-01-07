@@ -80,7 +80,7 @@ public class Matches extends Greql2Function {
 				{ JValueType.PATH, JValueType.NFA, JValueType.BOOL } };
 		signatures = x;
 
-		description = "Return true, iff the given path description matches the given path.";
+		description = "Returns true, iff the given path description matches the given path.";
 
 		Category[] c = { Category.PATHS_AND_PATHSYSTEMS };
 		categories = c;

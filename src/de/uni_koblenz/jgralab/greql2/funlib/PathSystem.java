@@ -89,7 +89,7 @@ public class PathSystem extends Greql2Function {
 				{ JValueType.VERTEX, JValueType.NFA, JValueType.PATHSYSTEM } };
 		signatures = x;
 
-		description = "Return a pathsystem with root vertex and structured according path description.";
+		description = "Returns a pathsystem with root vertex, which is structured according to path description.";
 
 		Category[] c = { Category.PATHS_AND_PATHSYSTEMS };
 		categories = c;
@@ -156,7 +156,7 @@ public class PathSystem extends Greql2Function {
 			return false;
 		}
 		PathSystemMarkerList list = currentMarker.getMark(v);
-		return (list != null);
+		return list != null;
 	}
 
 	/**
@@ -305,7 +305,7 @@ public class PathSystem extends Greql2Function {
 							continue;
 						}
 						Vertex currentVertex = leaf;
-						while ((currentVertex != null)
+						while (currentVertex != null
 								&& !isVertexMarkedWithState(currentVertex,
 										currentMarker.state)) {
 							int parentStateNumber = 0;

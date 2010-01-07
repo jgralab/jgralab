@@ -79,11 +79,10 @@ public class ExtractPath extends Greql2Function {
 				{ JValueType.PATHSYSTEM, JValueType.PATH },
 				{ JValueType.PATHSYSTEM, JValueType.VERTEX,
 						JValueType.COLLECTION },
-				{ JValueType.PATHSYSTEM, JValueType.INT,
-						JValueType.COLLECTION } };
+				{ JValueType.PATHSYSTEM, JValueType.INT, JValueType.COLLECTION } };
 		signatures = x;
 
-		description = "Return a path from the given pathsystem's root to the given vertex.\n"
+		description = "Returns a path from the given pathsystem's root to the given vertex.\n"
 				+ "If the given vertex is contained more then once, the first occurrence will be\n"
 				+ "used. If no vertex is given, the paths from the root to all leaves are returned\n"
 				+ "as set. If an integer is given instead of a vertex, all paths are returned that\n"

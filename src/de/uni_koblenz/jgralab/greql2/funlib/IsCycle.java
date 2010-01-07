@@ -66,7 +66,7 @@ public class IsCycle extends Greql2Function {
 		JValueType[][] x = { { JValueType.PATH, JValueType.BOOL } };
 		signatures = x;
 
-		description = "Return true, iff the given path is a cycle.\n"
+		description = "Returns true, iff the given path is a cycle.\n"
 				+ "In a cycle, the start and end vertex are identical.";
 
 		Category[] c = { Category.PATHS_AND_PATHSYSTEMS };
