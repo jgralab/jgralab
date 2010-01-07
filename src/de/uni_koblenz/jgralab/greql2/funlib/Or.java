@@ -86,7 +86,8 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
 public class Or extends BooleanFunction {
 
 	{
-		description = "Logical operation a | b (\"or\").";
+		description = "Logical operation $a \\vee b$. \n"
+				+ "Alternativ usage: \\texttt{a or b}.";
 	}
 
 	@Override

@@ -86,7 +86,8 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
 public class Xor extends BooleanFunction {
 
 	{
-		description = "Logical operation a ^ b  or (a & !b) | (!a & b) (\" xor \").";
+		description = "Logical operation $(a \\wedge \\neg b) \\vee (\\neg a\\wedge b)$. \n"
+				+ "Alternativ usage: \\texttt{a xor b}.";
 	}
 
 	@Override
