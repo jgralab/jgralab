@@ -27,11 +27,8 @@ package de.uni_koblenz.jgralab.graphmarker;
 import java.util.HashMap;
 
 import de.uni_koblenz.jgralab.AttributedElement;
-import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.GraphElement;
-import de.uni_koblenz.jgralab.GraphException;
-import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.impl.ReversedEdgeImpl;
 
 /**
@@ -54,8 +51,8 @@ import de.uni_koblenz.jgralab.impl.ReversedEdgeImpl;
  * @author ist@uni-koblenz.de
  * 
  */
-public abstract class GenericGraphMarker<T extends AttributedElement, O>
-		extends AbstractGraphMarker<T> {
+public abstract class MapGraphMarker<T extends AttributedElement, O> extends
+		AbstractGraphMarker<T> {
 
 	/**
 	 * Stores the mapping between Graph, Edge or Vertex and the attribute
@@ -65,7 +62,7 @@ public abstract class GenericGraphMarker<T extends AttributedElement, O>
 	/**
 	 * Creates a new GraphMarker
 	 */
-	public GenericGraphMarker(Graph g) {
+	public MapGraphMarker(Graph g) {
 		super(g);
 		tempAttributeMap = new HashMap<T, O>();
 	}
@@ -177,11 +174,6 @@ public abstract class GenericGraphMarker<T extends AttributedElement, O>
 	}
 
 	@Override
-	public void edgeDeleted(Edge e) {
-		tempAttributeMap.remove(e);
-	}
-
-	@Override
 	public void maxEdgeCountIncreased(int newValue) {
 		// do nothing
 	}
@@ -189,11 +181,6 @@ public abstract class GenericGraphMarker<T extends AttributedElement, O>
 	@Override
 	public void maxVertexCountIncreased(int newValue) {
 		// do nothing
-	}
-
-	@Override
-	public void vertexDeleted(Vertex v) {
-		tempAttributeMap.remove(v);
 	}
 
 }

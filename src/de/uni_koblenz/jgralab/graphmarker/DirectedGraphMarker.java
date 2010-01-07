@@ -4,7 +4,6 @@ import de.uni_koblenz.jgralab.AttributedElement;
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.GraphElement;
-import de.uni_koblenz.jgralab.GraphException;
 import de.uni_koblenz.jgralab.Vertex;
 
 /**
@@ -18,7 +17,7 @@ import de.uni_koblenz.jgralab.Vertex;
  * @param <O>
  */
 public class DirectedGraphMarker<O> extends
-		GenericGraphMarker<AttributedElement, O> {
+		MapGraphMarker<AttributedElement, O> {
 
 	/**
 	 * Creates a new GraphMarker
@@ -83,6 +82,11 @@ public class DirectedGraphMarker<O> extends
 		assert ((elem instanceof GraphElement && ((GraphElement) elem)
 				.getGraph() == graph) || elem == graph);
 		return tempAttributeMap.remove(elem) != null;
+	}
+
+	@Override
+	public void vertexDeleted(Vertex v) {
+		tempAttributeMap.remove(v);
 	}
 
 }
