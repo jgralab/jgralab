@@ -67,8 +67,8 @@ public class First extends Greql2Function {
 		JValueType[][] x = { { JValueType.COLLECTION, JValueType.OBJECT } };
 		signatures = x;
 
-		description = "Return the given collection's first element."
-				+ "The collection will be converted to a list before.";
+		description = "Returns the first element of the given collection."
+				+ "The collection will be converted to a list first.";
 
 		Category[] c = { Category.COLLECTIONS_AND_MAPS };
 		categories = c;

@@ -47,7 +47,7 @@ public class TheElement extends Greql2Function {
 		JValueType[][] x = { { JValueType.COLLECTION, JValueType.OBJECT } };
 		signatures = x;
 
-		description = "Return the single element of the given collection.";
+		description = "Returns the one and only element in the given collection, otherwise WrongFunctionParameterException is returned.";
 
 		Category[] c = { Category.COLLECTIONS_AND_MAPS };
 		categories = c;

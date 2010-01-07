@@ -42,7 +42,7 @@ public class Sort extends Greql2Function {
 		JValueType[][] x = { { JValueType.COLLECTION, JValueType.COLLECTION } };
 		signatures = x;
 
-		description = "Sort the given collection according natural ordering.";
+		description = "Sorts the given collection according to natural ordering.";
 
 		Category[] c = { Category.COLLECTIONS_AND_MAPS };
 		categories = c;

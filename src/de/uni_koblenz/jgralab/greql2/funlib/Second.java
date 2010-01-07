@@ -67,8 +67,8 @@ public class Second extends Greql2Function {
 		JValueType[][] x = { { JValueType.COLLECTION, JValueType.OBJECT } };
 		signatures = x;
 
-		description = "Return the second element of the given collection.\n"
-				+ "The collection will be converted to a list before.";
+		description = "Returns the second element of the given collection.\n"
+				+ "The collection will be converted to a list first.";
 
 		Category[] c = { Category.COLLECTIONS_AND_MAPS };
 		categories = c;

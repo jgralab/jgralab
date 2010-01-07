@@ -69,7 +69,7 @@ public class NthElement extends Greql2Function {
 				JValueType.OBJECT } };
 		signatures = x;
 
-		description = "Return the element of the given collection on the given index.";
+		description = "Returns the element of the given collection on the given index.";
 
 		Category[] c = { Category.COLLECTIONS_AND_MAPS };
 		categories = c;

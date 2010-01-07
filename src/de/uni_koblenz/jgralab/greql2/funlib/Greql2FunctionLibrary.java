@@ -25,6 +25,8 @@
 package de.uni_koblenz.jgralab.greql2.funlib;
 
 import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Modifier;
 import java.net.URL;
@@ -165,6 +167,11 @@ public class Greql2FunctionLibrary {
 		describeFunction.setArgName("functionName");
 		group.addOption(describeFunction);
 
+		Option outputOption = new Option("o", "output", true,
+				"Specifies the given function.");
+		describeFunction.setRequired(false);
+		oh.addOption(outputOption);
+
 		Option brieflyDescribeFunction = new Option("b",
 				"briefly-describe-function", true,
 				"Describe the given function briefly (only one line)");
@@ -195,10 +202,27 @@ public class Greql2FunctionLibrary {
 			output = generateGreqlReferenceCard();
 		}
 		if (output != null) {
-			System.out.println(output);
+			if (cmd.hasOption('o')) {
+				try {
+					FileWriter file = new FileWriter(new File(cmd
+							.getOptionValue('o')));
+					file.append(output);
+					file.flush();
+					file.close();
+					System.out.println("Fini.");
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+
+			} else {
+				System.out.println(output);
+			}
+
 		} else {
 			System.out.println("Don't know what to do!");
 		}
+
 	}
 
 	private static String describeAllFunction() {
@@ -231,7 +255,7 @@ public class Greql2FunctionLibrary {
 			return "`" + functionName + "' is not a known function.";
 		}
 
-		Greql2Function afun = (Greql2Function) fun;
+		Greql2Function afun = fun;
 
 		if (briefly) {
 			int end = afun.description.indexOf("\n");

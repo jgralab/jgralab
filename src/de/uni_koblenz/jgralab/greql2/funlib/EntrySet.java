@@ -40,7 +40,7 @@ public class EntrySet extends Greql2Function {
 		JValueType[][] x = { { JValueType.MAP, JValueType.COLLECTION } };
 		signatures = x;
 
-		description = "Return the entries of the given map as set of key-value tuples.";
+		description = "Returns the entries of the given map as set of key-value tuples.";
 
 		Category[] c = { Category.COLLECTIONS_AND_MAPS };
 		categories = c;

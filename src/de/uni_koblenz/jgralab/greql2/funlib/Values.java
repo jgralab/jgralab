@@ -37,7 +37,7 @@ public class Values extends Greql2Function {
 		JValueType[][] x = { { JValueType.MAP, JValueType.COLLECTION } };
 		signatures = x;
 
-		description = "Return the bag of values of the given map.";
+		description = "Returns the bag of values of the given map.";
 
 		Category[] c = { Category.COLLECTIONS_AND_MAPS };
 		categories = c;

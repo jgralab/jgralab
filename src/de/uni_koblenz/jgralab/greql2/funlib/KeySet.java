@@ -37,7 +37,7 @@ public class KeySet extends Greql2Function {
 		JValueType[][] x = { { JValueType.MAP, JValueType.COLLECTION } };
 		signatures = x;
 
-		description = "Return the set of keys of the given map.";
+		description = "Returns the set of keys of the given map.";
 
 		Category[] c = { Category.COLLECTIONS_AND_MAPS };
 		categories = c;
