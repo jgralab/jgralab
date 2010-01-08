@@ -69,7 +69,7 @@ public class Uminus extends Greql2Function {
 				{ JValueType.DOUBLE, JValueType.DOUBLE } };
 		signatures = x;
 
-		description = "Calculates the negation $-a$ of a given number $a$.";
+		description = "Calculates the negation $-a$ of a given number $a$. Alternative usage: -a.";
 
 		Category[] c = { Category.ARITHMETICAL };
 		categories = c;

@@ -340,7 +340,8 @@ public class Greql2FunctionLibrary {
 		}
 
 		StringBuilder sb = new StringBuilder();
-		sb.append("\\section{Functions}\n\n");
+		// Stands in the Document!
+		// sb.append("\\section{Functions}\n\n");
 		for (Entry<Category, SortedSet<Greql2Function>> e : map.entrySet()) {
 			sb.append("\\subsection{");
 			String subSect = e.getKey().toString().toLowerCase().replace("_",
@@ -350,7 +351,7 @@ public class Greql2FunctionLibrary {
 			sb.append("}\n\n");
 
 			sb
-					.append("\\begin{longtable}{|l|p{0.45\\textwidth}|p{0.35\\textwidth}|}\n");
+					.append("\\begin{longtable}{|p{0.09\\textwidth}|p{0.56\\textwidth}|p{0.25\\textwidth}|}\n");
 
 			sb.append("\\hline\n");
 			sb
@@ -359,7 +360,7 @@ public class Greql2FunctionLibrary {
 			sb.append("\\endfirsthead\n");
 			sb.append("\\hline\n");
 			sb
-					.append("\\textbf{Name} & \\textbf{Description} & \\textbf{Signatures (continued...)} \\\\ \n");
+					.append("\\textbf{Name} & \\textbf{Description} & \\textbf{Signatures} \\\\ \n");
 			sb.append("\\hline\n");
 			sb.append("\\endhead\n\n");
 			for (Greql2Function fun : e.getValue()) {
