@@ -1,0 +1,9 @@
+#!/bin/sh
+
+echo "Starting GreqlServer..."
+
+CLASSPATH="../build/jar/jgralab.jar:$CLASSPATH"
+
+java -Xmx1G de.uni_koblenz.jgralab.greql2.evaluator.GreqlServer
+
+echo "GreqlServer finished."
