@@ -76,7 +76,7 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
 public class LeThan extends CompareFunction {
 
 	{
-		description = "Returns true, if $a < b$, otherwise false. \nAlternative usage: a < b.";
+		description = "Returns true, iff $a < b$. \nAlternative usage: a < b.";
 	}
 
 	@Override

@@ -76,7 +76,7 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
 public class LeEqual extends CompareFunction {
 
 	{
-		description = "Returns true, if $a\\leq b$, otherwise false. \nAlternative usage: a <= b.";
+		description = "Returns true, iff $a\\leq b$. \nAlternative usage: a <= b.";
 	}
 
 	@Override
