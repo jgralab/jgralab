@@ -71,7 +71,7 @@ public class ReMatch extends Greql2Function {
 		signatures = x;
 
 		description = "Returns true, iff the given string matches the given regular expression. \n"
-				+ "Alternative usage: myString =~ myRegexp.";
+				+ "Alternative usage: myString =\textasciitilde{} myRegexp.";
 
 		Category[] c = { Category.STRINGS };
 		categories = c;
