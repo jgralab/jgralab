@@ -12,7 +12,7 @@ public class IntegerArrayEdgeGraphMarker extends IntegerArrayGraphMarker<Edge> {
 
 	@Override
 	public void edgeDeleted(Edge e) {
-		removeMark(e);
+		removeMark(e.getNormalEdge());
 	}
 
 	@Override
@@ -31,6 +31,11 @@ public class IntegerArrayEdgeGraphMarker extends IntegerArrayGraphMarker<Edge> {
 	@Override
 	public void vertexDeleted(Vertex v) {
 		// do nothing
+	}
+
+	@Override
+	public int mark(Edge edge, int value) {
+		return super.mark(edge.getNormalEdge(), value);
 	}
 
 }

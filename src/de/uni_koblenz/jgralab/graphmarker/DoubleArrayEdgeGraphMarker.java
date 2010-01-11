@@ -12,7 +12,7 @@ public class DoubleArrayEdgeGraphMarker extends DoubleArrayGraphMarker<Edge> {
 
 	@Override
 	public void edgeDeleted(Edge e) {
-		removeMark(e);
+		removeMark(e.getNormalEdge());
 	}
 
 	@Override
@@ -31,6 +31,11 @@ public class DoubleArrayEdgeGraphMarker extends DoubleArrayGraphMarker<Edge> {
 	@Override
 	public void vertexDeleted(Vertex v) {
 		// do nothing
+	}
+
+	@Override
+	public double mark(Edge edge, double value) {
+		return super.mark(edge.getNormalEdge(), value);
 	}
 
 }

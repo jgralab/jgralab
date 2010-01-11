@@ -12,7 +12,7 @@ public class ArrayEdgeGraphMarker<O> extends ArrayGraphMarker<Edge, O> {
 
 	@Override
 	public void edgeDeleted(Edge e) {
-		removeMark(e);
+		removeMark(e.getNormalEdge());
 	}
 
 	@Override
@@ -31,6 +31,11 @@ public class ArrayEdgeGraphMarker<O> extends ArrayGraphMarker<Edge, O> {
 	@Override
 	public void vertexDeleted(Vertex v) {
 		// do nothing
+	}
+
+	@Override
+	public O mark(Edge edge, O value) {
+		return super.mark(edge.getNormalEdge(), value);
 	}
 
 }
