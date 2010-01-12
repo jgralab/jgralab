@@ -66,7 +66,7 @@ public class IsLoop extends Greql2Function {
 		JValueType[][] x = { { JValueType.EDGE, JValueType.BOOL } };
 		signatures = x;
 
-		description = "Return true, iff the given edge is a loop.\n"
+		description = "Returns true iff the given edge is a loop.\n"
 				+ "That means, its start- and end-vertex is the same.";
 
 		Category[] c = { Category.GRAPH };

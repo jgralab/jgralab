@@ -42,8 +42,7 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
  * <dt><b>GReQL-signature</b></dt>
  * <dd><code>SET&lt;ATTRELEMCLASS&gt; edgeTypeSet(c:COLLECTION)</code></dd>
  * <dd><code>SET&lt;ATTRELEMCLASS&gt; edgeTypeSet(p:PATH)</code></dd>
- * <dd><code>SET&lt;ATTRELEMCLASS&gt; edgeTypeSet(ps:PATHSYSTEM)</code>
- * </dd>
+ * <dd><code>SET&lt;ATTRELEMCLASS&gt; edgeTypeSet(ps:PATHSYSTEM)</code></dd>
  * <dd>&nbsp;</dd>
  * </dl>
  * <dl>
@@ -72,7 +71,7 @@ public class EdgeTypeSet extends Greql2Function {
 				{ JValueType.PATHSYSTEM, JValueType.COLLECTION } };
 		signatures = x;
 
-		description = "Return a set of all edge-types that occure in the given structure.";
+		description = "Returns a set of all edge-types that occure in the given structure.";
 
 		Category[] c = { Category.SCHEMA_ACCESS };
 		categories = c;

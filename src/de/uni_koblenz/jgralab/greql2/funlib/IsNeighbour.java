@@ -79,7 +79,7 @@ public class IsNeighbour extends Greql2Function {
 						JValueType.BOOL } };
 		signatures = x;
 
-		description = "Return true, iff two given vertices are neighbours.\n"
+		description = "Returns true iff two given vertices are neighbours.\n"
 				+ "That means, there is an edge between these two vertices. If a pathsystem\n"
 				+ "is also given, this check is performed on two vertices in this pathsystem.";
 

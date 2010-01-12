@@ -64,7 +64,7 @@ public class FirstVertex extends Greql2Function {
 				{ JValueType.TYPECOLLECTION, JValueType.VERTEX } };
 		signatures = x;
 
-		description = "Return the 1st vertex (of optionally given type) in the graph.";
+		description = "Returns the 1st vertex (of optionally given type) in the graph.";
 
 		Category[] c = { Category.GRAPH };
 		categories = c;

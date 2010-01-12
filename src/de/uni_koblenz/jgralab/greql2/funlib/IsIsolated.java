@@ -66,7 +66,7 @@ public class IsIsolated extends Greql2Function {
 		JValueType[][] x = { { JValueType.VERTEX, JValueType.BOOL } };
 		signatures = x;
 
-		description = "Return true, iff the given vertex is isolated.\n"
+		description = "Returns true iff the given vertex is isolated.\n"
 				+ "Isolated means, that there are no edges running\n"
 				+ "into or out of the given vertex.";
 

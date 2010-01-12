@@ -38,7 +38,7 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
 public abstract class Greql2Function {
 
 	public enum Category {
-		LOGICS, COMPARISONS, ARITHMETICAL, STRINGS, COLLECTIONS_AND_MAPS, PATHS_AND_PATHSYSTEMS, SCHEMA_ACCESS, GRAPH, UNDEFINED
+		LOGICS, COMPARISONS, ARITHMETICS, STRINGS, COLLECTIONS_AND_MAPS, PATHS_AND_PATHSYSTEMS, SCHEMA_ACCESS, GRAPH, UNDEFINED
 	};
 
 	/**
@@ -86,8 +86,8 @@ public abstract class Greql2Function {
 			if (conversionCosts == 0) {
 				// this signature was a perfect match!
 				return i;
-			} else if ((conversionCosts > 0)
-					&& (conversionCosts < indexAndCosts[1])) {
+			} else if (conversionCosts > 0
+					&& conversionCosts < indexAndCosts[1]) {
 				// this signature can at least be converted and is the best till
 				// now
 				indexAndCosts[0] = i;

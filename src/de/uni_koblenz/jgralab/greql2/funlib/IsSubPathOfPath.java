@@ -71,7 +71,7 @@ public class IsSubPathOfPath extends Greql2Function {
 				JValueType.BOOL } };
 		signatures = x;
 
-		description = "Returns true, iff the first path is a subpath of the second path.\n"
+		description = "Returns true iff the first path is a subpath of the second path.\n"
 				+ "That means, the second given path contains all vertices and edges of the\n"
 				+ "first given path in the same order.";
 

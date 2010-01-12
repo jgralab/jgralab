@@ -21,9 +21,9 @@ public abstract class ArithmeticFunction extends Greql2Function {
 				{ JValueType.LONG, JValueType.LONG, JValueType.LONG },
 				{ JValueType.INT, JValueType.INT, JValueType.INT } };
 		signatures = x;
-		description = "Perform arithmetic operation on the given operands.";
+		description = "Performs arithmetic operation on the given operands.";
 
-		Category[] c = { Category.ARITHMETICAL };
+		Category[] c = { Category.ARITHMETICS };
 		categories = c;
 	}
 

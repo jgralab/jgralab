@@ -64,8 +64,8 @@ public class IsAcyclic extends Greql2Function {
 				{ JValueType.SUBGRAPH, JValueType.BOOL } };
 		signatures = x;
 
-		description = "Return true, if the current graph or the given subgraph is cycle-free.\n"
-				+ "Also have a look at the function `topologicalSort'.";
+		description = "Returns true iff the current graph or the given subgraph is cycle-free.\n"
+				+ "See also: topologicalSort().";
 
 		Category[] c = { Category.GRAPH };
 		categories = c;

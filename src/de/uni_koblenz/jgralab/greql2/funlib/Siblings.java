@@ -77,7 +77,7 @@ public class Siblings extends Greql2Function {
 						JValueType.COLLECTION } };
 		signatures = x;
 
-		description = "Return the set of all siblings of the given vertex.\n"
+		description = "Returns the set of all siblings of the given vertex.\n"
 				+ "If a pathsystem is given, all siblings that are in the pathsystem are\n"
 				+ "returned.  Two or more vertices are siblings, if they have at least one\n"
 				+ "same parent.";

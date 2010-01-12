@@ -75,7 +75,7 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
 public class GrThan extends CompareFunction {
 
 	{
-		description = "Returns true, iff $a > b$. \nAlternative usage: a > b.";
+		description = "Returns true iff $a > b$. \nAlternative usage: a > b.";
 	}
 
 	@Override

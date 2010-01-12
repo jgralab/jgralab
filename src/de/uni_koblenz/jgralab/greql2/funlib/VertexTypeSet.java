@@ -72,7 +72,7 @@ public class VertexTypeSet extends Greql2Function {
 				{ JValueType.PATHSYSTEM, JValueType.COLLECTION } };
 		signatures = x;
 
-		description = "Return a set of all vertex-types that occure in the given structure.";
+		description = "Returns a set of all vertex-types that occure in the given structure.";
 
 		Category[] c = { Category.SCHEMA_ACCESS };
 		categories = c;

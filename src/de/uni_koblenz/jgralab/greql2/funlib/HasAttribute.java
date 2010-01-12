@@ -40,8 +40,7 @@ import de.uni_koblenz.jgralab.schema.AttributedElementClass;
  * <dl>
  * <dt><b>GReQL-signature</b></dt>
  * <dd><code>BOOL hasAttribute(ae:ATTRELEM, name:STRING)</code></dd>
- * <dd><code>BOOL hasAttribute(ae:ATTRELEMCLASS, name:STRING)</code>
- * </dd>
+ * <dd><code>BOOL hasAttribute(ae:ATTRELEMCLASS, name:STRING)</code></dd>
  * <dd>&nbsp;</dd>
  * </dl>
  * <dl>
@@ -69,13 +68,11 @@ public class HasAttribute extends Greql2Function {
 
 	{
 		JValueType[][] x = {
-				{ JValueType.ATTRELEM, JValueType.STRING,
-						JValueType.BOOL },
-				{ JValueType.ATTRELEMCLASS, JValueType.STRING,
-						JValueType.BOOL } };
+				{ JValueType.ATTRELEM, JValueType.STRING, JValueType.BOOL },
+				{ JValueType.ATTRELEMCLASS, JValueType.STRING, JValueType.BOOL } };
 		signatures = x;
 
-		description = "Return true, iff the given AttrElem has an attribute with the given name.";
+		description = "Returns true iff the given element or class has an attribute with the given name.";
 
 		Category[] c = { Category.GRAPH, Category.SCHEMA_ACCESS };
 		categories = c;

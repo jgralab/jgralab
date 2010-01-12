@@ -33,7 +33,7 @@ public class GetGraph extends Greql2Function {
 		JValueType[][] x = { { JValueType.GRAPH } };
 		signatures = x;
 
-		description = "Return the graph the query is evaluated on.";
+		description = "Returns the graph the query is evaluated on.";
 
 		Category[] c = { Category.GRAPH };
 		categories = c;

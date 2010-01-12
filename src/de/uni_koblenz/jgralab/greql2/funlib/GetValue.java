@@ -67,12 +67,11 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
 public class GetValue extends Greql2Function {
 	{
 		JValueType[][] x = {
-				{ JValueType.ATTRELEM, JValueType.STRING,
-						JValueType.OBJECT },
+				{ JValueType.ATTRELEM, JValueType.STRING, JValueType.OBJECT },
 				{ JValueType.RECORD, JValueType.STRING, JValueType.OBJECT } };
 		signatures = x;
 
-		description = "Return the value of the given AttrElem's or Record's attribute or component.\n"
+		description = "Returns the value of the given AttrElem's or Record's attribute or component.\n"
 				+ "This function can be used with the point operator.";
 
 		Category[] c = { Category.GRAPH };

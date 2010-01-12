@@ -87,9 +87,9 @@ public class Plus extends ArithmeticFunction {
 				{ JValueType.STRING, JValueType.STRING, JValueType.STRING } };
 		signatures = x;
 
-		description = "Calculates the product $a+b$ or concatenate the two given strings.";
+		description = "Calculates the sum $a+b$ or concatenate the two given strings. Alternative usage: a + b.";
 
-		Category[] c = { Category.ARITHMETICAL, Category.STRINGS };
+		Category[] c = { Category.ARITHMETICS, Category.STRINGS };
 		categories = c;
 	}
 

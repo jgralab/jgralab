@@ -43,8 +43,7 @@ import de.uni_koblenz.jgralab.schema.AttributedElementClass;
  * <dt><b>GReQL-signature</b></dt>
  * <dd><code>SET&lt;ATTRELEMCLASS&gt; subTypes(type:STRING)</code></dd>
  * <dd>
- * <code>SET&lt;ATTRELEMCLASS&gt; subTypes(typeA:ATTRELEMCLASS)</code>
- * </dd>
+ * <code>SET&lt;ATTRELEMCLASS&gt; subTypes(typeA:ATTRELEMCLASS)</code></dd>
  * <dd>&nbsp;</dd>
  * </dl>
  * <dl>
@@ -72,7 +71,7 @@ public class Subtypes extends Greql2Function {
 				{ JValueType.ATTRELEMCLASS, JValueType.COLLECTION } };
 		signatures = x;
 
-		description = "Return the set of direct subtypes of the given type.\n"
+		description = "Returns the set of direct subtypes of the given type.\n"
 				+ "The type may be given as string or attributed element class.";
 
 		Category[] c = { Category.SCHEMA_ACCESS };
