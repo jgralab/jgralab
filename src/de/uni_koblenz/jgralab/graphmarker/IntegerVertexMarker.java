@@ -4,9 +4,10 @@ import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.Vertex;
 
-public class LongArrayVertexGraphMarker extends LongArrayGraphMarker<Vertex> {
+public class IntegerVertexMarker extends
+		IntegerGraphMarker<Vertex> {
 
-	public LongArrayVertexGraphMarker(Graph graph) {
+	public IntegerVertexMarker(Graph graph) {
 		super(graph, graph.getMaxVCount() + 1);
 	}
 

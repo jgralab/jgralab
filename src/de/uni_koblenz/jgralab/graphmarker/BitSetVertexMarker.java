@@ -4,9 +4,9 @@ import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.Vertex;
 
-public class BitSetVertexGraphMarker extends BitSetGraphMarker<Vertex> {
+public class BitSetVertexMarker extends BitSetGraphMarker<Vertex> {
 
-	public BitSetVertexGraphMarker(Graph graph) {
+	public BitSetVertexMarker(Graph graph) {
 		super(graph);
 	}
 

@@ -4,9 +4,9 @@ import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.Vertex;
 
-public class DoubleArrayEdgeGraphMarker extends DoubleArrayGraphMarker<Edge> {
+public class ArrayEdgeMarker<O> extends ArrayGraphMarker<Edge, O> {
 
-	public DoubleArrayEdgeGraphMarker(Graph graph) {
+	public ArrayEdgeMarker(Graph graph) {
 		super(graph, graph.getMaxECount() + 1);
 	}
 
@@ -34,7 +34,7 @@ public class DoubleArrayEdgeGraphMarker extends DoubleArrayGraphMarker<Edge> {
 	}
 
 	@Override
-	public double mark(Edge edge, double value) {
+	public O mark(Edge edge, O value) {
 		return super.mark(edge.getNormalEdge(), value);
 	}
 

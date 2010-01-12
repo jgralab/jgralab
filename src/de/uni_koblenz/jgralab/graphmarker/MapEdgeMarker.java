@@ -4,9 +4,9 @@ import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.Vertex;
 
-public class MapEdgeGraphMarker<O> extends MapGraphMarker<Edge, O> {
+public class MapEdgeMarker<O> extends MapGraphMarker<Edge, O> {
 
-	public MapEdgeGraphMarker(Graph g) {
+	public MapEdgeMarker(Graph g) {
 		super(g);
 	}
 
