@@ -75,7 +75,7 @@ public class Vertices extends Greql2Function {
 						JValueType.TYPECOLLECTION, JValueType.COLLECTION } };
 		signatures = x;
 
-		description = "Return a part of the global vertex sequence from v1 to v2.\n"
+		description = "Returns a part of the global vertex sequence from v1 to v2.\n"
 				+ "Optionally, the vertices may be restricted by a type collection.";
 
 		Category[] c = { Category.GRAPH };

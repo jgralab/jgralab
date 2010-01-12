@@ -70,7 +70,7 @@ public class Equals extends Greql2Function {
 				JValueType.BOOL } };
 		signatures = x;
 
-		description = "Returns true, iff two objects a and b are equal. \nAlternative usage: a = b.";
+		description = "Returns true iff two objects a and b are equal. \nAlternative usage: a = b.";
 
 		Category[] c = { Category.COMPARISONS };
 		categories = c;

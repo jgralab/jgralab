@@ -64,7 +64,7 @@ public class LastVertex extends Greql2Function {
 				{ JValueType.TYPECOLLECTION, JValueType.VERTEX } };
 		signatures = x;
 
-		description = "Return the last vertex (restr. by optional TypeCollection) in the graph.";
+		description = "Returns the last vertex (restricted by optional TypeCollection) in the graph.";
 
 		Category[] c = { Category.GRAPH };
 		categories = c;

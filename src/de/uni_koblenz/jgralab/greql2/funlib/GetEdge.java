@@ -64,7 +64,7 @@ public class GetEdge extends Greql2Function {
 		JValueType[][] x = { { JValueType.INT, JValueType.EDGE } };
 		signatures = x;
 
-		description = "Return the edge with the given id.";
+		description = "Returns the edge with the given id.";
 
 		Category[] c = { Category.GRAPH };
 		categories = c;

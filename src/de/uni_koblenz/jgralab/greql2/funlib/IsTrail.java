@@ -68,7 +68,7 @@ public class IsTrail extends Greql2Function {
 		JValueType[][] x = { { JValueType.PATH, JValueType.BOOL } };
 		signatures = x;
 
-		description = "Returns true, iff the given path is a trail.\n"
+		description = "Returns true iff the given path is a trail.\n"
 				+ "That means, no vertex occurs more than once.";
 
 		Category[] c = { Category.PATHS_AND_PATHSYSTEMS };

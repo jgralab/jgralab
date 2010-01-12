@@ -56,7 +56,7 @@ public class Describe extends Greql2Function {
 				{ JValueType.ATTRELEM, JValueType.COLLECTION } };
 		signatures = x;
 
-		description = "Return a tuple (QName, ID, Attrs) describing the given attributed element.\n"
+		description = "Returns a tuple (QName, ID, Attrs) describing the given attributed element.\n"
 				+ "If no element is given, describe the graph itself, producing: (QName, (ID, Version), Attrs).";
 
 		Category[] c = { Category.GRAPH };

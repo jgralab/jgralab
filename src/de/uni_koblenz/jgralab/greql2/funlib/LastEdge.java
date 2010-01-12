@@ -64,7 +64,7 @@ public class LastEdge extends Greql2Function {
 				{ JValueType.TYPECOLLECTION, JValueType.EDGE } };
 		signatures = x;
 
-		description = "Return the last edge (restricted by optional TypeCollection) in the graph.";
+		description = "Returns the last edge (restricted by optional TypeCollection) in the graph.";
 
 		Category[] c = { Category.GRAPH };
 		categories = c;

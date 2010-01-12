@@ -70,7 +70,7 @@ public class ReMatch extends Greql2Function {
 				JValueType.BOOL } };
 		signatures = x;
 
-		description = "Returns true, iff the given string matches the given regular expression. \n"
+		description = "Returns true iff the given string matches the given regular expression. \n"
 				+ "Alternative usage: myString =\\textasciitilde{} myRegexp.";
 
 		Category[] c = { Category.STRINGS };

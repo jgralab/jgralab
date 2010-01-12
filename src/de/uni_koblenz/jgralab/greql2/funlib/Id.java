@@ -68,7 +68,7 @@ public class Id extends Greql2Function {
 				{ JValueType.EDGE, JValueType.INT } };
 		signatures = x;
 
-		description = "Return the id of the given vertex or edge.";
+		description = "Returns the id of the given vertex or edge.";
 
 		Category[] c = { Category.GRAPH };
 		categories = c;

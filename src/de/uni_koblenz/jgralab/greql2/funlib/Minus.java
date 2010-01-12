@@ -71,7 +71,7 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
 public class Minus extends ArithmeticFunction {
 
 	{
-		description = "Calculates the difference $a-b$.";
+		description = "Calculates the difference $a-b$. Alternative usage: a - b.";
 	}
 
 	@Override

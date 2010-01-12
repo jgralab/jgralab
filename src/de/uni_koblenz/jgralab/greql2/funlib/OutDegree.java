@@ -70,7 +70,7 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
 
 public class OutDegree extends DegreeFunction {
 	{
-		description = "Return the out-degree of the given vertex.\n"
+		description = "Returns the out-degree of the given vertex.\n"
 				+ "The scope can be limited by a path, a path system, or\n"
 				+ "an type collection.";
 	}

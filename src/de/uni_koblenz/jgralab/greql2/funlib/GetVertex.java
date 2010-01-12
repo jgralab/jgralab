@@ -64,7 +64,7 @@ public class GetVertex extends Greql2Function {
 		JValueType[][] x = { { JValueType.INT, JValueType.INT } };
 		signatures = x;
 
-		description = "Return the vertex with the given id.";
+		description = "Returns the vertex with the given id.";
 
 		Category[] c = { Category.GRAPH };
 		categories = c;

@@ -69,7 +69,7 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
 public class EdgesConnected extends Incidences {
 
 	{
-		description = "Return the set of edges connected to the given vertex.\n"
+		description = "Returns the set of edges connected to the given vertex.\n"
 				+ "Optionally, the a path, path system or type collection may\n"
 				+ "be given.  In that case, the returned edges also are part of\n"
 				+ "that structure, or have the given type, respectively.";

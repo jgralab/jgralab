@@ -42,7 +42,7 @@ public class IsEmpty extends Greql2Function {
 				{ JValueType.MAP, JValueType.BOOL } };
 		signatures = x;
 
-		description = "Returns true, iff the given collection or map is empty.";
+		description = "Returns true iff the given collection or map is empty.";
 
 		Category[] c = { Category.COLLECTIONS_AND_MAPS };
 		categories = c;

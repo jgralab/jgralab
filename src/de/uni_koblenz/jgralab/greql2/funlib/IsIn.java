@@ -75,7 +75,7 @@ public class IsIn extends Greql2Function {
 				{ JValueType.ATTRELEM, JValueType.BOOL } };
 		signatures = x;
 
-		description = "Returns true, iff the given element is part of the given structure.\n"
+		description = "Returns true iff the given element is part of the given structure.\n"
 				+ "If only an attributed element is given, then check if that is \n"
 				+ "contained in the graph the query is evaluated on.";
 

@@ -70,7 +70,7 @@ public class IsSubSet extends Greql2Function {
 				JValueType.BOOL } };
 		signatures = x;
 
-		description = "Returns true, iff the first collection is a subset of the second collection.\n"
+		description = "Returns true iff the first collection is a subset of the second collection.\n"
 				+ "That means, all elements from the first collection are also elements in the\n"
 				+ "second collection.  Both arguments are converted to sets first.";
 

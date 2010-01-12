@@ -69,7 +69,7 @@ public class IsTree extends Greql2Function {
 				{ JValueType.SUBGRAPH, JValueType.BOOL } };
 		signatures = x;
 
-		description = "Return true if the current graph or subgraph is a tree.\n"
+		description = "Returns true iff the current graph or the given subgraph is a tree.\n"
 				+ "That means, the graph is acyclic, has exactly one vertex without\n"
 				+ "incoming edges and all other vertices have exactly one incoming edge.";
 
@@ -98,7 +98,7 @@ public class IsTree extends Greql2Function {
 				}
 				Vertex v = (Vertex) ae;
 				int inDegree = v.getDegree(EdgeDirection.IN);
-				if ((inDegree > 1) || ((inDegree == 0) && foundOneRoot)) {
+				if (inDegree > 1 || inDegree == 0 && foundOneRoot) {
 					return new JValue(JValueBoolean.getFalseValue());
 				}
 				if (inDegree == 0) {
@@ -108,7 +108,7 @@ public class IsTree extends Greql2Function {
 		} else {
 			for (Vertex v : graph.vertices()) {
 				int inDegree = v.getDegree(EdgeDirection.IN);
-				if ((inDegree > 1) || ((inDegree == 0) && foundOneRoot)) {
+				if (inDegree > 1 || inDegree == 0 && foundOneRoot) {
 					return new JValue(JValueBoolean.getFalseValue());
 				}
 				if (inDegree == 0) {

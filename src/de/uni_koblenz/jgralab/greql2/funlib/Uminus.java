@@ -71,7 +71,7 @@ public class Uminus extends Greql2Function {
 
 		description = "Calculates the negation $-a$ of a given number $a$. Alternative usage: -a.";
 
-		Category[] c = { Category.ARITHMETICAL };
+		Category[] c = { Category.ARITHMETICS };
 		categories = c;
 	}
 

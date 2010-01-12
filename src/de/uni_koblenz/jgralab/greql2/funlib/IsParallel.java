@@ -68,7 +68,7 @@ public class IsParallel extends Greql2Function {
 				JValueType.BOOL } };
 		signatures = x;
 
-		description = "Returns true, iff two given paths are parallel.\n"
+		description = "Returns true iff two given paths are parallel.\n"
 				+ "That means, they have the same start-vertex and end-vertex\n"
 				+ "and no other shared vertices.";
 

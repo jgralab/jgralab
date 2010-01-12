@@ -81,7 +81,7 @@ public class IsA extends Greql2Function {
 						JValueType.BOOL } };
 		signatures = x;
 
-		description = "Return true, iff the first type is a subtype of the second type.\n"
+		description = "Returns true iff the first type is a subtype of the second type.\n"
 				+ "The types may be given as attributed element class or by\n"
 				+ "their qualified name given as string.";
 

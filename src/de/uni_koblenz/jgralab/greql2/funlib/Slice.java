@@ -90,7 +90,7 @@ public class Slice extends Greql2Function {
 				{ JValueType.VERTEX, JValueType.NFA, JValueType.SLICE } };
 		signatures = x;
 
-		description = "Return a slice, starting at root(s) and structured according path description.";
+		description = "Returns a slice, starting at root(s) and structured according path description.";
 
 		Category[] c = { Category.PATHS_AND_PATHSYSTEMS };
 		categories = c;
@@ -220,10 +220,10 @@ public class Slice extends Greql2Function {
 				for (Transition currentTransition : currentEntry.state.outTransitions) {
 					Vertex nextVertex = currentTransition.getNextVertex(
 							currentEntry.vertex, inc);
-					if ((!isMarked(nextVertex, currentTransition.getEndState(),
-							inc))
-							&& (currentTransition.accepts(currentEntry.vertex,
-									inc, subgraph))) {
+					if (!isMarked(nextVertex, currentTransition.getEndState(),
+							inc)
+							&& currentTransition.accepts(currentEntry.vertex,
+									inc, subgraph)) {
 						Edge traversedEdge = inc;
 						int distanceToRoot = currentEntry.distanceToRoot;
 						if (nextVertex == currentEntry.vertex) {
@@ -373,7 +373,7 @@ public class Slice extends Greql2Function {
 										marker.parentVertex, parentStateNumber,
 										marker.state.isFinal);
 								parentVertex = marker.parentVertex;
-								if ((parentVertex != null)
+								if (parentVertex != null
 										&& !isVertexMarkedWithState(
 												parentVertex, parentState)) {
 									// if (parentVertex, parentState) has not

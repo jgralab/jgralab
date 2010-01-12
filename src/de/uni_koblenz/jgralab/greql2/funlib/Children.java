@@ -77,7 +77,7 @@ public class Children extends Greql2Function {
 						JValueType.COLLECTION } };
 		signatures = x;
 
-		description = "Return the set of all children of the given vertex.\n"
+		description = "Returns the set of all children of the given vertex.\n"
 				+ "They may be restricted by an optional pathsystem.\n"
 				+ "Children are those vertices, from which edges point to the given vertex. The\n"
 				+ "child vertices are returned as a set.";
@@ -110,7 +110,7 @@ public class Children extends Greql2Function {
 			JValueSet resultSet = new JValueSet();
 			while (inc != null) {
 				other = inc.getThat();
-				if ((subgraph == null) || (subgraph.isMarked(other))) {
+				if (subgraph == null || subgraph.isMarked(other)) {
 					resultSet.add(new JValue(other));
 				}
 				inc = inc.getNextEdge(EdgeDirection.OUT);

@@ -75,7 +75,7 @@ public class IsPrime extends Greql2Function {
 				+ "The chances of being prime is $1- (\\frac{1}{4})^k$.  The default\n"
 				+ "value of $k$ is 10.";
 
-		Category[] c = { Category.ARITHMETICAL };
+		Category[] c = { Category.ARITHMETICS };
 		categories = c;
 	}
 

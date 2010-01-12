@@ -67,7 +67,7 @@ public class SquareRoot extends Greql2Function {
 
 		description = "Calculates the square root $\\sqrt{a}$ of the given number a.";
 
-		Category[] c = { Category.ARITHMETICAL };
+		Category[] c = { Category.ARITHMETICS };
 		categories = c;
 	}
 

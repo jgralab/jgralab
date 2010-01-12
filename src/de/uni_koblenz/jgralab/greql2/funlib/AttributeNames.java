@@ -37,14 +37,13 @@ import de.uni_koblenz.jgralab.schema.Attribute;
 import de.uni_koblenz.jgralab.schema.AttributedElementClass;
 
 /**
- * Returns the set of names of the attributes of an attributed element or 
- * an attributed element class.
+ * Returns the set of names of the attributes of an attributed element or an
+ * attributed element class.
  * 
  * <dl>
  * <dt><b>GReQL-signature</b></dt>
  * <dd><code>SET attributeNames(ae:ATTRIBUTEDELEMENT)</code></dd>
- * <dd><code>BOOLEAN hasAttribute(ae:ATTRIBUTEDELEMENTCLASS)</code>
- * </dd>
+ * <dd><code>BOOLEAN hasAttribute(ae:ATTRIBUTEDELEMENTCLASS)</code></dd>
  * <dd>&nbsp;</dd>
  * </dl>
  * <dl>
@@ -67,12 +66,11 @@ import de.uni_koblenz.jgralab.schema.AttributedElementClass;
 public class AttributeNames extends Greql2Function {
 
 	{
-		JValueType[][] x = {
-				{ JValueType.ATTRELEM },
+		JValueType[][] x = { { JValueType.ATTRELEM },
 				{ JValueType.ATTRELEMCLASS } };
 		signatures = x;
 
-		description = "Return true, iff the given AttrElem has an attribute with the given name.";
+		description = "Returns true iff the given element or class has an attribute with the given name.";
 	}
 
 	@Override
