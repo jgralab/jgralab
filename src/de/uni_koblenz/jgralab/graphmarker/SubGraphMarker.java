@@ -19,13 +19,13 @@ public class SubGraphMarker extends AbstractGraphMarker<GraphElement> {
 
 	// TODO maybe replace with BitSets
 
-	private final BitSetEdgeGraphMarker edgeGraphMarker;
-	private final BitSetVertexGraphMarker vertexGraphMarker;
+	private final BitSetEdgeMarker edgeGraphMarker;
+	private final BitSetVertexMarker vertexGraphMarker;
 
 	public SubGraphMarker(Graph graph) {
 		super(graph);
-		edgeGraphMarker = new BitSetEdgeGraphMarker(graph);
-		vertexGraphMarker = new BitSetVertexGraphMarker(graph);
+		edgeGraphMarker = new BitSetEdgeMarker(graph);
+		vertexGraphMarker = new BitSetVertexMarker(graph);
 	}
 
 	@Override
