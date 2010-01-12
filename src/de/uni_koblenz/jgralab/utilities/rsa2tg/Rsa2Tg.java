@@ -469,10 +469,10 @@ public class Rsa2Tg extends XmlProcessor {
 		String versionString = JGraLab.getInfo(false);
 
 		// Adds an additional help string to the help page.
-		// TODO: this String needs to be included into the Optionhandler, but
+		// TODO: this String needs to be included into the OptionHandler, but
 		// the functionality is not present.
 
-		// String aditional =
+		// String additional =
 		// "If no optional output option is selected, a file with the name "
 		// + "\"<InputFileName>.rsa.tg\" will be written."
 		// + "\n\n"
@@ -620,6 +620,9 @@ public class Rsa2Tg extends XmlProcessor {
 							"A Schema must have a package prefix!\nProcessed qualified name: "
 									+ nm);
 				}
+				
+				schema.set_packagePrefix(nm.substring(0, p));
+				schema.set_name(nm.substring(p + 1));
 
 				// Generates a GraphClass and links it with the created Schema
 				graphClass = sg.createGraphClass();
