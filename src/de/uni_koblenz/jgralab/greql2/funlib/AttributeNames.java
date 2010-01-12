@@ -68,8 +68,8 @@ public class AttributeNames extends Greql2Function {
 
 	{
 		JValueType[][] x = {
-				{ JValueType.ATTRIBUTEDELEMENT},
-				{ JValueType.ATTRIBUTEDELEMENTCLASS } };
+				{ JValueType.ATTRELEM },
+				{ JValueType.ATTRELEMCLASS } };
 		signatures = x;
 
 		description = "Return true, iff the given AttrElem has an attribute with the given name.";

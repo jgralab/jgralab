@@ -39,8 +39,7 @@ public class ThisLiteralTest extends GenericTests {
 		assertEquals(0, result.toCollection().size());
 	}
 
-	// TODO: We get a NullpointerException here, cause somewhere Equals gets a
-	// null value as first parameter
+
 	@Test
 	public void testThisVertex2() throws Exception {
 		String queryString = "from v,w:V{WhereExpression}, g:V{Greql2Expression} with v {@thisVertex=v}& --> &{@thisVertex=g} <-- w report v end";
@@ -48,8 +47,7 @@ public class ThisLiteralTest extends GenericTests {
 		assertEquals(1, result.toCollection().size());
 	}
 
-	// TODO: We get a NullpointerException here, cause somewhere Equals gets a
-	// null value as first parameter
+
 	@Test
 	public void testThisVertex3() throws Exception {
 		String queryString = "from v,w:V{WhereExpression}, g:V{Greql2Expression} with v {@thisVertex=v}& --> &{@thisVertex<>g} <-- w report v end";
