@@ -59,6 +59,13 @@ public abstract class GraphImpl implements Graph {
 	// ------------- GRAPH VARIABLES -------------
 
 	/**
+	 * Reference to itself. This attribute is a quickfix for the codegenerator.
+	 * TODO find a better fix.
+	 */
+	@Deprecated
+	protected Graph graph;
+
+	/**
 	 * the unique id of the graph in the schema
 	 */
 	private String id;
@@ -185,6 +192,8 @@ public abstract class GraphImpl implements Graph {
 	 */
 	public GraphImpl(String id, GraphClass cls) {
 		this(id, cls, 1000, 1000);
+		// TODO remove the following after fixing the bug in codegenerator
+		graph = this;
 	}
 
 	/**
