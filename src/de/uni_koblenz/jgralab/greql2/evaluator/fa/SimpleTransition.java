@@ -218,6 +218,8 @@ public class SimpleTransition extends Transition {
 		return false;
 	}
 
+	
+	
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -249,16 +251,24 @@ public class SimpleTransition extends Transition {
 			}
 		}
 		// checks if a role restriction is set and if e has the right role
-		if (validEdgeRoles != null) { 
+		boolean acceptedByRole = false;
+		if (validEdgeRoles != null) {
 			if ((e.getThatRole() == null) || (!validEdgeRoles.contains(e.getThatRole()))) {
-				return false;
+				acceptedByRole = false;
+			} else {
+				acceptedByRole = true;
 			}
 		}
+		
 		// checks if a edgeTypeRestriction is set and if e has the right type
+		boolean acceptedByType = true;
 		AttributedElementClass edgeClass = e.getAttributedElementClass();
 		if (!typeCollection.acceptsType(edgeClass)) {
-			return false;
+			acceptedByType = false;
 		}
+		
+		if (!((acceptedByRole) || acceptedByType ) )
+			return false;
 		
 		// checks if a boolean expression exists and if it evaluates to true
 		if (predicateEvaluator != null) {
