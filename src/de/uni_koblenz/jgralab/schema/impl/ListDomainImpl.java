@@ -130,7 +130,7 @@ public final class ListDomainImpl extends CollectionDomainImpl implements
 				"#io#.match(\"]\");"));
 		code
 				.add(new CodeSnippet(
-						"#name# = graph.createList(#basedom#.class, #tmpname#.size());"));
+						"#name# = #theGraph#.createList(#basedom#.class, #tmpname#.size());"));
 		code.add(new CodeSnippet("#name#.addAll(#tmpname#);"));
 		code
 				.addNoIndent(new CodeSnippet(
