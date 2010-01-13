@@ -1171,8 +1171,16 @@ public class SchemaImpl implements Schema {
 		if (RESERVED_JAVA_WORDS.contains(name)) {
 			return false;
 		}
+		if (!Character.isJavaIdentifierStart(name.charAt(0)) )
+			return false;
+		for (char c : name.toCharArray()) {
+			if (!Character.isJavaIdentifierPart(c)) {
+				return false;
+			}
+		}
 		return true;
 	}
+	
 
 	@Override
 	public boolean knows(String qn) {
