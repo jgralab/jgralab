@@ -188,7 +188,7 @@ public class GreqlEvaluator {
 	 * The map of SimpleName to Type of types that is known in the evaluator by
 	 * import statements in the greql query
 	 */
-	protected Map<String, AttributedElementClass> knownTypes;
+	protected Map<String, AttributedElementClass> knownTypes = new HashMap<String, AttributedElementClass>(); // initial initialization (afuhr) // initialize empty map (afuhr)
 
 	/**
 	 * returns the vertexEvalGraph marker that is used
@@ -714,6 +714,10 @@ public class GreqlEvaluator {
 		} else {
 			this.datagraph = datagraph;
 		}
+		
+		// Read query from file (afuhr)
+		this.setQueryFile(queryFile);
+		
 		this.variableMap = variables;
 		this.progressFunction = progressFunction;
 
