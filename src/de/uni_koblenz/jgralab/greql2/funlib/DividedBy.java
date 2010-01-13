@@ -78,7 +78,7 @@ public class DividedBy extends ArithmeticFunction {
 		signatures = x;
 
 		description = "Calculates the quotient $a / b$. "
-				+ "a / 0$ will return either a positive or a negative infinity. Alternative usage: a / b.";
+				+ "$a / 0$ will return either a positive or a negative infinity. Alternative usage: a / b.";
 	}
 
 	@Override

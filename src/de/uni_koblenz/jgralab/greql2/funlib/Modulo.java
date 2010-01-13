@@ -64,7 +64,7 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
 public class Modulo extends ArithmeticFunction {
 
 	{
-		description = "Calculates the remainder of $a / b$. Alternative usage: a % b.";
+		description = "Calculates the remainder of $a / b$. Alternative usage: a \\% b.";
 	}
 
 	@Override
