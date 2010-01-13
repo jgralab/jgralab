@@ -109,7 +109,8 @@ public final class SetDomainImpl extends CollectionDomainImpl implements
 
 		code.addNoIndent(new CodeSnippet("#init#"));
 		code.addNoIndent(new CodeSnippet("if (#io#.isNextToken(\"{\")) {"));
-		code.add(new CodeSnippet("#name# = graph.createSet(#basedom#.class);"));
+		code.add(new CodeSnippet(
+				"#name# = #theGraph#.createSet(#basedom#.class);"));
 		code.add(new CodeSnippet("#io#.match(\"{\");",
 				"while (!#io#.isNextToken(\"}\")) {",
 				"\t#basetype# $#name#Element;"));
