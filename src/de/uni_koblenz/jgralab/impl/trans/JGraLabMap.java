@@ -56,8 +56,10 @@ public class JGraLabMap<K, V> extends HashMap<K, V> implements JGraLabCloneable 
 	/**
 	 * 
 	 * @param map
+	 *
+	 * visibility set to public (afuhr)
 	 */
-	/* protected */protected JGraLabMap(Map<K, V> map) {
+	/* protected */public JGraLabMap(Map<K, V> map) {
 		super(map);
 	}
 
@@ -372,8 +374,10 @@ public class JGraLabMap<K, V> extends HashMap<K, V> implements JGraLabCloneable 
 	/**
 	 * 
 	 * @param versionedList
+	 *
+	 * visibility set to public (afuhr)
 	 */
-	protected void setVersionedMap(
+	public void setVersionedMap(
 			VersionedJGraLabCloneableImpl<JGraLabMap<K, V>> versionedMap) {
 		this.versionedMap = versionedMap;
 		if (versionedMap != null)
