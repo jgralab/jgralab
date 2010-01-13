@@ -19,7 +19,7 @@ import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.GraphStructureChangedAdapter;
 import de.uni_koblenz.jgralab.GraphStructureChangedListener;
 import de.uni_koblenz.jgralab.Vertex;
-import de.uni_koblenz.jgralab.graphmarker.ArrayVertexGraphMarker;
+import de.uni_koblenz.jgralab.graphmarker.ArrayVertexMarker;
 import de.uni_koblenz.jgralab.trans.CommitFailedException;
 import de.uni_koblenz.jgralabtest.instancetest.InstanceTest;
 import de.uni_koblenz.jgralabtest.schemas.minimal.Link;
@@ -96,7 +96,7 @@ public class ArrayGraphmarkerTest extends InstanceTest {
 	protected final int E = 4; // initial max edge count
 
 	private MinimalGraph g;
-	private ArrayVertexGraphMarker<TestMarkerObject> marker;
+	private ArrayVertexMarker<TestMarkerObject> marker;
 
 	private Node v1;
 	private Node v2;
@@ -112,7 +112,7 @@ public class ArrayGraphmarkerTest extends InstanceTest {
 		g.createLink(v1, v2);
 		commit(g);
 
-		marker = new ArrayVertexGraphMarker<TestMarkerObject>(g);
+		marker = new ArrayVertexMarker<TestMarkerObject>(g);
 		createTransaction(g);
 	}
 
