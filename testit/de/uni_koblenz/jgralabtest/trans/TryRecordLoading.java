@@ -13,8 +13,9 @@ public class TryRecordLoading {
 
 	/**
 	 * @param args
+	 * @throws GraphIOException
 	 */
-	public static void main(String[] args) {
+	public static void main(String[] args) throws GraphIOException {
 		// create graph without transaction support
 		RecordTestGraph graph = RecordTestSchema.instance()
 				.createRecordTestGraph();
@@ -25,24 +26,14 @@ public class TryRecordLoading {
 
 		// save graph to file
 		String filename = "./testit/testgraphs/record.tg";
-		try {
-			GraphIO
-					.saveGraphToFile(filename, graph,
-							new ProgressFunctionImpl());
-		} catch (GraphIOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+
+		GraphIO.saveGraphToFile(filename, graph, new ProgressFunctionImpl());
 
 		// load graph with transaction support
-		try {
-			RecordTestGraph graphTS = RecordTestSchema.instance()
-					.loadRecordTestGraphWithTransactionSupport(filename,
-							new ProgressFunctionImpl());
-		} catch (GraphIOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+
+		RecordTestGraph graphTS = RecordTestSchema.instance()
+				.loadRecordTestGraphWithTransactionSupport(filename,
+						new ProgressFunctionImpl());
 
 		System.out.println("Success!");
 
