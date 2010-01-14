@@ -2,5 +2,6 @@ Schema de.uni_koblenz.jgralabtest.schemas.record.RecordTestSchema;
 GraphClass RecordTestGraph;
 
 RecordDomain BooleanType (isSet: Boolean, value: Boolean);
+EnumDomain Hugo (A,B,C);
 VertexClass Node {nodeMap : Map<Integer, String>, testRecord : BooleanType};
 EdgeClass Link from Node (0,*) role source to Node (0,*) role target;
