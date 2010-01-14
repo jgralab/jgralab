@@ -632,7 +632,7 @@ public class JValue implements Comparable<JValue> {
 	@Override
 	public String toString() {
 		if (!isValid()) {
-			assert value != null : "JValue.type is null, but value is " + value;
+			assert value == null : "JValue.type is null, but value is '" + value + "'";
 			return "null";
 		}
 		return (value != null) ? value.toString() : "null";
