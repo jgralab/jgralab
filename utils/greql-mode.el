@@ -234,7 +234,27 @@ columns.")
     (define-key greql-mode-map (kbd "C-c C-d") 'greql-show-documentation)
     (define-key greql-mode-map (kbd "C-c C-s") 'greql-set-graph)
     (define-key greql-mode-map (kbd "C-c C-c") 'greql-execute)
-    (define-key greql-mode-map (kbd "C-c C-f") 'greql-format)))
+    (define-key greql-mode-map (kbd "C-c C-f") 'greql-format)
+
+    ;; Menu bar
+    (define-key greql-mode-map [menu-bar greql]
+      (cons "GReQL" (make-sparse-keymap "GReQL")))
+
+    (define-key greql-mode-map [menu-bar greql exec-query]
+      '(menu-item "Execute query" greql-execute
+                  :help "Execute the current query and show the results"))
+    (define-key greql-mode-map [menu-bar greql format-query]
+      '(menu-item "Format query" greql-format
+                  :help "Auto-format the current query"))
+    (define-key greql-mode-map [menu-bar greql show-doc]
+      '(menu-item "Show docs" greql-show-documentation
+                  :help "Show the documentation for the element at point"))
+    (define-key greql-mode-map [menu-bar greql complete]
+      '(menu-item "Complete element" greql-complete
+                  :help "Complete the element at point"))
+    (define-key greql-mode-map [menu-bar greql set-graph]
+      '(menu-item "Set Graph/Schema" greql-set-graph
+                  :help "Set the graph/schema for the current query"))))
 
 (defvar greql-graph nil
   "The graph which is used to extract schema information on which
