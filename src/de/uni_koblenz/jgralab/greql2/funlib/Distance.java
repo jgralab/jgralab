@@ -71,7 +71,7 @@ public class Distance extends Greql2Function {
 
 		description = "Returns the distance from the root to the given vertex in the given pathsystem.";
 
-		Category[] c = { Category.PATHS_AND_PATHSYSTEMS };
+		Category[] c = { Category.PATHS_AND_PATHSYSTEMS_AND_SLICES };
 		categories = c;
 	}
 

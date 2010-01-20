@@ -82,7 +82,7 @@ public class Matches extends Greql2Function {
 
 		description = "Returns true iff the given path description matches the given path.";
 
-		Category[] c = { Category.PATHS_AND_PATHSYSTEMS };
+		Category[] c = { Category.PATHS_AND_PATHSYSTEMS_AND_SLICES };
 		categories = c;
 	}
 

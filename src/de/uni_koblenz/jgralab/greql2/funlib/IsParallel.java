@@ -72,7 +72,7 @@ public class IsParallel extends Greql2Function {
 				+ "That means, they have the same start-vertex and end-vertex\n"
 				+ "and no other shared vertices.";
 
-		Category[] c = { Category.PATHS_AND_PATHSYSTEMS };
+		Category[] c = { Category.PATHS_AND_PATHSYSTEMS_AND_SLICES };
 		categories = c;
 	}
 

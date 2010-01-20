@@ -28,7 +28,7 @@ public abstract class ArithmeticFunction extends Greql2Function {
 	}
 
 	protected enum ArithmeticOperator {
-		PLUS, MINUS, DIV, TIMES, MODULO
+		ADD, SUB, DIV, MUL, MOD
 	};
 
 	public JValue evaluate(JValue[] arguments, ArithmeticOperator operator)
@@ -38,15 +38,15 @@ public abstract class ArithmeticFunction extends Greql2Function {
 			Double d1 = arguments[0].toDouble();
 			Double d2 = arguments[1].toDouble();
 			switch (operator) {
-			case PLUS:
+			case ADD:
 				return new JValue(d1 + d2);
-			case MINUS:
+			case SUB:
 				return new JValue(d1 - d2);
 			case DIV:
 				return new JValue(d1 / d2);
-			case TIMES:
+			case MUL:
 				return new JValue(d1 * d2);
-			case MODULO:
+			case MOD:
 				return new JValue(d1 % d2);
 			default:
 				throw new EvaluateException("Unknown ArithmeticOperator "
@@ -56,15 +56,15 @@ public abstract class ArithmeticFunction extends Greql2Function {
 			Long l1 = arguments[0].toLong();
 			Long l2 = arguments[1].toLong();
 			switch (operator) {
-			case PLUS:
+			case ADD:
 				return new JValue(l1 + l2);
-			case MINUS:
+			case SUB:
 				return new JValue(l1 - l2);
 			case DIV:
 				return new JValue(Double.valueOf(l1) / l2);
-			case TIMES:
+			case MUL:
 				return new JValue(l1 * l2);
-			case MODULO:
+			case MOD:
 				return new JValue(l1 % l2);
 			default:
 				throw new EvaluateException("Unknown ArithmeticOperator "
@@ -74,15 +74,15 @@ public abstract class ArithmeticFunction extends Greql2Function {
 			Integer i1 = arguments[0].toInteger();
 			Integer i2 = arguments[1].toInteger();
 			switch (operator) {
-			case PLUS:
+			case ADD:
 				return new JValue(i1 + i2);
-			case MINUS:
+			case SUB:
 				return new JValue(i1 - i2);
 			case DIV:
 				return new JValue(Double.valueOf(i1) / i2);
-			case TIMES:
+			case MUL:
 				return new JValue(i1 * i2);
-			case MODULO:
+			case MOD:
 				return new JValue(i1 % i2);
 			default:
 				throw new EvaluateException("Unknown ArithmeticOperator "

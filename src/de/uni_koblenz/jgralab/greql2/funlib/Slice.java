@@ -92,7 +92,7 @@ public class Slice extends Greql2Function {
 
 		description = "Returns a slice, starting at root(s) and structured according path description.";
 
-		Category[] c = { Category.PATHS_AND_PATHSYSTEMS };
+		Category[] c = { Category.PATHS_AND_PATHSYSTEMS_AND_SLICES };
 		categories = c;
 	}
 

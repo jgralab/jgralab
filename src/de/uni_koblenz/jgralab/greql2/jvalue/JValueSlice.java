@@ -33,10 +33,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Queue;
 import java.util.Set;
+import java.util.Map.Entry;
 import java.util.logging.Logger;
 
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.Graph;
+import de.uni_koblenz.jgralab.GraphElement;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.greql2.exception.JValueInvalidTypeException;
 
@@ -283,6 +285,27 @@ public class JValueSlice extends JValue {
 			}
 		}
 		return resultSet;
+	}
+
+	public boolean contains(GraphElement elem) {
+		for (Entry<PathSystemKey, List<PathSystemEntry>> e : keyToEntryMap
+				.entrySet()) {
+
+			if (e.getKey().getVertex() == elem) {
+				return true;
+			}
+			if (!(elem instanceof Edge)) {
+				continue;
+			}
+			for (PathSystemEntry pse : e.getValue()) {
+				if (pse.getParentEdge() == elem) {
+					return true;
+				}
+				// TODO: Don't we need to check parentVertex, too?? Or is that
+				// the key?
+			}
+		}
+		return false;
 	}
 
 	/**

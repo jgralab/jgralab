@@ -36,7 +36,7 @@ public abstract class Incidences extends Greql2Function {
 						JValueType.COLLECTION }, };
 		signatures = x;
 
-		Category[] c = { Category.GRAPH, Category.PATHS_AND_PATHSYSTEMS };
+		Category[] c = { Category.GRAPH, Category.PATHS_AND_PATHSYSTEMS_AND_SLICES };
 		categories = c;
 	}
 

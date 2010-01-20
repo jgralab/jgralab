@@ -74,7 +74,7 @@ public class EdgeTrace extends Greql2Function {
 		description = "Returns the edgetrace of the given path.\n"
 				+ "An edgetrace is a list of all edges of this path in correct order.";
 
-		Category[] c = { Category.PATHS_AND_PATHSYSTEMS };
+		Category[] c = { Category.PATHS_AND_PATHSYSTEMS_AND_SLICES };
 		categories = c;
 	}
 

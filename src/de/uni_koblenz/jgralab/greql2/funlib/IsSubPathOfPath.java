@@ -75,7 +75,7 @@ public class IsSubPathOfPath extends Greql2Function {
 				+ "That means, the second given path contains all vertices and edges of the\n"
 				+ "first given path in the same order.";
 
-		Category[] c = { Category.PATHS_AND_PATHSYSTEMS };
+		Category[] c = { Category.PATHS_AND_PATHSYSTEMS_AND_SLICES };
 		categories = c;
 	}
 

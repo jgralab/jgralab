@@ -88,7 +88,7 @@ public class ExtractPath extends Greql2Function {
 				+ "as set. If an integer is given instead of a vertex, all paths are returned that\n"
 				+ "have the length of this integer, again as set of paths.";
 
-		Category[] c = { Category.PATHS_AND_PATHSYSTEMS };
+		Category[] c = { Category.PATHS_AND_PATHSYSTEMS_AND_SLICES };
 		categories = c;
 	}
 

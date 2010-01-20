@@ -91,7 +91,7 @@ public class PathSystem extends Greql2Function {
 
 		description = "Returns a pathsystem with root vertex, which is structured according to path description.";
 
-		Category[] c = { Category.PATHS_AND_PATHSYSTEMS };
+		Category[] c = { Category.PATHS_AND_PATHSYSTEMS_AND_SLICES };
 		categories = c;
 	}
 

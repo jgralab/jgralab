@@ -46,6 +46,6 @@ public class Mod extends ArithmeticFunction {
 	@Override
 	public JValue evaluate(Graph graph, BooleanGraphMarker subgraph,
 			JValue[] arguments) throws EvaluateException {
-		return evaluate(arguments, ArithmeticOperator.MODULO);
+		return evaluate(arguments, ArithmeticOperator.MOD);
 	}
 }
