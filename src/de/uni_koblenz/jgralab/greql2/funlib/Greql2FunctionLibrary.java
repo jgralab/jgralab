@@ -94,26 +94,6 @@ public class Greql2FunctionLibrary {
 	 */
 	private static Greql2FunctionLibrary thisInstance;
 
-	private static String[] functions = new String[] { "And", "Avg",
-			"Children", "Concat", "Contains", "Count", "Degree", "Depth",
-			"Difference", "Distance", "Div", "EdgesConnected", "EdgesFrom",
-			"EdgesTo", "EdgeTrace", "EdgeTypeSet", "ElementsIn", "EndVertex",
-			"Equals", "ExtractPath", "GetEdge", "GetValue", "GetVertex",
-			"Greql2Function", "Greql2FunctionLibrary", "GrEqual", "GrThan",
-			"HasAttribute", "HasType", "Id", "InDegree", "InnerNodes",
-			"Intersection", "IsA", "IsAcyclic", "IsCycle", "IsIn",
-			"IsIsolated", "IsLoop", "IsNeighbour", "IsParallel", "IsPrime",
-			"IsReachable", "IsSibling", "IsSubPathOfPath", "IsSubSet",
-			"IsSuperSet", "IsTrail", "IsTree", "Leaves", "LeEqual", "LeThan",
-			"Matches", "MaxPathLength", "MinPathLength", "Sub", "Mod",
-			"Nequals", "NodeTrace", "Not", "NthElement", "Or", "OutDegree",
-			"Parent", "PathConcat", "PathLength", "PathSystem", "Add", "Pos",
-			"ReachableVertices", "ReMatch", "Siblings", "Slice", "SquareRoot",
-			"StartVertex", "Subtypes", "Sum", "Supertypes", "SymDifference",
-			"TheElement", "Mul", "TopologicalSort", "ToSet", "ToString",
-			"Type", "TypeName", "Types", "TypeSet", "Neg", "Union",
-			"VertexTypeSet", "Weight", "Xor" };
-
 	/**
 	 * constructs a new instance as soon as the Library gets loaded
 	 */
@@ -211,7 +191,6 @@ public class Greql2FunctionLibrary {
 					file.close();
 					System.out.println("Fini.");
 				} catch (IOException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 
@@ -571,12 +550,6 @@ public class Greql2FunctionLibrary {
 		}
 	}
 
-	private void registerFixedFunctionSet(String packagePath) {
-		for (String function : functions) {
-			registerPredefinedFunction(function);
-		}
-	}
-
 	/**
 	 * registeres all GReQL-Functions in this package. GReQL-Functions are all
 	 * classes that implement the Interface GreqlFunction
@@ -614,7 +587,6 @@ public class Greql2FunctionLibrary {
 			if (registerFunctionsInDirectory(packagePath)) {
 				return;
 			}
-			registerFixedFunctionSet(packagePath);
 		}
 	}
 
