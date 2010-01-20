@@ -32,6 +32,7 @@ import de.uni_koblenz.jgralab.greql2.exception.EvaluateException;
 import de.uni_koblenz.jgralab.greql2.exception.WrongFunctionParameterException;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValueList;
+import de.uni_koblenz.jgralab.greql2.jvalue.JValueSet;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
 import de.uni_koblenz.jgralab.schema.AttributedElementClass;
 
@@ -62,12 +63,17 @@ import de.uni_koblenz.jgralab.schema.AttributedElementClass;
 public class Types extends Greql2Function {
 
 	{
-		JValueType[][] x = { { JValueType.COLLECTION } };
+		JValueType[][] x = { { JValueType.COLLECTION },
+				{ JValueType.COLLECTION, JValueType.COLLECTION },
+				{ JValueType.PATH, JValueType.COLLECTION },
+				{ JValueType.PATHSYSTEM, JValueType.COLLECTION } };
 		signatures = x;
 
 		description = "Returns a set of all types known by the schema of the current graph.\n"
 				+ "The list is sortet in topological order (first superclasses, then\n"
-				+ "subclasses). First come the vertex classes, then the edge classes.";
+				+ "subclasses). First come the vertex classes, then the edge classes.\n"
+				+ "If a collection of graph elements, a path, or a path system is given,\n"
+				+ "it returns only the types of the contained graph elements.";
 
 		Category[] c = { Category.SCHEMA_ACCESS };
 		categories = c;
@@ -76,20 +82,37 @@ public class Types extends Greql2Function {
 	@Override
 	public JValue evaluate(Graph graph, BooleanGraphMarker subgraph,
 			JValue[] arguments) throws EvaluateException {
-		if (checkArguments(arguments) == -1) {
+		switch (checkArguments(arguments)) {
+		case 0:
+			JValueList typeList = new JValueList();
+			for (AttributedElementClass c : graph.getSchema()
+					.getVertexClassesInTopologicalOrder()) {
+				typeList.add(new JValue(c));
+			}
+			for (AttributedElementClass c : graph.getSchema()
+					.getEdgeClassesInTopologicalOrder()) {
+				typeList.add(new JValue(c));
+			}
+			return typeList;
+		case 1:
+			JValueSet resultSet = new JValueSet();
+			for (JValue v : arguments[0].toCollection()) {
+				if (!v.isAttributedElement()) {
+					throw new EvaluateException(
+							"Cannot calculate the typeSet for a collection that"
+									+ " doesn't contain attributed elements.");
+				}
+				resultSet.add(new JValue(v.toAttributedElement()
+						.getAttributedElementClass(), v.toAttributedElement()));
+			}
+			return resultSet;
+		case 2:
+			return arguments[0].toPath().types();
+		case 3:
+			return arguments[0].toPathSystem().types();
+		default:
 			throw new WrongFunctionParameterException(this, arguments);
 		}
-
-		JValueList typeList = new JValueList();
-		for (AttributedElementClass c : graph.getSchema()
-				.getVertexClassesInTopologicalOrder()) {
-			typeList.add(new JValue(c));
-		}
-		for (AttributedElementClass c : graph.getSchema()
-				.getEdgeClassesInTopologicalOrder()) {
-			typeList.add(new JValue(c));
-		}
-		return typeList;
 	}
 
 	@Override
