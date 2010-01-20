@@ -1,5 +1,9 @@
 package de.uni_koblenz.jgralab.graphmarker;
 
+import java.util.ConcurrentModificationException;
+import java.util.Iterator;
+import java.util.NoSuchElementException;
+
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.GraphElement;
@@ -21,6 +25,7 @@ public class SubGraphMarker extends AbstractGraphMarker<GraphElement> {
 
 	private final BitSetEdgeMarker edgeGraphMarker;
 	private final BitSetVertexMarker vertexGraphMarker;
+	private long version;
 
 	public SubGraphMarker(Graph graph) {
 		super(graph);
@@ -55,6 +60,7 @@ public class SubGraphMarker extends AbstractGraphMarker<GraphElement> {
 
 	@Override
 	public boolean removeMark(GraphElement graphElement) {
+		version++;
 		if (graphElement instanceof Edge) {
 			return edgeGraphMarker.removeMark((Edge) graphElement);
 		} else {
@@ -72,6 +78,7 @@ public class SubGraphMarker extends AbstractGraphMarker<GraphElement> {
 	 * @return false if the given edge has already been unmarked.
 	 */
 	public boolean removeMark(Edge e) {
+		version++;
 		return edgeGraphMarker.removeMark(e);
 	}
 
@@ -85,6 +92,7 @@ public class SubGraphMarker extends AbstractGraphMarker<GraphElement> {
 	 * @return false if the given vertex has already been unmarked.
 	 */
 	public boolean removeMark(Vertex v) {
+		version++;
 		return vertexGraphMarker.removeMark(v);
 	}
 
@@ -97,6 +105,7 @@ public class SubGraphMarker extends AbstractGraphMarker<GraphElement> {
 	 *         marked.
 	 */
 	public boolean mark(GraphElement graphElement) {
+		version++;
 		if (graphElement instanceof Edge) {
 			return edgeGraphMarker.mark((Edge) graphElement);
 		} else {
@@ -114,6 +123,7 @@ public class SubGraphMarker extends AbstractGraphMarker<GraphElement> {
 	 * @return false if the given edge has already been marked.
 	 */
 	public boolean mark(Edge e) {
+		version++;
 		return edgeGraphMarker.mark(e);
 	}
 
@@ -127,6 +137,7 @@ public class SubGraphMarker extends AbstractGraphMarker<GraphElement> {
 	 * @return false if the given vertex has already been marked.
 	 */
 	public boolean mark(Vertex v) {
+		version++;
 		return vertexGraphMarker.mark(v);
 	}
 
@@ -148,5 +159,51 @@ public class SubGraphMarker extends AbstractGraphMarker<GraphElement> {
 	@Override
 	public void maxVertexCountIncreased(int newValue) {
 		// do nothing
+	}
+
+	@Override
+	public Iterable<GraphElement> getMarkedElements() {
+		return new Iterable<GraphElement>(){
+
+			@Override
+			public Iterator<GraphElement> iterator() {
+				return new ArrayGraphMarkerIterator<GraphElement>(version) {
+					
+					Iterator<Vertex> vertexIterator;
+					Iterator<Edge> edgeIterator;
+					
+					{
+						vertexIterator = vertexGraphMarker.getMarkedElements().iterator();
+						edgeIterator = edgeGraphMarker.getMarkedElements().iterator();
+					}
+					
+					@Override
+					public boolean hasNext() {
+						return vertexIterator.hasNext() || edgeIterator.hasNext();
+					}
+
+					@Override
+					protected void moveIndex() {
+						// not required
+					}
+
+					@Override
+					public GraphElement next() {
+						if(version != SubGraphMarker.this.version){
+							throw new ConcurrentModificationException(MODIFIED_ERROR_MESSAGE);
+						}
+						if(vertexIterator.hasNext()){
+							return vertexIterator.next();
+						}
+						if(edgeIterator.hasNext()){
+							return edgeIterator.next();
+						}
+						throw new NoSuchElementException(NO_MORE_ELEMENTS_ERROR_MESSAGE);
+					}
+					
+				};
+			}
+			
+		};
 	}
 }
