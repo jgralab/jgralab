@@ -151,6 +151,9 @@ public class VariableDeclarationOrderUnit implements
 		int costs = 0;
 		for (Vertex vertex : dependentVertices) {
 			VertexEvaluator eval = vertexEvalMarker.getMark(vertex);
+			if (eval == null) {
+				System.err.println("NULL: " + vertex);
+			}
 			costs += eval.getOwnEvaluationCosts(graphSize);
 		}
 		return costs;

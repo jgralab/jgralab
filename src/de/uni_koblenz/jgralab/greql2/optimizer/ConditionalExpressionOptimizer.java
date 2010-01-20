@@ -13,7 +13,6 @@ import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.JGraLab;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
-import de.uni_koblenz.jgralab.greql2.exception.EvaluateException;
 import de.uni_koblenz.jgralab.greql2.exception.OptimizerException;
 import de.uni_koblenz.jgralab.greql2.optimizer.condexp.Formula;
 import de.uni_koblenz.jgralab.greql2.schema.FunctionApplication;
@@ -93,14 +92,7 @@ public class ConditionalExpressionOptimizer extends OptimizerBase {
 			}
 		}
 
-		try {
-			eval.createVertexEvaluators();
-		} catch (EvaluateException e) {
-			e.printStackTrace();
-			throw new OptimizerException(
-					"Exception while re-creating VertexEvaluators.", e);
-		}
-
+		recreateVertexEvaluators(eval);
 		OptimizerUtility.createMissingSourcePositions(syntaxgraph);
 		return Formula.isSimplifiedOrOptimized();
 	}

@@ -44,7 +44,7 @@ public class SystemTest extends GenericTests {
 			queryString.append(part1);
 		}
 		queryString
-				.append(" plus(i, times( a, minus (b, modulo ( c, minus ( d, plus( e)))))) ");
+				.append(" add(i, mul( a, sub(b, mod( c, sub( d, add( e)))))) ");
 		for (int i = 0; i < count; i++) {
 			queryString.append(part2);
 		}

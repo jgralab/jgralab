@@ -133,6 +133,7 @@ public class TransformXorFunctionApplicationOptimizer extends OptimizerBase {
 			xor.delete();
 		}
 
+		recreateVertexEvaluators(eval);
 		return somethingWasTransformed;
 	}
 

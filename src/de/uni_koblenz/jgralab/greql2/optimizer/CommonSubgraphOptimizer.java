@@ -50,8 +50,7 @@ import de.uni_koblenz.jgralab.schema.Attribute;
 public class CommonSubgraphOptimizer extends OptimizerBase {
 
 	private static Logger logger = JGraLab
-			.getLogger(CommonSubgraphOptimizer.class.getPackage()
-					.getName());
+			.getLogger(CommonSubgraphOptimizer.class.getPackage().getName());
 
 	private boolean anOptimizationWasDone = false;
 
@@ -103,6 +102,7 @@ public class CommonSubgraphOptimizer extends OptimizerBase {
 
 		computeHashAndProcess(syntaxgraph.getFirstGreql2Expression());
 
+		recreateVertexEvaluators(eval);
 		return anOptimizationWasDone;
 	}
 

@@ -233,7 +233,7 @@ public class GreqlEvaluatorTest extends GenericTests {
 	@Test
 	public void testUsingWithFunction() throws Exception {
 		boundVariables.put("FOO", new JValue("A String"));
-		String queryString = "using FOO: plus(FOO, \" Another String\")";
+		String queryString = "using FOO: concat(FOO, \" Another String\")";
 		JValue result = evalTestQuery("UsingWithFunction", queryString);
 		assertEquals("A String Another String", result.toString());
 		JValue resultWO = evalTestQuery("UsingWithFunction", queryString,

@@ -95,23 +95,23 @@ public class Greql2FunctionLibrary {
 	private static Greql2FunctionLibrary thisInstance;
 
 	private static String[] functions = new String[] { "And", "Avg",
-			"Children", "Contains", "Count", "Degree", "Depth", "Difference",
-			"Distance", "DividedBy", "EdgesConnected", "EdgesFrom", "EdgesTo",
-			"EdgeTrace", "EdgeTypeSet", "ElementsIn", "EndVertex", "Equals",
-			"ExtractPath", "GetEdge", "GetValue", "GetVertex",
+			"Children", "Concat", "Contains", "Count", "Degree", "Depth",
+			"Difference", "Distance", "Div", "EdgesConnected", "EdgesFrom",
+			"EdgesTo", "EdgeTrace", "EdgeTypeSet", "ElementsIn", "EndVertex",
+			"Equals", "ExtractPath", "GetEdge", "GetValue", "GetVertex",
 			"Greql2Function", "Greql2FunctionLibrary", "GrEqual", "GrThan",
 			"HasAttribute", "HasType", "Id", "InDegree", "InnerNodes",
 			"Intersection", "IsA", "IsAcyclic", "IsCycle", "IsIn",
 			"IsIsolated", "IsLoop", "IsNeighbour", "IsParallel", "IsPrime",
 			"IsReachable", "IsSibling", "IsSubPathOfPath", "IsSubSet",
 			"IsSuperSet", "IsTrail", "IsTree", "Leaves", "LeEqual", "LeThan",
-			"Matches", "MaxPathLength", "MinPathLength", "Minus", "Modulo",
+			"Matches", "MaxPathLength", "MinPathLength", "Sub", "Mod",
 			"Nequals", "NodeTrace", "Not", "NthElement", "Or", "OutDegree",
-			"Parent", "PathConcat", "PathLength", "PathSystem", "Plus", "Pos",
+			"Parent", "PathConcat", "PathLength", "PathSystem", "Add", "Pos",
 			"ReachableVertices", "ReMatch", "Siblings", "Slice", "SquareRoot",
 			"StartVertex", "Subtypes", "Sum", "Supertypes", "SymDifference",
-			"TheElement", "Times", "TopologicalSort", "ToSet", "ToString",
-			"Type", "TypeName", "Types", "TypeSet", "Uminus", "Union",
+			"TheElement", "Mul", "TopologicalSort", "ToSet", "ToString",
+			"Type", "TypeName", "Types", "TypeSet", "Neg", "Union",
 			"VertexTypeSet", "Weight", "Xor" };
 
 	/**

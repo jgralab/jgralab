@@ -24,41 +24,35 @@
 
 package de.uni_koblenz.jgralab.greql2.funlib;
 
+import java.util.ArrayList;
+
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.graphmarker.BooleanGraphMarker;
 import de.uni_koblenz.jgralab.greql2.exception.EvaluateException;
+import de.uni_koblenz.jgralab.greql2.exception.WrongFunctionParameterException;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
+import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
 
 /**
- * Calculates a-b for given scalar values a and b.
+ * Calculates the negation of a given scalar.
  * <dl>
  * <dt><b>GReQL-signature</b></dt>
- * <dd><code>INT minus(a: INT, b: INT)</code></dd>
- * <dd><code>LONG minus(a: LONG, b: INT)</code></dd>
- * <dd><code>LONG minus(a: INT, b: LONG)</code></dd>
- * <dd><code>LONG minus(a: LONG, b: LONG)</code></dd>
- * <dd><code>DOUBLE minus(a: DOUBLE, b: INT)</code></dd>
- * <dd><code>DOUBLE minus(a: DOUBLE, b: LONG)</code></dd>
- * <dd><code>DOUBLE minus(a: INT, b: DOUBLE)</code></dd>
- * <dd><code>DOUBLE minus(a: LONG, b: DOUBLE)</code></dd>
- * <dd><code>DOUBLE minus(a: DOUBLE, b: DOUBLE)</code></dd>
- * <dd>&nbsp;</dd>
- * <dd>This function can be used with the (-)-Operator: <code>a - b</code></dd>
- * <dd>&nbsp;</dd>
+ * <dd><code>INT uminus (a: INT)</code></dd>
+ * <dd><code>LONG uminus (a: LONG)</code></dd>
+ * <dd><code>DOUBLE uminus (a: DOUBLE)</code></dd>
+ * <dd></dd>
+ * <dd>This function can be used with the (-)-Operator: <code>-a</code></dd>
  * </dl>
  * <dl>
  * <dt></dt>
  * <dd>
  * <dl>
  * <dt><b>Parameters:</b></dt>
- * <dd><code>a: INT</code> - minuend</dd>
- * <dd><code>a: LONG</code> - minuend</dd>
- * <dd><code>a: DOUBLE</code> - minuend</dd>
- * <dd><code>b: INT</code> - subtrahend</dd>
- * <dd><code>b: LONG</code> - subtrahend</dd>
- * <dd><code>b: DOUBLE</code> - subtrahend</dd>
+ * <dd><code>a: INT</code> - value to be negated</dd>
+ * <dd><code>a: LONG</code> - value to be negated</dd>
+ * <dd><code>a: DOUBLE</code> - value to be negated</dd>
  * <dt><b>Returns:</b></dt>
- * <dd>the difference <code>a - b</code></dd>
+ * <dd>the negation of <code>a</code>.</dd>
  * <dd><code>Null</code> if one of the given parameters is <code>Null</code></dd>
  * </dl>
  * </dd>
@@ -68,16 +62,47 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
  * 
  */
 
-public class Minus extends ArithmeticFunction {
-
+public class Neg extends Greql2Function {
 	{
-		description = "Calculates the difference $a-b$. Alternative usage: a - b.";
+		JValueType[][] x = { { JValueType.LONG, JValueType.LONG },
+				{ JValueType.INT, JValueType.INT },
+				{ JValueType.DOUBLE, JValueType.DOUBLE } };
+		signatures = x;
+
+		description = "Calculates the negation $-a$ of a given number $a$. Alternative usage: -a.";
+
+		Category[] c = { Category.ARITHMETICS };
+		categories = c;
 	}
 
 	@Override
 	public JValue evaluate(Graph graph, BooleanGraphMarker subgraph,
 			JValue[] arguments) throws EvaluateException {
-		return evaluate(arguments, ArithmeticOperator.MINUS);
+		switch (checkArguments(arguments)) {
+		case 0:
+			return new JValue(-arguments[0].toLong());
+		case 1:
+			return new JValue(-arguments[0].toInteger());
+		case 2:
+			return new JValue(-arguments[0].toDouble());
+		default:
+			throw new WrongFunctionParameterException(this, arguments);
+		}
+	}
+
+	@Override
+	public long getEstimatedCosts(ArrayList<Long> inElements) {
+		return 1;
+	}
+
+	@Override
+	public double getSelectivity() {
+		return 1;
+	}
+
+	@Override
+	public long getEstimatedCardinality(int inElements) {
+		return 1;
 	}
 
 }

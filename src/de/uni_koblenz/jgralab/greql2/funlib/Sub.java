@@ -30,46 +30,22 @@ import de.uni_koblenz.jgralab.greql2.exception.EvaluateException;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
 
 /**
- * Calculates the remainder of the integer-division (a / b) for given integer
- * values a and b.
- * <dl>
- * <dt><b>GReQL-signature</b></dt>
- * <dd><code>INT modulo(a: INT, b: INT)</code></dd>
- * <dd><code>LONG modulo(a: INT, b: LONG)</code>
- * <dd><code>LONG modulo(a: LONG, b: INT)</code></dd>
- * <dd><code>LONG modulo(a: LONG, b: LONG)</code></dd>
- * <dd>&nbsp;</dd>
- * <dd>This function can be used with the (%)-Operator: <code>a % b</code></dd>
- * </dl>
- * <dl>
- * <dt></dt>
- * <dd>
- * <dl>
- * <dt><b>Parameters:</b></dt>
- * <dd><code>a: INT</code> - dividend</dd>
- * <dd><code>a: LONG</code> - dividend</dd>
- * <dd><code>b: INT</code> - divisor</dd>
- * <dd><code>b: LONG</code> - divisor</dd>
- * <dt><b>Returns:</b></dt>
- * <dd>the remainder of the integer-division <code>a / b</code></dd>
- * <dd><code>Null</code> if one of the given parameters is <code>Null</code></dd>
- * </dl>
- * </dd>
- * </dl>
+ * Calculates a-b for given scalar values a and b.
  * 
  * @author ist@uni-koblenz.de
  * 
  */
 
-public class Modulo extends ArithmeticFunction {
+public class Sub extends ArithmeticFunction {
 
 	{
-		description = "Calculates the remainder of $a / b$. Alternative usage: a \\% b.";
+		description = "Calculates the difference $a-b$. Alternative usage: a - b.";
 	}
 
 	@Override
 	public JValue evaluate(Graph graph, BooleanGraphMarker subgraph,
 			JValue[] arguments) throws EvaluateException {
-		return evaluate(arguments, ArithmeticOperator.MODULO);
+		return evaluate(arguments, ArithmeticOperator.MINUS);
 	}
+
 }

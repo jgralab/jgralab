@@ -104,6 +104,7 @@ public class VariableDeclarationOrderOptimizer extends OptimizerBase {
 
 		boolean varDeclOrderChanged = false;
 
+		Set<SimpleDeclaration> oldSDs = new HashSet<SimpleDeclaration>();
 		for (List<VariableDeclarationOrderUnit> units : unitsList) {
 			Collections.sort(units);
 
@@ -118,7 +119,6 @@ public class VariableDeclarationOrderOptimizer extends OptimizerBase {
 				logger.finer(optimizerHeaderString()
 						+ "New order of declarations in " + declaringDecl);
 
-				Set<SimpleDeclaration> oldSDs = new HashSet<SimpleDeclaration>();
 				int i = 0;
 				for (VariableDeclarationOrderUnit unit : units) {
 					oldSDs.add(unit.getSimpleDeclarationOfVariable());
@@ -141,12 +141,16 @@ public class VariableDeclarationOrderOptimizer extends OptimizerBase {
 					marker.mark(newSD, new SimpleDeclarationEvaluator(newSD,
 							eval));
 				}
-				for (SimpleDeclaration sd : oldSDs) {
-					sd.delete();
-				}
+
 			}
 		}
+		for (SimpleDeclaration sd : oldSDs) {
+			marker.removeMark(sd);
+			System.out.println("Unmarked " + sd);
+			sd.delete();
+		}
 
+		recreateVertexEvaluators(eval);
 		OptimizerUtility.createMissingSourcePositions(syntaxgraph);
 
 		return varDeclOrderChanged;
