@@ -66,7 +66,7 @@ public class PathLength extends Greql2Function {
 
 		description = "Returns the length of the given path.";
 
-		Category[] c = { Category.PATHS_AND_PATHSYSTEMS };
+		Category[] c = { Category.PATHS_AND_PATHSYSTEMS_AND_SLICES };
 		categories = c;
 	}
 

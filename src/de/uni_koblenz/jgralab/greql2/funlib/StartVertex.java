@@ -68,7 +68,7 @@ public class StartVertex extends Greql2Function {
 
 		description = "Returns the start vertex of the given edge or path.";
 
-		Category[] c = { Category.PATHS_AND_PATHSYSTEMS, Category.GRAPH };
+		Category[] c = { Category.PATHS_AND_PATHSYSTEMS_AND_SLICES, Category.GRAPH };
 		categories = c;
 	}
 

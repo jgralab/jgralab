@@ -66,7 +66,7 @@ public class Depth extends Greql2Function {
 
 		description = "Returns the depth of the given pathsystem (length of the longes path).";
 
-		Category[] c = { Category.PATHS_AND_PATHSYSTEMS };
+		Category[] c = { Category.PATHS_AND_PATHSYSTEMS_AND_SLICES };
 		categories = c;
 	}
 

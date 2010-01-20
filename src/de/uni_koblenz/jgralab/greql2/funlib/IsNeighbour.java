@@ -83,7 +83,7 @@ public class IsNeighbour extends Greql2Function {
 				+ "That means, there is an edge between these two vertices. If a pathsystem\n"
 				+ "is also given, this check is performed on two vertices in this pathsystem.";
 
-		Category[] c = { Category.GRAPH, Category.PATHS_AND_PATHSYSTEMS };
+		Category[] c = { Category.GRAPH, Category.PATHS_AND_PATHSYSTEMS_AND_SLICES };
 		categories = c;
 	}
 

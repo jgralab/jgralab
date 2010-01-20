@@ -54,6 +54,6 @@ public class Mul extends ArithmeticFunction {
 	@Override
 	public JValue evaluate(Graph graph, BooleanGraphMarker subgraph,
 			JValue[] arguments) throws EvaluateException {
-		return evaluate(arguments, ArithmeticOperator.TIMES);
+		return evaluate(arguments, ArithmeticOperator.MUL);
 	}
 }

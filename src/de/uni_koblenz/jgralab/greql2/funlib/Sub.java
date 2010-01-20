@@ -45,7 +45,7 @@ public class Sub extends ArithmeticFunction {
 	@Override
 	public JValue evaluate(Graph graph, BooleanGraphMarker subgraph,
 			JValue[] arguments) throws EvaluateException {
-		return evaluate(arguments, ArithmeticOperator.MINUS);
+		return evaluate(arguments, ArithmeticOperator.SUB);
 	}
 
 }

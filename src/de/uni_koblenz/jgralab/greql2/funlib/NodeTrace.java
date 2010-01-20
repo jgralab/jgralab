@@ -70,7 +70,7 @@ public class NodeTrace extends Greql2Function {
 		description = "Returns the nodetrace of the given path.\n"
 				+ "A nodetrace is a list of all vertices of this path in correct order.";
 
-		Category[] c = { Category.PATHS_AND_PATHSYSTEMS };
+		Category[] c = { Category.PATHS_AND_PATHSYSTEMS_AND_SLICES };
 		categories = c;
 	}
 

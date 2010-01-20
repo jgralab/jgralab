@@ -73,7 +73,7 @@ public class PathConcat extends Greql2Function {
 				+ "first vertex of the second path are the same. If this is not the case,\n"
 				+ "null is returned.";
 
-		Category[] c = { Category.PATHS_AND_PATHSYSTEMS };
+		Category[] c = { Category.PATHS_AND_PATHSYSTEMS_AND_SLICES };
 		categories = c;
 	}
 

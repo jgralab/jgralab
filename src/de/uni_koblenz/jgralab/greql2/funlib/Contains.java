@@ -35,6 +35,7 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValueCollection;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValuePath;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValuePathSystem;
+import de.uni_koblenz.jgralab.greql2.jvalue.JValueSlice;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
 
 /**
@@ -74,13 +75,15 @@ public class Contains extends Greql2Function {
 		JValueType[][] x = {
 				{ JValueType.COLLECTION, JValueType.OBJECT, JValueType.BOOL },
 				{ JValueType.PATH, JValueType.ATTRELEM, JValueType.BOOL },
-				{ JValueType.PATHSYSTEM, JValueType.ATTRELEM, JValueType.BOOL } };
+				{ JValueType.PATHSYSTEM, JValueType.ATTRELEM, JValueType.BOOL },
+				{ JValueType.SLICE, JValueType.ATTRELEM, JValueType.BOOL },
+				{ JValueType.PATHSYSTEM, JValueType.PATH, JValueType.BOOL }, };
 		signatures = x;
 
 		description = "Returns true iff the given collection/path/pathsystem contains the given element.";
 
 		Category[] c = { Category.COLLECTIONS_AND_MAPS,
-				Category.PATHS_AND_PATHSYSTEMS };
+				Category.PATHS_AND_PATHSYSTEMS_AND_SLICES };
 		categories = c;
 	}
 
@@ -100,6 +103,14 @@ public class Contains extends Greql2Function {
 			JValuePathSystem pathsys = arguments[0].toPathSystem();
 			return new JValue(pathsys.contains((GraphElement) arguments[1]
 					.toAttributedElement()));
+		case 3:
+			JValueSlice slice = arguments[0].toSlice();
+			return new JValue(slice.contains((GraphElement) arguments[1]
+					.toAttributedElement()));
+		case 4:
+			JValuePathSystem pathsys2 = arguments[0].toPathSystem();
+			JValuePath path2 = arguments[1].toPath();
+			return new JValue(pathsys2.containsPath(path2));
 		default:
 			throw new WrongFunctionParameterException(this, arguments);
 		}

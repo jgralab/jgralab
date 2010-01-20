@@ -54,6 +54,6 @@ public class Add extends ArithmeticFunction {
 	@Override
 	public JValue evaluate(Graph graph, BooleanGraphMarker subgraph,
 			JValue[] arguments) throws EvaluateException {
-		return evaluate(arguments, ArithmeticOperator.PLUS);
+		return evaluate(arguments, ArithmeticOperator.ADD);
 	}
 }

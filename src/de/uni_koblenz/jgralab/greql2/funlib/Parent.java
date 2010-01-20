@@ -75,7 +75,7 @@ public class Parent extends Greql2Function {
 				+ "The parent-vertex of a vertex, is the vertex that is connected the vertex\n"
 				+ "with an incoming edge.";
 
-		Category[] c = { Category.PATHS_AND_PATHSYSTEMS };
+		Category[] c = { Category.PATHS_AND_PATHSYSTEMS_AND_SLICES };
 		categories = c;
 	}
 

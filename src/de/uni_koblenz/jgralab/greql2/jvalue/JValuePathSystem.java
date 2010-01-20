@@ -100,7 +100,7 @@ public class JValuePathSystem extends JValue {
 	public Graph getDataGraph() {
 		return datagraph;
 	}
-	
+
 	private boolean isCleared = true;
 
 	/**
@@ -145,28 +145,32 @@ public class JValuePathSystem extends JValue {
 		type = JValueType.PATHSYSTEM;
 	}
 
-	private Queue<PathSystemEntry> entriesWithoutParentEdge = new LinkedList<PathSystemEntry>();  
-		
+	private Queue<PathSystemEntry> entriesWithoutParentEdge = new LinkedList<PathSystemEntry>();
+
 	public void clearPathSystem() {
 		if (!isCleared) {
 			while (!entriesWithoutParentEdge.isEmpty()) {
 				PathSystemEntry te = entriesWithoutParentEdge.poll();
 				PathSystemEntry pe = null;
-				if (te.getParentVertex() != null)
-					pe = keyToEntryMap.get(new PathSystemKey(te.getParentVertex(), te.getParentStateNumber()));
-				else
-					pe = keyToEntryMap.get(new PathSystemKey(rootVertex, te.getParentStateNumber()));
+				if (te.getParentVertex() != null) {
+					pe = keyToEntryMap.get(new PathSystemKey(te
+							.getParentVertex(), te.getParentStateNumber()));
+				} else {
+					pe = keyToEntryMap.get(new PathSystemKey(rootVertex, te
+							.getParentStateNumber()));
+				}
 				te.setParentEdge(pe.getParentEdge());
 				te.setDistanceToRoot(pe.getDistanceToRoot());
 				te.setParentStateNumber(pe.getParentStateNumber());
 				te.setParentVertex(pe.getParentVertex());
-				if (te.getParentEdge() == null)
+				if (te.getParentEdge() == null) {
 					entriesWithoutParentEdge.add(te);
+				}
 			}
 			isCleared = true;
-		}			
+		}
 	}
-	
+
 	/**
 	 * adds a vertex of the PathSystem which is described by the parameters to
 	 * the PathSystem
@@ -224,12 +228,12 @@ public class JValuePathSystem extends JValue {
 				leafVertexToLeafKeyMap.put(vertex, key);
 				leafKeys = null;
 			}
-			if (parentEdge != null)
+			if (parentEdge != null) {
 				vertexToFirstKeyMap.put(vertex, key);
-			else  {
+			} else {
 				entriesWithoutParentEdge.add(entry);
 				isCleared = false;
-			}	
+			}
 		}
 	}
 
@@ -283,10 +287,12 @@ public class JValuePathSystem extends JValue {
 		clearPathSystem();
 		PathSystemEntry entry = keyToEntryMap.get(key);
 		JValueSet returnSet = new JValueSet();
-		for (Map.Entry<PathSystemKey, PathSystemEntry> mapEntry : keyToEntryMap.entrySet()) { 
+		for (Map.Entry<PathSystemKey, PathSystemEntry> mapEntry : keyToEntryMap
+				.entrySet()) {
 			PathSystemEntry value = mapEntry.getValue();
 			if ((value.getParentVertex() == entry.getParentVertex())
-					&& (value.getParentStateNumber() == entry.getParentStateNumber())
+					&& (value.getParentStateNumber() == entry
+							.getParentStateNumber())
 					&& (mapEntry.getKey().getVertex() != key.getVertex())) {
 				Vertex v = mapEntry.getKey().getVertex();
 				returnSet.add(new JValue(v, v));
@@ -410,6 +416,8 @@ public class JValuePathSystem extends JValue {
 			if (entry.getValue().getParentEdge().getAttributedElementClass() == type) {
 				return true;
 			}
+			// TODO: Don't we need to check parentVertex, too?? Or is that
+			// the key?
 			if (entry.getKey().getVertex().getAttributedElementClass() == type) {
 				return true;
 			}

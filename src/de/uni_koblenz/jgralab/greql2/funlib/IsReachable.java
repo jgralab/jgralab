@@ -88,7 +88,7 @@ public class IsReachable extends Greql2Function {
 				+ "of the path.  If you are only interested in only somehow connected,\n"
 				+ "use <->* here.";
 
-		Category[] c = { Category.GRAPH, Category.PATHS_AND_PATHSYSTEMS };
+		Category[] c = { Category.GRAPH, Category.PATHS_AND_PATHSYSTEMS_AND_SLICES };
 		categories = c;
 	}
 
