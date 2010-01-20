@@ -19,6 +19,7 @@ import de.uni_koblenz.jgralab.Vertex;
 public abstract class BitSetGraphMarker<T extends GraphElement> extends
 		AbstractGraphMarker<T> {
 	protected final BitSet marks;
+	protected long version;
 
 	/**
 	 * Initializes a new BitSetGraphMarker with the given graph.
@@ -44,6 +45,7 @@ public abstract class BitSetGraphMarker<T extends GraphElement> extends
 				.getMaxVCount() : graph.getMaxECount()));
 		boolean out = isMarked(graphElement);
 		marks.set(graphElement.getId());
+		version++;
 		return !out;
 	}
 
@@ -54,6 +56,7 @@ public abstract class BitSetGraphMarker<T extends GraphElement> extends
 				.getMaxVCount() : graph.getMaxECount()));
 		boolean out = isMarked(graphElement);
 		marks.clear(graphElement.getId());
+		version--;
 		return !out;
 	}
 

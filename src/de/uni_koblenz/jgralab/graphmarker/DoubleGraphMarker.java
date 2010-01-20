@@ -7,11 +7,13 @@ import de.uni_koblenz.jgralab.Vertex;
 public abstract class DoubleGraphMarker<T extends GraphElement> extends
 		AbstractGraphMarker<T> {
 
+	// TODO only allow NAN as unmarked value
 	private static final double DEFAULT_UNMARKED_VALUE = Double.NaN;
 
 	protected double[] temporaryAttributes;
 	protected int marked;
 	protected double unmarkedValue;
+	protected long version;
 
 	protected DoubleGraphMarker(Graph graph, int size) {
 		super(graph);
@@ -65,6 +67,7 @@ public abstract class DoubleGraphMarker<T extends GraphElement> extends
 		double out = temporaryAttributes[graphElement.getId()];
 		temporaryAttributes[graphElement.getId()] = value;
 		marked += 1;
+		version++;
 		return out;
 	}
 
@@ -86,6 +89,7 @@ public abstract class DoubleGraphMarker<T extends GraphElement> extends
 		}
 		temporaryAttributes[graphElement.getId()] = unmarkedValue;
 		marked -= 1;
+		version++;
 		return true;
 	}
 

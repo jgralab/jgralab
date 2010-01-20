@@ -12,6 +12,7 @@ public abstract class IntegerGraphMarker<T extends GraphElement> extends
 	protected int[] temporaryAttributes;
 	protected int marked;
 	protected int unmarkedValue;
+	protected long version;
 
 	protected IntegerGraphMarker(Graph graph, int size) {
 		super(graph);
@@ -65,6 +66,7 @@ public abstract class IntegerGraphMarker<T extends GraphElement> extends
 		int out = temporaryAttributes[graphElement.getId()];
 		temporaryAttributes[graphElement.getId()] = value;
 		marked += 1;
+		version++;
 		return out;
 	}
 
@@ -86,6 +88,7 @@ public abstract class IntegerGraphMarker<T extends GraphElement> extends
 		}
 		temporaryAttributes[graphElement.getId()] = unmarkedValue;
 		marked -= 1;
+		version++;
 		return true;
 	}
 

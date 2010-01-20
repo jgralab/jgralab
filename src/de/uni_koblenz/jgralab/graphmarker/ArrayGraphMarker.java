@@ -19,6 +19,7 @@ public abstract class ArrayGraphMarker<T extends GraphElement, O> extends
 	 */
 	protected Object[] temporaryAttributes;
 	protected int marked;
+	protected long version;
 
 	protected ArrayGraphMarker(Graph graph, int size) {
 		super(graph);
@@ -74,6 +75,7 @@ public abstract class ArrayGraphMarker<T extends GraphElement, O> extends
 		O out = (O) temporaryAttributes[graphElement.getId()];
 		temporaryAttributes[graphElement.getId()] = value;
 		marked += 1;
+		version++;
 		return out;
 	}
 
@@ -92,6 +94,7 @@ public abstract class ArrayGraphMarker<T extends GraphElement, O> extends
 		}
 		temporaryAttributes[graphElement.getId()] = null;
 		marked -= 1;
+		version++;
 		return true;
 	}
 
