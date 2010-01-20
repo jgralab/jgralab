@@ -71,6 +71,9 @@ public class AttributeNames extends Greql2Function {
 		signatures = x;
 
 		description = "Returns true iff the given element or class has an attribute with the given name.";
+
+		Category[] c = { Category.SCHEMA_ACCESS };
+		categories = c;
 	}
 
 	@Override
