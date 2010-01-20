@@ -77,7 +77,8 @@ public class Contains extends Greql2Function {
 				{ JValueType.PATH, JValueType.ATTRELEM, JValueType.BOOL },
 				{ JValueType.PATHSYSTEM, JValueType.ATTRELEM, JValueType.BOOL },
 				{ JValueType.SLICE, JValueType.ATTRELEM, JValueType.BOOL },
-				{ JValueType.PATHSYSTEM, JValueType.PATH, JValueType.BOOL }, };
+				{ JValueType.PATHSYSTEM, JValueType.PATH, JValueType.BOOL },
+				{ JValueType.SUBGRAPH, JValueType.ATTRELEM, JValueType.BOOL }, };
 		signatures = x;
 
 		description = "Returns true iff the given collection/path/pathsystem contains the given element.";
@@ -111,6 +112,9 @@ public class Contains extends Greql2Function {
 			JValuePathSystem pathsys2 = arguments[0].toPathSystem();
 			JValuePath path2 = arguments[1].toPath();
 			return new JValue(pathsys2.containsPath(path2));
+		case 5:
+			BooleanGraphMarker m = arguments[0].toSubgraphTempAttribute();
+			return new JValue(m.isMarked(arguments[1].toAttributedElement()));
 		default:
 			throw new WrongFunctionParameterException(this, arguments);
 		}

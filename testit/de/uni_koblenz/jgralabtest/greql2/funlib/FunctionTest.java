@@ -161,21 +161,21 @@ public class FunctionTest extends GenericTests {
 
 	@Test
 	public void testContains() throws Exception {
-		String queryString = "let x:= list (5..13) in isIn(7, x)";
+		String queryString = "let x:= list (5..13) in contains(x, 7)";
 		JValue result = evalTestQuery("ContainsTrue", queryString);
 		assertEquals(true, (boolean) result.toBoolean());
 	}
 
 	@Test
 	public void testContains2() throws Exception {
-		String queryString = "let x:= list (5..13) in isIn(56, x)";
+		String queryString = "let x:= list (5..13) in contains(x, 56)";
 		JValue result = evalTestQuery("ContainsFalse", queryString);
 		assertEquals(false, (boolean) result.toBoolean());
 	}
 
 	@Test
 	public void testContains3() throws Exception {
-		String queryString = "let x:= list (5..13) in isIn(13, x)";
+		String queryString = "let x:= list (5..13) in contains(x, 13)";
 		JValue result = evalTestQuery("ContainsTrue2", queryString);
 		assertEquals(true, (boolean) result.toBoolean());
 	}
@@ -277,8 +277,8 @@ public class FunctionTest extends GenericTests {
 	}
 
 	@Test
-	public void testEdgesTypeSet() throws Exception {
-		String queryString = "from x : V{WhereExpression} report edgeTypeSet(edgesConnected(x)) end";
+	public void testTypes() throws Exception {
+		String queryString = "from x : V{WhereExpression} report types(edgesConnected(x)) end";
 		JValue result = evalTestQuery("EdgeTypeSet", queryString);
 		assertEquals(3, getNthValue(result.toCollection(), 0).toCollection()
 				.size());
@@ -478,31 +478,22 @@ public class FunctionTest extends GenericTests {
 	}
 
 	@Test
-	public void testIsIn() throws Exception {
-		String queryString = "from v : V reportSet isIn(v, eSubgraph{Link}) end";
-		JValue result = evalTestQuery("isIn", queryString, getCyclicTestGraph());
+	public void testContains4() throws Exception {
+		String queryString = "from v : V reportSet contains(eSubgraph{Link}, v) end";
+		JValue result = evalTestQuery("Contains", queryString,
+				getCyclicTestGraph());
 		for (JValue v : result.toCollection()) {
 			assertEquals(JValueBoolean.getTrueValue(), v.toBoolean());
 		}
 	}
 
 	@Test
-	public void testIsIn2() throws Exception {
-		String queryString = "from v : from w : V with isIn(w) reportSet w end "
-				+ "           in eSubgraph{Link}      "
-				+ "           reportSet v end";
-		JValue result = evalTestQuery("isIn2", queryString,
-				getCyclicTestGraph());
-		assertEquals(10, result.toCollection().size());
-	}
-
-	@Test
-	public void testIsIn3() throws Exception {
+	public void testContains5() throws Exception {
 		String queryString = "from v : V "
 				+ "           in eSubgraph{Link}      "
 				+ "           reportSet isIn(v) end";
 		try {
-			evalTestQuery("isIn3", queryString, getCyclicTestGraph());
+			evalTestQuery("Contains5", queryString, getCyclicTestGraph());
 			fail();
 		} catch (EvaluateException e) {
 			// an eval exception is expected here
@@ -525,26 +516,6 @@ public class FunctionTest extends GenericTests {
 		assertEquals(1, result.toCollection().size());
 		assertEquals(false, (boolean) getNthValue(result.toCollection(), 0)
 				.toBoolean());
-	}
-
-	@Test
-	public void testIsNeighbour() throws Exception {
-		String queryString = "from x : V{WhereExpression}, y:V{Greql2Expression} report isNeighbour(x, y) end";
-		JValue result = evalTestQuery("IsNeighbour", queryString);
-		assertEquals(1, result.toCollection().size());
-		for (JValue j : result.toCollection()) {
-			assertEquals(true, (boolean) j.toBoolean());
-		}
-	}
-
-	@Test
-	public void testIsNeighbour2() throws Exception {
-		String queryString = "from x : V{Greql2Expression}, y:V{Variable} report isNeighbour(x, y) end";
-		JValue result = evalTestQuery("IsNeighbour2", queryString);
-		assertEquals(5, result.toCollection().size());
-		for (JValue j : result.toCollection()) {
-			assertEquals(false, (boolean) j.toBoolean());
-		}
 	}
 
 	@Test
@@ -575,26 +546,6 @@ public class FunctionTest extends GenericTests {
 	public void testIsPrime3() throws Exception {
 		assertFalse(evalTestQuery("IsPrime3 (not a prime)",
 				"isPrime(7171712, 12)").toBoolean());
-	}
-
-	@Test
-	public void testIsSibling() throws Exception {
-		String queryString = "from x : V{Definition}, y:V{BagComprehension} report isSibling(x, y) end";
-		JValue result = evalTestQuery("IsSibling", queryString);
-		assertEquals(4, result.toCollection().size());
-		for (JValue j : result.toCollection()) {
-			assertEquals(true, (boolean) j.toBoolean());
-		}
-	}
-
-	@Test
-	public void testIsSibling2() throws Exception {
-		String queryString = "from x : V{Definition}, y:V{Declaration} report isSibling(x, y) end";
-		JValue result = evalTestQuery("IsSibling2", queryString);
-		assertEquals(4, result.toCollection().size());
-		for (JValue j : result.toCollection()) {
-			assertEquals(false, (boolean) j.toBoolean());
-		}
 	}
 
 	@Test
