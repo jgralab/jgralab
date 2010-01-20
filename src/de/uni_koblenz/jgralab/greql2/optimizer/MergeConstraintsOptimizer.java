@@ -29,8 +29,7 @@ import de.uni_koblenz.jgralab.greql2.schema.IsConstraintOf;
 public class MergeConstraintsOptimizer extends OptimizerBase {
 
 	private static Logger logger = JGraLab
-			.getLogger(MergeConstraintsOptimizer.class.getPackage()
-					.getName());
+			.getLogger(MergeConstraintsOptimizer.class.getPackage().getName());
 
 	/*
 	 * (non-Javadoc)
@@ -86,6 +85,7 @@ public class MergeConstraintsOptimizer extends OptimizerBase {
 				syntaxgraph.createIsConstraintOf(singleConstraint, decl);
 			}
 		}
+		recreateVertexEvaluators(eval);
 		return constraintsGotMerged;
 	}
 

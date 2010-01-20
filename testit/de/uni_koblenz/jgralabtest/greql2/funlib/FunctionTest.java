@@ -72,8 +72,6 @@ public class FunctionTest extends GenericTests {
 		JValue result = evalTestQuery("And", queryString);
 		assertEquals(4, result.toCollection().size());
 	}
-	
-
 
 	@Test
 	public void testAnd2() throws Exception {
@@ -231,23 +229,23 @@ public class FunctionTest extends GenericTests {
 	}
 
 	@Test
-	public void testDividedBy() throws Exception {
+	public void testDiv() throws Exception {
 		String queryString = "3/3";
-		JValue result = evalTestQuery("DividedBy", queryString);
+		JValue result = evalTestQuery("Div", queryString);
 		assertEquals(new JValue(1.0), result);
 	}
 
 	@Test
-	public void testDividedBy2() throws Exception {
+	public void testDiv2() throws Exception {
 		String queryString = "3.0/1";
-		JValue result = evalTestQuery("DividedBy", queryString);
+		JValue result = evalTestQuery("Div", queryString);
 		assertEquals(new JValue(3.0), result);
 	}
 
 	@Test
-	public void testDividedBy3() throws Exception {
+	public void testDiv3() throws Exception {
 		String queryString = "3/7";
-		JValue result = evalTestQuery("DividedBy", queryString);
+		JValue result = evalTestQuery("Div", queryString);
 		assertEquals(new JValue(3.0 / 7), result);
 	}
 
@@ -671,37 +669,37 @@ public class FunctionTest extends GenericTests {
 	}
 
 	@Test
-	public void testMinus() throws Exception {
+	public void testSub() throws Exception {
 		String queryString = "6 - 1.5";
-		JValue result = evalTestQuery("Minus", queryString);
+		JValue result = evalTestQuery("Sub", queryString);
 		assertEquals(4.5, result.toDouble(), 0.01);
 	}
 
 	@Test
-	public void testMinus2() throws Exception {
+	public void testSub2() throws Exception {
 		String queryString = "6 - 3";
-		JValue result = evalTestQuery("Minus", queryString);
+		JValue result = evalTestQuery("Sub", queryString);
 		assertEquals(3l, (long) result.toLong());
 	}
 
 	@Test
-	public void testMinus3() throws Exception {
+	public void testSub3() throws Exception {
 		String queryString = "16 - 323";
-		JValue result = evalTestQuery("Minus", queryString);
+		JValue result = evalTestQuery("Sub", queryString);
 		assertEquals(-307l, (long) result.toLong());
 	}
 
 	@Test
-	public void testMinus4() throws Exception {
+	public void testSub4() throws Exception {
 		String queryString = "1.5 - 6";
-		JValue result = evalTestQuery("Minus", queryString);
+		JValue result = evalTestQuery("Sub", queryString);
 		assertEquals(-4.5, result.toDouble(), 0.01);
 	}
 
 	@Test
-	public void testModulo() throws Exception {
+	public void testMod() throws Exception {
 		String queryString = "9 % 2";
-		JValue result = evalTestQuery("Modulo", queryString);
+		JValue result = evalTestQuery("Mod", queryString);
 		assertEquals(Integer.valueOf(1), result.toInteger());
 	}
 
@@ -755,16 +753,16 @@ public class FunctionTest extends GenericTests {
 	}
 
 	@Test
-	public void testPlus() throws Exception {
+	public void testAdd() throws Exception {
 		String queryString = "6 + 1.5";
-		JValue result = evalTestQuery("Plus", queryString);
+		JValue result = evalTestQuery("Add", queryString);
 		assertEquals(9, (int) ((result.toDouble() + 1.5)));
 	}
 
 	@Test
-	public void testPlus2() throws Exception {
-		String queryString = "\"foo\" + \"bar\" + \"baz\"";
-		JValue result = evalTestQuery("Plus2", queryString);
+	public void testConcat() throws Exception {
+		String queryString = "\"foo\" ° \"bar\" ° \"baz\"";
+		JValue result = evalTestQuery("Concat", queryString);
 		assertEquals("foobarbaz", result.toString());
 	}
 
@@ -807,21 +805,14 @@ public class FunctionTest extends GenericTests {
 	}
 
 	@Test
-	public void testTimes() throws Exception {
+	public void testMul() throws Exception {
 		String queryString = "6 * 1.5";
-		JValue result = evalTestQuery("Times", queryString);
+		JValue result = evalTestQuery("Mul", queryString);
 		assertEquals(9, (int) (double) result.toDouble());
 	}
 
 	@Test
-	public void testTimes2() throws Exception {
-		String queryString = "\"foo\" * 3";
-		JValue result = evalTestQuery("Times2", queryString);
-		assertEquals("foofoofoo", result.toString());
-	}
-
-	@Test
-	public void testUminus() throws Exception {
+	public void testNeg() throws Exception {
 		String queryString = "let x:= list (5..13) in from i:x report -i end";
 		JValue result = evalTestQuery("UMinus", queryString);
 		assertEquals(9, result.toCollection().size());

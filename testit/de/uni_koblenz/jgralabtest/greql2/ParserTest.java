@@ -346,14 +346,14 @@ public class ParserTest {
 	}
 
 	@Test
-	public void testUnaryExpressionUMinus() throws Exception {
+	public void testUnaryExpressionNeg() throws Exception {
 		Greql2 graph = parseQuery("-5");
 		FunctionApplication funAp = graph.getFirstFunctionApplication();
 		assertNotNull(funAp);
 		IsFunctionIdOf isIdOf = funAp.getFirstIsFunctionIdOf();
 		assertNotNull(isIdOf);
 		FunctionId funId = (FunctionId) isIdOf.getAlpha();
-		assertEquals("uminus", funId.get_name());
+		assertEquals("neg", funId.get_name());
 	}
 
 	@Test

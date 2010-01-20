@@ -20,7 +20,6 @@ import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.JGraLab;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
-import de.uni_koblenz.jgralab.greql2.exception.EvaluateException;
 import de.uni_koblenz.jgralab.greql2.exception.OptimizerException;
 import de.uni_koblenz.jgralab.greql2.schema.Comprehension;
 import de.uni_koblenz.jgralab.greql2.schema.Declaration;
@@ -102,11 +101,7 @@ public class EarySelectionOptimizer extends OptimizerBase {
 
 		OptimizerUtility.createMissingSourcePositions(syntaxgraph);
 
-		try {
-			eval.createVertexEvaluators();
-		} catch (EvaluateException e) {
-			e.printStackTrace();
-		}
+		recreateVertexEvaluators(eval);
 
 		// If there was more than one optimization run, a transformation was
 		// done.

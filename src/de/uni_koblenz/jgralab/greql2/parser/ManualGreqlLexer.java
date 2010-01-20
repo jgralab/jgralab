@@ -83,6 +83,7 @@ public class ManualGreqlLexer {
 		fixedTokens.put(TokenTypes.MINUS, "-");
 		fixedTokens.put(TokenTypes.STAR, "*");
 		fixedTokens.put(TokenTypes.MOD, "%");
+		fixedTokens.put(TokenTypes.DEGREE, "°");
 		fixedTokens.put(TokenTypes.SEMI, ";");
 		fixedTokens.put(TokenTypes.CARET, "^");
 		fixedTokens.put(TokenTypes.BOR, "|");

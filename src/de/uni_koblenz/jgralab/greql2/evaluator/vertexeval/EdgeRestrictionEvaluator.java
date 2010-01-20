@@ -54,7 +54,7 @@ public class EdgeRestrictionEvaluator extends VertexEvaluator {
 	 * The EdgeRestriction vertex in the GReQL Syntaxgraph
 	 */
 	private EdgeRestriction vertex;
-	
+
 	private VertexEvaluator predicateEvaluator = null;
 
 	/**
@@ -65,11 +65,10 @@ public class EdgeRestrictionEvaluator extends VertexEvaluator {
 		return vertex;
 	}
 
-	
 	public VertexEvaluator getPredicateEvaluator() {
 		return predicateEvaluator;
 	}
-	
+
 	/**
 	 * The JValueTypeCollection which holds all the allowed and forbidden types
 	 */
@@ -133,18 +132,20 @@ public class EdgeRestrictionEvaluator extends VertexEvaluator {
 				typeInc = typeInc.getNextIsTypeIdOf(EdgeDirection.IN);
 			}
 		}
-		IsRoleIdOf roleInc = vertex.getFirstIsRoleIdOf();
-		if (roleInc != null) {
+
+		if (vertex.getFirstIsRoleIdOf() != null) {
 			validRoles = new HashSet<String>();
 			for (IsRoleIdOf e : vertex.getIsRoleIdOfIncidences()) {
 				RoleId role = (RoleId) e.getAlpha();
 				validRoles.add(role.get_name());
 			}
-		} 
-		IsBooleanPredicateOfEdgeRestriction predInc = vertex.getFirstIsBooleanPredicateOfEdgeRestriction(EdgeDirection.IN);
+		}
+		IsBooleanPredicateOfEdgeRestriction predInc = vertex
+				.getFirstIsBooleanPredicateOfEdgeRestriction(EdgeDirection.IN);
 		if (predInc != null) {
 			System.out.println("Found a BooleanPredicateOfEdge");
-			predicateEvaluator = greqlEvaluator.getVertexEvaluatorGraphMarker().getMark(predInc.getAlpha());
+			predicateEvaluator = greqlEvaluator.getVertexEvaluatorGraphMarker()
+					.getMark(predInc.getAlpha());
 		}
 		return new JValue();
 	}

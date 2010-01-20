@@ -152,7 +152,6 @@ public class DefaultOptimizer extends OptimizerBase {
 
 		logger.fine(optimizerHeaderString() + " finished after " + noOfRuns
 				+ " iterations.");
-
 		return aTransformationWasDone;
 	}
 

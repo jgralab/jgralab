@@ -33,43 +33,12 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
 /**
  * Calculates the quotient (a/b) for given scalar values a and b. The quotient
  * (a / 0) will return the value positive or negative infinity.
- * <dl>
- * <dt><b>GReQL-signature</b></dt>
- * <dd><code>DOUBLE dividedBy(a: INT, b: INT)</code></dd>
- * <dd><code>DOUBLE dividedBy(a: LONG, b: INT)</code></dd>
- * <dd><code>DOUBLE dividedBy(a: INT, b: LONG)</code></dd>
- * <dd><code>DOUBLE dividedBy(a: LONG, b: LONG)</code></dd>
- * <dd><code>DOUBLE dividedBy(a: DOUBLE, b: INT)</code></dd>
- * <dd><code>DOUBLE dividedBy(a: DOUBLE, b: LONG)</code></dd>
- * <dd><code>DOUBLE dividedBy(a: INT, b: DOUBLE)</code></dd>
- * <dd><code>DOUBLE dividedBy(a: LONG, b: DOUBLE)</code></dd>
- * <dd><code>DOUBLE dividedBy(a: DOUBLE, b: DOUBLE)</code></dd>
- * <dd></dd>
- * <dd>This function can be used with the (/)-Operator: <code>a / b</code></dd>
- * </dl>
- * <dl>
- * <dt></dt>
- * <dd>
- * <dl>
- * <dt><b>Parameters:</b></dt>
- * <dd><code>a: INT</code> - dividend</dd>
- * <dd><code>a: LONG</code> - dividend</dd>
- * <dd><code>a: DOUBLE</code> - dividend</dd>
- * <dd><code>b: INT</code> - divisor</dd>
- * <dd><code>b: LONG</code> - divisor</dd>
- * <dd><code>b: DOUBLE</code> - divisor</dd>
- * <dt><b>Returns:</b></dt>
- * <dd>the quotient <code>a / b</code></dd>
- * <dd><code>Null</code> if one of the given parameters is <code>Null</code></dd>
- * </dl>
- * </dd>
- * </dl>
  * 
  * @author ist@uni-koblenz.de
  * 
  */
 
-public class DividedBy extends ArithmeticFunction {
+public class Div extends ArithmeticFunction {
 	{
 		JValueType[][] x = {
 				{ JValueType.DOUBLE, JValueType.DOUBLE, JValueType.DOUBLE },

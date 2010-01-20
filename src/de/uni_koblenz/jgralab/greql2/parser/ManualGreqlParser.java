@@ -856,10 +856,13 @@ public class ManualGreqlParser extends ManualParserHelper {
 		Expression expr = parseMultiplicativeExpression();
 		construct.preOp(expr);
 		if (tryMatch(TokenTypes.PLUS)) {
-			construct.postOp("plus");
+			construct.postOp("add");
 			return construct.postArg2(parseAdditiveExpression());
 		} else if (tryMatch(TokenTypes.MINUS)) {
-			construct.postOp("minus");
+			construct.postOp("sub");
+			return construct.postArg2(parseAdditiveExpression());
+		} else if (tryMatch(TokenTypes.DEGREE)) {
+			construct.postOp("concat");
 			return construct.postArg2(parseAdditiveExpression());
 		}
 		return expr;
@@ -872,11 +875,11 @@ public class ManualGreqlParser extends ManualParserHelper {
 		construct.preOp(expr);
 		String name = null;
 		if (tryMatch(TokenTypes.STAR)) {
-			name = "times";
+			name = "mul";
 		} else if (tryMatch(TokenTypes.MOD)) {
-			name = "modulo";
+			name = "mod";
 		} else if (tryMatch(TokenTypes.DIV)) {
-			name = "dividedBy";
+			name = "div";
 		}
 		if (name != null) {
 			construct.postOp(name);
@@ -895,7 +898,7 @@ public class ManualGreqlParser extends ManualParserHelper {
 			if (tryMatch(TokenTypes.NOT)) {
 				opName = "not";
 			} else if (tryMatch(TokenTypes.MINUS)) {
-				opName = "uminus";
+				opName = "neg";
 			}
 			if (!inPredicateMode()) {
 				getFunctionId(opName);

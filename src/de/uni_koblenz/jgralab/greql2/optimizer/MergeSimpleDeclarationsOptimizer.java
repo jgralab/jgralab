@@ -63,7 +63,7 @@ public class MergeSimpleDeclarationsOptimizer extends OptimizerBase {
 		anOptimizationWasDone = false;
 
 		findAndMergeSimpleDeclarations(syntaxgraph);
-
+		recreateVertexEvaluators(eval);
 		return anOptimizationWasDone;
 	}
 
