@@ -64,8 +64,8 @@ public class Type extends Greql2Function {
 		signatures = x;
 
 		description = "Returns the type of the given attributed element.\n"
-				+ "If a qualified name (String) is given, return the attributed\n"
-				+ "element class with that qualified name.";
+				+ "If a qualified name (String) is given, the attributed\n"
+				+ "element class with that qualified name is returned.";
 
 		Category[] c = { Category.SCHEMA_ACCESS };
 		categories = c;

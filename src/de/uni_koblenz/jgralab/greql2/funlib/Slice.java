@@ -90,7 +90,7 @@ public class Slice extends Greql2Function {
 				{ JValueType.VERTEX, JValueType.NFA, JValueType.SLICE } };
 		signatures = x;
 
-		description = "Returns a slice, starting at root(s) and structured according path description.";
+		description = "Returns a slice, starting at root(s) and structured according to path description.";
 
 		Category[] c = { Category.PATHS_AND_PATHSYSTEMS_AND_SLICES };
 		categories = c;

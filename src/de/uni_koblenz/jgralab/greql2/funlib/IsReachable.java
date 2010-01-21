@@ -84,11 +84,12 @@ public class IsReachable extends Greql2Function {
 		signatures = x;
 
 		description = "Returns true iff there is a path from the first to the second vertex.\n"
-				+ "The third parameter is a path description describing the structure\n"
+				+ "The third parameter is a path description, describing the structure\n"
 				+ "of the path.  If you are only interested in only somehow connected,\n"
 				+ "use <->* here.";
 
-		Category[] c = { Category.GRAPH, Category.PATHS_AND_PATHSYSTEMS_AND_SLICES };
+		Category[] c = { Category.GRAPH,
+				Category.PATHS_AND_PATHSYSTEMS_AND_SLICES };
 		categories = c;
 	}
 
@@ -119,8 +120,7 @@ public class IsReachable extends Greql2Function {
 		queue.add(currentEntry);
 		while (!queue.isEmpty()) {
 			currentEntry = queue.poll();
-			if ((currentEntry.vertex == endVertex)
-					&& (currentEntry.state.isFinal)) {
+			if (currentEntry.vertex == endVertex && currentEntry.state.isFinal) {
 				return new JValue(true, startVertex);
 			}
 			Edge inc = currentEntry.vertex.getFirstEdge();

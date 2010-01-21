@@ -75,7 +75,7 @@ public class Elements extends Greql2Function {
 				{ JValueType.SLICE, JValueType.COLLECTION } };
 		signatures = x;
 
-		description = "Returns the set of elements, which are part of the given structure.";
+		description = "Returns the set of all elements of the given structure.";
 
 		Category[] c = { Category.COLLECTIONS_AND_MAPS,
 				Category.PATHS_AND_PATHSYSTEMS_AND_SLICES };

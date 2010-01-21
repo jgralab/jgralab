@@ -68,7 +68,7 @@ public class MergeMaps extends Greql2Function {
 		JValueType[][] x = { { JValueType.MAP, JValueType.MAP, JValueType.MAP } };
 		signatures = x;
 
-		description = "Merges the given two maps (the values must be collections).\n"
+		description = "Merges the given maps (the values must be collections).\n"
 				+ "That means, that the returned map contains mappings for the union of the\n"
 				+ "keys, and if both maps contain a mapping for a key, the value\n"
 				+ "collections are merged.";

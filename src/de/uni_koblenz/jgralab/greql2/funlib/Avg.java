@@ -66,7 +66,7 @@ public class Avg extends Greql2Function {
 		signatures = x;
 
 		description = "Arithmetic average of the given collection $c$ of numbers.\n"
-				+ "Returns null, if a null-Value is in $c$.";
+				+ "Returns null iff a null-Value is in $c$.";
 
 		Category[] c = { Category.COLLECTIONS_AND_MAPS };
 		categories = c;
