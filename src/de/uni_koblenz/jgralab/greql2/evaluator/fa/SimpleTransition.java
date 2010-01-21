@@ -39,7 +39,6 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueTypeCollection;
 import de.uni_koblenz.jgralab.greql2.schema.ThisEdge;
 import de.uni_koblenz.jgralab.schema.AttributedElementClass;
 
-
 /**
  * This transition accepts a SimplePathDescription. A SimplePathDescription is
  * for instance something like v -->{isExprOf} w.
@@ -48,7 +47,7 @@ import de.uni_koblenz.jgralab.schema.AttributedElementClass;
  * 
  */
 public class SimpleTransition extends Transition {
-	
+
 	protected VertexEvaluator predicateEvaluator;
 
 	protected ThisEdgeEvaluator thisEdgeEvaluator;
@@ -59,8 +58,8 @@ public class SimpleTransition extends Transition {
 	protected JValueTypeCollection typeCollection;
 
 	/**
-	 * an edge may have valid roles. This set  holds the valid roles for this
-	 * transition. If the transition is valid for all roles, this  set is null
+	 * an edge may have valid roles. This set holds the valid roles for this
+	 * transition. If the transition is valid for all roles, this set is null
 	 */
 	protected Set<String> validEdgeRoles;
 
@@ -103,25 +102,31 @@ public class SimpleTransition extends Transition {
 			return false;
 		}
 		if (validEdgeRoles != null) {
-			if (et.validEdgeRoles == null)
+			if (et.validEdgeRoles == null) {
 				return false;
-			if (!validEdgeRoles.equals(et.validEdgeRoles))
+			}
+			if (!validEdgeRoles.equals(et.validEdgeRoles)) {
 				return false;
+			}
 		}
 		if (validEdgeRoles == null) {
-			if (et.validEdgeRoles != null)
+			if (et.validEdgeRoles != null) {
 				return false;
+			}
 		}
 		if (predicateEvaluator != null) {
-			if (et.predicateEvaluator == null)
+			if (et.predicateEvaluator == null) {
 				return false;
-			if (!predicateEvaluator.equals(et.predicateEvaluator))
+			}
+			if (!predicateEvaluator.equals(et.predicateEvaluator)) {
 				return false;
+			}
 		} else {
-			if (et.predicateEvaluator != null)
+			if (et.predicateEvaluator != null) {
 				return false;
+			}
 		}
-		
+
 		return true;
 	}
 
@@ -182,7 +187,9 @@ public class SimpleTransition extends Transition {
 	 *            The accepted edge role, or null if any role is accepted
 	 */
 	public SimpleTransition(State start, State end, AllowedEdgeDirection dir,
-			JValueTypeCollection typeCollection, Set<String> roles, VertexEvaluator predicateEvaluator, GraphMarker<VertexEvaluator>  graphMarker) {
+			JValueTypeCollection typeCollection, Set<String> roles,
+			VertexEvaluator predicateEvaluator,
+			GraphMarker<VertexEvaluator> graphMarker) {
 		super(start, end);
 		validDirection = dir;
 		validEdgeRoles = roles;
@@ -193,6 +200,7 @@ public class SimpleTransition extends Transition {
 			thisEdgeEvaluator = (ThisEdgeEvaluator) graphMarker.getMark(v);
 		}
 	}
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -218,8 +226,6 @@ public class SimpleTransition extends Transition {
 		return false;
 	}
 
-	
-	
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -251,29 +257,22 @@ public class SimpleTransition extends Transition {
 			}
 		}
 		// checks if a role restriction is set and if e has the right role
-		boolean acceptedByRole = false;
-		if (validEdgeRoles != null) {
-			if ((e.getThatRole() == null) || (!validEdgeRoles.contains(e.getThatRole()))) {
-				acceptedByRole = false;
-			} else {
-				acceptedByRole = true;
-			}
+		if ((validEdgeRoles != null)
+				&& (validEdgeRoles.contains(e.getThatRole()))) {
+			return false;
 		}
-		
+
 		// checks if a edgeTypeRestriction is set and if e has the right type
-		boolean acceptedByType = true;
 		AttributedElementClass edgeClass = e.getAttributedElementClass();
 		if (!typeCollection.acceptsType(edgeClass)) {
-			acceptedByType = false;
-		}
-		
-		if (!((acceptedByRole) || acceptedByType ) )
 			return false;
-		
+		}
+
 		// checks if a boolean expression exists and if it evaluates to true
 		if (predicateEvaluator != null) {
-			if (thisEdgeEvaluator != null)
+			if (thisEdgeEvaluator != null) {
 				thisEdgeEvaluator.setValue(new JValue(e));
+			}
 			JValue res = predicateEvaluator.getResult(subgraph);
 			if (res.isBoolean()) {
 				try {
@@ -285,7 +284,7 @@ public class SimpleTransition extends Transition {
 				}
 			}
 			return false;
-		}	
+		}
 		return true;
 	}
 
