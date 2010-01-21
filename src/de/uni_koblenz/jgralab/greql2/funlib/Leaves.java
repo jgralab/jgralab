@@ -64,7 +64,8 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
 public class Leaves extends Greql2Function {
 
 	{
-		JValueType[][] x = { { JValueType.PATHSYSTEM, JValueType.COLLECTION } };
+		JValueType[][] x = { { JValueType.PATHSYSTEM, JValueType.COLLECTION },
+				{ JValueType.SLICE, JValueType.COLLECTION } };
 		signatures = x;
 
 		description = "Returns a set of all leaves of the given pathsystem.\n"
@@ -78,10 +79,14 @@ public class Leaves extends Greql2Function {
 	@Override
 	public JValue evaluate(Graph graph, BooleanGraphMarker subgraph,
 			JValue[] arguments) throws EvaluateException {
-		if (checkArguments(arguments) == -1) {
+		switch (checkArguments(arguments)) {
+		case 0:
+			return arguments[0].toPathSystem().leaves();
+		case 1:
+			return arguments[0].toSlice().leaves();
+		default:
 			throw new WrongFunctionParameterException(this, arguments);
 		}
-		return arguments[0].toPathSystem().leaves();
 	}
 
 	@Override

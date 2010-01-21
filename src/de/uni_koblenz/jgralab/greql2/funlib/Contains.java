@@ -78,7 +78,7 @@ public class Contains extends Greql2Function {
 				{ JValueType.PATHSYSTEM, JValueType.ATTRELEM, JValueType.BOOL },
 				{ JValueType.SLICE, JValueType.ATTRELEM, JValueType.BOOL },
 				{ JValueType.PATHSYSTEM, JValueType.PATH, JValueType.BOOL },
-				{ JValueType.SUBGRAPH, JValueType.ATTRELEM, JValueType.BOOL }, };
+				{ JValueType.SUBGRAPH, JValueType.ATTRELEM, JValueType.BOOL } };
 		signatures = x;
 
 		description = "Returns true iff the given collection/path/pathsystem contains the given element.";
