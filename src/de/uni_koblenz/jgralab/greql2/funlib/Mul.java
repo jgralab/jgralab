@@ -28,7 +28,6 @@ import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.graphmarker.BooleanGraphMarker;
 import de.uni_koblenz.jgralab.greql2.exception.EvaluateException;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
-import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
 
 /**
  * Calculates a*b for given scalar values a and b.
@@ -39,21 +38,27 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
  */
 public class Mul extends ArithmeticFunction {
 	{
-		JValueType[][] x = {
-				{ JValueType.DOUBLE, JValueType.DOUBLE, JValueType.DOUBLE },
-				{ JValueType.LONG, JValueType.LONG, JValueType.LONG },
-				{ JValueType.INT, JValueType.INT, JValueType.INT } };
-		signatures = x;
-
 		description = "Calculates the sum $a \\cdot b$. Alternative usage: a * b.";
-
-		Category[] c = { Category.ARITHMETICS };
-		categories = c;
 	}
 
 	@Override
 	public JValue evaluate(Graph graph, BooleanGraphMarker subgraph,
 			JValue[] arguments) throws EvaluateException {
 		return evaluate(arguments, ArithmeticOperator.MUL);
+	}
+
+	@Override
+	protected JValue applyFunction(Integer leftHandSide, Integer rightHandSide) {
+		return new JValue(leftHandSide * rightHandSide);
+	}
+
+	@Override
+	protected JValue applyFunction(Long leftHandSide, Long rightHandSide) {
+		return new JValue(leftHandSide * rightHandSide);
+	}
+
+	@Override
+	protected JValue applyFunction(Double leftHandSide, Double rightHandSide) {
+		return new JValue(leftHandSide * rightHandSide);
 	}
 }

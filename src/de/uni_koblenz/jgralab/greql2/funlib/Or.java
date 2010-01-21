@@ -28,6 +28,7 @@ import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.graphmarker.BooleanGraphMarker;
 import de.uni_koblenz.jgralab.greql2.exception.EvaluateException;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
+import de.uni_koblenz.jgralab.greql2.jvalue.JValueBoolean;
 
 /**
  * Returns the result of the logical operation <code>a or b</code>.
@@ -99,5 +100,10 @@ public class Or extends BooleanFunction {
 	@Override
 	public double getSelectivity() {
 		return 5d / 9;
+	}
+
+	@Override
+	protected JValue applyFunction(JValue leftHandSide, JValue rightHandSide) {
+		return JValueBoolean.or(leftHandSide, rightHandSide);
 	}
 }

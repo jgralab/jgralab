@@ -28,7 +28,6 @@ import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.graphmarker.BooleanGraphMarker;
 import de.uni_koblenz.jgralab.greql2.exception.EvaluateException;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
-import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
 
 /**
  * Calculates the quotient (a/b) for given scalar values a and b. The quotient
@@ -40,12 +39,6 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
 
 public class Div extends ArithmeticFunction {
 	{
-		JValueType[][] x = {
-				{ JValueType.DOUBLE, JValueType.DOUBLE, JValueType.DOUBLE },
-				{ JValueType.LONG, JValueType.LONG, JValueType.DOUBLE },
-				{ JValueType.INT, JValueType.INT, JValueType.DOUBLE } };
-		signatures = x;
-
 		description = "Calculates the quotient $a / b$. "
 				+ "$a / 0$ will return either a positive or a negative infinity. Alternative usage: a / b.";
 	}
@@ -54,6 +47,21 @@ public class Div extends ArithmeticFunction {
 	public JValue evaluate(Graph graph, BooleanGraphMarker subgraph,
 			JValue[] arguments) throws EvaluateException {
 		return evaluate(arguments, ArithmeticOperator.DIV);
+	}
+
+	@Override
+	protected JValue applyFunction(Integer leftHandSide, Integer rightHandSide) {
+		return new JValue(Double.valueOf(leftHandSide) / rightHandSide);
+	}
+
+	@Override
+	protected JValue applyFunction(Long leftHandSide, Long rightHandSide) {
+		return new JValue(Double.valueOf(leftHandSide) / rightHandSide);
+	}
+
+	@Override
+	protected JValue applyFunction(Double leftHandSide, Double rightHandSide) {
+		return new JValue(leftHandSide / rightHandSide);
 	}
 
 }

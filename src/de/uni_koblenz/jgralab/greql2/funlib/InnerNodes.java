@@ -67,9 +67,9 @@ public class InnerNodes extends Greql2Function {
 				{ JValueType.SLICE, JValueType.COLLECTION } };
 		signatures = x;
 
-		description = "Returns all inner nodes of the given pathsystem/slice as set.\n"
-				+ "Inner nodes are all vertices besides leaves of the pathsystem/slice. That\n"
-				+ "means, all vertices, that are neither end of a path nor the root.";
+		description = "Returns all inner nodes of the given pathsystem or slice as set.\n"
+				+ "Inner nodes are all vertices besides leaves of the pathsystem or slice. That\n"
+				+ "means, all vertices, that are neither the end nor the root of a path.";
 
 		Category[] c = { Category.PATHS_AND_PATHSYSTEMS_AND_SLICES };
 		categories = c;

@@ -33,65 +33,40 @@ public abstract class ArithmeticFunction extends Greql2Function {
 
 	public JValue evaluate(JValue[] arguments, ArithmeticOperator operator)
 			throws EvaluateException {
+
+		JValue result = null;
+
 		switch (checkArguments(arguments)) {
 		case 0:
 			Double d1 = arguments[0].toDouble();
 			Double d2 = arguments[1].toDouble();
-			switch (operator) {
-			case ADD:
-				return new JValue(d1 + d2);
-			case SUB:
-				return new JValue(d1 - d2);
-			case DIV:
-				return new JValue(d1 / d2);
-			case MUL:
-				return new JValue(d1 * d2);
-			case MOD:
-				return new JValue(d1 % d2);
-			default:
-				throw new EvaluateException("Unknown ArithmeticOperator "
-						+ operator + ".");
-			}
+			result = applyFunction(d1, d2);
+			break;
 		case 1:
 			Long l1 = arguments[0].toLong();
 			Long l2 = arguments[1].toLong();
-			switch (operator) {
-			case ADD:
-				return new JValue(l1 + l2);
-			case SUB:
-				return new JValue(l1 - l2);
-			case DIV:
-				return new JValue(Double.valueOf(l1) / l2);
-			case MUL:
-				return new JValue(l1 * l2);
-			case MOD:
-				return new JValue(l1 % l2);
-			default:
-				throw new EvaluateException("Unknown ArithmeticOperator "
-						+ operator + ".");
-			}
+			result = applyFunction(l1, l2);
+			break;
 		case 2:
 			Integer i1 = arguments[0].toInteger();
 			Integer i2 = arguments[1].toInteger();
-			switch (operator) {
-			case ADD:
-				return new JValue(i1 + i2);
-			case SUB:
-				return new JValue(i1 - i2);
-			case DIV:
-				return new JValue(Double.valueOf(i1) / i2);
-			case MUL:
-				return new JValue(i1 * i2);
-			case MOD:
-				return new JValue(i1 % i2);
-			default:
-				throw new EvaluateException("Unknown ArithmeticOperator "
-						+ operator + ".");
-			}
+			result = applyFunction(i1, i2);
+			break;
 		default:
 			throw new WrongFunctionParameterException(this, arguments);
 		}
+
+		return result;
 	}
+
+	protected abstract JValue applyFunction(Integer leftHandSide,
+			Integer rightHandSide);
+
+	protected abstract JValue applyFunction(Long leftHandSide,
+			Long rightHandSide);
+
+	protected abstract JValue applyFunction(Double leftHandSide,
+			Double rightHandSide);
 
 	/*
 	 * (non-Javadoc)
