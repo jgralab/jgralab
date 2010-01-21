@@ -22,7 +22,7 @@ public class Concat extends Greql2Function {
 				JValueType.STRING } };
 		signatures = x;
 
-		description = "Concatenates the given two strings. Alternative usage: str1 ° str2";
+		description = "Concatenates the given two strings. Alternative usage: str1 ++ str2";
 
 		Category[] c = { Category.STRINGS };
 		categories = c;
