@@ -16,6 +16,7 @@ import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.codegenerator.CodeGeneratorConfiguration;
 import de.uni_koblenz.jgralab.greql2.exception.ParsingException;
 import de.uni_koblenz.jgralab.greql2.exception.UndefinedVariableException;
+import de.uni_koblenz.jgralab.greql2.funlib.Greql2FunctionLibrary;
 import de.uni_koblenz.jgralab.greql2.parser.ManualGreqlParser;
 import de.uni_koblenz.jgralab.greql2.schema.AggregationPathDescription;
 import de.uni_koblenz.jgralab.greql2.schema.AlternativePathDescription;
@@ -84,6 +85,7 @@ import de.uni_koblenz.jgralab.greql2.schema.VertexSubgraphExpression;
 import de.uni_koblenz.jgralab.schema.GraphClass;
 import de.uni_koblenz.jgralab.schema.Schema;
 import de.uni_koblenz.jgralab.schema.impl.SchemaImpl;
+import de.uni_koblenz.jgralabtest.greql2.testfunctions.IsPrime;
 
 /*
  * GReQL Constructs where discussions are needed
@@ -100,6 +102,10 @@ import de.uni_koblenz.jgralab.schema.impl.SchemaImpl;
  */
 
 public class ParserTest {
+	static {
+		Greql2FunctionLibrary.instance().registerUserDefinedFunction(
+				IsPrime.class);
+	}
 
 	private Greql2 parseQuery(String query) throws ParsingException {
 		return parseQuery(query, null);

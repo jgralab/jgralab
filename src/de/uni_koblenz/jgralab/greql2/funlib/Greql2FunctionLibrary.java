@@ -429,7 +429,15 @@ public class Greql2FunctionLibrary {
 			throws DuplicateGreqlFunctionException {
 		logger.finer("Try to register user defined function: "
 				+ functionClass.getName());
-		if (isGreqlFunction(toFunctionName(functionClass.getSimpleName()))) {
+		String funName = toFunctionName(functionClass.getSimpleName());
+		// The same function may be registered many times, but a function with
+		// same name and different class may not. Implementation have to be the
+		// same.
+		if (isGreqlFunction(funName)
+				&& (availableFunctions.get(funName).getClass() != functionClass)) {
+			System.out.println(availableFunctions.get(funName) + " != "
+					+ functionClass);
+			System.exit(1);
 			throw new DuplicateGreqlFunctionException(
 					"The class "
 							+ functionClass.getName()

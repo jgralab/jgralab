@@ -23,7 +23,7 @@
  *
  */
 
-package de.uni_koblenz.jgralab.greql2.funlib;
+package de.uni_koblenz.jgralabtest.greql2.testfunctions;
 
 import java.util.ArrayList;
 
@@ -31,6 +31,8 @@ import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.graphmarker.BooleanGraphMarker;
 import de.uni_koblenz.jgralab.greql2.exception.EvaluateException;
 import de.uni_koblenz.jgralab.greql2.exception.WrongFunctionParameterException;
+import de.uni_koblenz.jgralab.greql2.funlib.Greql2Function;
+import de.uni_koblenz.jgralab.greql2.funlib.Greql2Function.Category;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValueBoolean;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;

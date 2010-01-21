@@ -7,6 +7,7 @@ import org.junit.Test;
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
 import de.uni_koblenz.jgralab.greql2.exception.OptimizerException;
+import de.uni_koblenz.jgralab.greql2.funlib.Greql2FunctionLibrary;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
 import de.uni_koblenz.jgralab.greql2.optimizer.CommonSubgraphOptimizer;
 import de.uni_koblenz.jgralab.greql2.optimizer.ConditionalExpressionOptimizer;
@@ -20,8 +21,13 @@ import de.uni_koblenz.jgralab.greql2.optimizer.VariableDeclarationOrderOptimizer
 import de.uni_koblenz.jgralab.greql2.parser.ManualGreqlParser;
 import de.uni_koblenz.jgralab.greql2.schema.Greql2;
 import de.uni_koblenz.jgralabtest.greql2.GenericTests;
+import de.uni_koblenz.jgralabtest.greql2.testfunctions.IsPrime;
 
 public class OptimizerTest extends GenericTests {
+	static {
+		Greql2FunctionLibrary.instance().registerUserDefinedFunction(
+				IsPrime.class);
+	}
 
 	private Optimizer cso = new CommonSubgraphOptimizer();
 	private Optimizer eso = new EarySelectionOptimizer();
