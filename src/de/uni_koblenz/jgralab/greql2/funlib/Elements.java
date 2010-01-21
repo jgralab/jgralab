@@ -65,7 +65,7 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
  * 
  */
 
-public class ElementsIn extends Greql2Function {
+public class Elements extends Greql2Function {
 
 	{
 		JValueType[][] x = { { JValueType.COLLECTION, JValueType.COLLECTION },
