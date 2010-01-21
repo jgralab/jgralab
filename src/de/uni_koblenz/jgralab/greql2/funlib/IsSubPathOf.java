@@ -64,7 +64,7 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
  * 
  */
 
-public class IsSubPathOfPath extends Greql2Function {
+public class IsSubPathOf extends Greql2Function {
 
 	{
 		JValueType[][] x = { { JValueType.PATH, JValueType.PATH,
