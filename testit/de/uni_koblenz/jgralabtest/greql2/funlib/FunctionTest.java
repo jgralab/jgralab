@@ -712,7 +712,7 @@ public class FunctionTest extends GenericTests {
 
 	@Test
 	public void testConcat() throws Exception {
-		String queryString = "\"foo\" ° \"bar\" ° \"baz\"";
+		String queryString = "\"foo\" ++ \"bar\" ++ \"baz\"";
 		JValue result = evalTestQuery("Concat", queryString);
 		assertEquals("foobarbaz", result.toString());
 	}

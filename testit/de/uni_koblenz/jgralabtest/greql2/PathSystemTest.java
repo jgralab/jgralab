@@ -26,7 +26,6 @@ package de.uni_koblenz.jgralabtest.greql2;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
 
@@ -83,14 +82,15 @@ public class PathSystemTest extends GenericTests {
 
 	@Test
 	public void testPathSystemContains() throws Exception {
-		String queryString = "from v: V{WhereExpression}, w:V{Variable}  report isIn(w,  v  :-) <--{IsDefinitionOf} <--{IsVarOf}) end";
+		String queryString = "from v: V{WhereExpression}, w:V{Variable}  report contains(v  :-) <--{IsDefinitionOf} <--{IsVarOf}, w) end";
 		JValue result = evalTestQuery("PathSystemConstruction", queryString);
 		JValueBag bag = result.toCollection().toJValueBag();
 		assertEquals(5, bag.size());
 		int falseFound = 0;
 		for (JValue v : bag) {
-			if (v.toBoolean() == false)
+			if (v.toBoolean() == false) {
 				falseFound++;
+			}
 		}
 		assertEquals(1, falseFound);
 	}
@@ -104,9 +104,9 @@ public class PathSystemTest extends GenericTests {
 		int falseFound = 0;
 		for (JValue v : bag) {
 			int distance = v.toInteger();
-			if (distance > 0)
+			if (distance > 0) {
 				assertEquals(2, distance);
-			else {
+			} else {
 				assertEquals(-1, distance);
 				falseFound++;
 			}
@@ -122,10 +122,11 @@ public class PathSystemTest extends GenericTests {
 		assertEquals(5, bag.size());
 		int empty = 0;
 		for (JValue v : bag) {
-			if (v.toCollection().size() == 0)
+			if (v.toCollection().size() == 0) {
 				empty++;
-			else
+			} else {
 				assertEquals(1, v.toCollection().size());
+			}
 		}
 		assertEquals(1, empty);
 	}
@@ -138,10 +139,11 @@ public class PathSystemTest extends GenericTests {
 		assertEquals(5, bag.size());
 		int empty = 0;
 		for (JValue v : bag) {
-			if (v.toCollection().size() == 0)
+			if (v.toCollection().size() == 0) {
 				empty++;
-			else
+			} else {
 				assertEquals(1, v.toCollection().size());
+			}
 		}
 		assertEquals(1, empty);
 	}
@@ -158,17 +160,6 @@ public class PathSystemTest extends GenericTests {
 	}
 
 	@Test
-	public void testPathSystemEdgeTypeSet() throws Exception {
-		String queryString = "from v: V{WhereExpression}, w:V{Variable}  report edgeTypeSet(v  :-) <--{IsDefinitionOf} <--{IsVarOf}) end";
-		JValue result = evalTestQuery("PathSystemEdgeSet", queryString);
-		JValueBag bag = result.toCollection().toJValueBag();
-		assertEquals(5, bag.size());
-		for (JValue v : bag) {
-			assertEquals(2, v.toCollection().size());
-		}
-	}
-
-	@Test
 	public void testExtractPath() throws Exception {
 		String queryString = "from v: V{WhereExpression}, w:V{Variable}  report extractPath(v  :-) <--{IsDefinitionOf} <--{IsVarOf}, w) end";
 		JValue result = evalTestQuery("ExtractPath", queryString);
@@ -177,10 +168,11 @@ public class PathSystemTest extends GenericTests {
 		int invalidPaths = 0;
 		for (JValue v : bag) {
 			JValuePath p = v.toPath();
-			if (!p.isValidPath())
+			if (!p.isValidPath()) {
 				invalidPaths++;
-			else
+			} else {
 				assertEquals(3, p.pathLength());
+			}
 		}
 		assertEquals(1, invalidPaths);
 	}
@@ -204,50 +196,6 @@ public class PathSystemTest extends GenericTests {
 		assertEquals(5, bag.size());
 		for (JValue v : bag) {
 			assertEquals(4, v.toCollection().size());
-		}
-	}
-
-	@Test
-	public void testIsNeighbour() throws Exception {
-		String queryString = "from v: V{WhereExpression}, w:V{Variable}  report isNeighbour(v, w, v  :-) <--{IsDefinitionOf} <--{IsVarOf}) end";
-		JValue result = evalTestQuery("IsNeighbour", queryString);
-		JValueBag bag = result.toCollection().toJValueBag();
-		assertEquals(5, bag.size());
-		for (JValue v : bag) {
-			assertFalse(v.toBoolean());
-		}
-	}
-
-	@Test
-	public void testIsNeighbour2() throws Exception {
-		String queryString = "from v: V{WhereExpression}, w:V{Definition}  report isNeighbour(v, w, v  :-) <--{IsDefinitionOf} <--{IsVarOf}) end";
-		JValue result = evalTestQuery("IsNeighbour2", queryString);
-		JValueBag bag = result.toCollection().toJValueBag();
-		assertEquals(4, bag.size());
-		for (JValue v : bag) {
-			assertTrue(v.toBoolean());
-		}
-	}
-
-	@Test
-	public void testIsNeighbour3() throws Exception {
-		String queryString = "from v: V{WhereExpression}, w:V{BagComprehension}  report isNeighbour(v, w, v  :-) <--{IsDefinitionOf} <--{IsVarOf}) end";
-		JValue result = evalTestQuery("IsNeighbour3", queryString);
-		JValueBag bag = result.toCollection().toJValueBag();
-		assertEquals(1, bag.size());
-		for (JValue v : bag) {
-			assertFalse(v.toBoolean());
-		}
-	}
-
-	@Test
-	public void testIsSibling() throws Exception {
-		String queryString = "from v: V{WhereExpression}, w:V{Variable}  report isSibling(v, w, v  :-) <--{IsDefinitionOf} <--{IsVarOf}) end";
-		JValue result = evalTestQuery("IsSibling", queryString);
-		JValueBag bag = result.toCollection().toJValueBag();
-		assertEquals(5, bag.size());
-		for (JValue v : bag) {
-			assertFalse(v.toBoolean());
 		}
 	}
 
@@ -281,8 +229,9 @@ public class PathSystemTest extends GenericTests {
 		assertEquals(5, bag.size());
 		int invalid = 0;
 		for (JValue v : bag) {
-			if (!v.isValid())
+			if (!v.isValid()) {
 				invalid++;
+			}
 		}
 		assertEquals(1, invalid);
 	}
@@ -293,28 +242,20 @@ public class PathSystemTest extends GenericTests {
 		JValue result = evalTestQuery("Siblings", queryString);
 		JValueBag bag = result.toCollection().toJValueBag();
 		assertEquals(4, bag.size());
-		for (JValue v : bag)
-			assertEquals(3, (int) v.toCollection().size());
+		for (JValue v : bag) {
+			assertEquals(3, v.toCollection().size());
+		}
 	}
 
 	@Test
-	public void testTypeSet() throws Exception {
-		String queryString = "from v: V{WhereExpression} report typeSet(v  :-) <--{IsDefinitionOf} <--{IsVarOf}) end";
+	public void testTypes() throws Exception {
+		String queryString = "from v: V{WhereExpression} report types(v  :-) <--{IsDefinitionOf} <--{IsVarOf}) end";
 		JValue result = evalTestQuery("TypeSet", queryString);
 		JValueBag bag = result.toCollection().toJValueBag();
 		assertEquals(1, bag.size());
-		for (JValue v : bag)
-			assertEquals(5, (int) v.toCollection().size());
-	}
-
-	@Test
-	public void testVertexTypeSet() throws Exception {
-		String queryString = "from v: V{WhereExpression} report vertexTypeSet(v  :-) <--{IsDefinitionOf} <--{IsVarOf}) end";
-		JValue result = evalTestQuery("TypeSet", queryString);
-		JValueBag bag = result.toCollection().toJValueBag();
-		assertEquals(1, bag.size());
-		for (JValue v : bag)
-			assertEquals(3, (int) v.toCollection().size());
+		for (JValue v : bag) {
+			assertEquals(5, v.toCollection().size());
+		}
 	}
 
 	@Test
@@ -325,10 +266,11 @@ public class PathSystemTest extends GenericTests {
 		assertEquals(5, bag.size());
 		int nullPath = 0;
 		for (JValue v : bag) {
-			if (v.toInteger() == 0)
+			if (v.toInteger() == 0) {
 				nullPath++;
-			else
+			} else {
 				assertEquals(3, (int) v.toInteger());
+			}
 		}
 		assertEquals(1, nullPath);
 	}
@@ -352,10 +294,11 @@ public class PathSystemTest extends GenericTests {
 		assertEquals(5, bag.size());
 		int emptyTraces = 0;
 		for (JValue v : bag) {
-			if (v.toCollection().size() == 0)
+			if (v.toCollection().size() == 0) {
 				emptyTraces++;
-			else
+			} else {
 				assertEquals(3, v.toCollection().size());
+			}
 		}
 		assertEquals(1, emptyTraces);
 	}
@@ -368,10 +311,11 @@ public class PathSystemTest extends GenericTests {
 		assertEquals(5, bag.size());
 		int emptyTraces = 0;
 		for (JValue v : bag) {
-			if (v.toCollection().size() == 0)
+			if (v.toCollection().size() == 0) {
 				emptyTraces++;
-			else
+			} else {
 				assertEquals(2, v.toCollection().size());
+			}
 		}
 	}
 
@@ -383,8 +327,9 @@ public class PathSystemTest extends GenericTests {
 		assertEquals(20, bag.size());
 		int trueCounts = 0;
 		for (JValue v : bag) {
-			if (v.toBoolean())
+			if (v.toBoolean()) {
 				trueCounts++;
+			}
 		}
 		assertEquals(16, trueCounts);
 	}

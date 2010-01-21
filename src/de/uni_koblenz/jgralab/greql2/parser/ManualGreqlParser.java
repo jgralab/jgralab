@@ -861,7 +861,7 @@ public class ManualGreqlParser extends ManualParserHelper {
 		} else if (tryMatch(TokenTypes.MINUS)) {
 			construct.postOp("sub");
 			return construct.postArg2(parseAdditiveExpression());
-		} else if (tryMatch(TokenTypes.DEGREE)) {
+		} else if (tryMatch(TokenTypes.PLUSPLUS)) {
 			construct.postOp("concat");
 			return construct.postArg2(parseAdditiveExpression());
 		}
