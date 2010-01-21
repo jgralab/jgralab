@@ -321,7 +321,7 @@ public class PathSystemTest extends GenericTests {
 
 	@Test
 	public void testIsSubpath() throws Exception {
-		String queryString = "from v: V{WhereExpression}, w: V{Variable}, d: V{Definition} report isSubPathOfPath( extractPath(v  :-) <--{IsDefinitionOf}, d), extractPath(v  :-) <--{IsDefinitionOf} <--{IsVarOf}, w)) end";
+		String queryString = "from v: V{WhereExpression}, w: V{Variable}, d: V{Definition} report isSubPathOf( extractPath(v  :-) <--{IsDefinitionOf}, d), extractPath(v  :-) <--{IsDefinitionOf} <--{IsVarOf}, w)) end";
 		JValue result = evalTestQuery("PathLength", queryString);
 		JValueBag bag = result.toCollection().toJValueBag();
 		assertEquals(20, bag.size());
