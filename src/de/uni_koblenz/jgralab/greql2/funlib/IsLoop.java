@@ -50,7 +50,7 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
  * <dt><b>Parameters:</b></dt>
  * <dd><code>e</code> - edge to check</dd>
  * <dt><b>Returns:</b></dt>
- * <dd><code>true</code> if the start-vertex and the end-vertex is the same</dd>
+ * <dd><code>true</code> if the start-vertex and the end-vertex are the same</dd>
  * <dd><code>Null</code> if one of the given parameters is <code>Null</code></dd>
  * <dd><code>false</code> otherwise</dd>
  * </dl>

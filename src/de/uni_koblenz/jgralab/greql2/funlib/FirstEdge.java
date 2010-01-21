@@ -64,7 +64,7 @@ public class FirstEdge extends Greql2Function {
 				{ JValueType.TYPECOLLECTION, JValueType.EDGE } };
 		signatures = x;
 
-		description = "Returns the 1st edge (of optionally given type) in the graph.";
+		description = "Returns the first edge (of optionally given type) in the graph.";
 
 		Category[] c = { Category.GRAPH };
 		categories = c;

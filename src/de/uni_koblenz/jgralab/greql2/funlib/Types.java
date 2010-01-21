@@ -71,9 +71,9 @@ public class Types extends Greql2Function {
 
 		description = "Returns a set of all types known by the schema of the current graph.\n"
 				+ "The list is sortet in topological order (first superclasses, then\n"
-				+ "subclasses). First come the vertex classes, then the edge classes.\n"
-				+ "If a collection of graph elements, a path, or a path system is given,\n"
-				+ "it returns only the types of the contained graph elements.";
+				+ "subclasses). First comes the vertex classes and then the edge classes.\n"
+				+ "If a collection of graph elements, a path or a path system is given,\n"
+				+ "the types of the contained graph elements are returned.";
 
 		Category[] c = { Category.SCHEMA_ACCESS };
 		categories = c;

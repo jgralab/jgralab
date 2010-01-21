@@ -64,7 +64,7 @@ public class TypeName extends Greql2Function {
 		JValueType[][] x = { { JValueType.ATTRELEM, JValueType.STRING } };
 		signatures = x;
 
-		description = "Returns the qualified type name of the given attr elem.";
+		description = "Returns the qualified type name of the given AttrElem.";
 
 		Category[] c = { Category.SCHEMA_ACCESS };
 		categories = c;

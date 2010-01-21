@@ -91,10 +91,10 @@ public class Union extends Greql2Function {
 		signatures = x;
 
 		description = "Returns the union of the two given collections.\n"
-				+ "If 2 collections are given, both are converted to sets first.\n"
-				+ "In case of 2 maps, the third parameter says if the keys have to be\n"
+				+ "In case of collections, both are converted to sets first.\n"
+				+ "In case of maps, the third parameter tells if the keys have to be\n"
 				+ "disjoint.  If not, the 2nd map's entries override the 1st one's.\n"
-				+ "If only a collection of collections is given, the union of\n"
+				+ "in case of a collection of collections, the union of\n"
 				+ "all member collections is returned.";
 
 		Category[] c = { Category.COLLECTIONS_AND_MAPS };

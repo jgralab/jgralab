@@ -79,9 +79,10 @@ public class ReachableVertices extends Greql2Function {
 						JValueType.COLLECTION } };
 		signatures = x;
 
-		description = "Returns all vertices that are reachable from vertex with path description.";
+		description = "Returns all vertices that are reachable from vertex with a path description.";
 
-		Category[] c = { Category.GRAPH, Category.PATHS_AND_PATHSYSTEMS_AND_SLICES };
+		Category[] c = { Category.GRAPH,
+				Category.PATHS_AND_PATHSYSTEMS_AND_SLICES };
 		categories = c;
 	}
 

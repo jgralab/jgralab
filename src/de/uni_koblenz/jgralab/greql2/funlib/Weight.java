@@ -67,7 +67,7 @@ public class Weight extends Greql2Function {
 		signatures = x;
 
 		description = "Returns the weight of the given pathsystem.\n"
-				+ "The weight of a pathsystem is its the amount of vertices. If vertices occur\n"
+				+ "The weight of a pathsystem is its amount of vertices. If vertices occur\n"
 				+ "multiple times, they are counted multiple times as well.";
 
 		Category[] c = { Category.PATHS_AND_PATHSYSTEMS_AND_SLICES };

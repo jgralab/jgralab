@@ -67,8 +67,8 @@ public class Count extends Greql2Function {
 				{ JValueType.MAP, JValueType.INT } };
 		signatures = x;
 		description = "Returns the number of elements in the given object.\n"
-				+ "For a non-collection or map type, 1 is returned.\n"
-				+ "For a map the number of entries is returned.";
+				+ "For a map the number of entries is returned."
+				+ "Returns 1 iff no collection or map is given.\n";
 
 		Category[] c = { Category.COLLECTIONS_AND_MAPS };
 		categories = c;
