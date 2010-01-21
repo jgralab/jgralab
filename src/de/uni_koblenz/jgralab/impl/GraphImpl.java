@@ -314,7 +314,6 @@ public abstract class GraphImpl implements Graph {
 	}
 
 	protected void internalEdgeAdded(EdgeImpl e) {
-		edgeAdded(e);
 		notifyEdgeAdded(e);
 	}
 
@@ -389,7 +388,6 @@ public abstract class GraphImpl implements Graph {
 	}
 
 	protected void internalVertexAdded(VertexImpl v) {
-		vertexAdded(v);
 		notifyVertexAdded(v);
 	}
 
@@ -616,16 +614,6 @@ public abstract class GraphImpl implements Graph {
 		// vertexListModified();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * de.uni_koblenz.jgralab.Graph#edgeDeleted(de.uni_koblenz.jgralab.Edge)
-	 */
-	@Override
-	public void edgeDeleted(Edge e) {
-	}
-
 	/**
 	 * Callback function for triggered actions just after the edge
 	 * <code>e</code> was deleted from this Graph. Override this method to
@@ -642,15 +630,6 @@ public abstract class GraphImpl implements Graph {
 	 *            the omega-vertex before deletion
 	 */
 	protected void edgeAfterDeleted(Edge e, Vertex oldAlpha, Vertex oldOmega) {
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see de.uni_koblenz.jgralab.Graph#edgeAdded(de.uni_koblenz.jgralab.Edge)
-	 */
-	@Override
-	public void edgeAdded(Edge e) {
 	}
 
 	/**
@@ -1058,7 +1037,6 @@ public abstract class GraphImpl implements Graph {
 	}
 
 	protected void internalEdgeDeleted(EdgeImpl e) {
-		edgeDeleted(e);
 		notifyEdgeDeleted(e);
 	}
 
@@ -1119,7 +1097,6 @@ public abstract class GraphImpl implements Graph {
 	}
 
 	protected void internalVertexDeleted(VertexImpl v) {
-		vertexDeleted(v);
 		notifyVertexDeleted(v);
 	}
 
@@ -1514,16 +1491,6 @@ public abstract class GraphImpl implements Graph {
 		loading = isLoading;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * de.uni_koblenz.jgralab.Graph#vertexDeleted(de.uni_koblenz.jgralab.Vertex)
-	 */
-	@Override
-	public void vertexDeleted(Vertex v) {
-	}
-
 	/**
 	 * Callback function for triggered actions just after the vertex
 	 * <code>v</code> was deleted from this Graph. Override this method to
@@ -1535,15 +1502,6 @@ public abstract class GraphImpl implements Graph {
 	 */
 	abstract protected void vertexAfterDeleted(Vertex v);
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * de.uni_koblenz.jgralab.Graph#vertexAdded(de.uni_koblenz.jgralab.Vertex)
-	 */
-	@Override
-	public void vertexAdded(Vertex v) {
-	}
 
 	/**
 	 * Changes the vertex sequence version of this graph. Should be called

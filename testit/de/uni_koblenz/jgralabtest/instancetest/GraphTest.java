@@ -2110,401 +2110,401 @@ public class GraphTest extends InstanceTest {
 		commit(g1);
 	}
 
-	private static interface VertexTestGraphTest {
-
-		public List<Vertex> getDeletedVertices();
-
-		public void resetDeletedVertices();
-
-		public List<Vertex> getAddedVertices();
-
-		public void resetAddedVertices();
-
-		public List<Edge> getDeletedEdges();
-
-		public void resetDeletedEdges();
-
-		public List<Edge> getAddedEdges();
-
-		public void resetAddedEdges();
-	}
-
-	private static class VertexTestGraphImplDelegator {
-		private List<Vertex> deletedVertices;
-		private List<Vertex> addedVertices;
-		private List<Edge> deletedEdges;
-		private List<Edge> addedEdges;
-		private VertexTestGraph g;
-
-		public VertexTestGraphImplDelegator(VertexTestGraph g) {
-			this.g = g;
-			deletedVertices = new ArrayList<Vertex>();
-			addedVertices = new ArrayList<Vertex>();
-			deletedEdges = new ArrayList<Edge>();
-			addedEdges = new ArrayList<Edge>();
-		}
-
-		public void edgeAdded(Edge e) {
-			addedEdges.add(e);
-			// test if Edge has already been added at this point
-			assertTrue(g.containsEdge(e));
-		}
-
-		public void edgeDeleted(Edge e) {
-			deletedEdges.add(e);
-			// test if Edge has not been deleted yet
-			assertTrue(g.containsEdge(e));
-		}
-
-		public void vertexAdded(Vertex v) {
-			addedVertices.add(v);
-			// test if Vertex has already been added at this point
-			assertTrue(g.containsVertex(v));
-		}
-
-		public void vertexDeleted(Vertex v) {
-			deletedVertices.add(v);
-			// test if Vertex has not been deleted yet
-			assertTrue(g.containsVertex(v));
-		}
-
-		public List<Vertex> getDeletedVertices() {
-			return deletedVertices;
-		}
-
-		public void resetDeletedVertices() {
-			deletedVertices.clear();
-		}
-
-		public List<Vertex> getAddedVertices() {
-			return addedVertices;
-		}
-
-		public void resetAddedVertices() {
-			addedVertices.clear();
-		}
-
-		public List<Edge> getDeletedEdges() {
-			return deletedEdges;
-		}
-
-		public void resetDeletedEdges() {
-			deletedEdges.clear();
-		}
-
-		public List<Edge> getAddedEdges() {
-			return addedEdges;
-		}
-
-		public void resetAddedEdges() {
-			addedEdges.clear();
-		}
-
-	}
-
-	public static class VertexTestGraphImplTest
-			extends
-			de.uni_koblenz.jgralabtest.schemas.vertextest.impl.std.VertexTestGraphImpl
-			implements VertexTestGraphTest {
-
-		private VertexTestGraphImplDelegator delegator;
-
-		public VertexTestGraphImplTest() {
-			super();
-			createDelegator();
-		}
-
-		public VertexTestGraphImplTest(int vMax, int eMax) {
-			super(vMax, eMax);
-			createDelegator();
-		}
-
-		public VertexTestGraphImplTest(String id, int vMax, int eMax) {
-			super(id, vMax, eMax);
-			createDelegator();
-		}
-
-		public VertexTestGraphImplTest(String id) {
-			super(id);
-			createDelegator();
-		}
-
-		private void createDelegator() {
-			delegator = new VertexTestGraphImplDelegator(this);
-		}
-
-		@Override
-		public void edgeAdded(Edge e) {
-			delegator.edgeAdded(e);
-		}
-
-		@Override
-		public void edgeDeleted(Edge e) {
-			delegator.edgeDeleted(e);
-		}
-
-		@Override
-		public void vertexAdded(Vertex v) {
-			delegator.vertexAdded(v);
-		}
-
-		@Override
-		public void vertexDeleted(Vertex v) {
-			delegator.vertexDeleted(v);
-		}
-
-		@Override
-		public List<Edge> getAddedEdges() {
-			return delegator.getAddedEdges();
-		}
-
-		@Override
-		public List<Vertex> getAddedVertices() {
-			return delegator.getAddedVertices();
-		}
-
-		@Override
-		public List<Edge> getDeletedEdges() {
-			return delegator.getDeletedEdges();
-		}
-
-		@Override
-		public List<Vertex> getDeletedVertices() {
-			return delegator.getDeletedVertices();
-		}
-
-		@Override
-		public void resetAddedEdges() {
-			delegator.resetAddedEdges();
-		}
-
-		@Override
-		public void resetAddedVertices() {
-			delegator.resetAddedVertices();
-		}
-
-		@Override
-		public void resetDeletedEdges() {
-			delegator.resetDeletedEdges();
-		}
-
-		@Override
-		public void resetDeletedVertices() {
-			delegator.resetDeletedVertices();
-
-		}
-
-	}
-
-	public static class VertexTestGraphImplTestWithTransactionSupport
-			extends
-			de.uni_koblenz.jgralabtest.schemas.vertextest.impl.trans.VertexTestGraphImpl
-			implements VertexTestGraphTest {
-
-		private VertexTestGraphImplDelegator delegator;
-
-		public VertexTestGraphImplTestWithTransactionSupport() {
-			super();
-			createDelegator();
-		}
-
-		public VertexTestGraphImplTestWithTransactionSupport(int vMax, int eMax) {
-			super(vMax, eMax);
-			createDelegator();
-		}
-
-		public VertexTestGraphImplTestWithTransactionSupport(String id,
-				int vMax, int eMax) {
-			super(id, vMax, eMax);
-			createDelegator();
-		}
-
-		public VertexTestGraphImplTestWithTransactionSupport(String id) {
-			super(id);
-			createDelegator();
-		}
-
-		private void createDelegator() {
-			delegator = new VertexTestGraphImplDelegator(this);
-		}
-
-		@Override
-		public void edgeAdded(Edge e) {
-			delegator.edgeAdded(e);
-		}
-
-		@Override
-		public void edgeDeleted(Edge e) {
-			delegator.edgeDeleted(e);
-		}
-
-		@Override
-		public void vertexAdded(Vertex v) {
-			delegator.vertexAdded(v);
-		}
-
-		@Override
-		public void vertexDeleted(Vertex v) {
-			delegator.vertexDeleted(v);
-		}
-
-		@Override
-		public List<Edge> getAddedEdges() {
-			return delegator.getAddedEdges();
-		}
-
-		@Override
-		public List<Vertex> getAddedVertices() {
-			return delegator.getAddedVertices();
-		}
-
-		@Override
-		public List<Edge> getDeletedEdges() {
-			return delegator.getDeletedEdges();
-		}
-
-		@Override
-		public List<Vertex> getDeletedVertices() {
-			return delegator.getDeletedVertices();
-		}
-
-		@Override
-		public void resetAddedEdges() {
-			delegator.resetAddedEdges();
-		}
-
-		@Override
-		public void resetAddedVertices() {
-			delegator.resetAddedVertices();
-		}
-
-		@Override
-		public void resetDeletedEdges() {
-			delegator.resetDeletedEdges();
-		}
-
-		@Override
-		public void resetDeletedVertices() {
-			delegator.resetDeletedVertices();
-
-		}
-	}
-
-	@Test
-	public void testVertexDeleted() throws CommitFailedException {
-
-		// set new class for GraphFactory
-		setTestGraphClasses();
-
-		VertexTestGraph g = transactionsEnabled ? VertexTestSchema.instance()
-				.createVertexTestGraphWithTransactionSupport()
-				: VertexTestSchema.instance().createVertexTestGraph();
-		// create a simple graph
-		createTransaction(g);
-		SubNode v1 = g.createSubNode();
-		SuperNode v2 = g.createSuperNode();
-		DoubleSubNode v3 = g.createDoubleSubNode();
-		SuperNode v4 = g.createSuperNode();
-
-		g.createLink(v1, v2);
-		g.createLinkBack(v2, v1);
-		g.createSubLink(v3, v4);
-		g.createLinkBack(v4, v1);
-		commit(g);
-
-		// reset list of deleted vertices
-		((VertexTestGraphTest) g).resetDeletedVertices();
-
-		// delete v1
-		createTransaction(g);
-		g.deleteVertex(v1);
-		commit(g);
-
-		// obtain list of deleted vertices
-		List<Vertex> deletedVertices = ((VertexTestGraphTest) g)
-				.getDeletedVertices();
-
-		// test if vertexDeleted was invoked only once
-		assertEquals(1, deletedVertices.size());
-		// test if the correct vertex was affected
-		assertTrue(v1 == deletedVertices.get(0));
-		((VertexTestGraphTest) g).resetDeletedVertices();
-
-		// delete vertex v3 and check if method is also called for implicitly
-		// deleted vertex v4
-		createTransaction(g);
-		g.deleteVertex(v3);
-		commit(g);
-
-		// obtain list of affected graph elements
-		deletedVertices = ((VertexTestGraphTest) g).getDeletedVertices();
-
-		// test if vertexDeleted was invoked twice
-		assertEquals(2, deletedVertices.size());
-		// test if the two correct vertices were affected and the methods were
-		// called in the correct order.
-		assertTrue(v3 == deletedVertices.get(0));
-		assertTrue(v4 == deletedVertices.get(1));
-
-		// reset implementation class for graph factory
-		resetGraphClasses();
-
-		System.out.println("Done testing vertexDeleted.");
-	}
-
-	private void resetGraphClasses() {
-		VertexTestSchema
-				.instance()
-				.getGraphFactory()
-				.setGraphImplementationClass(
-						VertexTestGraph.class,
-						de.uni_koblenz.jgralabtest.schemas.vertextest.impl.std.VertexTestGraphImpl.class);
-		VertexTestSchema
-				.instance()
-				.getGraphFactory()
-				.setGraphTransactionImplementationClass(
-						VertexTestGraph.class,
-						de.uni_koblenz.jgralabtest.schemas.vertextest.impl.trans.VertexTestGraphImpl.class);
-
-	}
-
-	private void setTestGraphClasses() {
-		VertexTestSchema.instance().getGraphFactory()
-				.setGraphImplementationClass(VertexTestGraph.class,
-						VertexTestGraphImplTest.class);
-		VertexTestSchema.instance().getGraphFactory()
-				.setGraphTransactionImplementationClass(VertexTestGraph.class,
-						VertexTestGraphImplTestWithTransactionSupport.class);
-	}
-
-	@Test
-	public void testVertexAdded() throws CommitFailedException {
-		setTestGraphClasses();
-
-		VertexTestGraph g = transactionsEnabled ? VertexTestSchema.instance()
-				.createVertexTestGraphWithTransactionSupport()
-				: VertexTestSchema.instance().createVertexTestGraph();
-
-		((VertexTestGraphTest) g).resetAddedVertices();
-
-		// create a vertex
-		createTransaction(g);
-		SubNode v1 = g.createSubNode();
-		commit(g);
-
-		// obtain list of added vertices
-		List<Vertex> addedVertices = ((VertexTestGraphTest) g)
-				.getAddedVertices();
-
-		// test if method was invoked exactly once
-		assertEquals(1, addedVertices.size());
-		// test if the correct vertex was affected
-		assertTrue(v1 == addedVertices.get(0));
-
-		resetGraphClasses();
-
-		System.out.println("Done testing vertexAdded.");
-	}
+//	private static interface VertexTestGraphTest {
+//
+//		public List<Vertex> getDeletedVertices();
+//
+//		public void resetDeletedVertices();
+//
+//		public List<Vertex> getAddedVertices();
+//
+//		public void resetAddedVertices();
+//
+//		public List<Edge> getDeletedEdges();
+//
+//		public void resetDeletedEdges();
+//
+//		public List<Edge> getAddedEdges();
+//
+//		public void resetAddedEdges();
+//	}
+
+//	private static class VertexTestGraphImplDelegator {
+//		private final List<Vertex> deletedVertices;
+//		private final List<Vertex> addedVertices;
+//		private final List<Edge> deletedEdges;
+//		private final List<Edge> addedEdges;
+//		private final VertexTestGraph g;
+//
+//		public VertexTestGraphImplDelegator(VertexTestGraph g) {
+//			this.g = g;
+//			deletedVertices = new ArrayList<Vertex>();
+//			addedVertices = new ArrayList<Vertex>();
+//			deletedEdges = new ArrayList<Edge>();
+//			addedEdges = new ArrayList<Edge>();
+//		}
+//
+//		public void edgeAdded(Edge e) {
+//			addedEdges.add(e);
+//			// test if Edge has already been added at this point
+//			assertTrue(g.containsEdge(e));
+//		}
+//
+//		public void edgeDeleted(Edge e) {
+//			deletedEdges.add(e);
+//			// test if Edge has not been deleted yet
+//			assertTrue(g.containsEdge(e));
+//		}
+//
+//		public void vertexAdded(Vertex v) {
+//			addedVertices.add(v);
+//			// test if Vertex has already been added at this point
+//			assertTrue(g.containsVertex(v));
+//		}
+//
+//		public void vertexDeleted(Vertex v) {
+//			deletedVertices.add(v);
+//			// test if Vertex has not been deleted yet
+//			assertTrue(g.containsVertex(v));
+//		}
+//
+//		public List<Vertex> getDeletedVertices() {
+//			return deletedVertices;
+//		}
+//
+//		public void resetDeletedVertices() {
+//			deletedVertices.clear();
+//		}
+//
+//		public List<Vertex> getAddedVertices() {
+//			return addedVertices;
+//		}
+//
+//		public void resetAddedVertices() {
+//			addedVertices.clear();
+//		}
+//
+//		public List<Edge> getDeletedEdges() {
+//			return deletedEdges;
+//		}
+//
+//		public void resetDeletedEdges() {
+//			deletedEdges.clear();
+//		}
+//
+//		public List<Edge> getAddedEdges() {
+//			return addedEdges;
+//		}
+//
+//		public void resetAddedEdges() {
+//			addedEdges.clear();
+//		}
+//
+//	}
+
+//	public static class VertexTestGraphImplTest
+//			extends
+//			de.uni_koblenz.jgralabtest.schemas.vertextest.impl.std.VertexTestGraphImpl
+//			implements VertexTestGraphTest {
+//
+//		private VertexTestGraphImplDelegator delegator;
+//
+//		public VertexTestGraphImplTest() {
+//			super();
+//			createDelegator();
+//		}
+//
+//		public VertexTestGraphImplTest(int vMax, int eMax) {
+//			super(vMax, eMax);
+//			createDelegator();
+//		}
+//
+//		public VertexTestGraphImplTest(String id, int vMax, int eMax) {
+//			super(id, vMax, eMax);
+//			createDelegator();
+//		}
+//
+//		public VertexTestGraphImplTest(String id) {
+//			super(id);
+//			createDelegator();
+//		}
+//
+//		private void createDelegator() {
+//			delegator = new VertexTestGraphImplDelegator(this);
+//		}
+//
+//		@Override
+//		public void edgeAdded(Edge e) {
+//			delegator.edgeAdded(e);
+//		}
+//
+//		@Override
+//		public void edgeDeleted(Edge e) {
+//			delegator.edgeDeleted(e);
+//		}
+//
+//		@Override
+//		public void vertexAdded(Vertex v) {
+//			delegator.vertexAdded(v);
+//		}
+//
+//		@Override
+//		public void vertexDeleted(Vertex v) {
+//			delegator.vertexDeleted(v);
+//		}
+//
+//		@Override
+//		public List<Edge> getAddedEdges() {
+//			return delegator.getAddedEdges();
+//		}
+//
+//		@Override
+//		public List<Vertex> getAddedVertices() {
+//			return delegator.getAddedVertices();
+//		}
+//
+//		@Override
+//		public List<Edge> getDeletedEdges() {
+//			return delegator.getDeletedEdges();
+//		}
+//
+//		@Override
+//		public List<Vertex> getDeletedVertices() {
+//			return delegator.getDeletedVertices();
+//		}
+//
+//		@Override
+//		public void resetAddedEdges() {
+//			delegator.resetAddedEdges();
+//		}
+//
+//		@Override
+//		public void resetAddedVertices() {
+//			delegator.resetAddedVertices();
+//		}
+//
+//		@Override
+//		public void resetDeletedEdges() {
+//			delegator.resetDeletedEdges();
+//		}
+//
+//		@Override
+//		public void resetDeletedVertices() {
+//			delegator.resetDeletedVertices();
+//
+//		}
+//
+//	}
+//
+//	public static class VertexTestGraphImplTestWithTransactionSupport
+//			extends
+//			de.uni_koblenz.jgralabtest.schemas.vertextest.impl.trans.VertexTestGraphImpl
+//			implements VertexTestGraphTest {
+//
+//		private VertexTestGraphImplDelegator delegator;
+//
+//		public VertexTestGraphImplTestWithTransactionSupport() {
+//			super();
+//			createDelegator();
+//		}
+//
+//		public VertexTestGraphImplTestWithTransactionSupport(int vMax, int eMax) {
+//			super(vMax, eMax);
+//			createDelegator();
+//		}
+//
+//		public VertexTestGraphImplTestWithTransactionSupport(String id,
+//				int vMax, int eMax) {
+//			super(id, vMax, eMax);
+//			createDelegator();
+//		}
+//
+//		public VertexTestGraphImplTestWithTransactionSupport(String id) {
+//			super(id);
+//			createDelegator();
+//		}
+//
+//		private void createDelegator() {
+//			delegator = new VertexTestGraphImplDelegator(this);
+//		}
+//
+//		@Override
+//		public void edgeAdded(Edge e) {
+//			delegator.edgeAdded(e);
+//		}
+//
+//		@Override
+//		public void edgeDeleted(Edge e) {
+//			delegator.edgeDeleted(e);
+//		}
+//
+//		@Override
+//		public void vertexAdded(Vertex v) {
+//			delegator.vertexAdded(v);
+//		}
+//
+//		@Override
+//		public void vertexDeleted(Vertex v) {
+//			delegator.vertexDeleted(v);
+//		}
+//
+//		@Override
+//		public List<Edge> getAddedEdges() {
+//			return delegator.getAddedEdges();
+//		}
+//
+//		@Override
+//		public List<Vertex> getAddedVertices() {
+//			return delegator.getAddedVertices();
+//		}
+//
+//		@Override
+//		public List<Edge> getDeletedEdges() {
+//			return delegator.getDeletedEdges();
+//		}
+//
+//		@Override
+//		public List<Vertex> getDeletedVertices() {
+//			return delegator.getDeletedVertices();
+//		}
+//
+//		@Override
+//		public void resetAddedEdges() {
+//			delegator.resetAddedEdges();
+//		}
+//
+//		@Override
+//		public void resetAddedVertices() {
+//			delegator.resetAddedVertices();
+//		}
+//
+//		@Override
+//		public void resetDeletedEdges() {
+//			delegator.resetDeletedEdges();
+//		}
+//
+//		@Override
+//		public void resetDeletedVertices() {
+//			delegator.resetDeletedVertices();
+//
+//		}
+//	}
+
+//	@Test
+//	public void testVertexDeleted() throws CommitFailedException {
+//
+//		// set new class for GraphFactory
+//		setTestGraphClasses();
+//
+//		VertexTestGraph g = transactionsEnabled ? VertexTestSchema.instance()
+//				.createVertexTestGraphWithTransactionSupport()
+//				: VertexTestSchema.instance().createVertexTestGraph();
+//		// create a simple graph
+//		createTransaction(g);
+//		SubNode v1 = g.createSubNode();
+//		SuperNode v2 = g.createSuperNode();
+//		DoubleSubNode v3 = g.createDoubleSubNode();
+//		SuperNode v4 = g.createSuperNode();
+//
+//		g.createLink(v1, v2);
+//		g.createLinkBack(v2, v1);
+//		g.createSubLink(v3, v4);
+//		g.createLinkBack(v4, v1);
+//		commit(g);
+//
+//		// reset list of deleted vertices
+//		((VertexTestGraphTest) g).resetDeletedVertices();
+//
+//		// delete v1
+//		createTransaction(g);
+//		g.deleteVertex(v1);
+//		commit(g);
+//
+//		// obtain list of deleted vertices
+//		List<Vertex> deletedVertices = ((VertexTestGraphTest) g)
+//				.getDeletedVertices();
+//
+//		// test if vertexDeleted was invoked only once
+//		assertEquals(1, deletedVertices.size());
+//		// test if the correct vertex was affected
+//		assertTrue(v1 == deletedVertices.get(0));
+//		((VertexTestGraphTest) g).resetDeletedVertices();
+//
+//		// delete vertex v3 and check if method is also called for implicitly
+//		// deleted vertex v4
+//		createTransaction(g);
+//		g.deleteVertex(v3);
+//		commit(g);
+//
+//		// obtain list of affected graph elements
+//		deletedVertices = ((VertexTestGraphTest) g).getDeletedVertices();
+//
+//		// test if vertexDeleted was invoked twice
+//		assertEquals(2, deletedVertices.size());
+//		// test if the two correct vertices were affected and the methods were
+//		// called in the correct order.
+//		assertTrue(v3 == deletedVertices.get(0));
+//		assertTrue(v4 == deletedVertices.get(1));
+//
+//		// reset implementation class for graph factory
+//		resetGraphClasses();
+//
+//		System.out.println("Done testing vertexDeleted.");
+//	}
+
+//	private void resetGraphClasses() {
+//		VertexTestSchema
+//				.instance()
+//				.getGraphFactory()
+//				.setGraphImplementationClass(
+//						VertexTestGraph.class,
+//						de.uni_koblenz.jgralabtest.schemas.vertextest.impl.std.VertexTestGraphImpl.class);
+//		VertexTestSchema
+//				.instance()
+//				.getGraphFactory()
+//				.setGraphTransactionImplementationClass(
+//						VertexTestGraph.class,
+//						de.uni_koblenz.jgralabtest.schemas.vertextest.impl.trans.VertexTestGraphImpl.class);
+//
+//	}
+
+//	private void setTestGraphClasses() {
+//		VertexTestSchema.instance().getGraphFactory()
+//				.setGraphImplementationClass(VertexTestGraph.class,
+//						VertexTestGraphImplTest.class);
+//		VertexTestSchema.instance().getGraphFactory()
+//				.setGraphTransactionImplementationClass(VertexTestGraph.class,
+//						VertexTestGraphImplTestWithTransactionSupport.class);
+//	}
+
+//	@Test
+//	public void testVertexAdded() throws CommitFailedException {
+//		setTestGraphClasses();
+//
+//		VertexTestGraph g = transactionsEnabled ? VertexTestSchema.instance()
+//				.createVertexTestGraphWithTransactionSupport()
+//				: VertexTestSchema.instance().createVertexTestGraph();
+//
+//		((VertexTestGraphTest) g).resetAddedVertices();
+//
+//		// create a vertex
+//		createTransaction(g);
+//		SubNode v1 = g.createSubNode();
+//		commit(g);
+//
+//		// obtain list of added vertices
+//		List<Vertex> addedVertices = ((VertexTestGraphTest) g)
+//				.getAddedVertices();
+//
+//		// test if method was invoked exactly once
+//		assertEquals(1, addedVertices.size());
+//		// test if the correct vertex was affected
+//		assertTrue(v1 == addedVertices.get(0));
+//
+//		resetGraphClasses();
+//
+//		System.out.println("Done testing vertexAdded.");
+//	}
 
 	@Test
 	public void testDeleteEdge() throws CommitFailedException {
@@ -2707,75 +2707,75 @@ public class GraphTest extends InstanceTest {
 		System.out.println("Done testing deleteEdge.");
 	}
 
-	@Test
-	public void testEdgeDeleted() throws CommitFailedException {
-		// set new class for GraphFactory
-		setTestGraphClasses();
+//	@Test
+//	public void testEdgeDeleted() throws CommitFailedException {
+//		// set new class for GraphFactory
+//		setTestGraphClasses();
+//
+//		VertexTestGraph g = transactionsEnabled ? VertexTestSchema.instance()
+//				.createVertexTestGraphWithTransactionSupport()
+//				: VertexTestSchema.instance().createVertexTestGraph();
+//		// create a simple graph
+//		createTransaction(g);
+//		SubNode v1 = g.createSubNode();
+//		SuperNode v2 = g.createSuperNode();
+//
+//		Link e1 = g.createLink(v1, v2);
+//
+//		commit(g);
+//
+//		// reset list of deleted edges
+//		((VertexTestGraphTest) g).resetDeletedEdges();
+//
+//		// delete e1
+//		createTransaction(g);
+//		g.deleteEdge(e1);
+//		commit(g);
+//
+//		// obtain list of deleted edges
+//		List<Edge> deletedEdges = ((VertexTestGraphTest) g).getDeletedEdges();
+//
+//		// test if edgeDeleted was invoked only once
+//		assertEquals(1, deletedEdges.size());
+//		// test if the correct vertex was affected
+//		assertTrue(e1 == deletedEdges.get(0));
+//		((VertexTestGraphTest) g).resetDeletedVertices();
+//
+//		// reset implementation class for graph factory
+//		resetGraphClasses();
+//
+//		System.out.println("Done testing edgeDeleted.");
+//	}
 
-		VertexTestGraph g = transactionsEnabled ? VertexTestSchema.instance()
-				.createVertexTestGraphWithTransactionSupport()
-				: VertexTestSchema.instance().createVertexTestGraph();
-		// create a simple graph
-		createTransaction(g);
-		SubNode v1 = g.createSubNode();
-		SuperNode v2 = g.createSuperNode();
-
-		Link e1 = g.createLink(v1, v2);
-
-		commit(g);
-
-		// reset list of deleted edges
-		((VertexTestGraphTest) g).resetDeletedEdges();
-
-		// delete e1
-		createTransaction(g);
-		g.deleteEdge(e1);
-		commit(g);
-
-		// obtain list of deleted edges
-		List<Edge> deletedEdges = ((VertexTestGraphTest) g).getDeletedEdges();
-
-		// test if edgeDeleted was invoked only once
-		assertEquals(1, deletedEdges.size());
-		// test if the correct vertex was affected
-		assertTrue(e1 == deletedEdges.get(0));
-		((VertexTestGraphTest) g).resetDeletedVertices();
-
-		// reset implementation class for graph factory
-		resetGraphClasses();
-
-		System.out.println("Done testing edgeDeleted.");
-	}
-
-	@Test
-	public void testEdgeAdded() throws CommitFailedException {
-		setTestGraphClasses();
-
-		VertexTestGraph g = transactionsEnabled ? VertexTestSchema.instance()
-				.createVertexTestGraphWithTransactionSupport()
-				: VertexTestSchema.instance().createVertexTestGraph();
-
-		((VertexTestGraphTest) g).resetAddedEdges();
-
-		// create a simple graph
-		createTransaction(g);
-		SubNode v1 = g.createSubNode();
-		SuperNode v2 = g.createSuperNode();
-
-		Link e1 = g.createLink(v1, v2);
-
-		commit(g);
-
-		// obtain list of added edges
-		List<Edge> addedEdges = ((VertexTestGraphTest) g).getAddedEdges();
-
-		// test if method was invoked exactly once
-		assertEquals(1, addedEdges.size());
-		// test if the correct vertex was affected
-		assertTrue(e1 == addedEdges.get(0));
-
-		resetGraphClasses();
-	}
+//	@Test
+//	public void testEdgeAdded() throws CommitFailedException {
+//		setTestGraphClasses();
+//
+//		VertexTestGraph g = transactionsEnabled ? VertexTestSchema.instance()
+//				.createVertexTestGraphWithTransactionSupport()
+//				: VertexTestSchema.instance().createVertexTestGraph();
+//
+//		((VertexTestGraphTest) g).resetAddedEdges();
+//
+//		// create a simple graph
+//		createTransaction(g);
+//		SubNode v1 = g.createSubNode();
+//		SuperNode v2 = g.createSuperNode();
+//
+//		Link e1 = g.createLink(v1, v2);
+//
+//		commit(g);
+//
+//		// obtain list of added edges
+//		List<Edge> addedEdges = ((VertexTestGraphTest) g).getAddedEdges();
+//
+//		// test if method was invoked exactly once
+//		assertEquals(1, addedEdges.size());
+//		// test if the correct vertex was affected
+//		assertTrue(e1 == addedEdges.get(0));
+//
+//		resetGraphClasses();
+//	}
 
 	@Test
 	public void testGetFirstVertex() throws CommitFailedException {

@@ -165,28 +165,6 @@ public interface Graph extends AttributedElement {
 	public void deleteVertex(Vertex v);
 
 	/**
-	 * Callback function triggered just before the vertex <code>v</code> is
-	 * actually deleted from this Graph. Override this method to implement
-	 * user-defined behaviour upon deletion of vertices. Note that any changes
-	 * to this graph are forbidden.
-	 * 
-	 * @param v
-	 *            the deleted vertex
-	 */
-	public void vertexDeleted(Vertex v);
-
-	/**
-	 * Callback function for triggered actions just after the vertex
-	 * <code>v</code> was added to this Graph. Override this method to implement
-	 * user-defined behaviour upon addition of vertices. Note that any changes
-	 * to this graph are forbidden.
-	 * 
-	 * @param v
-	 *            the added vertex
-	 */
-	public void vertexAdded(Vertex v);
-
-	/**
 	 * Removes the edge <code>e</code> from the edge sequence of this graph.
 	 * This implies changes to the incidence lists of the alpha and omega vertex
 	 * of <code>e</code>.
@@ -200,28 +178,6 @@ public interface Graph extends AttributedElement {
 	 *            the Edge to be deleted
 	 */
 	public void deleteEdge(Edge e);
-
-	/**
-	 * Callback function triggered just before the edge <code>e</code> is
-	 * actually deleted from this Graph. Override this method to implement
-	 * user-defined behaviour upon deletion of edges. Note that any changes to
-	 * this graph are forbidden.
-	 * 
-	 * @param e
-	 *            the deleted Edge
-	 */
-	public void edgeDeleted(Edge e);
-
-	/**
-	 * Callback function for triggered actions just after the edge
-	 * <code>e</code> was added to this Graph. Override this method to implement
-	 * user-defined behaviour upon addition of edges. Note that any changes to
-	 * this graph are forbidden.
-	 * 
-	 * @param e
-	 *            the added Edge
-	 */
-	public void edgeAdded(Edge e);
 
 	/**
 	 * Returns the first Vertex in the vertex sequence of this Graph.
