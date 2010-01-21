@@ -66,11 +66,11 @@ import de.uni_koblenz.jgralab.schema.AttributedElementClass;
 public class AttributeNames extends Greql2Function {
 
 	{
-		JValueType[][] x = { { JValueType.ATTRELEM },
-				{ JValueType.ATTRELEMCLASS } };
+		JValueType[][] x = { { JValueType.ATTRELEM, JValueType.COLLECTION },
+				{ JValueType.ATTRELEMCLASS, JValueType.COLLECTION } };
 		signatures = x;
 
-		description = "Returns true iff the given element or class has an attribute with the given name.";
+		description = "Returns the set of attribute names of the given elem or class.";
 
 		Category[] c = { Category.SCHEMA_ACCESS };
 		categories = c;
