@@ -1689,23 +1689,23 @@ public abstract class GraphImpl extends de.uni_koblenz.jgralab.impl.GraphImpl {
 	}
 
 	@Override
-	public void register(GraphStructureChangedListener newListener) {
+	public void addGraphStructureChangedListener(GraphStructureChangedListener newListener) {
 		synchronized (graphStructureChangedListeners) {
-			super.register(newListener);
+			super.addGraphStructureChangedListener(newListener);
 		}
 	}
 
 	@Override
-	public void unregister(GraphStructureChangedListener listener) {
+	public void removeGraphStructureChangedListener(GraphStructureChangedListener listener) {
 		synchronized (graphStructureChangedListeners) {
-			super.unregister(listener);
+			super.removeGraphStructureChangedListener(listener);
 		}
 	}
 
 	@Override
-	public void unregisterAll() {
+	public void removeAllGraphStructureChangedListeners() {
 		synchronized (graphStructureChangedListeners) {
-			super.unregisterAll();
+			super.removeAllGraphStructureChangedListeners();
 		}
 	}
 

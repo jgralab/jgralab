@@ -63,7 +63,7 @@ public class GraphStructureChangedListenerTest extends InstanceTest {
 			}
 		};
 
-		g.register(listener);
+		g.addGraphStructureChangedListener(listener);
 
 		createTransaction(g);
 		g.createNode();
@@ -83,7 +83,7 @@ public class GraphStructureChangedListenerTest extends InstanceTest {
 						v.isValid() && v.getGraph() == g);
 			}
 		};
-		g.register(listener);
+		g.addGraphStructureChangedListener(listener);
 
 		createTransaction(g);
 		Node n = g.createNode();
@@ -109,7 +109,7 @@ public class GraphStructureChangedListenerTest extends InstanceTest {
 						&& e.getGraph() == g);
 			}
 		};
-		g.register(listener);
+		g.addGraphStructureChangedListener(listener);
 
 		assertFalse("The trigger has not been resetted", trigger);
 
@@ -133,7 +133,7 @@ public class GraphStructureChangedListenerTest extends InstanceTest {
 						&& e.getGraph() == g);
 			}
 		};
-		g.register(listener);
+		g.addGraphStructureChangedListener(listener);
 
 		createTransaction(g);
 		Node n1 = g.createNode();
@@ -163,7 +163,7 @@ public class GraphStructureChangedListenerTest extends InstanceTest {
 			}
 
 		};
-		g.register(listener);
+		g.addGraphStructureChangedListener(listener);
 
 		assertFalse("The trigger has not been resetted", trigger);
 
@@ -193,7 +193,7 @@ public class GraphStructureChangedListenerTest extends InstanceTest {
 			}
 
 		};
-		g.register(listener);
+		g.addGraphStructureChangedListener(listener);
 
 		assertFalse("The trigger has not been resetted", trigger);
 
@@ -217,7 +217,7 @@ public class GraphStructureChangedListenerTest extends InstanceTest {
 		GraphStructureChangedListener[] listeners = new GraphStructureChangedListener[LISTENERS];
 		for (int i = 0; i < listeners.length; i++) {
 			listeners[i] = new GraphStructureChangedAdapter();
-			g.register(listeners[i]);
+			g.addGraphStructureChangedListener(listeners[i]);
 		}
 
 		// test explicit unregister
@@ -226,7 +226,7 @@ public class GraphStructureChangedListenerTest extends InstanceTest {
 				.getGraphStructureChangedListenerCount() == LISTENERS);
 		commit(g);
 
-		g.unregister(listeners[1]);
+		g.removeGraphStructureChangedListener(listeners[1]);
 
 		createReadOnlyTransaction(g);
 		assertEquals(LISTENERS - 1, g.getGraphStructureChangedListenerCount());

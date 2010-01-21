@@ -793,7 +793,7 @@ public interface Graph extends AttributedElement {
 	 *            the new <code>GraphStructureChangedListener</code> to
 	 *            register.
 	 */
-	public void register(GraphStructureChangedListener newListener);
+	public void addGraphStructureChangedListener(GraphStructureChangedListener newListener);
 
 	/**
 	 * Removes the given <code>listener</code> from the internal listener list.
@@ -801,13 +801,13 @@ public interface Graph extends AttributedElement {
 	 * @param listener
 	 *            the <code>GraphStructureChangedListener</code> to be removed.
 	 */
-	public void unregister(GraphStructureChangedListener listener);
+	public void removeGraphStructureChangedListener(GraphStructureChangedListener listener);
 
 	/**
 	 * Removes all <code>GraphStructureChangedListener</code> from the internal
 	 * listener list.
 	 */
-	public void unregisterAll();
+	public void removeAllGraphStructureChangedListeners();
 
 	/**
 	 * Returns the amount of registered
