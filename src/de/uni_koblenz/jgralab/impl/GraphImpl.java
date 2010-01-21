@@ -1783,14 +1783,14 @@ public abstract class GraphImpl implements Graph {
 	}
 
 	@Override
-	public void register(GraphStructureChangedListener newListener) {
+	public void addGraphStructureChangedListener(GraphStructureChangedListener newListener) {
 		graphStructureChangedListeners
 				.add(new WeakReference<GraphStructureChangedListener>(
 						newListener));
 	}
 
 	@Override
-	public void unregister(GraphStructureChangedListener listener) {
+	public void removeGraphStructureChangedListener(GraphStructureChangedListener listener) {
 		Iterator<WeakReference<GraphStructureChangedListener>> iterator = getListenerListIterator();
 		while (iterator.hasNext()) {
 			WeakReference<GraphStructureChangedListener> currentListener = iterator
@@ -1807,7 +1807,7 @@ public abstract class GraphImpl implements Graph {
 	}
 
 	@Override
-	public void unregisterAll() {
+	public void removeAllGraphStructureChangedListeners() {
 		graphStructureChangedListeners.clear();
 	}
 

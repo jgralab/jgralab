@@ -13,7 +13,7 @@ GraphStructureChangedAdapter {
 	protected AbstractGraphMarker(Graph graph) {
 		this.graph = graph;
 		// register the graph marker at the graph
-		graph.register(this);
+		graph.addGraphStructureChangedListener(this);
 	}
 
 	/**
@@ -64,7 +64,7 @@ GraphStructureChangedAdapter {
 	protected void finalize() throws Throwable {
 		super.finalize();
 		// TODO maybe remove
-		graph.unregister(this);
+		graph.removeGraphStructureChangedListener(this);
 	}
 
 	@Override
