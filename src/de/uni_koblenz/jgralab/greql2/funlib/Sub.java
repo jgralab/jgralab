@@ -48,4 +48,19 @@ public class Sub extends ArithmeticFunction {
 		return evaluate(arguments, ArithmeticOperator.SUB);
 	}
 
+	@Override
+	protected JValue applyFunction(Integer leftHandSide, Integer rightHandSide) {
+		return new JValue(leftHandSide - rightHandSide);
+	}
+
+	@Override
+	protected JValue applyFunction(Long leftHandSide, Long rightHandSide) {
+		return new JValue(leftHandSide - rightHandSide);
+	}
+
+	@Override
+	protected JValue applyFunction(Double leftHandSide, Double rightHandSide) {
+		return new JValue(leftHandSide - rightHandSide);
+	}
+
 }

@@ -8,7 +8,6 @@ import java.util.ArrayList;
 import de.uni_koblenz.jgralab.greql2.exception.EvaluateException;
 import de.uni_koblenz.jgralab.greql2.exception.WrongFunctionParameterException;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
-import de.uni_koblenz.jgralab.greql2.jvalue.JValueBoolean;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
 
 /**
@@ -36,18 +35,12 @@ public abstract class BooleanFunction extends Greql2Function {
 		if (checkArguments(arguments) == -1) {
 			throw new WrongFunctionParameterException(this, arguments);
 		}
-		switch (operator) {
-		case AND:
-			return JValueBoolean.and(arguments[0], arguments[1]);
-		case OR:
-			return JValueBoolean.or(arguments[0], arguments[1]);
-		case XOR:
-			return JValueBoolean.xor(arguments[0], arguments[1]);
-		default:
-			throw new EvaluateException("Unknown BooleanOperator " + operator
-					+ ".");
-		}
+
+		return applyFunction(arguments[0], arguments[1]);
 	}
+
+	protected abstract JValue applyFunction(JValue leftHandSide,
+			JValue rightHandSide);
 
 	/*
 	 * (non-Javadoc)

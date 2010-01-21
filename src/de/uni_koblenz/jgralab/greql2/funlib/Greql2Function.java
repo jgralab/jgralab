@@ -109,7 +109,7 @@ public abstract class Greql2Function {
 			sb.append("(");
 			for (int j = 0; j < signatures[i].length - 1; j++) {
 				sb.append(signatures[i][j]);
-				if (j != signatures[i].length - 1) {
+				if (j != signatures[i].length - 2) {
 					sb.append(", ");
 				}
 			}
