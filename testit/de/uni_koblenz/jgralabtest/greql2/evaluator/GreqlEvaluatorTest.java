@@ -1220,7 +1220,7 @@ public class GreqlEvaluatorTest extends GenericTests {
 	@Test
 	public void testEvaluateAggregationPathDescriptionWithRole()
 			throws Exception {
-		String queryString = "from var: V{Variable}, def: V{Definition} with def <>--{undefinedRole} var report var end";
+		String queryString = "from var: V{Variable}, def: V{Definition} with def <>--{undefeeeinedRole} var report var end";
 		JValue result = evalTestQuery("SimplePathDescription2", queryString);
 		assertEquals(0, result.toCollection().size());
 		JValue resultWO = evalTestQuery("SimplePathDescription2 (wo)",

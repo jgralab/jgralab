@@ -29,10 +29,10 @@ import java.util.Set;
 import de.uni_koblenz.jgralab.Aggregation;
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.Vertex;
-import de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.ThisEdgeEvaluator;
-import de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.VertexEvaluator;
 import de.uni_koblenz.jgralab.graphmarker.BooleanGraphMarker;
 import de.uni_koblenz.jgralab.graphmarker.GraphMarker;
+import de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.ThisEdgeEvaluator;
+import de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.VertexEvaluator;
 import de.uni_koblenz.jgralab.greql2.exception.EvaluateException;
 import de.uni_koblenz.jgralab.greql2.exception.JValueInvalidTypeException;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
@@ -52,15 +52,15 @@ public class AggregationTransition extends Transition {
 	private VertexEvaluator predicateEvaluator;
 
 	private ThisEdgeEvaluator thisEdgeEvaluator;
-	
+
 	/**
 	 * The collection of types that are accepted by this transition
 	 */
 	protected JValueTypeCollection typeCollection;
 
 	/**
-	 * an edge may have valid roles. This set  holds the valid roles for this
-	 * transition. If the transition is valid for all roles, this  set is null
+	 * an edge may have valid roles. This set holds the valid roles for this
+	 * transition. If the transition is valid for all roles, this set is null
 	 */
 	protected Set<String> validEdgeRoles;
 
@@ -100,23 +100,29 @@ public class AggregationTransition extends Transition {
 			return false;
 		}
 		if (validEdgeRoles != null) {
-			if (et.validEdgeRoles == null)
+			if (et.validEdgeRoles == null) {
 				return false;
-			if (!validEdgeRoles.equals(et.validEdgeRoles))
+			}
+			if (!validEdgeRoles.equals(et.validEdgeRoles)) {
 				return false;
+			}
 		}
 		if (validEdgeRoles == null) {
-			if (et.validEdgeRoles != null)
+			if (et.validEdgeRoles != null) {
 				return false;
+			}
 		}
 		if (predicateEvaluator != null) {
-			if (et.predicateEvaluator == null)
+			if (et.predicateEvaluator == null) {
 				return false;
-			if (!predicateEvaluator.equals(et.predicateEvaluator))
+			}
+			if (!predicateEvaluator.equals(et.predicateEvaluator)) {
 				return false;
+			}
 		} else {
-			if (et.predicateEvaluator != null)
+			if (et.predicateEvaluator != null) {
 				return false;
+			}
 		}
 		return true;
 	}
@@ -141,7 +147,6 @@ public class AggregationTransition extends Transition {
 		return new AggregationTransition(this, addToStates);
 	}
 
-
 	/**
 	 * Creates a new transition from start state to end state. The Transition
 	 * accepts all aggregations that have the right aggregation direction, role,
@@ -163,7 +168,9 @@ public class AggregationTransition extends Transition {
 	 *            The accepted edge role, or null if any role is accepted
 	 */
 	public AggregationTransition(State start, State end, boolean aggregateFrom,
-			JValueTypeCollection typeCollection, Set<String> roles, VertexEvaluator predicateEvaluator, GraphMarker<VertexEvaluator>  graphMarker) {
+			JValueTypeCollection typeCollection, Set<String> roles,
+			VertexEvaluator predicateEvaluator,
+			GraphMarker<VertexEvaluator> graphMarker) {
 		super(start, end);
 		this.aggregateFrom = aggregateFrom;
 		this.validEdgeRoles = roles;
@@ -225,34 +232,22 @@ public class AggregationTransition extends Transition {
 		// checks if the subgraphattribute is set and if the edge belongs to
 		// this subgraph (if the edge belongs to it, also the endvertex must
 		// belong to it)
-		if (subgraph != null) {
-			if (!subgraph.isMarked(e)) {
-				return false;
-			}
+		if ((subgraph != null) && !subgraph.isMarked(e)) {
+			return false;
 		}
-		
-		
+
 		// checks if a role restriction is set and if e has the right role
-		boolean acceptedByRole = false;
-		if (validEdgeRoles != null) {
-			if ((e.getThatRole() == null) || (!validEdgeRoles.contains(e.getThatRole()))) {
-				acceptedByRole = false;
-			} else {
-				acceptedByRole = true;
-			}
+		if ((validEdgeRoles != null)
+				&& !(validEdgeRoles.contains(e.getThatRole()))) {
+			return false;
 		}
-		
+
 		// checks if a edgeTypeRestriction is set and if e has the right type
-		boolean acceptedByType = true;
 		AttributedElementClass edgeClass = e.getAttributedElementClass();
 		if (!typeCollection.acceptsType(edgeClass)) {
-			acceptedByType = false;
-		}
-		
-		if (!((acceptedByRole) || acceptedByType ) )
 			return false;
-		
-		
+		}
+
 		// checks if a boolean expression exists and if it evaluates to true
 		if (predicateEvaluator != null) {
 			thisEdgeEvaluator.setValue(new JValue(e));
@@ -267,8 +262,8 @@ public class AggregationTransition extends Transition {
 				}
 			}
 			return false;
-		}	
-		
+		}
+
 		return true;
 	}
 
