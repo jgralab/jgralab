@@ -519,36 +519,6 @@ public class FunctionTest extends GenericTests {
 	}
 
 	@Test
-	public void testIsPrime() throws Exception {
-		// check the first 58 prime numbers
-		String queryString = "from x : list(1..271) with isPrime(x) report x end";
-		JValue result = evalTestQuery("IsPrime", queryString);
-		assertEquals(58, result.toCollection().size());
-		int primes[] = { 2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43,
-				47, 53, 59, 61, 67, 71, 73, 79, 83, 89, 97, 101, 103, 107, 109,
-				113, 127, 131, 137, 139, 149, 151, 157, 163, 167, 173, 179,
-				181, 191, 193, 197, 199, 211, 223, 227, 229, 233, 239, 241,
-				251, 257, 263, 269, 271 };
-		for (int prime : primes) {
-			assertTrue(result.toCollection().contains(JValue.fromObject(prime)));
-		}
-	}
-
-	@Test
-	public void testIsPrime2() throws Exception {
-		// check some really large numbers (and check if the optional parameter
-		// noOfTestRuns works, too)
-		assertTrue(evalTestQuery("IsPrime2", "isPrime(37956673, 8)")
-				.toBoolean());
-	}
-
-	@Test
-	public void testIsPrime3() throws Exception {
-		assertFalse(evalTestQuery("IsPrime3 (not a prime)",
-				"isPrime(7171712, 12)").toBoolean());
-	}
-
-	@Test
 	public void testIsSubSet1() throws Exception {
 		String queryString = "let x:= set(5, 7, 9, 13), y := set(5,6,7,8) in isSubSet(x,y)";
 		JValue result = evalTestQuery("IsSubset", queryString);

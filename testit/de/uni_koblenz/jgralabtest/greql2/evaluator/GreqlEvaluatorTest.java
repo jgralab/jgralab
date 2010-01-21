@@ -39,6 +39,7 @@ import org.junit.Test;
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
+import de.uni_koblenz.jgralab.greql2.funlib.Greql2FunctionLibrary;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValueBag;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValueBoolean;
@@ -54,8 +55,13 @@ import de.uni_koblenz.jgralab.greql2.parser.ManualGreqlParser;
 import de.uni_koblenz.jgralab.greql2.schema.Definition;
 import de.uni_koblenz.jgralab.greql2.schema.Greql2;
 import de.uni_koblenz.jgralabtest.greql2.GenericTests;
+import de.uni_koblenz.jgralabtest.greql2.testfunctions.IsPrime;
 
 public class GreqlEvaluatorTest extends GenericTests {
+	static {
+		Greql2FunctionLibrary.instance().registerUserDefinedFunction(
+				IsPrime.class);
+	}
 
 	private JValueBag createBagWithMeat(List<JValue> list) {
 		JValueBag bag = new JValueBag();
