@@ -36,6 +36,7 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueCollection;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValuePath;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValuePathSystem;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValueSet;
+import de.uni_koblenz.jgralab.greql2.jvalue.JValueSlice;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValueTable;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
 
@@ -70,7 +71,8 @@ public class Elements extends Greql2Function {
 	{
 		JValueType[][] x = { { JValueType.COLLECTION, JValueType.COLLECTION },
 				{ JValueType.PATH, JValueType.COLLECTION },
-				{ JValueType.PATHSYSTEM, JValueType.COLLECTION } };
+				{ JValueType.PATHSYSTEM, JValueType.COLLECTION },
+				{ JValueType.SLICE, JValueType.COLLECTION } };
 		signatures = x;
 
 		description = "Returns the set of elements, which are part of the given structure.";
@@ -116,6 +118,11 @@ public class Elements extends Greql2Function {
 			JValuePathSystem pathSystem = arguments[0].toPathSystem();
 			set.addAll(pathSystem.edges());
 			set.addAll(pathSystem.nodes());
+			break;
+		case 3:
+			JValueSlice slice = arguments[0].toSlice();
+			set.addAll(slice.edges());
+			set.addAll(slice.nodes());
 			break;
 		default:
 			throw new WrongFunctionParameterException(this, arguments);

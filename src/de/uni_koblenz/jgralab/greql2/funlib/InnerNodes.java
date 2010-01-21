@@ -31,7 +31,6 @@ import de.uni_koblenz.jgralab.graphmarker.BooleanGraphMarker;
 import de.uni_koblenz.jgralab.greql2.exception.EvaluateException;
 import de.uni_koblenz.jgralab.greql2.exception.WrongFunctionParameterException;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValue;
-import de.uni_koblenz.jgralab.greql2.jvalue.JValuePathSystem;
 import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
 
 /**
@@ -64,11 +63,12 @@ import de.uni_koblenz.jgralab.greql2.jvalue.JValueType;
 
 public class InnerNodes extends Greql2Function {
 	{
-		JValueType[][] x = { { JValueType.PATHSYSTEM, JValueType.COLLECTION } };
+		JValueType[][] x = { { JValueType.PATHSYSTEM, JValueType.COLLECTION },
+				{ JValueType.SLICE, JValueType.COLLECTION } };
 		signatures = x;
 
-		description = "Returns all inner nodes of the given pathsystem as set.\n"
-				+ "Inner nodes are all vertices besides leaves of the pathsystem. That\n"
+		description = "Returns all inner nodes of the given pathsystem/slice as set.\n"
+				+ "Inner nodes are all vertices besides leaves of the pathsystem/slice. That\n"
 				+ "means, all vertices, that are neither end of a path nor the root.";
 
 		Category[] c = { Category.PATHS_AND_PATHSYSTEMS_AND_SLICES };
@@ -78,11 +78,14 @@ public class InnerNodes extends Greql2Function {
 	@Override
 	public JValue evaluate(Graph graph, BooleanGraphMarker subgraph,
 			JValue[] arguments) throws EvaluateException {
-		if (checkArguments(arguments) == -1) {
+		switch (checkArguments(arguments)) {
+		case 0:
+			return arguments[0].toPathSystem().innerNodes();
+		case 1:
+			return arguments[0].toSlice().innerNodes();
+		default:
 			throw new WrongFunctionParameterException(this, arguments);
 		}
-		JValuePathSystem ps = arguments[0].toPathSystem();
-		return ps.innerNodes();
 	}
 
 	@Override
