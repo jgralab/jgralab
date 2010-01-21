@@ -688,6 +688,20 @@ public class FunctionTest extends GenericTests {
 	}
 
 	@Test
+	public void testConcat2() throws Exception {
+		String queryString = "list(1..3) ++ list(4..6)";
+		JValue result = evalTestQuery("Concat", queryString);
+		JValueList l = new JValueList();
+		l.add(new JValue(1));
+		l.add(new JValue(2));
+		l.add(new JValue(3));
+		l.add(new JValue(4));
+		l.add(new JValue(5));
+		l.add(new JValue(6));
+		assertEquals(l, result);
+	}
+
+	@Test
 	public void testPos() throws Exception {
 		String queryString = "let x:= list (5..13) in pos(x, 7)";
 		JValue result = evalTestQuery("Pos", queryString);
