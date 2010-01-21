@@ -65,7 +65,7 @@ public class Avg extends Greql2Function {
 		JValueType[][] x = { { JValueType.COLLECTION, JValueType.NUMBER } };
 		signatures = x;
 
-		description = "Arithmetic average of the given collection $c$ of numbers. "
+		description = "Arithmetic average of the given collection $c$ of numbers.\n"
 				+ "Returns null, if a null-Value is in $c$.";
 
 		Category[] c = { Category.COLLECTIONS_AND_MAPS };
