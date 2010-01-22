@@ -284,24 +284,41 @@ public class JGraLabList<E> extends ArrayList<E> implements JGraLabCloneable {
 	@Override
 	// TODO try to make it work somehow?!
 	public void ensureCapacity(int minCapacity) {
-		throw new UnsupportedOperationException(
-				"This method doesn't work for List instances with transaction support.");
+		// simply do nothing
 	}
 
 	@SuppressWarnings("unchecked")
 	@Override
 	public boolean equals(Object o) {
-		if (!(o instanceof JGraLabList))
-			return false;
-		JGraLabList<E> list = (JGraLabList<E>) o;
-		if (list == this)
+		// if the parameter is this instance...
+		if (o == this)
 			return true;
-		if (internalSize() != list.internalSize())
+		
+		// make sure the given parameter is at least a List
+		if(!(o instanceof List<?>))
 			return false;
-		for (int i = 0; i < internalSize(); i++) {
-			if (!this.internalGet(i).equals(list.internalGet(i)))
+		
+		// if the parameter is an instance of JGraLabList, we need to invoke the
+		// "internal..."-methods.
+		if (o instanceof JGraLabList<?>) {
+			JGraLabList<E> list = (JGraLabList<E>) o;
+			if (internalSize() != list.internalSize())
 				return false;
+			for (int i = 0; i < internalSize(); i++) {
+				if (!this.internalGet(i).equals(list.internalGet(i)))
+					return false;
+			}
+		} else {
+			// if not invoke the "normal" methods.
+			List list = (List) o;
+			if(internalSize() != list.size())
+				return false;
+			for (int i = 0; i < internalSize(); i++) {
+				if (!this.internalGet(i).equals(list.get(i)))
+					return false;
+			}
 		}
+
 		return true;
 	}
 

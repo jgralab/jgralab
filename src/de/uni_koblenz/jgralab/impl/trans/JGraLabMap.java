@@ -21,7 +21,7 @@ import de.uni_koblenz.jgralab.trans.TransactionState;
  * @param <K>
  * @param <V>
  * 
- * TODO maybe add check to putAll-methods?
+ *            TODO maybe add check to putAll-methods?
  */
 public class JGraLabMap<K, V> extends HashMap<K, V> implements JGraLabCloneable {
 	private static final long serialVersionUID = -9198046937053316052L;
@@ -56,10 +56,10 @@ public class JGraLabMap<K, V> extends HashMap<K, V> implements JGraLabCloneable 
 	/**
 	 * 
 	 * @param map
-	 *
-	 * visibility set to public (afuhr)
 	 * 
-	 * TODO ask why it must be public ;-)
+	 *            visibility set to public (afuhr)
+	 * 
+	 *            TODO ask why it must be public ;-)
 	 */
 	protected JGraLabMap(Map<K, V> map) {
 		super(map);
@@ -145,13 +145,13 @@ public class JGraLabMap<K, V> extends HashMap<K, V> implements JGraLabCloneable 
 	}
 
 	/**
-	 * Checks whether the added value support transactions (in the case of
-	 * List, Set and Map) and belongs to the same graph.
+	 * Checks whether the added value support transactions (in the case of List,
+	 * Set and Map) and belongs to the same graph.
 	 * 
 	 * @param value
 	 */
 	private void isValidValueCheck(V value) {
-		if ((value instanceof Map<?,?> || value instanceof List<?> || value instanceof Set<?>)
+		if ((value instanceof Map<?, ?> || value instanceof List<?> || value instanceof Set<?>)
 				&& !(value instanceof JGraLabCloneable))
 			throw new GraphException(
 					"The value added to this map does not support transactions.");
@@ -165,13 +165,13 @@ public class JGraLabMap<K, V> extends HashMap<K, V> implements JGraLabCloneable 
 	}
 
 	/**
-	 * Checks whether the added key support transactions (in the case of
-	 * List, Set and Map) and belongs to the same graph.
+	 * Checks whether the added key support transactions (in the case of List,
+	 * Set and Map) and belongs to the same graph.
 	 * 
 	 * @param key
 	 */
 	private void isValidKeyCheck(K key) {
-		if ((key instanceof Map<?,?> || key instanceof List<?> || key instanceof Set<?>)
+		if ((key instanceof Map<?, ?> || key instanceof List<?> || key instanceof Set<?>)
 				&& !(key instanceof JGraLabCloneable))
 			throw new GraphException(
 					"The key added to this map does not support transactions.");
@@ -393,8 +393,8 @@ public class JGraLabMap<K, V> extends HashMap<K, V> implements JGraLabCloneable 
 	/**
 	 * 
 	 * @param versionedList
-	 *
-	 * visibility set to public (afuhr)
+	 * 
+	 *            visibility set to public (afuhr)
 	 */
 	public void setVersionedMap(
 			VersionedJGraLabCloneableImpl<JGraLabMap<K, V>> versionedMap) {
@@ -427,20 +427,43 @@ public class JGraLabMap<K, V> extends HashMap<K, V> implements JGraLabCloneable 
 	}
 
 	@SuppressWarnings("unchecked")
+	@Override
 	public boolean equals(Object o) {
-		if (!(o instanceof JGraLabMap))
-			return false;
-		JGraLabMap<K, V> object = (JGraLabMap<K, V>) o;
-		if (this == object)
+		// if the parameter is this instance...
+		if (this == o)
 			return true;
-		if (!internalKeySet().equals(object.internalKeySet()))
+
+		// make sure the given parameter is at least a Map
+		if (!(o instanceof Map<?, ?>))
 			return false;
-		if (internalSize() != object.internalSize())
-			return false;
-		for (Entry<K, V> entry : this.internalEntrySet()) {
-			if (!object.internalEntrySet().contains(entry))
+
+		// if the parameter is an instance of JGraLabMap, we need to invoke the
+		// "internal..."-methods.
+		if (o instanceof JGraLabMap<?, ?>) {
+			JGraLabMap<K, V> object = (JGraLabMap<K, V>) o;
+
+			if (!internalKeySet().equals(object.internalKeySet()))
 				return false;
+			if (internalSize() != object.internalSize())
+				return false;
+			for (Entry<K, V> entry : this.internalEntrySet()) {
+				if (!object.internalEntrySet().contains(entry))
+					return false;
+			}
+		} else {
+			// if not invoke the "normal" methods.
+			Map<K, V> object = (Map<K, V>) o;
+
+			if (!internalKeySet().equals(object.keySet()))
+				return false;
+			if (internalSize() != object.size())
+				return false;
+			for (Entry<K, V> entry : this.internalEntrySet()) {
+				if (!object.entrySet().contains(entry))
+					return false;
+			}
 		}
+		
 		return true;
 	}
 

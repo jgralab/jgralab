@@ -13,7 +13,8 @@ import de.uni_koblenz.jgralab.trans.JGraLabCloneable;
 import de.uni_koblenz.jgralab.trans.TransactionState;
 
 /**
- * Own implementation class for attributes of type <code>java.util.Set<E></code>.
+ * Own implementation class for attributes of type <code>java.util.Set<E></code>
+ * .
  * 
  * @author Jose Monte(monte@uni-koblenz.de)
  * 
@@ -419,19 +420,41 @@ public class JGraLabSet<E> extends HashSet<E> implements JGraLabCloneable {
 	}
 
 	@SuppressWarnings("unchecked")
+	@Override
 	public boolean equals(Object o) {
-		if (!(o instanceof JGraLabSet))
-			return false;
-		JGraLabSet<E> set = (JGraLabSet<E>) o;
-		if (set == this)
+		// if the parameter is this instance...
+		if (o == this)
 			return true;
-		if (internalSize() != set.internalSize())
+
+		// make sure the given parameter is at least a Set
+		if (!(o instanceof Set<?>))
 			return false;
-		Iterator<E> iter = this.internalIterator();
-		while (iter.hasNext()) {
-			if (!set.internalContains(iter.next()))
+
+		// if the parameter is an instance of JGraLabSet, we need to invoke the
+		// "internal..."-methods.
+		if (o instanceof JGraLabSet<?>) {
+			JGraLabSet<E> set = (JGraLabSet<E>) o;
+
+			if (internalSize() != set.internalSize())
 				return false;
+			Iterator<E> iter = this.internalIterator();
+			while (iter.hasNext()) {
+				if (!set.internalContains(iter.next()))
+					return false;
+			}
+		} else {
+			// if not invoke the "normal" methods.
+			Set<E> set = (Set<E>) o;
+
+			if (internalSize() != set.size())
+				return false;
+			Iterator<E> iter = this.internalIterator();
+			while (iter.hasNext()) {
+				if (!set.contains(iter.next()))
+					return false;
+			}
 		}
+		
 		return true;
 	}
 
