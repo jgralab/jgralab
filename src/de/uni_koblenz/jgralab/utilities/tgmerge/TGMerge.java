@@ -138,11 +138,11 @@ public class TGMerge {
 		Option output = new Option("o", "outTG", true,
 				"(required): output TG file");
 		output.setRequired(true);
-		output.setArgName("file");
+		output.setArgName("outputTG");
 		oh.addOption(output);
 
 		oh.setArgumentCount(Option.UNLIMITED_VALUES);
-		oh.setArgumentName("inTG");
+		oh.setArgumentName("inputTG");
 		oh.setOptionalArgument(false);
 
 		return oh.parse(args);
