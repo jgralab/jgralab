@@ -1039,7 +1039,6 @@ public abstract class VersionedDataObjectImpl<E> implements
 	/**
 	 * Needed to expand ALL currently existing values of Array vertex.
 	 * 
-	 * @param transaction
 	 * @param newSize
 	 */
 	protected synchronized void expandVertexArrays(int newSize) {
@@ -1052,7 +1051,6 @@ public abstract class VersionedDataObjectImpl<E> implements
 	/**
 	 * Needed to expand ALL currently existing values of Array edge.
 	 * 
-	 * @param transaction
 	 * @param newSize
 	 */
 	protected synchronized void expandEdgeArrays(int newSize) {
