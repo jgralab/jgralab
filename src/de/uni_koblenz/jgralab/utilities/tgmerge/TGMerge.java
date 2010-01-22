@@ -4,6 +4,7 @@
 package de.uni_koblenz.jgralab.utilities.tgmerge;
 
 import java.lang.reflect.Method;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -31,7 +32,8 @@ import de.uni_koblenz.jgralab.schema.Schema;
 public class TGMerge {
 	private Set<Graph> graphs = new HashSet<Graph>();
 	private Graph targetGraph;
-	private Map<Vertex, Vertex> old2NewMap = new HashMap<Vertex, Vertex>();
+	private Map<Vertex, Vertex> old2NewVertices = new HashMap<Vertex, Vertex>();
+	private Map<Edge, Edge> new2OldEdges = new HashMap<Edge, Edge>();
 
 	public TGMerge(Set<Graph> graphs) {
 		if (graphs.size() < 2) {
@@ -92,26 +94,61 @@ public class TGMerge {
 		for (Graph g : graphs) {
 			copyVertices(g);
 			copyEdges(g);
-			old2NewMap.clear();
+			sortIncidences();
+			old2NewVertices.clear();
+			new2OldEdges.clear();
 		}
 
-		return null;
+		return targetGraph;
 	}
 
+	private void sortIncidences() {
+		System.out.println("Sorting incidences...");
+		for (Vertex v : old2NewVertices.values()) {
+			v.sortIncidences(new Comparator<Edge>() {
+
+				@Override
+				public int compare(Edge e1, Edge e2) {
+					Edge old1 = new2OldEdges.get(e1);
+					Edge old2 = new2OldEdges.get(e2);
+					if (old1.isBefore(old2)) {
+						return -1;
+					} else if (old2.isBefore(old1)) {
+						return 1;
+					}
+					throw new RuntimeException(
+							"Exception while sorting incidences.");
+				}
+			});
+		}
+	}
+
+	@SuppressWarnings("unchecked")
 	private void copyEdges(Graph g) {
+		System.out.println("Copying Edges...");
 		for (Edge e : g.edges()) {
-			Vertex start = old2NewMap.get(e.getAlpha());
-			Vertex end = old2NewMap.get(e.getOmega());
+			Vertex start = old2NewVertices.get(e.getAlpha());
+			Vertex end = old2NewVertices.get(e.getOmega());
+			Edge newEdge = targetGraph.createEdge((Class<? extends Edge>) e
+					.getM1Class(), start, end);
 
-			Edge newEdge = targetGraph.createEdge(e.getClass(), start, end);
 			copyAttributes(e, newEdge);
+
+			new2OldEdges.put(newEdge, e);
+			new2OldEdges.put(newEdge.getReversedEdge(), e.getReversedEdge());
 		}
 	}
 
+	@SuppressWarnings("unchecked")
 	private void copyVertices(Graph g) {
+		System.out.println("Copying Vertices...");
 		for (Vertex v : g.vertices()) {
-			Vertex newV = targetGraph.createVertex(v.getClass());
-			copyAttributes(v, newV);
+			Vertex newVertex = targetGraph
+					.createVertex((Class<? extends Vertex>) v.getM1Class());
+
+			copyAttributes(v, newVertex);
+
+			old2NewVertices.put(v, newVertex);
 		}
 
 	}
