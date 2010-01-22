@@ -332,7 +332,7 @@ public class AttributedElementCodeGenerator extends CodeGenerator {
 							"\t#ttype# value = _#name#.getValidValue(#graphreference#getCurrentTransaction());");
 
 			if (attr.getDomain().isComposite()) {
-				code.add("\tif(_#name# != null)");
+				code.add("\tif(_#name# != null && value != null)");
 				code.add("\t\tvalue.setName(this + \":#name#\");");
 			}
 			code.add("\treturn (value == null) ? #initValue# : value;", "}");
