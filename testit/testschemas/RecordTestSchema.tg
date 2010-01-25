@@ -3,5 +3,5 @@ GraphClass RecordTestGraph;
 
 RecordDomain BooleanType (isSet: Boolean, value: Boolean);
 EnumDomain Hugo (A,B,C);
-VertexClass Node {nodeMap : Map<Integer, String>, testRecord : BooleanType};
+VertexClass Node {nodeMap : Map<Integer, String>, testRecord : BooleanType, testEnum : Hugo, testList : List<String>, testSet : Set<Integer>, testString : String};
 EdgeClass Link from Node (0,*) role source to Node (0,*) role target;
