@@ -409,7 +409,7 @@ prefix arg, jump to the target vertex."
                         (propertize (tg-unique-name (plist-get elem :from) 'unique)
                                     'face 'tg-type-face)
                         (propertize " to " 'face 'tg-keyword-face)
-                        (propertize (tg-unique-name (plist-get elem :from) 'unique)
+                        (propertize (tg-unique-name (plist-get elem :to) 'unique)
                                     'face 'tg-type-face))
               "")
             " {"
