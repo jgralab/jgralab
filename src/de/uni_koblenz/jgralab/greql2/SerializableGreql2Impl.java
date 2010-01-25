@@ -36,6 +36,12 @@ public class SerializableGreql2Impl extends Greql2Impl implements
 
 	@Override
 	public String serialize(Greql2Vertex v) {
-		return serializer.serializeGreql2Vertex(v);
+		try {
+			return serializer.serializeGreql2Vertex(v);
+		} catch (Exception e) {
+			System.err.println("Couldn't serialize Query.");
+			e.printStackTrace();
+		}
+		return "";
 	}
 }
