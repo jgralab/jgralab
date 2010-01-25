@@ -48,9 +48,9 @@ public class TryGraphMarkers {
 		printAllMarks(graph, marker1, marker2);
 		System.out.println(marker2.size());
 
-		marker2.setUnmarkedValue(Double.NEGATIVE_INFINITY);
-		printAllMarks(graph, marker1, marker2);
-		System.out.println(marker2.size());
+		// marker2.setUnmarkedValue(Double.NEGATIVE_INFINITY);
+		// printAllMarks(graph, marker1, marker2);
+		// System.out.println(marker2.size());
 
 	}
 
