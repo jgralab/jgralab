@@ -282,37 +282,40 @@ queries are evaluated.  Set it with `greql-set-graph'.")
 If the package foo is imported, then the element \"Bar\" will be
 in the result, supplementing its qualified name foo.Bar gathered
 by normal completion."
-  (let ((comp-lst (greql-completion-list mtypes))
-        lst)
-    (save-excursion
-      (goto-char (line-end-position))
-      (while (re-search-backward "import[[:space:]]+\\([^;]+\\);" nil t)
-        (unless (looking-back ".*//.*")
-          (let ((import (match-string-no-properties 1)))
-            (if (string-match "\\*$" import)
-                ;; A package import
-                (let ((regex (regexp-quote (substring import 0 (- (length import) 1)))))
-                  (setq lst
-                        (nconc
-                         lst
-                         (delq nil
-                               (mapcar
-                                (lambda (elem)
-                                  (if (string-match regex (car elem))
-                                      (list (replace-regexp-in-string regex "" (car elem))
-                                            (cadr elem))
-                                    nil))
-                                comp-lst)))))
-              ;; An element import
-              (let ((elem (catch 'elem (dolist (m comp-lst)
-                                         (when (string= (car m) import)
-                                           (throw 'elem m))))))
-                (when elem
-                  (setq lst (cons
-                             (cons (replace-regexp-in-string "\\([[:word:]._]+\\.\\)\\([^.]+\\)" "\\2" import)
-                                   (cdr elem))
-                             lst)))))))))
-    lst))
+  (when tg-schema-alist
+    (let ((comp-lst (greql-completion-list mtypes))
+          lst)
+      (save-excursion
+        (goto-char (line-end-position))
+        (while (re-search-backward "import[[:space:]]+\\([^;]+\\);" nil t)
+          (unless (looking-back ".*//.*")
+            (let ((import (match-string-no-properties 1)))
+              (if (string-match "\\*$" import)
+                  ;; A package import
+                  (let ((regex (regexp-quote (substring import 0 (- (length import) 1)))))
+                    (setq
+                     lst
+                     (nconc
+                      lst
+                      (delq
+                       nil
+                       (mapcar
+                        (lambda (elem)
+                          (if (string-match regex (car elem))
+                              (list (replace-regexp-in-string regex "" (car elem))
+                                    (cadr elem))
+                            nil))
+                        comp-lst)))))
+                ;; An element import
+                (let ((elem (catch 'elem (dolist (m comp-lst)
+                                           (when (string= (car m) import)
+                                             (throw 'elem m))))))
+                  (when elem
+                    (setq lst (cons
+                               (cons (replace-regexp-in-string "\\([[:word:]._]+\\.\\)\\([^.]+\\)" "\\2" import)
+                                     (cdr elem))
+                               lst)))))))))
+      lst)))
 
 (defun greql-completion-list (mtypes)
   "Return a completion list of all MTYPES (:meta values)."
