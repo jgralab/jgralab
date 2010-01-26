@@ -293,19 +293,16 @@ by normal completion."
               (if (string-match "\\*$" import)
                   ;; A package import
                   (let ((regex (regexp-quote (substring import 0 (- (length import) 1)))))
-                    (setq
-                     lst
-                     (nconc
-                      lst
-                      (delq
-                       nil
-                       (mapcar
-                        (lambda (elem)
-                          (if (string-match regex (car elem))
-                              (list (replace-regexp-in-string regex "" (car elem))
-                                    (cadr elem))
-                            nil))
-                        comp-lst)))))
+                    (setq lst
+                          (append lst
+                                  (remove nil
+                                          (mapcar
+                                           (lambda (elem)
+                                             (if (string-match regex (car elem))
+                                                 (list (replace-regexp-in-string regex "" (car elem))
+                                                       (cadr elem))
+                                               nil))
+                                           comp-lst)))))
                 ;; An element import
                 (let ((elem (catch 'elem (dolist (m comp-lst)
                                            (when (string= (car m) import)
