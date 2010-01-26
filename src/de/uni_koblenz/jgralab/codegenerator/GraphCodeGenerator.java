@@ -208,7 +208,7 @@ public class GraphCodeGenerator extends AttributedElementCodeGenerator {
 			parameters += (withTypes ? entry.getValue()
 					.getJavaAttributeImplementationTypeName(
 							schemaRootPackageName) : "")
-							+ " " + entry.getKey();
+							+ " _" + entry.getKey();
 			count++;
 			if (size != count) {
 				parameters += ", ";
