@@ -473,7 +473,7 @@ types with FACE3."
   (set (make-local-variable 'eldoc-documentation-function)
        'tg-documentation-function)
   (add-hook 'after-save-hook
-            'tg-init-schema)
+            'tg-init-schema nil t)
   (tg-init-schema))
 
 ;;** Init function
