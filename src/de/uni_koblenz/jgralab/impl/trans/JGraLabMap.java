@@ -21,7 +21,6 @@ import de.uni_koblenz.jgralab.trans.TransactionState;
  * @param <K>
  * @param <V>
  * 
- *            TODO maybe add check to putAll-methods?
  */
 public class JGraLabMap<K, V> extends HashMap<K, V> implements JGraLabCloneable {
 	private static final long serialVersionUID = -9198046937053316052L;
@@ -440,26 +439,26 @@ public class JGraLabMap<K, V> extends HashMap<K, V> implements JGraLabCloneable 
 		// if the parameter is an instance of JGraLabMap, we need to invoke the
 		// "internal..."-methods.
 		if (o instanceof JGraLabMap<?, ?>) {
-			JGraLabMap<K, V> object = (JGraLabMap<K, V>) o;
+			JGraLabMap<K, V> map = (JGraLabMap<K, V>) o;
 
-			if (!internalKeySet().equals(object.internalKeySet()))
+			if (!internalKeySet().equals(map.internalKeySet()))
 				return false;
-			if (internalSize() != object.internalSize())
+			if (internalSize() != map.internalSize())
 				return false;
 			for (Entry<K, V> entry : this.internalEntrySet()) {
-				if (!object.internalEntrySet().contains(entry))
+				if (!map.internalEntrySet().contains(entry))
 					return false;
 			}
 		} else {
 			// if not invoke the "normal" methods.
-			Map<K, V> object = (Map<K, V>) o;
+			Map<K, V> map = (Map<K, V>) o;
 
-			if (!internalKeySet().equals(object.keySet()))
+			if (!internalKeySet().equals(map.keySet()))
 				return false;
-			if (internalSize() != object.size())
+			if (internalSize() != map.size())
 				return false;
 			for (Entry<K, V> entry : this.internalEntrySet()) {
-				if (!object.entrySet().contains(entry))
+				if (!map.entrySet().contains(entry))
 					return false;
 			}
 		}
