@@ -293,11 +293,11 @@ public class JGraLabList<E> extends ArrayList<E> implements JGraLabCloneable {
 		// if the parameter is this instance...
 		if (o == this)
 			return true;
-		
+
 		// make sure the given parameter is at least a List
-		if(!(o instanceof List<?>))
+		if (!(o instanceof List<?>))
 			return false;
-		
+
 		// if the parameter is an instance of JGraLabList, we need to invoke the
 		// "internal..."-methods.
 		if (o instanceof JGraLabList<?>) {
@@ -305,16 +305,28 @@ public class JGraLabList<E> extends ArrayList<E> implements JGraLabCloneable {
 			if (internalSize() != list.internalSize())
 				return false;
 			for (int i = 0; i < internalSize(); i++) {
-				if (!this.internalGet(i).equals(list.internalGet(i)))
+				if (internalGet(i) == null) {
+					// if both values are null, then they are equal
+					if (list.internalGet(i) == null)
+						return true;
+					// ..otherwise not
+					return false;
+				} else if (!internalGet(i).equals(list.internalGet(i)))
 					return false;
 			}
 		} else {
 			// if not invoke the "normal" methods.
 			List list = (List) o;
-			if(internalSize() != list.size())
+			if (internalSize() != list.size())
 				return false;
 			for (int i = 0; i < internalSize(); i++) {
-				if (!this.internalGet(i).equals(list.get(i)))
+				if (internalGet(i) == null) {
+					// if both values are null, then they are equal
+					if (list.get(i) == null)
+						return true;
+					// ..otherwise not
+					return false;
+				} else if (!internalGet(i).equals(list.get(i)))
 					return false;
 			}
 		}
