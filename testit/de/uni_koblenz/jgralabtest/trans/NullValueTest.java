@@ -55,6 +55,7 @@ public class NullValueTest {
 				Integer.class, String.class) : new HashMap<Integer, String>();
 		map.put(1, "Hugo");
 		map.put(100, "Volker");
+		map.put(30, null);
 		node2.set_nodeMap(map);
 		node2.set_testEnum(Hugo.A);
 		List<String> list = transactionSupport ? graph.createList(String.class)
@@ -76,7 +77,7 @@ public class NullValueTest {
 
 	@After
 	public void tearDown() {
-		new File(filename).delete();
+		// new File(filename).delete();
 	}
 
 	@Test
@@ -97,6 +98,7 @@ public class NullValueTest {
 		Map<Integer, String> map = new HashMap<Integer, String>();
 		map.put(1, "Hugo");
 		map.put(100, "Volker");
+		map.put(30, null);
 		assertEquals(node2.get_nodeMap(), map);
 		assertEquals(map, node2.get_nodeMap());
 		List<String> list1 = new LinkedList<String>();
