@@ -57,7 +57,7 @@ public abstract class BitSetGraphMarker<T extends GraphElement> extends
 		boolean out = isMarked(graphElement);
 		marks.clear(graphElement.getId());
 		version--;
-		return !out;
+		return out;
 	}
 
 	@Override
