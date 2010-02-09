@@ -71,8 +71,8 @@ public class EdgeTrace extends Greql2Function {
 		JValueType[][] x = { { JValueType.PATH, JValueType.COLLECTION } };
 		signatures = x;
 
-		description = "Returns the edgetrace of the given path.\n"
-				+ "An edgetrace is a list of all edges of this path in correct order.";
+		description = "Returns the edge trace of the given path.\n"
+				+ "An edge trace is a list of all edges of this path in correct order.";
 
 		Category[] c = { Category.PATHS_AND_PATHSYSTEMS_AND_SLICES };
 		categories = c;

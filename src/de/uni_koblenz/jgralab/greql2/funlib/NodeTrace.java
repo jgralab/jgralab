@@ -67,8 +67,8 @@ public class NodeTrace extends Greql2Function {
 		JValueType[][] x = { { JValueType.PATH, JValueType.COLLECTION } };
 		signatures = x;
 
-		description = "Returns the nodetrace of the given path.\n"
-				+ "A nodetrace is a list of all vertices of this path in correct order.";
+		description = "Returns the node trace of the given path.\n"
+				+ "A node trace is a list of all vertices of this path in correct order.";
 
 		Category[] c = { Category.PATHS_AND_PATHSYSTEMS_AND_SLICES };
 		categories = c;
