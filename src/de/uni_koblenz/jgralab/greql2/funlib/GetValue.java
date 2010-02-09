@@ -72,7 +72,7 @@ public class GetValue extends Greql2Function {
 		signatures = x;
 
 		description = "Returns the value of the given AttrElem's or Record's attribute or component.\n"
-				+ "Alternativ usage: element.attribute.";
+				+ "Alternative usage: element.attribute.";
 
 		Category[] c = { Category.GRAPH };
 		categories = c;

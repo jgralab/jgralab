@@ -79,7 +79,7 @@ public class Supertypes extends Greql2Function {
 				{ JValueType.ATTRELEMCLASS, JValueType.COLLECTION } };
 		signatures = x;
 
-		description = "Returns the set of direct supertypes of the given type.\n"
+		description = "Returns the set of direct super types of the given type.\n"
 				+ "The type may be given as string or attributed element class.";
 
 		Category[] c = { Category.SCHEMA_ACCESS };

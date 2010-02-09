@@ -70,7 +70,7 @@ public class Types extends Greql2Function {
 		signatures = x;
 
 		description = "Returns a set of all types known by the schema of the current graph.\n"
-				+ "The list is sortet in topological order (first superclasses, then\n"
+				+ "The list is sorted in topological order (first superclasses, then\n"
 				+ "subclasses). First comes the vertex classes and then the edge classes.\n"
 				+ "If a collection of graph elements, a path or a path system is given,\n"
 				+ "the types of the contained graph elements are returned.";

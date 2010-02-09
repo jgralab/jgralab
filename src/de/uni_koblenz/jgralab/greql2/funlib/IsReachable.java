@@ -85,7 +85,7 @@ public class IsReachable extends Greql2Function {
 
 		description = "Returns true iff there is a path from the first to the second vertex.\n"
 				+ "The third parameter is a path description, describing the structure\n"
-				+ "of the path.  If you are only interested in only somehow connected,\n"
+				+ "of the path.  If you are interested in only somehow connections,\n"
 				+ "use <->* here.";
 
 		Category[] c = { Category.GRAPH,
