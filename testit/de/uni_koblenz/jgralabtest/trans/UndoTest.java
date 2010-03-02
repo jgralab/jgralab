@@ -52,7 +52,10 @@ public class UndoTest {
 	@Test
 	public void testSimpleUndo() throws CommitFailedException, InvalidSavepointException {
 		Transaction trans = graph.newTransaction();
+		assertNull(graph.getFirstNode());
 		Savepoint sp = trans.defineSavepoint();
+		assertNull(graph.getFirstNode());
+		
 		node2 = graph.createNode();
 		Map<Integer, String> map = graph.createMap(
 				Integer.class, String.class);
