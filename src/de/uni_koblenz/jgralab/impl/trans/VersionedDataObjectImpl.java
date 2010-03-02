@@ -386,9 +386,18 @@ public abstract class VersionedDataObjectImpl<E> implements
 				.get(this);
 		assert (trans.temporaryVersionMap != null);
 		if (trans.latestRestoredSavepoint != null) {
-			SortedMap<Long, Object> subMap = transactionMap.subMap(
-					transactionMap.firstKey(),
-					trans.latestRestoredSavepoint.versionAtSavepoint + 1);
+			Long fromKey = transactionMap.firstKey();
+			long toKey = trans.latestRestoredSavepoint.versionAtSavepoint + 1;
+			// make sure firstKey is always < toKey
+			if (fromKey > toKey)
+				fromKey = 0L;
+			SortedMap<Long, Object> subMap = transactionMap.subMap(fromKey,
+					toKey);
+			// it may happen that subMap is empty, then return null!
+			if (subMap.isEmpty())
+				return null;
+			// ...otherwise return the version with the highest version number which is
+			// valid for the current savepoint
 			return (E) subMap.get(subMap.lastKey());
 		}
 		return (E) transactionMap.get(transactionMap.lastKey());
@@ -738,8 +747,8 @@ public abstract class VersionedDataObjectImpl<E> implements
 	}
 
 	/**
-	 * Returns the valid value for the given <code>transaction</code>
-	 * depending on his current state and depending on the result of
+	 * Returns the valid value for the given <code>transaction</code> depending
+	 * on his current state and depending on the result of
 	 * {@link TransactionImpl#isReadOnly() <code>transaction</code>
 	 * .isReadOnly()}
 	 * 
@@ -773,9 +782,7 @@ public abstract class VersionedDataObjectImpl<E> implements
 		assert ((transaction.getState() == TransactionState.RUNNING) || (transaction
 				.getState() == TransactionState.VALIDATING));
 		// if transaction has no temporary versions and is RUNNING, just
-		// return
-		// the persistent version valid
-		// at BOT-time
+		// return the persistent version valid at BOT-time
 		if (!hasTemporaryValue(transaction)) {
 			assert (transaction.getState() == TransactionState.RUNNING);
 			return getPersistentValueAtBot(transaction);
@@ -811,8 +818,8 @@ public abstract class VersionedDataObjectImpl<E> implements
 	}
 
 	/**
-	 * Sets the valid value for the given <code>transaction</code> depending
-	 * on his current state and depending on the result of
+	 * Sets the valid value for the given <code>transaction</code> depending on
+	 * his current state and depending on the result of
 	 * {@link TransactionImpl#isReadOnly() <code>transaction</code>
 	 * .isReadOnly()}
 	 * 
@@ -822,8 +829,8 @@ public abstract class VersionedDataObjectImpl<E> implements
 	 * @param transaction
 	 * @param incrVersionNumber
 	 * 
-	 * TODO maybe fix so that also types like List, Set, Map and Array work,
-	 * too.
+	 *            TODO maybe fix so that also types like List, Set, Map and
+	 *            Array work, too.
 	 */
 	private void internalSetValidValue(E dataObject, Transaction transaction,
 			boolean explicitChange) {
@@ -1045,7 +1052,7 @@ public abstract class VersionedDataObjectImpl<E> implements
 		((GraphImpl) getGraph()).vertexSync.writeLock().lock();
 		expandArray(newSize, new VertexImpl[newSize + 1]);
 		((GraphImpl) getGraph()).vertexSync.writeLock().unlock();
-		System.gc();
+		//System.gc();
 	}
 
 	/**
@@ -1057,7 +1064,7 @@ public abstract class VersionedDataObjectImpl<E> implements
 		((GraphImpl) getGraph()).edgeSync.writeLock().lock();
 		expandArray(newSize, new EdgeImpl[newSize + 1]);
 		((GraphImpl) getGraph()).edgeSync.writeLock().unlock();
-		System.gc();
+		//System.gc();
 	}
 
 	/**
@@ -1070,7 +1077,7 @@ public abstract class VersionedDataObjectImpl<E> implements
 		((GraphImpl) getGraph()).edgeSync.writeLock().lock();
 		expandArray(newSize, new ReversedEdgeImpl[newSize + 1]);
 		((GraphImpl) getGraph()).edgeSync.writeLock().unlock();
-		System.gc();
+		//System.gc();
 	}
 
 	/**
